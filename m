@@ -1,55 +1,62 @@
-Return-Path: <linux-kernel+bounces-309196-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309197-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5544896673D
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 18:46:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA519966742
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 18:46:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 884E41C24AFA
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 16:46:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 77FF4287362
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 16:46:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51D001BA281;
-	Fri, 30 Aug 2024 16:43:00 +0000 (UTC)
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F2CF1B8EBA;
+	Fri, 30 Aug 2024 16:44:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="pOMb1304"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39E001B9B28;
-	Fri, 30 Aug 2024 16:42:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05F1C1B5313;
+	Fri, 30 Aug 2024 16:44:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725036179; cv=none; b=ugzpoAladcrCDvMWX3OPWdPVci9xMFtnjX/KjtP+1klbvvsaPoNlpLXlBCiT8ETHp4pg98SoVmAdPw41oUts08+vjETVG9QT0JybsNOc3Slj2tuOgZvJdrJn583TBB5DwHl3s3kswg0vER3dd/RFy8md2/JgInDQq52WZSXGR7c=
+	t=1725036296; cv=none; b=Cznkj3KwN0osqlPhjz4lpkI89/9lq68MFPYTDFOYawKpoU6z/w5b9J3ZFw+oJuJmP+B0P513WTobUsUW6c8sQ2pPBJ99WBXBdnUDibMvW93AfhUMlI84CQAW48B3uBfIJH6NW/snxNOkrweKH779pj1ArZ3IypSj6MY3fZCJFpI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725036179; c=relaxed/simple;
-	bh=TOnGq0IO24mAJLekrXPB1z6LZN6IYMcZ09nnaFQEPw4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RlIJlsvvpwW8IiauzKL7Y1kTdNcTz9spdy/FCFSWuG/hSkt3QL5ShnMB+Pq8vLjPvJPc9LT/7el6zzbGqLsG+WROm4QZtNupozhODKpnYD7aHpzDlaGskhFa/1hSwfv3rDBnZpEj8ubGQs42KkkdTglewX9e7oksZ9bhkSoVR9g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4WwP8c465gz9sS8;
-	Fri, 30 Aug 2024 18:42:56 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id 6brwcfcnvqln; Fri, 30 Aug 2024 18:42:56 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4WwP8c3CYvz9sS7;
-	Fri, 30 Aug 2024 18:42:56 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 59C838B794;
-	Fri, 30 Aug 2024 18:42:56 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id spbTDoYI002a; Fri, 30 Aug 2024 18:42:56 +0200 (CEST)
-Received: from [192.168.234.133] (unknown [192.168.234.133])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 74A238B764;
-	Fri, 30 Aug 2024 18:42:55 +0200 (CEST)
-Message-ID: <84682299-8cbe-4b66-9c26-17786e73af55@csgroup.eu>
-Date: Fri, 30 Aug 2024 18:42:55 +0200
+	s=arc-20240116; t=1725036296; c=relaxed/simple;
+	bh=cAx/CkSWaWBsOEdX3c4Sy30s5GhSkh62nw8fBxVHlBI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Da4MMt9Ch3XDPpndtH3DHb3ePwxwCHsI5Dn4EshuBc0GxUvhk2Aaj1MoNFV8FsrL407y5/+26bCpOiBlWsS5EE6bPQKuaU3f3RCYN/LpcyRB7ThK7uW06bZxW42+rlHS43kY/kVog+eek71+4Xnr7m085GoV09YUkGezptYnT5o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=pOMb1304; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47UFI2jI028797;
+	Fri, 30 Aug 2024 16:44:42 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	PTXvTkGDdGSjOfgJlvddv1N2iFsBozj7rOvj7GAdUJQ=; b=pOMb1304Cbvlf3TN
+	8p83Z/mIQfgAaovKh4Z/wSAJ1KQcsjCsBu3n7jfTST58JbXbRMRtwh1ZaPUl6H55
+	aN2+BxJ2a57zT3D/pjUa/RTZ+gt5RONggAGfdkwCbp4tCvGZz7MgPjaCXLYOHXXU
+	9mvA14URxvZS5JrNbpqAkPxkGXKIDhYPDNDYSARJvu1ar1CPb8sWbXQVzGOEx2iZ
+	30hV3X1pAz2v4gFNcMgYYglQSLFC7zP0yGC7nyVjqJ0JtPvxQ2z5IJhPITYtR/vA
+	HCpdCP0+EABsyu2hTzZbThYRbgL9bGF0DfsAcx4oYNxZD501CM6CtirbKk7D1cET
+	G5y2ag==
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41ax4mk8x4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 30 Aug 2024 16:44:42 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47UGifL2032621
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 30 Aug 2024 16:44:41 GMT
+Received: from [10.110.126.215] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 30 Aug
+ 2024 09:44:40 -0700
+Message-ID: <9b495b92-5b6f-4a8f-8877-fef111b7259c@quicinc.com>
+Date: Fri, 30 Aug 2024 09:44:40 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,52 +64,64 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 4/5] powerpc/vdso: Wire up getrandom() vDSO
- implementation on PPC32
-To: "Jason A. Donenfeld" <Jason@zx2c4.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
- Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
- <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
- Naveen N Rao <naveen@kernel.org>, Nathan Chancellor <nathan@kernel.org>,
- Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling
- <morbo@google.com>, Justin Stitt <justinstitt@google.com>,
- Shuah Khan <shuah@kernel.org>, linux-kernel@vger.kernel.org,
- linuxppc-dev@lists.ozlabs.org, linux-kselftest@vger.kernel.org,
- llvm@lists.linux.dev, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
- linux-trace-kernel@vger.kernel.org,
- Adhemerval Zanella <adhemerval.zanella@linaro.org>,
- Xi Ruoyao <xry111@xry111.site>
-References: <cover.1725031952.git.christophe.leroy@csgroup.eu>
- <e7e4c6d36cf98229850c333f113bcea909564501.1725031952.git.christophe.leroy@csgroup.eu>
- <ZtHv9R8b7qwWKR2b@zx2c4.com>
-Content-Language: fr-FR
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-In-Reply-To: <ZtHv9R8b7qwWKR2b@zx2c4.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH v1 1/7] dt-bindings: arm: Add support for Coresight TGU
+ trace
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+        songchai
+	<quic_songchai@quicinc.com>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        "Mike
+ Leach" <mike.leach@linaro.org>,
+        James Clark <james.clark@arm.com>,
+        "Alexander
+ Shishkin" <alexander.shishkin@linux.intel.com>,
+        Andy Gross
+	<agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Rob Herring
+	<robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <coresight@lists.linaro.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>
+References: <20240830092311.14400-1-quic_songchai@quicinc.com>
+ <20240830092311.14400-2-quic_songchai@quicinc.com>
+ <0a79b9df-4ca4-4dc8-9930-3fa1dc7d3174@kernel.org>
+Content-Language: en-US
+From: Trilok Soni <quic_tsoni@quicinc.com>
+In-Reply-To: <0a79b9df-4ca4-4dc8-9930-3fa1dc7d3174@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: NwKB0PFUnUcS7bfCt6_Q1lyvobbJ-T_m
+X-Proofpoint-ORIG-GUID: NwKB0PFUnUcS7bfCt6_Q1lyvobbJ-T_m
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-30_10,2024-08-30_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=788
+ impostorscore=0 spamscore=0 suspectscore=0 adultscore=0 priorityscore=1501
+ lowpriorityscore=0 bulkscore=0 malwarescore=0 phishscore=0 mlxscore=0
+ clxscore=1011 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2408300128
+
+On 8/30/2024 3:11 AM, Krzysztof Kozlowski wrote:
+>> Add a new coresight-tgu.yaml file to describe the bindings required to
+>> define the TGU in the device trees.
+>>
+>> Signed-off-by: songchai <quic_songchai@quicinc.com>
+> It feels like you are using login name as real name. Please investigate
+> this and confirm whether latin transcription/transliteration of your
+> name is like above.
+
+It should be "Signed-off-by: Sam Chai <quic_songchai@quicinc.com>" ? 
 
 
+-- 
+---Trilok Soni
 
-Le 30/08/2024 à 18:14, Jason A. Donenfeld a écrit :
-> On Fri, Aug 30, 2024 at 05:57:08PM +0200, Christophe Leroy wrote:
->> + *	r5: 8-byte counter input/output (saved on stack)
->> + *
->> + *	r14-r15: counter
->> + */
->> +SYM_FUNC_START(__arch_chacha20_blocks_nostack)
->> +	stwu	r1, -96(r1)
->> +	stw	r5, 20(r1)
->> +	stmw	r14, 24(r1)
->> +	li	r31, 4
->> +	LWZX_LE	r14, 0, r5
->> +	LWZX_LE	r15, r31, r5
-> 
-> Why swap endian on the counter?
-
-Unlike the keys, the counter is passed to the function as an u8*, not as 
-a u64*, so I thought it was raw data in little endian order, same as 
-when using Sodium. Is it wrong ?
-
-Christophe
 
