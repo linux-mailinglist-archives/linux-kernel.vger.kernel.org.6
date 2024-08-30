@@ -1,142 +1,108 @@
-Return-Path: <linux-kernel+bounces-309457-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309458-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1DFC966ADD
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 22:51:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6251F966ADF
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 22:51:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE9B4283D2F
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 20:51:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1FCF4283878
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 20:51:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DCB41BDAB5;
-	Fri, 30 Aug 2024 20:51:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3654E1C0DC3;
+	Fri, 30 Aug 2024 20:51:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RJF9E6Yn"
-Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K6KkzIwL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19F4D1BF7FD;
-	Fri, 30 Aug 2024 20:51:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C01A1BE259
+	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 20:51:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725051079; cv=none; b=fFt8vnkZdVRP/YkdmsEdLdmYkSNaTcYez+hBiKXQR+637Nwy9ctpsk8zElGHPw2hEFgWGpUVwUKiRV3CiRbedNI8gx20CyW8yUtwgtPyBJwXoBa6d1lEtK8pEL9CttW+SL0gTW8C7x9y7bMkM/ivqZJjm2U1VCWww2Wccm2xEPg=
+	t=1725051099; cv=none; b=OTRLShnwLdzT6jZyJn3XPUci8D65AyPw3Z1JNznOnsIJjLVzhiLfBn8X/sS7/Sz2roxM+RJx2WlDFn9e/e5R4DhjBevgbEC9jddip+50YxO8jMpBNR0rOBgJiGj1bEndBYxT/CRtXcpuQOlCo9X1QOW0Z0y97oWagLgg9g0+S/I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725051079; c=relaxed/simple;
-	bh=EGmaHQIyFUQXRzkAm6S7M6ACd+k5XeZNvtGEUAyJy0w=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hrPyGKTXmFIIkt0HsdrjWnNVZyAO/1FvVtSKcVLWQaTkwmkeHn9O84N/jKgpZYkD7osGNjxGiBn7g0TuQV5fvFM2dCxJtbn6YLedN18sgT2eFyhUqj3CNMY1VL0aTEYxJU5tPc+Aggvia3VOxXuH6ZsfdhigNAhC78ivT5XzXbg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RJF9E6Yn; arc=none smtp.client-ip=209.85.215.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-7bcf8077742so1562120a12.0;
-        Fri, 30 Aug 2024 13:51:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725051077; x=1725655877; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gKCWX5eBlnYoIPNYnC/Yrj2h0Y/qTbwBQ/bhYQL0ahI=;
-        b=RJF9E6YnGRQz8YjtxUy4PrOwffcqeN3TRTJ/PAPJibjhWIV+HvckGQx47Zrh10BajW
-         xiSjC5rAnXpAhFey2xvQ0O8cj/5Gu+fpISFWjm3LjhXXzh7HSaCpwLPovbdt2LeNPOAm
-         yHOWbRqLYka5h7fUNnrwR8xvCTaSt7qbLq7f9NFE0fu/H2WkqnkA17ShzyFJwzlMHpar
-         jwKbqeyq+BP0nfVH7JE37EhGm+ORG7JJz968nERfFA42MooKcGpV6OzWrEQNEnQusawZ
-         bQhfw1yEBVM5qVleUvM5nw8lB+hnI6/9PsufzuxqL3GZcui6PdBvEP3NnmIfPS3eMV+4
-         mEUQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725051077; x=1725655877;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gKCWX5eBlnYoIPNYnC/Yrj2h0Y/qTbwBQ/bhYQL0ahI=;
-        b=haUegjPKmp9ONhiZhiMs7NlcATbrQ9Yg1F3PhP36hYZU8e3DC0z8JPQ3oEQQYbm+k0
-         yB3Z1Rqrt9lIWuKn4A2MN4UmAkzg3GtejNuN+hjbHNIMff3y8Rw2tcwaWZdp6PEuX5Hn
-         M8ym9KNSS6KQj9BAC7RH+xWsdxVIKmLFUvHdVda0eGo2kHHRHzVnfNDSZJSzYhdY/ejm
-         DbWTi9/vaDCifC+877IIOoxGTLG9FL9lnXZomWFGGQr94yTXFSNXs4cLfHkLq6SyAX6C
-         zkbZDw3/kpc4YVysknQimfrTkoO2JrMjgV2hZNymlevEQMUIWPULkLBlzXiBtKV1j6jT
-         wjJw==
-X-Forwarded-Encrypted: i=1; AJvYcCUUYC+Mg9ik++MAOfHqGU7odRf3xf7jB9t3imLQ+X3tVb4+qv6Vhlu6JNID4hBoLrr9+nbWKXeVsQ+gGAM5@vger.kernel.org, AJvYcCUV9edyw3Eo3Htu4N5OjcZuTzcAZjx84ixdM0fFjRU0gmAwzSx6BNC4R/Y+1ukE6h/NV3WWEVOB1Ucc6yp8pFfBUk60@vger.kernel.org, AJvYcCVsIx5A4CZkYZqxdPnMjdVU8+f6k4wH01Et8s5LMIoKbnnu9sRxHA+55LfCQ3P8isJfnCk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywv+OxP5xUD9+gOtGT4Ew1UtTQNXsmUeuBj+XZbtaeHBStfYJDc
-	gR3h64xNBDGkwg21Mu+fhtcFVIIbU+2JLovjs+EZg1u/PTpT9KJAFAi1qSvypqimjWjs4UIZMIq
-	EmsGePETGQ/zivFx/CJiTTopsCq8=
-X-Google-Smtp-Source: AGHT+IFJkXzMiCz4hLWiGHcIVHu9KNDUbV2A/WAg3aG8mUvFdbjfQlgpeqAXSl8XE4hL1lGIco6WROtxFKXpTg8dotw=
-X-Received: by 2002:a17:90a:4b85:b0:2cf:7388:ad9e with SMTP id
- 98e67ed59e1d1-2d85616eccamr7546969a91.2.1725051077220; Fri, 30 Aug 2024
- 13:51:17 -0700 (PDT)
+	s=arc-20240116; t=1725051099; c=relaxed/simple;
+	bh=vPxzIksKckelCZPO/lJH6gBkLGJDcZWljmfpGuIjjHE=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=awoKOZ88mYWjj0qYgD2sbVAnACaIU+x2NPnms2va5RotJb6PNccHhK1TWNjJigR2J2EXERQ5hUJDcKUj1KXFY/woavA1RsHCu34X7gXbQpX9+AdmSDuv5xTushiN6+JmOrCLK0r0qz48rLr5FOwkNMKsS4oNYVmXdJtq905EC3A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K6KkzIwL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4CA35C4CEC2;
+	Fri, 30 Aug 2024 20:51:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725051099;
+	bh=vPxzIksKckelCZPO/lJH6gBkLGJDcZWljmfpGuIjjHE=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=K6KkzIwL6Ctr+iwW67Ua7xntF7iTQbEe8PUNj4KRZoHr79dfDNW8PNblFz9gx9mRa
+	 A1YP0uECJJ6qXSxkQi1/HWOckUxl31lQdat8psmtTqGoIOV0zmhHDk5oOTgePXPOGb
+	 X7Ey2AyltmA3LbauPooP+YqhNCHBe8k0CksFrLQJL/Qu3dhejSui4eTCdszan00Bs2
+	 4aplR37mv17nzeta88KjVyggrD6TbUL+C3vlLgVftYe5ShT8fw8kZUizB1ZY9lB7zk
+	 kXPSmcCbMgQjcW4VGBQYNEcYxtP52Hb+qYybBgNJkhSYiVXVmhPq5f3MSnU4qNlu5J
+	 uNEgjpAzE0MZA==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EAED13809A80;
+	Fri, 30 Aug 2024 20:51:40 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240829194505.402807-1-jolsa@kernel.org> <20240829194505.402807-3-jolsa@kernel.org>
-In-Reply-To: <20240829194505.402807-3-jolsa@kernel.org>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Fri, 30 Aug 2024 13:51:04 -0700
-Message-ID: <CAEf4Bza4JztS8YBaEFUi81OwH2aSNbv3c29hoVc31vTnfgiCLA@mail.gmail.com>
-Subject: Re: [PATCH bpf-next 2/2] selftests/bpf: Add uprobe pid filter test
- for multiple processes
-To: Jiri Olsa <jolsa@kernel.org>
-Cc: Oleg Nesterov <oleg@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Andrii Nakryiko <andrii@kernel.org>, Tianyi Liu <i.pear@outlook.com>, 
-	Masami Hiramatsu <mhiramat@kernel.org>, bpf@vger.kernel.org, 
-	Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org, 
-	linux-trace-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Subject: Re: [f2fs-dev] [PATCH 1/9] f2fs: convert f2fs_compress_ctx_add_page()
+ to use folio
+From: patchwork-bot+f2fs@kernel.org
+Message-Id: 
+ <172505109977.2712133.16285332779262349295.git-patchwork-notify@kernel.org>
+Date: Fri, 30 Aug 2024 20:51:39 +0000
+References: <20240813141331.417067-1-chao@kernel.org>
+In-Reply-To: <20240813141331.417067-1-chao@kernel.org>
+To: Chao Yu <chao@kernel.org>
+Cc: jaegeuk@kernel.org, linux-kernel@vger.kernel.org, willy@infradead.org,
+ linux-f2fs-devel@lists.sourceforge.net
 
-On Thu, Aug 29, 2024 at 12:45=E2=80=AFPM Jiri Olsa <jolsa@kernel.org> wrote=
-:
->
-> The idea is to create and monitor 3 uprobes, each trigered in separate
+Hello:
 
-typo: triggered
+This series was applied to jaegeuk/f2fs.git (dev)
+by Jaegeuk Kim <jaegeuk@kernel.org>:
 
-> process and make sure the bpf program gets executed just for the proper
-> PID specified via pid filter.
->
-> Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-> ---
->  .../bpf/prog_tests/uprobe_multi_test.c        | 103 ++++++++++++++++++
->  .../bpf/progs/uprobe_multi_pid_filter.c       |  61 +++++++++++
->  2 files changed, 164 insertions(+)
->  create mode 100644 tools/testing/selftests/bpf/progs/uprobe_multi_pid_fi=
-lter.c
->
+On Tue, 13 Aug 2024 22:13:23 +0800 you wrote:
+> onvert to use folio, so that we can get rid of 'page->index' to
+> prepare for removal of 'index' field in structure page [1].
+> 
+> [1] https://lore.kernel.org/all/Zp8fgUSIBGQ1TN0D@casper.infradead.org/
+> 
+> Cc: Matthew Wilcox <willy@infradead.org>
+> Signed-off-by: Chao Yu <chao@kernel.org>
+> 
+> [...]
 
-It's good to have a test, thanks for adding it! But we should couple
-it with the fix in multi-uprobe and land together, right? I'm not
-exactly sure why we can't just use task->signal-based check, but let's
-try to converge on something and fix it.
+Here is the summary with links:
+  - [f2fs-dev,1/9] f2fs: convert f2fs_compress_ctx_add_page() to use folio
+    https://git.kernel.org/jaegeuk/f2fs/c/2cbbc4f94317
+  - [f2fs-dev,2/9] f2fs: convert f2fs_vm_page_mkwrite() to use folio
+    https://git.kernel.org/jaegeuk/f2fs/c/8ed263450530
+  - [f2fs-dev,3/9] f2fs: convert f2fs_clear_page_cache_dirty_tag() to use folio
+    https://git.kernel.org/jaegeuk/f2fs/c/71aa6bbfc247
+  - [f2fs-dev,4/9] f2fs: convert f2fs_write_inline_data() to use folio
+    https://git.kernel.org/jaegeuk/f2fs/c/333ad04822f5
+  - [f2fs-dev,5/9] f2fs: convert f2fs_write_single_data_page() to use folio
+    https://git.kernel.org/jaegeuk/f2fs/c/65826f2732fa
+  - [f2fs-dev,6/9] f2fs: convert f2fs_do_write_meta_page() to use folio
+    https://git.kernel.org/jaegeuk/f2fs/c/9f9bbd634792
+  - [f2fs-dev,7/9] f2fs: convert __f2fs_write_meta_page() to use folio
+    https://git.kernel.org/jaegeuk/f2fs/c/1b9eb6539810
+  - [f2fs-dev,8/9] f2fs: convert f2fs_read_multi_pages() to use folio
+    (no matching commit)
+  - [f2fs-dev,9/9] f2fs: convert f2fs_handle_page_eio() to use folio
+    https://git.kernel.org/jaegeuk/f2fs/c/6d899d7e3999
 
-pw-bot: cr
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
-[...]
 
-> +#define TASKS 3
-> +
-> +static void run_pid_filter(struct uprobe_multi_pid_filter *skel,
-> +                          create_link_t create_link, bool retprobe)
-> +{
-> +       struct bpf_link *link[TASKS] =3D {};
-> +       struct child child[TASKS] =3D {};
-> +       int i;
-> +
-> +       printf("%s retprobe %d\n", create_link =3D=3D create_link_uprobe =
-? "uprobe" : "uprobe_multi",
-> +               retprobe);
-
-leftovers
-
-> +
-> +       memset(skel->bss->test, 0, sizeof(skel->bss->test));
-> +
-> +       for (i =3D 0; i < TASKS; i++) {
-> +               if (!ASSERT_OK(spawn_child(&child[i]), "spawn_child"))
-> +                       goto cleanup;
-> +               skel->bss->pids[i] =3D child[i].pid;
-> +       }
-
-[...]
 
