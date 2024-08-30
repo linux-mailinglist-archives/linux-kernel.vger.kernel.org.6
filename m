@@ -1,123 +1,115 @@
-Return-Path: <linux-kernel+bounces-308165-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308167-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18F99965817
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 09:08:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B3F196581C
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 09:11:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C29DB1F24DBC
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 07:08:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DBBB9B214AD
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 07:11:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C87881531F9;
-	Fri, 30 Aug 2024 07:08:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5559E153BE3;
+	Fri, 30 Aug 2024 07:11:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="VrQSqSkr"
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YR9oJD4F"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2798B13E40F
-	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 07:08:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56E0F44C7C;
+	Fri, 30 Aug 2024 07:11:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725001707; cv=none; b=lbwH+d5ORM8jnI7TDrSUGiEXORFTNBQJ6qk7/GujTP5WY7JSi5dWb39PEnwv/SGrSTiblM/xwhb671ismoNuuDcucrAIBwG5+VIqcoa58k6Q0Otj1oG3yFs/Mr2cOstTnTG+CYdV4Io5j7aHwcG07Ohxiik7f97mfgDbDEdScqY=
+	t=1725001884; cv=none; b=mlRAQYWs48B1Q3f8CCe2gPjr0fvRymyu/f3FZ8RxF7kgRvXqhx1odLlVXVNzFIkPJfD5aaRAKcvOVzIJvWQXRbmMLm/Qgckvjmni+21HDdLMoNrNI04s05qyjCF9DodbSA2sZA3z91tZztV59APIkgSwbA2tEYfhqE8ZtWZiwoc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725001707; c=relaxed/simple;
-	bh=4GUSPODpLpXIBM/udMA/qJLR/gJRdsYqioWTQ9RvzxM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NADz+eilEQy+LTaRf2oF19WDYeBCvnhbK0Fxe7c4kX3M1rck7nwQMq0XE3jy5fcbMs1K2MTyNFHBM3tMv0Uit3H2z5Got4bxkD51Ut5ag4VEWHYT3jnjbSU0htAzFf5RG0qSPwVHp8SU4UJTg302rmnX4hIeNFTp2E/z3U6l1+c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=VrQSqSkr; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-37196681d3bso924667f8f.3
-        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 00:08:24 -0700 (PDT)
+	s=arc-20240116; t=1725001884; c=relaxed/simple;
+	bh=Q9zo8i84cdABomh+rkak0lKLEIIWvG4IvVr6aF7PKMI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DNlMo0admVpYprXCcFjtGaTP3E7QYULICY5mcMEB5U7HchIrW9wFEQOcDGhCF3Mjj0lLaiyfZKn8xc+jxEIowQgHkGkVd9yRzR/Iis2fAlZ3n/t+j52Bfheeb3kQaUHcjsDBqCIk24W0o+8lKLZMdiGnZvRzXR+60gCceSsOQRA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YR9oJD4F; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-201f2b7fe0dso12691275ad.1;
+        Fri, 30 Aug 2024 00:11:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1725001703; x=1725606503; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=iCS5TEESTr5e9Lr43y0GfLDajqqNRmNFbDHOZayEVCE=;
-        b=VrQSqSkr7JXQrzp15ot4o71inst6+sXv5vuMgWh+HHGcBlMRM4rnV7NrVwpH4UnX3z
-         GgA7WmkAisAlQ2/g8YWYQByQ+6yTLC5Ppypv6mvw3f5gqAjykvclbQ2CQO654d6NAugw
-         U+T0DETF79++OHx616ncjnU58i33KSbUgPVuEzpm1SVP33FlHQU6vTjAmOPv1MageDD7
-         X4VPIL05iZKRSzUgcJ3nTwHS6LTNCB0MiQcONtYWfABYb3wh3eePlUpg7mGLFL2t1NBF
-         9INnWJ4AF1L+0/Js+alWRlKDeG94ftnB0o7d/O0K7zaVzPm8Yh7hwll/zx2jPVsePgJk
-         uOLQ==
+        d=gmail.com; s=20230601; t=1725001882; x=1725606682; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=jVk8LINkbTRQSWBWSOj1f6VAOaUL2cUfSgT/UyEtcj8=;
+        b=YR9oJD4FzIj+33OkZeA1oLTZcN/7/AQbRbqu5NWr2VgzFHKFJzzUXKtETdXtMi6kpa
+         e2bxd4Ur4405ogUTrkqdH6HLZgYQCyZ1ei0i82mpaZdtVtkb1dVQ998rOGy/MZ8kEPY0
+         vYA+2FMYiehYX8wcRmoaDqJ05/5h4UkGm2qxiKklTz7jHyq0Loa9e0XwQg1i9wx8gmsJ
+         0rcrFFboi6OAvVWqpFG2zcxn4FWUNvxxgoPcjoZDznkOwW5Zlaf3ZxXLVT40RcVaozMX
+         iGI7QUAxngwSadswpyFtCYPyoZaW85bGFr5eR9whUse63h6xnm/6GMgh84KMpiTCirRr
+         8Y3w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725001703; x=1725606503;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=iCS5TEESTr5e9Lr43y0GfLDajqqNRmNFbDHOZayEVCE=;
-        b=FXoRgUPQFE7n3rU/dkLcYI7BP6ZDVgH9Be0AIYhPUkAV561lAs10MBsRIwVvBEbLDH
-         M7r+KUbJ+tDGibobnUBXRda3thDwU/eL+tN/RSKhExTCO+i78sytj4JY4bEGuAec9mWY
-         TmHdUg35GSWHsjA9RC0GOn+UzWsjpUf/Nt2AiNbg0nGIryhuyecxeDDIlB6luBrF8a46
-         7rL1bGS1XYfyRXFKthyNHM5bWEPAXxgW3nDCpVgGABViWvW922Zc6Elzmq6NE5pEpLbC
-         dRfOFtWjp7PFYRCuc548VPnL2GRap6Lr+Ar/dcs9Fv0SzvKC0bUSzGl82LmtkBl8NKyD
-         bntQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVuw/3mt/TCxJSE8CXuN5+eaXlLZZl1p+V3nR/bot6YfV7SddMA31qlGYdZVAv92SqK2pxQBwfEWnIiY94=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwJ1t/chIs/QU8TqQPHWr/83VX8ASuPjKjyVW706vdb9Te3UHuO
-	yDLMmqfCzT2B/9mzlDWK1vvy2Bkx3CcSqQArTtLLMohvBpatvkQ2wS9YMSKNsvY=
-X-Google-Smtp-Source: AGHT+IGPcYfQC61zTRVDY+JEAqWSvbxDngClQz+OhhcqpV9NC9cBnCGp6fIjWo7d72IwzsuKFzR4EQ==
-X-Received: by 2002:a5d:628b:0:b0:36b:a3c7:b9fd with SMTP id ffacd0b85a97d-3749b5868a2mr3322544f8f.56.1725001703449;
-        Fri, 30 Aug 2024 00:08:23 -0700 (PDT)
-Received: from localhost (109-81-82-19.rct.o2.cz. [109.81.82.19])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3749ee9c188sm3158578f8f.55.2024.08.30.00.08.23
+        d=1e100.net; s=20230601; t=1725001882; x=1725606682;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=jVk8LINkbTRQSWBWSOj1f6VAOaUL2cUfSgT/UyEtcj8=;
+        b=vXUxMUILLhjBwygAvJTCjIcryVpnl4vvXNgsfLT7QQbQlatVEWi8t1zxoGdgoyPhLS
+         8n7uNYkQKOw4s07tGNTocFMvWCKCZiHgqM9Oleh5O+U6EgoKEcyYmZpN7sY6Dz7naZ/Q
+         I5/Hiinpz4DaEVQPZ/Ltm3hHKhsDQQZlQX1jKlFWsJWZ7jFcVZo2DDBZIShKEbnaQXvy
+         q7btNLbSk6ccB+MZklfbQ77UhvkUS/vHt4nPzE+GTEj+sDrnPWRa51BA6xEGURDbLM+X
+         k4i4U87RSjmx34wn6mrm91OC2jcXQ/tmqhkYmi21j/iVvaq1pyIUGjFEzRAeVmTk0xXl
+         GPAA==
+X-Forwarded-Encrypted: i=1; AJvYcCUpFNZ9Tk4mMm/gP8RlXppd4g5ucLRFa2jbEbgijt5rEyMHyS7UUfH9NTHexx4QOz2LWleEx2gHVPxFrsc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywfqm2UPUmQHuGpD16tZ5pQF114Ubze99olVcudsWotMSsfGyni
+	2K4qluYY+zU4bhgFmTOj5IsdgcU8onw3M9RPWU1KKV820fV6ZRlRMB0xX+HIeLE=
+X-Google-Smtp-Source: AGHT+IEG86tnZcFSGgrjOxo6oZCRr3aVnnMeXGdSQvX8M1+dO29teMaRbeJ7yb+I7rzB4yHNGS6kzA==
+X-Received: by 2002:a17:902:ec8e:b0:202:4b99:fd27 with SMTP id d9443c01a7336-2050c4d38b5mr53444925ad.51.1725001882185;
+        Fri, 30 Aug 2024 00:11:22 -0700 (PDT)
+Received: from fedora.. ([106.219.166.11])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2052a485dacsm5243615ad.212.2024.08.30.00.11.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 30 Aug 2024 00:08:23 -0700 (PDT)
-Date: Fri, 30 Aug 2024 09:08:22 +0200
-From: Michal Hocko <mhocko@suse.com>
-To: Liu Jing <liujing@cmss.chinamobile.com>
-Cc: akpm@linux-foundation.org, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: The percpu memory used by memcg cannot be cleared
-Message-ID: <ZtFv5jDx3Y3NMPrH@tiehlicka>
-References: <20240829170644.15588-1-liujing@cmss.chinamobile.com>
+        Fri, 30 Aug 2024 00:11:21 -0700 (PDT)
+From: Riyan Dhiman <riyandhiman14@gmail.com>
+To: lpieralisi@kernel.org,
+	guohanjun@huawei.com,
+	sudeep.holla@arm.com
+Cc: linux-acpi@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Riyan Dhiman <riyandhiman14@gmail.com>
+Subject: [PATCH] ACPI: arm64: Calculate size from pointer instead of struct
+Date: Fri, 30 Aug 2024 12:41:10 +0530
+Message-ID: <20240830071110.120350-1-riyandhiman14@gmail.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240829170644.15588-1-liujing@cmss.chinamobile.com>
 
-On Fri 30-08-24 01:06:44, Liu Jing wrote:
-> hello，linux boss
-> 
->         I found a problem in the process of using linux memcg，When I turned swap off, the memcg memory I created with the following script could not be deleted with echo 0 > memory.force_empty, as explained below。
-> 
-> ----------------------------------------------------------------------------------------------------------
-> step1：swapoff -a
-> 
-> 
-> step2：use this script to create memcg
-> 
-> #!/bin/bash
-> mkdir -p /tmp/test
-> for i in 'seq 2000'
-> do
->         sudo mkdir -p /sys/fs/cgroup/memory/user.slice/user-0.slice/test$ {i}
->         sudo echo $$ > /sys/fs/cgroup/memory/user.slice/user-0.slice/test$ {i}/tasks
->         sudo echo 'data' > /tmp/test/test$ {i}
->         sudo echo $$ > /sys/fs/cgroup/memory/user.slice/user-0.slice/tasks
->         sudo rmdir /sys/fs/cgroup/memory/user.slice/user-0.slice/test$ {i}
-> done
-[...]
+Calculate the size from pointer instead of struct to adhere to
+kernel coding style.
 
-I assume you /tmp is tmpfs backed.
+Issue reported in checkpatch
 
-> Therefore, I want to know why swap affects memcg memory reclamation,
-> echo 0 > memory.force_empty this interface should force the memory
-> used by the cgroup to be reclaimed. 
+This commit has no functional changes.
 
-If the above is true then you simply do not have any backing storage to
-reclaim to. You need swap to reclaim tmpfs/shmem memory.
+Signed-off-by: Riyan Dhiman <riyandhiman14@gmail.com>
+---
+ drivers/acpi/arm64/iort.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/acpi/arm64/iort.c b/drivers/acpi/arm64/iort.c
+index 1b39e9ae7ac1..6a87ec243c56 100644
+--- a/drivers/acpi/arm64/iort.c
++++ b/drivers/acpi/arm64/iort.c
+@@ -56,7 +56,7 @@ static inline int iort_set_fwnode(struct acpi_iort_node *iort_node,
+ {
+ 	struct iort_fwnode *np;
+ 
+-	np = kzalloc(sizeof(struct iort_fwnode), GFP_ATOMIC);
++	np = kzalloc(sizeof(*np), GFP_ATOMIC);
+ 
+ 	if (WARN_ON(!np))
+ 		return -ENOMEM;
 -- 
-Michal Hocko
-SUSE Labs
+2.46.0
+
 
