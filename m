@@ -1,100 +1,117 @@
-Return-Path: <linux-kernel+bounces-308400-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308401-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C54C4965C76
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 11:13:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D54C965C78
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 11:13:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 04B001C2355F
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 09:13:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 526581C23680
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 09:13:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C968170A0B;
-	Fri, 30 Aug 2024 09:12:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Hn0o1+zg"
-Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 963BF16FF26;
+	Fri, 30 Aug 2024 09:13:05 +0000 (UTC)
+Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A87A616F0E6;
-	Fri, 30 Aug 2024 09:12:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6446C171650;
+	Fri, 30 Aug 2024 09:13:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725009178; cv=none; b=bPilpVKR/v/glE8rXipmAS8iJyIEAVTkvFynvs/2O3Dap9rbztPLoDwydR8mekc7TdW/A+dVSCi4GYvl1F+QkXmdgphSLRRcf9HPkDgDZP/pZcCkwG3JD9JTfFazCDWpTG+gYtiH6PZgANIPn0X60R6AUsB9TdvUMOM916lTysc=
+	t=1725009185; cv=none; b=fevfDY0M+kZI2Ip2ysyOtNdSqyUBVPKIqmvEgc/SFnTonTMUtso8XDeQwAaddfc+AGeto3EKDQ61VddU11QkF41XAdwsbpIXKMEjSgpUFBsHRtmjBkUByJgwB72N82MndQZ2SaZa4wXhN2nprcD3Zyb4vEAhiEdiccXNrPMcBGo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725009178; c=relaxed/simple;
-	bh=GcMYJ3PIwRsIy8xGQ2nMsRWc8HyxLcC69tALdqQ+RKA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hxs4y/ntwhBQbFmYo6sj7D6pX+oD3BVKiDIgGckfKXaSNLOy0ETtg2bCfIzmKVb7a6wLNJpj2BDRd9Jx0jcLzrmD42FzcgwS9Jtsb0S3jsX7kbJpXGtV7tRjEXXwI8+LsKhd0DPHr0+8mJ+bWo8VN+Sj7YJNMhBTPcQeWdHwIik=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Hn0o1+zg; arc=none smtp.client-ip=217.70.183.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 7B11BFF806;
-	Fri, 30 Aug 2024 09:12:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1725009168;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8vUwX4cXKvuh9t8yohr6KHZCZg/xLuyYvuM4zKl+6Mc=;
-	b=Hn0o1+zgcikDEMZQngQ1Q+yHtR3R3ZB5xkDV1r4JObOTxLvJF7YUyyJcZ4pWvJNXkOQDxi
-	+xoT4fQOIqD/+A+Gx6hRNDTHBtxLl0LhN8j9Qirofr8Rhot4pOryoXT9uW/6/wiGp0I27Y
-	merMFuSJzBX9tZhh/9OM2UsQ09Iz3HruapoDErCQph1wUPvagIebqB0Hi8GTk3GVjZBEsD
-	IQ8E1U1uuPRgXtc4HurxifyGBb3Xmv7+lH51NtG6fwEswNKnxSNGq3BmImj9UhYUJuOuFZ
-	AShfWLqFRFphza95ytMMKdHNdYHX53DCSQWbGmtYbz+PBO/oYqcuqky+P3dtRA==
-Date: Fri, 30 Aug 2024 11:12:46 +0200
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: Sudeep Holla <sudeep.holla@arm.com>
-Cc: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>,
-	Cristian Marussi <cristian.marussi@arm.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, Peng Fan <peng.fan@nxp.com>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	imx@lists.linux.dev, linux-rtc@vger.kernel.org,
-	linux-input@vger.kernel.org
-Subject: Re: [PATCH v8 6/7] rtc: support i.MX95 BBM RTC
-Message-ID: <20240830091246fce62c34@mail.local>
-References: <20240823-imx95-bbm-misc-v2-v8-0-e600ed9e9271@nxp.com>
- <20240823-imx95-bbm-misc-v2-v8-6-e600ed9e9271@nxp.com>
- <Zs2rz1FT1UsKQBj6@bogus>
+	s=arc-20240116; t=1725009185; c=relaxed/simple;
+	bh=Hpvg87zG8KAP8+Qw4uvNllQvQHp8Ub8BWaUdz7xUQRM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Hs9kCiR3/T1m9hjV4n/n6nFYsg1ei5v9avN6BpH/ZneABodoUFRTjIwV9/0M8gMEIUAaVfWATl/D6BGqPPWK2R++J7rvD2gh/pIPfrdu8i9w2NEb9Vl8JDqfZWOOewoAwCS1AtyjEfQQpBsj6okeHzxeKJesTnOcrTH8ei9O6jQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-6c130ffa0adso16065677b3.3;
+        Fri, 30 Aug 2024 02:13:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725009181; x=1725613981;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=daF6lSM2+LMkrRjbALvD9vmKglf9+xqjtzTYJxCfy78=;
+        b=qdLleSuxVK/3ROXA+NlbqpiznDPKjeWsWKhzw+szLUAsZAD1SP1q5+19TYmfbEioYm
+         +XmtjTmHn43Vhvhg95hTKWOWil91toI5WYnu6GoBE//uQu5QSE5H4RhHp+scCWYDfw8u
+         mi9TOCuF6sQbMGsuPjy5unxvAcIMb9SZi9CaqrwaZDcpFri30nxKCSWsKJfmdgP4W4fE
+         VG/18u2WZba9+cMkxqoIygL/iGxMrl4/OfH8BEnioLk0WRghqazgTYGtcGK4qlf/PiMQ
+         9YbErb3RiIahUMVBa0uUjplN3nTjDhHDgHEZUotfizmJSC2FSrFMQHO0S03dOnd01Gat
+         RU+A==
+X-Forwarded-Encrypted: i=1; AJvYcCX0NzZptck8pjdTOLRDbneijR/RSuznW1UZZIynfdvfUkKwFrKaoVsxpnEOKRJbyI8+IWZpR1oxN+szs2g7DkbYZyk=@vger.kernel.org, AJvYcCXHYY9XhYlbO/nY4sKbbiYva7zxEwPoZVBNfHtRt5en0i5riWLUHny/dvAgrrLEeBeEEHKg6zSCPsRB5RBL@vger.kernel.org, AJvYcCXVd68TTPaWMf7OgkrfSKw5LFzqQ+j8+8QCmo4WiNHS06+GvLAxVLB+rCm7uP/Zs9GZ3Zxq+6xEnqcS@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzoq6DZGRcECWrbDx1o9CpsUKClG/lOAwCYzGg9UUBMkRsxCNmj
+	YlRmCH4+xCopH0MOTjKG5Bl3DXEhr133QXtb/kyD1SfW8uc/dtV3JyWr2YrL
+X-Google-Smtp-Source: AGHT+IFMiAK0k9Db4xRo8voBpaKwrWiAXXUhWC+R7qA2ib/SWvZO+CZnuxw9C41Lziu83AalVOYIIQ==
+X-Received: by 2002:a05:690c:389:b0:6b3:9cc1:97e4 with SMTP id 00721157ae682-6d40f829539mr13719717b3.30.1725009180668;
+        Fri, 30 Aug 2024 02:13:00 -0700 (PDT)
+Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com. [209.85.128.174])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6d2d438e15dsm5542477b3.66.2024.08.30.02.13.00
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 30 Aug 2024 02:13:00 -0700 (PDT)
+Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-6ca1d6f549eso18568517b3.0;
+        Fri, 30 Aug 2024 02:13:00 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCW3TxIQtMbxpiCW+94xDsFH52IKNSNSJGdsdxX7+qvcp3w/wOj1VqfExwucX8jNoG1ZWX2z5fTd6Z+0i2VATsxtmTQ=@vger.kernel.org, AJvYcCWgddHANIizXG4IGLCEt5wjRAqHEodiLWcNJiavczrU/hVk4VdAeAkoU1YmPeiQem1nQ4QU7RWy7Xx6FAfy@vger.kernel.org, AJvYcCXk+hsBPa6Dmptk0X23vPYKDHFN0mWH66FdAXIqvFcYDvXkErdkOwzCz7T0ZiSiWtdCY3S+si9c2HBe@vger.kernel.org
+X-Received: by 2002:a05:690c:fca:b0:6d3:f51b:38c3 with SMTP id
+ 00721157ae682-6d40d88d522mr17797587b3.7.1725009180020; Fri, 30 Aug 2024
+ 02:13:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zs2rz1FT1UsKQBj6@bogus>
-X-GND-Sasl: alexandre.belloni@bootlin.com
+References: <20240829194841.84398-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20240829194841.84398-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20240829194841.84398-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 30 Aug 2024 11:12:48 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdXqxXovL--eT75XJx+0mozdAnfUU4gcVWcomJrmZ4SROA@mail.gmail.com>
+Message-ID: <CAMuHMdXqxXovL--eT75XJx+0mozdAnfUU4gcVWcomJrmZ4SROA@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] pinctrl: renesas: rzg2l: Move pinconf_to_config_argument()
+ call outside of switch cases
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-renesas-soc@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 27/08/2024 11:34:55+0100, Sudeep Holla wrote:
-> Hi Alexandre,
-> 
-> On Fri, Aug 23, 2024 at 05:05:22PM +0800, Peng Fan (OSS) wrote:
-> > From: Peng Fan <peng.fan@nxp.com>
-> > 
-> > The BBM module provides RTC feature. To i.MX95, this module is managed by
-> > System Manager and exported System Control Management Interface(SCMI).
-> > Linux could use i.MX SCMI BBM Extension protocol to use RTC feature.
-> > 
-> > This driver is to use SCMI interface to get/set RTC.
-> >
-> 
-> Are you fine if I take this along with dependent SCMI changes via SoC tree ?
+On Thu, Aug 29, 2024 at 9:49=E2=80=AFPM Prabhakar <prabhakar.csengg@gmail.c=
+om> wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> Refactor the `rzg2l_pinctrl_pinconf_set()` function by moving the call to
+> `arg =3D pinconf_to_config_argument(_configs[i])` to the beginning of the
+> loop. Previously, this call was redundantly made in most cases within the
+> switch statement.
+>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> ---
+> v1->v2
+> - Updated commit description
+> - Replaced `pinconf_to_config_argument(_configs[i])` with arg in
+>   PIN_CONFIG_POWER_SOURCE and PIN_CONFIG_DRIVE_STRENGTH_UA switch
+>   cases
 
-Sure, please do.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-pinctrl for v6.12.
 
+Gr{oetje,eeting}s,
 
--- 
-Alexandre Belloni, co-owner and COO, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
