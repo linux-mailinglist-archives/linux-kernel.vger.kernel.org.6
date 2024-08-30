@@ -1,132 +1,116 @@
-Return-Path: <linux-kernel+bounces-309343-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309344-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6152D966928
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 20:52:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7062596692C
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 20:52:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C9FBFB232B6
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 18:52:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 88E1C1C231D2
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 18:52:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 719FB1BC07B;
-	Fri, 30 Aug 2024 18:52:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Yw7cWkYn"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A1231BCA05;
+	Fri, 30 Aug 2024 18:52:44 +0000 (UTC)
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2A121B9B29;
-	Fri, 30 Aug 2024 18:52:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36BE51BB69B;
+	Fri, 30 Aug 2024 18:52:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725043928; cv=none; b=Y7FRWrq7V7DTRbe25lrfGhN3rGCCsTjB83X3O12buBBtWDKAmK21s5kfyMgXAUWTg7QRFBOOYcWQE4HHqVw5MQ874L4jwAKJJccyQ6RiR2ElnzF1ISafiTubKxGJSBpk4BuWepay0XvtrSoqVvOB+QCjshDMiFSHMCTliFKQR4k=
+	t=1725043964; cv=none; b=ZrMHWGfYpn2RSJFrgqQdynyOEwhoZ4QT0uAtAaehZTPrDKFVQzNY/DptSeDDXL/WxGSJnqqG876KLDpMF/vcOHHnSn9FZUn+qLynEUXC3tG2ZiDPcNroCQYQWJX2ZZsXH+3baItJy36nK+KQ/RFQuN904+HflRrRdy9tr8gg5n4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725043928; c=relaxed/simple;
-	bh=1g6UP0+INSxNv+dqvr+NMhr94C5/+d020dTzUB1qIEo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JjZxtV121aTxwARez6O1ZvXrqI7eyhO5MZ8UT74VfDrwXSikuVsXmkG7FuGjqV+NE4q58acIBb19ZejTAO8UEuv2woAT1UsiaRTHSDfZeTVjI04UvTOavOJSqMWQS/W69G0ywE+8oQ0S0B7pzutZHxvTWDwLL+jR2aAtiqgFcXY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Yw7cWkYn; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725043927; x=1756579927;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=1g6UP0+INSxNv+dqvr+NMhr94C5/+d020dTzUB1qIEo=;
-  b=Yw7cWkYn3AjMSCByO1To2Q36j3kIQcSGLS/f7A4CVEtlrFEPMkDVJ6O/
-   qcV+95O/0W0r88C5e5XQAdwa8WlB4Bmceb2ZnZPkjtb2Okv+6U6DZ7K5Q
-   wD333/P1vnj2dK1Z9vLdgqCkEvEEXyc1vYyIxNb1RJTIo2YE4TdI7kp4l
-   YUtvDptGSvYNz+1I4z8isgWJecIM8gOWOSyv3KMMAWCCURsyAANfwK+KW
-   9/xUET/sVOGtSzgSif1IHh9q5AOfxFZCjCSue3IsymGtGkh1xkkTssJ0Q
-   zTfqGUKRmM10sLFBJ+RRGlJnWSp8mkxJXEiHvmTaWQrbAZg/0y9FmuBoL
-   g==;
-X-CSE-ConnectionGUID: 7x9xX5xjRVut5bheWeW0mA==
-X-CSE-MsgGUID: 7pz1OywIQ56apQcwkQOGGg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11180"; a="27575243"
-X-IronPort-AV: E=Sophos;i="6.10,189,1719903600"; 
-   d="scan'208";a="27575243"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Aug 2024 11:52:06 -0700
-X-CSE-ConnectionGUID: YhrcxMycTQy8jKRAvPG0BQ==
-X-CSE-MsgGUID: R5EoqoN3Sui9gIoRcQwxRw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,189,1719903600"; 
-   d="scan'208";a="68375059"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmviesa005.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Aug 2024 11:52:06 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1sk6io-00000003Ryp-13LU;
-	Fri, 30 Aug 2024 21:51:46 +0300
-Date: Fri, 30 Aug 2024 21:51:45 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Heiner Kallweit <hkallweit1@gmail.com>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Mika Westerberg <mika.westerberg@linux.intel.com>,
-	Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v1 0/5] pinctrl: intel: High impedance impl. and cleanups
-Message-ID: <ZtIUwWavMQRXDOGN@smile.fi.intel.com>
-References: <20240828184018.3097386-1-andriy.shevchenko@linux.intel.com>
- <Zs-B9m4jO9x3wX4d@smile.fi.intel.com>
- <974bbb25-3b27-4f53-be35-4bfda17b8c7e@gmail.com>
+	s=arc-20240116; t=1725043964; c=relaxed/simple;
+	bh=kPiLDQ8HQsZ7OY2s7jtUVwKAWbrRXvStaSUX+5VHXqg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MSw2zZm4rOFiwni7YV532TOmNrd5CZGVXYRrFRBgPg9q4Cx+DBBIK1TYIfHGP/zGlZ7ejGY/04tkMkZPgUOe/HkVElRd1HfbsVXq0mqmXv4K6SSYifPGCk7YaeQHWAJOQzGpYffZp549G0cXZ9YuJknUe3ZdqOxKon1cGtwBIEU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4WwS2H2zdLz9sSN;
+	Fri, 30 Aug 2024 20:52:39 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id 3f9-XC2A1YeT; Fri, 30 Aug 2024 20:52:39 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4WwS2H1wnjz9sSK;
+	Fri, 30 Aug 2024 20:52:39 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 28C2A8B794;
+	Fri, 30 Aug 2024 20:52:39 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id h0_TT9jQfciA; Fri, 30 Aug 2024 20:52:39 +0200 (CEST)
+Received: from [192.168.234.133] (unknown [192.168.234.133])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 428938B764;
+	Fri, 30 Aug 2024 20:52:38 +0200 (CEST)
+Message-ID: <ef38cd36-3e15-4608-8b72-87cf7621cce6@csgroup.eu>
+Date: Fri, 30 Aug 2024 20:52:37 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <974bbb25-3b27-4f53-be35-4bfda17b8c7e@gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 4/5] powerpc/vdso: Wire up getrandom() vDSO
+ implementation on PPC32
+To: "Jason A. Donenfeld" <Jason@zx2c4.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+ Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
+ <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
+ Naveen N Rao <naveen@kernel.org>, Nathan Chancellor <nathan@kernel.org>,
+ Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling
+ <morbo@google.com>, Justin Stitt <justinstitt@google.com>,
+ Shuah Khan <shuah@kernel.org>, linux-kernel@vger.kernel.org,
+ linuxppc-dev@lists.ozlabs.org, linux-kselftest@vger.kernel.org,
+ llvm@lists.linux.dev, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+ linux-trace-kernel@vger.kernel.org,
+ Adhemerval Zanella <adhemerval.zanella@linaro.org>,
+ Xi Ruoyao <xry111@xry111.site>
+References: <cover.1725031952.git.christophe.leroy@csgroup.eu>
+ <e7e4c6d36cf98229850c333f113bcea909564501.1725031952.git.christophe.leroy@csgroup.eu>
+ <ZtHwnc4AZuRULkom@zx2c4.com>
+Content-Language: fr-FR
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+In-Reply-To: <ZtHwnc4AZuRULkom@zx2c4.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Fri, Aug 30, 2024 at 07:56:11AM +0200, Heiner Kallweit wrote:
-> On 28.08.2024 22:00, Andy Shevchenko wrote:
-> > On Wed, Aug 28, 2024 at 09:38:33PM +0300, Andy Shevchenko wrote:
-> >> We would need a high impedance implementation for a quirk, so here it
-> >> is. While doing this series I also noticed a couple of opportunities
-> >> to clean up, hence two more patches (1st and 5th).
-> > 
-> > Sorry it took a while to actually start implementing the quirk for your case.
-> > Here I'm asking for the following things:
-> > 
-> > 1) what is the marketing name of the device you have problems with?
-> > (I believe it's available on the free market, correct?);
+
+
+Le 30/08/2024 à 18:17, Jason A. Donenfeld a écrit :
+> On Fri, Aug 30, 2024 at 05:57:08PM +0200, Christophe Leroy wrote:
+>> @@ -14,6 +14,10 @@ ifeq ($(uname_M),x86_64)
+>>   TEST_GEN_PROGS += vdso_test_getrandom
+>>   TEST_GEN_PROGS += vdso_test_chacha
+>>   endif
+>> +ifeq ($(ARCH),powerpc)
+>> +TEST_GEN_PROGS += vdso_test_getrandom
+>> +TEST_GEN_PROGS += vdso_test_chacha
+>> +endif
 > 
-> Device is a dirt-cheap mini pc, marketed as Chatreey T9. It's available
-> on the free market, right. Dmesg says:
-> DMI: Default string Default string/Default string, BIOS ADLN.M6.SODIMM.ZB.CY.015 08/08/2023
+> FYI, as of [1], you should now be able to add powerpc to the filter list
+> instead of having to duplicate a new stanza:
 > 
-> > 2) does it have any BIOS updates and, if it has, does it fix the issue?
-> > 
-> No BIOS updates.
-> 
-> > 3) can you apply patches 2,3,4,5 from this series (the first one is buggy and
-> > not needed for you) and replace the hack I mentioned earlier with
-> > 
-> > 	ret = intel_gpio_set_high_impedance(pctrl, 3);
-> > 	if (ret)
-> > 		return ret;
-> > 
-> > somewhere at the end of intel_pinctrl_probe()?
-> > 
-> > Does it still work as expected?
-> > 
-> I will check.
+> [1] https://eur01.safelinks.protection.outlook.com/?url=https%3A%2F%2Fgit.kernel.org%2Fpub%2Fscm%2Flinux%2Fkernel%2Fgit%2Fcrng%2Frandom.git%2Fcommit%2F%3Fid%3Dbbaae98172ed284fc0d5d39cc0d68f5d06164f06&data=05%7C02%7Cchristophe.leroy%40csgroup.eu%7C4f51736c027a44cc7df908dcc90f46d6%7C8b87af7d86474dc78df45f69a2011bb5%7C0%7C0%7C638606314665557021%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C0%7C%7C%7C&sdata=UtLdKTuEaZVhsguKa7kX1TBJ%2BvvQtl7DmU9hSBeThWo%3D&reserved=0
 
-There is a v2 to test, you can take entire series, or for-next branch of Intel
-pin control tree
+I'm a bit sceptic with that commit. IIUC you are changing the meaning of 
+$ARCH. How does that fit with the $ARCH we give when we cross-build or 
+with the ARCH which is set by the top-level Makefile in 
+tools/testing/selftests ?
 
-https://git.kernel.org/pub/scm/linux/kernel/git/pinctrl/intel.git/log/?h=for-next
+Also, wouldn't there be a way to use scripts/subarch.include instead of 
+opencoding ?
 
-Thanks!
+Afterall, would it be a problem to build it even for i386 ? It should 
+now be ignored anyway with your new commit f78280b1a3ce ("selftests: 
+vDSO: skip getrandom test if architecture is unsupported")
 
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+Christophe
 
