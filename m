@@ -1,123 +1,141 @@
-Return-Path: <linux-kernel+bounces-309212-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309213-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 897AF966793
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 19:05:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C4AF966796
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 19:07:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 46EB9286C8A
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 17:05:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5F4201C2310E
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 17:07:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0E941B9B28;
-	Fri, 30 Aug 2024 17:04:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77B381B8E99;
+	Fri, 30 Aug 2024 17:07:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nFGiZtTV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=cristian.ciocaltea@collabora.com header.b="eUgTB7/4"
+Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A4A416C68F;
-	Fri, 30 Aug 2024 17:04:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725037494; cv=none; b=tmqnW+qdbN5K2MI7HOdlVzKjUUEbYG7D9C83QlACnro+UXIqm8h7UiOXHSgfCURTk/i63t4KMzHU3ZEk9wJpKRJYUnuv1Rj7iqG5gEXKwuTm11N1Tq0z7ss1Oz6KVlDHzBRIooptMmVsK3wZb4BreE5O4qPTRtC4swFwn/gNzqU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725037494; c=relaxed/simple;
-	bh=xIXAMIe5hLeQUFpwywsJ8g5KP7dZuff50VDK4ECjhaQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PYeVPVPOlqPQWLI5e7uFX5svpltQE3/y5fZoSYbV1H6pJGq5nj/jr8q+kVyehvtVOa8L0SxARDWqO6yZDTjTYDoZA6+fWME/tOoD0jhIkIS5TD+MLsxoYbcHf5caTP6wy7n7gkJkxaLdZ8ufYPm7vC4kZFEy10HjSkl3bjBpAtM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nFGiZtTV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 32E95C4CEC2;
-	Fri, 30 Aug 2024 17:04:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725037493;
-	bh=xIXAMIe5hLeQUFpwywsJ8g5KP7dZuff50VDK4ECjhaQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=nFGiZtTVGSMcAvzTDKKMPKU9t254eb1MRqstsx3+2wi7SnROqSDh21xZ9yJMc+sme
-	 g0yvyDsJeCojACLE1s9CQXEPLA7hgyBJn1ZAkHeMUhHREV/QzOD4Dr9CxoRWLyjRIB
-	 Oop5Z8PNSHkHP6P/Xzs6eWiCQpG+xQkMxywEPVt80Lup3BdgkKC1XiVPMGIogi6/1E
-	 CQGvNOxr1OYofJdERSgID4GHEsMtkSvBlXfuj6788/Qw2eab6sil6o9Rh4GrkA9x6d
-	 n9asGsqSMCPmeqwy1GAgZ+ZSIqPiQ0S8hix+olAAS9AwbGCl29Gbq3urMDZ74j0m4C
-	 47WrsXy/moEwg==
-Date: Fri, 30 Aug 2024 18:04:49 +0100
-From: Simon Horman <horms@kernel.org>
-To: Naresh Kamboju <naresh.kamboju@linaro.org>
-Cc: clang-built-linux <llvm@lists.linux.dev>,
-	Netdev <netdev@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>,
-	lkft-triage@lists.linaro.org,
-	Linux Regressions <regressions@lists.linux.dev>,
-	Anders Roxell <anders.roxell@linaro.org>,
-	Dan Carpenter <dan.carpenter@linaro.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Florian Westphal <fw@strlen.de>,
-	Steffen Klassert <steffen.klassert@secunet.com>
-Subject: Re: net/xfrm/xfrm_policy.c:1286:8: error: variable 'dir' is
- uninitialized when used here [-Werror,-Wuninitialized]
-Message-ID: <20240830170449.GX1368797@kernel.org>
-References: <CA+G9fYtemFfuhc7=eNyP3TezM9Euc8sFtHe4GDR4Z9XdHzXSJA@mail.gmail.com>
- <20240830164706.GW1368797@kernel.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24CD867A0D;
+	Fri, 30 Aug 2024 17:07:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725037624; cv=pass; b=TPTl812a3t7GfB1/5od0P+1pfIlZTaw4N4C3zWLewQi6RoFCbJ/zl1bYyDBKQC8pV1/tZBbwjTiJWKoXvXCDfaUWNrAcRRfL53YRyh5R7BpN8vDmbFbssPcGrhLiRdvGSCfjzSldTi07jQXFPlg31VwVe5F+Er63C/5r//RbfBQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725037624; c=relaxed/simple;
+	bh=/Zr4THWkvyzAq3Ws9q1ZhCjeQx91hbNDTqTfFqRuqdg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rNKfBzXB//VDnT2pbLzQQ4oBZU0O3QH31n2/Z9JnkPtkN9nNXavW5DZMTmqwozImnVJzD69jejiFxCXqF4ZNYqpFqxq4135Z6sISYtfOPwYOjHTFCIjLcAg+py3XFzJqKZrZwWfWqlVqn5XmSJur/0QmvA2EyMe6iatVDH/Z1zw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=cristian.ciocaltea@collabora.com header.b=eUgTB7/4; arc=pass smtp.client-ip=136.143.188.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1725037583; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=ngV+QYPPC8w8D6ME0lzSoqJLcXzhr8+rM3pIQnklsjTFqrR2Sbws/ZcdVmyt/JSh5NU9VeoMzWqkKzdZUTU81Gogk4fUu64s7/vEh7KazhA9zZ6KAPXdiTbu98QQlOe8ZMM5sJYW0wZGx+o4PNAO4dEs858OpzA0gNjRiI8gRDw=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1725037583; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=KnpKeemAO2VMc6FHLD9U8mKtZUQ/q0cWnYTv+8kFLZ0=; 
+	b=NvPaCsIjVPL8C/FDpDW6qF8B8M+Rg+P52Zst2GA1uMV5dFzxsvAJG9riFUkwSmO4IVXvmByE+rbvc9rpQYnGXH13+jljg8JHX9/OgYGl15LSS4jozmLCD4ScJ4lKdTfmP9NFEkmB6q4XLx+56OHBWPBgiqTyH5kslLaIAw0aKt4=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=cristian.ciocaltea@collabora.com;
+	dmarc=pass header.from=<cristian.ciocaltea@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1725037583;
+	s=zohomail; d=collabora.com; i=cristian.ciocaltea@collabora.com;
+	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=KnpKeemAO2VMc6FHLD9U8mKtZUQ/q0cWnYTv+8kFLZ0=;
+	b=eUgTB7/4+R6rELo4C367GkmtuSW8hZ8Ii2ubfeFkdIvBmQ3cq4f7yiBGOu5T8E1r
+	mLnrMyQPArepmiWwoCsrdzgtZg7UIjUMMFoI06LCfzP+hnQmFxqBKExkqcWSDpyqnR9
+	2ngxm30h68NeSIYva+jjP4cKmnvHy2WKjihePMSs=
+Received: by mx.zohomail.com with SMTPS id 1725037581937540.2732611536068;
+	Fri, 30 Aug 2024 10:06:21 -0700 (PDT)
+Message-ID: <68e78629-5a2c-433b-8c83-50ffced04268@collabora.com>
+Date: Fri, 30 Aug 2024 20:06:14 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240830164706.GW1368797@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5? 0/6] Tweaked basic Synopsys DW HDMI QP TX driver for
+ Rockchip RK3588
+To: Shimrra Shai <shimrrashai@gmail.com>, andrzej.hajda@intel.com,
+ neil.armstrong@linaro.org, rfoss@kernel.org,
+ Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
+ jernej.skrabec@gmail.com, maarten.lankhorst@linux.intel.com,
+ mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, daniel@ffwll.ch,
+ hjc@rock-chips.com, heiko@sntech.de, andy.yan@rock-chips.com,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ markyao0591@gmail.com, s.hauer@pengutronix.de
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ devicetree@vger.kernel.org, aarnoud@me.com, ldearquer@gmail.com,
+ algea.cao@rock-chips.com
+References: <20240830152132.8894-1-shimrrashai@gmail.com>
+From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20240830152132.8894-1-shimrrashai@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ZohoMailClient: External
 
-On Fri, Aug 30, 2024 at 05:47:06PM +0100, Simon Horman wrote:
-> + Florian, Steffen
-> 
-> On Fri, Aug 30, 2024 at 12:15:10PM +0530, Naresh Kamboju wrote:
-> > The x86_64 defconfig builds failed on today's Linux next-20240829
-> > due to following build warnings / errors.
-> > 
-> > Regressions:
-> > * i386, build
-> >   - clang-18-defconfig
-> >   - clang-nightly-defconfig
-> > 
-> > * x86_64, build
-> >   - clang-18-lkftconfig
-> >   - clang-18-lkftconfig-compat
-> >   - clang-18-lkftconfig-kcsan
-> >   - clang-18-lkftconfig-no-kselftest-frag
-> >   - clang-18-x86_64_defconfig
-> >   - clang-nightly-lkftconfig
-> >   - clang-nightly-lkftconfig-kselftest
-> >   - clang-nightly-x86_64_defconfig
-> >   - rustclang-nightly-lkftconfig-kselftest
-> > 
-> > first seen on next-20240829.
-> >   Good: next-20240828
-> >   BAD:  next-20240829
-> > 
-> > Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
-> > 
-> > build log:
-> > --------
-> > net/xfrm/xfrm_policy.c:1286:8: error: variable 'dir' is uninitialized
-> > when used here [-Werror,-Wuninitialized]
-> >  1286 |                 if ((dir & XFRM_POLICY_MASK) == XFRM_POLICY_OUT) {
-> >       |                      ^~~
-> > net/xfrm/xfrm_policy.c:1257:9: note: initialize the variable 'dir' to
-> > silence this warning
-> >  1257 |         int dir;
-> >       |                ^
-> >       |                 = 0
-> > 1 error generated.
-> 
-> I believe that is due to
-> commit 08c2182cf0b4 ("xfrm: policy: use recently added helper in more places")
-> 
-> I will work on a fix to initialise dir in the loop where it is used.
+Hi Shimrra,
 
-Patch is here:
-- [PATCH ipsec-next] xfrm: Initialise dir in xfrm_hash_rebuild()
-  https://lore.kernel.org/netdev/20240830-xfrm_hash_rebuild-dir-v1-1-f75092d07e1b@kernel.org/T/#u
+On 8/30/24 6:21 PM, Shimrra Shai wrote:
+> Hi,
+> 
+> I saw Cristian Ciocaltea's proposed basic driver for the Synopsys DW
+> HDMI QP transmit (TX) facility on the Rockchip RK3588 and noticed that
+> it had seen some critique and thought I'd help it along a little by
+> making some of the changes that others had suggested in the discussion
+> thread. This package is mostly like his(?) original but features the
+> following changes suggested by Conor Dooley and Heiko Stuebner:
+
+Please stop doing this!  
+
+I appreciate your intention to help, but this is not the proper way of
+doing it.  This is a work-in-progress series and you should have asked
+before taking over.  Please do not interfere with other people's work
+without having a preliminary agreement with the author(s).
+
+Additionally, before submitting any other patches, you should get 
+familiar with the process - see [1] for a starting point.
+
+>  * Documentation for the device tree bindings specifies the various
+>    clocks explicitly in both the general (synopsys,dw-hdmi-qp.yaml)
+>    and Rockchip-specific (rockchip,rk3588-dw-hdmi-qp.yaml) files.
+
+Why? Did you read [2]?
+
+>  * Changed the compatibles for the RK3588 VO0 and VO1 GRFs in the
+>    Device Trees (rk3588-base.dtsi) to reflect their different natures.
+
+This has been already handled - see [3].
+
+> and some of my own changes:
+> 
+>  * Tweaked the driver code slightly - mostly organizational, but also
+>    added a mutex around device access in the dw_hdmi_qp_... method
+>    that was present in the downstream BSP driver which might have been
+>    necessary to prevent thread bugs.
+>  * Improved grammar & punctuation in some of the English on the
+>    Kconfigs and output messages.
+> 
+> Let me know how you like it. I hope this is suitable enough for kernel
+> integration as I'd really like to be able to get some of the newest
+> kernels having video bringup out of the box. 
+
+That's definitely not suitable as you made lots of other mistakes while
+preparing the patches, i.e. preserving authorship, missing commit
+descriptions, SoB tags, etc.
+
+Regards,
+Cristian
+
+[1] https://www.kernel.org/doc/html/latest/process/submitting-patches.html
+[2] https://lore.kernel.org/lkml/038073d0-d4b9-4938-9a51-ea2aeb4530f6@collabora.com/
+[3] https://lore.kernel.org/lkml/20240828-rk3588-vo-grf-compat-v2-0-4db2f791593f@collabora.com/
+
 
