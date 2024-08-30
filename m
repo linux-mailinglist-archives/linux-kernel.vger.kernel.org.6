@@ -1,206 +1,123 @@
-Return-Path: <linux-kernel+bounces-308666-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308667-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F39C96604A
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 13:13:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A729C966008
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 13:08:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 060F0B2E13D
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 11:08:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5CB6F1F21249
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 11:08:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F53C1B1D47;
-	Fri, 30 Aug 2024 11:04:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="OODc2dum"
-Received: from APC01-SG2-obe.outbound.protection.outlook.com (mail-sgaapc01on2070.outbound.protection.outlook.com [40.107.215.70])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5615219341A;
+	Fri, 30 Aug 2024 11:05:04 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82992192D7E;
-	Fri, 30 Aug 2024 11:04:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.215.70
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725015880; cv=fail; b=WXaUJOFtb6lNu7PZbj/hKX85/17mQPa4bhFwGMCvHNo3PTwTCFuw7ZxTBN3XMGxbRSQTKgEkCiVHCR73OJ1sdu2R0N5YY2Nl3fobeaUWMP3UpbkFNreYCzEidAzy9ZlGZ2zu44tPeciatZdTVZHKMLTpN4QP94+XUUgT3dmgAXE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725015880; c=relaxed/simple;
-	bh=TYC36C2BbH89gDM0dgaq/FkpueHnepXdv9RPowUFiaE=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=ebeFJ3XlCXDixWSwYFljX7tJ4qo5bOFHs29OAXGG2gPQyPZClCWpaGePFdzJf/pbUzYJehW8Xi+8oMwH6+rxFdS/61hDMTRMkJzzVNJedt1UbgYU6zvpZBfeOgs4oJH44392fx5vHAiq9oGgaXaNdhMXYY+el5JUBTGUtyBMhng=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=OODc2dum; arc=fail smtp.client-ip=40.107.215.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=fxAfsvhlUcuR7YfMuXEDq+MDy7UO1//6r8EhDiv1ZCnLrYVEF7PddkzZox5Gifx+LAkhB3dAI5m4Exas2QwHqUtv+IaNlse+7cGayYsX8XjDADK39aVLKW5ANKz4Rx8CpYJ9cYKu51w5EDqjpyZCK7/ajoH51jxSA4Z7MPZq6Zu9WFTYRWyhFFgWXysvqIj7ni0p0V4JFnBmukJbitYMt0Z/plBMCdaM57v1A09f/PH/Wtwt4sY0wl29eJ6xxhVqNKxd7NodEHWB6E6whMEOTGK8PWYPIv95Pobt0Od6FpoRZW4eziezkCcBBnA7C/gdUFIr7dHAjBctd06MXrEvjQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=hUwiPDcuYn9Hd5t30PyjpANSQ6ebHEF2FYkW3T6IzPQ=;
- b=bM+OW9vKeJjClpJ93nSkCpx9nS5ObwETconpCm0s8ptDvWJtCPwQhpd5U+at7m50G/6oN49rGTg+Bc067B3ZTiPBBBrNVnz1mCp2LttnDrij6EwSlKab4MC2Xw4EqXyyCjZF99+wWfbLuzJfZRzQQQ4fDxK6cXyItXzcUr4oGjWFULj+FumRfMoWQE1ECjxahd04vE8/cdZzLzhMti38PwoL2py7P9BIaTT3iZwbySAgGaHa8Tk0DWGmAnotRufaa61CvR4z2flHB5fNUrCO+Ts0Y8TlM0s4euV6fIHTM6twLHb+6Co/XWNSmrDgi62bmG27qWin5vP04vKfLk+w5Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=hUwiPDcuYn9Hd5t30PyjpANSQ6ebHEF2FYkW3T6IzPQ=;
- b=OODc2dumwUj+d7b9iUofV+Ai41kxBHn28dVAZcahiqD8EB0knvRGdQC2eEezlvw/2Dq4BJgZrOZCg3oNdNTZgFDGCJltt5H+Ec8VEYbBMSOypZs/vECIod1KzbvCyhGCEmWaOp5MoESpg35wlRkCmHUnWTMDtbb0q5LmWbmi6EsuTyYxVtqHFn350Yjm8grn85EaRqHnvMEeTqwAgvdgHpmtQOcs8ZJhg9f+C7QKogdiXchBTtox8WRWkpHFxE1BXIczwsFF8dZSR68cO1PslfeAWnQLWLx0YMYwq6VfrtTSAhIHZyais5GeYgJuP9x7fMGW+v0lCAODM6q7xl4pnQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from SEZPR06MB5899.apcprd06.prod.outlook.com (2603:1096:101:e3::16)
- by TYZPR06MB5370.apcprd06.prod.outlook.com (2603:1096:400:1f1::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.20; Fri, 30 Aug
- 2024 11:04:33 +0000
-Received: from SEZPR06MB5899.apcprd06.prod.outlook.com
- ([fe80::8bfc:f1ee:8923:77ce]) by SEZPR06MB5899.apcprd06.prod.outlook.com
- ([fe80::8bfc:f1ee:8923:77ce%3]) with mapi id 15.20.7897.027; Fri, 30 Aug 2024
- 11:04:33 +0000
-From: Shen Lichuan <shenlichuan@vivo.com>
-To: ulf.hansson@linaro.org,
-	florian.fainelli@broadcom.com,
-	rjui@broadcom.com,
-	sbranden@broadcom.com
-Cc: bcm-kernel-feedback-list@broadcom.com,
-	linux-pm@vger.kernel.org,
-	linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	opensource.kernel@vivo.com,
-	Shen Lichuan <shenlichuan@vivo.com>
-Subject: [PATCH v1] pmdomain: bcm: Simplify with dev_err_probe()
-Date: Fri, 30 Aug 2024 19:04:21 +0800
-Message-Id: <20240830110421.62980-1-shenlichuan@vivo.com>
-X-Mailer: git-send-email 2.17.1
-Content-Type: text/plain
-X-ClientProxiedBy: SI2PR01CA0020.apcprd01.prod.exchangelabs.com
- (2603:1096:4:192::6) To SEZPR06MB5899.apcprd06.prod.outlook.com
- (2603:1096:101:e3::16)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 093CD192D87
+	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 11:05:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725015903; cv=none; b=uvh+7UikXec3SHcPL5ptkLl52GmSk4Os6d7DHTvGXGwkG1GwJp81F0GwU7W7uuER4/KiOYdP139Ta6RU+/5HHG/n+3RX++o0cjh1GVxXsWXN9GbA3ABcgVmnf92wo3AP0+wtUO1Ww689954HhYX05YrjVBtBU//DBr87/JyutHM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725015903; c=relaxed/simple;
+	bh=NvlbOxagaUp01IxQe/8/RbsnWCG24uO+K/jvP3nHa5U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=S4a7nQSR17rU8CyrgyovnA+O/7kKdL6DM8cgGMbXbK8bI4qn7XG3NLjacx7EFarCYgyHOPLQheZ/ijbDaastQIJngD31C3kFRSnDe5d5ab+y3FhFRqPfKUfUVLLHyQIevlCDsPy5wWMYzrmdUCH8qCV2QXJ8xFOXS21w4SafNHQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <sha@pengutronix.de>)
+	id 1sjzR2-0003bx-Nj; Fri, 30 Aug 2024 13:04:56 +0200
+Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <sha@pengutronix.de>)
+	id 1sjzR2-0048HW-6c; Fri, 30 Aug 2024 13:04:56 +0200
+Received: from sha by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <sha@pengutronix.de>)
+	id 1sjzR2-00ETpy-0K;
+	Fri, 30 Aug 2024 13:04:56 +0200
+Date: Fri, 30 Aug 2024 13:04:56 +0200
+From: Sascha Hauer <s.hauer@pengutronix.de>
+To: Kalle Valo <kvalo@kernel.org>
+Cc: Brian Norris <briannorris@chromium.org>,
+	Francesco Dolcini <francesco@dolcini.it>,
+	linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH] wifi: mwifiex: Ensure all STA and AP use the same channel
+Message-ID: <ZtGnWC7SPHt7Vbbp@pengutronix.de>
+References: <20240830-mwifiex-check-channel-v1-1-b04e075c9184@pengutronix.de>
+ <8734mmuyq9.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SEZPR06MB5899:EE_|TYZPR06MB5370:EE_
-X-MS-Office365-Filtering-Correlation-Id: d42dda5f-55fd-4a0e-cc37-08dcc8e38736
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|1800799024|376014|52116014|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?JhwwlfePqXyEZfcLQBaYjrks4Lh01+ZZPt60HKMb6+iQPtHBsCn+uJ7ZLBta?=
- =?us-ascii?Q?W17cgbp3hy2ocMYm/cPgIpQ8SRyxpJdck7P368uwQsDIzeZ7sZYMxvvXhDwL?=
- =?us-ascii?Q?uJrR/a/+8Ff/uUWo0y6wmFNXtfDIx5yHxMTCxGwWTN5+NsJAxeKajpyOJ4iA?=
- =?us-ascii?Q?weKKx/dnvSgJiJszGjL9PphF80MXvLzcbAKdz7kRVMVKMRoonOsFdfi/5fuZ?=
- =?us-ascii?Q?uMkOYmL73vKsgXDIjrqzkfxSpCNKIggfADmoQjwcLUZJ/XIWhtPtAMH8UU0o?=
- =?us-ascii?Q?JWTN8eGoLXWPlYqiWA+AiNcLTsOq8O0FyJV/RYKqrXfoXrmyUPjcAM2MvKPc?=
- =?us-ascii?Q?MoiYX8F961Wj9t7z2EQEEko7GhzPfJI1Gl6aRGr83SbOrRAqNVEv6I43t76W?=
- =?us-ascii?Q?UvweCubHtytocGsF7TeuGb5O3oDt+9N5ermYJ/++SZgHitwSQlR7VPosUMnl?=
- =?us-ascii?Q?7JK1roa5u6Nv7uWabu3P85UgjT3OSRkifFef1krLbwyu4YCxFYwt76Tqc7E/?=
- =?us-ascii?Q?IYLM0B6IsfffrcZ8C9H1D+D3MnqSkb27blgRW88toP9quC3AreMo2+ytO5f4?=
- =?us-ascii?Q?qIZLejt+fGEFM09DXMRQTYs/pEqljsVfMkU6aNceHeU19tCZ9Uh+J8WmWez4?=
- =?us-ascii?Q?umtof67+kNTCAESBD0eo3LxQinykVxDjOwop9q24mBu0/+6yXAuNLw6puM3x?=
- =?us-ascii?Q?JA3jdrKmTvP+svxQyeIbdDEmmukya1UVI2bX7RDSRggUBg+2yPwp3Iv5oz1x?=
- =?us-ascii?Q?CMUfcW7kBB8XR/oU8M9S+BKc1YApTLvz0NNY/pB/6Y5M/AzAyx3plAhuWi5a?=
- =?us-ascii?Q?SPRkPZBZK4DBpomtOx46wS2SmysvIaEr2foPgqgCDoGCmwQIcW2R3STfALHh?=
- =?us-ascii?Q?xQoZfHgDPSq/BCxKAGaJBOC53vH/DvpOu35nqAeRjP0j/2UO1x0+8sLrIFx9?=
- =?us-ascii?Q?fvTjH2xxhlyFOP+Q2UbmfiFVYrzefayeu6+u0muLmC1DODtiK8P9+lECA3Z5?=
- =?us-ascii?Q?cqjJbST1f8MOVm6Ji56JFje0E19Hp64dWMLv2Twmc8kfLyN97OJfn2FMLya9?=
- =?us-ascii?Q?xyYuXRS29cjAFw2rRB7CfqZDM+UZIqyslkEUtDHVoxyMo4PS93YvH3pxwwwM?=
- =?us-ascii?Q?yXjj2Ai2Zk5PG8o/Q7kPlTZhUN3X43zpLHMuX9oRRVlRJkmB6Zxlt3CvzA3J?=
- =?us-ascii?Q?BFx2aVCeXBrL6jp+qWOgnNw8KfXp5RTR7/haMPgVvfVxX5Htgg/jovr6q3kh?=
- =?us-ascii?Q?1w6WB9YLLsDjaVRHTSEppCcqlOM3FyMa3HrWQ3v4tW4C2xqn+mU8tU3JkV2o?=
- =?us-ascii?Q?R7lo1RZMW0Rgk9eOV/s+YljAkHpxpjtiH5BFE0Gr/Qi66QjPukjwus/RKRWF?=
- =?us-ascii?Q?ay26b9kkXcSvlGpTMi1G/HPxwWhZiBpMJWfTYWSoCGQ9hrl++Q=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEZPR06MB5899.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(52116014)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?L7f/Htm7IaPkXUI0e3+Sh3Oi6ocFz/DwWNHRKtCCKhsb46OClpnGkpP5u7+Y?=
- =?us-ascii?Q?AXTIxlxyK0xJvEJWdgrScACv3e1a826B7Ezn9bHKUwWBeR43apZ66WBqNCVf?=
- =?us-ascii?Q?brM+F6SbYJYrtmgdMI8ph3e1BpGuU4QWvm/N1EmcO0dlTFhXo6fZR5DS7dXH?=
- =?us-ascii?Q?gSeMYABQN7u+HC5Q6IwmzrFkf3CZXSB5co6sy+Q+VXbV4Zv8/FIR5JQSLsHQ?=
- =?us-ascii?Q?KFyoxsTdmIhwPzGcmabRwR3CVVFOJggOgBACfnYvRR1A+eLsCpVS4FidrRvV?=
- =?us-ascii?Q?71VxgH4EACA5A65i+ANm8jV1i8VclslZWKEGVrD1Zt/U6cH04XCL4gk0mETF?=
- =?us-ascii?Q?zc8R67OYv8C/Gy4hF5qPZvX5jCN6VnrfPzadxRz3LLkdS2S6tjhboZRNJQih?=
- =?us-ascii?Q?4v5YCwZm8VyI6yt+CN2AQmpfDv/7KP8oS53wa/JVSYlAtLimJgF0qB5+YMGH?=
- =?us-ascii?Q?82wATRwb8jPaP155D1dGFadoto4fapa19AxMC8vEHvau72od6vVnJXLFFRw3?=
- =?us-ascii?Q?lmH/3o5KW3ek4uMGqVfGMJ7RsTS9EbVOuVa62gXyAdwIpRXfbpMQ7UPOewm4?=
- =?us-ascii?Q?YSFEGpN4bcVWuyu0iW8Yp/gET36EOtuG/w/5wGWnCmuxPjUymjYLjFzPlgUH?=
- =?us-ascii?Q?RPmnD6vD+PTEeboCeMKDu3W6GXLc+87w26KHqN2BV8xrV3I/ReJX2if5nNsX?=
- =?us-ascii?Q?pchjCRwBbpsbL0IjeK5MCg2Tir5qDanL3s0Plo0DTM4DFoc0DfzAHbKqpG87?=
- =?us-ascii?Q?DoOej7CYcRPFyKV5LZpwRYwM+YkoDjRe8n3HQcgzxHjmDz4wFUZMEcl7KO+J?=
- =?us-ascii?Q?vCbqFPugnadQXAxdwR719bh80ziij0G1WPDY+zGd2XOitASEX7ZlbkM+XM5K?=
- =?us-ascii?Q?rcVMD8zEc9oFPAJQBt/diER/CyB6/uEAGa4+R/4lOKWnO9W1A4KR3K45mLlY?=
- =?us-ascii?Q?0xmgJAtaogmqnpQi7m0vL9TYGuhioVf7JMs4YpP2cQA5Mbf52cJbMf1FLo+F?=
- =?us-ascii?Q?OCMEggDU41fuMVbrPUT4zXhQbTDFC3k/39iy3/8jA0gYFrMMkN3kk6WEAhra?=
- =?us-ascii?Q?MPu6sra7Qlhj9hSkLS0q9MXTnoOT/EUEp+CcefkzqI0xw7epubQA9fss/c2c?=
- =?us-ascii?Q?BfDiE5mNta32pAJH2uMUvmqZsREGi4aHrIM2+zhHkKkFzoo7B6r/AbWJW0Dc?=
- =?us-ascii?Q?6UF2adQ0zD5bSL493FXp2zS75Ax9H2/lF8lUmJuP5XTXWM2Bm0olM4Vs/Jex?=
- =?us-ascii?Q?/2SEu2UBGlVF3lmfbWK5ZQmAFPMJpt7GpZAhg6NlQm0l/xhOGnj/TTWxHoHq?=
- =?us-ascii?Q?HTQn2Vkg/Sd/CQUvA4NxBBZexcImNPoUzFyCBsashANRyTxuJNJQMc8na9tG?=
- =?us-ascii?Q?cMTDx4gOHVF4XeXA/l/Xqx45SQZ5QXtZcNxQyyQ586kpJ4emSfYUn9om8WyQ?=
- =?us-ascii?Q?MJwB0hnkiq/rbCQYjESf+Gmav3SzAHPkWox1genGlXgsKs25FCnZ+r3l/hi4?=
- =?us-ascii?Q?xt5ByV9f6znlHH5gsc+KxSeNCNqNFzUCkYhiX6kR/mwHfcssaZJHzURA/NdC?=
- =?us-ascii?Q?bn+RfgbU3zXdrMpMdsWmSFp/s/ngpm3YtSqZK3/Y?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d42dda5f-55fd-4a0e-cc37-08dcc8e38736
-X-MS-Exchange-CrossTenant-AuthSource: SEZPR06MB5899.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Aug 2024 11:04:33.3479
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: z17fTLejugunkdinGB4B06EyWhRNUcsIWubtbscC0Tkd2MCi4/zVoku682YaQo9mv8uTSDFL6u1w69ecIkks+A==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYZPR06MB5370
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8734mmuyq9.fsf@kernel.org>
+X-Sent-From: Pengutronix Hildesheim
+X-URL: http://www.pengutronix.de/
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: sha@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-Use dev_err_probe() to simplify the error path and unify a message
-template.
+On Fri, Aug 30, 2024 at 12:49:34PM +0300, Kalle Valo wrote:
+> Sascha Hauer <s.hauer@pengutronix.de> writes:
+> 
+> > The mwifiex chips support simultaneous Accesspoint and station mode,
+> > but this only works when all are using the same channel. The downstream
+> > driver uses ECSA which makes the Accesspoint automatically switch to the
+> > channel the station is going to use.  Until this is implemented in the
+> > mwifiex driver at least catch this situation and bail out with an error.
+> > Userspace doesn't have a meaningful way to figure out what went wrong,
+> > so print an error message to give the user a clue.
+> >
+> > Without this patch the driver would timeout on the
+> > HostCmd_CMD_802_11_ASSOCIATE command when creating a station with a
+> > channel different from the one that an existing accesspoint uses.
+> >
+> > Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
+> > Cc: stable@vger.kernel.org
+> 
+> Does this mean that iface combination definitions are wrong? For example:
+> 
+> static const struct
+> ieee80211_iface_combination mwifiex_iface_comb_ap_sta_drcs = {
+> 	.limits = mwifiex_ap_sta_limits,
+> 	.num_different_channels = 2,
+> 	.n_limits = ARRAY_SIZE(mwifiex_ap_sta_limits),
+> 	.max_interfaces = MWIFIEX_MAX_BSS_NUM,
+> 	.beacon_int_infra_match = true,
+> };
 
-Using this helper is totally fine even if err is known to never
-be -EPROBE_DEFER.
+I wasn't aware of DRCS as it's disabled by default in the mwifiex
+driver. From a quick test I can say that indeed with DRCS two channels
+are supported. It seems we have to relax the same channel enforcement
+when DRCS is enabled.
 
-The benefit compared to a normal dev_err() is the standardized format
-of the error code, it being emitted symbolically and the fact that
-the error code is returned which allows more compact error paths.
+This brings up the question why DRCS is disabled by default. Wouldn't it
+make sense to always enable it when available?
 
-Signed-off-by: Shen Lichuan <shenlichuan@vivo.com>
----
- drivers/pmdomain/bcm/bcm2835-power.c | 16 +++++++---------
- 1 file changed, 7 insertions(+), 9 deletions(-)
+Related: num_different_channels is exposed to userspace, but outside the
+MAC80211 layer there is nothing in the kernel that enforces this
+restriction.  Am I missing something or is this just an open patch
+opportunity?
 
-diff --git a/drivers/pmdomain/bcm/bcm2835-power.c b/drivers/pmdomain/bcm/bcm2835-power.c
-index d2f0233cb620..be07ab8a663c 100644
---- a/drivers/pmdomain/bcm/bcm2835-power.c
-+++ b/drivers/pmdomain/bcm/bcm2835-power.c
-@@ -643,18 +643,16 @@ static int bcm2835_power_probe(struct platform_device *pdev)
- 	power->rpivid_asb = pm->rpivid_asb;
- 
- 	id = readl(power->asb + ASB_AXI_BRDG_ID);
--	if (id != BCM2835_BRDG_ID /* "BRDG" */) {
--		dev_err(dev, "ASB register ID returned 0x%08x\n", id);
--		return -ENODEV;
--	}
-+	if (id != BCM2835_BRDG_ID /* "BRDG" */)
-+		return dev_err_probe(dev, -ENODEV,
-+				     "ASB register ID returned 0x%08x\n", id);
- 
- 	if (power->rpivid_asb) {
- 		id = readl(power->rpivid_asb + ASB_AXI_BRDG_ID);
--		if (id != BCM2835_BRDG_ID /* "BRDG" */) {
--			dev_err(dev, "RPiVid ASB register ID returned 0x%08x\n",
--				     id);
--			return -ENODEV;
--		}
-+		if (id != BCM2835_BRDG_ID /* "BRDG" */)
-+			return dev_err_probe(dev, -ENODEV,
-+					     "RPiVid ASB register ID returned 0x%08x\n",
-+					     id);
- 	}
- 
- 	power->pd_xlate.domains = devm_kcalloc(dev,
+Sascha
+
 -- 
-2.17.1
-
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
 
