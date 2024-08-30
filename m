@@ -1,112 +1,111 @@
-Return-Path: <linux-kernel+bounces-309422-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309423-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9C45966A45
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 22:16:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D70F966A48
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 22:17:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7474A284572
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 20:16:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B85F51F23800
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 20:17:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19B671BF7E8;
-	Fri, 30 Aug 2024 20:16:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DFA31BF335;
+	Fri, 30 Aug 2024 20:17:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YNy+ey6I"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="noU9z6Bp"
+Received: from mail-oo1-f51.google.com (mail-oo1-f51.google.com [209.85.161.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D9A9EEC3;
-	Fri, 30 Aug 2024 20:16:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 666081531D3;
+	Fri, 30 Aug 2024 20:17:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725048966; cv=none; b=BVNBffGQ+NmauwaWaBN03pSA2fpPNIYUtbiE/ZZZ7o9MrbuR5qw5t7D/eHzym0wEb0M8mQ2L8bt8EtYM5VZu7UVuul1rt7N9Aq9GwqGhRxjGsKNSm2ormv29bQ+VskJUMHUn167i2RxrHVKORCwdhbGYz/AE1yPXPlzjgtM+gmw=
+	t=1725049022; cv=none; b=A5Vas7HmBZPkkiAjGYyHua87x9sauhKPfVfb7DI2wEhKo6iSvaNb0R9T7Q0E1umgJc7tRrCK39YwKu1iRqXCzwzz9KjTmX3rLew0CPRMqTqVOjcYTZL4yzAbAf/edNoskaG+PjviWidiH4qQuywBqsO21VQ/Xqie4LVXUowlHXo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725048966; c=relaxed/simple;
-	bh=BHJAPCRkkwvBrJQihBZsj9YydNkC0N902Xxm8U4CrfE=;
-	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=iQw2A9jPM0Zh3zFaf/KuciVf9Q0HJJI6i8mcrq4Ik3g16IGtylSMOY3CvGMQ8ONhmwRCiITmpeky/0BblnsUT1TxseuvgXaSZsJ9peqgRTyNqXQoFD/XZQqZDb1XXLtDR7nVtkhKnBSLw3MEo/DL8iOnr2TUJShF1jCFTX6cyAc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YNy+ey6I; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8FF73C4CEC2;
-	Fri, 30 Aug 2024 20:16:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725048965;
-	bh=BHJAPCRkkwvBrJQihBZsj9YydNkC0N902Xxm8U4CrfE=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=YNy+ey6INHaAq9MsgntpjXQRnsDtR4mQxaT5mip9SwXlpm49c7B5zp9PkHSqyPx+b
-	 AwMLMRu0e3WmZ3ZhpSPb6+xqc67eCDC6KidvQPHC8PV4+bwl/Q4h2v7nJoES2QOszJ
-	 bCVw9kWyVi0mhWJf6yeQsmlhORy47rpMoyJiGyvZIpNAahjD78TJf1ONtCa0LCI+wG
-	 TvXRYfI3/F8Bro8sv/+QV4179CosziWun+hm+KkkU4dHYkIl2UcPDEnGuuy45lvgv+
-	 xB0UqtTuGn5ikLwp364HDjVLCgG0ZPyilgdFDMxyrkpxPVs785/RRVRH1rb2EebrZt
-	 hkVENzPwrWwmQ==
-Date: Fri, 30 Aug 2024 15:16:03 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1725049022; c=relaxed/simple;
+	bh=HzBCujGWFzfOd5BmjgO5KkDCBZ4GHXAp9LzELZN+Y6A=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=AiwHtzJSUnDGNVBm/Ts02Un5IRMlisDV4xggStUSL7N4fWKNU7A1wr6IAX7hhL1Qu20PrZj1HFUSh1TdT9kuBWLIHwkMgjylt+ncAJ0xRQcq+Akuzt9YlixWS+XOoiWqD0+EX+8s08Cf8Cal4ew8Sl41qk7fK14W7hEszt02ZKI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=noU9z6Bp; arc=none smtp.client-ip=209.85.161.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oo1-f51.google.com with SMTP id 006d021491bc7-5da686531d3so1396087eaf.3;
+        Fri, 30 Aug 2024 13:17:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725049020; x=1725653820; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=QDhaX7oBXrjQRCJVsp+rzW7MPrAAVpU5PK4VXaUGOus=;
+        b=noU9z6Bp9NfQoCzu5aIue1QJXQxbuVNomIqMQsikZIeWhjWmWttp996Wx+eioUhJ1G
+         vVZurMtk8XddaF0BJJzfS/uu4AOQt2QUCJu4lVGDlxCtXlBmd3tNPYLBNAA0TmCLekKL
+         DeBw5LPxBYtQgTpzvpOv2T/lssa+bWqH7QzCOtSNvqiU1In52XEDmqY8KxgJmV4KHzF5
+         KjZsk666iFtZXDt6iVS59iNBfMIOZYKuvjxyoJutgQ+R2SaZ3jZRxSRe4vbGL+75RLCs
+         A5erPxsxo9bFa07iMgtQ66hLqF7XJjgpez3gW+yAoA1OWv9kUUOwJp+pkdXxasVgvgl4
+         0EuA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725049020; x=1725653820;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=QDhaX7oBXrjQRCJVsp+rzW7MPrAAVpU5PK4VXaUGOus=;
+        b=PpwIuIzFDxEXXVM3SgpEtg2mQija51gcdloJDTzXAhs0W2f2mScG82L2YXwx8k7QHJ
+         4kGd6lLOf7UuG+PkLnn1ECV8yOGcNyd3LImL0KZ+D7yOCkvxlqGyNtURkJLcsYROaY15
+         Ldx7WOCDWOCSD8WDvxQj09JzHikLheRxxXjAjd5TfewiaWSckWGKmHhQJ6i/reUE3Kvb
+         smfjUBokEW9rhTB2B/kUGh9xFZROkhe2IWPQldV4JT+n5zlvYX3pvxqjfkWDuGvQy6vS
+         FnNtEy5TJSIt59zsgkdb8Syj8d/cj5mIVgAyI4zu5nQJIFUeAeOcDXUgi0arM9Q2+IiZ
+         M7Mw==
+X-Forwarded-Encrypted: i=1; AJvYcCWbHYVfB38wNooN/KyXU05V5by9vxKGgfjUcQ3rjuWYci5jGDFXbh/Tb7aMnX17aMaDaS6x5cmoKcaSZuk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YylvlK37CtaPv+PkEOnOPlKULCEOuma/SO/s77+7lhq4Pmq8smm
+	AWaNEQo3bN55NLVm7iY5hUAMg/dZdk5nPBeZ0RP9QObCMwcef34JC4j1x68f
+X-Google-Smtp-Source: AGHT+IEhZdklZzt100oAH5ja4QzVJeruaaRLFlumsZEjq5qDndJFoRUc5lsOhKoBk7hVMwu2/WkktQ==
+X-Received: by 2002:a05:6358:724a:b0:1b5:fde1:d00c with SMTP id e5c5f4694b2df-1b7edbf9fafmr99527655d.25.1725049019759;
+        Fri, 30 Aug 2024 13:16:59 -0700 (PDT)
+Received: from abhash-IdeaPad-L340-15IRH-Gaming.. ([2401:4900:608e:fa44:845a:20a9:791f:c32b])
+        by smtp.googlemail.com with ESMTPSA id d2e1a72fcca58-715e56e5c23sm3257476b3a.172.2024.08.30.13.16.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 30 Aug 2024 13:16:59 -0700 (PDT)
+From: Abhash Jha <abhashkumarjha123@gmail.com>
+To: linux-iio@vger.kernel.org
+Cc: songqiang1304521@gmail.com,
+	jic23@kernel.org,
+	lars@metafoo.de,
+	linux-kernel@vger.kernel.org,
+	Abhash Jha <abhashkumarjha123@gmail.com>
+Subject: [PATCH 0/2] Continuous mode support for VL53l0x
+Date: Sat, 31 Aug 2024 01:46:24 +0530
+Message-ID: <20240830201627.298264-1-abhashkumarjha123@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Marc Kleine-Budde <mkl@pengutronix.de>
-Cc: David Jander <david.jander@protonic.nl>, 
- Jakub Kicinski <kuba@kernel.org>, linux-arm-kernel@lists.infradead.org, 
- Heiko Stuebner <heiko@sntech.de>, Elaine Zhang <zhangqing@rock-chips.com>, 
- Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org, 
- kernel@pengutronix.de, linux-can@vger.kernel.org, 
- linux-rockchip@lists.infradead.org, 
- Vincent Mailhol <mailhol.vincent@wanadoo.fr>, 
- Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, devicetree@vger.kernel.org, 
- Eric Dumazet <edumazet@google.com>, Simon Horman <horms@kernel.org>, 
- Philipp Zabel <p.zabel@pengutronix.de>, 
- "David S. Miller" <davem@davemloft.net>
-In-Reply-To: <20240830-rockchip-canfd-v3-1-d426266453fa@pengutronix.de>
-References: <20240830-rockchip-canfd-v3-0-d426266453fa@pengutronix.de>
- <20240830-rockchip-canfd-v3-1-d426266453fa@pengutronix.de>
-Message-Id: <172504896361.968651.6212275556677921387.robh@kernel.org>
-Subject: Re: [PATCH can-next v3 01/20] dt-bindings: can: rockchip_canfd:
- add rockchip CAN-FD controller
+Content-Transfer-Encoding: 8bit
 
+Hello,
 
-On Fri, 30 Aug 2024 21:25:58 +0200, Marc Kleine-Budde wrote:
-> Add documentation for the rockchip rk3568 CAN-FD controller.
-> 
-> Co-developed-by: Elaine Zhang <zhangqing@rock-chips.com>
-> Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
-> Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
-> ---
->  .../bindings/net/can/rockchip,rk3568-canfd.yaml    | 74 ++++++++++++++++++++++
->  MAINTAINERS                                        |  7 ++
->  2 files changed, 81 insertions(+)
-> 
+The first patch adds support for checking the sensor ID by reading
+MODEL_IDENTIFICATION register and seeing if it returns the value 0xEE
 
-My bot found errors running 'make dt_binding_check' on your patch:
+The second patch adds support for continuous mode in the sensor by using
+buffers. We enable the sensor's continuous mode in the buffer_postenable
+function.
+Replaced the irq handler with a threaded irq handler in order to perform
+I2C reads for the data. The continuous mode can be disabled by disabling
+the buffer.
 
-yamllint warnings/errors:
+Regards,
+Abhash
 
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/net/can/rockchip,rk3568-canfd.yaml: $id: Cannot determine base path from $id, relative path/filename doesn't match actual path or filename
- 	 $id: http://devicetree.org/schemas/net/can/rockchip,canfd.yaml
- 	file: /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/net/can/rockchip,rk3568-canfd.yaml
+Abhash Jha (2):
+  iio: proximity: vl53l0x-i2c: Added sensor ID check
+  iio: proximity: vl53l0x-i2c: Added continuous mode support
 
-doc reference errors (make refcheckdocs):
+ drivers/iio/proximity/vl53l0x-i2c.c | 136 ++++++++++++++++++++++------
+ 1 file changed, 110 insertions(+), 26 deletions(-)
 
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240830-rockchip-canfd-v3-1-d426266453fa@pengutronix.de
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
+-- 
+2.43.0
 
 
