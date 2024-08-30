@@ -1,135 +1,177 @@
-Return-Path: <linux-kernel+bounces-308567-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308569-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5EF5D965EE6
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 12:24:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C9BB965EEC
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 12:24:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 925331C24431
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 10:23:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3568628A1A2
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 10:24:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 867CA192D92;
-	Fri, 30 Aug 2024 10:19:05 +0000 (UTC)
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9118F199929;
+	Fri, 30 Aug 2024 10:19:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=deller@gmx.de header.b="o+Bgvky4"
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9556918FDA9
-	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 10:19:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 467D5190074;
+	Fri, 30 Aug 2024 10:19:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725013145; cv=none; b=GLNBR92veQY3DIwVr7996E02bspqRvLMVLEFWQnyZmp4zIB7oPRP4HfvFkVKmmyitnnq/+DoO5hyUXPuQ0elRSncRTmjtKlXKqPcKUAlo4lQR8ttl97o0yWyhyqE6UQy6iOzMcavIn5p9keDR12GBy5gQUH51D5XVAkUdn7lyAQ=
+	t=1725013165; cv=none; b=jE7vBbNa0cg97e03B2XFO4jcinAXmXavKJ9vEBi5Rzcr7xJ0adwZD+tZdE1ZTUdiVD9bx7yahvG/XOVdGtiyyd8C0+N8MHUkH+qyMtO1XyLB4hfB3tN2LtpD6qyQ8cd/3vx02TZ7IjN9rSpWaBgWZugUe4LNYTELXAfrJ9R/zRE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725013145; c=relaxed/simple;
-	bh=E92vPcDUNH2H6tXKAyZSvRlnQzJMyeSx5qItmxkxsNE=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=oC28CJ3HHUb5kPTlqtXQhoFgHwpQ6T3vSfamj2Rx/CHa1xW8ctACQDVJq0eEgk9Gylgm7WWVo9J6a5Ff6kP2SKSUMR+lyaynY9cVKwVb1TrvtXiykEd42ozI49PTMtPKtoTyyT62HudGP6gQUUGBhoPAm/6rWaIUMx1eAP+oAJc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-82a2723a5aeso56794039f.1
-        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 03:19:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725013142; x=1725617942;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=cZwEs243YnoTjv7mRJam4tBLXDmD+xDF+1bP+8r8g0E=;
-        b=NgyrCwLGIapfhUbDB8++9afTR6iX4lSaE5aFDDXIGx7kqY2qp7wSRF7EoppSvpoPFa
-         m21S+lRQn9YJU/gZZzCAdqD6L8yTe/GnAxio3oftf6B4ohkhsIobLRnhWGeFixIIptFe
-         zU7eSCKqwkRe6vRf2/4NiYvBvEn3gWwMI2Yh1sTKbu78u7mdpW/DosbDYim8YjyGT9kf
-         qA1W8asKc43u/5crbPQqBqSL+bBodgy0eU5kL8xhyvvswpJqsIoKDw853GI2WyASNshG
-         uzbf3/wBgznCGqfKIB+C122ZGm8zx1Fcyr9oS07fWVUDvYfTegmyy9ajQGB3YXizCeaL
-         SLYA==
-X-Forwarded-Encrypted: i=1; AJvYcCXhnZBNu5M9kLgDGdum4X64xV2RT/hvX0O19DUFi+oHca9rKy4zR1Fk4rLhj8rStqUYns6GB7Ly8dhRTIo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyCl3D1hpyMz4PgT4S7g0GJ07RdieQLMG57VMdYpw9Zr+T2RSoC
-	PyNd+gT5tViTryxOo1+vFvewJt12QHNv9inHO1uJE7IGnsV9qVQ0oXLvMhTdHRfNAyYj82vFiW/
-	UFRcuA2OEWAnUkjtRCQnVZffk9Hx6cz6q/mlffzvMNJAXnL3+f1PcO9I=
-X-Google-Smtp-Source: AGHT+IFMiJ32db5lCffYpTxI1K34TKvT7SlmN4c4BQpJtea95Em5wyGT7ZDH04JbzrzXtpNDNJ8O69kA7RP2TO2zuSXuSjgMhZLg
+	s=arc-20240116; t=1725013165; c=relaxed/simple;
+	bh=OZ4Sqpu+toVfpRSr9XvrRnblRGpm2HHUhLDGHrMMpWQ=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=AO4FLzKXICWmYG6zCdt6iu/cUQzZ65BM/ssoC3msnYWtKmNebPbpOHOX6hskaH3q2Vj3O1NevBR/6SrIgeySsDqrfIN0GsWFls1INIaELXOUL20OEdItOWz9lvr5e29b4WIdmWp6ED6cSr09fl83najp35rWZcdDEeHjUdDgT1s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=deller@gmx.de header.b=o+Bgvky4; arc=none smtp.client-ip=212.227.15.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1725013150; x=1725617950; i=deller@gmx.de;
+	bh=9+dueI8bosr7037SDmUwpWrguCYldlWx+vVde7fdzPw=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:From:To:
+	 Cc:References:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=o+Bgvky4ZFiSoeLsuIPcOoy2NN4b8PVqnTwCz1gClPenbT4X9fxNwGzm5EJzmIjS
+	 6odLc62NEprdas5Vb9w9KU80cZZ9LILLHFuL6uF9hqlJCW/euNeWzA5O1tYeYQI6D
+	 krRxSBsDZLdV0tc8poFwHLcLtYuPrg1rDhamLF4l7QQZ67oViHX3honFQYmEohXQA
+	 IZBFs8EPlF5vCPgj41laNYwiIK0m4teoitEYE8XbkUKGNUe60X9Qyz/zT5kuhGhPX
+	 +igGBIYpMlvFJIwE6S1TVmSO25rKShbzrv7MvGjiFbfu39opNdwndYUfnzOiv6gyq
+	 bAE4RKhniO7e4eiP/w==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [192.168.20.55] ([109.250.63.126]) by mail.gmx.net (mrgmx004
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1MKKZ3-1sW0u10qMh-00KCQp; Fri, 30
+ Aug 2024 12:19:10 +0200
+Message-ID: <7aa99a5f-306b-4c9b-88d2-9ea93c013eda@gmx.de>
+Date: Fri, 30 Aug 2024 12:19:08 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:1507:b0:4b7:c9b5:6765 with SMTP id
- 8926c6da1cb9f-4d017ee3993mr59704173.5.1725013141879; Fri, 30 Aug 2024
- 03:19:01 -0700 (PDT)
-Date: Fri, 30 Aug 2024 03:19:01 -0700
-In-Reply-To: <df7fc9c1863f353091cfcb84f04e365aa4609bab.camel@gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000008e11ef0620e3eb6a@google.com>
-Subject: Re: [syzbot] [iomap?] [xfs?] WARNING in iomap_write_begin
-From: syzbot <syzbot+296b1c84b9cbf306e5a0@syzkaller.appspotmail.com>
-To: brauner@kernel.org, chandan.babu@oracle.com, djwong@kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-xfs@vger.kernel.org, sunjunchao2870@gmail.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] fbdev: Introduce devm_register_framebuffer()
+From: Helge Deller <deller@gmx.de>
+To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>,
+ Daniel Vetter <daniel@ffwll.ch>
+Cc: linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, Bert Karwatzki <spasswolf@web.de>,
+ "Borah, Chaitanya Kumar" <chaitanya.kumar.borah@intel.com>,
+ intel-gfx@lists.freedesktop.org,
+ "Kurmi, Suresh Kumar" <suresh.kumar.kurmi@intel.com>,
+ "Saarinen, Jani" <jani.saarinen@intel.com>
+References: <20240830-fbdev-devm_register_framebuffer-v1-1-6d4186519c68@weissschuh.net>
+ <729c4f82-a683-4302-b4ae-f591ac04daa1@gmx.de>
+Content-Language: en-US
+Autocrypt: addr=deller@gmx.de; keydata=
+ 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
+In-Reply-To: <729c4f82-a683-4302-b4ae-f591ac04daa1@gmx.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:Ke00r2fjsrt2Tn/tP8qIcKESj9Ec7VvVpdVynge0YOQ9CgxxEEP
+ 9p3ZPMQKdtn5RZy0qx2akfMPi8+4RQ1NAdmbk7TXGlL9tBMYoydYKfTmhfmO1dZkhFXu8M6
+ ajDl3qG25lhpZvoQsVvhxOxTY1PTv+VGqHpIlzGcl0rFrk2cJ/HlgYdAZBPygopub0WPnXY
+ FrqQts/7j3v0VUg/REHgg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:4+OuAVJzvWg=;hzh9By/lVafIMZFJMsI1NSZz8Yz
+ OIU/2GHfZFLpJ+I8l4RiMJqS/6tfVuE2yEj43FWjP6lsSgd3wfp0pyH3Qj6Qkhesl/5j2lEyl
+ ErxCLcgXJnPO6+0JP0yQMJrxRNbBYMrU5dhpnhXy88UWp3ZhI06f/V/lTc5o+6F3bsN8cniF6
+ cUk7Ri+G6MpMdY7Nfgdc58Nn5mo8g9UrwXQXoY1C8yY1QhUyH7x2XcynROJa176DeJW5HQHFf
+ 6qPljXO4s8FcAtIzHjdGfzOi5K+9ewdzkLErZEPYsVoRKDdKqW+jPkGLErvCUtG1jCtk7Sci5
+ Md4Wto/ZPMEmbIKhCcFS/N7aOV5R5XcFWWXXyR0BBuAFTmvsc73dPu644QE3Wm4CAi+LqGhAM
+ w2Qmycj8il7Tlj+Jf5XFz9f2P9A1b1raQ4r63p5lGYpoNROUlANrJHftJNFIgsD/XT3DQ8n6b
+ BnITMSgX1pSnmwifGEscwa3jDhU4cvpz5jc8xkVaZHKvzSnT8U/kqz47g1PbDqV9kKV5Mprkf
+ yHn9UzFTTeeofRjR2+c4Ny5Ael/ydajORkZe8/datHD/8ylBKvPa2QWEjYPoIxs6YOcWNqnyV
+ XRSntKvLY2RCG90UlIPXEVLhf21E6KzNds3WFL4K8i7HGbTcMF11IDxIzmeDL5xWcoepB3SzO
+ 5AVHKPL0CQC76OZO5CnGmjSorz/ma8P9fKiGA/e3cuIa3Cu8bz8nmppI5mkm/f67Ul5GTE/Px
+ 4WWHUpiahQq/d2rSGXUXIuoH3EHtixphLgffewcdAs6MBtKqt7TVE+DcgfIMGjn9MV9T+KkNh
+ EtyC85vsIHnVwoeQ8zmv8i+w==
 
-Hello,
+On 8/30/24 12:16, Helge Deller wrote:
+> On 8/30/24 11:45, Thomas Wei=C3=9Fschuh wrote:
+>> Introduce a device-managed variant of register_framebuffer() which
+>> automatically unregisters the framebuffer on device destruction.
+>> This can simplify the error handling and resource management in drivers=
+.
+>>
+>> Signed-off-by: Thomas Wei=C3=9Fschuh <linux@weissschuh.net>
+>> ---
+>> This is a fixed resend of [0], which was broken.
+>> Thanks to Bert [1], and Chaitanya Kumar [2]
+>> for reporting the issue.
+>>
+>> [0] https://lore.kernel.org/lkml/20240827-efifb-sysfs-v1-3-c9cc3e052180=
+@weissschuh.net/
+>> [1] https://lore.kernel.org/lkml/20240829224124.2978-1-spasswolf@web.de=
+/
+>> [2] https://lore.kernel.org/lkml/SJ1PR11MB612925C1C533C09F8F62F7CBB9972=
+@SJ1PR11MB6129.namprd11.prod.outlook.com/
+>
+> I've applied this patch to the fbdev git tree.
+> Please double check at
+> https://git.kernel.org/pub/scm/linux/kernel/git/deller/linux-fbdev.git/l=
+og/?h=3Dfor-next
+>
+> Can you please check if this fixes this new report too:
+> https://marc.info/?l=3Dlinux-fbdev&m=3D172500784802901&w=3D2
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-WARNING in iomap_write_begin
-
-XFS (loop0): Mounting V5 Filesystem bfdc47fc-10d8-4eed-a562-11a831b3f791
-XFS (loop0): Ending clean mount
-XFS (loop0): Quotacheck needed: Please wait.
-XFS (loop0): Quotacheck: Done.
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 6077 at fs/iomap/buffered-io.c:727 __iomap_write_begin fs/iomap/buffered-io.c:727 [inline]
-WARNING: CPU: 0 PID: 6077 at fs/iomap/buffered-io.c:727 iomap_write_begin+0x13f0/0x16f0 fs/iomap/buffered-io.c:830
-Modules linked in:
-CPU: 0 UID: 0 PID: 6077 Comm: syz.0.15 Not tainted 6.11.0-rc2-syzkaller-00111-gee9a43b7cfe2-dirty #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
-RIP: 0010:__iomap_write_begin fs/iomap/buffered-io.c:727 [inline]
-RIP: 0010:iomap_write_begin+0x13f0/0x16f0 fs/iomap/buffered-io.c:830
-Code: b5 0d 01 90 48 c7 c7 a0 54 fa 8b e8 da 19 2b ff 90 0f 0b 90 90 e9 74 ef ff ff e8 5b f1 68 ff e9 4b f6 ff ff e8 51 f1 68 ff 90 <0f> 0b 90 bb fb ff ff ff e9 e9 fe ff ff e8 3e f1 68 ff 90 0f 0b 90
-RSP: 0018:ffffc90003e977c0 EFLAGS: 00010293
-RAX: ffffffff822a858f RBX: 0000000000000080 RCX: ffff888020aeda00
-RDX: 0000000000000000 RSI: 0000000000000080 RDI: 0000000000000000
-RBP: ffffc90003e97a50 R08: ffffffff822a8294 R09: 1ffff11004494cf9
-R10: dffffc0000000000 R11: ffffed1004494cfa R12: ffffc90003e979b0
-R13: ffffc90003e97bf0 R14: ffffc90003e97990 R15: 0000000000000800
-FS:  00007f4d396276c0(0000) GS:ffff8880b9200000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000020001000 CR3: 0000000023f3a000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- iomap_unshare_iter fs/iomap/buffered-io.c:1351 [inline]
- iomap_file_unshare+0x460/0x780 fs/iomap/buffered-io.c:1391
- xfs_reflink_unshare+0x173/0x5f0 fs/xfs/xfs_reflink.c:1681
- xfs_file_fallocate+0x6be/0xa50 fs/xfs/xfs_file.c:997
- vfs_fallocate+0x553/0x6c0 fs/open.c:334
- ksys_fallocate fs/open.c:357 [inline]
- __do_sys_fallocate fs/open.c:365 [inline]
- __se_sys_fallocate fs/open.c:363 [inline]
- __x64_sys_fallocate+0xbd/0x110 fs/open.c:363
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f4d387779f9
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f4d39627038 EFLAGS: 00000246 ORIG_RAX: 000000000000011d
-RAX: ffffffffffffffda RBX: 00007f4d38905f80 RCX: 00007f4d387779f9
-RDX: 0000000000000000 RSI: 0000000000000040 RDI: 0000000000000006
-RBP: 00007f4d387e58ee R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000002000 R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000000000 R14: 00007f4d38905f80 R15: 00007ffd9e61c108
- </TASK>
+Please ignore this ^^^.  You already mentioned this one above.
+Helge
 
 
-Tested on:
-
-commit:         ee9a43b7 Merge tag 'net-6.11-rc3' of git://git.kernel...
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
-console output: https://syzkaller.appspot.com/x/log.txt?x=173e3eeb980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=9358cc4a2e37fd30
-dashboard link: https://syzkaller.appspot.com/bug?extid=296b1c84b9cbf306e5a0
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=16b67cdb980000
+>> Helge, I didn't document the function devm_unregister_framebuffer() as
+>> it is only an internal helper and will ever only used by one user,
+>> similar to other helpers in fbmem.c.
+>
+> Ok.
+>
+> Helge
 
 
