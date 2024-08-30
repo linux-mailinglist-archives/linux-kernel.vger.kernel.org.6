@@ -1,99 +1,72 @@
-Return-Path: <linux-kernel+bounces-309420-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309421-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D9E7966A32
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 22:06:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 506D9966A3E
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 22:11:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 203161F23149
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 20:06:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 068631F235F6
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 20:11:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25FE61BF338;
-	Fri, 30 Aug 2024 20:06:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EB6C1BF337;
+	Fri, 30 Aug 2024 20:11:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WoRy7XE1"
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AEjCKHe7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1DBC1B86D6;
-	Fri, 30 Aug 2024 20:06:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BF3FEEC3;
+	Fri, 30 Aug 2024 20:11:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725048383; cv=none; b=sA9AGtR0X2stM7xq1Fcd8ZTMHJ1Xg3HtbeiEM878RT0BJfQ5ru0XOG21lBxCSFrPjUGZs9AgJ+5AIHxcVDxBSmhDiFfcl0n9LczMZCPJmvjOaBZo2P4QYKATj0nPEscmNp0gD4W/DYRxm22a3L8XqHqK6Ntm60SLwVoZ2OyhRRc=
+	t=1725048676; cv=none; b=IDg6aCCC/b43BfWfyhv00Z1BGRsK24WQEl7tnkjtl6Ev4+HWcL/BuAx4S4CBo8lB7NrPPH9fsw6kcGn8EDWJiCd6wb+P3f8NBfSJMbZYHTIjIn93qPaefGHKqJM/K5yJRGSxCf/rv2gf3IM0WK9TslTc0FMAB3LCqBAAyto3jqE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725048383; c=relaxed/simple;
-	bh=cWSiC3lXQnjNwNsl8WkPzx8Q6+jpP9g7prZ8FN3pDiU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lsPadvJ240RaghaSWnBbC5lC+s0fNaZmaYi4ncwMGAh99OHh9SdWmuOFaVsU1v5/Qs8KBOqBX9CMkZalA/mqi7oNfsijdc6UzjLjJd4QfInRWPlly1VYleIlEKOVh2qb3JELHm1263whCkyxq7sGD/4NRQcMteGmaSRgXu5AR6s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WoRy7XE1; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-5353d0b7463so3993512e87.3;
-        Fri, 30 Aug 2024 13:06:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725048380; x=1725653180; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=cWSiC3lXQnjNwNsl8WkPzx8Q6+jpP9g7prZ8FN3pDiU=;
-        b=WoRy7XE1I4/xznFIwggo7Q6yNSmMuRifFJweOCfFGog0ojEK8SxPGZIpEyfSfWpp0O
-         CYJKDlDn+/3NNr904lAtGqCJknmookK3cgEMpN8nexptc8uIXBt3f6p1k7T4qrhyRr8k
-         cLjIqjQaG19oGbTZ+zQ3nf4BJzROEG5ztWJguSCCnIhTrtpL1/xnIcuEahwkTzNjByxq
-         YSjpdpo6DTtIxx9MeLNBs2iiKzAVkKgjL6Gtq1moBqKmr3arqpRDdV+Xid21RdTdMgMl
-         sY2WRUEmNgRXMtExBVzWxMUoUl98IKZfRUxICGexOgeX4QH3O8DZ2hkRzA1L2VDd/PUN
-         KvBA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725048380; x=1725653180;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=cWSiC3lXQnjNwNsl8WkPzx8Q6+jpP9g7prZ8FN3pDiU=;
-        b=uCxAP9+UaR6qnhkAyngAbpXCvJpIyZCPeu7egrFT+434mfEwzmgX+1K0d59YJygF6K
-         ahuijhUl5fbCfraXJ23rzPcqREe83V9L4Ew0yDLp8dzTWv3Ub8SYiyw5Rjv0TFclsbIA
-         NaK6Kkrlz+qwkwFfIOEnPfHNOL46doPMd69MVLDsKtdlEqvPilgjQWPT8aMKraYhGt6H
-         kISDYTCGmuXm9Oifw6WzP1FiyohTbKOVqnyPyprv8GQ/4sEPsO0mfHaZudl6AQryIDG/
-         DQ/55cbo8SdFfKURrE/sLto6y4HqnW91IhsvqXpCVBZiEVnRrl+wwyzyp3a06KIL4fjU
-         /29g==
-X-Forwarded-Encrypted: i=1; AJvYcCU05Rlrpkss84As7uCELYp+9o4/qomFauKuX1XTW6d3U6jxHQpd8PZLzejYuVN6hFX86kZLCxnN2qON4E0=@vger.kernel.org, AJvYcCWg3sLck6iGnUVp3s2zsbkAhDtB4zP6XQntWCVBxJSoKfw1qvhpyR+gYA82X/Pqn49FZySdhVIxXcY3ATpigjS2@vger.kernel.org
-X-Gm-Message-State: AOJu0YwYWOpqEhypdQFn/+5KfBSgIFBimjujsPM+6oXrGlMEyFBmu3Lb
-	ou2xHxraYOtjKFHq67S/t49uG4iMaSEQsp0XG2RKWwJjaTSuBPPjvITYIIHKe+uYL6AzvJYKTSA
-	/0ndjFOUToScCTZo30HCvmQ2oscY=
-X-Google-Smtp-Source: AGHT+IFvRM/OgbBe7Gr0V4rG8sg0ZG+w5OS2fFDBcptAHWkTHk8VHqd2Jhi7uoYeQyRVWNMtCfi/T1jVxes+Fy0z+cU=
-X-Received: by 2002:a05:6512:acb:b0:533:4505:5b2a with SMTP id
- 2adb3069b0e04-53546b4a8c9mr2832666e87.28.1725048379086; Fri, 30 Aug 2024
- 13:06:19 -0700 (PDT)
+	s=arc-20240116; t=1725048676; c=relaxed/simple;
+	bh=IQ/fCby4wtedNLiRXiC+Utba3e2AiBRZy3nW4CKCXtU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Dn5mmXodyN4/rSu2uiK62Dwd5xot41/TeiiHek8lKHQWhPufK8/zolVI1Ur6r8mMDWIxIZmpWSKd4/R7kXwvlp42+/7CzBF2uhXbLJOjym/ANA5gyFonLtpXaKPj6OJ1shRC3Ej/DvGekONaoariQwmJuRxpkOygEikRGplkJzo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AEjCKHe7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3BDD8C4CEC2;
+	Fri, 30 Aug 2024 20:11:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725048675;
+	bh=IQ/fCby4wtedNLiRXiC+Utba3e2AiBRZy3nW4CKCXtU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=AEjCKHe7WTkXudZt3NpaH0kNrS3zku//iTCSvKVHpz2utSQLiu2+x7rcCCO5/JaHs
+	 jqs0ZVlwLmEIcsxZrh7M++dUEGFkfd+zCWwyNd0G53R6e1YaA+sod52ZrIiomBkGkA
+	 7/+rj3pwy88r++2yryP+C+Lmtii0PrBWJNskbchXA8dOABA2s2MSXaubsHb8/gfIxD
+	 SnX6FGRQwRwwaUqbQGP6oJpbEAUZKq9EPeVQzNMeGZ/j7ccDhiKVAPB8Bbmzz8rchx
+	 8FdddYOLmxEQ2RffIcO5xF+13HSUMlHgL0qIL4i9LescTl0NuoHNSrHo6mkZJXYR8o
+	 UIwZ+TXqMouug==
+Date: Fri, 30 Aug 2024 21:11:12 +0100
+From: Simon Horman <horms@kernel.org>
+To: Yue Haibing <yuehaibing@huawei.com>
+Cc: bharat@chelsio.com, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 net-next 3/3] cxgb: Remove unused declarations
+Message-ID: <20240830201112.GA4063074@kernel.org>
+References: <20240830093338.3742315-1-yuehaibing@huawei.com>
+ <20240830093338.3742315-4-yuehaibing@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240830141939.723729-1-joshua.hahnjy@gmail.com>
- <20240830141939.723729-2-joshua.hahnjy@gmail.com> <ZtIgdEt9RSU4MCIP@slm.duckdns.org>
-In-Reply-To: <ZtIgdEt9RSU4MCIP@slm.duckdns.org>
-From: Joshua Hahn <joshua.hahnjy@gmail.com>
-Date: Fri, 30 Aug 2024 16:06:07 -0400
-Message-ID: <CAN+CAwP-VnCAH=OpNSG7HbBj3TJsrRQ2Rcs=e6X9DGrTEQLKuA@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] Tracking cgroup-level niced CPU time
-To: Tejun Heo <tj@kernel.org>
-Cc: cgroups@vger.kernel.org, hannes@cmpxchg.org, linux-kernel@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, lizefan.x@bytedance.com, mkoutny@suse.com, 
-	shuah@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240830093338.3742315-4-yuehaibing@huawei.com>
 
-Hello, thank you for reviewing the v2.
+On Fri, Aug 30, 2024 at 05:33:38PM +0800, Yue Haibing wrote:
+> These functions were never implenmented since introduction in
+> commit 8199d3a79c22 ("[PATCH] A new 10GB Ethernet Driver by Chelsio
+> Communications")
+> 
+> Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
 
-> Patch looks fine to me but can you please do the followings?
->
-> - Add subsystem prefix to the patch titles. Look other commits for examples.
-> - Add Signed-off-by to both.
-> --
-> tejun
+Reviewed-by: Simon Horman <horms@kernel.org>
 
-I will send out a v3 with the signed-off-by, and I will add
-cgroup/rstat to the patch title.
-Thank you again!
-
-Joshua
 
