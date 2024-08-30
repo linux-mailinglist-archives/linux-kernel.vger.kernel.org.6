@@ -1,105 +1,125 @@
-Return-Path: <linux-kernel+bounces-308685-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308686-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99935966057
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 13:15:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AE0696605A
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 13:15:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 430611F28CC8
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 11:15:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BE83F1C22ACD
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 11:15:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA3E8196D9E;
-	Fri, 30 Aug 2024 11:12:11 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 104D518E370;
-	Fri, 30 Aug 2024 11:12:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 734DC1AF4CA;
+	Fri, 30 Aug 2024 11:12:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZDiZCgN4"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 122FC192D60;
+	Fri, 30 Aug 2024 11:12:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725016331; cv=none; b=Kp7le7mD5TsvwTYDnajfSzZAVbdojLJDFsLLkoRGpnlUoyXFr+EC1cRfXsF6Fe6Gwsmt2Z8g/xG95jmgbquO2kbmGeOgfTyrnWowaO6ilt9skFVaMid6zMe+gYW8qFOpX0k+wF5Uj1bdXCqcR+ZayZjQmE+fjQ8NCCGTyb7nbMA=
+	t=1725016353; cv=none; b=jWVc9GbFEJ11UqfVeTKv2RN6BwpAcMSeUz3YNWRDbnM7hTz8fzX9BYyuK6LEmzxn4RoGgAUwJrbMlc39HYkKiB/D+ErEs4jdyyp0OC7gUTCFSZYqlQL1S05fruo7neISrO/chJMcnglf8I8ijIMvFT/Uyrf8fldEnucVtFa4KZ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725016331; c=relaxed/simple;
-	bh=ACVRDK5MKKiC/ptkkN4ovtss5KjkflVraIVTd8aCdVc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=c9TjWOVEaqRrj9qXOC2iTuNL15r50a+3I4vgpiKkId0pl9CxvVd8Krt6gEkQrQNT4LfikY95LujMXYMSHFoCVVvSPeVZ2cECHurSvK6YTj1JReBmg5ABbn8SutURtEW1u1gJ3QNsyjVU1UjuurcLonhAf1bLpUKZE03X9+WtLfo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 935711063;
-	Fri, 30 Aug 2024 04:12:33 -0700 (PDT)
-Received: from usa.arm.com (e107155-lin.cambridge.arm.com [10.1.198.42])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 019D93F66E;
-	Fri, 30 Aug 2024 04:12:04 -0700 (PDT)
-From: Sudeep Holla <sudeep.holla@arm.com>
-To: Cristian Marussi <cristian.marussi@arm.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Peng Fan <peng.fan@nxp.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	"Peng Fan (OSS)" <peng.fan@oss.nxp.com>
-Cc: Sudeep Holla <sudeep.holla@arm.com>,
-	arm-scmi@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	imx@lists.linux.dev,
-	linux-rtc@vger.kernel.org,
-	linux-input@vger.kernel.org
-Subject: Re: [PATCH v8 0/7] firmware: support i.MX95 SCMI BBM/MISC Extenstion
-Date: Fri, 30 Aug 2024 12:12:01 +0100
-Message-ID: <172501620010.2362412.13911228276992325036.b4-ty@arm.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20240823-imx95-bbm-misc-v2-v8-0-e600ed9e9271@nxp.com>
-References: <20240823-imx95-bbm-misc-v2-v8-0-e600ed9e9271@nxp.com>
+	s=arc-20240116; t=1725016353; c=relaxed/simple;
+	bh=Mm2ryxK9cgrNWbIdIzIOzLeHvtD9PPpe3P/fDgYZDJs=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=M5FDLuy03TkMVoXAfotlMxiit3rmlThiyxB/IzCi8Q1UfYRBlUJm+Mt89oTecZku0xyAeXwP3k7Y1l/DVfBu2Z4Yl4296G9F1mQimi0f5yYjZVZRPFE4ArCBzsN8YQ4W0Zwiw3N9voZqjoiSiL8dBdY4jnWTDLbFP3SmRT615hU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZDiZCgN4; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725016353; x=1756552353;
+  h=date:from:to:cc:subject:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=Mm2ryxK9cgrNWbIdIzIOzLeHvtD9PPpe3P/fDgYZDJs=;
+  b=ZDiZCgN48vl5eGkLaM8JnCWNTKJJzl7k6/ouIQbeu4dkoDYN6uXmUKjt
+   I1Sk0N9ZkimFNVnRSPjCnHkfEHB0/g/msqlmP1xdbuORLTYPfsFmBlLdL
+   9qlWHgTqW+/XNdDRMP2hQQPFLfK4QSjQIemeTshZI/B5u59yP8QnwOGG+
+   CIH2+SETTamuCRZumjYxEGZy4bfY6b2s4xBQJjtPj/IAgu6CiJylHD26U
+   gjY3oLqiR83NX9DHK8xsEd1q+3joPCDzTKyALlFWzp7sZr8E58ghq6PsY
+   KotZCG02zEdn6cDmLDMjpIpKGM2CArBH+3P7dMiA2D9wwszaeidkdhh5Z
+   g==;
+X-CSE-ConnectionGUID: 8wSZuwVSTZi8PUdT7yZGcQ==
+X-CSE-MsgGUID: Rbsm9DPCSqqmEFiK1sLrWw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11179"; a="34814833"
+X-IronPort-AV: E=Sophos;i="6.10,188,1719903600"; 
+   d="scan'208";a="34814833"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Aug 2024 04:12:32 -0700
+X-CSE-ConnectionGUID: zwoFdLDtRIirEWqvOjJprg==
+X-CSE-MsgGUID: xFbrO0dgQRK8xO4cY0t//w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,188,1719903600"; 
+   d="scan'208";a="87107713"
+Received: from mtkaczyk-mobl.ger.corp.intel.com (HELO localhost) ([10.245.96.27])
+  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Aug 2024 04:12:29 -0700
+Date: Fri, 30 Aug 2024 13:12:24 +0200
+From: Mariusz Tkaczyk <mariusz.tkaczyk@linux.intel.com>
+To: song@kernel.org
+Cc: Yu Kuai <yukuai1@huaweicloud.com>, mariusz.tkaczyk@intel.com,
+ linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org,
+ yukuai3@huawei.com, yi.zhang@huawei.com, yangerkun@huawei.com
+Subject: Re: [PATCH md-6.12 0/7] md: enhance faulty chekcing for blocked
+ handling
+Message-ID: <20240830131224.00001114@linux.intel.com>
+In-Reply-To: <20240830072721.2112006-1-yukuai1@huaweicloud.com>
+References: <20240830072721.2112006-1-yukuai1@huaweicloud.com>
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Fri, 23 Aug 2024 17:05:16 +0800, Peng Fan (OSS) wrote:
-> i.MX95 System Manager Firmware source: https://github.com/nxp-imx/imx-sm
-> To generate html from the repo: make html
->
-> i.MX95 System Manager Firmware support vendor extension protocol:
-> - Battery Backed Module(BBM) Protocol
->   This protocol is intended provide access to the battery-backed module.
->   This contains persistent storage (GPR), an RTC, and the ON/OFF button.
->   The protocol can also provide access to similar functions implemented via
->   external board components. The BBM protocol provides functions to:
->
-> [...]
+On Fri, 30 Aug 2024 15:27:14 +0800
+Yu Kuai <yukuai1@huaweicloud.com> wrote:
 
-Applied to sudeep.holla/linux (for-next/scmi/updates), thanks!
-(with various minor changes to fix the build and sparse errors reported)
+> From: Yu Kuai <yukuai3@huawei.com>
+> 
+> The lifetime of badblocks:
+> 
+> - IO error, and decide to record badblocks, and record sb_flags;
+> - write IO found rdev has badblocks and not yet acknowledged, then this
+> IO is blocked;
+> - daemon found sb_flags is set, update superblock and flush badblocks;
+> - write IO continue;
+> 
+> Main idea is that badblocks will be set in memory fist, before badblocks
+> are acknowledged, new write request must be blocked to prevent reading
+> old data after power failure, and this behaviour is not necessary if rdev
+> is faulty in the first place.
+> 
+> Yu Kuai (7):
+>   md: add a new helper rdev_blocked()
+>   md: don't wait faulty rdev in md_wait_for_blocked_rdev()
+>   md: don't record new badblocks for faulty rdev
+>   md/raid1: factor out helper to handle blocked rdev from
+>     raid1_write_request()
+>   md/raid1: don't wait for Faulty rdev in wait_blocked_rdev()
+>   md/raid10: don't wait for Faulty rdev in wait_blocked_rdev()
+>   md/raid5: don't set Faulty rdev for blocked_rdev
+> 
+>  drivers/md/md.c     |  8 +++--
+>  drivers/md/md.h     | 24 +++++++++++++++
+>  drivers/md/raid1.c  | 75 +++++++++++++++++++++++----------------------
+>  drivers/md/raid10.c | 40 +++++++++++-------------
+>  drivers/md/raid5.c  | 13 ++++----
+>  5 files changed, 92 insertions(+), 68 deletions(-)
+> 
 
-[1/7] dt-bindings: firmware: add i.MX95 SCMI Extension protocol
-      https://git.kernel.org/sudeep.holla/c/7d2b23fda996
-[2/7] firmware: arm_scmi: add initial support for i.MX BBM protocol
-      https://git.kernel.org/sudeep.holla/c/41845541adeb
-[3/7] firmware: arm_scmi: add initial support for i.MX MISC protocol
-      https://git.kernel.org/sudeep.holla/c/61c9f03e22fc
-[4/7] firmware: arm_scmi: add NXP i.MX95 SCMI documentation
-      https://git.kernel.org/sudeep.holla/c/c66beeab7436
-[5/7] firmware: imx: add i.MX95 MISC driver
-      https://git.kernel.org/sudeep.holla/c/0b4f8a68b292
-[6/7] rtc: support i.MX95 BBM RTC
-      https://git.kernel.org/sudeep.holla/c/3008598ef3b0
-[7/7] input: keyboard: support i.MX95 BBM module
-      https://git.kernel.org/sudeep.holla/c/d17baf052cbb
---
-Regards,
-Sudeep
+Hi Song,
+We need to test this with external metadata so please wait for our green light
+before you will take this.
+I checked the code and it looks safe but I need to double confirm it to avoid
+hung tasks.
 
+Thanks,
+Mariusz
 
