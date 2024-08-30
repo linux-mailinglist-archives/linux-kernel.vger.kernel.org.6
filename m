@@ -1,73 +1,165 @@
-Return-Path: <linux-kernel+bounces-308957-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308959-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FF4E966446
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 16:35:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC6D496644C
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 16:37:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 939421C231DD
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 14:35:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 79354282D5E
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 14:37:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75D3F1B2519;
-	Fri, 30 Aug 2024 14:35:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9C1C1B2EC8;
+	Fri, 30 Aug 2024 14:37:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="O11OjRep"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UePCUnYy"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2380418FDA7
-	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 14:35:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61B451B2510
+	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 14:37:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725028530; cv=none; b=Byg4in4/5iOkE4eQ9HpR5b5AuosyfuFqBZL1BjnkTXmclvw71VguoTdLlRsuqD2yeJ2Xtnw7tfckgG9cea1rd7RnhE5iRhzXJb3WmBEZTC11AB7pK8HMNDv/mxm/lzLCXqAtao8KbSJlnGUzC2BMRArqaMa48DXXF7w63bLEf/c=
+	t=1725028637; cv=none; b=IBQyGxm7vUBHphtZjNV1GRkoC/bQfM5RTxBboomCCLnYs41M/UZcSUEwFSRXIdxu4U78sRx/+G7DkAjLebvSRoZ+YQyhqAfPPxmH/yIhBgAujHJ7JZJD2gAmfubaxyt08rP4eHzphZc4/5+rQPpKdLXRdT8YTCjbyh9iZ8Te4bw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725028530; c=relaxed/simple;
-	bh=eIAO9pwEamQIUf2s4yl7Gxg/tKOF3aWd5ZF622pGQUM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sQg7l+CGuRsnt/RhPaorMA2impLNVTKF2ww5p9N8sboSIV+FXjil0eom+/YZ8DbONLDiH3RUfOlFMgNJyelPoWZPF6LzmE+q5L7j5SIFWS3fUEVZYa4DUTCfMK5k/CZLgOtUGQq6SuZXuoFNUboEgNUIo7PX+ChWfuYzdVPDN+g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=O11OjRep; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=BNdRKEuqYftPoGFclr9De5Rzd8g3r15IkdyxOL3+D5M=; b=O11OjRepTkhzXEamXqQ6GTGFKX
-	SSykeaYAl5O5hxBDIC5QPduI9tc27lvMjq6dh3UTpS3hiZW9amaBgf8TjA3soXk8f/ePsFZfWdP2t
-	My2TrhBOSoCBcE7ncyDIdHfWSZIXlPUmtKop5X3MLzfT9ZvBGP09wWcof/BKv7DrCZMA=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1sk2ig-0068VF-H8; Fri, 30 Aug 2024 16:35:22 +0200
-Date: Fri, 30 Aug 2024 16:35:22 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Jinjie Ruan <ruanjinjie@huawei.com>
-Cc: sebastian.hesselbarth@gmail.com, gregory.clement@bootlin.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	krzk@kernel.org, jic23@kernel.org
-Subject: Re: [PATCH -next RESEND] soc: dove: Simplify with scoped for each OF
- child loop
-Message-ID: <4ecbf16c-7ca4-4cf8-b6f5-2c6386a6b502@lunn.ch>
-References: <20240830040956.3508919-1-ruanjinjie@huawei.com>
+	s=arc-20240116; t=1725028637; c=relaxed/simple;
+	bh=V3LYwBVfusskf5TId8gLHE1yuDhwHuX77AKmxh+YuxY=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=BqPytGb1xaz8C82mW3nR6v0uqEyO1BRdnGEJSu8d6ao4JtjpDObi/cd1oIpyhOzzgjKsm7i7Mo+xMACk0fxRPLq6ZHu/lxKMaHbKcYoo9zeq+QhoipAVRZGxDubpwq7rXY+bDBXD3Y12g1JIOG+N4g6neSBSHMKnTC8dOSQ38fw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UePCUnYy; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1725028634;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=oXMp7uWH/N7bIuo3ya5a5ES0R5pph2PC7v2bOFZblKs=;
+	b=UePCUnYyXk+PFcNmjuZjGe7zVNvMLNmcSJeQRjtgPCjazAWSSbjS4pMuP7Ta0SIU36tm4D
+	MCfNgBWS94mbHNzde6uSIidMAhJcXmwWDb1MCB6UO4XfnnIFx9FuRJ315Mm5kMxxgLiIjW
+	QGHVf/44rWLrW24XkBd8N0ja05O0tmY=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-633-OahdVQjrPyeBJTbjceppDQ-1; Fri, 30 Aug 2024 10:37:13 -0400
+X-MC-Unique: OahdVQjrPyeBJTbjceppDQ-1
+Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-37493941575so1363431f8f.1
+        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 07:37:12 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725028632; x=1725633432;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=oXMp7uWH/N7bIuo3ya5a5ES0R5pph2PC7v2bOFZblKs=;
+        b=tBtDnHF/CJLZKDktJBPrUh3g16TTr5Rrv880S5C272SumcUvcf5/z60DiNWGu54fiL
+         YOIVjm7owXdA/PgD7SY+lDxuGH67tFb2BT6PtFYUnN0xsKNnE567325Rtll55NnXdjJ6
+         UH2NmkPpXe3kNCAW8KBZszbFigiWJ6hiWwc/Nf9zGm5cDdTqwg4WhqHXSE+X1pyL9HoJ
+         hheE0sYVwtldNuFDScCqj5uYYsMFKI10S234clmsyj6gqIxlmqoCGwVxv9i89Z90Nfzu
+         ZbuiViFwnr7NzVBWbmM4De7F7KGuQTfYK9liB6DZX6dINnABDu3wYSI08Zptb/BzR0mF
+         UJQg==
+X-Forwarded-Encrypted: i=1; AJvYcCVw/zurtRaChLCn2rvSNQ3qfrUwQAL9gcgurVWceJbKvaFa8tNU5jHLTBEKs4BZfHX7MLCfzZ0PE0J/p+I=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw0qJgWAlVdJgAAvIqHTFfU34KoXzGvvLPiKCmnqqvhQJ0VdbEw
+	HqDCkrT0e6ooECej58UqAgbSBZvqgaN8hCoLm7DcjMSBYtNs52WybbcNC6eUqIQIXHF3t6ro2W5
+	az1XMM3v1spSiYMrsj3GlBffOfsZemVN2X2B7uLilgNn9G2WVPXoLwvpkaXrpkw==
+X-Received: by 2002:adf:e105:0:b0:371:8a3a:680a with SMTP id ffacd0b85a97d-3749b56145amr4121126f8f.32.1725028631779;
+        Fri, 30 Aug 2024 07:37:11 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHFYgXNQ2yY6fOL1KrOlEnGq7ndk/i4ruj17NaJHBuCgglUICGU9LPO8teX4/pN12Jf+eJJPg==
+X-Received: by 2002:adf:e105:0:b0:371:8a3a:680a with SMTP id ffacd0b85a97d-3749b56145amr4121106f8f.32.1725028631239;
+        Fri, 30 Aug 2024 07:37:11 -0700 (PDT)
+Received: from fedora (g2.ign.cz. [91.219.240.8])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3749ef81146sm4175385f8f.82.2024.08.30.07.37.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 30 Aug 2024 07:37:10 -0700 (PDT)
+From: Vitaly Kuznetsov <vkuznets@redhat.com>
+To: Sean Christopherson <seanjc@google.com>
+Cc: Gerd Hoffmann <kraxel@redhat.com>, Paolo Bonzini <pbonzini@redhat.com>,
+ kvm@vger.kernel.org, rcu@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Kevin Tian <kevin.tian@intel.com>, Yan Zhao <yan.y.zhao@intel.com>, Yiwei
+ Zhang <zzyiwei@google.com>, Lai Jiangshan <jiangshanlai@gmail.com>, "Paul
+ E. McKenney" <paulmck@kernel.org>, Josh Triplett <josh@joshtriplett.org>
+Subject: Re: [PATCH 5/5] KVM: VMX: Always honor guest PAT on CPUs that
+ support self-snoop
+In-Reply-To: <87seumt89u.fsf@redhat.com>
+References: <20240309010929.1403984-1-seanjc@google.com>
+ <20240309010929.1403984-6-seanjc@google.com> <877cbyuzdn.fsf@redhat.com>
+ <vuwlkftomgsnzsywjyxw6rcnycg3bve3o53svvxg3vd6xpok7o@k4ktmx5tqtmz>
+ <871q26unq8.fsf@redhat.com> <ZtHOr-kCqvCdUc_A@google.com>
+ <87seumt89u.fsf@redhat.com>
+Date: Fri, 30 Aug 2024 16:37:10 +0200
+Message-ID: <87plpqt6uh.fsf@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240830040956.3508919-1-ruanjinjie@huawei.com>
+Content-Type: text/plain
 
-On Fri, Aug 30, 2024 at 12:09:56PM +0800, Jinjie Ruan wrote:
-> Use scoped for_each_child_of_node_scoped() when iterating over device
-> nodes to make code a bit simpler.
-> 
-> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
+Vitaly Kuznetsov <vkuznets@redhat.com> writes:
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+> Sean Christopherson <seanjc@google.com> writes:
+>
+>> On Fri, Aug 30, 2024, Vitaly Kuznetsov wrote:
+>>> Gerd Hoffmann <kraxel@redhat.com> writes:
+>>> 
+>>> >> Necroposting!
+>>> >> 
+>>> >> Turns out that this change broke "bochs-display" driver in QEMU even
+>>> >> when the guest is modern (don't ask me 'who the hell uses bochs for
+>>> >> modern guests', it was basically a configuration error :-). E.g:
+>>> >
+>>> > qemu stdvga (the default display device) is affected too.
+>>> >
+>>> 
+>>> So far, I was only able to verify that the issue has nothing to do with
+>>> OVMF and multi-vcpu, it reproduces very well with
+>>> 
+>>> $ qemu-kvm -machine q35,accel=kvm,kernel-irqchip=split -name guest=c10s
+>>> -cpu host -smp 1 -m 16384 -drive file=/var/lib/libvirt/images/c10s-bios.qcow2,if=none,id=drive-ide0-0-0
+>>> -device ide-hd,bus=ide.0,unit=0,drive=drive-ide0-0-0,id=ide0-0-0,bootindex=1
+>>> -vnc :0 -device VGA -monitor stdio --no-reboot
+>>> 
+>>> Comparing traces of working and broken cases, I couldn't find anything
+>>> suspicious but I may had missed something of course. For now, it seems
+>>> like a userspace misbehavior resulting in a segfault.
+>>
+>> Guest userspace?
+>>
+>
+> Yes? :-) As Gerd described, video memory is "mapped into userspace so
+> the wayland / X11 display server can software-render into the buffer"
+> and it seems that wayland gets something unexpected in this memory and
+> crashes. 
 
-    Andrew
+Also, I don't know if it helps or not, but out of two hunks in
+377b2f359d1f, it is the vmx_get_mt_mask() one which brings the
+issue. I.e. the following is enough to fix things:
+
+diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
+index f18c2d8c7476..733a0c45d1a6 100644
+--- a/arch/x86/kvm/vmx/vmx.c
++++ b/arch/x86/kvm/vmx/vmx.c
+@@ -7659,13 +7659,11 @@ u8 vmx_get_mt_mask(struct kvm_vcpu *vcpu, gfn_t gfn, bool is_mmio)
+ 
+        /*
+         * Force WB and ignore guest PAT if the VM does NOT have a non-coherent
+-        * device attached and the CPU doesn't support self-snoop.  Letting the
+-        * guest control memory types on Intel CPUs without self-snoop may
+-        * result in unexpected behavior, and so KVM's (historical) ABI is to
+-        * trust the guest to behave only as a last resort.
++        * device attached.  Letting the guest control memory types on Intel
++        * CPUs may result in unexpected behavior, and so KVM's ABI is to trust
++        * the guest to behave only as a last resort.
+         */
+-       if (!static_cpu_has(X86_FEATURE_SELFSNOOP) &&
+-           !kvm_arch_has_noncoherent_dma(vcpu->kvm))
++       if (!kvm_arch_has_noncoherent_dma(vcpu->kvm))
+                return (MTRR_TYPE_WRBACK << VMX_EPT_MT_EPTE_SHIFT) | VMX_EPT_IPAT_BIT;
+ 
+        return (MTRR_TYPE_WRBACK << VMX_EPT_MT_EPTE_SHIFT);
+
+
+-- 
+Vitaly
+
 
