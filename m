@@ -1,248 +1,175 @@
-Return-Path: <linux-kernel+bounces-308657-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308651-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23511965FF9
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 13:06:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69EED965FF2
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 13:04:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 824091C20EC8
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 11:06:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E7A121F27CFB
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 11:04:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 146F819E81F;
-	Fri, 30 Aug 2024 11:04:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89DF5192D9B;
+	Fri, 30 Aug 2024 11:04:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MfeY27Ed"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vpSJMhIk"
+Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 305CE19ABAA
-	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 11:04:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 331FC192D80
+	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 11:04:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725015866; cv=none; b=rndLNhBT3QyYLX+y5Q7qketv/Ky+rXjKejMV6BND6W0wATvCoVHMUNYHbHdwWYFn0MsB9oga2JtArNDtf9dEHHWZXo/zsWYSeF6I8WI0QxQGKkf8JYqpyH5peu8/tEzrtf5KQXjXIc+4kjUDf8ms7nZTJZcDObJXGO1VM27croQ=
+	t=1725015842; cv=none; b=aC7mSW+5WalbUT29z1QEv1O5YRkD7qxE3VKNNq2WHggjPv2efE5oaY0xyBPW4pLFn6y3OFx6My+UERKiK1DD8RjQhj1sx2zUAT8cmpheTjiNcaMnPnLevAaSJrfxyMb/ze1jdO0IHH4bUOqzSydrXZlpD1dnPCgVei21C3F7AwA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725015866; c=relaxed/simple;
-	bh=PxQxs1dzpTVKaadJ3L8xHOFUMg9pWjdhmkgI2eKkz3M=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=qL4BpT2nc1DqVJWQC5CAIg+Rf+vIQjMP/BTeVepLdYinzIL2BIT88F7PxQtKpkPDrv1kojRnIOGZ4Lh1ZJlC8anvl8QHtgvwXO5U/kEm+pUEBH5IS+bzCDy+kvjxOMh3idjWeHNHepG/gl0jIY6DXUsJ1gjbkSzyBgNXCFNsxCQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MfeY27Ed; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E296BC4CEC2;
-	Fri, 30 Aug 2024 11:04:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725015866;
-	bh=PxQxs1dzpTVKaadJ3L8xHOFUMg9pWjdhmkgI2eKkz3M=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=MfeY27EdYi+2BHEB5zGux4wIoh7pfSVti8IwQs+BeuCqfeHbBFuMsUWaaYg0Lo5Kj
-	 k1bb5hh0i+okTy3VOsQegR0Bfdd6XCOh0GqhHfyOuNZ48a0mdIBFkfnXXrtLZqTBmu
-	 ER3MIqfTvhRSjSI78SDi973lx4fu0OHV8+DiVQV9nuK3oMC28esDKRG5J/hBwcdb7i
-	 R3/VY4Szn7z60cLcCo0Pkwk/jB/3MzeYRTP/7j0wUS5z09ue+LyESSav7kmEiPO2gd
-	 WOXxFRz9LZD7TXtrB/dc09XdkO//WoHCUZ9YtPhMRVTyxxLDzKsRUNHh20o4008a3Y
-	 CiLb42EpOpSTQ==
-From: Tejun Heo <tj@kernel.org>
-To: void@manifault.com
-Cc: kernel-team@meta.com,
-	linux-kernel@vger.kernel.org,
-	Tejun Heo <tj@kernel.org>
-Subject: [PATCH 03/11] sched_ext: Make find_dsq_for_dispatch() handle SCX_DSQ_LOCAL_ON
-Date: Fri, 30 Aug 2024 01:03:47 -1000
-Message-ID: <20240830110415.116090-4-tj@kernel.org>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20240830110415.116090-1-tj@kernel.org>
-References: <20240830110415.116090-1-tj@kernel.org>
+	s=arc-20240116; t=1725015842; c=relaxed/simple;
+	bh=+K0m8Z/tfxXArd2ca1OsFLwOmWFwm4/wH1OpiRtKoks=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=AP9CWtjMFknJshs4icQmF4xRiOzHiAHdh72NvkxbrI5DEBdJvk2cB/tFXTs39r3QLX1da2Rr4J0y+W3Q0xDmhyJ482Xl8JeuCM/NaO8QeY0PfDFawL6ewi+iIBn+NLcw3/zTvpkcX3JcSrd7WJbNXvRWnnQOuUmnrE/qsOuCjDQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--smostafa.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=vpSJMhIk; arc=none smtp.client-ip=209.85.128.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--smostafa.bounces.google.com
+Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6d4bd76f5a8so823007b3.0
+        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 04:04:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1725015840; x=1725620640; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Ic37IELEQRRYuBS18VKDjuHeMlY5e56pj2JA+eqlY6M=;
+        b=vpSJMhIkQphVoJiPZN9lf+Tu5LHoEUwey9OUGFj14bH9K7Qm2LK8nL9wFJn2fgEcy2
+         KirN2jG7TKZf2IsQrSZLzfvtKkj40BYk1wvfuAdlQgs50hdF5vRyG2pnxZU74NEi+uJn
+         JZUXJIj9ixdnwLKYCeKaYqgN5i4X0oTRvIZiNU4p+iiENF10hABWpDbQU2PBIiaq8Iwf
+         qk9hKTkMmLeuOKRzY4KRQFutYAfGktciE0R5LXIsxhQ/K8Eec4IObDL/TdXjRqVlV9Jb
+         n8ZJA8ciVlTm5Z4MTXh922UQSEX71TRQzL1YxX9eo7EOgqTtbPnJOGu8nDeC5zwPbstw
+         TKjQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725015840; x=1725620640;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=Ic37IELEQRRYuBS18VKDjuHeMlY5e56pj2JA+eqlY6M=;
+        b=jTTlWN3Z4djS6tQ9//EolCni0dM0THIvUIeOtyOq0KPYPfZ3pRqELQC3RJ89Non9hc
+         KmzCEBXdVeMCFaQ/yNOKkZZPeRzEeyzI+PyDCb/5GBYAq1rj05U8YW4g1hkxHHHaRZBx
+         Zy3kyBERy7VdDzB3qUVAc5vRQr/hg5zf+WYvGoeQKCbDSfe11kZ8us/wMiYEtuSbeVAK
+         IgfEwkdjT+5b+VniCvkDZBqr4sGJJJulChYKzSTibVz1Ubety1whRtuuYDBcIVMOkwKV
+         fnviAbEhuRe+uKSexwH6tM7Cx6Kc20HE6jO3fTZG6PPpdIc1MLQL8BBN5bHGPT9kSMn/
+         SgXQ==
+X-Gm-Message-State: AOJu0Yx6bOpl7TeEk3H2MZnFUw8PuUVqQ/jXXE813G6/t9u0G/+vTwfE
+	STmVQV2ynMw6BgQe4/80YHrgp1ECYOiH8L4jElyorHfgNtpjj0IOP2ObZgOOsV/X42GVRwc4J+F
+	F8gJ8tjNt4CCDoIhX2urEdwkRwx2tgm8WhfVGoJAr/f1RZRFqpNBfRPoZFgmCfivk3hV6DY+wRl
+	g/Lrbprg9N7mhQQE0hSvewL6Hj2ii2x8VMWne1K6m6S52gPPYdPgI=
+X-Google-Smtp-Source: AGHT+IEhIgqCCVpoJF04izZWNpGhj9w4DRkBO4N4vRbTNO83ovpMlTZbUepHXnCpHONa5Hk4mWllX9/lH0OXjQ==
+X-Received: from mostafa.c.googlers.com ([fda3:e722:ac3:cc00:28:9cb1:c0a8:333c])
+ (user=smostafa job=sendgmr) by 2002:a05:690c:3744:b0:64b:5cc7:bcb7 with SMTP
+ id 00721157ae682-6d40d890122mr37757b3.1.1725015839642; Fri, 30 Aug 2024
+ 04:03:59 -0700 (PDT)
+Date: Fri, 30 Aug 2024 11:03:47 +0000
+In-Reply-To: <20240830110349.797399-1-smostafa@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+References: <20240830110349.797399-1-smostafa@google.com>
+X-Mailer: git-send-email 2.46.0.469.g59c65b2a67-goog
+Message-ID: <20240830110349.797399-2-smostafa@google.com>
+Subject: [PATCH v4 1/2] iommu/arm-smmu-v3: Match Stall behaviour for S2
+From: Mostafa Saleh <smostafa@google.com>
+To: linux-kernel@vger.kernel.org, iommu@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, will@kernel.org, robin.murphy@arm.com, 
+	joro@8bytes.org
+Cc: jean-philippe@linaro.org, jgg@ziepe.ca, nicolinc@nvidia.com, 
+	mshavit@google.com, Mostafa Saleh <smostafa@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-find_dsq_for_dispatch() handles all DSQ IDs except SCX_DSQ_LOCAL_ON.
-Instead, each caller is hanlding SCX_DSQ_LOCAL_ON before calling it. Move
-SCX_DSQ_LOCAL_ON lookup into find_dsq_for_dispatch() to remove duplicate
-code in direct_dispatch() and dispatch_to_local_dsq().
+According to the spec (ARM IHI 0070 F.b), in
+"5.5 Fault configuration (A, R, S bits)":
+    A STE with stage 2 translation enabled and STE.S2S =3D=3D 0 is
+    considered ILLEGAL if SMMU_IDR0.STALL_MODEL =3D=3D 0b10.
 
-No functional changes intended.
+Also described in the pseudocode =E2=80=9CSteIllegal()=E2=80=9D
+    if STE.Config =3D=3D '11x' then
+        [..]
+        if eff_idr0_stall_model =3D=3D '10' && STE.S2S =3D=3D '0' then
+            // stall_model forcing stall, but S2S =3D=3D 0
+            return TRUE;
 
-Signed-off-by: Tejun Heo <tj@kernel.org>
+Which means, S2S must be set when stall model is
+"ARM_SMMU_FEAT_STALL_FORCE", but currently the driver ignores that.
+
+Although, the driver can do the minimum and only set S2S for
+=E2=80=9CARM_SMMU_FEAT_STALL_FORCE=E2=80=9D, it is more consistent to match=
+ S1
+behaviour, which also sets it for =E2=80=9CARM_SMMU_FEAT_STALL=E2=80=9D if =
+the
+master has requested stalls.
+
+Also, since S2 stalls are enabled now, report them to the IOMMU layer
+and for VFIO devices it will fail anyway as VFIO doesn=E2=80=99t register a=
+n
+iopf handler.
+
+Signed-off-by: Mostafa Saleh <smostafa@google.com>
 ---
- kernel/sched/ext.c | 90 +++++++++++++++++++++-------------------------
- 1 file changed, 40 insertions(+), 50 deletions(-)
+ drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c | 8 +++-----
+ drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h | 1 +
+ 2 files changed, 4 insertions(+), 5 deletions(-)
 
-diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
-index 3facfca73337..80387cd9b8c3 100644
---- a/kernel/sched/ext.c
-+++ b/kernel/sched/ext.c
-@@ -1726,6 +1726,15 @@ static struct scx_dispatch_q *find_dsq_for_dispatch(struct rq *rq, u64 dsq_id,
- 	if (dsq_id == SCX_DSQ_LOCAL)
- 		return &rq->scx.local_dsq;
- 
-+	if ((dsq_id & SCX_DSQ_LOCAL_ON) == SCX_DSQ_LOCAL_ON) {
-+		s32 cpu = dsq_id & SCX_DSQ_LOCAL_CPU_MASK;
-+
-+		if (!ops_cpu_valid(cpu, "in SCX_DSQ_LOCAL_ON dispatch verdict"))
-+			return &scx_dsq_global;
-+
-+		return &cpu_rq(cpu)->scx.local_dsq;
-+	}
-+
- 	dsq = find_non_local_dsq(dsq_id);
- 	if (unlikely(!dsq)) {
- 		scx_ops_error("non-existent DSQ 0x%llx for %s[%d]",
-@@ -1769,8 +1778,8 @@ static void mark_direct_dispatch(struct task_struct *ddsp_task,
- static void direct_dispatch(struct task_struct *p, u64 enq_flags)
- {
- 	struct rq *rq = task_rq(p);
--	struct scx_dispatch_q *dsq;
--	u64 dsq_id = p->scx.ddsp_dsq_id;
-+	struct scx_dispatch_q *dsq =
-+		find_dsq_for_dispatch(rq, p->scx.ddsp_dsq_id, p);
- 
- 	touch_core_sched_dispatch(rq, p);
- 
-@@ -1782,15 +1791,9 @@ static void direct_dispatch(struct task_struct *p, u64 enq_flags)
- 	 * DSQ_LOCAL_ON verdicts targeting the local DSQ of a remote CPU, defer
- 	 * the enqueue so that it's executed when @rq can be unlocked.
- 	 */
--	if ((dsq_id & SCX_DSQ_LOCAL_ON) == SCX_DSQ_LOCAL_ON) {
--		s32 cpu = dsq_id & SCX_DSQ_LOCAL_CPU_MASK;
-+	if (dsq->id == SCX_DSQ_LOCAL && dsq != &rq->scx.local_dsq) {
- 		unsigned long opss;
- 
--		if (cpu == cpu_of(rq)) {
--			dsq_id = SCX_DSQ_LOCAL;
--			goto dispatch;
--		}
+diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c b/drivers/iommu/ar=
+m/arm-smmu-v3/arm-smmu-v3.c
+index a31460f9f3d4..a0044ff2facf 100644
+--- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
++++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
+@@ -1012,7 +1012,8 @@ void arm_smmu_get_ste_used(const __le64 *ent, __le64 =
+*used_bits)
+ 		used_bits[2] |=3D
+ 			cpu_to_le64(STRTAB_STE_2_S2VMID | STRTAB_STE_2_VTCR |
+ 				    STRTAB_STE_2_S2AA64 | STRTAB_STE_2_S2ENDI |
+-				    STRTAB_STE_2_S2PTW | STRTAB_STE_2_S2R);
++				    STRTAB_STE_2_S2PTW | STRTAB_STE_2_S2S |
++				    STRTAB_STE_2_S2R);
+ 		used_bits[3] |=3D cpu_to_le64(STRTAB_STE_3_S2TTB_MASK);
+ 	}
+=20
+@@ -1646,6 +1647,7 @@ void arm_smmu_make_s2_domain_ste(struct arm_smmu_ste =
+*target,
+ 		STRTAB_STE_2_S2ENDI |
+ #endif
+ 		STRTAB_STE_2_S2PTW |
++		(master->stall_enabled ? STRTAB_STE_2_S2S : 0) |
+ 		STRTAB_STE_2_S2R);
+=20
+ 	target->data[3] =3D cpu_to_le64(pgtbl_cfg->arm_lpae_s2_cfg.vttbr &
+@@ -1739,10 +1741,6 @@ static int arm_smmu_handle_evt(struct arm_smmu_devic=
+e *smmu, u64 *evt)
+ 		return -EOPNOTSUPP;
+ 	}
+=20
+-	/* Stage-2 is always pinned at the moment */
+-	if (evt[1] & EVTQ_1_S2)
+-		return -EFAULT;
 -
- 		opss = atomic_long_read(&p->scx.ops_state) & SCX_OPSS_STATE_MASK;
- 
- 		switch (opss & SCX_OPSS_STATE_MASK) {
-@@ -1817,8 +1820,6 @@ static void direct_dispatch(struct task_struct *p, u64 enq_flags)
- 		return;
- 	}
- 
--dispatch:
--	dsq = find_dsq_for_dispatch(rq, dsq_id, p);
- 	dispatch_enqueue(dsq, p, p->scx.ddsp_enq_flags | SCX_ENQ_CLEAR_OPSS);
- }
- 
-@@ -2303,51 +2304,38 @@ static bool consume_dispatch_q(struct rq *rq, struct scx_dispatch_q *dsq)
- enum dispatch_to_local_dsq_ret {
- 	DTL_DISPATCHED,		/* successfully dispatched */
- 	DTL_LOST,		/* lost race to dequeue */
--	DTL_NOT_LOCAL,		/* destination is not a local DSQ */
- 	DTL_INVALID,		/* invalid local dsq_id */
- };
- 
- /**
-  * dispatch_to_local_dsq - Dispatch a task to a local dsq
-  * @rq: current rq which is locked
-- * @dsq_id: destination dsq ID
-+ * @dst_dsq: destination DSQ
-  * @p: task to dispatch
-  * @enq_flags: %SCX_ENQ_*
-  *
-- * We're holding @rq lock and want to dispatch @p to the local DSQ identified by
-- * @dsq_id. This function performs all the synchronization dancing needed
-- * because local DSQs are protected with rq locks.
-+ * We're holding @rq lock and want to dispatch @p to @dst_dsq which is a local
-+ * DSQ. This function performs all the synchronization dancing needed because
-+ * local DSQs are protected with rq locks.
-  *
-  * The caller must have exclusive ownership of @p (e.g. through
-  * %SCX_OPSS_DISPATCHING).
-  */
- static enum dispatch_to_local_dsq_ret
--dispatch_to_local_dsq(struct rq *rq, u64 dsq_id, struct task_struct *p,
--		      u64 enq_flags)
-+dispatch_to_local_dsq(struct rq *rq, struct scx_dispatch_q *dst_dsq,
-+		      struct task_struct *p, u64 enq_flags)
- {
- 	struct rq *src_rq = task_rq(p);
--	struct rq *dst_rq;
-+	struct rq *dst_rq = container_of(dst_dsq, struct rq, scx.local_dsq);
- 
- 	/*
- 	 * We're synchronized against dequeue through DISPATCHING. As @p can't
- 	 * be dequeued, its task_rq and cpus_allowed are stable too.
-+	 *
-+	 * If dispatching to @rq that @p is already on, no lock dancing needed.
- 	 */
--	if (dsq_id == SCX_DSQ_LOCAL) {
--		dst_rq = rq;
--	} else if ((dsq_id & SCX_DSQ_LOCAL_ON) == SCX_DSQ_LOCAL_ON) {
--		s32 cpu = dsq_id & SCX_DSQ_LOCAL_CPU_MASK;
--
--		if (!ops_cpu_valid(cpu, "in SCX_DSQ_LOCAL_ON dispatch verdict"))
--			return DTL_INVALID;
--		dst_rq = cpu_rq(cpu);
--	} else {
--		return DTL_NOT_LOCAL;
--	}
--
--	/* if dispatching to @rq that @p is already on, no lock dancing needed */
- 	if (rq == src_rq && rq == dst_rq) {
--		dispatch_enqueue(&dst_rq->scx.local_dsq, p,
--				 enq_flags | SCX_ENQ_CLEAR_OPSS);
-+		dispatch_enqueue(dst_dsq, p, enq_flags | SCX_ENQ_CLEAR_OPSS);
- 		return DTL_DISPATCHED;
- 	}
- 
-@@ -2489,19 +2477,21 @@ static void finish_dispatch(struct rq *rq, struct task_struct *p,
- 
- 	BUG_ON(!(p->scx.flags & SCX_TASK_QUEUED));
- 
--	switch (dispatch_to_local_dsq(rq, dsq_id, p, enq_flags)) {
--	case DTL_DISPATCHED:
--		break;
--	case DTL_LOST:
--		break;
--	case DTL_INVALID:
--		dsq_id = SCX_DSQ_GLOBAL;
--		fallthrough;
--	case DTL_NOT_LOCAL:
--		dsq = find_dsq_for_dispatch(cpu_rq(raw_smp_processor_id()),
--					    dsq_id, p);
-+	dsq = find_dsq_for_dispatch(this_rq(), dsq_id, p);
-+
-+	if (dsq->id == SCX_DSQ_LOCAL) {
-+		switch (dispatch_to_local_dsq(rq, dsq, p, enq_flags)) {
-+		case DTL_DISPATCHED:
-+			break;
-+		case DTL_LOST:
-+			break;
-+		case DTL_INVALID:
-+			dispatch_enqueue(&scx_dsq_global, p,
-+					 enq_flags | SCX_ENQ_CLEAR_OPSS);
-+			break;
-+		}
-+	} else {
- 		dispatch_enqueue(dsq, p, enq_flags | SCX_ENQ_CLEAR_OPSS);
--		break;
- 	}
- }
- 
-@@ -2718,13 +2708,13 @@ static void process_ddsp_deferred_locals(struct rq *rq)
- 	 */
- 	while ((p = list_first_entry_or_null(&rq->scx.ddsp_deferred_locals,
- 				struct task_struct, scx.dsq_list.node))) {
--		s32 ret;
-+		struct scx_dispatch_q *dsq;
- 
- 		list_del_init(&p->scx.dsq_list.node);
- 
--		ret = dispatch_to_local_dsq(rq, p->scx.ddsp_dsq_id, p,
--					    p->scx.ddsp_enq_flags);
--		WARN_ON_ONCE(ret == DTL_NOT_LOCAL);
-+		dsq = find_dsq_for_dispatch(rq, p->scx.ddsp_dsq_id, p);
-+		if (!WARN_ON_ONCE(dsq->id != SCX_DSQ_LOCAL))
-+			dispatch_to_local_dsq(rq, dsq, p, p->scx.ddsp_enq_flags);
- 	}
- }
- 
--- 
-2.46.0
+ 	if (!(evt[1] & EVTQ_1_STALL))
+ 		return -EOPNOTSUPP;
+=20
+diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h b/drivers/iommu/ar=
+m/arm-smmu-v3/arm-smmu-v3.h
+index 14bca41a981b..0dc7ad43c64c 100644
+--- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h
++++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h
+@@ -267,6 +267,7 @@ struct arm_smmu_ste {
+ #define STRTAB_STE_2_S2AA64		(1UL << 51)
+ #define STRTAB_STE_2_S2ENDI		(1UL << 52)
+ #define STRTAB_STE_2_S2PTW		(1UL << 54)
++#define STRTAB_STE_2_S2S		(1UL << 57)
+ #define STRTAB_STE_2_S2R		(1UL << 58)
+=20
+ #define STRTAB_STE_3_S2TTB_MASK		GENMASK_ULL(51, 4)
+--=20
+2.46.0.469.g59c65b2a67-goog
 
 
