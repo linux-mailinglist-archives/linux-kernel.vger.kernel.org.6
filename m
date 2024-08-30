@@ -1,192 +1,171 @@
-Return-Path: <linux-kernel+bounces-308309-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308310-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FE2F965A27
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 10:23:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCBB8965A29
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 10:23:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 545791C208B2
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 08:23:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EF49D1C20DAA
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 08:23:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6CBB16CD28;
-	Fri, 30 Aug 2024 08:22:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC65D16C685;
+	Fri, 30 Aug 2024 08:22:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="PdX55yCj"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k1dfjJZM"
+Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3287516726E
-	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 08:22:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D313A16BE2B;
+	Fri, 30 Aug 2024 08:22:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725006167; cv=none; b=nxtrX1umf7fxbTwdOmaxZJMvD/N5kQr6d0MFZPFNKCqnOMNqU+z4mUkEod8nD/1iCQFQfYd9h6sfgQDEG5j9I1MFD3rxCqNi6x0dvMf9gCoPekVbgSCnig44HZuU9Nq2TOqDxxKHUq1LHtyq+e3LZ+u2yxpHg/6txz2ZzZRiwd0=
+	t=1725006175; cv=none; b=q12WNm+OeMNg4+FsaUnQyzHF8PQzp6kkO0kZElZ8cuyJ5VY3hoHOXGG4Tz4XpNwb86U1hEnRpiL6qK4Md770axoir97g8thSGH4lzCAii7SeTTyA1dxsotcq05bUkUBHYwZAoT8WDga+SaszWY/b9uel2QX51zdbpfdu5ckenhA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725006167; c=relaxed/simple;
-	bh=lg2a5Or0gfd5Bku8PfxGPt1GgB3ed0TVDFLBpQJIMg4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eCPTz9EB27cyssNhrpvVQBbEDINCI8sg0vXWmNjSnZzUEZXCNcs0BFcWgI9eZo0L99Mqy4KQsc5XKED4FOlhSnioui6n66e/qwmdHuDEhD/ZidRjzaQ5LSuAuhItw4M52EatgZfXjUsNx7hwbotuloS1a5joZCtEH5OsUR1j/UU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=PdX55yCj; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-428243f928fso17178475e9.0
-        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 01:22:46 -0700 (PDT)
+	s=arc-20240116; t=1725006175; c=relaxed/simple;
+	bh=6iDvifggTaOH44UT6njNqiYwywcsxgrNyE7xGZicVig=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RvzeA/O4A83Vrbwqq/SUK9WgKchMQu6y7we1Gf+iCJAvWzviR2cIAhnGh/pl/4lPrGfJxt2ihVFglgjvAjSC/Hajo86ZHej4RQTF427vQsYZrjqZc1UHs3xl1vJncbP6Sfp5c++6tw3A56diqiJtNOsHsn4O/vfbZN4RNPKRjOo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=k1dfjJZM; arc=none smtp.client-ip=209.85.215.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-70b2421471aso877184a12.0;
+        Fri, 30 Aug 2024 01:22:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1725006164; x=1725610964; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=zchK+tZfRdJr/B0VNKRrEBtLoJmeJfsr2YpFzQ08IdE=;
-        b=PdX55yCjayxLU3a0HuryCmcojZbcsP1de6j68M6ebp45drf94iA8NvQ3vsQjHDYp5n
-         P8yVFUuidLKGgIn94toZdJ8Hez/KX4ijJvG3obykwA8N6EFCXEfuV0jL5hfAVLH9n2FT
-         JDgtvtEv2wNPr5PRcw7s1+jaMBUU/ydxJV/5vXjkSb4A6Hx/WLesh7ismzSRiwg1c8oU
-         hs4k49jr+zfamjjjl1mOB2Jsvq2B1n/itmC73c4rO1JTg7oZOIHiq05+A5mpJ6OPVLqD
-         zUantHtRV6mHWHqKBVgjPqry3UzYkH1R5EeiZOey60NAit5f9lGIWVAf7MkpNyPle08y
-         M+fQ==
+        d=gmail.com; s=20230601; t=1725006173; x=1725610973; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:reply-to:message-id:date
+         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=8ewjWosioynS9QjLJzPP/p/LP8/+o765Ca4TuY9GDfQ=;
+        b=k1dfjJZMt0lNcdPfK75op0O8dmVNd95ycLZmSOhUZUMH8G9uLAbXuf1BxkDEFOZPCG
+         ASbE+4UM/CWCGVDAykO2jMe6FT1kyBoOuoxfLipzbZNrdXRlHvSlPUCSLhCyW1OflU/E
+         4LFQ0Dtx0KJYlOBdC3k8Xzc6gbvOE405LY2L5z57kJYuoj7VxjYsfTxrP4hhaP/w4t87
+         QL+IYi+ytpNP6fMf6QtJ8iMFmHNycVur+/5kcJDUT3DHMY8DaSwaj/A9AzE2o/0zBGr6
+         YM1e8QBjyfrck6XGlSYaE5p+JCqQ9pX9hrwco7kQrFnsPI4BUyC9+cnM1xJLh3Yoy8j5
+         /1yQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725006164; x=1725610964;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=zchK+tZfRdJr/B0VNKRrEBtLoJmeJfsr2YpFzQ08IdE=;
-        b=bZcVMdU83fjb9ZPzokG4Mm8g0yStDR4r4cI0QLlrFMRn6BlTtbT1aOLB/ZINk764tW
-         Td/EUikFTeY5woTz+sYqcgF2c7W3Wlx/fSyUm+wNvoFX5+tGeQB3ncC6OGPt8vf+uh2r
-         k5tYBCNMIiAAFGxQYDfg9+T5I2r9+2TbooAH+RDedhPCDo3pAgECifenwo/zbRBCKWdv
-         MlVQMqYS0MKvQMpXaJF818Kz2H999zSSm8AOlI+l6zjXcdlgdgTAlYs0lJa/11Pywawo
-         AR9R/Ax0OOW1LdGfJTaxZOhdajMz/KPkZ9GaueusSS+K+PHWSBbLScdoWi11j5GCRRXx
-         GJDg==
-X-Forwarded-Encrypted: i=1; AJvYcCXHrrBxxEwXLun6GkbsD1/ITQmuIgaoG1h/kVbnioTKQvO4HK1BHzIJZi/xwCyoCXao1D+4ai1GcMZpwng=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzqyFQpVFmdR/tP8Jm8P/4Vagg6SAKte0kaCXe0s4P08K/wjTWS
-	nfelZhOiBVG2GKfOqj+42J3E1ktNiz/LaSW9HKKWkofZlDnvzFXyZfHYZr1RzvI=
-X-Google-Smtp-Source: AGHT+IF8ZkJGKUmuglZKyShKgzTB0GuKfWBu6xay0mGYscvHuYinOaW5h5J83vGVNlCFB6KS0zIxvQ==
-X-Received: by 2002:a05:600c:3ca2:b0:426:5520:b835 with SMTP id 5b1f17b1804b1-42bb01ae206mr53646705e9.5.1725006164296;
-        Fri, 30 Aug 2024 01:22:44 -0700 (PDT)
-Received: from [192.168.50.4] ([82.78.167.144])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42bb87f7fccsm31864805e9.46.2024.08.30.01.22.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 30 Aug 2024 01:22:43 -0700 (PDT)
-Message-ID: <99bef301-9f6c-4797-b47e-c83e56dfbda9@tuxon.dev>
-Date: Fri, 30 Aug 2024 11:22:41 +0300
+        d=1e100.net; s=20230601; t=1725006173; x=1725610973;
+        h=content-transfer-encoding:mime-version:reply-to:message-id:date
+         :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8ewjWosioynS9QjLJzPP/p/LP8/+o765Ca4TuY9GDfQ=;
+        b=nc9rjiPLegfmhHk3UXjJpW3I3qkHuHbqqVXWmRsjYZvx2ls4FCA9B+WGca34OHBqa9
+         kE9elaWjy0OBi6KOFIijUI4wn5HxnM+r4s+gXyAVruBPj2xfUfZpseww2Yf+3uWP18EL
+         8NgKE+n7TtLfy4moRCrPttbzh0f76WGWxMczQevJN254QsaN5QpGDzgEcoN3Fy1Q/eyX
+         zs0ho1xFgVRaB7xQAE2a4Rlz5bUSc6L4rqMrGowV1aeYuhdbDfdX/Yhnlf1DsnRDBf3/
+         nbUc6Au/qiMB5wOtQqvdcGqAsIJ0I3aCpm3gb1Hbv2xY/gfFiuF/oGR41kfHEq4ig9Ub
+         pkEg==
+X-Forwarded-Encrypted: i=1; AJvYcCULvMC+0a3mOp222N8vUih73rQTrtia/hXbbDWaehdXKngo40A0pySBIRrp0Qy2hPPfdeaine7s@vger.kernel.org, AJvYcCVQ4EY2P11zr8l4+lwu+BSt6XPElfcJ4YmtbYljYQerg0qHWPuRBu2m0UTBy8t7wHQbDsliDfs3TG5N6wDa@vger.kernel.org
+X-Gm-Message-State: AOJu0YwdaQyJsi0NAeLUCWIXdg+NJu6w81QPzbpcUjQj0SEQk6DnOU0r
+	fBDhT7Kgv9phK6Nk/boLdSGpyzJctHU3cLNZ8ynAQkcTPZvrd9Rk
+X-Google-Smtp-Source: AGHT+IGdtecW2ZO4g4vdfngXfhM0JCRsaqI0LNGJZiq1ZEecxwo+Hlehe5MApd/ZlNiDNIysqYKRJw==
+X-Received: by 2002:a17:90a:e7c6:b0:2c9:7849:4e22 with SMTP id 98e67ed59e1d1-2d85618c33emr5718939a91.8.1725006172936;
+        Fri, 30 Aug 2024 01:22:52 -0700 (PDT)
+Received: from localhost.localdomain ([14.116.239.34])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d85b12553asm3165774a91.22.2024.08.30.01.22.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 30 Aug 2024 01:22:52 -0700 (PDT)
+From: Jingxiang Zeng <jingxiangzeng.cas@gmail.com>
+To: linux-mm@kvack.org
+Cc: Johannes Weiner <hannes@cmpxchg.org>,
+	Michal Hocko <mhocko@kernel.org>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Shakeel Butt <shakeel.butt@linux.dev>,
+	Muchun Song <muchun.song@linux.dev>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	cgroups@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Jingxiang Zeng <linuszeng@tencent.com>
+Subject: [PATCH] mm/memcontrol: add per-memcg pgpgin/pswpin counter
+Date: Fri, 30 Aug 2024 16:22:44 +0800
+Message-ID: <20240830082244.156923-1-jingxiangzeng.cas@gmail.com>
+X-Mailer: git-send-email 2.43.5
+Reply-To: Jingxiang Zeng <linuszeng@tencent.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 00/16] Add initial USB support for the Renesas RZ/G3S SoC
-Content-Language: en-US
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: vkoul@kernel.org, kishon@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, p.zabel@pengutronix.de, geert+renesas@glider.be,
- magnus.damm@gmail.com, gregkh@linuxfoundation.org, mturquette@baylibre.com,
- sboyd@kernel.org, yoshihiro.shimoda.uh@renesas.com,
- biju.das.jz@bp.renesas.com, linux-phy@lists.infradead.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-renesas-soc@vger.kernel.org, linux-usb@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
- linux-pm@vger.kernel.org, Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-References: <20240822152801.602318-1-claudiu.beznea.uj@bp.renesas.com>
- <CAPDyKFrS4Dhd7DZa2zz=oPro1TiTJFix0awzzzp8Qatm-8Z2Ug@mail.gmail.com>
-From: claudiu beznea <claudiu.beznea@tuxon.dev>
-In-Reply-To: <CAPDyKFrS4Dhd7DZa2zz=oPro1TiTJFix0awzzzp8Qatm-8Z2Ug@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Hi, Ulf,
+From: Jingxiang Zeng <linuszeng@tencent.com>
 
-On 29.08.2024 18:26, Ulf Hansson wrote:
-> On Thu, 22 Aug 2024 at 17:28, Claudiu <claudiu.beznea@tuxon.dev> wrote:
->>
->> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->>
->> Hi,
->>
->> Series adds initial USB support for the Renesas RZ/G3S SoC.
->>
->> Series is split as follows:
->>
->> - patch 01/16           - add clock reset and power domain support for USB
->> - patch 02-04/16        - add reset control support for a USB signal
->>                           that need to be controlled before/after
->>                           the power to USB area is turned on/off.
->>
->>                           Philipp, Ulf, Geert, all,
->>
->>                           I detailed my approach for this in patch
->>                           04/16, please have a look and let me know
->>                           your input.
-> 
-> I have looked briefly. Your suggested approach may work, but I have a
-> few thoughts, see below.
-> 
-> If I understand correctly, it is the consumer driver for the device
-> that is attached to the USB power domain that becomes responsible for
-> asserting/de-asserting this new signal. Right?
+In proactive memory reclamation scenarios, it is necessary to
+estimate the pswpin and pswpout metrics of the cgroup to
+determine whether to continue reclaiming anonymous pages in
+the current batch. This patch will collect these metrics and
+expose them.
 
-Right!
+Signed-off-by: Jingxiang Zeng <linuszeng@tencent.com>
+---
+ mm/memcontrol-v1.c | 2 ++
+ mm/memcontrol.c    | 2 ++
+ mm/page_io.c       | 4 ++++
+ 3 files changed, 8 insertions(+)
 
-> 
-> In this regard, please note that the consumer driver doesn't really
-> know when the power domain really gets powered-on/off. Calling
-> pm_runtime_get|put*() is dealing with the reference counting. For
-> example, a call to pm_runtime_get*() just makes sure that the PM
-> domain gets-or-remains powered-on. Could this be a problem from the
-> reset-signal point of view?
+diff --git a/mm/memcontrol-v1.c b/mm/memcontrol-v1.c
+index b37c0d870816..44803cbea38a 100644
+--- a/mm/memcontrol-v1.c
++++ b/mm/memcontrol-v1.c
+@@ -2729,6 +2729,8 @@ static const char *const memcg1_stat_names[] = {
+ static const unsigned int memcg1_events[] = {
+ 	PGPGIN,
+ 	PGPGOUT,
++	PSWPIN,
++	PSWPOUT,
+ 	PGFAULT,
+ 	PGMAJFAULT,
+ };
+diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+index 087a8cb1a6d8..dde3d026f174 100644
+--- a/mm/memcontrol.c
++++ b/mm/memcontrol.c
+@@ -418,6 +418,8 @@ static const unsigned int memcg_vm_event_stat[] = {
+ 	PGPGIN,
+ 	PGPGOUT,
+ #endif
++	PSWPIN,
++	PSWPOUT,
+ 	PGSCAN_KSWAPD,
+ 	PGSCAN_DIRECT,
+ 	PGSCAN_KHUGEPAGED,
+diff --git a/mm/page_io.c b/mm/page_io.c
+index b6f1519d63b0..4bc77d1c6bfa 100644
+--- a/mm/page_io.c
++++ b/mm/page_io.c
+@@ -310,6 +310,7 @@ static inline void count_swpout_vm_event(struct folio *folio)
+ 	}
+ 	count_mthp_stat(folio_order(folio), MTHP_STAT_SWPOUT);
+ #endif
++	count_memcg_folio_events(folio, PSWPOUT, folio_nr_pages(folio));
+ 	count_vm_events(PSWPOUT, folio_nr_pages(folio));
+ }
+ 
+@@ -505,6 +506,7 @@ static void sio_read_complete(struct kiocb *iocb, long ret)
+ 		for (p = 0; p < sio->pages; p++) {
+ 			struct folio *folio = page_folio(sio->bvec[p].bv_page);
+ 
++			count_memcg_folio_events(folio, PSWPIN, folio_nr_pages(folio));
+ 			folio_mark_uptodate(folio);
+ 			folio_unlock(folio);
+ 		}
+@@ -588,6 +590,7 @@ static void swap_read_folio_bdev_sync(struct folio *folio,
+ 	 * attempt to access it in the page fault retry time check.
+ 	 */
+ 	get_task_struct(current);
++	count_memcg_folio_events(folio, PSWPIN, folio_nr_pages(folio));
+ 	count_vm_event(PSWPIN);
+ 	submit_bio_wait(&bio);
+ 	__end_swap_bio_read(&bio);
+@@ -603,6 +606,7 @@ static void swap_read_folio_bdev_async(struct folio *folio,
+ 	bio->bi_iter.bi_sector = swap_folio_sector(folio);
+ 	bio->bi_end_io = end_swap_bio_read;
+ 	bio_add_folio_nofail(bio, folio, folio_size(folio), 0);
++	count_memcg_folio_events(folio, PSWPIN, folio_nr_pages(folio));
+ 	count_vm_event(PSWPIN);
+ 	submit_bio(bio);
+ }
+-- 
+2.43.5
 
-It should be safe. From the HW manual I understand the hardware block is
-something like the following:
-
-
-                  USB area
-         +-------------------------+
-         |                         |
-         | PHY --->USB controller  |
-SYSC --> |  ^                      |
-         |  |                      |
-         | PHY reset               |
-         +-------------------------+
-
-Where:
-- SYSC is the system controller that controls the new signal for which
-  I'm requesting opinions in this series
-- PHY reset: is the block controlling the PHYs
-- PHY: is the block controlling the USB PHYs
-- USB controller: is the USB controller
-
-Currently, I passed the SYSC signal handling to the PHY reset driver; w/o
-PHY reset the rest of the USB logic cannot work (neither PHY block nor USB
-controller).
-
-Currently, the PHY reset driver call pm_runtime_resume_and_get() in probe
-and pm_runtime_put() in remove. The struct reset_control_ops::{assert,
-deassert} only set specific bits in registers (no pm_runtime* calls).
-
-The PHY driver is taking its PHY reset in probe and release it in remove().
-With this approach the newly introduced SYSC signal will be
-de-asserted/asserted only in the PHY reset probe/remove (either if it is
-handled though PM domain or reset control signal).
-
-If the SYSC signal would be passed to all the blocks in the USB area (and
-it would be handled though PM domains) it should be no problem either,
-AFAICT, because of reference counting the pm_runtime_get|put*() is taking
-care of. As the PHY reset is the root node the in the devices node tree for
-USB the reference counting should work, too (I may miss something though,
-please correct me if I'm wrong).
-
-If the SYSC signal would be handled though a reset control driver (as
-proposed in this series) and we want to pass this reference to all the
-blocks in the USB area then we can request the reset signal as shared and,
-AFAIK, this is also reference counted. The devices node tree should help
-with the order, too, if I'm not wrong.
-
-Thank you for looking at this,
-Claudiu Beznea
-
-> 
-> [...]
-> 
-> Kind regards
-> Uffe
 
