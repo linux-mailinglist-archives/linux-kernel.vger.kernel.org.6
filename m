@@ -1,49 +1,57 @@
-Return-Path: <linux-kernel+bounces-308068-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308069-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87F149656D7
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 07:22:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9F979656DB
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 07:24:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BBAF61C21CA3
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 05:22:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 849C71F232BE
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 05:24:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9255F14A0B6;
-	Fri, 30 Aug 2024 05:22:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E08914D71D;
+	Fri, 30 Aug 2024 05:23:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="HkehagCJ"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="I5jsYDMF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 734E6EEB7
-	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 05:22:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B82BBEEB7;
+	Fri, 30 Aug 2024 05:23:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724995359; cv=none; b=bZWgSFyEdTyxlLLo5MTvWZyc+lTovpXRaBwChxIzA4b5g5olJrxG7KxhrOlU8/yVCJacbcpCQ2iZ/mHi3+zqska0Rs1oerWc3lFL7pmqi5FqNE6MHk1PSVjcBp18SQ+3+hCa0Z96CgIvp5qyq5iKzjEe0TYllCf93U5CgCLheUk=
+	t=1724995433; cv=none; b=gaWB2Uc9U8779qv7YJQqwB5O6ou5wtjt/IJNu/SnF1zuYMwJLbewMMbDFJf5JwCRMQpxkD6kFxEjFSju+xPs5axB9nlxD3YAQFdnqSgczEZu6QQIYBUIxkY8lh+yBxzSYOG8I3l/UT0W3V2S5AmUjLV2weUWnK9FALPLJmfGxhs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724995359; c=relaxed/simple;
-	bh=Z9FpZIAERYl4K3YRyheNwrysYSCpYqYGRbzlMCgLbSY=;
+	s=arc-20240116; t=1724995433; c=relaxed/simple;
+	bh=g0jou+hkbZ1Cw5t8c9AWKZzysCGPuMG2V/6r2Uwp1Qw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=F97fCpcsVcBgWWfh/6agbQw9Evvq5leq7WEkqeYFseScQyFY1f0mlknHg5jFGb49e9VPHfe8VUPZecpwtL7S1ZNUuCcFvO9aSafuiDTNO8eJAAbiIGOIIVtwvxfW2AuXRCSNoRDFNxmRJbZsjUMr53yb4XZ8+2FUFNtJWnvBgpU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=HkehagCJ; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1724995343;
-	bh=Z9FpZIAERYl4K3YRyheNwrysYSCpYqYGRbzlMCgLbSY=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZLan9vpCF8ylgDLU26hys+ncJYADrvHACVD9bxie2Tlf9cR+pKqRsiD7QSOnB6COBbenuecy8F52/jaLg9NtJyxnsJ2OEk3jzjh3HdmmeQGMQT2agAF2UETjdXhNkCmLQ/JZHXURUZ1Ynbw1N3D2wXme0neJEojn2qZWnVfLZDI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=I5jsYDMF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A8E1CC4CEC4;
+	Fri, 30 Aug 2024 05:23:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1724995433;
+	bh=g0jou+hkbZ1Cw5t8c9AWKZzysCGPuMG2V/6r2Uwp1Qw=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HkehagCJAubkEO5lKicU3gngC/851BWibLjtFmzEs+3wAsUUnPZE5Ma2K5KxMv4kP
-	 DfLs5cQjNvy65yS5SoyFEiVKSauWYBtzjhxfgqEg0/h+xUOi4LqeQOgjuiB+6cTHQY
-	 eI7+jpbXFNuo/xIeRbp+2iEE51NzvSVr5oclen9Y=
-Date: Fri, 30 Aug 2024 07:22:22 +0200
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
-To: Bert Karwatzki <spasswolf@web.de>
-Cc: linux-kernel@vger.kernel.org
-Subject: Re: commit c2fe0480cd77 leads to hang on boot
-Message-ID: <717c608b-6280-45fd-bb88-eeb862a893e3@t-8ch.de>
-References: <20240829230438.3226-1-spasswolf@web.de>
+	b=I5jsYDMF/JJrYup8m0quhEu3opTU6/ba3rMsdd6DIHxsgNVGOYp3s5iuAciy2cAXk
+	 ItTHrrLh9/TO3eO8xbDrvN3V8DP+PPWCYx+wtDXWk1u3+1j/gnpJicvvCY7BNW8/hB
+	 ssTRu5dJfZ7ZyNGxHwTAp0Ids7hCWfuW+fiR5ha8=
+Date: Fri, 30 Aug 2024 07:23:49 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: WangYuli <wangyuli@uniontech.com>
+Cc: mathias.nyman@intel.com, sergei.shtylyov@gmail.com, helgaas@kernel.org,
+	yuzenghui@huawei.com, linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+	guanwentao@uniontech.com, Chen Baozi <chenbaozi@phytium.com.cn>,
+	Wang Zhimin <wangzhimin1179@phytium.com.cn>,
+	Chen Zhenhua <chenzhenhua@phytium.com.cn>,
+	Wang Yinfeng <wangyinfeng@phytium.com.cn>,
+	Jiakun Shuai <shuaijiakun1288@phytium.com.cn>
+Subject: Re: [PATCH v3] usb: xHCI: add XHCI_RESET_ON_RESUME quirk for Phytium
+ xHCI host
+Message-ID: <2024083013-crinkle-making-8cb8@gregkh>
+References: <51AD65BA61BA0881+20240830043509.31019-1-wangyuli@uniontech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -52,34 +60,22 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240829230438.3226-1-spasswolf@web.de>
+In-Reply-To: <51AD65BA61BA0881+20240830043509.31019-1-wangyuli@uniontech.com>
 
-Hi Bert,
-
-thanks for the report.
-
-On 2024-08-30 01:04:37+0000, Bert Karwatzki wrote:
-> To look into the issue I applied the following patch to next-20240829:
+On Fri, Aug 30, 2024 at 12:35:09PM +0800, WangYuli wrote:
+> The resume operation of Phytium Px210 xHCI host would failed
+> to restore state. Use the XHCI_RESET_ON_RESUME quirk to skip
+> it and reset the controller after resume.
 > 
-> diff --git a/drivers/video/fbdev/efifb.c b/drivers/video/fbdev/efifb.c
-> index 20517448487e..ba2b0d4b1bd3 100644
-> --- a/drivers/video/fbdev/efifb.c
-> +++ b/drivers/video/fbdev/efifb.c
-> @@ -573,6 +573,8 @@ static int efifb_probe(struct platform_device *dev)
->  		pr_err("efifb: cannot acquire aperture\n");
->  		goto err_fb_dealloc_cmap;
->  	}
-> +	printk(KERN_INFO "%s: not calling devm_register_framebuffer\n", __func__);
-> +	goto err_fb_dealloc_cmap;
->  	err = devm_register_framebuffer(&dev->dev, info);
->  	if (err < 0) {
->  		pr_err("efifb: cannot register framebuffer\n");
-> 
-> Now booting works again so the problem seems to be in devm_register_framebuffer().
+> Changlog:
+>  *v1 -> v2: Move the PCI_VENDOR_ID_PHYTIUM form pci_ids.h to xhci-pci.c
+>   v2 -> v3: Change "||" to "&&", that was a mistake.
 
-What happens if you replace devm_register_framebuffer() with a plain
-register_framebuffer() again?
+As per the documentation, the changelog goes below the --- line.
 
+Please fix up and send a v4.
 
-Thomas
+thanks,
+
+greg k-h
 
