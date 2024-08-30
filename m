@@ -1,72 +1,59 @@
-Return-Path: <linux-kernel+bounces-309070-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309071-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 625D59665D2
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 17:38:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 704B39665D4
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 17:39:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BCF9FB24EFC
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 15:38:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DB54BB25104
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 15:38:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7DC11BE875;
-	Fri, 30 Aug 2024 15:34:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F3291B6553;
+	Fri, 30 Aug 2024 15:36:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BGu2EEG4"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UTW5lIaw"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E242D1B81C3;
-	Fri, 30 Aug 2024 15:34:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF9CD1386DF;
+	Fri, 30 Aug 2024 15:36:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725032080; cv=none; b=spG/sW/SxmriZnDPHpzU6zhbRZLMxUSa05BpP/RvF/ynWLO995f4N3FhSbt8PobHYETUJB4arl7vfMZ0JzRD1FYqB9TzbCwtjJrtvOYpsQ93GCXqmhzgPiBUDY1xfJqxtlCngLbnXpc4rp0un6L7NknPFGvgQ/qfTdHVfTreFS0=
+	t=1725032200; cv=none; b=MrjndSwPtXyFZF2baxJkXoitA3tGcOpJ0bLZbnWqKUW7/qJq3SL2D1nrl83a8LrBOUv+YOs5yieHce7C+ZnTZ/gfK75AqVq75wp2iralOr1yuTuFLmgXNLBLWTQTsFidB07NmwjjCeY7eI+EKfVSsuL7aqbERCg1dpl1U77pGmI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725032080; c=relaxed/simple;
-	bh=sMhjK2G93E8pRdOEGgRej93yB0F8vhk+6uOsJO083iE=;
+	s=arc-20240116; t=1725032200; c=relaxed/simple;
+	bh=XKLkN7swlMDapQ8Pi00Cr3mQaJz8vtD+lACwdeK6Kvc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ePSaY+++/UeV/Xinn+MwY22BXxlllp5flPtoRTbACmlUkC5pSwKgxC8OS5zdKErMPpWclGUOQkw16JWRCFV6/OgiV1A8VeAqbpGmCTiHux1PwgMKuUfvid6NHiDxmsv7N4B+7Qt45oMUAUDkgQnvtlhx6rTcFQMMpfV0MJjjcGE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BGu2EEG4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 36455C4CEC2;
-	Fri, 30 Aug 2024 15:34:39 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=bgy9773jBbA5lQvBPGx5/zD2ah3jZ2bWp11MlP0qouxdQdtjhj0rtzX6lKw71S60YqsgpDQUxRR4Ku50KzxtYRXbP/tq2IUDYceJT32Kv9zVx/gXL1AHnqWBlg7qZqZKOonGzKm8nJgMnULStUCbsUv+SLwsS0o1a+qmmzh8Cb4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UTW5lIaw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 077BBC4CEC2;
+	Fri, 30 Aug 2024 15:36:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725032079;
-	bh=sMhjK2G93E8pRdOEGgRej93yB0F8vhk+6uOsJO083iE=;
+	s=k20201202; t=1725032200;
+	bh=XKLkN7swlMDapQ8Pi00Cr3mQaJz8vtD+lACwdeK6Kvc=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BGu2EEG4qNddC56ktd+1VgcidfLuPMPi9DcvYjB8+u+ih72S9+0T0da4r8ynZnk3g
-	 uR/6O5p6dBovtm452fMouESkWIiCaWQUfBRivhC/tUQ64Np56kzACgQ+N5XZ+qxpVJ
-	 e2QXDNUpP+7nKL9d3OlS3Rwkz4Tq04Ccw/3LjyXnfdQqgefQt1EAS2K682LY4cetbV
-	 N1y5WDQj4SEetgbGNmagrg5ajX/6/W5ZmL4qsIapmKNu1lpl3iqkTybW/MclgMf9vf
-	 Qwa7DbNb4yqKc4qE0/ylwDVkqcbTik4pTgPG9Cq20KDSUbfiXsxUUScfIlMlLegBaw
-	 xMaFmb9Ds0C7A==
-Date: Fri, 30 Aug 2024 10:34:37 -0500
-From: Rob Herring <robh@kernel.org>
-To: Macpaul Lin <macpaul.lin@mediatek.com>
-Cc: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-leds@vger.kernel.org,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>, Sebastian Reichel <sre@kernel.org>,
-	Pavel Machek <pavel@ucw.cz>, Sean Wang <sean.wang@mediatek.com>,
-	Lee Jones <lee@kernel.org>,
-	Alexandre Mergnat <amergnat@baylibre.com>,
-	Flora Fu <flora.fu@mediatek.com>,
-	Bear Wang <bear.wang@mediatek.com>,
-	Pablo Sun <pablo.sun@mediatek.com>, Macpaul Lin <macpaul@gmail.com>,
-	Sen Chu <sen.chu@mediatek.com>,
-	Chris-qj chen <chris-qj.chen@mediatek.com>,
-	MediaTek Chromebook Upstream <Project_Global_Chrome_Upstream_Group@mediatek.com>,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, linux-pm@vger.kernel.org,
-	linux-rtc@vger.kernel.org, linux-sound@vger.kernel.org,
-	devicetree@vger.kernel.org, Chen-Yu Tsai <wenst@chromium.org>
-Subject: Re: [PATCH v2 3/7] dt-bindings: rtc: mt6397: merge to MFD
- mediatek,mt6397 DT schema
-Message-ID: <20240830153437.GB4175444-robh@kernel.org>
-References: <20240830110732.30080-1-macpaul.lin@mediatek.com>
- <20240830110732.30080-3-macpaul.lin@mediatek.com>
+	b=UTW5lIaworEQj2H3MuCLXQ5pAKGOzZ9XgYnaqxuy42huZUM1L1kBVz/QaYYNtgxgA
+	 Qk2gQqroQ7g27oRZp+vxzaP0wpOkPLaSPvNx0TeAgwrmlPMN5cIsgKUAWYd/kZ2Eqz
+	 jh5PpCWCI6ML3gjwVaZwRCGih8mLoWP/921sw4Reaoq91ZCw7iYk/lSxSA4pOt4Uv2
+	 jJgRIfGdkNpU3IBLc/IGpGqMIaAyW5tEpeuoCG8ipy44GjzXGNuLoBFowoGA3VXUfw
+	 zDhSRP0rvX/7FdpvfiTMn+s6FauRPXcmdsoevA0/4dQhbkcLx0uuS98l/UnexnZ80f
+	 kW62vMXiC+GGw==
+Date: Fri, 30 Aug 2024 16:36:34 +0100
+From: Simon Horman <horms@kernel.org>
+To: Menglong Dong <menglong8.dong@gmail.com>
+Cc: idosch@nvidia.com, kuba@kernel.org, davem@davemloft.net,
+	edumazet@google.com, pabeni@redhat.com, dsahern@kernel.org,
+	dongml2@chinatelecom.cn, amcohen@nvidia.com, gnault@redhat.com,
+	bpoirier@nvidia.com, b.galvani@gmail.com, razor@blackwall.org,
+	petrm@nvidia.com, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org
+Subject: Re: [PATCH net-next v2 07/12] net: vxlan: add skb drop reasons to
+ vxlan_rcv()
+Message-ID: <20240830153634.GR1368797@kernel.org>
+References: <20240830020001.79377-1-dongml2@chinatelecom.cn>
+ <20240830020001.79377-8-dongml2@chinatelecom.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,21 +62,66 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240830110732.30080-3-macpaul.lin@mediatek.com>
+In-Reply-To: <20240830020001.79377-8-dongml2@chinatelecom.cn>
 
-On Fri, Aug 30, 2024 at 07:07:28PM +0800, Macpaul Lin wrote:
-> Convert rtc-mt6397.txt be compatible with the DT schema.
-> Since this is a simple RTC device node, merge it into parent
-> mediatek,mt6397.yaml. Subsequently, remove rtc-mt6397.txt with a
-> separate patch.
-
-This doesn't match what the patch does. You can just squash this into 
-the MFD patch where you add the schema.
-
+On Fri, Aug 30, 2024 at 09:59:56AM +0800, Menglong Dong wrote:
+> Introduce skb drop reasons to the function vxlan_rcv(). Following new
+> vxlan drop reasons are added:
 > 
-> Signed-off-by: Macpaul Lin <macpaul.lin@mediatek.com>
+>   VXLAN_DROP_INVALID_HDR
+>   VXLAN_DROP_VNI_NOT_FOUND
+> 
+> And Following core skb drop reason is added:
+> 
+>   SKB_DROP_REASON_IP_TUNNEL_ECN
+> 
+> Signed-off-by: Menglong Dong <dongml2@chinatelecom.cn>
 > ---
->  .../devicetree/bindings/rtc/rtc-mt6397.txt    | 31 -------------------
->  1 file changed, 31 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/rtc/rtc-mt6397.txt
+> v2:
+> - rename the drop reasons, as Ido advised.
+> - document the drop reasons
+> ---
+>  drivers/net/vxlan/drop.h       | 10 ++++++++++
+>  drivers/net/vxlan/vxlan_core.c | 35 +++++++++++++++++++++++++---------
+>  include/net/dropreason-core.h  |  6 ++++++
+>  3 files changed, 42 insertions(+), 9 deletions(-)
+> 
+> diff --git a/drivers/net/vxlan/drop.h b/drivers/net/vxlan/drop.h
+> index 876b4a9de92f..416532633881 100644
+> --- a/drivers/net/vxlan/drop.h
+> +++ b/drivers/net/vxlan/drop.h
+> @@ -11,6 +11,8 @@
+>  #define VXLAN_DROP_REASONS(R)			\
+>  	R(VXLAN_DROP_INVALID_SMAC)		\
+>  	R(VXLAN_DROP_ENTRY_EXISTS)		\
+> +	R(VXLAN_DROP_INVALID_HDR)		\
+> +	R(VXLAN_DROP_VNI_NOT_FOUND)		\
+>  	/* deliberate comment for trailing \ */
+>  
+>  enum vxlan_drop_reason {
+> @@ -23,6 +25,14 @@ enum vxlan_drop_reason {
+>  	 * one pointing to a nexthop
+>  	 */
+>  	VXLAN_DROP_ENTRY_EXISTS,
+> +	/**
+> +	 * @VXLAN_DROP_INVALID_HDR: the vxlan header is invalid, such as:
+
+> +	 * 1) the reserved fields are not zero
+> +	 * 2) the "I" flag is not set
+
+Maybe:
+	 * ...: VXLAN header is invalid. E.g.:
+	 * 1) reserved fields are not zero
+	 * 2) "I" flag is not set
+
+> +	 */
+> +	VXLAN_DROP_INVALID_HDR,
+> +	/** @VXLAN_DROP_VNI_NOT_FOUND: no vxlan device found for the vni */
+
+Maybe: no VXLAN device found for VNI
+
+> +	VXLAN_DROP_VNI_NOT_FOUND,
+>  };
+
+...
 
