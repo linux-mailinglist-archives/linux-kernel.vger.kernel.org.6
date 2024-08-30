@@ -1,195 +1,92 @@
-Return-Path: <linux-kernel+bounces-309355-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309356-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D41296694F
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 21:10:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2D40966950
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 21:11:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 44F9328518A
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 19:10:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8AF571F2478C
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 19:11:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C65E51BC9E9;
-	Fri, 30 Aug 2024 19:10:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B312E1BD018;
+	Fri, 30 Aug 2024 19:11:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FLdaTgMe"
-Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="gSKuCCHE"
+Received: from smtpout.efficios.com (smtpout.efficios.com [167.114.26.122])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 817B813B297;
-	Fri, 30 Aug 2024 19:09:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C69D1DA22
+	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 19:11:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.114.26.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725045001; cv=none; b=BUNTovb7c3lYbjsKTRILBaP7+71jKDvyvCeAS21D6EhTp8e3MwfEScL7beFihCUC+EBNWQVxRlziLPjunECWSllFJ+6Z6U/x54jPWbr9ZKyVzVVpDfDVqU7YWWQlObhAFY12URvCQYHyrmYQE7hJqQH1bQjWUvccU709N3kO8/k=
+	t=1725045074; cv=none; b=RMmYLVg5Za3matjOPOXvtqKtyWTdS8aVKa2kzgNqtngLHK6zrCWkXX2y2mnuhZrT/EvC/gQ74x9y9BfAuAy/Z+qHBSV8/tmmz5LDC7qlSme0WNBGA+fG3MAUayp/qixVaEHzH0hiD3O8RoBi3nOqgNppgYKJuR6espFZkN8qswE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725045001; c=relaxed/simple;
-	bh=9v4c6eYe6XInWfwmmXNcdoZYfz7QVGmeCfxTCFEj3wo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gLCMwnSEfi9nYZZngsljB9ycH1kGqynEPTk5dASpE1IaRmaNqTpGNzYa9WtgJmX33Vfp3PL3OAI61w/HnDjYAyakS6dD/rfsZyPTz1qtQ8EEC7RskaihwZV389ehE/ocCD3eQXTUWDRUDN8PqrUrwgreEDtrMnbZLUtyCK9tOl4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FLdaTgMe; arc=none smtp.client-ip=209.85.216.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-2d87a57c06fso105720a91.2;
-        Fri, 30 Aug 2024 12:09:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725044999; x=1725649799; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kiQ1ufq0LJDmNAhzzm7F4UAH4C8ldiYpmNwSTNOtiQE=;
-        b=FLdaTgMemSmzWqVk6zPh3nbt76i82rfUkzFo7gJ4ggODnIz3ZQNpYu/g8TsvPTohtS
-         K13k7oj9F249NbHbxZIUQHr28zOK3cP7gpHR8zCmd4XBuckasGlMhSS4eGgeFLx3DEoJ
-         Ti5CvzAU9RqK8zlI6itwaWZ29LW7lPb8UR7ZYJjnH1naHW1DbNi01q1mh72QLDw3y1Ls
-         0zS0wDuILOgTHATVlwj++VXlX7Vr8/pLnOvydLDZWlUJConrwaNzqLU+/DTcfBrIZOUK
-         akYroobrNLexyevDJTGGMjT7FcXx3PE3MTqqA8GYNsLZt1wnjmvaBicauX966hCVaSxQ
-         tbaw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725044999; x=1725649799;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=kiQ1ufq0LJDmNAhzzm7F4UAH4C8ldiYpmNwSTNOtiQE=;
-        b=E3tOXgQUphu+r+wRkGTuOjnGKqWavyD/6w053+Q/Ewf3TxwB8XoRaBH251SdFocixj
-         ktIkvSdgV6ww0zoQSDSNg7zG7xiqV2Kr/1evKOwehI7zKyCOe0irUz+HtxQTeweS56MT
-         PuOZa8d0JqUhr5D6Q5e7f3PuttO/veFi57B8hefyMINo0JWhjqqvXr787pZLCu/dcS/W
-         W46M0A83mLLA6bEvRsgNoYZkzq2RY6w9Mr96vrNcloiXOpV3BjflpzGUdrYZzjEeKAri
-         r+auyMZ4+EVHXN1/0WlZSL04A1sx8D2A1cPK3MV6Cz6ggkLFyXr9Canz/NmvbHVjFvMo
-         43/w==
-X-Forwarded-Encrypted: i=1; AJvYcCUkd8irS9EFnfvYedzk9DviAh5ta6gkzXhZ4/Dw0aZ++K3E850GJV3TO90BgwjlUoy8c7QLxNBgBPZxQ0Nh@vger.kernel.org, AJvYcCWRJ3sQ1FNyjiLMM9V5O6nkk50lTju5Nx89CnB8wOYU3xjb32klfNr2P05i7Klqo4vx+KUTRYCPujwUF/22@vger.kernel.org
-X-Gm-Message-State: AOJu0YxlyvE1wbWsGaqVMuXtgQtB/2X2UH8O7D68B7dUsaEUrYTYe0TG
-	Ek5tPp85Cuu2iLGk8Z/B8g0oi1a0qzru1TODFk/pTH8KCNCvk3NxALRtGhrT9u+Yut9dSD7q6Bp
-	6w7YzcQ75zB2+mzdGyXlQqTdLXMg=
-X-Google-Smtp-Source: AGHT+IFLdzRNSJoZ7XESTDoYRzQrEdC8kcWMd8Fgqi1Pn13p4zB6Vr7SKOtwpkRilwX7Ji1V/XFn1RrfBI1xcCqPa6w=
-X-Received: by 2002:a17:90b:4b4a:b0:2d3:c34b:a071 with SMTP id
- 98e67ed59e1d1-2d86b814c6dmr1831729a91.3.1725044998757; Fri, 30 Aug 2024
- 12:09:58 -0700 (PDT)
+	s=arc-20240116; t=1725045074; c=relaxed/simple;
+	bh=fN/gboV7mvM7orgTeMr0F/zHqUjc1KBHYhBJbJZi8u4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=KvqMAwBhrZwJrO2Y3XvtWb8aaCrIZvTs7oySLWwo8tyfzDH+qn+nTBy+DyBshmfcFZXUAD0VzECSEUYqJ9gFMogrnHr5QFkis68LmhdkvydDK2gEtqiO/YSiWn/O6eeYAmax+Pi1Gpf+UFocA3J9flr7p8SaFVV08rQm2efZNpE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=gSKuCCHE; arc=none smtp.client-ip=167.114.26.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
+	s=smtpout1; t=1725045070;
+	bh=fN/gboV7mvM7orgTeMr0F/zHqUjc1KBHYhBJbJZi8u4=;
+	h=From:To:Cc:Subject:Date:From;
+	b=gSKuCCHE4gBeMZRx+oLs9ARmR2oc8omZlV+qHRV5yaono5m8lJHNtvoAP2beL+/N6
+	 R0tdtPFbq9eeocXee+RlTq7qIdxEBMLRhfIfkkgkjwvp8gWGzICtA7eIHPdwDLz6qU
+	 55LGtuoOpltscQROa9HiheCaWc3xq2lVnvH6MnplTKUQs8AjiVxDaIG2RwvokU3GLD
+	 S0NFnkF4YYpJdCYeoVCWb2i6C9ujYVJpohAJ+3YwupVVuY7W5l9LQNIzHkXYP6XeOH
+	 eKE5pGRCHzmSjC0TWMuNM8jzeyeac0SsSmZKmJkaZRKy9bPF/0NTqv2049PZTBWzWk
+	 Qj3pnAlXNqOtg==
+Received: from thinkos.internal.efficios.com (96-127-217-162.qc.cable.ebox.net [96.127.217.162])
+	by smtpout.efficios.com (Postfix) with ESMTPSA id 4WwSRf5Gstz1Jjx;
+	Fri, 30 Aug 2024 15:11:10 -0400 (EDT)
+From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+To: Yury Norov <yury.norov@gmail.com>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Cc: linux-kernel@vger.kernel.org,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Subject: [PATCH v3 0/6] lib: Extend bitmap find binary operations
+Date: Fri, 30 Aug 2024 15:10:37 -0400
+Message-Id: <20240830191043.1028827-1-mathieu.desnoyers@efficios.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240830-preemption-a750-t-v2-0-86aeead2cd80@gmail.com>
- <20240830-preemption-a750-t-v2-4-86aeead2cd80@gmail.com> <CAF6AEGtxCnoyrEHPknV7C9XO3OcTpSOmGq-j2K7UDKXF1j0ssA@mail.gmail.com>
- <CACu1E7FC_gPXHm4g7f0iv551orxfh=V_sJF47=6TC+nWdMyTMg@mail.gmail.com> <CAF6AEGvkds04G1XzVr8433S1Za_xZZSkmrWNaH-gUw6cH+cSUw@mail.gmail.com>
-In-Reply-To: <CAF6AEGvkds04G1XzVr8433S1Za_xZZSkmrWNaH-gUw6cH+cSUw@mail.gmail.com>
-From: Connor Abbott <cwabbott0@gmail.com>
-Date: Fri, 30 Aug 2024 20:09:47 +0100
-Message-ID: <CACu1E7HC_u0WZ5ayXhm3z-Q5Do7tnwQLGdJ5feD99aOB52H1ug@mail.gmail.com>
-Subject: Re: [PATCH v2 4/9] drm/msm/A6xx: Implement preemption for A7XX targets
-To: Rob Clark <robdclark@gmail.com>
-Cc: Antonino Maniscalco <antomani103@gmail.com>, Sean Paul <sean@poorly.run>, 
-	Konrad Dybcio <konrad.dybcio@linaro.org>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
-	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
-	Daniel Vetter <daniel@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, linux-arm-msm@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org, Sharat Masetty <smasetty@codeaurora.org>, 
-	Neil Armstrong <neil.armstrong@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Fri, Aug 30, 2024 at 8:00=E2=80=AFPM Rob Clark <robdclark@gmail.com> wro=
-te:
->
-> On Fri, Aug 30, 2024 at 11:54=E2=80=AFAM Connor Abbott <cwabbott0@gmail.c=
-om> wrote:
-> >
-> > On Fri, Aug 30, 2024 at 7:08=E2=80=AFPM Rob Clark <robdclark@gmail.com>=
- wrote:
-> > >
-> > > On Fri, Aug 30, 2024 at 8:33=E2=80=AFAM Antonino Maniscalco
-> > > <antomani103@gmail.com> wrote:
-> > > >
-> > > > This patch implements preemption feature for A6xx targets, this all=
-ows
-> > > > the GPU to switch to a higher priority ringbuffer if one is ready. =
-A6XX
-> > > > hardware as such supports multiple levels of preemption granulariti=
-es,
-> > > > ranging from coarse grained(ringbuffer level) to a more fine graine=
-d
-> > > > such as draw-call level or a bin boundary level preemption. This pa=
-tch
-> > > > enables the basic preemption level, with more fine grained preempti=
-on
-> > > > support to follow.
-> > > >
-> > > > Signed-off-by: Sharat Masetty <smasetty@codeaurora.org>
-> > > > Signed-off-by: Antonino Maniscalco <antomani103@gmail.com>
-> > > > Tested-by: Neil Armstrong <neil.armstrong@linaro.org> # on SM8650-Q=
-RD
-> > > > ---
-> > > >  drivers/gpu/drm/msm/Makefile              |   1 +
-> > > >  drivers/gpu/drm/msm/adreno/a6xx_gpu.c     | 323 ++++++++++++++++++=
-+++-
-> > > >  drivers/gpu/drm/msm/adreno/a6xx_gpu.h     | 168 ++++++++++++
-> > > >  drivers/gpu/drm/msm/adreno/a6xx_preempt.c | 431 ++++++++++++++++++=
-++++++++++++
-> > > >  drivers/gpu/drm/msm/msm_ringbuffer.h      |   7 +
-> > > >  5 files changed, 921 insertions(+), 9 deletions(-)
-> > > >
-> > >
-> > > [snip]
-> > >
-> > > > +
-> > > > +int a6xx_preempt_submitqueue_setup(struct msm_gpu *gpu,
-> > > > +               struct msm_gpu_submitqueue *queue)
-> > > > +{
-> > > > +       void *ptr;
-> > > > +
-> > > > +       /*
-> > > > +        * Create a per submitqueue buffer for the CP to save and r=
-estore user
-> > > > +        * specific information such as the VPC streamout data.
-> > > > +        */
-> > > > +       ptr =3D msm_gem_kernel_new(gpu->dev, A6XX_PREEMPT_USER_RECO=
-RD_SIZE,
-> > > > +                       MSM_BO_WC, gpu->aspace, &queue->bo, &queue-=
->bo_iova);
-> > >
-> > > Can this be MSM_BO_MAP_PRIV?  Otherwise it is visible (and writeable)
-> > > by other proceess's userspace generated cmdstream.
-> > >
-> > > And a similar question for the scratch_bo..  I'd have to give some
-> > > thought to what sort of mischief could be had, but generall kernel
-> > > mappings that are not MAP_PRIV are a thing to be careful about.
-> > >
-> >
-> > It seems like the idea behind this is that it's supposed to be
-> > per-context. kgsl allocates it as part of the context, as part of the
-> > userspace address space, and then in order to know which user record
-> > to use when preempting, before each submit (although really it only
-> > needs to be done when setting the pagetable) it does a CP_MEM_WRITE of
-> > the user record address to a scratch buffer holding an array of the
-> > current user record for each ring. Then when preempting it reads the
-> > address for the next ring from the scratch buffer and sets it. I think
-> > we need to do that dance too.
->
-> Moving it into userspace's address space (vm) would be better.
->
-> I assume the preempt record is where state is saved/restored?  So
-> would need to be in kernel aspace/vm?  Or is the fw changing ttbr0
-> after saving state but before restoring?
->
-> BR,
-> -R
+Extend bitmap find.h and cpumask.h with additional binary operations
+such as "nor".
 
-The preempt record is split into a number of pieces, each with their
-own address. One of those pieces is the SMMU record with ttbr0 and
-other SMMU things. Another piece is the "private" context record with
-sensitive things like RB address/rptr/wptr, although actually the bulk
-of the registers are saved here. Then the user or "non-private" record
-is its own piece, which is presumably saved before switching ttbr0 and
-restored after the SMMU record is restored and ttbr0 is switched.
+Also extend the testing and benchmark coverage of those bitmap find with
+binary operations.
 
-Connor
+This is useful for NUMA-aware rseq concurrency IDs which depend on this
+series. The series can be found at:
 
->
-> > Connor
-> >
-> > > BR,
-> > > -R
+https://lore.kernel.org/lkml/20240823185946.418340-1-mathieu.desnoyers@efficios.com/
+
+
+Mathieu Desnoyers (6):
+  lib: Clarify comment on top of find_next_andnot_bit
+  lib: Implement find_{first,next,nth}_nor_bit, for_each_nor_bit,
+    find_first_andnot_bit
+  lib: test bitmap sets binary operation iterators
+  lib: Fix test_find_first_and_bit and test_find_next_and_bit benchmark
+  lib: benchmark bitmap sets binary operation find
+  cpumask: Implement cpumask_{first,next}_{nor,andnot}
+
+ include/linux/cpumask.h  |  60 ++++++++++++++++
+ include/linux/find.h     | 124 +++++++++++++++++++++++++++++++--
+ lib/find_bit.c           |  36 ++++++++++
+ lib/find_bit_benchmark.c | 143 +++++++++++++++++++++++++++++++++------
+ lib/test_bitmap.c        |  81 ++++++++++++++++++++++
+ 5 files changed, 418 insertions(+), 26 deletions(-)
+
+-- 
+2.39.2
 
