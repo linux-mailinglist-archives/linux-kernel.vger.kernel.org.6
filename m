@@ -1,128 +1,173 @@
-Return-Path: <linux-kernel+bounces-308086-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308080-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A969D965706
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 07:40:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C8889656FA
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 07:38:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3F98FB23A65
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 05:40:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9EEE71F21B9A
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 05:37:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 877DE14F11D;
-	Fri, 30 Aug 2024 05:40:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3676E14EC7C;
+	Fri, 30 Aug 2024 05:37:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="R7gT9Y6s"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PvcXudcd"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69DB04683;
-	Fri, 30 Aug 2024 05:40:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AFC54683;
+	Fri, 30 Aug 2024 05:37:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724996425; cv=none; b=eL1AvcCxFIbEWCI8BQ2TqkUE++LBvSwqcI1vmFcgijv2+NWSfTDQZtDh0hEcFGWGiqJ+I3F904H2p7Rpbl4wK+oM6B/Sa56vX8XcXPGKZy3z7ru2vN+5BHWQsoEvK+rhmLFaa1fDBc1sokKPujXL6ij93oS0mDpRvK61zNLbCto=
+	t=1724996269; cv=none; b=fslpivhv6Dby8ArU7nvU+wLR1EIaaAB/wYXTlrTkpEIWp9PZ+e9gvbup1mL3rFFassEI2eoaFYgB9bDNhITysA+iKwNR2qa7AGIsjkgu2oc8pKGVOhfD4/XPVUu+J/ilNtZImy+dL82k+fkMfCY9uCON6dYe5BSpGsdlwLOjcEc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724996425; c=relaxed/simple;
-	bh=TSvZrD4lJmOy7wdjmlljNKPC9vnJyx3eyHMBcM54u7Q=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=khAegb4PLobhPioP+rwph5Jg2URJESkFDtgPhc35mlwhz7ksop9QtSaRkZQBf7t9IHGfil07PX9Ad8FXEIr55ZZBljstEo8jCY5xHoSbhtdiZWI0I1xr7yRc9KzUF/gnXx2d8XKZZO3YmNklzXfjJL8jPLJe1k8adfiIvpF6Ato=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=R7gT9Y6s; arc=none smtp.client-ip=68.232.154.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1724996423; x=1756532423;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=TSvZrD4lJmOy7wdjmlljNKPC9vnJyx3eyHMBcM54u7Q=;
-  b=R7gT9Y6sB3b9e5q/ibheBu47+7oUhf+zkow81xFIy61N15jn0oH2c+vP
-   j41y3qGUMDlydOTUU/A4EAYBhI2rcxS+qogSknmIr+FCeqgyVrt0EePsA
-   LnSqT3LKNMnBrOPFQWzZXueYAgDUcUyqyf/fnxVhFLLTBrtJslBkg4U9M
-   LsAGlaYve/X+zwEd0XI7ql8CX8x2LArik+wISRGO7V+KRApVQ/yF8dP8m
-   cTBsiwS/wcLCPqG+viOw8tMVBYh2BPy+p10FnyJnNTNxNaG5VsxwaivTJ
-   xUyyJ3wj7beL/zEe2jf+8QWsDe3FXDI43KzwI8ItoS5OHMW0pDc9dX+MM
-   A==;
-X-CSE-ConnectionGUID: LxYZ/VWqTCKqkZobaprtlw==
-X-CSE-MsgGUID: IJBPug06SGixdt0yYhiSGQ==
-X-IronPort-AV: E=Sophos;i="6.10,187,1719903600"; 
-   d="scan'208";a="31745598"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa2.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 29 Aug 2024 22:40:22 -0700
-Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Thu, 29 Aug 2024 22:40:12 -0700
-Received: from localhost (10.10.85.11) by chn-vm-ex03.mchp-main.com
- (10.10.85.151) with Microsoft SMTP Server id 15.1.2507.35 via Frontend
- Transport; Thu, 29 Aug 2024 22:40:12 -0700
-Date: Fri, 30 Aug 2024 11:06:33 +0530
-From: Raju Lakkaraju <Raju.Lakkaraju@microchip.com>
-To: Maxime Chevallier <maxime.chevallier@bootlin.com>
-CC: Raju Lakkaraju <Raju.Lakkaraju@microchip.com>, <netdev@vger.kernel.org>,
-	<davem@davemloft.net>, <linux@armlinux.org.uk>, <kuba@kernel.org>,
-	<andrew@lunn.ch>, <hkallweit1@gmail.com>, <richardcochran@gmail.com>,
-	<rdunlap@infradead.org>, <Bryan.Whitehead@microchip.com>,
-	<edumazet@google.com>, <pabeni@redhat.com>, <linux-kernel@vger.kernel.org>,
-	<horms@kernel.org>, <UNGLinuxDriver@microchip.com>
-Subject: Re: [PATCH net-next V4 4/5] net: lan743x: Migrate phylib to phylink
-Message-ID: <ZtFaYQRQXi/8Q+qx@HYD-DK-UNGSW21.microchip.com>
-References: <20240829055132.79638-1-Raju.Lakkaraju@microchip.com>
- <20240829055132.79638-5-Raju.Lakkaraju@microchip.com>
- <20240829094910.28ccd6ca@device-28.home>
+	s=arc-20240116; t=1724996269; c=relaxed/simple;
+	bh=YIqTEY53Dydj7lrzD+Z8xZQeTDoC27uAIz99CEHIE0E=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=Se/VLy3gqaNCiopQE3MTeVWz/Lq7nklR4o9sFMF4Ey4ArdntKFgcDFrKSKGX0Od0n9oduPOuLzs8J1NAPhoH/w8vG7LOYU//LjPhN9SDjWYJ9sUPBCfFbYEb6XtCLfmelAN7jUJSQFZde9ozEmtlXSwIT3jnCCV8YUehFLNH/do=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PvcXudcd; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-20219a0fe4dso12426145ad.2;
+        Thu, 29 Aug 2024 22:37:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724996266; x=1725601066; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZIv2atOMB0cIykPfF8uzzPRCW3JUYYFtqphvX1v4wFo=;
+        b=PvcXudcdP+7CmdDFzGoVX1xtw0QpkLCBau2AWYvRv0XJwFsk+0uc2+k7Wf2lkdGQNy
+         5tNKIFq6/9HDIlPpb5tPu1fhU6g5ZT0GVtKxIkn7+IvUxgCPX6b1FcIvbbiuRf02J+N/
+         cvsy+7cl13MCi62utuVTnHLAxshFcIxKQ2A90Hi49J15wzBUu0OIFQfS0yhP7mZidULV
+         bPNeAHvIHM0Aoe6dbX3jvsGP6oLqGM/X6zSEul1YZbxd/aXI6swjq7Fs3YDEPAEPg1kX
+         lyNhLwcPeE75e0VgZmccfbY9CKEgmWRovg4gXjFlLCzcbe9WjnBmC6O1XFLxBiaCyYi0
+         UJPQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724996266; x=1725601066;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ZIv2atOMB0cIykPfF8uzzPRCW3JUYYFtqphvX1v4wFo=;
+        b=hgnVgZMWJMmG9MH1vlrtB6wYap6d9c6sIAN84HZL2+MQM/3OI2nnMmJAB1zzP4ahBC
+         MGvT+FpS9p3y+57z3eT8Iw0XT89KKZA8nMQ/V7846UKAunnIUVe6VFDHXSBsMNSZOHXU
+         8KsTp3swwhikgMjchLRV9IZJ5TbmOpo7pD7ZoMA81zXQRBEvrS20Edl65rz/aoLVDqlX
+         QHC8irZ8RghyVeCr4d6fcgN/mCQ0WBXbDuvxspOtna/D7eq7eFuElaJAbDWdDJkSFoSs
+         2A4g6tq3HCP/x7My68yqCSPbnbLNc9WtstkO3CHkOZkYkvKIl4KCA3xK+gbFI8HkYfQk
+         qArQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVgKA+PNq1XfU5FBNApXFL8uguoSa+jl8UxV8UNFnY9UyYmNVu1FRhDWxBwaCznpvU8gOGK2VPWSbLFiHc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxhmDgP6CTjbhroiQPvg0RCyiGxS5sachBF9zLLAi6qVrYixj4E
+	5aUANGo6Ld30G2knD+dTCJcAaXcE3dVtXMCUVo2KaMidV1AV+aED9YtuDX3X
+X-Google-Smtp-Source: AGHT+IGpNW3eN39MKqqr2OXO5DlhRncT3JKekINbOmFmXuDtynLW4yLwufYGsr0JPHumk6YxLolUog==
+X-Received: by 2002:a17:902:f543:b0:1fa:fc24:afa5 with SMTP id d9443c01a7336-2050c350429mr57616415ad.27.1724996266167;
+        Thu, 29 Aug 2024 22:37:46 -0700 (PDT)
+Received: from localhost.localdomain ([163.53.18.10])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20515534801sm19784075ad.154.2024.08.29.22.37.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 29 Aug 2024 22:37:45 -0700 (PDT)
+From: zhangshida <starzhangzsd@gmail.com>
+X-Google-Original-From: zhangshida <zhangshida@kylinos.cn>
+To: tytso@mit.edu,
+	adilger.kernel@dilger.ca,
+	jack@suse.com,
+	ebiggers@kernel.org
+Cc: linux-ext4@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	zhangshida@kylinos.cn,
+	starzhangzsd@gmail.com
+Subject: [PATCH v6 0/4] Fix an error caused by improperly dirtied buffer
+Date: Fri, 30 Aug 2024 13:37:35 +0800
+Message-Id: <20240830053739.3588573-1-zhangshida@kylinos.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Disposition: inline
-In-Reply-To: <20240829094910.28ccd6ca@device-28.home>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hello Maxime,
+From: Shida Zhang <zhangshida@kylinos.cn>
 
-Thank you for review the patches.
+Hi all,
 
-The 08/29/2024 09:49, Maxime Chevallier wrote:
-> EXTERNAL EMAIL: Do not click links or open attachments unless you know the content is safe
-> 
-> Hello Raju,
-> 
-> On Thu, 29 Aug 2024 11:21:31 +0530
-> Raju Lakkaraju <Raju.Lakkaraju@microchip.com> wrote:
-> 
-> > Migrate phy support from phylib to phylink.
-> >
-> > Signed-off-by: Raju Lakkaraju <Raju.Lakkaraju@microchip.com>
-> 
-> [...]
-> 
-> > +static void lan743x_phylink_disconnect(struct lan743x_adapter *adapter)
-> > +{
-> > +     struct net_device *netdev = adapter->netdev;
-> > +     struct phy_device *phydev = netdev->phydev;
-> > +
-> > +     phylink_stop(adapter->phylink);
-> > +     phylink_disconnect_phy(adapter->phylink);
-> > +
-> > +     if (phydev)
-> > +             if (phy_is_pseudo_fixed_link(phydev))
-> > +                     fixed_phy_unregister(phydev);
-> 
-> You shouldn't manually deal with the fixed_phy when using phylink, it
-> handles fixed links already for you, without a PHY.
+On an old kernel version(4.19, ext3, data=journal, pagesize=64k),
+an assertion failure will occasionally be triggered by the line below:
+---------
+jbd2_journal_commit_transaction
+{
+...
+J_ASSERT_BH(bh, !buffer_dirty(bh));
+/*
+* The buffer on BJ_Forget list and not jbddirty means
+...
+}
+---------
 
-Sure.
-I wll remove this fixed_phy unregister here.
+The same condition may also be applied to the lattest kernel version.
 
-> 
-> Thanks,
-> 
-> Maxime
+This patch set fixes it by: 
+1.Fix a small bug for ext4_journalled_zero_new_buffers first.(patch 1)
+2.Replace the __block_write_begin with the hoisted
+  ext4_block_write_begin().(patch 2)
+3.Trace the user data dirtying in ext4_block_write_begin().(patch 3)
+4.Clean up some extra things.(patch 4)
+
+Changes since v5: 
+- Moved a hunk inside the if (buffer_new(bh)) check in patch 3.
+- Add a cleanup in patch 4. 
+
+[5] Version 5:
+https://lore.kernel.org/linux-ext4/20240829085407.3331490-1-zhangshida@kylinos.cn/
+Changes since v4: 
+- At first, we fix a bug in ext4_journalled_zero_new_buffers, as suggested
+  by Jan.
+- In patch 2, clean up the related comment. And remove the #ifdef in  
+  ext4_block_write_begin(), as suggested by Eric. 
+- Add some comments in patch 3.
+
+[4] Version 4:
+https://lore.kernel.org/linux-ext4/20240823013329.1996741-1-zhangshida@kylinos.cn/
+Changes since v3: 
+- Ditch the patch 3 in v3, because some other code paths can set the 
+  buffer dirty:
+        ext4_write_begin
+                ext4_block_write_begin
+                        create_empty_buffers
+                                set_buffer_dirty 
+
+[3] Version 3:
+https://lore.kernel.org/linux-ext4/20240810082814.3709867-1-zhangshida@kylinos.cn/
+Changes since v2: 
+- Adjust the applied order of patch 1 and patch 2 in v1. 
+- Reword the commit message.
+- Remove some superfluous logic in patch 2 and patch 3.
+
+[2] Version 2:
+https://lore.kernel.org/linux-ext4/20240809064606.3490994-2-zhangshida@kylinos.cn/
+Changes since v1:
+- v1 use a hack into jbd2 to fix the bug while v2 choose to journal
+  the dirty data in *_block_write_begin.
+
+[1] Version 1:
+https://lore.kernel.org/linux-ext4/20240720062356.2522658-1-zhangshida@kylinos.cn/
+
+
+Shida Zhang (4):
+  ext4: persist the new uptodate buffers in
+    ext4_journalled_zero_new_buffers
+  ext4: hoist ext4_block_write_begin and replace the __block_write_begin
+  ext4: fix a potential assertion failure due to improperly dirtied
+    buffer
+  ext4: remove the special buffer dirty handling in
+    do_journal_get_write_access
+
+ fs/ext4/ext4.h   |  3 ++
+ fs/ext4/inline.c | 11 ++++---
+ fs/ext4/inode.c  | 80 +++++++++++++++++++++++-------------------------
+ 3 files changed, 47 insertions(+), 47 deletions(-)
 
 -- 
-Thanks,                                                                         
-Raju
+2.33.0
+
 
