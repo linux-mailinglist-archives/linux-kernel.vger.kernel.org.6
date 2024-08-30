@@ -1,141 +1,114 @@
-Return-Path: <linux-kernel+bounces-308285-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308286-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13A2C9659CE
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 10:14:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D3DA9659D1
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 10:15:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C6C9E2877DB
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 08:14:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 23C8A287D7C
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 08:15:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B79C515099A;
-	Fri, 30 Aug 2024 08:13:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GnTfo3jM"
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEB4A16DC05;
+	Fri, 30 Aug 2024 08:14:10 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AA2E166F3F
-	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 08:13:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29F96166F08
+	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 08:14:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725005615; cv=none; b=Kn/oVXIaJe5ApQZY70amy3p4cualZHOjz880/7rtQikkoPRg7OBCG4yePCUyo7aN1NO4XtknDchzFbbky5Bbg6QONdV0h435ZJoETiRf2oepAkCpez9fYy3f+loG9j4SajLQKFrtI8uu2HOCtlosjcu4/da1Wbh2Klh+p2JJx0E=
+	t=1725005650; cv=none; b=JWFHwxk4Ta06QiexQMUt+t9h9tbwGBeKBOUKxRzSGApkBT4Z0DsQSUhnhaJ0jtYPtXbn4tHfNB8Qhw+6uv8vHwQiPodWr4vUDk8ZjCwhDI1bQmorpAWj9GtbvM44BHMuxL9elw2VZcFb10qjEmPmw0O77kvh0GRV5WuUKQFCD1Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725005615; c=relaxed/simple;
-	bh=9lAJkqgaWF31Wo4W4580wuECtRVzMN8l2oXT5n9PbkM=;
+	s=arc-20240116; t=1725005650; c=relaxed/simple;
+	bh=gs8m6XzA7rsiitgMax02+6Zf3kJfaVZMXfkZt6ROd0A=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FYWH6CAfX2pE4j0N84iNNeSujXvOAZ0yCC0fVkRj1/I0DlpbX8h54DVyXb63nLsQtwQfLHbRWr+4JIS0BtW69RTvGLAq7zhyBWmxw3YD/ULB0l7uqadlt+ybYIOrO7gJJ2j93d++4kuiS6DTDduzmyT9toSxtxokCOsYDfL6HYw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GnTfo3jM; arc=none smtp.client-ip=209.85.208.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2f504652853so17142841fa.0
-        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 01:13:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1725005611; x=1725610411; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=0Rd3vrhfsJ6l74liSsK8uI//rJ+lt5QFYUiOIWgOEvw=;
-        b=GnTfo3jMU/SmEmvhgqJa/1KW0uVKTPR+FIXhvXq0Ms3qi2rgUboIyLRd+/PhK/2F/x
-         VS3hLKP5fXov93AXJJChiWh8BjtkWA/53qTpnzFg/lp6FQUXoUcRXWE/qtMuROefBd0+
-         blZ0AGDN4iXbpxGuGan1CLV0MDvpCmnOjnT8IZowrOpZLBdegBMtAcJ/0lLZqdP0kuvT
-         v4wsGOOJJB76VzduOkfyNkMDiHVi+NurF/qRjvrspEVK74cB5YWhih64sUgE6ikeM6e2
-         gC3LAnmBGk5tRbh4LCCb1WVX+C3wRUgJyNWKD1twaf/Ix1NUkdLvr92SX8TFZ0xx+kRn
-         eVnw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725005611; x=1725610411;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0Rd3vrhfsJ6l74liSsK8uI//rJ+lt5QFYUiOIWgOEvw=;
-        b=I91oGDi76iZ+FY88ETjDlQJn9z0nTGDvsxoolJ786Cle2TtNs6LKvsp2gPHEpz+3jG
-         5EILGWjW34dQXlBCVIncoHeUDdtfeexyD8KsNU9d3bvTtORtOE8S9xDYIUlnHL8kn5XV
-         NPOz7ROpAmvtrga8rIL4nxXQCKStUWCS8Ko7nRG5EJgHOnuKtIMav6mpvoxVvO/jM8OH
-         U/xFWU+el21EqW9t22ZE/KvdRzb4aknb7j+bgyQXa8Vk4323QwciNkf86y35CuFIKq7M
-         zYVM0LNUFRshMT9uEJVQwepuoB2DFG4jy6zzEKl9+A/XBVJOHhy/ij8Htyvw1LfP5+UQ
-         iPhQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW5XVM4G4sFrhv2rqUlN3YejXiPoT5P3IjNyZx0+Y+hNGot9Dji0ruuxAXd59DHQigZdjE2I2g3Yylspe4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxTu2x5d2A6D2QmnIXK6cO43mEQqLrqEyyPcYM5rcGDZcRE9r+3
-	RwiArytzPdG7LUsqPlNanRnfUFq5apNNEu4LEinWm4tlr+PJBgAR6JFFS/DE60fJGR0AgOviGHF
-	L
-X-Google-Smtp-Source: AGHT+IHxc5+G0BndaGsL2vRM9TegLDOnMydgCuBJSqgNQZJbkJofQqj7sLvluos8dVwzgjwNY2Lk4Q==
-X-Received: by 2002:a2e:bea1:0:b0:2f4:f279:36d3 with SMTP id 38308e7fff4ca-2f61e0258f3mr11052511fa.4.1725005610510;
-        Fri, 30 Aug 2024 01:13:30 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2f615171c70sm5280001fa.85.2024.08.30.01.13.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 30 Aug 2024 01:13:30 -0700 (PDT)
-Date: Fri, 30 Aug 2024 11:13:28 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Danila Tikhonov <danila@jiaxyga.com>
-Cc: andersson@kernel.org, konradybcio@kernel.org, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, cros-qcom-dts-watchers@chromium.org, 
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux@mainlining.org
-Subject: Re: [PATCH] arm64: dts: qcom: sc7280.dtsi: Fix PMU nodes for Cortex
- A55 and A78
-Message-ID: <5gmsbbnuc7sbkpptomvpl6aarw5poutvjfav5rilgogb7727vi@nhtr5m24tkmt>
-References: <20240818192905.120477-1-danila@jiaxyga.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=OVoGxtaA5rKu3aEcCJIDm4CfgG3LSYmQMEq/aDhcT52LDDf0ZrRGb9kcrhdlnpLRKrKuvRQM6y0z2PjH4rbqHmJGtsVLGxPrWeqov+d/avGhIciern1nyCGKXaQ71wAXlvrEhM5dQVJK1jWKhB6xelwlsFVMXktnqawSb41Yr6o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ore@pengutronix.de>)
+	id 1sjwlZ-0007vV-UZ; Fri, 30 Aug 2024 10:13:57 +0200
+Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <ore@pengutronix.de>)
+	id 1sjwlY-0046c9-UI; Fri, 30 Aug 2024 10:13:56 +0200
+Received: from ore by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1sjwlY-00ERNa-2d;
+	Fri, 30 Aug 2024 10:13:56 +0200
+Date: Fri, 30 Aug 2024 10:13:56 +0200
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: Stefan Eichenberger <eichest@gmail.com>
+Cc: kernel@pengutronix.de, andi.shyti@kernel.org, shawnguo@kernel.org,
+	s.hauer@pengutronix.de, festevam@gmail.com, Frank.Li@nxp.com,
+	francesco.dolcini@toradex.com, linux-i2c@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Stefan Eichenberger <stefan.eichenberger@toradex.com>
+Subject: Re: [PATCH v2 4/4] i2c: imx: prevent rescheduling in non dma mode
+Message-ID: <ZtF_RJaG9lj_Mvtb@pengutronix.de>
+References: <20240819072052.8722-1-eichest@gmail.com>
+ <20240819072052.8722-5-eichest@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240818192905.120477-1-danila@jiaxyga.com>
+In-Reply-To: <20240819072052.8722-5-eichest@gmail.com>
+X-Sent-From: Pengutronix Hildesheim
+X-URL: http://www.pengutronix.de/
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ore@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Sun, Aug 18, 2024 at 10:29:05PM GMT, Danila Tikhonov wrote:
-> The SC7280, SM7325, and QCM6490 platforms feature an 8-core setup
-> consisting of:
-> - 1x Kryo 670 Prime (Cortex-A78) / Kryo 670 Gold Plus (Cortex-A78)
-> - 3x Kryo 670 Gold (Cortex-A78)
-> - 4x Kryo 670 Silver (Cortex-A55)
-> (The CPU cores in the SC7280 are simply called Kryo, but are
-> nevertheless based on the same Cortex A78 and A55).
+On Mon, Aug 19, 2024 at 09:19:10AM +0200, Stefan Eichenberger wrote:
+> From: Stefan Eichenberger <stefan.eichenberger@toradex.com>
 > 
-> Use the correct compatibility.
+> We are experiencing a problem with the i.MX I2C controller when
+> communicating with SMBus devices. We are seeing devices time-out because
+> the time between sending/receiving two bytes is too long, and the SMBus
+> device returns to the idle state. This happens because the i.MX I2C
+> controller sends and receives byte by byte. When a byte is sent or
+> received, we get an interrupt and can send or receive the next byte.
 > 
-> Signed-off-by: Danila Tikhonov <danila@jiaxyga.com>
-> ---
->  arch/arm64/boot/dts/qcom/sc7280.dtsi | 9 +++++++--
->  1 file changed, 7 insertions(+), 2 deletions(-)
+> The current implementation sends a byte and then waits for an event
+> generated by the interrupt subroutine. After the event is received, the
+> next byte is sent and we wait again. This waiting allows the scheduler
+> to reschedule other tasks, with the disadvantage that we may not send
+> the next byte for a long time because the send task is not immediately
+> scheduled. For example, if the rescheduling takes more than 25ms, this
+> can cause SMBus devices to timeout and communication to fail.
 > 
-> diff --git a/arch/arm64/boot/dts/qcom/sc7280.dtsi b/arch/arm64/boot/dts/qcom/sc7280.dtsi
-> index 91cc5e74d8f5..ab024a3c3653 100644
-> --- a/arch/arm64/boot/dts/qcom/sc7280.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/sc7280.dtsi
-> @@ -845,8 +845,13 @@ wlan_smp2p_in: wlan-wpss-to-ap {
->  		};
->  	};
->  
-> -	pmu {
-> -		compatible = "arm,armv8-pmuv3";
-> +	pmu-a55 {
-> +		compatible = "arm,cortex-a55-pmu";
-> +		interrupts = <GIC_PPI 7 IRQ_TYPE_LEVEL_LOW>;
-> +	};
-> +
-> +	pmu-a78 {
-> +		compatible = "arm,cortex-a78-pmu";
->  		interrupts = <GIC_PPI 7 IRQ_TYPE_LEVEL_LOW>;
-
-Shouldn't these two entries have GIC_CPU_MASK_RAW(), limiting interrupts
-to the corresponding cores? I see that in [1] Rob used masks for older
-SoCs, but skipped them for newer ones.
-
-[1] https://lore.kernel.org/all/20240417204247.3216703-1-robh@kernel.org/
-
-
->  	};
->  
-> -- 
-> 2.46.0
+> This patch changes the behavior so that we do not reschedule the
+> send/receive task, but instead send or receive the next byte in the
+> interrupt subroutine. This prevents rescheduling and drastically reduces
+> the time between sending/receiving bytes. The cost in the interrupt
+> subroutine is relatively small, we check what state we are in and then
+> send/receive the next byte. Before we had to call wake_up, which is even
+> less expensive. However, we also had to do some scheduling, which
+> increased the overall cost compared to the new solution. The wake_up
+> function to wake up the send/receive task is now only called when an
+> error occurs or when the transfer is complete.
 > 
+> Signed-off-by: Stefan Eichenberger <stefan.eichenberger@toradex.com>
+
+Acked-by: Oleksij Rempel <o.rempel@pengutronix.de>
 
 -- 
-With best wishes
-Dmitry
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
 
