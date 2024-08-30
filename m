@@ -1,236 +1,130 @@
-Return-Path: <linux-kernel+bounces-308029-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308030-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C3D796564B
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 06:30:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F26B96564C
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 06:30:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6090CB228B6
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 04:30:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 877ECB2295E
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 04:30:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0A3114B09F;
-	Fri, 30 Aug 2024 04:29:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 199EF14A60D;
+	Fri, 30 Aug 2024 04:30:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nU8df6m8"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Sxqj3D2j"
+Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5383514B061
-	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 04:29:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7DAA1411C8
+	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 04:30:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724992195; cv=none; b=LQvRuxiNGYjSqd10khAGURthFa/itV+1G13/aLf1r4Q7dbNwj3Q497Cq6Kli+smvpFJDBYG2eRTjBah3nmPjxgQ8+YcG67mv8PnwvXTI5DNFuZ734voArLkHwOFIV166sSA5ai+CW7P294yV32fW+rlTsKtsTYtm7CUIN13YhHg=
+	t=1724992212; cv=none; b=aG5U+bPzkISmFUwjeWiPAlj3HrkBu9KFfBHU0eAZ0Q6d4rE4x2h+0h/kcHoxGlkjNuD8XD/vI7V8hB6mg2dDj6T7Yg92ONXCGpSvEWp602KRcu5smP79f8LWIfQxwruGlDGw1di53N4cn0FZr1g074048PqAf9VlPgwXwtqbYII=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724992195; c=relaxed/simple;
-	bh=HZiRI6SyEMeBbNVgqAOgHy9+liT5napyh25Lh2UQpuQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=BuTjeiBnuzUAzk2iHYj5w0DdVnwNBGX4OFcMGdhtiwtJxDKSCuT0xm7hiMl0aTzgmNLjaqgtmz2Kdonz45Ph8L81aeO8DG6UzzJc13Pk1Y855ah5dQjUvIolz3MKMu4DvtbacRb0pdaSFLZh03yUtd+g1srvoGmFpHJpSzESSAQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nU8df6m8; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724992195; x=1756528195;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=HZiRI6SyEMeBbNVgqAOgHy9+liT5napyh25Lh2UQpuQ=;
-  b=nU8df6m8IA52NJ+DpzX2lvRNUW/hewlFoKQxEcHaK8mepxHQawcq0i47
-   tN1x0pLiULgsHVSKd33pxRpmMqDHufyfXcxRMSx3XizIegrMvucIGtj/5
-   AVIy6Tt4I3xlVlo5D6lRfOhPkY9lkfjEX1+yaO6fTxfzU9ZLlrU1Js/Z4
-   raWTVIrZUfSqJEAdHJ3V/sRYw1ONADT9lfQFRhWkz7kkUrlgcRSL6Yedn
-   9FAOgurRvk96yY0suJkgPFetUKZIXakiUxmDGAXfhpRGHuIWKWQB5lKtI
-   l5iZa8PsvEqaviewH5D4yHImGIaMWnJULVw7UsGFjg5mR6yT4ct6Mror6
-   w==;
-X-CSE-ConnectionGUID: Bk1R9VmMQESnT3eXcxzvlA==
-X-CSE-MsgGUID: j9CvGPIGTrSZ5RkrC+JzhA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11179"; a="41099522"
-X-IronPort-AV: E=Sophos;i="6.10,187,1719903600"; 
-   d="scan'208";a="41099522"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Aug 2024 21:29:54 -0700
-X-CSE-ConnectionGUID: 0laKQN+VQIeeiDqRL217WQ==
-X-CSE-MsgGUID: CVsqXqEjQfGXvViuoMlA8w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,187,1719903600"; 
-   d="scan'208";a="68180056"
-Received: from lkp-server01.sh.intel.com (HELO 9c6b1c7d3b50) ([10.239.97.150])
-  by fmviesa005.fm.intel.com with ESMTP; 29 Aug 2024 21:29:52 -0700
-Received: from kbuild by 9c6b1c7d3b50 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sjtGg-00014P-0F;
-	Fri, 30 Aug 2024 04:29:50 +0000
-Date: Fri, 30 Aug 2024 12:29:03 +0800
-From: kernel test robot <lkp@intel.com>
-To: Lu Baolu <baolu.lu@linux.intel.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Joerg Roedel <jroedel@suse.de>, Kevin Tian <kevin.tian@intel.com>,
-	Steve Wahl <steve.wahl@hpe.com>
-Subject: drivers/iommu/intel/dmar.c:1050:35: error: '%d' directive writing
- between 1 and 10 bytes into a region of size 9
-Message-ID: <202408301254.q8hKTUzC-lkp@intel.com>
+	s=arc-20240116; t=1724992212; c=relaxed/simple;
+	bh=hP05dZxv1Bp5ZvKMrsPf0Sc8A2Qb3cVl0NshbhgtxPg=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KbiJk4E3nFBrPj6OV0YtJKhY+VHkVlG9Tz7xhlH85c/7SzWup97V6JjsPvVEFQ8gMs4OwgqXvbVyaamfnLhW9sub4bz6FnZnSAp2wODJW7IhQBsgWfpJthvFsUdvmowv5Jo7tivq11hBX27AKIXN+lTmKDLV5ElRfxsE9kkrjfw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=Sxqj3D2j; arc=none smtp.client-ip=198.47.23.248
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 47U4Txq0082333;
+	Thu, 29 Aug 2024 23:29:59 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1724992199;
+	bh=41xMG3qhDMXgrisGkZ7YqvIT0lqH6fleXZV4RA17Ubc=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=Sxqj3D2j92rN5Yt5cbNG+ecBQh8/DZpp4GKsAYtgkQClelwFoamLtDkf5oR/amE84
+	 I3jznRt0vgcOzM1wMWX30L4XJXB0TCROdK4O1SxbP0MGcwcFY/u+lpMxmDzu+lj0dn
+	 e/pN4ADkSAApHQVwkIZeGUjIxUbDBjgEeYke7y9M=
+Received: from DLEE103.ent.ti.com (dlee103.ent.ti.com [157.170.170.33])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 47U4TxlW121167
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Thu, 29 Aug 2024 23:29:59 -0500
+Received: from DLEE114.ent.ti.com (157.170.170.25) by DLEE103.ent.ti.com
+ (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 29
+ Aug 2024 23:29:59 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE114.ent.ti.com
+ (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Thu, 29 Aug 2024 23:29:59 -0500
+Received: from localhost (lcpd911.dhcp.ti.com [172.24.227.68])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 47U4Twu6107767;
+	Thu, 29 Aug 2024 23:29:58 -0500
+Date: Fri, 30 Aug 2024 09:59:58 +0530
+From: Dhruva Gole <d-gole@ti.com>
+To: Markus Schneider-Pargmann <msp@baylibre.com>
+CC: Nishanth Menon <nm@ti.com>, Tero Kristo <kristo@kernel.org>,
+        "Santosh
+ Shilimkar" <ssantosh@kernel.org>,
+        Vibhore Vardhan <vibhore@ti.com>,
+        "Kevin
+ Hilman" <khilman@baylibre.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        Georgi Vlaev <g-vlaev@ti.com>
+Subject: Re: [PATCH v11 1/4] firmware: ti_sci: Add support for querying the
+ firmware caps
+Message-ID: <20240830042958.33d35pfos7uv4wqb@lcpd911>
+References: <20240829201606.1407773-1-msp@baylibre.com>
+ <20240829201606.1407773-2-msp@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
+In-Reply-To: <20240829201606.1407773-2-msp@baylibre.com>
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-Hi Lu,
+On Aug 29, 2024 at 22:16:02 +0200, Markus Schneider-Pargmann wrote:
+> From: Georgi Vlaev <g-vlaev@ti.com>
+> 
+> Add support for the TISCI_MSG_QUERY_FW_CAPS message, used to retrieve
+> the firmware capabilities of the currently running system firmware. The
+> message belongs to the TISCI general core message API [1] and is
+> available in SysFW version 08.04.03 and above. Currently, the message is
+> supported on devices with split architecture of the system firmware (DM
+> + TIFS) like AM62x. Old revisions or not yet supported platforms will
+> NACK this request.
+> 
+> We're using this message locally in ti_sci.c to get the low power
+> features of the FW/SoC. As there's no other kernel consumers yet, this
+> is not added to struct ti_sci_core_ops.
+> 
+> Sysfw version >= 10.00.04 support LPM_DM_MANAGED capability [2], where
+> Device Mgr firmware now manages which low power mode is chosen. Going
+> forward, this is the default configuration supported for TI AM62 family
+> of devices. The state chosen by the DM can be influenced by sending
+> constraints using the new LPM constraint APIs.
+> 
+> [1] https://software-dl.ti.com/tisci/esd/latest/2_tisci_msgs/general/core.html
+> [2] https://software-dl.ti.com/tisci/esd/latest/2_tisci_msgs/general/core.html#tisci-msg-query-fw-caps
+> 
+> Signed-off-by: Georgi Vlaev <g-vlaev@ti.com>
+> [vibhore@ti.com: Support for LPM_DM_MANAGED mode]
+> Signed-off-by: Vibhore Vardhan <vibhore@ti.com>
+> Signed-off-by: Kevin Hilman <khilman@baylibre.com>
+> Tested-by: Dhruva Gole <d-gole@ti.com>
+> Signed-off-by: Markus Schneider-Pargmann <msp@baylibre.com>
+> ---
+>  drivers/firmware/ti_sci.c | 74 ++++++++++++++++++++++++++++++++++++++-
+>  drivers/firmware/ti_sci.h | 22 ++++++++++++
+>  2 files changed, 95 insertions(+), 1 deletion(-)
+> 
 
-FYI, the error/warning still remains.
+[..snip..]
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   20371ba120635d9ab7fc7670497105af8f33eb08
-commit: 913432f217c843a69ff9d11a6474a7982033087b iommu/vt-d: Use IDA interface to manage iommu sequence id
-date:   2 years, 2 months ago
-config: x86_64-sof-customedconfig-atom-defconfig (https://download.01.org/0day-ci/archive/20240830/202408301254.q8hKTUzC-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240830/202408301254.q8hKTUzC-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202408301254.q8hKTUzC-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   drivers/iommu/intel/dmar.c: In function 'dmar_parse_one_drhd':
->> drivers/iommu/intel/dmar.c:1050:35: error: '%d' directive writing between 1 and 10 bytes into a region of size 9 [-Werror=format-overflow=]
-    1050 |         sprintf(iommu->name, "dmar%d", iommu->seq_id);
-         |                                   ^~
-   In function 'alloc_iommu',
-       inlined from 'dmar_parse_one_drhd' at drivers/iommu/intel/dmar.c:439:8:
-   drivers/iommu/intel/dmar.c:1050:30: note: directive argument in the range [0, 2147483647]
-    1050 |         sprintf(iommu->name, "dmar%d", iommu->seq_id);
-         |                              ^~~~~~~~
-   drivers/iommu/intel/dmar.c:1050:9: note: 'sprintf' output between 6 and 15 bytes into a destination of size 13
-    1050 |         sprintf(iommu->name, "dmar%d", iommu->seq_id);
-         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   cc1: all warnings being treated as errors
-
-
-vim +1050 drivers/iommu/intel/dmar.c
-
-  1025	
-  1026	static int alloc_iommu(struct dmar_drhd_unit *drhd)
-  1027	{
-  1028		struct intel_iommu *iommu;
-  1029		u32 ver, sts;
-  1030		int agaw = -1;
-  1031		int msagaw = -1;
-  1032		int err;
-  1033	
-  1034		if (!drhd->reg_base_addr) {
-  1035			warn_invalid_dmar(0, "");
-  1036			return -EINVAL;
-  1037		}
-  1038	
-  1039		iommu = kzalloc(sizeof(*iommu), GFP_KERNEL);
-  1040		if (!iommu)
-  1041			return -ENOMEM;
-  1042	
-  1043		iommu->seq_id = ida_alloc_range(&dmar_seq_ids, 0,
-  1044						DMAR_UNITS_SUPPORTED - 1, GFP_KERNEL);
-  1045		if (iommu->seq_id < 0) {
-  1046			pr_err("Failed to allocate seq_id\n");
-  1047			err = iommu->seq_id;
-  1048			goto error;
-  1049		}
-> 1050		sprintf(iommu->name, "dmar%d", iommu->seq_id);
-  1051	
-  1052		err = map_iommu(iommu, drhd->reg_base_addr);
-  1053		if (err) {
-  1054			pr_err("Failed to map %s\n", iommu->name);
-  1055			goto error_free_seq_id;
-  1056		}
-  1057	
-  1058		err = -EINVAL;
-  1059		if (cap_sagaw(iommu->cap) == 0) {
-  1060			pr_info("%s: No supported address widths. Not attempting DMA translation.\n",
-  1061				iommu->name);
-  1062			drhd->ignored = 1;
-  1063		}
-  1064	
-  1065		if (!drhd->ignored) {
-  1066			agaw = iommu_calculate_agaw(iommu);
-  1067			if (agaw < 0) {
-  1068				pr_err("Cannot get a valid agaw for iommu (seq_id = %d)\n",
-  1069				       iommu->seq_id);
-  1070				drhd->ignored = 1;
-  1071			}
-  1072		}
-  1073		if (!drhd->ignored) {
-  1074			msagaw = iommu_calculate_max_sagaw(iommu);
-  1075			if (msagaw < 0) {
-  1076				pr_err("Cannot get a valid max agaw for iommu (seq_id = %d)\n",
-  1077				       iommu->seq_id);
-  1078				drhd->ignored = 1;
-  1079				agaw = -1;
-  1080			}
-  1081		}
-  1082		iommu->agaw = agaw;
-  1083		iommu->msagaw = msagaw;
-  1084		iommu->segment = drhd->segment;
-  1085	
-  1086		iommu->node = NUMA_NO_NODE;
-  1087	
-  1088		ver = readl(iommu->reg + DMAR_VER_REG);
-  1089		pr_info("%s: reg_base_addr %llx ver %d:%d cap %llx ecap %llx\n",
-  1090			iommu->name,
-  1091			(unsigned long long)drhd->reg_base_addr,
-  1092			DMAR_VER_MAJOR(ver), DMAR_VER_MINOR(ver),
-  1093			(unsigned long long)iommu->cap,
-  1094			(unsigned long long)iommu->ecap);
-  1095	
-  1096		/* Reflect status in gcmd */
-  1097		sts = readl(iommu->reg + DMAR_GSTS_REG);
-  1098		if (sts & DMA_GSTS_IRES)
-  1099			iommu->gcmd |= DMA_GCMD_IRE;
-  1100		if (sts & DMA_GSTS_TES)
-  1101			iommu->gcmd |= DMA_GCMD_TE;
-  1102		if (sts & DMA_GSTS_QIES)
-  1103			iommu->gcmd |= DMA_GCMD_QIE;
-  1104	
-  1105		raw_spin_lock_init(&iommu->register_lock);
-  1106	
-  1107		/*
-  1108		 * This is only for hotplug; at boot time intel_iommu_enabled won't
-  1109		 * be set yet. When intel_iommu_init() runs, it registers the units
-  1110		 * present at boot time, then sets intel_iommu_enabled.
-  1111		 */
-  1112		if (intel_iommu_enabled && !drhd->ignored) {
-  1113			err = iommu_device_sysfs_add(&iommu->iommu, NULL,
-  1114						     intel_iommu_groups,
-  1115						     "%s", iommu->name);
-  1116			if (err)
-  1117				goto err_unmap;
-  1118	
-  1119			err = iommu_device_register(&iommu->iommu, &intel_iommu_ops, NULL);
-  1120			if (err)
-  1121				goto err_sysfs;
-  1122		}
-  1123	
-  1124		drhd->iommu = iommu;
-  1125		iommu->drhd = drhd;
-  1126	
-  1127		return 0;
-  1128	
-  1129	err_sysfs:
-  1130		iommu_device_sysfs_remove(&iommu->iommu);
-  1131	err_unmap:
-  1132		unmap_iommu(iommu);
-  1133	error_free_seq_id:
-  1134		ida_free(&dmar_seq_ids, iommu->seq_id);
-  1135	error:
-  1136		kfree(iommu);
-  1137		return err;
-  1138	}
-  1139	
+No remaining concerns,
+Acked-by: Dhruva Gole <d-gole@ti.com>
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Best regards,
+Dhruva Gole
+Texas Instruments Incorporated
 
