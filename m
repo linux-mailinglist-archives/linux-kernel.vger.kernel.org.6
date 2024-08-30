@@ -1,78 +1,99 @@
-Return-Path: <linux-kernel+bounces-308227-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308228-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C29E79658EE
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 09:44:55 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF47F9658F0
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 09:45:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 010301C24B74
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 07:44:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6CA24B24F6F
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 07:45:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D82916CD04;
-	Fri, 30 Aug 2024 07:43:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C42416D4DA;
+	Fri, 30 Aug 2024 07:43:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O27weyjd"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="K60/ssKV"
+Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F737158544;
-	Fri, 30 Aug 2024 07:43:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2FD216D4D0;
+	Fri, 30 Aug 2024 07:43:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725003792; cv=none; b=XSvxc0tIdxCCfF71G3emw5kyOzxN9SkDcMkEmhFc3Qn5CTwBywYeflaxyVYBTOR3JmXQua6bqO9wD8u7D4nlKA5MJiJBtP/kqUiAfHeAjIwZiQIBpl1MacGdeO7PA/xipWZCp7rFPGqFAKl82cswo9idN424ixU5b/67PZELDh8=
+	t=1725003809; cv=none; b=NeAtiCcxocTK/M80eF5z/se0MO4No8/L37WKeoS0V+qf1y5zmJcG/bc3OjyBOIzPdFHwzfPQRWvkvfkFG3bvzwuoiHC/EKkFqvaYV5STA7Cp21lTfacPkzHSfQx8Q6LsVtdw8pQRhaMdKRblfVoObqY+JGcrAa+lMNHgU62VlTc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725003792; c=relaxed/simple;
-	bh=p2GL4XduuEoVsX2bFk1A6bJbFb6KOOcHDQhwYEwgMKM=;
-	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=k8365bddyaCsufsldOmA6im+omCENXHwfCGjYEXc/M+4kvqUnXC9eTA8c4tGKqiLq1TC0fS+S1PMT2hxVP58yugPuZ5oRRcPs0nFsq16WJ42TyKlkBZa8jVZv4SRR4FrQcv9JM/Axi3ZaxhO0UYZ8jfRm9c6swhFmHAuAdCc6vM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O27weyjd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B944C4CEC2;
-	Fri, 30 Aug 2024 07:43:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725003792;
-	bh=p2GL4XduuEoVsX2bFk1A6bJbFb6KOOcHDQhwYEwgMKM=;
-	h=From:To:In-Reply-To:References:Subject:Date:From;
-	b=O27weyjdpt8Yw+EX3GS9XbOAVD6Ss7msg6QT6XdrpXLbb4NKtdiHPQCPN/bAAKkHD
-	 pgwlV5AnwLkwKTzgfg36KPqwf+KA4Z1AwhgWFw10xKPKTeyfIzA2B5qHd5iKFhYGoM
-	 qvz6hlZjI36nmIHxODiukBsk4yfH7vSIz/VIMrrTIvnule7sE47ZwJSuLtGXUQ16lb
-	 M9k6jfiIF2co1rQoC2WzTrpnCZ8ppRA9b1Dwwb0K4E/F0uxP6u2DaiQsWmBbjj0Vu2
-	 Jj5nnqCnDyGsz1Qm2YR75jaQ24DPehfeK6KPLPAM1QfSW1BSUF3YM71JLgGcmH8vlN
-	 E9aQ7iDj3K7SA==
-From: Lee Jones <lee@kernel.org>
-To: lee@kernel.org, linux-kernel@vger.kernel.org, 
- linux-arm-msm@vger.kernel.org, krzk@kernel.org, jic23@kernel.org, 
- Jinjie Ruan <ruanjinjie@huawei.com>
-In-Reply-To: <20240826092734.2899562-2-ruanjinjie@huawei.com>
-References: <20240826092734.2899562-1-ruanjinjie@huawei.com>
- <20240826092734.2899562-2-ruanjinjie@huawei.com>
-Subject: Re: (subset) [PATCH -next RESEND 1/2] mfd: max77620: Use
- for_each_child_of_node_scoped()
-Message-Id: <172500379078.59806.7835669679693188987.b4-ty@kernel.org>
-Date: Fri, 30 Aug 2024 08:43:10 +0100
+	s=arc-20240116; t=1725003809; c=relaxed/simple;
+	bh=SGppUcr3XcDzCZT35NF9reldjtBurwIRnByI8W4UlK4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=E8cYqe8YRg6g/abBo7T5SeGesXWA0+CckwSjKpJRpPjQTgDFS9+cWCQs1lad4uTyfZSgrmBpZUDROARCm46AXFdJLFnenyfy/FoRn99XxNWEcl1A0FfZtwpVAqFVcFiYsa5MhNZgnkHsx73ToAwo8FmbrE1MTU+xGBsADRSUBjc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=K60/ssKV; arc=none smtp.client-ip=217.70.183.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 5B88D40010;
+	Fri, 30 Aug 2024 07:43:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1725003805;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=UYDF/qFiFyKUZMLDs2FqY4OyzGLxagNS91tJHlcxSSE=;
+	b=K60/ssKVG65HW2bGYxyZ7uSdjk+XLrBgxnduxGwqi5TuDvKQTjFLKJPdM7N6OvaR1ChJPs
+	tgVdZLy8GNaBLbkG7f4bItSegRW4GRw9n72ClsCR/IcDoaHXmBLf+6h2b6P2Bi2cfetoY2
+	witJju4T0r3cZzNP8nm6TnfrLVsN9YQpbPtWFP0d1oqwzlfttRkvV3MzVfgJdL5rky1hSF
+	WqUhniEoykKkxctojqPmKwE4uMWoV3Tt2cjhtjP9HgrJhSbF4LkxubIYpX8jbGP1127ind
+	9V853RFiwqLdnEzMkRi1n/gBIFbE0o6520zLYvHCBNcNHMwHVPLhJzD3dG8NLw==
+Message-ID: <c16370e5-2b65-4288-9f99-50e8faa9c8ea@bootlin.com>
+Date: Fri, 30 Aug 2024 09:43:23 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] wifi: wilc1000: fix potential RCU dereference issue in
+ wilc_parse_join_bss_param
+To: Jiawei Ye <jiawei.ye@foxmail.com>, ajay.kathat@microchip.com,
+ claudiu.beznea@tuxon.dev, kvalo@kernel.org
+Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <tencent_466225AA599BA49627FB26F707EE17BC5407@qq.com>
+Content-Language: en-US
+From: =?UTF-8?Q?Alexis_Lothor=C3=A9?= <alexis.lothore@bootlin.com>
+In-Reply-To: <tencent_466225AA599BA49627FB26F707EE17BC5407@qq.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.13.0
+X-GND-Sasl: alexis.lothore@bootlin.com
 
-On Mon, 26 Aug 2024 17:27:33 +0800, Jinjie Ruan wrote:
-> Avoids the need for manual cleanup of_node_put() in early exits
-> from the loop.
+Hello,
+
+On 8/29/24 10:17, Jiawei Ye wrote:
+> In the `wilc_parse_join_bss_param` function, the TSF field of the `ies`
+> structure is accessed after the RCU read-side critical section is
+> unlocked. According to RCU usage rules, this is illegal. Reusing this
+> pointer can lead to unpredictable behavior, including accessing memory
+> that has been updated or causing use-after-free issues.
 > 
+> This possible bug was identified using a static analysis tool developed
+> by myself, specifically designed to detect RCU-related issues.
 > 
+> To address this, the TSF value is now stored in a local variable
+> `ies_tsf` before the RCU lock is released. The `param->tsf_lo` field is
+> then assigned using this local variable, ensuring that the TSF value is
+> safely accessed.
+> 
+> Fixes: 205c50306acf ("wifi: wilc1000: fix RCU usage in connect path")
+> Signed-off-by: Jiawei Ye <jiawei.ye@foxmail.com>
 
-Applied, thanks!
+I guess you are right, that indeed looks like a miss from 205c50306acf. And I
+guess it needs wilc to receive packets with P2P info in it to trigger a RCU splat.
 
-[1/2] mfd: max77620: Use for_each_child_of_node_scoped()
-      commit: 2b96330e5ac0426087e34e55494e2c2a6a96a8b2
+Reviewed-by: Alexis Lothoré <alexis.lothore@bootlin.com>
 
---
-Lee Jones [李琼斯]
+-- 
+Alexis Lothoré, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
 
