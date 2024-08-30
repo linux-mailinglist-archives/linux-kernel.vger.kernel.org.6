@@ -1,208 +1,117 @@
-Return-Path: <linux-kernel+bounces-309053-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309065-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14FF09665A7
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 17:34:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B5689665C3
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 17:37:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C1C882859F2
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 15:34:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C353AB251A9
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 15:37:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81B6E1B86C0;
-	Fri, 30 Aug 2024 15:33:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BFA71BDAAE;
+	Fri, 30 Aug 2024 15:33:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WDQ+cEJc"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a/mGcIBn"
+Received: from mail-io1-f50.google.com (mail-io1-f50.google.com [209.85.166.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A176B1B5821;
-	Fri, 30 Aug 2024 15:33:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61A6A1BD50E;
+	Fri, 30 Aug 2024 15:33:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725031994; cv=none; b=qNuqUGS0jg4rQrYfaqUX8sk6U7eZKxlkP09lV60EmdyxCZBYUVAm4JY+WN0+1F1rEzPLuqltopVBlmfPWN/4t44+8ncfX4TkmbTDwrr7XXp+JOay2vkeYbPe0zRN52hM5myvB6cuC7xNfiT/ijRgiiDVBPn8um/49T5Vq55EzdY=
+	t=1725032025; cv=none; b=KJmqG4S23w1nQQPFdMEDg+x5XEXpsXZV+bha7I2mfIxrzUoc4pNih/hJ+AgK4+wQXcu/siUk5IMJpGC3ri279UiT6AiVfJLbXQa/+fWhkqPsboNVFir5X77lsn6djDcBEgvGY61EFcUit9Zb4kaC3C1KIdThyIKfSQTQzArPeRE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725031994; c=relaxed/simple;
-	bh=oNCCs+eEzkGQ4trGqNatqV533zN5HVkZhKWaI/iEjsk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Kc+xQgUNnHbj+u5SOPGzgH1K1r8Jj+zYf8kf9WfCrnEFxvIGxi+ILFnOUz01NQ2Hz5sL6gZiFySdBvkZ6zPEuEy1HdQ7olQWm7HXc8ncCGbkY9f8cvpeQUycRML6TK1yhCvN6j6TA9v3h1y3YfiSOTGpEuVmF8/q+8Q8PXYWJmM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WDQ+cEJc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85A32C4CEC5;
-	Fri, 30 Aug 2024 15:33:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725031994;
-	bh=oNCCs+eEzkGQ4trGqNatqV533zN5HVkZhKWaI/iEjsk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=WDQ+cEJcRwR/2tknocKteL5zFtlGsV9ZXtI0ELlEhUjTcbPen4gJ/sQbJFQi+DqCy
-	 1vRDBGnUVDXeezAKTEFqQAJveWxVBsKXQ0ohg0Po1b8hIg4wI8dFUM3LcMaWl0fvuG
-	 qZBKE4apniG1dssrJ220EiodkrO0O6A4NAO5m2gyASR569VU9wwu3bCRDyim4nNEhy
-	 6bdMCc9mZltrV2zsWd+cJk/oGIU0AU+BarRlknq0fgfwyFt/4ryB8qlaE5/FVmzQzl
-	 ETZJXjZZ1GicvI8p6ZzymeXhCbdrClME2tYdRuPyAQZer9mLNAryAWTh6w5Gccb00e
-	 3CXQR1XhpTaGA==
-Date: Fri, 30 Aug 2024 16:33:09 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Angelo Dureghello <adureghello@baylibre.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>,
-	Michael Hennerich <Michael.Hennerich@analog.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Olivier Moysan <olivier.moysan@foss.st.com>,
-	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, dlechner@baylibre.com
-Subject: Re: [PATCH RFC 4/8] dt-bindings: iio: dac: add adi axi-dac bus
- property
-Message-ID: <20240830-quilt-appointee-4a7947e84988@spud>
-References: <20240829-wip-bl-ad3552r-axi-v0-v1-0-b6da6015327a@baylibre.com>
- <20240829-wip-bl-ad3552r-axi-v0-v1-4-b6da6015327a@baylibre.com>
- <20240829-stopwatch-morality-a933abb4d688@spud>
- <d4eddc24-9192-4a4a-ac67-4cfbd429a6a9@baylibre.com>
+	s=arc-20240116; t=1725032025; c=relaxed/simple;
+	bh=gRLVDlLtYtEHFRW+z5u3RzqQq8Otkw4nKdbnkHz4B9k=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=LxB6yhYp0QEQAQcSbbxC05Cp/cMnTXku+vUIrLSwVu1RSGHNbL1X4YXF58ssfvKnKVBmbGGi+JydkMU0iwGU4aQdR+D2etUp9gIYU18ZfihmPy9Q008O9KyM4GV5jipOsNT4H7OeIPArtccyJa0Sm9hZeC37uEylJMEaowwtKV8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=a/mGcIBn; arc=none smtp.client-ip=209.85.166.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-io1-f50.google.com with SMTP id ca18e2360f4ac-82a29c11e1cso27834639f.0;
+        Fri, 30 Aug 2024 08:33:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725032023; x=1725636823; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gRLVDlLtYtEHFRW+z5u3RzqQq8Otkw4nKdbnkHz4B9k=;
+        b=a/mGcIBnDw3jiEjfU5gL0G8PtlEu9NIYgDCFDw08EUG+3NnxgjrlduosK041/fax8F
+         ytXFONG+TGfapnlJK/Flnr9QVBi+WYnrUhFGpqosFWa9oYxCC1x4YTN9BJonlBKPVvvz
+         9p8kO8EvV5aIb/3OAW4YYnEb0F/inG4e8VuO1z4dmDlgH8ILUuAl+7vwIRqSuaJn626F
+         Tct2VBpl1pZFSTj9WBib5ujn6YnHW+W2F6ghOjEfcrAYOfaz88WNkEXzHHXT/BVBRNRI
+         BL+9LbbnxMTdMSNQRmYvbjP8uTiyoNBaal5c9Z4MM8HkwRvQyMUeNE5EJyc6emvGy8lX
+         L5VA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725032023; x=1725636823;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=gRLVDlLtYtEHFRW+z5u3RzqQq8Otkw4nKdbnkHz4B9k=;
+        b=t9wbEsugNcuKg0AQuDsBissQ7Ex3hear1KnRE33AnhCParAOqyioyffCuAB7wdAAYz
+         y2UgWdxkKU78b5DghCqZtGyj7i3VYZTpRzXPib+w0iv9guZ2zCXTAq5xSuTYMLDGN+Sv
+         9SKa/pBJayjFk+ucTTT8nHyfzme+FSLsFQulb99pBzq/1NA/4lldshaW8kkis+qBBhIn
+         YWe/psHBbn8wi18lUtKDJTfArGqZUh2g1PQWWMHcgab6auYLNFHEdyWfb68n7wdO7KSJ
+         DI6Upb34CW50Kq391nI8W1zkW5bT3UVJGPnEi7RCaOotqKGg93K3Jlcv4BZRcYZ8vd/r
+         f9kg==
+X-Forwarded-Encrypted: i=1; AJvYcCV1bst4eSmEeaMLcKtexz9XQ2s0LQzJzaF/q/3n9hWd4uUNiynMvYwORVI4q1y1+h+DjV5sNeI/m46+@vger.kernel.org, AJvYcCWe3CPmHVc04V5ee179+b08NnNsA77aP5N8FO2//KrINZ4hVNOaHJ+BfTEETCP+PrYt0PIEDAa+r9Bry36r@vger.kernel.org
+X-Gm-Message-State: AOJu0YwHmoj5Pz2oIaCdtnawzGI8mVlK2tnaCpLO7F6jKNwSlZ/9U6nO
+	+WYzXmeQl4H4qywE39awMDKDOBrJb+ZpekTVITM2l+6z1QpS66rkw4CJ5AFb
+X-Google-Smtp-Source: AGHT+IG2cWkWM/nBFDX7DVTMBeL0INFhcJoxGS1vmbMD0g+wj0qZPDln60G5qlg6TvjRsKkG7WqZgQ==
+X-Received: by 2002:a05:6602:6d0f:b0:824:d9d1:e67b with SMTP id ca18e2360f4ac-82a110478d8mr615310639f.8.1725032023266;
+        Fri, 30 Aug 2024 08:33:43 -0700 (PDT)
+Received: from localhost.localdomain (174-20-195-90.mpls.qwest.net. [174.20.195.90])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4ced2e96209sm781045173.91.2024.08.30.08.33.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 30 Aug 2024 08:33:42 -0700 (PDT)
+From: Shimrra Shai <shimrrashai@gmail.com>
+To: shimrrashai@gmail.com
+Cc: Laurent.pinchart@ideasonboard.com,
+	aarnoud@me.com,
+	airlied@gmail.com,
+	algea.cao@rock-chips.com,
+	andrzej.hajda@intel.com,
+	andy.yan@rock-chips.com,
+	conor+dt@kernel.org,
+	cristian.ciocaltea@collabora.com,
+	daniel@ffwll.ch,
+	devicetree@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	heiko@sntech.de,
+	hjc@rock-chips.com,
+	jernej.skrabec@gmail.com,
+	jonas@kwiboo.se,
+	krzk+dt@kernel.org,
+	ldearquer@gmail.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	maarten.lankhorst@linux.intel.com,
+	markyao0591@gmail.com,
+	mripard@kernel.org,
+	neil.armstrong@linaro.org,
+	rfoss@kernel.org,
+	robh@kernel.org,
+	s.hauer@pengutronix.de,
+	tzimmermann@suse.de
+Subject: Re: [PATCH v5? 0/6] Tweaked basic Synopsys DW HDMI QP TX driver for Rockchip RK3588
+Date: Fri, 30 Aug 2024 10:33:29 -0500
+Message-ID: <20240830153329.9170-1-shimrrashai@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240830152132.8894-1-shimrrashai@gmail.com>
+References: <20240830152132.8894-1-shimrrashai@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="O8AcbMJiu18HmGgA"
-Content-Disposition: inline
-In-Reply-To: <d4eddc24-9192-4a4a-ac67-4cfbd429a6a9@baylibre.com>
+Content-Transfer-Encoding: 8bit
 
+Geez, my email system seems to have screwed up this submission by
+duplicate-sending messages for some reason. Just FYI.
 
---O8AcbMJiu18HmGgA
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Fri, Aug 30, 2024 at 10:19:49AM +0200, Angelo Dureghello wrote:
-> Hi Conor,
->=20
-> On 29/08/24 5:46 PM, Conor Dooley wrote:
-> > On Thu, Aug 29, 2024 at 02:32:02PM +0200, Angelo Dureghello wrote:
-> > > From: Angelo Dureghello <adureghello@baylibre.com>
-> > >=20
-> > > Add bus property.
-> > RFC it may be, but you do need to explain what this bus-type actually
-> > describes for commenting on the suitability of the method to be
-> > meaningful.
->=20
-> thanks for the feedbacks,
->=20
-> a "bus" is intended as a generic interface connected to the target,
-> may be used from a custom IP (fpga) to communicate with the target
-> device (by read/write(reg and value)) using a special custom interface.
->=20
-> The bus could also be physically the same of some well-known existing
-> interfaces (as parallel, lvds or other uncommon interfaces), but using
-> an uncommon/custom protocol over it.
->=20
-> In concrete, actually bus-type is added to the backend since the
-> ad3552r DAC chip can be connected (for maximum speed) by a 5 lanes DDR
-> parallel bus (interface that i named QSPI, but it's not exactly a QSPI
-> as a protocol), so it's a device-specific interface.
->=20
-> With additions in this patchset, other frontends, of course not only
-> DACs, will be able to add specific busses and read/wrtie to the bus
-> as needed.
->=20
-> > > Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
-> > > ---
-> > >   Documentation/devicetree/bindings/iio/dac/adi,axi-dac.yaml | 9 ++++=
-+++++
-> > >   1 file changed, 9 insertions(+)
-> > >=20
-> > > diff --git a/Documentation/devicetree/bindings/iio/dac/adi,axi-dac.ya=
-ml b/Documentation/devicetree/bindings/iio/dac/adi,axi-dac.yaml
-> > > index a55e9bfc66d7..a7ce72e1cd81 100644
-> > > --- a/Documentation/devicetree/bindings/iio/dac/adi,axi-dac.yaml
-> > > +++ b/Documentation/devicetree/bindings/iio/dac/adi,axi-dac.yaml
-> > > @@ -38,6 +38,15 @@ properties:
-> > >     clocks:
-> > >       maxItems: 1
-> > You mentioned about new compatible strings, does the one currently
-> > listed in this binding support both bus types?
-
-You didn't answer this, and there's insufficient explanation of the
-"hardware" in this RFC, but I found this which is supposedly the
-backend:
-https://github.com/analogdevicesinc/hdl/tree/main/library/axi_ad3552r
-adi,axi-dac.yaml has a single compatible, and that compatible has
-nothing to do with "axi_ad3552r" as it is "adi,axi-dac-9.1.b". I would
-expect either justification for reuse of the compatible, or a brand new
-compatible for this backend, even if the driver can mostly be reused.
-
-Could you please link to whatever ADI wiki has detailed information on
-how this stuff works so that I can look at it to better understand the
-axes of configuration here?
-
-> >=20
-> > Making the bus type decision based on compatible only really makes sense
-> > if they're different versions of the IP, but not if they're different
-> > configuration options for a given version.
-> >=20
-> > > +  bus-type:
->=20
-> DAC IP on fpga actually respects same structure and register set, except
-> for a named "custom" register that may use specific bitfields depending
-> on the application of the IP.
-
-To paraphrase:
-"The register map is the same, except for the bit that is different".
-If ADI is shipping several different configurations of this IP for
-different DACs, I'd be expecting different compatibles for each backend
-to be honest.
-If each DAC specific backend was to have a unique compatible, would the
-type of bus used be determinable from it? Doesn't have to work for all
-devices from now until the heath death of the universe, but at least for
-the devices that you're currently aware of?
-
-> > If, as you mentioned, there are multiple bus types, a non-flag property
-> > does make sense. However, I am really not keen on these "forced" numeri=
-cal
-> > properties at all, I'd much rather see strings used here.
-
-> > > +    maxItems: 1
-> > > +    description: |
-> > > +      Configure bus type:
-> > > +        - 0: none
-> > > +        - 1: qspi
-
-Also, re-reading the cover letter, it says "this platform driver uses a 4
-lanes parallel bus, plus a clock line, similar to a qspi."
-I don't think we should call this "qspi" if it is not actually qspi,
-that's just confusing.
-
-Cheers,
-Conor.
-
-> > > +    enum: [0, 1]
-> > > +    default: 0
-> > > +
-> > >     '#io-backend-cells':
-> > >       const: 0
-> > >=20
-> > > --=20
-> > > 2.45.0.rc1
-> > >=20
-> --=20
->  ,,,      Angelo Dureghello
-> :: :.     BayLibre -runtime team- Developer
-> :`___:
->  `____:
->=20
-
---O8AcbMJiu18HmGgA
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZtHmNQAKCRB4tDGHoIJi
-0nuSAP4/5s5LIi7WeGptks/V/sxAnqULmH/Xr48/M9Kso5CxBAD/T/7gk0aGvLvK
-qFh6V6pwK6t+OBBihFTVSjmPo1KGDAA=
-=e7vR
------END PGP SIGNATURE-----
-
---O8AcbMJiu18HmGgA--
+Shimrra
 
