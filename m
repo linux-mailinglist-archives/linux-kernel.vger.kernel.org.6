@@ -1,138 +1,117 @@
-Return-Path: <linux-kernel+bounces-309069-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309068-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D63659665CC
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 17:38:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BE8D19665CA
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 17:38:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 153821C23956
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 15:38:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F12331C23A2F
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 15:38:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F50F1B81D2;
-	Fri, 30 Aug 2024 15:34:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33DCB1BE241;
+	Fri, 30 Aug 2024 15:34:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Wmsc5rPG"
-Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X6VBKc8l"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AD011B81C3
-	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 15:34:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 703371B7901;
+	Fri, 30 Aug 2024 15:34:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725032070; cv=none; b=I1XjkOr3Zh3UG/RF6sWiTLKra1wcY2tmn3vLF2bYaXKb6uPcDIv6XKepSJ9vYi6vhzmaW36GcocE20teICBDQgJ7gMVjTD+Ev9W7IOm87yL0z3v0HxLndS7Vz98swVdPLjao6nGalImElllYYJewY6rcEfa+lWpXd+zoxKyrnZE=
+	t=1725032059; cv=none; b=OuwCMzL3aMmuNL3HNXvpb3x6vnCMH8x/F2dNBejTPiwaKFJCamu2OE5RiQpK8LpIOL6vWFTavY8KYdTt+goqFR2GRLePDEP8doKd7p2UHNgA6grICTDbvZ7CRUWtnKRRPiQ5efsZN8yEcd4w8xKKw5o/ZRGVnubFnYsmDveSIrA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725032070; c=relaxed/simple;
-	bh=fpS42aX0b5K/b3Q1uAIPaQJhJiOQBXKx/N3vFKIRp18=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JFPyaupqqAUEgXiOYGItzv9Zqgc2b/attC/23aXt4ew3K73eQXG5YdyFphiAPAKswVId+9gIz1nA0QLbZTYATpPMOXr7svwiMi5DrjCWEgPvnpRAqUlUneYVAupBLJ4VueKul+2oFPaMXY2MEHocwqeLGvkFgNkno+8s4aH1qZo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Wmsc5rPG; arc=none smtp.client-ip=209.85.208.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2f50966c478so19698891fa.1
-        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 08:34:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1725032067; x=1725636867; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fpS42aX0b5K/b3Q1uAIPaQJhJiOQBXKx/N3vFKIRp18=;
-        b=Wmsc5rPGtDGiPCZokdC1Gw7pezL3Q+qYze/rrzykk6T6lnvb1YCGpqPa1xSQWGDNUo
-         tK6X+kq/xXKH/WmwGautbiHU7kQ6kV7/yuWP8cfQWdTQ2mK45EKOpRaH/gD/JzaLDQHw
-         ppIQUv9p+UV5Yh1Z9EGQ2O/RTVOZMMzGzFc3yXx7Gxle5lEqeImVn98gGbE/Vf7ZOHo3
-         wKdna+JM5LSDztXAzzJy/1tTVkStuMC9OoLkzIm8LSpr4MHWFlaK/dOJ+YHYoqBvPTYh
-         bEXuhlZOoBlVJ8AulTFczU0ewsabFsjNzGXO8oiZqsP98QwEvC0RxrVazAiV3KtVtEBg
-         IN7A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725032067; x=1725636867;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fpS42aX0b5K/b3Q1uAIPaQJhJiOQBXKx/N3vFKIRp18=;
-        b=AbkN8CSWixvhMnJ7Y4MiyvL+ecG1Ua4NWWfdpczIIS55otknngLXiyaw43yCzg5y3h
-         ShhTXfPxNLuHP9guF1WOzoyP0W81OJOx+Ib+1yTfkyomxTfoBGXO4wMfLLHtspKErixf
-         9RI9g2ameoeiZX0eE5yEYjZtVPPah4qWeH7Vjeed+uHs2MhRIYbW4VyAwKP/N/b9owaJ
-         RMVSBIz04AikZyTwUiBxQVWfQ7DgQxnjweLPo0YyoPyzmAZLC3yoiuovciVHwK8/Isw+
-         TDQlo7+tKAFI/xzue4ypP4a1S/t0w3W8+0tLzl/+w3ZP8mBuKiRdtBAXgcP0r1EWJdde
-         pxbQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVl+aPIJUbgHCT58BMWxReP7I1Bt8ju6iaVnaWKaib2zDcGtPXp5agrkCN+MsUSDCdnor7WvbdnRtE97kU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz5aHNoRg6wGHaxXdpPDCfA0QLJTBVbpRNEtn7Av7ffIsJ+xudJ
-	TtEKNywo3uk3KBklsM/zPznmCgGJwwq+TNO/gA6hQ8HIXY9PrZa3uQOCPYOZEZYBEV57xL1uA/K
-	IykMjghiqENd09VnIwTzKgjfmTv7eW+f2Uwdw
-X-Google-Smtp-Source: AGHT+IGwBJXtOV0i3GYyRTdCgSnRpiivnFkx2coVNIZMzMIKNaMNwsMNP5zJF5zp0+JOd+xMSn0E3uXDKUV2VAuZcjg=
-X-Received: by 2002:a2e:a544:0:b0:2f3:f39f:3719 with SMTP id
- 38308e7fff4ca-2f61e0a5143mr23582771fa.29.1725032066374; Fri, 30 Aug 2024
- 08:34:26 -0700 (PDT)
+	s=arc-20240116; t=1725032059; c=relaxed/simple;
+	bh=h5Dh9w2B631NC+SF0BB02Jl/dZ4K6lx7MsnDASvr5tM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rsjmNrgCAOchpwgYKGwTcTlHabcg9hDPJSCnsbbp6IXBuXv43PQRO4yibnQme3kx6fuoaXeZLn4kkQ37B9ouE/fYT8pGADNb9BCm1VTnTPGABvfG+sRH7WuC0qeYucs69lfIszCvOrywohHmWvzJ08geSl5nmCKFN9mCtXDGriI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X6VBKc8l; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D6522C4CEC2;
+	Fri, 30 Aug 2024 15:34:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725032059;
+	bh=h5Dh9w2B631NC+SF0BB02Jl/dZ4K6lx7MsnDASvr5tM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=X6VBKc8lPgjHp6f7jbf7w0oNckYBnFgYvehEf07A+MY4h6yL6C+/FSAS/unAAC8J8
+	 rfybVNdvl2Lz99RcwuIx7BonGginesqKZ1fDMw/TYcepTeVsjSjzR6uXIqXU8mntTv
+	 1rIXzNmlUPumIAesKpRsea5/b4cWQQ9Bo4HyXcJuxsIPBw6brlWTSBraXa9BrnPQNs
+	 DmteLwUiCGKB631+2XDOAwActb/YbS19+UZoo9e4/9qLc/8Qg+MwJU2lWeIoPHSvEG
+	 x1BO0pbc7nL1UEfT2w+KD5KBisOJ+/jWY77RX/vI1fj5/UTqphXW61u6I4MKX2gLHa
+	 vCy6TMHMk2Dsg==
+Date: Fri, 30 Aug 2024 16:34:13 +0100
+From: Simon Horman <horms@kernel.org>
+To: Menglong Dong <menglong8.dong@gmail.com>
+Cc: idosch@nvidia.com, kuba@kernel.org, davem@davemloft.net,
+	edumazet@google.com, pabeni@redhat.com, dsahern@kernel.org,
+	dongml2@chinatelecom.cn, amcohen@nvidia.com, gnault@redhat.com,
+	bpoirier@nvidia.com, b.galvani@gmail.com, razor@blackwall.org,
+	petrm@nvidia.com, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org
+Subject: Re: [PATCH net-next v2 08/12] net: vxlan: use vxlan_kfree_skb() in
+ vxlan_xmit()
+Message-ID: <20240830153413.GQ1368797@kernel.org>
+References: <20240830020001.79377-1-dongml2@chinatelecom.cn>
+ <20240830020001.79377-9-dongml2@chinatelecom.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240724011037.3671523-1-jthoughton@google.com>
- <20240724011037.3671523-4-jthoughton@google.com> <CADrL8HV5M-n72KDseDKWpGrUVMjC147Jqz98PxyG2ZeRVbFu8g@mail.gmail.com>
- <Zr_y7Fn63hdowfYM@google.com> <CAOUHufYc3hr-+fp14jgEkDN++v6t-z-PRf1yQdKtnje6SgLiiA@mail.gmail.com>
- <ZsOuEP6P0v45ffC0@linux.dev> <CADrL8HWf-Onu=4ONBO1CFZ1Tqj5bee=+NnRC333aKqkUy+0Sxg@mail.gmail.com>
- <ZtEW5Iym5QsJbONM@linux.dev>
-In-Reply-To: <ZtEW5Iym5QsJbONM@linux.dev>
-From: David Matlack <dmatlack@google.com>
-Date: Fri, 30 Aug 2024 08:33:59 -0700
-Message-ID: <CALzav=daN3y9nXNuj7pPpn2u_aAQ84t161z3odP=MGLYCLfYMQ@mail.gmail.com>
-Subject: Re: [PATCH v6 03/11] KVM: arm64: Relax locking for kvm_test_age_gfn
- and kvm_age_gfn
-To: Oliver Upton <oliver.upton@linux.dev>
-Cc: James Houghton <jthoughton@google.com>, Yu Zhao <yuzhao@google.com>, 
-	Sean Christopherson <seanjc@google.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Paolo Bonzini <pbonzini@redhat.com>, Ankit Agrawal <ankita@nvidia.com>, 
-	Axel Rasmussen <axelrasmussen@google.com>, Catalin Marinas <catalin.marinas@arm.com>, 
-	David Rientjes <rientjes@google.com>, James Morse <james.morse@arm.com>, 
-	Jason Gunthorpe <jgg@ziepe.ca>, Jonathan Corbet <corbet@lwn.net>, Marc Zyngier <maz@kernel.org>, 
-	Raghavendra Rao Ananta <rananta@google.com>, Ryan Roberts <ryan.roberts@arm.com>, 
-	Shaoqin Huang <shahuang@redhat.com>, Suzuki K Poulose <suzuki.poulose@arm.com>, 
-	Wei Xu <weixugc@google.com>, Will Deacon <will@kernel.org>, Zenghui Yu <yuzenghui@huawei.com>, 
-	kvmarm@lists.linux.dev, kvm@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240830020001.79377-9-dongml2@chinatelecom.cn>
 
-On Thu, Aug 29, 2024 at 5:48=E2=80=AFPM Oliver Upton <oliver.upton@linux.de=
-v> wrote:
->
-> On Thu, Aug 29, 2024 at 05:33:00PM -0700, James Houghton wrote:
-> > On Mon, Aug 19, 2024 at 1:42=E2=80=AFPM Oliver Upton <oliver.upton@linu=
-x.dev> wrote:
-> > > Asking since you had a setup / data earlier on when you were carrying
-> > > the series. Hopefully with supportive data we can get arm64 to opt-in
-> > > to HAVE_KVM_MMU_NOTIFIER_YOUNG_FAST_ONLY as well.
-> >
-> > I'll keep trying some other approaches I can take for getting similar
-> > testing that Yu had; it is somewhat difficult for me to reproduce
-> > those tests (and it really shouldn't be.... sorry).
->
-> No need to apologize. Getting good test hardware for arm64 is a complete
-> chore. Sure would love a functional workstation with cores from this
-> decade...
->
-> > I think it makes most sense for me to drop the arm64 patch for now and
-> > re-propose it (or something stronger) alongside enabling aging. Does
-> > that sound ok?
->
-> I'm a bit disappointed that we haven't gotten forward progress on the
-> arm64 patches, but I also recognize this is the direction of travel as
-> the x86 patches are shaping up.
->
-> So yeah, I'm OK with it, but I'd love to get the arm64 side sorted out
-> soon while the context is still fresh.
+On Fri, Aug 30, 2024 at 09:59:57AM +0800, Menglong Dong wrote:
+> Replace kfree_skb() with vxlan_kfree_skb() in vxlan_xmit(). Following
+> new skb drop reasons are introduced for vxlan:
+> 
+> /* no remote found */
+> VXLAN_DROP_NO_REMOTE
+> 
+> And following drop reason is introduced to dropreason-core:
+> 
+> /* txinfo is missed in "external" mode */
+> SKB_DROP_REASON_TUNNEL_TXINFO
+> 
+> Signed-off-by: Menglong Dong <dongml2@chinatelecom.cn>
+> ---
+> v2:
+> - move the drop reason "TXINFO" from vxlan to core
+> - rename VXLAN_DROP_REMOTE to VXLAN_DROP_NO_REMOTE
+> ---
+>  drivers/net/vxlan/drop.h       | 3 +++
+>  drivers/net/vxlan/vxlan_core.c | 6 +++---
+>  include/net/dropreason-core.h  | 3 +++
+>  3 files changed, 9 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/net/vxlan/drop.h b/drivers/net/vxlan/drop.h
+> index 416532633881..a8ad96e0a502 100644
+> --- a/drivers/net/vxlan/drop.h
+> +++ b/drivers/net/vxlan/drop.h
+> @@ -13,6 +13,7 @@
+>  	R(VXLAN_DROP_ENTRY_EXISTS)		\
+>  	R(VXLAN_DROP_INVALID_HDR)		\
+>  	R(VXLAN_DROP_VNI_NOT_FOUND)		\
+> +	R(VXLAN_DROP_NO_REMOTE)			\
+>  	/* deliberate comment for trailing \ */
+>  
+>  enum vxlan_drop_reason {
+> @@ -33,6 +34,8 @@ enum vxlan_drop_reason {
+>  	VXLAN_DROP_INVALID_HDR,
+>  	/** @VXLAN_DROP_VNI_NOT_FOUND: no vxlan device found for the vni */
+>  	VXLAN_DROP_VNI_NOT_FOUND,
+> +	/** @VXLAN_DROP_NO_REMOTE: no remote found to transmit the packet */
 
-Converting the aging notifiers to holding mmu_lock for read seems like
-a pure win and minimal churn. Can we keep that patch in v7 (which
-depends on the lockless notifier refactor, i.e. is not completely
-stand-alone)? We can revisit enabling MGLRU on arm64 in a subsequent
-series.
->
-> --
-> Thanks,
-> Oliver
+Maybe: no remote found for transmit
+   or: no remote found for xmit
+
+> +	VXLAN_DROP_NO_REMOTE,
+>  };
+>  
+>  static inline void
+
+...
 
