@@ -1,124 +1,248 @@
-Return-Path: <linux-kernel+bounces-308650-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308657-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65B2A965FF1
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 13:04:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23511965FF9
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 13:06:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 20880287D49
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 11:04:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 824091C20EC8
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 11:06:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06A18192D6D;
-	Fri, 30 Aug 2024 11:04:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 146F819E81F;
+	Fri, 30 Aug 2024 11:04:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="wXGJ7gi2"
-Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MfeY27Ed"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E30B4179652
-	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 11:03:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 305CE19ABAA
+	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 11:04:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725015840; cv=none; b=EkV08bDrIHPYSzQQ2z/07/2rvE05hLPJzO8TksS+CxRXou3Q36oENuauH7qOVRuCmZaFLMUujJc/SsvnlzoLhwEak+TsdrgLGhD3gJ40NrGR4xrl1nfrLfID4PTIMvvLteSvrAFzXy0+2CtH2gu4gXEagJRgS5K3fy9uONJp7BY=
+	t=1725015866; cv=none; b=rndLNhBT3QyYLX+y5Q7qketv/Ky+rXjKejMV6BND6W0wATvCoVHMUNYHbHdwWYFn0MsB9oga2JtArNDtf9dEHHWZXo/zsWYSeF6I8WI0QxQGKkf8JYqpyH5peu8/tEzrtf5KQXjXIc+4kjUDf8ms7nZTJZcDObJXGO1VM27croQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725015840; c=relaxed/simple;
-	bh=0ffy6KqD2ZsBlubMNAmxaGladd4Gg5hkg0zx+QhJMCU=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=AtQkWMTgvlgoYLAgGFud+DzQ37gLBBlSxjhAo80HntGdQqy0dIXUK4gjItn+NqP32qLmw6fDv8LpRA8YUhiUzNcjwSJlI/Bx70FnpMZ1XlM4f26arVPMb91Caru3JZMwIiXaHCH+DFVl8hkWLbtFmf+ybo+mEmVVSfinNmiB7M4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--smostafa.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=wXGJ7gi2; arc=none smtp.client-ip=209.85.128.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--smostafa.bounces.google.com
-Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6d3e062dbeeso8805237b3.0
-        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 04:03:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1725015838; x=1725620638; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id
-         :mime-version:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=obthWJJQx048EnN2AOC6zuK5QgHhreZNXc1GxoMBMd4=;
-        b=wXGJ7gi22eQAnN+MisYtiYF5VweiCqk3vahimD1iifKVvHrm95qeocOmcCnhBKk72V
-         tzLm9dx/sFEx0RS16FlG/f04fLAiBB21mqi6jvj8HT6fKL8sxIv+alW8BGCAaR7+mWKS
-         i5YcnIfwk4ZXGxY7DHhsj9Uw97WX2MtHC8VXzxPXenvTTpsfSAIv1do/PFFKx5twkLek
-         keSxRbJuCYDkVMS8O6cSx2eO0Um8w2cQAxIju7jVcgPTPBZci1AT5K0t4EWdAhC+ZPkl
-         qizqWQHehoylQbpmxGLDPJSw8qrVqikHzM+/VOidhptL7jeGqHRFE8opFZVZyFBwiPUB
-         xSBg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725015838; x=1725620638;
-        h=content-transfer-encoding:cc:to:from:subject:message-id
-         :mime-version:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=obthWJJQx048EnN2AOC6zuK5QgHhreZNXc1GxoMBMd4=;
-        b=mkxmV95Sg/BMbqoWl5ujtfeVdcBxqPmTkDyOHJJ56dH5waqJMFelS+ne6MetfVL1yC
-         HcEsI9P5nI51HXDaw3oqIPayXTOdHl5fdztXHQUNikYiBAEvlimykF/eNu2zdMdD48+7
-         jnCJ1Ax861/rsvwQJCGJbqlG/UDgqeaY1V2MJxXzAx8If2rmSOY2hsKLIZKMgL+tRfna
-         8lVkUfdRqFZU1WzPGsQcfO30xJ+wn/gN8J3wrkwjjxR54ubJhTZXpwDk+pweaGhToj8g
-         LicgzhyYHNw4aN6BFC2eaQN+IylEdrE5LNBBlq3QnHhZQguclf+rkqyO+UauTdJ8sTlI
-         5L/A==
-X-Gm-Message-State: AOJu0Yxa8hwnpcJd62xBmFQodnwNlwmMEuVxRRF/sQoUOQhixUta/GNs
-	hwKSq3hMxom5AsbNnM0CUleLs6q/F2B95njqS3Ut/AxwepRr0Y8jt/ZWG3FZjZEvxJ90R+YMpY+
-	A0TEMEtTEoV7tl6fmPpjJJE71nBGiEZjLPnQD0P7YYvdXVz7TvWNbf6eWMcFEXDKhSjhx20Ho7J
-	6lA3VcL6b2tjCOhWk+iJ9TASzZ23VSHASpyljMIgY+e02FDCpKGKw=
-X-Google-Smtp-Source: AGHT+IHkyHjn4rwsHHaBZz13oCcDK5Wif55SRe6/R2eIzxGkPl4d+94YtRJamqf/F9SQM1XvqVn7meehMJtJLw==
-X-Received: from mostafa.c.googlers.com ([fda3:e722:ac3:cc00:28:9cb1:c0a8:333c])
- (user=smostafa job=sendgmr) by 2002:a81:cb0d:0:b0:651:2eea:4dfe with SMTP id
- 00721157ae682-6d2818a64f4mr1646297b3.0.1725015837461; Fri, 30 Aug 2024
- 04:03:57 -0700 (PDT)
-Date: Fri, 30 Aug 2024 11:03:46 +0000
+	s=arc-20240116; t=1725015866; c=relaxed/simple;
+	bh=PxQxs1dzpTVKaadJ3L8xHOFUMg9pWjdhmkgI2eKkz3M=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=qL4BpT2nc1DqVJWQC5CAIg+Rf+vIQjMP/BTeVepLdYinzIL2BIT88F7PxQtKpkPDrv1kojRnIOGZ4Lh1ZJlC8anvl8QHtgvwXO5U/kEm+pUEBH5IS+bzCDy+kvjxOMh3idjWeHNHepG/gl0jIY6DXUsJ1gjbkSzyBgNXCFNsxCQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MfeY27Ed; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E296BC4CEC2;
+	Fri, 30 Aug 2024 11:04:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725015866;
+	bh=PxQxs1dzpTVKaadJ3L8xHOFUMg9pWjdhmkgI2eKkz3M=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=MfeY27EdYi+2BHEB5zGux4wIoh7pfSVti8IwQs+BeuCqfeHbBFuMsUWaaYg0Lo5Kj
+	 k1bb5hh0i+okTy3VOsQegR0Bfdd6XCOh0GqhHfyOuNZ48a0mdIBFkfnXXrtLZqTBmu
+	 ER3MIqfTvhRSjSI78SDi973lx4fu0OHV8+DiVQV9nuK3oMC28esDKRG5J/hBwcdb7i
+	 R3/VY4Szn7z60cLcCo0Pkwk/jB/3MzeYRTP/7j0wUS5z09ue+LyESSav7kmEiPO2gd
+	 WOXxFRz9LZD7TXtrB/dc09XdkO//WoHCUZ9YtPhMRVTyxxLDzKsRUNHh20o4008a3Y
+	 CiLb42EpOpSTQ==
+From: Tejun Heo <tj@kernel.org>
+To: void@manifault.com
+Cc: kernel-team@meta.com,
+	linux-kernel@vger.kernel.org,
+	Tejun Heo <tj@kernel.org>
+Subject: [PATCH 03/11] sched_ext: Make find_dsq_for_dispatch() handle SCX_DSQ_LOCAL_ON
+Date: Fri, 30 Aug 2024 01:03:47 -1000
+Message-ID: <20240830110415.116090-4-tj@kernel.org>
+X-Mailer: git-send-email 2.46.0
+In-Reply-To: <20240830110415.116090-1-tj@kernel.org>
+References: <20240830110415.116090-1-tj@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.46.0.469.g59c65b2a67-goog
-Message-ID: <20240830110349.797399-1-smostafa@google.com>
-Subject: [PATCH v4 0/2] Fix handling of S2 stalls
-From: Mostafa Saleh <smostafa@google.com>
-To: linux-kernel@vger.kernel.org, iommu@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, will@kernel.org, robin.murphy@arm.com, 
-	joro@8bytes.org
-Cc: jean-philippe@linaro.org, jgg@ziepe.ca, nicolinc@nvidia.com, 
-	mshavit@google.com, Mostafa Saleh <smostafa@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-While debugging something else, I spent hours looking at hexdumps of
-STEs, CDs and commands while comparing them against the arch specs,
-where I noticed a minor violation in the driver regarding handling of
-S2S bit in the STE.
+find_dsq_for_dispatch() handles all DSQ IDs except SCX_DSQ_LOCAL_ON.
+Instead, each caller is hanlding SCX_DSQ_LOCAL_ON before calling it. Move
+SCX_DSQ_LOCAL_ON lookup into find_dsq_for_dispatch() to remove duplicate
+code in direct_dispatch() and dispatch_to_local_dsq().
 
-This has been there for ages, so it=E2=80=99s highly unlikely that any HW (=
-if
-it exists with such features) running Linux is affected.
+No functional changes intended.
 
-I don=E2=80=99t have access to HW with stalls so I just tested normal usage
-and (terminated) translation fault events.
+Signed-off-by: Tejun Heo <tj@kernel.org>
+---
+ kernel/sched/ext.c | 90 +++++++++++++++++++++-------------------------
+ 1 file changed, 40 insertions(+), 50 deletions(-)
 
-Also, add some unit tests for stall enabled masters.
-
-Mostafa Saleh (2):
-  iommu/arm-smmu-v3: Match Stall behaviour for S2
-  iommu/arm-smmu-v3-test: Test masters with stall enabled
-
- .../iommu/arm/arm-smmu-v3/arm-smmu-v3-test.c  | 83 ++++++++++++++-----
- drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c   |  8 +-
- drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h   |  1 +
- 3 files changed, 66 insertions(+), 26 deletions(-)
-
-v4:
-- Add S2S bit to get_used for stage-2
-- Add unit tests for masters with stall enabled
-
-v3:
-- Set S2S for s2 and not s1 domain
-- Ignore ats check
-
-v2:
-- Fix index of the STE
-- Fix conflict with ATS
-- Squash the 2 patches and drop enable_nesting
-
---=20
-2.46.0.469.g59c65b2a67-goog
+diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
+index 3facfca73337..80387cd9b8c3 100644
+--- a/kernel/sched/ext.c
++++ b/kernel/sched/ext.c
+@@ -1726,6 +1726,15 @@ static struct scx_dispatch_q *find_dsq_for_dispatch(struct rq *rq, u64 dsq_id,
+ 	if (dsq_id == SCX_DSQ_LOCAL)
+ 		return &rq->scx.local_dsq;
+ 
++	if ((dsq_id & SCX_DSQ_LOCAL_ON) == SCX_DSQ_LOCAL_ON) {
++		s32 cpu = dsq_id & SCX_DSQ_LOCAL_CPU_MASK;
++
++		if (!ops_cpu_valid(cpu, "in SCX_DSQ_LOCAL_ON dispatch verdict"))
++			return &scx_dsq_global;
++
++		return &cpu_rq(cpu)->scx.local_dsq;
++	}
++
+ 	dsq = find_non_local_dsq(dsq_id);
+ 	if (unlikely(!dsq)) {
+ 		scx_ops_error("non-existent DSQ 0x%llx for %s[%d]",
+@@ -1769,8 +1778,8 @@ static void mark_direct_dispatch(struct task_struct *ddsp_task,
+ static void direct_dispatch(struct task_struct *p, u64 enq_flags)
+ {
+ 	struct rq *rq = task_rq(p);
+-	struct scx_dispatch_q *dsq;
+-	u64 dsq_id = p->scx.ddsp_dsq_id;
++	struct scx_dispatch_q *dsq =
++		find_dsq_for_dispatch(rq, p->scx.ddsp_dsq_id, p);
+ 
+ 	touch_core_sched_dispatch(rq, p);
+ 
+@@ -1782,15 +1791,9 @@ static void direct_dispatch(struct task_struct *p, u64 enq_flags)
+ 	 * DSQ_LOCAL_ON verdicts targeting the local DSQ of a remote CPU, defer
+ 	 * the enqueue so that it's executed when @rq can be unlocked.
+ 	 */
+-	if ((dsq_id & SCX_DSQ_LOCAL_ON) == SCX_DSQ_LOCAL_ON) {
+-		s32 cpu = dsq_id & SCX_DSQ_LOCAL_CPU_MASK;
++	if (dsq->id == SCX_DSQ_LOCAL && dsq != &rq->scx.local_dsq) {
+ 		unsigned long opss;
+ 
+-		if (cpu == cpu_of(rq)) {
+-			dsq_id = SCX_DSQ_LOCAL;
+-			goto dispatch;
+-		}
+-
+ 		opss = atomic_long_read(&p->scx.ops_state) & SCX_OPSS_STATE_MASK;
+ 
+ 		switch (opss & SCX_OPSS_STATE_MASK) {
+@@ -1817,8 +1820,6 @@ static void direct_dispatch(struct task_struct *p, u64 enq_flags)
+ 		return;
+ 	}
+ 
+-dispatch:
+-	dsq = find_dsq_for_dispatch(rq, dsq_id, p);
+ 	dispatch_enqueue(dsq, p, p->scx.ddsp_enq_flags | SCX_ENQ_CLEAR_OPSS);
+ }
+ 
+@@ -2303,51 +2304,38 @@ static bool consume_dispatch_q(struct rq *rq, struct scx_dispatch_q *dsq)
+ enum dispatch_to_local_dsq_ret {
+ 	DTL_DISPATCHED,		/* successfully dispatched */
+ 	DTL_LOST,		/* lost race to dequeue */
+-	DTL_NOT_LOCAL,		/* destination is not a local DSQ */
+ 	DTL_INVALID,		/* invalid local dsq_id */
+ };
+ 
+ /**
+  * dispatch_to_local_dsq - Dispatch a task to a local dsq
+  * @rq: current rq which is locked
+- * @dsq_id: destination dsq ID
++ * @dst_dsq: destination DSQ
+  * @p: task to dispatch
+  * @enq_flags: %SCX_ENQ_*
+  *
+- * We're holding @rq lock and want to dispatch @p to the local DSQ identified by
+- * @dsq_id. This function performs all the synchronization dancing needed
+- * because local DSQs are protected with rq locks.
++ * We're holding @rq lock and want to dispatch @p to @dst_dsq which is a local
++ * DSQ. This function performs all the synchronization dancing needed because
++ * local DSQs are protected with rq locks.
+  *
+  * The caller must have exclusive ownership of @p (e.g. through
+  * %SCX_OPSS_DISPATCHING).
+  */
+ static enum dispatch_to_local_dsq_ret
+-dispatch_to_local_dsq(struct rq *rq, u64 dsq_id, struct task_struct *p,
+-		      u64 enq_flags)
++dispatch_to_local_dsq(struct rq *rq, struct scx_dispatch_q *dst_dsq,
++		      struct task_struct *p, u64 enq_flags)
+ {
+ 	struct rq *src_rq = task_rq(p);
+-	struct rq *dst_rq;
++	struct rq *dst_rq = container_of(dst_dsq, struct rq, scx.local_dsq);
+ 
+ 	/*
+ 	 * We're synchronized against dequeue through DISPATCHING. As @p can't
+ 	 * be dequeued, its task_rq and cpus_allowed are stable too.
++	 *
++	 * If dispatching to @rq that @p is already on, no lock dancing needed.
+ 	 */
+-	if (dsq_id == SCX_DSQ_LOCAL) {
+-		dst_rq = rq;
+-	} else if ((dsq_id & SCX_DSQ_LOCAL_ON) == SCX_DSQ_LOCAL_ON) {
+-		s32 cpu = dsq_id & SCX_DSQ_LOCAL_CPU_MASK;
+-
+-		if (!ops_cpu_valid(cpu, "in SCX_DSQ_LOCAL_ON dispatch verdict"))
+-			return DTL_INVALID;
+-		dst_rq = cpu_rq(cpu);
+-	} else {
+-		return DTL_NOT_LOCAL;
+-	}
+-
+-	/* if dispatching to @rq that @p is already on, no lock dancing needed */
+ 	if (rq == src_rq && rq == dst_rq) {
+-		dispatch_enqueue(&dst_rq->scx.local_dsq, p,
+-				 enq_flags | SCX_ENQ_CLEAR_OPSS);
++		dispatch_enqueue(dst_dsq, p, enq_flags | SCX_ENQ_CLEAR_OPSS);
+ 		return DTL_DISPATCHED;
+ 	}
+ 
+@@ -2489,19 +2477,21 @@ static void finish_dispatch(struct rq *rq, struct task_struct *p,
+ 
+ 	BUG_ON(!(p->scx.flags & SCX_TASK_QUEUED));
+ 
+-	switch (dispatch_to_local_dsq(rq, dsq_id, p, enq_flags)) {
+-	case DTL_DISPATCHED:
+-		break;
+-	case DTL_LOST:
+-		break;
+-	case DTL_INVALID:
+-		dsq_id = SCX_DSQ_GLOBAL;
+-		fallthrough;
+-	case DTL_NOT_LOCAL:
+-		dsq = find_dsq_for_dispatch(cpu_rq(raw_smp_processor_id()),
+-					    dsq_id, p);
++	dsq = find_dsq_for_dispatch(this_rq(), dsq_id, p);
++
++	if (dsq->id == SCX_DSQ_LOCAL) {
++		switch (dispatch_to_local_dsq(rq, dsq, p, enq_flags)) {
++		case DTL_DISPATCHED:
++			break;
++		case DTL_LOST:
++			break;
++		case DTL_INVALID:
++			dispatch_enqueue(&scx_dsq_global, p,
++					 enq_flags | SCX_ENQ_CLEAR_OPSS);
++			break;
++		}
++	} else {
+ 		dispatch_enqueue(dsq, p, enq_flags | SCX_ENQ_CLEAR_OPSS);
+-		break;
+ 	}
+ }
+ 
+@@ -2718,13 +2708,13 @@ static void process_ddsp_deferred_locals(struct rq *rq)
+ 	 */
+ 	while ((p = list_first_entry_or_null(&rq->scx.ddsp_deferred_locals,
+ 				struct task_struct, scx.dsq_list.node))) {
+-		s32 ret;
++		struct scx_dispatch_q *dsq;
+ 
+ 		list_del_init(&p->scx.dsq_list.node);
+ 
+-		ret = dispatch_to_local_dsq(rq, p->scx.ddsp_dsq_id, p,
+-					    p->scx.ddsp_enq_flags);
+-		WARN_ON_ONCE(ret == DTL_NOT_LOCAL);
++		dsq = find_dsq_for_dispatch(rq, p->scx.ddsp_dsq_id, p);
++		if (!WARN_ON_ONCE(dsq->id != SCX_DSQ_LOCAL))
++			dispatch_to_local_dsq(rq, dsq, p, p->scx.ddsp_enq_flags);
+ 	}
+ }
+ 
+-- 
+2.46.0
 
 
