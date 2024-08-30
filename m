@@ -1,39 +1,62 @@
-Return-Path: <linux-kernel+bounces-308239-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308242-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67250965922
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 09:54:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED57296592B
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 09:56:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 97D501C2031A
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 07:54:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A8E96284324
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 07:56:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DD6F15B117;
-	Fri, 30 Aug 2024 07:54:48 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D9711531FC;
-	Fri, 30 Aug 2024 07:54:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECD65166F19;
+	Fri, 30 Aug 2024 07:55:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="SO8orggT"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D58B15C147;
+	Fri, 30 Aug 2024 07:55:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725004488; cv=none; b=Jkx59oB0HIoH9CC0bONeB85ymnU7eRmpJSWfto6oVWq0XXr12lpGiNAoN1yTCv0mlSnrBM7umU3Tek4A8NDI7epU9P3BvtSAfAHcE1XUyDjoOBJbcqpw1+Ptk45Jw9b7SK9IjONFYXjE0dM5vE1WaoIYcphZ5WISEAmK6zdXfOc=
+	t=1725004543; cv=none; b=GaLMCd7xIjALcoR43WZjNfjPtOifvksANCqDSX7bRLAQrCFyCxNN2kdOLgBdIqhYs4bepFGnwXUKxsRbeOFQLD6Rzi6pfvaTw07oULdoJwPBRmYQQuptjcjqiol2BizFSsxU16/odUPOJZqRZugRSr0gFV9NWjSX+00+wFIE9ro=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725004488; c=relaxed/simple;
-	bh=ICYHULuCEXJMyFjPlygiTLaIzDP1RtvfBDBMmHAMIlE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SRQctPDMgJSchNkDv1qVT+6dGETEq+wiVC1xFqEIw9nLFmH2EQ+VHmtOdoCu/lEQq2CzqwgDMzLaeRkpxEldamM/WJvkJXpBHwFNPBLHgjgf4E4ml8a1w/qw3e/qbGSiLD3sKB0HKCZTDl02KfRRjxaW2muSVfG9vlwm3IrqAuQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id F11931063;
-	Fri, 30 Aug 2024 00:55:11 -0700 (PDT)
-Received: from [10.2.76.71] (e132581.arm.com [10.2.76.71])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C21AD3F73B;
-	Fri, 30 Aug 2024 00:54:43 -0700 (PDT)
-Message-ID: <f14f9dc5-7a82-4ec3-8acc-53a0c7b5a2b6@arm.com>
-Date: Fri, 30 Aug 2024 08:54:42 +0100
+	s=arc-20240116; t=1725004543; c=relaxed/simple;
+	bh=ICOnWy5ERtMLb4aSD3kPGAsQnN7m6tT8L+4jFpK3UFM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Jgkhemus3VKiQjJj0yC2xTfeWrNqFoY6Mm6+BYf07iEPrmVuOtdujunENbNzwlPw8v6mCCRKStfjvF7g09DaZfa0qEZ7un6sV7RAF3GIm4OowSmpPaBULNPQF4jWId/4vW+Qlqul9VPFC7ajvDBXKRJYgz2q+FCKOyabHSMbHCI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=SO8orggT; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47TITuiq011732;
+	Fri, 30 Aug 2024 07:54:57 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	zYycfQ4lgaP4WF5dIMosJrmcyjh/Y2HNGGyYhdP2JtU=; b=SO8orggTFx1V5LiP
+	9mX9wuxE/5g0JhXMQpgYOLIHs2duHRm5fJqalUZVnWugLgAIO/1vD9d8c4ySLrrh
+	S5VqXtx86szGRqqGkan/VqZzemVP4JYsNXhyByeE7MI0dlqu9ztm9i0Yds3l3ten
+	ZPGrI2apaiBErdcLTo71EoXVzJbtGBjr367ABriWvpvNijBuM98SZuXO7JDGH34d
+	MzPcVumMHZc2uWK+0ZtxfY11p2v4zQ3lEe+Pfp0XUYIo7+0l7WZwMA4+O1K6H1Yn
+	m5/cfi9vlCKJDG/B0JxizHrjA932R1DnbIro/H8ii8hWXLq+sTEika3eYA1h3TzO
+	A13gfQ==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 419pv0fv1x-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 30 Aug 2024 07:54:56 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47U7stlY017067
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 30 Aug 2024 07:54:55 GMT
+Received: from [10.151.37.100] (10.80.80.8) by nalasex01c.na.qualcomm.com
+ (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 30 Aug
+ 2024 00:54:49 -0700
+Message-ID: <c17d6216-654d-427a-b267-a3886929ab48@quicinc.com>
+Date: Fri, 30 Aug 2024 13:24:46 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,74 +64,72 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 9/9] perf arm-spe: Dump metadata with version 2
-To: James Clark <james.clark@linaro.org>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>, Will Deacon
- <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Suzuki K Poulose <suzuki.poulose@arm.com>, Mike Leach
- <mike.leach@linaro.org>, John Garry <john.g.garry@oracle.com>,
- Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>,
- Adrian Hunter <adrian.hunter@intel.com>,
- "Liang, Kan" <kan.liang@linux.intel.com>,
- Jonathan Cameron <jonathan.cameron@huawei.com>,
- Yicong Yang <yangyicong@hisilicon.com>,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- coresight@lists.linaro.org, linux-perf-users@vger.kernel.org
-References: <20240827164417.3309560-1-leo.yan@arm.com>
- <20240827164417.3309560-10-leo.yan@arm.com>
- <f80c4933-6531-4578-87de-60e5eccc6cc4@linaro.org>
+Subject: Re: [PATCH V2 6/6] arm64: dts: qcom: ipq5018: Enable PCIe
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: <bhelgaas@google.com>, <lpieralisi@kernel.org>, <kw@linux.com>,
+        <manivannan.sadhasivam@linaro.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <vkoul@kernel.org>,
+        <kishon@kernel.org>, <andersson@kernel.org>, <konradybcio@kernel.org>,
+        <p.zabel@pengutronix.de>, <quic_nsekar@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, <linux-pci@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-phy@lists.infradead.org>, <robimarko@gmail.com>
+References: <20240827045757.1101194-1-quic_srichara@quicinc.com>
+ <20240827045757.1101194-7-quic_srichara@quicinc.com>
+ <nut3ru5rdjf3k3np47gqbpuczvpsuoismx6hp55ivc5mqmdglz@zyzbra46i6iz>
 Content-Language: en-US
-From: Leo Yan <leo.yan@arm.com>
-In-Reply-To: <f80c4933-6531-4578-87de-60e5eccc6cc4@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+From: Sricharan Ramabadhran <quic_srichara@quicinc.com>
+In-Reply-To: <nut3ru5rdjf3k3np47gqbpuczvpsuoismx6hp55ivc5mqmdglz@zyzbra46i6iz>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: ZFbtisr6HyB-2IYFdtE3WJX3D8urmszh
+X-Proofpoint-ORIG-GUID: ZFbtisr6HyB-2IYFdtE3WJX3D8urmszh
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-30_03,2024-08-29_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 clxscore=1015
+ priorityscore=1501 impostorscore=0 suspectscore=0 lowpriorityscore=0
+ malwarescore=0 spamscore=0 mlxlogscore=701 mlxscore=0 bulkscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2408300057
 
-On 8/28/24 17:20, James Clark wrote:
->> +static void arm_spe_print_info(struct arm_spe *spe, __u64 *arr)
->>   {
->> +     unsigned int i, cpu, header_size, cpu_num, per_cpu_size;
->> +
->>       if (!dump_trace)
->>               return;
+
+
+On 8/29/2024 2:40 PM, Dmitry Baryshkov wrote:
+> On Tue, Aug 27, 2024 at 10:27:57AM GMT, Sricharan R wrote:
+>> From: Nitheesh Sekar <quic_nsekar@quicinc.com>
 >>
->> -     fprintf(stdout, arm_spe_info_fmts[ARM_SPE_PMU_TYPE], arr[ARM_SPE_PMU_TYPE]);
->> +     if (spe->metadata_ver == 1) {
->> +             cpu_num = 0;
->> +             header_size = ARM_SPE_AUXTRACE_V1_PRIV_MAX;
->> +             per_cpu_size = 0;
->> +     } else if (spe->metadata_ver == 2) {
+>> Enable the PCIe controller and PHY nodes for RDP 432-c2.
+>>
+>> Signed-off-by: Nitheesh Sekar <quic_nsekar@quicinc.com>
+>> Signed-off-by: Sricharan Ramabadhran <quic_srichara@quicinc.com>
+>> ---
+>>   [v2] Moved status as last property
+>>
+>>   arch/arm64/boot/dts/qcom/ipq5018-rdp432-c2.dts | 9 +++++++++
+>>   1 file changed, 9 insertions(+)
+>>
+>> diff --git a/arch/arm64/boot/dts/qcom/ipq5018-rdp432-c2.dts b/arch/arm64/boot/dts/qcom/ipq5018-rdp432-c2.dts
+>> index 8460b538eb6a..2b253da7f776 100644
+>> --- a/arch/arm64/boot/dts/qcom/ipq5018-rdp432-c2.dts
+>> +++ b/arch/arm64/boot/dts/qcom/ipq5018-rdp432-c2.dts
+>> @@ -28,6 +28,15 @@ &blsp1_uart1 {
+>>   	status = "okay";
+>>   };
+>>   
+>> +&pcie1 {
+>> +	perst-gpios = <&tlmm 15 GPIO_ACTIVE_LOW>;
 > 
-> Assuming future version updates are backwards compatible and only add
-> new info this should be spe->metadata_ver >= 2, otherwise version bumps
-> end up causing errors when files get passed around.
+> pinctrl? wake-gpios?
 > 
-> I know there are arguments about what should and shouldn't be supported
-> when opening new files on old perfs, but in this case it's easy to only
-> add new info to the aux header and leave the old stuff intact.
-> 
->> +             cpu_num = arr[ARM_SPE_CPU_NUM];
->> +             header_size = ARM_SPE_AUXTRACE_V2_PRIV_MAX;
->> +             per_cpu_size = ARM_SPE_AUXTRACE_V2_PRIV_PER_CPU_MAX;
-> 
-> I think for coresight we also save the size of each per-cpu block rather
-> than use a constant, that way new items can be appended without breaking
-> readers.
 
-Good point for adding a 'size' field for each per-cpu block.
+  ok, will add to make it explicit.
+  Otherwise pinctrl was default muxed.
 
-My understanding is we need to make the metadata format to be self-described.
-E.g. the metadata header contains the size for itself, and every per CPU
-metadata block also contains a 'size' field.  Based on this, a general code
-can be used to processing different metadata versions.
-  
-> That kind of leads to another point that this mechanism is mostly
-> duplicated from coresight. It saves a main header version, then per-cpu
-> groups of variable size with named elements. I'm not saying we should
-> definitely try to share the code, but it's worth keeping in mind.
-
-Agreed. I will refine a bit, for better matching this direction.
-
-Thanks for suggestion.
-
-Leo
+Regards,
+  Sricharan
 
