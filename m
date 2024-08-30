@@ -1,77 +1,73 @@
-Return-Path: <linux-kernel+bounces-307969-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307970-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41E9D9655B4
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 05:33:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A6A79655B5
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 05:34:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7C7F3B22537
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 03:33:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E5D702827B5
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 03:34:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEF4B13AA2F;
-	Fri, 30 Aug 2024 03:33:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C7B3135417;
+	Fri, 30 Aug 2024 03:34:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="GJgi6kzD"
-Received: from HK2PR02CU002.outbound.protection.outlook.com (mail-eastasiaazon11010030.outbound.protection.outlook.com [52.101.128.30])
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="MuCKXQej"
+Received: from APC01-SG2-obe.outbound.protection.outlook.com (mail-sgaapc01on2052.outbound.protection.outlook.com [40.107.215.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BD2936B0D;
-	Fri, 30 Aug 2024 03:33:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.128.30
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE5A536B0D
+	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 03:34:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.215.52
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724988794; cv=fail; b=dSu3jv1KBKBSpQ9ELrpuWc+PC6eQ8HW1lgKBLASq/EtwsYGxDBaLkdnSRXitC0LExjq+Pj/B6M7QZUNbdquweJUC/NP+BjAIkA/B/u021zu5aNXyW+RBW+6H3a14XFoX1DDu5q0uSJWrM/wNd+SLW5orM/3xSg5/OJkMByePqLQ=
+	t=1724988855; cv=fail; b=CAt+IWwFz68I0AT3h2zPEEgnL0alP0ZGoW/yNTkVfDPqzWqHHjxJYmq88ZL568BsqbRH7AzdURdxvWklp76vB6L1Iri/spaWi2WXH+HNBYR0mbwugjyIFWbbfu0NVtxo3iHfWUdJ9935U+DdbdOMeusAtpWxCPplmhA2aQstqTk=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724988794; c=relaxed/simple;
-	bh=Eg5ytTFO9LvBN5qrpQdvOC7JMR411ROqL2Kk68J4B+8=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=LCS26KRHPMBIXm/p2eTdW88YUs96uNHUfnpG318ahyzDHeTINIvKbCs14d55cZHn0/ASCN7k9DkqQoM3rLdFWQwjivNPVm4/xoOf1CZ0k1JP4rlM4JR9/TAOl6CykqG3qA3aI5eMpxOgcGN3WFdwKXG5MISUrCpYpcVA0TAV2no=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=GJgi6kzD; arc=fail smtp.client-ip=52.101.128.30
+	s=arc-20240116; t=1724988855; c=relaxed/simple;
+	bh=+1r3vvMe0gZyH71S+kdJxvclAa67/XspZHZZ+8sO5Kw=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=PGYRyG5bfA4r+piO7f+WG+zPRYczl/S2nQcCxmOagiMW5mHoY5oZXVfA9NBNot1r5hVmfWGoAjgJtoAPs+FLPrYFjyaVfgrJrURgQQC0fXeDvbTjvNNEV4y+HkDoHyAs08pnugj9oI4Rm5hsqkcM54BvGTgFdvW68J5+sO9Bk1E=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=MuCKXQej; arc=fail smtp.client-ip=40.107.215.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=AIVxwCyDBEcy2tFhDwLMUQ2DJAdKsPxzc2dT3zJ64bqw3EobhP63YJUyOxFUcA7IxiQAfhj6M4gwXWw/mdjfM+h3Gy4eWxibBJhuspBOGhpmMqNYrCQcqDA/jJsAofSllbGQpupfZufE1pV89Xqa0TbLBSBsIFi80q/3dMEerqu6dgIo24IMvk6g2MuDTfmgcP+I0eMRZkvZ4U9GmrS6jlbzCYMPJkvyC6IV8niwvyhfu6wjIT1muEDDDaOC4EzjAceS8QqZUhlC8yze4zmdAb7lvgc8gvlt32uj4ZPS8TwEI8bqC/wWnpG2shSyy5X/8yYTVuTHTs7fzJGyMIxjHw==
+ b=ddJEqN1q6nXeEDY22X3z+CWSSrBJ3CylIbhIC8MwXm3fXcSUb4DGyEMteM70ejwuUSU0zBA7RdKE49BlEpA1nc2DdeFx0YK0B8E6AKVAOKL1EKyk2HsUBQ0MFs+QxsnVf7hAZ7OHOKIk1jEPPwXqlwT6Qt8MC0QizXY0auM/xlTCO1zUsKnyTPx/Fmi5QzfM4lH/AwOO66/IvV24zhCnUtQIqc85Ms7SaqOp3kcB9oLF22uVa/qKkHf5xfMfvI5AnTyLCRPg/q6aaws75y9NFyWc47uc7N+k8t0DzlXqc515bC3LJez5X7QELB3nFjKwzs8L6vG6uMyXstZfCoJE3A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=jxz/vXMwvfN4W1Ibsu2obm1pNefuvFmB69JVawhuWUw=;
- b=wyzwaTJInfbkzXacE7adeiM6NnxgRjMQDFqc65eiv5N22Rnlj+RC+ZlcSSgy38S65gD5nFMm33438POVZNqmlBO+FGzSWbBySzUdOd46iphg7PSzajI9L5nlpJ8KdMt2UFgkBqejqzHXfGzqvVzXbCfeK/QpN1dFr1oFxAVeTeoGbkeqmHU4EMe71KMuEK920MFfDQzxpFg2JYHowK9lgN2Bw+rrmFh2UP6h81XKzvkRlO+qIigsa/hFkRlF6a5uhvbxQ7hJzqLwVte55eMpSqOc4k+QOr5YFvGcnrhX5KZSp8yUWokE14DZeQ1zo+9TBI3vvvoD6Iu+spOxXL+8tQ==
+ bh=wrI6+MBIe20lW3rM1fJav7ZCn1xnHSLAPkWrHSMvqXM=;
+ b=vKiTbVMt6Q5h00qkqdVjvHns9nc4FHDsXw9sr1/LEd9TlcEocVR+0snTRZY84PgUeGt70vQfyEdP9aLJQa4+cXlA+oyD/htdu8aM6AaBtcw5jEzz4tk8Phs/Ny1CQEwHNlo+1q5sMeW13ZJE9/4sN9f+Qytg8fPj3wNQjzr4t0Wzx2uUKngyyu71QWxJFaEow6xxir/6Ldf0Cd6gDcjvcNxQ3c9HViW7q4Y0hcxeptwL1roKTZQZCKZB7uKsN4X1uYDojLemoI97fAda53iMvQcqy/id4wnDRVBdYsN6bfqFMiyyFa3Jv45wXAOoW/nwBHiQSQK1Vpo7asLzEmA0qg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
  dkim=pass header.d=vivo.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=jxz/vXMwvfN4W1Ibsu2obm1pNefuvFmB69JVawhuWUw=;
- b=GJgi6kzDsgVWon0lkfTVoUvkNiyKUYn62PZ4tmfo7KNH0mddDKl25btgNYemUyPFyPPQ7DlbIJLTWyCGlmoaIhDKFJeWb5Bc+n7F/c9mCwUxICVwjE/NtmQRb25dDSAqpDpm3TDiwhKtyqDl5DGXcM44jGSbOhaMAMmz8zqNqpPfSGorI2wdstXXaE14P7DTNMz38Ax8Z2EO1VJV8qYyP5Wj1KJkPO4sHcnpHPz5Z0L3AufAX9RwLQTFDB4XzSNUI5qxtTMEhGIrSL0Qg1ZmjPOeFm7Jm0GoE8daknxT/MY8YD5XqedZuRK4CP3HBnoe+fJ3dv3VfpFwtBXLFdiAjw==
+ bh=wrI6+MBIe20lW3rM1fJav7ZCn1xnHSLAPkWrHSMvqXM=;
+ b=MuCKXQejuJckuz1o3u9nfGC+hNXXY6ExfhuXhKc20StMZTztqmxXU8z94TWtnI795LmBFdGK7Yb5Tt9yuYBsv6FlsODhtHSr2rOvHA0eNVQZf3hsR+aJT4w+7H19OIrK/y5xFSqG88mDqPrLCTwB4NiPc3u0/rmFphhzrotStl/ZdY3TPMp012LI2Erwb+syCtfa652m/AkpUHABxogNwNrl4KgoDzapi5ksa5EziDcn0zVy8UNs7p+8vW5w9gzaKCj+gif1O7yTFeTB/A7G4Xk+eMRFpU7T7IoDmjAB9/9JsKKlqIOm3rZY7fvgz9aFTZowcIIFugsk3uV1dA8dbw==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from TYZPR06MB4461.apcprd06.prod.outlook.com (2603:1096:400:82::8)
- by JH0PR06MB7178.apcprd06.prod.outlook.com (2603:1096:990:9d::5) with
+Received: from TYZPR06MB5709.apcprd06.prod.outlook.com (2603:1096:400:283::14)
+ by KL1PR06MB6348.apcprd06.prod.outlook.com (2603:1096:820:e9::14) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.28; Fri, 30 Aug
- 2024 03:33:08 +0000
-Received: from TYZPR06MB4461.apcprd06.prod.outlook.com
- ([fe80::9c62:d1f5:ede3:1b70]) by TYZPR06MB4461.apcprd06.prod.outlook.com
- ([fe80::9c62:d1f5:ede3:1b70%5]) with mapi id 15.20.7897.027; Fri, 30 Aug 2024
- 03:33:08 +0000
-From: Yu Jiaoliang <yujiaoliang@vivo.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-serial@vger.kernel.org
-Cc: opensource.kernel@vivo.com
-Subject: [PATCH v1] tty: serial: samsung:Simplify with dev_err_probe()
-Date: Fri, 30 Aug 2024 11:32:51 +0800
-Message-Id: <20240830033251.232992-1-yujiaoliang@vivo.com>
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.27; Fri, 30 Aug
+ 2024 03:34:08 +0000
+Received: from TYZPR06MB5709.apcprd06.prod.outlook.com
+ ([fe80::bc46:cc92:c2b6:cd1a]) by TYZPR06MB5709.apcprd06.prod.outlook.com
+ ([fe80::bc46:cc92:c2b6:cd1a%4]) with mapi id 15.20.7897.027; Fri, 30 Aug 2024
+ 03:34:08 +0000
+From: Yuesong Li <liyuesong@vivo.com>
+To: p.zabel@pengutronix.de
+Cc: linux-kernel@vger.kernel.org,
+	opensource.kernel@vivo.com,
+	Yuesong Li <liyuesong@vivo.com>
+Subject: [PATCH RFC] reset: Provide new devm_reset helpers for get and deassert reset control
+Date: Fri, 30 Aug 2024 11:33:51 +0800
+Message-Id: <20240830033351.233263-1-liyuesong@vivo.com>
 X-Mailer: git-send-email 2.34.1
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-ClientProxiedBy: SG2P153CA0052.APCP153.PROD.OUTLOOK.COM (2603:1096:4:c6::21)
- To TYZPR06MB4461.apcprd06.prod.outlook.com (2603:1096:400:82::8)
+X-ClientProxiedBy: TYCP286CA0174.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:400:3c6::15) To TYZPR06MB5709.apcprd06.prod.outlook.com
+ (2603:1096:400:283::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,104 +75,130 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: TYZPR06MB4461:EE_|JH0PR06MB7178:EE_
-X-MS-Office365-Filtering-Correlation-Id: 67a21e2b-4f22-4bfd-b432-08dcc8a47772
+X-MS-TrafficTypeDiagnostic: TYZPR06MB5709:EE_|KL1PR06MB6348:EE_
+X-MS-Office365-Filtering-Correlation-Id: 0574e0a6-7ba0-456f-4a20-08dcc8a49afd
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|366016|52116014|376014|38350700014;
+	BCL:0;ARA:13230040|52116014|1800799024|376014|366016|38350700014;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?2oP6p4kaG+ZJdGTPmQxqAGSlrvVj+y1Y98D9cZ2YXGlsReiiC72r6lXaMrnS?=
- =?us-ascii?Q?r+Bhfwh8Fk3kuEwJKgzogRtpRYAgWPapUFhjQdEbVp+8NnYk8QA0JbT03CjM?=
- =?us-ascii?Q?+QBnYrYiuCUCOsZffiQ13yDS9X3zinGg6BlZ15U7yX9RwYBJAgVX3B4K62lc?=
- =?us-ascii?Q?FZSoUXXWUnJ4YYN9cHdWGM52as1jFBHR0PuCysphfEAmt7GtV3ARl+Jx9vPJ?=
- =?us-ascii?Q?nJq7mDv5zVoUOxUwOwTQri/n2UsprM1H6RLVPE+Uoz+O5n+1/aD6pnA3Usnn?=
- =?us-ascii?Q?Tbu36MRObJIvz0x4Ku0peteYAkeq0Ls7YMl5aq9oRVW7dtfKEvVScBmUB5Nu?=
- =?us-ascii?Q?5Cqcomc8sGJsqVqmcLYvJlODAH2668wRepCnh0Y1DQrXxehnyiJli43mXcsT?=
- =?us-ascii?Q?TEecJkxbBRBXNVj7ttr449CQBJzniHT8puqyw09K7nk1N4K0pG9W2O+QUVfO?=
- =?us-ascii?Q?1O64kIKegpE3Og6Fkx0d5BD3eqYtf60xi3o1x+ZRcRvx/IMqbEDD409UdEkP?=
- =?us-ascii?Q?eKFube7/4wuSl9i5KOLtl+RUyr27I2vh1zS6OzZn8ofT6dq8H7eFgMWZtiWA?=
- =?us-ascii?Q?aCMOPDZO8Sln/W8SVRYvPKCwfOaXC006RV2HMZ33EHUT+h4IysKs/6VNu7+k?=
- =?us-ascii?Q?7Ykww7k2hboAKyJ2vj79l+Cirmpf+YzwlGYJg3CEL/aa4ckE+/TLHW4fQTkF?=
- =?us-ascii?Q?phWrO4wRU2ANDCRZspB3m8zKE496rY8MUhffDIcXhhWiju9+q5R2VcDQJr1v?=
- =?us-ascii?Q?tztarSFoTdULqlleQUfUcLmDmS0JDQSEnFuv5/WUHux0NeGuCZ5aMaz2S4D8?=
- =?us-ascii?Q?TyJTjq7mKiIFf8MM7g7TFtiRSq1XMNJVJ++HT5RqYHyteqS4lDJnbQ6LkzLC?=
- =?us-ascii?Q?vXiIBfyBb62beLmS7erp3p4mEsB/dhGtdTR1wO0q/oNaXUrO6yhEE1G9mWMc?=
- =?us-ascii?Q?T0FQKKKg3NkvjwPMAnsUi+lXAYtMVAFhj5hgLVIat0C+mvDqEawv5MSTZIiW?=
- =?us-ascii?Q?nyyAM546VQ6294Lm+jXhHBA+QFsNkGaKyhiZKNArwRVbYBAHmJfenHoVNgYY?=
- =?us-ascii?Q?NtXU8SZxvBjmdK5iLcgE8/ecsjrJt+5UhR6DbAvk0WXaS2o+EQoomAra/PEM?=
- =?us-ascii?Q?/jw5AJ9597gOkYVHqLOoZw4ln2SpGiB+pLmMHg9+1HbwdGaE9P+96UnwRzRT?=
- =?us-ascii?Q?FBteZsBJxq5r82Q8qJ5UZJrGAkMOavJ5oYxlfwzKg/hw7NFyfgZFf3b0qa2M?=
- =?us-ascii?Q?PvcwdhwYKW2MgOytVlC/562OJR1csrW6NAOBxX+QxYpQvv6KZWs0KydVveTk?=
- =?us-ascii?Q?A6QyRWHjRnp86x9/3tfBnM3zMX0MrkmSvnHt87Kg09gASst/GgwLjrCJjKTS?=
- =?us-ascii?Q?mA3T8lEdQxknVDcXjXyfpxp0YW4EKlfxfTDgi5E8efv8E/Nxnw=3D=3D?=
+	=?us-ascii?Q?bniao4HcXgUcH7rPzQTHxrMAPtLhGaQdpEiF5Bfxs9Di7+1Dm9WQ2fvOaM+2?=
+ =?us-ascii?Q?30a+CaIvy+u3HRxrbaIVVQPs9cW7qvbNcGTSxQiReu7K+CIYBrlYVjjGutw3?=
+ =?us-ascii?Q?KtQYNZYDfSMU+Zmy5dAF95XJmzXd2xoELY01dbzssH4YQ790vt8igH2Ft7SY?=
+ =?us-ascii?Q?87h+19FG5xJpvhMIYSmaqeMiuPPoT0ECQlIXDNkzcNXijY4NH+wofL79L4Bi?=
+ =?us-ascii?Q?xA664q0miYTqgkr4a7ho3C3mwSnTgYQ+Du9tQrBT5/fvxXG6PT0Pm+EUDKbr?=
+ =?us-ascii?Q?hoU9RjWB7CQWDBcsrQc2jsImdoOyELXHgRwcs+JlR1nCkGHTuLat+O1+XWi0?=
+ =?us-ascii?Q?vu9f52/gd1rnJi/JylgDi0k9AylfopejcSCkPBo0JbwTpWSztpcSCjWGFywS?=
+ =?us-ascii?Q?/C9yrV+trIIHPw9MTvI88FrBmJo2++6VxWwPm+pN37mEh72+qA1V28mIaNhr?=
+ =?us-ascii?Q?i4c48IFj9UKZRNLXDj6ueJZ3B/OkImYzoLTt6vfmKChcbnOzrz70Xm01FRQN?=
+ =?us-ascii?Q?JFEGTlnM4rYQr9QZBv3hP26XhsdVHhlgktiIAUodYkyDtuOsc5mEJ8YlvY0s?=
+ =?us-ascii?Q?pI+Wj0FLAa75MGS8moqy5x1Ege9T75o4/C5jfYqjRr+jP4u1FTgJeJ4Oynf/?=
+ =?us-ascii?Q?9IGwlSbAVcxm8O5D6J3hh8fDd+kEb+GW7MauQTfAEpMR1/GJPqscfDaz4/wl?=
+ =?us-ascii?Q?zI2W+Rft0SHhQbAAzYvOU5LCqzuc8QcTM8ZS4CiKfIIk5FEMho1E0faCdNOA?=
+ =?us-ascii?Q?P7oXtFk2xSns77GOnn1zexiA+/gidMFJFJyX7QlOf/N6DjcnqwWH0NYohqRl?=
+ =?us-ascii?Q?E7sWJsbc6831r1pkBTaJ7xqZ7d/jfRwhxjp9cfnUMSCaVEKOk4VOCsTaUluq?=
+ =?us-ascii?Q?ddYFaoezJN/O3UsJSt4Kiv33Z1xoIP/XU0PII0rjsLM/tjdWWbZZNukrLonA?=
+ =?us-ascii?Q?MMseuVlK+gbBSFEf22pOT5tG1ClxkzWdjTK8O2J0kepIYy5AqlcLsHdxBmCA?=
+ =?us-ascii?Q?JCLNZI6NDj6LVCwmseDpdIzxRxDUTFhF6C1o4Vv1QSq00YqxTb7srotL7Jr4?=
+ =?us-ascii?Q?nZgDBT3ijV9r9yDKbZQoAzWpWL6jH5D01me7bDhyIzoXHKrsWp9airhDTvE1?=
+ =?us-ascii?Q?iW4el18eYGsAs6/vVNPx/Om3pFXpGmEicXH6nPc6q9EBB1e/WPe7k1px0m5L?=
+ =?us-ascii?Q?kzbsP9fiQug7x6EkDbGrY2C8oRMaoD8aHignHPrKVRU6JC/0DA3onNo52tYo?=
+ =?us-ascii?Q?9CdKMf1t2d9kVEhJOL3ApOCZczYcINarJdmEO/1Pf7mlhcL5ZG31oeE+fWs6?=
+ =?us-ascii?Q?chPlnk2N+8f5si/tN2nBgPZ6mMU1BPiiMI2JTE0SiTbK8yJ/0bPFB3sOD5FH?=
+ =?us-ascii?Q?phurOQ/hjW/f8HFTG1aBv0fA+bCdBBbJH3Dvaje4aiJCtUXKiQ=3D=3D?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYZPR06MB4461.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(52116014)(376014)(38350700014);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYZPR06MB5709.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(1800799024)(376014)(366016)(38350700014);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?vjWpfPddmdHiYqq6gDdhDc2pY7vPrC35sVfLs7K4xK23wc30qukzVd8tGPTp?=
- =?us-ascii?Q?nMM/BQuk5WJfbLn7CCOUmD7Jx2STNywR3ioK4yB2SgqTAbJ0/5rxBPZxYdS8?=
- =?us-ascii?Q?U2f59/awngt9IF2i4HT64lyFsk4AsOTrns4GwVcHVO8LgNAee7qUccCmSPOv?=
- =?us-ascii?Q?5l9R0ksPvpDepVNM64xyttgMtIP2FYZMTTy9pucyQ5yUkvcq5Fr4bwE3tGhB?=
- =?us-ascii?Q?lZIllo2Xwe8gWseFYauXd7JMkZ6wVxKNjkXt7c8BaS3UFYkm0RU4kuuS9uhA?=
- =?us-ascii?Q?yw4OTkXEp3u0Sb+vS54FCUkBAp30NTueTI/5XHTqALGjNimewaTN+peZW1iw?=
- =?us-ascii?Q?3a9Pri0ncUYcTreJUXT8oazv0oBuasfIcNz5R6j8GC4FXe2kI6zomJl40kPg?=
- =?us-ascii?Q?nCcrDjSiMrk4U6vYnQqsNivmqe0B5o3RhcVqxAb+m5whX/Sfh/+K0aUYkUGK?=
- =?us-ascii?Q?BSwibSO2b+7JNV3REjbegja9THZoDirSnUTw1PksQRZ5y6RtmQ3b0LVxiul1?=
- =?us-ascii?Q?1TIUpc8wqsziqRL79BBEF9YtbprtYs8cXulfgfIikeXSdF+VOEzGKcczSweV?=
- =?us-ascii?Q?ekaRbnnv06C1CplnF9n1vl4CwREi4gQe60NIPuYDgAMR7FT1NXOYhZhbOZ5o?=
- =?us-ascii?Q?k0WLPhQr8rwy8/D4mLwb9oROb9TBlniG87Iro5cv/UJIQbzzHJ6yFcgUEGoe?=
- =?us-ascii?Q?PJNYAOqojvEFvl5ybnOOoQfS4RKghEI/cd8VPVQ/vWNA09Hh0nVBwg6jq3vf?=
- =?us-ascii?Q?gAvmF2p8LOD36GnoGWzTIFyX7/FjPjj4J2lGlSE1rzgH/1Jf1x4uu3+AkCyl?=
- =?us-ascii?Q?SaZmvs5RooPuJXh1ueJBlanO0Z/4ou392S3dQj98jqhJSGTDBcZlUzPpZG+1?=
- =?us-ascii?Q?6+S84jzwEOR9SCMneJZvt9iy1WVYun5oNj1BiPmOS2cyQA/U8nNg+95NTvCK?=
- =?us-ascii?Q?djuUHYA+LT3P+Qn95K53KY7tNmmQ5xqPaM+Wz9f0uLD1Wt5q7Ino/VVd1HTc?=
- =?us-ascii?Q?NHZwgQfzyezwRc+Yj+rNuq7KztESnp5+IWBboF9yUfbP8IyrJJvEaRanWFPr?=
- =?us-ascii?Q?oUHb41vGtaiTArmJ74ht7Acp0uaWUTCEwW7UTBTnTnS8r8rVZY5D0phyovpe?=
- =?us-ascii?Q?Jj7p/2mhZ7LlDH5DFBYxlmU3qwIuzCpC3wCxaLYA8lXOFnfl3EPCMJ7rNQL2?=
- =?us-ascii?Q?fL5obkeel1fNNZHY2X7RDSv+9GfYzPjxqM8b1Ef36m3kvs4E52vRPpjZiGyn?=
- =?us-ascii?Q?O+BPTysUNXo3j6peixSn6SwnKggStS1K9Z3SAu4s+cztKDTavAb65r3B73Sh?=
- =?us-ascii?Q?8zOgf7+Qtbv3h3WniTceHbiKetyaxoluGr7eXosT01P5KVRaGqQMGqPBGEoq?=
- =?us-ascii?Q?yiakJkR1ueqjRaFXT5FPq5LPtIv2/oVvGFfU9IVsQo9sZNdLTjA/i4nCRuJ2?=
- =?us-ascii?Q?5PjxktgC6ZMV3hAQHSJDjR0UI4L+HWaK6/CXvhOkAru5BzmQ/zUCJ1HFrmYG?=
- =?us-ascii?Q?oXnoTJ3ntrDty4teGEltw9g0ciKV9XKUmje7CNa39x+ibe1kpXcgWUrSeCpq?=
- =?us-ascii?Q?oZ73C+49h6et1CoSrONiGHeYg3lFD+ygmbSlmXaE?=
+	=?us-ascii?Q?PjuI99L2x8031PVnFIemVADOsh+w08bRKnGHkMmCmwbsClvKM9e/IPsbUPGx?=
+ =?us-ascii?Q?pzrU9ZaWGgCnPA+z9gVCmlIdwD3lWaemW46ONkrhalGYJNvA76+mmJ2E/MW/?=
+ =?us-ascii?Q?8UoaLWSITSqS7L058b6wW4cPWTUf68G+Xvnw1deKyqOBqZ+kn3+HLPmy/siw?=
+ =?us-ascii?Q?w8IlGayDfdrCyK/8ONlqFnSVMu8RNLIadKP8xjOX31gITDuZWD7W7+/wDI/Y?=
+ =?us-ascii?Q?3ea9z0Ey9LRQQw603Tt3Vv6uUAh1qcWznEs+sYJBjHac0yIzk4FMpZ0G1Xfx?=
+ =?us-ascii?Q?9Iam45miopk+Hkb3B8ja612ICmbCaEEqaMiYDSdelrBLNlGIwLX2/eN4Jazl?=
+ =?us-ascii?Q?GY/JZcOex2qYCwF/K2LQpewiS7BynntKe2McjM9S2Kns5flaBh+k4qgubTL1?=
+ =?us-ascii?Q?7O/MMgSl+f+AZAv3WjJ5oVNTYRr/TvLjawg3hGWremWTZA0iSqunvts6ITNQ?=
+ =?us-ascii?Q?zaArbf1JkcrwxwZJ4Bez+G+quiqddtZimv6eTXjIcuRLa+MwbKaUD7fC3sOK?=
+ =?us-ascii?Q?rETOf6XEX73RGDESVMMg2UdNgHJMIRfytlYa/Q9G/laz/yBJYqFMZEXvEkcy?=
+ =?us-ascii?Q?uZ0WFyH3TYLgOmKYlm0ZseQTeXF2FQeFAznRmIpGtj91wHEkjp6A2BKFtG5x?=
+ =?us-ascii?Q?7Llb+7IKsWPmWAYwBpy2KySRLttQF7NZr091OnELbC2mvR6G+BphkTDdh6zy?=
+ =?us-ascii?Q?kEQafys4Q10rs3EOKCcbW+2U98B1Heh5oSW7VM+h9qgqnVvCA7yywULK90Zg?=
+ =?us-ascii?Q?Fi+MTmJDry9K72EgmI6oLApBY0NDQo0ncuXKWKlJjjbALAXOb9D8b312eGFY?=
+ =?us-ascii?Q?IIT1uikE4WaexklzpyTUvS3mVx00XfghyEUsae+CcvSEWF5JZonbl2PiYhwd?=
+ =?us-ascii?Q?sY2ytI2tv/PClaP98di4uiBcmvnc938lvR0SPFkfy5fp1gsemVrPp9uJ4fJ+?=
+ =?us-ascii?Q?v/JQltOixTH17evWDgdhUrzEjeZE7AMamfvQ5wIazh2PU7GQOWeqEywF4SNN?=
+ =?us-ascii?Q?dMkpL8Bc25SYxbtioMYbWzTWYaLzV3DSytsfmACCL6a3FZGwA6X9sGb08Kss?=
+ =?us-ascii?Q?Dg/+/lJY1QT4a4MtcDsPEr/gJiQap79Js5SnW9nPCvuUCBdTjmKivKkKWOIG?=
+ =?us-ascii?Q?aqwW2hOGyYVWt6AIhIMkJCwL4LWPtiobEnNfmJfvzOkxrz318HW/8ziJl7dx?=
+ =?us-ascii?Q?pDljUbOgppaoavLPwIR76GVf6HtyfZjsi8o+zol9nEImnq20XrEsz729qi2E?=
+ =?us-ascii?Q?O3+aL0jm1zS+AhDjhiP2mB2kqZYtGs8ub7VChM4ePaHe9eibi9C51HkGPAq0?=
+ =?us-ascii?Q?0gpAsBVmiemI036D4WnCugJwefX9SS//B3zIhXFT30mOGVu7Z84DsxhN40Pl?=
+ =?us-ascii?Q?LPaFkZZ1GbZ1Zakw0qOXyca74vQI7ZC8tWG7TlL5JsWhYcR+ZNcJR0wCMLV/?=
+ =?us-ascii?Q?e84yjLbEcoK2iXo5dEczo7Fda8f8kiZ3fltZXPj0u+IiJbhG7dKNK5R5ktFV?=
+ =?us-ascii?Q?C6BLE3WMePKZdqLnWi8xd4LUf+wQUTQvFg5VNjptxFQ9v2B2iVIh+GtcBxfb?=
+ =?us-ascii?Q?mNxNLsaFYuUc5M2T8xk53V0UexiL6AmETHfCFK0D?=
 X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 67a21e2b-4f22-4bfd-b432-08dcc8a47772
-X-MS-Exchange-CrossTenant-AuthSource: TYZPR06MB4461.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0574e0a6-7ba0-456f-4a20-08dcc8a49afd
+X-MS-Exchange-CrossTenant-AuthSource: TYZPR06MB5709.apcprd06.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Aug 2024 03:33:08.6003
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Aug 2024 03:34:08.1990
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 0cY6v49yvnvf2SGK46i9gqsdD+NvJ9uE/sYXkCewc9Jy9AttI0YvgmJQGQkLQAkb5UqxJVl6+w5MuYZAt9CnjA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: JH0PR06MB7178
+X-MS-Exchange-CrossTenant-UserPrincipalName: uxkwkgUDcKR2rjWW5qAuxVSJSpraGNvRRyEhfOY13kTABLKHYPIEnxEF+r0JNNmKH2uYf3UbQNZ315LyzMbP9Q==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: KL1PR06MB6348
 
-Error handling in probe() can be a bit simpler with dev_err_probe().
+When a driver wants to get reset control and deassert it,this
+helper will handle the return value of these function, also it
+will register a devres so that when the device been detached, the
+reset control will be assert.
 
-Signed-off-by: Yu Jiaoliang <yujiaoliang@vivo.com>
+Signed-off-by: Yuesong Li <liyuesong@vivo.com>
 ---
- drivers/tty/serial/samsung_tty.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ include/linux/reset.h | 29 +++++++++++++++++++++++++++++
+ 1 file changed, 29 insertions(+)
 
-diff --git a/drivers/tty/serial/samsung_tty.c b/drivers/tty/serial/samsung_tty.c
-index c4f2ac9518aa..3550177010ad 100644
---- a/drivers/tty/serial/samsung_tty.c
-+++ b/drivers/tty/serial/samsung_tty.c
-@@ -1225,10 +1225,8 @@ static int s3c64xx_serial_startup(struct uart_port *port)
+diff --git a/include/linux/reset.h b/include/linux/reset.h
+index 514ddf003efc..d7e02968b63b 100644
+--- a/include/linux/reset.h
++++ b/include/linux/reset.h
+@@ -806,6 +806,35 @@ devm_reset_control_get_shared_by_index(struct device *dev, int index)
+ 	return __devm_reset_control_get(dev, NULL, index, true, false, false);
+ }
  
- 	ret = request_irq(port->irq, s3c64xx_serial_handle_irq, IRQF_SHARED,
- 			  s3c24xx_serial_portname(port), ourport);
--	if (ret) {
--		dev_err(port->dev, "cannot get irq %d\n", port->irq);
--		return ret;
--	}
++/**
++ * devm_reset_control_get_deassert - resource managed
++ * @dev: device to be reset by the controller
++ * @index: index of the reset controller
++ *
++ * A helper function to automatically handle return value of
++ * devm_reset_control_get_exclusive() and reset_control_deassert().
++ */
++static struct reset_control *devm_reset_control_get_deassert(
++			  struct device *dev, const char *id)
++{
++	int ret;
++	struct reset_control *reset;
++
++	reset = devm_reset_control_get_exclusive(dev, id);
++	if (IS_ERR(reset))
++		return reset;
++
++	ret = reset_control_deassert(reset);
 +	if (ret)
-+		return dev_err_probe(port->dev, port->irq, "cannot get irq\n");
- 
- 	/* For compatibility with s3c24xx Soc's */
- 	ourport->rx_enabled = 1;
++		return ERR_PTR(ret);
++
++	ret = devm_add_action_or_reset(dev, (void *)reset_control_assert, (void *)reset);
++	if (ret)
++		return ERR_PTR(ret);
++
++	return reset;
++}
++
+ /*
+  * TEMPORARY calls to use during transition:
+  *
 -- 
 2.34.1
 
