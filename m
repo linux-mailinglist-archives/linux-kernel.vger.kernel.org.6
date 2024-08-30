@@ -1,92 +1,92 @@
-Return-Path: <linux-kernel+bounces-308575-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308577-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DB1F965F0B
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 12:26:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE616965F0E
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 12:26:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B958CB25BC4
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 10:26:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 964B628E41A
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 10:26:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B5EF18A958;
-	Fri, 30 Aug 2024 10:23:54 +0000 (UTC)
-Received: from SHSQR01.spreadtrum.com (unknown [222.66.158.135])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3030716CD1D;
+	Fri, 30 Aug 2024 10:24:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FQe1R1Qt"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB16D17B4F5;
-	Fri, 30 Aug 2024 10:23:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=222.66.158.135
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 105A417B516
+	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 10:24:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725013434; cv=none; b=AWVcaKOYsW9cqObQh6DX7UvISOo+Gc3PSjd5hXN3kNCBidvashnWgaEIbH9LDKd6XmrWF4ZqY2gb1MdJn34CQso8YzPoqyytaSzECNOpBkneW0ZaKo9pyMNlCotN5ybl+slISsKmuyB5L8r4LCvwqWQWpqcXXna0W9laJCS6bTQ=
+	t=1725013465; cv=none; b=QdK9Ob0JHoiTceMTf4NpuCp8BqKr7/b+aQ/i8S0iYpEc5zgxugUUHQSruQsRgznzz5OnFzFYPq+V05wRMuFTvkmqnPYSm/1vgry4fLKLqFopnVohUL5wJKxA1aSflkkN4lT5USTOR6+eFn0xPEgjF8FfLCyGj2blCMGc1QOIk7I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725013434; c=relaxed/simple;
-	bh=gPn3ocUVhQgAWNFUlaGK72RHnsXD6uEOO6+5lQ9CLRs=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=U0QIbG4EUvkjVtnLvm/20uJAVuzhiVCGyowOSAJaiCvnz4vC0u9NuSLRXe0aYECVIEw0+Iq19PjKzp/SRJXsGPK6o4awqAjxMytqvJvgkq1pXA7tWUiXIJ0E2Br15OkW9BPGws2Z9jnvurBT3e6iIhCadC+5QQJ0lgV3GVSpAJg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unisoc.com; spf=pass smtp.mailfrom=unisoc.com; arc=none smtp.client-ip=222.66.158.135
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unisoc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=unisoc.com
-Received: from dlp.unisoc.com ([10.29.3.86])
-	by SHSQR01.spreadtrum.com with ESMTP id 47UANJ0U032921;
-	Fri, 30 Aug 2024 18:23:19 +0800 (+08)
-	(envelope-from Yibin.Ding@unisoc.com)
-Received: from SHDLP.spreadtrum.com (bjmbx02.spreadtrum.com [10.0.64.8])
-	by dlp.unisoc.com (SkyGuard) with ESMTPS id 4WwDZg3DD0z2N5cJc;
-	Fri, 30 Aug 2024 18:16:27 +0800 (CST)
-Received: from tj10379pcu.spreadtrum.com (10.5.32.15) by
- BJMBX02.spreadtrum.com (10.0.64.8) with Microsoft SMTP Server (TLS) id
- 15.0.1497.23; Fri, 30 Aug 2024 18:23:17 +0800
-From: Yibin Ding <Yibin.Ding@unisoc.com>
-To: <djakov@kernel.org>, <gregkh@linuxfoundation.org>, <rafael@kernel.org>
-CC: <yibin.ding01@gmail.com>, <niuzhiguo84@gmail.com>,
-        <linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <Hao_hao.Wang@unisoc.com>, <Ke.Wang@unisoc.com>
-Subject: [PATCH 2/2] debugfs: Fix crash problem caused by accessing uninitialized nodes
-Date: Fri, 30 Aug 2024 18:23:14 +0800
-Message-ID: <20240830102314.409307-1-Yibin.Ding@unisoc.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1725013465; c=relaxed/simple;
+	bh=RQsHHI7kpVwOdK1joEOHTJ/7pkW/4sUkVR399XuvvWw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NKOG1xDX6UXlsoYNCOIjJmLoR7W5J9kq1LHvJA0QdDg7s9spnPQEQwDUTLat3yi93hDFmnGsuBGd3s2EruCq56oBdpHptK4Gp19R/4sSvd19PCKlEjdUjK1UngxO4jZfH5EyqeqvcwszOkhcFT03CXUADwRmsCjeXgaaMkXT/hs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FQe1R1Qt; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1725013463;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=XYesMj5ueiMNqutffq7npoYQS7CjMMgXBJZZO+/Hjyo=;
+	b=FQe1R1Qt39S7rZqUVpm1Ab/l1e7tS2KjELg6VAjDg2d9MBmuZFsx4DkocRoRVnBz0XlmZC
+	nklkwt5xLSKVckyPa9a0KvgfR7j9klnb0BaeZFVuB0pmqKs55rq7ARKrV/1PdIlkPk0+1U
+	1F69T5rRRJP01KTQ1o2bewVkkR8Q2cI=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-292-nL0bmLKMNpqdezNL84YlXg-1; Fri,
+ 30 Aug 2024 06:24:18 -0400
+X-MC-Unique: nL0bmLKMNpqdezNL84YlXg-1
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 967581955D48;
+	Fri, 30 Aug 2024 10:24:15 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.225.148])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 8F0F61955F45;
+	Fri, 30 Aug 2024 10:24:10 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Fri, 30 Aug 2024 12:24:07 +0200 (CEST)
+Date: Fri, 30 Aug 2024 12:24:01 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: Andrii Nakryiko <andrii@kernel.org>
+Cc: linux-trace-kernel@vger.kernel.org, peterz@infradead.org,
+	rostedt@goodmis.org, mhiramat@kernel.org, bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org, jolsa@kernel.org, paulmck@kernel.org,
+	willy@infradead.org, surenb@google.com, akpm@linux-foundation.org,
+	linux-mm@kvack.org
+Subject: Re: [PATCH v4 0/8] uprobes: RCU-protected hot path optimizations
+Message-ID: <20240830102400.GA20163@redhat.com>
+References: <20240829183741.3331213-1-andrii@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SHCAS03.spreadtrum.com (10.0.1.207) To
- BJMBX02.spreadtrum.com (10.0.64.8)
-X-MAIL:SHSQR01.spreadtrum.com 47UANJ0U032921
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240829183741.3331213-1-andrii@kernel.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-From: Yibin Ding <Yibin.ding@unisoc.com>
+On 08/29, Andrii Nakryiko wrote:
+>
+> v3->v4:
+>   - added back consumer_rwsem into consumer_del(), which was accidentally
+>     omitted earlier (Jiri);
 
-For uninitialized nodes such as
-/sys/kernel/debug/interconnect/test_client/dst_node, if the cat operation
-is performed directly without writing content to the node, it will cause
-a crash due to accessing a null pointer. So it is necessary to add a null
-pointer check in the debugfs_read_file_str() function.
+still,
 
-Signed-off-by: Yibin Ding <Yibin.ding@unisoc.com>
----
- fs/debugfs/file.c | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/fs/debugfs/file.c b/fs/debugfs/file.c
-index c6f4a9a98b85..8bbe7df6dfd1 100644
---- a/fs/debugfs/file.c
-+++ b/fs/debugfs/file.c
-@@ -970,6 +970,10 @@ ssize_t debugfs_read_file_str(struct file *file, char __user *user_buf,
- 		return ret;
- 
- 	str = *(char **)file->private_data;
-+	if (!str) {
-+		debugfs_file_put(dentry);
-+		return -EINVAL;
-+	}
- 	len = strlen(str) + 1;
- 	copy = kmalloc(len, GFP_KERNEL);
- 	if (!copy) {
--- 
-2.25.1
+Reviewed-by: Oleg Nesterov <oleg@redhat.com>
 
 
