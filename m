@@ -1,155 +1,111 @@
-Return-Path: <linux-kernel+bounces-307979-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307980-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F11999655D7
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 05:44:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE1F49655DB
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 05:46:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2F8731C2285F
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 03:44:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7AC72283ED0
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 03:46:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C3ED13D53E;
-	Fri, 30 Aug 2024 03:44:21 +0000 (UTC)
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB83713BC39;
+	Fri, 30 Aug 2024 03:46:35 +0000 (UTC)
+Received: from omta001.cacentral1.a.cloudfilter.net (omta001.cacentral1.a.cloudfilter.net [3.97.99.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D8C4482DD
-	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 03:44:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3D8E1369AE
+	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 03:46:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=3.97.99.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724989461; cv=none; b=WtusJpHpLKF/XHpJcXu3du0GH5u+CeC1sWr4rQR8QH3DPyBC55kmwkcL+fhGJWaM9O320Liq3q537zt0l2A2kzhu2DZsgmQOFsfKI586SOLlegyJCNvPK1FqRDkqIYJNzd6t3YFcK4ihzRvBL35GeN8xw2EYMwiHjL9IniCEp/M=
+	t=1724989595; cv=none; b=CJcSRdWlt15LRUWGQnG6H46+6c+i1cfiBm3MHxcPP/IYJkZb+KRQ+ZUycvZbx1O0ucy5Bnp69qztuuWNCIQks2iU9ngfZZKFWcwyeZ8RIOXNQbk6uqW89UggcE3GQS87TpRM/yDzysGoaDtVqLfohBX/fYQrKzN14y9NYDo7Q60=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724989461; c=relaxed/simple;
-	bh=tGsdxuuv598jVK+tZLbnqdHHWwnUPEfVZ3aSORhi1xk=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=Wv6hIXGaeMlBmnD/ZJ/doeFOkVWGKnjBpmEhr5M36Sni2YPVYHM/k08Zr359Mssm46L3MpaIflYvgjJPOHth7ZT8gU6eAw5CsFTwuD/KODBSYGxtU23IGSMIjHYL04thK4dsSWILF2ue/fcXLXBllEait2E2Akh7czRUv9swMVo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-82a2109c355so109177239f.2
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 20:44:19 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724989458; x=1725594258;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=EeOg+SB0yxrJiY7pfqPASylS6AmynBWxHScTHhkZb6w=;
-        b=KCQuSxUzBHkEAmCU8jDTHHt2f3K7ColWs4hkrKC51fRUz2twPGDLM4ZZEHrQ2Nw/0X
-         Nd3tQaJ1zkJRhw/EZXKWgPiD0B5HZSVKd+1VEfYMdIdLM1QbyUYKgrGh9HQI3lZvZ/8F
-         GHluRKfG6InRfUisUI2q3R5vDyp8rV3J//A5W3DjEENFOvi7l/aLMuOnUZpftLFtgJWi
-         hHbg/SW5wG2PCO3FPFntx1MpnBiZCao8qlFwxviH727/+IK8kaH2afJ6epcU8G1p1bkX
-         Lk8Sg4otMl6w4cuchXXiiX4ikXVqfoHZRLm9BKHSQOlJI2+1E3JzYIqR0UUdZJMnUaL0
-         ixzA==
-X-Gm-Message-State: AOJu0Yz1tvydRAoKREIE4UVxskT/TaudZ+w1+UEt9HyBDUpwr1OW3erS
-	6+7UpAhHdkzfqsLbwqEDIkpEkqADy/1xTohRVNKXb9og0QL+KBYSCH+MulPViz1xodje5hb81/J
-	lUlJ+ZSJDcE3XEE43WlNr31yiZzxNEUqSN/LQL0uqrAF/wope1u4p7kg=
-X-Google-Smtp-Source: AGHT+IGbv7tVYwWeIOWrlp7Jloc0bw6g2w9JSVtxBYUGpiYbxjroReNF5d4wrvw+ymZHcDmLX/bjTgq6E546OUUcpIa0Wjvx7aeH
+	s=arc-20240116; t=1724989595; c=relaxed/simple;
+	bh=I4MLJvPcC4ROIRlHe9VBbeY/xKuQDgMDbge5iwTw77g=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=Buzl2nc1GOiac4js24Md4leuO9pmRMFnAF+tOF0N3WUz9G1SIexqKP8tfFDSIsFFLj+OSESfHSzNMJ2K4WXfi2o19y6FUXKjEy62rMREps5GjGgXQqMCzHsq2cFrl+JYjBzmYeN/3BFsfC4NixCtRFW8VrIL1N5Cd7eBptTTUyE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuyoix.net; spf=pass smtp.mailfrom=tuyoix.net; arc=none smtp.client-ip=3.97.99.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuyoix.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuyoix.net
+Received: from shw-obgw-4003a.ext.cloudfilter.net ([10.228.9.183])
+	by cmsmtp with ESMTPS
+	id jhw0sMAFL9TOUjsZEsP8tg; Fri, 30 Aug 2024 03:44:56 +0000
+Received: from fanir.tuyoix.net ([68.150.218.192])
+	by cmsmtp with ESMTP
+	id jsZCsRJ7vE0IVjsZDsdo1K; Fri, 30 Aug 2024 03:44:55 +0000
+X-Authority-Analysis: v=2.4 cv=cI9DsUeN c=1 sm=1 tr=0 ts=66d14037
+ a=LfNn7serMq+1bQZBlMsSfQ==:117 a=LfNn7serMq+1bQZBlMsSfQ==:17
+ a=IkcTkHD0fZMA:10 a=yoJbH4e0A30A:10 a=M51BFTxLslgA:10 a=3I1X_3ewAAAA:8
+ a=VwQbUJbxAAAA:8 a=Z7GQwIsQ4rWEbV4-UEIA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+ a=VG9N9RgkD3hcbI6YpJ1l:22
+Received: from tuyoix.net (fanir.tuyoix.net [192.168.144.16])
+	(authenticated bits=0)
+	by fanir.tuyoix.net (8.18.1/8.18.1) with ESMTPSA id 47U3irgA024918
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+	Thu, 29 Aug 2024 21:44:54 -0600
+Date: Thu, 29 Aug 2024 21:44:53 -0600 (MDT)
+From: =?UTF-8?Q?Marc_Aur=C3=A8le_La_France?= <tsi@tuyoix.net>
+To: Eric Sandeen <sandeen@redhat.com>
+cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Christian Brauner <brauner@kernel.org>,
+        David Howells <dhowells@redhat.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] debugfs show actual source in /proc/mounts
+In-Reply-To: <alpine.WNT.2.20.2408181925400.3116@CLUIJ>
+Message-ID: <883a7548-9e67-ccf6-23b7-c4e37934f840@tuyoix.net>
+References: <e439fae2-01da-234b-75b9-2a7951671e27@tuyoix.net> <2024081303-bakery-rewash-4c1a@gregkh> <0798a2cf-b43b-4c17-94a0-142314d80f5b@redhat.com> <alpine.WNT.2.20.2408181925400.3116@CLUIJ>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:13ce:b0:81f:7d7d:89fd with SMTP id
- ca18e2360f4ac-82a2623e7eamr5761839f.1.1724989458573; Thu, 29 Aug 2024
- 20:44:18 -0700 (PDT)
-Date: Thu, 29 Aug 2024 20:44:18 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000eb77d60620de6758@google.com>
-Subject: [syzbot] [modules?] kernel panic: stack is corrupted in call_usermodehelper_exec
-From: syzbot <syzbot+14d9438422f594f856bd@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org, 
-	mcgrof@kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
+X-CMAE-Envelope: MS4xfHqC1pKhAmpRzafGTDNTCvTxtMaT9ZLoDz9zbGQEhGEAY24DcwLcEe7UViohuEmlhDsTyFo4jDBmYR1U9PL8B0uwdZexnI4O7t3pwImtYOMcUboL+F6i
+ 5dar6TgdOUtut6EvARwWeHivTqkmD2Y5f9AJ516duQ2T1Ys+gaIVTQjGWaNodbqB0XAMK5VgZNVw+57JWO1Go9Rab59PfMN3vGM4Tr+wqPX1y16c5PY/hui3
+ 1kCK8tt4WHmQMBqc6hfjo9CoRGOEqf46IcM6wsAlX/5zfaNi1kEZrUemrMJXmvnhGK2TIf3Y/lASpP9WWqXoBjLoPwT6zLSZo6Hva7aMfHdZ4dRrFp3qitET
+ 9GniGNjG
 
-Hello,
+After commit 0c07c273a5fe ("debugfs: continue to ignore unknown mount
+options"), debugfs displays "none" in /proc/mounts instead of the actual
+source.  Fix this by recognising its "source" mount option.
 
-syzbot found the following issue on:
+Signed-off-by: Marc Aurèle La France <tsi@tuyoix.net>
+Fixes: 0c07c273a5fe ("debugfs: continue to ignore unknown mount options")
+Cc: stable@vger.kernel.org # 6.10.x: 9f111059e725: fs_parse: add uid & gid option option parsing helpers
+Cc: stable@vger.kernel.org # 6.10.x: 49abee5991e1: debugfs: Convert to new uid/gid option parsing helpers
 
-HEAD commit:    3b9dfd9e5936 Merge tag 'hwmon-for-v6.11-rc6' of git://git...
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=141ab933980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=d76559f775f44ba6
-dashboard link: https://syzkaller.appspot.com/bug?extid=14d9438422f594f856bd
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17d8c77b980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11034a35980000
+diff -NRapruz -X /etc/diff.excludes linux-6.11.0-rc2/fs/debugfs/inode.c devel-6.11.0-rc2/fs/debugfs/inode.c
+--- linux-6.11.0-rc5/fs/debugfs/inode.c
++++ devel-6.11.0-rc5/fs/debugfs/inode.c
+@@ -89,12 +89,14 @@ enum {
+ 	Opt_uid,
+ 	Opt_gid,
+ 	Opt_mode,
++	Opt_source,
+ };
 
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-3b9dfd9e.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/3dab2f917732/vmlinux-3b9dfd9e.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/541828a1cf09/bzImage-3b9dfd9e.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/cc6a8f9d7bd9/mount_0.gz
+ static const struct fs_parameter_spec debugfs_param_specs[] = {
+ 	fsparam_gid	("gid",		Opt_gid),
+ 	fsparam_u32oct	("mode",	Opt_mode),
+ 	fsparam_uid	("uid",		Opt_uid),
++	fsparam_string	("source",	Opt_source),
+ 	{}
+ };
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+14d9438422f594f856bd@syzkaller.appspotmail.com
-
-Kernel panic - not syncing: stack-protector: Kernel stack is corrupted in: call_usermodehelper_exec+0x493/0x4a0
-CPU: 0 UID: 0 PID: 5107 Comm: syz-executor310 Not tainted 6.11.0-rc5-syzkaller-00148-g3b9dfd9e5936 #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:93 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:119
- panic+0x349/0x860 kernel/panic.c:354
- __stack_chk_fail+0x15/0x20 kernel/panic.c:827
- call_usermodehelper_exec+0x493/0x4a0
- call_modprobe kernel/module/kmod.c:103 [inline]
- __request_module+0x3ee/0x650 kernel/module/kmod.c:173
- ctrl_getfamily+0x28e/0x6b0 net/netlink/genetlink.c:1450
- genl_family_rcv_msg_doit net/netlink/genetlink.c:1115 [inline]
- genl_family_rcv_msg net/netlink/genetlink.c:1195 [inline]
- genl_rcv_msg+0xb14/0xec0 net/netlink/genetlink.c:1210
- netlink_rcv_skb+0x1e3/0x430 net/netlink/af_netlink.c:2550
- genl_rcv+0x28/0x40 net/netlink/genetlink.c:1219
- netlink_unicast_kernel net/netlink/af_netlink.c:1331 [inline]
- netlink_unicast+0x7f6/0x990 net/netlink/af_netlink.c:1357
- netlink_sendmsg+0x8e4/0xcb0 net/netlink/af_netlink.c:1901
- sock_sendmsg_nosec net/socket.c:730 [inline]
- __sock_sendmsg+0x221/0x270 net/socket.c:745
- __sys_sendto+0x3a4/0x4f0 net/socket.c:2204
- __do_sys_sendto net/socket.c:2216 [inline]
- __se_sys_sendto net/socket.c:2212 [inline]
- __x64_sys_sendto+0xde/0x100 net/socket.c:2212
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fb2add42023
-Code: 64 89 02 48 c7 c0 ff ff ff ff eb b7 66 2e 0f 1f 84 00 00 00 00 00 90 80 3d 81 90 09 00 00 41 89 ca 74 14 b8 2c 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 75 c3 0f 1f 40 00 55 48 83 ec 30 44 89 4c 24
-RSP: 002b:00007ffe2a46ace8 EFLAGS: 00000202 ORIG_RAX: 000000000000002c
-RAX: ffffffffffffffda RBX: 00007ffe2a46ad90 RCX: 00007fb2add42023
-RDX: 000000000000001c RSI: 00007ffe2a46ade0 RDI: 0000000000000005
-RBP: 0000000000000005 R08: 00007ffe2a46ad04 R09: 000000000000000c
-R10: 0000000000000000 R11: 0000000000000202 R12: 0000000000000000
-R13: 00007ffe2a46ad58 R14: 00007ffe2a46ade0 R15: 0000000000000000
- </TASK>
-Kernel Offset: disabled
-Rebooting in 86400 seconds..
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+@@ -126,6 +128,12 @@ static int debugfs_parse_param(struct fs_context *fc, struct fs_parameter *param)
+ 	case Opt_mode:
+ 		opts->mode = result.uint_32 & S_IALLUGO;
+ 		break;
++	case Opt_source:
++		if (fc->source)
++			return invalfc(fc, "Multiple sources specified");
++		fc->source = param->string;
++		param->string = NULL;
++		break;
+ 	/*
+ 	 * We might like to report bad mount options here;
+ 	 * but traditionally debugfs has ignored all mount options
 
