@@ -1,166 +1,111 @@
-Return-Path: <linux-kernel+bounces-309492-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309493-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE457966B52
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 23:34:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE5DF966B54
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 23:35:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 876DB1F235C7
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 21:34:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F0A2A1C21E45
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 21:35:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98D4F176AB6;
-	Fri, 30 Aug 2024 21:34:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 087E5176AB6;
+	Fri, 30 Aug 2024 21:35:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="PUIc+SDy"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Qdi3EDGK"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9D8115C153;
-	Fri, 30 Aug 2024 21:34:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1844015C153;
+	Fri, 30 Aug 2024 21:35:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725053657; cv=none; b=BqUOwztjOKxeLT/twePkOchAp6+NyIS2Bs57ORPMn83oImxkhLfpGlCOca3KmV3pyLM2b5CtOEYekC6xDQEZnIa2DEi6fDUYiMklFYAYbbJERBlGI2m8rtvoUo8fhRZUjwbw7LaXOwTU6BIGaQCFVH9fOCbyQJH+6ZB3FaMM6xI=
+	t=1725053725; cv=none; b=UjOpL4EbXPlTxmI+6DK8vc0Ul35VzfxBCCRHkEUJrBCeq5YFjBqs0hHx9Lqy+zd/UJViRNo6JvZqSZkYzJrSU+c+k5N7IL36+43DhtDkvR6MtzTlIjOG75Jx6zE2u8C/oPWbu/ndoJeuj7MFTBo0owiGq2Z6yvShonTjgnFt9FE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725053657; c=relaxed/simple;
-	bh=6JkLzJUtUYqH168S14hpBrlJnWK/5jDaKFH7dIaPYv8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Yud4c6jDOclR8dFlqrMG5zIn1LY0RPTemrrSLnZoABGkfnNoDwzjWcNWSkgdjfIP5w7x20bSoUxWAXpv0v1Byq6W7m/PhAPAnsyLUmgVayW7sfNxbY3lZUbkPzbxK474h3P7vVwe4nYAZErLS1ptLpynXUNpiGupakvAtUSCDF8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=PUIc+SDy; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1725053653;
-	bh=6JkLzJUtUYqH168S14hpBrlJnWK/5jDaKFH7dIaPYv8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=PUIc+SDyLrk3dIz0InmtjLeET5JiIGzd/rJ1IRjfH1V9O+k8e/UmMFIylwYkQX49A
-	 u+/CYAWO5xaf2XXpgf4pX6Xbm3D42p2n66k+irK+7HjYGi1C483T2GXW+sBksym46t
-	 AEbqDjrjZBg6qcPbRey6TF0HOFpJeMITR3cK4NLdjJGyDeOVK4romujn4EXCwHzC4b
-	 4HZ3wTNmSCx9eFNSwgs4R20d3m9O5Tvo6MsD2BcqTfoBreQh82rNus9//yuIxjETbg
-	 6XlEAKSMqjnQGLuX6Tax/4PoNkltGy9+ZSDNjMenk31IxygQGyABWxW2bMDriRSIGJ
-	 OuvY1sRgQBftQ==
-Received: from notapiano (pool-100-2-116-133.nycmny.fios.verizon.net [100.2.116.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: nfraprado)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 8E4B717E14D5;
-	Fri, 30 Aug 2024 23:34:12 +0200 (CEST)
-Date: Fri, 30 Aug 2024 17:34:10 -0400
-From: =?utf-8?B?TsOtY29sYXMgRi4gUi4gQS4=?= Prado <nfraprado@collabora.com>
-To: Pin-yen Lin <treapking@chromium.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	"open list:ARM/Mediatek SoC support" <linux-kernel@vger.kernel.org>,
-	"moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>,
-	"moderated list:ARM/Mediatek SoC support" <linux-arm-kernel@lists.infradead.org>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	Fabien Parent <fparent@baylibre.com>
-Subject: Re: [RESEND PATCH v2 2/2] arm64: dts: mediatek: mt8183-pumpkin: add
- HDMI support
-Message-ID: <c0597ae3-8849-4311-bab6-1c01575ec5e0@notapiano>
-References: <20240819120735.1508789-1-treapking@chromium.org>
- <20240819120735.1508789-2-treapking@chromium.org>
+	s=arc-20240116; t=1725053725; c=relaxed/simple;
+	bh=UvFffSAeq30Eqc8C+OPXmdN00zTYvQ9bHawAOmVQmgM=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=pyGFh9BPiOpei7uQDDmav5POeng/6q6WnEturKnydL89cMoKNCWBOnsn0vsNtTVL7YQatV01ewTBL1zxj8OyNSOShSJidkfl/uQ59OgM7A4FFr2fq39NPV0EhKa45IXmB0MfysIiEt5CqsuafqJ8naKL31lxV/BFqclnRb6koC0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Qdi3EDGK; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-20202df1c2fso22724605ad.1;
+        Fri, 30 Aug 2024 14:35:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725053723; x=1725658523; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=oPJaphb0lUc2jvSU3ZmLhDTup9rl4fMHIHMQDVwmBQ8=;
+        b=Qdi3EDGKf39wMqxoLuWxhekxozaA97cfvcvTXRSfd/WE6dsDCFiK1Bh4NdwbsudQ8r
+         WZobtGQhWIDYNDrcPa7Nj4oZOHXRfCJ0Dkt0FgzS7DtN+gRpTr8xHvmIgrJxLrqcqcZv
+         bGwwMfHqyxNOxmePagY+fsLqSjtu1qV+P6afMkywvOGNkR+4P8WDTO/RinLr7Fr7YDi6
+         i0ZHlVudsLOl7OpwnP74F/IOnxg4DWMO8QE8QTjYfrkNmkWmOF/LTPFkwFkflXcitNIP
+         CybINyOVQ7XYT4giGWKnDX2XAj/kfqAfkZ/5cnlNniFEubMorQwbxiqPrN7q9T/nVVcP
+         c+Sw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725053723; x=1725658523;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=oPJaphb0lUc2jvSU3ZmLhDTup9rl4fMHIHMQDVwmBQ8=;
+        b=XtHvujXlSXTpZb2DwiGbrkEnl4TW4Qz3zMLDmGHkNnVEj1BdgGaRBLGrsUADrXNhph
+         8wTfQpBDtmWxgPq7/JuSRw1/3l3sSsBv7Bj/Rcqnwbr9lz0vCo0VGgn5V9+Q7mY16xLo
+         OqJWbyZHYAycgXHUButTL9rM1AtBT0B8echVqeB/fBLeO+6pWsfiRw6S9jlJMKz0Meuj
+         3lrzpprdkDoL6VYleMSgMPF6+aqvxq2qm5ChAloOJL+8euVOXjs1Q98aH5G6nr5w6RwI
+         83jecLGHtwxPXLL8fQhwvYtGAa9X3hjtMDTA7cOMCusEB4RKM0iRnHXHjKt8Jd02RJod
+         uB6A==
+X-Forwarded-Encrypted: i=1; AJvYcCWmkY3uFA1yAj0I81tDhtGCxFlyUijLTpp9ob6kj+FYTd7ALXD0C6lROJybMGmJyb4x1O3v+dJzfzxniQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxNYe7/x9RdQ8ccBTgsupyQUrj1IC7bCGJhRDY9gslmASdLhsg2
+	elE1o7+rwG5y8+Jmk5/LDRi40TaoZTuhq/BqI6O8qnXUtWUsY0PY
+X-Google-Smtp-Source: AGHT+IFtMzfNonmObVVF8v+ps9Xr7rgv3GGTaAESTlUavLr/K8n/e7LZQgc0m/DPzonEEwFB2WQ5rA==
+X-Received: by 2002:a17:902:b182:b0:1fa:97ec:3a4 with SMTP id d9443c01a7336-2052770f025mr50402605ad.8.1725053722743;
+        Fri, 30 Aug 2024 14:35:22 -0700 (PDT)
+Received: from google.com ([2620:15c:9d:2:bf97:5ce2:737d:1e6f])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20549ddda8csm398795ad.258.2024.08.30.14.35.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 30 Aug 2024 14:35:22 -0700 (PDT)
+Date: Fri, 30 Aug 2024 14:35:19 -0700
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, linux-input@vger.kernel.org
+Subject: [git pull] Input updates for v6.11-rc5
+Message-ID: <ZtI7F8X59jgrGp_7@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240819120735.1508789-2-treapking@chromium.org>
 
-On Mon, Aug 19, 2024 at 08:05:56PM +0800, Pin-yen Lin wrote:
-> From: Fabien Parent <fparent@baylibre.com>
-> 
-> The MT8183 Pumpkin board has a micro-HDMI connector. HDMI support is
-> provided by an IT66121 DPI <-> HDMI bridge.
-> 
-> This commit enables DPI and add the node for the IT66121 bridge.
+Hi Linus,
 
-Make it imperative [1]:
+Please pull from:
 
-Enable the DPI and add the node for the IT66121 bridge.
+	git://git.kernel.org/pub/scm/linux/kernel/git/dtor/input.git tags/input-for-v6.11-rc5
 
-[1] https://www.kernel.org/doc/html/latest/process/submitting-patches.html#describe-your-changes
+to receive updates for the input subsystem. You will get:
 
-> 
-> Signed-off-by: Fabien Parent <fparent@baylibre.com>
+- a fix for Cypress PS/2 touchpad for regression introduced in 6.11
+  merge window where timeout condition is incorrectly reported for
+  all extended Cypress commands.
 
-You should also add a Co-developed-by tag for yourself since you made (or will
-make) changes to this commit.
+Changelog:
+---------
 
-> Signed-off-by: Pin-yen Lin <treapking@chromium.org>
-> 
-> ---
-> 
-> (no changes since v1)
-> 
->  .../boot/dts/mediatek/mt8183-pumpkin.dts      | 121 ++++++++++++++++++
->  1 file changed, 121 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/mediatek/mt8183-pumpkin.dts b/arch/arm64/boot/dts/mediatek/mt8183-pumpkin.dts
-> index 1aa668c3ccf9..ecc237355b56 100644
-> --- a/arch/arm64/boot/dts/mediatek/mt8183-pumpkin.dts
-> +++ b/arch/arm64/boot/dts/mediatek/mt8183-pumpkin.dts
-[..]
-> @@ -120,6 +132,41 @@ &i2c6 {
->  	pinctrl-0 = <&i2c6_pins>;
->  	status = "okay";
->  	clock-frequency = <100000>;
-> +	#address-cells = <1>;
-> +	#size-cells = <0>;
-> +
-> +	it66121hdmitx: hdmitx@4c {
-> +		compatible = "ite,it66121";
-> +		pinctrl-names = "default";
-> +		pinctrl-0 = <&ite_pins>;
-> +		vcn33-supply = <&mt6358_vcn33_wifi_reg>;
+Dmitry Torokhov (1):
+      Input: cypress_ps2 - fix waiting for command response
 
-As pointed out by lkp this label doesn't exist:
-https://lore.kernel.org/all/202408200703.MYO1s3Ne-lkp@intel.com/
+Diffstat:
+--------
 
-See 9a8014b1d4d2 ("arm64: dts: mediatek: mt6358: Merge ldo_vcn33_* regulators").
+ drivers/input/mouse/cypress_ps2.c | 58 +++++++++------------------------------
+ 1 file changed, 13 insertions(+), 45 deletions(-)
 
-> +		vcn18-supply = <&mt6358_vcn18_reg>;
-> +		vrf12-supply = <&mt6358_vrf12_reg>;
-> +		reset-gpios = <&pio 160 GPIO_ACTIVE_LOW>;
-> +		interrupt-parent = <&pio>;
-> +		interrupts = <4 IRQ_TYPE_LEVEL_LOW>;
-> +		reg = <0x4c>;
+Thanks.
 
-Please take a look at https://docs.kernel.org/devicetree/bindings/dts-coding-style.html
-for among other things, suggested ordering of properties in nodes. reg is
-commonly the second property.
 
-> +
-> +		ports {
-> +			#address-cells = <1>;
-> +			#size-cells = <0>;
-> +
-> +			port@0 {
-> +				reg = <0>;
-
-Add a blank line here.
-
-> +				it66121_in: endpoint {
-> +					bus-width = <12>;
-> +					remote-endpoint = <&dpi_out>;
-> +				};
-> +			};
-> +
-> +			port@1 {
-> +				reg = <1>;
-
-Ditto.
-
-Reviewed-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
-
-Thanks,
-Nícolas
+-- 
+Dmitry
 
