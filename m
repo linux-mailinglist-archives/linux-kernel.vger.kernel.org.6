@@ -1,123 +1,143 @@
-Return-Path: <linux-kernel+bounces-308821-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308857-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 172A796622D
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 14:59:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D73CF9662C9
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 15:17:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B2B34B22D18
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 12:59:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 123501C238A9
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 13:17:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DA501A284A;
-	Fri, 30 Aug 2024 12:59:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 469371ACDE2;
+	Fri, 30 Aug 2024 13:17:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="thiwJNo+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=tbonnefille.fr header.i=@tbonnefille.fr header.b="K5c+keZu"
+Received: from 9.mo563.mail-out.ovh.net (9.mo563.mail-out.ovh.net [46.105.73.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D99416EB5D
-	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 12:59:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C5911A7AC6
+	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 13:17:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.105.73.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725022782; cv=none; b=W9NkEteHLnMJQ3FjFTvkdaniOSUyYg/gGQPCm/o/5R17NnEhpQKdnACK6z3EDgYhWNLXQLPjl9m8/7YRYW3tCgWYg8ptVebAevIH6V8440+tdJz0Unv7zSXoB8/ymU4khEsOwniiTlPAOAjYxSXzi+3QnJQckhKO5MPdP5BhZpw=
+	t=1725023864; cv=none; b=g67snVe4A84nK0J9Quti8vMhtUPw7L0p6icflBI7eFEmAfjGon3NXZQS7X0/buSgGRTKapwszMfi92rhQpGmEBNHhJkZvugRLF6Lc6IQLwEubq1QdIIuexaoR/zZoQqm4sbZ/3SdzmAmU1spe4mx/h83/8zVBFkgTvTshILT16U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725022782; c=relaxed/simple;
-	bh=uFTaIQmao++WMsK76RUhgx7ncRMszlOrVoJG7KLW/pE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=skjLCV7xOblZtXFPhwYKsO8F0xXlrpzoPgflbK58Mwn69J5sixHIxelwij3gSiuXh9+WvHBbUtCM22v3eMAlADi4kaOS8ksmzsImnn31eY25UeMswLPKEHbjwJsCCKtOOmNby60Oloy8xsDTvqN7FlAq33iXTjnVS9GrTE8I63E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=thiwJNo+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 057ADC4CEC2;
-	Fri, 30 Aug 2024 12:59:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725022782;
-	bh=uFTaIQmao++WMsK76RUhgx7ncRMszlOrVoJG7KLW/pE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=thiwJNo+yK7GHsNtmTM1yn1DKXlkqlRYnEFUnY2oA+mxB3+F2KV6UlI2GBjOk/wQD
-	 ndyDoP0kq1Mye0jZ7NRldzLTa4Cbl9lRM//bRBpwJksL2lU7td4jTCIUJ3IRrU8q0B
-	 Msh5oRfaw0Qn784WulZkjUkZDnQCNwnhsKO1jHVgw/BYpOq0xOIq9WYN84MEMdGn+A
-	 57D5N5sg1/PVnkg83RoL1CenvcUIeMuRkdnDyOf5odKifWWScviOPT6kjLF0fHsDNF
-	 gHYJQ94qu59DoG4tW6hD6YqnYwk7EYX/R6EGiWzHTs73v/fMisuw6XVDVCB4Spk9Uu
-	 Bj8t24Vk0FlMA==
-Date: Fri, 30 Aug 2024 13:59:37 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Ryan Roberts <ryan.roberts@arm.com>,
-	Aishwarya TCV <aishwarya.tcv@arm.com>, dev.jain@arm.com
-Subject: Re: [PATCH v2 06/10] mm: avoid using vma_merge() for new VMAs
-Message-ID: <622b3769-fb5c-4a3e-82b7-1301623faf43@sirena.org.uk>
-References: <cover.1724441678.git.lorenzo.stoakes@oracle.com>
- <57f55a1473586a88211e04b44c6b128332d4272c.1724441678.git.lorenzo.stoakes@oracle.com>
- <51452bab-65ef-4924-8ca8-61536d2bc168@sirena.org.uk>
- <9dcddc2c-482b-4e12-a409-eee8d902ba26@lucifer.local>
+	s=arc-20240116; t=1725023864; c=relaxed/simple;
+	bh=eKGTQ3Zw5H4pG3i21MZO96JUQWkAB7zpE+9rjberyv0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=eyl8QRxSNfi0JJBhnvPV0lwonmkODTu+bahISj5SBPdpJhGtmOnZCtfgRErs+jvNxxR2cyO0i0eJyVE1ca1oPSj9QAZUuAqIiordANKkNRV/sVXS6RdjRXVf/HoAW8lXQyzdfmBn2+kPCL91aSwa9beDZ0vygFLI2ShqaPzBmvA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tbonnefille.fr; spf=pass smtp.mailfrom=tbonnefille.fr; dkim=pass (2048-bit key) header.d=tbonnefille.fr header.i=@tbonnefille.fr header.b=K5c+keZu; arc=none smtp.client-ip=46.105.73.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tbonnefille.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tbonnefille.fr
+Received: from director3.derp.mail-out.ovh.net (director3.derp.mail-out.ovh.net [152.228.215.222])
+	by mo563.mail-out.ovh.net (Postfix) with ESMTPS id 4WwJCW1MQcz1VMq;
+	Fri, 30 Aug 2024 13:00:07 +0000 (UTC)
+Received: from director3.derp.mail-out.ovh.net (director3.derp.mail-out.ovh.net. [127.0.0.1])
+        by director3.derp.mail-out.ovh.net (inspect_sender_mail_agent) with SMTP
+        for <dfustini@baylibre.com>; Fri, 30 Aug 2024 13:00:06 +0000 (UTC)
+Received: from DAG3EX1.emp3.local (unknown [10.108.42.252])
+	by director3.derp.mail-out.ovh.net (Postfix) with ESMTPS id 4WwJCV12JBz86Jy;
+	Fri, 30 Aug 2024 13:00:06 +0000 (UTC)
+Received: from [192.168.0.75] (90.89.163.127) by DAG3EX1.emp3.local
+ (172.16.2.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 30 Aug
+ 2024 15:00:04 +0200
+Message-ID: <5a463f00-a03d-4cf3-be3c-970ca5611486@tbonnefille.fr>
+Date: Fri, 30 Aug 2024 15:00:03 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="+HwhJGFuaIQgoGSS"
-Content-Disposition: inline
-In-Reply-To: <9dcddc2c-482b-4e12-a409-eee8d902ba26@lucifer.local>
-X-Cookie: for ARTIFICIAL FLAVORING!!
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 7/7] riscv: dts: sophgo: cv1812h: add pinctrl support
+To: Inochi Amaoto <inochiama@outlook.com>, Chen Wang
+	<unicorn_wang@outlook.com>
+CC: Drew Fustini <dfustini@baylibre.com>, Haylen Chu <heylenay@outlook.com>,
+	Jisheng Zhang <jszhang@kernel.org>, Guo Ren <guoren@kernel.org>, Albert Ou
+	<aou@eecs.berkeley.edu>, Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley
+	<paul.walmsley@sifive.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob
+ Herring <robh@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Conor
+ Dooley <conor+dt@kernel.org>, Liu Gui <kenneth.liu@sophgo.com>, Yixun Lan
+	<dlan@gentoo.org>, <linux-gpio@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-riscv@lists.infradead.org>, Thomas Petazzoni
+	<thomas.petazzoni@bootlin.com>, Miquel Raynal <miquel.raynal@bootlin.com>
+References: <IA1PR20MB4953DC78BB0FE0C57EA94F91BBB32@IA1PR20MB4953.namprd20.prod.outlook.com>
+ <IA1PR20MB495348B5FFE61FF1D76ECC4DBBB32@IA1PR20MB4953.namprd20.prod.outlook.com>
+Content-Language: en-US
+From: Thomas Bonnefille <thomas@tbonnefille.fr>
+In-Reply-To: <IA1PR20MB495348B5FFE61FF1D76ECC4DBBB32@IA1PR20MB4953.namprd20.prod.outlook.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: CAS9.emp3.local (172.16.1.9) To DAG3EX1.emp3.local
+ (172.16.2.31)
+DKIM-Signature: v=1; a=rsa-sha256; d=tbonnefille.fr;
+ s=ovhemp1147286-selector1; c=relaxed/relaxed; t=1725022805;
+ h=from:to:subject:date; bh=3xzeZZed1caYdsVmSD9tMT8ztI6dOeLf77ko1WrVFl8=;
+ b=K5c+keZu33DnBUPwc7skyaLF+NxHPTt9Cw0S98sXFVVW+SXVc5i0krrWTS/RoStbq6XJ6YfAhp7SBXylKTKY4r8KYFDxWMUiMChLJNb3jrOCqvpfKu8lj3Dnc57hzxZyNA2YQs+jTvx4U1muFytVNfLfJUlyr4eo2K7VoZQbPdqpPi29wk4SdWfeqLjxK77ffU6zepkcGXZeA9BYqezfVhhXcYydFI0i87T/Ra/EwCUZ+S2hrY7Jz71ita5msia3YHXVrtVnJI9TLAU89JINqsWU++in2i6QoOvp4Ph27zQX9cN9+4WolDbtIcbg7bdirjp7Ts/52etGiI9PAFLHbw==
+X-Ovh-Tracer-Id: 14003380092947865892
+X-VR-SPAMSTATE: OK
+X-VR-SPAMSCORE: -100
+X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeeftddrudefiedgheekucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuqfggjfdpvefjgfevmfevgfenuceurghilhhouhhtmecuhedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgihesthejredttddvjeenucfhrhhomhepvfhhohhmrghsuceuohhnnhgvfhhilhhlvgcuoehthhhomhgrshesthgsohhnnhgvfhhilhhlvgdrfhhrqeenucggtffrrghtthgvrhhnpeevvedtledtheeggfffudfggffhteeftdeitddttdejleegjeduieeugeehvdefffenucffohhmrghinhepihhnfhhrrgguvggrugdrohhrghenucfkphepuddvjedrtddrtddruddpledtrdekledrudeifedruddvjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeduvdejrddtrddtrddupdhmrghilhhfrhhomhepthhhohhmrghssehtsghonhhnvghfihhllhgvrdhfrhdpnhgspghrtghpthhtohepvddupdhrtghpthhtohepughfuhhsthhinhhisegsrgihlhhisghrvgdrtghomhdprhgtphhtthhopehmihhquhgvlhdrrhgrhihnrghlsegsohhothhlihhnrdgtohhmpdhrtghpthhtohepthhhohhmrghsrdhpvghtrgiiiihonhhisegsohhothhlihhnrdgtohhmpdhrtghpthhtohepphgrlhhmvghrsegurggssggvlhhtrdgtohhmpdhrtghpthhtoheprghouhesvggvtghsrdgsvghrkhgvlhgvhi
+ drvgguuhdprhgtphhtthhopegulhgrnhesghgvnhhtohhordhorhhgpdhrtghpthhtoheptghonhhorhdoughtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehguhhorhgvnheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepjhhsiihhrghngheskhgvrhhnvghlrdhorhhg
 
+On 8/2/24 2:35 AM, Inochi Amaoto wrote:
+> Add pinctrl node for CV1812H SoC.
+>
+> Signed-off-by: Inochi Amaoto <inochiama@outlook.com>
+> ---
+>   arch/riscv/boot/dts/sophgo/cv1812h.dtsi | 10 ++++++++++
+>   1 file changed, 10 insertions(+)
+>
+> diff --git a/arch/riscv/boot/dts/sophgo/cv1812h.dtsi b/arch/riscv/boot/dts/sophgo/cv1812h.dtsi
+> index 8fcb400574ed..2dfa450f0d26 100644
+> --- a/arch/riscv/boot/dts/sophgo/cv1812h.dtsi
+> +++ b/arch/riscv/boot/dts/sophgo/cv1812h.dtsi
+> @@ -4,6 +4,7 @@
+>    */
+>
+>   #include <dt-bindings/interrupt-controller/irq.h>
+> +#include <dt-bindings/pinctrl/pinctrl-cv1812h.h>
+>   #include "cv18xx.dtsi"
+>   #include "cv181x.dtsi"
 
---+HwhJGFuaIQgoGSS
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hello Inochi,
+I'm trying to apply your patch to the LicheeRV Nano series but I can't 
+find the file "cv181x.dtsi", neither in the upstream v6.11-rc5 nor in 
+the additional required patch.
+It was first mentioned in the v3 of your patch series.
+Was it supposed to appear here ?
 
-On Thu, Aug 29, 2024 at 10:22:53PM +0100, Lorenzo Stoakes wrote:
+If so, can you help me figure out where to find it?
 
-> Thanks, I figured out the problem, it's not arm-specific, I was running
-> self-tests but eyeballing-failure resulted in me missing this.
->=20
-> This is a product of vma_merge_extend() invoking vma_merge_new_range() wi=
-thout
-> having determined the next VMA correctly, after moving from vma_merge() (=
-which
-> looked this up for us) to vma_merge_new_range() (which does not).
->=20
-> This is after having adjusted the assumptions between v1 and v2 of the se=
-ries in
-> each merge function, and I simply missed this mremap()-specific case.
->=20
-> Andrew - I enclose a fix-patch to get a fix out for this asap, but I am d=
-ue a
-> respin relatively soon and will also include that in this.
->=20
-> ----8<----
-> From 3678f8a53f98de52f11946d4d32e6fb239d11c2f Mon Sep 17 00:00:00 2001
-> From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> Date: Thu, 29 Aug 2024 22:18:02 +0100
-> Subject: [PATCH] mm: correctly determine vmg.next in vma_merge_extend()
->=20
-> vma_merge_next_range() requires that the caller specify prev AND next.
+Regards,
+Thomas
 
-This fixes the problem for me.
-
-Tested-by: Mark Brown <broonie@kernel.org>
-
---+HwhJGFuaIQgoGSS
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmbRwjgACgkQJNaLcl1U
-h9AXbAf9FkWBHDchz8lVBIYqoq4in52zRMMQobF6cNp8/HyUUDWMa9OWZJk8byZZ
-3ogVYfXYc6BPFaY/ePBCH8ByVdUHb0r5zC6vuyK9lKg10/O0lHWKPCLBdJz+Vnuz
-NDAygjzV3tGPTlGSr/vZK4h2lSX/fFw59dd/1fsebnDxv+0PPnbSvzx3LKEVoXj2
-r5DIbk/CuIYuvDbs2MsYTZBorDJ5PBQI9rtAXZ8SdQpSWfWZyprKED2kwnsH1IJi
-Ht8207Q05g9e9Ck607vSElZzSIIFkgbHcWPUFTrJ+8Uydt8Kasp09SmszudU6SJg
-4Xd4pXqGzH9L27f63tdt81Rs7SHmRA==
-=OiSW
------END PGP SIGNATURE-----
-
---+HwhJGFuaIQgoGSS--
+> @@ -14,6 +15,15 @@ memory@80000000 {
+>   		device_type = "memory";
+>   		reg = <0x80000000 0x10000000>;
+>   	};
+> +
+> +	soc {
+> +		pinctrl: pinctrl@3008000 {
+> +			compatible = "sophgo,cv1812h-pinctrl";
+> +			reg = <0x03001000 0x1000>,
+> +			      <0x05027000 0x1000>;
+> +			reg-names = "sys", "rtc";
+> +		};
+> +	};
+>   };
+>
+>   &plic {
+> --
+> 2.46.0
+>
+>
+> _______________________________________________
+> linux-riscv mailing list
+> linux-riscv@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-riscv
 
