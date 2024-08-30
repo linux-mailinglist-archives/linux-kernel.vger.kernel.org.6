@@ -1,33 +1,33 @@
-Return-Path: <linux-kernel+bounces-309479-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309480-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C756966B21
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 23:06:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C3D9966B23
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 23:08:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 176F71F23CA1
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 21:06:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5F0E71C21C55
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 21:08:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F8931C0DEE;
-	Fri, 30 Aug 2024 21:06:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA10C1C0DF5;
+	Fri, 30 Aug 2024 21:08:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="Rsrvr1TM"
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="cZbzZPrA"
 Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE52F1BFE0F;
-	Fri, 30 Aug 2024 21:06:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B171413D60E;
+	Fri, 30 Aug 2024 21:08:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725052006; cv=none; b=cbCximzSK2zuJmXspcYuMOlIQICtwmJX3iEajyo9TOXm2Cix5nO67iySPGA4uHS1+LQnYsOvtbL53LYDonVKoDFH/3FycVwiIWoLKswtyvLJ+bpQtZdEBW4CdLR391WLuUMAhluZGad0KczGgQx9zmtXxWTrdSp118pAL83ABps=
+	t=1725052086; cv=none; b=fw7OB6OXaZc69AhSYhtLPTwTLTAsGU+TByu8npJY3SrAzc5sM/m3Sx55xmLyDHsvzSXS4ZQwPUKw05MQbFj796mGe28JP1kZOqmOCPM9aLwWXA/0MSdLJp0E8LusnrH23Uk2TMPlCmz45LhbXVHzZdQxBbNkbjre6ID8MxeQw+g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725052006; c=relaxed/simple;
-	bh=H0NQ5ZmehNIgYltPpSmZIYymrt2njEkOB2G8BxeekeA=;
+	s=arc-20240116; t=1725052086; c=relaxed/simple;
+	bh=Q82ym79uYg7X8I9tkET9sBPh5W+r79KqmYB7BOUjrYo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZoOrQPpKCCzceU7hUu5Xz/u2NLjB9csAGcdjVBEaOrlfPxHd3FvSqd2tS/vEJ0evjWzuIWW8E+8G2C9yC7UA9Dec5sY6Iwjio5LvzecPBQcDulTLUXU8ZV3zyqIzWNop/bvMkQvR0x7dV2pXJehYf/Lt2+YOFl9/+YtLyl1bhGA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=Rsrvr1TM; arc=none smtp.client-ip=156.67.10.101
+	 Content-Type:Content-Disposition:In-Reply-To; b=O1Om22mFqI+JZnaUkfpXSa4UOlnWUY+FB60QNUM6Atn2tbCs+dfV9Ij9Z3DaXZqjdWJ2kS4tcXVD0HnQqWXwH3EmLhRKpTLWw04dtIrXGXU9JJhmQl3aosZUj2Q/SDaZgxAyaEfNFszBtHEOGJPEoPcb02nu6s61DC0pQC6Yppk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=cZbzZPrA; arc=none smtp.client-ip=156.67.10.101
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
@@ -35,13 +35,13 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
 	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
 	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
 	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=mFZyqa+CojbUYnJNo0CayNqKOThSnfiFIOpByRbiXS4=; b=Rsrvr1TMQ72S2YVb/HKmtvr2yn
-	FvO9q3VA7D2my2HVJb41qeIe2zEOrT1UmPteEZiy2g8+kr4mrr4B1v7R+clHjkg7USBGmQCK8+tn7
-	kZk92hRXHeY+z0DuNIvFcqiI7uNbQaTIkZUPSmZnmoviK06hSU5RuqmJ0pLO/+0xSY74=;
+	bh=nlSRRJPy5Y/nvSGgNo8LGfd03y58qST4jCBIfpLyAlM=; b=cZbzZPrA83+6VP8QY1GzOWqCjM
+	eJ2hkcIFpfpn9E1GKfZnCBXtpGd7Z9jE5QlZdp/mkwfo6g2/pEMYY0ocTYa4lZkAB7K7wgeYi6szz
+	vV3hyPIHlCcRUS7zXZJaJhD/kxp9fYjFRrC/UeEvfm3Zo9NVzQexOLNAxwelEjNAmKlg=;
 Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
 	(envelope-from <andrew@lunn.ch>)
-	id 1sk8pJ-006AI1-7y; Fri, 30 Aug 2024 23:06:37 +0200
-Date: Fri, 30 Aug 2024 23:06:37 +0200
+	id 1sk8qa-006AIn-MK; Fri, 30 Aug 2024 23:07:56 +0200
+Date: Fri, 30 Aug 2024 23:07:56 +0200
 From: Andrew Lunn <andrew@lunn.ch>
 To: Maxime Chevallier <maxime.chevallier@bootlin.com>
 Cc: davem@davemloft.net, Pantelis Antoniou <pantelis.antoniou@gmail.com>,
@@ -56,7 +56,7 @@ Cc: davem@davemloft.net, Pantelis Antoniou <pantelis.antoniou@gmail.com>,
 	Simon Horman <horms@kernel.org>, linuxppc-dev@lists.ozlabs.org
 Subject: Re: [PATCH net-next v2 4/7] net: ethernet: fs_enet: drop unused
  phy_info and mii_if_info
-Message-ID: <470013f7-39d3-4bd1-b13c-96f851db234d@lunn.ch>
+Message-ID: <a6eeb9e1-09f0-47a4-bf78-d59037398078@lunn.ch>
 References: <20240829161531.610874-1-maxime.chevallier@bootlin.com>
  <20240829161531.610874-5-maxime.chevallier@bootlin.com>
 Precedence: bulk
@@ -73,12 +73,8 @@ On Thu, Aug 29, 2024 at 06:15:27PM +0200, Maxime Chevallier wrote:
 > There's no user of the struct phy_info, the 'phy' field and the
 > mii_if_info in the fs_enet driver, probably dating back when phylib
 > wasn't as widely used.  Drop these from the driver code.
-> 
-> Acked-by: Christophe Leroy <christophe.leroy@csgroup.eu>
-> Reviewed-by: Christophe Leroy <christophe.leroy@csgroup.eu>
-> Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+There might be an include of linux/mii.h you can also drop?
 
-    Andrew
+	Andrew      	   
 
