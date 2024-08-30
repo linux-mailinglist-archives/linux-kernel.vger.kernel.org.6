@@ -1,142 +1,156 @@
-Return-Path: <linux-kernel+bounces-308802-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308805-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E22879661FC
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 14:47:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77958966203
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 14:49:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9E3CE28593F
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 12:47:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AA96E1C21CCF
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 12:49:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B19419ABDD;
-	Fri, 30 Aug 2024 12:47:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABE10199FDC;
+	Fri, 30 Aug 2024 12:49:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="Tkqa/SAx"
-Received: from mail-qv1-f50.google.com (mail-qv1-f50.google.com [209.85.219.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D5F019993C
-	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 12:47:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.50
+	dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b="R/C2yv+l"
+Received: from mail.8bytes.org (mail.8bytes.org [85.214.250.239])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C03B56440
+	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 12:48:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.250.239
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725022044; cv=none; b=fSdrwWhwmFQD0Z/Qxg6FRQsylPZ3xTKiVAHUXOWugzF5s1LZqmVgJY6R8td/v4jgBqKO/daVRu5thPkOzClVabrqrCKZhwAhiQSXI/LgL+XXxs/lfNco1Ud5LgvlU53+u20tZiVDQw5uwP+2KpcF2yjneUZ0tX70foqEP7M68ZI=
+	t=1725022139; cv=none; b=GAJFPK0rXPf8qhQjPWuQe5StQ1BSEpJdzdrytLbvY7eUH/12HisOZGx5JL56c5B22hXQ9uBvaoSkDdZ4d2XMg5mjOilMdQH8sXG+DahL4aU7LY39gzPEeZ6jd373rYlapM8RJZlo2jjfgdAZkmDXVlaEMeXKh2TQoVK9cn+lsWU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725022044; c=relaxed/simple;
-	bh=lWiucSN6zXhG3X717OejSkyo1yUhj7w0KySk1SkYMIE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YCUpOxy17cbKCne/axpShm+KM4f6YjKaRYrSVwEktsJ5+bWMmd5gjVFiTUwh4JrouA+GYdLI/LrInEcJSmzDJa4+Zt1aRt17TTGopsU619I9ceJJyJ00sMR/ycRpiGTqsB19Obk0+MTC53912d+adfOA2UpoL5u84+2kRTyLxws=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=Tkqa/SAx; arc=none smtp.client-ip=209.85.219.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-qv1-f50.google.com with SMTP id 6a1803df08f44-6c35427935eso211316d6.3
-        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 05:47:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1725022042; x=1725626842; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=WmShJpOz/GOmUnd0xKeTBcV3P2NCGM0BHpjZiSl8WN0=;
-        b=Tkqa/SAxC6hDf3jk2/+3faExVIsJ7T72464ofmlt/iDcnuqn04YWh5DDrhJ2OGQb2K
-         T/hsSz5znhzr84aWUSfbd8ajZp6+rv9X7rHnDxTUr5NVwYzTWwYhp/1Eu1jG4GX5M4zB
-         xe6Nxhatfhwz72HqYUIh/Bm9dQNLFWyUE4H9mGIx9nOdEnbIvAakkYxFHlI8m+uwknV2
-         U2XETOsxLAhmD5BopdFPH5LK3KCpgw7yYKvNXpnrmidNndddltHr3NhyQdz6ite1d/m1
-         QamqiVX/DX55ys+9+fwwOCc4KSb5TNeUd8GxXu3zi3u6ttSwDNVhtNEXAaWJSEYcIuHM
-         u56g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725022042; x=1725626842;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=WmShJpOz/GOmUnd0xKeTBcV3P2NCGM0BHpjZiSl8WN0=;
-        b=pLm1j5ErjKz2Wkg48/vNYCERGerL5fDXpchHRQcL4fRdUGmCdGK0kgRkLFJ2J8HszZ
-         5Is8eCp1vV2Raa552/JO350pWMeTymYLtGUv8O4PZPAfGQK+cekHflIdIgwdIo28/Owl
-         DtOGaNMYW0Q04NFPNL0tGL2TvXInLvjo2BPgn4rguIb5pIYMlf/hkEhoGNg672H59fTA
-         YF/QmrHVfTiZvt//gMn+9R5XtdNaVl5WYVZl7/tlT5p82DHPELm1t8oCXbKtA2n9CUgw
-         OSBSp6mYZjwc3XhXQklqbDBu4Y2IZlu1EbxHCaWWSMKRFd9ZiKEDtY03zu3TUCD/RS6R
-         kKTQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW/NhHXyxZOQoHLnu0I+zXm10+9OyKso+Euuno/dKLeoV6UG3yKXLS7ftyMhTRUKo1pGSD4QUIzQUwND7g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxzaFr1n8kuklGj6fvp4rOjFY2Ioa1g+sG0VDKY0FqlhFNH7Zgm
-	yLimt9X+z719XY7NlmxGiTXMtz6XJ895aJE6SqZ58xT5DApNYfNkiWSGvUZA65k=
-X-Google-Smtp-Source: AGHT+IF1zgT2NlSjbSBC4mUiCoFIEUsoyt95nAEze677a3G7gSdAzBNVY6enBBsIy8xyElYIQbGvzA==
-X-Received: by 2002:a05:6214:3c8b:b0:6c1:70c8:ead6 with SMTP id 6a1803df08f44-6c33e69695bmr78641056d6.50.1725022041738;
-        Fri, 30 Aug 2024 05:47:21 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-142-68-80-239.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.80.239])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6c34c04f512sm3869726d6.37.2024.08.30.05.47.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 30 Aug 2024 05:47:21 -0700 (PDT)
-Received: from jgg by wakko with local (Exim 4.95)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1sk128-00DlJD-Gs;
-	Fri, 30 Aug 2024 09:47:20 -0300
-Date: Fri, 30 Aug 2024 09:47:20 -0300
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Sean Christopherson <seanjc@google.com>
-Cc: James Houghton <jthoughton@google.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Ankit Agrawal <ankita@nvidia.com>,
-	Axel Rasmussen <axelrasmussen@google.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	David Matlack <dmatlack@google.com>,
-	David Rientjes <rientjes@google.com>,
-	James Morse <james.morse@arm.com>, Jonathan Corbet <corbet@lwn.net>,
-	Marc Zyngier <maz@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Raghavendra Rao Ananta <rananta@google.com>,
-	Ryan Roberts <ryan.roberts@arm.com>,
-	Shaoqin Huang <shahuang@redhat.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Wei Xu <weixugc@google.com>, Will Deacon <will@kernel.org>,
-	Yu Zhao <yuzhao@google.com>, Zenghui Yu <yuzenghui@huawei.com>,
-	kvmarm@lists.linux.dev, kvm@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH v6 02/11] KVM: x86: Relax locking for kvm_test_age_gfn
- and kvm_age_gfn
-Message-ID: <20240830124720.GX3468552@ziepe.ca>
-References: <20240724011037.3671523-1-jthoughton@google.com>
- <20240724011037.3671523-3-jthoughton@google.com>
- <Zr_3Vohvzt0KmFiN@google.com>
- <CADrL8HWQqVm5VbNnR6iMEZF17+nuO_Y25m6uuScCBVSE_YCTdg@mail.gmail.com>
- <ZtFA79zreVt4GBri@google.com>
+	s=arc-20240116; t=1725022139; c=relaxed/simple;
+	bh=jUhwG5R0qWnWJOpTzFrDht5qN55ooWMDoFdCvpBkkkg=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=L+Sj18lpvDA9V1ooOHY3plm0JDlzfoZyLD8G9SQ0v77owz0JqYsqqSjLKjWcBcENePfSkoGE0G98xgFjseRM1huqzaS9gtFH+N0S4CIWDge5YO10a4lELJUwZJ16UoeBBO8lBil3TEuWTqjWGZTs1Gk1G68qOpGKAabdzmzATMA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=8bytes.org; spf=pass smtp.mailfrom=8bytes.org; dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b=R/C2yv+l; arc=none smtp.client-ip=85.214.250.239
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=8bytes.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=8bytes.org
+Received: from 8bytes.org (pd9fe9dd8.dip0.t-ipconnect.de [217.254.157.216])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.8bytes.org (Postfix) with ESMTPSA id 6ECD628719D;
+	Fri, 30 Aug 2024 14:48:50 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=8bytes.org;
+	s=default; t=1725022130;
+	bh=jUhwG5R0qWnWJOpTzFrDht5qN55ooWMDoFdCvpBkkkg=;
+	h=Date:From:To:Cc:Subject:From;
+	b=R/C2yv+lXYWup8HEUUBUXbkonNWKHCIVBwAR1uLB9PLpjeicjEfzKisceowgQoNy1
+	 VDZm+7P9WIi37ihBxdmPMMj2RwSxJv2olWzWfNefq+zEhwOaKC3IQQS/iZCvJpCJdt
+	 crLPW5tQecE3cvkZV/K7gnfcU17qkKkYAB85Ozwwa2kTDhqABO9JvoeYr//egnaehK
+	 uF38XzMoXs5LPoY7WH9hkPjvrKedEfsDdDqDkyXUvkSfmcwnmOaIWPi4+uj0PjHgZC
+	 ALvn/Ns6RKO8Npsz/V1r/DP7JMbzF1pWSqY9X9U9PAvCnx4iZs1CJkz00Xl9XasrWm
+	 9oW+jSAqkoSkA==
+Date: Fri, 30 Aug 2024 14:48:49 +0200
+From: Joerg Roedel <joro@8bytes.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Will Deacon <will@kernel.org>, linux-kernel@vger.kernel.org,
+	iommu@lists.linux.dev
+Subject: [git pull] IOMMU Fixes for Linux v6.11-rc5
+Message-ID: <ZtG_sa5UUrAoYkKd@8bytes.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="7GN+MAVE67h3RWRK"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ZtFA79zreVt4GBri@google.com>
 
-On Thu, Aug 29, 2024 at 08:47:59PM -0700, Sean Christopherson wrote:
-> On Thu, Aug 29, 2024, James Houghton wrote:
-> > On Fri, Aug 16, 2024 at 6:05 PM Sean Christopherson <seanjc@google.com> wrote:
-> > > > +static __always_inline bool kvm_tdp_mmu_handle_gfn_lockless(
-> > > > +             struct kvm *kvm,
-> > > > +             struct kvm_gfn_range *range,
-> > > > +             tdp_handler_t handler)
-> > >
-> > > Please burn all the Google3 from your brain, and code ;-)
-> > 
-> > I indented this way to avoid going past the 80 character limit. I've
-> > adjusted it to be more like the other functions in this file.
-> > 
-> > Perhaps I should put `static __always_inline bool` on its own line?
-> 
-> Noooo. Do not wrap before the function name.  Linus has a nice explanation/rant
-> on this[1].
 
-IMHO, run clang-format on your stuff and just be happy with 99% of
-what it spits out. Saves *so much time* and usually arguing..
+--7GN+MAVE67h3RWRK
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-clang-format will occasionally decide to wrap in the GNU way, if it
-can put the arguments all on one line. People will never agree on
-small details of style, but it would be really nice if we can at least
-agree not to nitpick clang-format's decisions :) :)
+Hi Linus,
 
-Jason
+The following changes since commit 47ac09b91befbb6a235ab620c32af719f8208399:
+
+  Linux 6.11-rc4 (2024-08-18 13:17:27 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/iommu/linux.git tags/iommu-fixes-v6.11-rc5
+
+for you to fetch changes up to 51eeef9a482bcb00f6f75eda4de9bd013092b76f:
+
+  MAINTAINERS: Add Jean-Philippe as SMMUv3 SVA reviewer (2024-08-26 09:17:36 +0200)
+
+----------------------------------------------------------------
+IOMMU Fixes for Linux v6.11-rc5
+
+Including:
+
+	- Fix a device-stall problem in bad io-page-fault setups (faults
+	  received from devices with no supporting domain attached).
+
+	- Context flush fix for Intel VT-d.
+
+	- Do not allow non-read+non-write mapping through iommufd as most
+	  implementations can not handle that.
+
+	- Fix a possible infinite-loop issue in map_pages() path.
+
+	- Add Jean-Philippe as reviewer for SMMUv3 SVA support
+
+----------------------------------------------------------------
+Jason Gunthorpe (2):
+      iommufd: Do not allow creating areas without READ or WRITE
+      iommu: Do not return 0 from map_pages if it doesn't do anything
+
+Lu Baolu (1):
+      iommu/vt-d: Fix incorrect domain ID in context flush helper
+
+Pranjal Shrivastava (1):
+      iommu: Handle iommu faults for a bad iopf setup
+
+Will Deacon (1):
+      MAINTAINERS: Add Jean-Philippe as SMMUv3 SVA reviewer
+
+ MAINTAINERS                                 |   4 +
+ drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c |   2 +-
+ drivers/iommu/intel/iommu.c                 |   8 +-
+ drivers/iommu/intel/iommu.h                 |   2 +-
+ drivers/iommu/intel/pasid.c                 |   7 +-
+ drivers/iommu/io-pgfault.c                  | 121 +++++++++++++++++++---------
+ drivers/iommu/io-pgtable-arm-v7s.c          |   3 +-
+ drivers/iommu/io-pgtable-arm.c              |   3 +-
+ drivers/iommu/io-pgtable-dart.c             |   3 +-
+ drivers/iommu/iommufd/ioas.c                |   8 ++
+ include/linux/iommu.h                       |   5 +-
+ tools/testing/selftests/iommu/iommufd.c     |   6 +-
+ 12 files changed, 116 insertions(+), 56 deletions(-)
+
+Please pull.
+
+Thanks,
+
+	Joerg
+
+--7GN+MAVE67h3RWRK
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEr9jSbILcajRFYWYyK/BELZcBGuMFAmbRv7EACgkQK/BELZcB
+GuN4fg/+NoQ1blmYcWF59PAblVXqjulH33l7FjZERNVrLa0X5IBj7VC5HRebFm3O
+8iiSrTs3zkYB4axrJWi6NzNpR+Yfiw29Rrvfjtha8b/zqRdF4YXAQYWcjKCu5EOa
+NhFIMoFDTYW5pnQKS6fWXZZsroud0oCf6p63kfH/qcrTI4CK2Rxt7pxHWVX1JAxp
+xNz9j1jcJ7NVZjGnrAbGOLAjrEJzvWUmnHCSpyANaArSWPPmCYXhkXI+qghGPKrx
+KPGpT6u6p6LH60aENcs24Mw7vTi/3wf5MTbGaCM1y8Wxvsb/OiycnNb/hu55uZIY
+uRb+TijEgycKvyaqkhqET7V96ku5loIcQPn7zzNwxQROR36KNfqrRz4Q7HU2ilQU
+VNlqHLZ390PJqCcxvIvnaqB0A3JDoVqCTGvK199CLJLjyi3YqzwT00+4Tf++kcwj
+NLrOPZphXXZpJ+lFi+x6PH9anKS07szY2lEsTqySqJG+GVreOOcMLtl/QbcbECFS
+wQa9DYWVqZWKZfNfb5xthDsIFNm/W7YMVlcPUvkQ+EqSlUmWvwa8qYdSy9D4E36q
+NEerK9rNyQFgyHaOjZmRnyRLlQylRUAHa64Iho4tktx/I6TOZpETzYnTkM6noI46
+E+DYLkG6SjfSpcN4ZlqqyyrDhNIO+aJrG2dGi6UaZ/bbM2vk8D8=
+=kdPw
+-----END PGP SIGNATURE-----
+
+--7GN+MAVE67h3RWRK--
 
