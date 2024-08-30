@@ -1,62 +1,47 @@
-Return-Path: <linux-kernel+bounces-308872-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308871-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E997B9662F1
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 15:30:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CF8579662EF
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 15:30:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E6C21F24435
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 13:30:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6B0481F25043
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 13:30:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A7B31ACDF9;
-	Fri, 30 Aug 2024 13:30:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C0841ACDF9;
+	Fri, 30 Aug 2024 13:30:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="RcKRJj/3"
-Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gFfPRsdc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C076C19992E;
-	Fri, 30 Aug 2024 13:30:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78D76170A0B;
+	Fri, 30 Aug 2024 13:30:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725024627; cv=none; b=qxq2bfJMOH4Y4hKiLNbhfU92uCezpVMCdLDJaZf3YTulo70/D/Thy5doz2tgZaQ5TB1fOWnJdFoyZLADiDYAp7GiyDXKDdd8chRFd+DDElq88uFbq6ms4x+NuhinZYLoVWOTZKByFLFKa0ZcXGTztVUUmbrgv1BN5j2sEntB5/E=
+	t=1725024616; cv=none; b=aoAf7v9tEXNsJ1vUAdYh+laFVc2rpujwRFMARzCePKBj7LX/PWZUowk+De2mkk3O205R3VwEDJSzoZ8DW/chVmuV7fc8oWSJOzyWAoI88FN6gh2d4HNVnEoFR0tTJ3zA+br3xMzL5vA7LB3yTApTNkGjd0su1DgUo1Sb3wDW8PM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725024627; c=relaxed/simple;
-	bh=akX9i3Y6YtjIaJLO68HWJOg04kx/lPLhkR4q/41kdMI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Pc2RNjgBEnOTMGKoBAy8BNDm0gkiOdBY3cyNv5rS35u6vLbuEM7FXnqy6mGCB4uE/tk4IBfG4nezm4yPsV3PadEpb/ufu1ey87Q4LEA8qjTlJnaljqZljy4jAaALUueg6I/Lz35wc8XBPQeIilhh+jGIgLWcbNJHTXdietVkYnw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=RcKRJj/3; arc=none smtp.client-ip=198.47.19.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 47UDUFb0012666;
-	Fri, 30 Aug 2024 08:30:15 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1725024615;
-	bh=zijsqgcnQrWmj900qtVdBFJMu40Rzgd2539slK46iqE=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=RcKRJj/3Sd6OAmSgok2Gmaf/EAnG3FkCrw8csYr7ks31yVr89emOhI7w3Io1Wdimq
-	 aDkudWWMokhFkKv8rwfihUAzOUE9aO5Ruy0tnMe7bn6gLNmdjz+YQYclVGrqCPW+wX
-	 D3cMx9J5qgko4ilvyqSZOSHqxzWRU7BTcmNXx9MI=
-Received: from DLEE109.ent.ti.com (dlee109.ent.ti.com [157.170.170.41])
-	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 47UDUFwc054299
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Fri, 30 Aug 2024 08:30:15 -0500
-Received: from DLEE114.ent.ti.com (157.170.170.25) by DLEE109.ent.ti.com
- (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 30
- Aug 2024 08:30:14 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE114.ent.ti.com
- (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Fri, 30 Aug 2024 08:30:15 -0500
-Received: from [10.249.141.75] ([10.249.141.75])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 47UDUAN4057042;
-	Fri, 30 Aug 2024 08:30:11 -0500
-Message-ID: <c2568770-c80c-44d6-b3d5-a1a18f213d42@ti.com>
-Date: Fri, 30 Aug 2024 19:00:09 +0530
+	s=arc-20240116; t=1725024616; c=relaxed/simple;
+	bh=cGi2qH53DXoJQTJqY9tTH9RtUBOepKdH8v4H9qRqxJw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=oLovPlc/UBZAnIW0fdSnhwhwRG07zZaA26PO8P/gTg8HeF++sDTS97NITLmkLAq8zd0Yg7duTf34nXwsS995NPlVhzyjDr6+RyFtsshShQLgv9XWn9vrnHhr9ilutUA69StQSR9W2oYbx0EP3NerUpcub2QSLKXMyFaSDIuHZ0g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gFfPRsdc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8705BC4CEC2;
+	Fri, 30 Aug 2024 13:30:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725024616;
+	bh=cGi2qH53DXoJQTJqY9tTH9RtUBOepKdH8v4H9qRqxJw=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=gFfPRsdcZgx3AY7KzIMQtTCihpJ0y7f6xKWkKlKo1kQNEYyAybeZof+h1eEGxWWyA
+	 8WiMb5SykooGr8zt1hJOODFcg099uE/udKjyK8nuaNBmnr6sbe34hnqSBRrVpuNJzM
+	 pRDaysus8DD/iZu1G/A9yTJqd07laRf+RipXWx08eM9L9bv0H6YXYpp3CsCnfYCJAk
+	 8iZ6UFf1/HWb2POecQbZu3k7LJp+aDDcHdzNC4MpBlp/MXTpOKLgEMaBukZbzb5g2s
+	 /oSmVf1ywrehLuqG3U4tcpqa4U088QId2EsUgPUaajC+sQ3B40BH+MarnnjUQzR9f+
+	 FbMmiWnIv1eCA==
+Message-ID: <7ebd7657-8e79-44e4-9680-832946fab523@kernel.org>
+Date: Fri, 30 Aug 2024 16:30:09 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,98 +49,125 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 1/5] arm64: dts: ti: Refactor J784s4 SoC files to a
- common file
-To: Manorit Chawdhry <m-chawdhry@ti.com>, Nishanth Menon <nm@ti.com>,
-        Vignesh
- Raghavendra <vigneshr@ti.com>,
-        Tero Kristo <kristo@kernel.org>, Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>
-CC: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Neha Malcom Francis <n-francis@ti.com>,
-        Aniket Limaye <a-limaye@ti.com>, Beleswar Padhi <b-padhi@ti.com>,
-        <u-kumar1@ti.com>
-References: <20240828-b4-upstream-j742s2-v5-0-9aaa02a0faee@ti.com>
- <20240828-b4-upstream-j742s2-v5-1-9aaa02a0faee@ti.com>
+Subject: Re: [PATCH net-next v3 4/6] net: ti: icssg-prueth: Enable HSR Tx
+ Packet duplication offload
+To: MD Danish Anwar <danishanwar@ti.com>, Andrew Lunn <andrew@lunn.ch>,
+ Dan Carpenter <dan.carpenter@linaro.org>, Jan Kiszka
+ <jan.kiszka@siemens.com>, Javier Carrasco <javier.carrasco.cruz@gmail.com>,
+ Jacob Keller <jacob.e.keller@intel.com>, Diogo Ivo <diogo.ivo@siemens.com>,
+ Simon Horman <horms@kernel.org>, Richard Cochran <richardcochran@gmail.com>,
+ Paolo Abeni <pabeni@redhat.com>, Jakub Kicinski <kuba@kernel.org>,
+ Eric Dumazet <edumazet@google.com>, "David S. Miller" <davem@davemloft.net>
+Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, srk@ti.com,
+ Vignesh Raghavendra <vigneshr@ti.com>
+References: <20240828091901.3120935-1-danishanwar@ti.com>
+ <20240828091901.3120935-5-danishanwar@ti.com>
 Content-Language: en-US
-From: "Kumar, Udit" <u-kumar1@ti.com>
-In-Reply-To: <20240828-b4-upstream-j742s2-v5-1-9aaa02a0faee@ti.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+From: Roger Quadros <rogerq@kernel.org>
+In-Reply-To: <20240828091901.3120935-5-danishanwar@ti.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-Hi Manorit
 
-Overall series looks ok but few comments below
 
-On 8/28/2024 4:44 PM, Manorit Chawdhry wrote:
-> Refactor J784s4 SoC files to a common file which uses the
-> superset device to allow reuse in j742s2-evm which uses the subset part.
->
-> Signed-off-by: Manorit Chawdhry <m-chawdhry@ti.com>
-> Reviewed-by: Beleswar Padhi <b-padhi@ti.com>
+On 28/08/2024 12:18, MD Danish Anwar wrote:
+> From: Ravi Gunasekaran <r-gunasekaran@ti.com>
+> 
+> The HSR stack allows to offload its Tx packet duplication functionality to
+> the hardware. Enable this offloading feature for ICSSG driver
+> 
+> Signed-off-by: Ravi Gunasekaran <r-gunasekaran@ti.com>
+> Signed-off-by: MD Danish Anwar <danishanwar@ti.com>
 > ---
->   .../arm64/boot/dts/ti/k3-j784s4-j742s2-common.dtsi |  150 ++
->   .../boot/dts/ti/k3-j784s4-j742s2-main-common.dtsi  | 2667 ++++++++++++++++++
->   ...tsi => k3-j784s4-j742s2-mcu-wakeup-common.dtsi} |    2 +-
->   ...l.dtsi => k3-j784s4-j742s2-thermal-common.dtsi} |    0
->   arch/arm64/boot/dts/ti/k3-j784s4-main.dtsi         | 2847 +-------------------
->   arch/arm64/boot/dts/ti/k3-j784s4.dtsi              |  135 +-
->   6 files changed, 2914 insertions(+), 2887 deletions(-)
->
-> diff --git a/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-common.dtsi b/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-common.dtsi
-> new file mode 100644
-> index 000000000000..43fee57f0926
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-common.dtsi
-> @@ -0,0 +1,150 @@
-> +// SPDX-License-Identifier: GPL-2.0-only OR MIT
-> +/*
-> + * Device Tree Source for J784S4 and J742S2 SoC Family
-> + *
-> + * TRM (j784s4) (SPRUJ43 JULY 2022): https://www.ti.com/lit/zip/spruj52
-> + * TRM (j742s2): https://www.ti.com/lit/pdf/spruje3
-> + *
-> [..]		 <0x00 0x01000000 0x00 0x01000000 0x00 0x0d000000>, /* Most peripherals */
-> +			 <0x00 0x04210000 0x00 0x04210000 0x00 0x00010000>, /* VPU0 */
-> +			 <0x00 0x04220000 0x00 0x04220000 0x00 0x00010000>, /* VPU1 */
-> +			 <0x00 0x0d000000 0x00 0x0d000000 0x00 0x00800000>, /* PCIe0 Core*/
-> +			 <0x00 0x0d800000 0x00 0x0d800000 0x00 0x00800000>, /* PCIe1 Core*/
-> +			 <0x00 0x0e000000 0x00 0x0e000000 0x00 0x00800000>, /* PCIe2 Core*/
-> +			 <0x00 0x0e800000 0x00 0x0e800000 0x00 0x00800000>, /* PCIe3 Core*/
-
-
-PCie2 and PCIe3 ranges are not common across these devices,
-
-Do you want to move this into J784s4 specific file
-
-Same comment for PCIe region DAT below
-
-> [..]
-
-> 			 <0x42 0x00000000 0x42 0x00000000 0x01 0x00000000>, /* PCIe2 DAT1 */
-> +			 <0x43 0x00000000 0x43 0x00000000 0x01 0x00000000>, /* PCIe3 DAT1 */
-
-[..]
-
-+#include "k3-j784s4-j742s2-main-common.dtsi"
-> +#include "k3-j784s4-j742s2-mcu-wakeup-common.dtsi"
-> diff --git a/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-main-common.dtsi b/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-main-common.dtsi
-> [...]
+>  drivers/net/ethernet/ti/icssg/icssg_common.c | 13 ++++++++++---
+>  drivers/net/ethernet/ti/icssg/icssg_prueth.c |  5 +++--
+>  drivers/net/ethernet/ti/icssg/icssg_prueth.h |  2 ++
+>  3 files changed, 15 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/net/ethernet/ti/icssg/icssg_common.c b/drivers/net/ethernet/ti/icssg/icssg_common.c
+> index b9d8a93d1680..2d6d8648f5a9 100644
+> --- a/drivers/net/ethernet/ti/icssg/icssg_common.c
+> +++ b/drivers/net/ethernet/ti/icssg/icssg_common.c
+> @@ -660,14 +660,15 @@ enum netdev_tx icssg_ndo_start_xmit(struct sk_buff *skb, struct net_device *ndev
+>  {
+>  	struct cppi5_host_desc_t *first_desc, *next_desc, *cur_desc;
+>  	struct prueth_emac *emac = netdev_priv(ndev);
+> +	struct prueth *prueth = emac->prueth;
+>  	struct netdev_queue *netif_txq;
+>  	struct prueth_tx_chn *tx_chn;
+>  	dma_addr_t desc_dma, buf_dma;
+> +	u32 pkt_len, dst_tag_id;
+>  	int i, ret = 0, q_idx;
+>  	bool in_tx_ts = 0;
+>  	int tx_ts_cookie;
+>  	void **swdata;
+> -	u32 pkt_len;
+>  	u32 *epib;
+>  
+>  	pkt_len = skb_headlen(skb);
+> @@ -712,9 +713,15 @@ enum netdev_tx icssg_ndo_start_xmit(struct sk_buff *skb, struct net_device *ndev
+>  
+>  	/* set dst tag to indicate internal qid at the firmware which is at
+>  	 * bit8..bit15. bit0..bit7 indicates port num for directed
+> -	 * packets in case of switch mode operation
+> +	 * packets in case of switch mode operation and port num 0
+> +	 * for undirected packets in case of HSR offload mode
+>  	 */
+> -	cppi5_desc_set_tags_ids(&first_desc->hdr, 0, (emac->port_id | (q_idx << 8)));
+> +	dst_tag_id = emac->port_id | (q_idx << 8);
 > +
-> +&cbass_main {
-> +	msmc_ram: sram@70000000 {
-> +		compatible = "mmio-sram";
-> +		reg = <0x00 0x70000000 0x00 0x800000>;
+> +	if (prueth->is_hsr_offload_mode && (ndev->features & NETIF_F_HW_HSR_DUP))
+> +		dst_tag_id = PRUETH_UNDIRECTED_PKT_DST_TAG;
+> +
+> +	cppi5_desc_set_tags_ids(&first_desc->hdr, 0, dst_tag_id);
+>  	k3_udma_glue_tx_dma_to_cppi5_addr(tx_chn->tx_chn, &buf_dma);
+>  	cppi5_hdesc_attach_buf(first_desc, buf_dma, pkt_len, buf_dma, pkt_len);
+>  	swdata = cppi5_hdesc_get_swdata(first_desc);
+> diff --git a/drivers/net/ethernet/ti/icssg/icssg_prueth.c b/drivers/net/ethernet/ti/icssg/icssg_prueth.c
+> index f4fd346fe6f5..b60efe7bd7a7 100644
+> --- a/drivers/net/ethernet/ti/icssg/icssg_prueth.c
+> +++ b/drivers/net/ethernet/ti/icssg/icssg_prueth.c
+> @@ -41,7 +41,8 @@
+>  #define DEFAULT_PORT_MASK	1
+>  #define DEFAULT_UNTAG_MASK	1
+>  
+> -#define NETIF_PRUETH_HSR_OFFLOAD_FEATURES	NETIF_F_HW_HSR_FWD
+> +#define NETIF_PRUETH_HSR_OFFLOAD_FEATURES	(NETIF_F_HW_HSR_FWD | \
+> +						 NETIF_F_HW_HSR_DUP)
 
-Table 2-1 of J742S2 TRM says msmc RAM is 4MB and on J784S4 this is 8MB
+You mentioned that these 2 features can't be enabled individually.
 
-Please see, if you can address that
+So better to squash this with previous patch and use ndo_fix_features() to make sure both
+are set or cleared together.
 
+>  
+>  /* CTRLMMR_ICSSG_RGMII_CTRL register bits */
+>  #define ICSSG_CTRL_RGMII_ID_MODE                BIT(24)
+> @@ -897,7 +898,7 @@ static int prueth_netdev_init(struct prueth *prueth,
+>  	ndev->ethtool_ops = &icssg_ethtool_ops;
+>  	ndev->hw_features = NETIF_F_SG;
+>  	ndev->features = ndev->hw_features;
+> -	ndev->hw_features |= NETIF_F_HW_HSR_FWD;
+> +	ndev->hw_features |= NETIF_PRUETH_HSR_OFFLOAD_FEATURES;
+>  
+>  	netif_napi_add(ndev, &emac->napi_rx, icssg_napi_rx_poll);
+>  	hrtimer_init(&emac->rx_hrtimer, CLOCK_MONOTONIC,
+> diff --git a/drivers/net/ethernet/ti/icssg/icssg_prueth.h b/drivers/net/ethernet/ti/icssg/icssg_prueth.h
+> index a4b025fae797..e110a5f92684 100644
+> --- a/drivers/net/ethernet/ti/icssg/icssg_prueth.h
+> +++ b/drivers/net/ethernet/ti/icssg/icssg_prueth.h
+> @@ -59,6 +59,8 @@
+>  
+>  #define IEP_DEFAULT_CYCLE_TIME_NS	1000000	/* 1 ms */
+>  
+> +#define PRUETH_UNDIRECTED_PKT_DST_TAG	0
+> +
+>  /* Firmware status codes */
+>  #define ICSS_HS_FW_READY 0x55555555
+>  #define ICSS_HS_FW_DEAD 0xDEAD0000	/* lower 16 bits contain error code */
 
-> [...]
->
+-- 
+cheers,
+-roger
 
