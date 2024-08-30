@@ -1,93 +1,110 @@
-Return-Path: <linux-kernel+bounces-308614-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308616-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 703E0965F84
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 12:44:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D426965F87
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 12:44:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D81928B29B
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 10:44:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 12A9F1F2865A
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 10:44:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40A7318EFE6;
-	Fri, 30 Aug 2024 10:44:05 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA4EC18EFD2;
+	Fri, 30 Aug 2024 10:44:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="JaL0miD6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75B6916F0DD
-	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 10:44:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F329917DE35
+	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 10:44:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725014644; cv=none; b=KKMX0yXcLyWGivoSrmQLg5YMDqnWEiQo5uaLIPeiFYhbcEHQXcEYHOEbhJoIxOwvpj0034dCzYN58L1vnCxl8PdkaA0zDYUOT20aTvC+FAJ34XaMD9fJK+llf3NC4Iw1syapCEvyClUHrB6qVljuj4wYVdrE1adKT6d5DdOSvZc=
+	t=1725014689; cv=none; b=s4oEK6xqXQClYSp22WdaTsOJwtXZve47JXb2oo8u4sXyJ2UuytgLUfDYhMZY4CrzCUJSjrOPsJKSEk40DYwRD8/RFu9rquFdbvQ0P/sd5RLEKhVWZfhDXiM6ndrrYXxoZHtl7Da13sH51CXNFgGVaJ98N+PYG1r2LKR1hj2sulQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725014644; c=relaxed/simple;
-	bh=niNpNZJMobFOh4FQA6zvVD8T0AOLgz3BBoY4hFfdYJ4=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=DH5OhxBz0URouxxw1mL4KGsnKUcxr5S90r+ZxRe/9TYOE66Rh07A5NN3LHYIz3F+9r8SINI61hLiE6557rbiHrgdtP9hrdJaA1QVyZAptF2nxjZpNk+uWDBfvV/7ZA+6n3QO05uOKWqpt3gWiBN/5QCYE+5s+e3CN0jiEBSpX3c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-39d3999d0fdso15813755ab.3
-        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 03:44:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725014642; x=1725619442;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=LJKtDFQx4A7z8EmFPZ787p4mjXNb5tRqOM9oMTocYA4=;
-        b=fMb6wGqKPY6Hd/abdLfXYVXNq26r6UEagBNRxGoZyfCXXgqDO1/Bq/rEeKq/2enh4N
-         M6NdCwgSGOcwS/HNqAT5huWWeSnM2/7aA0AQt7qapkKreI93OsIMTSQagYpX50C+qaFe
-         xhqcKfn2qRlCTj6K5Jgludrd8qEqNzt6FlBkRTZvY0gSnA/l1Xdpup/EAb3MUhIrIgN6
-         pwBgl4veT8AiCRkwuqCjfMPeXEk4a2pl2oowjO76AEWYj+ZNixNwLwBJGNKYXlDBKbie
-         FKnlx7EzXs9zpkhAbNdgSHonfVkSbCJ+gMc2LVT+LaDBZAR6rELiiND5szCg2+OAmdE4
-         fuzg==
-X-Forwarded-Encrypted: i=1; AJvYcCXDhMbS2kg932ew8GNUyBp9aM4HVHik80yZ6XOzhQIJydAEpISFbqy2Xmm2GxedsMn1gYyBpQIiU8YecEg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyVA8tDMP0I9qIzH0YLkB5OwvBHAP1mdhzsV7NK2af4eFFIBjdw
-	exab3l1Y1nmpZe6Xcz9ZaW0coNA5hzPkSmkmlH/c6zfc7jYSpZlqr3DSE5DguQHOX/i3TA6AHft
-	eHFf85VdEo/uD22rxrQ8ZVzjktrsbyN0uC74LdpIC3DiXQvu3aPf4ieA=
-X-Google-Smtp-Source: AGHT+IFphnEkAR4PqF2gg0wh439hJmAr4j9EryTljjcSjPfYV4T1MBzhbaA98mG907oZ464Z9Y84zJ6WGp8spaxpqGvYh1Qn+Uh+
+	s=arc-20240116; t=1725014689; c=relaxed/simple;
+	bh=xmw5OILkY79qOkpSSg5PhobeR5jkLRVZmxi87arky90=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PmVYoIM8s9WAVbzt7yFDnqjUa4QW7PnuR6mk0jQ2elwHmhmfDlnQvSoxyE6iB9frOvE5IJGWYQpyVKukxbfhcDmKU/kdJD4lhUzyuzZ/CfsSQV87aIKE3HeQW2gGP6QNLA561H7EsMXH8U2ZmhRpEgvPqN3hOhz+20UXsZ7I3Mw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=JaL0miD6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 37C43C4CEC2;
+	Fri, 30 Aug 2024 10:44:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1725014688;
+	bh=xmw5OILkY79qOkpSSg5PhobeR5jkLRVZmxi87arky90=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=JaL0miD6y+yqaCw+a9dFuhSTpLHI/GTB1+QQXBwhBRmKqcOC8/fBH1XUpfMQkgxed
+	 JLvKSEUB1WTJYBZ0PujIJyCe3m2m2ZfHfYuc+o1rs7/RPWhA7YoHGwNW7wjPdHnIIV
+	 qp0w8kcxgLmZlWen5EDskdAnIi9CenyjWTma30Bc=
+Date: Fri, 30 Aug 2024 12:44:45 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Willem de Bruijn <willemb@google.com>
+Cc: Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>, cve@kernel.org,
+	linux-kernel@vger.kernel.org, Tao Liu <thomas.liu@ucloud.cn>
+Subject: Re: CVE-2022-48936: gso: do not skip outer ip header in case of ipip
+ and net_failover
+Message-ID: <2024083005-casualty-earmark-4d57@gregkh>
+References: <2024082224-CVE-2022-48936-9302@gregkh>
+ <z3hh3yrf5wym3obgol6obh3dkmqoc3rwbkj23qcmadf63b47h2@nn2232wngans>
+ <2024082854-reassign-uniformed-2c2f@gregkh>
+ <jsnwzpmezgju7r7nkcauaicthkzizsqglb6p43zq25cdvdgbgt@dlkgwkch52qi>
+ <CA+FuTSeHvADR5qbWnzRpYtpvNcvYrAeXAj8LYczUFLKREDwfpQ@mail.gmail.com>
+ <2024082958-distress-outmatch-ab28@gregkh>
+ <CA+FuTSdT9Xf0TZm9JAv5tC3WN0UYO_Y9bcAwSsiKyCtwehOE4g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1a65:b0:380:9233:96e6 with SMTP id
- e9e14a558f8ab-39f41073afemr1366405ab.4.1725014642624; Fri, 30 Aug 2024
- 03:44:02 -0700 (PDT)
-Date: Fri, 30 Aug 2024 03:44:02 -0700
-In-Reply-To: <0000000000008886db06150bcc92@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000001a0600620e4451b@google.com>
-Subject: Re: [syzbot] [ntfs3?] INFO: trying to register non-static key in
- do_mpage_readpage (2)
-From: syzbot <syzbot+6783b9aaa6a224fabde8@syzkaller.appspotmail.com>
-To: almaz.alexandrovich@paragon-software.com, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, ntfs3@lists.linux.dev, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CA+FuTSdT9Xf0TZm9JAv5tC3WN0UYO_Y9bcAwSsiKyCtwehOE4g@mail.gmail.com>
 
-syzbot has bisected this issue to:
+On Thu, Aug 29, 2024 at 01:07:36PM -0400, Willem de Bruijn wrote:
+> On Thu, Aug 29, 2024 at 12:58 PM Greg Kroah-Hartman
+> <gregkh@linuxfoundation.org> wrote:
+> >
+> > On Thu, Aug 29, 2024 at 12:53:34PM -0400, Willem de Bruijn wrote:
+> > > On Thu, Aug 29, 2024 at 12:18 PM Michal Koutný <mkoutny@suse.com> wrote:
+> > > >
+> > > > On Wed, Aug 28, 2024 at 09:30:08AM GMT, Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
+> > > > > > What is the security issue here?
+> > > > >
+> > > > > This was assigned as part of the import of the Linux kernel GSD entries
+> > > > > into CVEs as required by the CVE board of directors (hence the 2022
+> > > > > date).  If you don't feel this should be assigned a CVE, just let me
+> > > > > know and I will be glad to reject it.
+> > > >
+> > > > The address of original author bounces back. Willem, could you please
+> > > > help explaining context of the change? (~the questions in my previous
+> > > > message).
+> > >
+> > > I don't know why this has a CVE.
+> > >
+> > > The patch reports that the negative effect is a drop due to a corrupted packet.
+> > >
+> > > According to the CVE report this requires both user input with
+> > > virtio_net_hdr, which is privileged, and a tunnel device configured,
+> > > which again is privileged.
+> > >
+> >
+> > Ok, should it be rejected then?  If so, just let me know.
+> 
+> It is a legitimate bug fix, definitely stable material.
+> 
+> With the fix backported to all these branches, not sure what, if
+> anything, more is needed wrt the CVE.
 
-commit 24c5100aceedcd47af89aaa404d4c96cd2837523
-Author: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-Date:   Tue Jun 4 07:41:39 2024 +0000
+Ok, for now I'll go revoke this as that feels the safest thing to do at
+the moment.
 
-    fs/ntfs3: Fix getting file type
+The "frankenkernel" distros can decide if they want to pick this up or
+not, everyone sane has had it for years now :)
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1104eb2f980000
-start commit:   d5d547aa7b51 Merge tag 'random-6.11-rc6-for-linus' of git:..
-git tree:       upstream
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=1304eb2f980000
-console output: https://syzkaller.appspot.com/x/log.txt?x=1504eb2f980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=d806687521800cad
-dashboard link: https://syzkaller.appspot.com/bug?extid=6783b9aaa6a224fabde8
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=140ddf93980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11c83909980000
+thanks,
 
-Reported-by: syzbot+6783b9aaa6a224fabde8@syzkaller.appspotmail.com
-Fixes: 24c5100aceed ("fs/ntfs3: Fix getting file type")
-
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+greg k-h
 
