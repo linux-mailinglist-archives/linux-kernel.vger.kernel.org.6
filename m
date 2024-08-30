@@ -1,155 +1,94 @@
-Return-Path: <linux-kernel+bounces-309440-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309441-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBA9A966A8D
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 22:31:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81BC9966A90
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 22:32:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 911A9282566
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 20:31:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3996C283234
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 20:32:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D42181BF31A;
-	Fri, 30 Aug 2024 20:31:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C20201BF33D;
+	Fri, 30 Aug 2024 20:32:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="SpnuLfaJ"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="l1gTFH/0"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DC84170A08
-	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 20:31:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F4FD166F0D;
+	Fri, 30 Aug 2024 20:32:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725049891; cv=none; b=h8ihXwDRDEdOhoxTWUTnHQqDqk3TDFnbZex48ELsHB3Uk3DV2VU1Xx4qZ5xaPRYY+ZFYwSnXkts5SdWj0C4Y2812zsUKjevAEauKWVEsYLwAfQk5gFJwvAu14U4fznAWIjRZIA/I5gK5bXuPAKJcbhzJ2nuZe/HV7YmEVDTvydw=
+	t=1725049947; cv=none; b=pCGKlDtG+oL7xXZSYJR/loIHqPIQ1FGqisYC9Xvaa8NSLcTRD+Qg2ifq6WwaSWMY6vzEGYPQnrZcjwQ0smHY2Syl8puuVDkepDB80JCnsrDGyi3mR5DwZPoIBf1t+QtAbVoJADjCFfCTxAF6ZlmbwANU1/jVIvjlyX9yYa+h4IQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725049891; c=relaxed/simple;
-	bh=duAltOdsgfQD8thkd3ezFvbCdFABgGybOeptMJvcT6M=;
+	s=arc-20240116; t=1725049947; c=relaxed/simple;
+	bh=rOtkussEVvEtJaYYLqRR1742JXpbhS+YhqlnswW9ZG0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hrKQqYrtqJNAc9ET+epfWlSg5F2KImMBxG62Eo76cnVpWnlyn6D5w7PfLVFjzMTc+d0QcufsfNo0O74WDoyP9I1GI6T2Y1m8BBuXdRiLB8jSxnF+ksr4vr1aVgKvt6l6Pxh9bwxZ9SxSLOQ5OacDKfgQm0ngnjuHB6bCgO48JPA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=SpnuLfaJ; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-42bbd16fcf2so7934605e9.2
-        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 13:31:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fastly.com; s=google; t=1725049888; x=1725654688; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:mail-followup-to:message-id:subject:cc:to
-         :from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=2QfOXme3vatBCFk9y/wc89nKqSgceIx60bJEIHC1dMA=;
-        b=SpnuLfaJks5+W/a3oGkzxgYl6nEn3ZyyZqsFM8a2lqQUV+3R524n+MOyIEjzYGq724
-         ihK/EtExoL+XlIuoqCN/6WAUnvytxZ4pQT+CnHgn6txkE9BiQN53sB8m74cZsA0DwpTB
-         oh9PV5m2OlLszW4vvyNHZ2Y1aUDoOGtXjiomA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725049888; x=1725654688;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:mail-followup-to:message-id:subject:cc:to
-         :from:date:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=2QfOXme3vatBCFk9y/wc89nKqSgceIx60bJEIHC1dMA=;
-        b=H00g7TLsjpDAx2z+CK4pQ7VlqyiNgODh+fgV1HMaznCmrctU48MzT1d9iGdNs5UIzN
-         6RSBS0BpP3h11xlblCQx4dhvPkApfsVQHwBmqNxIXybdBmhgOC619GaLhu9hEU4Gz3QY
-         SVDLdypGYo8lwmnaQhnFhHX6VzqopRNzCP6l8WTngkVc8HKiRky05JaGwh7QhXrrWD88
-         4bijwdpdJmLnNiluYIb2KwyBbWFOndQLb9NPD2GXZo/EWZLO8n7Ks0bVHOrIg9ZfrONg
-         k9dn1s0hWhsRbiH45pFCQdVaCBm7MUjqi6NYPBc6niL9ume1Jq+hR+W4vR+puvLTxy9G
-         OLMw==
-X-Forwarded-Encrypted: i=1; AJvYcCU2R3fUo+lGEQ7qYCK31+MZnMv/PnSxex156hP3Cu+YeVL9stGVnZWP5waH1SAssj+ufoCTNFwwukqY+MI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzvs4MNIv8WjPa+plGDltZp6VHnSQ0hKNrTxO71rmhdADFbuEj7
-	B9UUvC53ZKkK3MNbmYJFVkakYDsarrMi+82d4Hm1LW06+C3aOFD8Q6Iamjaqayw=
-X-Google-Smtp-Source: AGHT+IFS1PDkb/7iWWHj7TVynk4b13F/aajIx1rxFhxFoWni4dJxmJGkE24chBK9X2DQkNeiXJqyZw==
-X-Received: by 2002:a05:600c:474c:b0:426:6e95:78d6 with SMTP id 5b1f17b1804b1-42bb01aa1fdmr59120375e9.4.1725049887308;
-        Fri, 30 Aug 2024 13:31:27 -0700 (PDT)
-Received: from LQ3V64L9R2 ([185.226.39.209])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42ba639687csm89281335e9.8.2024.08.30.13.31.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 30 Aug 2024 13:31:27 -0700 (PDT)
-Date: Fri, 30 Aug 2024 21:31:25 +0100
-From: Joe Damato <jdamato@fastly.com>
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: netdev@vger.kernel.org, edumazet@google.com, amritha.nambiar@intel.com,
-	sridhar.samudrala@intel.com, sdf@fomichev.me, bjorn@rivosinc.com,
-	hch@infradead.org, willy@infradead.org,
-	willemdebruijn.kernel@gmail.com, skhawaja@google.com,
-	Martin Karsten <mkarsten@uwaterloo.ca>,
-	Donald Hunter <donald.hunter@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Jesper Dangaard Brouer <hawk@kernel.org>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	Daniel Jurgens <danielj@nvidia.com>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH net-next 2/5] netdev-genl: Dump napi_defer_hard_irqs
-Message-ID: <ZtIsHQoAEk1wfq0P@LQ3V64L9R2>
-Mail-Followup-To: Joe Damato <jdamato@fastly.com>,
-	Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
-	edumazet@google.com, amritha.nambiar@intel.com,
-	sridhar.samudrala@intel.com, sdf@fomichev.me, bjorn@rivosinc.com,
-	hch@infradead.org, willy@infradead.org,
-	willemdebruijn.kernel@gmail.com, skhawaja@google.com,
-	Martin Karsten <mkarsten@uwaterloo.ca>,
-	Donald Hunter <donald.hunter@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Jesper Dangaard Brouer <hawk@kernel.org>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	Daniel Jurgens <danielj@nvidia.com>,
-	open list <linux-kernel@vger.kernel.org>
-References: <20240829131214.169977-1-jdamato@fastly.com>
- <20240829131214.169977-3-jdamato@fastly.com>
- <20240829150828.2ec79b73@kernel.org>
- <ZtGMl25LaopZk1So@LQ3V64L9R2>
- <20240830132808.33129d22@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=MnLCtmBYr5alktwGObTsJN5aIVSWTt7fcBVRDyP/YJp/Cju1J2jigjMBc5Eqlcp94brxanaOrrA7rIotU8RrDX20Rnhm3+0ISqmtgnkUEeuGIlTydSl5Cqv2AVmc1QWFheHVLOkc1A7UoYgnOs7OAfIYU4Ff4djUHPxR1m4kgac=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=l1gTFH/0; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1725049943;
+	bh=rOtkussEVvEtJaYYLqRR1742JXpbhS+YhqlnswW9ZG0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=l1gTFH/043LrvIs3MAkQBN3SS90BvwS3PZwIsSVvAt841aCoqoEpMc7aFPtO7AW1d
+	 EwxHd+cBGOUuHl25xHzE4Uy2jzmDNPTulvRK8mo/gCrEhiI77vuu4MwDakXCPXzY9y
+	 hCw4Tshns0hj6Xy+Tw+XkZwSlCxGK/PJH4Go/aX1Y9C0tQh6hMmNMDSIJKlvk2fi47
+	 4HnFcMCjhwwH4eQFuqP3b2giom53ZFykytaVA+7vRtkMxs9tdKSYaCEtXzdU1MYXRb
+	 IZ1dhBVg2qePGDmC4EshaD8jMQ/ARgcSmf28iNda3Jfj+Bw7j0cQ0z2rAmbuaCSeWL
+	 JWUNJaSINFxqg==
+Received: from notapiano (pool-100-2-116-133.nycmny.fios.verizon.net [100.2.116.133])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: nfraprado)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 34D2D17E121B;
+	Fri, 30 Aug 2024 22:32:22 +0200 (CEST)
+Date: Fri, 30 Aug 2024 16:32:20 -0400
+From: =?utf-8?B?TsOtY29sYXMgRi4gUi4gQS4=?= Prado <nfraprado@collabora.com>
+To: Chun-Kuang Hu <chunkuang.hu@kernel.org>
+Cc: Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Moudy Ho <moudy.ho@mediatek.com>,
+	"Jason-JH . Lin" <jason-jh.lin@mediatek.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org
+Subject: Re: [PATCH v3 5/5] soc: mediatek: cmdq: Remove cmdq_pkt_finalize()
+ helper function
+Message-ID: <7a5a4d9f-f22f-433a-87a3-7df7ae4f8cd3@notapiano>
+References: <20240810090918.7457-1-chunkuang.hu@kernel.org>
+ <20240810090918.7457-6-chunkuang.hu@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240830132808.33129d22@kernel.org>
+In-Reply-To: <20240810090918.7457-6-chunkuang.hu@kernel.org>
 
-On Fri, Aug 30, 2024 at 01:28:08PM -0700, Jakub Kicinski wrote:
-> On Fri, 30 Aug 2024 10:10:47 +0100 Joe Damato wrote:
-> > > > +        name: defer-hard-irqs
-> > > > +        doc: The number of consecutive empty polls before IRQ deferral ends
-> > > > +             and hardware IRQs are re-enabled.
-> > > > +        type: s32  
-> > > 
-> > > Why is this a signed value? ðŸ¤”ï¸  
-> > 
-> > In commit 6f8b12d661d0 ("net: napi: add hard irqs deferral
-> > feature"), napi_defer_hard_irqs was added to struct net_device as an
-> > int. I was trying to match that and thus made the field a signed int
-> > in the napi struct, as well.
-> 
-> It's probably because int is the default type in C.
-> The choice of types in netlink feels more deliberate.
-> 
-> > It looks like there was a possibility of overflow introduced in that
-> > commit in change_napi_defer_hard_irqs maybe ?
-> > 
-> > If you'd prefer I could:
-> >   - submit a Fixes to change the net_device field to a u32 and then
-> >     change the netlink code to also be u32
-> >   - add an overflow check (val > U32_MAX) in
-> >     change_napi_defer_hard_irqs
-> > 
-> > Which would mean for the v2 of this series:
-> >   - drop the overflow check I added in Patch 1
-> >   - Change netlink to use u32 in this patch 
-> > 
-> > What do you think?
-> 
-> Whether we want to clean things up internally is up to you, the overflow
-> check you're adding in sysfs seems good. We can use u32 in netlink, with
-> a check: max: s32-max and lift this requirement later if we ever need
-> the 32nd bit?
+On Sat, Aug 10, 2024 at 09:09:18AM +0000, Chun-Kuang Hu wrote:
+> In order to have fine-grained control, use cmdq_pkt_eoc() and
+> cmdq_pkt_jump_rel() to replace cmdq_pkt_finalize().
 
-OK, u32 + check for max: s32-max seems good.
+This commit description doesn't match what you're doing. What about
 
-Is the overflow check in sysfs a fixes I send separately or can I
-sneak that into this series?
+Now that all occurrences of cmdq_pkt_finalize() have been switched to
+cmdq_pkt_eoc() and cmdq_pkt_jump_rel() for more fine-grained control, remove
+cmdq_pkt_finalize().
+
+> 
+> Signed-off-by: Chun-Kuang Hu <chunkuang.hu@kernel.org>
+
+Reviewed-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
+
+Thanks,
+Nícolas
 
