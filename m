@@ -1,103 +1,93 @@
-Return-Path: <linux-kernel+bounces-308198-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308211-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 199D7965896
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 09:32:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86FDA9658B9
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 09:37:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4B54E1C209C6
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 07:32:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 45380281A70
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 07:37:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF11D16DEA3;
-	Fri, 30 Aug 2024 07:28:55 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F9101586CB;
+	Fri, 30 Aug 2024 07:37:29 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DA2C16DC01
-	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 07:28:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01D111531CB
+	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 07:37:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725002935; cv=none; b=VXaxGQ5+LKZeJgeCBlCwYBsX5TC2kxwYXFwc8WkFMmSol/Tu96JulTkO+aIsg8J7AbFHhJMgzjQifTwc/NxnaXMD3sfivBZhIQtydN9G8rropKqOvxBQ4HtPALfa3tTMjK1EZf+XH78a+S7sp+93oUYgz9XNpENtpI6ceuiY2Lo=
+	t=1725003448; cv=none; b=rrKV0+/hHG0+oXHXmK0x5i/E/EtdVSb7Kpl95zOiJcPYRsHuhypaS6X0vcXr1f+4CXG8ANqKRDkhNqw2LuReVw94vLJGJbSqkIp7A9XwlGEuVOnO55FL2OHGLcZXk9O5fdD+YoLLVK/UeHcn77BWF9PcfmHumOv8mJIbryez6Nk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725002935; c=relaxed/simple;
-	bh=H2QEufYRWIldcrFXfbojbY60QT1tGRsknvAzFJ64mZw=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=opqcwk6fzILQP5uKu3DVjFUmUcPxC7d/VZ+W0wlA+6P8R70uuTzQu1T6hmWr9vlDuIlAQbeg3HetHiYsXMsJ2TzUCIPVP9XQMlUMUpQjmPQihXNSWtPcPk4MfdG/pO/8yGEjxlufDbe6chjZKUlhc0dLSO/+c32jtG74iheXjkY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.194])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4Ww8pl5ZhbzLr08;
-	Fri, 30 Aug 2024 15:26:39 +0800 (CST)
-Received: from kwepemh500013.china.huawei.com (unknown [7.202.181.146])
-	by mail.maildlp.com (Postfix) with ESMTPS id 8BCFA140202;
-	Fri, 30 Aug 2024 15:28:44 +0800 (CST)
-Received: from huawei.com (10.90.53.73) by kwepemh500013.china.huawei.com
- (7.202.181.146) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 30 Aug
- 2024 15:28:44 +0800
-From: Jinjie Ruan <ruanjinjie@huawei.com>
-To: <kherbst@redhat.com>, <lyude@redhat.com>, <dakr@redhat.com>,
-	<airlied@gmail.com>, <daniel@ffwll.ch>, <dri-devel@lists.freedesktop.org>,
-	<nouveau@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
-CC: <ruanjinjie@huawei.com>
-Subject: [PATCH -next v2] drm/nouveau: Use for_each_child_of_node_scoped()
-Date: Fri, 30 Aug 2024 15:36:54 +0800
-Message-ID: <20240830073654.3539640-1-ruanjinjie@huawei.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1725003448; c=relaxed/simple;
+	bh=EBqHwxvdQVyhbuiFBoLIU4AmBPq9DuPoCbMZM/JAWHM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TWid0tECsy9fjhofiz3E9lflR/WhdzIfxNProi8+8lUVOuOvrlAHbVJj5fwb0wOtpBwQwU02Y2E0bDjt4ljKlOy9lyNj9VN/QN3zbNeCsfwJ/ZnMXGUgNMcV38dFn6mJYWSTGUx1vp/7cT4FjrOaVOyqya4oFXPwBcacwnrBq3c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ore@pengutronix.de>)
+	id 1sjwC3-0000Kx-Ay; Fri, 30 Aug 2024 09:37:15 +0200
+Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <ore@pengutronix.de>)
+	id 1sjwC2-0046DZ-9c; Fri, 30 Aug 2024 09:37:14 +0200
+Received: from ore by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1sjwC2-00EQsl-0Z;
+	Fri, 30 Aug 2024 09:37:14 +0200
+Date: Fri, 30 Aug 2024 09:37:14 +0200
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: Stefan Eichenberger <eichest@gmail.com>
+Cc: kernel@pengutronix.de, andi.shyti@kernel.org, shawnguo@kernel.org,
+	s.hauer@pengutronix.de, festevam@gmail.com, Frank.Li@nxp.com,
+	francesco.dolcini@toradex.com, linux-i2c@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Stefan Eichenberger <stefan.eichenberger@toradex.com>
+Subject: Re: [PATCH v2 3/4] i2c: imx: use readb_relaxed and writeb_relaxed
+Message-ID: <ZtF2qj2cIjULy-RY@pengutronix.de>
+References: <20240819072052.8722-1-eichest@gmail.com>
+ <20240819072052.8722-4-eichest@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- kwepemh500013.china.huawei.com (7.202.181.146)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240819072052.8722-4-eichest@gmail.com>
+X-Sent-From: Pengutronix Hildesheim
+X-URL: http://www.pengutronix.de/
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ore@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-Avoids the need for manual cleanup of_node_put() in early exits
-from the loop.
+On Mon, Aug 19, 2024 at 09:19:09AM +0200, Stefan Eichenberger wrote:
+> From: Stefan Eichenberger <stefan.eichenberger@toradex.com>
+> 
+> Use the relaxed version of readb and writeb to reduce overhead. It is
+> safe to use the relaxed version because we either do not rely on dma
+> completion, or we use a dma callback to ensure that the dma transfer is
+> complete before we continue.
+> 
+> Signed-off-by: Stefan Eichenberger <stefan.eichenberger@toradex.com>
 
-Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
----
-v2:
-- Split out from the patch set.
----
- drivers/gpu/drm/nouveau/nouveau_connector.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+Acked-by: Oleksij Rempel <o.rempel@pengutronix.de>
 
-diff --git a/drivers/gpu/drm/nouveau/nouveau_connector.c b/drivers/gpu/drm/nouveau/nouveau_connector.c
-index b06aa473102b..8d5c9c74cbb9 100644
---- a/drivers/gpu/drm/nouveau/nouveau_connector.c
-+++ b/drivers/gpu/drm/nouveau/nouveau_connector.c
-@@ -477,14 +477,14 @@ nouveau_connector_of_detect(struct drm_connector *connector)
- 	struct nouveau_connector *nv_connector = nouveau_connector(connector);
- 	struct nouveau_encoder *nv_encoder;
- 	struct pci_dev *pdev = to_pci_dev(dev->dev);
--	struct device_node *cn, *dn = pci_device_to_OF_node(pdev);
-+	struct device_node *dn = pci_device_to_OF_node(pdev);
- 
- 	if (!dn ||
- 	    !((nv_encoder = find_encoder(connector, DCB_OUTPUT_TMDS)) ||
- 	      (nv_encoder = find_encoder(connector, DCB_OUTPUT_ANALOG))))
- 		return NULL;
- 
--	for_each_child_of_node(dn, cn) {
-+	for_each_child_of_node_scoped(dn, cn) {
- 		const char *name = of_get_property(cn, "name", NULL);
- 		const void *edid = of_get_property(cn, "EDID", NULL);
- 		int idx = name ? name[strlen(name) - 1] - 'A' : 0;
-@@ -492,7 +492,6 @@ nouveau_connector_of_detect(struct drm_connector *connector)
- 		if (nv_encoder->dcb->i2c_index == idx && edid) {
- 			nv_connector->edid =
- 				kmemdup(edid, EDID_LENGTH, GFP_KERNEL);
--			of_node_put(cn);
- 			return nv_encoder;
- 		}
- 	}
 -- 
-2.34.1
-
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
 
