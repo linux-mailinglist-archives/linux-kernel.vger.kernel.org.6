@@ -1,135 +1,181 @@
-Return-Path: <linux-kernel+bounces-309555-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309556-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5674966CBD
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 00:52:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B33F966CC0
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 00:56:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 936E328306D
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 22:52:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 80E9F1F242A3
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 22:56:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BB6D165F0B;
-	Fri, 30 Aug 2024 22:52:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dnbaSXG3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C57E418E35D;
+	Fri, 30 Aug 2024 22:56:17 +0000 (UTC)
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B21846B91;
-	Fri, 30 Aug 2024 22:52:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36FCD15C150;
+	Fri, 30 Aug 2024 22:56:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725058351; cv=none; b=QhsfbzgOAjW8myeD2+HZB2FlQXE0GuhUsa7JIRinV9A89IQixM4l6SpIeqpfdKqSPvORbIAlS8h/cUVAgqKukmCKiRKGFO+gF8dKnntU3DtKNdrpPeRgHF1AAy+dwohboujHyxVvtncmfd2h67NwAOgFdaHik1XfW6fzc5xiqT0=
+	t=1725058577; cv=none; b=G4CEgI5z3xG9e3N9R7eX9GL+vMqLJmmd4R2f344YQzamb2bD/myGUCMNghQ9IfuzWLwYhAT1bLEcnnQ/g5joAFnx4m3pu4tBhmvsBoDNQ7tEhL1hW93uIvc6ewSB7sJnLu78Pxisq8gSeNXD1X+mCtpJt4Qz01gs4ATCvTaOTzQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725058351; c=relaxed/simple;
-	bh=is63fOu6vcO6nj3KSRwAtgOMjqo7xhnsYBISPgGd3g0=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=RPX6RocCYhVnPwOpH1qPnkFOTmBLhDqx/4dtHU8P9DFlFL1dWKs7Ol7/SqZH02bTQhYv7XU0QsbSZZAqbQQL46UpGD8wTUQwvLQk92DrXxY85Ff1wMnD7CpT++srinki445llabhORFjHL/Xjut09MBL6kjcSTnsuw5jj2EJC7A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dnbaSXG3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A0573C4CEC2;
-	Fri, 30 Aug 2024 22:52:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725058351;
-	bh=is63fOu6vcO6nj3KSRwAtgOMjqo7xhnsYBISPgGd3g0=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=dnbaSXG3uOQzBXAd8nbHaRaHbxk1jPe66BVUHWrujr1keCIcL8gPtZa+5dlcuSKv7
-	 fknwDAHLPn8e5KVy/fGKbmqcYbE+UaFS+VoKd4mq6KnoYkXkGWAHOXcCfgI5q/nxWz
-	 dbqCeVHtZChZST/WicZ8ot0ebm0s/HWhjhEfopnPpFItrVu7ZL71kPeqD0yGq808ib
-	 FWL6WkVlCerttRj9UaxeU7V+JM0IL6OOMFoApPZZFKLQOpefUex7FBlRRZYLF9abC0
-	 qucFKKtarOAsEMD0rNjG2kGVQNdbrmXHefC7PKeuwfHCjo/GB0SS2MDgMZkoB2rVlN
-	 3fAAytYdzwWZQ==
-From: SeongJae Park <sj@kernel.org>
-To: damon@lists.linux.dev
-Cc: SeongJae Park <sj@kernel.org>,
-	linux-mm@kvack.org,
+	s=arc-20240116; t=1725058577; c=relaxed/simple;
+	bh=8XF3vmvNdNn9zLKrZfImEFFGflqsckIYF0ke9GOgNEM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eoI+kgcLTmc7kwDvDj2Ziq5RAmLaJrl76EZov8D4WUmvoQM0ALWCj02/SHjnKVY1krzDL5iB1h+aNSeg2Gy3Rd7v/50uofg9NCGXaDmGxMLh4A7uX0bVOJ2kQyys4dJ/yi0E58+xGquGe1BYBaz8O4TT1cuppJuPbEElFvRoJek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fomichev.me; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fomichev.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-7148912a1ebso1505523b3a.0;
+        Fri, 30 Aug 2024 15:56:14 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725058574; x=1725663374;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=OeH8hxTVMFEpq7p+SlKqJlF16p+IrHAk0EJziH2/pls=;
+        b=nNcyosSl9EUljUD2AxlzbFXqGDivqmhNZ5ZRdsoqjCBCuUpfcVu94sDe9A53cp4avG
+         eGziM0fR4MDIBPkK4lVggr8IxQyoDJiJF4cww7y69Iqew5zlZULw6/Upb9RuKkSIfRY9
+         STHhh/7KcQ1eR+pEYA/JYdVAW889b1SzaKiWvRIRhnyWp98O37auN6zKZ/5/JrYlxgJm
+         2O9fv9d0aLgGDIFMmKw8hhdYxndQBihKuIMNcYxM951Ob/gfOZRx+T46Iw1LWxGlPysR
+         fCrdiPHuJd/X/MsiKgpVY1nDq2VngdNNCsdD5QfD407tjQmXJj5GIZ0d+NRLjlNuYp6W
+         8S5A==
+X-Forwarded-Encrypted: i=1; AJvYcCUUgLKZFF8436siSkKW97I67seiOVtt/vRxN1Aty+dQp/vv95lfeIBzk2eJXaXbpPJz5xY=@vger.kernel.org, AJvYcCW5omjajJU0Pqr4c+zq3UpK0VnLafmPgKTluRPigF17ZMfhDzLWPuLJ3vlLNJv7s1HelkuVS1P1nJcYuSnN@vger.kernel.org, AJvYcCXJEoYjKNAq6XJDXOnvr7kiv8kfrUqH+jcogIrWIuBB3byPYP6KreIpQCMJD1hwYnuWtvXkXgFm@vger.kernel.org
+X-Gm-Message-State: AOJu0YxIOeGt5lNjPwgDQYASgGeHov+uOMrtLZREvv2rLXDzEOjPw+BX
+	Ti3eRgr27G4j4cHkbbQR7Ppg8zqro3g1REeMunDZVLNFTdOdLLE=
+X-Google-Smtp-Source: AGHT+IEVf5r+rolkiQ44IlQkVBbOxszPSaCFQ1vOzTxxgkXxPkhviLvJWKAGztNLO3pgEF5XOYsKrA==
+X-Received: by 2002:a05:6a21:e8f:b0:1c6:a4e7:bd1a with SMTP id adf61e73a8af0-1ced04c1224mr799255637.32.1725058573729;
+        Fri, 30 Aug 2024 15:56:13 -0700 (PDT)
+Received: from localhost ([2601:646:9e00:f56e:73b6:7410:eb24:cba4])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-205155424e7sm31450635ad.208.2024.08.30.15.56.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 30 Aug 2024 15:56:13 -0700 (PDT)
+Date: Fri, 30 Aug 2024 15:56:12 -0700
+From: Stanislav Fomichev <sdf@fomichev.me>
+To: Alexander Lobakin <aleksander.lobakin@intel.com>
+Cc: Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Lorenzo Bianconi <lorenzo@kernel.org>, Daniel Xu <dxu@dxuuu.xyz>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Jesper Dangaard Brouer <hawk@kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	bpf@vger.kernel.org, netdev@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: DAMON Beer/Coffee/Tea chat reminder (was: Re: DAMON Beer/Coffee/Tea chat reminder and extending for office hour)
-Date: Fri, 30 Aug 2024 15:52:27 -0700
-Message-Id: <20240830225227.90130-1-sj@kernel.org>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240519163329.150340-1-sj@kernel.org>
-References: 
+Subject: Re: [PATCH bpf-next 2/9] kthread: allow vararg
+ kthread_{create,run}_on_cpu()
+Message-ID: <ZtJODFOYkjgRTPCh@mini-arch>
+References: <20240830162508.1009458-1-aleksander.lobakin@intel.com>
+ <20240830162508.1009458-3-aleksander.lobakin@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240830162508.1009458-3-aleksander.lobakin@intel.com>
 
-Hello,
-
-On Sun, 19 May 2024 09:33:29 -0700 SeongJae Park <sj@kernel.org> wrote:
-> On Wed, 10 Aug 2022 22:51:02 +0000 SeongJae Park <sj@kernel.org> wrote:
+On 08/30, Alexander Lobakin wrote:
+> Currently, kthread_{create,run}_on_cpu() doesn't support varargs like
+> kthread_create{,_on_node}() do, which makes them less convenient to
+> use.
+> Convert them to take varargs as the last argument. The only difference
+> is that they always append the CPU ID at the end and require the format
+> string to have an excess '%u' at the end due to that. That's still true;
+> meanwhile, the compiler will correctly point out to that if missing.
+> One more nice side effect is that you can now use the underscored
+> __kthread_create_on_cpu() if you want to override that rule and not
+> have CPU ID at the end of the name.
+> The current callers are not anyhow affected.
 > 
-> > Hello,
-> > 
-> > 
-> > In short, I'd like to start an open, regular, and informal virtual bi-weekly
-> > meeting series for DAMON community.
-> > 
-> > Important links and dates
-> > -------------------------
-> > 
-> > Location: https://meet.google.com/ndx-evoc-gbu
-> > Agenda: https://docs.google.com/document/d/1v43Kcj3ly4CYqmAkMaZzLiM2GEnWfgdGbZAH3mi2vpM/edit?usp=sharing
+> Signed-off-by: Alexander Lobakin <aleksander.lobakin@intel.com>
+> ---
+>  include/linux/kthread.h | 51 ++++++++++++++++++++++++++---------------
+>  kernel/kthread.c        | 22 ++++++++++--------
+>  2 files changed, 45 insertions(+), 28 deletions(-)
 > 
-[...]
-> Firstly, I will regularly provide reminder of the series, probably 1-2 days
-> before every instance.
-> 
-> Secondly, I'm extending this series for reservation-based office hour.  That
-> is, I will reserve my time for 30 minutes every two weeks, keep the schedule
-> public, and encourage people to reserve the time for discussion on a special
-> topic for them.  The reservation should be made at least one day before the
-> time slot, and will be first-come first-served basis.  In detail, I will
-> reserve Monday afternoon or Tuesday morning of the group chat scheduled week.
-> Note that this is not necessarily only time slot for such discussion.  You're
-> still encouraged to schedule private meetings on your convenience.
+> diff --git a/include/linux/kthread.h b/include/linux/kthread.h
+> index b11f53c1ba2e..27a94e691948 100644
+> --- a/include/linux/kthread.h
+> +++ b/include/linux/kthread.h
+> @@ -27,11 +27,21 @@ struct task_struct *kthread_create_on_node(int (*threadfn)(void *data),
+>  #define kthread_create(threadfn, data, namefmt, arg...) \
+>  	kthread_create_on_node(threadfn, data, NUMA_NO_NODE, namefmt, ##arg)
+>  
+> -
+> -struct task_struct *kthread_create_on_cpu(int (*threadfn)(void *data),
+> -					  void *data,
+> -					  unsigned int cpu,
+> -					  const char *namefmt);
+> +__printf(4, 5)
+> +struct task_struct *__kthread_create_on_cpu(int (*threadfn)(void *data),
+> +					    void *data, unsigned int cpu,
+> +					    const char *namefmt, ...);
+> +
+> +#define kthread_create_on_cpu(threadfn, data, cpu, namefmt, ...)	   \
+> +	_kthread_create_on_cpu(threadfn, data, cpu, __UNIQUE_ID(cpu_),	   \
+> +			       namefmt, ##__VA_ARGS__)
+> +
+> +#define _kthread_create_on_cpu(threadfn, data, cpu, uc, namefmt, ...) ({   \
+> +	u32 uc = (cpu);							   \
+> +									   \
+> +	__kthread_create_on_cpu(threadfn, data, uc, namefmt,		   \
+> +				##__VA_ARGS__, uc);			   \
+> +})
+>  
+>  void get_kthread_comm(char *buf, size_t buf_size, struct task_struct *tsk);
+>  bool set_kthread_struct(struct task_struct *p);
+> @@ -62,25 +72,28 @@ bool kthread_is_per_cpu(struct task_struct *k);
+>   * @threadfn: the function to run until signal_pending(current).
+>   * @data: data ptr for @threadfn.
+>   * @cpu: The cpu on which the thread should be bound,
+> - * @namefmt: printf-style name for the thread. Format is restricted
+> - *	     to "name.*%u". Code fills in cpu number.
+> + * @namefmt: printf-style name for the thread. Must have an excess '%u'
+> + *	     at the end as kthread_create_on_cpu() fills in CPU number.
+>   *
+>   * Description: Convenient wrapper for kthread_create_on_cpu()
+>   * followed by wake_up_process().  Returns the kthread or
+>   * ERR_PTR(-ENOMEM).
+>   */
+> -static inline struct task_struct *
+> -kthread_run_on_cpu(int (*threadfn)(void *data), void *data,
+> -			unsigned int cpu, const char *namefmt)
+> -{
+> -	struct task_struct *p;
+> -
+> -	p = kthread_create_on_cpu(threadfn, data, cpu, namefmt);
+> -	if (!IS_ERR(p))
+> -		wake_up_process(p);
+> -
+> -	return p;
+> -}
+> +#define kthread_run_on_cpu(threadfn, data, cpu, namefmt, ...)		   \
+> +	_kthread_run_on_cpu(threadfn, data, cpu, __UNIQUE_ID(task_),	   \
+> +			    namefmt, ##__VA_ARGS__)
+> +
+> +#define _kthread_run_on_cpu(threadfn, data, cpu, ut, namefmt, ...)	   \
+> +({									   \
+> +	struct task_struct *ut;						   \
+> +									   \
+> +	ut = kthread_create_on_cpu(threadfn, data, cpu, namefmt,	   \
+> +				   ##__VA_ARGS__);			   \
+> +	if (!IS_ERR(ut))						   \
+> +		wake_up_process(ut);					   \
+> +									   \
+> +	ut;								   \
+> +})
 
-So, yet another reminder.
+Why do you need to use __UNIQUE_ID here? Presumably ({}) in _kthread_run_on_cpu
+should be enough to avoid the issue of non unique variable in the parent
+scope. (and similar kthread_run isn't using any __UNIQUE_IDs)
 
-Dedicated-topic discussions
----------------------------
-
-Next three time slots that I reserved in advance for possible future dedicated
-topic discussions are as below.
-
-- 2024-09-02 (Mon) 18:00 PT (reserved)
-- 2024-09-24 (Tue) 09:30 PT (not yet reserved)
-- 2024-10-07 (Mon) 18:00 PT (not yet reserved)
-
-Please reach out to me (sj@kernel.org or whatever) to reserve the
-not-yet-reserved time slots for your topics.  The reservation is made in a
-First-Come First-Served way, and I will send a Google Meet link to
-reservation-confirmed attendees.
-
-Please note that other time slots are also available based on the discussion.
-
-Any-topic discussions
----------------------
-
-Next two chat instance for any topic (no reservation is required) are scheduled
-as below:
-
-- 2024-09-03 (Tue) 09:30 PT (https://meet.google.com/ndx-evoc-gbu)
-- 2024-09-23 (Mon) 18:00 PT (https://meet.google.com/ndx-evoc-gbu)
-- 2024-10-08 (Tue) 09:30 PT (https://meet.google.com/ndx-evoc-gbu)
-
-Shared Calendar
----------------
-
-You can get the schedule via this shared Google Calendar:
-https://calendar.google.com/calendar/u/0?cid=ZDIwOTA4YTMxNjc2MDQ3NTIyMmUzYTM5ZmQyM2U4NDA0ZGIwZjBiYmJlZGQxNDM0MmY4ZTRjOTE0NjdhZDRiY0Bncm91cC5jYWxlbmRhci5nb29nbGUuY29t
-
-You can also get the past and upcoming schedules via
-https://docs.google.com/document/d/1v43Kcj3ly4CYqmAkMaZzLiM2GEnWfgdGbZAH3mi2vpM/edit?usp=sharing
-
-
-Thanks,
-SJ
-
-[...]
+The rest of the patches look good.
 
