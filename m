@@ -1,362 +1,210 @@
-Return-Path: <linux-kernel+bounces-308717-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308719-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB9AA9660D6
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 13:33:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39DCF9660D8
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 13:34:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A169FB291B1
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 11:32:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B4B1E1F22D71
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 11:34:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 864F5192D93;
-	Fri, 30 Aug 2024 11:32:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B26DC192D6C;
+	Fri, 30 Aug 2024 11:34:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="oNRzYtg9"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="JCYxv9KC"
+Received: from AM0PR83CU005.outbound.protection.outlook.com (mail-westeuropeazon11010051.outbound.protection.outlook.com [52.101.69.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9331190674
-	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 11:32:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725017533; cv=none; b=BjRqbzjmXIPgrhRvFle5VW9pgQbHU1UtWeyBDX7kOI4+TfNBc7Y+INVEaT0RAnikjy74jmL1U9rgXX7vbANpVZcS+sU5jC6O6lRqrPOkOBVfYPKbPga4aRachbfh/Z1pepKyqsJXHwCE5naKyKI5EJAjkabl+92due7FFF6ODLE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725017533; c=relaxed/simple;
-	bh=TfrqS+eEJC4hvAjbeCZHqAZjGPqiFyQI8yt6hFcSBPI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lvbIw/R84Y3JBp8jheDWwWaKHgNGNeTp3+FmugcYp9aDD6JokyQrW/hLVz7a6sbeY8qFy2cAFwURTJQUhm/ygcE69CC2LTrFmUHXOQQyZijTeHXoOPJ082NlAsd1D5wjr7I7Y3md8D26mndTLgD3szWgvRlfDX0nDdJQzQhg6xc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=oNRzYtg9; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-427fc97a88cso14493995e9.0
-        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 04:32:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1725017529; x=1725622329; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=cSAdrIdIlTZrcDnp23HrKjtj5P2NCbxTQsvhsi+KTpM=;
-        b=oNRzYtg9L7I0fm1Je+kshl1tjmCeL0TM0IZt0B1IClTv80MwL1TRLuMoOtC+qfOX44
-         1hDQU7Q0C+pJx8UwuquvkLYgDMMuw0beqTobZ7WV1zXfenyWCPdMmXJqpT92qB9+MfvM
-         hVxM0DsJ4hk/vA+LM9BSN5GuiiTmR17aWjN+8AD+oTI5epPQjcQrAJ0nwrTvNHSqQzC5
-         EPeyB0scKxlL0rO6CFWNAxmTIEz40XZyBAzyj5u6cc4QTVt6FJFvJcWvUd92DK7rAagH
-         44e7NUFjbLBN1ZOgCZUbAPxjxBdeXFU5lF9NBCk0UPzLsVYgWMeRjtZbdjrHoXprfcG9
-         xnFg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725017529; x=1725622329;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=cSAdrIdIlTZrcDnp23HrKjtj5P2NCbxTQsvhsi+KTpM=;
-        b=JJjlCZmqj1PFafVEM6/OBybHcu4+7ZDlEd2nuMN0VIkCfwPPzbZHR0ZfaQdur9f4S7
-         Ft0v2ublaoLkmJLP43vTnpjM4XVhB++x3ENLM7UJ8rfwFJeF7DI7LouCjBMfbWEDrxOa
-         1AUObQNwQHD5RiO4bnHq/AYOuLg4N4PI6rd1CatsoB6rPwkLaCzUJ5c6ggcLjnu1wFEA
-         a21MV8KkkdUh6yw7CqIhpG11Ueaukw/1WluYSv//xZQu3BXTpX68WYSI5n/+Nxwj5F+l
-         WDJY7FWtNxJA2DzTJ9RD+vBfa5niGjD3J5t6TndQT2viH51EwwdaoydFKBwuHfkqWclC
-         pFXg==
-X-Forwarded-Encrypted: i=1; AJvYcCW9Om+LE3R/BToJH2AwwdNTJKtFzuIwaurtdNqBcrnfnMNqKEfZVt0b2RpN8z+ufww7pFXgL3kOa8+fpvA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwO1Nf8GiC3qmXyQ9VaASipzudIPhB3pGmUZ+SrtBvYZlEMSRAU
-	klTrOzz0XZQZQhDHUQzQX2un+dI5KhW7VXovsu9p3xc6gCissUVOQHC2nAJ0iuc=
-X-Google-Smtp-Source: AGHT+IGCHErgOXx4yyX533NrAWENK9/do0M6Sx35yhBOeVo9fVW0bDEo+wGDIbFLyg6RNTrJOm6ilA==
-X-Received: by 2002:a05:600c:5110:b0:426:6696:9e50 with SMTP id 5b1f17b1804b1-42bb02591d1mr38716245e9.14.1725017528752;
-        Fri, 30 Aug 2024 04:32:08 -0700 (PDT)
-Received: from [192.168.50.4] ([82.78.167.144])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42bb6deb2dcsm43774765e9.1.2024.08.30.04.32.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 30 Aug 2024 04:32:08 -0700 (PDT)
-Message-ID: <fa9b3449-ea3e-4482-b7eb-96999445cea5@tuxon.dev>
-Date: Fri, 30 Aug 2024 14:32:06 +0300
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A907017DE1A;
+	Fri, 30 Aug 2024 11:33:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.69.51
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725017639; cv=fail; b=XBbeXiFllAmDZmqWWqG6cNl7Qps2q1N8s9D5Amj/jF4+pB2SBh8o3TADlzsS75VpWxmiiTvrtp8Byb7b0iSCtAcVOJC2xKCeDhvxSPMsrEmLXpNJ343MrliIcvamsXe0jDN+N4n1hktsDok9nikhbm3DLFTjCX8O3NODuZIfBoU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725017639; c=relaxed/simple;
+	bh=WPRO2okk4tTPpEkz0n/ODNdxDh153Uvmb59tM1AyaIY=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=OATUXjEb4ts6jJGUkgllE2Ma00ks8OXmJrgD39sZnqDgPQBfI3P9qf5ujr3wBwEB0dRNo+znVkc9h4+yxT4tpVftTH48renu2zQGRRT1MylNE8Ss8/+WMdwf5xpthmUtjLt57dtMxGRLz6mqcurZ21yr5HFyCsE3uwlPdXcYx5U=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=JCYxv9KC; arc=fail smtp.client-ip=52.101.69.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=akcn7Gww7vr/viceXh+WDHd3MJdraw+IRlxJXrQkbbZdxFD/+E1NP7sgS+XZwO4Vecs7RncYQ8gXYJNPhUUv9CVmdA8j2l2gUEU4dHs/qmBvNyxTbvWbFQuZ1OPH0elGitBkoHgc3/QtK05aDzJtEIS2M5MQIZ6AXM1mYUxfo9n7nRY6T73+OnAq/piHpL3chMHCt9k0EchIbu2aNfaZvCvorRHhcG+VTZv9pR56lLkxr8EeyqDPEgkeD3XXJqfKyfg1eMcb9Rn7ymg5Iji98GDpazYueQd6/KYO/rqkWC5WMTsmLtS10nPzlmyIHt1Ry684KwHY40A3NwN8ndG0yQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=oC15+Rb4u95VrIsR3H23t6uVNwVTtMbSXu/Vbhq6MSE=;
+ b=f5QwfU6r+Wnldjb91HkA6dTew70UBkrQQ4gGNAxARrnszHTZ0JtN1xfEa9I7y4DxD155rMVq/aaHgRBYdJnP6KQTNc+ynUVnSMH9M5ec7neSONE2ZDhjjTw48ubZd/6hIeQrARioKkpb5zqfCY7wVCAD0w/4hHQvCIaAE2A9AGJFxtGvinQwqvI7pvRBZl8qRZC5ob3dEakkv5DCzNmlF540bkPPZE8ZBZ4JhvQOagsFPSnm1XFh/QKYzfU6JO4gPzy0GKrcD3ck1SpTKdom5dZLX2xv2Q9We7h9oQ83BnFxNqn1I14Tlzlt6+VUJhOzLUa0ucG1sWkyp8ojdol3iQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
+ s=selector1-NXP1-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=oC15+Rb4u95VrIsR3H23t6uVNwVTtMbSXu/Vbhq6MSE=;
+ b=JCYxv9KC7JrNNHp/IMKjagN5vwvwM1Nxa8img/NmkL+BA4HVkWokpQkeO5gEFxz0kHQB747lMxquRN7Ii+BUD2LXFUbNVNydEMFSFslvXhkWL1TcjZU2TxSC+XxKWkc43eaMOAYx1TydVygZ87rgMDxhhM9TcByYBXSBSYMrP+jg8xIABtNDd4zxikmClVrlp9u3TFjg+2f7jOIlLaFq86skpI0VZkMX7umgUQFcVUyBZteDGpI2WtDi7pNDagRv9H38qnCPE/n9gNq3AeREQ88DMkcgHFT1sRAxcM8BSt/g7Za7J8RVXmcLfi0YMziWyyU89gpo3tEdq66imOu1mA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=oss.nxp.com;
+Received: from DU0PR04MB9251.eurprd04.prod.outlook.com (2603:10a6:10:352::15)
+ by VI1PR04MB6989.eurprd04.prod.outlook.com (2603:10a6:803:131::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.28; Fri, 30 Aug
+ 2024 11:33:52 +0000
+Received: from DU0PR04MB9251.eurprd04.prod.outlook.com
+ ([fe80::708f:69ee:15df:6ebd]) by DU0PR04MB9251.eurprd04.prod.outlook.com
+ ([fe80::708f:69ee:15df:6ebd%7]) with mapi id 15.20.7897.027; Fri, 30 Aug 2024
+ 11:33:52 +0000
+From: Ciprian Costea <ciprianmarian.costea@oss.nxp.com>
+To: Chester Lin <chester62515@gmail.com>,
+	Matthias Brugger <mbrugger@suse.com>,
+	Ghennadi Procopciuc <ghennadi.procopciuc@oss.nxp.com>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: Pengutronix Kernel Team <kernel@pengutronix.de>,
+	linux-arm-kernel@lists.infradead.org,
+	imx@lists.linux.dev,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	NXP S32 Linux Team <s32@nxp.com>,
+	Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>
+Subject: [PATCH v2 0/2] add S32G2/S32G3 uSDHC pinmux
+Date: Fri, 30 Aug 2024 14:33:45 +0300
+Message-ID: <20240830113347.4048370-1-ciprianmarian.costea@oss.nxp.com>
+X-Mailer: git-send-email 2.45.2
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: AM0PR07CA0003.eurprd07.prod.outlook.com
+ (2603:10a6:208:ac::16) To DU0PR04MB9251.eurprd04.prod.outlook.com
+ (2603:10a6:10:352::15)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 00/16] Add initial USB support for the Renesas RZ/G3S SoC
-Content-Language: en-US
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: vkoul@kernel.org, kishon@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, p.zabel@pengutronix.de, geert+renesas@glider.be,
- magnus.damm@gmail.com, gregkh@linuxfoundation.org, mturquette@baylibre.com,
- sboyd@kernel.org, yoshihiro.shimoda.uh@renesas.com,
- biju.das.jz@bp.renesas.com, linux-phy@lists.infradead.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-renesas-soc@vger.kernel.org, linux-usb@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
- linux-pm@vger.kernel.org, Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-References: <20240822152801.602318-1-claudiu.beznea.uj@bp.renesas.com>
- <CAPDyKFrS4Dhd7DZa2zz=oPro1TiTJFix0awzzzp8Qatm-8Z2Ug@mail.gmail.com>
- <99bef301-9f6c-4797-b47e-c83e56dfbda9@tuxon.dev>
- <CAPDyKFrVS2vpsJqTvjKCJ7ADqXc4D4k2eeCBsaK4T+=pXDnKUA@mail.gmail.com>
-From: claudiu beznea <claudiu.beznea@tuxon.dev>
-In-Reply-To: <CAPDyKFrVS2vpsJqTvjKCJ7ADqXc4D4k2eeCBsaK4T+=pXDnKUA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DU0PR04MB9251:EE_|VI1PR04MB6989:EE_
+X-MS-Office365-Filtering-Correlation-Id: c6af252e-dbd9-45d0-81d4-08dcc8e79f8e
+X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|7416014|366016|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?SHJUaHFFOEs4bTM4bE44Qm1kUWNLbUk1Vlp3RmZzTVhuSXhWenZYeU1LK3Y4?=
+ =?utf-8?B?bVgyWGxMQjJqZWxXVk1BbGpDaEc5S2RLNm5LQ1dXeVphVEk1WTlNc1BzR0FF?=
+ =?utf-8?B?d2phc1BiTTJLVFJwc053RjRlNTlBbkNUUnlWR3dzdTNMNFZ3aFhXb1FZaXli?=
+ =?utf-8?B?VlIxYTBxQzlhdVVET0VEazE3TU9jT01ZNElocjRFZ2NjU1d4RStpSTkrc3Uz?=
+ =?utf-8?B?WkREKy8rcDFWN0VpOWpTNml2b2NyQ2VIUEJSRUN4M2NpcXp6c2liL3FyZ1Fz?=
+ =?utf-8?B?QnZwakVlSTNIOW96LzEwT2JzdyszTUxtMGRCTk5TNTRtUm1uNVVoVE4wdE5x?=
+ =?utf-8?B?S25OUEw1ZElPbjE2THdZcllTYVd1OVlpZWdOMFZQcEVKUG1ZR3VkZWRlU2dj?=
+ =?utf-8?B?bTF1b0xTUHhKd1o1QzExOExnVHhqSzIrSU9kOTdneXBaQUd3TXVkSWtKVWNG?=
+ =?utf-8?B?Z2MzRGlHME9OS3V5bXRXRk1xdUYxMGs4SGVBNS9oYW9lSVQ2czRyOW52YmtV?=
+ =?utf-8?B?WlA5bVZoMVhCbG1vZVczQitwZDYyNXJmWTVxNlRWMGU3eEJjWi9QOTlRT1Zu?=
+ =?utf-8?B?dFBnNGNXcDdmL1RuMnJKRW5PSkJwbElpVWdjQml6cWI4T1BDTUh2dGpjVDFu?=
+ =?utf-8?B?aWZNVjM4T3hwbk5udVJPRWd5aEtyVWNYRnNXUGdRM1paYUIxQm96YkhkZWR4?=
+ =?utf-8?B?WDNmVFNXYURxNmlkbk1oNGxjYTJ6UmhMS3RRSitZMUtNVHFmYThUNUd0MkM5?=
+ =?utf-8?B?V3dRTWNSOHR0ZEJXcEdnNGI1WEprbU9RTjBaQm9RRUNHWUkrV1hyR1NmUmJJ?=
+ =?utf-8?B?c2JpTjhQZ0FBcVh5VzlrM0FtQ2xVbEJtWjEyZ01hcUt3ZXphZGFzdlNEUDdj?=
+ =?utf-8?B?bXd5ZlA2TVdlODdtSFRHbGtuMDNXQnRGdFA2L1VmSjlKTi9uY0pwVTdGcDBj?=
+ =?utf-8?B?SzNMYWpZWXJSS3ZNV0t1MFJjKzByeUFOb2pPOFN6bnM3QkpaYUZMSGRiNVdw?=
+ =?utf-8?B?U0ZESEdLTDdyRnFrc2JXTnRXaEl4cWlsaEVObnorTXBCRUd6SnNYNlY0TnZz?=
+ =?utf-8?B?YlhGSDdwMTBtdUZxZUFYbXA5VW1DSFQ0cGVjUWdMZnFySDVuUGRnQ2JZQW5i?=
+ =?utf-8?B?Y3Rvai9OOFB6YzBML0lDTFVSSy9yZ2pLTktMck9zT1d2dDl2VHA5OGR4VFVz?=
+ =?utf-8?B?U3doVDg2RFRuTDhQaEdyUS8yR255NmJzbGhsVW9sUFpjd3NySWNoWHhwWXp2?=
+ =?utf-8?B?cnliWHE0akxPWHJpeFVBMDRYc29QMFJtbTZRdGpRVHpUb2NvR3dKVCtEZVhj?=
+ =?utf-8?B?S1JTZEVsUXN4Vkozb0xmZzExbDR2L3BGSG9UZEJrRW5wZkJpZFMxRnZKSUVk?=
+ =?utf-8?B?bE9oMVowRWhzcE1tMWRGVXdJRUlBL212K1FlSVI5dVJpQ20wRko0LzB4dXZT?=
+ =?utf-8?B?c0d6UUxFL1JKN1d4cFdaUE9jOTRycGsxUXRWL1piYjd2Q0tRTHptRkZ5Y1pv?=
+ =?utf-8?B?MUZWVDhUWnFONko2U1ZlU240dy81Q3pOdi9JdXVScTQvYjVwU1IxSHZ5M3lo?=
+ =?utf-8?B?V0Jjc2FYSzgwK2pmR2ZqajMzM2pEcjRCNndLb3Q4RXNMRUxZTlBMNkZ2RFhz?=
+ =?utf-8?B?ZkljS0ZyTEh2TkxDYi9DdFl1TnhZOGlxcDc3K1d0NkdST3BlVjlDcDZwVlRw?=
+ =?utf-8?B?SnpIN1dGWXp4UlVrMlM1dVgycHZ1bmJrTzMzTVlTaUFyQTF2TGxVOFFzdHdP?=
+ =?utf-8?B?NEhWNVVBMkZ6UStwMVBoYVdrZnA5MkJyZXRLblN0bGNxN0kwc2gxVUxzNWdh?=
+ =?utf-8?B?dXE4b0lpWFB5Yk9xYUs4Zz09?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU0PR04MB9251.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(366016)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?U29OVWx5dFlha1dUdXpGRTQ0MWVkcXhjaXhOWDJrdzRlN1pndXMxOWlJM284?=
+ =?utf-8?B?ODJrWmpwclRNZTYzMjViVzIxOHZncGFsRFVrOFRvSW92dnA3VmpabzFwdlc3?=
+ =?utf-8?B?WHBDdVVjOHFkV3M4ZG5wcXRhT3BNM2RIS3AyV3ZPL1RwSjBVcTNkNHNZVDRu?=
+ =?utf-8?B?a0hHNmhiY1JJekxIb1lRckprS1NjUHo4aFJPcE5naDRUU0NYbmJqSVltL3NE?=
+ =?utf-8?B?MldIZlBoVUd0a3ZHMzZteENwMEpheFVVSTh5V083S05uOFVDSjlrWS9lVVg1?=
+ =?utf-8?B?eEJrVmMrdUtNNUluVDBIWjh1VVVTc28xT21KNFBBeEtaa0xaQm5QQ0NHYlIy?=
+ =?utf-8?B?dzhkQ0ZoQVEyVEJzZzhobmxueDdQMk5FWHBwUGNFNzFFekRoSUZXQzliL1FR?=
+ =?utf-8?B?UysxMDhxLzd3SmtxajlSMENCcFdJaVhMYUxreENKSmpiWHFFZkxIZ2RKdFJk?=
+ =?utf-8?B?bGd4RVcybnZmdUJrMHNtVms5VmlieWZ1MkVRRS9xcURPaEFRdnRxQjJUUWJo?=
+ =?utf-8?B?emhkZW9lR1Vmd0FZR09tSk1wMm5vVGpjK1dZTlFxVGpaZzB0UFJyemp2WUlu?=
+ =?utf-8?B?Q29TaS8vMEE3dEtBVFVDVG4yNUF0MEwzUUtlNzBGOXNnd3dTVjlxN0gwTUoy?=
+ =?utf-8?B?WFo5ZEF4Wk5qNW9IVTJ4WC9XUmlEdWZiWFE4bWxWenB3ODZMUFZXTVh6aDRL?=
+ =?utf-8?B?c0kwT05hSmhsejZPUGMrbmU5R2pzMXBGa1VnTUw5NmtTL1JhMmpvclBHeXpy?=
+ =?utf-8?B?TndFR3BmZnpwVWhnY1ZZK041MStmbDBOdE9GQURPNjJnSEszZXhOQlU1NjNX?=
+ =?utf-8?B?VGc4RWJKeGN3a2NPSHdoMnV0ZWp1UjcwcWdSdWt1K1l1M3FmR29ieTNldzAy?=
+ =?utf-8?B?TzZnaXljY09hdFUxRnpTUGFZNExtZkRqblRBWUt3VW5UVDAzR0VMV3NybVRr?=
+ =?utf-8?B?THlkUmUxczM0L3dUWXlvb0RTcDZkZEJBek1jS0YvaFg2SzhGd1V0SjJSaE9L?=
+ =?utf-8?B?T2dBSk5waWx5dlIwZ2NjQ3lEejRUbEtHTUtLdEVvS3pRUGpQSTBueUpwakEz?=
+ =?utf-8?B?dkpiY2dtUVA2RmZ1VGdMa2R4MitGdGt4QzhEZ01RQnJOUVk4aEI5QU8yQ09G?=
+ =?utf-8?B?UW8xQk9aejBWYWtqa05oTG9WZDNDU2kydE8vRjNpVm1WVThZT2hERHJ1Z2pa?=
+ =?utf-8?B?NVdlUzdlTXFBY2RPRW5nRjRtd2lOT05jYXVpM1B5c0JpS0tUdkRid0dZZkpU?=
+ =?utf-8?B?ZmlBRTZxakpKYm1CcjJFZG1oUDlkdmd1NjhjNWVPaDJaTk9IMUJkU3lTVkty?=
+ =?utf-8?B?ZE5Mc2NtUXhQMVZnblptMGlKWUhqUk5TcDZqWUNIUHpsa0NjQ3h6RXlhRldt?=
+ =?utf-8?B?cFQvMHNJeWVSVWJIWGt5bHdINFA3ekQweU50Wlc0SG05OUlHcGR5ajhobk5w?=
+ =?utf-8?B?Ty9ic1hadGMrczNIa0ZOZTkxQk9Wbm9pcWMrM2lhWXl3bFdBTnNvWnYzMTM3?=
+ =?utf-8?B?Zy9rQVJhRkdLNzIrdUQ1UW1FMGJaSDBmTGRqdk5pSjZwTys2TllOYWh5aGJh?=
+ =?utf-8?B?dWhoTVRjcXg2dEp0UmQ0elg1N3VRWUZHT1JMTzdSK2s5OHBzOHRkNlpzdkp0?=
+ =?utf-8?B?UzFQa1pVUm83NzVtSHY0YjU0WVFpNTltSm9QNSs4emxiNU1yRHY2ZE1FRW5W?=
+ =?utf-8?B?ZDJFa0JtMFpFcDBrcjFoOFNBKzZxK1l2QjMwWkVPanFwRkpRWVh6cEJUeTVG?=
+ =?utf-8?B?VDFEcThRajJxdUcyQlh5RFVESVFDZElvL0NSVjJiVDI5QXBJM3Uwc1llbE5L?=
+ =?utf-8?B?c09Hcm1qTGN3QWJyOUJFWWNoalh2SlYvL0dVRDB2dzNMRzd1UjlDMlc3SjFC?=
+ =?utf-8?B?TUVEeVNza2d2ck4wRkxtcjhtOWRrczVYcUtNTEYyTGp1cDg5cXF0UE53VXRG?=
+ =?utf-8?B?Nzh2NnplRWdSK05CN0tXZUNVVGNYb3JKTFFLK0EwNEdqYk5YQU1nSThjSW9C?=
+ =?utf-8?B?SmVvZWlvOVZib29zMHlGZi9hWktOUENxeVMvS3c3aExTa0YranV6L1JCNWxO?=
+ =?utf-8?B?VGYzMHVpOS9RdGlhRVJoaGlva0ZjamJDYThFbXFZdmxXL3dXOWNaZ3VHS05n?=
+ =?utf-8?B?czlxc0hINDZBNWNsQzNCRnRQSmNkSFZ3L043Nk0wWnlBMTN1ckxQMzVLOFBZ?=
+ =?utf-8?B?bEE9PQ==?=
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c6af252e-dbd9-45d0-81d4-08dcc8e79f8e
+X-MS-Exchange-CrossTenant-AuthSource: DU0PR04MB9251.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Aug 2024 11:33:52.2953
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: AhymTK3RQUX+JIqte903JqRQ+bnkC6KF+Qu5NJUYWHlr2O2mDpb5jiaMOzkiYFTEl9lZKmrfdeolSDUuIMyVYU5/vo4saf4crJas1C1srcc=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB6989
 
+From: Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>
 
+This patchset adds 100mhz & 200mhz pinmux support for uSDHC.
+Hence, UHS modes would be supported on NXP boards which enable
+usage of VCCQ voltage supply @1.8V by default, with no additional
+hardware (board) changes required, such as S32G399A-RDB3.
 
-On 30.08.2024 13:14, Ulf Hansson wrote:
-> On Fri, 30 Aug 2024 at 10:22, claudiu beznea <claudiu.beznea@tuxon.dev> wrote:
->>
->> Hi, Ulf,
->>
->> On 29.08.2024 18:26, Ulf Hansson wrote:
->>> On Thu, 22 Aug 2024 at 17:28, Claudiu <claudiu.beznea@tuxon.dev> wrote:
->>>>
->>>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->>>>
->>>> Hi,
->>>>
->>>> Series adds initial USB support for the Renesas RZ/G3S SoC.
->>>>
->>>> Series is split as follows:
->>>>
->>>> - patch 01/16           - add clock reset and power domain support for USB
->>>> - patch 02-04/16        - add reset control support for a USB signal
->>>>                           that need to be controlled before/after
->>>>                           the power to USB area is turned on/off.
->>>>
->>>>                           Philipp, Ulf, Geert, all,
->>>>
->>>>                           I detailed my approach for this in patch
->>>>                           04/16, please have a look and let me know
->>>>                           your input.
->>>
->>> I have looked briefly. Your suggested approach may work, but I have a
->>> few thoughts, see below.
->>>
->>> If I understand correctly, it is the consumer driver for the device
->>> that is attached to the USB power domain that becomes responsible for
->>> asserting/de-asserting this new signal. Right?
->>
->> Right!
->>
->>>
->>> In this regard, please note that the consumer driver doesn't really
->>> know when the power domain really gets powered-on/off. Calling
->>> pm_runtime_get|put*() is dealing with the reference counting. For
->>> example, a call to pm_runtime_get*() just makes sure that the PM
->>> domain gets-or-remains powered-on. Could this be a problem from the
->>> reset-signal point of view?
->>
->> It should be safe. From the HW manual I understand the hardware block is
->> something like the following:
->>
->>
->>                   USB area
->>          +-------------------------+
->>          |                         |
->>          | PHY --->USB controller  |
->> SYSC --> |  ^                      |
->>          |  |                      |
->>          | PHY reset               |
->>          +-------------------------+
->>
->> Where:
->> - SYSC is the system controller that controls the new signal for which
->>   I'm requesting opinions in this series
->> - PHY reset: is the block controlling the PHYs
->> - PHY: is the block controlling the USB PHYs
->> - USB controller: is the USB controller
->>
->> Currently, I passed the SYSC signal handling to the PHY reset driver; w/o
->> PHY reset the rest of the USB logic cannot work (neither PHY block nor USB
->> controller).
->>
->> Currently, the PHY reset driver call pm_runtime_resume_and_get() in probe
->> and pm_runtime_put() in remove. The struct reset_control_ops::{assert,
->> deassert} only set specific bits in registers (no pm_runtime* calls).
-> 
-> Thanks for clarifying!
-> 
-> For my understanding, in what register range do these bits belong? Is
-> it the USB logic or in the PM domain logic, or something else.
+Changes in V2:
+- Added patch for disablement of UHS modes for NXP boards
+where VCCQ voltage supply is set to 3.3V by default.
+- Fixed S32G2, S32G3 dtb checks warnings related to uSDHC
+pinmux renaming.
 
-The PHY reset block is an individual hardware block with its own address
-space, clocks and reset signals.
+Ciprian Marian Costea (2):
+  arm64: dts: s32g: Add S32G2/S32G3 uSDHC pinmux
+  arm64: dts: s32g2: Disable support for SD/eMMC UHS mode
 
-The PHY block may reside in the same address space with USB controller but
-it can provide PHY support for an external USB controller, something like:
+ arch/arm64/boot/dts/freescale/s32g2.dtsi      | 153 ++++++++++++++++++
+ .../arm64/boot/dts/freescale/s32g274a-evb.dts |   5 +
+ .../boot/dts/freescale/s32g274a-rdb2.dts      |  13 ++
+ arch/arm64/boot/dts/freescale/s32g3.dtsi      | 153 ++++++++++++++++++
+ .../boot/dts/freescale/s32g399a-rdb3.dts      |   4 +
+ 5 files changed, 328 insertions(+)
 
-+--------------------------+
-|  PHY ---> USB controller |
-|   |                      |
-+---|----------------------+
-   \/
-+---------------+
-| USB controller|
-+---------------+
+-- 
+2.45.2
 
-Because of this the PHY block is modeled in Linux as a standalone driver.
-
-And SYSC is an individual HW block with its own address space. This is
-where it resides the control of the signal for which I'm asking for directions.
-
-> 
->>
->> The PHY driver is taking its PHY reset in probe and release it in remove().
->> With this approach the newly introduced SYSC signal will be
->> de-asserted/asserted only in the PHY reset probe/remove (either if it is
->> handled though PM domain or reset control signal).
->>
->> If the SYSC signal would be passed to all the blocks in the USB area (and
->> it would be handled though PM domains) it should be no problem either,
->> AFAICT, because of reference counting the pm_runtime_get|put*() is taking
->> care of. As the PHY reset is the root node the in the devices node tree for
->> USB the reference counting should work, too (I may miss something though,
->> please correct me if I'm wrong).
->>
->> If the SYSC signal would be handled though a reset control driver (as
->> proposed in this series) and we want to pass this reference to all the
->> blocks in the USB area then we can request the reset signal as shared and,
->> AFAIK, this is also reference counted. The devices node tree should help
->> with the order, too, if I'm not wrong.
-> 
-> Reference counting a reset signal sounds a bit weird to me, but I
-> guess it can work. :-)
-> 
-> To sum up from my side;
-> 
-> As long as it's fine that we may end up asserting/de-asserting the
-> reset-signal, without actually knowing if the PM domain is getting
-> turn-on/off, 
-
-With my understanding of it, that should not happen, at least not with the
-current implementation of the drivers involved in this.
-
-> then using a reset-control like what you propose seems
-> okay to me.
-
-I would prefer this option, too.
-
-> 
-> If not, there are two other options that can be considered I think.
-> *) Using the genpd on/off notifiers, to really allow the consumer
-> driver of the reset-control to know when the PM domain gets turned
-> on/off.
-> **) Move the entire reset handling into the PM domain provider, as it
-> obviously knows when the domain is getting turned on/off.
-
-This option is what I've explored, tested on my side.
-
-I explored it in 2 ways:
-
-1/ SYSC modeled as an individual PM domain provider (this is more
-   appropriate to how HW manual described the hardware) with this the PHY
-   reset DT node would have to get 2 PM domains handlers (one for the
-   current PM domain provider and the other one for SYSC):
-
-+               phyrst: usbphy-ctrl@11e00000 {
-+                       compatible = "renesas,r9a08g045-usbphy-ctrl";
-+                       reg = <0 0x11e00000 0 0x10000>;
-+                       clocks = <&cpg CPG_MOD R9A08G045_USB_PCLK>;
-+                       resets = <&cpg R9A08G045_USB_PRESETN>;
-+                       power-domain-names = "cpg", "sysc";
-+                       power-domains = <&cpg R9A08G045_PD_USB_PHY>, <&sysc
-R9A08G045_SYSC_PD_USB>;
-+                       #reset-cells = <1>;
-+                       status = "disabled";
-+
-+                       usb0_vbus_otg: regulator-vbus {
-+                               regulator-name = "vbus";
-+                       };
-+               };
-+
-
-and the PHY reset driver will get bulky with powering on/off both of these,
-at least with my current implementation, something like (and the following
-code is in probe()):
-
-+       if (priv->set_power) {
-+               priv->cpg_genpd_dev = dev_pm_domain_attach_by_name(dev, "cpg");
-+               if (IS_ERR(priv->cpg_genpd_dev)) {
-+                       dev_err_probe(dev, error, "Failed to attach CPG PM
-domain!");
-+                       error = PTR_ERR(priv->cpg_genpd_dev);
-+                       goto err_pm_runtime_put;
-+               }
-+
-+               priv->sysc_genpd_dev = dev_pm_domain_attach_by_name(dev,
-"sysc");
-+               if (IS_ERR(priv->sysc_genpd_dev)) {
-+                       dev_err_probe(dev, error, "Failed to attach sysc PM
-domain!");
-+                       error = PTR_ERR(priv->sysc_genpd_dev);
-+                       goto err_genpd_cpg_detach;
-+               }
-+
-+               priv->cpg_genpd_dl = device_link_add(dev, priv->cpg_genpd_dev,
-+                                                    DL_FLAG_PM_RUNTIME |
-+                                                    DL_FLAG_STATELESS);
-+               if (!priv->cpg_genpd_dl) {
-+                       dev_err_probe(dev, -ENOMEM, "Failed to add CPG
-genpd device link!");
-+                       goto err_genpd_sysc_detach;
-+               }
-+
-+               priv->sysc_genpd_dl = device_link_add(dev,
-priv->sysc_genpd_dev,
-+                                                     DL_FLAG_PM_RUNTIME |
-+                                                     DL_FLAG_STATELESS);
-+               if (!priv->sysc_genpd_dl) {
-+                       dev_err_probe(dev, -ENOMEM, "Failed to add sysc
-genpd device link!");
-+                       goto err_genpd_cpg_dl_del;
-+               }
-+
-+
-+               error = pm_runtime_resume_and_get(priv->cpg_genpd_dev);
-+               if (error) {
-+                       dev_err_probe(dev, error, "Failed to runtime resume
-cpg PM domain!");
-+                       goto err_genpd_sysc_dl_del;
-+               }
-+
-+               error = pm_runtime_resume_and_get(priv->sysc_genpd_dev);
-+               if (error) {
-+                       dev_err_probe(dev, error, "Failed to runtime resume
-sysc PM domain!");
-+                       goto err_genpd_cpg_off;
-+               }
-+       }
-+
-
-2/ SYSC being a PM domain provider parent of the CPG (current PM domain
-   provider). With this the phy reset node is like proposed in this series
-   (powered by CPG PM domain):
-
-+               phyrst: usbphy-ctrl@11e00000 {
-+                       compatible = "renesas,r9a08g045-usbphy-ctrl",
-+                                    "renesas,rzg2l-usbphy-ctrl";
-+                       reg = <0 0x11e00000 0 0x10000>;
-+                       clocks = <&cpg CPG_MOD R9A08G045_USB_PCLK>;
-+                       resets = <&cpg R9A08G045_USB_PRESETN>;
-+                       power-domains = <&cpg R9A08G045_PD_USB_PHY>;
-+                       #reset-cells = <1>;
-+                       status = "disabled";
-+
-+                       usb0_vbus_otg: regulator-vbus {
-+                               regulator-name = "vbus";
-+                       };
-+               };
-
-And the USB SYSC PM domain is parent for all USB PM domains provided by CPG
-(3 in this case). With this there should be some glue code b/w CPG (code in
-drivers/clk/renesas/{rzg2l-cpg.c, r9a08g045-cpg.c}) and SYSC drivers (I
-have something ugly locally, haven't tried to detach CPG code from SYSC
-code at the moment).
-
-
-> 
-> Thanks again for your explanations!
-
-Thank you, also, for looking into this,
-Claudiu Beznea
-
-> 
-> Kind regards
-> Uffe
 
