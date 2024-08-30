@@ -1,118 +1,131 @@
-Return-Path: <linux-kernel+bounces-309410-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309411-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A65EA966A16
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 21:50:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 448F5966A19
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 21:52:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3C34628349E
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 19:50:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 768591C216F3
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 19:52:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50F6E1BE257;
-	Fri, 30 Aug 2024 19:50:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FD951BE250;
+	Fri, 30 Aug 2024 19:52:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="XekhFN/e"
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=cristian.ciocaltea@collabora.com header.b="ZpthUZPi"
+Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAA761BA885
-	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 19:50:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725047434; cv=none; b=S4a7Ra+1krlbGwRltIKYgcXtxvfmQXi0pAEpmyZXcZKwrr1Pf7dB4k0xZgMp20rwaAcueVy2IO/09mrhHUP9MdhG3XONGh5QSKY54AcHy/BSztTApNZ9CpLW9yLQCspdEIwgwjXoCtJh3uGmdUL8VXf3LtFk2tugKRkN/bLkTok=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725047434; c=relaxed/simple;
-	bh=yXNmqAtLWS5NlIPRIhOiDrjJJPBlvX+h51JTFVleZsY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=nBMnng1CGv4lQd4fU6mwFbNzXP5yGlBCV6gI0+39g1t7ALOHkv+5GtV0USdA5I9lleTbjuRDUAhayhJw160fC05dxfbtzvJKjljTJOMUyA9lUNwcZDZRbeWKuWOw+6ugDtcwXSkMNS8FF6R6uuQ2qmQOgdQkIwxuxgtFzkRlRD0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=XekhFN/e; arc=none smtp.client-ip=209.85.210.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-71456acebe8so1776262b3a.3
-        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 12:50:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1725047431; x=1725652231; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=I6QlsYvzYMyoJ1Ksug9tyv8g6XTQnvNg8jtnf6sK7fQ=;
-        b=XekhFN/eDLLhULgj+9yt+QR+Z8hd5PxKNrD99xDYp/sxEGJSYOG3IQlu3T0pogDAWs
-         /xQDJJeggNAdXJ1XA+rv9d7JtE6SIiob89+FJ2LGDNwmtuu/kQys5sPtub6TPiFPS5Lh
-         N8q5V7fZZQ/aCUnmpwRi7umO7NARDQaDHKXaoh5DP8ycTuy5IPhEz2VFbCOyF4umuO+8
-         Gvemy0goURud/zXa9fWQ6ly/rEYt4OZWFd5fOb0LCL1ekwVv7A8YRd5uwGj2wv+VqbNc
-         +AaoppnfB531dAEpzMSeLTfSXHXyvr9eCpTJt8lnHONJPSEC1lqH+GInCAVnofjVoCpt
-         W0Uw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725047431; x=1725652231;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=I6QlsYvzYMyoJ1Ksug9tyv8g6XTQnvNg8jtnf6sK7fQ=;
-        b=nPMsFkCCOap1ihN3CvEDZlTjLME4z6YiZDh+Xa9GJfY5Chi99/CpitsjcbTVHggwkp
-         /a6RGUFjUdb9rNGPoysJxVhRHuqCpMAifu5tg7Fao9favkJVZRazxqj3wEMQ1jLsShyv
-         Elqg9osmLETuConiyQwiyA+1jyDZnIhPAeUE2IL2uuNo6RZSbdFzHOTZDpbAPb/8uR0Y
-         NhcjFE5L9V1vdTJVHtm8GfCRNitW09PysUKbTciULCI7FanMc2OESbpqi1l+lJCRRsy3
-         vgijXLIKwLXFEXKKScYHMbmfawV5C+cCITtgULsE/o6W63aIXymz04pmgr7ntWazAh/9
-         8LvQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXvmO6xnHT9MfmZKLcD9n4SqNWv8vwionBWPTqNUGIRtcM2gatLCS4aGvh/U3kPTWEWhEqeBToscuGezJo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy//LdbvdXiV4wW0CqAgq84G3O9dgQPfC4sXGgwkUNrcIUNQedR
-	JhJ7IpGvDnPK0vQBlX5mv7fXAPgFYwY9b1UBnjLYe8YtWDw+ybBseExD6Z57Jn8=
-X-Google-Smtp-Source: AGHT+IEcm7YmlJtxqZsF4YzOMKYXwtY0ArLtbfsQjCm0ebmHvrq6+/sfSJC7izruBGlFJ/auiUixHg==
-X-Received: by 2002:a05:6a20:9c9b:b0:1cd:f065:4eec with SMTP id adf61e73a8af0-1cdf06555a8mr2551415637.41.1725047431173;
-        Fri, 30 Aug 2024 12:50:31 -0700 (PDT)
-Received: from localhost ([71.212.170.185])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7d22e7423c2sm3296998a12.17.2024.08.30.12.50.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 30 Aug 2024 12:50:30 -0700 (PDT)
-From: Kevin Hilman <khilman@baylibre.com>
-To: s-vadapalli@ti.com
-Cc: bhelgaas@google.com,
-	j-keerthy@ti.com,
-	kishon@kernel.org,
-	kw@linux.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-omap@vger.kernel.org,
-	linux-pci@vger.kernel.org,
-	lpieralisi@kernel.org,
-	manivannan.sadhasivam@linaro.org,
-	robh@kernel.org,
-	srk@ti.com,
-	stable@vger.kernel.org,
-	u-kumar1@ti.com,
-	vigneshr@ti.com
-Subject: Re: [PATCH 0/2] Fixes for the PCI dra7xx driver
-Date: Fri, 30 Aug 2024 12:50:30 -0700
-Message-ID: <20240830195030.3586919-1-khilman@baylibre.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20240827122422.985547-1-s-vadapalli@ti.com>
-References: <20240827122422.985547-1-s-vadapalli@ti.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D95B1D1300;
+	Fri, 30 Aug 2024 19:52:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725047531; cv=pass; b=bbQfUoKrAf4SuMhVyrokB8H8rTIicMU+2qQMWaD9QkWdrPnriVqBADQkrfEm4UvJ0gcABpqiIr5zVSwlKuCa6042EzyH+/A+Ijya9tHITQj/XPxexteRN5xZ7Bh4fmyDRV+wOQHJhaAD7/n+Idu/dLUMvToIZhCc0utb8xfSWGc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725047531; c=relaxed/simple;
+	bh=THEmys7qFAFk/emjfEmiQRoAoxxNPlyBk8CDDd/lAiE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nAy9mnDPP2DuPkF94tPiG0xELcitzSjE7SjIL0n3HIWXruPiWK+3S+zuvaHCP1rsW9Dd1+8LCjL4cHWGth5Cfw13m29ubxKZdN0165W9bV+zh3VPjNSc0wHNS4PW6KxFHrDxWfTKAPB+G09h/6rVQ/IVGibXFn3BTAvCd4Iia2s=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=cristian.ciocaltea@collabora.com header.b=ZpthUZPi; arc=pass smtp.client-ip=136.143.188.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1725047493; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=Fc5aKmQK2uAwBJfJnqtE5Q2Q+z+4uHVsRQC8QZAAQz3D7oe1q8ycADHvnuMlh5CbwAWHN8weyVTIJKI+NWtrlaSqfjnLkj9LxtNgOhTNDFbkIbxxaPfPNo7TNZCwc6/Iy5xjzAVVr6cL8Ymzqgv4vb2vW8YHbHQgw2CnASKJxXw=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1725047493; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=lZgsVPL1zIUPPX6fL1AfRoli7CWC0FdmvjcrwEFwrMY=; 
+	b=mPHFEHi72p36IknxA1gJVYdmIxG/VW/7t5atcKhAg1G+fPoB9chjlQW5EJB+X/Oyi+JTxa15w9cVgTRrKPRUn48QeqgkdDrtt5Dgr47iJcACScqdR/of0oaIc2OwEdNz9MnZf8I6Dk3VhedE/Cww6jV54jTm7sLBhWopSex4QOQ=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=cristian.ciocaltea@collabora.com;
+	dmarc=pass header.from=<cristian.ciocaltea@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1725047493;
+	s=zohomail; d=collabora.com; i=cristian.ciocaltea@collabora.com;
+	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=lZgsVPL1zIUPPX6fL1AfRoli7CWC0FdmvjcrwEFwrMY=;
+	b=ZpthUZPiBqmUHh7dkw1o9oxEFl1s1Tja+TkbYWkSHJJ4f1/tN6ZkTU7HKM76EuZr
+	chDfno7rrtP3f4eYS1z9mO2nnSwsRPrBsLEnt2hOegOPVEO8OHaoSBzeuc0crX/iRmZ
+	Lsyd3k/vlhb7qcn15ye3SsW3dJ//FrklIAWSrip0=
+Received: by mx.zohomail.com with SMTPS id 17250474912431006.0237532313579;
+	Fri, 30 Aug 2024 12:51:31 -0700 (PDT)
+Message-ID: <440c8b2b-035b-4983-b078-78252a17725d@collabora.com>
+Date: Fri, 30 Aug 2024 22:51:23 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5? 0/6] Tweaked basic Synopsys DW HDMI QP TX driver for
+ Rockchip RK3588
+To: Shimrra Shai <shimrrashai@gmail.com>
+Cc: Laurent.pinchart@ideasonboard.com, aarnoud@me.com, airlied@gmail.com,
+ algea.cao@rock-chips.com, andrzej.hajda@intel.com, andy.yan@rock-chips.com,
+ conor+dt@kernel.org, daniel@ffwll.ch, devicetree@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, heiko@sntech.de, hjc@rock-chips.com,
+ jernej.skrabec@gmail.com, jonas@kwiboo.se, krzk+dt@kernel.org,
+ ldearquer@gmail.com, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org,
+ maarten.lankhorst@linux.intel.com, markyao0591@gmail.com,
+ mripard@kernel.org, neil.armstrong@linaro.org, rfoss@kernel.org,
+ robh@kernel.org, s.hauer@pengutronix.de, tzimmermann@suse.de
+References: <68e78629-5a2c-433b-8c83-50ffced04268@collabora.com>
+ <20240830175440.2596-1-shimrrashai@gmail.com>
+Content-Language: en-US
+From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+In-Reply-To: <20240830175440.2596-1-shimrrashai@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ZohoMailClient: External
 
-> This series is based on commit
-> 3e9bff3bbe13 Merge tag 'vfs-6.11-rc6.fixes' of gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs
-> of Mainline Linux.
+Hi Shimrra,
+
+On 8/30/24 8:54 PM, Shimrra Shai wrote:
+> Cristian Ciocaltea wrote:
+>> Please stop doing this!
+>>
+>> I appreciate your intention to help, but this is not the proper way of
+>> doing it.  This is a work-in-progress series and you should have asked
+>> before taking over.  Please do not interfere with other people's work
+>> without having a preliminary agreement with the author(s).
+>>
+>> Additionally, before submitting any other patches, you should get
+>> familiar with the process - see [1] for a starting point.
+>>
 > 
-> The first patch fixes conversion to "devm_request_threaded_irq()" where
-> the IRQF_ONESHOT flag should have been added since the handler is NULL.
+> Hi Cristian,
 > 
-> The second patch fixes the error handling when IRQ request fails in the
-> probe function. The existing error handling doesn't cleanup the changes
-> performed prior to the IRQ request invocation.
+> Sorry, I did not know what the rules/norms/customs were around this
+> kind of thing here as I figured it was an open contribution space. I
+> did not know that I should have asked for agreement with you
+> beforehand. So go ahead and ignore this patch series if it goes
+> against the rules/customs. Even more if these points have already been
+> addressed, as redundant work is obviously not helpful.
 
-I tested this patch on v6.11-rc5 using a am57xx-beagle-x15 with a SATA
-drive connected to the eSATA port, and confirm that this allows
-booting again.
+This is an open community and, obviously, anyone is free to contribute
+without asking for permission.  However, taking over an ongoing work is
+nothing but a source of confusion.  You may do this for work that is known
+to be abandoned, e.g. the author(s) explicitly mentioned that in one of
+their last posts, or when there is no sign of activity for long enough
+time (usually months, for sure not days or weeks).  In the latter case, I
+find it reasonable to still ask for a confirmation that the submitter has
+no intention to continue or, at least, discuss the possibilities to join
+forces and help moving further.
 
-Reviewed-by: Kevin Hilman <khilman@baylibre.com>
+> That said, if there is some way to help along this project "the right
+> way", I would like to for sure! Just tell me what you'd _really_ need
+> help/assistance with to get this moved ahead and I'll see if I can
+> give it.
 
-Kevin
+Getting more testing on the series, reporting back the findings and/or
+providing fixes, would be much appreciated, for sure!  The goal is to land
+the basic functionality first, hence any new features should be submitted
+afterwards.
+
+Regards,
+Cristian
+
 
