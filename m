@@ -1,104 +1,165 @@
-Return-Path: <linux-kernel+bounces-309397-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309398-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45B169669D9
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 21:34:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 199659669DB
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 21:34:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9C2B8B25404
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 19:33:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4D01B1C256B9
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 19:34:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEBC71BD4F4;
-	Fri, 30 Aug 2024 19:30:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D07D01BDAA8;
+	Fri, 30 Aug 2024 19:33:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jXcp/9+s"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="EVFmW8zm"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02BF11531F5;
-	Fri, 30 Aug 2024 19:30:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C939633CD1
+	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 19:33:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725046237; cv=none; b=EsTvDOgk+3r8B5L7/BfFIqzk/IKEYmHbTWdGJIH7+WSWFs7cwXCrEU1f3d7l17+70A1A1hVb1saogbHULQyjKQeJ3/yRxRzjlC7LKk5EusDljyIixP3WAQTNQddmbMQ+nwCCVM5TJP1vZgLR2ZbVEb4EOc6wSdKkZchmrp8hsgw=
+	t=1725046384; cv=none; b=trGOVXT1NFNHelI6d3v/+1Ch9eGRqKRSQ196s71NAQezY/vwvEXP/G7qw/6W2b9xEYdUY8Iq8wbDqVleCNM4ISzawZMeCBlC6DOeDgeGHngpkz78qrqkeOV1OLWGL9eV1PCNBcfikMG1dnotA63Bw8JHnjVENJSu9sMv7hbZ69k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725046237; c=relaxed/simple;
-	bh=rz8KDKw3aTWGQcJdgAqnxUa0Kv/DBZMxKlXY8HtiKFw=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=FaySeFG/s3oIhW/0I9LJv+yWfA5UjmTWrcc0AN+RnMItV9Qu2wAIo7D8UaW8SVIRfT6qiMSZnqWbOEp0pjTKZwmIpPGXgJ0dOGf1WvNd10MqJ8zNBqKtejCLKCcYPDIUcvcsxzUTd9dJ2BT/ACl5XEIlIuWJNRagjlDe7ySvYzQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jXcp/9+s; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BC793C4CEC2;
-	Fri, 30 Aug 2024 19:30:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725046236;
-	bh=rz8KDKw3aTWGQcJdgAqnxUa0Kv/DBZMxKlXY8HtiKFw=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=jXcp/9+snMJHOYEgWuq8md6a8c055bh4zmF5ps27aLwFi5MpxHT10AitTZKkvZbt1
-	 nZFxYsO+Fqko0Vbwu+1leQo9D2jZhOMqBc2e0U+9zYp9EpLGswwYBMXk6ycolf74zO
-	 Mpn0hr/CtxZOBues2jY7VaWFauXfq0RBk8QH7nbKS6+p5tiZ0aCnLiKO2FOYNOjp7q
-	 +vzCwlLJL27xEPOQCp3P8/eWnlyiNa/Qb+xwKM/VXKk78JbZSbUWTxByHlQaM0yWxt
-	 wIciwVXClMWc8zuJzvVN4MtAVXK/SXDrcKA7Ic5taHyccl63gIsgN44tV8xq0IAHId
-	 tdLYhOGEMgNnw==
-From: Mark Brown <broonie@kernel.org>
-To: srinivas.kandagatla@linaro.org
-Cc: perex@perex.cz, tiwai@suse.com, alsa-devel@alsa-project.org, 
- linux-arm-msm@vger.kernel.org, linux-sound@vger.kernel.org, 
- linux-kernel@vger.kernel.org, amit.pundir@linaro.org, 
- dmitry.baryshkov@linaro.org
-In-Reply-To: <20240816091210.50172-1-srinivas.kandagatla@linaro.org>
-References: <20240816091210.50172-1-srinivas.kandagatla@linaro.org>
-Subject: Re: [PATCH v2] ASoC: codecs: lpass-va-macro: set the default codec
- version for sm8250
-Message-Id: <172504623446.461126.12391681424311035210.b4-ty@kernel.org>
-Date: Fri, 30 Aug 2024 20:30:34 +0100
+	s=arc-20240116; t=1725046384; c=relaxed/simple;
+	bh=EGQHQ9fk8ZiqDNL6+X+CQQWMMmNTIja/SNDq7dE//XE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nzB01es6JYefzQYuQNmFbeV0YXS/bIUZFnk5DLF5S48EumhQmv9/0MmyStyMqOL+ttYgA0iX6aznKwWwkINGuslB0ms0UvQBGbzRTgP53nh0Ds8xowTdOeet0Rvbhf4gKc7gCvYJ2I5UTIfF0FRD0XhiqTcLdyOuJdJTv2GoQbA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=EVFmW8zm; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1725046379;
+	bh=EGQHQ9fk8ZiqDNL6+X+CQQWMMmNTIja/SNDq7dE//XE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=EVFmW8zm6BHJo4kzQuf1Ng1cIjCUEEe08QXEAtUdXsssM/A105UrkQdJEMDQECxWE
+	 DHIr8fVYHbhGxUtopqOj0q5rhUp0kfQtf/yjp8xRxmRMH2lSimy5tN/OyK5H743Tm8
+	 4d+9tqLjSE7YXJ7Y68c8NOoX00M+WTBarAwkVVkM/SV1Z1JQIhQy8O3cpVEV8haA24
+	 ZY2UXS8KGYs+opY/035pG4aoDHkoi51ImMzy1eCdlghZ8fqsak6V/ewfxXm2hV8VMM
+	 BaO0B6HpVFcQwwq8KrWahZYQ+V4fY4EkMHfZNpQEah1kGPn22KK12KJTO9fEt/4bPk
+	 t8wGKP+MMkeQA==
+Received: from notapiano (pool-100-2-116-133.nycmny.fios.verizon.net [100.2.116.133])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: nfraprado)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id F2CED17E114A;
+	Fri, 30 Aug 2024 21:32:58 +0200 (CEST)
+Date: Fri, 30 Aug 2024 15:32:56 -0400
+From: =?utf-8?B?TsOtY29sYXMgRi4gUi4gQS4=?= Prado <nfraprado@collabora.com>
+To: Yan Zhen <yanzhen@vivo.com>
+Cc: matthias.bgg@gmail.com, angelogioacchino.delregno@collabora.com,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, opensource.kernel@vivo.com
+Subject: Re: [PATCH v2] soc: mediatek: Simplify with dev_err_probe()
+Message-ID: <d269df37-3bf9-45fd-8e3f-fb4f36ff9d8f@notapiano>
+References: <20240830080538.376200-1-yanzhen@vivo.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-37811
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240830080538.376200-1-yanzhen@vivo.com>
 
-On Fri, 16 Aug 2024 10:12:10 +0100, srinivas.kandagatla@linaro.org wrote:
-> sm8250 and sc7280 have lpass codec version 1.0, as these are very old
-> platforms, they do not have a reliable way to get the codec version
-> from core_id registers.
+Hi,
+
+thank you for the patch. See comments below.
+
+On Fri, Aug 30, 2024 at 04:05:38PM +0800, Yan Zhen wrote:
+> Using dev_err_probe() to simplify the error path and unify a 
+> message template.
 > 
-> On codec versions below 2.0, even though the core_id registers are
-> available to read, the values of these registers are not unique to be
-> able to determine the version of the codec dynamically.
+
+From [1]:
+
+  Describe your changes in imperative mood, e.g. “make xyzzy do frotz” instead of
+  “[This patch] makes xyzzy do frotz” or “[I] changed xyzzy to do frotz”, as if
+  you are giving orders to the codebase to change its behaviour.
+
+[1] https://www.kernel.org/doc/html/latest/process/submitting-patches.html#describe-your-changes
+
+So should be "Use dev_err_probe()...".
+
+Also, the commit summary seems a bit too broad, please add "mtk-mmsys:" in the
+subsystem:
+
+  soc: mediatek: mtk-mmsys: Simplify with dev_err_probe()
+
+> Using this helper is totally fine even if err is known to never
+> be -EPROBE_DEFER.
 > 
-> [...]
+> The benefit compared to a normal dev_err() is the standardized format
+> of the error code, it being emitted symbolically and the fact that
+> the error code is returned which allows more compact error paths.
+> 
+> Signed-off-by: Yan Zhen <yanzhen@vivo.com>
+> ---
+> 
+> Changes in v2:
+> - Get rid of `ret = PTR_ERR(mmsys->regs);`.
+> 
+>  drivers/soc/mediatek/mtk-mmsys.c | 15 ++++++---------
+>  1 file changed, 6 insertions(+), 9 deletions(-)
+> 
+> diff --git a/drivers/soc/mediatek/mtk-mmsys.c b/drivers/soc/mediatek/mtk-mmsys.c
+> index 938240714e54..a6e0c41c10ab 100644
+> --- a/drivers/soc/mediatek/mtk-mmsys.c
+> +++ b/drivers/soc/mediatek/mtk-mmsys.c
+> @@ -397,11 +397,9 @@ static int mtk_mmsys_probe(struct platform_device *pdev)
+>  		return -ENOMEM;
+>  
+>  	mmsys->regs = devm_platform_ioremap_resource(pdev, 0);
+> -	if (IS_ERR(mmsys->regs)) {
+> -		ret = PTR_ERR(mmsys->regs);
+> -		dev_err(dev, "Failed to ioremap mmsys registers: %d\n", ret);
+> -		return ret;
+> -	}
+> +	if (IS_ERR(mmsys->regs))
+> +		return dev_err_probe(dev, PTR_ERR(mmsys->regs),
+> +					"Failed to ioremap mmsys registers");
 
-Applied to
+You're missing the \n at the end of the string.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+Also, would look nicer if it was aligned like so:
 
-Thanks!
+		return dev_err_probe(dev, PTR_ERR(mmsys->regs),
+				     "Failed to ioremap mmsys registers\n");
 
-[1/1] ASoC: codecs: lpass-va-macro: set the default codec version for sm8250
-      commit: 77212f300bfd6fb3edaabd1daf863cabb521854a
+>  
+>  	mmsys->data = of_device_get_match_data(&pdev->dev);
+>  
+> @@ -413,10 +411,9 @@ static int mtk_mmsys_probe(struct platform_device *pdev)
+>  		mmsys->rcdev.ops = &mtk_mmsys_reset_ops;
+>  		mmsys->rcdev.of_node = pdev->dev.of_node;
+>  		ret = devm_reset_controller_register(&pdev->dev, &mmsys->rcdev);
+> -		if (ret) {
+> -			dev_err(&pdev->dev, "Couldn't register mmsys reset controller: %d\n", ret);
+> -			return ret;
+> -		}
+> +		if (ret)
+> +			dev_err_probe(&pdev->dev, ret,
+> +					"Couldn't register mmsys reset controller");
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
+You're missing the return here. And the \n is also missing.
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+Also, here checkpatch actually complains about the alignment (run
+'scripts/checkpatch.pl --strict' on your patch).
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+CHECK: Alignment should match open parenthesis
+#50: FILE: drivers/soc/mediatek/mtk-mmsys.c:416:
++			dev_err_probe(&pdev->dev, ret,
++					"Couldn't register mmsys reset controller");
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+After making those changes you can add
+
+Reviewed-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
 
 Thanks,
-Mark
-
+Nícolas
 
