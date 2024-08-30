@@ -1,174 +1,168 @@
-Return-Path: <linux-kernel+bounces-309520-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309522-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0088966C3A
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 00:24:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id ACFBD966C45
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 00:25:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D59FA1C21990
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 22:24:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1A2CBB21ADD
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 22:25:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12C671C1AB3;
-	Fri, 30 Aug 2024 22:24:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B993B1C1AAC;
+	Fri, 30 Aug 2024 22:24:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="dXd8fPOJ"
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HCCqfKnv"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45AAE1C175C
-	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 22:24:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F19C136337;
+	Fri, 30 Aug 2024 22:24:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725056659; cv=none; b=rhVRJU7vc5YVt9vLKPrvx09sqyitlADy/mztPe211tfJlF8fMtcBpgi7s/HcKJx2B6H6IsK2lSF7cZ3H4H1Fu/KGLASkc7KicExPaXNul4qmnhk20cQw/rmkSm0mNUxF+xcdIKxzmLNcrZbMtWgiJ+LCrPsA62Td6hVP0+pOww4=
+	t=1725056684; cv=none; b=G/id5JVL7cljSfAXjehyiAd7FPMuVWug/mAWf/U0Vx92JA8mekXPU7pDz91sUY6y9Iyq+SkUkGL8RzzV/j4Z1FtaiD3HIXP+u482YfIlauVhHi3HWaF2xtuKM6MDPZ4ScHDV8bt7gl13qIhTqCAJyn6tlPADYWU881pqelti5Dg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725056659; c=relaxed/simple;
-	bh=I2A/VR8wR7MpkPgXSTzbihxC7ZqnWdWFXtl6dOWUKTI=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=b8q0szTzZdUHsQClmkGr031HY6YyKshPYUlsqKwxSlEnWdNG9T6KWGvurPmt4zUwNKtGOI2+/y9pXUQmhGdW45vaHVf4UxcM6No6YTVThybptGc1my773YqeHLkXp+iaPDa1D43wd2f1SxzJKcSCDntea2QdV00IZ/IIvc9RBVg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=dXd8fPOJ; arc=none smtp.client-ip=209.85.167.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-5333b2fbedaso3899189e87.0
-        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 15:24:16 -0700 (PDT)
+	s=arc-20240116; t=1725056684; c=relaxed/simple;
+	bh=Ngr9/febxtlS7xmY7K0UaawwcsoKa8aW6rBes7FLKBs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nv87CMYOJXFvcUIwCSixJJS9graW/8kiIbhKB2jn4h2mTG41/YPOF2DJ1JNALLXDyOs/p0J6EobPFuxcWwxttEnIpa7Xmu+f7nNxoxxe7jgaiob2/AdjAhH7DYVFj9OnPnok45rJOlanFDJzQZTopS/dYm1Od3cQNVfxla9X0xo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HCCqfKnv; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-42bb81e795bso17336175e9.1;
+        Fri, 30 Aug 2024 15:24:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1725056655; x=1725661455; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZByxaspb+X+I9ALGw8uaa+qlzTqyVZ4/M5r6mYzzVAk=;
-        b=dXd8fPOJivpjU9934mEMb5iskqoxP1XsRCfT1iv3UeOLS+xGNphOgAMEIIAOnolOyd
-         gGrHhbRlOyj4BD3pVXncRvj9NFFgqhTN4O9aqgiiqULX1MQpPnYJUCPgqFrte0bz6w0A
-         D+Ym26vHtVgbaIHhwPdGtkLrSEXXwNyNFLV1RxNrAN1sqTvnWTZbDTCvQ+N912Iz57gj
-         Atc903vT873+CpP9bKoPSl00WWqv4pcUBfu7vSGObrm8kVG/clsVvqQDNXLWYM9hd7Rf
-         1NvSh04Hr4dPiB87cTy5HYmRFoA8LSshl4srzV0k+r4OZ4PakN6g+6qhFR2KPVakPrK7
-         UYKQ==
+        d=gmail.com; s=20230601; t=1725056681; x=1725661481; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=PMu8xuM4A8JgaI03qzs8RyiKKY0OlctnI6474Q81v7Y=;
+        b=HCCqfKnveSGQiAOI+Vk/ziFlO6wc6/fpz1BD9n3TMvwBnCyWYIkftadecDxCvbbSQp
+         wV/Z0fDn5w99QYbjJsUs/nIXuHScz7zUddU6WxZjjFcxWD7XC2aWbEnxGSE4+DVP3l5+
+         VLVx6NcH+x88E8slBl+thgdbSOSFjkjdtHPWetucSt6pi7CAE/yqGQuxlAJ3B83cgrE7
+         nwOclCrH0sI9q+Gsfh6XJxF1iCmbtu0OtUT0LlcqlSYL/6kIR363XVNd4E/J+SO4fekX
+         VUEOEmtCBKB4bCHDljy+hOeeot8ReYjF3/X9IBSRFBE+2yfN2CfoFh8hLkaRyr3tj8xc
+         cadA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725056655; x=1725661455;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZByxaspb+X+I9ALGw8uaa+qlzTqyVZ4/M5r6mYzzVAk=;
-        b=LgZxb5a8wpPdbm5lsji+4+NpWA3yNhL0BX3n/7bSpZbg2/T4DMjOT3FIfC+dl7Gh82
-         RN81yZryLSJLyfN7lhA1bV1+dO91E98wyWcNvJmQeMuROPsoc37HnQP46YG9IRfXPzlL
-         YkAOj5fWeLaGNjKRAcgWamyU0tZLWIV8FoddToh+yMN7Hz085IaENR9sqORjcyiH2WcX
-         oDVtdANx9vgj5c9WdlCBhWIgwP+vqSluC4pke21XbOv2OgtPDMDhIq4g713HpKQYCNvl
-         rRwprG+xEP3f0OZhhK2WufQUT2WNIirN3EKY+WIIDGfmU9AQtPdAJ0x05JMTJGmwtE3W
-         Q07g==
-X-Forwarded-Encrypted: i=1; AJvYcCW4lYkJE8O8n9hO9X2OfaJCGpjxkT1RYewYNM+1xHn6KJT0JDewgqAHDj73ElT39IY+VCYido3aeSN2vGI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywhw8HcrtG8odiceJfaWfBjyJe07pSNmighFVrAvbwHEUSY1Ou6
-	hSDghDzHp0Pgo1u76hKOEj6c0FwkF5zlyyWiF7LSlkBW/3tdAXr8oI9m6M+oMtY=
-X-Google-Smtp-Source: AGHT+IEvdHooOQ4c79uL08xEr1R8wS5rhUagjmDM7pNj1mHniRMIUAYAy3nLL08iJ8o1/B9AwpJ1xg==
-X-Received: by 2002:a05:6512:4011:b0:52e:a008:8f55 with SMTP id 2adb3069b0e04-53546b8d58cmr2395569e87.41.1725056654728;
-        Fri, 30 Aug 2024 15:24:14 -0700 (PDT)
-Received: from localhost (host-80-182-198-72.pool80182.interbusiness.it. [80.182.198.72])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a89891a3e52sm256742866b.116.2024.08.30.15.24.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 30 Aug 2024 15:24:14 -0700 (PDT)
-From: Andrea della Porta <andrea.porta@suse.com>
-X-Google-Original-From: Andrea della Porta <aporta@suse.de>
-Date: Sat, 31 Aug 2024 00:24:21 +0200
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Andrea della Porta <andrea.porta@suse.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Derek Kiernan <derek.kiernan@amd.com>,
-	Dragan Cvetic <dragan.cvetic@amd.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Saravana Kannan <saravanak@google.com>,
-	Bjorn Helgaas <bhelgaas@google.com>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org, netdev@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-arch@vger.kernel.org,
-	Lee Jones <lee@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
-	Stefan Wahren <wahrenst@gmx.net>
-Subject: Re: [PATCH 09/11] arm64: defconfig: Enable RP1 misc/clock/gpio
- drivers as built-in
-Message-ID: <ZtJGlX19ODk1mmrA@apocalypse>
-References: <cover.1724159867.git.andrea.porta@suse.com>
- <7ec76ec9b10ef1d840a566dab35497bf2d40b437.1724159867.git.andrea.porta@suse.com>
- <woewl6x7zyetuv3lc22kkmk2pptbfgoribtk6ziqmwjqxnm6rl@npv7tkquzqym>
+        d=1e100.net; s=20230601; t=1725056681; x=1725661481;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=PMu8xuM4A8JgaI03qzs8RyiKKY0OlctnI6474Q81v7Y=;
+        b=OuRW805SZz/fbBOSSsm0XkvN/Q47Y1KoEt8Phvj86HsYyjCCQZqciL+S77VZZTnnkD
+         MnBauV59cxzQMSbZpoUHRrnLh4AbQ5XjLTSYITQU13PZHE0PnfNIcbWPheJRtTzn0vpu
+         XY1CJct26ui7NxxiLy5jNfMvMzsmOHDaNvy4f3oP9oC/IPnR8VxT+KmVERjT8sGFUshj
+         ghb+Jxo25vslkpNSS9s0lWtavylxm7wV3xZMWVNnX2yV++kcv3Vro+8WRnkcD50uwjIU
+         RmOCs+KX7VkjmAG6OTW5gHNuTE7CmcOAbyQObTC9TmRAI20eO4N74v4VarvOmc+UaeIK
+         3gyQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVAlrxbUvZ2rwzwSZk21UZaMqsYpa3+M9mD8EO66hJhCMAKOdd98rkLfzeM88EI6kublbRL0hnCgImgbjEG@vger.kernel.org, AJvYcCVoynB+VRCDf83eZ3NCvnzkETJwekxT8MNtNyog5H0SAhSSLzEpyEDh16V/rM2WUg2TIcmSrYhZJoA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw1aaPEZJ6V/jaRQ6FPw7mmR6eM5IxdnGbyZC62jxMVoE1EuLxE
+	3rad0XeYqMIbG8wP7oiFnTnSFKMWgcgFwWF4O4d9XHCL/Sbz29r+
+X-Google-Smtp-Source: AGHT+IH4YQZXnwbhyHlXSXIcq5R6GiimdE0PpvIrTJiTNcEakPp1RQ8gmEDH9PJNVOk9MmXo1lMOxQ==
+X-Received: by 2002:a05:600c:138e:b0:428:c0a:27ea with SMTP id 5b1f17b1804b1-42bbb205ac6mr27182405e9.12.1725056679958;
+        Fri, 30 Aug 2024 15:24:39 -0700 (PDT)
+Received: from ?IPV6:2a02:6b6f:e750:7600:c5:51ce:2b5:970b? ([2a02:6b6f:e750:7600:c5:51ce:2b5:970b])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42bbc87773fsm25956195e9.0.2024.08.30.15.24.39
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 30 Aug 2024 15:24:39 -0700 (PDT)
+Message-ID: <cb141207-6065-4ee5-9e69-2d4ffd9eb7f3@gmail.com>
+Date: Fri, 30 Aug 2024 23:24:39 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <woewl6x7zyetuv3lc22kkmk2pptbfgoribtk6ziqmwjqxnm6rl@npv7tkquzqym>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] efi: reserve memory for tpm_log only if TPM final events
+ table is valid
+To: Gregory Price <gourry@gourry.net>
+Cc: ardb@kernel.org, linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org,
+ leitao@debian.org
+References: <20240830212852.2794145-1-usamaarif642@gmail.com>
+ <ZtI82gt30kUhwkFY@PC2K9PVX.TheFacebook.com>
+ <30f285bc-7540-4d70-8b6c-11675b68e9e4@gmail.com>
+ <1a31390d-f452-4d53-84a9-b9fb2af71e4c@gmail.com>
+ <ZtJAnkd3Rkh5Amfb@PC2K9PVX.TheFacebook.com>
+Content-Language: en-US
+From: Usama Arif <usamaarif642@gmail.com>
+In-Reply-To: <ZtJAnkd3Rkh5Amfb@PC2K9PVX.TheFacebook.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Krzysztof,
 
-On 10:47 Wed 21 Aug     , Krzysztof Kozlowski wrote:
-> On Tue, Aug 20, 2024 at 04:36:11PM +0200, Andrea della Porta wrote:
-> > Select the RP1 drivers needed to operate the PCI endpoint containing
-> > several peripherals such as Ethernet and USB Controller. This chip is
-> > present on RaspberryPi 5.
-> > 
-> > Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
-> > ---
-> >  arch/arm64/configs/defconfig | 3 +++
-> >  1 file changed, 3 insertions(+)
-> > 
-> > diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-> > index 7d32fca64996..e7615c464680 100644
-> > --- a/arch/arm64/configs/defconfig
-> > +++ b/arch/arm64/configs/defconfig
-> > @@ -606,6 +606,7 @@ CONFIG_PINCTRL_QCM2290=y
-> >  CONFIG_PINCTRL_QCS404=y
-> >  CONFIG_PINCTRL_QDF2XXX=y
-> >  CONFIG_PINCTRL_QDU1000=y
-> > +CONFIG_PINCTRL_RP1=y
-> >  CONFIG_PINCTRL_SA8775P=y
-> >  CONFIG_PINCTRL_SC7180=y
-> >  CONFIG_PINCTRL_SC7280=y
-> > @@ -685,6 +686,7 @@ CONFIG_SENSORS_RASPBERRYPI_HWMON=m
-> >  CONFIG_SENSORS_SL28CPLD=m
-> >  CONFIG_SENSORS_INA2XX=m
-> >  CONFIG_SENSORS_INA3221=m
-> > +CONFIG_MISC_RP1=y
+
+On 30/08/2024 17:58, Gregory Price wrote:
+> On Fri, Aug 30, 2024 at 10:52:48PM +0100, Usama Arif wrote:
+>>
+>>
+>> On 30/08/2024 17:49, Usama Arif wrote:
+>>>
+>>>
+>>> On 30/08/2024 17:42, Gregory Price wrote:
+>>>> On Fri, Aug 30, 2024 at 10:28:52PM +0100, Usama Arif wrote:
+>>>>> If efi.tpm_log is corrupted, log_tbl->size can be garbage (and
+>>>>> negative). This can result in a large memblock reservation, resulting
+>>>>> in the kernel booting without sufficient memory. Move the memblock
+>>>>> reservation after log_tbl->version check, and check the value of
+>>>>> both tbl_size and memblock_reserve.
+>>>>>
+>>>>> Signed-off-by: Usama Arif <usamaarif642@gmail.com>
+>>>>> ---
+>>>>>  drivers/firmware/efi/tpm.c | 16 +++++++++++++---
+>>>>>  1 file changed, 13 insertions(+), 3 deletions(-)
+>>>>>
+>>>>> diff --git a/drivers/firmware/efi/tpm.c b/drivers/firmware/efi/tpm.c
+>>>>> index e8d69bd548f3..cfc6a065f441 100644
+>>>>> --- a/drivers/firmware/efi/tpm.c
+>>>>> +++ b/drivers/firmware/efi/tpm.c
+>>>>> @@ -59,9 +59,6 @@ int __init efi_tpm_eventlog_init(void)
+>>>>>  		return -ENOMEM;
+>>>>>  	}
+>>>>>  
+>>>>> -	tbl_size = sizeof(*log_tbl) + log_tbl->size;
+>>>>> -	memblock_reserve(efi.tpm_log, tbl_size);
+>>>>> -
+>>>>>  	if (efi.tpm_final_log == EFI_INVALID_TABLE_ADDR) {
+>>>>>  		pr_info("TPM Final Events table not present\n");
+>>>>>  		goto out;
+>>>>
+>>>> The final event table is not present in TCG 1_2 format, but the
+>>>> tpm log still needs to be mapped.  So this change is incorrect for
+>>>> v1_2.
+>>>
+>>> hmm so we have 
+>>>
+>>> 	if (efi.tpm_final_log == EFI_INVALID_TABLE_ADDR) {
+>>> 		pr_info("TPM Final Events table not present\n");
+>>> 		goto out;
+>>> 	} else if (log_tbl->version != EFI_TCG2_EVENT_LOG_FORMAT_TCG_2) {
+>>> 		pr_warn(FW_BUG "TPM Final Events table invalid\n");
+>>> 		goto out;
+>>> 	}
+>>>
+>>> If the format is TCG 1_2, then log_tbl is not used?
+>>>
+>>
+>> Ah its the case that log_tbl->size will be valid, even if its TCG 2.
+>> Got it, Thanks!
 > 
-> Module?
-
-Ack.
-
+> No, not necessarily.  The corruption issue is entirely separate from the
+> patches here. size can technically be 0xffffffff and treated as valid
+> because as far as I can see the spec does not define a maximum size.
 > 
-> >  CONFIG_THERMAL_GOV_POWER_ALLOCATOR=y
-> >  CONFIG_CPU_THERMAL=y
-> >  CONFIG_DEVFREQ_THERMAL=y
-> > @@ -1259,6 +1261,7 @@ CONFIG_COMMON_CLK_CS2000_CP=y
-> >  CONFIG_COMMON_CLK_FSL_SAI=y
-> >  CONFIG_COMMON_CLK_S2MPS11=y
-> >  CONFIG_COMMON_CLK_PWM=y
-> > +CONFIG_COMMON_CLK_RP1=y
+> the tl;dr here is that the above checks on tpm_final_log and log_tbl->version
+> gate mapping/operating on the final log - but do not have anything to
+> say about the event log.
 > 
-> Module?
-
-Ack.
-
-Many thanks,
-Andrea
-
+> There isn't really a good sanity check for whether or not to memblock_reserve
+> the log.  Possibly you add a LOG_FORMAT_MAX and check if version >= MAX,
+> but again that should be separate from the change that checks the return
+> value of the memblock_reserve call.
 > 
-> >  CONFIG_COMMON_CLK_RS9_PCIE=y
-> >  CONFIG_COMMON_CLK_VC3=y
-> >  CONFIG_COMMON_CLK_VC5=y
-> > -- 
-> > 2.35.3
-> > 
+> ~Gregory
+
+Yes, makes sense. Thanks!
+
 
