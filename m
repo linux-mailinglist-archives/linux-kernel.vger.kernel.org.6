@@ -1,206 +1,201 @@
-Return-Path: <linux-kernel+bounces-309174-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309175-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 868EC96670A
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 18:34:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C49B396670D
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 18:36:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EB10DB209D6
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 16:34:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E97BE1C22944
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 16:36:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 950EC16C6B4;
-	Fri, 30 Aug 2024 16:34:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D94D41B3B2D;
+	Fri, 30 Aug 2024 16:36:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Puiqd24N"
-Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="i+md4WnA"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27D5513BAE2;
-	Fri, 30 Aug 2024 16:34:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CE5D13BAE2;
+	Fri, 30 Aug 2024 16:35:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725035681; cv=none; b=oKCeod8lWt+dTNtivDpgCzkCjv6v8V91lB09bJepHhmO6K8QT7nkkuXLgsX8Ck3Xyek6PAMYD3Wz4h/cz6sidJHeNgKFphy48/2fImEWErkZbwChpccsz2NyXD3ihgQJiKBP3/7YsFecO9ltzfewPgKItflRUBJgIhHHWORsvXA=
+	t=1725035761; cv=none; b=Cxw2UYNMKfvN5bZxwmv85KOxumPuf9yApu5QZUa7BOlfkOmGAegxW5J+f8gs77JJtK5rUIYjtyzmY04xxVYuqYY1E7G0VGGDXUv/BAgSiYkKppTXZUqIqwDjzeUblC+SOIZzwc013P57shYySDGzHOJQ82vI68M4BRZaQC1okOY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725035681; c=relaxed/simple;
-	bh=iFzf0Lzty/5yMH4AQkyBN8IKf0cDxoABsMXKbvCcmOs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NwrBylRx7TfXzlA5XkJUV3keV6zekemM50rbnHheIHB0YEC2n9jLixal4ufmeJPoVJRCgkACimfXnQUdC1C+k+rO8noIzCWtOD3TAZqS0nkbGSF7ab6tC/BkzTzJCUR+NY1bGNWFHyqQGcwdcNRmk6SZ1iN8CQfkJu9D6Z7cpnY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Puiqd24N; arc=none smtp.client-ip=209.85.160.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-4567587224eso11463331cf.0;
-        Fri, 30 Aug 2024 09:34:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725035679; x=1725640479; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1UuncYEpLqNPDMV52iLjYpBbuWE5/gdn/gZaZV8ruJY=;
-        b=Puiqd24NQZlWnZgk1/yUZR99GzL1zJPOjywXqWrwAtE5RDy2S9/X3qowjvYrFnzzX9
-         iBkLa1ICqmf9kTfzIfzuk8vxXNhORN2MWczDJApLDQwj8lq5VZXIuVDmIhP3SwcoHzJW
-         FZ8mh3KAS/yftmw0uynn53cZMwf+DOioFQOG+BqM7dMy/S8HI4pv/l36YetqK9WOHIff
-         o0a13sdE60rolPsJAw3odlrTIxp+RN4idBiSZkDg7Ipp/5e9Piw1h+Eh+iyk+5S4hsyq
-         z8EQGdJEI2kByF10+85dGyCbDDYZUmOyRmK3gR3awlMXLRqR3sfqo4tqb9fkaYaEXwnS
-         CM5w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725035679; x=1725640479;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1UuncYEpLqNPDMV52iLjYpBbuWE5/gdn/gZaZV8ruJY=;
-        b=nltI63mY10utEQfGMxR6VadU6LAPWKHXWWQdcUpQNvaDDY06Nqz/zSm6lqnAOqZQgy
-         IOqKEuYPF5LQtRxkZYp0Ai+KMCymeyimDejom0XZAT4PHJv+46KOxkGYTAoc4NWI8ESx
-         eM/BV9SH+/CS5X7cTZJMIWXNiFCL44KxQWe05Q2LpwFQFyPmHEdM6MNuNfmVjWUNC22e
-         5ZbS16um0yX8izD5uk03iJueuUhj4hgDoB0iGu5qes4a0IUPcHpdSMiySkSkowKRHM96
-         z8jlTGtCFXBvD+giDfBiLjkNcrObaVMHKrNLFjH2DNlB+ziSZVg7DayyZNeQmZjZoPnm
-         k15w==
-X-Forwarded-Encrypted: i=1; AJvYcCU1jG9UhAGFtxIjCgUOvf9kuKmgg3gfznflX4LZuCMg9FpB7/t4/VEgC/xMwfnJ6GEPOENxjqk34FrA3O4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz7cFtS0TcNIh9fpVfKFuwX4UXUKV3UvThgnofdNlU3qv0c1mPu
-	yTK95hQAxvtDNvJZuzfTp/o7oGTFA83IAop+n1pQvNiHePyGuUth
-X-Google-Smtp-Source: AGHT+IEThTZ4xKh5mN+fRZwI2iFzvcos3RJSkzDDdnkBqxXLHqtt0P1KtSwmRav6LrT88HooOIUBUg==
-X-Received: by 2002:a05:6214:418a:b0:6bf:6b15:a6da with SMTP id 6a1803df08f44-6c33e62780bmr64898766d6.25.1725035678888;
-        Fri, 30 Aug 2024 09:34:38 -0700 (PDT)
-Received: from fauth2-smtp.messagingengine.com (fauth2-smtp.messagingengine.com. [103.168.172.201])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6c340cacccbsm15931756d6.129.2024.08.30.09.34.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 30 Aug 2024 09:34:38 -0700 (PDT)
-Received: from phl-compute-06.internal (phl-compute-06.nyi.internal [10.202.2.46])
-	by mailfauth.nyi.internal (Postfix) with ESMTP id E5C4B1200043;
-	Fri, 30 Aug 2024 12:34:37 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-06.internal (MEProxy); Fri, 30 Aug 2024 12:34:37 -0400
-X-ME-Sender: <xms:nfTRZry0Qlh7vpx1oQqcnKrHGRnb4XIcP2_LWErdrEdaHgWNcOzIjA>
-    <xme:nfTRZjT4DXD4UNmxoderv9V9XGFIckmXGcI4FQr5vVt1UAQ-4Bc45G9gGJu94VYDr
-    VVe2k7QhuYmp2PGJg>
-X-ME-Received: <xmr:nfTRZlW-QSJNpEbZwnYRS7jNuNcxmVNHDyfwXIawU7sET36IOVmMYCtgvfw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudefiedguddtvdcutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtuggjsehttdertddttddv
-    necuhfhrohhmpeeuohhquhhnucfhvghnghcuoegsohhquhhnrdhfvghnghesghhmrghilh
-    drtghomheqnecuggftrfgrthhtvghrnhepffdtiefhieegtddvueeuffeiteevtdegjeeu
-    hffhgfdugfefgefgfedtieeghedvnecuffhomhgrihhnpehgihhthhhusgdrtghomhenuc
-    evlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegsohhquhhn
-    odhmvghsmhhtphgruhhthhhpvghrshhonhgrlhhithihqdeiledvgeehtdeigedqudejje
-    ekheehhedvqdgsohhquhhnrdhfvghngheppehgmhgrihhlrdgtohhmsehfihigmhgvrdhn
-    rghmvgdpnhgspghrtghpthhtohepuddvpdhmohguvgepshhmthhpohhuthdprhgtphhtth
-    hopehgrghrhiesghgrrhihghhuohdrnhgvthdprhgtphhtthhopehruhhsthdqfhhorhdq
-    lhhinhhugiesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqd
-    hkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehojhgvuggr
-    sehkvghrnhgvlhdrohhrghdprhgtphhtthhopegrlhgvgidrghgrhihnohhrsehgmhgrih
-    hlrdgtohhmpdhrtghpthhtohepfigvughsohhnrghfsehgmhgrihhlrdgtohhmpdhrtghp
-    thhtohepsghjohhrnhefpghghhesphhrohhtohhnmhgrihhlrdgtohhmpdhrtghpthhtoh
-    epsggvnhhnohdrlhhoshhsihhnsehprhhothhonhdrmhgvpdhrtghpthhtoheprgdrhhhi
-    nhgusghorhhgsehsrghmshhunhhgrdgtohhm
-X-ME-Proxy: <xmx:nfTRZljUPRhh4BLtS3S152_uk6oC6aVTf-wtsK3jDw3uA01q20xqTg>
-    <xmx:nfTRZtA9fix1m5OJctmIseslus_qaASqiGxIsCnRJUJAdKLjV7rI1g>
-    <xmx:nfTRZuLN7zkwJTfmoddc4fjtzJnjn6SZR70R3z6KxeMDnvBWXRodlw>
-    <xmx:nfTRZsBGCVl5PhHJZjxTP7gPjMa4mj51fmFi-5eKzOcXYG-xqy2lqA>
-    <xmx:nfTRZpxsNACeIxEEmv6xIsnaWKX6x2H86uekq6gmzrpucpwqwyyzgreA>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 30 Aug 2024 12:34:37 -0400 (EDT)
-Date: Fri, 30 Aug 2024 09:34:36 -0700
-From: Boqun Feng <boqun.feng@gmail.com>
-To: Gary Guo <gary@garyguo.net>
-Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Wedson Almeida Filho <wedsonaf@gmail.com>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@samsung.com>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>
-Subject: Re: [RFC PATCH] rust: Provide correct provenance when constructing
- THIS_MODULE
-Message-ID: <ZtH0nK8ytZCiZs-_@Boquns-Mac-mini.local>
-References: <20240828180129.4046355-1-boqun.feng@gmail.com>
- <20240830160532.4a526a62@eugeo>
+	s=arc-20240116; t=1725035761; c=relaxed/simple;
+	bh=rgX8SAslmVIKpEMoWAeWNHrbuviZUn9GPTO/3yea1tg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=cagYBrYXPSmtHTGGSudv4QKIdOZ+dTvX9CjtGnFiYCl0kYozgKHtDGXGeZ5CWJhb3ILVtqf7/qi1u2YjFdkIIeIl7CNaxUWmg4yQIrD6t7DpyYKa2yNQUj/GCwecact0zyR/OAssTwdTvTByrkwNAdJz3sA1QlSMuTTcoEzjpuE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=i+md4WnA; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47UGHBPg028956;
+	Fri, 30 Aug 2024 16:35:39 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	+3jUVHCU8Z6xeBgVwpy69fXyaiHuZQoYJBZ0GepdZzw=; b=i+md4WnAbwS2YHOf
+	7otXOJtq3A8XLxV05jC4Uf0dX+cN9G0iGJ7cZ9AY4py06mUjJBIT5lCaxUSDmAvP
+	B6QnNT4qtNqwE9klx57IGUpJ6oTrepQ9lIGrnlrq7OjJZK2FvzYUZcjkTArLpO8O
+	rvVjz+gKYU0pVT74xaw2lKpd6euPtJ/ndnKl7HVUblomKQWiSJghhHo8khUd3vQ6
+	NWhsdgxb0a4mVHCgRuhGe365anQyL2aU16OFgKLCvqfRIUTvqNlNUATFmMMU15er
+	cOWle63Rptl2J2dUPz9D8LDTupXrrhPESd5sKOHmuuRv90nGTtCTV5M8P9NDUNA3
+	buySjg==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41ax4mk8aa-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 30 Aug 2024 16:35:39 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47UGZcF5019043
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 30 Aug 2024 16:35:38 GMT
+Received: from [10.110.11.12] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 30 Aug
+ 2024 09:35:35 -0700
+Message-ID: <6408bb64-4ab7-4d46-9c15-d7eddc9d4e39@quicinc.com>
+Date: Fri, 30 Aug 2024 09:35:29 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240830160532.4a526a62@eugeo>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 0/2] Dynamic Allocation of the reserved_mem array
+To: Andy Shevchenko <andy@black.fi.intel.com>
+CC: <robh@kernel.org>, <saravanak@google.com>, <klarasmodin@gmail.com>,
+        <aisheng.dong@nxp.com>, <hch@lst.de>, <m.szyprowski@samsung.com>,
+        <robin.murphy@arm.com>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <iommu@lists.linux.dev>,
+        <will@kernel.org>, <catalin.marinas@arm.com>, <kernel@quicinc.com>
+References: <20240809184814.2703050-1-quic_obabatun@quicinc.com>
+ <ZsN_p9l8Pw2_X3j3@black.fi.intel.com>
+Content-Language: en-US
+From: Oreoluwa Babatunde <quic_obabatun@quicinc.com>
+In-Reply-To: <ZsN_p9l8Pw2_X3j3@black.fi.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 8OGfLwHxQzNOXyFcTrfSGvoGgJ59vzu8
+X-Proofpoint-ORIG-GUID: 8OGfLwHxQzNOXyFcTrfSGvoGgJ59vzu8
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-30_10,2024-08-30_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999
+ impostorscore=0 spamscore=0 suspectscore=0 adultscore=0 priorityscore=1501
+ lowpriorityscore=0 bulkscore=0 malwarescore=0 phishscore=0 mlxscore=0
+ clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2408300127
 
-On Fri, Aug 30, 2024 at 04:05:32PM +0100, Gary Guo wrote:
-> On Wed, 28 Aug 2024 11:01:29 -0700
-> Boqun Feng <boqun.feng@gmail.com> wrote:
-> 
-> > Currently while defining `THIS_MODULE` symbol in `module!()`, the
-> > pointer used to contruct `ThisModule` is derived from an immutable
-> > reference of `__this_module`, which means the pointer doesn't have
-> > the provenance for writting, and that means any write to that pointer
-> > is UB regardless of data races or not. However, the usage of
-> > `THIS_MODULE` includes passing this pointer to functions that may write
-> > to it (probably in unsafe code), and this will create soundness issues.
-> > 
-> > One way to fix this is using `addr_of_mut!()` but that requires the
-> > unstable feature "const_mut_refs". So instead of `addr_of_mut()!`,
-> > an extern static `Opaque` is used here: since `Opaque<T>` is transparent
-> > to `T`, an extern static `Opaque` will just wrap the C symbol (defined
-> > in a C compile unit) in an `Opaque`, which provides a pointer with
-> > writable provenance via `Opaque::get()`. This fix the potential UBs
-> > because of pointer provenance unmatched.
-> 
-> `const_mut_refs` is getting stablised so we should be able to use it
-> soon. I am slightly inclined to use `addr_of_mut!()` over `Opaque` in
-> this case so we can use it directly from bindgen.
-> 
 
-That's the reason why I put "RFC" in the title, although I feel `Opaque`
-is better, one of the reasons is you can easily provide a `*mut T` with
-wrong provenance (e.g. casting from a `&T`), but it's harder to
-construct a (or an? ;-)) `&Opaque<T>` incorrectly. So if an API takes
-`&Opaque<T>` instead of a `*mut T`, it can reduce some user errors.
-Therefore personally, I prefer `&Opaque<T>` (or `&UnsafeCell<T>`). But
-of course, I don't think this is something really strong, and I might
-miss something, so I don't feel bad using `*mut T`.
+On 8/19/2024 10:23 AM, Andy Shevchenko wrote:
+> On Fri, Aug 09, 2024 at 11:48:12AM -0700, Oreoluwa Babatunde wrote:
+>> The reserved_mem array is used to store data for the different
+>> reserved memory regions defined in the DT of a device.  The array
+>> stores information such as region name, node reference, start-address,
+>> and size of the different reserved memory regions.
+>>
+>> The array is currently statically allocated with a size of
+>> MAX_RESERVED_REGIONS(64). This means that any system that specifies a
+>> number of reserved memory regions greater than MAX_RESERVED_REGIONS(64)
+>> will not have enough space to store the information for all the regions.
+>>
+>> This can be fixed by making the reserved_mem array a dynamically sized
+>> array which is allocated using memblock_alloc() based on the exact
+>> number of reserved memory regions defined in the DT.
+>>
+>> On architectures such as arm64, memblock allocated memory is not
+>> writable until after the page tables have been setup.
+>> This is an issue because the current implementation initializes the
+>> reserved memory regions and stores their information in the array before
+>> the page tables are setup. Hence, dynamically allocating the
+>> reserved_mem array and attempting to write information to it at this
+>> point will fail.
+>>
+>> Therefore, the allocation of the reserved_mem array will need to be done
+>> after the page tables have been setup, which means that the reserved
+>> memory regions will also need to wait until after the page tables have
+>> been setup to be stored in the array.
+>>
+>> When processing the reserved memory regions defined in the DT, these
+>> regions are marked as reserved by calling memblock_reserve(base, size).
+>> Where:  base = base address of the reserved region.
+>> 	size = the size of the reserved memory region.
+>>
+>> Depending on if that region is defined using the "no-map" property,
+>> memblock_mark_nomap(base, size) is also called.
+>>
+>> The "no-map" property is used to indicate to the operating system that a
+>> mapping of the specified region must NOT be created. This also means
+>> that no access (including speculative accesses) is allowed on this
+>> region of memory except when it is coming from the device driver that
+>> this region of memory is being reserved for.[1]
+>>
+>> Therefore, it is important to call memblock_reserve() and
+>> memblock_mark_nomap() on all the reserved memory regions before the
+>> system sets up the page tables so that the system does not unknowingly
+>> include any of the no-map reserved memory regions in the memory map.
+>>
+>> There are two ways to define how/where a reserved memory region is
+>> placed in memory:
+>> i) Statically-placed reserved memory regions
+>> i.e. regions defined with a set start address and size using the
+>>      "reg" property in the DT.
+>> ii) Dynamically-placed reserved memory regions.
+>> i.e. regions defined by specifying a range of addresses where they can
+>>      be placed in memory using the "alloc_ranges" and "size" properties
+>>      in the DT.
+>>
+>> The dynamically-placed reserved memory regions get assigned a start
+>> address only at runtime. And this needs to  be done before the page
+>> tables are setup so that memblock_reserve() and memblock_mark_nomap()
+>> can be called on the allocated region as explained above.
+>> Since the dynamically allocated reserved_mem array can only be
+>> available after the page tables have been setup, the information for
+>> the dynamically-placed reserved memory regions needs to be stored
+>> somewhere temporarily until the reserved_mem array is available.
+>>
+>> Therefore, this series makes use of a temporary static array to store
+>> the information of the dynamically-placed reserved memory regions until
+>> the reserved_mem array is allocated.
+>> Once the reserved_mem array is available, the information is copied over
+>> from the temporary array into the reserved_mem array, and the memory for
+>> the temporary array is freed back to the system.
+>>
+>> The information for the statically-placed reserved memory regions does
+>> not need to be stored in a temporary array because their starting
+>> address is already stored in the devicetree.
+>> Once the reserved_mem array is allocated, the information for the
+>> statically-placed reserved memory regions is added to the array.
+>>
+>> Note:
+>> Because of the use of a temporary array to store the information of the
+>> dynamically-placed reserved memory regions, there still exists a
+>> limitation of 64 for this particular kind of reserved memory regions.
+>> >From my observation, these regions are typically small in number and
+>> hence I expect this to not be an issue for now.
+>
+> This series (in particular the first patch) broke boot on Intel Meteor
+> Lake-P. Taking Linux next of 20240819 with these being reverted makes
+> things work again.
+>
+> Taking into account bisectability issue (that's how I noticed the issue
+> in the first place) I think it would be nice to have no such patches at
+> all in the respective subsystem tree. On my side I may help with testing
+> whatever solution or next version provides.
+Hi Andy,
 
-Moreover, besides `const_mut_refs`, we also may also want to wait for
+I have re-uploaded another version of my patches.
+Please can you help test it on your platform to confirm
+that the issue is no longer present?
+https://lore.kernel.org/all/20240830162857.2821502-1-quic_obabatun@quicinc.com/
 
-	https://github.com/rust-lang/rust/pull/125834
-
-to be in stable to avoid unnecessary unsafe.
-
-> That said, the current approach also LGTM.
-> 
-
-Thanks!
-
-Regards,
-Boqun
-
-> Reviewed-by: Gary Guo <gary@garyguo.net>
-> 
-> > 
-> > Reported-by: Alice Ryhl <aliceryhl@google.com>
-> > Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
-> > ---
-> >  rust/macros/module.rs | 6 +++++-
-> >  1 file changed, 5 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/rust/macros/module.rs b/rust/macros/module.rs
-> > index 571ffa2e189c..aef3b132f32b 100644
-> > --- a/rust/macros/module.rs
-> > +++ b/rust/macros/module.rs
-> > @@ -217,7 +217,11 @@ pub(crate) fn module(ts: TokenStream) -> TokenStream {
-> >              // freed until the module is unloaded.
-> >              #[cfg(MODULE)]
-> >              static THIS_MODULE: kernel::ThisModule = unsafe {{
-> > -                kernel::ThisModule::from_ptr(&kernel::bindings::__this_module as *const _ as *mut _)
-> > +                extern \"C\" {{
-> > +                    static __this_module: kernel::types::Opaque<kernel::bindings::module>;
-> > +                }}
-> > +
-> > +                kernel::ThisModule::from_ptr(__this_module.get())
-> >              }};
-> >              #[cfg(not(MODULE))]
-> >              static THIS_MODULE: kernel::ThisModule = unsafe {{
-> 
+Thank you!
+Oreoluwa
 
