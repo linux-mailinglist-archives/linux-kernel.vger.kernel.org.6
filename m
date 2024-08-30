@@ -1,97 +1,109 @@
-Return-Path: <linux-kernel+bounces-308051-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308052-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85A97965691
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 06:51:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91FC5965693
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 06:51:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 42EE0285620
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 04:51:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3A9B81F2490B
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 04:51:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82782142624;
-	Fri, 30 Aug 2024 04:51:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19543142631;
+	Fri, 30 Aug 2024 04:51:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lxiP047j"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nKGDjTDK"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF368481AB;
-	Fri, 30 Aug 2024 04:51:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80872481AB;
+	Fri, 30 Aug 2024 04:51:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724993477; cv=none; b=EN/JfxNDgiF+H3TwYaoV0WZfH5bx9HR/4w5qXwl7S5YPZXi83W136cpHlB6NXQ0C6IbgyC22pYf1AHqvNQcQ/qTFRTjqLcZm0WloF07aV+Mghw4FhIIPvB+qo/L5818NedwG7WgKFKlgE+Z4LLbYV/MBHOvR3SFyDqk/Z1nQyoc=
+	t=1724993506; cv=none; b=eUyP+uXI3tB8GMHT8LXbMM1XmjzTZeVDGKOYjZRWPzjrlFm1B49Pf56rcHS3BAEd/Tqc5OL/qleSetFU1FaX7MN7P4eIm4WtYGBmtgtjaOH+mu6aukZZ2EfWssck3Cyp3067blSoZ6VjJBjrb+imTpBPViqfFzuXmpqNBDNbyAg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724993477; c=relaxed/simple;
-	bh=6JXLuomAdY/ZqnXAe3Cw7Q3pOOueFtiVnZ5g+koy2/0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nsmTDuvgOj+WUqtNA/XTtDhdv8efAtl/uBVrIJC1PsA0UutoIkmRqZ6VP4zpnyMiOpncsKR2QzMRKZFLZFNEbIuEzZR7ffbgsvEoBWHuFOrkB/ECePYV8WKRdLA3G2Ag1Q3JJb6lkCV0lBJ/kJu83G7ckhc81bzFfUTPFJ0CYRo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lxiP047j; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 60D6EC4CEC4;
-	Fri, 30 Aug 2024 04:51:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724993477;
-	bh=6JXLuomAdY/ZqnXAe3Cw7Q3pOOueFtiVnZ5g+koy2/0=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=lxiP047jRlZR3ZmH3H7FIIQfTSwDm/45l3fc4GKQF6n9uGPGgpcOJbMXyRAO7d+D+
-	 9zvqvicPz7pqS9EDFhRsMBWQoyVGf7W2KChdUm7Hs5soljk02muU/5GuI13YMCsFox
-	 jW6ruR9a68Wn6bgZHz3WOLHNcBHx8d6PsPh/2e0JBdqT1BA23ZXX2WPWHbMjbppR/M
-	 s/T2Jn8EZjcC4pM2E8zeVpvukmcYyfcsfbjCMiDuRDzkqHEF9ZQLs8BGzW1OIk43Pu
-	 HUiO6b3bMse5WrM1gCC8EwQkBlX7meYL8ddtBfs/iN9c+RNRnoztFIH8DST8NEQO1e
-	 wXC1/VvLU9Nvw==
-Message-ID: <6a6e269c-255c-4cca-b389-e54c0e7e571a@kernel.org>
-Date: Fri, 30 Aug 2024 13:51:15 +0900
+	s=arc-20240116; t=1724993506; c=relaxed/simple;
+	bh=2wTGFT6AyIs95nsUriB/96AEDnUobdVcR+tW8y677sc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=atEKrTZoQFvKoXqRkQmhEpR3V5sEG9cEDWpMfZZabfiz4P624peo/1uog9wiechcp89Oime7WHuLCK2E1L9Wl7SvN4vcjqlPI59VIgGEPnmk/HPXsFg7ONukOpNAk37o1m4GoNUtMceX6Q4a8vbpGPEFQTtCn2/VRprKkGAi8fI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nKGDjTDK; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724993505; x=1756529505;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=2wTGFT6AyIs95nsUriB/96AEDnUobdVcR+tW8y677sc=;
+  b=nKGDjTDKcS86HEtXM+WijDDdByLZU1p1mgX9X0ADTYA6aP7ZazfAx3/U
+   91tVZlV5eHQubfyyWcKD+bTVI1irt+goUp8V84MukMqhc6xjGOfLDvXua
+   cXOPXceEtv1IOsLnZ5UEwm4aXSX/x5l352GHu0EHiWAgSndyZoEkR6LBi
+   wieU5uMEI2IuqwpJ37Q/IOXYZemo2gXbGlZMoklOC1PiqAsr0Pasdr0Wz
+   /Je4L5Lntwoao76LG1L3wUeauofCIGJ4nxA4HSSdwaxDZmxAOFs2wHX+Y
+   hUW/S2LDdJCnZpUJpd4p+BwERES2rU1ADGiXN7RVqTIHQtYrzlIWmwJ8M
+   Q==;
+X-CSE-ConnectionGUID: VaEAYDALS9WpD4BLgTHWOg==
+X-CSE-MsgGUID: qmEpNRLTQa6u/2fhdZo0dQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11179"; a="27501153"
+X-IronPort-AV: E=Sophos;i="6.10,187,1719903600"; 
+   d="scan'208";a="27501153"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Aug 2024 21:51:44 -0700
+X-CSE-ConnectionGUID: 1+yVm4H7Tg+x+2dg+4/gwA==
+X-CSE-MsgGUID: YE4YbLKqRvW9Tx71ljbHrw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,187,1719903600"; 
+   d="scan'208";a="68452736"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa004.fm.intel.com with ESMTP; 29 Aug 2024 21:51:42 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1001)
+	id 74D57142; Fri, 30 Aug 2024 07:51:41 +0300 (EEST)
+Date: Fri, 30 Aug 2024 07:51:41 +0300
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Andy Shevchenko <andy@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Heiner Kallweit <hkallweit1@gmail.com>
+Subject: Re: [PATCH v2 0/6] pinctrl: intel: High impedance impl. and cleanups
+Message-ID: <20240830045141.GV1532424@black.fi.intel.com>
+References: <20240829140406.357612-1-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH -next 1/3] ata: pata_ftide010: Enable module autoloading
-To: Liao Chen <liaochen4@huawei.com>, linux-ide@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Cc: linus.walleij@linaro.org, s.shtylyov@omp.ru, cassel@kernel.org
-References: <20240829131907.541466-1-liaochen4@huawei.com>
- <20240829131907.541466-2-liaochen4@huawei.com>
-From: Damien Le Moal <dlemoal@kernel.org>
-Content-Language: en-US
-Organization: Western Digital Research
-In-Reply-To: <20240829131907.541466-2-liaochen4@huawei.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240829140406.357612-1-andriy.shevchenko@linux.intel.com>
 
-On 8/29/24 10:19 PM, Liao Chen wrote:
-> Add MODULE_DEVICE_TABLE(), so modules could be properly autoloaded based
-
-s/could/can
-
-Same comment for the other 2 patches. Other than that, looks good.
-Feel free to add Sergey's review tag when sending v2. Thanks.
-
-> on the alias from of_device_id table.
+On Thu, Aug 29, 2024 at 04:59:14PM +0300, Andy Shevchenko wrote:
+> We would need a high impedance implementation for a quirk, so here it
+> is. While doing this series I also noticed a couple of opportunities
+> to clean up, hence a few more patches (1st, 5th, and 6th).
 > 
-> Signed-off-by: Liao Chen <liaochen4@huawei.com>
-> ---
->  drivers/ata/pata_ftide010.c | 1 +
->  1 file changed, 1 insertion(+)
+> Series has been tested on Intel Meteor Lake-P.
 > 
-> diff --git a/drivers/ata/pata_ftide010.c b/drivers/ata/pata_ftide010.c
-> index 4d6ef90ccc77..73a9a5109238 100644
-> --- a/drivers/ata/pata_ftide010.c
-> +++ b/drivers/ata/pata_ftide010.c
-> @@ -549,6 +549,7 @@ static const struct of_device_id pata_ftide010_of_match[] = {
->  	{ .compatible = "faraday,ftide010", },
->  	{ /* sentinel */ }
->  };
-> +MODULE_DEVICE_TABLE(of, pata_ftide010_of_match);
->  
->  static struct platform_driver pata_ftide010_driver = {
->  	.driver = {
+> v2:
+> - fixed a bug in patch 1 when applying debounce value
+> - updated enum style (Mika)
+> - made intel_gpio_set_high_impedance return void (Mika)
+> - new patch to constify intel_get_community()
+> - resplit "absolutely grotesque" macro to four (Mika)
+> - ...and update more users, this shrinks binary a lot
+> 
+> Andy Shevchenko (6):
+>   pinctrl: intel: Move debounce validation out of the lock
+>   pinctrl: intel: Refactor __intel_gpio_set_direction() to be more
+>     useful
+>   pinctrl: intel: Add __intel_gpio_get_direction() helper
+>   pinctrl: intel: Implement high impedance support
+>   pinctrl: intel: Constify intel_get_community() returned object
+>   pinctrl: intel: Introduce for_each_intel_gpio_group() helper et al.
 
--- 
-Damien Le Moal
-Western Digital Research
+I sent one minor comment for the last patch. For the series,
 
+Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
 
