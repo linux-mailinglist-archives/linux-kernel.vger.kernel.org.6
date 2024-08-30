@@ -1,82 +1,94 @@
-Return-Path: <linux-kernel+bounces-308749-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308751-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90BAB966153
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 14:04:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4579796615A
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 14:09:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 46F1B1F27A19
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 12:04:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 782C81C22056
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 12:09:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61EBD199953;
-	Fri, 30 Aug 2024 12:04:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70A1D199FA2;
+	Fri, 30 Aug 2024 12:09:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="QGByS0V+"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ts4mj0PW"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5453D192D79;
-	Fri, 30 Aug 2024 12:04:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA66F1384B3;
+	Fri, 30 Aug 2024 12:09:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725019488; cv=none; b=ZO9ka/XSC9e0R22FCmw/egJpLDBUFQ13sWAwFMthw1t78W+j4dQE51FfCBNYHr4v77WaY6gtP0ZnKNJnBwoLLKQuX8Br9wr/6NgL60qaMlFB60IeFm0IcbEzCJWHbq4W1LXhLuD7pWIPt3HJ1S+w8lZyI2gyXsY50WI0bdZ62kM=
+	t=1725019752; cv=none; b=YKfyo3HfOhQoEY1Kq+YX0pOMeTfCwcNa26vvjN6Odf7w6JMvOJKy1GH5SgmfF73P7Aoaqttsk4LYvH9kBckk3bwQu4eDJo2VDnTAPxsz3Mvi9ztZx+5FIJL2nJ/a14+ukgYAKEJVJjewRnSGtqulIkTf+faM5OdJY7185Ms/DKQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725019488; c=relaxed/simple;
-	bh=8zkhsnrRmJglZ1xx/z1Ejoruoi6hMrCb82FeDSEj4z0=;
+	s=arc-20240116; t=1725019752; c=relaxed/simple;
+	bh=+PdqaIAnbvFWzUlrXS5dGz+94tQph/rZhL6Pzhzm0RM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tXSAzAvNUoXvHoLHThjjhR8HQDuXPCJwhmB4Yaq3ehNBPutN8Izi+JZfsrv+Zfmsvlk5WpsXPMEolQ1HbXZ4k4VQBuxLv84QHxTvJTQaV01j0z8mx3NQcx2L+PEwrMgT6tyPr5hVRP9ufpl3CesczNrluv7K/FeTyARCfjZj7Lw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=QGByS0V+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B15F0C4CEC2;
-	Fri, 30 Aug 2024 12:04:46 +0000 (UTC)
-Authentication-Results: smtp.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="QGByS0V+"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
-	t=1725019485;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8KNtaBYw1xfEjRV2JBKbb5umlz7bXA1hHQfXl06/f4E=;
-	b=QGByS0V+qPAy9oKrC/Kbxth3Sv+WWc1ru0JgdaVICM+CgTVUjcLWPC7kDJFMs32UVyJU6d
-	pJrB7zn76C7L6Dmj86vFbw1F9xSrq8I8F9huTjnsfvdWdBZDPCMKFXmPsX7pD5n/AZEHDO
-	Cxd6LDfIbc5g6tU0WtNGe6G+OcobtOA=
-Received: 
-	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id b3ef1719 (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
-	Fri, 30 Aug 2024 12:04:44 +0000 (UTC)
-Date: Fri, 30 Aug 2024 14:04:39 +0200
-From: "Jason A. Donenfeld" <Jason@zx2c4.com>
-To: Will Deacon <will@kernel.org>
-Cc: Adhemerval Zanella <adhemerval.zanella@linaro.org>,
-	Theodore Ts'o <tytso@mit.edu>, linux-kernel@vger.kernel.org,
-	linux-crypto@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-arch@vger.kernel.org,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Eric Biggers <ebiggers@kernel.org>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>, ardb@kernel.org
-Subject: Re: [PATCH v2] aarch64: vdso: Wire up getrandom() vDSO implementation
-Message-ID: <ZtG1V9me28OvU0Qu@zx2c4.com>
-References: <20240829201728.2825-1-adhemerval.zanella@linaro.org>
- <20240830114645.GA8219@willie-the-truck>
+	 Content-Type:Content-Disposition:In-Reply-To; b=pLDEmUxQIGYRwab4e50sY2SV0voV7vdtPfF6OICKUrPumOrcaIc0XUPViycAUyHDbwRIY86028+7EVT0RgWdW7WK4z4Pl2tdQVk4NujtEH8X+QUBAo7FwqWroofOcP/FmppGfUjbmuxlj+23S60pp2VBHZTF8hgj6hFTYswnWLc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ts4mj0PW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27319C4CEC2;
+	Fri, 30 Aug 2024 12:09:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725019752;
+	bh=+PdqaIAnbvFWzUlrXS5dGz+94tQph/rZhL6Pzhzm0RM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ts4mj0PWgjvWJ/9Hvw6e2c8sBU3UXW4VOt1XBc3uiwzIHodYOSPFnXiXmn6oQ1aXn
+	 hNIpT7dx1M0e+NcN5fStkUQIccy6aZERUXEiA4hVf0eoD3epSzGBiC7R4IJLSaHi8S
+	 c1VpE7Hu9OZWLZ1T/O4bgx6l4pnxyWxu10ohFpd1hcbxOGkjLpES/Foo+Y5hs++i1/
+	 3eDhCkMA52nD5ghHSz4IRP8LsHnvTRPtF+P5TkJVrlOF+HHGafZI3veIRAC9nsncid
+	 BGYDdQlw+ohuFc6+fqJctBVx1Zh6rRl0CtO4QtKWev0AeKem/9mCK8kfBWWAEKxxKH
+	 k9KqumZy+tG9Q==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1sk0RR-000000006vI-47q4;
+	Fri, 30 Aug 2024 14:09:26 +0200
+Date: Fri, 30 Aug 2024 14:09:25 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Abel Vesa <abel.vesa@linaro.org>, Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
+	linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>,
+	Johan Hovold <johan+linaro@kernel.org>
+Subject: Re: [PATCH v3 1/2] dt-bindings: phy: qcom,sc8280xp-qmp-pcie-phy:
+ Document the X1E80100 QMP PCIe PHY Gen4 x4
+Message-ID: <ZtG2dUVkdwBpBbix@hovoldconsulting.com>
+References: <20240823-x1e80100-phy-add-gen4x4-v3-0-b7765631ca01@linaro.org>
+ <20240823-x1e80100-phy-add-gen4x4-v3-1-b7765631ca01@linaro.org>
+ <gvx3sdsdxigel3iwu7vgvvgxohvnaqq6suogsqojeumobhwhdk@5qct23m5ncda>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240830114645.GA8219@willie-the-truck>
+In-Reply-To: <gvx3sdsdxigel3iwu7vgvvgxohvnaqq6suogsqojeumobhwhdk@5qct23m5ncda>
 
-> > +SYM_FUNC_START(__arch_chacha20_blocks_nostack)
+On Fri, Aug 30, 2024 at 01:42:10PM +0300, Dmitry Baryshkov wrote:
+> On Fri, Aug 23, 2024 at 10:04:15AM GMT, Abel Vesa wrote:
+> > The sixth PCIe instance on X1E80100 can be used in either 4-lane mode or
+> > 2-lane mode. Document the 4-lane mode as a separate compatible.
 > 
-> Is there any way we can reuse the existing code in
-> crypto/chacha-neon-core.S for this? It looks to my untrained eye like
-> this is an arbitrarily different implementation to what we already have.
+> As the patches were merged, it's too late for this series, but as a
+> note: we should think of a way to describe the PHY configuration without
+> changing the compatibility strings. The hardware stays the same, it's
+> just the number of lanes being wired that changes.
 
-Nope, it is indeed different, and not arbitrarily so. This patch is
-mirroring exactly what we did on x86.
+No, this is not about configuration and we need two separate compatibles
+as the two PHY instances are distinct and only one of them can be used
+in 4-lane mode.
 
-Jason
+The mistake was to ever describe pcie6a as 2-lane in the x1e80100 dtsi
+(and possibly also in the ambiguous commit message above). Whether
+pcie6a is used in 4-lane or 2-lane mode is determined by a TCSR
+register.
+
+Johan
 
