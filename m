@@ -1,150 +1,142 @@
-Return-Path: <linux-kernel+bounces-309456-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309457-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 814AD966ADC
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 22:51:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1DFC966ADD
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 22:51:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0C4F2B21222
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 20:51:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE9B4283D2F
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 20:51:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A91D1C0DD1;
-	Fri, 30 Aug 2024 20:51:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DCB41BDAB5;
+	Fri, 30 Aug 2024 20:51:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q/JKN6NV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RJF9E6Yn"
+Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C214015C153;
-	Fri, 30 Aug 2024 20:51:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19F4D1BF7FD;
+	Fri, 30 Aug 2024 20:51:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725051061; cv=none; b=c9vk60XdsCn9TgtGazAs26dEcOrKfc8T3U7To0UhjAOFjAwBq2NL8VtKbrDDd+y1WGW6pvWKTu4qgwGkFG4g8xDAZb+EqMNSWiHM7r7tqzLz2R0cdQVmTKAkaboGDXqUunp5ztgAOADpPN7FCepZ3faqnbiudWVxcKPmOFeBgNo=
+	t=1725051079; cv=none; b=fFt8vnkZdVRP/YkdmsEdLdmYkSNaTcYez+hBiKXQR+637Nwy9ctpsk8zElGHPw2hEFgWGpUVwUKiRV3CiRbedNI8gx20CyW8yUtwgtPyBJwXoBa6d1lEtK8pEL9CttW+SL0gTW8C7x9y7bMkM/ivqZJjm2U1VCWww2Wccm2xEPg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725051061; c=relaxed/simple;
-	bh=wlq18c85cf5NFaz/GOdFOn9Y5Nz0ucxWSmCOdXWJFG0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=HzitS3tBnbV/MyCE1FDbpLYNtpSkR9Q6XlksfM0x7LBny5jnlYRjMHjEK6iNKEjzQuPFlVUNu/dsXuN7tgFac6O7EUH3tGevdlgo6LU9i5dfbnQ0yyKMek2EMBidqKIHD7ny5lyDZ/OGnFZOGX97E18iv9o4vmHIrB6lrk92+CY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q/JKN6NV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 8C799C4CEC2;
-	Fri, 30 Aug 2024 20:51:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725051061;
-	bh=wlq18c85cf5NFaz/GOdFOn9Y5Nz0ucxWSmCOdXWJFG0=;
-	h=From:Date:Subject:To:Cc:Reply-To:From;
-	b=q/JKN6NVPr9umuFgSX+B5wSGFWvF2Sgf6I5CYX+JyhUTj4pZ3VSvqR18YGUaoMdBL
-	 bhJXQr655OkKZ21Dijepjz52Bbt9/S/wiv+7L05pG/+axUke+w1ocv+ItzWH9cC1/8
-	 KxYAWlfMN8ZA6s6aiTW0o6UUN/RqOC+idgV6wdqjRCPR5yKPjCusfT5OhKO75u56Q9
-	 eNLlnahhpGnljeH8J2hkhOv2sIiIzeod/IfL2Au7fwlbM+u0DRkGK0dmRpoX2yMVb/
-	 jc8+NuGpf2NS1Bc7Ztcfqh8KITj3bf6CJp2lpqiH/gHI3EigIvOal0IZcDI58cbjum
-	 hmse3tIIcdrPQ==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74FDDCA0EF3;
-	Fri, 30 Aug 2024 20:51:01 +0000 (UTC)
-From: =?utf-8?q?Andr=C3=A9_Apitzsch_via_B4_Relay?= <devnull+git.apitzsch.eu@kernel.org>
-Date: Fri, 30 Aug 2024 22:49:50 +0200
-Subject: [PATCH] Revert "arm64: dts: qcom: msm8939-longcheer-l9100: Add
- rear flash"
+	s=arc-20240116; t=1725051079; c=relaxed/simple;
+	bh=EGmaHQIyFUQXRzkAm6S7M6ACd+k5XeZNvtGEUAyJy0w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hrPyGKTXmFIIkt0HsdrjWnNVZyAO/1FvVtSKcVLWQaTkwmkeHn9O84N/jKgpZYkD7osGNjxGiBn7g0TuQV5fvFM2dCxJtbn6YLedN18sgT2eFyhUqj3CNMY1VL0aTEYxJU5tPc+Aggvia3VOxXuH6ZsfdhigNAhC78ivT5XzXbg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RJF9E6Yn; arc=none smtp.client-ip=209.85.215.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-7bcf8077742so1562120a12.0;
+        Fri, 30 Aug 2024 13:51:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725051077; x=1725655877; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gKCWX5eBlnYoIPNYnC/Yrj2h0Y/qTbwBQ/bhYQL0ahI=;
+        b=RJF9E6YnGRQz8YjtxUy4PrOwffcqeN3TRTJ/PAPJibjhWIV+HvckGQx47Zrh10BajW
+         xiSjC5rAnXpAhFey2xvQ0O8cj/5Gu+fpISFWjm3LjhXXzh7HSaCpwLPovbdt2LeNPOAm
+         yHOWbRqLYka5h7fUNnrwR8xvCTaSt7qbLq7f9NFE0fu/H2WkqnkA17ShzyFJwzlMHpar
+         jwKbqeyq+BP0nfVH7JE37EhGm+ORG7JJz968nERfFA42MooKcGpV6OzWrEQNEnQusawZ
+         bQhfw1yEBVM5qVleUvM5nw8lB+hnI6/9PsufzuxqL3GZcui6PdBvEP3NnmIfPS3eMV+4
+         mEUQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725051077; x=1725655877;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=gKCWX5eBlnYoIPNYnC/Yrj2h0Y/qTbwBQ/bhYQL0ahI=;
+        b=haUegjPKmp9ONhiZhiMs7NlcATbrQ9Yg1F3PhP36hYZU8e3DC0z8JPQ3oEQQYbm+k0
+         yB3Z1Rqrt9lIWuKn4A2MN4UmAkzg3GtejNuN+hjbHNIMff3y8Rw2tcwaWZdp6PEuX5Hn
+         M8ym9KNSS6KQj9BAC7RH+xWsdxVIKmLFUvHdVda0eGo2kHHRHzVnfNDSZJSzYhdY/ejm
+         DbWTi9/vaDCifC+877IIOoxGTLG9FL9lnXZomWFGGQr94yTXFSNXs4cLfHkLq6SyAX6C
+         zkbZDw3/kpc4YVysknQimfrTkoO2JrMjgV2hZNymlevEQMUIWPULkLBlzXiBtKV1j6jT
+         wjJw==
+X-Forwarded-Encrypted: i=1; AJvYcCUUYC+Mg9ik++MAOfHqGU7odRf3xf7jB9t3imLQ+X3tVb4+qv6Vhlu6JNID4hBoLrr9+nbWKXeVsQ+gGAM5@vger.kernel.org, AJvYcCUV9edyw3Eo3Htu4N5OjcZuTzcAZjx84ixdM0fFjRU0gmAwzSx6BNC4R/Y+1ukE6h/NV3WWEVOB1Ucc6yp8pFfBUk60@vger.kernel.org, AJvYcCVsIx5A4CZkYZqxdPnMjdVU8+f6k4wH01Et8s5LMIoKbnnu9sRxHA+55LfCQ3P8isJfnCk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywv+OxP5xUD9+gOtGT4Ew1UtTQNXsmUeuBj+XZbtaeHBStfYJDc
+	gR3h64xNBDGkwg21Mu+fhtcFVIIbU+2JLovjs+EZg1u/PTpT9KJAFAi1qSvypqimjWjs4UIZMIq
+	EmsGePETGQ/zivFx/CJiTTopsCq8=
+X-Google-Smtp-Source: AGHT+IFJkXzMiCz4hLWiGHcIVHu9KNDUbV2A/WAg3aG8mUvFdbjfQlgpeqAXSl8XE4hL1lGIco6WROtxFKXpTg8dotw=
+X-Received: by 2002:a17:90a:4b85:b0:2cf:7388:ad9e with SMTP id
+ 98e67ed59e1d1-2d85616eccamr7546969a91.2.1725051077220; Fri, 30 Aug 2024
+ 13:51:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20240830-revert_flash-v1-1-ad7057ea7e6e@apitzsch.eu>
-X-B4-Tracking: v=1; b=H4sIAG0w0mYC/x2MQQqAIBAAvxJ7TlBTsL4SEZJrLoSFRgTi35OOA
- zNTIGMizDB1BRI+lOmMDUTfwRZs3JGRawySS8XNwFmTMN2rP2wOTKEwSo/CWaGhJVdCT++/m5d
- aP60G5wFeAAAA
-To: Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org, 
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- =?utf-8?q?Andr=C3=A9_Apitzsch?= <git@apitzsch.eu>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1725051108; l=1873;
- i=git@apitzsch.eu; s=20240325; h=from:subject:message-id;
- bh=e8OmqrXh0tbGdO++XiKLMFxfWpEu2DvMhtbt6MUV/A8=;
- b=O92PbyqG9ghtpTVHIrrk4BWY3mb570s0wC+LCtYQgraW1WTvErXUQeUUY4HkEXbOS6+roClHo
- g+t/fpRE8VODfR1hFpZdFkMzkY/5hvmkmQ2j+HXDl50hZD8x03TIlZW
-X-Developer-Key: i=git@apitzsch.eu; a=ed25519;
- pk=wxovcZRfvNYBMcTw4QFFtNEP4qv39gnBfnfyImXZxiU=
-X-Endpoint-Received: by B4 Relay for git@apitzsch.eu/20240325 with
- auth_id=142
-X-Original-From: =?utf-8?q?Andr=C3=A9_Apitzsch?= <git@apitzsch.eu>
-Reply-To: git@apitzsch.eu
+References: <20240829194505.402807-1-jolsa@kernel.org> <20240829194505.402807-3-jolsa@kernel.org>
+In-Reply-To: <20240829194505.402807-3-jolsa@kernel.org>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Fri, 30 Aug 2024 13:51:04 -0700
+Message-ID: <CAEf4Bza4JztS8YBaEFUi81OwH2aSNbv3c29hoVc31vTnfgiCLA@mail.gmail.com>
+Subject: Re: [PATCH bpf-next 2/2] selftests/bpf: Add uprobe pid filter test
+ for multiple processes
+To: Jiri Olsa <jolsa@kernel.org>
+Cc: Oleg Nesterov <oleg@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Andrii Nakryiko <andrii@kernel.org>, Tianyi Liu <i.pear@outlook.com>, 
+	Masami Hiramatsu <mhiramat@kernel.org>, bpf@vger.kernel.org, 
+	Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org, 
+	linux-trace-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: André Apitzsch <git@apitzsch.eu>
+On Thu, Aug 29, 2024 at 12:45=E2=80=AFPM Jiri Olsa <jolsa@kernel.org> wrote=
+:
+>
+> The idea is to create and monitor 3 uprobes, each trigered in separate
 
-Patch "arm64: dts: qcom: msm8939-longcheer-l9100: Add rear flash" has
-been applied twice. This reverts the older version of the patch.
+typo: triggered
 
-Revert the commit f98bdb21cfc9 ("arm64: dts: qcom:
-msm8939-longcheer-l9100: Add rear flash")
+> process and make sure the bpf program gets executed just for the proper
+> PID specified via pid filter.
+>
+> Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+> ---
+>  .../bpf/prog_tests/uprobe_multi_test.c        | 103 ++++++++++++++++++
+>  .../bpf/progs/uprobe_multi_pid_filter.c       |  61 +++++++++++
+>  2 files changed, 164 insertions(+)
+>  create mode 100644 tools/testing/selftests/bpf/progs/uprobe_multi_pid_fi=
+lter.c
+>
 
-Fixes: f98bdb21cfc9 ("arm64: dts: qcom: msm8939-longcheer-l9100: Add rear flash")
-Signed-off-by: André Apitzsch <git@apitzsch.eu>
----
- .../boot/dts/qcom/msm8939-longcheer-l9100.dts      | 26 ----------------------
- 1 file changed, 26 deletions(-)
+It's good to have a test, thanks for adding it! But we should couple
+it with the fix in multi-uprobe and land together, right? I'm not
+exactly sure why we can't just use task->signal-based check, but let's
+try to converge on something and fix it.
 
-diff --git a/arch/arm64/boot/dts/qcom/msm8939-longcheer-l9100.dts b/arch/arm64/boot/dts/qcom/msm8939-longcheer-l9100.dts
-index adc992ebc29d..b845da4fa23e 100644
---- a/arch/arm64/boot/dts/qcom/msm8939-longcheer-l9100.dts
-+++ b/arch/arm64/boot/dts/qcom/msm8939-longcheer-l9100.dts
-@@ -160,25 +160,6 @@ led@2 {
- 		};
- 	};
- 
--	flash-led-controller@53 {
--		compatible = "silergy,sy7802";
--		reg = <0x53>;
--		#address-cells = <1>;
--		#size-cells = <0>;
--
--		enable-gpios = <&tlmm 16 GPIO_ACTIVE_HIGH>;
--
--		pinctrl-0 = <&camera_rear_flash_default>;
--		pinctrl-names = "default";
--
--		led@0 {
--			reg = <0>;
--			function = LED_FUNCTION_FLASH;
--			color = <LED_COLOR_ID_WHITE>;
--			led-sources = <0>, <1>;
--		};
--	};
--
- 	flash-led-controller@53 {
- 		compatible = "silergy,sy7802";
- 		reg = <0x53>;
-@@ -364,13 +345,6 @@ camera_rear_flash_default: camera-rear-flash-default-state {
- 		bias-disable;
- 	};
- 
--	camera_rear_flash_default: camera-rear-flash-default-state {
--		pins = "gpio9", "gpio16", "gpio51";
--		function = "gpio";
--		drive-strength = <2>;
--		bias-disable;
--	};
--
- 	gpio_hall_sensor_default: gpio-hall-sensor-default-state {
- 		pins = "gpio20";
- 		function = "gpio";
+pw-bot: cr
 
----
-base-commit: d7b69f6e9e1c8b6acdcce3b385779eb046835dd5
-change-id: 20240830-revert_flash-4e184591da15
+[...]
 
-Best regards,
--- 
-André Apitzsch <git@apitzsch.eu>
+> +#define TASKS 3
+> +
+> +static void run_pid_filter(struct uprobe_multi_pid_filter *skel,
+> +                          create_link_t create_link, bool retprobe)
+> +{
+> +       struct bpf_link *link[TASKS] =3D {};
+> +       struct child child[TASKS] =3D {};
+> +       int i;
+> +
+> +       printf("%s retprobe %d\n", create_link =3D=3D create_link_uprobe =
+? "uprobe" : "uprobe_multi",
+> +               retprobe);
 
+leftovers
 
+> +
+> +       memset(skel->bss->test, 0, sizeof(skel->bss->test));
+> +
+> +       for (i =3D 0; i < TASKS; i++) {
+> +               if (!ASSERT_OK(spawn_child(&child[i]), "spawn_child"))
+> +                       goto cleanup;
+> +               skel->bss->pids[i] =3D child[i].pid;
+> +       }
+
+[...]
 
