@@ -1,129 +1,82 @@
-Return-Path: <linux-kernel+bounces-308268-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308269-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D29B965993
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 10:10:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19D00965995
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 10:10:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B6C761F22A17
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 08:10:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 902C0B229A2
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 08:10:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 659F8166F15;
-	Fri, 30 Aug 2024 08:10:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 186D7166F15;
+	Fri, 30 Aug 2024 08:10:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="iJH07Lwc"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="JORgyirg"
+Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BE83165F07
-	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 08:10:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5003A158528;
+	Fri, 30 Aug 2024 08:10:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725005416; cv=none; b=mS/3cePfWxQqJsvecamGs7goObCHa6WOgzTYq+sbjOr5PRxcWoNrPc7Gx9/697/J9NBO2n5rBt9GJGhSoMVC2+rHA9108Rf3alDi89WfUJX5W9QoiUFlSKJb5LWiH+ZhgNBySWdKFj369+81fNigPFFXBJWQgqUDWtiPjSWS59w=
+	t=1725005443; cv=none; b=LdhdZrCZyJew7FVm3hHped9dx5BY0UMl/GNGSRLl8Lc1r3uk/VEYpbxs8Li50TKAmt8MmfQ+9S+NL6nYPqRD3QowcUFZvEbsd/xUDPu7mHRACf+3AyCLWdkakO9M2c+BN2KXBXW/SpWB9lkCkH26k+cR11uGSp88NnU0oyUweEQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725005416; c=relaxed/simple;
-	bh=O586LEmPjPX2HiPnhS5pv8/gtaBBHNlXFpbm4jWmWSU=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=DzHzMhAC0vRPKmUM+346jehcUlUWvb03esP3ziVnHWs18HrOFqyW0WNSEPZp4J1Ni9DN8T8vWFcCAZhlxA2VTl3RAOccV1GKAlnuIWXzQqEoiH8bx37GaQDYpadmMp2C3hHBDYDl8Thg1ciH3NEXKGGTTG8M29HSmzj2Hqe+Pfw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=iJH07Lwc; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-429ec9f2155so13330685e9.2
-        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 01:10:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1725005412; x=1725610212; darn=vger.kernel.org;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Css1DS/twF3J6CTksvvGFwq/UDTMQRJ6E1Ahqfi3MtM=;
-        b=iJH07LwcLVXLpvxAzNhck3hkQubEQvzOSRSn3IpArrDpEPVuTKQLOzAgQBx+9LJQeB
-         8+udVi9TEGAYChM+J3eGXf/S3R4/sDvC5n/T+yhh8SRjTO23oQ+CusOK5Qvk2ACaaAwh
-         EgKc81Aml0bjvh5aTDysbVl9imtNZqEpXiEZby6zudn8l7DvpYrGd4KiuMv2Ak7fI87a
-         mqM21+UMH68l+O+EeSLmB5f4X7sRYm3sOCCxaJCcuHqvTLDp5CFob2TMXcOgQMZeI/0L
-         8baltIaJWB945VyIREc5j+Im4KCM+eyIsFkWTRnjjpIoEu1CKsD+quOIWKXFHq4IHryM
-         HnnA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725005412; x=1725610212;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Css1DS/twF3J6CTksvvGFwq/UDTMQRJ6E1Ahqfi3MtM=;
-        b=IgD4OifxNGQOZrxDqK6+clp+6GMgX75nahc05F8fI1521lyxx39Cj1IQchfoOoqr5D
-         vujKZYEa2w6AtH2mm+Rem0Uq3aPZogkafxi3Kr3TlnJAonamX53xGPslcH/a+/3UFu3K
-         l/ZqZ0aKC4MzZYA8T0sI82645zcOlLMbJ3dLUrP5lyP8rqFLArMvpHsZ0geRCraZtHjL
-         7HHJLlbbPP6pKrT+NaOipbt3+UA/HxQJuKd4gUnRQArSqqz2srUyFt0bB+BfbJnWzbJE
-         dsTjtIZRjAnb+1qsH95XjC1PNohRTDKPYYLZGclgzCWvOSFKUCCTczwsGBjtLXt4j9ay
-         wnrQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXrJIHX+XrpGwRhGuF9Xp1dCDwLfK06OeEBr1dNUeTo6o42iWYuni5PF0Pk1+lQBg2dzHlRIFei71ix8cM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx+nbE5TweSfZToLxmLK6elr44/SrArjJnE1NINW7RJ0BMpv/Ta
-	ebHTcjLF/8uYX/kEXwl8DdQcQxq7sdqMWg85mp21N9AAskiVB/z9TZM6ILrENZI=
-X-Google-Smtp-Source: AGHT+IH8H5uUNTbFEsKnYUdKRjBzDDZGcrGLT+W24BeFBC1OCMxsf8Ey3WOHr8h+hmPJhmnT5iK/wg==
-X-Received: by 2002:a05:600c:3b8e:b0:42b:a9d7:93 with SMTP id 5b1f17b1804b1-42bb032c82cmr45411815e9.28.1725005411476;
-        Fri, 30 Aug 2024 01:10:11 -0700 (PDT)
-Received: from localhost ([2a01:e0a:3c5:5fb1:90cb:5cec:cfdf:966f])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42bbd46b60bsm4808145e9.1.2024.08.30.01.10.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 30 Aug 2024 01:10:10 -0700 (PDT)
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Neil Armstrong <neil.armstrong@linaro.org>
-Cc: xianwei.zhao@amlogic.com,  Michael Turquette <mturquette@baylibre.com>,
-  Stephen Boyd <sboyd@kernel.org>,  Rob Herring <robh@kernel.org>,
-  Krzysztof Kozlowski <krzk+dt@kernel.org>,  Conor Dooley
- <conor+dt@kernel.org>,  Chuan Liu <chuan.liu@amlogic.com>,  Kevin Hilman
- <khilman@baylibre.com>,  Martin Blumenstingl
- <martin.blumenstingl@googlemail.com>,  Krzysztof Kozlowski
- <krzysztof.kozlowski@linaro.org>,  linux-amlogic@lists.infradead.org,
-  linux-clk@vger.kernel.org,  devicetree@vger.kernel.org,
-  linux-kernel@vger.kernel.org,  linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v4 1/3] dt-bindings: clock: fix C3 PLL input parameter
-In-Reply-To: <0e74dbc8-88ed-43db-95ef-0fe55d92091d@linaro.org> (Neil
-	Armstrong's message of "Fri, 30 Aug 2024 10:00:38 +0200")
-References: <20240830-c3_add_node-v4-0-b56c0511e9dc@amlogic.com>
-	<20240830-c3_add_node-v4-1-b56c0511e9dc@amlogic.com>
-	<0e74dbc8-88ed-43db-95ef-0fe55d92091d@linaro.org>
-Date: Fri, 30 Aug 2024 10:10:10 +0200
-Message-ID: <1jplpqsa71.fsf@starbuckisacylon.baylibre.com>
+	s=arc-20240116; t=1725005443; c=relaxed/simple;
+	bh=ZygKSRZowQbgdebKmZAcW/XeSZFFXj2C5+igaleld5M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BXUC5R3BSfOv05AfFcnTQt46w2oZGK62azdSut0tb0jB/+CV87wf9GNbyT1EakfQhuh32aHaTNM0dhsrfAj6mouXtBvD39foJcK7kJeR1piAHGkPagMhSkeSE1gRYsBFoUhkjszcvOuiFY/7OIL9+HK4VjavEDeV2eimvt1wouk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=JORgyirg; arc=none smtp.client-ip=217.194.8.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
+Received: from gaggiata.pivistrello.it (93-49-2-63.ip317.fastwebnet.it [93.49.2.63])
+	by mail11.truemail.it (Postfix) with ESMTPA id B424021155;
+	Fri, 30 Aug 2024 10:10:30 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
+	s=default; t=1725005430;
+	bh=ZygKSRZowQbgdebKmZAcW/XeSZFFXj2C5+igaleld5M=;
+	h=Received:From:To:Subject;
+	b=JORgyirgBevfFN5PDFqTWzJbIRyiWh7gCFs2GiCt8uDd2WBscilhcQEeehcpY7AiI
+	 4A0o1mg1DZRdvy2f2CeDInaRhzZ7ARHOYT+Xz9rofztwmVJuXxGfEd5q15BCEbdq0i
+	 9cbmeDbvCd0seljVWAlK0IHGI8y0j+7ZwbtV9nB1wHeVvm0FGJfl65xvvUU1rnBY2l
+	 GapyENkn36S0Ni6pZqVc5KGM4VgRjW4H9jUrUsCqRJyvsmq3ZC7IZ5b3b0EDv+xL+N
+	 3lI7KDdzd/sgCgdJSLUQPdgUkADgV/sIG53GXqUfemPrPGR+nA16/VpDWTy3BMjzzX
+	 Yz0HHPuXbtu8g==
+Received: by gaggiata.pivistrello.it (Postfix, from userid 1000)
+	id 67B3A7F9D0; Fri, 30 Aug 2024 10:10:30 +0200 (CEST)
+Date: Fri, 30 Aug 2024 10:10:30 +0200
+From: Francesco Dolcini <francesco@dolcini.it>
+To: David Lin <yu-hao.lin@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>
+Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
+	briannorris@chromium.org, kvalo@kernel.org, francesco@dolcini.it,
+	tsung-hsien.hsieh@nxp.com
+Subject: Re: [PATCH] wifi: mwifiex: avoid AP and STA running on different
+ channel
+Message-ID: <ZtF-dgrx28yZKG2O@gaggiata.pivistrello.it>
+References: <20240830030630.825818-1-yu-hao.lin@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240830030630.825818-1-yu-hao.lin@nxp.com>
 
-On Fri 30 Aug 2024 at 10:00, Neil Armstrong <neil.armstrong@linaro.org> wrote:
++Sascha, that just sent a patch to handle the same issue.
 
-> Hi Jerome,
->
-> On 30/08/2024 07:26, Xianwei Zhao via B4 Relay wrote:
->> From: Xianwei Zhao <xianwei.zhao@amlogic.com>
->> Add C3 PLL controller input clock parameters "fix".
->> The clock named "fix" was initially implemented in PLL clock controller
->> driver. However, some registers required secure zone access, so we moved
->> it to the secure zone (BL31) and accessed it through SCMI. Since the PLL
->> clock driver needs to use this clock, the "fix" clock is used as an input
->> source. We updated the driver but forgot to modify the binding accordingly,
->> so we are adding it here.
->> It is an ABI break but on a new and immature platform. Noboby could
->> really
->> use that platform at this stage, so nothing is going to break on anyone
->> really.
->> Fixes: 0e6be855a96d ("dt-bindings: clock: add Amlogic C3 PLL clock
->> controller")
->> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
->> Signed-off-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
->> ---
->>   Documentation/devicetree/bindings/clock/amlogic,c3-pll-clkc.yaml | 7 +++++--
->
-> So you mind if I take this one via my arm64-dt tree ?
+On Fri, Aug 30, 2024 at 11:06:30AM +0800, David Lin wrote:
+> Current firmware doesn't support AP and STA running on different
+> channels simultaneously.
+> FW crash would occur in such case.
+> This patch avoids the issue by disabling AP and STA to run on
+> different channels.
 
-There is no conflicting change in my tree so it's fine, yes.
+Is this a generic issue of specific of some firmware version? Asking since the
+driver as you know is supporting multiple Wi-Fi device.
 
->
-> Neil
->
-> <snip>
+Francesco
 
--- 
-Jerome
 
