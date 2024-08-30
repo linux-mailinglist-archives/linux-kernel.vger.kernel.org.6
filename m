@@ -1,337 +1,151 @@
-Return-Path: <linux-kernel+bounces-309125-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309128-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18DB2966679
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 18:08:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 787B4966682
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 18:09:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 35628B21B23
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 16:08:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 139F21F22E75
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 16:09:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E51A1B81C3;
-	Fri, 30 Aug 2024 16:08:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC9EA1B8E92;
+	Fri, 30 Aug 2024 16:09:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="SR/9c5JA"
-Received: from smtpout.efficios.com (smtpout.efficios.com [167.114.26.122])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="B8Uv2ddP"
+Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15AAB4D8AE
-	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 16:08:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.114.26.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79B171B8E84
+	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 16:08:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725034101; cv=none; b=F42cHGHVv/nKpL5bBvjZOhYc2hZUDqwZulGcRNZqjKZbacD13iInhEDj/kuQ6qoD4IdF89gRteKh8CcGE6ntkrHABtY5cVY+nxWbvhFhIPjhlTZDndEVX5r+uyyDtoTVWzrouqAYLd0eVwtyz4HS2iq5Ke3wYWy5R1ACFbnsnYM=
+	t=1725034142; cv=none; b=NhqSjV7Zpc/CJutNJurtxdezoBaaTqtA72Vxo6Er/I2/l5guhJn8+Zki6ZoqcgsYATMfiLXqBE08EhE6DjAsv5gK54QzFtBO/1UM/RR4lOdLja1MhvvV57dux/083y/ReUs3Dwk9Y8bEy21XgaBbsAg1aPHrPT61i3UcRpnoLtA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725034101; c=relaxed/simple;
-	bh=d7bW5ItJ77tkm4VSI99P2mukTBHVVYrpWlCNCSdu7SA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ehhuoYDp9iHtR3wsRQeuH2bSqSqJsy8vIAc7K5Mxw7RsBVMYV+9SmCNa+aXP4LWZFTM9LK/nq8qHHlXjgBC+Ik7xF3+F0AHk7WGyRfqaVnvFzBgthLt35f4oyD+ZDhjwKMPHv3PXWqbTzvdSaWZu3XePR7FNdHjVcs5MZRNATt0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=SR/9c5JA; arc=none smtp.client-ip=167.114.26.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
-	s=smtpout1; t=1725034096;
-	bh=d7bW5ItJ77tkm4VSI99P2mukTBHVVYrpWlCNCSdu7SA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=SR/9c5JA/ODFyClK/vXDthYPXr8mdiv6PwiJ4f9h4IZtNabaFYpY18Y4X00pcIIiK
-	 6l91Z+Bg5NlLCkGKWUgO7EhpoMz6Nb2qAvjNuMeCyivv6RWCvb9Gr7Aa+wNXfrYdhK
-	 80jWhUcDfp8GM9QxNun03ohi8SNnlGhOyC8F3QqFIHDUNYBPgz2kznn6puNWIh+kDo
-	 DbqZerm697r9pS+NDbNtoFIXqHzts+qx4HEFQJmtVvyFIK4nSKujldRxW/SqUtFK8s
-	 QqcREcZjOBZdkTXG8am5C/cFaH1qftS+nvnNteItoTlFJ57vbT5rMayINXsvHSon7C
-	 AAFYwAV0rURYA==
-Received: from [172.16.0.134] (96-127-217-162.qc.cable.ebox.net [96.127.217.162])
-	by smtpout.efficios.com (Postfix) with ESMTPSA id 4WwNNb6sT9z1JXT;
-	Fri, 30 Aug 2024 12:08:15 -0400 (EDT)
-Message-ID: <ab577998-946a-4844-a67f-60d17a31ed3c@efficios.com>
-Date: Fri, 30 Aug 2024 12:07:53 -0400
+	s=arc-20240116; t=1725034142; c=relaxed/simple;
+	bh=L3G1Nh03iCO7XPdrJMCStZn8wSn6LH0tlCITcgXcfnQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bzy3TLBBn5yX/RvyDegFuewAEXcoXJP9zxubx+tBh0F2namqsBYsnHzLdf94X6QKg/KaUp+qVT0INAtrDX6voerQ0s4FZtbKxG41Xor9Nojf2QqfXyGgLH2iAqxyEntEBSwVfPUrz8jjICZv04KKTND0R7pHIEqebGLIQT9bV+8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=B8Uv2ddP; arc=none smtp.client-ip=209.85.210.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-714226888dfso1675244b3a.1
+        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 09:08:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1725034139; x=1725638939; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=OqgedbIRVt4S8ZRSsokiU1zOwOOddKQzQ2oSgumJZFM=;
+        b=B8Uv2ddPbfplvmBBhxsbMXYtOxyOAtHGNoD/pugThQG4FlvrocWAIYNbdR6NzL4Jri
+         zKgT7QnsUehundZWtS67E0dWG6CWB9NYQBM2y/kYcGAYU7w2FSy0H1cvcn6fjSrYwPqn
+         m1C1WOzatNnDKlggn71ui20WFBByxHpF/38tr5uztK3/H8H7+k4Rn41gWyCGdQiBp+Dx
+         IeOah57CgKBqGITA3OOuubWJU7krgiTEs0k9ufWdSozP1MT8lH/jud8lF9VZe80k24/p
+         BndjkzmWxLX7rTeV4e4PeggSDUN0++fxNkh3U+DcYJtjh3slEnD36GMVs7cTuDksZK5Q
+         nSRg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725034139; x=1725638939;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=OqgedbIRVt4S8ZRSsokiU1zOwOOddKQzQ2oSgumJZFM=;
+        b=Mz6Ojel/VkRnQXOl/H+NlGKICx+/0nyNQ53adjjvf4dLGgIGkzEky9Qp4FwQ4JJvxU
+         stXk2eTRGJaKLIT5jT24829sfqbA1AfE73YAznqQ12b/d/n/Ww82s/4f9wUWHL8sLC9z
+         EfPPLbXbnxAAS5BNJMJOm41jiV1S/Si7FXHDJNMskFFo6adAXwF2zFXNAfjEsmkKORJB
+         x+2U0YMn9YmC0m3/G3P5ePFzuUupxnLUwK9NhLmRAC6c5Pb6HFDrE0iy8lLMlTL099CE
+         GF4NW3j46hxHd/+1YyM58j+RTV78ILOegMxJOEyViIKZXm6oidmQrcargeSZnrFqSeua
+         ptBg==
+X-Forwarded-Encrypted: i=1; AJvYcCX7ZiMUchU/t4T//JZprIDNNxLhmUsSPnB2iLIw43xPu0IdynnBExqdmXMVQEHez+bVHFZz+GtOBjJGz2A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxoZ357rmU8JZjec8aviNUYAf71FaaLLR6+F+RjaS5Uft84ifaK
+	HjD8QnECPZ9hWMkvCVreAGqEmbSu7tgX0ImieGe8oatVoevmfArfX59IjcV7vA==
+X-Google-Smtp-Source: AGHT+IES4/7B4sqZGOGgix0e+QAdLuS5rttxBBJJaO5LiD6juStmaSYpJsaqj34wUd3zsmL/1KHt8Q==
+X-Received: by 2002:a17:902:e74b:b0:201:f409:ce73 with SMTP id d9443c01a7336-2050c4cf204mr65623345ad.65.1725034138664;
+        Fri, 30 Aug 2024 09:08:58 -0700 (PDT)
+Received: from thinkpad ([117.193.213.95])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2051555155csm28445905ad.253.2024.08.30.09.08.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 30 Aug 2024 09:08:58 -0700 (PDT)
+Date: Fri, 30 Aug 2024 21:38:50 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Siddharth Vadapalli <s-vadapalli@ti.com>
+Cc: bhelgaas@google.com, lpieralisi@kernel.org, kw@linux.com,
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	vigneshr@ti.com, kishon@kernel.org, linux-pci@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, srk@ti.com
+Subject: Re: [PATCH v4 0/2] Add ACSPCIE refclk support on J784S4-EVM
+Message-ID: <20240830160850.rkz3winxatwwo5cr@thinkpad>
+References: <20240829105316.1483684-1-s-vadapalli@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 5/6] lib: benchmark bitmap sets binary operation find
-To: Yury Norov <yury.norov@gmail.com>
-Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>, linux-kernel@vger.kernel.org
-References: <20240829135926.926603-1-mathieu.desnoyers@efficios.com>
- <20240829135926.926603-6-mathieu.desnoyers@efficios.com>
- <ZtHptgtLhgpGQTga@yury-ThinkPad>
-Content-Language: en-US
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-In-Reply-To: <ZtHptgtLhgpGQTga@yury-ThinkPad>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240829105316.1483684-1-s-vadapalli@ti.com>
 
-On 2024-08-30 17:48, Yury Norov wrote:
-> On Thu, Aug 29, 2024 at 09:59:25AM -0400, Mathieu Desnoyers wrote:
->> Benchmark the following bitmap find functions applying binary operations
->> on sets of two bitmaps:
->>
->> - find_first_andnot_bit,
->> - find_first_nor_bit,
->> - find_next_andnot_bit,
->> - find_next_nor_bit,
->> - find_next_or_bit.
->>
->> Note that find_first_or_bit is not part of the current API, so it is not
->> covered.
+On Thu, Aug 29, 2024 at 04:23:14PM +0530, Siddharth Vadapalli wrote:
+> Hello,
 > 
-> Can you please show how the test output looks on your system now? I'll
-> add that in commit message.
-
-Start testing find_bit() with random-filled bitmap
-find_next_bit:                  576314 ns, 163810 iterations
-find_next_zero_bit:             626847 ns, 163871 iterations
-find_last_bit:                  465050 ns, 163810 iterations
-find_nth_bit:                  2720718 ns,  16329 iterations
-find_first_bit:                1409431 ns,  16330 iterations
-find_first_and_bit:           15216406 ns,  40975 iterations
-find_next_and_bit:              324624 ns,  81708 iterations
-find_first_andnot_bit:           23856039 ns,  40955 iterations
-find_next_andnot_bit:              327734 ns,  82103 iterations
-find_first_nor_bit:           21911075 ns,  40956 iterations
-find_next_nor_bit:              345315 ns,  81919 iterations
-find_next_or_bit:              886338 ns, 245762 iterations
-
-Start testing find_bit() with sparse bitmap
-find_next_bit:                    8870 ns,    656 iterations
-find_next_zero_bit:            1188951 ns, 327025 iterations
-find_last_bit:                    8380 ns,    656 iterations
-find_nth_bit:                  1110068 ns,    655 iterations
-find_first_bit:                 455799 ns,    656 iterations
-find_first_and_bit:               6521 ns,      2 iterations
-find_next_and_bit:                3540 ns,      2 iterations
-find_first_andnot_bit:             785844 ns,    655 iterations
-find_next_andnot_bit:                8950 ns,    655 iterations
-find_first_nor_bit:          338646832 ns, 326373 iterations
-find_next_nor_bit:             1264144 ns, 326372 iterations
-find_next_or_bit:               14020 ns,   1309 iterations
-
-Relevant lscpu output:
-
-Architecture:             x86_64
-   CPU op-mode(s):         32-bit, 64-bit
-   Address sizes:          52 bits physical, 57 bits virtual
-   Byte Order:             Little Endian
-CPU(s):                   384
-   On-line CPU(s) list:    0-383
-Vendor ID:                AuthenticAMD
-   Model name:             AMD EPYC 9654 96-Core Processor
-     CPU family:           25
-     Model:                17
-     Thread(s) per core:   2
-     Core(s) per socket:   96
-     Socket(s):            2
-     Stepping:             1
-     Frequency boost:      enabled
-     CPU(s) scaling MHz:   100%
-     CPU max MHz:          3709.0000
-     CPU min MHz:          400.0000
-     BogoMIPS:             4799.80
-     Flags:                fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ht syscall nx mmxext
-                           fxsr_opt pdpe1gb rdtscp lm constant_tsc rep_good amd_lbr_v2 nopl xtopology nonstop_tsc cpuid extd_apicid aperfmperf rap
-                           l pni pclmulqdq monitor ssse3 fma cx16 pcid sse4_1 sse4_2 x2apic movbe popcnt aes xsave avx f16c rdrand lahf_lm cmp_leg
-                           acy svm extapic cr8_legacy abm sse4a misalignsse 3dnowprefetch osvw ibs skinit wdt tce topoext perfctr_core perfctr_nb
-                           bpext perfctr_llc mwaitx cpb cat_l3 cdp_l3 hw_pstate ssbd mba perfmon_v2 ibrs ibpb stibp ibrs_enhanced vmmcall fsgsbase
-                            bmi1 avx2 smep bmi2 erms invpcid cqm rdt_a avx512f avx512dq rdseed adx smap avx512ifma clflushopt clwb avx512cd sha_ni
-                            avx512bw avx512vl xsaveopt xsavec xgetbv1 xsaves cqm_llc cqm_occup_llc cqm_mbm_total cqm_mbm_local user_shstk avx512_b
-                           f16 clzero irperf xsaveerptr rdpru wbnoinvd amd_ppin cppc arat npt lbrv svm_lock nrip_save tsc_scale vmcb_clean flushby
-                           asid decodeassists pausefilter pfthreshold avic v_vmsave_vmload vgif x2avic v_spec_ctrl vnmi avx512vbmi umip pku ospke
-                           avx512_vbmi2 gfni vaes vpclmulqdq avx512_vnni avx512_bitalg avx512_vpopcntdq la57 rdpid overflow_recov succor smca fsrm
-                            flush_l1d debug_swap
-Virtualization features:
-   Virtualization:         AMD-V
-Caches (sum of all):
-   L1d:                    6 MiB (192 instances)
-   L1i:                    6 MiB (192 instances)
-   L2:                     192 MiB (192 instances)
-   L3:                     768 MiB (24 instances)
-NUMA:
-   NUMA node(s):           24
-   NUMA node0 CPU(s):      0-7,192-199
-   NUMA node1 CPU(s):      8-15,200-207
-   NUMA node2 CPU(s):      16-23,208-215
-   NUMA node3 CPU(s):      24-31,216-223
-   NUMA node4 CPU(s):      32-39,224-231
-   NUMA node5 CPU(s):      40-47,232-239
-   NUMA node6 CPU(s):      48-55,240-247
-   NUMA node7 CPU(s):      56-63,248-255
-   NUMA node8 CPU(s):      64-71,256-263
-   NUMA node9 CPU(s):      72-79,264-271
-   NUMA node10 CPU(s):     80-87,272-279
-   NUMA node11 CPU(s):     88-95,280-287
-   NUMA node12 CPU(s):     96-103,288-295
-   NUMA node13 CPU(s):     104-111,296-303
-   NUMA node14 CPU(s):     112-119,304-311
-   NUMA node15 CPU(s):     120-127,312-319
-   NUMA node16 CPU(s):     128-135,320-327
-   NUMA node17 CPU(s):     136-143,328-335
-   NUMA node18 CPU(s):     144-151,336-343
-   NUMA node19 CPU(s):     152-159,344-351
-   NUMA node20 CPU(s):     160-167,352-359
-   NUMA node21 CPU(s):     168-175,360-367
-   NUMA node22 CPU(s):     176-183,368-375
-   NUMA node23 CPU(s):     184-191,376-383
-Vulnerabilities:
-   Gather data sampling:   Not affected
-   Itlb multihit:          Not affected
-   L1tf:                   Not affected
-   Mds:                    Not affected
-   Meltdown:               Not affected
-   Mmio stale data:        Not affected
-   Reg file data sampling: Not affected
-   Retbleed:               Not affected
-   Spec rstack overflow:   Vulnerable
-   Spec store bypass:      Vulnerable
-   Spectre v1:             Vulnerable: __user pointer sanitization and usercopy barriers only; no swapgs barriers
-   Spectre v2:             Vulnerable; IBPB: disabled; STIBP: disabled; PBRSB-eIBRS: Not affected; BHI: Not affected
-   Srbds:                  Not affected
-   Tsx async abort:        Not affected
-
-
-
+> This series adds support to drive out the reference clock required by
+> the PCIe Endpoint device using the ACSPCIE buffer. Series __doesn't__
+> have any dependencies as the dependent patch:
+> https://lore.kernel.org/r/20240729064012.1915674-1-s-vadapalli@ti.com/
+> which was mentioned in the v2 series has been merged.
 > 
->>
->> Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
->> Cc: Yury Norov <yury.norov@gmail.com>
->> Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>
->> ---
->>   lib/find_bit_benchmark.c | 93 ++++++++++++++++++++++++++++++++++++++++
->>   1 file changed, 93 insertions(+)
->>
->> diff --git a/lib/find_bit_benchmark.c b/lib/find_bit_benchmark.c
->> index aee2ebb6b3cd..3b16254dec23 100644
->> --- a/lib/find_bit_benchmark.c
->> +++ b/lib/find_bit_benchmark.c
->> @@ -70,6 +70,44 @@ static int __init test_find_first_and_bit(void *bitmap, const void *bitmap2, uns
->>   	return 0;
->>   }
->>   
->> +static int __init test_find_first_andnot_bit(void *bitmap, const void *bitmap2, unsigned long len)
->> +{
->> +	static DECLARE_BITMAP(cp, BITMAP_LEN) __initdata;
->> +	unsigned long i, cnt;
->> +	ktime_t time;
->> +
->> +	bitmap_copy(cp, bitmap, BITMAP_LEN);
->> +
->> +	time = ktime_get();
->> +	for (cnt = i = 0; i < len; cnt++) {
->> +		i = find_first_andnot_bit(cp, bitmap2, len);
->> +		__clear_bit(i, cp);
->> +	}
->> +	time = ktime_get() - time;
->> +	pr_err("find_first_andnot_bit: %18llu ns, %6ld iterations\n", time, cnt);
->> +
->> +	return 0;
->> +}
->> +
->> +static int __init test_find_first_nor_bit(void *bitmap, const void *bitmap2, unsigned long len)
->> +{
->> +	static DECLARE_BITMAP(cp, BITMAP_LEN) __initdata;
->> +	unsigned long i, cnt;
->> +	ktime_t time;
->> +
->> +	bitmap_copy(cp, bitmap, BITMAP_LEN);
->> +
->> +	time = ktime_get();
->> +	for (cnt = i = 0; i < len; cnt++) {
->> +		i = find_first_nor_bit(cp, bitmap2, len);
->> +		__set_bit(i, cp);
->> +	}
->> +	time = ktime_get() - time;
->> +	pr_err("find_first_nor_bit: %18llu ns, %6ld iterations\n", time, cnt);
->> +
->> +	return 0;
->> +}
->> +
->>   static int __init test_find_next_bit(const void *bitmap, unsigned long len)
->>   {
->>   	unsigned long i, cnt;
->> @@ -148,6 +186,51 @@ static int __init test_find_next_and_bit(const void *bitmap,
->>   	return 0;
->>   }
->>   
->> +static int __init test_find_next_andnot_bit(const void *bitmap,
->> +		const void *bitmap2, unsigned long len)
->> +{
->> +	unsigned long i, cnt;
->> +	ktime_t time;
->> +
->> +	time = ktime_get();
->> +	for (cnt = i = 0; i < BITMAP_LEN; cnt++)
->> +		i = find_next_andnot_bit(bitmap, bitmap2, BITMAP_LEN, i + 1);
->> +	time = ktime_get() - time;
->> +	pr_err("find_next_andnot_bit:  %18llu ns, %6ld iterations\n", time, cnt);
->> +
->> +	return 0;
->> +}
->> +
->> +static int __init test_find_next_nor_bit(const void *bitmap,
->> +		const void *bitmap2, unsigned long len)
->> +{
->> +	unsigned long i, cnt;
->> +	ktime_t time;
->> +
->> +	time = ktime_get();
->> +	for (cnt = i = 0; i < BITMAP_LEN; cnt++)
->> +		i = find_next_nor_bit(bitmap, bitmap2, BITMAP_LEN, i + 1);
->> +	time = ktime_get() - time;
->> +	pr_err("find_next_nor_bit:  %18llu ns, %6ld iterations\n", time, cnt);
->> +
->> +	return 0;
->> +}
->> +
->> +static int __init test_find_next_or_bit(const void *bitmap,
->> +		const void *bitmap2, unsigned long len)
->> +{
->> +	unsigned long i, cnt;
->> +	ktime_t time;
->> +
->> +	time = ktime_get();
->> +	for (cnt = i = 0; i < BITMAP_LEN; cnt++)
->> +		i = find_next_or_bit(bitmap, bitmap2, BITMAP_LEN, i + 1);
->> +	time = ktime_get() - time;
->> +	pr_err("find_next_or_bit:  %18llu ns, %6ld iterations\n", time, cnt);
->> +
->> +	return 0;
->> +}
->> +
->>   static int __init find_bit_test(void)
->>   {
->>   	unsigned long nbits = BITMAP_LEN / SPARSE;
->> @@ -169,6 +252,11 @@ static int __init find_bit_test(void)
->>   	test_find_first_bit(bitmap, BITMAP_LEN / 10);
->>   	test_find_first_and_bit(bitmap, bitmap2, BITMAP_LEN / 2);
->>   	test_find_next_and_bit(bitmap, bitmap2, BITMAP_LEN);
->> +	test_find_first_andnot_bit(bitmap, bitmap2, BITMAP_LEN / 2);
->> +	test_find_next_andnot_bit(bitmap, bitmap2, BITMAP_LEN);
->> +	test_find_first_nor_bit(bitmap, bitmap2, BITMAP_LEN / 2);
->> +	test_find_next_nor_bit(bitmap, bitmap2, BITMAP_LEN);
->> +	test_find_next_or_bit(bitmap, bitmap2, BITMAP_LEN);
->>   
->>   	pr_err("\nStart testing find_bit() with sparse bitmap\n");
->>   
->> @@ -187,6 +275,11 @@ static int __init find_bit_test(void)
->>   	test_find_first_bit(bitmap, BITMAP_LEN);
->>   	test_find_first_and_bit(bitmap, bitmap2, BITMAP_LEN);
->>   	test_find_next_and_bit(bitmap, bitmap2, BITMAP_LEN);
->> +	test_find_first_andnot_bit(bitmap, bitmap2, BITMAP_LEN);
->> +	test_find_next_andnot_bit(bitmap, bitmap2, BITMAP_LEN);
->> +	test_find_first_nor_bit(bitmap, bitmap2, BITMAP_LEN);
->> +	test_find_next_nor_bit(bitmap, bitmap2, BITMAP_LEN);
->> +	test_find_next_or_bit(bitmap, bitmap2, BITMAP_LEN);
->>   
->>   	/*
->>   	 * Everything is OK. Return error just to let user run benchmark
->> -- 
->> 2.39.2
+> Series is based on linux-next tagged next-20240829.
+> 
+
+Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+
+- Mani
+
+> v3:
+> https://lore.kernel.org/r/20240827055548.901285-1-s-vadapalli@ti.com/
+> Changes since v3:
+> - Rebased series on next-20240829.
+> - Addressed Bjorn's feedback on the v3 patch 2/2 at:
+>   https://lore.kernel.org/r/20240828211906.GA38267@bhelgaas/
+> 
+> v2:
+> https://lore.kernel.org/r/20240729092855.1945700-1-s-vadapalli@ti.com/
+> Changes since v2:
+> - Rebased series on next-20240826.
+> 
+> v1:
+> https://lore.kernel.org/r/20240715120936.1150314-1-s-vadapalli@ti.com/
+> Changes since v1:
+> - Patch 1/3 of the v1 series has been posted separately at:
+>   https://lore.kernel.org/r/20240729064012.1915674-1-s-vadapalli@ti.com/
+> - Collected Acked-by tag from:
+>   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>   for Patch 2/3 of the v1 series which is patch 1/2 of this series:
+>   https://lore.kernel.org/r/1caa0c9a-1de7-41db-be2b-557b49f4a248@kernel.org/
+> - Addressed Bjorn's feedback on Patch 3/3 of v1 series at:
+>   https://lore.kernel.org/r/20240725211841.GA859405@bhelgaas/
+>   which is patch 2/2 of this series.
+> 
+> Regards,
+> Siddharth.
+> 
+> Siddharth Vadapalli (2):
+>   dt-bindings: PCI: ti,j721e-pci-host: Add ACSPCIE proxy control
+>     property
+>   PCI: j721e: Enable ACSPCIE Refclk if "ti,syscon-acspcie-proxy-ctrl"
+>     exists
+> 
+>  .../bindings/pci/ti,j721e-pci-host.yaml       | 10 +++++
+>  drivers/pci/controller/cadence/pci-j721e.c    | 39 ++++++++++++++++++-
+>  2 files changed, 48 insertions(+), 1 deletion(-)
+> 
+> -- 
+> 2.40.1
+> 
 
 -- 
-Mathieu Desnoyers
-EfficiOS Inc.
-https://www.efficios.com
-
+மணிவண்ணன் சதாசிவம்
 
