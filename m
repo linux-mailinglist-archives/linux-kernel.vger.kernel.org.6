@@ -1,390 +1,98 @@
-Return-Path: <linux-kernel+bounces-308665-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308653-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F7B2966005
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 13:08:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3EDC3965FF5
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 13:05:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E9944283D2A
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 11:07:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD2801F21C3F
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 11:05:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 569B4192D7C;
-	Fri, 30 Aug 2024 11:04:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08BE219409C;
+	Fri, 30 Aug 2024 11:04:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lCPF6eHZ"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="cExWXtsF"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 479811B1D5F
-	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 11:04:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E4F918FDD2;
+	Fri, 30 Aug 2024 11:04:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725015877; cv=none; b=W19TqdETl8ClEhORU96NH73HyOuy1+2qAVn0NYLj6pUIh3Qi9mz1y9Fx7fvPIZ64w5ycBwH0Pvxfha19WcFu5TnQDMHSnIZrtdGKtWQ0dsZPdtFL+0dfYoD671vk9nrV/kw5hA7X6S6O2fKQ2wFbI0A4bOmZXYUjietFqIwvYGM=
+	t=1725015859; cv=none; b=pU00uYcGs7z2tJh1kZN9p6H65AMs8l52EcfgoEsMC1xXX6SQqYR2FfIkfmLZsmIPTyk/kUZ6UYEhbSurPUfIYLcvjyW+ODGv9QdOj526oChLprTnsyP+cOqGhDD7vxE+opW8Lgf+/g/zoionoJEaACk1GqhJsVlCBEE7KKVPd0s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725015877; c=relaxed/simple;
-	bh=lUh8Aedgv8tc8oDpPohyk/Cd29grYQZyx9Rw2Lh5QQc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=gy1RcEQOPoh16zuDIrGz20jihPB9ngDtSmzneY8OK73mpAOd5La9lXaX/v3ATcTfCytv+0Few04Nr+ZHgPPoLd2Pr1H7Vyx00BNUK1/JA5CUPR1vYNLO33HtazpnOMx4W2I30a++AYuL9bXEEZhrzoheOHZvemySsFnLCL/b9nU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lCPF6eHZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC2D5C4CEC6;
-	Fri, 30 Aug 2024 11:04:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725015876;
-	bh=lUh8Aedgv8tc8oDpPohyk/Cd29grYQZyx9Rw2Lh5QQc=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=lCPF6eHZnD+OxTItvRilpWaEiSAZwuJFqAxhl0r8PPR1cQs9NYw3RBvkERhtSMm71
-	 NR/5kkLsMB8VSjHJyN4K+Ouq5xqAe3NzQ5u9OwO3Q/ONp6Xl+30We5WWhWCkTrgWdV
-	 Hb/pEDF5FUPlf/9IW7dc/Cy88LTVmaabkYwkj80kg0ZYs0IuC/V3jKnrQWbxMK6URC
-	 HivxdqaYSi2Xue4Gk/mtyTYBKgF1gMYcvJdPaK/hnUDRGrIMl1Xfh0nCKvGkG0Az8t
-	 kK6J3F2DCR0fNed7Pscz48Rirf9DLKy4S1PGaknxtUGmT+SrF7e0utFGnI1YAn4VTX
-	 Ha+iEQRirsgAg==
-From: Tejun Heo <tj@kernel.org>
-To: void@manifault.com
-Cc: kernel-team@meta.com,
-	linux-kernel@vger.kernel.org,
-	Tejun Heo <tj@kernel.org>,
-	Daniel Hodges <hodges.daniel.scott@gmail.com>,
-	Changwoo Min <multics69@gmail.com>,
-	Andrea Righi <andrea.righi@linux.dev>,
-	Dan Schatzberg <schatzberg.dan@gmail.com>
-Subject: [PATCH 11/11] scx_qmap: Implement highpri boosting
-Date: Fri, 30 Aug 2024 01:03:55 -1000
-Message-ID: <20240830110415.116090-12-tj@kernel.org>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20240830110415.116090-1-tj@kernel.org>
-References: <20240830110415.116090-1-tj@kernel.org>
+	s=arc-20240116; t=1725015859; c=relaxed/simple;
+	bh=rO6b7QFMzMshg1b/0hXGx0Bjl6EL4/D2pRT9fm6J53o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cX3TEdasY+4roLIxPsrIhqSp3KQGcbK/W4goX7ZNz+XI/h8+YZqdXSLTfCox1ytS3lbf7oVfjkqSO+2oSAMJUaBQZzFrmTSQS5pvUABpc2uDLsIJM0SAW1BbJK2LObBX69hVCFBRVx7dpDtC1koYKlGp7jtgTsMsb1A6q0VRYh4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=cExWXtsF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 19755C4CEC2;
+	Fri, 30 Aug 2024 11:04:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1725015858;
+	bh=rO6b7QFMzMshg1b/0hXGx0Bjl6EL4/D2pRT9fm6J53o=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=cExWXtsFOxTgUaU9KshA4QxNtf7K1NEJriuqNf/EeM/NRe9phkQNkpeU1WZpHxfAT
+	 hPZSpgo5aDKtsPI1YTJcIyqt4/AsAnXBz3ZkceNC4kzPk7bZ/K4WNl++wImmMFGN17
+	 gRx4Bc2KeSPRrDbwsnKLtOuPTxIzKKfwX8fKSTL8=
+Date: Fri, 30 Aug 2024 13:04:15 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Jiaxun Yang <jiaxun.yang@flygoat.com>
+Cc: Guenter Roeck <linux@roeck-us.net>,
+	"stable@vger.kernel.org" <stable@vger.kernel.org>,
+	patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Andrew Morton <akpm@linux-foundation.org>, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Florian Fainelli <f.fainelli@gmail.com>, sudipm.mukherjee@gmail.com,
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org,
+	allen.lkml@gmail.com, broonie@kernel.org,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+Subject: Re: [PATCH 5.15 000/479] 5.15.165-rc3 review
+Message-ID: <2024083004-scouts-broadways-663b@gregkh>
+References: <20240817075228.220424500@linuxfoundation.org>
+ <135ef4fd-4fc9-40b4-b188-8e64946f47c4@roeck-us.net>
+ <eb7fda2e-e3c3-42cb-b477-91bcafe3088a@app.fastmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <eb7fda2e-e3c3-42cb-b477-91bcafe3088a@app.fastmail.com>
 
-Implement a silly boosting mechanism for nice -20 tasks. The only purpose is
-demonstrating and testing scx_bpf_dispatch_from_dsq(). The boosting only
-works within SHARED_DSQ and makes only minor differences with increased
-dispatch batch (-b).
+On Mon, Aug 26, 2024 at 02:27:17PM +0100, Jiaxun Yang wrote:
+> 
+> 
+> 在2024年8月26日八月 上午2:04，Guenter Roeck写道：
+> > On 8/17/24 01:00, Greg Kroah-Hartman wrote:
+> >> This is the start of the stable review cycle for the 5.15.165 release.
+> >> There are 479 patches in this series, all will be posted as a response
+> >> to this one.  If anyone has any issues with these being applied, please
+> >> let me know.
+> >> 
+> >> Responses should be made by Mon, 19 Aug 2024 07:51:05 +0000.
+> >> Anything received after that time might be too late.
+> >> 
+> > [ ... ]
+> >> Jiaxun Yang <jiaxun.yang@flygoat.com>
+> >>      MIPS: Loongson64: reset: Prioritise firmware service
+> >> 
+> >
+> > This patch in v5.15.165 results in:
+> 
+> Thanks for reporting!
+> 
+> This patch should be reverted for 5.15 as the infra was not here and 5.15
+> is not intended to support platforms that may be impacted by this issue.
 
-This exercises moving tasks to a user DSQ and all local DSQs from
-ops.dispatch() and BPF timerfn.
+Now reverted, thanks!
 
-Signed-off-by: Tejun Heo <tj@kernel.org>
-Cc: Daniel Hodges <hodges.daniel.scott@gmail.com>
-Cc: David Vernet <void@manifault.com>
-Cc: Changwoo Min <multics69@gmail.com>
-Cc: Andrea Righi <andrea.righi@linux.dev>
-Cc: Dan Schatzberg <schatzberg.dan@gmail.com>
----
- tools/sched_ext/scx_qmap.bpf.c | 142 ++++++++++++++++++++++++++++++---
- tools/sched_ext/scx_qmap.c     |  11 ++-
- 2 files changed, 139 insertions(+), 14 deletions(-)
-
-diff --git a/tools/sched_ext/scx_qmap.bpf.c b/tools/sched_ext/scx_qmap.bpf.c
-index 892278f12dce..11b8e22128e1 100644
---- a/tools/sched_ext/scx_qmap.bpf.c
-+++ b/tools/sched_ext/scx_qmap.bpf.c
-@@ -27,6 +27,8 @@
- enum consts {
- 	ONE_SEC_IN_NS		= 1000000000,
- 	SHARED_DSQ		= 0,
-+	HIGHPRI_DSQ		= 1,
-+	HIGHPRI_WEIGHT		= 8668,		/* this is what -20 maps to */
- };
- 
- char _license[] SEC("license") = "GPL";
-@@ -36,10 +38,12 @@ const volatile u32 stall_user_nth;
- const volatile u32 stall_kernel_nth;
- const volatile u32 dsp_inf_loop_after;
- const volatile u32 dsp_batch;
-+const volatile bool highpri_boosting;
- const volatile bool print_shared_dsq;
- const volatile s32 disallow_tgid;
- const volatile bool suppress_dump;
- 
-+u64 nr_highpri_queued;
- u32 test_error_cnt;
- 
- UEI_DEFINE(uei);
-@@ -95,6 +99,7 @@ static u64 core_sched_tail_seqs[5];
- /* Per-task scheduling context */
- struct task_ctx {
- 	bool	force_local;	/* Dispatch directly to local_dsq */
-+	bool	highpri;
- 	u64	core_sched_seq;
- };
- 
-@@ -122,6 +127,7 @@ struct {
- /* Statistics */
- u64 nr_enqueued, nr_dispatched, nr_reenqueued, nr_dequeued, nr_ddsp_from_enq;
- u64 nr_core_sched_execed;
-+u64 nr_expedited_local, nr_expedited_remote, nr_expedited_lost, nr_expedited_from_timer;
- u32 cpuperf_min, cpuperf_avg, cpuperf_max;
- u32 cpuperf_target_min, cpuperf_target_avg, cpuperf_target_max;
- 
-@@ -140,17 +146,25 @@ static s32 pick_direct_dispatch_cpu(struct task_struct *p, s32 prev_cpu)
- 	return -1;
- }
- 
-+static struct task_ctx *lookup_task_ctx(struct task_struct *p)
-+{
-+	struct task_ctx *tctx;
-+
-+	if (!(tctx = bpf_task_storage_get(&task_ctx_stor, p, 0, 0))) {
-+		scx_bpf_error("task_ctx lookup failed");
-+		return NULL;
-+	}
-+	return tctx;
-+}
-+
- s32 BPF_STRUCT_OPS(qmap_select_cpu, struct task_struct *p,
- 		   s32 prev_cpu, u64 wake_flags)
- {
- 	struct task_ctx *tctx;
- 	s32 cpu;
- 
--	tctx = bpf_task_storage_get(&task_ctx_stor, p, 0, 0);
--	if (!tctx) {
--		scx_bpf_error("task_ctx lookup failed");
-+	if (!(tctx = lookup_task_ctx(p)))
- 		return -ESRCH;
--	}
- 
- 	cpu = pick_direct_dispatch_cpu(p, prev_cpu);
- 
-@@ -197,11 +211,8 @@ void BPF_STRUCT_OPS(qmap_enqueue, struct task_struct *p, u64 enq_flags)
- 	if (test_error_cnt && !--test_error_cnt)
- 		scx_bpf_error("test triggering error");
- 
--	tctx = bpf_task_storage_get(&task_ctx_stor, p, 0, 0);
--	if (!tctx) {
--		scx_bpf_error("task_ctx lookup failed");
-+	if (!(tctx = lookup_task_ctx(p)))
- 		return;
--	}
- 
- 	/*
- 	 * All enqueued tasks must have their core_sched_seq updated for correct
-@@ -256,6 +267,10 @@ void BPF_STRUCT_OPS(qmap_enqueue, struct task_struct *p, u64 enq_flags)
- 		return;
- 	}
- 
-+	if (highpri_boosting && p->scx.weight >= HIGHPRI_WEIGHT) {
-+		tctx->highpri = true;
-+		__sync_fetch_and_add(&nr_highpri_queued, 1);
-+	}
- 	__sync_fetch_and_add(&nr_enqueued, 1);
- }
- 
-@@ -272,13 +287,89 @@ void BPF_STRUCT_OPS(qmap_dequeue, struct task_struct *p, u64 deq_flags)
- 
- static void update_core_sched_head_seq(struct task_struct *p)
- {
--	struct task_ctx *tctx = bpf_task_storage_get(&task_ctx_stor, p, 0, 0);
- 	int idx = weight_to_idx(p->scx.weight);
-+	struct task_ctx *tctx;
- 
--	if (tctx)
-+	if ((tctx = lookup_task_ctx(p)))
- 		core_sched_head_seqs[idx] = tctx->core_sched_seq;
--	else
--		scx_bpf_error("task_ctx lookup failed");
-+}
-+
-+/*
-+ * To demonstrate the use of scx_bpf_dispatch_from_dsq(), implement silly
-+ * selective priority boosting mechanism by scanning SHARED_DSQ looking for
-+ * highpri tasks, moving them to HIGHPRI_DSQ and then consuming them first. This
-+ * makes minor difference only when dsp_batch is larger than 1.
-+ *
-+ * scx_bpf_dispatch[_vtime]_from_dsq() are allowed both from ops.dispatch() and
-+ * non-rq-lock holding BPF programs. As demonstration, this function is called
-+ * from qmap_dispatch() and monitor_timerfn().
-+ */
-+static bool dispatch_highpri(bool from_timer)
-+{
-+	struct task_struct *p;
-+	s32 this_cpu = bpf_get_smp_processor_id();
-+
-+	/* scan SHARED_DSQ and move highpri tasks to HIGHPRI_DSQ */
-+	bpf_for_each(scx_dsq, p, SHARED_DSQ, 0) {
-+		struct task_ctx *tctx;
-+
-+		/* BPF workaround: iterated task is not trusted, look up again */
-+		p = bpf_task_from_pid(p->pid);
-+		if (!p)
-+			continue;
-+
-+		if (!(tctx = lookup_task_ctx(p))) {
-+			bpf_task_release(p);
-+			return false;
-+		}
-+
-+		if (tctx->highpri)
-+			scx_bpf_dispatch_from_dsq(BPF_FOR_EACH_ITER, p,
-+						  HIGHPRI_DSQ, 0, 0);
-+
-+		bpf_task_release(p);
-+	}
-+
-+	/*
-+	 * Scan HIGHPRI_DSQ and dispatch until a task that can run on this CPU
-+	 * is found.
-+	 */
-+	bpf_for_each(scx_dsq, p, HIGHPRI_DSQ, 0) {
-+		bool dispatched = false;
-+		s32 cpu;
-+
-+		/* BPF workaround: iterated task is not trusted, look up again */
-+		p = bpf_task_from_pid(p->pid);
-+		if (!p)
-+			continue;
-+
-+		if (bpf_cpumask_test_cpu(this_cpu, p->cpus_ptr))
-+			cpu = this_cpu;
-+		else
-+			cpu = scx_bpf_pick_any_cpu(p->cpus_ptr, 0);
-+
-+		if (scx_bpf_dispatch_from_dsq(BPF_FOR_EACH_ITER, p,
-+					      SCX_DSQ_LOCAL_ON | cpu, 0,
-+					      SCX_ENQ_PREEMPT)) {
-+			if (cpu == this_cpu) {
-+				dispatched = true;
-+				__sync_fetch_and_add(&nr_expedited_local, 1);
-+			} else {
-+				__sync_fetch_and_add(&nr_expedited_remote, 1);
-+			}
-+			if (from_timer)
-+				__sync_fetch_and_add(&nr_expedited_from_timer, 1);
-+		} else {
-+			__sync_fetch_and_add(&nr_expedited_lost, 1);
-+		}
-+
-+		bpf_task_release(p);
-+
-+		if (dispatched)
-+			return true;
-+	}
-+
-+	return false;
- }
- 
- void BPF_STRUCT_OPS(qmap_dispatch, s32 cpu, struct task_struct *prev)
-@@ -289,7 +380,10 @@ void BPF_STRUCT_OPS(qmap_dispatch, s32 cpu, struct task_struct *prev)
- 	void *fifo;
- 	s32 i, pid;
- 
--	if (scx_bpf_consume(SHARED_DSQ))
-+	if (dispatch_highpri(false))
-+		return;
-+
-+	if (!nr_highpri_queued && scx_bpf_consume(SHARED_DSQ))
- 		return;
- 
- 	if (dsp_inf_loop_after && nr_dispatched > dsp_inf_loop_after) {
-@@ -326,6 +420,8 @@ void BPF_STRUCT_OPS(qmap_dispatch, s32 cpu, struct task_struct *prev)
- 
- 		/* Dispatch or advance. */
- 		bpf_repeat(BPF_MAX_LOOPS) {
-+			struct task_ctx *tctx;
-+
- 			if (bpf_map_pop_elem(fifo, &pid))
- 				break;
- 
-@@ -333,13 +429,25 @@ void BPF_STRUCT_OPS(qmap_dispatch, s32 cpu, struct task_struct *prev)
- 			if (!p)
- 				continue;
- 
-+			if (!(tctx = lookup_task_ctx(p))) {
-+				bpf_task_release(p);
-+				return;
-+			}
-+
-+			if (tctx->highpri)
-+				__sync_fetch_and_sub(&nr_highpri_queued, 1);
-+
- 			update_core_sched_head_seq(p);
- 			__sync_fetch_and_add(&nr_dispatched, 1);
-+
- 			scx_bpf_dispatch(p, SHARED_DSQ, slice_ns, 0);
- 			bpf_task_release(p);
-+
- 			batch--;
- 			cpuc->dsp_cnt--;
- 			if (!batch || !scx_bpf_dispatch_nr_slots()) {
-+				if (dispatch_highpri(false))
-+					return;
- 				scx_bpf_consume(SHARED_DSQ);
- 				return;
- 			}
-@@ -649,6 +757,10 @@ static void dump_shared_dsq(void)
- 
- static int monitor_timerfn(void *map, int *key, struct bpf_timer *timer)
- {
-+	bpf_rcu_read_lock();
-+	dispatch_highpri(true);
-+	bpf_rcu_read_unlock();
-+
- 	monitor_cpuperf();
- 
- 	if (print_shared_dsq)
-@@ -670,6 +782,10 @@ s32 BPF_STRUCT_OPS_SLEEPABLE(qmap_init)
- 	if (ret)
- 		return ret;
- 
-+	ret = scx_bpf_create_dsq(HIGHPRI_DSQ, -1);
-+	if (ret)
-+		return ret;
-+
- 	timer = bpf_map_lookup_elem(&monitor_timer, &key);
- 	if (!timer)
- 		return -ESRCH;
-diff --git a/tools/sched_ext/scx_qmap.c b/tools/sched_ext/scx_qmap.c
-index c9ca30d62b2b..ac45a02b4055 100644
---- a/tools/sched_ext/scx_qmap.c
-+++ b/tools/sched_ext/scx_qmap.c
-@@ -29,6 +29,7 @@ const char help_fmt[] =
- "  -l COUNT      Trigger dispatch infinite looping after COUNT dispatches\n"
- "  -b COUNT      Dispatch upto COUNT tasks together\n"
- "  -P            Print out DSQ content to trace_pipe every second, use with -b\n"
-+"  -H            Boost nice -20 tasks in SHARED_DSQ, use with -b\n"
- "  -d PID        Disallow a process from switching into SCHED_EXT (-1 for self)\n"
- "  -D LEN        Set scx_exit_info.dump buffer length\n"
- "  -S            Suppress qmap-specific debug dump\n"
-@@ -63,7 +64,7 @@ int main(int argc, char **argv)
- 
- 	skel = SCX_OPS_OPEN(qmap_ops, scx_qmap);
- 
--	while ((opt = getopt(argc, argv, "s:e:t:T:l:b:Pd:D:Spvh")) != -1) {
-+	while ((opt = getopt(argc, argv, "s:e:t:T:l:b:PHd:D:Spvh")) != -1) {
- 		switch (opt) {
- 		case 's':
- 			skel->rodata->slice_ns = strtoull(optarg, NULL, 0) * 1000;
-@@ -86,6 +87,9 @@ int main(int argc, char **argv)
- 		case 'P':
- 			skel->rodata->print_shared_dsq = true;
- 			break;
-+		case 'H':
-+			skel->rodata->highpri_boosting = true;
-+			break;
- 		case 'd':
- 			skel->rodata->disallow_tgid = strtol(optarg, NULL, 0);
- 			if (skel->rodata->disallow_tgid < 0)
-@@ -121,6 +125,11 @@ int main(int argc, char **argv)
- 		       skel->bss->nr_reenqueued, skel->bss->nr_dequeued,
- 		       skel->bss->nr_core_sched_execed,
- 		       skel->bss->nr_ddsp_from_enq);
-+		printf("         exp_local=%"PRIu64" exp_remote=%"PRIu64" exp_timer=%"PRIu64" exp_lost=%"PRIu64"\n",
-+		       skel->bss->nr_expedited_local,
-+		       skel->bss->nr_expedited_remote,
-+		       skel->bss->nr_expedited_from_timer,
-+		       skel->bss->nr_expedited_lost);
- 		if (__COMPAT_has_ksym("scx_bpf_cpuperf_cur"))
- 			printf("cpuperf: cur min/avg/max=%u/%u/%u target min/avg/max=%u/%u/%u\n",
- 			       skel->bss->cpuperf_min,
--- 
-2.46.0
-
+greg k-h
 
