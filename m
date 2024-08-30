@@ -1,96 +1,122 @@
-Return-Path: <linux-kernel+bounces-307971-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307972-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D11F39655B9
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 05:37:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 246829655BB
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 05:39:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0D8A41C2117C
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 03:37:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C30311F23A5F
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 03:39:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25651136328;
-	Fri, 30 Aug 2024 03:37:45 +0000 (UTC)
-Received: from mail-qv1-f45.google.com (mail-qv1-f45.google.com [209.85.219.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6E9513B280;
+	Fri, 30 Aug 2024 03:39:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="LzS0ZQ6o"
+Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC52536B0D;
-	Fri, 30 Aug 2024 03:37:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C51674068
+	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 03:39:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724989064; cv=none; b=rieu2T3MOriUudlqE3KgXku+dmd7sHHPU1Ksw0TCz4Bv47/HqUdjs94bOO2cAX32GwWSJDzGUzNdx0oPqOj54uP390//+59ZD1CqzgdO8IJXX/R1zlG+baQcDD1PILtrViLMhvMYiVyDGqAdj+oIRfK1alWyxzgaDFMrUbLAIws=
+	t=1724989185; cv=none; b=YOp6KfUZd4n41jQg08fVFXQdRwjvGbbuDu7vqVAlFBPTlM0ApTtn5EUhDpZmD8i7cJ+Ap8VleRjFsA2KKAH8M0SmtgtPyjewSpemagFG23KhAtSedbp0DkVcP6oQH4rhp0nbgjRbzpARusq7IE4By4pXbrdn+/s6oKsIOFf8EWI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724989064; c=relaxed/simple;
-	bh=FMSFomMO/tzcf9mszOogrFHifHKAs7T3PX3Od76URIQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VcptIWGax502TcWuKgBcdX2lwv4HT+WIGWkN5UGNUoRIJVqh6UX1GghlrKwYes6yu03Ax58aHiWC5Np517EcgjjrucsqoiNti8goQESkzHSYADy1eK9K4rHw7rwDQncVpkU0cUL9J4U6Z63d8Jxy1/sB76DAC+V6iHx964Q8gk4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=vasilevsky.ca; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=vasilevsky.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f45.google.com with SMTP id 6a1803df08f44-6c159150ff4so7849306d6.2;
-        Thu, 29 Aug 2024 20:37:42 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724989062; x=1725593862;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=fo9L05Z0QSBRe+YpGa+Uw+0Mfbc5M8wNwQrY2Gw1TrU=;
-        b=HAeNqk3JiZxpBG2831ru79rxBG1yq1YxqdJnhpomySrKIjo581wm65Zh3HNhLE2pre
-         Ko7ehoQIvuic3qxaNsPuGiEg6txdFD9YeKscbXg7zpSFs6zRgla08p7SpCFoJSVlJVKE
-         jMbM7mVddbrzJMo5YbJJvELPqw8oRgU5b0kqYMe+JrG9C7CucBpUGybKjQJNurx3dZEG
-         zfg/H5AdC/z2RqgePzyZ83x3Xp6jSdOdSx4LYXzhWxGeR8huDJF5RHRJ6nCktaP3PVaT
-         8NjI35p+A3NetfVdEU7B0rUmHkVoV7Z6ngDYKw6lVlXhuaEMZh0hlbCH54Jxu5zHxXuu
-         YwAQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV7FheQmKFJBF/8AOPevGj2pP4l4r7D0hKcKcu8SALTVyqW5IOLEDOgWlL5x3RxpZKk8TmflVeI3l0=@vger.kernel.org, AJvYcCVM2+7B8/a+Ri6nND6kbdSgV+RElMoN0jfveOTb/HeezNzmHi+SOlAhwHJaCL8MOnOlES4TYjPHJa3pyes=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz9UA5tNCuCf5I9YM+gzUZEFrzMK1v61sJo4CHl6x69nSU3Uu50
-	fzSEckgotdSOZFIcBjL23GWUNKahwL8ed0A/ym4CGaCAka1EQIlr
-X-Google-Smtp-Source: AGHT+IF5lvFeC41ykAP/5lmiaGuGSVJ62dpKhpYmw92FoqNUdVPe/V37Z2IbmmFTugcCgHwIe+E9QA==
-X-Received: by 2002:a05:6214:3d9b:b0:6b5:d73d:918f with SMTP id 6a1803df08f44-6c33e4f053cmr61325206d6.0.1724989061710;
-        Thu, 29 Aug 2024 20:37:41 -0700 (PDT)
-Received: from [192.168.2.204] ([65.93.184.127])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6c340bfafaesm11005716d6.22.2024.08.29.20.37.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 29 Aug 2024 20:37:40 -0700 (PDT)
-Message-ID: <1568b378-5592-4d23-a572-4e09f3996331@vasilevsky.ca>
-Date: Thu, 29 Aug 2024 23:37:29 -0400
+	s=arc-20240116; t=1724989185; c=relaxed/simple;
+	bh=9g+fkzgNiLmkzb8kJYA3wu4o17li5UlZA5Js0dxJiRg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PxOIlNx2O60ORM9X5DjRS2BDrkSpIPXj+xNXiOwm9g4lPt6NMjT/yGoCHRVNbMv/iLCwyz1hEv2AMO7pWK2z+2Ahz4/xwE/Ex4xZ4LYfp9M/xiD3Bh2fWAIbL9xg3SEEYTP/eZQhg7EjjAoAlBZzRG07NdH07yDADUWvR/a8lcU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=LzS0ZQ6o; arc=none smtp.client-ip=18.9.28.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
+Received: from cwcc.thunk.org (pool-173-48-112-93.bstnma.fios.verizon.net [173.48.112.93])
+	(authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 47U3d6d9028280
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 29 Aug 2024 23:39:07 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
+	t=1724989148; bh=iBN1OqKISlzImerjylAD7DIlwprKTEvfPiiXXj/dLaQ=;
+	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
+	b=LzS0ZQ6obZmSSsyjaPriURvOuAoToFy5I4SVjGhUGdpCwKSIXBwt3LZQJrgW740CJ
+	 dGEwODnZCAyJ3lxGE+mn0WiD5tg+uRkVnfRYWXLozyKP18C+ODYuYythaN6+xaxz+t
+	 T4lyl4FHjRVGVUKlVOCnTyQPjV59vymE0AlJP6uON6/0OsI8iCWuYLNW3D70vqgOm7
+	 qtW7ZUA6diTVtP2gWnXCOEelkxj4N3xzrXFPs4cg3FHB+1SeNUvAvAvF/rrOd4IdXU
+	 LohFASq22zl8qk2Yqh2KA26DCP9izryo8n3t5HLL4AxxV1HqAvwxPDx7qw8Ewvct1r
+	 e3YMRiCA0OFug==
+Received: by cwcc.thunk.org (Postfix, from userid 15806)
+	id B367C15C02C1; Thu, 29 Aug 2024 23:39:05 -0400 (EDT)
+Date: Thu, 29 Aug 2024 23:39:05 -0400
+From: "Theodore Ts'o" <tytso@mit.edu>
+To: Dave Chinner <david@fromorbit.com>
+Cc: Kent Overstreet <kent.overstreet@linux.dev>,
+        Michal Hocko <mhocko@suse.com>, Matthew Wilcox <willy@infradead.org>,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Dave Chinner <dchinner@redhat.com>
+Subject: Re: [PATCH] bcachefs: Switch to memalloc_flags_do() for vmalloc
+ allocations
+Message-ID: <20240830033905.GC9627@mit.edu>
+References: <20240828140638.3204253-1-kent.overstreet@linux.dev>
+ <Zs9xC3OJPbkMy25C@casper.infradead.org>
+ <gutyvxwembnzaoo43dzvmnpnbmj6pzmypx5kcyor3oeomgzkva@6colowp7crgk>
+ <Zs959Pa5H5WeY5_i@tiehlicka>
+ <xxs3s22qmlzby3ligct7x5a3fbzzjfdqqt7unmpih64dk3kdyx@vml4m27gpujw>
+ <ZtBWxWunhXTh0bhS@tiehlicka>
+ <wjfubyrzk4ovtuae5uht7uhhigkrym2anmo5w5vp7xgq3zss76@s2uy3qindie4>
+ <ZtCFP5w6yv/aykui@dread.disaster.area>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] crash: Default to CRASH_DUMP=n when support for it is
- unlikely
-To: Baoquan He <bhe@redhat.com>
-Cc: glaubitz@physik.fu-berlin.de, linuxppc-dev@lists.ozlabs.org,
- linux-sh@vger.kernel.org, mpe@ellerman.id.au, kexec@lists.infradead.org,
- linux-kernel@vger.kernel.org, =?UTF-8?Q?Reimar_D=C3=B6ffinger?=
- <Reimar.Doeffinger@gmx.de>
-References: <20240823125156.104775-1-dave@vasilevsky.ca>
- <ZtE5Z/gDR1WixG9S@MiWiFi-R3L-srv>
-Content-Language: en-US
-From: Dave Vasilevsky <dave@vasilevsky.ca>
-In-Reply-To: <ZtE5Z/gDR1WixG9S@MiWiFi-R3L-srv>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZtCFP5w6yv/aykui@dread.disaster.area>
 
-On 2024-08-29 23:15, Baoquan He wrote:
->> +config ARCH_DEFAULT_CRASH_DUMP
->> +	def_bool n
+On Fri, Aug 30, 2024 at 12:27:11AM +1000, Dave Chinner wrote:
 > 
-> If we don't add ARCH_DEFAULT_CRASH_DUMP at all in sh arch, the
-> CRASH_DUMP will be off by default according to the below new definition
-> of CRASH_DUMP?
+> We've been using __GFP_NOFAIL semantics in XFS heavily for 30 years
+> now. This was the default Irix kernel allocator behaviour (it had a
+> forwards progress guarantee and would never fail allocation unless
+> told it could do so). We've been using the same "guaranteed not to
+> fail" semantics on Linux since the original port started 25 years
+> ago via open-coded loops.
 
-Yes, that's true. But if we don't add it at all in sh arch, it looks confusing
-in the search feature of menuconfig:
+Ext3/ext4 doesn't have quite the history as XFS --- it's only been
+around for 23 years --- but we've also used __GFP_NOFAIL or its
+moral equivalent, e.g.:
 
-> Symbol: ARCH_DEFAULT_CRASH_DUMP [=ARCH_DEFAULT_CRASH_DUMP]
-> Type  : unknown
+> 	do {
+> 		p = kmalloc(size);
+> 	while (!p);
 
-So I thought it was better to explicitly set it to 'n'. What do you think?
+For the entire existence of ext3.
 
--Dave
+> Put simply: __GFP_NOFAIL will be rendered completely useless if it
+> can fail due to external scoped memory allocation contexts.  This
+> will force us to revert all __GFP_NOFAIL allocations back to
+> open-coded will-not-fail loops.
+
+The same will be true for ext4.  And as Dave has said, the MM
+developers want to have visibility to when file systems have basically
+said, "if you can't allow us to allocate memory, our only alternative
+is to cause user data loss, crash the kernel, or loop forever; we will
+choose the latter".  The MM developers tried to make __GFP_NOFAIL go
+away several years ago, and ext4 put the retry loop back, As a result,
+the compromise was that the MM developers restored __GFP_NOFAIL, and
+the file systems developers have done their best to reduce the use of
+__GFP_NOFAIL as much as possible.
+
+So if you try to break the GFP_NOFAIL promise, both xfs and ext4 will
+back to the retry loop.  And the MM devs will be sad, and they will
+forcibly revert your change to *ther* code, even if that means
+breaking bcachefs.  Becuase otherwise, you will be breaking ext4 and
+xfs, and so we will go back to using a retry loop, which will be worse
+for Linux users.
+
+Cheers,
+
+					- Ted
 
