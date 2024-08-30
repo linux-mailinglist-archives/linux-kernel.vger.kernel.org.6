@@ -1,111 +1,97 @@
-Return-Path: <linux-kernel+bounces-308923-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308924-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 635769663D4
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 16:11:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4BC89663D8
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 16:11:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D9D82B2205D
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 14:11:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6DA351F217BC
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 14:11:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0F221B013F;
-	Fri, 30 Aug 2024 14:10:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 760DF1B1D75;
+	Fri, 30 Aug 2024 14:11:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="haLZ8908"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="N2eMQhH9"
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39B2D1AF4F8;
-	Fri, 30 Aug 2024 14:10:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 287471B1D56
+	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 14:11:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725027051; cv=none; b=WwcKJFIlFpbA0CkPdQJVT9b5txmR78mpiaPQKCLnts7yMKAdIkeTYn+yrVSO8YNpk14/4bXrQXLQCHco+oA1c1KNAE/Uyjj2c5SI3Ebl5/9eSQc0V+VoMxv/CZdCMseSwG2wgeAIq+8KR/PODS2M8FF0wCJWceoubcUBbVN136I=
+	t=1725027066; cv=none; b=HswhbCwYk6kYD+FbO4dBTM1Pvta4iHxbfrjM5MLbCeW4Pp1kLZWBPBxWgOwOAmYMDiRSiTA/AtCoL+zo5K9Ohkk4FAmEGMIkuaQSZt+A+4iTclJguFPaIv4y3ByUawXlMO5VxxxwzSmIerIZCY2M1G2J9tVlbMdzhd34PgzjDtw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725027051; c=relaxed/simple;
-	bh=s4ofsPLllTgoEZz5zcK/aCOTMmpqFnd/GqJpSB5kJaM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ha1U3BLkzqNOteFXI8o33OYn6b4g5JwQZegN0RSUnYlebdj3Qd0/B63ZsQeeW/ST9ZQKDheAdwApGsZB1IljjAai7Du/zaOH0SQvKtZOXB5fnKKjrvtoaM+89IT/9aTfkMOdgwvKcr4+BZdUmJK3fJYSqmPvwfcEP1RTtoU1+/k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=haLZ8908; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=uDcaebjvS3BGJm2mNwOKtW7qt1HOm0LrXI8UJBsCjr4=; b=haLZ8908g6RDC+VOGOw83NdP89
-	CeMPQLDvAK1hacZ5Q+EEj1yIsZ0PaIMoSfgNYOvLOOaN27XdqMy1bcvmuVBG9AD3sycn7kPSdsGk0
-	RpiOOZLgoac+3bM3ztwfjZr04JbHp+Wh6jTzzcYEBpmYIy8VRneE9X7tOYOkBojC8bBU=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1sk2KZ-0068J6-EH; Fri, 30 Aug 2024 16:10:27 +0200
-Date: Fri, 30 Aug 2024 16:10:27 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Andrea della Porta <andrea.porta@suse.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Derek Kiernan <derek.kiernan@amd.com>,
-	Dragan Cvetic <dragan.cvetic@amd.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Saravana Kannan <saravanak@google.com>,
-	Bjorn Helgaas <bhelgaas@google.com>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org, netdev@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-arch@vger.kernel.org,
-	Lee Jones <lee@kernel.org>, Stefan Wahren <wahrenst@gmx.net>
-Subject: Re: [PATCH 00/11] Add support for RaspberryPi RP1 PCI device using a
- DT overlay
-Message-ID: <334b382a-c9ab-47e4-b860-b8477f04c3fb@lunn.ch>
-References: <cover.1724159867.git.andrea.porta@suse.com>
- <14990d25-40a2-46c0-bf94-25800f379a30@kernel.org>
- <Zsb_ZeczWd-gQ5po@apocalypse>
- <45a41ed9-2e42-4fd5-a1d5-35de93ce0512@lunn.ch>
- <ZtBjMpMGtA4WfDij@apocalypse>
- <e6e6c230-370f-4b04-8cb7-4158dd51efdc@lunn.ch>
- <ZtFWyAX_7OR5yYDS@apocalypse>
+	s=arc-20240116; t=1725027066; c=relaxed/simple;
+	bh=Kxo4HM8TfxhVMBqZvduTJba+uKnQyaKejzhBmWp0U+Q=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=V6csiLutxDjHgdvS6JdOfvsbTfANeeR65WoBl2IYyzoXYDKOeldiXjrYqptu23Xn0a3Phdew0V1rfjpGM1ZYKXisqURYt9QBQKJGIefMvZll39pDpejA5T7KPtlKZHeNoL1HGSxvMbiZZwtHniK/Icqo9Y6U2rSCSMccfkV37LA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=N2eMQhH9; arc=none smtp.client-ip=209.85.167.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-5343617fdddso3372542e87.0
+        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 07:11:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1725027062; x=1725631862; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Kxo4HM8TfxhVMBqZvduTJba+uKnQyaKejzhBmWp0U+Q=;
+        b=N2eMQhH9RLyDAfTGhaQ6A1VYOnC9U+Qnxb3P1PZYUxoFPrJMX6GEdx9zg+PAxvgkLb
+         /VF8vKxjnlhAc7WVVE7c7+3GemYQZ9fr6tc3KZETBCy6LdheLzhMuXVIU0ts1Gufjii0
+         S122HqHVNrt75WzEuybeWgeZQIBmLbFxFCmaDeU0mnDd1xRexOFPdrhdVVXBnmOji7CK
+         o0NknaFoqJnI3qF240zpngIGu/7UbKXffhfYkIFhKLmtIGVwWlZNziXkBSd2KzZnTE3u
+         /uwQxa4pQOsosi9utUrJI53GsEeTrsVnNPZp6IzF2+7Vl54hnqFLfaKu9AybD3cfECMn
+         8l7w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725027062; x=1725631862;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Kxo4HM8TfxhVMBqZvduTJba+uKnQyaKejzhBmWp0U+Q=;
+        b=agtUcIJHbF7uNy+rM9O3ZhnuAMpoCVp0TvhEUbRVeGKtcoVP/jdLxZ8MY4cwc4MWCE
+         UKslR8KFQrhIYD7Cl2uHeqe0lnf60P0/uR5B6nyJCYosuoxKRoeh3qKsfAnlc48vWkse
+         TWDCQQg6VeaHzi2V4dXCOiPP+OeYqzjewgEoEbZB9F+oSORPxrV4R1XO8fwl1K4VxjMm
+         lZO0VrN8noDZAkYROfmO8D0tYvfvgNeOmgSmhYeZoaCgxP6jgdSRkMJy3kuOBS5IJXoa
+         kXJUTC9yHxMWzSNB/VWBM78NozqnPNwME51Y/5mQPC/bCoHiN9ZKfRKNFMvzUc+k71Z5
+         jo1A==
+X-Forwarded-Encrypted: i=1; AJvYcCXMqphOXX070Jh1ZAfBVHXfa0xgEL24zuCoKJhJAatOqtXcnOLwt+Sw2N7nK36kjebDQsk2g5dzfnI7PNE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyuBzLCCSNaPSNVRVBa0840KPcfvaSFMjdrDdQ3AxLoDHg2s8wS
+	HuuCdi5+kxPlyOQppOcQmDYYc/fXpHSL9HRAIozc1d8CxzFKYX1m7OgDd7v30qhBmzdNa2XuX9h
+	ydmeCV/fwVTFvmVtdXllRU5H+Q7oCwGik7PqIAA==
+X-Google-Smtp-Source: AGHT+IEgOnI27T01MkcIfr0sPFDlCvh+HVrjFg8GLB5sUtmwg7JKQJFudrMfin7GG+p5U0cHUwxzx9gE/DikJRKk24I=
+X-Received: by 2002:a05:6512:33d4:b0:533:4497:9f29 with SMTP id
+ 2adb3069b0e04-53546b55282mr1789833e87.31.1725027061611; Fri, 30 Aug 2024
+ 07:11:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZtFWyAX_7OR5yYDS@apocalypse>
+References: <20240829131907.541466-1-liaochen4@huawei.com> <20240829131907.541466-4-liaochen4@huawei.com>
+In-Reply-To: <20240829131907.541466-4-liaochen4@huawei.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Fri, 30 Aug 2024 16:10:50 +0200
+Message-ID: <CACRpkdafzWBQ97up6hMBp_tBajfooTp4fW1E2hvc2pLuB46q6Q@mail.gmail.com>
+Subject: Re: [PATCH -next 3/3] ata: sata_gemini: Enable module autoloading
+To: Liao Chen <liaochen4@huawei.com>
+Cc: linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org, s.shtylyov@omp.ru, 
+	dlemoal@kernel.org, cassel@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-> On a second thought, are you really sure we want to proceed with the header file?
-> After all the only line in it would be the extern declaration and the only one to
-> include it would be rp1-dev.c. Moreover, an header file would convey the false
-> premise that you can include it and use that symbol while in fact it should be
-> only used inside the driver.
-> OTOH, not creating that header file will continue to trigger the warning...
+On Thu, Aug 29, 2024 at 3:27=E2=80=AFPM Liao Chen <liaochen4@huawei.com> wr=
+ote:
 
-The header file does not need to be in global scope. It could be in
-the driver source directory. As such, nothing outside of the driver
-can use it.
+> Add MODULE_DEVICE_TABLE(), so modules could be properly autoloaded based
+> on the alias from of_device_id table.
+>
+> Signed-off-by: Liao Chen <liaochen4@huawei.com>
 
-Headers like this have multiple proposes. One is they make a symbol
-visible to the linker. But having two different .c files include the
-header enables type checking, which for long term maintenance is just
-as important. So a one line header is fine.
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
-	Andrew
-
+Yours,
+Linus Walleij
 
