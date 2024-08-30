@@ -1,55 +1,57 @@
-Return-Path: <linux-kernel+bounces-309224-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309227-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37C7B9667BC
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 19:14:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B09C9667C2
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 19:14:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CA243B25E64
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 17:14:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8CEC01C23F25
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 17:14:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B3F61BA288;
-	Fri, 30 Aug 2024 17:14:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6FDD1BBBC0;
+	Fri, 30 Aug 2024 17:14:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P6zMiyEH"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NONv074o"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E076135417;
-	Fri, 30 Aug 2024 17:14:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3378B1BB6A3;
+	Fri, 30 Aug 2024 17:14:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725038055; cv=none; b=oQJZyR5P2PWd6n7scFJBX0mjsmbi/hEcZwPLMLkf457ywh4WVEgzIg39FnLaTU8OMotOj9mzMgfmpN4gP6UUQM3lXVLomKNCSs9dBXEKyku0pFPRUunc3hDolcxUaZqgEHX1ZFULAoTsG9EWkHnjtgG59Rz/3hKuouzAetW0Nh4=
+	t=1725038063; cv=none; b=ELqkjgPv+495YMoGynZB1oZ1MV4mPW5OS/GPlQcV5n9qI1fAYh9i1pnB06YHkvzmJmDAHrnqY4/IkH8o8sZvLHQ+pdGcGmOkDQ5zGY9EpRtJVf/Uhnm4RF+xbIfv8s7+3iMRO6IiZIWdxE8i6V3iUH8Ygu4J3H75J1O+V7w68Pw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725038055; c=relaxed/simple;
-	bh=GBtmt9Z9AJod1bR39pvhQzsBcCcZge0uznnylrYCgD0=;
+	s=arc-20240116; t=1725038063; c=relaxed/simple;
+	bh=H0wJ8wsMUAah1G02ZzmrdrdnFaoSA3Mc9Ef9ZQp8UDw=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=VBNurVZZoqZK88+3gbAlJj1hBsV6lwbxeSdlyqzrPRBbfOV4jv8tRlu6AdiPxPbONoE0+KF0Drin0u0X/l7djUHNlKlMpUqMMdIsKalSknC8h+gXijWBCB4prfXkhFVETtQsx4jwaduCki1C3RYz6QdAdXnFma3OiyYrQt3TLCY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P6zMiyEH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5D280C4CEC5;
-	Fri, 30 Aug 2024 17:14:14 +0000 (UTC)
+	 MIME-Version:Content-Type; b=Hlj8q/O1JcC9g518J+vbPDggku27rvn1Mn3rhRiahMtnvIwC9RLn8iVtnpmRVeUUc7EhUO0yR1MoSzfnPm5gOT51yKDQNAq1hucAADASD7aY38woz1a2OvQiVC5MSrdhl/L4xFDRs1xo2a/8zbvFyBL3l3SOtrgKyZUwNQQXajc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NONv074o; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A84A6C4CEC9;
+	Fri, 30 Aug 2024 17:14:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725038055;
-	bh=GBtmt9Z9AJod1bR39pvhQzsBcCcZge0uznnylrYCgD0=;
+	s=k20201202; t=1725038063;
+	bh=H0wJ8wsMUAah1G02ZzmrdrdnFaoSA3Mc9Ef9ZQp8UDw=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=P6zMiyEHsTK1RAXsR9tsiHFTVD9b3sVFHzWMVe49LJqaZPDiHBQsl6oZ+dbiJmLZH
-	 dXQbrzyHV4k5O75XwU/ZjZohLpE2TOjw1ktNFXAdGmftMAht8yl0PFvgv7Z2MfVZag
-	 JnIQspdQyXf48kG3HWFhiLh72AukMWfR02XytmcGO+2iyFb5md+BxcxV8S6GxKtVD0
-	 3UFpuIPQy9FxYs4pg/6a3yGQDPABh+yHp3K9ceFzec2uwUXFRbBbwykuEL8phVpzmq
-	 1m1iHm6swcDTkGWvLa/n4WRuXKyg5PyHdjukJOgbzV6WtrdbKFxg4IRC5xPjIc8v9v
-	 LRzvRm6K8Nn/w==
+	b=NONv074ocJd0COZKyehHgQa/K5T3X51wcgIKZ0DLPRj4WPPJcMF9Lzgetr0xDpZfw
+	 iyX5lR6UQStuwoPjFMlb4Spzv77o6jEPx+Puo35bl+4ffPcF6Df0Upeatn9Ncbzmgt
+	 PDGMvOXg2HwWWPxbIJ8pJujZfzxPoqOqpAi/vp/av8RhpNC/6YxZCAymnzekHnE71O
+	 kSHc89slXgfRp7cOTlg4zHjJCsL1j6CICu1G5+ClSBE1nOJUi7MKlWboeHEUDi8Oi0
+	 TLzApWFEzGcGFWBy3ZDubain6Se8a5kDpZZVuyVv6Blsla+gQC1wlqTW6OinuTTJ/A
+	 Sc6d5IrFYLBag==
 From: Mark Brown <broonie@kernel.org>
-To: Richard Fitzgerald <rf@opensource.cirrus.com>
-Cc: linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org, 
- patches@opensource.cirrus.com
-In-Reply-To: <20240830144819.118362-1-rf@opensource.cirrus.com>
-References: <20240830144819.118362-1-rf@opensource.cirrus.com>
-Subject: Re: [PATCH] ASoC: cs-amp-lib: Add KUnit test case for empty
- calibration entries
-Message-Id: <172503805409.196534.11009418066889155786.b4-ty@kernel.org>
-Date: Fri, 30 Aug 2024 18:14:14 +0100
+To: Douglas Anderson <dianders@chromium.org>
+Cc: dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org, 
+ kernel test robot <lkp@intel.com>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, 
+ Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org
+In-Reply-To: <20240830073511.1.Ib733229a8a19fad8179213c05e1af01b51e42328@changeid>
+References: <20240830073511.1.Ib733229a8a19fad8179213c05e1af01b51e42328@changeid>
+Subject: Re: [PATCH] regulator: core: Stub devm_regulator_bulk_get_const()
+ if !CONFIG_REGULATOR
+Message-Id: <172503806142.196819.2979143374573134626.b4-ty@kernel.org>
+Date: Fri, 30 Aug 2024 18:14:21 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,24 +62,25 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.15-dev-37811
 
-On Fri, 30 Aug 2024 15:48:19 +0100, Richard Fitzgerald wrote:
-> Add a test case for commit bb4485562f59 ("ASoC: cs-amp-lib: Ignore
-> empty UEFI calibration entries").
+On Fri, 30 Aug 2024 07:35:12 -0700, Douglas Anderson wrote:
+> When adding devm_regulator_bulk_get_const() I missed adding a stub for
+> when CONFIG_REGULATOR is not enabled. Under certain conditions (like
+> randconfig testing) this can cause the compiler to reports errors
+> like:
 > 
-> Any entries in the calibration blob that have calTime==0 are empty
-> entries. So they must not be returned by a lookup.
-> 
+>   error: implicit declaration of function 'devm_regulator_bulk_get_const';
+>   did you mean 'devm_regulator_bulk_get_enable'?
 > 
 > [...]
 
 Applied to
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
 
 Thanks!
 
-[1/1] ASoC: cs-amp-lib: Add KUnit test case for empty calibration entries
-      commit: 99c9767c0444098a806529204c7a2556f89d0c04
+[1/1] regulator: core: Stub devm_regulator_bulk_get_const() if !CONFIG_REGULATOR
+      commit: 1a5caec7f80ca2e659c03f45378ee26915f4eda2
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
