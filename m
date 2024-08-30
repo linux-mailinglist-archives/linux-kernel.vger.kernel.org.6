@@ -1,168 +1,153 @@
-Return-Path: <linux-kernel+bounces-308176-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308177-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A64F965848
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 09:21:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A02D5965849
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 09:22:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4E9D31C22A8E
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 07:21:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 496E31F225A9
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 07:22:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39D0E158521;
-	Fri, 30 Aug 2024 07:21:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BDF015C155;
+	Fri, 30 Aug 2024 07:21:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="otpo5ntJ"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AWrdZfOV"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D7511509A0;
-	Fri, 30 Aug 2024 07:21:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF54F1509A0;
+	Fri, 30 Aug 2024 07:21:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725002487; cv=none; b=K+ZP8fL8QZH7hlvr8mbFfP8qGRjbLn1UdFQzHOuKfsl3mPGxCZOOBydGI7+uOE+lPeLakxolwGMJNATujUXNlALt5/EeptBSMTmoLb4oi5TyotvL5dXXL9O3EhoWPK3P//TQnhgo6uxsKHDIyyFqqZmPXYHhGcq4/KfLBA9rFCk=
+	t=1725002494; cv=none; b=rZt5LUCLxHri7Cp+P+IoMCgAEVAObw2OAR+HCQ7Mpio3b1MaKxbH/VpecZoyGWtMPyfQ/FcbkVg4Ljkgs23HSkxKoGfDZ8OCAcC7Dfk622Kc7KEz9SZOPxLP+D0TZYle90jh6CmJHY+CwtA5Psuu05v6mrGQH8e6M393TvYaK5k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725002487; c=relaxed/simple;
-	bh=ye98vENoZQWZsbEkLBJ/fd2Wa4qBGtCugOCMhivSlRo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Hcz0pCWs5rcrkFQaK4CpG6/zhJvcx6dIeDYAgooxZZednLBbzlEsXGLO9NUj8E0hKYZ3Hh6RoC4Gvd0BYYVLAreKrIFk4/l6788FDcwbHzgzFlNycpWTtupFGjN4riTgn5lF1Qw5vuXzlYn1z98BcEV9gys+4nLpwAReLHhpYjc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=otpo5ntJ; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47U3wMV5030922;
-	Fri, 30 Aug 2024 07:21:16 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from
-	:to:cc:subject:date:message-id:in-reply-to:references
-	:mime-version:content-transfer-encoding; s=pp1; bh=E9z3t2ZIOLzOn
-	aDx3SE/JLHQ+NnkXcAGW/xdWKQ5sUc=; b=otpo5ntJB8Dlt4C5NMWv30hQR0DVc
-	CDL3CjEXXganKIBT/XGzLi451tK4ko+6uCFReV9+6K3a/u2Q5S5T449kQ0MO7RFd
-	Zl5admTz853gmRFIPubtBdYpO5izeJYehAO6jvrJAgir4hsYn2jWIm2EYzw3BcnO
-	NC8kgCAn0i3vTaex07RrSYIR2BBRO+DhxjReJbg0dS3eJNdyAVg7fjA19B70sngR
-	KNeygerCEfgQWjtA9bRgUF/wDrBYZg0RalIWOMQYMbD2BL4EuTe96B5D4h5R8gre
-	gSGbeJGniywUPLnJ1znHZHcZW+4ZwZ4eXjRmNMgE3qmMHXkk1+nkt7xvw==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 419q8r58ax-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 30 Aug 2024 07:21:15 +0000 (GMT)
-Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 47U7Henk016655;
-	Fri, 30 Aug 2024 07:21:15 GMT
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 419q8r58au-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 30 Aug 2024 07:21:15 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 47U4rPwv021770;
-	Fri, 30 Aug 2024 07:21:14 GMT
-Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 417suutf5c-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 30 Aug 2024 07:21:14 +0000
-Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
-	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 47U7LCwu18153738
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 30 Aug 2024 07:21:13 GMT
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id DB6162004B;
-	Fri, 30 Aug 2024 07:21:12 +0000 (GMT)
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id BF5E620040;
-	Fri, 30 Aug 2024 07:21:11 +0000 (GMT)
-Received: from li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com.com (unknown [9.195.46.118])
-	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Fri, 30 Aug 2024 07:21:11 +0000 (GMT)
-From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-To: linux-ext4@vger.kernel.org, "Theodore Ts'o" <tytso@mit.edu>
-Cc: Ritesh Harjani <ritesh.list@gmail.com>, linux-kernel@vger.kernel.org,
-        Kemeng Shi <shikemeng@huaweicloud.com>
-Subject: [PATCH v3 2/2] ext4: Convert EXT4_B2C(sbi->s_stripe) users to EXT4_NUM_B2C
-Date: Fri, 30 Aug 2024 12:50:58 +0530
-Message-ID: <e0c0a3b58a40935a1361f668851d041575861411.1725002410.git.ojaswin@linux.ibm.com>
-X-Mailer: git-send-email 2.43.5
-In-Reply-To: <3a493bb503c3598e25dcfbed2936bb2dff3fece7.1725002410.git.ojaswin@linux.ibm.com>
-References: <3a493bb503c3598e25dcfbed2936bb2dff3fece7.1725002410.git.ojaswin@linux.ibm.com>
+	s=arc-20240116; t=1725002494; c=relaxed/simple;
+	bh=FgWa3xuFBZIE8BaH1K88EEiex3imBuvR4h9fRGT+/Fo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dRtc0aRJ7wXwlM+EmgQDV3bs7XQMPeaeorj6lAviDWq5SQFxhD8B9bUlvyLKp+hzpAwCCZYOW4O7LgEBYFNTl0cnrL8zv4DiG/qu/6QcGdejdBOJMujmEjkhfeXnlObOH7A31rBGw+5BFOv/JKC7GoQmaZ8AfzoYBob7NMqHCg8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AWrdZfOV; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725002493; x=1756538493;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=FgWa3xuFBZIE8BaH1K88EEiex3imBuvR4h9fRGT+/Fo=;
+  b=AWrdZfOVq0PgCN38ChDKaKe81lxtZgo2V8vU4EZEJEFWfbPDq7zo0Gx6
+   0zsnzCFa+wdQhICBz8fCzJrFPDtb75qJC4hiPAG+ahqPLCNbFWuWAl5Ch
+   3i5idUyVuvWWe3tqO0/gNLOeq+rgYWdI2AsXfUvNhuvQV9/rHqrK96vnD
+   ZgjvL+XXaPLVEO29tic3Zn0BsujPeUDVC6HgwPx3Htkf2FuAXESoS63Jl
+   BZmtp+AaRCP9eOC6gIsIjdDtHobKmpN+bfmaVx6SjMvu+jIQ6tE23AqF/
+   rJFAaHNkpFGfHcnGWpGsGgu1nEbnCGl+NjBNsUb2rlPARrbMnJExuvM47
+   w==;
+X-CSE-ConnectionGUID: /YG2cg+vSrmUnGQhOW9SDg==
+X-CSE-MsgGUID: KirhShEaRRGc20MpOlviKQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11179"; a="23787744"
+X-IronPort-AV: E=Sophos;i="6.10,188,1719903600"; 
+   d="scan'208";a="23787744"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Aug 2024 00:21:32 -0700
+X-CSE-ConnectionGUID: C4U2RfBpSiCNz8mB1MsxOQ==
+X-CSE-MsgGUID: GCX5Jn/EQzSL7PNXvjzhkA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,188,1719903600"; 
+   d="scan'208";a="63780727"
+Received: from sschumil-mobl2.ger.corp.intel.com (HELO tlindgre-MOBL1) ([10.245.246.63])
+  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Aug 2024 00:21:28 -0700
+Date: Fri, 30 Aug 2024 10:21:23 +0300
+From: Tony Lindgren <tony.lindgren@linux.intel.com>
+To: Xu Yilun <yilun.xu@linux.intel.com>
+Cc: Rick Edgecombe <rick.p.edgecombe@intel.com>, seanjc@google.com,
+	pbonzini@redhat.com, kvm@vger.kernel.org, kai.huang@intel.com,
+	isaku.yamahata@gmail.com, xiaoyao.li@intel.com,
+	linux-kernel@vger.kernel.org,
+	Isaku Yamahata <isaku.yamahata@intel.com>,
+	Binbin Wu <binbin.wu@linux.intel.com>
+Subject: Re: [PATCH 09/25] KVM: TDX: Get system-wide info about TDX module on
+ initialization
+Message-ID: <ZtFy8_etJ2tkQ8pm@tlindgre-MOBL1>
+References: <20240812224820.34826-1-rick.p.edgecombe@intel.com>
+ <20240812224820.34826-10-rick.p.edgecombe@intel.com>
+ <Zr21XioOyi0CZ+FV@yilunxu-OptiPlex-7050>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: nzaFG1Xp5nuO8zikZJux-3dhNF5d0TMn
-X-Proofpoint-ORIG-GUID: 2J2pQ1nt6Z5eFMqY3wzWEG9A5P0H1Fuk
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-30_02,2024-08-29_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 phishscore=0
- clxscore=1015 priorityscore=1501 mlxlogscore=999 spamscore=0 mlxscore=0
- suspectscore=0 lowpriorityscore=0 impostorscore=0 malwarescore=0
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2408300051
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zr21XioOyi0CZ+FV@yilunxu-OptiPlex-7050>
 
-Although we have checks to make sure s_stripe is a multiple of cluster
-size, in case we accidentally end up with a scenario where this is not
-the case, use EXT4_NUM_B2C() so that we don't end up with unexpected
-cases where EXT4_B2C(stripe) becomes 0.
+On Thu, Aug 15, 2024 at 03:59:26PM +0800, Xu Yilun wrote:
+> > --- a/arch/x86/kvm/vmx/tdx.c
+> > +++ b/arch/x86/kvm/vmx/tdx.c
+> > @@ -3,6 +3,7 @@
+> >  #include <asm/tdx.h>
+> >  #include "capabilities.h"
+> >  #include "x86_ops.h"
+> > +#include "mmu.h"
+> 
+> Is the header file still needed?
 
-Also make the is_stripe_aligned check in regular_allocator a bit more
-robust while we are at it. This should ideally have no functional change
-unless we have a bug somewhere causing (stripe % cluster_size != 0)
+It's needed for kvm_gfn_direct_bits(), but should have been added in a
+later patch.
 
-Reviewed-by: Kemeng Shi <shikemeng@huaweicloud.com>
-Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
----
- fs/ext4/mballoc.c | 12 +++++++-----
- 1 file changed, 7 insertions(+), 5 deletions(-)
+> > +static int tdx_get_capabilities(struct kvm_tdx_cmd *cmd)
+> > +{
+> > +	const struct tdx_sysinfo_td_conf *td_conf = &tdx_sysinfo->td_conf;
+> > +	struct kvm_tdx_capabilities __user *user_caps;
+> > +	struct kvm_tdx_capabilities *caps = NULL;
+> > +	int i, ret = 0;
+> > +
+> > +	/* flags is reserved for future use */
+> > +	if (cmd->flags)
+> > +		return -EINVAL;
+> > +
+> > +	caps = kmalloc(sizeof(*caps), GFP_KERNEL);
+> > +	if (!caps)
+> > +		return -ENOMEM;
+> > +
+> > +	user_caps = u64_to_user_ptr(cmd->data);
+> > +	if (copy_from_user(caps, user_caps, sizeof(*caps))) {
+> > +		ret = -EFAULT;
+> > +		goto out;
+> > +	}
+> > +
+> > +	if (caps->nr_cpuid_configs < td_conf->num_cpuid_config) {
+> > +		ret = -E2BIG;
+> 
+> How about output the correct num_cpuid_config to userspace as a hint,
+> to avoid user blindly retries.
 
-diff --git a/fs/ext4/mballoc.c b/fs/ext4/mballoc.c
-index 2008d2d524c9..6dc0a9bb29a7 100644
---- a/fs/ext4/mballoc.c
-+++ b/fs/ext4/mballoc.c
-@@ -2356,7 +2356,7 @@ int ext4_mb_find_by_goal(struct ext4_allocation_context *ac,
- 	ex.fe_logical = 0xDEADFA11; /* debug value */
- 
- 	if (max >= ac->ac_g_ex.fe_len &&
--	    ac->ac_g_ex.fe_len == EXT4_B2C(sbi, sbi->s_stripe)) {
-+	    ac->ac_g_ex.fe_len == EXT4_NUM_B2C(sbi, sbi->s_stripe)) {
- 		ext4_fsblk_t start;
- 
- 		start = ext4_grp_offs_to_block(ac->ac_sb, &ex);
-@@ -2553,7 +2553,7 @@ void ext4_mb_scan_aligned(struct ext4_allocation_context *ac,
- 	do_div(a, sbi->s_stripe);
- 	i = (a * sbi->s_stripe) - first_group_block;
- 
--	stripe = EXT4_B2C(sbi, sbi->s_stripe);
-+	stripe = EXT4_NUM_B2C(sbi, sbi->s_stripe);
- 	i = EXT4_B2C(sbi, i);
- 	while (i < EXT4_CLUSTERS_PER_GROUP(sb)) {
- 		if (!mb_test_bit(i, bitmap)) {
-@@ -2928,9 +2928,11 @@ ext4_mb_regular_allocator(struct ext4_allocation_context *ac)
- 			if (cr == CR_POWER2_ALIGNED)
- 				ext4_mb_simple_scan_group(ac, &e4b);
- 			else {
--				bool is_stripe_aligned = sbi->s_stripe &&
-+				bool is_stripe_aligned =
-+					(sbi->s_stripe >=
-+					 sbi->s_cluster_ratio) &&
- 					!(ac->ac_g_ex.fe_len %
--					  EXT4_B2C(sbi, sbi->s_stripe));
-+					  EXT4_NUM_B2C(sbi, sbi->s_stripe));
- 
- 				if ((cr == CR_GOAL_LEN_FAST ||
- 				     cr == CR_BEST_AVAIL_LEN) &&
-@@ -3706,7 +3708,7 @@ int ext4_mb_init(struct super_block *sb)
- 	 */
- 	if (sbi->s_stripe > 1) {
- 		sbi->s_mb_group_prealloc = roundup(
--			sbi->s_mb_group_prealloc, EXT4_B2C(sbi, sbi->s_stripe));
-+			sbi->s_mb_group_prealloc, EXT4_NUM_B2C(sbi, sbi->s_stripe));
- 	}
- 
- 	sbi->s_locality_groups = alloc_percpu(struct ext4_locality_group);
--- 
-2.43.5
+Hmm do we want to add also positive numbers for errors for this function?
 
+> > +	for (i = 0; i < td_conf->num_cpuid_config; i++) {
+> > +		struct kvm_tdx_cpuid_config cpuid_config = {
+> > +			.leaf = (u32)td_conf->cpuid_config_leaves[i],
+> > +			.sub_leaf = td_conf->cpuid_config_leaves[i] >> 32,
+> > +			.eax = (u32)td_conf->cpuid_config_values[i].eax_ebx,
+> > +			.ebx = td_conf->cpuid_config_values[i].eax_ebx >> 32,
+> > +			.ecx = (u32)td_conf->cpuid_config_values[i].ecx_edx,
+> > +			.edx = td_conf->cpuid_config_values[i].ecx_edx >> 32,
+> > +		};
+> > +
+> > +		if (copy_to_user(&(user_caps->cpuid_configs[i]), &cpuid_config,
+>                                   ^                           ^
+> 
+> I think the brackets could be removed.
+> 
+> > +					sizeof(struct kvm_tdx_cpuid_config))) {
+> 
+> sizeof(cpuid_config) could be better.
+
+Looks like these both already changed in a later patch
+"KVM: TDX: Report kvm_tdx_caps in KVM_TDX_CAPABILITIES".
+
+Regards,
+
+Tony
 
