@@ -1,126 +1,278 @@
-Return-Path: <linux-kernel+bounces-309238-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309239-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D23989667F1
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 19:24:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 595699667F5
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 19:25:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 838421F22354
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 17:24:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 11EBD281152
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 17:25:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1ADFC1BAEF1;
-	Fri, 30 Aug 2024 17:24:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E63AA1BAEFA;
+	Fri, 30 Aug 2024 17:25:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="akRed3gr"
-Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FpqK2Azr"
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3937E1B2EC8;
-	Fri, 30 Aug 2024 17:24:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A2AA1BA286
+	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 17:25:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725038657; cv=none; b=lKfjM7XLa2PIm17EmCI/SuECAnc67omeglzldL/SG3aO270ZP5ThrV2eFJFuEVdtq/KpRcBUj12YxrWmcz8Ufn/y3b1JR/enj7ZQ0nxZsTsprItCSChvQZOnuflwOdGu8eNx0BBjeRYCto4qGPyfmfwfqzV5jTVCQLGw/OgVH6w=
+	t=1725038736; cv=none; b=u8wXmsxBR5rz0wv0/Cwg+60Y8hTcsMSYAqtLxJNI56ViXq1zVtbzt09FfwULGwDNM1NPijwLKEf9E6vmGCiaPv132rCEiEAAmR9TvTd+hLsKyOE2q8EV9dCdiNBpefaesLw+/yunLbSLDXPf2qSc7Fkh7xoFXNSocJ8m+BDZ630=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725038657; c=relaxed/simple;
-	bh=PMa1w9wViDROucA4Q9WgZ/QMB8a6JVGkNlXnhoxUWTE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=TtqUw7ULDsUx7FIWbglJRrWo4CmAVDyOjiE6QN4PtFUAB0NBAX6uI2coeUPsh+vmN7eNntmVytZeHp8Q8xUcRX+W2L/8zyjoNMm+S+Y4azf11VC0ptjLY3Mk0FcsOlrWe1LVFQldays7AWIh14gABpVIN9YtsEOfVLbuMp3rRxk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=akRed3gr; arc=none smtp.client-ip=198.47.23.248
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 47UHO7Dd022963;
-	Fri, 30 Aug 2024 12:24:07 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1725038647;
-	bh=6bj066I79BDcrPxQSOA/Xu2j4XxdgGo59tSZOuTfsiM=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=akRed3grc+8B2sGrj59mVS/EBOA/u1r+3Vhdey0kD0Ha2HiCaAu5Sfa23YIYPHMbz
-	 kj/S1GzVQsklfSZDgZOqa/OJ13Jv5Fu9cNbzCd0BblxhLDgj1bqNdyTsLZFtWMqkeI
-	 AxaOidwQtZ/w3t88pip29taPLWNygXeOoJR9xkhk=
-Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
-	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 47UHO7Rs062114
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Fri, 30 Aug 2024 12:24:07 -0500
-Received: from DLEE109.ent.ti.com (157.170.170.41) by DLEE108.ent.ti.com
- (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 30
- Aug 2024 12:24:06 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE109.ent.ti.com
- (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Fri, 30 Aug 2024 12:24:06 -0500
-Received: from [10.249.141.75] ([10.249.141.75])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 47UHO00N041951;
-	Fri, 30 Aug 2024 12:24:01 -0500
-Message-ID: <6fe3da57-d93b-4782-a9b1-91833abb6d77@ti.com>
-Date: Fri, 30 Aug 2024 22:53:59 +0530
+	s=arc-20240116; t=1725038736; c=relaxed/simple;
+	bh=9PXjV5D5W69HmwAx6lnawYhG+6CsfaGiYevdrRLJydQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mp/49m3pVAxXR4BT9rcS1OvPz8fl7iMvSMp1/nZPeUnhYgaf1LiJGjfyTcvkqtwHaxgMrsJUhV96G0LUUx9fL9vV5RQWnR5f9U4yakvTGRxZCBzo9B+eT8gkmQpL6lGu6qxTrpd6bkkrziovhOwOo2G7sGQKTZWLC5xu4eol1as=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=FpqK2Azr; arc=none smtp.client-ip=209.85.167.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-5334c018913so1872988e87.0
+        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 10:25:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1725038732; x=1725643532; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=tts8d/vsTb2shtPr8ARgYB6shyI2W4IvjVV+pUS/EO0=;
+        b=FpqK2Azra7kHdEaWOPRB/DuG2NF7TBXSnPlEL47wFEVYNZiH7ifQvJL+/moZ0UNeWG
+         Z/bC1DPPT+bQAjLUluO7WqVi0KPS742NZ+eI0VvfGH27bvSlp1zbH6DGTmH/HhLpKjBL
+         FOLKr7F3tdsiy3HzOg4s+dLRDYH1llSgKNGcSV2WLnH81Wl3hEqhKd2jfIZPMXJmURJX
+         DbU3jWVda+0egsRr2Rynshd+qbcB9ZLX14vgn95K9adcA1ENCxYFUxWe4uaTS2oMIwQr
+         sQzmwXwGRvrwTi6l/4FpF1oRyK5MrlDJ/nTx7ReNc2o+YxNcfS+Vlaua2ZW+TAcyw8AI
+         HgcA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725038732; x=1725643532;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tts8d/vsTb2shtPr8ARgYB6shyI2W4IvjVV+pUS/EO0=;
+        b=ek23WYsvoMUefjn8wgA5RwQAHGXwo0Kz7htNjfERT26YM29MsPL1kvqJ4O94hHZNDE
+         mvlhxXSlU3SpW56JdJ9680WdAz9K6E5L13ZpI5Ujj2SxoA2qJUAwvM/D+4b9iuXGkNYZ
+         MRTumgoQ3IRrodZ1fk6ITG8VCvS5aNPK2ZnsiVCGnjj7kBVqd+HQimn6B2bcX8NKAxkg
+         r4w/I6zKR+e6yILZuuA8gpiBSy+GbQ7ZCtuoXx5LkKyWleKXWFnegYdSMzq+uUcnZXOr
+         BM0te+9VZFy0ioJDMp4QoJPWzARBItpGMKLiE3UwO+KeCSCxz47Q1TI6YSu8jM5Qk6/C
+         slgw==
+X-Forwarded-Encrypted: i=1; AJvYcCWbVNEdorWQjqtqHqqaIwsMgXY0qWzdjP3UVl1o5rijPRtElhEcu3W35q/P0sykAjmwxE3hljUwtSOE2+U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzRivssP1+Kh1/Mwi3ZY3dSw8JUG39o1ypTaECOFp3GnYq7rPTR
+	hvY9cxGQOJfT3mx/LZBsWdDvKCZw/91MZGDwv82SOszcAWr7yyHX8cVIhznqS7k=
+X-Google-Smtp-Source: AGHT+IE8/VaQxR5xEjwPCk3dHcHC7hA2aM+AJamVIo5ydsZa6i1ax86Oclom/5rHRIiZMUxAhFZJZQ==
+X-Received: by 2002:a05:6512:224a:b0:52b:de5b:1b30 with SMTP id 2adb3069b0e04-53546ba09afmr2488465e87.44.1725038731406;
+        Fri, 30 Aug 2024 10:25:31 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5354084ca95sm693710e87.245.2024.08.30.10.25.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 30 Aug 2024 10:25:31 -0700 (PDT)
+Date: Fri, 30 Aug 2024 20:25:29 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Jessica Zhang <quic_jesszhan@quicinc.com>
+Cc: Rob Clark <robdclark@gmail.com>, quic_abhinavk@quicinc.com, 
+	Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>, 
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, quic_ebharadw@quicinc.com, linux-arm-msm@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	Rob Clark <robdclark@chromium.org>
+Subject: Re: [PATCH 14/21] drm/msm/dpu: Reserve resources for CWB
+Message-ID: <yohtzxysheoybac24hxil6zzzsqi4inx6oh6x7vaoj5lvtdf3u@vd5nax37ilqd>
+References: <20240829-concurrent-wb-v1-0-502b16ae2ebb@quicinc.com>
+ <20240829-concurrent-wb-v1-14-502b16ae2ebb@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 2/2] arm64: dts: ti: k3-j722s-evm: Enable
- Inter-Processor Communication
-To: Beleswar Padhi <b-padhi@ti.com>, <nm@ti.com>, <vigneshr@ti.com>,
-        <kristo@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>
-CC: <j-choudhary@ti.com>, <vaishnav.a@ti.com>, <afd@ti.com>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <u-kumar1@ti.com>
-References: <20240830161742.925145-1-b-padhi@ti.com>
- <20240830161742.925145-3-b-padhi@ti.com>
-Content-Language: en-US
-From: "Kumar, Udit" <u-kumar1@ti.com>
-In-Reply-To: <20240830161742.925145-3-b-padhi@ti.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240829-concurrent-wb-v1-14-502b16ae2ebb@quicinc.com>
 
+On Thu, Aug 29, 2024 at 01:48:35PM GMT, Jessica Zhang wrote:
+> Reserve dedicated pingpong blocks for CWB
 
-On 8/30/2024 9:47 PM, Beleswar Padhi wrote:
-> From: Apurva Nandan <a-nandan@ti.com>
->
-> The K3 J722S-EVM platform is based on the J722S SoC which has one
-> single-core Arm Cortex-R5F processor in each of the WAKEUP, MCU and MAIN
-> voltage domain, and two C71x DSP subsystems in MAIN voltage domain.
->
-> The Inter-Processor communication between the A53 cores and these R5F
-> and DSP remote cores is achieved through shared memory and Mailboxes.
-> Thus, add the memory carveouts and enable the mailbox clusters required
-> for communication.
->
-> Also, The remoteproc firmware like of R5F and DSPs in the MAIN voltage
-> domain use timers. Therefore, change the status of the timer nodes to
-> "reserved" to avoid any clash during booting of remotecores. Usage is
-> described as below:
->
-> 	+===================+=============+
-> 	|  Remoteproc Node  | Timer Node  |
-> 	+===================+=============+
-> 	| main_r5fss0_core0 | main_timer0 |
-> 	+-------------------+-------------+
-> 	| c7x_0             | main_timer1 |
-> 	+-------------------+-------------+
-> 	| c7x_1             | main_timer2 |
-> 	+-------------------+-------------+
+Please explain design ideas. Having just a single phrase is usually not
+enough.
 
-
-Reviewed-by: Udit Kumar<u-kumar1@ti.com>
-
-> Signed-off-by: Apurva Nandan <a-nandan@ti.com>
-> [ Enabled mailbox instances and Reserved timer nodes ]
-> Signed-off-by: Beleswar Padhi <b-padhi@ti.com>
+> 
+> Signed-off-by: Jessica Zhang <quic_jesszhan@quicinc.com>
 > ---
-> v5: Changelog:
-> 1) Updated commit message to correctly reflect the host core name (A53
-> not A72).
-> 2) Updated mbox DT node label and name to "mbox_wkup_r5_0" from
-> "mbox_r5_0" for clarity.
->
-> [..]
+>  drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c | 17 ++++++--
+>  drivers/gpu/drm/msm/disp/dpu1/dpu_hw_mdss.h |  1 +
+>  drivers/gpu/drm/msm/disp/dpu1/dpu_rm.c      | 65 +++++++++++++++++++++++++++++
+>  3 files changed, 79 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
+> index 36b677cf9c7a..f1bd14d1f89e 100644
+> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
+> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
+> @@ -2,7 +2,7 @@
+>  /*
+>   * Copyright (C) 2013 Red Hat
+>   * Copyright (c) 2014-2018, 2020-2021 The Linux Foundation. All rights reserved.
+> - * Copyright (c) 2022-2023 Qualcomm Innovation Center, Inc. All rights reserved.
+> + * Copyright (c) 2022-2024 Qualcomm Innovation Center, Inc. All rights reserved.
+>   *
+>   * Author: Rob Clark <robdclark@gmail.com>
+>   */
+> @@ -1054,6 +1054,7 @@ static void dpu_encoder_virt_atomic_mode_set(struct drm_encoder *drm_enc,
+>  	struct dpu_hw_blk *hw_ctl[MAX_CHANNELS_PER_ENC];
+>  	struct dpu_hw_blk *hw_dsc[MAX_CHANNELS_PER_ENC];
+>  	int num_pp, num_dsc;
+> +	bool is_cwb_encoder;
+>  	unsigned int dsc_mask = 0;
+>  	int i;
+>  
+> @@ -1067,6 +1068,8 @@ static void dpu_encoder_virt_atomic_mode_set(struct drm_encoder *drm_enc,
+>  
+>  	priv = drm_enc->dev->dev_private;
+>  	dpu_kms = to_dpu_kms(priv->kms);
+> +	is_cwb_encoder = drm_crtc_in_clone_mode(crtc_state) &&
+> +		dpu_enc->disp_info.intf_type == INTF_WB;
+>  
+>  	global_state = dpu_kms_get_existing_global_state(dpu_kms);
+>  	if (IS_ERR_OR_NULL(global_state)) {
+> @@ -1077,9 +1080,15 @@ static void dpu_encoder_virt_atomic_mode_set(struct drm_encoder *drm_enc,
+>  	trace_dpu_enc_mode_set(DRMID(drm_enc));
+>  
+>  	/* Query resource that have been reserved in atomic check step. */
+> -	num_pp = dpu_rm_get_assigned_resources(&dpu_kms->rm, global_state,
+> -		drm_enc->crtc, DPU_HW_BLK_PINGPONG, hw_pp,
+> -		ARRAY_SIZE(hw_pp));
+> +	if (is_cwb_encoder)
+> +		num_pp = dpu_rm_get_assigned_resources(&dpu_kms->rm, global_state,
+> +			drm_enc->crtc, DPU_HW_BLK_DCWB_PINGPONG, hw_pp,
+> +			ARRAY_SIZE(hw_pp));
+> +	else
+> +		num_pp = dpu_rm_get_assigned_resources(&dpu_kms->rm, global_state,
+> +			drm_enc->crtc, DPU_HW_BLK_PINGPONG, hw_pp,
+> +			ARRAY_SIZE(hw_pp));
+
+Why is this necessary? Can we still use DPU_HW_BLK_PINGPONG?
+
+> +
+>  	dpu_rm_get_assigned_resources(&dpu_kms->rm, global_state,
+>  			drm_enc->crtc, DPU_HW_BLK_CTL, hw_ctl, ARRAY_SIZE(hw_ctl));
+>  
+> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_mdss.h b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_mdss.h
+> index c43cb55fe1d2..c87790a1b940 100644
+> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_mdss.h
+> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_mdss.h
+> @@ -77,6 +77,7 @@ enum dpu_hw_blk_type {
+>  	DPU_HW_BLK_LM,
+>  	DPU_HW_BLK_CTL,
+>  	DPU_HW_BLK_PINGPONG,
+> +	DPU_HW_BLK_DCWB_PINGPONG,
+>  	DPU_HW_BLK_INTF,
+>  	DPU_HW_BLK_WB,
+>  	DPU_HW_BLK_DSPP,
+> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_rm.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_rm.c
+> index 13f84375e15d..afad26556cd5 100644
+> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_rm.c
+> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_rm.c
+> @@ -236,6 +236,48 @@ static int _dpu_rm_get_lm_peer(struct dpu_rm *rm, int primary_idx)
+>  	return -EINVAL;
+>  }
+>  
+> +static int _dpu_rm_reserve_cwb_pingpong(struct dpu_rm *rm,
+> +		struct dpu_global_state *global_state, uint32_t crtc_id,
+> +		struct msm_display_topology *topology)
+> +{
+> +	int num_cwb_pp = topology->num_lm, cwb_pp_count = 0;
+> +	int cwb_pp_idx[MAX_BLOCKS];
+> +
+> +	/*
+> +	 * Reserve additional dedicated CWB pingpong blocks for each mixer
+> +	 *
+> +	 * TODO: add support for reserving non-dedicated CWB pingpong blocks
+> +	 */
+> +	for (int i = 0; i < ARRAY_SIZE(rm->mixer_blks) &&
+> +			cwb_pp_count < num_cwb_pp; i++) {
+> +		for (int j = PINGPONG_CWB_0 - PINGPONG_0;
+> +				j < ARRAY_SIZE(rm->pingpong_blks); j++) {
+
+Alignment...
+
+> +			/*
+> +			 * Odd LMs must be assigned to odd pingpongs and even
+> +			 * LMs with even pingpongs
+> +			 */
+> +			if (reserved_by_other(global_state->pingpong_to_crtc_id,
+> +						j, crtc_id) ||
+> +					i % 2 != j % 2)
+> +				continue;
+> +
+> +			cwb_pp_idx[cwb_pp_count] = j;
+> +			cwb_pp_count++;
+> +			break;
+> +		}
+> +	}
+> +
+> +	if (cwb_pp_count != num_cwb_pp) {
+> +		DPU_ERROR("Unable to reserve all cwb pingpongs\n");
+> +		return -ENAVAIL;
+> +	}
+> +
+> +	for (int i = 0; i < cwb_pp_count; i++)
+> +		global_state->pingpong_to_crtc_id[cwb_pp_idx[i]] = crtc_id;
+> +
+> +	return 0;
+> +}
+> +
+>  /**
+>   * _dpu_rm_check_lm_and_get_connected_blks - check if proposed layer mixer meets
+>   *	proposed use case requirements, incl. hardwired dependent blocks like
+> @@ -617,6 +659,14 @@ static int _dpu_rm_make_reservation(
+>  		return ret;
+>  	}
+>  
+> +	if (topology->cwb_enabled) {
+> +		ret = _dpu_rm_reserve_cwb_pingpong(rm, global_state,
+> +				crtc_id, topology);
+> +		if (ret) {
+> +			DPU_ERROR("unable to find appropriate dcwb pingpongs\n");
+> +			return ret;
+> +		}
+> +	}
+>  
+>  	ret = _dpu_rm_reserve_ctls(rm, global_state, crtc_id,
+>  			topology);
+> @@ -706,6 +756,7 @@ int dpu_rm_get_assigned_resources(struct dpu_rm *rm,
+>  
+>  	switch (type) {
+>  	case DPU_HW_BLK_PINGPONG:
+> +	case DPU_HW_BLK_DCWB_PINGPONG:
+>  		hw_blks = rm->pingpong_blks;
+>  		hw_to_crtc_id = global_state->pingpong_to_crtc_id;
+>  		max_blks = ARRAY_SIZE(rm->pingpong_blks);
+> @@ -745,6 +796,20 @@ int dpu_rm_get_assigned_resources(struct dpu_rm *rm,
+>  		if (hw_to_crtc_id[i] != crtc_id)
+>  			continue;
+>  
+> +		if (type == DPU_HW_BLK_PINGPONG) {
+> +			struct dpu_hw_pingpong *pp = to_dpu_hw_pingpong(hw_blks[i]);
+> +
+> +			if (pp->idx >= PINGPONG_CWB_0)
+> +				continue;
+> +		}
+> +
+> +		if (type == DPU_HW_BLK_DCWB_PINGPONG) {
+> +			struct dpu_hw_pingpong *pp = to_dpu_hw_pingpong(hw_blks[i]);
+> +
+> +			if (pp->idx < PINGPONG_CWB_0)
+> +				continue;
+> +		}
+> +
+>  		if (num_blks == blks_size) {
+>  			DPU_ERROR("More than %d resources assigned to crtc %d\n",
+>  				  blks_size, crtc_id);
+> 
+> -- 
+> 2.34.1
+> 
+
+-- 
+With best wishes
+Dmitry
 
