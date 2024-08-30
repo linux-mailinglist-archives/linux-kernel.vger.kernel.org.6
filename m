@@ -1,167 +1,153 @@
-Return-Path: <linux-kernel+bounces-308137-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308138-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE93A9657C0
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 08:42:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C56FF9657C2
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 08:42:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 768B628563B
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 06:42:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 04EFD1C221D9
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 06:42:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43A0A15099A;
-	Fri, 30 Aug 2024 06:42:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3646152E17;
+	Fri, 30 Aug 2024 06:42:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="jToRsgt8"
-Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="gezECcUO"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B46651D131D
-	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 06:42:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B27181D131D
+	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 06:42:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725000128; cv=none; b=cfmpWGZ8RibZnka6mi1ICzQzIVgiPkwfSy5MTj7Bcv1V+IbTJo5anFb+9d/+LxAisFDtU+z2sl4yRG+WhoAIJVBYYJj/dV+kDh18PPFB93SawdgtxwUq2whV5Gp1QV7m0n1Htay3KjpBqpj4OYsyEkKijE6c4a4wdqlBSDUBQdg=
+	t=1725000162; cv=none; b=Vnc5pMUapI+zikA006zC7Pbnn+bZtG/qy0Nbg6IjKNpPDMr3bEVkL7gmHRah1NZ/XPQtRbkePaQzzs4LVyybEOGn64Dd6b2Xhe/8OVZY4a/JjIX26E5LH/9AyD+Y9uOhUfyHnnD4uuzjaCbaB9Dq84CSNHmZByj/vkJfTZEpRZQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725000128; c=relaxed/simple;
-	bh=SPX2TYWXECL8SZx6jLAaGZ8DQ70DBpQ/cR7EuKTZ+xA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tbXtDtwixGxgLNzZz9vbKRaqkrH0oL0mrN588TwMAmf/yr+6iatQreO8NmXrCpBtMhXI9nAQP8iPewmUkFic3Jlaz4yDfW1pyEGBNPyzDMsVwqKYAeWhgfg4x+WXnj0gAOuEx83JQ6GkNge3jgvu6257mzxHfdhsWmG8Q60DWoo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=jToRsgt8; arc=none smtp.client-ip=185.125.188.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from mail-pf1-f199.google.com (mail-pf1-f199.google.com [209.85.210.199])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 5335F3FB5F
-	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 06:41:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1725000118;
-	bh=stViVxHrBBEsBOu5+lfKdQqL1kmTozBEiuazG7uCPrc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:In-Reply-To;
-	b=jToRsgt8kmwgg4RG5Z47b3XeucXhnKLSs8NRhNR7f5Kd76fp4pJygRAwE9iVq3Rj0
-	 +HXzJmqqfx+Gnex1C9ZhiNhNteMYuWoVhxlBUA9S9IWlyztHZXB1P/3ahPm5ye5COi
-	 BYeJIYWE5yn+QbdGCtmzjsvhJbuYQoIHnsQvwZQBnpmfHxM6L0+pZBONlBhDEE7hUV
-	 J/48MnHz6X4ipgk/nxjJsdEKy0dJuetYF4L0bj1EotClI+9lkHffsBF0d4APq+FYG2
-	 epj5ux1861BTYeF5lEhz7hO/BuwLvN7p+VkXDt/Nvu3X6mv69Q9MhLKtHz6R1oJMlU
-	 fl5w8l+/bjkvA==
-Received: by mail-pf1-f199.google.com with SMTP id d2e1a72fcca58-714203541e1so1383246b3a.0
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 23:41:58 -0700 (PDT)
+	s=arc-20240116; t=1725000162; c=relaxed/simple;
+	bh=kMWDAFpnhfBdSn1lDdTSrwwTlwPF96pFdHk5uMwJhgY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HLdjaIj6lLVRJDwtOGTJgwRzphH3mWZtesgcnipGqW7z84qWaXV2SP8FOuv/6lnIs6atTGWQhAHvho/wwnCBnGYA4V2/B1ws97IkaTXxhygyt7dCCoY4J/o6340pVhGDReOFwIlrPZ6z7930ltcLMYa0dCrKrsoz4WdnbQYV1ZQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=gezECcUO; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-201fba05363so13096135ad.3
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 23:42:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1725000160; x=1725604960; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=sAPIQ+0oTzbZ3F2sniQtCFwQ1sSVebQi1669/F3+Skk=;
+        b=gezECcUOq8iTSWW1F0OaX6J4aEsIO5wehQDoHeYXRgDEXbXXSBzrYJZVKxZuu3+iFP
+         HH6nM8510j6s0k6fIou3+1UnwxpOWGrVZmqk2CrBclYcIVxNK8MlenKjciWTawASudBT
+         0bwL2JMjlIJabyU9NwLc2Wnb4x3sWCwUEp5u4uyd2gEXyjydLKMmhaskPwpPuOsJxjrQ
+         Zh6hznzJt/TJAStm99wdNCnAfqGS1DdfaiOvFwgvc4OHAcuHheipxvPtsBhdgEHkKbUN
+         NzrpA0HHVZd4/65dvylmd6suJORQ/2QPViBNXGuxCHT6SlX+bPy9Zd66HVacOdCrpAvy
+         SwoQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725000116; x=1725604916;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
+        d=1e100.net; s=20230601; t=1725000160; x=1725604960;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=stViVxHrBBEsBOu5+lfKdQqL1kmTozBEiuazG7uCPrc=;
-        b=sJW8oPTIIzad8UWGOy8l1fCgHmdcHouPTG5BtHK3oDvYCBGrrONRZmSez0MI9Swt33
-         ITbSLKz9g1qMKCGmbBHRzSOZ72xt26S+WSPFKzwpUJ/UT9s7cTiBwFFRxSzl6FF91kJB
-         x76858WGwmv9B3yn+LQHvCKIc5IWalqnBuUGwzjqU/EbE8v3LtPqHg9L18zngtftVOxB
-         LJ0IH2lgotSrT5/OhV2+FkBrgRqR6cPX3+cqm/L93wV6WzFHjVpWLGhsemYxkZI77ZKd
-         3+y7E6qq+0LPDFQr2TfFtQPyYWbli6fa2CbDE8ZDibngElXTELu3s+rpvgTX6SpUUq2g
-         9+lA==
-X-Forwarded-Encrypted: i=1; AJvYcCXbCr8XQXxeSwQ9xaG42uh1/0cO5jDHSkUl3KIM7jSjfXAopAzbAxtYaiYsMVbgLsh6LCQMiKvNthM6X2E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YycZ0lwKgvrU/xlMe6d/wNbQ6lc78uux0vdIHvimP0sGd1fsVBo
-	bZ+SKjprHX8WrFHKpmqitcoKJdhcjW2XzJ4zNbX3bowuG2QCY4wbrztkm04QXpn8cHvNIiiRRdB
-	hIiapaFP3X/4Zu+TwLUy3Leqrk+vaUY7/OIkR2BzY51iRx4RfXp0AARDkcRGyT12lopgN3Q0ilm
-	bbqw==
-X-Received: by 2002:a05:6a21:1304:b0:1cc:ecfc:4e19 with SMTP id adf61e73a8af0-1ccecfc5080mr2120881637.21.1725000116142;
-        Thu, 29 Aug 2024 23:41:56 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHaXyUn2dop9Ka0x8wrhn0wVdTWTZjUwZ/SlkcBN7yWlQ1nrIciaeWRmtziG4HoZZ26ik1ehQ==
-X-Received: by 2002:a05:6a21:1304:b0:1cc:ecfc:4e19 with SMTP id adf61e73a8af0-1ccecfc5080mr2120843637.21.1725000115369;
-        Thu, 29 Aug 2024 23:41:55 -0700 (PDT)
-Received: from kylee-ThinkPad-E16-Gen-1 ([122.147.171.160])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2051556a712sm20796435ad.307.2024.08.29.23.41.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Aug 2024 23:41:55 -0700 (PDT)
-Date: Fri, 30 Aug 2024 14:41:49 +0800
-From: Kuan-Ying Lee <kuan-ying.lee@canonical.com>
-To: lijiang <lijiang@redhat.com>
-Cc: Baoquan He <bhe@redhat.com>, Will Deacon <will@kernel.org>,
-	HAGIO =?utf-8?B?S0FaVUhJVE8o6JCp5bC+IOS4gOS7gSk=?= <k-hagio-ab@nec.com>,
-	Vivek Goyal <vgoyal@redhat.com>, Dave Young <dyoung@redhat.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	kexec@lists.infradead.org, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	ardb@kernel.org
-Subject: Re: [PATCH] arm64/vmcore: Add pgtable_l5_enabled information in
- vmcoreinfo
-Message-ID: <ZtFprQX-UzyqnKTH@kylee-ThinkPad-E16-Gen-1>
-References: <20240826065219.305963-1-kuan-ying.lee@canonical.com>
- <20240827122459.GA4679@willie-the-truck>
- <Zs5Xo5eVUvGMbtSv@MiWiFi-R3L-srv>
- <CANU+ZydbFPiSnCRr3qQ52GjUQQmU3ZO62c6hRkoLM147+u5u8w@mail.gmail.com>
+        bh=sAPIQ+0oTzbZ3F2sniQtCFwQ1sSVebQi1669/F3+Skk=;
+        b=T3dgGnzGwj/cHiuKHbrXetJcJrdEz4xoYfDY2eKC8Q6MHJJFHKBz+N8mggv+OAZlj9
+         SE78jgyAwcEM/uzGDAgdxHMU+0PfSOTp3UOI1pGJ+ZcuZyLO5g+R0jw2S5ma/ohwMXjP
+         /hmWanCNQ2Y+Ju5zhuBmulPc+zqPZXbQf7M5Kr8vypLj8nBId62ku2x7dFxqC+Ot0cA5
+         QWjKVbPxOrcP9ZtEWW9iGouJdsnqHqIfqy2zVJRJELTRwL5XGBN0D+1yqNSowuJmtZgy
+         jBuNK3pQ6KpYiGRtXvZh4uBoWsHbT+tb0t6UMz2XmqmTaPBGhO6syPTgxLSS11I1t+vQ
+         7TUw==
+X-Forwarded-Encrypted: i=1; AJvYcCWiNKcVupk9Szk8r7b1cpM9jhEAsm/1Hlki91lnhqpUh/Ww8m4s81Lkv9M1zRkB9N3YIPg/+YkUDs4/zOk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyQ/LobY0zioat8yJejSXEsiQeTp4NLXmJZBmiF3e5Tg/1y3Zpd
+	6iofOA62rDioVedNs57ei37pOJbAQgo9GAA84a4xGRG51cIUS7MYShBsY/y97YI=
+X-Google-Smtp-Source: AGHT+IFX6MWdATn3PHJECm84KknThK0jKPALrJmyAm2CUCVW6pc6Pf0GS8/g/1o4RkhLk/GIua405Q==
+X-Received: by 2002:a17:902:da90:b0:1fd:8c25:415d with SMTP id d9443c01a7336-2050c3d2a05mr57644625ad.36.1725000159781;
+        Thu, 29 Aug 2024 23:42:39 -0700 (PDT)
+Received: from [10.4.59.158] ([139.177.225.242])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-205152b14c4sm20794075ad.46.2024.08.29.23.42.32
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 29 Aug 2024 23:42:39 -0700 (PDT)
+Message-ID: <fe146c6c-60e6-4ff1-bb93-6c818f71b3de@bytedance.com>
+Date: Fri, 30 Aug 2024 14:42:30 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 08/14] mm: copy_pte_range() use
+ pte_offset_map_rw_nolock()
+Content-Language: en-US
+To: David Hildenbrand <david@redhat.com>
+Cc: hughd@google.com, willy@infradead.org, muchun.song@linux.dev,
+ vbabka@kernel.org, akpm@linux-foundation.org, rppt@kernel.org,
+ vishal.moola@gmail.com, peterx@redhat.com, ryan.roberts@arm.com,
+ christophe.leroy2@cs-soprasteria.com, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org, linux-arm-kernel@lists.infradead.org,
+ linuxppc-dev@lists.ozlabs.org
+References: <cover.1724310149.git.zhengqi.arch@bytedance.com>
+ <71100c3867c4cf6f5f429ce9f2db8432066d0e99.1724310149.git.zhengqi.arch@bytedance.com>
+ <4101a941-6286-4128-a16c-29c7cffcbe8c@redhat.com>
+From: Qi Zheng <zhengqi.arch@bytedance.com>
+In-Reply-To: <4101a941-6286-4128-a16c-29c7cffcbe8c@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CANU+ZydbFPiSnCRr3qQ52GjUQQmU3ZO62c6hRkoLM147+u5u8w@mail.gmail.com>
 
-On Wed, Aug 28, 2024 at 05:37:07PM +0800, lijiang wrote:
-> On Wed, Aug 28, 2024 at 6:48 AM Baoquan He <bhe@redhat.com> wrote:
-> 
-> > On 08/27/24 at 01:24pm, Will Deacon wrote:
-> > > On Mon, Aug 26, 2024 at 02:52:02PM +0800, Kuan-Ying Lee wrote:
-> > > > Since arm64 supports 5-level page tables, we need to add this
-> > > > information to vmcoreinfo to make debug tools know if 5-level
-> > > > page table is enabled or not.
-> > > >
-> > > > Missing this information will break the debug tool like crash [1].
 
-Sorry, the above line was mistakenly expressed.
 
-Currently, the crash tool doesn't support 4K page with 5-level
-page tables (LPA2), so I initially planned to add this
-information to implement support for 4K page with 5-level page
-table in the crash tool.
+On 2024/8/29 23:36, David Hildenbrand wrote:
+> On 22.08.24 09:13, Qi Zheng wrote:
+>> In copy_pte_range(), we may modify the src_pte entry after holding the
+>> src_ptl, so convert it to using pte_offset_map_rw_nolock(). But since we
+>> already hold the write lock of mmap_lock, there is no need to get pmdval
+>> to do pmd_same() check, just pass a dummy variable to it.
+>>
+>> Signed-off-by: Qi Zheng <zhengqi.arch@bytedance.com>
+>> ---
+>>   mm/memory.c | 11 ++++++++++-
+>>   1 file changed, 10 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/mm/memory.c b/mm/memory.c
+>> index 7b6071a0e21e2..30d98025b2a40 100644
+>> --- a/mm/memory.c
+>> +++ b/mm/memory.c
+>> @@ -1083,6 +1083,7 @@ copy_pte_range(struct vm_area_struct *dst_vma, 
+>> struct vm_area_struct *src_vma,
+>>       struct mm_struct *src_mm = src_vma->vm_mm;
+>>       pte_t *orig_src_pte, *orig_dst_pte;
+>>       pte_t *src_pte, *dst_pte;
+>> +    pmd_t dummy_pmdval;
+>>       pte_t ptent;
+>>       spinlock_t *src_ptl, *dst_ptl;
+>>       int progress, max_nr, ret = 0;
+>> @@ -1108,7 +1109,15 @@ copy_pte_range(struct vm_area_struct *dst_vma, 
+>> struct vm_area_struct *src_vma,
+>>           ret = -ENOMEM;
+>>           goto out;
+>>       }
+>> -    src_pte = pte_offset_map_nolock(src_mm, src_pmd, addr, &src_ptl);
+>> +
+>> +    /*
+>> +     * Use the maywrite version to indicate that dst_pte will be 
+>> modified,
+>> +     * but since we already hold the write lock of mmap_lock, there 
+>> is no
+>> +     * need to get pmdval to do pmd_same() check, just pass a dummy 
+>> variable
+>> +     * to it.
+> 
+> As we hold the mmap lock write lock, I assume it will prevent any page 
+> table removal, because they need *at least* the mmap lock in read mode, 
+> right?
 
-> > > >
-> > > > [1] https://github.com/crash-utility/crash
-> > > >
-> > > > Signed-off-by: Kuan-Ying Lee <kuan-ying.lee@canonical.com>
-> > > > ---
-> > > >  Documentation/admin-guide/kdump/vmcoreinfo.rst | 6 ++++++
-> > > >  arch/arm64/kernel/vmcore_info.c                | 3 +++
-> > > >  2 files changed, 9 insertions(+)
-> > >
-> > > In which case, wouldn't you also want to know about pgtable_l4_enabled()?
-> >
-> > That is a good question. I guess it's deduced in code, mostly needed for
-> > different PAGE_OFFSET, how to transfer virtual addr to physical addr,
-> > etc.
-> >
-> >
-> Thanks for the information, Baoquan.
-> 
-> If I understand correctly, for arm64, currently, the crash tool determines
-> the levels of the page table based on page size and va_bits, and then
-> decides how to translate the address, such as calculating it in conjunction
-> with other values, e.g: kernel pgd, offset, etc.
-
-Thanks for the information. I will then try to use VA_BITS to determine
-if it is a 5-level page table.
-Let me investigate further.
-
-Thanks,
-Kuan-Ying Lee
+Except for retract_page_tables(), all others hold the read lock of
+mmap_lock.
 
 > 
-> For more details, please refer to this one:
-> https://github.com/crash-utility/crash/blob/master/arm64.c
+> We should probably document the rules for removing a page table -- which 
+> locks must be held in which mode (if not already done).
+
+Agree, I will document it in the v3.
+
 > 
-> 
-> Thanks
-> Lianbo
-> 
-> 
-> > Add Crash utility experts here.
-> >
-> >
 
