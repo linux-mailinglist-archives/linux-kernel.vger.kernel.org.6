@@ -1,152 +1,242 @@
-Return-Path: <linux-kernel+bounces-308088-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308089-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CD0A965711
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 07:42:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8ADFD965715
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 07:42:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 531A4B2383D
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 05:42:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B465FB21F26
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 05:42:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35F0C1531DB;
-	Fri, 30 Aug 2024 05:41:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22B8414F131;
+	Fri, 30 Aug 2024 05:41:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="mzuDB1rY"
-Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="f6vw7ZT/"
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69CF615099A
-	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 05:41:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B9DF12F59C;
+	Fri, 30 Aug 2024 05:41:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724996494; cv=none; b=qFlGhNsduk0GyeDO9OO/psqrKvPCepfJZR5esDWOFi5pi4QPWACdXQW33d9GXEI0zExfOkdvx4Uu8NUH1lX1Z7MQcUe/QYO5iIPWlSTeK7L5xWhybJQycc7szfTQO8eL37ZYhCHZB5sVtj1H9UxSpGJ8LYaahb5dCB4dhjRxjio=
+	t=1724996518; cv=none; b=NC70vSvlgZudCN7RDqq++78dbWqQxNi6iiOfOp8jUbkF7VLHxM5Xd/mpgHyAMNZgwHzoqWSYH5b4P1lRDXMSrui9JvdpoHuerB4QJqcdTcWWJ2X7VqQBJID0I2ETml5J7KWlHJF3raK91pwpc/HRQAxiy7iM7T2XQxzMuOji6HI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724996494; c=relaxed/simple;
-	bh=sw/z0V7t62DQd/qzCRru7G5IMJTzCRndRN+lm9ctM2E=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YTw1SbxnhZ9r68Ju+h5fI/5H/buoGTLGzq7l3E643lDkkKpSh6SKkoHIypj9BS0RgxaNsYmiwAylQ4koQTYGKn5RArPhgggiB64jNnVh5xFGwPy6TuyF3EJPGDKHevrjr29Izv4RzmrdEa26cS6S7QNkjpfW5FI/jgU3MOkir+o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=mzuDB1rY; arc=none smtp.client-ip=209.85.160.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-4567fe32141so217311cf.0
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 22:41:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1724996491; x=1725601291; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fGeAe2VvLt867O6PJvkuLBlyvjINITixvnm768ff9FY=;
-        b=mzuDB1rYWDyPjZzvdX79WUt2S6rBiqFOtJAmdGK5qkwibD266jlpF2ukdux+pwTHrA
-         igSeLo8xdS6RHMHxckeZBY5j+BECFTrueAM8NoF+fNX1bCJewdx4eLfcL3g5Sv7EFINz
-         29Cy7yftlxEReyl7svsdeDc2jqhndKdN0qlPa5y35yDmdKDafvURbkhfFsFDn+/SCCuI
-         yK1/578XwWSP4rBkeZBZt7q2MRBtYIrxc+y23/CMbJYRhR/z/7h6KtAuBWUqay4Q/G4/
-         bFfuYvt5W8KIHEFweRFzxO9BinqJ8XTLALfFCAHLd36EMJ2I6pS0HZHyQVv79YIohtA8
-         kCoA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724996491; x=1725601291;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fGeAe2VvLt867O6PJvkuLBlyvjINITixvnm768ff9FY=;
-        b=FtxaYkd/YC+y7km4wWcWGFE+XVI5C+8tgYkPV3/Z55JOf9Blnni7FbuNHTA9QIKBEm
-         7qQVPL7Oyr+BXuppP/0sQX/fIntXXbMLRwhbg27cxxeq7veExpGdybRbxj/8X33+8u5o
-         /UIhFeMLE3ktcvzWtpvlGF172EBIDxOKP9EaoBVG/BIgm0RZeq41Rytnb1/aRsfnTnDi
-         2KKiGmCw0jthzvi3YpsbtIGGyVAe3C0VP9almJIpCe2JsC66ALC0HDejpu+q42pwRp39
-         2cbV2t9V0JFDA9XRyDDOpW6kDhL3NQRMKf0stN7k4iDjlabZdRwfkDkJZt3iN9cK90BY
-         bWjA==
-X-Forwarded-Encrypted: i=1; AJvYcCWDVh8KpII6v/FV3OgyXZYRzEiwlkUtN4GL/WKKdIKG8/1ccUnJIKuXvAwmebzeIMB+e4aOD0/HCsxuceU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwGAler+0RJWct61ekOH9YPSNyyVKN8xZBVd7e3AqG5ABFK5DJW
-	Gntp6HU1OXaz1SWzGSnvPGadwLbbLIbD71C1BeWcm0WWJUj49Wx+YdcSwuM7MlkT+L+OycImfMu
-	8SI2sPZOyAK9mX43ATo9LrK7Q46HyNLLK6Ata
-X-Google-Smtp-Source: AGHT+IFJ5dSdgHloFb1Pn4hIJolGDXJPa0ot44BqfHuQJyxrQVYkduwL7EuLxMx9wUjPI6We8cpcbnMVMN++0hRnKxw=
-X-Received: by 2002:a05:622a:1a9a:b0:453:56e7:c62b with SMTP id
- d75a77b69052e-4568a9fb7edmr1721641cf.12.1724996491072; Thu, 29 Aug 2024
- 22:41:31 -0700 (PDT)
+	s=arc-20240116; t=1724996518; c=relaxed/simple;
+	bh=WJB1Qv9t1WJLJSPM8oLL76616PtUevddQKiteAa1kJA=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ZQLEd2knXYfW4/3en1nvjaGFQ6pbNK6LDx4o6ISt+NXH4/UzlLehcJtb0sj7K/BIoQK9Iy/kbb8NsZxH5Ht1alj2k/WRGEgSLiH+2hhzgUo5960HdVJIOKRcIRZ+ph5KRxMHbN77/p7KASI9bmEJxeLFb77JXDiWStYbWg9dIi8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=f6vw7ZT/; arc=none smtp.client-ip=60.244.123.138
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: 8bb28e08669211ef8593d301e5c8a9c0-20240830
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=k4A5y+j5+WAfhLRjqTomaLz8jYqVXqpj3++oyTEnWOI=;
+	b=f6vw7ZT/L44ErZ6qZvbTeGbhVWmWxu241qhQA8P7nutz4WqZ6rwUMqgujvJ3aD5Jc/eucDrWbPDwSn7Pwt6WPoY/ts/l9WXaMQ33W0VAgE5HajyMig7wXw/sn2ItcwhtsvDS/9GZ7bvxtzaCQJHhUTkg8k3EVPmZRLtV6XmBcHE=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.41,REQID:04c0c5c0-20cf-4123-a6e5-4277dea87755,IP:0,U
+	RL:0,TC:0,Content:-25,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
+	N:release,TS:-25
+X-CID-META: VersionHash:6dc6a47,CLOUDID:94266acf-7921-4900-88a1-3aef019a55ce,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
+	RL:11|1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES
+	:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0,NGT
+X-CID-BAS: 0,NGT,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULN
+X-UUID: 8bb28e08669211ef8593d301e5c8a9c0-20240830
+Received: from mtkmbs13n2.mediatek.inc [(172.21.101.108)] by mailgw01.mediatek.com
+	(envelope-from <chunhui.li@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 1789130880; Fri, 30 Aug 2024 13:41:46 +0800
+Received: from mtkmbs13n2.mediatek.inc (172.21.101.108) by
+ MTKMBS09N2.mediatek.inc (172.21.101.94) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.26; Thu, 29 Aug 2024 22:41:47 -0700
+Received: from mbjsdccf07.gcn.mediatek.inc (10.15.20.246) by
+ mtkmbs13n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1118.26 via Frontend Transport; Fri, 30 Aug 2024 13:41:47 +0800
+From: Chunhui Li <chunhui.li@mediatek.com>
+To: Luis Chamberlain <mcgrof@kernel.org>, Matthias Brugger
+	<matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
+	<angelogioacchino.delregno@collabora.com>
+CC: <linux-modules@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>,
+	<wsd_upstream@mediatek.com>, Chunhui Li <chunhui.li@mediatek.com>, Xion Wang
+	<xion.wang@mediatek.com>
+Subject: [PATCH] module: abort module loading when sysfs setup suffer errors
+Date: Fri, 30 Aug 2024 13:43:54 +0800
+Message-ID: <20240830054400.26622-1-chunhui.li@mediatek.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240829060126.2792671-1-almasrymina@google.com>
- <20240829060126.2792671-4-almasrymina@google.com> <20240829140824.555d016c@kernel.org>
- <e6df00ec-2c52-489e-a510-b69db7e9dbf9@linux.dev>
-In-Reply-To: <e6df00ec-2c52-489e-a510-b69db7e9dbf9@linux.dev>
-From: Mina Almasry <almasrymina@google.com>
-Date: Thu, 29 Aug 2024 22:41:17 -0700
-Message-ID: <CAHS8izOy26r0uoWdASgmBCENNS6cDjHpkp+AHhOaKVkZR1LZqQ@mail.gmail.com>
-Subject: Re: [PATCH net-next v23 03/13] netdev: support binding dma-buf to netdevice
-To: Vadim Fedorenko <vadim.fedorenko@linux.dev>
-Cc: Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-doc@vger.kernel.org, linux-alpha@vger.kernel.org, 
-	linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org, 
-	sparclinux@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
-	linux-arch@vger.kernel.org, bpf@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, linux-media@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, 
-	Donald Hunter <donald.hunter@gmail.com>, Jonathan Corbet <corbet@lwn.net>, 
-	Richard Henderson <richard.henderson@linaro.org>, Ivan Kokshaysky <ink@jurassic.park.msu.ru>, 
-	Matt Turner <mattst88@gmail.com>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
-	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, Helge Deller <deller@gmx.de>, 
-	Andreas Larsson <andreas@gaisler.com>, Jesper Dangaard Brouer <hawk@kernel.org>, 
-	Ilias Apalodimas <ilias.apalodimas@linaro.org>, Steven Rostedt <rostedt@goodmis.org>, 
-	Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
-	Arnd Bergmann <arnd@arndb.de>, Steffen Klassert <steffen.klassert@secunet.com>, 
-	Herbert Xu <herbert@gondor.apana.org.au>, David Ahern <dsahern@kernel.org>, 
-	Willem de Bruijn <willemdebruijn.kernel@gmail.com>, =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@kernel.org>, 
-	Magnus Karlsson <magnus.karlsson@intel.com>, 
-	Maciej Fijalkowski <maciej.fijalkowski@intel.com>, Jonathan Lemon <jonathan.lemon@gmail.com>, 
-	Shuah Khan <shuah@kernel.org>, Alexei Starovoitov <ast@kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>, John Fastabend <john.fastabend@gmail.com>, 
-	Sumit Semwal <sumit.semwal@linaro.org>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
-	Pavel Begunkov <asml.silence@gmail.com>, David Wei <dw@davidwei.uk>, Jason Gunthorpe <jgg@ziepe.ca>, 
-	Yunsheng Lin <linyunsheng@huawei.com>, Shailend Chand <shailend@google.com>, 
-	Harshitha Ramamurthy <hramamurthy@google.com>, Shakeel Butt <shakeel.butt@linux.dev>, 
-	Jeroen de Borst <jeroendb@google.com>, Praveen Kaligineedi <pkaligineedi@google.com>, 
-	Bagas Sanjaya <bagasdotme@gmail.com>, Christoph Hellwig <hch@infradead.org>, 
-	Nikolay Aleksandrov <razor@blackwall.org>, Taehee Yoo <ap420073@gmail.com>, 
-	Willem de Bruijn <willemb@google.com>, Kaiyuan Zhang <kaiyuanz@google.com>, 
-	Daniel Vetter <daniel.vetter@ffwll.ch>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-MTK: N
 
-On Thu, Aug 29, 2024 at 2:24=E2=80=AFPM Vadim Fedorenko
-<vadim.fedorenko@linux.dev> wrote:
->
-> On 29/08/2024 22:08, Jakub Kicinski wrote:
-> > On Thu, 29 Aug 2024 06:01:16 +0000 Mina Almasry wrote:
-> >> +    err =3D genlmsg_reply(rsp, info);
-> >> +    if (err)
-> >> +            goto err_unbind;
-> >> +
-> >>      return 0;
-> >> +
-> >> +err_unbind:
-> >
-> > rtnl_lock()
->
-> There are 2 places with goto err_unbind, and one is under the lock,
-> additional label (or rearrange of the last check) is needed..
->
+When insmod a kernel module, if fails in add_notes_attrs or
+add_sysfs_attrs such as memory allocation fail, mod_sysfs_setup
+will still return success, but we can't access user interface
+on android device.
 
-Thank you, I think the right fix here is to reacquire rtnl_lock before
-the `goto err_unbind;`, since err_unbind expects rtnl to be locked at
-this point.
+Patch for make mod_sysfs_setup can check the error of
+add_notes_attrs and add_sysfs_attrs
 
-This could introduce a weird edge case where we drop rtnl_lock, then
-find out genlmsg_reply failed, then reacquire rtnl_lock to do the
-cleanup. I can't think of anything that would horribly break if we do
-that, but I may be missing something. In theory we could race with a
-dmabuf unbind call happening in parallel.
+Signed-off-by: Xion Wang <xion.wang@mediatek.com>
+Signed-off-by: Chunhui Li <chunhui.li@mediatek.com>
+---
+ kernel/module/sysfs.c | 49 ++++++++++++++++++++++++++++++-------------
+ 1 file changed, 35 insertions(+), 14 deletions(-)
 
-If we can't reacquire rtnl_lock to do the cleanup, I think I need to
-revert back to doing genlmsg_reply inside of rtnl_lock, and dropping
-the lock before we return from the function.
+diff --git a/kernel/module/sysfs.c b/kernel/module/sysfs.c
+index 26efe1305c12..a9ee650d995d 100644
+--- a/kernel/module/sysfs.c
++++ b/kernel/module/sysfs.c
+@@ -69,12 +69,13 @@ static void free_sect_attrs(struct module_sect_attrs *sect_attrs)
+ 	kfree(sect_attrs);
+ }
+ 
+-static void add_sect_attrs(struct module *mod, const struct load_info *info)
++static int add_sect_attrs(struct module *mod, const struct load_info *info)
+ {
+ 	unsigned int nloaded = 0, i, size[2];
+ 	struct module_sect_attrs *sect_attrs;
+ 	struct module_sect_attr *sattr;
+ 	struct bin_attribute **gattr;
++	int ret = 0;
+ 
+ 	/* Count loaded sections and allocate structures */
+ 	for (i = 0; i < info->hdr->e_shnum; i++)
+@@ -85,7 +86,7 @@ static void add_sect_attrs(struct module *mod, const struct load_info *info)
+ 	size[1] = (nloaded + 1) * sizeof(sect_attrs->grp.bin_attrs[0]);
+ 	sect_attrs = kzalloc(size[0] + size[1], GFP_KERNEL);
+ 	if (!sect_attrs)
+-		return;
++		return -ENOMEM;
+ 
+ 	/* Setup section attributes. */
+ 	sect_attrs->grp.name = "sections";
+@@ -103,8 +104,10 @@ static void add_sect_attrs(struct module *mod, const struct load_info *info)
+ 		sattr->address = sec->sh_addr;
+ 		sattr->battr.attr.name =
+ 			kstrdup(info->secstrings + sec->sh_name, GFP_KERNEL);
+-		if (!sattr->battr.attr.name)
++		if (!sattr->battr.attr.name) {
++			ret = -ENOMEM;
+ 			goto out;
++		}
+ 		sect_attrs->nsections++;
+ 		sattr->battr.read = module_sect_read;
+ 		sattr->battr.size = MODULE_SECT_READ_SIZE;
+@@ -113,13 +116,16 @@ static void add_sect_attrs(struct module *mod, const struct load_info *info)
+ 	}
+ 	*gattr = NULL;
+ 
+-	if (sysfs_create_group(&mod->mkobj.kobj, &sect_attrs->grp))
++	if (sysfs_create_group(&mod->mkobj.kobj, &sect_attrs->grp)) {
++		ret = -EIO;
+ 		goto out;
++	}
+ 
+ 	mod->sect_attrs = sect_attrs;
+-	return;
++	return 0;
+ out:
+ 	free_sect_attrs(sect_attrs);
++	return ret;
+ }
+ 
+ static void remove_sect_attrs(struct module *mod)
+@@ -158,15 +164,16 @@ static void free_notes_attrs(struct module_notes_attrs *notes_attrs,
+ 	kfree(notes_attrs);
+ }
+ 
+-static void add_notes_attrs(struct module *mod, const struct load_info *info)
++static int add_notes_attrs(struct module *mod, const struct load_info *info)
+ {
+ 	unsigned int notes, loaded, i;
+ 	struct module_notes_attrs *notes_attrs;
+ 	struct bin_attribute *nattr;
++	int ret = 0;
+ 
+ 	/* failed to create section attributes, so can't create notes */
+ 	if (!mod->sect_attrs)
+-		return;
++		return -EINVAL;
+ 
+ 	/* Count notes sections and allocate structures.  */
+ 	notes = 0;
+@@ -176,12 +183,12 @@ static void add_notes_attrs(struct module *mod, const struct load_info *info)
+ 			++notes;
+ 
+ 	if (notes == 0)
+-		return;
++		return 0;
+ 
+ 	notes_attrs = kzalloc(struct_size(notes_attrs, attrs, notes),
+ 			      GFP_KERNEL);
+ 	if (!notes_attrs)
+-		return;
++		return -ENOMEM;
+ 
+ 	notes_attrs->notes = notes;
+ 	nattr = &notes_attrs->attrs[0];
+@@ -201,19 +208,24 @@ static void add_notes_attrs(struct module *mod, const struct load_info *info)
+ 	}
+ 
+ 	notes_attrs->dir = kobject_create_and_add("notes", &mod->mkobj.kobj);
+-	if (!notes_attrs->dir)
++	if (!notes_attrs->dir) {
++		ret = -ENOMEM;
+ 		goto out;
++	}
+ 
+ 	for (i = 0; i < notes; ++i)
+ 		if (sysfs_create_bin_file(notes_attrs->dir,
+-					  &notes_attrs->attrs[i]))
++					  &notes_attrs->attrs[i])) {
++			ret = -EIO;
+ 			goto out;
++	}
+ 
+ 	mod->notes_attrs = notes_attrs;
+-	return;
++	return 0;
+ 
+ out:
+ 	free_notes_attrs(notes_attrs, i);
++	return ret;
+ }
+ 
+ static void remove_notes_attrs(struct module *mod)
+@@ -385,11 +397,20 @@ int mod_sysfs_setup(struct module *mod,
+ 	if (err)
+ 		goto out_unreg_modinfo_attrs;
+ 
+-	add_sect_attrs(mod, info);
+-	add_notes_attrs(mod, info);
++	err = add_sect_attrs(mod, info);
++	if (err)
++		goto out_unreg_sect_attrs;
++
++	err = add_notes_attrs(mod, info);
++	if (err)
++		goto out_unreg_notes_attrs;
+ 
+ 	return 0;
+ 
++out_unreg_notes_attrs:
++	remove_notes_attrs(mod);
++out_unreg_sect_attrs:
++	remove_sect_attrs(mod);
+ out_unreg_modinfo_attrs:
+ 	module_remove_modinfo_attrs(mod, -1);
+ out_unreg_param:
+-- 
+2.45.2
 
---=20
-Thanks,
-Mina
 
