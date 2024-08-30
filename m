@@ -1,165 +1,147 @@
-Return-Path: <linux-kernel+bounces-308753-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308754-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E5A1966168
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 14:18:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D43196616B
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 14:18:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C2BFD1C23432
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 12:18:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BF238283C05
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 12:18:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E4CF199FA4;
-	Fri, 30 Aug 2024 12:18:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 578E3199FDC;
+	Fri, 30 Aug 2024 12:18:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xcvxnSkS"
-Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YX6Gpw1i"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DFF716F0DD
-	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 12:18:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 964D516F0DD;
+	Fri, 30 Aug 2024 12:18:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725020294; cv=none; b=IyW7xTwHkHFN2Noj2ALGMdTm2w9Mn6LD8+5uziiDTRTiWo43cRyk9t8xYOXG26Ibys4dHWF1NrHFlaMObgA5fkzsRV7n6p5CKixY2cxEDQtZkMVehXZ+xSobWxIRWWEr2YrBPzXHBsVcQwgmGdJHAqREEXOFBZTKhOBIhLvFOjo=
+	t=1725020300; cv=none; b=UzLAl+rnpPaxdQS5JdChZII0tJ90XvYwhgzgWuKZl3guOUarCAsnVRr6dQ33SEjBrCvY1Eg9unj/QbxQLZ7/BDSpD2p1QVtmwywhe8UiL+39Sz7TZgmR8EOu4+68I+oc/i1giD37mOOV9sAJeRAilZAtCuJ8er7W3yV79khiYms=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725020294; c=relaxed/simple;
-	bh=lgfx6GwDKoZM/4nC7D3oRCk62Tejbqlai0EzUVs5XgI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fNzP2SlAlF+1u9ltbJZ8IYaiskN2rziMSVfNjCETxz5EmgkC8Epl5urbg6QepRHwvhZZIjKwsoGq6MuXTGzvyMLLGwZsJSvvdWiRe+uhEL0h3tp1UOaRN51CvY7FPxZIhlzc/5DxEoPBqD/axidjQU+PH+xbt4nWt2mmgrTJ1tA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xcvxnSkS; arc=none smtp.client-ip=209.85.215.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-76cb5b6b3e4so1109281a12.1
-        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 05:18:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1725020292; x=1725625092; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=Id4w7NNA8moHIg99Nv0TMFKrSz/R2qoiMO7qyLMBeaY=;
-        b=xcvxnSkSNV2bGEdDuLKWfaYlLe22K5tM9e9qDmoMdsLbHY4HYA1B0BoeOnqKRqhxDd
-         JRu9WL7R3Y7OddTAE22H/JrbpwUemDcrnHaz0uTjgdkkI7HLnh9GNlJdacGtodiAkqZr
-         noR6jjeShDZe8chM+3kRn6zHATmII4LRfl+u+cNLuCu+9sBgF8k2pRSLVH/lWKbEWDNG
-         EKdO+KJK8dKKWQvUp/yKe3Kq+AZRuJ/y26zOllniRa4IBakxKjWYAheMmCEKD0nJsSd9
-         p/duxEkLFF/VRImt04LCGU4lfMZiGu7BD3y8ebt+tQ4EPBnZ0qP9RMjcmSIYw3J81YYg
-         vmJw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725020292; x=1725625092;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Id4w7NNA8moHIg99Nv0TMFKrSz/R2qoiMO7qyLMBeaY=;
-        b=pWE57RGcRPPx1j5isK8tgh8hfFR7tH3u5CLA7ryxwl2YH+cMMR2medVulgN4AOd6HE
-         eHz19clsf4CRvtwj69a8Uv7YYqX0G7d2UcHJgZTccokEWw4nbW3MgR8+LXwRqf/BCglS
-         h1makKbHgrkr+RkoOpaxkydAsw6JPWhy9WUTE5vagrZxqyeu/p1DLa+nkmQgrtOQB2eX
-         mInTwlZtyU7LUEJQufdM7DhOXLHs34scV721xdCjRdx3Bjt49KeUAXkUsXIEVP9QM5xB
-         s1aTQu4e+IOrCCtKdTV9YoSQhqOY+GkYpwa4rWo0xJjLQmSgujqtS37I2HmxrZN0Tx/S
-         BbuA==
-X-Forwarded-Encrypted: i=1; AJvYcCVMX9YCOkAUHAbF09w4MnVq3abH2QnDgY+eONxo/P2YAtueAHDLBr1oELcztBCHrS5285ttDBEZnwLSBRc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwHiKnS58dl4GpSlX2XPJXxwKMapMS3SaVYSP4J2HT1Nh93hcOm
-	JPxEscnY5Wk0KuMDEJUlKzN9haUi26GNaNM/2LuRAnRWnqp+wojMD+cnlWrN/Q==
-X-Google-Smtp-Source: AGHT+IG5/ZWFAjSG6uNdUFmC0sk12wJugx6UZ9BZD71Ucu4X4w99uOTL+UHPQZ4ynSm0cGmDA4y3cA==
-X-Received: by 2002:a17:90b:3e84:b0:2c1:9892:8fb with SMTP id 98e67ed59e1d1-2d85618881dmr6007999a91.5.1725020292391;
-        Fri, 30 Aug 2024 05:18:12 -0700 (PDT)
-Received: from thinkpad ([117.193.213.95])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d85b0ffce5sm3663374a91.3.2024.08.30.05.18.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 30 Aug 2024 05:18:12 -0700 (PDT)
-Date: Fri, 30 Aug 2024 17:48:07 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Slark Xiao <slark_xiao@163.com>
-Cc: mhi@lists.linux.dev, linux-arm-msm@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] bus: mhi: host: pci_generic: Update the file path
- for Foxconn SDX55/SDX72
-Message-ID: <20240830121807.noxfo6fy2nsd4ohi@thinkpad>
-References: <20240725022941.65948-1-slark_xiao@163.com>
+	s=arc-20240116; t=1725020300; c=relaxed/simple;
+	bh=fzW3G+TfB+bO5ebL/bX9LdeCTen9lbExGhAdJz/gUE8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JCOYKhNKdjUkdcVhM/ZCo+oFU42QmpQJuYH2L8iFPtW2daQpwZmiOMVj7MrDE0wrORDCBfVyq3vQwj38PFDFslDTGxFuYBV0q7FLkJNcNghOrugRiaiiHNGhmT79puVsk7Ap+cp7UvAFoyXZMpgUBnFmBpsVJlHgXp/NYRetDp4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YX6Gpw1i; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 15310C4CECD;
+	Fri, 30 Aug 2024 12:18:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725020300;
+	bh=fzW3G+TfB+bO5ebL/bX9LdeCTen9lbExGhAdJz/gUE8=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=YX6Gpw1iAM1qcXKu7BASnn7Qo45teZi4XXjDrmwn/Vm4TnZW3bXHuZf+aIV8rnhz0
+	 7VJ9gf240vFlFx69v7Gytuo+daKbx/S4payvqKJCL+wpO6Oj2vwKuHWo7VYnjGJPaH
+	 41rQ1hCheK7YWyiteSj1QCLB193pxleVPtw7pyJvPaKHgasT2isgNCGwpSMjSXlqGC
+	 ec5a8ppcWoJn+0Tc8EDxaWlAPdgEfZCp/oJarZBv6gWXXd/cQRri2pRcMwEFPnD7H/
+	 vm9Fdfxn+WilUW8TBmM/UkaC0ahgKu+wuig8BUCdyRxxq9ujl/xkxdJs1NJJWOBhSV
+	 9hwmywR7owrdQ==
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-2050b059357so14245875ad.2;
+        Fri, 30 Aug 2024 05:18:20 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXia+W3NVa7gtupN3ZW7E5a69dWHXAOBZKOExiNEcgK+aMknr1uJU1/LCEnqrMbp1sJTt5eBeIBLeoF@vger.kernel.org, AJvYcCXuq8I5bvvPEh33rK6ZFWaVaR3JSkTHIYpHcXe73y9u4n/hIbGZ2kafFllWjG6v7/R8v8TSOnU0iSgfGXWi@vger.kernel.org
+X-Gm-Message-State: AOJu0YxBycV7wOumDV8CFvOKEhOdZ1otB3WiZgZFO0yAW5NiEcV+R1jN
+	Nw6Zl4xA3U7JRdkR6FJ5FYiy4yqMqp8LhpMDhFs7DcCuHMOnV/cWw/JRO71Qr3yrYgSY3u7nYjx
+	sLEH2iC0Xoy+hE830XxKtOpbhNg==
+X-Google-Smtp-Source: AGHT+IF2p5CQY3b8HPQl1+/RqA1ZHqHcuWEQh2qoVHx4PAKoc7yqtJdfN0iZ0lNlEvXu5ud9ENOdM8aJpEyK48XB/pY=
+X-Received: by 2002:a17:903:124c:b0:202:18de:b419 with SMTP id
+ d9443c01a7336-2050c524e84mr78003075ad.63.1725020299631; Fri, 30 Aug 2024
+ 05:18:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240725022941.65948-1-slark_xiao@163.com>
+References: <20240830084544.2898512-1-rohiagar@chromium.org> <20240830084544.2898512-2-rohiagar@chromium.org>
+In-Reply-To: <20240830084544.2898512-2-rohiagar@chromium.org>
+From: Chun-Kuang Hu <chunkuang.hu@kernel.org>
+Date: Fri, 30 Aug 2024 20:18:33 +0800
+X-Gmail-Original-Message-ID: <CAAOTY_-1bT-=jU4vCZTfe18Ks6WiAL=7M3y0eK3DyGkfWmsFKA@mail.gmail.com>
+Message-ID: <CAAOTY_-1bT-=jU4vCZTfe18Ks6WiAL=7M3y0eK3DyGkfWmsFKA@mail.gmail.com>
+Subject: Re: [PATCH v4 1/3] dt-bindings: display: mediatek: dpi: Add power domains
+To: Rohit Agarwal <rohiagar@chromium.org>
+Cc: chunkuang.hu@kernel.org, p.zabel@pengutronix.de, airlied@gmail.com, 
+	daniel@ffwll.ch, maarten.lankhorst@linux.intel.com, mripard@kernel.org, 
+	tzimmermann@suse.de, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	matthias.bgg@gmail.com, angelogioacchino.delregno@collabora.com, 
+	ck.hu@mediatek.com, jitao.shi@mediatek.com, dri-devel@lists.freedesktop.org, 
+	linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jul 25, 2024 at 10:29:40AM +0800, Slark Xiao wrote:
-> To separate the images of Foxconn from other vendors, adding a
-> new foxconn subfolder under qcom/<platform> for edl image path.
-> And delete the fw patch since it's useless for Foxconn devices.
-> 
-> Fixes: bf30a75e6e00 ("bus: mhi: host: Add support for Foxconn SDX72 modems")
-> Signed-off-by: Slark Xiao <slark_xiao@163.com>
+Hi, Rohit:
 
-Applied to mhi-next!
+Rohit Agarwal <rohiagar@chromium.org> =E6=96=BC 2024=E5=B9=B48=E6=9C=8830=
+=E6=97=A5 =E9=80=B1=E4=BA=94 =E4=B8=8B=E5=8D=884:46=E5=AF=AB=E9=81=93=EF=BC=
+=9A
+>
+> Add power domain binding to the mediatek DPI controller
+> for MT8186.
+> Also, add power domain binding for other SoCs like
+> MT6795 and MT8173 that already had power domain property.
 
-- Mani
+For this patch, applied to mediatek-drm-next [1], thanks.
 
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/chunkuang.hu/linux.git/=
+log/?h=3Dmediatek-drm-next
+
+Regards,
+Chun-Kuang.
+
+>
+> Signed-off-by: Rohit Agarwal <rohiagar@chromium.org>
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Reviewed-by: CK Hu <ck.hu@mediatek.com>
 > ---
-> v2: change the folder path architecture
-> ---
->  drivers/bus/mhi/host/pci_generic.c | 13 +++++--------
->  1 file changed, 5 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/bus/mhi/host/pci_generic.c b/drivers/bus/mhi/host/pci_generic.c
-> index 14a11880bcea..f159a9dd53e7 100644
-> --- a/drivers/bus/mhi/host/pci_generic.c
-> +++ b/drivers/bus/mhi/host/pci_generic.c
-> @@ -433,8 +433,7 @@ static const struct mhi_controller_config modem_foxconn_sdx72_config = {
->  
->  static const struct mhi_pci_dev_info mhi_foxconn_sdx55_info = {
->  	.name = "foxconn-sdx55",
-> -	.fw = "qcom/sdx55m/sbl1.mbn",
-> -	.edl = "qcom/sdx55m/edl.mbn",
-> +	.edl = "qcom/sdx55m/foxconn/prog_firehose_sdx55.mbn",
->  	.config = &modem_foxconn_sdx55_config,
->  	.bar_num = MHI_PCI_DEFAULT_BAR_NUM,
->  	.dma_data_width = 32,
-> @@ -444,8 +443,7 @@ static const struct mhi_pci_dev_info mhi_foxconn_sdx55_info = {
->  
->  static const struct mhi_pci_dev_info mhi_foxconn_t99w175_info = {
->  	.name = "foxconn-t99w175",
-> -	.fw = "qcom/sdx55m/sbl1.mbn",
-> -	.edl = "qcom/sdx55m/edl.mbn",
-> +	.edl = "qcom/sdx55m/foxconn/prog_firehose_sdx55.mbn",
->  	.config = &modem_foxconn_sdx55_config,
->  	.bar_num = MHI_PCI_DEFAULT_BAR_NUM,
->  	.dma_data_width = 32,
-> @@ -455,8 +453,7 @@ static const struct mhi_pci_dev_info mhi_foxconn_t99w175_info = {
->  
->  static const struct mhi_pci_dev_info mhi_foxconn_dw5930e_info = {
->  	.name = "foxconn-dw5930e",
-> -	.fw = "qcom/sdx55m/sbl1.mbn",
-> -	.edl = "qcom/sdx55m/edl.mbn",
-> +	.edl = "qcom/sdx55m/foxconn/prog_firehose_sdx55.mbn",
->  	.config = &modem_foxconn_sdx55_config,
->  	.bar_num = MHI_PCI_DEFAULT_BAR_NUM,
->  	.dma_data_width = 32,
-> @@ -502,7 +499,7 @@ static const struct mhi_pci_dev_info mhi_foxconn_dw5932e_info = {
->  
->  static const struct mhi_pci_dev_info mhi_foxconn_t99w515_info = {
->  	.name = "foxconn-t99w515",
-> -	.edl = "fox/sdx72m/edl.mbn",
-> +	.edl = "qcom/sdx72m/foxconn/edl.mbn",
->  	.edl_trigger = true,
->  	.config = &modem_foxconn_sdx72_config,
->  	.bar_num = MHI_PCI_DEFAULT_BAR_NUM,
-> @@ -513,7 +510,7 @@ static const struct mhi_pci_dev_info mhi_foxconn_t99w515_info = {
->  
->  static const struct mhi_pci_dev_info mhi_foxconn_dw5934e_info = {
->  	.name = "foxconn-dw5934e",
-> -	.edl = "fox/sdx72m/edl.mbn",
-> +	.edl = "qcom/sdx72m/foxconn/edl.mbn",
->  	.edl_trigger = true,
->  	.config = &modem_foxconn_sdx72_config,
->  	.bar_num = MHI_PCI_DEFAULT_BAR_NUM,
-> -- 
-> 2.25.1
-> 
-
--- 
-மணிவண்ணன் சதாசிவம்
+>  .../bindings/display/mediatek/mediatek,dpi.yaml | 17 +++++++++++++++++
+>  1 file changed, 17 insertions(+)
+>
+> diff --git a/Documentation/devicetree/bindings/display/mediatek/mediatek,=
+dpi.yaml b/Documentation/devicetree/bindings/display/mediatek/mediatek,dpi.=
+yaml
+> index 5ca7679d5427..3a82aec9021c 100644
+> --- a/Documentation/devicetree/bindings/display/mediatek/mediatek,dpi.yam=
+l
+> +++ b/Documentation/devicetree/bindings/display/mediatek/mediatek,dpi.yam=
+l
+> @@ -62,6 +62,9 @@ properties:
+>        - const: default
+>        - const: sleep
+>
+> +  power-domains:
+> +    maxItems: 1
+> +
+>    port:
+>      $ref: /schemas/graph.yaml#/properties/port
+>      description:
+> @@ -76,6 +79,20 @@ required:
+>    - clock-names
+>    - port
+>
+> +allOf:
+> +  - if:
+> +      not:
+> +        properties:
+> +          compatible:
+> +            contains:
+> +              enum:
+> +                - mediatek,mt6795-dpi
+> +                - mediatek,mt8173-dpi
+> +                - mediatek,mt8186-dpi
+> +    then:
+> +      properties:
+> +        power-domains: false
+> +
+>  additionalProperties: false
+>
+>  examples:
+> --
+> 2.46.0.469.g59c65b2a67-goog
+>
 
