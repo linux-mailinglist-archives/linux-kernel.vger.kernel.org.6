@@ -1,94 +1,91 @@
-Return-Path: <linux-kernel+bounces-309441-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309442-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81BC9966A90
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 22:32:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A7A6966A94
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 22:34:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3996C283234
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 20:32:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C9C891C2243A
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 20:34:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C20201BF33D;
-	Fri, 30 Aug 2024 20:32:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B666A1BF7E5;
+	Fri, 30 Aug 2024 20:34:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="l1gTFH/0"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="KqcLce2X"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F4FD166F0D;
-	Fri, 30 Aug 2024 20:32:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE05B155C80;
+	Fri, 30 Aug 2024 20:34:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725049947; cv=none; b=pCGKlDtG+oL7xXZSYJR/loIHqPIQ1FGqisYC9Xvaa8NSLcTRD+Qg2ifq6WwaSWMY6vzEGYPQnrZcjwQ0smHY2Syl8puuVDkepDB80JCnsrDGyi3mR5DwZPoIBf1t+QtAbVoJADjCFfCTxAF6ZlmbwANU1/jVIvjlyX9yYa+h4IQ=
+	t=1725050085; cv=none; b=B903+MwvxC4qeGbvqx30PkVq3THo/SbzvtCbpz4h8ITRZORV3zkRtfkgBbM4GC0CKSaa6bGMrlCgu7Umw5cgu5AHIFwgVlNNpf5kHNwiH72ZIs0L+Czy6MTfKo85JS4FFRqNTr5u2RoTzbTneghTyw2ab0ggg+qW1l8AscD5quQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725049947; c=relaxed/simple;
-	bh=rOtkussEVvEtJaYYLqRR1742JXpbhS+YhqlnswW9ZG0=;
+	s=arc-20240116; t=1725050085; c=relaxed/simple;
+	bh=XVcXmMQg/JA0zOiwLKUeapBVJY+VU4c9iUfQQnkFCO0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MnLCtmBYr5alktwGObTsJN5aIVSWTt7fcBVRDyP/YJp/Cju1J2jigjMBc5Eqlcp94brxanaOrrA7rIotU8RrDX20Rnhm3+0ISqmtgnkUEeuGIlTydSl5Cqv2AVmc1QWFheHVLOkc1A7UoYgnOs7OAfIYU4Ff4djUHPxR1m4kgac=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=l1gTFH/0; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1725049943;
-	bh=rOtkussEVvEtJaYYLqRR1742JXpbhS+YhqlnswW9ZG0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=l1gTFH/043LrvIs3MAkQBN3SS90BvwS3PZwIsSVvAt841aCoqoEpMc7aFPtO7AW1d
-	 EwxHd+cBGOUuHl25xHzE4Uy2jzmDNPTulvRK8mo/gCrEhiI77vuu4MwDakXCPXzY9y
-	 hCw4Tshns0hj6Xy+Tw+XkZwSlCxGK/PJH4Go/aX1Y9C0tQh6hMmNMDSIJKlvk2fi47
-	 4HnFcMCjhwwH4eQFuqP3b2giom53ZFykytaVA+7vRtkMxs9tdKSYaCEtXzdU1MYXRb
-	 IZ1dhBVg2qePGDmC4EshaD8jMQ/ARgcSmf28iNda3Jfj+Bw7j0cQ0z2rAmbuaCSeWL
-	 JWUNJaSINFxqg==
-Received: from notapiano (pool-100-2-116-133.nycmny.fios.verizon.net [100.2.116.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: nfraprado)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 34D2D17E121B;
-	Fri, 30 Aug 2024 22:32:22 +0200 (CEST)
-Date: Fri, 30 Aug 2024 16:32:20 -0400
-From: =?utf-8?B?TsOtY29sYXMgRi4gUi4gQS4=?= Prado <nfraprado@collabora.com>
-To: Chun-Kuang Hu <chunkuang.hu@kernel.org>
-Cc: Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Moudy Ho <moudy.ho@mediatek.com>,
-	"Jason-JH . Lin" <jason-jh.lin@mediatek.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org
-Subject: Re: [PATCH v3 5/5] soc: mediatek: cmdq: Remove cmdq_pkt_finalize()
- helper function
-Message-ID: <7a5a4d9f-f22f-433a-87a3-7df7ae4f8cd3@notapiano>
-References: <20240810090918.7457-1-chunkuang.hu@kernel.org>
- <20240810090918.7457-6-chunkuang.hu@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=e9tViLBD1F08t2WE/BN2kkauLrLyHIwuTBbYsf8hcfN55W1F2vriNuboN7NR6lyjdC8cJf8RY1Ff8ERZ0jT9DK12KFSjX2xYjuNI2iy4XOLEOJUxKFapf2AerkIar0cwE0bz5NQY+94Zo9tpTs/hbfFb3OBHsdOY//0et4uL9RI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=KqcLce2X; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=dzhlgHFYyjKehOX4ltLZZbG76ccSCY8TFHFaHrHyOQc=; b=KqcLce2XfynqYOiiS1mQntAyWa
+	99pY8aMGmJWsVWUW9/GRedoe8hGYc/7V2znBxwsThwzCOyAvuUxGXWXDvNLltFNlqbxAYCvTgCtrX
+	gE9sUWrbXOmqCst9C+f3qhVTE6+PBoIToF83P6JwssT6YGgkW5Ez1r/3f4r5+HGrQjXE=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1sk8K0-006A7F-QO; Fri, 30 Aug 2024 22:34:16 +0200
+Date: Fri, 30 Aug 2024 22:34:16 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Simon Horman <horms@kernel.org>
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Lino Sanfilippo <LinoSanfilippo@gmx.de>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Jacob Keller <jacob.e.keller@intel.com>,
+	Yang Ruibin <11162571@vivo.com>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] net: alacritech: Partially revert "net: alacritech:
+ Switch to use dev_err_probe()"
+Message-ID: <0f8fbbe7-4a91-4a18-a277-06d144844c2a@lunn.ch>
+References: <20240830170014.15389-1-krzysztof.kozlowski@linaro.org>
+ <20240830182844.GE1368797@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240810090918.7457-6-chunkuang.hu@kernel.org>
+In-Reply-To: <20240830182844.GE1368797@kernel.org>
 
-On Sat, Aug 10, 2024 at 09:09:18AM +0000, Chun-Kuang Hu wrote:
-> In order to have fine-grained control, use cmdq_pkt_eoc() and
-> cmdq_pkt_jump_rel() to replace cmdq_pkt_finalize().
-
-This commit description doesn't match what you're doing. What about
-
-Now that all occurrences of cmdq_pkt_finalize() have been switched to
-cmdq_pkt_eoc() and cmdq_pkt_jump_rel() for more fine-grained control, remove
-cmdq_pkt_finalize().
-
+On Fri, Aug 30, 2024 at 07:28:44PM +0100, Simon Horman wrote:
+> On Fri, Aug 30, 2024 at 07:00:14PM +0200, Krzysztof Kozlowski wrote:
+> > This reverts commit bf4d87f884fe8a4b6b61fe4d0e05f293d08df61c because it
+> > introduced dev_err_probe() in non-probe path, which is not desired.
+> > Calling it after successful probe, dev_err_probe() will set deferred
+> > status on the device already probed. See also documentation of
+> > dev_err_probe().
 > 
-> Signed-off-by: Chun-Kuang Hu <chunkuang.hu@kernel.org>
+> I agree that using dev_err_probe() outside of a probe path is
+> inappropriate. And I agree that your patch addresses that problem
+> in the context of changes made by the cited commit.
 
-Reviewed-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
+Maybe device_set_deferred_probe_reason() could call device_is_bound()
+is check the device is not actually bound, and hence still in probe,
+and do a dev_warn(). That should help catch these errors.
 
-Thanks,
-Nícolas
+I assume the developers submitting these patches are also using a
+bot. It would be good if the bot could be trained to follow the call
+paths and ensure it only reports cases which are probe.
+
+	Andrew
 
