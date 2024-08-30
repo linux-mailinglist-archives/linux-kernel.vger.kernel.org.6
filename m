@@ -1,55 +1,55 @@
-Return-Path: <linux-kernel+bounces-308207-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308208-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2DF199658AE
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 09:35:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 958999658B0
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 09:36:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D8EAC1F24638
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 07:35:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4C39E1F245AA
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 07:36:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD64D155A32;
-	Fri, 30 Aug 2024 07:35:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9772F4690;
+	Fri, 30 Aug 2024 07:35:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EZt//oXf"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aPYjqfsQ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 199EE56440;
-	Fri, 30 Aug 2024 07:35:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBB9756440;
+	Fri, 30 Aug 2024 07:35:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725003342; cv=none; b=W+NPH28L4ITO8fYNCnQZy1nbFWQCugu0qdBAONt6axFIn7q7ScIgPBHTbImUANY9YKvxbXG2SOJpxpSXG2OS9LP9RKCe3R+1x9uJ6IB6jNyRUXPI/OuRWM7wEjzKk9+t3bmaaQbOC2GgzMXhBClqdHd1zB78P1IkP+UU/WEcu18=
+	t=1725003358; cv=none; b=WovHtwKrDqa9mNq7aEwwpRlCijxXpJccpzRFXCR65LPbz2VERpcdi7MWA3Dl+F0HyZK+0zYVdqwC933o72pbtkyN+A84Jw1iwX9d9nuRGP6dQO8lS0Sh4jz154qczm5XtzjL8LPhsH4PcCAu3RufaHfL1jj7spDRqd4DpMOtaQ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725003342; c=relaxed/simple;
-	bh=xHquYzTQF6jiRAzKURhriE4TbVpZm1HhvOv+un2SS7M=;
+	s=arc-20240116; t=1725003358; c=relaxed/simple;
+	bh=3riHkqm7T5xycD0sgr32Z0W0i2hevSL56eCchx+6aVc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=abCmFbujRDuIdDpGR98Pj+swcMTf3avJtHDDKFRZ3wsMWas4WQZ32xhspzRKRcDkJ+08rkWnuT40lnKbb1CdpKlJikPhsklW9z/J3b4Pflhk86dibsiNWiQrmzGh7Wxks234LpFs9Be5YEzi3IWsZJx30cqKr6ARgE7pZKgYbTg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EZt//oXf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 02AF5C4CEC2;
-	Fri, 30 Aug 2024 07:35:39 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=kbPMFUE91G9hltrS1ijw0af1M7DPzOzgJ9WvFA/LUmQaVwuKgqDgwGPxQlyoOitx2P8XvTGpTKWpU3bptELWb5V8Ja0GuEXSN5RJgHHlrTW0V57ogXLLPA0ofy0Pg5TILMNjOQv7q6NAmq+/lhFb/Uf25Fcqpmrjjiy0lCQHhf0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aPYjqfsQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BEEFAC4CEC2;
+	Fri, 30 Aug 2024 07:35:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725003341;
-	bh=xHquYzTQF6jiRAzKURhriE4TbVpZm1HhvOv+un2SS7M=;
+	s=k20201202; t=1725003357;
+	bh=3riHkqm7T5xycD0sgr32Z0W0i2hevSL56eCchx+6aVc=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=EZt//oXfnedPEgwiEFfGD0kXsW4/VyTymxgT2L7dVDMZjLeJHLYxH4v/UyVisGIBD
-	 JONhr9jntp4rVJfjojjamdp8qUerJBbOR3vIBdoP4e5q5NObqCdHvlTwdrg181cFyS
-	 V2LgrPie6fLm3O8LizKOSEOqyEBfj5Xg14+b5ZwDitIwTeFXkSRn9kx5enDJtcm0Rh
-	 lJnkv0wCJodTOseITsA31x4H3eAgHobKE+9+mn+lCtFzu/i8ciVXLBkThavNrXgxIe
-	 t927KhuejR3G5vjmUWIjE4b/pakcp9tFvVSKRQymretja89kwldtOlJpUVGAzOxsSF
-	 25fnfxtVZQxzg==
-Date: Fri, 30 Aug 2024 08:35:37 +0100
+	b=aPYjqfsQ34ZRztvg8zIby9zuR/dG3AQH1phKWiee4tYgpZyACWIp6lIG9UDYxPMOp
+	 b6kMB3kCUYv4j1SnJQus/8+QBodYoL5tdhZx1FJ92aLwWoknwckptKYJVIHYjZcNbx
+	 COX0+C8NxgPMGdPGY1q72y39bx+95vJt0R490nBXBIPmiL5IQEx6AuM8y1in2zjl+D
+	 ECb90V7AzsvDbYcZifRNb4K9h3kj/wNAjK2wG63IkFEQ8YNzLPZv8TLy/p589RMMez
+	 wHzXQlcjq5kXKAuyCgYDI6YtiBvdEV5u0F7jdltdfSKeMoXIFNZI1ucTOYGjJ9m7kX
+	 rrItCZli0N5kw==
+Date: Fri, 30 Aug 2024 08:35:53 +0100
 From: Simon Horman <horms@kernel.org>
 To: Yue Haibing <yuehaibing@huawei.com>
 Cc: bharat@chelsio.com, davem@davemloft.net, edumazet@google.com,
 	kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next 1/3] cxgb3: Remove unused declarations
-Message-ID: <20240830073537.GE1368797@kernel.org>
+Subject: Re: [PATCH net-next 2/3] cxgb4: Remove unused declarations
+Message-ID: <20240830073553.GF1368797@kernel.org>
 References: <20240829123707.2276148-1-yuehaibing@huawei.com>
- <20240829123707.2276148-2-yuehaibing@huawei.com>
+ <20240829123707.2276148-3-yuehaibing@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,11 +58,17 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240829123707.2276148-2-yuehaibing@huawei.com>
+In-Reply-To: <20240829123707.2276148-3-yuehaibing@huawei.com>
 
-On Thu, Aug 29, 2024 at 08:37:05PM +0800, Yue Haibing wrote:
-> Commit 4d22de3e6cc4 ("Add support for the latest 1G/10G Chelsio adapter,
-> T3.") declared but never implemented these.
+On Thu, Aug 29, 2024 at 08:37:06PM +0800, Yue Haibing wrote:
+> Commit e2d14b42c25c ("cxgb4: Remove WOL get/set ethtool support") removed
+> t4_wol_magic_enable() and t4_wol_pat_enable() but leave declarations.
+> 
+> Commit 02d805dc5fe3 ("cxgb4: use new fw interface to get the VIN and smt
+> index") leave behind cxgb4_tp_smt_idx().
+> 
+> cxgb4_dcb_set_caps() is never implemented and used since introduction in
+> commit 76bcb31efc06 ("cxgb4 : Add DCBx support codebase and dcbnl_ops").
 > 
 > Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
 
