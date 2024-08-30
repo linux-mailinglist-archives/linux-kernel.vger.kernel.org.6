@@ -1,153 +1,106 @@
-Return-Path: <linux-kernel+bounces-307926-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307927-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D0A496550D
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 04:06:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C051965510
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 04:06:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 06FF61F21856
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 02:06:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BD7191C22936
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 02:06:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4318E13DDB5;
-	Fri, 30 Aug 2024 02:04:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A45C5136331;
+	Fri, 30 Aug 2024 02:05:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PmKHox9V"
-Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
+	dkim=pass (2048-bit key) header.d=darkphysics.net header.i=@darkphysics.net header.b="E/0c8iee"
+Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3167A27473;
-	Fri, 30 Aug 2024 02:04:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD8B128DCB
+	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 02:05:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724983449; cv=none; b=aKIbjvKEphXJIJqUKagDgoJq4DmavfW43GudlpewSYaFarUvVuDGpBnZldYIAz6+8SG4pPVQVnK7dIOnk8S5giXgKE0xk+CSTjC0FwCuQpON3cP4d10L8yavoE8eLV7GTT+j4mcPMismcTWchY7ztCOibCUZs08wQ5W1vTJLw+Q=
+	t=1724983513; cv=none; b=qEn7IRdPSYD0/7Zj20NGdVA1r782WL/uX9ByOVhqN/X61REKdtUdgapeac2fqavgKvtcr1b9P/5hYgXwa8DpgsrKvN8nxoFdmi0a3otjTQQCAFTqtpv+aV8/SvX/90OREuwGD7oKDUifnewwagzRHW50n89qNUvQsDtNqHDpYR0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724983449; c=relaxed/simple;
-	bh=Y3hMusF4liDwrYLRnZukIfN3F7nT4dN+Q5Rop8q4Vlk=;
-	h=Content-Type:From:Mime-Version:Subject:Date:Message-Id:References:
-	 Cc:In-Reply-To:To; b=hvXUox+Rhu969SnMm0lZP2I1fdZ+h81bYDY9BkSbui58ksogJawfoP2voSHyr3D++BFP8x6pSCiESV2UO3gJDlVS2RLaaJLqnovnfBkve6n7GijJytxWiwlMD0DW1lWZyly65d9fzxgOgM3qE5nDR7Rw+dIlIgGGaXSwaMqd8mc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PmKHox9V; arc=none smtp.client-ip=209.85.210.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-716609a0e2bso291303b3a.0;
-        Thu, 29 Aug 2024 19:04:07 -0700 (PDT)
+	s=arc-20240116; t=1724983513; c=relaxed/simple;
+	bh=2yuuJVKQ+Siguo8PGv6DbdWIFXlssxpRT1fH4pUOoOk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=lP5HbQcHit9zyOrB0xCy0VjKPRxiHwuIZCx0x3O257X0eODykigqfyEHVJVo659+9FUc+H8J8Q4bNda92pJ68iX+wLXyCFUW6KdnpAWdY4sVJj0SMOGdUOcWKxcPPqeprACYjpZDwTVfdXw1Eru65VJ/jHqssnz3/NFrIAZ1eo0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=darkphysics.net; spf=pass smtp.mailfrom=darkphysics.net; dkim=pass (2048-bit key) header.d=darkphysics.net header.i=@darkphysics.net header.b=E/0c8iee; arc=none smtp.client-ip=209.85.210.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=darkphysics.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=darkphysics.net
+Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-715e64ea7d1so1067939b3a.0
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 19:05:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724983447; x=1725588247; darn=vger.kernel.org;
-        h=to:in-reply-to:cc:references:message-id:date:subject:mime-version
-         :from:content-transfer-encoding:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=3u7MEHbTS5aIEdhqu3cNoa9W9oSTziOnMc5kpFlW668=;
-        b=PmKHox9V3B/cIDbEvv9ZlXDdY56KyNFgwuMzECbRQNqGQ2sFJyQs3kpfi2+Gi+8WG4
-         Y36HOHWHkqEbUI3ArLWBn5FZQqopGAGejg220seKrrknG7pVjZ+Xm/wJxXQp6pP+joiV
-         YMcK/2kT9SYJqjsaYhR+PDkg0n28ugJAnizvLUR1StugmT7SVvtWD9RoRNrmUOVHO4ju
-         CE3dEqc4FvpYHMLVw/MlgQ8QXcxzoNBOmh3VVbqe+kqg90Ed/KmV4ZdhLEvOiXs/NFO7
-         yKleqotlkAWoLmCePzx8tvysfLUtKlJF3p4QzLEZBJXEUQhIHP99ETF5Xe3mdsQc+a5n
-         6ikw==
+        d=darkphysics.net; s=google; t=1724983511; x=1725588311; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=x/5DVpazD2e4b/WBbkd9CtgNXP337r5jJGNekgg+Vhw=;
+        b=E/0c8ieetU+zFDoVaTu0zaDElO1if6E/aR0MY7eiMi5ZUAgJeIap1YAalUY9Gek1be
+         XEHP/Dh0yfsydoXgImTSeTwY10+nOVk9iUTEnF56cpCZpHKsl1+AOQjgKx4MbGoL4ybd
+         PbVRO9kQAdKfiztLoQovUsCy/OFQkP56bU6eHISKk1gTqwOMxI0M+xCDhflpFc0zbQOV
+         yv9CcLsDK0xAlZo/f8KiB+Py7UOOsk/aIlf7q7nzloeANBQFMlbRjHyAXwnq8JIxKtrp
+         b1UBl2VSZtLlO2lj7jkjWdY/Y+YGotXA4cbdlWkE/CXhPXdAobB0eNy2/uDdpMfb54iI
+         qqmw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724983447; x=1725588247;
-        h=to:in-reply-to:cc:references:message-id:date:subject:mime-version
-         :from:content-transfer-encoding:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3u7MEHbTS5aIEdhqu3cNoa9W9oSTziOnMc5kpFlW668=;
-        b=O8Vk3n20nTH2S/Q6MY8LaVKW84t16Ya9zMIuKNANjaYQRIn51viInqfPwE9wHMIEmF
-         ak04kpkJRi61QBF7ieNNgB46S/b7HOpmmRkHCCnDdGlabmbx4xIVllNFxFIyCLkOHDLd
-         /h2b1X0Bq0ZHOVvMvV3m+iHXyWGSaLP1ZF+0ZAEeKaqKT4g9gXvO0HxCTrhvhMpOPANl
-         kiq67bAVQrN+OlxR7RlyaK8r0yLT7H0XgJoSTT5ow+FeKKlDgK6l9RLxTx8H+8tvjLRK
-         BFOBmey2LJsFCZnAfIeSSE9CG9yg8Osgz6h4FU9So6RgGYjUL8a/J0rNMhYx6SwlNMN7
-         Iv4A==
-X-Forwarded-Encrypted: i=1; AJvYcCUDKh93e9rE9KX3PeRkSELJjFXvFJwVdNkkPftObct26LQDr7iVlP7sGSg+bisxuqG+hWQ=@vger.kernel.org, AJvYcCVbb1f7jWZB6GEbXhl9OZaeFHJ3RjNp9txDIEJPTCVef8LJzxEB3vpW3nd4QSORRLTUGj43is1ej9hqlviD@vger.kernel.org
-X-Gm-Message-State: AOJu0YwHwCR7qxVwDn4xbXNUwuWqVyM7wxdCMJ9oyuFM8emNtXGp0X2R
-	7Q+MZt1elcFkR4wyjL8ietOer7/4jQY2v0pNwidOZX5g43PfTsuO
-X-Google-Smtp-Source: AGHT+IGHl7cemBtoX5qsT9N4v16xPV1yX2TOLZXitRI1QU88g9SCvxMpqVFWtfp3UkXmgk0SXrsj6Q==
-X-Received: by 2002:a05:6a20:2d24:b0:1c4:818c:2986 with SMTP id adf61e73a8af0-1cce100e21emr4887015637.13.1724983447328;
-        Thu, 29 Aug 2024 19:04:07 -0700 (PDT)
-Received: from smtpclient.apple ([2001:e60:a014:2acf:bd3a:95a:cb6b:9c04])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20515550badsm17508025ad.241.2024.08.29.19.04.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 29 Aug 2024 19:04:06 -0700 (PDT)
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-From: Jeongjun Park <aha310510@gmail.com>
+        d=1e100.net; s=20230601; t=1724983511; x=1725588311;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=x/5DVpazD2e4b/WBbkd9CtgNXP337r5jJGNekgg+Vhw=;
+        b=rKrFrqhrWZTEPgyF47iGrmpF7e6wOaxnjCg2lxqhddASnr9wSJF0NtVKUceeoAmDVX
+         HrHYQOame1Kw53osc5AvSZ4/xHIpXxfzHuBEmefHVupqLBrNeMrpIT3cAFdp/9+FRluy
+         njwIXOTPzflPsmCBjvz1FkKg5dvBBBwKZtp42VsZ+YHzQNFTIlDjEmNmfs0vCErIr+WU
+         2zglsFbZPfMouZKhSgy/2bw2GL5MmsBZEhm61XKpzNY1H/3R/4sRtPl9WxFKPq8LvFKO
+         ts23RSv/FPJTOS2dZ5O52Dusjd0tkVloUGrAPqTVMmjYADXpvZcrH2X8HATKy93q9RKd
+         KsUg==
+X-Forwarded-Encrypted: i=1; AJvYcCW4aQGXCpX2SAwvW5awYUEDXxLwrKozTdI8YCAJJAqqPKQ+jizvzuJ+L6TK8SR2YbgGw7vOPJfwMtiaLI0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz/b2FqUvdZozCCBirhy/37ZmNxLr5BIoG3IsrR74Ynppglcdtk
+	YTGY18ZE01XpGPQ95Fi7o+nx/LRMEgMMuwUjU3J/yqS2mn6vrdAqnkv888MMeNr1NvknqSoK5t4
+	WiwI=
+X-Google-Smtp-Source: AGHT+IEMCsy/a+MiMSHWPUNa+kuvu9LDzb34kNddaRUMbVVgmr3mLn7LTVs5FWxj4etZ87zK3Tk5tg==
+X-Received: by 2002:a05:6a20:9d92:b0:1cc:9f24:42 with SMTP id adf61e73a8af0-1cce1027549mr4694666637.20.1724983511028;
+        Thu, 29 Aug 2024 19:05:11 -0700 (PDT)
+Received: from lunchbox.darkphysics (c-73-83-183-190.hsd1.wa.comcast.net. [73.83.183.190])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20515534444sm17643255ad.147.2024.08.29.19.05.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 29 Aug 2024 19:05:10 -0700 (PDT)
+From: Tree Davies <tdavies@darkphysics.net>
+To: gregkh@linuxfoundation.org,
+	philipp.g.hortmann@gmail.com,
+	anjan@momi.ca
+Cc: linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Tree Davies <tdavies@darkphysics.net>
+Subject: [PATCH 0/3] Staging: rtl8192e: Yet another variable rename and cleanup series
+Date: Thu, 29 Aug 2024 19:05:05 -0700
+Message-Id: <20240830020508.532945-1-tdavies@darkphysics.net>
+X-Mailer: git-send-email 2.30.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (1.0)
-Subject: Re: [PATCH bpf] bpf: add check for invalid name in btf_name_valid_section()
-Date: Fri, 30 Aug 2024 11:03:54 +0900
-Message-Id: <07EBE3E5-61A7-4F64-92BA-24A1DCA9583B@gmail.com>
-References: <3a48e38f29cc8c73e36a6d3339b9303571d522a8.camel@gmail.com>
-Cc: alexei.starovoitov@gmail.com, andrii@kernel.org, ast@kernel.org,
- bpf@vger.kernel.org, daniel@iogearbox.net, haoluo@google.com,
- john.fastabend@gmail.com, jolsa@kernel.org, kpsingh@kernel.org,
- linux-kernel@vger.kernel.org, martin.lau@linux.dev, sdf@fomichev.me,
- song@kernel.org, yonghong.song@linux.dev
-In-Reply-To: <3a48e38f29cc8c73e36a6d3339b9303571d522a8.camel@gmail.com>
-To: Eduard Zingerman <eddyz87@gmail.com>
-X-Mailer: iPhone Mail (21F90)
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
+This series renames pNetwork and bHWError variables, and 
+improves readability by inserting spaces around opperators.
 
+Cheers!
+~Tree
 
-> Eduard Zingerman wrote:
->=20
-> =EF=BB=BFOn Wed, 2024-08-28 at 22:45 -0700, Eduard Zingerman wrote:
->=20
-> [...]
->=20
->> I will prepare a test case.
->> Probably tomorrow.
->=20
-> Please find test in the attachment. This test triggers KASAN error
-> report as in another attachment. (I enabled CONFIG_KASAN using
-> menuconfig on top of regular selftest config).
->=20
+Tree Davies (3):
+  Staging: rtl8192e: Rename variable pNetwork
+  Staging: rtl8192e: Rename variable bHwError
+  Staging: rtl8192e: Add spaces around operators.
 
-Thank you for writing the selftest for me.
+ .../staging/rtl8192e/rtl8192e/r8192E_dev.c    |  8 +--
+ drivers/staging/rtl8192e/rtl819x_HTProc.c     | 34 +++++-----
+ drivers/staging/rtl8192e/rtllib.h             | 68 +++++++++----------
+ 3 files changed, 55 insertions(+), 55 deletions(-)
 
-> On Fri, Aug 23, 2024 at 3:43=E2=80=AFAM Jeongjun Park <aha310510@gmail.com=
-> wrote:
->=20
-> [...]
->=20
->> diff --git a/kernel/bpf/btf.c b/kernel/bpf/btf.c
->> index 520f49f422fe..5c24ea1a65a4 100644
->> --- a/kernel/bpf/btf.c
->> +++ b/kernel/bpf/btf.c
->> @@ -823,6 +823,9 @@ static bool btf_name_valid_section(const struct btf *=
-btf, u32 offset)
->>        const char *src =3D btf_str_by_offset(btf, offset);
->>        const char *src_limit;
->>=20
->> +       if (!*src)
->> +               return false;
->> +
->=20
-> I think that correct fix would be as follows:
->=20
-> ---
->=20
-> diff --git a/kernel/bpf/btf.c b/kernel/bpf/btf.c
-> index edad152cee8e..d583d76fcace 100644
-> --- a/kernel/bpf/btf.c
-> +++ b/kernel/bpf/btf.c
-> @@ -820,7 +820,6 @@ static bool btf_name_valid_section(const struct btf *b=
-tf, u32 offset)
->=20
->        /* set a limit on identifier length */
->        src_limit =3D src + KSYM_NAME_LEN;
-> -       src++;
->        while (*src && src < src_limit) {
->                if (!isprint(*src))
->                        return false;
+-- 
+2.30.2
 
-However, this patch is logically flawed.=20
-It will return true for invalid names with=20
-length 1 and src[0] being NULL. So I think=20
-it's better to stick with the original patch.
-
->=20
-> <bad-name-test.patch>
-> <bad-name-kasan-report.txt>
 
