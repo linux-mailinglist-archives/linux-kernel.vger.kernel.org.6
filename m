@@ -1,117 +1,166 @@
-Return-Path: <linux-kernel+bounces-308982-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308983-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 073A1966499
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 16:53:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3AC3696649C
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 16:54:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 888D6B23D8F
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 14:53:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6886B1C23E62
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 14:54:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 856891B5EA2;
-	Fri, 30 Aug 2024 14:52:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 224A91B2EF7;
+	Fri, 30 Aug 2024 14:54:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K5gCEjI8"
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
+	dkim=pass (2048-bit key) header.d=bisdn-de.20230601.gappssmtp.com header.i=@bisdn-de.20230601.gappssmtp.com header.b="M44fLIUe"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 777091B4C2E
-	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 14:52:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D50418FDA7
+	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 14:54:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725029557; cv=none; b=kDKXo6TpVkJtQV9/jUAjvOcgM97h3z2FIq+smQFxEEKsb8ycWcx3s54R2V/IVfCb759a+ibfoLXfWxqc/tY5zBplVMEU3vNYZ3WyERCq61WOqFsv3HNVZFQVyDIzTtXUpKKb2N4KHo5s3DIzAxjhN1c0nM3TSLG9pAgpjn682VA=
+	t=1725029656; cv=none; b=ttVIKtHn33T1DJJLyuN3cUi+y3sbl7DXll2D3b6BMbBzdShI/WyD25WkDwfyyGB7+DpNub46dKNpNQmj2DI+gB3+64Za9zGwMYrkRHkfdvDc6hrJeYonem1BRb9eGHeeNpvY1Z2thpHDuLZteD2N6DpS4kjGUBDvEePACtYolhM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725029557; c=relaxed/simple;
-	bh=FuDLCEncKPaeV9pVCsEMan8OdEXT5DPU7suVJu1eIzA=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UZc5lKyogrXx5IhBYf7McMkQKFAI9rmwGMdbya+S8wHLkCuPdQYwAkODAuL3W9/DUF0X8nFCQT9LeMGGZZ5d8GC83C2Uqru1pNWN6AyhyEf6Jm3rP6iA2h0p7KVmttM3U0eyvipstU2U4yYIWGXDsfdFCGf0dwqcaxGcPZXd/7M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=K5gCEjI8; arc=none smtp.client-ip=209.85.210.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-7142e002aceso1621864b3a.2
-        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 07:52:36 -0700 (PDT)
+	s=arc-20240116; t=1725029656; c=relaxed/simple;
+	bh=dc5bRy15ONVTTEBc9aLEo2ukaqbrY4WWZWtKTlLqz3E=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=RFdjTJDuzXIl0xWgojJBFOYATmPZgMjch9D01H1D3SfQoJU9emOJ3jJBPNV5dhVsbYXc+ywLXJxS0E/ug6CgPnalOXFrDewL+bcHZbSV3gxu2wlt/1GSTR1GRhjc4snyW4fEVZ17ud18IbwNQu9BqzXU+AESR0AX0ayJRqkf3+g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bisdn.de; spf=none smtp.mailfrom=bisdn.de; dkim=pass (2048-bit key) header.d=bisdn-de.20230601.gappssmtp.com header.i=@bisdn-de.20230601.gappssmtp.com header.b=M44fLIUe; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bisdn.de
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bisdn.de
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-42bb9c04fa5so1775765e9.3
+        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 07:54:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725029556; x=1725634356; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=l43nUavHxnAn2/Q+7POfa5kpXTQFK1M94W4Oz0qeZQE=;
-        b=K5gCEjI80O2/aKxui21k6jeoSpYoD5SWmbqkHtSoZ5LLABh5ArswK3qXIWmmuxtCj+
-         PZWq6G94Q8LnfrqSCVZW6C4kicjFSAG1GuFgKs0mWBL5DMxmxontAVh3QkiQjMlqahFN
-         +AyieAzaIXb1f8kUL120zgASrvjw21h6xY+cCmN4LSltBlyiTT9mAG7n/ONSUhalnQFi
-         AZK4CL2wjBwc82S1O6kddSgM87yjaC5rOOqIq9ip96igcPh2PPYLIEztbK/7s146ax3v
-         w38mftMLfzuqH7833aRzKD8Fkm0Mk5Zpu5ybGte3tF4AVhbLPZnVpZKfLE5/zou5MxC6
-         u7Bw==
+        d=bisdn-de.20230601.gappssmtp.com; s=20230601; t=1725029651; x=1725634451; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=qrcokWaDtnovzXGcwzep+zxvnhENL1QqZzp8TzZhMRE=;
+        b=M44fLIUee0IefkxMTMhcDCjJmOJ0t4UK0O3rj32t3mD+6kdGoKCQ0BcbdymRUwaDkE
+         tmY2Qo9SlKLSZz7HsOyIH3BmmaNcNGJMMCecFh15G3HDvHtssMwqN/Ot+qRDhXsl3ufF
+         KT8Xut4dJgXK5XMke1r+im/HRqvH2E0SM969iiL6NPH97EGoEq68OfhIdpIy6Xjh7eVZ
+         c9Ee6WYqvlw/B/JgbcjkD7OEhoIBsLQbYq/34RtWZ0B8MCb5ivntq9GChuoE/d+RfoVN
+         y9BoZS5kuzrx6zw6Av1uQkvGz0ldolDcy2gFco8lkIAJQhBqUKknLYqA0cJX12zSjD5C
+         gTjg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725029556; x=1725634356;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=l43nUavHxnAn2/Q+7POfa5kpXTQFK1M94W4Oz0qeZQE=;
-        b=v9+DV3xjCPXVyZuV3pVbEcfRZrhmb4P5lBJgqoYjB4hd4yJL5pTJMcNoFjtRACmnS9
-         NmXZQI3pB/4m3auukRFi+b333h0W78PsDV0oSTS/tCLHYGPf5sE69XKRbGfwEJmoi33z
-         5dVaSrHEB0XrvglU0GFOBFDsOIDm8T+tAniFxdnWuAQL7h2s5PPWlUnU8j1U612kFjhc
-         FCohvwucmqe9hLI/jb9mJMwu7+y/RX3QAsd4Tl925uWZMnw9RGAe7/z4I9IcZqlYS6oO
-         wx+IF0hptBLgr/l0mundGxUAASn8X2kZMroFF6pZ81pjJZu9o9S+ruDHJCWjKlgthoR9
-         Imzw==
-X-Forwarded-Encrypted: i=1; AJvYcCVNOQAzStBbP+lfnOyjZtV7RZV4JuX6HC2ueKbiwB2bEINMj7pMd6rFpww8gLedFFLQzY7mjSF+CJJzm5Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyWkKPITyTFGC8FdwkwRhksWUUmR9XbDp2TqMeK5qgg9p3OM+s3
-	WjcGKtvofth5Gleuh2RU9CW7t6mEibs+9ZET3qwBimCKW38/vAssDIKj1g==
-X-Google-Smtp-Source: AGHT+IGxHY+6Jai4ZqwKefEHo2BiPfqhaC3jiXpWGV+/fyWdBXLOrdvc8VAZ3rrnNkBeBcUytqFPtw==
-X-Received: by 2002:a05:6a20:d70f:b0:1c4:bbb8:4d02 with SMTP id adf61e73a8af0-1cce10c4d57mr5637524637.37.1725029555625;
-        Fri, 30 Aug 2024 07:52:35 -0700 (PDT)
-Received: from victor-IdeaPad-Gaming-3-16IAH7 ([116.68.77.85])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-715e569e9bfsm2847966b3a.130.2024.08.30.07.52.33
+        d=1e100.net; s=20230601; t=1725029651; x=1725634451;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=qrcokWaDtnovzXGcwzep+zxvnhENL1QqZzp8TzZhMRE=;
+        b=IWWcqkCVmGM8nwcMp2V5nnsORyohk8GMKA0ky9bhVcXr+eM9DGWU43j/vgnS05vgTQ
+         AzBb5pab6jCQ13iwIuG69Hsoc1SSsAYAomykoGBS6OqNTK0+EwjEMi43u4W8QNzw0xLl
+         DQTLhvcedQUbCLE5c00+JnWrnhUBsIQdmMXr1xDAwhIY2sqH/HRO3az3haSkxBaT/HP+
+         gjZ/jXRlbfeUWaUsPkAYreIKEn2jRM/NNTUMBm1mA9fCDpe+tyaXCwNnVv7Mkq6+2YT9
+         b3W5r9xPUTCLLIggowltgK8Idq5B1kaNSq9ZiuoA9kUrXefKYEQlXgChuxBogczL9Ubq
+         2Q9g==
+X-Forwarded-Encrypted: i=1; AJvYcCVI53rywVOcMYuJTtVMZA/zGN+l4tc1duBFix1aBZA6FTGNziY4sjL8BRGASy2m46X6WjlAqjyYPorv2Mc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw8537N7YxZsV7Z0pcEM+SRMoq3GUDjtNYRlSYrc60VJ6G0otV8
+	A0zj2SdCDQu0RfzYTrmQfjAUBYSF8l7vTrekWhCbm2O6G97+a4xlCZ47UKQ9ecB9U4Q7xff7QPn
+	KtPcTo8svNYlTtQuBEUxP/senLc9w9s5+NYn4ATO4Y8WZBA4tJ/m1iVI=
+X-Google-Smtp-Source: AGHT+IHzCrZfGKkqZIrpmvjmqPrDiRM+M6I5F7pFZ63yccDIP5YShJDmbt3sx8lfrlWsn0wQtLPLuw==
+X-Received: by 2002:a5d:5889:0:b0:35f:247e:fbce with SMTP id ffacd0b85a97d-374a9551535mr1079432f8f.1.1725029650638;
+        Fri, 30 Aug 2024 07:54:10 -0700 (PDT)
+Received: from localhost (dslb-002-205-017-144.002.205.pools.vodafone-ip.de. [2.205.17.144])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42bb01d300csm58394655e9.15.2024.08.30.07.54.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 30 Aug 2024 07:52:35 -0700 (PDT)
-From: YOUR NAME <vivek6429.ts@gmail.com>
-X-Google-Original-From: YOUR NAME <username@gmail.com>
-Date: Fri, 30 Aug 2024 20:22:30 +0530
-To: Philipp Hortmann <philipp.g.hortmann@gmail.com>
-Cc: gregkh@linuxfoundation.org, dan.carpenter@linaro.org,
-	linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] Staging: rtl8723bs: Rename function SelectChannel()
-Message-ID: <ZtHcrs3GoRZJiLjS@victor-IdeaPad-Gaming-3-16IAH7>
-References: <Zs8WLkzoZe3Z0DYF@victor-IdeaPad-Gaming-3-16IAH7>
- <5cbf98cf-9b1a-455e-afcd-b0cdfcf1aaec@gmail.com>
+        Fri, 30 Aug 2024 07:54:09 -0700 (PDT)
+From: Jonas Gorski <jonas.gorski@bisdn.de>
+To: Roopa Prabhu <roopa@nvidia.com>,
+	Nikolay Aleksandrov <razor@blackwall.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Petr Machata <petrm@mellanox.com>,
+	Ido Schimmel <idosch@mellanox.com>
+Cc: bridge@lists.linux.dev,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH net] net: bridge: allow users setting EXT_LEARN for user FDB entries
+Date: Fri, 30 Aug 2024 16:53:55 +0200
+Message-ID: <20240830145356.102951-1-jonas.gorski@bisdn.de>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5cbf98cf-9b1a-455e-afcd-b0cdfcf1aaec@gmail.com>
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="ISO-8859-1"
 
-On Wed, Aug 28, 2024 at 10:25:56PM +0200, Philipp Hortmann wrote:
-> On 8/28/24 14:21, vivek t s wrote:
-> > Rename SelectChannel() to r8723bs_select_channel() to avoid CamelCase
-> > warning from checkpatch.
-> > 
-> > Signed-off-by: vivek t s<vivek6429.ts@gmail.com>
-> 
-> Hi Vivek,
-> 
-> the description can be improved. Please always consider that checkpatch can
-> be wrong. So checkpatch is not a justification.
-> 
-> I propose (feel free to improve):
-> Rename function SelectChannel() to r8723bs_select_channel() to avoid
-> CamelCase and to improve cleanliness of the global namespace.
-> 
-> Thanks for your support.
-> 
-> Bye Philipp
+When userspace wants to take over a fdb entry by setting it as
+EXTERN_LEARNED, we set both flags BR_FDB_ADDED_BY_EXT_LEARN and
+BR_FDB_ADDED_BY_USER in br_fdb_external_learn_add().
 
-okay, understood.
-i shall change the description and send again.
+If the bridge updates the entry later because its port changed, we clear
+the BR_FDB_ADDED_BY_EXT_LEARN flag, but leave the BR_FDB_ADDED_BY_USER
+flag set.
 
-thanks,
-vivek
+If userspace then wants to take over the entry again,
+br_fdb_external_learn_add() sees that BR_FDB_ADDED_BY_USER and skips
+setting the BR_FDB_ADDED_BY_EXT_LEARN flags, thus silently ignores the
+update:
+
+   if (test_bit(BR_FDB_ADDED_BY_EXT_LEARN, &fdb->flags)) {
+           /* Refresh entry */
+           fdb->used =3D jiffies;
+   } else if (!test_bit(BR_FDB_ADDED_BY_USER, &fdb->flags)) {
+           /* Take over SW learned entry */
+           set_bit(BR_FDB_ADDED_BY_EXT_LEARN, &fdb->flags);
+           modified =3D true;
+   }
+
+Fix this by relaxing the condition for setting BR_FDB_ADDED_BY_EXT_LEARN
+by also allowing it if swdev_notify is true, which it will only be for
+user initiated updates.
+
+Fixes: 710ae7287737 ("net: bridge: Mark FDB entries that were added by user=
+ as such")
+Signed-off-by: Jonas Gorski <jonas.gorski@bisdn.de>
+---
+ net/bridge/br_fdb.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/net/bridge/br_fdb.c b/net/bridge/br_fdb.c
+index c77591e63841..c5d9ae13a6fb 100644
+--- a/net/bridge/br_fdb.c
++++ b/net/bridge/br_fdb.c
+@@ -1472,7 +1472,8 @@ int br_fdb_external_learn_add(struct net_bridge *br, =
+struct net_bridge_port *p,
+ 		if (test_bit(BR_FDB_ADDED_BY_EXT_LEARN, &fdb->flags)) {
+ 			/* Refresh entry */
+ 			fdb->used =3D jiffies;
+-		} else if (!test_bit(BR_FDB_ADDED_BY_USER, &fdb->flags)) {
++		} else if (swdev_notify ||
++			   !test_bit(BR_FDB_ADDED_BY_USER, &fdb->flags)) {
+ 			/* Take over SW learned entry */
+ 			set_bit(BR_FDB_ADDED_BY_EXT_LEARN, &fdb->flags);
+ 			modified =3D true;
+--=20
+2.46.0
 
 
+--=20
+BISDN GmbH
+K=F6rnerstra=DFe 7-10
+10785 Berlin
+Germany
 
+
+Phone:=20
++49-30-6108-1-6100
+
+
+Managing Directors:=A0
+Dr.-Ing. Hagen Woesner, Andreas=20
+K=F6psel
+
+
+Commercial register:=A0
+Amtsgericht Berlin-Charlottenburg HRB 141569=20
+B
+VAT ID No:=A0DE283257294
 
 
