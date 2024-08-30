@@ -1,147 +1,140 @@
-Return-Path: <linux-kernel+bounces-308818-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308819-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45A46966222
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 14:58:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AFB35966229
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 14:58:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 009D0280C00
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 12:58:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 184142852CE
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 12:58:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE34C19ABC2;
-	Fri, 30 Aug 2024 12:57:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E4521A4B75;
+	Fri, 30 Aug 2024 12:58:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eUgf3x3M"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MgeGhM3S"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11EFC19645C
-	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 12:57:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69B7219ABAA;
+	Fri, 30 Aug 2024 12:58:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725022674; cv=none; b=QZRW87KcK6mdHma+xPUbNwWyjokqwX49y41Bt+kcRq7WxE8+dYBV2Clc1EYv1kBqi4MSog2mzY9xob6e7WyjNAd0xlLr2EJGyONVzRsKFbr/ejGAq5nau3B0eBlU1DE+kO9JTaaLbEjnCxT8AN5jmh+UtMv9wV1LjmXuNd6LkWM=
+	t=1725022684; cv=none; b=EWrQxq49Sr0Js2PDatwq/JWR5pydb0Ynh2GWF6x7yW+nAjeZ6SZ46lTpGX+15GWHoY1x8ec3CzaSVSFnlmFRsqVn8aoovcbhD5a9CID6t7w5onK9geTWVlKT1uA3Hrb31vSUlryjzEq6BLjocKMcBjCxOYxANkbvn877dBjMjKc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725022674; c=relaxed/simple;
-	bh=pITWRVgmLjxu1KlpGQAOrookls8MbfzgD+BpU31jtU8=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=OlbP6gRm0fGeV5mcFyzedNEJ9JhjHAsEBs0Z0xGSXGVSqhNTntiordI7FuEBbOrXMQ/0fcdDJwv7cHCFQimh4xu51sVU8LBlnxY8ymw2KDM+ug5TPqN5hKaX5Ii8jJt3DPRfjLtRADEo4Gg4y+ncGXH0PI+X9Jk4HPEEW9uX3Fo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eUgf3x3M; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1DD39C4CEC2;
-	Fri, 30 Aug 2024 12:57:52 +0000 (UTC)
+	s=arc-20240116; t=1725022684; c=relaxed/simple;
+	bh=pRzr4dw+htikBqyVyR2UfwtO0f/g1Jd6QIJAItLjm9c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Qr/sRhgmyi/ovRzEzPBVAjYY01JWIQcX9oYTVn/DAXKsvrq5u0DuOELZNWmKAaiMY8d1jvP4fkEYeP/lULB6wPts/dzTLo1cziXYzG2ho6oleeOcgNDxBrSu1J+pu6RwIUXKxhSGiRcsuLBLVpaYUMgGJ1YwfLJkKAKUtlQ140Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MgeGhM3S; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C8EB8C4CEC2;
+	Fri, 30 Aug 2024 12:57:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725022673;
-	bh=pITWRVgmLjxu1KlpGQAOrookls8MbfzgD+BpU31jtU8=;
-	h=Date:From:To:Cc:Subject:From;
-	b=eUgf3x3MUj/U8evr04d18n3kQ0QtNCRbxJzq/vIYjHlkvbog1UbtPPrafXe9t0p9L
-	 UphN/YpDL1ROFdAvG9Wr8rkuoFspEWlMBHdfywLR92DyJeVeHpY8rgFw+TQlVdwlI6
-	 GShZIlTEtj4M/N3+jduKBKWN9K889Gm/7OpGlcRRgEvoN47irkEdnPpFrKcp+5cdwO
-	 ImgkOl40JaUGf0Dw8QpGrO2yvu9mNVs3MBd5OseIdHZ+IOSdJ5ZvfKDxtm291eK+o9
-	 /gff6C7KHu693sgOXj5Kc3pi8ZOi6AXIzgH85T9vVUcdLsaxBG3qpyzQIJXj3zmO/T
-	 CBYARgTnDQX0Q==
-Date: Fri, 30 Aug 2024 18:27:50 +0530
-From: Vinod Koul <vkoul@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
-Subject: [GIT PULL]: dmanegine fixes for v6.11
-Message-ID: <ZtHBzmaZzRaluC74@vaman>
+	s=k20201202; t=1725022684;
+	bh=pRzr4dw+htikBqyVyR2UfwtO0f/g1Jd6QIJAItLjm9c=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=MgeGhM3S5Skkm3/czz9Sb4Q/cLEXI9TleH0U3Vau8IqpzVb/X/pDF1kqKFqwYbimK
+	 HNtT7qR9MMOBs7/rPoReRuwDBqSWcQub+lzuzCTUiny9hXVbWJWhHcrx+HH46cUU/1
+	 si/G+nON+U61JVnqQY2LTk+1TCnedYwS6voFpwCPblt5H4WNbzBdvDiuyieAjudA46
+	 Y4GZ2CJ4UEZ3bnyJecRQp+T7JwEf4eX840m+PRjzx4gHFPqf1Xfy4RbPHcRc6tmqHM
+	 g62Vw/9VGJ++mllrkCxjUKe30z5fXiRPRJGGguqj9qa1vYUFxElS23O1hbhP/VdoQ0
+	 cPNTshwv7omjA==
+Message-ID: <998609e2-0fa4-43e8-9f72-05af40cf62c2@kernel.org>
+Date: Fri, 30 Aug 2024 14:57:56 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="DjAHJzx7f1mTrGS6"
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 3/3] platform/surface: Add OF support
+To: Andy Shevchenko <andy.shevchenko@gmail.com>,
+ Maximilian Luz <luzmaximilian@gmail.com>
+Cc: Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Jiri Slaby <jirislaby@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
+ Len Brown <lenb@kernel.org>, Hans de Goede <hdegoede@redhat.com>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+ Marijn Suijten <marijn.suijten@somainline.org>,
+ linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-acpi@vger.kernel.org,
+ platform-driver-x86@vger.kernel.org, Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <quic_kdybcio@quicinc.com>
+References: <20240814-topic-sam-v3-0-a84588aad233@quicinc.com>
+ <20240814-topic-sam-v3-3-a84588aad233@quicinc.com>
+ <ZszrjQChQ2aS5YjV@surfacebook.localdomain>
+ <d08d41ad-edcb-48ad-a848-53edc45ab8eb@gmail.com>
+ <CAHp75VcbjR8HQqPASLFEGiyYLfTFQDa6Ri+jFy+7Q1xz7gY39Q@mail.gmail.com>
+ <53a56539-1d95-42ac-ad07-1b689702b2ed@gmail.com>
+ <CAHp75VdsksKPrj-CwmR4QLBrm_FfaG4aZys-_jnee_L=3ZnRPQ@mail.gmail.com>
+Content-Language: en-US
+From: Konrad Dybcio <konradybcio@kernel.org>
+In-Reply-To: <CAHp75VdsksKPrj-CwmR4QLBrm_FfaG4aZys-_jnee_L=3ZnRPQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
+On 28.08.2024 9:06 PM, Andy Shevchenko wrote:
+> On Wed, Aug 28, 2024 at 8:40 PM Maximilian Luz <luzmaximilian@gmail.com> wrote:
+>> On 8/28/24 6:56 PM, Andy Shevchenko wrote:
+>>> On Wed, Aug 28, 2024 at 12:10 PM Maximilian Luz <luzmaximilian@gmail.com> wrote:
+> 
+> ...
+> 
+>>> Yes, and software nodes for DT are quite strange things! Why can't you
+>>> simply fix the DT to begin with?
+>>
+>> For the ARM/DT variants we could do that. But we still have to deal with
+>> the x86/ACPI ones here.
+> 
+> So, then fix it there! Currently it's an abuse of software nodes
+> inside the Linux kernel.
+> 
+>> So for me it makes more sense to have it unified
+>> and just deal with everything in this module.
+> 
+> I understand the desire, but DT is DT and ACPI is ACPI, they are
+> different despite having some common APIs in the Linux kernel.
+> Moreover, DT has a validation tools and everything, making that being
+> a software nodes has at least these disadvantages:
+> - no official schema that must be supported and users are known of
+> - no validation done
+> - bloating of the Linux kernel binary and hence memory footprint
 
---DjAHJzx7f1mTrGS6
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Arguably the last point isn't very strong.. DT also has to store some
+strings and pointers to represent devices
 
-Hello Linus,
+> 
+>> Also, if we consider that at some point we might get ACPI PEP support (I
+>> know, far fetched right now): With that, ACPI on ARM might be feasible
+>> and then we'd have to manage the same thing in two places...
+> 
+> This (PEP) is something I have no knowledge about. But I think it's
+> still orthogonal to the software nodes usage.
 
-Last one for the weekend, so please pull the dmaengine fixes which
-contain the driver fixes for couple of them.
+The PEP (Power Engine Plugin) unfortunately is the reason we can't have
+ACPI-based boot on WoA platforms.. This two-or-three-digit megabyte
+Windows driver hardcodes almost everything related to the on-SoC power
+management (buses, clocks, etc.) and only uses the bare minimum ACPI it
+needs to connect devices to a bus or get notifications on standard events..
 
-The following changes since commit 8400291e289ee6b2bf9779ff1c83a291501f017b:
+> 
+>> And lastly, the EC subdevices are quite contained and I don't see them
+>> interacting with any other components in the DT, so it's more of a
+>> stylistic choice where to put them.
+> 
+> They are still part of hardware and DT describes hardware.
 
-  Linux 6.11-rc1 (2024-07-28 14:19:55 -0700)
+Unfortunately the "Surface Aggregator Module" is just a firmware
+exposed on some range of MCUs running MSFT's code..
 
-are available in the Git repository at:
+Given how.. peculiarly the "bus" that it hosts """devices""" on is
+constructed (5-level-deep hierarchy without it making much sense
+beyond maaaybe the first two), it's not really easy to describe in
+DT in a way that would be both true to the bigger picture and make
+enough sense to convince the DT maintainers, I don't think
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/vkoul/dmaengine.git tags/dm=
-aengine-fix-6.11
-
-for you to fetch changes up to 9f646ff25c09c52cebe726601db27a60f876f15e:
-
-  dmaengine: dw-edma: Do not enable watermark interrupts for HDMA (2024-08-=
-28 18:40:17 +0530)
-
-----------------------------------------------------------------
-dmaengine fixes for v6.11
-
-Driver fixes for:
- - Bunch of dw driver changes to fix the src/dst addr width config
- - Omap driver fix for sglen initialization
- - stm32-dma3 driver lli_size init fix
- - dw edma driver fixes for watermark interrupts and unmasking STOP and
-   ABORT interrupts
-
-----------------------------------------------------------------
-Kees Cook (2):
-      dmaengine: ti: omap-dma: Initialize sglen after allocation
-      dmaengine: stm32-dma3: Set lli_size after allocation
-
-Mrinmay Sarkar (2):
-      dmaengine: dw-edma: Fix unmasking STOP and ABORT interrupts for HDMA
-      dmaengine: dw-edma: Do not enable watermark interrupts for HDMA
-
-Serge Semin (6):
-      dmaengine: dw: Add peripheral bus width verification
-      dmaengine: dw: Add memory bus width verification
-      dmaengine: dw: Simplify prepare CTL_LO methods
-      dmaengine: dw: Define encode_maxburst() above prepare_ctllo() callbac=
-ks
-      dmaengine: dw: Simplify max-burst calculation procedure
-      dmaengine: dw: Unify ret-val local variables naming
-
- drivers/dma/dw-edma/dw-hdma-v0-core.c |  26 +++----
- drivers/dma/dw/core.c                 | 131 ++++++++++++++++++++++++++++--=
-----
- drivers/dma/dw/dw.c                   |  44 +++++++-----
- drivers/dma/dw/idma32.c               |  19 ++---
- drivers/dma/dw/platform.c             |  20 +++---
- drivers/dma/dw/regs.h                 |   1 -
- drivers/dma/stm32/stm32-dma3.c        |   2 +-
- drivers/dma/ti/omap-dma.c             |   6 +-
- 8 files changed, 168 insertions(+), 81 deletions(-)
-
---=20
-~Vinod
-
---DjAHJzx7f1mTrGS6
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEE+vs47OPLdNbVcHzyfBQHDyUjg0cFAmbRwc0ACgkQfBQHDyUj
-g0e9wQ/7BS1LSBL1EMldrFljS917fe4dGAGZFqO3Epz6JqNp3fyYclrkKECOYN23
-xl1FQSZG5M8FMHTL7AthzeN9FbqtnGXjrs93OL/IX6VmL/RUVKyq8SHRo3XJ29uh
-GobQLFPgN8y3Do5GcNwy5dlf6JakZDrG1jWjPvh8oTpT9oLExvOKDimZitjrCohx
-OyUrBNNGUtMBmMgwmoIYk47GQ9wxocJBVbVqlzO5+CR8tewXkts0ffNjEa26PW4c
-qfBt0uSgh2HgGLAF7+gszgEr1gTjWN+ntNi6oMJl+sexlGVv7RkBGP0IhnunfMZt
-24HXH27a+cYR4pVw4Xhtrd1KRyBq8aYQhLT/i41xOtYH9BqPXilPNrh2TIjbRsnR
-BoGeFrKU2rwi78p2sNLY7AkoL0CRVRMBS23YEFqg/4UViTYYY4Vk7eSP9lGDs9T0
-stYWcjf518yKlLfj4Y1VVQdIUU3ZnTJAHJaAYaq1gd4/XQca9wMf8w20TzzMZvRS
-xReo5bkzCZjaFWMpJdiLluvaEM4wOZcfWNG3oQNiP8KTa1vcm+ZS7Rcbjk+y841H
-ybRcWrbB+e75zIvXURysXGtvKy961fVaykCyYLIa+WimP4Jcl90qnKjx7i/tjpIC
-MFDDSn43R427ct8n2kBJMBob+Tl2j7FVofYu6a3fSWmxzMhCuTU=
-=WLHT
------END PGP SIGNATURE-----
-
---DjAHJzx7f1mTrGS6--
+Konrad
 
