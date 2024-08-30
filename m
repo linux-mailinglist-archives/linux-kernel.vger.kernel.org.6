@@ -1,108 +1,121 @@
-Return-Path: <linux-kernel+bounces-309372-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309373-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCAD496696F
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 21:20:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2AF1966973
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 21:20:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6BFD11F242D0
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 19:20:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 21F781C23914
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 19:20:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E500B1BCA04;
-	Fri, 30 Aug 2024 19:19:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B53F1BD4FD;
+	Fri, 30 Aug 2024 19:20:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XfWO3fFA"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	dkim=pass (2048-bit key) header.d=uliege.be header.i=@uliege.be header.b="MrvCoaR1"
+Received: from serv108.segi.ulg.ac.be (serv108.segi.ulg.ac.be [139.165.32.111])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDF0113B297;
-	Fri, 30 Aug 2024 19:19:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFA7113B297;
+	Fri, 30 Aug 2024 19:19:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=139.165.32.111
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725045594; cv=none; b=YJZkKWVj9s4MaZOCPe6j7wA3F/qQYaW3JTpE/UAXSsuWHsFZTfuPtVZ/SypjHFIVAh2qknZ384xdC5fV5FKtyVaKP+LKNYyHF76GdueI1xpa/xnGClQyxMelBUH2G0bfp9djJQG2yqAFg0NNCO2IeObDLpBtgBI6qYkA2WFCDCw=
+	t=1725045600; cv=none; b=LRKF35uTPnzaBR0BS30madSF7QhYRiPR2Nh4wIgH9EhGRh2TDURR7B2c3LIft4+nMfsjkJ7Me2tjodw9NhUSDpYfPcniPXQfbnaiumaKUP52m6FR047ytDc0ZPhtm/PDu7RC2on3N0k8xh/mRJuxSqIfuYEB5axUyEJIhnswNO4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725045594; c=relaxed/simple;
-	bh=RPj8glNq/XNfJ0RgM0JMhvIq250MlyxYDrEKUuZhelw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=djTJzJe5Vf3/PqAzycGSKb1V5OdG4uqairJ2HGV5cTgyKaFJKXI/OhtxT23djQTN1d3ZkllF2U7V4ABKPudGGkqXpze3Odj8b+VQ2T3OxlzvhYBigPl237WOnt66i8j9yMEA0c057hfuAtmUfvga+lBIiBbROthvupZSW0ixyWs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XfWO3fFA; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725045592; x=1756581592;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=RPj8glNq/XNfJ0RgM0JMhvIq250MlyxYDrEKUuZhelw=;
-  b=XfWO3fFAhzmKAp7s1p/5ieU7Dl48RHWKoWjvdg6OzJB0Hzbs3JkTrL7G
-   J4CTKjOOfxChIbpvJ2Bae7uvByfaGA3gD58TWxz0or0RFQiY7N3F8KuGx
-   Arty69Nfnm75fw89t0QgPb+cyGtXe624vLmMIHNJqn7ervfbdezM1EqgI
-   sHqTbm1ZbtYWzpf5SID+67+SuA/0Ce9dTleNUX0tklDrcmvTEJgt4FIKj
-   f+hHd/xe2wEcH6D701f9HTnphHsaXaup1WUePpucOJVUQilr2vWxrQEYE
-   6Ev1mhpsF7zMx3fsWW44pzv+Oe2tivu0E2AGfT5PAKUb45mRYHPyS9zxL
-   Q==;
-X-CSE-ConnectionGUID: Q9SI06DqQJqPypXkhR9dJg==
-X-CSE-MsgGUID: AwbBI+NmTeGvkC7ADa4T7A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11180"; a="23218434"
-X-IronPort-AV: E=Sophos;i="6.10,189,1719903600"; 
-   d="scan'208";a="23218434"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Aug 2024 12:19:52 -0700
-X-CSE-ConnectionGUID: CsMyUCFFRPKtSiSFs3jdCA==
-X-CSE-MsgGUID: C54OLbo3QACXAIrJKi+hzw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,189,1719903600"; 
-   d="scan'208";a="63794787"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by orviesa010.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Aug 2024 12:19:47 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1sk79d-00000003SRU-3XVq;
-	Fri, 30 Aug 2024 22:19:29 +0300
-Date: Fri, 30 Aug 2024 22:19:15 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Tyrone Ting <warp5tw@gmail.com>
-Cc: avifishman70@gmail.com, tmaimon77@gmail.com, tali.perry1@gmail.com,
-	venture@google.com, yuenn@google.com, benjaminfair@google.com,
-	andi.shyti@kernel.org, wsa@kernel.org, rand.sec96@gmail.com,
-	wsa+renesas@sang-engineering.com, tali.perry@nuvoton.com,
-	Avi.Fishman@nuvoton.com, tomer.maimon@nuvoton.com,
-	KWLIU@nuvoton.com, JJLIU0@nuvoton.com, kfting@nuvoton.com,
-	openbmc@lists.ozlabs.org, linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 6/7] i2c: npcm: use i2c frequency table
-Message-ID: <ZtIbM4NTbldBIDXf@smile.fi.intel.com>
-References: <20240830034640.7049-1-kfting@nuvoton.com>
- <20240830034640.7049-7-kfting@nuvoton.com>
+	s=arc-20240116; t=1725045600; c=relaxed/simple;
+	bh=HX8kLOaPMTAtVknT9zY5Gl5BOvmcEacxGGF1dNteoAU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=RB248c5/ZYDn/1K1Zp6lYfHIvt360Tnl2Tj3wnPrbx6+J3qTXopEcOHsYaSmcmRgiMjIinRF7/WGNPOWbbaDCCDdYzgE0jqtdADTNDuewQW23zzcRsmBz8f1LvTvAIpLk/CVvv0BQ+f8l2i8zjHtkln5uUrkNiVGgxjlWtoF9is=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uliege.be; spf=pass smtp.mailfrom=uliege.be; dkim=pass (2048-bit key) header.d=uliege.be header.i=@uliege.be header.b=MrvCoaR1; arc=none smtp.client-ip=139.165.32.111
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uliege.be
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uliege.be
+Received: from localhost.localdomain (220.24-245-81.adsl-dyn.isp.belgacom.be [81.245.24.220])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by serv108.segi.ulg.ac.be (Postfix) with ESMTPSA id 8E276200BE66;
+	Fri, 30 Aug 2024 21:19:49 +0200 (CEST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 serv108.segi.ulg.ac.be 8E276200BE66
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uliege.be;
+	s=ulg20190529; t=1725045589;
+	bh=PYIyj+X/7aEiwjF1cs2nn0vYoBjyj76GNh+zXYydPpY=;
+	h=From:To:Cc:Subject:Date:From;
+	b=MrvCoaR13bzrgTimFFJ5RwGSA/aM6mROeGi4rHh6243Vz3Rl4QSEnIIAtr7xxXwZV
+	 J62vyJwhpUbVAp7k70HUzTGloppipz3ytML52ZFHWrrI00idQi1kJjfrgoOyaAH7f9
+	 K0hefm2hz8+Cc1ix/PnO5KY2X/pQ7n+0r5vkCh/+Yyu1deCVI2YyMTwtqWcJzj6gKT
+	 usDDzhnrCZ7+GsTQeZeZfEi25qigtbUzsdRFzkbyszG5ymzOJyeVzb4Z0nMpQHkuTm
+	 WvWffZnxKTrPTaEUzAbxtgbE5IDCCbbdfsGyTKaIztx/FPrq99GHhH28LG01wKpL6H
+	 RXVAt5R27xxeQ==
+From: Justin Iurman <justin.iurman@uliege.be>
+To: netdev@vger.kernel.org
+Cc: davem@davemloft.net,
+	dsahern@kernel.org,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	linux-kernel@vger.kernel.org,
+	justin.iurman@uliege.be
+Subject: [PATCH net-next] ioam6: improve checks on user data 
+Date: Fri, 30 Aug 2024 21:19:19 +0200
+Message-Id: <20240830191919.51439-1-justin.iurman@uliege.be>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240830034640.7049-7-kfting@nuvoton.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 8bit
 
-On Fri, Aug 30, 2024 at 11:46:39AM +0800, Tyrone Ting wrote:
-> Modify i2c frequency from table parameters
-> for NPCM i2c modules.
-> 
-> Supported frequencies are:
-> 
-> 1. 100KHz
-> 2. 400KHz
-> 3. 1MHz
+This patch improves two checks on user data.
 
-There is no explanations "why". What's wrong with the calculations done in the
-current code?
+The first one prevents bit 23 from being set, as specified by RFC 9197
+(Sec 4.4.1):
 
+  Bit 23    Reserved; MUST be set to zero upon transmission and be
+            ignored upon receipt.  This bit is reserved to allow for
+            future extensions of the IOAM Trace-Type bit field.
+
+The second one checks that the tunnel destination address !=
+IPV6_ADDR_ANY, just like we already do for the tunnel source address.
+
+Signed-off-by: Justin Iurman <justin.iurman@uliege.be>
+---
+ net/ipv6/ioam6_iptunnel.c | 12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
+
+diff --git a/net/ipv6/ioam6_iptunnel.c b/net/ipv6/ioam6_iptunnel.c
+index e34e1ff24546..beb6b4cfc551 100644
+--- a/net/ipv6/ioam6_iptunnel.c
++++ b/net/ipv6/ioam6_iptunnel.c
+@@ -89,7 +89,7 @@ static bool ioam6_validate_trace_hdr(struct ioam6_trace_hdr *trace)
+ 	    trace->type.bit12 | trace->type.bit13 | trace->type.bit14 |
+ 	    trace->type.bit15 | trace->type.bit16 | trace->type.bit17 |
+ 	    trace->type.bit18 | trace->type.bit19 | trace->type.bit20 |
+-	    trace->type.bit21)
++	    trace->type.bit21 | trace->type.bit23)
+ 		return false;
+ 
+ 	trace->nodelen = 0;
+@@ -199,9 +199,17 @@ static int ioam6_build_state(struct net *net, struct nlattr *nla,
+ 		}
+ 	}
+ 
+-	if (tb[IOAM6_IPTUNNEL_DST])
++	if (tb[IOAM6_IPTUNNEL_DST]) {
+ 		ilwt->tundst = nla_get_in6_addr(tb[IOAM6_IPTUNNEL_DST]);
+ 
++		if (ipv6_addr_any(&ilwt->tundst)) {
++			NL_SET_ERR_MSG_ATTR(extack, tb[IOAM6_IPTUNNEL_DST],
++					    "invalid tunnel dest address");
++			err = -EINVAL;
++			goto free_cache;
++		}
++	}
++
+ 	tuninfo = ioam6_lwt_info(lwt);
+ 	tuninfo->eh.hdrlen = ((sizeof(*tuninfo) + len_aligned) >> 3) - 1;
+ 	tuninfo->pad[0] = IPV6_TLV_PADN;
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.34.1
 
 
