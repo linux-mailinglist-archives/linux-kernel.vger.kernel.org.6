@@ -1,94 +1,127 @@
-Return-Path: <linux-kernel+bounces-308751-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308752-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4579796615A
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 14:09:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A99B196615C
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 14:12:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 782C81C22056
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 12:09:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 48AA21F2822A
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 12:12:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70A1D199FA2;
-	Fri, 30 Aug 2024 12:09:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ts4mj0PW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA66F1384B3;
-	Fri, 30 Aug 2024 12:09:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9242F19995B;
+	Fri, 30 Aug 2024 12:12:46 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7E5317BB0C;
+	Fri, 30 Aug 2024 12:12:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725019752; cv=none; b=YKfyo3HfOhQoEY1Kq+YX0pOMeTfCwcNa26vvjN6Odf7w6JMvOJKy1GH5SgmfF73P7Aoaqttsk4LYvH9kBckk3bwQu4eDJo2VDnTAPxsz3Mvi9ztZx+5FIJL2nJ/a14+ukgYAKEJVJjewRnSGtqulIkTf+faM5OdJY7185Ms/DKQ=
+	t=1725019966; cv=none; b=FWk1V6Q0XcP/V5vzQrxgifevgpmv8kZiM/3NYTBKNw5NwqOBhM3S4XmRllVGhFrFodHWiFIGGElutlShpC9XZBrznpT/U57nv/nc8/PR99sl2hzaFdaxLYIo0qZtZFL3jJi1YalyuNyedV4HpTtGC67j/ESpbR5P2JvtT/HYg7k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725019752; c=relaxed/simple;
-	bh=+PdqaIAnbvFWzUlrXS5dGz+94tQph/rZhL6Pzhzm0RM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pLDEmUxQIGYRwab4e50sY2SV0voV7vdtPfF6OICKUrPumOrcaIc0XUPViycAUyHDbwRIY86028+7EVT0RgWdW7WK4z4Pl2tdQVk4NujtEH8X+QUBAo7FwqWroofOcP/FmppGfUjbmuxlj+23S60pp2VBHZTF8hgj6hFTYswnWLc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ts4mj0PW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27319C4CEC2;
-	Fri, 30 Aug 2024 12:09:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725019752;
-	bh=+PdqaIAnbvFWzUlrXS5dGz+94tQph/rZhL6Pzhzm0RM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ts4mj0PWgjvWJ/9Hvw6e2c8sBU3UXW4VOt1XBc3uiwzIHodYOSPFnXiXmn6oQ1aXn
-	 hNIpT7dx1M0e+NcN5fStkUQIccy6aZERUXEiA4hVf0eoD3epSzGBiC7R4IJLSaHi8S
-	 c1VpE7Hu9OZWLZ1T/O4bgx6l4pnxyWxu10ohFpd1hcbxOGkjLpES/Foo+Y5hs++i1/
-	 3eDhCkMA52nD5ghHSz4IRP8LsHnvTRPtF+P5TkJVrlOF+HHGafZI3veIRAC9nsncid
-	 BGYDdQlw+ohuFc6+fqJctBVx1Zh6rRl0CtO4QtKWev0AeKem/9mCK8kfBWWAEKxxKH
-	 k9KqumZy+tG9Q==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1sk0RR-000000006vI-47q4;
-	Fri, 30 Aug 2024 14:09:26 +0200
-Date: Fri, 30 Aug 2024 14:09:25 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Abel Vesa <abel.vesa@linaro.org>, Vinod Koul <vkoul@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
-	linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>,
-	Johan Hovold <johan+linaro@kernel.org>
-Subject: Re: [PATCH v3 1/2] dt-bindings: phy: qcom,sc8280xp-qmp-pcie-phy:
- Document the X1E80100 QMP PCIe PHY Gen4 x4
-Message-ID: <ZtG2dUVkdwBpBbix@hovoldconsulting.com>
-References: <20240823-x1e80100-phy-add-gen4x4-v3-0-b7765631ca01@linaro.org>
- <20240823-x1e80100-phy-add-gen4x4-v3-1-b7765631ca01@linaro.org>
- <gvx3sdsdxigel3iwu7vgvvgxohvnaqq6suogsqojeumobhwhdk@5qct23m5ncda>
+	s=arc-20240116; t=1725019966; c=relaxed/simple;
+	bh=5efDUvWPJTQzrLZn1kIQh/Y0LwK0Dnn/sLPIabxchwo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=A3CwvRYax8Qu6ms5lIdF3+EOdikFjoSikxZaQCSt8TTc0+61+AeVyoVvE0UKm/vpzZscU40Idbo5S03oFRkhVDLYlITI+Q5U2pjPUypSzxNRKjQQWRPkYgy7q1bZ0j2UvQaley+4X66kzOkPRbdUEUGzDVrPdaghTwX/Fn8ebwE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7829F339;
+	Fri, 30 Aug 2024 05:13:03 -0700 (PDT)
+Received: from [10.2.76.71] (e132581.arm.com [10.2.76.71])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E88EF3F762;
+	Fri, 30 Aug 2024 05:12:34 -0700 (PDT)
+Message-ID: <655edf2e-8e0d-4c00-91a1-1af58593f597@arm.com>
+Date: Fri, 30 Aug 2024 13:12:33 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <gvx3sdsdxigel3iwu7vgvvgxohvnaqq6suogsqojeumobhwhdk@5qct23m5ncda>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 1/9] perf: arm_spe: Introduce 'lds' capacity
+To: Will Deacon <will@kernel.org>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Suzuki K Poulose <suzuki.poulose@arm.com>, Mike Leach
+ <mike.leach@linaro.org>, James Clark <james.clark@linaro.org>,
+ John Garry <john.g.garry@oracle.com>, Namhyung Kim <namhyung@kernel.org>,
+ Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>,
+ "Liang, Kan" <kan.liang@linux.intel.com>,
+ Jonathan Cameron <jonathan.cameron@huawei.com>,
+ Yicong Yang <yangyicong@hisilicon.com>,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ coresight@lists.linaro.org, linux-perf-users@vger.kernel.org
+References: <20240827164417.3309560-1-leo.yan@arm.com>
+ <20240827164417.3309560-2-leo.yan@arm.com>
+ <20240830103834.GA8000@willie-the-truck>
+Content-Language: en-US
+From: Leo Yan <leo.yan@arm.com>
+In-Reply-To: <20240830103834.GA8000@willie-the-truck>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Aug 30, 2024 at 01:42:10PM +0300, Dmitry Baryshkov wrote:
-> On Fri, Aug 23, 2024 at 10:04:15AM GMT, Abel Vesa wrote:
-> > The sixth PCIe instance on X1E80100 can be used in either 4-lane mode or
-> > 2-lane mode. Document the 4-lane mode as a separate compatible.
+On 8/30/24 11:38, Will Deacon wrote:
+> On Tue, Aug 27, 2024 at 05:44:09PM +0100, Leo Yan wrote:
+>> This commit adds a new entry 'lds' in the capacity folder. 'lds' stands
+>> for "loaded data source". When its value is 1, it indicates the data
+>> source implemented, and data source packets will be recorded in the
+>> trace data.
+>>
+>> Signed-off-by: Leo Yan <leo.yan@arm.com>
+>> ---
+>>   drivers/perf/arm_spe_pmu.c | 3 +++
+>>   1 file changed, 3 insertions(+)
+>>
+>> diff --git a/drivers/perf/arm_spe_pmu.c b/drivers/perf/arm_spe_pmu.c
+>> index 9100d82bfabc..81c1e7627721 100644
+>> --- a/drivers/perf/arm_spe_pmu.c
+>> +++ b/drivers/perf/arm_spe_pmu.c
+>> @@ -110,6 +110,7 @@ enum arm_spe_pmu_buf_fault_action {
+>>   /* This sysfs gunk was really good fun to write. */
+>>   enum arm_spe_pmu_capabilities {
+>>        SPE_PMU_CAP_ARCH_INST = 0,
+>> +     SPE_PMU_CAP_LDS,
+>>        SPE_PMU_CAP_ERND,
+>>        SPE_PMU_CAP_FEAT_MAX,
+>>        SPE_PMU_CAP_CNT_SZ = SPE_PMU_CAP_FEAT_MAX,
+>> @@ -118,6 +119,7 @@ enum arm_spe_pmu_capabilities {
+>>
+>>   static int arm_spe_pmu_feat_caps[SPE_PMU_CAP_FEAT_MAX] = {
+>>        [SPE_PMU_CAP_ARCH_INST] = SPE_PMU_FEAT_ARCH_INST,
+>> +     [SPE_PMU_CAP_LDS]       = SPE_PMU_FEAT_LDS,
+>>        [SPE_PMU_CAP_ERND]      = SPE_PMU_FEAT_ERND,
+>>   };
+>>
+>> @@ -160,6 +162,7 @@ static ssize_t arm_spe_pmu_cap_show(struct device *dev,
+>>
+>>   static struct attribute *arm_spe_pmu_cap_attr[] = {
+>>        SPE_CAP_EXT_ATTR_ENTRY(arch_inst, SPE_PMU_CAP_ARCH_INST),
+>> +     SPE_CAP_EXT_ATTR_ENTRY(lds, SPE_PMU_CAP_LDS),
+>>        SPE_CAP_EXT_ATTR_ENTRY(ernd, SPE_PMU_CAP_ERND),
+>>        SPE_CAP_EXT_ATTR_ENTRY(count_size, SPE_PMU_CAP_CNT_SZ),
+>>        SPE_CAP_EXT_ATTR_ENTRY(min_interval, SPE_PMU_CAP_MIN_IVAL),
 > 
-> As the patches were merged, it's too late for this series, but as a
-> note: we should think of a way to describe the PHY configuration without
-> changing the compatibility strings. The hardware stays the same, it's
-> just the number of lanes being wired that changes.
+> What will userspace do with this? I don't think you can turn LDS on/off,
+> so either you'll get the data source packet or you won't.
 
-No, this is not about configuration and we need two separate compatibles
-as the two PHY instances are distinct and only one of them can be used
-in 4-lane mode.
+Yes, LDS bit does not work as a switch.
 
-The mistake was to ever describe pcie6a as 2-lane in the x1e80100 dtsi
-(and possibly also in the ambiguous commit message above). Whether
-pcie6a is used in 4-lane or 2-lane mode is determined by a TCSR
-register.
+The tool in the userspace will record the LDS bit into the metadata. During
+decoding phase, it reads out the LDS from metadata. Based on it, the perf
+tool can know if the data source is supported or not, if yes then decode the
+data source packet.
 
-Johan
+Another point is how to decide the data source packet format. Now we maintain
+a CPU list for tracking CPU variants which support data source trace. For long
+term, I would like the tool can based on hardware feature (e.g. a ID register
+in Arm SPE) to decide the data source format, so far it is absent. This is why
+LDS bit + CPU list is a more reliable way. See some discussion [1].
+
+Thanks,
+Leo
+
+[1] https://lore.kernel.org/linux-perf-users/Zl9jLtiFagBcH7oH@J2N7QTR9R3/
 
