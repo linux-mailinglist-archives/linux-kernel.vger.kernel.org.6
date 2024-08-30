@@ -1,120 +1,95 @@
-Return-Path: <linux-kernel+bounces-309119-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309120-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D41796666A
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 18:02:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83E3296666D
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 18:03:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B59B286F3B
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 16:02:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 301051F25FCD
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 16:03:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B81C51B86C4;
-	Fri, 30 Aug 2024 16:01:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40F931B8EAC;
+	Fri, 30 Aug 2024 16:02:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="jZAtzviA"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GHYpTZD5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FE1E1A2C35;
-	Fri, 30 Aug 2024 16:01:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C2FB1B86E6;
+	Fri, 30 Aug 2024 16:02:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725033712; cv=none; b=jiACe9yAkZ86e+9aMNBe6mlcppyAn0CcW8kHz6GECV1opwZQ5X/VAOIYyEJL+wqd1He9hJ77dugUWPzfP5KEmHADKwQ8pcDbsPG6O6i+Zh5fiv5hz9fGfojgIMdCaeXDD9VNUIGprX+lWaYSESCrWqdRZuidXB0NKz8gHaTw/QI=
+	t=1725033753; cv=none; b=iOdxGAQvONTNMt19P4AEssvMjz+xOn9iVr+b6RsaMzxqkQ+16tnhgaPIIXveIow6lRZnM7yUEo9YBFdGDksZndQDc3AQFXjYrKFnwmO65QDtaQ5/kPYogHTDvvCtSbhffhXx7Jb/EjHEITYr2b679vVN3O8VtROHiJ8JLYzH5sw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725033712; c=relaxed/simple;
-	bh=16lj0Ja7gHILLEZora4E65v9tQ3y4iAKP3+Kl60/RSg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=OmIZAaFAp+/EhZSlaGyUluUSMNMWiP4uuR5J1vWFzPEqr/6s7a195OO4ppkMVrz9v6y1qFgtUwK60j/WugAwPXWVqpHxFCWNfLDl1r5FjbaUeVll7rfn4CS8mQwxl+UDGyJb4bG2868UbGW6Xr1shGq8yS2BJ9pvnpqe67r8M+w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=jZAtzviA; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47UEttMM011674;
-	Fri, 30 Aug 2024 16:01:40 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	fZ6BleY6hJxhqNSKGHouVM4VvjSsw9CDGQREuyoil4U=; b=jZAtzviAb4NjNWR8
-	5llO2FoqPCfsZXwpNcLCfvqor0OpeXwtBviJySKVJZEO8Oy827/+QDjdBDQhPbe/
-	T63Zib5JO1WjFlS8Jj06OOt0mRZl9zm1fnkvnAF0VFqbXMiyXwG4sC59JdalfrYH
-	DMHJkmuuT1iBuiMWJXxCedS6nLWsRAARe9PX2a2YvazD0aIZ8wHUIpr9QIE+P9kW
-	iYNHxB1LL56M50Qt7JTQ033GF+y4GiAsnfDd6IflJVuRH6r4ZMlHZFOL+hoCE5Jf
-	qGpyS/pIWsxoQ7ovQYY8jXoHPNak8lGHcr34ASfPNFSEWfwXMrggb0KhTLUnEmJ4
-	uuo0KQ==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 419pv0sk4m-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 30 Aug 2024 16:01:38 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47UG1bt1030541
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 30 Aug 2024 16:01:37 GMT
-Received: from [10.111.180.95] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 30 Aug
- 2024 09:01:36 -0700
-Message-ID: <29bf2e9c-ca24-46d1-93e4-3b3f3f812705@quicinc.com>
-Date: Fri, 30 Aug 2024 09:01:36 -0700
+	s=arc-20240116; t=1725033753; c=relaxed/simple;
+	bh=S8HKI+dh64VVg7YTa6VZ40u+1y81J9bN2DoysdYC+0U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GUo3PwTaqEskuCAE8CYZu8mvQSLahJGEtLS1GM00xjRdFrwG9JRSVxYISfBklLrCEnoqhuWXHX7IW2x48lqtgyeGGRNX1w/9VJkYIM969SfTaB/Mf2UuQOZ9kq2oJcRrbUA3yGsycUBnQtkQZT5Uh9VkeQF6SnU7e4uCQpLckR0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GHYpTZD5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8FDFCC4CEC2;
+	Fri, 30 Aug 2024 16:02:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725033753;
+	bh=S8HKI+dh64VVg7YTa6VZ40u+1y81J9bN2DoysdYC+0U=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=GHYpTZD5tidX9dDfW5b8mPMuuzm1ZclU4ALrbRr4kj89zWOnCNBEprPGQemXAUWaL
+	 kGRtPOcvsWc0EOaSf+W+tUEv3C38iuymGu/vLjPptfPSY7fmcYUuf/pTdVU+wEivVT
+	 oPJynAhRWjMvjoHVqKpWUkf9NoyquMZ9MisKr94aOtPReml/FKQYXPzgWDc04BYMUQ
+	 CVACFGbb8CuiZhAMyl5zVfnFIeGwu+kFZSfkyKJi/38RuyieejAzlMsS8FALc6bPPq
+	 D0Kr1Q5/8agrShYZKBI6DSgIBNZCt9flUoR8+JOqu5ZxoFbvPetF1ebjycJNtMtmch
+	 DkNf6IOjPZZGQ==
+Date: Fri, 30 Aug 2024 17:02:28 +0100
+From: Simon Horman <horms@kernel.org>
+To: Shen Lichuan <shenlichuan@vivo.com>
+Cc: alex.aring@gmail.com, stefan@datenfreihafen.org,
+	miquel.raynal@bootlin.com, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, linux-wpan@vger.kernel.org,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	opensource.kernel@vivo.com
+Subject: Re: [PATCH v1] ieee802154: at86rf230: Simplify with dev_err_probe()
+Message-ID: <20240830160228.GU1368797@kernel.org>
+References: <20240830081402.21716-1-shenlichuan@vivo.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ath11k: Fix potential RCU dereference issue in
- ath11k_debugfs_htt_ext_stats_handler
-To: Jiawei Ye <jiawei.ye@foxmail.com>, <kvalo@kernel.org>,
-        <jjohnson@kernel.org>, <corbet@lwn.net>
-CC: <linux-wireless@vger.kernel.org>, <ath11k@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-References: <tencent_A64CA96B962349E369B349EA01EBC53C3505@qq.com>
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-Content-Language: en-US
-In-Reply-To: <tencent_A64CA96B962349E369B349EA01EBC53C3505@qq.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: ARulsQs3EzcXSvTL9NRtBApJhL6BoHhr
-X-Proofpoint-ORIG-GUID: ARulsQs3EzcXSvTL9NRtBApJhL6BoHhr
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-30_10,2024-08-30_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- mlxlogscore=737 bulkscore=0 impostorscore=0 phishscore=0 clxscore=1011
- mlxscore=0 spamscore=0 suspectscore=0 malwarescore=0 adultscore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2408300122
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240830081402.21716-1-shenlichuan@vivo.com>
 
-On 8/30/2024 5:02 AM, Jiawei Ye wrote:
-> In the `ath11k_debugfs_htt_ext_stats_handler` function, the `ar` pointer
-> obtained via RCU lock is accessed after the RCU read-side critical
-> section might be unlocked. According to RCU usage rules, this is illegal.
-> Reusing this pointer can lead to unpredictable behavior, including
-> accessing memory that has been updated or causing use-after-free issues.
-> The `ath12k_debugfs_htt_ext_stats_handler` function in the
-> `drivers/net/wireless/ath/ath12k/debugfs_htt_stats.c` file provides a good
-> example to follow for addressing this issue.
+On Fri, Aug 30, 2024 at 04:14:02PM +0800, Shen Lichuan wrote:
+> Use dev_err_probe() to simplify the error path and unify a message
+> template.
 > 
-> This possible bug was identified using a static analysis tool developed
-> by myself, specifically designed to detect RCU-related issues.
+> Using this helper is totally fine even if err is known to never
+> be -EPROBE_DEFER.
 > 
-> To address this issue, the RCU read lock is now kept until all accesses
-> to the `ar` pointer are completed. A `goto exit` statement is introduced
-> to ensure that the RCU read unlock is called appropriately, regardless of
-> the function's exit path.
+> The benefit compared to a normal dev_err() is the standardized format
+> of the error code, it being emitted symbolically and the fact that
+> the error code is returned which allows more compact error paths.
+> 
+> Signed-off-by: Shen Lichuan <shenlichuan@vivo.com>
 
-This analysis is incorrect since ar is not an RCU-protected structure
+...
 
-The rcu_read_lock() is required internally within
-ath11k_mac_get_ar_by_pdev_id() when retrieving the RCU-protected pdev pointer.
+> @@ -1576,9 +1574,8 @@ static int at86rf230_probe(struct spi_device *spi)
+>  
+>  	lp->regmap = devm_regmap_init_spi(spi, &at86rf230_regmap_spi_config);
+>  	if (IS_ERR(lp->regmap)) {
+> -		rc = PTR_ERR(lp->regmap);
+> -		dev_err(&spi->dev, "Failed to allocate register map: %d\n",
+> -			rc);
+> +		dev_err_probe(&spi->dev, PTR_ERR(lp->regmap),
+> +			      "Failed to allocate register map\n");
+>  		goto free_dev;
 
-So NAK this patch.
+After branching to dev_free the function will return rc.
+So I think it still needs to be set a in this error path.
 
-
+-- 
+pw-bot: cr
 
