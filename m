@@ -1,104 +1,185 @@
-Return-Path: <linux-kernel+bounces-308842-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308843-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED479966284
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 15:07:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C400F96628B
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 15:07:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A32651F22355
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 13:07:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 741B1287A37
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 13:07:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABEFC1B1D45;
-	Fri, 30 Aug 2024 13:05:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E4B71AF4F6;
+	Fri, 30 Aug 2024 13:05:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Zn8V8fYE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Oe4tVhyl"
+Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F28B21ACDFD
-	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 13:05:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 383581B1D73
+	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 13:05:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725023129; cv=none; b=MQYKoSvoEVw328xJZaMuWRr7kCmC/DqwFVZPQimXWjKserBBVRReV+EYU81SM6noGRbGSoV9//kkzUkiI9fdVggpw8u6NQaM1ds8X3VbFpxoXM1leejzSRAVosPZDdbUaxGfkuhfrB2SJiqu10C6qiLV2qp/GxPN2gdT23TYjB8=
+	t=1725023151; cv=none; b=Y8N+wGAywvJ4D8V21kyn0jYxMM941nwn6gYR9zGrIp418owWAq1vqf6GYT15z1Ny1PvUNGv/OdQ7qu4l0kmAkyVeasGxL5aTJqcp/T7k4YzTLzdwQljJWJMGX/tR2YQIy0PV9zF2Pj0lEI3vgVMEzDkhM94uWi2B0Ki1D+jE/W8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725023129; c=relaxed/simple;
-	bh=13ZInjYWA/lVIMWe9FrRhEllqUoe/mlTZFl/UiXHhWY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=U6PSQsYcLFWVG58ZBGa5mo/9h92At81tjF9Rlna3sjSk+aMIOpuME9mT6lEJNjgbnF9UvZfsB3HxAfJXtB7AmOHyhXQQiaJzPPArhn2nDQuuLD+W666Hg3brfoKh6Pd+UKLH533NE5e4Kpb5xsw6vVOEIfQu7tiB5eJyOd1WNWg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Zn8V8fYE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57F3DC4CEC2;
-	Fri, 30 Aug 2024 13:05:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725023128;
-	bh=13ZInjYWA/lVIMWe9FrRhEllqUoe/mlTZFl/UiXHhWY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Zn8V8fYE5BLGVJ02kILIiiqn6XcQ9AeksSjm3giye3OoTA4k9deuTtzERqRK1cutS
-	 aXuktZj+NN8vpYqwRqixamiPn6X/WaphAbx086xNDIU0cV8wJ7MfZAOxtUt2u/tsmM
-	 1+l1wyn1CqLn0iX3ivnzbajhuzUa9QmtVoj+oUzGHAU6nsSqRXfAQoNbDVhdKx4fjh
-	 WW6iNKHp87WgO7XJ2EFXjLWnhm7vVNRumEkovjrjOs63JpeLu0rNEchlM6GkSftUvP
-	 0wwtxj6wDJs7reKddD/kcEEsWf6RiKlvjyj9Vw7MEJ/k8EwGd1EVabZAT6ox9DetbR
-	 pugOef3PqaB7A==
-Date: Fri, 30 Aug 2024 14:05:23 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Ryan Roberts <ryan.roberts@arm.com>,
-	Aishwarya TCV <aishwarya.tcv@arm.com>, dev.jain@arm.com
-Subject: Re: [PATCH v2 06/10] mm: avoid using vma_merge() for new VMAs
-Message-ID: <9e3b42ca-ef40-4400-b4ed-3d082da82a0f@sirena.org.uk>
-References: <cover.1724441678.git.lorenzo.stoakes@oracle.com>
- <57f55a1473586a88211e04b44c6b128332d4272c.1724441678.git.lorenzo.stoakes@oracle.com>
- <51452bab-65ef-4924-8ca8-61536d2bc168@sirena.org.uk>
- <9dcddc2c-482b-4e12-a409-eee8d902ba26@lucifer.local>
- <622b3769-fb5c-4a3e-82b7-1301623faf43@sirena.org.uk>
- <82718839-dacb-4774-a72d-99d9c2b134c8@lucifer.local>
+	s=arc-20240116; t=1725023151; c=relaxed/simple;
+	bh=5H9xTh2WGW9t0qScz5XSko441kB8yD/i1PWMAMe39p8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=SZ26z5hqHsrA3PKdEhk37gJUm3q9cv86VDND4aH+Amp2BBjVXpFpy7VFLtJ894IIoM02/Ovj7eQx1NUXJL/nBZ51uGxBSkXehpDV6Je7yB7l/zaKeKzSXZKUybbIpvOh2IzzKUhBMIM2uc9HOg567IdCUsCvkKuDPHaWdGcWim8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Oe4tVhyl; arc=none smtp.client-ip=209.85.215.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-7c691c8f8dcso1191477a12.1
+        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 06:05:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725023149; x=1725627949; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=h2/OAejnsiuYcRBFc3w40uVreuCzsZZuIbGLYT8lLiA=;
+        b=Oe4tVhylfT64WBXgtijoKDkY4sGAM/pEmGzvIkLlSEA7TLGjf9NTaBNtrKUFFIX8FX
+         g7xNFZPSNGeQKeRYzszdCXogDMUG8LHOzaWzcKo67rI0mCCFL06hGb3tI3wmTEJF3DJN
+         0btB7bhz0WXRbStRBm8I3G7KaIWsw9c8XGhDJ27vjla+Sx+7fflsJ/S/amiBm5dm4eoX
+         5fNs2M+E7Pt773lqbHXAizdwVZEOy1H8LWALUvaNzn/+w9fniY1WDjvYv/ykbyEW9qpy
+         l4xw9BHJMCCAWm2fwtcuHuUi0EIea3nB/+j531NRuSH7TWbSFAOdCKYbvMH7BV/AHkgI
+         0FyA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725023149; x=1725627949;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=h2/OAejnsiuYcRBFc3w40uVreuCzsZZuIbGLYT8lLiA=;
+        b=Ipv5noSGTCiQZYGQWy2PwuOpFo4dA+0jAat8Kbq+BSGnAjjg6PdbqfFVOImMToTdmK
+         8kjXoPIRvkI8PwrBByUsBDiDK0TaDILRdp89Z0nV1hfuLjbCxxdzDD3FdraEra3gZa8k
+         BImQRgyrAzV/dQnFi67x6w0mDWpKIKvA3yRFQ0x+mjXXzfd3dHg1h1lLBc4EohwlEtdV
+         K/zX5Egh9eEkO8Ew2gEGGv0xqnM0krHGacK2HRBq50mZaiSNy2l8qbZSkThhjM7JIk5/
+         hVt95FY4gsCK7WDECyMtYcj32RJidIkA7T/K4FdabhUBiUMqTaizBBUgUN+oZKGsFXQm
+         xKKw==
+X-Forwarded-Encrypted: i=1; AJvYcCUOtOEjO/oL/xDUxBuBdN1ZMQBj73ABww8V+STdjUNnc2lKrt86fajY6Y6RM7JYxm7Ce4osjEJvs9L4Uhk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy2gtxtTWSi8x4b+VzWz9vkNkqxmyG0Q61tm7rquIXaS056KRlU
+	gkR2rPgnpGm7jwaRxYzwFfO7Oe5nrDt7sNBuIy44eRy/O6G/e5q0BA9jmpRDSlqSKwvzcJ+2lvM
+	mCBJKgU4oMxK6SwOIFcPx9XZuDXU=
+X-Google-Smtp-Source: AGHT+IGC+zn8BVsMs+l2GLH+s2gVQrfg2TWIeMQxR2Tdy2T9MoeJugkdwFdKqV3sDjE8Ceij5Mm7/cJpeOdB0yQ/KIw=
+X-Received: by 2002:a17:90a:f281:b0:2d8:8509:85d1 with SMTP id
+ 98e67ed59e1d1-2d8850989c0mr500196a91.38.1725023149115; Fri, 30 Aug 2024
+ 06:05:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="H4IlusNa3+d2EykC"
-Content-Disposition: inline
-In-Reply-To: <82718839-dacb-4774-a72d-99d9c2b134c8@lucifer.local>
-X-Cookie: for ARTIFICIAL FLAVORING!!
+References: <20240829021256.787615-1-aford173@gmail.com> <20240829021256.787615-2-aford173@gmail.com>
+ <ZtC2LhYAAdPdSRpz@vaman> <CAHCN7xKW=zxips+J73913eEfS+p_e3dN9BWU08=poj599JbUxA@mail.gmail.com>
+ <ZtF69NSHFtAwDupq@vaman>
+In-Reply-To: <ZtF69NSHFtAwDupq@vaman>
+From: Adam Ford <aford173@gmail.com>
+Date: Fri, 30 Aug 2024 08:05:37 -0500
+Message-ID: <CAHCN7xKsH4Rau23t_pmsjTsNS7Hz32Xb+GBydjLFDpgtni7w2A@mail.gmail.com>
+Subject: Re: [RFC V2 2/2] phy: freescale: fsl-samsung-hdmi: Support dynamic
+ integer divider
+To: Vinod Koul <vkoul@kernel.org>
+Cc: linux-phy@lists.infradead.org, dominique.martinet@atmark-techno.com, 
+	linux-imx@nxp.com, festevam@gmail.com, frieder.schrempf@kontron.de, 
+	aford@beaconembedded.com, Kishon Vijay Abraham I <kishon@kernel.org>, 
+	Lucas Stach <l.stach@pengutronix.de>, Marco Felsch <m.felsch@pengutronix.de>, 
+	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Fri, Aug 30, 2024 at 2:55=E2=80=AFAM Vinod Koul <vkoul@kernel.org> wrote=
+:
+>
+> On 29-08-24, 13:30, Adam Ford wrote:
+> > On Thu, Aug 29, 2024 at 12:56=E2=80=AFPM Vinod Koul <vkoul@kernel.org> =
+wrote:
+> > >
+> > > On 28-08-24, 21:12, Adam Ford wrote:
+> > > > There is currently a look-up table for a variety of resolutions.
+> > > > Since the phy has the ability to dynamically calculate the values
+> > > > necessary to use the intger divider which should allow more
+> > > > resolutions without having to update the look-up-table.  If the
+> > > > integer calculator cannot get an exact frequency, it falls back
+> > > > to the look-up-table.  Because the LUT algorithm does some
+> > > > rounding, I did not remove integer entries from the LUT.
+> > >
+> > > Any reason why this is RFC?
+> >
+> > Someone was asking for functionality, but I'm not 100% sure this is
+> > the right approach or it would even work.  I am waiting for feedback
+> > from Dominique to determine if this helps solve the display for that
+> > particular display.
+> >
+> > >
+> > > >
+> > > > Signed-off-by: Adam Ford <aford173@gmail.com>
+> > > >
+> > > > diff --git a/drivers/phy/freescale/phy-fsl-samsung-hdmi.c b/drivers=
+/phy/freescale/phy-fsl-samsung-hdmi.c
+> > > > index bc5d3625ece6..76e0899c6006 100644
+> > > > --- a/drivers/phy/freescale/phy-fsl-samsung-hdmi.c
+> > > > +++ b/drivers/phy/freescale/phy-fsl-samsung-hdmi.c
+> > > > @@ -16,6 +16,8 @@
+> > > >
+> > > >  #define PHY_REG(reg)         (reg * 4)
+> > > >
+> > > > +#define REG01_PMS_P_MASK     GENMASK(3, 0)
+> > > > +#define REG03_PMS_S_MASK     GENMASK(7, 4)
+> > > >  #define REG12_CK_DIV_MASK    GENMASK(5, 4)
+> > > >  #define REG13_TG_CODE_LOW_MASK       GENMASK(7, 0)
+> > > >  #define REG14_TOL_MASK               GENMASK(7, 4)
+> > > > @@ -31,11 +33,17 @@
+> > > >
+> > > >  #define PHY_PLL_DIV_REGS_NUM 6
+> > > >
+> > > > +#ifndef MHZ
+> > > > +#define MHZ  (1000UL * 1000UL)
+> > > > +#endif
+> > > > +
+> > > >  struct phy_config {
+> > > >       u32     pixclk;
+> > > >       u8      pll_div_regs[PHY_PLL_DIV_REGS_NUM];
+> > > >  };
+> > > >
+> > > > +static struct phy_config custom_phy_pll_cfg;
+> > > > +
+> > > >  static const struct phy_config phy_pll_cfg[] =3D {
+> > > >       {
+> > > >               .pixclk =3D 22250000,
+> > > > @@ -440,10 +448,83 @@ fsl_samsung_hdmi_phy_configure_pll_lock_det(s=
+truct fsl_samsung_hdmi_phy *phy,
+> > > >              phy->regs + PHY_REG(14));
+> > > >  }
+> > > >
+> > > > +static unsigned long fsl_samsung_hdmi_phy_find_pms(unsigned long f=
+out, u8 *p, u16 *m, u8 *s)
+> > > > +{
+> > > > +     unsigned long best_freq =3D 0;
+> > > > +     u32 min_delta =3D 0xffffffff;
+> > >
+> > > > +     u8 _p, best_p;
+> > > > +     u16 _m, best_m;
+> > > > +     u8 _s, best_s;
+> > > > +
+> > > > +     for (_p =3D 1; _p <=3D 11; ++_p) {
+> > >
+> > > starts with 1 to 11.. why?
+> >
+> > According to Rev 2 of the 8MP Reference Manual, the Previder range is
+> > between 1 and 11.
+>
+> Would be better to document these assumptions, am sure if someone asks
+> you this next year, it would be hard to recall :-)
 
---H4IlusNa3+d2EykC
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+I updated the note n V3.
 
-On Fri, Aug 30, 2024 at 02:02:33PM +0100, Lorenzo Stoakes wrote:
-> On Fri, Aug 30, 2024 at 01:59:37PM GMT, Mark Brown wrote:
+Dominique confirmed V3 appears to be working, so I'll investigate his
+suggestions, and submit a patch based on my V3 without the RFC.
 
-> > Tested-by: Mark Brown <broonie@kernel.org>
-
-> Thanks! I will be folding this into a respin soon, are you good with me
-> adding this tag to the patch 6/10 in general? No worries if not, as fix
-> will be subsumed there.
-
-Sure.
-
---H4IlusNa3+d2EykC
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmbRw5IACgkQJNaLcl1U
-h9AkEwf+NghTY2sWM7k+eA3WA4rfNZnXcTW5Knwbp8SsfL5lBn6oUjUheUTefGwM
-aiiw3h+Y0pyTXE4wPoz722B3nogTEP2d3NJR3M/QDXmDvSV7Ndl/v4ON3wZi8jbF
-6S5fS2ZvOHsAe7gdI/qGuHSdM8RngKcm1V4PkAnz3abZXqc+9joRxm5UEKRycilF
-lo+EGK6y56FIMqOpiAM62X7oVVlGclHjkmNymdKfvZo6P6og5FMHCWUAXvsC+cPV
-RA9eb+wsMyGp+3NCU47glykC1vA6PU5Q7Y52My1Tp68l8Md4VtiLlJNGeTqqI/+e
-8mpDjeeW13lPw/kt7p54sA7vnCFuxQ==
-=jB1/
------END PGP SIGNATURE-----
-
---H4IlusNa3+d2EykC--
+adam
+>
+> --
+> ~Vinod
 
