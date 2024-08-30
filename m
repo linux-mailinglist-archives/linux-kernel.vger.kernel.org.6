@@ -1,135 +1,175 @@
-Return-Path: <linux-kernel+bounces-308793-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308792-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9AACE9661E0
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 14:38:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E7649661DE
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 14:38:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CD07B1C213C5
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 12:38:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9AC471C210D8
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 12:38:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 058BE199FBA;
-	Fri, 30 Aug 2024 12:38:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B10B19995B;
+	Fri, 30 Aug 2024 12:37:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="RZjOuUEn"
-Received: from mail-oi1-f177.google.com (mail-oi1-f177.google.com [209.85.167.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=spasswolf@web.de header.b="E9h3ljOh"
+Received: from mout.web.de (mout.web.de [212.227.17.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AAB91898E5
-	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 12:38:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C7FB1898E5
+	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 12:37:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725021491; cv=none; b=t5iXZfi1aMekepqwPsr8/KYNQPfFxgVY7YBRlIN4Z15jcrzmkaVw6Xnq9/PNrM7IrrBw4oT1/4T0lHF8gIYtF4EcBNogDJdWQiwwg+0LgKNkO6JE2Ss+axSMavToNiegO+94YzqrT/ThITqfvLUwIl3ipR4LKzdB5mX0ML4z1YU=
+	t=1725021476; cv=none; b=diWI7skiblgKGQWrcZRGKuIQEVvOxE5L6uF6g2CDQXrck77DDg1aAFLZyMSjG8qqJWTf1X95I065MsKDmCV5M1/do/aX3QCyiB13pEcjthfctvsqBkm9And79vDHZji7UUZR283wyWtTomS9GwXrScpkjU1Cd5uxH8YXsl/Sk9k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725021491; c=relaxed/simple;
-	bh=yp196IwksZJ7sYAQ8R1rQrxykhZdy2GROPFhwzXA84o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZNHwfn83mYdcEkN2qRBJ6pW9C4wjOUHqnncXRfI5O7MvOoEmYUQSILitjxHtBskxKc4GH/iPUGsSg/1qs+x4Q9bgy+b/nIZWGcAqMLRH7JAq7aRFf+lviUXwbOyyQwwLndae3Ycgs6buLxvNINAzjYS+iXixWi0Gjy4DHYskPU8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=RZjOuUEn; arc=none smtp.client-ip=209.85.167.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-oi1-f177.google.com with SMTP id 5614622812f47-3de13126957so1112979b6e.0
-        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 05:38:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1725021487; x=1725626287; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=FwOyoOeR+Iv38nsYEcC70HzZBSGU/mDtER78grIPRQU=;
-        b=RZjOuUEnEmShwm4EAKS+HNGi0MlXNhcia4GGc6tCHuyFgT3MYnnLJMoZvKU+keEIwp
-         V2bJVV1B4kA7g5UygDlj8ZueVGf9H4pGMT0J8IpO7z1wQWOaGqOwA7phNmBrxXJ7Arwy
-         ARtb4GdUUqjFyfSvCKOwuXV+c4lPMoqgTc00A=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725021487; x=1725626287;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=FwOyoOeR+Iv38nsYEcC70HzZBSGU/mDtER78grIPRQU=;
-        b=CyewhmEhFX5W9G55PVD1h0877/EvW7A8Ty2o7NAylKT5mN7fPXXCb2RC8o29FSNJED
-         ew34vToFK1+x+mLwkUz9X/fkSeAUX60FWv1UCsKOyJ5R9pjV1yKCfrkzD3M5IlU66vtV
-         MAR8qb1Fg4fEH5G2CjjYsuciipb8hF0ZS8zvaDuWE0AY9V7LE1yRZxt9DTv8dJcb1vcM
-         UfPD+HTRznBJotgTIMohQxit7j3nLmD/u6xKQP0aWKy7++QyalpFDz1r6+sX5X2K4u25
-         YQmURS1ZJqWaJ2PLHWNStIgP+YmjFiz0YorXceO8dFW4vR2RvvCF54CoN8EVoqYuyIH5
-         XTkQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWthJi7Bs8YSL+mWCVBZYFaLMN13GLIY476xY+1dqqNs+WuOEWIQkrazWioAUTrge3yeB0ZT4sD3j3nME4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyJ8I5hULPi/19HxhvYORcY4qSbiGSPRqIhpp+pt0sppnDtp388
-	0hyA3KZcNHoUHhiw0yJM1ejjhszHXGSi7OHcaF/dcfV3lzc4i6LmQz22U7fg8AA=
-X-Google-Smtp-Source: AGHT+IHmUNbIOg0Wb3avyaPMvQm8k7ZuTu9Q7gpTHmL+xuVu5Yf68OkEdM9G5jxoJ2Uk7GMUt2sctw==
-X-Received: by 2002:a05:6808:1809:b0:3d9:273b:169d with SMTP id 5614622812f47-3df05e88001mr6525591b6e.44.1725021486920;
-        Fri, 30 Aug 2024 05:38:06 -0700 (PDT)
-Received: from [172.19.248.149] ([205.220.129.17])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-45682c82771sm13376791cf.15.2024.08.30.05.37.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 30 Aug 2024 05:38:06 -0700 (PDT)
-Message-ID: <c15802a1-088f-468c-afe7-fedb374bce89@linuxfoundation.org>
-Date: Fri, 30 Aug 2024 06:37:48 -0600
+	s=arc-20240116; t=1725021476; c=relaxed/simple;
+	bh=xpanB0/kJfspPoCJky+oKGofM3KImGK43I6v4SwFEVg=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=rRorFupjZQHR7G6Vqx0en754UOR5PSPFc/tIMOtYHLT9Qfd3rIX5RguuK/3jXv7fWQYUI8e4u28Pc8usrveKJNhBLU+ZsYxSRfm3g6w5NsFxHA23+PhUTvJ3NPfQqSRgHQ+9JDTTD+qHb4aLJNEGUzs6rpSn4Bv6K3itJ3lkc0E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=spasswolf@web.de header.b=E9h3ljOh; arc=none smtp.client-ip=212.227.17.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1725021471; x=1725626271; i=spasswolf@web.de;
+	bh=xpanB0/kJfspPoCJky+oKGofM3KImGK43I6v4SwFEVg=;
+	h=X-UI-Sender-Class:Message-ID:Subject:From:To:Cc:Date:In-Reply-To:
+	 References:Content-Type:MIME-Version:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=E9h3ljOhlP2YeaNRAV/CjNBygFKApvNlkz+hEWah2vInlqCxjkxv+SdxR/scNUyI
+	 Y7ANuDr2TxbIv1bDZmnl6dj0s2PoqH2wCUSDCmmUmgr0HoKtGogIk/EnP5KhVTDLU
+	 knsr3qpfRIef9bfWlZhiWfSVgoUsLpjMKRKw6I436RGJBiuN75K5MnRCH8oKoLzGR
+	 yiPl4BoiUkSYEOYbqLi137zWU6s6+4sHwva98UI28AhLskjSImtoV5QUVq3pubMDx
+	 L3zlr6KEq/7W8Fspnr9Nhzn8D4Rot4gr6/2OpdTmeK0wcfTdIo2rhel4D9hvglSso
+	 DWcEAnLkYSAEdKhJ1w==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.0.101] ([84.119.92.193]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MjPU0-1sMBfB2cTS-00fFDC; Fri, 30
+ Aug 2024 14:37:51 +0200
+Message-ID: <c7526910a5416841b95822597e132a5a1fc1034e.camel@web.de>
+Subject: Re: commit c2fe0480cd77 leads to hang on boot
+From: Bert Karwatzki <spasswolf@web.de>
+To: Thomas =?ISO-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>
+Cc: linux-kernel@vger.kernel.org, spasswolf@web.de
+Date: Fri, 30 Aug 2024 14:37:50 +0200
+In-Reply-To: <20240830123414.3341-1-spasswolf@web.de>
+References: <20240830123414.3341-1-spasswolf@web.de>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.53.2-1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] selftests: splice: Add splice_read.sh and hint
-To: Rong Tao <rtoax@foxmail.com>, shuah@kernel.org
-Cc: rongtao@cestc.cn, open list <linux-kernel@vger.kernel.org>,
- "open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>,
- Shuah Khan <skhan@linuxfoundation.org>
-References: <tencent_3E0DB88452B3022E6754AC5F8546B310BD09@qq.com>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <tencent_3E0DB88452B3022E6754AC5F8546B310BD09@qq.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:evdYxzAQNdlEkUfTx8itcPg1oy8dGZmaRKL1My/XDnwnfVy9ztl
+ E6aSEWlUd2hdKEiGtcF7vxlj2A8MASR6rI/vKDamJJ5/36yPj1cArnL9YB7eFCZRpDOQOE3
+ Q3f9KyIcIlxdvR7GQ712cr6UmMTxGYdQMe0NALwgcH7ZgPL/BGhP0Ci1x2BEqQILvArVzo6
+ 6QdYC35Xln+KNM3HkicTw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:cv0xXKaVVXc=;03Z3gsxn91ZbY5D2lsnY+R5Plkd
+ WmB+vgTxHGvt9H8zYJjk4TizZuSRlyXiyZxqiq2Ui7CvB3lsJM4oV9vIE8Ff/cKwAucnypAdw
+ vXB5FnEvOp/QRmPLNL7P/YrL1SoFwSIj/oYscvezd21WWAQIUfhUkxoGfJcDxInQOz6vN6obG
+ Exx9MEw3I8+www92hR3eRiL9zkqZbH/xFGU20rKddRh8wg6Zbga8hfhK/JO6EojW3+BTTQYL6
+ bMJY3fNyF54HQ7FF+0ZmthH284jwtai0InIyqJ/tLS2PFDiclNyk0nvZXMuu88/4RvJ2/u5dK
+ YrLpHXK4M5F7jJITRMPUmXMxXYXnENM/ACEpNMI9B+TkMpIyZ4F+o/BIh5dQLoum3Bskk3nvt
+ jvttG9OpJK6OiApfzcNYkR8rPzlsGtow2oQRSEy+8nHsXu5wjhGDSOQE30zZBc3L3P7FY74D7
+ olyOuAUSyi6x58Gm6IAsAOrdF5stZt7Hj+AM9L/vfC6MOQPeBlfPGS2/q3Tjr8nFi7IhmHDBn
+ QEL86lX2jxjPfWy1YxZkn3FhcM55uZ1rYq55zNFihEtqxCxjT6sncTkvROdb5cKsSkzekln+x
+ Wl7YTKrHCCCGu6WJvkQfS/LS1JTE3R4xWZC5gLynDivIZpITIdLMfG1+Q921odbJtyE3nXxvy
+ 3VD3QcQwQHvdmx9n7tEB++Z3unvHS730kLLcBiF6dAi9YyG+mgkAtqp2koVT3UCWaeto3AFHP
+ 9d/fYFcpn1CRcYlrenxvgwFNJf+wMn++m3IwN0OuGlQHyKITVyUW0XgF/K5VMye8pZxabJC9n
+ 1FZzRo3hfujSxWPwTei0Dq/w==
 
-On 8/27/24 21:40, Rong Tao wrote:
-> From: Rong Tao <rongtao@cestc.cn>
-> 
-> Add test scripts and prompts.
+Am Freitag, dem 30.08.2024 um 14:34 +0200 schrieb Bert Karwatzki:
+> Since linux next-20240829 my MSI Alpha 15 laptop hangs when booting.
+> After grub displays "Loading Linux 6.11.0-rc5-next-2024829" and
+> "Loading initial ramdisk" nothing happens.
+> I bisected this to commit c2fe0480cd77 and reverting this in
+> next-20240829 fixes the issue for me.
+>
+> Hardware (OS is debian sid):
+> $ lspci
+> 00:00.0 Host bridge: Advanced Micro Devices, Inc. [AMD] Renoir/Cezanne R=
+oot Complex
+> 00:00.2 IOMMU: Advanced Micro Devices, Inc. [AMD] Renoir/Cezanne IOMMU
+> 00:01.0 Host bridge: Advanced Micro Devices, Inc. [AMD] Renoir PCIe Dumm=
+y Host Bridge
+> 00:01.1 PCI bridge: Advanced Micro Devices, Inc. [AMD] Renoir PCIe GPP B=
+ridge
+> 00:02.0 Host bridge: Advanced Micro Devices, Inc. [AMD] Renoir PCIe Dumm=
+y Host Bridge
+> 00:02.1 PCI bridge: Advanced Micro Devices, Inc. [AMD] Renoir/Cezanne PC=
+Ie GPP Bridge
+> 00:02.2 PCI bridge: Advanced Micro Devices, Inc. [AMD] Renoir/Cezanne PC=
+Ie GPP Bridge
+> 00:02.3 PCI bridge: Advanced Micro Devices, Inc. [AMD] Renoir/Cezanne PC=
+Ie GPP Bridge
+> 00:02.4 PCI bridge: Advanced Micro Devices, Inc. [AMD] Renoir/Cezanne PC=
+Ie GPP Bridge
+> 00:08.0 Host bridge: Advanced Micro Devices, Inc. [AMD] Renoir PCIe Dumm=
+y Host Bridge
+> 00:08.1 PCI bridge: Advanced Micro Devices, Inc. [AMD] Renoir Internal P=
+CIe GPP Bridge to Bus
+> 00:14.0 SMBus: Advanced Micro Devices, Inc. [AMD] FCH SMBus Controller (=
+rev 51)
+> 00:14.3 ISA bridge: Advanced Micro Devices, Inc. [AMD] FCH LPC Bridge (r=
+ev 51)
+> 00:18.0 Host bridge: Advanced Micro Devices, Inc. [AMD] Cezanne Data Fab=
+ric; Function 0
+> 00:18.1 Host bridge: Advanced Micro Devices, Inc. [AMD] Cezanne Data Fab=
+ric; Function 1
+> 00:18.2 Host bridge: Advanced Micro Devices, Inc. [AMD] Cezanne Data Fab=
+ric; Function 2
+> 00:18.3 Host bridge: Advanced Micro Devices, Inc. [AMD] Cezanne Data Fab=
+ric; Function 3
+> 00:18.4 Host bridge: Advanced Micro Devices, Inc. [AMD] Cezanne Data Fab=
+ric; Function 4
+> 00:18.5 Host bridge: Advanced Micro Devices, Inc. [AMD] Cezanne Data Fab=
+ric; Function 5
+> 00:18.6 Host bridge: Advanced Micro Devices, Inc. [AMD] Cezanne Data Fab=
+ric; Function 6
+> 00:18.7 Host bridge: Advanced Micro Devices, Inc. [AMD] Cezanne Data Fab=
+ric; Function 7
+> 01:00.0 PCI bridge: Advanced Micro Devices, Inc. [AMD/ATI] Navi 10 XL Up=
+stream Port of PCI Express Switch (rev c3)
+> 02:00.0 PCI bridge: Advanced Micro Devices, Inc. [AMD/ATI] Navi 10 XL Do=
+wnstream Port of PCI Express Switch
+> 03:00.0 Display controller: Advanced Micro Devices, Inc. [AMD/ATI] Navi =
+23 [Radeon RX 6600/6600 XT/6600M] (rev c3)
+> 03:00.1 Audio device: Advanced Micro Devices, Inc. [AMD/ATI] Navi 21/23 =
+HDMI/DP Audio Controller
+> 04:00.0 Network controller: MEDIATEK Corp. MT7921K (RZ608) Wi-Fi 6E 80MH=
+z
+> 05:00.0 Ethernet controller: Realtek Semiconductor Co., Ltd. RTL8111/816=
+8/8211/8411 PCI Express Gigabit Ethernet Controller (rev 15)
+> 06:00.0 Non-Volatile memory controller: Kingston Technology Company, Inc=
+. KC3000/FURY Renegade NVMe SSD E18 (rev 01)
+> 07:00.0 Non-Volatile memory controller: Micron/Crucial Technology P1 NVM=
+e PCIe SSD[Frampton] (rev 03)
+> 08:00.0 VGA compatible controller: Advanced Micro Devices, Inc. [AMD/ATI=
+] Cezanne [Radeon Vega Series / Radeon Vega Mobile Series] (rev c5)
+> 08:00.1 Audio device: Advanced Micro Devices, Inc. [AMD/ATI] Renoir Rade=
+on High Definition Audio Controller
+> 08:00.2 Encryption controller: Advanced Micro Devices, Inc. [AMD] Family=
+ 17h (Models 10h-1fh) Platform Security Processor
+> 08:00.3 USB controller: Advanced Micro Devices, Inc. [AMD] Renoir/Cezann=
+e USB 3.1
+> 08:00.4 USB controller: Advanced Micro Devices, Inc. [AMD] Renoir/Cezann=
+e USB 3.1
+> 08:00.5 Multimedia controller: Advanced Micro Devices, Inc. [AMD] ACP/AC=
+P3X/ACP6x Audio Coprocessor (rev 01)
+> 08:00.6 Audio device: Advanced Micro Devices, Inc. [AMD] Family 17h/19h =
+HD Audio Controller
+> 08:00.7 Signal processing controller: Advanced Micro Devices, Inc. [AMD]=
+ Sensor Fusion Hub
+>
+> Bert Karwatzki
 
-Can you give more details on what these scripts and prompts do?
+Please ignore this, this is was sent because I misused git send-email.
 
-> 
-> Signed-off-by: Rong Tao <rongtao@cestc.cn>
-> ---
->   tools/testing/selftests/splice/splice_read.c  | 1 +
->   tools/testing/selftests/splice/splice_read.sh | 9 +++++++++
->   2 files changed, 10 insertions(+)
->   create mode 100755 tools/testing/selftests/splice/splice_read.sh
-> 
-> diff --git a/tools/testing/selftests/splice/splice_read.c b/tools/testing/selftests/splice/splice_read.c
-> index 46dae6a25cfb..194b075f6bc0 100644
-> --- a/tools/testing/selftests/splice/splice_read.c
-> +++ b/tools/testing/selftests/splice/splice_read.c
-> @@ -49,6 +49,7 @@ int main(int argc, char *argv[])
->   		      size, SPLICE_F_MOVE);
->   	if (spliced < 0) {
->   		perror("splice");
-> +		fprintf(stderr, "May try: %s /etc/os-release | cat\n", argv[0]);
+Bert Karwatzki
 
-Is this supposed to be usage or help message?
-
->   		return EXIT_FAILURE;
->   	}
->   
-> diff --git a/tools/testing/selftests/splice/splice_read.sh b/tools/testing/selftests/splice/splice_read.sh
-> new file mode 100755
-> index 000000000000..10fd5d738a2d
-> --- /dev/null
-> +++ b/tools/testing/selftests/splice/splice_read.sh
-> @@ -0,0 +1,9 @@
-> +#!/bin/sh
-> +# SPDX-License-Identifier: GPL-2.0
-> +set -e
-> +nl=$(./splice_read /etc/os-release | wc -l)
-> +
-> +test "$nl" != 0 && exit 0
-> +
-> +echo "splice_read broken"
-> +exit 1
-
-thanks,
--- Shuah
 
