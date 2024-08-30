@@ -1,257 +1,253 @@
-Return-Path: <linux-kernel+bounces-308852-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308853-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 074CB9662B7
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 15:14:37 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AB2E9662BB
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 15:15:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2801D1C23513
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 13:14:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 84A85B20582
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 13:15:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D852D1ACDEF;
-	Fri, 30 Aug 2024 13:14:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 018B2192D7B;
+	Fri, 30 Aug 2024 13:15:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aI2lZoKd"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=digitalocean.com header.i=@digitalocean.com header.b="CcZGbGRo"
+Received: from mail-oa1-f49.google.com (mail-oa1-f49.google.com [209.85.160.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0189B18E378;
-	Fri, 30 Aug 2024 13:14:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EE8018EFD2
+	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 13:15:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725023667; cv=none; b=bEzXXiEeklM8Sxxrg1X+zZS1Lv/iwXlw8ZGCW6PNzCvPg9XmJ9buNC6PLiKTahZ3e6WKRtWKhCsSEeBb7H0s9D/ZSxFABQ65i23gs0913sKlisYKCoC/QcWH1G6D5qK1G67Xkonob9t9R21b2+4/GACcu8n8+HLktoWsIbqqN2w=
+	t=1725023718; cv=none; b=D3H/Rna4Gl/ZYlu1TlwmOfdUwifBM/5YkWOxmtLqzZv/HPxxKc2j2DQvwFXFF5Dt/FDLq9tO0t//CIAXLO1XheGJvFLvUWhNgZy19UALJ7HkuaGbkjYkjcW3YpvCKi2sYUXcUFhLyEkW5CyMxseY1NLwSUEk9vCFlkhk14M+62k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725023667; c=relaxed/simple;
-	bh=TySXN9cetRSmWCN4veZ0Z+ZRgq1TPvA79rVPiBwac+4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=D3auLFJI92jTUxK8JmZMMfBCo2Ru9XcRD907QTUKm5L2uNdcH+4tvE0/iEPOuuAsL7qPklM7/DTAOtAHEa7vge8TcnYdHE/xzvEgtytHedTNKr8TpV91XqAZEgRPJVYrE3lO4sTxfiWlI4pv5xhw1vW/IY+qRPHH0tQiNmPlfNM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aI2lZoKd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9E2DC4CEC7;
-	Fri, 30 Aug 2024 13:14:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725023665;
-	bh=TySXN9cetRSmWCN4veZ0Z+ZRgq1TPvA79rVPiBwac+4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=aI2lZoKdVO4xG0+gXii7ySQH3bs/WeE3GnlzN0ACXWuE8tQ+9WUgN4Zt4xfDHYJ3T
-	 hcfihE9fHi01molNCNcOd2meJ1QJIB+N8s4Ryz3S8XDuIIeqpWPNHLxSrJ54IxdsN0
-	 /1gskhy8CUBTDquIJE6AfgDEapIcSqLBsN2AlvWgAKBz++w0AI4DiY0P/PtKsM8Xgd
-	 dKjXb0ElyWB5NGP4RhIpf5qAgf3ebFIribKNoD08hSYFGTN9e97M2A/GfhcRMXhhuz
-	 sCZFCyY+/9QbCmcIgWxt7ygcOyjsSoUikJF3nFN1cIQgVoqRp2CkVdgCit6aXnRlTu
-	 BfF/EOCO6N46Q==
-Date: Fri, 30 Aug 2024 14:14:20 +0100
-From: Conor Dooley <conor@kernel.org>
-To: "Sperling, Tobias" <Tobias.Sperling@softing.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-hwmon@vger.kernel.org" <linux-hwmon@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-	"jdelvare@suse.com" <jdelvare@suse.com>,
-	"linux@roeck-us.net" <linux@roeck-us.net>,
-	"robh@kernel.org" <robh@kernel.org>,
-	"krzk+dt@kernel.org" <krzk+dt@kernel.org>,
-	"conor+dt@kernel.org" <conor+dt@kernel.org>,
-	"corbet@lwn.net" <corbet@lwn.net>,
-	Jonathan Cameron <jic23@kernel.org>, linux-iio@vger.kernel.org
-Subject: Re: [PATCH 1/2] dt-bindings: hwmon: Introduce ADS71x8
-Message-ID: <20240830-chaos-unrivaled-04c5c4c6add9@spud>
-References: <BE1P281MB24208CB90AF549578AA5C384EF972@BE1P281MB2420.DEUP281.PROD.OUTLOOK.COM>
+	s=arc-20240116; t=1725023718; c=relaxed/simple;
+	bh=0JUFgJrZCyLHbuoyvfTevfGPfsUEGgoeCm03Y51wjd8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EQCyNgNuON3yZ7flPvNfZBRed2ErJu3TedicgSa2SfK+77UZhk0tW6T9FP3rWoswkc5so8PrQShecwlGO9AcG2iHZ5Sod1HAQdTNwncukcB8fM7uAXGxuJmhR4CYeo7+xi1L/5vdLlE2SJnwjuhZaJjoHCpvAgZ6TwUV/IjciuM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=digitalocean.com; spf=pass smtp.mailfrom=digitalocean.com; dkim=pass (1024-bit key) header.d=digitalocean.com header.i=@digitalocean.com header.b=CcZGbGRo; arc=none smtp.client-ip=209.85.160.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=digitalocean.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digitalocean.com
+Received: by mail-oa1-f49.google.com with SMTP id 586e51a60fabf-273c8514254so1098289fac.0
+        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 06:15:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=digitalocean.com; s=google; t=1725023715; x=1725628515; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=VprTCVdPbtS+6PHftPZIj/39sG8TMOu+xi6y54Sq9AA=;
+        b=CcZGbGRojnzdvUPZBHmA6mhTRe79Fs/j6OUYpkgIcIyRwyrw0Td0Lvu3gEqRHyf0cS
+         xFFxeobe8RZdYUcnjaigyJsGZiX6fAdwmWr0LSHb3BmVB3mh1aDJee5o3oQTKMCoJIsI
+         wsLuDebwfmyShbN0DfK4A6s5cr2foMRBEb+vw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725023715; x=1725628515;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=VprTCVdPbtS+6PHftPZIj/39sG8TMOu+xi6y54Sq9AA=;
+        b=EfRz1BCs1NDiw4cfQwtzt7aXCKYACZBcO1jxg9Ua871kZ1Hba4mbdEaGvg1nrxZDsV
+         sN5PObF8Nq/V3eYrma/mwzDSGETRmUzcKFtfYJKZy3KQajBduxe0fRDLMNq97hJnOtlF
+         m5IfX7MN63wTacyqQXyCMmtQzON5hlLkR+JTJTCPy78DN6MMGK0DcQdXe+YHh6BM52YX
+         u1AO8wqK3F7Z+0cTS4r33ZyyZbZz5JPURCJ0Y6RBThcbohKbh/PpSyYM9J46csCVMkyU
+         VLGz01sG0RPi+JKeQfWvD4vp8VkuJeQ2yhTLA0W/kt5AhO6G1RTBVnZnzdbPbxaAi3jv
+         jwdQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX3ogGHbkGIa/WK+QCvss8kjqWlhPPds0A7CBBArCws7WOtXwyKNt63tye9YOiJZ4cEELAfkqKVTL4dujE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwqS/mdINHqnFdNEqv+nPd6Mke8he1OkUu5hmfEnPTX34Z/9AVh
+	gMyyD9SP+0GhLLadoawm/jTZfcFHLiohD2ZEYaKZT142rbujuNwhWrf9jXorNfw=
+X-Google-Smtp-Source: AGHT+IEEf8JDw0+ehxvIQaSDZh9XomjN8oJZ98PS+YmIyAoTGCq+h+/U7tisWHB2JSk4bSqDG6a6Cw==
+X-Received: by 2002:a05:6871:58b:b0:260:f058:48eb with SMTP id 586e51a60fabf-27790129b30mr6397898fac.20.1725023715099;
+        Fri, 30 Aug 2024 06:15:15 -0700 (PDT)
+Received: from ?IPV6:2603:8080:7400:36da:b4f6:16b8:9118:2c1a? ([2603:8080:7400:36da:b4f6:16b8:9118:2c1a])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-277abae1dc0sm529859fac.12.2024.08.30.06.15.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 30 Aug 2024 06:15:14 -0700 (PDT)
+Message-ID: <f5e3768d-bb16-48eb-96df-ce5f9593b843@digitalocean.com>
+Date: Fri, 30 Aug 2024 08:15:12 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="lRANKpXNUz7vXikp"
-Content-Disposition: inline
-In-Reply-To: <BE1P281MB24208CB90AF549578AA5C384EF972@BE1P281MB2420.DEUP281.PROD.OUTLOOK.COM>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] vdpa: Add support to update speed/duplex in
+ vDPA/mlx5_vnet
+To: Jason Wang <jasowang@redhat.com>, Dragos Tatulea <dtatulea@nvidia.com>
+Cc: Carlos Bilbao <carlos.bilbao.osdev@gmail.com>, mst@redhat.com,
+ bilbao@vt.edu, xuanzhuo@linux.alibaba.com, eperezma@redhat.com,
+ cratiu@nvidia.com, lingshan.zhu@intel.com, virtualization@lists.linux.dev,
+ linux-kernel@vger.kernel.org
+References: <20240829161620.38679-1-carlos.bilbao.osdev@gmail.com>
+ <20240829161620.38679-3-carlos.bilbao.osdev@gmail.com>
+ <c15d3682-05ee-437c-b51c-d6a824252d76@nvidia.com>
+ <CACGkMEtDSDTS_SVvsf7nwMdabGCN85P-r5WpjgZdVDV5PMdc0g@mail.gmail.com>
+Content-Language: en-US
+From: Carlos Bilbao <cbilbao@digitalocean.com>
+In-Reply-To: <CACGkMEtDSDTS_SVvsf7nwMdabGCN85P-r5WpjgZdVDV5PMdc0g@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Hello,
+
+On 8/29/24 9:31 PM, Jason Wang wrote:
+> On Fri, Aug 30, 2024 at 5:08 AM Dragos Tatulea <dtatulea@nvidia.com> wrote:
+>> (resending as I accidentally replied only to Carlos)
+>>
+>> On 29.08.24 18:16, Carlos Bilbao wrote:
+>>> From: Carlos Bilbao <cbilbao@digitalocean.com>
+>>>
+>>> Include support to update the vDPA configuration fields of speed and
+>>> duplex (as needed by VHOST_VDPA_SET_CONFIG). This includes function
+>>> mlx5_vdpa_set_config() as well as changes in vdpa.c to fill the initial
+>>> values to UNKNOWN. Also add a warning message for when
+>>> mlx5_vdpa_get_config() receives offset and length out of bounds.
+>>>
+>>> Signed-off-by: Carlos Bilbao <cbilbao@digitalocean.com>
+>>> ---
+>>>  drivers/vdpa/mlx5/net/mlx5_vnet.c | 34 ++++++++++++++++++++++++++++++-
+>>>  drivers/vdpa/vdpa.c               | 27 ++++++++++++++++++++++++
+>>>  include/uapi/linux/vdpa.h         |  2 ++
+>>>  3 files changed, 62 insertions(+), 1 deletion(-)
+>>>
+>>> diff --git a/drivers/vdpa/mlx5/net/mlx5_vnet.c b/drivers/vdpa/mlx5/net/mlx5_vnet.c
+>>> index c47009a8b472..a44bb2072eec 100644
+>>> --- a/drivers/vdpa/mlx5/net/mlx5_vnet.c
+>>> +++ b/drivers/vdpa/mlx5/net/mlx5_vnet.c
+>>> @@ -3221,12 +3221,44 @@ static void mlx5_vdpa_get_config(struct vdpa_device *vdev, unsigned int offset,
+>>>
+>>>       if (offset + len <= sizeof(struct virtio_net_config))
+>>>               memcpy(buf, (u8 *)&ndev->config + offset, len);
+>>> +     else
+>>> +             mlx5_vdpa_warn(mvdev, "Offset and length out of bounds\n");
+>>>  }
+>>>
+>>>  static void mlx5_vdpa_set_config(struct vdpa_device *vdev, unsigned int offset, const void *buf,
+>>>                                unsigned int len)
+>>>  {
+>>> -     /* not supported */
+>>> +     struct mlx5_vdpa_dev *mvdev = to_mvdev(vdev);
+>>> +     struct mlx5_vdpa_net *ndev = to_mlx5_vdpa_ndev(mvdev);
+>>> +
+>>> +     if (offset + len > sizeof(struct virtio_net_config)) {
+>>> +             mlx5_vdpa_warn(mvdev, "Offset and length out of bounds\n");
+>>> +             return;
+>>> +     }
+>>> +
+>>> +     /*
+>>> +      * Note that this will update the speed/duplex configuration fields
+>>> +      * but the hardware support to actually perform this change does
+>>> +      * not exist yet.
+>>> +      */
+>>> +     switch (offset) {
+>>> +     case offsetof(struct virtio_net_config, speed):
+>>> +             if (len == sizeof(((struct virtio_net_config *) 0)->speed))
+>>> +                     memcpy(&ndev->config.speed, buf, len);
+>>> +             else
+>>> +                     mlx5_vdpa_warn(mvdev, "Invalid length for speed.\n");
+>>> +             break;
+>>> +
+>>> +     case offsetof(struct virtio_net_config, duplex):
+>>> +             if (len == sizeof(((struct virtio_net_config *)0)->duplex))
+>>> +                     memcpy(&ndev->config.duplex, buf, len);
+>>> +             else
+>>> +                     mlx5_vdpa_warn(mvdev, "Invalid length for duplex.\n");
+>>> +             break;
+>>> +
+>>> +     default:
+>>> +             mlx5_vdpa_warn(mvdev, "Configuration field not supported.\n");
+>> This will trigger noise in dmesg because there is a MAC configuration here.
+>>> +     }
+>> I would prefer that the .set_config remains a stub TBH. Setting the fields here is
+>> misleading: the user might deduce that the configuration worked when they read the
+>> values and see that they were updated.
+> Yes, and actually, those fields are read-only according to the spec:
+>
+> """
+> The network device has the following device configuration layout. All
+> of the device configuration fields are read-only for the driver.
+> """
+>
+> Thanks
 
 
---lRANKpXNUz7vXikp
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Should I go ahead and remove the ioctl then?
 
-Hey Tobias, Guenter, Jonathan,
 
-On Fri, Aug 30, 2024 at 11:49:53AM +0000, Sperling, Tobias wrote:
-> From b2e04ce5500faf274654be5284be9db4f3abefce Mon Sep 17 00:00:00 2001
-> From: Tobias Sperling <tobias.sperling@softing.com>
-> Date: Fri, 23 Aug 2024 12:08:33 +0200
-> Subject: [PATCH 1/2] dt-bindings: hwmon: Introduce ADS71x8
->=20
-> Add documentation for the driver of ADS7128 and ADS7138 12-bit, 8-channel
-> analog-to-digital converters. These ADCs have a wide operating range and
-> a wide feature set. Communication is based on an I2C interface.
-> The driver provides the functionality of manually reading single channels
-> or sequentially reading all channels automatically.
->=20
-> Signed-off-by: Tobias Sperling <tobias.sperling@softing.com>
-> ---
->  .../devicetree/bindings/hwmon/ti,ads71x8.yaml |  85 +++++++++++
+>
+>> Thanks,
+>> dragos
+>>>  }
+>>>
+>>>  static u32 mlx5_vdpa_get_generation(struct vdpa_device *vdev)
+>>> diff --git a/drivers/vdpa/vdpa.c b/drivers/vdpa/vdpa.c
+>>> index 4dbd2e55a288..b920e4405f6d 100644
+>>> --- a/drivers/vdpa/vdpa.c
+>>> +++ b/drivers/vdpa/vdpa.c
+>>> @@ -15,6 +15,7 @@
+>>>  #include <net/genetlink.h>
+>>>  #include <linux/mod_devicetable.h>
+>>>  #include <linux/virtio_ids.h>
+>>> +#include <uapi/linux/ethtool.h>
+>>>
+>>>  static LIST_HEAD(mdev_head);
+>>>  /* A global mutex that protects vdpa management device and device level operations. */
+>>> @@ -919,6 +920,22 @@ static int vdpa_dev_net_status_config_fill(struct sk_buff *msg, u64 features,
+>>>       return nla_put_u16(msg, VDPA_ATTR_DEV_NET_STATUS, val_u16);
+>>>  }
+>>>
+>>> +static int vdpa_dev_net_speed_config_fill(struct sk_buff *msg, u64 features,
+>>> +                                     struct virtio_net_config *config)
+>>> +{
+>>> +     __le32 speed = cpu_to_le32(SPEED_UNKNOWN);
+>>> +
+>>> +     return nla_put(msg, VDPA_ATTR_DEV_NET_CFG_SPEED, sizeof(speed), &speed);
+>>> +}
+>>> +
+>>> +static int vdpa_dev_net_duplex_config_fill(struct sk_buff *msg, u64 features,
+>>> +                                     struct virtio_net_config *config)
+>>> +{
+>>> +     u8 duplex = DUPLEX_UNKNOWN;
+>>> +
+>>> +     return nla_put(msg, VDPA_ATTR_DEV_NET_CFG_DUPLEX, sizeof(duplex), &duplex);
+>>> +}
+>>> +
+>>>  static int vdpa_dev_net_config_fill(struct vdpa_device *vdev, struct sk_buff *msg)
+>>>  {
+>>>       struct virtio_net_config config = {};
+>>> @@ -940,6 +957,16 @@ static int vdpa_dev_net_config_fill(struct vdpa_device *vdev, struct sk_buff *ms
+>>>
+>>>       if (vdpa_dev_net_status_config_fill(msg, features_device, &config))
+>>>               return -EMSGSIZE;
+>>> +     /*
+>>> +      * mlx5_vdpa vDPA devicess currently do not support the
+>>> +      * VIRTIO_NET_F_SPEED_DUPLEX feature, which reports speed and
+>>> +      * duplex; hence these are set to UNKNOWN for now.
+>>> +      */
+>>> +     if (vdpa_dev_net_speed_config_fill(msg, features_device, &config))
+>>> +             return -EMSGSIZE;
+>>> +
+>>> +     if (vdpa_dev_net_duplex_config_fill(msg, features_device, &config))
+>>> +             return -EMSGSIZE;
+>>>
+>>>       return vdpa_dev_net_mq_config_fill(msg, features_device, &config);
+>>>  }
+>>> diff --git a/include/uapi/linux/vdpa.h b/include/uapi/linux/vdpa.h
+>>> index 842bf1201ac4..1c64ee0dd7b1 100644
+>>> --- a/include/uapi/linux/vdpa.h
+>>> +++ b/include/uapi/linux/vdpa.h
+>>> @@ -43,6 +43,8 @@ enum vdpa_attr {
+>>>       VDPA_ATTR_DEV_NET_STATUS,               /* u8 */
+>>>       VDPA_ATTR_DEV_NET_CFG_MAX_VQP,          /* u16 */
+>>>       VDPA_ATTR_DEV_NET_CFG_MTU,              /* u16 */
+>>> +     VDPA_ATTR_DEV_NET_CFG_SPEED,            /* u32 */
+>>> +     VDPA_ATTR_DEV_NET_CFG_DUPLEX,           /* u8 */
+>>>
+>>>       VDPA_ATTR_DEV_NEGOTIATED_FEATURES,      /* u64 */
+>>>       VDPA_ATTR_DEV_MGMTDEV_MAX_VQS,          /* u32 */
 
-If this is a "generic" adc, why is it going into hwmon?
-I would have expected this to be in iio/adc, and use more typical adc
-bindings, even if the driver is in hwmon.
 
-Guenter/Jonathan wdyt?
+Thanks, Carlos
 
->  Documentation/hwmon/ads71x8.rst               | 140 ++++++++++++++++++
->  Documentation/hwmon/index.rst                 |   1 +
-
-And these two documents are not dt-bindings, so they should either be in
-their own commit or alongside the driver. Not sure how Guenter likes
-things.
-
->  3 files changed, 226 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/hwmon/ti,ads71x8.ya=
-ml
-
->  create mode 100644 Documentation/hwmon/ads71x8.rst
->=20
-> diff --git a/Documentation/devicetree/bindings/hwmon/ti,ads71x8.yaml b/Do=
-cumentation/devicetree/bindings/hwmon/ti,ads71x8.yaml
-> new file mode 100644
-> index 000000000000..e422c4ebd207
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/hwmon/ti,ads71x8.yaml
-
-Please make the filename match a compatible.
-
-> @@ -0,0 +1,85 @@
-> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +
-> +$id: http://devicetree.org/schemas/hwmon/ti,ads71x8.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Texas Instruments ADS7128/ADS7138 Analog to Digital Converter (AD=
-C)
-> +
-> +maintainers:
-> +  - None
-
-Nice trick..
-
-> +description: |
-> +  The ADS7128 is 12-Bit, 8-Channel Sampling Analog to Digital Converter =
-(ADC)
-> +  with an I2C interface.
-> +
-> +  Datasheets:
-> +    https://www.ti.com/product/ADS7128
-> +    https://www.ti.com/product/ADS7138
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - ti,ads7128
-> +      - ti,ads7138
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  avdd-supply:
-
-There's also a dvdd on the ads7128.
-
-> +    description:
-> +      The regulator used as analog supply voltage as well as reference v=
-oltage.
-> +
-> +  ti,mode:
-> +    $ref: /schemas/types.yaml#/definitions/uint8
-> +    description: |
-> +      Operation mode
-> +      Mode 0 - Manual mode. A channel is only sampled when the according=
- input
-> +        in the sysfs is read.
-> +      Mode 1 - Auto mode. All channels are automatically sampled sequent=
-ially.
-> +        Reading an input returns the last valid sample. In this mode fur=
-ther
-> +        features like statistics and interrupts are available.
-> +    default: 0
-
-I don't think this ti,mode property is suitable for bindings. sysfs is a
-linux implementation detail, when to do sampling is an implementation
-detail of your driver. Bindings are only supposed to describe properties
-of the hardware, not set software policy.
-
-> +
-> +  ti,interval:
-> +    $ref: /schemas/types.yaml#/definitions/uint16
-> +    description: |
-> +      Only considered in mode 1!
-> +      Interval in microseconds a new sample is triggered. Is set to clos=
-est
-> +      possible interval, see datasheet.
-
-For iio devices, this is usually set from userspace, not from
-devicetree, because it is usually not a hardware property, but rather
-something a user may want to change at runtime.
-
-> +    default: 1
-> +
-> +  interrupts:
-> +    description: |
-> +      Only considered in mode 1!
-> +      Interrupt specifier the device's ALERT pin is connected to. Level =
-must be
-> +      IRQ_TYPE_LEVEL_LOW. If not configured the digital window comparato=
-r (DWC)
-> +      is not available.
-> +    maxItems: 1
-
-You've got 8 channels on the device, so I would be expecting to see
-these described here, with a reference to adc.yaml, even if the only
-suitable property is "label".
-
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - avdd-supply
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/interrupt-controller/irq.h>
-> +    i2c {
-> +        #address-cells =3D <1>;
-> +        #size-cells =3D <0>;
-> +
-> +        ads7138@10 {
-
-This should just be "dac@".
-
-> +            compatible =3D "ti,ads7138";
-> +            reg =3D <0x10>;
-> +            avdd-supply =3D <&reg_stb_3v3>;
-> +            ti,mode =3D /bits/ 8 <1>;
-> +            ti,interval =3D /bits/ 16 <1000>;
-> +            interrupt-parent =3D <&gpio2>;
-> +            interrupts =3D <12 IRQ_TYPE_LEVEL_LOW>;
-> +            status =3D "okay";
-> +        };
-> +    };
-oCheers,
-Conor.
-
---lRANKpXNUz7vXikp
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZtHFrAAKCRB4tDGHoIJi
-0gGJAQDSrH+O91oma7P5k9E+GjH8BM9eGLiFTeSHh/mDeLBU0wEAnUlaR0cOocD3
-A5ar/PwXWSn7o6e3pz50rpHfAO4Iew8=
-=zvjM
------END PGP SIGNATURE-----
-
---lRANKpXNUz7vXikp--
 
