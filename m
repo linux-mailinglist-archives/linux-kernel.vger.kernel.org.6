@@ -1,266 +1,158 @@
-Return-Path: <linux-kernel+bounces-308945-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308946-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D2AF966421
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 16:26:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 370C7966424
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 16:26:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 81D811C232CB
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 14:26:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DDB051F2143C
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 14:26:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75ECE1B251C;
-	Fri, 30 Aug 2024 14:26:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B21C1B2521;
+	Fri, 30 Aug 2024 14:26:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BsUEulbA"
-Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SO27gycv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CC311A287C;
-	Fri, 30 Aug 2024 14:26:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0CE31A287C;
+	Fri, 30 Aug 2024 14:26:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725027978; cv=none; b=mC1PI2Bq/EXN0vW3S8CYngR/16icwxHsD5juJ8Kh1jdQeYXtb4yJCa/Inijmekmh1WoCtgCOpPMfgN5r4tabqzQR0fsuq9ohdj7ApQgaRjal9r7Ky57ItxJftrLxRnBpGYtIFzwdPpM1ykmlbmxfKdYcR8gXYJgIXqvoCLIm4nA=
+	t=1725027987; cv=none; b=Iv6QGkn7GvS4yDuMAbBvClia2mFkjpjDnT0f4EhZZSTDGaRVxQnEcIqj7Wl6IJOviAV7NiGF2FST+GRoGwh3QmHjnVQnukxsjnxifrohSUlGVZNfv05oGEg6J614K+EZrV63AW051BJLf4djsBNKBAuN0oI2HkSxDRy27IWJHF4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725027978; c=relaxed/simple;
-	bh=/lxB6OM0MBV+zgCQ/1R66rLa9t2Xg5JuxvAWQNcvk9U=;
+	s=arc-20240116; t=1725027987; c=relaxed/simple;
+	bh=pmYzM5MpkijOaA7CMYN4bxqSPHajG3ChAOSYGsOiQes=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nG7Aeu3EU/QCopM0HttJwdQ3+e8bmnpyo/TM4Lxhwe/kTxVGT4STscaF4x2t26qxuM6l+Oqe+BPNd94JPrbeAV6RKJk4ZpNUx3p8bOlfzF61QSmdMMgYmMMsYWjwaU0MIAzrvldehaSbfyeyR0eHD12KkOjoXR+JXkL6CgYpFL4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BsUEulbA; arc=none smtp.client-ip=209.85.160.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-4568780a168so9010811cf.0;
-        Fri, 30 Aug 2024 07:26:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725027976; x=1725632776; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=164jGs/89Um/AnOtSvrzje4FuBBYrC6pESzJaoUHWtE=;
-        b=BsUEulbA+4czh/Ym2h90qGvXW1H0xXujljo/y9SrmCaCRvbyuCMvXyUdmU5LR57NGE
-         oDHBQ5hGQ7BBuw+DUvYYUGcpI5oAwiJFNtPdFSz1y4LINRDFSoR1MMI3VxmpNVQMkK6Z
-         ugUSHWTcKZGMOsybzMyj1ONcb7jUxWBsC6hx1vkK5znDG+i53FquTNwhWZZZCQMbjXtR
-         UVJPlsxQydZQq1cKC0bG+7eSExVmxXivXUyWlSjUS1cBWQ8uwZ9VX4+sZbBIkfru3ZF4
-         iHwljdGBwpshpeuyOWfxIPHNluP1F8vFmewNsWBrBQk1OlR99fBAGSmQ8xxpE5BfsLV2
-         jxhw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725027976; x=1725632776;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=164jGs/89Um/AnOtSvrzje4FuBBYrC6pESzJaoUHWtE=;
-        b=RqtByZ7JJSdQV7w1YCRRS8yM5aaXXjS6Ru9Q6dVd0Gze652Aeouv0O9bs8plVbKQ2t
-         JZiKG4ksJpJ+pfIy0Z95HI6g0+8JkEzxZnX4AFzitRj08bQctHUDIpYx6ijdnIPTvR6a
-         kGoX6MbSx4XlJRrEtsdF0qNhxWOJ+TCInBWvlVHoyHNnc1Kpvy52quL6IeF21onBxx05
-         7KGbkjAZYMqlNuUlSSghxZRqkI/bL/wkWWPYUZkTT4qrBWMf8IIjXwHTHF+FSys88Jtv
-         qwX+Lr3a8RbbBPSWygHTXbjpceE+XoDRB8rEGemI3oGG1fJpyOcfFtuXSgQtfz95TERO
-         /wHg==
-X-Forwarded-Encrypted: i=1; AJvYcCVCt+rI7CDCNZvssdx+YaByhsbjSBD/lv8Ke/il7GL7A8v6/m8MEHwsFTOCpHipomju6BFt9GMj+6yryH+d@vger.kernel.org, AJvYcCWq8zUZbwlsY4xvlF3V/GQ/sOjj2uRxwJuDzMls/VModgSjhrVaaHJLSl9Y++ty5t8sDfGSYhHmyz00@vger.kernel.org
-X-Gm-Message-State: AOJu0YzdTx9ClkNMcN7vUyl+MKFLkAItIRL336ttp6zKGNyUJJV30RnT
-	nEFuMoy8RjeI9GkIepGWTteA2ZToyKJlatwSupVra2RyU+Qhm13L
-X-Google-Smtp-Source: AGHT+IGtqcgwB7aiUspmKw2bWDAFI8RK/cwOxSXe7Pj969PwCKlkOWWz/klTvLJp/wHKXlKwMNZbew==
-X-Received: by 2002:ac8:7c92:0:b0:456:81d1:dfe5 with SMTP id d75a77b69052e-45681d1e484mr48660541cf.40.1725027975851;
-        Fri, 30 Aug 2024 07:26:15 -0700 (PDT)
-Received: from VM-Arch (ip-185-104-139-72.ptr.icomera.net. [185.104.139.72])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-45682c865fcsm13994151cf.17.2024.08.30.07.26.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 30 Aug 2024 07:26:15 -0700 (PDT)
-Date: Fri, 30 Aug 2024 10:26:11 -0400
-From: Alex Lanzano <lanzano.alex@gmail.com>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: airlied@gmail.com, conor+dt@kernel.org, daniel@ffwll.ch, 
-	devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org, krzk+dt@kernel.org, 
-	linux-kernel@vger.kernel.org, maarten.lankhorst@linux.intel.com, mehdi.djait@bootlin.com, 
-	mripard@kernel.org, robh@kernel.org, tzimmermann@suse.de
-Subject: Re: [RESEND PATCH v4 2/2] drm/tiny: Add driver for Sharp Memory LCD
-Message-ID: <xjimc7o6lgaivockfugwfmdsae6fm7hz2cd4nvvwkuavabjjkd@kvo4alvvoqzl>
-References: <20240819214943.1610691-1-lanzano.alex@gmail.com>
- <20240819214943.1610691-3-lanzano.alex@gmail.com>
- <3c8359ae-9a12-41c8-9799-86de9024fcd4@wanadoo.fr>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Tp0uONQX4DlG7rS76zq+QpUPiNawzRZWP8Mr3tSyFP5CuxX2CFPUfYO2WNMUN8ivNvmoP5xTy76RzjU/qYQRsuFXJA992uMHvKxll8NaStsJsdho06/GKPz1i/f4C3jcxRJKuFHwLO10PieRUI128W6y7FiJJAPdUsATyHfawhY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SO27gycv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83023C4CEC2;
+	Fri, 30 Aug 2024 14:26:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725027987;
+	bh=pmYzM5MpkijOaA7CMYN4bxqSPHajG3ChAOSYGsOiQes=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=SO27gycvv+aDYmKxVhjyBiJTnPuCee7lg/BcgPfW2Q0iMJcKcGKqIci/op8gB80Jv
+	 Zh/JKKmFEyKS01eMkht6Ykm4jGoG064O2DhiATVXgoh2r/EuhwKOvTUaHgMX3M3O3F
+	 gAlAjlLknPf2eP5u2wx8hVFVvMZKR4SykLzcB1Kh6K8w6AmyLmd3iYdNBXq3S+4XPD
+	 8aPNdcdcUngfaVG2IWv89pOp95ZFM34i0595GDXiKRD2vBzcaXLYnXx0w9KOLk0m3F
+	 0+s0Ge5JFuWHlZqPPm8R40LAj4YlGIXhyxCfWANFaBQVHX2Ws/sLSv/7hyZaco79j5
+	 kUIaqDr1bWSpw==
+Date: Fri, 30 Aug 2024 15:26:23 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Antoniu Miclaus <antoniu.miclaus@analog.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Michael Hennerich <michael.hennerich@analog.com>,
+	linux-input@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] dt-bindings: touchscreen: ad7877: add bindings
+Message-ID: <20240830-most-amiss-dc8bf471ce9a@spud>
+References: <20240829092007.25850-1-antoniu.miclaus@analog.com>
+ <20240829092007.25850-2-antoniu.miclaus@analog.com>
+ <20240829-mossy-dispense-bab38650455f@spud>
+ <ZtC48cOrWPG5SdiS@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="A0uBSx1XFuQdwCNx"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <3c8359ae-9a12-41c8-9799-86de9024fcd4@wanadoo.fr>
+In-Reply-To: <ZtC48cOrWPG5SdiS@google.com>
 
-On Tue, Aug 20, 2024 at 08:53:07AM GMT, Christophe JAILLET wrote:
-> Le 19/08/2024 à 23:49, Alex Lanzano a écrit :
-> > Add support for the monochrome Sharp Memory LCDs.
-> 
-> Hi,
-> 
-> a few nitpick below, should thre be a v5.
-> 
-> ...
-> 
-> > +struct sharp_memory_device {
-> > +	struct drm_device drm;
-> > +	struct spi_device *spi;
-> > +
-> > +	const struct drm_display_mode *mode;
-> > +
-> > +	struct drm_crtc crtc;
-> > +	struct drm_plane plane;
-> > +	struct drm_encoder encoder;
-> > +	struct drm_connector connector;
-> > +
-> > +	struct gpio_desc *enable_gpio;
-> > +
-> > +	struct task_struct *sw_vcom_signal;
-> > +	struct pwm_device *pwm_vcom_signal;
-> > +
-> > +	enum sharp_memory_vcom_mode vcom_mode;
-> > +	u8 vcom;
-> > +
-> > +	u32 pitch;
-> > +	u32 tx_buffer_size;
-> > +	u8 *tx_buffer;
-> > +
-> > +	/* When vcom_mode == "software" a kthread is used to
-> > +	 * periodically send a 'maintain display' message over
-> > +	 * spi. This mutex ensures tx_buffer access and spi bus
-> > +	 * usage is synchronized in this case
-> 
-> This comment could take only 3 lines and still be with < 80 lines.
-> A dot could also be added at the end of the 2nd sentence.
-> 
-> > +	 */
-> > +	struct mutex tx_mutex;
-> > +};
-> 
-> ...
-> 
-> > +static int sharp_memory_probe(struct spi_device *spi)
-> > +{
-> > +	int ret;
-> > +	struct device *dev;
-> > +	struct sharp_memory_device *smd;
-> > +	struct drm_device *drm;
-> > +	const char *vcom_mode_str;
-> > +
-> > +	ret = spi_setup(spi);
-> > +	if (ret < 0)
-> > +		return dev_err_probe(&spi->dev, ret, "Failed to setup spi device\n");
-> > +
-> > +	dev = &spi->dev;
-> 
-> If done earlier (when dev is declared?), it could already be used in the
-> dev_err_probe() just above?
-> 
-> > +	if (!dev->coherent_dma_mask) {
-> > +		ret = dma_coerce_mask_and_coherent(dev, DMA_BIT_MASK(32));
-> > +		if (ret)
-> > +			return dev_err_probe(dev, ret, "Failed to set dma mask\n");
-> > +	}
-> > +
-> > +	smd = devm_drm_dev_alloc(dev, &sharp_memory_drm_driver,
-> > +				 struct sharp_memory_device, drm);
-> > +	if (!smd)
-> > +		return -ENOMEM;
-> > +
-> > +	spi_set_drvdata(spi, smd);
-> > +
-> > +	smd->spi = spi;
-> > +	drm = &smd->drm;
-> > +	ret = drmm_mode_config_init(drm);
-> > +	if (ret)
-> > +		return dev_err_probe(dev, ret, "Failed to initialize drm config\n");
-> > +
-> > +	smd->enable_gpio = devm_gpiod_get_optional(dev, "enable", GPIOD_OUT_HIGH);
-> > +	if (!smd->enable_gpio)
-> > +		dev_warn(dev, "Enable gpio not defined\n");
-> > +
-> > +	/*
-> > +	 * VCOM is a signal that prevents DC bias from being built up in
-> > +	 * the panel resulting in pixels being forever stuck in one state.
-> > +	 *
-> > +	 * This driver supports three different methods to generate this
-> > +	 * signal depending on EXTMODE pin:
-> > +	 *
-> > +	 * software (EXTMODE = L) - This mode uses a kthread to
-> > +	 * periodically send a "maintain display" message to the display,
-> > +	 * toggling the vcom bit on and off with each message
-> > +	 *
-> > +	 * external (EXTMODE = H) - This mode relies on an external
-> > +	 * clock to generate the signal on the EXTCOMM pin
-> > +	 *
-> > +	 * pwm (EXTMODE = H) - This mode uses a pwm device to generate
-> > +	 * the signal on the EXTCOMM pin
-> > +	 *
-> > +	 */
-> > +	if (device_property_read_string(&spi->dev, "sharp,vcom-mode", &vcom_mode_str))
-> 
-> just dev?
-> 
-> > +		return dev_err_probe(dev, -EINVAL,
-> > +				     "Unable to find sharp,vcom-mode node in device tree\n");
-> > +
-> > +	if (!strcmp("software", vcom_mode_str)) {
-> > +		smd->vcom_mode = SHARP_MEMORY_SOFTWARE_VCOM;
-> > +
-> > +	} else if (!strcmp("external", vcom_mode_str)) {
-> > +		smd->vcom_mode = SHARP_MEMORY_EXTERNAL_VCOM;
-> > +
-> > +	} else if (!strcmp("pwm", vcom_mode_str)) {
-> > +		smd->vcom_mode = SHARP_MEMORY_PWM_VCOM;
-> > +		ret = sharp_memory_init_pwm_vcom_signal(smd);
-> > +		if (ret)
-> > +			return dev_err_probe(dev, ret,
-> > +					     "Failed to initialize external COM signal\n");
-> > +	} else {
-> > +		return dev_err_probe(dev, -EINVAL, "Invalid value set for vcom-mode\n");
-> > +	}
-> > +
-> > +	drm->mode_config.funcs = &sharp_memory_mode_config_funcs;
-> > +	smd->mode = spi_get_device_match_data(spi);
-> > +
-> > +	smd->pitch = (SHARP_ADDR_PERIOD + smd->mode->hdisplay + SHARP_DUMMY_PERIOD) / 8;
-> > +	smd->tx_buffer_size = (SHARP_MODE_PERIOD +
-> > +			       (SHARP_ADDR_PERIOD + (smd->mode->hdisplay) + SHARP_DUMMY_PERIOD) *
-> > +			       smd->mode->vdisplay) / 8;
-> > +
-> > +	smd->tx_buffer = devm_kzalloc(&spi->dev, smd->tx_buffer_size, GFP_KERNEL);
-> 
-> Just dev?
-> 
-> > +	if (!smd->tx_buffer)
-> > +		return -ENOMEM;
-> > +
-> > +	mutex_init(&smd->tx_mutex);
-> > +
-> > +	drm->mode_config.min_width = smd->mode->hdisplay;
-> > +	drm->mode_config.max_width = smd->mode->hdisplay;
-> > +	drm->mode_config.min_height = smd->mode->vdisplay;
-> > +	drm->mode_config.max_height = smd->mode->vdisplay;
-> > +
-> > +	ret = sharp_memory_pipe_init(drm, smd, sharp_memory_formats,
-> > +				     ARRAY_SIZE(sharp_memory_formats),
-> > +				     NULL);
-> > +	if (ret)
-> > +		return dev_err_probe(dev, ret, "Failed to initialize display pipeline.\n");
-> > +
-> > +	drm_plane_enable_fb_damage_clips(&smd->plane);
-> > +	drm_mode_config_reset(drm);
-> > +
-> > +	ret = drm_dev_register(drm, 0);
-> > +	if (ret)
-> > +		return dev_err_probe(dev, ret, "Failed to register drm device.\n");
-> > +
-> > +	drm_fbdev_dma_setup(drm, 0);
-> > +
-> > +	return 0;
-> > +}
-> 
-> ...
-> 
-> CJ
-> 
 
-Thank you for the review! Will address in v5
+--A0uBSx1XFuQdwCNx
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Thu, Aug 29, 2024 at 11:07:45AM -0700, Dmitry Torokhov wrote:
+> On Thu, Aug 29, 2024 at 05:16:30PM +0100, Conor Dooley wrote:
+> > On Thu, Aug 29, 2024 at 12:19:36PM +0300, Antoniu Miclaus wrote:
+> > > Add device tree bindings for the ad7877 driver.
+> > >=20
+> > > Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
+> > > ---
+> > >  .../input/touchscreen/adi,ad7877.yaml         | 58 +++++++++++++++++=
+++
+> > >  1 file changed, 58 insertions(+)
+> > >  create mode 100644 Documentation/devicetree/bindings/input/touchscre=
+en/adi,ad7877.yaml
+> > >=20
+> > > diff --git a/Documentation/devicetree/bindings/input/touchscreen/adi,=
+ad7877.yaml b/Documentation/devicetree/bindings/input/touchscreen/adi,ad787=
+7.yaml
+> > > new file mode 100644
+> > > index 000000000000..5fc5124c5999
+> > > --- /dev/null
+> > > +++ b/Documentation/devicetree/bindings/input/touchscreen/adi,ad7877.=
+yaml
+> > > @@ -0,0 +1,58 @@
+> > > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > > +%YAML 1.2
+> > > +---
+> > > +$id: http://devicetree.org/schemas/input/touchscreen/adi,ad7877.yaml#
+> > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > > +
+> > > +title: Analog Devices AD7877 Touch Screen Controller
+> > > +
+> > > +maintainers:
+> > > +  - Antoniu Miclaus <antoniu.miclaus@analog.com>
+> > > +
+> > > +description: |
+> > > +  Analog Devices Touch Screen Controller
+> > > +  https://www.analog.com/media/en/technical-documentation/data-sheet=
+s/AD7877.pdf
+> > > +
+> > > +allOf:
+> > > +  - $ref: touchscreen.yaml#
+> > > +  - $ref: /schemas/spi/spi-peripheral-props.yaml#
+> >=20
+> > > +
+> > > +unevaluatedProperties: false
+> >=20
+> > So, all of the properties in those two files are valid for this
+> > touchscreen controller?
+>=20
+> No, the driver does not support transformations (swapping axes,
+> inverting, etc) but that is driver limitation, not property of the
+> hardware, which DT supposed to be, right?
+
+Yeah, I'm only interested in whether or not the properties are actually
+applicable to the hardware. In particular, if there are properties in
+spi-peripheral-props required for functionality (eg active high cs) I
+would like to see them required.
+
+>=20
+> Still I think we need to extend the driver to do that before adding DT
+> match tables and adding DT bindings (or maybe together with it).
+>=20
+> The driver also need to have proper GPIO controller support instead of
+> having ad-hoc sysfs attributes, and converting in now before there are
+> mainline users would be a good time.
+
+Do you mean that this device is a provider of GPIOs? If so, then
+absolutely I would want to see gpio controller properties in the binding
+here before adding support.
+
+
+--A0uBSx1XFuQdwCNx
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZtHWjwAKCRB4tDGHoIJi
+0isBAP48uEmWI6U5r9oDXiomBQN6AGXRF+1FWjY3XS1LkHRrpgD7BG62flIYjrG5
+cOYNpDlHBJ+hoMM3pCF9yc+0ts3HrgI=
+=7DMl
+-----END PGP SIGNATURE-----
+
+--A0uBSx1XFuQdwCNx--
 
