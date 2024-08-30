@@ -1,140 +1,154 @@
-Return-Path: <linux-kernel+bounces-308756-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308769-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42F7696616F
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 14:19:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4E5396618D
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 14:26:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0194528305F
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 12:19:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7CBF3289791
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 12:26:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0FBA199955;
-	Fri, 30 Aug 2024 12:19:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5761199FBB;
+	Fri, 30 Aug 2024 12:23:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PsYLY0cg"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kitfTdpu"
+Received: from mail-yb1-f178.google.com (mail-yb1-f178.google.com [209.85.219.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E1381D1312;
-	Fri, 30 Aug 2024 12:19:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7556B195985;
+	Fri, 30 Aug 2024 12:23:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725020371; cv=none; b=ceocpKMhv7kNqOTUJKtYysfkW9wCvNVYsDm/4v0e2lHGDsJRJW7aPqEB/eRWjM/PwhZFDHlNXnqhMfFGxa75eusTrX4y/wt40ByvAtuhGp55EjHwStFGdYMlWR6zdgT1PJsgNtkD2dKpYtFIJj5WQwkTSukDQ/6qKbvBCI3DuV4=
+	t=1725020611; cv=none; b=tNOmy7NplYUAZTx7F2H5zaOPKdJFkWOneCSAwAi09IwMCHa/cO1+Kbizp43XlL0P0+Xd6VGVrshESH4YPv2rINCEV9zoz5Iq8zunfqdshkslEV6pIMiYvP3wB2TsC77kD4hzY/BL/zrpfmWtne8vHtw6QkZO9KMQVw60vRB2MeA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725020371; c=relaxed/simple;
-	bh=GYwcdTpZfkB/eg8RZ00QmtBiRQ1q3q5j/qKFwnlXm7E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=im+EH2jHAVkfSNWDNcvMBmtH99tU4kW/jwcdhWwBIAE9kYl7IJL9yqJvoJJPYwkB1MtKYCk9XbYYAHcgw6zcw9kEdz1N4B9dhYtBG7aNB9bk4JcAqRruY6VlUB3gwGj5UdMqaQ/giLUK1xXvzw/z2GJmZPaz5oi2Nid95Nko6d4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PsYLY0cg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70DA0C4CEC2;
-	Fri, 30 Aug 2024 12:19:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725020370;
-	bh=GYwcdTpZfkB/eg8RZ00QmtBiRQ1q3q5j/qKFwnlXm7E=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=PsYLY0cg0EC69Ei/jFLhXSsiEl/O/fDYmSkncYrIk5fihN5IQX99pjcu4H4GHJbaG
-	 EdE1fD492/+aLhGd3p784mVMZvWS1s6Mh4Ten2AMFov2huw2j1EWGr3D4SECLrMjXH
-	 xDskfUILHJYP6rNAsaq4vZGh25H2AafPQ2AaGbD3TfusZP7lzK6+ROVaA6MxsjQnmz
-	 fLAuerZLT8bS/B2qL7yLR0yfiyLLCxMvFSG9dHamIXNnNSfnG0noh4Wq+I3B4+oyor
-	 4T203PuQu9FNBDw7p2IfT/nPS0F6CuhM/6fUr0XotIg6yXLnW8eQAkC4YCQlpJJ9cC
-	 0jaP4wlDc3CGg==
-Date: Fri, 30 Aug 2024 09:19:27 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	Nick Terrell <terrelln@fb.com>, Yanteng Si <siyanteng@loongson.cn>,
-	Yicong Yang <yangyicong@hisilicon.com>,
-	James Clark <james.clark@linaro.org>,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 5/8] perf header: Allow attributes to be written after
- data
-Message-ID: <ZtG4z5qPtCBNDdXO@x1>
-References: <20240829150154.37929-1-irogers@google.com>
- <20240829150154.37929-6-irogers@google.com>
- <ZtDMf886_1vXWt49@x1>
- <CAP-5=fURe7yVy6OGWdKn1eSzsdfZPyvvc5fRMPeNAjukaWOe1w@mail.gmail.com>
- <ZtDg2BAI0V5zKpjn@x1>
- <CAP-5=fXa0r7sD9xbtBVbJQFgnq=3i-cnj6gUX9tze0JyhLhvZw@mail.gmail.com>
+	s=arc-20240116; t=1725020611; c=relaxed/simple;
+	bh=BlLyslQpDGEzBxuUDe8Cov1IXreDXWei8o6rlcjjJik=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CRUj4bKoFhBUWkwz+7xSAmHLhCjX4yMMxB4W/FGi1E0idksu1dl3LYqv+4/qwX/oLU+M6U73AeL3PMp6c7NhXJ9Ah9y0vfzAUu69cTGKtlST/zRZg/X0aX+0SoFM2FYSMkWbsFGw0S2KrW9QmtOhReKKB3NBaOb4iwy7m6GFWso=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kitfTdpu; arc=none smtp.client-ip=209.85.219.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f178.google.com with SMTP id 3f1490d57ef6-e165825ebfdso1734266276.0;
+        Fri, 30 Aug 2024 05:23:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725020608; x=1725625408; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Ubwn7IgLAh1kgKkNxqu475mnJWVnidsj1Cts8mO7ZEg=;
+        b=kitfTdpup/HVzomLKblsw9asQZfTrh3xqonw0VFYnWJYvUsunVGHRoe+i1WmkVYIKD
+         hmJ0ozueT3PKUXxsUBU9t1GQL9JvFz261gRTnabFxtOXfm3KJjFMU9BvGfqogwZLDnzg
+         1a5exs56ojm7WZUJvtJaC5sySdevTcFcQHkb4J4A9Fg8vMDSgbG96u/zoHGFh5XkZa3V
+         O+erS8gID3bXKYIgGG5mp49QZp1qoXKGKiRDLVHiCU+wDVFnaYoA/LHZ2hZP8mXOj05H
+         XLcsNn8gkFwR4X/y+gooD5AnkR5SEe3WTHjCrsL6Fj3TpeTSE7yda0oGn11Xh7+bYAX8
+         0Sdw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725020608; x=1725625408;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Ubwn7IgLAh1kgKkNxqu475mnJWVnidsj1Cts8mO7ZEg=;
+        b=wmj+51Xeid78pFxcp4n6IF1KDDmjUPgI3Cc+XuZG3zGTjGSEGVBO9Al/Zd/MWnRbzF
+         KabclFzELwctBzqapHVsn7gWbOT+ewJ7hnKf4ughLMTmdVcf2z+31R1k3nIdbtD10LDj
+         tbQsuIijQPDWk+S+v5Nx2l5GuRMOXJQpMDrfu+py1tMYxrnEInRAknVf0gL5cd1a3Qir
+         sLf4oFa2vjsegetDBxSSfsEsLFK4Ry5varKbaDtS3WFcj3+JrHDyrO2y0V98UgWCa79r
+         d/xqI2mNDTt/bz4HZdtTIaT62u7subQA/b+8MxkFQkg6ImmG5Ur2LxXs/KQjkNA3WZJg
+         6d0A==
+X-Forwarded-Encrypted: i=1; AJvYcCUDRpyBWyVDeueaiQcfRM/DoY/AAEQ6LkCnRD8BigXivOXiHCO9txp/yrVo3kglpol8dfS3Q1tMHDfqTMPc9w==@vger.kernel.org, AJvYcCVlhzdYo/eoZXXRBV65ENSvfM1bfPgwsZiLoNIYYdRwk8F64nRPZp4iao/AAuo5OghlprBKtQJFV3K8fjw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwHaDshTt0noqqGIlCRj3E61Wh1xSEmth3teH1e5cxZ5PbEKF26
+	87w6uO0iLgsSjXlKulxSgvmo7KNKSdBTm81dcvDFvmMt7rrdBXF3sYMhE4Ovp9lu8Bd/6fzdSUg
+	9yDyDlhdJzNKoBR+/k/xv0vX4H+/KDCZv+CA=
+X-Google-Smtp-Source: AGHT+IHTB+yOd4+mCdfPLF2/afYOkSh7cvSfBcQPadfdS+q/5wmplT1oDdKEYQtNW+IxYUeKU7q8XY1eQti43GTMalg=
+X-Received: by 2002:a05:6902:2586:b0:e04:e298:3749 with SMTP id
+ 3f1490d57ef6-e1a7a025ecbmr2129733276.33.1725020608094; Fri, 30 Aug 2024
+ 05:23:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAP-5=fXa0r7sD9xbtBVbJQFgnq=3i-cnj6gUX9tze0JyhLhvZw@mail.gmail.com>
+References: <20240722101443.10768-1-feilv@asrmicro.com> <CAOQ4uxhP03BHK8gDmeySxkacGvy9BToZkb5nTgaegWxJPAuG8A@mail.gmail.com>
+ <CAJfpegtPOgowkK5EHxNZnuHDo9AZTbF2-zxMc99rvWL44rdMXQ@mail.gmail.com>
+ <CAOQ4uxiYGsKzMZ73=WLZqseU=ibboFtPfqpeGtmFWYY3uxjMvw@mail.gmail.com>
+ <CAOQ4uxi-BuKU-AbyydVB2c8z0DiPP-Ednu+bN3JB2Cqf7rZamA@mail.gmail.com>
+ <CAJfpegt=BLfdb5GRbsOHheStve8S57V9XRDN_cNKcxst2dKZzw@mail.gmail.com>
+ <CAOQ4uxhtoAL43d5HcVEsAH2EtgiT8h6RkjymNhTcP5nnG1h09g@mail.gmail.com>
+ <CAOQ4uxjkVcY7z8JCshmsCfn1=JUcxDG8vyJQ+ssdeBmGrZ=eKg@mail.gmail.com> <4ec356a473294dd3aab94a66c528eb2e@exch01.asrmicro.com>
+In-Reply-To: <4ec356a473294dd3aab94a66c528eb2e@exch01.asrmicro.com>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Fri, 30 Aug 2024 14:23:16 +0200
+Message-ID: <CAOQ4uxgKC1SgjMWre=fUb00v8rxtd6sQi-S+dxR8oDzAuiGu8g@mail.gmail.com>
+Subject: Re: [PATCH V2] ovl: fsync after metadata copy-up via mount option "fsync=strict"
+To: =?UTF-8?B?THYgRmVp77yI5ZCV6aOe77yJ?= <feilv@asrmicro.com>
+Cc: Miklos Szeredi <miklos@szeredi.hu>, 
+	"linux-unionfs@vger.kernel.org" <linux-unionfs@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	=?UTF-8?B?WHUgTGlhbmdode+8iOW+kOiJr+iZju+8iQ==?= <lianghuxu@asrmicro.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Aug 29, 2024 at 02:42:38PM -0700, Ian Rogers wrote:
-> On Thu, Aug 29, 2024 at 1:58 PM Arnaldo Carvalho de Melo <acme@kernel.org> wrote:
-> > On Thu, Aug 29, 2024 at 01:12:32PM -0700, Ian Rogers wrote:
-> > > On Thu, Aug 29, 2024 at 12:31 PM Arnaldo Carvalho de Melo <acme@kernel.org> wrote:
-> > > > On Thu, Aug 29, 2024 at 08:01:51AM -0700, Ian Rogers wrote:
-> > > I'm not seeing the difference. Before:
+On Fri, Aug 30, 2024 at 1:52=E2=80=AFPM Lv Fei=EF=BC=88=E5=90=95=E9=A3=9E=
+=EF=BC=89 <feilv@asrmicro.com> wrote:
+>
+> > On Thu, Aug 29, 2024 at 6:23=E2=80=AFPM Amir Goldstein <amir73il@gmail.=
+com> wrote:
+> > >
+> > > On Thu, Aug 29, 2024 at 2:51=E2=80=AFPM Miklos Szeredi <miklos@szered=
+i.hu> wrote:
+> > > >
+> > > > On Thu, 29 Aug 2024 at 12:29, Amir Goldstein <amir73il@gmail.com> w=
+rote:
+> > > >
+> > > > > But maybe we can ignore crash safety of metacopy on ubifs, becaus=
+e
+> > > > > 1. the ubifs users may not be using this feature 2. ubifs may be
+> > > > > nice and takes care of ordering O_TMPFILE
+> > > > >     metadata updates before exposing the link
+> > > > >
+> > > > > Then we can do the following:
+> > > > > IF (metacopy_enabled)
+> > > > >     fsync only in ovl_copy_up_file() ELSE
+> > > > >     fsync only in ovl_copy_up_metadata()
+> > > > >
+> > > > > Let me know what you think.
+> > > >
+> > > > Sounds like a good compromise.
+> > > >
+> > >
+> > > Fei,
+> > >
+> > > Could you please test the attached patch and confirm that your use
+> > > case does not depend on metacopy enabled?
+> > >
+> > > In any case, I am holding on to your patch in case someone reports a
+> > > performance regression with this unconditional fsync approach.
+> > >
+> >
+> > Well, it's a good thing that I took Miklois' advice to make the fsync o=
+ption implicit, because > the original patch had 2 bugs detected by fstest:
+> > 1. missing O_LARGEFILE
+> > 2. trying to fsync special files
+> >
+> > Please see uptodate patch at:
+> > https://github.com/amir73il/linux/commits/ovl-fsync/
+> >
+> > If there are no complaints, I will queue this up for v6.12.
+> > Fei, please provide your Tested-by.
+>
+> We do not enable metacopy.
+> Tested this patch and it also solved our issue.
 
-> > You noticed the difference: before we used lseek to get the current
-> > offset to use, afterwards we moved to doing plain math.
+Hi Fei,
 
-> > So I had to check if we could assume that, and with the current code
-> > structure, yes, we can assume that, so seems safe, but it is different
-> > and if the assumption somehow breaks, as the code in __do_write_fd()
-> > guard against (unneeded at the moment as ion has even a BUG_ON for that
-> > not to happen), then the offset will not be where the data is.
+Thanks for approving.
+I added Reported-and-tested-by and pushed to overlayfs-next.
 
-> > Using lseek() is more costly (syscalls) but it is the ultimate answer to
-> > get where in the file the current offset is.
+Now we just need to hope that users won't come shouting about
+performance regressions.
 
-> > So that is the difference I noticed.
-
-> > Doing multiple things in the same patch causes these reviewing delays,
-> > doubts, its something we discussed multiple times in the past, and that
-> > continue to cause these discussions.
-
-> Right, but it is something of an unfortunate coincidence of how the
-> code is structured. The fact that writing the header updates
-> data_offset which is a thing that other things depend upon while
-> depending on its value itself, etc. - ie the function does more than
-> just a write, it also sometimes computes the layout, has inbuilt
-> assumptions on the values lseek will return, and so on. To get to this
-
-I share your frustrations, code gets complex over time, that is why I at
-least try to ask these questions, encourage more granular patches, that
-do just one thing, etc, to avoid having this conversation again years
-from now, when some other person tries to understand the codebase do
-bisects, refactor it, etc, just like you're doing now.
-
-> final structure took a fair few iterations and I've separated this
-> change out from the bulk in the next change to keep the patch size
-> down. I could have done a patch switching from lseeks to math, then a
-> patch to add write_attrs_after_data.
-
-> It probably would have yielded about 4 lines of shared code, more
-> lines that would have been deleted, while creating quite a bit of work
-> for me.
-
-> Ideally when these functions were created there would have been far
-> more liberal use of things like immutability, so side-effects are
-> minimized. Yes I could refactor everything, but time..
-
-As I said, I think your patch is safe as-is, its just that it took more
-time than needed for reviewing, i.e. it will cost more one side or the
-other, and as I have to review everything I merge, doing it on my side
-slows things down the overall process of collecting patches from lots of
-people.
-
-So far I collected 234 patches for v6.12, and there are way more to
-process, like Howard's perf trace BTF work, that I merged partially,
-but where I'll have to do work on splitting patches as agreed with him
-in another thread, etc.
-
-- Arnaldo
+Thanks,
+Amir.
 
