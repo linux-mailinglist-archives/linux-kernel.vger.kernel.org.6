@@ -1,140 +1,194 @@
-Return-Path: <linux-kernel+bounces-308819-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308820-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AFB35966229
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 14:58:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D6DA96622C
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 14:58:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 184142852CE
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 12:58:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 918701F25454
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 12:58:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E4521A4B75;
-	Fri, 30 Aug 2024 12:58:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEEC31A4AAF;
+	Fri, 30 Aug 2024 12:58:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MgeGhM3S"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kutsevol-com.20230601.gappssmtp.com header.i=@kutsevol-com.20230601.gappssmtp.com header.b="F8T6J93n"
+Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69B7219ABAA;
-	Fri, 30 Aug 2024 12:58:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FE6719ABAA
+	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 12:58:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725022684; cv=none; b=EWrQxq49Sr0Js2PDatwq/JWR5pydb0Ynh2GWF6x7yW+nAjeZ6SZ46lTpGX+15GWHoY1x8ec3CzaSVSFnlmFRsqVn8aoovcbhD5a9CID6t7w5onK9geTWVlKT1uA3Hrb31vSUlryjzEq6BLjocKMcBjCxOYxANkbvn877dBjMjKc=
+	t=1725022705; cv=none; b=NieshJCvlHSElsPOLllySwGkY5mCzf0R49M+nzTGDE0vOpS+KvrY4QM5PHJAlxKC4+1H9oS0oJpLvnIjSCKB1CCHwXyiXnTvFNg4z9qb4hm+HQXjJ3WLGsPp19RKIYgg99j/uz18jm1o1hemFHPCR0zqosZb+jjMx3qLy8rd3t4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725022684; c=relaxed/simple;
-	bh=pRzr4dw+htikBqyVyR2UfwtO0f/g1Jd6QIJAItLjm9c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Qr/sRhgmyi/ovRzEzPBVAjYY01JWIQcX9oYTVn/DAXKsvrq5u0DuOELZNWmKAaiMY8d1jvP4fkEYeP/lULB6wPts/dzTLo1cziXYzG2ho6oleeOcgNDxBrSu1J+pu6RwIUXKxhSGiRcsuLBLVpaYUMgGJ1YwfLJkKAKUtlQ140Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MgeGhM3S; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C8EB8C4CEC2;
-	Fri, 30 Aug 2024 12:57:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725022684;
-	bh=pRzr4dw+htikBqyVyR2UfwtO0f/g1Jd6QIJAItLjm9c=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=MgeGhM3S5Skkm3/czz9Sb4Q/cLEXI9TleH0U3Vau8IqpzVb/X/pDF1kqKFqwYbimK
-	 HNtT7qR9MMOBs7/rPoReRuwDBqSWcQub+lzuzCTUiny9hXVbWJWhHcrx+HH46cUU/1
-	 si/G+nON+U61JVnqQY2LTk+1TCnedYwS6voFpwCPblt5H4WNbzBdvDiuyieAjudA46
-	 Y4GZ2CJ4UEZ3bnyJecRQp+T7JwEf4eX840m+PRjzx4gHFPqf1Xfy4RbPHcRc6tmqHM
-	 g62Vw/9VGJ++mllrkCxjUKe30z5fXiRPRJGGguqj9qa1vYUFxElS23O1hbhP/VdoQ0
-	 cPNTshwv7omjA==
-Message-ID: <998609e2-0fa4-43e8-9f72-05af40cf62c2@kernel.org>
-Date: Fri, 30 Aug 2024 14:57:56 +0200
+	s=arc-20240116; t=1725022705; c=relaxed/simple;
+	bh=q6C0QbwlZ8bWPzWNj5Wpp/Ls9Ao5dRgXaiIg0HeEQK0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=P0cis0JnvrZwA6BKw1Hg5dzkB9UbYdm4D17fuxGMAVHJx7aqFhjYFXJYMU6npwvDeLyF7Jt9/yD1tJimpPgnu7mnPVRiysVPl016YwVCcxJaWvnJoLvew3akk4aPYHtsjHoQjwJKob0Pb5NRmW+mic1V6nb5SBvNy3i7uGu391E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kutsevol.com; spf=none smtp.mailfrom=kutsevol.com; dkim=pass (2048-bit key) header.d=kutsevol-com.20230601.gappssmtp.com header.i=@kutsevol-com.20230601.gappssmtp.com header.b=F8T6J93n; arc=none smtp.client-ip=209.85.160.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kutsevol.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=kutsevol.com
+Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-45685a3b1d8so13333521cf.1
+        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 05:58:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kutsevol-com.20230601.gappssmtp.com; s=20230601; t=1725022703; x=1725627503; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UHY2MAsMyPjJRozsNU6xOeZT7J7x2bfZTUu25H3K7VM=;
+        b=F8T6J93nAmFKkJEnO3MazxELlP6cabGB/kMBuh+aao3/ZCexyvyDyr2i+2SG4dNtjx
+         yE5AaKeh4H2q0OZxQpvWH30I2BR30waHjzAeamDIGFCMg9Wsj63JM6YMMBCufOrCA5ND
+         4eEyZV+Ze1ZzIkugWBv+Te1gXZ6eKqH20VFOHPB84aiJrRdQNzsc1h2C5BouzZeo9GhA
+         oaxLK0L/mx7xymmd1u1LNud1CYh7ojCrLPXy/qxsbWqP8Jn10owrOkUJBAIEvX4nSjc9
+         TbIKo3zti0XAjcvfdi8kNFUv4HQpeganAI3qL7riCTnxH1FqEcYgrQcgzc6igL3B/yk5
+         kw8g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725022703; x=1725627503;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=UHY2MAsMyPjJRozsNU6xOeZT7J7x2bfZTUu25H3K7VM=;
+        b=YSltcY+HJBlG01lk8e0zK3TrldhukxPABfOg7TRhx1/hLXNkjgDyZedQjkpQwiEFIW
+         bvvGd4QEX5n/bnbURVzwsBC2+FJ29lJkekq2B1vZtjKCBHL6JiMOHSRtdmgoQpS6+NiQ
+         FyKu7zi1WvMiTKFQZvPYtT995dY5h+ZfvlFfD/n2s+nre61vYLpICUiMDiBjcDGwtoYj
+         t6xbo1m9TAY0WwxWysEckAiD83XUE1V9vO8X6C8jfaEN81zJBXch3kuTOWcR3mS7PNF3
+         XawPc3GPWD7a52R5AI4VTN+Ix/swr6yEgj1RODFD/vMMDUKNF8bRVekMS3b5wjEadvzz
+         qqBA==
+X-Forwarded-Encrypted: i=1; AJvYcCUQMhBYdYBeTyeFGrObeSf3m/N1hJC7dHbPLitVOUr5osS0CpM1l0xW0PGhGs1+28K7tOd50xe3PiwlFY8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxyguiqAlx2PAKT2embyJP+XYs10F8T53sasBMQdZRFS8aAv1pQ
+	Sqn1QJ7mJ2Az7V+0T5HHILBwaSzG96mdxE+ZIxsqNOnaXPKCUjFpSMBvUw27tJRXO26am2sD6R6
+	PrsocZYy66MFrljR8Ms44RzCqB1KGadHsXegP9g==
+X-Google-Smtp-Source: AGHT+IGLCbgTmLIdILs/Eg4Fdv4t8yyw4ppw3tOy7+4g4xz6Qly6CnuU3a8xlhW2KTgAvExXC4j2BRRVc83sBHot540=
+X-Received: by 2002:ac8:7f0f:0:b0:447:f8b1:aeb9 with SMTP id
+ d75a77b69052e-45680261b90mr95859631cf.16.1725022703058; Fri, 30 Aug 2024
+ 05:58:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 3/3] platform/surface: Add OF support
-To: Andy Shevchenko <andy.shevchenko@gmail.com>,
- Maximilian Luz <luzmaximilian@gmail.com>
-Cc: Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Jiri Slaby <jirislaby@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
- Len Brown <lenb@kernel.org>, Hans de Goede <hdegoede@redhat.com>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- Marijn Suijten <marijn.suijten@somainline.org>,
- linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, linux-acpi@vger.kernel.org,
- platform-driver-x86@vger.kernel.org, Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <quic_kdybcio@quicinc.com>
-References: <20240814-topic-sam-v3-0-a84588aad233@quicinc.com>
- <20240814-topic-sam-v3-3-a84588aad233@quicinc.com>
- <ZszrjQChQ2aS5YjV@surfacebook.localdomain>
- <d08d41ad-edcb-48ad-a848-53edc45ab8eb@gmail.com>
- <CAHp75VcbjR8HQqPASLFEGiyYLfTFQDa6Ri+jFy+7Q1xz7gY39Q@mail.gmail.com>
- <53a56539-1d95-42ac-ad07-1b689702b2ed@gmail.com>
- <CAHp75VdsksKPrj-CwmR4QLBrm_FfaG4aZys-_jnee_L=3ZnRPQ@mail.gmail.com>
-Content-Language: en-US
-From: Konrad Dybcio <konradybcio@kernel.org>
-In-Reply-To: <CAHp75VdsksKPrj-CwmR4QLBrm_FfaG4aZys-_jnee_L=3ZnRPQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20240824215130.2134153-1-max@kutsevol.com> <20240828214524.1867954-1-max@kutsevol.com>
+ <20240828214524.1867954-2-max@kutsevol.com> <ZtGGp9DRTy6X+PLv@gmail.com>
+In-Reply-To: <ZtGGp9DRTy6X+PLv@gmail.com>
+From: Maksym Kutsevol <max@kutsevol.com>
+Date: Fri, 30 Aug 2024 08:58:12 -0400
+Message-ID: <CAO6EAnUe5-Yr=TE4Edi5oHenUR+mHYCh7ob7xu55V_dUn7d28w@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] netcons: Add udp send fail statistics to netconsole
+To: Breno Leitao <leitao@debian.org>
+Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 28.08.2024 9:06 PM, Andy Shevchenko wrote:
-> On Wed, Aug 28, 2024 at 8:40 PM Maximilian Luz <luzmaximilian@gmail.com> wrote:
->> On 8/28/24 6:56 PM, Andy Shevchenko wrote:
->>> On Wed, Aug 28, 2024 at 12:10 PM Maximilian Luz <luzmaximilian@gmail.com> wrote:
-> 
-> ...
-> 
->>> Yes, and software nodes for DT are quite strange things! Why can't you
->>> simply fix the DT to begin with?
->>
->> For the ARM/DT variants we could do that. But we still have to deal with
->> the x86/ACPI ones here.
-> 
-> So, then fix it there! Currently it's an abuse of software nodes
-> inside the Linux kernel.
-> 
->> So for me it makes more sense to have it unified
->> and just deal with everything in this module.
-> 
-> I understand the desire, but DT is DT and ACPI is ACPI, they are
-> different despite having some common APIs in the Linux kernel.
-> Moreover, DT has a validation tools and everything, making that being
-> a software nodes has at least these disadvantages:
-> - no official schema that must be supported and users are known of
-> - no validation done
-> - bloating of the Linux kernel binary and hence memory footprint
+Hello Breno,
 
-Arguably the last point isn't very strong.. DT also has to store some
-strings and pointers to represent devices
 
-> 
->> Also, if we consider that at some point we might get ACPI PEP support (I
->> know, far fetched right now): With that, ACPI on ARM might be feasible
->> and then we'd have to manage the same thing in two places...
-> 
-> This (PEP) is something I have no knowledge about. But I think it's
-> still orthogonal to the software nodes usage.
+On Fri, Aug 30, 2024 at 4:45=E2=80=AFAM Breno Leitao <leitao@debian.org> wr=
+ote:
+>
+> Hello Maksym,
+>
+> On Wed, Aug 28, 2024 at 02:33:49PM -0700, Maksym Kutsevol wrote:
+> > diff --git a/drivers/net/netconsole.c b/drivers/net/netconsole.c
+> > index 9c09293b5258..e14b13a8e0d2 100644
+> > --- a/drivers/net/netconsole.c
+> > +++ b/drivers/net/netconsole.c
+> > @@ -36,6 +36,7 @@
+> >  #include <linux/inet.h>
+> >  #include <linux/configfs.h>
+> >  #include <linux/etherdevice.h>
+> > +#include <linux/u64_stats_sync.h>
+> >  #include <linux/utsname.h>
+> >
+> >  MODULE_AUTHOR("Maintainer: Matt Mackall <mpm@selenic.com>");
+>
+> I am afraid that you are not build the patch against net-next, since
+> this line was changed a while ago.
+Yes, that's true. Jacub sent me the link to the net-tree specific
+contribution doc, I also found
+that. Will fix it in the next set.
 
-The PEP (Power Engine Plugin) unfortunately is the reason we can't have
-ACPI-based boot on WoA platforms.. This two-or-three-digit megabyte
-Windows driver hardcodes almost everything related to the on-SoC power
-management (buses, clocks, etc.) and only uses the bare minimum ACPI it
-needs to connect devices to a bus or get notifications on standard events..
+> https://git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next.git/commi=
+t/?id=3D10a6545f0bdc
+>
+> Please develop on top of net-next, otherwise the patch might not apply
+> on top of net-next.
+>
+> > +/**
+> > + * netpoll_send_udp_count_errs - Wrapper for netpoll_send_udp that cou=
+nts errors
+> > + * @nt: target to send message to
+> > + * @msg: message to send
+> > + * @len: length of message
+> > + *
+> > + * Calls netpoll_send_udp and classifies the return value. If an error
+> > + * occurred it increments statistics in nt->stats accordingly.
+> > + * Noop if CONFIG_NETCONSOLE_DYNAMIC is disabled.
+> > + */
+> > +// static void netpoll_send_udp_count_errs(struct netpoll *np, const c=
+har *msg, int len)
+>
+> Have you forgot to remove the line above?
+Yes, thank you.
 
-> 
->> And lastly, the EC subdevices are quite contained and I don't see them
->> interacting with any other components in the DT, so it's more of a
->> stylistic choice where to put them.
-> 
-> They are still part of hardware and DT describes hardware.
+> > +static void netpoll_send_udp_count_errs(struct netconsole_target *nt, =
+const char *msg, int len)
+> > +{
+> > +#ifdef CONFIG_NETCONSOLE_DYNAMIC
+> > +     int result =3D netpoll_send_udp(&nt->np, msg, len);
+> > +     result =3D NET_XMIT_DROP;
+>
+> Could you please clarify why do you want to overwrite `result` here with
+> NET_XMIT_DROP? It seems wrong.
+Unfortunately I sent this patch with my debugging addons, this is plainly w=
+rong.
+Will remove.
 
-Unfortunately the "Surface Aggregator Module" is just a firmware
-exposed on some range of MCUs running MSFT's code..
+> > +     if (result =3D=3D NET_XMIT_DROP) {
+> > +             u64_stats_update_begin(&nt->stats.syncp);
+> > +             u64_stats_inc(&nt->stats.xmit_drop_count);
+> > +             u64_stats_update_end(&nt->stats.syncp);
+> > +     } else if (result =3D=3D -ENOMEM) {
+> > +             u64_stats_update_begin(&nt->stats.syncp);
+> > +             u64_stats_inc(&nt->stats.enomem_count);
+> > +             u64_stats_update_end(&nt->stats.syncp);
+> > +     };
+> > +#else
+> > +     netpoll_send_udp(&nt->np, msg, len);
+> > +#endif
+>
+> I am not sure this if/else/endif is the best way. I am wondering if
+> something like this would make the code simpler (uncompiled/untested):
+Two calls in two different places to netpoll_send_udp bothers you or
+the way it has to distinct cases for enabled/disabled and you prefer to
+have it as added steps for the case when it's enabled?
 
-Given how.. peculiarly the "bus" that it hosts """devices""" on is
-constructed (5-level-deep hierarchy without it making much sense
-beyond maaaybe the first two), it's not really easy to describe in
-DT in a way that would be both true to the bigger picture and make
-enough sense to convince the DT maintainers, I don't think
 
-Konrad
+> static void netpoll_send_udp_count_errs(struct netconsole_target *nt, con=
+st char *msg, int len)
+> {
+>         int __maybe_unused result;
+>
+>         result =3D netpoll_send_udp(&nt->np, msg, len);
+> #ifdef CONFIG_NETCONSOLE_DYNAMIC
+>         switch (result) {
+>         case NET_XMIT_DROP:
+>                 u64_stats_update_begin(&nt->stats.syncp);
+>                 u64_stats_inc(&nt->stats.xmit_drop_count);
+>                 u64_stats_update_end(&nt->stats.syncp);
+>                 breadk;
+>         case ENOMEM:
+>                 u64_stats_update_begin(&nt->stats.syncp);
+>                 u64_stats_inc(&nt->stats.enomem_count);
+>                 u64_stats_update_end(&nt->stats.syncp);
+>                 break;
+>         };
+> #endif
+>
+> Thanks for working on it.
+> --breno
 
