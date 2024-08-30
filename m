@@ -1,108 +1,144 @@
-Return-Path: <linux-kernel+bounces-309322-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309323-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0AB59668D9
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 20:24:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 871379668DD
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 20:24:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 049E0B20CE8
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 18:24:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 295211F23439
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 18:24:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C22C1BC068;
-	Fri, 30 Aug 2024 18:23:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 880381B8EB3;
+	Fri, 30 Aug 2024 18:24:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="OysKoZ1J"
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m9BLLBFh"
+Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF6BC1531C5;
-	Fri, 30 Aug 2024 18:23:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B2001531C5;
+	Fri, 30 Aug 2024 18:24:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725042238; cv=none; b=ejpTfXc20ty+WGtfZI3EcfXJGhFtNzORNwrZZQDVni2lDK5cBxnvd1Zkrk58u+X6zVYg3bUeliUWBzezg56u8RvYm8jHzMwW4frtZt3BeSetmL+XJWiOz3M5si+C+IzgSoFK4NQ1lyEQ+YXbwSSspWTnFkcXYtciTpUeNHEjZ9Q=
+	t=1725042255; cv=none; b=ViejbmdQe9G894BF0RUsQJaXZ0h8dz+6wsFx8gqE3HwmntHCmv4+m1p0UZmKHx0koqvr5pCONJNfiSE41Tvk1C+w3DsaY2oFLu+eBkIJgcaTW6hFDj2EAEici6dwKbfmziDb9+nqt8/YUtIZUrWhpqAtm66eJZIX6LaMlLsqBrU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725042238; c=relaxed/simple;
-	bh=fKMKmdIdvmv98smX+LI6ZUFHFWqjKkATbTDIJrPvllA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gfaLIE8FqGdw9CEY9BtcZV/Mq70LJiBGTVHjRHcWZdpdaLHlTfL6ctpgDAVSHHbgUZw6JQdIcZp0n8jDTdGA8Cy2GIxsGZnUpRxyrSFAXdoenEiDW3d6cZqcSs7Mudzn1FMmOzFWnColeuU1IcDjKJoUA0wBSBmzCsMg7+XIaD8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=OysKoZ1J; arc=none smtp.client-ip=178.60.130.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=hh4itEyLDnEMzZxAwF6jQr2sg6SqyVA/UmRTj4Gm508=; b=OysKoZ1J6RJLGm/5sQNsgBNmAi
-	cWsUb0ASJzvLxJVJ1pTqh+H5c4mewYkOHgpNMpGWLyU418tHS9D1CuevL9L8IT2VgJ1QBqtxYHACl
-	POm9m7uEsiB9DTix716yXedCWUxSAEJ0PnWM6qnir2OIfvwaHQdesUw8FZsWn69i+nV4nzKB5fRGc
-	Qhwa3O7MJ2zxTOnbTPLX6AYe8R1yhcdnKbAPucmn+k0ieduQOzs37ihHRL8ZLzIHJX8ON269yjz7A
-	54lChbOTh932aSKts8QAE3/aQ0ZtgV2JDSyl5sXG89hmgzjgpFD33DWCx7hKnujMRoENk2byfWMMB
-	rdTFK+cQ==;
-Received: from [177.76.152.96] (helo=[192.168.1.60])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-	id 1sk6Ho-007FYO-3c; Fri, 30 Aug 2024 20:23:51 +0200
-Message-ID: <ffe4b1ac-926e-7f99-900b-707384f09462@igalia.com>
-Date: Fri, 30 Aug 2024 15:23:45 -0300
+	s=arc-20240116; t=1725042255; c=relaxed/simple;
+	bh=+8Mi16jcy/tUa5JXPRMxxFyk9a2VflT+oEtctzkrnT8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=D91/56YkpGNnRtupetMJrLTNwGlvcSi9C5ogk4A/5Ua5p0Aed39JubOeC7Rn/oqy4A48FTFH4A4naurioDBmgoDzIAAn63HlzJadyTtVfJCA029S76WiWEVVJhu+iPOT2X9DWo8DNMMkn4ruyak+gEBkiw3rwW4EZceEL4jpKuQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m9BLLBFh; arc=none smtp.client-ip=209.85.160.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-45680233930so12296891cf.3;
+        Fri, 30 Aug 2024 11:24:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725042253; x=1725647053; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KPZxBSRso5pE3AEFn4SdS9B50SQjBiwX3ZtiCsZD6C0=;
+        b=m9BLLBFhBEAMrLLN7HLt2aVORmOzBqyw553oT85mJWGEMM9BFz+LPzyQqXM8K13lqW
+         OYR8g0Vrnfz6TTie2Q0hECccqkLLDT07jkyYODJuaBI/F6LKGJuHT4EX9PSqUPfwX74I
+         Qj246KwhKeMzRj2ZRtQVrV88CyHcX/AsKcyWYMySrGEOfB5Im5tR0W1SiwkKAXLRmVNl
+         wmqbBAbJ+G/AOsi/fYhEnZ057X6JBNdkuwGGdVQgJ3k0c3PqY8DcZrDlv1wP8bwFePfu
+         kqDyEkgsasrH9CVfCQk1Kqeo22OgZhDXbISpc8hev0lz1MAUF0yDOVZFWeVCErb0aAQX
+         F7CQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725042253; x=1725647053;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=KPZxBSRso5pE3AEFn4SdS9B50SQjBiwX3ZtiCsZD6C0=;
+        b=DQ5WAUhFprvfilug/ryBUsGb4Sase/zCQSZiSCEm50lpCsrDW8srSuys2fJxt8c0ZZ
+         nQqg1E9ccA9ADm3gJ19vxkc+rx6nOmiwsiUE41TxwmPP9qXBBJ+FyZxShTlXsc5NEjGX
+         xDsJBccPEhCTBh6GugGJK9oNClsmYeD9wp1YSdFuf24ICqqDpLY7w3SmbryjEMhXbm6S
+         CLSutWPyY+VaMKx1DxaNAQmph59aZeTu6QN0fXA4EnoUFAM8JhS30mOJ9dy0hj2zfnTB
+         nnLqU4/ABRq4sFqImDQs5rlsQEyDxPBGSRGSsyNsrr9NfhV910isHCoSrtWv3imzl7CC
+         3icw==
+X-Forwarded-Encrypted: i=1; AJvYcCU/SlT/SsTfOzDmq+IBvGTUUeP/jS3XRph8oulO1NJFY995ZQLkzgj8hq2u7eDDRJsZDXRlYmZJy1uC8nm5@vger.kernel.org, AJvYcCVRVUVwdzcGzmrUD+zMIxK2vKJRR8lkbSch6Ka3V3AKAPnXx6GGPuN+v/Paw/3S4pYgh/uoXr0PXr6NQTc2@vger.kernel.org
+X-Gm-Message-State: AOJu0YyHaDZe4qpSrm0OSoMpuLJ1+gR8Z+ntm2MvBCqlXQ3MVS3SjvH6
+	jppHwjtF+ug7Pj887eLk2vrXLmwIQHMphQdKSGsw+Hnbip8sAS7juDmLpW909q7hndIbY2FQrp7
+	KMdlMs86F6wBzPpjcMR7VHTf+rmw=
+X-Google-Smtp-Source: AGHT+IFfAZ5Dc/UAH0FAehnAcx0CC4YDuotMeeFeOIHs8OXYW9H+4ZEFhxkx/keeE+cv8gefPgcsT/Uchh3WnYFsJzo=
+X-Received: by 2002:a05:622a:2590:b0:456:941c:f995 with SMTP id
+ d75a77b69052e-456941cfb3dmr17682961cf.56.1725042252988; Fri, 30 Aug 2024
+ 11:24:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH] Documentation: Improve crash_kexec_post_notifiers
- description
-Content-Language: en-US
-To: Stephen Brennan <stephen.s.brennan@oracle.com>,
- kexec@lists.infradead.org, linux-doc@vger.kernel.org
-Cc: bhe@redhat.com, vgoyal@redhat.com, dyoung@redhat.com, corbet@lwn.net,
- linux-kernel@vger.kernel.org, linux-debuggers@vger.kernel.org,
- kernel@gpiccoli.net, kernel-dev@igalia.com
-References: <20240830140401.458542-1-gpiccoli@igalia.com>
- <87ed66q6d5.fsf@oracle.com>
-From: "Guilherme G. Piccoli" <gpiccoli@igalia.com>
-In-Reply-To: <87ed66q6d5.fsf@oracle.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240830-preemption-a750-t-v2-0-86aeead2cd80@gmail.com> <20240830-preemption-a750-t-v2-9-86aeead2cd80@gmail.com>
+In-Reply-To: <20240830-preemption-a750-t-v2-9-86aeead2cd80@gmail.com>
+From: Rob Clark <robdclark@gmail.com>
+Date: Fri, 30 Aug 2024 11:23:58 -0700
+Message-ID: <CAF6AEGui3bFqTqwhSCcx38=WzbaHKmnttjXiff-=GT0HHQyapw@mail.gmail.com>
+Subject: Re: [PATCH v2 9/9] drm/msm/A6xx: Enable preemption for A750
+To: Antonino Maniscalco <antomani103@gmail.com>
+Cc: Sean Paul <sean@poorly.run>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
+	Abhinav Kumar <quic_abhinavk@quicinc.com>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
+	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
+	Daniel Vetter <daniel@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, linux-arm-msm@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org, Neil Armstrong <neil.armstrong@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 30/08/2024 14:15, Stephen Brennan wrote:
-> [...]
-> 
-> This is definitely clearer and an improvement! But I didn't (and still
-> don't) love the phrase "users who doubt kdump will succeed" because I
-> think that implies user error or silly beliefs.
-> 
-> What if these two sentences read something like:
-> 
-> In configurations where kdump may not be reliable, running the panic
-> notifiers can allow collecting more data on dmesg, like stack traces
-> from other CPUS or extra data dumped by panic_print.
-> 
->> Notice that some code
->> +			enables this option unconditionally, like Hyper-V,
->> +			PowerPC (fadump) and AMD SEV.
-> 
-> Yes, great addition.
-> 
-> With or without my suggestions it's an improvement, so:
-> 
-> Reviewed-by: Stephen Brennan <stephen.s.brennan@oracle.com>
-> 
+On Fri, Aug 30, 2024 at 8:33=E2=80=AFAM Antonino Maniscalco
+<antomani103@gmail.com> wrote:
+>
+> Initialize with 4 rings to enable preemption.
+>
+> For now only on A750 as other targets require testing.
+>
+> Signed-off-by: Antonino Maniscalco <antomani103@gmail.com>
+> Tested-by: Neil Armstrong <neil.armstrong@linaro.org> # on SM8650-QRD
+> ---
+>  drivers/gpu/drm/msm/adreno/a6xx_gpu.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c b/drivers/gpu/drm/msm/=
+adreno/a6xx_gpu.c
+> index a2853309288b..ea518209c03d 100644
+> --- a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
+> +++ b/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
+> @@ -2609,7 +2609,9 @@ struct msm_gpu *a6xx_gpu_init(struct drm_device *de=
+v)
+>                 return ERR_PTR(ret);
+>         }
+>
+> -       if (is_a7xx)
+> +       if (adreno_is_a750(adreno_gpu))
+> +               ret =3D adreno_gpu_init(dev, pdev, adreno_gpu, &funcs_a7x=
+x, 4);
 
-Thanks Stephen, I agree - your wording sounds better.
-I've incorporated that in the just sent V2.
-Cheers,
+perhaps it would be useful (to enable others to more easily test), to
+allow this to be overridden with a modparam.. something like
 
+       if ((enable_preemption =3D=3D 1) || (enable_preemption =3D=3D -1 &&
+(config->info->quirks & ADRENO_QUIRK_PREEMPTION))
 
-Guilherme
+That would allow overriding enable_preemption to 1 or 0 on cmdline to
+force enable/disable preemption.
 
+That plus some instructions about how to test preemption (ie. what
+deqp tests to run, or similar) would make it easier to "crowd source"
+the testing (assuming you don't have every a7xx device there is)
 
-P.S. I'll be OOO some days, so expect a bit of delay in case there are
-more reviews/interactions.
+BR,
+-R
+
+> +       else if (is_a7xx)
+>                 ret =3D adreno_gpu_init(dev, pdev, adreno_gpu, &funcs_a7x=
+x, 1);
+>         else if (adreno_has_gmu_wrapper(adreno_gpu))
+>                 ret =3D adreno_gpu_init(dev, pdev, adreno_gpu, &funcs_gmu=
+wrapper, 1);
+>
+> --
+> 2.46.0
+>
 
