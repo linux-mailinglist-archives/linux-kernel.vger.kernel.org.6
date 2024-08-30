@@ -1,30 +1,30 @@
-Return-Path: <linux-kernel+bounces-309400-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309401-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA63E9669E0
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 21:34:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07E919669E2
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 21:34:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 56EBC1F27427
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 19:34:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B7B7B2884D3
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 19:34:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 847F11BF300;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C35DD1BF309;
 	Fri, 30 Aug 2024 19:33:17 +0000 (UTC)
 Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20A411BE25E
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60B1D1BE846
 	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 19:33:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725046396; cv=none; b=CaftR9rP1CV79ddNBWEPwdG1AeOjoFwjOBk1kdJ5EO5POnBS4IgV9syAKdDv5jHqfEN/b+xGJNn528EYS821Btp2BJPgcb6Q2yL2HE0c0AE4sOh00PAePt2h2P5JzEs3ixKRjUvLfUFE4nmA6QcKz3NYcw+gJgUVIfi9pgJYuV4=
+	t=1725046397; cv=none; b=rk2Mi4vnbcZW3rLUcuFXhg4dEYvjDdegpHOLxf2WvknMtmFoxSoaVnYmH0ydG2nqGxmATn1ELVpGcgHhYS1qh0FUWWt9gWVHqF1io7i+4o11bvTVU8Mf9peKRxqiyNrvFt6HTGxpCiOh/IYT1QT7Q9m/ex++kFMpiPi1tX3588o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725046396; c=relaxed/simple;
-	bh=/s9xfpJ5faFkGxYn0Ztg+FA4vUJebVCmlZ+jp3JMo/M=;
+	s=arc-20240116; t=1725046397; c=relaxed/simple;
+	bh=gHcn4OZDSX+A/OQCPXVw5Njr3d5BhPC3JSMfqT4fihA=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=tV6WupsK4D5uBzrGI9sA+XGOs6FFDNo80tjaAYXxFRybkf/LtRQ8rRBQQR9BZgcPRMO7ohzWzrp30Fpt2o7nnr9v2adORZdQCp0owwRl9FrJhgmIxQcunubKJV1+krtzzhGysu7BGdskligw4FZF1ugi2rnOrrhHyXmDsh9LM8g=
+	 In-Reply-To:To:Cc; b=iGA7131Ynga0mVPZyd74zdp2oVdnibIzlxOLxeS0Rwopjp35GMFiJXIcGNKsnunfRA6O9ta4TZhDvIYnzSoFk90HY9yarnxJYydjqONXeH1YpJdFvkWql5hYkKL2sG96McHfx8iSt2R++HgLuUqZ4DMkJSvP+i8iRAB9AQUarB4=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
@@ -32,30 +32,30 @@ Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
 	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
 	(Exim 4.92)
 	(envelope-from <mkl@pengutronix.de>)
-	id 1sk7Mv-00066A-KV
+	id 1sk7Mv-00066O-OW
 	for linux-kernel@vger.kernel.org; Fri, 30 Aug 2024 21:33:13 +0200
 Received: from [2a0a:edc0:0:b01:1d::7b] (helo=bjornoya.blackshift.org)
 	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.94.2)
 	(envelope-from <mkl@pengutronix.de>)
-	id 1sk7Mu-004E5v-ST
+	id 1sk7Mu-004E6D-U2
 	for linux-kernel@vger.kernel.org; Fri, 30 Aug 2024 21:33:12 +0200
 Received: from dspam.blackshift.org (localhost [127.0.0.1])
-	by bjornoya.blackshift.org (Postfix) with SMTP id DD76B32E222
+	by bjornoya.blackshift.org (Postfix) with SMTP id E2E4832E227
 	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 19:26:55 +0000 (UTC)
 Received: from hardanger.blackshift.org (unknown [172.20.34.65])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(Client did not present a certificate)
-	by bjornoya.blackshift.org (Postfix) with ESMTPS id 8E1A732E0F9;
+	by bjornoya.blackshift.org (Postfix) with ESMTPS id AA29232E0FD;
 	Fri, 30 Aug 2024 19:26:46 +0000 (UTC)
 Received: from [172.20.34.65] (localhost [::1])
-	by hardanger.blackshift.org (OpenSMTPD) with ESMTP id 20c9dded;
+	by hardanger.blackshift.org (OpenSMTPD) with ESMTP id ec69a17b;
 	Fri, 30 Aug 2024 19:26:45 +0000 (UTC)
 From: Marc Kleine-Budde <mkl@pengutronix.de>
-Date: Fri, 30 Aug 2024 21:26:03 +0200
-Subject: [PATCH can-next v3 06/20] can: rockchip_canfd: add quirk for
- broken CAN-FD support
+Date: Fri, 30 Aug 2024 21:26:04 +0200
+Subject: [PATCH can-next v3 07/20] can: rockchip_canfd: add support for
+ rk3568v3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,7 +64,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240830-rockchip-canfd-v3-6-d426266453fa@pengutronix.de>
+Message-Id: <20240830-rockchip-canfd-v3-7-d426266453fa@pengutronix.de>
 References: <20240830-rockchip-canfd-v3-0-d426266453fa@pengutronix.de>
 In-Reply-To: <20240830-rockchip-canfd-v3-0-d426266453fa@pengutronix.de>
 To: kernel@pengutronix.de, Vincent Mailhol <mailhol.vincent@wanadoo.fr>, 
@@ -80,15 +80,15 @@ Cc: Simon Horman <horms@kernel.org>, linux-can@vger.kernel.org,
  linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
  linux-kernel@vger.kernel.org, Marc Kleine-Budde <mkl@pengutronix.de>
 X-Mailer: b4 0.15-dev-99b12
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2840; i=mkl@pengutronix.de;
- h=from:subject:message-id; bh=/s9xfpJ5faFkGxYn0Ztg+FA4vUJebVCmlZ+jp3JMo/M=;
- b=owEBbQGS/pANAwAKASg4oj56LbxvAcsmYgBm0hzemRIbXa/PmuAVlyR17VkN3WesDJ5DSIwa1
- o/GPL/G4YiJATMEAAEKAB0WIQRQQLqG4LYE3Sm8Pl8oOKI+ei28bwUCZtIc3gAKCRAoOKI+ei28
- b4u5B/9Z8Lw54hZD9Og8L8NooyA5prCXBHit7uJyJEacOmq/a5SkJ1Sx6/QpeW6QEUSlzXt9Sih
- 0nCG80uJ+KtuDlQ54VXnf8TZDfOhAM1Ax9CN4cKV+EpFaGKbkDQyxFCH1jd/8DYnvH6YjMZ1X+4
- n5UPgolZYckOUsqmoiylGqyecDWmjUGfDmgkRHvhySrMViq731MGYz1x1KCAl7QnbWbvtwZDKJL
- FhrXT+5uIgfFrLHZPg5g7p84WBilAJdv9G0BkPW6mTmCsSQ0lX6j6mjRzplLBxAade+LkfHcRPH
- Eo//nYTq3mrFPaiWO0d6P4DV+du7urhONggQN7cFIX3b/VvY
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2430; i=mkl@pengutronix.de;
+ h=from:subject:message-id; bh=gHcn4OZDSX+A/OQCPXVw5Njr3d5BhPC3JSMfqT4fihA=;
+ b=owEBbQGS/pANAwAKASg4oj56LbxvAcsmYgBm0hzgTN/nn4L8IxlLVyeswobJnPMW7kpp2fMql
+ IMKxHzbLnSJATMEAAEKAB0WIQRQQLqG4LYE3Sm8Pl8oOKI+ei28bwUCZtIc4AAKCRAoOKI+ei28
+ b2mVB/4se9H/tExfU14wiMJK1hvhyPR7kwXQF9faq8pnDmbr4CVsq5FSeUAjtmDTftqgLh6DWpt
+ M8lgpAR5Ui3g2a+jR+iWEpvPbKlS4tjumk6y6Tiyw25pcnDUx4pDrqF1VIO6syYsZpD+09wuCP9
+ pyEygU9Fezl3KhWI6LvK8FPB1E+5Qdf8e9E5u1YKuZVsE94sNUTA5jUGCAAymS9v1vUl5gojABE
+ bUVcn00AHkShAUtfX+73UMRLd+Cmo0RbeagCyd/6mVU5hm9wK5HXosd0ut2MynVRZR8SLAJD1ep
+ /xJuTlUSBfNWztAo5ycPeSmlwzXFC0HxwkSkvxDN85YdDGpx
 X-Developer-Key: i=mkl@pengutronix.de; a=openpgp;
  fpr=C1400BA0B3989E6FBC7D5B5C2B5EE211C58AEA54
 X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
@@ -96,73 +96,70 @@ X-SA-Exim-Mail-From: mkl@pengutronix.de
 X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
 X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-The errata sheets doesn't say anything about CAN-FD, but tests on the
-rk3568v2 and rk3568v3 show that receiving certain CAN-FD frames
-triggers an Error Interrupt.
-
-Mark the CAN-FD support as broken.
+Add the support for the rk3568v3 SoC, the CAN-FD IP core has 7
+documented errata.
 
 Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
 ---
- drivers/net/can/rockchip/rockchip_canfd-core.c |  5 ++++-
- drivers/net/can/rockchip/rockchip_canfd.h      | 21 +++++++++++++++++++++
- 2 files changed, 25 insertions(+), 1 deletion(-)
+ drivers/net/can/rockchip/rockchip_canfd-core.c | 20 ++++++++++++++++++++
+ drivers/net/can/rockchip/rockchip_canfd.h      |  1 +
+ 2 files changed, 21 insertions(+)
 
 diff --git a/drivers/net/can/rockchip/rockchip_canfd-core.c b/drivers/net/can/rockchip/rockchip_canfd-core.c
-index 18957769b3d3..61de6f89cf16 100644
+index 61de6f89cf16..40911bb63623 100644
 --- a/drivers/net/can/rockchip/rockchip_canfd-core.c
 +++ b/drivers/net/can/rockchip/rockchip_canfd-core.c
-@@ -31,7 +31,8 @@ static const struct rkcanfd_devtype_data rkcanfd_devtype_data_rk3568v2 = {
- 		RKCANFD_QUIRK_RK3568_ERRATUM_5 | RKCANFD_QUIRK_RK3568_ERRATUM_6 |
- 		RKCANFD_QUIRK_RK3568_ERRATUM_7 | RKCANFD_QUIRK_RK3568_ERRATUM_8 |
- 		RKCANFD_QUIRK_RK3568_ERRATUM_9 | RKCANFD_QUIRK_RK3568_ERRATUM_10 |
--		RKCANFD_QUIRK_RK3568_ERRATUM_11 | RKCANFD_QUIRK_RK3568_ERRATUM_12,
+@@ -35,11 +35,28 @@ static const struct rkcanfd_devtype_data rkcanfd_devtype_data_rk3568v2 = {
+ 		RKCANFD_QUIRK_CANFD_BROKEN,
+ };
+ 
++/* The rk3568 CAN-FD errata sheet as of Tue 07 Nov 2023 11:25:31 +08:00
++ * states that only the rk3568v2 is affected by erratum 5, but tests
++ * with the rk3568v2 and rk3568v3 show that the RX_FIFO_CNT is
++ * sometimes too high. In contrast to the errata sheet mark rk3568v3
++ * as effected by erratum 5, too.
++ */
++static const struct rkcanfd_devtype_data rkcanfd_devtype_data_rk3568v3 = {
++	.model = RKCANFD_MODEL_RK3568V3,
++	.quirks = RKCANFD_QUIRK_RK3568_ERRATUM_1 | RKCANFD_QUIRK_RK3568_ERRATUM_2 |
++		RKCANFD_QUIRK_RK3568_ERRATUM_5 | RKCANFD_QUIRK_RK3568_ERRATUM_7 |
++		RKCANFD_QUIRK_RK3568_ERRATUM_8 | RKCANFD_QUIRK_RK3568_ERRATUM_10 |
 +		RKCANFD_QUIRK_RK3568_ERRATUM_11 | RKCANFD_QUIRK_RK3568_ERRATUM_12 |
 +		RKCANFD_QUIRK_CANFD_BROKEN,
- };
- 
++};
++
  static const char *__rkcanfd_get_model_str(enum rkcanfd_model model)
-@@ -817,6 +818,8 @@ static int rkcanfd_probe(struct platform_device *pdev)
- 	priv->can.bittiming_const = &rkcanfd_bittiming_const;
- 	priv->can.data_bittiming_const = &rkcanfd_data_bittiming_const;
- 	priv->can.ctrlmode_supported = 0;
-+	if (!(priv->devtype_data.quirks & RKCANFD_QUIRK_CANFD_BROKEN))
-+		priv->can.ctrlmode_supported |= CAN_CTRLMODE_FD;
- 	priv->can.do_set_mode = rkcanfd_set_mode;
- 	priv->can.do_get_berr_counter = rkcanfd_get_berr_counter;
- 	priv->ndev = ndev;
+ {
+ 	switch (model) {
+ 	case RKCANFD_MODEL_RK3568V2:
+ 		return "rk3568v2";
++	case RKCANFD_MODEL_RK3568V3:
++		return "rk3568v3";
+ 	}
+ 
+ 	return "<unknown>";
+@@ -764,6 +781,9 @@ static const struct of_device_id rkcanfd_of_match[] = {
+ 	{
+ 		.compatible = "rockchip,rk3568v2-canfd",
+ 		.data = &rkcanfd_devtype_data_rk3568v2,
++	}, {
++		.compatible = "rockchip,rk3568v3-canfd",
++		.data = &rkcanfd_devtype_data_rk3568v3,
+ 	}, {
+ 		/* sentinel */
+ 	},
 diff --git a/drivers/net/can/rockchip/rockchip_canfd.h b/drivers/net/can/rockchip/rockchip_canfd.h
-index 09626ca174a8..7321027534fb 100644
+index 7321027534fb..9b446331fbd0 100644
 --- a/drivers/net/can/rockchip/rockchip_canfd.h
 +++ b/drivers/net/can/rockchip/rockchip_canfd.h
-@@ -349,6 +349,27 @@
-  */
- #define RKCANFD_QUIRK_RK3568_ERRATUM_12 BIT(11)
+@@ -372,6 +372,7 @@
  
-+/* Tests on the rk3568v2 and rk3568v3 show that receiving certain
-+ * CAN-FD frames trigger an Error Interrupt.
-+ *
-+ * - Form Error in RX Arbitration Phase: TX_IDLE RX_STUFF_COUNT (0x0a010100) CMD=0 RX=0 TX=0
-+ *   Error-Warning=1 Bus-Off=0
-+ *   To reproduce:
-+ *   host:
-+ *     cansend can0 002##01f
-+ *   DUT:
-+ *     candump any,0:0,#FFFFFFFF -cexdHtA
-+ *
-+ * - Form Error in RX Arbitration Phase: TX_IDLE RX_CRC (0x0a010200) CMD=0 RX=0 TX=0
-+ *   Error-Warning=1 Bus-Off=0
-+ *   To reproduce:
-+ *   host:
-+ *     cansend can0 002##07217010000000000
-+ *   DUT:
-+ *     candump any,0:0,#FFFFFFFF -cexdHtA
-+ */
-+#define RKCANFD_QUIRK_CANFD_BROKEN BIT(12)
-+
  enum rkcanfd_model {
  	RKCANFD_MODEL_RK3568V2 = 0x35682,
++	RKCANFD_MODEL_RK3568V3 = 0x35683,
  };
+ 
+ struct rkcanfd_devtype_data {
 
 -- 
 2.45.2
