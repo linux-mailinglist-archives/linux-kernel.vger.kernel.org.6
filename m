@@ -1,255 +1,97 @@
-Return-Path: <linux-kernel+bounces-307977-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307996-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15B1E9655CF
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 05:42:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8755965602
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 05:55:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3AC6B1C22B80
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 03:42:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DE77C1C21A03
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 03:55:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6906814D6F6;
-	Fri, 30 Aug 2024 03:41:17 +0000 (UTC)
-Received: from TWMBX01.aspeed.com (mail.aspeedtech.com [211.20.114.72])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B058113C672;
+	Fri, 30 Aug 2024 03:54:33 +0000 (UTC)
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC00713C672;
-	Fri, 30 Aug 2024 03:41:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.20.114.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EA3213049E
+	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 03:54:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724989276; cv=none; b=Yt/1KJ7GgrWW0AhToc+i3CKxdP9IhI6ED56hiqQuGem7w/yMN1E2BhhRpQbtYSZY4RNDQvZonsUISRr2zzib7ONW3AOxb+M73q7zbLdVksAkn5iLNbOsFjk8/oKI+gotKw78zf9BOis4VB64ZkVXxSYg9+aXxSBzqHAP2lqhNqE=
+	t=1724990073; cv=none; b=hdWMkvqEi/WnpXeVbTSScAJVCqV9biUIqGqgEFEVtGXbkZwaA5sOGCxd7vuX4GH7P5hZuoi4mJc3xFrKK+k0drJxEn0GVWtyRYNXruAy60qaRi2tO2gHFfA8ss2NORxRuez8lCVp3njugVZqwOkEZROkEO2ADj/KHe5oE6eMSRI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724989276; c=relaxed/simple;
-	bh=bbDUZJuxl6BhnSNZqhyx6zNmudvYRof97UdKWYiiPnE=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=hu9X+WoGjww7991FZ8MF2UpAf2TXOXXgmmFucKGqKK7btVDkbJytBBwBqi/qVntRDQv51Gsb7j5RhOr42Z1mVYUlrg0nkn8xgB/44vMfYavPfHmEDd//fFGlk/pIpKsWhJiZmts5crIGyVFh0tcfkKMPkr/UVQCeU9TJIdt65mw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com; spf=pass smtp.mailfrom=aspeedtech.com; arc=none smtp.client-ip=211.20.114.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aspeedtech.com
-Received: from TWMBX01.aspeed.com (192.168.0.62) by TWMBX01.aspeed.com
- (192.168.0.62) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.12; Fri, 30 Aug
- 2024 11:40:48 +0800
-Received: from mail.aspeedtech.com (192.168.10.10) by TWMBX01.aspeed.com
- (192.168.0.62) with Microsoft SMTP Server id 15.2.1258.12 via Frontend
- Transport; Fri, 30 Aug 2024 11:40:48 +0800
-From: Billy Tsai <billy_tsai@aspeedtech.com>
-To: <linus.walleij@linaro.org>, <brgl@bgdev.pl>, <robh@kernel.org>,
-	<krzk+dt@kernel.org>, <conor+dt@kernel.org>, <joel@jms.id.au>,
-	<andrew@codeconstruct.com.au>, <linux-gpio@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-aspeed@lists.ozlabs.org>, <linux-kernel@vger.kernel.org>,
-	<BMC-SW@aspeedtech.com>
-Subject: [PATCH v2 4/4] gpio: aspeed: Support G7 Aspeed gpio controller
-Date: Fri, 30 Aug 2024 11:40:47 +0800
-Message-ID: <20240830034047.2251482-5-billy_tsai@aspeedtech.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240830034047.2251482-1-billy_tsai@aspeedtech.com>
-References: <20240830034047.2251482-1-billy_tsai@aspeedtech.com>
+	s=arc-20240116; t=1724990073; c=relaxed/simple;
+	bh=OfDTFjf/h2wvTgjbGH6TLB03gGgubM6ndEfZYh9agqY=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=psFx/9tKMOgn8rjgdpKqY5VZLS+C+dcxIfjWHoPECMHPbZjU+zCLKnnh4BIv65bhl/LevDU1MzORmm78qrks2veYmBQnRNs+Pp0S2Uq+qTyEMTdN1YJ8IFFhzPaFMFj2CNjGPgI5r90TfpBzmVFnX23QPzukUh3rhuPwlOu8lDU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.17])
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4Ww45d4QKPz1j7gj;
+	Fri, 30 Aug 2024 11:54:13 +0800 (CST)
+Received: from kwepemd200012.china.huawei.com (unknown [7.221.188.145])
+	by mail.maildlp.com (Postfix) with ESMTPS id EC8E01A0188;
+	Fri, 30 Aug 2024 11:54:26 +0800 (CST)
+Received: from huawei.com (10.175.112.208) by kwepemd200012.china.huawei.com
+ (7.221.188.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.34; Fri, 30 Aug
+ 2024 11:54:25 +0800
+From: Wang Wensheng <wangwensheng4@huawei.com>
+To: <harry.wentland@amd.com>, <sunpeng.li@amd.com>,
+	<Rodrigo.Siqueira@amd.com>, <alexander.deucher@amd.com>,
+	<christian.koenig@amd.com>, <Xinhui.Pan@amd.com>, <airlied@gmail.com>,
+	<daniel@ffwll.ch>, <wayne.lin@amd.com>, <alex.hung@amd.com>,
+	<roman.li@amd.com>, <mwen@igalia.com>, <alvin.lee2@amd.com>,
+	<danny.wang@amd.com>, <dillon.varone@amd.com>,
+	<amd-gfx@lists.freedesktop.org>, <dri-devel@lists.freedesktop.org>,
+	<linux-kernel@vger.kernel.org>
+CC: <xuqiang36@huawei.com>
+Subject: [PATCH -next] drm/amd/display: Delete redundant null check for 'steam' and 'plane'
+Date: Fri, 30 Aug 2024 11:41:03 +0800
+Message-ID: <20240830034103.121722-1-wangwensheng4@huawei.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ kwepemd200012.china.huawei.com (7.221.188.145)
 
-In the 7th generation of the SoC from Aspeed, the control logic of the
-GPIO controller has been updated to support per-pin control. Each pin now
-has its own 32-bit register, allowing for individual control of the pin’s
-value, direction, interrupt type, and other settings. The permission for
-coprocessor access is supported by the hardware but hasn’t been
-implemented in the current patch.
+Since commit 15c2990e0f01 ("drm/amd/display: Add null checks for
+'stream' and 'plane' before dereferencing"), the
+dcn30_apply_idle_power_optimizations() function would return
+if these veriables would be null. So no need to check again before
+using them.
 
-Signed-off-by: Billy Tsai <billy_tsai@aspeedtech.com>
+Signed-off-by: Wang Wensheng <wangwensheng4@huawei.com>
 ---
- drivers/gpio/gpio-aspeed.c | 116 +++++++++++++++++++++++++++++++++++++
- 1 file changed, 116 insertions(+)
+ drivers/gpu/drm/amd/display/dc/hwss/dcn30/dcn30_hwseq.c | 8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/gpio/gpio-aspeed.c b/drivers/gpio/gpio-aspeed.c
-index 74c4e80958bf..24f9c7312351 100644
---- a/drivers/gpio/gpio-aspeed.c
-+++ b/drivers/gpio/gpio-aspeed.c
-@@ -30,6 +30,23 @@
- #include <linux/gpio/consumer.h>
- #include "gpiolib.h"
+diff --git a/drivers/gpu/drm/amd/display/dc/hwss/dcn30/dcn30_hwseq.c b/drivers/gpu/drm/amd/display/dc/hwss/dcn30/dcn30_hwseq.c
+index eaeeade31ed7..ffc35a5653fd 100644
+--- a/drivers/gpu/drm/amd/display/dc/hwss/dcn30/dcn30_hwseq.c
++++ b/drivers/gpu/drm/amd/display/dc/hwss/dcn30/dcn30_hwseq.c
+@@ -925,11 +925,9 @@ bool dcn30_apply_idle_power_optimizations(struct dc *dc, bool enable)
+ 			if (!stream || !plane)
+ 				return false;
  
-+#define GPIO_G7_IRQ_STS_BASE 0x100
-+#define GPIO_G7_IRQ_STS_OFFSET(x) (GPIO_G7_IRQ_STS_BASE + (x) * 0x4)
-+#define GPIO_G7_CTRL_REG_BASE 0x180
-+#define GPIO_G7_CTRL_REG_OFFSET(x) (GPIO_G7_CTRL_REG_BASE + (x) * 0x4)
-+#define GPIO_G7_CTRL_OUT_DATA BIT(0)
-+#define GPIO_G7_CTRL_DIR BIT(1)
-+#define GPIO_G7_CTRL_IRQ_EN BIT(2)
-+#define GPIO_G7_CTRL_IRQ_TYPE0 BIT(3)
-+#define GPIO_G7_CTRL_IRQ_TYPE1 BIT(4)
-+#define GPIO_G7_CTRL_IRQ_TYPE2 BIT(5)
-+#define GPIO_G7_CTRL_RST_TOLERANCE BIT(6)
-+#define GPIO_G7_CTRL_DEBOUNCE_SEL2 BIT(7)
-+#define GPIO_G7_CTRL_DEBOUNCE_SEL1 BIT(8)
-+#define GPIO_G7_CTRL_INPUT_MASK BIT(9)
-+#define GPIO_G7_CTRL_IRQ_STS BIT(12)
-+#define GPIO_G7_CTRL_IN_DATA BIT(13)
-+
- struct aspeed_bank_props {
- 	unsigned int bank;
- 	u32 input;
-@@ -95,6 +112,7 @@ struct aspeed_gpio_bank {
-  */
+-			if (stream && plane) {
+-				cursor_cache_enable = stream->cursor_position.enable &&
+-						plane->address.grph.cursor_cache_addr.quad_part;
+-				cursor_attr = stream->cursor_attributes;
+-			}
++			cursor_cache_enable = stream->cursor_position.enable &&
++					plane->address.grph.cursor_cache_addr.quad_part;
++			cursor_attr = stream->cursor_attributes;
  
- static const int debounce_timers[4] = { 0x00, 0x50, 0x54, 0x58 };
-+static const int g7_debounce_timers[4] = { 0x00, 0x04, 0x00, 0x08 };
- 
- static const struct aspeed_gpio_copro_ops *copro_ops;
- static void *copro_data;
-@@ -246,6 +264,39 @@ static inline void __iomem *bank_reg(struct aspeed_gpio *gpio,
- 	BUG();
- }
- 
-+static inline u32 reg_mask(const enum aspeed_gpio_reg reg)
-+{
-+	switch (reg) {
-+	case reg_val:
-+		return GPIO_G7_CTRL_OUT_DATA;
-+	case reg_dir:
-+		return GPIO_G7_CTRL_DIR;
-+	case reg_irq_enable:
-+		return GPIO_G7_CTRL_IRQ_EN;
-+	case reg_irq_type0:
-+		return GPIO_G7_CTRL_IRQ_TYPE0;
-+	case reg_irq_type1:
-+		return GPIO_G7_CTRL_IRQ_TYPE1;
-+	case reg_irq_type2:
-+		return GPIO_G7_CTRL_IRQ_TYPE2;
-+	case reg_tolerance:
-+		return GPIO_G7_CTRL_RST_TOLERANCE;
-+	case reg_debounce_sel1:
-+		return GPIO_G7_CTRL_DEBOUNCE_SEL1;
-+	case reg_debounce_sel2:
-+		return GPIO_G7_CTRL_DEBOUNCE_SEL2;
-+	case reg_rdata:
-+		return GPIO_G7_CTRL_OUT_DATA;
-+	case reg_irq_status:
-+		return GPIO_G7_CTRL_IRQ_STS;
-+	case reg_cmdsrc0:
-+	case reg_cmdsrc1:
-+	default:
-+		WARN_ON_ONCE(1);
-+		return 0;
-+	}
-+}
-+
- #define GPIO_BANK(x)	((x) >> 5)
- #define GPIO_OFFSET(x)	((x) & 0x1f)
- #define GPIO_BIT(x)	BIT(GPIO_OFFSET(x))
-@@ -930,6 +981,9 @@ int aspeed_gpio_copro_grab_gpio(struct gpio_desc *desc,
- 	const struct aspeed_gpio_bank *bank = to_bank(offset);
- 	unsigned long flags;
- 
-+	if (gpio->config->version == 7)
-+		return -EOPNOTSUPP;
-+
- 	if (!gpio->cf_copro_bankmap)
- 		gpio->cf_copro_bankmap = kzalloc(gpio->chip.ngpio >> 3, GFP_KERNEL);
- 	if (!gpio->cf_copro_bankmap)
-@@ -975,6 +1029,9 @@ int aspeed_gpio_copro_release_gpio(struct gpio_desc *desc)
- 	int rc = 0, bindex, offset = gpio_chip_hwgpio(desc);
- 	unsigned long flags;
- 
-+	if (gpio->config->version == 7)
-+		return -EOPNOTSUPP;
-+
- 	if (!gpio->cf_copro_bankmap)
- 		return -ENXIO;
- 
-@@ -1069,10 +1126,27 @@ static const struct aspeed_gpio_config ast2600_config =
- 	 */
- 	{ .nr_gpios = 208, .props = ast2600_bank_props, .version = 4};
- 
-+static const struct aspeed_bank_props ast2700_bank_props[] = {
-+	/*     input	  output   */
-+	{ 1, 0x0fffffff, 0x0fffffff }, /* E/F/G/H, 4-GPIO hole */
-+	{ 6, 0x00ffffff, 0x00ffffff }, /* Y/Z/AA */
-+	{},
-+};
-+
-+static const struct aspeed_gpio_config ast2700_config =
-+	/*
-+	 * ast2700 has two controllers one with 212 GPIOs and one with 16 GPIOs.
-+	 * 216 for simplicity, actual number is 212 (4-GPIO hole in GPIOH)
-+	 * We expect ngpio being set in the device tree and this is a fallback
-+	 * option.
-+	 */
-+	{ .nr_gpios = 216, .props = ast2700_bank_props, .version = 7 };
-+
- static const struct of_device_id aspeed_gpio_of_table[] = {
- 	{ .compatible = "aspeed,ast2400-gpio", .data = &ast2400_config, },
- 	{ .compatible = "aspeed,ast2500-gpio", .data = &ast2500_config, },
- 	{ .compatible = "aspeed,ast2600-gpio", .data = &ast2600_config, },
-+	{ .compatible = "aspeed,ast2700-gpio", .data = &ast2700_config, },
- 	{}
- };
- MODULE_DEVICE_TABLE(of, aspeed_gpio_of_table);
-@@ -1111,6 +1185,40 @@ struct aspeed_gpio_llops aspeed_g4_llops = {
- 	.reg_bits_read = aspeed_g4_reg_bits_read,
- };
- 
-+static void aspeed_g7_reg_bits_set(struct aspeed_gpio *gpio, unsigned int offset,
-+				   const enum aspeed_gpio_reg reg, u32 val)
-+{
-+	u32 mask = reg_mask(reg);
-+	void __iomem *addr = gpio->base + GPIO_G7_CTRL_REG_OFFSET(offset);
-+	u32 write_val = (ioread32(addr) & ~(mask)) | (((val) << (ffs(mask) - 1)) & (mask));
-+
-+	iowrite32(write_val, addr);
-+}
-+
-+static u32 aspeed_g7_reg_bits_read(struct aspeed_gpio *gpio, unsigned int offset,
-+				   const enum aspeed_gpio_reg reg)
-+{
-+	u32 mask = reg_mask(reg);
-+	void __iomem *addr;
-+
-+	if (reg == reg_irq_status) {
-+		addr = gpio->base + GPIO_G7_IRQ_STS_OFFSET(offset);
-+		return ioread32(addr);
-+	}
-+	addr = gpio->base + GPIO_G7_CTRL_REG_OFFSET(offset);
-+	if (reg == reg_val)
-+		mask = GPIO_G7_CTRL_IN_DATA;
-+
-+	return (((ioread32(addr)) & (mask)) >> (ffs(mask) - 1));
-+}
-+
-+struct aspeed_gpio_llops aspeed_g7_llops = {
-+	.copro_request = NULL,
-+	.copro_release = NULL,
-+	.reg_bits_set = aspeed_g7_reg_bits_set,
-+	.reg_bits_read = aspeed_g7_reg_bits_read,
-+};
-+
- static int __init aspeed_gpio_probe(struct platform_device *pdev)
- {
- 	const struct of_device_id *gpio_id;
-@@ -1152,6 +1260,14 @@ static int __init aspeed_gpio_probe(struct platform_device *pdev)
- 			gpio->debounce_timers_array = debounce_timers;
- 			gpio->debounce_timers_num = ARRAY_SIZE(debounce_timers);
- 		}
-+	} else if (gpio->config->version == 7) {
-+		if (!gpio->llops)
-+			gpio->llops = &aspeed_g7_llops;
-+
-+		if (!gpio->debounce_timers_array) {
-+			gpio->debounce_timers_array = g7_debounce_timers;
-+			gpio->debounce_timers_num = ARRAY_SIZE(g7_debounce_timers);
-+		}
- 	} else {
- 		return -EOPNOTSUPP;
- 	}
+ 			/*
+ 			 * Second, check MALL eligibility
 -- 
-2.25.1
+2.17.1
 
 
