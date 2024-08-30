@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-308830-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308831-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2AA89966263
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 15:04:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3235096626B
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 15:04:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA48B280CAF
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 13:04:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AF402B23D09
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 13:04:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59AD11A285A;
-	Fri, 30 Aug 2024 13:02:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C59501B2EE3;
+	Fri, 30 Aug 2024 13:02:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="DRekLhrv"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="rXlxiy1a"
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFFFA1B250E
-	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 13:02:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 412711B2531
+	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 13:02:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725022971; cv=none; b=k7h9kCxpUOlTZn9QFmeDbgCf/mLM4dWNY+uLPw21IxqeHYcJEBvM3vs29kvvwK1kNWh2bSdJVcxO4aBbe2qHRi3Xiv4m8sQljqFt+/VijB58a/OUQMAPn00m9M0vMuTGBXX407KpLLBXhr5Ka/dIdPZ52KfUKEnQ7RGzYApT+0k=
+	t=1725022973; cv=none; b=INLFzEq+NziOuHs7hG6Y6JTbX08dWrkGuYIkJ4o1P2SHomop2zcv4AhKckwo/pMC8vVY8Q4iInEY6r+o4uTmnyxHJPrhpRxIrz167x04jwM16shmcOVRMa3qb+LwlGSJ9YqNBLxfvlj9nm+flu9IE4hB6KU46GeWbWsm9oxuQMc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725022971; c=relaxed/simple;
-	bh=SOGK7YXZYXutzKsB4rqBEXBmAsm7IDgcVUg5Tr6j8dw=;
+	s=arc-20240116; t=1725022973; c=relaxed/simple;
+	bh=XoEdsWD3GFV8d0KfrEKPk7Ur4yqRuu/m00zmMrSLN9Y=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=qjyWK2xV+BI65fiCx3JbrmN7qiN5Db4P9FrsKe+CjmSKwIG5/yWXf/Wzfe1YJbW/+YOIeuUnZs8i2o8M8k2ox2Pq9pc0hIwe1v7kseh4+/Gkw2dCbdMs/4ivFV/UWaUqGuzB+N5Rf++qfA0fiOKTpMhVug6w5vp3/1kLRVu6/Xg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=DRekLhrv; arc=none smtp.client-ip=209.85.128.54
+	 MIME-Version; b=FAWBMfwuhMWjARY2mk9lz99LypTfJgDTEftY9SbphXU7fUhxVcpGypMnq6ULqdNS38rE0LhSKsSMeVpYNhrnhQsVzGuNw7BUVC+DZDJAYW/IwfewqLss+gWlXkZESadhuOsYqVFR73GwYYo+oMj35ThBVGmfnwizkkuAKeYHifY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=rXlxiy1a; arc=none smtp.client-ip=209.85.221.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-42bb7298bdeso19273025e9.1
-        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 06:02:48 -0700 (PDT)
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-374ba74e9b6so61813f8f.0
+        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 06:02:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1725022967; x=1725627767; darn=vger.kernel.org;
+        d=tuxon.dev; s=google; t=1725022969; x=1725627769; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=rkRwte9q+8AOt+nLdxE1AfujOX2Kar+XMD+HzKexS/o=;
-        b=DRekLhrvNR22sORM1LeuRJ4p+LqPx+oKKOhb/DEhpiiLaMQnPIEZcTmuaDu3lGGobY
-         tA7OrP2P3zx2j/XMu32oIVT000RrGPkOWvonvn/fvVhk7d/h2/CBVsMqPU0eSMUi6nQ3
-         EHRTNKuTXQ5fud/pPzn6dzZg8K/NI3+FV+qNS5D9Lze6cSdaq4r/y5xBQF9XzYpe4DZz
-         A+zItSmkt+NLz4YtVb5SE50rFgjZyae3yuaTIzC191agS53UaaFdRtPdRgxyUpE8Bhzp
-         1WTJ9XarU9nTW1k1bk8dZ5WYssdDMiMLStXR0Z5jjhPXtZ8LE9nXRSHbH7fsfG6G1mKt
-         mxtQ==
+        bh=Jv0oZD54JwyxxGSiMjJenEWJkyUF1s8+LyLX9GNpM7s=;
+        b=rXlxiy1aUQGbGmM3mk+dviQ1CBZ+LhD4NEeLEe5e2CVKC2tuiP84DoP55ygJwKTWb2
+         nHu682KCTq7Ot1OQsEkV5eN90Q+0UxmEh0tffVayjhb12APhEx2PKmDaIeJ15aV+OQZ/
+         r0/6HUrORInNYDaXBHNR6T9s/2/P0JeKNaPQSnbl9wsGYsSeuM3UAYVyr+E4Rm9CGLVi
+         4FGYWba3AG68qVhOcLx6Wy+03c+zny4b+unNGrg7wivdNwI7dJLPxT/RFPmKCH3IQa5u
+         UGK6r4VhyuGDEsh5rOACC13fq2mQgUDKj2OJl1mcU3VwSNacboF8ftdCYq9CerFQYdsL
+         pyAQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725022967; x=1725627767;
+        d=1e100.net; s=20230601; t=1725022969; x=1725627769;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=rkRwte9q+8AOt+nLdxE1AfujOX2Kar+XMD+HzKexS/o=;
-        b=ecfOfeu/E8lOY9/cDHvUYTfejdTSMVDBXF3OwUFHRoDvLuzAHotCiv6in5vm3l9QKY
-         LvrEIH2mRmIRIz1Z6cV7XStbu7+EDB49OiLlTi/47dvHST1So6yCMbxaKMCKRWDrCVbp
-         5wYzMq2rOlJZ/d+MXsoEZnTKZU8X+xKyZeZFemjRqGsyVikZyewc+t7Y6bHMICXN71Gg
-         PSwAUyD/M532tsmN9XtBoyfPKs9QqjDDxNPMzJoK715fo1gk6etFXu09WQXSpkW8DNQx
-         Sb5X49HUuCzzj2iu48X4LvXxiDB1gczzE5I146d3OUp9twC3KLa/AYcmFZXmG896loIL
-         Kmfg==
-X-Forwarded-Encrypted: i=1; AJvYcCXuRCuAW/jD8poGjTSyrv5SCGFsh94j1neJWdK94auCOLoMgY2tcZouXoiJthN4YZX//OIfhjGzdD3IF4s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YySRShjcd6wdiP7mDPuWkVB6LsJmGYgc6v+y1m7NAm+mRVg5bLb
-	IvxImZu6+9QDKy8KKmW2FsnFPP/vv5ZU7509ddEI3sOkMvMT2Ku3wMzQ7FS2UGc=
-X-Google-Smtp-Source: AGHT+IGU92UJsrTL2eS34wvxlFxInUfaWmAHimLJ8uHD9As/Je5eM6xtpedH3VaOd1rgq+IJrO4c2w==
-X-Received: by 2002:a05:600c:3b10:b0:426:6ed5:fcb with SMTP id 5b1f17b1804b1-42bb01ae1fbmr61952375e9.4.1725022966892;
-        Fri, 30 Aug 2024 06:02:46 -0700 (PDT)
+        bh=Jv0oZD54JwyxxGSiMjJenEWJkyUF1s8+LyLX9GNpM7s=;
+        b=QFP1SHZCY1jedunSDC2STjxonzODhIsgXFWdUljU987zUfstdcs7P9eeKoWOb9jVWv
+         9kqtvef7FGNetWPRg/0cbk+hRm0qy06jdo1eB3rNaj9s1MVA6RHa/fS70388cbLyccHX
+         fskkRrclodX4dexhftOc/Anbq3Ri3Q4CYFnHieeC42lED+WqxlQjiQNyf5pz3ZX43s+k
+         XEbxULgBOooBSjoAG1d6XN04R2MimUZOXfKuPLVZJmA9NHH/oaFiBMq6p0TslJuFucbj
+         Hgeknu3gf4XfXi0/SCVlo4mQGBlzEBq29se/NeoJHmBSqpldtlevB2gOw/WHTq61BxMN
+         siiA==
+X-Forwarded-Encrypted: i=1; AJvYcCUvlW9GYrm0nQmq3OByJ519O8YobCFso7iCi6PCPWPRbr5qOqGt/INXCCRIGT3ho35XFWOGC2VMvLAHcFg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwztXZtgiNr8Q1utgQhCCQIbRHPAaBVRVeJu+B9CBHBWtJZ8ltS
+	VWc1QDjqeUESybQb04zAbIdoXRa7wDb4cQUWgrapkjGZu2hVjfAsScQjwyeLgkg=
+X-Google-Smtp-Source: AGHT+IFJuYbBZoAS0PSV5YK7faHO8M89tBMM5ZoWIn7ROBTJ6rIOk/KLg+dQnZBya/I75t5xQlCWlg==
+X-Received: by 2002:adf:ee12:0:b0:368:7282:51d6 with SMTP id ffacd0b85a97d-3749b544a72mr4671516f8f.21.1725022968774;
+        Fri, 30 Aug 2024 06:02:48 -0700 (PDT)
 Received: from claudiu-X670E-Pro-RS.. ([82.78.167.144])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42ba642594dsm80361785e9.47.2024.08.30.06.02.45
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42ba642594dsm80361785e9.47.2024.08.30.06.02.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 30 Aug 2024 06:02:46 -0700 (PDT)
+        Fri, 30 Aug 2024 06:02:48 -0700 (PDT)
 From: Claudiu <claudiu.beznea@tuxon.dev>
 X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
 To: geert+renesas@glider.be,
@@ -85,9 +85,9 @@ Cc: claudiu.beznea@tuxon.dev,
 	linux-rtc@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: [PATCH v3 08/12] arm64: dts: renesas: r9a08g045: Add RTC node
-Date: Fri, 30 Aug 2024 16:02:14 +0300
-Message-Id: <20240830130218.3377060-9-claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH v3 09/12] arm64: dts: renesas: rzg3s-smarc-som: Enable VBATTB
+Date: Fri, 30 Aug 2024 16:02:15 +0300
+Message-Id: <20240830130218.3377060-10-claudiu.beznea.uj@bp.renesas.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20240830130218.3377060-1-claudiu.beznea.uj@bp.renesas.com>
 References: <20240830130218.3377060-1-claudiu.beznea.uj@bp.renesas.com>
@@ -101,58 +101,43 @@ Content-Transfer-Encoding: 8bit
 
 From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-Add the DT node for the RTC IP available on the Renesas RZ/G3S SoC.
+Enable the VBATTB controller. It provides the clock for RTC.
 
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 ---
 
 Changes in v3:
-- added CPG clock, power domain, reset
-- and assigned-clocks, assigned-clock-parents to configure the
-  VBATTCLK
-- included dt-bindings/clock/r9a08g045-vbattb.h
+- updated patch description
+- dropped vbattclk
+- added renesas,vbattb-load-nanofarads on vbattb
+- moved vbattb before vbattb_xtal
 
 Changes in v2:
-- updated compatibles
+- none
 
- arch/arm64/boot/dts/renesas/r9a08g045.dtsi | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+ arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r9a08g045.dtsi b/arch/arm64/boot/dts/renesas/r9a08g045.dtsi
-index 247fa80a4f53..ac9b6733d289 100644
---- a/arch/arm64/boot/dts/renesas/r9a08g045.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r9a08g045.dtsi
-@@ -7,6 +7,7 @@
+diff --git a/arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi b/arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi
+index 21bfa4e03972..591a90ccfe3c 100644
+--- a/arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi
++++ b/arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi
+@@ -346,6 +346,15 @@ mux {
+ 	};
+ };
  
- #include <dt-bindings/interrupt-controller/arm-gic.h>
- #include <dt-bindings/clock/r9a08g045-cpg.h>
-+#include <dt-bindings/clock/r9a08g045-vbattb.h>
- 
- / {
- 	compatible = "renesas,r9a08g045";
-@@ -160,6 +161,22 @@ i2c3: i2c@10090c00 {
- 			status = "disabled";
- 		};
- 
-+		rtc: rtc@1004ec00 {
-+			compatible = "renesas,r9a08g045-rtca3", "renesas,rz-rtca3";
-+			reg = <0 0x1004ec00 0 0x400>;
-+			interrupts = <GIC_SPI 315 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 316 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 317 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "alarm", "period", "carry";
-+			clocks = <&cpg CPG_MOD R9A08G045_VBAT_BCLK>, <&vbattb VBATTB_VBATTCLK>;
-+			clock-names = "bus", "counter";
-+			assigned-clocks = <&vbattb VBATTB_MUX>;
-+			assigned-clock-parents = <&vbattb VBATTB_XC>;
-+			power-domains = <&cpg>;
-+			resets = <&cpg R9A08G045_VBAT_BRESETN>;
-+			status = "disabled";
-+		};
++&vbattb {
++	renesas,vbattb-load-nanofarads = <12500>;
++	status = "okay";
++};
 +
- 		vbattb: vbattb@1005c000 {
- 			compatible = "renesas,r9a08g045-vbattb";
- 			reg = <0 0x1005c000 0 0x1000>;
++&vbattb_xtal {
++	clock-frequency = <32768>;
++};
++
+ &wdt0 {
+ 	timeout-sec = <60>;
+ 	status = "okay";
 -- 
 2.39.2
 
