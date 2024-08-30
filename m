@@ -1,188 +1,484 @@
-Return-Path: <linux-kernel+bounces-308197-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308188-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A608C965886
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 09:31:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77462965864
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 09:28:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5CEE0287EC5
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 07:31:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D7DFFB21856
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 07:28:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D5EA156668;
-	Fri, 30 Aug 2024 07:28:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 591CE1547D3;
+	Fri, 30 Aug 2024 07:28:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="g0d8rHEj"
-Received: from APC01-PSA-obe.outbound.protection.outlook.com (mail-psaapc01on2072.outbound.protection.outlook.com [40.107.255.72])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b8GV5N8u"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96E63158554;
-	Fri, 30 Aug 2024 07:28:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.255.72
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725002931; cv=fail; b=YoCjUnvTOeD1qsc8HETrSOHsbrvQECdkbqRY3v1SiQtBMZw/6vyNtoJYl3knJg8IvBJNrxHQ2JQva1n4XrXBZdk+bAPOEfj4WkZR5dXap2wg0ImKf+uScWnrSVBWZLuvQgP/b86q44kiDTtYoaWoXk4dJ7P0iRhOJgpTxtS+qG4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725002931; c=relaxed/simple;
-	bh=u3Ro8r+I/E/zf9NJVEX8bN/Yovtdi0VNuyB3/P/jn6E=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=pdHMjVFpK4SfMv7e6QG4rrvZ61t2BhJiQIUTpFaD+7FSGw8vdwBjPLX1bh9yPq42IxG1RJiEGiNwy+myh93oNNjrn47K6RJ7caM8KMu4rEmyKiM6iDeOwQfIbZSJKP0AeCnXJTLPjKlZ52CkWYUkOvr/bK1I34VNGHUNZ2AgVlQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=g0d8rHEj; arc=fail smtp.client-ip=40.107.255.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=y4iH+qW8E59n0f57lRj06IIwVT/9K1ijDwSVcGCJEY8M70Qj2xGG1DNexN62U/qHNCo906aa7Uzj12VI83U5qn1dEWfAzniKyih4GoRlDQDAD6p0jrh1HdR01zxx8iwjGFZ7BqBsmeXmzE8POsroJkrXQQubXRtM2DK1IgPqCnrIXYv+4viSpdCpVvI7FMbh132FI/5mICBLaU1XHjJyfBs6F5Dp4LFgmXVvwpTEKsmTCiW+kUKyzlkQtfuhvujMawV82dmW65JT/bZL822mhXO77q/D9PE/9AgG8Y4sH4ItkzUNdsL2mUuBAyTPdb7HEImUcI5W2knEIqnKTQwStg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=qyYL06JpEE4EgEdruPC6xYYO1yJyMeMp1dUMmDwtVYg=;
- b=PPi1vxbhDkGCu5WaWuwOfXOQpuw6TO7YC9dTd+XJ9I0Y/Rtr54/t95I74y0yJ5+PCVZODPDB9LTLbxFCXV3nCBcieCT4jlusO88+0FYj5/bH3IoKmRirgDeoobQqyB8mpYAwdpeHEzPJwivK9sQLiix6o0o7HEzmqh+KpOwU34iqkmz8X+Qt36vugZG5JgC4DQ2HWoSwcFu/KRGRU54bhC9oIv12tfjQQTJt5HeLv62cK18AeQO34PcoEzObCwHt+gHCUCqdERMAsYGYH4J7rwD7g2PElu5GhxTRQa6aLASZC4b0FYlDYXoQ/DqaRd7Yqmy2ZBL4/2ZSVd2kcWymRQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=qyYL06JpEE4EgEdruPC6xYYO1yJyMeMp1dUMmDwtVYg=;
- b=g0d8rHEjFLb0kMq5BEQCa5tpFwUuE0feoHR/ZEnWdpGXycJGBBAwv9IcznC4MAkyMT8BUBjSgWV1o/pxD3t6tvDBea7871RVG2wu7r/HEWXMnFPjx6R9LkCZG3zVfdigF/Fpnh7zbvkVQY/ZcbjDceTuOqRIQ4jx0ank7fDg5fatBC7qvKSD+gnM+h4tFZV/Nx5tloCGMiJAlJuo6464UboTp7Qgi6x+9HYNDZRP9W3dzXV8U07H9U6Gba64aowIqpXqoRB6E1w4VKwKda1X1JKSY3YyD+KcDx6aE9ZyolJXTs0VYm7KEZcdQK/ZJAef7cEV2c55WB0kIv7DJrxj/Q==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from KL1PR0601MB5487.apcprd06.prod.outlook.com
- (2603:1096:820:bf::14) by KL1PR06MB6274.apcprd06.prod.outlook.com
- (2603:1096:820:e5::10) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.28; Fri, 30 Aug
- 2024 07:28:45 +0000
-Received: from KL1PR0601MB5487.apcprd06.prod.outlook.com
- ([fe80::2129:59e5:6c67:311f]) by KL1PR0601MB5487.apcprd06.prod.outlook.com
- ([fe80::2129:59e5:6c67:311f%7]) with mapi id 15.20.7897.027; Fri, 30 Aug 2024
- 07:28:45 +0000
-From: Chen Yufan <chenyufan@vivo.com>
-To: =?UTF-8?q?Emilio=20L=C3=B3pez?= <emilio@elopez.com.ar>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-sunxi@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Cc: opensource.kernel@vivo.com,
-	Chen Yufan <chenyufan@vivo.com>
-Subject: [PATCH v1] clk: sunxi: sun9i-mmc: Use dev_err_probe() to simplfy code
-Date: Fri, 30 Aug 2024 15:27:47 +0800
-Message-Id: <20240830072747.11032-1-chenyufan@vivo.com>
-X-Mailer: git-send-email 2.39.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: TYWPR01CA0047.jpnprd01.prod.outlook.com
- (2603:1096:400:17f::12) To KL1PR0601MB5487.apcprd06.prod.outlook.com
- (2603:1096:820:bf::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 045D1153BE3
+	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 07:28:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725002907; cv=none; b=G7lkZtyZWEjX6kZXW8av3ijWeLS6WL4BJjo+u9DL3gcyQ8/dZSzithU2PmJ/BKn96pnzKW1V0yunYdLG1hNPH8e+wPliFJdn+9YXQ9ybcCqe+g5AVbSMQlKDHyshdJoIp0C8f+TdLOLqyu/CAEmoK3G/FrvtgwPQevQDZXFBIUI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725002907; c=relaxed/simple;
+	bh=WR665u3V6lLR4hQEMZOKRCBmcIJyVQTdBgnzHFBxZok=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aEfmlQ8uzAWNumpJ4QDOMDJaQR4HMy8JI64Wf16xSueAxx9mW6NFf3V3x7J0wD95r8bxuIdJlZ39Gw5yWWLP8eev8SNYRv4nke96BC15deVc27V9UaA1xZecWpDeMZl1ZoHZXOAXfzRpDsbtaV7ez+Rw6tYCOLjHV2/H58GLies=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b8GV5N8u; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 54D9AC4CEC2;
+	Fri, 30 Aug 2024 07:28:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725002906;
+	bh=WR665u3V6lLR4hQEMZOKRCBmcIJyVQTdBgnzHFBxZok=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=b8GV5N8uq9ckGObA0i5dX6rhnNYvbeYpE+xnoB+wIimy5lYhuH1z4Z4SoR4ZP/lO9
+	 dBWj9K9bfUhbhMQJ5m/WVpYwL8ajdmsTM2y38e2spPpoOFKqNkVWa9ioaSQ9CXmN8x
+	 kfpDS5Ppl1PnZ6NuNkjf+whoctp5WLV/bfjQ5nj6hruD+MAqAQK7p/MzwDYgZYMUTy
+	 MEKluASAtt/u9F4E4inDA2CfS3samiGbnJ8gv5I95Fkudj2wv2e6kxmU17yb14BbVX
+	 hE8iuTX2yJ6S0Y9c9NjgMpMtodE7kAIiFlLNqchWddHvW7zpaTR1Rqk+hpCCiTWqhN
+	 YIaev9Byt8pkA==
+Date: Fri, 30 Aug 2024 08:28:22 +0100
+From: Lee Jones <lee@kernel.org>
+To: Matti Vaittinen <mazziesaccount@gmail.com>
+Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] mfd: bd96801: Add ERRB IRQ
+Message-ID: <20240830072822.GS6858@google.com>
+References: <cover.1724655894.git.mazziesaccount@gmail.com>
+ <05b576f3eef81a21cb9b4bcebee4873b7aafb4af.1724655894.git.mazziesaccount@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: KL1PR0601MB5487:EE_|KL1PR06MB6274:EE_
-X-MS-Office365-Filtering-Correlation-Id: 9e027bfc-979e-4683-6281-08dcc8c5612b
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|366016|7416014|52116014|376014|921020|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?xs60jA5ICs4KzULqqrHoxq0mnh2GFg0pBfYb8H+GXCtETee9StL/Dly9qqwY?=
- =?us-ascii?Q?xecBtMINmaZxlXoKGd0st/77CE2i01x/Rxe6nydL+Ry8bHSr88tfOkHmX4Qm?=
- =?us-ascii?Q?dDRuSjX+rDa6xXoDAPJ/61Erce2PrP1YESnLMr3hJYCw2SwIzXMo92BWMfJB?=
- =?us-ascii?Q?dgJVnf53BF1uzfLEE5ZFVDosSEg0jcPDRHv0TV0lueAi1kGqA+f9jqcIVNMh?=
- =?us-ascii?Q?ohu8XVJSlorIie8n/fZp4em9gOEKew3SSge/3gSIniDY20LzuanzDiMLQucd?=
- =?us-ascii?Q?IoobnwHWjHM6Fp4YgotYU1XtmEYm3pJNdOMnNuzjYwLY8NsiO5CZql4Fb4ww?=
- =?us-ascii?Q?DjE7EroTNfNCMaIIyAXCtY3a+N71ynpIeKty4XfQNKnxFmoLnIHbbe8QX5Mv?=
- =?us-ascii?Q?QPdSNBHFUyzVU+Uu3a5Uaiipm+WI3uJZhuifmIPH9ZLSttjEw30dlMdPzhov?=
- =?us-ascii?Q?zPzYJXkQWIi7l+azsubORr5sGazwxBodPFTa57eAaKlhZMyvPJ6kcHYL9xLk?=
- =?us-ascii?Q?KhaY9wRuZgD3DizeD5PTtuAoUj5CmgLwapoF5sgYZb6IgMSf0Z0QiACjkX3s?=
- =?us-ascii?Q?bsut+lsriGvjxpPZYwDIMZ6ExWP+AzxS6i5h7Q6oQiYxqEZkkk8Xj+8UWLH4?=
- =?us-ascii?Q?bUhMbX8vlhKEAWGlbs8d59+ZH+YcFsubfQ6F08b0+CcVuOrmVZM0ry5sruw9?=
- =?us-ascii?Q?EoYQ4ZKSiQMcG4b+snjcsk/oy5FR1/YwhV1jlCCQuSovVw6tZMYk0XI6k5Ot?=
- =?us-ascii?Q?DTU2Jc2GnHzgqYDHa7TSeIgDP0qDuT6quu82nQ0LNiSS4y7StKF0Psxzttkt?=
- =?us-ascii?Q?DLvIkEkEbX1RVV92uDv3apl1d8+v4qOUDvTpfsh1NqYP+gdnuPH7F8jGgDy3?=
- =?us-ascii?Q?IaWrcchxZiLn0JlekIRVMECMHdUEaCVW6qX8rT5APkGl4W6y3n+LWUAYPXEH?=
- =?us-ascii?Q?R0BAV5rRF07h9b15Sg5ScyU8Kw3zKW85PK99Ze9OR0+E+1ef4jorq1ymVR3K?=
- =?us-ascii?Q?emUMGjxF3bM7c+4UHqN4t/YyavTYnGOd9hXlB8xYr8ek3fcaer/FKRKN+qjW?=
- =?us-ascii?Q?hrp/3K/rOs85YEWHpd/B1wD6OVLBqVQGNimgCgFYsgc8Yyf4z7FRRAvBHUps?=
- =?us-ascii?Q?OmTn4zdcFjq+eML2UbVVTfGJPL0o+fCLpKYF0jqoDP28TM9izXv9njskDaSx?=
- =?us-ascii?Q?vMw34CoiutJvQkib4k3dZJJ3Gi2RHf5NGEcd/SM3zVqnC+umxNIFafzpTJah?=
- =?us-ascii?Q?XUzg5slxzD3zxJvakOMJ/quIrDrECRQ09yX0/tXmaLts16BzOlF+JXslzlti?=
- =?us-ascii?Q?UjSNfXMwUW3vxneLApYXOdz6JXjc3pmNZpHk4CVrYmQg+tx561XmDArI3xcO?=
- =?us-ascii?Q?OSXmwrbKFYmD4Xmi8lOtL0/I8CpRwFZdsOSwMte9/Px09/PcicTd1kJTiUOS?=
- =?us-ascii?Q?HwTqY9TJddE=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:KL1PR0601MB5487.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(52116014)(376014)(921020)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?5rrGqoHN7DjAv6VbF/p/H7uRKXJjLlk7cAU0PZ568qlqYp0ALxPFWOam2RHF?=
- =?us-ascii?Q?BneRGCYBj4hU1idc54STYLCvBJRECSiCm/COJrL6v0T6w3/nkB87/3Dr4oDh?=
- =?us-ascii?Q?tdC+UwrYQp0o+d1oqjZeD+gC7F0c6/NMfrG2clEhn9bY2DmMebW+duw5pyj4?=
- =?us-ascii?Q?OTDfwTuD9vqAsEUV3MKtxBaL33ZrtBwPPxgqFJMTuCtNiKgFn1tS9tvqONl/?=
- =?us-ascii?Q?vP9KNkdoVeolVNz220zloOa8Qh25OPDn4z96WmCKwWusDBK7E2+ISQKsv7gX?=
- =?us-ascii?Q?jHNk/h06dd320O1yCSfBhV0LSzOsgogApjxu/f7CPISDtnMNzFK4wxC9R2vL?=
- =?us-ascii?Q?Hv3exhJRm4ZUIyRz96Knl8YSu1fQ95SWxzPbIK28uopaPLNbwHG8pFm3l/v1?=
- =?us-ascii?Q?9OHwj+sfdIk+0+PHerhgVZHZbZPKbed71f78Q+kiW0K7w4OFoXgffhFjAtpD?=
- =?us-ascii?Q?d642fZ6wkOoOgmObK2aahYxdbefiIuQ8Y180ej/du6jL1Ndudex6FkNXv8k9?=
- =?us-ascii?Q?NDtpmiVqFVvfJTghu5j7Rb5fHbFSwW09YwYxFc9erkcr+2V+EoSpMpXW7MO4?=
- =?us-ascii?Q?sYxLPynS9KDPJ7VD66deTBkxav/7phqCiylXQOu4U7POdUt9dC1MGkWpeLvF?=
- =?us-ascii?Q?kHVJvkiiqhKYEmC3BK/PuLNm2OUKRY0HIYBNATiDyK97Z0MXvhUeNvcA6poP?=
- =?us-ascii?Q?W0V+AljQFfNkMhFrYu/SyPhwHZgUaDoE2x/kraio5V1/Po9Aw0L/iDYmiLI8?=
- =?us-ascii?Q?2kCr6HPilGYFl7LjUPpFEu6WaqXqqppPsBaa6gOvn//fQetty47w4ExsnAtc?=
- =?us-ascii?Q?qKc+anNAaiTPc5HEMd487sTkhpCCdcoB8TZQAqAqfO07NO0Bbj/vfq+gIIZ7?=
- =?us-ascii?Q?/3S11J3owj3b8TN2+33YSuax3pELNkB/1eCdw9tqEgdrk9gWse82UDL7oYim?=
- =?us-ascii?Q?yfuFGy5l2KGQb+g7IZxZT5NRwOb33gJnrngBwPxaSiT8orfJVvtbJHNEdgJD?=
- =?us-ascii?Q?KOJEyM3znKPSzfhgXqf2hR9O5YvJCOgeeV5mXQ+5u87VbjhPsIv9tCW6vuZ6?=
- =?us-ascii?Q?ONVqx/behHApoGD1BinKneo9Dblo1zuCIbCpNuFWT+lkHxH6koA1Xt6rpikk?=
- =?us-ascii?Q?mV7FED0LUC2WYsMyQMsmO+Hv50W4Z9NXj/NHuA7QTpqr6+yZ8F8QiA+bOl/F?=
- =?us-ascii?Q?LafPYMgpkSkV41fG1SdoSoWj1PmaS3BL8G9K8GVEBKAFDZw66FWWb1KfXKL0?=
- =?us-ascii?Q?gANqYgGD42ox1Kyw3ONiW74v3XVLRMfERAdndJ2eOmox2AjgVVn0RXvBhj6Y?=
- =?us-ascii?Q?Q6zKQfrO7AmQ3jAxDuOcRwoitzvYWhZ2r0/HMlRsk3jec7kJd3ygLwRKS26y?=
- =?us-ascii?Q?K3Q/BEJTPQZMmRiv6uFp/QjpM87I93c4m2nNK6MFK5ya2ccsVGf8Yzwn3S4V?=
- =?us-ascii?Q?9IzX3Swm4GmNLbVcmNZ1cueStF1H8lNzlPOE4GRYXwUsfiu63rCL13xt/BUz?=
- =?us-ascii?Q?TG61PvHgane9ItiDSGRHtR1KXPgMowChVp8mBX+EOEIt/f/z5FQzwOFitab5?=
- =?us-ascii?Q?YiBVXwjyU7rSReQrIBZBpXLXKNlnc8Q8gTUC0PUN?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9e027bfc-979e-4683-6281-08dcc8c5612b
-X-MS-Exchange-CrossTenant-AuthSource: KL1PR0601MB5487.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Aug 2024 07:28:45.0469
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Jy3/YggptzM6KTq6NoJ0t7zLQmKTUCCzycrPMiF4DJdzaZ9IJpjMh5+nZHN+HWWk8Q3lLa7qtU18IR+h9GMetA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: KL1PR06MB6274
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <05b576f3eef81a21cb9b4bcebee4873b7aafb4af.1724655894.git.mazziesaccount@gmail.com>
 
-Use dev_err_probe() can make code a bit simpler.
+On Mon, 26 Aug 2024, Matti Vaittinen wrote:
 
-Signed-off-by: Chen Yufan <chenyufan@vivo.com>
----
- drivers/clk/sunxi/clk-sun9i-mmc.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+> The ROHM BD96801 "scalable PMIC" provides two physical IRQs. The ERRB
+> handling can in many cases be omitted because it is used to inform fatal
+> IRQs, which usually kill the power from the SOC.
+> 
+> There may however be use-cases where the SOC has a 'back-up' emergency
+> power source which allows some very short time of operation to try to
+> gracefully shut down sensitive hardware. Furthermore, it is possible the
+> processor controlling the PMIC is not powered by the PMIC. In such cases
+> handling the ERRB IRQs may be beneficial.
+> 
+> Add support for ERRB IRQs.
+> 
+> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
+> ---
+> Revision history:
+> New series (only ERRB addition)
+> v1:
+> 	- use devm allocation for regulator_res
+> 	- use goto skip_errb instead of an if (errb)
+> 	- constify immutable structs
+> 
+> Old series (All BD96801 functionality + irqdomain and regmap changes)
+> v2 => v3:
+> 	- No changes
+> v1 => v2:
+> 	- New patch
+> 
+> mfd: constify structs
+> ---
+>  drivers/mfd/rohm-bd96801.c | 276 ++++++++++++++++++++++++++++++++-----
+>  1 file changed, 241 insertions(+), 35 deletions(-)
+> 
+> diff --git a/drivers/mfd/rohm-bd96801.c b/drivers/mfd/rohm-bd96801.c
+> index 714f08ed544b..fff764ddbf2f 100644
+> --- a/drivers/mfd/rohm-bd96801.c
+> +++ b/drivers/mfd/rohm-bd96801.c
+> @@ -5,13 +5,9 @@
+>   * ROHM BD96801 PMIC driver
+>   *
+>   * This version of the "BD86801 scalable PMIC"'s driver supports only very
+> - * basic set of the PMIC features. Most notably, there is no support for
+> - * the ERRB interrupt and the configurations which should be done when the
+> - * PMIC is in STBY mode.
+> - *
+> - * Supporting the ERRB interrupt would require dropping the regmap-IRQ
+> - * usage or working around (or accepting a presense of) a naming conflict
+> - * in debugFS IRQs.
+> + * basic set of the PMIC features.
+> + * Most notably, there is no support for the configurations which should
+> + * be done when the PMIC is in STBY mode.
+>   *
+>   * Being able to reliably do the configurations like changing the
+>   * regulator safety limits (like limits for the over/under -voltages, over
+> @@ -23,16 +19,14 @@
+>   * be the need to configure these safety limits. Hence it's not simple to
+>   * come up with a generic solution.
+>   *
+> - * Users who require the ERRB handling and STBY state configurations can
+> - * have a look at the original RFC:
+> + * Users who require the STBY state configurations can  have a look at the
+> + * original RFC:
+>   * https://lore.kernel.org/all/cover.1712920132.git.mazziesaccount@gmail.com/
+> - * which implements a workaround to debugFS naming conflict and some of
+> - * the safety limit configurations - but leaves the state change handling
+> - * and synchronization to be implemented.
+> + * which implements some of the safety limit configurations - but leaves the
+> + * state change handling and synchronization to be implemented.
+>   *
+>   * It would be great to hear (and receive a patch!) if you implement the
+> - * STBY configuration support or a proper fix to the debugFS naming
+> - * conflict in your downstream driver ;)
+> + * STBY configuration support or a proper fix in your downstream driver ;)
+>   */
+>  
+>  #include <linux/i2c.h>
+> @@ -46,6 +40,64 @@
+>  #include <linux/mfd/rohm-bd96801.h>
+>  #include <linux/mfd/rohm-generic.h>
+>  
+> +static const struct resource regulator_errb_irqs[] = {
+> +	DEFINE_RES_IRQ_NAMED(BD96801_OTP_ERR_STAT, "bd96801-otp-err"),
+> +	DEFINE_RES_IRQ_NAMED(BD96801_DBIST_ERR_STAT, "bd96801-dbist-err"),
+> +	DEFINE_RES_IRQ_NAMED(BD96801_EEP_ERR_STAT, "bd96801-eep-err"),
+> +	DEFINE_RES_IRQ_NAMED(BD96801_ABIST_ERR_STAT, "bd96801-abist-err"),
+> +	DEFINE_RES_IRQ_NAMED(BD96801_PRSTB_ERR_STAT, "bd96801-prstb-err"),
+> +	DEFINE_RES_IRQ_NAMED(BD96801_DRMOS1_ERR_STAT, "bd96801-drmoserr1"),
+> +	DEFINE_RES_IRQ_NAMED(BD96801_DRMOS2_ERR_STAT, "bd96801-drmoserr2"),
+> +	DEFINE_RES_IRQ_NAMED(BD96801_SLAVE_ERR_STAT, "bd96801-slave-err"),
+> +	DEFINE_RES_IRQ_NAMED(BD96801_VREF_ERR_STAT, "bd96801-vref-err"),
+> +	DEFINE_RES_IRQ_NAMED(BD96801_TSD_ERR_STAT, "bd96801-tsd"),
+> +	DEFINE_RES_IRQ_NAMED(BD96801_UVLO_ERR_STAT, "bd96801-uvlo-err"),
+> +	DEFINE_RES_IRQ_NAMED(BD96801_OVLO_ERR_STAT, "bd96801-ovlo-err"),
+> +	DEFINE_RES_IRQ_NAMED(BD96801_OSC_ERR_STAT, "bd96801-osc-err"),
+> +	DEFINE_RES_IRQ_NAMED(BD96801_PON_ERR_STAT, "bd96801-pon-err"),
+> +	DEFINE_RES_IRQ_NAMED(BD96801_POFF_ERR_STAT, "bd96801-poff-err"),
+> +	DEFINE_RES_IRQ_NAMED(BD96801_CMD_SHDN_ERR_STAT, "bd96801-cmd-shdn-err"),
+> +
+> +	DEFINE_RES_IRQ_NAMED(BD96801_INT_PRSTB_WDT_ERR, "bd96801-prstb-wdt-err"),
+> +	DEFINE_RES_IRQ_NAMED(BD96801_INT_CHIP_IF_ERR, "bd96801-chip-if-err"),
+> +	DEFINE_RES_IRQ_NAMED(BD96801_INT_SHDN_ERR_STAT, "bd96801-int-shdn-err"),
+> +
+> +	DEFINE_RES_IRQ_NAMED(BD96801_BUCK1_PVIN_ERR_STAT, "bd96801-buck1-pvin-err"),
+> +	DEFINE_RES_IRQ_NAMED(BD96801_BUCK1_OVP_ERR_STAT, "bd96801-buck1-ovp-err"),
+> +	DEFINE_RES_IRQ_NAMED(BD96801_BUCK1_UVP_ERR_STAT, "bd96801-buck1-uvp-err"),
+> +	DEFINE_RES_IRQ_NAMED(BD96801_BUCK1_SHDN_ERR_STAT, "bd96801-buck1-shdn-err"),
+> +
+> +	DEFINE_RES_IRQ_NAMED(BD96801_BUCK2_PVIN_ERR_STAT, "bd96801-buck2-pvin-err"),
+> +	DEFINE_RES_IRQ_NAMED(BD96801_BUCK2_OVP_ERR_STAT, "bd96801-buck2-ovp-err"),
+> +	DEFINE_RES_IRQ_NAMED(BD96801_BUCK2_UVP_ERR_STAT, "bd96801-buck2-uvp-err"),
+> +	DEFINE_RES_IRQ_NAMED(BD96801_BUCK2_SHDN_ERR_STAT, "bd96801-buck2-shdn-err"),
+> +
+> +	DEFINE_RES_IRQ_NAMED(BD96801_BUCK3_PVIN_ERR_STAT, "bd96801-buck3-pvin-err"),
+> +	DEFINE_RES_IRQ_NAMED(BD96801_BUCK3_OVP_ERR_STAT, "bd96801-buck3-ovp-err"),
+> +	DEFINE_RES_IRQ_NAMED(BD96801_BUCK3_UVP_ERR_STAT, "bd96801-buck3-uvp-err"),
+> +	DEFINE_RES_IRQ_NAMED(BD96801_BUCK3_SHDN_ERR_STAT, "bd96801-buck3-shdn-err"),
+> +
+> +	DEFINE_RES_IRQ_NAMED(BD96801_BUCK4_PVIN_ERR_STAT, "bd96801-buck4-pvin-err"),
+> +	DEFINE_RES_IRQ_NAMED(BD96801_BUCK4_OVP_ERR_STAT, "bd96801-buck4-ovp-err"),
+> +	DEFINE_RES_IRQ_NAMED(BD96801_BUCK4_UVP_ERR_STAT, "bd96801-buck4-uvp-err"),
+> +	DEFINE_RES_IRQ_NAMED(BD96801_BUCK4_SHDN_ERR_STAT, "bd96801-buck4-shdn-err"),
+> +
+> +	DEFINE_RES_IRQ_NAMED(BD96801_LDO5_PVIN_ERR_STAT, "bd96801-ldo5-pvin-err"),
+> +	DEFINE_RES_IRQ_NAMED(BD96801_LDO5_OVP_ERR_STAT, "bd96801-ldo5-ovp-err"),
+> +	DEFINE_RES_IRQ_NAMED(BD96801_LDO5_UVP_ERR_STAT, "bd96801-ldo5-uvp-err"),
+> +	DEFINE_RES_IRQ_NAMED(BD96801_LDO5_SHDN_ERR_STAT, "bd96801-ldo5-shdn-err"),
+> +
+> +	DEFINE_RES_IRQ_NAMED(BD96801_LDO6_PVIN_ERR_STAT, "bd96801-ldo6-pvin-err"),
+> +	DEFINE_RES_IRQ_NAMED(BD96801_LDO6_OVP_ERR_STAT, "bd96801-ldo6-ovp-err"),
+> +	DEFINE_RES_IRQ_NAMED(BD96801_LDO6_UVP_ERR_STAT, "bd96801-ldo6-uvp-err"),
+> +	DEFINE_RES_IRQ_NAMED(BD96801_LDO6_SHDN_ERR_STAT, "bd96801-ldo6-shdn-err"),
+> +
+> +	DEFINE_RES_IRQ_NAMED(BD96801_LDO7_PVIN_ERR_STAT, "bd96801-ldo7-pvin-err"),
+> +	DEFINE_RES_IRQ_NAMED(BD96801_LDO7_OVP_ERR_STAT, "bd96801-ldo7-ovp-err"),
+> +	DEFINE_RES_IRQ_NAMED(BD96801_LDO7_UVP_ERR_STAT, "bd96801-ldo7-uvp-err"),
+> +	DEFINE_RES_IRQ_NAMED(BD96801_LDO7_SHDN_ERR_STAT, "bd96801-ldo7-shdn-err"),
+> +};
+> +
+>  static const struct resource regulator_intb_irqs[] = {
+>  	DEFINE_RES_IRQ_NAMED(BD96801_TW_STAT, "bd96801-core-thermal"),
+>  
+> @@ -90,20 +142,14 @@ static const struct resource regulator_intb_irqs[] = {
+>  	DEFINE_RES_IRQ_NAMED(BD96801_LDO7_UVD_STAT, "bd96801-ldo7-undervolt"),
+>  };
+>  
+> -static const struct resource wdg_intb_irqs[] = {
+> -	DEFINE_RES_IRQ_NAMED(BD96801_WDT_ERR_STAT, "bd96801-wdg"),
+> +enum {
+> +	WDG_CELL = 0,
+> +	REGULATOR_CELL,
+>  };
+>  
+>  static struct mfd_cell bd96801_cells[] = {
+> -	{
+> -		.name = "bd96801-wdt",
+> -		.resources = wdg_intb_irqs,
+> -		.num_resources = ARRAY_SIZE(wdg_intb_irqs),
+> -	}, {
+> -		.name = "bd96801-regulator",
+> -		.resources = regulator_intb_irqs,
+> -		.num_resources = ARRAY_SIZE(regulator_intb_irqs),
+> -	},
+> +	[WDG_CELL] = { .name = "bd96801-wdt", },
+> +	[REGULATOR_CELL] = { .name = "bd96801-regulator", },
+>  };
+>  
+>  static const struct regmap_range bd96801_volatile_ranges[] = {
+> @@ -128,6 +174,91 @@ static const struct regmap_access_table volatile_regs = {
+>  	.n_yes_ranges = ARRAY_SIZE(bd96801_volatile_ranges),
+>  };
+>  
+> +/*
+> + * For ERRB we need main register bit mapping as bit(0) indicates active IRQ
+> + * in one of the first 3 sub IRQ registers, For INTB we can use default 1 to 1
+> + * mapping.
+> + */
+> +static unsigned int bit0_offsets[] = {0, 1, 2};	/* System stat, 3 registers */
+> +static unsigned int bit1_offsets[] = {3};	/* Buck 1 stat */
+> +static unsigned int bit2_offsets[] = {4};	/* Buck 2 stat */
+> +static unsigned int bit3_offsets[] = {5};	/* Buck 3 stat */
+> +static unsigned int bit4_offsets[] = {6};	/* Buck 4 stat */
+> +static unsigned int bit5_offsets[] = {7};	/* LDO 5 stat */
+> +static unsigned int bit6_offsets[] = {8};	/* LDO 6 stat */
+> +static unsigned int bit7_offsets[] = {9};	/* LDO 7 stat */
+> +
+> +static const struct regmap_irq_sub_irq_map errb_sub_irq_offsets[] = {
+> +	REGMAP_IRQ_MAIN_REG_OFFSET(bit0_offsets),
+> +	REGMAP_IRQ_MAIN_REG_OFFSET(bit1_offsets),
+> +	REGMAP_IRQ_MAIN_REG_OFFSET(bit2_offsets),
+> +	REGMAP_IRQ_MAIN_REG_OFFSET(bit3_offsets),
+> +	REGMAP_IRQ_MAIN_REG_OFFSET(bit4_offsets),
+> +	REGMAP_IRQ_MAIN_REG_OFFSET(bit5_offsets),
+> +	REGMAP_IRQ_MAIN_REG_OFFSET(bit6_offsets),
+> +	REGMAP_IRQ_MAIN_REG_OFFSET(bit7_offsets),
+> +};
+> +
+> +static const struct regmap_irq bd96801_errb_irqs[] = {
+> +	/* Reg 0x52 Fatal ERRB1 */
+> +	REGMAP_IRQ_REG(BD96801_OTP_ERR_STAT, 0, BD96801_OTP_ERR_MASK),
+> +	REGMAP_IRQ_REG(BD96801_DBIST_ERR_STAT, 0, BD96801_DBIST_ERR_MASK),
+> +	REGMAP_IRQ_REG(BD96801_EEP_ERR_STAT, 0, BD96801_EEP_ERR_MASK),
+> +	REGMAP_IRQ_REG(BD96801_ABIST_ERR_STAT, 0, BD96801_ABIST_ERR_MASK),
+> +	REGMAP_IRQ_REG(BD96801_PRSTB_ERR_STAT, 0, BD96801_PRSTB_ERR_MASK),
+> +	REGMAP_IRQ_REG(BD96801_DRMOS1_ERR_STAT, 0, BD96801_DRMOS1_ERR_MASK),
+> +	REGMAP_IRQ_REG(BD96801_DRMOS2_ERR_STAT, 0, BD96801_DRMOS2_ERR_MASK),
+> +	REGMAP_IRQ_REG(BD96801_SLAVE_ERR_STAT, 0, BD96801_SLAVE_ERR_MASK),
+> +	/* 0x53 Fatal ERRB2 */
+> +	REGMAP_IRQ_REG(BD96801_VREF_ERR_STAT, 1, BD96801_VREF_ERR_MASK),
+> +	REGMAP_IRQ_REG(BD96801_TSD_ERR_STAT, 1, BD96801_TSD_ERR_MASK),
+> +	REGMAP_IRQ_REG(BD96801_UVLO_ERR_STAT, 1, BD96801_UVLO_ERR_MASK),
+> +	REGMAP_IRQ_REG(BD96801_OVLO_ERR_STAT, 1, BD96801_OVLO_ERR_MASK),
+> +	REGMAP_IRQ_REG(BD96801_OSC_ERR_STAT, 1, BD96801_OSC_ERR_MASK),
+> +	REGMAP_IRQ_REG(BD96801_PON_ERR_STAT, 1, BD96801_PON_ERR_MASK),
+> +	REGMAP_IRQ_REG(BD96801_POFF_ERR_STAT, 1, BD96801_POFF_ERR_MASK),
+> +	REGMAP_IRQ_REG(BD96801_CMD_SHDN_ERR_STAT, 1, BD96801_CMD_SHDN_ERR_MASK),
+> +	/* 0x54 Fatal INTB shadowed to ERRB */
+> +	REGMAP_IRQ_REG(BD96801_INT_PRSTB_WDT_ERR, 2, BD96801_INT_PRSTB_WDT_ERR_MASK),
+> +	REGMAP_IRQ_REG(BD96801_INT_CHIP_IF_ERR, 2, BD96801_INT_CHIP_IF_ERR_MASK),
+> +	REGMAP_IRQ_REG(BD96801_INT_SHDN_ERR_STAT, 2, BD96801_INT_SHDN_ERR_MASK),
+> +	/* Reg 0x55 BUCK1 ERR IRQs */
+> +	REGMAP_IRQ_REG(BD96801_BUCK1_PVIN_ERR_STAT, 3, BD96801_OUT_PVIN_ERR_MASK),
+> +	REGMAP_IRQ_REG(BD96801_BUCK1_OVP_ERR_STAT, 3, BD96801_OUT_OVP_ERR_MASK),
+> +	REGMAP_IRQ_REG(BD96801_BUCK1_UVP_ERR_STAT, 3, BD96801_OUT_UVP_ERR_MASK),
+> +	REGMAP_IRQ_REG(BD96801_BUCK1_SHDN_ERR_STAT, 3, BD96801_OUT_SHDN_ERR_MASK),
+> +	/* Reg 0x56 BUCK2 ERR IRQs */
+> +	REGMAP_IRQ_REG(BD96801_BUCK2_PVIN_ERR_STAT, 4, BD96801_OUT_PVIN_ERR_MASK),
+> +	REGMAP_IRQ_REG(BD96801_BUCK2_OVP_ERR_STAT, 4, BD96801_OUT_OVP_ERR_MASK),
+> +	REGMAP_IRQ_REG(BD96801_BUCK2_UVP_ERR_STAT, 4, BD96801_OUT_UVP_ERR_MASK),
+> +	REGMAP_IRQ_REG(BD96801_BUCK2_SHDN_ERR_STAT, 4, BD96801_OUT_SHDN_ERR_MASK),
+> +	/* Reg 0x57 BUCK3 ERR IRQs */
+> +	REGMAP_IRQ_REG(BD96801_BUCK3_PVIN_ERR_STAT, 5, BD96801_OUT_PVIN_ERR_MASK),
+> +	REGMAP_IRQ_REG(BD96801_BUCK3_OVP_ERR_STAT, 5, BD96801_OUT_OVP_ERR_MASK),
+> +	REGMAP_IRQ_REG(BD96801_BUCK3_UVP_ERR_STAT, 5, BD96801_OUT_UVP_ERR_MASK),
+> +	REGMAP_IRQ_REG(BD96801_BUCK3_SHDN_ERR_STAT, 5, BD96801_OUT_SHDN_ERR_MASK),
+> +	/* Reg 0x58 BUCK4 ERR IRQs */
+> +	REGMAP_IRQ_REG(BD96801_BUCK4_PVIN_ERR_STAT, 6, BD96801_OUT_PVIN_ERR_MASK),
+> +	REGMAP_IRQ_REG(BD96801_BUCK4_OVP_ERR_STAT, 6, BD96801_OUT_OVP_ERR_MASK),
+> +	REGMAP_IRQ_REG(BD96801_BUCK4_UVP_ERR_STAT, 6, BD96801_OUT_UVP_ERR_MASK),
+> +	REGMAP_IRQ_REG(BD96801_BUCK4_SHDN_ERR_STAT, 6, BD96801_OUT_SHDN_ERR_MASK),
+> +	/* Reg 0x59 LDO5 ERR IRQs */
+> +	REGMAP_IRQ_REG(BD96801_LDO5_PVIN_ERR_STAT, 7, BD96801_OUT_PVIN_ERR_MASK),
+> +	REGMAP_IRQ_REG(BD96801_LDO5_OVP_ERR_STAT, 7, BD96801_OUT_OVP_ERR_MASK),
+> +	REGMAP_IRQ_REG(BD96801_LDO5_UVP_ERR_STAT, 7, BD96801_OUT_UVP_ERR_MASK),
+> +	REGMAP_IRQ_REG(BD96801_LDO5_SHDN_ERR_STAT, 7, BD96801_OUT_SHDN_ERR_MASK),
+> +	/* Reg 0x5a LDO6 ERR IRQs */
+> +	REGMAP_IRQ_REG(BD96801_LDO6_PVIN_ERR_STAT, 8, BD96801_OUT_PVIN_ERR_MASK),
+> +	REGMAP_IRQ_REG(BD96801_LDO6_OVP_ERR_STAT, 8, BD96801_OUT_OVP_ERR_MASK),
+> +	REGMAP_IRQ_REG(BD96801_LDO6_UVP_ERR_STAT, 8, BD96801_OUT_UVP_ERR_MASK),
+> +	REGMAP_IRQ_REG(BD96801_LDO6_SHDN_ERR_STAT, 8, BD96801_OUT_SHDN_ERR_MASK),
+> +	/* Reg 0x5b LDO7 ERR IRQs */
+> +	REGMAP_IRQ_REG(BD96801_LDO7_PVIN_ERR_STAT, 9, BD96801_OUT_PVIN_ERR_MASK),
+> +	REGMAP_IRQ_REG(BD96801_LDO7_OVP_ERR_STAT, 9, BD96801_OUT_OVP_ERR_MASK),
+> +	REGMAP_IRQ_REG(BD96801_LDO7_UVP_ERR_STAT, 9, BD96801_OUT_UVP_ERR_MASK),
+> +	REGMAP_IRQ_REG(BD96801_LDO7_SHDN_ERR_STAT, 9, BD96801_OUT_SHDN_ERR_MASK),
+> +};
+> +
+>  static const struct regmap_irq bd96801_intb_irqs[] = {
+>  	/* STATUS SYSTEM INTB */
+>  	REGMAP_IRQ_REG(BD96801_TW_STAT, 0, BD96801_TW_STAT_MASK),
+> @@ -176,8 +307,25 @@ static const struct regmap_irq bd96801_intb_irqs[] = {
+>  	REGMAP_IRQ_REG(BD96801_LDO7_UVD_STAT, 7, BD96801_LDO_UVD_STAT_MASK),
+>  };
+>  
+> -static struct regmap_irq_chip bd96801_irq_chip_intb = {
+> +static const struct regmap_irq_chip bd96801_irq_chip_errb = {
+> +	.name = "bd96801-irq-errb",
+> +	.domain_suffix = "errb",
+> +	.main_status = BD96801_REG_INT_MAIN,
+> +	.num_main_regs = 1,
+> +	.irqs = &bd96801_errb_irqs[0],
+> +	.num_irqs = ARRAY_SIZE(bd96801_errb_irqs),
+> +	.status_base = BD96801_REG_INT_SYS_ERRB1,
+> +	.mask_base = BD96801_REG_MASK_SYS_ERRB,
+> +	.ack_base = BD96801_REG_INT_SYS_ERRB1,
+> +	.init_ack_masked = true,
+> +	.num_regs = 10,
+> +	.irq_reg_stride = 1,
+> +	.sub_reg_offsets = &errb_sub_irq_offsets[0],
+> +};
+> +
+> +static const struct regmap_irq_chip bd96801_irq_chip_intb = {
+>  	.name = "bd96801-irq-intb",
+> +	.domain_suffix = "intb",
+>  	.main_status = BD96801_REG_INT_MAIN,
+>  	.num_main_regs = 1,
+>  	.irqs = &bd96801_intb_irqs[0],
+> @@ -199,11 +347,14 @@ static const struct regmap_config bd96801_regmap_config = {
+>  
+>  static int bd96801_i2c_probe(struct i2c_client *i2c)
+>  {
+> -	struct regmap_irq_chip_data *intb_irq_data;
+> +	int i, ret, intb_irq, errb_irq, num_regu_irqs, num_intb, num_errb = 0;
+> +	int wdg_irq_no;
 
-diff --git a/drivers/clk/sunxi/clk-sun9i-mmc.c b/drivers/clk/sunxi/clk-sun9i-mmc.c
-index 91074017c04f..e6b62e421936 100644
---- a/drivers/clk/sunxi/clk-sun9i-mmc.c
-+++ b/drivers/clk/sunxi/clk-sun9i-mmc.c
-@@ -134,10 +134,8 @@ static int sun9i_a80_mmc_config_clk_probe(struct platform_device *pdev)
- 	}
- 
- 	ret = reset_control_deassert(data->reset);
--	if (ret) {
--		dev_err(&pdev->dev, "Reset deassert err %d\n", ret);
--		return ret;
--	}
-+	if (ret)
-+		return dev_err_probe(&pdev->dev, ret, "Reset deassert err %d\n");
- 
- 	clk_parent = __clk_get_name(data->clk);
- 	for (i = 0; i < count; i++) {
+Nit: Not sure why the smaller data elements have been placed at the top.
+
+They were better down where they were.
+
+> +	struct regmap_irq_chip_data *intb_irq_data, *errb_irq_data;
+> +	struct irq_domain *intb_domain, *errb_domain;
+> +	struct resource wdg_irq;
+>  	const struct fwnode_handle *fwnode;
+> -	struct irq_domain *intb_domain;
+> +	struct resource *regulator_res;
+>  	struct regmap *regmap;
+> -	int ret, intb_irq;
+>  
+>  	fwnode = dev_fwnode(&i2c->dev);
+>  	if (!fwnode)
+> @@ -213,6 +364,23 @@ static int bd96801_i2c_probe(struct i2c_client *i2c)
+>  	if (intb_irq < 0)
+>  		return dev_err_probe(&i2c->dev, intb_irq, "INTB IRQ not configured\n");
+>  
+> +	num_intb =  ARRAY_SIZE(regulator_intb_irqs);
+> +
+> +	/* ERRB may be omitted if processor is powered by the PMIC */
+> +	errb_irq = fwnode_irq_get_byname(fwnode, "errb");
+> +	if (errb_irq < 0)
+> +		errb_irq = 0;
+> +
+> +	if (errb_irq)
+> +		num_errb = ARRAY_SIZE(regulator_errb_irqs);
+> +
+> +	num_regu_irqs = num_intb + num_errb;
+> +
+> +	regulator_res = devm_kcalloc(&i2c->dev, num_regu_irqs,
+> +				     sizeof(*regulator_res), GFP_KERNEL);
+> +	if (!regulator_res)
+> +		return -ENOMEM;
+> +
+>  	regmap = devm_regmap_init_i2c(i2c, &bd96801_regmap_config);
+>  	if (IS_ERR(regmap))
+>  		return dev_err_probe(&i2c->dev, PTR_ERR(regmap),
+> @@ -226,16 +394,54 @@ static int bd96801_i2c_probe(struct i2c_client *i2c)
+>  				       IRQF_ONESHOT, 0, &bd96801_irq_chip_intb,
+>  				       &intb_irq_data);
+>  	if (ret)
+> -		return dev_err_probe(&i2c->dev, ret, "Failed to add INTB IRQ chip\n");
+> +		return dev_err_probe(&i2c->dev, ret, "Failed to add INTB irq_chip\n");
+>  
+>  	intb_domain = regmap_irq_get_domain(intb_irq_data);
+>  
+> -	ret = devm_mfd_add_devices(&i2c->dev, PLATFORM_DEVID_AUTO,
+> -				   bd96801_cells,
+> -				   ARRAY_SIZE(bd96801_cells), NULL, 0,
+> -				   intb_domain);
+> +	/*
+> +	 * MFD core code is built to handle only one IRQ domain. BD96801
+> +	 * has two domains so we do IRQ mapping here and provide the
+> +	 * already mapped IRQ numbers to sub-devices.
+> +	 */
+
+Do one or more of the subdevices consume both domains?
+
+If not, why not call devm_mfd_add_devices() twice?
+
+> +	for (i = 0; i < num_intb; i++) {
+> +		struct resource *res = &regulator_res[i];
+> +
+> +		*res = regulator_intb_irqs[i];
+> +		res->start = res->end = irq_create_mapping(intb_domain,
+> +							    res->start);
+> +	}
+> +
+> +	wdg_irq_no = irq_create_mapping(intb_domain, BD96801_WDT_ERR_STAT);
+> +	wdg_irq = DEFINE_RES_IRQ_NAMED(wdg_irq_no, "bd96801-wdg");
+> +	bd96801_cells[WDG_CELL].resources = &wdg_irq;
+> +	bd96801_cells[WDG_CELL].num_resources = 1;
+> +
+> +	if (!num_errb)
+> +		goto skip_errb;
+> +
+> +	ret = devm_regmap_add_irq_chip(&i2c->dev, regmap, errb_irq, IRQF_ONESHOT,
+> +				       0, &bd96801_irq_chip_errb, &errb_irq_data);
+> +	if (ret)
+> +		return dev_err_probe(&i2c->dev, ret,
+> +				     "Failed to add ERRB (%d) irq_chip\n", errb_irq);
+> +
+> +	errb_domain = regmap_irq_get_domain(errb_irq_data);
+> +
+> +	for (i = 0; i < num_errb; i++) {
+> +		struct resource *res = &regulator_res[num_intb + i];
+> +
+> +		*res = regulator_errb_irqs[i];
+> +		res->start = res->end = irq_create_mapping(errb_domain, res->start);
+> +	}
+> +
+> +skip_errb:
+> +	bd96801_cells[REGULATOR_CELL].resources = regulator_res;
+> +	bd96801_cells[REGULATOR_CELL].num_resources = num_regu_irqs;
+> +
+> +	ret = devm_mfd_add_devices(&i2c->dev, PLATFORM_DEVID_AUTO, bd96801_cells,
+> +				   ARRAY_SIZE(bd96801_cells), NULL, 0, NULL);
+>  	if (ret)
+> -		dev_err(&i2c->dev, "Failed to create subdevices\n");
+> +		dev_err_probe(&i2c->dev, ret, "Failed to create subdevices\n");
+>  
+>  	return ret;
+>  }
+> -- 
+> 2.45.2
+> 
+> 
+> -- 
+> Matti Vaittinen, Linux device drivers
+> ROHM Semiconductors, Finland SWDC
+> Kiviharjunlenkki 1E
+> 90220 OULU
+> FINLAND
+> 
+> ~~~ "I don't think so," said Rene Descartes. Just then he vanished ~~~
+> Simon says - in Latin please.
+> ~~~ "non cogito me" dixit Rene Descarte, deinde evanescavit ~~~
+> Thanks to Simon Glass for the translation =] 
+
+
+
 -- 
-2.39.0
-
+Lee Jones [李琼斯]
 
