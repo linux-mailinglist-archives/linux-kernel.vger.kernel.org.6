@@ -1,221 +1,380 @@
-Return-Path: <linux-kernel+bounces-308096-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308098-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D1AF96572A
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 07:56:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C97D965731
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 07:57:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA0BC28622C
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 05:56:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D8E762866C2
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 05:57:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A2D514B061;
-	Fri, 30 Aug 2024 05:56:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06FF72F2C;
+	Fri, 30 Aug 2024 05:56:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="XdypjZWY"
-Received: from mail-oi1-f177.google.com (mail-oi1-f177.google.com [209.85.167.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=atmark-techno.com header.i=@atmark-techno.com header.b="wXcaaVJU";
+	dkim=pass (2048-bit key) header.d=atmark-techno.com header.i=@atmark-techno.com header.b="ETEKpY8Z"
+Received: from gw2.atmark-techno.com (gw2.atmark-techno.com [35.74.137.57])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20EFF22615
-	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 05:56:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9DA11531F9
+	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 05:56:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.74.137.57
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724997390; cv=none; b=NuJj9/NepoTs+d13jXl/zpEhjyksm300kQ4RBqZUdqfljJN8EgywDIbzASqGpxfik0fBqn55KvkK/anDudxN4kBtIDZ+MjJP3WLmV0Hlvnblv+0tsOlbxSwfTH1JlG/5hQbktkDSBevtMkwwgWkBebAnupEW/rhJukyxKZ7SpG4=
+	t=1724997405; cv=none; b=fx5aX4kdL4eWxYL+9uZ6hjtZrQoJmGEmcdzsv4+4C/4oZOvYhtmlzXpCEfMkDxWHgFzP4ssRWtjPnFfhS54xoHAxZpJTgNGqL9ChGXspM8nHEucGGLlqGtR4kMWTE5spM3HmFIuqS/e17ZRP1sOqqagv1Ne+4vGjpihSQtUbQeo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724997390; c=relaxed/simple;
-	bh=BufH58xUlwGgIMD/X+IHjfQoH0oJKj3bV5BKz4Oi78o=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sSa385jOw6VeI/3+dIu0XFQLUo38TqyZVPaKajILjjnBWS3NUydWUsdZO6/gWEftFEYFxqwnnuKMDhZqbiLUk4iiQK1omXZn391AL7p3CXBdfXOvvsau8v5swGwsoCqWZNvWd19geMkS99tGCBu3kTXyfDzJoE4kusbO5i+WjBA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=XdypjZWY; arc=none smtp.client-ip=209.85.167.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
-Received: by mail-oi1-f177.google.com with SMTP id 5614622812f47-3dd25b2c3f2so638107b6e.0
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 22:56:28 -0700 (PDT)
+	s=arc-20240116; t=1724997405; c=relaxed/simple;
+	bh=x9yjOjFAohZtscac1sFvxpeu7yLK+GwtoV5bfW1JrOk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PztpyA/az8N6c+zaL8eQPD9EaL1ccQRcl2LNwdhmrakqtpSm6cRlttxPb7fECM061a6+GSC1L74KCCmqQQ6NpRkbWWygF9V8r+CrpCMvu8ekmS88fk5joV3Dy2Itqv4JVs4roN0yPxPGe2NT5iZFzozVy1IGcaxf/H1gbxxXTSk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=atmark-techno.com; spf=pass smtp.mailfrom=atmark-techno.com; dkim=pass (2048-bit key) header.d=atmark-techno.com header.i=@atmark-techno.com header.b=wXcaaVJU; dkim=pass (2048-bit key) header.d=atmark-techno.com header.i=@atmark-techno.com header.b=ETEKpY8Z; arc=none smtp.client-ip=35.74.137.57
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=atmark-techno.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=atmark-techno.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=atmark-techno.com;
+	s=gw2_bookworm; t=1724997397;
+	bh=x9yjOjFAohZtscac1sFvxpeu7yLK+GwtoV5bfW1JrOk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=wXcaaVJUCXBWpGxgdT3ZXp3PUtR1mfC92445ncE9J5Hhp60v4Nm+H29gfkbQODNSr
+	 8OdCMlo/ZuLmlYmX9XhILyiP4BCsn94ymbuFdM/wga9/Y10z0StkqDYWvUBN7U7ZMg
+	 2zauCYVfGANlzVyieFXKONS4h6jJPMZ61dlM0Z5v5c+Y5gAegH6T5frUJLy5okLMv/
+	 F/eLMfhT4rMRC9opHOF6i83BsX3xTtmwSlxKtcoFh0yco1zH61yTSflcpxWBN81Hnj
+	 wapTx9r43kX/21f+XiK4izKaOHTH8gi4R4Ns/sP0tm4kcno/pmsbkP2kyTtZbyTXHc
+	 rhP5mz3FK/INg==
+Received: from gw2.atmark-techno.com (localhost [127.0.0.1])
+	by gw2.atmark-techno.com (Postfix) with ESMTP id 5411D7B4
+	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 14:56:37 +0900 (JST)
+Authentication-Results: gw2.atmark-techno.com;
+	dkim=pass (2048-bit key; unprotected) header.d=atmark-techno.com header.i=@atmark-techno.com header.a=rsa-sha256 header.s=google header.b=ETEKpY8Z;
+	dkim-atps=neutral
+Received: from mail-pf1-f197.google.com (mail-pf1-f197.google.com [209.85.210.197])
+	by gw2.atmark-techno.com (Postfix) with ESMTPS id D0AE275B
+	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 14:56:35 +0900 (JST)
+Received: by mail-pf1-f197.google.com with SMTP id d2e1a72fcca58-7143d66b510so1738639b3a.3
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 22:56:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google; t=1724997388; x=1725602188; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jErUDJYJZrdtSGs3YNEXW8T8pZ8TEPOPqQ7j0f/EK1I=;
-        b=XdypjZWYL0b2ijAI4gN+q2xT7eWcpLp3eYb8z24uN4/ZHtAIOEBG1snTd7qo+lpSva
-         f7bi1u/a2cpFg0qYTdnEwCDu1WNQ2sxVKO7jgfO49Rn1duU/7KqvqoCY3RZaPuzMRmpl
-         Sb6O3QD1eJ2cBmgb3Hf3KDTC+TF7ct6rIMKeYkjoDkaERO1Y6Fmg4WYN3kmARvLUtEzd
-         +tFGATYL7Y/S9IQuzcqCoHQSGNlgU304OYor6s2fha24PqRSbm3Cvb+h8LAYmoEPPWe/
-         2u9llI860KfydaD1u3sPBYSP1B6RT45NwRY98L5thdL//64K/DDTVnn9CS/RNEsLQbiE
-         xcqw==
+        d=atmark-techno.com; s=google; t=1724997395; x=1725602195; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=mkYZPDGmaBN190bl0HbQlkXjB4c4DMUzWPODIPceod0=;
+        b=ETEKpY8ZjGtoYchD21JPEWfhwq48fGYDBhi4s8DTbn4Dirw81tPytuPFkM0zB5058M
+         tCAzybDa9R3WQiZnE6OVIRrlpsPFILy/YyvJJcjvr99YgwIaoQ2bgKZq6cc8k/km6B68
+         yQkVI6NYdNuEFXhGM8/vVu+L729ta859jTqI4usCfZh5ARG6jnS+S51dUo8LmL7l17L6
+         utacPd2PRnEj88EqrqLzbH3UmdoBs0drG7i/Gg7txkEF0PeW1NZcwDD3CcFub/uypQK5
+         PffR6AvJmLuGDlqql7LEXHo1grLLeOTEC6SE54cVbYLO9pKfUCyuWagDLY8GJDc486f1
+         P+UA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724997388; x=1725602188;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jErUDJYJZrdtSGs3YNEXW8T8pZ8TEPOPqQ7j0f/EK1I=;
-        b=Y/GjnJefeGub4SBBYhdfsvdIsy9sfCllS3A4Vg0wf2+SVc0BP/il3mMLDluJptOJFu
-         MCmDbxqkmwbqtv8OE58H0FKVc2QpKyV2w6kg/7JWbCu7aq9fS/xNZjaHHpwRG6JbwIbQ
-         q6bas24CJVvILDXBWac2NTdshX88ySk66VCfTu9Zx2tut7YoxF6zZgPSjwk3yoUtDwgJ
-         F15NDZfhLgnK/TKf3D+9gbJgZk1yIBj2xNAzZ4WwnjYeKzQ/s/JQd3CEit8TMZ3TlfuE
-         EZIuTjKIwaaA5ubUZqO+EAA8ZDTqPnUs/417wL11PasxfU+8xlM+EokUlJjv3snR3dYx
-         gQBw==
-X-Forwarded-Encrypted: i=1; AJvYcCVaiIXvqeisn5Hp0wMQuqOXgLwRSobZi5OJsPGrdCzD/soz+XcglpjBX5/fzADkS1PK/Yd6tFJTsoUukDE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzaGdQ3aSZPDMzBrYRl90ILWCkT6adoGYO//lJ9QGXcXWr9KxAK
-	+ioGBSzgdDkF/COS33CNNFAy3DIm4zV1j+Kms71bIGzBgdiTwokYBzyDBCX9ZH3++mngK+vqbA8
-	0EJgdRQ2t2IEYKIuDGucQNllZnJ4466oisUtz6w==
-X-Google-Smtp-Source: AGHT+IHA3E7d2Q5u8iuUQE6FpOiZI0dlWkCb5KtpOqR2HgEH/0+z5Vbpq2htdz0jpr0UjNRAEK7twhGJkx21tqu8hgU=
-X-Received: by 2002:a05:6808:1692:b0:3de:13bf:3092 with SMTP id
- 5614622812f47-3df05d8557fmr4797666b6e.24.1724997387915; Thu, 29 Aug 2024
- 22:56:27 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1724997395; x=1725602195;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=mkYZPDGmaBN190bl0HbQlkXjB4c4DMUzWPODIPceod0=;
+        b=Hs+uz4VLc52yuJOKUCeUaKgavctdHhizAZrv6FE8ixofEAzae02AcNVpxTeELDzCKX
+         tUPxNV9JmIR53RljWFmdFZA5vZpBCBBQDWfpBlO2pJib8QEvuLnwfVefbCUGfhdg747O
+         Uw6GZj+8wFnC0mmTZgJ51VunMoRxORHdwFtdSddftGhG43gORQwx5jX9eynBBg5kC4pM
+         1QkdRcaGycbW6qajKr6E2bUlCfQdRbxxYaKAx46H4pVQzGkKYtmmrLInpeut9SqCMqci
+         SKmhgE+lj/VVNmn6VU4p8ve1kOF+Y0JSyy/39bqEU30W30vMAbx5roFi0YY8EPYXAdq2
+         QByQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXCq9HZK5+1bEn6CirugJ/uKmJkmsYQWgT57BhspE8soBbb6RuF5Q21dmEPnUKVS77xB3RB+FNxpE2SEFw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzf9/vZGjJoS55aHqnf2ouaxzKvzUXASQx6OLREX6BYG+eQ56h5
+	M0GLHmN7mhjNvbX2z8eBnEsDVvwiKDLdqr1Xm6GpIzYlMnhFmFRoHnWicjsXDny44CHYNfS+BlC
+	Jz6W2Y1i5beorvJ4xevhk2eugOUrKuPi9NzpfVsqBLTQFYr+PUZR0JzbDNP5G9oU=
+X-Received: by 2002:a05:6a00:234a:b0:714:1fc3:79f7 with SMTP id d2e1a72fcca58-715dfc506a0mr7113315b3a.17.1724997394663;
+        Thu, 29 Aug 2024 22:56:34 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEospLhuiiaJ+JXW7SbcBkbVDDo2i03cNpb6xUMWtOllEbOfcXeI36XV92dVw14GmctIFDlqw==
+X-Received: by 2002:a05:6a00:234a:b0:714:1fc3:79f7 with SMTP id d2e1a72fcca58-715dfc506a0mr7113295b3a.17.1724997394145;
+        Thu, 29 Aug 2024 22:56:34 -0700 (PDT)
+Received: from pc-0182.atmarktech (117.209.187.35.bc.googleusercontent.com. [35.187.209.117])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-715e55a44e4sm2019480b3a.56.2024.08.29.22.56.33
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 29 Aug 2024 22:56:33 -0700 (PDT)
+Received: from martinet by pc-0182.atmarktech with local (Exim 4.96)
+	(envelope-from <martinet@pc-zest>)
+	id 1sjuca-00E9Fv-0o;
+	Fri, 30 Aug 2024 14:56:32 +0900
+Date: Fri, 30 Aug 2024 14:56:22 +0900
+From: Dominique Martinet <dominique.martinet@atmark-techno.com>
+To: Adam Ford <aford173@gmail.com>
+Cc: linux-phy@lists.infradead.org, linux-imx@nxp.com, festevam@gmail.com,
+	frieder.schrempf@kontron.de, aford@beaconembedded.com,
+	Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Marco Felsch <m.felsch@pengutronix.de>,
+	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+	Lucas Stach <l.stach@pengutronix.de>, linux-kernel@vger.kernel.org,
+	Makoto Sato <makoto.sato@atmark-techno.com>
+Subject: Re: [RFC V3 3/3] phy: freescale: fsl-samsung-hdmi: Support dynamic
+ integer
+Message-ID: <ZtFfBs4HEShmJKsi@atmark-techno.com>
+References: <20240830032442.226031-1-aford173@gmail.com>
+ <20240830032442.226031-3-aford173@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240829033904.477200-1-nick.hu@sifive.com> <20240829033904.477200-3-nick.hu@sifive.com>
- <CAK9=C2Xui8c0b55WrZxCZYqK=AFmiPT+nG8d_E0d7SpamwvO-Q@mail.gmail.com>
- <CAKddAkCoZy=uid5gVzUg-zwhBxX_EZCbFR18521N3142MPv=jw@mail.gmail.com> <CAK9=C2VbF2JKSfJLVEV4SYQFxr+gmpBTjtK6DuVFSbEAjRmFOA@mail.gmail.com>
-In-Reply-To: <CAK9=C2VbF2JKSfJLVEV4SYQFxr+gmpBTjtK6DuVFSbEAjRmFOA@mail.gmail.com>
-From: Nick Hu <nick.hu@sifive.com>
-Date: Fri, 30 Aug 2024 13:56:17 +0800
-Message-ID: <CAKddAkAbf7VJ-dZ_PWsDstTKgTobA_UCYK+vix1ovc-BSMOyJA@mail.gmail.com>
-Subject: Re: [PATCH 2/2] time-riscv: Stop stimecmp when cpu hotplug
-To: Anup Patel <apatel@ventanamicro.com>
-Cc: greentime.hu@sifive.com, zong.li@sifive.com, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Pavel Machek <pavel@ucw.cz>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
-	Thomas Gleixner <tglx@linutronix.de>, Andrew Jones <ajones@ventanamicro.com>, 
-	Conor Dooley <conor.dooley@microchip.com>, Samuel Holland <samuel.holland@sifive.com>, 
-	Sunil V L <sunilvl@ventanamicro.com>, linux-pm@vger.kernel.org, 
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240830032442.226031-3-aford173@gmail.com>
 
-Hi Anup
+Adam Ford wrote on Thu, Aug 29, 2024 at 10:24:27PM -0500:
+> There is currently a look-up table for a variety of resolutions.
+> Since the phy has the ability to dynamically calculate the values
+> necessary to use the intger divider which should allow more
+> resolutions without having to update the look-up-table.
+> 
+> If the lookup table cannot find an exact match, fall back to the
+> dynamic calculator of the integer divider.
+> 
+> Previously, the value of P was hard-coded to 1, this required an
+> update to the phy_pll_cfg table to add in the extra value into the
+> table, so if the value of P is calculated to be something else
+> by the PMS calculator, the calculated_phy_pll_cfg structure
+> can be used instead without having to keep track of which method
+> was used.
 
-On Thu, Aug 29, 2024 at 2:49=E2=80=AFPM Anup Patel <apatel@ventanamicro.com=
-> wrote:
->
-> On Thu, Aug 29, 2024 at 11:53=E2=80=AFAM Nick Hu <nick.hu@sifive.com> wro=
-te:
-> >
-> > Hi Anup
-> >
-> > On Thu, Aug 29, 2024 at 1:18=E2=80=AFPM Anup Patel <apatel@ventanamicro=
-.com> wrote:
-> > >
-> > > On Thu, Aug 29, 2024 at 9:10=E2=80=AFAM Nick Hu <nick.hu@sifive.com> =
-wrote:
-> > > >
-> > > > Stop the stimecmp when the cpu is going to be off otherwise the tim=
-er
-> > > > interrupt may pending while performing power down operation.
-> > > >
-> > > > Signed-off-by: Nick Hu <nick.hu@sifive.com>
-> > > > ---
-> > > >  drivers/clocksource/timer-riscv.c | 22 +++++++++++++++-------
-> > > >  1 file changed, 15 insertions(+), 7 deletions(-)
-> > > >
-> > > > diff --git a/drivers/clocksource/timer-riscv.c b/drivers/clocksourc=
-e/timer-riscv.c
-> > > > index 48ce50c5f5e6..9a6acaa8dfb0 100644
-> > > > --- a/drivers/clocksource/timer-riscv.c
-> > > > +++ b/drivers/clocksource/timer-riscv.c
-> > > > @@ -32,15 +32,19 @@
-> > > >  static DEFINE_STATIC_KEY_FALSE(riscv_sstc_available);
-> > > >  static bool riscv_timer_cannot_wake_cpu;
-> > > >
-> > > > +static void riscv_clock_stop_stimecmp(void)
-> > > > +{
-> > > > +       csr_write(CSR_STIMECMP, ULONG_MAX);
-> > > > +       if (IS_ENABLED(CONFIG_32BIT))
-> > > > +               csr_write(CSR_STIMECMPH, ULONG_MAX);
-> > > > +}
-> > > > +
-> > > >  static void riscv_clock_event_stop(void)
-> > > >  {
-> > > > -       if (static_branch_likely(&riscv_sstc_available)) {
-> > > > -               csr_write(CSR_STIMECMP, ULONG_MAX);
-> > > > -               if (IS_ENABLED(CONFIG_32BIT))
-> > > > -                       csr_write(CSR_STIMECMPH, ULONG_MAX);
-> > > > -       } else {
-> > > > +       if (static_branch_likely(&riscv_sstc_available))
-> > > > +               riscv_clock_stop_stimecmp();
-> > > > +       else
-> > > >                 sbi_set_timer(U64_MAX);
-> > > > -       }
-> > > >  }
-> > > >
-> > > >  static int riscv_clock_next_event(unsigned long delta,
-> > > > @@ -126,7 +130,11 @@ static int riscv_timer_starting_cpu(unsigned i=
-nt cpu)
-> > > >
-> > > >  static int riscv_timer_dying_cpu(unsigned int cpu)
-> > > >  {
-> > > > -       disable_percpu_irq(riscv_clock_event_irq);
-> > > > +       if (static_branch_likely(&riscv_sstc_available))
-> > > > +               riscv_clock_stop_stimecmp();
-> > > > +       else
-> > > > +               disable_percpu_irq(riscv_clock_event_irq);
-> > > > +
-> > >
-> > > Not disabling riscv_clock_event_irq here for Sstc would now
-> > > cause riscv_timer_starting_cpu() to unnecessarily enable it
-> > > when the CPU is powered-up.
-> > >
-> > > I think the below change is sufficient for this patch:
-> > >
-> > > diff --git a/drivers/clocksource/timer-riscv.c
-> > > b/drivers/clocksource/timer-riscv.c
-> > > index 48ce50c5f5e6..546fd248f4ff 100644
-> > > --- a/drivers/clocksource/timer-riscv.c
-> > > +++ b/drivers/clocksource/timer-riscv.c
-> > > @@ -127,6 +127,11 @@ static int riscv_timer_starting_cpu(unsigned int=
- cpu)
-> > >  static int riscv_timer_dying_cpu(unsigned int cpu)
-> > >  {
-> > >         disable_percpu_irq(riscv_clock_event_irq);
-> > > +       /*
-> > > +        * Stop the timer when the cpu is going to be offline otherwi=
-se
-> > > +        * the timer interrupt may be pending while performing power-=
-down.
-> > > +        */
-> > > +       riscv_clock_event_stop();
-> > >         return 0;
-> > >  }
-> > >
-> > The sbi_exit() of OpenSBI will disable mtimecmp when
-> > sbi_hsm_hart_stop() so the mtimecmp will be disabled twice if there is
-> > no SSTC.
-> > How about adding a SSTC available check before the riscv_clock_event_st=
-op?
->
-> Currently, OpenSBI uses mtimecmp only for implementing
-> SBI time extension but in the future, OpenSBI might implement
-> a per-hart timer event list to allow M-mode timer events.
->
-> Don't assume in what environment the driver is running.
->
-> It is possible that the driver is running under a hypervisor
-> which only provides SBI time extension and does not virtualize
-> Sstc extension.
->
-I see, Thank you for the explanation!
+Thank you!
 
-> >
-> >   /*
-> >    * Stop the timer when the cpu is going to be offline otherwise
-> >    * the timer interrupt may be pending while performing power-down.
-> >    */
-> > if (static_branch_likely(&riscv_sstc_available))
-> >     riscv_clock_event_stop();
-> >
->
-I'll update this one in the next version.
+I've updated to v3 and we must have missed something fiddling with v1
+but our 31.5MHz-only screen turns on with this!
 
-> Regards,
-> Anup
+Unfortunately among the other odd devices we support, there's one
+whose native resolution only supports 83.5MHz, and that doesn't come out
+right with the integer divider (that function returns 83.2MHz, which is
+0.4%off)
+If we force the round/set rate functions to prefer the calculated value
+and allow that in imx8mp_hdmi_check_clk_rate (dw_hdmi-imx.c) then it
+also works, so I don't think we actually need to affine the model...
+Coming back to what Lucas replied to my initial mail HDMI would also a
+rate mismatch of ±0.5%, so the integer calculator works for all the
+frequencies we've currently added manually if we fix the check to allow
+that as well:
+32000000: found 32000000 (100.0% match): p 1 / m 80 / s 12
+51200000: found 51200000 (100.0% match): p 1 / m 64 / s 6
+65000000: found 64800000 (99.6% match): p 1 / m 54 / s 4
+71000000: found 70800000 (99.7% match): p 1 / m 59 / s 4
+83500000: found 83200000 (99.6% match): p 1 / m 104 / s 6
 
-Regards,
-Nick
+(only actually tested 51.2 and 83.5 here, we don't have all the hardware
+available; I'll try to play with normal monitors that support more modes
+once the patch gets further finalized)
+
+
+So, as far as I'm concerned I'd be happy to move forward with that and
+will backport this to our tree/remove our kludged values, would "just"
+need to properly pick the closest value if no exact match instead of
+always falling back to the table (or just remove the table altogether if
+we can test a few monitors?)
+
+A couple of style nitpicks below
+
+> diff --git a/drivers/phy/freescale/phy-fsl-samsung-hdmi.c b/drivers/phy/freescale/phy-fsl-samsung-hdmi.c
+> index a700a300dc6f..3fab40cde40d 100644
+> --- a/drivers/phy/freescale/phy-fsl-samsung-hdmi.c
+> +++ b/drivers/phy/freescale/phy-fsl-samsung-hdmi.c
+> @@ -16,6 +16,8 @@
+>  
+>  #define PHY_REG(reg)		(reg * 4)
+>  
+> +#define REG01_PMS_P_MASK	GENMASK(3, 0)
+> +#define REG03_PMS_S_MASK	GENMASK(7, 4)
+>  #define REG12_CK_DIV_MASK	GENMASK(5, 4)
+>  #define REG13_TG_CODE_LOW_MASK	GENMASK(7, 0)
+>  #define REG14_TOL_MASK		GENMASK(7, 4)
+> @@ -29,281 +31,296 @@
+>  #define REG34_PLL_LOCK		BIT(6)
+>  #define REG34_PHY_CLK_READY	BIT(5)
+>  
+> -#define PHY_PLL_DIV_REGS_NUM 6
+> +#ifndef MHZ
+> +#define MHZ	(1000UL * 1000UL)
+> +#endif
+> +
+> +#define PHY_PLL_DIV_REGS_NUM 7
+>  
+>  struct phy_config {
+>  	u32	pixclk;
+>  	u8	pll_div_regs[PHY_PLL_DIV_REGS_NUM];
+>  };
+>  
+> +/*
+> + * The calculated_phy_pll_cfg only handles integer divider for PMS only,
+> + * meaning the last four entries will be fixed, but the first three will
+> + * be calculated by the PMS calculator
+> + */
+> +static struct phy_config calculated_phy_pll_cfg = {
+
+I'd change cur_cfg from pointer to the struct itself like this (partial
+patch that probably won't even apply on your branch:)
+----
+diff --git a/drivers/phy/freescale/phy-fsl-samsung-hdmi.c b/drivers/phy/freescale/phy-fsl-samsung-hdmi.c
+index 9048cdc760c2..d7124604819c 100644
+--- a/drivers/phy/freescale/phy-fsl-samsung-hdmi.c
++++ b/drivers/phy/freescale/phy-fsl-samsung-hdmi.c
+@@ -402,7 +402,7 @@ struct fsl_samsung_hdmi_phy {
+ 
+ 	/* clk provider */
+ 	struct clk_hw hw;
+-	const struct phy_config *cur_cfg;
++	struct phy_config cur_cfg;
+ };
+ 
+ static inline struct fsl_samsung_hdmi_phy *
+@@ -562,9 +562,9 @@ static int phy_clk_set_rate(struct clk_hw *hw,
+ 	if (i < 0)
+ 		return -EINVAL;
+ 
+-	phy->cur_cfg = &phy_pll_cfg[i];
++	phy->cur_cfg = phy_pll_cfg[i];
+ 
+-	return fsl_samsung_hdmi_phy_configure(phy, phy->cur_cfg);
++	return fsl_samsung_hdmi_phy_configure(phy, &phy->cur_cfg);
+ }
+ 
+ static const struct clk_ops phy_clk_ops = {
+----
+
+Then you can just set it directly for calculated values.
+But conceptually it's the same, just one less indirection.
+
+> @@ -406,6 +424,76 @@ fsl_samsung_hdmi_phy_configure_pll_lock_det(struct fsl_samsung_hdmi_phy *phy,
+>  	       phy->regs + PHY_REG(14));
+>  }
+>  
+> +static unsigned long fsl_samsung_hdmi_phy_find_pms(unsigned long fout, u8 *p, u16 *m, u8 *s)
+> +{
+> +	unsigned long best_freq = 0;
+> +	u32 min_delta = 0xffffffff;
+> +	u8 _p, best_p;
+> +	u16 _m, best_m;
+> +	u8 _s, best_s;
+> +
+> +	/* The ref manual states the values of 'P' rannge from 1 to 11 */
+
+typo: range
+
+> +	for (_p = 1; _p <= 11; ++_p) {
+> +		for (_s = 1; _s <= 16; ++_s) {
+> +			u64 tmp;
+> +			u32 delta;
+> +
+> +			/* s must be one or even */
+> +			if (_s > 1 && (_s & 0x01) == 1)
+> +				_s++;
+> +
+> +			/* _s cannot be 14 per the TRM */
+> +			if (_s == 14)
+> +				continue;
+> +
+> +			/*
+> +			 * TODO: Ref Manual doesn't state the range of _m
+> +			 * so this should be further refined if possible.
+> +			 * This range was set based on the original values
+> +			 * in the look-up table
+> +			 */
+> +			tmp = (u64)fout * (_p * _s);
+> +			do_div(tmp, 24 * MHZ);
+> +			_m = tmp;
+> +			if (_m < 0x30 || _m > 0x7b)
+> +				continue;
+> +
+> +			/*
+> +			 * Rev 2 of the Ref Manual states the
+> +			 * VCO can range between 750MHz and
+> +			 * 3GHz.  The VCO is assumed to be _m x
+> +			 * the reference frequency of 24MHz divided
+> +			 * by the prescaler, _p
+> +			 */
+> +			tmp = (u64)_m * 24 * MHZ;
+> +			do_div(tmp, _p);
+> +			if (tmp < 750 * MHZ ||
+> +			    tmp > 3000 * MHZ)
+> +				continue;
+> +
+> +			tmp = (u64)_m * 24 * MHZ;
+> +			do_div(tmp, _p * _s);
+> +
+> +			delta = abs(fout - tmp);
+> +			if (delta < min_delta) {
+> +				best_p = _p;
+> +				best_s = _s;
+> +				best_m = _m;
+> +				min_delta = delta;
+> +				best_freq = tmp;
+> +			}
+> +		}
+> +	}
+> +
+> +	if (best_freq) {
+> +		*p = best_p;
+> +		*m = best_m;
+> +		*s = best_s;
+> +	}
+> +
+> +	return best_freq;
+> +}
+> +
+>  static int fsl_samsung_hdmi_phy_configure(struct fsl_samsung_hdmi_phy *phy,
+>  					  const struct phy_config *cfg)
+>  {
+> @@ -419,13 +507,13 @@ static int fsl_samsung_hdmi_phy_configure(struct fsl_samsung_hdmi_phy *phy,
+>  	for (i = 0; i < ARRAY_SIZE(common_phy_cfg); i++)
+>  		writeb(common_phy_cfg[i].val, phy->regs + common_phy_cfg[i].reg);
+>  
+> -	/* set individual PLL registers PHY_REG2 ... PHY_REG7 */
+> +	/* set individual PLL registers PHY_REG1 ... PHY_REG7 */
+>  	for (i = 0; i < PHY_PLL_DIV_REGS_NUM; i++)
+> -		writeb(cfg->pll_div_regs[i], phy->regs + PHY_REG(2) + i * 4);
+> +		writeb(cfg->pll_div_regs[i], phy->regs + PHY_REG(1) + i * 4);
+>  
+> -	/* High nibble of pll_div_regs[1] contains S which also gets written to REG21 */
+> +	/* High nibble of PHY_REG3 and low nibble of PHY_REG21 both contain 'S' */
+>  	writeb(REG21_SEL_TX_CK_INV | FIELD_PREP(REG21_PMS_S_MASK,
+> -	       cfg->pll_div_regs[1] >> 4), phy->regs + PHY_REG(21));
+> +	       cfg->pll_div_regs[2] >> 4), phy->regs + PHY_REG(21));
+>  
+>  	fsl_samsung_hdmi_phy_configure_pll_lock_det(phy, cfg);
+>  
+> @@ -453,29 +541,70 @@ static unsigned long phy_clk_recalc_rate(struct clk_hw *hw,
+>  static long phy_clk_round_rate(struct clk_hw *hw,
+>  			       unsigned long rate, unsigned long *parent_rate)
+>  {
+> +	u32 int_div_clk;
+>  	int i;
+> +	u16 m;
+> +	u8 p, s;
+> +
+> +	/* If the clock is out of range return error instead of searching */
+> +	if (rate > 297000000 || rate < 22250000)
+> +		return -EINVAL;
+>  
+> +	/* Check the look-up table */
+>  	for (i = ARRAY_SIZE(phy_pll_cfg) - 1; i >= 0; i--)
+>  		if (phy_pll_cfg[i].pixclk <= rate)
+> -			return phy_pll_cfg[i].pixclk;
+> +			break;
+> +	/* If the rate is an exact match, return it now */
+> +	if (rate == phy_pll_cfg[i].pixclk)
+> +		return phy_pll_cfg[i].pixclk;
+> +
+> +	/*
+> +	 * The math on the lookup table shows the PMS math yields a
+> +	 * frequency 5 x pixclk.
+> +	 * When we check the integer divider against the desired rate,
+> +	 * multiply the rate x 5 and then divide the outcome by 5.
+> +	 */
+> +	int_div_clk = fsl_samsung_hdmi_phy_find_pms(rate * 5, &p, &m, &s) / 5;
+
+I'd move that comment and both multiplication and division inside
+fsl_samsung_hdmi_phy_find_pms, since it's a property of the computation
+(not having the comment made me ask last time, with the comment it's
+fine -- thanks for adding these comments, very helpful.)
+
+-- 
+Dominique
+
+
 
