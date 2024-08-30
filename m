@@ -1,100 +1,108 @@
-Return-Path: <linux-kernel+bounces-309076-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309077-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 177179665EB
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 17:44:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B10D39665F0
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 17:44:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C521428228D
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 15:44:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F8E1282B7F
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 15:44:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D19F71B5307;
-	Fri, 30 Aug 2024 15:43:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAD851B6554;
+	Fri, 30 Aug 2024 15:44:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TNwUVg53"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tVAtELA0"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20FE0EEC9;
-	Fri, 30 Aug 2024 15:43:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFFF0EEC9;
+	Fri, 30 Aug 2024 15:44:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725032639; cv=none; b=DHuvfUSkjfDAcZHZh22SRrRwjGV6VhE0a0uSwPTPDd+s+ArVj6fEBudlxAjb2GtViwE0IsUBFLND3qVym2KJx7mxZk7TNHUJ13FxmjXJikHzFW8Ov8q0r0u7jKGT57YPRZb35g19SQvbryt5KZHwUOxMBoUThP3+3PELouUOcOU=
+	t=1725032647; cv=none; b=iHqLgOmPqHeF/Jw2+Y8oTc//69UigQlwwJJCWl//RHKUmD53aPqPUMW53lcG/67sYecFFustIsYkfDjtj4ktNypWjI6AiFMvixuAIiVjIufd467iBcI+hBHrcx+CosygfVwQne7iGEjcmTy/VsDLEulmlSQdbpftzg3A8wqY4vw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725032639; c=relaxed/simple;
-	bh=WlCQ3d+pkD4dwXRjDSTxJBjttia+/6c3FcwfFK2Pqq4=;
+	s=arc-20240116; t=1725032647; c=relaxed/simple;
+	bh=VkZDandq3JSMzzDGwRJwhrbaal1xkOQ+HGnJE8SjBsM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WW2y1JTI+JIltsqPmdvXGGinb9eTmJS3RJS9qtMIPli39c6CMmLerIK+f2xYuGOsUheoNTXf+1Cgz9yCvdSfrEoDwfTUeBe+R1GSxd+HZ55owsiCGoUPBR0m9OwzZfd6tgHebG2dk6piQgEqNIZem8GvDpX3CCe1yIS1bCeSrFs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TNwUVg53; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96D47C4CEC2;
-	Fri, 30 Aug 2024 15:43:57 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=nGthhWUH0Mq/XQ0w6r9Y+d2AjwBGXdGOgtNeiblUuszVW+FlnCsuib9AqkQUZKArW0i+Cn9qmldrM1UY7FBIRzcVcNKMLgJQEC7K2icCm6L9iLe7yHdGzrQdqhGyUhfD0xOCIkG4BrxEH6FFs3LUQquLrCE6sDb/Go8HXoGt/oE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tVAtELA0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5152AC4CEC2;
+	Fri, 30 Aug 2024 15:44:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725032638;
-	bh=WlCQ3d+pkD4dwXRjDSTxJBjttia+/6c3FcwfFK2Pqq4=;
+	s=k20201202; t=1725032646;
+	bh=VkZDandq3JSMzzDGwRJwhrbaal1xkOQ+HGnJE8SjBsM=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=TNwUVg53jpeeMo8Onx0A8fQZxyIi/54T06NsICRHAfKBUJPhxRU/rWwBxbsQXvuDH
-	 vWaoaxUn/rcWp2k9ZqKET+XQ7vRmMemfQjSgHpGtvSNIi3ZaMicM3BufOwxutwUXYo
-	 Y/EpGbfizO8mnkw8JGsNqIzf2tWR7nMflVVhQrfFzc1QBXq5NQaTOIOCV0/b8O91JN
-	 PKd4dODAOTSFdpeqSxu8VAJOdpIzDgCYPfHhha54BSwHxynXP4N6TZ7PxX4KSWdzpZ
-	 u5qJ7QtnHxgyAlSlujXdYe0kq5XbvYyy2xXu6v9MSTdG1XubW/OZzKZDStlYOJXt4e
-	 yMv9vZVJZwtmQ==
-Date: Fri, 30 Aug 2024 16:43:54 +0100
-From: Mark Brown <broonie@kernel.org>
-To: "Jason A. Donenfeld" <Jason@zx2c4.com>
-Cc: Shuah Khan <shuah@kernel.org>, linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] selftest/vDSO: Fix cross build for the random tests
-Message-ID: <dd1d8f71-28ab-44db-819e-90aff2f9b9be@sirena.org.uk>
-References: <20240830-vdso-chacha-build-v1-1-78f93d2a142f@kernel.org>
- <ZtHmdf1XsEJLur84@zx2c4.com>
+	b=tVAtELA0KeGQegt8ntHg1wiWQe7Yv26xq5TPF9n0MGbMbz0OjOvp/IEvp42gC7FMt
+	 M2w1ikHzeSKcH4HY4PGnn3ITcMVi1HSNOVeWBTdj0OwFgwapDVRBt07X4HZrrobXsM
+	 X6YkkTfa8VFe0f4EBgqnSC59+9AVv9wNWLDzIJ2Fpm9LsjnJ0YZZPnYZmEHGnOCQzI
+	 o1RUx06J0fkqlIpIrw/uKoZ0x/HAlviXUlVCYOVZVqYpaEtDiq5P283J0LHCnEjGU6
+	 cj18RjP/lmR2MuIcNX7Tl6OPQRuBPgHdbZukp94IyESyQ3vydIFWnLCtIN00gSyAet
+	 Poy6op0SOty0w==
+Date: Fri, 30 Aug 2024 10:44:04 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Claudiu <claudiu.beznea@tuxon.dev>
+Cc: linux-rtc@vger.kernel.org, p.zabel@pengutronix.de, krzk+dt@kernel.org,
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, geert+renesas@glider.be,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
+	mturquette@baylibre.com, magnus.damm@gmail.com, conor+dt@kernel.org,
+	sboyd@kernel.org, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, alexandre.belloni@bootlin.com
+Subject: Re: [PATCH v3 05/12] dt-bindings: rtc: renesas,rzg3s-rtc: Document
+ the Renesas RTCA-3 IP
+Message-ID: <172503263744.44904.9725810011067270873.robh@kernel.org>
+References: <20240830130218.3377060-1-claudiu.beznea.uj@bp.renesas.com>
+ <20240830130218.3377060-6-claudiu.beznea.uj@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="XAtaYKVVmQ4tJSmN"
-Content-Disposition: inline
-In-Reply-To: <ZtHmdf1XsEJLur84@zx2c4.com>
-X-Cookie: for ARTIFICIAL FLAVORING!!
-
-
---XAtaYKVVmQ4tJSmN
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20240830130218.3377060-6-claudiu.beznea.uj@bp.renesas.com>
 
-On Fri, Aug 30, 2024 at 05:34:13PM +0200, Jason A. Donenfeld wrote:
 
-> > +ifeq ($(ARCH),$(filter $(ARCH),x86_64))
+On Fri, 30 Aug 2024 16:02:11 +0300, Claudiu wrote:
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> 
+> Document the RTC IP (RTCA-3) available on the Renesas RZ/G3S SoC.
+> The RTC IP available on Renesas RZ/V2H is almost identical with the
+> one found on Renesas RZ/G3S (it misses the time capture functionality
+> which is not yet implemented on proposed driver). For this, added also a
+> generic compatible that will be used at the moment as fallback for both
+> RZ/G3S and RZ/V2H.
+> 
+> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> ---
+> 
+> Changes in v3:
+> - added RTC bus clock, reset and power-domain; it has been detected
+>   by reverse engineering that RTC and VBATTB clock, reset and power
+>   domain are shared; HW manual doesn't mention it
+> - updated example with these and with assigned-clock properties
+>   needed to configure the VBATTCLK MUX with proper parent
+> - updated example section with dt-bindings/clock/r9a08g045-cpg.h
+>   and dt-bindings/clock/r9a08g045-vbattb.h includes
+> - for all these, dropped Conor's Rb tag
+> 
+> Changes in v2:
+> - updated patch description and title
+> - included reference to rtc.yaml
+> - updated compatible list with a generic compatible as explained in
+>   patch description; with this the node in examples section has also been
+>   updated
+> - used items to describe interrupts, interrupt-names, clock, clock-names
+> - updated title section
+> 
+>  .../bindings/rtc/renesas,rz-rtca3.yaml        | 86 +++++++++++++++++++
+>  1 file changed, 86 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/rtc/renesas,rz-rtca3.yaml
+> 
 
-> Actually... this doesn't work. Because:
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
-> ARCH ?= $(shell echo $(uname_M) | sed -e s/i.86/x86/ -e s/x86_64/x86/)
-
-> The x86_64 gets turned into an x86. It's a little trickier when
-> considering subarch. I'll send a followup here and not queue this.
-
-Ah, right - I originally had copied the line above with both x86 and
-x86_64 when I tested and did a last minute edit during final review
-after I'd switched away.
-
---XAtaYKVVmQ4tJSmN
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmbR6LoACgkQJNaLcl1U
-h9CTWAf/Uv26vpPNHryShQOXRALhsp8AA4/QHwJBB99tVzqr2bBjYWO/Kbqej+MZ
-qyu8cMld9+6ykpWr3FNcemjvl6xE+MEbr5C24Wj5inrX48Hoqgf1U123tcUPrulx
-Hpfvy971lPtRXIDGChSF9IK2t29DoL2ewLcjIje+XS2q2DxEMfgmWxbhzhqaJ3K6
-IA4B45zcmh8+QZIt50tnzemCKpv+u7XS+Z9UzVorPKoXiOhdgjBphhFOQT7PT4fV
-tm1ULBkE5fWZeiHDHelEsC4NUzKBL9aVgvga7DO3SHk2NbHTLt1NyqgbNk4WVHyB
-UKUyhM+0SSFiSDiJSNIRNNA4EiNjOA==
-=zfhn
------END PGP SIGNATURE-----
-
---XAtaYKVVmQ4tJSmN--
 
