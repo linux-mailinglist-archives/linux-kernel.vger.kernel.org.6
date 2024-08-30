@@ -1,126 +1,147 @@
-Return-Path: <linux-kernel+bounces-309579-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309580-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36B2B966D02
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 01:49:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50F9D966D05
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 01:55:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D4E6328386A
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 23:49:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D22C5B23328
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 23:55:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7734118F2FA;
-	Fri, 30 Aug 2024 23:49:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98D0D18FDD8;
+	Fri, 30 Aug 2024 23:55:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="BlkmYLfs"
-Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="xmwx6/X2"
+Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52C2B193
-	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 23:49:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70E8F175D5E
+	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 23:54:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725061758; cv=none; b=BKstEqzIUt9lpY0ICvJ5D4bORiRemZ9+H7e7jn/EswP7cJQhTbOncKmMRnnGNvVTZR1u4bz3hHjeFuDQ00l8Ud/d6G0YeeGn8lVYr5a5Fi2egUj1VY1T9WVyQQOi5TnjwOGmEevE0aPNB9rci+iRtXzbUIv9wDTEu/8R9CPP01Q=
+	t=1725062101; cv=none; b=G5laLQYJ/d59aB7tDhfI7zKyoXda1PVPjzfmY7UM+C+DWIVbH3393HD+ggh3vSbJdNeFheB3+du9w+naJYfOcotj1QaZ/QQAo83aEcVM06ZLVe3G7iGLS9D/6kieMPt37tqfHH+SUctY9mTyQ2wbpO1ntkm7OuM1WPvMi4+dgHM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725061758; c=relaxed/simple;
-	bh=E4bwRTmMN3gpdrrJ+34PGDohq3gLhiEt90gFRaqXxyU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cz3+0lcBqVf1MWhqjYfuo1Sinj82T/Nq5yYX2LiizfUyB2mpbhPSXS3qNVqdMfPBSNip9kw8rbPE66SYvFnjlrr9TMisUr/hAmRdJvTiaJXm94lDr2VWxb1HadzfZ7IaryQm9RM+ErtqkeLNs4ELHnT3+HdNtBDTy2OkFp8nxDw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=BlkmYLfs; arc=none smtp.client-ip=209.85.160.171
+	s=arc-20240116; t=1725062101; c=relaxed/simple;
+	bh=+EsYePFzMFNpF6erMIpOe0WO8D6FAuzs9/EQFCfVmyY=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=AJi6JpVrqgXIGuLi1uhqXDuqGhWqr5Wo1vwJ02nUGHzMt45lDNXGDZ9dH4QlJ4rX9j7zom0qHziqmCt1qbubNXVumlK2c4chW/DwiIYy7X/wuwm3ihsuRf2Bzr7Y6B3Vf0q5te5T49so61nPKd4jLgLUuog7p5OgQ4Uhi467bKA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=xmwx6/X2; arc=none smtp.client-ip=209.85.128.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-45029af1408so41151cf.1
-        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 16:49:17 -0700 (PDT)
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6886cd07673so47933257b3.3
+        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 16:54:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1725061756; x=1725666556; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TP0VIEgrFYpHgeMfKEUNg/ROM1J2CbpA619iyejeYoc=;
-        b=BlkmYLfsljY44QTG3HKlIOsBE0II3bP8yl2bq8tdX7jDuFTOPblVZkJacKb1DutT+a
-         dPyGgDQ/SQeMlx7lO1iSM70e4oUYQqPvQ3b3Xnv0GUaB9pKSTdQT3cn0CsDH8i//svdR
-         WQAE9ElP7ImYIYUvnjnIX4/83M7tOLss9V9D+dLFIwoapeIle2EsMgupJ8KlggR5V9A6
-         t8S8orXlEinj36l9/5jCnhQBTdcNeCybByrqLc9+2iLNfiE85Opz5akLm0/xR+K/XWgF
-         8/E7QqgBcBGFBjxYCt2l5TVJdgF1eHW2EeRanxNN3wZmtxYDIxfA3S0mvRl6c9AUOgW/
-         D6OA==
+        d=google.com; s=20230601; t=1725062098; x=1725666898; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=7mTp89YM4a+JZ2WxsvEPMQELbnbLphEGU34GUEc+1rE=;
+        b=xmwx6/X2yBrCzqrYhCN4r8qk6lOACar88BdriaApdOFv2ph9Y3BW7wiPuFGriElTNx
+         BqrWoVJ5zsgyioqD9XXTaRW4WEQgl5E3ogdiiGGapPjtBGhn/YO9U6h0h43lZWJASgte
+         TqkGO4h3uibNslpkOAwfB9ma9lDgIQ8KtMqO0CODyfwRnUZab+b1JxVT88RspsabsFP9
+         UGX6SwJuGFZ2m+qlU1Kp6CY4brEJDx6kNJTEXrNjaQ7ezNRmYRo6sd3Bs1oI7e804Ohn
+         6eFk8/MZx0If0vWcpSe2ugEnE/OpJdzvcM1oXfnvWnEzwyKmjZBRt80tcF6aTQN8EUuJ
+         /t3Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725061756; x=1725666556;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=TP0VIEgrFYpHgeMfKEUNg/ROM1J2CbpA619iyejeYoc=;
-        b=TpKFXOLRupbFzu5sYyRjfJgF/9zbAinx7AV99/LxKZwdpBKHYtYYvjJY5Z/y/+8b6d
-         nXBkHEg0PH/+pbB7I+7gprGF/xwY5Q9I9o011wDoP6n+koJ7nrMaPrlD9CH5aREqG2eu
-         fGUBW+ihgzd5PsGnQMlBIwMFZwrtHonewV8edftWynArzo7Zm3C/SRN3AaJUwUwJ8xJw
-         zwYj823J7wagZrzWVA3zn5+u7mX4U3ADJn5+gG+jfk8a3pbNaj/u2V3HOagFRy+lMGO2
-         7Oyqh6hZPCxIJgAgF1NEIv3nVPuhj0/jUr01/m8itokqOO8sw6Q37u0sLxbmHeDwMdCP
-         DG4Q==
-X-Gm-Message-State: AOJu0YxEUmlCobj/BZhtGxzCmNYSvDMubVQxi6+O2Mpb/VJdgT9tZwcL
-	K0jUyjXS5AAtAyAwYl/ad3ZnKG0VBv5r4MzXkVHcG/77kc9DYGL1RMCD06MclvsIVS6Ny/kmdUl
-	h1YoQRrqrIWeW08zBVsPotJlG0VRU5aw20bSn
-X-Google-Smtp-Source: AGHT+IGhb6pwgPVlootJoP49CP94+EsPf6u+/j/OQWLkWAwJ0wQhWQED7bZMZLKe3dOxdh7MSSDMORHBJlY90a7t6Ho=
-X-Received: by 2002:a05:622a:1a20:b0:453:581f:f29e with SMTP id
- d75a77b69052e-4574543029cmr1072671cf.24.1725061756115; Fri, 30 Aug 2024
- 16:49:16 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1725062098; x=1725666898;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=7mTp89YM4a+JZ2WxsvEPMQELbnbLphEGU34GUEc+1rE=;
+        b=iRp3jpFzdQEdGfChwfstDyy00Y38TRZg4GjMQPkiukwnMAJd4uUVaZXhSMuPa1C8Ah
+         fUNd3c37PdQolhiVbC+KkvC+yVHm6xrJM9qpafVDeTI9F+Bly7Sj7kL+K5Vmw3YDwTSu
+         TuqAiFJ4nr1q9X3yeWuUGu4kOW2Hf3ugJKPu+j1zdrS2cC6/j5sejPWMbuzo7I+wv38b
+         Y5mwpaYNWO/fV4GnWih0q2SEbBMn2kCIBzGIj87KBJDJcuK4aML7nVnU4bpNCI2GUj3j
+         c/etbFLfCtT3+d8wVGeMN29/GPdUSAxooCFDf1C/PsE22uGDnYLuW42llVu6eFT9X2t5
+         n4tQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWxijQ5wEgFHkFc6VfNKKRRMapxQIuIKGS2RT6skVTT2v7j+TMhru1cxGM6Rof68/QQRHJY1jFXwPHFi1U=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx/NYZOJeD+mxg5yerUEmC4c2RoyhTbPGpIQfGAeFT1Hvm26cBP
+	FzPv5+4pQ358JoEg5s45dDdqQC9tE8p0Ft6PMIJWF2X3j8av95hJK8o0SMAgDL2DlK7VZ8QFCgV
+	XVg==
+X-Google-Smtp-Source: AGHT+IGwZxjO7ktsYm2v/oExs6JzBV3HAZ4YBOgUiAc3Zp4+M4L8o7WExR7rM/tO17TVCN5qdyaZadxEIjw=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a0d:dc07:0:b0:6b2:3ecc:817 with SMTP id
+ 00721157ae682-6d4118645a0mr107867b3.8.1725062098023; Fri, 30 Aug 2024
+ 16:54:58 -0700 (PDT)
+Date: Fri, 30 Aug 2024 16:54:56 -0700
+In-Reply-To: <Zr4P86YRZvefE95k@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20240824033757.52005-1-kris.van.hees@oracle.com> <20240824033757.52005-4-kris.van.hees@oracle.com>
-In-Reply-To: <20240824033757.52005-4-kris.van.hees@oracle.com>
-From: Sami Tolvanen <samitolvanen@google.com>
-Date: Fri, 30 Aug 2024 16:48:37 -0700
-Message-ID: <CABCJKufBPaVu-C4bKY=jWxOQJX1OR+7=+DE-wtcy7=d=9ZFFcQ@mail.gmail.com>
-Subject: Re: [PATCH v9 3/4] scripts: add verifier script for builtin module
- range data
-To: Kris Van Hees <kris.van.hees@oracle.com>
-Cc: linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org, 
-	linux-modules@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
-	Nick Alcock <nick.alcock@oracle.com>, Alan Maguire <alan.maguire@oracle.com>, 
-	Masahiro Yamada <masahiroy@kernel.org>, Steven Rostedt <rostedt@goodmis.org>, 
-	Luis Chamberlain <mcgrof@kernel.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
-	Nick Desaulniers <ndesaulniers@google.com>, Jiri Olsa <olsajiri@gmail.com>, 
-	Elena Zannoni <elena.zannoni@oracle.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+References: <20240809190319.1710470-1-seanjc@google.com> <20240809190319.1710470-23-seanjc@google.com>
+ <5f8c0ca4-ae99-4d1c-8525-51c6f1096eaa@redhat.com> <Zr4P86YRZvefE95k@google.com>
+Message-ID: <ZtJb0M8Y3dRVlSaj@google.com>
+Subject: Re: [PATCH 22/22] KVM: x86/mmu: Detect if unprotect will do anything
+ based on invalid_list
+From: Sean Christopherson <seanjc@google.com>
+To: Paolo Bonzini <pbonzini@redhat.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Peter Gonda <pgonda@google.com>, Michael Roth <michael.roth@amd.com>, 
+	Vishal Annapurve <vannapurve@google.com>, Ackerly Tng <ackerleytng@google.com>
+Content-Type: text/plain; charset="us-ascii"
 
-Hi Kris,
+On Thu, Aug 15, 2024, Sean Christopherson wrote:
+> On Wed, Aug 14, 2024, Paolo Bonzini wrote:
+> > On 8/9/24 21:03, Sean Christopherson wrote:
+> > > Explicitly query the list of to-be-zapped shadow pages when checking to
+> > > see if unprotecting a gfn for retry has succeeded, i.e. if KVM should
+> > > retry the faulting instruction.
+> > > 
+> > > Add a comment to explain why the list needs to be checked before zapping,
+> > > which is the primary motivation for this change.
+> > > 
+> > > No functional change intended.
+> > > 
+> > > Signed-off-by: Sean Christopherson <seanjc@google.com>
+> > > ---
+> > >   arch/x86/kvm/mmu/mmu.c | 11 +++++++----
+> > >   1 file changed, 7 insertions(+), 4 deletions(-)
+> > > 
+> > > diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
+> > > index 300a47801685..50695eb2ee22 100644
+> > > --- a/arch/x86/kvm/mmu/mmu.c
+> > > +++ b/arch/x86/kvm/mmu/mmu.c
+> > > @@ -2731,12 +2731,15 @@ bool __kvm_mmu_unprotect_gfn_and_retry(struct kvm_vcpu *vcpu, gpa_t cr2_or_gpa,
+> > >   			goto out;
+> > >   	}
+> > > -	r = false;
+> > >   	write_lock(&kvm->mmu_lock);
+> > > -	for_each_gfn_valid_sp_with_gptes(kvm, sp, gpa_to_gfn(gpa)) {
+> > > -		r = true;
+> > > +	for_each_gfn_valid_sp_with_gptes(kvm, sp, gpa_to_gfn(gpa))
+> > >   		kvm_mmu_prepare_zap_page(kvm, sp, &invalid_list);
+> > > -	}
+> > > +
+> > > +	/*
+> > > +	 * Snapshot the result before zapping, as zapping will remove all list
+> > > +	 * entries, i.e. checking the list later would yield a false negative.
+> > > +	 */
+> > 
+> > Hmm, the comment is kinda overkill?  Maybe just
+> > 
+> > 	/* Return whether there were sptes to zap.  */
+> > 	r = !list_empty(&invalid_test);
+> 
+> I would strongly prefer to keep the verbose comment.  I was "this" close to
+> removing the local variable and checking list_empty() after the commit phase.
+> If we made that goof, it would only show up at the worst time, i.e. when a guest
+> triggers retry and gets stuck.  And the logical outcome of fixing such a bug
+> would be to add a comment to prevent it from happening again, so I say just add
+> the comment straightaway.
+> 
+> > I'm not sure about patch 21 - I like the simple kvm_mmu_unprotect_page()
+> > function.
+> 
+> >From a code perspective, I kinda like having a separate helper too.  As you
+> likely suspect given your below suggestion, KVM should never unprotect a gfn
+> without retry protection, i.e. there should never be another caller, and I want
+> to enforce that.
 
-On Fri, Aug 23, 2024 at 8:38=E2=80=AFPM Kris Van Hees <kris.van.hees@oracle=
-.com> wrote:
->
-> diff --git a/scripts/verify_builtin_ranges.awk b/scripts/verify_builtin_r=
-anges.awk
-> new file mode 100755
-> index 000000000000..f513841da83e
-> --- /dev/null
-> +++ b/scripts/verify_builtin_ranges.awk
-> @@ -0,0 +1,356 @@
-> +#!/usr/bin/gawk -f
-> +# SPDX-License-Identifier: GPL-2.0
-> +# verify_builtin_ranges.awk: Verify address range data for builtin modul=
-es
-> +# Written by Kris Van Hees <kris.van.hees@oracle.com>
-> +#
-> +# Usage: verify_builtin_ranges.awk modules.builtin.ranges System.map \
-> +#                                 modules.builtin vmlinux.map vmlinux.o.=
-map \
-> +#                                 [ <build-dir> ]
-
-While I was testing this, I did an arm64 build and I'm getting a long
-list of errors that ends with this:
-
-ERROR: Failed to read:
-././drivers/firmware/efi/libstub/.lib.a(efi-stub-entry.stub.o.cmd
-
-  Invalid kernel build directory (.)
-  or its content does not match modules.builtin.ranges
-
-That path looks a bit funky. Have you tested this with other
-architectures? I was able to get this to work on x86 builds just fine.
-
-Sami
+Oh, another argument for eliminating the separate helper is that having a separate
+helper makes it really hard to write a comment for why reading indirect_shadow_pages
+outside of mmu_lock is ok (it reads/looks weird if mmu_lock is taken in a different
+helper).
 
