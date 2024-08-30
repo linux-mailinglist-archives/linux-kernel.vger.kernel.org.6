@@ -1,94 +1,49 @@
-Return-Path: <linux-kernel+bounces-307924-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307911-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08703965509
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 04:06:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 054819654EE
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 04:00:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A95CF281C2B
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 02:06:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B2A97280EBD
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 02:00:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8E141547D7;
-	Fri, 30 Aug 2024 02:03:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB1E754673;
+	Fri, 30 Aug 2024 02:00:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CYicaLPU"
-Received: from mail-pf1-f195.google.com (mail-pf1-f195.google.com [209.85.210.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QJ+DJHK4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3742139597;
-	Fri, 30 Aug 2024 02:03:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED72D12B71;
+	Fri, 30 Aug 2024 02:00:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724983395; cv=none; b=JWkPSpy1tRN5zSj1ZNFDElKcHW+Blq64wK+8lWTsnjEWDqqrfTWO8tv8meqg2IpN9gGYA7goYkSAK7IdqlV+OFaNTaL1eu+iWdoErRcZk7dfQQeXhj9c1K1fitzvn5epEHjX753lG8OGL714VZ/7fJDRskY7stKdJnp0EkQDfBo=
+	t=1724983229; cv=none; b=OGYddlUWfz7BeE+GDI8vIFTLFyfxtVNJlgkErG81eddKkyDsUUGfgTtigyEl5DAfQ14KVTxUb54iFgasZ3FWaxfznGsXPF5zK/wyT85TJDAmAGW8MQNzijNvoMNdw4dyZOuVEbikGknPF3olcghl0obwMlMebZ33qSRula4AlbA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724983395; c=relaxed/simple;
-	bh=R4gv0SPgrsRUe46OTe7crquVQ/CEzuw0FVvWWYYcPE8=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=CZ1pUjrrdsq49Rn/r2s1M6BllYglrW9kVxnNgwJDUZsRRSQr5PEBqSBcSHIrBDCHruhwbxusjEH4RiLcwDmG5diQ69atR6nVnrzzybxTMsQ7NgtSj+byB20WX2j9eL1FR3BZDQxWF9isrFj/kU0yfdVJQ6HTvXs85DPn9hk58cw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CYicaLPU; arc=none smtp.client-ip=209.85.210.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f195.google.com with SMTP id d2e1a72fcca58-715cdc7a153so1058306b3a.0;
-        Thu, 29 Aug 2024 19:03:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724983393; x=1725588193; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ywfiqKh4u7bFVVs+tIwjEBC2kXxlfEwBoFKokKTsO+g=;
-        b=CYicaLPUdovYO2xTbF97dLVgbo8nqjChQi9I6/C19jQOu3yYquCWa73vrzupS2KHJM
-         EIi3JRuSQTDpoSMF8mCFf/XB190Aruh0lD9GrsVMnBmbW5whTUxGSdWkfU+k3S9e94gC
-         aHsXciWpkDyIchlmb+Hwaz0AuYjnI0yu1qMObWtUryQj38ip5qzKWiCN2ZGA2pOOltdy
-         n26g8gpQT3zErZxVDqyX1FfEh4hsvZVWTBpueLpetAnWSXG7ISWRPEKjW8PYIlt3EorL
-         XcwIM3L6GTPtLTQVlcceofAKle4ARg9KaucJrRtoZlruqIoKbxwy0ju0bhGrgnIuaMJf
-         jgHw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724983393; x=1725588193;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ywfiqKh4u7bFVVs+tIwjEBC2kXxlfEwBoFKokKTsO+g=;
-        b=S54mq6GqEwUahcgGr0gjTc2e/yYqx5POSLbjRxY7hkZD4TKVreD1dbuiGoWCG42A7q
-         baNph/M7ke+KuauJrn9RszVfMslCXXW7Wo/pCzpY0GS6/wRGqP8ZS6wAt/yzfBZ8ntRL
-         ut0c6z3ticAiR2YG/IOabOUZAHGsWuJUAexAIqg3q9+mXLhu/o+YZ6QnpqK7iQyhQq0c
-         uEsuNt5mafDeEbr6dEECngflwcChnYC5cVNzIKDDDiNgy8sk5QaDkFimAMO4idiFHBXE
-         iNz4xt0K6gizxN/IAi+wjCEXTx4sILxquPYNKJm+b5bGi5Kf8qZ1w+DlGCm6nSOQPLv5
-         MBlA==
-X-Forwarded-Encrypted: i=1; AJvYcCXB/di7YINEE7iGfTc7kkBZBOEUe0TRGhBe5cTZCzuOY1x8rSMbksZhPndPGpQ9UDW/HvhGqFXF7ZVvXzY=@vger.kernel.org, AJvYcCXr55TMwjvep3UmZur9BesiFSEHmyiueR4U0ZaBJHM1E3nGjKf+DFEl/oKM9MYGiyZLqttW4MTF@vger.kernel.org
-X-Gm-Message-State: AOJu0YzY/6+Lfk8FpOlEX6y0fSQldE1b0M1vTKrCrk1K8mA9YobKBMIq
-	PyE4qkpRjfMWyR58zNPybGPa+Hlz+is9QLzMQV5hBTWwFhhNI9e8
-X-Google-Smtp-Source: AGHT+IGOA/23GIGeKGBXHChGL+a631mrZR4C27wtUJFcsLMeHEsTgBEilGmHKdpL/ERsi3koNdAH1w==
-X-Received: by 2002:a05:6a21:10b:b0:1c4:779b:fb02 with SMTP id adf61e73a8af0-1ccee886705mr1352666637.21.1724983392693;
-        Thu, 29 Aug 2024 19:03:12 -0700 (PDT)
-Received: from localhost.localdomain ([43.129.25.208])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-715e55a6b60sm1764221b3a.87.2024.08.29.19.03.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Aug 2024 19:03:12 -0700 (PDT)
-From: Menglong Dong <menglong8.dong@gmail.com>
-X-Google-Original-From: Menglong Dong <dongml2@chinatelecom.cn>
-To: idosch@nvidia.com,
-	kuba@kernel.org
-Cc: davem@davemloft.net,
-	edumazet@google.com,
-	pabeni@redhat.com,
-	dsahern@kernel.org,
-	dongml2@chinatelecom.cn,
-	amcohen@nvidia.com,
-	gnault@redhat.com,
-	bpoirier@nvidia.com,
-	b.galvani@gmail.com,
-	razor@blackwall.org,
-	petrm@nvidia.com,
-	linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org
-Subject: [PATCH net-next v2 12/12] net: vxlan: use vxlan_kfree_skb in encap_bypass_if_local
-Date: Fri, 30 Aug 2024 10:00:01 +0800
-Message-Id: <20240830020001.79377-13-dongml2@chinatelecom.cn>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240830020001.79377-1-dongml2@chinatelecom.cn>
-References: <20240830020001.79377-1-dongml2@chinatelecom.cn>
+	s=arc-20240116; t=1724983229; c=relaxed/simple;
+	bh=B2HPHms1/46KYw9UCCyoWapPV2HKBQXDMWa9CS2eZzM=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=MuA3nAFigrFUscoEzXaJd3CyMO8Q1v87CWasWFJVEz4WIPLa4ssEnmQekHH2lqkuCpETbv71jd8TxvyC/TP8N2tUN7kMVyjuoYNVgjU+yfSEybKQQawMjrQt+0BrVk3ULiix+4KLeBp2bmkZW1rKb0KnqWDBrIcPTrLFm21CMqE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QJ+DJHK4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68640C4CEC5;
+	Fri, 30 Aug 2024 02:00:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724983228;
+	bh=B2HPHms1/46KYw9UCCyoWapPV2HKBQXDMWa9CS2eZzM=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=QJ+DJHK43N4Zbe1npGyyHNv50QX9ybNfA7fJWq4RNSj0fNU0nf1Gh2S5xc2XXJb+t
+	 MQfE0q1HYAPIldCTdcCUGdCIt19NWmdaO/7g4b8B87uXCqdbW6+Y2tTiebsxVKFLX+
+	 VkNAy+OM0LYNFIO6kBUmBa+8HGnZOjXNFMAHP9kZS5K4GxLBjRhCAygDySMCA9/wyu
+	 hf9A1SqV3HQ2WwLiNTZswptAG+RG8GaDkk0ZDSbb3naNK/vshTl29mh+YQzgn9Pkx0
+	 JpIHj9TzeAINrF7LBo7oDCzXi0Uyej2DSqMah8imfe1Ls+jx8/rjgznGkul48vL1R+
+	 TGSGs5gvAlxsw==
+Received: from ip-10-30-226-235.us-west-2.compute.internal (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id D71043822D6A;
+	Fri, 30 Aug 2024 02:00:29 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -96,29 +51,48 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH bpf-next v4 1/2] bpf: Make the pointer returned by iter next
+ method valid
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <172498322987.2141782.12883744896077744332.git-patchwork-notify@kernel.org>
+Date: Fri, 30 Aug 2024 02:00:29 +0000
+References: <AM6PR03MB584869F8B448EA1C87B7CDA399962@AM6PR03MB5848.eurprd03.prod.outlook.com>
+In-Reply-To: <AM6PR03MB584869F8B448EA1C87B7CDA399962@AM6PR03MB5848.eurprd03.prod.outlook.com>
+To: Juntong Deng <juntong.deng@outlook.com>
+Cc: ast@kernel.org, daniel@iogearbox.net, john.fastabend@gmail.com,
+ andrii@kernel.org, martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
+ yonghong.song@linux.dev, kpsingh@kernel.org, sdf@fomichev.me,
+ haoluo@google.com, jolsa@kernel.org, memxor@gmail.com, snorcht@gmail.com,
+ bpf@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Replace kfree_skb with vxlan_kfree_skb in encap_bypass_if_local, and no
-new skb drop reason is added in this commit.
+Hello:
 
-Signed-off-by: Menglong Dong <dongml2@chinatelecom.cn>
----
- drivers/net/vxlan/vxlan_core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+This series was applied to bpf/bpf-next.git (master)
+by Alexei Starovoitov <ast@kernel.org>:
 
-diff --git a/drivers/net/vxlan/vxlan_core.c b/drivers/net/vxlan/vxlan_core.c
-index adf89423e5fd..65f532a000f0 100644
---- a/drivers/net/vxlan/vxlan_core.c
-+++ b/drivers/net/vxlan/vxlan_core.c
-@@ -2339,7 +2339,7 @@ static int encap_bypass_if_local(struct sk_buff *skb, struct net_device *dev,
- 			DEV_STATS_INC(dev, tx_errors);
- 			vxlan_vnifilter_count(vxlan, vni, NULL,
- 					      VXLAN_VNI_STATS_TX_ERRORS, 0);
--			kfree_skb(skb);
-+			vxlan_kfree_skb(skb, VXLAN_DROP_INVALID_HDR);
- 
- 			return -ENOENT;
- 		}
+On Thu, 29 Aug 2024 21:11:17 +0100 you wrote:
+> Currently we cannot pass the pointer returned by iter next method as
+> argument to KF_TRUSTED_ARGS or KF_RCU kfuncs, because the pointer
+> returned by iter next method is not "valid".
+> 
+> This patch sets the pointer returned by iter next method to be valid.
+> 
+> This is based on the fact that if the iterator is implemented correctly,
+> then the pointer returned from the iter next method should be valid.
+> 
+> [...]
+
+Here is the summary with links:
+  - [bpf-next,v4,1/2] bpf: Make the pointer returned by iter next method valid
+    https://git.kernel.org/bpf/bpf-next/c/4cc8c50c9abc
+  - [bpf-next,v4,2/2] selftests/bpf: Add tests for iter next method returning valid pointer
+    https://git.kernel.org/bpf/bpf-next/c/7c5f7b16fe1b
+
+You are awesome, thank you!
 -- 
-2.39.2
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
 
