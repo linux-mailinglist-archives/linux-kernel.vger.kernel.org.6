@@ -1,70 +1,66 @@
-Return-Path: <linux-kernel+bounces-309133-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309134-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6724966692
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 18:13:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0DDB0966694
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 18:13:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BBB5E1C23A04
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 16:13:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7651E1F22ABB
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 16:13:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E73D11B9B4C;
-	Fri, 30 Aug 2024 16:12:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99DC31BA292;
+	Fri, 30 Aug 2024 16:12:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oIvQ8xI5"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bbTayib2"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 329CF1B81C3;
-	Fri, 30 Aug 2024 16:12:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6AAE1BA26B;
+	Fri, 30 Aug 2024 16:12:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725034352; cv=none; b=fsF99+4iKr3pmu+8msRS3cZlMEPnwLJNmyeiQ0SRpYhNnpjxPbdya/RRJDcK/qvVv2gMLSEMfQpQtAkVV9VZM4+TvmkdYtVMeBFBoLuDg7JT3oQWRvKXrrvx0GYAmJF7TZpMuBWmwUIUSgmYxU0h0yOMy/tA6+DjrZwFzzje2+s=
+	t=1725034355; cv=none; b=YzRxBaVomUU6q3+jbXM0CVMai0pT5a0/eq8FULrinfMQLBKAYkXgNTIotPVpeIBEmhIXSW4QYx+kwcGhrKljtDMU6a7R98eb4gVTT6Y8+OOuIeqHviD3XNoEeEx11vu8n7wVj6WGWVIm2GTO/B6958W76sVPnxdvPTsmwY/Fp3o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725034352; c=relaxed/simple;
-	bh=g9XfvD3q/Dl8PLtHo/kQwHc+kLWhm5eWuih+JylYTPM=;
+	s=arc-20240116; t=1725034355; c=relaxed/simple;
+	bh=h8V6mV7LznJSDPyytvtdyWN5LAbvGTbX2O+Xvk3aerI=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Fl2mFghdoD4tIw3ux4pi44KBO0DlXYyb6KO8Z2cWAmY2siXEgihhAjCc/Dm1/ceuqJjV/TnD3egoYZ9OqF04X9uTLMb+zlUqisTD1yi3y4/isGhX2DDORoaHK87TpZ1kYDOhLQIfnVOfEzBc5cyRoQDBSCc4i6Sax32eD7K/eEM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oIvQ8xI5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6FB6C4CEC2;
-	Fri, 30 Aug 2024 16:12:28 +0000 (UTC)
+	 MIME-Version:Content-Type; b=NmNmM40+kZmBQ8aYyR5ywUFyPLVe/CtUa1QXU9AbH+Rj/3N8D4pWqKJ3fa/QzpwCwGIuMJ3/V1VqIIP4V1WvQ4OQcxE2huliRNW8n3m7DdMokLwx1FxsRZC2Fsmh9itNCVmzQ2EqduhLmoFKlq4dhNUGwbWPZPuU1JoTbhb6htY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bbTayib2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4323DC4CEC5;
+	Fri, 30 Aug 2024 16:12:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725034351;
-	bh=g9XfvD3q/Dl8PLtHo/kQwHc+kLWhm5eWuih+JylYTPM=;
+	s=k20201202; t=1725034354;
+	bh=h8V6mV7LznJSDPyytvtdyWN5LAbvGTbX2O+Xvk3aerI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=oIvQ8xI55U6+R+O9IUubidSB5JhbqvFcQrMgEk53F2adJN5+xg0OltcyjjgJeuIni
-	 M6dpheSuwFrWjx2C5E2n3FXxP8uEo2aYc76/CmXUGgzDFA30SUsmO8cvqpJtRCXymo
-	 Q4AsK0c8Q76hAdlU82d2YM0bzddAPLaZSWW/I9coboruTKrWQti6D78kqAG/e4M5B8
-	 UDZG04SkNt5bSNWgAEXhnIYhkP9+j8OEkIEh1oNr7zpV/kq5BLeCQBms+JvuBZqpqI
-	 zRyKQM9N2pNikoCPzz/+O/XKWxgP0yt6GrjhmAFVYGMjpUgaAe+2bHmSQ2kFRAfA2I
-	 6gP/kH7Qudwog==
+	b=bbTayib2CLnzHLij97ZEpbG3xHLjfxKlFwFb9XMzATn4uyCG7CqbjkZkQy4xlyRRc
+	 bG4FfnqrWpoqQZPWkcTvGPvphtaB/NX+dPEXo7xtJsI9Gsvn3fG6895TJWRTrAVp6q
+	 CgBXrH39O5UrVdR+ZzIKXAZdNj6LioiHnLRMUh6bE8UMu5MMLcXDgLi03d8/FiCdaN
+	 1UcvDVJleF5WnAT8uN8kTLIlDQCOjHyBUrlAkQ8hOui0WZ/Slw49vAXuRIgR7xSYZo
+	 RNFe1oYAh5za17R1MnNa4ShFdl+t82ZvLM4tqH6Ue+of3hdzmaJ81bjf5F15nditOX
+	 7JDGhcLJ0+fmQ==
 From: Will Deacon <will@kernel.org>
-To: linux-arm-kernel@lists.infradead.org,
-	James Clark <james.clark@linaro.org>
+To: Nicolin Chen <nicolinc@nvidia.com>
 Cc: catalin.marinas@arm.com,
 	kernel-team@android.com,
 	Will Deacon <will@kernel.org>,
-	peterz@infradead.org,
-	Al Grant <al.grant@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
+	robin.murphy@arm.com,
+	joro@8bytes.org,
+	thierry.reding@gmail.com,
+	vdumpa@nvidia.com,
+	jonathanh@nvidia.com,
 	linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org
-Subject: Re: [PATCH v3] drivers/perf: arm_spe: Use perf_allow_kernel() for permissions
-Date: Fri, 30 Aug 2024 17:12:11 +0100
-Message-Id: <172501332409.1008166.7238309612916378266.b4-ty@kernel.org>
+	iommu@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-tegra@vger.kernel.org,
+	Jason Gunthorpe <jgg@ziepe.ca>
+Subject: Re: [PATCH v14 00/10] Add Tegra241 (Grace) CMDQV Support (part 1/2)
+Date: Fri, 30 Aug 2024 17:12:12 +0100
+Message-Id: <172502752365.3788306.13276843969148976864.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20240827145113.1224604-1-james.clark@linaro.org>
-References: <20240827145113.1224604-1-james.clark@linaro.org>
+In-Reply-To: <cover.1724970714.git.nicolinc@nvidia.com>
+References: <cover.1724970714.git.nicolinc@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,20 +70,42 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-On Tue, 27 Aug 2024 15:51:12 +0100, James Clark wrote:
-> Use perf_allow_kernel() for 'pa_enable' (physical addresses),
-> 'pct_enable' (physical timestamps) and context IDs. This means that
-> perf_event_paranoid is now taken into account and LSM hooks can be used,
-> which is more consistent with other perf_event_open calls. For example
-> PERF_SAMPLE_PHYS_ADDR uses perf_allow_kernel() rather than just
-> perfmon_capable().
+On Thu, 29 Aug 2024 15:34:29 -0700, Nicolin Chen wrote:
+> NVIDIA's Tegra241 (Grace) SoC has a CMDQ-Virtualization (CMDQV) hardware
+> that extends standard ARM SMMUv3 to support multiple command queues with
+> virtualization capabilities. Though this is similar to the ECMDQ in SMMU
+> v3.3, CMDQV provides additional Virtual Interfaces (VINTFs) allowing VMs
+> to have their own VINTFs and Virtual Command Queues (VCMDQs). The VCMDQs
+> can only execute a limited set of commands, mainly invalidation commands
+> when exclusively used by the VMs, compared to the standard SMMUv3 CMDQ.
 > 
 > [...]
 
-Applied to arm64 (for-next/perf), thanks!
+Thanks for this, Nicolin! I did drop the 'default' statement in the end,
+as I think it's a bit overkill to fail the probe in that case.
 
-[1/1] drivers/perf: arm_spe: Use perf_allow_kernel() for permissions
-      https://git.kernel.org/arm64/c/5e9629d0ae97
+Applied to will (for-joerg/arm-smmu/updates), thanks!
+
+[01/10] iommu/arm-smmu-v3: Issue a batch of commands to the same cmdq
+        https://git.kernel.org/will/c/56ae8866f3b4
+[02/10] iommu/arm-smmu-v3: Pass in cmdq pointer to arm_smmu_cmdq_build_sync_cmd
+        https://git.kernel.org/will/c/2ea1f0120f90
+[03/10] iommu/arm-smmu-v3: Pass in cmdq pointer to arm_smmu_cmdq_init
+        https://git.kernel.org/will/c/e736c895c45b
+[04/10] iommu/arm-smmu-v3: Make symbols public for CONFIG_TEGRA241_CMDQV
+        https://git.kernel.org/will/c/a7a08b857a32
+[05/10] iommu/arm-smmu-v3: Add ARM_SMMU_OPT_TEGRA241_CMDQV
+        https://git.kernel.org/will/c/b935a5b1c670
+[06/10] iommu/arm-smmu-v3: Add acpi_smmu_iort_probe_model for impl
+        https://git.kernel.org/will/c/6f3f9ff43d00
+[07/10] iommu/arm-smmu-v3: Add struct arm_smmu_impl_ops
+        https://git.kernel.org/will/c/6de80d619203
+[08/10] iommu/arm-smmu-v3: Add in-kernel support for NVIDIA Tegra241 (Grace) CMDQV
+        https://git.kernel.org/will/c/918eb5c856f6
+[09/10] iommu/arm-smmu-v3: Start a new batch if new command is not supported
+        https://git.kernel.org/will/c/f59e85490712
+[10/10] iommu/tegra241-cmdqv: Limit CMDs for VCMDQs of a guest owned VINTF
+        https://git.kernel.org/will/c/a9d40285bdef
 
 Cheers,
 -- 
