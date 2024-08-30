@@ -1,173 +1,112 @@
-Return-Path: <linux-kernel+bounces-308457-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308458-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11C39965D29
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 11:41:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B9EC4965D2B
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 11:41:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 072D01C2327F
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 09:41:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DE7A51C22AB4
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 09:41:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5F7017ADF8;
-	Fri, 30 Aug 2024 09:40:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80DCB171658;
+	Fri, 30 Aug 2024 09:41:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="LYRJvtsf"
-Received: from out30-118.freemail.mail.aliyun.com (out30-118.freemail.mail.aliyun.com [115.124.30.118])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JHZ4A2rD"
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F7CB4D8B1
-	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 09:40:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.118
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AA2713A261
+	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 09:41:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725010846; cv=none; b=KRLJ+LrzHq3PdX9lgflznn8s3SF4tBuRSZNFKW5v7c9tcGZRyIvVy0tB3H+SZauawa8TsNLxOl5bIWgS3lZSiELwA00CQIBe24/xx4/uQ5+2dsfcpZ2zPDPHJrdNt2CPfEM84Vv2oAJDoPRM51CViAZs6cxESQsRdDGOAOSijrw=
+	t=1725010870; cv=none; b=dpEb0VdLYtu6Oj6YjoLr00gkCy42Ww+Wb78+pSxsgXQf3iBzqyYjPuW8LLlWe0A22PZ8cpixZvXufrghd87qHNWYsI6erXl7HVRht8z2YBlBlWFYb+XM5OVCFQIBtHe3mWPxTudRcvLZmEYFGX+fzz3gnXk2jD1ktkMbwEM7MlU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725010846; c=relaxed/simple;
-	bh=hzbU49Sq3FhZCW5U8bGXiDSV2SwH/h9uDVxO3w2q3Ao=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gk6cOFSQWv334MMovPgwwOkNoPkqzhsNxKzqLgQ1rc+TfgthR+1tKOf48IeTqwi62Jhc907szbu94G4p2TmUANs/h8eNUhgaAPxOQKHZJt4wfTRQZ7JBT9j6Lgr877AJK9FpXHWILsJtdLtPRfsuO4UGAxe4gjbGcUaghXkts3M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=LYRJvtsf; arc=none smtp.client-ip=115.124.30.118
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1725010841; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=NTWTxWBlbt/PspruXxyx6IIkE+rfvDFhUTVl3u6Gibc=;
-	b=LYRJvtsf/kj1WWRr76kj5+OP0dgxzIBjvb0ADYq2IIh15zE8lgCiUMKeYeUdBZbYC4uFGmon+5FHEW17MgBVGuIGZZjsMdMZ7a75krzQxfz9KzLg8MRfZ92PE3TJ3Utbw8BCdWTMou2T3N4wweHT8SqgZ7k3W+tzk3hzqnYWEwI=
-Received: from 30.221.128.136(mailfrom:joseph.qi@linux.alibaba.com fp:SMTPD_---0WDwWZaN_1725010839)
-          by smtp.aliyun-inc.com;
-          Fri, 30 Aug 2024 17:40:40 +0800
-Message-ID: <07dea72e-8b93-4095-9347-4ff765a2539d@linux.alibaba.com>
-Date: Fri, 30 Aug 2024 17:40:39 +0800
+	s=arc-20240116; t=1725010870; c=relaxed/simple;
+	bh=COuL6iLBN27aS3GwFVVyjvVjhlNmkAK9/WIujnPqLCg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=G3ntybQStGQCJrQmcjbsbbcigm+HzpuhQoERdjIOY93VgB3JgdqU/tSEXuz6dTgf2nCByhOg+D5a53zvf/En+PguY1PX/ijPQx7oQvu/dpmrfoOH5xz3kv8LCZ7YbihUzn3RTxPtq4dmtagMOg2NYN4mDLWgAPUzIwvjIxXViww=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JHZ4A2rD; arc=none smtp.client-ip=209.85.167.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-533496017f8so2126459e87.0
+        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 02:41:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1725010867; x=1725615667; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=h2wAp3xJfvCQWFeQG2kIUuqsYSHGV2K2UZI9+s5ufnc=;
+        b=JHZ4A2rDoL2WwW9fjzFCxx0JTSrmyP/wbKt6Dso3+JRgmBD0sGBcLEr8exXjDc4phL
+         8bzBp9aoX/EFpE4uq3lrBYmS7GFtjVL0/XoI21J09LkBLw3IQFyeqlVIlO5HeAt5jSIa
+         5PYWw3bycQ2U5+T1l7zjnHjPrBwNdFnHT4xMBQoCBzGiZItxwZjXh99CJBFGdU60V7bZ
+         JkgIur5ndZTckUhQIGlYhnaZC4BiLzg0TOiTydLqItWfOKbpdZfc1GvuVip1JX/Unw9x
+         i/aRxRUFyi/s+GEyq47l9Hty4vLLdYOIeipJOj7dNdymWNGb4cJrWO0K6eXK1p18mClO
+         2ALQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725010867; x=1725615667;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=h2wAp3xJfvCQWFeQG2kIUuqsYSHGV2K2UZI9+s5ufnc=;
+        b=M9Z932zMipIdN4aMCQnQZn+m5uo2OqKWg+sOBBrMWyQTJ8/w/KHa7GfuMsW4VUbHNF
+         hwKnWHO8NLQ1GCofL718uQtDxleymR+Oeau65o/Mqa+EwaF4J+yv0QmCXbRrjDbD5B9X
+         kwBhJ9bfnD/kB9YWxbQx0f2rZYa4QoxFmlzezcfywlmzUDqRIoihZkYICgoiBSpmd2dQ
+         TMaMGtdibBE9O2vpcD/+efl2pfjUN0iHqFytXuR7xpEEJRps3YyO9XPNTsYRLbHaiZxc
+         vpZm24Tx8BopqytMXc6BxZPN6UbTrZztZNFBvO+TvTZabDy4sRYj82KjxQ0UQHSsOttv
+         Fh1w==
+X-Forwarded-Encrypted: i=1; AJvYcCXCa9k+rEUyUJmTWkF7toybJ4l/4gdxgg04PMNTuZyUH9tJTXCOFrlNQyksIN9uuyY06QIGPl1MmkSozPs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxuXamkthAF/Tox0muIxZkbjzlFWMebY7b08Tx+84RSE5MKYLBm
+	jsPtjs456uZ0s+7qJpgALvpSS5lCaX2BRZUSdErj8bDksE2bNDaI+T4bJJUEa3s=
+X-Google-Smtp-Source: AGHT+IGT7LIpysnNQIzwddwIOLZDD+RA8Y+gOPOv5OU4BlFShN6qC8hstT9A24BItY5SGW0e6QECzQ==
+X-Received: by 2002:a05:6512:1282:b0:533:d3e:16fe with SMTP id 2adb3069b0e04-53546b69245mr867822e87.38.1725010866552;
+        Fri, 30 Aug 2024 02:41:06 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5354084cbfesm516128e87.247.2024.08.30.02.41.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 30 Aug 2024 02:41:06 -0700 (PDT)
+Date: Fri, 30 Aug 2024 12:41:04 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Neil Armstrong <neil.armstrong@linaro.org>
+Cc: Stephen Boyd <sboyd@kernel.org>, 
+	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+	Taniya Das <quic_tdas@quicinc.com>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: qcom: gcc-sm8650: Don't use shared clk_ops for QUPs
+Message-ID: <mweaa33lovczlyc2v46lquuhuwkdtsfnhmqhwgapm7nhvyb5iq@264qcs2z4jem>
+References: <20240829-topic-sm8650-upstream-fix-qup-clk-rcg-shared-v1-1-7ecdbc672187@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] ocfs2: fix null-ptr-deref when journal load failed.
-To: Julian Sun <sunjunchao2870@gmail.com>, ocfs2-devel@lists.linux.dev
-Cc: lbec@evilplan.org, mark@fasheh.com,
- syzbot+05b9b39d8bdfe1a0861f@syzkaller.appspotmail.com,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- Heming Zhao <heming.zhao@suse.com>
-References: <20240823083150.17590-1-sunjunchao2870@gmail.com>
-Content-Language: en-US
-From: Joseph Qi <joseph.qi@linux.alibaba.com>
-In-Reply-To: <20240823083150.17590-1-sunjunchao2870@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240829-topic-sm8650-upstream-fix-qup-clk-rcg-shared-v1-1-7ecdbc672187@linaro.org>
 
-
-
-On 8/23/24 4:31 PM, Julian Sun wrote:
-> During the mounting process, if journal_reset() fails
-> because of too short journal, then lead to
-> jbd2_journal_load() fails with NULL j_sb_buffer.
-> Subsequently, ocfs2_journal_shutdown() calls
-> jbd2_journal_flush()->jbd2_cleanup_journal_tail()->
-> __jbd2_update_log_tail()->jbd2_journal_update_sb_log_tail()
-> ->lock_buffer(journal->j_sb_buffer), resulting in a
-> null-pointer dereference error.
+On Thu, Aug 29, 2024 at 10:44:30AM GMT, Neil Armstrong wrote:
+> The QUPs aren't shared in a way that requires parking the RCG at an
+> always on parent in case some other entity turns on the clk. The
+> hardware is capable of setting a new frequency itself with the DFS mode,
+> so parking is unnecessary. Furthermore, there aren't any GDSCs for these
+> devices, so there isn't a possibility of the GDSC turning on the clks
+> for housekeeping purposes.
 > 
-> To resolve this issue, a new state OCFS2_JOURNAL_INITED
-> has been introduced to replace the previous functionality
-> of OCFS2_JOURNAL_LOADED, the original OCFS2_JOURNAL_LOADED
-> is only set when ocfs2_journal_load() is successful.
-> The jbd2_journal_flush() function is allowed to be called
-> only when this flag is set. The logic here is that if the
-> journal has even not been successfully loaded, there is
-> no need to flush the journal.
+> Like for the SM8550 GCC QUP clocks at [1], do not use shared clk_ops for QUPs.
 > 
-> Link: https://syzkaller.appspot.com/bug?extid=05b9b39d8bdfe1a0861f
-> Reported-by: syzbot+05b9b39d8bdfe1a0861f@syzkaller.appspotmail.com
-> Signed-off-by: Julian Sun <sunjunchao2870@gmail.com>
+> [1] https://lore.kernel.org/all/20240827231237.1014813-3-swboyd@chromium.org/
+> 
+> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
 > ---
->  fs/ocfs2/journal.c | 9 ++++++---
->  fs/ocfs2/journal.h | 1 +
->  2 files changed, 7 insertions(+), 3 deletions(-)
+>  drivers/clk/qcom/gcc-sm8650.c | 56 +++++++++++++++++++++----------------------
+>  1 file changed, 28 insertions(+), 28 deletions(-)
 > 
-> diff --git a/fs/ocfs2/journal.c b/fs/ocfs2/journal.c
-> index 530fba34f6d3..da0ffcc5de0a 100644
-> --- a/fs/ocfs2/journal.c
-> +++ b/fs/ocfs2/journal.c
-> @@ -968,7 +968,7 @@ int ocfs2_journal_init(struct ocfs2_super *osb, int *dirty)
->  
->  	ocfs2_set_journal_params(osb);
->  
-> -	journal->j_state = OCFS2_JOURNAL_LOADED;
-> +	journal->j_state = OCFS2_JOURNAL_INITED;
->  
->  	status = 0;
->  done:
-> @@ -1039,6 +1039,7 @@ void ocfs2_journal_shutdown(struct ocfs2_super *osb)
->  	int status = 0;
->  	struct inode *inode = NULL;
->  	int num_running_trans = 0;
-> +	enum ocfs2_journal_state state;
->  
->  	BUG_ON(!osb);
->  
-> @@ -1047,8 +1048,9 @@ void ocfs2_journal_shutdown(struct ocfs2_super *osb)
->  		goto done;
->  
->  	inode = journal->j_inode;
-> +	state = journal->j_state;
->  
-> -	if (journal->j_state != OCFS2_JOURNAL_LOADED)
-> +	if (state != OCFS2_JOURNAL_INITED && state != OCFS2_JOURNAL_LOADED)
->  		goto done;
->  
->  	/* need to inc inode use count - jbd2_journal_destroy will iput. */
-> @@ -1076,7 +1078,7 @@ void ocfs2_journal_shutdown(struct ocfs2_super *osb)
->  
->  	BUG_ON(atomic_read(&(osb->journal->j_num_trans)) != 0);
->  
-> -	if (ocfs2_mount_local(osb)) {
-> +	if (ocfs2_mount_local(osb) && state == OCFS2_JOURNAL_LOADED) {
 
-The only intent of the new introduced state is to identify if journal is
-truly loaded or not.
-So it seems that the simplest way to fix this is just check JBD2_LOADED
-here.
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
-if (ocfs2_mount_local(osb) &&
-    (journal->j_journal->j_flags & JBD2_LOADED)) {
-	...
-}
 
-BTW, could you please also replace 'osb->journal->j_num_trans' to
-'journal->j_num_trans'?
-
->  		jbd2_journal_lock_updates(journal->j_journal);
->  		status = jbd2_journal_flush(journal->j_journal, 0);
->  		jbd2_journal_unlock_updates(journal->j_journal);
-> @@ -1174,6 +1176,7 @@ int ocfs2_journal_load(struct ocfs2_journal *journal, int local, int replayed)
->  		}
->  	} else
->  		osb->commit_task = NULL;
-> +	journal->j_state = OCFS2_JOURNAL_LOADED;
-
-It seems that this has to be moved just after jbd2_journal_load().
-Anyway, I don't think we have to introduce a new state. See above.
-
-Joseph
-
->  
->  done:
->  	return status;
-> diff --git a/fs/ocfs2/journal.h b/fs/ocfs2/journal.h
-> index e3c3a35dc5e0..a80f76a8fa0e 100644
-> --- a/fs/ocfs2/journal.h
-> +++ b/fs/ocfs2/journal.h
-> @@ -15,6 +15,7 @@
->  
->  enum ocfs2_journal_state {
->  	OCFS2_JOURNAL_FREE = 0,
-> +	OCFS2_JOURNAL_INITED,
->  	OCFS2_JOURNAL_LOADED,
->  	OCFS2_JOURNAL_IN_SHUTDOWN,
->  };
+-- 
+With best wishes
+Dmitry
 
