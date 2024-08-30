@@ -1,71 +1,90 @@
-Return-Path: <linux-kernel+bounces-309317-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309319-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 499099668CF
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 20:19:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA39B9668D3
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 20:20:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 08833285530
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 18:19:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DDACD1C2340E
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 18:20:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F24B11BC9E1;
-	Fri, 30 Aug 2024 18:18:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48D121BD002;
+	Fri, 30 Aug 2024 18:20:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ns6yVLA+"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hIQIFIcz"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37F2A1B81B3;
-	Fri, 30 Aug 2024 18:18:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81D241BB6B9;
+	Fri, 30 Aug 2024 18:20:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725041937; cv=none; b=Cp3SijqvXXRnR7iU4UQXPwtS/Jmss0jyw9kj0pZZqlgvQ1tE3Jf26kpPjAom/9gI16aHKQPGoogEMeUvHFnh4JvL809Pos6p8D/aKDmPuNZwfEV3hG5Bfpgxy/w8gCWD/y503uaYHmqoMoP9VCvnyXaqKaL5Kjwm8D//7EUsGhs=
+	t=1725042028; cv=none; b=rGq3sbA3GvXKnenIEEXE0nrdQDRR2qkRemnhtRLfNMg+SWvFjFFycm+z+0AW7wpk0h9x+rttoWr8v1DesTvVy19FfTmT4PxTGNWhKsHHJjMjzH5FIE2HVH8JIEhcFHrayXSuJJ290HEYD6arCio5piXjdXp76k99BkNA/iNPCLk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725041937; c=relaxed/simple;
-	bh=ndMxz9smi89g9vUWHsG7/pVoH9KEAp/0C+C97/k6+4I=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ejZj+3nA1gmovfOV0TaAuwr7n/1G1lqaFcY6iDMN2p9yCCqMh4MqvZQJvkdDZGUDQgAapjno/NzXXs8B7j7NRM09u/S/QPHh1BCMhwkd5F/cYUaZomWBga6KefACZWpeCqoctaCNQZKVRms472Yj2Sc4BR8D34OughpXT9r1HBQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ns6yVLA+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 594DFC4CEC2;
-	Fri, 30 Aug 2024 18:18:56 +0000 (UTC)
+	s=arc-20240116; t=1725042028; c=relaxed/simple;
+	bh=S4LhiCjxkTqDlJJT4aBKOZgqogADuYYzlY2ieWc9NxM=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=gDANFWMIE46iKofeQg+4yr0KTYrHwQOv14by5ypsJ//UA9Ku5r+nYFMx1laI0iz02071LVKuJp1XDaQImfz3nA1EaWOvGPGd8XOb79i6JDfECG1NOBEnTr5em+wQGim67PJeKW/xybppx4Gw6r4fmMPskWjyNVGlRWPfsMa/pYo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hIQIFIcz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 270FEC4CEC4;
+	Fri, 30 Aug 2024 18:20:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725041936;
-	bh=ndMxz9smi89g9vUWHsG7/pVoH9KEAp/0C+C97/k6+4I=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=ns6yVLA+R8LKyuI9RiuCM4wsgWsdk6GTlLLuAkHvcU5cd6dZ7xOqGZ720vocbqkwc
-	 DBMkHmLuZGOIcIsnCT1nE8ocArXLI/hB+VKTLM9gpes0nttYtv/2zosMNlkPPo+6nQ
-	 woVefq/1XqIjuvQDJtP97CzoDRMbR7hUJeUPdyPjodCtZ/0ua33+BHAL/jhJJidXhy
-	 BRkCReb0lq/SgblDKqeV3pDsbDy5NItCKgjxW+M+WufOQwDe/WUweTJP2vFQsjxQm+
-	 dJFeNY0isR8elPCIv4RsB0womcmmklX19U4KE0YSQgp5Z8zMIB4JyN3R//zpKmr5i2
-	 3u/sDD0RJ2bJA==
-Date: Fri, 30 Aug 2024 11:18:55 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Breno Leitao <leitao@debian.org>
-Cc: fw@strlen.de, davem@davemloft.net, edumazet@google.com,
- pabeni@redhat.com, rbc@meta.com, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, netfilter-devel@vger.kernel.org
-Subject: Re: [PATCH nf-next v4 0/2] netfilter: Make IP_NF_IPTABLES_LEGACY
- selectable
-Message-ID: <20240830111855.7d04cd3a@kernel.org>
-In-Reply-To: <20240829161656.832208-1-leitao@debian.org>
-References: <20240829161656.832208-1-leitao@debian.org>
+	s=k20201202; t=1725042028;
+	bh=S4LhiCjxkTqDlJJT4aBKOZgqogADuYYzlY2ieWc9NxM=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=hIQIFIczRy28YS2NnkAS7CLHqYpYLZ8NYUe5rMb3f1KHtEvUUtzOBBQakyhyFihzP
+	 4Nm137rlfseaf/Al1fFbP2GzSmOF5eMuRYtcrDiVIpqjev+3TnPpziJlpaIM2CA6HN
+	 l9+qlzN/KDFCxvP2xvxQc8NtVOd0ha9BeSlY5f4+XbmvlY2xXbX+uuNdYzqRvBQeDv
+	 THCgiPwrBukpjcnJ1+p0szqLFvHWbRz1bqyjXLgnDi1UktQtim3kfhT/scI0raMbbs
+	 vcPcYcOrZO/k0Pu/PF0qbRoAf7hXAjbyYsFaQy//L03m0xuc+oCgPkisS95eBzsBep
+	 zFWnERoLyb5Ww==
+Received: from ip-10-30-226-235.us-west-2.compute.internal (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id BA86E3809A82;
+	Fri, 30 Aug 2024 18:20:29 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH v1 net-next] net: openvswitch: Use ERR_CAST() to return
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <172504202975.2677701.2567446210822369558.git-patchwork-notify@kernel.org>
+Date: Fri, 30 Aug 2024 18:20:29 +0000
+References: <20240829095509.3151987-1-yanzhen@vivo.com>
+In-Reply-To: <20240829095509.3151987-1-yanzhen@vivo.com>
+To: Yan Zhen <yanzhen@vivo.com>
+Cc: edumazet@google.com, pshelar@ovn.org, davem@davemloft.net,
+ kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org,
+ dev@openvswitch.org, linux-kernel@vger.kernel.org, opensource.kernel@vivo.com
 
-On Thu, 29 Aug 2024 09:16:53 -0700 Breno Leitao wrote:
-> These two patches make IP_NF_IPTABLES_LEGACY and IP6_NF_IPTABLES_LEGACY
-> Kconfigs user selectable, avoiding creating an extra dependency by
-> enabling some other config that would select IP{6}_NF_IPTABLES_LEGACY.
+Hello:
 
-FWIW I can confirm this version causes no disturbances to known CIs.
+This patch was applied to netdev/net-next.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
+
+On Thu, 29 Aug 2024 17:55:09 +0800 you wrote:
+> Using ERR_CAST() is more reasonable and safer, When it is necessary
+> to convert the type of an error pointer and return it.
+> 
+> Signed-off-by: Yan Zhen <yanzhen@vivo.com>
+> ---
+>  net/openvswitch/flow_netlink.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+
+Here is the summary with links:
+  - [v1,net-next] net: openvswitch: Use ERR_CAST() to return
+    https://git.kernel.org/netdev/net-next/c/b26b64493343
+
+You are awesome, thank you!
 -- 
-pw-bot: au
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
 
