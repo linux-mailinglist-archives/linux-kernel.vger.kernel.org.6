@@ -1,121 +1,114 @@
-Return-Path: <linux-kernel+bounces-308172-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308173-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C2CE96583B
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 09:18:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D527D96583E
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 09:18:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9C5B5B22529
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 07:18:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 14A241C22A61
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 07:18:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE3A114BFB4;
-	Fri, 30 Aug 2024 07:17:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8418B158A23;
+	Fri, 30 Aug 2024 07:17:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="UkIGCMlj"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NrE5amNS"
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ABFF9474;
-	Fri, 30 Aug 2024 07:17:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F9A114EC66
+	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 07:17:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725002274; cv=none; b=BBd6YPW7A7TXjMIPsUYJoXzkXdZTxw6+zYg0aLHwRQpU1/gtQ2ywrubxHC3U0IYZ8TgozqXrqWCogfPv7qIdiQiqhhSPTtxApCiOZGCKJZArjHN8TBusW4s3qjQG8g3VqrglmyUF8q5D7+1EvYzd9X9gU7IfRo5H43mneHCN6oE=
+	t=1725002278; cv=none; b=ZHSPj4kOm/7R2MbbYz2fWh6I5QVCmvuuRsyojHGOFQCoXWyUHqpzcsBm7ybPjKsJytIsDkoc+Nk6bq0bzS9Yp+zv0lmO8vbxN+1eiTb5OhSQjlz/m9ldPB2i6W/SftPDl9oVa9/a7z54gXm3gmMTz7LUR035XorSpHVCjlZCqdE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725002274; c=relaxed/simple;
-	bh=f2HCDSTkTkCbIafIoSatL/nTKpy+odGB0YR86K1BIL0=;
+	s=arc-20240116; t=1725002278; c=relaxed/simple;
+	bh=Hj7O3fn7LsnB+ScXKkFHRAn9BFQguNH0VHtWrri72AA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OEjiDm4Ws86Cb6M9IHlX0taIw8ygQfaqGgMNGagzsa4LyDqtpyvwnQs+b0LlhbPtzTNa+W3rG0PkUrUblorImCUwRfPsNLB0ilEkTkMSPyaS1dL80UL3KXnl9sZd/R6ZOPUyhxw/XSgBoBbmQLBgP1bCMB99cf+sZ57UQzAOfLA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=UkIGCMlj; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1725002265;
-	bh=f2HCDSTkTkCbIafIoSatL/nTKpy+odGB0YR86K1BIL0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=UkIGCMljMuRbtSoV000F3kIuCGjuuKCG5kjxKHGD4W6C/z1H839STQYJkAa3Mwkc5
-	 VYEp5C8gkhkcfymnyfODbTCbrgknvwpMmjJsKBJ6vWVDWnAohNlT1Cs3r3wFsklyhA
-	 rjYBvhwCfG3DeKQBO10nR7O90EslWIQzVr+ML+j4=
-Date: Fri, 30 Aug 2024 09:17:45 +0200
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
-To: Helge Deller <deller@gmx.de>, Bert Karwatzki <spasswolf@web.de>
-Cc: linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org, Daniel Vetter <daniel@ffwll.ch>, Peter Jones <pjones@redhat.com>
-Subject: Re: [PATCH 3/5] fbdev: Introduce devm_register_framebuffer()
-Message-ID: <8b52669c-4c99-45e2-8b5e-9348e5e00f70@t-8ch.de>
-References: <20240827-efifb-sysfs-v1-0-c9cc3e052180@weissschuh.net>
- <20240827-efifb-sysfs-v1-3-c9cc3e052180@weissschuh.net>
+	 Content-Type:Content-Disposition:In-Reply-To; b=SGtWD95RhyPWSXEY4SH98ryI6k21oXBb2xVs81O7OIazDIO7olPBWWo7XNT4VT6wqmLyqEtHcVuucF5zfAlZP4xYWDWNTKdVEsoD6ZQ+byDiGlHYVfEH4+qmiiWXlT5TCx570pDN1gwTTdpbwqQN6UBx7kqR1vZE2GselveXg7I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=NrE5amNS; arc=none smtp.client-ip=209.85.167.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-533521cd1c3so1806376e87.1
+        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 00:17:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1725002274; x=1725607074; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=dUg0V5H1t924JBTmuGBSBlhyIluvyw9yjkWinmsdOTU=;
+        b=NrE5amNSjjLk1aCUL+ziEkL1316lK7CqRftOCcGRRRRFrXA7HLtg4TuNEMCsveo9Np
+         tJyWo5evk+grLP/L3IUayt05kY3saByhfBhy6/tTO6Ady7DtYuR/XHFdOcX+RTpMyEhf
+         qyYRXq8TXoaiZxgFc41TB+ZsfMC1GKul+M/91nejXA+bfa4T0uQM0PrNGBrB+fly7h/E
+         n/aGtjC6tkOFK6jC05WGtu6WiT8fO/hiWNPKv47y1Ck5/OXH0kLBCEApSb2TI2vuEjSj
+         dAGYyC6YUfu5VFusl6H2doD29wNG/fQh0zOvPnmqrztMItMiI2yFXy0s2N+XfFhVMkWp
+         zHig==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725002274; x=1725607074;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dUg0V5H1t924JBTmuGBSBlhyIluvyw9yjkWinmsdOTU=;
+        b=AhMc7Qs27vRXvto1wLj5MJ7aoOfMa9Demi2k2M0OKAIC4C9YbZlybd6zDYHnt9PGzr
+         MV3ODJsjlV/TSzafrC7j0SFhKmeF+G1RY8REV7OY3uqD/jP1oktWrYjaw0dBIyLRuy+5
+         6D2jQtcOYjDaKeHlNCgxfcYaeO71sOrfWRuD9KZlSMfB9aPEtWHbJ54ROZnCRYif1OMq
+         FMbkiUIDcwmR0ofW+qcPjZBHRtaPrYN+mWet97CKKgSl0t9uEDXq58/praZGHJ2qV4k/
+         xtJP5vsn8+eJVOGg99Q7OMDdU0dfpTB680Or44X6deJTBv/ICWqbiXrKlJN73jZVgl6t
+         QbgA==
+X-Forwarded-Encrypted: i=1; AJvYcCWZxgW9twVA7SKlRX9uFt9Q/fiR5RMukExg9LaKkRJbKf24EYGEw8ydWsvnCxV5j2lUu2knMubYJE5HpGA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxLy7bdGMVdhnlI1r/xG8s/SY2eKCOqJaMyhWStAoizecLpb3Tx
+	yGiFywRL1hCKPXYITwBFB0S2pHViSfgMxZP+9ziBWXIF2HLEeflJJ7tbkFt2Rmc=
+X-Google-Smtp-Source: AGHT+IHLpyKzhGXa8aflreXMGMxxXWhUvSYwRpfddmegIAVSkC2C6GCg1+q+ITO/U8ejaqpmrVXchw==
+X-Received: by 2002:a05:6512:238d:b0:52c:cd77:fe03 with SMTP id 2adb3069b0e04-53546b32f72mr980860e87.14.1725002273778;
+        Fri, 30 Aug 2024 00:17:53 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-535407ac51esm454470e87.80.2024.08.30.00.17.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 30 Aug 2024 00:17:53 -0700 (PDT)
+Date: Fri, 30 Aug 2024 10:17:51 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Sachin Gupta <quic_sachgupt@quicinc.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konrad.dybcio@linaro.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	quic_nitirawa@quicinc.com, quic_bhaskarv@quicinc.com, quic_narepall@quicinc.com, 
+	quic_rampraka@quicinc.com, quic_sartgarg@quicinc.com, quic_mapa@quicinc.com, 
+	quic_cang@quicinc.com, quic_nguyenb@quicinc.com
+Subject: Re: [PATCH V3] arm64: dts: qcom: Add SD Card node for qcm6490-idp
+Message-ID: <hlknpxukiqitcyfx5lyxjv6wsnpmyvatrxkgsif66sqruv2c6m@zm4tp7ouoidi>
+References: <20240829121225.14184-1-quic_sachgupt@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240827-efifb-sysfs-v1-3-c9cc3e052180@weissschuh.net>
+In-Reply-To: <20240829121225.14184-1-quic_sachgupt@quicinc.com>
 
-Hi everybody,
-
-On 2024-08-27 17:25:14+0000, Thomas Weißschuh wrote:
-> Introduce a device-managed variant of register_framebuffer() which
-> automatically unregisters the framebuffer on device destruction.
-> This can simplify the error handling and resource management in drivers.
-
-Bert reported that this series broke his framebuffer ([0], [1]).
-
-[0] https://lore.kernel.org/lkml/20240829224124.2978-1-spasswolf@web.de/
-[1] https://lore.kernel.org/lkml/20240829230438.3226-1-spasswolf@web.de/
-
-> Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
-> ---
->  drivers/video/fbdev/core/fbmem.c | 24 ++++++++++++++++++++++++
->  include/linux/fb.h               |  1 +
->  2 files changed, 25 insertions(+)
+On Thu, Aug 29, 2024 at 05:42:25PM GMT, Sachin Gupta wrote:
+> Add SD Card node for Qualcomm qcm6490-idp Board.
 > 
-> diff --git a/drivers/video/fbdev/core/fbmem.c b/drivers/video/fbdev/core/fbmem.c
-> index 4c4ad0a86a50..d17a2daa2483 100644
-> --- a/drivers/video/fbdev/core/fbmem.c
-> +++ b/drivers/video/fbdev/core/fbmem.c
-> @@ -544,6 +544,30 @@ unregister_framebuffer(struct fb_info *fb_info)
+> Signed-off-by: Sachin Gupta <quic_sachgupt@quicinc.com>
+> ---
+> Changes from v2:
+>  - Corrected patch version.
 
-[..]
+In future: no need to resend for such small issues.
 
-> +/**
-> + *	devm_register_framebuffer - resource-managed frame buffer device registration
-> + *	@dev: device the framebuffer belongs to
-> + *	@fb_info: frame buffer info structure
-> + *
-> + *	Registers a frame buffer device @fb_info to device @dev.
-> + *
-> + *	Returns negative errno on error, or zero for success.
-> + *
-> + */
-> +int
-> +devm_register_framebuffer(struct device *dev, struct fb_info *fb_info)
-> +{
-> +	return devm_add_action_or_reset(dev, devm_unregister_framebuffer, fb_info);
-> +}
-> +EXPORT_SYMBOL(devm_register_framebuffer);
+> 
+> Changes from v1:
+>  - Define sd_cd node. (Thanks Dmitry)
+> ---
+>  arch/arm64/boot/dts/qcom/qcm6490-idp.dts | 33 ++++++++++++++++++++++++
+>  1 file changed, 33 insertions(+)
+> 
 
-This implementation is wrong, it never actually registers the
-framebuffer. It should look like this:
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
-int
-devm_register_framebuffer(struct device *dev, struct fb_info *fb_info)
-{
-	int ret;
-
-	ret = register_framebuffer(fb_info);
-	if (ret)
-		return ret;
-
-	return devm_add_action_or_reset(dev, devm_unregister_framebuffer, fb_info);
-}
-EXPORT_SYMBOL(devm_register_framebuffer);
-
-Bert, could you test this?
-Helge, do you want me to resend the series, minus the original patch 1?
+-- 
+With best wishes
+Dmitry
 
