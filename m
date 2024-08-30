@@ -1,179 +1,139 @@
-Return-Path: <linux-kernel+bounces-308992-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308993-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A4A59664ED
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 17:03:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BC6B9664EE
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 17:04:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4F12E1C239E7
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 15:03:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A95131F22051
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 15:04:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 520061B3F1F;
-	Fri, 30 Aug 2024 15:03:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F1AF1B2EF4;
+	Fri, 30 Aug 2024 15:04:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mu657u52"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AZRNq1n3"
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF43561FCE;
-	Fri, 30 Aug 2024 15:03:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51D1C61FCE
+	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 15:04:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725030226; cv=none; b=R3Xj+bbgIkWu7u3TX6H+1qwm4AxfILm4X4lh/tVeHx6F+uyg2fN8bJBX2oy209KYswR7KHWtFLOktoWO+ou9nT89v7zlivqMpQAwUd15HIKNF9cRa9OdlY07Yo+bKaq44SK1ZOSefVPdmx/5aRgeMLq5i2sMsl/X9LrYczrTxXg=
+	t=1725030252; cv=none; b=aj8dLPy/ayfi1CqE32EDXbZtPe18Batf3RhnWOG1917xG4AAaAyh7XXKaQUwzjUnC21uArfJSJsLSHrhmSeIBbacRb/8L7Jcx6b9hD40FfLNPKOMfwPNS62nm0Swb5LgvjZwczVrr2OJyHUYSWuUhBXucebZAtJd4VZWi1V9hv4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725030226; c=relaxed/simple;
-	bh=6o7JyR5HGx7yBW/bLFYB5UEEz+m8g4pL6Cmsk6vGPS4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dI0ksGrV8bpbnbsR1VdUXvYTzuMnUI02Lc+Yy8VTj8SeMBGUo6quhjDFo91ApM4Pa3u6XUplI2EG+9xr36ecW0aqRC0Bs50aRhjCy1Mw3QbqQMDj605i6EFDWXjfP/Jpb2/N/Adktic5mPcHwyyuZozINYjPjnXJMToUrgkvsdw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mu657u52; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725030224; x=1756566224;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=6o7JyR5HGx7yBW/bLFYB5UEEz+m8g4pL6Cmsk6vGPS4=;
-  b=mu657u52KDgbM4KgBJbasN97uFNPsHOyXmHE7UVbMr6LFz1rEj5zhmSk
-   GrrRjC1hRV9EjyCLxTGynAwsHRykieqPS0PjV18rzHGmZwxj/H6ThR6E5
-   3jL2D1vXSlgG1UUc4iSUbX48eCdYZnxm8zsapJmqjO7+N2YvyTvQcF96d
-   hV2BF+gKEa2Afbic5I6D9cuCX844l/Z/zPbUPwHWxeHYShJARJXDlRvri
-   4obYgt1eugCP+dssKUXig7pyiNBCrbodUuQQd/8xs7Nl1rsF44yyI9lhe
-   lqQToSaFc2tk5YPFpd9rN8oiDUST76NUhcVOvsv4av0yovAoiJ8MFKdnO
-   Q==;
-X-CSE-ConnectionGUID: IryT5NF+RwKWLkgxJLCveg==
-X-CSE-MsgGUID: n4vSk2OYTwSa/Nlggnco1w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11180"; a="23859101"
-X-IronPort-AV: E=Sophos;i="6.10,189,1719903600"; 
-   d="scan'208";a="23859101"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Aug 2024 08:03:41 -0700
-X-CSE-ConnectionGUID: r7q0CKUlTQC3x1miP8LLtw==
-X-CSE-MsgGUID: eXfyfPtHSKSD6y5ZoE14uw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,189,1719903600"; 
-   d="scan'208";a="64273994"
-Received: from cmdeoliv-mobl.amr.corp.intel.com (HELO [10.125.108.69]) ([10.125.108.69])
-  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Aug 2024 08:03:40 -0700
-Message-ID: <a922737b-be1a-4ae9-b2d8-fefc44bb6419@intel.com>
-Date: Fri, 30 Aug 2024 08:03:25 -0700
+	s=arc-20240116; t=1725030252; c=relaxed/simple;
+	bh=lh/x2McaaALFfUgpVmAGYKNv4IHn41KY+7j/fAIATi0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mdQlW3jWGdqXi3ek5dW7GAHNnBb0Qi6oxyjeBHXIafQGWN4q2Y8hGEbteE3IjXoMotweEHLAeLhpa8XPi+DH2+s6zopRfgVVWdU3J65v8P7+FmBij0Yvkbc42y6n56NcOYE5aQ5jRlo1kklwstE+Pq5fLXa0dAw7SK7FXUXWZjE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AZRNq1n3; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-371893dd249so1406280f8f.2
+        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 08:04:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725030248; x=1725635048; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=5+y3zV4EDrHM8E/Avurk5GQvKXIz1DQBJgb/vXY4IU8=;
+        b=AZRNq1n34whritUCqqbbA2B/S2QcheeMAEyjxz+PgiojpAcg6v8mnJbLeFTi5CVNum
+         3YJ9irUgaDWlcW5gGlQSjx6yjgsS5uAy61udiVguXgDes0C90Ebfj/kCJgqNeurBwbgf
+         N8eFoV7WN+R5JnPRdavCRx4OvHTgExFqkeYhUKBI0IJJRH8sXJ4K/PH/BH8TCt57yENJ
+         Z3AN0pntQaJMkEYVqEzndg0P0DuBkuRPylhnMbPCgBv4gpYkOy8AqJ3ke+oOyOMtXiv8
+         xkM0Cr2HX5whPR2JEqbIYH9j5xrg7uDcLWyPC7rGgZ2xNqGonALH6Vgdqbqa3DLiba1Z
+         Qdnw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725030248; x=1725635048;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=5+y3zV4EDrHM8E/Avurk5GQvKXIz1DQBJgb/vXY4IU8=;
+        b=lNZaLyhRBeTgogmHNJOUReQgRSpBgLctd5DXgNsQrRkbcHNQV9DIHazfGIqyS53sIo
+         gUamzHGukL8uVVT5tfggCdaoaSBE7jyJR7lGnbV7CkNFrJiNYSrzEdD1Vzf7P+c+jraH
+         2HXCcdySrTSzL06YzdyDiaoeFB25qxXQHqw4KV9guqTdMCJsUQUmCD5YghzQ2GVfaAg7
+         tqEK0FDk92d7+oe0aOrXRRuDP5mUBE+xR9H6KJGvVuZWWJv+ps9Kzhj6rL+65MWepJQJ
+         VYsOf5WJB3mvqFHcrNWp3kh2oevoSnRAKqqspnN0e+aIpzQH66m2qlZ5q8qvuzZEQWUg
+         FVQQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVF2OzYTKg+pLs3Kghuf026RJTvQp220D8HkB9V/3I/58nTrz1HUHmnjf67Bq/Z9GBMYy2gUYx+R0oEqEc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzXuXU3U2QwSbH2ZTxQ84LsW7mw8B6zV36FzKOPMH7CeS/sYgFW
+	JpV5ZosTyAG+MDAXCbwlA9todxhI6RoC/+som+H3bP3umbmcHkuoDMew6w==
+X-Google-Smtp-Source: AGHT+IHmnfdQQ1hfPAXxYQUJZKzBNqemK3VME7LWK8oD3vyz5RbznDMrdodK4EXTUEkVgqcIn3QkAQ==
+X-Received: by 2002:a05:6000:1811:b0:367:8876:68e6 with SMTP id ffacd0b85a97d-3749b582257mr4258615f8f.48.1725030247744;
+        Fri, 30 Aug 2024 08:04:07 -0700 (PDT)
+Received: from PC-PEDRO-ARCH ([2001:8a0:7862:ea00:1d36:5f53:3f57:14ad])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3749efb1682sm4227265f8f.101.2024.08.30.08.04.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 30 Aug 2024 08:04:07 -0700 (PDT)
+Date: Fri, 30 Aug 2024 16:04:05 +0100
+From: Pedro Falcato <pedro.falcato@gmail.com>
+To: Petr =?utf-8?B?xaBwYcSNZWs=?= <pspacek@isc.org>
+Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, Vlastimil Babka <vbabka@suse.cz>, 
+	Liam Howlett <liam.howlett@oracle.com>
+Subject: Re: [PATCH RFC] mm: mmap: Change DEFAULT_MAX_MAP_COUNT to INT_MAX
+Message-ID: <mftebk5inxamd52k46frhq2llopoiiewsgdkrjbamg4yukyhqw@vf4jzz6lmgcu>
+References: <20240830095636.572947-1-pspacek@isc.org>
+ <90f07fec-3f46-4b38-86fd-07c9f8201904@lucifer.local>
+ <82960a7e-9013-475e-9b80-7b29a5667482@lucifer.local>
+ <5dca8600-0352-4b5b-acb0-0cd4f84733f4@isc.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC v2 0/4] mm: Introduce MAP_BELOW_HINT
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Charlie Jenkins <charlie@rivosinc.com>
-Cc: Arnd Bergmann <arnd@arndb.de>,
- Richard Henderson <richard.henderson@linaro.org>,
- Ivan Kokshaysky <ink@jurassic.park.msu.ru>, Matt Turner
- <mattst88@gmail.com>, Vineet Gupta <vgupta@kernel.org>,
- Russell King <linux@armlinux.org.uk>, Guo Ren <guoren@kernel.org>,
- Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>,
- Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
- "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
- Helge Deller <deller@gmx.de>, Michael Ellerman <mpe@ellerman.id.au>,
- Nicholas Piggin <npiggin@gmail.com>,
- Christophe Leroy <christophe.leroy@csgroup.eu>,
- Naveen N Rao <naveen@kernel.org>, Alexander Gordeev
- <agordeev@linux.ibm.com>, Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
- Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
- Christian Borntraeger <borntraeger@linux.ibm.com>,
- Sven Schnelle <svens@linux.ibm.com>,
- Yoshinori Sato <ysato@users.sourceforge.jp>, Rich Felker <dalias@libc.org>,
- John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
- "David S. Miller" <davem@davemloft.net>,
- Andreas Larsson <andreas@gaisler.com>, Thomas Gleixner <tglx@linutronix.de>,
- Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
- Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
- "H. Peter Anvin" <hpa@zytor.com>, Andy Lutomirski <luto@kernel.org>,
- Peter Zijlstra <peterz@infradead.org>, Muchun Song <muchun.song@linux.dev>,
- Andrew Morton <akpm@linux-foundation.org>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka
- <vbabka@suse.cz>, Shuah Khan <shuah@kernel.org>, linux-arch@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-alpha@vger.kernel.org,
- linux-snps-arc@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
- linux-csky@vger.kernel.org, loongarch@lists.linux.dev,
- linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
- linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
- linux-sh@vger.kernel.org, sparclinux@vger.kernel.org, linux-mm@kvack.org,
- linux-kselftest@vger.kernel.org,
- "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-References: <20240829-patches-below_hint_mmap-v2-0-638a28d9eae0@rivosinc.com>
- <ab90ff3b-67dc-4195-89a7-54e394da1aa0@lucifer.local>
-From: Dave Hansen <dave.hansen@intel.com>
-Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <ab90ff3b-67dc-4195-89a7-54e394da1aa0@lucifer.local>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <5dca8600-0352-4b5b-acb0-0cd4f84733f4@isc.org>
 
-On 8/29/24 01:42, Lorenzo Stoakes wrote:
->> These applications work on x86 because x86 does an implicit 47-bit
->> restriction of mmap() address that contain a hint address that is less
->> than 48 bits.
-> You mean x86 _has_ to limit to physically available bits in a canonical
-> format 🙂 this will not be the case for 5-page table levels though...
+On Fri, Aug 30, 2024 at 04:28:33PM GMT, Petr Špaček wrote:
+> Now I understand your concern. From the docs and code comments I've seen it
+> was not clear that the limit serves _another_ purpose than mere
+> compatibility shim for old ELF tools.
+> 
+> > It is a NACK, but it's a NACK because of the limit being so high.
+> > 
+> > With steam I believe it is a product of how it performs allocations, and
+> > unfortunately this causes it to allocate quite a bit more than you would
+> > expect.
+> 
+> FTR select non-game applications:
+> 
+> ElasticSearch and OpenSearch insist on at least 262144.
+> DNS server BIND 9.18.28 linked to jemalloc 5.2.1 was observed with usage
+> around 700000.
+> OpenJDK GC sometimes weeps about values < 737280.
+> SAP docs I was able to access use 1000000.
+> MariaDB is being tested by their QA with 1048576.
+> Fedora, Ubuntu, NixOS, and Arch distros went with value 1048576.
+> 
+> Is it worth sending a patch with the default raised to 1048576?
+> 
+> 
+> > With jemalloc() that seems strange, perhaps buggy behaviour?
+> 
+> Good question. In case of BIND DNS server, jemalloc handles mmap() and we
+> keep statistics about bytes requested from malloc().
+> 
+> When we hit max_map_count limit the
+> (sum of not-yet-freed malloc(size)) / (vm.max_map_count)
+> gives average size of mmaped block ~ 100 k.
+> 
+> Is 100 k way too low / does it indicate a bug? It does not seem terrible to
+> me - the application is handling ~ 100-1500 B packets at rate somewhere
+> between 10-200 k packets per second so it's expected it does lots of small
+> short lived allocations.
+> 
+> A complicating factor is that the process itself does not see the current
+> counter value (unless BPF is involved) so it's hard to monitor this until
+> the limit is hit.
 
-By "physically available bits" are you referring to the bits that can be
-used as a part of the virtual address?  "Physically" may not have been
-the best choice of words. ;)
+Can you get us a dump of the /proc/<pid>/maps? It'd be interesting to see how
+exactly you're hitting this.
 
-There's a canonical hole in 4-level paging and 5-level paging on x86.
-The 5-level canonical hole is just smaller.
-
-Also, I should probably say that the >47-bit mmap() access hint was more
-of a crutch than something that we wanted to make ABI forever.  We knew
-that high addresses might break some apps and we hoped that the list of
-things it would break would go down over time so that we could
-eventually just let mmap() access the whole address space by default.
-
-That optimism may have been misplaced.
+-- 
+Pedro
 
