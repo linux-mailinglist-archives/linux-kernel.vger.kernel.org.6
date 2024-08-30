@@ -1,302 +1,313 @@
-Return-Path: <linux-kernel+bounces-309202-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309203-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66B81966762
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 18:51:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF55196676E
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 18:53:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DC6C21F25B1D
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 16:51:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F3CEC1C22B66
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 16:53:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCEC81B9B5F;
-	Fri, 30 Aug 2024 16:51:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9842D1B9B29;
+	Fri, 30 Aug 2024 16:52:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hgLdHIte"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AYqfNfmY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A51FC1B8E84;
-	Fri, 30 Aug 2024 16:51:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70F9C192D98;
+	Fri, 30 Aug 2024 16:52:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725036686; cv=none; b=HbBbCwZSRNoB4XMST5ytr1HbjqaxqlXu+jCrBoJ09CuMSBtPjXxmH3kdmQDvkMvlWRUcspolAxS52nndtQoiVkd3SSdIOkXW+HRSdpTz7QoFdirzpxN846FPCi7Sc56iaB1t4CJprvvDaL+6CQ5ewHv+JlDwHgbRv/QQHEFYwVY=
+	t=1725036765; cv=none; b=Hsfh408Qw9TahPMkOCwkl3Y3ShX7qNV9fvmNX/L4fKgcTZSjRnFqHMd3V6VY0UMRUoXN66Zflg4Lwi1TlLW22jISdx9Pny7QSmVez32rKvcn9hgaPLWhaVmcu/N70dqGoA+aMo+raV01Ry6oLF2QzBLrp7qhYNe1XA63maWgPcA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725036686; c=relaxed/simple;
-	bh=+myL1WenBFtiJ4CShQ4fOJ404kckTowZXne0BXsaq5Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=b0YIqe45EDPlScKw8Zl3FvPtmrP6N2WIcLX4+FRJnnxrzSHMyVwe9jVLhyk+frW9YSQ2MQtEhh8jSrD2HSJMC84mEZyQez0MtTEZUF/dROYYvlyhaCTcWcTnybZR+ur2S7jI+gE1Gu7B4KRE/mfCrc1MlZMDvxnGIpg9Lb7Tirc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hgLdHIte; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725036685; x=1756572685;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=+myL1WenBFtiJ4CShQ4fOJ404kckTowZXne0BXsaq5Y=;
-  b=hgLdHIteD92ytk7+KkON0zAiwUqsDB+Adlmy5PzkLqqq0IBIndJ9xOoo
-   U9EAF6p8siUON+MOilyJJqDQM8BXeKwRJGg8Udq3OVDiqphU1poKOIiHc
-   ciZmm5qOwlJxUNiKsA4fDrQVay1i7lbubAu4mETDG1QdPftB+rJl6aMyb
-   bjrBeOP8ACIPDX1LwK2stJ9jmTySarCVsqkruivzsmBiU3EAzhhQBuPIj
-   uDhrNEgQLz2r5ex6iNbia8t/OI6eJh812VRmKpB09Z2pqrLJHZpvDsMf+
-   mdJ/bjexgPV3oTaTRhAb+sG1ub4Z9mgJnPbXdsr0LAu8vwNyY6YUOFC1K
-   A==;
-X-CSE-ConnectionGUID: uqD4aUTTTvWylIxwGRJoyg==
-X-CSE-MsgGUID: Txud8P0dRdW9UolDrhqgJQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11180"; a="23870852"
-X-IronPort-AV: E=Sophos;i="6.10,189,1719903600"; 
-   d="scan'208";a="23870852"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Aug 2024 09:51:24 -0700
-X-CSE-ConnectionGUID: J5hQuGrzQIaRUtKnO0c9mw==
-X-CSE-MsgGUID: QGgyDBk7QLiFRYtUHLHV+Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,189,1719903600"; 
-   d="scan'208";a="63649943"
-Received: from lkp-server01.sh.intel.com (HELO 9c6b1c7d3b50) ([10.239.97.150])
-  by fmviesa007.fm.intel.com with ESMTP; 30 Aug 2024 09:51:19 -0700
-Received: from kbuild by 9c6b1c7d3b50 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sk4qC-0001fk-2L;
-	Fri, 30 Aug 2024 16:51:16 +0000
-Date: Sat, 31 Aug 2024 00:50:29 +0800
-From: kernel test robot <lkp@intel.com>
-To: Joe Damato <jdamato@fastly.com>, netdev@vger.kernel.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	edumazet@google.com, amritha.nambiar@intel.com,
-	sridhar.samudrala@intel.com, sdf@fomichev.me, bjorn@rivosinc.com,
-	hch@infradead.org, willy@infradead.org,
-	willemdebruijn.kernel@gmail.com, skhawaja@google.com,
-	kuba@kernel.org, Joe Damato <jdamato@fastly.com>,
-	Martin Karsten <mkarsten@uwaterloo.ca>,
-	Paolo Abeni <pabeni@redhat.com>, Jiri Pirko <jiri@resnulli.us>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Lorenzo Bianconi <lorenzo@kernel.org>,
-	Breno Leitao <leitao@debian.org>,
-	Johannes Berg <johannes.berg@intel.com>,
-	Alexander Lobakin <aleksander.lobakin@intel.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next 1/5] net: napi: Make napi_defer_hard_irqs
- per-NAPI
-Message-ID: <202408310038.VztWz8YR-lkp@intel.com>
-References: <20240829131214.169977-2-jdamato@fastly.com>
+	s=arc-20240116; t=1725036765; c=relaxed/simple;
+	bh=SMcLNIaJ54MQsZ3nxl5vqmMyfb44UrOy7mGgTTHqYZo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cI6DOddpaQBW5ORptdAtPgUp9qcUg9Fjx8G4UxwBqSaxyLvbUYlE1QrpmQhbsk2holWZNV/8WAUOYf6fLfji4tv69R7QU+QX6rIcCoPI16gx1AiklluK0xPmAa1dM3deZNFit9fA/wVPD+mmgw8EjCc6bI4MWUAtgJH0fkglZjo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AYqfNfmY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 37851C4CEC2;
+	Fri, 30 Aug 2024 16:52:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725036765;
+	bh=SMcLNIaJ54MQsZ3nxl5vqmMyfb44UrOy7mGgTTHqYZo=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=AYqfNfmYiFPTbXVEG+bz3A0nts8/zcC0XWPxEIPNnauvCUj/p/wFOq4wpkq7Paeik
+	 ZVMxhimIvmX8KfmZ1DJIA/Fk93uwd+sRic29TktVLjwj9Fi4eCLgaVQBuh7dLmbeSb
+	 a8xUPVaKeYuLJLM02AhRR7E9QtxaTHIAdcAI6NxPhL0Mohfpyd6SRQBcM4AFfpd6eC
+	 r9Qbqf5g+0+/AIMoyKhJ809/uOryvKOzQaPzwP+L0LEn0goFcSvXQ4i241s46e2uCq
+	 jUXK3stvvzvVQ3LIacmriav8imr2uHfvQ/OO/NLR7b6EzCNXgLJOOXHxFhqKZK5W+U
+	 lCbJze5YFS6ZA==
+Message-ID: <b74327b8-43f6-47cf-ba9d-cc9a4559767b@kernel.org>
+Date: Fri, 30 Aug 2024 18:52:32 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240829131214.169977-2-jdamato@fastly.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 08/11] misc: rp1: RaspberryPi RP1 misc driver
+To: Andrea della Porta <andrea.porta@suse.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Florian Fainelli <florian.fainelli@broadcom.com>,
+ Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>,
+ Linus Walleij <linus.walleij@linaro.org>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Derek Kiernan <derek.kiernan@amd.com>, Dragan Cvetic
+ <dragan.cvetic@amd.com>, Arnd Bergmann <arnd@arndb.de>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Nicolas Ferre <nicolas.ferre@microchip.com>,
+ Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Saravana Kannan <saravanak@google.com>, Bjorn Helgaas <bhelgaas@google.com>,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+ netdev@vger.kernel.org, linux-pci@vger.kernel.org,
+ linux-arch@vger.kernel.org, Lee Jones <lee@kernel.org>,
+ Andrew Lunn <andrew@lunn.ch>, Stefan Wahren <wahrenst@gmx.net>
+References: <cover.1724159867.git.andrea.porta@suse.com>
+ <5954e4dccc0e158cf434d2c281ad57120538409b.1724159867.git.andrea.porta@suse.com>
+ <lrv7cpbt2n7eidog5ydhrbyo5se5l2j23n7ljxvojclnhykqs2@nfeu4wpi2d76>
+ <ZtHN0B8VEGZFXs95@apocalypse>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <ZtHN0B8VEGZFXs95@apocalypse>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Joe,
+On 30/08/2024 15:49, Andrea della Porta wrote:
+> Hi Krzysztof,
+> 
+> On 10:38 Wed 21 Aug     , Krzysztof Kozlowski wrote:
+>> On Tue, Aug 20, 2024 at 04:36:10PM +0200, Andrea della Porta wrote:
+>>> The RaspberryPi RP1 is ia PCI multi function device containing
+>>> peripherals ranging from Ethernet to USB controller, I2C, SPI
+>>> and others.
+>>> Implement a bare minimum driver to operate the RP1, leveraging
+>>> actual OF based driver implementations for the on-borad peripherals
+>>> by loading a devicetree overlay during driver probe.
+>>> The peripherals are accessed by mapping MMIO registers starting
+>>> from PCI BAR1 region.
+>>> As a minimum driver, the peripherals will not be added to the
+>>> dtbo here, but in following patches.
+>>>
+>>> Link: https://datasheets.raspberrypi.com/rp1/rp1-peripherals.pdf
+>>> Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
+>>> ---
+>>>  MAINTAINERS                           |   2 +
+>>>  arch/arm64/boot/dts/broadcom/rp1.dtso | 152 ++++++++++++
+>>
+>> Do not mix DTS with drivers.
+>>
+>> These MUST be separate.
+> 
+> Separating the dtso from the driver in two different patches would mean
+> that the dtso patch would be ordered before the driver one. This is because
+> the driver embeds the dtbo binary blob inside itself, at build time. So
+> in order to build the driver, the dtso needs to be there also. This is not
 
-kernel test robot noticed the following build errors:
+Sure, in such case DTS will have to go through the same tree as driver
+as an exception. Please document it in patch changelog (---).
 
-[auto build test ERROR on net-next/main]
+> the standard approach used with 'normal' dtb/dtbo, where the dtb patch is
+> ordered last wrt the driver it refers to.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Joe-Damato/net-napi-Make-napi_defer_hard_irqs-per-NAPI/20240829-211617
-base:   net-next/main
-patch link:    https://lore.kernel.org/r/20240829131214.169977-2-jdamato%40fastly.com
-patch subject: [PATCH net-next 1/5] net: napi: Make napi_defer_hard_irqs per-NAPI
-config: x86_64-allyesconfig (https://download.01.org/0day-ci/archive/20240831/202408310038.VztWz8YR-lkp@intel.com/config)
-compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240831/202408310038.VztWz8YR-lkp@intel.com/reproduce)
+It's not exactly the "ordered last" that matters, but lack of dependency
+and going through separate tree and branch - arm-soc/dts. Here there
+will be an exception how we handle patch, but still DTS is hardware
+description so should not be combined with driver code.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202408310038.VztWz8YR-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   In file included from drivers/net/ethernet/intel/idpf/idpf_dev.c:4:
-   In file included from drivers/net/ethernet/intel/idpf/idpf.h:22:
->> drivers/net/ethernet/intel/idpf/idpf_txrx.h:475:1: error: static assertion failed due to requirement '__builtin_offsetof(struct idpf_q_vector, __cacheline_group_end__read_write) - (__builtin_offsetof(struct idpf_q_vector, __cacheline_group_begin__read_write) + sizeof ((((struct idpf_q_vector *)0)->__cacheline_group_begin__read_write))) == (424 + 2 * sizeof(struct dim))': offsetof(struct idpf_q_vector, __cacheline_group_end__read_write) - offsetofend(struct idpf_q_vector, __cacheline_group_begin__read_write) == (424 + 2 * sizeof(struct dim))
-     475 | libeth_cacheline_set_assert(struct idpf_q_vector, 104,
-         | ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     476 |                             424 + 2 * sizeof(struct dim),
-         |                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     477 |                             8 + sizeof(cpumask_var_t));
-         |                             ~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/net/libeth/cache.h:62:2: note: expanded from macro 'libeth_cacheline_set_assert'
-      62 |         libeth_cacheline_group_assert(type, read_write, rw);                  \
-         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/net/libeth/cache.h:17:16: note: expanded from macro 'libeth_cacheline_group_assert'
-      17 |         static_assert(offsetof(type, __cacheline_group_end__##grp) -          \
-         |         ~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      18 |                       offsetofend(type, __cacheline_group_begin__##grp) ==    \
-         |                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      19 |                       (sz))
-         |                       ~~~~~
-   include/linux/stddef.h:16:32: note: expanded from macro 'offsetof'
-      16 | #define offsetof(TYPE, MEMBER)  __builtin_offsetof(TYPE, MEMBER)
-         |                                 ^
-   include/linux/build_bug.h:77:50: note: expanded from macro 'static_assert'
-      77 | #define static_assert(expr, ...) __static_assert(expr, ##__VA_ARGS__, #expr)
-         |                                  ~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/build_bug.h:78:56: note: expanded from macro '__static_assert'
-      78 | #define __static_assert(expr, msg, ...) _Static_assert(expr, msg)
-         |                                                        ^~~~
-   drivers/net/ethernet/intel/idpf/idpf_txrx.h:475:1: note: expression evaluates to '768 == 760'
-     475 | libeth_cacheline_set_assert(struct idpf_q_vector, 104,
-         | ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     476 |                             424 + 2 * sizeof(struct dim),
-         |                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     477 |                             8 + sizeof(cpumask_var_t));
-         |                             ~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/net/libeth/cache.h:62:2: note: expanded from macro 'libeth_cacheline_set_assert'
-      62 |         libeth_cacheline_group_assert(type, read_write, rw);                  \
-         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/net/libeth/cache.h:18:59: note: expanded from macro 'libeth_cacheline_group_assert'
-      17 |         static_assert(offsetof(type, __cacheline_group_end__##grp) -          \
-         |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      18 |                       offsetofend(type, __cacheline_group_begin__##grp) ==    \
-         |                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~
-      19 |                       (sz))
-         |                       ~~~~~
-   include/linux/build_bug.h:77:50: note: expanded from macro 'static_assert'
-      77 | #define static_assert(expr, ...) __static_assert(expr, ##__VA_ARGS__, #expr)
-         |                                  ~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/build_bug.h:78:56: note: expanded from macro '__static_assert'
-      78 | #define __static_assert(expr, msg, ...) _Static_assert(expr, msg)
-         |                                                        ^~~~
-   1 error generated.
---
-   In file included from drivers/net/ethernet/intel/idpf/idpf_main.c:4:
-   In file included from drivers/net/ethernet/intel/idpf/idpf.h:22:
->> drivers/net/ethernet/intel/idpf/idpf_txrx.h:475:1: error: static assertion failed due to requirement '__builtin_offsetof(struct idpf_q_vector, __cacheline_group_end__read_write) - (__builtin_offsetof(struct idpf_q_vector, __cacheline_group_begin__read_write) + sizeof ((((struct idpf_q_vector *)0)->__cacheline_group_begin__read_write))) == (424 + 2 * sizeof(struct dim))': offsetof(struct idpf_q_vector, __cacheline_group_end__read_write) - offsetofend(struct idpf_q_vector, __cacheline_group_begin__read_write) == (424 + 2 * sizeof(struct dim))
-     475 | libeth_cacheline_set_assert(struct idpf_q_vector, 104,
-         | ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     476 |                             424 + 2 * sizeof(struct dim),
-         |                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     477 |                             8 + sizeof(cpumask_var_t));
-         |                             ~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/net/libeth/cache.h:62:2: note: expanded from macro 'libeth_cacheline_set_assert'
-      62 |         libeth_cacheline_group_assert(type, read_write, rw);                  \
-         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/net/libeth/cache.h:17:16: note: expanded from macro 'libeth_cacheline_group_assert'
-      17 |         static_assert(offsetof(type, __cacheline_group_end__##grp) -          \
-         |         ~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      18 |                       offsetofend(type, __cacheline_group_begin__##grp) ==    \
-         |                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      19 |                       (sz))
-         |                       ~~~~~
-   include/linux/stddef.h:16:32: note: expanded from macro 'offsetof'
-      16 | #define offsetof(TYPE, MEMBER)  __builtin_offsetof(TYPE, MEMBER)
-         |                                 ^
-   include/linux/build_bug.h:77:50: note: expanded from macro 'static_assert'
-      77 | #define static_assert(expr, ...) __static_assert(expr, ##__VA_ARGS__, #expr)
-         |                                  ~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/build_bug.h:78:56: note: expanded from macro '__static_assert'
-      78 | #define __static_assert(expr, msg, ...) _Static_assert(expr, msg)
-         |                                                        ^~~~
-   drivers/net/ethernet/intel/idpf/idpf_txrx.h:475:1: note: expression evaluates to '768 == 760'
-     475 | libeth_cacheline_set_assert(struct idpf_q_vector, 104,
-         | ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     476 |                             424 + 2 * sizeof(struct dim),
-         |                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     477 |                             8 + sizeof(cpumask_var_t));
-         |                             ~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/net/libeth/cache.h:62:2: note: expanded from macro 'libeth_cacheline_set_assert'
-      62 |         libeth_cacheline_group_assert(type, read_write, rw);                  \
-         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/net/libeth/cache.h:18:59: note: expanded from macro 'libeth_cacheline_group_assert'
-      17 |         static_assert(offsetof(type, __cacheline_group_end__##grp) -          \
-         |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      18 |                       offsetofend(type, __cacheline_group_begin__##grp) ==    \
-         |                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~
-      19 |                       (sz))
-         |                       ~~~~~
-   include/linux/build_bug.h:77:50: note: expanded from macro 'static_assert'
-      77 | #define static_assert(expr, ...) __static_assert(expr, ##__VA_ARGS__, #expr)
-         |                                  ~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/build_bug.h:78:56: note: expanded from macro '__static_assert'
-      78 | #define __static_assert(expr, msg, ...) _Static_assert(expr, msg)
-         |                                                        ^~~~
-   drivers/net/ethernet/intel/idpf/idpf_main.c:167:39: warning: shift count >= width of type [-Wshift-count-overflow]
-     167 |         err = dma_set_mask_and_coherent(dev, DMA_BIT_MASK(64));
-         |                                              ^~~~~~~~~~~~~~~~
-   include/linux/dma-mapping.h:77:54: note: expanded from macro 'DMA_BIT_MASK'
-      77 | #define DMA_BIT_MASK(n) (((n) == 64) ? ~0ULL : ((1ULL<<(n))-1))
-         |                                                      ^ ~~~
-   1 warning and 1 error generated.
+> Are you sure you want to proceed in this way?
 
 
-vim +475 drivers/net/ethernet/intel/idpf/idpf_txrx.h
+> 
+>>
+>>>  drivers/misc/Kconfig                  |   1 +
+>>>  drivers/misc/Makefile                 |   1 +
+>>>  drivers/misc/rp1/Kconfig              |  20 ++
+>>>  drivers/misc/rp1/Makefile             |   3 +
+>>>  drivers/misc/rp1/rp1-pci.c            | 333 ++++++++++++++++++++++++++
+>>>  drivers/misc/rp1/rp1-pci.dtso         |   8 +
+>>>  drivers/pci/quirks.c                  |   1 +
+>>>  include/linux/pci_ids.h               |   3 +
+>>>  10 files changed, 524 insertions(+)
+>>>  create mode 100644 arch/arm64/boot/dts/broadcom/rp1.dtso
+>>>  create mode 100644 drivers/misc/rp1/Kconfig
+>>>  create mode 100644 drivers/misc/rp1/Makefile
+>>>  create mode 100644 drivers/misc/rp1/rp1-pci.c
+>>>  create mode 100644 drivers/misc/rp1/rp1-pci.dtso
+>>>
+>>> diff --git a/MAINTAINERS b/MAINTAINERS
+>>> index 67f460c36ea1..1359538b76e8 100644
+>>> --- a/MAINTAINERS
+>>> +++ b/MAINTAINERS
+>>> @@ -19119,9 +19119,11 @@ F:	include/uapi/linux/media/raspberrypi/
+>>>  RASPBERRY PI RP1 PCI DRIVER
+>>>  M:	Andrea della Porta <andrea.porta@suse.com>
+>>>  S:	Maintained
+>>> +F:	arch/arm64/boot/dts/broadcom/rp1.dtso
+>>>  F:	Documentation/devicetree/bindings/clock/raspberrypi,rp1-clocks.yaml
+>>>  F:	Documentation/devicetree/bindings/pinctrl/raspberrypi,rp1-gpio.yaml
+>>>  F:	drivers/clk/clk-rp1.c
+>>> +F:	drivers/misc/rp1/
+>>>  F:	drivers/pinctrl/pinctrl-rp1.c
+>>>  F:	include/dt-bindings/clock/rp1.h
+>>>  F:	include/dt-bindings/misc/rp1.h
+>>> diff --git a/arch/arm64/boot/dts/broadcom/rp1.dtso b/arch/arm64/boot/dts/broadcom/rp1.dtso
+>>> new file mode 100644
+>>> index 000000000000..d80178a278ee
+>>> --- /dev/null
+>>> +++ b/arch/arm64/boot/dts/broadcom/rp1.dtso
+>>> @@ -0,0 +1,152 @@
+>>> +// SPDX-License-Identifier: (GPL-2.0 OR MIT)
+>>> +
+>>> +#include <dt-bindings/gpio/gpio.h>
+>>> +#include <dt-bindings/interrupt-controller/irq.h>
+>>> +#include <dt-bindings/clock/rp1.h>
+>>> +#include <dt-bindings/misc/rp1.h>
+>>> +
+>>> +/dts-v1/;
+>>> +/plugin/;
+>>> +
+>>> +/ {
+>>> +	fragment@0 {
+>>> +		target-path="";
+>>> +		__overlay__ {
+>>> +			#address-cells = <3>;
+>>> +			#size-cells = <2>;
+>>> +
+>>> +			rp1: rp1@0 {
+>>> +				compatible = "simple-bus";
+>>> +				#address-cells = <2>;
+>>> +				#size-cells = <2>;
+>>> +				interrupt-controller;
+>>> +				interrupt-parent = <&rp1>;
+>>> +				#interrupt-cells = <2>;
+>>> +
+>>> +				// ranges and dma-ranges must be provided by the includer
+>>> +				ranges = <0xc0 0x40000000
+>>> +					  0x01/*0x02000000*/ 0x00 0x00000000
+>>> +					  0x00 0x00400000>;
+>>
+>> Are you 100% sure you do not have here dtc W=1 warnings?
+> 
+> the W=1 warnings are:
+> 
+> arch/arm64/boot/dts/broadcom/rp1.dtso:37.24-42.7: Warning (simple_bus_reg): /fragment@0/__overlay__/rp1@0/clk_xosc: missing or empty reg/ranges property
+> arch/arm64/boot/dts/broadcom/rp1.dtso:44.26-49.7: Warning (simple_bus_reg): /fragment@0/__overlay__/rp1@0/macb_pclk: missing or empty reg/ranges property
+> arch/arm64/boot/dts/broadcom/rp1.dtso:51.26-56.7: Warning (simple_bus_reg): /fragment@0/__overlay__/rp1@0/macb_hclk: missing or empty reg/ranges property
+> arch/arm64/boot/dts/broadcom/rp1.dtso:14.15-173.5: Warning (avoid_unnecessary_addr_size): /fragment@0/__overlay__: unnecessary #address-cells/#size-cells without "ranges", "dma-ranges" or child "reg" property
+> 
+> I don't see anything related to the ranges line you mentioned.
 
-4930fbf419a72d Pavan Kumar Linga 2023-08-07  412  
-4930fbf419a72d Pavan Kumar Linga 2023-08-07  413  /**
-4930fbf419a72d Pavan Kumar Linga 2023-08-07  414   * struct idpf_q_vector
-1c325aac10a82f Alan Brady        2023-08-07  415   * @vport: Vport back pointer
-5a816aae2d463d Alexander Lobakin 2024-06-20  416   * @num_rxq: Number of RX queues
-d4d5587182664b Pavan Kumar Linga 2023-08-07  417   * @num_txq: Number of TX queues
-5a816aae2d463d Alexander Lobakin 2024-06-20  418   * @num_bufq: Number of buffer queues
-e4891e4687c8dd Alexander Lobakin 2024-06-20  419   * @num_complq: number of completion queues
-5a816aae2d463d Alexander Lobakin 2024-06-20  420   * @rx: Array of RX queues to service
-1c325aac10a82f Alan Brady        2023-08-07  421   * @tx: Array of TX queues to service
-5a816aae2d463d Alexander Lobakin 2024-06-20  422   * @bufq: Array of buffer queues to service
-e4891e4687c8dd Alexander Lobakin 2024-06-20  423   * @complq: array of completion queues
-5a816aae2d463d Alexander Lobakin 2024-06-20  424   * @intr_reg: See struct idpf_intr_reg
-5a816aae2d463d Alexander Lobakin 2024-06-20  425   * @napi: napi handler
-5a816aae2d463d Alexander Lobakin 2024-06-20  426   * @total_events: Number of interrupts processed
-c2d548cad1508d Joshua Hay        2023-08-07  427   * @tx_dim: Data for TX net_dim algorithm
-1c325aac10a82f Alan Brady        2023-08-07  428   * @tx_itr_value: TX interrupt throttling rate
-1c325aac10a82f Alan Brady        2023-08-07  429   * @tx_intr_mode: Dynamic ITR or not
-1c325aac10a82f Alan Brady        2023-08-07  430   * @tx_itr_idx: TX ITR index
-3a8845af66edb3 Alan Brady        2023-08-07  431   * @rx_dim: Data for RX net_dim algorithm
-95af467d9a4e3b Alan Brady        2023-08-07  432   * @rx_itr_value: RX interrupt throttling rate
-95af467d9a4e3b Alan Brady        2023-08-07  433   * @rx_intr_mode: Dynamic ITR or not
-95af467d9a4e3b Alan Brady        2023-08-07  434   * @rx_itr_idx: RX ITR index
-5a816aae2d463d Alexander Lobakin 2024-06-20  435   * @v_idx: Vector index
-bf9bf7042a38eb Alexander Lobakin 2024-06-20  436   * @affinity_mask: CPU affinity mask
-4930fbf419a72d Pavan Kumar Linga 2023-08-07  437   */
-4930fbf419a72d Pavan Kumar Linga 2023-08-07  438  struct idpf_q_vector {
-5a816aae2d463d Alexander Lobakin 2024-06-20  439  	__cacheline_group_begin_aligned(read_mostly);
-1c325aac10a82f Alan Brady        2023-08-07  440  	struct idpf_vport *vport;
-1c325aac10a82f Alan Brady        2023-08-07  441  
-5a816aae2d463d Alexander Lobakin 2024-06-20  442  	u16 num_rxq;
-d4d5587182664b Pavan Kumar Linga 2023-08-07  443  	u16 num_txq;
-5a816aae2d463d Alexander Lobakin 2024-06-20  444  	u16 num_bufq;
-e4891e4687c8dd Alexander Lobakin 2024-06-20  445  	u16 num_complq;
-5a816aae2d463d Alexander Lobakin 2024-06-20  446  	struct idpf_rx_queue **rx;
-e4891e4687c8dd Alexander Lobakin 2024-06-20  447  	struct idpf_tx_queue **tx;
-5a816aae2d463d Alexander Lobakin 2024-06-20  448  	struct idpf_buf_queue **bufq;
-e4891e4687c8dd Alexander Lobakin 2024-06-20  449  	struct idpf_compl_queue **complq;
-e4891e4687c8dd Alexander Lobakin 2024-06-20  450  
-5a816aae2d463d Alexander Lobakin 2024-06-20  451  	struct idpf_intr_reg intr_reg;
-5a816aae2d463d Alexander Lobakin 2024-06-20  452  	__cacheline_group_end_aligned(read_mostly);
-5a816aae2d463d Alexander Lobakin 2024-06-20  453  
-5a816aae2d463d Alexander Lobakin 2024-06-20  454  	__cacheline_group_begin_aligned(read_write);
-5a816aae2d463d Alexander Lobakin 2024-06-20  455  	struct napi_struct napi;
-5a816aae2d463d Alexander Lobakin 2024-06-20  456  	u16 total_events;
-5a816aae2d463d Alexander Lobakin 2024-06-20  457  
-c2d548cad1508d Joshua Hay        2023-08-07  458  	struct dim tx_dim;
-1c325aac10a82f Alan Brady        2023-08-07  459  	u16 tx_itr_value;
-1c325aac10a82f Alan Brady        2023-08-07  460  	bool tx_intr_mode;
-1c325aac10a82f Alan Brady        2023-08-07  461  	u32 tx_itr_idx;
-1c325aac10a82f Alan Brady        2023-08-07  462  
-3a8845af66edb3 Alan Brady        2023-08-07  463  	struct dim rx_dim;
-95af467d9a4e3b Alan Brady        2023-08-07  464  	u16 rx_itr_value;
-95af467d9a4e3b Alan Brady        2023-08-07  465  	bool rx_intr_mode;
-95af467d9a4e3b Alan Brady        2023-08-07  466  	u32 rx_itr_idx;
-5a816aae2d463d Alexander Lobakin 2024-06-20  467  	__cacheline_group_end_aligned(read_write);
-95af467d9a4e3b Alan Brady        2023-08-07  468  
-5a816aae2d463d Alexander Lobakin 2024-06-20  469  	__cacheline_group_begin_aligned(cold);
-5a816aae2d463d Alexander Lobakin 2024-06-20  470  	u16 v_idx;
-bf9bf7042a38eb Alexander Lobakin 2024-06-20  471  
-bf9bf7042a38eb Alexander Lobakin 2024-06-20  472  	cpumask_var_t affinity_mask;
-5a816aae2d463d Alexander Lobakin 2024-06-20  473  	__cacheline_group_end_aligned(cold);
-4930fbf419a72d Pavan Kumar Linga 2023-08-07  474  };
-5a816aae2d463d Alexander Lobakin 2024-06-20 @475  libeth_cacheline_set_assert(struct idpf_q_vector, 104,
-5a816aae2d463d Alexander Lobakin 2024-06-20  476  			    424 + 2 * sizeof(struct dim),
-5a816aae2d463d Alexander Lobakin 2024-06-20  477  			    8 + sizeof(cpumask_var_t));
-0fe45467a1041e Pavan Kumar Linga 2023-08-07  478  
+Hm, indeed, but I would expect warning about unit address not matching
+ranges/reg.
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+> 
+>>
+>>> +
+>>> +				dma-ranges =
+>>> +				// inbound RP1 1x_xxxxxxxx -> PCIe 1x_xxxxxxxx
+>>> +					     <0x10 0x00000000
+>>> +					      0x43000000 0x10 0x00000000
+>>> +					      0x10 0x00000000>;
+>>> +
+>>> +				clk_xosc: clk_xosc {
+>>
+>> Nope, switch to DTS coding style.
+> 
+> Ack.
+> 
+>>
+>>> +					compatible = "fixed-clock";
+>>> +					#clock-cells = <0>;
+>>> +					clock-output-names = "xosc";
+>>> +					clock-frequency = <50000000>;
+>>> +				};
+>>> +
+>>> +				macb_pclk: macb_pclk {
+>>> +					compatible = "fixed-clock";
+>>> +					#clock-cells = <0>;
+>>> +					clock-output-names = "pclk";
+>>> +					clock-frequency = <200000000>;
+>>> +				};
+>>> +
+>>> +				macb_hclk: macb_hclk {
+>>> +					compatible = "fixed-clock";
+>>> +					#clock-cells = <0>;
+>>> +					clock-output-names = "hclk";
+>>> +					clock-frequency = <200000000>;
+>>> +				};
+>>> +
+>>> +				rp1_clocks: clocks@c040018000 {
+>>
+>> Why do you mix MMIO with non-MMIO nodes? This really does not look
+>> correct.
+>>
+> 
+> Right. This is already under discussion here:
+> https://lore.kernel.org/all/ZtBzis5CzQMm8loh@apocalypse/
+> 
+> IIUC you proposed to instantiate the non-MMIO nodes (the three clocks) by
+> using CLK_OF_DECLARE.
+
+Depends. Where are these clocks? Naming suggests they might not be even
+part of this device. But if these are part of the device, then why this
+is not a clock controller (if they are controllable) or even removed
+(because we do not represent internal clock tree in DTS).
+
+Best regards,
+Krzysztof
+
 
