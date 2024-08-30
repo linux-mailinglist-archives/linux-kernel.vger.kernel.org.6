@@ -1,81 +1,68 @@
-Return-Path: <linux-kernel+bounces-308755-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308756-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF64096616E
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 14:18:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42F7696616F
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 14:19:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 673751F259D3
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 12:18:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0194528305F
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 12:19:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81B5A199FBF;
-	Fri, 30 Aug 2024 12:18:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0FBA199955;
+	Fri, 30 Aug 2024 12:19:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="v6IbNiMQ"
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PsYLY0cg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CE4916F0DD
-	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 12:18:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E1381D1312;
+	Fri, 30 Aug 2024 12:19:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725020321; cv=none; b=bj26kdBoGtYpE7nBSaBFQkmsHr6vlSAiRsIBjKkhd5jEhtQ4cnQQO05V3gTxqu6s43mzjM/0CL/h4xjyIIvGCG/8PH5l3LDRBBgeepod5wMVH93RherzuoTXpo+K6WblslVyc2HALyI7pyRwG6clgRUevFXXPCNyJ+0MN8r7YQ4=
+	t=1725020371; cv=none; b=ceocpKMhv7kNqOTUJKtYysfkW9wCvNVYsDm/4v0e2lHGDsJRJW7aPqEB/eRWjM/PwhZFDHlNXnqhMfFGxa75eusTrX4y/wt40ByvAtuhGp55EjHwStFGdYMlWR6zdgT1PJsgNtkD2dKpYtFIJj5WQwkTSukDQ/6qKbvBCI3DuV4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725020321; c=relaxed/simple;
-	bh=as9bZ18482ds0DVCSos5+kV1IKZSHcbXBC2Asfcgf6o=;
+	s=arc-20240116; t=1725020371; c=relaxed/simple;
+	bh=GYwcdTpZfkB/eg8RZ00QmtBiRQ1q3q5j/qKFwnlXm7E=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lDDS4YTXWvxL0CT61FeIu4tgg1j55anxAh6dcB23B24pqOu/wblNpvBECJTSChmubEAvPLci/oIBuxP1RRuA1VrBLrgEfaVW917tzOGZjI3i1mtvnPsxhkYo/CpjuLwISfmRYEv4qt9Ono+eCj5Cq0trTH4HcPuBHi+rjXJXzQ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=v6IbNiMQ; arc=none smtp.client-ip=209.85.210.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-714263cb074so1299958b3a.1
-        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 05:18:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1725020319; x=1725625119; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=eJplX0nrFE2YsBh7KtLRDZWDD5YD99Qk9xo9Crw/Jk0=;
-        b=v6IbNiMQ8JhpLXKK+ggz29HUQAAKSSjHbR9FyuXwqJ4mRAaGsZhQKT9iXBbYkecHsb
-         9q/PoIneWFhh17hdSLyM39M0Ww8Tz3kCPXGLUvEZGLpMhIlaRDK7yFzrHkfVJJY6ER/G
-         SX+ZdpBrZzWqJbLZEk13AQPH65mY5zXv8RE/Rn/HE6L83ENX2OjtCwpr59Qa+y0uFGQw
-         i4DLMKvfs90RCwbWO7jj2VJMnJNXNpqbVhETRxXAC6B84Tt8sjAKTt2oOsPUhMdwxlGA
-         1kKqHj16TaPjvE7TpTzTzdCF0TzptHP0wvPDBqPcfBVLugfzk//kY/5+qg++6vuS0AV0
-         0ZpQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725020319; x=1725625119;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=eJplX0nrFE2YsBh7KtLRDZWDD5YD99Qk9xo9Crw/Jk0=;
-        b=FkKovzx/SrZDSLk7L9pUn0e35o0ltTUKJZDVP01VX5e/MOpbcb8nz71IJvN7IUl9G3
-         TxZKrTFMofrBxPvdy5Pyu2ykaSwiwv1sAGY46prX3TgErNDNnjcidvO+x9pHq95+4bq9
-         bTGnxS2iPOX1pmbX9ZQ1L7j1cBDTBpayuERmohh16CrpQzOn/ifTbgtffu5XcHRG+JGA
-         0txqLflC/gRWa6Vz9ze3qxZd0gMBsaaoh3HPSROG7lG8vx+a9LKSvdINvA1JAk8Dv+UF
-         V3rL4ZAmxnQSRmzYMAtP6Okw4rMxeqS5KbPHTt7zAoGx24WwyyhnGnIdB4DSZ60jpg26
-         OJxQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXIdCgWc6knL6CX2PxY4r+hgzeTUWpNNG8HgMrtAX3ujaZzvRlWGiUMrW/UyfGXC5dooErO6j9HLbQBx7o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwomBmn3D9LO9i8nxdt5MMvNbWsyTOO6MdeVxm83P+oR8c9iQ/+
-	lua2lpWmUW7K7Nx8ZVnVqNZVEz7xIS9c0SsjnebSq2uD/qN7sfqIXLmEWaJD1Q==
-X-Google-Smtp-Source: AGHT+IF8bmE5S2LuE60AnWdDtjWDZkmqQ9ygryaZA4rPxnm/Svh7hutBAGdVKk3XDfWvFmcWIRODRw==
-X-Received: by 2002:a05:6a20:e196:b0:1c6:cb01:db61 with SMTP id adf61e73a8af0-1cce101a84dmr6071301637.28.1725020319526;
-        Fri, 30 Aug 2024 05:18:39 -0700 (PDT)
-Received: from thinkpad ([117.193.213.95])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7d22e9be991sm2847738a12.75.2024.08.30.05.18.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 30 Aug 2024 05:18:39 -0700 (PDT)
-Date: Fri, 30 Aug 2024 17:48:34 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Slark Xiao <slark_xiao@163.com>
-Cc: mhi@lists.linux.dev, linux-arm-msm@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] bus: mhi: host: pci_generic: Enable trigger_edl
- for Foxconn SDX55/SDX65/SDX24 products
-Message-ID: <20240830121834.e6zhtqj6pwgbxpsr@thinkpad>
-References: <20240725022941.65948-1-slark_xiao@163.com>
- <20240725022941.65948-2-slark_xiao@163.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=im+EH2jHAVkfSNWDNcvMBmtH99tU4kW/jwcdhWwBIAE9kYl7IJL9yqJvoJJPYwkB1MtKYCk9XbYYAHcgw6zcw9kEdz1N4B9dhYtBG7aNB9bk4JcAqRruY6VlUB3gwGj5UdMqaQ/giLUK1xXvzw/z2GJmZPaz5oi2Nid95Nko6d4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PsYLY0cg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70DA0C4CEC2;
+	Fri, 30 Aug 2024 12:19:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725020370;
+	bh=GYwcdTpZfkB/eg8RZ00QmtBiRQ1q3q5j/qKFwnlXm7E=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=PsYLY0cg0EC69Ei/jFLhXSsiEl/O/fDYmSkncYrIk5fihN5IQX99pjcu4H4GHJbaG
+	 EdE1fD492/+aLhGd3p784mVMZvWS1s6Mh4Ten2AMFov2huw2j1EWGr3D4SECLrMjXH
+	 xDskfUILHJYP6rNAsaq4vZGh25H2AafPQ2AaGbD3TfusZP7lzK6+ROVaA6MxsjQnmz
+	 fLAuerZLT8bS/B2qL7yLR0yfiyLLCxMvFSG9dHamIXNnNSfnG0noh4Wq+I3B4+oyor
+	 4T203PuQu9FNBDw7p2IfT/nPS0F6CuhM/6fUr0XotIg6yXLnW8eQAkC4YCQlpJJ9cC
+	 0jaP4wlDc3CGg==
+Date: Fri, 30 Aug 2024 09:19:27 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	Nick Terrell <terrelln@fb.com>, Yanteng Si <siyanteng@loongson.cn>,
+	Yicong Yang <yangyicong@hisilicon.com>,
+	James Clark <james.clark@linaro.org>,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 5/8] perf header: Allow attributes to be written after
+ data
+Message-ID: <ZtG4z5qPtCBNDdXO@x1>
+References: <20240829150154.37929-1-irogers@google.com>
+ <20240829150154.37929-6-irogers@google.com>
+ <ZtDMf886_1vXWt49@x1>
+ <CAP-5=fURe7yVy6OGWdKn1eSzsdfZPyvvc5fRMPeNAjukaWOe1w@mail.gmail.com>
+ <ZtDg2BAI0V5zKpjn@x1>
+ <CAP-5=fXa0r7sD9xbtBVbJQFgnq=3i-cnj6gUX9tze0JyhLhvZw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,90 +72,69 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240725022941.65948-2-slark_xiao@163.com>
+In-Reply-To: <CAP-5=fXa0r7sD9xbtBVbJQFgnq=3i-cnj6gUX9tze0JyhLhvZw@mail.gmail.com>
 
-On Thu, Jul 25, 2024 at 10:29:41AM +0800, Slark Xiao wrote:
-> Since generic trigger_edl mechanism has been imported, all
-> products support firehose download shall enable 'edl_trigger'.
-> 
-> Signed-off-by: Slark Xiao <slark_xiao@163.com>
+On Thu, Aug 29, 2024 at 02:42:38PM -0700, Ian Rogers wrote:
+> On Thu, Aug 29, 2024 at 1:58 PM Arnaldo Carvalho de Melo <acme@kernel.org> wrote:
+> > On Thu, Aug 29, 2024 at 01:12:32PM -0700, Ian Rogers wrote:
+> > > On Thu, Aug 29, 2024 at 12:31 PM Arnaldo Carvalho de Melo <acme@kernel.org> wrote:
+> > > > On Thu, Aug 29, 2024 at 08:01:51AM -0700, Ian Rogers wrote:
+> > > I'm not seeing the difference. Before:
 
-Applied to mhi-next!
+> > You noticed the difference: before we used lseek to get the current
+> > offset to use, afterwards we moved to doing plain math.
 
-- Mani
+> > So I had to check if we could assume that, and with the current code
+> > structure, yes, we can assume that, so seems safe, but it is different
+> > and if the assumption somehow breaks, as the code in __do_write_fd()
+> > guard against (unneeded at the moment as ion has even a BUG_ON for that
+> > not to happen), then the offset will not be where the data is.
 
-> ---
->  drivers/bus/mhi/host/pci_generic.c | 11 +++++++++++
->  1 file changed, 11 insertions(+)
-> 
-> diff --git a/drivers/bus/mhi/host/pci_generic.c b/drivers/bus/mhi/host/pci_generic.c
-> index f159a9dd53e7..565b280c539e 100644
-> --- a/drivers/bus/mhi/host/pci_generic.c
-> +++ b/drivers/bus/mhi/host/pci_generic.c
-> @@ -434,6 +434,7 @@ static const struct mhi_controller_config modem_foxconn_sdx72_config = {
->  static const struct mhi_pci_dev_info mhi_foxconn_sdx55_info = {
->  	.name = "foxconn-sdx55",
->  	.edl = "qcom/sdx55m/foxconn/prog_firehose_sdx55.mbn",
-> +	.edl_trigger = true,
->  	.config = &modem_foxconn_sdx55_config,
->  	.bar_num = MHI_PCI_DEFAULT_BAR_NUM,
->  	.dma_data_width = 32,
-> @@ -444,6 +445,7 @@ static const struct mhi_pci_dev_info mhi_foxconn_sdx55_info = {
->  static const struct mhi_pci_dev_info mhi_foxconn_t99w175_info = {
->  	.name = "foxconn-t99w175",
->  	.edl = "qcom/sdx55m/foxconn/prog_firehose_sdx55.mbn",
-> +	.edl_trigger = true,
->  	.config = &modem_foxconn_sdx55_config,
->  	.bar_num = MHI_PCI_DEFAULT_BAR_NUM,
->  	.dma_data_width = 32,
-> @@ -454,6 +456,7 @@ static const struct mhi_pci_dev_info mhi_foxconn_t99w175_info = {
->  static const struct mhi_pci_dev_info mhi_foxconn_dw5930e_info = {
->  	.name = "foxconn-dw5930e",
->  	.edl = "qcom/sdx55m/foxconn/prog_firehose_sdx55.mbn",
-> +	.edl_trigger = true,
->  	.config = &modem_foxconn_sdx55_config,
->  	.bar_num = MHI_PCI_DEFAULT_BAR_NUM,
->  	.dma_data_width = 32,
-> @@ -463,6 +466,8 @@ static const struct mhi_pci_dev_info mhi_foxconn_dw5930e_info = {
->  
->  static const struct mhi_pci_dev_info mhi_foxconn_t99w368_info = {
->  	.name = "foxconn-t99w368",
-> +	.edl = "qcom/sdx65m/foxconn/prog_firehose_lite.elf",
-> +	.edl_trigger = true,
->  	.config = &modem_foxconn_sdx55_config,
->  	.bar_num = MHI_PCI_DEFAULT_BAR_NUM,
->  	.dma_data_width = 32,
-> @@ -472,6 +477,8 @@ static const struct mhi_pci_dev_info mhi_foxconn_t99w368_info = {
->  
->  static const struct mhi_pci_dev_info mhi_foxconn_t99w373_info = {
->  	.name = "foxconn-t99w373",
-> +	.edl = "qcom/sdx65m/foxconn/prog_firehose_lite.elf",
-> +	.edl_trigger = true,
->  	.config = &modem_foxconn_sdx55_config,
->  	.bar_num = MHI_PCI_DEFAULT_BAR_NUM,
->  	.dma_data_width = 32,
-> @@ -481,6 +488,8 @@ static const struct mhi_pci_dev_info mhi_foxconn_t99w373_info = {
->  
->  static const struct mhi_pci_dev_info mhi_foxconn_t99w510_info = {
->  	.name = "foxconn-t99w510",
-> +	.edl = "qcom/sdx24m/foxconn/prog_firehose_sdx24.mbn,
-> +	.edl_trigger = true,
->  	.config = &modem_foxconn_sdx55_config,
->  	.bar_num = MHI_PCI_DEFAULT_BAR_NUM,
->  	.dma_data_width = 32,
-> @@ -490,6 +499,8 @@ static const struct mhi_pci_dev_info mhi_foxconn_t99w510_info = {
->  
->  static const struct mhi_pci_dev_info mhi_foxconn_dw5932e_info = {
->  	.name = "foxconn-dw5932e",
-> +	.edl = "qcom/sdx65m/foxconn/prog_firehose_lite.elf",
-> +	.edl_trigger = true,
->  	.config = &modem_foxconn_sdx55_config,
->  	.bar_num = MHI_PCI_DEFAULT_BAR_NUM,
->  	.dma_data_width = 32,
-> -- 
-> 2.25.1
-> 
+> > Using lseek() is more costly (syscalls) but it is the ultimate answer to
+> > get where in the file the current offset is.
 
--- 
-மணிவண்ணன் சதாசிவம்
+> > So that is the difference I noticed.
+
+> > Doing multiple things in the same patch causes these reviewing delays,
+> > doubts, its something we discussed multiple times in the past, and that
+> > continue to cause these discussions.
+
+> Right, but it is something of an unfortunate coincidence of how the
+> code is structured. The fact that writing the header updates
+> data_offset which is a thing that other things depend upon while
+> depending on its value itself, etc. - ie the function does more than
+> just a write, it also sometimes computes the layout, has inbuilt
+> assumptions on the values lseek will return, and so on. To get to this
+
+I share your frustrations, code gets complex over time, that is why I at
+least try to ask these questions, encourage more granular patches, that
+do just one thing, etc, to avoid having this conversation again years
+from now, when some other person tries to understand the codebase do
+bisects, refactor it, etc, just like you're doing now.
+
+> final structure took a fair few iterations and I've separated this
+> change out from the bulk in the next change to keep the patch size
+> down. I could have done a patch switching from lseeks to math, then a
+> patch to add write_attrs_after_data.
+
+> It probably would have yielded about 4 lines of shared code, more
+> lines that would have been deleted, while creating quite a bit of work
+> for me.
+
+> Ideally when these functions were created there would have been far
+> more liberal use of things like immutability, so side-effects are
+> minimized. Yes I could refactor everything, but time..
+
+As I said, I think your patch is safe as-is, its just that it took more
+time than needed for reviewing, i.e. it will cost more one side or the
+other, and as I have to review everything I merge, doing it on my side
+slows things down the overall process of collecting patches from lots of
+people.
+
+So far I collected 234 patches for v6.12, and there are way more to
+process, like Howard's perf trace BTF work, that I merged partially,
+but where I'll have to do work on splitting patches as agreed with him
+in another thread, etc.
+
+- Arnaldo
 
