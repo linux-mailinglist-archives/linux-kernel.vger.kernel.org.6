@@ -1,190 +1,443 @@
-Return-Path: <linux-kernel+bounces-309581-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309582-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90CBB966D0A
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 01:56:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A0F5F966D0D
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 01:57:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A6CD2846A5
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 23:56:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D427285053
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 23:57:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE1AB190049;
-	Fri, 30 Aug 2024 23:56:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AAF717C9E7;
+	Fri, 30 Aug 2024 23:57:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CNxqSu4R"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="VlniHyU4"
+Received: from mail-oa1-f45.google.com (mail-oa1-f45.google.com [209.85.160.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB92114AD38;
-	Fri, 30 Aug 2024 23:56:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C424314AD38
+	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 23:57:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725062183; cv=none; b=mMJFeTT7H9djF2nqUDWeLRYQFf8a25Re7X2trenC2ENYs+QYv6uhXIpXjrB/V5i50NeZnMFJjVgpbTGMZ3qfrmKrSvTXGstHznJcMk4rcxdsXsVTannW5Yl6moJ9Si6vyhjytPrAxOPJe0Qa7ZKaMJnC3tJ8HVQ02+9FFcagL6U=
+	t=1725062263; cv=none; b=qdXFe1yBhMN4qDRgJq3SbdSarpd7B8L5GdzalONHc877SOxGksD0HSfdTGLu3z7RNEEukfcyyqDtQmS76YZ+uYgGamDxrox8OgtMldln7XPO79y6bGEyATN8xMEzHX1odrHV9U9nt6n7uWvitmOMfE8z/h1g1ie+l7SQoH/fWl0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725062183; c=relaxed/simple;
-	bh=pbFRQTG3rbv8AkxuMR0tvTGJyrk4wg2skLcT7z9reuU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dxaGzNCZKC2j8U/q4gd4goTuxrNCVF+TwOx0JsxZIVsVkhSVzfjmJSqoux1PWCKU6PqP9KP83QUtSByQgK5bOzyoU72/G90eZ4nyp9tWmdvcPcRWMJFVf/TB0H0Dh8mUZLlGo1Fp/UtvKxpGurOXRbuWXgB010kXL4srhmfMJC0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CNxqSu4R; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 649E4C4CEC2;
-	Fri, 30 Aug 2024 23:56:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725062182;
-	bh=pbFRQTG3rbv8AkxuMR0tvTGJyrk4wg2skLcT7z9reuU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CNxqSu4R2RXwfm3i1v+v0kcHeNf2XDM39kZJuuYNTOFXW5TNbH1tlB56L288jy9e/
-	 4J323pD8XvKLSsepz7ImyShHz08EM6SOzXu3avEMeV/vaFDgJ5akE2UZErUrG+TzZN
-	 DTgt7XFgixSvvf9coIcf/sZujl6WZI7nUy/P+hw0tOP3fRob/aDXqyA/d4cE4MPb4i
-	 F2MI5hVzFNAYCeG4G1r/3y9+LHWTVTfLJT0gP0qqUGM7ecc8lo+W9rrvpB42vLMHRB
-	 g2sLQ80L0/+aUD7iF4RrhMhJax8r4faYX2e5oTPTpu1CA6u+VJjOLCyPVMZAQTMPwE
-	 WZCGWWRZpChiw==
-Date: Fri, 30 Aug 2024 16:56:21 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: John Garry <john.g.garry@oracle.com>
-Cc: axboe@kernel.dk, brauner@kernel.org, viro@zeniv.linux.org.uk,
-	jack@suse.cz, chandan.babu@oracle.com, dchinner@redhat.com,
-	hch@lst.de, linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, hare@suse.de,
-	martin.petersen@oracle.com, catherine.hoang@oracle.com,
-	kbusch@kernel.org
-Subject: Re: [PATCH v5 3/7] fs: iomap: Atomic write support
-Message-ID: <20240830235621.GS6216@frogsfrogsfrogs>
-References: <20240817094800.776408-1-john.g.garry@oracle.com>
- <20240817094800.776408-4-john.g.garry@oracle.com>
- <20240821165803.GI865349@frogsfrogsfrogs>
- <a91557d2-95d4-4e73-9936-72fc1fbe100f@oracle.com>
- <20240822203058.GR865349@frogsfrogsfrogs>
- <112ec3a6-48b3-4596-9c20-e23288581ffd@oracle.com>
+	s=arc-20240116; t=1725062263; c=relaxed/simple;
+	bh=dCKdUGjicATV4rkdkvomgbNd8TuLGBpl3gUg9RLVAPQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jDSbN7tajALij/odVPnRfS6jgUF4lBdotnx6on2UGx6ysJ0/UkRlx2I4v1rWAH2szgBFmo9ppheaEFwG13Xgm3aTe6PIqWthIxOVl/Ma6YfReiRflESQ/xMB1OxMNyQ4RwMCZKZy+Lyzg7Oj7pmlL5EIe746LxDdB/mcf5RrXsU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=VlniHyU4; arc=none smtp.client-ip=209.85.160.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-oa1-f45.google.com with SMTP id 586e51a60fabf-2611dcc3941so154695fac.3
+        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 16:57:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1725062259; x=1725667059; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nvEfYKOVVxE8dkrUColYKOziuScNHjuMeSwgzin4M+4=;
+        b=VlniHyU4CHxwQmk3shD/r56HkwIAE2YgZgtQOmxCfxilQhmKyJk1V7daHLKgel4SR6
+         V/i6vQ9KkKScAA7cdv/VW2k5nbY/Sx/ORT9Xo1QKYRA3QS/qg6NIhX2N2qcB/plafc1T
+         uNBkf4eLvRLnwI7Komr9wn2q/PXRsv94zQpDg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725062259; x=1725667059;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=nvEfYKOVVxE8dkrUColYKOziuScNHjuMeSwgzin4M+4=;
+        b=PmJVnq0eS6Io4E9blqfKp9Wp9EGTADrgHcfhkMDYoWGelBkmQ4Rp0dawxndgmQRvCM
+         t13QQhTiVIIpcnq/U1WqH8hVivZIY/eJq4WVy8uWpqjnXCTya7+7DfALxToq73CQQmaV
+         ZTWHQHS/bMSXXVrkt9Gf0jYVuqjeZW9HEsWzC0ETHITSma2tYr+bLVAqdv0ZGOoAbvuL
+         Cwy0dlGECZaGr+FLzgIjhn04oOk1YXugeHNQD+10JylNaMNlXS3zbg/Oczsr0khVQFQl
+         4L1pKOcurWynsYZdCykmauM5vZq8J42fTmWCCfgmF9QdF+F5ybXHXABaPghEbkjboRJb
+         8zdg==
+X-Forwarded-Encrypted: i=1; AJvYcCVvA0+YpRA3BIVtPQUxxArxXmXj66GcpnvkG/D/B73AtAo9lrePveV4glMpmqz0SNOF3qdeaJzun4WUMNI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz9cvo4Up6QBzpUGDZjsLLyKucm9EEbrzj3gKaskCmoXa1Nlkae
+	NcWJ5EtiODLvuoJfSxMKybWbRj4x5WoBg8fsFlgCOUeRBqfqxy3oRMheRcZ/T5nfDcEgQfi41IZ
+	AVDOrcQC9Mnd+77Oam9QuNzdcIiahML9+Dptj
+X-Google-Smtp-Source: AGHT+IGjMwvg2UrGjfLtNCLSGM6nxH1ui5UjTCg13Enlj4QaUBaQ5TbLUJTqV1S+O33PHEODxv9SrU2l5S/YzS1NHlE=
+X-Received: by 2002:a05:6870:218c:b0:277:6b90:1915 with SMTP id
+ 586e51a60fabf-277b0e4fcc6mr2021449fac.9.1725062258617; Fri, 30 Aug 2024
+ 16:57:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <112ec3a6-48b3-4596-9c20-e23288581ffd@oracle.com>
+References: <20240830180237.1220027-1-jeffxu@chromium.org> <20240830180237.1220027-5-jeffxu@chromium.org>
+ <e7ea2b84-8d10-40fe-a14f-837bca851ea9@lucifer.local> <fd927106-2fc3-4b96-8014-2c517229bc99@lucifer.local>
+In-Reply-To: <fd927106-2fc3-4b96-8014-2c517229bc99@lucifer.local>
+From: Jeff Xu <jeffxu@chromium.org>
+Date: Fri, 30 Aug 2024 16:57:26 -0700
+Message-ID: <CABi2SkUpCf+aOa2sPED8CosG5ccqjFd7ouot8gXi9ECqsHiZhw@mail.gmail.com>
+Subject: Re: [PATCH v3 4/5] selftests/mseal: add more tests for mmap
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: akpm@linux-foundation.org, linux-kselftest@vger.kernel.org, 
+	linux-mm@kvack.org, linux-hardening@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, pedro.falcato@gmail.com, willy@infradead.org, 
+	broonie@kernel.org, vbabka@suse.cz, Liam.Howlett@oracle.com, 
+	rientjes@google.com, keescook@chromium.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Aug 30, 2024 at 04:48:36PM +0100, John Garry wrote:
-> On 22/08/2024 21:30, Darrick J. Wong wrote:
-> > > Then, the iomap->type/flag is either IOMAP_UNWRITTEN/IOMAP_F_DIRTY or
-> > > IOMAP_MAPPED/IOMAP_F_DIRTY per iter. So the type is not consistent. However
-> > > we will set IOMAP_DIO_UNWRITTEN in dio->flags, so call xfs_dio_write_endio()
-> > > -> xfs_iomap_write_unwritten() for the complete FSB range.
-> > > 
-> > > Do you see a problem with this?
-> 
-> Sorry again for the slow response.
-> 
-> > > 
-> > > Please see this also for some more background:
-> > > https://urldefense.com/v3/__https://lore.kernel.org/linux-
-> > > xfs/20240726171358.GA27612@lst.de/__;!!ACWV5N9M2RV99hQ! P5jeP96F8wAtRAblbm8NvRo8nlpil03vA26UMMX8qrYa4IzKecAAk7x1l1M45bBshC3Czxn1CkDXypNSAg$
-> > Yes -- if you have a mix of written and unwritten blocks for the same
-> > chunk of physical space:
-> > 
-> > 0      7
-> > WUWUWUWU
-> > 
-> > the directio ioend function will start four separate transactions to
-> > convert blocks 1, 3, 5, and 7 to written status.  If the system crashes
-> > midway through, they will see this afterwards:
-> > 
-> > WWWWW0W0
-> > 
-> > IOWs, although the*disk write* was completed successfully, the mapping
-> > updates were torn, and the user program sees a torn write.
-> > > The most performant/painful way to fix this would be to make the whole
-> > ioend completion a logged operation so that we could commit to updating
-> > all the unwritten mappings and restart it after a crash.
-> 
-> could we make it logged for those special cases which we are interested in
-> only?
+On Fri, Aug 30, 2024 at 12:23=E2=80=AFPM Lorenzo Stoakes
+<lorenzo.stoakes@oracle.com> wrote:
+>
+> On Fri, Aug 30, 2024 at 07:43:12PM GMT, Lorenzo Stoakes wrote:
+> > On Fri, Aug 30, 2024 at 06:02:36PM GMT, jeffxu@chromium.org wrote:
+> > > From: Jeff Xu <jeffxu@chromium.org>
+> > >
+> > > Add sealing test to cover mmap for
+> > > Expand/shrink across sealed vmas (MAP_FIXED)
+> > > Reuse the same address in !MAP_FIXED case.
+> >
+> > This commit message is woefully small. I told you on v1 to improve the
+> > commit messages. Linus has told you to do this before.
+> >
+> > Please actually respond to feedback. Thanks.
+> >
+> > >
+> > > Signed-off-by: Jeff Xu <jeffxu@chromium.org>
+> > > ---
+> > >  tools/testing/selftests/mm/mseal_test.c | 126 ++++++++++++++++++++++=
++-
+> > >  1 file changed, 125 insertions(+), 1 deletion(-)
+> > >
+> > > diff --git a/tools/testing/selftests/mm/mseal_test.c b/tools/testing/=
+selftests/mm/mseal_test.c
+> > > index e855c8ccefc3..3516389034a7 100644
+> > > --- a/tools/testing/selftests/mm/mseal_test.c
+> > > +++ b/tools/testing/selftests/mm/mseal_test.c
+> > > @@ -2222,6 +2222,123 @@ static void test_munmap_free_multiple_ranges(=
+bool seal)
+> > >     REPORT_TEST_PASS();
+> > >  }
+> > >
+> > > +static void test_seal_mmap_expand_seal_middle(bool seal)
+> >
+> > This test doesn't expand, doesn't do anything in the middle. It does mm=
+ap()
+> > though and relates to mseal, so that's something... this is compeltely
+> > misnamed and needs to be rethought.
+> >
+>
+> OK correction - it _seals_ in the middle. The remained of the criticism r=
+emains,
+> and this is rather confusing... and I continue to wonder what the purpose=
+ of
+> this is?
+>
+It expands the size (start from ptr).
 
-Yes, though this is the long route -- you get to define a new ondisk log
-item, build all the incore structures to process them, and then define a
-new high level operation that uses the state encoded in that new log
-item to run all the ioend completion transactions within that framework.
-Also you get to add a new log incompat feature bit for this.
+> > > +{
+> > > +   void *ptr;
+> > > +   unsigned long page_size =3D getpagesize();
+> > > +   unsigned long size =3D 12 * page_size;
+> > > +   int ret;
+> > > +   void *ret2;
+> > > +   int prot;
+> > > +
+> > > +   setup_single_address(size, &ptr);
+> >
+> > Please replace every single instance of this with an mmap(). There's
+> > literally no reason to abstract it. And munmap() what you map.
+> >
+No, we need to abstract it.  In addition to the mmap, it also
+allocates an additional two blocks before and after the allocated
+memory, to avoid auto-merging, so we can use get_vma_size.
 
-Perhaps we should analyze the cost of writing and QA'ing all that vs.
-the amount of time saved in the handling of this corner case using one
-of the less exciting options.
+> > > +   FAIL_TEST_IF_FALSE(ptr !=3D (void *)-1);
+> >
+> > Pretty sure Pedro pointed out you should be checking against MAP_FAILED
+> > here. I really don't understand why the rest of your test is full of
+> > mmap()'s but for some reason you choose to abstract this one call? What=
+?
+> >
+> > > +   /* ummap last 4 pages. */
+> > > +   ret =3D sys_munmap(ptr + 8 * page_size, 4 * page_size);
+> >
+> > sys_munmap()? What's wrong with munmap()?
+> >
+> > > +   FAIL_TEST_IF_FALSE(!ret);
+> >
+> > Why do we not have a FAIL_TEST_IF_TRUE()? This is crazy.
+> >
+> > Would be nice to have something human-readable like ASSERT_EQ() or
+> > ASSERT_TRUE() or ASSERT_FALSE().
+> >
+ASSERT_EQ and ASSERT_TURE are not recommended by the self-test. The
+FAIL_TEST_IF_FAIL wrap will take care of some of the admin tasks
+related to self-test infra, such as count how many tests are failing.
 
-> > The least performant of course is to write zeroes at allocation time,
-> > like we do for fsdax.
-> 
-> That idea was already proposed:
-> https://lore.kernel.org/linux-xfs/ZcGIPlNCkL6EDx3Z@dread.disaster.area/
+> > > +
+> > > +   size =3D get_vma_size(ptr, &prot);
+> > > +   FAIL_TEST_IF_FALSE(size =3D=3D 8 * page_size);
+> > > +   FAIL_TEST_IF_FALSE(prot =3D=3D 0x4);
+> > > +
+> > > +   if (seal) {
+> > > +           ret =3D sys_mseal(ptr + 4 * page_size, 4 * page_size);
+> > > +           FAIL_TEST_IF_FALSE(!ret);
+> > > +   }
+> > > +
+> > > +   /* use mmap to expand and overwrite (MAP_FIXED)  */
+> >
+> > You don't really need to say MAP_FIXED, it's below.
+> >
+Adding a comment here to help reviewers.
 
-Yes, I'm aware.
+> > > +   ret2 =3D mmap(ptr, 12 * page_size, PROT_READ,
+> > > +                   MAP_ANONYMOUS | MAP_PRIVATE | MAP_FIXED, -1, 0);
+> >
+> > Why read-only?
+> >
+> > You're not expanding you're overwriting. You're not doing anything in t=
+he
+> > middle.
+> >
+The MAP_FIXED is overwriting.  It also expands the address range
+(start from ptr) from 8 to 12 pages.
 
-> > A possible middle ground would be to detect IOMAP_ATOMIC in the
-> > ->iomap_begin method, notice that there are mixed mappings under the
-> > proposed untorn IO, and pre-convert the unwritten blocks by writing
-> > zeroes to disk and updating the mappings
-> 
-> Won't that have the same issue as using XFS_BMAPI_ZERO, above i.e. zeroing
-> during allocation?
+> > I'm again confused about what you think you're testing here. I don't th=
+ink
+> > we need an arbitrary MAP_FIXED mmap() at a size larger than the overwri=
+tten
+> > VMA?
+> >
+> > You just need a single instance of a MAP_FIXED mmap() over a sealed mma=
+p()
+> > if that's what you want.
+> >
+> > > +   if (seal) {
+> > > +           FAIL_TEST_IF_FALSE(ret2 =3D=3D MAP_FAILED);
+> > > +           FAIL_TEST_IF_FALSE(errno =3D=3D EPERM);
+> > > +
+> > > +           size =3D get_vma_size(ptr, &prot);
+> > > +           FAIL_TEST_IF_FALSE(size =3D=3D 4 * page_size);
+> > > +           FAIL_TEST_IF_FALSE(prot =3D=3D 0x4);
+> > > +
+> > > +           size =3D get_vma_size(ptr + 4 * page_size, &prot);
+> > > +           FAIL_TEST_IF_FALSE(size =3D=3D 4 * page_size);
+> > > +           FAIL_TEST_IF_FALSE(prot =3D=3D 0x4);
+> > > +   } else
+> > > +           FAIL_TEST_IF_FALSE(ret2 =3D=3D ptr);
+> >
+> > Don't do dangling else's after a big block.
+> >
+patch passed the checkpatch.pl for style check.
 
-Only if you set the forcealign size to > 1fsb and fail to write new
-file data in forcealign units, even for non-untorn writes.  If all
-writes to the file are aligned to the forcealign size then there's only
-one extent conversion to be done, and that cannot be torn.
+> > > +
+> > > +   REPORT_TEST_PASS();
+> > > +}
+> > > +
+> > > +static void test_seal_mmap_shrink_seal_middle(bool seal)
+> >
+> > What's going on in the 'middle'? This test doesn't shrink, it overwrite=
+s
+> > the beginning of a sealed VMA?
+>
+> Correction - the middle is sealed. Other points remain.
+>
+The mmap attempts to shrink the address range from 12 pages to 8 pages.
 
-> > before handing the one single
-> > mapping back to iomap_dio_rw to stage the untorn writes bio.  At least
-> > you'd only be suffering that penalty for the (probable) corner case of
-> > someone creating mixed mappings.
-> 
-> BTW, one issue I have with the sub-extent(or -alloc unit) zeroing from v4
-> series is how the unwritten conversion has changed, like:
-> 
-> xfs_iomap_write_unwritten()
-> {
-> 	unsigned int rounding;
-> 
-> 	/* when converting anything unwritten, we must be spanning an alloc unit,
-> so round up/down */
-> 	if (rounding > 1) {
-> 		offset_fsb = rounddown(rounding);
-> 		count_fsb = roundup(rounding);
-> 	}
-> 
-> 	...
-> 	do {
-> 		xfs_bmapi_write();
-> 		...
-> 		xfs_trans_commit();
-> 	} while ();
-> }
-> 
-> I'm not too happy with it and it seems a bit of a bodge, as I would rather
-> we report the complete size written (user data and zeroes); then
-> xfs_iomap_write_unwritten() would do proper individual block conversion.
-> However, we do something similar for zeroing for sub-FSB writes. I am not
-> sure if that is the same thing really, as we only round up to FSB size.
-> Opinion?
+> > > +{
+> > > +   void *ptr;
+> > > +   unsigned long page_size =3D getpagesize();
+> > > +   unsigned long size =3D 12 * page_size;
+> > > +   int ret;
+> > > +   void *ret2;
+> > > +   int prot;
+> > > +
+> > > +   setup_single_address(size, &ptr);
+> > > +   FAIL_TEST_IF_FALSE(ptr !=3D (void *)-1);
+> > > +
+> > > +   if (seal) {
+> > > +           ret =3D sys_mseal(ptr + 4 * page_size, 4 * page_size);
+> > > +           FAIL_TEST_IF_FALSE(!ret);
+> > > +   }
+> > > +
+> > > +   /* use mmap to shrink and overwrite (MAP_FIXED)  */
+> >
+> > What exactly are you shrinking? You're overwriting the start of the vma=
+?
+> >
+> > What is this testing that is different from the previous test? This see=
+ms
+> > useless honestly.
+> >
+Again, as above, one test is expanding, the other test is shrinking.
+Please take a look at mmap parameters and steps before mmap call.
 
-xfs_iomap_write_unwritten is in the ioend path; that's not what I was
-talking about.
 
-I'm talking about a separate change to the xfs_direct_write_iomap_begin
-function that would detect the case where the bmapi_read returns an
-@imap that doesn't span the whole forcealign region, then repeatedly
-calls bmapi_write(BMAPI_ZERO | BMAPI_CONVERT) on any unwritten mappings
-within that file range until the original bmapi_read would return a
-single written mapping.
+> > > +   ret2 =3D mmap(ptr, 7 * page_size, PROT_READ,
+> > > +                   MAP_ANONYMOUS | MAP_PRIVATE | MAP_FIXED, -1, 0);
+> > > +   if (seal) {
+> > > +           FAIL_TEST_IF_FALSE(ret2 =3D=3D MAP_FAILED);
+> > > +           FAIL_TEST_IF_FALSE(errno =3D=3D EPERM);
+> > > +
+> > > +           size =3D get_vma_size(ptr, &prot);
+> > > +           FAIL_TEST_IF_FALSE(size =3D=3D 4 * page_size);
+> > > +           FAIL_TEST_IF_FALSE(prot =3D=3D 0x4);
+> >
+> > What the hell is this comparison to magic numbers? This is
+> > ridiculous. What's wrong with PROT_xxx??
+> >
+The PROT_xxx can't be used here.
+get_vma_size doesn't return PROT_ type, i.e. the bit sequence is different.
 
---D
+> > > +
+> > > +           size =3D get_vma_size(ptr + 4 * page_size, &prot);
+> > > +           FAIL_TEST_IF_FALSE(size =3D=3D 4 * page_size);
+> > > +           FAIL_TEST_IF_FALSE(prot =3D=3D 0x4);
+> > > +
+> > > +           size =3D get_vma_size(ptr + 4 * page_size, &prot);
+> > > +           FAIL_TEST_IF_FALSE(size =3D=3D 4 * page_size);
+> > > +           FAIL_TEST_IF_FALSE(prot =3D=3D 0x4);
+> >
+> > Err dude, you're doing this twice?
+> >
+The second get_vma_size should be (ptr + 8 * page_size)
+I will update that.
 
-> 
-> Thanks,
-> John
-> 
-> 
-> 
+> > So what are we testing here exactly? That we got a VMA split? This is
+> > err... why are we asserting this?
+>
+> I guess, that we can't overwrite a sealed bit of a VMA at the end. But ag=
+ain
+> this feels entirely redundant. For this kind of thing to fail would mean =
+the
+> whole VMA machinery is broken.
+>
+The test is testing mmap(MAP_FIXED), since it can be used to overwrite
+the sealed memory range (without sealing), then there is a variant of
+expand/shrink.
+
+
+> >
+> > > +   } else
+> > > +           FAIL_TEST_IF_FALSE(ret2 =3D=3D ptr);
+> > > +
+> > > +   REPORT_TEST_PASS();
+> > > +}
+> > > +
+> > > +static void test_seal_mmap_reuse_addr(bool seal)
+> >
+> > This is wrong, you're not reusing anything. This test is useless.
+> >
+The ptr is reused as a hint.
+
+> > > +{
+> > > +   void *ptr;
+> > > +   unsigned long page_size =3D getpagesize();
+> > > +   unsigned long size =3D page_size;
+> > > +   int ret;
+> > > +   void *ret2;
+> > > +   int prot;
+> > > +
+> > > +   setup_single_address(size, &ptr);
+> > > +   FAIL_TEST_IF_FALSE(ptr !=3D (void *)-1);
+> > > +
+> > > +   if (seal) {
+> > > +           ret =3D sys_mseal(ptr, size);
+> > > +           FAIL_TEST_IF_FALSE(!ret);
+> >
+> > We could avoid this horrid ret, ret2 naming if you just did:
+> >
+> >       FAIL_TEST_IF_FALSE(sys_mseal(ptr, size));
+> >
+> > > +   }
+> > > +
+> > > +   /* use mmap to change protection. */
+> > > +   ret2 =3D mmap(ptr, size, PROT_NONE,
+> > > +                   MAP_ANONYMOUS | MAP_PRIVATE, -1, 0);
+> >
+> > How are you using mmap to change the protection when you're providing a
+> > hint to the address to use? You're not changing any protection at all!
+> >
+It is necessary to add the this tests to make sure mseal is behave as
+it should be, which is !MAP_FIXED case, new address will be allocated,
+instead of fail of mmap()
+
+
+> > You're allocating an entirely new VMA hinting that you want it near
+> > ptr. Please read the man page for mmap():
+> >
+> >        If addr is NULL, then the kernel chooses the (page-aligned) addr=
+ess
+> >        at which to create the mapping; this is the most portable method=
+ of
+> >        creating a new mapping.  If addr is not NULL, then the kernel ta=
+kes
+> >        it as a hint about where to place the mapping; on Linux, the ker=
+nel
+> >        will pick a nearby page boundary (but always above or equal to t=
+he
+> >        value specified by /proc/sys/vm/mmap_min_addr) and attempt to cr=
+eate
+> >        the mapping there.  If another mapping already exists there, the
+> >        kernel picks a new address that may or may not depend on the hin=
+t.
+> >        The address of the new mapping is returned as the result of the
+> >        call.
+> >
+> > > +
+> > > +   /* MAP_FIXED is not used, expect new addr */
+> > > +   FAIL_TEST_IF_FALSE(!(ret2 =3D=3D MAP_FAILED));
+> >
+> > This is beyond horrible. You really have to add more asserts.
+> >
+Again assert is not recommended by self_test
+
+> > Also you're expecting a new address here, so again, what on earth are y=
+ou
+> > asserting? That we can mmap()?
+> >
+> > > +   FAIL_TEST_IF_FALSE(ret2 !=3D ptr);
+> > > +
+> > > +   size =3D get_vma_size(ptr, &prot);
+> > > +   FAIL_TEST_IF_FALSE(size =3D=3D page_size);
+> > > +   FAIL_TEST_IF_FALSE(prot =3D=3D 0x4);
+> > > +
+> > > +   REPORT_TEST_PASS();
+> > > +}
+> > > +
+> > >  int main(int argc, char **argv)
+> > >  {
+> > >     bool test_seal =3D seal_support();
+> > > @@ -2243,7 +2360,7 @@ int main(int argc, char **argv)
+> > >     if (!get_vma_size_supported())
+> > >             ksft_exit_skip("get_vma_size not supported\n");
+> > >
+> > > -   ksft_set_plan(91);
+> > > +   ksft_set_plan(97);
+> >
+> > I'm guessing this is the number of tests, but I mean this is horrible. =
+Is
+> > there not a better way of doing this?
+> >
+Again, this is recommended by self-test.
+
+
+
+> > >
+> > >     test_seal_addseal();
+> > >     test_seal_unmapped_start();
+> > > @@ -2357,5 +2474,12 @@ int main(int argc, char **argv)
+> > >     test_munmap_free_multiple_ranges(false);
+> > >     test_munmap_free_multiple_ranges(true);
+> > >
+> > > +   test_seal_mmap_expand_seal_middle(false);
+> > > +   test_seal_mmap_expand_seal_middle(true);
+> > > +   test_seal_mmap_shrink_seal_middle(false);
+> > > +   test_seal_mmap_shrink_seal_middle(true);
+> > > +   test_seal_mmap_reuse_addr(false);
+> > > +   test_seal_mmap_reuse_addr(true);
+> > > +
+> > >     ksft_finished();
+> > >  }
+> > > --
+> > > 2.46.0.469.g59c65b2a67-goog
+> > >
 
