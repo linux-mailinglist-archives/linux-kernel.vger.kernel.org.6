@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-308038-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308039-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0375796566B
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 06:37:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A862396566E
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 06:38:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ADFC2284FF5
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 04:37:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 287931F23CFF
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 04:38:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0AC5158544;
-	Fri, 30 Aug 2024 04:36:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1C2815C155;
+	Fri, 30 Aug 2024 04:36:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="E48Ai+wI"
-Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="JjCIfx8H"
+Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86DA11531F7
-	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 04:36:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 529AC1547E5
+	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 04:36:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724992577; cv=none; b=iewTUY4zmVM/geoSQwTgFP7Ku5rvSB3xQ57FD8v224uZd1U7E7PRgD7PlWqiimrxlAQx4k6uPTFp0cwDbw4z6Iqf0yU+JKkOoCRs4peNFZ90eiNUOAXxGyw7I500pFwNsem7vtxlNJ2JZN6+7jNhI6sA/C64D6mvxhgb1BgkuAY=
+	t=1724992579; cv=none; b=WHpxcUtQxX2tunV8wHsszrRZ/AkneRZ+RwErlr8+dQCSBhfoNYDtxJOah5/Bt0UrNw+ZWnS0PldCxEvzHRWXH4Q+PZQjQKww0WRUNn0QGDwlz2GGNbvsbCe6jiXeZy3Tl90SfzIIk4FqyNQFPy9fnPXrQnI0YCdGWZ6+3rwOb48=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724992577; c=relaxed/simple;
-	bh=guZPEi4HnZ68kmunYREUsW0wJ0a79wE6zG0LOWaHkWk=;
+	s=arc-20240116; t=1724992579; c=relaxed/simple;
+	bh=r9TnUuOu+gvC939NhJllHWf188auJJvL355zIecEOyo=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=qBHYpZ5wqhLsZVKArOCVkRNkWAKA6X67jqvk+IyY2TCDUUEzR4TAQUZpEQqPwy+5PVDGVzdvmtibonOznX28i9A7mKzAxMuYqld7D15acepU0CyH05JqadOWB22sFVFLLvuZgkImrE50MeLFO8mwG2wwM4a5TXRdyu0MMiWfYi4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=E48Ai+wI; arc=none smtp.client-ip=209.85.128.201
+	 To:Cc:Content-Type; b=FEg2wR8HIS5RanNRW5pKEfcG9XL3ST8Ibft5VxQXya3slaasJBHnnbLnJva6dQEuuUV0iYmTB7+Pv+n8QfMiHAgFjMUutBRVy0AdB0zNCY45smio13iEcecvb2n/09uV2jPyMBEMd17m1tNkmCrzjID/vtmZfdWmHMUb4SCJphI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=JjCIfx8H; arc=none smtp.client-ip=209.85.214.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6d3e062dbeeso5901707b3.0
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 21:36:15 -0700 (PDT)
+Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-2039ce56280so15525405ad.3
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 21:36:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1724992574; x=1725597374; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1724992577; x=1725597377; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
-        bh=udiDa1YXNVQe9YQdq8pNqA0v4AMGb+sHHwac6qQVu4U=;
-        b=E48Ai+wInrWTdcy7S1ymgbdRLype09ekVwfhbZzYuZG9TQGCkRJAfbqRUkjrifDcWC
-         Eg3fujG5pwARBQuhXfgrrCUe79ZNnqtD53MtJ7LApWzNGnWxo1IqL1RB8JViSP2AhDSt
-         ARS+TMI8b1uJVDVzfgQ094PqeOTELAuVaZ2F93wQNi4CGj5DlJx3VxvIHLvY0UIfxI7C
-         h1oIK137kuPN6nCVv6mh3CUzY9TuzBkzwutGkyiS13G8yR+/+hEmJQVnTdgjzMGNaEK8
-         tyd2/ZcHaZVggvtZnRDng7QRh19ke6TmUMjTFUQJNG2iP3Btyf5EwMhNQFwilyetUzy0
-         TukA==
+        bh=mgnh0vt90hRoRdUmmB6HToka9M38WB/s+4LU+KtV258=;
+        b=JjCIfx8H+Sn4bhpIgcWvDFDeqNqqdMRxk51YTaMbFpxMxVtAFYRd14ynldHXPcYev7
+         awVM3SWXqj2UvSdaxlfSvVF4N67q6nndVCe/G5Lq8BsaNqMvtkY+V0qb+vz2cpDg+nLh
+         5wsA7T5n+4K3eHnOadEnRWKwEN56sVD3CpfYpHXaa5Lj2yii8+Bctp7UEWMQHuKh99cI
+         9ql3/FwIIAy/IXsrZUD9qBxFC6F6Pcu7d+VEg2NSjvmdu8OGw/X0G5j1KGDJsM/nNjXs
+         BLmrbwH8z92s5muZ5JyZajiffxHs80hF8TZu3iF3Vkku9Eb9c7U31C9b/Q+PPCgJoKPn
+         1tIw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724992574; x=1725597374;
+        d=1e100.net; s=20230601; t=1724992577; x=1725597377;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=udiDa1YXNVQe9YQdq8pNqA0v4AMGb+sHHwac6qQVu4U=;
-        b=sFUOAW+TrsiDCTY6Gs+hhdS38nLlY8JFRDBTdoK+vqEfcxILLaMVeAk1r0cFlZCz7a
-         gMRB+ZzgbJ+2wSkJymdWyjVccaPmvMew5wU114oVrXxp1VDyUo/yDRo1xWAzP8nNa1rB
-         aNng7M+loAslgGH72vbx2AVpfN7/Axk1VVWk3GlJUnR2p+TdUwRirhxZvtN8NNpEwqx9
-         X6nAgE1Bs4qCjP7y595EaNe07E0Z0sd5k5vRUa/Wyqx7HH2Mxlr79TbSSltRjSX+SrdZ
-         BfLk3/1aYV7tI1gvzYI+5EJqUeSQkkZDqdymgkqFo4Sh/ejXaUCvujL5/HTUvMBKHqAh
-         PuzQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVwPOyhlErG8KwiAVBFsm8Yy/4MMDIUcv7hPs97vWxhRGWexg5NBgU4iFEEJMOLyWQz2fvA1poYEfzfxfo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxMjSWX/TzkbqDYYKGktx5XIPLUMLMeLZsYvbUJDPEnxaeBXXNq
-	u/0Av3tLNfDGDK+u2dIMMSvCVX7yObB7AGL7GUUEpvw6k+/Pcejhjl/rnnrQwVPmdcnumZpcbG3
-	khA==
-X-Google-Smtp-Source: AGHT+IF7AfgBrJe8PwdncYuFwENH9bcWVSUBeh2Gmsa0ZJKxp7DrJ4HVnhtseSn5Ja9qHK89gyQHI56lkSI=
+        bh=mgnh0vt90hRoRdUmmB6HToka9M38WB/s+4LU+KtV258=;
+        b=gIjKqJ59B4+E4G2pcCUUrIUoo7U5X5BMVTp4SmB3lIomqr54NGW5YtTMQfXW7QBU/5
+         BYaUpwQOqm7auXTlWIQd1i2iy0nZa3LBpDA27hrARWWgGxR2mCPWWX/MTnEDCv20fYjS
+         hJFWRQSdUusfu6HdsGgk5GtMaKoE9daXODkLgPFpRbJH7E5SWdlxawr8KVak0uf008bO
+         8qy0yZrNJ+oc6J3DpSL/U/7rtYXVnL6sy/ygv+vUDCBVkbFoVSW2PLb3ysTw/N6JWij0
+         mRaUbXypego2fXWCpOJuiLJGpqBVBSB/gb+ht9Qsgv4y0SQLRDNdw07C3YdTVlv1jdfX
+         EhXw==
+X-Forwarded-Encrypted: i=1; AJvYcCVVIkfK2FHBwQdfRpyQdYL/kCw0mDKYKnHUeZ9LsrUS1XhUZNNINnRmr0pNXN1V3PSbxOwpgXqRj4g7g5Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz39EiId+gj85+qY94TlQp8zEm1RI2BzgkTV237+M5gsO6rBXr3
+	RyevhrlgGPv09cXhuWzRL4IUx1x2MEgaEQh2I5geQzyJNzDOXzH5RFW/OoNDOsYP00SeWolgZYE
+	vDg==
+X-Google-Smtp-Source: AGHT+IE7HTy6N+J/THFIKpl4Od8/dndX02uUteqyB99aiEenMzXSGqlK1AXIizH5wGxOY4Cdt0h/M5FZk0k=
 X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a05:690c:6681:b0:665:24b0:e936 with SMTP id
- 00721157ae682-6d286f64db5mr2502337b3.4.1724992574565; Thu, 29 Aug 2024
- 21:36:14 -0700 (PDT)
+ (user=seanjc job=sendgmr) by 2002:a17:903:1105:b0:1fd:74a8:df4a with SMTP id
+ d9443c01a7336-20527681a40mr898945ad.5.1724992576608; Thu, 29 Aug 2024
+ 21:36:16 -0700 (PDT)
 Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Thu, 29 Aug 2024 21:35:55 -0700
+Date: Thu, 29 Aug 2024 21:35:56 -0700
 In-Reply-To: <20240830043600.127750-1-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -75,8 +75,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20240830043600.127750-1-seanjc@google.com>
 X-Mailer: git-send-email 2.46.0.469.g59c65b2a67-goog
-Message-ID: <20240830043600.127750-6-seanjc@google.com>
-Subject: [PATCH v4 05/10] KVM: MIPS: Rename virtualization {en,dis}abling APIs
+Message-ID: <20240830043600.127750-7-seanjc@google.com>
+Subject: [PATCH v4 06/10] KVM: x86: Rename virtualization {en,dis}abling APIs
  to match common KVM
 From: Sean Christopherson <seanjc@google.com>
 To: Paolo Bonzini <pbonzini@redhat.com>, Marc Zyngier <maz@kernel.org>, 
@@ -92,85 +92,257 @@ Cc: kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
 	Kai Huang <kai.huang@intel.com>, Farrah Chen <farrah.chen@intel.com>
 Content-Type: text/plain; charset="UTF-8"
 
-Rename MIPS's trampoline hooks for virtualization enabling to match the
-recently renamed arch hooks.
+Rename x86's the per-CPU vendor hooks used to enable virtualization in
+hardware to align with the recently renamed arch hooks.
 
 No functional change intended.
 
 Signed-off-by: Sean Christopherson <seanjc@google.com>
 ---
- arch/mips/include/asm/kvm_host.h | 4 ++--
- arch/mips/kvm/mips.c             | 4 ++--
- arch/mips/kvm/vz.c               | 8 ++++----
- 3 files changed, 8 insertions(+), 8 deletions(-)
+ arch/x86/include/asm/kvm-x86-ops.h |  4 ++--
+ arch/x86/include/asm/kvm_host.h    |  4 ++--
+ arch/x86/kvm/svm/svm.c             | 18 +++++++++---------
+ arch/x86/kvm/vmx/main.c            |  4 ++--
+ arch/x86/kvm/vmx/vmx.c             | 10 +++++-----
+ arch/x86/kvm/vmx/x86_ops.h         |  4 ++--
+ arch/x86/kvm/x86.c                 | 10 +++++-----
+ 7 files changed, 27 insertions(+), 27 deletions(-)
 
-diff --git a/arch/mips/include/asm/kvm_host.h b/arch/mips/include/asm/kvm_host.h
-index 6743a57c1ab4..f7222eb594ea 100644
---- a/arch/mips/include/asm/kvm_host.h
-+++ b/arch/mips/include/asm/kvm_host.h
-@@ -728,8 +728,8 @@ struct kvm_mips_callbacks {
- 	int (*handle_fpe)(struct kvm_vcpu *vcpu);
- 	int (*handle_msa_disabled)(struct kvm_vcpu *vcpu);
- 	int (*handle_guest_exit)(struct kvm_vcpu *vcpu);
+diff --git a/arch/x86/include/asm/kvm-x86-ops.h b/arch/x86/include/asm/kvm-x86-ops.h
+index 68ad4f923664..03b7e13f15bb 100644
+--- a/arch/x86/include/asm/kvm-x86-ops.h
++++ b/arch/x86/include/asm/kvm-x86-ops.h
+@@ -14,8 +14,8 @@ BUILD_BUG_ON(1)
+  * be __static_call_return0.
+  */
+ KVM_X86_OP(check_processor_compatibility)
+-KVM_X86_OP(hardware_enable)
+-KVM_X86_OP(hardware_disable)
++KVM_X86_OP(enable_virtualization_cpu)
++KVM_X86_OP(disable_virtualization_cpu)
+ KVM_X86_OP(hardware_unsetup)
+ KVM_X86_OP(has_emulated_msr)
+ KVM_X86_OP(vcpu_after_set_cpuid)
+diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
+index 94e7b5a4fafe..cb3b5f107c6e 100644
+--- a/arch/x86/include/asm/kvm_host.h
++++ b/arch/x86/include/asm/kvm_host.h
+@@ -1629,8 +1629,8 @@ struct kvm_x86_ops {
+ 
+ 	int (*check_processor_compatibility)(void);
+ 
 -	int (*hardware_enable)(void);
 -	void (*hardware_disable)(void);
 +	int (*enable_virtualization_cpu)(void);
 +	void (*disable_virtualization_cpu)(void);
- 	int (*check_extension)(struct kvm *kvm, long ext);
- 	int (*vcpu_init)(struct kvm_vcpu *vcpu);
- 	void (*vcpu_uninit)(struct kvm_vcpu *vcpu);
-diff --git a/arch/mips/kvm/mips.c b/arch/mips/kvm/mips.c
-index 52e1f275351e..60b43ea85c12 100644
---- a/arch/mips/kvm/mips.c
-+++ b/arch/mips/kvm/mips.c
-@@ -127,12 +127,12 @@ int kvm_arch_vcpu_should_kick(struct kvm_vcpu *vcpu)
- 
- int kvm_arch_enable_virtualization_cpu(void)
- {
--	return kvm_mips_callbacks->hardware_enable();
-+	return kvm_mips_callbacks->enable_virtualization_cpu();
+ 	void (*hardware_unsetup)(void);
+ 	bool (*has_emulated_msr)(struct kvm *kvm, u32 index);
+ 	void (*vcpu_after_set_cpuid)(struct kvm_vcpu *vcpu);
+diff --git a/arch/x86/kvm/svm/svm.c b/arch/x86/kvm/svm/svm.c
+index d6f252555ab3..a9adbe10c12e 100644
+--- a/arch/x86/kvm/svm/svm.c
++++ b/arch/x86/kvm/svm/svm.c
+@@ -592,14 +592,14 @@ static inline void kvm_cpu_svm_disable(void)
+ 	}
  }
+ 
+-static void svm_emergency_disable(void)
++static void svm_emergency_disable_virtualization_cpu(void)
+ {
+ 	kvm_rebooting = true;
+ 
+ 	kvm_cpu_svm_disable();
+ }
+ 
+-static void svm_hardware_disable(void)
++static void svm_disable_virtualization_cpu(void)
+ {
+ 	/* Make sure we clean up behind us */
+ 	if (tsc_scaling)
+@@ -610,7 +610,7 @@ static void svm_hardware_disable(void)
+ 	amd_pmu_disable_virt();
+ }
+ 
+-static int svm_hardware_enable(void)
++static int svm_enable_virtualization_cpu(void)
+ {
+ 
+ 	struct svm_cpu_data *sd;
+@@ -1533,7 +1533,7 @@ static void svm_prepare_switch_to_guest(struct kvm_vcpu *vcpu)
+ 	 * TSC_AUX is always virtualized for SEV-ES guests when the feature is
+ 	 * available. The user return MSR support is not required in this case
+ 	 * because TSC_AUX is restored on #VMEXIT from the host save area
+-	 * (which has been initialized in svm_hardware_enable()).
++	 * (which has been initialized in svm_enable_virtualization_cpu()).
+ 	 */
+ 	if (likely(tsc_aux_uret_slot >= 0) &&
+ 	    (!boot_cpu_has(X86_FEATURE_V_TSC_AUX) || !sev_es_guest(vcpu->kvm)))
+@@ -3132,7 +3132,7 @@ static int svm_set_msr(struct kvm_vcpu *vcpu, struct msr_data *msr)
+ 		 * feature is available. The user return MSR support is not
+ 		 * required in this case because TSC_AUX is restored on #VMEXIT
+ 		 * from the host save area (which has been initialized in
+-		 * svm_hardware_enable()).
++		 * svm_enable_virtualization_cpu()).
+ 		 */
+ 		if (boot_cpu_has(X86_FEATURE_V_TSC_AUX) && sev_es_guest(vcpu->kvm))
+ 			break;
+@@ -4980,8 +4980,8 @@ static struct kvm_x86_ops svm_x86_ops __initdata = {
+ 	.check_processor_compatibility = svm_check_processor_compat,
+ 
+ 	.hardware_unsetup = svm_hardware_unsetup,
+-	.hardware_enable = svm_hardware_enable,
+-	.hardware_disable = svm_hardware_disable,
++	.enable_virtualization_cpu = svm_enable_virtualization_cpu,
++	.disable_virtualization_cpu = svm_disable_virtualization_cpu,
+ 	.has_emulated_msr = svm_has_emulated_msr,
+ 
+ 	.vcpu_create = svm_vcpu_create,
+@@ -5411,7 +5411,7 @@ static void __svm_exit(void)
+ {
+ 	kvm_x86_vendor_exit();
+ 
+-	cpu_emergency_unregister_virt_callback(svm_emergency_disable);
++	cpu_emergency_unregister_virt_callback(svm_emergency_disable_virtualization_cpu);
+ }
+ 
+ static int __init svm_init(void)
+@@ -5427,7 +5427,7 @@ static int __init svm_init(void)
+ 	if (r)
+ 		return r;
+ 
+-	cpu_emergency_register_virt_callback(svm_emergency_disable);
++	cpu_emergency_register_virt_callback(svm_emergency_disable_virtualization_cpu);
+ 
+ 	/*
+ 	 * Common KVM initialization _must_ come last, after this, /dev/kvm is
+diff --git a/arch/x86/kvm/vmx/main.c b/arch/x86/kvm/vmx/main.c
+index 0bf35ebe8a1b..4a5bf92edccf 100644
+--- a/arch/x86/kvm/vmx/main.c
++++ b/arch/x86/kvm/vmx/main.c
+@@ -23,8 +23,8 @@ struct kvm_x86_ops vt_x86_ops __initdata = {
+ 
+ 	.hardware_unsetup = vmx_hardware_unsetup,
+ 
+-	.hardware_enable = vmx_hardware_enable,
+-	.hardware_disable = vmx_hardware_disable,
++	.enable_virtualization_cpu = vmx_enable_virtualization_cpu,
++	.disable_virtualization_cpu = vmx_disable_virtualization_cpu,
+ 	.has_emulated_msr = vmx_has_emulated_msr,
+ 
+ 	.vm_size = sizeof(struct kvm_vmx),
+diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
+index f18c2d8c7476..cf7d937bfd2c 100644
+--- a/arch/x86/kvm/vmx/vmx.c
++++ b/arch/x86/kvm/vmx/vmx.c
+@@ -755,7 +755,7 @@ static int kvm_cpu_vmxoff(void)
+ 	return -EIO;
+ }
+ 
+-static void vmx_emergency_disable(void)
++static void vmx_emergency_disable_virtualization_cpu(void)
+ {
+ 	int cpu = raw_smp_processor_id();
+ 	struct loaded_vmcs *v;
+@@ -2844,7 +2844,7 @@ static int kvm_cpu_vmxon(u64 vmxon_pointer)
+ 	return -EFAULT;
+ }
+ 
+-int vmx_hardware_enable(void)
++int vmx_enable_virtualization_cpu(void)
+ {
+ 	int cpu = raw_smp_processor_id();
+ 	u64 phys_addr = __pa(per_cpu(vmxarea, cpu));
+@@ -2881,7 +2881,7 @@ static void vmclear_local_loaded_vmcss(void)
+ 		__loaded_vmcs_clear(v);
+ }
+ 
+-void vmx_hardware_disable(void)
++void vmx_disable_virtualization_cpu(void)
+ {
+ 	vmclear_local_loaded_vmcss();
+ 
+@@ -8584,7 +8584,7 @@ static void __vmx_exit(void)
+ {
+ 	allow_smaller_maxphyaddr = false;
+ 
+-	cpu_emergency_unregister_virt_callback(vmx_emergency_disable);
++	cpu_emergency_unregister_virt_callback(vmx_emergency_disable_virtualization_cpu);
+ 
+ 	vmx_cleanup_l1d_flush();
+ }
+@@ -8632,7 +8632,7 @@ static int __init vmx_init(void)
+ 		pi_init_cpu(cpu);
+ 	}
+ 
+-	cpu_emergency_register_virt_callback(vmx_emergency_disable);
++	cpu_emergency_register_virt_callback(vmx_emergency_disable_virtualization_cpu);
+ 
+ 	vmx_check_vmcs12_offsets();
+ 
+diff --git a/arch/x86/kvm/vmx/x86_ops.h b/arch/x86/kvm/vmx/x86_ops.h
+index ce3221cd1d01..205692c43a8e 100644
+--- a/arch/x86/kvm/vmx/x86_ops.h
++++ b/arch/x86/kvm/vmx/x86_ops.h
+@@ -13,8 +13,8 @@ extern struct kvm_x86_init_ops vt_init_ops __initdata;
+ 
+ void vmx_hardware_unsetup(void);
+ int vmx_check_processor_compat(void);
+-int vmx_hardware_enable(void);
+-void vmx_hardware_disable(void);
++int vmx_enable_virtualization_cpu(void);
++void vmx_disable_virtualization_cpu(void);
+ int vmx_vm_init(struct kvm *kvm);
+ void vmx_vm_destroy(struct kvm *kvm);
+ int vmx_vcpu_precreate(struct kvm *kvm);
+diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+index 1182baf0d487..431358167fa8 100644
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -9749,7 +9749,7 @@ int kvm_x86_vendor_init(struct kvm_x86_init_ops *ops)
+ 
+ 	guard(mutex)(&vendor_module_lock);
+ 
+-	if (kvm_x86_ops.hardware_enable) {
++	if (kvm_x86_ops.enable_virtualization_cpu) {
+ 		pr_err("already loaded vendor module '%s'\n", kvm_x86_ops.name);
+ 		return -EEXIST;
+ 	}
+@@ -9876,7 +9876,7 @@ int kvm_x86_vendor_init(struct kvm_x86_init_ops *ops)
+ 	return 0;
+ 
+ out_unwind_ops:
+-	kvm_x86_ops.hardware_enable = NULL;
++	kvm_x86_ops.enable_virtualization_cpu = NULL;
+ 	kvm_x86_call(hardware_unsetup)();
+ out_mmu_exit:
+ 	kvm_mmu_vendor_module_exit();
+@@ -9917,7 +9917,7 @@ void kvm_x86_vendor_exit(void)
+ 	WARN_ON(static_branch_unlikely(&kvm_xen_enabled.key));
+ #endif
+ 	mutex_lock(&vendor_module_lock);
+-	kvm_x86_ops.hardware_enable = NULL;
++	kvm_x86_ops.enable_virtualization_cpu = NULL;
+ 	mutex_unlock(&vendor_module_lock);
+ }
+ EXPORT_SYMBOL_GPL(kvm_x86_vendor_exit);
+@@ -12528,7 +12528,7 @@ int kvm_arch_enable_virtualization_cpu(void)
+ 	if (ret)
+ 		return ret;
+ 
+-	ret = kvm_x86_call(hardware_enable)();
++	ret = kvm_x86_call(enable_virtualization_cpu)();
+ 	if (ret != 0)
+ 		return ret;
+ 
+@@ -12610,7 +12610,7 @@ int kvm_arch_enable_virtualization_cpu(void)
  
  void kvm_arch_disable_virtualization_cpu(void)
  {
--	kvm_mips_callbacks->hardware_disable();
-+	kvm_mips_callbacks->disable_virtualization_cpu();
+-	kvm_x86_call(hardware_disable)();
++	kvm_x86_call(disable_virtualization_cpu)();
+ 	drop_user_return_notifiers();
  }
  
- int kvm_arch_init_vm(struct kvm *kvm, unsigned long type)
-diff --git a/arch/mips/kvm/vz.c b/arch/mips/kvm/vz.c
-index 99d5a71e4300..ccab4d76b126 100644
---- a/arch/mips/kvm/vz.c
-+++ b/arch/mips/kvm/vz.c
-@@ -2869,7 +2869,7 @@ static unsigned int kvm_vz_resize_guest_vtlb(unsigned int size)
- 	return ret + 1;
- }
- 
--static int kvm_vz_hardware_enable(void)
-+static int kvm_vz_enable_virtualization_cpu(void)
- {
- 	unsigned int mmu_size, guest_mmu_size, ftlb_size;
- 	u64 guest_cvmctl, cvmvmconfig;
-@@ -2983,7 +2983,7 @@ static int kvm_vz_hardware_enable(void)
- 	return 0;
- }
- 
--static void kvm_vz_hardware_disable(void)
-+static void kvm_vz_disable_virtualization_cpu(void)
- {
- 	u64 cvmvmconfig;
- 	unsigned int mmu_size;
-@@ -3280,8 +3280,8 @@ static struct kvm_mips_callbacks kvm_vz_callbacks = {
- 	.handle_msa_disabled = kvm_trap_vz_handle_msa_disabled,
- 	.handle_guest_exit = kvm_trap_vz_handle_guest_exit,
- 
--	.hardware_enable = kvm_vz_hardware_enable,
--	.hardware_disable = kvm_vz_hardware_disable,
-+	.enable_virtualization_cpu = kvm_vz_enable_virtualization_cpu,
-+	.disable_virtualization_cpu = kvm_vz_disable_virtualization_cpu,
- 	.check_extension = kvm_vz_check_extension,
- 	.vcpu_init = kvm_vz_vcpu_init,
- 	.vcpu_uninit = kvm_vz_vcpu_uninit,
 -- 
 2.46.0.469.g59c65b2a67-goog
 
