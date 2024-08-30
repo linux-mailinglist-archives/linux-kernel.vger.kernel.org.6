@@ -1,524 +1,99 @@
-Return-Path: <linux-kernel+bounces-308573-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308574-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90D7A965EFD
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 12:25:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 99747965F03
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 12:26:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B5AEE1C2482D
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 10:25:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CD1481C248D0
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 10:26:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7868917DFF3;
-	Fri, 30 Aug 2024 10:22:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1656517D896;
+	Fri, 30 Aug 2024 10:22:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="DWv8eRj+"
-Received: from mail-ej1-f66.google.com (mail-ej1-f66.google.com [209.85.218.66])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="lROkO8R6"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6B7C17ADE1
-	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 10:22:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B358B178378;
+	Fri, 30 Aug 2024 10:22:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725013325; cv=none; b=Oyez74c3e6F8xs0nanbVLHjRyYE09W0P8d4dllyrGEGxssuYHtPnl95u7GkxmAI05HPwWikwCms4LZLv6dfw5tyVrwpss371xfbEbCO/nUVhPC6ksa5HJU1U9GWIkZYVlQt9hXf91mC62PeIfw1UGRjoJA3ea8TSgMlT87c5HxM=
+	t=1725013368; cv=none; b=LtE96exNH2t+erC9hbql1bfKkVkMahk5KgLeSLnDWTmshJ6VpvY1Y/5FNpu6ZP1yg4mWeufs7oTm+3fTG6bmHxPKsKgq2kSzfNHA27mc4YFL2IHaoFBfMM5/21SRjzx/smFFqTC+fFApBUAkh20eVDQUAtpaPvuvVk32Sjt1kbU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725013325; c=relaxed/simple;
-	bh=Knm3BjZduDuXk0+b8GRzUTkw+Wzl6VmhKzC2pO+Na2w=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jkptnFWrf0y3eac0PeGVHyj3/HXKpcRt2e8ZQMCM+qeK84DvkG1Tw5L9YNP4IjrD6e4KzCSLLI6d06vLqPUeF8Brna15DPQ7SzlUu0X4oZvJZJqCpdmBN3gecshk0kaQXuV0Q9beGcrfBssvKD/I8XY1sEuUW2SHTatcxVz5mdo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=DWv8eRj+; arc=none smtp.client-ip=209.85.218.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f66.google.com with SMTP id a640c23a62f3a-a86e5e9ff05so212197966b.1
-        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 03:22:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1725013321; x=1725618121; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=wbhHoJjuM1ivpiPlmTgbjVGdK8GjjUmv5pMqCU8D6Fc=;
-        b=DWv8eRj+AxoZJi5aPr2u3pe0jmZN7BxCxGonnkLho70yuqz5jl9ekSHE1tRx/jB2qs
-         Sa3SNra1UDpekWlca82WUfkW0uWdkyycI9njeQl8+iP7MgtZSnqAyTssMWDsLBvQ40B5
-         9ADD00GxrDXdtb95aMdia5by2GB0k8AXX8rQVvv3sNgKgqteV/Q0NCZIsHo6awri1Lrz
-         Yt3DHsO0S8yQVM/JCKZ02zev4sjeZv+7ZZkq7eqzZdlXC2U+k61VXnXwiREfssG85X09
-         KYrjQ5YSQ2H47HRGcxEP78OIpFCa3xwUmcdiYHMyncEQdUTzNyAFjiiRaiBNe3IS3RnK
-         wH/g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725013321; x=1725618121;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wbhHoJjuM1ivpiPlmTgbjVGdK8GjjUmv5pMqCU8D6Fc=;
-        b=HQZ0ugckCQ5qXHhk39Ty9TicAhR8BqV3Cf6AaMqhcxGzmGBZpKvoT+MoglVNYE6jwK
-         QwG6WtuzEGtULLsywi/x6X9nld9sgbw5dQ2tyC2KR+2DRb0Mwe2geGs/VBl8O+nU/GX2
-         mb5B0CZuORei2lRrOzjGfesFwbNuogGTBQzXMV7CO+lq/MBxRRBoTOvI2wABFGZ8nwm5
-         C59ZyRahPVrrN/8A7h6tQxzlBT5SLi60+k0Xrq21SpVR009A8iyZrGA7HBgjjsSiyQU2
-         poqmR538I0l7GGIA+K6BpZo4m1mj09Dn4sdNYAdwA4UP/ZhBkLzrWG37g7/XyeY6ZFJ7
-         WNoQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUK8zNnCyvMZvPSDNe1dcasqtYXVXTwb70VEjar6EQcXleiykz48bEJfsDR0ISdKtF6fapkN66OKqEFAWA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzmffeDyg52y6IX0Jfch3QYhkFJPmnxda8RDoA4fkOVfqyY1Qfo
-	Clkok8ZfNQ/FznUWVeET0uQaPMlDg8vWzL9Z5leGqF9TEilsl5Zg6Kd8YSherco=
-X-Google-Smtp-Source: AGHT+IG6h20DnLXz5pVmLY+VL5ElH7DvF3660DEdHG1R9705g8TgluohDRSc1GHgGAsNQAfRzZM/2A==
-X-Received: by 2002:a17:907:3f9b:b0:a86:b080:9bd4 with SMTP id a640c23a62f3a-a897fa74e2cmr469691666b.48.1725013320323;
-        Fri, 30 Aug 2024 03:22:00 -0700 (PDT)
-Received: from localhost (host-80-182-198-72.retail.telecomitalia.it. [80.182.198.72])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a898900e746sm199701866b.52.2024.08.30.03.21.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 30 Aug 2024 03:21:59 -0700 (PDT)
-From: Andrea della Porta <andrea.porta@suse.com>
-X-Google-Original-From: Andrea della Porta <aporta@suse.de>
-Date: Fri, 30 Aug 2024 12:22:06 +0200
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Andrea della Porta <andrea.porta@suse.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Derek Kiernan <derek.kiernan@amd.com>,
-	Dragan Cvetic <dragan.cvetic@amd.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Saravana Kannan <saravanak@google.com>,
-	Bjorn Helgaas <bhelgaas@google.com>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org, netdev@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-arch@vger.kernel.org,
-	Lee Jones <lee@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
-	Stefan Wahren <wahrenst@gmx.net>
-Subject: Re: [PATCH 02/11] dt-bindings: pinctrl: Add RaspberryPi RP1
- gpio/pinctrl/pinmux bindings
-Message-ID: <ZtGdTjZPYtm3EGM0@apocalypse>
-References: <cover.1724159867.git.andrea.porta@suse.com>
- <82d57814075ed1bc76bf17bde124c5c83925ac59.1724159867.git.andrea.porta@suse.com>
- <5zlaxts46utk66k2n2uxeqr6umppfasnqoxhwdzah44hcmyfnp@euwjda6zk5rh>
+	s=arc-20240116; t=1725013368; c=relaxed/simple;
+	bh=dQzQQaW/lJQe5gEqWz7/siYJFCDJ0BBsoSUipXH98P0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Dp7l6tBOS4ox+3Zqb8HufqUEuugmai5dSUUG+cgGR6Syuks1QpuBE+3pInKpDOqreAY7h82xoSQotl6vNMURLywyyapFXkh6VmXIr35wh+1oVhGjs7gIj/i3f5m/jQ7UEkkFZNCKwDv11hUF/MXVeA4JOwghilR/ggCrDQBQ+Bw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=lROkO8R6; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1725013362;
+	bh=dQzQQaW/lJQe5gEqWz7/siYJFCDJ0BBsoSUipXH98P0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=lROkO8R69ThIazwkifncYI+/Jp6q7etFprg1o+WwsZkYQHS6hdFbVfrxZLUdCXLrK
+	 PJvQlrgai0wA4VU6Z8q2EaoML8jVa8la6pLGqK7nNOjbJqFyOXzpWGaCW8uWV8hOaY
+	 0OQmPwhpvjpqUZJN2u7OxTU923ux+jDBK1WU0Y8o=
+Date: Fri, 30 Aug 2024 12:22:42 +0200
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
+To: Helge Deller <deller@gmx.de>
+Cc: Daniel Vetter <daniel@ffwll.ch>, linux-fbdev@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, Bert Karwatzki <spasswolf@web.de>, 
+	"Borah, Chaitanya Kumar" <chaitanya.kumar.borah@intel.com>, intel-gfx@lists.freedesktop.org, 
+	"Kurmi, Suresh Kumar" <suresh.kumar.kurmi@intel.com>, "Saarinen, Jani" <jani.saarinen@intel.com>
+Subject: Re: [PATCH] fbdev: Introduce devm_register_framebuffer()
+Message-ID: <7a35a26c-a80b-419a-b2dc-f5c207c540b6@t-8ch.de>
+References: <20240830-fbdev-devm_register_framebuffer-v1-1-6d4186519c68@weissschuh.net>
+ <729c4f82-a683-4302-b4ae-f591ac04daa1@gmx.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <5zlaxts46utk66k2n2uxeqr6umppfasnqoxhwdzah44hcmyfnp@euwjda6zk5rh>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <729c4f82-a683-4302-b4ae-f591ac04daa1@gmx.de>
 
-Hi Krzysztof,
-
-On 10:42 Wed 21 Aug     , Krzysztof Kozlowski wrote:
-> On Tue, Aug 20, 2024 at 04:36:04PM +0200, Andrea della Porta wrote:
-> > Add device tree bindings for the gpio/pin/mux controller that is part of
-> > the RP1 multi function device, and relative entries in MAINTAINERS file.
+On 2024-08-30 12:16:46+0000, Helge Deller wrote:
+> On 8/30/24 11:45, Thomas Weißschuh wrote:
+> > Introduce a device-managed variant of register_framebuffer() which
+> > automatically unregisters the framebuffer on device destruction.
+> > This can simplify the error handling and resource management in drivers.
 > > 
-> > Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
+> > Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
 > > ---
-> >  .../pinctrl/raspberrypi,rp1-gpio.yaml         | 177 +++++++++++++
-> >  MAINTAINERS                                   |   2 +
-> >  include/dt-bindings/misc/rp1.h                | 235 ++++++++++++++++++
-> >  3 files changed, 414 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/pinctrl/raspberrypi,rp1-gpio.yaml
-> >  create mode 100644 include/dt-bindings/misc/rp1.h
+> > This is a fixed resend of [0], which was broken.
+> > Thanks to Bert [1], and Chaitanya Kumar [2]
+> > for reporting the issue.
 > > 
-> > diff --git a/Documentation/devicetree/bindings/pinctrl/raspberrypi,rp1-gpio.yaml b/Documentation/devicetree/bindings/pinctrl/raspberrypi,rp1-gpio.yaml
-> > new file mode 100644
-> > index 000000000000..7011fa258363
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/pinctrl/raspberrypi,rp1-gpio.yaml
-> > @@ -0,0 +1,177 @@
-> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/pinctrl/raspberrypi,rp1-gpio.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: RaspberryPi RP1 GPIO/Pinconf/Pinmux Controller submodule
-> > +
-> > +maintainers:
-> > +  - Andrea della Porta <andrea.porta@suse.com>
-> > +
-> > +description:
-> > +  The RP1 chipset is a Multi Function Device containing, among other sub-peripherals,
-> > +  a gpio/pinconf/mux controller whose 54 pins are grouped into 3 banks. It works also
-> > +  as an interrupt controller for those gpios.
-> > +
-> > +  Each pin configuration node lists the pin(s) to which it applies, and one or
-> > +  more of the mux function to select on those pin(s), and their configuration.
-> > +  The pin configuration and multiplexing supports the generic bindings.
-> > +  For details on each properties (including the meaning of "pin configuration node"),
-> > +  you can refer to ./pinctrl-bindings.txt.
-> > +
-> > +properties:
-> > +  compatible:
-> > +    const: raspberrypi,rp1-gpio
-> > +
-> > +  reg:
-> > +    minItems: 3
+> > [0] https://lore.kernel.org/lkml/20240827-efifb-sysfs-v1-3-c9cc3e052180@weissschuh.net/
+> > [1] https://lore.kernel.org/lkml/20240829224124.2978-1-spasswolf@web.de/
+> > [2] https://lore.kernel.org/lkml/SJ1PR11MB612925C1C533C09F8F62F7CBB9972@SJ1PR11MB6129.namprd11.prod.outlook.com/
 > 
-> You can drop minItems.
+> I've applied this patch to the fbdev git tree.
+> Please double check at
+> https://git.kernel.org/pub/scm/linux/kernel/git/deller/linux-fbdev.git/log/?h=for-next
 
-Ack.
+Looks good.
+Sorry for the extra effort necessary.
 
+> Can you please check if this fixes this new report too:
+> https://marc.info/?l=linux-fbdev&m=172500784802901&w=2
+
+I double check it and am decently sure it's the same issue.
+It tries to unregister the framebuffer but then notices that it never
+was registered in the first place.
+
+> > Helge, I didn't document the function devm_unregister_framebuffer() as
+> > it is only an internal helper and will ever only used by one user,
+> > similar to other helpers in fbmem.c.
 > 
-> > +    maxItems: 3
-> > +    description: One reg specifier for each one of the 3 pin banks.
-> > +
-> > +  '#gpio-cells':
-> > +    description: The first cell is the pin number and the second cell is used
-> > +      to specify the flags (see include/dt-bindings/gpio/gpio.h).
-> > +    const: 2
-> > +
-> > +  gpio-controller: true
-> > +
-> > +  gpio-ranges:
-> > +    maxItems: 1
-> > +
-> > +  gpio-line-names:
-> > +    maxItems: 54
-> > +
-> > +  interrupts:
-> > +    minItems: 3
+> Ok.
 > 
-> Ditto
-
-Ack.
-
-> 
-> > +    maxItems: 3
-> > +    description: One interrupt specifier for each one of the 3 pin banks.
-> > +
-> > +  '#interrupt-cells':
-> > +    description:
-> > +      Specifies the Bank number (as specified in include/dt-bindings/misc/rp1.h)
-> > +      and Flags (as defined in (include/dt-bindings/interrupt-controller/irq.h).
-> > +      Possible values for the Bank number are
-> > +          RP1_INT_IO_BANK0
-> > +          RP1_INT_IO_BANK1
-> > +          RP1_INT_IO_BANK2
-> > +    const: 2
-> > +
-> > +  interrupt-controller: true
-> > +
-> > +additionalProperties:
-> > +  anyOf:
-> > +    - type: object
-> > +      additionalProperties: false
-> > +      allOf:
-> > +        - $ref: pincfg-node.yaml#
-> > +        - $ref: pinmux-node.yaml#
-> > +
-> > +      description:
-> > +        Pin controller client devices use pin configuration subnodes (children
-> > +        and grandchildren) for desired pin configuration.
-> > +        Client device subnodes use below standard properties.
-> > +
-> > +      properties:
-> > +        pins:
-> > +          description:
-> > +            A string (or list of strings) adhering to the pattern "gpio[0-5][0-9]"
-> > +        function: true
-> > +        bias-disable: true
-> > +        bias-pull-down: true
-> > +        bias-pull-up: true
-> > +        slew-rate:
-> > +          description: 0 is slow slew rate, 1 is fast slew rate
-> > +          enum: [ 0, 1 ]
-> > +        drive-strength:
-> > +          description: 0 -> 2mA, 1 -> 4mA, 2 -> 8mA, 3 -> 12mA
-> > +          enum: [ 0, 1, 2, 3 ]
-> 
-> No, that's [ 2, 4, 8 and 12 ]
-> 
-> Read description of the field - it is in specific units.
-
-Ack. Thanks, this would have been a bug, since the driver was already using
-the current value instead of the positional.
-
-> 
-> > +
-> > +    - type: object
-> > +      additionalProperties:
-> > +        $ref: "#/additionalProperties/anyOf/0"
-> > +
-> > +allOf:
-> > +  - $ref: pinctrl.yaml#
-> > +
-> > +required:
-> > +  - reg
-> > +  - compatible
-> > +  - "#gpio-cells"
-> > +  - gpio-controller
-> > +  - interrupts
-> > +  - "#interrupt-cells"
-> > +  - interrupt-controller
-> > +
-> > +examples:
-> > +  - |
-> > +    #include <dt-bindings/interrupt-controller/irq.h>
-> > +    #include <dt-bindings/misc/rp1.h>
-> > +
-> > +    rp1 {
-> > +        #address-cells = <2>;
-> > +        #size-cells = <2>;
-> > +
-> > +        rp1_gpio: pinctrl@c0400d0000 {
-> > +            reg = <0xc0 0x400d0000  0x0 0xc000>,
-> > +                  <0xc0 0x400e0000  0x0 0xc000>,
-> > +                  <0xc0 0x400f0000  0x0 0xc000>;
-> > +            compatible = "raspberrypi,rp1-gpio";
-> > +            gpio-controller;
-> > +            #gpio-cells = <2>;
-> > +            interrupt-controller;
-> > +            #interrupt-cells = <2>;
-> > +            interrupts = <RP1_INT_IO_BANK0 IRQ_TYPE_LEVEL_HIGH>,
-> > +                         <RP1_INT_IO_BANK1 IRQ_TYPE_LEVEL_HIGH>,
-> > +                         <RP1_INT_IO_BANK2 IRQ_TYPE_LEVEL_HIGH>;
-> > +            gpio-line-names =
-> > +                   "ID_SDA", // GPIO0
-> > +                   "ID_SCL", // GPIO1
-> > +                   "GPIO2", "GPIO3", "GPIO4", "GPIO5", "GPIO6",
-> > +                   "GPIO7", "GPIO8", "GPIO9", "GPIO10", "GPIO11",
-> > +                   "GPIO12", "GPIO13", "GPIO14", "GPIO15", "GPIO16",
-> > +                   "GPIO17", "GPIO18", "GPIO19", "GPIO20", "GPIO21",
-> > +                   "GPIO22", "GPIO23", "GPIO24", "GPIO25", "GPIO26",
-> > +                   "GPIO27",
-> > +                   "PCIE_RP1_WAKE", // GPIO28
-> > +                   "FAN_TACH", // GPIO29
-> > +                   "HOST_SDA", // GPIO30
-> > +                   "HOST_SCL", // GPIO31
-> > +                   "ETH_RST_N", // GPIO32
-> > +                   "", // GPIO33
-> > +                   "CD0_IO0_MICCLK", // GPIO34
-> > +                   "CD0_IO0_MICDAT0", // GPIO35
-> > +                   "RP1_PCIE_CLKREQ_N", // GPIO36
-> > +                   "", // GPIO37
-> > +                   "CD0_SDA", // GPIO38
-> > +                   "CD0_SCL", // GPIO39
-> > +                   "CD1_SDA", // GPIO40
-> > +                   "CD1_SCL", // GPIO41
-> > +                   "USB_VBUS_EN", // GPIO42
-> > +                   "USB_OC_N", // GPIO43
-> > +                   "RP1_STAT_LED", // GPIO44
-> > +                   "FAN_PWM", // GPIO45
-> > +                   "CD1_IO0_MICCLK", // GPIO46
-> > +                   "2712_WAKE", // GPIO47
-> > +                   "CD1_IO1_MICDAT1", // GPIO48
-> > +                   "EN_MAX_USB_CUR", // GPIO49
-> > +                   "", // GPIO50
-> > +                   "", // GPIO51
-> > +                   "", // GPIO52
-> > +                   ""; // GPIO53
-> > +
-> > +            rp1_uart0_14_15: rp1_uart0_14_15 {
-> > +                pin_txd {
-> > +                    function = "uart0";
-> > +                    pins = "gpio14";
-> > +                    bias-disable;
-> > +                };
-> > +
-> > +                pin_rxd {
-> > +                    function = "uart0";
-> > +                    pins = "gpio15";
-> > +                    bias-pull-up;
-> > +                };
-> > +            };
-> > +        };
-> > +    };
-> > diff --git a/MAINTAINERS b/MAINTAINERS
-> > index 6e7db9bce278..c5018232c251 100644
-> > --- a/MAINTAINERS
-> > +++ b/MAINTAINERS
-> > @@ -19120,7 +19120,9 @@ RASPBERRY PI RP1 PCI DRIVER
-> >  M:	Andrea della Porta <andrea.porta@suse.com>
-> >  S:	Maintained
-> >  F:	Documentation/devicetree/bindings/clock/raspberrypi,rp1-clocks.yaml
-> > +F:	Documentation/devicetree/bindings/pinctrl/raspberrypi,rp1-gpio.yaml
-> >  F:	include/dt-bindings/clock/rp1.h
-> > +F:	include/dt-bindings/misc/rp1.h
-> >  
-> >  RC-CORE / LIRC FRAMEWORK
-> >  M:	Sean Young <sean@mess.org>
-> > diff --git a/include/dt-bindings/misc/rp1.h b/include/dt-bindings/misc/rp1.h
-> 
-> Filename should base on the compatible.
-
-include/dt-bindings/misc/rp1.h is just a shared header currently included from:
-
-- arch/arm64/boot/dts/broadcom/rp1.dtso (use RP1_INT_IO_BANKx)
-- drivers/misc/rp1/rp1-pci.c		(use RP1_INT_END)
-- Documentation/devicetree/bindings/pinctrl/raspberrypi,rp1-gpio.yaml (use RP1_INT_IO_BANKx)
-
-and the driver it is logically bound to (misc/rp1-pci.c) has no compatible, since it is a
-PCI driver.
-If you consider feasible to drop those interrupt defines in yaml bindings (please, see below), 
-then I can just drop the entire header placing those defines inside rp1-pci.c, otherwise
-we should come up with a new filename. If this is the case, I kindly ask for a suggestion.
-
-> 
-> The same applies to clocks bindings.
-
-Ack.
-
-> 
-> > new file mode 100644
-> > index 000000000000..6dd5e23870c2
-> > --- /dev/null
-> > +++ b/include/dt-bindings/misc/rp1.h
-> > @@ -0,0 +1,235 @@
-> > +/* SPDX-License-Identifier: GPL-2.0 OR MIT */
-> > +/*
-> > + * This header provides constants for the PY MFD.
-> > + */
-> > +
-> > +#ifndef _RP1_H
-> > +#define _RP1_H
-> 
-> That's very poor header guard...
-
-Ack.
-
-> 
-> > +
-> > +/* Address map */
-> > +#define RP1_SYSINFO_BASE 0x000000
-> > +#define RP1_TBMAN_BASE 0x004000
-> 
-> Nope, addresses are not bindings. Drop entire header.
-
-I've dropped the address part.
-
-> 
-> 
-> > +#define RP1_SYSCFG_BASE 0x008000
-> > +#define RP1_OTP_BASE 0x00c000
-> > +#define RP1_POWER_BASE 0x010000
-> > +#define RP1_RESETS_BASE 0x014000
-> > +#define RP1_CLOCKS_BANK_DEFAULT_BASE 0x018000
-> > +#define RP1_CLOCKS_BANK_VIDEO_BASE 0x01c000
-> > +#define RP1_PLL_SYS_BASE 0x020000
-> > +#define RP1_PLL_AUDIO_BASE 0x024000
-> > +#define RP1_PLL_VIDEO_BASE 0x028000
-> > +#define RP1_UART0_BASE 0x030000
-> > +#define RP1_UART1_BASE 0x034000
-> > +#define RP1_UART2_BASE 0x038000
-> > +#define RP1_UART3_BASE 0x03c000
-> > +#define RP1_UART4_BASE 0x040000
-> > +#define RP1_UART5_BASE 0x044000
-> > +#define RP1_SPI8_BASE 0x04c000
-> > +#define RP1_SPI0_BASE 0x050000
-> > +#define RP1_SPI1_BASE 0x054000
-> > +#define RP1_SPI2_BASE 0x058000
-> > +#define RP1_SPI3_BASE 0x05c000
-> > +#define RP1_SPI4_BASE 0x060000
-> > +#define RP1_SPI5_BASE 0x064000
-> > +#define RP1_SPI6_BASE 0x068000
-> > +#define RP1_SPI7_BASE 0x06c000
-> > +#define RP1_I2C0_BASE 0x070000
-> > +#define RP1_I2C1_BASE 0x074000
-> > +#define RP1_I2C2_BASE 0x078000
-> > +#define RP1_I2C3_BASE 0x07c000
-> > +#define RP1_I2C4_BASE 0x080000
-> > +#define RP1_I2C5_BASE 0x084000
-> > +#define RP1_I2C6_BASE 0x088000
-> > +#define RP1_AUDIO_IN_BASE 0x090000
-> > +#define RP1_AUDIO_OUT_BASE 0x094000
-> > +#define RP1_PWM0_BASE 0x098000
-> > +#define RP1_PWM1_BASE 0x09c000
-> > +#define RP1_I2S0_BASE 0x0a0000
-> > +#define RP1_I2S1_BASE 0x0a4000
-> > +#define RP1_I2S2_BASE 0x0a8000
-> > +#define RP1_TIMER_BASE 0x0ac000
-> > +#define RP1_SDIO0_APBS_BASE 0x0b0000
-> > +#define RP1_SDIO1_APBS_BASE 0x0b4000
-> > +#define RP1_BUSFABRIC_MONITOR_BASE 0x0c0000
-> > +#define RP1_BUSFABRIC_AXISHIM_BASE 0x0c4000
-> > +#define RP1_ADC_BASE 0x0c8000
-> > +#define RP1_IO_BANK0_BASE 0x0d0000
-> > +#define RP1_IO_BANK1_BASE 0x0d4000
-> > +#define RP1_IO_BANK2_BASE 0x0d8000
-> > +#define RP1_SYS_RIO0_BASE 0x0e0000
-> > +#define RP1_SYS_RIO1_BASE 0x0e4000
-> > +#define RP1_SYS_RIO2_BASE 0x0e8000
-> > +#define RP1_PADS_BANK0_BASE 0x0f0000
-> > +#define RP1_PADS_BANK1_BASE 0x0f4000
-> > +#define RP1_PADS_BANK2_BASE 0x0f8000
-> > +#define RP1_PADS_ETH_BASE 0x0fc000
-> > +#define RP1_ETH_IP_BASE 0x100000
-> > +#define RP1_ETH_CFG_BASE 0x104000
-> > +#define RP1_PCIE_APBS_BASE 0x108000
-> > +#define RP1_MIPI0_CSIDMA_BASE 0x110000
-> > +#define RP1_MIPI0_CSIHOST_BASE 0x114000
-> > +#define RP1_MIPI0_DSIDMA_BASE 0x118000
-> > +#define RP1_MIPI0_DSIHOST_BASE 0x11c000
-> > +#define RP1_MIPI0_MIPICFG_BASE 0x120000
-> > +#define RP1_MIPI0_ISP_BASE 0x124000
-> > +#define RP1_MIPI1_CSIDMA_BASE 0x128000
-> > +#define RP1_MIPI1_CSIHOST_BASE 0x12c000
-> > +#define RP1_MIPI1_DSIDMA_BASE 0x130000
-> > +#define RP1_MIPI1_DSIHOST_BASE 0x134000
-> > +#define RP1_MIPI1_MIPICFG_BASE 0x138000
-> > +#define RP1_MIPI1_ISP_BASE 0x13c000
-> > +#define RP1_VIDEO_OUT_CFG_BASE 0x140000
-> > +#define RP1_VIDEO_OUT_VEC_BASE 0x144000
-> > +#define RP1_VIDEO_OUT_DPI_BASE 0x148000
-> > +#define RP1_XOSC_BASE 0x150000
-> > +#define RP1_WATCHDOG_BASE 0x154000
-> > +#define RP1_DMA_TICK_BASE 0x158000
-> > +#define RP1_SDIO_CLOCKS_BASE 0x15c000
-> > +#define RP1_USBHOST0_APBS_BASE 0x160000
-> > +#define RP1_USBHOST1_APBS_BASE 0x164000
-> > +#define RP1_ROSC0_BASE 0x168000
-> > +#define RP1_ROSC1_BASE 0x16c000
-> > +#define RP1_VBUSCTRL_BASE 0x170000
-> > +#define RP1_TICKS_BASE 0x174000
-> > +#define RP1_PIO_APBS_BASE 0x178000
-> > +#define RP1_SDIO0_AHBLS_BASE 0x180000
-> > +#define RP1_SDIO1_AHBLS_BASE 0x184000
-> > +#define RP1_DMA_BASE 0x188000
-> > +#define RP1_RAM_BASE 0x1c0000
-> > +#define RP1_RAM_SIZE 0x020000
-> > +#define RP1_USBHOST0_AXIS_BASE 0x200000
-> > +#define RP1_USBHOST1_AXIS_BASE 0x300000
-> > +#define RP1_EXAC_BASE 0x400000
-> > +
-> > +/* Interrupts */
-> > +
-> > +#define RP1_INT_IO_BANK0 0
-> > +#define RP1_INT_IO_BANK1 1
-> 
-> Also no, interrupt numbers are not considered bindings. That's too much
-> churn. Otherwise, please point me to driver code using the define
-> (directly! that's the requirement).
-
-As mentioned above, RP1_INT_END is used in rp1-pci.c. To get rid of all those
-macroes from dt-binding would mean to hardcode the interrupt number in both
-the binding example and in dtso, from this:
-
-interrupts = <RP1_INT_IO_BANK0 IRQ_TYPE_LEVEL_HIGH>,
-             <RP1_INT_IO_BANK1 IRQ_TYPE_LEVEL_HIGH>,
-             <RP1_INT_IO_BANK2 IRQ_TYPE_LEVEL_HIGH>;
-
-to this:
-
-interrupts = <0 IRQ_TYPE_LEVEL_HIGH>,
-	     <1 IRQ_TYPE_LEVEL_HIGH>,
-             <2 IRQ_TYPE_LEVEL_HIGH>;
-
-is this what you are proposing?
-
-Many thanks,
-Andrea
-
-> 
-> Best regards,
-> Krzysztof
-> 
+> Helge
 
