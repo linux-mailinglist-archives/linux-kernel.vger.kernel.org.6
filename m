@@ -1,110 +1,106 @@
-Return-Path: <linux-kernel+bounces-309210-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309211-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF47096678C
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 19:02:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 294CB96678D
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 19:02:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D20D2871EA
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 17:02:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C83A11F24E2A
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 17:02:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C2A81B1D7F;
-	Fri, 30 Aug 2024 17:02:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nMGa6pOX"
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D4381509AE
-	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 17:02:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD6641B3B2D;
+	Fri, 30 Aug 2024 17:02:41 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 745B64B5AE
+	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 17:02:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725037332; cv=none; b=plQGY53Vch70ideqfVugTXR8/k0NmfK60o6Xfa3kZ2+WBgAAjh61Fi6rR6ucx847k6amh7u7dgkKFQZ9nJ/UbDGqUsLq9a7bkVFDQGdkj87lYGOzZVaL709pvgqospi9SZHJ//eY4S+LxRiX+BJ0juoAnlIGS1fpGU+W0uLrOpU=
+	t=1725037361; cv=none; b=InMfhq0EEQ2lv8mEVbCvYIT1syiGsiATIEBnhoF5fJ4866QoZuLZmWhkt2bW3oQuY9vmHhq5u2dIggxTvQ8X1EX/GALDR+dspiqpXEKZMKtkUlAdbwVtQICMv1jp7eG3nBfCL4JGPjBniELB4sftihbWL6tuswLo6Ej6rFeulPU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725037332; c=relaxed/simple;
-	bh=cOPcs/v+mLMBRmxNu9CzpJ+lMs1XQcL+pB+B63ErAyY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=A1eueb1vyHGFEVtwzmkU4qAPFvBtB/BeRzPzKHcMIbvQaiFF0guY5YkD69GyroKQY+ZAryJZfD4hO/N/ugOC7kubCWGOhpLxSvY+9bCTNYrw8mj0axDSseuZbSSHMFmC2ClYXZfuMqgKcKmwOLbwLs4camoWKsXwQsvJtlO7tFU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=nMGa6pOX; arc=none smtp.client-ip=209.85.208.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2f3e071eb64so27541691fa.1
-        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 10:02:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1725037327; x=1725642127; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=iy1KwRpNUGkj+C8RUHgjHvQd7fkZ5xQBFwgIdNo1D+c=;
-        b=nMGa6pOXx6mj4VCgMxABIGT9uPQZOPZsYAQnUV1Td/3+PGD5iotu9lPEl4Qem+HhZM
-         laar19XxuXGsDj1+ibRqWHw2l3jBlP4+mKip3N5J14bj38tRPM/5S9izklBIebPQ7h/m
-         2XGrbTI+bze4DaKBLkZdiDwYgVDlEQyTZ1LzL6Irqo8p+IM8aIj8/Y5zqTZYP4G9VP1l
-         RuLojMdciZEiqcJf74SgZHaArMuK54aw9jZXBoBpkBG3J+/dJXluN5ELiK4wVr+8w/l7
-         uN8IWIY2/7DrvdNZ9ophT/qGpq1pUznPvexJLuvHglVNp0GVsTgbk27Yc0tkKjpwVLfr
-         HeQw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725037327; x=1725642127;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=iy1KwRpNUGkj+C8RUHgjHvQd7fkZ5xQBFwgIdNo1D+c=;
-        b=a90l7mpGc1D9bPKbG0kIHd7l8UMOUjf1NkBdX+g2lZZT9YyB6BDqMqaqf92ejRiJLu
-         JWi2RUjQA7nA0kp4dEICO5i4Fw5FQ0DhrD3SXLqsayHIEDHgw/UGVKLYIKLM7lDyo43F
-         Ggo0JChtyhlG2z/1BepkynsbORUtX9q/+XMiqMhkxJORoilieRRWXEmf8ne/3vbCVVDx
-         YSIESyRuqik7V9mx9LvfTb45+3P4FnkbP0vqKEJadJfxo3d0g3bzTI4yH2lXYJDB3mk7
-         Mmsvb+FpW/QX3wM9N6E5cj30dq8jYjb6Bk+ytgbLYy85s3jFqhPvtAki4AWlEAykfvLk
-         2fAg==
-X-Forwarded-Encrypted: i=1; AJvYcCUhSXg5Yxcm90klCt47GyPghVN0O4H9Yvg8XZKAEvufsuvYNlZW1VlLjne661TY3SspEGHgtvC54At0zfA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyYHvx+TduG6OrMkJJ+OALZGjSX7DIewARa+idhpk+wdBHfjuLe
-	I0TWJOJqLkN+Q5IHDLDmkLRCVrMeA33J4vTm/aG9LJ4W6/dpjHBj8aXdtd5sBR8=
-X-Google-Smtp-Source: AGHT+IEPQ7h9WzerpnvpweqQa77Ds37RhEPya9x8ww4BvxZHsuGYMg+Xslva2ggdf/iA2e994Xil0Q==
-X-Received: by 2002:a2e:4611:0:b0:2ef:22a6:d90d with SMTP id 38308e7fff4ca-2f6108aef13mr51280371fa.47.1725037326455;
-        Fri, 30 Aug 2024 10:02:06 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2f615171e9esm7432711fa.77.2024.08.30.10.02.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 30 Aug 2024 10:02:06 -0700 (PDT)
-Date: Fri, 30 Aug 2024 20:02:04 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Jessica Zhang <quic_jesszhan@quicinc.com>
-Cc: Rob Clark <robdclark@gmail.com>, quic_abhinavk@quicinc.com, 
-	Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>, 
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, quic_ebharadw@quicinc.com, linux-arm-msm@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	Rob Clark <robdclark@chromium.org>
-Subject: Re: [PATCH 09/21] drm/msm/dpu: add devcoredumps for cwb registers
-Message-ID: <ur3mio35j4pgjuykbh4tyqroherz4oh6qnaw2jm4oq5ecj5yic@bhvdr7xtnelb>
-References: <20240829-concurrent-wb-v1-0-502b16ae2ebb@quicinc.com>
- <20240829-concurrent-wb-v1-9-502b16ae2ebb@quicinc.com>
+	s=arc-20240116; t=1725037361; c=relaxed/simple;
+	bh=Nj/aMAhItkBEFA253aJJn+6DPehCDcVHyJfTY5N7N78=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YBmjyhJ8PNeU26lXO9FYfX0fUTjVp1fbfAcfYkOPomxf5JcnLYF6TL+s0BlpJeIVu7VrQaTXK1/Wm7rbSOYGr86yodRnfBuodkfDsM4Tm8hw+5Fc9rLwiadljMbU06f1qZQgG07gDqR83HL1Ji7JBzeGEm8TDqCIK+npxzG6Y94=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D6F701063;
+	Fri, 30 Aug 2024 10:03:04 -0700 (PDT)
+Received: from [10.1.196.40] (e121345-lin.cambridge.arm.com [10.1.196.40])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 188D13F66E;
+	Fri, 30 Aug 2024 10:02:36 -0700 (PDT)
+Message-ID: <19c91b5f-e615-4198-b9e3-d0d00084d139@arm.com>
+Date: Fri, 30 Aug 2024 18:02:35 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240829-concurrent-wb-v1-9-502b16ae2ebb@quicinc.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 1/2] iommu/arm-smmu-v3: Match Stall behaviour for S2
+To: Nicolin Chen <nicolinc@nvidia.com>, Mostafa Saleh <smostafa@google.com>
+Cc: linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, will@kernel.org, joro@8bytes.org,
+ jean-philippe@linaro.org, jgg@ziepe.ca, mshavit@google.com
+References: <20240830110349.797399-1-smostafa@google.com>
+ <20240830110349.797399-2-smostafa@google.com>
+ <ZtHznQwkJmugKef2@Asurada-Nvidia>
+From: Robin Murphy <robin.murphy@arm.com>
+Content-Language: en-GB
+In-Reply-To: <ZtHznQwkJmugKef2@Asurada-Nvidia>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Thu, Aug 29, 2024 at 01:48:30PM GMT, Jessica Zhang wrote:
-> From: Esha Bharadwaj <quic_ebharadw@quicinc.com>
+On 30/08/2024 5:30 pm, Nicolin Chen wrote:
+> On Fri, Aug 30, 2024 at 11:03:47AM +0000, Mostafa Saleh wrote:
+>   
+>> According to the spec (ARM IHI 0070 F.b), in
+>> "5.5 Fault configuration (A, R, S bits)":
+>>      A STE with stage 2 translation enabled and STE.S2S == 0 is
+>>      considered ILLEGAL if SMMU_IDR0.STALL_MODEL == 0b10.
+>>
+>> Also described in the pseudocode “SteIllegal()”
+>>      if STE.Config == '11x' then
+>>          [..]
+>>          if eff_idr0_stall_model == '10' && STE.S2S == '0' then
+>>              // stall_model forcing stall, but S2S == 0
+>>              return TRUE;
+>>
+>> Which means, S2S must be set when stall model is
+>> "ARM_SMMU_FEAT_STALL_FORCE", but currently the driver ignores that.
+>>
+>> Although, the driver can do the minimum and only set S2S for
+>> “ARM_SMMU_FEAT_STALL_FORCE”, it is more consistent to match S1
+>> behaviour, which also sets it for “ARM_SMMU_FEAT_STALL” if the
+>> master has requested stalls.
 > 
-> Implement instance of snapshot function to dump new registers used
-> for cwb
+> If I read the SteIllegal() correctly, it seems S2S would conflict
+> against the STE.EATS settings?
 > 
-> Signed-off-by: Esha Bharadwaj <quic_ebharadw@quicinc.com>
-> Signed-off-by: Jessica Zhang <quic_jesszhan@quicinc.com>
-> ---
->  drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c | 5 +++++
->  1 file changed, 5 insertions(+)
-> 
+> // Check ATS configuration
+> if ((sec_sid == SS_NonSecure && SMMU_IDR0.ATS == '1') ||
+>      (sec_sid == SS_Realm && SMMU_R_IDR0.ATS == '1')) &&
+>      STE.Config != 'x00' then
+>      // Needs to be NS/Realm, ATS enabled, and not Bypass
+>          if STE.EATS == '01' && STE.S2S == '1' then
+>              // Full ATS mode
+>              if STE.Config == '11x' || constr_unpred_EATS_S2S then
+>                  // if stage 2 enabled or CONSTRAINED UNPREDICTABLE for SMMUv3.0
+>                  return TRUE;
+> 	
+> So, if master->stall_enabled and master->ats_enabled, there would
+> be a bad STE?
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Indeed, but as discussed previously, to get there would require either 
+firmware or hardware to bogusly advertise both stall and ATS 
+capabilities for the same device, which we decided is beyond the scope 
+of what's worth trying to reason about. If a nonsensical system leads to 
+obviously blowing up with C_BAD_STE, that's arguably not such a bad thing.
 
--- 
-With best wishes
-Dmitry
+Thanks,
+Robin.
 
