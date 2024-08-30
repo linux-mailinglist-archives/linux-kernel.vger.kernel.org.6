@@ -1,170 +1,91 @@
-Return-Path: <linux-kernel+bounces-308646-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308645-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC393965FE4
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 13:03:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5461D965FE2
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 13:02:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4737F28057B
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 11:03:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8699D1C22981
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 11:02:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 254A219994A;
-	Fri, 30 Aug 2024 11:01:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD6C81946C4;
+	Fri, 30 Aug 2024 11:01:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="h3M9Pqci"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R1vVcUTP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E68B19992E;
-	Fri, 30 Aug 2024 11:01:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D46E3190671;
+	Fri, 30 Aug 2024 11:01:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725015704; cv=none; b=QPZsSY7NVYpDQMoQqgi9f3xGEeZaotJzzsr2uCxG09NrsJ7abZDBSExi2lRUszZnuY8R2tN3MFlMrXsPgA9ZJYVK2R/YCwYHk/KHYfMEUW5L1KM2nGkEm7x99JkLrE2WVeA3Z/hr3dX/CkefcQ+hj3yOypikZR7WjNoY3CQ8Xd0=
+	t=1725015694; cv=none; b=EfJPRXQAHQ6otj2KNCrMoHG1GBaZgsiqzn/nrI0xolxoninTggGo8pKHvktoROC7wGsbAzJLiLkRz8ZhM4uplUyHyt+eElVHQP5FYzoUy87iePylUn2oebMplPkLLZUjdOejbD3xt5CYmNWbfYgk9m2YmBJ7DeeqXK1/Jfjd3+g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725015704; c=relaxed/simple;
-	bh=GP9Bk2oV4XilDa9FmBZHZQPmp/feHl1DYZ3IzxwovvQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=T1Ji/qKZhWpw2hXuTDbA95p+qsWrzh3KDz43xqQh76B4TzTIfZw0jZXw/7jmy3UWT97zpgDCKXa/vn6DlV32IBxpoTatDu98NObd/f84zgp52DCPvNfnEoruKWO0+W5a5d5cSI+mYtfcyEd0IOg+p34EiDJi/NQ5sI8tjzWZrYo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=h3M9Pqci; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725015702; x=1756551702;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=GP9Bk2oV4XilDa9FmBZHZQPmp/feHl1DYZ3IzxwovvQ=;
-  b=h3M9PqcizyWIk3XHa+UpMVDJ/r5ts7EMKLtApPTmd8os9dAagdXHIyEV
-   BZpPLc7txxYeTDNmyOmjf+XFtaupdcPgMyM24F9XsAEizWGGGgDwpOH5u
-   5l1H5lLDPdDdxcjN/LgalW0K97er/INR6vrclhj2GnphuH3nV89saj8UF
-   VWHuilZqLVWlh/XD0e4V/XOMbyOudg/KBjx7VqHM8a6Gv3AaZu3GjJxxf
-   HXMn52/61J6fC7FyQH75vcGjnAUCJlQjKSzdLkHYo0kqYx3pBO34oOhyr
-   ZBZgrNikx0kDLQA8216D6QnUlL0z4OXBYNoXRh7fzUGd0VB3fVDbC2T1j
-   A==;
-X-CSE-ConnectionGUID: YYKiBSRaRgiyy+FcisC1Iw==
-X-CSE-MsgGUID: 4eFB6s0aQ5ebtaVoGkiClg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11179"; a="23809204"
-X-IronPort-AV: E=Sophos;i="6.10,188,1719903600"; 
-   d="scan'208";a="23809204"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Aug 2024 04:01:40 -0700
-X-CSE-ConnectionGUID: +pYUoDjfTP6NqLBSGEA+iw==
-X-CSE-MsgGUID: c6+ZF1wSS5i6x/56jQdC8Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,188,1719903600"; 
-   d="scan'208";a="63492989"
-Received: from ahunter6-mobl1.ger.corp.intel.com (HELO [10.0.2.15]) ([10.245.96.163])
-  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Aug 2024 04:01:34 -0700
-Message-ID: <0a1a860f-cb46-426e-b586-f33d38b2c912@intel.com>
-Date: Fri, 30 Aug 2024 14:01:28 +0300
+	s=arc-20240116; t=1725015694; c=relaxed/simple;
+	bh=yaJeRuRQQyP3DjjG5GehxvL4FJ/rh3ymGrsYnYVWGWc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HKhp2Yg8S3/khR/vktAgI6byVhANYQKjbPYm/h4b247IylKP6oEOdXsjI8tRPSoUsaODSaiEVGwIbTTRpPbXOp9HDtP0m8SNU3lENJm8RHFzh7v+geK2yrY6QWIYEM9GQsTII2XgbIhwIqydKppmxysyb2CUKCWbkJvNrA2h37g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R1vVcUTP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08586C4CEC2;
+	Fri, 30 Aug 2024 11:01:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725015694;
+	bh=yaJeRuRQQyP3DjjG5GehxvL4FJ/rh3ymGrsYnYVWGWc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=R1vVcUTPNlaGZHDGvi2Nt85L2PWpInQ4x7SCqtbYI8QXiJIiGSB0NTqfd86BDtpRK
+	 ytCRgtIjNZQz4SjhimshFoVSoS+xP1I6aH1wmFX7WUpL78vaE4dEdr5viiGYgjYXTz
+	 XOwM6VfshXyman8p+I9Y5yecMdCGl4yIhkIZC+BhP6F0wPw6TjSLnFaKh/Ox/WFDkh
+	 FE4HIfgWGVZxEeSrro0sY/JDmpWO8xNttg5H8Sd3OGyJFLW+bYu0U0AkSqipbtxOPp
+	 qhuGoaxk+WYdRbog0Fa/YAqXBybSjTJoNPhw7r1FW+8Nhw1EfOO1xnwHPVIn2/09so
+	 azX6KHQq0x6LQ==
+Date: Fri, 30 Aug 2024 13:01:29 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Michal Hocko <mhocko@suse.com>
+Cc: Hannes Reinecke <hare@suse.de>, Jan Kara <jack@suse.cz>, 
+	linux-fsdevel@vger.kernel.org, linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Song Liu <song@kernel.org>, Yu Kuai <yukuai3@huawei.com>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>
+Subject: Re: [PATCH] fs: drop GFP_NOFAIL mode from alloc_page_buffers
+Message-ID: <20240830-formel-abklopfen-fa1249f5904d@brauner>
+References: <20240829130640.1397970-1-mhocko@kernel.org>
+ <20240829191746.tsrojxj3kntt4jhp@quack3>
+ <4dfed593-5b0c-4565-a6dd-108f1b1fe961@suse.de>
+ <ZtGTEOEgf4XuUu7F@tiehlicka>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 8/8] x86/virt/tdx: Don't initialize module that doesn't
- support NO_RBP_MOD feature
-To: Kai Huang <kai.huang@intel.com>, dave.hansen@intel.com,
- kirill.shutemov@linux.intel.com, tglx@linutronix.de, bp@alien8.de,
- peterz@infradead.org, mingo@redhat.com, hpa@zytor.com,
- dan.j.williams@intel.com, seanjc@google.com, pbonzini@redhat.com
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
- rick.p.edgecombe@intel.com, isaku.yamahata@intel.com, chao.gao@intel.com,
- binbin.wu@linux.intel.com
-References: <cover.1724741926.git.kai.huang@intel.com>
- <0996e2f1b3e5c72150708b10bff57ad726c69e4b.1724741926.git.kai.huang@intel.com>
-Content-Language: en-US
-From: Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-In-Reply-To: <0996e2f1b3e5c72150708b10bff57ad726c69e4b.1724741926.git.kai.huang@intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <ZtGTEOEgf4XuUu7F@tiehlicka>
 
-On 27/08/24 10:14, Kai Huang wrote:
-> Old TDX modules can clobber RBP in the TDH.VP.ENTER SEAMCALL.  However
-> RBP is used as frame pointer in the x86_64 calling convention, and
-> clobbering RBP could result in bad things like being unable to unwind
-> the stack if any non-maskable exceptions (NMI, #MC etc) happens in that
-> gap.
+On Fri, Aug 30, 2024 at 11:38:24AM GMT, Michal Hocko wrote:
+> On Fri 30-08-24 08:11:00, Hannes Reinecke wrote:
+> > On 8/29/24 21:17, Jan Kara wrote:
+> > > On Thu 29-08-24 15:06:40, Michal Hocko wrote:
+> > > > From: Michal Hocko <mhocko@suse.com>
+> > > > 
+> > > > There is only one called of alloc_page_buffers and it doesn't require
+> > > > __GFP_NOFAIL so drop this allocation mode.
+> > > > 
+> > > > Signed-off-by: Michal Hocko <mhocko@suse.com>
+> > > 
+> > > Looks good. Feel free to add:
+> > > 
+> > > Reviewed-by: Jan Kara <jack@suse.cz>
+> > > 
+> > > Although even better fix would be to convert the last remaining caller of
+> > > alloc_page_buffers() to folio_alloc_buffers()... But that may be more
+> > > difficult.
+> > > 
+> > Already done by Pankajs large-block patchset, currently staged in vfs.git.
 > 
-> A new "NO_RBP_MOD" feature was introduced to more recent TDX modules to
-> not clobber RBP.  This feature is reported in the TDX_FEATURES0 global
-> metadata field via bit 18.
-> 
-> Don't initialize the TDX module if this feature is not supported [1].
-> 
-> Link: https://lore.kernel.org/all/c0067319-2653-4cbd-8fee-1ccf21b1e646@suse.com/T/#mef98469c51e2382ead2c537ea189752360bd2bef [1]
-> Signed-off-by: Kai Huang <kai.huang@intel.com>
-> Reviewed-by: Nikolay Borisov <nik.borisov@suse.com>
+> Which branch should I be looking at?
 
-Reviewed-by: Adrian Hunter <adrian.hunter@intel.com>
-
-> ---
-> 
-> v2 -> v3:
->  - check_module_compatibility() -> check_features().
->  - Improve error message.
-> 
->  https://lore.kernel.org/kvm/cover.1721186590.git.kai.huang@intel.com/T/#md9e2eeef927838cbf20d7b361cdbea518b8aec50
-> 
-> ---
->  arch/x86/virt/vmx/tdx/tdx.c | 17 +++++++++++++++++
->  arch/x86/virt/vmx/tdx/tdx.h |  3 +++
->  2 files changed, 20 insertions(+)
-> 
-> diff --git a/arch/x86/virt/vmx/tdx/tdx.c b/arch/x86/virt/vmx/tdx/tdx.c
-> index fa335ab1ae92..032a53ddf5bc 100644
-> --- a/arch/x86/virt/vmx/tdx/tdx.c
-> +++ b/arch/x86/virt/vmx/tdx/tdx.c
-> @@ -454,6 +454,18 @@ static int get_tdx_sys_info(struct tdx_sys_info *sysinfo)
->  	return get_tdx_sys_info_tdmr(&sysinfo->tdmr);
->  }
->  
-> +static int check_features(struct tdx_sys_info *sysinfo)
-> +{
-> +	u64 tdx_features0 = sysinfo->features.tdx_features0;
-> +
-> +	if (!(tdx_features0 & TDX_FEATURES0_NO_RBP_MOD)) {
-> +		pr_err("frame pointer (RBP) clobber bug present, upgrade TDX module\n");
-> +		return -EINVAL;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
->  /* Calculate the actual TDMR size */
->  static int tdmr_size_single(u16 max_reserved_per_tdmr)
->  {
-> @@ -1235,6 +1247,11 @@ static int init_tdx_module(void)
->  
->  	print_basic_sys_info(&sysinfo);
->  
-> +	/* Check whether the kernel can support this module */
-> +	ret = check_features(&sysinfo);
-> +	if (ret)
-> +		return ret;
-> +
->  	/*
->  	 * To keep things simple, assume that all TDX-protected memory
->  	 * will come from the page allocator.  Make sure all pages in the
-> diff --git a/arch/x86/virt/vmx/tdx/tdx.h b/arch/x86/virt/vmx/tdx/tdx.h
-> index e7bed9e717c7..831361e6d0fb 100644
-> --- a/arch/x86/virt/vmx/tdx/tdx.h
-> +++ b/arch/x86/virt/vmx/tdx/tdx.h
-> @@ -154,6 +154,9 @@ struct tdx_sys_info_features {
->  	u64 tdx_features0;
->  };
->  
-> +/* Architectural bit definitions of TDX_FEATURES0 metadata field */
-> +#define TDX_FEATURES0_NO_RBP_MOD	_BITULL(18)
-> +
->  /* Class "TDX Module Version" */
->  struct tdx_sys_info_version {
->  	u16 major;
-
+Hi Michal, Hannes should be referring to:
+https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git/log/?h=vfs.blocksize
 
