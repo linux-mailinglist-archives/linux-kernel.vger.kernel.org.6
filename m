@@ -1,58 +1,76 @@
-Return-Path: <linux-kernel+bounces-308667-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308668-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A729C966008
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 13:08:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 566B296600B
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 13:09:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5CB6F1F21249
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 11:08:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE0CB284E90
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 11:09:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5615219341A;
-	Fri, 30 Aug 2024 11:05:04 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7925F19993D;
+	Fri, 30 Aug 2024 11:05:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Ya4vmu2O"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 093CD192D87
-	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 11:05:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60DFA19645C
+	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 11:05:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725015903; cv=none; b=uvh+7UikXec3SHcPL5ptkLl52GmSk4Os6d7DHTvGXGwkG1GwJp81F0GwU7W7uuER4/KiOYdP139Ta6RU+/5HHG/n+3RX++o0cjh1GVxXsWXN9GbA3ABcgVmnf92wo3AP0+wtUO1Ww689954HhYX05YrjVBtBU//DBr87/JyutHM=
+	t=1725015918; cv=none; b=YPgEhbLYv1Jz+NFOf9rYGoLkrj+jSu6L8AuNyFgRdpTP9fMNZIjFetEDbYOGFmX7J303/RzOQXzWyOE2vhCorBt0eKGaxup5X9v1SUl6hK/ch0UaCIubyz50MXophPEvtNwNMWGJcghLkPtbhQiIx+Df/rUIP2KEvfpPiX34MD4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725015903; c=relaxed/simple;
-	bh=NvlbOxagaUp01IxQe/8/RbsnWCG24uO+K/jvP3nHa5U=;
+	s=arc-20240116; t=1725015918; c=relaxed/simple;
+	bh=kOIpmlYJb8ft6Y2rN58XGcZtgztFV91lYJqhTSPV0c0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=S4a7nQSR17rU8CyrgyovnA+O/7kKdL6DM8cgGMbXbK8bI4qn7XG3NLjacx7EFarCYgyHOPLQheZ/ijbDaastQIJngD31C3kFRSnDe5d5ab+y3FhFRqPfKUfUVLLHyQIevlCDsPy5wWMYzrmdUCH8qCV2QXJ8xFOXS21w4SafNHQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <sha@pengutronix.de>)
-	id 1sjzR2-0003bx-Nj; Fri, 30 Aug 2024 13:04:56 +0200
-Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <sha@pengutronix.de>)
-	id 1sjzR2-0048HW-6c; Fri, 30 Aug 2024 13:04:56 +0200
-Received: from sha by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <sha@pengutronix.de>)
-	id 1sjzR2-00ETpy-0K;
-	Fri, 30 Aug 2024 13:04:56 +0200
-Date: Fri, 30 Aug 2024 13:04:56 +0200
-From: Sascha Hauer <s.hauer@pengutronix.de>
-To: Kalle Valo <kvalo@kernel.org>
-Cc: Brian Norris <briannorris@chromium.org>,
-	Francesco Dolcini <francesco@dolcini.it>,
-	linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH] wifi: mwifiex: Ensure all STA and AP use the same channel
-Message-ID: <ZtGnWC7SPHt7Vbbp@pengutronix.de>
-References: <20240830-mwifiex-check-channel-v1-1-b04e075c9184@pengutronix.de>
- <8734mmuyq9.fsf@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=VN2puHB5zeUCJtSzr1TRtg3r7iRbXAb/2bI7PcHgFVIfLbd6etv+xFlM+nDyfGu1beMYy5177vh9kMwiXEgh0RkpG/PlRjKudZgnEqKwTrfZ/4/xzOg9uOv/OBgSDAA5xkx3KxIFDvhc8Q1p/ibIa0KtpBAoA5lYM5q1HbLcUgQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Ya4vmu2O; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1725015916;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=l0tSha6adNMlOrHuzQyVeK84z60qmOVbtCpMu1nyGv4=;
+	b=Ya4vmu2O4FL8mAnPAY6QfAi4k0kG7tVEdqukb56MDW+gCYPZxF/Oaxw8PMaCOmKfhRaj13
+	+lqLPW0HS4OIm8WOyOEh5GY3XtxzQKL5krNBsx/8TG462x1S6xqFcXzLr5PEjvDsGn2u3s
+	x1JK9MxGrhx+JiMcDrE6ltqee4dKNXg=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-263-tzY--79qN_6mAMQY2I00NQ-1; Fri,
+ 30 Aug 2024 07:05:13 -0400
+X-MC-Unique: tzY--79qN_6mAMQY2I00NQ-1
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 841861955D54;
+	Fri, 30 Aug 2024 11:05:11 +0000 (UTC)
+Received: from sirius.home.kraxel.org (unknown [10.39.193.45])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id D418B19560A3;
+	Fri, 30 Aug 2024 11:05:10 +0000 (UTC)
+Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
+	id B3E191800D40; Fri, 30 Aug 2024 13:05:08 +0200 (CEST)
+Date: Fri, 30 Aug 2024 13:05:08 +0200
+From: Gerd Hoffmann <kraxel@redhat.com>
+To: Vitaly Kuznetsov <vkuznets@redhat.com>
+Cc: Sean Christopherson <seanjc@google.com>, 
+	Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, rcu@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Kevin Tian <kevin.tian@intel.com>, 
+	Yan Zhao <yan.y.zhao@intel.com>, Yiwei Zhang <zzyiwei@google.com>, 
+	Lai Jiangshan <jiangshanlai@gmail.com>, "Paul E. McKenney" <paulmck@kernel.org>, 
+	Josh Triplett <josh@joshtriplett.org>
+Subject: Re: [PATCH 5/5] KVM: VMX: Always honor guest PAT on CPUs that
+ support self-snoop
+Message-ID: <vuwlkftomgsnzsywjyxw6rcnycg3bve3o53svvxg3vd6xpok7o@k4ktmx5tqtmz>
+References: <20240309010929.1403984-1-seanjc@google.com>
+ <20240309010929.1403984-6-seanjc@google.com>
+ <877cbyuzdn.fsf@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,63 +79,37 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <8734mmuyq9.fsf@kernel.org>
-X-Sent-From: Pengutronix Hildesheim
-X-URL: http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: sha@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+In-Reply-To: <877cbyuzdn.fsf@redhat.com>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-On Fri, Aug 30, 2024 at 12:49:34PM +0300, Kalle Valo wrote:
-> Sascha Hauer <s.hauer@pengutronix.de> writes:
+> Necroposting!
 > 
-> > The mwifiex chips support simultaneous Accesspoint and station mode,
-> > but this only works when all are using the same channel. The downstream
-> > driver uses ECSA which makes the Accesspoint automatically switch to the
-> > channel the station is going to use.  Until this is implemented in the
-> > mwifiex driver at least catch this situation and bail out with an error.
-> > Userspace doesn't have a meaningful way to figure out what went wrong,
-> > so print an error message to give the user a clue.
-> >
-> > Without this patch the driver would timeout on the
-> > HostCmd_CMD_802_11_ASSOCIATE command when creating a station with a
-> > channel different from the one that an existing accesspoint uses.
-> >
-> > Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
-> > Cc: stable@vger.kernel.org
-> 
-> Does this mean that iface combination definitions are wrong? For example:
-> 
-> static const struct
-> ieee80211_iface_combination mwifiex_iface_comb_ap_sta_drcs = {
-> 	.limits = mwifiex_ap_sta_limits,
-> 	.num_different_channels = 2,
-> 	.n_limits = ARRAY_SIZE(mwifiex_ap_sta_limits),
-> 	.max_interfaces = MWIFIEX_MAX_BSS_NUM,
-> 	.beacon_int_infra_match = true,
-> };
+> Turns out that this change broke "bochs-display" driver in QEMU even
+> when the guest is modern (don't ask me 'who the hell uses bochs for
+> modern guests', it was basically a configuration error :-). E.g:
 
-I wasn't aware of DRCS as it's disabled by default in the mwifiex
-driver. From a quick test I can say that indeed with DRCS two channels
-are supported. It seems we have to relax the same channel enforcement
-when DRCS is enabled.
+qemu stdvga (the default display device) is affected too.
 
-This brings up the question why DRCS is disabled by default. Wouldn't it
-make sense to always enable it when available?
+bochs-display is effectively stdvga minus the vga compatibility: no text
+mode, no silly planar video modes.  Only linear framebuffers in xrgb
+format are supported.
 
-Related: num_different_channels is exposed to userspace, but outside the
-MAC80211 layer there is nothing in the kernel that enforces this
-restriction.  Am I missing something or is this just an open patch
-opportunity?
+Both devices are handled by the bochs drm driver.
 
-Sascha
+> The CPU where this reproduces is fairly modern too (Intel(R) Xeon(R)
+> Silver 4410Y, Sapphire Rapids). I wish I could give additional details
+> to what exactly happens in the guest but I can't find anything useful in
+> the logs ("WARNING: Application 'org.gnome.Shell.desktop' killed by
+> signal 9") and I know too little (nothing?) about how modern Linux
+> graphics stack is organized :-( Cc: Gerd just in case.
 
--- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+The device has an (purely virtual) pci memory bar for video memory.
+The drm driver allocates buffer objects in this video memory.  They
+are either used by the kernel directly (fbcon case, which works fine)
+or mapped into userspace so the wayland / X11 display server can
+software-render into the buffer (which breaks).
+
+take care,
+  Gerd
+
 
