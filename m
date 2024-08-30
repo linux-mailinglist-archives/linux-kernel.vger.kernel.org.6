@@ -1,126 +1,78 @@
-Return-Path: <linux-kernel+bounces-308243-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308244-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B614965936
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 09:56:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18934965939
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 09:57:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B4EE31F24D86
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 07:56:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE2E21F24BDC
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 07:57:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 017531662E9;
-	Fri, 30 Aug 2024 07:56:39 +0000 (UTC)
-Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BB28166F2D;
+	Fri, 30 Aug 2024 07:56:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BHNyda4a"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C326158A37;
-	Fri, 30 Aug 2024 07:56:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F016166F19;
+	Fri, 30 Aug 2024 07:56:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725004598; cv=none; b=Z2t85WmDNvbgjMPHOGVQL2JtZk2Ep2eWh2hVdew42uvO09KKYEwKrskhtfn8gnx7T1GJ2Dg11rVJv2DtwB9HwPtKSuL3yeCGuBgz4lbFE4P8SiIr+Gr4YgG0t6x9TvfvAcCwd0CeN1J+t5P3cddmOXzFqPx/gWjC4EyWY95edTk=
+	t=1725004600; cv=none; b=gRcZERYieaTld7Km2cBcyrkNcyAaFTLyn5CJFoopDxgZ+yVPoKXgrOVyoleyklOVy2MGPtPej901heSe7hwx4CoR6+5MdwNoftgZ1CcREVEiWBxn6/WB0Zcq+97ETyqjXfHIpa6C+RV++gKiXGyzzij24N7d7BrkK0T4fkE3vhg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725004598; c=relaxed/simple;
-	bh=C4RlOGixL7PRQeXoKJLE0klZ0yDDxIRnLXobt4M+yQ4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rTTO3RluTpr0OWkMHZJ7ca2nLB9w4CeSUVTe988gEajFxw6mnSQwbAUiZiozIBj4Od7fFs+1UfGWXPVCLK5hiw3iOdGWLPXn1iu/yqjOgX2444vZCP73skaQFeP+UsMz7TNeMekN9EClZ3IzIvkps2gZoNO1xGcXot7AGU4Ho7o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
-Date: Fri, 30 Aug 2024 07:56:26 +0000
-From: Yixun Lan <dlan@gentoo.org>
-To: Inochi Amaoto <inochiama@outlook.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Conor Dooley <conor@kernel.org>,
-	Yangyu Chen <cyy@cyyself.name>, Jesse Taube <jesse@rivosinc.com>,
-	Jisheng Zhang <jszhang@kernel.org>, Icenowy Zheng <uwu@icenowy.me>,
-	Meng Zhang <zhangmeng.kevin@spacemit.com>,
-	Meng Zhang <kevin.z.m@hotmail.com>, devicetree@vger.kernel.org,
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org
-Subject: Re: [PATCH v3 3/4] riscv: dts: spacemit: add pinctrl support for K1
- SoC
-Message-ID: <20240830075626-GYA41291@gentoo>
-References: <20240828-02-k1-pinctrl-v3-0-1fed6a22be98@gentoo.org>
- <20240828-02-k1-pinctrl-v3-3-1fed6a22be98@gentoo.org>
- <IA1PR20MB495369231BB1E1677228D95DBB972@IA1PR20MB4953.namprd20.prod.outlook.com>
+	s=arc-20240116; t=1725004600; c=relaxed/simple;
+	bh=U4aM1hyfgmnABktPEoPihbWuQKzIRjJ4DLsY+FoG9kk=;
+	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=ecr2D8YstqIwa79twhvBWMMRVmI/vsO9SBt+noCGdBnNp21ueRzhQG9R1WG6Kgo/8RPAO1J7il2JRTs6x65qFCDzP0LEVq8pDT1Hh4zlYU46eX+1nPtutVYIVf2qiHXwJSa+VSwKF2vjFruag/r2j7e5guGsrurP2e71Xo8iMP8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BHNyda4a; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AB802C4CEC4;
+	Fri, 30 Aug 2024 07:56:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725004599;
+	bh=U4aM1hyfgmnABktPEoPihbWuQKzIRjJ4DLsY+FoG9kk=;
+	h=From:To:In-Reply-To:References:Subject:Date:From;
+	b=BHNyda4a4tXvWZKGZlA8yJUWmu70dsUndKIaLh96aenGuqGPnckueP1Ub5kvBuL4w
+	 fpmko32NXF1xhcWW/0NEUHcFmZYbByWIxsmb+UO70ybKgA3ib4IFy0zCoejPBOGW9d
+	 ZJX1EaCk6Ei44FTLOXfejeshHuhf/khjj5HnQk972QYy0z+WiJUQisI6ohghsZxUx/
+	 Kt79lBRshF9LcqTYGkINQcrCbS/rD8//hyfiRPDltkfEg/+1fdWpIZA1OMXoQXTUE4
+	 9ozyVc4tZqXtHyTCMcr99ExZLXukOAlFUNUDmPK5KXLQtDwI3UcEaJpBei9/8oT1x3
+	 Kd8y3y6Onm79g==
+From: Lee Jones <lee@kernel.org>
+To: lee@kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-msm@vger.kernel.org, krzk@kernel.org, jic23@kernel.org, 
+ Jinjie Ruan <ruanjinjie@huawei.com>
+In-Reply-To: <20240826092734.2899562-3-ruanjinjie@huawei.com>
+References: <20240826092734.2899562-1-ruanjinjie@huawei.com>
+ <20240826092734.2899562-3-ruanjinjie@huawei.com>
+Subject: Re: (subset) [PATCH -next RESEND 2/2] mfd: qcom-spmi-pmic: Use
+ for_each_child_of_node_scoped()
+Message-Id: <172500459843.69285.53949628511366991.b4-ty@kernel.org>
+Date: Fri, 30 Aug 2024 08:56:38 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <IA1PR20MB495369231BB1E1677228D95DBB972@IA1PR20MB4953.namprd20.prod.outlook.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.13.0
 
-Hi
-
-On 09:36 Fri 30 Aug     , Inochi Amaoto wrote:
-> On Wed, Aug 28, 2024 at 11:30:25AM GMT, Yixun Lan wrote:
-> > Add pinctrl device tree data to SpacemiT's K1 SoC.
-> > 
-> > Signed-off-by: Yixun Lan <dlan@gentoo.org>
-> > ---
-> > Note, only minimal device tree data added in this series,
-> > which just try to demonstrate this pinctrl driver, but
-> > more dt data can be added later, in separate patches.
-> > ---
-> >  arch/riscv/boot/dts/spacemit/k1-pinctrl.dtsi |  19 ++++
-> >  arch/riscv/boot/dts/spacemit/k1-pinctrl.h    | 161 +++++++++++++++++++++++++++
-> >  arch/riscv/boot/dts/spacemit/k1.dtsi         |   5 +
-> >  3 files changed, 185 insertions(+)
-> > 
-> > diff --git a/arch/riscv/boot/dts/spacemit/k1-pinctrl.dtsi b/arch/riscv/boot/dts/spacemit/k1-pinctrl.dtsi
-> > new file mode 100644
-> > index 0000000000000..1082f92753176
-> > --- /dev/null
-> > +++ b/arch/riscv/boot/dts/spacemit/k1-pinctrl.dtsi
-> > @@ -0,0 +1,19 @@
-> > +// SPDX-License-Identifier: GPL-2.0 OR MIT
-> > +/*
-> > + * Copyright (c) 2024 Yixun Lan <dlan@gentoo.org>
-> > + */
-> > +
-> > +#include <dt-bindings/gpio/gpio.h>
-> > +#include "k1-pinctrl.h"
-> > +
+On Mon, 26 Aug 2024 17:27:34 +0800, Jinjie Ruan wrote:
+> Avoids the need for manual cleanup of_node_put() in early exits
+> from the loop.
 > 
-> > +&pinctrl {
-> > +	uart0_2_cfg: uart0-2-cfg {
-> > +		uart0-2-pins {
-> > +			pinmux = <K1_PADCONF(GPIO_68, 2)>,
-> > +				 <K1_PADCONF(GPIO_69, 2)>;
-> > +
-> > +			bias-pull-up = <0>;
-> > +			drive-strength = <32>;
-> > +		};
-> > +	};
-> > +};
 > 
-> "uart0_2"? Is not enough to use "uart0"?
-> 
-not sure if I understand your point correctly here, are you saying that
-we should describe all configurations of the "uart0", as there are indeed
-another two options - uart0_0, uart0_1 which using different pins, I can
-add them in next version
 
-for uart0_2 itself , I would consider it's a complete configuration
+Applied, thanks!
 
-> Although I do not reject to add a new common file, it is better
-> for you to squash this part into the next uart dts patch. I think
-> this is more related.
-> 
-I can squash them into one patch but still with separated pinctrl common file,
-does this sound good to you?
+[2/2] mfd: qcom-spmi-pmic: Use for_each_child_of_node_scoped()
+      commit: 12d219610d11d2c0917961680ca5fee369b500db
 
--- 
-Yixun Lan (dlan)
-Gentoo Linux Developer
-GPG Key ID AABEFD55
+--
+Lee Jones [李琼斯]
+
 
