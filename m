@@ -1,256 +1,269 @@
-Return-Path: <linux-kernel+bounces-307932-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307933-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2200B965519
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 04:08:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4684E96551B
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 04:09:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 970EE28204F
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 02:08:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 185D3281895
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 02:09:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F20D4132111;
-	Fri, 30 Aug 2024 02:08:28 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADF08535DC;
+	Fri, 30 Aug 2024 02:08:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a76pPK7B"
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C50BB1D1300;
-	Fri, 30 Aug 2024 02:08:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDD548814
+	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 02:08:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724983708; cv=none; b=sdwLwT9YY4TCPgUIKC5nBWNvzLWKvz3tAxniX2DD+m8GNrpktx4WFu1++bvppWMhH1yo1mwkfSQM/fS8fQsvfR4eWqopKHanBxBpbJ2gWz7ahmB9IHfOrJzA5QfeuZ6wHQ2LWYHn3zfl29/jv7KG+8eCchLYQtUfRks4UDt298g=
+	t=1724983736; cv=none; b=d1IjE7C1Fz+tdyqR6hzbmMxAxkVZEQgCCCY3rQBScUsBvNQ92PHAnjazdqyHjlOySOWkgTFm6vYnZKWcvkGzQcu2oW+uoeoC1xOp62iNqXEuKyoWhJKqZPbk4I5TfSgk9G2rhl/Iq2/K6MWovg7ZctDDOZhErFV+Xkr7C4MYdV0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724983708; c=relaxed/simple;
-	bh=wOgvntKYQmYohnFZGu07J+B7vsxAmgNnANMJIoUIDlI=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=Im/h5uyfId1dSn4FLOluV+V56CU2+muc+48aaOIDwNSdVd2Sqm0NR+sAwHRMVLvAWyQNm7KgBKqTEHURlhf+nvo5xP9d/uSn4RRXR4TqGpZoy3PPTGxBHe+FJmoJoz5bPneH9eG/4T+RC3t07pkyJdJdGQDctOqYWBjBhUgqb7Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4Ww1lC71sWz4f3jJC;
-	Fri, 30 Aug 2024 10:08:07 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.252])
-	by mail.maildlp.com (Postfix) with ESMTP id A5A8E1A06D7;
-	Fri, 30 Aug 2024 10:08:22 +0800 (CST)
-Received: from [10.67.109.79] (unknown [10.67.109.79])
-	by APP3 (Coremail) with SMTP id _Ch0CgAHtrSTKdFmeZoADA--.9512S2;
-	Fri, 30 Aug 2024 10:08:20 +0800 (CST)
-Message-ID: <cd2bc5bf-ac78-4121-80eb-9b5c7fd4549c@huaweicloud.com>
-Date: Fri, 30 Aug 2024 10:08:19 +0800
+	s=arc-20240116; t=1724983736; c=relaxed/simple;
+	bh=vLOo20fm1bNZFa/3W03AfeqJwF2chkfS4J3VTIzsh6o=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=ahjMecsk+SawKuuDbCqIiRUbpJfw8qDn0HRNTT4NIGuDr2q/YuT/rcmT7Jpc7bimHNFQO2RkBipHEc8bDoHeSNDL1IWb//hhR6wgC5w8wKz73TdKvddzFdNUePYSt7PbXS2PvmaHmQK7Opw8CkfRAI71V/7M5cccrXNWYP5Oxg4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=a76pPK7B; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a86910caf9cso424579366b.1
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 19:08:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724983733; x=1725588533; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=Qg6WNfL/F6Y1y6D4ESySiWKDVVUAg0SLjU+a+wT4JMA=;
+        b=a76pPK7B0C7UWyvGCUQhP03O7TnO+It+avm5mIUxgREpJkjWerqqGWQNlE8lSi6mOk
+         y3Kzv4eruIUrHfP7ZVitgjjYVVxPTWb4zM2js2TcJxqewZa+I4m7GqxyxxNfFFZffNps
+         J+yl29TQOxZ/5oL70huThmQTRSuwmuKrjq2Jhy99vrl0sGQLcTtpeVsbC71IPNzBr3sb
+         Sxkry/zFKtGQgDzsoFqMcOWeY/3eAfKzLqmMgXJv4vm9gqHZqqs97o5tbLz3JeJBPi3W
+         p9V655UVAg48qdPI1owEIa6sRrHj9qz3keMPFnJBVhPhBLLa/HKlOZCvkKjpN4kNB/cD
+         2fEw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724983733; x=1725588533;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Qg6WNfL/F6Y1y6D4ESySiWKDVVUAg0SLjU+a+wT4JMA=;
+        b=pSnSEFj9jmFX4IPlHazAnmJuIpU/3JB4olgIKRU36ZPGBjEegrbqW4BSv/bI6NolIN
+         1MtubT1NUFjMnYdjggqvLqh9/6S1G7zYJUpJZOUU4aPuzYs5iCf5UKU+GQeEVTl3Q4Cv
+         XfZMK4Is1T1nLiDQiOBzXua5AuSlBSU/QENompVwK+nexH0GepMACkgjqywrHXz02ZbZ
+         nweKffAM1clDxNYzNaBBI746l/lMMNq2otkPBgOlRMQ7iTV7xUdIybC8sk8U1hVZkkcU
+         YeFmB4WozRtfH/cJ+gdLoPIa4seJuTIV2q/CbgjKOm/qXVjBAoui7ZZFrU8/9W777kBl
+         17Xg==
+X-Forwarded-Encrypted: i=1; AJvYcCXkV3ztUG54gwje/Gzl2ob3T+qqH8uUr1T2jAc0JEZ8drFZ+wOx1sUQJ1oW3N3fpSMm8fN9DsuCq4mmklg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyhdl6226wOZjrYY7xty1DXOb+7tqzzdlDaBfnlJM0fa6ywtsVX
+	b3pdHszmdaIcuaPlJLvco20fgjf4ug0V9AI1J++zzO6ST4wSNY05vpZ9oXbRGBd0GXGKJ7zkULl
+	0LaYRfwUriQaW0XGUA4+odg0mf2ndaI3o
+X-Google-Smtp-Source: AGHT+IHgBRLmBAT4IJRklNDrgpfErJbap5rAuJNsLi3oUTrZX4dHmrrQJ1gAnoqaDuwxckRhNyZezmoRL/ajgVTzvm0=
+X-Received: by 2002:a17:907:980c:b0:a83:849e:ea80 with SMTP id
+ a640c23a62f3a-a898284a66emr452964966b.32.1724983732769; Thu, 29 Aug 2024
+ 19:08:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/1] cgroup: fix deadlock caused by cgroup_mutex and
- cpu_hotplug_lock
-From: Chen Ridong <chenridong@huaweicloud.com>
-To: martin.lau@linux.dev, ast@kernel.org, daniel@iogearbox.net,
- andrii@kernel.org, eddyz87@gmail.com, song@kernel.org,
- yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org,
- sdf@google.com, haoluo@google.com, jolsa@kernel.org, tj@kernel.org,
- lizefan.x@bytedance.com, hannes@cmpxchg.org, roman.gushchin@linux.dev,
- =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>
-Cc: bpf@vger.kernel.org, cgroups@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240817093334.6062-1-chenridong@huawei.com>
- <20240817093334.6062-2-chenridong@huawei.com>
- <8c1ccd1b-47cd-43b6-b961-2829a5a24513@huaweicloud.com>
-Content-Language: en-US
-In-Reply-To: <8c1ccd1b-47cd-43b6-b961-2829a5a24513@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_Ch0CgAHtrSTKdFmeZoADA--.9512S2
-X-Coremail-Antispam: 1UD129KBjvJXoW3Jw43CF4fWr43Zr1fZr4Utwb_yoW3ZFWrpr
-	n5JryUJ3yrCr1ktr4Utw1UXryrKr40q3WUJr18J3WUAr47Jr1jqr1UZr1jgFyUJFs7Cr1U
-	AF1Yvry2vr1jqw7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUv0b4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6r1S6rWUM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS
-	14v26r4a6rW5MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
-	8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWr
-	XwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
-	0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_
-	Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU0
-	s2-5UUUUU==
-X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
+From: Dave Airlie <airlied@gmail.com>
+Date: Fri, 30 Aug 2024 12:08:41 +1000
+Message-ID: <CAPM=9tzX71UKndfu8JECMOzc9kf4s4pp9cWTMWwE476cQXt_Yw@mail.gmail.com>
+Subject: [git pull] drm fixes for 6.11-rc6
+To: Linus Torvalds <torvalds@linux-foundation.org>, Daniel Vetter <daniel.vetter@ffwll.ch>
+Cc: dri-devel <dri-devel@lists.freedesktop.org>, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
+Hey Linus,
 
+Another week, another set of GPU fixes. amdgpu and vmwgfx leading the
+charge, then i915 and xe changes along with v3d and some other bits.
+The TTM revert is due to some stuttering graphical apps probably due
+to longer stalls while prefaulting.
 
-On 2024/8/22 8:57, Chen Ridong wrote:
-> 
-> 
-> On 2024/8/17 17:33, Chen Ridong wrote:
->> We found a hung_task problem as shown below:
->>
->> INFO: task kworker/0:0:8 blocked for more than 327 seconds.
->> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
->> task:kworker/0:0     state:D stack:13920 pid:8     ppid:2       
->> flags:0x00004000
->> Workqueue: events cgroup_bpf_release
->> Call Trace:
->>   <TASK>
->>   __schedule+0x5a2/0x2050
->>   ? find_held_lock+0x33/0x100
->>   ? wq_worker_sleeping+0x9e/0xe0
->>   schedule+0x9f/0x180
->>   schedule_preempt_disabled+0x25/0x50
->>   __mutex_lock+0x512/0x740
->>   ? cgroup_bpf_release+0x1e/0x4d0
->>   ? cgroup_bpf_release+0xcf/0x4d0
->>   ? process_scheduled_works+0x161/0x8a0
->>   ? cgroup_bpf_release+0x1e/0x4d0
->>   ? mutex_lock_nested+0x2b/0x40
->>   ? __pfx_delay_tsc+0x10/0x10
->>   mutex_lock_nested+0x2b/0x40
->>   cgroup_bpf_release+0xcf/0x4d0
->>   ? process_scheduled_works+0x161/0x8a0
->>   ? trace_event_raw_event_workqueue_execute_start+0x64/0xd0
->>   ? process_scheduled_works+0x161/0x8a0
->>   process_scheduled_works+0x23a/0x8a0
->>   worker_thread+0x231/0x5b0
->>   ? __pfx_worker_thread+0x10/0x10
->>   kthread+0x14d/0x1c0
->>   ? __pfx_kthread+0x10/0x10
->>   ret_from_fork+0x59/0x70
->>   ? __pfx_kthread+0x10/0x10
->>   ret_from_fork_asm+0x1b/0x30
->>   </TASK>
->>
->> This issue can be reproduced by the following pressuse test:
->> 1. A large number of cpuset cgroups are deleted.
->> 2. Set cpu on and off repeatly.
->> 3. Set watchdog_thresh repeatly.
->> The scripts can be obtained at LINK mentioned above the signature.
->>
->> The reason for this issue is cgroup_mutex and cpu_hotplug_lock are
->> acquired in different tasks, which may lead to deadlock.
->> It can lead to a deadlock through the following steps:
->> 1. A large number of cpusets are deleted asynchronously, which puts a
->>     large number of cgroup_bpf_release works into system_wq. The 
->> max_active
->>     of system_wq is WQ_DFL_ACTIVE(256). Consequently, all active works 
->> are
->>     cgroup_bpf_release works, and many cgroup_bpf_release works will 
->> be put
->>     into inactive queue. As illustrated in the diagram, there are 256 (in
->>     the acvtive queue) + n (in the inactive queue) works.
->> 2. Setting watchdog_thresh will hold cpu_hotplug_lock.read and put
->>     smp_call_on_cpu work into system_wq. However step 1 has already 
->> filled
->>     system_wq, 'sscs.work' is put into inactive queue. 'sscs.work' has
->>     to wait until the works that were put into the inacvtive queue 
->> earlier
->>     have executed (n cgroup_bpf_release), so it will be blocked for a 
->> while.
->> 3. Cpu offline requires cpu_hotplug_lock.write, which is blocked by 
->> step 2.
->> 4. Cpusets that were deleted at step 1 put cgroup_release works into
->>     cgroup_destroy_wq. They are competing to get cgroup_mutex all the 
->> time.
->>     When cgroup_metux is acqured by work at css_killed_work_fn, it will
->>     call cpuset_css_offline, which needs to acqure cpu_hotplug_lock.read.
->>     However, cpuset_css_offline will be blocked for step 3.
->> 5. At this moment, there are 256 works in active queue that are
->>     cgroup_bpf_release, they are attempting to acquire cgroup_mutex, 
->> and as
->>     a result, all of them are blocked. Consequently, sscs.work can not be
->>     executed. Ultimately, this situation leads to four processes being
->>     blocked, forming a deadlock.
->>
->> system_wq(step1)        WatchDog(step2)            cpu 
->> offline(step3)    cgroup_destroy_wq(step4)
->> ...
->> 2000+ cgroups deleted asyn
->> 256 actives + n inactives
->>                 __lockup_detector_reconfigure
->>                 P(cpu_hotplug_lock.read)
->>                 put sscs.work into system_wq
->> 256 + n + 1(sscs.work)
->> sscs.work wait to be executed
->>                 warting sscs.work finish
->>                                 percpu_down_write
->>                                 P(cpu_hotplug_lock.write)
->>                                 ...blocking...
->>                                             css_killed_work_fn
->>                                             P(cgroup_mutex)
->>                                             cpuset_css_offline
->>                                             P(cpu_hotplug_lock.read)
->>                                             ...blocking...
->> 256 cgroup_bpf_release
->> mutex_lock(&cgroup_mutex);
->> ..blocking...
->>
->> To fix the problem, place cgroup_bpf_release works on cgroup_destroy_wq,
->> which can break the loop and solve the problem. System wqs are for misc
->> things which shouldn't create a large number of concurrent work items.
->> If something is going to generate >WQ_DFL_ACTIVE(256) concurrent work
->> items, it should use its own dedicated workqueue.
->>
->> Fixes: 4bfc0bb2c60e ("bpf: decouple the lifetime of cgroup_bpf from 
->> cgroup itself")
->> Link: 
->> https://lore.kernel.org/cgroups/e90c32d2-2a85-4f28-9154-09c7d320cb60@huawei.com/T/#t
->> Signed-off-by: Chen Ridong <chenridong@huawei.com>
->> ---
->>   kernel/bpf/cgroup.c             | 2 +-
->>   kernel/cgroup/cgroup-internal.h | 1 +
->>   kernel/cgroup/cgroup.c          | 2 +-
->>   3 files changed, 3 insertions(+), 2 deletions(-)
->>
->> diff --git a/kernel/bpf/cgroup.c b/kernel/bpf/cgroup.c
->> index 8ba73042a239..a611a1274788 100644
->> --- a/kernel/bpf/cgroup.c
->> +++ b/kernel/bpf/cgroup.c
->> @@ -334,7 +334,7 @@ static void cgroup_bpf_release_fn(struct 
->> percpu_ref *ref)
->>       struct cgroup *cgrp = container_of(ref, struct cgroup, bpf.refcnt);
->>       INIT_WORK(&cgrp->bpf.release_work, cgroup_bpf_release);
->> -    queue_work(system_wq, &cgrp->bpf.release_work);
->> +    queue_work(cgroup_destroy_wq, &cgrp->bpf.release_work);
->>   }
->>   /* Get underlying bpf_prog of bpf_prog_list entry, regardless if 
->> it's through
->> diff --git a/kernel/cgroup/cgroup-internal.h 
->> b/kernel/cgroup/cgroup-internal.h
->> index c964dd7ff967..17ac19bc8106 100644
->> --- a/kernel/cgroup/cgroup-internal.h
->> +++ b/kernel/cgroup/cgroup-internal.h
->> @@ -13,6 +13,7 @@
->>   extern spinlock_t trace_cgroup_path_lock;
->>   extern char trace_cgroup_path[TRACE_CGROUP_PATH_LEN];
->>   extern void __init enable_debug_cgroup(void);
->> +extern struct workqueue_struct *cgroup_destroy_wq;
->>   /*
->>    * cgroup_path() takes a spin lock. It is good practice not to take
->> diff --git a/kernel/cgroup/cgroup.c b/kernel/cgroup/cgroup.c
->> index 75058fbf4450..77fa9ed69c86 100644
->> --- a/kernel/cgroup/cgroup.c
->> +++ b/kernel/cgroup/cgroup.c
->> @@ -124,7 +124,7 @@ DEFINE_PERCPU_RWSEM(cgroup_threadgroup_rwsem);
->>    * destruction work items don't end up filling up max_active of 
->> system_wq
->>    * which may lead to deadlock.
->>    */
->> -static struct workqueue_struct *cgroup_destroy_wq;
->> +struct workqueue_struct *cgroup_destroy_wq;
->>   /* generate an array of cgroup subsystem pointers */
->>   #define SUBSYS(_x) [_x ## _cgrp_id] = &_x ## _cgrp_subsys,
-> 
-> Ping.
-> Hi,TJ, Roman and Michal, I have updated commit message, I think it can 
-> be much clearer now, can you review it again?
-> 
-> Thanks,
-> Ridong
-> 
-Friendly ping.
+Seems pretty much where I'd expect things,
 
+Dave.
+
+drm-fixes-2024-08-30:
+drm fixes for 6.11-rc6
+
+ttm:
+- revert prefault change, caused stutters
+
+aperture:
+- handle non-VGA devices bettter
+
+amdgpu:
+- SWSMU gaming stability fix
+- SMU 13.0.7 fix
+- SWSMU documentation alignment fix
+- SMU 14.0.x fixes
+- GC 12.x fix
+- Display fix
+- IP discovery fix
+- SMU 13.0.6 fix
+
+i915:
+- Fix #11195: The external display connect via USB type-C dock stays
+blank after re-connect the dock
+- Make DSI backlight work for 2G version of Lenovo Yoga Tab 3 X90F
+- Move ARL GuC firmware to correct version
+
+xe:
+- Invalidate media_gt TLBs
+- Fix HWMON i1 power setup write command
+
+vmwgfx:
+- prevent unmapping active read buffers
+- fix prime with external buffers
+- disable coherent dumb buffers without 3d
+
+v3d:
+- disable preemption while updating GPU stats
+The following changes since commit 5be63fc19fcaa4c236b307420483578a56986a37:
+
+  Linux 6.11-rc5 (2024-08-25 19:07:11 +1200)
+
+are available in the Git repository at:
+
+  https://gitlab.freedesktop.org/drm/kernel.git tags/drm-fixes-2024-08-30
+
+for you to fetch changes up to 27f5b729cb56e46d8beca47c227c0edf1e958fbb:
+
+  Merge tag 'drm-misc-fixes-2024-08-29' of
+https://gitlab.freedesktop.org/drm/misc/kernel into drm-fixes
+(2024-08-30 11:28:11 +1000)
+
+----------------------------------------------------------------
+drm fixes for 6.11-rc6
+
+ttm:
+- revert prefault change, caused stutters
+
+aperture:
+- handle non-VGA devices bettter
+
+amdgpu:
+- SWSMU gaming stability fix
+- SMU 13.0.7 fix
+- SWSMU documentation alignment fix
+- SMU 14.0.x fixes
+- GC 12.x fix
+- Display fix
+- IP discovery fix
+- SMU 13.0.6 fix
+
+i915:
+- Fix #11195: The external display connect via USB type-C dock stays
+blank after re-connect the dock
+- Make DSI backlight work for 2G version of Lenovo Yoga Tab 3 X90F
+- Move ARL GuC firmware to correct version
+
+xe:
+- Invalidate media_gt TLBs
+- Fix HWMON i1 power setup write command
+
+vmwgfx:
+- prevent unmapping active read buffers
+- fix prime with external buffers
+- disable coherent dumb buffers without 3d
+
+v3d:
+- disable preemption while updating GPU stats
+
+----------------------------------------------------------------
+Alex Deucher (6):
+      Revert "drm/ttm: increase ttm pre-fault value to PMD size"
+      video/aperture: optionally match the device in sysfb_disable()
+      drm/amdgpu: align pp_power_profile_mode with kernel docs
+      drm/amdgpu/smu13.0.7: print index for profiles
+      drm/amdgpu/swsmu: always force a state reprogram on init
+      drm/amdgpu/gfx12: set UNORD_DISPATCH in compute MQDs
+
+Candice Li (1):
+      drm/amd/pm: Drop unsupported features on smu v14_0_2
+
+Dave Airlie (4):
+      Merge tag 'amd-drm-fixes-6.11-2024-08-28' of
+https://gitlab.freedesktop.org/agd5f/linux into drm-fixes
+      Merge tag 'drm-intel-fixes-2024-08-29' of
+https://gitlab.freedesktop.org/drm/i915/kernel into drm-fixes
+      Merge tag 'drm-xe-fixes-2024-08-29' of
+https://gitlab.freedesktop.org/drm/xe/kernel into drm-fixes
+      Merge tag 'drm-misc-fixes-2024-08-29' of
+https://gitlab.freedesktop.org/drm/misc/kernel into drm-fixes
+
+Hans de Goede (1):
+      drm/i915/dsi: Make Lenovo Yoga Tab 3 X90F DMI match less strict
+
+Imre Deak (1):
+      drm/i915/dp_mst: Fix MST state after a sink reset
+
+John Harrison (1):
+      drm/i915: ARL requires a newer GSC firmware
+
+Karthik Poosa (1):
+      drm/xe/hwmon: Fix WRITE_I1 param from u32 to u16
+
+Kenneth Feng (1):
+      drm/amd/pm: update message interface for smu v14.0.2/3
+
+Lijo Lazar (1):
+      drm/amd/pm: Add support for new P2S table revision
+
+Likun Gao (1):
+      drm/amdgpu: support for gc_info table v1.3
+
+Ma Ke (1):
+      drm/amd/display: avoid using null object of framebuffer
+
+Matthew Brost (1):
+      drm/xe: Invalidate media_gt TLBs
+
+Tvrtko Ursulin (1):
+      drm/v3d: Disable preemption while updating GPU stats
+
+Zack Rusin (3):
+      drm/vmwgfx: Prevent unmapping active read buffers
+      drm/vmwgfx: Fix prime with external buffers
+      drm/vmwgfx: Disable coherent dumb buffers without 3d
+
+ drivers/firmware/sysfb.c                           |  19 ++--
+ drivers/gpu/drm/amd/amdgpu/amdgpu_discovery.c      |  11 ++
+ drivers/gpu/drm/amd/amdgpu/amdgpu_gfx.h            |   6 ++
+ drivers/gpu/drm/amd/amdgpu/gfx_v12_0.c             |   2 +-
+ drivers/gpu/drm/amd/amdkfd/kfd_mqd_manager_v12.c   |   1 +
+ .../drm/amd/display/amdgpu_dm/amdgpu_dm_plane.c    |   9 +-
+ drivers/gpu/drm/amd/include/discovery.h            |  42 ++++++++
+ drivers/gpu/drm/amd/pm/swsmu/amdgpu_smu.c          |  21 ++--
+ .../amd/pm/swsmu/inc/pmfw_if/smu_v14_0_2_ppsmc.h   |  18 +++-
+ .../gpu/drm/amd/pm/swsmu/smu13/smu_v13_0_6_ppt.c   |   7 +-
+ .../gpu/drm/amd/pm/swsmu/smu13/smu_v13_0_7_ppt.c   |   4 +-
+ .../gpu/drm/amd/pm/swsmu/smu14/smu_v14_0_2_ppt.c   |  48 ---------
+ drivers/gpu/drm/i915/display/intel_dp.c            |  12 +++
+ drivers/gpu/drm/i915/display/intel_dp_mst.c        |  40 ++++++++
+ drivers/gpu/drm/i915/display/intel_dp_mst.h        |   1 +
+ drivers/gpu/drm/i915/display/vlv_dsi.c             |   1 -
+ drivers/gpu/drm/i915/gt/uc/intel_gsc_fw.c          |  31 ++++++
+ drivers/gpu/drm/i915/gt/uc/intel_uc_fw.c           |  10 +-
+ drivers/gpu/drm/i915/i915_drv.h                    |   2 +
+ drivers/gpu/drm/i915/intel_device_info.c           |   7 ++
+ drivers/gpu/drm/i915/intel_device_info.h           |   3 +
+ drivers/gpu/drm/v3d/v3d_sched.c                    |   6 ++
+ drivers/gpu/drm/vmwgfx/vmwgfx_blit.c               | 114 ++++++++++++++++++++-
+ drivers/gpu/drm/vmwgfx/vmwgfx_bo.c                 |  13 ++-
+ drivers/gpu/drm/vmwgfx/vmwgfx_bo.h                 |   3 +
+ drivers/gpu/drm/vmwgfx/vmwgfx_drv.h                |   4 +-
+ drivers/gpu/drm/vmwgfx/vmwgfx_stdu.c               |  12 +--
+ drivers/gpu/drm/vmwgfx/vmwgfx_surface.c            |   6 +-
+ drivers/gpu/drm/xe/xe_hwmon.c                      |   2 +-
+ drivers/gpu/drm/xe/xe_vm.c                         |  37 ++++---
+ drivers/of/platform.c                              |   2 +-
+ drivers/video/aperture.c                           |  11 +-
+ include/drm/intel/i915_pciids.h                    |  11 +-
+ include/drm/ttm/ttm_bo.h                           |   4 -
+ include/linux/sysfb.h                              |   4 +-
+ 35 files changed, 398 insertions(+), 126 deletions(-)
 
