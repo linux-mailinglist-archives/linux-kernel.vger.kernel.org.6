@@ -1,112 +1,134 @@
-Return-Path: <linux-kernel+bounces-309702-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309704-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 240F4966F74
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 07:45:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF4D9966F7A
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 07:47:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8DD24B21A42
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 05:45:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C12A1C21473
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 05:47:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B13613BC02;
-	Sat, 31 Aug 2024 05:45:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3235A14D6FE;
+	Sat, 31 Aug 2024 05:47:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="M+Mduk8Y"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OPeg55X9"
+Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A303020DC4
-	for <linux-kernel@vger.kernel.org>; Sat, 31 Aug 2024 05:45:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 325963C30;
+	Sat, 31 Aug 2024 05:47:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725083134; cv=none; b=MDWs4TePcKJ+8CvI9obG4Mdg187rbsf0Zh1fNTfw0VV/0WRzGzREVcn4vIfIYTi1E5Ut0aeof+MSKAUc9x7k3qvHKeQBdxuG48mXQl2+1D/6Cjf8W7obf4urAg7aAV676+p/hM1zoXdye5/dFL26nigpgrhuusmix0j1qwCqhfo=
+	t=1725083239; cv=none; b=iDN6a9jImxWyhRhF8DSCCbfDI1UPrdco6UVOU0askL4nDSgd8buEIra38Ls9LNHL5QqdLtO9DlQralcsrz/LG3rMlVXNLWFk/zLIXtVC8+JImt7BHM5Y+8Kz7c48FRgOsst4fcahsiNgCYO+avWk0RbNVjHQ9XCQmLDu9CbqWeE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725083134; c=relaxed/simple;
-	bh=TyuAkbB/j5TL19NdlwHMd+78FMaqJRnpoTf3HZhi2DE=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=dfyvEtm8MGH0mBs5pn/3bCaVa6KKSUsQeAGKQc9pCfv9Vtp6efj1OiKOBWqO0fg7itpLRHy9qo1RTUMYZaZPaijeog6J9fcClBKZIaMi3+/t1kz4BQo07t4N08RcOpq1uMHHvYtifddZQ/YoYmOoEng8++G2mwnH9Fa2l8vOSkk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=M+Mduk8Y; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-42bbd555541so1593685e9.3
-        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 22:45:32 -0700 (PDT)
+	s=arc-20240116; t=1725083239; c=relaxed/simple;
+	bh=u8imtR1wqjX5vtSYhiGWTIpQ9iFad42AOyF4T1X0eQ8=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=USXwITDWRMLndlbVqVcsuMoh4XSLPUTpGTy6SU4uxz8NNG/peQNZ2i74x7lffEKp5TFlX2TY7e3QbeMvzijDxyVDCigoNDS7OVg61YRi9Nf38hMqOdk7Lr2aZDNMhfhrZsnqg8D0ED2erQlfHnjmPukK97ozfQul5dRIxYjq29g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OPeg55X9; arc=none smtp.client-ip=209.85.216.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-2d86f71353dso929455a91.2;
+        Fri, 30 Aug 2024 22:47:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1725083131; x=1725687931; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1725083237; x=1725688037; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=jrXZso5Gm2mzlfd850rrfZ2B11di6r9bUJl1cxGvq74=;
-        b=M+Mduk8Y4JQpgSghqiD8tqu5uwI+7R+U6aqgDKeTgrnpD0ofNPYbZVO+oDJA7gM+o0
-         TTRbJFbSIbJjI0b50ZNU7PEHRgOITBZv4GCWjt8ju5uW8qyLal0ElN7IKT9O/m0dMUIn
-         c0HW/lG7U5W9Y5IWf70P/LI15l3DMncCyJJ5GSTXYbaAuIpBOhDBa1BsYGyryticzNr2
-         ThnlfKem5i5mZ5H/tKW99CiB76ih+WUNE4dluswQ2qN+5eKN9/1K3euYnelMhA3ox0cr
-         Lj370Xm/i+MlRhtDkJLA8SSrpejzp0d8hXBbanJLs1ZXDa1xtBNKb39lCO18c+BEu9W9
-         s5nQ==
+        bh=M3qdCv/34SlaBM7I6zxUMTcENRlUyUZdBcHJE/PR9fU=;
+        b=OPeg55X98vnQkweC5R3CM3dan8GEjnib8lJgUvNpRz4/LtNNvEGIWUqv5m2mragH68
+         /J+5BTo5FqkPzHluzrRYMbqvnCrb7u8DwGk9UJxCnXF03mBHhvkst5zfUg/RyNYU7hXz
+         pgjdWDGFgHS6a7ugruYy0+mfVSxxUYxkXfF+ytNnFPw2Uq9J1fHj7NxEF65hWRtY0J1S
+         MiHihbl/8FJYL0jxGmlkK4bGU5uPPrUmNWCiBjEUpJp9dg8sJgs/wOQOQgCv7tQOVCx5
+         rWrfROvhSH7p0EvSMeKcBmk1jEJahoQ2lgVsUybI33uzrIH7hN3D8G6QqSu8EWW7vpTZ
+         qI7w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725083131; x=1725687931;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1725083237; x=1725688037;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=jrXZso5Gm2mzlfd850rrfZ2B11di6r9bUJl1cxGvq74=;
-        b=EXS5RJN0w06+RiwcIzRUfyqRsTP+5VCH9zeAnWSAdQ+TCVdDdqRGKd0rGwWFGYe8Mz
-         lV9AC4RcM3g4MxyVQqXBecwAw7C/6yH/RvfWZcjY4eFSWqlrh2OzWIfEXpMDOaTUNKPG
-         6efXKzrndBDNQRzmYmVz6ryDLOCeZe/jvyHhycwZyFNB2T7HvrBCTPufXL8u7wHYJ5IL
-         ipYaBcG9Vs++GzZL9tSKroLVUdeDdLw1SndISMHd+zvPw3bFOuwEbjLjkMLlL8DO6SVr
-         ucPH5IIC76nzK8HuXcu4Q7RSJ/P0ezc3j+PNgen89n/sjK8i8VVUsp7eR8GW526OrWTx
-         RVPA==
-X-Forwarded-Encrypted: i=1; AJvYcCXfUb6BA86W5vlYXcobNEq8q8KiMsEZBNm8PN4nAdB2m0X20jJxJ8POOA7lwA1znTYvdCyuS2z50p5MJr8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yytn0EddcFQfh+5PXJFvbkc2F0YVao/KaSLNkIXFNStes8YZ8vk
-	DQcwiKoErhsRYlVlY/Ot1Us+EY6tk8f4QRjZK+U/8Jf5yinmnCCOJ/N9wgLgD/k=
-X-Google-Smtp-Source: AGHT+IEkllVc8bvcY+xECeoK/LuLjbTAQMCJbR0RmXVX6O+O/vU9mX0Apct+rKZGiiFIvuoDdZKx/A==
-X-Received: by 2002:a05:6000:4010:b0:367:2da6:aa1b with SMTP id ffacd0b85a97d-374a9644d00mr1630307f8f.7.1725083130885;
-        Fri, 30 Aug 2024 22:45:30 -0700 (PDT)
-Received: from [127.0.1.1] ([178.197.222.82])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42bb6e33b41sm64985405e9.40.2024.08.30.22.45.29
+        bh=M3qdCv/34SlaBM7I6zxUMTcENRlUyUZdBcHJE/PR9fU=;
+        b=WRJcvaZKS1CtKcFw4J0R9WZMZ8ImC9qAIp66JR1C/lPOWSVMdQYy5YlQ1eDp3is4Vk
+         F1icB1FymIPVwHnTBfRENvfRPi6w8Ddn6dfc/Pcqj3WDANdxT0p4YnZwfewxHJSBfOMr
+         wRopw3AxkDj4iKr7Xr9cFng6SPLqEkZAjFAvhdIysK+lOxXGbHzm6KHdvUFLzJkbvDwO
+         znqHN52B+bX7m6P+wYXEnZZnoFv9We5+boa3QzkRn5BMeK7G5x0mGlFdbky0EKHl5boQ
+         u1MN4wz1/ZBfyBGDfbfRO6w2wHOgaXM5dTVWhjKmfcitK/U1dnnp815JmiuO1XRMc6yh
+         6Yqg==
+X-Forwarded-Encrypted: i=1; AJvYcCULhMP/jamvKQF01sAPX5JDk5HrShYmWcLJGbpVYQS1tdJsyh50hupIDH2M1ri432UmbW2h+RTwOb0pPuNW@vger.kernel.org, AJvYcCVEecsTiTbQPu+dWZiSZD154sDWnF1UTj0iOa3okWDS2BsMSMv2c82ExaK2e3ljWPpqLa36zAEs8Rq9ovpzelLC@vger.kernel.org, AJvYcCXC9y2vHFm8nXdDQXoOhdakqBDUUdhGQGyP+ycVscIhz0SkLX8V83cqJgIE7V+D4/eMbMc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxw3nkT/g7Qt8GaBZAKpjd4EWRGIxSw3+9g/qTlyV5wFdb91xgm
+	m8lIm/6UgeekkKHpZO15ch9+3w7rIBCWXj1BiFIRMPlWmkIRX3lM
+X-Google-Smtp-Source: AGHT+IHXwInMq6af8y1ipsdH1bz4MMYFrRFxEv5rCJC6uklQHBzukPu6RFf949bPS/zf1NsivGruXw==
+X-Received: by 2002:a17:90a:1090:b0:2c2:deda:8561 with SMTP id 98e67ed59e1d1-2d8564b146fmr8448470a91.41.1725083237325;
+        Fri, 30 Aug 2024 22:47:17 -0700 (PDT)
+Received: from kernelexploit-virtual-machine.localdomain ([121.185.186.233])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d89b12f585sm430713a91.41.2024.08.30.22.47.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 30 Aug 2024 22:45:30 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Vladimir Zapolskiy <vz@mleia.com>, 
- Krzysztof Kozlowski <krzk@kernel.org>, 
- Miquel Raynal <miquel.raynal@bootlin.com>, 
- Michal Simek <michal.simek@amd.com>, linux-arm-kernel@lists.infradead.org, 
- linux-kernel@vger.kernel.org, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-In-Reply-To: <20240825135001.48963-1-krzysztof.kozlowski@linaro.org>
-References: <20240825135001.48963-1-krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH 1/2] memory: pl172: simplify releasing AMBA regions
- with devm
-Message-Id: <172508312949.6769.12439040744745378226.b4-ty@linaro.org>
-Date: Sat, 31 Aug 2024 07:45:29 +0200
+        Fri, 30 Aug 2024 22:47:17 -0700 (PDT)
+From: Jeongjun Park <aha310510@gmail.com>
+To: martin.lau@linux.dev,
+	ast@kernel.org,
+	daniel@iogearbox.net,
+	andrii@kernel.org,
+	eddyz87@gmail.com
+Cc: song@kernel.org,
+	yonghong.song@linux.dev,
+	john.fastabend@gmail.com,
+	kpsingh@kernel.org,
+	sdf@fomichev.me,
+	haoluo@google.com,
+	jolsa@kernel.org,
+	mykolal@fb.com,
+	shuah@kernel.org,
+	aha310510@gmail.com,
+	bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org
+Subject: [PATCH bpf,v2,1/2] bpf: add check for invalid name in btf_name_valid_section()
+Date: Sat, 31 Aug 2024 14:47:02 +0900
+Message-Id: <20240831054702.364455-1-aha310510@gmail.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20240831054525.364353-1-aha310510@gmail.com>
+References: <20240831054525.364353-1-aha310510@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.1
+Content-Transfer-Encoding: 8bit
 
+If the length of the name string is 1 and the value of name[0] is NULL
+byte, an OOB vulnerability occurs in btf_name_valid_section() and the
+return value is true, so the invalid name passes the check.
 
-On Sun, 25 Aug 2024 15:50:00 +0200, Krzysztof Kozlowski wrote:
-> Use devm_add_action_or_reset() and dev_err_probe() to make the probe()
-> error handling simpler around amba_release_regions() cleanup.  This
-> allows to drop the remove() callback entirely.
-> 
-> 
+To solve this, you need to check if the first position is NULL byte and 
+if the first character is printable.
 
-Applied, thanks!
+Suggested-by: Eduard Zingerman <eddyz87@gmail.com>
+Fixes: bd70a8fb7ca4 ("bpf: Allow all printable characters in BTF DATASEC names")
+Signed-off-by: Jeongjun Park <aha310510@gmail.com>
+---
+ kernel/bpf/btf.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-[1/2] memory: pl172: simplify releasing AMBA regions with devm
-      https://git.kernel.org/krzk/linux-mem-ctrl/c/331b8a963137d182248599d500edd9b4a3783db5
-[2/2] memory: pl353-smc: simplify with scoped for each OF child loop
-      https://git.kernel.org/krzk/linux-mem-ctrl/c/32960b4f25c248f13758b8bbe6cc4260828442a1
-
-Best regards,
--- 
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
+diff --git a/kernel/bpf/btf.c b/kernel/bpf/btf.c
+index 520f49f422fe..f1e91bf367fa 100644
+--- a/kernel/bpf/btf.c
++++ b/kernel/bpf/btf.c
+@@ -823,9 +823,11 @@ static bool btf_name_valid_section(const struct btf *btf, u32 offset)
+ 	const char *src = btf_str_by_offset(btf, offset);
+ 	const char *src_limit;
+ 
++	if (!*src)
++		return false;
++
+ 	/* set a limit on identifier length */
+ 	src_limit = src + KSYM_NAME_LEN;
+-	src++;
+ 	while (*src && src < src_limit) {
+ 		if (!isprint(*src))
+ 			return false;
+--
 
