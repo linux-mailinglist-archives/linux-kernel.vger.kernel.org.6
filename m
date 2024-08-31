@@ -1,158 +1,128 @@
-Return-Path: <linux-kernel+bounces-309984-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309985-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93E879672B7
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 18:31:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C9039672B9
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 18:42:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B8B851C20F5F
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 16:31:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C65D41F2280D
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 16:42:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA7733B290;
-	Sat, 31 Aug 2024 16:31:22 +0000 (UTC)
-Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.85.151])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C8114F606;
+	Sat, 31 Aug 2024 16:42:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bUVW+Mq5"
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DB9343AC4
-	for <linux-kernel@vger.kernel.org>; Sat, 31 Aug 2024 16:31:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.85.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA1121F95E;
+	Sat, 31 Aug 2024 16:42:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725121882; cv=none; b=dAI8m3OLwDpxyS5Fi+4sGPsNU0jR27hJv3HGaKknQUvqzsC5TmNya6oq9vEfHZhjZl6V3PLqXwJlcsph3VoajGiEhCAeU0HFWSBAXshlv4uTKgP8Y7mGK3+t6SXiBygm6Q01zxGMjeGQT1Cp2WP0G3SkjaAonxi6eztxrhPZkHQ=
+	t=1725122563; cv=none; b=jCakv9PTXsk4jo9NoaygFIVbLn8kvRE+VG7PHRy3M+XLqw6s+NaoEBQmFk9uwBCmuw+tflMcWS9dHV47C7U1zP1VBz9zxR5AJJuZiEfWklAFRGyMos7CBlbdTdKk3M8AwSC1yoY+1wA6lIrFRArhPHq7cFEibWL2IEpSJLqS+J8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725121882; c=relaxed/simple;
-	bh=AuLfZzUmtglWqwz48TCd9lAiPu5sOPRAyVJ52ZHkrxk=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 MIME-Version:Content-Type; b=DgOJA5A98akRETQFWQqGaKq6uM5QlNL9dhDWq80ravwPE31BSh9FGeZa/hmVlJ7pPdBC1hHbPZGE42AtjjRmAjwR7pbp11zirqFxdlnYEKp32FPIN9KGCuAOuZWkReP0KNQ9L8j8uUPJDzyIFvSSg9o13vDdBaJsOKhkOtNG6Q0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.85.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
-Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
- relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- uk-mta-262-wK_tsTO6PIqyGgtMlXpe8w-1; Sat, 31 Aug 2024 17:31:14 +0100
-X-MC-Unique: wK_tsTO6PIqyGgtMlXpe8w-1
-Received: from AcuMS.Aculab.com (10.202.163.6) by AcuMS.aculab.com
- (10.202.163.6) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Sat, 31 Aug
- 2024 17:30:28 +0100
-Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
- id 15.00.1497.048; Sat, 31 Aug 2024 17:30:28 +0100
-From: David Laight <David.Laight@ACULAB.COM>
-To: 'Christophe Leroy' <christophe.leroy@csgroup.eu>, Charlie Jenkins
-	<charlie@rivosinc.com>, Arnd Bergmann <arnd@arndb.de>, Paul Walmsley
-	<paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou
-	<aou@eecs.berkeley.edu>, Catalin Marinas <catalin.marinas@arm.com>, "Will
- Deacon" <will@kernel.org>, Michael Ellerman <mpe@ellerman.id.au>, "Nicholas
- Piggin" <npiggin@gmail.com>, Naveen N Rao <naveen@kernel.org>, Muchun Song
-	<muchun.song@linux.dev>, Andrew Morton <akpm@linux-foundation.org>, "Liam R.
- Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>,
-	"Lorenzo Stoakes" <lorenzo.stoakes@oracle.com>, Thomas Gleixner
-	<tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov
-	<bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, "x86@kernel.org"
-	<x86@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>, Huacai Chen
-	<chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>, Russell King
-	<linux@armlinux.org.uk>, "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>,
-	"James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>, Helge Deller
-	<deller@gmx.de>, Alexander Gordeev <agordeev@linux.ibm.com>, Gerald Schaefer
-	<gerald.schaefer@linux.ibm.com>, Heiko Carstens <hca@linux.ibm.com>, "Vasily
- Gorbik" <gor@linux.ibm.com>, Christian Borntraeger
-	<borntraeger@linux.ibm.com>, Sven Schnelle <svens@linux.ibm.com>, "Yoshinori
- Sato" <ysato@users.sourceforge.jp>, Rich Felker <dalias@libc.org>, "John Paul
- Adrian Glaubitz" <glaubitz@physik.fu-berlin.de>, "David S. Miller"
-	<davem@davemloft.net>, Andreas Larsson <andreas@gaisler.com>, Shuah Khan
-	<shuah@kernel.org>, Alexandre Ghiti <alexghiti@rivosinc.com>
-CC: "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Palmer Dabbelt
-	<palmer@rivosinc.com>, "linux-riscv@lists.infradead.org"
-	<linux-riscv@lists.infradead.org>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "linuxppc-dev@lists.ozlabs.org"
-	<linuxppc-dev@lists.ozlabs.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>,
-	"loongarch@lists.linux.dev" <loongarch@lists.linux.dev>,
-	"linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
-	"linux-parisc@vger.kernel.org" <linux-parisc@vger.kernel.org>,
-	"linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>,
-	"linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>,
-	"sparclinux@vger.kernel.org" <sparclinux@vger.kernel.org>,
-	"linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>
-Subject: RE: [PATCH 07/16] powerpc: mm: Support MAP_BELOW_HINT
-Thread-Topic: [PATCH 07/16] powerpc: mm: Support MAP_BELOW_HINT
-Thread-Index: AQHa+RRTN/GnVgA7wEmCsX6Cdbuah7JBk7Rw
-Date: Sat, 31 Aug 2024 16:30:28 +0000
-Message-ID: <7011cb340586473dac83efbbe84c4a05@AcuMS.aculab.com>
-References: <20240827-patches-below_hint_mmap-v1-0-46ff2eb9022d@rivosinc.com>
- <20240827-patches-below_hint_mmap-v1-7-46ff2eb9022d@rivosinc.com>
- <a43c52c6-c1ac-4ef3-b511-08f0459bddad@csgroup.eu>
-In-Reply-To: <a43c52c6-c1ac-4ef3-b511-08f0459bddad@csgroup.eu>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
+	s=arc-20240116; t=1725122563; c=relaxed/simple;
+	bh=5nxftlw36WRCH7hhubmyp9Fr8vyJ3JvaNgYOtKPsxbU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KzFuYeUD7S5ZTQPVawGk+fW1hLzI3haBJKXGYwMP3clWQ+6ZKZ6CtaTOnSCAT9IoEofc+2hoMRGwJKZE5NlSZv/UoXm/94nNu3Si9w9caSYySGuLtsaWFra+oOB7HWJPuSPh3jTg05G56jhoV0y9sOdHKdZl+P2PpUBhMMSYJ48=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bUVW+Mq5; arc=none smtp.client-ip=209.85.208.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2f3edb2d908so29482421fa.2;
+        Sat, 31 Aug 2024 09:42:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725122560; x=1725727360; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=KilWTuBK/UXyi+ZAcZMAHfDF1J3qSDvycaldNcwXGN4=;
+        b=bUVW+Mq5naX3Hc1UCV6ek7QUt2QhVwtYxZ9oE3qNkf5GtVARwPoirmdjSL4U641vX+
+         VGU5/QTuN6agX/vM9JLaWl1rSIfWZ25Fs8OUA0PFuEPqpjIK2XGGuCSce/3BH6cEQu05
+         HitT1O31zd4dJdMGzboNB5BddLIFyHGXgdqhj4+CgDltxP8feiYyKucY9gQWYseQ34g7
+         jW44Hh58ppJQXU5s/ipNfd6n4GeTJQqh4dp586vW8J0+gl8dO+zz5vekB8BmRCZUhHu1
+         I2u17Ii/ItvTLyZCFyaqVAM9TbOvYx4yK/ejVbjTsYhEp48LnVkhFndK9KI4jiKCltrc
+         EYGg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725122560; x=1725727360;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=KilWTuBK/UXyi+ZAcZMAHfDF1J3qSDvycaldNcwXGN4=;
+        b=HA+JBud/7SIsMOjDrqyVut75l7V7+Y+7Zr21nuenAChOzHOgAF0E5XbIVHIxAP85q9
+         0CEQmohBjMSqJssZJzm1FqAJ4ja/sW9AHVQIY3fqOgMvzBQ6Hot49eFOFPJjXstozEqC
+         7v2hH9PAxTfqk9W4614tm47AShGNvYBTHm7wOhvvx98634UolZ3H7OF3KXywOGhI/lam
+         OEjnXs+cI2Fa7yj/wxGrmygNjUYY5wg2jyH0zZB8KUws8xpzKl8zTy4xqLE0SFEu7EhS
+         rix5a7JLXyR+tBYXaJ75JUxuVZTUOnCqUc/rhfBI0r5GxTZ95uL3ojJvTW9cnkyOitqM
+         PqTw==
+X-Forwarded-Encrypted: i=1; AJvYcCUKV+YjQnr3i4Q6DXT7MPyhxi5hMzPUwR+czHB8/5KzNvGypxi9oeaZeQGqYKcdWmcnKTRJC8xUDaHy/O0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw7L+IqQprYbRei2cvPPd1BNTqD+Do27WynHJEPcZHK74rwEgMz
+	P5Fl98XrkZfr+60cWsB7sMskRdlEjJlHxXwTunr7KIVmyH6703GWoLpV2Jlh2QOcdEO0jRv+PT9
+	pOuXc6gq2F60tUjIG8xquawVMsrs=
+X-Google-Smtp-Source: AGHT+IHShTqQnKMAWO5x4NZXqH988FKcL2DjXaOs9oI2feKR97EJ5QSw6Aq6be0ymvo9od9i6EnPnr1AN7ORfCwIAa0=
+X-Received: by 2002:ac2:4c48:0:b0:52c:daa7:8975 with SMTP id
+ 2adb3069b0e04-53546b05e2bmr4323725e87.18.1725122559348; Sat, 31 Aug 2024
+ 09:42:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: aculab.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: base64
+References: <20240830201627.298264-1-abhashkumarjha123@gmail.com>
+ <20240830201627.298264-3-abhashkumarjha123@gmail.com> <20240831134219.3d394c1a@jic23-huawei>
+In-Reply-To: <20240831134219.3d394c1a@jic23-huawei>
+From: Abhash jha <abhashkumarjha123@gmail.com>
+Date: Sat, 31 Aug 2024 22:12:27 +0530
+Message-ID: <CAG=0RqLfjPF2_ebuabo0_ddvRxZkTLmKUAXQZWYHRaKxDaOkew@mail.gmail.com>
+Subject: Re: [PATCH 2/2] iio: proximity: vl53l0x-i2c: Added continuous mode support
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: linux-iio@vger.kernel.org, songqiang1304521@gmail.com, lars@metafoo.de, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-RnJvbTogQ2hyaXN0b3BoZSBMZXJveQ0KPiBTZW50OiAyOCBBdWd1c3QgMjAyNCAwNzozNQ0KPiBI
-aSBDaGFybGllLA0KPiANCj4gTGUgMjgvMDgvMjAyNCDDoCAwNzo0OSwgQ2hhcmxpZSBKZW5raW5z
-IGEgw6ljcml0wqA6DQo+ID4gQWRkIHN1cHBvcnQgZm9yIE1BUF9CRUxPV19ISU5UIHRvIGFyY2hf
-Z2V0X21tYXBfYmFzZSgpIGFuZA0KPiA+IGFyY2hfZ2V0X21tYXBfZW5kKCkuDQo+ID4NCj4gPiBT
-aWduZWQtb2ZmLWJ5OiBDaGFybGllIEplbmtpbnMgPGNoYXJsaWVAcml2b3NpbmMuY29tPg0KPiA+
-IC0tLQ0KPiA+ICAgYXJjaC9wb3dlcnBjL2luY2x1ZGUvYXNtL3Rhc2tfc2l6ZV82NC5oIHwgMzYg
-KysrKysrKysrKysrKysrKysrKysrKysrKysrLS0tLS0tDQo+ID4gICAxIGZpbGUgY2hhbmdlZCwg
-MzAgaW5zZXJ0aW9ucygrKSwgNiBkZWxldGlvbnMoLSkNCj4gPg0KPiA+IGRpZmYgLS1naXQgYS9h
-cmNoL3Bvd2VycGMvaW5jbHVkZS9hc20vdGFza19zaXplXzY0LmggYi9hcmNoL3Bvd2VycGMvaW5j
-bHVkZS9hc20vdGFza19zaXplXzY0LmgNCj4gPiBpbmRleCAyMzliMzYzODQxYWEuLmEzN2E1YTgx
-MzY1ZCAxMDA2NDQNCj4gPiAtLS0gYS9hcmNoL3Bvd2VycGMvaW5jbHVkZS9hc20vdGFza19zaXpl
-XzY0LmgNCj4gPiArKysgYi9hcmNoL3Bvd2VycGMvaW5jbHVkZS9hc20vdGFza19zaXplXzY0LmgN
-Cj4gPiBAQCAtNzIsMTIgKzcyLDM2IEBADQo+ID4gICAjZGVmaW5lIFNUQUNLX1RPUF9NQVggVEFT
-S19TSVpFX1VTRVI2NA0KPiA+ICAgI2RlZmluZSBTVEFDS19UT1AgKGlzXzMyYml0X3Rhc2soKSA/
-IFNUQUNLX1RPUF9VU0VSMzIgOiBTVEFDS19UT1BfVVNFUjY0KQ0KPiA+DQo+ID4gLSNkZWZpbmUg
-YXJjaF9nZXRfbW1hcF9iYXNlKGFkZHIsIGxlbiwgYmFzZSwgZmxhZ3MpIFwNCj4gPiAtCSgoKGFk
-ZHIpID4gREVGQVVMVF9NQVBfV0lORE9XKSA/IChiYXNlKSArIFRBU0tfU0laRSAtIERFRkFVTFRf
-TUFQX1dJTkRPVyA6IChiYXNlKSkNCj4gPiArI2RlZmluZSBhcmNoX2dldF9tbWFwX2Jhc2UoYWRk
-ciwgbGVuLCBiYXNlLCBmbGFncykJCQkJCVwNCj4gDQo+IFRoaXMgbWFjcm8gbG9va3MgcXVpdGUg
-YmlnIGZvciBhIG1hY3JvLCBjYW4gaXQgYmUgYSBzdGF0aWMgaW5saW5lDQo+IGZ1bmN0aW9uIGlu
-c3RlYWQgPyBTYW1lIGZvciB0aGUgb3RoZXIgbWFjcm8gYmVsb3cuDQoNCk9yIGV2ZW4gYSByZWFs
-IGZ1bmN0aW9uPw0KR2l2ZW4gdGhlIGFjdHVhbCBjb3N0IG9mIG1hcHBpbmcgbWVtb3J5IGFuIGV4
-dHJhIGZ1bmN0aW9uIGNhbGwNCmlzbid0IGdvaW5nIHRvIGJlIG1hc3VyYWJsZS4NCg0KCURhdmlk
-DQoNCj4gDQo+ID4gKyh7CQkJCQkJCQkJCQlcDQo+ID4gKwl1bnNpZ25lZCBsb25nIG1tYXBfYmFz
-ZTsJCQkJCQkJXA0KPiA+ICsJdHlwZW9mKGZsYWdzKSBfZmxhZ3MgPSAoZmxhZ3MpOwkJCQkJCQlc
-DQo+ID4gKwl0eXBlb2YoYWRkcikgX2FkZHIgPSAoYWRkcik7CQkJCQkJCVwNCj4gPiArCXR5cGVv
-ZihiYXNlKSBfYmFzZSA9IChiYXNlKTsJCQkJCQkJXA0KPiA+ICsJdHlwZW9mKGxlbikgX2xlbiA9
-IChsZW4pOwkJCQkJCQlcDQo+ID4gKwl1bnNpZ25lZCBsb25nIHJuZF9nYXAgPSBERUZBVUxUX01B
-UF9XSU5ET1cgLSAoX2Jhc2UpOwkJCQlcDQo+ID4gKwlpZiAoX2ZsYWdzICYgTUFQX0JFTE9XX0hJ
-TlQgJiYgX2FkZHIgIT0gMCAmJiAoKF9hZGRyICsgX2xlbikgPiBCSVQoVkFfQklUUyAtIDEpKSlc
-DQo+ID4gKwkJbW1hcF9iYXNlID0gKF9hZGRyICsgX2xlbikgLSBybmRfZ2FwOwkJCQkJXA0KPiA+
-ICsJZWxzZQkJCQkJCQkJCQlcDQo+ID4gKwkJbW1hcF9lbmQgPSAoKF9hZGRyID4gREVGQVVMVF9N
-QVBfV0lORE9XKSA/CQkJCVwNCj4gPiArCQkJCV9iYXNlICsgVEFTS19TSVpFIC0gREVGQVVMVF9N
-QVBfV0lORE9XIDoJCVwNCj4gPiArCQkJCV9iYXNlKTsJCQkJCQkJXA0KPiA+ICsJbW1hcF9lbmQ7
-CQkJCQkJCQkJXA0KPiANCj4gbW1hcF9lbmQgZG9lc24ndCBleGlzdCwgZGlkIHlvdSBtZWFuIG1t
-YXBfYmFzZSA/DQo+IA0KPiA+ICt9KQ0KPiA+DQo+ID4gLSNkZWZpbmUgYXJjaF9nZXRfbW1hcF9l
-bmQoYWRkciwgbGVuLCBmbGFncykgXA0KPiA+IC0JKCgoYWRkcikgPiBERUZBVUxUX01BUF9XSU5E
-T1cpIHx8IFwNCj4gPiAtCSAoKChmbGFncykgJiBNQVBfRklYRUQpICYmICgoYWRkcikgKyAobGVu
-KSA+IERFRkFVTFRfTUFQX1dJTkRPVykpID8gVEFTS19TSVpFIDogXA0KPiA+IC0JCQkJCQkJCQkg
-ICAgREVGQVVMVF9NQVBfV0lORE9XKQ0KPiA+ICsjZGVmaW5lIGFyY2hfZ2V0X21tYXBfZW5kKGFk
-ZHIsIGxlbiwgZmxhZ3MpCQkJCQkJCVwNCj4gPiArKHsJCQkJCQkJCQkJCQlcDQo+ID4gKwl1bnNp
-Z25lZCBsb25nIG1tYXBfZW5kOwkJCQkJCQkJCVwNCj4gPiArCXR5cGVvZihmbGFncykgX2ZsYWdz
-ID0gKGZsYWdzKTsJCQkJCQkJCVwNCj4gPiArCXR5cGVvZihhZGRyKSBfYWRkciA9IChhZGRyKTsJ
-CQkJCQkJCVwNCj4gPiArCXR5cGVvZihsZW4pIF9sZW4gPSAobGVuKTsJCQkJCQkJCVwNCj4gPiAr
-CWlmIChfZmxhZ3MgJiBNQVBfQkVMT1dfSElOVCAmJiBfYWRkciAhPSAwICYmICgoX2FkZHIgKyBf
-bGVuKSA+IEJJVChWQV9CSVRTIC0gMSkpKQlcDQo+ID4gKwkJbW1hcF9lbmQgPSAoX2FkZHIgKyBf
-bGVuKTsJCQkJCQkJXA0KPiA+ICsJZWxzZQkJCQkJCQkJCQkJXA0KPiA+ICsJCW1tYXBfZW5kID0g
-KCgoX2FkZHIpID4gREVGQVVMVF9NQVBfV0lORE9XKSB8fAkJCQkJXA0KPiA+ICsJCQkJKCgoX2Zs
-YWdzKSAmIE1BUF9GSVhFRCkgJiYgKChfYWRkcikgKyAoX2xlbikgPiBERUZBVUxUX01BUF9XSU5E
-T1cpKVwNCj4gPiArCQkJCT8gVEFTS19TSVpFIDogREVGQVVMVF9NQVBfV0lORE9XKQkJCQlcDQo+
-ID4gKwltbWFwX2VuZDsJCQkJCQkJCQkJXA0KPiA+ICt9KQ0KPiA+DQo+ID4gICAjZW5kaWYgLyog
-X0FTTV9QT1dFUlBDX1RBU0tfU0laRV82NF9IICovDQo+ID4NCg0KLQ0KUmVnaXN0ZXJlZCBBZGRy
-ZXNzIExha2VzaWRlLCBCcmFtbGV5IFJvYWQsIE1vdW50IEZhcm0sIE1pbHRvbiBLZXluZXMsIE1L
-MSAxUFQsIFVLDQpSZWdpc3RyYXRpb24gTm86IDEzOTczODYgKFdhbGVzKQ0K
+> Also, consider if other triggers could be used as if not you need to
+> both document why and add the validation callbacks to stop other triggers
+> being assigned (once you've added one that can be!)
+>
+> Feel free to ask if you have more questions, but your first reference
+> should be other drivers (and I hope we don't have any that do it this way).
+>
+I used this driver as a reference
+https://github.com/torvalds/linux/blob/master/drivers/iio/adc/vf610_adc.c#L556
 
+>
+> ouch, not a write 1 to clear register?  I can't find docs, but this is really
+> nasty bit of interface design if you have to toggle the bit.
+>
+Actually ST has not provided a register map or any application note
+for the sensor.
+So there's no way to cross reference. Hence I kept the original code.
+But I will try to write 1 to clear register with my sensor.
+
+> > +             ret = devm_iio_triggered_buffer_setup(&client->dev,
+> > +                                     indio_dev,
+> > +                                     &iio_pollfunc_store_time,
+>
+> This is odd.  You don't seem to have a function to be called to actually store
+> the data.  Note you also need to consider if other triggers might be used.
+>
+> I'm not sure what reason we have to do that here though as this is a very
+> conventional one interrupt per 'scan' of data device.
+>
+> So you should be registering a trigger, and a buffer then letting the
+> trigger drive the buffer.
+
+Why do I need to register a trigger? Would it be fine to let the irq
+fill the buffer
+with data as  it continuously reads it in the poll function?
+
+So according to my understanding,
+I need to move all the data reading and pushing to the poll function
+and not do it in the irq handler.
+Then register that poll function here during iio_triggered_buffer_setup.
+Is there something that I am missing?
+
+Regards,
+Abhash
 
