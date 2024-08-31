@@ -1,111 +1,201 @@
-Return-Path: <linux-kernel+bounces-309829-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309837-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65BC49670CB
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 12:22:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D1A09670EA
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 12:32:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E2DACB22558
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 10:22:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DDC461F25A39
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 10:32:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5279179970;
-	Sat, 31 Aug 2024 10:22:37 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 743FC17C7C2;
+	Sat, 31 Aug 2024 10:32:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="K79//bN8"
+Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com [209.85.219.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F08B16F0F0
-	for <linux-kernel@vger.kernel.org>; Sat, 31 Aug 2024 10:22:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1357B170826
+	for <linux-kernel@vger.kernel.org>; Sat, 31 Aug 2024 10:32:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725099757; cv=none; b=i4+1cgLFkSSKeobhJnhpKrb612IQ8XjmK0PUD1Xo05qGcTvwsSPbIUbEUprjfeAS0SYHcsa/ikMSod1MCnXPj+vO/TiApb1Zi7II/jJCAyQI0KzaBEKF+M7jJAc1r4V+QZbO5+bjvS9M2wVEK0OssafUhbZm9lpM1nZfVS2rzVc=
+	t=1725100362; cv=none; b=eY4uQlPkuWXHAVsSQuDVcItM3MoZYcB0JDm21rnlEmscTtyyp6+7Xj/w4rRVrBVUr11JywGjP2ZIs7BF0PV/Ac/s+m1ug1DUF/bcxAwoDBvZ0KkoQZscmcyT9Lync36y8g8gQz56eXc0qN8zkHktvUPtnKikxfKQ4bJ+Z+ZuSxU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725099757; c=relaxed/simple;
-	bh=1ixH9OkzJ/KGFfbODxkUO32eTSdnQApugAkffkOzqYc=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=OGq1EXi5sOUXZNd7xQ4yLq3SqfmCnxbTlagenNfA6i7Eg2pWpNAn7IK3OuAmgE+ZsoPIalcawbL9Qe8bsZ5fiaOtBJRTf19AsLo/pRp8twjY8lg+sAyB9Xucy6f+XYJWlduVAHatoIYf2B2AZm7aHiogsnElRQEZFC3HPl22Y38=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.174])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4WwrfD2SlPzyQxW;
-	Sat, 31 Aug 2024 18:21:40 +0800 (CST)
-Received: from kwepemh500013.china.huawei.com (unknown [7.202.181.146])
-	by mail.maildlp.com (Postfix) with ESMTPS id B52B61400FD;
-	Sat, 31 Aug 2024 18:22:32 +0800 (CST)
-Received: from huawei.com (10.90.53.73) by kwepemh500013.china.huawei.com
- (7.202.181.146) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Sat, 31 Aug
- 2024 18:22:32 +0800
-From: Jinjie Ruan <ruanjinjie@huawei.com>
-To: <frank.binns@imgtec.com>, <matt.coster@imgtec.com>,
-	<maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
-	<tzimmermann@suse.de>, <airlied@gmail.com>, <daniel@ffwll.ch>,
-	<dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
-CC: <ruanjinjie@huawei.com>
-Subject: [PATCH -next] drm/imagination: Use memdup_user() helper
-Date: Sat, 31 Aug 2024 18:30:47 +0800
-Message-ID: <20240831103047.99499-1-ruanjinjie@huawei.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1725100362; c=relaxed/simple;
+	bh=LS7JjNLNOai5U4tKMxi9bIxoMnNaywIh2Nz/2XzTViE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=S8gED11WUDv/HFlteFge7UEuqMxHAwKQiLJfdFUxopFlqWQz/v5T9AqOp+GmnDsoR9wPkKJIMwZC3BkHiGaCble0XqByRJWQGeh5AXJvkvuwS1cyVQKCWShO5q4UYMHgQmGg/g50a3VrdhHpuTdonFYysZ3rrrcGYeLIDhq9Obo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=K79//bN8; arc=none smtp.client-ip=209.85.219.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f174.google.com with SMTP id 3f1490d57ef6-e0b7efa1c1bso2643053276.3
+        for <linux-kernel@vger.kernel.org>; Sat, 31 Aug 2024 03:32:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1725100360; x=1725705160; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=tKxIacQXeZ2qcUvNmDUUVII5ysi793GfJwtJp8UupOo=;
+        b=K79//bN8cXBhdsmHCleEkY4jKCZWc7vZw5bVpr+9ezF/Tq9yh1+AQko2aps9jV6Nra
+         L3nUQSBVdDPzzAsctwyEh26AqNfkQnXhfTKx0aojqdEI8gv5BjVAuA2+xBBr1rH1wAtc
+         yiWEUy1EZCGryL4OB5YQUkSL5aAXA3sGcD85ZAL4shyVE7asTxQMohCD4zVZ0qcqazA+
+         b53sCQ6XKu59mdeupIEFnm/dF5Ob8dzrs1MmEDemLvq5f8/ydxpoIgty/SaFvRDwTE85
+         iFPmNSWBYjRCQXEJXCFHh80/KOlBz+bZXN+Kne31Q2Xfyrmax4lC7xpTONo/KgnTjNEo
+         +BGQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725100360; x=1725705160;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=tKxIacQXeZ2qcUvNmDUUVII5ysi793GfJwtJp8UupOo=;
+        b=R2ItZiAddO2slQmR/gXvYU5FlE8TfwN+Nxk4/3o/nrpBhiBaxbrz9p9h00zMYbjh9/
+         Wt/ofBnSJX8QjmstKhmumINTRbe1xMWfYv4joMHOjrQP4bFy1cUHMekj5qd3RhjtqrQe
+         JMAkTVqNPbAfURCmjo/7JV6ghZoAaTqN6mtc0oPpASE/5+/zFmanZtdND6LnJoRDxxC2
+         9klpCGHQDW2/M6cEbMNiHtLKGUOx3TVUdUuDPqTTp3zsuoIVjjnnPyBwGtCRVTb7kQI+
+         8275+J4CXqmOa9LlDns+r5//HCW9m9rEwG1XhQbUK9EEt2SIfGmiEPwfyRXCfUIIM/eh
+         gaBg==
+X-Forwarded-Encrypted: i=1; AJvYcCVsnHux8WDhQ6fC69TPz4YROGsOzPff/xpCXPUIUQ+u2XyqKwHBK6WIUsoy6+pCTkHTfV2LALQH/MZ3FYk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx6J3oXruzSsN1xpcOlel2aKVEDJRxGaelfIbmJjiP9yn1ugl/d
+	4cgKiBOj+0PdkDfGrKbdBf7xudZ5cY3forn4Op8WmEk0jNKDwhPdb1sGvGyccQBpGtCbSh4M8Qk
+	AYqaLvR/f8FuCTK0Dlv8blhth+U6JXhicja6kew==
+X-Google-Smtp-Source: AGHT+IH8Eb7EYXiidD/DrNNChHQ2lwNk48tFSRFBB77aRxIJWoIIPagMeOtludSNPt8BV9FsjbJZVJT8vUY8xBCkml0=
+X-Received: by 2002:a05:6902:1145:b0:e0b:a7c1:9dcc with SMTP id
+ 3f1490d57ef6-e1a7a019106mr5308764276.20.1725100360016; Sat, 31 Aug 2024
+ 03:32:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- kwepemh500013.china.huawei.com (7.202.181.146)
+References: <20240822152801.602318-1-claudiu.beznea.uj@bp.renesas.com>
+ <CAPDyKFrS4Dhd7DZa2zz=oPro1TiTJFix0awzzzp8Qatm-8Z2Ug@mail.gmail.com>
+ <99bef301-9f6c-4797-b47e-c83e56dfbda9@tuxon.dev> <CAPDyKFrVS2vpsJqTvjKCJ7ADqXc4D4k2eeCBsaK4T+=pXDnKUA@mail.gmail.com>
+ <fa9b3449-ea3e-4482-b7eb-96999445cea5@tuxon.dev>
+In-Reply-To: <fa9b3449-ea3e-4482-b7eb-96999445cea5@tuxon.dev>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Sat, 31 Aug 2024 12:32:02 +0200
+Message-ID: <CAPDyKFrkkASq7rfRN=9sEet-p8T8t+f__PdnSNRN3bMNipnNNw@mail.gmail.com>
+Subject: Re: [PATCH 00/16] Add initial USB support for the Renesas RZ/G3S SoC
+To: claudiu beznea <claudiu.beznea@tuxon.dev>
+Cc: vkoul@kernel.org, kishon@kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, p.zabel@pengutronix.de, geert+renesas@glider.be, 
+	magnus.damm@gmail.com, gregkh@linuxfoundation.org, mturquette@baylibre.com, 
+	sboyd@kernel.org, yoshihiro.shimoda.uh@renesas.com, 
+	biju.das.jz@bp.renesas.com, linux-phy@lists.infradead.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, linux-usb@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, 
+	linux-pm@vger.kernel.org, Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Switching to memdup_user(), which combines kmalloc() and copy_from_user(),
-and it can simplfy code.
+[...]
 
-Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
----
- drivers/gpu/drm/imagination/pvr_context.c | 22 +++++++---------------
- 1 file changed, 7 insertions(+), 15 deletions(-)
+> >
+> > If not, there are two other options that can be considered I think.
+> > *) Using the genpd on/off notifiers, to really allow the consumer
+> > driver of the reset-control to know when the PM domain gets turned
+> > on/off.
+> > **) Move the entire reset handling into the PM domain provider, as it
+> > obviously knows when the domain is getting turned on/off.
+>
+> This option is what I've explored, tested on my side.
+>
+> I explored it in 2 ways:
+>
+> 1/ SYSC modeled as an individual PM domain provider (this is more
+>    appropriate to how HW manual described the hardware) with this the PHY
+>    reset DT node would have to get 2 PM domains handlers (one for the
+>    current PM domain provider and the other one for SYSC):
+>
+> +               phyrst: usbphy-ctrl@11e00000 {
+> +                       compatible = "renesas,r9a08g045-usbphy-ctrl";
+> +                       reg = <0 0x11e00000 0 0x10000>;
+> +                       clocks = <&cpg CPG_MOD R9A08G045_USB_PCLK>;
+> +                       resets = <&cpg R9A08G045_USB_PRESETN>;
+> +                       power-domain-names = "cpg", "sysc";
+> +                       power-domains = <&cpg R9A08G045_PD_USB_PHY>, <&sysc
+> R9A08G045_SYSC_PD_USB>;
+> +                       #reset-cells = <1>;
+> +                       status = "disabled";
+> +
+> +                       usb0_vbus_otg: regulator-vbus {
+> +                               regulator-name = "vbus";
+> +                       };
+> +               };
+> +
 
-diff --git a/drivers/gpu/drm/imagination/pvr_context.c b/drivers/gpu/drm/imagination/pvr_context.c
-index eded5e955cc0..e75fd50a4d9f 100644
---- a/drivers/gpu/drm/imagination/pvr_context.c
-+++ b/drivers/gpu/drm/imagination/pvr_context.c
-@@ -69,27 +69,19 @@ process_static_context_state(struct pvr_device *pvr_dev, const struct pvr_stream
- 	void *stream;
- 	int err;
- 
--	stream = kzalloc(stream_size, GFP_KERNEL);
--	if (!stream)
--		return -ENOMEM;
--
--	if (copy_from_user(stream, u64_to_user_ptr(stream_user_ptr), stream_size)) {
--		err = -EFAULT;
--		goto err_free;
--	}
-+	stream = memdup_user(u64_to_user_ptr(stream_user_ptr), stream_size);
-+	if (IS_ERR(stream))
-+		return PTR_ERR(stream);
- 
- 	err = pvr_stream_process(pvr_dev, cmd_defs, stream, stream_size, dest);
--	if (err)
--		goto err_free;
-+	if (err) {
-+		kfree(stream);
-+		return err;
-+	}
- 
- 	kfree(stream);
- 
- 	return 0;
--
--err_free:
--	kfree(stream);
--
--	return err;
- }
- 
- static int init_render_fw_objs(struct pvr_context *ctx,
--- 
-2.34.1
+According to what you have described earlier/above, modelling the SYSC
+as a PM domain provider seems like a better description of the HW to
+me. Although, as I said earlier, if you prefer the reset approach, I
+would not object to that.
 
+>
+> and the PHY reset driver will get bulky with powering on/off both of these,
+> at least with my current implementation, something like (and the following
+> code is in probe()):
+>
+> +       if (priv->set_power) {
+> +               priv->cpg_genpd_dev = dev_pm_domain_attach_by_name(dev, "cpg");
+> +               if (IS_ERR(priv->cpg_genpd_dev)) {
+> +                       dev_err_probe(dev, error, "Failed to attach CPG PM
+> domain!");
+> +                       error = PTR_ERR(priv->cpg_genpd_dev);
+> +                       goto err_pm_runtime_put;
+> +               }
+> +
+> +               priv->sysc_genpd_dev = dev_pm_domain_attach_by_name(dev,
+> "sysc");
+> +               if (IS_ERR(priv->sysc_genpd_dev)) {
+> +                       dev_err_probe(dev, error, "Failed to attach sysc PM
+> domain!");
+> +                       error = PTR_ERR(priv->sysc_genpd_dev);
+> +                       goto err_genpd_cpg_detach;
+> +               }
+> +
+> +               priv->cpg_genpd_dl = device_link_add(dev, priv->cpg_genpd_dev,
+> +                                                    DL_FLAG_PM_RUNTIME |
+> +                                                    DL_FLAG_STATELESS);
+> +               if (!priv->cpg_genpd_dl) {
+> +                       dev_err_probe(dev, -ENOMEM, "Failed to add CPG
+> genpd device link!");
+> +                       goto err_genpd_sysc_detach;
+> +               }
+> +
+> +               priv->sysc_genpd_dl = device_link_add(dev,
+> priv->sysc_genpd_dev,
+> +                                                     DL_FLAG_PM_RUNTIME |
+> +                                                     DL_FLAG_STATELESS);
+> +               if (!priv->sysc_genpd_dl) {
+> +                       dev_err_probe(dev, -ENOMEM, "Failed to add sysc
+> genpd device link!");
+> +                       goto err_genpd_cpg_dl_del;
+> +               }
+> +
+> +
+> +               error = pm_runtime_resume_and_get(priv->cpg_genpd_dev);
+> +               if (error) {
+> +                       dev_err_probe(dev, error, "Failed to runtime resume
+> cpg PM domain!");
+> +                       goto err_genpd_sysc_dl_del;
+> +               }
+> +
+> +               error = pm_runtime_resume_and_get(priv->sysc_genpd_dev);
+> +               if (error) {
+> +                       dev_err_probe(dev, error, "Failed to runtime resume
+> sysc PM domain!");
+> +                       goto err_genpd_cpg_off;
+> +               }
+> +       }
+
+Indeed, the code above looks bulky.
+
+Fortunately, we now have dev|devm_pm_domain_attach_list(), which
+replaces all of the code above.
+
+[...]
+
+Kind regards
+Uffe
 
