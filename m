@@ -1,149 +1,119 @@
-Return-Path: <linux-kernel+bounces-310017-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310018-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19C74967322
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 21:35:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68A0C967324
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 21:40:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BDBE31F2235E
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 19:35:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E9911C210FD
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 19:40:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B30A1531FD;
-	Sat, 31 Aug 2024 19:35:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4949217BB34;
+	Sat, 31 Aug 2024 19:40:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="COVPeyFC"
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="MXTSPoyr"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0D1D39FDD;
-	Sat, 31 Aug 2024 19:35:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3827524F
+	for <linux-kernel@vger.kernel.org>; Sat, 31 Aug 2024 19:40:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725132935; cv=none; b=Yy3lXfcljiWI3A7UXiA54bDDpntlZgj0DofrHf7o4Thq+z7lrBT4sdvi280B0nMhLs/BXrSZ5fDikfW3dMRHE1qIupsnBDXUWySyQ+5JOojuKAecEvmOqGnoUnZsUO4ZTK/KjBLAPBiYfkpoKzsDU6HVwvWvCc70yIUmrXW0ZjE=
+	t=1725133248; cv=none; b=dR8pGyF+6pWTiPdd+u7YrDgX5ln/pwASN5MF6c8/xRvsX6CB2WyCBq1+y7fHPJuLwJzliK3ZCRI/4e6JROea5m9Uozqk4kk5wP+R3S/BfldZo8RaUcEHgjOFFCcyC/UnDmumzKi/Q5z3V+Lc67CdV1258a0+szUcqam7TqvlTx4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725132935; c=relaxed/simple;
-	bh=88vBedgXwP97HYw2npqq3VYbx8iEQMale+RTN4exJRw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YAs7Kb8GwovHbiSVlOCaD3bam0wkOz+n6BY1lVrnWlmZeAnsQ77ZivDjI93MDQVyygtADjwOjmumhaaeZyQVCCDuOfbBHxce5V81TPL6nMkHNtwWmRzojCyN0qD3EdlZBq+oS4MfQ4rt1HTlCYFh9HRpqcy7KE/IB3IrkCsRTeg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=COVPeyFC; arc=none smtp.client-ip=209.85.210.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-715cc93694fso2647225b3a.2;
-        Sat, 31 Aug 2024 12:35:33 -0700 (PDT)
+	s=arc-20240116; t=1725133248; c=relaxed/simple;
+	bh=0zBqQcQWGQH6QT+Zs59gfm6nXvQOLfs6t1Z3jMdHjSQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YMhfhfSJmsBujypNY675xip1L+eRnuvabH8O23Xyxvg5QjZfukqxnGEexlWn3lNkKAoKXpA/o3eGc+nC0ttxqsjQGwDDlG4v4uJmv+AJKMG9M2dW/FGEimM8HspzCElXM7/KJjkLs/d//Y3AvZurl9Vmrb9L3rVRRsVnL5ClZQ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=MXTSPoyr; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-42c7a384b18so4781915e9.0
+        for <linux-kernel@vger.kernel.org>; Sat, 31 Aug 2024 12:40:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725132933; x=1725737733; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=efDdo8Rf8FcDNhL/pTn7ObRZiGA/HSHYfyN56iTR4Ok=;
-        b=COVPeyFC4QxfLVQRq1Sgp9SoU55PzeZE6SFR32nuKaTIH5tFHiO7/D7p7/i7X7VwSw
-         Vm9SyNdtijMIVEn5faTghv2M0a4m0ea7tfWSecoiw2CGdrHJkAWrVZl5ViAD5cnNJZ0h
-         06Lq04RxTHHnHaSjBnhhgFg3jOoRa3wCJV23W5yyF5fHKi7i4qQFNlSvU01R8iVcSOiZ
-         hEsKVAzId6Y1PVBhZPQXr1eElrdQG2qkOaAte/JUY5lVZT7cFPAPz9810MBRfSSr1qOA
-         jg2kq9CbrMk2fPcTvscXVG2mvSlXSEtBpUuKL9YzMlmX8vg79VeLHsHBmSBYpZpHrK+c
-         pczg==
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1725133244; x=1725738044; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=+CtfmoH02/knNQfvPe1y43TpSI75G5Zoj3oZBNUmpzE=;
+        b=MXTSPoyr92imhXo8QqorP8Tg1SrdVdBmlkVqFaDkhOMygnYk8wiRhF1XcXlw+uV56R
+         CBTU87n/kJRikB+hiRfMbqbUORxdklARB71yA9DspeieVDzUxwyO7/tEpgdJITSeKR3p
+         NIDNXBg8zF7X1kvix2Pst9wfXwaLDKP/Gff55y5rrKWKUq01+bIcdLsbN6tqp5rpCb2v
+         p2MCAnVfsyDQBMzZ6v4fhZzjNqxHEQqQg0MjF33GsCJQQEGmbplRepfpMgSsHQAUx6F7
+         frs/0pMb27tdp4VIH1U8cgfi6sZB7gLpjw6SVnHbN2YC1OEB50G2JlzoAaTUIfTRgHc6
+         EeBg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725132933; x=1725737733;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=efDdo8Rf8FcDNhL/pTn7ObRZiGA/HSHYfyN56iTR4Ok=;
-        b=M4F0HtsmeWAp2DmJ6PHaIM016eBIUKlEahK3qKNsgfZLJFsIZj2e8dmOi/nvWmY5A1
-         A81FuVwPX2z3bmiqKuIV9bbPvdgyABlCaNpe2/PjYt4mks8R6lsoCutrbLkc0JPBLjkw
-         B+O02FUQ7nij2j9eO04QYZw7C69pqCk3mB4f77ypdbeTdrM6XltFYPvJF6UF2DSsHq0W
-         JluGPXx44qXXnwfY4CYwZQnrvy+yPyb8pv7+PfQiyuupebo5NYMlYzmumVSJxawS6aow
-         DCJTbvgznolBIYY4NPynzDWd/6SbIaW8i4Y6F6gAnNK0KJT+fOb+nHw/ATJ1ShKhtW0U
-         yTdg==
-X-Forwarded-Encrypted: i=1; AJvYcCWDZT+r8WdyI+xeHBfFa2SnKbohtB2zNu/NrJftY5BbJlpCjChmU5L0x8UXRSgeDv+nygDoWANDgIl+oQ==@vger.kernel.org, AJvYcCXuyYZGzs6XRpcQa4ZPXJD/3ntewTU5DPWhNNMLDPbik1y0Goftf26aW3ZLQ+hFp5sr+7cF0DAcXQIsX8nO@vger.kernel.org
-X-Gm-Message-State: AOJu0YzNQ2BDmkT5iFp/fvIidZGt3qFOhWPXMiMFtN2cp6MrUuVXVfqx
-	R2AOYn7BtFi/m0Lrasd1DveGmxdQ9+vNq3M8Y0IBgu9esc4Sm1zj
-X-Google-Smtp-Source: AGHT+IER2qtkqOh3s9y998ousnaj5IE1Uvj6aAunJLLbT566xMBH/BctBgffU5DEZeWxOix9vEVbdw==
-X-Received: by 2002:a05:6a00:3a05:b0:710:5825:5ba0 with SMTP id d2e1a72fcca58-7173c1e0e87mr2616159b3a.3.1725132932715;
-        Sat, 31 Aug 2024 12:35:32 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-715e55a94casm4544640b3a.70.2024.08.31.12.35.31
+        d=1e100.net; s=20230601; t=1725133244; x=1725738044;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+CtfmoH02/knNQfvPe1y43TpSI75G5Zoj3oZBNUmpzE=;
+        b=TAzLzfO6o7zvtRncSpQAPxierlevsnPgux7Mu5lty6Zj9IIG2hLZQXqBEDvbShCZwe
+         yTaYywG61B+DlHuL8KuRzgQy9n15q6XVQyYuc61i6tTqFdrlbEyZuXaeTPeoX7T7WKK3
+         ZCQrSrPUDrxFRu3LMFWY//M/qzthTNPWLeyKFxXdZ9U4f7yqWbSBD1OiKiVmZhkS7gw4
+         w6vckN4I/bDZRwGfv85dofI4SkUN/JFRLzgxjGssHPSjEJ7KwUQwT5Q41/g4nIay69mk
+         8fWkZmpb5VGeWlhtgEQ6C4bTG2OGZYKWHyfy1RxNlscQAJPuNN2uIDTKu49RINsXMC/B
+         fHSA==
+X-Forwarded-Encrypted: i=1; AJvYcCXM97TtRFUA+6fesF1L7/O5E+dfrinwYzh7V8ranlg+cwbThm6TlMFimDWJ/v8kHeTBP97fMFF0DJ732Qs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwvufVuuDmPv1zY/418wfrRt99QAcyZo9iIEKOZ24d2LVrwP2NL
+	HzmZvpD7X+MKQhjphbHPV/AY41+8ErvJff4f2gcELWCRYnKOPAqqpqvUyBBhjRE=
+X-Google-Smtp-Source: AGHT+IGMPsKGvi8ik9qWKFA0pPgByI5GVS4lUuTCFIOR8+o1o/wJszc9rxEhmR+5anMa6INMYGb15g==
+X-Received: by 2002:a05:600c:4452:b0:428:1090:cfd4 with SMTP id 5b1f17b1804b1-42be48faa4emr19435215e9.33.1725133243464;
+        Sat, 31 Aug 2024 12:40:43 -0700 (PDT)
+Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:48d1:4cac:fd8a:956c])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42bb6df936dsm84597655e9.28.2024.08.31.12.40.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 31 Aug 2024 12:35:31 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date: Sat, 31 Aug 2024 12:35:30 -0700
-From: Guenter Roeck <linux@roeck-us.net>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Shen Lichuan <shenlichuan@vivo.com>, jdelvare@suse.com,
-	linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org,
-	opensource.kernel@vivo.com
-Subject: Re: [PATCH v1] hwmon: (sht15) Simplify with dev_err_probe()
-Message-ID: <8114389a-46f2-4149-8835-8b2d62e00bc0@roeck-us.net>
-References: <20240830065443.31760-1-shenlichuan@vivo.com>
- <4792cf2f-1a53-428b-9760-9f8c506c34d7@kernel.org>
+        Sat, 31 Aug 2024 12:40:43 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: [GIT PULL] power sequencing fixes for v6.11-rc6
+Date: Sat, 31 Aug 2024 21:40:38 +0200
+Message-ID: <20240831194038.557316-1-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4792cf2f-1a53-428b-9760-9f8c506c34d7@kernel.org>
+Content-Transfer-Encoding: 8bit
 
-On Sat, Aug 31, 2024 at 07:53:14AM +0200, Krzysztof Kozlowski wrote:
-> On 30/08/2024 08:54, Shen Lichuan wrote:
-> > Use dev_err_probe() to simplify the error path and unify a message
-> > template.
-> > 
-> > Using this helper is totally fine even if err is known to never
-> > be -EPROBE_DEFER.
-> > 
-> > The benefit compared to a normal dev_err() is the standardized format
-> > of the error code, it being emitted symbolically and the fact that
-> > the error code is returned which allows more compact error paths.
-> > 
-> > Signed-off-by: Shen Lichuan <shenlichuan@vivo.com>
-> > ---
-> >  drivers/hwmon/sht15.c | 8 +++-----
-> >  1 file changed, 3 insertions(+), 5 deletions(-)
-> > 
-> > diff --git a/drivers/hwmon/sht15.c b/drivers/hwmon/sht15.c
-> > index 494f9655f44f..cc3a46a9c68e 100644
-> > --- a/drivers/hwmon/sht15.c
-> > +++ b/drivers/hwmon/sht15.c
-> > @@ -942,11 +942,9 @@ static int sht15_probe(struct platform_device *pdev)
-> >  			data->supply_uv = voltage;
-> >  
-> >  		ret = regulator_enable(data->reg);
-> > -		if (ret != 0) {
-> > -			dev_err(&pdev->dev,
-> > -				"failed to enable regulator: %d\n", ret);
-> > -			return ret;
-> > -		}
-> > +		if (ret != 0)
-> > +			return dev_err_probe(&pdev->dev, ret,
-> > +					     "failed to enable regulator\n");
-> 
-> This is ridiculous patch created by some low quality automation without
-> any review and thoughts from vivo.com side.
-> 
-> You change something which cannot defer, while leaving out unchanged
-> other places which actually can defer and could benefit.
-> 
-> Stop spamming with such low quality patches.
-> 
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Agreed. Not only would the driver benefit from using
-devm_regulator_get_enable_optional(), the driver should be reworked to use
-the with_info hardware monitoring API instead of the old deprecated API.
-But that would have to be done by someone actually _using_ that chip.
-If that isn't done, cosmeting driver changes like this really don't add
-any value.
+Linus,
 
-But then the whole driver, or rather its use or non-use of the supply
-voltage, does not really make sense. If the regulator and with it the
-voltage isn't available, the temperature sensor values don't make sense.
-And if the temperature isn't valid, humidity values are also wrong.
-That means using the optional regulator API doesn't make sense to start
-with.  Really, that driver needs a complete overhaul if anyone is still
-using it, not just cosmetic changes.
+Please pull the following follow-up fix for the power sequencing
+subsystem. It turned out the previous fix for this driver was incomplete
+and broke the WLAN support on some platforms. This addresses the issue.
 
-Guenter
+Thanks,
+Bartosz
+
+The following changes since commit 5be63fc19fcaa4c236b307420483578a56986a37:
+
+  Linux 6.11-rc5 (2024-08-25 19:07:11 +1200)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git tags/pwrseq-fixes-for-v6.11-rc6
+
+for you to fetch changes up to d8b762070c3fde224f8b9ea3cf59bc41a5a3eb57:
+
+  power: sequencing: qcom-wcn: set the wlan-enable GPIO to output (2024-08-31 21:32:19 +0200)
+
+----------------------------------------------------------------
+power sequencing fixes for v6.11-rc6
+
+- set the direction of the wlan-enable GPIO to output after requesting
+  it as-is
+
+----------------------------------------------------------------
+Bartosz Golaszewski (1):
+      power: sequencing: qcom-wcn: set the wlan-enable GPIO to output
+
+ drivers/power/sequencing/pwrseq-qcom-wcn.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
