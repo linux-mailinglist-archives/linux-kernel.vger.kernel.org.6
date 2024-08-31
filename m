@@ -1,106 +1,192 @@
-Return-Path: <linux-kernel+bounces-310007-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310008-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6C9D967307
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 20:46:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24A03967309
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 20:48:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EA0E31C21986
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 18:46:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4A0121C2193D
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 18:48:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4976616C852;
-	Sat, 31 Aug 2024 18:46:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B313166F28;
+	Sat, 31 Aug 2024 18:48:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=kuruczgy.com header.i=@kuruczgy.com header.b="JxihGx2l"
-Received: from out-183.mta1.migadu.com (out-183.mta1.migadu.com [95.215.58.183])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IdGO4SuV"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B4ECB67F
-	for <linux-kernel@vger.kernel.org>; Sat, 31 Aug 2024 18:46:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D28BB76048;
+	Sat, 31 Aug 2024 18:48:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725130000; cv=none; b=a1e/PRLASB4dOKvZKFaqQXMwEDPYP5RLrb9cT38WPUb4y+8yD5Uka8IYSarYSdda96G32AQTbveQ2VNI+1F4pTAgkBCt5FAHV1z9HxKGO0I6vQc68mB1l8gm4QSBBrQ3iqPMVKFhoY2mKhMdb7IVjD7Fh8z3V0gpnCX/N/BG2Qs=
+	t=1725130101; cv=none; b=o9ieKKW08zvc8v5v7YB5CMj94IqEP7apuVa77AnoQzISh/p8bQuqkuvTAhQFv8iGoef4vjO7HY6KQE27NvgGauz5i6LQx+hrZgfOXbAbSKQtUJx7OiTUGxbup/LscROWx0m2PJSl03UjrnK8FJ/VY6BEsmlhZPDClPMg3Fv8buQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725130000; c=relaxed/simple;
-	bh=lrN6wIlqmLNwZhyJ8TZxzLNC+bpQ63ShLMD3eI6WJw4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gC6ePozNfT3BRbBdb10JSMwqs1M4Uv/yeT9IMWVG9bm1p2N1FQkrD069yCONBHQzqaqqpGSFELjTZcwdClqdl5PTSKolqGZt7B9yQzJ1oPE5s2D1ZB6X3jaJx1RqDGnPhGltCpvklemXXBrFt9b0dCKBunwnkMXWYcgP+2oJ2Ac=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kuruczgy.com; spf=pass smtp.mailfrom=kuruczgy.com; dkim=pass (1024-bit key) header.d=kuruczgy.com header.i=@kuruczgy.com header.b=JxihGx2l; arc=none smtp.client-ip=95.215.58.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kuruczgy.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kuruczgy.com
-Message-ID: <56bf547a-08a5-4a08-87a9-c65f94416ef3@kuruczgy.com>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kuruczgy.com;
-	s=default; t=1725129996;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RaG84+/bdNFcK2s0BzGgnXzJQNkNWYStcn1LGw6NrpU=;
-	b=JxihGx2lGXxk+1WGBTTuLdHOlldL9esbNFKgrjCnLAABchnfXS1f4YyejhWdaZOvPtciMw
-	wN2a2kbxQgedVuJA7mGyVB9uFjzls6GGqwb0CoG0rcQicGxeJYp7R81Djg6V+l4xFEAb5d
-	KmV3hpY477EDPzZFKcsB7qgQhSRVy94=
-Date: Sat, 31 Aug 2024 20:46:32 +0200
+	s=arc-20240116; t=1725130101; c=relaxed/simple;
+	bh=vNLx4cr9O3aGVI+0EaJtBOHUEzDm0igOlyxGNzpMucA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=T+Ezjgu9XoPj4wALuGo+SqrLuPKVWUD6PMwPe/gTbwaybeQ1TwXP7dUIXqYnnww/kQBAgJT9KufWhPRFPF1Dda+iA/d+e8pMQWqzWsmQXXCna0HXJrqhMDsI88o2bIFOi4wvtSntatDjEieNJzTQhiBZ/qzcTlY/M+QRDRSJ6gg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IdGO4SuV; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725130099; x=1756666099;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=vNLx4cr9O3aGVI+0EaJtBOHUEzDm0igOlyxGNzpMucA=;
+  b=IdGO4SuVRA4aZdHJieeUN/zaEaA6SHket5aMfYixkzUtBP9FVuzVEa9T
+   b5VlRsSF0szklCyBNVOTuCsdHAuINtddG4PQXV+1Ad+BZuY8WY0X/vKGP
+   XrRES+nSpWrByG5nCymywjLghz5XG/rbu3KHBjJqK5NwhmO3Hrqco5Bo+
+   GgZ8FKj1AcCQd06qLdIf1FzYfac5kg6Sx+c6v6p+qErKAiNGSP6JXYw7s
+   qfufK7KxWELVE1/Yp6QgXXFll/KBlUyFnGGQzhGUx+VNYlH/3maWRjyIl
+   Rh34offJlkdTLu0sniiPOenWzkngXQHHfPpRP+g1tUH5WWgU9h+3GOAW8
+   w==;
+X-CSE-ConnectionGUID: cn4h0VCxTjeH/Tl7g1XnHw==
+X-CSE-MsgGUID: P2jX8xJiQL2d0nJYR8wqEg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11181"; a="23332628"
+X-IronPort-AV: E=Sophos;i="6.10,192,1719903600"; 
+   d="scan'208";a="23332628"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Aug 2024 11:48:18 -0700
+X-CSE-ConnectionGUID: f4mjMjXfRJ+UWxJ+QP6Pfg==
+X-CSE-MsgGUID: NfQMlSULQLSgc4c+LoHlng==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,192,1719903600"; 
+   d="scan'208";a="63815430"
+Received: from lkp-server01.sh.intel.com (HELO 9c6b1c7d3b50) ([10.239.97.150])
+  by fmviesa006.fm.intel.com with ESMTP; 31 Aug 2024 11:48:15 -0700
+Received: from kbuild by 9c6b1c7d3b50 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1skT8v-00030o-1V;
+	Sat, 31 Aug 2024 18:48:13 +0000
+Date: Sun, 1 Sep 2024 02:47:27 +0800
+From: kernel test robot <lkp@intel.com>
+To: Chunhui Li <chunhui.li@mediatek.com>,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-modules@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, wsd_upstream@mediatek.com,
+	Chunhui Li <chunhui.li@mediatek.com>,
+	Xion Wang <xion.wang@mediatek.com>
+Subject: Re: [PATCH] module: abort module loading when sysfs setup suffer
+ errors
+Message-ID: <202409010209.FqYOzYEa-lkp@intel.com>
+References: <20240830054400.26622-1-chunhui.li@mediatek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [v2,1/2] drm/msm/dpu1: don't choke on disabling the writeback
- connector
-To: Leonard Lausen <leonard@lausen.nl>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Rob Clark <robdclark@gmail.com>, Abhinav Kumar <quic_abhinavk@quicinc.com>,
- Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>,
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>
-Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
- freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- Jeykumar Sankaran <jsanka@codeaurora.org>, stable@vger.kernel.org
-References: <20240802-dpu-fix-wb-v2-1-7eac9eb8e895@linaro.org>
- <b70a4d1d-f98f-4169-942c-cb9006a42b40@kuruczgy.com>
- <0b2286bf-42fc-45dc-a4e0-89f85e97b189@lausen.nl>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: =?UTF-8?Q?Gy=C3=B6rgy_Kurucz?= <me@kuruczgy.com>
-In-Reply-To: <0b2286bf-42fc-45dc-a4e0-89f85e97b189@lausen.nl>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240830054400.26622-1-chunhui.li@mediatek.com>
 
-Dear Leonard,
+Hi Chunhui,
 
-> Do you observe this issue on every suspend-resume cycle?
+kernel test robot noticed the following build errors:
 
-I just did 10 suspend/resume cycles in a row to double check, and 
-without this patch the screen never comes back (always have to switch VT 
-back-and-forth to bring it back). The
+[auto build test ERROR on mcgrof/modules-next]
+[also build test ERROR on linus/master v6.11-rc5 next-20240830]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-[dpu error]connector not connected 3
-[drm:drm_mode_config_helper_resume] *ERROR* Failed to resume (-22)
+url:    https://github.com/intel-lab-lkp/linux/commits/Chunhui-Li/module-abort-module-loading-when-sysfs-setup-suffer-errors/20240830-134417
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/mcgrof/linux.git modules-next
+patch link:    https://lore.kernel.org/r/20240830054400.26622-1-chunhui.li%40mediatek.com
+patch subject: [PATCH] module: abort module loading when sysfs setup suffer errors
+config: powerpc-mpc834x_itx_defconfig (https://download.01.org/0day-ci/archive/20240901/202409010209.FqYOzYEa-lkp@intel.com/config)
+compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 46fe36a4295f05d5d3731762e31fc4e6e99863e9)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240901/202409010209.FqYOzYEa-lkp@intel.com/reproduce)
 
-pair of error messages also consistently appears after all resumes.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202409010209.FqYOzYEa-lkp@intel.com/
 
-Though I think e.g. Rob Clark reported that suspend/resume already works 
-properly for him without this patch, so this experience is not universal 
-on the Yoga Slim 7x.
+All errors (new ones prefixed by >>):
 
-> On sc7180 lazor, I do observe that this patch deterministically breaks restoring the CRTC state and functionality after resume. Can you please validate if you observe the same on Lenovo Yoga Slim 7x? Specifically, try set Night Light in your desktop environment to "Always On" and observe whether the screen remains in "Night Light" mode after resume. For lazor, "Night Light" is breaks after applying this patch and even manually toggling it off and on after resume does not restore "Night Light" / CRTC functionality.
+   In file included from kernel/module/sysfs.c:13:
+   In file included from include/linux/kallsyms.h:13:
+   In file included from include/linux/mm.h:2228:
+   include/linux/vmstat.h:517:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+     517 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
+         |                               ~~~~~~~~~~~ ^ ~~~
+>> kernel/module/sysfs.c:400:6: error: assigning to 'int' from incompatible type 'void'
+     400 |         err = add_sect_attrs(mod, info);
+         |             ^ ~~~~~~~~~~~~~~~~~~~~~~~~~
+   kernel/module/sysfs.c:404:6: error: assigning to 'int' from incompatible type 'void'
+     404 |         err = add_notes_attrs(mod, info);
+         |             ^ ~~~~~~~~~~~~~~~~~~~~~~~~~~
+   1 warning and 2 errors generated.
 
-Unfortunately I cannot test this, as color temperature adjustments seems 
-to be completely non-functional for me in the first place. For color 
-temperature adjustment, I use gammastep on my machines, which uses 
-wlr_gamma_control_unstable_v1 under the hood. It outputs the following 
-warnings:
 
-Warning: Zero outputs support gamma adjustment.
-Warning: 1/1 output(s) do not support gamma adjustment.
+vim +400 kernel/module/sysfs.c
 
-I haven't dug deeper into the cause yet, based on these it seems that 
-wlroots isn't detecting the display as being gamma-adjustable in the 
-first place.
+   370	
+   371	int mod_sysfs_setup(struct module *mod,
+   372			    const struct load_info *info,
+   373				   struct kernel_param *kparam,
+   374				   unsigned int num_params)
+   375	{
+   376		int err;
+   377	
+   378		err = mod_sysfs_init(mod);
+   379		if (err)
+   380			goto out;
+   381	
+   382		mod->holders_dir = kobject_create_and_add("holders", &mod->mkobj.kobj);
+   383		if (!mod->holders_dir) {
+   384			err = -ENOMEM;
+   385			goto out_unreg;
+   386		}
+   387	
+   388		err = module_param_sysfs_setup(mod, kparam, num_params);
+   389		if (err)
+   390			goto out_unreg_holders;
+   391	
+   392		err = module_add_modinfo_attrs(mod);
+   393		if (err)
+   394			goto out_unreg_param;
+   395	
+   396		err = add_usage_links(mod);
+   397		if (err)
+   398			goto out_unreg_modinfo_attrs;
+   399	
+ > 400		err = add_sect_attrs(mod, info);
+   401		if (err)
+   402			goto out_unreg_sect_attrs;
+   403	
+   404		err = add_notes_attrs(mod, info);
+   405		if (err)
+   406			goto out_unreg_notes_attrs;
+   407	
+   408		return 0;
+   409	
+   410	out_unreg_notes_attrs:
+   411		remove_notes_attrs(mod);
+   412	out_unreg_sect_attrs:
+   413		remove_sect_attrs(mod);
+   414	out_unreg_modinfo_attrs:
+   415		module_remove_modinfo_attrs(mod, -1);
+   416	out_unreg_param:
+   417		module_param_sysfs_remove(mod);
+   418	out_unreg_holders:
+   419		kobject_put(mod->holders_dir);
+   420	out_unreg:
+   421		mod_kobject_put(mod);
+   422	out:
+   423		return err;
+   424	}
+   425	
 
-Best regards,
-György
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
