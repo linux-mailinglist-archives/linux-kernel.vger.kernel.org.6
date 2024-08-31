@@ -1,99 +1,115 @@
-Return-Path: <linux-kernel+bounces-309888-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309887-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D931196718B
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 14:22:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C17C9967189
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 14:22:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1633B1C215EF
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 12:22:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 791781F21D33
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 12:22:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BB36193;
-	Sat, 31 Aug 2024 12:22:45 +0000 (UTC)
-Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.85.151])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6DD817F394;
+	Sat, 31 Aug 2024 12:22:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rGyMXa+A"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 965F217C216
-	for <linux-kernel@vger.kernel.org>; Sat, 31 Aug 2024 12:22:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.85.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13DD2193;
+	Sat, 31 Aug 2024 12:22:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725106965; cv=none; b=AKc9sj2hjrjRdX6EcLKrJr3ekMVpBVWvRxH/U4TTbCYxACyrivuGGNxQ5LTDXycMz7MCscrlzFZpz4hdu+cz3ZLFaA/UR2ZxQhmQvi2EofOUlAhOwT+fD7v0ug6mclCt/kYmEogLHxp42Lp0EkpBXUj3tX12y89e/wzqaU12iUg=
+	t=1725106928; cv=none; b=dD3XzSGgd+2Q6yTcR1CIrcxQPAIB+Rkrlc9marz/99LWAslapeA12ckEUdqtw9jp3ABU+wGP+nULN0VNG9yqhuKhKkyCQJt2BqeY0BsGi0fzP9g43tCMuNHO+9hO1kMiDniJ/wK4RdUsapIgSE6G9fXo9zCBCxDZ9gBEFU43GIs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725106965; c=relaxed/simple;
-	bh=GBegNYYOd/ctJwWFV91Z29yeEyY6E94yG6hnEzZz5b4=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 MIME-Version:Content-Type; b=pJjA4kbamz+07Yga69TjKeAAZ0np/wjU9e5KQpHfQz49mZYFK560aJgyNdB9mvBNXFS3atHutN+cphWD06QCvClLQYAEhYibV+U9/mQbjpc7IReT/m4tAn8KRmRtMwSSf4ApCg2NbmLAR1fYsfYKPYelbYPyPeCCtkpEMljsgGg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.85.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
-Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
- relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- uk-mta-72-gkhBvbvCMM6iE4wMAPg9GQ-1; Sat, 31 Aug 2024 13:22:32 +0100
-X-MC-Unique: gkhBvbvCMM6iE4wMAPg9GQ-1
-Received: from AcuMS.Aculab.com (10.202.163.4) by AcuMS.aculab.com
- (10.202.163.4) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Sat, 31 Aug
- 2024 13:21:48 +0100
-Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
- id 15.00.1497.048; Sat, 31 Aug 2024 13:21:48 +0100
-From: David Laight <David.Laight@ACULAB.COM>
-To: 'Michael Walle' <mwalle@kernel.org>, Yan Zhen <yanzhen@vivo.com>,
-	"han.xu@nxp.com" <han.xu@nxp.com>, "haibo.chen@nxp.com" <haibo.chen@nxp.com>,
-	"broonie@kernel.org" <broonie@kernel.org>
-CC: "yogeshgaur.83@gmail.com" <yogeshgaur.83@gmail.com>,
-	"linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"opensource.kernel@vivo.com" <opensource.kernel@vivo.com>
-Subject: RE: [PATCH v1] spi: nxp-fspi: Use min macro
-Thread-Topic: [PATCH v1] spi: nxp-fspi: Use min macro
-Thread-Index: AQHa+HhNKm243IlDrkqah0V5fjqHIbJBT6Vg
-Date: Sat, 31 Aug 2024 12:21:48 +0000
-Message-ID: <0cfbe737318f4c27b729c0d91d540abf@AcuMS.aculab.com>
-References: <20240827085739.3817877-1-yanzhen@vivo.com>
- <D3QOCGDROG5A.361R73U5376FE@kernel.org>
-In-Reply-To: <D3QOCGDROG5A.361R73U5376FE@kernel.org>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
+	s=arc-20240116; t=1725106928; c=relaxed/simple;
+	bh=StmMqtk1qu2rJCc4Il63kXR9JrprhuPEirHNGh6jjdA=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=XmcMt6vynanE84jddi0oEAIfvC+lgGYRmt+j8tdBGhPK+gJ6MmmTzW7+cufmOMLmdBHi55b/+YfHK71L+fKjt8/8ZOJaQTCwLG8As6o6SwRJrULKnU5fTcQ4wX+ayAq06vzmL1RcT7yz40uPZZsaqBQ0dlsVwDul/ftoDvnvVXE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rGyMXa+A; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 652CCC4CEC0;
+	Sat, 31 Aug 2024 12:22:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725106927;
+	bh=StmMqtk1qu2rJCc4Il63kXR9JrprhuPEirHNGh6jjdA=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=rGyMXa+AvBLE+nJZTVXG6eSqU4/vigDsYT2Zob+gujZ+2zTNzpi/uIMhPdGBC3ryn
+	 iOxrP8BK+G2eJwBY7bzmt5MDkC6V77nxprOb/A7+ECKDFzmEhAH+AigJe1ZJ/NmGHC
+	 mJzWZnkqsmxi4tGzsRNCHa7/mOurlheYV7g4fOIHXo2s/cFCdICSNcPT+nMX6yz2qs
+	 YjfH/2xSDSsuWmYPhMwoXRkFSAfxmFCunquPU+temeyhEJIz0CeVAG6IcG0p4c1twZ
+	 V9rOpcyXSiVK88I6gMfu2JMUgJbn3o/c+QuvJ9HJ7gRnCNMjwVk76kIVNI0oudBzlW
+	 7MKmLbPim0Cjg==
+Date: Sat, 31 Aug 2024 13:21:59 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Conor Dooley <conor@kernel.org>
+Cc: "Sperling, Tobias" <Tobias.Sperling@softing.com>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-hwmon@vger.kernel.org" <linux-hwmon@vger.kernel.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+ "jdelvare@suse.com" <jdelvare@suse.com>, "linux@roeck-us.net"
+ <linux@roeck-us.net>, "robh@kernel.org" <robh@kernel.org>,
+ "krzk+dt@kernel.org" <krzk+dt@kernel.org>, "conor+dt@kernel.org"
+ <conor+dt@kernel.org>, "corbet@lwn.net" <corbet@lwn.net>,
+ linux-iio@vger.kernel.org
+Subject: Re: [PATCH 1/2] dt-bindings: hwmon: Introduce ADS71x8
+Message-ID: <20240831132159.2073994f@jic23-huawei>
+In-Reply-To: <20240830-chaos-unrivaled-04c5c4c6add9@spud>
+References: <BE1P281MB24208CB90AF549578AA5C384EF972@BE1P281MB2420.DEUP281.PROD.OUTLOOK.COM>
+	<20240830-chaos-unrivaled-04c5c4c6add9@spud>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: aculab.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-RnJvbTogTWljaGFlbCBXYWxsZQ0KPiBTZW50OiAyNyBBdWd1c3QgMjAyNCAxMjo1OA0KPiANCj4g
-SGksDQo+IA0KPiBPbiBUdWUgQXVnIDI3LCAyMDI0IGF0IDEwOjU3IEFNIENFU1QsIFlhbiBaaGVu
-IHdyb3RlOg0KPiA+IFdoZW4gdGhlIG9yaWdpbmFsIGZpbGUgaXMgZ3VhcmFudGVlZCB0byBjb250
-YWluIHRoZSBtaW5tYXguaCBoZWFkZXIgZmlsZQ0KPiA+IGFuZCBjb21waWxlIGNvcnJlY3RseSwg
-dXNpbmcgdGhlIHJlYWwgbWFjcm8gaXMgdXN1YWxseQ0KPiA+IG1vcmUgaW50dWl0aXZlIGFuZCBy
-ZWFkYWJsZS4NCj4gDQo+IFRoZSBzdWJqZWN0IGRvZXNuJ3QgbWF0Y2ggd2hhdCB5b3UncmUgZG9p
-bmcgaGVyZS4gQWxzbywgc2hvdWxkbid0DQo+IG9uZSB1c2UgbWF4X3QoKT8NCg0KWW91IHNob3Vs
-ZCBwcmV0dHkgbXVjaCBuZXZlciB1c2UgbWF4X3QoKS4NClVzaW5nIGl0IGlzIGp1c3QgYW4gYWNj
-aWRlbnQgd2FpdGluZyB0byBoYXBwZW4uDQoNCglEYXZpZA0KDQo+IA0KPiAtbWljaGFlbA0KPiAN
-Cj4gPg0KPiA+IFNpZ25lZC1vZmYtYnk6IFlhbiBaaGVuIDx5YW56aGVuQHZpdm8uY29tPg0KPiA+
-IC0tLQ0KPiA+ICBkcml2ZXJzL3NwaS9zcGktbnhwLWZzcGkuYyB8IDMgKy0tDQo+ID4gIDEgZmls
-ZSBjaGFuZ2VkLCAxIGluc2VydGlvbigrKSwgMiBkZWxldGlvbnMoLSkNCj4gPg0KPiA+IGRpZmYg
-LS1naXQgYS9kcml2ZXJzL3NwaS9zcGktbnhwLWZzcGkuYyBiL2RyaXZlcnMvc3BpL3NwaS1ueHAt
-ZnNwaS5jDQo+ID4gaW5kZXggODgzOTdmNzEyYTNiLi5mZGE5MDJhYTU4MTUgMTAwNjQ0DQo+ID4g
-LS0tIGEvZHJpdmVycy9zcGkvc3BpLW54cC1mc3BpLmMNCj4gPiArKysgYi9kcml2ZXJzL3NwaS9z
-cGktbnhwLWZzcGkuYw0KPiA+IEBAIC03NTYsOCArNzU2LDcgQEAgc3RhdGljIGludCBueHBfZnNw
-aV9yZWFkX2FoYihzdHJ1Y3QgbnhwX2ZzcGkgKmYsIGNvbnN0IHN0cnVjdCBzcGlfbWVtX29wICpv
-cCkNCj4gPiAgCQkJaW91bm1hcChmLT5haGJfYWRkcik7DQo+ID4NCj4gPiAgCQlmLT5tZW1tYXBf
-c3RhcnQgPSBzdGFydDsNCj4gPiAtCQlmLT5tZW1tYXBfbGVuID0gbGVuID4gTlhQX0ZTUElfTUlO
-X0lPTUFQID8NCj4gPiAtCQkJCWxlbiA6IE5YUF9GU1BJX01JTl9JT01BUDsNCj4gPiArCQlmLT5t
-ZW1tYXBfbGVuID0gbWF4KGxlbiwgTlhQX0ZTUElfTUlOX0lPTUFQKTsNCj4gPg0KPiA+ICAJCWYt
-PmFoYl9hZGRyID0gaW9yZW1hcChmLT5tZW1tYXBfcGh5ICsgZi0+bWVtbWFwX3N0YXJ0LA0KPiA+
-ICAJCQkJCSBmLT5tZW1tYXBfbGVuKTsNCg0KLQ0KUmVnaXN0ZXJlZCBBZGRyZXNzIExha2VzaWRl
-LCBCcmFtbGV5IFJvYWQsIE1vdW50IEZhcm0sIE1pbHRvbiBLZXluZXMsIE1LMSAxUFQsIFVLDQpS
-ZWdpc3RyYXRpb24gTm86IDEzOTczODYgKFdhbGVzKQ0K
+
+> > +  ti,mode:
+> > +    $ref: /schemas/types.yaml#/definitions/uint8
+> > +    description: |
+> > +      Operation mode
+> > +      Mode 0 - Manual mode. A channel is only sampled when the according input
+> > +        in the sysfs is read.
+> > +      Mode 1 - Auto mode. All channels are automatically sampled sequentially.
+> > +        Reading an input returns the last valid sample. In this mode further
+> > +        features like statistics and interrupts are available.
+> > +    default: 0  
+> 
+> I don't think this ti,mode property is suitable for bindings. sysfs is a
+> linux implementation detail, when to do sampling is an implementation
+> detail of your driver. Bindings are only supposed to describe properties
+> of the hardware, not set software policy.
+
+Agreed. With an IIO driver this will become a switch based on what usespace
+interfaces are enabled.
+So if events are on or buffered data capture, enable automode.
+If just sysfs reads, then manual mode is fine.
+
+
+> > +
+> > +        ads7138@10 {  
+> 
+> This should just be "dac@".
+
+adc :)
+
+> 
+> > +            compatible = "ti,ads7138";
+> > +            reg = <0x10>;
+> > +            avdd-supply = <&reg_stb_3v3>;
+> > +            ti,mode = /bits/ 8 <1>;
+> > +            ti,interval = /bits/ 16 <1000>;
+> > +            interrupt-parent = <&gpio2>;
+> > +            interrupts = <12 IRQ_TYPE_LEVEL_LOW>;
+> > +            status = "okay";
+> > +        };
+> > +    };  
+> oCheers,
+> Conor.
 
 
