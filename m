@@ -1,49 +1,49 @@
-Return-Path: <linux-kernel+bounces-309996-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309997-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A0CB9672DD
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 19:40:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F28BE9672DF
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 19:41:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 56BCE28246C
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 17:40:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B093C281F9B
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 17:41:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AFB913CFBC;
-	Sat, 31 Aug 2024 17:40:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F0C313B29B;
+	Sat, 31 Aug 2024 17:41:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="ru1e95e+"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="oqlnvGnQ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB33658210;
-	Sat, 31 Aug 2024 17:40:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA9F2B658;
+	Sat, 31 Aug 2024 17:41:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725126036; cv=none; b=ur+5UovBJN1ehcb59rPflwmbPEYKOAKoUQPKm3esROLPsw8cERAu3oBQNZ5/6/2cjhJ0yMCfRndDyy4kBbBFcWRk7tqpXBB62PqpVong/EvhIdLanQRKCzCEuZUynr6VDlzLUAfYQaAh4P7Nqj90kQ4Fm09nUlocQg4kdlX/cnQ=
+	t=1725126071; cv=none; b=D2F/tRJv27LkQGz10e66tu8bhkh28RY75AQnyF+cmpwY8ZFrvTewvidhNWltX0YSlV5t1yfAuo9AmXl/8S23KJhUM7F6CNt+w5UiFd1REfSnIG65JOE7AommUmuIVgs2RIqp4TFZxVqp5nsPeP9JMkemTMRGHBt4ccL6R6dn5qM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725126036; c=relaxed/simple;
-	bh=ORjGi1B5GDaQ1sDMRdEoxtlFCpvT84o6WBVy+2WSyQI=;
+	s=arc-20240116; t=1725126071; c=relaxed/simple;
+	bh=hLLbX4Dn2Yresy0z9IosCGN6MOmzaAkR5HPRUGcVyK4=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=fgjYpgEa6qiAgpuVqBg0dvjD3bxft0/e2zLx17ItbFHYTGnIeVIzUYNAmNeJaWxF8KUYGBYI+RxYCB9HfAzAqMuKKMPzyojj0ycFFPreSl0zJTV0766Kdh9/PEshog7IZgG89nuEd8jvIiV+9DRfK/D66U0SkeItZact9EhlQzY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=ru1e95e+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4AB5C4CEC0;
-	Sat, 31 Aug 2024 17:40:35 +0000 (UTC)
+	 Content-Disposition; b=HHKY5voEVi7d8eu1ugEvZtVqlnAH81v1lFgz79Zu8v9MQ0nGsm9ETx/pzy1meRg0fDf+jQMlJCuL0ADFklcP6AWWFE8O0KQjtUnqQ03/MTPLaYhGJYDaeRUX0B/929y3jNuoWsdCLfOacwHLvL0mYICShjUa2Ny1a5A2LZuo0F0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=oqlnvGnQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EEE11C4CEC0;
+	Sat, 31 Aug 2024 17:41:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1725126036;
-	bh=ORjGi1B5GDaQ1sDMRdEoxtlFCpvT84o6WBVy+2WSyQI=;
+	s=korg; t=1725126070;
+	bh=hLLbX4Dn2Yresy0z9IosCGN6MOmzaAkR5HPRUGcVyK4=;
 	h=Date:From:To:Cc:Subject:From;
-	b=ru1e95e+VWn2TyQ/mOkG6rpnFiRAyiSb9p8FrcX/Vy7mqhwcqqcL1qADZxkKukrIu
-	 kltxpuMcP4u60l4YGJq8kFhVq4qhl8lhc/NMcoidunYTgPNj0Buy94mgJVE4fzuBw/
-	 2Py67eH0mXy9pJktVE1GSZZDxvjQud6gbWPb2vpI=
-Date: Sat, 31 Aug 2024 19:40:33 +0200
+	b=oqlnvGnQHCBnLqGDsxbMF5MnxbFhgs9F3/PosLykJvoSj/Ql2nJT+6n/lAJGI/CmX
+	 0QEHXuBtpOScu5dauO2lCiBGvnum015iZmHSU8WPjO4/pSWf/2NqAdJoGH/FVQrnJw
+	 SV2jdqAGNCq0Aorun13o5yEb1VnQghZXu2mYz75g=
+Date: Sat, 31 Aug 2024 19:41:07 +0200
 From: Greg KH <gregkh@linuxfoundation.org>
 To: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org,
 	linux-usb@vger.kernel.org
-Subject: [GIT PULL] USB / Thunderbolt driver fixes for 6.11-rc4
-Message-ID: <ZtNVkRAgDKh7q0Nn@kroah.com>
+Subject: [GIT PULL] USB driver fixes for 6.11-rc6
+Message-ID: <ZtNVs1boCTfsIu_3@kroah.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -52,6 +52,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+
+[resend with correct subject line this time, sorry about that...]
 
 The following changes since commit 47ac09b91befbb6a235ab620c32af719f8208399:
 
