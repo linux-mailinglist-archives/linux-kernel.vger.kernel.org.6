@@ -1,120 +1,158 @@
-Return-Path: <linux-kernel+bounces-310000-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310001-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F2009672EB
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 20:07:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E7269672EF
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 20:11:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 50AD21C210E8
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 18:07:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B8B2A2833EF
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 18:11:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 576AC13BAEE;
-	Sat, 31 Aug 2024 18:07:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2754148837;
+	Sat, 31 Aug 2024 18:11:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Nt1h78Bb"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=beagleboard-org.20230601.gappssmtp.com header.i=@beagleboard-org.20230601.gappssmtp.com header.b="ylVd4Od3"
+Received: from mail-pl1-f195.google.com (mail-pl1-f195.google.com [209.85.214.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC4F8339A1
-	for <linux-kernel@vger.kernel.org>; Sat, 31 Aug 2024 18:07:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE40E1D556
+	for <linux-kernel@vger.kernel.org>; Sat, 31 Aug 2024 18:11:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725127638; cv=none; b=mxqqSZaxzIdkWg+gwtb+eY01S56XczXfHfqk78lB/H0ZohSq1By/GU8g/tJujqKI/gLucGdjpKcNFq6m2O6hu5vRnUkv2WO4RnF3oUjy3SWYxlqqahhyKFk8O+j3gLsDPULjKhjayI3BG2qMLljpmTcIpphwjmiMFis5aYlow1A=
+	t=1725127907; cv=none; b=TYQAd+7buf2VJENwLobGWrHIPhaOYGQkeY0oUv6fTj+K83LmpnqVibT9Xr3DHR5mftImu0RhfusoNT0XiuYSMIX3LX7KVx0jRXCU8eecVxIZkVS0BkC8i1DvillIkXAEGJBdxEtbBF7Wz2AU5E1E36Yg/ojcM1l+2pn2sti9340=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725127638; c=relaxed/simple;
-	bh=aarbNujcQJQu8cWevGdPTbcJJFKQH7w9HGZjr2sx000=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Yj/KCFAqo0u2eZgVKmZGO+v7gYBvvgc2cS/z3OeHEIXeFhErBJdnopveWBeP7qL5BMeHGT+pEuOa0L2gqqNuTQWi2UrFBBoV4rsU1cUIFuCi5nU8FmQXzJz9B7R6js2lZPGTGgBhQGR9U2vBzRpxRqFIPFthcgVUx8i5Vj6fNG0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Nt1h78Bb; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725127637; x=1756663637;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=aarbNujcQJQu8cWevGdPTbcJJFKQH7w9HGZjr2sx000=;
-  b=Nt1h78BbXThM4v5gmwsFmncFjmqphdWziACaElAXSVA6Tp16Bpt7XelS
-   yX5REe+KAKAuynjR+HwCcbMwSAuEHpB0wJZZPPofb31Uovr5yHe2r2CaB
-   h60+30SLDYtOvoSFKFQvzWwQX9J5NsWrWChcg6/r7l6fRbJWcPYOBsbSn
-   l/BOsOdtkfxOTSuvJTTgcshAfab3lVF4vDe9ilT/0iuLgADiubJiKIjP1
-   VcNnvgQrWeEWa9baRgrVWdOZKfkWX2S4n5To54OFjPN6FzlUlqW3e9btA
-   tTHFdU08ZQV73IYKKG66zSXtUdp1wvQBRQ9j+h3nCVLFw3eajvPAPeu2R
-   w==;
-X-CSE-ConnectionGUID: hI8A+NMsTtKP7/ZLLJ71Zw==
-X-CSE-MsgGUID: NhdXM9PNTK+A/hrd5r04ZA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11181"; a="35122300"
-X-IronPort-AV: E=Sophos;i="6.10,192,1719903600"; 
-   d="scan'208";a="35122300"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Aug 2024 11:07:16 -0700
-X-CSE-ConnectionGUID: ZuQhqq6BRrOc43Oghc6LQg==
-X-CSE-MsgGUID: GlbcVdAlRk23nCyW8b0BgQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,192,1719903600"; 
-   d="scan'208";a="64203827"
-Received: from lkp-server01.sh.intel.com (HELO 9c6b1c7d3b50) ([10.239.97.150])
-  by fmviesa008.fm.intel.com with ESMTP; 31 Aug 2024 11:07:15 -0700
-Received: from kbuild by 9c6b1c7d3b50 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1skSVE-0002zI-2B;
-	Sat, 31 Aug 2024 18:07:12 +0000
-Date: Sun, 1 Sep 2024 02:06:30 +0800
-From: kernel test robot <lkp@intel.com>
-To: Sean Christopherson <seanjc@google.com>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-kernel@vger.kernel.org, Kai Huang <kai.huang@intel.com>
-Subject: arch/x86/kernel/reboot.c:939:20: error: unused function
- 'nmi_shootdown_cpus_on_restart'
-Message-ID: <202409010207.jrH6sNV4-lkp@intel.com>
+	s=arc-20240116; t=1725127907; c=relaxed/simple;
+	bh=JyNaWK9K0s83lLJcoD0b4TQy7rpDyJf4ZrqoMGJ3XMQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FZwOHHnmUqWrDFXTs6woQHR2MLP/ThSl5AqtwQaxKb1waIxaLBRpZ5SnI7GMrmqsu/znKzSIrILLOr64HhVe5OoKIKlZAKrZjQAVAVeuWFpCMm+iGJUiSdzNNbu9O95VrKmusT6Mpbm5OLo9vx5mPb3nllIPVhB5AWCA/VhBzzs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=beagleboard.org; spf=fail smtp.mailfrom=beagleboard.org; dkim=pass (2048-bit key) header.d=beagleboard-org.20230601.gappssmtp.com header.i=@beagleboard-org.20230601.gappssmtp.com header.b=ylVd4Od3; arc=none smtp.client-ip=209.85.214.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=beagleboard.org
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=beagleboard.org
+Received: by mail-pl1-f195.google.com with SMTP id d9443c01a7336-202146e93f6so28752635ad.3
+        for <linux-kernel@vger.kernel.org>; Sat, 31 Aug 2024 11:11:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=beagleboard-org.20230601.gappssmtp.com; s=20230601; t=1725127905; x=1725732705; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=C+5XzVjLCMuTjYv9Ok00f+cf4AkYWNfkNc3fqTvrp/0=;
+        b=ylVd4Od3VL+WmqB1I4T0C2lG7VDHTntSF72nV4SGHvOC2LHkUjywoXw0Fp3i4gK5cv
+         7zU3f61uWRP75a1Wz2xBjbm26zW5Sc0qqDK14UCLf3wLachsJp/JaN/3V9YdLHD662in
+         VwX9HvlvYhDI0BHxiH+ICK0aUwqmWcrK58bRbNu3HWJRL6Oopm9HRAYYzsb+Q3nDRVPe
+         ziJFKLiD/oN04DR+AEkcEthpjujMqZs24girL6KlAe+8JvxLFjOUBsBvPEXfkwYXmJ5P
+         VUWIKkz+egpSJ+YuMGmcv6bN5mQYzT2EIIlHWYPG/PKbzf06UQuJACgfOaCHf0mcFVZ9
+         xq+A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725127905; x=1725732705;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=C+5XzVjLCMuTjYv9Ok00f+cf4AkYWNfkNc3fqTvrp/0=;
+        b=O/e8tX+cEJkGS3v4TpAdTMIj85/OW+WgJoISk01jKFRdrh1LP05bmDQ2SA7PPXu5V1
+         w/GcHAz08PrnRMI/swjgzdzxsUqone3EHZq+etyDmrlTO0TDWWi5LdUmX8k4sBeZ+9vn
+         buepqFtUEiLdfBxUM7i8kkctqX5HWuHIHmiDpKO1CHn+U0/19XH22eNjZAqJ630WY8I3
+         GmvaK5JryFjIgixS4S3wMItP0JjJHWtW1xhJAZ9EqIl38b077c7bRqH1ESQCrv76PfGP
+         SXli15LLH5QH33rLbUArBQLw/lsHp7vrvrwuJudNGtsvOUqUY1KnLB0RQNGWwvmdI7SA
+         YSXg==
+X-Forwarded-Encrypted: i=1; AJvYcCWrfQ+qK6DqO7PZ6PPu3/CbgNZA//Tim7RbrNyyPGNvSg5zdWk1ElBxLEqBV37QEf115DANSiUpA3q0g3I=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yymp9DRlMDZF3xtRgXzAAVlcwE3sM3DsuiOqXpwcdxGxnH8FGu7
+	z8RcfetOmp6Jsya/43faMrYRjejWbShl79QZbXNqpeMN1UiFddG+21xqnS9wzw==
+X-Google-Smtp-Source: AGHT+IFQNwjO5fnCQzoxZ9MZgPdmCvdFiQl6lsMfwMOKhxYBfGKuDEbEGB1vFlHxRZvrR2ve39znhw==
+X-Received: by 2002:a17:902:d481:b0:202:45a7:84d1 with SMTP id d9443c01a7336-2050c46e83amr105743905ad.52.1725127904987;
+        Sat, 31 Aug 2024 11:11:44 -0700 (PDT)
+Received: from [172.16.118.100] ([103.15.228.94])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-205152d03fasm43302265ad.114.2024.08.31.11.11.37
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 31 Aug 2024 11:11:44 -0700 (PDT)
+Message-ID: <e2558820-f36f-406d-8f83-95c7188c0ce3@beagleboard.org>
+Date: Sat, 31 Aug 2024 23:41:35 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 1/7] dt-bindings: connector: Add mikrobus-connector
+Content-Language: en-US
+To: Michael Walle <mwalle@kernel.org>, Mark Brown <broonie@kernel.org>,
+ Vaishnav M A <vaishnav@beagleboard.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Derek Kiernan <derek.kiernan@amd.com>,
+ Dragan Cvetic <dragan.cvetic@amd.com>, Arnd Bergmann <arnd@arndb.de>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Nishanth Menon <nm@ti.com>,
+ Vignesh Raghavendra <vigneshr@ti.com>, Tero Kristo <kristo@kernel.org>,
+ Andrew Lunn <andrew@lunn.ch>, jkridner@beagleboard.org,
+ robertcnelson@beagleboard.org
+Cc: linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <20240627-mikrobus-scratch-spi-v5-0-9e6c148bf5f0@beagleboard.org>
+ <20240627-mikrobus-scratch-spi-v5-1-9e6c148bf5f0@beagleboard.org>
+ <D2AYUH4XY0SK.1SYOUCT0PLAKT@kernel.org>
+ <e0f9754e-4d84-4ab4-82a4-34cb12800927@beagleboard.org>
+ <D2AZMD2YYGAQ.1B3AGXIC7B44@kernel.org>
+From: Ayush Singh <ayush@beagleboard.org>
+In-Reply-To: <D2AZMD2YYGAQ.1B3AGXIC7B44@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   1934261d897467a924e2afd1181a74c1cbfa2c1d
-commit: 261cd5ed934e6923187cf1c9eaa6cb63f2b81212 x86/reboot: Expose VMCS crash hooks if and only if KVM_{INTEL,AMD} is enabled
-date:   1 year, 1 month ago
-config: x86_64-sof-customedconfig-amd-defconfig (https://download.01.org/0day-ci/archive/20240901/202409010207.jrH6sNV4-lkp@intel.com/config)
-compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240901/202409010207.jrH6sNV4-lkp@intel.com/reproduce)
+>> But here you can have subnodes, no? These could then be just
+>> enumerated as usual.
+>>
+>> &mikrobus_board {
+>> 	mikrobus_gpio: gpio {
+>> 		gpio-controller;
+>> 		#gpio-cells = <1>;
+>> 	};
+>>
+>> 	spi {
+>> 		cs-gpios = <&mikrobus_gpio 1>;
+>>
+>> 		spi@0 {
+>> 			compatible = "mydevice";
+>> 			reg = <0>;
+>> 		};
+>> 	};
+>> };
+>>
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202409010207.jrH6sNV4-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
->> arch/x86/kernel/reboot.c:939:20: error: unused function 'nmi_shootdown_cpus_on_restart' [-Werror,-Wunused-function]
-     939 | static inline void nmi_shootdown_cpus_on_restart(void)
-         |                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   1 error generated.
+Hi, I am now working on an approach for mikroBUS based on the apprach 
+described here: [1]
 
 
-vim +/nmi_shootdown_cpus_on_restart +939 arch/x86/kernel/reboot.c
+I am thinking of the gpio-controller approach you seem to have used 
+here. So I wanted to inquire if there already exists a gpio-controller 
+driver that can create a proxy controller that forwards stuff to the 
+underlying actual controller. So something like the following:
 
-26044aff37a5455 Sean Christopherson 2022-11-30  938  
-26044aff37a5455 Sean Christopherson 2022-11-30 @939  static inline void nmi_shootdown_cpus_on_restart(void)
-26044aff37a5455 Sean Christopherson 2022-11-30  940  {
-26044aff37a5455 Sean Christopherson 2022-11-30  941  	if (!crash_ipi_issued)
-26044aff37a5455 Sean Christopherson 2022-11-30  942  		nmi_shootdown_cpus(NULL);
-2ddded213895e41 Eduardo Habkost     2008-11-12  943  }
-58c5661f2144c08 Hidehiro Kawai      2015-12-14  944  
 
-:::::: The code at line 939 was first introduced by commit
-:::::: 26044aff37a5455b19a91785086914fd33053ef4 x86/crash: Disable virt in core NMI crash handler to avoid double shootdown
+&mikrobus_gpio: gpio {
 
-:::::: TO: Sean Christopherson <seanjc@google.com>
-:::::: CC: Sean Christopherson <seanjc@google.com>
+     gpio-controller;
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+     #gpio-cells = <2>;
+
+     gpios = <&gpio1 0>, <&gpi2 1>;
+
+};
+
+
+spi {
+
+     cs-gpios = <&mikrobus_gpio 1 GPIO_ACTIVE_HIGH>;
+
+};
+
+
+There does exist gpio0-virtio, but that seems to be for vm context.
+
+
+[1]: 
+https://lore.kernel.org/linux-arm-kernel/20240702164403.29067-1-afd@ti.com/
+
+
+Ayush Singh
+
 
