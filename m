@@ -1,85 +1,135 @@
-Return-Path: <linux-kernel+bounces-309841-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309842-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD1D59670F7
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 12:53:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AC0859670F8
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 12:56:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 63E8A1F22805
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 10:53:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5BA8D1F22A2A
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 10:56:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AE9117C7AF;
-	Sat, 31 Aug 2024 10:53:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2790B17C7B6;
+	Sat, 31 Aug 2024 10:56:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eXkbYfGK"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="swrVab4N"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CCA414B949;
-	Sat, 31 Aug 2024 10:53:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6982354279;
+	Sat, 31 Aug 2024 10:56:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725101628; cv=none; b=jHvCfvvfKWsMaRrwcrKdViAflyweBsIo5FRSkTJJNbsvBf42+vhvzQJwNLsVpSf1Hn0PR+qUgGWVll05AA6GeMXoGodfU3DIuOvdjs/bHplzovtCtvOjgof7QBOBcqd0ITxmxDTJf+2sA3pqzX8UvIlhuzWeKlLye6hke7IJmlA=
+	t=1725101791; cv=none; b=XE/w+obP3HUCIXbk7fC8Wsjq4z9UwZi2WwFOAmg8TCx0YW2raZFS7x1gimdJgrKnOhpcU45a5Mc0sgp2EXwxilgySN1efMaoUbjrzh3xHGsnbemYFpq7MS9wE4s1QSd7XFJNUuRVDvybTxAU3qAui3RGmzim41X1mH+DHIEDnWI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725101628; c=relaxed/simple;
-	bh=+Jvu/UdgzmcAXW+0d7ObytUme5eaUOhG6WbqyYns+TE=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=kAo/WtV9iJ1QDTNUlWwoquS9t8jup5uKpyXjPO/d3E21sP5HBB2C5mTXQpnc0V86lET/mLdD5NvUCtyG9f3UjVtWcstX3P8NSO3022YLAOt+KTCqJDH0t6cmbzJlpR36Hqi3UnJLv95M4e97FL93kbdVPo3MVC4Hd3wG6AJ07nc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eXkbYfGK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92A14C4CEC0;
-	Sat, 31 Aug 2024 10:53:46 +0000 (UTC)
+	s=arc-20240116; t=1725101791; c=relaxed/simple;
+	bh=eZGDBYMVexRHIcH994o+4ojxQhi7d011CzKVeC7HGc4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MQmU4OhsaUvaEGd/P9UaMmYtMHZI3bWgC8PCm61+3ThIuTUEENNKYtUYPSmmBiykRT2uibhSaV5A9K0F7Ts6pXGqAynaQY5wYbB8jIEHx+XJP6TvsYn+8PSf/66vXJE5lba9w9UDBHMSyiXmk3Q2ogqz9bmLL2sww3GymJqWhEs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=swrVab4N; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38EB6C4CEC8;
+	Sat, 31 Aug 2024 10:56:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725101628;
-	bh=+Jvu/UdgzmcAXW+0d7ObytUme5eaUOhG6WbqyYns+TE=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=eXkbYfGKdbCxtfUesvuIJ1yNzzYSJZgjVrw6UTIpMdxcelfOwZGF1/9DZQ0EhXD3H
-	 BPI7mByi+XW+aJNBrA+TBCwL9TDfdPsStNsYpp06iL2ffIg5rGNB/5wbkvcKDL6riZ
-	 CpkN11bhBCmXNRsyDJE87GWfusNJ7oyVfKvVSaJNQnwFjeOwvY06125Ow69kqjh9+G
-	 4Atb9tOVYO6gtHEL3IkKNlaPsZ2scl9b52GzWl3gIZiuy4s16f9WYQYLqDQof2lL+V
-	 cN83XvxZJ2gpQ0vpGZ4jt6UMYfQG3vIV9oImuoOULQ5QjMC8IOa88d8AQORG4ynpTQ
-	 MtVFaCjFgq01Q==
-Date: Sat, 31 Aug 2024 11:53:43 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Lorenzo Bianconi <lorenzo@kernel.org>, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org, Lars-Peter Clausen <lars@metafoo.de>
-Subject: Re: [PATCH v1 0/2] iio: imu: st_lsm6dsx: Clean up ACPI/fwnode code
- paths
-Message-ID: <20240831115343.775c6167@jic23-huawei>
-In-Reply-To: <20240826212344.866928-1-andy.shevchenko@gmail.com>
-References: <20240826212344.866928-1-andy.shevchenko@gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=k20201202; t=1725101791;
+	bh=eZGDBYMVexRHIcH994o+4ojxQhi7d011CzKVeC7HGc4=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=swrVab4NlDqQlVOZEpYw/OCgz7xvjtLAyOJhXL1nTUa1ZQU2KCRSm9FXJSATTA8H/
+	 N5HsSoKNNZVCiMG+Ao/KDAWzKDk5/5mvrAt77UtypwZRIeKJC9ZUdnwFsJ/xUTNHfd
+	 hEgKP6RxhcYV5B1GoNIVWCL+hzzb9K3PyvmvWom/tLpYSPsW1PkFkG/jZWFP9nz5jF
+	 FG9VvGzvOCLyShK0KeP5eI6xLx8ec/MZDdPhakhOL870A1MencRydsa1DuUZ8tOC25
+	 7Y+Wad6drGH1uL8O2xmKWsMmobr2dl0sWA4OtM3yHdX2IsjFZ4FTPmoBZ+jsACLTb7
+	 0TP/v8wezciTA==
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a866cea40c4so299671566b.0;
+        Sat, 31 Aug 2024 03:56:31 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXb4DSdj+12MUnbnuVGQOPxLWsGkqB2lIeOkmdCJMyOsBX/aLL1DcSZsTNQtelotBwlrTHW7q1rrvIWog==@vger.kernel.org, AJvYcCXep8nqASUhYmKOvZ/SQlNUEPlZxyvG0Uj3nfZwljlnSee3sIOYHZlpQSIynI0dkKuyuSaHDUopuxc0v/ug@vger.kernel.org
+X-Gm-Message-State: AOJu0YynaLqaBdgoU0YiJSU3rvDO2vKsdx4eRXN5VKR0cQJIk5dLED00
+	4uMMBEo07jU9iI79D58mgbxT6ACAvYEbGNUTWvw6CkFvRTYJ0Kx80XnrCQ+bU3x9jMs0EyaAliB
+	3H3z2v4o4YX3PyQlXZhq0Hpr17eo=
+X-Google-Smtp-Source: AGHT+IHJlZsip/+Ny0E3t9tMQN7th0liWZn7SYcTiIaIY07pp0aP0/3vZOUTcsKhZz1I1TUjxm13yX59HK+7wvEW+fA=
+X-Received: by 2002:a17:907:971b:b0:a77:c364:c4f2 with SMTP id
+ a640c23a62f3a-a897fa6a925mr629272166b.52.1725101789830; Sat, 31 Aug 2024
+ 03:56:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <00000000000044ff540620d7dee2@google.com> <20240831002222.2275740-1-lizhi.xu@windriver.com>
+In-Reply-To: <20240831002222.2275740-1-lizhi.xu@windriver.com>
+From: Filipe Manana <fdmanana@kernel.org>
+Date: Sat, 31 Aug 2024 11:55:53 +0100
+X-Gmail-Original-Message-ID: <CAL3q7H5p4vmBs-ES08dkY7z4sjE_k3970CkJRAjiy0MhpXjYWw@mail.gmail.com>
+Message-ID: <CAL3q7H5p4vmBs-ES08dkY7z4sjE_k3970CkJRAjiy0MhpXjYWw@mail.gmail.com>
+Subject: Re: [PATCH] btrfs: Add assert or condition
+To: Lizhi Xu <lizhi.xu@windriver.com>
+Cc: syzbot+4704b3cc972bd76024f1@syzkaller.appspotmail.com, clm@fb.com, 
+	dsterba@suse.com, josef@toxicpanda.com, linux-btrfs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 27 Aug 2024 00:22:38 +0300
-Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
+On Sat, Aug 31, 2024 at 1:36=E2=80=AFAM Lizhi Xu <lizhi.xu@windriver.com> w=
+rote:
+>
+> When the value of fsync_skip_inode_lock is true, i_mmap_lock is used,
+> so add it or condition in the ASSERT.
+>
+> Reported-and-tested-by: syzbot+4704b3cc972bd76024f1@syzkaller.appspotmail=
+.com
+> Closes: https://syzkaller.appspot.com/bug?extid=3D4704b3cc972bd76024f1
+> Signed-off-by: Lizhi Xu <lizhi.xu@windriver.com>
+> ---
+>  fs/btrfs/ordered-data.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+>
+> diff --git a/fs/btrfs/ordered-data.c b/fs/btrfs/ordered-data.c
+> index 82a68394a89c..d0187e1fb941 100644
+> --- a/fs/btrfs/ordered-data.c
+> +++ b/fs/btrfs/ordered-data.c
+> @@ -1015,7 +1015,8 @@ void btrfs_get_ordered_extents_for_logging(struct b=
+trfs_inode *inode,
+>  {
+>         struct rb_node *n;
+>
+> -       ASSERT(inode_is_locked(&inode->vfs_inode));
+> +       ASSERT(inode_is_locked(&inode->vfs_inode) ||
+> +              rwsem_is_locked(&inode->i_mmap_lock));
 
-> Here is a couple of cleanups that should not affect any functionality.
-> 
-> Andy Shevchenko (2):
->   iio: imu: st_lsm6dsx: Use iio_read_acpi_mount_matrix() helper
->   iio: imu: st_lsm6dsx: Remove useless dev_fwnode() calls
-> 
->  drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_core.c | 93 ++------------------
->  1 file changed, 7 insertions(+), 86 deletions(-)
-> 
+This definitely fixes the syzbot report, in the sense the assertion
+won't fail anymore.
+But it's wrong, very, very, very, very wrong.
 
-Applied the obvious fix for the bot error messages &drdy_pin
-and applied to the togreg branch of iio.git (pushed out as testing)
+The inode must be locked during the course of the fsync, that's why
+the assertion is there.
 
-Still time for other reviews however as I'll be rebasing that tree
-anyway if Greg takes the pull request I sent last week.
-There are some series waiting for fixes to loop back around, hence
-this dance.
+Why do you think it's ok to not have the inode locked?
+Have you done any analysis about that?
 
-Jonathan
+You mention "fsync_skip_inode_lock is true" in the changelog, but have
+you checked where and why it's set to true?
+
+Where we set it to true, at btrfs_direct_write(), there's a comment
+which explains it's to avoid a deadlock on the inode lock at
+btrfs_sync_file().
+
+This is a perfect example of trying a patch not only without having
+any idea how the code works but also being very lazy,
+as there's a very explicit comment in the code about why the variable
+is set to true, and even much more detailed in the
+change log of the commit that introduced it.
+
+And btw, there's already a patch to fix this issue:
+
+https://lore.kernel.org/linux-btrfs/717029440fe379747b9548a9c91eb7801bc5a81=
+3.1724972507.git.fdmanana@suse.com/
+
+>
+>         spin_lock_irq(&inode->ordered_tree_lock);
+>         for (n =3D rb_first(&inode->ordered_tree); n; n =3D rb_next(n)) {
+> --
+> 2.43.0
+>
+>
 
