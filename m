@@ -1,112 +1,294 @@
-Return-Path: <linux-kernel+bounces-309895-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309896-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8ED1F967198
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 14:42:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 300A896719B
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 14:42:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C8A381C21879
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 12:42:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9ABE71F22B0A
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 12:42:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8175017F397;
-	Sat, 31 Aug 2024 12:42:01 +0000 (UTC)
-Received: from mx0a-0064b401.pphosted.com (mx0a-0064b401.pphosted.com [205.220.166.238])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87CAB181334;
+	Sat, 31 Aug 2024 12:42:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gDBy8k9B"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98E9C42A9B;
-	Sat, 31 Aug 2024 12:41:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.166.238
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A49717F4EC;
+	Sat, 31 Aug 2024 12:42:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725108121; cv=none; b=T5Cpfwv2rlIvvLAFJQ9hylsE/qxidcV+3mKJvWgtAHul72+4g7JKf6y79UnhVZrgSm0Ww48aaj1dPkaEF7BF5/so0tKHGsz/S8a72RuKaqb0Bpxfc272xyp4TGk32nPH3yBHkrDuDBx7ReVjzXLvb88YhSML9JTtutp9QF41YYo=
+	t=1725108145; cv=none; b=YA73wHqrU0lzmTKxzrYGHeBI4psomY3vUeZVD2ITH8ehC7xAmfbwOJVAlvnrxnMcNMFmY7JSJ8pBgM+Op0sI6mW7EfmwhZYCwU/xMbMIbMksJka9ydQ605AOYBokd13fRFA6t+mEnrwaxf8wF78ksdSKl4wfuC5maDWNiR3Db+Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725108121; c=relaxed/simple;
-	bh=hgqNuRNNLmJqkHbMU+uEJW1Tq28sul8/fyWaNX8wOrY=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=AyiLTfCoS/9kW4yFyyh8NKkI1jilUqQ2tS0M8/0zn5/9Mhd5DX69qRt6dbBOAUzraAOdCL3HN+9hcA8LLTtcy0Vpaq1bbDaZ1z/7vsG+5Jmk7LkT/Agms5Ew3ooPm1VvEC72LdOK3fkswIcYSbvIicitISYG0lAsj/Qr1tk5e84=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; arc=none smtp.client-ip=205.220.166.238
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
-Received: from pps.filterd (m0250809.ppops.net [127.0.0.1])
-	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47VCdiNo031781;
-	Sat, 31 Aug 2024 05:41:45 -0700
-Received: from ala-exchng01.corp.ad.wrs.com (ala-exchng01.wrs.com [147.11.82.252])
-	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 41c2pkg0ur-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-	Sat, 31 Aug 2024 05:41:44 -0700 (PDT)
-Received: from ala-exchng01.corp.ad.wrs.com (147.11.82.252) by
- ala-exchng01.corp.ad.wrs.com (147.11.82.252) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Sat, 31 Aug 2024 05:41:44 -0700
-Received: from pek-lpd-ccm6.wrs.com (147.11.136.210) by
- ala-exchng01.corp.ad.wrs.com (147.11.82.252) with Microsoft SMTP Server id
- 15.1.2507.39 via Frontend Transport; Sat, 31 Aug 2024 05:41:42 -0700
-From: Lizhi Xu <lizhi.xu@windriver.com>
-To: <fdmanana@kernel.org>
-CC: <clm@fb.com>, <dsterba@suse.com>, <josef@toxicpanda.com>,
-        <linux-btrfs@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <lizhi.xu@windriver.com>,
-        <syzbot+4704b3cc972bd76024f1@syzkaller.appspotmail.com>,
-        <syzkaller-bugs@googlegroups.com>
-Subject: Re: [PATCH] btrfs: Add assert or condition
-Date: Sat, 31 Aug 2024 20:41:41 +0800
-Message-ID: <20240831124141.11022-1-lizhi.xu@windriver.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <CAL3q7H5p4vmBs-ES08dkY7z4sjE_k3970CkJRAjiy0MhpXjYWw@mail.gmail.com>
-References: <CAL3q7H5p4vmBs-ES08dkY7z4sjE_k3970CkJRAjiy0MhpXjYWw@mail.gmail.com>
+	s=arc-20240116; t=1725108145; c=relaxed/simple;
+	bh=v6y69RjiduGonD4am7MQx1/6AhSkXwcxwN81z8A1Dg0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=vC+i/7PJ0lyu+N4jdreGoCmy75sx4nVtRjWsLYfJaSuLucXSnZ4zBKKYXMDR4/9KgfciwBo+Og3VvEb3DYT2bUGhrWrxF9SWHZkRk0LIAU9z+jxfqubKJZaFQSkVvBmAhaBapAe90iCgCe5xwUijHw2VmrESpE6Bt8U4VYY7j1E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gDBy8k9B; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4825DC4CEC0;
+	Sat, 31 Aug 2024 12:42:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725108145;
+	bh=v6y69RjiduGonD4am7MQx1/6AhSkXwcxwN81z8A1Dg0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=gDBy8k9BgtypnGAdUwvzoMs0D90LyLzKx9k8MZ+isDlo6tPWU9MEOHIkyiCu7Uu7X
+	 oyppr+mFQOQ6ViuELqwU6ssvBvdEzmN0IwsEsUtpE//1Nem5lANqZcSWjTSCOj+5QU
+	 CDbNqGPKqBwsboQ2GxasrAh47SPnyD+0CSJXlA6KrNet/Athtap5JZ+DmLyKXXnqgM
+	 IZFHDrp2qEfgbLFKotgY7cyX97IYGP2G5w7ChCWT/D70ZEzM9n+jpk95qI3rIjhnCH
+	 fRB5Nakkbm0/DZQPrGVzmtMCoY0BZQ0+aJO7Ut1/5yz99ZroV7waqcTE8fd4KkNiPp
+	 WZ2txFpsqvTcA==
+Date: Sat, 31 Aug 2024 13:42:19 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Abhash Jha <abhashkumarjha123@gmail.com>
+Cc: linux-iio@vger.kernel.org, songqiang1304521@gmail.com, lars@metafoo.de,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] iio: proximity: vl53l0x-i2c: Added continuous mode
+ support
+Message-ID: <20240831134219.3d394c1a@jic23-huawei>
+In-Reply-To: <20240830201627.298264-3-abhashkumarjha123@gmail.com>
+References: <20240830201627.298264-1-abhashkumarjha123@gmail.com>
+	<20240830201627.298264-3-abhashkumarjha123@gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Authority-Analysis: v=2.4 cv=c+X5Qg9l c=1 sm=1 tr=0 ts=66d30f89 cx=c_pps a=/ZJR302f846pc/tyiSlYyQ==:117 a=/ZJR302f846pc/tyiSlYyQ==:17 a=yoJbH4e0A30A:10 a=VwQbUJbxAAAA:8 a=iox4zFpeAAAA:8 a=0qqOrUru9Iw2tnRzv3oA:9 a=WzC6qhA0u3u7Ye7llzcV:22
-X-Proofpoint-ORIG-GUID: CCYVnYbprWFbfOchVpEgVU2tgR651CNm
-X-Proofpoint-GUID: CCYVnYbprWFbfOchVpEgVU2tgR651CNm
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-31_02,2024-08-30_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 phishscore=0
- mlxscore=0 clxscore=1011 lowpriorityscore=0 malwarescore=0 impostorscore=0
- spamscore=0 priorityscore=1501 suspectscore=0 adultscore=0 mlxlogscore=512
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.21.0-2407110000
- definitions=main-2408310105
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Sat, 31 Aug 2024 11:55:53 +0100, Filipe Manana wrote:
-> > -       ASSERT(inode_is_locked(&inode->vfs_inode));
-> > +       ASSERT(inode_is_locked(&inode->vfs_inode) ||
-> > +              rwsem_is_locked(&inode->i_mmap_lock));
-> 
-> This definitely fixes the syzbot report, in the sense the assertion
-> won't fail anymore.
-> But it's wrong, very, very, very, very wrong.
-> 
-> The inode must be locked during the course of the fsync, that's why
-> the assertion is there.
-> 
-> Why do you think it's ok to not have the inode locked?
-> Have you done any analysis about that?
-> 
-> You mention "fsync_skip_inode_lock is true" in the changelog, but have
-> you checked where and why it's set to true?
-> 
-> Where we set it to true, at btrfs_direct_write(), there's a comment
-> which explains it's to avoid a deadlock on the inode lock at
-> btrfs_sync_file().
-> 
-> This is a perfect example of trying a patch not only without having
-> any idea how the code works but also being very lazy,
-> as there's a very explicit comment in the code about why the variable
-> is set to true, and even much more detailed in the
-> change log of the commit that introduced it.
-> 
-> And btw, there's already a patch to fix this issue:
-> 
-> https://lore.kernel.org/linux-btrfs/717029440fe379747b9548a9c91eb7801bc5a813.1724972507.git.fdmanana@suse.com/
-In your patch, I get what the mean of fsync_skip_inode_lock.
+On Sat, 31 Aug 2024 01:46:26 +0530
+Abhash Jha <abhashkumarjha123@gmail.com> wrote:
 
-Thanks.
+> The continuous mode of the sensor is enabled in the buffer_postenable.
+> Replaced the original irq handler with a threaded irq handler to perform
+> i2c reads during continuous mode.
+> The continuous mode is disabled by disabling the buffer.
+> 
+> Signed-off-by: Abhash Jha <abhashkumarjha123@gmail.com>
+
+Hi Abhash,
+
+You've ended up with an implementation that is somewhere between
+a triggered buffer approach (normal one an appropriate here) and that
+used when we don't have triggers (typically because there is a fifo in the path).
+
+Please take a look at how other drivers do this.  In particularly if you
+are not pushing data to the buffer from the pollfunc (registered for the
+triggered buffer) then you are doing it wrong.
+
+Also, consider if other triggers could be used as if not you need to
+both document why and add the validation callbacks to stop other triggers
+being assigned (once you've added one that can be!)
+
+Feel free to ask if you have more questions, but your first reference
+should be other drivers (and I hope we don't have any that do it this way).
+
+Jonathan
+
+> ---
+>  drivers/iio/proximity/vl53l0x-i2c.c | 125 ++++++++++++++++++++++------
+>  1 file changed, 101 insertions(+), 24 deletions(-)
+> 
+> diff --git a/drivers/iio/proximity/vl53l0x-i2c.c b/drivers/iio/proximity/vl53l0x-i2c.c
+> index 2b3dd18be..b0c947586 100644
+> --- a/drivers/iio/proximity/vl53l0x-i2c.c
+> +++ b/drivers/iio/proximity/vl53l0x-i2c.c
+> @@ -22,6 +22,10 @@
+>  #include <linux/module.h>
+>  
+>  #include <linux/iio/iio.h>
+> +#include <linux/iio/buffer.h>
+> +#include <linux/iio/trigger.h>
+> +#include <linux/iio/trigger_consumer.h>
+> +#include <linux/iio/triggered_buffer.h>
+>  
+>  #define VL_REG_SYSRANGE_START				0x00
+>  
+> @@ -49,14 +53,58 @@ struct vl53l0x_data {
+>  	struct completion completion;
+>  	struct regulator *vdd_supply;
+>  	struct gpio_desc *reset_gpio;
+> +
+> +	struct {
+> +		u16 chan;
+> +		s64 timestamp __aligned(8);
+> +	} scan;
+>  };
+>  
+> -static irqreturn_t vl53l0x_handle_irq(int irq, void *priv)
+> +static void vl53l0x_clear_irq(struct vl53l0x_data *data)
+> +{
+> +	struct device *dev = &data->client->dev;
+> +	int ret;
+> +
+> +	ret = i2c_smbus_write_byte_data(data->client,
+> +					VL_REG_SYSTEM_INTERRUPT_CLEAR, 1);
+> +	if (ret < 0)
+> +		dev_err(dev, "failed to clear error irq: %d\n", ret);
+> +
+> +	ret = i2c_smbus_write_byte_data(data->client,
+> +					VL_REG_SYSTEM_INTERRUPT_CLEAR, 0);
+> +	if (ret < 0)
+> +		dev_err(dev, "failed to clear range irq: %d\n", ret);
+
+ouch, not a write 1 to clear register?  I can't find docs, but this is really
+nasty bit of interface design if you have to toggle the bit.
+
+> +
+> +	ret = i2c_smbus_read_byte_data(data->client, VL_REG_RESULT_INT_STATUS);
+> +	if (ret < 0 || ret & 0x07)
+> +		dev_err(dev, "failed to clear irq: %d\n", ret);
+
+return an error from this, and elect whether to do anything or not
+with that at the caller.
+
+> +}
+> +
+> +static irqreturn_t vl53l0x_threaded_irq(int irq, void *priv)
+>  {
+>  	struct iio_dev *indio_dev = priv;
+>  	struct vl53l0x_data *data = iio_priv(indio_dev);
+> +	u8 buffer[12];
+
+See below for more comments, but this is not a triggered buffer
+setup. It looks like what we do when draining fifos (where a trigger
+concept doesn't apply) but that's not what you have here.  So take
+a look at how the split trigger / triggered buffer approach works
+in other drivers.
+
+> +	int ret;
+>  
+> -	complete(&data->completion);
+> +	if (iio_buffer_enabled(indio_dev)) {
+> +		ret = i2c_smbus_read_i2c_block_data(data->client,
+> +						VL_REG_RESULT_RANGE_STATUS,
+> +						sizeof(buffer), buffer);
+> +		if (ret < 0)
+> +			return ret;
+> +		else if (ret != 12)
+> +			return -EREMOTEIO;
+> +
+> +		data->scan.chan = (buffer[10] << 8) + buffer[11];
+
+get_unaligned_be16()
+
+
+> +		iio_push_to_buffers_with_timestamp(indio_dev,
+> +						&data->scan,
+> +						iio_get_time_ns(indio_dev));
+
+If you are using a trigger (and they are optional) then this interrupt should
+only be call iio_trigger_poll_nested() not do the data reading.
+
+
+> +
+> +		iio_trigger_notify_done(indio_dev->trig);
+> +		vl53l0x_clear_irq(data);
+> +	} else
+> +		complete(&data->completion);
+>  
+>  	return IRQ_HANDLED;
+>  }
+
+>  
+> -static void vl53l0x_clear_irq(struct vl53l0x_data *data)
+> -{
+> -	struct device *dev = &data->client->dev;
+> -	int ret;
+> -
+> -	ret = i2c_smbus_write_byte_data(data->client,
+> -					VL_REG_SYSTEM_INTERRUPT_CLEAR, 1);
+> -	if (ret < 0)
+> -		dev_err(dev, "failed to clear error irq: %d\n", ret);
+> -
+> -	ret = i2c_smbus_write_byte_data(data->client,
+> -					VL_REG_SYSTEM_INTERRUPT_CLEAR, 0);
+> -	if (ret < 0)
+> -		dev_err(dev, "failed to clear range irq: %d\n", ret);
+> -
+> -	ret = i2c_smbus_read_byte_data(data->client, VL_REG_RESULT_INT_STATUS);
+> -	if (ret < 0 || ret & 0x07)
+> -		dev_err(dev, "failed to clear irq: %d\n", ret);
+> -}
+> -
+
+>  
+>  static int vl53l0x_read_raw(struct iio_dev *indio_dev,
+> @@ -221,6 +257,40 @@ static int vl53l0x_power_on(struct vl53l0x_data *data)
+>  	return 0;
+>  }
+>  
+> +static int vl53l0x_buffer_postenable(struct iio_dev *indio_dev)
+> +{
+> +	struct vl53l0x_data *data = iio_priv(indio_dev);
+> +	int ret;
+> +
+> +	ret = i2c_smbus_write_byte_data(data->client, VL_REG_SYSRANGE_START, 0x02);
+
+return i2c_smbus_write_byte_data()
+
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	return 0;
+> +}
+> +
+> +static int vl53l0x_buffer_postdisable(struct iio_dev *indio_dev)
+> +{
+> +	struct vl53l0x_data *data = iio_priv(indio_dev);
+> +	int ret;
+> +
+> +	ret = i2c_smbus_write_byte_data(data->client, VL_REG_SYSRANGE_START, 0x01);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	/* Let the ongoing reading finish */
+> +	reinit_completion(&data->completion);
+> +	wait_for_completion_timeout(&data->completion, HZ/10);
+Spaces around /
+
+> +	vl53l0x_clear_irq(data);
+> +
+> +	return 0;
+> +}
+
+>  static int vl53l0x_probe(struct i2c_client *client)
+>  {
+>  	struct vl53l0x_data *data;
+> @@ -279,6 +349,13 @@ static int vl53l0x_probe(struct i2c_client *client)
+>  		ret = vl53l0x_configure_irq(client, indio_dev);
+>  		if (ret)
+>  			return ret;
+> +
+> +		ret = devm_iio_triggered_buffer_setup(&client->dev,
+> +					indio_dev,
+> +					&iio_pollfunc_store_time,
+
+This is odd.  You don't seem to have a function to be called to actually store
+the data.  Note you also need to consider if other triggers might be used.
+
+Ultimately this doesn't look like a triggered buffer to me.
+It is fine for some devices to drive the buffer directly but in that
+case register the kfifo buffer. 
+
+I'm not sure what reason we have to do that here though as this is a very
+conventional one interrupt per 'scan' of data device.
+
+So you should be registering a trigger, and a buffer then letting the
+trigger drive the buffer.
+
+
+
+> +					NULL, &iio_triggered_buffer_setup_ops);
+> +		if (ret)
+> +			return ret;
+>  	}
+>  
+>  	return devm_iio_device_register(&client->dev, indio_dev);
+
 
