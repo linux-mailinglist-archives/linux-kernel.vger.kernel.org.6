@@ -1,392 +1,367 @@
-Return-Path: <linux-kernel+bounces-310003-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310004-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C7FA9672FA
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 20:22:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 13E579672FD
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 20:22:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6ED471C219E9
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 18:22:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 38B281C214BA
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 18:22:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB8BC14A600;
-	Sat, 31 Aug 2024 18:22:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JWCICXAW"
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10BAE17557E;
+	Sat, 31 Aug 2024 18:22:22 +0000 (UTC)
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC796433B5;
-	Sat, 31 Aug 2024 18:21:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CF6914A600
+	for <linux-kernel@vger.kernel.org>; Sat, 31 Aug 2024 18:22:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725128520; cv=none; b=jOA6lIgKlu9YQPf+R19gzuyQoZWVM6m8a7KocfB5vGirCdOG4TsTUK9CMickzwsiZkH0sZpe3D3L/38rmJw6AbdODkzz1wjF6RJGH8M2KVWHZVUKhGx3zgvplUx5X8iotM7Dpk+N5FgfDn24B//22xCzQIlcW7jMQR2/aBbf6/U=
+	t=1725128541; cv=none; b=EYCYa+u+IJr9dqmG2ejckvf84BsDnwfN0VEYn1OwzfTMMMLaj7FzQm1gYlNAZpDJIleAg5PAr5lhKTZkzALPC2pFUt8FtbITmIUDWzAo4xejgdxWS1G1j787iH4rqmqYT4llDnNbxtGD4RYiKDId4IG1DBpht0XxPX32+UJvMFg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725128520; c=relaxed/simple;
-	bh=4zMq+OhygYCEkhdUArZSfwAiqzb+8f12iZVJZI8vLl8=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=iSxXKpqiPG3uUI5+8u1DLaG0vM6R5TuqLECVk7LytD+Ly3pv53ljjJDEiAtJWF16h1AVz/BZfoVE0+har23+90g7YcgNLBPzrRK4gFu7fg75CTLUd/fPB5fE1iLYqYsiCIDzzCiP/bShznE/iBSTYn97SReDAf/hSUVgPiEZ57g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JWCICXAW; arc=none smtp.client-ip=209.85.221.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-371941bbfb0so1788314f8f.0;
-        Sat, 31 Aug 2024 11:21:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725128517; x=1725733317; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=LH41BoP5EHG11gPJ4mHapDdqmZlexxcIeG0MM9jXWs0=;
-        b=JWCICXAWbd2BjJid4MLdsU30wg7gbQqvWXqt9+UAyVnZj95Tdk4+VnfnppOkpMy8gx
-         CRNha7ovpDIcZZw389EFXCxp1nXWj0qMN+XABKUZR7uqnWHnsTJM+DdCd1dT9M8wnyWe
-         TX7CUV+98DRGn4QmTAgTXhFGl7VVGF2IH42Y84hQclf7L0yS1r80X8aNaQjplYUFVGG1
-         7PhG9hZ4lPwXdP7WIZ3IJlmLCP2yizPkdB6A9dvKCGgSXJbyqDvZYw6XCYJaccOfpDF4
-         eH6OFxnApWUSBVJ8SRsEe3fuKo5MsbFe/9qh4UtJjPOPT2ygiwfZ0PTspqtYPUAFd8IF
-         2vGg==
+	s=arc-20240116; t=1725128541; c=relaxed/simple;
+	bh=aLYhyjW62lzyVyWBQnV+BTWSzyk3bo/ww6OrMnSF1UM=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=k1dAfv9fLvzq7XWF5rGJoJbkq8LVkJHYlcGVFoZ4pOo+Vd0DZHNvHhfYlmWP87nFZbAuQi05TJeU0r1i7n1hSqg0jCkWz6hZUi9qv6Z2Ym8WJuJxay8m02ddhzrd0t6/V10AzvXGSk9rr+pLcChDRZnKGromxwi9teQc54obBLA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-82a21f28d87so262337639f.3
+        for <linux-kernel@vger.kernel.org>; Sat, 31 Aug 2024 11:22:18 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725128517; x=1725733317;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=LH41BoP5EHG11gPJ4mHapDdqmZlexxcIeG0MM9jXWs0=;
-        b=awBJZCVVVYA/nd1NJG+RZUu14J/F6pSII21aInEATHX0wrgGh1uw8vkEwKV1w2StU8
-         TruYutyKedCE1Uw+jVq3ZfB5/4rDcATCtKJfs3q0eHbaLcvld+ssKSBFHJHUqqRkYlwF
-         XByM4nPoiCMHFz38Mi0eeccqyN9yJHXzQRVsjb1y12MJvyh1Rv1cUjgGTKCQJRC2KQQ9
-         OdSRgd0/d36UXVsaUldP8ZKzA0quPaWlF4/JTLDLHyKUrbxK9PnCv7DY8FoktWSELcXH
-         4/Mi6qHbJnZPCsBXRUdw4SwNK8UTUOCuXGcvaZt+EsuU4ub5rfercZk+1ii0opB94M/2
-         2qAQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWjxUVKH2HsQNgiC2J9exceC0o4FTEuuJddvb5kwrOb7akelDkz9NNZ8UVjxPZHR6HSJ+PtSYUqMd0=@vger.kernel.org, AJvYcCWzcNXp6GeAJbAkfbW6Kdprj9vZdBlX+vdRChxlfTLjNsj06Ik3zKakt6Qk/THLh6bPgorPI9p6wwVlEMc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzwte570ss2f4B7RprgzX7c63hgPVJkAYUCLc392iRr6gDsLhGj
-	e4fNU47iReySTvH9qhYel9Oah89U1RqF16iMhLdr8Jodvz5/d+sRCq865XCC
-X-Google-Smtp-Source: AGHT+IGeI2hy/wrbGTTiMjdOs049W9Y9oeaamhp0K4wOgEDJ/xJ3q+jEx1ZbdDLbhbDJXa5v+BbzIQ==
-X-Received: by 2002:a05:6000:50d:b0:371:a70d:107e with SMTP id ffacd0b85a97d-3749b53169bmr7510947f8f.6.1725128516266;
-        Sat, 31 Aug 2024 11:21:56 -0700 (PDT)
-Received: from debian.fritz.box ([2a00:79c0:660:4c00:224:9bff:fe22:6dd6])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-374c11eeea6sm1747909f8f.52.2024.08.31.11.21.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 31 Aug 2024 11:21:55 -0700 (PDT)
-From: Dimitri Fedrau <dima.fedrau@gmail.com>
-To: 
-Cc: Sebastian Reichel <sre@kernel.org>,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-	linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Dimitri Fedrau <dima.fedrau@gmail.com>
-Subject: [PATCH v2] power: supply: max1720x: add read support for nvmem
-Date: Sat, 31 Aug 2024 20:21:45 +0200
-Message-Id: <20240831182145.11589-1-dima.fedrau@gmail.com>
-X-Mailer: git-send-email 2.39.2
+        d=1e100.net; s=20230601; t=1725128538; x=1725733338;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=XZ2rI+RJYwA+tRDSFIjoqgx5o9kR6zfIPQ+R8qx1Hbk=;
+        b=pNv0FrDhJZUEVG65gxk18SVZrEyHkAe5+Xtu4nq7LMsvvYZZyZKWX/BSO8D3ozLPdz
+         AlzcDTTcBUJJkRUaen4FYQwTgH85Gj8aBrE5/jiqesb4zxfgDwvXav2eDUjcsPeLvVBU
+         kiKY5VZinY/0iGVvkglOybPmUl+YtrzbYQkOIjOGPuGVVSXBjl6AhUoMxF8li4ENWzcM
+         e8UXjW1r5C9UHtXIRs5nBEYZ1HD2ySYGwDKyb63SrfjEoR8NbpwzKgdk1zhO8ZHwC5od
+         L+3n5aOuGzuay43Oa7UsMymbsT4O9ZjrIqNPzonLXHyOA07x1DqtC1NfdtCFCdSzxxN/
+         CWhQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUNQ+c9UXyfUPMOKiym4jxb46OdUUaOfczy9k9KdOXHiBh2pQAkEIIb4+0sFbPn5mDqzCi8WIzHRbqPUEQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxFpfTn/BoRpYYi836Nj1NfIfGW7JLeybFGZuQ8gnuengg31Qpy
+	pv3WE5T9UD0cJ5RNYhZp+3D4mDu0hjzKFBv+yQ6q0CrBNeRNIE0gGqNuXnosLDoZ+4TP3jAnke0
+	1GJ6K2qyOmvjO6PtabU2tPWpSF599JNYeeYVfoomCsZ3uIGw6OEEo+2A=
+X-Google-Smtp-Source: AGHT+IFJY41Tc+o0Eji4GTCPq13AywwWUlPA75MLeUzlObVwl0cMQCZM0B7i7isgXVHZT1JfZUu5srWuel1K0fc8ZaYIT2Pbb2gP
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:1c4c:b0:397:2946:c83c with SMTP id
+ e9e14a558f8ab-39f41094f42mr4686095ab.4.1725128538167; Sat, 31 Aug 2024
+ 11:22:18 -0700 (PDT)
+Date: Sat, 31 Aug 2024 11:22:18 -0700
+In-Reply-To: <0000000000004385ec06198753f8@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000b5ba900620fec99b@google.com>
+Subject: Re: [syzbot] [nfs?] INFO: task hung in nfsd_nl_listener_set_doit
+From: syzbot <syzbot+d1e76d963f757db40f91@syzkaller.appspotmail.com>
+To: Dai.Ngo@oracle.com, chuck.lever@oracle.com, dai.ngo@oracle.com, 
+	jlayton@kernel.org, kolga@netapp.com, linux-kernel@vger.kernel.org, 
+	linux-nfs@vger.kernel.org, lorenzo@kernel.org, neilb@suse.de, 
+	netdev@vger.kernel.org, okorniev@redhat.com, syzkaller-bugs@googlegroups.com, 
+	tom@talpey.com
+Content-Type: text/plain; charset="UTF-8"
 
-ModelGauge m5 and device configuration values are stored in nonvolatile
-memory to prevent data loss if the IC loses power. Add read support for
-the nonvolatile memory on MAX1720X devices.
+syzbot has found a reproducer for the following issue on:
 
-Signed-off-by: Dimitri Fedrau <dima.fedrau@gmail.com>
+HEAD commit:    fe1910f9337b tcp_bpf: fix return value of tcp_bpf_sendmsg()
+git tree:       net
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=100e272b980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=996585887acdadb3
+dashboard link: https://syzkaller.appspot.com/bug?extid=d1e76d963f757db40f91
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=113234fb980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11140943980000
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/cb37d16e2860/disk-fe1910f9.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/315198aa296e/vmlinux-fe1910f9.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/b3e6fb9fa8a4/bzImage-fe1910f9.xz
+
+The issue was bisected to:
+
+commit 16a471177496c8e04a9793812c187a2c1a2192fa
+Author: Lorenzo Bianconi <lorenzo@kernel.org>
+Date:   Tue Apr 23 13:25:44 2024 +0000
+
+    NFSD: add listener-{set,get} netlink command
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=16af38d3980000
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=15af38d3980000
+console output: https://syzkaller.appspot.com/x/log.txt?x=11af38d3980000
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+d1e76d963f757db40f91@syzkaller.appspotmail.com
+Fixes: 16a471177496 ("NFSD: add listener-{set,get} netlink command")
+
+INFO: task syz-executor388:5254 blocked for more than 143 seconds.
+      Not tainted 6.11.0-rc5-syzkaller-00151-gfe1910f9337b #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:syz-executor388 state:D stack:23736 pid:5254  tgid:5254  ppid:5252   flags:0x00004006
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5188 [inline]
+ __schedule+0x1800/0x4a60 kernel/sched/core.c:6529
+ __schedule_loop kernel/sched/core.c:6606 [inline]
+ schedule+0x14b/0x320 kernel/sched/core.c:6621
+ schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6678
+ __mutex_lock_common kernel/locking/mutex.c:684 [inline]
+ __mutex_lock+0x6a4/0xd70 kernel/locking/mutex.c:752
+ nfsd_nl_listener_set_doit+0x12d/0x1a90 fs/nfsd/nfsctl.c:1956
+ genl_family_rcv_msg_doit net/netlink/genetlink.c:1115 [inline]
+ genl_family_rcv_msg net/netlink/genetlink.c:1195 [inline]
+ genl_rcv_msg+0xb14/0xec0 net/netlink/genetlink.c:1210
+ netlink_rcv_skb+0x1e3/0x430 net/netlink/af_netlink.c:2550
+ genl_rcv+0x28/0x40 net/netlink/genetlink.c:1219
+ netlink_unicast_kernel net/netlink/af_netlink.c:1331 [inline]
+ netlink_unicast+0x7f6/0x990 net/netlink/af_netlink.c:1357
+ netlink_sendmsg+0x8e4/0xcb0 net/netlink/af_netlink.c:1901
+ sock_sendmsg_nosec net/socket.c:730 [inline]
+ __sock_sendmsg+0x221/0x270 net/socket.c:745
+ ____sys_sendmsg+0x525/0x7d0 net/socket.c:2597
+ ___sys_sendmsg net/socket.c:2651 [inline]
+ __sys_sendmsg+0x2b0/0x3a0 net/socket.c:2680
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f4204435ce9
+RSP: 002b:00007ffea2feb278 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
+RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f4204435ce9
+RDX: 0000000000000000 RSI: 0000000020000100 RDI: 0000000000000003
+RBP: 0000000000000000 R08: 00000000000000a0 R09: 00000000000000a0
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000000 R14: 00007ffea2feb2a0 R15: 00007ffea2feb290
+ </TASK>
+INFO: task syz-executor388:5258 blocked for more than 143 seconds.
+      Not tainted 6.11.0-rc5-syzkaller-00151-gfe1910f9337b #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:syz-executor388 state:D stack:26576 pid:5258  tgid:5258  ppid:5255   flags:0x00004006
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5188 [inline]
+ __schedule+0x1800/0x4a60 kernel/sched/core.c:6529
+ __schedule_loop kernel/sched/core.c:6606 [inline]
+ schedule+0x14b/0x320 kernel/sched/core.c:6621
+ schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6678
+ __mutex_lock_common kernel/locking/mutex.c:684 [inline]
+ __mutex_lock+0x6a4/0xd70 kernel/locking/mutex.c:752
+ nfsd_nl_listener_set_doit+0x12d/0x1a90 fs/nfsd/nfsctl.c:1956
+ genl_family_rcv_msg_doit net/netlink/genetlink.c:1115 [inline]
+ genl_family_rcv_msg net/netlink/genetlink.c:1195 [inline]
+ genl_rcv_msg+0xb14/0xec0 net/netlink/genetlink.c:1210
+ netlink_rcv_skb+0x1e3/0x430 net/netlink/af_netlink.c:2550
+ genl_rcv+0x28/0x40 net/netlink/genetlink.c:1219
+ netlink_unicast_kernel net/netlink/af_netlink.c:1331 [inline]
+ netlink_unicast+0x7f6/0x990 net/netlink/af_netlink.c:1357
+ netlink_sendmsg+0x8e4/0xcb0 net/netlink/af_netlink.c:1901
+ sock_sendmsg_nosec net/socket.c:730 [inline]
+ __sock_sendmsg+0x221/0x270 net/socket.c:745
+ ____sys_sendmsg+0x525/0x7d0 net/socket.c:2597
+ ___sys_sendmsg net/socket.c:2651 [inline]
+ __sys_sendmsg+0x2b0/0x3a0 net/socket.c:2680
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f4204435ce9
+RSP: 002b:00007ffea2feb278 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
+RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f4204435ce9
+RDX: 0000000000000000 RSI: 0000000020000100 RDI: 0000000000000003
+RBP: 0000000000000000 R08: 00000000000000a0 R09: 00000000000000a0
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000000 R14: 00007ffea2feb2a0 R15: 00007ffea2feb290
+ </TASK>
+INFO: task syz-executor388:5259 blocked for more than 144 seconds.
+      Not tainted 6.11.0-rc5-syzkaller-00151-gfe1910f9337b #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:syz-executor388 state:D stack:26576 pid:5259  tgid:5259  ppid:5257   flags:0x00004006
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5188 [inline]
+ __schedule+0x1800/0x4a60 kernel/sched/core.c:6529
+ __schedule_loop kernel/sched/core.c:6606 [inline]
+ schedule+0x14b/0x320 kernel/sched/core.c:6621
+ schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6678
+ __mutex_lock_common kernel/locking/mutex.c:684 [inline]
+ __mutex_lock+0x6a4/0xd70 kernel/locking/mutex.c:752
+ nfsd_nl_listener_set_doit+0x12d/0x1a90 fs/nfsd/nfsctl.c:1956
+ genl_family_rcv_msg_doit net/netlink/genetlink.c:1115 [inline]
+ genl_family_rcv_msg net/netlink/genetlink.c:1195 [inline]
+ genl_rcv_msg+0xb14/0xec0 net/netlink/genetlink.c:1210
+ netlink_rcv_skb+0x1e3/0x430 net/netlink/af_netlink.c:2550
+ genl_rcv+0x28/0x40 net/netlink/genetlink.c:1219
+ netlink_unicast_kernel net/netlink/af_netlink.c:1331 [inline]
+ netlink_unicast+0x7f6/0x990 net/netlink/af_netlink.c:1357
+ netlink_sendmsg+0x8e4/0xcb0 net/netlink/af_netlink.c:1901
+ sock_sendmsg_nosec net/socket.c:730 [inline]
+ __sock_sendmsg+0x221/0x270 net/socket.c:745
+ ____sys_sendmsg+0x525/0x7d0 net/socket.c:2597
+ ___sys_sendmsg net/socket.c:2651 [inline]
+ __sys_sendmsg+0x2b0/0x3a0 net/socket.c:2680
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f4204435ce9
+RSP: 002b:00007ffea2feb278 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
+RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f4204435ce9
+RDX: 0000000000000000 RSI: 0000000020000100 RDI: 0000000000000003
+RBP: 0000000000000000 R08: 00000000000000a0 R09: 00000000000000a0
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000000 R14: 00007ffea2feb2a0 R15: 00007ffea2feb290
+ </TASK>
+INFO: task syz-executor388:5270 blocked for more than 144 seconds.
+      Not tainted 6.11.0-rc5-syzkaller-00151-gfe1910f9337b #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:syz-executor388 state:D stack:26576 pid:5270  tgid:5270  ppid:5253   flags:0x00004006
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5188 [inline]
+ __schedule+0x1800/0x4a60 kernel/sched/core.c:6529
+ __schedule_loop kernel/sched/core.c:6606 [inline]
+ schedule+0x14b/0x320 kernel/sched/core.c:6621
+ schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6678
+ __mutex_lock_common kernel/locking/mutex.c:684 [inline]
+ __mutex_lock+0x6a4/0xd70 kernel/locking/mutex.c:752
+ nfsd_nl_listener_set_doit+0x12d/0x1a90 fs/nfsd/nfsctl.c:1956
+ genl_family_rcv_msg_doit net/netlink/genetlink.c:1115 [inline]
+ genl_family_rcv_msg net/netlink/genetlink.c:1195 [inline]
+ genl_rcv_msg+0xb14/0xec0 net/netlink/genetlink.c:1210
+ netlink_rcv_skb+0x1e3/0x430 net/netlink/af_netlink.c:2550
+ genl_rcv+0x28/0x40 net/netlink/genetlink.c:1219
+ netlink_unicast_kernel net/netlink/af_netlink.c:1331 [inline]
+ netlink_unicast+0x7f6/0x990 net/netlink/af_netlink.c:1357
+ netlink_sendmsg+0x8e4/0xcb0 net/netlink/af_netlink.c:1901
+ sock_sendmsg_nosec net/socket.c:730 [inline]
+ __sock_sendmsg+0x221/0x270 net/socket.c:745
+ ____sys_sendmsg+0x525/0x7d0 net/socket.c:2597
+ ___sys_sendmsg net/socket.c:2651 [inline]
+ __sys_sendmsg+0x2b0/0x3a0 net/socket.c:2680
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f4204435ce9
+RSP: 002b:00007ffea2feb278 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
+RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f4204435ce9
+RDX: 0000000000000000 RSI: 0000000020000100 RDI: 0000000000000003
+RBP: 0000000000000000 R08: 00000000000000a0 R09: 00000000000000a0
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000000 R14: 00007ffea2feb2a0 R15: 00007ffea2feb290
+ </TASK>
+
+Showing all locks held in the system:
+1 lock held by khungtaskd/30:
+ #0: ffffffff8e938320 (rcu_read_lock){....}-{1:2}, at: rcu_lock_acquire include/linux/rcupdate.h:326 [inline]
+ #0: ffffffff8e938320 (rcu_read_lock){....}-{1:2}, at: rcu_read_lock include/linux/rcupdate.h:838 [inline]
+ #0: ffffffff8e938320 (rcu_read_lock){....}-{1:2}, at: debug_show_all_locks+0x55/0x2a0 kernel/locking/lockdep.c:6626
+2 locks held by kworker/u8:5/1073:
+4 locks held by klogd/4679:
+ #0: ffff8880b893e9d8 (&rq->__lock){-.-.}-{2:2}, at: raw_spin_rq_lock_nested+0x2a/0x140 kernel/sched/core.c:560
+ #1: ffff8880b8928948 (&per_cpu_ptr(group->pcpu, cpu)->seq){-.-.}-{0:0}, at: psi_task_switch+0x441/0x770 kernel/sched/psi.c:989
+ #2: ffff88807cdc6418 (&p->pi_lock){-.-.}-{2:2}, at: class_raw_spinlock_irqsave_constructor include/linux/spinlock.h:551 [inline]
+ #2: ffff88807cdc6418 (&p->pi_lock){-.-.}-{2:2}, at: try_to_wake_up+0xb0/0x1470 kernel/sched/core.c:4051
+ #3: ffff8880b893e9d8 (&rq->__lock){-.-.}-{2:2}, at: raw_spin_rq_lock_nested+0x2a/0x140 kernel/sched/core.c:560
+2 locks held by getty/4991:
+ #0: ffff8880309080a0 (&tty->ldisc_sem){++++}-{0:0}, at: tty_ldisc_ref_wait+0x25/0x70 drivers/tty/tty_ldisc.c:243
+ #1: ffffc900031332f0 (&ldata->atomic_read_lock){+.+.}-{3:3}, at: n_tty_read+0x6ac/0x1e00 drivers/tty/n_tty.c:2211
+2 locks held by syz-executor388/5254:
+ #0: ffffffff8fcf11b0 (cb_lock){++++}-{3:3}, at: genl_rcv+0x19/0x40 net/netlink/genetlink.c:1218
+ #1: ffffffff8ec0b628 (nfsd_mutex){+.+.}-{3:3}, at: nfsd_nl_listener_set_doit+0x12d/0x1a90 fs/nfsd/nfsctl.c:1956
+2 locks held by syz-executor388/5258:
+ #0: ffffffff8fcf11b0 (cb_lock){++++}-{3:3}, at: genl_rcv+0x19/0x40 net/netlink/genetlink.c:1218
+ #1: ffffffff8ec0b628 (nfsd_mutex){+.+.}-{3:3}, at: nfsd_nl_listener_set_doit+0x12d/0x1a90 fs/nfsd/nfsctl.c:1956
+2 locks held by syz-executor388/5259:
+ #0: ffffffff8fcf11b0 (cb_lock){++++}-{3:3}, at: genl_rcv+0x19/0x40 net/netlink/genetlink.c:1218
+ #1: ffffffff8ec0b628 (nfsd_mutex){+.+.}-{3:3}, at: nfsd_nl_listener_set_doit+0x12d/0x1a90 fs/nfsd/nfsctl.c:1956
+2 locks held by syz-executor388/5261:
+ #0: ffffffff8fcf11b0 (cb_lock){++++}-{3:3}, at: genl_rcv+0x19/0x40 net/netlink/genetlink.c:1218
+ #1: ffffffff8ec0b628 (nfsd_mutex){+.+.}-{3:3}, at: nfsd_nl_listener_set_doit+0x12d/0x1a90 fs/nfsd/nfsctl.c:1956
+2 locks held by syz-executor388/5270:
+ #0: ffffffff8fcf11b0 (cb_lock){++++}-{3:3}, at: genl_rcv+0x19/0x40 net/netlink/genetlink.c:1218
+ #1: ffffffff8ec0b628 (nfsd_mutex){+.+.}-{3:3}, at: nfsd_nl_listener_set_doit+0x12d/0x1a90 fs/nfsd/nfsctl.c:1956
+
+=============================================
+
+NMI backtrace for cpu 0
+CPU: 0 UID: 0 PID: 30 Comm: khungtaskd Not tainted 6.11.0-rc5-syzkaller-00151-gfe1910f9337b #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:93 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:119
+ nmi_cpu_backtrace+0x49c/0x4d0 lib/nmi_backtrace.c:113
+ nmi_trigger_cpumask_backtrace+0x198/0x320 lib/nmi_backtrace.c:62
+ trigger_all_cpu_backtrace include/linux/nmi.h:162 [inline]
+ check_hung_uninterruptible_tasks kernel/hung_task.c:223 [inline]
+ watchdog+0xff4/0x1040 kernel/hung_task.c:379
+ kthread+0x2f0/0x390 kernel/kthread.c:389
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+Sending NMI from CPU 0 to CPUs 1:
+NMI backtrace for cpu 1
+CPU: 1 UID: 0 PID: 4679 Comm: klogd Not tainted 6.11.0-rc5-syzkaller-00151-gfe1910f9337b #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
+RIP: 0010:unwind_next_frame+0x690/0x2a00 arch/x86/kernel/unwind_orc.c:505
+Code: 3c 5b 4d 01 ff 49 01 cf 0f 84 82 00 00 00 49 89 ee e8 64 5e 52 00 49 8d 6f 04 49 8d 5f 05 48 89 e8 48 c1 e8 03 42 0f b6 04 28 <84> c0 0f 85 88 1b 00 00 48 89 d8 48 c1 e8 03 42 0f b6 04 28 84 c0
+RSP: 0018:ffffc90004187268 EFLAGS: 00000a02
+RAX: 0000000000000000 RBX: ffffffff90a9f4f1 RCX: ffff88807c3c8000
+RDX: 0000000000000000 RSI: ffffffff81faa2e5 RDI: ffffffff81faa2ea
+RBP: ffffffff90a9f4f0 R08: ffffffff81412c60 R09: ffffc90004187430
+R10: 0000000000000003 R11: ffffffff817f2f00 R12: ffffffff90310524
+R13: dffffc0000000000 R14: 1ffff92000830e68 R15: ffffffff90a9f4ec
+FS:  00007fb93ee6f380(0000) GS:ffff8880b8900000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000555557e676f8 CR3: 000000007c060000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <NMI>
+ </NMI>
+ <TASK>
+ arch_stack_walk+0x151/0x1b0 arch/x86/kernel/stacktrace.c:25
+ stack_trace_save+0x118/0x1d0 kernel/stacktrace.c:122
+ kasan_save_stack mm/kasan/common.c:47 [inline]
+ kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
+ unpoison_slab_object mm/kasan/common.c:312 [inline]
+ __kasan_slab_alloc+0x66/0x80 mm/kasan/common.c:338
+ kasan_slab_alloc include/linux/kasan.h:201 [inline]
+ slab_post_alloc_hook mm/slub.c:3988 [inline]
+ slab_alloc_node mm/slub.c:4037 [inline]
+ kmem_cache_alloc_node_noprof+0x16b/0x320 mm/slub.c:4080
+ __alloc_skb+0x1c3/0x440 net/core/skbuff.c:664
+ alloc_skb include/linux/skbuff.h:1320 [inline]
+ alloc_skb_with_frags+0xc3/0x770 net/core/skbuff.c:6526
+ sock_alloc_send_pskb+0x91a/0xa60 net/core/sock.c:2815
+ unix_dgram_sendmsg+0x6d3/0x1f80 net/unix/af_unix.c:2030
+ sock_sendmsg_nosec net/socket.c:730 [inline]
+ __sock_sendmsg+0x221/0x270 net/socket.c:745
+ __sys_sendto+0x3a4/0x4f0 net/socket.c:2204
+ __do_sys_sendto net/socket.c:2216 [inline]
+ __se_sys_sendto net/socket.c:2212 [inline]
+ __x64_sys_sendto+0xde/0x100 net/socket.c:2212
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fb93efd19b5
+Code: 8b 44 24 08 48 83 c4 28 48 98 c3 48 98 c3 41 89 ca 64 8b 04 25 18 00 00 00 85 c0 75 26 45 31 c9 45 31 c0 b8 2c 00 00 00 0f 05 <48> 3d 00 f0 ff ff 76 7a 48 8b 15 44 c4 0c 00 f7 d8 64 89 02 48 83
+RSP: 002b:00007ffecbd3b868 EFLAGS: 00000246 ORIG_RAX: 000000000000002c
+RAX: ffffffffffffffda RBX: 0000000000000002 RCX: 00007fb93efd19b5
+RDX: 000000000000008b RSI: 000056134a140d80 RDI: 0000000000000003
+RBP: 000056134a13c910 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000004000 R11: 0000000000000246 R12: 0000000000000013
+R13: 00007fb93f15f212 R14: 00007ffecbd3b968 R15: 0000000000000000
+ </TASK>
+INFO: NMI handler (nmi_cpu_backtrace_handler) took too long to run: 1.486 msecs
+
+
 ---
-
-Based on:
-479b6d04964b "power: supply: add support for MAX1720x standalone fuel gauge"
-in branch for-next
-
-Changes in V2:
-  - remove function max1720x_remove and use devm_add_action_or_reset() to
-    unregister info->ancillary to avoid race condition during module remove
-
----
- drivers/power/supply/max1720x_battery.c | 220 ++++++++++++++++++++++--
- 1 file changed, 205 insertions(+), 15 deletions(-)
-
-diff --git a/drivers/power/supply/max1720x_battery.c b/drivers/power/supply/max1720x_battery.c
-index edc262f0a62f..d27c94bdb835 100644
---- a/drivers/power/supply/max1720x_battery.c
-+++ b/drivers/power/supply/max1720x_battery.c
-@@ -16,7 +16,9 @@
- #include <asm/unaligned.h>
- 
- /* Nonvolatile registers */
-+#define MAX1720X_NXTABLE0		0x80
- #define MAX1720X_NRSENSE		0xCF	/* RSense in 10^-5 Ohm */
-+#define MAX1720X_NDEVICE_NAME4		0xDF
- 
- /* ModelGauge m5 */
- #define MAX172XX_STATUS			0x00	/* Status */
-@@ -46,6 +48,8 @@ static const char *const max17205_model = "MAX17205";
- 
- struct max1720x_device_info {
- 	struct regmap *regmap;
-+	struct regmap *regmap_nv;
-+	struct i2c_client *ancillary;
- 	int rsense;
- };
- 
-@@ -106,6 +110,134 @@ static const struct regmap_config max1720x_regmap_cfg = {
- 	.cache_type = REGCACHE_RBTREE,
- };
- 
-+static const struct regmap_range max1720x_nvmem_allow[] = {
-+	regmap_reg_range(MAX1720X_NXTABLE0, MAX1720X_NDEVICE_NAME4),
-+};
-+
-+static const struct regmap_range max1720x_nvmem_deny[] = {
-+	regmap_reg_range(0x00, 0x7F),
-+	regmap_reg_range(0xE0, 0xFF),
-+};
-+
-+static const struct regmap_access_table max1720x_nvmem_regs = {
-+	.yes_ranges	= max1720x_nvmem_allow,
-+	.n_yes_ranges	= ARRAY_SIZE(max1720x_nvmem_allow),
-+	.no_ranges	= max1720x_nvmem_deny,
-+	.n_no_ranges	= ARRAY_SIZE(max1720x_nvmem_deny),
-+};
-+
-+static const struct regmap_config max1720x_nvmem_regmap_cfg = {
-+	.reg_bits = 8,
-+	.val_bits = 16,
-+	.max_register = MAX1720X_NDEVICE_NAME4,
-+	.val_format_endian = REGMAP_ENDIAN_LITTLE,
-+	.rd_table = &max1720x_nvmem_regs,
-+};
-+
-+static const struct nvmem_cell_info max1720x_nvmem_cells[] = {
-+	{ .name = "nXTable0",  .offset = 0,  .bytes = 2, },
-+	{ .name = "nXTable1",  .offset = 2,  .bytes = 2, },
-+	{ .name = "nXTable2",  .offset = 4,  .bytes = 2, },
-+	{ .name = "nXTable3",  .offset = 6,  .bytes = 2, },
-+	{ .name = "nXTable4",  .offset = 8,  .bytes = 2, },
-+	{ .name = "nXTable5",  .offset = 10, .bytes = 2, },
-+	{ .name = "nXTable6",  .offset = 12, .bytes = 2, },
-+	{ .name = "nXTable7",  .offset = 14, .bytes = 2, },
-+	{ .name = "nXTable8",  .offset = 16, .bytes = 2, },
-+	{ .name = "nXTable9",  .offset = 18, .bytes = 2, },
-+	{ .name = "nXTable10", .offset = 20, .bytes = 2, },
-+	{ .name = "nXTable11", .offset = 22, .bytes = 2, },
-+	{ .name = "nUser18C",  .offset = 24, .bytes = 2, },
-+	{ .name = "nUser18D",  .offset = 26, .bytes = 2, },
-+	{ .name = "nODSCTh",   .offset = 28, .bytes = 2, },
-+	{ .name = "nODSCCfg",  .offset = 30, .bytes = 2, },
-+
-+	{ .name = "nOCVTable0",  .offset = 32, .bytes = 2, },
-+	{ .name = "nOCVTable1",  .offset = 34, .bytes = 2, },
-+	{ .name = "nOCVTable2",  .offset = 36, .bytes = 2, },
-+	{ .name = "nOCVTable3",  .offset = 38, .bytes = 2, },
-+	{ .name = "nOCVTable4",  .offset = 40, .bytes = 2, },
-+	{ .name = "nOCVTable5",  .offset = 42, .bytes = 2, },
-+	{ .name = "nOCVTable6",  .offset = 44, .bytes = 2, },
-+	{ .name = "nOCVTable7",  .offset = 46, .bytes = 2, },
-+	{ .name = "nOCVTable8",  .offset = 48, .bytes = 2, },
-+	{ .name = "nOCVTable9",  .offset = 50, .bytes = 2, },
-+	{ .name = "nOCVTable10", .offset = 52, .bytes = 2, },
-+	{ .name = "nOCVTable11", .offset = 54, .bytes = 2, },
-+	{ .name = "nIChgTerm",   .offset = 56, .bytes = 2, },
-+	{ .name = "nFilterCfg",  .offset = 58, .bytes = 2, },
-+	{ .name = "nVEmpty",     .offset = 60, .bytes = 2, },
-+	{ .name = "nLearnCfg",   .offset = 62, .bytes = 2, },
-+
-+	{ .name = "nQRTable00",  .offset = 64, .bytes = 2, },
-+	{ .name = "nQRTable10",  .offset = 66, .bytes = 2, },
-+	{ .name = "nQRTable20",  .offset = 68, .bytes = 2, },
-+	{ .name = "nQRTable30",  .offset = 70, .bytes = 2, },
-+	{ .name = "nCycles",     .offset = 72, .bytes = 2, },
-+	{ .name = "nFullCapNom", .offset = 74, .bytes = 2, },
-+	{ .name = "nRComp0",     .offset = 76, .bytes = 2, },
-+	{ .name = "nTempCo",     .offset = 78, .bytes = 2, },
-+	{ .name = "nIAvgEmpty",  .offset = 80, .bytes = 2, },
-+	{ .name = "nFullCapRep", .offset = 82, .bytes = 2, },
-+	{ .name = "nVoltTemp",   .offset = 84, .bytes = 2, },
-+	{ .name = "nMaxMinCurr", .offset = 86, .bytes = 2, },
-+	{ .name = "nMaxMinVolt", .offset = 88, .bytes = 2, },
-+	{ .name = "nMaxMinTemp", .offset = 90, .bytes = 2, },
-+	{ .name = "nSOC",        .offset = 92, .bytes = 2, },
-+	{ .name = "nTimerH",     .offset = 94, .bytes = 2, },
-+
-+	{ .name = "nConfig",    .offset = 96,  .bytes = 2, },
-+	{ .name = "nRippleCfg", .offset = 98,  .bytes = 2, },
-+	{ .name = "nMiscCfg",   .offset = 100, .bytes = 2, },
-+	{ .name = "nDesignCap", .offset = 102, .bytes = 2, },
-+	{ .name = "nHibCfg",    .offset = 104, .bytes = 2, },
-+	{ .name = "nPackCfg",   .offset = 106, .bytes = 2, },
-+	{ .name = "nRelaxCfg",  .offset = 108, .bytes = 2, },
-+	{ .name = "nConvgCfg",  .offset = 110, .bytes = 2, },
-+	{ .name = "nNVCfg0",    .offset = 112, .bytes = 2, },
-+	{ .name = "nNVCfg1",    .offset = 114, .bytes = 2, },
-+	{ .name = "nNVCfg2",    .offset = 116, .bytes = 2, },
-+	{ .name = "nSBSCfg",    .offset = 118, .bytes = 2, },
-+	{ .name = "nROMID0",    .offset = 120, .bytes = 2, },
-+	{ .name = "nROMID1",    .offset = 122, .bytes = 2, },
-+	{ .name = "nROMID2",    .offset = 124, .bytes = 2, },
-+	{ .name = "nROMID3",    .offset = 126, .bytes = 2, },
-+
-+	{ .name = "nVAlrtTh",      .offset = 128, .bytes = 2, },
-+	{ .name = "nTAlrtTh",      .offset = 130, .bytes = 2, },
-+	{ .name = "nSAlrtTh",      .offset = 132, .bytes = 2, },
-+	{ .name = "nIAlrtTh",      .offset = 134, .bytes = 2, },
-+	{ .name = "nUser1C4",      .offset = 136, .bytes = 2, },
-+	{ .name = "nUser1C5",      .offset = 138, .bytes = 2, },
-+	{ .name = "nFullSOCThr",   .offset = 140, .bytes = 2, },
-+	{ .name = "nTTFCfg",       .offset = 142, .bytes = 2, },
-+	{ .name = "nCGain",        .offset = 144, .bytes = 2, },
-+	{ .name = "nTCurve",       .offset = 146, .bytes = 2, },
-+	{ .name = "nTGain",        .offset = 148, .bytes = 2, },
-+	{ .name = "nTOff",         .offset = 150, .bytes = 2, },
-+	{ .name = "nManfctrName0", .offset = 152, .bytes = 2, },
-+	{ .name = "nManfctrName1", .offset = 154, .bytes = 2, },
-+	{ .name = "nManfctrName2", .offset = 156, .bytes = 2, },
-+	{ .name = "nRSense",       .offset = 158, .bytes = 2, },
-+
-+	{ .name = "nUser1D0",       .offset = 160, .bytes = 2, },
-+	{ .name = "nUser1D1",       .offset = 162, .bytes = 2, },
-+	{ .name = "nAgeFcCfg",      .offset = 164, .bytes = 2, },
-+	{ .name = "nDesignVoltage", .offset = 166, .bytes = 2, },
-+	{ .name = "nUser1D4",       .offset = 168, .bytes = 2, },
-+	{ .name = "nRFastVShdn",    .offset = 170, .bytes = 2, },
-+	{ .name = "nManfctrDate",   .offset = 172, .bytes = 2, },
-+	{ .name = "nFirstUsed",     .offset = 174, .bytes = 2, },
-+	{ .name = "nSerialNumber0", .offset = 176, .bytes = 2, },
-+	{ .name = "nSerialNumber1", .offset = 178, .bytes = 2, },
-+	{ .name = "nSerialNumber2", .offset = 180, .bytes = 2, },
-+	{ .name = "nDeviceName0",   .offset = 182, .bytes = 2, },
-+	{ .name = "nDeviceName1",   .offset = 184, .bytes = 2, },
-+	{ .name = "nDeviceName2",   .offset = 186, .bytes = 2, },
-+	{ .name = "nDeviceName3",   .offset = 188, .bytes = 2, },
-+	{ .name = "nDeviceName4",   .offset = 190, .bytes = 2, },
-+};
-+
- static const enum power_supply_property max1720x_battery_props[] = {
- 	POWER_SUPPLY_PROP_PRESENT,
- 	POWER_SUPPLY_PROP_CAPACITY,
-@@ -249,31 +381,87 @@ static int max1720x_battery_get_property(struct power_supply *psy,
- 	return ret;
- }
- 
--static int max1720x_probe_sense_resistor(struct i2c_client *client,
--					 struct max1720x_device_info *info)
-+static
-+int max1720x_nvmem_reg_read(void *priv, unsigned int off, void *val, size_t len)
-+{
-+	struct max1720x_device_info *info = priv;
-+	unsigned int reg = MAX1720X_NXTABLE0 + (off / 2);
-+
-+	return regmap_bulk_read(info->regmap_nv, reg, val, len / 2);
-+}
-+
-+static void max1720x_unregister_ancillary(void *data)
-+{
-+	struct max1720x_device_info *info = data;
-+
-+	i2c_unregister_device(info->ancillary);
-+}
-+
-+static int max1720x_probe_nvmem(struct i2c_client *client,
-+				struct max1720x_device_info *info)
- {
- 	struct device *dev = &client->dev;
--	struct i2c_client *ancillary;
-+	struct nvmem_config nvmem_config = {
-+		.dev = dev,
-+		.name = "max1720x_nvmem",
-+		.cells = max1720x_nvmem_cells,
-+		.ncells = ARRAY_SIZE(max1720x_nvmem_cells),
-+		.read_only = true,
-+		.root_only = true,
-+		.reg_read = max1720x_nvmem_reg_read,
-+		.size = ARRAY_SIZE(max1720x_nvmem_cells) * 2,
-+		.word_size = 2,
-+		.stride = 2,
-+		.priv = info,
-+	};
-+	struct nvmem_device *nvmem;
-+	unsigned int val;
- 	int ret;
- 
--	ancillary = i2c_new_ancillary_device(client, "nvmem", 0xb);
--	if (IS_ERR(ancillary)) {
-+	info->ancillary = i2c_new_ancillary_device(client, "nvmem", 0xb);
-+	if (IS_ERR(info->ancillary)) {
- 		dev_err(dev, "Failed to initialize ancillary i2c device\n");
--		return PTR_ERR(ancillary);
-+		return PTR_ERR(info->ancillary);
- 	}
- 
--	ret = i2c_smbus_read_word_data(ancillary, MAX1720X_NRSENSE);
--	i2c_unregister_device(ancillary);
--	if (ret < 0)
--		return ret;
-+	ret = devm_add_action_or_reset(dev, max1720x_unregister_ancillary, info);
-+	if (ret) {
-+		dev_err(dev, "Failed to add unregister callback\n");
-+		goto err;
-+	}
- 
--	info->rsense = ret;
-+	info->regmap_nv = devm_regmap_init_i2c(info->ancillary,
-+					       &max1720x_nvmem_regmap_cfg);
-+	if (IS_ERR(info->regmap_nv)) {
-+		dev_err(dev, "regmap initialization of nvmem failed\n");
-+		ret = PTR_ERR(info->regmap_nv);
-+		goto err;
-+	}
-+
-+	ret = regmap_read(info->regmap_nv, MAX1720X_NRSENSE, &val);
-+	if (ret < 0) {
-+		dev_err(dev, "Failed to read sense resistor value\n");
-+		goto err;
-+	}
-+
-+	info->rsense = val;
- 	if (!info->rsense) {
- 		dev_warn(dev, "RSense not calibrated, set 10 mOhms!\n");
- 		info->rsense = 1000; /* in regs in 10^-5 */
- 	}
- 
-+	nvmem = devm_nvmem_register(dev, &nvmem_config);
-+	if (IS_ERR(nvmem)) {
-+		dev_err(dev, "Could not register nvmem!");
-+		ret = PTR_ERR(nvmem);
-+		goto err;
-+	}
-+
- 	return 0;
-+err:
-+	i2c_unregister_device(info->ancillary);
-+
-+	return ret;
- }
- 
- static const struct power_supply_desc max1720x_bat_desc = {
-@@ -299,20 +487,22 @@ static int max1720x_probe(struct i2c_client *client)
- 
- 	psy_cfg.drv_data = info;
- 	psy_cfg.fwnode = dev_fwnode(dev);
-+	i2c_set_clientdata(client, info);
- 	info->regmap = devm_regmap_init_i2c(client, &max1720x_regmap_cfg);
- 	if (IS_ERR(info->regmap))
- 		return dev_err_probe(dev, PTR_ERR(info->regmap),
- 				     "regmap initialization failed\n");
- 
--	ret = max1720x_probe_sense_resistor(client, info);
-+	ret = max1720x_probe_nvmem(client, info);
- 	if (ret)
--		return dev_err_probe(dev, ret,
--				     "Failed to read sense resistor value\n");
-+		return dev_err_probe(dev, ret, "Failed to probe nvmem\n");
- 
- 	bat = devm_power_supply_register(dev, &max1720x_bat_desc, &psy_cfg);
--	if (IS_ERR(bat))
-+	if (IS_ERR(bat)) {
-+		i2c_unregister_device(info->ancillary);
- 		return dev_err_probe(dev, PTR_ERR(bat),
- 				     "Failed to register power supply\n");
-+	}
- 
- 	return 0;
- }
--- 
-2.39.2
-
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
