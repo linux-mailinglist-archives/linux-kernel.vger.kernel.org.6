@@ -1,136 +1,112 @@
-Return-Path: <linux-kernel+bounces-309894-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309895-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4246D967196
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 14:40:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8ED1F967198
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 14:42:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6F4001C215E3
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 12:40:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C8A381C21879
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 12:42:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17CC417E003;
-	Sat, 31 Aug 2024 12:40:20 +0000 (UTC)
-Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.85.151])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8175017F397;
+	Sat, 31 Aug 2024 12:42:01 +0000 (UTC)
+Received: from mx0a-0064b401.pphosted.com (mx0a-0064b401.pphosted.com [205.220.166.238])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAFF0193
-	for <linux-kernel@vger.kernel.org>; Sat, 31 Aug 2024 12:40:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.85.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98E9C42A9B;
+	Sat, 31 Aug 2024 12:41:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.166.238
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725108019; cv=none; b=epxF0K+VypMqAIlVL2yJ/bFWRWu7dvEhS4UTRU80PQQCotGK+zkbQSUdjS+DkI/QfT8YdLKC9dlre/HWYVmEzJYn7JPkAwRDLPyjEPFMEEqWjf0EiW+QT8tJD+5JhxWNHosFBj1uaH0XP7TAEN4Y4FtnatNuEFCY0NZ6YQHo3Os=
+	t=1725108121; cv=none; b=T5Cpfwv2rlIvvLAFJQ9hylsE/qxidcV+3mKJvWgtAHul72+4g7JKf6y79UnhVZrgSm0Ww48aaj1dPkaEF7BF5/so0tKHGsz/S8a72RuKaqb0Bpxfc272xyp4TGk32nPH3yBHkrDuDBx7ReVjzXLvb88YhSML9JTtutp9QF41YYo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725108019; c=relaxed/simple;
-	bh=2uZQwCysczlevMbIXlt6PGWT0zeQq4JUP/rOE5wCCWI=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 MIME-Version:Content-Type; b=u5KWKJzuISGxOZGw4Pj34aHFJJXUr/+yWjZWxXI+YjegUq3r6QfNRMR1eJDXI5BTX9IMw5vdCFf9ArNLRWyteyuo66Y3AtjNzkWCbNaGTelPHnymAbz/l8PrvKzYZPoFL7gP/64mrELZL5bIWVoM5Cjfj50r4hShdEKy6aFWedM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.85.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
-Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
- relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- uk-mta-92-VIUI8HB7OHmUb0FuB2D6sQ-1; Sat, 31 Aug 2024 13:40:12 +0100
-X-MC-Unique: VIUI8HB7OHmUb0FuB2D6sQ-1
-Received: from AcuMS.Aculab.com (10.202.163.4) by AcuMS.aculab.com
- (10.202.163.4) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Sat, 31 Aug
- 2024 13:39:28 +0100
-Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
- id 15.00.1497.048; Sat, 31 Aug 2024 13:39:28 +0100
-From: David Laight <David.Laight@ACULAB.COM>
-To: 'Simon Horman' <horms@kernel.org>, Yan Zhen <yanzhen@vivo.com>
-CC: "marcin.s.wojtas@gmail.com" <marcin.s.wojtas@gmail.com>,
-	"davem@davemloft.net" <davem@davemloft.net>, "edumazet@google.com"
-	<edumazet@google.com>, "kuba@kernel.org" <kuba@kernel.org>,
-	"pabeni@redhat.com" <pabeni@redhat.com>, "netdev@vger.kernel.org"
-	<netdev@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "opensource.kernel@vivo.com"
-	<opensource.kernel@vivo.com>
-Subject: RE: [PATCH v1] ethernet: marvell: Use min macro
-Thread-Topic: [PATCH v1] ethernet: marvell: Use min macro
-Thread-Index: AQHa+KqNGETvg8muuEmp3IGPwP4GwrJBUzyA
-Date: Sat, 31 Aug 2024 12:39:28 +0000
-Message-ID: <7cfe24b82098487e9b1d35f964bf652f@AcuMS.aculab.com>
-References: <20240827115848.3908369-1-yanzhen@vivo.com>
- <20240827175408.GR1368797@kernel.org> <20240827175745.GS1368797@kernel.org>
-In-Reply-To: <20240827175745.GS1368797@kernel.org>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
+	s=arc-20240116; t=1725108121; c=relaxed/simple;
+	bh=hgqNuRNNLmJqkHbMU+uEJW1Tq28sul8/fyWaNX8wOrY=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=AyiLTfCoS/9kW4yFyyh8NKkI1jilUqQ2tS0M8/0zn5/9Mhd5DX69qRt6dbBOAUzraAOdCL3HN+9hcA8LLTtcy0Vpaq1bbDaZ1z/7vsG+5Jmk7LkT/Agms5Ew3ooPm1VvEC72LdOK3fkswIcYSbvIicitISYG0lAsj/Qr1tk5e84=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; arc=none smtp.client-ip=205.220.166.238
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
+Received: from pps.filterd (m0250809.ppops.net [127.0.0.1])
+	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47VCdiNo031781;
+	Sat, 31 Aug 2024 05:41:45 -0700
+Received: from ala-exchng01.corp.ad.wrs.com (ala-exchng01.wrs.com [147.11.82.252])
+	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 41c2pkg0ur-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+	Sat, 31 Aug 2024 05:41:44 -0700 (PDT)
+Received: from ala-exchng01.corp.ad.wrs.com (147.11.82.252) by
+ ala-exchng01.corp.ad.wrs.com (147.11.82.252) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Sat, 31 Aug 2024 05:41:44 -0700
+Received: from pek-lpd-ccm6.wrs.com (147.11.136.210) by
+ ala-exchng01.corp.ad.wrs.com (147.11.82.252) with Microsoft SMTP Server id
+ 15.1.2507.39 via Frontend Transport; Sat, 31 Aug 2024 05:41:42 -0700
+From: Lizhi Xu <lizhi.xu@windriver.com>
+To: <fdmanana@kernel.org>
+CC: <clm@fb.com>, <dsterba@suse.com>, <josef@toxicpanda.com>,
+        <linux-btrfs@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <lizhi.xu@windriver.com>,
+        <syzbot+4704b3cc972bd76024f1@syzkaller.appspotmail.com>,
+        <syzkaller-bugs@googlegroups.com>
+Subject: Re: [PATCH] btrfs: Add assert or condition
+Date: Sat, 31 Aug 2024 20:41:41 +0800
+Message-ID: <20240831124141.11022-1-lizhi.xu@windriver.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <CAL3q7H5p4vmBs-ES08dkY7z4sjE_k3970CkJRAjiy0MhpXjYWw@mail.gmail.com>
+References: <CAL3q7H5p4vmBs-ES08dkY7z4sjE_k3970CkJRAjiy0MhpXjYWw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: aculab.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Authority-Analysis: v=2.4 cv=c+X5Qg9l c=1 sm=1 tr=0 ts=66d30f89 cx=c_pps a=/ZJR302f846pc/tyiSlYyQ==:117 a=/ZJR302f846pc/tyiSlYyQ==:17 a=yoJbH4e0A30A:10 a=VwQbUJbxAAAA:8 a=iox4zFpeAAAA:8 a=0qqOrUru9Iw2tnRzv3oA:9 a=WzC6qhA0u3u7Ye7llzcV:22
+X-Proofpoint-ORIG-GUID: CCYVnYbprWFbfOchVpEgVU2tgR651CNm
+X-Proofpoint-GUID: CCYVnYbprWFbfOchVpEgVU2tgR651CNm
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-31_02,2024-08-30_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 phishscore=0
+ mlxscore=0 clxscore=1011 lowpriorityscore=0 malwarescore=0 impostorscore=0
+ spamscore=0 priorityscore=1501 suspectscore=0 adultscore=0 mlxlogscore=512
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.21.0-2407110000
+ definitions=main-2408310105
 
-From: Simon Horman
-> Sent: 27 August 2024 18:58
->=20
-> On Tue, Aug 27, 2024 at 06:54:08PM +0100, Simon Horman wrote:
-> > On Tue, Aug 27, 2024 at 07:58:48PM +0800, Yan Zhen wrote:
-> > > Using the real macro is usually more intuitive and readable,
-> > > When the original file is guaranteed to contain the minmax.h header f=
-ile
-> > > and compile correctly.
-> > >
-> > > Signed-off-by: Yan Zhen <yanzhen@vivo.com>
-> > > ---
-> > >  drivers/net/ethernet/marvell/mvneta.c | 3 +--
-> > >  1 file changed, 1 insertion(+), 2 deletions(-)
-> > >
-> > > diff --git a/drivers/net/ethernet/marvell/mvneta.c b/drivers/net/ethe=
-rnet/marvell/mvneta.c
-> > > index d72b2d5f96db..415d2b9e63f9 100644
-> > > --- a/drivers/net/ethernet/marvell/mvneta.c
-> > > +++ b/drivers/net/ethernet/marvell/mvneta.c
-> > > @@ -4750,8 +4750,7 @@ mvneta_ethtool_set_ringparam(struct net_device =
-*dev,
-> > >
-> > >  =09if ((ring->rx_pending =3D=3D 0) || (ring->tx_pending =3D=3D 0))
-> > >  =09=09return -EINVAL;
-> > > -=09pp->rx_ring_size =3D ring->rx_pending < MVNETA_MAX_RXD ?
-> > > -=09=09ring->rx_pending : MVNETA_MAX_RXD;
-> > > +=09pp->rx_ring_size =3D min(ring->rx_pending, MVNETA_MAX_RXD);
-> >
-> > Given that the type of ring->rx_pending is __32, and MVNETA_MAX_RXD is
-> > a positive value.
->=20
-> Sorry, I hit send to soon. What I wanted to say is:
->=20
-> I think that it is appropriate to use umin() here.
-> Because:
-> 1) As I understand things, the type of MVNETA_MAX_RXD is signed,
->    but it always holds a positive value
-> 2) ring->rx_pending is unsigned
+On Sat, 31 Aug 2024 11:55:53 +0100, Filipe Manana wrote:
+> > -       ASSERT(inode_is_locked(&inode->vfs_inode));
+> > +       ASSERT(inode_is_locked(&inode->vfs_inode) ||
+> > +              rwsem_is_locked(&inode->i_mmap_lock));
+> 
+> This definitely fixes the syzbot report, in the sense the assertion
+> won't fail anymore.
+> But it's wrong, very, very, very, very wrong.
+> 
+> The inode must be locked during the course of the fsync, that's why
+> the assertion is there.
+> 
+> Why do you think it's ok to not have the inode locked?
+> Have you done any analysis about that?
+> 
+> You mention "fsync_skip_inode_lock is true" in the changelog, but have
+> you checked where and why it's set to true?
+> 
+> Where we set it to true, at btrfs_direct_write(), there's a comment
+> which explains it's to avoid a deadlock on the inode lock at
+> btrfs_sync_file().
+> 
+> This is a perfect example of trying a patch not only without having
+> any idea how the code works but also being very lazy,
+> as there's a very explicit comment in the code about why the variable
+> is set to true, and even much more detailed in the
+> change log of the commit that introduced it.
+> 
+> And btw, there's already a patch to fix this issue:
+> 
+> https://lore.kernel.org/linux-btrfs/717029440fe379747b9548a9c91eb7801bc5a813.1724972507.git.fdmanana@suse.com/
+In your patch, I get what the mean of fsync_skip_inode_lock.
 
-Provided MVNETA_MAX_RXD is constant it is fine.
-umin() is only needed for signed variables that can only contain
-non-negative values.
-
-You only need to use it is the compiler bleats...
-
-umin(x, y) is safer than min_t(unsigned_type, x, y) because you can't
-get the type wrong.
-If will also generate better code since it never sign extends a
-32bit value to 64bits (expensive on 32bit).
-
-=09David
-
->=20
-> > See: 80fcac55385c ("minmax: add umin(a, b) and umax(a, b)")
-> >      https://git.kernel.org/torvalds/c/80fcac55385c
-
--
-Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1=
-PT, UK
-Registration No: 1397386 (Wales)
-
+Thanks.
 
