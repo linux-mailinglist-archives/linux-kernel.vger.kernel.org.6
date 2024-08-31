@@ -1,61 +1,51 @@
-Return-Path: <linux-kernel+bounces-309900-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309901-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 538099671A3
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 14:54:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 815B79671A7
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 14:55:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 09F121F212C7
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 12:54:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2D50D1F22B6B
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 12:55:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0706181310;
-	Sat, 31 Aug 2024 12:54:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6142C181334;
+	Sat, 31 Aug 2024 12:55:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="JP8WMB2p"
-Received: from mail-m16.yeah.net (mail-m16.yeah.net [1.95.21.16])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D0AE2AF05;
-	Sat, 31 Aug 2024 12:54:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=1.95.21.16
+	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="I6p7xKQB"
+Received: from mail-m16.yeah.net (mail-m16.yeah.net [220.197.32.18])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E50F2AF05;
+	Sat, 31 Aug 2024 12:55:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725108871; cv=none; b=r2d8JBbTQW3M73PLn3OjRGcJwgYNCOYW9n6Jb9AY3qy+pr9bCB1SNmn0g+qcnm5ArIV1KKmxEa540GmtYLXhj/z5yH8B2bQg/APfbqsoBmCEwUvEKyGb4JOtOz8i7QWzqggxFDjSW/5avfduVwdL/vhLInuQmPABX45neDK4awk=
+	t=1725108933; cv=none; b=tCJ2mqv2OvPIW37iXi6cH+MFUJul1QT8K55R96AP0sChaYP3ko8fszQ3qtulDfjtT2faCvXp8FsC8Q1On/8UB/M2TQOKRVAjlQruaERN7x+q/IBw2b7yGtfezLFRokgzvaliRFnVdfJNSp4aMaBFpakMtNl1KN72rS9ETF+dFQw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725108871; c=relaxed/simple;
-	bh=2XSVFmj/9f7JSvMOYvkAM8H9FENNi4eZdpDjcsZlUS8=;
+	s=arc-20240116; t=1725108933; c=relaxed/simple;
+	bh=owomlQr8/F6YqjT+6uGIkj02JvKiA5zjZrYQtMFE4Mo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pYaYmXA3GjDmZSC+37lEYs7hh+HhbRCEaVT+aNthkAOvhbbT2VL85CNY+RHVU/6CKJ75fGkukuDzng4CEHGvIHNI5j9q0K8Evx/Cf/II4RDPsAPReIQLRhQRvumncfe8PqrVKF+t/DPOAQ035DA1YbMzJQ5AJCgcKlOspcIgNbs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=JP8WMB2p; arc=none smtp.client-ip=1.95.21.16
+	 Content-Type:Content-Disposition:In-Reply-To; b=ie3WVsicCPgDNLBWR2h8TV8bqD2rTNYk66w3AybuP8xImRghRXoLcxliKcuIyaq+za7W/IuaY99cngogUrpJCMhTTMZnbQnkWUeFYQLJU2SOT8pkk1IYCeoT+Y0ClJFmn8eJUno2My1nBrw88A2UbE90gZhvXf1MhNlZyo+T9PE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=I6p7xKQB; arc=none smtp.client-ip=220.197.32.18
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
 	s=s110527; h=Date:From:Subject:Message-ID:MIME-Version:
-	Content-Type; bh=11hKmzHQAJSyR+Fny0gB8RizXyDsH10V73RfyavEu7k=;
-	b=JP8WMB2p0lRzfm61Ko6UqrRr3tBdqswahKYPqPmLKWBOSdWAenUmS7D9jem9Y5
-	r18itIEMTQCrQRuKMG+0G1+/cGy+Q3Za1aBJ7Rm9wbp9wKZBGf0mp91Xt4t6/HpW
-	0GTMinGlvBTivooLudmBxMG6fhkAQKdcNfqF43Gv4p9yo=
+	Content-Type; bh=6xPUOQoHw7J1hQT40FBfy6ZWsRjtvI0U3y75Xqpiio8=;
+	b=I6p7xKQBA23kn1TUkw+o4oVZpO5MaftVgjb3DFcnOLaCK+btYoMzIMpm2GIGpP
+	QU79nd3QdQHr1hAHoK4vHNw/P65QftEekHbFbpNvbEwcnHrsVKr8uwdRErsl6Zqu
+	mCAbq323RivT1jhs9+EU0eyQ6y3V6lMj/rwrk8is3c2Eg=
 Received: from dragon (unknown [114.216.210.89])
-	by gzsmtp3 (Coremail) with SMTP id M88vCgDnzwIZEtNmbRI6AA--.20347S3;
-	Sat, 31 Aug 2024 20:52:43 +0800 (CST)
-Date: Sat, 31 Aug 2024 20:52:41 +0800
+	by gzsmtp1 (Coremail) with SMTP id Mc8vCgCX_jWjEtNmHnM6AA--.16195S3;
+	Sat, 31 Aug 2024 20:55:01 +0800 (CST)
+Date: Sat, 31 Aug 2024 20:54:59 +0800
 From: Shawn Guo <shawnguo2@yeah.net>
-To: Frank Li <Frank.Li@nxp.com>
+To: Max Merchel <Max.Merchel@ew.tq-group.com>
 Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Alexander Stein <alexander.stein@ew.tq-group.com>,
-	Hiago De Franco <hiago.franco@toradex.com>,
-	Joao Paulo Goncalves <joao.goncalves@toradex.com>,
-	Gregor Herburger <gregor.herburger@ew.tq-group.com>,
-	Hugo Villeneuve <hvilleneuve@dimonoff.com>,
-	Peng Fan <peng.fan@nxp.com>,
-	Mathieu Othacehe <m.othacehe@gmail.com>,
-	Michael Walle <mwalle@kernel.org>, Fabio Estevam <festevam@denx.de>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>, imx@lists.linux.dev
-Subject: Re: [PATCH 1/1] dt-bindings: arm: fsl: add fsl-ls2081a-rdb board
-Message-ID: <ZtMSGV7vIVRlIsB/@dragon>
-References: <20240812200816.3828649-1-Frank.Li@nxp.com>
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/1] dt-bindings: arm: fsl: correct spelling of TQ-Systems
+Message-ID: <ZtMSowxZF1WCgUJr@dragon>
+References: <20240813071242.71928-1-Max.Merchel@ew.tq-group.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,20 +54,19 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240812200816.3828649-1-Frank.Li@nxp.com>
-X-CM-TRANSID:M88vCgDnzwIZEtNmbRI6AA--.20347S3
+In-Reply-To: <20240813071242.71928-1-Max.Merchel@ew.tq-group.com>
+X-CM-TRANSID:Mc8vCgCX_jWjEtNmHnM6AA--.16195S3
 X-Coremail-Antispam: 1Uf129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
-	VFW2AGmfu7bjvjm3AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxUVTKZDUUUU
-X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiAghMZWbS-BorEgAAsI
+	VFW2AGmfu7bjvjm3AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxUec_-DUUUU
+X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiCRlMZWbS+P4w-gAAsF
 
-On Mon, Aug 12, 2024 at 04:08:15PM -0400, Frank Li wrote:
-> Add compatible string fsl-ls2081a-rdb for ls2081a rdb boards to fix below
-> warning:
+On Tue, Aug 13, 2024 at 09:12:42AM +0200, Max Merchel wrote:
+> TQ-Systems is written with a hyphen. The incorrect spelling with spaces
+> is therefore corrected.
 > 
-> arch/arm64/boot/dts/freescale/fsl-ls2081a-rdb.dtb: /:
-> 	failed to match any schema with compatible: ['fsl,ls2081a-rdb', 'fsl,ls2081a']
+> While at it, comments are added to TQMa6ULLx.
 > 
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> Signed-off-by: Max Merchel <Max.Merchel@ew.tq-group.com>
 
 Applied, thanks!
 
