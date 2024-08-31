@@ -1,190 +1,191 @@
-Return-Path: <linux-kernel+bounces-309866-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309867-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECB8496714A
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 13:32:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11D9696714D
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 13:33:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1962C1C2110C
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 11:32:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 88CC21F226BB
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 11:33:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2C5F17D896;
-	Sat, 31 Aug 2024 11:32:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7897B17DFEC;
+	Sat, 31 Aug 2024 11:33:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="CVUYnasx"
-Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="k0+SN8lH"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59F944D8A3
-	for <linux-kernel@vger.kernel.org>; Sat, 31 Aug 2024 11:32:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EA9A17D8A9
+	for <linux-kernel@vger.kernel.org>; Sat, 31 Aug 2024 11:33:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725103948; cv=none; b=selvP4Pzh685DK/566C/AMCO5utgU8dlMeYOpiLIqaNLShSPqlkAE6uxe8F+DzG/RTubX91xbra50p7AohR86aGP2t8sWcwZ5G4NaHErvs4UZQ+raR+IPluh5NeN9hXX4u5I7S0vLytZU/JNxMgRWn7uFt+p4MRwGFptDS6ZC6w=
+	t=1725103986; cv=none; b=UdD2mP4NfQXKOxi1ods7uHnIgtFuUOj4IsE6AgxQk5LPARiFlIE8x1SigY06CwhU0u/xyP5wfwNEzNWZvgX04nDzECmk9BdrgvCA20zV+TDpmiJjSZ6zuGjW0AJfFNNGCzKlsgynKTI85zAzPweobr6gwlNiqMsjFKGRNSgQEGc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725103948; c=relaxed/simple;
-	bh=MfpzBkUI2SIjf1Ij8cczj9zf7DOV9/vZ1Hj7VLFx2i8=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Foh9edpuC/yrveol4ZrfTeBcMFqh6BKI2+aWeyIlOUGVu0vIu3e3BXrE2CMSVOKppk7ni98/bRb5wGU2l2GHfQLCG12hkwoMnZWgeU181rYk1wroF6Tz7Ml4RH09nR3qqfqdHUtpcsFRoRjE4Awc3EhsOiR36WrzcHRP0U8zfYE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=CVUYnasx; arc=none smtp.client-ip=209.85.215.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
-Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-7c1324be8easo2513237a12.1
-        for <linux-kernel@vger.kernel.org>; Sat, 31 Aug 2024 04:32:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fastly.com; s=google; t=1725103946; x=1725708746; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=uGCk/6hTDajNFc2rj7m9UG3Rk2A6Wg+d9O29FknHW3o=;
-        b=CVUYnasxQ8GEH1eVpDRS5kXIbJW/Oy9UWDNuBQHHUPUlRVY0BLiMfR+9/+oS1V+CaF
-         1nD6WLRI5vI+tDl222QCrcXhmPGZ+5MPta13tyfFqFfrb2qCKVHLTnoS9GVlut67k6Wz
-         +/UHzaK7PyyvtLjOMrxbdvmqcn7NX44atfahA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725103946; x=1725708746;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=uGCk/6hTDajNFc2rj7m9UG3Rk2A6Wg+d9O29FknHW3o=;
-        b=pPKo4PUhpBCg6qa3j0F7Qbxkeo5/ChgfXMT11uIAfU7u99cVuxGiMhcEumiWEX5kc7
-         5r6B+rd8iQxwkxyw0Ze1mwDXbHHsNc4TTwvjWZYrmVsHQdl24wUFcYnsCY5ascry5RhV
-         +mLOcuMLfvpNUUXLktppENC4kR4fzDqqSKvuq1JfZ+E5OezPZFjOU37wFgr0wlXuzeV3
-         2Ejx/gv7VRDO2TbHn2KwK9X8QsOVN36mwjmV2jgd87Unomme47ZpN3WeyEhCHoCcXXLZ
-         Ib6QxfOCgqbS5hfQ1Wv/X9MqJ3A3dussrof2VGbx1C6guKfAnwzyjrjwmEGTh7I47dKa
-         z9mg==
-X-Forwarded-Encrypted: i=1; AJvYcCWrZT8xZmwTO0tyqmGw6KDPujleFKPOOlY09B9Ba9Pp5lP1iBSnNwRGMeMqYycAYRX42Ke1JBU8rJOTvvY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxJ8VwLYx8rAZpmr1x3kfn/ZQJmYygEkeoaXiOEnSMO4oOuX7M0
-	RKIfE1z/eW9hOBhQybIls+kTWEjHsjZAkq8+/2V+afRXHuazH3jKWchq0o8ufjM=
-X-Google-Smtp-Source: AGHT+IGCh4g056FK7rVO6rKm6NZb2AutNP/iyfBJ35us76roXsVhFBcLl2jn+M8T/9RNvfrH0rJ51Q==
-X-Received: by 2002:a17:90b:690:b0:2c9:5a71:1500 with SMTP id 98e67ed59e1d1-2d86a9175c0mr8100961a91.0.1725103946400;
-        Sat, 31 Aug 2024 04:32:26 -0700 (PDT)
-Received: from localhost.localdomain ([2620:11a:c019:0:65e:3115:2f58:c5fd])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d8445d5e91sm8139112a91.7.2024.08.31.04.32.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 31 Aug 2024 04:32:25 -0700 (PDT)
-From: Joe Damato <jdamato@fastly.com>
-To: netdev@vger.kernel.org
-Cc: mkarsten@uwaterloo.ca,
-	Joe Damato <jdamato@fastly.com>,
-	stable@kernel.org,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Breno Leitao <leitao@debian.org>,
-	Johannes Berg <johannes.berg@intel.com>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Alexander Lobakin <aleksander.lobakin@intel.com>,
-	linux-doc@vger.kernel.org (open list:DOCUMENTATION),
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH net] net: napi: Make napi_defer_irqs u32
-Date: Sat, 31 Aug 2024 11:32:21 +0000
-Message-Id: <20240831113223.9627-1-jdamato@fastly.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1725103986; c=relaxed/simple;
+	bh=fDLJsT54dSxm1y46YGptra1PqCVaar4upTFp1LoErAg=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=NovyClMnWG2ZbIvpBHQG6w5AQVWzXRDu6GsNrjdisEGys565ff8Su+w9VYyVSoNGHhO4Ioojn7/UFaeAN7eASykTiGJzVAXmSZvWFHEBsitOUIm960VSrCf+Us2QonjMXl9+sCL4LmWsCW+yBlWdR4FRGhLx9TXD8qETNviqCRE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=k0+SN8lH; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725103985; x=1756639985;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=fDLJsT54dSxm1y46YGptra1PqCVaar4upTFp1LoErAg=;
+  b=k0+SN8lHUjXWC9FX/g4xdjQSF42dJcgU0P3v4gVICnN2uHcjgTRQJ/Gj
+   JWZr97R8EbEoVfrN6UOAiLNaPpQ91+zxQB1uO10H6INdANQEFu9wC9Zul
+   t0gKtNHPTMiadHHqyWJzSSFSW4TdJ/10h2TapJb3EbNVWgHcYHX8queiT
+   ipdWvtPJz7T46jaWFWgGsryXkSmVg0ERxE/J3vGdi7huu0Wm6qJly1ZWj
+   cNZ5D1bOc23zzLkcgh6NrkrwbVT8fgYAsMMzhK5YVkvjW/lJrCBUiJmWQ
+   l7grDzspMfaqx0NhE1g0C02qMhp8Uet9aYF0akgpw9joGamPKH9dMMBSm
+   w==;
+X-CSE-ConnectionGUID: +zq7fkMoRoy6JHc3a3SdJA==
+X-CSE-MsgGUID: piCl5Gr8RLaY85iqtu+Jvw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11180"; a="13309731"
+X-IronPort-AV: E=Sophos;i="6.10,191,1719903600"; 
+   d="scan'208";a="13309731"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Aug 2024 04:33:03 -0700
+X-CSE-ConnectionGUID: 5LRusX/qQ9i+UzZb5sqkYw==
+X-CSE-MsgGUID: oDgdpXazRvyPxw4C7Sev3g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,191,1719903600"; 
+   d="scan'208";a="64158484"
+Received: from lkp-server01.sh.intel.com (HELO 9c6b1c7d3b50) ([10.239.97.150])
+  by fmviesa008.fm.intel.com with ESMTP; 31 Aug 2024 04:33:02 -0700
+Received: from kbuild by 9c6b1c7d3b50 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1skMLj-0002gi-2K;
+	Sat, 31 Aug 2024 11:32:59 +0000
+Date: Sat, 31 Aug 2024 19:32:47 +0800
+From: kernel test robot <lkp@intel.com>
+To: "Paul E. McKenney" <paulmck@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: [paulmck-rcu:dev.2024.08.30a 33/33] kernel/rcu/refscale.c:1179
+ ref_scale_init() warn: inconsistent indenting
+Message-ID: <202408311948.LQzaV2xP-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-In commit 6f8b12d661d0 ("net: napi: add hard irqs deferral feature")
-napi_defer_irqs was added to net_device and napi_defer_irqs_count was
-added to napi_struct, both as type int.
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/paulmck/linux-rcu.git dev.2024.08.30a
+head:   05416eb79213ad6a9770faa795059fdd00adb6e0
+commit: 05416eb79213ad6a9770faa795059fdd00adb6e0 [33/33] refscale: Add srcu_read_lock_lite() support using "srcu-lite"
+config: parisc-randconfig-r071-20240831 (https://download.01.org/0day-ci/archive/20240831/202408311948.LQzaV2xP-lkp@intel.com/config)
+compiler: hppa-linux-gcc (GCC) 14.1.0
 
-This value never goes below zero. Change the type for both from int to
-u32, and add an overflow check to sysfs to limit the value to S32_MAX.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202408311948.LQzaV2xP-lkp@intel.com/
 
-Before this patch:
+smatch warnings:
+kernel/rcu/refscale.c:1179 ref_scale_init() warn: inconsistent indenting
 
-$ sudo bash -c 'echo 2147483649 > /sys/class/net/eth4/napi_defer_hard_irqs'
-$ cat /sys/class/net/eth4/napi_defer_hard_irqs
--2147483647
+vim +1179 kernel/rcu/refscale.c
 
-After this patch:
+  1159	
+  1160	static int __init
+  1161	ref_scale_init(void)
+  1162	{
+  1163		long i;
+  1164		int firsterr = 0;
+  1165		static const struct ref_scale_ops *scale_ops[] = {
+  1166			&rcu_ops, &srcu_ops, &srcu_lite_ops, RCU_TRACE_OPS RCU_TASKS_OPS
+  1167			&refcnt_ops, &rwlock_ops, &rwsem_ops, &lock_ops, &lock_irq_ops, &acqrel_ops,
+  1168			&sched_clock_ops, &clock_ops, &jiffies_ops, &typesafe_ref_ops, &typesafe_lock_ops,
+  1169			&typesafe_seqlock_ops,
+  1170		};
+  1171	
+  1172		if (!torture_init_begin(scale_type, verbose))
+  1173			return -EBUSY;
+  1174	
+  1175		for (i = 0; i < ARRAY_SIZE(scale_ops); i++) {
+  1176			cur_ops = scale_ops[i]; if (strcmp(scale_type,
+  1177			cur_ops->name) == 0)
+  1178				break;
+> 1179		} if (i == ARRAY_SIZE(scale_ops)) {
+  1180			pr_alert("rcu-scale: invalid scale type: \"%s\"\n",
+  1181			scale_type); pr_alert("rcu-scale types:"); for (i = 0;
+  1182			i < ARRAY_SIZE(scale_ops); i++)
+  1183				pr_cont(" %s", scale_ops[i]->name);
+  1184			pr_cont("\n"); firsterr = -EINVAL; cur_ops = NULL;
+  1185			goto unwind;
+  1186		}
+  1187		if (cur_ops->init)
+  1188			if (!cur_ops->init()) {
+  1189				firsterr = -EUCLEAN;
+  1190				goto unwind;
+  1191			}
+  1192	
+  1193		ref_scale_print_module_parms(cur_ops, "Start of test");
+  1194	
+  1195		// Shutdown task
+  1196		if (shutdown) {
+  1197			init_waitqueue_head(&shutdown_wq);
+  1198			firsterr = torture_create_kthread(ref_scale_shutdown, NULL,
+  1199							  shutdown_task);
+  1200			if (torture_init_error(firsterr))
+  1201				goto unwind;
+  1202			schedule_timeout_uninterruptible(1);
+  1203		}
+  1204	
+  1205		// Reader tasks (default to ~75% of online CPUs).
+  1206		if (nreaders < 0)
+  1207			nreaders = (num_online_cpus() >> 1) + (num_online_cpus() >> 2);
+  1208		if (WARN_ONCE(loops <= 0, "%s: loops = %ld, adjusted to 1\n", __func__, loops))
+  1209			loops = 1;
+  1210		if (WARN_ONCE(nreaders <= 0, "%s: nreaders = %d, adjusted to 1\n", __func__, nreaders))
+  1211			nreaders = 1;
+  1212		if (WARN_ONCE(nruns <= 0, "%s: nruns = %d, adjusted to 1\n", __func__, nruns))
+  1213			nruns = 1;
+  1214		reader_tasks = kcalloc(nreaders, sizeof(reader_tasks[0]),
+  1215				       GFP_KERNEL);
+  1216		if (!reader_tasks) {
+  1217			SCALEOUT_ERRSTRING("out of memory");
+  1218			firsterr = -ENOMEM;
+  1219			goto unwind;
+  1220		}
+  1221	
+  1222		VERBOSE_SCALEOUT("Starting %d reader threads", nreaders);
+  1223	
+  1224		for (i = 0; i < nreaders; i++) {
+  1225			init_waitqueue_head(&reader_tasks[i].wq);
+  1226			firsterr = torture_create_kthread(ref_scale_reader, (void *)i,
+  1227							  reader_tasks[i].task);
+  1228			if (torture_init_error(firsterr))
+  1229				goto unwind;
+  1230		}
+  1231	
+  1232		// Main Task
+  1233		init_waitqueue_head(&main_wq);
+  1234		firsterr = torture_create_kthread(main_func, NULL, main_task);
+  1235		if (torture_init_error(firsterr))
+  1236			goto unwind;
+  1237	
+  1238		torture_init_end();
+  1239		return 0;
+  1240	
+  1241	unwind:
+  1242		torture_init_end();
+  1243		ref_scale_cleanup();
+  1244		if (shutdown) {
+  1245			WARN_ON(!IS_MODULE(CONFIG_RCU_REF_SCALE_TEST));
+  1246			kernel_power_off();
+  1247		}
+  1248		return firsterr;
+  1249	}
+  1250	
 
-$ sudo bash -c 'echo 2147483649 > /sys/class/net/eth4/napi_defer_hard_irqs'
-bash: line 0: echo: write error: Numerical result out of range
-
-Fixes: 6f8b12d661d0 ("net: napi: add hard irqs deferral feature")
-Cc: stable@kernel.org
-Cc: Eric Dumazet <edumazet@google.com>
-Suggested-by: Jakub Kicinski <kuba@kernel.org>
-Signed-off-by: Joe Damato <jdamato@fastly.com>
----
- Documentation/networking/net_cachelines/net_device.rst | 2 +-
- include/linux/netdevice.h                              | 4 ++--
- net/core/net-sysfs.c                                   | 6 +++++-
- 3 files changed, 8 insertions(+), 4 deletions(-)
-
-diff --git a/Documentation/networking/net_cachelines/net_device.rst b/Documentation/networking/net_cachelines/net_device.rst
-index 70c4fb9d4e5c..d68f37f5b1f8 100644
---- a/Documentation/networking/net_cachelines/net_device.rst
-+++ b/Documentation/networking/net_cachelines/net_device.rst
-@@ -98,7 +98,7 @@ unsigned_int                        num_rx_queues
- unsigned_int                        real_num_rx_queues      -                   read_mostly         get_rps_cpu
- struct_bpf_prog*                    xdp_prog                -                   read_mostly         netif_elide_gro()
- unsigned_long                       gro_flush_timeout       -                   read_mostly         napi_complete_done
--int                                 napi_defer_hard_irqs    -                   read_mostly         napi_complete_done
-+u32                                 napi_defer_hard_irqs    -                   read_mostly         napi_complete_done
- unsigned_int                        gro_max_size            -                   read_mostly         skb_gro_receive
- unsigned_int                        gro_ipv4_max_size       -                   read_mostly         skb_gro_receive
- rx_handler_func_t*                  rx_handler              read_mostly         -                   __netif_receive_skb_core
-diff --git a/include/linux/netdevice.h b/include/linux/netdevice.h
-index 607009150b5f..39eafd2e2368 100644
---- a/include/linux/netdevice.h
-+++ b/include/linux/netdevice.h
-@@ -356,7 +356,7 @@ struct napi_struct {
- 
- 	unsigned long		state;
- 	int			weight;
--	int			defer_hard_irqs_count;
-+	u32			defer_hard_irqs_count;
- 	unsigned long		gro_bitmask;
- 	int			(*poll)(struct napi_struct *, int);
- #ifdef CONFIG_NETPOLL
-@@ -2091,7 +2091,7 @@ struct net_device {
- 	unsigned int		real_num_rx_queues;
- 	struct netdev_rx_queue	*_rx;
- 	unsigned long		gro_flush_timeout;
--	int			napi_defer_hard_irqs;
-+	u32			napi_defer_hard_irqs;
- 	unsigned int		gro_max_size;
- 	unsigned int		gro_ipv4_max_size;
- 	rx_handler_func_t __rcu	*rx_handler;
-diff --git a/net/core/net-sysfs.c b/net/core/net-sysfs.c
-index 444f23e74f8e..b34d731524d5 100644
---- a/net/core/net-sysfs.c
-+++ b/net/core/net-sysfs.c
-@@ -32,6 +32,7 @@
- #ifdef CONFIG_SYSFS
- static const char fmt_hex[] = "%#x\n";
- static const char fmt_dec[] = "%d\n";
-+static const char fmt_uint[] = "%u\n";
- static const char fmt_ulong[] = "%lu\n";
- static const char fmt_u64[] = "%llu\n";
- 
-@@ -425,6 +426,9 @@ NETDEVICE_SHOW_RW(gro_flush_timeout, fmt_ulong);
- 
- static int change_napi_defer_hard_irqs(struct net_device *dev, unsigned long val)
- {
-+	if (val > S32_MAX)
-+		return -ERANGE;
-+
- 	WRITE_ONCE(dev->napi_defer_hard_irqs, val);
- 	return 0;
- }
-@@ -438,7 +442,7 @@ static ssize_t napi_defer_hard_irqs_store(struct device *dev,
- 
- 	return netdev_store(dev, attr, buf, len, change_napi_defer_hard_irqs);
- }
--NETDEVICE_SHOW_RW(napi_defer_hard_irqs, fmt_dec);
-+NETDEVICE_SHOW_RW(napi_defer_hard_irqs, fmt_uint);
- 
- static ssize_t ifalias_store(struct device *dev, struct device_attribute *attr,
- 			     const char *buf, size_t len)
 -- 
-2.25.1
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
