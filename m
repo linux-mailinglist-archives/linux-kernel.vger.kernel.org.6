@@ -1,149 +1,381 @@
-Return-Path: <linux-kernel+bounces-309941-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309942-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B994E967227
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 16:27:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A57C96723A
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 16:31:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F5F12838B6
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 14:27:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A94D1F228AF
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 14:31:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28E301CA9E;
-	Sat, 31 Aug 2024 14:27:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BDDC1CD2F;
+	Sat, 31 Aug 2024 14:31:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gylKU0YA"
-Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Lou8KKZB"
+Received: from out-171.mta0.migadu.com (out-171.mta0.migadu.com [91.218.175.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB40410A3D;
-	Sat, 31 Aug 2024 14:27:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC7B58BF3
+	for <linux-kernel@vger.kernel.org>; Sat, 31 Aug 2024 14:31:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725114426; cv=none; b=YgmDcQH3ef6takCLrYZ+a1UEGlX3H3gOy4RSdhTdMIMu+X86RcV8gd/6F7G1NNgTFP0LzU93tZt+pJVLjkJkEq/tQLD2v+b7BdWQ1PEvzZoNQ+sn5scRGHI2g+DAX1rVZfaSliirXf7Y5Ynr4wT0K4rwVUMmm9kozjf0jQgHWoQ=
+	t=1725114668; cv=none; b=Opu7QyHwuc00DYtfOzTEYfIb8Dkr1y363sItJJGhVnNv2Asd7pLO4NfIA3gf9wmkArX7SFwWxLqCMFoHd2YhCqcnuaHg2RyGT3wrPfuxGKq6g07IufO7ow7AXuxbjygX1WS0aY7sR7FwrbTBB+OTQBOFlg0kSG7GUYQfdsSH4p8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725114426; c=relaxed/simple;
-	bh=e7UMSMNz/YtPpOqFUnb5PqraOGMsG5u8Rx6NEk9c7nQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OHJudwEOtRtpwblB9OC6MH8L2XP6BRwF8BR0ojzDIw2VqiNnck2dSSI0pOahlpm7wcoRYSBDiaX1ia2FoCY08t/Shh7qxZaTm1XbULPeq5GI9nFj/uUsrVtgx1Y4IBhd5VrZDHveWYJCFtNiRdd9eNj42sULqEVqdLGfiYkR4fc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gylKU0YA; arc=none smtp.client-ip=209.85.208.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2f40a1a2c1aso25147761fa.3;
-        Sat, 31 Aug 2024 07:27:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725114423; x=1725719223; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ClDDUTpR8t6DPG6KoXyNnf/qGLBhLmE/UmuhkywqIpw=;
-        b=gylKU0YAxG/V7Sm2Nr9oX21QkWmz656/SMXq93gNGYqsxwy8+gWREjPAl+QUndjpM7
-         SLbJ+xU+P889nWBCuz1oRtDgDb7UtblflDdoSEaX0uf2Wh2gXErbASftqUNAFm7mZOCF
-         kf4ENiPovYlb8yj957umQ+CrTCLuTos9e26YlMxzFgu0ed0GyHKcwXD6zOxu+s/UKFTK
-         hdWellnsW4pDiiNPz2sUdo5V/1+9eZfoiRl070IZtBZQlUmB+WMxs/0aLXoY9fxEz9Yq
-         pdHgJ4hP4ma99/w9WhieWq0dvaGHT9lnHYCmpmgmB69IXNgJD26DhmF0ucqlFc07a4gQ
-         Rd3w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725114423; x=1725719223;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ClDDUTpR8t6DPG6KoXyNnf/qGLBhLmE/UmuhkywqIpw=;
-        b=sAvve2EtbIplOJijO9Ug0D0gKqKu0zete97TQF0IdDYIXoWcm2wCgfhwtJlCcv9vt+
-         KVFaQe4tRwaWDnPlnuHx1XY+dAjPI30zXwZbUVteDzNdbEyZU5BzrhnLpVxWCNHd5DBg
-         ut++h/konzUfvAMg+igtdOrjCE/2qnIeSquAOaerzjWR9Jt5+ALfDsaJ9p8RcyyspBLQ
-         lfo6+azQvNLg8KsJsS1ZpWIyhCFGMLGpavqiu05yfLAoNhz6GRvL7LU0hVj0Gnk+eOJe
-         g1TWfKnCEn+oaI39mm5KJdCzkHhgj3HY4TIAWLI3+1heZOdV0Np2OD+DL+W1b44S/YhK
-         ShFw==
-X-Forwarded-Encrypted: i=1; AJvYcCWWH3MGu4QVEQ3Dv0XrJELMUAxWKKJL4vRAt02X9fA9zpfgE+eWOX+9vQBhmumXpbtr70Jd3665FpCqb+Q5@vger.kernel.org, AJvYcCXUH//ywQO66iPAx5PW+B5ab7PEixavVZ6l2e8PEnr/MuzMpeFxHmI3yBU3kFu33R/D537ZdJ3y32Ozo0mv@vger.kernel.org
-X-Gm-Message-State: AOJu0YwwkXc8O15MGxZpzBjStymASQMRTlNJajAW/jNu/SAGWOGatCFK
-	W25WVTj1whSVk+UFCoHD3NTJBRtRgQ/Q3Ensl6vsmDkbPavt8ZDlQ2H5o8Lp
-X-Google-Smtp-Source: AGHT+IG0soZ5n4oimLQY1Jh8mnsJcHcxLpHeW/bofHdniT0E1XHiLWLlJ9NcFIp6//datiepOAkLFQ==
-X-Received: by 2002:a05:6512:124f:b0:530:e228:779c with SMTP id 2adb3069b0e04-53546b04212mr3837461e87.19.1725114421834;
-        Sat, 31 Aug 2024 07:27:01 -0700 (PDT)
-Received: from [192.168.1.17] (host-79-46-163-127.retail.telecomitalia.it. [79.46.163.127])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8989196751sm330525766b.121.2024.08.31.07.26.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 31 Aug 2024 07:27:00 -0700 (PDT)
-Message-ID: <8537f53c-3898-4fa0-8376-de789d5c3ba3@gmail.com>
-Date: Sat, 31 Aug 2024 16:26:59 +0200
+	s=arc-20240116; t=1725114668; c=relaxed/simple;
+	bh=JJvCauuh1JfOGPT6TLhA5/HzQsOSyReU21rM8kk/CtQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jYTcNhAMyhyw2ieyTkmF05fpfbryEaySj2ACSVRcjMSBnVjxOZksswIkx+z5zTUZzsDwTAhmrcrHhnfe/y94pYao03rN/CdD69C8E3VtHB3Lf2/6KdFD6rrVg6VZJo1zZaSdsKZ0Vi5K3olqIM7PTzvDbtB3ghXXZaK0NPXJ+2I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Lou8KKZB; arc=none smtp.client-ip=91.218.175.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Sat, 31 Aug 2024 16:30:57 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1725114662;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=r5LxRLaI6PHeUD1U588+fsIepPXYx0cpFo+a1lpOekU=;
+	b=Lou8KKZBf1aaJWCwZDJ1a3O7H98gXloAMJTcgyXxpsDEANUi9WTN9TDX6TFVMFur7eJPoc
+	5S44SkrJoTlzA8RR/8NXx8//rb/lyejFdbF5kCY3y69dhVu8zqEl8NxSnR9OMPv/4kHPT0
+	zyQNijMYNIW8xOnlPw2CA3PY1bKos2I=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Andrea Righi <andrea.righi@linux.dev>
+To: Tejun Heo <tj@kernel.org>
+Cc: void@manifault.com, kernel-team@meta.com, linux-kernel@vger.kernel.org,
+	Daniel Hodges <hodges.daniel.scott@gmail.com>,
+	Changwoo Min <multics69@gmail.com>,
+	Dan Schatzberg <schatzberg.dan@gmail.com>
+Subject: Re: [PATCH 10/11] sched_ext: Implement
+ scx_bpf_dispatch[_vtime]_from_dsq()
+Message-ID: <ZtMpIb38MSn5r4-U@gpd3>
+References: <20240830110415.116090-1-tj@kernel.org>
+ <20240830110415.116090-11-tj@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 4/9] drm/msm/A6xx: Implement preemption for A7XX
- targets
-To: Rob Clark <robdclark@gmail.com>
-Cc: Sean Paul <sean@poorly.run>, Konrad Dybcio <konrad.dybcio@linaro.org>,
- Abhinav Kumar <quic_abhinavk@quicinc.com>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Marijn Suijten <marijn.suijten@somainline.org>,
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
- freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- Sharat Masetty <smasetty@codeaurora.org>,
- Neil Armstrong <neil.armstrong@linaro.org>
-References: <20240830-preemption-a750-t-v2-0-86aeead2cd80@gmail.com>
- <20240830-preemption-a750-t-v2-4-86aeead2cd80@gmail.com>
- <CAF6AEGuwtgzOZtDKPq+dna-mvv2M193Neow_7ZprxrLV+hf+FA@mail.gmail.com>
-Content-Language: en-US
-From: Antonino Maniscalco <antomani103@gmail.com>
-In-Reply-To: <CAF6AEGuwtgzOZtDKPq+dna-mvv2M193Neow_7ZprxrLV+hf+FA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240830110415.116090-11-tj@kernel.org>
+X-Migadu-Flow: FLOW_OUT
 
-On 8/30/24 10:25 PM, Rob Clark wrote:
-> On Fri, Aug 30, 2024 at 8:33 AM Antonino Maniscalco
-> <antomani103@gmail.com> wrote:
->>
->> This patch implements preemption feature for A6xx targets, this allows
->> the GPU to switch to a higher priority ringbuffer if one is ready. A6XX
->> hardware as such supports multiple levels of preemption granularities,
->> ranging from coarse grained(ringbuffer level) to a more fine grained
->> such as draw-call level or a bin boundary level preemption. This patch
->> enables the basic preemption level, with more fine grained preemption
->> support to follow.
->>
->> Signed-off-by: Sharat Masetty <smasetty@codeaurora.org>
->> Signed-off-by: Antonino Maniscalco <antomani103@gmail.com>
->> Tested-by: Neil Armstrong <neil.armstrong@linaro.org> # on SM8650-QRD
->> ---
->>   drivers/gpu/drm/msm/Makefile              |   1 +
->>   drivers/gpu/drm/msm/adreno/a6xx_gpu.c     | 323 +++++++++++++++++++++-
->>   drivers/gpu/drm/msm/adreno/a6xx_gpu.h     | 168 ++++++++++++
->>   drivers/gpu/drm/msm/adreno/a6xx_preempt.c | 431 ++++++++++++++++++++++++++++++
->>   drivers/gpu/drm/msm/msm_ringbuffer.h      |   7 +
->>   5 files changed, 921 insertions(+), 9 deletions(-)
->>
+On Fri, Aug 30, 2024 at 01:03:54AM -1000, Tejun Heo wrote:
+> Once a task is put into a DSQ, the allowed operations are fairly limited.
+> Tasks in the built-in local and global DSQs are executed automatically and,
+> ignoring dequeue, there is only one way a task in a user DSQ can be
+> manipulated - scx_bpf_consume() moves the first task to the dispatching
+> local DSQ. This inflexibility sometimes gets in the way and is an area where
+> multiple feature requests have been made.
 > 
-> [snip]
+> Implement scx_bpf_dispatch[_vtime]_from_dsq(), which can be called during
+> DSQ iteration and can move the task to any DSQ - local DSQs, global DSQ and
+> user DSQs. The kfuncs can be called from ops.dispatch() and any BPF context
+> which dosen't hold a rq lock including BPF timers and SYSCALL programs.
 > 
->> @@ -784,6 +1062,16 @@ static int a6xx_ucode_load(struct msm_gpu *gpu)
->>                  msm_gem_object_set_name(a6xx_gpu->shadow_bo, "shadow");
->>          }
->>
->> +       a6xx_gpu->pwrup_reglist_ptr = msm_gem_kernel_new(gpu->dev, PAGE_SIZE,
->> +                                                        MSM_BO_WC  | MSM_BO_MAP_PRIV,
->> +                                                        gpu->aspace, &a6xx_gpu->pwrup_reglist_bo,
->> +                                                        &a6xx_gpu->pwrup_reglist_iova);
+> This is an expansion of an earlier patch which only allowed moving into the
+> dispatching local DSQ:
 > 
-> I guess this could also be MSM_BO_GPU_READONLY?
+>   http://lkml.kernel.org/r/Zn4Cw4FDTmvXnhaf@slm.duckdns.org
 > 
-> BR,
-> -R
+> Signed-off-by: Tejun Heo <tj@kernel.org>
+> Cc: Daniel Hodges <hodges.daniel.scott@gmail.com>
+> Cc: David Vernet <void@manifault.com>
+> Cc: Changwoo Min <multics69@gmail.com>
+> Cc: Andrea Righi <andrea.righi@linux.dev>
+> Cc: Dan Schatzberg <schatzberg.dan@gmail.com>
+> ---
+>  kernel/sched/ext.c                       | 180 ++++++++++++++++++++++-
+>  tools/sched_ext/include/scx/common.bpf.h |   8 +
+>  2 files changed, 186 insertions(+), 2 deletions(-)
+> 
+> diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
+> index df33524d68f3..96b8cc490841 100644
+> --- a/kernel/sched/ext.c
+> +++ b/kernel/sched/ext.c
+> @@ -1067,6 +1067,11 @@ static __always_inline bool scx_kf_allowed_on_arg_tasks(u32 mask,
+>  	return true;
+>  }
+>  
+> +static bool scx_kf_allowed_if_unlocked(void)
+> +{
+> +	return !current->scx.kf_mask;
+> +}
+> +
+>  /**
+>   * nldsq_next_task - Iterate to the next task in a non-local DSQ
+>   * @dsq: user dsq being interated
+> @@ -5461,7 +5466,7 @@ __bpf_kfunc_start_defs();
+>   * scx_bpf_dispatch - Dispatch a task into the FIFO queue of a DSQ
+>   * @p: task_struct to dispatch
+>   * @dsq_id: DSQ to dispatch to
+> - * @slice: duration @p can run for in nsecs
+> + * @slice: duration @p can run for in nsecs, 0 to keep the current value
+>   * @enq_flags: SCX_ENQ_*
+>   *
+>   * Dispatch @p into the FIFO queue of the DSQ identified by @dsq_id. It is safe
+> @@ -5511,7 +5516,7 @@ __bpf_kfunc void scx_bpf_dispatch(struct task_struct *p, u64 dsq_id, u64 slice,
+>   * scx_bpf_dispatch_vtime - Dispatch a task into the vtime priority queue of a DSQ
+>   * @p: task_struct to dispatch
+>   * @dsq_id: DSQ to dispatch to
+> - * @slice: duration @p can run for in nsecs
+> + * @slice: duration @p can run for in nsecs, 0 to keep the current value
+>   * @vtime: @p's ordering inside the vtime-sorted queue of the target DSQ
 
-Besides containing the the actual reglist this buffer also contains the 
-`cpu_gpu_lock` structure which is written by the SQE so adding the 
-`MSM_BO_GPU_READONLY` flag would cause it to fault.
+Maybe allow to keep the current vtime if 0 is passed, similar to slice?
 
-Best regards,
--- 
-Antonino Maniscalco <antomani103@gmail.com>
+>   * @enq_flags: SCX_ENQ_*
+>   *
+> @@ -5552,6 +5557,117 @@ static const struct btf_kfunc_id_set scx_kfunc_set_enqueue_dispatch = {
+>  	.set			= &scx_kfunc_ids_enqueue_dispatch,
+>  };
+>  
+> +static bool scx_dispatch_from_dsq(struct bpf_iter_scx_dsq_kern *kit,
+> +				  struct task_struct *p, u64 dsq_id,
+> +				  u64 slice, u64 vtime, u64 enq_flags)
+> +{
+> +	struct scx_dispatch_q *src_dsq = kit->dsq, *dst_dsq;
+> +	struct rq *this_rq, *src_rq, *dst_rq, *locked_rq;
+> +	bool dispatched = false;
+> +	bool in_balance;
+> +	unsigned long flags;
+> +
+> +	if (!scx_kf_allowed_if_unlocked() && !scx_kf_allowed(SCX_KF_DISPATCH))
+> +		return false;
+> +
+> +	/*
+> +	 * Can be called from either ops.dispatch() locking this_rq() or any
+> +	 * context where no rq lock is held. If latter, lock @p's task_rq which
+> +	 * we'll likely need anyway.
+> +	 */
 
+About locking, I was wondering if we could provide a similar API
+(scx_bpf_dispatch_lock()?) to use scx_bpf_dispatch() from any context
+and not necessarily from ops.select_cpu() / ops.enqueue() or
+ops.dispatch().
+
+This would be really useful for user-space schedulers, since we could
+use scx_bpf_dispatch() directly and get rid of the
+BPF_MAP_TYPE_RINGBUFFER complexity.
+
+> +	src_rq = task_rq(p);
+> +
+> +	local_irq_save(flags);
+> +	this_rq = this_rq();
+> +	in_balance = this_rq->scx.flags & SCX_RQ_IN_BALANCE;
+> +
+> +	if (in_balance) {
+> +		if (this_rq != src_rq) {
+> +			raw_spin_rq_unlock(this_rq);
+> +			raw_spin_rq_lock(src_rq);
+> +		}
+> +	} else {
+> +		raw_spin_rq_lock(src_rq);
+> +	}
+> +
+> +	locked_rq = src_rq;
+> +	raw_spin_lock(&src_dsq->lock);
+> +
+> +	/*
+> +	 * Did someone else get to it? @p could have already left $src_dsq, got
+> +	 * re-enqueud, or be in the process of being consumed by someone else.
+> +	 */
+> +	if (unlikely(p->scx.dsq != src_dsq ||
+> +		     u32_before(kit->dsq_seq, p->scx.dsq_seq) ||
+> +		     p->scx.holding_cpu >= 0) ||
+> +	    WARN_ON_ONCE(src_rq != task_rq(p))) {
+> +		raw_spin_unlock(&src_dsq->lock);
+> +		goto out;
+> +	}
+> +
+> +	/* @p is still on $src_dsq and stable, determine the destination */
+> +	dst_dsq = find_dsq_for_dispatch(this_rq, dsq_id, p);
+> +
+> +	if (dst_dsq->id == SCX_DSQ_LOCAL) {
+> +		dst_rq = container_of(dst_dsq, struct rq, scx.local_dsq);
+> +		if (!task_can_run_on_remote_rq(p, dst_rq, true)) {
+> +			dst_dsq = &scx_dsq_global;
+> +			dst_rq = src_rq;
+> +		}
+> +	} else {
+> +		/* no need to migrate if destination is a non-local DSQ */
+> +		dst_rq = src_rq;
+> +	}
+> +
+> +	/*
+> +	 * Move @p into $dst_dsq. If $dst_dsq is the local DSQ of a different
+> +	 * CPU, @p will be migrated.
+> +	 */
+> +	if (dst_dsq->id == SCX_DSQ_LOCAL) {
+> +		/* @p is going from a non-local DSQ to a local DSQ */
+> +		if (src_rq == dst_rq) {
+> +			task_unlink_from_dsq(p, src_dsq);
+> +			move_local_task_to_local_dsq(p, enq_flags,
+> +						     src_dsq, dst_rq);
+> +			raw_spin_unlock(&src_dsq->lock);
+> +		} else {
+> +			raw_spin_unlock(&src_dsq->lock);
+> +			move_remote_task_to_local_dsq(p, enq_flags,
+> +						      src_rq, dst_rq);
+> +			locked_rq = dst_rq;
+> +		}
+> +	} else {
+> +		/*
+> +		 * @p is going from a non-local DSQ to a non-local DSQ. As
+> +		 * $src_dsq is already locked, do an abbreviated dequeue.
+> +		 */
+> +		task_unlink_from_dsq(p, src_dsq);
+> +		p->scx.dsq = NULL;
+> +		raw_spin_unlock(&src_dsq->lock);
+> +
+> +		p->scx.dsq_vtime = vtime;
+
+This would be like:
+
+  if (vtime)
+  	p->scx.dsq_vtime = vtime;
+
+> +		dispatch_enqueue(dst_dsq, p, enq_flags);
+> +	}
+> +
+> +	if (slice)
+> +		p->scx.slice = slice;
+> +	else
+> +		p->scx.slice = p->scx.slice ?: 1;
+> +
+> +	dispatched = true;
+> +out:
+> +	if (in_balance) {
+> +		if (this_rq != locked_rq) {
+> +			raw_spin_rq_unlock(locked_rq);
+> +			raw_spin_rq_lock(this_rq);
+> +		}
+> +	} else {
+> +		raw_spin_rq_unlock_irqrestore(locked_rq, flags);
+> +	}
+> +
+> +	return dispatched;
+> +}
+> +
+>  __bpf_kfunc_start_defs();
+>  
+>  /**
+> @@ -5631,12 +5747,70 @@ __bpf_kfunc bool scx_bpf_consume(u64 dsq_id)
+>  	}
+>  }
+>  
+> +/**
+> + * scx_bpf_dispatch_from_dsq - Move a task from DSQ iteration to a DSQ
+> + * @it__iter: DSQ iterator in progress
+> + * @p: task to transfer
+> + * @dsq_id: DSQ to move @p to
+> + * @slice: duration @p can run for in nsecs, 0 to keep the current value
+> + * @enq_flags: SCX_ENQ_*
+> + *
+> + * Transfer @p which is on the DSQ currently iterated by @it__iter to the DSQ
+> + * specified by @dsq_id. All DSQs - local DSQs, global DSQ and user DSQs - can
+> + * be the destination.
+> + *
+> + * For the transfer to be successful, @p must still be on the DSQ and have been
+> + * queued before the DSQ iteration started. This function doesn't care whether
+> + * @p was obtained from the DSQ iteration. @p just has to be on the DSQ and have
+> + * been queued before the iteration started.
+> + *
+> + * Can be called from ops.dispatch() or any BPF context which doesn't hold a rq
+> + * lock (e.g. BPF timers or SYSCALL programs).
+> + *
+> + * Returns %true if @p has been consumed, %false if @p had already been consumed
+> + * or dequeued.
+> + */
+> +__bpf_kfunc bool scx_bpf_dispatch_from_dsq(struct bpf_iter_scx_dsq *it__iter,
+> +					   struct task_struct *p, u64 dsq_id,
+> +					   u64 slice, u64 enq_flags)
+> +{
+> +	return scx_dispatch_from_dsq((struct bpf_iter_scx_dsq_kern *)it__iter,
+> +				     p, dsq_id, slice, 0, enq_flags);
+> +}
+> +
+> +/**
+> + * scx_bpf_dispatch_vtime_from_dsq - Move a task from DSQ iteration to a PRIQ DSQ
+> + * @it__iter: DSQ iterator in progress
+> + * @p: task to transfer
+> + * @dsq_id: DSQ to move @p to
+> + * @slice: duration @p can run for in nsecs, 0 to keep the current value
+> + * @vtime: @p's ordering inside the vtime-sorted queue of the target DSQ
+> + * @enq_flags: SCX_ENQ_*
+
+Hm... can we pass 6 arguments to a kfunc? I think we're limited to 5,
+unless I'm missing something here.
+
+> + *
+> + * Transfer @p which is on the DSQ currently iterated by @it__iter to the
+> + * priority queue of the DSQ specified by @dsq_id. The destination must be a
+> + * user DSQ as only user DSQs support priority queue.
+> + *
+> + * All other aspects are identical to scx_bpf_dispatch_from_dsq(). See
+> + * scx_bpf_dispatch_vtime() for more information on @vtime.
+> + */
+> +__bpf_kfunc bool scx_bpf_dispatch_vtime_from_dsq(struct bpf_iter_scx_dsq *it__iter,
+> +						 struct task_struct *p, u64 dsq_id,
+> +						 u64 slice, u64 vtime, u64 enq_flags)
+> +{
+> +	return scx_dispatch_from_dsq((struct bpf_iter_scx_dsq_kern *)it__iter,
+> +				     p, dsq_id, slice, vtime,
+> +				     enq_flags | SCX_ENQ_DSQ_PRIQ);
+> +}
+> +
+>  __bpf_kfunc_end_defs();
+>  
+>  BTF_KFUNCS_START(scx_kfunc_ids_dispatch)
+>  BTF_ID_FLAGS(func, scx_bpf_dispatch_nr_slots)
+>  BTF_ID_FLAGS(func, scx_bpf_dispatch_cancel)
+>  BTF_ID_FLAGS(func, scx_bpf_consume)
+> +BTF_ID_FLAGS(func, scx_bpf_dispatch_from_dsq, KF_RCU)
+> +BTF_ID_FLAGS(func, scx_bpf_dispatch_vtime_from_dsq, KF_RCU)
+>  BTF_KFUNCS_END(scx_kfunc_ids_dispatch)
+>  
+>  static const struct btf_kfunc_id_set scx_kfunc_set_dispatch = {
+> @@ -5733,6 +5907,8 @@ __bpf_kfunc_end_defs();
+>  
+>  BTF_KFUNCS_START(scx_kfunc_ids_unlocked)
+>  BTF_ID_FLAGS(func, scx_bpf_create_dsq, KF_SLEEPABLE)
+> +BTF_ID_FLAGS(func, scx_bpf_dispatch_from_dsq, KF_RCU)
+> +BTF_ID_FLAGS(func, scx_bpf_dispatch_vtime_from_dsq, KF_RCU)
+>  BTF_KFUNCS_END(scx_kfunc_ids_unlocked)
+>  
+>  static const struct btf_kfunc_id_set scx_kfunc_set_unlocked = {
+> diff --git a/tools/sched_ext/include/scx/common.bpf.h b/tools/sched_ext/include/scx/common.bpf.h
+> index 20280df62857..ef018071da31 100644
+> --- a/tools/sched_ext/include/scx/common.bpf.h
+> +++ b/tools/sched_ext/include/scx/common.bpf.h
+> @@ -35,6 +35,8 @@ void scx_bpf_dispatch_vtime(struct task_struct *p, u64 dsq_id, u64 slice, u64 vt
+>  u32 scx_bpf_dispatch_nr_slots(void) __ksym;
+>  void scx_bpf_dispatch_cancel(void) __ksym;
+>  bool scx_bpf_consume(u64 dsq_id) __ksym;
+> +bool scx_bpf_dispatch_from_dsq(struct bpf_iter_scx_dsq *it__iter, struct task_struct *p, u64 dsq_id, u64 slice, u64 enq_flags) __ksym __weak;
+> +bool scx_bpf_dispatch_vtime_from_dsq(struct bpf_iter_scx_dsq *it__iter, struct task_struct *p, u64 dsq_id, u64 slice, u64 vtime, u64 enq_flags) __ksym __weak;
+>  u32 scx_bpf_reenqueue_local(void) __ksym;
+>  void scx_bpf_kick_cpu(s32 cpu, u64 flags) __ksym;
+>  s32 scx_bpf_dsq_nr_queued(u64 dsq_id) __ksym;
+> @@ -62,6 +64,12 @@ bool scx_bpf_task_running(const struct task_struct *p) __ksym;
+>  s32 scx_bpf_task_cpu(const struct task_struct *p) __ksym;
+>  struct rq *scx_bpf_cpu_rq(s32 cpu) __ksym;
+>  
+> +/*
+> + * Use the following as @it__iter when calling
+> + * scx_bpf_dispatch[_vtime]_from_dsq() from within bpf_for_each() loops.
+> + */
+> +#define BPF_FOR_EACH_ITER	(&___it)
+> +
+>  static inline __attribute__((format(printf, 1, 2)))
+>  void ___scx_bpf_bstr_format_checker(const char *fmt, ...) {}
+>  
+> -- 
+> 2.46.0
+> 
+
+-Andrea
 
