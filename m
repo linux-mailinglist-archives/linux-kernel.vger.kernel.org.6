@@ -1,123 +1,83 @@
-Return-Path: <linux-kernel+bounces-309890-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309891-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91F23967190
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 14:28:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53E58967191
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 14:31:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C09931C21785
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 12:28:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED0591F22A32
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 12:31:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA92F17E918;
-	Sat, 31 Aug 2024 12:28:09 +0000 (UTC)
-Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.86.151])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9D5417DFE9;
+	Sat, 31 Aug 2024 12:30:55 +0000 (UTC)
+Received: from smtp134-32.sina.com.cn (smtp134-32.sina.com.cn [180.149.134.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F01917E46E
-	for <linux-kernel@vger.kernel.org>; Sat, 31 Aug 2024 12:28:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.86.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5914478289
+	for <linux-kernel@vger.kernel.org>; Sat, 31 Aug 2024 12:30:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=180.149.134.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725107289; cv=none; b=ZVdlYjpQlG9B5/PLTg/2nzb0DcZbc/yzMmUuZOQI1tFwwdPVT+piBVMWjLjX08EfvYsVa2Y3Ojn+T39zZLVQXwsU3/RiqwjFN/osb+HL4Q4FuG0Pu0YhD+F83J44U4RuQZo3mxg2QZcgvCTf1JyT+AkHRZ4DvT0/vYfg2ErUd7o=
+	t=1725107455; cv=none; b=W2BbB42dCPuR1e90mufKYggL3JwKGKstfpEJs0ByXgD3Nkj6jNCcRPnG1XLQQ6Y84POwdX6E6jBlx1Zs57rIbxmGnEFMYARjF3mIsEv/uDfvozH3C+idnKIALSCHb9UMlOHRIJRHgvenikDGVw7YCsIZWpQ654F7YhOkQsxVlXE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725107289; c=relaxed/simple;
-	bh=pvC/rc4EGrb8mtS6EIahOyR7G9lc3uRyb0Bj3Pl+MIc=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 MIME-Version:Content-Type; b=j741jVoKIKE4ee0kr4a5S097+RaCqNz07JKlJ6J+1XMxWyFul+X3A5q0JdtOYJAGC/0/wV+5xzVYCuplO60FmhdCuHvrE9XOiNRnP900wtOSGbUEoMgq2MAbPlm6E47xjAHEXqbjwuZXTdZd98KUPADvf8UvRZYiWA5BwBR1pe8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.86.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
-Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
- relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- uk-mta-401-bIz0EuKoNPmEz4bY-gpZwA-1; Sat, 31 Aug 2024 13:28:03 +0100
-X-MC-Unique: bIz0EuKoNPmEz4bY-gpZwA-1
-Received: from AcuMS.Aculab.com (10.202.163.4) by AcuMS.aculab.com
- (10.202.163.4) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Sat, 31 Aug
- 2024 13:27:19 +0100
-Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
- id 15.00.1497.048; Sat, 31 Aug 2024 13:27:19 +0100
-From: David Laight <David.Laight@ACULAB.COM>
-To: 'Yan Zhen' <yanzhen@vivo.com>, "han.xu@nxp.com" <han.xu@nxp.com>,
-	"haibo.chen@nxp.com" <haibo.chen@nxp.com>, "broonie@kernel.org"
-	<broonie@kernel.org>
-CC: "yogeshgaur.83@gmail.com" <yogeshgaur.83@gmail.com>,
-	"linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"opensource.kernel@vivo.com" <opensource.kernel@vivo.com>
-Subject: RE: [PATCH v2] spi: nxp-fspi: Use max macro
-Thread-Topic: [PATCH v2] spi: nxp-fspi: Use max macro
-Thread-Index: AQHa+IMHZV0HYMLLd0icFMuKBcoi+rJBUF+Q
-Date: Sat, 31 Aug 2024 12:27:19 +0000
-Message-ID: <1ac834f698524ef8bce28a4a1024a3a7@AcuMS.aculab.com>
-References: <20240827131203.3918516-1-yanzhen@vivo.com>
-In-Reply-To: <20240827131203.3918516-1-yanzhen@vivo.com>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
+	s=arc-20240116; t=1725107455; c=relaxed/simple;
+	bh=ibWR5oj/i+PDg1gOX80v0djJfJ8+JGd230Geby0SPJY=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=foEd/Kl+SfLjw1RZzGqSMHd41TjvwEGGeNJ5Vm2X0sArT/TDu9sqbef5V0jcMsaFqM5/9Rn5AcHSAbsf6kT+rgntEW7L5xJo6Gdy4p4vKn7Rv+CwGoHl7pl5GuWHs6UOscSiUDXNEOIDOp9D8MZILq8W5No2k3OU0abzp9EwdMM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=180.149.134.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([113.118.67.55])
+	by sina.com (10.185.250.21) with ESMTP
+	id 66D30C5600002351; Sat, 31 Aug 2024 20:28:18 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 7840513408532
+X-SMAIL-UIID: 61DDD826364C4A4D95AF248B25BC84BF-20240831-202818-1
+From: Hillf Danton <hdanton@sina.com>
+To: syzbot <syzbot+fcb79916dcfe2a4ed10a@syzkaller.appspotmail.com>
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [ocfs2?] possible deadlock in ocfs2_nfs_sync_lock
+Date: Sat, 31 Aug 2024 20:27:56 +0800
+Message-Id: <20240831122756.1426-1-hdanton@sina.com>
+In-Reply-To: <0000000000007c90b60620f79447@google.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: aculab.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-From: Yan Zhen
-> Sent: 27 August 2024 14:12
->=20
-> When the original file is guaranteed to contain the minmax.h header file
-> and compile correctly, using the real macro is usually
-> more intuitive and readable.
->=20
-> Signed-off-by: Yan Zhen <yanzhen@vivo.com>
-> ---
->=20
-> Changes in v2:
-> - Rewrite the subject.
-> - Using max_t() instead of max().
->=20
->  drivers/spi/spi-nxp-fspi.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
->=20
-> diff --git a/drivers/spi/spi-nxp-fspi.c b/drivers/spi/spi-nxp-fspi.c
-> index 88397f712a3b..fda902aa5815 100644
-> --- a/drivers/spi/spi-nxp-fspi.c
-> +++ b/drivers/spi/spi-nxp-fspi.c
-> @@ -756,8 +756,7 @@ static int nxp_fspi_read_ahb(struct nxp_fspi *f, cons=
-t struct spi_mem_op *op)
->  =09=09=09iounmap(f->ahb_addr);
->=20
->  =09=09f->memmap_start =3D start;
-> -=09=09f->memmap_len =3D len > NXP_FSPI_MIN_IOMAP ?
-> -=09=09=09=09len : NXP_FSPI_MIN_IOMAP;
-> +=09=09f->memmap_len =3D max_t(u32, len, NXP_FSPI_MIN_IOMAP);
->=20
+On Sat, 31 Aug 2024 02:46:20 -0700
+> syzbot found the following issue on:
+> 
+> HEAD commit:    a18093afa393 Merge tag 'nfsd-6.11-2' of git://git.kernel.o..
+> git tree:       upstream
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11f51063980000
 
-This shouldn't be max_t().
-That is equivalent to:
-=09=09(u32)len > (u32)NXP_FSPI_MIN_IOMAP ? (u32)len) : (u32)NXP_FSPI_MIN_IO=
-MAP;
-Which you'd never write and has the obvious fubar that is 'len' is 64bit
-and greater that 2^32 the wrong thing happens.
+#syz test upstream  a18093afa393
 
-=09David
-
->  =09=09f->ahb_addr =3D ioremap(f->memmap_phy + f->memmap_start,
->  =09=09=09=09=09 f->memmap_len);
-> --
-> 2.34.1
->=20
-
--
-Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1=
-PT, UK
-Registration No: 1397386 (Wales)
-
+--- l/fs/ocfs2/suballoc.c
++++ k/fs/ocfs2/suballoc.c
+@@ -962,8 +962,10 @@ int ocfs2_reserve_new_metadata_blocks(st
+ {
+ 	int status;
+ 	int slot = ocfs2_get_meta_steal_slot(osb);
++	unsigned int pff = memalloc_nofs_save();
+ 
+ 	*ac = kzalloc(sizeof(struct ocfs2_alloc_context), GFP_KERNEL);
++	memalloc_nofs_restore(pff);
+ 	if (!(*ac)) {
+ 		status = -ENOMEM;
+ 		mlog_errno(status);
+--
 
