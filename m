@@ -1,138 +1,99 @@
-Return-Path: <linux-kernel+bounces-309774-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309775-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 041FF96704C
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 10:08:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1ACE96704D
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 10:14:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 269B51C217AF
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 08:08:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A90D01F22C04
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 08:14:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5C1C16EBEC;
-	Sat, 31 Aug 2024 08:08:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0B8B16F27F;
+	Sat, 31 Aug 2024 08:14:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NL6KefUk"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Gz4m3+VO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3754F3A1AC;
-	Sat, 31 Aug 2024 08:07:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20FB53A1AC;
+	Sat, 31 Aug 2024 08:14:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725091679; cv=none; b=ctyE8cZ+JVpseyFiMM6Yml+MMSUWvzpVPRrcZEKrvnlsXFTB4iUiMf9IVxrOQSIF2s0IIXeIxy1ejmDyFSut+fkm6BGgKpyVszdIVwfD53qpFyKvx3Vtw96GtbIIwaObCdnn2gOGylJlLRtjuD17HfSPZRf1enZn1YTKOyIAO/M=
+	t=1725092064; cv=none; b=gmicBdTh9z35mumi5A4RkiAVl4D1RTOZqqzjkeitcMHy3x8OSd5RuM3ZNPfhpjz2WUyFc/982p4bI0fT1WyiKI0xredAcmEc85fue2bi+TXZ7EvTgppW6fqeE1/alMzcnfEnSKsWrh64APHBj3dnP4En4VdBGbtSl5d149az308=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725091679; c=relaxed/simple;
-	bh=pMyd6VJ5fw/wGHIvhzQNZYG4qJelaQ5hTMxf5GnoR3c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tYSn5xBNxh8ba+Z1nNX3WPEMia4ZOHPXUyhj2YffRtCyFmfSi+jTOw3DZ3vE/agECygme2AxUjx8VZAMeIX1pU/gkGMDpko7p3T2ew/xokYVl7DfZhsMUPHO0+HmmDkrlVLq5Pa0CSLIO5vr3/TPZJ1DRVM9GuXVEA7JKZ+nHg0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NL6KefUk; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725091678; x=1756627678;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=pMyd6VJ5fw/wGHIvhzQNZYG4qJelaQ5hTMxf5GnoR3c=;
-  b=NL6KefUkOr+IN0DnYlV0AjeZBOsYYd8uvfx/KG6W5kJ9muO7YmMm8fcS
-   2xVn+sQXoVFkfbFxagFWeWv+5boKpn3pohGrBuwxzk6t8PKmwZbO/nx2v
-   dLM6EsBnvrMC31kgz59DjqCGqNPl9L5E/D0dGzKuW+CWi3tzZBeGesu7v
-   1MVo23fsqeltxJQwjPbSiLJ/wsccCOb3aES22mvJyu4KK+guuVwlUbOX9
-   blDXKI4TyrRH6mkPjKesLkjNYjtvxC+RbMHnaOftZ6S0EjHfbloWD5rGp
-   stx4GCOBOFm20oRLES8bTRCTKQoOusKigy0RVmswHjF4O7MFg54ihwFkj
-   Q==;
-X-CSE-ConnectionGUID: EHzDdnjqRPmsqxrr/GYwgQ==
-X-CSE-MsgGUID: +UwtKZg1R0KruCwnWtcZHA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11180"; a="23898825"
-X-IronPort-AV: E=Sophos;i="6.10,191,1719903600"; 
-   d="scan'208";a="23898825"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Aug 2024 01:07:57 -0700
-X-CSE-ConnectionGUID: +yHVbmu0R8O+HNdeMbMqzg==
-X-CSE-MsgGUID: QuDWnnohQq6+5BdwTdhPig==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,191,1719903600"; 
-   d="scan'208";a="64167540"
-Received: from lkp-server01.sh.intel.com (HELO 9c6b1c7d3b50) ([10.239.97.150])
-  by fmviesa009.fm.intel.com with ESMTP; 31 Aug 2024 01:07:51 -0700
-Received: from kbuild by 9c6b1c7d3b50 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1skJ9A-0002Ra-2m;
-	Sat, 31 Aug 2024 08:07:48 +0000
-Date: Sat, 31 Aug 2024 16:06:53 +0800
-From: kernel test robot <lkp@intel.com>
-To: Macpaul Lin <macpaul.lin@mediatek.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-leds@vger.kernel.org,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>, Sebastian Reichel <sre@kernel.org>,
-	Pavel Machek <pavel@ucw.cz>, Sean Wang <sean.wang@mediatek.com>,
-	Lee Jones <lee@kernel.org>,
-	Alexandre Mergnat <amergnat@baylibre.com>,
-	Flora Fu <flora.fu@mediatek.com>
-Cc: oe-kbuild-all@lists.linux.dev, Bear Wang <bear.wang@mediatek.com>,
-	Pablo Sun <pablo.sun@mediatek.com>,
-	Macpaul Lin <macpaul.lin@mediatek.com>,
-	Sen Chu <sen.chu@mediatek.com>,
-	Chris-qj chen <chris-qj.chen@mediatek.com>,
-	MediaTek Chromebook Upstream <Project_Global_Chrome_Upstream_Group@mediatek.com>,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, linux-pm@vger.kernel.org,
-	linux-rtc@vger.kernel.org, linux-sound@vger.kernel.org,
-	devicetree@vger.kernel.org, Chen-Yu Tsai <wenst@chromium.org>
-Subject: Re: [PATCH v2 5/7] dt-bindings: leds: mt6323: merge to MFD
- mediatek,mt6397 DT schema
-Message-ID: <202408311533.GPosdKVY-lkp@intel.com>
-References: <20240830110732.30080-5-macpaul.lin@mediatek.com>
+	s=arc-20240116; t=1725092064; c=relaxed/simple;
+	bh=dC9woE6OiFq0DFYL5jgTE8HMEHaGEFxF7EU9YoSWi08=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=HOhXH3X+ZrYO5rUK1DM+3Pjl0HEb/78p3NgWA8t+6MSS/E4AYXzKy92rhsxRY/Id7qCFuKuSlxqz6n6cWBtzHISKc/wAG/5kCa3nBdsk+TXFsUyjYVDEQpzEB6OxtBz0wMxclrSr83LW6VORcCXDoKb0Bi3yWQdCUa9z8f1Bbyc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Gz4m3+VO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AEFA7C4CEC0;
+	Sat, 31 Aug 2024 08:14:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725092063;
+	bh=dC9woE6OiFq0DFYL5jgTE8HMEHaGEFxF7EU9YoSWi08=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Gz4m3+VOTfGPQsRcJ+UVGQ+eae0g6/yUULBTyB65x7lfUuD0KLipbA4oTKNlSzo6F
+	 r7odGqqocNQvce2SYMYH6wWiZSbEQ9R96Z+jT03qX6P2eI/MDv8CY7eX13kRmOP2lh
+	 zAPhjfXvj3IUzc+DIHnyDFiC0T6+KHP1st2su9fJ6gfSJCuRrgA267lEC8p70a5TTB
+	 g5hYsmMW1lbBzUlUUAcy1B7dJS5xM+i32dsutdFFKDVI6H6tzwpQT5vOa0OUYSgBWW
+	 r05ASkp1FwhEKzAzSn4zRSPisH7GzcyBtf4S+vix0l1lt2Xh1F3bCLOvThO8STw852
+	 eSwscLlvFNuRg==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1skJFV-008Rjk-Eh;
+	Sat, 31 Aug 2024 09:14:21 +0100
+Date: Sat, 31 Aug 2024 09:14:20 +0100
+Message-ID: <86y14dun1f.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Ard Biesheuvel <ardb@kernel.org>
+Cc: Tangnianyao <tangnianyao@huawei.com>,
+	Will Deacon <will@kernel.org>,
+	oliver.upton@linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	kvmarm@lists.linux.dev,
+	"guoyang (C)" <guoyang2@huawei.com>
+Subject: Re: Question on get random long worse in VM than on host
+In-Reply-To: <CAMj1kXGocnZPe4EfzsB6xd2QZacp-a45R5f5f6FDpVtVEXCcGQ@mail.gmail.com>
+References: <214e37e9-7aba-1e61-f63f-85cb10c9a878@huawei.com>
+	<86zfotuoio.wl-maz@kernel.org>
+	<CAMj1kXGocnZPe4EfzsB6xd2QZacp-a45R5f5f6FDpVtVEXCcGQ@mail.gmail.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240830110732.30080-5-macpaul.lin@mediatek.com>
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: ardb@kernel.org, tangnianyao@huawei.com, will@kernel.org, oliver.upton@linux.dev, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kvmarm@lists.linux.dev, guoyang2@huawei.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-Hi Macpaul,
+On Sat, 31 Aug 2024 08:56:23 +0100,
+Ard Biesheuvel <ardb@kernel.org> wrote:
+> 
+> As for RNDR/RNDRRS vs TRNG: the former is not a raw entropy source, it
+> is a DRBG (or CSPRNG) which provides cryptographically secure random
+> numbers whose security strength is limited by the size of the seed.
+> TRNG does not have this limitation in principle, although non-p KVM
+> happily seeds it from the kernel's entropy pool, which has the same
+> limitation in practice.
 
-kernel test robot noticed the following build warnings:
+Is that something we should address? I assume that this has an impact
+on the quality of the provided random numbers?
 
-[auto build test WARNING on broonie-regulator/for-next]
-[also build test WARNING on next-20240830]
-[cannot apply to lee-mfd/for-mfd-next robh/for-next lee-mfd/for-mfd-fixes linus/master v6.11-rc5]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Thanks,
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Macpaul-Lin/dt-bindings-mfd-mediatek-mt6397-Convert-to-DT-schema-format/20240830-191309
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
-patch link:    https://lore.kernel.org/r/20240830110732.30080-5-macpaul.lin%40mediatek.com
-patch subject: [PATCH v2 5/7] dt-bindings: leds: mt6323: merge to MFD mediatek,mt6397 DT schema
-reproduce: (https://download.01.org/0day-ci/archive/20240831/202408311533.GPosdKVY-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202408311533.GPosdKVY-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
-   Warning: Documentation/devicetree/bindings/power/wakeup-source.txt references a file that doesn't exist: Documentation/devicetree/bindings/input/qcom,pm8xxx-keypad.txt
-   Warning: Documentation/devicetree/bindings/regulator/siliconmitus,sm5703-regulator.yaml references a file that doesn't exist: Documentation/devicetree/bindings/mfd/siliconmitus,sm5703.yaml
-   Warning: Documentation/hwmon/g762.rst references a file that doesn't exist: Documentation/devicetree/bindings/hwmon/g762.txt
-   Warning: MAINTAINERS references a file that doesn't exist: Documentation/devicetree/bindings/reserved-memory/qcom
-   Warning: MAINTAINERS references a file that doesn't exist: Documentation/devicetree/bindings/display/exynos/
->> Warning: MAINTAINERS references a file that doesn't exist: Documentation/devicetree/bindings/leds/leds-mt6323.txt
-   Warning: MAINTAINERS references a file that doesn't exist: Documentation/devicetree/bindings/misc/fsl,qoriq-mc.txt
-   Using alabaster theme
+	M.
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Without deviation from the norm, progress is not possible.
 
