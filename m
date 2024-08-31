@@ -1,73 +1,94 @@
-Return-Path: <linux-kernel+bounces-309747-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309748-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2DC4966FEF
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 09:06:28 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0789B966FF4
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 09:06:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E3E6A1C20EA3
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 07:06:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 88002B228A3
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 07:06:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0A3517C7D8;
-	Sat, 31 Aug 2024 07:04:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D50B17DE15;
+	Sat, 31 Aug 2024 07:05:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="heBtBwxJ"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="edQ7Gt8m"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E29416EB54
-	for <linux-kernel@vger.kernel.org>; Sat, 31 Aug 2024 07:04:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B84AA16D4FF;
+	Sat, 31 Aug 2024 07:04:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725087897; cv=none; b=QmgESmpJCy8wK+J7J5HM5awlHmXMzqmYqTH/hxUPyHi4e2qrR5TygHpslG3uMDwUgyHBnz5m8YZCE9K3jnF1Hl7nZe/a527PT8hDfvU5H6fYhbQ1ZVyxz4ubhQUsm+7G9sEzU9Fxk2xnK5lD/usbser8umE8Pg1s9JYlfU2Q908=
+	t=1725087901; cv=none; b=iGBIg0GU/M398RzNBNYunXK9PdNx8vK9REmFZfgfg0Pa2A4pV+xHu9YfohU0iNwPcGFHYduqUX/ExTZF6jtNQ93HgdW01pYOhjGI+dH0bi3aHLRGwWgWjjNmHftBmzezayFKYftDX+yLEFjIfr8L+NXjN1PP4zSHpFU6kqr6wRM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725087897; c=relaxed/simple;
-	bh=JKEQXIXKED+8Pw8da1C5xAekT7C4EqGCID20YKUKeD4=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=i5PiazGF7SjIZL3h837QH1hzKRl6Dv8WNpfsMx8ub7HGL6sgTaZ29zcvkJfb0zn9L+tLvuXsl5wttANxMXxsxxDEJO7Q+olSsaVEiSsmMcYKrmD2oZ90FalU/JEEADk9sOMstM8zAyqN8kYppyprNwWRzIyU6lmJ5YXPCKEgJn8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=heBtBwxJ; arc=none smtp.client-ip=192.198.163.16
+	s=arc-20240116; t=1725087901; c=relaxed/simple;
+	bh=2MIvjife9TxEOVM4N//TXAhsxKXULju5kqrwtaSFDZI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MlSWikrWS/P96BIo92EMU07/hwntbHvWLeBEXD1WPRf9dznPfwh4lb5qJzhbW+g1fFq+4VlvKv2dzUA6oD5+C4V8i85SUTWy1qv38pD2Y1WG8NsfZ7Lf/D4T23H4jCU72YhPxwGfDT6QOHCdTJqVZmmFSlR1eBaG8KBkDl2u29o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=edQ7Gt8m; arc=none smtp.client-ip=192.198.163.10
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725087895; x=1756623895;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=JKEQXIXKED+8Pw8da1C5xAekT7C4EqGCID20YKUKeD4=;
-  b=heBtBwxJ3Dix+KeH5NajsWqrEzT9Tdh1h4Srx0qwxVrqjeRp7YaXVRIn
-   Dr/8YCUkX7GF0dPPckxp7uttxWYdYoHaCZ7VdpMpJ9cSiqF3m9h2106Ks
-   GFq5OvAMAoiZs/vYSKn5ZV6cW1g7y+Jytmsvq8Rl7J6ywDErKtKChzEMo
-   KB6nv5LbJ1oLYospwNiljGcUC+hsZ3QS65emsYH9NhP/Cxhyq5zL+9RQX
-   Iarau37UCY+X37AzbYrBh3UmRTK0lOTdaI83BQiyqQGWtrq98ymMa17TM
-   mZiVEUqwKiYsUZu2jXfm5+fW6dJteKVzzbnj2L8khUiw/uBSgRs7NfCdk
-   g==;
-X-CSE-ConnectionGUID: nZhPBuYMRcuG3Tbs9oEuaQ==
-X-CSE-MsgGUID: zx2ds5GOTXibBezCa9OKjw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11180"; a="13308911"
+  t=1725087897; x=1756623897;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=2MIvjife9TxEOVM4N//TXAhsxKXULju5kqrwtaSFDZI=;
+  b=edQ7Gt8mmXBpdXS9M/rn/3IwDMuaaSnCpuiz4eJEPB9rRkL5FPvCnoo5
+   lTSK1r3E/Hrshovh9++k5y8xbV8JGP+5LYX51+K/iqEvL4QvFNVS0BITY
+   BuieiZWpTGXH2hrVCx3AHsa/YrkVaMQxnhK5AtOyqp9+RD7CRKHTYY4fY
+   FLMHC3GrJ3b4PIq/h+zeWc5WzQYLoNY1m3XlEykh5P1YyR9FAr7/01Ms8
+   yebvpIqB8ze8h1yINOONHoG5uU8ELn0g3qr65ONOrVSGp9IarO8eK1B7k
+   hZTpnE1AJYHKf83mdcwLNjKMy6a0e2UacyinreffO0XpSBdsVL4WQxUbv
+   Q==;
+X-CSE-ConnectionGUID: 9DsinZPPTMGN9Fwb6WQmUQ==
+X-CSE-MsgGUID: QIXGcIBHRRqI5hgpLNw4Gw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11180"; a="35142355"
 X-IronPort-AV: E=Sophos;i="6.10,191,1719903600"; 
-   d="scan'208";a="13308911"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Aug 2024 00:04:52 -0700
-X-CSE-ConnectionGUID: hcdCQj+SQbqPVt5aV6izYQ==
-X-CSE-MsgGUID: bj9yYPDiSzOxFUV7eOkQZw==
+   d="scan'208";a="35142355"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Aug 2024 00:04:56 -0700
+X-CSE-ConnectionGUID: pBaWsdrATdClvQIISpIntA==
+X-CSE-MsgGUID: PGOW7AjMQ2qLPMI3JEsoQA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.10,191,1719903600"; 
-   d="scan'208";a="64467304"
+   d="scan'208";a="64160004"
 Received: from lkp-server01.sh.intel.com (HELO 9c6b1c7d3b50) ([10.239.97.150])
-  by orviesa006.jf.intel.com with ESMTP; 31 Aug 2024 00:04:50 -0700
+  by fmviesa009.fm.intel.com with ESMTP; 31 Aug 2024 00:04:50 -0700
 Received: from kbuild by 9c6b1c7d3b50 with local (Exim 4.96)
 	(envelope-from <lkp@intel.com>)
-	id 1skIAC-0002Pv-0E;
+	id 1skIAC-0002Ps-0A;
 	Sat, 31 Aug 2024 07:04:48 +0000
-Date: Sat, 31 Aug 2024 15:04:05 +0800
+Date: Sat, 31 Aug 2024 15:04:06 +0800
 From: kernel test robot <lkp@intel.com>
-To: "Paul E. McKenney" <paulmck@kernel.org>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: [paulmck-rcu:dev.2024.08.30a 27/33] include/linux/srcu.h:246:30:
- error: use of undeclared identifier 'SRCU_READ_FLAVOR_NORMAL'
-Message-ID: <202408311452.nS2HBgqc-lkp@intel.com>
+To: Macpaul Lin <macpaul.lin@mediatek.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-leds@vger.kernel.org,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>, Sebastian Reichel <sre@kernel.org>,
+	Pavel Machek <pavel@ucw.cz>, Sean Wang <sean.wang@mediatek.com>,
+	Lee Jones <lee@kernel.org>,
+	Alexandre Mergnat <amergnat@baylibre.com>,
+	Flora Fu <flora.fu@mediatek.com>
+Cc: oe-kbuild-all@lists.linux.dev, Bear Wang <bear.wang@mediatek.com>,
+	Pablo Sun <pablo.sun@mediatek.com>,
+	Macpaul Lin <macpaul.lin@mediatek.com>,
+	Sen Chu <sen.chu@mediatek.com>,
+	Chris-qj chen <chris-qj.chen@mediatek.com>,
+	MediaTek Chromebook Upstream <Project_Global_Chrome_Upstream_Group@mediatek.com>,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, linux-pm@vger.kernel.org,
+	linux-rtc@vger.kernel.org, linux-sound@vger.kernel.org,
+	devicetree@vger.kernel.org, Chen-Yu Tsai <wenst@chromium.org>
+Subject: Re: [PATCH v2 2/7] dt-bindings: mfd: mediatek: mt6397: Convert to DT
+ schema format
+Message-ID: <202408311453.Ui9YGyJc-lkp@intel.com>
+References: <20240830110732.30080-2-macpaul.lin@mediatek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,188 +97,37 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20240830110732.30080-2-macpaul.lin@mediatek.com>
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/paulmck/linux-rcu.git dev.2024.08.30a
-head:   05416eb79213ad6a9770faa795059fdd00adb6e0
-commit: d4401cc54f3e2985675be825f5222aff9764ab8b [27/33] srcu: Convert srcu_data ->srcu_reader_flavor to bit field
-config: x86_64-allnoconfig (https://download.01.org/0day-ci/archive/20240831/202408311452.nS2HBgqc-lkp@intel.com/config)
-compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240831/202408311452.nS2HBgqc-lkp@intel.com/reproduce)
+Hi Macpaul,
+
+kernel test robot noticed the following build warnings:
+
+[auto build test WARNING on broonie-regulator/for-next]
+[also build test WARNING on lee-mfd/for-mfd-next robh/for-next lee-mfd/for-mfd-fixes linus/master v6.11-rc5 next-20240830]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Macpaul-Lin/dt-bindings-mfd-mediatek-mt6397-Convert-to-DT-schema-format/20240830-191309
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
+patch link:    https://lore.kernel.org/r/20240830110732.30080-2-macpaul.lin%40mediatek.com
+patch subject: [PATCH v2 2/7] dt-bindings: mfd: mediatek: mt6397: Convert to DT schema format
+reproduce: (https://download.01.org/0day-ci/archive/20240831/202408311453.Ui9YGyJc-lkp@intel.com/reproduce)
 
 If you fix the issue in a separate patch/commit (i.e. not just a new version of
 the same patch/commit), kindly add following tags
 | Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202408311452.nS2HBgqc-lkp@intel.com/
+| Closes: https://lore.kernel.org/oe-kbuild-all/202408311453.Ui9YGyJc-lkp@intel.com/
 
-All errors (new ones prefixed by >>):
+All warnings (new ones prefixed by >>):
 
-   In file included from arch/x86/kernel/asm-offsets.c:9:
-   In file included from include/linux/crypto.h:17:
-   In file included from include/linux/slab.h:16:
-   In file included from include/linux/gfp.h:7:
-   In file included from include/linux/mmzone.h:1432:
-   In file included from include/linux/memory_hotplug.h:7:
-   In file included from include/linux/notifier.h:16:
->> include/linux/srcu.h:246:30: error: use of undeclared identifier 'SRCU_READ_FLAVOR_NORMAL'
-     246 |         srcu_check_read_flavor(ssp, SRCU_READ_FLAVOR_NORMAL);
-         |                                     ^
->> include/linux/srcu.h:267:30: error: use of undeclared identifier 'SRCU_READ_FLAVOR_NMI'
-     267 |         srcu_check_read_flavor(ssp, SRCU_READ_FLAVOR_NMI);
-         |                                     ^
-   include/linux/srcu.h:279:30: error: use of undeclared identifier 'SRCU_READ_FLAVOR_NORMAL'
-     279 |         srcu_check_read_flavor(ssp, SRCU_READ_FLAVOR_NORMAL);
-         |                                     ^
-   include/linux/srcu.h:308:30: error: use of undeclared identifier 'SRCU_READ_FLAVOR_NORMAL'
-     308 |         srcu_check_read_flavor(ssp, SRCU_READ_FLAVOR_NORMAL);
-         |                                     ^
-   include/linux/srcu.h:323:30: error: use of undeclared identifier 'SRCU_READ_FLAVOR_NORMAL'
-     323 |         srcu_check_read_flavor(ssp, SRCU_READ_FLAVOR_NORMAL);
-         |                                     ^
-   include/linux/srcu.h:339:30: error: use of undeclared identifier 'SRCU_READ_FLAVOR_NMI'
-     339 |         srcu_check_read_flavor(ssp, SRCU_READ_FLAVOR_NMI);
-         |                                     ^
-   include/linux/srcu.h:348:30: error: use of undeclared identifier 'SRCU_READ_FLAVOR_NORMAL'
-     348 |         srcu_check_read_flavor(ssp, SRCU_READ_FLAVOR_NORMAL);
-         |                                     ^
-   include/linux/srcu.h:365:30: error: use of undeclared identifier 'SRCU_READ_FLAVOR_NORMAL'
-     365 |         srcu_check_read_flavor(ssp, SRCU_READ_FLAVOR_NORMAL);
-         |                                     ^
-   In file included from arch/x86/kernel/asm-offsets.c:14:
-   In file included from include/linux/suspend.h:5:
-   In file included from include/linux/swap.h:9:
-   In file included from include/linux/memcontrol.h:13:
-   In file included from include/linux/cgroup.h:16:
-   In file included from include/linux/fs.h:33:
-   In file included from include/linux/percpu-rwsem.h:7:
-   In file included from include/linux/rcuwait.h:6:
-   In file included from include/linux/sched/signal.h:6:
-   include/linux/signal.h:98:11: warning: array index 3 is past the end of the array (that has type 'unsigned long[1]') [-Warray-bounds]
-      98 |                 return (set->sig[3] | set->sig[2] |
-         |                         ^        ~
-   arch/x86/include/asm/signal.h:24:2: note: array 'sig' declared here
-      24 |         unsigned long sig[_NSIG_WORDS];
-         |         ^
-   In file included from arch/x86/kernel/asm-offsets.c:14:
-   In file included from include/linux/suspend.h:5:
-   In file included from include/linux/swap.h:9:
-   In file included from include/linux/memcontrol.h:13:
-   In file included from include/linux/cgroup.h:16:
-   In file included from include/linux/fs.h:33:
-   In file included from include/linux/percpu-rwsem.h:7:
-   In file included from include/linux/rcuwait.h:6:
-   In file included from include/linux/sched/signal.h:6:
-   include/linux/signal.h:98:25: warning: array index 2 is past the end of the array (that has type 'unsigned long[1]') [-Warray-bounds]
-      98 |                 return (set->sig[3] | set->sig[2] |
-         |                                       ^        ~
-   arch/x86/include/asm/signal.h:24:2: note: array 'sig' declared here
-      24 |         unsigned long sig[_NSIG_WORDS];
-         |         ^
-   In file included from arch/x86/kernel/asm-offsets.c:14:
-   In file included from include/linux/suspend.h:5:
-   In file included from include/linux/swap.h:9:
-   In file included from include/linux/memcontrol.h:13:
-   In file included from include/linux/cgroup.h:16:
-   In file included from include/linux/fs.h:33:
-   In file included from include/linux/percpu-rwsem.h:7:
-   In file included from include/linux/rcuwait.h:6:
-   In file included from include/linux/sched/signal.h:6:
-   include/linux/signal.h:99:4: warning: array index 1 is past the end of the array (that has type 'unsigned long[1]') [-Warray-bounds]
-      99 |                         set->sig[1] | set->sig[0]) == 0;
-         |                         ^        ~
-   arch/x86/include/asm/signal.h:24:2: note: array 'sig' declared here
-      24 |         unsigned long sig[_NSIG_WORDS];
-         |         ^
-   In file included from arch/x86/kernel/asm-offsets.c:14:
-   In file included from include/linux/suspend.h:5:
-   In file included from include/linux/swap.h:9:
-   In file included from include/linux/memcontrol.h:13:
-   In file included from include/linux/cgroup.h:16:
-   In file included from include/linux/fs.h:33:
-   In file included from include/linux/percpu-rwsem.h:7:
-   In file included from include/linux/rcuwait.h:6:
-   In file included from include/linux/sched/signal.h:6:
-   include/linux/signal.h:101:11: warning: array index 1 is past the end of the array (that has type 'unsigned long[1]') [-Warray-bounds]
-     101 |                 return (set->sig[1] | set->sig[0]) == 0;
-         |                         ^        ~
-   arch/x86/include/asm/signal.h:24:2: note: array 'sig' declared here
-      24 |         unsigned long sig[_NSIG_WORDS];
-         |         ^
-   In file included from arch/x86/kernel/asm-offsets.c:14:
-   In file included from include/linux/suspend.h:5:
-   In file included from include/linux/swap.h:9:
-   In file included from include/linux/memcontrol.h:13:
-   In file included from include/linux/cgroup.h:16:
-   In file included from include/linux/fs.h:33:
-   In file included from include/linux/percpu-rwsem.h:7:
-   In file included from include/linux/rcuwait.h:6:
-   In file included from include/linux/sched/signal.h:6:
-   include/linux/signal.h:114:11: warning: array index 3 is past the end of the array (that has type 'const unsigned long[1]') [-Warray-bounds]
-     114 |                 return  (set1->sig[3] == set2->sig[3]) &&
-         |                          ^         ~
-   arch/x86/include/asm/signal.h:24:2: note: array 'sig' declared here
-      24 |         unsigned long sig[_NSIG_WORDS];
-         |         ^
-   In file included from arch/x86/kernel/asm-offsets.c:14:
-   In file included from include/linux/suspend.h:5:
-   In file included from include/linux/swap.h:9:
-   In file included from include/linux/memcontrol.h:13:
-   In file included from include/linux/cgroup.h:16:
-
-
-vim +/SRCU_READ_FLAVOR_NORMAL +246 include/linux/srcu.h
-
-   221	
-   222	/**
-   223	 * srcu_read_lock - register a new reader for an SRCU-protected structure.
-   224	 * @ssp: srcu_struct in which to register the new reader.
-   225	 *
-   226	 * Enter an SRCU read-side critical section.  Note that SRCU read-side
-   227	 * critical sections may be nested.  However, it is illegal to
-   228	 * call anything that waits on an SRCU grace period for the same
-   229	 * srcu_struct, whether directly or indirectly.  Please note that
-   230	 * one way to indirectly wait on an SRCU grace period is to acquire
-   231	 * a mutex that is held elsewhere while calling synchronize_srcu() or
-   232	 * synchronize_srcu_expedited().
-   233	 *
-   234	 * The return value from srcu_read_lock() must be passed unaltered
-   235	 * to the matching srcu_read_unlock().  Note that srcu_read_lock() and
-   236	 * the matching srcu_read_unlock() must occur in the same context, for
-   237	 * example, it is illegal to invoke srcu_read_unlock() in an irq handler
-   238	 * if the matching srcu_read_lock() was invoked in process context.  Or,
-   239	 * for that matter to invoke srcu_read_unlock() from one task and the
-   240	 * matching srcu_read_lock() from another.
-   241	 */
-   242	static inline int srcu_read_lock(struct srcu_struct *ssp) __acquires(ssp)
-   243	{
-   244		int retval;
-   245	
- > 246		srcu_check_read_flavor(ssp, SRCU_READ_FLAVOR_NORMAL);
-   247		retval = __srcu_read_lock(ssp);
-   248		srcu_lock_acquire(&ssp->dep_map);
-   249		return retval;
-   250	}
-   251	
-   252	/**
-   253	 * srcu_read_lock_nmisafe - register a new reader for an SRCU-protected structure.
-   254	 * @ssp: srcu_struct in which to register the new reader.
-   255	 *
-   256	 * Enter an SRCU read-side critical section, but in an NMI-safe manner.
-   257	 * See srcu_read_lock() for more information.
-   258	 *
-   259	 * If srcu_read_lock_nmisafe() is ever used on an srcu_struct structure,
-   260	 * then none of the other flavors may be used, whether before, during,
-   261	 * or after.
-   262	 */
-   263	static inline int srcu_read_lock_nmisafe(struct srcu_struct *ssp) __acquires(ssp)
-   264	{
-   265		int retval;
-   266	
- > 267		srcu_check_read_flavor(ssp, SRCU_READ_FLAVOR_NMI);
-   268		retval = __srcu_read_lock_nmisafe(ssp);
-   269		rcu_try_lock_acquire(&ssp->dep_map);
-   270		return retval;
-   271	}
-   272	
+>> Warning: Documentation/devicetree/bindings/input/mediatek,pmic-keys.yaml references a file that doesn't exist: Documentation/devicetree/bindings/mfd/mt6397.txt
+   Warning: Documentation/devicetree/bindings/leds/leds-mt6323.txt references a file that doesn't exist: Documentation/devicetree/bindings/mfd/mt6397.txt
+   Warning: Documentation/devicetree/bindings/net/dsa/mediatek,mt7530.yaml references a file that doesn't exist: Documentation/devicetree/bindings/regulator/mt6323-regulator.txt
+   Warning: Documentation/devicetree/bindings/power/wakeup-source.txt references a file that doesn't exist: Documentation/devicetree/bindings/input/qcom,pm8xxx-keypad.txt
+   Warning: Documentation/devicetree/bindings/regulator/siliconmitus,sm5703-regulator.yaml references a file that doesn't exist: Documentation/devicetree/bindings/mfd/siliconmitus,sm5703.yaml
+   Warning: Documentation/hwmon/g762.rst references a file that doesn't exist: Documentation/devicetree/bindings/hwmon/g762.txt
 
 -- 
 0-DAY CI Kernel Test Service
