@@ -1,139 +1,120 @@
-Return-Path: <linux-kernel+bounces-309779-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309780-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 246A0967055
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 10:24:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0875967058
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 10:26:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C45121F21605
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 08:24:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 56AA01F22E20
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 08:26:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C02F1170A22;
-	Sat, 31 Aug 2024 08:24:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52A90170A23;
+	Sat, 31 Aug 2024 08:26:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PThRW3+n"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="G+Gl5hoe"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB99922095;
-	Sat, 31 Aug 2024 08:24:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B186916EBED
+	for <linux-kernel@vger.kernel.org>; Sat, 31 Aug 2024 08:26:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725092657; cv=none; b=mF06gqTODT9//NEewMbqC90pD5LgOq0ukNwR4Ntp9n98AO0YdSHekU3T9OP3UJkfdA0cee2CFOmJXa81FptK6D3CB7yGH/a4oCJC6+Bkp/+1zEWvLBi/2ueOjMX/EdDdBut8dELNmUep20w/ZPmWLwYYYBd/QF9YxxhM9RPalBk=
+	t=1725092772; cv=none; b=TcqAmRXGB2pN1JAFJRslhgSi3yCYM+Od09ifYdm7ylG/pRpsCTwWbOrn+VIix8doQ2VLzfm5Uq7DsyKPEWyVzj9/RaAKEd/Qa+earhQRWoMEe6vagnZeoZXLDdhpa4zbBVZ/PN3gYsl80hth6kDfNFNEWmNXSDTfm76ON7YqLsQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725092657; c=relaxed/simple;
-	bh=8Q0rv1U+EQwWMFT1qBVs5i+5vSbooP+Bl5Hfnffjh4s=;
+	s=arc-20240116; t=1725092772; c=relaxed/simple;
+	bh=wrI9Ia4Ar4QKeJfDIgGIGj41ailash/OWxo+v7iPnis=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tb8yeQVbtO3EDNbooQAJVyqLv3M5geqxm94LzY5Kt/XeDsbzWxdd9kQhfs7q0GfjhqKytkaNjG7CxxkY/KBXpN4Knjkl6BB25emaEUhauiB8hR77f7bOduM8OkzK4sv5Bii7ITPNydfnPHaca1eIuuG/EICUWGn97cIf6ZfP/ms=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PThRW3+n; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DAD1CC4CEC0;
-	Sat, 31 Aug 2024 08:24:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725092656;
-	bh=8Q0rv1U+EQwWMFT1qBVs5i+5vSbooP+Bl5Hfnffjh4s=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=PThRW3+nZ4aRFDDLhuSiH5RqKJ6xblGOcBjhmOsCOIxA7+eOKv5dTW70+S1e7yNxP
-	 PuH1KcpVat0BQ6ivesg5oPzqIPnJMlHj/JF5wMZeak1Ue/peGfq/yFFGvNNJpRJ2X8
-	 Uh+arijRJZWunOUvbQoXai0j5/7LT/5tk3mSYrPFppqGFwnTuC3+wpCy4b3Ai4uOxv
-	 9iDxt9jn66PXSPX8ABpnzGZugz+g2/VwrEEok6U1mgp8u5vH7pH3GdEU6PdxHa4pk1
-	 mwWzJlWPbeYcaQ2tSdDCD+hIZlP7VJrUtl7/qPuWrDY0NmZVFFQEs3eED2wcAbHCoh
-	 7hUv8gH2gOkvg==
-Date: Sat, 31 Aug 2024 09:24:11 +0100
-From: Simon Horman <horms@kernel.org>
-To: Nathan Chancellor <nathan@kernel.org>
-Cc: Naresh Kamboju <naresh.kamboju@linaro.org>,
-	clang-built-linux <llvm@lists.linux.dev>,
-	Netdev <netdev@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>,
-	lkft-triage@lists.linaro.org,
-	Linux Regressions <regressions@lists.linux.dev>,
-	Anders Roxell <anders.roxell@linaro.org>,
-	Dan Carpenter <dan.carpenter@linaro.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Florian Westphal <fw@strlen.de>,
-	Steffen Klassert <steffen.klassert@secunet.com>
-Subject: Re: net/xfrm/xfrm_policy.c:1286:8: error: variable 'dir' is
- uninitialized when used here [-Werror,-Wuninitialized]
-Message-ID: <20240831082411.GC4063074@kernel.org>
-References: <CA+G9fYtemFfuhc7=eNyP3TezM9Euc8sFtHe4GDR4Z9XdHzXSJA@mail.gmail.com>
- <20240830164706.GW1368797@kernel.org>
- <20240830170449.GX1368797@kernel.org>
- <20240830214757.GA3819549@thelio-3990X>
+	 Content-Type:Content-Disposition:In-Reply-To; b=tGyVXqdcdUJnjYdXmETV/bE2Ih4G4+bDfTjBr3u1DBLxUuzzU6V7iu1yFDGY8tNEiMwxbmvc9fMH8hRoFge/+kO1fAO7TiQ0onA0Xw69HDCaQGOXoGEuqSIDQKmFwuOB75QzfWD9psUyVpoPq11aGeuu7HtY3o2y6By1gwbc9gY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=G+Gl5hoe; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-42bb81e795bso19709815e9.1
+        for <linux-kernel@vger.kernel.org>; Sat, 31 Aug 2024 01:26:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1725092769; x=1725697569; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=PUn25yylj83ADt3TIdVylAl6ydwxlNjsLdxzQbv/uu8=;
+        b=G+Gl5hoeYYAEO/vbsF4zbV9SZ37CMfgMB3u9pibTRJURQUm4OhFevQGdp7tHsBEH+X
+         hEgbOJ+IAf7M5wcIlx1PR3u6A4e+RdPdzCVIB0tZMNSIdNU/sh+szOshJPzV9Ul62VHR
+         YT/6T622omHgz4JNGkAmbzdZBsYNo15XPTT1/xGKZ2qG+p4VWna+22MliUjjEksg4e29
+         6GSAq/yO+Dm2Abgd/G6GmD+Po2bnUd+n4GSZbVBai8sxMdMJZUMe9Aw4tN20S3chphpc
+         6qFZY7uM+IrZ3jsYb0AgrgrV25usngFsB6t61RgS5PRcAEOA5Z3MLlPiORAxVQeBztdi
+         rPSg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725092769; x=1725697569;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=PUn25yylj83ADt3TIdVylAl6ydwxlNjsLdxzQbv/uu8=;
+        b=BwVEYoKXJbFLBryENmCdLZxXdUuoJOYRU59b/J3oYzUO9G+EmNgEYnIvHWQEQHuZO+
+         TVj0LQ+F1ODIEUBLxmczG/QzO8iuO2ib2fbSyy0LTznuaMUnOy7SP90kTGgyQsyu9qXe
+         SsE4h8Wh3sGyor3nH2mzxIaQe98kV3Oudorg5XChx902ut4BE7ZonieUVJ6hInIwZzxO
+         2BYC26yS1RQj+ieLqbvolqj9G0Uq3pJtaXxA3xzb/Fg0UFIUUmbL2TIfxfsYXo5UvRPa
+         bqFw0JYiTBgCd6nfbCtRcmDRbKgWaz1IX7w7zA4E2SwdQPI3OZYkSO7ZdLrIrvSlmTdD
+         ws+w==
+X-Forwarded-Encrypted: i=1; AJvYcCXSeVc9set/u5RNcERi5T3Uo4/ElChX5lXTqIZ7HKcdJmjcr9nQZ8Z9Ms4L5mx5gMkTzh/WAw1Ejwd7Dfo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzkhUSv3PHD0RM3YoB4aGmmLmVyeOYf67HAR58bQdg6i2Qc69Ov
+	mn1jLbwmMUJNhTU0EOVcOaBm9Wx1sAQbOGItyO3JkZlkfKgvNfPG0x+h3rPvd/s=
+X-Google-Smtp-Source: AGHT+IHWvHDiyoJfajPjn0ChFw5L62xII7chAIudL8Rfv0VPD2SsDp1xkjww+bPGvwVAiAoynVDyIQ==
+X-Received: by 2002:a05:600c:3b93:b0:426:5e0b:5823 with SMTP id 5b1f17b1804b1-42bbb44114emr36049175e9.34.1725092768683;
+        Sat, 31 Aug 2024 01:26:08 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42ba6396516sm104491425e9.4.2024.08.31.01.26.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 31 Aug 2024 01:26:08 -0700 (PDT)
+Date: Sat, 31 Aug 2024 11:25:54 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Hans de Goede <hdegoede@redhat.com>, linux-kernel@vger.kernel.org,
+	platform-driver-x86@vger.kernel.org,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Daniel Scally <djrscally@gmail.com>
+Subject: Re: [PATCH v2 1/4] driver core: Ignore 0 in dev_err_probe()
+Message-ID: <ce59c3c6-8729-469f-a0df-b6844792e324@stanley.mountain>
+References: <20240822130722.1261891-1-andriy.shevchenko@linux.intel.com>
+ <20240822130722.1261891-2-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20240830214757.GA3819549@thelio-3990X>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240822130722.1261891-2-andriy.shevchenko@linux.intel.com>
 
-On Fri, Aug 30, 2024 at 02:47:57PM -0700, Nathan Chancellor wrote:
-> Hi Simon (and Naresh),
+On Thu, Aug 22, 2024 at 04:05:38PM +0300, Andy Shevchenko wrote:
+> In the similar way, ignore 0 error code (AKA "success") in
+> dev_err_probe(). This helps to simplify a code such as
 > 
-> On Fri, Aug 30, 2024 at 06:04:49PM +0100, Simon Horman wrote:
-> > On Fri, Aug 30, 2024 at 05:47:06PM +0100, Simon Horman wrote:
-> > > + Florian, Steffen
-> > > 
-> > > On Fri, Aug 30, 2024 at 12:15:10PM +0530, Naresh Kamboju wrote:
-> > > > The x86_64 defconfig builds failed on today's Linux next-20240829
-> > > > due to following build warnings / errors.
-> > > > 
-> > > > Regressions:
-> > > > * i386, build
-> > > >   - clang-18-defconfig
-> > > >   - clang-nightly-defconfig
-> > > > 
-> > > > * x86_64, build
-> > > >   - clang-18-lkftconfig
-> > > >   - clang-18-lkftconfig-compat
-> > > >   - clang-18-lkftconfig-kcsan
-> > > >   - clang-18-lkftconfig-no-kselftest-frag
-> > > >   - clang-18-x86_64_defconfig
-> > > >   - clang-nightly-lkftconfig
-> > > >   - clang-nightly-lkftconfig-kselftest
-> > > >   - clang-nightly-x86_64_defconfig
-> > > >   - rustclang-nightly-lkftconfig-kselftest
-> > > > 
-> > > > first seen on next-20240829.
-> > > >   Good: next-20240828
-> > > >   BAD:  next-20240829
-> > > > 
-> > > > Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
-> > > > 
-> > > > build log:
-> > > > --------
-> > > > net/xfrm/xfrm_policy.c:1286:8: error: variable 'dir' is uninitialized
-> > > > when used here [-Werror,-Wuninitialized]
-> > > >  1286 |                 if ((dir & XFRM_POLICY_MASK) == XFRM_POLICY_OUT) {
-> > > >       |                      ^~~
-> > > > net/xfrm/xfrm_policy.c:1257:9: note: initialize the variable 'dir' to
-> > > > silence this warning
-> > > >  1257 |         int dir;
-> > > >       |                ^
-> > > >       |                 = 0
-> > > > 1 error generated.
+>   if (ret < 0)
+>     return dev_err_probe(int3472->dev, ret, err_msg);
 > 
-> Thanks for the report.
+>   return ret;
 > 
-> > > I believe that is due to
-> > > commit 08c2182cf0b4 ("xfrm: policy: use recently added helper in more places")
-> > > 
-> > > I will work on a fix to initialise dir in the loop where it is used.
-> > 
-> > Patch is here:
-> > - [PATCH ipsec-next] xfrm: Initialise dir in xfrm_hash_rebuild()
-> >   https://lore.kernel.org/netdev/20240830-xfrm_hash_rebuild-dir-v1-1-f75092d07e1b@kernel.org/T/#u
+> to
 > 
-> I sent the same patch as a v1 but Florian pointed out that dir needs to
-> be initialized in the other loop too. I sent my v2 for it yesterday, it
-> just needs to be merged.
+>   return dev_err_probe(int3472->dev, ret, err_msg);
 > 
-> https://lore.kernel.org/all/20240829-xfrm-restore-dir-assign-xfrm_hash_rebuild-v2-1-1cf8958f6e8e@kernel.org/
+> Reviewed-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-Thanks, and sorry for the noise.
+This is a terrible idea because currently Smatch is able to detect about one
+bug per month where someone unintentionally passes the wrong error variable
+to dev_err_probe().
+
+I really hate this.
+
+NAKed-by: Dan Carpenter <dan.carpenter@linaro.org>
+
+regards,
+dan carpenter
+
 
