@@ -1,38 +1,38 @@
-Return-Path: <linux-kernel+bounces-309755-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309753-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 585D2967018
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 09:31:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 357AD967014
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 09:30:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C27B3B22D88
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 07:31:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 20FD8B22D8F
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 07:30:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2C7817A583;
-	Sat, 31 Aug 2024 07:30:30 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B858170A16;
+	Sat, 31 Aug 2024 07:30:26 +0000 (UTC)
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD940763F8;
-	Sat, 31 Aug 2024 07:30:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 074F014D28F;
+	Sat, 31 Aug 2024 07:30:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725089430; cv=none; b=P7Gta0dYpczX/jMl93z9M7Ed+5p5zJWhcpW0Y/B6D833eBrtinL0EHiOpwdrz5QrifhDzoXL8FpTNgS9gZOqJT1A6/3ZclPY5VKDEZxB2YwLCLde5G8bGkTiI/Z5pdv3iSyQS9s0RW4EQdiBzXgFoKfcq2d4ZtA9twKpy1r3uFw=
+	t=1725089426; cv=none; b=vCWAYtlNA2J5S39VhZiPkGv+mKtJJrvAlNr52nAavs22Kkjfkuyt7IHRj6KbK7IZW3fPCUZkD5GAEjVAzhXkz/9d1kyNttj9s+YijvZZHkG8p/+OPlayH5mpkiIJ79+vPIrF/P/+YHkrJUbDdG/5oMzKnNQcIJSrl9bCfZgyotc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725089430; c=relaxed/simple;
-	bh=OwPkCG1hjPtfQhuBwcbqpj5W/rfBtASoOkbNTlc4dS8=;
+	s=arc-20240116; t=1725089426; c=relaxed/simple;
+	bh=KgC5JsQG+0Ud0hlCnsyxlnt7nbCvOatRrH3PTQNqGcA=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=JIh900X+m6FRCaC9bmIwhvoS9Eg3bUXzntVpIcZUKFkT9c4i5+sOA/02MQNCyPfZMfzt3gOTMSqjpkEa0+jNIDfUZJqpNOARC8GVbx/UF0LOeEZ7fdJ7WHwSL9hUyoKa4qngaiPEBb3qHx0GI9FIgmBXyECxloh5yK4R3SME2xA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+	 MIME-Version:Content-Type; b=XQcEAYcXoWrJ25OkFIoHG/lhDgt0Iv99o++Rm64cZ5J4u02spIxadUsyTNFLYd02tKxfHYOeo93kThUVAFhmuIG6NYS/osSYrdlME0DaAdO8HSSTmxpYbaQYy8xk7mJWzzH7LGCt9XA1vmWAuR4Ii+24n0WCGV8a7lG+I5UEvog=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.48])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4WwmqV1B0KzyQjl;
-	Sat, 31 Aug 2024 15:29:26 +0800 (CST)
+Received: from mail.maildlp.com (unknown [172.19.163.44])
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4WwmrC5Jj3z1j7LR;
+	Sat, 31 Aug 2024 15:30:03 +0800 (CST)
 Received: from dggpemm500020.china.huawei.com (unknown [7.185.36.49])
-	by mail.maildlp.com (Postfix) with ESMTPS id 6547C18006C;
+	by mail.maildlp.com (Postfix) with ESMTPS id 909A21400D7;
 	Sat, 31 Aug 2024 15:30:18 +0800 (CST)
 Received: from huawei.com (10.67.174.77) by dggpemm500020.china.huawei.com
  (7.185.36.49) with Microsoft SMTP Server (version=TLS1_2,
@@ -42,9 +42,9 @@ From: Liao Chen <liaochen4@huawei.com>
 To: <linux-ide@vger.kernel.org>, <linux-kernel@vger.kernel.org>
 CC: <s.shtylyov@omp.ru>, <linus.walleij@linaro.org>, <dlemoal@kernel.org>,
 	<cassel@kernel.org>
-Subject: [PATCH -next v2 2/3] ata: pata_ixp4xx: Enable module autoloading
-Date: Sat, 31 Aug 2024 07:21:57 +0000
-Message-ID: <20240831072158.789419-3-liaochen4@huawei.com>
+Subject: [PATCH -next v2 3/3] ata: sata_gemini: Enable module autoloading
+Date: Sat, 31 Aug 2024 07:21:58 +0000
+Message-ID: <20240831072158.789419-4-liaochen4@huawei.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240831072158.789419-1-liaochen4@huawei.com>
 References: <20240831072158.789419-1-liaochen4@huawei.com>
@@ -63,23 +63,23 @@ Add MODULE_DEVICE_TABLE(), so modules can be properly autoloaded based
 on the alias from of_device_id table.
 
 Signed-off-by: Liao Chen <liaochen4@huawei.com>
-Reviewed-by: Sergey Shtylyov <s.shtylyov@omp.ru>
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 ---
- drivers/ata/pata_ixp4xx_cf.c | 1 +
+ drivers/ata/sata_gemini.c | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/drivers/ata/pata_ixp4xx_cf.c b/drivers/ata/pata_ixp4xx_cf.c
-index 246bb4f8f1f7..8a9ee828478f 100644
---- a/drivers/ata/pata_ixp4xx_cf.c
-+++ b/drivers/ata/pata_ixp4xx_cf.c
-@@ -290,6 +290,7 @@ static const struct of_device_id ixp4xx_pata_of_match[] = {
- 	{ .compatible = "intel,ixp4xx-compact-flash", },
+diff --git a/drivers/ata/sata_gemini.c b/drivers/ata/sata_gemini.c
+index 4c270999ba3c..f574e3c3f5b4 100644
+--- a/drivers/ata/sata_gemini.c
++++ b/drivers/ata/sata_gemini.c
+@@ -417,6 +417,7 @@ static const struct of_device_id gemini_sata_of_match[] = {
+ 	{ .compatible = "cortina,gemini-sata-bridge", },
  	{ /* sentinel */ }
  };
-+MODULE_DEVICE_TABLE(of, ixp4xx_pata_of_match);
++MODULE_DEVICE_TABLE(of, gemini_sata_of_match);
  
- static struct platform_driver ixp4xx_pata_platform_driver = {
- 	.driver	 = {
+ static struct platform_driver gemini_sata_driver = {
+ 	.driver = {
 -- 
 2.34.1
 
