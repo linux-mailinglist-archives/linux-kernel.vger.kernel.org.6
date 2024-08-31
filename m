@@ -1,75 +1,75 @@
-Return-Path: <linux-kernel+bounces-310027-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310028-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76651967355
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 23:19:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 831EC967358
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 23:26:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2DBB1282C55
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 21:19:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 02A3F1F21F88
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 21:26:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32EED17E8E5;
-	Sat, 31 Aug 2024 21:19:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D2DD17ADE8;
+	Sat, 31 Aug 2024 21:26:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YXrwllEE"
-Received: from mail-ot1-f51.google.com (mail-ot1-f51.google.com [209.85.210.51])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nlQYPoRf"
+Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C20676FCC;
-	Sat, 31 Aug 2024 21:19:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDDFE77102;
+	Sat, 31 Aug 2024 21:26:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725139158; cv=none; b=JL9V34+2FN8RJIzfz0kYGLBQkswrhbmFTL45u6B8ZCoDg7fLnDNfBbVmMUUNXHOxHvfAhlpv4gYbZdfw8F0LcB8+jcKtf6k33yGa14lpiSzkywR4vPlM7A2peI31o67lw3R2PO1cBHx4hCRaaVwz0Zgs9rJBeevyfjq68qdk2Hs=
+	t=1725139593; cv=none; b=kizia8o+MYVp9h7Y6aHaP5OBnRbTfEugGMr/WFdRwcv8gB5hPV6wAa+UAFj/3OUgRPpudb6JaK4sBfzP5fRg0MCJiXPYym2jbE7VRYnvCLF+9UR8Hkiybd17X+nVyeuZKgptDcwB3MYEHPtveuU2wgFsrDfKs89JnP2ysk7Nv6s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725139158; c=relaxed/simple;
-	bh=OWqRTvt9404/ano+yp1yu3wGHRwtXn5oFYJekFfxAWk=;
+	s=arc-20240116; t=1725139593; c=relaxed/simple;
+	bh=WnTYFeG/fzOiKVzt1gkZelOK94/v9zyLQUVVRTD2/2E=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=j6hzv7k7TPZyf40hQ9EKBQy++4FYn6aZ4DHAgmIqOLAN8AHesI151b8QHG+pLTvAwVuzKyyNnKKCRcopn5nEJS05GKyAMP6SRMfRSXU/bZp8L5sW8mNJuXLvGahShdp/iiplBawmTRnNbebfSlhBNIhwvjOdEfXEgllC7+coWg4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YXrwllEE; arc=none smtp.client-ip=209.85.210.51
+	 In-Reply-To:Content-Type; b=tVW9+Cal369jaYeclD35obJKeRw00erUVFtLLUrr3u2+MdsaGcW9PzuKOWBJ8R3lxNwnYWUtqSlhHeYG81TxV60UtY7W1lTKdtR1pyCyfTN61zJJDiVlh9P9opxD6A5JV4A25tlaMqC26+06iUEX2kDWC610JrINcezv+gDXxJU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nlQYPoRf; arc=none smtp.client-ip=209.85.210.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f51.google.com with SMTP id 46e09a7af769-70f782d6ba8so241705a34.0;
-        Sat, 31 Aug 2024 14:19:16 -0700 (PDT)
+Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-7142448aaf9so2011634b3a.1;
+        Sat, 31 Aug 2024 14:26:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725139156; x=1725743956; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1725139591; x=1725744391; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=5AiRVgx2oBpN4HxI8sWFyfTegsh1fo61Uz0IrDwOv7A=;
-        b=YXrwllEEIZJpkeb+3qjfkQt7dAEX/38WIPB4UKjhUmOysobhh2dDBoqxtW4o1K1f/M
-         6lkdBOV39cUDkuDowDFo98kojOKBkFYZpTuEmIbIcesSZwR+Fb/dVCMwFJfFxoDq2v1p
-         CcQ1qhj8lDuKQ5n3pN2EDnunpm0UuVMEjI2PQNoaaqz7Rh57HxdzYhJNa5JtFhKuE7Mw
-         nBrLfjY/T3VR87MSW5VIfQYoKUfn6Cp8RyoBSd2CVavzhttjfY9EZK9ZdKci0fy492+H
-         TvPzabzJSb/cLDf56JlDyX86GYP9U93GcUNpG9WFEoh2rcAHrF25xAvHcodpv5iMS5BJ
-         LZ6Q==
+        bh=FR2aZdF5bv/OtfI8399Ca40G5kJMSLxBifyoulxIJMw=;
+        b=nlQYPoRfR5vs9cmG8YY6Xiubksf5aL97hu1ag7J311UlpG3MWPBcSOzpperN9ZGNHU
+         YTRvyYCYK8XxNMrscC9wj7MqP4dw5v4zE7Y6RbqkJVuLTgzAQlaJtU6sBG28Ufr5Do6K
+         zPP6QtszWW8QoR9hcQ6Wkm4EBgXeh5H1mQpeHu5DCvEOMrhWtDUPo4MkpZS3EntJlZHq
+         xA9W6zB3fNJGPi5FgBTK4qUKnnKlYiVeRpJ/Zl/IN/w9lpbe7sESDAOLCw/whiZ4Rk+c
+         /H+RNfuyRrVQNvs654stvhkHTkV4PQWdLchmdiq8RazeXE28RSKKeTO1kOkff84aY7t5
+         hEmA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725139156; x=1725743956;
+        d=1e100.net; s=20230601; t=1725139591; x=1725744391;
         h=content-transfer-encoding:in-reply-to:autocrypt:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=5AiRVgx2oBpN4HxI8sWFyfTegsh1fo61Uz0IrDwOv7A=;
-        b=v/x9qexSZprv0xxLu99k0KAnQMTKZR+BfHffNJYwr0WCUnDVreHYLl+PBITlpcgK0N
-         53UBHYB7UhFk4JCqnebx04NnEBPmf5ZniCuYWtvWyrfkmxzYPiDsXpg/9X0dstzjCGgy
-         3OPVfh8LuC8G1317Jq+A9Y4KU6OEnX/DA9fxHB8ubhqW7RDs2WgkiIv/uNZfRJ3XLx/D
-         WwVTIGPb5pMqhmlhq3k3f67ir5IMEENzK1wRZTHjO6lMvvZYPKB48/yfY4ODV4tGOPsM
-         odKjwV8AtCpoGwtTIzwFUCsQuwwYFz/nHaSbYbvRYU+jjqApLyIu87a2SV6IY56rsxmp
-         77Sw==
-X-Forwarded-Encrypted: i=1; AJvYcCUJv2gWr4BJH57IJK5GHQjBraqlNkMKnXgGq9cdbleFo4R7UwPywdm1p8qQdxDvZDXyQoZX91NAaUi+944=@vger.kernel.org, AJvYcCVaFTwSQvwcA+oy74b5ioXIG3HbJ7qJMR+z4Q+DBqaKYjnLJVKjYG0hfashcL6wSCVNEuIijYO5@vger.kernel.org
-X-Gm-Message-State: AOJu0YwVvQuLS0RP9NqVHn0uamWMzO8f4IjPnw5LykKUVNYOkf7Ruera
-	zt21pgBhWertzrJt3yj2ft28yphFh1zYt8jibNaWeN3qB2AqyuUK
-X-Google-Smtp-Source: AGHT+IFpbL8W/xvro9BB9EEndYTLZsrTgHOEH49NpBEtc3b4ZNCxSPQS6o56kM89ceKeb8QklsBYJA==
-X-Received: by 2002:a05:6358:718e:b0:1b5:ffce:b28e with SMTP id e5c5f4694b2df-1b603c202femr1259468755d.12.1725139155574;
-        Sat, 31 Aug 2024 14:19:15 -0700 (PDT)
+        bh=FR2aZdF5bv/OtfI8399Ca40G5kJMSLxBifyoulxIJMw=;
+        b=cBhBOdeEHb2kzggflXYF5vLNQhkwCKSn5wWYLnqLfq+QyFyGIxR5yY+dzxZn4IHEdI
+         p/Mh8lljgIkN72mj/nmCNPjVB0dVWMhNwuUjHNvnQINK3Dov9W/NKKQ+CApRKfes+zD6
+         +QHyyQiFzP7LC3+hLABCp/XehLhIjcpSHp1U3Q0IJNkSotF/j/8RBHbnzdHzY1dFGvgL
+         GM/r/7y/vRSS+xsCWijGy9G/s2WHSN8UYf/hywBjcSvbgQjq68eDccn1Dx06w8iN+tgy
+         ejeqdLvB7Th7sqS7yqchZRMQ3Oxh8e4+sOnMba7BIUxfyADqHXycKqp4BJRwiyKgNdcT
+         8Hqw==
+X-Forwarded-Encrypted: i=1; AJvYcCWpwvyjlCo2P8EU0W+rzd+oo4hTJizy2oPTg+1kMcJ+GU58PEfCd9oct99OqmFFq6ra8epDakOv@vger.kernel.org, AJvYcCXGItP3QjQLrA5aaSy2nNgbwxiYDIY2YOGaqOxMf0KdbKrCx671jK/l9jDkTIsQ7UAShr2dlUDjsf7uAw8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxduapz6dL3sYp/iesNTQuSMJbieCQaKBcpHt5nwe/Rd31ZEP3W
+	UtgBcFQPWYaXdVykZ+Y770cqaT0PPu8TmBcy8Y55wv+sfo35FGLB
+X-Google-Smtp-Source: AGHT+IHazNvH5Ggr+Ry5W/EaR+fwton9T4al9vHQ+2WVAogX7HPBlJScQFXQAgfm7nEQAOJWB1R+ZQ==
+X-Received: by 2002:a05:6a00:6f64:b0:710:d294:a2b with SMTP id d2e1a72fcca58-715e0fbe5cemr16506914b3a.8.1725139590836;
+        Sat, 31 Aug 2024 14:26:30 -0700 (PDT)
 Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d8a5324db0sm1420727a91.56.2024.08.31.14.19.12
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-715e55a455esm4596093b3a.54.2024.08.31.14.26.28
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 31 Aug 2024 14:19:14 -0700 (PDT)
+        Sat, 31 Aug 2024 14:26:30 -0700 (PDT)
 Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <4f4ac35e-e31c-4f67-b809-a5de4d4b273a@roeck-us.net>
-Date: Sat, 31 Aug 2024 14:19:12 -0700
+Message-ID: <4b332d8c-4ed0-4ecf-a4db-75c1aa932b48@roeck-us.net>
+Date: Sat, 31 Aug 2024 14:26:28 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,7 +77,7 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6.1 000/321] 6.1.107-rc1 review
+Subject: Re: [PATCH 6.6 000/341] 6.6.48-rc1 review
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
 Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
  torvalds@linux-foundation.org, akpm@linux-foundation.org, shuah@kernel.org,
@@ -85,7 +85,7 @@ Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
  jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
  srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org,
  allen.lkml@gmail.com, broonie@kernel.org
-References: <20240827143838.192435816@linuxfoundation.org>
+References: <20240827143843.399359062@linuxfoundation.org>
 Content-Language: en-US
 From: Guenter Roeck <linux@roeck-us.net>
 Autocrypt: addr=linux@roeck-us.net; keydata=
@@ -131,13 +131,13 @@ Autocrypt: addr=linux@roeck-us.net; keydata=
  WkRwrSuCn7UG+qVWZeKEsFKFOkynOs3pVbcbq1pxbhk3TRWCGRU5JolI4ohy/7JV1TVbjiDI
  HP/aVnm6NC8of26P40Pg8EdAhajZnHHjA7FrJXsy3cyIGqvg9os4rNkUWmrCfLLsZDHD8FnU
  mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
-In-Reply-To: <20240827143838.192435816@linuxfoundation.org>
+In-Reply-To: <20240827143843.399359062@linuxfoundation.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 8/27/24 07:35, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.1.107 release.
-> There are 321 patches in this series, all will be posted as a response
+On 8/27/24 07:33, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.6.48 release.
+> There are 341 patches in this series, all will be posted as a response
 > to this one.  If anyone has any issues with these being applied, please
 > let me know.
 > 
@@ -146,22 +146,22 @@ On 8/27/24 07:35, Greg Kroah-Hartman wrote:
 > 
 [ ... ]
 
-> Abdulrasaq Lawani <abdulrasaqolawani@gmail.com>
->      fbdev: offb: replace of_node_put with __free(device_node)
+> Suren Baghdasaryan <surenb@google.com>
+>      change alloc_pages name in dma_map_ops to avoid name conflicts
 > 
 
 This patch triggers:
 
-Building powerpc:defconfig ... failed
-Building powerpc:ppc64e_defconfig ... failed
-Building powerpc:ppc6xx_defconfig ... failed
+Building s390:defconfig ... failed
 --------------
 Error log:
-drivers/video/fbdev/offb.c: In function 'offb_init_palette_hacks':
-drivers/video/fbdev/offb.c:358:24: error: cleanup argument not a function
-   358 |                 struct device_node *pciparent __free(device_node) = of_get_parent(dp);
-       |                        ^~~~~~~~~~~
-make[5]: *** [scripts/Makefile.build:250: drivers/video/fbdev/offb.o] Error 1
+arch/s390/pci/pci_dma.c:724:10: error: 'const struct dma_map_ops' has no member named 'alloc_pages'; did you mean 'alloc_pages_op'?
+   724 |         .alloc_pages    = dma_common_alloc_pages,
+
+for pretty much all s390 builds.
+
+Source code analysis suggests that the problem also affects
+arch/ia64/hp/common/sba_iommu.c.
 
 Guenter
 
