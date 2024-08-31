@@ -1,172 +1,114 @@
-Return-Path: <linux-kernel+bounces-309822-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309823-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 017139670BB
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 12:11:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF1469670BC
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 12:14:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 323CD1C20D57
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 10:11:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 83A3A2843B6
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 10:14:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C16A17C231;
-	Sat, 31 Aug 2024 10:11:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D76F17B4FE;
+	Sat, 31 Aug 2024 10:14:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IBEdoZ69"
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CB8Iy569"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3498C17ADF1
-	for <linux-kernel@vger.kernel.org>; Sat, 31 Aug 2024 10:11:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFD7513A27E
+	for <linux-kernel@vger.kernel.org>; Sat, 31 Aug 2024 10:14:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725099098; cv=none; b=TRqCDBQ2wEyQhAbth0Tw5JGH1uybBYhrSPu8Z0woJxJWur22PF5TonMkhcCF1HXuF3/9tapFVUb65DJ8PnnIXPWaOxT5Dy2STjERhZgmeQtBZZJjCsH5QgWcC7CZ3i10zB8VsxSReFq9ttXbHeZ4jDthYmPMJKvvif0XC2PFvMA=
+	t=1725099272; cv=none; b=CZCkWOUW4tYePvTCgb3S7b7Da08gSp2QPOFld8P/ZMTnbOSF1dnHje+DLKswBLwU+ei0jIG5ZryqOASQrS74NDI8k1LwT/foYeyTefK1VEXFluFr/gltqcWsvBQRIul2yNRJaIbe8oxbF/moO8P+UBYnf9jRd+oG8SQb7z1Xa0U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725099098; c=relaxed/simple;
-	bh=6A/KZXl0SOszbMPxJ54MyjSi/j4NMy3w33LDYgwEuUM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=KBiBp8Odf9o1BxtBI/g19BGCcG+rBNlgBXll/hBu9p8CSGVoGDkm3Lec2u6Ay4I5ZQRLrgs7Gga+f581UQ2LU8UTTq+ihSvOAVtdaa6ii58AI4HcfvAPUa8Hmd9dVjYIAOJoXQWkFgs7UB0GjVtjJKuJKe8WV++kbFaz8reLzkU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=IBEdoZ69; arc=none smtp.client-ip=209.85.208.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5c245580f5cso71623a12.0
-        for <linux-kernel@vger.kernel.org>; Sat, 31 Aug 2024 03:11:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1725099094; x=1725703894; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HAA/88jUmPoX8j9EzkHuwxEf+0bfdEcorfVyfMeqjt0=;
-        b=IBEdoZ690OOzBbuySs8tCMVkCUqFMIUxQx81sIn/QchJS+bh25iezZacv/xCgizvN0
-         kOrPULkPtPyYEM2lz/pkaWD+t/lpbWNGuBQxIV9YRgLmV28Epqxba3g5ioMm85fyziJg
-         +1MAPgzz5O0y11l4W50AtMAP7HE2sMk0ugTfS8c90BseI046ApdU3C3dfJ38HKfMhukb
-         m4FWWkTuV4PY1+TVYlIKsGaSkGMtp2tdiUTwkp2woZo/OheYbR3WLmhwWBP8SYzO7xvI
-         jbMRgC4t5WWyF7izgphNDIw/3BdY3l8Sm0Pvoo/N7BS9lIaTkr6eoYBTHq9W29THFfx/
-         aylw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725099094; x=1725703894;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=HAA/88jUmPoX8j9EzkHuwxEf+0bfdEcorfVyfMeqjt0=;
-        b=CniFQHYK0aaIOCUUHhmItKovcUZakZSTagAwlVQm0cUYfffyuylRWLqbg8jEL17Zau
-         QMGmT4RBp4vKyfDQR2S14RHDvT+oKt4El9wAPSfPjciGHueby0Zx2B2pMJdOKLjwiuoN
-         1TFVryYAZ/jorNQD52PS3d+DZ6PblbRzxCO68au5aGKcDPkCk0nnRnNHZQzy1dsYIwxW
-         E3BjMoWERjCA0a0WhNIkRJwWnf+D6YLvLPQJSw0wpHOVZV+W5QguBmmoRLffZNNkHZQ5
-         1I1n7TcyrVJHSHipENrmCDRYfmziiJ5OqeL1KOybVO0DGwwrjBfAcSxFvQ5Ase+sf0XH
-         3gtA==
-X-Forwarded-Encrypted: i=1; AJvYcCWM/oc+8G8n1mhfcrqedtePQ39H2xROGUl07rqVG+YSrJuF7HYDOi3BsR84+66OPSx6f+T+LXXqEQHXyH4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzlwYP//pno6SHyESnX1WytMHWKZVRYyUsufMGFJVDiekxGjBbN
-	skqvaVwZtiLql4558gjFVY1CXqyDkC/5FgmxoABGSju/IdJVHW0vnzJN+DJay/k=
-X-Google-Smtp-Source: AGHT+IFlB45dEul3ujIqmq8Dxo7h/2KpPUUyuM2NL5Hz0hrjeccIA1n0Q+AYQl2uee/M95VUlejx1g==
-X-Received: by 2002:a17:907:7f06:b0:a83:70d0:7a1e with SMTP id a640c23a62f3a-a89a37f673dmr133763166b.9.1725099094557;
-        Sat, 31 Aug 2024 03:11:34 -0700 (PDT)
-Received: from krzk-bin.. ([178.197.222.82])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8988feae4dsm311707266b.31.2024.08.31.03.11.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 31 Aug 2024 03:11:33 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Michael Trimarchi <michael@amarulasolutions.com>,
-	Matteo Lisi <matteo.lisi@engicam.com>,
-	Jagan Teki <jagan@amarulasolutions.com>,
-	Parthiban Nallathambi <parthiban@linumiz.com>,
-	devicetree@vger.kernel.org,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	stable@vger.kernel.org
-Subject: [PATCH 2/2] ARM: dts: imx6ull-seeed-npi: fix fsl,pins property in tscgrp pinctrl
-Date: Sat, 31 Aug 2024 12:11:29 +0200
-Message-ID: <20240831101129.15640-2-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240831101129.15640-1-krzysztof.kozlowski@linaro.org>
-References: <20240831101129.15640-1-krzysztof.kozlowski@linaro.org>
+	s=arc-20240116; t=1725099272; c=relaxed/simple;
+	bh=yj38hRBpjkYukw9Ls4kNpywcL2S3VVmPB0OsAP1YOvA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gGc9MWAEcm+csPfbp3Lf8YiZQsaRtE2M19nCqloBQVk4qwluzeZrBnM0aFC8WrJwRU9WBIcavR138Ql775L9+wiyqKEgGhXYfKv5UFcnKEBdMDZGZwyo/AfNqDRW0uoKq4c7pGgSGcEQSa1inZC/S6sfMogMinFAtAWddvijj9k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CB8Iy569; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 01616C4AF09
+	for <linux-kernel@vger.kernel.org>; Sat, 31 Aug 2024 10:14:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725099270;
+	bh=yj38hRBpjkYukw9Ls4kNpywcL2S3VVmPB0OsAP1YOvA=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=CB8Iy569E0WF8foH21kMyeaIxGfu5WeOENrdTNXAyKKdpVcpbWgXhWSH4nQK+0WTJ
+	 MU4QZmdMic+BPZxnat7apdTN7bYTMu752636mWfAnA2Z6pJ4lOSGb/wQ54JcjOvmaO
+	 hxgsRcCCcoGIRC7hD6Umb9TlvWSeah2vXCVKSuBAaGkX2+eNFJkDdsWpsdzbySuBbK
+	 mWcLI/YtUOfte7flJRh/IMncb51fMckC+mJwVd8fSR3lQYeoenxLHCUdAAJy65yGTJ
+	 QrvAhMx+fTS9YRD0uWvD3ylBPFwU9WuASPd1Me879LYbxidSk0nC5gCvPPTTXhDCVk
+	 0tOrWkkD0dqqA==
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-52f01b8738dso1907692e87.1
+        for <linux-kernel@vger.kernel.org>; Sat, 31 Aug 2024 03:14:29 -0700 (PDT)
+X-Gm-Message-State: AOJu0Ywu9UuvMym3iP31wrKvuSecnfz3bjei8WH0ccx99tBtJcQsadfi
+	Ku+Y1E4wa1Pn4JaIRHFufcIEbSZwhyCRACV/7VuOGJPZGFoayatek4vMiK/+7SlkrD+EA/3Qvfm
+	rvHeqbeJC18Y1gJiyXyU4VRavWQU=
+X-Google-Smtp-Source: AGHT+IGJqUs8p1NGO3fICcAO4WPlEKDkIXDQ0GM8sqsZT/kWKVLCi9wH3j8eFXId92Z1hO6A+ReMAxL2r6Ovfk5SVI4=
+X-Received: by 2002:a05:6512:12c7:b0:533:4689:973c with SMTP id
+ 2adb3069b0e04-53546b28914mr3103561e87.23.1725099268477; Sat, 31 Aug 2024
+ 03:14:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240831101045.1381258-1-masahiroy@kernel.org>
+In-Reply-To: <20240831101045.1381258-1-masahiroy@kernel.org>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Sat, 31 Aug 2024 19:13:52 +0900
+X-Gmail-Original-Message-ID: <CAK7LNATtOzj175_Y0qQz338FRG1GYCrsorA=jWG+Go1Wjn9rnw@mail.gmail.com>
+Message-ID: <CAK7LNATtOzj175_Y0qQz338FRG1GYCrsorA=jWG+Go1Wjn9rnw@mail.gmail.com>
+Subject: Re: [PATCH] ARC: update the help message for CONFIG_ARC_BUILTIN_DTB_NAME
+To: Vineet Gupta <vgupta@kernel.org>, linux-snps-arc@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The property is "fsl,pins", not "fsl,pin".  Wrong property means the pin
-configuration was not applied.  Fixes dtbs_check warnings:
+On Sat, Aug 31, 2024 at 7:10=E2=80=AFPM Masahiro Yamada <masahiroy@kernel.o=
+rg> wrote:
+>
+> Commit abe11ddea1d7 ("ARC: [plat-arcfpga]: Enabling DeviceTree for
+> Angel4 board") changed the default built-in DTB from "skeleton" to
+> "angel4".
+>
+> Commit fd1557923b2e ("ARC: [plat_arcfpga]->[plat_sim]") changed it
+> from "angel4" to "nsim_70".
 
-  imx6ull-seeed-npi-dev-board-emmc.dtb: pinctrl@20e0000: uart1grp: 'fsl,pins' is a required property
-  imx6ull-seeed-npi-dev-board-emmc.dtb: pinctrl@20e0000: uart1grp: 'fsl,pin' does not match any of the regexes: 'pinctrl-[0-9]+'
 
-Cc: <stable@vger.kernel.org>
-Fixes: e3b5697195c8 ("ARM: dts: imx6ull: add seeed studio NPi dev board")
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- .../dts/nxp/imx/imx6ull-seeed-npi-dev-board.dtsi     | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+A typo.
 
-diff --git a/arch/arm/boot/dts/nxp/imx/imx6ull-seeed-npi-dev-board.dtsi b/arch/arm/boot/dts/nxp/imx/imx6ull-seeed-npi-dev-board.dtsi
-index 6bb12e0bbc7e..50654dbf62e0 100644
---- a/arch/arm/boot/dts/nxp/imx/imx6ull-seeed-npi-dev-board.dtsi
-+++ b/arch/arm/boot/dts/nxp/imx/imx6ull-seeed-npi-dev-board.dtsi
-@@ -339,14 +339,14 @@ MX6UL_PAD_JTAG_TRST_B__SAI2_TX_DATA	0x120b0
- 	};
- 
- 	pinctrl_uart1: uart1grp {
--		fsl,pin = <
-+		fsl,pins = <
- 			MX6UL_PAD_UART1_TX_DATA__UART1_DCE_TX	0x1b0b1
- 			MX6UL_PAD_UART1_RX_DATA__UART1_DCE_RX	0x1b0b1
- 		>;
- 	};
- 
- 	pinctrl_uart2: uart2grp {
--		fsl,pin = <
-+		fsl,pins = <
- 			MX6UL_PAD_UART2_TX_DATA__UART2_DCE_TX	0x1b0b1
- 			MX6UL_PAD_UART2_RX_DATA__UART2_DCE_RX	0x1b0b1
- 			MX6UL_PAD_UART2_CTS_B__UART2_DCE_CTS	0x1b0b1
-@@ -355,7 +355,7 @@ MX6UL_PAD_UART2_RTS_B__UART2_DCE_RTS	0x1b0b1
- 	};
- 
- 	pinctrl_uart3: uart3grp {
--		fsl,pin = <
-+		fsl,pins = <
- 			MX6UL_PAD_UART3_TX_DATA__UART3_DCE_TX	0x1b0b1
- 			MX6UL_PAD_UART3_RX_DATA__UART3_DCE_RX	0x1b0b1
- 			MX6UL_PAD_UART3_CTS_B__UART3_DCE_CTS	0x1b0b1
-@@ -364,21 +364,21 @@ MX6UL_PAD_UART3_RTS_B__UART3_DCE_RTS	0x1b0b1
- 	};
- 
- 	pinctrl_uart4: uart4grp {
--		fsl,pin = <
-+		fsl,pins = <
- 			MX6UL_PAD_UART4_TX_DATA__UART4_DCE_TX	0x1b0b1
- 			MX6UL_PAD_UART4_RX_DATA__UART4_DCE_RX	0x1b0b1
- 		>;
- 	};
- 
- 	pinctrl_uart5: uart5grp {
--		fsl,pin = <
-+		fsl,pins = <
- 			MX6UL_PAD_UART5_TX_DATA__UART5_DCE_TX	0x1b0b1
- 			MX6UL_PAD_UART5_RX_DATA__UART5_DCE_RX	0x1b0b1
- 		>;
- 	};
- 
- 	pinctrl_usb_otg1_id: usbotg1idgrp {
--		fsl,pin = <
-+		fsl,pins = <
- 			MX6UL_PAD_GPIO1_IO00__ANATOP_OTG1_ID	0x17059
- 		>;
- 	};
--- 
-2.43.0
+ ... to "nsim_700".
 
+
+>
+> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+> ---
+>
+>  arch/arc/Kconfig | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/arch/arc/Kconfig b/arch/arc/Kconfig
+> index fd0b0a0d4686..d01e69a29b69 100644
+> --- a/arch/arc/Kconfig
+> +++ b/arch/arc/Kconfig
+> @@ -553,7 +553,7 @@ config ARC_BUILTIN_DTB_NAME
+>         string "Built in DTB"
+>         help
+>           Set the name of the DTB to embed in the vmlinux binary
+> -         Leaving it blank selects the minimal "skeleton" dtb
+> +         Leaving it blank selects the "nsim_700" dtb.
+>
+>  endmenu         # "ARC Architecture Configuration"
+>
+> --
+> 2.43.0
+>
+
+
+--=20
+Best Regards
+Masahiro Yamada
 
