@@ -1,119 +1,117 @@
-Return-Path: <linux-kernel+bounces-309764-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309760-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6D7F96702F
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 09:42:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E16F967025
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 09:38:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0289A1C21939
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 07:42:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4895828174A
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 07:38:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD0C616F0CA;
-	Sat, 31 Aug 2024 07:42:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tn0HWQeu"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17E4E16F27D;
+	Sat, 31 Aug 2024 07:38:02 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1910B1758F;
-	Sat, 31 Aug 2024 07:42:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B098F14D28F;
+	Sat, 31 Aug 2024 07:37:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725090147; cv=none; b=jZs77cPeWdQFcMDkPnVVnrqoqowBcVrqAIpJekczOYA9hP3PKQIZY8971Xcr0SR4GmzwgEaMa0oo5P0/HGx/HrzAgtLS+zwAr+nBogWzLbdwChO0tPUeoPZy2qPpHt2vUapLiB6p+FvikoWidIxR7FOvjblsBs0CXiLvHouz6fs=
+	t=1725089881; cv=none; b=tvVM1kfZa62ZPAFVUJDw+2B7Qmoifm/KDW5iYu++xJSiVbz3ASvogXbbLXeMwDAf3TcKo9+LFq5cNl/kJZVlCNuGpyues/hy8vOdacwNfIwA5CjrOH+/dyDyp/L7/slEaYx3epd3ZgONq6LF6tlcuTRrfF76pOUTq6laJCl+Qms=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725090147; c=relaxed/simple;
-	bh=CSYles6ImJnP6hRgL02AQveRmBHZZvF8jl7dwBIrqss=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=YknfcB4bq1KTa9maYdhuXr6sdyFGWEM8RW/LFkQloK5EeGLz2fAeh1N9CPplLJsufgux043NruIp7llx/6/qTiNWLjPEeVlYwvprJUpF5qfcXqwAm1C0eETu38wMVF1sRCHAZVtQWPhJ0gWDGgY3GjGALUAcz3w6JFnwB4J7E3k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tn0HWQeu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 924FDC4CEC0;
-	Sat, 31 Aug 2024 07:42:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725090146;
-	bh=CSYles6ImJnP6hRgL02AQveRmBHZZvF8jl7dwBIrqss=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=tn0HWQeuZfUPF/N6YWMS4/kIkP/e80G4QduNmZ186OA2/aDlwmBaNQ5jPMh3h5MXV
-	 8PqZdrQdMSAWU0TUxH1kAhPPckZyXnTDRBqHNndHMOoZ+gsrqWswRH4ZA0WvpqohFr
-	 3VH1Ljj2nqhiZgBh+kIr4vmILJ763GWrG5zCPUcEkxdvMeRkpXCZAJgxfdLhpYVmK4
-	 /p9WGi3pIQPYbKN0ghTwVOpxUkkDe/RPZMkSTcxsfpcSblT56zn0Kf09Zy1KJICtpC
-	 zHHCsJJbHaQzUdRxb0cUGF+c9csvH+TnmNwe0PvUptstp9Ukf4g7P6+yEeguh/2r0g
-	 LJB3+stHfRLXw==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1skIka-008RVF-7l;
-	Sat, 31 Aug 2024 08:42:24 +0100
-Date: Sat, 31 Aug 2024 08:42:23 +0100
-Message-ID: <86zfotuoio.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Tangnianyao <tangnianyao@huawei.com>
-Cc: Will Deacon <will@kernel.org>,
-	<oliver.upton@linux.dev>,
-	<linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>,
-	<kvmarm@lists.linux.dev>,
-	"guoyang (C)" <guoyang2@huawei.com>,
-	Ard Biesheuvel <ardb@kernel.org>
-Subject: Re: Question on get random long worse in VM than on host
-In-Reply-To: <214e37e9-7aba-1e61-f63f-85cb10c9a878@huawei.com>
-References: <214e37e9-7aba-1e61-f63f-85cb10c9a878@huawei.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1725089881; c=relaxed/simple;
+	bh=0t6r8K4+BuzINWItainCjUJV4Y8eunJfwWqFqylvwB8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=a9N85GHhiw+bI0Mc1pU4kkt8P4DxeM04vx35UlwbW5iNDtwdypglaCvS4IL5Op8uVUJaDz6dYrh7Gu1atvrNFfDBeHNMqkDUWxTgbxgRxUnYpWPRKcF+n4YukLr2gxAZgjq/v5Qe2lNt7ZC+Z1ObigU599OB6pnQgzig/Xq0Fvo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Wwn152q39z4f3jjw;
+	Sat, 31 Aug 2024 15:37:45 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 7B27B1A12E5;
+	Sat, 31 Aug 2024 15:37:55 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.67.174.193])
+	by APP4 (Coremail) with SMTP id gCh0CgCXv4VQyNJmLLDdDA--.28814S4;
+	Sat, 31 Aug 2024 15:37:54 +0800 (CST)
+From: Luo Gengkun <luogengkun@huaweicloud.com>
+To: peterz@infradead.org
+Cc: mingo@redhat.com,
+	acme@kernel.org,
+	namhyung@kernel.org,
+	mark.rutland@arm.com,
+	alexander.shishkin@linux.intel.com,
+	jolsa@kernel.org,
+	irogers@google.com,
+	adrian.hunter@intel.com,
+	kan.liang@linux.intel.com,
+	linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org,
+	luogengkun@huaweicloud.com
+Subject: [PATCH v5 0/2] Fix perf adjust period algorithm
+Date: Sat, 31 Aug 2024 07:43:14 +0000
+Message-Id: <20240831074316.2106159-1-luogengkun@huaweicloud.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: tangnianyao@huawei.com, will@kernel.org, oliver.upton@linux.dev, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kvmarm@lists.linux.dev, guoyang2@huawei.com, ardb@kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgCXv4VQyNJmLLDdDA--.28814S4
+X-Coremail-Antispam: 1UD129KBjvdXoWrKw47tFW7GrWxGr1rZr43Jrb_yoWkArgE9r
+	17AFy0kwn7WF40ga4IyF45tasYkrWUAr1FkF1UtryagwnFyry8GF4kJFyrArnxGa1FqryD
+	J3Z8ArnYvr1ayjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUb3kFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j
+	6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
+	4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628v
+	n2kIc2xKxwCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7x
+	kEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E
+	67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCw
+	CI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1x
+	MIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIda
+	VFxhVjvjDU0xZFpf9x0JUd-B_UUUUU=
+X-CM-SenderInfo: 5oxrwvpqjn3046kxt4xhlfz01xgou0bp/
 
-[+ Ard, who actually understands the whole RNG thing]
+---
+Changes in v5:
+1. Read the time once at the beginning instead of each loop
+2. Add reviewed by
+Link to v4: https://lore.kernel.org/all/20240821134227.577544-1-luogengkun@huaweicloud.com/
 
-On Sat, 31 Aug 2024 04:34:33 +0100,
-Tangnianyao <tangnianyao@huawei.com> wrote:
-> 
-> Hi, all
-> 
-> On ARM64 server(Kunpeng), performance of some syscall cases (like fork
-> and open) in guest, which need random u64, are 10~20% worse than
-> those on host. Because CONFIG_ARCH_HAS_ELF_RANDOMIZE=y and
-> CONFIG_STACKPROTECTOR=y, guest kernel need random u64 and
-> require them from host kvm using hvc.
->
-> If FEAT_RNG is supported and EL3 firmware not support smccc trng, host
-> kvm finally return random u64 using RNDRRS to guest.
-> 
-> Shall we firstly let guest get random u64 from RNDRRS to avoid hvc trap?
-> For example, if host find smccc trng not available, then tell guest smccc
-> trng not available when guest check trng version.
+Changes in v4:
+1. Rebase the patch 
+2. Tidy up the commit message
+3. Modify the code style
+Link to v3: https://lore.kernel.org/all/20240810102406.1190402-1-luogengkun@huaweicloud.com/
 
-My recollection is that it was a deliberate decision to decouple what
-the host firmware offers from what the guest sees (we can always
-implement the SMCCC TRNG using any mechanism that the host has to
-deliver entropy).
+Changes in v3:
+1. Replace perf_clock with jiffies in perf_adjust_freq_unthr_context
+Link to v2: https://lore.kernel.org/all/20240417115446.2908769-1-luogengkun@huaweicloud.com/
 
-Now, userspace has almost complete freedom to expose what the guest
-sees in terms of PV services. In this particular case, it can write to
-the KVM_REG_ARM_STD_BMAP pseudo register to remove the
-KVM_REG_ARM_STD_BIT_TRNG_V1_0 bit from the bitmap, which will hide the
-functionality.
+Changes in v2:
+1. Add reviewed by for perf/core: Fix small negative period being ignored
+2. Add new patch perf/core: Fix incorrected time diff in tick adjust period
+Link to v1: https://lore.kernel.org/all/20240116083915.2859302-1-luogengkun2@huawei.com/
+---
 
-Isn't this sufficient here? Given that you seem to be micro-optimising
-for a particular platform, this seems like the easiest way to reach
-your goal without having to change anything.
+Luo Gengkun (2):
+  perf/core: Fix small negative period being ignored
+  perf/core: Fix incorrect time diff in tick adjust period
 
-Thanks,
-
-	M.
+ include/linux/perf_event.h |  1 +
+ kernel/events/core.c       | 18 ++++++++++++++----
+ 2 files changed, 15 insertions(+), 4 deletions(-)
 
 -- 
-Without deviation from the norm, progress is not possible.
+2.34.1
+
 
