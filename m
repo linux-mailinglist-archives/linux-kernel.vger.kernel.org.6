@@ -1,139 +1,176 @@
-Return-Path: <linux-kernel+bounces-309946-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309944-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4725A96724A
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 17:00:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BBA5A967243
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 16:56:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B90471F22660
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 15:00:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED6931F21CC9
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 14:56:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78D4C364A4;
-	Sat, 31 Aug 2024 15:00:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA4702262B;
+	Sat, 31 Aug 2024 14:56:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=lausen.nl header.i=@lausen.nl header.b="Y+haWd6F"
-Received: from mailgate02.uberspace.is (mailgate02.uberspace.is [185.26.156.114])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NSfAqcss"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74BF7249ED
-	for <linux-kernel@vger.kernel.org>; Sat, 31 Aug 2024 15:00:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.26.156.114
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10ED41F959;
+	Sat, 31 Aug 2024 14:56:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725116407; cv=none; b=KzWzkiEeDM370e44hBUNNrDMZnpjtqsMWoLBjS95CIPJUb5+ngCyqy98TebTbybJvqwhXrVt1UHcduuTOpgc5rdJuP7NTkXbFF2Me6ZG2v2bR/OnweHYP+53mk3QG8gCRJ4DJgzm8740HU8KNeU09y7EKuFZzH0P96BvU+f+2vk=
+	t=1725116172; cv=none; b=KNqZSoSCLAi9SsNL0eH0juhWv8Apt8u7RDLVVffQOmavIIsgc3buXgSr1EY/+acQFqN5gVCxtmkKVyOSadpF1XrbSwar9FnYhCG5ovAwaCptefvyvB4Wp1k5SiIpYlGvWXhj5GpUW3jQ4M3IZ50saro/cUPCWmXpGTWI1oHcuI4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725116407; c=relaxed/simple;
-	bh=YyHUK4IQnTPVeEYta+n1gsttoFXt/qfofrar4WmPX0o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eIvNJ2PokeU90QZ6YFeSJvKaFrYZrr9nBTBmWBhoMLy9BMUKjphM3ybG8IRBF4AtxrdNa/fHH0K/IQ+tXIbNe1pkvVlSHjeF6bzwvJtwwcWEYC9+iARslEe3YSHj6/lAMvfIGZSJW4YWbVpr2dGlHX4l+wDQqCFO9Dn/GTRBBnE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lausen.nl; spf=fail smtp.mailfrom=lausen.nl; dkim=fail (0-bit key) header.d=lausen.nl header.i=@lausen.nl header.b=Y+haWd6F reason="key not found in DNS"; arc=none smtp.client-ip=185.26.156.114
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lausen.nl
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=lausen.nl
-Received: from devico.uberspace.de (devico.uberspace.de [185.26.156.185])
-	by mailgate02.uberspace.is (Postfix) with ESMTPS id 26DFA1802EC
-	for <linux-kernel@vger.kernel.org>; Sat, 31 Aug 2024 16:53:26 +0200 (CEST)
-Received: (qmail 12192 invoked by uid 990); 31 Aug 2024 14:53:25 -0000
-Authentication-Results: devico.uberspace.de;
-	auth=pass (plain)
-Received: from unknown (HELO unkown) (::1)
-	by devico.uberspace.de (Haraka/3.0.1) with ESMTPSA; Sat, 31 Aug 2024 16:53:25 +0200
-Message-ID: <9723f25d-1005-4045-b8f2-7c2d06f30394@lausen.nl>
-Date: Sat, 31 Aug 2024 10:53:19 -0400
+	s=arc-20240116; t=1725116172; c=relaxed/simple;
+	bh=Dq+eBER6Wi/OhVJxWmmHUAOjADJsYbcEDCDMPaluXCI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=WdF/oSYWwMUSlvW6729biEE+zaraKWAxqAHWxTHKtAaz43iaGlC8ypZzbRBXlgERwAUnC9WOGjBWgU5ARhkULLtKy/y2okcnbTO3mMjxb+jSwtfMBqw3iApoCf/uvEypOli34tJSxlfYToWd5BjurGdbK8COjUzgozw1gQ8MU3Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NSfAqcss; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC7ADC4CEC0;
+	Sat, 31 Aug 2024 14:56:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725116171;
+	bh=Dq+eBER6Wi/OhVJxWmmHUAOjADJsYbcEDCDMPaluXCI=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=NSfAqcss9HgBbxBPIvFYAZdTe0DQOzeij/u8KjABx+4jbt6vXiFBkKRdix8yIxI1u
+	 hSNVcdAfrp7SA9dq143rPXNhJbP7TBorXR+SWSFvAPIfBxi3fFFG+rhSJtCBZeiG+X
+	 lyRtl4lpAJBRqzxKS/8nF52OdONtniDP6EPbXrz6p6LALIrD6IpCUrnAN/6EljKNhn
+	 BP+63mpkQ51TlMHlyGF636IlWta1Mmr6fDg+QVPhqgi07sgN2PNSlhxH+pdWQr/guB
+	 FdBr29Fc0kVh6lGTXx8jdtCwbk1HNxkIz5qwkv/21nj/FlOo0d+SNA8+YuXaK1KiZS
+	 qZMyCZs8ixnnA==
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5bef295a2b4so4741632a12.0;
+        Sat, 31 Aug 2024 07:56:11 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUK+dWWT7+GcgyljAK0B5PvErjPIdPxSwewHM0c9o2SJ+ORqL3HxKJr6jwh4o57dW9P6rY=@vger.kernel.org, AJvYcCV65rzV2KNWHgroOsO8YDBFeBV/71Y8d+fcc9voovz1qaBRjviN0Ewrr0dq8rTiRwvsxhVagB7kBvrYkaso@vger.kernel.org
+X-Gm-Message-State: AOJu0YwBH98sAzN/nMa5mrWQov7akgx+Q1VyTxc042enbQKjUeF+ajve
+	AK8LS2OS0ItpYc/oH0ej+IElihGFzoYIIRnLL9pesWIypbaXuTP75KEI6IgK4n6A/FBIwh7GY+P
+	HN9LsGVBF6uUtvodYzjSm1EQx4nM=
+X-Google-Smtp-Source: AGHT+IFxskF7lIdpRwknhT3nSB4OC5bYvD6oGoNWeAErn2EM+YplzZd8VvXwDHOFoE+yL8ykFvIt/M2XZRP6CbcuLfw=
+X-Received: by 2002:a05:6402:4303:b0:5c0:a8b8:dd6b with SMTP id
+ 4fb4d7f45d1cf-5c22f8a1797mr6686055a12.14.1725116170311; Sat, 31 Aug 2024
+ 07:56:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [v2,1/2] drm/msm/dpu1: don't choke on disabling the writeback
- connector
-Content-Language: en-US
-To: =?UTF-8?Q?Gy=C3=B6rgy_Kurucz?= <me@kuruczgy.com>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Rob Clark <robdclark@gmail.com>, Abhinav Kumar <quic_abhinavk@quicinc.com>,
- Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>,
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>
-Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
- freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- Jeykumar Sankaran <jsanka@codeaurora.org>, stable@vger.kernel.org
-References: <20240802-dpu-fix-wb-v2-1-7eac9eb8e895@linaro.org>
- <b70a4d1d-f98f-4169-942c-cb9006a42b40@kuruczgy.com>
-From: Leonard Lausen <leonard@lausen.nl>
-Autocrypt: addr=leonard@lausen.nl; keydata=
- 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 Sw==
-In-Reply-To: <b70a4d1d-f98f-4169-942c-cb9006a42b40@kuruczgy.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Rspamd-Bar: /
-X-Rspamd-Report: BAYES_HAM(-0.000362) XM_UA_NO_VERSION(0.01) MIME_GOOD(-0.1)
-X-Rspamd-Score: -0.090362
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=lausen.nl; s=uberspace;
-	h=from:to:cc:subject:date;
-	bh=YyHUK4IQnTPVeEYta+n1gsttoFXt/qfofrar4WmPX0o=;
-	b=Y+haWd6F2IkMZFwSh6XhOxrXM68YxkZSpN/H80ZBRQNLHfuwidSidGR4PD9M+Gzi15Jk29us7A
-	bRQJ0xuAOLBWqEexqccheh2Tan22DqzMAJ2F3Ot6Ez5HqWvj5CZchmTdgriNGQXTEjSiTBGlpEzo
-	HoctCqB47hI81L/hxhzRUe2F4/4iHs81Khy3rsvxA4s2Z/6detbkdS5gY0kyqMLwOktmoP7n0A9v
-	lE0dLsmUic7nv7L73f0O/uZfxMUqMDAW83e44TwGsjtAOWEOW/1yeoF90sBn5v4QXBal0+40XS+r
-	V+M51ztYaTKdG+hA26AK8SZifxYTU0+khBNSrE7XSGyCrFjTe3B005kfBaWKAkI3KQZDqD9QvAG9
-	hQZ6xVIXPriN2d92DYBxdbi7kKBNcpuNrlScbVWv0HWUwstlPIj1rZ9v8fcIbjZiPd9y3LM/Ky1U
-	ZZdUPhrXwPZEQk/YwkUQtppmozUxDvjN+71MYaPyeo0vovbyOFG0tf291v4AW+Yr9fKFm03pQPpr
-	OZYmkxwfZ7osHZ9YjQpS/AVXtsCU61v+5mfW1joq6/AiFMEoeH+PbF6Ro0eAS2WVgt67d/oh9wzX
-	0hMVxoqrOIsgOdmxaNACJTte1joMG7h1SUt9s5VHmualyyJny0muzZN4ODus91qj/LiJUOXRMXF0
-	c=
+References: <20240730075744.1215856-1-maobibo@loongson.cn> <CAAhV-H6dFBJ+dQE7qzK8aiTjx8NFJtzPWzEGpJ8dm7v4ExD8Ow@mail.gmail.com>
+ <e898b732-71d5-c16f-93a5-de630820f06d@loongson.cn>
+In-Reply-To: <e898b732-71d5-c16f-93a5-de630820f06d@loongson.cn>
+From: Huacai Chen <chenhuacai@kernel.org>
+Date: Sat, 31 Aug 2024 22:55:58 +0800
+X-Gmail-Original-Message-ID: <CAAhV-H55SMmYvWSsGc6dHX6Dw=4fMe0+QJpQ_kzHUaU1zdux5Q@mail.gmail.com>
+Message-ID: <CAAhV-H55SMmYvWSsGc6dHX6Dw=4fMe0+QJpQ_kzHUaU1zdux5Q@mail.gmail.com>
+Subject: Re: [PATCH v6 0/3] LoongArch: KVM: Add Binary Translation extension support
+To: maobibo <maobibo@loongson.cn>
+Cc: Tianrui Zhao <zhaotianrui@loongson.cn>, WANG Xuerui <kernel@xen0n.name>, kvm@vger.kernel.org, 
+	loongarch@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	Jiaxun Yang <jiaxun.yang@flygoat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Dear György,
+On Wed, Aug 28, 2024 at 10:28=E2=80=AFAM maobibo <maobibo@loongson.cn> wrot=
+e:
+>
+>
+>
+> On 2024/8/28 =E4=B8=8A=E5=8D=8810:08, Huacai Chen wrote:
+> > Hi, Bibo,
+> >
+> > I have consulted with Jiaxun offline, and he has tried his best to
+> > propose a "scratch vcpu" solution. But unfortunately that solution is
+> > too difficult to implement and he has nearly given up.
+> >
+> > So the solution in this series seems the best one, and I will queue it
+> > for loongarch-kvm now.
+> Thanks. There may be requirement such as there is different capability
+> for different vCPUs, only that it is a little far from now. We can
+> discuss and add that if there is such requirement. Because of limitation
+> of human resource and ability, the implementation is not perfect however
+> it can be used.
+I have merged the first two patches, but the 3rd one seems to have
+some problems. If you send V7, please keep the first two be the same
+and only update the 3rd one, thanks.
 
-On 8/30/24 13:36, György Kurucz wrote:
-> For context, I have a Lenovo Yoga Slim 7x laptop, and was having issues with the display staying black after sleep. As a workaround, I could switch to a different VT and back.
+Huacai
 
-Do you observe this issue on every suspend-resume cycle? On sc7180 trogdor lazor, I do observe the same "display staying black after sleep" in some of the suspend-resume cycles. I have not been able to observe a pattern with respect to when the issue occurs and when it does not. "[drm:drm_mode_config_helper_resume] *ERROR* Failed to resume (-22)" is printed in either case. Switching to a different VT and back works to restore display functionality after those suspend-resume cycles that experience the issue.
-
-On sc7180 lazor, I do observe that this patch deterministically breaks restoring the CRTC state and functionality after resume. Can you please validate if you observe the same on Lenovo Yoga Slim 7x? Specifically, try set Night Light in your desktop environment to "Always On" and observe whether the screen remains in "Night Light" mode after resume. For lazor, "Night Light" is breaks after applying this patch and even manually toggling it off and on after resume does not restore "Night Light" / CRTC functionality.
-
-Best regards
-Leonard
+>
+> Regards
+> Bibo Mao
+> >
+> > Huacai
+> >
+> > On Tue, Jul 30, 2024 at 3:57=E2=80=AFPM Bibo Mao <maobibo@loongson.cn> =
+wrote:
+> >>
+> >> Loongson Binary Translation (LBT) is used to accelerate binary
+> >> translation, which contains 4 scratch registers (scr0 to scr3), x86/AR=
+M
+> >> eflags (eflags) and x87 fpu stack pointer (ftop).
+> >>
+> >> Like FPU extension, here lately enabling method is used for LBT. LBT
+> >> context is saved/restored during vcpu context switch path.
+> >>
+> >> Also this patch set LBT capability detection, and LBT register get and=
+ set
+> >> interface for userspace vmm, so that vm supports migration with BT
+> >> extension.
+> >>
+> >> ---
+> >> v5 ... v6:
+> >>    1. Solve compiling issue with function kvm_get_one_reg() and
+> >>       kvm_set_one_reg().
+> >>
+> >> v4 ... v5:
+> >>    1. Add feature detection for LSX/LASX from vm side, previously
+> >>       LSX/LASX feature is detected from vcpu ioctl command, now both
+> >>       methods are supported.
+> >>
+> >> v3 ... v4:
+> >>    1. Merge LBT feature detection for VM and VCPU into one patch.
+> >>    2. Move function declaration such as kvm_lose_lbt()/kvm_check_fcsr(=
+)/
+> >>       kvm_enable_lbt_fpu() from header file to c file, since it is onl=
+y
+> >>       used in one c file.
+> >>
+> >> v2 ... v3:
+> >>    1. Split KVM_LOONGARCH_VM_FEAT_LBT capability checking into three
+> >>       sub-features, KVM_LOONGARCH_VM_FEAT_X86BT/KVM_LOONGARCH_VM_FEAT_=
+ARMBT
+> >>       and KVM_LOONGARCH_VM_FEAT_MIPSBT. Return success only if host
+> >>       supports the sub-feature.
+> >>
+> >> v1 ... v2:
+> >>    1. With LBT register read or write interface to userpace, replace
+> >>       device attr method with KVM_GET_ONE_REG method, since lbt regist=
+er is
+> >>       vcpu register and can be added in kvm_reg_list in future.
+> >>    2. Add vm device attr ctrl marcro KVM_LOONGARCH_VM_FEAT_CTRL, it is
+> >>       used to get supported LBT feature before vm or vcpu is created.
+> >> ---
+> >> Bibo Mao (3):
+> >>    LoongArch: KVM: Add HW Binary Translation extension support
+> >>    LoongArch: KVM: Add LBT feature detection function
+> >>    LoongArch: KVM: Add vm migration support for LBT registers
+> >>
+> >>   arch/loongarch/include/asm/kvm_host.h |   8 ++
+> >>   arch/loongarch/include/asm/kvm_vcpu.h |   6 ++
+> >>   arch/loongarch/include/uapi/asm/kvm.h |  17 ++++
+> >>   arch/loongarch/kvm/exit.c             |   9 ++
+> >>   arch/loongarch/kvm/vcpu.c             | 128 ++++++++++++++++++++++++=
++-
+> >>   arch/loongarch/kvm/vm.c               |  52 ++++++++++-
+> >>   6 files changed, 218 insertions(+), 2 deletions(-)
+> >>
+> >>
+> >> base-commit: 8400291e289ee6b2bf9779ff1c83a291501f017b
+> >> --
+> >> 2.39.3
+> >>
+> >>
+>
+>
 
