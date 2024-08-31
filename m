@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-309600-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309601-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BF21966D50
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 02:19:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D473D966D52
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 02:19:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA92D1F2248D
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 00:19:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 890A81F22B16
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 00:19:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69EF547F5B;
-	Sat, 31 Aug 2024 00:16:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 581BA58ABF;
+	Sat, 31 Aug 2024 00:16:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="x6Ud8f+Y"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="cGo2+jyr"
 Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7224942077
-	for <linux-kernel@vger.kernel.org>; Sat, 31 Aug 2024 00:16:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5823DAD2D
+	for <linux-kernel@vger.kernel.org>; Sat, 31 Aug 2024 00:16:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725063366; cv=none; b=QSGS9ZVCUEh7BXxfhnZPr8OeinK9qfm3LCcKN5mx5p7mm1nx4Zo4lTG+B8FicqoXUXm1xnHkeo2N9k4Zh+rW52o5Rrac1vbq/Hw634r07bynvoXTUgqF+EcTCDqbWLeO2q+ioKmKb2XP8/Xp6i/ZDl7NdwO0ac9u9gpy9e2oUqY=
+	t=1725063369; cv=none; b=EVjWlaNOWZP/k4ax2hVmIPQzLTwnt6YY1GGA1XC44Uw1DbZxpxDSybud+D2lwHcxaFpvmv0VmZmVCm0wB1sfRM0fp5bOGcsliZTACwAOkcNZj/zMhCEoG1fsTymyoab/bAXCYGLBV3i4vhU1iqjfpK3HDAxL6gGnj6rkgJj3A70=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725063366; c=relaxed/simple;
-	bh=0ugKPXm7f0Z9tkNBlydIBvCQhLXirirTmaxUHzxFYGc=;
+	s=arc-20240116; t=1725063369; c=relaxed/simple;
+	bh=LzpJ/JVED9Xy/kfec+E0sqmDsVm4jZ8PMfDy2LTQRhA=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=IPBPP2moioMe+mm1OdXIidjR1g0gw+lyxwHrAfOlBVzfM3IzLQ+rtt9zd6uSpqjld+2/9HxmUQyhtoXLdVSyTGaN4XDubfg1RxJ7LGobwi0z5g50dzoOls+mvgMBwkyNnScVCqnLn+XrShTI8BBqBcSX85qjE0CRHoqwE9fLU5Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=x6Ud8f+Y; arc=none smtp.client-ip=209.85.210.201
+	 To:Cc:Content-Type; b=cA22eJuhMyNRtA+4DXibdSa0t91QxzhKbDpZ8rE1IzR3rRkg41a9du59SEW9whl+LkkfMMba3zkan1A9GzyiajDhrp8x5DCNQYxWaPV7h/bkXEmLEL62U2A3rV5iY4r+zA9CxqjLOJJfBLrf5xWv58befWH9HdYPM+juBNQrFW8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=cGo2+jyr; arc=none smtp.client-ip=209.85.210.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-714290c2b34so2321098b3a.1
-        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 17:16:05 -0700 (PDT)
+Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-7144c67e3d0so2311957b3a.0
+        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 17:16:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1725063365; x=1725668165; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1725063368; x=1725668168; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
-        bh=pFaEKpwsoQLgtn+xPOU/nmb2rgY2BlrNEgxoYJSjng0=;
-        b=x6Ud8f+YfiNAppvZWkbOoTh7yNRBp/eZpMnrRSdIR8mbBUeHPL2tUDE41RtBZRqTKk
-         2m4wZj4k0gWHDEMvAE+rD2Rx9ihFFJTKoO8hEsteWIAfQxbwquLVysdznBoBIPKl9XIq
-         7AD9/vT/9fTg3Xp8nrZiAF5gn9l0djEkeAK9zf7xodZd8QZkgvFqhzqyFf+DnG4Q5Jn7
-         Y8c4j1tx0T96EHILB77ySJgUKmMX2BMjWp0cKLpM7DyAF4+WWZM5cp4JSjNSp7nqf7Ph
-         f9vIieuWR7y/+fP3h185SmIir8jt4SmGf52ctXsCU2ywgmxW0/8+ALa+BsIskzn3jBtH
-         A+JQ==
+        bh=i1F/rHShfrDTgNHmv4cG1toMKdrxBDoSppyZEKY7y+E=;
+        b=cGo2+jyrnJ7A6D0zsP/8TWXvElPKXRdHnVxx4M30gHzMwr6sjOoERCtL/GVa6EJIZt
+         3q4b4lkWMrPO8CFxRBjC0r6cP2AKMqWGiaEFxDhfPAcqw2+j5Pu94ZiTmXO/ks8THxev
+         52CFV4LvzYVEmIjaNVeF3eudhcI3fbIdIKYBYKoF7GJEJPTuVGTkReNq3yJj7OaP3OfI
+         f5pWwse4xl4FtUcmJu2pwiZ5ursqgtKV42lHKzZvV4NCzX4K2dPgsASV/OLDv+2NjH97
+         3bW9KuD2O6R/3o3SzsSOgmPQBQbJ1KXZL8BOCLt3RypMpLDcxSjsz2nCVA3gABcALOEW
+         5n2w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725063365; x=1725668165;
+        d=1e100.net; s=20230601; t=1725063368; x=1725668168;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=pFaEKpwsoQLgtn+xPOU/nmb2rgY2BlrNEgxoYJSjng0=;
-        b=AcsOg+9KYP6PfRQGjKH9oS0C8EQU2t4+oJ+mYuHUOu8V5bExHJzpVLjtXPin2m3T1Z
-         y+Mwx29jDtGvdCdtUNyygLLhrZ8Ht4A7Q4ZfQzZKfle/whZgSrwJqCFuqkHkNFG5Qamh
-         Kpq6z4kP0pTUnp5725yfTs8UlL+A05YYUepCXN5z2UVmb2zUq9UvkLDusY/cYoGBkYy8
-         7VOKpsMfsmVP9N1ggVRk4QFjkC4+GRlmRX0yX1GGE9KHkLekGEu7wOqaABPwrUnIMyoB
-         86AisfWuaqkzGFvC0JPqEtOO9zQhuz6zpO+3nzbw4JZYj8j+2bDuBm5KcgLBzJFYIaQg
-         Yp2w==
-X-Forwarded-Encrypted: i=1; AJvYcCVdTGz0KRGvSMcj5bEaSCCbw+3z/c6JOizULVpvvtmp39vdlkGyWCsEiYopWl5aGXw6O8vNykPQiiY8qzs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy6LOQcdAcjbWiHMJrkX4/1fTwR2O10603dr4kca/ooB8QimmcG
-	Ks/aEZaalW6B4ZIOvNeA9/GEzdEXnJU1OgKvWHBMTkqgxt/2XLCeV7BqtMy+A2aXVGBf/Chqh2B
-	i0Q==
-X-Google-Smtp-Source: AGHT+IHeayohZ8P9bTfkvLJWiAXof8KEhjPXfE8aDRqDE3XirEUvuRZ9MRzo1AWngrkQZ4frV2qYEdsDGQ0=
+        bh=i1F/rHShfrDTgNHmv4cG1toMKdrxBDoSppyZEKY7y+E=;
+        b=Ui7IMffFmrFl+kpoIj6kOBEOZvQf9y2wf6wsjButXK7Yi4f6blvNAb7eeE5SPSdz24
+         M9M0AQwu+I7Ig5QzwRveMx0hg9COcnYBIRqBi4dttJPNDCaAfawRGGMUKmZIfC9gLPlz
+         WZ2Kj/nS/qX+nX8MjbxFJrXFVwfoOm0aKl79x+t/dccRZ5BZX6L7wHYGbiF3FUSaqBSj
+         +Imjxc0XTNN5Z2gaJyDs/85MTk+PeXldaUg2DourEXReDW8j3omYfbdVNuCWy2tcLqVl
+         vsQa6E+rKYdI0oZCA56Tc48o/MKjz0x057v6GDprDgzbOcgpKVbnO3+Q/TStauqfPjMA
+         WHyg==
+X-Forwarded-Encrypted: i=1; AJvYcCX0+e5FPegaNgrEGrWv5awHxi0196ekwpAVrP89BwELD9/7x8mLnCFcm6H3svnp4ce5xnfzCMNTe/dse2Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy9sh2baikAZPdkzpZ7KRavti+YjGPWZcleZW6Vn422lwEqO5Ia
+	hcdb6OB1BdFeKjyE9VYCfHmoV2NCfdmYqQia6pMIw65Y5fB4Vfqq9PjRws/rKwY6IaxAtvEsl+P
+	zHA==
+X-Google-Smtp-Source: AGHT+IFRLF5vuwLCmCExGGa5XYbATHrgktWltU4k7xw5DL+Mn8fkJtnEkifE9EVPqwBnNdQM3Vq7ebbZ5c4=
 X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a05:6a00:870f:b0:714:37ca:ed6e with SMTP id
- d2e1a72fcca58-715e104ad90mr24129b3a.3.1725063364507; Fri, 30 Aug 2024
- 17:16:04 -0700 (PDT)
+ (user=seanjc job=sendgmr) by 2002:a05:6a00:8983:b0:710:5cfc:8795 with SMTP id
+ d2e1a72fcca58-7173045b0b6mr7558b3a.0.1725063366272; Fri, 30 Aug 2024 17:16:06
+ -0700 (PDT)
 Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Fri, 30 Aug 2024 17:15:27 -0700
+Date: Fri, 30 Aug 2024 17:15:28 -0700
 In-Reply-To: <20240831001538.336683-1-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -75,50 +75,41 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20240831001538.336683-1-seanjc@google.com>
 X-Mailer: git-send-email 2.46.0.469.g59c65b2a67-goog
-Message-ID: <20240831001538.336683-13-seanjc@google.com>
-Subject: [PATCH v2 12/22] KVM: x86/mmu: Don't try to unprotect an INVALID_GPA
+Message-ID: <20240831001538.336683-14-seanjc@google.com>
+Subject: [PATCH v2 13/22] KVM: x86/mmu: Always walk guest PTEs with WRITE
+ access when unprotecting
 From: Sean Christopherson <seanjc@google.com>
 To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>
 Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
 	Yuan Yao <yuan.yao@intel.com>, Yuan Yao <yuan.yao@linux.intel.com>
 Content-Type: text/plain; charset="UTF-8"
 
-If getting the gpa for a gva fails, e.g. because the gva isn't mapped in
-the guest page tables, don't try to unprotect the invalid gfn.  This is
-mostly a performance fix (avoids unnecessarily taking mmu_lock), as
-for_each_gfn_valid_sp_with_gptes() won't explode on garbage input, it's
-simply pointless.
+When getting a gpa from a gva to unprotect the associated gfn when an
+event is awating reinjection, walk the guest PTEs for WRITE as there's no
+point in unprotecting the gfn if the guest is unable to write the page,
+i.e. if write-protection can't trigger emulation.
+
+Note, the entire flow should be guarded on the access being a write, and
+even better should be conditioned on actually triggering a write-protect
+fault.  This will be addressed in a future commit.
 
 Signed-off-by: Sean Christopherson <seanjc@google.com>
 ---
- arch/x86/kvm/mmu/mmu.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ arch/x86/kvm/mmu/mmu.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
-index dd62bd1e7657..ee288f8370de 100644
+index ee288f8370de..b89e2c63b435 100644
 --- a/arch/x86/kvm/mmu/mmu.c
 +++ b/arch/x86/kvm/mmu/mmu.c
-@@ -2729,8 +2729,11 @@ bool kvm_mmu_unprotect_gfn_and_retry(struct kvm_vcpu *vcpu, gpa_t cr2_or_gpa)
- 	if (!READ_ONCE(vcpu->kvm->arch.indirect_shadow_pages))
- 		return false;
- 
--	if (!vcpu->arch.mmu->root_role.direct)
-+	if (!vcpu->arch.mmu->root_role.direct) {
- 		gpa = kvm_mmu_gva_to_gpa_write(vcpu, cr2_or_gpa, NULL);
-+		if (gpa == INVALID_GPA)
-+			return false;
-+	}
- 
- 	r = kvm_mmu_unprotect_page(vcpu->kvm, gpa_to_gfn(gpa));
- 	if (r) {
-@@ -2749,6 +2752,8 @@ static int kvm_mmu_unprotect_page_virt(struct kvm_vcpu *vcpu, gva_t gva)
+@@ -2751,7 +2751,7 @@ static int kvm_mmu_unprotect_page_virt(struct kvm_vcpu *vcpu, gva_t gva)
+ 	if (vcpu->arch.mmu->root_role.direct)
  		return 0;
  
- 	gpa = kvm_mmu_gva_to_gpa_read(vcpu, gva, NULL);
-+	if (gpa == INVALID_GPA)
-+		return 0;
- 
- 	r = kvm_mmu_unprotect_page(vcpu->kvm, gpa >> PAGE_SHIFT);
+-	gpa = kvm_mmu_gva_to_gpa_read(vcpu, gva, NULL);
++	gpa = kvm_mmu_gva_to_gpa_write(vcpu, gva, NULL);
+ 	if (gpa == INVALID_GPA)
+ 		return 0;
  
 -- 
 2.46.0.469.g59c65b2a67-goog
