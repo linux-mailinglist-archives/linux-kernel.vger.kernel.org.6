@@ -1,146 +1,116 @@
-Return-Path: <linux-kernel+bounces-309883-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309884-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8B5996717B
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 14:17:37 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC343967181
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 14:18:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E89D1F21594
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 12:17:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5DC00B22923
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 12:18:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC4E617E005;
-	Sat, 31 Aug 2024 12:17:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E6DC17E900;
+	Sat, 31 Aug 2024 12:18:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="VUyTsahQ"
-Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RJ2JezcI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8F59193
-	for <linux-kernel@vger.kernel.org>; Sat, 31 Aug 2024 12:17:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBF84193;
+	Sat, 31 Aug 2024 12:18:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725106649; cv=none; b=MHgNvtuDic45qQfD7f/a6C+D3EDupAf1V9QaykiOrs0Ng+XartEygbx1xgr3zkWMfeFs7ClYol2PzI8iLSO1nqNdwdhOtDUG3JqNG+HXCkIVQmWxvqkqEuENtl0oCyfq1PUFRUu5Py4PQGJKa/xj2pHKhKJBQ4298w2XSskbKTc=
+	t=1725106714; cv=none; b=kzgbjZImdh4X0crAkzufd3dhNeAyiXcZQ2eJ1flHUppe0QjE55mikB2R7POpspNEZphcf7J34jSHhQcs0Y3AB4/vC6sYCikW3HJkwVuP6wAoLN4GJm/GceKF4/aGpqoinPpgeQGoJBPvvC7jfQFkYz/Zg3GburvYGfx4/3/KBWk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725106649; c=relaxed/simple;
-	bh=vStrJNgxv7jluDND4edIjDhOQsUyuYYkJfiHb2+oZUA=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=B604QPJ4Ypq0+0ghesLlmOD+DtNfRf0CkH2KgKpEHY5/egI96EMrD0lTqmWmfcXiS4V+inFUBAZqVxah/j1Orvi3tlRdlbkgE4cqdxQm47RM7fARfBdZm3GgmFgBC0KbXHX5SbFifEMMgsvMk3ByzXMz9OKSWgWAvXKGXrLTEgc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=VUyTsahQ; arc=none smtp.client-ip=209.85.210.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
-Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-71433096e89so2272920b3a.3
-        for <linux-kernel@vger.kernel.org>; Sat, 31 Aug 2024 05:17:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fastly.com; s=google; t=1725106647; x=1725711447; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=N9vo0rxBDwLLQLuN0jh+7it+dIzexEc+nX/9gftDvCo=;
-        b=VUyTsahQAGaJucepbFSKQG0yO75E1dYAtZuW3DpbwUeNbthwEw8zL7NuizOW3KSW5X
-         UCRg51+4k7Dde1ncKDhUErzq62eCPYfmPRte6LFOK3GJw9IJCizwtBEEGv6NN9NTCpMY
-         Z/wbvuC3epNWoqwwgs2o2P/i5UfS+CTL+BMYk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725106647; x=1725711447;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=N9vo0rxBDwLLQLuN0jh+7it+dIzexEc+nX/9gftDvCo=;
-        b=hLj+bnZuQj/6K0RK3qwOK3OXv/uAVnI/KsPsWu4F/KWCHFx4BUKqvUwILjz/iMOVNj
-         6fOS0MP4XG3wbMA6WEZdx/d+fIyGiEFVSZTdYnjFJN9OHMDttqo/ovw0ZAxIFuDY+ad5
-         KkQslMucPmzSFL/YKdthax6cCNcLN841SyQ0nZGfMHGwJmUaQf3XMx576F6w3PrgNwo2
-         C0IRBWxgmWrkrHbhFLC1biOKmNG6ACvwdkR2hzi/fdQREZ7qvQXkCIeoHEV/1DTjiws1
-         iBIjvDEJFJ8kQsWa8uPRES6ejKt9h/hyGXsfcAEOUWf6Us6muFvzjWyKEoWqLYOAqUtL
-         vSiw==
-X-Forwarded-Encrypted: i=1; AJvYcCV0V2Mu+dZgmovVQv4yI3vBDhuvfG33qAkizMH6OxhyjL2MNXS6ZQy1fC3O8tBzSo6TwWGG+Ch5rxXP2k0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxC0v+CpbDYt+uDSEd55tgJX7Kqk4+N/T6MTOu5KkzlLciMF6wE
-	aAFEq4QkaZqNUtTOJznaX6nmH6cILpHOQzRtWJOv3k2h/Sf2jgpffPCaL1hRBqECGfoXQmiEYDr
-	SO3c=
-X-Google-Smtp-Source: AGHT+IEWVTjw1mkR38vOPZGIpsHvZYPxa/2cs8gJfJ7WI6kldGRvYlYX/irEafDBtNVI99nvIv+eBA==
-X-Received: by 2002:a05:6a20:2a29:b0:1cc:d73a:93f1 with SMTP id adf61e73a8af0-1cece5d1375mr2103569637.42.1725106646757;
-        Sat, 31 Aug 2024 05:17:26 -0700 (PDT)
-Received: from localhost.localdomain ([2620:11a:c019:0:65e:3115:2f58:c5fd])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d8aba505bfsm458583a91.8.2024.08.31.05.17.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 31 Aug 2024 05:17:26 -0700 (PDT)
-From: Joe Damato <jdamato@fastly.com>
-To: netdev@vger.kernel.org
-Cc: mkarsten@uwaterloo.ca,
-	Joe Damato <jdamato@fastly.com>,
-	Amritha Nambiar <amritha.nambiar@intel.com>,
-	stable@kernel.org,
-	Jakub Kicinski <kuba@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Sridhar Samudrala <sridhar.samudrala@intel.com>,
-	Stanislav Fomichev <sdf@fomichev.me>,
-	Daniel Jurgens <danielj@nvidia.com>,
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH net] netdev-genl: Set extack and fix error on napi-get
-Date: Sat, 31 Aug 2024 12:17:04 +0000
-Message-Id: <20240831121707.17562-1-jdamato@fastly.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1725106714; c=relaxed/simple;
+	bh=/DcwqGi/TTJgseU69eQAMnE6ASnIXDVzUih6oz1NpNI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=HSsnDfPiwIvo+eFR5iZSDsU1/oINV3yTPxxAfvL0BuW01Q5KMkfXa0IvQmzJl60iFQ4kL8P0pMC1hh3cdkumiuA4gMi7pC2PNoNg/f6b3E6+VT79EC20pH8J31UI5c65XYjpNVn6ylyzr8d+iho9j8Upn6ssdg2GxzsAlbs2ebQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RJ2JezcI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 567CEC4CEC0;
+	Sat, 31 Aug 2024 12:18:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725106713;
+	bh=/DcwqGi/TTJgseU69eQAMnE6ASnIXDVzUih6oz1NpNI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=RJ2JezcIpXcSe1NeonYL0r100OFvOuWNOT0MzKkQRdZzXDLAyYJ1JJbL+AndAvIRr
+	 3DlUus60hSuaxcD927eSDfNQb6AkRNKC2AjJRL18BHbJFuCcOzTnrTZZZ8U6yVn1rH
+	 CS86ErYAaIzj+qOuWqmmLrVoQZqNNd8VCfvoWIEfBYt0+e3sqekz25D+KsGL7q6QhW
+	 GKEolpj6QE+8i4Ypgw7zHal+9jbV4qdoj+xpyUgBCLdOjD6ge1BaW7JcqGWG4lDfgy
+	 Z70M6CTMzhLYpkkobsxeaQjB/Xp/QDCAgTogGGLf+7YiN5qcFPwYe0RTkVDoM7nklM
+	 BwU0BnUV+d5ng==
+Date: Sat, 31 Aug 2024 13:18:24 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Conor Dooley <conor@kernel.org>, "Sperling, Tobias"
+ <Tobias.Sperling@softing.com>, "linux-kernel@vger.kernel.org"
+ <linux-kernel@vger.kernel.org>, "linux-hwmon@vger.kernel.org"
+ <linux-hwmon@vger.kernel.org>, "devicetree@vger.kernel.org"
+ <devicetree@vger.kernel.org>, "linux-doc@vger.kernel.org"
+ <linux-doc@vger.kernel.org>, "jdelvare@suse.com" <jdelvare@suse.com>,
+ "robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
+ <krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
+ "corbet@lwn.net" <corbet@lwn.net>, linux-iio@vger.kernel.org
+Subject: Re: [PATCH 1/2] dt-bindings: hwmon: Introduce ADS71x8
+Message-ID: <20240831131824.03141d4a@jic23-huawei>
+In-Reply-To: <766b9892-ef54-4f0a-96dd-19e8a1b3279c@roeck-us.net>
+References: <BE1P281MB24208CB90AF549578AA5C384EF972@BE1P281MB2420.DEUP281.PROD.OUTLOOK.COM>
+	<20240830-chaos-unrivaled-04c5c4c6add9@spud>
+	<766b9892-ef54-4f0a-96dd-19e8a1b3279c@roeck-us.net>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-In commit 27f91aaf49b3 ("netdev-genl: Add netlink framework functions
-for napi"), when an invalid NAPI ID is specified the return value
--EINVAL is used and no extack is set.
+On Fri, 30 Aug 2024 07:30:16 -0700
+Guenter Roeck <linux@roeck-us.net> wrote:
 
-Change the return value to -ENOENT and set the extack.
+> On 8/30/24 06:14, Conor Dooley wrote:
+> > Hey Tobias, Guenter, Jonathan,
+> > 
+> > On Fri, Aug 30, 2024 at 11:49:53AM +0000, Sperling, Tobias wrote:  
+> >>  From b2e04ce5500faf274654be5284be9db4f3abefce Mon Sep 17 00:00:00 2001
+> >> From: Tobias Sperling <tobias.sperling@softing.com>
+> >> Date: Fri, 23 Aug 2024 12:08:33 +0200
+> >> Subject: [PATCH 1/2] dt-bindings: hwmon: Introduce ADS71x8
+> >>
+> >> Add documentation for the driver of ADS7128 and ADS7138 12-bit, 8-channel
+> >> analog-to-digital converters. These ADCs have a wide operating range and
+> >> a wide feature set. Communication is based on an I2C interface.
+> >> The driver provides the functionality of manually reading single channels
+> >> or sequentially reading all channels automatically.
+> >>
+> >> Signed-off-by: Tobias Sperling <tobias.sperling@softing.com>
+> >> ---
+> >>   .../devicetree/bindings/hwmon/ti,ads71x8.yaml |  85 +++++++++++  
+> > 
+> > If this is a "generic" adc, why is it going into hwmon?
+> > I would have expected this to be in iio/adc, and use more typical adc
+> > bindings, even if the driver is in hwmon.
+> > 
+> > Guenter/Jonathan wdyt?
+> >   
+> 
+> Same thought here. While the chip supports limits, making it suitable for
+> hardware monitoring, its primary use seems to be as ADC, not as hardware
+> monitoring device. The hardware monitoring API isn't well suited for the
+> fast sample rate supported by this chip.
 
-Before this commit:
+Agreed, looks like a typical IIO ADC.
 
-$ ./tools/net/ynl/cli.py --spec Documentation/netlink/specs/netdev.yaml \
-                          --do napi-get --json='{"id": 451}'
-Netlink error: Invalid argument
-nl_len = 36 (20) nl_flags = 0x100 nl_type = 2
-	error: -22
+If the particular board needs it for hardware monitoring we have
+the bridge that should work for that (iio-hwmon).
 
-After this commit:
+Jonathan
 
-$ ./tools/net/ynl/cli.py --spec Documentation/netlink/specs/netdev.yaml \
-                         --do napi-get --json='{"id": 451}'
-Netlink error: No such file or directory
-nl_len = 44 (28) nl_flags = 0x300 nl_type = 2
-	error: -2
-	extack: {'bad-attr': '.id'}
-
-Cc: Amritha Nambiar <amritha.nambiar@intel.com>
-Cc: stable@kernel.org
-Suggested-by: Jakub Kicinski <kuba@kernel.org>
-Fixes: 27f91aaf49b3 ("netdev-genl: Add netlink framework functions for napi")
-Signed-off-by: Joe Damato <jdamato@fastly.com>
----
- net/core/netdev-genl.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
-
-diff --git a/net/core/netdev-genl.c b/net/core/netdev-genl.c
-index 05f9515d2c05..a17d7eaeb001 100644
---- a/net/core/netdev-genl.c
-+++ b/net/core/netdev-genl.c
-@@ -216,10 +216,12 @@ int netdev_nl_napi_get_doit(struct sk_buff *skb, struct genl_info *info)
- 	rtnl_lock();
- 
- 	napi = napi_by_id(napi_id);
--	if (napi)
-+	if (napi) {
- 		err = netdev_nl_napi_fill_one(rsp, napi, info);
--	else
--		err = -EINVAL;
-+	} else {
-+		NL_SET_BAD_ATTR(info->extack, info->attrs[NETDEV_A_NAPI_ID]);
-+		err = -ENOENT;
-+	}
- 
- 	rtnl_unlock();
- 
--- 
-2.25.1
+> 
+> Guenter
+> 
 
 
