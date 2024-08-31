@@ -1,135 +1,130 @@
-Return-Path: <linux-kernel+bounces-309748-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309739-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0789B966FF4
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 09:06:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D243966FE7
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 09:04:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 88002B228A3
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 07:06:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AC5BF1F22D73
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 07:04:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D50B17DE15;
-	Sat, 31 Aug 2024 07:05:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60F3C16BE01;
+	Sat, 31 Aug 2024 07:04:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="edQ7Gt8m"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="1Q2XQ2XX"
+Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B84AA16D4FF;
-	Sat, 31 Aug 2024 07:04:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36CFE1758F
+	for <linux-kernel@vger.kernel.org>; Sat, 31 Aug 2024 07:04:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725087901; cv=none; b=iGBIg0GU/M398RzNBNYunXK9PdNx8vK9REmFZfgfg0Pa2A4pV+xHu9YfohU0iNwPcGFHYduqUX/ExTZF6jtNQ93HgdW01pYOhjGI+dH0bi3aHLRGwWgWjjNmHftBmzezayFKYftDX+yLEFjIfr8L+NXjN1PP4zSHpFU6kqr6wRM=
+	t=1725087868; cv=none; b=eJdDcSOXN1riuEelw788eOesk0V83d1A9BDHD1iMiwu4f8xjixr6yUeLAUDUNS+M/ilOt+5ew+NhiKmpeC/9PJXw9fefanS3LHg4qGkkCOMfnkT9eNFcMvM3Uw4Vb5kF+Ff5vtyT1IbrSIezNI4VBSrPYB6YQ/JmwNSSM/sIvew=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725087901; c=relaxed/simple;
-	bh=2MIvjife9TxEOVM4N//TXAhsxKXULju5kqrwtaSFDZI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MlSWikrWS/P96BIo92EMU07/hwntbHvWLeBEXD1WPRf9dznPfwh4lb5qJzhbW+g1fFq+4VlvKv2dzUA6oD5+C4V8i85SUTWy1qv38pD2Y1WG8NsfZ7Lf/D4T23H4jCU72YhPxwGfDT6QOHCdTJqVZmmFSlR1eBaG8KBkDl2u29o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=edQ7Gt8m; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725087897; x=1756623897;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=2MIvjife9TxEOVM4N//TXAhsxKXULju5kqrwtaSFDZI=;
-  b=edQ7Gt8mmXBpdXS9M/rn/3IwDMuaaSnCpuiz4eJEPB9rRkL5FPvCnoo5
-   lTSK1r3E/Hrshovh9++k5y8xbV8JGP+5LYX51+K/iqEvL4QvFNVS0BITY
-   BuieiZWpTGXH2hrVCx3AHsa/YrkVaMQxnhK5AtOyqp9+RD7CRKHTYY4fY
-   FLMHC3GrJ3b4PIq/h+zeWc5WzQYLoNY1m3XlEykh5P1YyR9FAr7/01Ms8
-   yebvpIqB8ze8h1yINOONHoG5uU8ELn0g3qr65ONOrVSGp9IarO8eK1B7k
-   hZTpnE1AJYHKf83mdcwLNjKMy6a0e2UacyinreffO0XpSBdsVL4WQxUbv
-   Q==;
-X-CSE-ConnectionGUID: 9DsinZPPTMGN9Fwb6WQmUQ==
-X-CSE-MsgGUID: QIXGcIBHRRqI5hgpLNw4Gw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11180"; a="35142355"
-X-IronPort-AV: E=Sophos;i="6.10,191,1719903600"; 
-   d="scan'208";a="35142355"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Aug 2024 00:04:56 -0700
-X-CSE-ConnectionGUID: pBaWsdrATdClvQIISpIntA==
-X-CSE-MsgGUID: PGOW7AjMQ2qLPMI3JEsoQA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,191,1719903600"; 
-   d="scan'208";a="64160004"
-Received: from lkp-server01.sh.intel.com (HELO 9c6b1c7d3b50) ([10.239.97.150])
-  by fmviesa009.fm.intel.com with ESMTP; 31 Aug 2024 00:04:50 -0700
-Received: from kbuild by 9c6b1c7d3b50 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1skIAC-0002Ps-0A;
-	Sat, 31 Aug 2024 07:04:48 +0000
-Date: Sat, 31 Aug 2024 15:04:06 +0800
-From: kernel test robot <lkp@intel.com>
-To: Macpaul Lin <macpaul.lin@mediatek.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-leds@vger.kernel.org,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>, Sebastian Reichel <sre@kernel.org>,
-	Pavel Machek <pavel@ucw.cz>, Sean Wang <sean.wang@mediatek.com>,
-	Lee Jones <lee@kernel.org>,
-	Alexandre Mergnat <amergnat@baylibre.com>,
-	Flora Fu <flora.fu@mediatek.com>
-Cc: oe-kbuild-all@lists.linux.dev, Bear Wang <bear.wang@mediatek.com>,
-	Pablo Sun <pablo.sun@mediatek.com>,
-	Macpaul Lin <macpaul.lin@mediatek.com>,
-	Sen Chu <sen.chu@mediatek.com>,
-	Chris-qj chen <chris-qj.chen@mediatek.com>,
-	MediaTek Chromebook Upstream <Project_Global_Chrome_Upstream_Group@mediatek.com>,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, linux-pm@vger.kernel.org,
-	linux-rtc@vger.kernel.org, linux-sound@vger.kernel.org,
-	devicetree@vger.kernel.org, Chen-Yu Tsai <wenst@chromium.org>
-Subject: Re: [PATCH v2 2/7] dt-bindings: mfd: mediatek: mt6397: Convert to DT
- schema format
-Message-ID: <202408311453.Ui9YGyJc-lkp@intel.com>
-References: <20240830110732.30080-2-macpaul.lin@mediatek.com>
+	s=arc-20240116; t=1725087868; c=relaxed/simple;
+	bh=XVNfhs0bK32n2PUsqr3Dy1HmPIqiOmkZ0KlzLN1Y2bI=;
+	h=Date:Message-Id:Mime-Version:Subject:From:To:Content-Type; b=gP9IWzn903m2n+yrDCsszhKjwLXF/AEnjRMt5MHnVbP3CqwEk0R7VK8FJjFa/8gpWlb5ZSPGtKmy5634B+istJMNBZSksM0O6qIJMe6BOwhA62+lKqD5++Di5FeUguhvzoQGQYjk7H3OUyl4IsoDZfkig0e8aSXVrYwfJm+wNxA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=1Q2XQ2XX; arc=none smtp.client-ip=209.85.128.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
+Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6d3aa5a6715so34151087b3.2
+        for <linux-kernel@vger.kernel.org>; Sat, 31 Aug 2024 00:04:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1725087866; x=1725692666; darn=vger.kernel.org;
+        h=to:from:subject:mime-version:message-id:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=Yix+TBZPkXSa49ue1ChfBQwhkMaD26rQNK5r6EhEs+8=;
+        b=1Q2XQ2XXs4Wwe8kHtQTTeibT2lNIs6kK7/cAcmYTEf546xE3Og448m5RUdTkyzn49T
+         LhSgwJS28adATwR4Nrgf62yzVJZWziNThD01jftL3aTkRrbm58QGaaAI+LjOztviC61y
+         QiIfKzSMTzc52satrat2ktShRgEQwxcsyE5TAVVxdnshRRWRgkoCDjZD9pJq8hcPc9wH
+         0uP8mY78W+qU1i3jZAsTLHAGl5Th9RjmnsjWPCP/2uVgRB0MEwWEdAKJneypu/fR5PBh
+         bYu/kQ9h7T0HOs5ZFU6vBDnobauIYQqdtoAJx8t1D0jMmnUKe8iVf02VosXscexYMPSX
+         y/8w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725087866; x=1725692666;
+        h=to:from:subject:mime-version:message-id:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Yix+TBZPkXSa49ue1ChfBQwhkMaD26rQNK5r6EhEs+8=;
+        b=NKc+/2GrXNZIeLMeAwYz8shQmET78B7MhoXqiwgTbT9aePNlNZlHzpNzlJnmpm1v0t
+         9JhAmFOSSm4wLmuDFh81oweZZIL3ARLkJgs5e9j+0n7e/mhnSOsIs+y7Jl6APh4u8FbM
+         7ww0XOdFhaKeUbYNhPOn3pxnj6T15mRSCryWw+kN0l6xTagqQgtae9RaWrUoMQoHwrEC
+         0PvilJ2nQemf8YaMDWCFXsskysVT+IRhKp5011vX83AqAwXOAJHn/FvnnUd3EgX1uoV6
+         9JEhYPPh9HwLHnvQNVD6vznWrbpp6CluBkFL48aJfZ7uwC8zcK8CH/5jYIhIhv28vg1y
+         pWIg==
+X-Forwarded-Encrypted: i=1; AJvYcCWX+n5BfmW4H/Qs+2inExcAN7juAV6OhONhxxfZvzbwSGLtt6xfR9TLptxgAfyNOmmoh977/g9UpwJlxWw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yypcbs7w7WntfJdABvXZHL//6W8vpYJdyDQGqxzusl/1I0M5l2/
+	/0+qfAlSKoTC7ka9QlkIjU7pxxuy1Vjfr4w1LWqByOZxQI07gh9iu/Q9XWw79CumJQsy3LxGyOy
+	m0fLvGQ==
+X-Google-Smtp-Source: AGHT+IFSQlqCaooK8EKm3oSpG167pQvMkiIAlIb5MBJCP0D74T3jspayC9ArNyHScKXixrYOkTzvSYAFVc0S
+X-Received: from irogers.svl.corp.google.com ([2620:15c:2a3:200:4974:82ff:2f9:edb6])
+ (user=irogers job=sendgmr) by 2002:a05:6902:18d5:b0:e05:fb86:1909 with SMTP
+ id 3f1490d57ef6-e1a7a1a339bmr674564276.6.1725087866165; Sat, 31 Aug 2024
+ 00:04:26 -0700 (PDT)
+Date: Sat, 31 Aug 2024 00:04:09 -0700
+Message-Id: <20240831070415.506194-1-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240830110732.30080-2-macpaul.lin@mediatek.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.46.0.469.g59c65b2a67-goog
+Subject: [PATCH v1 0/6] Various 32-bit and test fixes
+From: Ian Rogers <irogers@google.com>
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Kan Liang <kan.liang@linux.intel.com>, Athira Rajeev <atrajeev@linux.vnet.ibm.com>, 
+	Dominique Martinet <asmadeus@codewreck.org>, Yang Jihong <yangjihong@bytedance.com>, 
+	Colin Ian King <colin.i.king@gmail.com>, Chaitanya S Prakash <chaitanyas.prakash@arm.com>, 
+	"Masami Hiramatsu (Google)" <mhiramat@kernel.org>, James Clark <james.clark@linaro.org>, 
+	John Garry <john.g.garry@oracle.com>, Junhao He <hejunhao3@huawei.com>, 
+	David Ahern <dsa@cumulusnetworks.com>, linux-perf-users@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Macpaul,
+Running `perf test` as an i386 executable yielded a number of
+failures, some of which are addressed here.
 
-kernel test robot noticed the following build warnings:
+The first 2 are straightforward use strtoull issues when parsing a
+64-bit quantity in 32-bit land.
 
-[auto build test WARNING on broonie-regulator/for-next]
-[also build test WARNING on lee-mfd/for-mfd-next robh/for-next lee-mfd/for-mfd-fixes linus/master v6.11-rc5 next-20240830]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+The 3rd patch just avoids a fail when `perf probe` isn't compiled in
+(in my case as LIBELF wasn't present).
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Macpaul-Lin/dt-bindings-mfd-mediatek-mt6397-Convert-to-DT-schema-format/20240830-191309
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
-patch link:    https://lore.kernel.org/r/20240830110732.30080-2-macpaul.lin%40mediatek.com
-patch subject: [PATCH v2 2/7] dt-bindings: mfd: mediatek: mt6397: Convert to DT schema format
-reproduce: (https://download.01.org/0day-ci/archive/20240831/202408311453.Ui9YGyJc-lkp@intel.com/reproduce)
+The 4th and 5th cases fix the breakpoint length, on i386 so the
+sizeof(long) used matches the kernel's sizeof(long). On aarch64 the
+value is change to 4 instead of sizeof(long), ie 8, as future kernels
+may make 8 an invalid argument.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202408311453.Ui9YGyJc-lkp@intel.com/
+The final change addresses i386 watchpoint support not supporting
+8-byte values.
 
-All warnings (new ones prefixed by >>):
+Ian Rogers (6):
+  perf pmus: Fix name comparisons on 32-bit systems
+  perf time-utils: Fix 32-bit nsec parsing
+  perf test: Skip uprobe test if probe command isn't present
+  perf parse-events: Add default_breakpoint_len helper
+  perf parse-events: Vary default_breakpoint_len on i386 and arm64
+  perf test: Make watchpoint data 32-bits on i386
 
->> Warning: Documentation/devicetree/bindings/input/mediatek,pmic-keys.yaml references a file that doesn't exist: Documentation/devicetree/bindings/mfd/mt6397.txt
-   Warning: Documentation/devicetree/bindings/leds/leds-mt6323.txt references a file that doesn't exist: Documentation/devicetree/bindings/mfd/mt6397.txt
-   Warning: Documentation/devicetree/bindings/net/dsa/mediatek,mt7530.yaml references a file that doesn't exist: Documentation/devicetree/bindings/regulator/mt6323-regulator.txt
-   Warning: Documentation/devicetree/bindings/power/wakeup-source.txt references a file that doesn't exist: Documentation/devicetree/bindings/input/qcom,pm8xxx-keypad.txt
-   Warning: Documentation/devicetree/bindings/regulator/siliconmitus,sm5703-regulator.yaml references a file that doesn't exist: Documentation/devicetree/bindings/mfd/siliconmitus,sm5703.yaml
-   Warning: Documentation/hwmon/g762.rst references a file that doesn't exist: Documentation/devicetree/bindings/hwmon/g762.txt
+ tools/perf/tests/bp_account.c                 |  4 +++-
+ tools/perf/tests/bp_signal.c                  |  3 ++-
+ tools/perf/tests/bp_signal_overflow.c         |  3 ++-
+ tools/perf/tests/parse-events.c               |  3 ++-
+ .../shell/test_uprobe_from_different_cu.sh    |  7 ++++++
+ tools/perf/tests/wp.c                         |  5 ++++
+ tools/perf/util/parse-events.c                | 23 ++++++++++++++++++-
+ tools/perf/util/parse-events.h                |  2 ++
+ tools/perf/util/pmus.c                        |  6 ++---
+ tools/perf/util/time-utils.c                  |  4 ++--
+ 10 files changed, 50 insertions(+), 10 deletions(-)
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.46.0.469.g59c65b2a67-goog
+
 
