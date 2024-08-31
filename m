@@ -1,89 +1,119 @@
-Return-Path: <linux-kernel+bounces-309674-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309675-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DC37966F15
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 05:20:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A57C966F18
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 05:29:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DB98D1F2399B
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 03:20:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3BAFF1F239CB
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 03:29:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A532415C135;
-	Sat, 31 Aug 2024 03:19:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bDRD4bvf"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 997BE12AAFD;
+	Sat, 31 Aug 2024 03:29:09 +0000 (UTC)
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E22C815099B;
-	Sat, 31 Aug 2024 03:19:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 173CB2F2E;
+	Sat, 31 Aug 2024 03:29:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725074346; cv=none; b=eXfxzAuQEdGGziDLjBmpWkLb/yBD+0jqDfokqXSbqLXIpXnHtZ4EpPq2I+PXzzHa6oduLqH6AymAEDvWJM410T+CGu2vdJcf9ILzzcaMBZvQ0SckhvehE+CgrH9CwsVAZ8iHApvZl8mNPNj8m5rZRvJ6tOhAVIpQtVmWIp0wxF8=
+	t=1725074949; cv=none; b=ee2uPvGRpsy+IrZM/1+k7A38SY4gb2tC5is03X27Z4448333GzRv3uIGfi7x5vu6W/23AAg1XnwTX9Pz+OKj7DrzHXxlapXKHwRlDwCCpo4/cheLuku7j+M9drBF7qK469DK64UCmS6GuHFoL5Sng4dbHMDWJZSY93u00+XvOxM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725074346; c=relaxed/simple;
-	bh=Lp0q530IdV/hpTMrQs3hFIcEYPKLeusmgXaDnrjVndI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=pekCxTodlFdBwzFi2A5uf+Q1k642kvuGVKAmyJUM7hlwiw4IoPQ3WHkEN5h5wJbft1N9O6Wd+Mucssht1rp5wEB598GHZt62vaYGWVTkH+/4a3c/jrnXTxwuLsa71UPwXvzqnXOROIfe6mODe+Fy+QUGcz/u5lCZ654uzUQX1VU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bDRD4bvf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A13FBC4CEC7;
-	Sat, 31 Aug 2024 03:19:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725074345;
-	bh=Lp0q530IdV/hpTMrQs3hFIcEYPKLeusmgXaDnrjVndI=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=bDRD4bvfO9xdTm+DVDCk2sho1V670AowwJBopkmO2yzDBqIMqPewaFYWt0AMTcDXY
-	 aKq7HtLNHBkb+F0rzLh4fvbyEr5Dfegmhcb8CtKi3Pf0c36kL2/CVCJmr33JpG9RZI
-	 ypxB4VbY97spo6zqr008J5dd2HYVDXOIH3KG9DiASO1y/PdQA07W/ui6ZKj82zMcla
-	 R2CC6jwpLTPIyVgLxGwCoOhwapu/mYP+rEYJevFgP4DA79tHJNUNvhSX4KWFskrV6V
-	 oDqpi/GZYol8s+BR28XlusoPZmKgHMpQ300VZurS4wAzWygonYN3tVJQQe2FSseRUD
-	 qMTSjlotOFQbg==
-From: Bjorn Andersson <andersson@kernel.org>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Sachin Gupta <quic_sachgupt@quicinc.com>
-Cc: linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	quic_nitirawa@quicinc.com,
-	quic_bhaskarv@quicinc.com,
-	quic_narepall@quicinc.com,
-	quic_rampraka@quicinc.com,
-	quic_sartgarg@quicinc.com,
-	quic_mapa@quicinc.com,
-	quic_cang@quicinc.com,
-	quic_nguyenb@quicinc.com
-Subject: Re: [PATCH V2] arm64: dts: qcom: Add SD Card node for qcm6490-idp
-Date: Fri, 30 Aug 2024 22:18:41 -0500
-Message-ID: <172507431833.12792.13543272937622578069.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240829114748.9661-1-quic_sachgupt@quicinc.com>
-References: <20240829114748.9661-1-quic_sachgupt@quicinc.com>
+	s=arc-20240116; t=1725074949; c=relaxed/simple;
+	bh=i09h7pVzWa6OCZm6rAC982LxyrDslBxDFkPhuofomjA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lFJDPXFGsXwmCVqdsGRKH3OkajTEClaux/5BTIVaiuS+XpyfBqigQbT0pRRNqgQvg6CFGOKJNBtnbRSRIB0k1BH5oexOwHMG1qJohgNozOJqITkvZe6GsdOEjKkAE7k4kHGIA21+n5NS/JE6ECkaATq/z9GIzUsKk2jIlClMktg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fomichev.me; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fomichev.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-202146e93f6so24581115ad.3;
+        Fri, 30 Aug 2024 20:29:06 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725074946; x=1725679746;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CmUNI7dopbgPT4zjvSEr3dpJrjim6ozHINXa3gY07bw=;
+        b=A6NFQbRj8eRoYqG6QzKLIAT+2WiYkxxaaAkYUtWmgKb4rgC1mudsJDWBSd/bZQI/an
+         wFAy93SgOcraHIPHVXMJBvLxY8+di8zQgI36bBQiL7Mn366ryoTV4wQovf1WZh/8xLmK
+         n1bVWJvAy1AjL3CAng2wM6m+k4tIQq4x57RAX6X+I8VW0moU4lQ5ODjLXoQAb9hVMpne
+         zTODwJRzLSxT+gbWmdnWnGtlfGZU+BWlaRqqYJaglRnKRohWqD1w7PSON3FYyNmUVf2B
+         DD04rCMSCIZawD3RJsvtH7N9q3WHvDDC8PocA4Ng/jvbBLrxJ8/7OzaWGRktYHHLwnch
+         wryg==
+X-Forwarded-Encrypted: i=1; AJvYcCUcBBd/VaAd3eJviZhyPMFN8cgL8Se3yAe6MjyjyPa453OCn8GDBAFjqp7rUqZsKgWvJS0=@vger.kernel.org, AJvYcCW9m6lIuodtsOQYWek24tFXKUmVcz49F3xrF04skXkCqL0FhdJT+ogWkqidpt/o8tP7qdDr6+gAwG7ws0nj@vger.kernel.org
+X-Gm-Message-State: AOJu0YxRkEnpO6mgjAS4cXvF208jixhvtdiXvdxuFRw5GtyjPIEqCd5u
+	TwTT83T7UWJ2hhljpK00sZgp9wWMhi+WvQuT+iZmT81mS40MDFg=
+X-Google-Smtp-Source: AGHT+IHd6g6pyez/8oZoyMFdR/yCZyTkS9LN5xXtI/s4MBHHHdVw0Q6ZuduT6Yegky8Pq/nfuJhkGQ==
+X-Received: by 2002:a17:902:d486:b0:202:2a38:f9f1 with SMTP id d9443c01a7336-2050c4bc469mr90250375ad.58.1725074946166;
+        Fri, 30 Aug 2024 20:29:06 -0700 (PDT)
+Received: from localhost ([2601:646:9e00:f56e:73b6:7410:eb24:cba4])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2054baf1423sm2147985ad.175.2024.08.30.20.29.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 30 Aug 2024 20:29:05 -0700 (PDT)
+Date: Fri, 30 Aug 2024 20:29:04 -0700
+From: Stanislav Fomichev <sdf@fomichev.me>
+To: Tze-nan Wu <Tze-nan.Wu@mediatek.com>
+Cc: netdev@vger.kernel.org, bpf@vger.kernel.org,
+	Alexei Starovoitov <ast@kernel.org>, alexei.starovoitov@gmail.com,
+	bobule.chang@mediatek.com, wsd_upstream@mediatek.com,
+	linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
+	Kuniyuki Iwashima <kuniyu@amazon.com>, chen-yao.chang@mediatek.com,
+	Yanghui Li <yanghui.li@mediatek.com>,
+	Cheng-Jui Wang <cheng-jui.wang@mediatek.com>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	KP Singh <kpsingh@kernel.org>, Hao Luo <haoluo@google.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH net v5] bpf, net: Fix a potential race in
+ do_sock_getsockopt()
+Message-ID: <ZtKOAKlNalVLIz2E@mini-arch>
+References: <20240830082518.23243-1-Tze-nan.Wu@mediatek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240830082518.23243-1-Tze-nan.Wu@mediatek.com>
 
-
-On Thu, 29 Aug 2024 17:17:48 +0530, Sachin Gupta wrote:
-> Add SD Card node for Qualcomm qcm6490-idp Board.
+On 08/30, Tze-nan Wu wrote:
+> There's a potential race when `cgroup_bpf_enabled(CGROUP_GETSOCKOPT)` is
+> false during the execution of `BPF_CGROUP_GETSOCKOPT_MAX_OPTLEN`, but
+> becomes true when `BPF_CGROUP_RUN_PROG_GETSOCKOPT` is called.
+> This inconsistency can lead to `BPF_CGROUP_RUN_PROG_GETSOCKOPT` receiving
+> an "-EFAULT" from `__cgroup_bpf_run_filter_getsockopt(max_optlen=0)`.
+> Scenario shown as below:
 > 
+>            `process A`                      `process B`
+>            -----------                      ------------
+>   BPF_CGROUP_GETSOCKOPT_MAX_OPTLEN
+>                                             enable CGROUP_GETSOCKOPT
+>   BPF_CGROUP_RUN_PROG_GETSOCKOPT (-EFAULT)
 > 
+> To resolve this, remove the `BPF_CGROUP_GETSOCKOPT_MAX_OPTLEN` macro and
+> directly uses `copy_from_sockptr` to ensure that `max_optlen` is always 
+> set before `BPF_CGROUP_RUN_PROG_GETSOCKOPT` is invoked.
+> 
+> Fixes: 0d01da6afc54 ("bpf: implement getsockopt and setsockopt hooks")
+> Co-developed-by: Yanghui Li <yanghui.li@mediatek.com>
+> Signed-off-by: Yanghui Li <yanghui.li@mediatek.com>
+> Co-developed-by: Cheng-Jui Wang <cheng-jui.wang@mediatek.com>
+> Signed-off-by: Cheng-Jui Wang <cheng-jui.wang@mediatek.com>
+> Signed-off-by: Tze-nan Wu <Tze-nan.Wu@mediatek.com>
 
-Applied, thanks!
-
-[1/1] arm64: dts: qcom: Add SD Card node for qcm6490-idp
-      commit: fec09568a355ec70cbad254168da4391e0241238
-
-Best regards,
--- 
-Bjorn Andersson <andersson@kernel.org>
+Acked-by: Stanislav Fomichev <sdf@fomichev.me>
 
