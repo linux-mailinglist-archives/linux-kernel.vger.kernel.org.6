@@ -1,85 +1,136 @@
-Return-Path: <linux-kernel+bounces-309893-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309894-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08732967195
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 14:37:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4246D967196
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 14:40:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 41DB21C21765
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 12:37:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6F4001C215E3
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 12:40:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 707BB18132A;
-	Sat, 31 Aug 2024 12:37:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fA//wwn+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17CC417E003;
+	Sat, 31 Aug 2024 12:40:20 +0000 (UTC)
+Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.85.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA16E17C7B3
-	for <linux-kernel@vger.kernel.org>; Sat, 31 Aug 2024 12:37:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAFF0193
+	for <linux-kernel@vger.kernel.org>; Sat, 31 Aug 2024 12:40:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.85.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725107842; cv=none; b=qT/1Hahsf8Gl6ZmTTTcYloLAdrCv80X+NSWLRpOpGebLjxCJKiuCtAjsktBPX2g+W1AxpQVbh9AVeovt1AMugZ6gXCE61DTBLSNtm7u0EJ62mRuifCWpfb35/PjB7b4H8y+5gULi9o3bqYo8DIF07vFBRai3WbZxEjw0PNhYKYM=
+	t=1725108019; cv=none; b=epxF0K+VypMqAIlVL2yJ/bFWRWu7dvEhS4UTRU80PQQCotGK+zkbQSUdjS+DkI/QfT8YdLKC9dlre/HWYVmEzJYn7JPkAwRDLPyjEPFMEEqWjf0EiW+QT8tJD+5JhxWNHosFBj1uaH0XP7TAEN4Y4FtnatNuEFCY0NZ6YQHo3Os=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725107842; c=relaxed/simple;
-	bh=Noby7El9z0c63e41wu6AhQcfLUuk4A1lf0hrYdgifns=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nJL7gfZZwxSPCfCOi/gUajvz1FdFwjDjCkKVc67x/FAaBumjRO1KzoT57unI2ACkgCxC5taP5sg72pu3pSm2q3j7rg9Nx+4pMOMRr8KB1nF/ug6oYsU3CUBpQ5WwqpF+By6gdNjj8Yj0Kwpiy0Cc2JyEEW7I5WHJUIG9iNJyZ30=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fA//wwn+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 620FEC4CEC4
-	for <linux-kernel@vger.kernel.org>; Sat, 31 Aug 2024 12:37:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725107842;
-	bh=Noby7El9z0c63e41wu6AhQcfLUuk4A1lf0hrYdgifns=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=fA//wwn+sB7SCym7eddwh3+Fv1gfwYSRnlrrR2y5soCmAKWVYIdYjNhCmTQlMPJPn
-	 TkhucRSJDINL3UFw4wZq3bdJYB/Ae4Sgv37SivAJ/oYI90IhMTDATck/I4/P3I5NVN
-	 mFv61uUKD2Vxe8/2PwxM6cDrrKhwnfsV1VQSM1WvRp+U/WGhn+MkWlQ5pC3KViQbJu
-	 v9OWTruS+OmHWm45/GYq8QjHU8u7xvndTzepaQxjrfR1iEZGBaVcWKDxwPsR3wAV+y
-	 OJppyv5xBU4sEquspqngzJW6XwQRIFkb9hUx2p9sv7/r1Tz9fZH1kM6j23vESffzfz
-	 eHKwqrBfXSY8g==
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5bf01bdaff0so2771489a12.3
-        for <linux-kernel@vger.kernel.org>; Sat, 31 Aug 2024 05:37:22 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXlXoC7BWm2c2YdiSMk7D3NDcdwkitlrPMTTPSGEXzC8p3AhysJEW/u3cbVYXk1X1E7gK0DOnAldQkV3Nw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YylXxOIMVFg4dFTr0PUAw4ualCtvTfs72+sYQXJIMmQAAonROEX
-	7PlfUkG3uzzk0YhFw2a+DRoF5r9+BkvSJGKsh17fSo0ROaLRngS+6KzZtSEnyEcsRlQE1tpmJFz
-	WPDds5TUWE62CuyA7YAo6nxZC5yk=
-X-Google-Smtp-Source: AGHT+IFzorRshPsuDJ8XEzT9wq3sbRSknfWJS/lfjEMrPElt1JbMx7hESBdAu8CIv3grlpOZ228FUCX0BNuT7BOAG1I=
-X-Received: by 2002:a05:6402:40c1:b0:5c2:17b7:5a7e with SMTP id
- 4fb4d7f45d1cf-5c21ed9fcbcmr6622190a12.36.1725107841040; Sat, 31 Aug 2024
- 05:37:21 -0700 (PDT)
+	s=arc-20240116; t=1725108019; c=relaxed/simple;
+	bh=2uZQwCysczlevMbIXlt6PGWT0zeQq4JUP/rOE5wCCWI=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 MIME-Version:Content-Type; b=u5KWKJzuISGxOZGw4Pj34aHFJJXUr/+yWjZWxXI+YjegUq3r6QfNRMR1eJDXI5BTX9IMw5vdCFf9ArNLRWyteyuo66Y3AtjNzkWCbNaGTelPHnymAbz/l8PrvKzYZPoFL7gP/64mrELZL5bIWVoM5Cjfj50r4hShdEKy6aFWedM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.85.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
+Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
+ relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ uk-mta-92-VIUI8HB7OHmUb0FuB2D6sQ-1; Sat, 31 Aug 2024 13:40:12 +0100
+X-MC-Unique: VIUI8HB7OHmUb0FuB2D6sQ-1
+Received: from AcuMS.Aculab.com (10.202.163.4) by AcuMS.aculab.com
+ (10.202.163.4) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Sat, 31 Aug
+ 2024 13:39:28 +0100
+Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
+ id 15.00.1497.048; Sat, 31 Aug 2024 13:39:28 +0100
+From: David Laight <David.Laight@ACULAB.COM>
+To: 'Simon Horman' <horms@kernel.org>, Yan Zhen <yanzhen@vivo.com>
+CC: "marcin.s.wojtas@gmail.com" <marcin.s.wojtas@gmail.com>,
+	"davem@davemloft.net" <davem@davemloft.net>, "edumazet@google.com"
+	<edumazet@google.com>, "kuba@kernel.org" <kuba@kernel.org>,
+	"pabeni@redhat.com" <pabeni@redhat.com>, "netdev@vger.kernel.org"
+	<netdev@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "opensource.kernel@vivo.com"
+	<opensource.kernel@vivo.com>
+Subject: RE: [PATCH v1] ethernet: marvell: Use min macro
+Thread-Topic: [PATCH v1] ethernet: marvell: Use min macro
+Thread-Index: AQHa+KqNGETvg8muuEmp3IGPwP4GwrJBUzyA
+Date: Sat, 31 Aug 2024 12:39:28 +0000
+Message-ID: <7cfe24b82098487e9b1d35f964bf652f@AcuMS.aculab.com>
+References: <20240827115848.3908369-1-yanzhen@vivo.com>
+ <20240827175408.GR1368797@kernel.org> <20240827175745.GS1368797@kernel.org>
+In-Reply-To: <20240827175745.GS1368797@kernel.org>
+Accept-Language: en-GB, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240831052157.13532-1-guanwentao@uniontech.com>
- <CAAhV-H7GptUdpKScV1AuZZm7w-F5oUXHRmaT9BFCZV4HuQExJg@mail.gmail.com>
- <tencent_3F6931DF7E765EB870FD970A@qq.com> <tencent_3A814C6056AE06E21CE86A92@qq.com>
-In-Reply-To: <tencent_3A814C6056AE06E21CE86A92@qq.com>
-From: Huacai Chen <chenhuacai@kernel.org>
-Date: Sat, 31 Aug 2024 20:37:09 +0800
-X-Gmail-Original-Message-ID: <CAAhV-H4wNc+747nZPzT714KzGRSnbye==WXdxckVG1nTxEfLjQ@mail.gmail.com>
-Message-ID: <CAAhV-H4wNc+747nZPzT714KzGRSnbye==WXdxckVG1nTxEfLjQ@mail.gmail.com>
-Subject: Re: [PATCH] Loongarch64: pci: fix memleak in pci_acpi_scan_root
-To: Wentao Guan <guanwentao@uniontech.com>
-Cc: WANG Xuerui <kernel@xen0n.name>, loongarch <loongarch@lists.linux.dev>, 
-	linux-kernel <linux-kernel@vger.kernel.org>, =?UTF-8?B?546L5pix5Yqb?= <wangyuli@uniontech.com>
-Content-Type: text/plain; charset="UTF-8"
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: aculab.com
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
 
-On Sat, Aug 31, 2024 at 4:36=E2=80=AFPM Wentao Guan <guanwentao@uniontech.c=
-om> wrote:
->
-> Hello Huacai:
->
-> I found a mistake that my PATCH commit msg need change to "Loongarch: pci=
-: fix memleak in pci_acpi_scan_root"
-> Need to send patch v2?
-No need.
+From: Simon Horman
+> Sent: 27 August 2024 18:58
+>=20
+> On Tue, Aug 27, 2024 at 06:54:08PM +0100, Simon Horman wrote:
+> > On Tue, Aug 27, 2024 at 07:58:48PM +0800, Yan Zhen wrote:
+> > > Using the real macro is usually more intuitive and readable,
+> > > When the original file is guaranteed to contain the minmax.h header f=
+ile
+> > > and compile correctly.
+> > >
+> > > Signed-off-by: Yan Zhen <yanzhen@vivo.com>
+> > > ---
+> > >  drivers/net/ethernet/marvell/mvneta.c | 3 +--
+> > >  1 file changed, 1 insertion(+), 2 deletions(-)
+> > >
+> > > diff --git a/drivers/net/ethernet/marvell/mvneta.c b/drivers/net/ethe=
+rnet/marvell/mvneta.c
+> > > index d72b2d5f96db..415d2b9e63f9 100644
+> > > --- a/drivers/net/ethernet/marvell/mvneta.c
+> > > +++ b/drivers/net/ethernet/marvell/mvneta.c
+> > > @@ -4750,8 +4750,7 @@ mvneta_ethtool_set_ringparam(struct net_device =
+*dev,
+> > >
+> > >  =09if ((ring->rx_pending =3D=3D 0) || (ring->tx_pending =3D=3D 0))
+> > >  =09=09return -EINVAL;
+> > > -=09pp->rx_ring_size =3D ring->rx_pending < MVNETA_MAX_RXD ?
+> > > -=09=09ring->rx_pending : MVNETA_MAX_RXD;
+> > > +=09pp->rx_ring_size =3D min(ring->rx_pending, MVNETA_MAX_RXD);
+> >
+> > Given that the type of ring->rx_pending is __32, and MVNETA_MAX_RXD is
+> > a positive value.
+>=20
+> Sorry, I hit send to soon. What I wanted to say is:
+>=20
+> I think that it is appropriate to use umin() here.
+> Because:
+> 1) As I understand things, the type of MVNETA_MAX_RXD is signed,
+>    but it always holds a positive value
+> 2) ring->rx_pending is unsigned
 
-Huacai
+Provided MVNETA_MAX_RXD is constant it is fine.
+umin() is only needed for signed variables that can only contain
+non-negative values.
+
+You only need to use it is the compiler bleats...
+
+umin(x, y) is safer than min_t(unsigned_type, x, y) because you can't
+get the type wrong.
+If will also generate better code since it never sign extends a
+32bit value to 64bits (expensive on 32bit).
+
+=09David
+
+>=20
+> > See: 80fcac55385c ("minmax: add umin(a, b) and umax(a, b)")
+> >      https://git.kernel.org/torvalds/c/80fcac55385c
+
+-
+Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1=
+PT, UK
+Registration No: 1397386 (Wales)
+
 
