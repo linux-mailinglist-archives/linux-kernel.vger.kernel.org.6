@@ -1,97 +1,87 @@
-Return-Path: <linux-kernel+bounces-309899-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309897-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62E219671A1
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 14:50:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BC8896719C
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 14:50:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0DD3C1F22BC8
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 12:50:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 986E11F22B13
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 12:50:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB32D183CAD;
-	Sat, 31 Aug 2024 12:50:37 +0000 (UTC)
-Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.86.151])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76B481802A8;
+	Sat, 31 Aug 2024 12:50:06 +0000 (UTC)
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBCE0181B86
-	for <linux-kernel@vger.kernel.org>; Sat, 31 Aug 2024 12:50:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.86.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EA1317BB34
+	for <linux-kernel@vger.kernel.org>; Sat, 31 Aug 2024 12:50:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725108637; cv=none; b=ZMhHl6+Wgc1GVQWnCaCrZxdK+hl2Mq1FVti3vXjQRHDh3crZw/OAmNfBr+dzRIsZ0V5cJoHtnAZ24iHYo+Jh0qffOCBNtOLDRSrH6V71ygcrFNR1jSbQQ+I38bjeUJA0ypq1NYuN4Ss/CNt2FxqTPVw3IiLH/58o7uK1ijGBr+8=
+	t=1725108606; cv=none; b=CzNaNo9J9YIkYFLs94WryehGuD/FqMSp+gxhtWDZUuKxRSvp778GkxIMtab1JP1Lx4GNZWuKYL5wYc63k2JqDWm8lbwO9sXKhKWYfA5FIpDzjKJBM41BxBveqVHbjePzhN9tM+khx/XfXJVyjsb7yEpeL5sQK4jcaMJ5335C7+M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725108637; c=relaxed/simple;
-	bh=bQ5Sxn7JI2RLIiAX6U8qpIddB2Lher9DRJKFxT7UoQQ=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 MIME-Version:Content-Type; b=Ca9r0FI1Sx1HCaJS81W0Vq16IBdceodopPssRGGq0rN0mosLLOcKtlkljp7NrTKYxmW4QyEJHJ3digJsojHST4ZMAadeKnZ0ncLD0Xcda7V3Jpsisejkc+/Eugd3vRJZlhNvwA3LPu3AVFWPhuTrqu01xyUjTRNMjK9jShkEOKA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.86.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
-Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
- relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- uk-mta-81-zQruYB7rPfiFBNlQ0B6Bhw-1; Sat, 31 Aug 2024 13:50:31 +0100
-X-MC-Unique: zQruYB7rPfiFBNlQ0B6Bhw-1
-Received: from AcuMS.Aculab.com (10.202.163.4) by AcuMS.aculab.com
- (10.202.163.4) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Sat, 31 Aug
- 2024 13:49:47 +0100
-Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
- id 15.00.1497.048; Sat, 31 Aug 2024 13:49:47 +0100
-From: David Laight <David.Laight@ACULAB.COM>
-To: 'Jakub Kicinski' <kuba@kernel.org>, Yan Zhen <yanzhen@vivo.com>
-CC: "louis.peens@corigine.com" <louis.peens@corigine.com>,
-	"davem@davemloft.net" <davem@davemloft.net>, "edumazet@google.com"
-	<edumazet@google.com>, "pabeni@redhat.com" <pabeni@redhat.com>,
-	"oss-drivers@corigine.com" <oss-drivers@corigine.com>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"opensource.kernel@vivo.vom" <opensource.kernel@vivo.vom>
-Subject: RE: [PATCH v1] netronome: nfp: Use min macro
-Thread-Topic: [PATCH v1] netronome: nfp: Use min macro
-Thread-Index: AQHa+Iy7z9qF71A5HUm0+tauGhvQX7JBVuZQ
-Date: Sat, 31 Aug 2024 12:49:47 +0000
-Message-ID: <151a6133edc74d07a4488cdd83090d1a@AcuMS.aculab.com>
-References: <20240827084005.3815912-1-yanzhen@vivo.com>
- <20240827072423.4540bed6@kernel.org>
-In-Reply-To: <20240827072423.4540bed6@kernel.org>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
+	s=arc-20240116; t=1725108606; c=relaxed/simple;
+	bh=8osgygwu8S3WOYpKWkRYA57Fxuite9SuhO+yrtNb13Y=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=AEU8yfa7PXW56RV4nNVW9g3QwuREeb1z/LbdbrR3N47+p2LHIITxJKu16/CxN9eYeazCfWNmx4a+IBVC3M+32QNVdIXu3Tj8gijtsXBgDzBmZCOb6Za5Ho/XC9MTPPDOIK5h8l8oYCWClxJh1u0ZxtWuvp9My2x0bunLSjkBRuk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-82a1c57f4a1so311905339f.3
+        for <linux-kernel@vger.kernel.org>; Sat, 31 Aug 2024 05:50:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725108603; x=1725713403;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=wOrhT54fFAg2yuW7VI3NN64WpOvK0qct+AXeVomy60w=;
+        b=kFhQFBOqPQ6jnswcK38IaJbnqiefDfvuVvmnauUrnClDIuX5TSIk9HRgqWChHm7nAG
+         ObxfZpj1LJ0HrmYjNOCxzcYbMWPGSs2FT2Vjli/1ceee5pExQWWpNVsiYTQo4c8NN4RF
+         BJBdBdrF8wQ6fteKDXsXFL8bqy3OlZsvkAVojJgLL9nVJoi0WLN7eCSLx4ljYpBZ8Ul3
+         xHmTlfeOi8HYW9ZyEAAIUFOAnH3dkky69SMrSdbYx9Lswas/uml9Tfo9hoH6mRGHIsRa
+         xnbjdwpEd7SNArvT4KIiPKAq3NDrzwk3VKQSQZ/q88hlt1Ya1zCOHbmUq161IN4yq106
+         RHNg==
+X-Forwarded-Encrypted: i=1; AJvYcCXDzZrYr6zv0tWnrpXYciBbiNG9E3EJHy4ofVWc916GAbGvdiNu7DN4J2GCdKwBVEKViSRjI9/f5Iw2z0I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxRUqVk0+zzmon2NSzJK8Dvze0arYmVhYStfZsrsLhdYBRcfv6S
+	u5P+IQf49jxw51tcrt9w1HVgcCNCrqqSD6tS8PgehGiMtZO0z9ehDGGrtWA97t0wXYWcpB5ql31
+	6wvj7aZJ9wScpYR3x9D0fZF2i8tZRUWmOw6RXMk3Xpa5TegSUeFWANXw=
+X-Google-Smtp-Source: AGHT+IHbqnlQU0xRKdCvyLgDE1m1n6ES46zZnFhuBKy4wRTOO/AaTTQgYgpEXVkPryw2FPCOM/SuSC6XHlQ0t4FPG9fP1l0IwIy+
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: aculab.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+X-Received: by 2002:a05:6638:3494:b0:4c2:8a0c:3815 with SMTP id
+ 8926c6da1cb9f-4d017d9a32fmr193481173.2.1725108603592; Sat, 31 Aug 2024
+ 05:50:03 -0700 (PDT)
+Date: Sat, 31 Aug 2024 05:50:03 -0700
+In-Reply-To: <20240831122756.1426-1-hdanton@sina.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000008434460620fa2585@google.com>
+Subject: Re: [syzbot] [ocfs2?] possible deadlock in ocfs2_nfs_sync_lock
+From: syzbot <syzbot+fcb79916dcfe2a4ed10a@syzkaller.appspotmail.com>
+To: hdanton@sina.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-From: Jakub Kicinski
-> Sent: 27 August 2024 15:24
->=20
-> On Tue, 27 Aug 2024 16:40:05 +0800 Yan Zhen wrote:
-> > Using min macro not only makes the code more concise and readable
-> > but also improves efficiency sometimes.
->=20
-> The code is fine, you're making it worse.
->=20
-> How many of those pointless min()/max() conversions do you have
-> for drivers/net ?
+Hello,
 
-Maybe someone who understands cochineal should change the pattern
-so that is require one of the 'arguments' to be non-trivial.
-(or perhaps just delete the script ;-)
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-=09David
+Reported-by: syzbot+fcb79916dcfe2a4ed10a@syzkaller.appspotmail.com
+Tested-by: syzbot+fcb79916dcfe2a4ed10a@syzkaller.appspotmail.com
 
--
-Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1=
-PT, UK
-Registration No: 1397386 (Wales)
+Tested on:
 
+commit:         a18093af Merge tag 'nfsd-6.11-2' of git://git.kernel.o..
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+console output: https://syzkaller.appspot.com/x/log.txt?x=11d450fb980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=8605cd35ddc8ff3c
+dashboard link: https://syzkaller.appspot.com/bug?extid=fcb79916dcfe2a4ed10a
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=14e64529980000
+
+Note: testing is done by a robot and is best-effort only.
 
