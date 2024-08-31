@@ -1,154 +1,116 @@
-Return-Path: <linux-kernel+bounces-309735-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309737-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 949D2966FDE
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 08:48:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08E84966FE3
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 08:57:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C5AA11C21E05
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 06:48:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A91131F22841
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 06:57:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4933716D9AE;
-	Sat, 31 Aug 2024 06:48:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19C3C16C852;
+	Sat, 31 Aug 2024 06:56:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=svenpeter.dev header.i=@svenpeter.dev header.b="ncZ59w5a";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="qTU84pI9"
-Received: from fhigh1-smtp.messagingengine.com (fhigh1-smtp.messagingengine.com [103.168.172.152])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ipA2EL28"
+Received: from mail-yb1-f178.google.com (mail-yb1-f178.google.com [209.85.219.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89E9761FEB;
-	Sat, 31 Aug 2024 06:48:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D613F16BE01
+	for <linux-kernel@vger.kernel.org>; Sat, 31 Aug 2024 06:56:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725086918; cv=none; b=g5kmBelV0+U0Rt+ClIsFgIDAqwrvb+kt1Xa668jhX4XRZiHfvO7y6DicBKlS/Lhv1p+FTisfN9C4C0VDYIOWIYw3fX7kb5KtflNsWGD8u7lbvdF90alVR+xyGUM9KLgp4tc/ovaozxHMc4sRVL9slFiXeLITGoJwBt7ooIu5EmI=
+	t=1725087418; cv=none; b=lopKXMBdT0910pV6mhKCIKIu1VCgYBujRdu2AOU3HYWtvnOnH7AyjhPCDbPIA79jhlbDY7+8rL+GXva2p0Q+fNRSc5t03AwzI3wws8mTmAESG9Dr0L9+LXuSaNOL6wB94BPph+MgELIWe9b1g7otubVgHE+fm6zY8qxYzVALwGA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725086918; c=relaxed/simple;
-	bh=AWlIbgwDW15uXnvfiFNOWTtR+Bzmb9Zh8lOvtOTxJeE=;
-	h=Content-Type:From:Mime-Version:Subject:Date:Message-Id:References:
-	 Cc:In-Reply-To:To; b=Gv1EimJlEBem/d3Q/Nz//KbGW4oTY9QhdeJLc5vkAvR3R7TS7GSvz7yN/eqDUbbz+aGjEkEBpZ3aumC4fAZlt+QnBdTgJALBfdxexsF+7ttIbFPVToScGZPJJfnnrTYKw8NqkR8vRECIKqKnPn+E/aWUgLGdkffOHR2WJJ/UiwQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=svenpeter.dev; spf=pass smtp.mailfrom=svenpeter.dev; dkim=pass (2048-bit key) header.d=svenpeter.dev header.i=@svenpeter.dev header.b=ncZ59w5a; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=qTU84pI9; arc=none smtp.client-ip=103.168.172.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=svenpeter.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=svenpeter.dev
-Received: from phl-compute-06.internal (phl-compute-06.nyi.internal [10.202.2.46])
-	by mailfhigh.nyi.internal (Postfix) with ESMTP id AC67A114063E;
-	Sat, 31 Aug 2024 02:48:35 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-06.internal (MEProxy); Sat, 31 Aug 2024 02:48:35 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=svenpeter.dev;
-	 h=cc:cc:content-transfer-encoding:content-type:content-type
-	:date:date:from:from:in-reply-to:in-reply-to:message-id
-	:mime-version:references:reply-to:subject:subject:to:to; s=fm2;
-	 t=1725086915; x=1725173315; bh=20rH0T2L4W72RaArx6nM2uEwp1FMBQ6S
-	wXbHHbGIl6g=; b=ncZ59w5a1l3Xp3qgxe4bgBRj/0P2RbRnmheZ/d+mThbns8kr
-	UljPq8epg0BCm+JtOnXh/Zx7EcKjs8pQ1jAgFNL0jKDkCnBbl5hx1YJi1dXPi2eX
-	HiiUXVR9/ocmEsV+1uajHXZexxnqZqBGM6XQ2Om89FvpvaBF51wvRJWulHUnK+XI
-	MnKC1RJlhq8tqmz0F1s4YI7f67aQ6x5b/ja2Jawqt1ADqwGEo1D3o+lQpFlDznm/
-	IKVFva08Z8N/34MonnfowGeThAo3pLpzPDpP6lzaukxKsAbdvjF55RviXcyqEm6J
-	nVsVu57o78cJ9BWi/Z542XdFsQggC/i735s1Bw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1725086915; x=
-	1725173315; bh=20rH0T2L4W72RaArx6nM2uEwp1FMBQ6SwXbHHbGIl6g=; b=q
-	TU84pI9xVIYwnR9xkAsHrLOoYG6juW/ZlRKRaI9dxOGigfkOLDcn8Apt2LJWZiQe
-	Sa1QOIqS4JTeSTCb9jJoZ8nOnJ6J9cb9ynav/pNG9KsJCfodObGjvtvn8rkVYG4q
-	UZ3cKPJcVrxFHqDHejsTP/Lbx4JHQSOnuZU/qtU4hiPuTkIatjSrbWwhKV5Pl3Pr
-	t1qnwcnj15lqtlhzc66axQSS98GH+MgVaWF6HYYByNGcPtHkr+UFX/MnMDqRlXXg
-	Ffgb4Erub6JaGlo0d96IJDSmBqAQ9gtTPRPjwTiR039SbHkJ57vkTRmTTpTXoPZP
-	UhSONd71I1T29RIa72Nkw==
-X-ME-Sender: <xms:w7zSZtXL9uAqMN3lg0jIrbBtWrvwORzZpxZVBgX18pq036-wrIjGlw>
-    <xme:w7zSZtlDiGrpRj6UiYiVaIBoIKGhRhzsfz3pS34hNZmXYhZjz-yiyaG_utD8gtkSL
-    lNos5t2s848LvZKD_Q>
-X-ME-Received: <xmr:w7zSZpYxZnqdTSfxu3JjZF9V4bL2l1kPkJDuk7rPG-1WTQo7sYZ7xaKF7GdLCqW8WoPuS92Nxu8iB6IZhuqWhfBbk22N4eueVGP9ONs-0kM8WqBoa0UzOv7K4Yk>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudefjedgudduudcutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpegtgffhggfufffkfhevjgfvofesthhqmhdthhdt
-    jeenucfhrhhomhepufhvvghnucfrvghtvghruceoshhvvghnsehsvhgvnhhpvghtvghrrd
-    guvghvqeenucggtffrrghtthgvrhhnpedvhfdtudduvdeujeeufffgudekvdefvefgueei
-    iedvledtheegieevffdtteekudenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
-    epmhgrihhlfhhrohhmpehsvhgvnhesshhvvghnphgvthgvrhdruggvvhdpnhgspghrtghp
-    thhtohepudefpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopeimphhoshhtmhgrrh
-    hkvghtohhssdhuphhsthhrvggrmhhinhhgsehlihhsthhsrdhsrhdrhhhtpdhrtghpthht
-    oheprhhosghhsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdgrrhhmqd
-    hkvghrnhgvlheslhhishhtshdrihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopeht
-    ghhlgieslhhinhhuthhrohhnihigrdguvgdprhgtphhtthhopehkrhiikhdoughtsehkvg
-    hrnhgvlhdrohhrghdprhgtphhtthhopegrshgrhhhisehlihhsthhsrdhlihhnuhigrdgu
-    vghvpdhrtghpthhtohepthhofihinhgthhgvnhhmihesghhmrghilhdrtghomhdprhgtph
-    htthhopehkohhnrhgrugdrugihsggtihhosehsohhmrghinhhlihhnvgdrohhrghdprhgt
-    phhtthhopehmrghrtggrnhesmhgrrhgtrghnrdhsth
-X-ME-Proxy: <xmx:w7zSZgVNO_3QdtrIY9rMINnq3SvYnWykU533H6IzIuL8zzHQn2_FSg>
-    <xmx:w7zSZnkNUqwz-B8fSLHr95omjNdxLtFWPA2EkFc00kQpUlfjB3zy6w>
-    <xmx:w7zSZtcOffHIZ_P-RJQJE9dzUv4MrMdkzDFsg2e30m0CX6A1i9olGg>
-    <xmx:w7zSZhENZsBECJK6V7bkmtr4vJgE7q3azXP6pOVXA4ZntkBUt_pSog>
-    <xmx:w7zSZhn3_A3JO2R-23XmMKrFxJ2ESz1mX7GrEMt9R84C7Zj091-0Mewd>
-Feedback-ID: i51094778:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sat,
- 31 Aug 2024 02:48:35 -0400 (EDT)
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-From: Sven Peter <sven@svenpeter.dev>
+	s=arc-20240116; t=1725087418; c=relaxed/simple;
+	bh=8+xb/c5q8Te81bywgznH7epprrs+vus2sJDb/zrAqlI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DmG1T2N9h4TaMZWjujoXs5GxIagH9fEsdH7cmgEgkzB6nEWxz8To0dQ6Hkux3OaRbDk0AtE5pG5dIOAf5yrs7cmsbXtWXOFSnGah4d31425dyX3ZHEQz78L0hEi2KpTrmx9j5E42LXiD44pN2B2FIWFYaaAfoylGh0b15idk37A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ipA2EL28; arc=none smtp.client-ip=209.85.219.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f178.google.com with SMTP id 3f1490d57ef6-e13e11b23faso2584874276.3
+        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 23:56:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1725087416; x=1725692216; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=35/Cpco2p2doBWBoqkU/4WZL7A9fRuozoOMEP5DhBlM=;
+        b=ipA2EL28NfkHMF7Bu1AE1NRHUWJcX3Jg1VVzfgrd6xD/g/xekeEJULFMdm5ZNaVbnw
+         spp67cqXt7EZZrUaj8yk80QL6M5R2lzkRRRtdg4/F5NH2gh/kCu3E2NdOTQwube2J6NI
+         cDvDsZa1cemjGvwLj2MOgrk1/kFlE+IJq6LVi5vwqRn0iXio46lFvKKBR+AXTv862xdj
+         1/zeYScrc/34ICH/mWL9lEJogDtZ5TjTqG7oWmdzGuLmh2EkE5m39wAB/IFQUJ1ipCVu
+         IrkqFE2FuG+/gO7R6IiKnfQCbATqLRq3xLy2pZyk9GzkN/MsMCFmQ5XfAgML4RJfp47N
+         trIw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725087416; x=1725692216;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=35/Cpco2p2doBWBoqkU/4WZL7A9fRuozoOMEP5DhBlM=;
+        b=tjIx5DGhzQ03wNIEtJqNPYNizF/6TAnH7KwlyT761BxL1SiUbsEgo30+z3F5mBS9Bg
+         vlt9JhzHgwqIT/om8zbQBtDX3boXRT4Riytd3XHWXVExVD4uJjGzy9od3WzeX7xbyhzN
+         XId0RwkIEWPocnn4n4kjtqy7TJ6OcnmH4/a+o2fX7NQuXEATHLfoFY58My+qAJBlHX/T
+         TSV9bmCBDgnxriz1aOUJfMHfcrXacHONCJljRB+G9D9cLAUU2mTaWf6WF7eMAk4kozq2
+         s5tF8+S3SXOkhkaoBz3CIIcts+ijfNYVxBRszBmBY0/zWhTm7ld7157YUka3cUwZjpei
+         kATw==
+X-Forwarded-Encrypted: i=1; AJvYcCVU8Ej+MA81v9v6eldW00tJuICU9Xe7agRl7z0nr/82t7HcRtH1AETTm62OJw15ylTTs2OArrU1npVu65o=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxzp5Gxgz1JTHvWOadcWz+o2gUCp4/wWcctxhdKrCM6/WyTRZcc
+	6tEIge01YB99R5WJULl1zJhgzTVUw1/O3C3PUsYH6AppGi4D6C8zvmpgslAfWhwkDP3R/LcFUQJ
+	NH3N3+3h+FrL7Adaf9bF0Wl1jzjN6qK0NrqOtyg==
+X-Google-Smtp-Source: AGHT+IFWbLWA4IjXvF5bKeQh1lJtnNOkDsN8Sdtsfq95rr64K/eYP6o6HPpIf8dFbQYhHTulhF5MoAz7eON8AeOpAgw=
+X-Received: by 2002:a05:690c:d81:b0:6cf:8d6f:2bef with SMTP id
+ 00721157ae682-6d40eb67be1mr51383017b3.7.1725087415578; Fri, 30 Aug 2024
+ 23:56:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (1.0)
-Subject: Re: [PATCH v2 2/4] irqchip/apple-aic: Skip unnecessary setting of use_fast_ipi
-Date: Sat, 31 Aug 2024 08:48:23 +0200
-Message-Id: <05775A47-1FA8-47BF-9449-351CB35B9A42@svenpeter.dev>
-References: <20240831055605.3542-3-towinchenmi@gmail.com>
-Cc: Hector Martin <marcan@marcan.st>,
- Alyssa Rosenzweig <alyssa@rosenzweig.io>,
- Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, asahi@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, konrad.dybcio@somainline.org,
- ~postmarketos/upstreaming@lists.sr.ht
-In-Reply-To: <20240831055605.3542-3-towinchenmi@gmail.com>
-To: Nick Chan <towinchenmi@gmail.com>
-X-Mailer: iPhone Mail (21G93)
+MIME-Version: 1.0
+References: <20240829082830.56959-1-quic_varada@quicinc.com>
+ <20240829082830.56959-4-quic_varada@quicinc.com> <gomm5yozebwfuhmgziajmkflbj6knmbwae4mls5kuwl5ngcbrx@mndpiktfken2>
+In-Reply-To: <gomm5yozebwfuhmgziajmkflbj6knmbwae4mls5kuwl5ngcbrx@mndpiktfken2>
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Sat, 31 Aug 2024 09:56:44 +0300
+Message-ID: <CAA8EJpoSZwqw7_UVVXzwOd77Xh6j5LzKus-ZfuL_f5yrc8AYkg@mail.gmail.com>
+Subject: Re: [PATCH v5 3/8] dt-bindings: clock: add Qualcomm IPQ5332 NSSCC
+ clock and reset definitions
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Varadarajan Narayanan <quic_varada@quicinc.com>, andersson@kernel.org, mturquette@baylibre.com, 
+	sboyd@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	konradybcio@kernel.org, catalin.marinas@arm.com, will@kernel.org, 
+	djakov@kernel.org, richardcochran@gmail.com, geert+renesas@glider.be, 
+	neil.armstrong@linaro.org, arnd@arndb.de, nfraprado@collabora.com, 
+	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org, 
+	netdev@vger.kernel.org, Kathiravan Thirumoorthy <quic_kathirav@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"
 
+On Sat, 31 Aug 2024 at 09:11, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>
+> On Thu, Aug 29, 2024 at 01:58:25PM +0530, Varadarajan Narayanan wrote:
+> > From: Kathiravan Thirumoorthy <quic_kathirav@quicinc.com>
+> >
+> > Add NSSCC clock and reset definitions for Qualcomm IPQ5332.
+> > Enable interconnect provider ability for use by the ethernet
+> > driver.
+> >
+> > Signed-off-by: Kathiravan Thirumoorthy <quic_kathirav@quicinc.com>
+> > Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
+> > ---
+> > v5: Marked #power-domain-cells as false
+> >     Included #interconnect-cells
+>
+> Then this might not be GCC-like clock controller or gcc.yaml
+> should not include power-domain-cells.
 
+qcom,gcc.yaml already doesn't mark #power-domain-cells as required, so
+it should be fine. See qcom,gcc-apq8064.yaml or qcom,gcc-ipq4019.yaml.
 
-> On 31. Aug 2024, at 07:57, Nick Chan <towinchenmi@gmail.com> wrote:
->=20
-> =EF=BB=BFuse_fast_ipi is true by default and there is no need to "enable" i=
-t.
->=20
-> Signed-off-by: Nick Chan <towinchenmi@gmail.com>
-> ---
-
-Acked-by: Sven Peter <sven@svenpeter.dev>
-
-
-> drivers/irqchip/irq-apple-aic.c | 4 +---
-> 1 file changed, 1 insertion(+), 3 deletions(-)
->=20
-> diff --git a/drivers/irqchip/irq-apple-aic.c b/drivers/irqchip/irq-apple-a=
-ic.c
-> index 5c534d9fd2b0..8d81d5fb3c50 100644
-> --- a/drivers/irqchip/irq-apple-aic.c
-> +++ b/drivers/irqchip/irq-apple-aic.c
-> @@ -987,9 +987,7 @@ static int __init aic_of_ic_init(struct device_node *n=
-ode, struct device_node *p
->    off +=3D sizeof(u32) * (irqc->max_irq >> 5); /* MASK_CLR */
->    off +=3D sizeof(u32) * (irqc->max_irq >> 5); /* HW_STATE */
->=20
-> -    if (irqc->info.fast_ipi)
-> -        static_branch_enable(&use_fast_ipi);
-> -    else
-> +    if (!irqc->info.fast_ipi)
->        static_branch_disable(&use_fast_ipi);
->=20
->    irqc->info.die_stride =3D off - start_off;
-> --
-> 2.46.0
->=20
-
+-- 
+With best wishes
+Dmitry
 
