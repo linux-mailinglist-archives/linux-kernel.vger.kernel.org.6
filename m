@@ -1,93 +1,149 @@
-Return-Path: <linux-kernel+bounces-310019-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310017-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFD14967326
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 21:41:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19C74967322
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 21:35:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE1C62832C4
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 19:41:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BDBE31F2235E
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 19:35:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4B0D17BB3E;
-	Sat, 31 Aug 2024 19:41:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B30A1531FD;
+	Sat, 31 Aug 2024 19:35:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=diekuehnen.com header.i=@diekuehnen.com header.b="T7lf2pXs"
-Received: from mail.diekuehnen.com (mail.diekuehnen.com [78.47.205.37])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="COVPeyFC"
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B48C2524F;
-	Sat, 31 Aug 2024 19:41:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.47.205.37
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0D1D39FDD;
+	Sat, 31 Aug 2024 19:35:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725133291; cv=none; b=hBHxFFPevRvX+UTVdOJ0MEJwD34hjpfR+JK5qMHQAvqTH0RMIsVcYbf3atmfcf+YheSjW0mBND/NzqjN4bFGtBlBER98xeScWYizh/OsxSO6sV5Ob5EDFu9a0AmRngT9TbokeqVr1Y6ixA200cKOsC6hn1JlPYVbNRjPzGBhgxs=
+	t=1725132935; cv=none; b=Yy3lXfcljiWI3A7UXiA54bDDpntlZgj0DofrHf7o4Thq+z7lrBT4sdvi280B0nMhLs/BXrSZ5fDikfW3dMRHE1qIupsnBDXUWySyQ+5JOojuKAecEvmOqGnoUnZsUO4ZTK/KjBLAPBiYfkpoKzsDU6HVwvWvCc70yIUmrXW0ZjE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725133291; c=relaxed/simple;
-	bh=Z01ZmUqepmagPSiRrE/hPtUaOltU1UjTBA+jKJSPPQ0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=d3SWdAch/QixgfKqa28JGsmcpKBpGEpFwfBTkQDbFHz8tbecYiVyhyOl0mXw/6laTW5ZaGubzpx7CQxEQsKZmYhDG7oSo06zutLGkB1OCaaLwiLxJyiygj8siCzW3UYlTS7PuxvyTr2NvlrGbOD57IuchynOBD5TKNNGKqJ3VqI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=diekuehnen.com; spf=pass smtp.mailfrom=diekuehnen.com; dkim=pass (2048-bit key) header.d=diekuehnen.com header.i=@diekuehnen.com header.b=T7lf2pXs; arc=none smtp.client-ip=78.47.205.37
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=diekuehnen.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=diekuehnen.com
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 17CBA7E699;
-	Sat, 31 Aug 2024 21:36:06 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=diekuehnen.com;
-	s=dkim; t=1725132967;
-	h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding; bh=46QX0kuhx180X/8BVQKfdic538oR3Z6r3UiNROg8Mi8=;
-	b=T7lf2pXsSKOnmASVTCVThS7v+FSiSl+ZgeUhKY/kPdUlCRCWjb+hHnoj/rHaBsnEU+lj1h
-	et9GEtGPAYjp5isu1sRgRrmL44oBlOYNl/NV5dDEZecEi6aJqrfFwS90nQxUF9Ee1xOzfR
-	v2tsGDtD0Se+IENU7xyLpg0q5Aelm7J5fJPJYaM56xA+2Oj2w1mbCgN9vVYdTCR/g87LZz
-	ajljGKi1MYGSF5oQRQRtedXIYUjDKsc7TWxcCLmggbZmDGHqRr++uzPpm0nJQViJi2BgBF
-	JIvtc23HLLmXj+BJb4lv+rNQWcYZL918sHbUp3UbCxFaJrXVcP7xqhuu+HEb8w==
-From: =?UTF-8?q?Andreas=20K=C3=BChn?= <andreas.kuehn@diekuehnen.com>
-To: avifishman70@gmail.com,
-	tmaimon77@gmail.com,
-	tali.perry1@gmail.com,
-	venture@google.com,
-	yuenn@google.com,
-	benjaminfair@google.com,
-	peter.chen@kernel.org,
-	gregkh@linuxfoundation.org
-Cc: openbmc@lists.ozlabs.org,
-	linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	=?UTF-8?q?Andreas=20K=C3=BChn?= <andreas.kuehn@diekuehnen.com>
-Subject: [PATCH] usb: chipidea: npcm: Fix coding style with missing space
-Date: Sat, 31 Aug 2024 21:34:06 +0200
-Message-ID: <20240831193407.11302-1-andreas.kuehn@diekuehnen.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1725132935; c=relaxed/simple;
+	bh=88vBedgXwP97HYw2npqq3VYbx8iEQMale+RTN4exJRw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YAs7Kb8GwovHbiSVlOCaD3bam0wkOz+n6BY1lVrnWlmZeAnsQ77ZivDjI93MDQVyygtADjwOjmumhaaeZyQVCCDuOfbBHxce5V81TPL6nMkHNtwWmRzojCyN0qD3EdlZBq+oS4MfQ4rt1HTlCYFh9HRpqcy7KE/IB3IrkCsRTeg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=COVPeyFC; arc=none smtp.client-ip=209.85.210.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-715cc93694fso2647225b3a.2;
+        Sat, 31 Aug 2024 12:35:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725132933; x=1725737733; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=efDdo8Rf8FcDNhL/pTn7ObRZiGA/HSHYfyN56iTR4Ok=;
+        b=COVPeyFC4QxfLVQRq1Sgp9SoU55PzeZE6SFR32nuKaTIH5tFHiO7/D7p7/i7X7VwSw
+         Vm9SyNdtijMIVEn5faTghv2M0a4m0ea7tfWSecoiw2CGdrHJkAWrVZl5ViAD5cnNJZ0h
+         06Lq04RxTHHnHaSjBnhhgFg3jOoRa3wCJV23W5yyF5fHKi7i4qQFNlSvU01R8iVcSOiZ
+         hEsKVAzId6Y1PVBhZPQXr1eElrdQG2qkOaAte/JUY5lVZT7cFPAPz9810MBRfSSr1qOA
+         jg2kq9CbrMk2fPcTvscXVG2mvSlXSEtBpUuKL9YzMlmX8vg79VeLHsHBmSBYpZpHrK+c
+         pczg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725132933; x=1725737733;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=efDdo8Rf8FcDNhL/pTn7ObRZiGA/HSHYfyN56iTR4Ok=;
+        b=M4F0HtsmeWAp2DmJ6PHaIM016eBIUKlEahK3qKNsgfZLJFsIZj2e8dmOi/nvWmY5A1
+         A81FuVwPX2z3bmiqKuIV9bbPvdgyABlCaNpe2/PjYt4mks8R6lsoCutrbLkc0JPBLjkw
+         B+O02FUQ7nij2j9eO04QYZw7C69pqCk3mB4f77ypdbeTdrM6XltFYPvJF6UF2DSsHq0W
+         JluGPXx44qXXnwfY4CYwZQnrvy+yPyb8pv7+PfQiyuupebo5NYMlYzmumVSJxawS6aow
+         DCJTbvgznolBIYY4NPynzDWd/6SbIaW8i4Y6F6gAnNK0KJT+fOb+nHw/ATJ1ShKhtW0U
+         yTdg==
+X-Forwarded-Encrypted: i=1; AJvYcCWDZT+r8WdyI+xeHBfFa2SnKbohtB2zNu/NrJftY5BbJlpCjChmU5L0x8UXRSgeDv+nygDoWANDgIl+oQ==@vger.kernel.org, AJvYcCXuyYZGzs6XRpcQa4ZPXJD/3ntewTU5DPWhNNMLDPbik1y0Goftf26aW3ZLQ+hFp5sr+7cF0DAcXQIsX8nO@vger.kernel.org
+X-Gm-Message-State: AOJu0YzNQ2BDmkT5iFp/fvIidZGt3qFOhWPXMiMFtN2cp6MrUuVXVfqx
+	R2AOYn7BtFi/m0Lrasd1DveGmxdQ9+vNq3M8Y0IBgu9esc4Sm1zj
+X-Google-Smtp-Source: AGHT+IER2qtkqOh3s9y998ousnaj5IE1Uvj6aAunJLLbT566xMBH/BctBgffU5DEZeWxOix9vEVbdw==
+X-Received: by 2002:a05:6a00:3a05:b0:710:5825:5ba0 with SMTP id d2e1a72fcca58-7173c1e0e87mr2616159b3a.3.1725132932715;
+        Sat, 31 Aug 2024 12:35:32 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-715e55a94casm4544640b3a.70.2024.08.31.12.35.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 31 Aug 2024 12:35:31 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date: Sat, 31 Aug 2024 12:35:30 -0700
+From: Guenter Roeck <linux@roeck-us.net>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Shen Lichuan <shenlichuan@vivo.com>, jdelvare@suse.com,
+	linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org,
+	opensource.kernel@vivo.com
+Subject: Re: [PATCH v1] hwmon: (sht15) Simplify with dev_err_probe()
+Message-ID: <8114389a-46f2-4149-8835-8b2d62e00bc0@roeck-us.net>
+References: <20240830065443.31760-1-shenlichuan@vivo.com>
+ <4792cf2f-1a53-428b-9760-9f8c506c34d7@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4792cf2f-1a53-428b-9760-9f8c506c34d7@kernel.org>
 
-Fixed coding style issue: added missing space.
+On Sat, Aug 31, 2024 at 07:53:14AM +0200, Krzysztof Kozlowski wrote:
+> On 30/08/2024 08:54, Shen Lichuan wrote:
+> > Use dev_err_probe() to simplify the error path and unify a message
+> > template.
+> > 
+> > Using this helper is totally fine even if err is known to never
+> > be -EPROBE_DEFER.
+> > 
+> > The benefit compared to a normal dev_err() is the standardized format
+> > of the error code, it being emitted symbolically and the fact that
+> > the error code is returned which allows more compact error paths.
+> > 
+> > Signed-off-by: Shen Lichuan <shenlichuan@vivo.com>
+> > ---
+> >  drivers/hwmon/sht15.c | 8 +++-----
+> >  1 file changed, 3 insertions(+), 5 deletions(-)
+> > 
+> > diff --git a/drivers/hwmon/sht15.c b/drivers/hwmon/sht15.c
+> > index 494f9655f44f..cc3a46a9c68e 100644
+> > --- a/drivers/hwmon/sht15.c
+> > +++ b/drivers/hwmon/sht15.c
+> > @@ -942,11 +942,9 @@ static int sht15_probe(struct platform_device *pdev)
+> >  			data->supply_uv = voltage;
+> >  
+> >  		ret = regulator_enable(data->reg);
+> > -		if (ret != 0) {
+> > -			dev_err(&pdev->dev,
+> > -				"failed to enable regulator: %d\n", ret);
+> > -			return ret;
+> > -		}
+> > +		if (ret != 0)
+> > +			return dev_err_probe(&pdev->dev, ret,
+> > +					     "failed to enable regulator\n");
+> 
+> This is ridiculous patch created by some low quality automation without
+> any review and thoughts from vivo.com side.
+> 
+> You change something which cannot defer, while leaving out unchanged
+> other places which actually can defer and could benefit.
+> 
+> Stop spamming with such low quality patches.
+> 
 
-Signed-off-by: Andreas Kühn <andreas.kuehn@diekuehnen.com>
----
- drivers/usb/chipidea/ci_hdrc_npcm.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Agreed. Not only would the driver benefit from using
+devm_regulator_get_enable_optional(), the driver should be reworked to use
+the with_info hardware monitoring API instead of the old deprecated API.
+But that would have to be done by someone actually _using_ that chip.
+If that isn't done, cosmeting driver changes like this really don't add
+any value.
 
-diff --git a/drivers/usb/chipidea/ci_hdrc_npcm.c b/drivers/usb/chipidea/ci_hdrc_npcm.c
-index b14127873c55..c89c68f41ccc 100644
---- a/drivers/usb/chipidea/ci_hdrc_npcm.c
-+++ b/drivers/usb/chipidea/ci_hdrc_npcm.c
-@@ -28,7 +28,7 @@ static int npcm_udc_notify_event(struct ci_hdrc *ci, unsigned event)
- 		hw_write(ci, OP_USBMODE, 0xffffffff, 0x0);
- 		break;
- 	default:
--		dev_dbg(dev, "unknown ci_hdrc event (%d)\n",event);
-+		dev_dbg(dev, "unknown ci_hdrc event (%d)\n", event);
- 		break;
- 	}
- 
--- 
-2.43.0
+But then the whole driver, or rather its use or non-use of the supply
+voltage, does not really make sense. If the regulator and with it the
+voltage isn't available, the temperature sensor values don't make sense.
+And if the temperature isn't valid, humidity values are also wrong.
+That means using the optional regulator API doesn't make sense to start
+with.  Really, that driver needs a complete overhaul if anyone is still
+using it, not just cosmetic changes.
 
+Guenter
 
