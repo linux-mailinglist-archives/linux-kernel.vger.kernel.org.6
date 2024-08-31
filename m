@@ -1,102 +1,81 @@
-Return-Path: <linux-kernel+bounces-309873-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309876-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A19A196715D
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 13:41:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E3BE096716C
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 13:52:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C7C3F1C2145F
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 11:41:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 20F061C21481
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 11:52:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F38A17E007;
-	Sat, 31 Aug 2024 11:41:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A/H5u7Bv"
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2A3C17F4EC;
+	Sat, 31 Aug 2024 11:52:22 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D50D36A8CF;
-	Sat, 31 Aug 2024 11:41:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC8A14C99;
+	Sat, 31 Aug 2024 11:52:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725104478; cv=none; b=Pv9rZ61zgBhaI4To/2KW+IXvuJToREdAqDdTbE8JOklUmJq+jzDYYc65w9TBtGcdqMYk9paR7iQFfRdJuwdXSkIXLB48cOg9YS5hRD/g8QY5CpJOUMLIKboJ3ZLYBCts6Daet1+h+LYXcyABPANw8wOrAEmc1vNj9PMPZx1ZuaQ=
+	t=1725105142; cv=none; b=M8iIdlMA0F3k+YYNNic/MYCN2xWP1csexzoGBMFnoKG6oyN1VvGz5ft3yQ3S3ablc0XUnsEPqhHUQ8tuutSGDTcc4P1OxlF6lr7geITSILnaXDw9u1a9CeJrWjm9Kgh3SByo7gJrFeWxeL8dcHuoqDYdKuSErqCe7JUg6imNAwQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725104478; c=relaxed/simple;
-	bh=dzfg5AAPQBP7IxGhqH2LJ3n1Dw2NUaBeXGeXvnIpsVA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NCWYqwJ/VMcj80JsYF56DeFvo9kQHIipRGBuiddkkQ1I2zi/eMMNpa5SU4zRY/JOdfLgCiquotn8PpXjHhiiNBlzwYNtmBaNw+qWyG0IV+8bE+D4xFcckbqthMNC54kUb8soemM3PXic4mpb0JrD6/OnbU4tLpp/keYrfEG6/dw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=A/H5u7Bv; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5bec4e00978so2726123a12.0;
-        Sat, 31 Aug 2024 04:41:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725104475; x=1725709275; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dzfg5AAPQBP7IxGhqH2LJ3n1Dw2NUaBeXGeXvnIpsVA=;
-        b=A/H5u7BvNlhcL9Etw75OzNdY8nYEjDHkvzstsQ3YfWkHK0x/uNH2eqM0KSemyZp7Cw
-         Az73wkliG4BwayzdLY1vc3uXYzzjhnq4Vc7EBiFpD8URyo0zSAE78+p7yIy8WBA8WmHj
-         2/I5av316XuvYCRUOr7iWY09CuHL1Y0ZuZrZCJ/uzcfb9LEsNZYltP4jzS8Fr2SzNO48
-         70lhNNeE34qJQT13wWVPWYRgRfhmxfuYEoCazwha7LuHVh5COQdl7PY2px0b/UVZbV+f
-         MAWbz4gea5Mpl5ONrtZE15hYR3q2eSwp3vrcMn7Pz8XSTVkuvHc+nDB/WhimxxYa0HJZ
-         A/Lg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725104475; x=1725709275;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=dzfg5AAPQBP7IxGhqH2LJ3n1Dw2NUaBeXGeXvnIpsVA=;
-        b=EZG0AWojcbvmV+fSSiixcplcFMn2GmUa+CLXVJsKK3GEUNb9p46oPUjaVnXFPTmUtw
-         f1/7gTK66sD8GFu5v+qEHsDnzm5n4lho4jqsOqAwTBWkzN737DuHRHpeJcOoP132vkG/
-         X1bguGLZLoljGShT2u3GQEgKGyN6byDAA86zRL9hLdePRVQ2xsqUVWe4i0Gst55lwWhf
-         sgXDU9D99uEiPR70SJHyGA/nIn7BxQmZ+sZqw/nibwmdyJ0gyj37Yey64MAr5mNj6Z2d
-         Gh8zhg/5GF9+7vwvd3G9GcCDTQwbOIOZHtqBMnURCtM2xBGChisWO8wFxWROvzxlxD/O
-         jwyg==
-X-Forwarded-Encrypted: i=1; AJvYcCUWNQ7NoiTDszDMYhg3vZxLrRrazmEev5VenckpuiP+94NiOLlXCGIJX+mmVS9tidH/arRwvXMsZX0=@vger.kernel.org, AJvYcCVrMpKBsXyKcckmHiEFlHQb4Pk8Q4bxjKqJylJW/ujBd9ifzB0SkIlq3NZ23M4cKh8HUVMLPtMTqHj9xngp@vger.kernel.org
-X-Gm-Message-State: AOJu0YwPSoS3tROlJwOhjvant2Akr+7jU8fyBlufjt8xkN5Q/0hOfY3q
-	mioX584ysHqxR7zIpnChPEKKmgHcqzSj7U8pPn+m5kX/B43Zq3QiiqEmFLe1Pg2dJrH8n2jdH2/
-	H3jqxTbUHCwicksXZ2ZzemQ6e5DQ=
-X-Google-Smtp-Source: AGHT+IFyquyaYAKRcJU4KGIAwFgdI7SC3dKZUTalVzMf8x3+nH6tfUdud/w9VNB4qkeRJVPINcOulPJzYR0cflsoO8k=
-X-Received: by 2002:a17:907:7da3:b0:a7a:b385:37c5 with SMTP id
- a640c23a62f3a-a897f811cc2mr712228366b.17.1725104474690; Sat, 31 Aug 2024
- 04:41:14 -0700 (PDT)
+	s=arc-20240116; t=1725105142; c=relaxed/simple;
+	bh=7KJMoXFm1sjE9zdEQDm6xbqnZvCYOVAuYscMOzihT0M=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=XUlfMXv1tWxaGL0wcXjd3EkzU7nDLndEP5mPGyzclO1OLf0lcaUOw5btRxzBFst17TkCV5K+r97ZuNTVBW62e3ovALbVpw3lTddHJxIF6bm7OhSkH9NJGQXRIdAYlJnqaUvxIBeblv75mTt/xUdJKTtnH7igUOdfklvr63kAw8I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.194])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4Wwtf64H1jzyR58;
+	Sat, 31 Aug 2024 19:51:42 +0800 (CST)
+Received: from kwepemm600009.china.huawei.com (unknown [7.193.23.164])
+	by mail.maildlp.com (Postfix) with ESMTPS id 4AA021400DC;
+	Sat, 31 Aug 2024 19:52:16 +0800 (CST)
+Received: from localhost.localdomain (10.69.192.56) by
+ kwepemm600009.china.huawei.com (7.193.23.164) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Sat, 31 Aug 2024 19:52:15 +0800
+From: Weili Qian <qianweili@huawei.com>
+To: <herbert@gondor.apana.org.au>
+CC: <linux-crypto@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<liulongfang@huawei.com>, <shenyang39@huawei.com>
+Subject: [PATCH 0/3] crypto: hisilicon - fix issues related to device reset
+Date: Sat, 31 Aug 2024 19:48:28 +0800
+Message-ID: <20240831114831.21987-1-qianweili@huawei.com>
+X-Mailer: git-send-email 2.33.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240826212344.866928-1-andy.shevchenko@gmail.com> <20240831115343.775c6167@jic23-huawei>
-In-Reply-To: <20240831115343.775c6167@jic23-huawei>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Sat, 31 Aug 2024 14:40:38 +0300
-Message-ID: <CAHp75VcZBAkpr==gwXohhHLZfTGpwQdtyOH_A3xkz12qV4Nvrw@mail.gmail.com>
-Subject: Re: [PATCH v1 0/2] iio: imu: st_lsm6dsx: Clean up ACPI/fwnode code paths
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: Lorenzo Bianconi <lorenzo@kernel.org>, linux-iio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Lars-Peter Clausen <lars@metafoo.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ kwepemm600009.china.huawei.com (7.193.23.164)
 
-On Sat, Aug 31, 2024 at 1:53=E2=80=AFPM Jonathan Cameron <jic23@kernel.org>=
- wrote:
-> On Tue, 27 Aug 2024 00:22:38 +0300
-> Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
->
-> > Here is a couple of cleanups that should not affect any functionality.
+This set fixes some issues related to device reset:
+1. Before enabling the device, reset the device to ensure that
+the device is in the initial state.
+2. Mask device task timeout error because the current device
+timeout threshold is too short.
+3. Memory error is injected to close master ooo to prevent the
+device write the released memory.
 
-...
+Weili Qian (3):
+  crypto: hisilicon/qm - reset device before enabling it
+  crypto: hisilicon/hpre - mask cluster timeout error
+  crypto: hisilicon/qm - inject error before stopping queue
 
-> Applied the obvious fix for the bot error messages &drdy_pin
-> and applied to the togreg branch of iio.git (pushed out as testing)
+ drivers/crypto/hisilicon/hpre/hpre_main.c |  54 ++++----
+ drivers/crypto/hisilicon/qm.c             | 151 ++++++++++++++--------
+ drivers/crypto/hisilicon/sec2/sec_main.c  |  16 +--
+ drivers/crypto/hisilicon/zip/zip_main.c   |  23 ++--
+ 4 files changed, 146 insertions(+), 98 deletions(-)
 
-Thank you and sorry for the inconvenience.
+-- 
+2.33.0
 
---=20
-With Best Regards,
-Andy Shevchenko
 
