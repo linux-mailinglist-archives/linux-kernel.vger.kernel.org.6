@@ -1,150 +1,144 @@
-Return-Path: <linux-kernel+bounces-309759-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309763-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65ADF967022
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 09:36:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0DFD96702C
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 09:41:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 14B661F232D6
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 07:36:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D84FE1C21957
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 07:41:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DD3316F265;
-	Sat, 31 Aug 2024 07:35:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 246D516F0F0;
+	Sat, 31 Aug 2024 07:41:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="a6DkfDuO"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="WQbeHUXs"
+Received: from smtpbguseast3.qq.com (smtpbguseast3.qq.com [54.243.244.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF434157A6B;
-	Sat, 31 Aug 2024 07:35:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D69971E52D
+	for <linux-kernel@vger.kernel.org>; Sat, 31 Aug 2024 07:41:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.243.244.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725089758; cv=none; b=CWfOZ8ZCAJnsmQ92hH2KaafCPITPNDb5MHojKSiuMiITIJNlRmbuzIoFQ7+ViMJK8DoW7Lqrf7D60PEF4/c4wUXUkF2iGkwULDf1xclU/KQLdbI/NOu70bPI1ShpqZ3DWdTJ+TSr4vbq7LojHQhEsJxNrc+Yo9WS30R/caB5c6Q=
+	t=1725090077; cv=none; b=W4aaWMtXF8xj5WAkCPrQbxWbrjl5dYhI0ABUktotmuh7YKJrYcVj3EtbYIGFBqOOcS4EUrHpw+dP69oikg1VuvvYsrgHwmN479qkRwKHtC6ckj7Qgo+7qnT9PYJRpTGsREOIL6eqKteTO1NzBvsc9TbRXKtoq4rgFVuS6BOkWOs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725089758; c=relaxed/simple;
-	bh=czp5B2f7yB9kZl1r+dl0QORW3vwTZa6LcMuzRe1KU+8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IhI8tZdPOY+NgWxaOrNEm6TyCisQqG3HP8Uhp55ViHwdQTYtH4biQeuNJfccCNpKEg52VD6LaEizHHDoLgrv0C1IASuPkq4u36aOvwJDVO/4paXQ1v8qOUTTspiZmsIrejUZ2fOWjq0RSYiHU9NovJxZDfYBKuAFf+K35JdC0mk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=a6DkfDuO; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725089756; x=1756625756;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=czp5B2f7yB9kZl1r+dl0QORW3vwTZa6LcMuzRe1KU+8=;
-  b=a6DkfDuObpg+6Hlkjg2x9ORDf5QbJiYA1Up45gteXtxb8hcV+zzrcPDF
-   L++lP3ucm/pTFgxGtMkwHQbCq4oO9qtGtukxIp3cln2Pc6eqIMXmpSeek
-   11/7CBoE7BLEkHKVixFpxoKXzrbH3c6S2f/qPZ2WvFClsgxtBVlrpPX7M
-   5Uc3wezLE0FqmV71OFO75XdF7MvR/4InJ1AMh48Nvi4L8API4sGqqZKgk
-   B8b1oazQMnyP8n5Q8bLLp6eypLsds9J6YnIWtkzUPqLty3uP+MouXTng0
-   X9h/1XnWh0mpdRmmJqCBRef+nqpmxVG0OubEHgCTKYnFN0P/+Y53zOY/V
-   Q==;
-X-CSE-ConnectionGUID: 3XrxmTrQTFWzDEEU/bslwg==
-X-CSE-MsgGUID: oSvCYGIqS/KDe3cb7/BssQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11180"; a="26644518"
-X-IronPort-AV: E=Sophos;i="6.10,191,1719903600"; 
-   d="scan'208";a="26644518"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Aug 2024 00:35:55 -0700
-X-CSE-ConnectionGUID: yxTs2rpBSbuLl83xUL3cog==
-X-CSE-MsgGUID: rW71+T5yRlq/qW58K35c4A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,191,1719903600"; 
-   d="scan'208";a="68950957"
-Received: from lkp-server01.sh.intel.com (HELO 9c6b1c7d3b50) ([10.239.97.150])
-  by orviesa005.jf.intel.com with ESMTP; 31 Aug 2024 00:35:51 -0700
-Received: from kbuild by 9c6b1c7d3b50 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1skIeC-0002Qw-1m;
-	Sat, 31 Aug 2024 07:35:48 +0000
-Date: Sat, 31 Aug 2024 15:35:11 +0800
-From: kernel test robot <lkp@intel.com>
-To: Ashish Kalra <Ashish.Kalra@amd.com>, seanjc@google.com,
-	pbonzini@redhat.com, dave.hansen@linux.intel.com,
-	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, x86@kernel.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev, hpa@zytor.com,
-	peterz@infradead.org, linux-kernel@vger.kernel.org,
-	kvm@vger.kernel.org, thomas.lendacky@amd.com, michael.roth@amd.com,
-	kexec@lists.infradead.org, linux-coco@lists.linux.dev
-Subject: Re: [PATCH] x86/sev: Fix host kdump support for SNP
-Message-ID: <202408311530.cYa27OX8-lkp@intel.com>
-References: <20240827203804.4989-1-Ashish.Kalra@amd.com>
+	s=arc-20240116; t=1725090077; c=relaxed/simple;
+	bh=u2TLDIVYn/ltoYIw/AoXlW3X+ya46JQbBlhZ5/T2BQM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Y8IIgMiiJCmqGd2l8rBD+1lwEMteQc/YhGJ6mJgzBsqDD9W677+NhtrX27AbpJhTUbS77sQx13GiXfTdKgK6PNeC+opqiA/7LZeubNEUgrQyuJnjrRJm6H0eV6hXfn2UwhoaACQkHg6D3tzssHfht9Sg79Gyy06g3bYNhReS3U8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=WQbeHUXs; arc=none smtp.client-ip=54.243.244.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
+	s=onoh2408; t=1725090038;
+	bh=titFpAFRFG6lSC5TNWm3vO0HJx8nVGVx12kXcfKUHUE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=WQbeHUXsVf1bbvgaEgD11OikP8iUeU/Nv8XLeDWAGa/R9cQvFuLvWjwGdSQdPOyZv
+	 9J0YC0+4tO17R/WrI04Ct1vymGG2gB8jPMr0fIzHxaTeAk1ziksizIf2xfCimA7Q7I
+	 FLmMJLk9kxr4OYv5YUsfN0SqSP8VQw8936GoR5vI=
+X-QQ-mid: bizesmtpsz13t1725090023t31myz
+X-QQ-Originating-IP: sNcB1n3vxgVmHjLmLNF0NJUB/d2IZqPIuDFnWQbqixE=
+Received: from [10.20.53.89] ( [113.57.152.160])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Sat, 31 Aug 2024 15:40:22 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 1
+X-BIZMAIL-ID: 15338145670686491411
+Message-ID: <95E05902A7743E7B+99bf08fd-c057-41a9-9250-d05e1e89d92f@uniontech.com>
+Date: Sat, 31 Aug 2024 15:40:21 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240827203804.4989-1-Ashish.Kalra@amd.com>
-
-Hi Ashish,
-
-kernel test robot noticed the following build warnings:
-
-[auto build test WARNING on kvm/queue]
-[also build test WARNING on linus/master v6.11-rc5 next-20240830]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Ashish-Kalra/x86-sev-Fix-host-kdump-support-for-SNP/20240828-044035
-base:   https://git.kernel.org/pub/scm/virt/kvm/kvm.git queue
-patch link:    https://lore.kernel.org/r/20240827203804.4989-1-Ashish.Kalra%40amd.com
-patch subject: [PATCH] x86/sev: Fix host kdump support for SNP
-config: i386-buildonly-randconfig-006-20240831 (https://download.01.org/0day-ci/archive/20240831/202408311530.cYa27OX8-lkp@intel.com/config)
-compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240831/202408311530.cYa27OX8-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202408311530.cYa27OX8-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
-   In file included from arch/x86/kvm/svm/svm.c:50:
->> arch/x86/kvm/svm/svm.h:783:13: warning: function 'snp_decommision_all' has internal linkage but is not defined [-Wundefined-internal]
-     783 | static void snp_decommision_all(void);
-         |             ^
-   arch/x86/kvm/svm/svm.c:686:3: note: used here
-     686 |                 snp_decommision_all();
-         |                 ^
-   1 warning generated.
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] Loongarch64: pci: fix memleak in pci_acpi_scan_root
+To: Huacai Chen <chenhuacai@kernel.org>,
+ Wentao Guan <guanwentao@uniontech.com>
+Cc: henhuacai@kernel.org, kernel@xen0n.name, loongarch@lists.linux.dev,
+ linux-kernel@vger.kernel.org
+References: <20240831052157.13532-1-guanwentao@uniontech.com>
+ <CAAhV-H7GptUdpKScV1AuZZm7w-F5oUXHRmaT9BFCZV4HuQExJg@mail.gmail.com>
+From: WangYuli <wangyuli@uniontech.com>
+Autocrypt: addr=wangyuli@uniontech.com; keydata=
+ xjMEZoEsiBYJKwYBBAHaRw8BAQdAyDPzcbPnchbIhweThfNK1tg1imM+5kgDBJSKP+nX39DN
+ IVdhbmdZdWxpIDx3YW5neXVsaUB1bmlvbnRlY2guY29tPsKJBBMWCAAxFiEEa1GMzYeuKPkg
+ qDuvxdofMEb0C+4FAmaBLIgCGwMECwkIBwUVCAkKCwUWAgMBAAAKCRDF2h8wRvQL7g0UAQCH
+ 3mrGM0HzOaARhBeA/Q3AIVfhS010a0MZmPTRGVfPbwD/SrncJwwPAL4GiLPEC4XssV6FPUAY
+ 0rA68eNNI9cJLArOOARmgSyJEgorBgEEAZdVAQUBAQdA88W4CTLDD9fKwW9PB5yurCNdWNS7
+ VTL0dvPDofBTjFYDAQgHwngEGBYIACAWIQRrUYzNh64o+SCoO6/F2h8wRvQL7gUCZoEsiQIb
+ DAAKCRDF2h8wRvQL7sKvAP4mBvm7Zn1OUjFViwkma8IGRGosXAvMUFyOHVcl1RTgFQEAuJkU
+ o9ERi7qS/hbUdUgtitI89efbY0TVetgDsyeQiwU=
+In-Reply-To: <CAAhV-H7GptUdpKScV1AuZZm7w-F5oUXHRmaT9BFCZV4HuQExJg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtpsz:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
 
 
-vim +/snp_decommision_all +783 arch/x86/kvm/svm/svm.h
+On 2024/8/31 15:18, Huacai Chen wrote:
+> Hi, Wentao,
+>
+> On Sat, Aug 31, 2024 at 1:24 PM Wentao Guan <guanwentao@uniontech.com> wrote:
+>> Add kfree(root_ops) in this case to avoid memleak root_ops,
+>> leaks when pci_find_bus() != 0.
+>> Also delay assign root_ops when used for making code read clean.
+>> Found by code review
+>>
+>> Signed-off-by: Wangyuli <wangyuli@uniontech.com>
+> This should be Yuli Wang <wangyuli@uniontech.com>
 
-   763	
-   764	static inline void sev_free_vcpu(struct kvm_vcpu *vcpu) {}
-   765	static inline void sev_vm_destroy(struct kvm *kvm) {}
-   766	static inline void __init sev_set_cpu_caps(void) {}
-   767	static inline void __init sev_hardware_setup(void) {}
-   768	static inline void sev_hardware_unsetup(void) {}
-   769	static inline int sev_cpu_init(struct svm_cpu_data *sd) { return 0; }
-   770	static inline int sev_dev_get_attr(u32 group, u64 attr, u64 *val) { return -ENXIO; }
-   771	#define max_sev_asid 0
-   772	static inline void sev_handle_rmp_fault(struct kvm_vcpu *vcpu, gpa_t gpa, u64 error_code) {}
-   773	static inline void sev_snp_init_protected_guest_state(struct kvm_vcpu *vcpu) {}
-   774	static inline int sev_gmem_prepare(struct kvm *kvm, kvm_pfn_t pfn, gfn_t gfn, int max_order)
-   775	{
-   776		return 0;
-   777	}
-   778	static inline void sev_gmem_invalidate(kvm_pfn_t start, kvm_pfn_t end) {}
-   779	static inline int sev_private_max_mapping_level(struct kvm *kvm, kvm_pfn_t pfn)
-   780	{
-   781		return 0;
-   782	}
- > 783	static void snp_decommision_all(void);
-   784	#endif
-   785	
+While I maintain a preference for the traditional Chinese naming order, 
+not particularly like putting my Chinese name in the English surname order,
 
+I acknowledge that flexibility in this matter is often necessary.
+
+It is sufficient for everybody to be aware that both 'WangYuli' and 
+'Yuli Wang' refer to me.
+
+>> Signed-off-by: Wentao Guan <guanwentao@uniontech.com>
+>> ---
+>>   arch/loongarch/pci/acpi.c | 9 +++++----
+>>   1 file changed, 5 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/arch/loongarch/pci/acpi.c b/arch/loongarch/pci/acpi.c
+>> index 3eb61b8cd5e3..7f3539f5fa23 100644
+>> --- a/arch/loongarch/pci/acpi.c
+>> +++ b/arch/loongarch/pci/acpi.c
+>> @@ -219,17 +219,18 @@ struct pci_bus *pci_acpi_scan_root(struct acpi_pci_root *root)
+>>                  return NULL;
+>>          }
+>>
+>> -       root_ops->release_info = acpi_release_root_info;
+>> -       root_ops->prepare_resources = acpi_prepare_root_resources;
+>> -       root_ops->pci_ops = (struct pci_ops *)&info->cfg->ops->pci_ops;
+>> -
+>>          bus = pci_find_bus(domain, busnum);
+>>          if (bus) {
+>>                  memcpy(bus->sysdata, info->cfg, sizeof(struct pci_config_window));
+>>                  kfree(info);
+>> +               kfree(root_ops);
+> Add kfree() is fine, but move root_ops assignment is unnecessary.
+>
+> Huacai
+>
+>>          } else {
+>>                  struct pci_bus *child;
+>>
+>> +               root_ops->release_info = acpi_release_root_info;
+>> +               root_ops->prepare_resources = acpi_prepare_root_resources;
+>> +               root_ops->pci_ops = (struct pci_ops *)&info->cfg->ops->pci_ops;
+>> +
+>>                  bus = acpi_pci_root_create(root, root_ops,
+>>                                             &info->common, info->cfg);
+>>                  if (!bus) {
+>> --
+>> 2.20.1
+>>
+>>
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+WangYuli
+
 
