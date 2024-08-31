@@ -1,257 +1,234 @@
-Return-Path: <linux-kernel+bounces-309916-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309917-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91BC49671D0
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 15:28:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5435A9671D1
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 15:30:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B289D1C21398
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 13:28:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D8BC283CEB
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 13:30:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1FFEDF6C;
-	Sat, 31 Aug 2024 13:28:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B34A611CA1;
+	Sat, 31 Aug 2024 13:29:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ov0hALNl"
-Received: from mail-oa1-f46.google.com (mail-oa1-f46.google.com [209.85.160.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cYS/RCk2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EBB81097B;
-	Sat, 31 Aug 2024 13:28:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0086DF6C;
+	Sat, 31 Aug 2024 13:29:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725110920; cv=none; b=UwUx+m7ACECQbNv4tmayNaw029prqN4JweroEXJsM5icO466LN1UKvtTUAym6lPKsiQX5kh9s2WlYzZhSb1fuaE6EKM3vN6s+YYKfm8mNK+oTAe2qoQ1x240blgdCgj3Fz3o/3c/rKnVL53l+Yj9mtFPnV5gdE1Jes7EprPlCSs=
+	t=1725110993; cv=none; b=OQyLT/H21eLpJAtwU/8pNQBekzNyG43oCDyUSxt+t5H/fxz8yERBlru2ni9wr4a/tT5jBropCXxjRNLkxBfOblsRhwJfiGHGvfW4EmeEiJjp+zGRdICWiFTHiDmBOm1KBssJn0kx3nlgfPmpzaW0/Fl2W8SNWkp3O0qLgyQzl6s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725110920; c=relaxed/simple;
-	bh=kdEhp/Kg27kne0vOQ2RDduD1wKCXvRJ42Jc1+k5J+XI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gYvRBryuVbqgZLWDKwM4BKvUJ/JLKUc+N8u2TpC56nMjCEDnEi+MzbCrEDQvP2qm0cj25WCHaRDJXVyuKi/zDrc6uwBt/n6CfVvDvUVmm56xOlbiGqdmu0ToqRjYIh8ztdqvetrUKgiibyUQ62N8Rfzwu67Y/pxnYZRnB6xpyB0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ov0hALNl; arc=none smtp.client-ip=209.85.160.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f46.google.com with SMTP id 586e51a60fabf-277c861d9f6so496185fac.2;
-        Sat, 31 Aug 2024 06:28:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725110917; x=1725715717; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=lBh1jjPkZpHihQJDhRtC8nDyBpN1Y8R089uuo6Q3AtU=;
-        b=Ov0hALNldp4XimpOj5bRM9o+8abVd/IQXPsvdQ8Ky5Ge1Lsh7zAiJCUBGYc0eVQZlE
-         wgU399Py9jGF3TnEkK1RFMKw/RvEQlCuxbTSU6Jzw3/Gh7kFwKkXqMugftGBdb2/sImN
-         nJeMvs4yFalT0TKWzLVqjzUh1aYZis7kTTj8oHUYayFAV621XcpLAzCo0HtyZh9U/DHB
-         maXRWGmpzVXmAXK1DW6Wa7OeXromXQSGQi9xLzd98WUnkgdqWdGLodFASFXmFnphLzv6
-         EQOS1G5KmRav/R9e/I8Di2lFml6pee8B29xq9mbwIoAJfpIXvaUUA+Lr4tAijXdVaRqh
-         yiKA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725110917; x=1725715717;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=lBh1jjPkZpHihQJDhRtC8nDyBpN1Y8R089uuo6Q3AtU=;
-        b=OHZwTkbg44PlihUaE+lcs7/DGTq5x/qN4u3f5KU9pRD4bkjSLzXDpgvbKCOYliYjs6
-         eRzHfEBbhNvJ2Mpge7nHue8stybntSoQ0j+r3r4pgfAShjM7GN+8pEjipmq8hdL7NlW6
-         CuSvcGDlMmJV7pAOslLD8ESEWAtbev5qwSn8KyOpIz1oM0/I/sbtMONi1MFCedu3AC8A
-         6q7d+utvisg8TXEdEkO/iTYHWCpZR6Pc2z1/EbGYw5tdDpXKaeRpRKx4OgfTpIGzWRMK
-         XraFp2AEU1mjkP2UCGXcibWZrqzO8liaRgS6Bev4AzYVjrhfDBKxL+zOqCN0RoBBI5Xf
-         11HA==
-X-Forwarded-Encrypted: i=1; AJvYcCU0mW5xBaWhyN5BRwhWejF8ubIyOsHn4rx5iB3qQTekqcTaWIlTZlYqH7w9PPElDUC7f74qssQKiaDp@vger.kernel.org, AJvYcCUefv+B3V+Xi55r451pBd/fC9gITziQrgQw1a8vtUAqyVHxtnyVhbEB2GdoHZ9sEze9QElmWtEoehDbW/0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwEw91sggJLjGqDtpiluNe9QQr02vteL4T6DsgnIGlST0yheK0g
-	X6fNzqqMevUL3MeQEkop/H9HQQg5gth40laOY3heO23futg0WfFx
-X-Google-Smtp-Source: AGHT+IHDnxfBiDMHwyFYjFI+KMmUnJMWSFedzXZdawqjhoK+iY8KbI1BfjXOe4gEGUcmk+3ZBO1nIA==
-X-Received: by 2002:a05:6870:7191:b0:261:164e:d12a with SMTP id 586e51a60fabf-2779013ab01mr9260587fac.22.1725110917437;
-        Sat, 31 Aug 2024 06:28:37 -0700 (PDT)
-Received: from localhost.localdomain ([187.120.135.185])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-715e55b9b9esm4354485b3a.95.2024.08.31.06.28.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 31 Aug 2024 06:28:37 -0700 (PDT)
-From: Guilherme Giacomo Simoes <trintaeoitogc@gmail.com>
-To: scott@spiteful.org,
-	bhelgaas@google.com,
-	ilpo.jarvinen@linux.intel.com,
-	wsa+renesas@sang-engineering.com,
-	lukas@wunner.de
-Cc: Guilherme Giacomo Simoes <trintaeoitogc@gmail.com>,
-	linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [RESEND PATCH] PCI: hotplug: check the return of hotplug bridge
-Date: Sat, 31 Aug 2024 10:28:21 -0300
-Message-ID: <20240831132822.22103-1-trintaeoitogc@gmail.com>
-X-Mailer: git-send-email 2.46.0
+	s=arc-20240116; t=1725110993; c=relaxed/simple;
+	bh=hVOLyxRZbQYfFNcM2qTTz3H4OV0aZePrb4+I5W69coM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ad0jO0GIdB9Tx0venLzGJ5v3FKbyQ1VpvvT4nYuIw2OgIjkbjWgofT9tulBYmQfsuxU+zqrPj82FDnsK2kK1zS8q5a3+FrPgfqyFFefRtYRiQTeVHX3pGyI49dfctNtfEukYxC2ZVDS4+8zJqY/efPXBJBLc2VtqVcorCSxljxc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cYS/RCk2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B3D8C4CEC0;
+	Sat, 31 Aug 2024 13:29:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725110993;
+	bh=hVOLyxRZbQYfFNcM2qTTz3H4OV0aZePrb4+I5W69coM=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=cYS/RCk299MDpnQ4vLYJUwKSNYXCiwQUj/PsZK9O/SgZOZd8hefrkg8Y8LyuzAh8R
+	 lr073grVfqEU8q0CN9/AZA0JBHTeU1miM2wsY/35Dye4T3+OKHd8ltP+Av2/PXWpsy
+	 1RCAZmPl5oeoeiyf4Tj2raikjz5HneFZutWqJZZuwvz249th0BbetF215fWXfcOv0L
+	 G18ewKAhxpHhwqxrvjnlI5Cei7y8YTvCrdEpx6VQi/qLIS5Ukj/etFFlQvTDxNdvwc
+	 0Ev3qA1s02YyD+BWYwGX86x6ybGTWz1r0hMwWEHg+T8noeB7zep7GWstoozxmntyqt
+	 0h5NvJ859RQ8w==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id E3735CE0FF5; Sat, 31 Aug 2024 06:29:51 -0700 (PDT)
+Date: Sat, 31 Aug 2024 06:29:51 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: kernel test robot <lkp@intel.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [paulmck-rcu:dev.2024.08.30a 27/33] include/linux/srcu.h:246:37:
+ error: 'SRCU_READ_FLAVOR_NORMAL' undeclared
+Message-ID: <287df78c-a528-40ad-afe2-88e6cff88cc5@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <202408311318.wcMCNEWH-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <202408311318.wcMCNEWH-lkp@intel.com>
 
-In some pci drivers, when the pci bridge is added if the process return an error,
-the drivers don't check this and continue your execute normally.
-Then, this patch change this drivers for check return of pci_hp_add_bridge(), and
-if has an error, then the drivers call goto lable , free your mutex and return the
-error for your caller.
+On Sat, Aug 31, 2024 at 01:51:05PM +0800, kernel test robot wrote:
+> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/paulmck/linux-rcu.git dev.2024.08.30a
+> head:   05416eb79213ad6a9770faa795059fdd00adb6e0
+> commit: d4401cc54f3e2985675be825f5222aff9764ab8b [27/33] srcu: Convert srcu_data ->srcu_reader_flavor to bit field
+> config: m68k-randconfig-r072-20240831 (https://download.01.org/0day-ci/archive/20240831/202408311318.wcMCNEWH-lkp@intel.com/config)
+> compiler: m68k-linux-gcc (GCC) 14.1.0
+> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240831/202408311318.wcMCNEWH-lkp@intel.com/reproduce)
+> 
+> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes: https://lore.kernel.org/oe-kbuild-all/202408311318.wcMCNEWH-lkp@intel.com/
 
-Signed-off-by: Guilherme Giacomo Simoes <trintaeoitogc@gmail.com>
----
- drivers/pci/hotplug/cpci_hotplug_pci.c | 7 +++++--
- drivers/pci/hotplug/cpqphp_pci.c       | 9 ++++++---
- drivers/pci/hotplug/ibmphp_core.c      | 8 ++++++--
- drivers/pci/hotplug/pciehp_pci.c       | 7 +++++--
- drivers/pci/hotplug/shpchp_pci.c       | 7 +++++--
- drivers/pci/probe.c                    | 9 ++++++---
- 6 files changed, 33 insertions(+), 14 deletions(-)
+Good catch, thank you!  Does this commit fix the issue for you?
 
-diff --git a/drivers/pci/hotplug/cpci_hotplug_pci.c b/drivers/pci/hotplug/cpci_hotplug_pci.c
-index 6c48066acb44..2d3256795eab 100644
---- a/drivers/pci/hotplug/cpci_hotplug_pci.c
-+++ b/drivers/pci/hotplug/cpci_hotplug_pci.c
-@@ -269,8 +269,11 @@ int cpci_configure_slot(struct slot *slot)
- 	parent = slot->dev->bus;
- 
- 	for_each_pci_bridge(dev, parent) {
--		if (PCI_SLOT(dev->devfn) == PCI_SLOT(slot->devfn))
--			pci_hp_add_bridge(dev);
-+		if (PCI_SLOT(dev->devfn) == PCI_SLOT(slot->devfn)) {
-+			ret = pci_hp_add_bridge(dev);
-+			if (ret)
-+				goto out;
-+		}
- 	}
- 
- 	pci_assign_unassigned_bridge_resources(parent->self);
-diff --git a/drivers/pci/hotplug/cpqphp_pci.c b/drivers/pci/hotplug/cpqphp_pci.c
-index e9f1fb333a71..5f6ce2c6385a 100644
---- a/drivers/pci/hotplug/cpqphp_pci.c
-+++ b/drivers/pci/hotplug/cpqphp_pci.c
-@@ -70,7 +70,7 @@ static void __iomem *detect_HRT_floating_pointer(void __iomem *begin, void __iom
- int cpqhp_configure_device(struct controller *ctrl, struct pci_func *func)
- {
- 	struct pci_bus *child;
--	int num;
-+	int num, ret = 0;
- 
- 	pci_lock_rescan_remove();
- 
-@@ -97,7 +97,10 @@ int cpqhp_configure_device(struct controller *ctrl, struct pci_func *func)
- 	}
- 
- 	if (func->pci_dev->hdr_type == PCI_HEADER_TYPE_BRIDGE) {
--		pci_hp_add_bridge(func->pci_dev);
-+		ret = pci_hp_add_bridge(func->pci_dev);
-+		if (ret)
-+			goto out;
-+
- 		child = func->pci_dev->subordinate;
- 		if (child)
- 			pci_bus_add_devices(child);
-@@ -107,7 +110,7 @@ int cpqhp_configure_device(struct controller *ctrl, struct pci_func *func)
- 
-  out:
- 	pci_unlock_rescan_remove();
--	return 0;
-+	return ret;
- }
- 
- 
-diff --git a/drivers/pci/hotplug/ibmphp_core.c b/drivers/pci/hotplug/ibmphp_core.c
-index 197997e264a2..73a593c2993b 100644
---- a/drivers/pci/hotplug/ibmphp_core.c
-+++ b/drivers/pci/hotplug/ibmphp_core.c
-@@ -663,6 +663,7 @@ static int ibm_configure_device(struct pci_func *func)
- 	int num;
- 	int flag = 0;	/* this is to make sure we don't double scan the bus,
- 					for bridged devices primarily */
-+	int ret = 0;
- 
- 	pci_lock_rescan_remove();
- 
-@@ -690,7 +691,10 @@ static int ibm_configure_device(struct pci_func *func)
- 		}
- 	}
- 	if (!(flag) && (func->dev->hdr_type == PCI_HEADER_TYPE_BRIDGE)) {
--		pci_hp_add_bridge(func->dev);
-+		ret = pci_hp_add_bridge(func->dev);
-+		if (ret)
-+			goto out;
-+
- 		child = func->dev->subordinate;
- 		if (child)
- 			pci_bus_add_devices(child);
-@@ -698,7 +702,7 @@ static int ibm_configure_device(struct pci_func *func)
- 
-  out:
- 	pci_unlock_rescan_remove();
--	return 0;
-+	return ret;
- }
- 
- /*******************************************************
-diff --git a/drivers/pci/hotplug/pciehp_pci.c b/drivers/pci/hotplug/pciehp_pci.c
-index 65e50bee1a8c..0c4873c2ef3c 100644
---- a/drivers/pci/hotplug/pciehp_pci.c
-+++ b/drivers/pci/hotplug/pciehp_pci.c
-@@ -58,8 +58,11 @@ int pciehp_configure_device(struct controller *ctrl)
- 		goto out;
- 	}
- 
--	for_each_pci_bridge(dev, parent)
--		pci_hp_add_bridge(dev);
-+	for_each_pci_bridge(dev, parent) {
-+		ret = pci_hp_add_bridge(dev);
-+		if (ret)
-+			goto out;
-+	}
- 
- 	pci_assign_unassigned_bridge_resources(bridge);
- 	pcie_bus_configure_settings(parent);
-diff --git a/drivers/pci/hotplug/shpchp_pci.c b/drivers/pci/hotplug/shpchp_pci.c
-index 36db0c3c4ea6..7db0ce966f1d 100644
---- a/drivers/pci/hotplug/shpchp_pci.c
-+++ b/drivers/pci/hotplug/shpchp_pci.c
-@@ -48,8 +48,11 @@ int shpchp_configure_device(struct slot *p_slot)
- 	}
- 
- 	for_each_pci_bridge(dev, parent) {
--		if (PCI_SLOT(dev->devfn) == p_slot->device)
--			pci_hp_add_bridge(dev);
-+		if (PCI_SLOT(dev->devfn) == p_slot->device) {
-+			ret = pci_hp_add_bridge(dev);
-+			if (ret)
-+				goto out;
-+		}
- 	}
- 
- 	pci_assign_unassigned_bridge_resources(bridge);
-diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
-index b14b9876c030..2418998820dc 100644
---- a/drivers/pci/probe.c
-+++ b/drivers/pci/probe.c
-@@ -3363,9 +3363,10 @@ int pci_hp_add_bridge(struct pci_dev *dev)
- 		if (!pci_find_bus(pci_domain_nr(parent), busnr))
- 			break;
- 	}
-+
- 	if (busnr-- > end) {
- 		pci_err(dev, "No bus number available for hot-added bridge\n");
--		return -1;
-+		return -ENODEV;
- 	}
- 
- 	/* Scan bridges that are already configured */
-@@ -3380,8 +3381,10 @@ int pci_hp_add_bridge(struct pci_dev *dev)
- 	/* Scan bridges that need to be reconfigured */
- 	pci_scan_bridge_extend(parent, dev, busnr, available_buses, 1);
- 
--	if (!dev->subordinate)
--		return -1;
-+	if (!dev->subordinate) {
-+		pci_err(dev, "No dev subordinate\n");
-+		return -ENODEV;
-+	}
- 
- 	return 0;
- }
--- 
-2.46.0
+e97f0db697ae ("fixup! srcu: Add srcu_read_lock_lite() and srcu_read_unlock_lite()"
 
+Please see the end of this message for this in patch form.  I believe
+that this will fix the other reports, as well.  (Famous last words!)
+
+							Thanx, Paul
+
+> All errors (new ones prefixed by >>):
+> 
+>    In file included from include/linux/notifier.h:16,
+>                     from include/linux/memory_hotplug.h:7,
+>                     from include/linux/mmzone.h:1432,
+>                     from include/linux/topology.h:33,
+>                     from include/linux/irq.h:19,
+>                     from include/asm-generic/hardirq.h:17,
+>                     from ./arch/m68k/include/generated/asm/hardirq.h:1,
+>                     from include/linux/hardirq.h:11,
+>                     from include/linux/interrupt.h:11,
+>                     from include/linux/kernel_stat.h:8,
+>                     from arch/m68k/kernel/asm-offsets.c:16:
+>    include/linux/srcu.h: In function 'srcu_read_lock':
+> >> include/linux/srcu.h:246:37: error: 'SRCU_READ_FLAVOR_NORMAL' undeclared (first use in this function)
+>      246 |         srcu_check_read_flavor(ssp, SRCU_READ_FLAVOR_NORMAL);
+>          |                                     ^~~~~~~~~~~~~~~~~~~~~~~
+>    include/linux/srcu.h:246:37: note: each undeclared identifier is reported only once for each function it appears in
+>    include/linux/srcu.h: In function 'srcu_read_lock_nmisafe':
+> >> include/linux/srcu.h:267:37: error: 'SRCU_READ_FLAVOR_NMI' undeclared (first use in this function)
+>      267 |         srcu_check_read_flavor(ssp, SRCU_READ_FLAVOR_NMI);
+>          |                                     ^~~~~~~~~~~~~~~~~~~~
+>    include/linux/srcu.h: In function 'srcu_read_lock_notrace':
+>    include/linux/srcu.h:279:37: error: 'SRCU_READ_FLAVOR_NORMAL' undeclared (first use in this function)
+>      279 |         srcu_check_read_flavor(ssp, SRCU_READ_FLAVOR_NORMAL);
+>          |                                     ^~~~~~~~~~~~~~~~~~~~~~~
+>    include/linux/srcu.h: In function 'srcu_down_read':
+>    include/linux/srcu.h:308:37: error: 'SRCU_READ_FLAVOR_NORMAL' undeclared (first use in this function)
+>      308 |         srcu_check_read_flavor(ssp, SRCU_READ_FLAVOR_NORMAL);
+>          |                                     ^~~~~~~~~~~~~~~~~~~~~~~
+>    include/linux/srcu.h: In function 'srcu_read_unlock':
+>    include/linux/srcu.h:323:37: error: 'SRCU_READ_FLAVOR_NORMAL' undeclared (first use in this function)
+>      323 |         srcu_check_read_flavor(ssp, SRCU_READ_FLAVOR_NORMAL);
+>          |                                     ^~~~~~~~~~~~~~~~~~~~~~~
+>    include/linux/srcu.h: In function 'srcu_read_unlock_nmisafe':
+>    include/linux/srcu.h:339:37: error: 'SRCU_READ_FLAVOR_NMI' undeclared (first use in this function)
+>      339 |         srcu_check_read_flavor(ssp, SRCU_READ_FLAVOR_NMI);
+>          |                                     ^~~~~~~~~~~~~~~~~~~~
+>    include/linux/srcu.h: In function 'srcu_read_unlock_notrace':
+>    include/linux/srcu.h:348:37: error: 'SRCU_READ_FLAVOR_NORMAL' undeclared (first use in this function)
+>      348 |         srcu_check_read_flavor(ssp, SRCU_READ_FLAVOR_NORMAL);
+>          |                                     ^~~~~~~~~~~~~~~~~~~~~~~
+>    include/linux/srcu.h: In function 'srcu_up_read':
+>    include/linux/srcu.h:365:37: error: 'SRCU_READ_FLAVOR_NORMAL' undeclared (first use in this function)
+>      365 |         srcu_check_read_flavor(ssp, SRCU_READ_FLAVOR_NORMAL);
+>          |                                     ^~~~~~~~~~~~~~~~~~~~~~~
+>    make[3]: *** [scripts/Makefile.build:117: arch/m68k/kernel/asm-offsets.s] Error 1
+>    make[3]: Target 'prepare' not remade because of errors.
+>    make[2]: *** [Makefile:1193: prepare0] Error 2
+>    make[2]: Target 'prepare' not remade because of errors.
+>    make[1]: *** [Makefile:224: __sub-make] Error 2
+>    make[1]: Target 'prepare' not remade because of errors.
+>    make: *** [Makefile:224: __sub-make] Error 2
+>    make: Target 'prepare' not remade because of errors.
+> 
+> 
+> vim +/SRCU_READ_FLAVOR_NORMAL +246 include/linux/srcu.h
+> 
+>    221	
+>    222	/**
+>    223	 * srcu_read_lock - register a new reader for an SRCU-protected structure.
+>    224	 * @ssp: srcu_struct in which to register the new reader.
+>    225	 *
+>    226	 * Enter an SRCU read-side critical section.  Note that SRCU read-side
+>    227	 * critical sections may be nested.  However, it is illegal to
+>    228	 * call anything that waits on an SRCU grace period for the same
+>    229	 * srcu_struct, whether directly or indirectly.  Please note that
+>    230	 * one way to indirectly wait on an SRCU grace period is to acquire
+>    231	 * a mutex that is held elsewhere while calling synchronize_srcu() or
+>    232	 * synchronize_srcu_expedited().
+>    233	 *
+>    234	 * The return value from srcu_read_lock() must be passed unaltered
+>    235	 * to the matching srcu_read_unlock().  Note that srcu_read_lock() and
+>    236	 * the matching srcu_read_unlock() must occur in the same context, for
+>    237	 * example, it is illegal to invoke srcu_read_unlock() in an irq handler
+>    238	 * if the matching srcu_read_lock() was invoked in process context.  Or,
+>    239	 * for that matter to invoke srcu_read_unlock() from one task and the
+>    240	 * matching srcu_read_lock() from another.
+>    241	 */
+>    242	static inline int srcu_read_lock(struct srcu_struct *ssp) __acquires(ssp)
+>    243	{
+>    244		int retval;
+>    245	
+>  > 246		srcu_check_read_flavor(ssp, SRCU_READ_FLAVOR_NORMAL);
+>    247		retval = __srcu_read_lock(ssp);
+>    248		srcu_lock_acquire(&ssp->dep_map);
+>    249		return retval;
+>    250	}
+>    251	
+>    252	/**
+>    253	 * srcu_read_lock_nmisafe - register a new reader for an SRCU-protected structure.
+>    254	 * @ssp: srcu_struct in which to register the new reader.
+>    255	 *
+>    256	 * Enter an SRCU read-side critical section, but in an NMI-safe manner.
+>    257	 * See srcu_read_lock() for more information.
+>    258	 *
+>    259	 * If srcu_read_lock_nmisafe() is ever used on an srcu_struct structure,
+>    260	 * then none of the other flavors may be used, whether before, during,
+>    261	 * or after.
+>    262	 */
+>    263	static inline int srcu_read_lock_nmisafe(struct srcu_struct *ssp) __acquires(ssp)
+>    264	{
+>    265		int retval;
+>    266	
+>  > 267		srcu_check_read_flavor(ssp, SRCU_READ_FLAVOR_NMI);
+>    268		retval = __srcu_read_lock_nmisafe(ssp);
+>    269		rcu_try_lock_acquire(&ssp->dep_map);
+>    270		return retval;
+>    271	}
+>    272	
+
+------------------------------------------------------------------------
+
+commit e97f0db697aef503a9363137dcfa7f3dc66573ac
+Author: Paul E. McKenney <paulmck@kernel.org>
+Date:   Fri Aug 30 11:19:28 2024 -0700
+
+    fixup! srcu: Add srcu_read_lock_lite() and srcu_read_unlock_lite()
+    
+    Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+
+diff --git a/include/linux/srcu.h b/include/linux/srcu.h
+index 718c1a17b70a3..4ba96e2cfa405 100644
+--- a/include/linux/srcu.h
++++ b/include/linux/srcu.h
+@@ -56,8 +56,13 @@ void call_srcu(struct srcu_struct *ssp, struct rcu_head *head,
+ void cleanup_srcu_struct(struct srcu_struct *ssp);
+ int __srcu_read_lock(struct srcu_struct *ssp) __acquires(ssp);
+ void __srcu_read_unlock(struct srcu_struct *ssp, int idx) __releases(ssp);
++#ifdef CONFIG_TINY_SRCU
++#define __srcu_read_lock_lite __srcu_read_lock
++#define __srcu_read_unlock_lite __srcu_read_unlock
++#else // #ifdef CONFIG_TINY_SRCU
+ int __srcu_read_lock_lite(struct srcu_struct *ssp) __acquires(ssp);
+ void __srcu_read_unlock_lite(struct srcu_struct *ssp, int idx) __releases(ssp);
++#endif // #else // #ifdef CONFIG_TINY_SRCU
+ void synchronize_srcu(struct srcu_struct *ssp);
+ 
+ #define SRCU_GET_STATE_COMPLETED 0x1
+@@ -181,7 +186,7 @@ static inline int srcu_read_lock_held(const struct srcu_struct *ssp)
+ #if defined(CONFIG_PROVE_RCU) && defined(CONFIG_TREE_SRCU)
+ void srcu_check_read_flavor(struct srcu_struct *ssp, int read_flavor);
+ #else
+-static inline void srcu_check_read_flavor(struct srcu_struct *ssp, int read_flavor) { }
++#define srcu_check_read_flavor(ssp, read_flavor) do { } while (0)
+ #endif
+ 
+ 
 
