@@ -1,201 +1,104 @@
-Return-Path: <linux-kernel+bounces-309837-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309838-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D1A09670EA
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 12:32:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56FA69670F3
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 12:48:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DDC461F25A39
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 10:32:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0DFBF283B4B
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 10:48:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 743FC17C7C2;
-	Sat, 31 Aug 2024 10:32:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEC6917C222;
+	Sat, 31 Aug 2024 10:48:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="K79//bN8"
-Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com [209.85.219.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CgzVdVw5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1357B170826
-	for <linux-kernel@vger.kernel.org>; Sat, 31 Aug 2024 10:32:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D44C1BC39;
+	Sat, 31 Aug 2024 10:48:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725100362; cv=none; b=eY4uQlPkuWXHAVsSQuDVcItM3MoZYcB0JDm21rnlEmscTtyyp6+7Xj/w4rRVrBVUr11JywGjP2ZIs7BF0PV/Ac/s+m1ug1DUF/bcxAwoDBvZ0KkoQZscmcyT9Lync36y8g8gQz56eXc0qN8zkHktvUPtnKikxfKQ4bJ+Z+ZuSxU=
+	t=1725101284; cv=none; b=QxI0pnapUQEjUx3IPRXWFXZ2wP6xu3n0RKdCK4zeY3q+T/fuB79GdBoSsl4H4O6t3euAC3ulJWoyQFYBJGFoS7rHhsHSPu9QuLVHUjlbMKDqxYGPHCeai3abLXw32DNrtw39UiswaO/fu7G4et0qtF5N1pGfhBIy03NyJ+GoqWA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725100362; c=relaxed/simple;
-	bh=LS7JjNLNOai5U4tKMxi9bIxoMnNaywIh2Nz/2XzTViE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=S8gED11WUDv/HFlteFge7UEuqMxHAwKQiLJfdFUxopFlqWQz/v5T9AqOp+GmnDsoR9wPkKJIMwZC3BkHiGaCble0XqByRJWQGeh5AXJvkvuwS1cyVQKCWShO5q4UYMHgQmGg/g50a3VrdhHpuTdonFYysZ3rrrcGYeLIDhq9Obo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=K79//bN8; arc=none smtp.client-ip=209.85.219.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f174.google.com with SMTP id 3f1490d57ef6-e0b7efa1c1bso2643053276.3
-        for <linux-kernel@vger.kernel.org>; Sat, 31 Aug 2024 03:32:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1725100360; x=1725705160; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=tKxIacQXeZ2qcUvNmDUUVII5ysi793GfJwtJp8UupOo=;
-        b=K79//bN8cXBhdsmHCleEkY4jKCZWc7vZw5bVpr+9ezF/Tq9yh1+AQko2aps9jV6Nra
-         L3nUQSBVdDPzzAsctwyEh26AqNfkQnXhfTKx0aojqdEI8gv5BjVAuA2+xBBr1rH1wAtc
-         yiWEUy1EZCGryL4OB5YQUkSL5aAXA3sGcD85ZAL4shyVE7asTxQMohCD4zVZ0qcqazA+
-         b53sCQ6XKu59mdeupIEFnm/dF5Ob8dzrs1MmEDemLvq5f8/ydxpoIgty/SaFvRDwTE85
-         iFPmNSWBYjRCQXEJXCFHh80/KOlBz+bZXN+Kne31Q2Xfyrmax4lC7xpTONo/KgnTjNEo
-         +BGQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725100360; x=1725705160;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=tKxIacQXeZ2qcUvNmDUUVII5ysi793GfJwtJp8UupOo=;
-        b=R2ItZiAddO2slQmR/gXvYU5FlE8TfwN+Nxk4/3o/nrpBhiBaxbrz9p9h00zMYbjh9/
-         Wt/ofBnSJX8QjmstKhmumINTRbe1xMWfYv4joMHOjrQP4bFy1cUHMekj5qd3RhjtqrQe
-         JMAkTVqNPbAfURCmjo/7JV6ghZoAaTqN6mtc0oPpASE/5+/zFmanZtdND6LnJoRDxxC2
-         9klpCGHQDW2/M6cEbMNiHtLKGUOx3TVUdUuDPqTTp3zsuoIVjjnnPyBwGtCRVTb7kQI+
-         8275+J4CXqmOa9LlDns+r5//HCW9m9rEwG1XhQbUK9EEt2SIfGmiEPwfyRXCfUIIM/eh
-         gaBg==
-X-Forwarded-Encrypted: i=1; AJvYcCVsnHux8WDhQ6fC69TPz4YROGsOzPff/xpCXPUIUQ+u2XyqKwHBK6WIUsoy6+pCTkHTfV2LALQH/MZ3FYk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx6J3oXruzSsN1xpcOlel2aKVEDJRxGaelfIbmJjiP9yn1ugl/d
-	4cgKiBOj+0PdkDfGrKbdBf7xudZ5cY3forn4Op8WmEk0jNKDwhPdb1sGvGyccQBpGtCbSh4M8Qk
-	AYqaLvR/f8FuCTK0Dlv8blhth+U6JXhicja6kew==
-X-Google-Smtp-Source: AGHT+IH8Eb7EYXiidD/DrNNChHQ2lwNk48tFSRFBB77aRxIJWoIIPagMeOtludSNPt8BV9FsjbJZVJT8vUY8xBCkml0=
-X-Received: by 2002:a05:6902:1145:b0:e0b:a7c1:9dcc with SMTP id
- 3f1490d57ef6-e1a7a019106mr5308764276.20.1725100360016; Sat, 31 Aug 2024
- 03:32:40 -0700 (PDT)
+	s=arc-20240116; t=1725101284; c=relaxed/simple;
+	bh=MwKI1qrtYyusKDZItQQkb1WHRX+8VmcA0TRf8mRwo+w=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=f0tgTNx6wqr4xqVr7X3jq5egwJNxo63y6wv37sTBgGr1BKluS4jpKwI2CsjB5iSNCkVkhSn145EjdP3WnCEvcVbcgxA5jLqLiblibXKSDE154VqMbB0ZR9JcSVQL9hxxi7HBJ49GRnLB/0bN4AUna8xuV7joCk1x9zuK+sJdQuM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CgzVdVw5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CFD4DC4CEC0;
+	Sat, 31 Aug 2024 10:48:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725101283;
+	bh=MwKI1qrtYyusKDZItQQkb1WHRX+8VmcA0TRf8mRwo+w=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=CgzVdVw52qUXL8Es/YDJh9RTmk+fUHyD5cmGHPUQ6thmRylRmYx8QmBPWk9jBsg3i
+	 m+7ymJ3+33qJxQnJq6fteelitnmm6IQPGQXPFK/qKzBYJ4JX2v6KuLbFJklzyWNvSB
+	 OL32Hf3k4+Y02Nx/fGbf6ukRzpWrQVsCqnxpfQ5VK8RdOV+aLJWL7wufRMquSlh1kR
+	 mrIYLJXKT8z0xW44gvhoh2O+cfpW7t7OA9ntpkjWO/Q7ASUaTXHGEBXAbdhIUiwCOT
+	 NTDrIuQelBcqWcv56nUGGZg+TEnyF3dsosS0qazzEyKXa/RCjUnG4o2FY6TYVFFsyW
+	 cquhugPRdapuQ==
+Date: Sat, 31 Aug 2024 11:47:56 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Lars-Peter Clausen <lars@metafoo.de>, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] iio: adc: mcp320x: Drop vendorless compatible strings
+Message-ID: <20240831114756.38b459a1@jic23-huawei>
+In-Reply-To: <20240826191728.1415189-1-robh@kernel.org>
+References: <20240826191728.1415189-1-robh@kernel.org>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240822152801.602318-1-claudiu.beznea.uj@bp.renesas.com>
- <CAPDyKFrS4Dhd7DZa2zz=oPro1TiTJFix0awzzzp8Qatm-8Z2Ug@mail.gmail.com>
- <99bef301-9f6c-4797-b47e-c83e56dfbda9@tuxon.dev> <CAPDyKFrVS2vpsJqTvjKCJ7ADqXc4D4k2eeCBsaK4T+=pXDnKUA@mail.gmail.com>
- <fa9b3449-ea3e-4482-b7eb-96999445cea5@tuxon.dev>
-In-Reply-To: <fa9b3449-ea3e-4482-b7eb-96999445cea5@tuxon.dev>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Sat, 31 Aug 2024 12:32:02 +0200
-Message-ID: <CAPDyKFrkkASq7rfRN=9sEet-p8T8t+f__PdnSNRN3bMNipnNNw@mail.gmail.com>
-Subject: Re: [PATCH 00/16] Add initial USB support for the Renesas RZ/G3S SoC
-To: claudiu beznea <claudiu.beznea@tuxon.dev>
-Cc: vkoul@kernel.org, kishon@kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, p.zabel@pengutronix.de, geert+renesas@glider.be, 
-	magnus.damm@gmail.com, gregkh@linuxfoundation.org, mturquette@baylibre.com, 
-	sboyd@kernel.org, yoshihiro.shimoda.uh@renesas.com, 
-	biju.das.jz@bp.renesas.com, linux-phy@lists.infradead.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, linux-usb@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, 
-	linux-pm@vger.kernel.org, Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-[...]
+On Mon, 26 Aug 2024 14:17:28 -0500
+"Rob Herring (Arm)" <robh@kernel.org> wrote:
 
-> >
-> > If not, there are two other options that can be considered I think.
-> > *) Using the genpd on/off notifiers, to really allow the consumer
-> > driver of the reset-control to know when the PM domain gets turned
-> > on/off.
-> > **) Move the entire reset handling into the PM domain provider, as it
-> > obviously knows when the domain is getting turned on/off.
->
-> This option is what I've explored, tested on my side.
->
-> I explored it in 2 ways:
->
-> 1/ SYSC modeled as an individual PM domain provider (this is more
->    appropriate to how HW manual described the hardware) with this the PHY
->    reset DT node would have to get 2 PM domains handlers (one for the
->    current PM domain provider and the other one for SYSC):
->
-> +               phyrst: usbphy-ctrl@11e00000 {
-> +                       compatible = "renesas,r9a08g045-usbphy-ctrl";
-> +                       reg = <0 0x11e00000 0 0x10000>;
-> +                       clocks = <&cpg CPG_MOD R9A08G045_USB_PCLK>;
-> +                       resets = <&cpg R9A08G045_USB_PRESETN>;
-> +                       power-domain-names = "cpg", "sysc";
-> +                       power-domains = <&cpg R9A08G045_PD_USB_PHY>, <&sysc
-> R9A08G045_SYSC_PD_USB>;
-> +                       #reset-cells = <1>;
-> +                       status = "disabled";
-> +
-> +                       usb0_vbus_otg: regulator-vbus {
-> +                               regulator-name = "vbus";
-> +                       };
-> +               };
-> +
+> The vendorless compatible strings are deprecated and weren't retained
+> when the binding was converted to schema. As a result, they are listed
+> as undocumented when running "make dt_compatible_check". Rather than add
+> them back to the schema, let's just drop them as they are unnecessary.
+> Furthermore, they are unnecessary as the SPI matching will strip the
+> vendor prefix on compatible string and match that against the
+> spi_device_id table.
+> 
+> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+Applied.
 
-According to what you have described earlier/above, modelling the SYSC
-as a PM domain provider seems like a better description of the HW to
-me. Although, as I said earlier, if you prefer the reset approach, I
-would not object to that.
+Thanks,
 
->
-> and the PHY reset driver will get bulky with powering on/off both of these,
-> at least with my current implementation, something like (and the following
-> code is in probe()):
->
-> +       if (priv->set_power) {
-> +               priv->cpg_genpd_dev = dev_pm_domain_attach_by_name(dev, "cpg");
-> +               if (IS_ERR(priv->cpg_genpd_dev)) {
-> +                       dev_err_probe(dev, error, "Failed to attach CPG PM
-> domain!");
-> +                       error = PTR_ERR(priv->cpg_genpd_dev);
-> +                       goto err_pm_runtime_put;
-> +               }
-> +
-> +               priv->sysc_genpd_dev = dev_pm_domain_attach_by_name(dev,
-> "sysc");
-> +               if (IS_ERR(priv->sysc_genpd_dev)) {
-> +                       dev_err_probe(dev, error, "Failed to attach sysc PM
-> domain!");
-> +                       error = PTR_ERR(priv->sysc_genpd_dev);
-> +                       goto err_genpd_cpg_detach;
-> +               }
-> +
-> +               priv->cpg_genpd_dl = device_link_add(dev, priv->cpg_genpd_dev,
-> +                                                    DL_FLAG_PM_RUNTIME |
-> +                                                    DL_FLAG_STATELESS);
-> +               if (!priv->cpg_genpd_dl) {
-> +                       dev_err_probe(dev, -ENOMEM, "Failed to add CPG
-> genpd device link!");
-> +                       goto err_genpd_sysc_detach;
-> +               }
-> +
-> +               priv->sysc_genpd_dl = device_link_add(dev,
-> priv->sysc_genpd_dev,
-> +                                                     DL_FLAG_PM_RUNTIME |
-> +                                                     DL_FLAG_STATELESS);
-> +               if (!priv->sysc_genpd_dl) {
-> +                       dev_err_probe(dev, -ENOMEM, "Failed to add sysc
-> genpd device link!");
-> +                       goto err_genpd_cpg_dl_del;
-> +               }
-> +
-> +
-> +               error = pm_runtime_resume_and_get(priv->cpg_genpd_dev);
-> +               if (error) {
-> +                       dev_err_probe(dev, error, "Failed to runtime resume
-> cpg PM domain!");
-> +                       goto err_genpd_sysc_dl_del;
-> +               }
-> +
-> +               error = pm_runtime_resume_and_get(priv->sysc_genpd_dev);
-> +               if (error) {
-> +                       dev_err_probe(dev, error, "Failed to runtime resume
-> sysc PM domain!");
-> +                       goto err_genpd_cpg_off;
-> +               }
-> +       }
+> ---
+>  drivers/iio/adc/mcp320x.c | 10 ----------
+>  1 file changed, 10 deletions(-)
+> 
+> diff --git a/drivers/iio/adc/mcp320x.c b/drivers/iio/adc/mcp320x.c
+> index da1421bd7b62..57cff3772ebe 100644
+> --- a/drivers/iio/adc/mcp320x.c
+> +++ b/drivers/iio/adc/mcp320x.c
+> @@ -459,16 +459,6 @@ static int mcp320x_probe(struct spi_device *spi)
+>  }
+>  
+>  static const struct of_device_id mcp320x_dt_ids[] = {
+> -	/* NOTE: The use of compatibles with no vendor prefix is deprecated. */
+> -	{ .compatible = "mcp3001" },
+> -	{ .compatible = "mcp3002" },
+> -	{ .compatible = "mcp3004" },
+> -	{ .compatible = "mcp3008" },
+> -	{ .compatible = "mcp3201" },
+> -	{ .compatible = "mcp3202" },
+> -	{ .compatible = "mcp3204" },
+> -	{ .compatible = "mcp3208" },
+> -	{ .compatible = "mcp3301" },
+>  	{ .compatible = "microchip,mcp3001" },
+>  	{ .compatible = "microchip,mcp3002" },
+>  	{ .compatible = "microchip,mcp3004" },
 
-Indeed, the code above looks bulky.
-
-Fortunately, we now have dev|devm_pm_domain_attach_list(), which
-replaces all of the code above.
-
-[...]
-
-Kind regards
-Uffe
 
