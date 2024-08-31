@@ -1,191 +1,245 @@
-Return-Path: <linux-kernel+bounces-309867-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309868-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11D9696714D
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 13:33:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C427967151
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 13:34:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 88CC21F226BB
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 11:33:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 245C628128E
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 11:34:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7897B17DFEC;
-	Sat, 31 Aug 2024 11:33:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE53A17E005;
+	Sat, 31 Aug 2024 11:34:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="k0+SN8lH"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rL/Mtpnf"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EA9A17D8A9
-	for <linux-kernel@vger.kernel.org>; Sat, 31 Aug 2024 11:33:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 187E819BB7;
+	Sat, 31 Aug 2024 11:34:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725103986; cv=none; b=UdD2mP4NfQXKOxi1ods7uHnIgtFuUOj4IsE6AgxQk5LPARiFlIE8x1SigY06CwhU0u/xyP5wfwNEzNWZvgX04nDzECmk9BdrgvCA20zV+TDpmiJjSZ6zuGjW0AJfFNNGCzKlsgynKTI85zAzPweobr6gwlNiqMsjFKGRNSgQEGc=
+	t=1725104064; cv=none; b=Z9JSNX9JY0O6sVfgncVnKM4tIgRNwFnd1ahWtEpaDSAhcoOGgedXLjEKTDOGtP04STO8q5LmvWNY76Xy/Siw+loous1avl8k43yNyKeT3iEUGsSkazqZ1Gg34YQw+oQPN2e2uXdHgkY/ovO2rkjNCOpRd7rrKgqmBgeKWQ03zXE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725103986; c=relaxed/simple;
-	bh=fDLJsT54dSxm1y46YGptra1PqCVaar4upTFp1LoErAg=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=NovyClMnWG2ZbIvpBHQG6w5AQVWzXRDu6GsNrjdisEGys565ff8Su+w9VYyVSoNGHhO4Ioojn7/UFaeAN7eASykTiGJzVAXmSZvWFHEBsitOUIm960VSrCf+Us2QonjMXl9+sCL4LmWsCW+yBlWdR4FRGhLx9TXD8qETNviqCRE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=k0+SN8lH; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725103985; x=1756639985;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=fDLJsT54dSxm1y46YGptra1PqCVaar4upTFp1LoErAg=;
-  b=k0+SN8lHUjXWC9FX/g4xdjQSF42dJcgU0P3v4gVICnN2uHcjgTRQJ/Gj
-   JWZr97R8EbEoVfrN6UOAiLNaPpQ91+zxQB1uO10H6INdANQEFu9wC9Zul
-   t0gKtNHPTMiadHHqyWJzSSFSW4TdJ/10h2TapJb3EbNVWgHcYHX8queiT
-   ipdWvtPJz7T46jaWFWgGsryXkSmVg0ERxE/J3vGdi7huu0Wm6qJly1ZWj
-   cNZ5D1bOc23zzLkcgh6NrkrwbVT8fgYAsMMzhK5YVkvjW/lJrCBUiJmWQ
-   l7grDzspMfaqx0NhE1g0C02qMhp8Uet9aYF0akgpw9joGamPKH9dMMBSm
-   w==;
-X-CSE-ConnectionGUID: +zq7fkMoRoy6JHc3a3SdJA==
-X-CSE-MsgGUID: piCl5Gr8RLaY85iqtu+Jvw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11180"; a="13309731"
-X-IronPort-AV: E=Sophos;i="6.10,191,1719903600"; 
-   d="scan'208";a="13309731"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Aug 2024 04:33:03 -0700
-X-CSE-ConnectionGUID: 5LRusX/qQ9i+UzZb5sqkYw==
-X-CSE-MsgGUID: oDgdpXazRvyPxw4C7Sev3g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,191,1719903600"; 
-   d="scan'208";a="64158484"
-Received: from lkp-server01.sh.intel.com (HELO 9c6b1c7d3b50) ([10.239.97.150])
-  by fmviesa008.fm.intel.com with ESMTP; 31 Aug 2024 04:33:02 -0700
-Received: from kbuild by 9c6b1c7d3b50 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1skMLj-0002gi-2K;
-	Sat, 31 Aug 2024 11:32:59 +0000
-Date: Sat, 31 Aug 2024 19:32:47 +0800
-From: kernel test robot <lkp@intel.com>
-To: "Paul E. McKenney" <paulmck@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: [paulmck-rcu:dev.2024.08.30a 33/33] kernel/rcu/refscale.c:1179
- ref_scale_init() warn: inconsistent indenting
-Message-ID: <202408311948.LQzaV2xP-lkp@intel.com>
+	s=arc-20240116; t=1725104064; c=relaxed/simple;
+	bh=pTuBiz0aBmLlXkooQ8sY+Trgbzt3HvaZXF0VH5ok2+c=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=tPEffnViuGCPxgAPbMTUBJeR/Mct7gLHbYba18DfY+5VgXu8ucv9+VWB4R0sdIl56dkM64dLHzUYrysi7LVHsh2rqbycKYJACUIqfNYBUcfCVskCJZtilfvCIwalxo7kZcf14cRcXbIemLbkEJUaLAu370pB1UjkdG7IVE5ekAM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rL/Mtpnf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4A4FEC4CEC0;
+	Sat, 31 Aug 2024 11:34:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725104063;
+	bh=pTuBiz0aBmLlXkooQ8sY+Trgbzt3HvaZXF0VH5ok2+c=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=rL/Mtpnfrnwj+i0+5owDZ0wnjNAxb9lcQgLrxWDKmtJAyXsMc82TkhwEnFD9h828y
+	 7RP3SX2fqLAlTIEwdHWD5rzv0GNy5LEVVKPVNaRTIh2UmQ2y86xAIU8UIyyt7yAm4R
+	 3eAtLyB5bhTyUm/hesD8sJ3JmTlZQ6I13mLCXnsuMMBgotGZUD5lCX/7qNiYyzAvd/
+	 7RgP+KpzCcDqkKFz5v0QVxW+rq4yqg5xGRM088fcwmY5C3knjascOPEBCmVRqguM6o
+	 54Xnj4IK7RpIgcd3I7/1c/e3DTmvGEsEnjIUHJdog7LXUrUoMsIMiePKZmTEJGlhcP
+	 FSpjnrw3Jw4jw==
+Date: Sat, 31 Aug 2024 12:34:18 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Angelo Dureghello <adureghello@baylibre.com>
+Cc: Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich
+ <Michael.Hennerich@analog.com>, Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Olivier Moysan
+ <olivier.moysan@foss.st.com>, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ dlechner@baylibre.com
+Subject: Re: [PATCH RFC 3/8] iio: backend adi-axi-dac: backend features
+Message-ID: <20240831123418.6bef6039@jic23-huawei>
+In-Reply-To: <20240829-wip-bl-ad3552r-axi-v0-v1-3-b6da6015327a@baylibre.com>
+References: <20240829-wip-bl-ad3552r-axi-v0-v1-0-b6da6015327a@baylibre.com>
+	<20240829-wip-bl-ad3552r-axi-v0-v1-3-b6da6015327a@baylibre.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/paulmck/linux-rcu.git dev.2024.08.30a
-head:   05416eb79213ad6a9770faa795059fdd00adb6e0
-commit: 05416eb79213ad6a9770faa795059fdd00adb6e0 [33/33] refscale: Add srcu_read_lock_lite() support using "srcu-lite"
-config: parisc-randconfig-r071-20240831 (https://download.01.org/0day-ci/archive/20240831/202408311948.LQzaV2xP-lkp@intel.com/config)
-compiler: hppa-linux-gcc (GCC) 14.1.0
+On Thu, 29 Aug 2024 14:32:01 +0200
+Angelo Dureghello <adureghello@baylibre.com> wrote:
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202408311948.LQzaV2xP-lkp@intel.com/
+> From: Angelo Dureghello <adureghello@baylibre.com>
+> 
+> Extend DAC backend with new features required for the AXI driver
+> version for the a3552r DAC.
+> 
+> Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
+Hi Angelo
+Minor comments inline.
+>  
+>  static int axi_dac_enable(struct iio_backend *back)
+> @@ -460,7 +493,13 @@ static int axi_dac_data_source_set(struct iio_backend *back, unsigned int chan,
+>  	case IIO_BACKEND_EXTERNAL:
+>  		return regmap_update_bits(st->regmap,
+>  					  AXI_DAC_REG_CHAN_CNTRL_7(chan),
+> -					  AXI_DAC_DATA_SEL, AXI_DAC_DATA_DMA);
+> +					  AXI_DAC_DATA_SEL,
+> +					  AXI_DAC_DATA_DMA);
 
-smatch warnings:
-kernel/rcu/refscale.c:1179 ref_scale_init() warn: inconsistent indenting
+Unrelated change.   If you want to change this, separate patch.
 
-vim +1179 kernel/rcu/refscale.c
+> +	case IIO_BACKEND_INTERNAL_RAMP_16:
+> +		return regmap_update_bits(st->regmap,
+> +					  AXI_DAC_REG_CHAN_CNTRL_7(chan),
+> +					  AXI_DAC_DATA_SEL,
+> +					  AXI_DAC_DATA_INTERNAL_RAMP_16);
+>  	default:
+>  		return -EINVAL;
+>  	}
+> @@ -518,9 +557,204 @@ static int axi_dac_reg_access(struct iio_backend *back, unsigned int reg,
+>  	return regmap_write(st->regmap, reg, writeval);
+>  }
+>  
 
-  1159	
-  1160	static int __init
-  1161	ref_scale_init(void)
-  1162	{
-  1163		long i;
-  1164		int firsterr = 0;
-  1165		static const struct ref_scale_ops *scale_ops[] = {
-  1166			&rcu_ops, &srcu_ops, &srcu_lite_ops, RCU_TRACE_OPS RCU_TASKS_OPS
-  1167			&refcnt_ops, &rwlock_ops, &rwsem_ops, &lock_ops, &lock_irq_ops, &acqrel_ops,
-  1168			&sched_clock_ops, &clock_ops, &jiffies_ops, &typesafe_ref_ops, &typesafe_lock_ops,
-  1169			&typesafe_seqlock_ops,
-  1170		};
-  1171	
-  1172		if (!torture_init_begin(scale_type, verbose))
-  1173			return -EBUSY;
-  1174	
-  1175		for (i = 0; i < ARRAY_SIZE(scale_ops); i++) {
-  1176			cur_ops = scale_ops[i]; if (strcmp(scale_type,
-  1177			cur_ops->name) == 0)
-  1178				break;
-> 1179		} if (i == ARRAY_SIZE(scale_ops)) {
-  1180			pr_alert("rcu-scale: invalid scale type: \"%s\"\n",
-  1181			scale_type); pr_alert("rcu-scale types:"); for (i = 0;
-  1182			i < ARRAY_SIZE(scale_ops); i++)
-  1183				pr_cont(" %s", scale_ops[i]->name);
-  1184			pr_cont("\n"); firsterr = -EINVAL; cur_ops = NULL;
-  1185			goto unwind;
-  1186		}
-  1187		if (cur_ops->init)
-  1188			if (!cur_ops->init()) {
-  1189				firsterr = -EUCLEAN;
-  1190				goto unwind;
-  1191			}
-  1192	
-  1193		ref_scale_print_module_parms(cur_ops, "Start of test");
-  1194	
-  1195		// Shutdown task
-  1196		if (shutdown) {
-  1197			init_waitqueue_head(&shutdown_wq);
-  1198			firsterr = torture_create_kthread(ref_scale_shutdown, NULL,
-  1199							  shutdown_task);
-  1200			if (torture_init_error(firsterr))
-  1201				goto unwind;
-  1202			schedule_timeout_uninterruptible(1);
-  1203		}
-  1204	
-  1205		// Reader tasks (default to ~75% of online CPUs).
-  1206		if (nreaders < 0)
-  1207			nreaders = (num_online_cpus() >> 1) + (num_online_cpus() >> 2);
-  1208		if (WARN_ONCE(loops <= 0, "%s: loops = %ld, adjusted to 1\n", __func__, loops))
-  1209			loops = 1;
-  1210		if (WARN_ONCE(nreaders <= 0, "%s: nreaders = %d, adjusted to 1\n", __func__, nreaders))
-  1211			nreaders = 1;
-  1212		if (WARN_ONCE(nruns <= 0, "%s: nruns = %d, adjusted to 1\n", __func__, nruns))
-  1213			nruns = 1;
-  1214		reader_tasks = kcalloc(nreaders, sizeof(reader_tasks[0]),
-  1215				       GFP_KERNEL);
-  1216		if (!reader_tasks) {
-  1217			SCALEOUT_ERRSTRING("out of memory");
-  1218			firsterr = -ENOMEM;
-  1219			goto unwind;
-  1220		}
-  1221	
-  1222		VERBOSE_SCALEOUT("Starting %d reader threads", nreaders);
-  1223	
-  1224		for (i = 0; i < nreaders; i++) {
-  1225			init_waitqueue_head(&reader_tasks[i].wq);
-  1226			firsterr = torture_create_kthread(ref_scale_reader, (void *)i,
-  1227							  reader_tasks[i].task);
-  1228			if (torture_init_error(firsterr))
-  1229				goto unwind;
-  1230		}
-  1231	
-  1232		// Main Task
-  1233		init_waitqueue_head(&main_wq);
-  1234		firsterr = torture_create_kthread(main_func, NULL, main_task);
-  1235		if (torture_init_error(firsterr))
-  1236			goto unwind;
-  1237	
-  1238		torture_init_end();
-  1239		return 0;
-  1240	
-  1241	unwind:
-  1242		torture_init_end();
-  1243		ref_scale_cleanup();
-  1244		if (shutdown) {
-  1245			WARN_ON(!IS_MODULE(CONFIG_RCU_REF_SCALE_TEST));
-  1246			kernel_power_off();
-  1247		}
-  1248		return firsterr;
-  1249	}
-  1250	
+> +
+> +static int axi_dac_bus_reg_write(struct iio_backend *back,
+> +				 u32 reg, void *val, size_t size)
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Maybe just pass an unsigned int for val?
+So follow what regmap does? You will still need the size, but it
+will just be configuration related rather than affecting the type
+of val.
+
+
+
+> +{
+> +	struct axi_dac_state *st = iio_backend_get_priv(back);
+> +
+> +	if (!st->bus_type)
+> +		return -EOPNOTSUPP;
+> +
+> +	if (st->bus_type == AXI_DAC_BUS_TYPE_QSPI) {
+
+As below, I'd use a switch and factor out this block as a separate
+bus specific function.
+
+> +		int ret;
+> +		u32 ival;
+> +
+> +		if (size != 1 && size != 2)
+> +			return -EINVAL;
+> +
+> +		switch (size) {
+> +		case 1:
+> +			ival = FIELD_PREP(AXI_DAC_DATA_WR_8, *(u8 *)val);
+> +			break;
+> +		case 2:
+> +			ival =  FIELD_PREP(AXI_DAC_DATA_WR_16, *(u16 *)val);
+> +			break;
+> +		default:
+> +			return  -EINVAL;
+
+Hopefully compiler won't need this and the above. I'd drop the size != 1..
+check in favour of just doing it in this switch.
+
+> +		}
+> +
+> +		ret = regmap_write(st->regmap, AXI_DAC_CNTRL_DATA_WR, ival);
+> +		if (ret)
+> +			return ret;
+> +
+> +		/*
+> +		 * Both REG_CNTRL_2 and AXI_DAC_CNTRL_DATA_WR need to know
+> +		 * the data size. So keeping data size control here only,
+> +		 * since data size is mandatory for to the current transfer.
+> +		 * DDR state handled separately by specific backend calls,
+> +		 * generally all raw register writes are SDR.
+> +		 */
+> +		if (size == 1)
+> +			ret = regmap_set_bits(st->regmap, AXI_DAC_REG_CNTRL_2,
+> +					      AXI_DAC_SYMB_8B);
+> +		else
+> +			ret = regmap_clear_bits(st->regmap, AXI_DAC_REG_CNTRL_2,
+> +						AXI_DAC_SYMB_8B);
+> +		if (ret)
+> +			return ret;
+> +
+> +		ret = regmap_update_bits(st->regmap, AXI_DAC_REG_CUSTOM_CTRL,
+> +					 AXI_DAC_ADDRESS,
+> +					 FIELD_PREP(AXI_DAC_ADDRESS, reg));
+> +		if (ret)
+> +			return ret;
+> +
+> +		ret = regmap_update_bits(st->regmap, AXI_DAC_REG_CUSTOM_CTRL,
+> +					 AXI_DAC_TRANSFER_DATA,
+> +					 AXI_DAC_TRANSFER_DATA);
+> +		if (ret)
+> +			return ret;
+> +
+> +		ret = regmap_read_poll_timeout(st->regmap,
+> +					       AXI_DAC_REG_CUSTOM_CTRL, ival,
+> +					       ival & AXI_DAC_TRANSFER_DATA,
+> +					       10, 100 * KILO);
+> +		if (ret)
+> +			return ret;
+> +
+> +		return regmap_clear_bits(st->regmap, AXI_DAC_REG_CUSTOM_CTRL,
+> +					  AXI_DAC_TRANSFER_DATA);
+> +	}
+> +
+> +	return -EINVAL;
+> +}
+> +
+> +static int axi_dac_bus_reg_read(struct iio_backend *back,
+> +				u32 reg, void *val, size_t size)
+As for write, I'd just use an unsigned int * for val like
+regmap does.
+
+
+> +{
+> +	struct axi_dac_state *st = iio_backend_get_priv(back);
+> +
+> +	if (!st->bus_type)
+> +		return -EOPNOTSUPP;
+> +
+> +	if (st->bus_type == AXI_DAC_BUS_TYPE_QSPI) {
+
+It got mentioned in binding review but if this isn't QSPI, even
+if similar don't call it that.
+Maybe use a switch from the start give it will make sense
+anyway the moment there is a second bus type.
+
+I'd be tempted to factor the rest of this block out.
+I guess expectation is we'll see more bus types so that factoring
+out will be needed soon anyway.
+
+
+> +		int ret;
+> +		u32 bval;
+		u32 bval = 0;
+> +
+> +		if (size != 1 && size != 2)
+> +			return -EINVAL;
+> +
+> +		bval = 0;
+> +		ret = axi_dac_bus_reg_write(back,
+> +					    AXI_DAC_RD_ADDR(reg), &bval, size);
+
+Ugly wrap.   Move more stuff on to first line.
+
+> +		if (ret)
+> +			return ret;
+> +
+> +		ret = regmap_read_poll_timeout(st->regmap, AXI_DAC_UI_STATUS,
+> +					       bval, bval != AXI_DAC_BUSY,
+> +					       10, 100);
+> +		if (ret)
+> +			return ret;
+> +
+> +		return regmap_read(st->regmap, AXI_DAC_CNTRL_DATA_RD, val);
+> +	}
+> +
+> +	return -EINVAL;
+> +}
+
 
