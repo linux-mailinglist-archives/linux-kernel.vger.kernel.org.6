@@ -1,189 +1,157 @@
-Return-Path: <linux-kernel+bounces-309587-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309588-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 921A7966D2C
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 02:06:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F7D5966D35
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 02:15:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1C4851F245A3
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 00:06:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA08B284C61
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 00:15:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78AC73C3C;
-	Sat, 31 Aug 2024 00:06:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F15A4C74;
+	Sat, 31 Aug 2024 00:15:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f+CBmSu4"
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="WEpBGVw6"
+Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44F9A2582;
-	Sat, 31 Aug 2024 00:06:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52558184F
+	for <linux-kernel@vger.kernel.org>; Sat, 31 Aug 2024 00:15:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725062795; cv=none; b=se2YlLLTCv/f/sV7WOt5d+HkU6H173pRy7fG+z4R25loJUMTDtlJJesIkc5zcpcCTRGeEomMfcCFsl3h0F1E7I7l4omdGbhtruF6aVY5paCmT2x6ZO4xdI23PxMOmXy7crP20lGkVH8/C+hZkr949CiWJkDYvIi9U7ydJEwCFOM=
+	t=1725063342; cv=none; b=Lr42h+gv5sohbDkFs368DHsXEJnh7XV8QvO7SgBnrtscaGB0TdiRL8xwrBNc6tEEkB10IA7RTH0Qf1Gh1qSQn0kks4T3auN880XBcLez9XWwmKEfg/jLhlFMi7ocGFq4KyB8ig/SPWkNt4z+50DBP5bHzc0aBYLvMq0L1OwPfbw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725062795; c=relaxed/simple;
-	bh=P36KJ9dUl02rMEqVvQH9JpX6m+5Y+S8JZjyrFgjM0iY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sDV3LRQPBL+7j0TGQR2Uf+uvJORSPuJ+m2COtiTJkGuZJppv5g5mZNoBnLC+Ac9xOMPSbDAEfQ92a7i678kwZcOc87rPaIuD1jQH3AzatypsGkes+q6CqTb4h0SvQxJJtvDCsRdhBqICzV7kD27kEB9AXWq0dFB6kWs/0quqYCk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=f+CBmSu4; arc=none smtp.client-ip=209.85.210.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-71423704ef3so1845632b3a.3;
-        Fri, 30 Aug 2024 17:06:34 -0700 (PDT)
+	s=arc-20240116; t=1725063342; c=relaxed/simple;
+	bh=KuZ0OoLpHGEBrE1b1ZW5sIbzye+2VwcQFnPIkPLV4f4=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=CmhoxuDJ35EKgGgKs97uYsGh5RUs4pvTXoisQFBiaYL6CE+pe8sOMIf2eL1U+DD5UU2Yt9Ikf97EPzTVR0A42KDVpwzbnBRRXFkCKzSMn9KQR4akrjscUWaau1oMEEu91TQRIxtS0sqJXSrVnhJQD2wTmao915H1kRhIe82SKPA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=WEpBGVw6; arc=none smtp.client-ip=209.85.210.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-714290c2b34so2321021b3a.1
+        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 17:15:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725062793; x=1725667593; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=73FwECXoPq+p2CEsRYfVQNKBUbmo714kbm7kCx6MODE=;
-        b=f+CBmSu4xFIi9Yx6/B1Fhm+V5NPubaME9sOmvxqw/dbxXRFYo3fm57u4J76yDiKb4r
-         uPn/m9VoAaSzGKjKdJ5fBvCxO4f4HVpWQyj2VysbaeVyExfxLnNYg3EJrMZu6Ex9uLBw
-         nksoFf4HgqzFNRxU85SNtNPri9+HaVMOXF/6XPSUW7noNsZN9X6fPWrE+PpOcoeE7FbN
-         oyyRPgSevvaZpD1tINr2+Yi+AxuoiSc1rFfOUd8mbfNWQFZE9mEIKKcSDynh4vc+tx+6
-         prkfPKaaoLB/XS6H88RJ0N1xjCbEfxW1sc0sz3vdhU30+ExN1FfORqu98JK1mG3mFvXX
-         D8Ew==
+        d=google.com; s=20230601; t=1725063341; x=1725668141; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:reply-to:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=vTFtS87rRNga7epLMEfljyowaniVQp7YdYYjP/4rKoU=;
+        b=WEpBGVw6IuaXCqG+tS7RNI8IxP08g4wTUH2cD25eB8xzLoJ8fqPr3CboV93HSA+CI0
+         6bzXupXs9VUJNdWEGbxLVahEJudmT83k120kFyuYBFiHPs9/OmyB7WZB8IdDrInSTeys
+         mEt6HMYahq8pvJWy6YdrmIH4zCdT/uPLVqPrr17DP8Ta9Wxwg1MhG8xbX7zwWwHwi5A9
+         6tJcWmW8wu0v5J1jj1zibIEhMu4EhAz7nPNz60wbggy44W/JGhlBXhNNp7ZtcLhmPuGZ
+         e6AvSVZX4wrtaOZtkHwyVianWRX/GvR0cMK1yo1homYBeN803Mq5y1Krk2ZdiuuMjZQG
+         kPBg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725062793; x=1725667593;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1725063341; x=1725668141;
+        h=cc:to:from:subject:message-id:mime-version:date:reply-to
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=73FwECXoPq+p2CEsRYfVQNKBUbmo714kbm7kCx6MODE=;
-        b=vd9lWYHBJcp40k5TDXOe8EjXAN+u37grYSVTkbOoexWkWkL/X/nhpVj1I47c2/9F/x
-         ah9muw89tOf24xGmhTcOhLJPsQIBf06QwcjYzEl3nuJycdT4WJT1IzL6JbTFBLPai5NT
-         jmZ2SVDAGBE2XnvJBgDDhQt9TAVS4ZEQVYZu+pQ8ECpr7ZiC+Jd1D4lQerxqRh2222ZI
-         UEADv1/kzeAx+KaFXtpxkB45e3d39rcqK6yixftqGfL8R9vgXBNud+vzbf9n2obwdbmO
-         /sBWdaLuXkhjpjXe5JifQiKyYNp9QdOtzPLHvAU71PioncsKt3VOUiC7jkOZtt4c3Vii
-         tEeQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXvs41PdWdqpt6cZYgi5N/w2P3Zo9g+4Rbt6f1HvD30nY0/HwRV1PFI9SJiQemdODX7j915pqEr7so=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxzyiLGSDf7r8IBpk4CAaXeqwNhVsyoodCqWnea/Arj9QZsjWGe
-	Izel3TdI5XHdZfkD+hnyCU9fkYzuCr1DBdMz5WM9Kql6aGiMFi/R
-X-Google-Smtp-Source: AGHT+IGa4ZDk/cssOwvP6hdKmmo8JFXvC1u7x+M8kogokVGijUPE575Dzb5/owMqkRcLWPUYkk8aWQ==
-X-Received: by 2002:a05:6a00:21ce:b0:705:b6d3:4f15 with SMTP id d2e1a72fcca58-7173b6b5734mr1712748b3a.25.1725062793225;
-        Fri, 30 Aug 2024 17:06:33 -0700 (PDT)
-Received: from [192.168.50.127] ([2607:f130:0:161::c923:2115])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-715e56e2519sm3404733b3a.173.2024.08.30.17.06.29
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 30 Aug 2024 17:06:32 -0700 (PDT)
-Message-ID: <ebff7e4c-a561-4c61-a40d-f1905ac3d42a@gmail.com>
-Date: Sat, 31 Aug 2024 08:06:26 +0800
+        bh=vTFtS87rRNga7epLMEfljyowaniVQp7YdYYjP/4rKoU=;
+        b=PyJFRbbGxJgH6pTV5j9Ab81fSRO57XO7T2SB2re6KyqXgfCzNNETOfF6+7CLLa6TWE
+         wPHYH5AbyaK4gDFY5JFrf24NHMUOFYAQNrHr83vklBn4D+WvcdwlT1y3YQFQ7luEGoMO
+         N34tkecsYt+te3SMOSM/awky1gvR1l4qy+Bi3Lp64vvsFBnEYO+aweQz1DI5P9G3xndR
+         MFKk/DtCY1j7Ii0TKWmDTtzYzrKQQOzV1khP2U4jEbAPs0wG8DLBamkki6wdKG7Ji/WU
+         KzQzCmr6xnBnHDTiAw3D0WKPayWv19ERz79j4Y2nWXJK9tfYwHXGoollaCXs4LOa1r9d
+         awCw==
+X-Forwarded-Encrypted: i=1; AJvYcCUMA68+I9/QREJ/AjwKuy/tpbTCptP39u2EpWVSBUmeNT6eKlNQdGpIVqak4bazsDmoJeuRpx+fJQUL9eg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzv1Z7A05fAfA2gFBrX6JibyiA2PEvGUT6696PmfTZEYwcWPndZ
+	pFV70OxazbA4ykWkh9lq796BVOZEaIxQy0gpESaZWjXIoBxpSBjVY+McfJYxNOU6mjv0IaHozLL
+	CIA==
+X-Google-Smtp-Source: AGHT+IHatimWdzRYXvUKQfJLlDc85fVrVzYWQP70nBC338iYJOdi5vN66dK+0pDXHS/TtafnsiqigY81dTc=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a05:6a00:9152:b0:714:378b:c7c5 with SMTP id
+ d2e1a72fcca58-716f2091e9fmr18050b3a.0.1725063340488; Fri, 30 Aug 2024
+ 17:15:40 -0700 (PDT)
+Reply-To: Sean Christopherson <seanjc@google.com>
+Date: Fri, 30 Aug 2024 17:15:15 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] PCI: armada8k: change to use devm_clk_get_enabled()
- helper
-To: Anand Moon <linux.amoon@gmail.com>, Wu Bo <bo.wu@vivo.com>
-Cc: linux-kernel@vger.kernel.org,
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>,
- =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
- Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
- linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <20240827023914.2255103-1-bo.wu@vivo.com>
- <CANAwSgQpu9NYugu_=PCVQGXiXCptxLT2Q1xQ5KqbwvkU0kfWDQ@mail.gmail.com>
-Content-Language: en-US
-From: Wu Bo <wubo.oduw@gmail.com>
-In-Reply-To: <CANAwSgQpu9NYugu_=PCVQGXiXCptxLT2Q1xQ5KqbwvkU0kfWDQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.46.0.469.g59c65b2a67-goog
+Message-ID: <20240831001538.336683-1-seanjc@google.com>
+Subject: [PATCH v2 00/22] KVM: x86: Fix multiple #PF RO infinite loop bugs
+From: Sean Christopherson <seanjc@google.com>
+To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Yuan Yao <yuan.yao@intel.com>, Yuan Yao <yuan.yao@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On 2024/8/27 14:44, Anand Moon wrote:
-> Hi Wu Bo,
->
-> On Tue, 27 Aug 2024 at 07:55, Wu Bo <bo.wu@vivo.com> wrote:
->> Use devm_clk_get_enabled() instead of devm_clk_get() to make the code
->> cleaner and avoid calling clk_disable_unprepare()
->>
->> Signed-off-by: Wu Bo <bo.wu@vivo.com>
->> ---
->>   drivers/pci/controller/dwc/pcie-armada8k.c | 36 ++++++++--------------
->>   1 file changed, 13 insertions(+), 23 deletions(-)
->>
->> diff --git a/drivers/pci/controller/dwc/pcie-armada8k.c b/drivers/pci/controller/dwc/pcie-armada8k.c
->> index b5c599ccaacf..e7ef6c2641b8 100644
->> --- a/drivers/pci/controller/dwc/pcie-armada8k.c
->> +++ b/drivers/pci/controller/dwc/pcie-armada8k.c
->> @@ -284,23 +284,17 @@ static int armada8k_pcie_probe(struct platform_device *pdev)
->>
->>          pcie->pci = pci;
->>
->> -       pcie->clk = devm_clk_get(dev, NULL);
->> +       pcie->clk = devm_clk_get_enabled(dev, NULL);
->>          if (IS_ERR(pcie->clk))
->> -               return PTR_ERR(pcie->clk);
->> -
->> -       ret = clk_prepare_enable(pcie->clk);
->> -       if (ret)
->> -               return ret;
->> -
->> -       pcie->clk_reg = devm_clk_get(dev, "reg");
->> -       if (pcie->clk_reg == ERR_PTR(-EPROBE_DEFER)) {
->> -               ret = -EPROBE_DEFER;
->> -               goto fail;
->> -       }
+Fix an amusing number of minor bugs that can lead to KVM putting the guest into
+an infinite "retry #PF" loop, and cleanup and consolidate the unprotect+retry
+paths (there are four-ish).
 
-I don't know much about this device. But from the code here, its 
-previous logic is that the function will only return when the error code 
-is EPROBE_DEFER, and other errors will continue to execute.
+As a bonus, adding RET_PF_WRITE_PROTECTED obviates the need for
+kvm_lookup_pfn()[*].
 
-So I followed the previous logic, is it correct？
+[*] https://lore.kernel.org/all/63c41e25-2523-4397-96b4-557394281443@redhat.com
 
->> -       if (!IS_ERR(pcie->clk_reg)) {
->> -               ret = clk_prepare_enable(pcie->clk_reg);
->> -               if (ret)
->> -                       goto fail_clkreg;
->> +               return dev_err_probe(dev, PTR_ERR(pcie->clk),
->> +                               "could not enable clk\n");
->> +
->> +       pcie->clk_reg = devm_clk_get_enabled(dev, "reg");
->> +       if (IS_ERR(pcie->clk_reg)) {
->> +               ret = dev_err_probe(dev, PTR_ERR(pcie->clk_reg),
->> +                               "could not enable reg clk\n");
->> +               if (ret == -EPROBE_DEFER)
->> +                       goto out;
-> You can drop this check as dev_err_probe handle this inside
-> It will defer the enabling of clock.
->>          }
->>
->>          /* Get the dw-pcie unit configuration/control registers base. */
->> @@ -308,12 +302,12 @@ static int armada8k_pcie_probe(struct platform_device *pdev)
->>          pci->dbi_base = devm_pci_remap_cfg_resource(dev, base);
->>          if (IS_ERR(pci->dbi_base)) {
->>                  ret = PTR_ERR(pci->dbi_base);
->> -               goto fail_clkreg;
->> +               goto out;
->>          }
->>
->>          ret = armada8k_pcie_setup_phys(pcie);
->>          if (ret)
->> -               goto fail_clkreg;
->> +               goto out;
->>
->>          platform_set_drvdata(pdev, pcie);
->>
->> @@ -325,11 +319,7 @@ static int armada8k_pcie_probe(struct platform_device *pdev)
->>
->>   disable_phy:
->>          armada8k_pcie_disable_phys(pcie);
->> -fail_clkreg:
->> -       clk_disable_unprepare(pcie->clk_reg);
->> -fail:
->> -       clk_disable_unprepare(pcie->clk);
->> -
->> +out:
->>          return ret;
->>   }
->>
-> Thanks
-> -Anand
->> --
->> 2.25.1
->>
->>
+v2:
+ - Gather reviews.
+ - Rewrite the comment for the nested NPT "fast" unprotect path to explain what
+   it actually handles. [Yuan]
+ - Drop Cc: stable for the remaining patches, as it's extremely unlikely these
+   fixes would actually prevent a guest from dying. [Paolo]
+ - Move the patch to replace PFERR_NESTED_GUEST_PAGE much earlier. [Paolo]
+ - Wrap indirect_shadow_pages with READ_ONCE(). [Paolo]
+ - Massage a few changelogs to (hopefully) fix weird wordings. [Paolo]
+ - Always refer directly to last_retry_{addr,eip} in comments, instead of
+   indirectly referencing them as "infinite loop protection". [Paolo]
+ - WARN if write-protection hits the MMIO cache. [Yuan]
+
+v1: https://lore.kernel.org/all/20240809190319.1710470-1-seanjc@google.com
+
+Sean Christopherson (22):
+  KVM: VMX: Set PFERR_GUEST_{FINAL,PAGE}_MASK if and only if the GVA is
+    valid
+  KVM: x86/mmu: Replace PFERR_NESTED_GUEST_PAGE with a more descriptive
+    helper
+  KVM: x86/mmu: Trigger unprotect logic only on write-protection page
+    faults
+  KVM: x86/mmu: Skip emulation on page fault iff 1+ SPs were unprotected
+  KVM: x86: Retry to-be-emulated insn in "slow" unprotect path iff sp is
+    zapped
+  KVM: x86: Get RIP from vCPU state when storing it to last_retry_eip
+  KVM: x86: Store gpa as gpa_t, not unsigned long, when unprotecting for
+    retry
+  KVM: x86/mmu: Apply retry protection to "fast nTDP unprotect" path
+  KVM: x86/mmu: Try "unprotect for retry" iff there are indirect SPs
+  KVM: x86: Move EMULTYPE_ALLOW_RETRY_PF to x86_emulate_instruction()
+  KVM: x86: Fold retry_instruction() into x86_emulate_instruction()
+  KVM: x86/mmu: Don't try to unprotect an INVALID_GPA
+  KVM: x86/mmu: Always walk guest PTEs with WRITE access when
+    unprotecting
+  KVM: x86/mmu: Move event re-injection unprotect+retry into common path
+  KVM: x86: Remove manual pfn lookup when retrying #PF after failed
+    emulation
+  KVM: x86: Check EMULTYPE_WRITE_PF_TO_SP before unprotecting gfn
+  KVM: x86: Apply retry protection to "unprotect on failure" path
+  KVM: x86: Update retry protection fields when forcing retry on
+    emulation failure
+  KVM: x86: Rename
+    reexecute_instruction()=>kvm_unprotect_and_retry_on_failure()
+  KVM: x86/mmu: Subsume kvm_mmu_unprotect_page() into the and_retry()
+    version
+  KVM: x86/mmu: Detect if unprotect will do anything based on
+    invalid_list
+  KVM: x86/mmu: WARN on MMIO cache hit when emulating write-protected
+    gfn
+
+ arch/x86/include/asm/kvm_host.h |  14 ++-
+ arch/x86/kvm/mmu/mmu.c          | 200 +++++++++++++++++++++++---------
+ arch/x86/kvm/mmu/mmu_internal.h |   3 +
+ arch/x86/kvm/mmu/mmutrace.h     |   1 +
+ arch/x86/kvm/mmu/paging_tmpl.h  |   2 +-
+ arch/x86/kvm/mmu/tdp_mmu.c      |   6 +-
+ arch/x86/kvm/vmx/vmx.c          |   5 +-
+ arch/x86/kvm/x86.c              | 133 ++++++---------------
+ 8 files changed, 198 insertions(+), 166 deletions(-)
+
+
+base-commit: a1206bc992c3cd3f758a9b46117dfc7e59e8c10f
+-- 
+2.46.0.469.g59c65b2a67-goog
+
 
