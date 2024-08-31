@@ -1,747 +1,975 @@
-Return-Path: <linux-kernel+bounces-309994-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309993-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0FCA69672D4
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 19:31:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0283E9672D5
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 19:31:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DA7931C2130B
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 17:31:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A1941F22568
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 17:31:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B4A514A4E0;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB6BF14B949;
 	Sat, 31 Aug 2024 17:31:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ElgGZ3Vu"
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b="YhnBacCb";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="W8lzOZo+"
+Received: from fout4-smtp.messagingengine.com (fout4-smtp.messagingengine.com [103.168.172.147])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 992401CD1F;
-	Sat, 31 Aug 2024 17:31:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8FCC4C8C;
+	Sat, 31 Aug 2024 17:30:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.147
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725125462; cv=none; b=ddGIwfIK6w1pOvzYDOEEQSxiamdv8uj+JQJtVH0a373gEedN+gabto5BkcmfO6sGG6o/v61T4YuXLrnLhmshZbN4nMsdLTBiugoAsdLA+SqwN9cEdQ299EpZWtXcIkXDOLRMYc6j58mW4VmVvptqM0+uwcwHunNIYtJDddSfph4=
+	t=1725125461; cv=none; b=GZjm6/9cdE1+XLFRy17gBSN20z2wCbgRHRXF2fjXJXdpRw4hOxfxY3www8s/BjdhaEU81egCLGbUw3aqXzP/3E8ckr9dtyUBK6t27ClUbNRt3wAlHxQrBArsOKvDRE1UMQTGWp6NYptGBmD/PSxr58RFzI11WVQaaSpQNVtvlNs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725125462; c=relaxed/simple;
-	bh=QqqtYxIPmJZzUAOmS43L/mVHZMKB/folA8H3hDftMz0=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=UXIdMAr/8G710vCkXWREnksQxi+AodfX6gHE4N68sRHO+J88d4EdO30Feoufff1DL52vsXGHeefHjgUXz1WUfG3lbhZaDGyuUhMy4TZsl43qsLzoif25vYLOyWPFLOlcH+C5vkIFNErHNhQVbWd9b3I1PVEXTVfp4PkGcl7Q47Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ElgGZ3Vu; arc=none smtp.client-ip=209.85.216.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-2d885019558so905117a91.2;
-        Sat, 31 Aug 2024 10:31:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725125460; x=1725730260; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=VFS3erDJyf2Mb05Z5xCZGbf/yvs2uIXpeyy7GwMzybI=;
-        b=ElgGZ3VuR1ZSSRNmPWLWNAdo7IqRDBE5OinXr8q0fHrsXoZenOK8T3RWi3THwR7a7O
-         OAbwNu5E6fq+nP3OirQloEFx6La5DQSmS2zy45oHFFlPlxFeMfSYGn6t0jDZ9uTf3ngf
-         AzBjdoVvkBVkORM40e3hGAvFJrxrAnS31hyLjOw+FgaI3377BdHM+umhphImUAK2TE29
-         VO8tH5eEC1KoM4XBCqbeLu2P0o+utV9zQHumTFjKFKrI/z07aQGKFlV8XKYBuPX6K7Du
-         1glDDU/UNcq9UAqVZDT2R/ttlFqB4Jaqp2k5IgEFZ2vaeHC7FfozixQ9yvWKO8IgfBy7
-         7JEg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725125460; x=1725730260;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=VFS3erDJyf2Mb05Z5xCZGbf/yvs2uIXpeyy7GwMzybI=;
-        b=ZDDYkdeYrtWjaBqlrrXsgP2AOzGCp6Y2jzQVUmI8B7K+F7P9+C+JTSaUMMpU/6zpde
-         p7AHm1eDZk55V3vUebI6cU1YITNfqgNpPZz7j5l5OdEtSDZBqf0FjURszG36U+FfAagQ
-         TNrpeeJy+53PHkZUkVEZKOtLRTEvK2UtaooPftNyhdlsC/4j+VKGyNmV+a5roZoOUcMC
-         MgzCQnRBn1TzU5k0jSpzbsB72jYirUBb2SGhVrFeD8/DGsd1FMfZLH6zwb8wGnCGN98E
-         yyOWUdB6reqbwHQTC0w/Usa/DnEHLqD7vUkn8IA7w547G2wwvQ5YjZBx5QA0Ch9nnLE1
-         XrNg==
-X-Forwarded-Encrypted: i=1; AJvYcCUe2/jbp5QSPU0prWQ62iotPGnJ4oYNHnY8REomvjHCWny0Zyxk2Y0HymtchI7O2JT/MLQs6ETb0SG2a8gh@vger.kernel.org, AJvYcCWi895FhT6lW3HNqNxYxQL10lIhKEXqA+dYhQE+SlSXhfW6zPOM6j7zgZGEWVkS/GEJM+R+7jIGa6apSsai@vger.kernel.org, AJvYcCXYv1X/YV4IDhid2UUpH035vhWorkv4Uyy4i/gdNu//x55ZV1kRe7hVoPlaYvP0T6m+ecca4RPGaHX7dsk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwDV9BcnlT7pfRjglIJ/y8RGrc3cMWCeC1jqoI7/1f69U1PYQaN
-	YCSwb/sL+/UTJ4zcJI3UCfAem0KwHDq4U/WT7rhwHgVDtelyojx5ToGhKILD
-X-Google-Smtp-Source: AGHT+IE29YeGjb5hBV8rJJHXTxktiOK7tom34zPPHYty0F5yzQ5/zOr6JRiw2gVE5KVWlaMAx6x9ZA==
-X-Received: by 2002:a17:90b:104f:b0:2d4:924:8891 with SMTP id 98e67ed59e1d1-2d89467ed3amr2346579a91.38.1725125459271;
-        Sat, 31 Aug 2024 10:30:59 -0700 (PDT)
-Received: from localhost.localdomain ([2409:40c1:57:eb26:e0b:862d:98c2:d6d0])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d85b11f554sm6085758a91.21.2024.08.31.10.30.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 31 Aug 2024 10:30:58 -0700 (PDT)
-From: Amit Vadhavana <av2082000@gmail.com>
-To: dmaengine@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	ricardo@marliere.net
-Cc: av2082000@gmail.com,
-	linux-kernel-mentees@lists.linux.dev,
-	skhan@linuxfoundation.org,
-	vkoul@kernel.org,
-	olivierdautricourt@gmail.com,
-	sr@denx.de,
-	ludovic.desroches@microchip.com,
-	florian.fainelli@broadcom.com,
-	bcm-kernel-feedback-list@broadcom.com,
-	rjui@broadcom.com,
-	sbranden@broadcom.com,
-	wangzhou1@hisilicon.com,
-	haijie1@huawei.com,
-	fenghua.yu@intel.com,
-	dave.jiang@intel.com,
-	zhoubinbin@loongson.cn,
-	sean.wang@mediatek.com,
-	matthias.bgg@gmail.com,
-	angelogioacchino.delregno@collabora.com,
-	afaerber@suse.de,
-	manivannan.sadhasivam@linaro.org,
-	Basavaraj.Natikar@amd.com,
-	linus.walleij@linaro.org,
-	ldewangan@nvidia.com,
-	jonathanh@nvidia.com,
-	thierry.reding@gmail.com,
-	laurent.pinchart@ideasonboard.com,
-	michal.simek@amd.com,
-	Frank.Li@nxp.com,
-	n.shubin@yadro.com,
-	yajun.deng@linux.dev,
-	quic_jjohnson@quicinc.com,
-	lizetao1@huawei.com,
-	pliem@maxlinear.com,
-	konrad.dybcio@linaro.org,
-	kees@kernel.org,
-	gustavoars@kernel.org,
-	bryan.odonoghue@linaro.org,
-	linux@treblig.org,
-	dan.carpenter@linaro.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rpi-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	linux-actions@lists.infradead.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-tegra@vger.kernel.org
-Subject: [PATCH RESEND V2] dmaengine: Fix spelling mistakes
-Date: Sat, 31 Aug 2024 22:59:49 +0530
-Message-Id: <20240831172949.13189-1-av2082000@gmail.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1725125461; c=relaxed/simple;
+	bh=jdfxVdQ05Xx8+jrCpe00f5GeceDiDNpSvYctUIll+vE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IqABRAXlc64uCMfIVl6bajNHhZR0sYuxrFKCjkzoFlF9dILt40PaWTUW5nsbg/yonk+rEByRNyViMT6S02BWIEuh3NeqB9LY4r38rHSecC1ezAWHWejdcK75n3usbdiR4i+la0Eid6JLH19MqCYpiji7C/8QN8YyQ7C2v1J3zfo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se; spf=pass smtp.mailfrom=ragnatech.se; dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b=YhnBacCb; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=W8lzOZo+; arc=none smtp.client-ip=103.168.172.147
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ragnatech.se
+Received: from phl-compute-04.internal (phl-compute-04.nyi.internal [10.202.2.44])
+	by mailfout.nyi.internal (Postfix) with ESMTP id 8DA3D13801C7;
+	Sat, 31 Aug 2024 13:30:55 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-04.internal (MEProxy); Sat, 31 Aug 2024 13:30:55 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ragnatech.se; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1725125455;
+	 x=1725211855; bh=6hcBQV+lMn3nVLZRbacEyKgHgYoLImcFvXoJIsy56rM=; b=
+	YhnBacCbSrGcGAILCvbGCaw6DawV2A5xJxX6pjP6HyQEpmtPHk2sY0lr4JF8WpuO
+	0pvwL8kuEg3HtCj0RFClJr3C9GO6Hrkse+L5NRhwQxJHL62vjvbbZfZ/1nLgM95h
+	/+2ROW82yyaLH0/Bovm+XuIjXm4T6AHhBEXuWb2yS+12I5ZX4LW+7XvnAJc/DXJb
+	Au6kvzQ5Cb4TkFQX72/0tgLxNnEl12gjXwbsKxLXvUPXpmbAcmdfLSPGqOPwbc89
+	4PzaUbVn/7pwxjCSvGB/dGG2S/aGkH5n3gTqN+1qdFoUCPUOanNdoQKT+CLTyEjb
+	OwYT8zB/E3VB8F4j1KybHQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1725125455; x=
+	1725211855; bh=6hcBQV+lMn3nVLZRbacEyKgHgYoLImcFvXoJIsy56rM=; b=W
+	8lzOZo+sKqYQiI08ms8FVDpwvdAYYj1b/a2lYKW+WLrKvFKi2fAyUFx68DSSh3kB
+	Vs+VUCkJyIBKhia63htccXUduzeLQTW+pCcSjlENmI7Hy7BKL5lsK4RZAm+QTOIX
+	niY+qfS9cd79z53SqNenFJmL880aa52+86sob00F/ZAfSaT6lsyPKVeKnyH4WTRA
+	ItV9feyxgtLMY1mGRYY5OY9V+ZZfQZsAApbWpIXc0L+uyWZDhTfIPeURBbDh/Owl
+	L/NZiHAQ4bjUyly+o4y4c0dynBQCmu3IxBkIRS2kVAciAifxoPDfnjxQcMEpK98q
+	frMQErhpstk81LrYwvS3Q==
+X-ME-Sender: <xms:T1PTZsvqdF1cIqCrdN93zrAxIZ7XM8jSNMKPukefc6drUw0wQtqLSQ>
+    <xme:T1PTZpd21JoltMCQi2czRngIT1tDZ3jj5P8tJ0z0XSjrLfaC3IWMVekvb2wfx89CR
+    pnG01GH0EsBd6HvVHU>
+X-ME-Received: <xmr:T1PTZnyAlguDyTDQ-VA_k3W7O5u2JQaoz0MNe3bwKd_svKI761eAC4zfev2YtuExy4eDznYVwKcnsrmOHHxQzSP-WA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudefkedguddugecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+    hnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtugfgjgesthekredttddt
+    jeenucfhrhhomheppfhikhhlrghsucfunpguvghrlhhunhguuceonhhikhhlrghsrdhsoh
+    guvghrlhhunhgusehrrghgnhgrthgvtghhrdhsvgeqnecuggftrfgrthhtvghrnhepveet
+    gedtvddvhfdtkeeghfeffeehteehkeekgeefjeduieduueelgedtheekkeetnecuvehluh
+    hsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepnhhikhhlrghsrdhs
+    ohguvghrlhhunhgusehrrghgnhgrthgvtghhrdhsvgdpnhgspghrtghpthhtohepgedpmh
+    houggvpehsmhhtphhouhhtpdhrtghpthhtohepmhgrshgrhhhirhhohieskhgvrhhnvghl
+    rdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgsuhhilhgusehvghgvrhdrkhgvrhhnvg
+    hlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhn
+    vghlrdhorhhgpdhrtghpthhtohepmhgrrhgvgiesuggvnhigrdguvg
+X-ME-Proxy: <xmx:T1PTZvOIt2UCFgjeMz51MakhNnt8w9JBva15grLDP7furyZxJDUAJA>
+    <xmx:T1PTZs9ld2pAqufHVj6gZ1azBMmQ6fNyTiFFynAmFnxgvGOIxdxKIg>
+    <xmx:T1PTZnXvCHjvqSn102HNOrh2yOP6G_k3g65X7p5WuMor4WiVdFJ5kw>
+    <xmx:T1PTZlekassfyiuOeOuj7yxQT2IZjcdR7V026mWw5AAbeks033JNCA>
+    <xmx:T1PTZgbHVZNvpXkzEPSRmVJdNgwJG74DXvYHNPlahc_k4bh78HfZ598h>
+Feedback-ID: i80c9496c:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sat,
+ 31 Aug 2024 13:30:54 -0400 (EDT)
+Date: Sat, 31 Aug 2024 19:30:53 +0200
+From: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Marek Vasut <marex@denx.de>
+Subject: Re: [PATCH v2 02/12] kconfig: refactor choice value calculation
+Message-ID: <20240831173053.GA27734@ragnatech.se>
+References: <20240618103541.3508486-1-masahiroy@kernel.org>
+ <20240618103541.3508486-3-masahiroy@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240618103541.3508486-3-masahiroy@kernel.org>
 
-Correct spelling mistakes in the DMA engine to improve readability
-and clarity without altering functionality.
+Hello Yamada-san,
 
-Signed-off-by: Amit Vadhavana <av2082000@gmail.com>
-Reviewed-by: Kees Cook <kees@kernel.org>
-Reviewed-by: Dave Jiang <dave.jiang@intel.com>
-Reviewed-by: Fenghua Yu <fenghua.yu@intel.com>
----
-V2: https://lore.kernel.org/all/20240817080408.8010-1-av2082000@gmail.com
-V1: https://lore.kernel.org/all/20240810184333.34859-1-av2082000@gmail.com 
-V1 -> V2:
-- Write the commit description in imperative mode.
----
- drivers/dma/acpi-dma.c                  | 4 ++--
- drivers/dma/altera-msgdma.c             | 4 ++--
- drivers/dma/amba-pl08x.c                | 2 +-
- drivers/dma/at_hdmac.c                  | 6 +++---
- drivers/dma/bcm-sba-raid.c              | 4 ++--
- drivers/dma/bcm2835-dma.c               | 2 +-
- drivers/dma/ep93xx_dma.c                | 4 ++--
- drivers/dma/fsl-dpaa2-qdma/dpaa2-qdma.h | 6 +++---
- drivers/dma/hisi_dma.c                  | 2 +-
- drivers/dma/idma64.c                    | 4 ++--
- drivers/dma/idxd/submit.c               | 2 +-
- drivers/dma/ioat/init.c                 | 2 +-
- drivers/dma/lgm/lgm-dma.c               | 2 +-
- drivers/dma/ls2x-apb-dma.c              | 4 ++--
- drivers/dma/mediatek/mtk-cqdma.c        | 4 ++--
- drivers/dma/mediatek/mtk-hsdma.c        | 2 +-
- drivers/dma/mv_xor.c                    | 4 ++--
- drivers/dma/mv_xor.h                    | 2 +-
- drivers/dma/mv_xor_v2.c                 | 2 +-
- drivers/dma/nbpfaxi.c                   | 2 +-
- drivers/dma/of-dma.c                    | 4 ++--
- drivers/dma/owl-dma.c                   | 2 +-
- drivers/dma/ppc4xx/adma.c               | 2 +-
- drivers/dma/ppc4xx/dma.h                | 2 +-
- drivers/dma/ptdma/ptdma.h               | 2 +-
- drivers/dma/qcom/bam_dma.c              | 4 ++--
- drivers/dma/qcom/gpi.c                  | 2 +-
- drivers/dma/qcom/qcom_adm.c             | 2 +-
- drivers/dma/sh/shdmac.c                 | 2 +-
- drivers/dma/ste_dma40.h                 | 2 +-
- drivers/dma/ste_dma40_ll.h              | 2 +-
- drivers/dma/tegra20-apb-dma.c           | 2 +-
- drivers/dma/xgene-dma.c                 | 2 +-
- drivers/dma/xilinx/xilinx_dpdma.c       | 4 ++--
- 34 files changed, 49 insertions(+), 49 deletions(-)
+Thanks for your work.
 
-diff --git a/drivers/dma/acpi-dma.c b/drivers/dma/acpi-dma.c
-index 5906eae26e2a..a58a1600dd65 100644
---- a/drivers/dma/acpi-dma.c
-+++ b/drivers/dma/acpi-dma.c
-@@ -112,7 +112,7 @@ static int acpi_dma_parse_resource_group(const struct acpi_csrt_group *grp,
- }
- 
- /**
-- * acpi_dma_parse_csrt - parse CSRT to exctract additional DMA resources
-+ * acpi_dma_parse_csrt - parse CSRT to extract additional DMA resources
-  * @adev:	ACPI device to match with
-  * @adma:	struct acpi_dma of the given DMA controller
-  *
-@@ -305,7 +305,7 @@ EXPORT_SYMBOL_GPL(devm_acpi_dma_controller_free);
-  * found.
-  *
-  * Return:
-- * 0, if no information is avaiable, -1 on mismatch, and 1 otherwise.
-+ * 0, if no information is available, -1 on mismatch, and 1 otherwise.
-  */
- static int acpi_dma_update_dma_spec(struct acpi_dma *adma,
- 		struct acpi_dma_spec *dma_spec)
-diff --git a/drivers/dma/altera-msgdma.c b/drivers/dma/altera-msgdma.c
-index 0968176f323d..e6a6566b309e 100644
---- a/drivers/dma/altera-msgdma.c
-+++ b/drivers/dma/altera-msgdma.c
-@@ -153,7 +153,7 @@ struct msgdma_extended_desc {
- /**
-  * struct msgdma_sw_desc - implements a sw descriptor
-  * @async_tx: support for the async_tx api
-- * @hw_desc: assosiated HW descriptor
-+ * @hw_desc: associated HW descriptor
-  * @node: node to move from the free list to the tx list
-  * @tx_list: transmit list node
-  */
-@@ -511,7 +511,7 @@ static void msgdma_copy_one(struct msgdma_device *mdev,
- 	 * of the DMA controller. The descriptor will get flushed to the
- 	 * FIFO, once the last word (control word) is written. Since we
- 	 * are not 100% sure that memcpy() writes all word in the "correct"
--	 * oder (address from low to high) on all architectures, we make
-+	 * order (address from low to high) on all architectures, we make
- 	 * sure this control word is written last by single coding it and
- 	 * adding some write-barriers here.
- 	 */
-diff --git a/drivers/dma/amba-pl08x.c b/drivers/dma/amba-pl08x.c
-index 73a5cfb4da8a..38cdbca59485 100644
---- a/drivers/dma/amba-pl08x.c
-+++ b/drivers/dma/amba-pl08x.c
-@@ -2,7 +2,7 @@
- /*
-  * Copyright (c) 2006 ARM Ltd.
-  * Copyright (c) 2010 ST-Ericsson SA
-- * Copyirght (c) 2017 Linaro Ltd.
-+ * Copyright (c) 2017 Linaro Ltd.
-  *
-  * Author: Peter Pearse <peter.pearse@arm.com>
-  * Author: Linus Walleij <linus.walleij@linaro.org>
-diff --git a/drivers/dma/at_hdmac.c b/drivers/dma/at_hdmac.c
-index 40052d1bd0b5..baebddc740b0 100644
---- a/drivers/dma/at_hdmac.c
-+++ b/drivers/dma/at_hdmac.c
-@@ -339,7 +339,7 @@ static inline u8 convert_buswidth(enum dma_slave_buswidth addr_width)
-  * @regs: memory mapped register base
-  * @clk: dma controller clock
-  * @save_imr: interrupt mask register that is saved on suspend/resume cycle
-- * @all_chan_mask: all channels availlable in a mask
-+ * @all_chan_mask: all channels available in a mask
-  * @lli_pool: hw lli table
-  * @memset_pool: hw memset pool
-  * @chan: channels table to store at_dma_chan structures
-@@ -668,7 +668,7 @@ static inline u32 atc_calc_bytes_left(u32 current_len, u32 ctrla)
-  * CTRLA is read in turn, next the DSCR is read a second time. If the two
-  * consecutive read values of the DSCR are the same then we assume both refers
-  * to the very same LLI as well as the CTRLA value read inbetween does. For
-- * cyclic tranfers, the assumption is that a full loop is "not so fast". If the
-+ * cyclic transfers, the assumption is that a full loop is "not so fast". If the
-  * two DSCR values are different, we read again the CTRLA then the DSCR till two
-  * consecutive read values from DSCR are equal or till the maximum trials is
-  * reach. This algorithm is very unlikely not to find a stable value for DSCR.
-@@ -700,7 +700,7 @@ static int atc_get_llis_residue(struct at_dma_chan *atchan,
- 			break;
- 
- 		/*
--		 * DSCR has changed inside the DMA controller, so the previouly
-+		 * DSCR has changed inside the DMA controller, so the previously
- 		 * read value of CTRLA may refer to an already processed
- 		 * descriptor hence could be outdated. We need to update ctrla
- 		 * to match the current descriptor.
-diff --git a/drivers/dma/bcm-sba-raid.c b/drivers/dma/bcm-sba-raid.c
-index fbaacb4c19b2..cfa6e1167a1f 100644
---- a/drivers/dma/bcm-sba-raid.c
-+++ b/drivers/dma/bcm-sba-raid.c
-@@ -15,7 +15,7 @@
-  * number of hardware rings over one or more SBA hardware devices. By
-  * design, the internal buffer size of SBA hardware device is limited
-  * but all offload operations supported by SBA can be broken down into
-- * multiple small size requests and executed parallely on multiple SBA
-+ * multiple small size requests and executed parallelly on multiple SBA
-  * hardware devices for achieving high through-put.
-  *
-  * The Broadcom SBA RAID driver does not require any register programming
-@@ -135,7 +135,7 @@ struct sba_device {
- 	u32 max_xor_srcs;
- 	u32 max_resp_pool_size;
- 	u32 max_cmds_pool_size;
--	/* Maibox client and Mailbox channels */
-+	/* Mailbox client and Mailbox channels */
- 	struct mbox_client client;
- 	struct mbox_chan *mchan;
- 	struct device *mbox_dev;
-diff --git a/drivers/dma/bcm2835-dma.c b/drivers/dma/bcm2835-dma.c
-index 9d74fe97452e..e1b92b4d7b05 100644
---- a/drivers/dma/bcm2835-dma.c
-+++ b/drivers/dma/bcm2835-dma.c
-@@ -369,7 +369,7 @@ static struct bcm2835_desc *bcm2835_dma_create_cb_chain(
- 	/* the last frame requires extra flags */
- 	d->cb_list[d->frames - 1].cb->info |= finalextrainfo;
- 
--	/* detect a size missmatch */
-+	/* detect a size mismatch */
- 	if (buf_len && (d->size != buf_len))
- 		goto error_cb;
- 
-diff --git a/drivers/dma/ep93xx_dma.c b/drivers/dma/ep93xx_dma.c
-index d6c60635e90d..4ee337e78c23 100644
---- a/drivers/dma/ep93xx_dma.c
-+++ b/drivers/dma/ep93xx_dma.c
-@@ -841,7 +841,7 @@ static dma_cookie_t ep93xx_dma_tx_submit(struct dma_async_tx_descriptor *tx)
- 	desc = container_of(tx, struct ep93xx_dma_desc, txd);
- 
- 	/*
--	 * If nothing is currently prosessed, we push this descriptor
-+	 * If nothing is currently processed, we push this descriptor
- 	 * directly to the hardware. Otherwise we put the descriptor
- 	 * to the pending queue.
- 	 */
-@@ -1025,7 +1025,7 @@ ep93xx_dma_prep_dma_memcpy(struct dma_chan *chan, dma_addr_t dest,
-  * @chan: channel
-  * @sgl: list of buffers to transfer
-  * @sg_len: number of entries in @sgl
-- * @dir: direction of tha DMA transfer
-+ * @dir: direction of the DMA transfer
-  * @flags: flags for the descriptor
-  * @context: operation context (ignored)
-  *
-diff --git a/drivers/dma/fsl-dpaa2-qdma/dpaa2-qdma.h b/drivers/dma/fsl-dpaa2-qdma/dpaa2-qdma.h
-index 2c80077cb7c0..36c284a3d184 100644
---- a/drivers/dma/fsl-dpaa2-qdma/dpaa2-qdma.h
-+++ b/drivers/dma/fsl-dpaa2-qdma/dpaa2-qdma.h
-@@ -12,8 +12,8 @@ struct dpaa2_qdma_sd_d {
- 	u32 rsv:32;
- 	union {
- 		struct {
--			u32 ssd:12; /* souce stride distance */
--			u32 sss:12; /* souce stride size */
-+			u32 ssd:12; /* source stride distance */
-+			u32 sss:12; /* source stride size */
- 			u32 rsv1:8;
- 		} sdf;
- 		struct {
-@@ -48,7 +48,7 @@ struct dpaa2_qdma_sd_d {
- #define QDMA_SER_DISABLE	(8) /* no notification */
- #define QDMA_SER_CTX		BIT(8) /* notification by FQD_CTX[fqid] */
- #define QDMA_SER_DEST		(2 << 8) /* notification by destination desc */
--#define QDMA_SER_BOTH		(3 << 8) /* soruce and dest notification */
-+#define QDMA_SER_BOTH		(3 << 8) /* source and dest notification */
- #define QDMA_FD_SPF_ENALBE	BIT(30) /* source prefetch enable */
- 
- #define QMAN_FD_VA_ENABLE	BIT(14) /* Address used is virtual address */
-diff --git a/drivers/dma/hisi_dma.c b/drivers/dma/hisi_dma.c
-index 4c47bff81064..25a4134be36b 100644
---- a/drivers/dma/hisi_dma.c
-+++ b/drivers/dma/hisi_dma.c
-@@ -677,7 +677,7 @@ static void hisi_dma_init_hw_qp(struct hisi_dma_dev *hdma_dev, u32 index)
- 		writel_relaxed(tmp, addr);
- 
- 		/*
--		 * 0 - dma should process FLR whith CPU.
-+		 * 0 - dma should process FLR with CPU.
- 		 * 1 - dma not process FLR, only cpu process FLR.
- 		 */
- 		addr = q_base + HISI_DMA_HIP09_DMA_FLR_DISABLE +
-diff --git a/drivers/dma/idma64.c b/drivers/dma/idma64.c
-index e3505e56784b..2192b7136c2a 100644
---- a/drivers/dma/idma64.c
-+++ b/drivers/dma/idma64.c
-@@ -290,7 +290,7 @@ static void idma64_desc_fill(struct idma64_chan *idma64c,
- 		desc->length += hw->len;
- 	} while (i);
- 
--	/* Trigger an interrupt after the last block is transfered */
-+	/* Trigger an interrupt after the last block is transferred */
- 	lli->ctllo |= IDMA64C_CTLL_INT_EN;
- 
- 	/* Disable LLP transfer in the last block */
-@@ -364,7 +364,7 @@ static size_t idma64_active_desc_size(struct idma64_chan *idma64c)
- 	if (!i)
- 		return bytes;
- 
--	/* The current chunk is not fully transfered yet */
-+	/* The current chunk is not fully transferred yet */
- 	bytes += desc->hw[--i].len;
- 
- 	return bytes - IDMA64C_CTLH_BLOCK_TS(ctlhi);
-diff --git a/drivers/dma/idxd/submit.c b/drivers/dma/idxd/submit.c
-index 817a564413b0..94eca25ae9b9 100644
---- a/drivers/dma/idxd/submit.c
-+++ b/drivers/dma/idxd/submit.c
-@@ -134,7 +134,7 @@ static void llist_abort_desc(struct idxd_wq *wq, struct idxd_irq_entry *ie,
- 	 * completing the descriptor will return desc to allocator and
- 	 * the desc can be acquired by a different process and the
- 	 * desc->list can be modified.  Delete desc from list so the
--	 * list trasversing does not get corrupted by the other process.
-+	 * list traversing does not get corrupted by the other process.
- 	 */
- 	list_for_each_entry_safe(d, t, &flist, list) {
- 		list_del_init(&d->list);
-diff --git a/drivers/dma/ioat/init.c b/drivers/dma/ioat/init.c
-index 7b502b60b38b..cc9ddd6c325b 100644
---- a/drivers/dma/ioat/init.c
-+++ b/drivers/dma/ioat/init.c
-@@ -905,7 +905,7 @@ static int ioat_xor_val_self_test(struct ioatdma_device *ioat_dma)
- 
- 	op = IOAT_OP_XOR_VAL;
- 
--	/* validate the sources with the destintation page */
-+	/* validate the sources with the destination page */
- 	for (i = 0; i < IOAT_NUM_SRC_TEST; i++)
- 		xor_val_srcs[i] = xor_srcs[i];
- 	xor_val_srcs[i] = dest;
-diff --git a/drivers/dma/lgm/lgm-dma.c b/drivers/dma/lgm/lgm-dma.c
-index 4117c7b67e9c..8173c3f1075a 100644
---- a/drivers/dma/lgm/lgm-dma.c
-+++ b/drivers/dma/lgm/lgm-dma.c
-@@ -107,7 +107,7 @@
-  * If header mode is set in DMA descriptor,
-  *   If bit 30 is disabled, HDR_LEN must be configured according to channel
-  *     requirement.
-- *   If bit 30 is enabled(checksum with heade mode), HDR_LEN has no need to
-+ *   If bit 30 is enabled(checksum with header mode), HDR_LEN has no need to
-  *     be configured. It will enable check sum for switch
-  * If header mode is not set in DMA descriptor,
-  *   This register setting doesn't matter
-diff --git a/drivers/dma/ls2x-apb-dma.c b/drivers/dma/ls2x-apb-dma.c
-index a49913f3ed3f..9652e8666722 100644
---- a/drivers/dma/ls2x-apb-dma.c
-+++ b/drivers/dma/ls2x-apb-dma.c
-@@ -33,11 +33,11 @@
- #define LDMA_STOP		BIT(4) /* DMA stop operation */
- #define LDMA_CONFIG_MASK	GENMASK(4, 0) /* DMA controller config bits mask */
- 
--/* Bitfields in ndesc_addr field of HW decriptor */
-+/* Bitfields in ndesc_addr field of HW descriptor */
- #define LDMA_DESC_EN		BIT(0) /*1: The next descriptor is valid */
- #define LDMA_DESC_ADDR_LOW	GENMASK(31, 1)
- 
--/* Bitfields in cmd field of HW decriptor */
-+/* Bitfields in cmd field of HW descriptor */
- #define LDMA_INT		BIT(1) /* Enable DMA interrupts */
- #define LDMA_DATA_DIRECTION	BIT(12) /* 1: write to device, 0: read from device */
- 
-diff --git a/drivers/dma/mediatek/mtk-cqdma.c b/drivers/dma/mediatek/mtk-cqdma.c
-index 529100c5b9f5..b69eabf12a24 100644
---- a/drivers/dma/mediatek/mtk-cqdma.c
-+++ b/drivers/dma/mediatek/mtk-cqdma.c
-@@ -518,7 +518,7 @@ mtk_cqdma_prep_dma_memcpy(struct dma_chan *c, dma_addr_t dest,
- 		/* setup dma channel */
- 		cvd[i]->ch = c;
- 
--		/* setup sourece, destination, and length */
-+		/* setup source, destination, and length */
- 		tlen = (len > MTK_CQDMA_MAX_LEN) ? MTK_CQDMA_MAX_LEN : len;
- 		cvd[i]->len = tlen;
- 		cvd[i]->src = src;
-@@ -617,7 +617,7 @@ static int mtk_cqdma_alloc_chan_resources(struct dma_chan *c)
- 	u32 i, min_refcnt = U32_MAX, refcnt;
- 	unsigned long flags;
- 
--	/* allocate PC with the minimun refcount */
-+	/* allocate PC with the minimum refcount */
- 	for (i = 0; i < cqdma->dma_channels; ++i) {
- 		refcnt = refcount_read(&cqdma->pc[i]->refcnt);
- 		if (refcnt < min_refcnt) {
-diff --git a/drivers/dma/mediatek/mtk-hsdma.c b/drivers/dma/mediatek/mtk-hsdma.c
-index 36ff11e909ea..58c7961ab9ad 100644
---- a/drivers/dma/mediatek/mtk-hsdma.c
-+++ b/drivers/dma/mediatek/mtk-hsdma.c
-@@ -226,7 +226,7 @@ struct mtk_hsdma_soc {
-  * @pc_refcnt:		     Track how many VCs are using the PC
-  * @lock:		     Lock protect agaisting multiple VCs access PC
-  * @soc:		     The pointer to area holding differences among
-- *			     vaious platform
-+ *			     various platform
-  */
- struct mtk_hsdma_device {
- 	struct dma_device ddev;
-diff --git a/drivers/dma/mv_xor.c b/drivers/dma/mv_xor.c
-index bcd3b623ac6c..43efce77bb57 100644
---- a/drivers/dma/mv_xor.c
-+++ b/drivers/dma/mv_xor.c
-@@ -414,7 +414,7 @@ mv_xor_tx_submit(struct dma_async_tx_descriptor *tx)
- 		if (!mv_chan_is_busy(mv_chan)) {
- 			u32 current_desc = mv_chan_get_current_desc(mv_chan);
- 			/*
--			 * and the curren desc is the end of the chain before
-+			 * and the current desc is the end of the chain before
- 			 * the append, then we need to start the channel
- 			 */
- 			if (current_desc == old_chain_tail->async_tx.phys)
-@@ -1074,7 +1074,7 @@ mv_xor_channel_add(struct mv_xor_device *xordev,
- 	if (!mv_chan->dma_desc_pool_virt)
- 		return ERR_PTR(-ENOMEM);
- 
--	/* discover transaction capabilites from the platform data */
-+	/* discover transaction capabilities from the platform data */
- 	dma_dev->cap_mask = cap_mask;
- 
- 	INIT_LIST_HEAD(&dma_dev->channels);
-diff --git a/drivers/dma/mv_xor.h b/drivers/dma/mv_xor.h
-index d86086b05b0e..c87cefd38a07 100644
---- a/drivers/dma/mv_xor.h
-+++ b/drivers/dma/mv_xor.h
-@@ -99,7 +99,7 @@ struct mv_xor_device {
-  * @common: common dmaengine channel object members
-  * @slots_allocated: records the actual size of the descriptor slot pool
-  * @irq_tasklet: bottom half where mv_xor_slot_cleanup runs
-- * @op_in_desc: new mode of driver, each op is writen to descriptor.
-+ * @op_in_desc: new mode of driver, each op is written to descriptor.
-  */
- struct mv_xor_chan {
- 	int			pending;
-diff --git a/drivers/dma/mv_xor_v2.c b/drivers/dma/mv_xor_v2.c
-index 97ebc791a30b..c8c67f4d982c 100644
---- a/drivers/dma/mv_xor_v2.c
-+++ b/drivers/dma/mv_xor_v2.c
-@@ -175,7 +175,7 @@ struct mv_xor_v2_device {
-  * struct mv_xor_v2_sw_desc - implements a xor SW descriptor
-  * @idx: descriptor index
-  * @async_tx: support for the async_tx api
-- * @hw_desc: assosiated HW descriptor
-+ * @hw_desc: associated HW descriptor
-  * @free_list: node of the free SW descriprots list
- */
- struct mv_xor_v2_sw_desc {
-diff --git a/drivers/dma/nbpfaxi.c b/drivers/dma/nbpfaxi.c
-index c08916339aa7..3b011a91d48e 100644
---- a/drivers/dma/nbpfaxi.c
-+++ b/drivers/dma/nbpfaxi.c
-@@ -897,7 +897,7 @@ static int nbpf_config(struct dma_chan *dchan,
- 	/*
- 	 * We could check config->slave_id to match chan->terminal here,
- 	 * but with DT they would be coming from the same source, so
--	 * such a check would be superflous
-+	 * such a check would be superfluous
- 	 */
- 
- 	chan->slave_dst_addr = config->dst_addr;
-diff --git a/drivers/dma/of-dma.c b/drivers/dma/of-dma.c
-index e588fff9f21d..423442e55d36 100644
---- a/drivers/dma/of-dma.c
-+++ b/drivers/dma/of-dma.c
-@@ -26,7 +26,7 @@ static DEFINE_MUTEX(of_dma_lock);
-  *
-  * Finds a DMA controller with matching device node and number for dma cells
-  * in a list of registered DMA controllers. If a match is found a valid pointer
-- * to the DMA data stored is retuned. A NULL pointer is returned if no match is
-+ * to the DMA data stored is returned. A NULL pointer is returned if no match is
-  * found.
-  */
- static struct of_dma *of_dma_find_controller(const struct of_phandle_args *dma_spec)
-@@ -342,7 +342,7 @@ EXPORT_SYMBOL_GPL(of_dma_simple_xlate);
-  *
-  * This function can be used as the of xlate callback for DMA driver which wants
-  * to match the channel based on the channel id. When using this xlate function
-- * the #dma-cells propety of the DMA controller dt node needs to be set to 1.
-+ * the #dma-cells property of the DMA controller dt node needs to be set to 1.
-  * The data parameter of of_dma_controller_register must be a pointer to the
-  * dma_device struct the function should match upon.
-  *
-diff --git a/drivers/dma/owl-dma.c b/drivers/dma/owl-dma.c
-index e001f4f7aa64..aa436f9e3571 100644
---- a/drivers/dma/owl-dma.c
-+++ b/drivers/dma/owl-dma.c
-@@ -1156,7 +1156,7 @@ static int owl_dma_probe(struct platform_device *pdev)
- 	}
- 
- 	/*
--	 * Eventhough the DMA controller is capable of generating 4
-+	 * Even though the DMA controller is capable of generating 4
- 	 * IRQ's for DMA priority feature, we only use 1 IRQ for
- 	 * simplification.
- 	 */
-diff --git a/drivers/dma/ppc4xx/adma.c b/drivers/dma/ppc4xx/adma.c
-index bbb60a970dab..7b78759ac734 100644
---- a/drivers/dma/ppc4xx/adma.c
-+++ b/drivers/dma/ppc4xx/adma.c
-@@ -9,7 +9,7 @@
-  */
- 
- /*
-- * This driver supports the asynchrounous DMA copy and RAID engines available
-+ * This driver supports the asynchronous DMA copy and RAID engines available
-  * on the AMCC PPC440SPe Processors.
-  * Based on the Intel Xscale(R) family of I/O Processors (IOP 32x, 33x, 134x)
-  * ADMA driver written by D.Williams.
-diff --git a/drivers/dma/ppc4xx/dma.h b/drivers/dma/ppc4xx/dma.h
-index 1ff4be23db0f..b5725481bfa6 100644
---- a/drivers/dma/ppc4xx/dma.h
-+++ b/drivers/dma/ppc4xx/dma.h
-@@ -14,7 +14,7 @@
- 
- /* Number of elements in the array with statical CDBs */
- #define	MAX_STAT_DMA_CDBS	16
--/* Number of DMA engines available on the contoller */
-+/* Number of DMA engines available on the controller */
- #define DMA_ENGINES_NUM		2
- 
- /* Maximum h/w supported number of destinations */
-diff --git a/drivers/dma/ptdma/ptdma.h b/drivers/dma/ptdma/ptdma.h
-index 21b4bf895200..39bc37268235 100644
---- a/drivers/dma/ptdma/ptdma.h
-+++ b/drivers/dma/ptdma/ptdma.h
-@@ -192,7 +192,7 @@ struct pt_cmd_queue {
- 	/* Queue dma pool */
- 	struct dma_pool *dma_pool;
- 
--	/* Queue base address (not neccessarily aligned)*/
-+	/* Queue base address (not necessarily aligned)*/
- 	struct ptdma_desc *qbase;
- 
- 	/* Aligned queue start address (per requirement) */
-diff --git a/drivers/dma/qcom/bam_dma.c b/drivers/dma/qcom/bam_dma.c
-index 5e7d332731e0..2d7550b8e03e 100644
---- a/drivers/dma/qcom/bam_dma.c
-+++ b/drivers/dma/qcom/bam_dma.c
-@@ -440,7 +440,7 @@ static void bam_reset(struct bam_device *bdev)
- 	val |= BAM_EN;
- 	writel_relaxed(val, bam_addr(bdev, 0, BAM_CTRL));
- 
--	/* set descriptor threshhold, start with 4 bytes */
-+	/* set descriptor threshold, start with 4 bytes */
- 	writel_relaxed(DEFAULT_CNT_THRSHLD,
- 			bam_addr(bdev, 0, BAM_DESC_CNT_TRSHLD));
- 
-@@ -667,7 +667,7 @@ static struct dma_async_tx_descriptor *bam_prep_slave_sg(struct dma_chan *chan,
- 	for_each_sg(sgl, sg, sg_len, i)
- 		num_alloc += DIV_ROUND_UP(sg_dma_len(sg), BAM_FIFO_SIZE);
- 
--	/* allocate enough room to accomodate the number of entries */
-+	/* allocate enough room to accommodate the number of entries */
- 	async_desc = kzalloc(struct_size(async_desc, desc, num_alloc),
- 			     GFP_NOWAIT);
- 
-diff --git a/drivers/dma/qcom/gpi.c b/drivers/dma/qcom/gpi.c
-index e6ebd688d746..52a7c8f2498f 100644
---- a/drivers/dma/qcom/gpi.c
-+++ b/drivers/dma/qcom/gpi.c
-@@ -1856,7 +1856,7 @@ static void gpi_issue_pending(struct dma_chan *chan)
- 
- 	read_lock_irqsave(&gpii->pm_lock, pm_lock_flags);
- 
--	/* move all submitted discriptors to issued list */
-+	/* move all submitted descriptors to issued list */
- 	spin_lock_irqsave(&gchan->vc.lock, flags);
- 	if (vchan_issue_pending(&gchan->vc))
- 		vd = list_last_entry(&gchan->vc.desc_issued,
-diff --git a/drivers/dma/qcom/qcom_adm.c b/drivers/dma/qcom/qcom_adm.c
-index 53f4273b657c..c1db398adc84 100644
---- a/drivers/dma/qcom/qcom_adm.c
-+++ b/drivers/dma/qcom/qcom_adm.c
-@@ -650,7 +650,7 @@ static enum dma_status adm_tx_status(struct dma_chan *chan, dma_cookie_t cookie,
- 	/*
- 	 * residue is either the full length if it is in the issued list, or 0
- 	 * if it is in progress.  We have no reliable way of determining
--	 * anything inbetween
-+	 * anything in between
- 	 */
- 	dma_set_residue(txstate, residue);
- 
-diff --git a/drivers/dma/sh/shdmac.c b/drivers/dma/sh/shdmac.c
-index 7cc9eb2217e8..8ead0a1fd237 100644
---- a/drivers/dma/sh/shdmac.c
-+++ b/drivers/dma/sh/shdmac.c
-@@ -318,7 +318,7 @@ static void sh_dmae_setup_xfer(struct shdma_chan *schan,
- }
- 
- /*
-- * Find a slave channel configuration from the contoller list by either a slave
-+ * Find a slave channel configuration from the controller list by either a slave
-  * ID in the non-DT case, or by a MID/RID value in the DT case
-  */
- static const struct sh_dmae_slave_config *dmae_find_slave(
-diff --git a/drivers/dma/ste_dma40.h b/drivers/dma/ste_dma40.h
-index c697bfe16a01..a90c786acc1f 100644
---- a/drivers/dma/ste_dma40.h
-+++ b/drivers/dma/ste_dma40.h
-@@ -4,7 +4,7 @@
- #define STE_DMA40_H
- 
- /*
-- * Maxium size for a single dma descriptor
-+ * Maximum size for a single dma descriptor
-  * Size is limited to 16 bits.
-  * Size is in the units of addr-widths (1,2,4,8 bytes)
-  * Larger transfers will be split up to multiple linked desc
-diff --git a/drivers/dma/ste_dma40_ll.h b/drivers/dma/ste_dma40_ll.h
-index c504e855eb02..2e30e9a94a1e 100644
---- a/drivers/dma/ste_dma40_ll.h
-+++ b/drivers/dma/ste_dma40_ll.h
-@@ -369,7 +369,7 @@ struct d40_phy_lli_bidir {
-  * @lcsp02: Either maps to register lcsp0 if src or lcsp2 if dst.
-  * @lcsp13: Either maps to register lcsp1 if src or lcsp3 if dst.
-  *
-- * This struct must be 8 bytes aligned since it will be accessed directy by
-+ * This struct must be 8 bytes aligned since it will be accessed directly by
-  * the DMA. Never add any none hw mapped registers to this struct.
-  */
- 
-diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dma.c
-index ac69778827f2..7d1acda2d72b 100644
---- a/drivers/dma/tegra20-apb-dma.c
-+++ b/drivers/dma/tegra20-apb-dma.c
-@@ -463,7 +463,7 @@ static void tegra_dma_configure_for_next(struct tegra_dma_channel *tdc,
- 
- 	/*
- 	 * If interrupt is pending then do nothing as the ISR will handle
--	 * the programing for new request.
-+	 * the programming for new request.
- 	 */
- 	if (status & TEGRA_APBDMA_STATUS_ISE_EOC) {
- 		dev_err(tdc2dev(tdc),
-diff --git a/drivers/dma/xgene-dma.c b/drivers/dma/xgene-dma.c
-index fd4397adeb79..275848a9c450 100644
---- a/drivers/dma/xgene-dma.c
-+++ b/drivers/dma/xgene-dma.c
-@@ -1742,7 +1742,7 @@ static int xgene_dma_probe(struct platform_device *pdev)
- 	/* Initialize DMA channels software state */
- 	xgene_dma_init_channels(pdma);
- 
--	/* Configue DMA rings */
-+	/* Configure DMA rings */
- 	ret = xgene_dma_init_rings(pdma);
- 	if (ret)
- 		goto err_clk_enable;
-diff --git a/drivers/dma/xilinx/xilinx_dpdma.c b/drivers/dma/xilinx/xilinx_dpdma.c
-index 36bd4825d389..c26ebced866c 100644
---- a/drivers/dma/xilinx/xilinx_dpdma.c
-+++ b/drivers/dma/xilinx/xilinx_dpdma.c
-@@ -149,7 +149,7 @@ struct xilinx_dpdma_chan;
-  * @addr_ext: upper 16 bit of 48 bit address (next_desc and src_addr)
-  * @next_desc: next descriptor 32 bit address
-  * @src_addr: payload source address (1st page, 32 LSB)
-- * @addr_ext_23: payload source address (3nd and 3rd pages, 16 LSBs)
-+ * @addr_ext_23: payload source address (2nd and 3rd pages, 16 LSBs)
-  * @addr_ext_45: payload source address (4th and 5th pages, 16 LSBs)
-  * @src_addr2: payload source address (2nd page, 32 LSB)
-  * @src_addr3: payload source address (3rd page, 32 LSB)
-@@ -210,7 +210,7 @@ struct xilinx_dpdma_tx_desc {
-  * @vchan: virtual DMA channel
-  * @reg: register base address
-  * @id: channel ID
-- * @wait_to_stop: queue to wait for outstanding transacitons before stopping
-+ * @wait_to_stop: queue to wait for outstanding transactions before stopping
-  * @running: true if the channel is running
-  * @first_frame: flag for the first frame of stream
-  * @video_group: flag if multi-channel operation is needed for video channels
+I bisected a kconfig issue to this change, but I'm not sure how to 
+resolve it and would appreciate your help.
+
+Before this changes if I run menuconfig,
+
+    $ ARCH=arm64 make menuconfig
+
+The menu option for by SOC_RENESAS is visible at
+
+    Device Drivers ->
+        SOC (System On Chip) specific Drivers ->
+            Renesas SoC driver support
+
+However after this patch it is not.
+
+Furthermore searching (/) for any config option protected by SOC_RENESAS 
+in drivers/soc/renesas/Kconfig (e.g. ARCH_R8A77965) results in a search 
+hit, but if I try to jump to it by pressing 1 all I get is a blank 
+screen.
+
+I'm not sure if a fix to the for mention Kconfig file is needed or if 
+something else is wrong. This is still true for today's linux-next [1].
+
+1. 985bf40edf43 ("Add linux-next specific files for 20240830")
+
+On 2024-06-18 19:35:21 +0900, Masahiro Yamada wrote:
+> Handling choices has always been in a PITA in Kconfig.
+> 
+> For example, fixes and reverts were repeated for randconfig with
+> KCONFIG_ALLCONFIG:
+> 
+>  - 422c809f03f0 ("kconfig: fix randomising choice entries in presence of KCONFIG_ALLCONFIG")
+>  - 23a5dfdad22a ("Revert "kconfig: fix randomising choice entries in presence of KCONFIG_ALLCONFIG"")
+>  - 8357b48549e1 ("kconfig: fix randomising choice entries in presence of KCONFIG_ALLCONFIG")
+>  - 490f16171119 ("Revert "kconfig: fix randomising choice entries in presence of KCONFIG_ALLCONFIG"")
+> 
+> As these commits pointed out, randconfig does not randomize choices when
+> KCONFIG_ALLCONFIG is used. This issue still remains.
+> 
+> [Test Case]
+> 
+>     choice
+>             prompt "choose"
+> 
+>     config A
+>             bool "A"
+> 
+>     config B
+>             bool "B"
+> 
+>     endchoice
+> 
+>     $ echo > all.config
+>     $ make KCONFIG_ALLCONFIG=1 randconfig
+> 
+> The output is always as follows:
+> 
+>     CONFIG_A=y
+>     # CONFIG_B is not set
+> 
+> Not only randconfig, but other all*config variants are also broken with
+> KCONFIG_ALLCONFIG.
+> 
+> With the same Kconfig,
+> 
+>     $ echo '# CONFIG_A is not set' > all.config
+>     $ make KCONFIG_ALLCONFIG=1 allyesconfig
+> 
+> You will get this:
+> 
+>     CONFIG_A=y
+>     # CONFIG_B is not set
+> 
+> This is incorrect because it does not respect all.config.
+> 
+> The correct output should be:
+> 
+>     # CONFIG_A is not set
+>     CONFIG_B=y
+> 
+> To handle user inputs more accurately, this commit refactors the code
+> based on the following principles:
+> 
+>  - When a user value is given, Kconfig must set it immediately.
+>    Do not defer it by setting SYMBOL_NEED_SET_CHOICE_VALUES.
+> 
+>  - The SYMBOL_DEF_USER flag must not be cleared, unless a new config
+>    file is loaded. Kconfig must not forget user inputs.
+> 
+> In addition, user values for choices must be managed with priority.
+> If user inputs conflict within a choice block, the newest value wins.
+> The values given by randconfig have lower priority than explicit user
+> inputs.
+> 
+> This commit implements it by using a linked list. Every time a choice
+> block gets a new input, it is moved to the top of the list.
+> 
+> Let me explain how it works.
+> 
+> Let's say, we have a choice block that consists of five symbols:
+> A, B, C, D, and E.
+> 
+> Initially, the linked list looks like this:
+> 
+>     A(=?) --> B(=?) --> C(=?) --> D(=?) --> E(=?)
+> 
+> Suppose randconfig is executed with the following KCONFIG_ALLCONFIG:
+> 
+>     CONFIG_C=y
+>     # CONFIG_A is not set
+>     CONFIG_D=y
+> 
+> First, CONFIG_C=y is read. C is set to 'y' and moved to the top.
+> 
+>     C(=y) --> A(=?) --> B(=?) --> D(=?) --> E(=?)
+> 
+> Next, '# CONFIG_A is not set' is read. A is set to 'n' and moved to
+> the top.
+> 
+>     A(=n) --> C(=y) --> B(=?) --> D(=?) --> E(=?)
+> 
+> Then, 'CONFIG_D=y' is read. D is set to 'y' and moved to the top.
+> 
+>     D(=y) --> A(=n) --> C(=y) --> B(=?) --> E(=?)
+> 
+> Lastly, randconfig shuffles the order of the remaining symbols,
+> resulting in:
+> 
+>     D(=y) --> A(=n) --> C(=y) --> B(=y) --> E(=y)
+> or
+>     D(=y) --> A(=n) --> C(=y) --> E(=y) --> B(=y)
+> 
+> When calculating the output, the linked list is traversed and the first
+> visible symbol with 'y' is taken. In this case, it is D if visible.
+> 
+> If D is hidden by 'depends on', the next node, A, is examined. Since
+> it is already specified as 'n', it is skipped. Next, C is checked, and
+> selected if it is visible.
+> 
+> If C is also invisible, either B or E is chosen as a result of the
+> randomization.
+> 
+> If B and E are also invisible, the linked list is traversed in the
+> reverse order, and the least prioritized 'n' symbol is chosen. It is
+> A in this case.
+> 
+> Now, Kconfig remembers all user values. This is a big difference from
+> the previous implementation, where Kconfig would forget CONFIG_C=y when
+> CONFIG_D=y appeared in the same input file.
+> 
+> The new appaorch respects user-specified values as much as possible.
+> 
+> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+> ---
+> 
+> Changes in v2:
+>   - If all 'y' and '?' symbols are invisible, traverse the linked list
+>     in the reverse order to pick up the least prioritized 'n'.
+> 
+>  scripts/kconfig/conf.c     | 131 +++++++++++++++---------------
+>  scripts/kconfig/confdata.c |  54 +++----------
+>  scripts/kconfig/expr.h     |  12 ++-
+>  scripts/kconfig/lkc.h      |   7 +-
+>  scripts/kconfig/menu.c     |  17 +---
+>  scripts/kconfig/parser.y   |   4 +
+>  scripts/kconfig/symbol.c   | 159 +++++++++++++++++++++++--------------
+>  7 files changed, 187 insertions(+), 197 deletions(-)
+> 
+> diff --git a/scripts/kconfig/conf.c b/scripts/kconfig/conf.c
+> index 5dbdd9459f21..1c59998a62f7 100644
+> --- a/scripts/kconfig/conf.c
+> +++ b/scripts/kconfig/conf.c
+> @@ -114,41 +114,54 @@ static void set_randconfig_seed(void)
+>  	srand(seed);
+>  }
+>  
+> -static void randomize_choice_values(struct symbol *csym)
+> +/**
+> + * randomize_choice_values - randomize choice block
+> + *
+> + * @choice: menu entry for the choice
+> + */
+> +static void randomize_choice_values(struct menu *choice)
+>  {
+> -	struct property *prop;
+> -	struct symbol *sym;
+> -	struct expr *e;
+> -	int cnt, def;
+> -
+> -	prop = sym_get_choice_prop(csym);
+> -
+> -	/* count entries in choice block */
+> -	cnt = 0;
+> -	expr_list_for_each_sym(prop->expr, e, sym)
+> -		cnt++;
+> +	struct menu *menu;
+> +	int x;
+> +	int cnt = 0;
+>  
+>  	/*
+> -	 * find a random value and set it to yes,
+> -	 * set the rest to no so we have only one set
+> +	 * First, count the number of symbols to randomize. If sym_has_value()
+> +	 * is true, it was specified by KCONFIG_ALLCONFIG. It needs to be
+> +	 * respected.
+>  	 */
+> -	def = rand() % cnt;
+> +	menu_for_each_sub_entry(menu, choice) {
+> +		struct symbol *sym = menu->sym;
+>  
+> -	cnt = 0;
+> -	expr_list_for_each_sym(prop->expr, e, sym) {
+> -		if (def == cnt++) {
+> -			sym->def[S_DEF_USER].tri = yes;
+> -			csym->def[S_DEF_USER].val = sym;
+> -		} else {
+> -			sym->def[S_DEF_USER].tri = no;
+> -		}
+> -		sym->flags |= SYMBOL_DEF_USER;
+> -		/* clear VALID to get value calculated */
+> -		sym->flags &= ~SYMBOL_VALID;
+> +		if (sym && !sym_has_value(sym))
+> +			cnt++;
+> +	}
+> +
+> +	while (cnt > 0) {
+> +		x = rand() % cnt;
+> +
+> +		menu_for_each_sub_entry(menu, choice) {
+> +			struct symbol *sym = menu->sym;
+> +
+> +			if (sym && !sym_has_value(sym))
+> +				x--;
+> +
+> +			if (x < 0) {
+> +				sym->def[S_DEF_USER].tri = yes;
+> +				sym->flags |= SYMBOL_DEF_USER;
+> +				/*
+> +				 * Move the selected item to the _tail_ because
+> +				 * this needs to have a lower priority than the
+> +				 * user input from KCONFIG_ALLCONFIG.
+> +				 */
+> +				list_move_tail(&sym->choice_link,
+> +					       &choice->choice_members);
+> +
+> +				break;
+> +			}
+> +		}
+> +		cnt--;
+>  	}
+> -	csym->flags |= SYMBOL_DEF_USER;
+> -	/* clear VALID to get value calculated */
+> -	csym->flags &= ~SYMBOL_VALID;
+>  }
+>  
+>  enum conf_def_mode {
+> @@ -159,9 +172,9 @@ enum conf_def_mode {
+>  	def_random
+>  };
+>  
+> -static bool conf_set_all_new_symbols(enum conf_def_mode mode)
+> +static void conf_set_all_new_symbols(enum conf_def_mode mode)
+>  {
+> -	struct symbol *sym, *csym;
+> +	struct menu *menu;
+>  	int cnt;
+>  	/*
+>  	 * can't go as the default in switch-case below, otherwise gcc whines
+> @@ -170,7 +183,6 @@ static bool conf_set_all_new_symbols(enum conf_def_mode mode)
+>  	int pby = 50; /* probability of bool     = y */
+>  	int pty = 33; /* probability of tristate = y */
+>  	int ptm = 33; /* probability of tristate = m */
+> -	bool has_changed = false;
+>  
+>  	if (mode == def_random) {
+>  		int n, p[3];
+> @@ -217,14 +229,21 @@ static bool conf_set_all_new_symbols(enum conf_def_mode mode)
+>  		}
+>  	}
+>  
+> -	for_all_symbols(sym) {
+> +	menu_for_each_entry(menu) {
+> +		struct symbol *sym = menu->sym;
+>  		tristate val;
+>  
+> -		if (sym_has_value(sym) || sym->flags & SYMBOL_VALID ||
+> -		    (sym->type != S_BOOLEAN && sym->type != S_TRISTATE))
+> +		if (!sym || !menu->prompt || sym_has_value(sym) ||
+> +		    (sym->type != S_BOOLEAN && sym->type != S_TRISTATE) ||
+> +		    sym_is_choice_value(sym))
+>  			continue;
+>  
+> -		has_changed = true;
+> +		if (sym_is_choice(sym)) {
+> +			if (mode == def_random)
+> +				randomize_choice_values(menu);
+> +			continue;
+> +		}
+> +
+>  		switch (mode) {
+>  		case def_yes:
+>  			val = yes;
+> @@ -251,34 +270,10 @@ static bool conf_set_all_new_symbols(enum conf_def_mode mode)
+>  			continue;
+>  		}
+>  		sym->def[S_DEF_USER].tri = val;
+> -
+> -		if (!(sym_is_choice(sym) && mode == def_random))
+> -			sym->flags |= SYMBOL_DEF_USER;
+> +		sym->flags |= SYMBOL_DEF_USER;
+>  	}
+>  
+>  	sym_clear_all_valid();
+> -
+> -	if (mode != def_random) {
+> -		for_all_symbols(csym) {
+> -			if ((sym_is_choice(csym) && !sym_has_value(csym)) ||
+> -			    sym_is_choice_value(csym))
+> -				csym->flags |= SYMBOL_NEED_SET_CHOICE_VALUES;
+> -		}
+> -	}
+> -
+> -	for_all_symbols(csym) {
+> -		if (sym_has_value(csym) || !sym_is_choice(csym))
+> -			continue;
+> -
+> -		sym_calc_value(csym);
+> -		if (mode == def_random)
+> -			randomize_choice_values(csym);
+> -		else
+> -			set_all_choice_values(csym);
+> -		has_changed = true;
+> -	}
+> -
+> -	return has_changed;
+>  }
+>  
+>  static void conf_rewrite_tristates(tristate old_val, tristate new_val)
+> @@ -429,10 +424,9 @@ static void conf_choice(struct menu *menu)
+>  {
+>  	struct symbol *sym, *def_sym;
+>  	struct menu *child;
+> -	bool is_new;
+> +	bool is_new = false;
+>  
+>  	sym = menu->sym;
+> -	is_new = !sym_has_value(sym);
+>  
+>  	while (1) {
+>  		int cnt, def;
+> @@ -456,8 +450,10 @@ static void conf_choice(struct menu *menu)
+>  				printf("%*c", indent, ' ');
+>  			printf(" %d. %s (%s)", cnt, menu_get_prompt(child),
+>  			       child->sym->name);
+> -			if (!sym_has_value(child->sym))
+> +			if (!sym_has_value(child->sym)) {
+> +				is_new = true;
+>  				printf(" (NEW)");
+> +			}
+>  			printf("\n");
+>  		}
+>  		printf("%*schoice", indent - 1, "");
+> @@ -586,9 +582,7 @@ static void check_conf(struct menu *menu)
+>  		return;
+>  
+>  	sym = menu->sym;
+> -	if (sym && !sym_has_value(sym) &&
+> -	    (sym_is_changeable(sym) || sym_is_choice(sym))) {
+> -
+> +	if (sym && !sym_has_value(sym) && sym_is_changeable(sym)) {
+>  		switch (input_mode) {
+>  		case listnewconfig:
+>  			if (sym->name)
+> @@ -804,8 +798,7 @@ int main(int ac, char **av)
+>  		conf_set_all_new_symbols(def_default);
+>  		break;
+>  	case randconfig:
+> -		/* Really nothing to do in this loop */
+> -		while (conf_set_all_new_symbols(def_random)) ;
+> +		conf_set_all_new_symbols(def_random);
+>  		break;
+>  	case defconfig:
+>  		conf_set_all_new_symbols(def_default);
+> diff --git a/scripts/kconfig/confdata.c b/scripts/kconfig/confdata.c
+> index 1ac7fc9ad756..05823f85402a 100644
+> --- a/scripts/kconfig/confdata.c
+> +++ b/scripts/kconfig/confdata.c
+> @@ -382,10 +382,7 @@ int conf_read_simple(const char *name, int def)
+>  
+>  	def_flags = SYMBOL_DEF << def;
+>  	for_all_symbols(sym) {
+> -		sym->flags |= SYMBOL_CHANGED;
+>  		sym->flags &= ~(def_flags|SYMBOL_VALID);
+> -		if (sym_is_choice(sym))
+> -			sym->flags |= def_flags;
+>  		switch (sym->type) {
+>  		case S_INT:
+>  		case S_HEX:
+> @@ -399,6 +396,8 @@ int conf_read_simple(const char *name, int def)
+>  	}
+>  
+>  	while (getline_stripped(&line, &line_asize, in) != -1) {
+> +		struct menu *choice;
+> +
+>  		conf_lineno++;
+>  
+>  		if (!line[0]) /* blank line */
+> @@ -460,15 +459,14 @@ int conf_read_simple(const char *name, int def)
+>  		if (conf_set_sym_val(sym, def, def_flags, val))
+>  			continue;
+>  
+> -		if (sym && sym_is_choice_value(sym)) {
+> -			struct symbol *cs = prop_get_symbol(sym_get_choice_prop(sym));
+> -			if (sym->def[def].tri == yes) {
+> -				if (cs->def[def].tri != no)
+> -					conf_warning("override: %s changes choice state", sym->name);
+> -				cs->def[def].val = sym;
+> -				cs->def[def].tri = yes;
+> -			}
+> -		}
+> +		/*
+> +		 * If this is a choice member, give it the highest priority.
+> +		 * If conflicting CONFIG options are given from an input file,
+> +		 * the last one wins.
+> +		 */
+> +		choice = sym_get_choice_menu(sym);
+> +		if (choice)
+> +			list_move(&sym->choice_link, &choice->choice_members);
+>  	}
+>  	free(line);
+>  	fclose(in);
+> @@ -514,18 +512,6 @@ int conf_read(const char *name)
+>  		/* maybe print value in verbose mode... */
+>  	}
+>  
+> -	for_all_symbols(sym) {
+> -		if (sym_has_value(sym) && !sym_is_choice_value(sym)) {
+> -			/* Reset values of generates values, so they'll appear
+> -			 * as new, if they should become visible, but that
+> -			 * doesn't quite work if the Kconfig and the saved
+> -			 * configuration disagree.
+> -			 */
+> -			if (sym->visible == no && !conf_unsaved)
+> -				sym->flags &= ~SYMBOL_DEF_USER;
+> -		}
+> -	}
+> -
+>  	if (conf_warnings || conf_unsaved)
+>  		conf_set_changed(true);
+>  
+> @@ -1146,23 +1132,3 @@ void conf_set_changed_callback(void (*fn)(bool))
+>  {
+>  	conf_changed_callback = fn;
+>  }
+> -
+> -void set_all_choice_values(struct symbol *csym)
+> -{
+> -	struct property *prop;
+> -	struct symbol *sym;
+> -	struct expr *e;
+> -
+> -	prop = sym_get_choice_prop(csym);
+> -
+> -	/*
+> -	 * Set all non-assinged choice values to no
+> -	 */
+> -	expr_list_for_each_sym(prop->expr, e, sym) {
+> -		if (!sym_has_value(sym))
+> -			sym->def[S_DEF_USER].tri = no;
+> -	}
+> -	csym->flags |= SYMBOL_DEF_USER;
+> -	/* clear VALID to get value calculated */
+> -	csym->flags &= ~(SYMBOL_VALID | SYMBOL_NEED_SET_CHOICE_VALUES);
+> -}
+> diff --git a/scripts/kconfig/expr.h b/scripts/kconfig/expr.h
+> index 7c0c242318bc..7acf27a4f454 100644
+> --- a/scripts/kconfig/expr.h
+> +++ b/scripts/kconfig/expr.h
+> @@ -73,6 +73,8 @@ enum {
+>   * Represents a configuration symbol.
+>   *
+>   * Choices are represented as a special kind of symbol with null name.
+> + *
+> + * @choice_link: linked to menu::choice_members
+>   */
+>  struct symbol {
+>  	/* link node for the hash table */
+> @@ -110,6 +112,8 @@ struct symbol {
+>  	/* config entries associated with this symbol */
+>  	struct list_head menus;
+>  
+> +	struct list_head choice_link;
+> +
+>  	/* SYMBOL_* flags */
+>  	int flags;
+>  
+> @@ -133,7 +137,6 @@ struct symbol {
+>  #define SYMBOL_CHOICEVAL  0x0020  /* used as a value in a choice block */
+>  #define SYMBOL_VALID      0x0080  /* set when symbol.curr is calculated */
+>  #define SYMBOL_WRITE      0x0200  /* write symbol to file (KCONFIG_CONFIG) */
+> -#define SYMBOL_CHANGED    0x0400  /* ? */
+>  #define SYMBOL_WRITTEN    0x0800  /* track info to avoid double-write to .config */
+>  #define SYMBOL_CHECKED    0x2000  /* used during dependency checking */
+>  #define SYMBOL_WARNED     0x8000  /* warning has been issued */
+> @@ -145,9 +148,6 @@ struct symbol {
+>  #define SYMBOL_DEF3       0x40000  /* symbol.def[S_DEF_3] is valid */
+>  #define SYMBOL_DEF4       0x80000  /* symbol.def[S_DEF_4] is valid */
+>  
+> -/* choice values need to be set before calculating this symbol value */
+> -#define SYMBOL_NEED_SET_CHOICE_VALUES  0x100000
+> -
+>  #define SYMBOL_MAXLENGTH	256
+>  
+>  /* A property represent the config options that can be associated
+> @@ -204,6 +204,8 @@ struct property {
+>   * for all front ends). Each symbol, menu, etc. defined in the Kconfig files
+>   * gets a node. A symbol defined in multiple locations gets one node at each
+>   * location.
+> + *
+> + * @choice_members: list of choice members with priority.
+>   */
+>  struct menu {
+>  	/* The next menu node at the same level */
+> @@ -223,6 +225,8 @@ struct menu {
+>  
+>  	struct list_head link;	/* link to symbol::menus */
+>  
+> +	struct list_head choice_members;
+> +
+>  	/*
+>  	 * The prompt associated with the node. This holds the prompt for a
+>  	 * symbol as well as the text for a menu or comment, along with the
+> diff --git a/scripts/kconfig/lkc.h b/scripts/kconfig/lkc.h
+> index 64dfc354dd5c..bdd37a16b040 100644
+> --- a/scripts/kconfig/lkc.h
+> +++ b/scripts/kconfig/lkc.h
+> @@ -40,7 +40,6 @@ void zconf_nextfile(const char *name);
+>  /* confdata.c */
+>  extern struct gstr autoconf_cmd;
+>  const char *conf_get_configname(void);
+> -void set_all_choice_values(struct symbol *csym);
+>  
+>  /* confdata.c and expr.c */
+>  static inline void xfwrite(const void *str, size_t len, size_t count, FILE *out)
+> @@ -121,11 +120,7 @@ static inline tristate sym_get_tristate_value(struct symbol *sym)
+>  	return sym->curr.tri;
+>  }
+>  
+> -
+> -static inline struct symbol *sym_get_choice_value(struct symbol *sym)
+> -{
+> -	return (struct symbol *)sym->curr.val;
+> -}
+> +struct symbol *sym_get_choice_value(struct symbol *sym);
+>  
+>  static inline bool sym_is_choice(struct symbol *sym)
+>  {
+> diff --git a/scripts/kconfig/menu.c b/scripts/kconfig/menu.c
+> index bf5dcc05350b..170a269a8d7c 100644
+> --- a/scripts/kconfig/menu.c
+> +++ b/scripts/kconfig/menu.c
+> @@ -591,7 +591,6 @@ bool menu_is_empty(struct menu *menu)
+>  
+>  bool menu_is_visible(struct menu *menu)
+>  {
+> -	struct menu *child;
+>  	struct symbol *sym;
+>  	tristate visible;
+>  
+> @@ -610,21 +609,7 @@ bool menu_is_visible(struct menu *menu)
+>  	} else
+>  		visible = menu->prompt->visible.tri = expr_calc_value(menu->prompt->visible.expr);
+>  
+> -	if (visible != no)
+> -		return true;
+> -
+> -	if (!sym || sym_get_tristate_value(menu->sym) == no)
+> -		return false;
+> -
+> -	for (child = menu->list; child; child = child->next) {
+> -		if (menu_is_visible(child)) {
+> -			if (sym)
+> -				sym->flags |= SYMBOL_DEF_USER;
+> -			return true;
+> -		}
+> -	}
+> -
+> -	return false;
+> +	return visible != no;
+>  }
+>  
+>  const char *menu_get_prompt(struct menu *menu)
+> diff --git a/scripts/kconfig/parser.y b/scripts/kconfig/parser.y
+> index 20538e1d3788..9d58544b0255 100644
+> --- a/scripts/kconfig/parser.y
+> +++ b/scripts/kconfig/parser.y
+> @@ -157,6 +157,9 @@ config_stmt: config_entry_start config_option_list
+>  				current_entry->filename, current_entry->lineno);
+>  			yynerrs++;
+>  		}
+> +
+> +		list_add_tail(&current_entry->sym->choice_link,
+> +			      &current_choice->choice_members);
+>  	}
+>  
+>  	printd(DEBUG_PARSE, "%s:%d:endconfig\n", cur_filename, cur_lineno);
+> @@ -240,6 +243,7 @@ choice: T_CHOICE T_EOL
+>  	menu_add_entry(sym);
+>  	menu_add_expr(P_CHOICE, NULL, NULL);
+>  	menu_set_type(S_BOOLEAN);
+> +	INIT_LIST_HEAD(&current_entry->choice_members);
+>  
+>  	printd(DEBUG_PARSE, "%s:%d:choice\n", cur_filename, cur_lineno);
+>  };
+> diff --git a/scripts/kconfig/symbol.c b/scripts/kconfig/symbol.c
+> index 8df0a75f40b9..329c7bd314cf 100644
+> --- a/scripts/kconfig/symbol.c
+> +++ b/scripts/kconfig/symbol.c
+> @@ -188,7 +188,6 @@ static void sym_set_changed(struct symbol *sym)
+>  {
+>  	struct menu *menu;
+>  
+> -	sym->flags |= SYMBOL_CHANGED;
+>  	list_for_each_entry(menu, &sym->menus, link)
+>  		menu->flags |= MENU_CHANGED;
+>  }
+> @@ -282,36 +281,95 @@ struct symbol *sym_choice_default(struct symbol *sym)
+>  	return NULL;
+>  }
+>  
+> -static struct symbol *sym_calc_choice(struct symbol *sym)
+> +/*
+> + * sym_calc_choice - calculate symbol values in a choice
+> + *
+> + * @choice: a menu of the choice
+> + *
+> + * Return: a chosen symbol
+> + */
+> +static struct symbol *sym_calc_choice(struct menu *choice)
+>  {
+> -	struct symbol *def_sym;
+> -	struct property *prop;
+> -	struct expr *e;
+> -	int flags;
+> +	struct symbol *res = NULL;
+> +	struct symbol *sym;
+> +	struct menu *menu;
+>  
+> -	/* first calculate all choice values' visibilities */
+> -	flags = sym->flags;
+> -	prop = sym_get_choice_prop(sym);
+> -	expr_list_for_each_sym(prop->expr, e, def_sym) {
+> -		sym_calc_visibility(def_sym);
+> -		if (def_sym->visible != no)
+> -			flags &= def_sym->flags;
+> +	/* Traverse the list of choice members in the priority order. */
+> +	list_for_each_entry(sym, &choice->choice_members, choice_link) {
+> +		sym_calc_visibility(sym);
+> +		if (sym->visible == no)
+> +			continue;
+> +
+> +		/* The first visible symble with the user value 'y'. */
+> +		if (sym_has_value(sym) && sym->def[S_DEF_USER].tri == yes) {
+> +			res = sym;
+> +			break;
+> +		}
+>  	}
+>  
+> -	sym->flags &= flags | ~SYMBOL_DEF_USER;
+> +	/*
+> +	 * If 'y' is not found in the user input, use the default, unless it is
+> +	 * explicitly set to 'n'.
+> +	 */
+> +	if (!res) {
+> +		res = sym_choice_default(choice->sym);
+> +		if (res && sym_has_value(res) && res->def[S_DEF_USER].tri == no)
+> +			res = NULL;
+> +	}
+>  
+> -	/* is the user choice visible? */
+> -	def_sym = sym->def[S_DEF_USER].val;
+> -	if (def_sym && def_sym->visible != no)
+> -		return def_sym;
+> +	/* Still not found. Pick up the first visible, user-unspecified symbol. */
+> +	if (!res) {
+> +		menu_for_each_sub_entry(menu, choice) {
+> +			sym = menu->sym;
+>  
+> -	def_sym = sym_choice_default(sym);
+> +			if (!sym || sym->visible == no || sym_has_value(sym))
+> +				continue;
+>  
+> -	if (def_sym == NULL)
+> -		/* no choice? reset tristate value */
+> -		sym->curr.tri = no;
+> +			res = sym;
+> +			break;
+> +		}
+> +	}
+>  
+> -	return def_sym;
+> +	/*
+> +	 * Still not found. Traverse the linked list in the _reverse_ order to
+> +	 * pick up the least prioritized 'n'.
+> +	 */
+> +	if (!res) {
+> +		list_for_each_entry_reverse(sym, &choice->choice_members,
+> +					    choice_link) {
+> +			if (sym->visible == no)
+> +				continue;
+> +
+> +			res = sym;
+> +			break;
+> +		}
+> +	}
+> +
+> +	menu_for_each_sub_entry(menu, choice) {
+> +		tristate val;
+> +
+> +		sym = menu->sym;
+> +
+> +		if (!sym || sym->visible == no)
+> +			continue;
+> +
+> +		val = sym == res ? yes : no;
+> +
+> +		if (sym->curr.tri != val)
+> +			sym_set_changed(sym);
+> +
+> +		sym->curr.tri = val;
+> +		sym->flags |= SYMBOL_VALID | SYMBOL_WRITE;
+> +	}
+> +
+> +	return res;
+> +}
+> +
+> +struct symbol *sym_get_choice_value(struct symbol *sym)
+> +{
+> +	struct menu *menu = list_first_entry(&sym->menus, struct menu, link);
+> +
+> +	return sym_calc_choice(menu);
+>  }
+>  
+>  static void sym_warn_unmet_dep(struct symbol *sym)
+> @@ -347,7 +405,7 @@ void sym_calc_value(struct symbol *sym)
+>  {
+>  	struct symbol_value newval, oldval;
+>  	struct property *prop;
+> -	struct expr *e;
+> +	struct menu *choice_menu;
+>  
+>  	if (!sym)
+>  		return;
+> @@ -355,13 +413,6 @@ void sym_calc_value(struct symbol *sym)
+>  	if (sym->flags & SYMBOL_VALID)
+>  		return;
+>  
+> -	if (sym_is_choice_value(sym) &&
+> -	    sym->flags & SYMBOL_NEED_SET_CHOICE_VALUES) {
+> -		sym->flags &= ~SYMBOL_NEED_SET_CHOICE_VALUES;
+> -		prop = sym_get_choice_prop(sym);
+> -		sym_calc_value(prop_get_symbol(prop));
+> -	}
+> -
+>  	sym->flags |= SYMBOL_VALID;
+>  
+>  	oldval = sym->curr;
+> @@ -400,9 +451,11 @@ void sym_calc_value(struct symbol *sym)
+>  	switch (sym_get_type(sym)) {
+>  	case S_BOOLEAN:
+>  	case S_TRISTATE:
+> -		if (sym_is_choice_value(sym) && sym->visible == yes) {
+> -			prop = sym_get_choice_prop(sym);
+> -			newval.tri = (prop_get_symbol(prop)->curr.val == sym) ? yes : no;
+> +		choice_menu = sym_get_choice_menu(sym);
+> +
+> +		if (choice_menu) {
+> +			sym_calc_choice(choice_menu);
+> +			newval.tri = sym->curr.tri;
+>  		} else {
+>  			if (sym->visible != no) {
+>  				/* if the symbol is visible use the user value
+> @@ -461,8 +514,6 @@ void sym_calc_value(struct symbol *sym)
+>  	}
+>  
+>  	sym->curr = newval;
+> -	if (sym_is_choice(sym) && newval.tri == yes)
+> -		sym->curr.val = sym_calc_choice(sym);
+>  	sym_validate_range(sym);
+>  
+>  	if (memcmp(&oldval, &sym->curr, sizeof(oldval))) {
+> @@ -473,23 +524,8 @@ void sym_calc_value(struct symbol *sym)
+>  		}
+>  	}
+>  
+> -	if (sym_is_choice(sym)) {
+> -		struct symbol *choice_sym;
+> -
+> -		prop = sym_get_choice_prop(sym);
+> -		expr_list_for_each_sym(prop->expr, e, choice_sym) {
+> -			if ((sym->flags & SYMBOL_WRITE) &&
+> -			    choice_sym->visible != no)
+> -				choice_sym->flags |= SYMBOL_WRITE;
+> -			if (sym->flags & SYMBOL_CHANGED)
+> -				sym_set_changed(choice_sym);
+> -		}
+> -
+> +	if (sym_is_choice(sym))
+>  		sym->flags &= ~SYMBOL_WRITE;
+> -	}
+> -
+> -	if (sym->flags & SYMBOL_NEED_SET_CHOICE_VALUES)
+> -		set_all_choice_values(sym);
+>  }
+>  
+>  void sym_clear_all_valid(void)
+> @@ -523,15 +559,15 @@ bool sym_set_tristate_value(struct symbol *sym, tristate val)
+>  {
+>  	tristate oldval = sym_get_tristate_value(sym);
+>  
+> -	if (oldval != val && !sym_tristate_within_range(sym, val))
+> +	if (!sym_tristate_within_range(sym, val))
+>  		return false;
+>  
+> -	if (!(sym->flags & SYMBOL_DEF_USER)) {
+> +	if (!(sym->flags & SYMBOL_DEF_USER) || sym->def[S_DEF_USER].tri != val) {
+> +		sym->def[S_DEF_USER].tri = val;
+>  		sym->flags |= SYMBOL_DEF_USER;
+>  		sym_set_changed(sym);
+>  	}
+>  
+> -	sym->def[S_DEF_USER].tri = val;
+>  	if (oldval != val)
+>  		sym_clear_all_valid();
+>  
+> @@ -565,10 +601,17 @@ void choice_set_value(struct menu *choice, struct symbol *sym)
+>  
+>  		menu->sym->def[S_DEF_USER].tri = val;
+>  		menu->sym->flags |= SYMBOL_DEF_USER;
+> -	}
+>  
+> -	choice->sym->def[S_DEF_USER].val = sym;
+> -	choice->sym->flags |= SYMBOL_DEF_USER;
+> +		/*
+> +		 * Now, the user has explicitly enabled or disabled this symbol,
+> +		 * it should be given the highest priority. We are possibly
+> +		 * setting multiple symbols to 'n', where the first symbol is
+> +		 * given the least prioritized 'n'. This works well when the
+> +		 * choice block ends up with selecting 'n' symbol.
+> +		 * (see sym_calc_choice())
+> +		 */
+> +		list_move(&menu->sym->choice_link, &choice->choice_members);
+> +	}
+>  
+>  	if (changed)
+>  		sym_clear_all_valid();
+> -- 
+> 2.43.0
+> 
+
 -- 
-2.25.1
-
+Kind Regards,
+Niklas Söderlund
 
