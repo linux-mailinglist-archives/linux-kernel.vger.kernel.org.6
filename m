@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-309921-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309922-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A90BC9671E2
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 15:37:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 366D09671E4
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 15:38:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 27A5AB20F72
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 13:37:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8BFBA283F44
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 13:38:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9053314A84;
-	Sat, 31 Aug 2024 13:37:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8808A14F98;
+	Sat, 31 Aug 2024 13:38:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bsCrY11d"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vNamdTGC"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C79701097B;
-	Sat, 31 Aug 2024 13:37:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF9D612B64;
+	Sat, 31 Aug 2024 13:38:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725111445; cv=none; b=M37qM7pqdiR8K34kqfFxPq+qpzuLHRJg91rUH+5BEgrS1R1yTlqdDtluMQ/4JMrn/TEVwo3EY4h6yFL8LiewIJ6wO6Dx8BNk/QU1vy8z9Yl81JbN9n1n83+9af1r9dn6uV8b59gMC7qSeupI8RTcrpfex++NpaE78361GOgxEXM=
+	t=1725111511; cv=none; b=r6b56IcffbOpMmJ2+eh+3bwDxn0kTGvQ+29Y8s6XhHrZQ4COAqMyj8vX9Uy6e+64xIrHsXdh8SdnqDSp+z2Hk3iOqKHhnE2oVzjU9YQpTl5/qE6LvOMmxnu7DRv+eaPL5D+O2hgJoRceaslEuO1fW1znqxRsEIWXPZiX54duAag=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725111445; c=relaxed/simple;
-	bh=mzhjecXQkqqIE9h3kjQVKrKvIjg9fWP+2Ys8fQpdb1w=;
+	s=arc-20240116; t=1725111511; c=relaxed/simple;
+	bh=i+XoQypci//bHcijF2Bc9bs00F7M1gn/VdtpSbANkwc=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=txixQrWaAH8HF8qUw25uv7Hh+bOKP1vTeGLzzWH2d9SMoapWqmokF0p3XiQLZLHYZqBsKa2+0Di9pfrfy51yPGtepf4TWOv9WiIqHsXAQP8joG2fHmb/tYlx5pefdY/Q6HhD+6JWRupUauh/RsCQJXHJTbL889E0aJU5L8eJPiY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bsCrY11d; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C68FFC4CEC0;
-	Sat, 31 Aug 2024 13:37:20 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=eNa+pCSGmq2rs9lPKybWITVhYw197qbIAzZNaV2p0/p54bO52a7cPRX1j6bAfUSMhBzWM7AFPs7xEdqhjxeshLwr+A2JhnJsoWvg9pZw113tnFH5SZtoGPJ9nHDUp5dV4OT1SLA7eWncR41PT/Oc5xveTKPa7hl01kiFnSBB7uo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vNamdTGC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96334C4CEC0;
+	Sat, 31 Aug 2024 13:38:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725111445;
-	bh=mzhjecXQkqqIE9h3kjQVKrKvIjg9fWP+2Ys8fQpdb1w=;
+	s=k20201202; t=1725111510;
+	bh=i+XoQypci//bHcijF2Bc9bs00F7M1gn/VdtpSbANkwc=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=bsCrY11dk9kBjXqn4dhKq1JH+CaBiyff7l3qcUjEJLNbbzgsymdZhuFRvmLVhjy+a
-	 VAH62d6yCJYvC2i6TJkuiDH6KmOER7WihL1MkyJYayaxTJ93xa720BQrkJvg7g8Woh
-	 POvR2jvpISX1zFl/pNqtrREqxc6eDUuB6QfB/TDMWSQn+QbGHpqYDzJIIzH1e1FHgk
-	 phSlGuyJSPsIkeEKG/a2GveVAIecQz81aJwj6WhldxviP9TakLRNrIPR9Zj66bovNO
-	 96CZB8cmCJsJwj6ucIYeZFCf9ro4VEtblAyKu1iUHlsQBCl7fz/TWI75UxvgFxEGY6
-	 e+mE/YKchsOgg==
-Message-ID: <995f57b0-d164-4ad8-a409-80bdd876caa8@kernel.org>
-Date: Sat, 31 Aug 2024 15:37:17 +0200
+	b=vNamdTGCJIJd/Zbg81RoXAkCp1WUzXX/rjXHOLQZNrgyA8XLx1LGvS0KFTZUQTw9i
+	 /B9I3MczeWdQtVkCwQOS5af3KT+QsulT8kD425ISKwq5b0KnUOhpaEO+Bw70a594jX
+	 XBY4DZbpUB2VS9gEB5i2rfIwDFAYuntNMFPjOH/FQEnD0SQ06s30virWW4GdgsgZci
+	 eFXGCm1ITK4WUCkS8S8lC9N5azzCRkkOBYjs1iSsBQd2rB50UtC+lfz4aUQNp9AmFB
+	 Vow8weXmf2u0rIGyPVHJRzrIMTUVwHdfIh4SZjq+tuVSIWYTEfqZ+EnIZDPTsweaBz
+	 t2L+S+nfeKjCA==
+Message-ID: <eb96bcf2-8bcd-4801-b381-96583d733b87@kernel.org>
+Date: Sat, 31 Aug 2024 15:38:23 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,21 +49,19 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dt-bindings: clock: Add SAMA7D65 PMC compatible string
-To: Nicolas Ferre <nicolas.ferre@microchip.com>,
+Subject: Re: [PATCH] dt-bindings: ARM: at91: Document Microchip SAMA7D65
+ Curiosity
+To: Dharma Balasubiramani <dharma.b@microchip.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Nicolas Ferre <nicolas.ferre@microchip.com>,
  Alexandre Belloni <alexandre.belloni@bootlin.com>,
- Dharma Balasubiramani <dharma.b@microchip.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Claudiu Beznea <claudiu.beznea@tuxon.dev>,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20240829-sama7d65-next-v1-1-53d4e50b550d@microchip.com>
- <20240829141003278e9ec2@mail.local>
- <744af115-3cfe-4d3a-9bf7-e6ac0cd12378@microchip.com>
-Content-Language: en-US
+ Claudiu Beznea <claudiu.beznea@tuxon.dev>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, Romain Sioen <romain.sioen@microchip.com>
+References: <20240829-sama7d65-core-dt-v1-1-e5d882886f59@microchip.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
  cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
@@ -107,30 +105,42 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <744af115-3cfe-4d3a-9bf7-e6ac0cd12378@microchip.com>
+In-Reply-To: <20240829-sama7d65-core-dt-v1-1-e5d882886f59@microchip.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 29/08/2024 16:42, Nicolas Ferre wrote:
-> Alexandre,
+On 29/08/2024 11:57, Dharma Balasubiramani wrote:
+> From: Romain Sioen <romain.sioen@microchip.com>
 > 
-> On 29/08/2024 at 16:10, Alexandre Belloni wrote:
->> On 29/08/2024 15:08:45+0530, Dharma Balasubiramani wrote:
->>> Add the `microchip,sama7d65-pmc` compatible string to the existing binding,
->>> since the SAMA7D65 PMC shares the same properties and clock requirements
->>> as the SAMA7G5.
->>
->> Shouldn't you rather use a fallback if you currently have no driver
->> change?
+> Document device tree binding of the Microchip SAMA7D65 Curiosity board.
 > 
-> The clock/pmc driver is (will be) different. Only the binding of the PMC 
-> uses the same properties and clocks specification as our recent SoCs (so 
-> can be added to the "enum").
+> Signed-off-by: Romain Sioen <romain.sioen@microchip.com>
+> Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
+> Signed-off-by: Dharma Balasubiramani <dharma.b@microchip.com>
+> ---
+>  Documentation/devicetree/bindings/arm/atmel-at91.yaml | 7 +++++++
+>  1 file changed, 7 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/arm/atmel-at91.yaml b/Documentation/devicetree/bindings/arm/atmel-at91.yaml
+> index 82f37328cc69..8e897680d43a 100644
+> --- a/Documentation/devicetree/bindings/arm/atmel-at91.yaml
+> +++ b/Documentation/devicetree/bindings/arm/atmel-at91.yaml
+> @@ -174,6 +174,13 @@ properties:
+>            - const: atmel,sama5d4
+>            - const: atmel,sama5
+>  
+> +      - description: Microchip SAMA7D65 Curiosity Board
+> +        items:
+> +          - const: microchip,sama7d65-curiosity
+> +          - const: microchip,sama7d65
+> +          - const: microchip,sama7d6
+> +          - const: microchip,sama7
+> +
 
-I don't understand this patch. The binding without any users makes no
-sense. For bindings without drivers, I understand you send it in
-parallel from the DTS. But this one here will have a driver, right? In
-such case IT MUST GO with the driver.
+No. This must go with the DTS.
+
+It's second patch you sent entirely split from the rest. That's not how
+upstreaming of DTS and drivers work.
 
 Best regards,
 Krzysztof
