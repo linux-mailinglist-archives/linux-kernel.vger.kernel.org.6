@@ -1,188 +1,145 @@
-Return-Path: <linux-kernel+bounces-309746-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309744-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 498F3966FEE
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 09:06:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 062A0966FEC
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 09:05:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 082C82847D1
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 07:06:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 331541C213DB
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 07:05:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70B8016EBE6;
-	Sat, 31 Aug 2024 07:04:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95ECB16DEB4;
+	Sat, 31 Aug 2024 07:04:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JSwXl+bH"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="bTYqouWs"
+Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A6E616EB7C
-	for <linux-kernel@vger.kernel.org>; Sat, 31 Aug 2024 07:04:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73BEF178398
+	for <linux-kernel@vger.kernel.org>; Sat, 31 Aug 2024 07:04:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725087894; cv=none; b=HwtV9foM9RkhoZAcsVG+M5wjYCiLQlR9S0nfri2PVUs6YsFUa+nyS6QqAHB45JcEWM9C8l82Mi9RHebvEAJ+ZxC8HwDL/lw2Qi2OURw46l+ZZMXe9d9+qcIxsSu8whS9UkuTyKhaSMPvnuXvrIJ2gJBC9XiG8P2FczrXAUtu0Jk=
+	t=1725087879; cv=none; b=ahBFw/XpxzzQDGVmpML7ykbgiwy2ZyrR/Afc2Hb9xRcPC4N0zwYoYZOeUfa+pJQayl6uNLABwXyt6lNorOyjQw32Cu+Z9l9tmHd0SEPbamtLX66I3RykHSHtEePHqFSvBgaGDR5otIMMv0tvqbjeWPF7Fj3ENQjeOdr1sW7SFfA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725087894; c=relaxed/simple;
-	bh=fwMdMbVs3xWVXCibYnDgqCXntz3zNkHDn0/8xaVKBo8=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=oyUgkMvUqF5/3cmyoc8krhgp+7mI4NTeyH+X+Xrt278i98XvX5qQ8MnpOAGhnVV1r3n5evZVpEbAyyBC7tbrAv0y76SRkX78SSMb+68eXzNm36MZWKAVidhQ/Nzcqmid3f79IiBRD6TGPRY8YPuEuMQ3UaHm4Clf7dh1B+iM96g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JSwXl+bH; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725087892; x=1756623892;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=fwMdMbVs3xWVXCibYnDgqCXntz3zNkHDn0/8xaVKBo8=;
-  b=JSwXl+bH387uAdBQZtuRyZzxjRh9iJ8hurmKY1hFKUZIXzrDquvqdPAa
-   R5tdX8leI0iFbJKgmIoxX0p3KoQG/0eIEnjqN4df3+SG06sC7uQK4GlB7
-   NVbyu0dUopuoF2p0wTXVujM9RGBP4xaMqJO5qZnYdetzQEpzXpd3+/eNf
-   Vqr7qe5SntmHBokdvKM9SqIn1tXssPNDpj6o/0VSLwVUSF/e71YLQ9AB7
-   2z8YiWXCHMTme6DhBOIE8PUCUrntI5+LOXWG1IYrXZ6r4lkLlIIJsKSJV
-   6ZqN10/xiRhzKYaNrWeh8mA+Su9uV3YkEYx6CDH0N5Y0qu/nseizxR4Sd
-   w==;
-X-CSE-ConnectionGUID: UMFPbBCbQCWNaFu9Yjmsrw==
-X-CSE-MsgGUID: oYwhPVTlSzyho22Wvu2Z5Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11180"; a="13308909"
-X-IronPort-AV: E=Sophos;i="6.10,191,1719903600"; 
-   d="scan'208";a="13308909"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Aug 2024 00:04:52 -0700
-X-CSE-ConnectionGUID: WAUuO70SS1WIl5cd075NFA==
-X-CSE-MsgGUID: TTqS330XSe6xY4e+9zL6zA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,191,1719903600"; 
-   d="scan'208";a="64467303"
-Received: from lkp-server01.sh.intel.com (HELO 9c6b1c7d3b50) ([10.239.97.150])
-  by orviesa006.jf.intel.com with ESMTP; 31 Aug 2024 00:04:50 -0700
-Received: from kbuild by 9c6b1c7d3b50 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1skIAC-0002Pq-06;
-	Sat, 31 Aug 2024 07:04:48 +0000
-Date: Sat, 31 Aug 2024 15:04:13 +0800
-From: kernel test robot <lkp@intel.com>
-To: "Paul E. McKenney" <paulmck@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: [paulmck-rcu:dev.2024.08.30a 28/33] include/linux/srcu.h:274:37:
- error: 'SRCU_READ_FLAVOR_LITE' undeclared
-Message-ID: <202408311559.fzAoy2aD-lkp@intel.com>
+	s=arc-20240116; t=1725087879; c=relaxed/simple;
+	bh=neE8KUj5swSBbTAvkEmb7HlGQpVC/JyPFNunQxVwu/U=;
+	h=Date:In-Reply-To:Message-Id:Mime-Version:References:Subject:From:
+	 To:Content-Type; b=DK2u6Mw7mjkOlucFn5zC7z3oGL0NlpFb22GA+TUauLrI16SW9DwDLg/gVPoHR5c6S4HFRC8bbnmCnwnwB+gp5QH3c8QQhJAT6qtIDYRGPdf0Z+zQtXUUfe+B+cITrxvff3UewXlTTojyc5QMjRCvUBPfOH+zCpUxIkkPgo5LWM4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=bTYqouWs; arc=none smtp.client-ip=209.85.219.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
+Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-e1a6d328eacso3653589276.3
+        for <linux-kernel@vger.kernel.org>; Sat, 31 Aug 2024 00:04:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1725087877; x=1725692677; darn=vger.kernel.org;
+        h=to:from:subject:references:mime-version:message-id:in-reply-to:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=hMHouUPm/pUbpqXHpAwu3f/Ggg/o8qY6+an2XmPnD00=;
+        b=bTYqouWsvhPu/wRbjJDDrLM9vx9g9U/ljPv/SCltgoZKaAKi9laHtmCY+8CDdKyD4q
+         XHWJirKM6rruYrjRN21+5Hspl5xvaj3LBov1vfCJf56i5mXwFtqS+7occ5upO0oS23N8
+         mvz3bQ8eORRS44ip3EGyxG6JCTYBMshOkeYeiVLPEIcdOy6xAGDI0K7hTFCQVeBEuNcG
+         i6OEMlglaoj3p1jmRuPGkA4bwYnHmICnib5Qit2pr4VkY9onSo0EIxDwzFa0F48cyTKc
+         kKFN6MGYqVpDChUF2O1i0P1dN27rTISoK8kNH2JMXXh6w+zHA91chg2V0Sdjp/t0KwhY
+         Efhg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725087877; x=1725692677;
+        h=to:from:subject:references:mime-version:message-id:in-reply-to:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=hMHouUPm/pUbpqXHpAwu3f/Ggg/o8qY6+an2XmPnD00=;
+        b=rKsD8daAFZJ7hQoXSZ1nXXpM+iMK9rbC7QHuXBER5lVFlQYHlYcLPVf2tR6n4kjrO2
+         galbXN5hsvxAonoeTJ0wwHiIbQfFcaeY/ytSxoSeDBcQYWq5x0DrJQls8+CjeEsIdcT+
+         euuAhxmvyGcfdEZA82EYXVaaU/DTC8C+GvcoEQdM4XNQE4OGkcVf5Ktia0TtryEIjU1R
+         KURcOF9CCJK9Wt8RjTKWaaHrIGD8CpWUewjz+C0HAzdrQkjvvDqDdCr4dUU/6VBdZC7d
+         848SpwW5lTYyxuXMwybSldrN/lF+Dh+K9yEoInFCySNVnwVvaFOmBA44kHd5gyz+mRHl
+         BZ5w==
+X-Forwarded-Encrypted: i=1; AJvYcCW+8Gljxlj8GjlfYsdg5KmDFif003lMqbgu012+WwVRK8kLxNMSaA/xXWyHs8GZe2Q81r5h87bwjZvbsXo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzkz9OSseWHqBs/xeCwxfvsei1HsfaqvWcutdkKo2HSiVzW/zZY
+	7n7+ZGrWhAh/7RkZmJ0NmZSvc2MkBqCW27MosLFdVfj6g6pDaUvfswxSDojbr6DJfzurCRZAQCI
+	zRR961w==
+X-Google-Smtp-Source: AGHT+IEQRxwFyMDSw6Mj2d4DGqVL/glGW1ecwaCsu3ve2y6MdyDP3o6KRg8tCHoQeSLhIeD+/Ar8hkGrgI+x
+X-Received: from irogers.svl.corp.google.com ([2620:15c:2a3:200:4974:82ff:2f9:edb6])
+ (user=irogers job=sendgmr) by 2002:a5b:1:0:b0:e0e:8b26:484e with SMTP id
+ 3f1490d57ef6-e1a7a176b02mr7463276.8.1725087877533; Sat, 31 Aug 2024 00:04:37
+ -0700 (PDT)
+Date: Sat, 31 Aug 2024 00:04:14 -0700
+In-Reply-To: <20240831070415.506194-1-irogers@google.com>
+Message-Id: <20240831070415.506194-6-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Mime-Version: 1.0
+References: <20240831070415.506194-1-irogers@google.com>
+X-Mailer: git-send-email 2.46.0.469.g59c65b2a67-goog
+Subject: [PATCH v1 5/6] perf parse-events: Vary default_breakpoint_len on i386
+ and arm64
+From: Ian Rogers <irogers@google.com>
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Kan Liang <kan.liang@linux.intel.com>, Athira Rajeev <atrajeev@linux.vnet.ibm.com>, 
+	Dominique Martinet <asmadeus@codewreck.org>, Yang Jihong <yangjihong@bytedance.com>, 
+	Colin Ian King <colin.i.king@gmail.com>, Chaitanya S Prakash <chaitanyas.prakash@arm.com>, 
+	"Masami Hiramatsu (Google)" <mhiramat@kernel.org>, James Clark <james.clark@linaro.org>, 
+	John Garry <john.g.garry@oracle.com>, Junhao He <hejunhao3@huawei.com>, 
+	David Ahern <dsa@cumulusnetworks.com>, linux-perf-users@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/paulmck/linux-rcu.git dev.2024.08.30a
-head:   05416eb79213ad6a9770faa795059fdd00adb6e0
-commit: 23265e8fd7b05be03428c2e7632440d8573e5e7e [28/33] srcu: Add srcu_read_lock_lite() and srcu_read_unlock_lite()
-config: m68k-randconfig-r072-20240831 (https://download.01.org/0day-ci/archive/20240831/202408311559.fzAoy2aD-lkp@intel.com/config)
-compiler: m68k-linux-gcc (GCC) 14.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240831/202408311559.fzAoy2aD-lkp@intel.com/reproduce)
+On arm64 the breakpoint length should be 4-bytes but 8-bytes is
+tolerated as perf passes that as sizeof(long). Just pass the correct
+value.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202408311559.fzAoy2aD-lkp@intel.com/
+On i386 the sizeof(long) check in the kernel needs to match the
+kernel's long size. Check using an environment (uname checks) whether
+4 or 8 bytes needs to be passed. Cache the value in a static.
 
-All errors (new ones prefixed by >>):
+Signed-off-by: Ian Rogers <irogers@google.com>
+---
+ tools/perf/util/parse-events.c | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
-   In file included from include/linux/notifier.h:16,
-                    from include/linux/memory_hotplug.h:7,
-                    from include/linux/mmzone.h:1432,
-                    from include/linux/topology.h:33,
-                    from include/linux/irq.h:19,
-                    from include/asm-generic/hardirq.h:17,
-                    from ./arch/m68k/include/generated/asm/hardirq.h:1,
-                    from include/linux/hardirq.h:11,
-                    from include/linux/interrupt.h:11,
-                    from include/linux/kernel_stat.h:8,
-                    from arch/m68k/kernel/asm-offsets.c:16:
-   include/linux/srcu.h: In function 'srcu_read_lock':
-   include/linux/srcu.h:248:37: error: 'SRCU_READ_FLAVOR_NORMAL' undeclared (first use in this function)
-     248 |         srcu_check_read_flavor(ssp, SRCU_READ_FLAVOR_NORMAL);
-         |                                     ^~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/srcu.h:248:37: note: each undeclared identifier is reported only once for each function it appears in
-   include/linux/srcu.h: In function 'srcu_read_lock_lite':
->> include/linux/srcu.h:274:37: error: 'SRCU_READ_FLAVOR_LITE' undeclared (first use in this function)
-     274 |         srcu_check_read_flavor(ssp, SRCU_READ_FLAVOR_LITE);
-         |                                     ^~~~~~~~~~~~~~~~~~~~~
-   include/linux/srcu.h: In function 'srcu_read_lock_nmisafe':
-   include/linux/srcu.h:295:37: error: 'SRCU_READ_FLAVOR_NMI' undeclared (first use in this function)
-     295 |         srcu_check_read_flavor(ssp, SRCU_READ_FLAVOR_NMI);
-         |                                     ^~~~~~~~~~~~~~~~~~~~
-   include/linux/srcu.h: In function 'srcu_read_lock_notrace':
-   include/linux/srcu.h:307:37: error: 'SRCU_READ_FLAVOR_NORMAL' undeclared (first use in this function)
-     307 |         srcu_check_read_flavor(ssp, SRCU_READ_FLAVOR_NORMAL);
-         |                                     ^~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/srcu.h: In function 'srcu_down_read':
-   include/linux/srcu.h:336:37: error: 'SRCU_READ_FLAVOR_NORMAL' undeclared (first use in this function)
-     336 |         srcu_check_read_flavor(ssp, SRCU_READ_FLAVOR_NORMAL);
-         |                                     ^~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/srcu.h: In function 'srcu_read_unlock':
-   include/linux/srcu.h:351:37: error: 'SRCU_READ_FLAVOR_NORMAL' undeclared (first use in this function)
-     351 |         srcu_check_read_flavor(ssp, SRCU_READ_FLAVOR_NORMAL);
-         |                                     ^~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/srcu.h: In function 'srcu_read_unlock_lite':
-   include/linux/srcu.h:367:37: error: 'SRCU_READ_FLAVOR_LITE' undeclared (first use in this function)
-     367 |         srcu_check_read_flavor(ssp, SRCU_READ_FLAVOR_LITE);
-         |                                     ^~~~~~~~~~~~~~~~~~~~~
-   include/linux/srcu.h: In function 'srcu_read_unlock_nmisafe':
-   include/linux/srcu.h:383:37: error: 'SRCU_READ_FLAVOR_NMI' undeclared (first use in this function)
-     383 |         srcu_check_read_flavor(ssp, SRCU_READ_FLAVOR_NMI);
-         |                                     ^~~~~~~~~~~~~~~~~~~~
-   include/linux/srcu.h: In function 'srcu_read_unlock_notrace':
-   include/linux/srcu.h:392:37: error: 'SRCU_READ_FLAVOR_NORMAL' undeclared (first use in this function)
-     392 |         srcu_check_read_flavor(ssp, SRCU_READ_FLAVOR_NORMAL);
-         |                                     ^~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/srcu.h: In function 'srcu_up_read':
-   include/linux/srcu.h:409:37: error: 'SRCU_READ_FLAVOR_NORMAL' undeclared (first use in this function)
-     409 |         srcu_check_read_flavor(ssp, SRCU_READ_FLAVOR_NORMAL);
-         |                                     ^~~~~~~~~~~~~~~~~~~~~~~
-   make[3]: *** [scripts/Makefile.build:117: arch/m68k/kernel/asm-offsets.s] Error 1
-   make[3]: Target 'prepare' not remade because of errors.
-   make[2]: *** [Makefile:1193: prepare0] Error 2
-   make[2]: Target 'prepare' not remade because of errors.
-   make[1]: *** [Makefile:224: __sub-make] Error 2
-   make[1]: Target 'prepare' not remade because of errors.
-   make: *** [Makefile:224: __sub-make] Error 2
-   make: Target 'prepare' not remade because of errors.
-
-
-vim +/SRCU_READ_FLAVOR_LITE +274 include/linux/srcu.h
-
-   253	
-   254	/**
-   255	 * srcu_read_lock_lite - register a new reader for an SRCU-protected structure.
-   256	 * @ssp: srcu_struct in which to register the new reader.
-   257	 *
-   258	 * Enter an SRCU read-side critical section, but for a light-weight
-   259	 * smp_mb()-free reader.  See srcu_read_lock() for more information.
-   260	 *
-   261	 * If srcu_read_lock_lite() is ever used on an srcu_struct structure,
-   262	 * then none of the other flavors may be used, whether before, during,
-   263	 * or after.  Note that grace-period auto-expediting is disabled for _lite
-   264	 * srcu_struct structures because auto-expedited grace periods invoke
-   265	 * synchronize_rcu_expedited(), IPIs and all.
-   266	 *
-   267	 * Note that srcu_read_lock_lite() can be invoked only from those contexts
-   268	 * where RCU is watching.  Otherwise, lockdep will complain.
-   269	 */
-   270	static inline int srcu_read_lock_lite(struct srcu_struct *ssp) __acquires(ssp)
-   271	{
-   272		int retval;
-   273	
- > 274		srcu_check_read_flavor(ssp, SRCU_READ_FLAVOR_LITE);
-   275		retval = __srcu_read_lock_lite(ssp);
-   276		rcu_try_lock_acquire(&ssp->dep_map);
-   277		return retval;
-   278	}
-   279	
-
+diff --git a/tools/perf/util/parse-events.c b/tools/perf/util/parse-events.c
+index dfb951bb184b..c7fe8b4167d7 100644
+--- a/tools/perf/util/parse-events.c
++++ b/tools/perf/util/parse-events.c
+@@ -8,6 +8,7 @@
+ #include <sys/ioctl.h>
+ #include <sys/param.h>
+ #include "term.h"
++#include "env.h"
+ #include "evlist.h"
+ #include "evsel.h"
+ #include <subcmd/parse-options.h>
+@@ -672,7 +673,22 @@ static int add_tracepoint_multi_sys(struct parse_events_state *parse_state,
+ 
+ int default_breakpoint_len(void)
+ {
++#if defined(__i386__)
++	static int len;
++
++	if (len == 0) {
++		struct perf_env env = {};
++
++		perf_env__init(&env);
++		len = perf_env__kernel_is_64_bit(&env) ? sizeof(u64) : sizeof(long);
++		perf_env__exit(&env);
++	}
++	return len;
++#elif defined(__aarch64__)
++	return 4;
++#else
+ 	return sizeof(long);
++#endif
+ }
+ 
+ static int
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.46.0.469.g59c65b2a67-goog
+
 
