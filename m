@@ -1,122 +1,111 @@
-Return-Path: <linux-kernel+bounces-309836-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309829-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC4A29670E5
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 12:30:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65BC49670CB
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 12:22:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 817881F2554F
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 10:30:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E2DACB22558
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 10:22:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DB1A17C20E;
-	Sat, 31 Aug 2024 10:30:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QEffq0MX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5279179970;
+	Sat, 31 Aug 2024 10:22:37 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A6F31531E9;
-	Sat, 31 Aug 2024 10:30:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F08B16F0F0
+	for <linux-kernel@vger.kernel.org>; Sat, 31 Aug 2024 10:22:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725100233; cv=none; b=GdXWZYQNISThYyPNDrIYAMImowHsy5tDSfHYSjeISeaWZUM5B/Ko6AHmKBUVibOwqxSK5VCdFJS/uwR9GirpZji53rxd9/3xz2hKaOIv9Rpcr10xovKNe8RHFste45WoxvJxYqrE1lhbUTUsBIKRdBbsDQYzfa2aktqhd0IaKU4=
+	t=1725099757; cv=none; b=i4+1cgLFkSSKeobhJnhpKrb612IQ8XjmK0PUD1Xo05qGcTvwsSPbIUbEUprjfeAS0SYHcsa/ikMSod1MCnXPj+vO/TiApb1Zi7II/jJCAyQI0KzaBEKF+M7jJAc1r4V+QZbO5+bjvS9M2wVEK0OssafUhbZm9lpM1nZfVS2rzVc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725100233; c=relaxed/simple;
-	bh=6SWTTgTAzp6pqg4Vm4RZubkX3UCuusQwF+vJGG/x2vQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=UvPkXUcCSJoaAMIAtXmxREHlp+YVPJyZ8+tKcNyHFzCMO4yhPfPSccv8K0KfVUO3hP4311+oO6uNEr4tD1ssPjVSAuWDX4gcPTW22ecJtlt8FBriH3lGMcJzAIGqbmKJLt6Ez0rCvak7mIRAfcbQOxYsoh4jUukIU6ZWbAYx120=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QEffq0MX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E5E1FC4CEC0;
-	Sat, 31 Aug 2024 10:30:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725100232;
-	bh=6SWTTgTAzp6pqg4Vm4RZubkX3UCuusQwF+vJGG/x2vQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=QEffq0MXDsWJWK5sRvImQL8mf+7JPH7FqWXdrsgY3Cd7NXJR8fmTHMuusiYMGnyhC
-	 MHZRnQPI2BQBNzCli8vVmgh+dEdC0uxBsz/fRD4SJemPO70j2WI5R14ofbm4VjUpqj
-	 kjhuO/TmLT2Aem8eyujuJ1mvRbendpbr22r/NmZB8VHlPSpsUMXOsVwaG1aQ4wijVU
-	 RybOdpY2DoFelEtVjQyRLTVrH9HyaFC1lbjOm1n7PKyWOTl8dYcRCY4yp8Qh8GHVki
-	 ymaipbd5WA6OB41R7ckuL0rn3ouJJGPlz4pdjabaARYh6JkylN/XBqkaD8dQdf/vUx
-	 XFfHdhi7Y3qYw==
-Date: Sat, 31 Aug 2024 11:30:21 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Jinjie Ruan <ruanjinjie@huawei.com>
-Cc: Kousik Sanagavarapu <five231003@gmail.com>, <andrew@lunn.ch>,
- <sebastian.hesselbarth@gmail.com>, <gregory.clement@bootlin.com>,
- <herve.codina@bootlin.com>, <qiang.zhao@nxp.com>,
- <christophe.leroy@csgroup.eu>, <thierry.reding@gmail.com>,
- <jonathanh@nvidia.com>, <nm@ti.com>, <ssantosh@kernel.org>,
- <petlozup@nvidia.com>, <pshete@nvidia.com>,
- <christophe.jaillet@wanadoo.fr>, <ulf.hansson@linaro.org>,
- <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
- <linuxppc-dev@lists.ozlabs.org>, <linux-tegra@vger.kernel.org>,
- <krzk@kernel.org>, jonathan.cameron@huawei.com
-Subject: Re: [PATCH -next 8/8] soc: ti: knav_qmss_queue: Simplify with
- scoped for each OF child loop
-Message-ID: <20240831113021.08a9010a@jic23-huawei>
-In-Reply-To: <598efadd-da27-0be3-6d1c-dee50e71c811@huawei.com>
-References: <ZtCapIwWZolY7oMH@five231003>
-	<598efadd-da27-0be3-6d1c-dee50e71c811@huawei.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1725099757; c=relaxed/simple;
+	bh=1ixH9OkzJ/KGFfbODxkUO32eTSdnQApugAkffkOzqYc=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=OGq1EXi5sOUXZNd7xQ4yLq3SqfmCnxbTlagenNfA6i7Eg2pWpNAn7IK3OuAmgE+ZsoPIalcawbL9Qe8bsZ5fiaOtBJRTf19AsLo/pRp8twjY8lg+sAyB9Xucy6f+XYJWlduVAHatoIYf2B2AZm7aHiogsnElRQEZFC3HPl22Y38=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.174])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4WwrfD2SlPzyQxW;
+	Sat, 31 Aug 2024 18:21:40 +0800 (CST)
+Received: from kwepemh500013.china.huawei.com (unknown [7.202.181.146])
+	by mail.maildlp.com (Postfix) with ESMTPS id B52B61400FD;
+	Sat, 31 Aug 2024 18:22:32 +0800 (CST)
+Received: from huawei.com (10.90.53.73) by kwepemh500013.china.huawei.com
+ (7.202.181.146) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Sat, 31 Aug
+ 2024 18:22:32 +0800
+From: Jinjie Ruan <ruanjinjie@huawei.com>
+To: <frank.binns@imgtec.com>, <matt.coster@imgtec.com>,
+	<maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
+	<tzimmermann@suse.de>, <airlied@gmail.com>, <daniel@ffwll.ch>,
+	<dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
+CC: <ruanjinjie@huawei.com>
+Subject: [PATCH -next] drm/imagination: Use memdup_user() helper
+Date: Sat, 31 Aug 2024 18:30:47 +0800
+Message-ID: <20240831103047.99499-1-ruanjinjie@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+ kwepemh500013.china.huawei.com (7.202.181.146)
 
-On Fri, 30 Aug 2024 11:24:14 +0800
-Jinjie Ruan <ruanjinjie@huawei.com> wrote:
+Switching to memdup_user(), which combines kmalloc() and copy_from_user(),
+and it can simplfy code.
 
-> On 2024/8/29 23:58, Kousik Sanagavarapu wrote:
-> > Jinjie Ruan <ruanjinjie@huawei.com> writes:  
-> >> @@ -1080,17 +1080,13 @@ static int knav_queue_setup_regions(struct knav_device *kdev,
-> >>  {
-> >>  	struct device *dev = kdev->dev;
-> >>  	struct knav_region *region;
-> >> -	struct device_node *child;
-> >>  	u32 temp[2];
-> >>  	int ret;
-> >>  
-> >> -	for_each_child_of_node(regions, child) {
-> >> +	for_each_child_of_node_scoped(regions, child) {  
-> > 
-> > Are you sure using *_scoped() is better here?  Since it seems that we
-> > need the memory pointed to by "child" in cases where we don't go into an
-> > error path.  
-> 
-> Hi, Jonathan, could you help review this code?
+Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
+---
+ drivers/gpu/drm/imagination/pvr_context.c | 22 +++++++---------------
+ 1 file changed, 7 insertions(+), 15 deletions(-)
 
-I don't understand the review comment.
-The reference counting before and after this patch is the same, just
-with the error path handled in a simpler fashion and the scope of
-the child variable reduced.
-
-
-> 
-> >   
-> >>  		region = devm_kzalloc(dev, sizeof(*region), GFP_KERNEL);
-> >> -		if (!region) {
-> >> -			of_node_put(child);
-> >> -			dev_err(dev, "out of memory allocating region\n");
-> >> -			return -ENOMEM;
-> >> -		}
-> >> +		if (!region)
-> >> +			return dev_err_probe(dev, -ENOMEM, "out of memory allocating region\n");
-> >>  
-> >>  		region->name = knav_queue_find_name(child);
-> >>  		of_property_read_u32(child, "id", &region->id);  
-> > 
-> > Similarly in most of the other cases in this series where a similar
-> > change is done.
-> > 
-> > Also FYI, as for dev_err_probe(), I think I covered all of them in this
-> > file and a patch for it is currently sitting in ti-drivers-soc-next.
-> > 
-> > Thanks  
+diff --git a/drivers/gpu/drm/imagination/pvr_context.c b/drivers/gpu/drm/imagination/pvr_context.c
+index eded5e955cc0..e75fd50a4d9f 100644
+--- a/drivers/gpu/drm/imagination/pvr_context.c
++++ b/drivers/gpu/drm/imagination/pvr_context.c
+@@ -69,27 +69,19 @@ process_static_context_state(struct pvr_device *pvr_dev, const struct pvr_stream
+ 	void *stream;
+ 	int err;
+ 
+-	stream = kzalloc(stream_size, GFP_KERNEL);
+-	if (!stream)
+-		return -ENOMEM;
+-
+-	if (copy_from_user(stream, u64_to_user_ptr(stream_user_ptr), stream_size)) {
+-		err = -EFAULT;
+-		goto err_free;
+-	}
++	stream = memdup_user(u64_to_user_ptr(stream_user_ptr), stream_size);
++	if (IS_ERR(stream))
++		return PTR_ERR(stream);
+ 
+ 	err = pvr_stream_process(pvr_dev, cmd_defs, stream, stream_size, dest);
+-	if (err)
+-		goto err_free;
++	if (err) {
++		kfree(stream);
++		return err;
++	}
+ 
+ 	kfree(stream);
+ 
+ 	return 0;
+-
+-err_free:
+-	kfree(stream);
+-
+-	return err;
+ }
+ 
+ static int init_render_fw_objs(struct pvr_context *ctx,
+-- 
+2.34.1
 
 
