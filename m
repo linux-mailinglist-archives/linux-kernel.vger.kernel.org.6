@@ -1,142 +1,198 @@
-Return-Path: <linux-kernel+bounces-309997-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309998-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F28BE9672DF
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 19:41:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 809449672E1
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 19:53:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B093C281F9B
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 17:41:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F06E6282E39
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 17:53:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F0C313B29B;
-	Sat, 31 Aug 2024 17:41:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 654D574C14;
+	Sat, 31 Aug 2024 17:52:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="oqlnvGnQ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fXYwDxjZ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA9F2B658;
-	Sat, 31 Aug 2024 17:41:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D00610A3D
+	for <linux-kernel@vger.kernel.org>; Sat, 31 Aug 2024 17:52:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725126071; cv=none; b=D2F/tRJv27LkQGz10e66tu8bhkh28RY75AQnyF+cmpwY8ZFrvTewvidhNWltX0YSlV5t1yfAuo9AmXl/8S23KJhUM7F6CNt+w5UiFd1REfSnIG65JOE7AommUmuIVgs2RIqp4TFZxVqp5nsPeP9JMkemTMRGHBt4ccL6R6dn5qM=
+	t=1725126775; cv=none; b=hoGqUgJBLGm/2ix5jN2WmBX2qV8GLczpVb8vD47KnWKMOdHu4ugVCI9mxsiN2/bDc/S8W9CPNNVpDq2zuS09ZwJNkZ4qzCkESQ9yNLKRi424IuviBIeVYVQbXCveDoTdXMMpVt3amAa4OJyTW8arm9QSLRpR6lWAfzvnht+9q+o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725126071; c=relaxed/simple;
-	bh=hLLbX4Dn2Yresy0z9IosCGN6MOmzaAkR5HPRUGcVyK4=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=HHKY5voEVi7d8eu1ugEvZtVqlnAH81v1lFgz79Zu8v9MQ0nGsm9ETx/pzy1meRg0fDf+jQMlJCuL0ADFklcP6AWWFE8O0KQjtUnqQ03/MTPLaYhGJYDaeRUX0B/929y3jNuoWsdCLfOacwHLvL0mYICShjUa2Ny1a5A2LZuo0F0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=oqlnvGnQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EEE11C4CEC0;
-	Sat, 31 Aug 2024 17:41:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1725126070;
-	bh=hLLbX4Dn2Yresy0z9IosCGN6MOmzaAkR5HPRUGcVyK4=;
-	h=Date:From:To:Cc:Subject:From;
-	b=oqlnvGnQHCBnLqGDsxbMF5MnxbFhgs9F3/PosLykJvoSj/Ql2nJT+6n/lAJGI/CmX
-	 0QEHXuBtpOScu5dauO2lCiBGvnum015iZmHSU8WPjO4/pSWf/2NqAdJoGH/FVQrnJw
-	 SV2jdqAGNCq0Aorun13o5yEb1VnQghZXu2mYz75g=
-Date: Sat, 31 Aug 2024 19:41:07 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org,
-	linux-usb@vger.kernel.org
-Subject: [GIT PULL] USB driver fixes for 6.11-rc6
-Message-ID: <ZtNVs1boCTfsIu_3@kroah.com>
+	s=arc-20240116; t=1725126775; c=relaxed/simple;
+	bh=qXIeDZEytA51QiW9CXiqVlkSKbg0CHzLEiz2qUvN9zU=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ukJPNysJ6wWG0fnN/dkHRgBOA7mr1tlIxqGOS6X54bQG4J4OE0XpUUcWs/SVXZdk14sF8r8N8isVy7E5jkEVfSICSCOcsPfIaeI8gEiPJZiarrPumfUFhDPeErGt/Ge/Wgv3BbDJ3fI44SUSfWrGduesPXyzQMuPfQuKTwPbQWU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fXYwDxjZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DBF3DC4CEC0;
+	Sat, 31 Aug 2024 17:52:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725126774;
+	bh=qXIeDZEytA51QiW9CXiqVlkSKbg0CHzLEiz2qUvN9zU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=fXYwDxjZ/C2vjp9+65ynnBrZ7UTDu5KpF5cpCU+86CSrfieZ95+LD37PBQ6Capc0l
+	 BhMXttEHEThLn7TaphcYr6VLyIZ725HJeKMH2ddcY9JVyFHz6MgDJtpmQb0+CCvzZE
+	 rYoDn+92iyRwd0vAjHahz1lhjdwkNXBZhdgSM6GiJnuwGwl0Z4b5rq/gegCU4KPn4P
+	 H34gzV1fZZykqMl+z/O/GCXlJ+xTbexJOc06MD4J5IqBA/5YJcu2ohEn8/dVOFVjT+
+	 LJsiERJWRTzLU8EastEqrOkVLheTg5zuzEQygQvoQJci6g7ghY66H45nywfR1bqSPS
+	 3ZgfbZKaCzu0g==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1skSHM-008VJP-F8;
+	Sat, 31 Aug 2024 18:52:52 +0100
+Date: Sat, 31 Aug 2024 18:52:52 +0100
+Message-ID: <86wmjwvatn.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Will Deacon <will@kernel.org>
+Cc: syzbot <syzbot+908886656a02769af987@syzkaller.appspotmail.com>,
+	catalin.marinas@arm.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [arm?] upstream test error: KASAN: invalid-access Write in setup_arch
+In-Reply-To: <20240830095254.GA7769@willie-the-truck>
+References: <000000000000f362e80620e27859@google.com>
+	<20240830095254.GA7769@willie-the-truck>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: will@kernel.org, syzbot+908886656a02769af987@syzkaller.appspotmail.com, catalin.marinas@arm.com, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-[resend with correct subject line this time, sorry about that...]
+On Fri, 30 Aug 2024 10:52:54 +0100,
+Will Deacon <will@kernel.org> wrote:
+> 
+> On Fri, Aug 30, 2024 at 01:35:24AM -0700, syzbot wrote:
+> > Hello,
+> > 
+> > syzbot found the following issue on:
+> > 
+> > HEAD commit:    33faa93bc856 Merge branch kvmarm-master/next into kvmarm-m..
+> > git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/kvmarm/kvmarm.git fuzzme
+> 
+> +Marc, as this is his branch.
+>
+> > console output: https://syzkaller.appspot.com/x/log.txt?x=1398420b980000
+> > kernel config:  https://syzkaller.appspot.com/x/.config?x=2b7b31c9aa1397ca
+> > dashboard link: https://syzkaller.appspot.com/bug?extid=908886656a02769af987
+> > compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+> > userspace arch: arm64
 
-The following changes since commit 47ac09b91befbb6a235ab620c32af719f8208399:
+As it turns out, this isn't specific to this branch. I can reproduce
+it with this config on a vanilla 6.10 as a KVM guest. Even worse,
+compiling with clang results in an unbootable kernel (without any
+output at all).
 
-  Linux 6.11-rc4 (2024-08-18 13:17:27 -0700)
+Mind you, the binary is absolutely massive (130MB with gcc, 156MB with
+clang), and I wouldn't be surprised if we were hitting some kind of
+odd limit.
 
-are available in the Git repository at:
+> > 
+> > Downloadable assets:
+> > disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/384ffdcca292/non_bootable_disk-33faa93b.raw.xz
+> > vmlinux: https://storage.googleapis.com/syzbot-assets/9093742fcee9/vmlinux-33faa93b.xz
+> > kernel image: https://storage.googleapis.com/syzbot-assets/b1f599907931/Image-33faa93b.gz.xz
+> > 
+> > IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> > Reported-by: syzbot+908886656a02769af987@syzkaller.appspotmail.com
+> > 
+> > Booting Linux on physical CPU 0x0000000000 [0x000f0510]
+> > Linux version 6.11.0-rc5-syzkaller-g33faa93bc856 (syzkaller@syzkaller) (gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40) #0 SMP PREEMPT now
+> > random: crng init done
+> > Machine model: linux,dummy-virt
+> > efi: UEFI not found.
+> > NUMA: No NUMA configuration found
+> > NUMA: Faking a node at [mem 0x0000000040000000-0x00000000bfffffff]
+> > NUMA: NODE_DATA [mem 0xbfc1d340-0xbfc20fff]
+> > Zone ranges:
+> >   DMA      [mem 0x0000000040000000-0x00000000bfffffff]
+> >   DMA32    empty
+> >   Normal   empty
+> >   Device   empty
+> > Movable zone start for each node
+> > Early memory node ranges
+> >   node   0: [mem 0x0000000040000000-0x00000000bfffffff]
+> > Initmem setup node 0 [mem 0x0000000040000000-0x00000000bfffffff]
+> > cma: Reserved 32 MiB at 0x00000000bba00000 on node -1
+> > psci: probing for conduit method from DT.
+> > psci: PSCIv1.1 detected in firmware.
+> > psci: Using standard PSCI v0.2 function IDs
+> > psci: Trusted OS migration not required
+> > psci: SMC Calling Convention v1.0
+> > ==================================================================
+> > BUG: KASAN: invalid-access in smp_build_mpidr_hash arch/arm64/kernel/setup.c:133 [inline]
+> > BUG: KASAN: invalid-access in setup_arch+0x984/0xd60 arch/arm64/kernel/setup.c:356
+> > Write of size 4 at addr 03ff800086867e00 by task swapper/0
+> > Pointer tag: [03], memory tag: [fe]
+> > 
+> > CPU: 0 UID: 0 PID: 0 Comm: swapper Not tainted 6.11.0-rc5-syzkaller-g33faa93bc856 #0
+> > Hardware name: linux,dummy-virt (DT)
+> > Call trace:
+> >  dump_backtrace+0x204/0x3b8 arch/arm64/kernel/stacktrace.c:317
+> >  show_stack+0x2c/0x3c arch/arm64/kernel/stacktrace.c:324
+> >  __dump_stack lib/dump_stack.c:93 [inline]
+> >  dump_stack_lvl+0x260/0x3b4 lib/dump_stack.c:119
+> >  print_address_description mm/kasan/report.c:377 [inline]
+> >  print_report+0x118/0x5ac mm/kasan/report.c:488
+> >  kasan_report+0xc8/0x108 mm/kasan/report.c:601
+> >  kasan_check_range+0x94/0xb8 mm/kasan/sw_tags.c:84
+> >  __hwasan_store4_noabort+0x20/0x2c mm/kasan/sw_tags.c:149
+> >  smp_build_mpidr_hash arch/arm64/kernel/setup.c:133 [inline]
+> >  setup_arch+0x984/0xd60 arch/arm64/kernel/setup.c:356
+> >  start_kernel+0xe0/0xff0 init/main.c:926
+> >  __primary_switched+0x84/0x8c arch/arm64/kernel/head.S:243
+> > 
+> > The buggy address belongs to stack of task swapper/0
+> > 
+> > Memory state around the buggy address:
+> >  ffff800086867c00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+> >  ffff800086867d00: 00 fe fe 00 00 00 fe fe fe fe fe fe fe fe fe fe
+> > >ffff800086867e00: fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe
+> >                    ^
+> >  ffff800086867f00: fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe
+> >  ffff800086868000: fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe
+> > ==================================================================
+> 
+> I can't spot the issue here. We have a couple of fixed-length
+> (4 element) arrays on the stack and they're indexed by a simple loop
+> counter that runs from 0-3.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git tags/usb-6.11-rc6
+Having trimmed the config to the extreme, I can only trigger the
+warning with CONFIG_KASAN_SW_TAGS (CONFIG_KASAN_GENERIC does not
+scream). Same thing if I use gcc 14.2.0.
 
-for you to fetch changes up to 58c2fa54257d640c83137b44e12c174fd660a485:
+However, compiling with clang 14 (Debian clang version 14.0.6) does
+*not* result in a screaming kernel, even with KASAN_SW_TAGS.
 
-  Merge tag 'usb-serial-6.11-rc6' of ssh://gitolite.kernel.org/pub/scm/linux/kernel/git/johan/usb-serial into usb-linus (2024-08-30 15:41:18 +0200)
+So I can see two possibilities here:
 
-----------------------------------------------------------------
-USB fixes for 6.11-rc6
+- either gcc is incompatible with KASAN_SW_TAGS and the generic
+  version is the only one that works
 
-Here are some small USB fixes for 6.11-rc6.  Included in here are:
-  - dwc3 driver fixes for reported issues
-  - MAINTAINER file update, marking a driver as unsupported :(
-  - cdnsp driver fixes
-  - USB gadget driver fix
-  - USB sysfs fix
-  - other tiny fixes
-  - new device ids for usb serial driver
+- or we have a compiler bug on our hands.
 
-All of these have been in linux-next this week with no reported issues.
+Frankly, I can't believe the later, as the code is so daft that I
+can't imagine gcc getting it *that* wrong.
 
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Who knows enough about KASAN to dig into this?
 
-----------------------------------------------------------------
-Alexander Stein (1):
-      dt-bindings: usb: microchip,usb2514: Fix reference USB device schema
+	M.
 
-Greg Kroah-Hartman (1):
-      Merge tag 'usb-serial-6.11-rc6' of ssh://gitolite.kernel.org/pub/scm/linux/kernel/git/johan/usb-serial into usb-linus
-
-Ian Ray (1):
-      cdc-acm: Add DISABLE_ECHO quirk for GE HealthCare UI Controller
-
-Krzysztof Kozlowski (4):
-      usb: dwc3: omap: add missing depopulate in probe error path
-      usb: dwc3: xilinx: add missing depopulate in probe error path
-      usb: dwc3: st: fix probed platform device ref count on probe error path
-      usb: dwc3: st: add missing depopulate in probe error path
-
-Laurent Pinchart (1):
-      MAINTAINERS: Mark UVC gadget driver as orphan
-
-Luca Weiss (1):
-      usb: typec: fsa4480: Relax CHIP_ID check
-
-Michael Grzeschik (1):
-      usb: dwc3: ep0: Don't reset resource alloc flag (including ep0)
-
-Pawel Laszczak (2):
-      usb: cdnsp: fix incorrect index in cdnsp_get_hw_deq function
-      usb: cdnsp: fix for Link TRB with TC
-
-Selvarasu Ganesan (1):
-      usb: dwc3: core: Prevent USB core invalid event buffer address access
-
-Xu Yang (1):
-      usb: gadget: uvc: queue pump work in uvcg_video_enable()
-
-ZHANG Yuntian (1):
-      USB: serial: option: add MeiG Smart SRM825L
-
-Zijun Hu (1):
-      usb: core: sysfs: Unmerge @usb3_hardware_lpm_attr_group in remove_power_attributes()
-
- .../devicetree/bindings/usb/microchip,usb2514.yaml |  9 ++++++-
- MAINTAINERS                                        |  4 +--
- drivers/usb/cdns3/cdnsp-gadget.h                   |  3 +++
- drivers/usb/cdns3/cdnsp-ring.c                     | 30 +++++++++++++++++++++-
- drivers/usb/class/cdc-acm.c                        |  3 +++
- drivers/usb/core/sysfs.c                           |  1 +
- drivers/usb/dwc3/core.c                            |  8 ++++++
- drivers/usb/dwc3/dwc3-omap.c                       |  4 ++-
- drivers/usb/dwc3/dwc3-st.c                         | 16 +++++-------
- drivers/usb/dwc3/dwc3-xilinx.c                     |  7 ++++-
- drivers/usb/dwc3/ep0.c                             |  3 ++-
- drivers/usb/gadget/function/uvc_video.c            |  1 +
- drivers/usb/serial/option.c                        |  5 ++++
- drivers/usb/typec/mux/fsa4480.c                    |  2 +-
- 14 files changed, 78 insertions(+), 18 deletions(-)
+-- 
+Without deviation from the norm, progress is not possible.
 
