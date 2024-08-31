@@ -1,201 +1,123 @@
-Return-Path: <linux-kernel+bounces-309795-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309797-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F307967081
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 11:38:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91016967087
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 11:41:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1878F280235
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 09:38:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C1E6D1C21A42
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 09:41:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F7AB17BB3E;
-	Sat, 31 Aug 2024 09:37:59 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CAD0174EE4;
+	Sat, 31 Aug 2024 09:41:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H4Z1/O62"
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72E4A170A1B;
-	Sat, 31 Aug 2024 09:37:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF38814D449
+	for <linux-kernel@vger.kernel.org>; Sat, 31 Aug 2024 09:41:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725097078; cv=none; b=npsInTCWrKCUCAC3/CMLyrlH8S52423OTxtlF+4tpbHvDZ0IZ/YVXD8ZgYiYJb88Y5L9K0P1omXdjraquX6aisC0ahBN5+9QAhnlvZ/nFGFbQBlDVEMuuDdfrZlmU9eYyq2gX5SA8XwAZodJ1e2zLf9isF2i+HQ7IfyQYa4Q7RM=
+	t=1725097281; cv=none; b=MGC9Spxu3WeIXHxNTcVMUmrHVEXpBdZz5NWQrY2n3g6NGc6MqrO3yV11iEhwepIGbFTzUYmomlrltqlWHhVNpxfu3x7wlC42qf2X1jxTd/Xl+LC2kkZW10CG/cHy3CSIc8ZxCiMyOhMpuoK/rWONzlk4OLjC744E7VSKzgsolF4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725097078; c=relaxed/simple;
-	bh=Is8gMZiYzT6REmkxrkgk5qT74fiRXbxvg1E/pyuAfeQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=FwnG/fAVncclY+rOQI+oOi8/Nmjs0B+/3vFWci0n/x5DGFZZt3B/QRHfg2mv+qx0alvAC++8nmypQj2y/nrf8fEzY3ZZHtmBxJDQJfopccW1YfdN6vUgSTpIiVb5+9DHftrFrtlgOdLI6LMk83P3VC0rtNOIpWhfiNDJLNdG28M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=none smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4WwqgW2BGXz4f3jYx;
-	Sat, 31 Aug 2024 17:37:43 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 666461A018D;
-	Sat, 31 Aug 2024 17:37:53 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.124.27])
-	by APP4 (Coremail) with SMTP id gCh0CgBXzIJj5NJm0I_lDA--.58191S6;
-	Sat, 31 Aug 2024 17:37:53 +0800 (CST)
-From: Hou Tao <houtao@huaweicloud.com>
-To: linux-fsdevel@vger.kernel.org
-Cc: Miklos Szeredi <miklos@szeredi.hu>,
-	Vivek Goyal <vgoyal@redhat.com>,
-	Stefan Hajnoczi <stefanha@redhat.com>,
-	Bernd Schubert <bernd.schubert@fastmail.fm>,
-	"Michael S . Tsirkin" <mst@redhat.com>,
-	Matthew Wilcox <willy@infradead.org>,
-	Benjamin Coddington <bcodding@redhat.com>,
-	Jingbo Xu <jefflexu@linux.alibaba.com>,
-	linux-kernel@vger.kernel.org,
-	virtualization@lists.linux.dev,
-	houtao1@huawei.com
-Subject: [PATCH v4 2/2] virtiofs: use GFP_NOFS when enqueuing request through kworker
-Date: Sat, 31 Aug 2024 17:37:50 +0800
-Message-Id: <20240831093750.1593871-3-houtao@huaweicloud.com>
-X-Mailer: git-send-email 2.29.2
-In-Reply-To: <20240831093750.1593871-1-houtao@huaweicloud.com>
-References: <20240831093750.1593871-1-houtao@huaweicloud.com>
+	s=arc-20240116; t=1725097281; c=relaxed/simple;
+	bh=P7Ay73iPkGu0MmbyS4ClIVJhfFRmCWoeq0yYnn8GQ5k=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=g2N55XGgGci3sG++9DMnwK63WAXe8xVtBHBmtKC+upEqzoRxj0uV9mitkxL6arqzEDHD49d6/zWJ/94vHWBJL2nSERcRj6Blo0RmC73ZqOoZLAXZMY5UiKY7PV7oia7knIJ2iL72jFA89aRSlFyzF8xA6Mp5lx1Q+eVeOaZj91U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=H4Z1/O62; arc=none smtp.client-ip=209.85.208.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2f406034874so30654771fa.1
+        for <linux-kernel@vger.kernel.org>; Sat, 31 Aug 2024 02:41:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725097278; x=1725702078; darn=vger.kernel.org;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=P7Ay73iPkGu0MmbyS4ClIVJhfFRmCWoeq0yYnn8GQ5k=;
+        b=H4Z1/O62d7qTp2H10zEwu3TfbFmQCH0vrYr4Z4NNvh2vU2BX9u67TwnEnsQsjDZSbx
+         701HKLetKgKI0BMuht07m5u9/xZljKXYV/mlSELZVZbha9qE4o1NwaoBQ4JH8UMhra6b
+         y3h1fU8ERVN2ZYs1PKH5vPHPp/joJcPtqfWaMFFCPifryaGp0Nmp6MbDmOwp3oF4bzHC
+         r+dUhKqDfyuceKxrtPkqR9g6QeAK+m7HLgvos29MVU95RXajNWf546MFIBvDJi8Oye1B
+         ohwSQyt4PonSoR6k4Pp3flYjEolrdmHZe1/taIi8MYhtgehBn+a34NkOt9QGtv8ljZNW
+         fnOw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725097278; x=1725702078;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=P7Ay73iPkGu0MmbyS4ClIVJhfFRmCWoeq0yYnn8GQ5k=;
+        b=RaZWeSZ0GN+gOsISBD0ygEb5uJvXmwLu8fjPqTBhklCJWk/BCwafHmQteHMmGKyUvJ
+         1aQmmFh9AHMIEqdn99SR5EyJhE9tr5FRLjt6nU1Sfp7Z+HrnrR/Gk2IJREmvGGrDrBRc
+         gGBX+4d/IkFD59+VAIM4tKPRdQagVqWLueAbU9noITIOX6WOn72K0+Wed8I2liKXQ8bz
+         e2LDb4moI7vlMfLzk/nMJzQ7YLgGCuieRQCcqwtGRwfvUCKsDhbhnyGfYxEBNbBUt1LK
+         YNxkJmptaBWq6M7k/JpcdnqCmS4ye5VefouvCDnibHJdd0i9DxRj/XYTyQ8n0+52B+yg
+         5f4w==
+X-Forwarded-Encrypted: i=1; AJvYcCWvrzuO/bfMksD+wRVuqPYD1H5fBWVIeKCQZqaYZ2AIH+PM0C0IwgGDIIe8/FekDw4f1KVPSFKxuXe5slY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxWfs1EbhMS/Mm5iaayrUIeTrlWho01kwwsSJeAapScT9Uaw86+
+	TD/NIZC5R5DZ8+Nixhyj6vewRcsjMUABCJ2idF+v6vXfCrCzBj0+
+X-Google-Smtp-Source: AGHT+IH3fkry8a2MdNWwGeiNc3HZ2o5AuoOQ6W2Q7EimLQjOCU+/sdxJFuoHIQfJ0l3SALypmKxrxg==
+X-Received: by 2002:a05:651c:548:b0:2f3:b078:84bc with SMTP id 38308e7fff4ca-2f6105b5d9amr69678851fa.4.1725097277549;
+        Sat, 31 Aug 2024 02:41:17 -0700 (PDT)
+Received: from smtpclient.apple (89-73-96-21.dynamic.chello.pl. [89.73.96.21])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2f615171d68sm10033141fa.84.2024.08.31.02.41.16
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 31 Aug 2024 02:41:17 -0700 (PDT)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgBXzIJj5NJm0I_lDA--.58191S6
-X-Coremail-Antispam: 1UD129KBjvJXoWxGF4kXrWrXFy5Xry3GF15urg_yoWrAFykpr
-	WDAa15CFWrJ3y2gFWkJF4UGr1akws3CFW7Ja4fXa4Skr4Yqr17CF18ZFy0qrZavrWkAF1x
-	Wr4FqF4DuF47Zw7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUPFb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28IrcIa0xkI8VA2jI8067AKxVWUXw
-	A2048vs2IY020Ec7CjxVAFwI0_Xr0E3s1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxS
-	w2x7M28EF7xvwVC0I7IYx2IY67AKxVW5JVW7JwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxV
-	W8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v2
-	6rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMc
-	Ij6xIIjxv20xvE14v26r1Y6r17McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_
-	Jr0_Gr1lF7xvr2IYc2Ij64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AFwI
-	0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG
-	67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MI
-	IYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E
-	14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJV
-	W8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUrJPE
-	DUUUU
-X-CM-SenderInfo: xkrx3t3r6k3tpzhluzxrxghudrp/
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3776.700.51\))
+Subject: Re: [regression] oops on heavy compilations ("kernel BUG at
+ mm/zswap.c:1005!" and "Oops: invalid opcode: 0000")
+From: Piotr Oniszczuk <piotr.oniszczuk@gmail.com>
+In-Reply-To: <CAJD7tkZ01PPYMzcTyX_cwr836jGonJT=fwT3ovc4ixW44keRgg@mail.gmail.com>
+Date: Sat, 31 Aug 2024 11:41:05 +0200
+Cc: Pedro Falcato <pedro.falcato@gmail.com>,
+ Nhat Pham <nphamcs@gmail.com>,
+ Matthew Wilcox <willy@infradead.org>,
+ Linux regressions mailing list <regressions@lists.linux.dev>,
+ LKML <linux-kernel@vger.kernel.org>,
+ Johannes Weiner <hannes@cmpxchg.org>,
+ Linux-MM <linux-mm@kvack.org>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <277CDE7C-7ED8-4840-9C30-533C9327B028@gmail.com>
+References: <BD22A15A-9216-4FA0-82DF-C7BBF8EE642E@gmail.com>
+ <6f65e3a6-5f1a-4fda-b406-17598f4a72d5@leemhuis.info>
+ <ZsiLElTykamcYZ6J@casper.infradead.org>
+ <02D2DA66-4A91-4033-8B98-ED25FC2E0CD6@gmail.com>
+ <CAKEwX=N-10A=C_Cp_m8yxfeTigvmZp1v7TrphcrHuRkHJ8837g@mail.gmail.com>
+ <A512FD59-63DF-48D3-BCB3-83DF8505E7E0@gmail.com>
+ <oophwj3aj2fnfi57ebzjuc536iltilmcpoucyms6nfk2alwvtr@pdj4cn4rvpdn>
+ <3D1B8F1F-2C41-4CCD-A5D7-41CF412F99DE@gmail.com>
+ <CAJD7tkbF2Cx4uRCJAN=EKDLkVC=CApiLAsYt4ZN9YcVUJZp_5g@mail.gmail.com>
+ <EE83D424-A546-410D-B5ED-6E9631746ACF@gmail.com>
+ <CAJD7tkZ01PPYMzcTyX_cwr836jGonJT=fwT3ovc4ixW44keRgg@mail.gmail.com>
+To: Yosry Ahmed <yosryahmed@google.com>
+X-Mailer: Apple Mail (2.3776.700.51)
 
-From: Hou Tao <houtao1@huawei.com>
 
-When invoking virtio_fs_enqueue_req() through kworker, both the
-allocation of the sg array and the bounce buffer still use GFP_ATOMIC.
-Considering the size of the sg array may be greater than PAGE_SIZE, use
-GFP_NOFS instead of GFP_ATOMIC to lower the possibility of memory
-allocation failure and to avoid unnecessarily depleting the atomic
-reserves. GFP_NOFS is not passed to virtio_fs_enqueue_req() directly,
-GFP_KERNEL and memalloc_nofs_{save|restore} helpers are used instead.
 
-It may seem OK to pass GFP_NOFS to virtio_fs_enqueue_req() as well when
-queuing the request for the first time, but this is not the case. The
-reason is that fuse_request_queue_background() may call
-->queue_request_and_unlock() while holding fc->bg_lock, which is a
-spin-lock. Therefore, still use GFP_ATOMIC for it.
+> Wiadomo=C5=9B=C4=87 napisana przez Yosry Ahmed <yosryahmed@google.com> =
+w dniu 29.08.2024, o godz. 23:54:
+>=20
+> I also noticed that you are using z3fold as the zpool. Is the problem
+> reproducible with zsmalloc? I wouldn't be surprised if there's a
+> z3fold bug somewhere.
+>=20
 
-Signed-off-by: Hou Tao <houtao1@huawei.com>
----
- fs/fuse/virtio_fs.c | 24 +++++++++++++++---------
- 1 file changed, 15 insertions(+), 9 deletions(-)
+Hmm - yesterday i recompiled 6.9.12 with zsmalloc and =E2=80=A6. after =
+16h of continuous tests I can=E2=80=99t reproduce issue.
+With zsmalloc 6.9.12 looks to me like stable.
 
-diff --git a/fs/fuse/virtio_fs.c b/fs/fuse/virtio_fs.c
-index 43d66ab5e891..9bc48b3ca384 100644
---- a/fs/fuse/virtio_fs.c
-+++ b/fs/fuse/virtio_fs.c
-@@ -95,7 +95,8 @@ struct virtio_fs_req_work {
- };
- 
- static int virtio_fs_enqueue_req(struct virtio_fs_vq *fsvq,
--				 struct fuse_req *req, bool in_flight);
-+				 struct fuse_req *req, bool in_flight,
-+				 gfp_t gfp);
- 
- static const struct constant_table dax_param_enums[] = {
- 	{"always",	FUSE_DAX_ALWAYS },
-@@ -439,6 +440,8 @@ static void virtio_fs_request_dispatch_work(struct work_struct *work)
- 
- 	/* Dispatch pending requests */
- 	while (1) {
-+		unsigned int flags;
-+
- 		spin_lock(&fsvq->lock);
- 		req = list_first_entry_or_null(&fsvq->queued_reqs,
- 					       struct fuse_req, list);
-@@ -449,7 +452,9 @@ static void virtio_fs_request_dispatch_work(struct work_struct *work)
- 		list_del_init(&req->list);
- 		spin_unlock(&fsvq->lock);
- 
--		ret = virtio_fs_enqueue_req(fsvq, req, true);
-+		flags = memalloc_nofs_save();
-+		ret = virtio_fs_enqueue_req(fsvq, req, true, GFP_KERNEL);
-+		memalloc_nofs_restore(flags);
- 		if (ret < 0) {
- 			if (ret == -ENOSPC) {
- 				spin_lock(&fsvq->lock);
-@@ -550,7 +555,7 @@ static void virtio_fs_hiprio_dispatch_work(struct work_struct *work)
- }
- 
- /* Allocate and copy args into req->argbuf */
--static int copy_args_to_argbuf(struct fuse_req *req)
-+static int copy_args_to_argbuf(struct fuse_req *req, gfp_t gfp)
- {
- 	struct fuse_args *args = req->args;
- 	unsigned int offset = 0;
-@@ -564,7 +569,7 @@ static int copy_args_to_argbuf(struct fuse_req *req)
- 	len = fuse_len_args(num_in, (struct fuse_arg *) args->in_args) +
- 	      fuse_len_args(num_out, args->out_args);
- 
--	req->argbuf = kmalloc(len, GFP_ATOMIC);
-+	req->argbuf = kmalloc(len, gfp);
- 	if (!req->argbuf)
- 		return -ENOMEM;
- 
-@@ -1239,7 +1244,8 @@ static unsigned int sg_init_fuse_args(struct scatterlist *sg,
- 
- /* Add a request to a virtqueue and kick the device */
- static int virtio_fs_enqueue_req(struct virtio_fs_vq *fsvq,
--				 struct fuse_req *req, bool in_flight)
-+				 struct fuse_req *req, bool in_flight,
-+				 gfp_t gfp)
- {
- 	/* requests need at least 4 elements */
- 	struct scatterlist *stack_sgs[6];
-@@ -1260,8 +1266,8 @@ static int virtio_fs_enqueue_req(struct virtio_fs_vq *fsvq,
- 	/* Does the sglist fit on the stack? */
- 	total_sgs = sg_count_fuse_req(req);
- 	if (total_sgs > ARRAY_SIZE(stack_sgs)) {
--		sgs = kmalloc_array(total_sgs, sizeof(sgs[0]), GFP_ATOMIC);
--		sg = kmalloc_array(total_sgs, sizeof(sg[0]), GFP_ATOMIC);
-+		sgs = kmalloc_array(total_sgs, sizeof(sgs[0]), gfp);
-+		sg = kmalloc_array(total_sgs, sizeof(sg[0]), gfp);
- 		if (!sgs || !sg) {
- 			ret = -ENOMEM;
- 			goto out;
-@@ -1269,7 +1275,7 @@ static int virtio_fs_enqueue_req(struct virtio_fs_vq *fsvq,
- 	}
- 
- 	/* Use a bounce buffer since stack args cannot be mapped */
--	ret = copy_args_to_argbuf(req);
-+	ret = copy_args_to_argbuf(req, gfp);
- 	if (ret < 0)
- 		goto out;
- 
-@@ -1367,7 +1373,7 @@ __releases(fiq->lock)
- 		 queue_id);
- 
- 	fsvq = &fs->vqs[queue_id];
--	ret = virtio_fs_enqueue_req(fsvq, req, false);
-+	ret = virtio_fs_enqueue_req(fsvq, req, false, GFP_ATOMIC);
- 	if (ret < 0) {
- 		if (ret == -ENOSPC) {
- 			/*
--- 
-2.29.2
+With this - what will be your advice to move forward?
+Is there any possibility/way to avoid bisecting? (due limited time from =
+my side)
 
 
