@@ -1,49 +1,58 @@
-Return-Path: <linux-kernel+bounces-309791-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309794-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B22FA967076
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 11:28:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA05496707D
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 11:38:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D48C51C21C09
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 09:28:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9AFA51F23529
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 09:38:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B3E3176AB6;
-	Sat, 31 Aug 2024 09:28:52 +0000 (UTC)
-Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3AE71791ED;
+	Sat, 31 Aug 2024 09:37:57 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A8594C99
-	for <linux-kernel@vger.kernel.org>; Sat, 31 Aug 2024 09:28:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C152616DC33;
+	Sat, 31 Aug 2024 09:37:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725096532; cv=none; b=qxUGDb/zPltS6Zs/x1FS+GWeINbSZbF6/IIBb055FSopTU/klZZ8OvRUFxhvkKCbWtawzDAvfg8NZOeOsKxRJave+X7kME9hgH7rnkhpXPPcuAG9s9zt49BpFeSbVYXDIUnIovNoyVwRpnBHdxriIwH9P9duhj/ayEKjPk6ZVLU=
+	t=1725097077; cv=none; b=CEoG/rGYkkGcKbagUPuYQ9bDdCmacFBczLT9mtP9eMSUxxGnxG8JfIh4s4lcjZeXDQ9xQI1gN2d6NTD4j/b9E+WLwAn0EjCukElL5ObazLcwAZ6vqSypOG3QMOilcS7U3WWEaYiR4tdR/wilm9KYKv/Nu16MFIqLNW1KzzENh94=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725096532; c=relaxed/simple;
-	bh=54HWVix3GdJzZcfJ4QZ8u+yWFp2Ci+ChSRxawQ/dJbA=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=hHt1oR757g29jCuy4r7xztP5uVWNJ4PytTA8c7VUNZcVsWdDi5mLR6fw9qLPGupAMMDOYBIsb3dVqYa62z7Qxqc326rH+KunlbE5/zkIVoNMlrXWme9sfoCEJXdKDGgQqohhTc4l+/sTMVFoW2vkkwUIQjfQyqfDTpKrWomr7ik=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.214])
-	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4WwqQt4N6jz1xwLx
-	for <linux-kernel@vger.kernel.org>; Sat, 31 Aug 2024 17:26:46 +0800 (CST)
-Received: from kwepemh500013.china.huawei.com (unknown [7.202.181.146])
-	by mail.maildlp.com (Postfix) with ESMTPS id 8C1A81A0170
-	for <linux-kernel@vger.kernel.org>; Sat, 31 Aug 2024 17:28:45 +0800 (CST)
-Received: from huawei.com (10.90.53.73) by kwepemh500013.china.huawei.com
- (7.202.181.146) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Sat, 31 Aug
- 2024 17:28:45 +0800
-From: Jinjie Ruan <ruanjinjie@huawei.com>
-To: <tglx@linutronix.de>, <linux-kernel@vger.kernel.org>
-CC: <ruanjinjie@huawei.com>
-Subject: [PATCH -next] genirq/timings: Use min_t() to simplify the code
-Date: Sat, 31 Aug 2024 17:36:54 +0800
-Message-ID: <20240831093654.4139823-1-ruanjinjie@huawei.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1725097077; c=relaxed/simple;
+	bh=1lL0P5MhRS+DnyvL7X98m5nvWYYL0N6ajAaOdNJWiQ4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Z2MPIOi6NSjJ9GDqg8xffBRjbxdLfAk+rZ6Uz9cVVt5m9FmmV7fkaAbT94zhKHYXnkfqAqk9iHvBz/TRTvrW2Tm1FTLMt0ADzLzsZXGy8xNqAfiyd2C2SKdQa7SIzOkBN1koaWMIhwGn1V5oUNZ+Zk+EIOjV/yZpqQmgAa8TEPI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4WwqgV2SmMz4f3jkJ;
+	Sat, 31 Aug 2024 17:37:42 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 6F4F21A07B6;
+	Sat, 31 Aug 2024 17:37:52 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.124.27])
+	by APP4 (Coremail) with SMTP id gCh0CgBXzIJj5NJm0I_lDA--.58191S4;
+	Sat, 31 Aug 2024 17:37:50 +0800 (CST)
+From: Hou Tao <houtao@huaweicloud.com>
+To: linux-fsdevel@vger.kernel.org
+Cc: Miklos Szeredi <miklos@szeredi.hu>,
+	Vivek Goyal <vgoyal@redhat.com>,
+	Stefan Hajnoczi <stefanha@redhat.com>,
+	Bernd Schubert <bernd.schubert@fastmail.fm>,
+	"Michael S . Tsirkin" <mst@redhat.com>,
+	Matthew Wilcox <willy@infradead.org>,
+	Benjamin Coddington <bcodding@redhat.com>,
+	Jingbo Xu <jefflexu@linux.alibaba.com>,
+	linux-kernel@vger.kernel.org,
+	virtualization@lists.linux.dev,
+	houtao1@huawei.com
+Subject: [PATCH v4 0/2] virtiofs: fix the warning for kernel direct IO
+Date: Sat, 31 Aug 2024 17:37:48 +0800
+Message-Id: <20240831093750.1593871-1-houtao@huaweicloud.com>
+X-Mailer: git-send-email 2.29.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -51,33 +60,83 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- kwepemh500013.china.huawei.com (7.202.181.146)
+X-CM-TRANSID:gCh0CgBXzIJj5NJm0I_lDA--.58191S4
+X-Coremail-Antispam: 1UD129KBjvJXoWxZryxAw4xAry7JF1fXFWUArb_yoW5GF48pr
+	WfGan8XrsrJryxJrs3A3WkuFyF9wn5JF47Xr93Ww1rZrW5ZF1I9rnFvF4F9ry7Ary8JFyY
+	qr4SvF1qgryqv3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUv2b4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUXVWUAwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0E
+	n4kS14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I
+	0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWU
+	tVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcV
+	CY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAF
+	wI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa
+	7IU10PfPUUUUU==
+X-CM-SenderInfo: xkrx3t3r6k3tpzhluzxrxghudrp/
 
-The irq count can not exceed circular buffer IRQ_TIMINGS_SIZE, use
-min_t() to simplify it.
+From: Hou Tao <houtao1@huawei.com>
 
-Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
----
- kernel/irq/timings.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+Hi,
 
-diff --git a/kernel/irq/timings.c b/kernel/irq/timings.c
-index c43e2ac2f8de..69f103b4c7a6 100644
---- a/kernel/irq/timings.c
-+++ b/kernel/irq/timings.c
-@@ -406,8 +406,7 @@ static u64 __irq_timings_next_event(struct irqt_stat *irqs, int irq, u64 now)
- 	/*
- 	 * 'count' will depends if the circular buffer wrapped or not
- 	 */
--	count = irqs->count < IRQ_TIMINGS_SIZE ?
--		irqs->count : IRQ_TIMINGS_SIZE;
-+	count = min_t(int, irqs->count, IRQ_TIMINGS_SIZE);
- 
- 	start = irqs->count < IRQ_TIMINGS_SIZE ?
- 		0 : (irqs->count & IRQ_TIMINGS_MASK);
+The patch set aims to fix the warning related to an abnormal size
+parameter of kmalloc() in virtiofs. Patch #1 fixes it by introducing
+use_pages_for_kvec_io option in fuse_conn and enabling it in virtiofs.
+Beside the abnormal size parameter for kmalloc, the gfp parameter is
+also questionable: GFP_ATOMIC is used even when the allocation occurs
+in a kworker context. Patch #2 fixes it by using GFP_NOFS when the
+allocation is initiated by the kworker. For more details, please check
+the individual patches.
+
+As usual, comments are always welcome.
+
+Change Log:
+
+v4:
+ * patch 1: add the missed {flush|invalidate}_kernel_vmap_range() and
+            update commit message accordingly
+ * patch 2: update commit message to explain why GFP_ATOMIC is
+            reasonable for the first invocation of
+	    virtio_fs_enqueue_req().
+
+v3: https://lore.kernel.org/linux-fsdevel/20240426143903.1305919-1-houtao@huaweicloud.com/
+ * introduce use_pages_for_kvec_io for virtiofs. When the option is
+   enabled, fuse will use iov_iter_extract_pages() to construct a page
+   array and pass the pages array instead of a pointer to virtiofs.
+   The benefit is twofold: the length of the data passed to virtiofs is
+   limited by max_pages, and there is no memory copy compared with v2.
+
+v2: https://lore.kernel.org/linux-fsdevel/20240228144126.2864064-1-houtao@huaweicloud.com/
+  * limit the length of ITER_KVEC dio by max_pages instead of the
+    newly-introduced max_nopage_rw. Using max_pages make the ITER_KVEC
+    dio being consistent with other rw operations.
+  * replace kmalloc-allocated bounce buffer by using a bounce buffer
+    backed by scattered pages when the length of the bounce buffer for
+    KVEC_ITER dio is larger than PAG_SIZE, so even on hosts with
+    fragmented memory, the KVEC_ITER dio can be handled normally by
+    virtiofs. (Bernd Schubert)
+  * merge the GFP_NOFS patch [1] into this patch-set and use
+    memalloc_nofs_{save|restore}+GFP_KERNEL instead of GFP_NOFS
+    (Benjamin Coddington)
+
+v1: https://lore.kernel.org/linux-fsdevel/20240103105929.1902658-1-houtao@huaweicloud.com/
+
+[1]: https://lore.kernel.org/linux-fsdevel/20240105105305.4052672-1-houtao@huaweicloud.com/
+
+Hou Tao (2):
+  virtiofs: use pages instead of pointer for kernel direct IO
+  virtiofs: use GFP_NOFS when enqueuing request through kworker
+
+ fs/fuse/file.c      | 62 +++++++++++++++++++++++++++++++--------------
+ fs/fuse/fuse_i.h    |  6 +++++
+ fs/fuse/virtio_fs.c | 25 +++++++++++-------
+ 3 files changed, 65 insertions(+), 28 deletions(-)
+
 -- 
-2.34.1
+2.29.2
 
 
