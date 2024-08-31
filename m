@@ -1,135 +1,123 @@
-Return-Path: <linux-kernel+bounces-309889-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309890-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7E6496718D
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 14:24:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91F23967190
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 14:28:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 28164284054
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 12:24:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C09931C21785
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 12:28:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A42A17E8E5;
-	Sat, 31 Aug 2024 12:24:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J/Q/UXhy"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA92F17E918;
+	Sat, 31 Aug 2024 12:28:09 +0000 (UTC)
+Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.86.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB9A0193;
-	Sat, 31 Aug 2024 12:24:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F01917E46E
+	for <linux-kernel@vger.kernel.org>; Sat, 31 Aug 2024 12:28:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.86.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725107084; cv=none; b=QLu7AQqYU1hSQrGEQRuzipRUIeXMpw5GkG/senRH9maVk2QNWHPJVGogfmjphlRD5TC5F2gZ8vscTyNxB4rk8W5LrGQM9ZZAVz8FMZmxFO3HAcQfF2twXE316ecf2ekQYLTR6ZIlD+JRX6o2oCuALzM4/8KyLy2m5o7npR/kKZs=
+	t=1725107289; cv=none; b=ZVdlYjpQlG9B5/PLTg/2nzb0DcZbc/yzMmUuZOQI1tFwwdPVT+piBVMWjLjX08EfvYsVa2Y3Ojn+T39zZLVQXwsU3/RiqwjFN/osb+HL4Q4FuG0Pu0YhD+F83J44U4RuQZo3mxg2QZcgvCTf1JyT+AkHRZ4DvT0/vYfg2ErUd7o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725107084; c=relaxed/simple;
-	bh=FJujHEIrIRqL8H5Byt3mi6S9BjorpsPwOOBwfAswh+w=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=mNxeHNsB75YcbLZ98IAm6O8YlZ4zwLdu5tEX+Hri7gq6ZtQrcGn7zNU0THunHR6qyTyEc6/55Hune3nAhGBNPG3YyGTZ1m1ZZvNNpPOymQatqR/N6T1kV6K5qsYAntcUaeGz/ianCGamFk/zP+NtAL7e4RjnyijyrRJ0P5LeF98=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J/Q/UXhy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E4DAC4CEC0;
-	Sat, 31 Aug 2024 12:24:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725107083;
-	bh=FJujHEIrIRqL8H5Byt3mi6S9BjorpsPwOOBwfAswh+w=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=J/Q/UXhyFDGsqQPUEPaiUtv+ZEsHHmSDZ/mH3w3eIsNPQAGOWhESCvknN5IlJPP+m
-	 O+ugiZ+unttmWrJ2Pspggk8tCd6CQPzCw7xyBKG1XXaLu9laO6VoIFT6uLrmeHcVF9
-	 5pIjLF1C4Q+D69UFsmKVUDo/kqwhmaaNFeRrrUwaZs9t2n9JI6dQrBsQBdv3ymnxYw
-	 rYbbxlyGoKljjceG5Di42NheWktaq2tMKpNWMWFkuHJJKooAEvcUp5l/U0fW6IZnvR
-	 P8tiY/RWevlyGhCck338odQKPTa92HRWm7qWhyRfbLFp7YdIew6eOao0xR+zUSvQw7
-	 q71OwHXNWh9Fg==
-Date: Sat, 31 Aug 2024 13:24:37 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Abhash Jha <abhashkumarjha123@gmail.com>
-Cc: linux-iio@vger.kernel.org, songqiang1304521@gmail.com, lars@metafoo.de,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] iio: proximity: vl53l0x-i2c: Added sensor ID check
-Message-ID: <20240831132437.1584a0e3@jic23-huawei>
-In-Reply-To: <20240830201627.298264-2-abhashkumarjha123@gmail.com>
-References: <20240830201627.298264-1-abhashkumarjha123@gmail.com>
-	<20240830201627.298264-2-abhashkumarjha123@gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1725107289; c=relaxed/simple;
+	bh=pvC/rc4EGrb8mtS6EIahOyR7G9lc3uRyb0Bj3Pl+MIc=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 MIME-Version:Content-Type; b=j741jVoKIKE4ee0kr4a5S097+RaCqNz07JKlJ6J+1XMxWyFul+X3A5q0JdtOYJAGC/0/wV+5xzVYCuplO60FmhdCuHvrE9XOiNRnP900wtOSGbUEoMgq2MAbPlm6E47xjAHEXqbjwuZXTdZd98KUPADvf8UvRZYiWA5BwBR1pe8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.86.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
+Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
+ relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ uk-mta-401-bIz0EuKoNPmEz4bY-gpZwA-1; Sat, 31 Aug 2024 13:28:03 +0100
+X-MC-Unique: bIz0EuKoNPmEz4bY-gpZwA-1
+Received: from AcuMS.Aculab.com (10.202.163.4) by AcuMS.aculab.com
+ (10.202.163.4) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Sat, 31 Aug
+ 2024 13:27:19 +0100
+Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
+ id 15.00.1497.048; Sat, 31 Aug 2024 13:27:19 +0100
+From: David Laight <David.Laight@ACULAB.COM>
+To: 'Yan Zhen' <yanzhen@vivo.com>, "han.xu@nxp.com" <han.xu@nxp.com>,
+	"haibo.chen@nxp.com" <haibo.chen@nxp.com>, "broonie@kernel.org"
+	<broonie@kernel.org>
+CC: "yogeshgaur.83@gmail.com" <yogeshgaur.83@gmail.com>,
+	"linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"opensource.kernel@vivo.com" <opensource.kernel@vivo.com>
+Subject: RE: [PATCH v2] spi: nxp-fspi: Use max macro
+Thread-Topic: [PATCH v2] spi: nxp-fspi: Use max macro
+Thread-Index: AQHa+IMHZV0HYMLLd0icFMuKBcoi+rJBUF+Q
+Date: Sat, 31 Aug 2024 12:27:19 +0000
+Message-ID: <1ac834f698524ef8bce28a4a1024a3a7@AcuMS.aculab.com>
+References: <20240827131203.3918516-1-yanzhen@vivo.com>
+In-Reply-To: <20240827131203.3918516-1-yanzhen@vivo.com>
+Accept-Language: en-GB, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: aculab.com
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-On Sat, 31 Aug 2024 01:46:25 +0530
-Abhash Jha <abhashkumarjha123@gmail.com> wrote:
-
-> The commit adds a check for the sensor's model ID. We read the model
-> identification register (0xC0) and expect a value of 0xEE.
-> 
-> Signed-off-by: Abhash Jha <abhashkumarjha123@gmail.com>
+From: Yan Zhen
+> Sent: 27 August 2024 14:12
+>=20
+> When the original file is guaranteed to contain the minmax.h header file
+> and compile correctly, using the real macro is usually
+> more intuitive and readable.
+>=20
+> Signed-off-by: Yan Zhen <yanzhen@vivo.com>
 > ---
->  drivers/iio/proximity/vl53l0x-i2c.c | 11 +++++++++--
->  1 file changed, 9 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/iio/proximity/vl53l0x-i2c.c b/drivers/iio/proximity/vl53l0x-i2c.c
-> index 8d4f3f849..2b3dd18be 100644
-> --- a/drivers/iio/proximity/vl53l0x-i2c.c
-> +++ b/drivers/iio/proximity/vl53l0x-i2c.c
-> @@ -39,8 +39,11 @@
->  
->  #define VL_REG_RESULT_INT_STATUS			0x13
->  #define VL_REG_RESULT_RANGE_STATUS			0x14
-> +#define VL_REG_IDENTIFICATION_MODEL_ID			0xC0
->  #define VL_REG_RESULT_RANGE_STATUS_COMPLETE		BIT(0)
->  
-> +#define VL53L0X_MODEL_ID_VAL				0xEE
-> +
->  struct vl53l0x_data {
->  	struct i2c_client *client;
->  	struct completion completion;
-> @@ -223,6 +226,7 @@ static int vl53l0x_probe(struct i2c_client *client)
->  	struct vl53l0x_data *data;
->  	struct iio_dev *indio_dev;
->  	int error;
-> +	int ret;
->  
->  	indio_dev = devm_iio_device_alloc(&client->dev, sizeof(*data));
->  	if (!indio_dev)
-> @@ -237,6 +241,11 @@ static int vl53l0x_probe(struct i2c_client *client)
->  				     I2C_FUNC_SMBUS_BYTE_DATA))
->  		return -EOPNOTSUPP;
->  
-> +	ret = i2c_smbus_read_byte_data(data->client, VL_REG_IDENTIFICATION_MODEL_ID);
-> +	if (ret != VL53L0X_MODEL_ID_VAL)
-> +		return dev_err_probe(&client->dev, ret,
-This first ret should be the error return you want.  So -EINVAL or something like that.
+>=20
+> Changes in v2:
+> - Rewrite the subject.
+> - Using max_t() instead of max().
+>=20
+>  drivers/spi/spi-nxp-fspi.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+>=20
+> diff --git a/drivers/spi/spi-nxp-fspi.c b/drivers/spi/spi-nxp-fspi.c
+> index 88397f712a3b..fda902aa5815 100644
+> --- a/drivers/spi/spi-nxp-fspi.c
+> +++ b/drivers/spi/spi-nxp-fspi.c
+> @@ -756,8 +756,7 @@ static int nxp_fspi_read_ahb(struct nxp_fspi *f, cons=
+t struct spi_mem_op *op)
+>  =09=09=09iounmap(f->ahb_addr);
+>=20
+>  =09=09f->memmap_start =3D start;
+> -=09=09f->memmap_len =3D len > NXP_FSPI_MIN_IOMAP ?
+> -=09=09=09=09len : NXP_FSPI_MIN_IOMAP;
+> +=09=09f->memmap_len =3D max_t(u32, len, NXP_FSPI_MIN_IOMAP);
+>=20
 
-> +				     "Received invalid model id: 0x%x", ret);
+This shouldn't be max_t().
+That is equivalent to:
+=09=09(u32)len > (u32)NXP_FSPI_MIN_IOMAP ? (u32)len) : (u32)NXP_FSPI_MIN_IO=
+MAP;
+Which you'd never write and has the obvious fubar that is 'len' is 64bit
+and greater that 2^32 the wrong thing happens.
 
-This needs to be message only, not an error return.
+=09David
 
-If we return an error here we break any future use of fallback device tree compatibles
-for future devices running with an old kernel. 
+>  =09=09f->ahb_addr =3D ioremap(f->memmap_phy + f->memmap_start,
+>  =09=09=09=09=09 f->memmap_len);
+> --
+> 2.34.1
+>=20
 
-So the most we should do is print a message that observes we don't recognise
-the device, then carry on anyway.
-
-We used to get this wrong in IIO and haven't yet fixed all drivers, but
-I definitely don't want add such hard failures to more drivers.
-
-
-> +
->  	data->vdd_supply = devm_regulator_get(&client->dev, "vdd");
->  	if (IS_ERR(data->vdd_supply))
->  		return dev_err_probe(&client->dev, PTR_ERR(data->vdd_supply),
-> @@ -265,8 +274,6 @@ static int vl53l0x_probe(struct i2c_client *client)
->  
->  	/* usage of interrupt is optional */
->  	if (client->irq) {
-> -		int ret;
-> -
->  		init_completion(&data->completion);
->  
->  		ret = vl53l0x_configure_irq(client, indio_dev);
+-
+Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1=
+PT, UK
+Registration No: 1397386 (Wales)
 
 
