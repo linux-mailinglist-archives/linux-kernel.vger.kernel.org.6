@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-309922-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309923-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 366D09671E4
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 15:38:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 687C29671EF
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 15:39:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8BFBA283F44
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 13:38:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9ABF61C20EB8
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 13:39:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8808A14F98;
-	Sat, 31 Aug 2024 13:38:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7C6614F6C;
+	Sat, 31 Aug 2024 13:39:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vNamdTGC"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vL7ZgIxh"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF9D612B64;
-	Sat, 31 Aug 2024 13:38:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 290765227;
+	Sat, 31 Aug 2024 13:39:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725111511; cv=none; b=r6b56IcffbOpMmJ2+eh+3bwDxn0kTGvQ+29Y8s6XhHrZQ4COAqMyj8vX9Uy6e+64xIrHsXdh8SdnqDSp+z2Hk3iOqKHhnE2oVzjU9YQpTl5/qE6LvOMmxnu7DRv+eaPL5D+O2hgJoRceaslEuO1fW1znqxRsEIWXPZiX54duAag=
+	t=1725111588; cv=none; b=DUasdhRTsHrtTl5gZRoBiQm850KvAWkt6JHeUyx0efOY2b4ATi/kBp9e5wMxxajdxvYzf52hlAgzHhLI1KW5GPFv0Y9OyPkyjlxq5fDAndteXeuebOGRoQvnYhW+tsaUs4EnxY9e2HD4TUPFJIXfJOX6z28Gcbbo9djG/0Slny8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725111511; c=relaxed/simple;
-	bh=i+XoQypci//bHcijF2Bc9bs00F7M1gn/VdtpSbANkwc=;
+	s=arc-20240116; t=1725111588; c=relaxed/simple;
+	bh=van4tTdcIFIgu7RthN3qncoCCZAubLKGTpYt/BCiw38=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eNa+pCSGmq2rs9lPKybWITVhYw197qbIAzZNaV2p0/p54bO52a7cPRX1j6bAfUSMhBzWM7AFPs7xEdqhjxeshLwr+A2JhnJsoWvg9pZw113tnFH5SZtoGPJ9nHDUp5dV4OT1SLA7eWncR41PT/Oc5xveTKPa7hl01kiFnSBB7uo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vNamdTGC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96334C4CEC0;
-	Sat, 31 Aug 2024 13:38:25 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=lsXAizoVcWsAWTwonFF3cktZaL/sPv51lUW2OC9oXd2dLd1VbumJQnVdq4ZwAAK3+QQL6mdJ1D9oA0SS2aI7gM1MzkGcG7isfeRzcNxWqwsKduzXaEQ1lgo/+hOuWMvPJgMvTgiV4K4QhqNZqqBq/TM34ENeCAxAJBM0sIjui8Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vL7ZgIxh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83961C4CEC0;
+	Sat, 31 Aug 2024 13:39:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725111510;
-	bh=i+XoQypci//bHcijF2Bc9bs00F7M1gn/VdtpSbANkwc=;
+	s=k20201202; t=1725111588;
+	bh=van4tTdcIFIgu7RthN3qncoCCZAubLKGTpYt/BCiw38=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=vNamdTGCJIJd/Zbg81RoXAkCp1WUzXX/rjXHOLQZNrgyA8XLx1LGvS0KFTZUQTw9i
-	 /B9I3MczeWdQtVkCwQOS5af3KT+QsulT8kD425ISKwq5b0KnUOhpaEO+Bw70a594jX
-	 XBY4DZbpUB2VS9gEB5i2rfIwDFAYuntNMFPjOH/FQEnD0SQ06s30virWW4GdgsgZci
-	 eFXGCm1ITK4WUCkS8S8lC9N5azzCRkkOBYjs1iSsBQd2rB50UtC+lfz4aUQNp9AmFB
-	 Vow8weXmf2u0rIGyPVHJRzrIMTUVwHdfIh4SZjq+tuVSIWYTEfqZ+EnIZDPTsweaBz
-	 t2L+S+nfeKjCA==
-Message-ID: <eb96bcf2-8bcd-4801-b381-96583d733b87@kernel.org>
-Date: Sat, 31 Aug 2024 15:38:23 +0200
+	b=vL7ZgIxhdZQs3TDYXqGYvjpN9yzrwtLLyvGmgAFZhWWTdZx6pkSpj2OQ8tdE9Wk4q
+	 4FHG9bJlS4EkRCYwAR5vRMOB1wTDpWGeGFY1VlTchL+cxnh8QGW7IY/ruHmGpzz344
+	 Nl9Ws9aY8mZdyz7lCWVBRRk+20BatbtVOniytX0Hrcc0DrQkj2EpStQReBC0B8+U0w
+	 xjao79AzOPAUFcBjIlUIS6khIKqoBraKWkWvcgV7Sg+ookC7vvk1Gsut4+ou6/0ph/
+	 vh9NDZPZNoxtImzfeamYvYcGvzIdNwtTI4eyyAgQ5h5DigwFB5y+FyR9oYPwpoAa+W
+	 0onOTQ955lgGQ==
+Message-ID: <4962c133-50e7-4d3f-998a-b8d853ab1425@kernel.org>
+Date: Sat, 31 Aug 2024 15:39:41 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,17 +49,17 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dt-bindings: ARM: at91: Document Microchip SAMA7D65
- Curiosity
+Subject: Re: [PATCH] dt-bindings: clocks: atmel,at91sam9x5-sckc: add sama7d65
 To: Dharma Balasubiramani <dharma.b@microchip.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Nicolas Ferre <nicolas.ferre@microchip.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Nicolas Ferre <nicolas.ferre@microchip.com>,
  Alexandre Belloni <alexandre.belloni@bootlin.com>,
  Claudiu Beznea <claudiu.beznea@tuxon.dev>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, Romain Sioen <romain.sioen@microchip.com>
-References: <20240829-sama7d65-core-dt-v1-1-e5d882886f59@microchip.com>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20240829-sama7d65-sck-v1-1-3e7b19e3cbf9@microchip.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -105,42 +105,35 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240829-sama7d65-core-dt-v1-1-e5d882886f59@microchip.com>
+In-Reply-To: <20240829-sama7d65-sck-v1-1-3e7b19e3cbf9@microchip.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 29/08/2024 11:57, Dharma Balasubiramani wrote:
-> From: Romain Sioen <romain.sioen@microchip.com>
+On 29/08/2024 12:54, Dharma Balasubiramani wrote:
+> Add bindings for SAMA7D65's slow clock controller.
 > 
-> Document device tree binding of the Microchip SAMA7D65 Curiosity board.
-> 
-> Signed-off-by: Romain Sioen <romain.sioen@microchip.com>
-> Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
 > Signed-off-by: Dharma Balasubiramani <dharma.b@microchip.com>
 > ---
->  Documentation/devicetree/bindings/arm/atmel-at91.yaml | 7 +++++++
->  1 file changed, 7 insertions(+)
+>  Documentation/devicetree/bindings/clock/atmel,at91sam9x5-sckc.yaml | 1 +
+>  1 file changed, 1 insertion(+)
 > 
-> diff --git a/Documentation/devicetree/bindings/arm/atmel-at91.yaml b/Documentation/devicetree/bindings/arm/atmel-at91.yaml
-> index 82f37328cc69..8e897680d43a 100644
-> --- a/Documentation/devicetree/bindings/arm/atmel-at91.yaml
-> +++ b/Documentation/devicetree/bindings/arm/atmel-at91.yaml
-> @@ -174,6 +174,13 @@ properties:
->            - const: atmel,sama5d4
->            - const: atmel,sama5
->  
-> +      - description: Microchip SAMA7D65 Curiosity Board
-> +        items:
-> +          - const: microchip,sama7d65-curiosity
-> +          - const: microchip,sama7d65
-> +          - const: microchip,sama7d6
-> +          - const: microchip,sama7
-> +
+> diff --git a/Documentation/devicetree/bindings/clock/atmel,at91sam9x5-sckc.yaml b/Documentation/devicetree/bindings/clock/atmel,at91sam9x5-sckc.yaml
+> index c2283cd07f05..d4cf8ae2961e 100644
+> --- a/Documentation/devicetree/bindings/clock/atmel,at91sam9x5-sckc.yaml
+> +++ b/Documentation/devicetree/bindings/clock/atmel,at91sam9x5-sckc.yaml
+> @@ -20,6 +20,7 @@ properties:
+>        - items:
+>            - enum:
+>                - microchip,sam9x7-sckc
+> +              - microchip,sama7d65-sckc
+>                - microchip,sama7g5-sckc
+>            - const: microchip,sam9x60-sckc
 
-No. This must go with the DTS.
+I have doubts about this as well. For example "microchip,sam9x7-sckc"
+was added, but there are no users.
 
-It's second patch you sent entirely split from the rest. That's not how
-upstreaming of DTS and drivers work.
+Stop adding bindings without users. Before you keep posting more of this
+stuff, post your DTS in parallel.
 
 Best regards,
 Krzysztof
