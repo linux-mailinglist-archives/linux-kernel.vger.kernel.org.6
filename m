@@ -1,92 +1,129 @@
-Return-Path: <linux-kernel+bounces-309629-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309630-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7F56966D8E
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 02:38:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A26B7966D90
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 02:39:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 829C128307C
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 00:38:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 177C8B22F09
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 00:39:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D23EC179AE;
-	Sat, 31 Aug 2024 00:38:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B6F717BAF;
+	Sat, 31 Aug 2024 00:39:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="I4axDld3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b="Bj5JVRGA";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="UMihmeHA"
+Received: from fhigh5-smtp.messagingengine.com (fhigh5-smtp.messagingengine.com [103.168.172.156])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 187DF2C9A
-	for <linux-kernel@vger.kernel.org>; Sat, 31 Aug 2024 00:38:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FB4714295;
+	Sat, 31 Aug 2024 00:39:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.156
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725064695; cv=none; b=pfvSg0nmb5rJxGexM1Xsfx3CCKd8L0VzHbxeGXMEGyxWZHQYClF31El+W3Tk7xxwuCxKsfhHXqASRpLhW6lSMWSjyjl8nPBBOuocI1WwE5Oh+xkK0RgLWtjHzT9SZZA0BMj5ODYb7yhdGWk419unYn8FslC2daN5gHxkvGSy8pg=
+	t=1725064757; cv=none; b=RPRpsVT/5ZbjQYNXbfjUXnR/XCns4VdLRFioJk9IENBl5/lRfsFAm/mRZVIZCIjvCIDWxzhUxXWjP3adtC4liZhQVS8oaOCEQWL/gE//0BP6QVMMOxGX7ZPUxtamPdjkaAzT0C4WjNppyYBPP5YeHOfZYBBFzrVJIlta3Xb3mJg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725064695; c=relaxed/simple;
-	bh=41QhoOH043vB3lz1p4/QFHetCaG4BRSFEdl5XSgn20o=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=Bog2TGyj5j5V7pS6gEUJ0phjBsoCMT/wjZbdvSH6fnNQdih+a3UmrykZqELV1agp4yREbEbMK4Ft4EdhpOrm0qhnydq9faUrew39SZxOl2brwwir23nTXS79qul8Q8XVeDqwsDuBePj0I3ZB6NQ82po3NKgRtJgIx0cmP4ycCtY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=I4axDld3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 54827C4CEC2;
-	Sat, 31 Aug 2024 00:38:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1725064694;
-	bh=41QhoOH043vB3lz1p4/QFHetCaG4BRSFEdl5XSgn20o=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=I4axDld3rFxM/mIdfbjlATcUOo6WidbcUVzr40cusz+DMssOens3X3GyvPkj8kqKv
-	 GMoWx6THtCgUzQty2MKBncRUTTpqspOO/4hDLgTi1FhcX2MLduJ+mtC+Nv6rBtq8dK
-	 CTuo2lYV3058JjLZLHwlcbJeET35X6mPRE0My5eI=
-Date: Fri, 30 Aug 2024 17:38:13 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Jingxiang Zeng <linuszeng@tencent.com>
-Cc: Jingxiang Zeng <jingxiangzeng.cas@gmail.com>, linux-mm@kvack.org, Yu
- Zhao <yuzhao@google.com>, Wei Xu <weixugc@google.com>, "T . J . Mercier"
- <tjmercier@google.com>, Kairui Song <kasong@tencent.com>,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mm/vmscan: wake up flushers conditionally to avoid
- cgroup OOM
-Message-Id: <20240830173813.c53769f62bf72116266f42ca@linux-foundation.org>
-In-Reply-To: <20240829102543.189453-1-jingxiangzeng.cas@gmail.com>
-References: <20240829102543.189453-1-jingxiangzeng.cas@gmail.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1725064757; c=relaxed/simple;
+	bh=mppTRV1zZW/Ag1x0EJ0PAo1cyUU547iLWc9ES9D0S+o=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bOcnJotVJisaruJRJpVh3WDvwNMxkOx0YsIOjYNny8z3o9rSx1rcgU6kT+B5Jgi7udBjxIGg499hZPnEn8ceJ0Wl5jOJkjVC2CIAt+C0/Y2pCvLvFXJY+YX/2pKPEM+060KAna9XWn8VUSPzvh0Nx/kmBIbofi61C3y/g2S8pzM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev; spf=none smtp.mailfrom=ljones.dev; dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b=Bj5JVRGA; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=UMihmeHA; arc=none smtp.client-ip=103.168.172.156
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ljones.dev
+Received: from phl-compute-08.internal (phl-compute-08.nyi.internal [10.202.2.48])
+	by mailfhigh.nyi.internal (Postfix) with ESMTP id A82741140175;
+	Fri, 30 Aug 2024 20:39:13 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-08.internal (MEProxy); Fri, 30 Aug 2024 20:39:13 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ljones.dev; h=cc
+	:cc:content-transfer-encoding:content-type:date:date:from:from
+	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
+	:to; s=fm2; t=1725064753; x=1725151153; bh=LXV0nOlsOnCv/Pdhy6bRp
+	V1/J/v3Qjd5zmbmqu2eUCY=; b=Bj5JVRGAWnSIxW/Bah3o7S+tNwn6Cat5W3VHD
+	6WuPyHJ5lSTYwA/OARj7useI6A3f5f7Xld/KTCH2Ntxu9RVY1XHYjUhoCWmNqHCc
+	+ucSJvN/bE+nzCdcCO8FrdJBhLyzGgyRbsJhu7kkdlYOCVHqArIr/uhRqBuH9rgy
+	QW0JSBStcFHbgJO3wd+IFhu1BW6Az7Vm9W5h9xxGTCzHU6rYmnvv9tshRJzIEl7v
+	IvCx+UBE27mk5BHWmmoAVs281TeIckeHQ2qbawxsgHoqYoqSYe+1oPSMCwysp3He
+	6P4iTYX5JcKxvTUvKn5XLu2le0CJum97rGK6GXXG/eDZ+FgXQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:date:date:feedback-id:feedback-id:from:from
+	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm1; t=1725064753; x=1725151153; bh=LXV0nOlsOnCv/Pdhy6bRpV1/J/v3
+	Qjd5zmbmqu2eUCY=; b=UMihmeHAPUrxNvtqNJ/YGHUON12ebsxW30SnwKZfDmnj
+	NPAxQCcyIe4aFO/6QzgEtadv7li1CP7r5mf9zpXVc/RbN7XdzLo8IX0Hn60/4OcK
+	ZyKRIG/HUP3f+ib1D554UUkfhsGQhbJ/DiTTXLhbekl6fLTQcfF8lCzOGeGWKWNI
+	8kFWK0VT1rxOVxTQYhh7aoKwIKdOnSVhGWlOogL1qM3sVirncBWU3kFtUFgaxDIb
+	k6kkMoCxPdIB1KwPgOp656v9tgqsvgqGML9ezqkMTnsury5AqH1bcOqvKNKTzElj
+	p0+crTL2sZgmLX5togA+i23khQ29CrDyaT7HBxMXDw==
+X-ME-Sender: <xms:MWbSZiFtpVwTH66bE2_ONW49yoXc2dh7A_iHtrrtPX1F3RTTjGTZDw>
+    <xme:MWbSZjU53ZIVVauSnidX6AgNREOGj4BMpww4FQ8qI_dvXTotzne1RHvN4crwL2juK
+    BZaShzGlFLpReHDduc>
+X-ME-Received: <xmr:MWbSZsJR0_N3kfS4Rgj-_EiDqaMAE7B51CswSDwY_mRmfUCLoKnR0s4KxIdQ-nT25M2UrVDCPURXSQjA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudefjedgfeeiucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucenucfjughrpefhvfevuf
+    ffkffoggfgsedtkeertdertddtnecuhfhrohhmpedfnfhukhgvucffrdculfhonhgvshdf
+    uceolhhukhgvsehljhhonhgvshdruggvvheqnecuggftrfgrthhtvghrnhepgfdujedthf
+    duudekffefkeeiffdttddvhfegudduueffuefhfefggeefteevvdegnecuvehluhhsthgv
+    rhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheplhhukhgvsehljhhonhgvsh
+    druggvvhdpnhgspghrtghpthhtohepiedpmhhouggvpehsmhhtphhouhhtpdhrtghpthht
+    ohepphhlrghtfhhorhhmqdgurhhivhgvrhdqgiekieesvhhgvghrrdhkvghrnhgvlhdroh
+    hrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdr
+    ohhrghdprhgtphhtthhopehilhhpohdrjhgrrhhvihhnvghnsehlihhnuhigrdhinhhtvg
+    hlrdgtohhmpdhrtghpthhtohephhguvghgohgvuggvsehrvgguhhgrthdrtghomhdprhgt
+    phhtthhopehshhihrghmqdhsuhhnuggrrhdrshdqkhesrghmugdrtghomhdprhgtphhtth
+    hopehluhhkvgeslhhjohhnvghsrdguvghv
+X-ME-Proxy: <xmx:MWbSZsGHKYwn1A1V3rbuBoYUmX08LchBcVj42C90XUwf0_7GKV1Ylg>
+    <xmx:MWbSZoX31b3JZOaFUL8t9JRDUSroT3wtizIKA_UN709e-rw3PKlKZA>
+    <xmx:MWbSZvN9_hXJRKj0CHjVsb7teLtZE-csQCwJNncC_Rq8-cwIdTz5mQ>
+    <xmx:MWbSZv2DJUvpi7iXuE8PySQ-4R_K-FVXAjGUJ2fMoQGdSyfdQMe3eA>
+    <xmx:MWbSZic9D3bj4lFVh9d01r20o_7VnQmBAUL5AFp9sydMhioxCtDD2Cl3>
+Feedback-ID: i5ec1447f:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 30 Aug 2024 20:39:10 -0400 (EDT)
+From: "Luke D. Jones" <luke@ljones.dev>
+To: platform-driver-x86@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	ilpo.jarvinen@linux.intel.com,
+	hdegoede@redhat.com,
+	Shyam-sundar.S-k@amd.com,
+	"Luke D. Jones" <luke@ljones.dev>
+Subject: [PATCH] platform/x86/amd: pmf: Make ASUS GA403 quirk generic
+Date: Sat, 31 Aug 2024 12:39:05 +1200
+Message-ID: <20240831003905.1060977-1-luke@ljones.dev>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Thu, 29 Aug 2024 18:25:43 +0800 Jingxiang Zeng <jingxiangzeng.cas@gmail.com> wrote:
+The original quirk should match to GA403U so that the full
+range of GA403U models can benefit.
 
-> From: Zeng Jingxiang <linuszeng@tencent.com>
-> 
-> Commit 14aa8b2d5c2e ("mm/mglru: don't sync disk for each aging cycle")
-> removed the opportunity to wake up flushers during the MGLRU page
-> reclamation process can lead to an increased likelihood of triggering
-> OOM when encountering many dirty pages during reclamation on MGLRU.
-> 
-> This leads to premature OOM if there are too many dirty pages in cgroup:
-> Killed
-> 
-> ...
->
-> The flusher wake up was removed to decrease SSD wearing, but if we are 
-> seeing all dirty folios at the tail of an LRU, not waking up the flusher 
-> could lead to thrashing easily. So wake it up when a mem cgroups is 
-> about to OOM due to dirty caches.
+Signed-off-by: Luke D. Jones <luke@ljones.dev>
+---
+ drivers/platform/x86/amd/pmf/pmf-quirks.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks, I'll queue this for testing and review.  Could people please
-consider whether we should backport this into -stable kernels.
-
-> MGLRU still suffers OOM issue on latest mm tree, so the test is done
-> with another fix merged [1].
-> 
-> Link: https://lore.kernel.org/linux-mm/CAOUHufYi9h0kz5uW3LHHS3ZrVwEq-kKp8S6N-MZUmErNAXoXmw@mail.gmail.com/ [1]
-
-This one is already queued for -stable.
-
+diff --git a/drivers/platform/x86/amd/pmf/pmf-quirks.c b/drivers/platform/x86/amd/pmf/pmf-quirks.c
+index 460444cda1b2..48870ca52b41 100644
+--- a/drivers/platform/x86/amd/pmf/pmf-quirks.c
++++ b/drivers/platform/x86/amd/pmf/pmf-quirks.c
+@@ -25,7 +25,7 @@ static const struct dmi_system_id fwbug_list[] = {
+ 		.ident = "ROG Zephyrus G14",
+ 		.matches = {
+ 			DMI_MATCH(DMI_SYS_VENDOR, "ASUSTeK COMPUTER INC."),
+-			DMI_MATCH(DMI_PRODUCT_NAME, "GA403UV"),
++			DMI_MATCH(DMI_PRODUCT_NAME, "GA403U"),
+ 		},
+ 		.driver_data = &quirk_no_sps_bug,
+ 	},
+-- 
+2.46.0
 
 
