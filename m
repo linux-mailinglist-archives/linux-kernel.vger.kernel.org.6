@@ -1,77 +1,91 @@
-Return-Path: <linux-kernel+bounces-309931-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309932-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E858967208
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 16:00:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B6D9996720B
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 16:07:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B83971C21449
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 14:00:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E847D1C2169B
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 14:07:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B63B01BDDB;
-	Sat, 31 Aug 2024 14:00:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBC0A1CA9F;
+	Sat, 31 Aug 2024 14:07:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="h/JZnhP5"
-Received: from mail-m16.yeah.net (mail-m16.yeah.net [220.197.32.17])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A02B3A932;
-	Sat, 31 Aug 2024 14:00:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.17
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DlN7KrcQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 202CCB67F;
+	Sat, 31 Aug 2024 14:07:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725112851; cv=none; b=UfadMQMeOG7ONT4PWdA3yIv3KGkEehYfFLoUF0qyJzlDSXIkWyMfFVtrz6kyBL0WyCcQFcwN+4i+Vb21nLO3xPiyegVp5mzG7zJCu57uIdl6a/SehpPChEdbo9kYT/FshMS9DYrA7UTXcieI51pdd6gIasmeaaNPtIevUFMvrgc=
+	t=1725113252; cv=none; b=lzswMK89OavOXaDPKdBAoJuGlrZ11F/2n0uxc5Mod+E23wqWY9pN4U/T2+LHP2XQOTxg7Ve+1tXUJN4Eiy/4ZbqQgJPDvo3zUrfciwNzpPmV9Gljawzal5bXvZxcrp34vO71hs7OGzTZKzPVBGQkSnO9QfeTOY+IKPlIhCtoNuo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725112851; c=relaxed/simple;
-	bh=y4Qdhjn0FN8uf9zeE27PFL4cEPKOHqWUGu3Z9m6rDXo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=G+6VOgakQPIgBRuTa1BlPwY9kWyfpGUULO6yCQJxMv3saJD/7pQ4JnXbBZu34fueXGowqAYer6YsvIJYs97D1mBxIiBTtrw2yhaoTxoPkOTQyrEBRZP5+03KS5F81FQeSoPbOqCtebqEKGQssKBK73vZxOfHuJKnETgDzhFbanE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=h/JZnhP5; arc=none smtp.client-ip=220.197.32.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
-	s=s110527; h=Date:From:Subject:Message-ID:MIME-Version:
-	Content-Type; bh=ZHMlLxBV6WiIADgN4jDjxhO6TGFE1s5YKCIdS8a3q+A=;
-	b=h/JZnhP5twlgQ7wbNgfW7av4FiiGw5reDcjYIywCCqLHLTy69k1WVGSFcAB61j
-	yT5HFdYy4p/CgcDxueLOP6m8HSbm5EzuZQKw1ro6uI0n1tKR0eNOAbB1XDhrVPDF
-	b6llauRWk0rQETPITjzD14QnmahhYodc5gM5m1CZBuBK8=
-Received: from dragon (unknown [114.216.210.89])
-	by gzsmtp3 (Coremail) with SMTP id M88vCgCXh9XoIdNmkpo6AA--.14294S3;
-	Sat, 31 Aug 2024 22:00:10 +0800 (CST)
-Date: Sat, 31 Aug 2024 22:00:08 +0800
-From: Shawn Guo <shawnguo2@yeah.net>
-To: Adam Ford <aford173@gmail.com>
-Cc: linux-arm-kernel@lists.infradead.org, aford@beaconembedded.com,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, devicetree@vger.kernel.org,
-	imx@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V2] arm64: dts: imx8mp-beacon: Enable DW HDMI Bridge
-Message-ID: <ZtMh6J9pUUTPdWo9@dragon>
-References: <20240819231814.120053-1-aford173@gmail.com>
+	s=arc-20240116; t=1725113252; c=relaxed/simple;
+	bh=/vdmoZVEwx28LixhMMtoYCBSI0UdVZq6WkEm+VOLStA=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=j/pPVQwUKWfPoICo17j0KljOwKk9Dlg2T9cHa1vuuoFUR8J1X3cUrL3g1+dqtajaWs0X6vIggOUN5WorW5qowFp2snAHyNevUwJDXKpkfuOyTNkTq+7FOIKxVc+eQ30AiCX6wW0k2btwPNLYVGMIY9JYx34fFUrRSSHM5kdBpzg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DlN7KrcQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 42A9AC4CEC0;
+	Sat, 31 Aug 2024 14:07:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725113251;
+	bh=/vdmoZVEwx28LixhMMtoYCBSI0UdVZq6WkEm+VOLStA=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=DlN7KrcQ2CX9qKiczHDvzC8avGLDsRcaQj49xGEuQ6Rx1BsQ2sqxlqmd3KkAx/gRD
+	 Gmf2RNhdPL31BShmTV6gc4VuQVK+opuHhzn+FPTR6EN7R00HnTsOx//4IjnMZYIgaL
+	 oKqcshQqT6ZHQ/yuuTJD61IoRSsB0IQkHJ9BsrXZ/mjR5AvgmfZPoAwyqJytghwAuT
+	 OrP2oJQvdryzCcwhraOQdh0lMT5cvDH1hchsX8TDu0m3tjAz4xez8e4rQieFUS0PeJ
+	 Avpe1enKJIaunuoWMBYSvpJrRh57FUbt46HJ+59W3IB0h8Ip+28Pqvv0SB4+Sov1LP
+	 5ZjyVc7Dqba2w==
+Date: Sat, 31 Aug 2024 15:07:24 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: wangshuaijie@awinic.com
+Cc: lars@metafoo.de, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, kees@kernel.org, gustavoars@kernel.org,
+ linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org,
+ liweilei@awinic.com, kangjiajun@awinic.com
+Subject: Re: [PATCH V9 0/2] Add support for aw96103/aw96105 proximity sensor
+Message-ID: <20240831150724.201e7d73@jic23-huawei>
+In-Reply-To: <20240827080229.1431784-1-wangshuaijie@awinic.com>
+References: <20240827080229.1431784-1-wangshuaijie@awinic.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240819231814.120053-1-aford173@gmail.com>
-X-CM-TRANSID:M88vCgCXh9XoIdNmkpo6AA--.14294S3
-X-Coremail-Antispam: 1Uf129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
-	VFW2AGmfu7bjvjm3AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxUIksgUUUUU
-X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiEgNMZWbS-GZHsAAAsh
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Mon, Aug 19, 2024 at 06:18:14PM -0500, Adam Ford wrote:
-> There is a second HDMI connector on the baseboard which is routed
-> to the DW HDMI bridge through the PVI to the LCDIF3 and requires the
-> HDMI PHY to be enabled too.
+On Tue, 27 Aug 2024 08:02:27 +0000
+wangshuaijie@awinic.com wrote:
+
+> From: shuaijie wang <wangshuaijie@awinic.com>
 > 
-> Signed-off-by: Adam Ford <aford173@gmail.com>
+> Add drivers that support Awinic aw96103/aw96105 proximity sensors.
+> 
+> The aw9610x series are high-sensitivity capacitive proximity detection
+> sensors. This device detects human proximity and assists electronic devices
+> in reducing specific absorption rate (SAR) to pass SAR related certifications.
+> The device reduces RF power and reduces harm when detecting human proximity. 
+> Increase power and improve signal quality when the human body is far away.
+> 
+> The specific absorption rate (SAR) is a metric that measures the degree of
+> absorption of electromagnetic radiation emitted by wireless devices,
+> such as mobile phones and tablets, by human tissue.
+> 
+> This patch implements device initialization, registration,
+> I/O operation handling and interrupt handling, and passed basic testing.
+I made one trivial tweak to add static to the iio_info declaration and
+applied to the togreg branch of iio.git, initially pushed out as testing
+for 0-day to see if it can find any issues we missed.
 
-Applied, thanks!
+Thanks,
 
+Jonathan
 
