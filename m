@@ -1,73 +1,73 @@
-Return-Path: <linux-kernel+bounces-309953-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309954-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E390967262
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 17:31:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8DE3967268
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 17:34:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3DAA31C21617
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 15:31:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F60528372F
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 15:34:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1F3E25624;
-	Sat, 31 Aug 2024 15:31:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C60328377;
+	Sat, 31 Aug 2024 15:33:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="YslcUk6Y"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="Vs2Cb78D"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CDD21CFBE
-	for <linux-kernel@vger.kernel.org>; Sat, 31 Aug 2024 15:31:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DD931BF2A
+	for <linux-kernel@vger.kernel.org>; Sat, 31 Aug 2024 15:33:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725118294; cv=none; b=tieF/gWSmzASbsNJE4ViWIQqCPBY9bMCyFMKHiyqBW36tPqlJG4j4488yfJcEvoPR0lLdXcmjPB3Yx6KXzVzXzkHgfHtOfPUDhL7HjlvP4A7zWIImCCVOV5o/MaEkcUHdhecUFOiF2Miwx78lnPqfds75OikTknUcQ1XTPJ0MYo=
+	t=1725118437; cv=none; b=mEI3iblmAvocbYu8kTa6Xcrd3ASo0bx60CfPkHjYaf7aHwPoTRwjgRcqUk3t5DUYfT8asvMT+PPRohoyC/dWiuCCrD/Hukkaf66pDXOCsbjp7cuLivufcp1M3xelJNN8m6E6PZ/swaQsN5SBwH2Gos99dXnHD8CMDEPTke2f7ds=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725118294; c=relaxed/simple;
-	bh=I59zsQ6QDYn2BmE7tLRFbrgQRGFZIRMC4ejMVwM/98g=;
+	s=arc-20240116; t=1725118437; c=relaxed/simple;
+	bh=0Aq1sNKfFzJn8xQpMMG4pqBsSwiOHkTTuHUhXG4ekCM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=JLDT6q+N4opba/SS9CW6Q1Ck9yE64QfjiZc/iaHGt0HOSjqfgW0i3n9BIFMnJ46ZPA5mi8e8L+CKGURbJQUWkeBH19fg28w5ZzblePB/isJL9rN6z/gZauAewSKrrJ7iMnWEWG5QrTT+vR1Ckoh7uhV0x2zONxtz8U2+yQldFIA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=YslcUk6Y; arc=none smtp.client-ip=209.85.128.49
+	 In-Reply-To:Content-Type; b=BtiUoWStcjdSznAO8L6iiZki1A7FSKk9TwGzqC3ic+CLTgd/PvKoxkreioyk0IMZfFFZo+eqpExf5yhXJBcTr4VSv/wxbdyCrHw7+We57D0ZzRBtQgwLSk4cr2RhbFKbUEJyBu99X+CRc04Oxkfu8/cMN5S+V9RnVnhUpRbImKA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=Vs2Cb78D; arc=none smtp.client-ip=209.85.128.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-42bac9469e8so23116205e9.3
-        for <linux-kernel@vger.kernel.org>; Sat, 31 Aug 2024 08:31:32 -0700 (PDT)
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-42c7bc97423so3114205e9.0
+        for <linux-kernel@vger.kernel.org>; Sat, 31 Aug 2024 08:33:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1725118291; x=1725723091; darn=vger.kernel.org;
+        d=tuxon.dev; s=google; t=1725118434; x=1725723234; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:references:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=2CEOjK3+I6m6XV07ddXyAN85PV8Q65Umk8iIBSqhSAg=;
-        b=YslcUk6YIzKvrEvIwxNJvCpiWal+c+dNs9so+6oIcD98DxPcqG7W1NHJMrZYt8/s6R
-         dCsNfLNP0/l656J4bZ/+vW+DUeRzuUr7531zXdse+EqY7DyCgkDQLZ61HEz7+Pp2A4Tz
-         +BEvE/VUgGe1RCSLlfJ6XayKwGgLOp20KVLqU0+pWAdE2jBsJrohkp1qQ3htI6R8GOGF
-         XgBSo7i8Ufvq0a7pUre5D2eJGiwBfLS/4JvAv0+tpcVWVuKccKOTR78JVMQxk9j7P3Qa
-         WUozmO+1XuRl4G4UhNixVEAPTM3jA1SHP2dOrPaTEMXGnJVzvwRilWpqISsC2rmxA98w
-         Dbcw==
+        bh=N9MjxDrbaua4w9wMZSO5n89c35tDh+VOTCEJqezilSA=;
+        b=Vs2Cb78DqI+829I3CnXDTWAlQjDkpK/MMbuMa9b0vQJUb2DDQVo3kGePsHxBNCw22D
+         lGZXz4qoXUPduQoRXVo0/W9EAbSxdSiLGFcz1Vpqp20PVjYqlYZblNwJksLuTQPlWrHf
+         viQ0spERVeoMJC3eP4BVzJbqlZEhR2kTf/DJ1MH/jRH/hs9/zazTEGY+1/jHCBv7Ykd4
+         n4+WAMcP0ef0xlqRFb4hQfguGPpIQDWSUb3pcAjDgBfK4AJMEzQK9ySs+/0hwf41z/Y/
+         Ja3YO4yqxep5Qm5U4I0hhwH6hQBqH7a7FSjJrQSb5OJUZ45Mdy4WapvAwpnovsiQhVSk
+         riNw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725118291; x=1725723091;
+        d=1e100.net; s=20230601; t=1725118434; x=1725723234;
         h=content-transfer-encoding:in-reply-to:from:references:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2CEOjK3+I6m6XV07ddXyAN85PV8Q65Umk8iIBSqhSAg=;
-        b=wlPk8HUwQNIkg/4Wh0eh+mj37DoU2qqi1CWD1OAyEHKKppO4R788lp06YqC4hZvp5L
-         mhsd6wEdJEkE8v3FLTgIsDfBsDnPud30byiHoJjPxky94VL4czFuMY0oYXjoal9FdMxO
-         ugs9W5VIC2VED/swj28sj13ymR/p/uK0Pl+BDSJw3PD5ELTcjd/ImeBH9sfiAYFHqkti
-         RYm5XUEJ5V0/ymOrToYlAuEm+M/hBkiDbWXSmAJakWRcSLZ80FjeyKjjrxxUc5BCqhsG
-         6G3T5PdrymCRfuL3ClRYWIrhywPXxX5dmNgZSHJWdOQ7zqsofc7yQtEgrEHRvqK9Q5fv
-         Yr8g==
-X-Forwarded-Encrypted: i=1; AJvYcCUHeukhW4Y0SybBf3SGfKOXz/Sk+KacM1yCz3JoVdhjrvSgbUDlzXlfa8VsZrPq3QZKT+DgUCktUojIwp4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxvVtQxFCKG+2I2Bl90cNNofM6mQ7t3oR6p2muHsrXlqJXCtJNF
-	kS6X5fe+4BYs+VN1QIyqOv9AOFHqwkY27CcrCc5y8LqOqw+nLuKCoKlHyQQdid0=
-X-Google-Smtp-Source: AGHT+IEtXhnWcJIqV3twT2kpt1vTDEto7JbVHcOrgywhbCWyeChW/zqbdIf9e/yto9DDK2RIMg4Zug==
-X-Received: by 2002:a05:600c:4455:b0:426:5cee:4abc with SMTP id 5b1f17b1804b1-42bb0262d4emr74545385e9.20.1725118291319;
-        Sat, 31 Aug 2024 08:31:31 -0700 (PDT)
+        bh=N9MjxDrbaua4w9wMZSO5n89c35tDh+VOTCEJqezilSA=;
+        b=r9Owscn8EyNIIIX/jEebDs9ch/q5xCz4dyQDfyVi6fVlUcszgeQwWmpF0Qnd3+vCHn
+         jAjuODq4Vj1dL8BY2zcBKcL6JkfuY0Y0SSmLAsLALRZ+lOAVC7YUm/kxVQKsB4KnScx3
+         7Xg07XegFEZhpmLPh/KpJpTtHiY5I4zwyh52+cHl0lsakOJtEW/boeaORtHdCoKeIlHE
+         YgovB+vCvYImk6VvAV16Vbm+hcbbZX1JAfPVwhWvkdzTB3mLjLQebVrR87WmcFz1afCA
+         6IEyFi1lTrQh3PaNS35gPstI11IqdsayD7CeW9HItbadr9O87dJvRCwanlGdctRo7acP
+         d+6w==
+X-Forwarded-Encrypted: i=1; AJvYcCWM7lD1rV8kwzh064YgcVve7jFUaqfN8Dbcz3/8wLbMG6s6HBO+Jr7FXn9osJOypzHKG2kIggglOdOHM6k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxaJyWjjmS3UEfGZOMLoxnEN/5lLRqoprJ4iQd1+H/hGnsVZHjS
+	TKTCMswhd4CKbeOvv6qHYw2JqBQwIDD7x50YxOeeSx8O3NfjxgW3HaEe9229zM4=
+X-Google-Smtp-Source: AGHT+IGbHkUNqAug0TtbZHZxpqz58AzfONDihCHxG0wzsQG0OM473lIfRYWud/gLeqmeP9GloZ6rAg==
+X-Received: by 2002:a05:600c:1c83:b0:426:59fe:ac27 with SMTP id 5b1f17b1804b1-42bb01edc2amr81614945e9.26.1725118433566;
+        Sat, 31 Aug 2024 08:33:53 -0700 (PDT)
 Received: from [192.168.50.4] ([82.78.167.144])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42bb6df0a4dsm78783175e9.12.2024.08.31.08.31.30
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42bb6df7c5bsm79364085e9.23.2024.08.31.08.33.52
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 31 Aug 2024 08:31:30 -0700 (PDT)
-Message-ID: <85f08de3-4718-43b8-abfc-7bc70dc8700f@tuxon.dev>
-Date: Sat, 31 Aug 2024 18:31:28 +0300
+        Sat, 31 Aug 2024 08:33:53 -0700 (PDT)
+Message-ID: <aeed6b52-98df-4515-a3df-5ccc8429e022@tuxon.dev>
+Date: Sat, 31 Aug 2024 18:33:50 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,7 +75,8 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 04/12] nvmem: microchip-otpc: Add SAM9X60 support
+Subject: Re: [PATCH v1 07/12] nvmem: microchip-otpc: Add missing register
+ definitions
 Content-Language: en-US
 To: Christian Melki <christian.melki@t2data.com>,
  Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
@@ -84,67 +85,79 @@ To: Christian Melki <christian.melki@t2data.com>,
  open list <linux-kernel@vger.kernel.org>,
  Nicolas Ferre <nicolas.ferre@microchip.com>
 References: <20240821105943.230281-1-ada@thorsis.com>
- <20240821105943.230281-5-ada@thorsis.com>
- <6a234b6b-ac4c-4fa8-8809-df56327f7b9c@tuxon.dev>
- <20240828-unworried-borough-b5738c8216f6@thorsis.com>
+ <20240821105943.230281-8-ada@thorsis.com>
+ <5228af83-b423-4f51-820a-edfc40017ca8@tuxon.dev>
+ <20240828-making-gangrene-786ec368b106@thorsis.com>
 From: claudiu beznea <claudiu.beznea@tuxon.dev>
-In-Reply-To: <20240828-unworried-borough-b5738c8216f6@thorsis.com>
+In-Reply-To: <20240828-making-gangrene-786ec368b106@thorsis.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-Hi, Alexander,
 
-On 28.08.2024 11:09, Alexander Dahl wrote:
+
+On 28.08.2024 11:14, Alexander Dahl wrote:
 > Hello Claudiu,
 > 
-> Am Sat, Aug 24, 2024 at 06:53:53PM +0300 schrieb claudiu beznea:
+> Am Sat, Aug 24, 2024 at 06:54:02PM +0300 schrieb claudiu beznea:
 >>
 >>
 >> On 21.08.2024 13:59, Alexander Dahl wrote:
->>> Register layout is almost identical to sama7g5 OTPC.
+>>> According to datasheets DS60001765B for SAMA7G5 and DS60001579G for
+>>> SAM9X60.
+>>>
+>>> Signed-off-by: Alexander Dahl <ada@thorsis.com>
+>>> ---
+>>>  drivers/nvmem/microchip-otpc.c | 15 +++++++++++++++
+>>>  1 file changed, 15 insertions(+)
+>>>
+>>> diff --git a/drivers/nvmem/microchip-otpc.c b/drivers/nvmem/microchip-otpc.c
+>>> index b8ed7412dbca..4630e96243ac 100644
+>>> --- a/drivers/nvmem/microchip-otpc.c
+>>> +++ b/drivers/nvmem/microchip-otpc.c
+>>> @@ -21,9 +21,24 @@
+>>>  #define MCHP_OTPC_AR			(0x8)
+>>>  #define MCHP_OTPC_SR			(0xc)
+>>>  #define MCHP_OTPC_SR_READ		BIT(6)
+>>> +#define MCHP_OTPC_IER			(0x10)
+>>> +#define MCHP_OTPC_IDR			(0x14)
+>>> +#define MCHP_OTPC_IMR			(0x18)
+>>> +#define MCHP_OTPC_ISR			(0x1C)
+>>> +#define MCHP_OTPC_ISR_COERR		BIT(13)
+>>>  #define MCHP_OTPC_HR			(0x20)
+>>>  #define MCHP_OTPC_HR_SIZE		GENMASK(15, 8)
+>>>  #define MCHP_OTPC_DR			(0x24)
+>>> +#define MCHP_OTPC_BAR			(0x30)
+>>> +#define MCHP_OTPC_CAR			(0x34)
+>>> +#define MCHP_OTPC_UHC0R			(0x50)
+>>> +#define MCHP_OTPC_UHC1R			(0x54)
+>>> +#define MCHP_OTPC_UID0R			(0x60)
+>>> +#define MCHP_OTPC_UID1R			(0x64)
+>>> +#define MCHP_OTPC_UID2R			(0x68)
+>>> +#define MCHP_OTPC_UID3R			(0x6C)
+>>> +#define MCHP_OTPC_WPMR			(0xE4)
+>>> +#define MCHP_OTPC_WPSR			(0xE8)
 >>
->> Can you please mention some major differences?
+>> Are all these used in driver?
 > 
-> - SAMA7G5 has an additional bit SECURE in the OTPC Header Register
->   (OTPC_HR) not present on SAM9X60.
-> - SAMA7G5 has an additional register OTPC Secure Custom Address
->   Register (OTPC_SCAR) not present on SAM9X60.
-> - SAMA7G5 has an additional field SECDBG[7:0] in OTPC User Hardware
->   Configuration 0 Register (OTPC_UHC0R) not present on SAM9X60.
-> - SAMA7G5 has three additional bits (SCPGDIS, SCLKDIS, SCINVDIS) in
->   the OTPC User Hardware Configuration 1 Register (OTPC_UHC1R) not
->   present on SAM9X60.
+> Not all, but some.  What are you implying?  Only add register
+> definitions actually used in the driver? 
+
+Yes!
+
+> Why?
+
+Less code to maintain. If it's not used there is no meaning to have it.
+
+
 > 
-> All are currently not used by the driver.
-> 
-> Is adding this information to the commit message sufficient?
-
-More than enough. If you can do a summary of it would be better, I think.
-
-Thank you,
-Claudiu Beznea
-
+> Those register offsets won't change, but helped us when debugging.
+> Debug code (e.g. register dump) is not part of the patch series.
 > 
 > Greets
 > Alex
 > 
 >>
->>>
->>> Signed-off-by: Alexander Dahl <ada@thorsis.com>
->>> ---
->>>  drivers/nvmem/microchip-otpc.c | 1 +
->>>  1 file changed, 1 insertion(+)
->>>
->>> diff --git a/drivers/nvmem/microchip-otpc.c b/drivers/nvmem/microchip-otpc.c
->>> index bd3383eabdf6..b8ed7412dbca 100644
->>> --- a/drivers/nvmem/microchip-otpc.c
->>> +++ b/drivers/nvmem/microchip-otpc.c
->>> @@ -271,6 +271,7 @@ static int mchp_otpc_probe(struct platform_device *pdev)
 >>>  
->>>  static const struct of_device_id __maybe_unused mchp_otpc_ids[] = {
->>>  	{ .compatible = "microchip,sama7g5-otpc", },
->>> +	{ .compatible = "microchip,sam9x60-otpc", },
->>>  	{ },
->>>  };
->>>  MODULE_DEVICE_TABLE(of, mchp_otpc_ids);
+>>>  #define MCHP_OTPC_NAME			"mchp-otpc"
+>>>  #define MCHP_OTPC_SIZE			(11 * 1024)
 
