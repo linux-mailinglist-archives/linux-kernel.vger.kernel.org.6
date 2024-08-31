@@ -1,104 +1,132 @@
-Return-Path: <linux-kernel+bounces-309838-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309839-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56FA69670F3
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 12:48:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC60A9670F4
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 12:49:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0DFBF283B4B
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 10:48:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 55070B221C6
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 10:49:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEC6917C222;
-	Sat, 31 Aug 2024 10:48:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6101917C222;
+	Sat, 31 Aug 2024 10:49:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CgzVdVw5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="iWSOQxHJ"
+Received: from smtp.smtpout.orange.fr (smtp-22.smtpout.orange.fr [80.12.242.22])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D44C1BC39;
-	Sat, 31 Aug 2024 10:48:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 171DC1BDDB
+	for <linux-kernel@vger.kernel.org>; Sat, 31 Aug 2024 10:48:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725101284; cv=none; b=QxI0pnapUQEjUx3IPRXWFXZ2wP6xu3n0RKdCK4zeY3q+T/fuB79GdBoSsl4H4O6t3euAC3ulJWoyQFYBJGFoS7rHhsHSPu9QuLVHUjlbMKDqxYGPHCeai3abLXw32DNrtw39UiswaO/fu7G4et0qtF5N1pGfhBIy03NyJ+GoqWA=
+	t=1725101341; cv=none; b=MlCJ1+RYwNYryGs+i2XNOgYI4/Rr3BO5NAjSIoVcitW8eTa8FXUrAVEvzpmd1LFKacO4CfWzIUMJ5RcSEmbP1kfNW6gli+DbEjujuxMMyFz6b2ekIOyEgHwhvQrRg9ikAwXlvvwu7dJYUHmbsf3AUyOKvLSrVqVgG9qFwMsju6Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725101284; c=relaxed/simple;
-	bh=MwKI1qrtYyusKDZItQQkb1WHRX+8VmcA0TRf8mRwo+w=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=f0tgTNx6wqr4xqVr7X3jq5egwJNxo63y6wv37sTBgGr1BKluS4jpKwI2CsjB5iSNCkVkhSn145EjdP3WnCEvcVbcgxA5jLqLiblibXKSDE154VqMbB0ZR9JcSVQL9hxxi7HBJ49GRnLB/0bN4AUna8xuV7joCk1x9zuK+sJdQuM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CgzVdVw5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CFD4DC4CEC0;
-	Sat, 31 Aug 2024 10:48:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725101283;
-	bh=MwKI1qrtYyusKDZItQQkb1WHRX+8VmcA0TRf8mRwo+w=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=CgzVdVw52qUXL8Es/YDJh9RTmk+fUHyD5cmGHPUQ6thmRylRmYx8QmBPWk9jBsg3i
-	 m+7ymJ3+33qJxQnJq6fteelitnmm6IQPGQXPFK/qKzBYJ4JX2v6KuLbFJklzyWNvSB
-	 OL32Hf3k4+Y02Nx/fGbf6ukRzpWrQVsCqnxpfQ5VK8RdOV+aLJWL7wufRMquSlh1kR
-	 mrIYLJXKT8z0xW44gvhoh2O+cfpW7t7OA9ntpkjWO/Q7ASUaTXHGEBXAbdhIUiwCOT
-	 NTDrIuQelBcqWcv56nUGGZg+TEnyF3dsosS0qazzEyKXa/RCjUnG4o2FY6TYVFFsyW
-	 cquhugPRdapuQ==
-Date: Sat, 31 Aug 2024 11:47:56 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] iio: adc: mcp320x: Drop vendorless compatible strings
-Message-ID: <20240831114756.38b459a1@jic23-huawei>
-In-Reply-To: <20240826191728.1415189-1-robh@kernel.org>
-References: <20240826191728.1415189-1-robh@kernel.org>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1725101341; c=relaxed/simple;
+	bh=kXD1W98erynzmVVn9auXPsEFqW3820MtCLgbm09vh08=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=oDwkWXY9lZ7+9egaY1uuywvD9OOh/Z+yP9blV5TWtHTFrZcuCowR+7zQkoD0KyWai+zLJmMKz+cmam49Ev8nqSKIaGhZh16JEJeB/O5BnACsg10Aa/RXHG8LUt8y+HMokPPlJGGOgiTgR9Zv3SxqB/VcEr2KJu8Zsd100RRsS7M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=iWSOQxHJ; arc=none smtp.client-ip=80.12.242.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from [192.168.1.37] ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id kLewsd95c6mdlkLews593w; Sat, 31 Aug 2024 12:48:50 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1725101330;
+	bh=jWhl45GhCInF4jIxORGfZyY2AMGshnhXMxuMEz4hBUk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=iWSOQxHJoDSMbOQzbXx6fpKqvOzFo6iD/jctkMfqp68dsOu1gg3To2GoWL3P/GyGq
+	 wwlJjHCPf5qLNRlmVunnvjtHHkg43rmVJuc03g7KGqW1u998TRKAXrW+L0JdnuI8qC
+	 0f1xr8MEG1ILdl2FPjrmSsnVXkDEbv4uCEupgRqNPwkWn6s2WfQqg3J1O3qVycsVQN
+	 CyWWt2x5cBrDGT1Xik0t+HeBZ/8/W3WqXtRhDb2+2JuaUx090szYr6gTRv4jCdHX4x
+	 EoILVoQ1Sgm4BcJdlBj7zGLQYRMp1cnba4ESwccdMOXIxRTDTHDVG7l+b0KdPT5W4Q
+	 7BLzdhvpflg5w==
+X-ME-Helo: [192.168.1.37]
+X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
+X-ME-Date: Sat, 31 Aug 2024 12:48:50 +0200
+X-ME-IP: 90.11.132.44
+Message-ID: <74dfe952-2055-4152-90c6-ac9cc42fcad9@wanadoo.fr>
+Date: Sat, 31 Aug 2024 12:48:45 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH -next] drm/imagination: Use memdup_user() helper
+To: Jinjie Ruan <ruanjinjie@huawei.com>, frank.binns@imgtec.com,
+ matt.coster@imgtec.com, maarten.lankhorst@linux.intel.com,
+ mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, daniel@ffwll.ch,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <20240831103047.99499-1-ruanjinjie@huawei.com>
+Content-Language: en-US, fr-FR
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20240831103047.99499-1-ruanjinjie@huawei.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Mon, 26 Aug 2024 14:17:28 -0500
-"Rob Herring (Arm)" <robh@kernel.org> wrote:
-
-> The vendorless compatible strings are deprecated and weren't retained
-> when the binding was converted to schema. As a result, they are listed
-> as undocumented when running "make dt_compatible_check". Rather than add
-> them back to the schema, let's just drop them as they are unnecessary.
-> Furthermore, they are unnecessary as the SPI matching will strip the
-> vendor prefix on compatible string and match that against the
-> spi_device_id table.
+Le 31/08/2024 à 12:30, Jinjie Ruan a écrit :
+> Switching to memdup_user(), which combines kmalloc() and copy_from_user(),
+> and it can simplfy code.
 > 
-> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
-Applied.
-
-Thanks,
-
+> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
 > ---
->  drivers/iio/adc/mcp320x.c | 10 ----------
->  1 file changed, 10 deletions(-)
+>   drivers/gpu/drm/imagination/pvr_context.c | 22 +++++++---------------
+>   1 file changed, 7 insertions(+), 15 deletions(-)
 > 
-> diff --git a/drivers/iio/adc/mcp320x.c b/drivers/iio/adc/mcp320x.c
-> index da1421bd7b62..57cff3772ebe 100644
-> --- a/drivers/iio/adc/mcp320x.c
-> +++ b/drivers/iio/adc/mcp320x.c
-> @@ -459,16 +459,6 @@ static int mcp320x_probe(struct spi_device *spi)
->  }
->  
->  static const struct of_device_id mcp320x_dt_ids[] = {
-> -	/* NOTE: The use of compatibles with no vendor prefix is deprecated. */
-> -	{ .compatible = "mcp3001" },
-> -	{ .compatible = "mcp3002" },
-> -	{ .compatible = "mcp3004" },
-> -	{ .compatible = "mcp3008" },
-> -	{ .compatible = "mcp3201" },
-> -	{ .compatible = "mcp3202" },
-> -	{ .compatible = "mcp3204" },
-> -	{ .compatible = "mcp3208" },
-> -	{ .compatible = "mcp3301" },
->  	{ .compatible = "microchip,mcp3001" },
->  	{ .compatible = "microchip,mcp3002" },
->  	{ .compatible = "microchip,mcp3004" },
+> diff --git a/drivers/gpu/drm/imagination/pvr_context.c b/drivers/gpu/drm/imagination/pvr_context.c
+> index eded5e955cc0..e75fd50a4d9f 100644
+> --- a/drivers/gpu/drm/imagination/pvr_context.c
+> +++ b/drivers/gpu/drm/imagination/pvr_context.c
+> @@ -69,27 +69,19 @@ process_static_context_state(struct pvr_device *pvr_dev, const struct pvr_stream
+>   	void *stream;
+>   	int err;
+>   
+> -	stream = kzalloc(stream_size, GFP_KERNEL);
+> -	if (!stream)
+> -		return -ENOMEM;
+> -
+> -	if (copy_from_user(stream, u64_to_user_ptr(stream_user_ptr), stream_size)) {
+> -		err = -EFAULT;
+> -		goto err_free;
+> -	}
+> +	stream = memdup_user(u64_to_user_ptr(stream_user_ptr), stream_size);
+> +	if (IS_ERR(stream))
+> +		return PTR_ERR(stream);
+>   
+>   	err = pvr_stream_process(pvr_dev, cmd_defs, stream, stream_size, dest);
+> -	if (err)
+> -		goto err_free;
+> +	if (err) {
+> +		kfree(stream);
+> +		return err;
+> +	}
+>   
+>   	kfree(stream);
+>   
+>   	return 0;
+> -
+> -err_free:
+> -	kfree(stream);
+> -
+> -	return err;
+>   }
+
+It could also be:
+  	err = pvr_stream_process(...);
+
+  	kfree(stream);
+
+  	return err;
+
+as you did for drivers/gpu/drm/imagination/pvr_job.c.
+
+CJ
+
+>   
+>   static int init_render_fw_objs(struct pvr_context *ctx,
 
 
