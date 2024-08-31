@@ -1,247 +1,191 @@
-Return-Path: <linux-kernel+bounces-309987-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309988-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E3C49672C4
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 19:11:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC8F19672C6
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 19:19:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C90441F22578
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 17:11:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E4041C2127A
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 17:19:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E21960EC4;
-	Sat, 31 Aug 2024 17:11:46 +0000 (UTC)
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AC6155E48;
+	Sat, 31 Aug 2024 17:19:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kNGpOoaN"
+Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4425E81E;
-	Sat, 31 Aug 2024 17:11:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25B21200AF
+	for <linux-kernel@vger.kernel.org>; Sat, 31 Aug 2024 17:19:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725124305; cv=none; b=X5McUm2X0LvMxc979PLNYICTWWNirLC5Q4Pz+sxSxeAUt0ZI1nzT6sO8Z3qIZbTYjcCoICeu0PaJoCNoDlSP7v/pTbQKIPVjQ/BkJIdDpjStF4uw4r3hNZLgNgTPruW5JVLpIVLdUzDO5VL/BfeaoYRGFH3iO2pXuMUp+UClZPc=
+	t=1725124769; cv=none; b=izMrCJZwFf99BfURYYtQCMcO8DUd+RUgjXI1ths1HGcD4xo2oYrezMLBjrGy1j6Khi2JIHwuTukPACmcin4D0H7aVmxAk21sqXs0xSI+HvzKgaojSawCFJjqHGF7OE+T1VzZtxvNe54up6UpfnDTM4aJwS9gKo/AXaqLjKo9dtQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725124305; c=relaxed/simple;
-	bh=GLhGRmiZ6Sgd3urA7ewXSYOuW6rVAhmqUnDPRSDRq7o=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=af3iPYgb6UAdQ/Mho/7wqCOU/65xr40I5D71rbdPdd/ob5eF2/Xh4CAmHUPD1n2xOJr0FSViky67MuxaE+N7D1rtLX3OiAhXAQn9fq5oW+7YK19KBm/AEcszD6jgG1JQvhmN4ODRbx7quWqHtj4YGhoYsiAum5wgY1mfG8nO34g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4Wx1lB5tJ7z9sSK;
-	Sat, 31 Aug 2024 19:11:34 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id P11Ppt1QQ7bg; Sat, 31 Aug 2024 19:11:34 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4Wx1lB4fkvz9sSC;
-	Sat, 31 Aug 2024 19:11:34 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 91ABA8B76C;
-	Sat, 31 Aug 2024 19:11:34 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id 6qfx2MPn75E3; Sat, 31 Aug 2024 19:11:34 +0200 (CEST)
-Received: from PO20335.idsi0.si.c-s.fr (unknown [192.168.234.150])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 2DE7D8B764;
-	Sat, 31 Aug 2024 19:11:34 +0200 (CEST)
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-To: "Jason A . Donenfeld" <Jason@zx2c4.com>
-Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
-	linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	Adhemerval Zanella <adhemerval.zanella@linaro.org>,
-	Xi Ruoyao <xry111@xry111.site>
-Subject: [PATCH] selftests: vDSO: Do not rely on $ARCH for vdso_test_getrandom && vdso_test_chacha
-Date: Sat, 31 Aug 2024 19:11:28 +0200
-Message-ID: <ddf594c81787dba708fc392cb03027470dee64fb.1725124064.git.christophe.leroy@csgroup.eu>
-X-Mailer: git-send-email 2.44.0
+	s=arc-20240116; t=1725124769; c=relaxed/simple;
+	bh=ZwmuV/pOEVo053mZttbOFHhS9B5972/J/WOxpEJ/3QU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Ugj1ZBl80rVAktWA62TI71flF19MEu0gp5jwidlVgAiQjgdfSXHCHXaYqXEWWTYPItlKStKN2ztJkVimMzQIadjoBw2099qUBBuKKxalSJCteJmbEoTEpaowNHneFASOI7YjQlduB/i5ebpon866iIvkCdaCPIOlayo3yjArDRM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kNGpOoaN; arc=none smtp.client-ip=209.85.215.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-7cb3db0932cso2106942a12.1
+        for <linux-kernel@vger.kernel.org>; Sat, 31 Aug 2024 10:19:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725124767; x=1725729567; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/2i+VxibeCjbEKt8s0QvfC/FQysemfkJorYwpG2Vczw=;
+        b=kNGpOoaNx32uiO2PZes/P52xV0+A3Co6Z8TvbhhkTx4VSwrpEqszbgbwVM40SqPOiO
+         ge9LkoQHnJ19jEZihdNZI69MwkgPf01+60mvoyRZkXDMUVxykcdgX+FyD2k5pwLGFJ3y
+         1b5EbEyIKxPlNErarZ5KO+BDqxfua35+4RoIVHQAlxVL2/rEY2jhnmRrs2aqPU1WrqZe
+         P1qZbOR0jNfzP8ynI6OfvVkcsWFjyAO72hdFqgIuTbcR9+EN9Bt107l/Lr0aR8MccNTF
+         z6yGJFDCAXK4Ngx9TDleKpYi/fBHBzmvO+XciQ1Crl9yqjRh6MsC/bJQqgO3poLp20Kq
+         k7mQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725124767; x=1725729567;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/2i+VxibeCjbEKt8s0QvfC/FQysemfkJorYwpG2Vczw=;
+        b=Q1j9bIjCm/FwjVLYYzkgd/YyvxF+Io4jmJ19TSCDWCM7AkX0AYMaumnYMYRzCg52W0
+         ddRrPLskZ5WauxolEU8aTJnaJqGd20wfU6cF3uyT3GWAUe+q6K5gy4i1tRCrQIREd8rY
+         k+C/yakfOjvGDVEyRkk7kZGRPM23tMzi7qefht/maOp2ZJWz5tTlkVbVFYjX3wUg+uKW
+         18Xi4EFxeBgS2LaECwINR8hYugKJj9HLuuurIMtG+5DOWYj2NuA9hELjWnNJ3GPPWnHK
+         UpxZPmyE4b0PvwFaE34a5QZ0Tqvu2LFjtlPLdkpRSxkKMDtoB/NETTmrDDSgaSe65Zwc
+         n9Ow==
+X-Forwarded-Encrypted: i=1; AJvYcCU+5FgPbdKjOBNduf80D2i4j0TXiVh8xdy+AKjAfHISIGj4KvUYp0JWBVVcnH6SKrSQB17j1yvbJVJx7mY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxIpj6oypxE1FOnCGWln7dOPlyAc8koeQpYRIeooJP+T+pZ05rS
+	XCkeVv+BoyCFQoYvvAVdkv97X/HcSEEac9TLbSxVpZapXPFZvZOkxxmhsZVaa9DiVMClW92wA18
+	7k3FNCdk9qRjZC4V6itpPfBpAkwr3+G71
+X-Google-Smtp-Source: AGHT+IHTnRu9XlDWp2DJVqWFQq5g1KaEFOkwIlBZvSMLiqQna8laP9Ga0yQI0anwDwPezmnwrwderAX849mbnWm/EcQ=
+X-Received: by 2002:a17:90b:4b41:b0:2d8:b43b:6ecc with SMTP id
+ 98e67ed59e1d1-2d8b43b72b1mr797687a91.4.1725124767304; Sat, 31 Aug 2024
+ 10:19:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1725124288; l=6821; i=christophe.leroy@csgroup.eu; s=20211009; h=from:subject:message-id; bh=GLhGRmiZ6Sgd3urA7ewXSYOuW6rVAhmqUnDPRSDRq7o=; b=CmSvxM/8VumUnTNpAxeF5EJRoIcW6UdJ48CI3XuU8BEvrQd7PfhUEcwjT41v75PSM3qzLmooV dOCBiJBChviBZvSjz+C3E5seOlrgViKHdNtan2l5vK8YNFpHPa+kHXL
-X-Developer-Key: i=christophe.leroy@csgroup.eu; a=ed25519; pk=HIzTzUj91asvincQGOFx6+ZF5AoUuP9GdOtQChs7Mm0=
-Content-Transfer-Encoding: 8bit
+References: <CAHhAz+hjhZQnTWX088EmMDbszAJrrBQBqkhvfiMjxQPNtWbkqw@mail.gmail.com>
+ <212937.1724701599@turing-police>
+In-Reply-To: <212937.1724701599@turing-police>
+From: Muni Sekhar <munisekharrms@gmail.com>
+Date: Sat, 31 Aug 2024 22:49:15 +0530
+Message-ID: <CAHhAz+gML+kENh_5AgxZJxNn5iA2dD4CWbVO05nYi0eoY3vPhQ@mail.gmail.com>
+Subject: Re: Query Regarding Stack-Out-of-Bounds Error
+To: =?UTF-8?Q?Valdis_Kl=C4=93tnieks?= <valdis.kletnieks@vt.edu>
+Cc: kernelnewbies <kernelnewbies@kernelnewbies.org>, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-$ARCH is not always enough to know whether getrandom vDSO is supported
-or not. For instance on x86 we want it for x86_64 but not i386.
+On Tue, Aug 27, 2024 at 1:16=E2=80=AFAM Valdis Kl=C4=93tnieks
+<valdis.kletnieks@vt.edu> wrote:
+>
+> On Mon, 26 Aug 2024 18:04:39 +0530, Muni Sekhar said:
+>
+> > static struct cmd_info *find_cmd_entry_any_ring(struct intel_gvt *gvt,
+> >                unsigned int opcode, int rings)
+> > {
+> >         struct cmd_info *info =3D NULL;
+> >         unsigned int ring;
+> >         ...
+> >         for_each_set_bit(ring, (unsigned long *)&rings, I915_NUM_ENGINE=
+S) {
+> >
+> > In the above code, a 32-bit integer pointer (rings) is being cast to a
+> > 64-bit unsigned long pointer, which leads to an extra 4 bytes being
+> > accessed. This raises a concern regarding a stack-out-of-bounds bug.
+> >
+> > My specific query is: While it is logically understandable that a
+> > write operation involving these extra 4 bytes could cause a kernel
+> > crash, in this case, it is a read operation that is occurring.
+>
+> Note that 'ring' is located in the stack frame for the current function. =
+So to
+> complete the analysis - is there any way that the stack frame can be loca=
+ted in
+> such a way that 'ring' is the *very last* 4 bytes on a page, and the next=
+ page
+> *isn't* allocated, *and* I915_NUM_ENGINES is big enough to cause the loop=
+ to walk
+> off the end?
+>
+> For bonus points, part 1:  Does the answer depend on whether the architec=
+ture
+> has stacks that grow up, or grow down in address?
 
-On the other hand, we already have detailed architecture selection in
-vdso_config.h, the only difference is that it cannot be used for
-Makefile. But most selftests are built regardless of whether a
-functionality is supported or not. The return value KSFT_SKIP is there
-for than: it tells the test is skipped because it is not supported.
+Here=E2=80=99s an example stack frame for context:
 
-Make the implementation more flexible by setting a VDSO_GETRANDOM
-macro in vdso_config.h. That macro contains the path to the file that
-defines __arch_chacha20_blocks_nostack(). It avoids the symbolic
-link to vdso directory and will allow architectures to have several
-implementations of __arch_chacha20_blocks_nostack() if needed.
+|---------------------------|
+| Return Address |
+|---------------------------|
+| Saved Frame Pointer |
+|---------------------------|
+| Parameter: gvt |
+|---------------------------|
+| Parameter: opcode |
+|---------------------------|
+| Parameter: rings |
+|---------------------------|
+| Local Variable: info |
+|---------------------------|
+| Local Variable: ring |
+|---------------------------|
 
-Then restore the original behaviour which was dedicated to
-vdso_standalone_test_x86 and build getrandom and chacha tests all
-the time just like other vDSO selftests and return SKIP when the
-functionality to be tested is not implemented.
+Stack Growth Downwards:
+If the stack grows downward in address space, is there any scenario
+where the stack frame could be positioned such that the return address
+is located at the very last 4 bytes of a page, the next page isn't
+allocated, and I915_NUM_ENGINES is large enough to cause the loop to
+walk off the end? If this happens, would it result in a
+stack-out-of-bounds error leading to a kernel crash?
 
-This has the advantage of doing architecture specific selection at
-only one place.
+Stack Growth Upwards:
+Conversely, if the stack grows upward, could the stack frame be
+positioned in such a way that the 'ring' variable is at the very last
+4 bytes of a page, and the next page isn=E2=80=99t allocated, with
+I915_NUM_ENGINES being large enough to cause the loop to walk off the
+end? Would this also result in a stack-out-of-bounds error causing a
+kernel crash?
 
-Also change vdso_test_getrandom to return SKIP instead of FAIL when
-vDSO function is not found, just like vdso_test_getcpu or
-vdso_test_gettimeofday.
+I'm curious as to why the likelihood of this error seems to depend on
+whether the architecture has stacks that grow up or down in address
+space. In both scenarios stack-out-of-bounds error behaves the same,
+right?
 
-Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
----
-Based on latest random tree (0dfed8092247)
+>
+> For bonus points, part 2: can this function be called quickly enough, and
+> enough times, that it can be abused to do something interesting to L1/L2 =
+cache
+> and speculative execution, because some systems will fetch not only the b=
+ytes
+> needed, but as much as 64 or 128 bytes of cache line?  Can you name 3 sec=
+urity
+> bugs that abused this sort of thing?
+Where should I look to find more details about these security bugs?
+I appreciate your insights on these questions.
+>
+> Free hint:  There's a bit of interesting code in kernel/exit.c that tells=
+ you if
+> your system has gotten close to running out of kernel stack.
+>
+> [/usr/src/linux-next] dmesg | grep 'greatest stack'
+> [    1.093400] [     T40] pgdatinit0 (40) used greatest stack depth: 1392=
+0 bytes left
+> [    3.832907] [     T82] modprobe (82) used greatest stack depth: 8 byte=
+s left
+>
+> Hmm... wonder how that modprobe managed *that* :)
+>
+>
+>
 
- tools/arch/x86/vdso                                 |  1 -
- tools/testing/selftests/vDSO/Makefile               | 10 ++++------
- tools/testing/selftests/vDSO/vdso_config.h          |  3 +++
- tools/testing/selftests/vDSO/vdso_test_chacha-asm.S |  7 +++++++
- tools/testing/selftests/vDSO/vdso_test_chacha.c     | 11 +++++++++++
- tools/testing/selftests/vDSO/vdso_test_getrandom.c  |  2 +-
- 6 files changed, 26 insertions(+), 8 deletions(-)
- delete mode 120000 tools/arch/x86/vdso
- create mode 100644 tools/testing/selftests/vDSO/vdso_test_chacha-asm.S
 
-diff --git a/tools/arch/x86/vdso b/tools/arch/x86/vdso
-deleted file mode 120000
-index 7eb962fd3454..000000000000
---- a/tools/arch/x86/vdso
-+++ /dev/null
-@@ -1 +0,0 @@
--../../../arch/x86/entry/vdso/
-\ No newline at end of file
-diff --git a/tools/testing/selftests/vDSO/Makefile b/tools/testing/selftests/vDSO/Makefile
-index 5ead6b1f0478..cfb7c281b22c 100644
---- a/tools/testing/selftests/vDSO/Makefile
-+++ b/tools/testing/selftests/vDSO/Makefile
-@@ -1,6 +1,6 @@
- # SPDX-License-Identifier: GPL-2.0
--ARCH ?= $(shell uname -m | sed -e s/i.86/x86/)
--SRCARCH := $(subst x86_64,x86,$(ARCH))
-+uname_M := $(shell uname -m 2>/dev/null || echo not)
-+ARCH ?= $(shell echo $(uname_M) | sed -e s/i.86/x86/ -e s/x86_64/x86/)
- 
- TEST_GEN_PROGS := vdso_test_gettimeofday
- TEST_GEN_PROGS += vdso_test_getcpu
-@@ -10,10 +10,8 @@ ifeq ($(ARCH),$(filter $(ARCH),x86 x86_64))
- TEST_GEN_PROGS += vdso_standalone_test_x86
- endif
- TEST_GEN_PROGS += vdso_test_correctness
--ifeq ($(ARCH),$(filter $(ARCH),x86_64))
- TEST_GEN_PROGS += vdso_test_getrandom
- TEST_GEN_PROGS += vdso_test_chacha
--endif
- 
- CFLAGS := -std=gnu99
- 
-@@ -38,8 +36,8 @@ $(OUTPUT)/vdso_test_getrandom: CFLAGS += -isystem $(top_srcdir)/tools/include \
-                                          $(KHDR_INCLUDES) \
-                                          -isystem $(top_srcdir)/include/uapi
- 
--$(OUTPUT)/vdso_test_chacha: $(top_srcdir)/tools/arch/$(SRCARCH)/vdso/vgetrandom-chacha.S
-+$(OUTPUT)/vdso_test_chacha: vdso_test_chacha-asm.S
- $(OUTPUT)/vdso_test_chacha: CFLAGS += -idirafter $(top_srcdir)/tools/include \
--                                      -idirafter $(top_srcdir)/arch/$(SRCARCH)/include \
-+                                      -idirafter $(top_srcdir)/arch/$(ARCH)/include \
-                                       -idirafter $(top_srcdir)/include \
-                                       -D__ASSEMBLY__ -Wa,--noexecstack
-diff --git a/tools/testing/selftests/vDSO/vdso_config.h b/tools/testing/selftests/vDSO/vdso_config.h
-index 740ce8c98d2e..693920471160 100644
---- a/tools/testing/selftests/vDSO/vdso_config.h
-+++ b/tools/testing/selftests/vDSO/vdso_config.h
-@@ -47,6 +47,7 @@
- #elif defined(__x86_64__)
- #define VDSO_VERSION		0
- #define VDSO_NAMES		1
-+#define VDSO_GETRANDOM		"../../../../arch/x86/entry/vdso/vgetrandom-chacha.S"
- #elif defined(__riscv__) || defined(__riscv)
- #define VDSO_VERSION		5
- #define VDSO_NAMES		1
-@@ -58,6 +59,7 @@
- #define VDSO_NAMES		1
- #endif
- 
-+#ifndef __ASSEMBLY__
- static const char *versions[7] = {
- 	"LINUX_2.6",
- 	"LINUX_2.6.15",
-@@ -88,5 +90,6 @@ static const char *names[2][7] = {
- 		"__vdso_getrandom",
- 	},
- };
-+#endif
- 
- #endif /* __VDSO_CONFIG_H__ */
-diff --git a/tools/testing/selftests/vDSO/vdso_test_chacha-asm.S b/tools/testing/selftests/vDSO/vdso_test_chacha-asm.S
-new file mode 100644
-index 000000000000..8e704165f6f2
---- /dev/null
-+++ b/tools/testing/selftests/vDSO/vdso_test_chacha-asm.S
-@@ -0,0 +1,7 @@
-+#include "vdso_config.h"
-+
-+#ifdef VDSO_GETRANDOM
-+
-+#include VDSO_GETRANDOM
-+
-+#endif
-diff --git a/tools/testing/selftests/vDSO/vdso_test_chacha.c b/tools/testing/selftests/vDSO/vdso_test_chacha.c
-index 3a5a08d857cf..9d18d49a82f8 100644
---- a/tools/testing/selftests/vDSO/vdso_test_chacha.c
-+++ b/tools/testing/selftests/vDSO/vdso_test_chacha.c
-@@ -8,6 +8,8 @@
- #include <string.h>
- #include <stdint.h>
- #include <stdbool.h>
-+#include <linux/kconfig.h>
-+#include "vdso_config.h"
- #include "../kselftest.h"
- 
- static uint32_t rol32(uint32_t word, unsigned int shift)
-@@ -57,6 +59,10 @@ typedef uint32_t u32;
- typedef uint64_t u64;
- #include <vdso/getrandom.h>
- 
-+#ifdef VDSO_GETRANDOM
-+#define HAVE_VDSO_GETRANDOM	1
-+#endif
-+
- int main(int argc, char *argv[])
- {
- 	enum { TRIALS = 1000, BLOCKS = 128, BLOCK_SIZE = 64 };
-@@ -68,6 +74,11 @@ int main(int argc, char *argv[])
- 	ksft_print_header();
- 	ksft_set_plan(1);
- 
-+	if (!__is_defined(HAVE_VDSO_GETRANDOM)) {
-+		printf("__arch_chacha20_blocks_nostack() not implemented\n");
-+		return KSFT_SKIP;
-+	}
-+
- 	for (unsigned int trial = 0; trial < TRIALS; ++trial) {
- 		if (getrandom(key, sizeof(key), 0) != sizeof(key)) {
- 			printf("getrandom() failed!\n");
-diff --git a/tools/testing/selftests/vDSO/vdso_test_getrandom.c b/tools/testing/selftests/vDSO/vdso_test_getrandom.c
-index 8866b65a4605..47ee94b32617 100644
---- a/tools/testing/selftests/vDSO/vdso_test_getrandom.c
-+++ b/tools/testing/selftests/vDSO/vdso_test_getrandom.c
-@@ -115,7 +115,7 @@ static void vgetrandom_init(void)
- 	vgrnd.fn = (__typeof__(vgrnd.fn))vdso_sym(version, name);
- 	if (!vgrnd.fn) {
- 		printf("%s is missing!\n", name);
--		exit(KSFT_FAIL);
-+		exit(KSFT_SKIP);
- 	}
- 	ret = VDSO_CALL(vgrnd.fn, 5, NULL, 0, 0, &vgrnd.params, ~0UL);
- 	if (ret == -ENOSYS) {
--- 
-2.44.0
-
+--=20
+Thanks,
+Sekhar
 
