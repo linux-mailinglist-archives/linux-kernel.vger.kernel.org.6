@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-309744-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309745-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 062A0966FEC
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 09:05:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F842966FED
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 09:06:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 331541C213DB
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 07:05:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 66FDF1C21D1B
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 07:05:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95ECB16DEB4;
-	Sat, 31 Aug 2024 07:04:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F029117C216;
+	Sat, 31 Aug 2024 07:04:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="bTYqouWs"
-Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="YXeqqu1/"
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73BEF178398
-	for <linux-kernel@vger.kernel.org>; Sat, 31 Aug 2024 07:04:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC89517B4E2
+	for <linux-kernel@vger.kernel.org>; Sat, 31 Aug 2024 07:04:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725087879; cv=none; b=ahBFw/XpxzzQDGVmpML7ykbgiwy2ZyrR/Afc2Hb9xRcPC4N0zwYoYZOeUfa+pJQayl6uNLABwXyt6lNorOyjQw32Cu+Z9l9tmHd0SEPbamtLX66I3RykHSHtEePHqFSvBgaGDR5otIMMv0tvqbjeWPF7Fj3ENQjeOdr1sW7SFfA=
+	t=1725087882; cv=none; b=YjvsVjzQdVhs7/raFFv13MK628vxqCFecuNIK441oTwscaWrJvO7i/dtNbUow10AyOlvNIQOnBwsyaS8w9K8wBS26Pjv3DXOoRTCfAM81cU7HFy0PnGP1CojCG8sKHnTxi0tL3CxrR7wvoK7nAVg4ngEcnuRacXp5yHnCLEJ9aI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725087879; c=relaxed/simple;
-	bh=neE8KUj5swSBbTAvkEmb7HlGQpVC/JyPFNunQxVwu/U=;
+	s=arc-20240116; t=1725087882; c=relaxed/simple;
+	bh=Zzp47YpjJrlq/7aNuFnEG/sx74AzSK2oA4jiAlYD1m4=;
 	h=Date:In-Reply-To:Message-Id:Mime-Version:References:Subject:From:
-	 To:Content-Type; b=DK2u6Mw7mjkOlucFn5zC7z3oGL0NlpFb22GA+TUauLrI16SW9DwDLg/gVPoHR5c6S4HFRC8bbnmCnwnwB+gp5QH3c8QQhJAT6qtIDYRGPdf0Z+zQtXUUfe+B+cITrxvff3UewXlTTojyc5QMjRCvUBPfOH+zCpUxIkkPgo5LWM4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=bTYqouWs; arc=none smtp.client-ip=209.85.219.202
+	 To:Content-Type; b=VolgSsTr29KupfMoGRD/zG1cjphz0maLU++ZdLhhFcPZinuQ+vRRsp7FlFuZF7UpHPjzxbibH6YlEc3V4k+K6XOeYemCtJTjqhhBg5hoi0TffGzBONah+xi5s5/8mJkrBPe0McvNk+bad25IbLhbsg4Pru6cxTzlMv884cMwB1A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=YXeqqu1/; arc=none smtp.client-ip=209.85.128.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-e1a6d328eacso3653589276.3
-        for <linux-kernel@vger.kernel.org>; Sat, 31 Aug 2024 00:04:38 -0700 (PDT)
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6d4daca4a4bso12685047b3.0
+        for <linux-kernel@vger.kernel.org>; Sat, 31 Aug 2024 00:04:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1725087877; x=1725692677; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1725087880; x=1725692680; darn=vger.kernel.org;
         h=to:from:subject:references:mime-version:message-id:in-reply-to:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=hMHouUPm/pUbpqXHpAwu3f/Ggg/o8qY6+an2XmPnD00=;
-        b=bTYqouWsvhPu/wRbjJDDrLM9vx9g9U/ljPv/SCltgoZKaAKi9laHtmCY+8CDdKyD4q
-         XHWJirKM6rruYrjRN21+5Hspl5xvaj3LBov1vfCJf56i5mXwFtqS+7occ5upO0oS23N8
-         mvz3bQ8eORRS44ip3EGyxG6JCTYBMshOkeYeiVLPEIcdOy6xAGDI0K7hTFCQVeBEuNcG
-         i6OEMlglaoj3p1jmRuPGkA4bwYnHmICnib5Qit2pr4VkY9onSo0EIxDwzFa0F48cyTKc
-         kKFN6MGYqVpDChUF2O1i0P1dN27rTISoK8kNH2JMXXh6w+zHA91chg2V0Sdjp/t0KwhY
-         Efhg==
+        bh=J5+jy8suatSYU8agZ+1zFUqOrIedBbY+ji9A0DmCUwg=;
+        b=YXeqqu1/T7EB5q0Xc87ElZRffeI9/OqXF2z6+sv10twgx0LlS2FzfyLNqAb7runij4
+         LU/YsVB9jIQMI/tG5y8ZR/OjQWwJaue32N12goBcQxD82fTCF8hrv5a/3u4oGfnSIqoU
+         yS6Yp4B/hKjft/JeJbQiAdetOLqgTqJ6IVz+/i1VOexTsqs4KCm/iXv3w7HXWKJVAzqo
+         E4K/yNQy559qDdX6BkXYGBZyy/5lJSFR9FI4NU6vdWYpxyRFgoUWzvu1nQvrO/B5RspJ
+         /KSM9ehFLRqMx2z8vD+rONSrlz6hUc0nGkFBcIsjtCJ3k4cK0WlKcrEeq7vj+PXaL4Kf
+         WD7g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725087877; x=1725692677;
+        d=1e100.net; s=20230601; t=1725087880; x=1725692680;
         h=to:from:subject:references:mime-version:message-id:in-reply-to:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=hMHouUPm/pUbpqXHpAwu3f/Ggg/o8qY6+an2XmPnD00=;
-        b=rKsD8daAFZJ7hQoXSZ1nXXpM+iMK9rbC7QHuXBER5lVFlQYHlYcLPVf2tR6n4kjrO2
-         galbXN5hsvxAonoeTJ0wwHiIbQfFcaeY/ytSxoSeDBcQYWq5x0DrJQls8+CjeEsIdcT+
-         euuAhxmvyGcfdEZA82EYXVaaU/DTC8C+GvcoEQdM4XNQE4OGkcVf5Ktia0TtryEIjU1R
-         KURcOF9CCJK9Wt8RjTKWaaHrIGD8CpWUewjz+C0HAzdrQkjvvDqDdCr4dUU/6VBdZC7d
-         848SpwW5lTYyxuXMwybSldrN/lF+Dh+K9yEoInFCySNVnwVvaFOmBA44kHd5gyz+mRHl
-         BZ5w==
-X-Forwarded-Encrypted: i=1; AJvYcCW+8Gljxlj8GjlfYsdg5KmDFif003lMqbgu012+WwVRK8kLxNMSaA/xXWyHs8GZe2Q81r5h87bwjZvbsXo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzkz9OSseWHqBs/xeCwxfvsei1HsfaqvWcutdkKo2HSiVzW/zZY
-	7n7+ZGrWhAh/7RkZmJ0NmZSvc2MkBqCW27MosLFdVfj6g6pDaUvfswxSDojbr6DJfzurCRZAQCI
-	zRR961w==
-X-Google-Smtp-Source: AGHT+IEQRxwFyMDSw6Mj2d4DGqVL/glGW1ecwaCsu3ve2y6MdyDP3o6KRg8tCHoQeSLhIeD+/Ar8hkGrgI+x
+        bh=J5+jy8suatSYU8agZ+1zFUqOrIedBbY+ji9A0DmCUwg=;
+        b=YtYPdcpcTzMACjaBfL3SoxGTjur1HyzdOTT02rNa0Pa/bM9oSD0p3AzPVcv+n9BJ8j
+         SsRLyozbKzC1C7Gwum50IV33J0SzD7XqyorB55TfY75rKwDyqOeIGf/QPrR5shyPAQVl
+         KpAwWlmCq9W+1tkz9eDHwZPPmy1zrWCF8fv/braAzAr7OTEZc3kZV1B6R0qPAv36VIQU
+         uRQnRFVIwukD3HEZ5PPYj2A45ZrU91oHL6e4yfObU1s61SJtTfrRGz/RqwowxJgBdRQ8
+         Jwgksg73JtzK4vJ/LoiXXL3+seKCuwmSUvgntxUy20v+OwWo+6goz8d6ms/E94/szaLv
+         V+JQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVEWNx0Xw3YPSl+jEDjP/FAtt1FuceqCSU/4ms960wbfXWAv7cMH8K9XRW8XE8AgCLNnwvYAFCDM2lbVFY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzHApzYwxCMBLFrdluDXdyrLULBj2xCeyHdMS93GOSdn+nUbKKU
+	0Ti9eyKr+pEgUVh01jFHRMHjSoGijNcWyEK+jbxwcVKJ1R389Z4aXpDHPBtpGNl//zipC4XimKO
+	Cv54BIA==
+X-Google-Smtp-Source: AGHT+IG1XD+JUjlCpgglYclPZZLQJ4BWz+jqR+qm5DgB0ka+M75PUfqNm5Cwbhc6EFTAGgHWlo8uxtzePXRt
 X-Received: from irogers.svl.corp.google.com ([2620:15c:2a3:200:4974:82ff:2f9:edb6])
- (user=irogers job=sendgmr) by 2002:a5b:1:0:b0:e0e:8b26:484e with SMTP id
- 3f1490d57ef6-e1a7a176b02mr7463276.8.1725087877533; Sat, 31 Aug 2024 00:04:37
+ (user=irogers job=sendgmr) by 2002:a05:6902:281:b0:e11:757f:30af with SMTP id
+ 3f1490d57ef6-e1a5c85d46amr83900276.3.1725087879809; Sat, 31 Aug 2024 00:04:39
  -0700 (PDT)
-Date: Sat, 31 Aug 2024 00:04:14 -0700
+Date: Sat, 31 Aug 2024 00:04:15 -0700
 In-Reply-To: <20240831070415.506194-1-irogers@google.com>
-Message-Id: <20240831070415.506194-6-irogers@google.com>
+Message-Id: <20240831070415.506194-7-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,8 +74,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20240831070415.506194-1-irogers@google.com>
 X-Mailer: git-send-email 2.46.0.469.g59c65b2a67-goog
-Subject: [PATCH v1 5/6] perf parse-events: Vary default_breakpoint_len on i386
- and arm64
+Subject: [PATCH v1 6/6] perf test: Make watchpoint data 32-bits on i386
 From: Ian Rogers <irogers@google.com>
 To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
 	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
@@ -91,54 +90,31 @@ To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
 	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-On arm64 the breakpoint length should be 4-bytes but 8-bytes is
-tolerated as perf passes that as sizeof(long). Just pass the correct
-value.
-
-On i386 the sizeof(long) check in the kernel needs to match the
-kernel's long size. Check using an environment (uname checks) whether
-4 or 8 bytes needs to be passed. Cache the value in a static.
+i386 only supports watchpoints up to size 4, 8 bytes causes extra
+counts and test failures.
 
 Signed-off-by: Ian Rogers <irogers@google.com>
 ---
- tools/perf/util/parse-events.c | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+ tools/perf/tests/wp.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/tools/perf/util/parse-events.c b/tools/perf/util/parse-events.c
-index dfb951bb184b..c7fe8b4167d7 100644
---- a/tools/perf/util/parse-events.c
-+++ b/tools/perf/util/parse-events.c
-@@ -8,6 +8,7 @@
- #include <sys/ioctl.h>
- #include <sys/param.h>
- #include "term.h"
-+#include "env.h"
- #include "evlist.h"
- #include "evsel.h"
- #include <subcmd/parse-options.h>
-@@ -672,7 +673,22 @@ static int add_tracepoint_multi_sys(struct parse_events_state *parse_state,
+diff --git a/tools/perf/tests/wp.c b/tools/perf/tests/wp.c
+index cc8719609b19..6c178985e37f 100644
+--- a/tools/perf/tests/wp.c
++++ b/tools/perf/tests/wp.c
+@@ -20,7 +20,12 @@ do {                                            \
+ 	TEST_ASSERT_VAL(text, count == val);    \
+ } while (0)
  
- int default_breakpoint_len(void)
- {
-+#if defined(__i386__)
-+	static int len;
-+
-+	if (len == 0) {
-+		struct perf_env env = {};
-+
-+		perf_env__init(&env);
-+		len = perf_env__kernel_is_64_bit(&env) ? sizeof(u64) : sizeof(long);
-+		perf_env__exit(&env);
-+	}
-+	return len;
-+#elif defined(__aarch64__)
-+	return 4;
++#ifdef __i386__
++/* Only breakpoint length less-than 8 has hardware support on i386. */
++volatile u32 data1;
 +#else
- 	return sizeof(long);
+ volatile u64 data1;
 +#endif
- }
+ volatile u8 data2[3];
  
- static int
+ #ifndef __s390x__
 -- 
 2.46.0.469.g59c65b2a67-goog
 
