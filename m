@@ -1,73 +1,47 @@
-Return-Path: <linux-kernel+bounces-309907-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309908-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCD8A9671BB
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 15:18:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43DA49671BE
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 15:19:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 758F8282A12
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 13:18:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7A79B1C2179D
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 13:19:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C047E12B64;
-	Sat, 31 Aug 2024 13:18:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 469FD1D130C;
+	Sat, 31 Aug 2024 13:19:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="a1hh+iJb"
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jZvSX2To"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B928B67E
-	for <linux-kernel@vger.kernel.org>; Sat, 31 Aug 2024 13:18:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 798304C74;
+	Sat, 31 Aug 2024 13:19:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725110303; cv=none; b=oguyhlq38bxP8FhQ4OVrGJQtTauG026L8fy7EdyVV++diuq7S7a9MTQw7A7Ut8SrBaehvhInUq1jIQIblOvGPhlkeO+2uezIsWZfmkl0+NKmwTVePDb2psbEBMecWPBAMFOT+TUt+lgZbBgV7Lkx+UlnCFED+ixWhjrK/cU6cqc=
+	t=1725110374; cv=none; b=H0nyI3rW0qwBATOu+vUaodgV3UgmyUOBW/017VvbrqIqdz3JAxHjtd/aBuMaAA3t0H0fkz7avSXIMVAbSFEwa1vDpbboHljw3i5ZGC5SmBzb4200KrLS/Iu+1jJK85bo/VOfPMxN8g56EFDzmq1ITAt3Im0Oh8d5XpRabd+MUXU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725110303; c=relaxed/simple;
-	bh=mu13EQ9HoQejLYVNxt2U8RKRikdH3YeZJxgItcqJ/1w=;
+	s=arc-20240116; t=1725110374; c=relaxed/simple;
+	bh=0zdxZYbzShfweYP4HmXE6EL/oxUaoMolm9zs/RxGp0Y=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MBO1lrRCzgm1URiPfq4gO21otxT9QYPrMQMFn/e7FjUw0fM/mdFfkyZtu4xLA67eAoVufEt2Ppokc0u/7yx11tKB2FuvXAXS0TZPoyNJwcfQiP+SthNFOR7sbDI6zqGUlv1DVYUug3cHyiZ0MtQtdSJY62JkNXCCY+zRd9YvsLM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=a1hh+iJb; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-533461323cdso3353464e87.2
-        for <linux-kernel@vger.kernel.org>; Sat, 31 Aug 2024 06:18:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1725110298; x=1725715098; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=NJkTnaPWIP3xGBTfa2SPoHVtOVzpX0uKAT2t6dy54EM=;
-        b=a1hh+iJbox7UcgTuAp6MNR2ePkcTlYDPewA5oDq/HbnO+ve5O84RRLMAs6NiPtQV4H
-         ogGStaIi3+Xv4KXMrPnavc6Jz7CPfDMev+6eK74HLJC8sayc7QHmKe1JX+tLQBZDYCN1
-         dhN5pcROFKCESfkh6nAaraaRDuSytpaCo12evEfVU8KFiuFE6gJwOWou1zoogngbZdoU
-         Lk41EHMG44mArGu+2hwXQCbPGrt0Dh7BGcD8sSbDV9C6kqBTzONOcj+R4kDpxKo29pBs
-         HOTh+RR0UhgwqXG6D4EW/zEbsmHBTc7R3JhAG3emU6dvAoseqkObv+s1T6hZWU9KYwz3
-         lOrA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725110298; x=1725715098;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=NJkTnaPWIP3xGBTfa2SPoHVtOVzpX0uKAT2t6dy54EM=;
-        b=C77ukwYaZ0OBJV2HGivgLF6f9PQltF2X1g6wT8OBdywWveHVtgw/ZTf4cxi6qdL7eH
-         2uFExHqTdMWLlqR3sM52b4mjDyLFtIoLwR+dl+eC6NOiLhqd9Nq6MiOvnPgfoPqqSJXN
-         /PLj/BsNjr5d3qBuz2y2fKeg+l5nnBWPBJEkIVI0nbDgEMGGrwCrJfT1vZ348PqmeBD1
-         xD2L9udie8NjL5fnlDnjH7uwUsrgWb1q90iyhEBEUZaFjF66cCLXw+cEF5iW3gNnVzHW
-         c5z1oEmiXqIJ72jVnoEx5xCHuUwhqPDqgwOGy8KpR7B7p348JWbQ74UHhLrqfO7+cV7D
-         4Xmw==
-X-Forwarded-Encrypted: i=1; AJvYcCX2YaDGrCmW6J5LruErNoV/a1J2+JbEqI5J85+Q4wt8CO+dW6UDS2pHUUqh6B7mVM73XL8jSVOvsE9cE7E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzCcI/TEtWQOqnkZcb7xpYS74yhNjwlOgZ31Fx/vebLB7d3goT/
-	HVae7APXsi3otUlnV06u7BWashrrK4OG8ozl1iizje28XqpevaD77vK/7RPMndc=
-X-Google-Smtp-Source: AGHT+IGPOz7dvYo89+4zvzcBxzz/93RdbGmQWnTvKAy390yr3LyXNraYmjVZVSj51lwW56kV+d9PFw==
-X-Received: by 2002:a05:6512:3d0f:b0:533:46de:30a0 with SMTP id 2adb3069b0e04-53546b9c0cemr3283704e87.54.1725110297376;
-        Sat, 31 Aug 2024 06:18:17 -0700 (PDT)
-Received: from [192.168.0.25] ([176.61.106.227])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a89891a3e9dsm325824366b.108.2024.08.31.06.18.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 31 Aug 2024 06:18:17 -0700 (PDT)
-Message-ID: <293f3ddd-531b-443f-a58c-a789337e2b35@linaro.org>
-Date: Sat, 31 Aug 2024 14:18:16 +0100
+	 In-Reply-To:Content-Type; b=Pj3XtiQrZEfhDekpuWHNpxvj5zkZc52KnxaHaHjIgXEDf67XInIUXRjjKHt3x3AuFiOCO7QzD6erIc5D7erY94BNbP59tZrWYe7IERpe1qNbcH1kptjET7eDIQOYgDUR6bbtbOXdsfGJlQ0F90TFoehoFbSiEGW7Lj/PoqqVpPA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jZvSX2To; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E24EC4CEC4;
+	Sat, 31 Aug 2024 13:19:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725110374;
+	bh=0zdxZYbzShfweYP4HmXE6EL/oxUaoMolm9zs/RxGp0Y=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=jZvSX2To7b1EimVgIA2yCnz4qQCTHMbMTYJuvtoSpNBU4MngrxsC+QuRlVnxxRUNb
+	 eE0NqBY9KfRBfMdygl2JUAbCIbMQvijwl5PlTDGV9bxSLQ7X0f/7FL1Y9pykjrHDt5
+	 ACJJvhbuDOes4E1GLLjRPz0Zo6vb6/lnoVcn5RAw7R+Lws8OwTMfo3wHR7gxwJ1wVu
+	 YGbdlDskOMP6LDA0VbTPpjvqPbuwQLjY3LZLxW8rP+E79g3vZqr6l1ufWFitwb1urz
+	 4LyUK1vKHBYJdYUkLqdfe0zQJU/c4+Sst68GVEDrVO+0RVAhBpcT1muEbqPz9S01Fi
+	 q5Bj5qLeA+L0A==
+Message-ID: <46902f4e-2eb5-4ee6-8bd9-c2745809be76@kernel.org>
+Date: Sat, 31 Aug 2024 15:19:24 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,374 +49,105 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 07/29] media: iris: implement video firmware
- load/unload
-To: quic_dikshita@quicinc.com, Vikash Garodia <quic_vgarodia@quicinc.com>,
- Abhinav Kumar <quic_abhinavk@quicinc.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>
-Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240827-iris_v3-v3-0-c5fdbbe65e70@quicinc.com>
- <20240827-iris_v3-v3-7-c5fdbbe65e70@quicinc.com>
+Subject: Re: [PATCH 1/2] arm64: dts: imx8mp-var-som-symphony: Add Variscite
+ Symphony board and VAR-SOM-MX8MP SoM
+To: Tarang Raval <tarang.raval@siliconsignals.io>, shawnguo@kernel.org,
+ krzk+dt@kernel.org, robh@kernel.org, festevam@gmail.com
+Cc: Conor Dooley <conor+dt@kernel.org>, Sascha Hauer
+ <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Gregor Herburger <gregor.herburger@ew.tq-group.com>,
+ Joao Paulo Goncalves <joao.goncalves@toradex.com>,
+ Hiago De Franco <hiago.franco@toradex.com>,
+ Hugo Villeneuve <hvilleneuve@dimonoff.com>,
+ Mathieu Othacehe <m.othacehe@gmail.com>,
+ Alexander Stein <alexander.stein@ew.tq-group.com>,
+ Josua Mayer <josua@solid-run.com>, Yannic Moog <y.moog@phytec.de>,
+ Li Yang <leoyang.li@nxp.com>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, imx@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org
+References: <20240831110743.14280-1-tarang.raval@siliconsignals.io>
+ <20240831110743.14280-2-tarang.raval@siliconsignals.io>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-In-Reply-To: <20240827-iris_v3-v3-7-c5fdbbe65e70@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240831110743.14280-2-tarang.raval@siliconsignals.io>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 27/08/2024 11:05, Dikshita Agarwal via B4 Relay wrote:
-> From: Dikshita Agarwal <quic_dikshita@quicinc.com>
-> 
-> Load/unload firmware in memory via mdt loader.
-> Firmware is loaded as part of core initialization
-> and unloaded as part of core de-initialization.
-> 
-> Signed-off-by: Dikshita Agarwal <quic_dikshita@quicinc.com>
-> ---
->   drivers/media/platform/qcom/iris/Kconfig           |   2 +
->   drivers/media/platform/qcom/iris/Makefile          |   1 +
->   drivers/media/platform/qcom/iris/iris_core.c       |   8 ++
->   drivers/media/platform/qcom/iris/iris_firmware.c   | 146 +++++++++++++++++++++
->   drivers/media/platform/qcom/iris/iris_firmware.h   |  14 ++
->   .../platform/qcom/iris/iris_platform_common.h      |  12 ++
->   .../platform/qcom/iris/iris_platform_sm8250.c      |  10 ++
->   .../platform/qcom/iris/iris_platform_sm8550.c      |  10 ++
->   8 files changed, 203 insertions(+)
-> 
-> diff --git a/drivers/media/platform/qcom/iris/Kconfig b/drivers/media/platform/qcom/iris/Kconfig
-> index 4b757bb8adf3..ea518760c65c 100644
-> --- a/drivers/media/platform/qcom/iris/Kconfig
-> +++ b/drivers/media/platform/qcom/iris/Kconfig
-> @@ -3,6 +3,8 @@ config VIDEO_QCOM_IRIS
->           depends on VIDEO_DEV
->           depends on ARCH_QCOM || COMPILE_TEST
->           select V4L2_MEM2MEM_DEV
-> +        select QCOM_MDT_LOADER if ARCH_QCOM
-> +        select QCOM_SCM
->           help
->             This is a V4L2 driver for Qualcomm Iris video accelerator
->             hardware. It accelerates decoding operations on various
-> diff --git a/drivers/media/platform/qcom/iris/Makefile b/drivers/media/platform/qcom/iris/Makefile
-> index 48d54e53a576..ddd4c994a0b9 100644
-> --- a/drivers/media/platform/qcom/iris/Makefile
-> +++ b/drivers/media/platform/qcom/iris/Makefile
-> @@ -1,4 +1,5 @@
->   iris-objs += iris_core.o \
-> +             iris_firmware.o \
->                iris_hfi_gen1_command.o \
->                iris_hfi_gen2_command.o \
->                iris_hfi_queue.o \
-> diff --git a/drivers/media/platform/qcom/iris/iris_core.c b/drivers/media/platform/qcom/iris/iris_core.c
-> index 360a54909ef6..8c7d53c57086 100644
-> --- a/drivers/media/platform/qcom/iris/iris_core.c
-> +++ b/drivers/media/platform/qcom/iris/iris_core.c
-> @@ -4,11 +4,13 @@
->    */
->   
->   #include "iris_core.h"
-> +#include "iris_firmware.h"
->   #include "iris_state.h"
->   
->   void iris_core_deinit(struct iris_core *core)
->   {
->   	mutex_lock(&core->lock);
-> +	iris_fw_unload(core);
->   	iris_hfi_queues_deinit(core);
->   	core->state = IRIS_CORE_DEINIT;
->   	mutex_unlock(&core->lock);
-> @@ -33,10 +35,16 @@ int iris_core_init(struct iris_core *core)
->   	if (ret)
->   		goto error;
->   
-> +	ret = iris_fw_load(core);
-> +	if (ret)
-> +		goto error_queue_deinit;
+On 31/08/2024 13:07, Tarang Raval wrote:
+> +/dts-v1/;
 > +
->   	mutex_unlock(&core->lock);
->   
->   	return 0;
->   
-> +error_queue_deinit:
-> +	iris_hfi_queues_deinit(core);
->   error:
->   	core->state = IRIS_CORE_DEINIT;
->   exit:
-> diff --git a/drivers/media/platform/qcom/iris/iris_firmware.c b/drivers/media/platform/qcom/iris/iris_firmware.c
-> new file mode 100644
-> index 000000000000..55bbcc798f4c
-> --- /dev/null
-> +++ b/drivers/media/platform/qcom/iris/iris_firmware.c
-> @@ -0,0 +1,146 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * Copyright (c) 2022-2024 Qualcomm Innovation Center, Inc. All rights reserved.
-> + */
+> +#include <dt-bindings/phy/phy-imx8-pcie.h>
+> +#include <dt-bindings/leds/common.h>
+> +#include <dt-bindings/usb/pd.h>
+> +#include "imx8mp.dtsi"
 > +
-> +#include <linux/firmware.h>
-> +#include <linux/firmware/qcom/qcom_scm.h>
-> +#include <linux/of_address.h>
-> +#include <linux/of_reserved_mem.h>
-> +#include <linux/soc/qcom/mdt_loader.h>
+> +/ {
+> +	model = "Variscite VAR-SOM-MX8M Plus module";
+> +	compatible = "variscite,imx8mp-var-som", "fsl,imx8mp";
 > +
-> +#include "iris_core.h"
-> +#include "iris_firmware.h"
-> +
-> +#define MAX_FIRMWARE_NAME_SIZE	128
-> +
-> +static int iris_protect_cp_mem(struct iris_core *core)
-> +{
-> +	struct tz_cp_config *cp_config;
-> +	int ret;
-> +
-> +	cp_config = core->iris_platform_data->tz_cp_config_data;
-> +
-> +	ret = qcom_scm_mem_protect_video_var(cp_config->cp_start,
-> +					     cp_config->cp_size,
-> +					     cp_config->cp_nonpixel_start,
-> +					     cp_config->cp_nonpixel_size);
-> +	if (ret)
-> +		dev_err(core->dev, "failed to protect memory(%d)\n", ret);
-> +
-> +	return ret;
-> +}
-> +
-> +static int iris_load_fw_to_memory(struct iris_core *core, const char *fw_name)
-> +{
-> +	const struct firmware *firmware = NULL;
-> +	struct device_node *node = NULL;
-> +	struct reserved_mem *rmem;
-> +	phys_addr_t mem_phys = 0;
-> +	void *mem_virt = NULL;
-> +	size_t res_size = 0;
-> +	ssize_t fw_size = 0;
-> +	struct device *dev;
-> +	int pas_id = 0;
-> +	int ret;
-> +
-> +	if (!fw_name || !(*fw_name) || !core)
-> +		return -EINVAL;
-> +
-> +	dev = core->dev;
-> +
-> +	if (strlen(fw_name) >= MAX_FIRMWARE_NAME_SIZE - 4)
-> +		return -EINVAL;
-> +
-> +	pas_id = core->iris_platform_data->pas_id;
-> +
-> +	node = of_parse_phandle(dev->of_node, "memory-region", 0);
-> +	if (!node)
-> +		return -EINVAL;
-> +
-> +	rmem = of_reserved_mem_lookup(node);
-> +	if (!rmem) {
-> +		ret = -EINVAL;
-> +		goto err_put_node;
-> +	}
-> +
-> +	mem_phys = rmem->base;
-> +	res_size = rmem->size;
-> +
-> +	ret = request_firmware(&firmware, fw_name, dev);
-> +	if (ret) {
-> +		dev_err(core->dev, "failed to request fw \"%s\", error %d\n",
-> +			fw_name, ret);
-> +		goto err_put_node;
-> +	}
-> +
-> +	fw_size = qcom_mdt_get_size(firmware);
-> +	if (fw_size < 0 || res_size < (size_t)fw_size) {
-> +		ret = -EINVAL;
-> +		dev_err(core->dev, "out of bound fw image fw size: %ld, res_size: %lu\n",
-> +			fw_size, res_size);
-> +		goto err_release_fw;
-> +	}
-> +
-> +	mem_virt = memremap(mem_phys, res_size, MEMREMAP_WC);
-> +	if (!mem_virt) {
-> +		dev_err(core->dev, "failed to remap fw memory phys %pa[p]\n",
-> +			&mem_phys);
-> +		goto err_release_fw;
-> +	}
-> +
-> +	ret = qcom_mdt_load(dev, firmware, fw_name,
-> +			    pas_id, mem_virt, mem_phys, res_size, NULL);
-> +	if (ret) {
-> +		dev_err(core->dev, "error %d loading fw \"%s\"\n",
-> +			ret, fw_name);
-> +		goto err_mem_unmap;
-> +	}
-> +	ret = qcom_scm_pas_auth_and_reset(pas_id);
-> +	if (ret) {
-> +		dev_err(core->dev, "error %d authenticating fw \"%s\"\n",
-> +			ret, fw_name);
-> +		goto err_mem_unmap;
-> +	}
-> +
-> +	return ret;
-> +
-> +err_mem_unmap:
-> +	memunmap(mem_virt);
-> +err_release_fw:
-> +	release_firmware(firmware);
-> +err_put_node:
-> +	of_node_put(node);
-> +	return ret;
-> +}
-> +
-> +int iris_fw_load(struct iris_core *core)
-> +{
-> +	int ret;
-> +
-> +	ret = iris_load_fw_to_memory(core, core->iris_platform_data->fwname);
-> +	if (ret) {
-> +		dev_err(core->dev, "firmware download failed\n");
-> +		return -ENOMEM;
-> +	}
-> +
-> +	ret = iris_protect_cp_mem(core);
-> +	if (ret) {
-> +		dev_err(core->dev, "protect memory failed\n");
-> +		qcom_scm_pas_shutdown(core->iris_platform_data->pas_id);
-> +		return ret;
-> +	}
-> +
-> +	return ret;
-> +}
-> +
-> +int iris_fw_unload(struct iris_core *core)
-> +{
-> +	int ret;
-> +
-> +	ret = qcom_scm_pas_shutdown(core->iris_platform_data->pas_id);
-> +	if (ret)
-> +		dev_err(core->dev, "firmware unload failed with ret %d\n", ret);
-> +
-> +	return ret;
-> +}
-> diff --git a/drivers/media/platform/qcom/iris/iris_firmware.h b/drivers/media/platform/qcom/iris/iris_firmware.h
-> new file mode 100644
-> index 000000000000..8d4f6b7f75c5
-> --- /dev/null
-> +++ b/drivers/media/platform/qcom/iris/iris_firmware.h
-> @@ -0,0 +1,14 @@
-> +/* SPDX-License-Identifier: GPL-2.0-only */
-> +/*
-> + * Copyright (c) 2022-2024 Qualcomm Innovation Center, Inc. All rights reserved.
-> + */
-> +
-> +#ifndef _IRIS_FIRMWARE_H_
-> +#define _IRIS_FIRMWARE_H_
-> +
-> +struct iris_core;
-> +
-> +int iris_fw_load(struct iris_core *core);
-> +int iris_fw_unload(struct iris_core *core);
-> +
-> +#endif
-> diff --git a/drivers/media/platform/qcom/iris/iris_platform_common.h b/drivers/media/platform/qcom/iris/iris_platform_common.h
-> index 5287fdf913bc..9c919367f9d7 100644
-> --- a/drivers/media/platform/qcom/iris/iris_platform_common.h
-> +++ b/drivers/media/platform/qcom/iris/iris_platform_common.h
-> @@ -6,6 +6,8 @@
->   #ifndef _IRIS_PLATFORM_COMMON_H_
->   #define _IRIS_PLATFORM_COMMON_H_
->   
-> +#define IRIS_PAS_ID				9
-> +
->   extern struct iris_platform_data sm8550_data;
->   extern struct iris_platform_data sm8250_data;
->   
-> @@ -20,6 +22,13 @@ struct platform_clk_data {
->   	const char *clk_name;
->   };
->   
-> +struct tz_cp_config {
-> +	u32 cp_start;
-> +	u32 cp_size;
-> +	u32 cp_nonpixel_start;
-> +	u32 cp_nonpixel_size;
-> +};
-> +
->   struct iris_platform_data {
->   	struct iris_inst *(*get_instance)(void);
->   	const struct icc_info *icc_tbl;
-> @@ -33,6 +42,9 @@ struct iris_platform_data {
->   	const char * const *clk_rst_tbl;
->   	unsigned int clk_rst_tbl_size;
->   	u64 dma_mask;
-> +	const char *fwname;
-> +	u32 pas_id;
-> +	struct tz_cp_config *tz_cp_config_data;
->   };
->   
->   #endif
-> diff --git a/drivers/media/platform/qcom/iris/iris_platform_sm8250.c b/drivers/media/platform/qcom/iris/iris_platform_sm8250.c
-> index 664cb2b359a3..36bcb1b851ed 100644
-> --- a/drivers/media/platform/qcom/iris/iris_platform_sm8250.c
-> +++ b/drivers/media/platform/qcom/iris/iris_platform_sm8250.c
-> @@ -25,6 +25,13 @@ static const struct platform_clk_data sm8250_clk_table[] = {
->   	{IRIS_HW_CLK,   "vcodec0_core" },
->   };
->   
-> +static struct tz_cp_config tz_cp_config_sm8250 = {
-> +	.cp_start = 0,
-> +	.cp_size = 0x25800000,
-> +	.cp_nonpixel_start = 0x01000000,
-> +	.cp_nonpixel_size = 0x24800000,
-> +};
-> +
->   struct iris_platform_data sm8250_data = {
->   	.get_instance = iris_hfi_gen1_get_instance,
->   	.icc_tbl = sm8250_icc_table,
-> @@ -38,4 +45,7 @@ struct iris_platform_data sm8250_data = {
->   	.clk_tbl = sm8250_clk_table,
->   	.clk_tbl_size = ARRAY_SIZE(sm8250_clk_table),
->   	.dma_mask = GENMASK(31, 29) - 1,
-> +	.fwname = "qcom/vpu/vpu20_p4.mbn",
+> +	chosen {
+> +		stdout-path = &uart2;
+> +	};
+> +	
+> +	gpio-leds {
+> +	        compatible = "gpio-leds";
+> +	        status = "okay";
+
+That's default. Where is the node disabled?
+
+> +	
+> +	        led-0 {
+> +	                function = LED_FUNCTION_POWER;
+> +	                gpios = <&pca9534 0 GPIO_ACTIVE_HIGH>;
+> +	                linux,default-trigger = "heartbeat";
+> +	        };
+> +	};
 
 
-RB5/sm8250 on this kernel
+Best regards,
+Krzysztof
 
-https://git.codelinaro.org/bryan.odonoghue/kernel/-/tree/linux-stable-24-08-29-iris-v3-rb5?ref_type=heads
-
-CONFIG_QCOM_VENUS = m
-
-Loads fine and I can run this simple smoke test
-
-ffplay -loglevel debug -codec:video h264_v4l2m2m -i sample-5s.mp4
-gst-launch-1.0 -vvv -e filesrc location=sample-5s.mp4 ! qtdemux ! 
-parsebin ! v4l2h264dec ! autovideosink
-
-
-CONFIG_QCOM_IRIS = m
-
-[    2.130077] hw perfevents: enabled with armv8_pmuv3 PMU driver, 7 
-counters available
-[   12.282381] qcom-iris aa00000.video-codec: Adding to iommu group 13
-[   12.463983] qcom-iris aa00000.video-codec: Direct firmware load for 
-qcom/vpu/vpu20_p4.mbn failed with error -2
-[   12.474396] qcom-iris aa00000.video-codec: failed to request fw 
-"qcom/vpu/vpu20_p4.mbn", error -2
-[   12.490919] qcom-iris aa00000.video-codec: firmware download failed
-[   12.516391] qcom-iris aa00000.video-codec: core init failed
-
-In venus the firmware name is
-
-.fwname = "qcom/vpu-1.0/venus.mbn"
-
-What firmware reference are you testing on with your rb5/sm8250 stuff ?
-
-Mine is linux-firmware / Debian sid.
-
-root@linaro-gnome:~# dpkg -S /lib/firmware/qcom/vpu-1.0/venus.mbn
-firmware-qcom-soc: /lib/firmware/qcom/vpu-1.0/venus.mbn
-
-https://packages.debian.org/sid/firmware-qcom-soc
-
-Anyway I don't see much logic/justification for the firmware string change.
-
----
-bod
 
