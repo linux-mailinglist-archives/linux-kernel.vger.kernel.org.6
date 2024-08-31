@@ -1,114 +1,189 @@
-Return-Path: <linux-kernel+bounces-309586-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309587-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DCC7966D29
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 02:06:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 921A7966D2C
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 02:06:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 21A50284AC0
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 00:06:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1C4851F245A3
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 00:06:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE94F4405;
-	Sat, 31 Aug 2024 00:06:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78AC73C3C;
+	Sat, 31 Aug 2024 00:06:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="3vHhwB/r"
-Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f+CBmSu4"
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8986A29A5
-	for <linux-kernel@vger.kernel.org>; Sat, 31 Aug 2024 00:06:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44F9A2582;
+	Sat, 31 Aug 2024 00:06:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725062780; cv=none; b=N8LVaD3qTMK6oGq+XffRMV/uvq32t4HDRva3ru8GwOhHmqlrut/E6MnmmdfIyMbxIRBdGHKmO3k5uQpq/zmeWFMIoBhD4s6sZuiNAtNo/6FNbcF7KxxmG95e/3xAK5c4fkd8Bf09p1ryITJpGBewz/ldM6743dlCaMCE+eMzUFY=
+	t=1725062795; cv=none; b=se2YlLLTCv/f/sV7WOt5d+HkU6H173pRy7fG+z4R25loJUMTDtlJJesIkc5zcpcCTRGeEomMfcCFsl3h0F1E7I7l4omdGbhtruF6aVY5paCmT2x6ZO4xdI23PxMOmXy7crP20lGkVH8/C+hZkr949CiWJkDYvIi9U7ydJEwCFOM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725062780; c=relaxed/simple;
-	bh=n8xcqiHEzhMcHy2TGqeuIA4zEqW0LBBlmS3A1RDmuII=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RkDtcqdjFPh16TYhLw7e3eVK9+PTLJxjzh3i4D6gWxW1AbbIn3zDh3R5APWfHfy3YU6kZ/tnXRlM88k33tYs2CJuszW1XG0xUuwozs+bC6JCf7PQzJOZuQSpVaDRgBcB8BiSrwhGtupD1gIUXA4Siwrv0sv0dIDTZMQvGDBScH0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=3vHhwB/r; arc=none smtp.client-ip=209.85.160.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-45029af1408so42971cf.1
-        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 17:06:18 -0700 (PDT)
+	s=arc-20240116; t=1725062795; c=relaxed/simple;
+	bh=P36KJ9dUl02rMEqVvQH9JpX6m+5Y+S8JZjyrFgjM0iY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sDV3LRQPBL+7j0TGQR2Uf+uvJORSPuJ+m2COtiTJkGuZJppv5g5mZNoBnLC+Ac9xOMPSbDAEfQ92a7i678kwZcOc87rPaIuD1jQH3AzatypsGkes+q6CqTb4h0SvQxJJtvDCsRdhBqICzV7kD27kEB9AXWq0dFB6kWs/0quqYCk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=f+CBmSu4; arc=none smtp.client-ip=209.85.210.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-71423704ef3so1845632b3a.3;
+        Fri, 30 Aug 2024 17:06:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1725062777; x=1725667577; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=n8xcqiHEzhMcHy2TGqeuIA4zEqW0LBBlmS3A1RDmuII=;
-        b=3vHhwB/rvceYxkjD9IZz+rYaiCLZQGsFAT0Y6tqw29EeC9vQfiHmHQFKQdH7t0XgyA
-         ka93vNsLHaXQYaxHdvxrkoZc9hQz6EJvlHImjserC7JTNY/HSwBkQ66f2WrEH6UYf+dd
-         EVNjrTeszz/K9UMyzgHJmzc76dqF3ZI4pxTNadrjBBuZqea0ZuyFlYGWdv+fBr/e0HcS
-         Xv4QWl8xUlmRh462iNuLhzepBAgxql7at6Y7M/Vn5K+aVlxmJ3abTsz+q8uStO/IuCpM
-         6icFmQQZLLOe84MWI7h4OdH7ppmKfNqb7F0qzIPiz4Z+o0CKR8wdsOZ8T2uBhiK5bXsw
-         SxhQ==
+        d=gmail.com; s=20230601; t=1725062793; x=1725667593; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=73FwECXoPq+p2CEsRYfVQNKBUbmo714kbm7kCx6MODE=;
+        b=f+CBmSu4xFIi9Yx6/B1Fhm+V5NPubaME9sOmvxqw/dbxXRFYo3fm57u4J76yDiKb4r
+         uPn/m9VoAaSzGKjKdJ5fBvCxO4f4HVpWQyj2VysbaeVyExfxLnNYg3EJrMZu6Ex9uLBw
+         nksoFf4HgqzFNRxU85SNtNPri9+HaVMOXF/6XPSUW7noNsZN9X6fPWrE+PpOcoeE7FbN
+         oyyRPgSevvaZpD1tINr2+Yi+AxuoiSc1rFfOUd8mbfNWQFZE9mEIKKcSDynh4vc+tx+6
+         prkfPKaaoLB/XS6H88RJ0N1xjCbEfxW1sc0sz3vdhU30+ExN1FfORqu98JK1mG3mFvXX
+         D8Ew==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725062777; x=1725667577;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=n8xcqiHEzhMcHy2TGqeuIA4zEqW0LBBlmS3A1RDmuII=;
-        b=BgqEeNhNiwymqy/U5E2fahuWWY+Md5pOqcJNaqKfMXEqXVcyT4pZg30Yse4uAEU2aT
-         kguKlzlsXNqvrzeA8+YDGf+P0aE30KVe007iduMlA1XvF0DloNli/1TsUX7uJVP+Seeu
-         Y2XCoyrroRs64US7sErXVQtk9GGHEFhfkX3RSZRt3EkcNftfqjKRPYEcg+Iv9sWAyFsx
-         JzEEz6L46FEI5PK5WlB/QZ4tp2g0wCWe4UyD4XOSWoabBX7b941E1R47xIDkI4Sd6Niq
-         msLOuZqg6jtS239OWxY/mb7IPpfLB3WeE5GCh+10IHLebp+ldYMY01JQFuuNqvnbi8C+
-         RlDw==
-X-Forwarded-Encrypted: i=1; AJvYcCWaE/RghHMDs+yJ6JkMZeCHEKKTRnRFDEDp+beOnpKDM3IL0HAZxZerz/M6zEGCKIw+rHaoQmRNI8px450=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwP7WtmFyeUXWMAK7fgs3E3C0tmlCndIFqPeF8+FnnLzFsjwjjW
-	Wyg1wje/QJ4iqCI20HhwSzPn9UdQlPSmtShLNPDHt2rPIo2v5+RhPTkjjwq2FDqvzqPrj5KerKh
-	I6nYSvaFKKxMxewc1XU3Dv0pNbqSdtqTgZ//U
-X-Google-Smtp-Source: AGHT+IFg6NnIqNYSyCQdp+4piRmBL+jQdTn0fkJWHCEEU/fYsuOdUxONjCSJBEQ2wyGjIkWsARNyrhv7f4RZhj+2hRc=
-X-Received: by 2002:ac8:5987:0:b0:447:e847:486 with SMTP id
- d75a77b69052e-457c41b4ae7mr670401cf.3.1725062777214; Fri, 30 Aug 2024
- 17:06:17 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1725062793; x=1725667593;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=73FwECXoPq+p2CEsRYfVQNKBUbmo714kbm7kCx6MODE=;
+        b=vd9lWYHBJcp40k5TDXOe8EjXAN+u37grYSVTkbOoexWkWkL/X/nhpVj1I47c2/9F/x
+         ah9muw89tOf24xGmhTcOhLJPsQIBf06QwcjYzEl3nuJycdT4WJT1IzL6JbTFBLPai5NT
+         jmZ2SVDAGBE2XnvJBgDDhQt9TAVS4ZEQVYZu+pQ8ECpr7ZiC+Jd1D4lQerxqRh2222ZI
+         UEADv1/kzeAx+KaFXtpxkB45e3d39rcqK6yixftqGfL8R9vgXBNud+vzbf9n2obwdbmO
+         /sBWdaLuXkhjpjXe5JifQiKyYNp9QdOtzPLHvAU71PioncsKt3VOUiC7jkOZtt4c3Vii
+         tEeQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXvs41PdWdqpt6cZYgi5N/w2P3Zo9g+4Rbt6f1HvD30nY0/HwRV1PFI9SJiQemdODX7j915pqEr7so=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxzyiLGSDf7r8IBpk4CAaXeqwNhVsyoodCqWnea/Arj9QZsjWGe
+	Izel3TdI5XHdZfkD+hnyCU9fkYzuCr1DBdMz5WM9Kql6aGiMFi/R
+X-Google-Smtp-Source: AGHT+IGa4ZDk/cssOwvP6hdKmmo8JFXvC1u7x+M8kogokVGijUPE575Dzb5/owMqkRcLWPUYkk8aWQ==
+X-Received: by 2002:a05:6a00:21ce:b0:705:b6d3:4f15 with SMTP id d2e1a72fcca58-7173b6b5734mr1712748b3a.25.1725062793225;
+        Fri, 30 Aug 2024 17:06:33 -0700 (PDT)
+Received: from [192.168.50.127] ([2607:f130:0:161::c923:2115])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-715e56e2519sm3404733b3a.173.2024.08.30.17.06.29
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 30 Aug 2024 17:06:32 -0700 (PDT)
+Message-ID: <ebff7e4c-a561-4c61-a40d-f1905ac3d42a@gmail.com>
+Date: Sat, 31 Aug 2024 08:06:26 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240815173903.4172139-21-samitolvanen@google.com>
- <20240815173903.4172139-37-samitolvanen@google.com> <alpine.LSU.2.21.2408301114000.1124@pobox.suse.cz>
-In-Reply-To: <alpine.LSU.2.21.2408301114000.1124@pobox.suse.cz>
-From: Sami Tolvanen <samitolvanen@google.com>
-Date: Sat, 31 Aug 2024 00:05:40 +0000
-Message-ID: <CABCJKucCWfeC0yL6Q2ZcBfef0tMd9L_gmHRJt-cUYkg_4PDtnA@mail.gmail.com>
-Subject: Re: [PATCH v2 16/19] gendwarfksyms: Add support for reserved
- structure fields
-To: Miroslav Benes <mbenes@suse.cz>
-Cc: Masahiro Yamada <masahiroy@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>, 
-	Miguel Ojeda <ojeda@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Matthew Maurer <mmaurer@google.com>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Wedson Almeida Filho <wedsonaf@gmail.com>, Gary Guo <gary@garyguo.net>, Petr Pavlu <petr.pavlu@suse.com>, 
-	Neal Gompa <neal@gompa.dev>, Hector Martin <marcan@marcan.st>, Janne Grunau <j@jannau.net>, 
-	Asahi Linux <asahi@lists.linux.dev>, linux-kbuild@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] PCI: armada8k: change to use devm_clk_get_enabled()
+ helper
+To: Anand Moon <linux.amoon@gmail.com>, Wu Bo <bo.wu@vivo.com>
+Cc: linux-kernel@vger.kernel.org,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+ Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+ linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <20240827023914.2255103-1-bo.wu@vivo.com>
+ <CANAwSgQpu9NYugu_=PCVQGXiXCptxLT2Q1xQ5KqbwvkU0kfWDQ@mail.gmail.com>
+Content-Language: en-US
+From: Wu Bo <wubo.oduw@gmail.com>
+In-Reply-To: <CANAwSgQpu9NYugu_=PCVQGXiXCptxLT2Q1xQ5KqbwvkU0kfWDQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hi Miroslav,
-
-On Fri, Aug 30, 2024 at 9:34=E2=80=AFAM Miroslav Benes <mbenes@suse.cz> wro=
-te:
+On 2024/8/27 14:44, Anand Moon wrote:
+> Hi Wu Bo,
 >
-> yes, this is one of the approaches we use in SLES. We add kabi paddings
-> to some structures in advance (see [1] as a random example) and then use
-> it later if needed.
->
-> It is not the only approach. Much more often we do not have a padding and
-> use alignment holes ([5]), addition of a new member to the end of a
-> structure ([2] or [3]) and such "tricks" ([4] for a newly fully defined
-> structure).
+> On Tue, 27 Aug 2024 at 07:55, Wu Bo <bo.wu@vivo.com> wrote:
+>> Use devm_clk_get_enabled() instead of devm_clk_get() to make the code
+>> cleaner and avoid calling clk_disable_unprepare()
+>>
+>> Signed-off-by: Wu Bo <bo.wu@vivo.com>
+>> ---
+>>   drivers/pci/controller/dwc/pcie-armada8k.c | 36 ++++++++--------------
+>>   1 file changed, 13 insertions(+), 23 deletions(-)
+>>
+>> diff --git a/drivers/pci/controller/dwc/pcie-armada8k.c b/drivers/pci/controller/dwc/pcie-armada8k.c
+>> index b5c599ccaacf..e7ef6c2641b8 100644
+>> --- a/drivers/pci/controller/dwc/pcie-armada8k.c
+>> +++ b/drivers/pci/controller/dwc/pcie-armada8k.c
+>> @@ -284,23 +284,17 @@ static int armada8k_pcie_probe(struct platform_device *pdev)
+>>
+>>          pcie->pci = pci;
+>>
+>> -       pcie->clk = devm_clk_get(dev, NULL);
+>> +       pcie->clk = devm_clk_get_enabled(dev, NULL);
+>>          if (IS_ERR(pcie->clk))
+>> -               return PTR_ERR(pcie->clk);
+>> -
+>> -       ret = clk_prepare_enable(pcie->clk);
+>> -       if (ret)
+>> -               return ret;
+>> -
+>> -       pcie->clk_reg = devm_clk_get(dev, "reg");
+>> -       if (pcie->clk_reg == ERR_PTR(-EPROBE_DEFER)) {
+>> -               ret = -EPROBE_DEFER;
+>> -               goto fail;
+>> -       }
 
-Thanks for bringing this up! Sounds like we're also going to need a
-way to completely exclude specific fields from the output then. I
-think we can use a similar union approach, but instead of instructing
-the tool to use another type, we can just indicate that the field
-should be skipped. I'll come up with a solution for v3.
+I don't know much about this device. But from the code here, its 
+previous logic is that the function will only return when the error code 
+is EPROBE_DEFER, and other errors will continue to execute.
 
-Sami
+So I followed the previous logic, is it correct？
+
+>> -       if (!IS_ERR(pcie->clk_reg)) {
+>> -               ret = clk_prepare_enable(pcie->clk_reg);
+>> -               if (ret)
+>> -                       goto fail_clkreg;
+>> +               return dev_err_probe(dev, PTR_ERR(pcie->clk),
+>> +                               "could not enable clk\n");
+>> +
+>> +       pcie->clk_reg = devm_clk_get_enabled(dev, "reg");
+>> +       if (IS_ERR(pcie->clk_reg)) {
+>> +               ret = dev_err_probe(dev, PTR_ERR(pcie->clk_reg),
+>> +                               "could not enable reg clk\n");
+>> +               if (ret == -EPROBE_DEFER)
+>> +                       goto out;
+> You can drop this check as dev_err_probe handle this inside
+> It will defer the enabling of clock.
+>>          }
+>>
+>>          /* Get the dw-pcie unit configuration/control registers base. */
+>> @@ -308,12 +302,12 @@ static int armada8k_pcie_probe(struct platform_device *pdev)
+>>          pci->dbi_base = devm_pci_remap_cfg_resource(dev, base);
+>>          if (IS_ERR(pci->dbi_base)) {
+>>                  ret = PTR_ERR(pci->dbi_base);
+>> -               goto fail_clkreg;
+>> +               goto out;
+>>          }
+>>
+>>          ret = armada8k_pcie_setup_phys(pcie);
+>>          if (ret)
+>> -               goto fail_clkreg;
+>> +               goto out;
+>>
+>>          platform_set_drvdata(pdev, pcie);
+>>
+>> @@ -325,11 +319,7 @@ static int armada8k_pcie_probe(struct platform_device *pdev)
+>>
+>>   disable_phy:
+>>          armada8k_pcie_disable_phys(pcie);
+>> -fail_clkreg:
+>> -       clk_disable_unprepare(pcie->clk_reg);
+>> -fail:
+>> -       clk_disable_unprepare(pcie->clk);
+>> -
+>> +out:
+>>          return ret;
+>>   }
+>>
+> Thanks
+> -Anand
+>> --
+>> 2.25.1
+>>
+>>
 
