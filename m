@@ -1,136 +1,168 @@
-Return-Path: <linux-kernel+bounces-309871-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309872-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F416967158
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 13:37:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 16C7096715B
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 13:38:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 139401F2260B
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 11:37:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C21DA1F21FCD
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 11:38:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 417AD17E003;
-	Sat, 31 Aug 2024 11:37:43 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85A8B13B797;
-	Sat, 31 Aug 2024 11:37:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7007617E00A;
+	Sat, 31 Aug 2024 11:38:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RFYeiGEV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A152B6A8CF;
+	Sat, 31 Aug 2024 11:38:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725104262; cv=none; b=q5L2KgJgOUChUxLJs9hP7pkTrIgxnK9tmQMZHvgEqAGuUYE7f+7arJGKPAaSvENxv4UoUmpg8GxGuRtI1cvqZM97JHpKO8YT50JPpL5l+EAEHm+1XvUrSiQNa41b4W/TyzcNTqd9DDwHxC7xrl9xALL4v0P1ObKRFU7Rpz8xO/k=
+	t=1725104326; cv=none; b=CBVltLUk3cW4zeR4+tJDzmVDyTUTBXFEl9ncTgFmXJo+a6lozz/Xek6ib51aaZjNTFCHYZsncuLrgWPbMxnyytwFPnw32VScDzGpcWEVSfTETcbfkV2jyrzjy3swXlEU1xtotJ1w+3k0Q0+z2T9HyJ2Yo7keTvOQokV1+QrDA+w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725104262; c=relaxed/simple;
-	bh=p7YwjUYQ2OGjacewqfUPEKpjZ+QWcRjoLDUApUuglow=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=efovPTrD86qe1NmYDGOZAo87KiywQYyq+rjV2V8/6uMUOFrI0kgt9xzfIr+JNXObPaulFkQdMfDowjANdqzDqM4uXzpMWN0dm41zGKFmSTxkzkqeyljt4miO2utJggAPvZiAoRWMuhFYkqHynijBZQppxVvY8VGQefWVykFZj0s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B463D339;
-	Sat, 31 Aug 2024 04:38:05 -0700 (PDT)
-Received: from [10.57.87.50] (unknown [10.57.87.50])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D119F3F762;
-	Sat, 31 Aug 2024 04:37:36 -0700 (PDT)
-Message-ID: <0c6d3625-228a-4cb0-b75f-57f1d4069ced@arm.com>
-Date: Sat, 31 Aug 2024 12:37:29 +0100
+	s=arc-20240116; t=1725104326; c=relaxed/simple;
+	bh=26XxgTbdOhTuCSD4I9b4ByqUILFzK3wcbjqL8EuM6gE=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=JzRx0i2fGdxFILH+n9nox9rrdyLQs6YleAWuV+tZ7BnaMh9uE0LbFRPkC8/b/+nCfzrg491I1czhQR3ARhsj+HzH05MCtSbO65yNfU/qWonF/3jUbdzrVmlocqBY48eQ+WObS1qt/mfqo9eU6r9+xiERHzu8IgRiGvS79dXnZKA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RFYeiGEV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD656C4CEC0;
+	Sat, 31 Aug 2024 11:38:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725104326;
+	bh=26XxgTbdOhTuCSD4I9b4ByqUILFzK3wcbjqL8EuM6gE=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=RFYeiGEVSAqhiaBzzTBp/EqS4UZZC+5ZDB0Fb7o9UR1b9mLVzw0adrWVQkE5j+WcN
+	 7Rn/k/p6WYZWv3NuoZr5AItEKO+zeBPm0fbLZOZuTftz0osl0HUCnbPbLZYa8EQ9Az
+	 zbdHhFqJhLfpyjHMO3XrVAzyE42wmCMQHvL7rl8AKX944pAOLN3OaqdhdpynWSQtbE
+	 QyKyLQsWiAswVKacrGmcABvt2Vf408qg7/wgFGS7SgMLhUDGC2c/xxA31HkirRA8Cp
+	 6Peepq2PwJVzv/ZxEitP3KTNDXev2yC0faMq+u2Xk3b11dwK7Si+esgOPSlMc8egaf
+	 eDiDba09LaSUQ==
+Date: Sat, 31 Aug 2024 12:38:37 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Angelo Dureghello <adureghello@baylibre.com>
+Cc: Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich
+ <Michael.Hennerich@analog.com>, Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Olivier Moysan
+ <olivier.moysan@foss.st.com>, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ dlechner@baylibre.com
+Subject: Re: [RFC PATCH 0/8] iio: dac: introducing ad3552r-axi
+Message-ID: <20240831123837.26a1070a@jic23-huawei>
+In-Reply-To: <20240829-wip-bl-ad3552r-axi-v0-v1-0-b6da6015327a@baylibre.com>
+References: <20240829-wip-bl-ad3552r-axi-v0-v1-0-b6da6015327a@baylibre.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/9] perf: arm_spe: Introduce 'lds' capacity
-To: Will Deacon <will@kernel.org>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>,
- Suzuki K Poulose <suzuki.poulose@arm.com>, Mike Leach
- <mike.leach@linaro.org>, James Clark <james.clark@linaro.org>,
- John Garry <john.g.garry@oracle.com>, Namhyung Kim <namhyung@kernel.org>,
- Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>,
- "Liang, Kan" <kan.liang@linux.intel.com>,
- Jonathan Cameron <jonathan.cameron@huawei.com>,
- Yicong Yang <yangyicong@hisilicon.com>,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- coresight@lists.linaro.org, linux-perf-users@vger.kernel.org
-References: <20240827164417.3309560-1-leo.yan@arm.com>
- <20240827164417.3309560-2-leo.yan@arm.com>
- <20240830103834.GA8000@willie-the-truck>
- <655edf2e-8e0d-4c00-91a1-1af58593f597@arm.com>
- <20240830130930.GA8615@willie-the-truck>
-Content-Language: en-US
-From: Leo Yan <leo.yan@arm.com>
-In-Reply-To: <20240830130930.GA8615@willie-the-truck>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
 
-On 8/30/2024 2:09 PM, Will Deacon wrote:
+On Thu, 29 Aug 2024 14:31:58 +0200
+Angelo Dureghello <adureghello@baylibre.com> wrote:
 
-[...]
+> Hi, asking for comments for this patchset, that is mostly=20
+> ready, at least feature-complete and functionally tested.
+>=20
+> I am introducing ad3552r-axi variant, controlled from a fpga-based
+> AXI IP, as a platform driver, using the DAC backend. The patchset is
+> actually based on linux-iio, since some needed DAC backend features
+> was already there on that repo only, still to be merged in mainline.
+>=20
+> Comments i would like to ask are:
+>=20
+> - i added some devicetree bindings inside current ad3552r yaml,
+>   device is the same, so i wouldn't create a different yaml file.=20
 
->>>> @@ -160,6 +162,7 @@ static ssize_t arm_spe_pmu_cap_show(struct device *dev,
->>>>
->>>>   static struct attribute *arm_spe_pmu_cap_attr[] = {
->>>>        SPE_CAP_EXT_ATTR_ENTRY(arch_inst, SPE_PMU_CAP_ARCH_INST),
->>>> +     SPE_CAP_EXT_ATTR_ENTRY(lds, SPE_PMU_CAP_LDS),
->>>>        SPE_CAP_EXT_ATTR_ENTRY(ernd, SPE_PMU_CAP_ERND),
->>>>        SPE_CAP_EXT_ATTR_ENTRY(count_size, SPE_PMU_CAP_CNT_SZ),
->>>>        SPE_CAP_EXT_ATTR_ENTRY(min_interval, SPE_PMU_CAP_MIN_IVAL),
->>>
->>> What will userspace do with this? I don't think you can turn LDS on/off,
->>> so either you'll get the data source packet or you won't.
->>
->> Yes, LDS bit does not work as a switch.
->>
->> The tool in the userspace will record the LDS bit into the metadata. During
->> decoding phase, it reads out the LDS from metadata. Based on it, the perf
->> tool can know if the data source is supported or not, if yes then decode the
->> data source packet.
-> 
-> Why not just decode a data source packet when you see it? i.e. assume LDS
-> is always set.
+Agreed. If same device, it's usually better to keep it in one file.
 
-The current tool works this way to directly decode a data source packet.
+>=20
+> - if it's ok adding the bus-type property in the DAC backend:
+>   actually, this platform driver uses a 4 lanes parallel bus, plus
+>   a clock line, similar to a qspi. This to read an write registers
+>   and as well to send samples at double data rate. Other DAC may=20
+>   need "parallel" or "lvds" in the future.
 
-However, as Arm ARM section D17.2.4 "Data Source packet" describes, the loaded
-data source is implementation dependent, the data source payload format also
-is implementation defined.
+If it is for register read + write as well, sounds to me like you need
+to treat this as a new bus type, possibly then combined with a
+backend, or something similar to spi offload?
 
-We are halfway here in using the LDS bit to determine if the data source is
-implemented. However, we lack information on the data source format
-implementation. As a first step, we can use the LDS bit for sanity checking in
-the tool to detect any potential silicon implementation issues. Once we have
-an architectural definition for the data source format, we can extend the tool
-accordingly.
+What bus does this currently sit on in your DT bindings?
+(add an example)
 
->> Another point is how to decide the data source packet format. Now we maintain
->> a CPU list for tracking CPU variants which support data source trace. For long
->> term, I would like the tool can based on hardware feature (e.g. a ID register
->> in Arm SPE) to decide the data source format, so far it is absent. This is why
->> LDS bit + CPU list is a more reliable way. See some discussion [1].
-> 
-> Huh. Why would you have a CPU in the list if it _doesn't_ have LDS?
+>=20
+> - adding the bus-type property vs. a boolean property vs. adding=20
+>   a new compatible string.
+>=20
+> - how external synchronization should be handled. Actually, i added
+>   2 backend calls to enable or disable this external trigger.
 
-Yeah, this is what we don't expect - we can verify the implementation based on
-LDS bit.
+That seems more or less fine.  Is there any control over the external
+trigger?  This feels a bit like some of the complex stm32 hardware
+triggers in that a 'hidden' trigger is being enabled.
+If it is controllable or selectable (between say a PWM or an external
+pin) then you may need to be careful how to expose that control.
 
-E.g. if users ask data source related questions, we can use LDS bit (saved in
-the perf metadata) to confirm the feature has been implemented in a silicon.
+>=20
+> - is a read-only sampling-frequency useful ?
+Yes. If it is easy to provide, it can be useful to userspace to
+allow it to figure out how much data to expect.
 
-> If we have to resort to per-CPU decoding, then that's even more of a reason>
-not to have the LDS cap imo.
+Jonathan
 
-This series converts the Arm SPE information into per-CPU metadata, including
-the LDS bit. Consequently, the decoding process retrieves CPU metadata for
-per-CPU decoding, making it easy to determine if a CPU supports the data source.
-
-We have platforms that not all CPUs support Arm SPE, for example, the CPU0 and
-CPU1 don't support Arm SPE, CPU2~CPU5 share a Arm SPE PMU event, CPU6~CPU7
-share another Arm SPE PMU event. In this case, per CPU metadata can be easily
-for checking hardware capacity (include LDS bit) in the decoding.
-
-Thanks,
-Leo
+>=20
+> Thanks a lot for your feedbacks.
+>=20
+> To: Lars-Peter Clausen <lars@metafoo.de>
+> To: Michael Hennerich <Michael.Hennerich@analog.com>
+> To: Nuno S=C3=A1 <nuno.sa@analog.com>
+> To: Jonathan Cameron <jic23@kernel.org>
+> To: Rob Herring <robh@kernel.org>
+> To: Krzysztof Kozlowski <krzk+dt@kernel.org>
+> To: Conor Dooley <conor+dt@kernel.org>
+> To: Olivier Moysan <olivier.moysan@foss.st.com>
+> Cc: linux-iio@vger.kernel.org
+> Cc: devicetree@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org
+> Cc: dlechner@baylibre.com
+>=20
+> Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
+> ---
+> Angelo Dureghello (8):
+>       dt-bindings: iio: dac: ad3552r: add io-backend property
+>       iio: backend: extend features
+>       iio: backend adi-axi-dac: backend features
+>       dt-bindings: iio: dac: add adi axi-dac bus property
+>       iio: dac: ad3552r: changes to use FIELD_PREP
+>       iio: dac: ad3552r: extract common code (no changes in behavior inte=
+nded)
+>       iio: dac: ad3552r: add axi platform driver
+>       iio: ABI: add DAC sysfs synchronous_mode parameter
+>=20
+>  Documentation/ABI/testing/sysfs-bus-iio-dac        |   7 +
+>  .../devicetree/bindings/iio/dac/adi,ad3552r.yaml   |  39 +-
+>  .../devicetree/bindings/iio/dac/adi,axi-dac.yaml   |   9 +
+>  drivers/iio/dac/Kconfig                            |  11 +
+>  drivers/iio/dac/Makefile                           |   3 +-
+>  drivers/iio/dac/ad3552r-axi.c                      | 572 +++++++++++++++=
+++++++
+>  drivers/iio/dac/ad3552r-common.c                   | 163 ++++++
+>  drivers/iio/dac/ad3552r.c                          | 394 +++-----------
+>  drivers/iio/dac/ad3552r.h                          | 199 +++++++
+>  drivers/iio/dac/adi-axi-dac.c                      | 250 ++++++++-
+>  drivers/iio/industrialio-backend.c                 | 151 ++++++
+>  include/linux/iio/backend.h                        |  24 +
+>  12 files changed, 1494 insertions(+), 328 deletions(-)
+> ---
+> base-commit: 7ccb2c2db44572deadb795c4637273cdabbe8b66
+> change-id: 20240829-wip-bl-ad3552r-axi-v0-b1e379c986d3
+>=20
+> Best regards,
 
 
