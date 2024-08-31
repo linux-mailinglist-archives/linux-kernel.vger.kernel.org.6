@@ -1,129 +1,78 @@
-Return-Path: <linux-kernel+bounces-309751-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309752-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3AC5D966FFD
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 09:19:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 526F5967012
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 09:30:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC727284331
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 07:19:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 246451C21646
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 07:30:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB02416A94A;
-	Sat, 31 Aug 2024 07:18:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lpiOx21x"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BD6316F0CA;
+	Sat, 31 Aug 2024 07:30:25 +0000 (UTC)
+Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DB0033981
-	for <linux-kernel@vger.kernel.org>; Sat, 31 Aug 2024 07:18:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FE60136E28;
+	Sat, 31 Aug 2024 07:30:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725088738; cv=none; b=QU+gBrMVLg8+MXIOQtDp50GSOCBxxZfd5Csi1BKCprp6iUEQhQPRQj0+/bCMxf8nTSYrXFWJuJHbUdttosu373z2aNdBbHcSqF1FLtcbcrAsBgv0FYefBsUME1JYaX34yAKbWxPSqJ3xiefiaZ64Q7P6UO/hfIXATo/BHdyboQA=
+	t=1725089424; cv=none; b=tFzfrf50spBdpuW30gdO+6bizd28gzuLSgaZemsvUbDOu9llaF5i7OUaFHnXYvVIJ1rj24LI9DDtpvzGAD2kJthNz6A1s+csTU7TdlmBtwnR7fUcqEu6UIpwp/Gd7wm4+di+NS4rr1ZW6SrHQ7fLo9Qkky2p6IJYX1fhqlOiUB4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725088738; c=relaxed/simple;
-	bh=+Li4JYHmlc0m2Jpsk4OmpL6Gm5XCVPtAY5DKJ4HWX0A=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SYfmvB55dbQ1PdTyH9YBkv1KP4JjGiHxXWn1MSr1614vTxHbNZKMa0nTUJThAd9GOEZosslz9p3N8ZmP7LzxtYga+qBf6srh4U8NUNqRLSvyHHlex1UqE2Jl9Y4s2LofEEWBg67zu8e2sSxs7rwWZj9Bnwk3qn/D+tzLsDgkHSg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lpiOx21x; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A077CC4CEC7
-	for <linux-kernel@vger.kernel.org>; Sat, 31 Aug 2024 07:18:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725088737;
-	bh=+Li4JYHmlc0m2Jpsk4OmpL6Gm5XCVPtAY5DKJ4HWX0A=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=lpiOx21xxgiomI5A2jGRK3190FGd7rgUHc/qQ3cJXH+gaItG/IvNdFszi9jfexZTw
-	 jtzAhN4asksCQJfpEzeCm2EQ/YklvI9GokGDcsvW0fxHL8Wvgkb8zsvK+/wNdfCcj+
-	 idsMZ3i1opg/vjjAVB5fizi2WpTjZAgg8IRHkOenaReNeOsBVa2tLsmUTTw3B9ykEN
-	 utPOVAAL84QqH0t6RMTm/85hBHuxq4InVGLq16r5rczBTiUodEuCATsnsLUGnrVL0m
-	 xazk4tUFPstpfoOjNzra+cE5czUm+tSkqnfavPe16z4ZHdiWdN4Rpi8uuG0NHoLvmU
-	 a9/CFwgIMY/rg==
-Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2f4f505118fso29405781fa.3
-        for <linux-kernel@vger.kernel.org>; Sat, 31 Aug 2024 00:18:57 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVCcdlFQ23XKx76PByfrd4R1b1LkRSVPJyxjjUzpQKHW7cZhE8XaoER2V31IDKFfr8ik70HmqHl7iMNCcM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyrdBasRamveuwzChMjlvF+ArU/qG+FktyTEvWs4mJ4HdY0NmBV
-	8A1IdrAoa8lYLqKrCgIQH8csS3WTiT/vXBw0MXMcWNG3u761b74fn7SbTyFyuf3+iFSoKT0FoUW
-	cfEzNcuMMbFCuYdNBLB26jO+D3Mo=
-X-Google-Smtp-Source: AGHT+IE3Va6gLap4UlxPvqg9ICLyHHD8IlhWZu1pPlzygqJuherO9PBYOHB2LrTvALJromzeS2DCgA7ZQCxsoBTo+Qk=
-X-Received: by 2002:a2e:b8c2:0:b0:2f4:f1d2:c6b with SMTP id
- 38308e7fff4ca-2f626567525mr9603571fa.12.1725088735986; Sat, 31 Aug 2024
- 00:18:55 -0700 (PDT)
+	s=arc-20240116; t=1725089424; c=relaxed/simple;
+	bh=k5BAZnri9ofBt131jwbvdQzKNLiYOwKxPgpUF3hMAMs=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=EGFtZtWu8PUSyBK2lAiDl22L74LVatGzqT4UW2MKHj9T/CX17bz+95bVSE9AxjOWCqvMMKZg6y+x9+QKNhgmqSjy+MZcldhpM8janVm5PEFY4MoCliomId8bYhVfEZ0KW4IQTRN4wxppN7+F2h6FCbsBwKR7CuYx+FMMqts1fSk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.163])
+	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4WwmpC1Qxpz1xtr9;
+	Sat, 31 Aug 2024 15:28:19 +0800 (CST)
+Received: from dggpemm500020.china.huawei.com (unknown [7.185.36.49])
+	by mail.maildlp.com (Postfix) with ESMTPS id 174BF180043;
+	Sat, 31 Aug 2024 15:30:18 +0800 (CST)
+Received: from huawei.com (10.67.174.77) by dggpemm500020.china.huawei.com
+ (7.185.36.49) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Sat, 31 Aug
+ 2024 15:30:17 +0800
+From: Liao Chen <liaochen4@huawei.com>
+To: <linux-ide@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: <s.shtylyov@omp.ru>, <linus.walleij@linaro.org>, <dlemoal@kernel.org>,
+	<cassel@kernel.org>
+Subject: [PATCH -next v2 0/3] ata: Enable module autoloading
+Date: Sat, 31 Aug 2024 07:21:55 +0000
+Message-ID: <20240831072158.789419-1-liaochen4@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240831052157.13532-1-guanwentao@uniontech.com>
-In-Reply-To: <20240831052157.13532-1-guanwentao@uniontech.com>
-From: Huacai Chen <chenhuacai@kernel.org>
-Date: Sat, 31 Aug 2024 15:18:44 +0800
-X-Gmail-Original-Message-ID: <CAAhV-H7GptUdpKScV1AuZZm7w-F5oUXHRmaT9BFCZV4HuQExJg@mail.gmail.com>
-Message-ID: <CAAhV-H7GptUdpKScV1AuZZm7w-F5oUXHRmaT9BFCZV4HuQExJg@mail.gmail.com>
-Subject: Re: [PATCH] Loongarch64: pci: fix memleak in pci_acpi_scan_root
-To: Wentao Guan <guanwentao@uniontech.com>
-Cc: henhuacai@kernel.org, kernel@xen0n.name, loongarch@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, Wangyuli <wangyuli@uniontech.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
+ dggpemm500020.china.huawei.com (7.185.36.49)
 
-Hi, Wentao,
+Hi all,
 
-On Sat, Aug 31, 2024 at 1:24=E2=80=AFPM Wentao Guan <guanwentao@uniontech.c=
-om> wrote:
->
-> Add kfree(root_ops) in this case to avoid memleak root_ops,
-> leaks when pci_find_bus() !=3D 0.
-> Also delay assign root_ops when used for making code read clean.
-> Found by code review
->
-> Signed-off-by: Wangyuli <wangyuli@uniontech.com>
-This should be Yuli Wang <wangyuli@uniontech.com>
+This patchset aims to enable autoloading of some use modules. By 
+registering MDT, the kernel is allowed to automatically bind modules to
+devices that match the specified compatible strings.
 
-> Signed-off-by: Wentao Guan <guanwentao@uniontech.com>
-> ---
->  arch/loongarch/pci/acpi.c | 9 +++++----
->  1 file changed, 5 insertions(+), 4 deletions(-)
->
-> diff --git a/arch/loongarch/pci/acpi.c b/arch/loongarch/pci/acpi.c
-> index 3eb61b8cd5e3..7f3539f5fa23 100644
-> --- a/arch/loongarch/pci/acpi.c
-> +++ b/arch/loongarch/pci/acpi.c
-> @@ -219,17 +219,18 @@ struct pci_bus *pci_acpi_scan_root(struct acpi_pci_=
-root *root)
->                 return NULL;
->         }
->
-> -       root_ops->release_info =3D acpi_release_root_info;
-> -       root_ops->prepare_resources =3D acpi_prepare_root_resources;
-> -       root_ops->pci_ops =3D (struct pci_ops *)&info->cfg->ops->pci_ops;
-> -
->         bus =3D pci_find_bus(domain, busnum);
->         if (bus) {
->                 memcpy(bus->sysdata, info->cfg, sizeof(struct pci_config_=
-window));
->                 kfree(info);
-> +               kfree(root_ops);
-Add kfree() is fine, but move root_ops assignment is unnecessary.
+Liao Chen (3):
+  ata: pata_ftide010: Enable module autoloading
+  ata: pata_ixp4xx: Enable module autoloading
+  ata: sata_gemini: Enable module autoloading
 
-Huacai
+ drivers/ata/pata_ftide010.c  | 1 +
+ drivers/ata/pata_ixp4xx_cf.c | 1 +
+ drivers/ata/sata_gemini.c    | 1 +
+ 3 files changed, 3 insertions(+)
 
->         } else {
->                 struct pci_bus *child;
->
-> +               root_ops->release_info =3D acpi_release_root_info;
-> +               root_ops->prepare_resources =3D acpi_prepare_root_resourc=
-es;
-> +               root_ops->pci_ops =3D (struct pci_ops *)&info->cfg->ops->=
-pci_ops;
-> +
->                 bus =3D acpi_pci_root_create(root, root_ops,
->                                            &info->common, info->cfg);
->                 if (!bus) {
-> --
-> 2.20.1
->
->
+-- 
+2.34.1
+
 
