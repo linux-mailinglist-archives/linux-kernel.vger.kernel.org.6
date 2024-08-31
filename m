@@ -1,53 +1,71 @@
-Return-Path: <linux-kernel+bounces-309904-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309905-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F403A9671AE
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 15:03:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF3C29671B1
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 15:10:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 785E7282CB6
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 13:03:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 40BC828395A
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 13:10:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35FB7AD21;
-	Sat, 31 Aug 2024 13:03:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9139A9461;
+	Sat, 31 Aug 2024 13:09:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="S6PTxzUl"
+	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="KZGpWoYn"
 Received: from mail-m16.yeah.net (mail-m16.yeah.net [220.197.32.16])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DF112C9A;
-	Sat, 31 Aug 2024 13:03:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 513D37494;
+	Sat, 31 Aug 2024 13:09:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725109410; cv=none; b=VdvaCZfu9CIAsPFXFq0v+IuodV7mNePaQAYOKMSd/nrzCrb+2EwXxWJmAdzwJLdav5x4EqXHE08HCbyl+3NaT8YU898bBYomagtAFhI3EGmipT8j6VCwDo/5KL53Dhy6opUuClltEVyWFajmz3RM14UC7fUSIPTucs33Ux1FBOE=
+	t=1725109797; cv=none; b=ah13OJdIST5yGAzendlDncxxw6nmJjFwTpNZU4csl805EG5oU36C7ykbE/lQkzjBJd+MZTNvzVFPiqDzqQQrBidwe7mlDRWRLckL+GbAKADfMcBm5fnoroTjhfILvnrBZPEWBZDXj4dOXcvZDH26T+zxxBm/GajkZCbQYxbKRIw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725109410; c=relaxed/simple;
-	bh=FvhXiPh2zeXzTeRJgyzV63N2jWYC9mSuDAQuNFB7lW0=;
+	s=arc-20240116; t=1725109797; c=relaxed/simple;
+	bh=JhbA8SLC7PqTOJM4EjydUp66srUh+KBL2NPDw8VnI+0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TtbeIqpp7P8jXGbbO9J0R2XHmjOIyBew44UsvrNUCGkSWR8X3EEEl2sKKRJisF7KGIs4wpqz9YyTBpajw0T4Uocjii8PsUh1zxERtbmihkkyo+7gSDzTfVggsFT//CLkRhZWHL9XcgMG3mWVppMRqbsZaHjsAE7WIOmbIu2DCh4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=S6PTxzUl; arc=none smtp.client-ip=220.197.32.16
+	 Content-Type:Content-Disposition:In-Reply-To; b=AA/cqAxo/O1CIUoBbjkij/lEUF/PnFPPdQ+86adbXd7w9mOGEIDv7n4n1PnjpSyzvo0pUcngnKtVitQSRKEYSrp3d/Nu0ZQXRLCai2TghShvDw7mA4vXApmc5pzJ9PCbdb24HcvK4mUkD86e+p0ZidmFgB8ZABKi3EGeoMewMgc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=KZGpWoYn; arc=none smtp.client-ip=220.197.32.16
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
 	s=s110527; h=Date:From:Subject:Message-ID:MIME-Version:
-	Content-Type; bh=ogS1093DYNfHdi/kXr74mgK5XoOfm1WU8YZW02sTJ/g=;
-	b=S6PTxzUldpxTJgqdY3tBVH3woW5ltXkGSXvaDpCR1zSzSgFyEObaWTUzIDStB6
-	MQjNk3RabBxi3NB0W8jiXjdGkI7R6daAklbDxuZojA8kBMdQ/5wPsaY47jZtw3yC
-	n9r8tYz9IyoNB6Ix0Df81tvsCzDP6EujpicRJ5oAxwpoU=
+	Content-Type; bh=hBxY1wW+vCTmGRcQG2NrNyjhBF4l614KDLIpuKsQrS4=;
+	b=KZGpWoYnBnxUI9tXJzTbd1KZVZDPR3pqI9QC4nSUmkNoa01s+BCekOiZWobjfC
+	HfRMcMJ7SGvFt3I/6vsmjhVeMf1iVP8z1F7dkW79BbUbCdwGdDnT2RvnCBHWVwnr
+	lpl70qEeXE6cQ+0nwGkAdLmEZLa0Tk9YWj/Scm9Px8u+A=
 Received: from dragon (unknown [114.216.210.89])
-	by gzsmtp2 (Coremail) with SMTP id Ms8vCgDHLzxuFNNm6Y47AA--.10675S3;
-	Sat, 31 Aug 2024 21:02:40 +0800 (CST)
-Date: Sat, 31 Aug 2024 21:02:38 +0800
+	by gzsmtp3 (Coremail) with SMTP id M88vCgD3X_LAFdNmMzI6AA--.19966S3;
+	Sat, 31 Aug 2024 21:08:18 +0800 (CST)
+Date: Sat, 31 Aug 2024 21:08:16 +0800
 From: Shawn Guo <shawnguo2@yeah.net>
-To: Richard Zhu <hongxing.zhu@nxp.com>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	shawnguo@kernel.org, l.stach@pengutronix.de,
-	devicetree@vger.kernel.org, linux-pci@vger.kernel.org,
+To: Frieder Schrempf <frieder@fris.de>
+Cc: Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
+	imx@lists.linux.dev, Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	kernel@pengutronix.de, imx@lists.linux.dev
-Subject: Re: [PATCH v5 0/4] Add dbi2 and atu for i.MX8M PCIe EP
-Message-ID: <ZtMUbpBJscWlgkhW@dragon>
-References: <1723534943-28499-1-git-send-email-hongxing.zhu@nxp.com>
+	Rob Herring <robh@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Frieder Schrempf <frieder.schrempf@kontron.de>,
+	Alexander Stein <alexander.stein@ew.tq-group.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Conor Dooley <conor.dooley@microchip.com>,
+	Fabio Estevam <festevam@denx.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Francesco Dolcini <francesco.dolcini@toradex.com>,
+	Gregor Herburger <gregor.herburger@ew.tq-group.com>,
+	Hiago De Franco <hiago.franco@toradex.com>,
+	Hugo Villeneuve <hvilleneuve@dimonoff.com>,
+	Joao Paulo Goncalves <joao.goncalves@toradex.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Mathieu Othacehe <m.othacehe@gmail.com>,
+	Michael Walle <mwalle@kernel.org>,
+	Parthiban Nallathambi <parthiban@linumiz.com>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>
+Subject: Re: [PATCH v5 0/2] Add support for Kontron OSM-S i.MX93 SoM and
+ carrier board
+Message-ID: <ZtMVwKT5NbTywXtQ@dragon>
+References: <20240813084934.46004-1-frieder@fris.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,36 +74,43 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1723534943-28499-1-git-send-email-hongxing.zhu@nxp.com>
-X-CM-TRANSID:Ms8vCgDHLzxuFNNm6Y47AA--.10675S3
-X-Coremail-Antispam: 1Uf129KBjvdXoWrurWfWF47Gw1kuF4xtr48tFb_yoW3XFbE9a
-	yUJa4UWw45Ca10k3Wakrna9FW7A347AFW5ZryFgr93Xr4xXF95uFZ7t3s5Gw1Ut3ZIqF1q
-	9F9rZa4UXw47WjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IU8ZmRUUUUUU==
-X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiBAVMZWbS+PA0YQAAsB
+In-Reply-To: <20240813084934.46004-1-frieder@fris.de>
+X-CM-TRANSID:M88vCgD3X_LAFdNmMzI6AA--.19966S3
+X-Coremail-Antispam: 1Uf129KBjvdXoWrtF1DKr47Ar4UCry8KFyDZFb_yoWfJrbE9a
+	4UWa4DK3W8G3WIkF1Fyr1kX3ZxKay0kryq9wn0gw4fXFW7JrW5tFZ5Kry3Wa4rWFWrCa4v
+	ya1kXa9rAw429jkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IUbD5r5UUUUU==
+X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiCxBMZWbS-Ekw8QAAsy
 
-On Tue, Aug 13, 2024 at 03:42:19PM +0800, Richard Zhu wrote:
-> v5 changes:
-> - Correct subject prefix.
+On Tue, Aug 13, 2024 at 10:49:03AM +0200, Frieder Schrempf wrote:
+> From: Frieder Schrempf <frieder.schrempf@kontron.de>
 > 
-> v4 changes:
-> - Add Frank's reviewed tag, and re-format the commit message.
+> Patch 1: board DT bindings
+> Patch 2: add devicetrees
 > 
-> v3 changes:
-> - Refine the commit descriptions.
+> Changes for v5:
+> * Address Shawn's review comments (thanks!)
 > 
-> v2 changes:
-> Thanks for Conor's comments.
-> - Place the new added properties at the end.
+> Changes for v4:
+> * Reorder enable-active-high property
+> * Add dedicated pinctrl settings for different SDHC speed modes
+> * Add SION bit for SDHC pinctrls as workaround for SoC erratum
 > 
-> Ideally, dbi2 and atu base addresses should be fetched from DT.
-> Add dbi2 and atu base addresses for i.MX8M PCIe EP here.
+> Changes for v3:
+> * remove applied patches
+> * rebase onto v6.11-rc1
 > 
-> [PATCH v5 1/4] dt-bindings: imx6q-pcie: Add reg-name "dbi2" and "atu"
-> [PATCH v5 2/4] arm64: dts: imx8mq: Add dbi2 and atu reg for i.MX8MQ
-> [PATCH v5 3/4] arm64: dts: imx8mp: Add dbi2 and atu reg for i.MX8MP
-> [PATCH v5 4/4] arm64: dts: imx8mm: Add dbi2 and atu reg for i.MX8MM
+> Changes for v2:
+> * remove applied patches 1 and 2
+> * add tags
+> * improvements suggested by Krzysztof (thanks!)
+> * add missing Makefile entry for DT
+> 
+> Frieder Schrempf (2):
+>   dt-bindings: arm: fsl: Add Kontron i.MX93 OSM-S based boards
+>   arm64: dts: Add support for Kontron i.MX93 OSM-S SoM and BL carrier
+>     board
 
-Applied 3 DTS patches, thanks!
+Applied both, thanks!
 
 
