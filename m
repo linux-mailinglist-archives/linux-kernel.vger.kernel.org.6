@@ -1,67 +1,59 @@
-Return-Path: <linux-kernel+bounces-309722-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309723-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B9E9966FB7
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 08:16:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF1AD966FBD
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 08:19:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7BB101C21674
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 06:16:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 787BD1F232EB
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 06:19:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B76D81537A3;
-	Sat, 31 Aug 2024 06:16:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21BB71547EA;
+	Sat, 31 Aug 2024 06:19:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rfvl9omS"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qz7SeIV+"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3F5C1448EA;
-	Sat, 31 Aug 2024 06:16:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5339C1BC39;
+	Sat, 31 Aug 2024 06:19:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725084991; cv=none; b=qY4x5xumiym6XjkYvf+RaPLxntXbCgayl9a1l+EPtXA9NIcNhYaQtpPHfzM+aU3m34BTHQ3zmFyxxvAJQF6sbcKEQlxYl+81pms4tq/hGImLX2ZoRESuRhJ77X/48pXX+V56ZbJ+KWDEfCIFvi2QzeJmjPCoRuX6Dhtb4mbME+w=
+	t=1725085182; cv=none; b=T9LDDVEceiFcWrTlhNWFR9nZasezEkoPbzvDOvtue01Gnug1HRkLprFyAsG4HO4xImq24Wx4Ip8hSSnwtaq/dmOQkMUAMpChC+ud4b4M/sMSOgDp62Z4Mak4p1Na9jEWTi3pLYx/fo1uXH7koP3Ua5q3w4LARFYaKMed07eAxh4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725084991; c=relaxed/simple;
-	bh=Itrc34IYAY3xn9/wCabZCczGxzpgNo8B22FkQ32dCTM=;
+	s=arc-20240116; t=1725085182; c=relaxed/simple;
+	bh=5i1ejH31AgHdMEezPmR5r7ia7Xz2VlGh8jp3bOTfxAk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sJoAvzneqKbaJNzXx7x4XXpNeY85EA255KC9MbvEwzJKNOkx9DXbKMvjMd9I3fnSLc3hIbta4MQO8h3eTIinp7fJxSAoE3bFnVRIcPcS/q6AkQ8nnfCLMYLf+K/C8FH6iD6vuOHnpgM+DnG+cBpmS1lreCHmQ9ttU0YgEUtMKcA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rfvl9omS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 69E5DC4CEC0;
-	Sat, 31 Aug 2024 06:16:29 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=M8SBUwI22bRavWKx+pR8DZ4KvnsPtSFQwnl4ERgJTv2MCRiTQyWKe3QE7h/h9nkjnk64XUJUiwoayvd6Uy4owJnXof59d2Z886BjtJq/GhgcOprupH3PYLuh11aq17Sb1a5SyJbuxApbhBGdJyI3a9L4mbkItL6Hq9ebpxpj/P4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qz7SeIV+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 05CB3C4CEC0;
+	Sat, 31 Aug 2024 06:19:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725084990;
-	bh=Itrc34IYAY3xn9/wCabZCczGxzpgNo8B22FkQ32dCTM=;
+	s=k20201202; t=1725085181;
+	bh=5i1ejH31AgHdMEezPmR5r7ia7Xz2VlGh8jp3bOTfxAk=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rfvl9omSqu1jEcX+TQ5OzZmzSgYejtsE5EMIJfBBcgCcsNGvYEIz2Ljwd/f+bf4ak
-	 XS3MgHGGQ+W6ed050cNvRCggcLUDoqIdJqn+pOIbaI2XBbJooz1l2v0gD+fJie5kh5
-	 ATqIZG10O2ewOmXNEi0tQqW4lXg6XBoalcb3MJpTms2hKefa+6OYecfZjj1y4+vW2Y
-	 zar0ZQ6y+5oClQCl2nBXdpEo3KdUfXVJ44bSikR/QDJMFM67tQ9mCT7aZeSihcpg1J
-	 Iz6Xqtubv8sfhMnwyxLzJN3vgFM6HWf9vrs3e6pJ/gW7mDQu3IZcWP44L+jEzdzDoq
-	 Iw5OY4LHLRxiQ==
-Date: Sat, 31 Aug 2024 08:16:26 +0200
+	b=qz7SeIV+TEDhZX1osB/1xQ0nkHYBuAZ0Imyol8CCxd0UcOL6NEyPcK1nIp7aEl/1N
+	 ezQj+XAPUhKLMjIhaJkllUIdddFayppCUUN8fMXcU/34rBBGgFOf9li4F+Onp5g80w
+	 CAjLStgRNogN4XZmFUw6J2Gh+V+0i282xZaAkrIryFMOZA2qge30Y2g+P/xLhkC3JX
+	 2zaDrMs7N5iQHwnK6vAa83A59P/tbia8Z/Gel4QGF4/eiF/yLzjDBWwqfO6aXjtHDi
+	 fZXR96ddX7XZQ1LCDUgQGe7ECeagj7iyq6DG52ovVoHCnGknhDKoLv/AdMJF/sWXKg
+	 wtX2k7NtPp2sg==
+Date: Sat, 31 Aug 2024 08:19:38 +0200
 From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-Cc: Andrzej Hajda <andrzej.hajda@intel.com>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
-	Sandy Huang <hjc@rock-chips.com>, Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>, 
-	Andy Yan <andy.yan@rock-chips.com>, Rob Herring <robh@kernel.org>, 
+To: Dharma Balasubiramani <dharma.b@microchip.com>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>, 
 	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Mark Yao <markyao0591@gmail.com>, Sascha Hauer <s.hauer@pengutronix.de>, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org, 
-	kernel@collabora.com, Alexandre ARNOUD <aarnoud@me.com>, 
-	Luis de Arquer <ldearquer@gmail.com>
-Subject: Re: [PATCH v5 1/4] dt-bindings: display: bridge: Add schema for
- Synopsys DW HDMI QP TX IP
-Message-ID: <57wj2vwjv7eehlix2bmvbm3z4agv5fsyp6vmwwqzotkdsadx7n@azqg2kkaeuxz>
-References: <20240831-b4-rk3588-bridge-upstream-v5-0-9503bece0136@collabora.com>
- <20240831-b4-rk3588-bridge-upstream-v5-1-9503bece0136@collabora.com>
+	Nicolas Ferre <nicolas.ferre@microchip.com>, Alexandre Belloni <alexandre.belloni@bootlin.com>, 
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>, Aubin Constans <aubin.constans@microchip.com>, 
+	linux-mmc@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/2] dt-bindings: mmc: sdhci-atmel: Convert to json
+ schema
+Message-ID: <7cprvqjnmtkpehkok7lfv34t2i5vywt5fhp6q4qyfvmlivvcp5@xdsif4htcqxl>
+References: <20240830-atmel-sdhci-v3-0-7c97a0872af4@microchip.com>
+ <20240830-atmel-sdhci-v3-1-7c97a0872af4@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -70,96 +62,66 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240831-b4-rk3588-bridge-upstream-v5-1-9503bece0136@collabora.com>
+In-Reply-To: <20240830-atmel-sdhci-v3-1-7c97a0872af4@microchip.com>
 
-On Sat, Aug 31, 2024 at 12:55:29AM +0300, Cristian Ciocaltea wrote:
-> Add dt-binding schema containing the common properties for the Synopsys
-> DesignWare HDMI QP TX controller.
+On Fri, Aug 30, 2024 at 08:21:20PM +0530, Dharma Balasubiramani wrote:
+> Convert sdhci-atmel documentation to yaml format. The new file will inherit
+> from sdhci-common.yaml.
 > 
-> Note this is not a full dt-binding specification, but is meant to be
-> referenced by platform-specific bindings for this IP core.
+> Note: Add microchip,sama7g5-sdhci to compatible list as we already use it
+> in the DT.
 > 
-> Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+> Signed-off-by: Dharma Balasubiramani <dharma.b@microchip.com>
 > ---
->  .../display/bridge/synopsys,dw-hdmi-qp.yaml        | 88 ++++++++++++++++++++++
->  1 file changed, 88 insertions(+)
+>  .../bindings/mmc/atmel,sama5d2-sdhci.yaml          | 90 ++++++++++++++++++++++
+>  .../devicetree/bindings/mmc/sdhci-atmel.txt        | 35 ---------
+>  2 files changed, 90 insertions(+), 35 deletions(-)
 > 
-> diff --git a/Documentation/devicetree/bindings/display/bridge/synopsys,dw-hdmi-qp.yaml b/Documentation/devicetree/bindings/display/bridge/synopsys,dw-hdmi-qp.yaml
+> diff --git a/Documentation/devicetree/bindings/mmc/atmel,sama5d2-sdhci.yaml b/Documentation/devicetree/bindings/mmc/atmel,sama5d2-sdhci.yaml
 > new file mode 100644
-> index 000000000000..771f7fba6c50
+> index 000000000000..ba4786328833
 > --- /dev/null
-> +++ b/Documentation/devicetree/bindings/display/bridge/synopsys,dw-hdmi-qp.yaml
-> @@ -0,0 +1,88 @@
+> +++ b/Documentation/devicetree/bindings/mmc/atmel,sama5d2-sdhci.yaml
+> @@ -0,0 +1,90 @@
 > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
 > +%YAML 1.2
 > +---
-> +$id: http://devicetree.org/schemas/display/bridge/synopsys,dw-hdmi-qp.yaml#
+> +$id: http://devicetree.org/schemas/mmc/atmel,sama5d2-sdhci.yaml#
 > +$schema: http://devicetree.org/meta-schemas/core.yaml#
 > +
-> +title: Common Properties for Synopsys DesignWare HDMI QP TX Controller IP
+> +title: Atmel SDHCI controller
 > +
 > +maintainers:
-> +  - Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+> +  - Aubin Constans <aubin.constans@microchip.com>
+> +  - Nicolas Ferre <nicolas.ferre@microchip.com>
 > +
-> +description: |
-> +  The Synopsys DesignWare HDMI 2.1 Quad-Pixel (QP) TX Controller IP core
-> +  supports the following features, among others:
-> +
-> +  * Fixed Rate Link (FRL)
-> +  * Display Stream Compression (DSC)
-> +  * 4K@120Hz and 8K@60Hz video modes
-> +  * Variable Refresh Rate (VRR) including Quick Media Switching (QMS)
-> +  * Fast Vactive (FVA)
-> +  * SCDC I2C DDC access
-> +  * Multi-stream audio
-> +  * Enhanced Audio Return Channel (EARC)
-> +
-> +  Note this is not a full dt-binding specification, but is meant to be
-> +  referenced by platform-specific bindings for this IP core.
+> +description:
+> +  Bindings for the SDHCI controller found in Atmel/Microchip SoCs.
 > +
 > +properties:
-> +  reg:
-> +    maxItems: 1
-> +
-> +  clocks:
-> +    minItems: 4
-> +    maxItems: 6
-> +    items:
-> +      - description: Peripheral/APB bus clock
-> +      - description: EARC RX biphase clock
-> +      - description: Reference clock
-> +      - description: Audio interface clock
-> +    additionalItems: true
+> +  compatible:
+> +    oneOf:
+> +      - enum:
+> +          - atmel,sama5d2-sdhci
+> +          - atmel,sama5d3-sdhci
 
-What is the usefulness of all this? How can you even be sure that each
-implementation of this core will have exactly these clocks?
+This wasn't in the old binding.
+
+> +          - atmel,sama5d4-sdhci
+
+Neither this.
+
+> +          - microchip,sam9x60-sdhci
+> +      - items:
+> +          - enum:
+> +              - microchip,sama7g5-sdhci
+> +          - const: microchip,sam9x60-sdhci
+
+What happened with microchip,sam9x7-sdhci compatible from the old binding?
+
+And none of above changes are explained in commit msg.
 
 
-> +
-> +  clock-names:
-> +    minItems: 4
-> +    maxItems: 6
-> +    items:
-> +      - const: pclk
-> +      - const: earc
-> +      - const: ref
-> +      - const: aud
-> +    additionalItems: true
-> +
-> +  interrupts:
-> +    minItems: 4
-> +    maxItems: 5
-> +    items:
-> +      - description: AVP Unit interrupt
-> +      - description: CEC interrupt
-> +      - description: eARC RX interrupt
-> +      - description: Main Unit interrupt
-
-If these are real pins, then this seems more possible, but
-additionalItems does not make me happy.
-
-I don't see much value in this schema and I am afraid even enforcing
-clock and interrupt names won't work for the second or third user.
 
 Best regards,
 Krzysztof
