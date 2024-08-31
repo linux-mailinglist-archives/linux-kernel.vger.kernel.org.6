@@ -1,245 +1,117 @@
-Return-Path: <linux-kernel+bounces-309868-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309869-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C427967151
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 13:34:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82498967153
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 13:36:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 245C628128E
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 11:34:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B36851C21423
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 11:35:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE53A17E005;
-	Sat, 31 Aug 2024 11:34:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4034917DFF8;
+	Sat, 31 Aug 2024 11:35:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rL/Mtpnf"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="r7rmWNMq";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="+GLn1eiP"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 187E819BB7;
-	Sat, 31 Aug 2024 11:34:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98A0D19BB7;
+	Sat, 31 Aug 2024 11:35:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725104064; cv=none; b=Z9JSNX9JY0O6sVfgncVnKM4tIgRNwFnd1ahWtEpaDSAhcoOGgedXLjEKTDOGtP04STO8q5LmvWNY76Xy/Siw+loous1avl8k43yNyKeT3iEUGsSkazqZ1Gg34YQw+oQPN2e2uXdHgkY/ovO2rkjNCOpRd7rrKgqmBgeKWQ03zXE=
+	t=1725104154; cv=none; b=IuqMj4hna4Pe5dewTER4riAyiFL92Oq+dv693pGPgYhCX3wbgTFNdHc6z3KQQw+4WUZaIKDLYI8IvSeF19ivL1FWHGkVGmCVJQcDhBEwdeuVBACFLGpfweeZQjB2tw0J8js4j7SMOV192pzzVh2cUyvM2UVQex6gN3ZumkcDFFc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725104064; c=relaxed/simple;
-	bh=pTuBiz0aBmLlXkooQ8sY+Trgbzt3HvaZXF0VH5ok2+c=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=tPEffnViuGCPxgAPbMTUBJeR/Mct7gLHbYba18DfY+5VgXu8ucv9+VWB4R0sdIl56dkM64dLHzUYrysi7LVHsh2rqbycKYJACUIqfNYBUcfCVskCJZtilfvCIwalxo7kZcf14cRcXbIemLbkEJUaLAu370pB1UjkdG7IVE5ekAM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rL/Mtpnf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4A4FEC4CEC0;
-	Sat, 31 Aug 2024 11:34:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725104063;
-	bh=pTuBiz0aBmLlXkooQ8sY+Trgbzt3HvaZXF0VH5ok2+c=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=rL/Mtpnfrnwj+i0+5owDZ0wnjNAxb9lcQgLrxWDKmtJAyXsMc82TkhwEnFD9h828y
-	 7RP3SX2fqLAlTIEwdHWD5rzv0GNy5LEVVKPVNaRTIh2UmQ2y86xAIU8UIyyt7yAm4R
-	 3eAtLyB5bhTyUm/hesD8sJ3JmTlZQ6I13mLCXnsuMMBgotGZUD5lCX/7qNiYyzAvd/
-	 7RgP+KpzCcDqkKFz5v0QVxW+rq4yqg5xGRM088fcwmY5C3knjascOPEBCmVRqguM6o
-	 54Xnj4IK7RpIgcd3I7/1c/e3DTmvGEsEnjIUHJdog7LXUrUoMsIMiePKZmTEJGlhcP
-	 FSpjnrw3Jw4jw==
-Date: Sat, 31 Aug 2024 12:34:18 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Angelo Dureghello <adureghello@baylibre.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich
- <Michael.Hennerich@analog.com>, Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Olivier Moysan
- <olivier.moysan@foss.st.com>, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- dlechner@baylibre.com
-Subject: Re: [PATCH RFC 3/8] iio: backend adi-axi-dac: backend features
-Message-ID: <20240831123418.6bef6039@jic23-huawei>
-In-Reply-To: <20240829-wip-bl-ad3552r-axi-v0-v1-3-b6da6015327a@baylibre.com>
-References: <20240829-wip-bl-ad3552r-axi-v0-v1-0-b6da6015327a@baylibre.com>
-	<20240829-wip-bl-ad3552r-axi-v0-v1-3-b6da6015327a@baylibre.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1725104154; c=relaxed/simple;
+	bh=p8/lDM0cC55G6RPKHtM0qwXyznkNlWGGqzepkmtlwjU=;
+	h=Date:From:To:Subject:Cc:MIME-Version:Message-ID:Content-Type; b=CzTeRh52XOcULk9wROUjBTReRKzPmHcyGG9S/donfWbJfThCyW4rsdfullyJBNmVk65Wvhbz5HZrqp7aFmaPWU9UyYlNISKTubc3tUte4b+afldCRbOmyObPxAXz+jkh0qD6Gac3daZ/GPiZw75EjFyx04W3NM5DMhLycHV0LUw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=r7rmWNMq; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=+GLn1eiP; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Sat, 31 Aug 2024 11:35:47 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1725104150;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
+	bh=VAR6E5wOkXDgCvIIY1WZojham88gMqLKNVPqhToSA0k=;
+	b=r7rmWNMqTQ8jID3WmPnD4FIeKl1MPKbEW04FZb3DakHiR0WYvUVwtvYlbq84VvplZqzw3O
+	z83c2q1sStP9krGDv+sV8R1L+ciBkkOV34j/YOtrcjXIYKSOOwWZ4EfWIWHyi/GVtDk+s1
+	JFY2xpWe0El893y+fl/S8CU8oWN4U+CbA7miS1hNv745n0hgFZ0dnOXRZaz775FVo2Uhsu
+	Igrwlv1cvUD8ZCdw8C3VxV9zgnkYSWQVFCb+UOQuU3x8qh9rPZZ5FoIHwYely+DHmIMpPW
+	PVPHf59Ki6VPLfd27SGcLdrN34Qpgnk7JIq3rfgjpWC+b8xk4B+OcOGoNzhOpQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1725104150;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
+	bh=VAR6E5wOkXDgCvIIY1WZojham88gMqLKNVPqhToSA0k=;
+	b=+GLn1eiPkwG9DmczeBbRt5xC3QEFt9HljgbqmanaNKxQAlgHHIJNaFNVm2uas/LgMvBhYz
+	EHlxBjMKNPZEQwAw==
+From: "tip-bot2 for Thomas Gleixner" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: core/core] Revert "timekeeping: Use time_after() in
+ timekeeping_check_update()"
+Cc: Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Message-ID: <172510414774.2215.15979645843783952294.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 
-On Thu, 29 Aug 2024 14:32:01 +0200
-Angelo Dureghello <adureghello@baylibre.com> wrote:
+The following commit has been merged into the core/core branch of tip:
 
-> From: Angelo Dureghello <adureghello@baylibre.com>
-> 
-> Extend DAC backend with new features required for the AXI driver
-> version for the a3552r DAC.
-> 
-> Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
-Hi Angelo
-Minor comments inline.
->  
->  static int axi_dac_enable(struct iio_backend *back)
-> @@ -460,7 +493,13 @@ static int axi_dac_data_source_set(struct iio_backend *back, unsigned int chan,
->  	case IIO_BACKEND_EXTERNAL:
->  		return regmap_update_bits(st->regmap,
->  					  AXI_DAC_REG_CHAN_CNTRL_7(chan),
-> -					  AXI_DAC_DATA_SEL, AXI_DAC_DATA_DMA);
-> +					  AXI_DAC_DATA_SEL,
-> +					  AXI_DAC_DATA_DMA);
+Commit-ID:     908c1217c074b83222cdb88235bd940e51463244
+Gitweb:        https://git.kernel.org/tip/908c1217c074b83222cdb88235bd940e51463244
+Author:        Thomas Gleixner <tglx@linutronix.de>
+AuthorDate:    Sat, 31 Aug 2024 13:26:26 +02:00
+Committer:     Thomas Gleixner <tglx@linutronix.de>
+CommitterDate: Sat, 31 Aug 2024 13:26:26 +02:00
 
-Unrelated change.   If you want to change this, separate patch.
+Revert "timekeeping: Use time_after() in timekeeping_check_update()"
 
-> +	case IIO_BACKEND_INTERNAL_RAMP_16:
-> +		return regmap_update_bits(st->regmap,
-> +					  AXI_DAC_REG_CHAN_CNTRL_7(chan),
-> +					  AXI_DAC_DATA_SEL,
-> +					  AXI_DAC_DATA_INTERNAL_RAMP_16);
->  	default:
->  		return -EINVAL;
->  	}
-> @@ -518,9 +557,204 @@ static int axi_dac_reg_access(struct iio_backend *back, unsigned int reg,
->  	return regmap_write(st->regmap, reg, writeval);
->  }
->  
+This reverts commit 42db2c2cb5ac3572380a9489b8f8bbe0e534dfc7.
 
-> +
-> +static int axi_dac_bus_reg_write(struct iio_backend *back,
-> +				 u32 reg, void *val, size_t size)
+Due to build warnings.
 
-Maybe just pass an unsigned int for val?
-So follow what regmap does? You will still need the size, but it
-will just be configuration related rather than affecting the type
-of val.
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+---
+ kernel/time/timekeeping.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-
-
-> +{
-> +	struct axi_dac_state *st = iio_backend_get_priv(back);
-> +
-> +	if (!st->bus_type)
-> +		return -EOPNOTSUPP;
-> +
-> +	if (st->bus_type == AXI_DAC_BUS_TYPE_QSPI) {
-
-As below, I'd use a switch and factor out this block as a separate
-bus specific function.
-
-> +		int ret;
-> +		u32 ival;
-> +
-> +		if (size != 1 && size != 2)
-> +			return -EINVAL;
-> +
-> +		switch (size) {
-> +		case 1:
-> +			ival = FIELD_PREP(AXI_DAC_DATA_WR_8, *(u8 *)val);
-> +			break;
-> +		case 2:
-> +			ival =  FIELD_PREP(AXI_DAC_DATA_WR_16, *(u16 *)val);
-> +			break;
-> +		default:
-> +			return  -EINVAL;
-
-Hopefully compiler won't need this and the above. I'd drop the size != 1..
-check in favour of just doing it in this switch.
-
-> +		}
-> +
-> +		ret = regmap_write(st->regmap, AXI_DAC_CNTRL_DATA_WR, ival);
-> +		if (ret)
-> +			return ret;
-> +
-> +		/*
-> +		 * Both REG_CNTRL_2 and AXI_DAC_CNTRL_DATA_WR need to know
-> +		 * the data size. So keeping data size control here only,
-> +		 * since data size is mandatory for to the current transfer.
-> +		 * DDR state handled separately by specific backend calls,
-> +		 * generally all raw register writes are SDR.
-> +		 */
-> +		if (size == 1)
-> +			ret = regmap_set_bits(st->regmap, AXI_DAC_REG_CNTRL_2,
-> +					      AXI_DAC_SYMB_8B);
-> +		else
-> +			ret = regmap_clear_bits(st->regmap, AXI_DAC_REG_CNTRL_2,
-> +						AXI_DAC_SYMB_8B);
-> +		if (ret)
-> +			return ret;
-> +
-> +		ret = regmap_update_bits(st->regmap, AXI_DAC_REG_CUSTOM_CTRL,
-> +					 AXI_DAC_ADDRESS,
-> +					 FIELD_PREP(AXI_DAC_ADDRESS, reg));
-> +		if (ret)
-> +			return ret;
-> +
-> +		ret = regmap_update_bits(st->regmap, AXI_DAC_REG_CUSTOM_CTRL,
-> +					 AXI_DAC_TRANSFER_DATA,
-> +					 AXI_DAC_TRANSFER_DATA);
-> +		if (ret)
-> +			return ret;
-> +
-> +		ret = regmap_read_poll_timeout(st->regmap,
-> +					       AXI_DAC_REG_CUSTOM_CTRL, ival,
-> +					       ival & AXI_DAC_TRANSFER_DATA,
-> +					       10, 100 * KILO);
-> +		if (ret)
-> +			return ret;
-> +
-> +		return regmap_clear_bits(st->regmap, AXI_DAC_REG_CUSTOM_CTRL,
-> +					  AXI_DAC_TRANSFER_DATA);
-> +	}
-> +
-> +	return -EINVAL;
-> +}
-> +
-> +static int axi_dac_bus_reg_read(struct iio_backend *back,
-> +				u32 reg, void *val, size_t size)
-As for write, I'd just use an unsigned int * for val like
-regmap does.
-
-
-> +{
-> +	struct axi_dac_state *st = iio_backend_get_priv(back);
-> +
-> +	if (!st->bus_type)
-> +		return -EOPNOTSUPP;
-> +
-> +	if (st->bus_type == AXI_DAC_BUS_TYPE_QSPI) {
-
-It got mentioned in binding review but if this isn't QSPI, even
-if similar don't call it that.
-Maybe use a switch from the start give it will make sense
-anyway the moment there is a second bus type.
-
-I'd be tempted to factor the rest of this block out.
-I guess expectation is we'll see more bus types so that factoring
-out will be needed soon anyway.
-
-
-> +		int ret;
-> +		u32 bval;
-		u32 bval = 0;
-> +
-> +		if (size != 1 && size != 2)
-> +			return -EINVAL;
-> +
-> +		bval = 0;
-> +		ret = axi_dac_bus_reg_write(back,
-> +					    AXI_DAC_RD_ADDR(reg), &bval, size);
-
-Ugly wrap.   Move more stuff on to first line.
-
-> +		if (ret)
-> +			return ret;
-> +
-> +		ret = regmap_read_poll_timeout(st->regmap, AXI_DAC_UI_STATUS,
-> +					       bval, bval != AXI_DAC_BUSY,
-> +					       10, 100);
-> +		if (ret)
-> +			return ret;
-> +
-> +		return regmap_read(st->regmap, AXI_DAC_CNTRL_DATA_RD, val);
-> +	}
-> +
-> +	return -EINVAL;
-> +}
-
+diff --git a/kernel/time/timekeeping.c b/kernel/time/timekeeping.c
+index 6cda65d..5391e41 100644
+--- a/kernel/time/timekeeping.c
++++ b/kernel/time/timekeeping.c
+@@ -217,7 +217,7 @@ static void timekeeping_check_update(struct timekeeper *tk, u64 offset)
+ 	}
+ 
+ 	if (tk->underflow_seen) {
+-		if (time_after(jiffies, tk->last_warning + WARNING_FREQ)) {
++		if (jiffies - tk->last_warning > WARNING_FREQ) {
+ 			printk_deferred("WARNING: Underflow in clocksource '%s' observed, time update ignored.\n", name);
+ 			printk_deferred("         Please report this, consider using a different clocksource, if possible.\n");
+ 			printk_deferred("         Your kernel is probably still fine.\n");
+@@ -227,7 +227,7 @@ static void timekeeping_check_update(struct timekeeper *tk, u64 offset)
+ 	}
+ 
+ 	if (tk->overflow_seen) {
+-		if (time_after(jiffies, tk->last_warning + WARNING_FREQ)) {
++		if (jiffies - tk->last_warning > WARNING_FREQ) {
+ 			printk_deferred("WARNING: Overflow in clocksource '%s' observed, time update capped.\n", name);
+ 			printk_deferred("         Please report this, consider using a different clocksource, if possible.\n");
+ 			printk_deferred("         Your kernel is probably still fine.\n");
 
