@@ -1,96 +1,88 @@
-Return-Path: <linux-kernel+bounces-309705-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309711-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 041EA966F7D
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 07:48:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EDD4966F8D
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 07:57:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A22831F23641
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 05:48:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0EF481F237FD
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 05:57:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37D2514EC5E;
-	Sat, 31 Aug 2024 05:47:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 953EF1514E2;
+	Sat, 31 Aug 2024 05:57:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XRNzVlSr"
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FV5w5qrI"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AFBA2E405;
-	Sat, 31 Aug 2024 05:47:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 853288528F;
+	Sat, 31 Aug 2024 05:57:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725083271; cv=none; b=p5kkgDgnipu/DRtjkBdvj8tSgKEir476aXheJR2bAYG143z1hTEFiBeakahqEg7TMUF9JgdC0DsjAvfAl8vA0iddm4opkzxgdP2qcfcIj0drCDc0y7X9+sWnCTxn53IIMMds9x4ekO+1GWpIqRVow7hv1j12oAgWHirFz/gr9Eo=
+	t=1725083825; cv=none; b=e5fRVgd2sjqfPVbi5DK1SPZBHrwF0VA8/8Wcp33I0X5fXSVmR3w6wIgMjfjsGbV2hRIenrHVDaAh+TBpsMERQ+EJiIhWN+Tiqk6vyZUpfMY0qrG0+pPNppDfuwLOH/qpI09g5koDIYegyvMC3ef/O59ttGfu9a7eg6qcOADUJdY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725083271; c=relaxed/simple;
-	bh=cV8GigBqJzTIQ/oFjGK4Y5hHeBbGDREvYmt5NzuQCEU=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=a8c7DBqX+3a7KbXJ5P3u/9x110464tV0hbVrfU9/3XOoQtxAXzNYl0eP0SnQMM8C43Y66G6TQ0FJcvpZCzgSG814YmUU0skt4YScPRK54Y/nPO4ez2F+cUSXJ/xt3m1knbSP5qNNdksZmdyQCXT6Yt04f90yaUgIaHjHDdiidjk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XRNzVlSr; arc=none smtp.client-ip=209.85.210.174
+	s=arc-20240116; t=1725083825; c=relaxed/simple;
+	bh=6jRipSmZB7tBHL26nPToxzqlMWECJ6w6dEGLoIX4iV4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SDz97OujC5mwN7k/j2IuV5zC3dg4NWg7BD+gm35GpKvYfbVsEKNJ1C2+t6pG4U4z+TTp2tM0aiERAbmQUewMUB5D2KDG0sS+44i3zS4zK1NFi0puJC8Zu7CAgANvAuzVnHOYeMnZyLiaoLmoSyXP6s7vOnmouV6lSqK64ua27kk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FV5w5qrI; arc=none smtp.client-ip=209.85.214.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-71744362c22so43981b3a.2;
-        Fri, 30 Aug 2024 22:47:49 -0700 (PDT)
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-202146e93f6so25178615ad.3;
+        Fri, 30 Aug 2024 22:57:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725083269; x=1725688069; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4ckgtpxhKEUT5nAj96jMRuGhhWodTxLNrAvXaIKOqCk=;
-        b=XRNzVlSrqWc2RoP0C0WlpBt7P/lAxyJXnrsBR3zWy3eVXAuQWqon0vlj6OlBWVzVUg
-         23beQa4ADGOrOZ9fn36mxXY0tQssXaO7yCDqoDFrUjp6WaRNsIF3xrHlCAdbgtgC+QGx
-         0MEyi8VLStzuYIoSZzSN4aUOKkjNlzcaO4S+F0AuRDcAb0NoaVFhQHV2CNNG5XqZ0wZw
-         DH2ycOejZdwQtHt36kJn9TcWJcvUxM3KMoXVXQ3PyW0FhguHrHxEpTuxXni9ngr2lYM+
-         5eeeqQtPxB2RhI4bjZLIAZs+Gkd/3t8RjdP1kF25821fySreVNm4aPHwKrlcacUsXFja
-         sEow==
+        d=gmail.com; s=20230601; t=1725083824; x=1725688624; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ByuhC/KjucY4J7CupyjYySbESElTD8OlxoVh31r/Quw=;
+        b=FV5w5qrIM78MvK+AJvOHOEKW9AEQZFJ3nTjtRPj6RIfe1WVBDdIxn1zkOaiaQTlAok
+         uzSurnVmU3nCQETQMxmAf2BOFk7Gpd4xElkswAHzayB5PNrPKOzP7ASHr5nbm96Rgo8q
+         sLoQi2rmIsk6QA9TyBDeJrcYpisxOFcX8LCc8fsRfRqEzTMGtDeXamCGT+gFx2mq+vPE
+         zCde9hwi1ytRBWyUbdW+O4BZNxfKdm92riNsjr7DvjAr64+r/Yp8bhZARNF+z6lwso51
+         vn1nwloU/c/Dvc3h9XZAPRdVvMZulHod5tKPligeU7HLVcXdBPeUDoDP0txO54x/b9UP
+         kY/g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725083269; x=1725688069;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4ckgtpxhKEUT5nAj96jMRuGhhWodTxLNrAvXaIKOqCk=;
-        b=jer/iUCoGlu7KzRwnYAIq3ttmwRgMHHzZIlpbI+xR82i+M8qNDF8XvcBVlYKXbnUqz
-         WjqRNMZKpYnCQtN1cUrz2MiQkAC2wc+4m7oRY8ChDILf/joW6D7lljTs2WmVluO9yAEt
-         zCowaoAKnCciwzQRGU75VeBPV9ZhewcUIejMzRMftoRdEAJU+9P34DFNLdHj4Nbq8ET/
-         gwQI6o6j6VcQfAh6eSeM9lLTMyvEoikztrt1fFDHuV6NnMifY5XQQhEkqwgM2R7ztNwg
-         781XVSdP8C2cNdVMd4eB6z3egN2zyiyNzXJ7M5uXXZDZQWV/dUQtNeTY//aIn5DDpZK4
-         EyTg==
-X-Forwarded-Encrypted: i=1; AJvYcCV0BCTqxaJf6YP2ojUTyvwh9TLzNwbPGpFbg37r+NbEpEf09GOv4KxAS/sV3XyAFs3cmB2s9XE7cHnyhgXCvdj4@vger.kernel.org, AJvYcCWImEreNJgtmG0OVtLYdTI0Z90GwjN/hBrNgA3QdZkiJOFURS58EfcHv7WZJuFMOZRt/hYe2yytu6dbaXbJ@vger.kernel.org, AJvYcCWK+oVMifu0+5FivpPQzLWfmk8/chYn0r4621IO5wnD4hqOpOe0PArztGvwwvflStcHGZ8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyTQWX+gs1XVw+oAceW0eo7JVAWO1NNqZcltC+5hvXrJfv9EjmZ
-	L12SrWzdBgVxBYwOMh42oh2amYl8E2eK6VgUMM5uogZdnLVWPzPM
-X-Google-Smtp-Source: AGHT+IG/WCbMFojSxC3xOhkFsA9bL6w0IdupUHCplkiRyaZ3b3v1SNYwCg4ej3GSmj239JffaDPiYw==
-X-Received: by 2002:a05:6a21:9101:b0:1cc:9f25:54d4 with SMTP id adf61e73a8af0-1cce10979f6mr7242647637.38.1725083269352;
-        Fri, 30 Aug 2024 22:47:49 -0700 (PDT)
-Received: from kernelexploit-virtual-machine.localdomain ([121.185.186.233])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2051553442esm34843105ad.135.2024.08.30.22.47.45
+        d=1e100.net; s=20230601; t=1725083824; x=1725688624;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ByuhC/KjucY4J7CupyjYySbESElTD8OlxoVh31r/Quw=;
+        b=MbZqXMcZfGOFbTHn8mHfW4IORPnFSgxExQ7ijm3OmI93bsguKPytV4OWG1YjQOSzdW
+         7wBVl9YIvWcEEhvKk+jLcQoPUm4xJw90D6XSUoWsuOEAJXh3ZZndkYtjVrt9OjHJsWWN
+         gckAjXDn849j5pRx7QsCGrBZVivF+09zYk1sXUqwdF9aNPpCDnmSE5PeJ1QDmgITAvok
+         iR3Zbh2pFsOAQPxUTksOJqzArWoByB6NYMlplTyr1OdEo3UuAMnPNUfmdjBuX/RhQ8ju
+         5y2SuzqIWaArlTuebsIb6ocWUiXf1B/ziUALleW0RdnmrMNMooCZHt2L41rUyubsT8ek
+         Zj5Q==
+X-Forwarded-Encrypted: i=1; AJvYcCU1jEXLbPp1lF4v2J+Va8CONYmE1cy7k5lro5VRTpNUcGrKqt+iOWHnqQwOrPJxHgua2BybHg4V2FZE@vger.kernel.org, AJvYcCUf73UZlZ3brD7hJHM/da4QZdHxkrNRz+RAfCFeAZKtvvl5ivI9xQYjqmLTsMW671Z3iEA9sMt+d80QnM+3@vger.kernel.org
+X-Gm-Message-State: AOJu0YzC7fSmRqNYvj5oLk61Mt+bStqFwuBQhmwjg765p5Nxvmws3K+L
+	DbJlOeYZfrzUoI22yZvwfAXPZiDfkkkJHauf4QlhI0c8Rxu2oQKu
+X-Google-Smtp-Source: AGHT+IGh3vEuCKsQf/q7EZsGAaz8dCUKLiYZWUd0LMKY0xL83ycYMtjPR5YYsNp8yxn9ikg9CmVGwg==
+X-Received: by 2002:a17:902:e742:b0:202:162c:1f29 with SMTP id d9443c01a7336-2050c46deb5mr78384205ad.47.1725083823654;
+        Fri, 30 Aug 2024 22:57:03 -0700 (PDT)
+Received: from localhost.localdomain ([59.188.211.160])
+        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-2053aa8cb4asm12027045ad.271.2024.08.30.22.57.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 30 Aug 2024 22:47:49 -0700 (PDT)
-From: Jeongjun Park <aha310510@gmail.com>
-To: martin.lau@linux.dev,
-	ast@kernel.org,
-	daniel@iogearbox.net,
-	andrii@kernel.org,
-	eddyz87@gmail.com
-Cc: song@kernel.org,
-	yonghong.song@linux.dev,
-	john.fastabend@gmail.com,
-	kpsingh@kernel.org,
-	sdf@fomichev.me,
-	haoluo@google.com,
-	jolsa@kernel.org,
-	mykolal@fb.com,
-	shuah@kernel.org,
-	aha310510@gmail.com,
-	bpf@vger.kernel.org,
+        Fri, 30 Aug 2024 22:57:03 -0700 (PDT)
+From: Nick Chan <towinchenmi@gmail.com>
+To: Hector Martin <marcan@marcan.st>,
+	Sven Peter <sven@svenpeter.dev>,
+	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	asahi@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org
-Subject: [PATCH bpf,v2,2/2] selftest/bpf : Add a selftest test case to check for incorrect names
-Date: Sat, 31 Aug 2024 14:47:42 +0900
-Message-Id: <20240831054742.364585-1-aha310510@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240831054525.364353-1-aha310510@gmail.com>
-References: <20240831054525.364353-1-aha310510@gmail.com>
+	devicetree@vger.kernel.org,
+	konrad.dybcio@somainline.org
+Cc: ~postmarketos/upstreaming@lists.sr.ht,
+	Nick Chan <towinchenmi@gmail.com>
+Subject: [PATCH v2 0/4] Add support for A7-A11 AIC
+Date: Sat, 31 Aug 2024 13:48:15 +0800
+Message-ID: <20240831055605.3542-1-towinchenmi@gmail.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -99,59 +91,56 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add selftest for cases where btf_name_valid_section() does not properly 
-check for certain types of names.
+Hi,
 
-Suggested-by: Eduard Zingerman <eddyz87@gmail.com>
-Signed-off-by: Jeongjun Park <aha310510@gmail.com>
----
- tools/testing/selftests/bpf/prog_tests/btf.c | 34 ++++++++++++++++++++
- 1 file changed, 34 insertions(+)
+This patch series introduce support for A7-A11 SoCs into the AIC driver by
+if'ing out some features unavailable on them. For background information
+about these SoCs, see v1.
 
-diff --git a/tools/testing/selftests/bpf/prog_tests/btf.c b/tools/testing/selftests/bpf/prog_tests/btf.c
-index 00965a6e83bb..61de88cf4ad0 100644
---- a/tools/testing/selftests/bpf/prog_tests/btf.c
-+++ b/tools/testing/selftests/bpf/prog_tests/btf.c
-@@ -3550,6 +3550,40 @@ static struct btf_raw_test raw_tests[] = {
- 	},
- 	BTF_STR_SEC("\0x\0?.foo bar:buz"),
- },
-+{
-+	.descr = "datasec: name with non-printable first char not is ok",
-+	.raw_types = {
-+		/* int */
-+		BTF_TYPE_INT_ENC(0, BTF_INT_SIGNED, 0, 32, 4),  /* [1] */
-+		/* VAR x */                                     /* [2] */
-+		BTF_TYPE_ENC(1, BTF_INFO_ENC(BTF_KIND_VAR, 0, 0), 1),
-+		BTF_VAR_STATIC,
-+		/* DATASEC ?.data */                            /* [3] */
-+		BTF_TYPE_ENC(3, BTF_INFO_ENC(BTF_KIND_DATASEC, 0, 1), 4),
-+		BTF_VAR_SECINFO_ENC(2, 0, 4),
-+		BTF_END_RAW,
-+	},
-+	BTF_STR_SEC("\0x\0\7foo"),
-+	.err_str = "Invalid name",
-+	.btf_load_err = true,
-+},
-+{
-+	.descr = "datasec: name '\\0' is not ok",
-+	.raw_types = {
-+		/* int */
-+		BTF_TYPE_INT_ENC(0, BTF_INT_SIGNED, 0, 32, 4),  /* [1] */
-+		/* VAR x */                                     /* [2] */
-+		BTF_TYPE_ENC(1, BTF_INFO_ENC(BTF_KIND_VAR, 0, 0), 1),
-+		BTF_VAR_STATIC,
-+		/* DATASEC \0 */                                /* [3] */
-+		BTF_TYPE_ENC(3, BTF_INFO_ENC(BTF_KIND_DATASEC, 0, 1), 4),
-+		BTF_VAR_SECINFO_ENC(2, 0, 4),
-+		BTF_END_RAW,
-+	},
-+	BTF_STR_SEC("\0x\0"),
-+	.err_str = "Invalid name",
-+	.btf_load_err = true,
-+},
- {
- 	.descr = "type name '?foo' is not ok",
- 	.raw_types = {
---
+Changes since v1:
+
+- Corrected dt-binding issues pointed out by Rob, all of A7-M1 gets its own
+SoC compat, as well as the "apple,aic" generic fallback.
+
+- Order the AIC dt-bindings of the SoCs by release dates instead of 
+alphabetical order: 's5l8960x' (A7) -> 't7000' (A8) -> 's8000' (A9) ->
+'t8010' (A10) -> 't8015' (A11) -> 't8103' (M1)
+
+- The patch to disallow local fast IPI on A11 now comes before the patch 
+that enables to AIC driver to work on slow IPI systems. This ensures all
+fast IPI capable systems can use one of the IPI capable compatibles before
+the IPI-always-ack code path in aic_handle_fiq() is removed by the slow IPI
+patch.
+
+- Keep local fast IPI enabled on AIC2, mistake in V1
+- Describe the feature levels in the description of AIC.
+- Added new patch to remove unneccessary enablement of use_fast_ipi.
+- Do not try to enable use_local_fast_ipi, because it is enabled by default.
+
+In theory M1 can also get the apple,t8015-aic (A11) compatible. However, I
+do not see a point in doing that.
+
+Previous version:
+v1: https://lore.kernel.org/asahi/20240829092610.89731-1-towinchenmi@gmail.com
+
+Nick Chan
+
+Konrad Dybcio (1):
+  irqchip/apple-aic: Only access system registers on SoCs which provide
+    them
+
+Nick Chan (3):
+  dt-bindings: apple,aic: Document A7-A11 compatibles
+  irqchip/apple-aic: Skip unnecessary setting of use_fast_ipi
+  irqchip/apple-aic: Add a new "Global fast IPIs only" feature level
+
+ .../interrupt-controller/apple,aic.yaml       | 14 ++++-
+ drivers/irqchip/irq-apple-aic.c               | 53 +++++++++++++------
+ 2 files changed, 49 insertions(+), 18 deletions(-)
+
+
+base-commit: 985bf40edf4343dcb04c33f58b40b4a85c1776d4
+-- 
+2.46.0
+
 
