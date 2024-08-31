@@ -1,113 +1,104 @@
-Return-Path: <linux-kernel+bounces-309622-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309628-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DB5E966D81
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 02:25:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D9D0966D8C
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 02:36:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B7394B22897
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 00:25:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E0403B21B8A
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 00:36:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED4E045013;
-	Sat, 31 Aug 2024 00:22:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ayDPa94W"
-Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1BC36FC7;
+	Sat, 31 Aug 2024 00:36:19 +0000 (UTC)
+Received: from mx0a-0064b401.pphosted.com (mx0a-0064b401.pphosted.com [205.220.166.238])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E16CE8475
-	for <linux-kernel@vger.kernel.org>; Sat, 31 Aug 2024 00:22:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2BA41D1309;
+	Sat, 31 Aug 2024 00:36:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.166.238
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725063752; cv=none; b=AM7TS4My7Rvn0inul2HHSQznVtKcD6D3SFH81uo2REfCm5hNtUEi2SwvkzMtSfaggTamqDlVzGs+ILGmqcNWLFXiqENtxzKqKCAxR3FXGk95iy2KW3Cm94w4upq2lc9bo5gRGL+lVZfWnKKU8P/o8YbfngDu08D4LsU0DaUrgms=
+	t=1725064579; cv=none; b=EOxpqfpYmbBzGn/YNJ75+VEUGnzOjvo5iHCJJVpNSqmV+xXBUUz+bE2SObVOsvoGbDkANvHDqe2o5gOv+R3dlnNk+NbN3bJVTO/9mRw2VSuLVfqLYIoZP/hA2/zcSOO2eqS0RwLKqUk7MxbcRQF7Vj2e/YxKvdk/hIzl/bDstPg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725063752; c=relaxed/simple;
-	bh=fWpWQPA95IPGIQkDKTyjlkmNaVVzA1qb791N30Rg0zk=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=nm9/q2yfQ1q3oRIC+W/D+D4Ypny+2pxRJwGA9cINSFRbo3K4TTTksnX+758+ftJqQvrTGu0EbRI9ezRdvKQjvj8fUBWLzNrNxBHkdXbmn+f/khSBdB7URim1KQ9w3bgEwS+/UdjCbjudIbv5ArkJ0oKHe+FRnraASJIl7AdOkFw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ayDPa94W; arc=none smtp.client-ip=209.85.219.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-e1a892d8438so1111493276.3
-        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 17:22:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1725063750; x=1725668550; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=njo7PyLwOnLnfzTk1Lawe2PiQh7NoMsTGiysrxTefNo=;
-        b=ayDPa94WrAVNuFHO2O1V6jEoCth+zLVr6kmHvzJ7cTOnyKZFtK8ZTp8Qu4QXLstz3d
-         ZcriLscW1gIMvIejl85lf2CSScROXMH8uA1qkLy3AEMUoocAYPMwhfAtQqCGGKKjkobY
-         xif0cw+wFdsj6DemgaEiOM/N1C35eQM3l4jzvTXTPMhgggBOiPUOnaLX3PR8Qt4JVcgh
-         rzmBGO5Pn0jk369Qp2cRJVDrEJ6bPdr+mQDscAy6QtrOy8p0wgXv1hSER2v/cdZFO+6F
-         9IhgGMQ5dud6AgRs1cheucOEhRaHyLPyOg0xj/JjSbmIkKX0jzmKq01lKCNeOLeiFebX
-         KbWQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725063750; x=1725668550;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=njo7PyLwOnLnfzTk1Lawe2PiQh7NoMsTGiysrxTefNo=;
-        b=DtOdhSJGgROxf6m4QWpb5tyTLQMffW4ufSeejRuu5qdPUHYsoYVpTQESMIHDbvHuph
-         BmUD2qcAtc8vLWuyVBqRILYpuYDSE5GnYI1EicqLbQXw/4QDbQUdg0dH+lh5WUs8NsP1
-         cvRMsvui4YH4zWGH47y/12W7qdaew4k0bbw+vBLdsNinxrKkkE2/3QU6UM1rycZOsMq/
-         KaBduJ+cjqOiLVsy3/NtZijJ13pL4xaML30QHeoq/Yaj4PrTbjodUg01jDk1ZWyH96KG
-         SGCguGkwY+RJJGi8fjTep/2kS0VoxBfpOH8urOEUlGVYFrmnGThPW4b1vg64MZU9I3FS
-         8Omg==
-X-Forwarded-Encrypted: i=1; AJvYcCWpCbvuwIA3W9hj69BU/m4l/cUPCRCg5EYqqJZBPfsu1n3ryuvoqqzuxYO4BN9d1UWo4Fqlir/PpLa9qpo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxMEDX1yiNiGcf8vBw0UEjTXEFrPfPpQMdoP5sny79zG4gk+noL
-	ES09AlECalXnnmbR9nCnl1bYEs4nQj7kpa7m+sZCRG3XrqlRpEYBzql4ZTnqB/Mcspqlj04mUbx
-	Nww==
-X-Google-Smtp-Source: AGHT+IEui7FBiE9u2FThcn1PeAaV0uNxeSn+BFUq/rFJRRo3ixDwIuue6J6qs/Yvqrt8s5shTST1GTWMl14=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a25:b612:0:b0:e03:3cfa:1aa7 with SMTP id
- 3f1490d57ef6-e1a79fb5333mr6385276.1.1725063749897; Fri, 30 Aug 2024 17:22:29
- -0700 (PDT)
-Date: Fri, 30 Aug 2024 17:21:09 -0700
-In-Reply-To: <20240720000138.3027780-1-seanjc@google.com>
+	s=arc-20240116; t=1725064579; c=relaxed/simple;
+	bh=ez1uLWZElCWBv5bLkXxc6KjkAHcwOdiyQY1fr5ULPOg=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=b65+ZesIHb74qnvRDfsCGJBeajztjihAlsB8K5PrpZ75gCO69WaiyXDXST6A6Tn6/tA1VIcEDHij8N85PAxQ/7LCgFeoT+9tpjzdk+UB4z1LjFn4pGZdzkEGvCbTD5LptrtbUDV07iNsq/I6WWW8rq7op2aK1oZ0XYbAqgDS90k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; arc=none smtp.client-ip=205.220.166.238
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
+Received: from pps.filterd (m0250809.ppops.net [127.0.0.1])
+	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47V0Ad6V000915;
+	Fri, 30 Aug 2024 17:22:25 -0700
+Received: from ala-exchng02.corp.ad.wrs.com (ala-exchng02.wrs.com [147.11.82.254])
+	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 419unh3p8t-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+	Fri, 30 Aug 2024 17:22:25 -0700 (PDT)
+Received: from ala-exchng01.corp.ad.wrs.com (147.11.82.252) by
+ ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Fri, 30 Aug 2024 17:22:24 -0700
+Received: from pek-lpd-ccm6.wrs.com (147.11.136.210) by
+ ala-exchng01.corp.ad.wrs.com (147.11.82.252) with Microsoft SMTP Server id
+ 15.1.2507.39 via Frontend Transport; Fri, 30 Aug 2024 17:22:23 -0700
+From: Lizhi Xu <lizhi.xu@windriver.com>
+To: <syzbot+4704b3cc972bd76024f1@syzkaller.appspotmail.com>
+CC: <clm@fb.com>, <dsterba@suse.com>, <josef@toxicpanda.com>,
+        <linux-btrfs@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <syzkaller-bugs@googlegroups.com>
+Subject: [PATCH] btrfs: Add assert or condition
+Date: Sat, 31 Aug 2024 08:22:22 +0800
+Message-ID: <20240831002222.2275740-1-lizhi.xu@windriver.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <00000000000044ff540620d7dee2@google.com>
+References: <00000000000044ff540620d7dee2@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240720000138.3027780-1-seanjc@google.com>
-X-Mailer: git-send-email 2.46.0.469.g59c65b2a67-goog
-Message-ID: <172506347147.337933.13850159673543308459.b4-ty@google.com>
-Subject: Re: [PATCH 0/6] KVM: nVMX: Fix IPIv vs. nested posted interrupts
-From: Sean Christopherson <seanjc@google.com>
-To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Chao Gao <chao.gao@intel.com>, Zeng Guang <guang.zeng@intel.com>
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-GUID: YeYNFiSsZKJWH2ppmGtPvnp5jBaQ1zN9
+X-Proofpoint-ORIG-GUID: YeYNFiSsZKJWH2ppmGtPvnp5jBaQ1zN9
+X-Authority-Analysis: v=2.4 cv=K8RwHDWI c=1 sm=1 tr=0 ts=66d26241 cx=c_pps a=K4BcnWQioVPsTJd46EJO2w==:117 a=K4BcnWQioVPsTJd46EJO2w==:17 a=yoJbH4e0A30A:10 a=hSkVLCK3AAAA:8 a=edf1wS77AAAA:8 a=t7CeM3EgAAAA:8 a=WQ4PzUGnyvOGiPlKdjgA:9 a=cQPPKAXgyycSBL8etih5:22
+ a=DcSpbTIhAlouE1Uv7lRv:22 a=FdTzh2GWekK77mhwV6Dw:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-30_12,2024-08-30_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ phishscore=0 spamscore=0 clxscore=1011 mlxlogscore=697 lowpriorityscore=0
+ suspectscore=0 malwarescore=0 impostorscore=0 mlxscore=0 bulkscore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.21.0-2407110000 definitions=main-2408310001
 
-On Fri, 19 Jul 2024 17:01:32 -0700, Sean Christopherson wrote:
-> Fix a bug where KVM injects L2's nested posted interrupt into L1 as a
-> nested VM-Exit instead of triggering PI processing.  The actual bug is
-> technically a generic nested posted interrupts problem, but due to the
-> way that KVM handles interrupt delivery, I'm 99.9% certain the issue is
-> limited to IPI virtualization being enabled.
-> 
-> Found by the nested posted interrupt KUT test on SPR.
-> 
-> [...]
+When the value of fsync_skip_inode_lock is true, i_mmap_lock is used,
+so add it or condition in the ASSERT. 
 
-Applied to kvm-x86 vmx, with a massaged changelog to clarify that this bug could
-be hit even without IPI virtualization.
+Reported-and-tested-by: syzbot+4704b3cc972bd76024f1@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=4704b3cc972bd76024f1
+Signed-off-by: Lizhi Xu <lizhi.xu@windriver.com>
+---
+ fs/btrfs/ordered-data.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-[1/6] KVM: nVMX: Get to-be-acknowledge IRQ for nested VM-Exit at injection site
-      https://github.com/kvm-x86/linux/commit/6f373f4d941b
-[2/6] KVM: nVMX: Suppress external interrupt VM-Exit injection if there's no IRQ
-      https://github.com/kvm-x86/linux/commit/cb14e454add0
-[3/6] KVM: x86: Don't move VMX's nested PI notification vector from IRR to ISR
-      https://github.com/kvm-x86/linux/commit/f729851189d5
-[4/6] KVM: nVMX: Track nested_vmx.posted_intr_nv as a signed int
-      https://github.com/kvm-x86/linux/commit/ab9cbe044f83
-[5/6] KVM: nVMX: Explicitly invalidate posted_intr_nv if PI is disabled at VM-Enter
-      https://github.com/kvm-x86/linux/commit/be02aa1e52d2
-[6/6] KVM: nVMX: Detect nested posted interrupt NV at nested VM-Exit injection
-      https://github.com/kvm-x86/linux/commit/44518120c4ca
+diff --git a/fs/btrfs/ordered-data.c b/fs/btrfs/ordered-data.c
+index 82a68394a89c..d0187e1fb941 100644
+--- a/fs/btrfs/ordered-data.c
++++ b/fs/btrfs/ordered-data.c
+@@ -1015,7 +1015,8 @@ void btrfs_get_ordered_extents_for_logging(struct btrfs_inode *inode,
+ {
+ 	struct rb_node *n;
+ 
+-	ASSERT(inode_is_locked(&inode->vfs_inode));
++	ASSERT(inode_is_locked(&inode->vfs_inode) ||
++	       rwsem_is_locked(&inode->i_mmap_lock));
+ 
+ 	spin_lock_irq(&inode->ordered_tree_lock);
+ 	for (n = rb_first(&inode->ordered_tree); n; n = rb_next(n)) {
+-- 
+2.43.0
 
---
-https://github.com/kvm-x86/linux/tree/next
 
