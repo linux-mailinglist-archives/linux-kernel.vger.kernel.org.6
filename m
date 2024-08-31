@@ -1,176 +1,140 @@
-Return-Path: <linux-kernel+bounces-309944-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309945-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBA5A967243
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 16:56:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 112B3967247
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 16:59:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED6931F21CC9
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 14:56:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C333B283743
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 14:59:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA4702262B;
-	Sat, 31 Aug 2024 14:56:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF82C23776;
+	Sat, 31 Aug 2024 14:59:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NSfAqcss"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jdeOLmVf"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10ED41F959;
-	Sat, 31 Aug 2024 14:56:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8146AD55
+	for <linux-kernel@vger.kernel.org>; Sat, 31 Aug 2024 14:59:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725116172; cv=none; b=KNqZSoSCLAi9SsNL0eH0juhWv8Apt8u7RDLVVffQOmavIIsgc3buXgSr1EY/+acQFqN5gVCxtmkKVyOSadpF1XrbSwar9FnYhCG5ovAwaCptefvyvB4Wp1k5SiIpYlGvWXhj5GpUW3jQ4M3IZ50saro/cUPCWmXpGTWI1oHcuI4=
+	t=1725116384; cv=none; b=X4W7lXCSK+foAthkHHmydo1aEhQKhUcDIvrcACzuJp+yEbwNmgBPNUerAekFw7xgRGhb+Qh10ZapLqRKEbJxtsFVkwHSsGeGeHxw1KLRP4Qn2hce91On+hOYZGU69zfvXset4EPuWS5UXQCJgEJGrE6ed1UR/EEHbiquau8q+0g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725116172; c=relaxed/simple;
-	bh=Dq+eBER6Wi/OhVJxWmmHUAOjADJsYbcEDCDMPaluXCI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WdF/oSYWwMUSlvW6729biEE+zaraKWAxqAHWxTHKtAaz43iaGlC8ypZzbRBXlgERwAUnC9WOGjBWgU5ARhkULLtKy/y2okcnbTO3mMjxb+jSwtfMBqw3iApoCf/uvEypOli34tJSxlfYToWd5BjurGdbK8COjUzgozw1gQ8MU3Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NSfAqcss; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC7ADC4CEC0;
-	Sat, 31 Aug 2024 14:56:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725116171;
-	bh=Dq+eBER6Wi/OhVJxWmmHUAOjADJsYbcEDCDMPaluXCI=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=NSfAqcss9HgBbxBPIvFYAZdTe0DQOzeij/u8KjABx+4jbt6vXiFBkKRdix8yIxI1u
-	 hSNVcdAfrp7SA9dq143rPXNhJbP7TBorXR+SWSFvAPIfBxi3fFFG+rhSJtCBZeiG+X
-	 lyRtl4lpAJBRqzxKS/8nF52OdONtniDP6EPbXrz6p6LALIrD6IpCUrnAN/6EljKNhn
-	 BP+63mpkQ51TlMHlyGF636IlWta1Mmr6fDg+QVPhqgi07sgN2PNSlhxH+pdWQr/guB
-	 FdBr29Fc0kVh6lGTXx8jdtCwbk1HNxkIz5qwkv/21nj/FlOo0d+SNA8+YuXaK1KiZS
-	 qZMyCZs8ixnnA==
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5bef295a2b4so4741632a12.0;
-        Sat, 31 Aug 2024 07:56:11 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUK+dWWT7+GcgyljAK0B5PvErjPIdPxSwewHM0c9o2SJ+ORqL3HxKJr6jwh4o57dW9P6rY=@vger.kernel.org, AJvYcCV65rzV2KNWHgroOsO8YDBFeBV/71Y8d+fcc9voovz1qaBRjviN0Ewrr0dq8rTiRwvsxhVagB7kBvrYkaso@vger.kernel.org
-X-Gm-Message-State: AOJu0YwBH98sAzN/nMa5mrWQov7akgx+Q1VyTxc042enbQKjUeF+ajve
-	AK8LS2OS0ItpYc/oH0ej+IElihGFzoYIIRnLL9pesWIypbaXuTP75KEI6IgK4n6A/FBIwh7GY+P
-	HN9LsGVBF6uUtvodYzjSm1EQx4nM=
-X-Google-Smtp-Source: AGHT+IFxskF7lIdpRwknhT3nSB4OC5bYvD6oGoNWeAErn2EM+YplzZd8VvXwDHOFoE+yL8ykFvIt/M2XZRP6CbcuLfw=
-X-Received: by 2002:a05:6402:4303:b0:5c0:a8b8:dd6b with SMTP id
- 4fb4d7f45d1cf-5c22f8a1797mr6686055a12.14.1725116170311; Sat, 31 Aug 2024
- 07:56:10 -0700 (PDT)
+	s=arc-20240116; t=1725116384; c=relaxed/simple;
+	bh=Pn8KwUv0DkKQ+7ZtjyoKep4bskoqW4L9AuBTQBa8zuM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=aFhkQtXQr2CH4eSZf63/HzV8Ig9MQWQbPEHVbPQkNnJ4msXxikaNDcigdRtUqgDFZCzE101nmCwECXLWyOJnNMciVZrsXogCQHz/omogn8Lv0spxgqPAFj/GfhHBx32B1fhQ3m9vjjFq6A26ce9R+VB1DPDXaqlGi9IPzli7vEQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jdeOLmVf; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-2055a3f80a4so774045ad.2
+        for <linux-kernel@vger.kernel.org>; Sat, 31 Aug 2024 07:59:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725116382; x=1725721182; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=OyVG1AgOZE9WJVZe0FpJwMfaDm+MjzUmj8n+GYSoTc4=;
+        b=jdeOLmVf35Z/LzkDdOZoOBaQSMUXZQ/fzimyEoE6YhJRzww7ScPU3UoAj9e2P1Al34
+         2qVW3m0R0FaRXo55UwS7dM3UkGC5Rlggjo+kWrpIcg3q0QKZ/J9mZvKDMSoc3KeYdsZz
+         evquPnZp9qvm0NmB+NOMiMSQnNfUGGVrBHnFR9KTsxvJL8sxHV6gRgsCDp8H/bW9JVuM
+         XJ83AFXKaMF9XuDMtVpSQYlUJm8oF7PdnNGttBHgwwXL0Ejr8P3ct/+7Nu4hCwv8pyul
+         p6KchqVwdGa4eXvCKVutUWzpnanboesVUa3AhIHWFJiy/BxcdQ1V9DUi6ELqbQYZd65V
+         BvrA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725116382; x=1725721182;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=OyVG1AgOZE9WJVZe0FpJwMfaDm+MjzUmj8n+GYSoTc4=;
+        b=eZKrZBaS9vjgGbX6/q16LTDFthKb4d9p8y0hb6B6xMU84bvdzWsgVbFoYKRBUxUhHU
+         lg+UWwop8VIid6XHZGPPGYRslHZXo4nA/aBOINYmp09uftjnCMlcWBKMCYRCAr1em62U
+         xEkAHKvRDUInf1J7Esh0iAkuHiLtHndurbSeyDPc/pw/QwQbkqDKI/y64ABPGrJS2vD+
+         +EjghXK62+Ft7o4eyVa0j4s4GG99gjIORCIIFLGjhwvQYG8I5QVT+mUxNWY1h96pmxZg
+         XNIXQb6dnJ+d6QERzp/+RgOIXfBJVhmSbL5UZ/E2z1/MMH8chby8r9VCxNmJYGKhWgLt
+         1ueA==
+X-Gm-Message-State: AOJu0YxUOXnWRIlfPr5RvUqJF73pXzp8Yt9aoGJa5DsxmXG0lr14l0rj
+	OWaX1pxWhX4Ip3R/FQJHjhcOpX4aJSzD4eoyaKMZC9HCvxsK7ltAecVhg7kH
+X-Google-Smtp-Source: AGHT+IFFBXtR4oC1CxsZUzXfcNqZjWooOa3vPuKcBV2xy77m/B/eASaxdy4YIUPTCK7rRWJO6GOCQw==
+X-Received: by 2002:a17:902:c94a:b0:202:3dcd:23ef with SMTP id d9443c01a7336-205447bc4c5mr20674015ad.61.1725116381799;
+        Sat, 31 Aug 2024 07:59:41 -0700 (PDT)
+Received: from fedora.. ([106.219.166.29])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-205456242fesm12548175ad.53.2024.08.31.07.59.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 31 Aug 2024 07:59:41 -0700 (PDT)
+From: Riyan Dhiman <riyandhiman14@gmail.com>
+To: gregkh@linuxfoundation.org
+Cc: linux-kernel@vger.kernel.org,
+	linux-staging@lists.linux.dev,
+	Riyan Dhiman <riyandhiman14@gmail.com>
+Subject: [PATCH] staging: rtl8192e: Rename variable eRFPath
+Date: Sat, 31 Aug 2024 20:29:32 +0530
+Message-ID: <20240831145932.37744-1-riyandhiman14@gmail.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240730075744.1215856-1-maobibo@loongson.cn> <CAAhV-H6dFBJ+dQE7qzK8aiTjx8NFJtzPWzEGpJ8dm7v4ExD8Ow@mail.gmail.com>
- <e898b732-71d5-c16f-93a5-de630820f06d@loongson.cn>
-In-Reply-To: <e898b732-71d5-c16f-93a5-de630820f06d@loongson.cn>
-From: Huacai Chen <chenhuacai@kernel.org>
-Date: Sat, 31 Aug 2024 22:55:58 +0800
-X-Gmail-Original-Message-ID: <CAAhV-H55SMmYvWSsGc6dHX6Dw=4fMe0+QJpQ_kzHUaU1zdux5Q@mail.gmail.com>
-Message-ID: <CAAhV-H55SMmYvWSsGc6dHX6Dw=4fMe0+QJpQ_kzHUaU1zdux5Q@mail.gmail.com>
-Subject: Re: [PATCH v6 0/3] LoongArch: KVM: Add Binary Translation extension support
-To: maobibo <maobibo@loongson.cn>
-Cc: Tianrui Zhao <zhaotianrui@loongson.cn>, WANG Xuerui <kernel@xen0n.name>, kvm@vger.kernel.org, 
-	loongarch@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	Jiaxun Yang <jiaxun.yang@flygoat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Wed, Aug 28, 2024 at 10:28=E2=80=AFAM maobibo <maobibo@loongson.cn> wrot=
-e:
->
->
->
-> On 2024/8/28 =E4=B8=8A=E5=8D=8810:08, Huacai Chen wrote:
-> > Hi, Bibo,
-> >
-> > I have consulted with Jiaxun offline, and he has tried his best to
-> > propose a "scratch vcpu" solution. But unfortunately that solution is
-> > too difficult to implement and he has nearly given up.
-> >
-> > So the solution in this series seems the best one, and I will queue it
-> > for loongarch-kvm now.
-> Thanks. There may be requirement such as there is different capability
-> for different vCPUs, only that it is a little far from now. We can
-> discuss and add that if there is such requirement. Because of limitation
-> of human resource and ability, the implementation is not perfect however
-> it can be used.
-I have merged the first two patches, but the 3rd one seems to have
-some problems. If you send V7, please keep the first two be the same
-and only update the 3rd one, thanks.
+Rename variable eRFPath to erf_path to fix checkpatch
+warning.
 
-Huacai
+Issue reported in checkpatch:
+-CHECK: Avoid CamelCase: <eRFPath>
 
->
-> Regards
-> Bibo Mao
-> >
-> > Huacai
-> >
-> > On Tue, Jul 30, 2024 at 3:57=E2=80=AFPM Bibo Mao <maobibo@loongson.cn> =
-wrote:
-> >>
-> >> Loongson Binary Translation (LBT) is used to accelerate binary
-> >> translation, which contains 4 scratch registers (scr0 to scr3), x86/AR=
-M
-> >> eflags (eflags) and x87 fpu stack pointer (ftop).
-> >>
-> >> Like FPU extension, here lately enabling method is used for LBT. LBT
-> >> context is saved/restored during vcpu context switch path.
-> >>
-> >> Also this patch set LBT capability detection, and LBT register get and=
- set
-> >> interface for userspace vmm, so that vm supports migration with BT
-> >> extension.
-> >>
-> >> ---
-> >> v5 ... v6:
-> >>    1. Solve compiling issue with function kvm_get_one_reg() and
-> >>       kvm_set_one_reg().
-> >>
-> >> v4 ... v5:
-> >>    1. Add feature detection for LSX/LASX from vm side, previously
-> >>       LSX/LASX feature is detected from vcpu ioctl command, now both
-> >>       methods are supported.
-> >>
-> >> v3 ... v4:
-> >>    1. Merge LBT feature detection for VM and VCPU into one patch.
-> >>    2. Move function declaration such as kvm_lose_lbt()/kvm_check_fcsr(=
-)/
-> >>       kvm_enable_lbt_fpu() from header file to c file, since it is onl=
-y
-> >>       used in one c file.
-> >>
-> >> v2 ... v3:
-> >>    1. Split KVM_LOONGARCH_VM_FEAT_LBT capability checking into three
-> >>       sub-features, KVM_LOONGARCH_VM_FEAT_X86BT/KVM_LOONGARCH_VM_FEAT_=
-ARMBT
-> >>       and KVM_LOONGARCH_VM_FEAT_MIPSBT. Return success only if host
-> >>       supports the sub-feature.
-> >>
-> >> v1 ... v2:
-> >>    1. With LBT register read or write interface to userpace, replace
-> >>       device attr method with KVM_GET_ONE_REG method, since lbt regist=
-er is
-> >>       vcpu register and can be added in kvm_reg_list in future.
-> >>    2. Add vm device attr ctrl marcro KVM_LOONGARCH_VM_FEAT_CTRL, it is
-> >>       used to get supported LBT feature before vm or vcpu is created.
-> >> ---
-> >> Bibo Mao (3):
-> >>    LoongArch: KVM: Add HW Binary Translation extension support
-> >>    LoongArch: KVM: Add LBT feature detection function
-> >>    LoongArch: KVM: Add vm migration support for LBT registers
-> >>
-> >>   arch/loongarch/include/asm/kvm_host.h |   8 ++
-> >>   arch/loongarch/include/asm/kvm_vcpu.h |   6 ++
-> >>   arch/loongarch/include/uapi/asm/kvm.h |  17 ++++
-> >>   arch/loongarch/kvm/exit.c             |   9 ++
-> >>   arch/loongarch/kvm/vcpu.c             | 128 ++++++++++++++++++++++++=
-+-
-> >>   arch/loongarch/kvm/vm.c               |  52 ++++++++++-
-> >>   6 files changed, 218 insertions(+), 2 deletions(-)
-> >>
-> >>
-> >> base-commit: 8400291e289ee6b2bf9779ff1c83a291501f017b
-> >> --
-> >> 2.39.3
-> >>
-> >>
->
->
+Signed-off-by: Riyan Dhiman <riyandhiman14@gmail.com>
+---
+ .../staging/rtl8192e/rtl8192e/r8190P_rtl8256.c   | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/staging/rtl8192e/rtl8192e/r8190P_rtl8256.c b/drivers/staging/rtl8192e/rtl8192e/r8190P_rtl8256.c
+index 7061f1cf4d3a..256c19739ad1 100644
+--- a/drivers/staging/rtl8192e/rtl8192e/r8190P_rtl8256.c
++++ b/drivers/staging/rtl8192e/rtl8192e/r8190P_rtl8256.c
+@@ -12,7 +12,7 @@
+ void rtl92e_set_bandwidth(struct net_device *dev,
+ 			  enum ht_channel_width bandwidth)
+ {
+-	u8	eRFPath;
++	u8	erf_path;
+ 	struct r8192_priv *priv = rtllib_priv(dev);
+ 
+ 	if (priv->card_8192_version != VERSION_8190_BD &&
+@@ -21,22 +21,22 @@ void rtl92e_set_bandwidth(struct net_device *dev,
+ 		return;
+ 	}
+ 
+-	for (eRFPath = 0; eRFPath < priv->num_total_rf_path; eRFPath++) {
++	for (erf_path = 0; erf_path < priv->num_total_rf_path; erf_path++) {
+ 		switch (bandwidth) {
+ 		case HT_CHANNEL_WIDTH_20:
+-			rtl92e_set_rf_reg(dev, (enum rf90_radio_path)eRFPath,
++			rtl92e_set_rf_reg(dev, (enum rf90_radio_path)erf_path,
+ 					  0x0b, bMask12Bits, 0x100);
+-			rtl92e_set_rf_reg(dev, (enum rf90_radio_path)eRFPath,
++			rtl92e_set_rf_reg(dev, (enum rf90_radio_path)erf_path,
+ 					  0x2c, bMask12Bits, 0x3d7);
+-			rtl92e_set_rf_reg(dev, (enum rf90_radio_path)eRFPath,
++			rtl92e_set_rf_reg(dev, (enum rf90_radio_path)erf_path,
+ 					  0x0e, bMask12Bits, 0x021);
+ 			break;
+ 		case HT_CHANNEL_WIDTH_20_40:
+-			rtl92e_set_rf_reg(dev, (enum rf90_radio_path)eRFPath,
++			rtl92e_set_rf_reg(dev, (enum rf90_radio_path)erf_path,
+ 					  0x0b, bMask12Bits, 0x300);
+-			rtl92e_set_rf_reg(dev, (enum rf90_radio_path)eRFPath,
++			rtl92e_set_rf_reg(dev, (enum rf90_radio_path)erf_path,
+ 					  0x2c, bMask12Bits, 0x3ff);
+-			rtl92e_set_rf_reg(dev, (enum rf90_radio_path)eRFPath,
++			rtl92e_set_rf_reg(dev, (enum rf90_radio_path)erf_path,
+ 					  0x0e, bMask12Bits, 0x0e1);
+ 			break;
+ 		default:
+-- 
+2.46.0
+
 
