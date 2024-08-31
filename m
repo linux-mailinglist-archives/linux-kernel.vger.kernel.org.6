@@ -1,100 +1,122 @@
-Return-Path: <linux-kernel+bounces-309827-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309836-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E2439670C8
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 12:21:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC4A29670E5
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 12:30:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9C7951C2157F
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 10:21:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 817881F2554F
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 10:30:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B257F17A583;
-	Sat, 31 Aug 2024 10:21:28 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DB1A17C20E;
+	Sat, 31 Aug 2024 10:30:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QEffq0MX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB01C16A940
-	for <linux-kernel@vger.kernel.org>; Sat, 31 Aug 2024 10:21:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A6F31531E9;
+	Sat, 31 Aug 2024 10:30:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725099688; cv=none; b=R3UUAbFb5IFcAFdAIw+MwPw/HEIAmkBnK7L/Y/sEXywnr3FwEUQ3+s2ceowscdx4a5A7MnSwJoUf3ewK+dL37GxTc7W+tRjE3LSA5HL780iHhCE5BCKqmgO5NV5r45BulhpRe4SEy0/ElykNaLwPRP9y+o/SYdYVR80o6jPXSvE=
+	t=1725100233; cv=none; b=GdXWZYQNISThYyPNDrIYAMImowHsy5tDSfHYSjeISeaWZUM5B/Ko6AHmKBUVibOwqxSK5VCdFJS/uwR9GirpZji53rxd9/3xz2hKaOIv9Rpcr10xovKNe8RHFste45WoxvJxYqrE1lhbUTUsBIKRdBbsDQYzfa2aktqhd0IaKU4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725099688; c=relaxed/simple;
-	bh=ww07WZYU6Z8GXNVq6eqDCCDgPB1ih3yQo5VzV7ldO6o=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=GO7nZeTnZ1GlNwh+PBpt4fy9QbigLHaYSQthZlT15/KVoHOjmi7C+USWK7GOgGjlFmGFXvEuGakpH5o2HWMvSsAKCHDjQl3tJvcwmVLRjBjttbRYGO1yXUNnA8KQjquXndI7SMK3XrgG7Nf9M8pUKh20n6nav3ycU59qt5hOKTE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.44])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4WwrX83Yt6z20nBR;
-	Sat, 31 Aug 2024 18:16:24 +0800 (CST)
-Received: from kwepemh500013.china.huawei.com (unknown [7.202.181.146])
-	by mail.maildlp.com (Postfix) with ESMTPS id 247B81400D7;
-	Sat, 31 Aug 2024 18:21:17 +0800 (CST)
-Received: from huawei.com (10.90.53.73) by kwepemh500013.china.huawei.com
- (7.202.181.146) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Sat, 31 Aug
- 2024 18:21:16 +0800
-From: Jinjie Ruan <ruanjinjie@huawei.com>
-To: <frank.binns@imgtec.com>, <matt.coster@imgtec.com>,
-	<maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
-	<tzimmermann@suse.de>, <airlied@gmail.com>, <daniel@ffwll.ch>,
-	<dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
-CC: <ruanjinjie@huawei.com>
-Subject: [PATCH -next] drm/imagination: Use memdup_user() helper to simplify code
-Date: Sat, 31 Aug 2024 18:29:30 +0800
-Message-ID: <20240831102930.97502-1-ruanjinjie@huawei.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1725100233; c=relaxed/simple;
+	bh=6SWTTgTAzp6pqg4Vm4RZubkX3UCuusQwF+vJGG/x2vQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=UvPkXUcCSJoaAMIAtXmxREHlp+YVPJyZ8+tKcNyHFzCMO4yhPfPSccv8K0KfVUO3hP4311+oO6uNEr4tD1ssPjVSAuWDX4gcPTW22ecJtlt8FBriH3lGMcJzAIGqbmKJLt6Ez0rCvak7mIRAfcbQOxYsoh4jUukIU6ZWbAYx120=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QEffq0MX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E5E1FC4CEC0;
+	Sat, 31 Aug 2024 10:30:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725100232;
+	bh=6SWTTgTAzp6pqg4Vm4RZubkX3UCuusQwF+vJGG/x2vQ=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=QEffq0MXDsWJWK5sRvImQL8mf+7JPH7FqWXdrsgY3Cd7NXJR8fmTHMuusiYMGnyhC
+	 MHZRnQPI2BQBNzCli8vVmgh+dEdC0uxBsz/fRD4SJemPO70j2WI5R14ofbm4VjUpqj
+	 kjhuO/TmLT2Aem8eyujuJ1mvRbendpbr22r/NmZB8VHlPSpsUMXOsVwaG1aQ4wijVU
+	 RybOdpY2DoFelEtVjQyRLTVrH9HyaFC1lbjOm1n7PKyWOTl8dYcRCY4yp8Qh8GHVki
+	 ymaipbd5WA6OB41R7ckuL0rn3ouJJGPlz4pdjabaARYh6JkylN/XBqkaD8dQdf/vUx
+	 XFfHdhi7Y3qYw==
+Date: Sat, 31 Aug 2024 11:30:21 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Jinjie Ruan <ruanjinjie@huawei.com>
+Cc: Kousik Sanagavarapu <five231003@gmail.com>, <andrew@lunn.ch>,
+ <sebastian.hesselbarth@gmail.com>, <gregory.clement@bootlin.com>,
+ <herve.codina@bootlin.com>, <qiang.zhao@nxp.com>,
+ <christophe.leroy@csgroup.eu>, <thierry.reding@gmail.com>,
+ <jonathanh@nvidia.com>, <nm@ti.com>, <ssantosh@kernel.org>,
+ <petlozup@nvidia.com>, <pshete@nvidia.com>,
+ <christophe.jaillet@wanadoo.fr>, <ulf.hansson@linaro.org>,
+ <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+ <linuxppc-dev@lists.ozlabs.org>, <linux-tegra@vger.kernel.org>,
+ <krzk@kernel.org>, jonathan.cameron@huawei.com
+Subject: Re: [PATCH -next 8/8] soc: ti: knav_qmss_queue: Simplify with
+ scoped for each OF child loop
+Message-ID: <20240831113021.08a9010a@jic23-huawei>
+In-Reply-To: <598efadd-da27-0be3-6d1c-dee50e71c811@huawei.com>
+References: <ZtCapIwWZolY7oMH@five231003>
+	<598efadd-da27-0be3-6d1c-dee50e71c811@huawei.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- kwepemh500013.china.huawei.com (7.202.181.146)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Switching to memdup_user(), which combines kmalloc() and copy_from_user(),
-and it can simplfy code.
+On Fri, 30 Aug 2024 11:24:14 +0800
+Jinjie Ruan <ruanjinjie@huawei.com> wrote:
 
-Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
----
- drivers/gpu/drm/imagination/pvr_job.c | 13 +++----------
- 1 file changed, 3 insertions(+), 10 deletions(-)
+> On 2024/8/29 23:58, Kousik Sanagavarapu wrote:
+> > Jinjie Ruan <ruanjinjie@huawei.com> writes:  
+> >> @@ -1080,17 +1080,13 @@ static int knav_queue_setup_regions(struct knav_device *kdev,
+> >>  {
+> >>  	struct device *dev = kdev->dev;
+> >>  	struct knav_region *region;
+> >> -	struct device_node *child;
+> >>  	u32 temp[2];
+> >>  	int ret;
+> >>  
+> >> -	for_each_child_of_node(regions, child) {
+> >> +	for_each_child_of_node_scoped(regions, child) {  
+> > 
+> > Are you sure using *_scoped() is better here?  Since it seems that we
+> > need the memory pointed to by "child" in cases where we don't go into an
+> > error path.  
+> 
+> Hi, Jonathan, could you help review this code?
 
-diff --git a/drivers/gpu/drm/imagination/pvr_job.c b/drivers/gpu/drm/imagination/pvr_job.c
-index 78c2f3c6dce0..618503a212a7 100644
---- a/drivers/gpu/drm/imagination/pvr_job.c
-+++ b/drivers/gpu/drm/imagination/pvr_job.c
-@@ -90,20 +90,13 @@ static int pvr_fw_cmd_init(struct pvr_device *pvr_dev, struct pvr_job *job,
- 	void *stream;
- 	int err;
- 
--	stream = kzalloc(stream_len, GFP_KERNEL);
--	if (!stream)
--		return -ENOMEM;
--
--	if (copy_from_user(stream, u64_to_user_ptr(stream_userptr), stream_len)) {
--		err = -EFAULT;
--		goto err_free_stream;
--	}
-+	stream = memdup_user(u64_to_user_ptr(stream_userptr), stream_len);
-+	if (IS_ERR(stream))
-+		return PTR_ERR(stream);
- 
- 	err = pvr_job_process_stream(pvr_dev, stream_def, stream, stream_len, job);
- 
--err_free_stream:
- 	kfree(stream);
--
- 	return err;
- }
- 
--- 
-2.34.1
+I don't understand the review comment.
+The reference counting before and after this patch is the same, just
+with the error path handled in a simpler fashion and the scope of
+the child variable reduced.
+
+
+> 
+> >   
+> >>  		region = devm_kzalloc(dev, sizeof(*region), GFP_KERNEL);
+> >> -		if (!region) {
+> >> -			of_node_put(child);
+> >> -			dev_err(dev, "out of memory allocating region\n");
+> >> -			return -ENOMEM;
+> >> -		}
+> >> +		if (!region)
+> >> +			return dev_err_probe(dev, -ENOMEM, "out of memory allocating region\n");
+> >>  
+> >>  		region->name = knav_queue_find_name(child);
+> >>  		of_property_read_u32(child, "id", &region->id);  
+> > 
+> > Similarly in most of the other cases in this series where a similar
+> > change is done.
+> > 
+> > Also FYI, as for dev_err_probe(), I think I covered all of them in this
+> > file and a patch for it is currently sitting in ti-drivers-soc-next.
+> > 
+> > Thanks  
 
 
