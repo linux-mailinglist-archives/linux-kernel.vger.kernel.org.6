@@ -1,78 +1,105 @@
-Return-Path: <linux-kernel+bounces-309991-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309992-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28EE39672CD
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 19:26:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D2339672CF
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 19:28:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 89938B22063
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 17:26:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 818E41C21342
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 17:28:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95F0013B2B8;
-	Sat, 31 Aug 2024 17:26:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2ACB114A600;
+	Sat, 31 Aug 2024 17:27:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="AaHAWZ2D"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="rDGKrm7K"
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EA6960B8A
-	for <linux-kernel@vger.kernel.org>; Sat, 31 Aug 2024 17:26:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 297CB524F
+	for <linux-kernel@vger.kernel.org>; Sat, 31 Aug 2024 17:27:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725125172; cv=none; b=ZZ0dIA4I1PvAwxajJZvRrX3GiV5AGUQN+XHmMl2igNZCcfwaM+ngxWlPdy9DgUm2dUmkNiDlmoSb24Wheu0yTzJyYsRgBggpzxpHZ1BbGnzmdNiC3Lyr460Tb2uujBWvpZpLm7z1EaTjSNEgmLo84F6amZfJk7F+Q9PuegOvsFY=
+	t=1725125271; cv=none; b=VXHmMFvhXFxx4mE98Y/l0e8dJfclboPjuAX/QUdZEq/4LWaKeguVBzFB6dG/oNjdvT1Ha+uORKMpUZqlDtHM2HdGEeSqALuZKYGQVMh3xlRSF37dRfrVsOxoTDrrxG8exeihe8ge6yn8RsUU9835667p4SOX8EO54oACWSCjeUY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725125172; c=relaxed/simple;
-	bh=d7TEpslBaognOjT87UdwGdO0JX/BFiDLWGCl1qCtksc=;
+	s=arc-20240116; t=1725125271; c=relaxed/simple;
+	bh=tgBgHElHU/JQNeOUlFyZ8i9x9/58/6NrE7QX8ETtCms=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Vooq+FO4qDRt2wkkxHaKhhgRrB/pYFiFFiH3FOvRmeJdUcqg+aqRNqMFpmLRRiiduN4zv6WKieXWXuVLimoR7cnDZR7qbMnsUCyqOzU8EBNQUX7z9b+Sv6gg5ftwkvftTg6EOzCwLU/8xDp+dB6q0JrxABlDtfpkACqdHtGycVU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=AaHAWZ2D; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1725125169;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=JVfJiK+AAnah9BOiQ40UN9PtQCNI2NjuzPzjdt9OXUI=;
-	b=AaHAWZ2DBijaMZNzsPsYLL+zluARzkg1YxKYD/N0i9G5BWnPnIG2BA7VUlQ2YHviw0XBLg
-	4EF9VqpEO80aZsYdnQ5au9HVvDPzLbhTihBTLVxmjMXFIYw+N8/t9Ca5H0LbFA0qMpVm3h
-	JjhXRNflTDgVNSc270kVdfTXyYpQNg8=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-270-Nq0PdkgeNV2PWi72YA0zag-1; Sat,
- 31 Aug 2024 13:26:02 -0400
-X-MC-Unique: Nq0PdkgeNV2PWi72YA0zag-1
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 9FF661956080;
-	Sat, 31 Aug 2024 17:25:59 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.49])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 29D041956048;
-	Sat, 31 Aug 2024 17:25:53 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Sat, 31 Aug 2024 19:25:50 +0200 (CEST)
-Date: Sat, 31 Aug 2024 19:25:44 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: Jiri Olsa <olsajiri@gmail.com>,
-	Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: Andrii Nakryiko <andrii@kernel.org>, linux-trace-kernel@vger.kernel.org,
-	peterz@infradead.org, rostedt@goodmis.org, mhiramat@kernel.org,
-	bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
-	paulmck@kernel.org, willy@infradead.org, surenb@google.com,
-	akpm@linux-foundation.org, linux-mm@kvack.org
-Subject: Re: [PATCH v4 4/8] uprobes: travers uprobe's consumer list
- locklessly under SRCU protection
-Message-ID: <20240831172543.GB9683@redhat.com>
-References: <20240829183741.3331213-1-andrii@kernel.org>
- <20240829183741.3331213-5-andrii@kernel.org>
- <ZtD_x9zxLjyhS37Z@krava>
- <CAEf4Bzb3mCWK5St51bRDnQ1b-aTj=2w6bi6MkZydW48s=R+CCA@mail.gmail.com>
- <ZtHM_C1NmDSKL0pi@krava>
+	 Content-Type:Content-Disposition:In-Reply-To; b=aYYp+RS0TxLuCzKGjF+IJ6pdJG/Y0wYQJzu1uOxqISQVLPhUpY2cQ76HEzpOkJOmyEZGZumbvtTRiaVMkGm40d635hogDO+ZdtyRUQAEyEBxYbQBWW2tpcfg7CGba2Ny+p8O7WIOkcR91ZoQtd0fbUN5OhDRTrBqS86rZcBNLMw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=rDGKrm7K; arc=none smtp.client-ip=209.85.221.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-374bb1a3addso662286f8f.1
+        for <linux-kernel@vger.kernel.org>; Sat, 31 Aug 2024 10:27:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fastly.com; s=google; t=1725125267; x=1725730067; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=dZ0YVbwHufs3vIExxpLzmbWF9hyInLnZlv53BHalC/g=;
+        b=rDGKrm7KhBbLfdriH0gzL8j+iMqI66dfb0G0dgqcPvkLOPJsHoSsBz+p+yq/r6Z6n/
+         CD6tWeOvafxR4OTEcfesGUp3T6g3mTgevPB6oI0/xGGtor5JCCRbq5q0VfXN+Up7/VIz
+         GA6Xe6bdfvJTfZbtNh7y3FAHwj+1ycHVTQh4k=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725125267; x=1725730067;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=dZ0YVbwHufs3vIExxpLzmbWF9hyInLnZlv53BHalC/g=;
+        b=B5n+XTWgXx73/8qQLbNtpnjjRNjicNVbwBHCpBgX7VFpHXxcXrjef3mhe1v3w2EImN
+         6Vjc4NKoOW8Pm7MfEvTqkA5cphz9JUTLPivLRA42fxxY64cp3UFxZcE4J+r/Uu6Ivqwd
+         fcTzA/7rn4Ey5of/kReTR6jJoxdTVnVMIcgiqlQMerZQ84tbha0mKO//GZtXKOtl33Vp
+         KfWglgPWm4KMEvXvPEKVcjOmSqKQirVjFHjQP7Wcn3/H0ggXohXR0NKsyqgqm78xDzgP
+         H3HJqEdPJsvhj8KqKZ3B7xXKKdbQWKYnhXVKVjOCZa/GncfCK34vVR4y91VcHKuiOS37
+         bE/Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWRaDflmfHrzz3bJAFekqPbJI+dckBYtBUin3JgcjEQRCxjRdaU9IhH4P5c1PmCQN6WbGvfcgO46cP1Lrk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyMkQmPA1FXTDpp1fn4Y4Jjc59TS/hD84vL8UAm1WuGVpBRDjWg
+	XZOoGnp5zjwsDqAqaRrogIfdMRNhDwQQFei1YjO0cUXIt679QCyKwq83xQLriRo=
+X-Google-Smtp-Source: AGHT+IEu6xJYOajULga49j5jdi/y1J2EqWMsOEaH4T9o806yQC51Dg/gOzbzxy7fItKCeBwhDtYchQ==
+X-Received: by 2002:a5d:6188:0:b0:367:bb20:b3e1 with SMTP id ffacd0b85a97d-3749b585e8cmr6450024f8f.51.1725125266848;
+        Sat, 31 Aug 2024 10:27:46 -0700 (PDT)
+Received: from LQ3V64L9R2 ([185.226.39.209])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-374b6f7ef8esm3891341f8f.8.2024.08.31.10.27.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 31 Aug 2024 10:27:46 -0700 (PDT)
+Date: Sat, 31 Aug 2024 18:27:45 +0100
+From: Joe Damato <jdamato@fastly.com>
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: netdev@vger.kernel.org, edumazet@google.com, amritha.nambiar@intel.com,
+	sridhar.samudrala@intel.com, sdf@fomichev.me, bjorn@rivosinc.com,
+	hch@infradead.org, willy@infradead.org,
+	willemdebruijn.kernel@gmail.com, skhawaja@google.com,
+	Martin Karsten <mkarsten@uwaterloo.ca>,
+	Donald Hunter <donald.hunter@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Jesper Dangaard Brouer <hawk@kernel.org>,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+	Daniel Jurgens <danielj@nvidia.com>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH net-next 5/5] netdev-genl: Support setting per-NAPI
+ config values
+Message-ID: <ZtNSkWa1G40jRX5N@LQ3V64L9R2>
+Mail-Followup-To: Joe Damato <jdamato@fastly.com>,
+	Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
+	edumazet@google.com, amritha.nambiar@intel.com,
+	sridhar.samudrala@intel.com, sdf@fomichev.me, bjorn@rivosinc.com,
+	hch@infradead.org, willy@infradead.org,
+	willemdebruijn.kernel@gmail.com, skhawaja@google.com,
+	Martin Karsten <mkarsten@uwaterloo.ca>,
+	Donald Hunter <donald.hunter@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Jesper Dangaard Brouer <hawk@kernel.org>,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+	Daniel Jurgens <danielj@nvidia.com>,
+	open list <linux-kernel@vger.kernel.org>
+References: <20240829131214.169977-1-jdamato@fastly.com>
+ <20240829131214.169977-6-jdamato@fastly.com>
+ <20240829153105.6b813c98@kernel.org>
+ <ZtGiNF0wsCRhTtOF@LQ3V64L9R2>
+ <20240830142235.352dbad5@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,53 +108,218 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZtHM_C1NmDSKL0pi@krava>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+In-Reply-To: <20240830142235.352dbad5@kernel.org>
 
-On 08/30, Jiri Olsa wrote:
->
-> with this change the probe will not get removed in the attached test,
-> it'll get 2 hits, without this change just 1 hit
+On Fri, Aug 30, 2024 at 02:22:35PM -0700, Jakub Kicinski wrote:
+> On Fri, 30 Aug 2024 11:43:00 +0100 Joe Damato wrote:
+> > On Thu, Aug 29, 2024 at 03:31:05PM -0700, Jakub Kicinski wrote:
+> > > On Thu, 29 Aug 2024 13:12:01 +0000 Joe Damato wrote:  
+> > > > +	napi = napi_by_id(napi_id);
+> > > > +	if (napi)
+> > > > +		err = netdev_nl_napi_set_config(napi, info);
+> > > > +	else
+> > > > +		err = -EINVAL;  
+> > > 
+> > > if (napi) {
+> > > ...
+> > > } else {
+> > > 	NL_SET_BAD_ATTR(info->extack, info->attrs[NETDEV_A_NAPI_ID])
+> > > 	err = -ENOENT;
+> > > }  
+> > 
+> > Thanks, I'll make that change in the v2.
+> > 
+> > Should I send a Fixes for the same pattern in
+> > netdev_nl_napi_get_doit ?
+> 
+> SG, standalone patch is good, FWIW, no need to add to the series.
 
-Thanks again for pointing out the subtle change in behaviour, but could
-you add more details for me? ;)
+Done. TBH: couldn't tell if it was a fixes for net or a net-next
+thing.
+ 
+> > > > +      doc: Set configurable NAPI instance settings.  
+> > > 
+> > > We should pause and think here how configuring NAPI params should
+> > > behave. NAPI instances are ephemeral, if you close and open the
+> > > device (or for some drivers change any BPF or ethtool setting)
+> > > the NAPIs may get wiped and recreated, discarding all configuration.
+> > > 
+> > > This is not how the sysfs API behaves, the sysfs settings on the device
+> > > survive close. It's (weirdly?) also not how queues behave, because we
+> > > have struct netdev{_rx,}_queue to store stuff persistently. Even tho
+> > > you'd think queues are as ephemeral as NAPIs if not more.
+> > > 
+> > > I guess we can either document this, and move on (which may be fine,
+> > > you have more practical experience than me). Or we can add an internal
+> > > concept of a "channel" (which perhaps maybe if you squint is what
+> > > ethtool -l calls NAPIs?) or just "napi_storage" as an array inside
+> > > net_device and store such config there. For simplicity of matching
+> > > config to NAPIs we can assume drivers add NAPI instances in order. 
+> > > If driver wants to do something more fancy we can add a variant of
+> > > netif_napi_add() which specifies the channel/storage to use.
+> > > 
+> > > Thoughts? I may be overly sensitive to the ephemeral thing, maybe
+> > > I work with unfortunate drivers...  
+> > 
+> > Thanks for pointing this out. I think this is an important case to
+> > consider. Here's how I'm thinking about it.
+> > 
+> > There are two cases:
+> > 
+> > 1) sysfs setting is used by existing/legacy apps: If the NAPIs are
+> > discarded and recreated, the code I added to netif_napi_add_weight
+> > in patch 1 and 3 should take care of that case preserving how sysfs
+> > works today, I believe. I think we are good on this case ?
+> 
+> Agreed.
+> 
+> > 2) apps using netlink to set various custom settings. This seems
+> > like a case where a future extension can be made to add a notifier
+> > for NAPI changes (like the netdevice notifier?).
+> 
+> Yes, the notifier may help, but it's a bit of a stop gap / fallback.
+> 
+> > If you think this is a good idea, then we'd do something like:
+> >   1. Document that the NAPI settings are wiped when NAPIs are wiped
+> >   2. In the future (not part of this series) a NAPI notifier is
+> >      added
+> >   3. User apps can then listen for NAPI create/delete events
+> >      and update settings when a NAPI is created. It would be
+> >      helpful, I think, for user apps to know about NAPI
+> >      create/delete events in general because it means NAPI IDs are
+> >      changing.
+> > 
+> > One could argue:
+> > 
+> >   When wiping/recreating a NAPI for an existing HW queue, that HW
+> >   queue gets a new NAPI ID associated with it. User apps operating
+> >   at this level probably care about NAPI IDs changing (as it affects
+> >   epoll busy poll). Since the settings in this series are per-NAPI
+> >   (and not per HW queue), the argument could be that user apps need
+> >   to setup NAPIs when they are created and settings do not persist
+> >   between NAPIs with different IDs even if associated with the same
+> >   HW queue.
+> 
+> IDK if the fact that NAPI ID gets replaced was intentional in the first
+> place. I would venture a guess that the person who added the IDs was
+> working with NICs which have stable NAPI instances once the device is
+> opened. This is, unfortunately, not universally the case.
+> 
+> I just poked at bnxt, mlx5 and fbnic and all of them reallocate NAPIs
+> on an open device. Closer we get to queue API the more dynamic the whole
+> setup will become (read: the more often reconfigurations will happen).
+> 
+> > Admittedly, from the perspective of a user it would be nice if a new
+> > NAPI created for an existing HW queue retained the previous
+> > settings so that I, as the user, can do less work.
+> > 
+> > But, what happens if a HW queue is destroyed and recreated? Will any
+> > HW settings be retained? And does that have any influence on what we
+> > do in software? See below.
+> 
+> Up to the driver, today. But settings we store in queue structs in 
+> the core are not wiped.
+> 
+> > This part of your message:
+> > 
+> > > we can assume drivers add NAPI instances in order. If driver wants
+> > > to do something more fancy we can add a variant of
+> > > netif_napi_add() which specifies the channel/storage to use.  
+> > 
+> > assuming drivers will "do a thing", so to speak, makes me uneasy.
+> 
+> Yeah.. :(
+> 
+> > I started to wonder: how do drivers handle per-queue HW IRQ coalesce
+> > settings when queue counts increase? It's a different, but adjacent
+> > problem, I think.
+> > 
+> > I tried a couple experiments on mlx5 and got very strange results
+> > suitable for their own thread and I didn't want to get this thread
+> > too far off track.
+> 
+> Yes, but ethtool is an old shallow API from the times when semantics
+> were simpler. It's precisely this mess which we try to avoid by storing
+> more of the config in the core, in a consistent fashion.
+> 
+> > I think you have much more practical experience when it comes to
+> > dealing with drivers, so I am happy to follow your lead on this one,
+> > but assuming drivers will "do a thing" seems mildly scary to me with
+> > limited driver experience.
+> > 
+> > My two goals with this series are:
+> >   1. Make it possible to set these values per NAPI
+> >   2. Unblock the IRQ suspension series by threading the suspend
+> >      parameter through the code path carved in this series
+> > 
+> > So, I'm happy to proceed with this series as you prefer whether
+> > that's documentation or "napi_storage"; I think you are probably the
+> > best person to answer this question :)
+> 
+> How do you feel about making this configuration opt-in / require driver
+> changes? What I'm thinking is that having the new "netif_napi_add()"
+> variant (or perhaps extending netif_napi_set_irq()) to take an extra
+> "index" parameter would make the whole thing much simpler.
 
-I was going to read the test below today, but no. As I said many times
-I know nothing about bpf, I simply can't understand what this test-case
-actually do in kernel-space.
+I think if we are going to go this way, then opt-in is probably the
+way to go. This series would include the necessary changes for mlx5,
+in that case (because that's what I have access to) so that the new
+variant has a user?
 
-According to git grep, the only in kernel user of UPROBE_HANDLER_REMOVE
-is uprobe_perf_func(), but if it returns UPROBE_HANDLER_REMOVE then
-consumer->filter == uprobe_perf_filter() should return false?
+> Index would basically be an integer 0..n, where n is the number of
+> IRQs configured for the driver. The index of a NAPI instance would
+> likely match the queue ID of the queue the NAPI serves.
+> 
+> We can then allocate an array of "napi_configs" in net_device -
+> like we allocate queues, the array size would be max(num_rx_queue,
+> num_tx_queues). We just need to store a couple of ints so it will
+> be tiny compared to queue structs, anyway.
 
-So could you explay how/why exactly this changes affects your test-case?
+I assume napi_storage exists for both combined RX/TX NAPIs (i.e.
+drivers that multiplex RX/TX on a single NAPI like mlx5) as well
+as drivers which create NAPIs that are RX or TX-only, right?
 
+If so, it seems like we'd either need to:
+  - Do something more complicated when computing how much NAPI
+    storage to make, or
+  - Provide a different path for drivers which don't multiplex and
+    create some number of (for example) TX-only NAPIs ?
 
-But perhaps it uses bpf_uprobe_multi_link_attach() and ->handler is
-uprobe_multi_link_handler() ? But uprobe_prog_run() returns zero if
-current->mm != link->task->mm.
+I guess I'm just imagining a weird case where a driver has 8 RX
+queues but 64 TX queues. max of that is 64, so we'd be missing 8
+napi_storage ?
 
-OTOH, otherwise it returns the error code from bpf_prog_run() and this looks
-confusing to me. I have no idea what prog->bpf_func(ctx, insnsi) can return
-in this case, but note the WARN(rc & ~UPROBE_HANDLER_MASK) in handler_chain...
+Sorry, I'm probably just missing something about the implementation
+details you summarized above.
 
-Hmm... looking at your test-case again,
+> The NAPI_SET netlink op can then work based on NAPI index rather 
+> than the ephemeral NAPI ID. It can apply the config to all live
+> NAPI instances with that index (of which there really should only 
+> be one, unless driver is mid-reconfiguration somehow but even that
+> won't cause issues, we can give multiple instances the same settings)
+> and also store the user config in the array in net_device.
 
-> +SEC("uprobe.multi//proc/self/exe:uprobe_multi_func_1")
-> +int uprobe(struct pt_regs *ctx)
-> +{
-> +	test++;
-> +	return 1;
-> +}
+I understand what you are proposing. I suppose napi-get could be
+extended to include the NAPI index, too?
 
-So may be this (compiled to ebpf) is what prog->bpf_func() actually executes?
-If yes, everything is clear. And this "proves" that the patch makes the current
-API less flexible, as I mentioned in my reply to Andrii.
+Then users could map queues to NAPI indexes to queues (via NAPI ID)?
 
-If I got it right, I'd suggest to add a comment into this code to explain
-that we return UPROBE_HANDLER_REMOVE after the 1st hit, for git-grep.
+> When new NAPI instance is associate with a NAPI index it should get
+> all the config associated with that index applied.
+> 
+> Thoughts? Does that makes sense, and if so do you think it's an
+> over-complication?
 
-Oleg.
+It feels a bit tricky, to me, as it seems there are some edge cases
+to be careful with (queue count change). I could probably give the
+implementation a try and see where I end up.
 
+Having these settings per-NAPI would be really useful and being able
+to support IRQ suspension would be useful, too.
+
+I think being thoughtful about how we get there is important; I'm a
+little wary of getting side tracked, but I trust your judgement and
+if you think this is worth exploring I'll think on it some more.
+
+- Joe
 
