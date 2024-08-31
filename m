@@ -1,60 +1,60 @@
-Return-Path: <linux-kernel+bounces-309936-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309937-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90D14967216
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 16:21:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EBC2967219
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 16:21:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C1AE21C21148
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 14:21:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 252FF1F228B9
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 14:21:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BE1D1CAA4;
-	Sat, 31 Aug 2024 14:21:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E7C93CF63;
+	Sat, 31 Aug 2024 14:21:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fEZve2Oe"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="d4mdBa9F"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0250D2B9D6
-	for <linux-kernel@vger.kernel.org>; Sat, 31 Aug 2024 14:21:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20F9742077
+	for <linux-kernel@vger.kernel.org>; Sat, 31 Aug 2024 14:21:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725114070; cv=none; b=pMMJqIqg/mJN+kV7GiUKpordDwTF931BSAssXLoW3PfA4d3aPR2FVAo1JxtB/TVEiwbEWfkxXcZErUXSFFjse4bebyrkoILrBesGr0byIHW0sERDc2snfspsa9/hSQOMMSzIH3xPncOTZxiIpaUbXrQyZPP9tkpEn6zzdHEo9wo=
+	t=1725114074; cv=none; b=lUUCD/0YyOZgKPGmMGRijg+FaLChFAvjaNEysIJx8ybM36E6MLHKIiTyLmeI3KAurxU02XPDVv8dQbNqyb87nD3IWdE+wNplZDyGjcM1JSGI88JGIjY9b0gIW8BWvB/lyjDuYzhhOV7BtkvXWO5MSXCPRqQ619aoUEVh8oPX8gw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725114070; c=relaxed/simple;
-	bh=zINAiPqxol2jf7n95zfSwjCFNPHHesldhpOGxFwbcGU=;
+	s=arc-20240116; t=1725114074; c=relaxed/simple;
+	bh=Q1ksihjpVfuP+VRWxZRsYugofz9jYU44EY/sBMoBMEs=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=BnHnaxZwHI3o2W0ZFpx+B2bICLon8YvEKlCQ9nbrU4wzgUr/kEhq0KIdduFLCDxbnSzI6mYoY8Y3CntcitIscfc8iqx1+v00CeJkeGbeav6pQ1T4zESXenYfCBSUqGAuP4QJpS/HVhFmJj29QM/NnQ38MSTu8UlrWk5/Goi661A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fEZve2Oe; arc=none smtp.client-ip=170.10.133.124
+	 MIME-Version; b=NhLZGUUeyonZXs0K2Dx88WIc2tJd9qT3XgU4LQICxFtkEYijjbN+0vPwDCNR9CZwLfcKR8FAhtBmOnld1Rj0nU5413BbIu2exnosjw1l1/Fy9n88nv4aQFjxi8kRgI5eDxJNr+jf1QNiLp2WLcIm2Poyux7/kEfY3bT5l2zseRk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=d4mdBa9F; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1725114067;
+	s=mimecast20190719; t=1725114072;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=Y5O3GspAeKQ3pneZEdcCy+Sw5OHilzaQkJasxbh7z3U=;
-	b=fEZve2OeorTK7NMm3EejtESaekEC1D8/AW99yHc8DH+krZW/JaZuYl3+EfI+r0fo4F5iIi
-	s/cfQy4nC1OR3H5MkxSHaCT2JGDd+dQ0rw7XsPCEelJFyjBQr34vgBGWGEjTvhXATvnKXX
-	qXShm36Ii3IJvGAbamfx5zEzYIEmX0w=
+	bh=a+YaXcuOLFlVp84HCFFSCXL1mJivlfEZlF6lzWx9g7c=;
+	b=d4mdBa9FTPK31LbGYLEhmkKYySw8edlAkRYTcmhCqBvM7FL5vo+WsBbZRgehfEBcFDejA8
+	LeImx47ytQ5pWSvfib7aQ6iwosfgOqLW6mHmHKcTkT+3hav3kWRmRWkYtWNLTMGCeuhc9g
+	OkuJHQ3qy2IwVK8If2qJj5lkfz76CVc=
 Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
  (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-596-UNIRLRDgMwesO4-JeuSJWA-1; Sat,
- 31 Aug 2024 10:21:03 -0400
-X-MC-Unique: UNIRLRDgMwesO4-JeuSJWA-1
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-629-zT7G6qIhP6O32hWBOUjMtA-1; Sat,
+ 31 Aug 2024 10:21:07 -0400
+X-MC-Unique: zT7G6qIhP6O32hWBOUjMtA-1
 Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 26D1A19560AD;
-	Sat, 31 Aug 2024 14:21:01 +0000 (UTC)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 49E4A19560B7;
+	Sat, 31 Aug 2024 14:21:05 +0000 (UTC)
 Received: from localhost.localdomain (unknown [10.39.192.42])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id AC60130001A4;
-	Sat, 31 Aug 2024 14:20:55 +0000 (UTC)
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 323B13001FE8;
+	Sat, 31 Aug 2024 14:21:00 +0000 (UTC)
 From: Hans de Goede <hdegoede@redhat.com>
 To: Sebastian Reichel <sre@kernel.org>,
 	=?UTF-8?q?Thomas=20Wei=C3=9Fschuh?= <linux@weissschuh.net>,
@@ -71,9 +71,9 @@ Cc: Hans de Goede <hdegoede@redhat.com>,
 	linux-kernel@vger.kernel.org,
 	linux-usb@vger.kernel.org,
 	linux-phy@lists.infradead.org
-Subject: [PATCH 2/6] power: supply: ucs1002: Adjust ucs1002_set_usb_type() to accept string values
-Date: Sat, 31 Aug 2024 16:20:35 +0200
-Message-ID: <20240831142039.28830-3-hdegoede@redhat.com>
+Subject: [PATCH 3/6] power: supply: rt9467-charger: Remove "usb_type" property write support
+Date: Sat, 31 Aug 2024 16:20:36 +0200
+Message-ID: <20240831142039.28830-4-hdegoede@redhat.com>
 In-Reply-To: <20240831142039.28830-1-hdegoede@redhat.com>
 References: <20240831142039.28830-1-hdegoede@redhat.com>
 Precedence: bulk
@@ -85,52 +85,44 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-power_supply_sysfs.c accept wrrites of strings to "usb_type" for strings
-values matching an entry in POWER_SUPPLY_USB_TYPE_TEXT[]. If such a
-string value is written then the int value passed to ucs1002_set_property()
-will be an enum power_supply_usb_type value.
+The "usb_type" property must be read-only for charger power-supply devices,
+see: Documentation/ABI/testing/sysfs-class-power.
 
-Before this change ucs1002_set_usb_type() expected the value to be an index
-into ucs1002_usb_types[]. Adjust ucs1002_set_usb_type() to use the enum
-value directly so that writing string values works.
+But the rt9467 driver allows writing 0/1 to it to disable/enable charging.
+Other charger drivers use the "status" property for this and the rt9467
+code also allows writing 0/1 to its "status" property and this does
+the exact same thing as writing 0/1 to its "usb_type" property.
 
-The list of supported types in ucs1002_usb_types[] is: PD, SDP, DCP, CDP.
-The [POWER_SUPPLY_USB_TYPE_]SDP, DCP and CDP enum labels have a value of
-1, 2 and 3. So userspace selecting SDP, DCP or CDP by writing 1, 2 or 3
-will keep working. POWER_SUPPLY_USB_TYPE_PD which is mapped to the ucs1002
-dedicated mode however has a value of 6. Before this change writing 0 would
-select the dedicated mode. To preserve userspace API compatibility also map
-POWER_SUPPLY_USB_TYPE_UNKNOWN (which is 0) to the dedicated mode.
+Drop write support for the "usb_type" property making it readonly to match
+the ABI documentation. If userspace wants to disable/enable charging it
+can use the "status" property for this.
 
-Cc: Enric Balletbo Serra <enric.balletbo@collabora.com>
-Cc: Andrey Smirnov <andrew.smirnov@gmail.com>
 Signed-off-by: Hans de Goede <hdegoede@redhat.com>
 ---
- drivers/power/supply/ucs1002_power.c | 11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
+ drivers/power/supply/rt9467-charger.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-diff --git a/drivers/power/supply/ucs1002_power.c b/drivers/power/supply/ucs1002_power.c
-index 7970843a4f48..b67d5b03d93e 100644
---- a/drivers/power/supply/ucs1002_power.c
-+++ b/drivers/power/supply/ucs1002_power.c
-@@ -308,10 +308,13 @@ static int ucs1002_set_usb_type(struct ucs1002_info *info, int val)
- {
- 	unsigned int mode;
- 
--	if (val < 0 || val >= ARRAY_SIZE(ucs1002_usb_types))
--		return -EINVAL;
--
--	switch (ucs1002_usb_types[val]) {
-+	switch (val) {
-+	/*
-+	 * POWER_SUPPLY_USB_TYPE_UNKNOWN == 0, map this to dedicated for
-+	 * userspace API compatibility with older versions of this driver
-+	 * which mapped 0 to dedicated.
-+	 */
-+	case POWER_SUPPLY_USB_TYPE_UNKNOWN:
- 	case POWER_SUPPLY_USB_TYPE_PD:
- 		mode = V_SET_ACTIVE_MODE_DEDICATED;
- 		break;
+diff --git a/drivers/power/supply/rt9467-charger.c b/drivers/power/supply/rt9467-charger.c
+index fdfdc83ab045..f935bd761ac1 100644
+--- a/drivers/power/supply/rt9467-charger.c
++++ b/drivers/power/supply/rt9467-charger.c
+@@ -745,8 +745,6 @@ static int rt9467_psy_set_property(struct power_supply *psy,
+ 						    RT9467_RANGE_IPREC, val->intval);
+ 	case POWER_SUPPLY_PROP_CHARGE_TERM_CURRENT:
+ 		return rt9467_psy_set_ieoc(data, val->intval);
+-	case POWER_SUPPLY_PROP_USB_TYPE:
+-		return regmap_field_write(data->rm_field[F_USBCHGEN], val->intval);
+ 	default:
+ 		return -EINVAL;
+ 	}
+@@ -764,7 +762,6 @@ static int rt9467_chg_prop_is_writeable(struct power_supply *psy,
+ 	case POWER_SUPPLY_PROP_INPUT_VOLTAGE_LIMIT:
+ 	case POWER_SUPPLY_PROP_CHARGE_TERM_CURRENT:
+ 	case POWER_SUPPLY_PROP_PRECHARGE_CURRENT:
+-	case POWER_SUPPLY_PROP_USB_TYPE:
+ 		return 1;
+ 	default:
+ 		return 0;
 -- 
 2.46.0
 
