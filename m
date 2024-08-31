@@ -1,104 +1,276 @@
-Return-Path: <linux-kernel+bounces-309628-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309623-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D9D0966D8C
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 02:36:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 46EFA966D83
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 02:27:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E0403B21B8A
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 00:36:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A3D25B20C5F
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 00:27:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1BC36FC7;
-	Sat, 31 Aug 2024 00:36:19 +0000 (UTC)
-Received: from mx0a-0064b401.pphosted.com (mx0a-0064b401.pphosted.com [205.220.166.238])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C123A524F;
+	Sat, 31 Aug 2024 00:27:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Y6wMSfol"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2BA41D1309;
-	Sat, 31 Aug 2024 00:36:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.166.238
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C6BE3D76
+	for <linux-kernel@vger.kernel.org>; Sat, 31 Aug 2024 00:27:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725064579; cv=none; b=EOxpqfpYmbBzGn/YNJ75+VEUGnzOjvo5iHCJJVpNSqmV+xXBUUz+bE2SObVOsvoGbDkANvHDqe2o5gOv+R3dlnNk+NbN3bJVTO/9mRw2VSuLVfqLYIoZP/hA2/zcSOO2eqS0RwLKqUk7MxbcRQF7Vj2e/YxKvdk/hIzl/bDstPg=
+	t=1725064048; cv=none; b=E4xo3LbWxk3u1dCILRL64X6Hdp0zOnYkjj9hVifW5hIfV5Pr7eA7W4Te/y4h/oUZ6FzI24TY9ZRF26Mz6eGACJGwBw2uXtGtzqceyS5P2t0+9xR0rqZuZBi0Uw/WohCBH3rPjeyU3pdxB+xO1SpWVaj4UDZ0NimKSPXcw1FoMBw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725064579; c=relaxed/simple;
-	bh=ez1uLWZElCWBv5bLkXxc6KjkAHcwOdiyQY1fr5ULPOg=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=b65+ZesIHb74qnvRDfsCGJBeajztjihAlsB8K5PrpZ75gCO69WaiyXDXST6A6Tn6/tA1VIcEDHij8N85PAxQ/7LCgFeoT+9tpjzdk+UB4z1LjFn4pGZdzkEGvCbTD5LptrtbUDV07iNsq/I6WWW8rq7op2aK1oZ0XYbAqgDS90k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; arc=none smtp.client-ip=205.220.166.238
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
-Received: from pps.filterd (m0250809.ppops.net [127.0.0.1])
-	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47V0Ad6V000915;
-	Fri, 30 Aug 2024 17:22:25 -0700
-Received: from ala-exchng02.corp.ad.wrs.com (ala-exchng02.wrs.com [147.11.82.254])
-	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 419unh3p8t-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-	Fri, 30 Aug 2024 17:22:25 -0700 (PDT)
-Received: from ala-exchng01.corp.ad.wrs.com (147.11.82.252) by
- ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Fri, 30 Aug 2024 17:22:24 -0700
-Received: from pek-lpd-ccm6.wrs.com (147.11.136.210) by
- ala-exchng01.corp.ad.wrs.com (147.11.82.252) with Microsoft SMTP Server id
- 15.1.2507.39 via Frontend Transport; Fri, 30 Aug 2024 17:22:23 -0700
-From: Lizhi Xu <lizhi.xu@windriver.com>
-To: <syzbot+4704b3cc972bd76024f1@syzkaller.appspotmail.com>
-CC: <clm@fb.com>, <dsterba@suse.com>, <josef@toxicpanda.com>,
-        <linux-btrfs@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <syzkaller-bugs@googlegroups.com>
-Subject: [PATCH] btrfs: Add assert or condition
-Date: Sat, 31 Aug 2024 08:22:22 +0800
-Message-ID: <20240831002222.2275740-1-lizhi.xu@windriver.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <00000000000044ff540620d7dee2@google.com>
-References: <00000000000044ff540620d7dee2@google.com>
+	s=arc-20240116; t=1725064048; c=relaxed/simple;
+	bh=qjy0F2D7JFwR+9Y8cigngslE+eD+AhDYpK38RXmGbUI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jJ1Z5b1Zc/a9AXCSv1Eyy/PdyHuuhxfx0IEvStBNqhsjoLJJkfV/8/lCSMmrigZgRc4zRhcSoi7kENNEKOHooJDHSlb3ZXlTGKQTZN+CmSX025BNWHnQHOOb7rXH+NY0yQJsNkV0c/WWC4HWqcEWcN/mkmO9YSFxBEBEZysnQkA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Y6wMSfol; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1725064045;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=wHBWnT4k6dco0n9/t0HZDWA/5sCtUSV1D+k6nHMThu0=;
+	b=Y6wMSfol4bNhDn/uIsGnEiTuOcdc3zFhIQ/G4iCkDITTroO9Wv0yAgE5LzydZNQ1RUdwwh
+	9OFTS/ada+9V21rhLTDQCJ5l7zhPKmDsYAT/aegGOm9nCHDNUFRfUTNFfqSSL0CoTQjX3U
+	lhrg4E5Rd6Jfbet9qHfgeUiOzu0nlew=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-103-MysWu4bdO-6OwJbXq1_Q0Q-1; Fri,
+ 30 Aug 2024 20:27:21 -0400
+X-MC-Unique: MysWu4bdO-6OwJbXq1_Q0Q-1
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 064CD19560A3;
+	Sat, 31 Aug 2024 00:27:19 +0000 (UTC)
+Received: from [10.2.16.45] (unknown [10.2.16.45])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id D45B71955DD8;
+	Sat, 31 Aug 2024 00:27:14 +0000 (UTC)
+Message-ID: <db28db41-41aa-4f3e-bb32-4bb58d746dbc@redhat.com>
+Date: Fri, 30 Aug 2024 20:27:13 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-GUID: YeYNFiSsZKJWH2ppmGtPvnp5jBaQ1zN9
-X-Proofpoint-ORIG-GUID: YeYNFiSsZKJWH2ppmGtPvnp5jBaQ1zN9
-X-Authority-Analysis: v=2.4 cv=K8RwHDWI c=1 sm=1 tr=0 ts=66d26241 cx=c_pps a=K4BcnWQioVPsTJd46EJO2w==:117 a=K4BcnWQioVPsTJd46EJO2w==:17 a=yoJbH4e0A30A:10 a=hSkVLCK3AAAA:8 a=edf1wS77AAAA:8 a=t7CeM3EgAAAA:8 a=WQ4PzUGnyvOGiPlKdjgA:9 a=cQPPKAXgyycSBL8etih5:22
- a=DcSpbTIhAlouE1Uv7lRv:22 a=FdTzh2GWekK77mhwV6Dw:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-30_12,2024-08-30_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- phishscore=0 spamscore=0 clxscore=1011 mlxlogscore=697 lowpriorityscore=0
- suspectscore=0 malwarescore=0 impostorscore=0 mlxscore=0 bulkscore=0
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.21.0-2407110000 definitions=main-2408310001
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/2] sched/isolation: Exclude dynamically isolated CPUs
+ from housekeeping masks
+To: Zefan Li <lizefan.x@bytedance.com>, Tejun Heo <tj@kernel.org>,
+ Johannes Weiner <hannes@cmpxchg.org>, =?UTF-8?Q?Michal_Koutn=C3=BD?=
+ <mkoutny@suse.com>, Ingo Molnar <mingo@redhat.com>,
+ Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>,
+ Vincent Guittot <vincent.guittot@linaro.org>,
+ Dietmar Eggemann <dietmar.eggemann@arm.com>,
+ Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
+ Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
+ Frederic Weisbecker <frederic@kernel.org>
+Cc: linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
+ Costa Shulyupin <cshulyup@redhat.com>
+References: <20240821142312.236970-1-longman@redhat.com>
+ <20240821142312.236970-2-longman@redhat.com>
+Content-Language: en-US
+From: Waiman Long <longman@redhat.com>
+In-Reply-To: <20240821142312.236970-2-longman@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-When the value of fsync_skip_inode_lock is true, i_mmap_lock is used,
-so add it or condition in the ASSERT. 
 
-Reported-and-tested-by: syzbot+4704b3cc972bd76024f1@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=4704b3cc972bd76024f1
-Signed-off-by: Lizhi Xu <lizhi.xu@windriver.com>
----
- fs/btrfs/ordered-data.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+On 8/21/24 10:23, Waiman Long wrote:
+> The housekeeping CPU masks, set up by the "isolcpus" and "nohz_full"
+> boot command line options, are used at boot time to exclude selected CPUs
+> from running some kernel background processes to minimize disturbance
+> to latency sensitive userspace applications. Some of housekeeping CPU
+> masks are also checked at run time to avoid using those isolated CPUs.
+>
+> The cpuset subsystem is now able to dynamically create a set of isolated
+> CPUs to be used in isolated cpuset partitions. The long term goal is
+> to make the degree of isolation as close as possible to what can be
+> done statically using those boot command line options.
+>
+> This patch is a step in that direction by making the housekeeping CPU
+> mask APIs exclude the dynamically isolated CPUs when they are called
+> at run time. The housekeeping CPU masks will fall back to the bootup
+> default when all the dynamically isolated CPUs are released.
+>
+> A new housekeeping_exlude_isolcpus() function is added which is to be
+> called by the cpuset subsystem to provide a list of isolated CPUs to
+> be excluded.
+>
+> Signed-off-by: Waiman Long <longman@redhat.com>
+> ---
+>   include/linux/sched/isolation.h |   8 +++
+>   kernel/sched/isolation.c        | 112 +++++++++++++++++++++++++++++++-
+>   2 files changed, 119 insertions(+), 1 deletion(-)
+>
+> diff --git a/include/linux/sched/isolation.h b/include/linux/sched/isolation.h
+> index 2b461129d1fa..d64fa4e60138 100644
+> --- a/include/linux/sched/isolation.h
+> +++ b/include/linux/sched/isolation.h
+> @@ -27,6 +27,8 @@ extern bool housekeeping_enabled(enum hk_type type);
+>   extern void housekeeping_affine(struct task_struct *t, enum hk_type type);
+>   extern bool housekeeping_test_cpu(int cpu, enum hk_type type);
+>   extern void __init housekeeping_init(void);
+> +extern int housekeeping_exlude_isolcpus(const struct cpumask *isolcpus,
+> +					unsigned long flags);
+>   
+>   #else
+>   
+> @@ -54,6 +56,12 @@ static inline bool housekeeping_test_cpu(int cpu, enum hk_type type)
+>   }
+>   
+>   static inline void housekeeping_init(void) { }
+> +
+> +static inline int housekeeping_exlude_isolcpus(struct cpumask *isolcpus,
+> +					       unsigned long flags)
+> +{
+> +	return -EOPNOTSUPP;
+> +}
+>   #endif /* CONFIG_CPU_ISOLATION */
+>   
+>   static inline bool housekeeping_cpu(int cpu, enum hk_type type)
+> diff --git a/kernel/sched/isolation.c b/kernel/sched/isolation.c
+> index 5891e715f00d..3018ba81eb65 100644
+> --- a/kernel/sched/isolation.c
+> +++ b/kernel/sched/isolation.c
+> @@ -28,7 +28,16 @@ struct housekeeping {
+>   	unsigned long flags;
+>   };
+>   
+> -static struct housekeeping housekeeping;
+> +static struct housekeeping housekeeping __read_mostly;
+> +
+> +/*
+> + * Boot time housekeeping cpumask and flags
+> + *
+> + * If more than one of nohz_full or isolcpus are specified, the cpumask must
+> + * be the same or the setup will fail.
+> + */
+> +static cpumask_var_t boot_hk_cpumask;
+> +static unsigned long  boot_hk_flags;
+>   
+>   bool housekeeping_enabled(enum hk_type type)
+>   {
+> @@ -253,3 +262,104 @@ static int __init housekeeping_isolcpus_setup(char *str)
+>   	return housekeeping_setup(str, flags);
+>   }
+>   __setup("isolcpus=", housekeeping_isolcpus_setup);
+> +
+> +/*
+> + * Save bootup housekeeping cpumask and flags
+> + */
+> +static int housekeeping_save(void)
+> +{
+> +	enum hk_type type;
+> +
+> +	boot_hk_flags = housekeeping.flags;
+> +	for_each_set_bit(type, &housekeeping.flags, HK_TYPE_MAX) {
+> +		if (!alloc_cpumask_var(&boot_hk_cpumask, GFP_KERNEL))
+> +			return -ENOMEM;
+> +		cpumask_copy(boot_hk_cpumask, housekeeping.cpumasks[type]);
+> +		break;
+> +	}
+> +	return 0;
+> +}
+> +
+> +/*
+> + * Exclude the given dynamically isolated CPUs from the housekeeping CPUs
+> + * External synchronization is required to make sure that concurrent call to
+> + * this function will not happen.
+> + *
+> + * [TODO] The housekeeping cpumasks and flags at bootup time are currently
+> + * preserved as cpuset dynamic CPU isolation isn't as good as boot time CPU
+> + * isolation yet. Once dynamic CPU isolation is close to boot time isolation,
+> + * we will not need to save the bootup values and will allow them to be
+> + * overridden.
+> + *
+> + * Return: 0 if successful, an error code if not
+> + */
+> +int housekeeping_exlude_isolcpus(const struct cpumask *isolcpus, unsigned long flags)
+> +{
+> +	static unsigned long alloc_flags;
+> +	static cpumask_var_t tmp_mask;
+> +	static bool excluded;	/* @true if some CPUs have been excluded */
+> +	static bool inited;	/* @true if called before */
+> +
+> +	bool isolate_none = !isolcpus || cpumask_empty(isolcpus);
+> +	enum hk_type type;
+> +
+> +	lockdep_assert_cpus_held();
+> +
+> +	if (isolate_none && (!inited || !excluded))
+> +		return 0;
+> +
+> +	if (unlikely(!inited)) {
+> +		if (!alloc_cpumask_var(&tmp_mask, GFP_KERNEL))
+> +			return -ENOMEM;
+> +		if (housekeeping.flags) {
+> +			int err = housekeeping_save();
+> +
+> +			if (err)
+> +				return err;
+> +		}
+> +		alloc_flags = housekeeping.flags;
+> +		inited = true;
+> +	}
+> +
+> +	if (isolate_none) {
+> +		excluded = false;
+> +
+> +		/*
+> +		 * Reset housekeeping to bootup default
+> +		 */
+> +		for_each_set_bit(type, &boot_hk_flags, HK_TYPE_MAX)
+> +			cpumask_copy(housekeeping.cpumasks[type], boot_hk_cpumask);
+> +
+> +		WRITE_ONCE(housekeeping.flags, boot_hk_flags);
+> +		if (!boot_hk_flags && static_key_enabled(&housekeeping_overridden))
+> +			static_key_disable_cpuslocked(&housekeeping_overridden.key);
+> +		return 0;
+> +	}
+> +
+> +	/*
+> +	 * Setting up the new housekeeping cpumasks
+> +	 */
+> +	for_each_set_bit(type, &flags, HK_TYPE_MAX) {
+> +		const struct cpumask *src_mask;
+> +
+> +		if (!(BIT(type) & alloc_flags)) {
+> +			if (!alloc_cpumask_var(&housekeeping.cpumasks[type], GFP_KERNEL))
+> +				return -ENOMEM;
+> +			alloc_flags |= BIT(type);
+> +		}
+> +		src_mask = (BIT(type) & boot_hk_flags)
+> +			 ? boot_hk_cpumask : cpu_possible_mask;
+> +		/*
+> +		 * Make sure there is at least one online housekeeping CPU
+> +		 */
+> +		cpumask_andnot(tmp_mask, src_mask, isolcpus);
+> +		if (!cpumask_intersects(tmp_mask, cpu_online_mask))
+> +			return -EINVAL;	/* Invalid isolated CPUs */
+> +		cpumask_copy(housekeeping.cpumasks[type], tmp_mask);
+> +	}
+> +	WRITE_ONCE(housekeeping.flags, boot_hk_flags | flags);
+> +	excluded = true;
+> +	if (!static_key_enabled(&housekeeping_overridden))
+> +		static_key_enable_cpuslocked(&housekeeping_overridden.key);
+> +	return 0;
+> +}
 
-diff --git a/fs/btrfs/ordered-data.c b/fs/btrfs/ordered-data.c
-index 82a68394a89c..d0187e1fb941 100644
---- a/fs/btrfs/ordered-data.c
-+++ b/fs/btrfs/ordered-data.c
-@@ -1015,7 +1015,8 @@ void btrfs_get_ordered_extents_for_logging(struct btrfs_inode *inode,
- {
- 	struct rb_node *n;
- 
--	ASSERT(inode_is_locked(&inode->vfs_inode));
-+	ASSERT(inode_is_locked(&inode->vfs_inode) ||
-+	       rwsem_is_locked(&inode->i_mmap_lock));
- 
- 	spin_lock_irq(&inode->ordered_tree_lock);
- 	for (n = rb_first(&inode->ordered_tree); n; n = rb_next(n)) {
--- 
-2.43.0
+Any comment or suggestion about this patch?
+
+Thanks,
+Longman
 
 
