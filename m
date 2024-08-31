@@ -1,140 +1,102 @@
-Return-Path: <linux-kernel+bounces-309945-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309947-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 112B3967247
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 16:59:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0655896724E
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 17:03:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C333B283743
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 14:59:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 89BBEB2215E
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 15:02:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF82C23776;
-	Sat, 31 Aug 2024 14:59:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jdeOLmVf"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9841E1F951;
+	Sat, 31 Aug 2024 15:02:52 +0000 (UTC)
+Received: from brightrain.aerifal.cx (brightrain.aerifal.cx [104.156.224.86])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8146AD55
-	for <linux-kernel@vger.kernel.org>; Sat, 31 Aug 2024 14:59:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF5C31CD16
+	for <linux-kernel@vger.kernel.org>; Sat, 31 Aug 2024 15:02:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=104.156.224.86
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725116384; cv=none; b=X4W7lXCSK+foAthkHHmydo1aEhQKhUcDIvrcACzuJp+yEbwNmgBPNUerAekFw7xgRGhb+Qh10ZapLqRKEbJxtsFVkwHSsGeGeHxw1KLRP4Qn2hce91On+hOYZGU69zfvXset4EPuWS5UXQCJgEJGrE6ed1UR/EEHbiquau8q+0g=
+	t=1725116572; cv=none; b=QiSQB9GEIC9PbHCGccFYqZXkJvEn+qj06dAP/gQigSUnJbCSulyFTWGp3/PD9vn+09ETSdEZH0YqOzrz7wECMux6k+K8+LzQ44X1cUh71fN0T5oOzHkkoeT4jhDEneigDY+W5KV72N4z8YKnSYzqkg5ZKiPN90GwqAsz3udq5k8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725116384; c=relaxed/simple;
-	bh=Pn8KwUv0DkKQ+7ZtjyoKep4bskoqW4L9AuBTQBa8zuM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=aFhkQtXQr2CH4eSZf63/HzV8Ig9MQWQbPEHVbPQkNnJ4msXxikaNDcigdRtUqgDFZCzE101nmCwECXLWyOJnNMciVZrsXogCQHz/omogn8Lv0spxgqPAFj/GfhHBx32B1fhQ3m9vjjFq6A26ce9R+VB1DPDXaqlGi9IPzli7vEQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jdeOLmVf; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-2055a3f80a4so774045ad.2
-        for <linux-kernel@vger.kernel.org>; Sat, 31 Aug 2024 07:59:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725116382; x=1725721182; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=OyVG1AgOZE9WJVZe0FpJwMfaDm+MjzUmj8n+GYSoTc4=;
-        b=jdeOLmVf35Z/LzkDdOZoOBaQSMUXZQ/fzimyEoE6YhJRzww7ScPU3UoAj9e2P1Al34
-         2qVW3m0R0FaRXo55UwS7dM3UkGC5Rlggjo+kWrpIcg3q0QKZ/J9mZvKDMSoc3KeYdsZz
-         evquPnZp9qvm0NmB+NOMiMSQnNfUGGVrBHnFR9KTsxvJL8sxHV6gRgsCDp8H/bW9JVuM
-         XJ83AFXKaMF9XuDMtVpSQYlUJm8oF7PdnNGttBHgwwXL0Ejr8P3ct/+7Nu4hCwv8pyul
-         p6KchqVwdGa4eXvCKVutUWzpnanboesVUa3AhIHWFJiy/BxcdQ1V9DUi6ELqbQYZd65V
-         BvrA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725116382; x=1725721182;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=OyVG1AgOZE9WJVZe0FpJwMfaDm+MjzUmj8n+GYSoTc4=;
-        b=eZKrZBaS9vjgGbX6/q16LTDFthKb4d9p8y0hb6B6xMU84bvdzWsgVbFoYKRBUxUhHU
-         lg+UWwop8VIid6XHZGPPGYRslHZXo4nA/aBOINYmp09uftjnCMlcWBKMCYRCAr1em62U
-         xEkAHKvRDUInf1J7Esh0iAkuHiLtHndurbSeyDPc/pw/QwQbkqDKI/y64ABPGrJS2vD+
-         +EjghXK62+Ft7o4eyVa0j4s4GG99gjIORCIIFLGjhwvQYG8I5QVT+mUxNWY1h96pmxZg
-         XNIXQb6dnJ+d6QERzp/+RgOIXfBJVhmSbL5UZ/E2z1/MMH8chby8r9VCxNmJYGKhWgLt
-         1ueA==
-X-Gm-Message-State: AOJu0YxUOXnWRIlfPr5RvUqJF73pXzp8Yt9aoGJa5DsxmXG0lr14l0rj
-	OWaX1pxWhX4Ip3R/FQJHjhcOpX4aJSzD4eoyaKMZC9HCvxsK7ltAecVhg7kH
-X-Google-Smtp-Source: AGHT+IFFBXtR4oC1CxsZUzXfcNqZjWooOa3vPuKcBV2xy77m/B/eASaxdy4YIUPTCK7rRWJO6GOCQw==
-X-Received: by 2002:a17:902:c94a:b0:202:3dcd:23ef with SMTP id d9443c01a7336-205447bc4c5mr20674015ad.61.1725116381799;
-        Sat, 31 Aug 2024 07:59:41 -0700 (PDT)
-Received: from fedora.. ([106.219.166.29])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-205456242fesm12548175ad.53.2024.08.31.07.59.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 31 Aug 2024 07:59:41 -0700 (PDT)
-From: Riyan Dhiman <riyandhiman14@gmail.com>
-To: gregkh@linuxfoundation.org
-Cc: linux-kernel@vger.kernel.org,
-	linux-staging@lists.linux.dev,
-	Riyan Dhiman <riyandhiman14@gmail.com>
-Subject: [PATCH] staging: rtl8192e: Rename variable eRFPath
-Date: Sat, 31 Aug 2024 20:29:32 +0530
-Message-ID: <20240831145932.37744-1-riyandhiman14@gmail.com>
-X-Mailer: git-send-email 2.46.0
+	s=arc-20240116; t=1725116572; c=relaxed/simple;
+	bh=YgEYnIFOxCRQ8sXxEqVG+/XVCfKPDEStM7YnuFh/Ygo=;
+	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XZddgnq86WdjUGjzwa96nEsJtgzro1Yaz1xho12Kfwuy8ZLmbm1pFWFeXlZVBk1Kz87CIkkQctgYSiNzOjd27l2fx3QuuZPiRwYSiQTQJWX9XHgHcLDONtJLDIOygbylpoUqsyrGvaqet04Z5Pqa8uzlkQwNn5GTHnjR9Jt4h1o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=libc.org; spf=pass smtp.mailfrom=aerifal.cx; arc=none smtp.client-ip=104.156.224.86
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=libc.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aerifal.cx
+Date: Sat, 31 Aug 2024 11:02:42 -0400
+From: Rich Felker <dalias@libc.org>
+To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	linux-api@vger.kernel.org, libc-alpha@sourceware.org,
+	musl@lists.openwall.com
+Subject: Re: [musl] AT_MINSIGSTKSZ mismatched interpretation kernel vs libc
+Message-ID: <20240831150241.GP10433@brightrain.aerifal.cx>
+References: <20240829205436.GA14562@brightrain.aerifal.cx>
+ <20240831092902.GA2724612@port70.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240831092902.GA2724612@port70.net>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 
-Rename variable eRFPath to erf_path to fix checkpatch
-warning.
+On Sat, Aug 31, 2024 at 11:29:02AM +0200, Szabolcs Nagy wrote:
+> * Rich Felker <dalias@libc.org> [2024-08-29 16:54:38 -0400]:
+> > As I understand it, the AT_MINSIGSTKSZ auxv value is supposed to be a
+> > suitable runtime value for MINSIGSTKSZ (sysconf(_SC_MINSIGSTKSZ)),
+> > such that it's safe to pass as a size to sigaltstack. However, this is
+> > not how the kernel actually implements it. At least on x86 and
+> > powerpc, the kernel fills it via get_sigframe_size, which computes the
+> > size of the sigcontext/siginfo/etc to be pushed and uses that
+> > directly, without allowing any space for actual execution, and without
+> > ensuring the value is at least as large as the legacy constant
+> > MINSIGSTKSZ. This leads to two problems:
+> > 
+> > 1. If userspace uses the value without clamping it not-below
+> >    MINSIGSTKSZ, sigaltstack will fail with ENOMEM.
+> > 
+> > 2. If the kernel needs more space than MINSIGSTKSZ just for the signal
+> >    frame structures, userspace that trusts AT_MINSIGSTKSZ will only
+> >    allocate enough for the frame, and the program will immediately
+> >    crash/stack-overflow once execution passes to userspace.
+> > 
+> > Since existing kernels in the wild can't be fixed, and since it looks
+> > like the problem is just that the kernel chose a poor definition of
+> > AT_MINSIGSTKSZ, I think userspace (glibc, musl, etc.) need to work
+> > around the problem, adding a per-arch correction term to
+> > AT_MINSIGSTKSZ that's basically equal to:
+> > 
+> >     legacy_MINSIGSTKSZ - AT_MINSIGSTKSZ as returned on legacy hw
+> > 
+> > such that adding the correction term would reproduce the expected
+> > value MINSIGSTKSZ.
+> > 
+> > The only question is whether the kernel will commit to keeping this
+> > behavior, or whether it would be "fixed" to include all the needed
+> > working space when they eventually decide they want bigger stacks for
+> > some new register file bloat. I think keeping the current behavior, so
+> > we can just add a fixed offset, is probably the best thing to do.
+> 
+> i think it makes sense that the kernel sets AT_MINSIGSTKSZ
+> according to what the kernel needs (signal frame size)
+> anything beyond that is up to userspace requirements (e.g.
+> the kernel cannot know if the libc wraps signal handlers)
+> 
+> it's up to the libc to adjust sysconf(_SC_MINSIGSTKSZ)
+> according to posix or backward compat requirements.
 
-Issue reported in checkpatch:
--CHECK: Avoid CamelCase: <eRFPath>
+I think this is a reasonable viea and means the aux key was just very
+poorly named. It should have been called something like
+AT_SIGFRAMESIZE to indicate to the userspace-side consumer that it's
+not a suitable value for MINSIGSTKSZ, only a contributing term for it.
 
-Signed-off-by: Riyan Dhiman <riyandhiman14@gmail.com>
----
- .../staging/rtl8192e/rtl8192e/r8190P_rtl8256.c   | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
-
-diff --git a/drivers/staging/rtl8192e/rtl8192e/r8190P_rtl8256.c b/drivers/staging/rtl8192e/rtl8192e/r8190P_rtl8256.c
-index 7061f1cf4d3a..256c19739ad1 100644
---- a/drivers/staging/rtl8192e/rtl8192e/r8190P_rtl8256.c
-+++ b/drivers/staging/rtl8192e/rtl8192e/r8190P_rtl8256.c
-@@ -12,7 +12,7 @@
- void rtl92e_set_bandwidth(struct net_device *dev,
- 			  enum ht_channel_width bandwidth)
- {
--	u8	eRFPath;
-+	u8	erf_path;
- 	struct r8192_priv *priv = rtllib_priv(dev);
- 
- 	if (priv->card_8192_version != VERSION_8190_BD &&
-@@ -21,22 +21,22 @@ void rtl92e_set_bandwidth(struct net_device *dev,
- 		return;
- 	}
- 
--	for (eRFPath = 0; eRFPath < priv->num_total_rf_path; eRFPath++) {
-+	for (erf_path = 0; erf_path < priv->num_total_rf_path; erf_path++) {
- 		switch (bandwidth) {
- 		case HT_CHANNEL_WIDTH_20:
--			rtl92e_set_rf_reg(dev, (enum rf90_radio_path)eRFPath,
-+			rtl92e_set_rf_reg(dev, (enum rf90_radio_path)erf_path,
- 					  0x0b, bMask12Bits, 0x100);
--			rtl92e_set_rf_reg(dev, (enum rf90_radio_path)eRFPath,
-+			rtl92e_set_rf_reg(dev, (enum rf90_radio_path)erf_path,
- 					  0x2c, bMask12Bits, 0x3d7);
--			rtl92e_set_rf_reg(dev, (enum rf90_radio_path)eRFPath,
-+			rtl92e_set_rf_reg(dev, (enum rf90_radio_path)erf_path,
- 					  0x0e, bMask12Bits, 0x021);
- 			break;
- 		case HT_CHANNEL_WIDTH_20_40:
--			rtl92e_set_rf_reg(dev, (enum rf90_radio_path)eRFPath,
-+			rtl92e_set_rf_reg(dev, (enum rf90_radio_path)erf_path,
- 					  0x0b, bMask12Bits, 0x300);
--			rtl92e_set_rf_reg(dev, (enum rf90_radio_path)eRFPath,
-+			rtl92e_set_rf_reg(dev, (enum rf90_radio_path)erf_path,
- 					  0x2c, bMask12Bits, 0x3ff);
--			rtl92e_set_rf_reg(dev, (enum rf90_radio_path)eRFPath,
-+			rtl92e_set_rf_reg(dev, (enum rf90_radio_path)erf_path,
- 					  0x0e, bMask12Bits, 0x0e1);
- 			break;
- 		default:
--- 
-2.46.0
-
+Rich
 
