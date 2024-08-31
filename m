@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-309852-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309853-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 459BD967117
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 13:11:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDE0796711A
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 13:12:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5C84B1C20D6B
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 11:11:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B2BB284190
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 11:12:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 862DE17C9E7;
-	Sat, 31 Aug 2024 11:11:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C70F17C9FB;
+	Sat, 31 Aug 2024 11:12:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DR/MBBFe"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j8vhu9tb"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C340554279;
-	Sat, 31 Aug 2024 11:11:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C89B617C7AF;
+	Sat, 31 Aug 2024 11:12:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725102701; cv=none; b=jX3DKgNMn9xGbdz57iFVoBWkiHzmCQyUrh05roGiRvQljemSrQeJoV41yoX2oSrONiDZeYMS8C4x4425dwYwUJnILbgL5AmYW1XaYVTUn2ynrfCDHRwxk79EQGMBCA/SpxUUtWreLNXh4447+WDSp3dK93FcwTfJzRsTkbfxQoM=
+	t=1725102720; cv=none; b=kzsi0QLz3NAw0F4lzRo+VB2X5ZCBVp25WocW6XfQ2KUARQE99kKoYOt4eODChPUk8ZD/V2Odhv8Oj04I36rPmPVvnHj9FGj6KkpZzQrC1d37lfFk48STfq0zDKRuSfyl1PfLutPgNTng+NXe+vp1kHOhUlQobagegew4ecC7mpQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725102701; c=relaxed/simple;
-	bh=0WHLlaTK0otUlK19e3QVW/qXCLqjQ01sSWCsFRz8/Xk=;
+	s=arc-20240116; t=1725102720; c=relaxed/simple;
+	bh=6Tc7RsbCHU6apA/esYfyd/F8YwR9o2cw7PHhVhzyfsg=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cnvyUTZ/e/SsEGYDG+KS8dtcMuNezgnYQaH16nQ2HORoyEk3oi6p7bgKtWeP8NEFY75iT2lHHWO8QylIm1quSvogp/gKqsDJs0vK+K3i99JhBCm5wfPs1nH/++tuDXFiRV/rx6MGxbtFZww2AEWBaVhlEPHrQriUbC/Qiz8bKuk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DR/MBBFe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F339C4CEC0;
-	Sat, 31 Aug 2024 11:11:32 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=hYb6uh37qEW9TfWI+w1axzX+ahEzsGsIMbA2CWod4yXVtMXjf/LTbOF05CG1k4LPFSxGPu6TdkPcJt4Rdg/Ga9wS0hpNaQCRM2/aI6dc9LmbYJyrn/DsM8KpAkS/Fi05Z9WXPUh9m02q0TSgTYDU19eUTbu2LmDX1BXNGr8zJ4o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j8vhu9tb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39648C4CEC0;
+	Sat, 31 Aug 2024 11:11:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725102701;
-	bh=0WHLlaTK0otUlK19e3QVW/qXCLqjQ01sSWCsFRz8/Xk=;
+	s=k20201202; t=1725102720;
+	bh=6Tc7RsbCHU6apA/esYfyd/F8YwR9o2cw7PHhVhzyfsg=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=DR/MBBFeng0PaL2RepRnjZVDwGjh6Af9EZ5muuxcRA7RLMYCIxlOxezh3QX85CZWc
-	 TN/7eYCAG1viiPO4TUZ3nBhiXRS2ZA7KPAMlvYpUWFxhzYFlxP7jzxYvj7u3c4+rbq
-	 XEbjguJLXcKfC7EtOKsoZSf77pkqf4OfY/TH6Q9VdJIr4kloterZjSgMEZPTXSX+n6
-	 pt6p23RQkX7PXSCKF/UTW0mczRBOy/jk7EsmaEqGkSu0JZaCBg8/y2e9gUiBnbDiZp
-	 ZOJgVJ2rwyClP1SolZw3j5gqlHnlRzxoIQZIEg0LCYpQFvgZC7NvWJvwvWez6OvaWF
-	 8s/SmKbF075+w==
-Message-ID: <df0d9cdf-0fc5-440d-997d-9e1a786dc8b5@kernel.org>
-Date: Sat, 31 Aug 2024 13:11:29 +0200
+	b=j8vhu9tb9t3HUYiyXLBxHRfkFdTHbYpgE2+YYuJzZvdpz0ksQaDZCszdSN/ZXnYY+
+	 Xzm2SxUr1mc8ktUBqtUIXUxNVXlMJXWAwBetO9Wwy2hn5YZMUoYsWabb1WRBLxNSTV
+	 f6n7TID2x37moy85Cw/9+EGug1tdaonpeKxur6DrlAgjsvo2uydFOFpM92E3Xs245+
+	 D/Mzgr2c9o4qg/t/fLU2WznLOrYXBJ8lXCWIMl3CgiGtwFJ/Ei3Np1FXFgdL0zNCnD
+	 rmvUzbaAXQ0Yjtv3pHBqJ6EFDg3lqlAEy51t5BXnt51l278UU72kNcMY24XH1i2Zub
+	 DbCFoqbhvPK7g==
+Message-ID: <c4145009-b9ae-40b3-b550-cdb90ddc39eb@kernel.org>
+Date: Sat, 31 Aug 2024 13:11:49 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,8 +49,8 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5? 3/6] dt-bindings: display: bridge: Add schema for
- Synopsys DW HDMI QP TX IP
+Subject: Re: [PATCH v5? 4/6] dt-bindings: soc: rockchip: Document VO0/1 GRF
+ compatible string changes
 To: Shimrra Shai <shimrrashai@gmail.com>
 Cc: Laurent.pinchart@ideasonboard.com, aarnoud@me.com, airlied@gmail.com,
  algea.cao@rock-chips.com, andrzej.hajda@intel.com, andy.yan@rock-chips.com,
@@ -64,7 +64,7 @@ Cc: Laurent.pinchart@ideasonboard.com, aarnoud@me.com, airlied@gmail.com,
  rfoss@kernel.org, robh@kernel.org, s.hauer@pengutronix.de,
  tzimmermann@suse.de
 References: <20240830152132.8894-1-shimrrashai@gmail.com>
- <20240830152825.9053-1-shimrrashai@gmail.com>
+ <20240830152840.9066-1-shimrrashai@gmail.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -110,18 +110,25 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240830152825.9053-1-shimrrashai@gmail.com>
+In-Reply-To: <20240830152840.9066-1-shimrrashai@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 30/08/2024 17:28, Shimrra Shai wrote:
-> diff --git a/Documentation/devicetree/bindings/display/bridge/synopsys,dw-hdmi-qp.yaml b/Documentation/devicetree/bindings/display/bridge/synopsys,dw-hdmi-qp.yaml
-> new file mode 100644
-> index 000000000..141899ba2
+> diff --git a/Documentation/devicetree/bindings/soc/rockchip/grf.yaml b/Documentation/devicetree/bindings/soc/rockchip/grf.yaml
+> index 78c6d5b64..8fd539125 100644
+> --- a/Documentation/devicetree/bindings/soc/rockchip/grf.yaml
+> +++ b/Documentation/devicetree/bindings/soc/rockchip/grf.yaml
+> @@ -31,7 +31,8 @@ properties:
+>                - rockchip,rk3588-pcie3-pipe-grf
+>                - rockchip,rk3588-usb-grf
+>                - rockchip,rk3588-usbdpphy-grf
+> -              - rockchip,rk3588-vo-grf
+> +              - rockchip,rk3588-vo0-grf
+> +              - rockchip,rk3588-vo1-grf
+>                - rockchip,rk3588-vop-grf
 
-What is this? Where is proper message?
-
-Why are you sending someone's else work duplicating entire review effort?
+NAK, this does not make any sense. Just random code changes...
 
 Best regards,
 Krzysztof
