@@ -1,102 +1,118 @@
-Return-Path: <linux-kernel+bounces-310020-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310021-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 298E0967327
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 21:42:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13F4D96733F
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 22:48:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB46E2832CC
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 19:42:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 444201C210D9
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 20:48:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F99717BB08;
-	Sat, 31 Aug 2024 19:42:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 448DD17DFFA;
+	Sat, 31 Aug 2024 20:48:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="evNko2g2"
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="DOAYOJU2"
+Received: from mail-4322.protonmail.ch (mail-4322.protonmail.ch [185.70.43.22])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E89113CFBC
-	for <linux-kernel@vger.kernel.org>; Sat, 31 Aug 2024 19:42:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 923DD139D1B
+	for <linux-kernel@vger.kernel.org>; Sat, 31 Aug 2024 20:48:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725133363; cv=none; b=CS0O5M3UMvvALojIybicwJh22UAvQCH4JlaMF/1piXac0F55dtwHrJ6bzBulFf41MXyNAh5METszV0zeNkLcPGxbI9fWce1yswrB2N9oz/nkS2M8mYAFeOJfL9M3ddE6voALyIvPQtZ9SPGCh/SKpPnGbZnBvyHDfuePm4QuX4g=
+	t=1725137299; cv=none; b=Ao1yQLBYo08gJZ84dF8bF3lnk0ecygcjy+sO0JEOpNOddB59aEnxclu5i+dKUawONZCo1nzqXWp0xkkeRDde4JWX2Rzh+IcWrvkqR+ZEPSIhn05Y6okD+I0za12k1O2FEUnx0s+D3sdw+YZ1Lx3Er3TnKhRtwXA6km45Q2CM9vM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725133363; c=relaxed/simple;
-	bh=wLIe4IUlr3rXOUXYOCVMEg9+vli2/fTzveuqBdE9GHM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gl1tE/sJHtOA2e5OuIYSfZstB7s01sCeEkAVdzr2ZW7QfoIml0NXortDGC8BNPmOCQ43Am3qPGRtPbcFwO9JxTvnNSOO/+WzWcLMw5c9B6Xt8T6+7b8CzwGSTTBJ1Sxfliyja5ck2CFKyNSC7UVp6G05BcTPdXLo+bUIT0vcgpw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=evNko2g2; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-5334879ba28so4104520e87.3
-        for <linux-kernel@vger.kernel.org>; Sat, 31 Aug 2024 12:42:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1725133359; x=1725738159; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wLIe4IUlr3rXOUXYOCVMEg9+vli2/fTzveuqBdE9GHM=;
-        b=evNko2g2iluyBiyaibAI8EqvQYl6FxrhSJqrkq2DQbaI/uak4IZ6c/045UshEVsbGf
-         Ea4/82IfO0k4892XxuKHWazNEBiFsefgUdqhoCW30mypKnvk6iXb3WFXrYc3JlCQ4i6p
-         HxNfmPNdOvgygFQOACwqSFqhndrYsse2BTX4JmRMk6NOc4QgAAvV9P72YpsORouDU+/T
-         4seATACXIDHP5O/2AtBgZ2/4xAUif6PxqYZdhdszAEd1f9tsUoMPOIRmw/+c6bdgpcMj
-         Nt20y/EXmrlwlOLpsVjNBnWC4DlczfXj34a+1LbZ+j4x3Sj7YQk4dgBVhglZ/Cfu9dc4
-         LUPg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725133359; x=1725738159;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=wLIe4IUlr3rXOUXYOCVMEg9+vli2/fTzveuqBdE9GHM=;
-        b=LehDGr72n6ILUbw1X9wCOnimzVhypfLy5fCwFREXBQahodiTSq8GQlgfEEEJVIuQMu
-         ZFZA2mZcAnIYof1f/N16AE2WQG8YOkVH9+1MAK7RA8mAeWrzDV8mb1vBsTuoeNMWTbMC
-         Mb3YhdKHQZCYzXvFfIIJ6OZb1p2Ljb8I1RLrWFXBdVnuAIIhHwykolcTgej8ag+7g79e
-         XOB/KuLIpvAf9W9IPRKjkqUeMvjXo5Z0G31zzXINu8cuN1VfMztYRCY9XKRNWceODosM
-         8hmruiquyGcm4Ya5n/BzYiSbl7d6W7krV2JQQXblx3sReQIpD4En6VCn+LMa3qiKoSO8
-         33nw==
-X-Gm-Message-State: AOJu0YzvWnL3UiqK2atlXWET9nA78GNG8oxsyiW0INrH1GVAYsgIt8li
-	D4ENa0QAWK3aBRcqVoq3vqWtmNNTXPSnHC5X33nzxte3NgfHLWLVMA6ARdoUwUsn048cKSk2FbL
-	3OWmRYkT8skpfrHKUH3igV2DTBjUHm7AEHv0KIdafZPDUCnXteZQ=
-X-Google-Smtp-Source: AGHT+IGXaOAaM8ATTFJLTsPQZbvE8u2JeHXS1YqeKdSi+R09vxXwvH0uDqw692B7w/bHnB+Lqul6mKznyb5hXo7yP2c=
-X-Received: by 2002:a05:6512:10d6:b0:52e:d0f8:2d30 with SMTP id
- 2adb3069b0e04-53546bb8cdbmr4316450e87.59.1725133358269; Sat, 31 Aug 2024
- 12:42:38 -0700 (PDT)
+	s=arc-20240116; t=1725137299; c=relaxed/simple;
+	bh=q6JwDve5dpO3jSDZ97oFuOpo/UQZcbbRvp2RMOUwvxk=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=YqXibr89vK+MFf5DVLCUf61k6cDZTYE0ZLpvOkEPOQdFhsVhFKAk15PG4aaq69v1FViM75aS9b7yVv81/MwkwWgU8/ZwfgTdNXPVcfHHQHKdwYw0THvVrcXO7+Xpc4r/hhw44qk+drJQ9RvRXLnNayK+hC3Q2QYVvmyQC0SZiIs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=DOAYOJU2; arc=none smtp.client-ip=185.70.43.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1725137295; x=1725396495;
+	bh=ebRAKkZuf6ZT9J7pMWomz6AC19CcOPDVcG3khEKxHxI=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=DOAYOJU21xIA9lXHU2mAqiSy75rdNzFY9HsTJ8V1guS1U6lIwOX+vr0SwGlr4mmhW
+	 A8pgwx0PvFkFUWtgtpeVQ65uIlLATuCqbbu47fHu3EVWqbSxkfPeEtzilC6Jldm3WL
+	 P2uBurAc3ejbxmHcs8L8o8DHqXJhZNY+CeVb+rMsrCsEQU7BMj/+xlFcnEQdVLYylc
+	 Ku7N4mDO7z4Xpgaeb7pzw4z5thvhJToRr9rcFuEscjmrtMTx8RhikIfcC1rKzFY0MM
+	 tFsuLmYzSrjVlipSYpahQ3QHIUVDNuV/pAhPCROSaKFQIsZsT15D6aw8XW4CLjnxKf
+	 ONAJWbAjHqSKg==
+Date: Sat, 31 Aug 2024 20:48:10 +0000
+To: Boqun Feng <boqun.feng@gmail.com>, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+From: Benno Lossin <benno.lossin@proton.me>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@samsung.com>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>
+Subject: Re: [RFC PATCH] rust: Provide correct provenance when constructing THIS_MODULE
+Message-ID: <8df8ce27-b3b2-4cf2-926d-424456b0c7d2@proton.me>
+In-Reply-To: <20240828180129.4046355-1-boqun.feng@gmail.com>
+References: <20240828180129.4046355-1-boqun.feng@gmail.com>
+Feedback-ID: 71780778:user:proton
+X-Pm-Message-ID: c5d3738a7104647d7b873e9e84f820256fdef060
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240819151705.37258-1-brgl@bgdev.pl>
-In-Reply-To: <20240819151705.37258-1-brgl@bgdev.pl>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Sat, 31 Aug 2024 21:42:27 +0200
-Message-ID: <CAMRc=MckgUfDFiO+4rsVsk3zQC9P7W7K3DfDfx7t+-0z3dKhSA@mail.gmail.com>
-Subject: Re: [PATCH 1/2] gpio: davinci: drop platform data support
-To: Keerthy <j-keerthy@ti.com>
-Cc: linux-kernel@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, 
-	linux-gpio@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Aug 19, 2024 at 5:17=E2=80=AFPM Bartosz Golaszewski <brgl@bgdev.pl>=
- wrote:
->
-> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
->
-> There are no more any board files that use the platform data for
-> gpio-davinci. We can remove the header defining it and port the code to
-> no longer store any context in pdata.
->
-> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+On 28.08.24 20:01, Boqun Feng wrote:
+> Currently while defining `THIS_MODULE` symbol in `module!()`, the
+> pointer used to contruct `ThisModule` is derived from an immutable
+> reference of `__this_module`, which means the pointer doesn't have
+> the provenance for writting, and that means any write to that pointer
+> is UB regardless of data races or not. However, the usage of
+> `THIS_MODULE` includes passing this pointer to functions that may write
+> to it (probably in unsafe code), and this will create soundness issues.
+>=20
+> One way to fix this is using `addr_of_mut!()` but that requires the
+> unstable feature "const_mut_refs". So instead of `addr_of_mut()!`,
+> an extern static `Opaque` is used here: since `Opaque<T>` is transparent
+> to `T`, an extern static `Opaque` will just wrap the C symbol (defined
+> in a C compile unit) in an `Opaque`, which provides a pointer with
+> writable provenance via `Opaque::get()`. This fix the potential UBs
+> because of pointer provenance unmatched.
+>=20
+> Reported-by: Alice Ryhl <aliceryhl@google.com>
+> Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
+
+Reviewed-by: Benno Lossin <benno.lossin@proton.me>
+
+---
+Cheers,
+Benno
+
 > ---
+>  rust/macros/module.rs | 6 +++++-
+>  1 file changed, 5 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/rust/macros/module.rs b/rust/macros/module.rs
+> index 571ffa2e189c..aef3b132f32b 100644
+> --- a/rust/macros/module.rs
+> +++ b/rust/macros/module.rs
+> @@ -217,7 +217,11 @@ pub(crate) fn module(ts: TokenStream) -> TokenStream=
+ {
+>              // freed until the module is unloaded.
+>              #[cfg(MODULE)]
+>              static THIS_MODULE: kernel::ThisModule =3D unsafe {{
+> -                kernel::ThisModule::from_ptr(&kernel::bindings::__this_m=
+odule as *const _ as *mut _)
+> +                extern \"C\" {{
+> +                    static __this_module: kernel::types::Opaque<kernel::=
+bindings::module>;
+> +                }}
+> +
+> +                kernel::ThisModule::from_ptr(__this_module.get())
+>              }};
+>              #[cfg(not(MODULE))]
+>              static THIS_MODULE: kernel::ThisModule =3D unsafe {{
+> --
+> 2.45.2
+>=20
 
-Keerthy,
-
-Do you think you could test it on keystone to avoid any breakage upstream?
-
-Bart
 
