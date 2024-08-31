@@ -1,150 +1,120 @@
-Return-Path: <linux-kernel+bounces-309999-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310000-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B04059672E7
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 19:59:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F2009672EB
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 20:07:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3423B1F223BD
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 17:59:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 50AD21C210E8
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 18:07:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B259813AD05;
-	Sat, 31 Aug 2024 17:59:29 +0000 (UTC)
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 576AC13BAEE;
+	Sat, 31 Aug 2024 18:07:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Nt1h78Bb"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A72863A29A
-	for <linux-kernel@vger.kernel.org>; Sat, 31 Aug 2024 17:59:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC4F8339A1
+	for <linux-kernel@vger.kernel.org>; Sat, 31 Aug 2024 18:07:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725127169; cv=none; b=UTpfhwbK/PloKStGGmtnHUyNNdjSy+PGWJYrGIjvzahhSBYrPs26pa8uWGhGegCcanCuN/bMy4XmapNJGAj+uK3Od7HJ3r9bYmYB/pGi6WcjtXHrVuB72LP6cxKs2KsfeC4NUDFdKDLu1VXmvYWQguoC6WB32tgqvLJvtCWHa2M=
+	t=1725127638; cv=none; b=mxqqSZaxzIdkWg+gwtb+eY01S56XczXfHfqk78lB/H0ZohSq1By/GU8g/tJujqKI/gLucGdjpKcNFq6m2O6hu5vRnUkv2WO4RnF3oUjy3SWYxlqqahhyKFk8O+j3gLsDPULjKhjayI3BG2qMLljpmTcIpphwjmiMFis5aYlow1A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725127169; c=relaxed/simple;
-	bh=XHyQVpoMoTxGb69pUdf4yvKKvfJPBy+TRpZq/a0CTw8=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=E8SC6tGB3Dpo8Y4HgTAZLSt1xMvmZwMb8bp3axe2XDmS1ZAhtw2gXUAYfqRLG5bQbABv0nwhrCFQWU5VWJwgMZMj8XOlfMj0aA+micBNNark+/6YjriwajntUGjsxUvjJeD7zQDR9Mv5BPPM53FjQPYc5TyaCn4odIZBXaJDYms=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-82a217cec33so264472139f.1
-        for <linux-kernel@vger.kernel.org>; Sat, 31 Aug 2024 10:59:26 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725127166; x=1725731966;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=uy2DsHo15yiAT/5MKMd0euNM1waTYrVWOuLOMaJMGkE=;
-        b=NxGyEh0l22dsqcvLBQXgRIEZui4DHHcz4+aoJuk6I6uateGPvb7jll5LN3uy83zFvL
-         AkLEDegGOODc/nk57tryV9WlT1JTlRkxBZaI4beKt/esnbA/tcdB7Rg9NT6vzfnB/HWY
-         DvPvtKhaFSCvegk8aqvjCOzizJEzvO81U6EdEQIFByH0v9mEMy80lyuVsJWvvnhPF/sa
-         x1gRjYfiklSjYLEERO0Gab8iqQuyw/PoSC96ZLPIEH18krgZ6+4fIDnVTb0KvnF6xPqy
-         1bfNv7lFcDZtjDmdQhXhU1hIvMiCwsZW1ddXIFrk7TSygEpfElHV64zjT31TXhRJQ9Bf
-         g01w==
-X-Forwarded-Encrypted: i=1; AJvYcCXLGjjc5x9r7sqDWM4MCVqMqBtraZmP5gRuojPcDsA+z+rTFj8Uka5Obe9El0Db7irPzyelLDfLkCM+4qM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyw0jFzQOIzlW0idr/I9x8AjH0u6E1wt/TzfB3FdOx9rUlJa7a+
-	zSJpHTC3+IINwHnMf487jLvbPBNdMuna1rC8xPWNdxFkDtmA6uvXKEVwcV/vX3NxFa611eGpv7o
-	U+Rjns0ulLDiDJXniobeSa5EiMF2fPcl75zF2IH1x2QNfLrvtPWoFO4Q=
-X-Google-Smtp-Source: AGHT+IHABU6CUpEMDZoF5MyCkDP5u7UXfJn6S/W02Bb5mB3rEh78QPKW4q4fvhMv3+ex5ea4niUHJZyuMgMCxIQ1ZW/bH8ZaJstR
+	s=arc-20240116; t=1725127638; c=relaxed/simple;
+	bh=aarbNujcQJQu8cWevGdPTbcJJFKQH7w9HGZjr2sx000=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=Yj/KCFAqo0u2eZgVKmZGO+v7gYBvvgc2cS/z3OeHEIXeFhErBJdnopveWBeP7qL5BMeHGT+pEuOa0L2gqqNuTQWi2UrFBBoV4rsU1cUIFuCi5nU8FmQXzJz9B7R6js2lZPGTGgBhQGR9U2vBzRpxRqFIPFthcgVUx8i5Vj6fNG0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Nt1h78Bb; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725127637; x=1756663637;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=aarbNujcQJQu8cWevGdPTbcJJFKQH7w9HGZjr2sx000=;
+  b=Nt1h78BbXThM4v5gmwsFmncFjmqphdWziACaElAXSVA6Tp16Bpt7XelS
+   yX5REe+KAKAuynjR+HwCcbMwSAuEHpB0wJZZPPofb31Uovr5yHe2r2CaB
+   h60+30SLDYtOvoSFKFQvzWwQX9J5NsWrWChcg6/r7l6fRbJWcPYOBsbSn
+   l/BOsOdtkfxOTSuvJTTgcshAfab3lVF4vDe9ilT/0iuLgADiubJiKIjP1
+   VcNnvgQrWeEWa9baRgrVWdOZKfkWX2S4n5To54OFjPN6FzlUlqW3e9btA
+   tTHFdU08ZQV73IYKKG66zSXtUdp1wvQBRQ9j+h3nCVLFw3eajvPAPeu2R
+   w==;
+X-CSE-ConnectionGUID: hI8A+NMsTtKP7/ZLLJ71Zw==
+X-CSE-MsgGUID: NhdXM9PNTK+A/hrd5r04ZA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11181"; a="35122300"
+X-IronPort-AV: E=Sophos;i="6.10,192,1719903600"; 
+   d="scan'208";a="35122300"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Aug 2024 11:07:16 -0700
+X-CSE-ConnectionGUID: ZuQhqq6BRrOc43Oghc6LQg==
+X-CSE-MsgGUID: GlbcVdAlRk23nCyW8b0BgQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,192,1719903600"; 
+   d="scan'208";a="64203827"
+Received: from lkp-server01.sh.intel.com (HELO 9c6b1c7d3b50) ([10.239.97.150])
+  by fmviesa008.fm.intel.com with ESMTP; 31 Aug 2024 11:07:15 -0700
+Received: from kbuild by 9c6b1c7d3b50 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1skSVE-0002zI-2B;
+	Sat, 31 Aug 2024 18:07:12 +0000
+Date: Sun, 1 Sep 2024 02:06:30 +0800
+From: kernel test robot <lkp@intel.com>
+To: Sean Christopherson <seanjc@google.com>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-kernel@vger.kernel.org, Kai Huang <kai.huang@intel.com>
+Subject: arch/x86/kernel/reboot.c:939:20: error: unused function
+ 'nmi_shootdown_cpus_on_restart'
+Message-ID: <202409010207.jrH6sNV4-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1805:b0:39d:1ca5:3903 with SMTP id
- e9e14a558f8ab-39f40f042d4mr4887855ab.1.1725127165814; Sat, 31 Aug 2024
- 10:59:25 -0700 (PDT)
-Date: Sat, 31 Aug 2024 10:59:25 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000e93ea70620fe777a@google.com>
-Subject: [syzbot] [btrfs?] WARNING in __btrfs_free_extent (3)
-From: syzbot <syzbot+480676efc0c3a76b5214@syzkaller.appspotmail.com>
-To: clm@fb.com, dsterba@suse.com, josef@toxicpanda.com, 
-	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Hello,
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   1934261d897467a924e2afd1181a74c1cbfa2c1d
+commit: 261cd5ed934e6923187cf1c9eaa6cb63f2b81212 x86/reboot: Expose VMCS crash hooks if and only if KVM_{INTEL,AMD} is enabled
+date:   1 year, 1 month ago
+config: x86_64-sof-customedconfig-amd-defconfig (https://download.01.org/0day-ci/archive/20240901/202409010207.jrH6sNV4-lkp@intel.com/config)
+compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240901/202409010207.jrH6sNV4-lkp@intel.com/reproduce)
 
-syzbot found the following issue on:
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202409010207.jrH6sNV4-lkp@intel.com/
 
-HEAD commit:    86987d84b968 Merge tag 'v6.11-rc5-client-fixes' of git://g..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=109f1425980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=a0455552d0b27491
-dashboard link: https://syzkaller.appspot.com/bug?extid=480676efc0c3a76b5214
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+All errors (new ones prefixed by >>):
 
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/87692913ef45/disk-86987d84.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/a27da6973d7f/vmlinux-86987d84.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/2e28d02ce725/bzImage-86987d84.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+480676efc0c3a76b5214@syzkaller.appspotmail.com
-
-------------[ cut here ]------------
-BTRFS: Transaction aborted (error -2)
-WARNING: CPU: 1 PID: 63 at fs/btrfs/extent-tree.c:2972 do_free_extent_accounting fs/btrfs/extent-tree.c:2972 [inline]
-WARNING: CPU: 1 PID: 63 at fs/btrfs/extent-tree.c:2972 __btrfs_free_extent+0x32d1/0x3a10 fs/btrfs/extent-tree.c:3346
-Modules linked in:
-CPU: 1 UID: 0 PID: 63 Comm: kworker/u8:4 Not tainted 6.11.0-rc5-syzkaller-00057-g86987d84b968 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
-Workqueue: events_unbound btrfs_async_reclaim_metadata_space
-RIP: 0010:do_free_extent_accounting fs/btrfs/extent-tree.c:2972 [inline]
-RIP: 0010:__btrfs_free_extent+0x32d1/0x3a10 fs/btrfs/extent-tree.c:3346
-Code: e8 24 a4 ae fd 90 0f 0b 90 90 e9 3c f3 ff ff e8 35 80 ec fd 90 48 c7 c7 00 79 2b 8c 44 8b 6c 24 18 44 89 ee e8 00 a4 ae fd 90 <0f> 0b 90 90 4c 8b 24 24 e9 4f f3 ff ff e8 0d 80 ec fd 90 48 c7 c7
-RSP: 0018:ffffc900015e6f80 EFLAGS: 00010246
-RAX: ec2b4374561a8400 RBX: ffff88805d790001 RCX: ffff888015581e00
-RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000000
-RBP: ffffc900015e7150 R08: ffffffff8155b212 R09: fffffbfff1cba0e0
-R10: dffffc0000000000 R11: fffffbfff1cba0e0 R12: dffffc0000000000
-R13: 00000000fffffffe R14: 0000000000000000 R15: ffff88805d3be5c8
-FS:  0000000000000000(0000) GS:ffff8880b9300000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f3dca9f0270 CR3: 000000002dd02000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- run_delayed_tree_ref fs/btrfs/extent-tree.c:1724 [inline]
- run_one_delayed_ref fs/btrfs/extent-tree.c:1750 [inline]
- btrfs_run_delayed_refs_for_head fs/btrfs/extent-tree.c:2015 [inline]
- __btrfs_run_delayed_refs+0x112e/0x4680 fs/btrfs/extent-tree.c:2085
- btrfs_run_delayed_refs+0xe3/0x2c0 fs/btrfs/extent-tree.c:2197
- btrfs_commit_transaction+0x4be/0x3740 fs/btrfs/transaction.c:2198
- flush_space+0x19c/0xd00 fs/btrfs/space-info.c:835
- btrfs_async_reclaim_metadata_space+0x6dc/0x840 fs/btrfs/space-info.c:1106
- process_one_work kernel/workqueue.c:3231 [inline]
- process_scheduled_works+0xa2c/0x1830 kernel/workqueue.c:3312
- worker_thread+0x86d/0xd10 kernel/workqueue.c:3389
- kthread+0x2f0/0x390 kernel/kthread.c:389
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
+>> arch/x86/kernel/reboot.c:939:20: error: unused function 'nmi_shootdown_cpus_on_restart' [-Werror,-Wunused-function]
+     939 | static inline void nmi_shootdown_cpus_on_restart(void)
+         |                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   1 error generated.
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+vim +/nmi_shootdown_cpus_on_restart +939 arch/x86/kernel/reboot.c
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+26044aff37a5455 Sean Christopherson 2022-11-30  938  
+26044aff37a5455 Sean Christopherson 2022-11-30 @939  static inline void nmi_shootdown_cpus_on_restart(void)
+26044aff37a5455 Sean Christopherson 2022-11-30  940  {
+26044aff37a5455 Sean Christopherson 2022-11-30  941  	if (!crash_ipi_issued)
+26044aff37a5455 Sean Christopherson 2022-11-30  942  		nmi_shootdown_cpus(NULL);
+2ddded213895e41 Eduardo Habkost     2008-11-12  943  }
+58c5661f2144c08 Hidehiro Kawai      2015-12-14  944  
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+:::::: The code at line 939 was first introduced by commit
+:::::: 26044aff37a5455b19a91785086914fd33053ef4 x86/crash: Disable virt in core NMI crash handler to avoid double shootdown
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
+:::::: TO: Sean Christopherson <seanjc@google.com>
+:::::: CC: Sean Christopherson <seanjc@google.com>
 
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
