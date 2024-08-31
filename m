@@ -1,155 +1,158 @@
-Return-Path: <linux-kernel+bounces-310010-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310011-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A269296730D
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 20:54:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AF420967313
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 21:00:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C743B1C217CC
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 18:54:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D36DA1C218BA
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 19:00:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF29D14C5A9;
-	Sat, 31 Aug 2024 18:54:22 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DB8E1386C0;
+	Sat, 31 Aug 2024 19:00:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=lausen.nl header.i=@lausen.nl header.b="iUyOoSzD"
+Received: from mailgate02.uberspace.is (mailgate02.uberspace.is [185.26.156.114])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC4391CD0C
-	for <linux-kernel@vger.kernel.org>; Sat, 31 Aug 2024 18:54:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D3A914B971
+	for <linux-kernel@vger.kernel.org>; Sat, 31 Aug 2024 19:00:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.26.156.114
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725130462; cv=none; b=VaMvleMao+tKYx1a4VzLju6aokEWnQDv5j94eB48n+nBr6M0u2N7L5/o1ND8qrf5ncL9rgi71jrIe+FIZ3zk8b/Fvq+Fd9Poc0OWHd8SPDI/HaNzpyKsT87EfTIr4E6cFkPRYy4wZRrMXj0O6wqnC0EDnOHNbT2rczaRUa68W+4=
+	t=1725130814; cv=none; b=sL/Vw/bPjODURlLvOkfL7rW+lVXtC0k0A5fL5dA2lnAErXv7qfFswiLgZJnZKhKCcUWDD3putRjhV6axsv+zjEixeunt4FCq15+dis5EnirVdUif1zTGqHHgY5JDjhUyki0I/kNROG6EkLU8D3Sn4KCUZ9WgkwI3lWMUFzkjmuo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725130462; c=relaxed/simple;
-	bh=Qdl0oIRce2Gtbf9OZesLMZfTekQhJhFACaBtP6+TswI=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=ie1MkJCiVIvL/FnLoab3i2y45130oPsWA69jgXcI0JGkEH+Vm68iI2pIaOXrceU3sEipjcJLNqB+dDLIhB6kpeMAVbBo/ZmJ8wFnP0TG6RTSGTBcOp1vGBiOuShc9iKXWISM3bccxUvQXFL8QEEwjMndZV90vx91KmnXmeHKyBU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-39d4c656946so30944875ab.1
-        for <linux-kernel@vger.kernel.org>; Sat, 31 Aug 2024 11:54:20 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725130460; x=1725735260;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=FqN1lQszzxOP74sD9OtrYjx9lvH8sgwYB56fgBMgbJs=;
-        b=SD6nZRAwLhfPYde8du0UkG+ZpBx6QlX24hYAAFYAuLL3ys3N49hJB21RbcA3YgdO6e
-         zDY00z3Ps9hyaUbANb73uMVgocFqS0ZKDaRbOjvJ0mtbdZerGb+84hfNNkRvynUkyoJd
-         +5e7xRNJnRI3rcm9VZ4KV4T9W6KxXoiRGLfZj82CSsp9qnykMJtvtEMKmY5W9lZeWyAT
-         VmesLC8GKHMZZqg99pKXFyfKpNWSWrPbxLYis4qL3Y+htgLoIWz0oCDYIIJPh3xTVDKO
-         gPjKWfdwsgcYNomJY2Zom+oZ5w8cYRM7kNJ3iq26PZpggCrlRlhdeqDmY8xJgn2sID58
-         MSwg==
-X-Forwarded-Encrypted: i=1; AJvYcCXiAzb8Ixo6Uvml/ySVYMbN3HEisYQBcEMANVCtifA3JTtskcOT6kRHrF3Qy82R377CG7gmxy2Jk1Oo4F4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzooHNP3tby7eSrzC0oyH++5KtQC3t72u8rR8jeNHOzibomRXmf
-	GzM5EgMrhAhlQgyM3dyqnvKMJmNvxFPojNgqI/IKUvxT8B51q1Yv/HM9IUoHr3enaTSHnv9QUwA
-	GOSNKg5yOJFnZHRN3f6JqHov7YcnQMwAif97O3MhRzhbL4MY2O7pUvGw=
-X-Google-Smtp-Source: AGHT+IE4Omf+gKQHzkvaWlcTGdTwJ2vO0gAuSs5EosQ1cGQCHxAxTYSJaDCuiWOf0KoUj/E+0/MbvjcwmH+32+lXXDrSOqLXMaK6
+	s=arc-20240116; t=1725130814; c=relaxed/simple;
+	bh=UwKPp9JUYK4rRvslxHWwmxYRfnMGtjCQxAzmaPwy3AY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DfSeAYes6Bmqi/d+oa57ttQ0rrkRiM8DaTlOsbwUohUH7WIWOZ/v32+gYEeFHgUoLX0qoGWh5zJQDPVpTSI6zwGx2/eWYQJrf0uh52Klco7RuiaaerOIyEoiQ/SSspOrZ1z7xKIg50IktK6OjPqKo7wqC+YzfdIJh8mb0F3F5hk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lausen.nl; spf=pass smtp.mailfrom=lausen.nl; dkim=fail (0-bit key) header.d=lausen.nl header.i=@lausen.nl header.b=iUyOoSzD reason="key not found in DNS"; arc=none smtp.client-ip=185.26.156.114
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lausen.nl
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lausen.nl
+Received: from devico.uberspace.de (devico.uberspace.de [185.26.156.185])
+	by mailgate02.uberspace.is (Postfix) with ESMTPS id A8D0017F696
+	for <linux-kernel@vger.kernel.org>; Sat, 31 Aug 2024 21:00:06 +0200 (CEST)
+Received: (qmail 21879 invoked by uid 990); 31 Aug 2024 19:00:06 -0000
+Authentication-Results: devico.uberspace.de;
+	auth=pass (plain)
+Received: from unknown (HELO unkown) (::1)
+	by devico.uberspace.de (Haraka/3.0.1) with ESMTPSA; Sat, 31 Aug 2024 21:00:05 +0200
+Message-ID: <9d359542-bd16-4aba-88a8-0bdea1c1de44@lausen.nl>
+Date: Sat, 31 Aug 2024 15:00:00 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:20e7:b0:39a:ea21:1202 with SMTP id
- e9e14a558f8ab-39f410b5da6mr4186585ab.5.1725130459981; Sat, 31 Aug 2024
- 11:54:19 -0700 (PDT)
-Date: Sat, 31 Aug 2024 11:54:19 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000004235960620ff3c77@google.com>
-Subject: [syzbot] [v9fs?] WARNING in p9_client_create
-From: syzbot <syzbot+3c38ca819d922062d22a@syzkaller.appspotmail.com>
-To: asmadeus@codewreck.org, ericvh@kernel.org, linux-kernel@vger.kernel.org, 
-	linux_oss@crudebyte.com, lucho@ionkov.net, syzkaller-bugs@googlegroups.com, 
-	v9fs@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [v2,1/2] drm/msm/dpu1: don't choke on disabling the writeback
+ connector
+Content-Language: en-US
+To: =?UTF-8?Q?Gy=C3=B6rgy_Kurucz?= <me@kuruczgy.com>,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ Rob Clark <robdclark@gmail.com>, Abhinav Kumar <quic_abhinavk@quicinc.com>,
+ Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>,
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>
+Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ Jeykumar Sankaran <jsanka@codeaurora.org>, stable@vger.kernel.org
+References: <20240802-dpu-fix-wb-v2-1-7eac9eb8e895@linaro.org>
+ <b70a4d1d-f98f-4169-942c-cb9006a42b40@kuruczgy.com>
+ <0b2286bf-42fc-45dc-a4e0-89f85e97b189@lausen.nl>
+ <56bf547a-08a5-4a08-87a9-c65f94416ef3@kuruczgy.com>
+From: Leonard Lausen <leonard@lausen.nl>
+Autocrypt: addr=leonard@lausen.nl; keydata=
+ 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 Sw==
+In-Reply-To: <56bf547a-08a5-4a08-87a9-c65f94416ef3@kuruczgy.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Rspamd-Bar: /
+X-Rspamd-Report: BAYES_HAM(-0.002348) XM_UA_NO_VERSION(0.01) MIME_GOOD(-0.1)
+X-Rspamd-Score: -0.092348
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+	d=lausen.nl; s=uberspace;
+	h=from:to:cc:subject:date;
+	bh=UwKPp9JUYK4rRvslxHWwmxYRfnMGtjCQxAzmaPwy3AY=;
+	b=iUyOoSzDtrStwnLKl6pqdhTdYhMsl73vXTx3XZBMpuwViJm+IgXBIn9nSY7KdrKSkRVTOQhwka
+	mDwkhNuWjyQeNX/W5ghF1t0EOmKSlC5x0TFcmoyamrMH34rQ8/eRWhis8xnUG/6CDBqZIcCtmqrj
+	t7X4I0LDcOJBFr9Nk8PdiFp5QKMdNXKVhcuW20S3vMNEuWG4YcRjQAexfS5fB0/GNFTOWj7tIG3p
+	YHyuRvo011aUN5dqzHSypuQMObfM2ciEEuhzevvc9AKEWYuRBB3zgUzGZxBqIhkxvG6Ur9t2SjRY
+	p4YYdFIXnx51ZcdcHpC9PVhdNdmpnZgC6w9sp424ateEb36IhKF7M4YswoqYnAvH5RY+RtGNv9p9
+	7cBM6gsxIHeI0SVDrKbleTDCdnGLCcKUdg8ooix7hcZtvsYdYTuBDs4tDPXw0YsL9wiBrAWNpQmJ
+	OzdSvzzmrISC8brCWtGLG+C12vTKvKyz5Z07a9OJ+ElqYIQ4v1XjbkfJUBllBSjky6kR8sES1PFg
+	zftJ33NONN72iaUxBfz3bzp6gI7/8SXk/tytvaJ4fK6GCCxKAvnTtyNIetHQXWKaNTljm+EQLUz8
+	1T0qrsAj1CLcIHUTm8yeRbLA8Xg2GFUssI93QjdP0VCSaMrqcvH+X/2cT+BXF7E+KBBFhfMmynY2
+	U=
 
-Hello,
+Dear György,
 
-syzbot found the following issue on:
+>> Do you observe this issue on every suspend-resume cycle?
+> 
+> I just did 10 suspend/resume cycles in a row to double check, and without this patch the screen never comes back (always have to switch VT back-and-forth to bring it back). The
+> 
+> [dpu error]connector not connected 3
+> [drm:drm_mode_config_helper_resume] *ERROR* Failed to resume (-22)
+> 
+> pair of error messages also consistently appears after all resumes.
+> 
+> Though I think e.g. Rob Clark reported that suspend/resume already works properly for him without this patch, so this experience is not universal on the Yoga Slim 7x.
 
-HEAD commit:    6f923748057a Add linux-next specific files for 20240827
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=117f47a7980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=65c4a779aad2633f
-dashboard link: https://syzkaller.appspot.com/bug?extid=3c38ca819d922062d22a
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+Ack. Do you mean that Rob Clark also uses Yoga Slim 7x but does not face the "screen never comes back (always have to switch VT back-and-forth to bring it back)" issue?
 
-Unfortunately, I don't have any reproducer for this issue yet.
+>> On sc7180 lazor, I do observe that this patch deterministically breaks restoring the CRTC state and functionality after resume. Can you please validate if you observe the same on Lenovo Yoga Slim 7x? Specifically, try set Night Light in your desktop environment to "Always On" and observe whether the screen remains in "Night Light" mode after resume. For lazor, "Night Light" is breaks after applying this patch and even manually toggling it off and on after resume does not restore "Night Light" / CRTC functionality.
+> 
+> Unfortunately I cannot test this, as color temperature adjustments seems to be completely non-functional for me in the first place. For color temperature adjustment, I use gammastep on my machines, which uses wlr_gamma_control_unstable_v1 under the hood. It outputs the following warnings:
+> 
+> Warning: Zero outputs support gamma adjustment.
+> Warning: 1/1 output(s) do not support gamma adjustment.
+> 
+> I haven't dug deeper into the cause yet, based on these it seems that wlroots isn't detecting the display as being gamma-adjustable in the first place.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/4398d0ec73ed/disk-6f923748.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/1f7e004ef90a/vmlinux-6f923748.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/333e975a3aac/bzImage-6f923748.xz
+The cause is simple: Qualcomm SoCs don't implement GAMMA_LUT support. Your desktop environment needs to use Color Transform Matrix (CTM) on ARM/QCom devices. You can refer to https://bugs.kde.org/show_bug.cgi?id=455720 for further details. It would be great if you can validate whether this patch breaks CRTC state (which includes the CTM state) on Yoga Slim 7x, or whether that is specific to the trogdor lazor (Chromebook Acer Spin 513), though it may require you to install KDE. Gnome does not support CTM yet (https://gitlab.gnome.org/GNOME/mutter/-/issues/2318).
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+3c38ca819d922062d22a@syzkaller.appspotmail.com
-
-------------[ cut here ]------------
-kmem_cache of name '9p-fcall-cache' already exists
-WARNING: CPU: 0 PID: 5316 at mm/slab_common.c:108 kmem_cache_sanity_check mm/slab_common.c:107 [inline]
-WARNING: CPU: 0 PID: 5316 at mm/slab_common.c:108 kmem_cache_create_usercopy+0xb6/0x370 mm/slab_common.c:311
-Modules linked in:
-CPU: 0 UID: 0 PID: 5316 Comm: syz.1.7 Not tainted 6.11.0-rc5-next-20240827-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
-RIP: 0010:kmem_cache_sanity_check mm/slab_common.c:107 [inline]
-RIP: 0010:kmem_cache_create_usercopy+0xb6/0x370 mm/slab_common.c:311
-Code: 48 8b 6d 00 48 39 dd 74 25 48 8b 7d f8 4c 89 f6 e8 ff 16 dd 09 85 c0 75 e7 90 48 c7 c7 38 0a 0a 8e 4c 89 f6 e8 9b c1 79 ff 90 <0f> 0b 90 90 4c 89 f7 be 20 00 00 00 e8 59 18 dd 09 48 85 c0 0f 85
-RSP: 0018:ffffc900040d77a8 EFLAGS: 00010246
-RAX: 2c465ce8c6b42a00 RBX: ffffffff8ea1ba80 RCX: 0000000000040000
-RDX: ffffc90004ba2000 RSI: 0000000000005a3c RDI: 0000000000005a3d
-RBP: ffff88802203e068 R08: ffffffff8155a5b2 R09: 1ffff9200081ae90
-R10: dffffc0000000000 R11: fffff5200081ae91 R12: 0000000000020018
-R13: 0000000000000000 R14: ffffffff8d2d3620 R15: 000000000000000b
-FS:  00007f80561806c0(0000) GS:ffff8880b9000000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000020001000 CR3: 000000002b984000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- p9_client_create+0xb0b/0x1040 net/9p/client.c:1042
- v9fs_session_init+0x1e4/0x1b80 fs/9p/v9fs.c:410
- v9fs_mount+0xcf/0xaa0 fs/9p/vfs_super.c:122
- legacy_get_tree+0xee/0x190 fs/fs_context.c:662
- vfs_get_tree+0x90/0x2b0 fs/super.c:1800
- do_new_mount+0x2be/0xb40 fs/namespace.c:3507
- do_mount fs/namespace.c:3847 [inline]
- __do_sys_mount fs/namespace.c:4055 [inline]
- __se_sys_mount+0x2d6/0x3c0 fs/namespace.c:4032
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f8055379e79
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f8056180038 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
-RAX: ffffffffffffffda RBX: 00007f8055515f80 RCX: 00007f8055379e79
-RDX: 00000000200000c0 RSI: 0000000020000080 RDI: 0000000000000000
-RBP: 00007f80553e793e R08: 0000000020000440 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000000000 R14: 00007f8055515f80 R15: 00007ffc6f15d8c8
- </TASK>
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+Best regards
+Leonard
 
