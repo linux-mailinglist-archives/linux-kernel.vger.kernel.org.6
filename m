@@ -1,440 +1,114 @@
-Return-Path: <linux-kernel+bounces-309585-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309586-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6980D966D26
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 02:05:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DCC7966D29
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 02:06:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9A938B21FB9
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 00:05:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 21A50284AC0
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 00:06:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74DE628EF;
-	Sat, 31 Aug 2024 00:05:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE94F4405;
+	Sat, 31 Aug 2024 00:06:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="pUA7GJOh"
-Received: from out203-205-221-173.mail.qq.com (out203-205-221-173.mail.qq.com [203.205.221.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="3vHhwB/r"
+Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEDED19A
-	for <linux-kernel@vger.kernel.org>; Sat, 31 Aug 2024 00:05:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8986A29A5
+	for <linux-kernel@vger.kernel.org>; Sat, 31 Aug 2024 00:06:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725062725; cv=none; b=ZFwWQ+7g9I62DBBQhEbv0hfMTsxxFYB74O9cF7yRV5G5bzhjaw0US4IuHSbELOYC7frpT7SXGlAsPH6FqnaGPgJuwKayk72hg2rdIF4ZnKyhvhVJ9j2fOvHrp7i7ZhYNi6wgKTjqVR1giEXLbSy7G7HuLKpt/PGxUU3tI1k1OTo=
+	t=1725062780; cv=none; b=N8LVaD3qTMK6oGq+XffRMV/uvq32t4HDRva3ru8GwOhHmqlrut/E6MnmmdfIyMbxIRBdGHKmO3k5uQpq/zmeWFMIoBhD4s6sZuiNAtNo/6FNbcF7KxxmG95e/3xAK5c4fkd8Bf09p1ryITJpGBewz/ldM6743dlCaMCE+eMzUFY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725062725; c=relaxed/simple;
-	bh=3ELa3v7d0Sd3CCzs5ZLq9ROy55shKSmTqiKw5F2ANdM=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=Z4Pig90to8/JLMIGBV+VHv+7N7U9QnI1opgGRi7QdylOM5Qu4ESBZBzM97JNMLveb/IozsNWMLAEpnqrbQhxeX3VAhegB5O4NBRviZryeR+gZvKW823gtI1cPeY4JWFOvYarViFWyjg7zlWYQxgniZguVpwdLFgpBCgnEkAloNM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=pUA7GJOh; arc=none smtp.client-ip=203.205.221.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
-	s=s201512; t=1725062715;
-	bh=Pp5fbxH8Yz5IVta2/xKONO8NGXAM54UiF0c+o7rpJZU=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=pUA7GJOhHqdTI2zr6Y53nrmkqAzEa3g9/gxSxbF2V7CaCpokiT9hoWdeyfduKx4BS
-	 xZ12btC3QGgbwvfK365CJf5gGdjtqO+rBKeXDmihAfsaEmI0PUsE29EVZ1XwCIB1bz
-	 rcIikSyApn/KJYX9ppsWO6KwJaaR3GiuROwQXrSM=
-Received: from rtoax.lan ([120.245.115.147])
-	by newxmesmtplogicsvrsza15-1.qq.com (NewEsmtp) with SMTP
-	id EE3BE3C; Sat, 31 Aug 2024 08:03:46 +0800
-X-QQ-mid: xmsmtpt1725062626tuusdn36m
-Message-ID: <tencent_30ADAC88CB2915CA57E9512D4460035BA107@qq.com>
-X-QQ-XMAILINFO: OW8rLgt5YFkGLOQfs+m1UIYMbW/SmndDdxI5lTRMX6seJPklYhm+kmfeD4xWmt
-	 0fDEIHZosBprGbqHiywUg/j5bM850XjeLHYiUFLfdUxkg2sAPMALSABa+CGjzvpfdpbnwgIlnJYq
-	 gTymTP5b/A1mfTT01+UvQzHQASIBrEkXlaiISJXAV+vsU4cHMNnNJmyeIfrOgNNdprQ9VMakFH6T
-	 +7WUt/H7A9jMdMwXwcTEhEIvPS/8+fIUcoggPymD9B2+IukySjws4ekTxspPPhMp3y8Tn8p1D84v
-	 1PnGwp3ILmtaiGdxuMqmbhu2n9mG+WZOf/30E3l2jI/iuSUUdRw0nltDqBnGZByGWnq5fT9ZU611
-	 ShjV44/lfM7ViLqpeI0RMboTnv/qqRfEVzpIuL5x9GGoNEjUMw0fK9nhVfmzvOS47DoqKNu4ahqt
-	 zpI4kb6UVjBNinqHowuHvibUC3TYHojHBvlULn81nyRF7Mp9tde3j7Cxu3MDvUQluRneOUttO5qt
-	 x9n53q+B5J5EcvI9V+vMmgzOHJThaCcQ57jQeuSirFeXtGNIDPshe3zlfap/ulin0GoWxjm9g8Gi
-	 Yl8F1aMiAjCrD2h32iwnavRj/vyxXxnuxfz8ZN1AgAaVO0ldociVK69C3akH4P/JLqJqBmakyziN
-	 lf38rQOPe+8rStJ/LLmpZIQ5VDC/ar3uO/GQqZ/MO4xh7zNRRuIUpkegyClbS1eu8iU9iWbIkCcF
-	 rxLq3NCOBokfDbpmHCEW8A3z1fwNgAwC1SMkj2GdIKmJYSBRaob1zA2BIfWYbLfMdvqzJnBQGt3R
-	 sUPv8NA9tegwkMQ6l/zrKD4WtyFMvx7aAEAXz0TpiCWJ7Fq7WSGlHS0QPUjg+re6MCzVyxU716Pr
-	 F4/2PIJoQXvXEEGCawz60fq0fG+BdzCjYLlAVnuSShbHVqyxY8SMP0zqZmS+gMGTCOo5ethWxjPO
-	 1kl/23/HcOF+YntuCXXIvByiApTXUFkcrZftkwzLW8qtbbcoaFoThauxD5rroxcRvbAMyUnKo=
-X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
-From: Rong Tao <rtoax@foxmail.com>
-To: andrii.nakryiko@gmail.com
-Cc: andrii@kernel.org,
-	ast@kernel.org,
-	bpf@vger.kernel.org,
-	daniel@iogearbox.net,
-	eddyz87@gmail.com,
-	haoluo@google.com,
-	john.fastabend@gmail.com,
-	jolsa@kernel.org,
-	kpsingh@kernel.org,
-	linux-kernel@vger.kernel.org,
-	martin.lau@linux.dev,
-	rongtao@cestc.cn,
-	rtoax@foxmail.com,
-	sdf@fomichev.me,
-	song@kernel.org,
-	yonghong.song@linux.dev
-Subject: [PATCH bpf-next] samples/bpf: Remove sample tracex2
-Date: Sat, 31 Aug 2024 08:03:38 +0800
-X-OQ-MSGID: <20240831000338.9813-1-rtoax@foxmail.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <CAEf4BzaCW03xOp6=rSUqmy8DRFvGJWHy1LyGNdpP+D-D9Eo+Yw@mail.gmail.com>
-References: <CAEf4BzaCW03xOp6=rSUqmy8DRFvGJWHy1LyGNdpP+D-D9Eo+Yw@mail.gmail.com>
+	s=arc-20240116; t=1725062780; c=relaxed/simple;
+	bh=n8xcqiHEzhMcHy2TGqeuIA4zEqW0LBBlmS3A1RDmuII=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RkDtcqdjFPh16TYhLw7e3eVK9+PTLJxjzh3i4D6gWxW1AbbIn3zDh3R5APWfHfy3YU6kZ/tnXRlM88k33tYs2CJuszW1XG0xUuwozs+bC6JCf7PQzJOZuQSpVaDRgBcB8BiSrwhGtupD1gIUXA4Siwrv0sv0dIDTZMQvGDBScH0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=3vHhwB/r; arc=none smtp.client-ip=209.85.160.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-45029af1408so42971cf.1
+        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 17:06:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1725062777; x=1725667577; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=n8xcqiHEzhMcHy2TGqeuIA4zEqW0LBBlmS3A1RDmuII=;
+        b=3vHhwB/rvceYxkjD9IZz+rYaiCLZQGsFAT0Y6tqw29EeC9vQfiHmHQFKQdH7t0XgyA
+         ka93vNsLHaXQYaxHdvxrkoZc9hQz6EJvlHImjserC7JTNY/HSwBkQ66f2WrEH6UYf+dd
+         EVNjrTeszz/K9UMyzgHJmzc76dqF3ZI4pxTNadrjBBuZqea0ZuyFlYGWdv+fBr/e0HcS
+         Xv4QWl8xUlmRh462iNuLhzepBAgxql7at6Y7M/Vn5K+aVlxmJ3abTsz+q8uStO/IuCpM
+         6icFmQQZLLOe84MWI7h4OdH7ppmKfNqb7F0qzIPiz4Z+o0CKR8wdsOZ8T2uBhiK5bXsw
+         SxhQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725062777; x=1725667577;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=n8xcqiHEzhMcHy2TGqeuIA4zEqW0LBBlmS3A1RDmuII=;
+        b=BgqEeNhNiwymqy/U5E2fahuWWY+Md5pOqcJNaqKfMXEqXVcyT4pZg30Yse4uAEU2aT
+         kguKlzlsXNqvrzeA8+YDGf+P0aE30KVe007iduMlA1XvF0DloNli/1TsUX7uJVP+Seeu
+         Y2XCoyrroRs64US7sErXVQtk9GGHEFhfkX3RSZRt3EkcNftfqjKRPYEcg+Iv9sWAyFsx
+         JzEEz6L46FEI5PK5WlB/QZ4tp2g0wCWe4UyD4XOSWoabBX7b941E1R47xIDkI4Sd6Niq
+         msLOuZqg6jtS239OWxY/mb7IPpfLB3WeE5GCh+10IHLebp+ldYMY01JQFuuNqvnbi8C+
+         RlDw==
+X-Forwarded-Encrypted: i=1; AJvYcCWaE/RghHMDs+yJ6JkMZeCHEKKTRnRFDEDp+beOnpKDM3IL0HAZxZerz/M6zEGCKIw+rHaoQmRNI8px450=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwP7WtmFyeUXWMAK7fgs3E3C0tmlCndIFqPeF8+FnnLzFsjwjjW
+	Wyg1wje/QJ4iqCI20HhwSzPn9UdQlPSmtShLNPDHt2rPIo2v5+RhPTkjjwq2FDqvzqPrj5KerKh
+	I6nYSvaFKKxMxewc1XU3Dv0pNbqSdtqTgZ//U
+X-Google-Smtp-Source: AGHT+IFg6NnIqNYSyCQdp+4piRmBL+jQdTn0fkJWHCEEU/fYsuOdUxONjCSJBEQ2wyGjIkWsARNyrhv7f4RZhj+2hRc=
+X-Received: by 2002:ac8:5987:0:b0:447:e847:486 with SMTP id
+ d75a77b69052e-457c41b4ae7mr670401cf.3.1725062777214; Fri, 30 Aug 2024
+ 17:06:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240815173903.4172139-21-samitolvanen@google.com>
+ <20240815173903.4172139-37-samitolvanen@google.com> <alpine.LSU.2.21.2408301114000.1124@pobox.suse.cz>
+In-Reply-To: <alpine.LSU.2.21.2408301114000.1124@pobox.suse.cz>
+From: Sami Tolvanen <samitolvanen@google.com>
+Date: Sat, 31 Aug 2024 00:05:40 +0000
+Message-ID: <CABCJKucCWfeC0yL6Q2ZcBfef0tMd9L_gmHRJt-cUYkg_4PDtnA@mail.gmail.com>
+Subject: Re: [PATCH v2 16/19] gendwarfksyms: Add support for reserved
+ structure fields
+To: Miroslav Benes <mbenes@suse.cz>
+Cc: Masahiro Yamada <masahiroy@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>, 
+	Miguel Ojeda <ojeda@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Matthew Maurer <mmaurer@google.com>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Wedson Almeida Filho <wedsonaf@gmail.com>, Gary Guo <gary@garyguo.net>, Petr Pavlu <petr.pavlu@suse.com>, 
+	Neal Gompa <neal@gompa.dev>, Hector Martin <marcan@marcan.st>, Janne Grunau <j@jannau.net>, 
+	Asahi Linux <asahi@lists.linux.dev>, linux-kbuild@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Rong Tao <rongtao@cestc.cn>
+Hi Miroslav,
 
-In commit ba8de796baf4 ("net: introduce sk_skb_reason_drop function")
-kfree_skb_reason() becomes an inline function and cannot be traced.
+On Fri, Aug 30, 2024 at 9:34=E2=80=AFAM Miroslav Benes <mbenes@suse.cz> wro=
+te:
+>
+> yes, this is one of the approaches we use in SLES. We add kabi paddings
+> to some structures in advance (see [1] as a random example) and then use
+> it later if needed.
+>
+> It is not the only approach. Much more often we do not have a padding and
+> use alignment holes ([5]), addition of a new member to the end of a
+> structure ([2] or [3]) and such "tricks" ([4] for a newly fully defined
+> structure).
 
-samples/bpf is abandonware by now, and we should slowly but surely
-convert whatever makes sense into BPF selftests under
-tools/testing/selftests/bpf and just get rid of the rest.
+Thanks for bringing this up! Sounds like we're also going to need a
+way to completely exclude specific fields from the output then. I
+think we can use a similar union approach, but instead of instructing
+the tool to use another type, we can just indicate that the field
+should be skipped. I'll come up with a solution for v3.
 
-Link: https://github.com/torvalds/linux/commit/ba8de796baf4bdc03530774fb284fe3c97875566
-Signed-off-by: Rong Tao <rongtao@cestc.cn>
----
- samples/bpf/Makefile       |   3 -
- samples/bpf/tracex2.bpf.c  |  99 --------------------
- samples/bpf/tracex2_user.c | 187 -------------------------------------
- 3 files changed, 289 deletions(-)
- delete mode 100644 samples/bpf/tracex2.bpf.c
- delete mode 100644 samples/bpf/tracex2_user.c
-
-diff --git a/samples/bpf/Makefile b/samples/bpf/Makefile
-index dca56aa360ff..7afe040cf43b 100644
---- a/samples/bpf/Makefile
-+++ b/samples/bpf/Makefile
-@@ -13,7 +13,6 @@ tprogs-y += sockex1
- tprogs-y += sockex2
- tprogs-y += sockex3
- tprogs-y += tracex1
--tprogs-y += tracex2
- tprogs-y += tracex3
- tprogs-y += tracex4
- tprogs-y += tracex5
-@@ -63,7 +62,6 @@ sockex1-objs := sockex1_user.o
- sockex2-objs := sockex2_user.o
- sockex3-objs := sockex3_user.o
- tracex1-objs := tracex1_user.o $(TRACE_HELPERS)
--tracex2-objs := tracex2_user.o
- tracex3-objs := tracex3_user.o
- tracex4-objs := tracex4_user.o
- tracex5-objs := tracex5_user.o $(TRACE_HELPERS)
-@@ -105,7 +103,6 @@ always-y += sockex1_kern.o
- always-y += sockex2_kern.o
- always-y += sockex3_kern.o
- always-y += tracex1.bpf.o
--always-y += tracex2.bpf.o
- always-y += tracex3.bpf.o
- always-y += tracex4.bpf.o
- always-y += tracex5.bpf.o
-diff --git a/samples/bpf/tracex2.bpf.c b/samples/bpf/tracex2.bpf.c
-deleted file mode 100644
-index 0a5c75b367be..000000000000
---- a/samples/bpf/tracex2.bpf.c
-+++ /dev/null
-@@ -1,99 +0,0 @@
--/* Copyright (c) 2013-2015 PLUMgrid, http://plumgrid.com
-- *
-- * This program is free software; you can redistribute it and/or
-- * modify it under the terms of version 2 of the GNU General Public
-- * License as published by the Free Software Foundation.
-- */
--#include "vmlinux.h"
--#include <linux/version.h>
--#include <bpf/bpf_helpers.h>
--#include <bpf/bpf_tracing.h>
--#include <bpf/bpf_core_read.h>
--
--struct {
--	__uint(type, BPF_MAP_TYPE_HASH);
--	__type(key, long);
--	__type(value, long);
--	__uint(max_entries, 1024);
--} my_map SEC(".maps");
--
--/* kprobe is NOT a stable ABI. If kernel internals change this bpf+kprobe
-- * example will no longer be meaningful
-- */
--SEC("kprobe/kfree_skb_reason")
--int bpf_prog2(struct pt_regs *ctx)
--{
--	long loc = 0;
--	long init_val = 1;
--	long *value;
--
--	/* read ip of kfree_skb_reason caller.
--	 * non-portable version of __builtin_return_address(0)
--	 */
--	BPF_KPROBE_READ_RET_IP(loc, ctx);
--
--	value = bpf_map_lookup_elem(&my_map, &loc);
--	if (value)
--		*value += 1;
--	else
--		bpf_map_update_elem(&my_map, &loc, &init_val, BPF_ANY);
--	return 0;
--}
--
--static unsigned int log2(unsigned int v)
--{
--	unsigned int r;
--	unsigned int shift;
--
--	r = (v > 0xFFFF) << 4; v >>= r;
--	shift = (v > 0xFF) << 3; v >>= shift; r |= shift;
--	shift = (v > 0xF) << 2; v >>= shift; r |= shift;
--	shift = (v > 0x3) << 1; v >>= shift; r |= shift;
--	r |= (v >> 1);
--	return r;
--}
--
--static unsigned int log2l(unsigned long v)
--{
--	unsigned int hi = v >> 32;
--	if (hi)
--		return log2(hi) + 32;
--	else
--		return log2(v);
--}
--
--struct hist_key {
--	char comm[16];
--	u64 pid_tgid;
--	u64 uid_gid;
--	u64 index;
--};
--
--struct {
--	__uint(type, BPF_MAP_TYPE_PERCPU_HASH);
--	__uint(key_size, sizeof(struct hist_key));
--	__uint(value_size, sizeof(long));
--	__uint(max_entries, 1024);
--} my_hist_map SEC(".maps");
--
--SEC("ksyscall/write")
--int BPF_KSYSCALL(bpf_prog3, unsigned int fd, const char *buf, size_t count)
--{
--	long init_val = 1;
--	long *value;
--	struct hist_key key;
--
--	key.index = log2l(count);
--	key.pid_tgid = bpf_get_current_pid_tgid();
--	key.uid_gid = bpf_get_current_uid_gid();
--	bpf_get_current_comm(&key.comm, sizeof(key.comm));
--
--	value = bpf_map_lookup_elem(&my_hist_map, &key);
--	if (value)
--		__sync_fetch_and_add(value, 1);
--	else
--		bpf_map_update_elem(&my_hist_map, &key, &init_val, BPF_ANY);
--	return 0;
--}
--char _license[] SEC("license") = "GPL";
--u32 _version SEC("version") = LINUX_VERSION_CODE;
-diff --git a/samples/bpf/tracex2_user.c b/samples/bpf/tracex2_user.c
-deleted file mode 100644
-index 2131f1648cf1..000000000000
---- a/samples/bpf/tracex2_user.c
-+++ /dev/null
-@@ -1,187 +0,0 @@
--// SPDX-License-Identifier: GPL-2.0
--#include <stdio.h>
--#include <unistd.h>
--#include <stdlib.h>
--#include <signal.h>
--#include <string.h>
--
--#include <bpf/bpf.h>
--#include <bpf/libbpf.h>
--#include "bpf_util.h"
--
--#define MAX_INDEX	64
--#define MAX_STARS	38
--
--/* my_map, my_hist_map */
--static int map_fd[2];
--
--static void stars(char *str, long val, long max, int width)
--{
--	int i;
--
--	for (i = 0; i < (width * val / max) - 1 && i < width - 1; i++)
--		str[i] = '*';
--	if (val > max)
--		str[i - 1] = '+';
--	str[i] = '\0';
--}
--
--struct task {
--	char comm[16];
--	__u64 pid_tgid;
--	__u64 uid_gid;
--};
--
--struct hist_key {
--	struct task t;
--	__u32 index;
--};
--
--#define SIZE sizeof(struct task)
--
--static void print_hist_for_pid(int fd, void *task)
--{
--	unsigned int nr_cpus = bpf_num_possible_cpus();
--	struct hist_key key = {}, next_key;
--	long values[nr_cpus];
--	char starstr[MAX_STARS];
--	long value;
--	long data[MAX_INDEX] = {};
--	int max_ind = -1;
--	long max_value = 0;
--	int i, ind;
--
--	while (bpf_map_get_next_key(fd, &key, &next_key) == 0) {
--		if (memcmp(&next_key, task, SIZE)) {
--			key = next_key;
--			continue;
--		}
--		bpf_map_lookup_elem(fd, &next_key, values);
--		value = 0;
--		for (i = 0; i < nr_cpus; i++)
--			value += values[i];
--		ind = next_key.index;
--		data[ind] = value;
--		if (value && ind > max_ind)
--			max_ind = ind;
--		if (value > max_value)
--			max_value = value;
--		key = next_key;
--	}
--
--	printf("           syscall write() stats\n");
--	printf("     byte_size       : count     distribution\n");
--	for (i = 1; i <= max_ind + 1; i++) {
--		stars(starstr, data[i - 1], max_value, MAX_STARS);
--		printf("%8ld -> %-8ld : %-8ld |%-*s|\n",
--		       (1l << i) >> 1, (1l << i) - 1, data[i - 1],
--		       MAX_STARS, starstr);
--	}
--}
--
--static void print_hist(int fd)
--{
--	struct hist_key key = {}, next_key;
--	static struct task tasks[1024];
--	int task_cnt = 0;
--	int i;
--
--	while (bpf_map_get_next_key(fd, &key, &next_key) == 0) {
--		int found = 0;
--
--		for (i = 0; i < task_cnt; i++)
--			if (memcmp(&tasks[i], &next_key, SIZE) == 0)
--				found = 1;
--		if (!found)
--			memcpy(&tasks[task_cnt++], &next_key, SIZE);
--		key = next_key;
--	}
--
--	for (i = 0; i < task_cnt; i++) {
--		printf("\npid %d cmd %s uid %d\n",
--		       (__u32) tasks[i].pid_tgid,
--		       tasks[i].comm,
--		       (__u32) tasks[i].uid_gid);
--		print_hist_for_pid(fd, &tasks[i]);
--	}
--
--}
--
--static void int_exit(int sig)
--{
--	print_hist(map_fd[1]);
--	exit(0);
--}
--
--int main(int ac, char **argv)
--{
--	long key, next_key, value;
--	struct bpf_link *links[2];
--	struct bpf_program *prog;
--	struct bpf_object *obj;
--	char filename[256];
--	int i, j = 0;
--	FILE *f;
--
--	snprintf(filename, sizeof(filename), "%s.bpf.o", argv[0]);
--	obj = bpf_object__open_file(filename, NULL);
--	if (libbpf_get_error(obj)) {
--		fprintf(stderr, "ERROR: opening BPF object file failed\n");
--		return 0;
--	}
--
--	/* load BPF program */
--	if (bpf_object__load(obj)) {
--		fprintf(stderr, "ERROR: loading BPF object file failed\n");
--		goto cleanup;
--	}
--
--	map_fd[0] = bpf_object__find_map_fd_by_name(obj, "my_map");
--	map_fd[1] = bpf_object__find_map_fd_by_name(obj, "my_hist_map");
--	if (map_fd[0] < 0 || map_fd[1] < 0) {
--		fprintf(stderr, "ERROR: finding a map in obj file failed\n");
--		goto cleanup;
--	}
--
--	signal(SIGINT, int_exit);
--	signal(SIGTERM, int_exit);
--
--	/* start 'ping' in the background to have some kfree_skb_reason
--	 * events */
--	f = popen("ping -4 -c5 localhost", "r");
--	(void) f;
--
--	/* start 'dd' in the background to have plenty of 'write' syscalls */
--	f = popen("dd if=/dev/zero of=/dev/null count=5000000", "r");
--	(void) f;
--
--	bpf_object__for_each_program(prog, obj) {
--		links[j] = bpf_program__attach(prog);
--		if (libbpf_get_error(links[j])) {
--			fprintf(stderr, "ERROR: bpf_program__attach failed\n");
--			links[j] = NULL;
--			goto cleanup;
--		}
--		j++;
--	}
--
--	for (i = 0; i < 5; i++) {
--		key = 0;
--		while (bpf_map_get_next_key(map_fd[0], &key, &next_key) == 0) {
--			bpf_map_lookup_elem(map_fd[0], &next_key, &value);
--			printf("location 0x%lx count %ld\n", next_key, value);
--			key = next_key;
--		}
--		if (key)
--			printf("\n");
--		sleep(1);
--	}
--	print_hist(map_fd[1]);
--
--cleanup:
--	for (j--; j >= 0; j--)
--		bpf_link__destroy(links[j]);
--
--	bpf_object__close(obj);
--	return 0;
--}
--- 
-2.46.0
-
+Sami
 
