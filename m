@@ -1,164 +1,168 @@
-Return-Path: <linux-kernel+bounces-310026-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310027-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09947967350
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 23:15:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76651967355
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 23:19:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B1F14282AC8
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 21:15:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2DBB1282C55
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 21:19:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16D1A4500E;
-	Sat, 31 Aug 2024 21:15:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32EED17E8E5;
+	Sat, 31 Aug 2024 21:19:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Q97b1QKY"
-Received: from out-189.mta1.migadu.com (out-189.mta1.migadu.com [95.215.58.189])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YXrwllEE"
+Received: from mail-ot1-f51.google.com (mail-ot1-f51.google.com [209.85.210.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B2AB183CA3
-	for <linux-kernel@vger.kernel.org>; Sat, 31 Aug 2024 21:15:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C20676FCC;
+	Sat, 31 Aug 2024 21:19:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725138911; cv=none; b=dbR1xar4PzSTGpGDOXChZ9TQKtqYd7g1IrxWSykh6yNhDgPgFfkooo3kVPXmtq7dGFFSCSnick6lUuFmpv2bYtClmLWsSp9za8xvNSetyYqi8Wr4x4k4cAElUAwNGzhIcWAyCfKSgaRlEU0idMW6mrvX1EsaX6w2xDPTnchp9fo=
+	t=1725139158; cv=none; b=JL9V34+2FN8RJIzfz0kYGLBQkswrhbmFTL45u6B8ZCoDg7fLnDNfBbVmMUUNXHOxHvfAhlpv4gYbZdfw8F0LcB8+jcKtf6k33yGa14lpiSzkywR4vPlM7A2peI31o67lw3R2PO1cBHx4hCRaaVwz0Zgs9rJBeevyfjq68qdk2Hs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725138911; c=relaxed/simple;
-	bh=eQAtaQ/QhzLkIHaTH/Ukw2YOoFb9dNKgMiN/x3u1qOk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SBcduGtUsc1syIMk3vvYSM8Kc3qzMD/tNluYd8CM3or2sApGnlyJ+mCAdQXUolYSIYJExs7DfItkykezh5o0jMN6rFf3ZGlOqqyKzo+tc1LmFZmDfPG7VZeoa1l5DcaD5ca0SgOXFO9qFrnRMj3kVb9RkRxchuppRN9djUlZAQ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Q97b1QKY; arc=none smtp.client-ip=95.215.58.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Sat, 31 Aug 2024 23:15:01 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1725138906;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=33tao4Tmz3HOrHuy5i102D7+HCZMfQIcePtH0bM5gHo=;
-	b=Q97b1QKYvJC/kY7q461Bm4CZTJdfjO9Rdcr4uYLVW2uHBHC9L/x/2DDM5scZ7EHLT3tjHL
-	i8XOwDGkUAmXTdtV2JNd4h+CRt3s7J2j/yXHfs+iZ1ghfbtP8+FunJui/HICNFnTOv0VF/
-	xCQ8Te29MzncUcyzpCNf9gvhm0bk5eI=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Andrea Righi <andrea.righi@linux.dev>
-To: Tejun Heo <tj@kernel.org>
-Cc: void@manifault.com, kernel-team@meta.com, linux-kernel@vger.kernel.org,
-	Daniel Hodges <hodges.daniel.scott@gmail.com>,
-	Changwoo Min <multics69@gmail.com>,
-	Dan Schatzberg <schatzberg.dan@gmail.com>
-Subject: Re: [PATCH 10/11] sched_ext: Implement
- scx_bpf_dispatch[_vtime]_from_dsq()
-Message-ID: <ZtOH1YlEgyP45UkU@gpd3>
-References: <20240830110415.116090-1-tj@kernel.org>
- <20240830110415.116090-11-tj@kernel.org>
- <ZtMpIb38MSn5r4-U@gpd3>
- <ZtNC6l9nUEPnneag@slm.duckdns.org>
+	s=arc-20240116; t=1725139158; c=relaxed/simple;
+	bh=OWqRTvt9404/ano+yp1yu3wGHRwtXn5oFYJekFfxAWk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=j6hzv7k7TPZyf40hQ9EKBQy++4FYn6aZ4DHAgmIqOLAN8AHesI151b8QHG+pLTvAwVuzKyyNnKKCRcopn5nEJS05GKyAMP6SRMfRSXU/bZp8L5sW8mNJuXLvGahShdp/iiplBawmTRnNbebfSlhBNIhwvjOdEfXEgllC7+coWg4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YXrwllEE; arc=none smtp.client-ip=209.85.210.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ot1-f51.google.com with SMTP id 46e09a7af769-70f782d6ba8so241705a34.0;
+        Sat, 31 Aug 2024 14:19:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725139156; x=1725743956; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=5AiRVgx2oBpN4HxI8sWFyfTegsh1fo61Uz0IrDwOv7A=;
+        b=YXrwllEEIZJpkeb+3qjfkQt7dAEX/38WIPB4UKjhUmOysobhh2dDBoqxtW4o1K1f/M
+         6lkdBOV39cUDkuDowDFo98kojOKBkFYZpTuEmIbIcesSZwR+Fb/dVCMwFJfFxoDq2v1p
+         CcQ1qhj8lDuKQ5n3pN2EDnunpm0UuVMEjI2PQNoaaqz7Rh57HxdzYhJNa5JtFhKuE7Mw
+         nBrLfjY/T3VR87MSW5VIfQYoKUfn6Cp8RyoBSd2CVavzhttjfY9EZK9ZdKci0fy492+H
+         TvPzabzJSb/cLDf56JlDyX86GYP9U93GcUNpG9WFEoh2rcAHrF25xAvHcodpv5iMS5BJ
+         LZ6Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725139156; x=1725743956;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5AiRVgx2oBpN4HxI8sWFyfTegsh1fo61Uz0IrDwOv7A=;
+        b=v/x9qexSZprv0xxLu99k0KAnQMTKZR+BfHffNJYwr0WCUnDVreHYLl+PBITlpcgK0N
+         53UBHYB7UhFk4JCqnebx04NnEBPmf5ZniCuYWtvWyrfkmxzYPiDsXpg/9X0dstzjCGgy
+         3OPVfh8LuC8G1317Jq+A9Y4KU6OEnX/DA9fxHB8ubhqW7RDs2WgkiIv/uNZfRJ3XLx/D
+         WwVTIGPb5pMqhmlhq3k3f67ir5IMEENzK1wRZTHjO6lMvvZYPKB48/yfY4ODV4tGOPsM
+         odKjwV8AtCpoGwtTIzwFUCsQuwwYFz/nHaSbYbvRYU+jjqApLyIu87a2SV6IY56rsxmp
+         77Sw==
+X-Forwarded-Encrypted: i=1; AJvYcCUJv2gWr4BJH57IJK5GHQjBraqlNkMKnXgGq9cdbleFo4R7UwPywdm1p8qQdxDvZDXyQoZX91NAaUi+944=@vger.kernel.org, AJvYcCVaFTwSQvwcA+oy74b5ioXIG3HbJ7qJMR+z4Q+DBqaKYjnLJVKjYG0hfashcL6wSCVNEuIijYO5@vger.kernel.org
+X-Gm-Message-State: AOJu0YwVvQuLS0RP9NqVHn0uamWMzO8f4IjPnw5LykKUVNYOkf7Ruera
+	zt21pgBhWertzrJt3yj2ft28yphFh1zYt8jibNaWeN3qB2AqyuUK
+X-Google-Smtp-Source: AGHT+IFpbL8W/xvro9BB9EEndYTLZsrTgHOEH49NpBEtc3b4ZNCxSPQS6o56kM89ceKeb8QklsBYJA==
+X-Received: by 2002:a05:6358:718e:b0:1b5:ffce:b28e with SMTP id e5c5f4694b2df-1b603c202femr1259468755d.12.1725139155574;
+        Sat, 31 Aug 2024 14:19:15 -0700 (PDT)
+Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d8a5324db0sm1420727a91.56.2024.08.31.14.19.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 31 Aug 2024 14:19:14 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <4f4ac35e-e31c-4f67-b809-a5de4d4b273a@roeck-us.net>
+Date: Sat, 31 Aug 2024 14:19:12 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZtNC6l9nUEPnneag@slm.duckdns.org>
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.1 000/321] 6.1.107-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org, shuah@kernel.org,
+ patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+ jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
+ srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org,
+ allen.lkml@gmail.com, broonie@kernel.org
+References: <20240827143838.192435816@linuxfoundation.org>
+Content-Language: en-US
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
+In-Reply-To: <20240827143838.192435816@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Sat, Aug 31, 2024 at 06:20:58AM -1000, Tejun Heo wrote:
-> Hello,
+On 8/27/24 07:35, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.1.107 release.
+> There are 321 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> On Sat, Aug 31, 2024 at 04:30:57PM +0200, Andrea Righi wrote:
-> ...
-> > > @@ -5511,7 +5516,7 @@ __bpf_kfunc void scx_bpf_dispatch(struct task_struct *p, u64 dsq_id, u64 slice,
-> > >   * scx_bpf_dispatch_vtime - Dispatch a task into the vtime priority queue of a DSQ
-> > >   * @p: task_struct to dispatch
-> > >   * @dsq_id: DSQ to dispatch to
-> > > - * @slice: duration @p can run for in nsecs
-> > > + * @slice: duration @p can run for in nsecs, 0 to keep the current value
-> > >   * @vtime: @p's ordering inside the vtime-sorted queue of the target DSQ
-> > 
-> > Maybe allow to keep the current vtime if 0 is passed, similar to slice?
+> Responses should be made by Thu, 29 Aug 2024 14:37:36 +0000.
+> Anything received after that time might be too late.
 > 
-> It's tricky as 0 is a valid vtime. It's unlikely but depending on how vtime
-> is defined, it may wrap in a practical amount of time. More on this below.
+[ ... ]
 
-Ok.
-
+> Abdulrasaq Lawani <abdulrasaqolawani@gmail.com>
+>      fbdev: offb: replace of_node_put with __free(device_node)
 > 
-> ...
-> > > +	/*
-> > > +	 * Can be called from either ops.dispatch() locking this_rq() or any
-> > > +	 * context where no rq lock is held. If latter, lock @p's task_rq which
-> > > +	 * we'll likely need anyway.
-> > > +	 */
-> > 
-> > About locking, I was wondering if we could provide a similar API
-> > (scx_bpf_dispatch_lock()?) to use scx_bpf_dispatch() from any context
-> > and not necessarily from ops.select_cpu() / ops.enqueue() or
-> > ops.dispatch().
-> > 
-> > This would be really useful for user-space schedulers, since we could
-> > use scx_bpf_dispatch() directly and get rid of the
-> > BPF_MAP_TYPE_RINGBUFFER complexity.
-> 
-> One difference between scx_bpf_dispatch() and scx_bpf_dispatch_from_dsq() is
-> that the former is designed to be safe to call from any context under any
-> locks by doing the actual dispatches asynchronously. This is primarily to
-> allow scx_bpf_dispatch() to be called under BPF locks as they are used to
-> transfer the ownership of tasks from the BPF side to the kernel side. This
-> makes it more difficult to make scx_bpf_dispatch() more flexible. The way
-> BPF locks are currently developing, we might not have to worry about killing
-> the system through deadlocks but it'd still be very prone to soft deadlocks
-> that kill the BPF scheduler if implemented synchronously. Maybe the solution
-> here is bouncing to an irq_work or something. I'll think more on it.
 
-Got it. Well, the idea was to reduce complexity in the user-space
-schedulers, but if we need to increase complexity in the kernel to do
-so, probably it's not a good idea.
+This patch triggers:
 
-Moreover, using the BPF_MAP_TYPE_RINGBUFFER is really fast now, the
-overhead is pretty close to zero, so maybe we can keep this as a low
-priority todo.
+Building powerpc:defconfig ... failed
+Building powerpc:ppc64e_defconfig ... failed
+Building powerpc:ppc6xx_defconfig ... failed
+--------------
+Error log:
+drivers/video/fbdev/offb.c: In function 'offb_init_palette_hacks':
+drivers/video/fbdev/offb.c:358:24: error: cleanup argument not a function
+   358 |                 struct device_node *pciparent __free(device_node) = of_get_parent(dp);
+       |                        ^~~~~~~~~~~
+make[5]: *** [scripts/Makefile.build:250: drivers/video/fbdev/offb.o] Error 1
 
-> 
-> ...
-> > > +__bpf_kfunc bool scx_bpf_dispatch_from_dsq(struct bpf_iter_scx_dsq *it__iter,
-> > > +					   struct task_struct *p, u64 dsq_id,
-> > > +					   u64 slice, u64 enq_flags)
-> > > +{
-> > > +	return scx_dispatch_from_dsq((struct bpf_iter_scx_dsq_kern *)it__iter,
-> > > +				     p, dsq_id, slice, 0, enq_flags);
-> > > +}
-> > > +
-> > > +/**
-> > > + * scx_bpf_dispatch_vtime_from_dsq - Move a task from DSQ iteration to a PRIQ DSQ
-> > > + * @it__iter: DSQ iterator in progress
-> > > + * @p: task to transfer
-> > > + * @dsq_id: DSQ to move @p to
-> > > + * @slice: duration @p can run for in nsecs, 0 to keep the current value
-> > > + * @vtime: @p's ordering inside the vtime-sorted queue of the target DSQ
-> > > + * @enq_flags: SCX_ENQ_*
-> > 
-> > Hm... can we pass 6 arguments to a kfunc? I think we're limited to 5,
-> > unless I'm missing something here.
-> 
-> Hah, I actually don't know and didn't test the vtime variant. Maybe I should
-> just drop the @slice and @vtime. They can be set by the caller explicitly
-> before calling these kfuncs anyway although there are some concerns around
-> ownership (ie. the caller can't be sure that the task has already been
-> dispatched by someone else before scx_bpf_dispatch_from_dsq() commits). Or
-> maybe I should pack the optional arguments into a struct. I'll think more
-> about it.
+Guenter
 
-IMHO we can simply drop them, introducing a separate struct makes the
-API a bit inconsistent with scx_bpf_dispatch() (and I don't think we
-want to change also scx_bpf_dispatch() for that).
-
-About the ownership, true... maybe we can accept a bit of fuzziness
-in this case, also considering that this race can happen only when using
-scx_bpf_dispatch_from_dsq().
-
-Thanks,
--Andrea
 
