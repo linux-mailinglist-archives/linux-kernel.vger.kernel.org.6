@@ -1,158 +1,98 @@
-Return-Path: <linux-kernel+bounces-309782-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309783-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0AEC96705E
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 10:32:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F1A496705F
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 10:37:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 42E121F23B78
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 08:32:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A46751C21E3A
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 08:37:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 442BC17965E;
-	Sat, 31 Aug 2024 08:32:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89E3016FF45;
+	Sat, 31 Aug 2024 08:36:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Twxkm2zr"
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="TLOsX17U"
+Received: from smtpbgbr2.qq.com (smtpbgbr2.qq.com [54.207.22.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07B0E1779A9
-	for <linux-kernel@vger.kernel.org>; Sat, 31 Aug 2024 08:31:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A16D13B5AE
+	for <linux-kernel@vger.kernel.org>; Sat, 31 Aug 2024 08:36:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.207.22.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725093122; cv=none; b=TGaEBIX0an5r1iN1eJ823kUBVOPmUVVb3+hmguXQV52y7VsbHRKq1uLIeKbfFryp1IySkRuTLQpIXUEhbrKAMLCAKEJeVU+9BOS2L5VzeSrGz4t4FtBwOYZVkFLZVvyHp9YbloKygSF9p42mdjNJUyAE/HScP9decuzxIhsWB+o=
+	t=1725093418; cv=none; b=n1u+sWM0T5Qxyu7W+TtnNaebSNqPnGh6JYLeRW2uxnVMbj0aKRUozs5TBeSD11cYewG+OlQak1CYb1+iPUWRFVbuJnFcG7cLYhHyK1l5Tti0LVRL0ERprmmxsEhV99nAAFUpyajqE8hg9BPio6FSi8s+rdalPkbdgztQn7KiXt8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725093122; c=relaxed/simple;
-	bh=ygokJ3EuwP2KVqqlmTrJeAJWWdyXSr8sqWsV9WTAHco=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=CDnpsC7epdtS2wSbz+dpo0mi7Rh0XdKhzwQQ5cKdfyZSFwBhd2Gmgb3BZO435PzmzbXc6LUsHU5vIQRZ5Pi2CN8BkjP3aYV8c2Nhugm8HcUC7qHntnbKXL1rLodH5TPube5GCdNl6wbXgjMbxDmTLza4ye9R/iBhOgDyGeRq6+8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Twxkm2zr; arc=none smtp.client-ip=209.85.221.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-374c0a8c7a9so134415f8f.0
-        for <linux-kernel@vger.kernel.org>; Sat, 31 Aug 2024 01:31:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1725093118; x=1725697918; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=cYKXU/GRuYajonH8bLwJRIkuKYJn/KULcoZQ/7PWKrE=;
-        b=Twxkm2zr7sDaxXCm1z+Nm3OxpW02sG0MMev4bvEXHSXO+kRL9v/msuKTxiJ+f4uyat
-         lFJ/kwmushDU+bcKITE+++jE2cBtJYMc8zfGOlOCEDa+59TY/0bDnL7uLSfifIHeoaBf
-         yLmlDVWlEkfL1yPYro3Xr0Z9SbUmB8cxH8Nahu1zDCw3m4Hw4JZeK01YRSxHE2PVsz/e
-         I9dgXBdmEk4hSPMUBsxRXbuVfKYXO7KOyBv0YnC3MRjCQcwEG/qx4xOlysgH+ZF/SMtw
-         mKImu8jcMhcLwxiFu7sF8L4AO2UHYj+E2b2aqPzLp/DVy7gx7powT/gTCpEGisi3+zdp
-         F/kA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725093118; x=1725697918;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=cYKXU/GRuYajonH8bLwJRIkuKYJn/KULcoZQ/7PWKrE=;
-        b=VNW4FYlyFDddTw7i0aUuAN2mphod/B4zCqGn8MOvsdBC4P52jTI6TLWgfUpcMhVuei
-         OnOiytWa1r91MUqdAuj9fMCgdUYpDwfpWcA3YSwMsKJb49vebeK+AUV948FTbPNJIgff
-         Xm3Tcp48P6gxz8oVFJXrhiRcy4XjyRD8SCSFBJqVus+YEDbuYEJyOztOhGcJZ/qU+15X
-         c0ZiRHYf2RYYCE4Kbe70fqAbQpyQwq2gpXahBuOyH3VRR1Tpldwp7X6pWEG3q6Ay3RDC
-         +LkLf4cLKToCbNmrxzA0QEZ2vPlQIcVpFsRAQKcZAjbvWKK7g6vEwRlkxXZzsZN9zfvB
-         8fsA==
-X-Forwarded-Encrypted: i=1; AJvYcCVvB0usOGW3xyESUTsJHz8DAj0FlojWzfG4l1SKV+ERppGt6n0ydfZMD8NbL0VNEFbfn3SLAm6wHilITmI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw3qeDCEIYgLwVJMIrIMAzcnD4i/K4EktWTrLKUjtfzZPxNY7Og
-	dfaB0SApNvx19Pogin1Aq6m801zdRzdWvkPbgl1DkiDpkC1FbxPu2yswduxc054=
-X-Google-Smtp-Source: AGHT+IEY8B96yyKAmsk7FOyikce6yeIKfN0PQpvR2+w944msLHKH11XTNcpqiCg0x0+w3FqoiWogJA==
-X-Received: by 2002:adf:e5c9:0:b0:374:c2e9:28b8 with SMTP id ffacd0b85a97d-374c2e92d16mr52551f8f.18.1725093118067;
-        Sat, 31 Aug 2024 01:31:58 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-374c08e07b6sm759594f8f.63.2024.08.31.01.31.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 31 Aug 2024 01:31:57 -0700 (PDT)
-Date: Sat, 31 Aug 2024 11:31:53 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: oe-kbuild@lists.linux.dev,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Hans de Goede <hdegoede@redhat.com>, linux-kernel@vger.kernel.org,
-	platform-driver-x86@vger.kernel.org
-Cc: lkp@intel.com, oe-kbuild-all@lists.linux.dev,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Daniel Scally <djrscally@gmail.com>
-Subject: Re: [PATCH v2 2/4] platform/x86: int3472: Simplify dev_err_probe()
- usage
-Message-ID: <20dd56f0-78ea-4255-86ac-32151160b83d@stanley.mountain>
+	s=arc-20240116; t=1725093418; c=relaxed/simple;
+	bh=cl0Ox4KOziAzBMAA/oSEeqrN00rD+vC5icUHDP5gYtI=;
+	h=From:To:Cc:Subject:Mime-Version:Content-Type:Date:Message-ID:
+	 References:In-Reply-To; b=DrSIO8yTZQgrFs4lOHRh3ltD0RFh0r6KeLjMfoJTO6e4klKHwR/S8UDX5tiT8brkrTCQGH/d5HBcn0fbMj5c7noL2HwpgIy5LV9XlDPjqKb6yiAw+GVY58U1ltvaRmHp6+yFLx09L4PKZ97DbFaVs6HrdMnWGjaSGceEthmXkwM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=TLOsX17U; arc=none smtp.client-ip=54.207.22.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
+	s=onoh2408; t=1725093372;
+	bh=cl0Ox4KOziAzBMAA/oSEeqrN00rD+vC5icUHDP5gYtI=;
+	h=From:To:Subject:Mime-Version:Date:Message-ID;
+	b=TLOsX17UmpsitGdeeHdy7Gc4S4wcHbiJOmnvSESg011aO7M5CdDk1QTRVEcINXScQ
+	 RsqR5FFDxoDn+GHQ0pz8wMVeYsquzdGG/eSGO8GqTyYax8BfH8slAguf8k8BAEA1u7
+	 TT50r+9FqAqdLlc1NSmsinq/EKWDapMGyox99sCU=
+X-QQ-GoodBg: 1
+X-QQ-SSF: 00400000000000F0
+X-QQ-XMRINFO: NS+P29fieYNw95Bth2bWPxk=
+X-QQ-XMAILINFO: NyPaQtJYQgeoFqXPUdxfVHJcEgn/ytUp/itUvvfFPFKI39ezSC4k8QUu
+	WFa51a6evSSSsFMYbJI8j11nvk7pUcOjEvbeUMO1MXUIeSYMHAA2NkkenuAzjQ8BEUJJ/Mx
+	YbIp7vUTS5UWKEikK7Zc+pfk5Umss8LnhLBbaklEU5FlvzDNHrXq6qqVUNIML/q2OYEtcRx
+	Tl/tCo/BZR0phfMjI/C3Pf0iBVKTnOatGgR/tZgsZlkxLfsg/bdxHHds6z2dlpufMudhfl/
+	vXAfUDqbv89y9PWH2huGbCkJsGsi22BZmxuFPRzZ1soJXQHpLVItiNg8rwLgDC8/09MPLwC
+	LNBShBHoROueXnyOWBWNW1q83TfibftdWE5kKpDZalO9gqny5oGiCc3cPVBAiiwXW15htKI
+	z2UooWG1m0fXisCVoErZZcNQxSkreddyKlPRUFVmAVrDgwYPrjhhm/zmPUjhgWr/SPP92VW
+	eMTzT4jfdUjsA+tPnuRsqriZPYopBGrVPmIVWzL+nwljdQ8gKhQufYggo89fion7HZectre
+	cBjixpyDCyJ8+RbF/bhuqVpzroou94yFg3tkC2iCIxHx/lIlTOpZ1R0DWlSrUKu7G8Qry7I
+	G5k2NAMRP0z1zX2c6mosMN+pBvr4odB3rI0cRhizdW3SpYrukjE9/ooIx0lfQE/CNrMglBo
+	VNMZTYinAy7nLEe8EjjK0AaXRsjeYAFrwvPpn1zS8bt7JizZMoiT7/jTMdmZ22j/wpkmbFR
+	F7hA9dF93a9ju578BliBdnAP81eusRt2ItdyS8sz3MWajgb/diNVLcl5YblZl0qAC0MKhwx
+	i/qRKQKPr4USTm2IBQafR6E0ZMSsVXfMGEhWSBkr+OBzC0w1HnE35RT9WPfxzyaP35PSWrX
+	dPg/dX1Z67LSOCLVrOUpmFdLzianv2RCQ8F/sD15a6ida9hof+QZH70hT4onT+G90zTUkW4
+	CC6hE2nLKqrhMXEF3EAQdaXEz
+X-QQ-FEAT: D4aqtcRDiqRprBrzF3WAKrTVkjK5ocIr1dSI9KzQHZY=
+X-QQ-BUSINESS-ORIGIN: 2
+X-QQ-Originating-IP: Ckn6AHmDYfq0V5APyRAFb4Pw+UYUu4pvz9Uro+fdP3k=
+X-QQ-STYLE: 
+X-QQ-mid: t5gz7a-2t1725093360t637318
+From: "=?utf-8?B?V2VudGFvIEd1YW4=?=" <guanwentao@uniontech.com>
+To: "=?utf-8?B?Y2hlbmh1YWNhaQ==?=" <chenhuacai@kernel.org>
+Cc: "=?utf-8?B?V0FORyBYdWVydWk=?=" <kernel@xen0n.name>, "=?utf-8?B?bG9vbmdhcmNo?=" <loongarch@lists.linux.dev>, "=?utf-8?B?bGludXgta2VybmVs?=" <linux-kernel@vger.kernel.org>, "=?utf-8?B?546L5pix5Yqb?=" <wangyuli@uniontech.com>
+Subject: Re: [PATCH] Loongarch64: pci: fix memleak in pci_acpi_scan_root
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240822130722.1261891-3-andriy.shevchenko@linux.intel.com>
+Mime-Version: 1.0
+Content-Type: text/plain;
+	charset="utf-8"
+Content-Transfer-Encoding: base64
+Date: Sat, 31 Aug 2024 16:35:59 +0800
+X-Priority: 3
+Message-ID: <tencent_3A814C6056AE06E21CE86A92@qq.com>
+X-QQ-MIME: TCMime 1.0 by Tencent
+X-Mailer: QQMail 2.x
+X-QQ-Mailer: QQMail 2.x
+References: <20240831052157.13532-1-guanwentao@uniontech.com>
+	<CAAhV-H7GptUdpKScV1AuZZm7w-F5oUXHRmaT9BFCZV4HuQExJg@mail.gmail.com>
+	<tencent_3F6931DF7E765EB870FD970A@qq.com>
+In-Reply-To: <tencent_3F6931DF7E765EB870FD970A@qq.com>
+X-QQ-ReplyHash: 2900214901
+X-BIZMAIL-ID: 6513285501017925691
+X-QQ-SENDSIZE: 520
+Received: from qq.com (unknown [127.0.0.1])
+	by smtp.qq.com (ESMTP) with SMTP
+	id ; Sat, 31 Aug 2024 16:36:01 +0800 (CST)
+Feedback-ID: t:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
 
-Hi Andy,
-
-kernel test robot noticed the following build warnings:
-
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Andy-Shevchenko/driver-core-Ignore-0-in-dev_err_probe/20240826-113856
-base:   driver-core/driver-core-testing
-patch link:    https://lore.kernel.org/r/20240822130722.1261891-3-andriy.shevchenko%40linux.intel.com
-patch subject: [PATCH v2 2/4] platform/x86: int3472: Simplify dev_err_probe() usage
-config: i386-randconfig-141-20240830 (https://download.01.org/0day-ci/archive/20240831/202408310807.sNPe5Mr2-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-| Closes: https://lore.kernel.org/r/202408310807.sNPe5Mr2-lkp@intel.com/
-
-smatch warnings:
-drivers/platform/x86/intel/int3472/discrete.c:292 skl_int3472_handle_gpio_resources() error: uninitialized symbol 'err_msg'.
-drivers/platform/x86/intel/int3472/discrete.c:292 skl_int3472_handle_gpio_resources() warn: passing zero to 'dev_err_probe'
-
-vim +/err_msg +292 drivers/platform/x86/intel/int3472/discrete.c
-
-5de691bffe57fd drivers/platform/x86/intel-int3472/intel_skl_int3472_discrete.c Daniel Scally   2021-06-03  270  		case INT3472_GPIO_TYPE_POWER_ENABLE:
-53c5f7f6e7930f drivers/platform/x86/intel/int3472/discrete.c                   Hans de Goede   2023-10-04  271  			ret = skl_int3472_register_regulator(int3472, gpio);
-5de691bffe57fd drivers/platform/x86/intel-int3472/intel_skl_int3472_discrete.c Daniel Scally   2021-06-03  272  			if (ret)
-5de691bffe57fd drivers/platform/x86/intel-int3472/intel_skl_int3472_discrete.c Daniel Scally   2021-06-03  273  				err_msg = "Failed to map regulator to sensor\n";
-5de691bffe57fd drivers/platform/x86/intel-int3472/intel_skl_int3472_discrete.c Daniel Scally   2021-06-03  274  
-53c5f7f6e7930f drivers/platform/x86/intel/int3472/discrete.c                   Hans de Goede   2023-10-04  275  			break;
-53c5f7f6e7930f drivers/platform/x86/intel/int3472/discrete.c                   Hans de Goede   2023-10-04  276  		default: /* Never reached */
-53c5f7f6e7930f drivers/platform/x86/intel/int3472/discrete.c                   Hans de Goede   2023-10-04  277  			ret = -EINVAL;
-53c5f7f6e7930f drivers/platform/x86/intel/int3472/discrete.c                   Hans de Goede   2023-10-04  278  			break;
-53c5f7f6e7930f drivers/platform/x86/intel/int3472/discrete.c                   Hans de Goede   2023-10-04  279  		}
-5de691bffe57fd drivers/platform/x86/intel-int3472/intel_skl_int3472_discrete.c Daniel Scally   2021-06-03  280  		break;
-5de691bffe57fd drivers/platform/x86/intel-int3472/intel_skl_int3472_discrete.c Daniel Scally   2021-06-03  281  	default:
-5de691bffe57fd drivers/platform/x86/intel-int3472/intel_skl_int3472_discrete.c Daniel Scally   2021-06-03  282  		dev_warn(int3472->dev,
-5de691bffe57fd drivers/platform/x86/intel-int3472/intel_skl_int3472_discrete.c Daniel Scally   2021-06-03  283  			 "GPIO type 0x%02x unknown; the sensor may not work\n",
-5de691bffe57fd drivers/platform/x86/intel-int3472/intel_skl_int3472_discrete.c Daniel Scally   2021-06-03  284  			 type);
-5de691bffe57fd drivers/platform/x86/intel-int3472/intel_skl_int3472_discrete.c Daniel Scally   2021-06-03  285  		ret = 1;
-                                                                                                                                ^^^^^^^^
-
-5de691bffe57fd drivers/platform/x86/intel-int3472/intel_skl_int3472_discrete.c Daniel Scally   2021-06-03  286  		break;
-5de691bffe57fd drivers/platform/x86/intel-int3472/intel_skl_int3472_discrete.c Daniel Scally   2021-06-03  287  	}
-5de691bffe57fd drivers/platform/x86/intel-int3472/intel_skl_int3472_discrete.c Daniel Scally   2021-06-03  288  
-5de691bffe57fd drivers/platform/x86/intel-int3472/intel_skl_int3472_discrete.c Daniel Scally   2021-06-03  289  	int3472->ngpios++;
-5de691bffe57fd drivers/platform/x86/intel-int3472/intel_skl_int3472_discrete.c Daniel Scally   2021-06-03  290  	ACPI_FREE(obj);
-5de691bffe57fd drivers/platform/x86/intel-int3472/intel_skl_int3472_discrete.c Daniel Scally   2021-06-03  291  
-5de691bffe57fd drivers/platform/x86/intel-int3472/intel_skl_int3472_discrete.c Daniel Scally   2021-06-03 @292  	return dev_err_probe(int3472->dev, ret, err_msg);
-
-This is the success path.  "err_msg" is only set for the error path.  "ret" is 1
-so it will use the uninitialized data.  But even if ret were zero, it's illegal
-to pass uninitialized variables to functions which aren't inlined.
-
-1) It's undefined behavior
-2) Linus said so
-3) It causes UBSan warnings at runtime.
-
-regards,
-dan carpenter
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+SGVsbG8gSHVhY2FpOg0KDQpJIGZvdW5kIGEgbWlzdGFrZSB0aGF0IG15IFBBVENIIGNvbW1p
+dCBtc2cgbmVlZCBjaGFuZ2UgdG8gIkxvb25nYXJjaDogcGNpOiBmaXggbWVtbGVhayBpbiBw
+Y2lfYWNwaV9zY2FuX3Jvb3QiDQpOZWVkIHRvIHNlbmQgcGF0Y2ggdjI/
 
 
