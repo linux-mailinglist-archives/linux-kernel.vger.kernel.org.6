@@ -1,230 +1,393 @@
-Return-Path: <linux-kernel+bounces-310034-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310035-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 313C3967395
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 00:34:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D53BB967399
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 00:35:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1F0131C20E20
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 22:34:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 00F2E1C2114E
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 22:35:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D246B180A80;
-	Sat, 31 Aug 2024 22:33:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C6B0183063;
+	Sat, 31 Aug 2024 22:35:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.com header.i=quwenruo.btrfs@gmx.com header.b="Xc23ZNL7"
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.20])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="KeV5xbq7"
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2064.outbound.protection.outlook.com [40.107.220.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FC5529A5;
-	Sat, 31 Aug 2024 22:33:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.20
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725143633; cv=none; b=uofWcElNIGDTMlzW91cXVqa4jSd7r5J3IoYO8nCme81h6nkZfTtIEE827wVAgoLBnFcVyYPbNcytNaaBRCeijiZb3kov0B93z447iVq/1GcJMC5jMv82H1kiSOqmc1/duvQsaLTAfyMMSoJS6pOaCMRJZCyt6zat+aPDVK1WKUA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725143633; c=relaxed/simple;
-	bh=P4WTBxhdMmxXB7nraLoaZ5h/u9jp6GxFQqbnPOnHI2o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=f9+sr1sR/a8eypR+XnQb1FMCLg51e28cx+o+Aq1dxlxLpuFsHjBY79btP1rUjhG7lSwmOvsKLYvqT6yKa12hAlRZhC5qJhGxIlPbdRuRlPyBXqquzgBvFYoNSnmJ/9iy+ke1U2odh9POB1pawbNwDaalIinlGhhFP+Wl2ngNQ0o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.com; spf=pass smtp.mailfrom=gmx.com; dkim=pass (2048-bit key) header.d=gmx.com header.i=quwenruo.btrfs@gmx.com header.b=Xc23ZNL7; arc=none smtp.client-ip=212.227.17.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.com;
-	s=s31663417; t=1725143614; x=1725748414; i=quwenruo.btrfs@gmx.com;
-	bh=Mve+gyKsjgpW/qavfRjnHzJFKd0yzVjXgkM84t7FqHU=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=Xc23ZNL7ysZJT2Tzm6uIUVAPPi/76hYA/1+YDJakty/b8Ndc0kyY23/wEbZT1zlR
-	 UWc4MMQJILhwwVxugReUCnAAhbZKm/aqJEaGkB2MzjIA7FS1VvagOOxT1VDbcHnsb
-	 UtqiiQuGVP1pzWbk5tvmXJzeO9796+sSjctKgtDnGitcqRtAzNIzJk5zkXykuev0P
-	 WbgjDa3LmhM9w4eggsGeXmdu7p4BraLutUKBCl9MBxHZhPyGWV3aTXxxJ+oGTSG2w
-	 ZVX6gmJhE4XWPZaqKzKc6T9nXaB4BIkpGLMOgSoWGtt69rk5/znJr55YkRuMkzFS0
-	 GOSRWAbhMmNUqsxzPw==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [172.16.0.191] ([159.196.52.54]) by mail.gmx.net (mrgmx105
- [212.227.17.174]) with ESMTPSA (Nemesis) id 1MLQxX-1sSAaz0QBn-00Pvdq; Sun, 01
- Sep 2024 00:33:34 +0200
-Message-ID: <aa2e3dba-9729-4b6b-94a5-36075d57ca7f@gmx.com>
-Date: Sun, 1 Sep 2024 08:03:29 +0930
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EF0315E81;
+	Sat, 31 Aug 2024 22:35:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.64
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725143747; cv=fail; b=qMgkIF0bFtsGavkPhwJYlpur1Az4KXWB7w6wpOsOvc4Xm/qL8+kbHPfSZUyFnrFyh5Oa8hYvrWp1zEfGHTZaVML/OFl276yHTUCJb3Hc++qARpM+gD73zOf74PYVlvDSQUeVNo8mgBUq5GBrQfBsEhmGMLt4ucH2ALtmNeIkncM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725143747; c=relaxed/simple;
+	bh=bSlesJpDAlKhEuF/PZFwOIEpJ2xs1rBDhau6gpdnZ5o=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=QZzWMqEIgEs/znTQTciFvUF5c1E+2j8KryLVOXhoUuAXvHamMxRHZVQQX+lVTkrib9dY9zXd7iPiH2eCgO2EMW+dKk69Zcp/9LTGb2AKXWnr0ZYC+xdXa2vNu3MYT51UJ8SJmmPsRdkjXKjVneoPQsDH8mA+c5N0uQf0F5oaJBU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=KeV5xbq7; arc=fail smtp.client-ip=40.107.220.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=pmERUPi++Zi2Ro21pID77kmZ6AMX3V6nw94dfTLbnBqAJ6eHUWnjWl9V++X/YwxUQpQA5F+S01qfnDDRXB4xKy9lDX2Hy8C5Nd1oUuLIaqy4dKDclx1MF9pDn8Wqr3BPuXtsLS4SO+xY3ApBHgozVlVOidgdjRxIWFTTAfeo4gju3eBg0pcPgzO34/Bk7AbNEkyRxRcnZV+fTKRjCA6oM7LFY8rTnj8iXXOVrV7xBgbbBGXUCnl/S/jrWGIVpFyI/XdlgQOShlVZWmllJ9t6D1yW8FPXHmj5kIu0/JPLnnCzHenS1SF6vR0AyuHHNH/4iYHkVVbNWM7vA9nUBwQESA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=YZeCpM3RPA8Z2pYwOzEF3jRkilIsbN0t25iKn3Cw96c=;
+ b=A/+EXBGrLf1cNHtklpqLCCe/9S9dghbP7p+WRWZ0t081uQa+9p52Lcu+q7o2jZUDJlFDsleaqfo06FBGS8dNBwUDYyVxLIGaWbUJ71lYEBcQsz1/ppDmaGEDlzY+m1994gIytyn9HadMeSu1/Zbc6xktO2mGaOoCH/2i8lLD+YGMnfqT2J3eYQ0LUWzIkV+WjQ4Qh9kEaLU/H5qU89ly1GmyJj3qEq8IGj+Z7+tXAdgTScjk3gEEI0/5fgXwXKM9Eg82MZr5IIefRkbHvamXHzQBkL71HyfiRGbZn46jVnxgSB20tNgpPEw1kQCrI/RiKJ4oCbWLPcaM2oz6wmSShg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=YZeCpM3RPA8Z2pYwOzEF3jRkilIsbN0t25iKn3Cw96c=;
+ b=KeV5xbq7mG1eVvtOFOMXdls6df/xpnDjqs4YwJZ5oB2L+GULqzanF91+rTmpvRnn6M4jXYJh0NvTBgNpf7yzBGMO2OD+awci7kiUB/1uPBYQKqF2pluCsNec+tQu/RywaljOEc2DPlbn+B8wxB74DwJD6H2EWLrGv0fQTi2mTTXHsahRmb9olao0JG1gvpW7DFgEOKwjvzvmpgycB4SxoDNN9NnoPCJLt073FVAziqApuPUYSEAwMQS5Zs6uvaMzHFGN5vadxphdDvsEiy+o7306A9/HhA1mIovAq/jijH0ZaDrJnTQP0x1ba4Ps6+X19HwqDqSnQaoSQvBVqnQU/A==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CYXPR12MB9320.namprd12.prod.outlook.com (2603:10b6:930:e6::9)
+ by DM4PR12MB6422.namprd12.prod.outlook.com (2603:10b6:8:b9::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.22; Sat, 31 Aug
+ 2024 22:35:42 +0000
+Received: from CYXPR12MB9320.namprd12.prod.outlook.com
+ ([fe80::9347:9720:e1df:bb5f]) by CYXPR12MB9320.namprd12.prod.outlook.com
+ ([fe80::9347:9720:e1df:bb5f%5]) with mapi id 15.20.7918.020; Sat, 31 Aug 2024
+ 22:35:41 +0000
+From: Zi Yan <ziy@nvidia.com>
+To: Pankaj Raghav <kernel@pankajraghav.com>
+Cc: Luis Chamberlain <mcgrof@kernel.org>,
+ Matthew Wilcox <willy@infradead.org>, Sven Schnelle <svens@linux.ibm.com>,
+ brauner@kernel.org, akpm@linux-foundation.org, chandan.babu@oracle.com,
+ linux-fsdevel@vger.kernel.org, djwong@kernel.org, hare@suse.de,
+ gost.dev@samsung.com, linux-xfs@vger.kernel.org, hch@lst.de,
+ david@fromorbit.com, yang@os.amperecomputing.com,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org, john.g.garry@oracle.com,
+ cl@os.amperecomputing.com, p.raghav@samsung.com, ryan.roberts@arm.com,
+ David Howells <dhowells@redhat.com>, linux-s390@vger.kernel.org
+Subject: Re: [PATCH v13 04/10] mm: split a folio in minimum folio order chunks
+Date: Sat, 31 Aug 2024 18:35:38 -0400
+X-Mailer: MailMate (1.14r6064)
+Message-ID: <BFB9B02E-0D50-44DA-BF7A-4FD396669787@nvidia.com>
+In-Reply-To: <2477a817-b482-43ed-9fd3-a7f8f948495f@pankajraghav.com>
+References: <20240822135018.1931258-1-kernel@pankajraghav.com>
+ <20240822135018.1931258-5-kernel@pankajraghav.com>
+ <yt9dttf3r49e.fsf@linux.ibm.com> <ZtDCErRjh8bC5Y1r@bombadil.infradead.org>
+ <ZtDSJuI2hYniMAzv@casper.infradead.org>
+ <221FAE59-097C-4D31-A500-B09EDB07C285@nvidia.com>
+ <ZtEHPAsIHKxUHBZX@bombadil.infradead.org>
+ <2477a817-b482-43ed-9fd3-a7f8f948495f@pankajraghav.com>
+Content-Type: multipart/signed;
+ boundary="=_MailMate_275FD986-9397-4830-B7B8-10AE3C33B8DC_=";
+ micalg=pgp-sha512; protocol="application/pgp-signature"
+X-ClientProxiedBy: BL1PR13CA0243.namprd13.prod.outlook.com
+ (2603:10b6:208:2ba::8) To CYXPR12MB9320.namprd12.prod.outlook.com
+ (2603:10b6:930:e6::9)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [syzbot] [btrfs?] WARNING in __btrfs_free_extent (3)
-To: syzbot <syzbot+480676efc0c3a76b5214@syzkaller.appspotmail.com>,
- clm@fb.com, dsterba@suse.com, josef@toxicpanda.com,
- linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
- syzkaller-bugs@googlegroups.com
-References: <000000000000e93ea70620fe777a@google.com>
-Content-Language: en-US
-From: Qu Wenruo <quwenruo.btrfs@gmx.com>
-Autocrypt: addr=quwenruo.btrfs@gmx.com; keydata=
- xsBNBFnVga8BCACyhFP3ExcTIuB73jDIBA/vSoYcTyysFQzPvez64TUSCv1SgXEByR7fju3o
- 8RfaWuHCnkkea5luuTZMqfgTXrun2dqNVYDNOV6RIVrc4YuG20yhC1epnV55fJCThqij0MRL
- 1NxPKXIlEdHvN0Kov3CtWA+R1iNN0RCeVun7rmOrrjBK573aWC5sgP7YsBOLK79H3tmUtz6b
- 9Imuj0ZyEsa76Xg9PX9Hn2myKj1hfWGS+5og9Va4hrwQC8ipjXik6NKR5GDV+hOZkktU81G5
- gkQtGB9jOAYRs86QG/b7PtIlbd3+pppT0gaS+wvwMs8cuNG+Pu6KO1oC4jgdseFLu7NpABEB
- AAHNIlF1IFdlbnJ1byA8cXV3ZW5ydW8uYnRyZnNAZ214LmNvbT7CwJQEEwEIAD4CGwMFCwkI
- BwIGFQgJCgsCBBYCAwECHgECF4AWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCY00iVQUJDToH
- pgAKCRDCPZHzoSX+qNKACACkjDLzCvcFuDlgqCiS4ajHAo6twGra3uGgY2klo3S4JespWifr
- BLPPak74oOShqNZ8yWzB1Bkz1u93Ifx3c3H0r2vLWrImoP5eQdymVqMWmDAq+sV1Koyt8gXQ
- XPD2jQCrfR9nUuV1F3Z4Lgo+6I5LjuXBVEayFdz/VYK63+YLEAlSowCF72Lkz06TmaI0XMyj
- jgRNGM2MRgfxbprCcsgUypaDfmhY2nrhIzPUICURfp9t/65+/PLlV4nYs+DtSwPyNjkPX72+
- LdyIdY+BqS8cZbPG5spCyJIlZonADojLDYQq4QnufARU51zyVjzTXMg5gAttDZwTH+8LbNI4
- mm2YzsBNBFnVga8BCACqU+th4Esy/c8BnvliFAjAfpzhI1wH76FD1MJPmAhA3DnX5JDORcga
- CbPEwhLj1xlwTgpeT+QfDmGJ5B5BlrrQFZVE1fChEjiJvyiSAO4yQPkrPVYTI7Xj34FnscPj
- /IrRUUka68MlHxPtFnAHr25VIuOS41lmYKYNwPNLRz9Ik6DmeTG3WJO2BQRNvXA0pXrJH1fN
- GSsRb+pKEKHKtL1803x71zQxCwLh+zLP1iXHVM5j8gX9zqupigQR/Cel2XPS44zWcDW8r7B0
- q1eW4Jrv0x19p4P923voqn+joIAostyNTUjCeSrUdKth9jcdlam9X2DziA/DHDFfS5eq4fEv
- ABEBAAHCwHwEGAEIACYCGwwWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCY00ibgUJDToHvwAK
- CRDCPZHzoSX+qK6vB/9yyZlsS+ijtsvwYDjGA2WhVhN07Xa5SBBvGCAycyGGzSMkOJcOtUUf
- tD+ADyrLbLuVSfRN1ke738UojphwkSFj4t9scG5A+U8GgOZtrlYOsY2+cG3R5vjoXUgXMP37
- INfWh0KbJodf0G48xouesn08cbfUdlphSMXujCA8y5TcNyRuNv2q5Nizl8sKhUZzh4BascoK
- DChBuznBsucCTAGrwPgG4/ul6HnWE8DipMKvkV9ob1xJS2W4WJRPp6QdVrBWJ9cCdtpR6GbL
- iQi22uZXoSPv/0oUrGU+U5X4IvdnvT+8viPzszL5wXswJZfqfy8tmHM85yjObVdIG6AlnrrD
-In-Reply-To: <000000000000e93ea70620fe777a@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CYXPR12MB9320:EE_|DM4PR12MB6422:EE_
+X-MS-Office365-Filtering-Correlation-Id: 52e6fdc9-e8bc-4a2d-c30f-08dcca0d3ec4
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?RmpTN21lNVpJa0xRMVl0Mllmd21uSXovR0FRTEpJcmZyUTM2dFE1SkN3M0lG?=
+ =?utf-8?B?R0NEbmxHNUg0OW9RUVFqYTMvY0xzREkrcXFBV2hVV0t2Z2hZaDQvc2FJeHhN?=
+ =?utf-8?B?UzlEZlgwSGV0T0d3WUcyUGRSWUpkSkZJdng5STNUc1VVR0tWMmFOTTJiNUo3?=
+ =?utf-8?B?OFoxdFJtSzVQb2pUQWM3cDZ5NGhhRHFwNC85Rm8xaGFrS1B6M0t2eFhMY2FM?=
+ =?utf-8?B?Unl0TVI1NExGbjFpZjlwU0RWYlVHK1JKcVpXWENEZ0gxSE82dThGZGNHUDl3?=
+ =?utf-8?B?U1lSK3FqTE5UVTJmaWJTU1dYNUlnRDEybVdJdEJpUmM0bUZTSkJzVmdpdElt?=
+ =?utf-8?B?WWdQYisvRjhZTnMxMFJjbEk0S21BMWlTdVZZWHhGZkl0K0VvVnJ4YjMvaENR?=
+ =?utf-8?B?amtRdEZDTFAxSDZGdlc3OXhqdTFHVnNUOW0vSDhJalhzczFOMnppSzFFTHRh?=
+ =?utf-8?B?bnE5eUVLTnhtQWtESTBqbEZsQkJVV0oyQ0NuSytWNU5weS9LYThBWUZFdGIv?=
+ =?utf-8?B?RWhCWHcvMkNWMHkwa3ZQQUNwb1dJNDUxREFQckt0QVlvU095ZkFicTc1aWlZ?=
+ =?utf-8?B?VWhKUVhIak9EOExEMk14c01WcWdpbTdmNHFtdnN2SzRhVjVkUTFpMkFzdkJB?=
+ =?utf-8?B?WUhZUkxFK1oyUE9ZYU9Cd3IxUFBjRHBkOURCN29nSDBXbXJkN1N3Y1oycmhE?=
+ =?utf-8?B?VzRkV1p2cnZwc0tUTGdnUkJHY2tYUnVZalVRUDQ4ekJUWXYycUR3TzFuNTNV?=
+ =?utf-8?B?bFRCbnVWU1ZLSW9ERkhWUEIxWkpsU2NNZW5oemdtc2ZEQ2gyU3owV096UGZJ?=
+ =?utf-8?B?MFU5dHZHSUNQQmpMaGl3VUplcUVLallseHhwbkh0bndEN21tYnZCN0dQRVhz?=
+ =?utf-8?B?c0VHRVhkV3ZwdGNoSFR6aGlHTGZrQWg1cVBjaW5ib1FZS0RuTStYVjV3MlFO?=
+ =?utf-8?B?MjlhOFRTWkRsWUl1NHVCcXpaNmY5NE1lMG9aQ3FaTGZwVkVwS0Z5RmhMZDhl?=
+ =?utf-8?B?NWxYMDhFdDVBRnRZSDFIdWRaOVl5UFRySkNUMVd3ZDZQSU81MURieTk4dUgx?=
+ =?utf-8?B?Y0hEa1NpYWFDcDdZMnoyK25jWUZ6blNNaitETW14ckpDaGlLT0ZRYUwxRWg2?=
+ =?utf-8?B?cmplTFBXeDMySjdNOVRJUiszejlRY0NrQjJYUXdKWFVmWDFyZWRBYjVpZmYr?=
+ =?utf-8?B?K2VtcjB1bFdMUndQZVBRTERiRkZUeWw3dm1PcVZQT3YzdFR3Q2wyeEhHM3Bi?=
+ =?utf-8?B?UFp3VDZuT3lTOWRHbkZZa2grSXFDc2dtdW5BUXZtYUVVZmRUcEJ5Qk50NlZt?=
+ =?utf-8?B?Q2g3aG1CTkRHdk4xMy9VZlJ1TzRVd2NnZnFSV2NzS3VnUFpzOVRuaUtJQ0Y3?=
+ =?utf-8?B?VFJzUXMzR1FBT3NOVDJhRE5NQ3ZyOTl1cVVKa3ZacGpZTVF2R1VGV0ZwMEdF?=
+ =?utf-8?B?RFdCVEZ4b2MxSGZtQjFiTlZpVU5YLzNFVEJsSnl5aUlDSzRhRUdEZkFndDBO?=
+ =?utf-8?B?WGl0NjQzcklZMmpvSHZDaVVic2xTWm5mY2tmTzErei9QWnhhKzYrZHBneEtV?=
+ =?utf-8?B?V2pwclBIcyszaGlrcHZ5UGdDa1BKNVM1aEUxaUJmY1lXbUxsMWRMSHNhZjFo?=
+ =?utf-8?B?Q2VIdXFYYStSMmh6RkRMeGIrNDBnRHFpZkRIcFFwNE9uMklYTW8yaGZQQ3pk?=
+ =?utf-8?B?L2J6YmdjTkxtUmlqMzdWWXRCT1g5bDM3b2xZS0NSK21ETDZoV0l6cmdBV1Rn?=
+ =?utf-8?B?dUV6TVVmYjhOYldZa213T212WDJGNDNPcUYyUTNadFpUeWNLQWtWRCtMYWx4?=
+ =?utf-8?B?Tk04cktiN0JwRXV1QTB0Zz09?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CYXPR12MB9320.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?V0tueENtaHNNM1RYVnBMVHEvVU1iZFpPS0ZOZUs2STlteUptTFlmNjk2WVZI?=
+ =?utf-8?B?U3hScE5Wd284NktZTHozYTJ5ZWt0UWp6WkhrbWVCam1LaHdYYk9tYzQxb2Rk?=
+ =?utf-8?B?ZncwK0pKNjNaRTAray9oMkk5YjJWMWROeDg0UGJCeHhpZEFwekE5bFRoUStm?=
+ =?utf-8?B?ZHZ5bDJaWnR3ejQwVnRBZ3h5aGZCQTB4dXNUcDJXb0RkQUl1b2FhOXEzU05i?=
+ =?utf-8?B?RkZhQ25JR0lvQm9JZ2J6ZmJYTHNSSSt3ZDZHOElMUDFtWkFVQ1kzK05Dei9G?=
+ =?utf-8?B?Y2hPSUdXN2hDYzI0M2dZOVV0MlVUczVzTnFKbTdXVWFkczVnZW56MFpwQWJT?=
+ =?utf-8?B?dUw5ekR3QXlDcEdNZjhZOWhDM3YrcjJSMVEvLyt0SG9lS3UyRWhQamFHK2Vp?=
+ =?utf-8?B?N0pZOFBrbVlTNXVwY0llSmJwakM0WmJvT201MVVRYlRRdm1LdkFjQjZrbFkr?=
+ =?utf-8?B?QUVSWGtncFdwWGxjMEFYbklCbVlRNys2OTBzNFVXOE1Db01HbXp6VmFUbjg2?=
+ =?utf-8?B?YTI4THQySGFUeVBYNUVzNllqMlNYNDh4UktONjRWc0dBbkVlYmpKL003WG5W?=
+ =?utf-8?B?cFdkc3VCeFV3di9xbWJTcFprRzZCT0lqelNtMmx1UzRMakVWT3FWODlIeW8y?=
+ =?utf-8?B?b2syZGhxZ01FVWNBMzB4c0VsZGlhK1lvZUtZVnlUdW9iQUNVRnozWjJQUUZ5?=
+ =?utf-8?B?TmVrbys4VTdUdzFxbzVVeU15cWM2OHUrSjdWMjdHWVRqZWI4dFk4ZWdlcDRK?=
+ =?utf-8?B?YnFaQzNPWDVyNWwydVBqa01iNEhyazZjZEtmUTNQdzVLRzBBRHZEa1JYWWFT?=
+ =?utf-8?B?NzJlNzFDYnREU0FMMTFueFNSRG5kRVVYc2c4S1hqWnhHRXVCY2lwakNpeHRy?=
+ =?utf-8?B?bFhic3hKWE1CeFJCblJGTFRma1kvcEZIS3ozSDh5N2YyNDFmVHBYNjFSQkhq?=
+ =?utf-8?B?anJldWJwRFdvOXFZOTFVQkwxdFJaQ2wxdE9KaVlJazV0eHVJVWlQbG9ZUWdu?=
+ =?utf-8?B?dkNaOWV3ZUdoSkVEaVlDZEErVnEyUlNpUGltcW9UTEhyWDJRQU1sUWlKSmxW?=
+ =?utf-8?B?NDIzbmNla2pqTDQ5T01XZityc2FOZ1pCTWdrWVN1RGdCOE92SVFmNldRYnht?=
+ =?utf-8?B?VXFRL3gwNFhSVWwrTGwxb2RZM2liZ2tVdE5zcUc1Z2V4MmhtMEZoeXhrMzdD?=
+ =?utf-8?B?djNHTklXTDhyQXE3bkFvd3F5RlB6ckJnZEVSNXlNZ0FuM0RkRW9OU0d4TldK?=
+ =?utf-8?B?T29CVjU0WGVJUDdMNURRdmVaVE40REZ5b21ZcHhJWVo2MExXRFJjZitVQkVD?=
+ =?utf-8?B?cXdycWhEcnlIcWMzNDcvaXJVSDlSamdEaktRUjU5eDN1ZjhZZTZ6VEh4RWgz?=
+ =?utf-8?B?R21LZUhZZGtZMCtSRVIweE9QK2R6VURXU1FkaUM2ZitERzd2OG5nRmhnZExm?=
+ =?utf-8?B?NDZtSVB4VTNIL2ZuOGwzUk1SdStuaVMybjJWSnB2VzB0UG5XQVk0dU9WSDZB?=
+ =?utf-8?B?d05IdG5WT25lRU5vQkhqUm1xMWpDYUpSR0IwMWRpcS9UbEVsV29MbCtoQWtO?=
+ =?utf-8?B?SzIrYUtDUEdvM2lET0JLY2VWSGVDVDE0Y2lsYU04cEQxc3BRbjJxbTV2NHJr?=
+ =?utf-8?B?aFg5SCtUa0pWMFhwT3dqdUwvWE15d09KZ2t5TllWMFRlMUVJd2E4S0dHa2dU?=
+ =?utf-8?B?bWJ3UWFWcXROcFZoM2tLdE5GbXV3RWlpSTIxb0VVWE1OcUN3d2lZdTdOMHFY?=
+ =?utf-8?B?bDhsUTh0dXJBNWN1RmRSb0hRTVZyVTZjNzcwMWczdUhNM0YvV1d6UllzdCtW?=
+ =?utf-8?B?UTJ6WVBjcTlUeTFDbVU3aFptM1pPOXhJVytYMWUwcGVReUh0QSt6OTVkMHpJ?=
+ =?utf-8?B?SUlzSThyNTdZN2pJaTIvNGNVQkNSUFB1VVdEMTZjTVNaeHhhb0ROaXE3Zk9K?=
+ =?utf-8?B?Z21nTVZmb2lhUGk1NFAvaGI0OXlobyttYTFuREVwblYrZzJDcURQRWdTcEJx?=
+ =?utf-8?B?V1lMTUE4SGJhdEtRaHhodXo3NTVvK3BVelZsUnI1OUFEWUFPT0gvb2txeXhv?=
+ =?utf-8?B?NWtCRXhKOVhkRzJBUmhvVWpiU2VNZWhkZHhqZDdWMnhEcmpFeTdlMzBRcUZv?=
+ =?utf-8?Q?PuLc=3D?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 52e6fdc9-e8bc-4a2d-c30f-08dcca0d3ec4
+X-MS-Exchange-CrossTenant-AuthSource: CYXPR12MB9320.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Aug 2024 22:35:41.8135
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: wspzTxGbCLYZaaT0BDnpRFqTM1h04UzvEuccJ9MeXaRhr5M3exRrir0kDdg0Ig/2
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB6422
+
+--=_MailMate_275FD986-9397-4830-B7B8-10AE3C33B8DC_=
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:TMddwUrNFH/YE5OEr/dWAfw85JCTXP1mMGVc1grfCERlU3Fp3Qe
- 8kIth18GMw3B2y2f2hDg0n/t9cdTlObZkYygJe9IHjSSMjGv1lhNmdNRPUsKDj5KuJGlYz5
- XSg7QZ6GH+iQdUjUCPa2C5+QZI6rp3Tk3iv7ZW3ey/Sj56uOiNUXrSaZ7kn9YgJm+NlC5UL
- cOy6P3twL6lmbSoFKzx7w==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:BmYq8SQBt/s=;94CgZW+K2wwAOaoCODSSMQWyYM8
- d43omfLlX/9n+RRbgBqMkxwROWp/8TlQ024k0hmXPa5u6/HTrNpa51iLCAao/6zjJXqh3CXjd
- LkxwLlgqxUScXsegjL8x1s6M0xS6rXxFzPOp90HOpjykcH9CLxF/X+gH0tb0kkWzejliCy82x
- iw+BAlNo6IGWnN1/GUIHg5lEVWD9zr2W6uOgTXsQxzY55kNwR58gU1uH64Z8OjVmSc1100pFJ
- BUFmMoUnzWXk2bzQ9eoo6XkXf3vBWGX76Ze49fjEfFmk1aTnJqdga9YI7cxkllDTc3OPDuh4Y
- ILlQpZV7Gykzy9qmwZIYxCDz7GTMNWEGuIpbuoSemXEn5wck1OmGZHEAjccQ9p3YdyW/DfXmz
- 4cLc2idQK0+9dD3xgrJamYG+sCjmeFzAhofEKT0armOWwxaEXFl1ncxk/kwT/xAEkWofduZhv
- rK2hCMQLOeKrMzy77qTUaHckqnsZoTmYVbhzVbmCl6xB1QcRye3uwOxbpIUFUwnfMPjX+VMow
- JiLPX2UpAG+4jGLdRFxMv7mIKiSNN60XhjT3h71lD4vgDwM2ssrLnN/k/Ro5cIcHAMxxPrZ21
- 59WA6WSOGowmB3Q1rNeFUFkqQKS2xm1uAS5Js29W3pSGGNddHM5A7P0R6SiEXSBL2xr/fQKQ9
- s/7Yi/z+bBei/0IumOANBPq8vIoSjjSQiVkBK1ZgaGjrfOVJ6+yHR/JMd0NZ5uRqqQKYWDnRI
- tfiQGgBUddLqtiyqnaawpxxGbCMrm8OXqaJgGWbAB8wzGlAtiGMibWzg+onWH6qSPhjHj5hL5
- 5fvttCWt4tvOvahNlc8ZRXXA==
+
+On 30 Aug 2024, at 10:59, Pankaj Raghav wrote:
+
+> On 30/08/2024 01:41, Luis Chamberlain wrote:
+>> On Thu, Aug 29, 2024 at 06:12:26PM -0400, Zi Yan wrote:
+>>> The issue is that the change to split_huge_page() makes split_huge_pa=
+ge_to_list_to_order()
+>>> unlocks the wrong subpage. split_huge_page() used to pass the =E2=80=9C=
+page=E2=80=9D pointer
+>>> to split_huge_page_to_list_to_order(), which keeps that =E2=80=9Cpage=
+=E2=80=9D still locked.
+>>> But this patch changes the =E2=80=9Cpage=E2=80=9D passed into split_h=
+uge_page_to_list_to_order()
+>>> always to the head page.
+>>>
+>>> This fixes the crash on my x86 VM, but it can be improved:
+>>>
+>>> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
+>>> index 7c50aeed0522..eff5d2fb5d4e 100644
+>>> --- a/include/linux/huge_mm.h
+>>> +++ b/include/linux/huge_mm.h
+>>> @@ -320,10 +320,7 @@ bool can_split_folio(struct folio *folio, int *p=
+extra_pins);
+>>>  int split_huge_page_to_list_to_order(struct page *page, struct list_=
+head *list,
+>>>                 unsigned int new_order);
+>>>  int split_folio_to_list(struct folio *folio, struct list_head *list)=
+;
+>>> -static inline int split_huge_page(struct page *page)
+>>> -{
+>>> -       return split_folio(page_folio(page));
+>>> -}
+>>> +int split_huge_page(struct page *page);
+>>>  void deferred_split_folio(struct folio *folio);
+>>>
+>>>  void __split_huge_pmd(struct vm_area_struct *vma, pmd_t *pmd,
+>>> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+>>> index c29af9451d92..4d723dab4336 100644
+>>> --- a/mm/huge_memory.c
+>>> +++ b/mm/huge_memory.c
+>>> @@ -3297,6 +3297,25 @@ int split_huge_page_to_list_to_order(struct pa=
+ge *page, struct list_head *list,
+>>>         return ret;
+>>>  }
+>>>
+>>> +int split_huge_page(struct page *page)
+>>> +{
+>>> +       unsigned int min_order =3D 0;
+>>> +       struct folio *folio =3D page_folio(page);
+>>> +
+>>> +       if (folio_test_anon(folio))
+>>> +               goto out;
+>>> +
+>>> +       if (!folio->mapping) {
+>>> +               if (folio_test_pmd_mappable(folio))
+>>> +                       count_vm_event(THP_SPLIT_PAGE_FAILED);
+>>> +               return -EBUSY;
+>>> +       }
+>>> +
+>>> +       min_order =3D mapping_min_folio_order(folio->mapping);
+>>> +out:
+>>> +       return split_huge_page_to_list_to_order(page, NULL, min_order=
+);
+>>> +}
+>>> +
+>>>  int split_folio_to_list(struct folio *folio, struct list_head *list)=
+
+>>>  {
+>>>         unsigned int min_order =3D 0;
+>>
+>>
+>> Confirmed, and also although you suggest it can be improved, I thought=
+
+>> that we could do that by sharing more code and putting things in the
+>> headers, the below also fixes this but tries to share more code, but
+>> I think it is perhaps less easier to understand than your patch.
+>>
+> It feels a bit weird to pass both folio and the page in `split_page_fol=
+io_to_list()`.
+>
+> How about we extract the code that returns the min order so that we don=
+'t repeat.
+>
+> Something like this:
+>
+>
+> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
+> index c275aa9cc105..d27febd5c639 100644
+> --- a/include/linux/huge_mm.h
+> +++ b/include/linux/huge_mm.h
+> @@ -331,10 +331,24 @@ unsigned long thp_get_unmapped_area_vmflags(struc=
+t file *filp, unsigned long add
+>  bool can_split_folio(struct folio *folio, int caller_pins, int *pextra=
+_pins);
+>  int split_huge_page_to_list_to_order(struct page *page, struct list_he=
+ad *list,
+>                 unsigned int new_order);
+> +int min_order_for_split(struct folio *folio);
+>  int split_folio_to_list(struct folio *folio, struct list_head *list);
+
+Since split_folio() is no longer used below, this line can be removed.
+
+>  static inline int split_huge_page(struct page *page)
+>  {
+> -       return split_folio(page_folio(page));
+> +       struct folio *folio =3D page_folio(page);
+> +       int ret =3D min_order_for_split(folio);
+> +
+> +       if (ret)
+> +               return ret;
+
+min_order_for_split() returns -EBUSY, 0, and a positive min_order. This i=
+f
+statement should be "if (ret < 0)"?
+
+> +
+> +       /*
+> +        * split_huge_page() locks the page before splitting and
+> +        * expects the same page that has been split to be locked when
+> +        * returned. split_folio_to_list() cannot be used here because
+> +        * it converts the page to folio and passes the head page to be=
+
+> +        * split.
+> +        */
+> +       return split_huge_page_to_list_to_order(page, NULL, ret);
+>  }
+>  void deferred_split_folio(struct folio *folio);
+>
+> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+> index 169f1a71c95d..b167e036d01b 100644
+> --- a/mm/huge_memory.c
+> +++ b/mm/huge_memory.c
+> @@ -3529,12 +3529,10 @@ int split_huge_page_to_list_to_order(struct pag=
+e *page, struct list_head *list,
+>         return ret;
+>  }
+>
+> -int split_folio_to_list(struct folio *folio, struct list_head *list)
+> +int min_order_for_split(struct folio *folio)
+>  {
+> -       unsigned int min_order =3D 0;
+> -
+>         if (folio_test_anon(folio))
+> -               goto out;
+> +               return 0;
+>
+>         if (!folio->mapping) {
+>                 if (folio_test_pmd_mappable(folio))
+> @@ -3542,10 +3540,17 @@ int split_folio_to_list(struct folio *folio, st=
+ruct list_head *list)
+>                 return -EBUSY;
+>         }
+>
+> -       min_order =3D mapping_min_folio_order(folio->mapping);
+> -out:
+> -       return split_huge_page_to_list_to_order(&folio->page, list,
+> -                                                       min_order);
+> +       return mapping_min_folio_order(folio->mapping);
+> +}
+> +
+> +int split_folio_to_list(struct folio *folio, struct list_head *list)
+> +{
+> +       int ret =3D min_order_for_split(folio);
+> +
+> +       if (ret)
+> +               return ret;
+
+Ditto.
+
+> +
+> +       return split_huge_page_to_list_to_order(&folio->page, list, ret=
+);
+>  }
+>
+>  void __folio_undo_large_rmappable(struct folio *folio)
+>
 
 
+--
+Best Regards,
+Yan, Zi
 
-=E5=9C=A8 2024/9/1 03:29, syzbot =E5=86=99=E9=81=93:
-> Hello,
->
-> syzbot found the following issue on:
->
-> HEAD commit:    86987d84b968 Merge tag 'v6.11-rc5-client-fixes' of git:/=
-/g..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=3D109f14259800=
-00
+--=_MailMate_275FD986-9397-4830-B7B8-10AE3C33B8DC_=
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename=signature.asc
+Content-Type: application/pgp-signature; name=signature.asc
 
-I was checking the console and trying to find out what's before the
-transaction abort.
+-----BEGIN PGP SIGNATURE-----
 
-The error number means it's ENOENT thus it seems to be a missing extent
-item or whatever.
+iQJDBAEBCgAtFiEE6rR4j8RuQ2XmaZol4n+egRQHKFQFAmbTmroPHHppeUBudmlk
+aWEuY29tAAoJEOJ/noEUByhUro8P+gOXJXb4UkTZQTWNHdC25l8gpEgJp7AyYyuY
+pIbPzk1tAimzcdemI9g5FvvDQrUTL5WiTvcg14II3KZ5FkgS2u1+Vu4aNu2z5T1m
+MkoRCkzjrkT1yiVLoBebrq2hdie2bk7Aoc1l2Lt/GnZmwXq2Zjotq6kZ0l+8/g20
+h0N5ASsFf39eC+v5jJf8OyvMmGwCusqQMVuxmYotnL/ha1VFVMFaQIyvwtuFUfk6
+2QAHH9DsT8IPMsCYf9p9hUHAw5O743Zf17h2/Y7jNCX/Fp6rYT4qQVvNfKwxmI2Y
+a7cj/naEflgXDde9i6tCeeBftL0ivIN0K56H+JR/SZq9GVQvmDV5eXkdN+f69LHi
+1RYY6PgjT/ERR2enJ6dX6WYBjZnuSWCKAA5+7REFQUduaNpR/3PkUeA9ZXAtOC7A
+O3tm7LereDww1baoemUlKrlHF/51s2GAFh6S6utOxfzW9BVCezCi+JJjh9di1X3x
+7u1k2leb9eQvpJtOsdSFK33uH0ok6BT8XBT5CR+1gK165HO9M8H6VJ0J4/YWu2eY
+9ORMuSLWIxCg5b0Emh04s2XcpPCWwO2stq7idPavnGFiwEgto3Ryr0ZuI4so1bhc
+z85Tom852Dt06Os4Y1VU8Dokv/9Lfd5hk3dhF/E0mMfTwcSS1Cz8nFn1Ts2woywV
+KkxUNX6Z
+=2aOf
+-----END PGP SIGNATURE-----
 
-But the console output contains not even the WARNING line, is the
-console output trimmed or whatever?
-
-Thanks,
-Qu
-
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=3Da0455552d0b2=
-7491
-> dashboard link: https://syzkaller.appspot.com/bug?extid=3D480676efc0c3a7=
-6b5214
-> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for De=
-bian) 2.40
->
-> Unfortunately, I don't have any reproducer for this issue yet.
->
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/87692913ef45/di=
-sk-86987d84.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/a27da6973d7f/vmlin=
-ux-86987d84.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/2e28d02ce725/=
-bzImage-86987d84.xz
->
-> IMPORTANT: if you fix the issue, please add the following tag to the com=
-mit:
-> Reported-by: syzbot+480676efc0c3a76b5214@syzkaller.appspotmail.com
->
-> ------------[ cut here ]------------
-> BTRFS: Transaction aborted (error -2)
-> WARNING: CPU: 1 PID: 63 at fs/btrfs/extent-tree.c:2972 do_free_extent_ac=
-counting fs/btrfs/extent-tree.c:2972 [inline]
-> WARNING: CPU: 1 PID: 63 at fs/btrfs/extent-tree.c:2972 __btrfs_free_exte=
-nt+0x32d1/0x3a10 fs/btrfs/extent-tree.c:3346
-> Modules linked in:
-> CPU: 1 UID: 0 PID: 63 Comm: kworker/u8:4 Not tainted 6.11.0-rc5-syzkalle=
-r-00057-g86987d84b968 #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS =
-Google 08/06/2024
-> Workqueue: events_unbound btrfs_async_reclaim_metadata_space
-> RIP: 0010:do_free_extent_accounting fs/btrfs/extent-tree.c:2972 [inline]
-> RIP: 0010:__btrfs_free_extent+0x32d1/0x3a10 fs/btrfs/extent-tree.c:3346
-> Code: e8 24 a4 ae fd 90 0f 0b 90 90 e9 3c f3 ff ff e8 35 80 ec fd 90 48 =
-c7 c7 00 79 2b 8c 44 8b 6c 24 18 44 89 ee e8 00 a4 ae fd 90 <0f> 0b 90 90 =
-4c 8b 24 24 e9 4f f3 ff ff e8 0d 80 ec fd 90 48 c7 c7
-> RSP: 0018:ffffc900015e6f80 EFLAGS: 00010246
-> RAX: ec2b4374561a8400 RBX: ffff88805d790001 RCX: ffff888015581e00
-> RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000000
-> RBP: ffffc900015e7150 R08: ffffffff8155b212 R09: fffffbfff1cba0e0
-> R10: dffffc0000000000 R11: fffffbfff1cba0e0 R12: dffffc0000000000
-> R13: 00000000fffffffe R14: 0000000000000000 R15: ffff88805d3be5c8
-> FS:  0000000000000000(0000) GS:ffff8880b9300000(0000) knlGS:000000000000=
-0000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 00007f3dca9f0270 CR3: 000000002dd02000 CR4: 00000000003506f0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> Call Trace:
->   <TASK>
->   run_delayed_tree_ref fs/btrfs/extent-tree.c:1724 [inline]
->   run_one_delayed_ref fs/btrfs/extent-tree.c:1750 [inline]
->   btrfs_run_delayed_refs_for_head fs/btrfs/extent-tree.c:2015 [inline]
->   __btrfs_run_delayed_refs+0x112e/0x4680 fs/btrfs/extent-tree.c:2085
->   btrfs_run_delayed_refs+0xe3/0x2c0 fs/btrfs/extent-tree.c:2197
->   btrfs_commit_transaction+0x4be/0x3740 fs/btrfs/transaction.c:2198
->   flush_space+0x19c/0xd00 fs/btrfs/space-info.c:835
->   btrfs_async_reclaim_metadata_space+0x6dc/0x840 fs/btrfs/space-info.c:1=
-106
->   process_one_work kernel/workqueue.c:3231 [inline]
->   process_scheduled_works+0xa2c/0x1830 kernel/workqueue.c:3312
->   worker_thread+0x86d/0xd10 kernel/workqueue.c:3389
->   kthread+0x2f0/0x390 kernel/kthread.c:389
->   ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
->   ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
->   </TASK>
->
->
-> ---
-> This report is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
->
-> syzbot will keep track of this issue. See:
-> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
->
-> If the report is already addressed, let syzbot know by replying with:
-> #syz fix: exact-commit-title
->
-> If you want to overwrite report's subsystems, reply with:
-> #syz set subsystems: new-subsystem
-> (See the list of subsystem names on the web dashboard)
->
-> If the report is a duplicate of another one, reply with:
-> #syz dup: exact-subject-of-another-report
->
-> If you want to undo deduplication, reply with:
-> #syz undup
->
+--=_MailMate_275FD986-9397-4830-B7B8-10AE3C33B8DC_=--
 
