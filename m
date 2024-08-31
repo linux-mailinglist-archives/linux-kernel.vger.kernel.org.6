@@ -1,144 +1,119 @@
-Return-Path: <linux-kernel+bounces-309763-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309764-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0DFD96702C
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 09:41:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C6D7F96702F
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 09:42:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D84FE1C21957
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 07:41:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0289A1C21939
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 07:42:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 246D516F0F0;
-	Sat, 31 Aug 2024 07:41:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD0C616F0CA;
+	Sat, 31 Aug 2024 07:42:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="WQbeHUXs"
-Received: from smtpbguseast3.qq.com (smtpbguseast3.qq.com [54.243.244.52])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tn0HWQeu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D69971E52D
-	for <linux-kernel@vger.kernel.org>; Sat, 31 Aug 2024 07:41:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.243.244.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1910B1758F;
+	Sat, 31 Aug 2024 07:42:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725090077; cv=none; b=W4aaWMtXF8xj5WAkCPrQbxWbrjl5dYhI0ABUktotmuh7YKJrYcVj3EtbYIGFBqOOcS4EUrHpw+dP69oikg1VuvvYsrgHwmN479qkRwKHtC6ckj7Qgo+7qnT9PYJRpTGsREOIL6eqKteTO1NzBvsc9TbRXKtoq4rgFVuS6BOkWOs=
+	t=1725090147; cv=none; b=jZs77cPeWdQFcMDkPnVVnrqoqowBcVrqAIpJekczOYA9hP3PKQIZY8971Xcr0SR4GmzwgEaMa0oo5P0/HGx/HrzAgtLS+zwAr+nBogWzLbdwChO0tPUeoPZy2qPpHt2vUapLiB6p+FvikoWidIxR7FOvjblsBs0CXiLvHouz6fs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725090077; c=relaxed/simple;
-	bh=u2TLDIVYn/ltoYIw/AoXlW3X+ya46JQbBlhZ5/T2BQM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Y8IIgMiiJCmqGd2l8rBD+1lwEMteQc/YhGJ6mJgzBsqDD9W677+NhtrX27AbpJhTUbS77sQx13GiXfTdKgK6PNeC+opqiA/7LZeubNEUgrQyuJnjrRJm6H0eV6hXfn2UwhoaACQkHg6D3tzssHfht9Sg79Gyy06g3bYNhReS3U8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=WQbeHUXs; arc=none smtp.client-ip=54.243.244.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
-	s=onoh2408; t=1725090038;
-	bh=titFpAFRFG6lSC5TNWm3vO0HJx8nVGVx12kXcfKUHUE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=WQbeHUXsVf1bbvgaEgD11OikP8iUeU/Nv8XLeDWAGa/R9cQvFuLvWjwGdSQdPOyZv
-	 9J0YC0+4tO17R/WrI04Ct1vymGG2gB8jPMr0fIzHxaTeAk1ziksizIf2xfCimA7Q7I
-	 FLmMJLk9kxr4OYv5YUsfN0SqSP8VQw8936GoR5vI=
-X-QQ-mid: bizesmtpsz13t1725090023t31myz
-X-QQ-Originating-IP: sNcB1n3vxgVmHjLmLNF0NJUB/d2IZqPIuDFnWQbqixE=
-Received: from [10.20.53.89] ( [113.57.152.160])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Sat, 31 Aug 2024 15:40:22 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 1
-X-BIZMAIL-ID: 15338145670686491411
-Message-ID: <95E05902A7743E7B+99bf08fd-c057-41a9-9250-d05e1e89d92f@uniontech.com>
-Date: Sat, 31 Aug 2024 15:40:21 +0800
+	s=arc-20240116; t=1725090147; c=relaxed/simple;
+	bh=CSYles6ImJnP6hRgL02AQveRmBHZZvF8jl7dwBIrqss=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=YknfcB4bq1KTa9maYdhuXr6sdyFGWEM8RW/LFkQloK5EeGLz2fAeh1N9CPplLJsufgux043NruIp7llx/6/qTiNWLjPEeVlYwvprJUpF5qfcXqwAm1C0eETu38wMVF1sRCHAZVtQWPhJ0gWDGgY3GjGALUAcz3w6JFnwB4J7E3k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tn0HWQeu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 924FDC4CEC0;
+	Sat, 31 Aug 2024 07:42:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725090146;
+	bh=CSYles6ImJnP6hRgL02AQveRmBHZZvF8jl7dwBIrqss=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=tn0HWQeuZfUPF/N6YWMS4/kIkP/e80G4QduNmZ186OA2/aDlwmBaNQ5jPMh3h5MXV
+	 8PqZdrQdMSAWU0TUxH1kAhPPckZyXnTDRBqHNndHMOoZ+gsrqWswRH4ZA0WvpqohFr
+	 3VH1Ljj2nqhiZgBh+kIr4vmILJ763GWrG5zCPUcEkxdvMeRkpXCZAJgxfdLhpYVmK4
+	 /p9WGi3pIQPYbKN0ghTwVOpxUkkDe/RPZMkSTcxsfpcSblT56zn0Kf09Zy1KJICtpC
+	 zHHCsJJbHaQzUdRxb0cUGF+c9csvH+TnmNwe0PvUptstp9Ukf4g7P6+yEeguh/2r0g
+	 LJB3+stHfRLXw==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1skIka-008RVF-7l;
+	Sat, 31 Aug 2024 08:42:24 +0100
+Date: Sat, 31 Aug 2024 08:42:23 +0100
+Message-ID: <86zfotuoio.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Tangnianyao <tangnianyao@huawei.com>
+Cc: Will Deacon <will@kernel.org>,
+	<oliver.upton@linux.dev>,
+	<linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>,
+	<kvmarm@lists.linux.dev>,
+	"guoyang (C)" <guoyang2@huawei.com>,
+	Ard Biesheuvel <ardb@kernel.org>
+Subject: Re: Question on get random long worse in VM than on host
+In-Reply-To: <214e37e9-7aba-1e61-f63f-85cb10c9a878@huawei.com>
+References: <214e37e9-7aba-1e61-f63f-85cb10c9a878@huawei.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] Loongarch64: pci: fix memleak in pci_acpi_scan_root
-To: Huacai Chen <chenhuacai@kernel.org>,
- Wentao Guan <guanwentao@uniontech.com>
-Cc: henhuacai@kernel.org, kernel@xen0n.name, loongarch@lists.linux.dev,
- linux-kernel@vger.kernel.org
-References: <20240831052157.13532-1-guanwentao@uniontech.com>
- <CAAhV-H7GptUdpKScV1AuZZm7w-F5oUXHRmaT9BFCZV4HuQExJg@mail.gmail.com>
-From: WangYuli <wangyuli@uniontech.com>
-Autocrypt: addr=wangyuli@uniontech.com; keydata=
- xjMEZoEsiBYJKwYBBAHaRw8BAQdAyDPzcbPnchbIhweThfNK1tg1imM+5kgDBJSKP+nX39DN
- IVdhbmdZdWxpIDx3YW5neXVsaUB1bmlvbnRlY2guY29tPsKJBBMWCAAxFiEEa1GMzYeuKPkg
- qDuvxdofMEb0C+4FAmaBLIgCGwMECwkIBwUVCAkKCwUWAgMBAAAKCRDF2h8wRvQL7g0UAQCH
- 3mrGM0HzOaARhBeA/Q3AIVfhS010a0MZmPTRGVfPbwD/SrncJwwPAL4GiLPEC4XssV6FPUAY
- 0rA68eNNI9cJLArOOARmgSyJEgorBgEEAZdVAQUBAQdA88W4CTLDD9fKwW9PB5yurCNdWNS7
- VTL0dvPDofBTjFYDAQgHwngEGBYIACAWIQRrUYzNh64o+SCoO6/F2h8wRvQL7gUCZoEsiQIb
- DAAKCRDF2h8wRvQL7sKvAP4mBvm7Zn1OUjFViwkma8IGRGosXAvMUFyOHVcl1RTgFQEAuJkU
- o9ERi7qS/hbUdUgtitI89efbY0TVetgDsyeQiwU=
-In-Reply-To: <CAAhV-H7GptUdpKScV1AuZZm7w-F5oUXHRmaT9BFCZV4HuQExJg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtpsz:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: tangnianyao@huawei.com, will@kernel.org, oliver.upton@linux.dev, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kvmarm@lists.linux.dev, guoyang2@huawei.com, ardb@kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
+[+ Ard, who actually understands the whole RNG thing]
 
-On 2024/8/31 15:18, Huacai Chen wrote:
-> Hi, Wentao,
+On Sat, 31 Aug 2024 04:34:33 +0100,
+Tangnianyao <tangnianyao@huawei.com> wrote:
+> 
+> Hi, all
+> 
+> On ARM64 server(Kunpeng), performance of some syscall cases (like fork
+> and open) in guest, which need random u64, are 10~20% worse than
+> those on host. Because CONFIG_ARCH_HAS_ELF_RANDOMIZE=y and
+> CONFIG_STACKPROTECTOR=y, guest kernel need random u64 and
+> require them from host kvm using hvc.
 >
-> On Sat, Aug 31, 2024 at 1:24 PM Wentao Guan <guanwentao@uniontech.com> wrote:
->> Add kfree(root_ops) in this case to avoid memleak root_ops,
->> leaks when pci_find_bus() != 0.
->> Also delay assign root_ops when used for making code read clean.
->> Found by code review
->>
->> Signed-off-by: Wangyuli <wangyuli@uniontech.com>
-> This should be Yuli Wang <wangyuli@uniontech.com>
+> If FEAT_RNG is supported and EL3 firmware not support smccc trng, host
+> kvm finally return random u64 using RNDRRS to guest.
+> 
+> Shall we firstly let guest get random u64 from RNDRRS to avoid hvc trap?
+> For example, if host find smccc trng not available, then tell guest smccc
+> trng not available when guest check trng version.
 
-While I maintain a preference for the traditional Chinese naming order, 
-not particularly like putting my Chinese name in the English surname order,
+My recollection is that it was a deliberate decision to decouple what
+the host firmware offers from what the guest sees (we can always
+implement the SMCCC TRNG using any mechanism that the host has to
+deliver entropy).
 
-I acknowledge that flexibility in this matter is often necessary.
+Now, userspace has almost complete freedom to expose what the guest
+sees in terms of PV services. In this particular case, it can write to
+the KVM_REG_ARM_STD_BMAP pseudo register to remove the
+KVM_REG_ARM_STD_BIT_TRNG_V1_0 bit from the bitmap, which will hide the
+functionality.
 
-It is sufficient for everybody to be aware that both 'WangYuli' and 
-'Yuli Wang' refer to me.
+Isn't this sufficient here? Given that you seem to be micro-optimising
+for a particular platform, this seems like the easiest way to reach
+your goal without having to change anything.
 
->> Signed-off-by: Wentao Guan <guanwentao@uniontech.com>
->> ---
->>   arch/loongarch/pci/acpi.c | 9 +++++----
->>   1 file changed, 5 insertions(+), 4 deletions(-)
->>
->> diff --git a/arch/loongarch/pci/acpi.c b/arch/loongarch/pci/acpi.c
->> index 3eb61b8cd5e3..7f3539f5fa23 100644
->> --- a/arch/loongarch/pci/acpi.c
->> +++ b/arch/loongarch/pci/acpi.c
->> @@ -219,17 +219,18 @@ struct pci_bus *pci_acpi_scan_root(struct acpi_pci_root *root)
->>                  return NULL;
->>          }
->>
->> -       root_ops->release_info = acpi_release_root_info;
->> -       root_ops->prepare_resources = acpi_prepare_root_resources;
->> -       root_ops->pci_ops = (struct pci_ops *)&info->cfg->ops->pci_ops;
->> -
->>          bus = pci_find_bus(domain, busnum);
->>          if (bus) {
->>                  memcpy(bus->sysdata, info->cfg, sizeof(struct pci_config_window));
->>                  kfree(info);
->> +               kfree(root_ops);
-> Add kfree() is fine, but move root_ops assignment is unnecessary.
->
-> Huacai
->
->>          } else {
->>                  struct pci_bus *child;
->>
->> +               root_ops->release_info = acpi_release_root_info;
->> +               root_ops->prepare_resources = acpi_prepare_root_resources;
->> +               root_ops->pci_ops = (struct pci_ops *)&info->cfg->ops->pci_ops;
->> +
->>                  bus = acpi_pci_root_create(root, root_ops,
->>                                             &info->common, info->cfg);
->>                  if (!bus) {
->> --
->> 2.20.1
->>
->>
+Thanks,
+
+	M.
+
 -- 
-WangYuli
-
+Without deviation from the norm, progress is not possible.
 
