@@ -1,276 +1,503 @@
-Return-Path: <linux-kernel+bounces-309623-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309624-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46EFA966D83
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 02:27:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38EFB966D86
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 02:31:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A3D25B20C5F
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 00:27:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5B2671C21F57
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 00:31:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C123A524F;
-	Sat, 31 Aug 2024 00:27:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 324CB4C81;
+	Sat, 31 Aug 2024 00:31:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Y6wMSfol"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="nHTmNktN"
+Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C6BE3D76
-	for <linux-kernel@vger.kernel.org>; Sat, 31 Aug 2024 00:27:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 116C51D12FE
+	for <linux-kernel@vger.kernel.org>; Sat, 31 Aug 2024 00:31:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725064048; cv=none; b=E4xo3LbWxk3u1dCILRL64X6Hdp0zOnYkjj9hVifW5hIfV5Pr7eA7W4Te/y4h/oUZ6FzI24TY9ZRF26Mz6eGACJGwBw2uXtGtzqceyS5P2t0+9xR0rqZuZBi0Uw/WohCBH3rPjeyU3pdxB+xO1SpWVaj4UDZ0NimKSPXcw1FoMBw=
+	t=1725064267; cv=none; b=jbNP6veCayUMIa/pXh6Y1Hzg82shdGwvBGTvLyI8evAWRpB/oRJRt111A6Dbh42IhhR5ZtQXF/X+9UIqUO70/POcLd/aOBkOPgOEYMLPPN3x1J6DgxGiA1OtBHino1q21Ss/VH8wT7AbhBsNcvrJjJAN0ASFKcFRo5n3n1LtfAA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725064048; c=relaxed/simple;
-	bh=qjy0F2D7JFwR+9Y8cigngslE+eD+AhDYpK38RXmGbUI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jJ1Z5b1Zc/a9AXCSv1Eyy/PdyHuuhxfx0IEvStBNqhsjoLJJkfV/8/lCSMmrigZgRc4zRhcSoi7kENNEKOHooJDHSlb3ZXlTGKQTZN+CmSX025BNWHnQHOOb7rXH+NY0yQJsNkV0c/WWC4HWqcEWcN/mkmO9YSFxBEBEZysnQkA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Y6wMSfol; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1725064045;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wHBWnT4k6dco0n9/t0HZDWA/5sCtUSV1D+k6nHMThu0=;
-	b=Y6wMSfol4bNhDn/uIsGnEiTuOcdc3zFhIQ/G4iCkDITTroO9Wv0yAgE5LzydZNQ1RUdwwh
-	9OFTS/ada+9V21rhLTDQCJ5l7zhPKmDsYAT/aegGOm9nCHDNUFRfUTNFfqSSL0CoTQjX3U
-	lhrg4E5Rd6Jfbet9qHfgeUiOzu0nlew=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-103-MysWu4bdO-6OwJbXq1_Q0Q-1; Fri,
- 30 Aug 2024 20:27:21 -0400
-X-MC-Unique: MysWu4bdO-6OwJbXq1_Q0Q-1
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 064CD19560A3;
-	Sat, 31 Aug 2024 00:27:19 +0000 (UTC)
-Received: from [10.2.16.45] (unknown [10.2.16.45])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id D45B71955DD8;
-	Sat, 31 Aug 2024 00:27:14 +0000 (UTC)
-Message-ID: <db28db41-41aa-4f3e-bb32-4bb58d746dbc@redhat.com>
-Date: Fri, 30 Aug 2024 20:27:13 -0400
+	s=arc-20240116; t=1725064267; c=relaxed/simple;
+	bh=tVD+UP8nUCTDkUBEXxAUd5XJk3IMXilTePMa8pU/Gzc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=SiZIC+xUHX5nX+Xw2o5f3gRlKUyhE3g4isYwoDF0gJy97FHtkPA92Bjzcc1s3dHBsLES1/9iGppY/HY65F3C/7PfxyMi8E03gHL1y2iYC/TMf6qLjR2bC4Bfw9kn26d9H8PlIXAQ5Pq3Dtlq7NA4M7FPJHV/C0b7c7obuglFM+Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=nHTmNktN; arc=none smtp.client-ip=209.85.216.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-2d3da054f7cso1813353a91.1
+        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 17:31:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1725064265; x=1725669065; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VT8oouZGQwzYC1vFmX2Bue/oThHs7bBkAgqX8/v0ST0=;
+        b=nHTmNktNqw9MqbZvzuY2YhHDZ/hGG7jUw9o0Vg2EJz5KC6gs4mZKY3rC1T3Q9ct4vq
+         kqA1rnNaJNJGYJ/3G71nJE6kcUi/Qam1x87b4Akk7CDjJbVyAL2I7k4MhwLOr9EXLHO/
+         OC48Ph1kQqtbpqkpA6j5oCivP8IHp8SumU/uRngFx36FPlmnFzLF67FrcNvt4gTEe+Dr
+         RG1bcXPffm3hkCDf7USM3Aq6j6v+1P6ypdLZbxrrlQVbI42gVR9gfByLnmrUfr9d6zIH
+         1QU8WCJXVJNS2ccNm5iPfq5ma/DmcABU2JL+Uq3tr4LnmJLwmSDwIsZy/ZoL9EJg57Ul
+         SYgg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725064265; x=1725669065;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=VT8oouZGQwzYC1vFmX2Bue/oThHs7bBkAgqX8/v0ST0=;
+        b=l2mkrl2vRTYevpb3yMxW6p/WvytNLTyleAj/WEDjPP248sy+4jfKXrAyL5drNOAKjm
+         zLfSk73QkfdTDpQehZ2lUHvwLpl4ppbEywExHaGEDJ9gAF+EtXqUFCpuhxncEVQyl8+/
+         FmCfvalc2Aoe6prMlYpw8AcBY6GNbd4Iis+j7MQpD/Hx/bt6TWAPpcZssCbeT0MR1Acp
+         f8kuifObru/OSbTKJm4QPMspT2abWFMW/t20uS259MND65z+KLdrd+HWzaYfHc979t0I
+         ODX8dNw8XyE+egtCqto47hn8BKRwmAQFqpaRr9RlcVXkzNKrBSGGbDOxQLWnSx9M82Rs
+         Bs9A==
+X-Forwarded-Encrypted: i=1; AJvYcCWsDkDj/Mh+vlSj4xmfBJc9Tx8of4HvZCMeexJ7OQbDIbqP5Hn/lqbYnyQMhZuTF4KArmvsUhFpAT9a5IA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywd68T3fvtrXbrXDiVtUNpxlm94Bd/jUBqxWMoY3u2OsuYw0bUO
+	lecnpIyjBKZixbid20ptGYUPcjh/Lzh7dzPO+otVY4K9SbxgODoFWCPmJFiI6vadpX6aKoX5IJO
+	26efixhRw3wirJA0LHgHJ4fLarPMdaZXINhrv
+X-Google-Smtp-Source: AGHT+IHllA+hCLAfJhQi6WPIRVjTGZvJCzHWXnVAVx/B1xQX5e6f3kLuFFwG6AhJRWP6N1ZJ0kb0K5sZQa+Ghvga4Xs=
+X-Received: by 2002:a17:90b:1917:b0:2d8:7a3b:730d with SMTP id
+ 98e67ed59e1d1-2d890546c3cmr1094202a91.21.1725064264712; Fri, 30 Aug 2024
+ 17:31:04 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] sched/isolation: Exclude dynamically isolated CPUs
- from housekeeping masks
-To: Zefan Li <lizefan.x@bytedance.com>, Tejun Heo <tj@kernel.org>,
- Johannes Weiner <hannes@cmpxchg.org>, =?UTF-8?Q?Michal_Koutn=C3=BD?=
- <mkoutny@suse.com>, Ingo Molnar <mingo@redhat.com>,
- Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>,
- Vincent Guittot <vincent.guittot@linaro.org>,
- Dietmar Eggemann <dietmar.eggemann@arm.com>,
- Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
- Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
- Frederic Weisbecker <frederic@kernel.org>
-Cc: linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
- Costa Shulyupin <cshulyup@redhat.com>
-References: <20240821142312.236970-1-longman@redhat.com>
- <20240821142312.236970-2-longman@redhat.com>
-Content-Language: en-US
-From: Waiman Long <longman@redhat.com>
-In-Reply-To: <20240821142312.236970-2-longman@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+References: <20240830032840.3783206-1-hsiangkao@linux.alibaba.com>
+In-Reply-To: <20240830032840.3783206-1-hsiangkao@linux.alibaba.com>
+From: Sandeep Dhavale <dhavale@google.com>
+Date: Fri, 30 Aug 2024 17:30:53 -0700
+Message-ID: <CAB=BE-R3wU7hBBaeAXdkDp2kvODxSFWNQtcmc5tCppN5qwdQgw@mail.gmail.com>
+Subject: Re: [PATCH v2 1/4] erofs: add file-backed mount support
+To: Gao Xiang <hsiangkao@linux.alibaba.com>
+Cc: linux-erofs@lists.ozlabs.org, LKML <linux-kernel@vger.kernel.org>, 
+	kernel-team@android.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-
-On 8/21/24 10:23, Waiman Long wrote:
-> The housekeeping CPU masks, set up by the "isolcpus" and "nohz_full"
-> boot command line options, are used at boot time to exclude selected CPUs
-> from running some kernel background processes to minimize disturbance
-> to latency sensitive userspace applications. Some of housekeeping CPU
-> masks are also checked at run time to avoid using those isolated CPUs.
+On Thu, Aug 29, 2024 at 8:29=E2=80=AFPM Gao Xiang <hsiangkao@linux.alibaba.=
+com> wrote:
 >
-> The cpuset subsystem is now able to dynamically create a set of isolated
-> CPUs to be used in isolated cpuset partitions. The long term goal is
-> to make the degree of isolation as close as possible to what can be
-> done statically using those boot command line options.
+> It actually has been around for years: For containers and other sandbox
+> use cases, there will be thousands (and even more) of authenticated
+> (sub)images running on the same host, unlike OS images.
 >
-> This patch is a step in that direction by making the housekeeping CPU
-> mask APIs exclude the dynamically isolated CPUs when they are called
-> at run time. The housekeeping CPU masks will fall back to the bootup
-> default when all the dynamically isolated CPUs are released.
+> Of course, all scenarios can use the same EROFS on-disk format, but
+> bdev-backed mounts just work well for OS images since golden data is
+> dumped into real block devices.  However, it's somewhat hard for
+> container runtimes to manage and isolate so many unnecessary virtual
+> block devices safely and efficiently [1]: they just look like a burden
+> to orchestrators and file-backed mounts are preferred indeed.  There
+> were already enough attempts such as Incremental FS, the original
+> ComposeFS and PuzzleFS acting in the same way for immutable fses.  As
+> for current EROFS users, ComposeFS, containerd and Android APEXs will
+> be directly benefited from it.
 >
-> A new housekeeping_exlude_isolcpus() function is added which is to be
-> called by the cpuset subsystem to provide a list of isolated CPUs to
-> be excluded.
->
-> Signed-off-by: Waiman Long <longman@redhat.com>
-> ---
->   include/linux/sched/isolation.h |   8 +++
->   kernel/sched/isolation.c        | 112 +++++++++++++++++++++++++++++++-
->   2 files changed, 119 insertions(+), 1 deletion(-)
->
-> diff --git a/include/linux/sched/isolation.h b/include/linux/sched/isolation.h
-> index 2b461129d1fa..d64fa4e60138 100644
-> --- a/include/linux/sched/isolation.h
-> +++ b/include/linux/sched/isolation.h
-> @@ -27,6 +27,8 @@ extern bool housekeeping_enabled(enum hk_type type);
->   extern void housekeeping_affine(struct task_struct *t, enum hk_type type);
->   extern bool housekeeping_test_cpu(int cpu, enum hk_type type);
->   extern void __init housekeeping_init(void);
-> +extern int housekeeping_exlude_isolcpus(const struct cpumask *isolcpus,
-> +					unsigned long flags);
->   
->   #else
->   
-> @@ -54,6 +56,12 @@ static inline bool housekeeping_test_cpu(int cpu, enum hk_type type)
->   }
->   
->   static inline void housekeeping_init(void) { }
-> +
-> +static inline int housekeeping_exlude_isolcpus(struct cpumask *isolcpus,
-> +					       unsigned long flags)
-> +{
-> +	return -EOPNOTSUPP;
-> +}
->   #endif /* CONFIG_CPU_ISOLATION */
->   
->   static inline bool housekeeping_cpu(int cpu, enum hk_type type)
-> diff --git a/kernel/sched/isolation.c b/kernel/sched/isolation.c
-> index 5891e715f00d..3018ba81eb65 100644
-> --- a/kernel/sched/isolation.c
-> +++ b/kernel/sched/isolation.c
-> @@ -28,7 +28,16 @@ struct housekeeping {
->   	unsigned long flags;
->   };
->   
-> -static struct housekeeping housekeeping;
-> +static struct housekeeping housekeeping __read_mostly;
-> +
-> +/*
-> + * Boot time housekeeping cpumask and flags
-> + *
-> + * If more than one of nohz_full or isolcpus are specified, the cpumask must
-> + * be the same or the setup will fail.
-> + */
-> +static cpumask_var_t boot_hk_cpumask;
-> +static unsigned long  boot_hk_flags;
->   
->   bool housekeeping_enabled(enum hk_type type)
->   {
-> @@ -253,3 +262,104 @@ static int __init housekeeping_isolcpus_setup(char *str)
->   	return housekeeping_setup(str, flags);
->   }
->   __setup("isolcpus=", housekeeping_isolcpus_setup);
-> +
-> +/*
-> + * Save bootup housekeeping cpumask and flags
-> + */
-> +static int housekeeping_save(void)
-> +{
-> +	enum hk_type type;
-> +
-> +	boot_hk_flags = housekeeping.flags;
-> +	for_each_set_bit(type, &housekeeping.flags, HK_TYPE_MAX) {
-> +		if (!alloc_cpumask_var(&boot_hk_cpumask, GFP_KERNEL))
-> +			return -ENOMEM;
-> +		cpumask_copy(boot_hk_cpumask, housekeeping.cpumasks[type]);
-> +		break;
-> +	}
-> +	return 0;
-> +}
-> +
-> +/*
-> + * Exclude the given dynamically isolated CPUs from the housekeeping CPUs
-> + * External synchronization is required to make sure that concurrent call to
-> + * this function will not happen.
-> + *
-> + * [TODO] The housekeeping cpumasks and flags at bootup time are currently
-> + * preserved as cpuset dynamic CPU isolation isn't as good as boot time CPU
-> + * isolation yet. Once dynamic CPU isolation is close to boot time isolation,
-> + * we will not need to save the bootup values and will allow them to be
-> + * overridden.
-> + *
-> + * Return: 0 if successful, an error code if not
-> + */
-> +int housekeeping_exlude_isolcpus(const struct cpumask *isolcpus, unsigned long flags)
-> +{
-> +	static unsigned long alloc_flags;
-> +	static cpumask_var_t tmp_mask;
-> +	static bool excluded;	/* @true if some CPUs have been excluded */
-> +	static bool inited;	/* @true if called before */
-> +
-> +	bool isolate_none = !isolcpus || cpumask_empty(isolcpus);
-> +	enum hk_type type;
-> +
-> +	lockdep_assert_cpus_held();
-> +
-> +	if (isolate_none && (!inited || !excluded))
-> +		return 0;
-> +
-> +	if (unlikely(!inited)) {
-> +		if (!alloc_cpumask_var(&tmp_mask, GFP_KERNEL))
-> +			return -ENOMEM;
-> +		if (housekeeping.flags) {
-> +			int err = housekeeping_save();
-> +
-> +			if (err)
-> +				return err;
-> +		}
-> +		alloc_flags = housekeeping.flags;
-> +		inited = true;
-> +	}
-> +
-> +	if (isolate_none) {
-> +		excluded = false;
-> +
-> +		/*
-> +		 * Reset housekeeping to bootup default
-> +		 */
-> +		for_each_set_bit(type, &boot_hk_flags, HK_TYPE_MAX)
-> +			cpumask_copy(housekeeping.cpumasks[type], boot_hk_cpumask);
-> +
-> +		WRITE_ONCE(housekeeping.flags, boot_hk_flags);
-> +		if (!boot_hk_flags && static_key_enabled(&housekeeping_overridden))
-> +			static_key_disable_cpuslocked(&housekeeping_overridden.key);
-> +		return 0;
-> +	}
-> +
-> +	/*
-> +	 * Setting up the new housekeeping cpumasks
-> +	 */
-> +	for_each_set_bit(type, &flags, HK_TYPE_MAX) {
-> +		const struct cpumask *src_mask;
-> +
-> +		if (!(BIT(type) & alloc_flags)) {
-> +			if (!alloc_cpumask_var(&housekeeping.cpumasks[type], GFP_KERNEL))
-> +				return -ENOMEM;
-> +			alloc_flags |= BIT(type);
-> +		}
-> +		src_mask = (BIT(type) & boot_hk_flags)
-> +			 ? boot_hk_cpumask : cpu_possible_mask;
-> +		/*
-> +		 * Make sure there is at least one online housekeeping CPU
-> +		 */
-> +		cpumask_andnot(tmp_mask, src_mask, isolcpus);
-> +		if (!cpumask_intersects(tmp_mask, cpu_online_mask))
-> +			return -EINVAL;	/* Invalid isolated CPUs */
-> +		cpumask_copy(housekeeping.cpumasks[type], tmp_mask);
-> +	}
-> +	WRITE_ONCE(housekeeping.flags, boot_hk_flags | flags);
-> +	excluded = true;
-> +	if (!static_key_enabled(&housekeeping_overridden))
-> +		static_key_enable_cpuslocked(&housekeeping_overridden.key);
-> +	return 0;
-> +}
-
-Any comment or suggestion about this patch?
+Hi Gao,
+Thank you for the series! This is an interesting idea and will
+definitely help the Android ecosystem for APEXes if we can remove the
+loopback device. I will take a deeper look and provide comments soon.
 
 Thanks,
-Longman
+Sandeep.
 
+> On the other hand, previous experimental feature "erofs over fscache"
+> was once also intended to provide a similar solution (inspired by
+> Incremental FS discussion [2]), but the following facts show file-backed
+> mounts will be a better approach:
+>  - Fscache infrastructure has recently been moved into new Netfslib
+>    which is an unexpected dependency to EROFS really, although it
+>    originally claims "it could be used for caching other things such as
+>    ISO9660 filesystems too." [3]
+>
+>  - It takes an unexpectedly long time to upstream Fscache/Cachefiles
+>    enhancements.  For example, the failover feature took more than
+>    one year, and the deamonless feature is still far behind now;
+>
+>  - Ongoing HSM "fanotify pre-content hooks" [4] together with this will
+>    perfectly supersede "erofs over fscache" in a simpler way since
+>    developers (mainly containerd folks) could leverage their existing
+>    caching mechanism entirely in userspace instead of strictly following
+>    the predefined in-kernel caching tree hierarchy.
+>
+> After "fanotify pre-content hooks" lands upstream to provide the same
+> functionality, "erofs over fscache" will be removed then (as an EROFS
+> internal improvement and EROFS will not have to bother with on-demand
+> fetching and/or caching improvements anymore.)
+>
+> [1] https://github.com/containers/storage/pull/2039
+> [2] https://lore.kernel.org/r/CAOQ4uxjbVxnubaPjVaGYiSwoGDTdpWbB=3Dw_AeM6Y=
+M=3DzVixsUfQ@mail.gmail.com
+> [3] https://docs.kernel.org/filesystems/caching/fscache.html
+> [4] https://lore.kernel.org/r/cover.1723670362.git.josef@toxicpanda.com
+>
+> Closes: https://github.com/containers/composefs/issues/144
+> Signed-off-by: Gao Xiang <hsiangkao@linux.alibaba.com>
+> ---
+> v2:
+>  - should use kill_anon_super();
+>  - add O_LARGEFILE to support large files.
+>
+>  fs/erofs/Kconfig    | 17 ++++++++++
+>  fs/erofs/data.c     | 35 ++++++++++++---------
+>  fs/erofs/inode.c    |  5 ++-
+>  fs/erofs/internal.h | 11 +++++--
+>  fs/erofs/super.c    | 76 +++++++++++++++++++++++++++++----------------
+>  5 files changed, 100 insertions(+), 44 deletions(-)
+>
+> diff --git a/fs/erofs/Kconfig b/fs/erofs/Kconfig
+> index 7dcdce660cac..1428d0530e1c 100644
+> --- a/fs/erofs/Kconfig
+> +++ b/fs/erofs/Kconfig
+> @@ -74,6 +74,23 @@ config EROFS_FS_SECURITY
+>
+>           If you are not using a security module, say N.
+>
+> +config EROFS_FS_BACKED_BY_FILE
+> +       bool "File-backed EROFS filesystem support"
+> +       depends on EROFS_FS
+> +       default y
+> +       help
+> +         This allows EROFS to use filesystem image files directly, witho=
+ut
+> +         the intercession of loopback block devices or likewise. It is
+> +         particularly useful for container images with numerous blobs an=
+d
+> +         other sandboxes, where loop devices behave intricately.  It can=
+ also
+> +         be used to simplify error-prone lifetime management of unnecess=
+ary
+> +         virtual block devices.
+> +
+> +         Note that this feature, along with ongoing fanotify pre-content
+> +         hooks, will eventually replace "EROFS over fscache."
+> +
+> +         If you don't want to enable this feature, say N.
+> +
+>  config EROFS_FS_ZIP
+>         bool "EROFS Data Compression Support"
+>         depends on EROFS_FS
+> diff --git a/fs/erofs/data.c b/fs/erofs/data.c
+> index 1b7eba38ba1e..0fb31c588ae0 100644
+> --- a/fs/erofs/data.c
+> +++ b/fs/erofs/data.c
+> @@ -59,8 +59,12 @@ void *erofs_bread(struct erofs_buf *buf, erofs_off_t o=
+ffset,
+>
+>  void erofs_init_metabuf(struct erofs_buf *buf, struct super_block *sb)
+>  {
+> -       if (erofs_is_fscache_mode(sb))
+> -               buf->mapping =3D EROFS_SB(sb)->s_fscache->inode->i_mappin=
+g;
+> +       struct erofs_sb_info *sbi =3D EROFS_SB(sb);
+> +
+> +       if (erofs_is_fileio_mode(sbi))
+> +               buf->mapping =3D file_inode(sbi->fdev)->i_mapping;
+> +       else if (erofs_is_fscache_mode(sb))
+> +               buf->mapping =3D sbi->s_fscache->inode->i_mapping;
+>         else
+>                 buf->mapping =3D sb->s_bdev->bd_mapping;
+>  }
+> @@ -189,10 +193,22 @@ int erofs_map_blocks(struct inode *inode, struct er=
+ofs_map_blocks *map)
+>         return err;
+>  }
+>
+> +static void erofs_fill_from_devinfo(struct erofs_map_dev *map,
+> +                                   struct erofs_device_info *dif)
+> +{
+> +       map->m_bdev =3D NULL;
+> +       if (dif->file && S_ISBLK(file_inode(dif->file)->i_mode))
+> +               map->m_bdev =3D file_bdev(dif->file);
+> +       map->m_daxdev =3D dif->dax_dev;
+> +       map->m_dax_part_off =3D dif->dax_part_off;
+> +       map->m_fscache =3D dif->fscache;
+> +}
+> +
+>  int erofs_map_dev(struct super_block *sb, struct erofs_map_dev *map)
+>  {
+>         struct erofs_dev_context *devs =3D EROFS_SB(sb)->devs;
+>         struct erofs_device_info *dif;
+> +       erofs_off_t startoff, length;
+>         int id;
+>
+>         map->m_bdev =3D sb->s_bdev;
+> @@ -212,29 +228,20 @@ int erofs_map_dev(struct super_block *sb, struct er=
+ofs_map_dev *map)
+>                         up_read(&devs->rwsem);
+>                         return 0;
+>                 }
+> -               map->m_bdev =3D dif->bdev_file ? file_bdev(dif->bdev_file=
+) : NULL;
+> -               map->m_daxdev =3D dif->dax_dev;
+> -               map->m_dax_part_off =3D dif->dax_part_off;
+> -               map->m_fscache =3D dif->fscache;
+> +               erofs_fill_from_devinfo(map, dif);
+>                 up_read(&devs->rwsem);
+>         } else if (devs->extra_devices && !devs->flatdev) {
+>                 down_read(&devs->rwsem);
+>                 idr_for_each_entry(&devs->tree, dif, id) {
+> -                       erofs_off_t startoff, length;
+> -
+>                         if (!dif->mapped_blkaddr)
+>                                 continue;
+> +
+>                         startoff =3D erofs_pos(sb, dif->mapped_blkaddr);
+>                         length =3D erofs_pos(sb, dif->blocks);
+> -
+>                         if (map->m_pa >=3D startoff &&
+>                             map->m_pa < startoff + length) {
+>                                 map->m_pa -=3D startoff;
+> -                               map->m_bdev =3D dif->bdev_file ?
+> -                                             file_bdev(dif->bdev_file) :=
+ NULL;
+> -                               map->m_daxdev =3D dif->dax_dev;
+> -                               map->m_dax_part_off =3D dif->dax_part_off=
+;
+> -                               map->m_fscache =3D dif->fscache;
+> +                               erofs_fill_from_devinfo(map, dif);
+>                                 break;
+>                         }
+>                 }
+> diff --git a/fs/erofs/inode.c b/fs/erofs/inode.c
+> index 419432be3223..d05b9e59f122 100644
+> --- a/fs/erofs/inode.c
+> +++ b/fs/erofs/inode.c
+> @@ -258,7 +258,10 @@ static int erofs_fill_inode(struct inode *inode)
+>         }
+>
+>         mapping_set_large_folios(inode->i_mapping);
+> -       if (erofs_inode_is_data_compressed(vi->datalayout)) {
+> +       if (erofs_is_fileio_mode(EROFS_SB(inode->i_sb))) {
+> +               /* XXX: data I/Os will be implemented in the following pa=
+tches */
+> +               err =3D -EOPNOTSUPP;
+> +       } else if (erofs_inode_is_data_compressed(vi->datalayout)) {
+>  #ifdef CONFIG_EROFS_FS_ZIP
+>                 DO_ONCE_LITE_IF(inode->i_blkbits !=3D PAGE_SHIFT,
+>                           erofs_info, inode->i_sb,
+> diff --git a/fs/erofs/internal.h b/fs/erofs/internal.h
+> index 45dc15ebd870..9bf4fb1cfa09 100644
+> --- a/fs/erofs/internal.h
+> +++ b/fs/erofs/internal.h
+> @@ -49,7 +49,7 @@ typedef u32 erofs_blk_t;
+>  struct erofs_device_info {
+>         char *path;
+>         struct erofs_fscache *fscache;
+> -       struct file *bdev_file;
+> +       struct file *file;
+>         struct dax_device *dax_dev;
+>         u64 dax_part_off;
+>
+> @@ -130,6 +130,7 @@ struct erofs_sb_info {
+>
+>         struct erofs_sb_lz4_info lz4;
+>  #endif /* CONFIG_EROFS_FS_ZIP */
+> +       struct file *fdev;
+>         struct inode *packed_inode;
+>         struct erofs_dev_context *devs;
+>         struct dax_device *dax_dev;
+> @@ -190,9 +191,15 @@ struct erofs_sb_info {
+>  #define set_opt(opt, option)   ((opt)->mount_opt |=3D EROFS_MOUNT_##opti=
+on)
+>  #define test_opt(opt, option)  ((opt)->mount_opt & EROFS_MOUNT_##option)
+>
+> +static inline bool erofs_is_fileio_mode(struct erofs_sb_info *sbi)
+> +{
+> +       return IS_ENABLED(CONFIG_EROFS_FS_BACKED_BY_FILE) && sbi->fdev;
+> +}
+> +
+>  static inline bool erofs_is_fscache_mode(struct super_block *sb)
+>  {
+> -       return IS_ENABLED(CONFIG_EROFS_FS_ONDEMAND) && !sb->s_bdev;
+> +       return IS_ENABLED(CONFIG_EROFS_FS_ONDEMAND) &&
+> +                       !erofs_is_fileio_mode(EROFS_SB(sb)) && !sb->s_bde=
+v;
+>  }
+>
+>  enum {
+> diff --git a/fs/erofs/super.c b/fs/erofs/super.c
+> index aae3fd15899a..9a7e67eceed4 100644
+> --- a/fs/erofs/super.c
+> +++ b/fs/erofs/super.c
+> @@ -10,6 +10,7 @@
+>  #include <linux/fs_context.h>
+>  #include <linux/fs_parser.h>
+>  #include <linux/exportfs.h>
+> +#include <linux/backing-dev.h>
+>  #include "xattr.h"
+>
+>  #define CREATE_TRACE_POINTS
+> @@ -161,7 +162,7 @@ static int erofs_init_device(struct erofs_buf *buf, s=
+truct super_block *sb,
+>         struct erofs_sb_info *sbi =3D EROFS_SB(sb);
+>         struct erofs_fscache *fscache;
+>         struct erofs_deviceslot *dis;
+> -       struct file *bdev_file;
+> +       struct file *file;
+>
+>         dis =3D erofs_read_metabuf(buf, sb, *pos, EROFS_KMAP);
+>         if (IS_ERR(dis))
+> @@ -183,13 +184,17 @@ static int erofs_init_device(struct erofs_buf *buf,=
+ struct super_block *sb,
+>                         return PTR_ERR(fscache);
+>                 dif->fscache =3D fscache;
+>         } else if (!sbi->devs->flatdev) {
+> -               bdev_file =3D bdev_file_open_by_path(dif->path, BLK_OPEN_=
+READ,
+> -                                               sb->s_type, NULL);
+> -               if (IS_ERR(bdev_file))
+> -                       return PTR_ERR(bdev_file);
+> -               dif->bdev_file =3D bdev_file;
+> -               dif->dax_dev =3D fs_dax_get_by_bdev(file_bdev(bdev_file),
+> -                               &dif->dax_part_off, NULL, NULL);
+> +               file =3D erofs_is_fileio_mode(sbi) ?
+> +                               filp_open(dif->path, O_RDONLY | O_LARGEFI=
+LE, 0) :
+> +                               bdev_file_open_by_path(dif->path,
+> +                                               BLK_OPEN_READ, sb->s_type=
+, NULL);
+> +               if (IS_ERR(file))
+> +                       return PTR_ERR(file);
+> +
+> +               dif->file =3D file;
+> +               if (!erofs_is_fileio_mode(sbi))
+> +                       dif->dax_dev =3D fs_dax_get_by_bdev(file_bdev(fil=
+e),
+> +                                       &dif->dax_part_off, NULL, NULL);
+>         }
+>
+>         dif->blocks =3D le32_to_cpu(dis->blocks);
+> @@ -566,15 +571,16 @@ static void erofs_set_sysfs_name(struct super_block=
+ *sb)
+>  {
+>         struct erofs_sb_info *sbi =3D EROFS_SB(sb);
+>
+> -       if (erofs_is_fscache_mode(sb)) {
+> -               if (sbi->domain_id)
+> -                       super_set_sysfs_name_generic(sb, "%s,%s",sbi->dom=
+ain_id,
+> -                                                    sbi->fsid);
+> -               else
+> -                       super_set_sysfs_name_generic(sb, "%s", sbi->fsid)=
+;
+> -               return;
+> -       }
+> -       super_set_sysfs_name_id(sb);
+> +       if (sbi->domain_id)
+> +               super_set_sysfs_name_generic(sb, "%s,%s", sbi->domain_id,
+> +                                            sbi->fsid);
+> +       else if (sbi->fsid)
+> +               super_set_sysfs_name_generic(sb, "%s", sbi->fsid);
+> +       else if (erofs_is_fileio_mode(sbi))
+> +               super_set_sysfs_name_generic(sb, "%s",
+> +                                            bdi_dev_name(sb->s_bdi));
+> +       else
+> +               super_set_sysfs_name_id(sb);
+>  }
+>
+>  static int erofs_fc_fill_super(struct super_block *sb, struct fs_context=
+ *fc)
+> @@ -589,14 +595,15 @@ static int erofs_fc_fill_super(struct super_block *=
+sb, struct fs_context *fc)
+>         sb->s_op =3D &erofs_sops;
+>
+>         sbi->blkszbits =3D PAGE_SHIFT;
+> -       if (erofs_is_fscache_mode(sb)) {
+> +       if (!sb->s_bdev) {
+>                 sb->s_blocksize =3D PAGE_SIZE;
+>                 sb->s_blocksize_bits =3D PAGE_SHIFT;
+>
+> -               err =3D erofs_fscache_register_fs(sb);
+> -               if (err)
+> -                       return err;
+> -
+> +               if (erofs_is_fscache_mode(sb)) {
+> +                       err =3D erofs_fscache_register_fs(sb);
+> +                       if (err)
+> +                               return err;
+> +               }
+>                 err =3D super_setup_bdi(sb);
+>                 if (err)
+>                         return err;
+> @@ -693,11 +700,24 @@ static int erofs_fc_fill_super(struct super_block *=
+sb, struct fs_context *fc)
+>  static int erofs_fc_get_tree(struct fs_context *fc)
+>  {
+>         struct erofs_sb_info *sbi =3D fc->s_fs_info;
+> +       int ret;
+>
+>         if (IS_ENABLED(CONFIG_EROFS_FS_ONDEMAND) && sbi->fsid)
+>                 return get_tree_nodev(fc, erofs_fc_fill_super);
+>
+> -       return get_tree_bdev(fc, erofs_fc_fill_super);
+> +       ret =3D get_tree_bdev(fc, erofs_fc_fill_super);
+> +#ifdef CONFIG_EROFS_FS_BACKED_BY_FILE
+> +       if (ret =3D=3D -ENOTBLK) {
+> +               if (!fc->source)
+> +                       return invalf(fc, "No source specified");
+> +               sbi->fdev =3D filp_open(fc->source, O_RDONLY | O_LARGEFIL=
+E, 0);
+> +               if (IS_ERR(sbi->fdev))
+> +                       return PTR_ERR(sbi->fdev);
+> +
+> +               return get_tree_nodev(fc, erofs_fc_fill_super);
+> +       }
+> +#endif
+> +       return ret;
+>  }
+>
+>  static int erofs_fc_reconfigure(struct fs_context *fc)
+> @@ -727,8 +747,8 @@ static int erofs_release_device_info(int id, void *pt=
+r, void *data)
+>         struct erofs_device_info *dif =3D ptr;
+>
+>         fs_put_dax(dif->dax_dev, NULL);
+> -       if (dif->bdev_file)
+> -               fput(dif->bdev_file);
+> +       if (dif->file)
+> +               fput(dif->file);
+>         erofs_fscache_unregister_cookie(dif->fscache);
+>         dif->fscache =3D NULL;
+>         kfree(dif->path);
+> @@ -791,7 +811,7 @@ static void erofs_kill_sb(struct super_block *sb)
+>  {
+>         struct erofs_sb_info *sbi =3D EROFS_SB(sb);
+>
+> -       if (IS_ENABLED(CONFIG_EROFS_FS_ONDEMAND) && sbi->fsid)
+> +       if ((IS_ENABLED(CONFIG_EROFS_FS_ONDEMAND) && sbi->fsid) || sbi->f=
+dev)
+>                 kill_anon_super(sb);
+>         else
+>                 kill_block_super(sb);
+> @@ -801,6 +821,8 @@ static void erofs_kill_sb(struct super_block *sb)
+>         erofs_fscache_unregister_fs(sb);
+>         kfree(sbi->fsid);
+>         kfree(sbi->domain_id);
+> +       if (sbi->fdev)
+> +               fput(sbi->fdev);
+>         kfree(sbi);
+>         sb->s_fs_info =3D NULL;
+>  }
+> @@ -903,7 +925,7 @@ static int erofs_statfs(struct dentry *dentry, struct=
+ kstatfs *buf)
+>         buf->f_namelen =3D EROFS_NAME_LEN;
+>
+>         if (uuid_is_null(&sb->s_uuid))
+> -               buf->f_fsid =3D u64_to_fsid(erofs_is_fscache_mode(sb) ? 0=
+ :
+> +               buf->f_fsid =3D u64_to_fsid(!sb->s_bdev ? 0 :
+>                                 huge_encode_dev(sb->s_bdev->bd_dev));
+>         else
+>                 buf->f_fsid =3D uuid_to_fsid(sb->s_uuid.b);
+> --
+> 2.43.5
+>
 
