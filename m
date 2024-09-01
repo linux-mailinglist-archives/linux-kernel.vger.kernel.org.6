@@ -1,157 +1,216 @@
-Return-Path: <linux-kernel+bounces-310339-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310341-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D529967B90
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 19:52:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34B72967B97
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 19:56:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D95EC1F217EA
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 17:52:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF51B281DBD
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 17:56:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44349183CBF;
-	Sun,  1 Sep 2024 17:51:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7949E184529;
+	Sun,  1 Sep 2024 17:56:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=layalina-io.20230601.gappssmtp.com header.i=@layalina-io.20230601.gappssmtp.com header.b="vlRdhOCs"
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="WH2ct45R"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C892C53E15
-	for <linux-kernel@vger.kernel.org>; Sun,  1 Sep 2024 17:51:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 590EF17E8EA;
+	Sun,  1 Sep 2024 17:56:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725213116; cv=none; b=DJf598gnIzcNaCh6C+PDZS8aEu7rUiICQDwb7Sub+HugNaKfTSF0VbnLTtxeocE8bo60CbbGLIiuE5hqTAOpO/wkc0fiQ2NQ9O5LM7BbWupsqmumDPmu6xsn9Mw/FgIYxxByDIZPnbTfoFVpgFwq0SYxsQQAXQ+IS5aORgJf590=
+	t=1725213370; cv=none; b=IezBUoJnWhV1yJ87S4YxwyvubPn3OeggXss30nctPqP1jxkX7m8VpMBztViwR0Q7HuuXENYV6LwWj6pAsADdXtGR3HjNe2MgOn/BE/QMwjp6ZkZUiD9JLlNbGs/nKGAttjeQiCpN2fYN7YjmZvWOx+6ga4FaycLZ+I2MR1mfYeU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725213116; c=relaxed/simple;
-	bh=Tn6tHZIhVIU8zRTnyxfsgdnTgYxw83yj+IEMUQM3pv0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YymaKYrwEugW8rPNaKTN7UnV4QGOZ2OsaZbrXFFREjSzpJ/YFALyPyyJ39fPM4vDlGrKLrQb+9CtvQnfOWxJo4PLK1u3YRW9//TGgrDdoFrV0ZHztOw0re8jYIaK5G+qHZ2wmvg8reihQYIr2i+mMDM911+YKbb36j6sqmHFAwk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=layalina.io; spf=pass smtp.mailfrom=layalina.io; dkim=pass (2048-bit key) header.d=layalina-io.20230601.gappssmtp.com header.i=@layalina-io.20230601.gappssmtp.com header.b=vlRdhOCs; arc=none smtp.client-ip=209.85.208.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=layalina.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=layalina.io
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5becfd14353so3249655a12.1
-        for <linux-kernel@vger.kernel.org>; Sun, 01 Sep 2024 10:51:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=layalina-io.20230601.gappssmtp.com; s=20230601; t=1725213113; x=1725817913; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=iRaHoHzfShs9AbyvrFmo6S/xkJsBUX6uusSCB+QrMFI=;
-        b=vlRdhOCs75cyxVEfYdG+vGJwIyZef0z6jmPKwN+vnZOkRxXqs0/i78sUXgxzcnmF98
-         7lRUMoIuPrhIGMf122IlhpgmoP/PbsJ0mnOU0GMnYybB+9dpTkJDQviqAQxmJ0cyFcQC
-         9CBZQ810nnVD5vGTP14sRBkTO73n1QzuyKSxk+hJE3uD3OlP7BMTRFqW5K2QsAqcUAzL
-         x1iH9Wx1dW9B+6mYAxri4WNk92JQjZsBWsYa/TT+JoOqVPuQ6pTZZZMgbB1fylZtP57I
-         2LgGHVGmIhKVg993/tpfKakAmKp+Jcwe4T3HK3BjTjQn6oZSFoSpkbQxbjjU9cXItcpC
-         qtDw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725213113; x=1725817913;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=iRaHoHzfShs9AbyvrFmo6S/xkJsBUX6uusSCB+QrMFI=;
-        b=gUx7+jWy5PPHtKrXJVw2YlK19VeppLhqP+bXlpter269RaFHnjDHVO/lNJErWJbsWp
-         gW+rWSkzzSQj1ibDy73+QSxEuKoFSETXZhcRi1ZcaeDtCrz3YfSGkHccbVqOXYWKpuAP
-         4WOgRQ7fr1MfD4u0weWO6i34Gx0ju8C370m/p0CWb79OXDy5uX2T4Sg7JZy7kN0tNu39
-         phsoZltLdglJAqglJJLYhlHzq3pY8ZE7smzuy0Gu0sFgn+U+QIoy3TpFaDHMgI5ddcgW
-         7z/aRn1Zkv26QVUgfQFXBUFOo0kVO53UiuUdhBo0JpPQIzRW7SLkXgfOPGgqlcwZnD5U
-         v7UA==
-X-Forwarded-Encrypted: i=1; AJvYcCUXkDL0UQXejXLk0bpIdu7b7KJ1x6Yo13jv+kASgME8b+MeyNa2AHoH5Gsk2PloIJFWF32QWHMhFzr4p2w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyEN4fQGFDwOV1iajj6Apr1tMz/Mz/wA8SBTiOoTtA1I/eSbgKZ
-	8KVLzNEPiD3XIdIoxblVw3fjdAaulY3SODbwBBebBRWRcZL8Z7LkD1ir/u+zJxM=
-X-Google-Smtp-Source: AGHT+IFRRDbGvFCHQXdboqdVjJadxSjBkeetzH05dZheYKJemWnppoFoaTieZCL7fGuQhPEAeiLn9Q==
-X-Received: by 2002:a17:906:dc95:b0:a86:789f:c756 with SMTP id a640c23a62f3a-a897fa754cbmr735860166b.53.1725213113103;
-        Sun, 01 Sep 2024 10:51:53 -0700 (PDT)
-Received: from airbuntu ([176.29.222.46])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a89890219aasm460154066b.65.2024.09.01.10.51.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 01 Sep 2024 10:51:52 -0700 (PDT)
-Date: Sun, 1 Sep 2024 18:51:49 +0100
-From: Qais Yousef <qyousef@layalina.io>
-To: Vincent Guittot <vincent.guittot@linaro.org>
-Cc: Christian Loehle <christian.loehle@arm.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Ingo Molnar <mingo@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Hongyan Xia <hongyan.xia2@arm.com>,
-	John Stultz <jstultz@google.com>, linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v7] sched: Consolidate cpufreq updates
-Message-ID: <20240901175149.46yfk335niccmfq4@airbuntu>
-References: <20240728184551.42133-1-qyousef@layalina.io>
- <ca6b1db0-37d9-462e-87e4-d3bbd5eec7a3@arm.com>
- <CAKfTPtBWLe4hMBhJeSqvoW10dAF3Bgj+zcYGMgBfwUhkgytkEQ@mail.gmail.com>
- <CAKfTPtAJNjUe=4eQxq0M6==6O7dtJrw6rtwE6-xaWMJdSmfKcA@mail.gmail.com>
+	s=arc-20240116; t=1725213370; c=relaxed/simple;
+	bh=O9dzc+VELQ3LEZwolVQrUazLNfmSz68verP/WHp0L2c=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Ch4ky6xaVRGOVgcHla+z6RcTirsKU+nNMc8D5e7xCVdM5eGtbNFitI7ytgks4CGsFE7bDR+t4HJxkoPZHCDTHT1wWQet+bI/qwrlMszLKiCGFztR/76Oo6WPE3A/0MQFgOMbAO9yJTipCaWwMEemCE1E5sb2dXhC/L3pXQWLDJY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=WH2ct45R; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1725213352;
+	bh=O9dzc+VELQ3LEZwolVQrUazLNfmSz68verP/WHp0L2c=;
+	h=From:Date:Subject:To:Cc:From;
+	b=WH2ct45R1uZBqqeuI0pCM6lKa2A+Ty2b1ShIF71LNcCgUXWMOsPqiYnTgpLbZ8SBw
+	 jCdr/l+5ttz8YswSKox3o266iKp4iyx+lEY7swzh+LIuWcBS8XIZpUTzv1mF+XnR/6
+	 E9C77ZIZZuC0dldnYXLIiSsW17uj1ExqZl4Vsfrg=
+From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+Date: Sun, 01 Sep 2024 19:55:21 +0200
+Subject: [PATCH v2] modpost: compile constant module information only once
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAKfTPtAJNjUe=4eQxq0M6==6O7dtJrw6rtwE6-xaWMJdSmfKcA@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-Id: <20240901-modinfo-const-v2-1-ece53ca15075@weissschuh.net>
+X-B4-Tracking: v=1; b=H4sIAIiq1GYC/3XMQQ7CIBCF4as0sxYDiIiuvIfpwtJBZiEYBqum6
+ d3F7l3+L3nfDIyFkOHUzVBwIqacWuhNBz5e0w0Fja1BS22k00bc80gpZOFz4ipskKM9oB52UkH
+ 7PAoGeq/epW8diWsun5Wf1G/9J01KKGHcPhy9NYOz7vxCYmYfn3GbsEK/LMsX2Yhiyq8AAAA=
+To: Masahiro Yamada <masahiroy@kernel.org>, 
+ Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, 
+ Luis Chamberlain <mcgrof@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org, 
+ linux-modules@vger.kernel.org, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1725213352; l=5432;
+ i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
+ bh=O9dzc+VELQ3LEZwolVQrUazLNfmSz68verP/WHp0L2c=;
+ b=boIb0wtZpGky+i8ThnaUuOgnkp1qlvtOsIgeWlaWmths9YcHRz2A5QVK6hd/GKXdt5TjK997p
+ OXp1EiN0IyPCf1zoQ80ot6rc8yJVxjofxcv0laR58J6cpwRNQVC41Q+
+X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
+ pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
 
-On 08/13/24 10:27, Vincent Guittot wrote:
-> On Tue, 13 Aug 2024 at 10:25, Vincent Guittot
-> <vincent.guittot@linaro.org> wrote:
-> >
-> > On Mon, 5 Aug 2024 at 17:35, Christian Loehle <christian.loehle@arm.com> wrote:
-> > > Hi Qais,
-> > > the idea of SCHED_CPUFREQ_FORCE_UPDATE and the possiblity of spamming
-> > > freq updates still bothered me so let me share my thoughts even though
-> > > it might be niche enough for us not to care.
-> > >
-> > > 1. On fast_switch systems, assuming they are fine with handling the
-> > > actual updates, we have a bit more work on each context_switch() and
-> > > some synchronisation, too. That should be fine, if anything there's
-> > > some performance regression in a couple of niche cases.
-> > >
-> > > 2. On !fast_switch systems this gets more interesting IMO. So we have
-> > > a sugov DEADLINE task wakeup for every (in a freq-diff resulting)
-> > > update request. This task will preempt whatever and currently will
-> > > pretty much always be running on the CPU it ran last on (so first CPU
-> > > of the PD).
-> >
-> > The !fast_switch is a bit of concern for me too but not for the same
-> > reason and maybe the opposite of yours IIUC your proposal below:
-> >
-> > With fast_switch we have the following sequence:
-> >
-> > sched_switch() to task A
-> > cpufreq_driver_fast_switch -> write new freq target
-> > run task A
-> >
-> > This is pretty straight forward but we have the following sequence
-> > with !fast_switch
-> >
-> > sched_switch() to task A
-> > queue_irq_work -> raise an IPI on local CPU
-> > Handle IPI -> wakeup and queue sugov dl worker on local CPU (always
-> > with 1 CPU per PD)
-> > sched_switch() to sugov dl task
-> > __cpufreq_driver_target() which can possibly block on a lock
-> > sched_switch() to task A
-> > run task A
-> >
-> 
-> sent a bit too early
-> 
-> > We can possibly have 2 context switch and one IPi for each "normal"
-> > context switch which is not really optimal
-> 
-> It would be good to find a way to skip the spurious back and forth
-> between the normal task and sugov
+Various information about modules is compiled into the info sections.
+For that a dedicated .mod.c file is generated by modpost for each module
+and then linked into the module.
+However most of the information in the .mod.c is the same for all
+modules, internal and external.
+Split the shared information into a dedicated source file that is
+compiled once and then linked into all modules.
 
-Hmm I think we use affinity to keep the sugov running on policy->related_cpus.
-Relaxing this will make it less of a problem, but won't eliminate it.
+This avoids frequent rebuilds for all .mod.c files when using
+CONFIG_LOCALVERSION_AUTO because the local version ends up in .mod.c
+through UTS_RELEASE and VERMAGIC_STRING.
+The modules are still relinked in this case.
 
-I'll have a think about it, is this a blocker for now?
+The code is also easier to maintain as it's now in a proper source file
+instead of an inline string literal.
 
+Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
+---
+Changes in v2:
+- Remove RFC status
+- Incorporate Masahiro's proposals
+  - Rename modinfo.o to .module-common.o
+  - Build a dedicated .module-common.o for external modules
+- Link to v1: https://lore.kernel.org/r/20240824-modinfo-const-v1-1-485f9c64b868@weissschuh.net
+---
+Masahiro, feel free to add some attribution for yourself when applying.
+The new appraoch is pleasantly simpler.
+---
+ scripts/Makefile.modfinal |  7 +++++--
+ scripts/mod/modpost.c     | 23 -----------------------
+ scripts/module-common.c   | 25 +++++++++++++++++++++++++
+ 3 files changed, 30 insertions(+), 25 deletions(-)
+
+diff --git a/scripts/Makefile.modfinal b/scripts/Makefile.modfinal
+index 306a6bb86e4d..6b1b72257b29 100644
+--- a/scripts/Makefile.modfinal
++++ b/scripts/Makefile.modfinal
+@@ -30,6 +30,9 @@ quiet_cmd_cc_o_c = CC [M]  $@
+ %.mod.o: %.mod.c FORCE
+ 	$(call if_changed_dep,cc_o_c)
+ 
++$(extmod_prefix).module-common.o: $(srctree)/scripts/module-common.c FORCE
++	$(call if_changed_dep,cc_o_c)
++
+ quiet_cmd_ld_ko_o = LD [M]  $@
+       cmd_ld_ko_o +=							\
+ 	$(LD) -r $(KBUILD_LDFLAGS)					\
+@@ -54,13 +57,13 @@ if_changed_except = $(if $(call newer_prereqs_except,$(2))$(cmd-check),      \
+ 	printf '%s\n' 'savedcmd_$@ := $(make-cmd)' > $(dot-target).cmd, @:)
+ 
+ # Re-generate module BTFs if either module's .ko or vmlinux changed
+-%.ko: %.o %.mod.o scripts/module.lds $(and $(CONFIG_DEBUG_INFO_BTF_MODULES),$(KBUILD_BUILTIN),vmlinux) FORCE
++%.ko: %.o %.mod.o $(extmod_prefix).module-common.o scripts/module.lds $(and $(CONFIG_DEBUG_INFO_BTF_MODULES),$(KBUILD_BUILTIN),vmlinux) FORCE
+ 	+$(call if_changed_except,ld_ko_o,vmlinux)
+ ifdef CONFIG_DEBUG_INFO_BTF_MODULES
+ 	+$(if $(newer-prereqs),$(call cmd,btf_ko))
+ endif
+ 
+-targets += $(modules:%.o=%.ko) $(modules:%.o=%.mod.o)
++targets += $(modules:%.o=%.ko) $(modules:%.o=%.mod.o) $(extmod_prefix).module-common.o
+ 
+ # Add FORCE to the prerequisites of a target to force it to be always rebuilt.
+ # ---------------------------------------------------------------------------
+diff --git a/scripts/mod/modpost.c b/scripts/mod/modpost.c
+index c8cd5d822bb6..107393a8c48a 100644
+--- a/scripts/mod/modpost.c
++++ b/scripts/mod/modpost.c
+@@ -1755,26 +1755,9 @@ static void check_modname_len(struct module *mod)
+ static void add_header(struct buffer *b, struct module *mod)
+ {
+ 	buf_printf(b, "#include <linux/module.h>\n");
+-	/*
+-	 * Include build-salt.h after module.h in order to
+-	 * inherit the definitions.
+-	 */
+-	buf_printf(b, "#define INCLUDE_VERMAGIC\n");
+-	buf_printf(b, "#include <linux/build-salt.h>\n");
+-	buf_printf(b, "#include <linux/elfnote-lto.h>\n");
+ 	buf_printf(b, "#include <linux/export-internal.h>\n");
+-	buf_printf(b, "#include <linux/vermagic.h>\n");
+ 	buf_printf(b, "#include <linux/compiler.h>\n");
+ 	buf_printf(b, "\n");
+-	buf_printf(b, "#ifdef CONFIG_UNWINDER_ORC\n");
+-	buf_printf(b, "#include <asm/orc_header.h>\n");
+-	buf_printf(b, "ORC_HEADER;\n");
+-	buf_printf(b, "#endif\n");
+-	buf_printf(b, "\n");
+-	buf_printf(b, "BUILD_SALT;\n");
+-	buf_printf(b, "BUILD_LTO_INFO;\n");
+-	buf_printf(b, "\n");
+-	buf_printf(b, "MODULE_INFO(vermagic, VERMAGIC_STRING);\n");
+ 	buf_printf(b, "MODULE_INFO(name, KBUILD_MODNAME);\n");
+ 	buf_printf(b, "\n");
+ 	buf_printf(b, "__visible struct module __this_module\n");
+@@ -1792,12 +1775,6 @@ static void add_header(struct buffer *b, struct module *mod)
+ 	if (!external_module)
+ 		buf_printf(b, "\nMODULE_INFO(intree, \"Y\");\n");
+ 
+-	buf_printf(b,
+-		   "\n"
+-		   "#ifdef CONFIG_MITIGATION_RETPOLINE\n"
+-		   "MODULE_INFO(retpoline, \"Y\");\n"
+-		   "#endif\n");
+-
+ 	if (strstarts(mod->name, "drivers/staging"))
+ 		buf_printf(b, "\nMODULE_INFO(staging, \"Y\");\n");
+ 
+diff --git a/scripts/module-common.c b/scripts/module-common.c
+new file mode 100644
+index 000000000000..12fbc6d3aae8
+--- /dev/null
++++ b/scripts/module-common.c
+@@ -0,0 +1,25 @@
++// SPDX-License-Identifier: GPL-2.0
++
++#include <linux/module.h>
++/*
++ * Include build-salt.h after module.h in order to
++ * inherit the definitions.
++ */
++#define INCLUDE_VERMAGIC
++#include <linux/build-salt.h>
++#include <linux/elfnote-lto.h>
++#include <linux/vermagic.h>
++
++#ifdef CONFIG_UNWINDER_ORC
++#include <asm/orc_header.h>
++ORC_HEADER;
++#endif
++
++BUILD_SALT;
++BUILD_LTO_INFO;
++
++MODULE_INFO(vermagic, VERMAGIC_STRING);
++
++#ifdef CONFIG_MITIGATION_RETPOLINE
++MODULE_INFO(retpoline, "Y");
++#endif
+
+---
+base-commit: 9f18baf3dd656e7ca166038d51e0b54a892d87db
+change-id: 20240824-modinfo-const-6f0d67e2b301
+
+Best regards,
+-- 
+Thomas Weißschuh <linux@weissschuh.net>
 
 
