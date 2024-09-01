@@ -1,50 +1,82 @@
-Return-Path: <linux-kernel+bounces-310290-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310292-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A75929677E8
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 18:25:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84F91967813
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 18:27:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 361641F2190E
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 16:25:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 435E0280D31
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 16:27:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BF4A183CC2;
-	Sun,  1 Sep 2024 16:25:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD930183CD8;
+	Sun,  1 Sep 2024 16:27:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="WpkoZhaa"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.5])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D2E2143894;
-	Sun,  1 Sep 2024 16:25:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.5
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ObAanHGz"
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 776EA33987;
+	Sun,  1 Sep 2024 16:27:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725207932; cv=none; b=bF7Q8CURtVnR5VWkU9MeVkt8ZL/997v9ylA+cqqKAqXFH4oulzrGJ38ejxRLuPum3s9kVq1anjx6MxYPe6iHHufY4ldaEb4/RGSjmJfH+Y59Tz9cU876xYOHYDj+YmJ9iQyY052amPAmPRNPIy0//eIZoG6jrS0gb+K1yWS7XPk=
+	t=1725208044; cv=none; b=Wds3WF8egsQn0PRaB9GTkm+AAEe0uPvM92ZGG9AO18KwObjSsYs4y1dbqgSQ1EfS8/Z8JJxVcQ50oS+b5XJwnmGMLd3Brr6VxRciZRGxbEdJ6PcSf0GiPrW0jpclnnQVlCR13GAL6jfiySiN8/D432sKAjp00Orsq4Y0Yqt7E24=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725207932; c=relaxed/simple;
-	bh=3Mj6ijRTEP3d5AnaV0LktCCKBKb4f1wkpToEYFw8SjQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=eBtSTM35mOhkRH6V0SF/F1Et4TSaT+zJVj9P2/mja8/9473ZxZLEHXBRtx99tjsEyC2ALxjzbyONn+JgXMQjmMsbVPBd9txfTR9idGqBiNy7+dq1Z6uMlLdZXenlW7HJ/Onk9u7swMsYnF0QJ2dYw2OtdoXZBZOLasyTLJ+gd+8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=WpkoZhaa; arc=none smtp.client-ip=220.197.31.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=DgpRk
-	EVaxYPqJS1SPvfN+U+2xNOaGMTcZtuiECOYSgY=; b=WpkoZhaaIdOXVereO/pX1
-	nSCp4eLA5rOp20stL+CxtI4OwwghATqJjeTgddmjA0184LifwCwJtYUbQW/nElDe
-	h2otGD20dPDVuBmb40ZqhwW6BgG5cVA0U0JgfZa6RMcrNz5gTG9HYLiMM86HlS3J
-	/kfqwoI7qLsHboIyTwiNiE=
-Received: from localhost.localdomain (unknown [111.35.190.113])
-	by gzga-smtp-mta-g3-5 (Coremail) with SMTP id _____wBHZhU6ldRmT8x5Kg--.41103S4;
-	Mon, 02 Sep 2024 00:24:46 +0800 (CST)
-From: David Wang <00107082@163.com>
-To: mathias.nyman@intel.com,
-	gregkh@linuxfoundation.org
-Cc: linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	David Wang <00107082@163.com>
-Subject: [PATCH] usb: xhci: wait for controller ready when resume with reinit_xhc
-Date: Mon,  2 Sep 2024 00:24:25 +0800
-Message-Id: <20240901162425.5103-1-00107082@163.com>
+	s=arc-20240116; t=1725208044; c=relaxed/simple;
+	bh=e/LKTV7hMZEHn95toU81B+LDFOUu3I/CSU0QsKDRkTY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=EmAgL64EbDTgzs2gR5cwkQLeoT5GPVs3ivqHJhXlpYGncSlA34OJk0NodFc8EpYl/YvHSeX5n5lENqarRkIfAyrjhb3KUIZJBEE8Ec/l1k/ZEm4dAdghonNxmkTc53cLRiTzBXCmU5+VurGiVERMPojq11eX2pqBkxgtQIJYdig=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ObAanHGz; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a869332c2c2so715811966b.0;
+        Sun, 01 Sep 2024 09:27:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725208041; x=1725812841; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=WYkCsoCLWLw24xCZo4xi+SGoWPofV3x//tQ3lm2KoZw=;
+        b=ObAanHGzjcbcup/WE4wItwGjmP8KONktM1v75/IC1WB3bwKaDCAGQWUdY3RuqE5Sku
+         E4o0HfoIukGtrXtU1HdqC9Vbmipe2XRpX9YRXayi/4oeJa6T99kx4dS3raUmqwKZWtyV
+         nlQsaOgoUMmkGCx0YUyuEcwbhg3hdm1DKoL7HpYTx6fbYHs7GQMmw04+tZ16ZqtSHrQU
+         rLLgj5eEOHPOMqPB/pHhgsMREC+nM2v8iNL+A0RaEhNUH5xqNis+uUHPgX1sJaO0OeIO
+         DYf1SfEsQ4TtrC+d8e7ptfKMd3ytO8+gahYzXiqCwzWiSkNapeEXJfj5YRQ2QsM7YOt1
+         svIw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725208041; x=1725812841;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=WYkCsoCLWLw24xCZo4xi+SGoWPofV3x//tQ3lm2KoZw=;
+        b=JKQ9bRAgjVGGCqpZoiR0iE5a3MowMNafWMV6POQWUZNg01zt8oXcLlVFraZO1oWW77
+         mMLYmiIhq/5ZEoJqRyuZVv3xVVi0d3a5EOZThxYl+f9EZ1tHX9ytSnOwAjYg8MKLi8Ys
+         YZ11Iqmgv4bGH65DzSsv50aWwAsg4VeTw1tdWt0sRZuGuRKgvIt/93g14TQw9VaGJcz5
+         g1spqL8sutmaDSddE9R72ZnZ6h3fiAy5vaHkxCqDIEexBy8Wi4F/fHoRgysf9jm/GhiW
+         I78tv/XdL/gqsAWsT8YveqyNxY95EJddU9Uqks/T+gcMk2XbXeYhMUuG0/MflIUhyvwK
+         37hg==
+X-Forwarded-Encrypted: i=1; AJvYcCUBFUv9WZv3emegbqTdWjB88ogSfQTZy+sIR4v7uGWZWrfGfpLdCVtEr7jcCeqBStPKlqFMpu2kbPnVBc8=@vger.kernel.org, AJvYcCX7/3fIcd8ywh1ZZziONLBu7JVLeaEYHLzLxhFe9Mh1A8MQDAmgtVsaKKb7L4JHvVxEBsbBevPUdA+uLZUUhzT4YvM=@vger.kernel.org, AJvYcCXJ86F/ty9D5k8lO/ECOBJAGUjOU03hWVnzM03VRM6oOWqSBqfFW5szFrHsY1QsUhl/46KXHF29LH4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzahfWo9c9iKczCSJuoJsUtyqVXWUNT+ajVJKdj7d2B1DfFjVfj
+	n4QoG+qQLrbQ0WrZtFyeo4BbRRpr1/eOtcMD6Zt7k6hcYyenJKVt
+X-Google-Smtp-Source: AGHT+IFWkGvJc84SLUoPtIrjnB5r9CffAAjDGAjDj4l24UeHZVQNZST9WvvOPNlCX/91/n8v2sc1OQ==
+X-Received: by 2002:a17:906:d265:b0:a86:91a5:4d09 with SMTP id a640c23a62f3a-a89a2927b2fmr854988366b.26.1725208040548;
+        Sun, 01 Sep 2024 09:27:20 -0700 (PDT)
+Received: from localhost (craw-09-b2-v4wan-169726-cust2117.vm24.cable.virginm.net. [92.238.24.70])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8988fefb60sm454888366b.43.2024.09.01.09.27.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 01 Sep 2024 09:27:19 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Zhang Rui <rui.zhang@intel.com>,
+	Lukasz Luba <lukasz.luba@arm.com>,
+	linux-renesas-soc@vger.kernel.org,
+	linux-pm@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] thermal/drivers/renesas: Remove trailing space after \n newline
+Date: Sun,  1 Sep 2024 17:27:19 +0100
+Message-Id: <20240901162719.144406-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -52,56 +84,30 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wBHZhU6ldRmT8x5Kg--.41103S4
-X-Coremail-Antispam: 1Uf129KBjvJXoW7KF18tw17WryDAFyUtr15CFg_yoW8XF4DpF
-	4akr4UGF1rta1fKF1qyay2ya4rGasIq398XFZrC34a9rZrt345WryUtrW3Ja9rWrWfGr48
-	tF40qay5KF12qF7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0pE1vVZUUUUU=
-X-CM-SenderInfo: qqqrilqqysqiywtou0bp/1tbiqRNNqmVOClTVCQAAs0
 
-When resume system with reinit_xhc true, PM would report kernel
-warning about device parent:
+There is a extraneous space after a newline in a dev_err message.
+Remove it.
 
- >usb 3-1.1: reset high-speed USB device number 4 using xhci_hcd
- >..
- >ep_81: PM: parent 3-1.1:1.1 should not be sleeping
-
-Move the code waiting for controller ready out, and make it
-carry out work no matter reinit_xhc is true or false.
-The error is ignored when reinit_xhc is true.
-
-Signed-off-by: David Wang <00107082@163.com>
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/usb/host/xhci.c | 14 ++++++++------
- 1 file changed, 8 insertions(+), 6 deletions(-)
+ drivers/thermal/renesas/rcar_thermal.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/usb/host/xhci.c b/drivers/usb/host/xhci.c
-index efdf4c228b8c..8aeb1b34cdbf 100644
---- a/drivers/usb/host/xhci.c
-+++ b/drivers/usb/host/xhci.c
-@@ -1032,13 +1032,15 @@ int xhci_resume(struct xhci_hcd *xhci, pm_message_t msg)
- 	if (hibernated || xhci->quirks & XHCI_RESET_ON_RESUME || xhci->broken_suspend)
- 		reinit_xhc = true;
+diff --git a/drivers/thermal/renesas/rcar_thermal.c b/drivers/thermal/renesas/rcar_thermal.c
+index 1e93f60b6d74..ddc8341e5c3f 100644
+--- a/drivers/thermal/renesas/rcar_thermal.c
++++ b/drivers/thermal/renesas/rcar_thermal.c
+@@ -447,7 +447,7 @@ static int rcar_thermal_probe(struct platform_device *pdev)
+ 		ret = devm_request_irq(dev, irq, rcar_thermal_irq,
+ 				       IRQF_SHARED, dev_name(dev), common);
+ 		if (ret) {
+-			dev_err(dev, "irq request failed\n ");
++			dev_err(dev, "irq request failed\n");
+ 			goto error_unregister;
+ 		}
  
-+	/*
-+	 * Some controllers might lose power during suspend, so wait
-+	 * for controller not ready bit to clear, just as in xHC init.
-+	 * Ignore retval if reinit_xhc is true, since the device would
-+	 * be reinited.
-+	 */
-+	retval = xhci_handshake(&xhci->op_regs->status,
-+				STS_CNR, 0, 10 * 1000 * 1000);
- 	if (!reinit_xhc) {
--		/*
--		 * Some controllers might lose power during suspend, so wait
--		 * for controller not ready bit to clear, just as in xHC init.
--		 */
--		retval = xhci_handshake(&xhci->op_regs->status,
--					STS_CNR, 0, 10 * 1000 * 1000);
- 		if (retval) {
- 			xhci_warn(xhci, "Controller not ready at resume %d\n",
- 				  retval);
 -- 
 2.39.2
 
