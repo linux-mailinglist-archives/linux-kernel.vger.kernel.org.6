@@ -1,113 +1,119 @@
-Return-Path: <linux-kernel+bounces-310162-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310163-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A24819675AD
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 11:12:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2EA59675AF
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 11:12:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 59D0B1F21265
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 09:12:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8DA4928272D
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 09:12:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B539B146D79;
-	Sun,  1 Sep 2024 09:12:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A3BB149C7F;
+	Sun,  1 Sep 2024 09:12:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RbvmsaGp"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SOLDx4Gl"
+Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8EF241C73
-	for <linux-kernel@vger.kernel.org>; Sun,  1 Sep 2024 09:12:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36E2C1494C8;
+	Sun,  1 Sep 2024 09:12:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725181939; cv=none; b=V0wkBXRTRckpO/yVurQFWFuBYLLdyhDD61f1+9izcJgnw/QTO4e68MP5i9BEu9KKWbRZUQNzWHk8g/TD8XaJ9ja5IZ1YN2dOKe4aV+AnIXuF5cCiiK3k0REcXG2n9kE8gRB46jqSQhd2I4mR6NxSboljWegLbWostvq/Zuzj0Mw=
+	t=1725181942; cv=none; b=fxyt8VXOI1mk46wiwPY+QYG5JOBgDsw80O0g9vpC4Qko7FXR7nYXoQDWpBdH9QKYnvmnrR5H+EiGNNt4aEaQOqCLRb5d9AJiH7PtrCal5Y54PyaoXTvWBESAsWw1f5oHLYlHVcQQVzEy+V0YvFOZgA/3GnW86MUwTsqUorxBuC4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725181939; c=relaxed/simple;
-	bh=vhbxosuo5ppzs+Cd1QVJhsR1FrFtWypTTMALXVWUgLQ=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=smogtzTczgSW6HofVf0scSqnVCU9W9LuhfA5KOlrfek8jSS05Hgi6m56bsdp2KrNdCYSRmOp28PmcvKkcoMo0eEWivUasaaU9l2l/NEfIjPLA12PmSWoFmhybDyHGOLv9nVTB6PcXXj4+MO7uAmQhjjsNdH2MceJ5jBmV20iPkc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RbvmsaGp; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725181938; x=1756717938;
-  h=message-id:date:mime-version:cc:subject:to:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=vhbxosuo5ppzs+Cd1QVJhsR1FrFtWypTTMALXVWUgLQ=;
-  b=RbvmsaGp1Bnho58b3b+RPQKwnPc0XlyofsA5VYeZfi9Qvw4lN0fnx3P1
-   SwY9OqbvaxCRoHMksHq+kRxqD6OVICiACsbMM/cYCXv28Twawmxb5MHfv
-   79OQ+2aAzh9IZkJee5tJJ1EjmfZJk1vmSU1+kim7cWwX80UNowJKLrDJs
-   VGV5qC9suj/qsYn8CqyrirTATUZb+O4X/q1VF+YfEujUUkCuR1FliG5ft
-   4NkeXsSSORDYtH+/nQNWKa22rJU3PK0ftKVHdZLe9Z+ZZ7Hu0KGniYKrR
-   EACo9ek+4g/GaMl0JoLJ7msUunsyROXp52Inc5UkrVU1ASgwZFena8J/i
-   g==;
-X-CSE-ConnectionGUID: s8qB4wOSSCqx32/+6UqgFg==
-X-CSE-MsgGUID: LSBtqW+hRFuht/yCO+eLog==
-X-IronPort-AV: E=McAfee;i="6700,10204,11181"; a="41255346"
-X-IronPort-AV: E=Sophos;i="6.10,193,1719903600"; 
-   d="scan'208";a="41255346"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Sep 2024 02:12:17 -0700
-X-CSE-ConnectionGUID: y+ZH+4fGRbeU3GeLx6KDtg==
-X-CSE-MsgGUID: wH0QC7YrRkWPjftf2f6bZQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,193,1719903600"; 
-   d="scan'208";a="87554229"
-Received: from blu2-mobl.ccr.corp.intel.com (HELO [10.124.240.228]) ([10.124.240.228])
-  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Sep 2024 02:12:15 -0700
-Message-ID: <b909bc01-327a-427b-9900-8f324a229770@linux.intel.com>
-Date: Sun, 1 Sep 2024 17:12:12 +0800
+	s=arc-20240116; t=1725181942; c=relaxed/simple;
+	bh=Vb61e5yxnIMUSRQME9TeUFTKhUGt8rdek04lYMhBN2I=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=laf3z4jO3TXsa7P+7l9C0Q0LztJHkLSPWK9EpF3OGRqL4SG6HZlT7nDghcv7tdU2yLl7LBYQXnAaUl92Mt8xvwe8B2PTOgUJ3ARPy+C9zd6cMPiS1KcKhKxtiSgSMhdpgZXmfvJQWWaFmbe5/+7qqLOEmNmNaB0VyTDs1gyTqHY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SOLDx4Gl; arc=none smtp.client-ip=209.85.216.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-2d89dbb60bdso593301a91.1;
+        Sun, 01 Sep 2024 02:12:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725181940; x=1725786740; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=3RIvmqckB/XmS4jFCvRpV3k1k+SyUHd+kU2bgetmV8M=;
+        b=SOLDx4GlUTnlypD7Iz8OnnVD+C+hxD4y7OqQ/kyEJ2LRkpLIlBU238vXz6OKBoJcgw
+         jW4t0mQCq6TTZpXaIhJJdrg8Gi1q8ETZpeUegdDsQQbHR43Vw88vJxvgctzyClfCxHcl
+         kK/4ekr6ZmuatJe5DyZciB6NIW4+C2zu/oUen9jhI48E1WzryCUbR5Bj8UYlRAMWuvsx
+         7wCplEd8jlMJRN5nWLcMoPVfVmg//XRMmpaRebYwlGj9i7r6igbmPo4H3wNV+98c8tXC
+         U9ff67OgGrki3RzsToy3JkjsuP3Um0kjBae0Th8iS2kK5Kzv6RA89ItMMBSSYY+8xYjZ
+         6ISw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725181940; x=1725786740;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=3RIvmqckB/XmS4jFCvRpV3k1k+SyUHd+kU2bgetmV8M=;
+        b=hEPoWSPvy6dFF62pYv9paSn/hm3Xu3olRRFMVRpQVsWc94oKN1uMMHdYwMSE1MCzzb
+         L0qXj03m4XpjyIK88Guhz4RmuZU+HXd2mEXAFpwmW3k/mxDjvBYizYlraOSTOtHRh68Y
+         rbOpc5dyMrelvl50rwX6R8+B3X7QTGBsc7iE9qMml1wV4aOPDAY49i8fgxuCXerN7LKx
+         yUK04DRLGVL/rWzood6KHmzivS9ScrqWu4RpMQWSzr+qslF09i+VcME27KX/8fXCNwtT
+         Q+2pW6fc7P/L2QdhAy5Rus3TXcF+dfUGeYE2wdF1qk02f5KALJ1aC0Wk7D9OM1H+SeW6
+         BtOw==
+X-Forwarded-Encrypted: i=1; AJvYcCVUoVit7a5NSGqk275VZpXGwBNcPBIeRxgG99EnU52yj5XuuJac2f7z2iWRlwib7z6/ilvfqueVZuIAWGg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzNxf6DwLmgSSVTiKtGug5a7oUzh0T0XnyEzG1Fk6FYf2GX62E6
+	A1q+oq/3aYgSUjlkozxg9ebWjbZrVWyx+PnVuH2wVsEkfMjRtKeU6ya6qA==
+X-Google-Smtp-Source: AGHT+IFyPw8FaR/QxQkc06MqfZ0lPGIAXmc1HESOZjrhWGxlcUaFOXRSBYhlJpXA6YFMwCvff3ACdw==
+X-Received: by 2002:a17:90b:4c0b:b0:2c7:8a94:215d with SMTP id 98e67ed59e1d1-2d8561a13e6mr11460017a91.12.1725181940311;
+        Sun, 01 Sep 2024 02:12:20 -0700 (PDT)
+Received: from gye-ThinkPad-T590.. ([39.120.225.141])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d8d8b90e9asm59086a91.38.2024.09.01.02.12.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 01 Sep 2024 02:12:20 -0700 (PDT)
+From: Gyeyoung Baek <gye976@gmail.com>
+To: jic23@kernel.org,
+	lars@metafoo.de
+Cc: linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Gyeyoung Baek <gye976@gmail.com>
+Subject: [PATCH] iio: imu: inv_mpu6050: Remove duplicate code between labels
+Date: Sun,  1 Sep 2024 18:12:14 +0900
+Message-Id: <20240901091214.15199-1-gye976@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: baolu.lu@linux.intel.com,
- Linux regressions mailing list <regressions@lists.linux.dev>,
- Will Deacon <will@kernel.org>, David Woodhouse <dwmw2@infradead.org>,
- Joerg Roedel <joro@8bytes.org>, "iommu@lists.linux.dev"
- <iommu@lists.linux.dev>, LKML <linux-kernel@vger.kernel.org>,
- Jacob Pan <jacob.jun.pan@linux.intel.com>,
- Adam Williamson <awilliam@redhat.com>
-Subject: Re: [regression] usb and thunderbould are misbehaving or broken due
- to iommu/vt-d change
-To: "Tian, Kevin" <kevin.tian@intel.com>, Markus Rathgeb <maggu2810@gmail.com>
-References: <c844faa0-343a-46f4-a54f-0fd65f4d4679@leemhuis.info>
- <BN9PR11MB5276CA2E1922D9FD6B9F2ECF8C962@BN9PR11MB5276.namprd11.prod.outlook.com>
- <CAOcK=CN3-v=dgMC9XTbh-h0zaD01uatOZKjvSF7ocofTCOGp7Q@mail.gmail.com>
- <CAOcK=CPi1TokgySF77X+zuQ10kxfsfCXekYVanPhF51+Ow1XRg@mail.gmail.com>
- <CAOcK=CM4Poawy2AN3f6C2ooPdoT=dg4J9Bg1Fu=gsFjvkrBpQw@mail.gmail.com>
- <CAOcK=COEd0njBPGhJ8idaLbaqvATr_zSB1O9dyzwi+fbU8GhqA@mail.gmail.com>
- <BN9PR11MB5276F533DC882B182F1A4C268C972@BN9PR11MB5276.namprd11.prod.outlook.com>
-Content-Language: en-US
-From: Baolu Lu <baolu.lu@linux.intel.com>
-In-Reply-To: <BN9PR11MB5276F533DC882B182F1A4C268C972@BN9PR11MB5276.namprd11.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 2024/8/30 8:29, Tian, Kevin wrote:
->> From: Markus Rathgeb<maggu2810@gmail.com>
->> Sent: Thursday, August 29, 2024 4:34 PM
->>
->> With respect to my previous comment I tested to fix it myself (I am
->> not a kernel hacker and do not know anything about iommu etc.).
->>
->> After applying the following change to the v6.11-rc5 it seems to fix my
->> problem.
->> I can connect, disconnect and connect the dock and USB is working and
->> no DMAR error.
->>
-> as said there was already a fix posted which is similar to below:
-> 
-> https://lore.kernel.org/linux-iommu/20240815124857.70038-1-baolu.lu@linux.intel.com/
+'flush_fifo' label performs same task as 'endsession' label
+immediately after calling 'env_reset_fifo' function.
+so i remove that duplication.
 
-Above patch has been merged in v6.11-rc6. Please try the latest kernel
-version.
+Signed-off-by: Gyeyoung Baek <gye976@gmail.com>
+---
+ drivers/iio/imu/inv_mpu6050/inv_mpu_ring.c | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
 
-Thanks,
-baolu
+diff --git a/drivers/iio/imu/inv_mpu6050/inv_mpu_ring.c b/drivers/iio/imu/inv_mpu6050/inv_mpu_ring.c
+index 45c37525c2f1..40107b4457d4 100644
+--- a/drivers/iio/imu/inv_mpu6050/inv_mpu_ring.c
++++ b/drivers/iio/imu/inv_mpu6050/inv_mpu_ring.c
+@@ -192,15 +192,12 @@ irqreturn_t inv_mpu6050_read_fifo(int irq, void *p)
+ 		iio_push_to_buffers_with_timestamp(indio_dev, st->data, timestamp);
+ 	}
+ 
+-end_session:
+-	mutex_unlock(&st->lock);
+-	iio_trigger_notify_done(indio_dev->trig);
+-
+-	return IRQ_HANDLED;
+ 
+ flush_fifo:
+ 	/* Flush HW and SW FIFOs. */
+ 	inv_reset_fifo(indio_dev);
++
++end_session:
+ 	mutex_unlock(&st->lock);
+ 	iio_trigger_notify_done(indio_dev->trig);
+ 
+-- 
+2.34.1
+
 
