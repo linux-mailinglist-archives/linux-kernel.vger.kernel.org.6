@@ -1,125 +1,98 @@
-Return-Path: <linux-kernel+bounces-310419-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310420-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70E86967C81
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 00:13:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90057967C84
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 00:16:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AA0171C21137
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 22:13:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4E25B281A5A
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 22:16:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B177B185B4A;
-	Sun,  1 Sep 2024 22:13:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C027614A093;
+	Sun,  1 Sep 2024 22:16:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L5HoYQvS"
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Dol4w57w"
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73D9C61FCF
-	for <linux-kernel@vger.kernel.org>; Sun,  1 Sep 2024 22:13:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22A032A1B8
+	for <linux-kernel@vger.kernel.org>; Sun,  1 Sep 2024 22:16:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725228819; cv=none; b=qT2FAmpBdfOLzbLMlzTOG6LyN3M6wp39dPJjMHl80HSfqbBQ9eP1lfI+cFGI4sd9kOPOxAqN8Wtf6JHvWQbaK1rwyZSDnpOmRCNYPGqa9nVTtFF4wah4HjdtztHhYHFHmOHL22BMcnA31r3ETxhon4/HERl4QS9FSSg0CGPPtpA=
+	t=1725229013; cv=none; b=tDptyyKPJv1gNniaYyjQt4zVtoWDIl+f6iLACMJATXrg4CVWn0fE/v9VI9/g2vlNnxWxtbugChfHsHsKqc/l/6Gs1B2eKRkXPzInYJ/NkkHx2DGKWncU3TdKxBU/IAgCUv3+OJQDvdfMCbSikZHyANJm8nHCojPcEZpQkSrg0I8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725228819; c=relaxed/simple;
-	bh=uu05Fo9Mc9YyfS0pauXPeDLboNox95mhvm+3wRYnh/M=;
+	s=arc-20240116; t=1725229013; c=relaxed/simple;
+	bh=A9KquY+Xq9HYGt1l9PNrkt9cxTRdMnsMxi8cD3m9plc=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=j/LXYY4IPqDJz57kKtZUy0NKTGj6ZffJ3h7JHh2MVplArdt1QUDTRO6RErTOrgg3RJhtZ1TZJMe6iMeZsemREXTATJtXzGbaf/ik23yn/+lZd4cqSWidIVxBxByc4Di6c3XImRdiBPDLz2277ma3EX1mYqtOH/UpJofDUjIOXI0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=L5HoYQvS; arc=none smtp.client-ip=209.85.208.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5bed83488b6so3375691a12.2
-        for <linux-kernel@vger.kernel.org>; Sun, 01 Sep 2024 15:13:36 -0700 (PDT)
+	 To:Cc:Content-Type; b=gIs/JsdN1rrXrTvnIYzfqHMlgUkyOShW7QgiUekIrlL5SvipvE4Zoy91e7BtXkiORsKXqdLlHs3R+JICXpvSejPNi+2RDI1PeQdnumEmZAZqQetvvp0VNozIeZ3notrD+UcjKO/KYBnE83Y58vxOhBm4Jf65ETSR9fZxg+OWmNQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Dol4w57w; arc=none smtp.client-ip=209.85.167.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-53343bf5eddso4778173e87.1
+        for <linux-kernel@vger.kernel.org>; Sun, 01 Sep 2024 15:16:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725228815; x=1725833615; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=uu05Fo9Mc9YyfS0pauXPeDLboNox95mhvm+3wRYnh/M=;
-        b=L5HoYQvSSlimahe5nDdKY+OsMeQdTe8XPAvdvaR5HPIiB/HeX8TSTeqmdY5/RvAMzh
-         VKW2gn2XX+x/GUnCrKA2hfOa36u5wJlp/qE13DRWHegejgCMbDKF3RoKpd+LRcIrHalN
-         p5Vq2JqHRyq6ZrHe4QAL/lCjv9gYJsKbQX8IwVLmQg0jpyhXDLxhVVQhFetxc1CIljJB
-         qj6nb4iUtgKT7x8eWtlOHVXlc1l/6QAvYitbAOxKCKakk5boThWkL/0BuoXHu/jx7lQA
-         FrMzBmge9ZLr8irQMNjFsI6gkddDQRt/gJvnrOtMCuMIUgsmskmSmFAZQPHJSSk6AK46
-         8mUw==
+        d=linaro.org; s=google; t=1725229008; x=1725833808; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=A9KquY+Xq9HYGt1l9PNrkt9cxTRdMnsMxi8cD3m9plc=;
+        b=Dol4w57wANsqQVNqVFgtVj2afSBRE1fBp85A6HxNqVRhMhBw/qmERsMvPoM6UJxQPm
+         5evJ0OgwmiHCj3rj6GY4ssItY83gfT1QrGsap62lsLp9qihawu84RVx2g2WJ8oWN8Xrg
+         JzTfT8rZZNiP1kqXZ6xy15nlbE3zmSCZjvgWzOqcrSIZjJgD1QWnZIWWmuf+JCMpIzLL
+         ZUvdhxUCmh5/WKjoT+m0P/Qce1c3JyGFdFX/rdIzNJg/u/+2TKoaLOAFgB9GS9rwiEtk
+         0x59kVcBR6M8sWIJ2MGOuLp+m79NvU+xOnRK12cyWI69KBgvXapy940Fas74Uf+VTVLX
+         mCjw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725228815; x=1725833615;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=uu05Fo9Mc9YyfS0pauXPeDLboNox95mhvm+3wRYnh/M=;
-        b=QsZTIDT9o0+S/pvuPFofA47Nzi57UnqGP0U6QpAetGEBOqT2twJ4Q+on+PIlRZU9fS
-         nrupMt+6/2P1J695z/ndnWZMs0bYpLXCpLONrVUbSl0oDPqQAAHZX+40y7rTLSmWTBQr
-         +nC3LfOhdYIFyUn8zs3EoHe1+yK7AeKICjzauzWFg3zYz+601H5TBybPyytaCpIZbVLa
-         M1nvi/rGLP6o2q+2Z2mEXG/bnKuGAlOIfbGwd7eU8uor3AljsbHZ5C3v5o8j0El2Hk3U
-         8jw84c45R4IWXm8jK6vROj+OC11LTKfRJRsqufDZL/z3qVPr6E7sLq+Lhf4BlpzbhQcL
-         9mQQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUnlG7KqqNO6HjwALaBDYn4iAQzLIzeCDlzJdhSvGUbBaYYWNnLdKmrnAssF3JM+hUtLs7F+tuJlYpS1cQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyFX+Gu4myix22TyygyggPaglQIL2B2HhfiTp9CWraiasjqDsq9
-	C8EbuJ0BjPJeYKAPVWOYXemduIX3dPsj+CYYY11CFh5nYIr6KpCkuQmtDqZqfEc1mmuNSEGXSHA
-	NKqwH/yaDc+hJlsd7Ht7bkexb9KQ=
-X-Google-Smtp-Source: AGHT+IFMdVXB5CtReViBHo6ZhW/u0gI00NEcTW4LRdI2PTBS9Mb/sIzLvXxJSyV4w9+NPYGKmPmEWrB7UW/pabnX7Ng=
-X-Received: by 2002:a05:6402:2550:b0:5be:da7c:6176 with SMTP id
- 4fb4d7f45d1cf-5c21ed3dfd7mr8870092a12.10.1725228814579; Sun, 01 Sep 2024
- 15:13:34 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1725229008; x=1725833808;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=A9KquY+Xq9HYGt1l9PNrkt9cxTRdMnsMxi8cD3m9plc=;
+        b=GWAkN067lK9xx80vAlDCMLvVeLEClAXCKJfH/42cy0Hm/dc6c5zdGEWtuqQsETNBlu
+         nAaOavNmiQ3NxZKW5Nh9oFYUM/c8BsEGHuiO+zgPScbB+Bmxa5Kr/UaoJjSvIkry3p6l
+         sVUqkuF1gRaAr06sz5CLop1076c+PtK3DJdX/amFIBF5rAWaARXlzGkMvHItSnXuxBVD
+         kvRzmlXClHKyzNBfVWrd5ehTqZCqnPBre+Tv3UroJ5VQMZwmszNHuQBsKBVDzVDiHpDF
+         FGOqmqGBj4THNnW3miOqTWK9KJLRUxoICf/vUC3HGGsKsLnHGrls7/GXOqVkeW8IfjiU
+         k5Ng==
+X-Forwarded-Encrypted: i=1; AJvYcCWzIISe4hPRCiW2IQBmknymHSspvd2DCWMDFhgddhVGXQmIOoL4ytCOn4vk9p+ntm8qiisnodHTvEvHOKo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzyN1jKzjnyyGU2o2+WFnoQApfEUPNM+euKguayBy9vMbW+uHk5
+	oXBzHHukvFy/DRCLOyG4UEmKKci9oP8GV81RFIcW4hGTskef3QwJ3iE4ZNiNjigJL6rooo7uHxK
+	bhU2DVlpGJlJUyLaYJ8+6mvydJ/n2VbTXudAdCg==
+X-Google-Smtp-Source: AGHT+IHdmYET5UJJ7O0DFATqy27z4hgwKG+ELczqFeDgPnXSKCKTHjSkjivQNVE9IMRO9eMHmDXIIjSZEDNoK7exNfA=
+X-Received: by 2002:a05:6512:3b99:b0:535:3ca5:daa with SMTP id
+ 2adb3069b0e04-53546b167famr5663798e87.7.1725229007133; Sun, 01 Sep 2024
+ 15:16:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAPM=9tzX71UKndfu8JECMOzc9kf4s4pp9cWTMWwE476cQXt_Yw@mail.gmail.com>
- <CAHk-=wijFJM9MHvwGSS4ADs8ncRagrXYi2E9SvhK8coMH32D7A@mail.gmail.com>
-In-Reply-To: <CAHk-=wijFJM9MHvwGSS4ADs8ncRagrXYi2E9SvhK8coMH32D7A@mail.gmail.com>
-From: Dave Airlie <airlied@gmail.com>
-Date: Mon, 2 Sep 2024 08:13:13 +1000
-Message-ID: <CAPM=9txF4+rC_CXQTftPctUd0N37t306YKcV3oKPjz+_zQGqag@mail.gmail.com>
-Subject: Re: [git pull] drm fixes for 6.11-rc6
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Daniel Vetter <daniel.vetter@ffwll.ch>, dri-devel <dri-devel@lists.freedesktop.org>, 
-	LKML <linux-kernel@vger.kernel.org>, 
-	Arunpravin Paneer Selvam <Arunpravin.PaneerSelvam@amd.com>, Alex Deucher <alexdeucher@gmail.com>, 
-	lingshan.zhu@amd.com, "Koenig, Christian" <Christian.Koenig@amd.com>, 
-	Matthew Brost <matthew.brost@intel.com>, 
-	=?UTF-8?Q?Thomas_Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>
+References: <20240831072158.789419-1-liaochen4@huawei.com> <20240831072158.789419-2-liaochen4@huawei.com>
+In-Reply-To: <20240831072158.789419-2-liaochen4@huawei.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Mon, 2 Sep 2024 00:16:36 +0200
+Message-ID: <CACRpkdaDcPgMQhBf9cU+oqgCa7Z-CX43hf+NZ42c5o+ZHaR+Sg@mail.gmail.com>
+Subject: Re: [PATCH -next v2 1/3] ata: pata_ftide010: Enable module autoloading
+To: Liao Chen <liaochen4@huawei.com>
+Cc: linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org, s.shtylyov@omp.ru, 
+	dlemoal@kernel.org, cassel@kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, 30 Aug 2024 at 12:32, Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> On Fri, 30 Aug 2024 at 14:08, Dave Airlie <airlied@gmail.com> wrote:
-> >
-> > The TTM revert is due to some stuttering graphical apps probably due
-> > to longer stalls while prefaulting.
->
-> Yeah, trying to pre-fault a PMD worth of pages in one go is just crazy talk.
->
-> Now, if it was PMD-aligned and you faulted in a single PMD, that would
-> be different. But just doing prn_insert_page() in a loop is insane.
->
-> The code doesn't even stop when it hits a page that already existed,
-> and it keeps locking and unlocking the last-level page table over and
-> over again.
->
-> Honestly, that code is questionable even for the *small* value, much
-> less the "a PMD size" case.
->
-> Now, if you have an array of 'struct page *", you can use
-> vm_insert_pages(), and that's reasonably efficient.
->
-> And if you have a *contiguous* are of pfns, you can use remap_pfn_range().
->
-> But that "insert one pfn at a time" that the drm layer does is
-> complete garbage. You're not speeding anything up, you're just digging
-> deeper.
+On Sat, Aug 31, 2024 at 9:30=E2=80=AFAM Liao Chen <liaochen4@huawei.com> wr=
+ote:
 
-I wonder if there is functionality that could be provided in a common
-helper, by the mm layers, or if there would be too many locking
-interactions to make it sane,
+> Add MODULE_DEVICE_TABLE(), so modules can be properly autoloaded based
+> on the alias from of_device_id table.
+>
+> Signed-off-by: Liao Chen <liaochen4@huawei.com>
+> Reviewed-by: Sergey Shtylyov <s.shtylyov@omp.ru>
 
-It seems too fraught with danger for drivers or subsystems to be just
-doing this in the simplest way that isn't actually that smart.
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
-Dave.
+Yours,
+Linus Walleij
 
