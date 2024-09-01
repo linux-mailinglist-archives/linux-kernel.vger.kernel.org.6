@@ -1,116 +1,119 @@
-Return-Path: <linux-kernel+bounces-310235-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310236-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5723896769D
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 15:30:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A15296769F
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 15:31:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F29681F220B2
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 13:30:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CAFC11F20EE7
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 13:31:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 993EE17E01B;
-	Sun,  1 Sep 2024 13:29:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E3FA17D374;
+	Sun,  1 Sep 2024 13:31:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="laTWUtBp"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ek31ZHao"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6110156F33;
-	Sun,  1 Sep 2024 13:29:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8051523AB;
+	Sun,  1 Sep 2024 13:31:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725197392; cv=none; b=Qy4sk1cuDQxns1iy2uTPcBTSujj0xXiFPW4RqA2MqYcL/Ti8Dv4bnP658TbyO43v85SnFYdlGoz+VuKWHrwEHINmWX+xQTfs1cw8SvyTGtxFnPMuvJnLunFSQ4zN197wkjIuQScY6l942N9W6sTRpmo8mWseG4M6Bpk3kzFiJ2g=
+	t=1725197509; cv=none; b=s8fP8PfTGfVhcF9W5/dqTA3PtD8tikltT4+Zt+FGxsjN7+i7yiZbfx+Nqt4D0uJaWwrxApRwuamm5mdFrMgvSGPw+4fyjP4jP9N8tdDnBc9Zcrxewa1TTYceVdYLthj5ndJVb/PHeaiLOBStmEeM0nD1vg0MqE07AluLg5+knd4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725197392; c=relaxed/simple;
-	bh=fJV93TymRw1kv+yTPr1VEK4S6q4cyG+oEiTlEz8IwOA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AaDRAppmItCDSY7qcewU7N4pxmzPul26ow9P7tm3mXf3xF7/vbJ8MUnBdlAqdzIr0TkUBsLmdBiU+0WCI6UWNnSCN0ftgN9ty2Js2dmmjEIMUzhUvxrv9p8Q8LbK/JIfVPlo6vn52g0rGaiShtFD9SOcZKFiaYQGF0cHCZFcuAc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=laTWUtBp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 80392C4CEC3;
-	Sun,  1 Sep 2024 13:29:51 +0000 (UTC)
-Authentication-Results: smtp.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="laTWUtBp"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
-	t=1725197390;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vwEBp5hrk7rdQEMy5bh5wOYihg5L/fxmxEtvhyFPK8M=;
-	b=laTWUtBpgv/FCgSApr3ftEBjxJS2Zc+Hnj/j0n7p3WqEIoDLwPJwO3AO+e6hFon+7wFglZ
-	bIsoo8FGMp/qBb2qhVG6NiVMY8O5TIMkKSgV0WGiDkz5qY7vuYyDaNgYIYDLUH7csUURVm
-	mfgeNism5xWFi7Urk+hoyiIUaaVMR84=
-Received: 
-	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 577f71e4 (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
-	Sun, 1 Sep 2024 13:29:49 +0000 (UTC)
-Date: Sun, 1 Sep 2024 15:29:46 +0200
-From: "Jason A. Donenfeld" <Jason@zx2c4.com>
-To: Xi Ruoyao <xry111@xry111.site>
-Cc: Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>,
-	linux-crypto@vger.kernel.org, loongarch@lists.linux.dev,
-	linux-kernel@vger.kernel.org, Jinyang He <hejinyang@loongson.cn>,
-	Tiezhu Yang <yangtiezhu@loongson.cn>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH v6 1/3] arch: vDSO: Add a __vdso_getrandom prototype for
- all architectures
-Message-ID: <ZtRsSuBrky5KkBvk@zx2c4.com>
-References: <20240901061315.15693-1-xry111@xry111.site>
- <20240901061315.15693-2-xry111@xry111.site>
+	s=arc-20240116; t=1725197509; c=relaxed/simple;
+	bh=JNljzAsLk1yix2R94u1el+6SzsoPt7b0S5WPiCNk9lo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=j8USlSG/J10FOYtzDOnJF9bSnNRTM8vf2oh42cbrMdLi21EXZEAIQQUZOCi/Itpy072Crh9kuYKzQ3H1I92mSM9b/gBJ7UQthYTR34fi8D1wnrcMohpYNmpn9Nq4Gb9wZhuyahKFXsz6+B3W2lxIhRg0CZS1u+XqLt06NN3H00I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ek31ZHao; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-2055a3f80a4so3388365ad.2;
+        Sun, 01 Sep 2024 06:31:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725197508; x=1725802308; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=YsKWtzwZWeFCKs3FaZQWcU1tv/xpkAb6aBGtye2T5F0=;
+        b=Ek31ZHao5L+hxnrkqW9bPl2ntlEMLBkD+w/3x0KATR2fo6VAZFDwvVeUEtdtd0L725
+         Ud4chjkLlTJSNXjwQyJMhvdNDQTRY/Bd/kHspMJP3vLvZyMV/NuI9CkbBuK7yHIc2dbI
+         jZfUS5Ah8Wg1Y5IsFQx9h2ggZJaKJuBUH2qMGBbWufueTTf5swb0LM4SkO+Oh9ltKR6+
+         Xg+rpGiWU48AN1ToAMo3r4ntz45+axXwoJPOIPtCOzYiXBUg3bp9r0sih+7cQaIQmyok
+         wuJbW6YMbc0i6ujS3pr8PoCK/vqI4Qj53NGWOf2SdmGoozVhC/29urXnWZEt8Fav0PJQ
+         S7RA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725197508; x=1725802308;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=YsKWtzwZWeFCKs3FaZQWcU1tv/xpkAb6aBGtye2T5F0=;
+        b=LAEhMqvIHTvlmZAANnpoXgmVIZIFun/jytHFJfDZz4RyrKQRp8Qs1+3/6QaxrJj0GU
+         jF9QX57alODRO3HWmpaNuQGwKRpAPSvhkaTMNygey5mMO0qPri1PYOQZUrYbZqXpFICf
+         zt4aWB3kh/0slRqWnKLNwEGM1KIU5jMbD060cFJaGZbfZVmLnDNcwXojB38JlcvxZTqN
+         mrN5VV0E77ZEriYGbrHdNGwLZrIjmcowvU9mPA+0/zmSVYjUqWBnVgTujlr1qJoqVPBf
+         krQ0xAEdXOqCjFokwWG7idYVAeZJDC+VzljUohvM8eExLZkg/UlIWtbKxDVhqjnHxXJg
+         17MQ==
+X-Forwarded-Encrypted: i=1; AJvYcCULYX6OLVh2XDe7D48u2SkQFuMy7CaaioCmEmYNod65GuKPOceDYrqzg/bI3TQ5L82Ol8v6IZiP/ixB1Dhq@vger.kernel.org, AJvYcCVWY6SYDY4J8ctp6qH9UvmzcvJbAKv5kvqu64puI0WsTC1TmoOcqkDoIbCE9uR/BHj/i4zD5pqYajYm@vger.kernel.org
+X-Gm-Message-State: AOJu0YwXakDzqQFSX+JNVgivQiS/JThexyauDOG1r2Uk8iIphQMMD3Mm
+	S2yFmV/qJQQlAjJuXNC2BlpYua2/w++RrZhebBGZRPpfwGBBgZNr
+X-Google-Smtp-Source: AGHT+IHQskFo37TXYCxhkNM81uJOuzYc6x2rHUQiqaFyx3ld7bVbcmmjdrJ/L9XTt8DUGUelsCLEcA==
+X-Received: by 2002:a17:903:228c:b0:202:508c:b5a6 with SMTP id d9443c01a7336-2054477bfafmr50122015ad.46.1725197506157;
+        Sun, 01 Sep 2024 06:31:46 -0700 (PDT)
+Received: from eleanor-wkdl.. ([140.116.96.205])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20515537a2csm52691525ad.176.2024.09.01.06.31.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 01 Sep 2024 06:31:45 -0700 (PDT)
+From: Yu-Chun Lin <eleanor15x@gmail.com>
+To: laurent.pinchart@ideasonboard.com,
+	thierry.reding@gmail.com
+Cc: maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	tzimmermann@suse.de,
+	airlied@gmail.com,
+	daniel@ffwll.ch,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	dri-devel@lists.freedesktop.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	visitorckw@gmail.com,
+	Yu-Chun Lin <eleanor15x@gmail.com>
+Subject: [PATCH] docs: devicetree: Fix typo in lvds.yaml
+Date: Sun,  1 Sep 2024 21:30:46 +0800
+Message-ID: <20240901133046.962263-1-eleanor15x@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240901061315.15693-2-xry111@xry111.site>
+Content-Transfer-Encoding: 8bit
 
-On Sun, Sep 01, 2024 at 02:13:10PM +0800, Xi Ruoyao wrote:
-> Without a prototype, we'll have to add a prototype for each architecture
-> implementing vDSO getrandom.  As most architectures will likely have the
-> vDSO getrandom implemented in a near future, and we'd like to keep the
-> declarations compatible everywhere (to ease the Glibc work), we should
-> really just have one copy of the prototype.
-> 
-> Suggested-by: Huacai Chen <chenhuacai@kernel.org>
-> Signed-off-by: Xi Ruoyao <xry111@xry111.site>
-> ---
->  arch/x86/entry/vdso/vgetrandom.c | 2 --
->  include/vdso/getrandom.h         | 5 +++++
->  2 files changed, 5 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/x86/entry/vdso/vgetrandom.c b/arch/x86/entry/vdso/vgetrandom.c
-> index 52d3c7faae2e..430862b8977c 100644
-> --- a/arch/x86/entry/vdso/vgetrandom.c
-> +++ b/arch/x86/entry/vdso/vgetrandom.c
-> @@ -6,8 +6,6 @@
->  
->  #include "../../../../lib/vdso/getrandom.c"
->  
-> -ssize_t __vdso_getrandom(void *buffer, size_t len, unsigned int flags, void *opaque_state, size_t opaque_len);
-> -
->  ssize_t __vdso_getrandom(void *buffer, size_t len, unsigned int flags, void *opaque_state, size_t opaque_len)
->  {
->  	return __cvdso_getrandom(buffer, len, flags, opaque_state, opaque_len);
-> diff --git a/include/vdso/getrandom.h b/include/vdso/getrandom.h
-> index 4cf02e678f5e..08b47b002bf7 100644
-> --- a/include/vdso/getrandom.h
-> +++ b/include/vdso/getrandom.h
-> @@ -56,4 +56,9 @@ struct vgetrandom_state {
->   */
->  extern void __arch_chacha20_blocks_nostack(u8 *dst_bytes, const u32 *key, u32 *counter, size_t nblocks);
->  
-> +/**
-> + * __vdso_getrandom: Prototype of vDSO getrandom.
-> + */
-> +extern ssize_t __vdso_getrandom(void *buffer, size_t len, unsigned int flags, void *opaque_state, size_t opaque_len);
-> +
+Corrected the spelling in the description of LVDS Display Common
+Properties.
 
-My inclination was that this isn't correct because arm64 uses __kernel_*
-symbols instead, but it seems like arm handles that on their own, and
-include/vdso/gettime.h follows this same format. So I'll queue this up,
-possibly fixing up the comment.
+Signed-off-by: Yu-Chun Lin <eleanor15x@gmail.com>
+---
+ Documentation/devicetree/bindings/display/lvds.yaml | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Documentation/devicetree/bindings/display/lvds.yaml b/Documentation/devicetree/bindings/display/lvds.yaml
+index 224db4932011..b74efbea3be2 100644
+--- a/Documentation/devicetree/bindings/display/lvds.yaml
++++ b/Documentation/devicetree/bindings/display/lvds.yaml
+@@ -16,7 +16,7 @@ maintainers:
+ description:
+   This binding extends the data mapping defined in lvds-data-mapping.yaml.
+   It supports reversing the bit order on the formats defined there in order
+-  to accomodate for even more specialized data formats, since a variety of
++  to accommodate for even more specialized data formats, since a variety of
+   data formats and layouts is used to drive LVDS displays.
+ 
+ properties:
+-- 
+2.43.0
+
 
