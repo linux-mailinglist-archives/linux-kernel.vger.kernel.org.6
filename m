@@ -1,114 +1,107 @@
-Return-Path: <linux-kernel+bounces-310292-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310293-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84F91967813
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 18:27:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3CBD967829
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 18:28:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 435E0280D31
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 16:27:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 213091C20FD9
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 16:28:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD930183CD8;
-	Sun,  1 Sep 2024 16:27:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66EB5183CBE;
+	Sun,  1 Sep 2024 16:28:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ObAanHGz"
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W62HUtk0"
+Received: from mail-ot1-f42.google.com (mail-ot1-f42.google.com [209.85.210.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 776EA33987;
-	Sun,  1 Sep 2024 16:27:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 655B028387;
+	Sun,  1 Sep 2024 16:28:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725208044; cv=none; b=Wds3WF8egsQn0PRaB9GTkm+AAEe0uPvM92ZGG9AO18KwObjSsYs4y1dbqgSQ1EfS8/Z8JJxVcQ50oS+b5XJwnmGMLd3Brr6VxRciZRGxbEdJ6PcSf0GiPrW0jpclnnQVlCR13GAL6jfiySiN8/D432sKAjp00Orsq4Y0Yqt7E24=
+	t=1725208113; cv=none; b=oBoycV6R3Djo2sn+4MdHZafSTN3CSvf7zdamPB/nAVO7R7Wz9SbCngEp4RIJr8gAV1mus4kWnStE2XmWpT3VE4Gs49mzcPSaHKZHjViRr6B1dYsaH14BgQ082ThdRz3+MAvVnc9vYsODjCFj40FrlYlTaBf1Kg8clSjDruZ05CU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725208044; c=relaxed/simple;
-	bh=e/LKTV7hMZEHn95toU81B+LDFOUu3I/CSU0QsKDRkTY=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=EmAgL64EbDTgzs2gR5cwkQLeoT5GPVs3ivqHJhXlpYGncSlA34OJk0NodFc8EpYl/YvHSeX5n5lENqarRkIfAyrjhb3KUIZJBEE8Ec/l1k/ZEm4dAdghonNxmkTc53cLRiTzBXCmU5+VurGiVERMPojq11eX2pqBkxgtQIJYdig=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ObAanHGz; arc=none smtp.client-ip=209.85.218.42
+	s=arc-20240116; t=1725208113; c=relaxed/simple;
+	bh=4MtfHKuq/+UgpLDUC71roRztQ1MKn8y5DcemB7IM/oQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=AcOHrAFAWOqF1HtYK6j8BO8ua5Yyyhvr54s6GkWBDdLObeoSDDf39HmSd34Cj2MBNISHIQvUceKVjXcjLeTmspK87Xfb06SgGJ60H6jYp3i0zFb1LVIdFHeKALd/B6iRXHmIT81yViAwWex0TWFBnKApnV/MSKBcgFG90SYJfp0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=W62HUtk0; arc=none smtp.client-ip=209.85.210.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a869332c2c2so715811966b.0;
-        Sun, 01 Sep 2024 09:27:22 -0700 (PDT)
+Received: by mail-ot1-f42.google.com with SMTP id 46e09a7af769-70f5cd2fa39so2439511a34.0;
+        Sun, 01 Sep 2024 09:28:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725208041; x=1725812841; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=WYkCsoCLWLw24xCZo4xi+SGoWPofV3x//tQ3lm2KoZw=;
-        b=ObAanHGzjcbcup/WE4wItwGjmP8KONktM1v75/IC1WB3bwKaDCAGQWUdY3RuqE5Sku
-         E4o0HfoIukGtrXtU1HdqC9Vbmipe2XRpX9YRXayi/4oeJa6T99kx4dS3raUmqwKZWtyV
-         nlQsaOgoUMmkGCx0YUyuEcwbhg3hdm1DKoL7HpYTx6fbYHs7GQMmw04+tZ16ZqtSHrQU
-         rLLgj5eEOHPOMqPB/pHhgsMREC+nM2v8iNL+A0RaEhNUH5xqNis+uUHPgX1sJaO0OeIO
-         DYf1SfEsQ4TtrC+d8e7ptfKMd3ytO8+gahYzXiqCwzWiSkNapeEXJfj5YRQ2QsM7YOt1
-         svIw==
+        d=gmail.com; s=20230601; t=1725208111; x=1725812911; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4MtfHKuq/+UgpLDUC71roRztQ1MKn8y5DcemB7IM/oQ=;
+        b=W62HUtk0qteL1m/tYZgDD1awuTxIiIqNBk7A80MLFqDAJvgfEBypCHmnsFzc8Gtfzn
+         wV+0msvp5jnPJWaQZx25xM0z0mB4MhzlaKfbEhEeCYZj73S4TSxofYiH9e/ZesmaGOGt
+         LYlAQ71WIpj1pUG7sQa6Ho1LNXVakcuFW6bEBNwO58FIL/wveFQUlwYsz7bj4vxyjFDv
+         mKTAO+NoIrllnN1rQTsSLTgdoZNsxxGaH+V7ospAVi6HKvUKe4Bk25RUpVDnbscg55Qf
+         R3ofYWG9wrEkCKX4toqwRBvHtBuQInox51g6lTfU8VaBqywthtKGWZFSSyXTIsmEde3o
+         6WGQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725208041; x=1725812841;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=WYkCsoCLWLw24xCZo4xi+SGoWPofV3x//tQ3lm2KoZw=;
-        b=JKQ9bRAgjVGGCqpZoiR0iE5a3MowMNafWMV6POQWUZNg01zt8oXcLlVFraZO1oWW77
-         mMLYmiIhq/5ZEoJqRyuZVv3xVVi0d3a5EOZThxYl+f9EZ1tHX9ytSnOwAjYg8MKLi8Ys
-         YZ11Iqmgv4bGH65DzSsv50aWwAsg4VeTw1tdWt0sRZuGuRKgvIt/93g14TQw9VaGJcz5
-         g1spqL8sutmaDSddE9R72ZnZ6h3fiAy5vaHkxCqDIEexBy8Wi4F/fHoRgysf9jm/GhiW
-         I78tv/XdL/gqsAWsT8YveqyNxY95EJddU9Uqks/T+gcMk2XbXeYhMUuG0/MflIUhyvwK
-         37hg==
-X-Forwarded-Encrypted: i=1; AJvYcCUBFUv9WZv3emegbqTdWjB88ogSfQTZy+sIR4v7uGWZWrfGfpLdCVtEr7jcCeqBStPKlqFMpu2kbPnVBc8=@vger.kernel.org, AJvYcCX7/3fIcd8ywh1ZZziONLBu7JVLeaEYHLzLxhFe9Mh1A8MQDAmgtVsaKKb7L4JHvVxEBsbBevPUdA+uLZUUhzT4YvM=@vger.kernel.org, AJvYcCXJ86F/ty9D5k8lO/ECOBJAGUjOU03hWVnzM03VRM6oOWqSBqfFW5szFrHsY1QsUhl/46KXHF29LH4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzahfWo9c9iKczCSJuoJsUtyqVXWUNT+ajVJKdj7d2B1DfFjVfj
-	n4QoG+qQLrbQ0WrZtFyeo4BbRRpr1/eOtcMD6Zt7k6hcYyenJKVt
-X-Google-Smtp-Source: AGHT+IFWkGvJc84SLUoPtIrjnB5r9CffAAjDGAjDj4l24UeHZVQNZST9WvvOPNlCX/91/n8v2sc1OQ==
-X-Received: by 2002:a17:906:d265:b0:a86:91a5:4d09 with SMTP id a640c23a62f3a-a89a2927b2fmr854988366b.26.1725208040548;
-        Sun, 01 Sep 2024 09:27:20 -0700 (PDT)
-Received: from localhost (craw-09-b2-v4wan-169726-cust2117.vm24.cable.virginm.net. [92.238.24.70])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8988fefb60sm454888366b.43.2024.09.01.09.27.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 01 Sep 2024 09:27:19 -0700 (PDT)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Zhang Rui <rui.zhang@intel.com>,
-	Lukasz Luba <lukasz.luba@arm.com>,
-	linux-renesas-soc@vger.kernel.org,
-	linux-pm@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] thermal/drivers/renesas: Remove trailing space after \n newline
-Date: Sun,  1 Sep 2024 17:27:19 +0100
-Message-Id: <20240901162719.144406-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.39.2
+        d=1e100.net; s=20230601; t=1725208111; x=1725812911;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4MtfHKuq/+UgpLDUC71roRztQ1MKn8y5DcemB7IM/oQ=;
+        b=nH/jwbpxrze/g3q+8w5MlDlMHSU1CbWKT3Jjq8bq1YIZ3Iec595ZtPj57bXEzZsheg
+         Q4TMBpk14mDsdsseR/fMNOA6dR9hURTz6WawhtnmEApUNmfFsJoxwjnHQwd9nRnBSTSk
+         feP8ct+Ja2tIuEAMKlzt2cs09K734EFnPijNc5xRh4AKX2zS2iSuugms0X2RttRx/om1
+         27yKKuPwflPaQ2X1RvhkoPFFh7Rn6R9YH37JGYimo6YoL0PCn5SDVixNoe1v03k6uabk
+         ojV/oFQmfoiAEaT+ZPv4X5N2gIsGjAXo/EoFuE83/OWbOB0hh1pxs3qt2BRQN/dl9Qsb
+         V85g==
+X-Forwarded-Encrypted: i=1; AJvYcCWgVfrzeCyKHhgc11A2w7Az473tTlvKzyzC/Z+biRfV4rhWPRXE0YYU9rBBbL6CPoxIPeNMt+MHa7Ge4bQ=@vger.kernel.org, AJvYcCWgb0ATEqWmm5B/3OIrggYJz1oXem0PWdpst3+AuSnvPblk8wDhbNUNVIaObp2ZdpA4m9vhDmxxzk8tgg==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yylx0HeAwa1npEmLPjLM++fraGw2BBrmIq3JZ28VdyL5pSKJlEK
+	NiFyV+BxZgGK/HpcJnZsVBkz8Ea8uSEeCKBGyVWcaN+ZVlQVDtzG/EA9il9EDawQpWbHzyHUkf+
+	23HYKDZiDOQeQweqKoFBelvcCnHQ=
+X-Google-Smtp-Source: AGHT+IEQfj03uznQOgOoBoDTBGTT/mQBYdI5mTPwk6+iuz/Osa9kwYcahL7M/xN+cMmlXsGL+0KbCwY4D83hR/EuykI=
+X-Received: by 2002:a05:6358:52cd:b0:1b1:acd5:dd98 with SMTP id
+ e5c5f4694b2df-1b7ef64ec0cmr798348655d.7.1725208111259; Sun, 01 Sep 2024
+ 09:28:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+References: <CAEwRq=qhHBh5jKdLGb1r2Qem0jia=xcVdevihYfjdrLSYiZuiA@mail.gmail.com>
+ <CACRpkdZFQSN_t-Vx7xOXq0aF6Vf-XvsZKGF6yNMn7_dCeaZi_w@mail.gmail.com>
+In-Reply-To: <CACRpkdZFQSN_t-Vx7xOXq0aF6Vf-XvsZKGF6yNMn7_dCeaZi_w@mail.gmail.com>
+From: Vincent Legoll <vincent.legoll@gmail.com>
+Date: Sun, 1 Sep 2024 16:28:19 +0000
+Message-ID: <CAEwRq=p+=hBq3oP5u-Z=i2Qo6vwjagvf9wbPFzydO9nFuqixTw@mail.gmail.com>
+Subject: Re: [RFC} arm architecture board/feature deprecation timeline
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: arnd@arndb.de, aaro.koskinen@iki.fi, alexandre.torgue@foss.st.com, 
+	Andrew Lunn <andrew@lunn.ch>, broonie@kernel.org, dmitry.torokhov@gmail.com, 
+	gregory.clement@bootlin.com, jeremy@jeremypeper.com, jmkrzyszt@gmail.com, 
+	kristoffer.ericson@gmail.com, Krzysztof Kozlowski <krzk@kernel.org>, 
+	Linux Kernel ML <linux-kernel@vger.kernel.org>, 
+	Russell King - ARM Linux <linux@armlinux.org.uk>, Nicolas Pitre <nico@fluxnic.net>, nikita.shubin@maquefel.me, 
+	ramanara@nvidia.com, richard.earnshaw@arm.com, richard.sandiford@arm.com, 
+	robert.jarzmik@free.fr, sebastian.hesselbarth@gmail.com, tony@atomide.com, 
+	linux-mips@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-There is a extraneous space after a newline in a dev_err message.
-Remove it.
+Hi Linus,
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/thermal/renesas/rcar_thermal.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Mon, Aug 26, 2024 at 9:06=E2=80=AFAM Linus Walleij <linus.walleij@linaro=
+.org> wrote:
+> Userspace can still use it right?
 
-diff --git a/drivers/thermal/renesas/rcar_thermal.c b/drivers/thermal/renesas/rcar_thermal.c
-index 1e93f60b6d74..ddc8341e5c3f 100644
---- a/drivers/thermal/renesas/rcar_thermal.c
-+++ b/drivers/thermal/renesas/rcar_thermal.c
-@@ -447,7 +447,7 @@ static int rcar_thermal_probe(struct platform_device *pdev)
- 		ret = devm_request_irq(dev, irq, rcar_thermal_irq,
- 				       IRQF_SHARED, dev_name(dev), common);
- 		if (ret) {
--			dev_err(dev, "irq request failed\n ");
-+			dev_err(dev, "irq request failed\n");
- 			goto error_unregister;
- 		}
- 
--- 
-2.39.2
+Nope, it's made inaccessible.
 
+But I've found another workaround, thanks to Arnd's answer.
+
+Cheers
+
+--=20
+Vincent Legoll
 
