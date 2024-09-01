@@ -1,218 +1,173 @@
-Return-Path: <linux-kernel+bounces-310054-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310055-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5DA396742A
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 03:56:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48D30967433
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 04:28:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2C8A5282CE9
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 01:56:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BCCE81F21E46
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 02:28:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AEFA22625;
-	Sun,  1 Sep 2024 01:55:59 +0000 (UTC)
-Received: from mail-qv1-f41.google.com (mail-qv1-f41.google.com [209.85.219.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4D7726AEA;
+	Sun,  1 Sep 2024 02:28:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lixmEOF2"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44E4A1859
-	for <linux-kernel@vger.kernel.org>; Sun,  1 Sep 2024 01:55:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67CFC1DFF8
+	for <linux-kernel@vger.kernel.org>; Sun,  1 Sep 2024 02:28:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725155758; cv=none; b=gzSuBLljTg5ITYFcCDdUpnZdi3lL0OgCR5SuhUK5DkMSrqA6YJpDIzOx66b0pUmWbOK+SK0BKyGuPrbFdnXD07vrwazQUWQXOHl1KF4HgDHhUBON3SkfsSOUFHAEm540ft7dXtvQOG6Kn1ukvIyYwYrernmA/pdrDxm3zB/Ff5E=
+	t=1725157713; cv=none; b=ngqQWDfpez51gY4VerK4/Dw6m8DJp5Jc4QuTpD+34+xXXOcMRgt3IhqlOaPXPpzM9FoPuoCR7RJ7N311KkxPpvlVP06fDg3LpcHTYdkQpFQ/l36cLLqrhM4/kFA0IMT669OvkNptTABmjYuLZZi6lZArx/5w6dG2MiINQO8/Gig=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725155758; c=relaxed/simple;
-	bh=F8R4LLFmsi/Nbq/w004u4GlnGkKxvb1HkvdJbFxBD2Q=;
+	s=arc-20240116; t=1725157713; c=relaxed/simple;
+	bh=RLY9vgtFSSAnUSgXvZyFKQwN2JCSEdXEsD6XtAtQBHQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=vFXxU+9b9tdfeMnwqMJPhKZNSfQZkG0LTlKe9bTTWVVz+jY+N3UW0e0L2pnqrc/KvBUEq4GmAIXS5zw8nWdEKAE0Oa0C65516Kn+bwTtmJQ1vS7PoLyw04rEjrNty11IHiMNp346UnN07+DZCB2THwHhNjrSuHFbsBeRj8Xkhgo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=manifault.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=manifault.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f41.google.com with SMTP id 6a1803df08f44-6c352bcb569so8231086d6.0
-        for <linux-kernel@vger.kernel.org>; Sat, 31 Aug 2024 18:55:57 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725155756; x=1725760556;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=eSo7z37Sf6DuEZBOXjgDDSwq9qunClKp37tC96bPVNU=;
-        b=qfOdEY8tik0G9G8uObRFLfFMb7XM2G5hDOQYn/xlgEvAgdDRb7bTeLXaxpRgQWqjMY
-         slPJva1/PtZzLRlvP66ZzV3qhkYnlbfmk/2FksNls17qZsfJ0chnkJ4Fyes1zdUKdjZp
-         G0Fs/sLkupH82Nx6JSjoV36XQuP3WOMFpROjfQ0fkQr6F7d9Ia8DLM8uUEda7oGohlpY
-         X5NjZSSCtqB17FZJGrXQCYmBa+dTcUdzJulyjpHFw3LUc2OjjJiJyJRndeyL/fOn6Ll/
-         nAuzY2Rw9E4fGzrlzsCKPATD7BdlPdRQx0U4PwkmlQdiDSXcKbt2DZo6Fn86tmdT1v+1
-         ex/w==
-X-Forwarded-Encrypted: i=1; AJvYcCVa5P4q8x5ZsJlv3qRKY4oEgzcy4xNkGobLsuB5LmhLCll518xhtOkodoN4Lxol7xLCVq/22oOcZV3HIuo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy7Uu+JHJUt6NVGZ7Z3TUWhAsuitoviN7gFrR4kHeze1egNwKzV
-	tt8I2FislpTmnvWKhzd9xhUCgCCndBS3LArG5Bn3XmVclsX5zOWEPDVxaAJ0
-X-Google-Smtp-Source: AGHT+IEzCUKQTuxynyZDcutCBSbJtEPBzz/JD3hY581ewI1MJdgnrOQkoOBYAx2Us4gvQLuVSl3Shw==
-X-Received: by 2002:a05:6214:4948:b0:6c3:5663:81b5 with SMTP id 6a1803df08f44-6c3566381efmr28785526d6.5.1725155755971;
-        Sat, 31 Aug 2024 18:55:55 -0700 (PDT)
-Received: from maniforge (c-76-141-129-107.hsd1.il.comcast.net. [76.141.129.107])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6c340ca6a89sm29053256d6.113.2024.08.31.18.55.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 31 Aug 2024 18:55:55 -0700 (PDT)
-Date: Sat, 31 Aug 2024 20:55:53 -0500
-From: David Vernet <void@manifault.com>
-To: Tejun Heo <tj@kernel.org>
-Cc: kernel-team@meta.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 09/11] sched_ext: Replace consume_local_task() with
- move_local_task_to_local_dsq()
-Message-ID: <20240901015553.GJ70166@maniforge>
-References: <20240830110415.116090-1-tj@kernel.org>
- <20240830110415.116090-10-tj@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ggleuRCVor7MO5Ou6K92zZ86LA+el0anXQ78y/G+hHewvBGOt3a0keFp7ZUf4aRqA5C8sncil+Lci2cyAxU/SG3kpmjNMm8apxDLAGQppW/hTdKMotdQ6y0P3FbQjPAzhiOHqrdblJkmIpLpwjilo2qC11IzPD5XoCvjkMXdkFg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lixmEOF2; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725157710; x=1756693710;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=RLY9vgtFSSAnUSgXvZyFKQwN2JCSEdXEsD6XtAtQBHQ=;
+  b=lixmEOF2eOJNPQHs9Ss+fmosT9PcEPsTrrTr+OQfhQDWHrysVrqdQM76
+   cjosVoiJBQzOFFLT0UJlJHVH4Ly42jiyEOY8I/haDbBeLFfGZJv033pMF
+   XQN7kpGtzp4duJte4UzebL9n8vMAcaYcvsgI7jVIE0Lab9fpjf/3mkLiV
+   nwKAZC0CALgElE2E7ZgPvYLqMjiumRX23kC0lDoowH3LM/0i39yDIYlHA
+   Izi5w0ottgJ1F/uiR+yggGF+kd5/9UTsAjD4d61Jc6DHzyyVWC9HxFrek
+   Ro2bEC7xLYO/+t5qYgF2AWCPU3czuIXuzJzwcxkjNB3xjvm+rHr5ehZ2y
+   Q==;
+X-CSE-ConnectionGUID: lKV3onUVQWufwkSqBkO8QQ==
+X-CSE-MsgGUID: 16GfRk08S1GYncgpm9FnLA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11181"; a="23574862"
+X-IronPort-AV: E=Sophos;i="6.10,193,1719903600"; 
+   d="scan'208";a="23574862"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Aug 2024 19:28:29 -0700
+X-CSE-ConnectionGUID: RChm/ESJSJKZdhlxhHKlAA==
+X-CSE-MsgGUID: Jwh5GKJKQty6aQKz3qbSyA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,193,1719903600"; 
+   d="scan'208";a="64296260"
+Received: from lkp-server01.sh.intel.com (HELO 9c6b1c7d3b50) ([10.239.97.150])
+  by fmviesa009.fm.intel.com with ESMTP; 31 Aug 2024 19:28:26 -0700
+Received: from kbuild by 9c6b1c7d3b50 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1skaKG-0003Hi-10;
+	Sun, 01 Sep 2024 02:28:24 +0000
+Date: Sun, 1 Sep 2024 10:28:14 +0800
+From: kernel test robot <lkp@intel.com>
+To: Umang Jain <umang.jain@ideasonboard.com>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: oe-kbuild-all@lists.linux.dev, linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Kieran Bingham <kieran.bingham@ideasonboard.com>,
+	Arnd Bergmann <arnd@arndb.de>, Stefan Wahren <wahrenst@gmx.net>,
+	Dave Stevenson <dave.stevenson@raspberrypi.com>,
+	Phil Elwell <phil@raspberrypi.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Umang Jain <umang.jain@ideasonboard.com>
+Subject: Re: [PATCH v2 1/7] staging: vchiq: Factor out bulk transfer for
+ VCHIQ_BULK_MODE_WAITING
+Message-ID: <202409011052.hHoEnTUy-lkp@intel.com>
+References: <20240831162435.191084-2-umang.jain@ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="CfTem88Kzab91uKz"
-Content-Disposition: inline
-In-Reply-To: <20240830110415.116090-10-tj@kernel.org>
-User-Agent: Mutt/2.2.13 (00d56288) (2024-03-09)
-
-
---CfTem88Kzab91uKz
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20240831162435.191084-2-umang.jain@ideasonboard.com>
 
-On Fri, Aug 30, 2024 at 01:03:53AM -1000, Tejun Heo wrote:
-> - Rename move_task_to_local_dsq() to move_remote_task_to_local_dsq().
->=20
-> - Rename consume_local_task() to move_local_task_to_local_dsq() and remove
->   task_unlink_from_dsq() and source DSQ unlocking from it.
->=20
-> This is to make the migration code easier to reuse.
->=20
-> No functional changes intended.
->=20
-> Signed-off-by: Tejun Heo <tj@kernel.org>
+Hi Umang,
 
-Acked-by: David Vernet <void@manifault.com>
+kernel test robot noticed the following build warnings:
 
-> ---
->  kernel/sched/ext.c | 42 ++++++++++++++++++++++++++----------------
->  1 file changed, 26 insertions(+), 16 deletions(-)
->=20
-> diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
-> index 51d141602a11..df33524d68f3 100644
-> --- a/kernel/sched/ext.c
-> +++ b/kernel/sched/ext.c
-> @@ -2103,23 +2103,30 @@ static bool yield_to_task_scx(struct rq *rq, stru=
-ct task_struct *to)
->  		return false;
->  }
-> =20
-> -static void consume_local_task(struct task_struct *p,
-> -			       struct scx_dispatch_q *dsq, struct rq *rq)
-> +static void move_local_task_to_local_dsq(struct task_struct *p, u64 enq_=
-flags,
-> +					 struct scx_dispatch_q *src_dsq,
-> +					 struct rq *dst_rq)
->  {
-> -	lockdep_assert_held(&dsq->lock);	/* released on return */
-> +	struct scx_dispatch_q *dst_dsq =3D &dst_rq->scx.local_dsq;
-> +
-> +	/* @dsq is locked and @p is on @dst_rq */
-> +	lockdep_assert_held(&src_dsq->lock);
-> +	lockdep_assert_rq_held(dst_rq);
-> =20
-> -	/* @dsq is locked and @p is on this rq */
->  	WARN_ON_ONCE(p->scx.holding_cpu >=3D 0);
-> -	task_unlink_from_dsq(p, dsq);
-> -	list_add_tail(&p->scx.dsq_list.node, &rq->scx.local_dsq.list);
-> -	dsq_mod_nr(&rq->scx.local_dsq, 1);
-> -	p->scx.dsq =3D &rq->scx.local_dsq;
-> -	raw_spin_unlock(&dsq->lock);
-> +
-> +	if (enq_flags & (SCX_ENQ_HEAD | SCX_ENQ_PREEMPT))
-> +		list_add(&p->scx.dsq_list.node, &dst_dsq->list);
-> +	else
-> +		list_add_tail(&p->scx.dsq_list.node, &dst_dsq->list);
-> +
-> +	dsq_mod_nr(dst_dsq, 1);
-> +	p->scx.dsq =3D dst_dsq;
->  }
-> =20
->  #ifdef CONFIG_SMP
->  /**
-> - * move_task_to_local_dsq - Move a task from a different rq to a local D=
-SQ
-> + * move_remote_task_to_local_dsq - Move a task from a foreign rq to a lo=
-cal DSQ
->   * @p: task to move
->   * @enq_flags: %SCX_ENQ_*
->   * @src_rq: rq to move the task from, locked on entry, released on return
-> @@ -2127,8 +2134,8 @@ static void consume_local_task(struct task_struct *=
-p,
->   *
->   * Move @p which is currently on @src_rq to @dst_rq's local DSQ.
->   */
-> -static void move_task_to_local_dsq(struct task_struct *p, u64 enq_flags,
-> -				   struct rq *src_rq, struct rq *dst_rq)
-> +static void move_remote_task_to_local_dsq(struct task_struct *p, u64 enq=
-_flags,
-> +					  struct rq *src_rq, struct rq *dst_rq)
->  {
->  	lockdep_assert_rq_held(src_rq);
-> =20
-> @@ -2251,7 +2258,7 @@ static bool consume_remote_task(struct rq *this_rq,=
- struct task_struct *p,
->  	raw_spin_rq_unlock(this_rq);
-> =20
->  	if (unlink_dsq_and_lock_task_rq(p, dsq, task_rq)) {
-> -		move_task_to_local_dsq(p, 0, task_rq, this_rq);
-> +		move_remote_task_to_local_dsq(p, 0, task_rq, this_rq);
->  		return true;
->  	} else {
->  		raw_spin_rq_unlock(task_rq);
-> @@ -2282,7 +2289,9 @@ static bool consume_dispatch_q(struct rq *rq, struc=
-t scx_dispatch_q *dsq)
->  		struct rq *task_rq =3D task_rq(p);
-> =20
->  		if (rq =3D=3D task_rq) {
-> -			consume_local_task(p, dsq, rq);
-> +			task_unlink_from_dsq(p, dsq);
-> +			move_local_task_to_local_dsq(p, 0, dsq, rq);
-> +			raw_spin_unlock(&dsq->lock);
->  			return true;
->  		}
-> =20
-> @@ -2362,13 +2371,14 @@ static void dispatch_to_local_dsq(struct rq *rq, =
-struct scx_dispatch_q *dst_dsq,
->  		/*
->  		 * If @p is staying on the same rq, there's no need to go
->  		 * through the full deactivate/activate cycle. Optimize by
-> -		 * abbreviating the operations in move_task_to_local_dsq().
-> +		 * abbreviating move_remote_task_to_local_dsq().
->  		 */
->  		if (src_rq =3D=3D dst_rq) {
->  			p->scx.holding_cpu =3D -1;
->  			dispatch_enqueue(&dst_rq->scx.local_dsq, p, enq_flags);
->  		} else {
-> -			move_task_to_local_dsq(p, enq_flags, src_rq, dst_rq);
-> +			move_remote_task_to_local_dsq(p, enq_flags,
-> +						      src_rq, dst_rq);
->  		}
-> =20
->  		/* if the destination CPU is idle, wake it up */
-> --=20
-> 2.46.0
->=20
+[auto build test WARNING on staging/staging-testing]
 
---CfTem88Kzab91uKz
-Content-Type: application/pgp-signature; name="signature.asc"
+url:    https://github.com/intel-lab-lkp/linux/commits/Umang-Jain/staging-vchiq-Factor-out-bulk-transfer-for-VCHIQ_BULK_MODE_WAITING/20240901-002839
+base:   staging/staging-testing
+patch link:    https://lore.kernel.org/r/20240831162435.191084-2-umang.jain%40ideasonboard.com
+patch subject: [PATCH v2 1/7] staging: vchiq: Factor out bulk transfer for VCHIQ_BULK_MODE_WAITING
+config: i386-buildonly-randconfig-001-20240901 (https://download.01.org/0day-ci/archive/20240901/202409011052.hHoEnTUy-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240901/202409011052.hHoEnTUy-lkp@intel.com/reproduce)
 
------BEGIN PGP SIGNATURE-----
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202409011052.hHoEnTUy-lkp@intel.com/
 
-iHUEARYKAB0WIQRBxU1So5MTLwphjdFZ5LhpZcTzZAUCZtPJqQAKCRBZ5LhpZcTz
-ZMFdAP9QYntEEMQDNdolbGOv5hp4T5TNe17r8cOHaBnSCO52xwD/eJ04w1E2BUCI
-MAbEpn/Ki//oDuQ8NGSB8YKVXUyO0Aw=
-=tH2r
------END PGP SIGNATURE-----
+All warnings (new ones prefixed by >>):
 
---CfTem88Kzab91uKz--
+   drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c: In function 'vchiq_bulk_xfer_waiting_interruptible':
+>> drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c:3152:28: warning: variable 'bulk' set but not used [-Wunused-but-set-variable]
+    3152 |         struct vchiq_bulk *bulk;
+         |                            ^~~~
+
+
+vim +/bulk +3152 drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c
+
+  3140	
+  3141	/*
+  3142	 * This function is called by VCHIQ ioctl interface and is interruptible.
+  3143	 * It may receive -EAGAIN to indicate that a signal has been received
+  3144	 * and the call should be retried after being returned to user context.
+  3145	 */
+  3146	int
+  3147	vchiq_bulk_xfer_waiting_interruptible(struct vchiq_instance *instance,
+  3148					      unsigned int handle, struct bulk_waiter *userdata)
+  3149	{
+  3150		struct vchiq_service *service = find_service_by_handle(instance, handle);
+  3151		struct bulk_waiter *bulk_waiter;
+> 3152		struct vchiq_bulk *bulk;
+  3153		int status = -EINVAL;
+  3154	
+  3155		if (!service)
+  3156			goto error_exit;
+  3157	
+  3158		if (!userdata)
+  3159			goto error_exit;
+  3160	
+  3161		if (service->srvstate != VCHIQ_SRVSTATE_OPEN)
+  3162			goto error_exit;
+  3163	
+  3164		if (vchiq_check_service(service))
+  3165			goto error_exit;
+  3166	
+  3167		bulk_waiter = userdata;
+  3168		bulk = bulk_waiter->bulk;
+  3169	
+  3170		vchiq_service_put(service);
+  3171	
+  3172		status = 0;
+  3173	
+  3174		if (wait_for_completion_interruptible(&bulk_waiter->event))
+  3175			return -EAGAIN;
+  3176		else if (bulk_waiter->actual == VCHIQ_BULK_ACTUAL_ABORTED)
+  3177			return -EINVAL;
+  3178	
+  3179		return status;
+  3180	
+  3181	error_exit:
+  3182		if (service)
+  3183			vchiq_service_put(service);
+  3184		return status;
+  3185	}
+  3186	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
