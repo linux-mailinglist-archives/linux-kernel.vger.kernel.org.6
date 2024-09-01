@@ -1,96 +1,126 @@
-Return-Path: <linux-kernel+bounces-310325-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310326-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B64E4967B64
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 19:12:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51208967B66
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 19:12:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DC6DB1C21791
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 17:12:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0CE7328133A
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 17:12:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82E012A1B8;
-	Sun,  1 Sep 2024 17:12:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE57C183CDB;
+	Sun,  1 Sep 2024 17:12:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fnanninga.de header.i=@fnanninga.de header.b="pSVwYZIb"
-Received: from box.shakik.de (box.shakik.de [116.203.140.107])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fWxp/cMA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE7EC1DFD1;
-	Sun,  1 Sep 2024 17:12:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.140.107
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AC4018308E;
+	Sun,  1 Sep 2024 17:12:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725210744; cv=none; b=F+TLU7hKHCGq/r0+40JqOVNR5dwPpPAjoJX2clrExV4RYSquZJffKCSc6EG4zOP4fnWHME9wsqxx5boOgEJ6Q+y/hZ0Qt6/bzOXUygowhg3E8ysNZlmyJElkLOtU8wPMVrKMPxEbpQLAAqEQTzxntQkWAE1KRqmLZvtZXdXjHVU=
+	t=1725210746; cv=none; b=tf5cy+Mmx18SIbB15xvyEkOn0T09A0g/w2YBQDIoBmdkf15mfYnpRrYMGj9EnXerp/8RkuqhAGAQDrJ0h3//ITtvGnijToxCiBn4vqoVxw8nKEGpuQOmK94O/PqHACg6z64JgrIjr5cTRRcUwSO1J8nDCewvC3LZsQx/PyzJva8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725210744; c=relaxed/simple;
-	bh=3BP+ZfdplAybx2qytl7H/ivcCshwHcSKpjMtsxNQGP4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=V1wFiJQ0hDK77TpPHccIK0S1gKuue/E2xm2+Li9/Ci2jaWvaFX6jOBZVRiNXmQADlU1uS2HS6FYjEhGH6aBs9bYhAvk5qfNs/CL/A0/XDku9dlpldHNcsEqgmZyG8HGqgCS1xBrh/Jal+srx97Q4mAwlV5jdbLeUGFYYgMV2GtU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fnanninga.de; spf=pass smtp.mailfrom=fnanninga.de; dkim=pass (2048-bit key) header.d=fnanninga.de header.i=@fnanninga.de header.b=pSVwYZIb; arc=none smtp.client-ip=116.203.140.107
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fnanninga.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fnanninga.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=fnanninga.de; s=mail;
-	t=1725210731; bh=3BP+ZfdplAybx2qytl7H/ivcCshwHcSKpjMtsxNQGP4=;
-	h=From:To:Cc:Subject:Date:From;
-	b=pSVwYZIb1uVTdyWyynpLj9khmUZl+yy5Unob60moBVECcUzV7Izd2Q8ptkdkcYKR4
-	 inxy0YwEXKf+ARUwYX8GqoUlyakk6bnK3tX+o1uIT5YZVRD1k6mhUmTUqC2AQSIAac
-	 ukKMJlOLrFxtvtZYyd73VCd8unyypK9BfQsCSQp+t9aktZCrBcJ9REenrzuCaqTSOa
-	 IlyV0JTfwpQKdrOGpBKPwZ4nfTlfohxymm+vQ9QdyP8jX6FxWsZTWWcUte3yXx9fzU
-	 tjguSe2rMmbjSKoBP7D68v3IyP9saMlyJdnMk9lr5N+y2RroFlatYXAA/zm0YeeuWX
-	 WHkJAEnHO+sSg==
-Received: from authenticated-user (box.shakik.de [116.203.140.107])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by box.shakik.de (Postfix) with ESMTPSA id 8CA823EB1D;
-	Sun,  1 Sep 2024 19:12:11 +0200 (CEST)
-From: Feiko Nanninga <feiko.nanninga@fnanninga.de>
-To: Kent Overstreet <kent.overstreet@linux.dev>,
-	linux-bcachefs@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Feiko Nanninga <feiko.nanninga@fnanninga.de>
-Subject: [PATCH] Fix sysfs rebalance duration waited formatting
-Date: Sun,  1 Sep 2024 19:08:05 +0200
-Message-ID: <20240901170821.10617-2-feiko.nanninga@fnanninga.de>
+	s=arc-20240116; t=1725210746; c=relaxed/simple;
+	bh=RgV1+vFXxD1YOWUbfX+yhlkDhClujDM6WsRSO2vDLWQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sZboM+cS2I26UhabxnBgUWk/I63OC9j3abF4Ichv2aAC4snUw3RdNA/74gfqVhxdU3BwKQRQyZhdNX8hUq4GxDW2GreYXnwksAPi4fveb7dVUqClG6TQe2srvpu6vu8o6XUDudRjyHOixd4Qx+EcOa4e40RiWOuTEd3uiItM57A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fWxp/cMA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 97B7EC4CEC3;
+	Sun,  1 Sep 2024 17:12:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725210744;
+	bh=RgV1+vFXxD1YOWUbfX+yhlkDhClujDM6WsRSO2vDLWQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fWxp/cMA+sUFKE1I9PdLg1ey5HcEI5PaYKdjavQwnGhb/2sw5wHL1+irDSoF2nHye
+	 6WV4JlST0WV3EFBrnE5U8IaV/QwTdt4oLPb4rmFpdhtT6kBIbuNKYxDrsu11awsoJD
+	 4Qjbj8xdat3CqB2429nVjsqIF5jTynJLNf8xVxsrHAb5hSUpIQyDCZP2gjqRCPuuB4
+	 9A31Wk7QUOuyKxU4OJ9jDKxN5itkon4MCCeC61CHae5ABVc16uii6HuAOu2aLnSIIw
+	 FptLBiHsNr6ze+2Jvh6E3beO9SAtlIXCTul3txKTo2NunDCFNkOyUI34M1PN6FhRMH
+	 SnP06H5PpujGA==
+Date: Sun, 1 Sep 2024 18:11:50 +0100
+From: Simon Horman <horms@kernel.org>
+To: David Laight <David.Laight@aculab.com>
+Cc: Yan Zhen <yanzhen@vivo.com>,
+	"marcin.s.wojtas@gmail.com" <marcin.s.wojtas@gmail.com>,
+	"davem@davemloft.net" <davem@davemloft.net>,
+	"edumazet@google.com" <edumazet@google.com>,
+	"kuba@kernel.org" <kuba@kernel.org>,
+	"pabeni@redhat.com" <pabeni@redhat.com>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"opensource.kernel@vivo.com" <opensource.kernel@vivo.com>
+Subject: Re: [PATCH v1] ethernet: marvell: Use min macro
+Message-ID: <20240901171150.GA23170@kernel.org>
+References: <20240827115848.3908369-1-yanzhen@vivo.com>
+ <20240827175408.GR1368797@kernel.org>
+ <20240827175745.GS1368797@kernel.org>
+ <7cfe24b82098487e9b1d35f964bf652f@AcuMS.aculab.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <7cfe24b82098487e9b1d35f964bf652f@AcuMS.aculab.com>
 
-cat /sys/fs/bcachefs/*/internal/rebalance_status
-waiting
-  io wait duration:  13.5 GiB
-  io wait remaining: 627 MiB
-  duration waited:   1392 m
+On Sat, Aug 31, 2024 at 12:39:28PM +0000, David Laight wrote:
+> From: Simon Horman
+> > Sent: 27 August 2024 18:58
+> > 
+> > On Tue, Aug 27, 2024 at 06:54:08PM +0100, Simon Horman wrote:
+> > > On Tue, Aug 27, 2024 at 07:58:48PM +0800, Yan Zhen wrote:
+> > > > Using the real macro is usually more intuitive and readable,
+> > > > When the original file is guaranteed to contain the minmax.h header file
+> > > > and compile correctly.
+> > > >
+> > > > Signed-off-by: Yan Zhen <yanzhen@vivo.com>
+> > > > ---
+> > > >  drivers/net/ethernet/marvell/mvneta.c | 3 +--
+> > > >  1 file changed, 1 insertion(+), 2 deletions(-)
+> > > >
+> > > > diff --git a/drivers/net/ethernet/marvell/mvneta.c b/drivers/net/ethernet/marvell/mvneta.c
+> > > > index d72b2d5f96db..415d2b9e63f9 100644
+> > > > --- a/drivers/net/ethernet/marvell/mvneta.c
+> > > > +++ b/drivers/net/ethernet/marvell/mvneta.c
+> > > > @@ -4750,8 +4750,7 @@ mvneta_ethtool_set_ringparam(struct net_device *dev,
+> > > >
+> > > >  	if ((ring->rx_pending == 0) || (ring->tx_pending == 0))
+> > > >  		return -EINVAL;
+> > > > -	pp->rx_ring_size = ring->rx_pending < MVNETA_MAX_RXD ?
+> > > > -		ring->rx_pending : MVNETA_MAX_RXD;
+> > > > +	pp->rx_ring_size = min(ring->rx_pending, MVNETA_MAX_RXD);
+> > >
+> > > Given that the type of ring->rx_pending is __32, and MVNETA_MAX_RXD is
+> > > a positive value.
+> > 
+> > Sorry, I hit send to soon. What I wanted to say is:
+> > 
+> > I think that it is appropriate to use umin() here.
+> > Because:
+> > 1) As I understand things, the type of MVNETA_MAX_RXD is signed,
+> >    but it always holds a positive value
+> > 2) ring->rx_pending is unsigned
+> 
+> Provided MVNETA_MAX_RXD is constant it is fine.
+> umin() is only needed for signed variables that can only contain
+> non-negative values.
+> 
+> You only need to use it is the compiler bleats...
+> 
+> umin(x, y) is safer than min_t(unsigned_type, x, y) because you can't
+> get the type wrong.
+> If will also generate better code since it never sign extends a
+> 32bit value to 64bits (expensive on 32bit).
 
-duration waited was increasing at a rate of about 14 times the expected
-rate.
+Hi David,
 
-div_u64 takes a u32 divisor, but u->nsecs (from time_units[]) can be
-bigger than u32.
+My understanding of umin() was a bit off - I thought it was
+also relevant when one of the arguments is a constant.
 
-Signed-off-by: Feiko Nanninga <feiko.nanninga@fnanninga.de>
----
- fs/bcachefs/util.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/fs/bcachefs/util.c b/fs/bcachefs/util.c
-index 1b8554460af4..a6c9c96955f1 100644
---- a/fs/bcachefs/util.c
-+++ b/fs/bcachefs/util.c
-@@ -360,7 +360,7 @@ void bch2_pr_time_units(struct printbuf *out, u64 ns)
- {
- 	const struct time_unit *u = bch2_pick_time_units(ns);
- 
--	prt_printf(out, "%llu %s", div_u64(ns, u->nsecs), u->name);
-+	prt_printf(out, "%llu %s", div64_u64(ns, u->nsecs), u->name);
- }
- 
- static void bch2_pr_time_units_aligned(struct printbuf *out, u64 ns)
--- 
-2.45.2
-
+Thanks for setting me straight.
 
