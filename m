@@ -1,343 +1,288 @@
-Return-Path: <linux-kernel+bounces-310264-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310265-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8B47967735
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 17:34:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92DC6967736
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 17:36:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 24904B211C3
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 15:34:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9D2F61C20AC4
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 15:36:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73E751DFD1;
-	Sun,  1 Sep 2024 15:34:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vH+sanxO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBC6E17DFE9;
+	Sun,  1 Sep 2024 15:35:54 +0000 (UTC)
+Received: from mail-ot1-f53.google.com (mail-ot1-f53.google.com [209.85.210.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B05F26AEA;
-	Sun,  1 Sep 2024 15:34:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5651D26AEA
+	for <linux-kernel@vger.kernel.org>; Sun,  1 Sep 2024 15:35:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725204876; cv=none; b=ZYx6cV1skN3q0cucibE70N+wqtp7gfrNX7P7HXdTRouWJywNdk8ZHHqzoENjZIVGF0OauZvIEk4aB/Kn6TBG9Jjc0OQNRXCS9x4UR2+XhRbvtnEukNKPZRq0oWwj1OCNdFcLH79fNJ4/78aTYQikZX1eixKl8q7/aIyFRRjCwgE=
+	t=1725204954; cv=none; b=d4nzz7jTEKQnmv8XsiH7wzMvCSKa32FBlq/e52UHru6b4X+iSjUL/l/mw+tShfkJdQ/AwdcSozurwEZ3qacJYcvKidJozIuzuQ7wpy34un1OMyXIgMFfP2wssEaTaGXgipdn0EgfjaZeT/0v2Rg60ZLGGpN97QADDtRgKpXfd9w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725204876; c=relaxed/simple;
-	bh=FgsG1NQYh7lM/TTNC+liIO6CqYLNB2/Cqer/okDSwjg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Kb3+mM20+wsb/KoTaxoPehQXcDtLulQNxts+XoqL13bvtETARQCxeCCMJloZUkHnNn5FAxgf6D6durcrm5HjFzcte79xOX/Ceu/AhfiXQBsfvTPi5PJAKUrSHhUHy42gS+gL17E9jI0ZoKjvnNZQL7AHvHwCoeD6cQor27HYFIE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vH+sanxO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BC01CC4CEC9;
-	Sun,  1 Sep 2024 15:34:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725204875;
-	bh=FgsG1NQYh7lM/TTNC+liIO6CqYLNB2/Cqer/okDSwjg=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=vH+sanxO8ckaQspNHtaq0iVtt7yauHTMoA6UyNVE2v2d25lISxXygqInQOwItkEKt
-	 uSEOkQ+7Sxp4ytCA1jwgzTbPFMIvaaM54k7Su4p92rYByGGcYM8PZuUv+4veMoM06p
-	 YPwQ/G7jIgt0rHYugWU4xDo/4aJdivClZUKzbpqfMG1P1/foir/khdtHYAJ+Wu4m7u
-	 OZg4SOdE3lrisKUz94OXkXOWuS4Oo0X4UJDGXHdkZdeIfSO+2llS+yIELQBfCvWH4u
-	 AQS4hA5hERymOHm7sE5DhIXq7AypuLLbHOIQV7N49qm61QoU5jfLSV2+5d/Mqpb5+I
-	 nmwstgn11fYpA==
-Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2f51b67e16dso38057531fa.3;
-        Sun, 01 Sep 2024 08:34:35 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWuPWeMvYAqITqVoi8e9yXus+WAzROujoRH1uSDqcp3sYedqiibJG5P6j/6jyFDBvNYZte3heJ+FdOq0RM=@vger.kernel.org, AJvYcCXCZSNo5TSwWEs2jxd/0tyH4eo8AmuT80Pgwpuxi8QQb2hpmquUoMaphdsd/qgx+k6z+z7uGOQscEnvo+UO@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywcvnv2RQI4TkT0jt6pWZcbQhg26mNcpvc0w9JXa7JE2Jb0Kfew
-	lLEJy+GskyVSjtNqLAMsLMj/qNuheFw1phCCm4byxg3pbE1Kg7bV9886k2XE1djea4rjR255M3B
-	AR2QffJPEHMuEfwMbc6RNYdgNz2w=
-X-Google-Smtp-Source: AGHT+IFAFqy44nVqodqMurZA+hHCssh6rsaWP3AL6HPR1Is7U1vqYHemEX12i+MfXUhaDcZZKin/uebQf/sEcOjARao=
-X-Received: by 2002:a05:6512:a8e:b0:533:4642:9e06 with SMTP id
- 2adb3069b0e04-53546b59d4bmr4749805e87.34.1725204874301; Sun, 01 Sep 2024
- 08:34:34 -0700 (PDT)
+	s=arc-20240116; t=1725204954; c=relaxed/simple;
+	bh=r0jNTiLoecJKnnJ5CdEjUz5HO/hYdmcflEzyAlCsozI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SR3QsABVZupz6XGYPq3NgXJdFia3faZSoGh1NfteXMrAVA7xaNMYPvW38bHH+xZdcZeroHyCzVbabTqrE80wdvg4lellDz7aBwm+VhxPNM6/cQNsaKi1tXRmXDvfUSD2C6+RLB0CYxW5mx4VT6q+tqxR0dlDKbZvAZx2NrevQX4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=manifault.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=manifault.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ot1-f53.google.com with SMTP id 46e09a7af769-70f645a30dcso1976429a34.3
+        for <linux-kernel@vger.kernel.org>; Sun, 01 Sep 2024 08:35:52 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725204951; x=1725809751;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=xPcffN6Y0/nsSLxwxfe0IvDd6h+tZoZCfUXmpqQ5Un4=;
+        b=DihK9sfqxPhA9w85EqN2jb0pzFT6NO9EW0o9QDaSY4RzdXffiBQ0eamzpmjAwn6Xet
+         QN5tS3eqdNwj4L1K8VMAygba+ZPgixvZjzAUZ3Qk7XNbzTIP/2MeVknXt7hGJ2zZfJbc
+         6VNt2aFZTG8cbm01iBgk3UFxe/pMsmeO14+6Q7cOfpX99AOL4eZOt63lbuFGR+aG068A
+         mjg1onufZesEPkkEEGc5iUwZp7ttiu7PHjebkDBtcl8I9grkHDbKrw0q9p2OMVrDaQUS
+         YOu9+wOHgKnMHSrkG2iU+AgZr7lEdhUi9+F3IBRI1v4dcNBA6woI5V3IzvNMZ9IbM2sv
+         6+yQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVEbtQQC+Q13KsX7R2cU+IhaZri1/FPtRgaNdI2UatbXEksHGAXfiPZ6ZhdqPAUlHZxfvlRsFcyUdmAyIw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzlDrJRa01F1XCA6RGJfcPhzwH7id4SB1NWmnbh/p90bc6gqRtJ
+	dPPCFrJBx1tP9sQKd6eTfpjvwpO0oQHAtwt3B5IyOtU3WOUGqyjr
+X-Google-Smtp-Source: AGHT+IFIdYznnLs5Fw0SlKIYzk1/n5ESuMS8FBoKloYIpmwTHi/w9VgrmaOJR3TipQDbsxj+aIbL7g==
+X-Received: by 2002:a05:6830:2905:b0:703:7821:da7 with SMTP id 46e09a7af769-70f5c3fbf75mr13863415a34.25.1725204951291;
+        Sun, 01 Sep 2024 08:35:51 -0700 (PDT)
+Received: from maniforge (c-76-141-129-107.hsd1.il.comcast.net. [76.141.129.107])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6c362e23487sm5972916d6.117.2024.09.01.08.35.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 01 Sep 2024 08:35:50 -0700 (PDT)
+Date: Sun, 1 Sep 2024 10:35:48 -0500
+From: David Vernet <void@manifault.com>
+To: Tejun Heo <tj@kernel.org>
+Cc: kernel-team@meta.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 04/11] sched_ext: Fix processs_ddsp_deferred_locals() by
+ unifying DTL_INVALID handling
+Message-ID: <20240901153548.GK70166@maniforge>
+References: <20240830110415.116090-1-tj@kernel.org>
+ <20240830110415.116090-5-tj@kernel.org>
+ <ZtIFDmWxIO0nXCZA@slm.duckdns.org>
+ <20240901005337.GD70166@maniforge>
+ <20240901005639.GE70166@maniforge>
+ <ZtQf7jPR3He48jLH@slm.duckdns.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240824-modinfo-const-v1-1-485f9c64b868@weissschuh.net>
-In-Reply-To: <20240824-modinfo-const-v1-1-485f9c64b868@weissschuh.net>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Mon, 2 Sep 2024 00:33:57 +0900
-X-Gmail-Original-Message-ID: <CAK7LNASbuJcgFBz+_4gJMnTvVeyeCbu2ZwGEu+ofj+kLKF9wiw@mail.gmail.com>
-Message-ID: <CAK7LNASbuJcgFBz+_4gJMnTvVeyeCbu2ZwGEu+ofj+kLKF9wiw@mail.gmail.com>
-Subject: Re: [PATCH RFC] modpost: compile constant module information only once
-To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Cc: Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, linux-kernel@vger.kernel.org, 
-	linux-kbuild@vger.kernel.org
-Content-Type: multipart/mixed; boundary="000000000000b372cd0621108f9a"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="ZRQN9mrpzsXEUd+R"
+Content-Disposition: inline
+In-Reply-To: <ZtQf7jPR3He48jLH@slm.duckdns.org>
+User-Agent: Mutt/2.2.13 (00d56288) (2024-03-09)
 
---000000000000b372cd0621108f9a
-Content-Type: text/plain; charset="UTF-8"
+
+--ZRQN9mrpzsXEUd+R
+Content-Type: multipart/mixed; boundary="PtTDoeNoVytaOQZP"
+Content-Disposition: inline
+
+
+--PtTDoeNoVytaOQZP
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Sun, Aug 25, 2024 at 2:44=E2=80=AFAM Thomas Wei=C3=9Fschuh <linux@weisss=
-chuh.net> wrote:
->
-> Various information about modules is compiled into the info sections.
-> For that a dedicated .mod.c file is generated by modpost for each module
-> and then linked into the module.
-> However most of the information in the .mod.c is the same for all
-> modules, internal and external.
-> Split the shared information into a dedicated source file that is
-> compiled once and then linked into all modules.
->
-> This avoids frequent rebuilds for all .mod.c files when using
-> CONFIG_LOCALVERSION_AUTO because the local version ends up in .mod.c
-> through UTS_RELEASE and VERMAGIC_STRING.
-> The modules are still relinked in this case.
->
-> The code is also easier to maintain as it's now in a proper source file
-> instead of an inline string literal.
->
-> Signed-off-by: Thomas Wei=C3=9Fschuh <linux@weissschuh.net>
-> ---
-> I came up with this while investigating something different.
-> Not sure it's worth the effort.
-> ---
->  scripts/Makefile.modfinal            |  9 +++++++--
->  scripts/mod/modinfo.c                | 25 +++++++++++++++++++++++++
->  scripts/mod/modpost.c                | 23 -----------------------
->  scripts/package/install-extmod-build |  3 ++-
->  4 files changed, 34 insertions(+), 26 deletions(-)
->
-> diff --git a/scripts/Makefile.modfinal b/scripts/Makefile.modfinal
-> index 306a6bb86e4d..dde09dc4ba11 100644
-> --- a/scripts/Makefile.modfinal
-> +++ b/scripts/Makefile.modfinal
-> @@ -30,6 +30,11 @@ quiet_cmd_cc_o_c =3D CC [M]  $@
->  %.mod.o: %.mod.c FORCE
->         $(call if_changed_dep,cc_o_c)
->
-> +ifeq ($(KBUILD_EXTMOD),)
-> +scripts/mod/modinfo.o: scripts/mod/modinfo.c FORCE
-> +       $(call if_changed_dep,cc_o_c)
-> +endif
-> +
->  quiet_cmd_ld_ko_o =3D LD [M]  $@
->        cmd_ld_ko_o +=3D                                                  =
- \
->         $(LD) -r $(KBUILD_LDFLAGS)                                      \
-> @@ -54,13 +59,13 @@ if_changed_except =3D $(if $(call newer_prereqs_excep=
-t,$(2))$(cmd-check),      \
->         printf '%s\n' 'savedcmd_$@ :=3D $(make-cmd)' > $(dot-target).cmd,=
- @:)
->
->  # Re-generate module BTFs if either module's .ko or vmlinux changed
-> -%.ko: %.o %.mod.o scripts/module.lds $(and $(CONFIG_DEBUG_INFO_BTF_MODUL=
-ES),$(KBUILD_BUILTIN),vmlinux) FORCE
-> +%.ko: %.o %.mod.o scripts/module.lds scripts/mod/modinfo.o $(and $(CONFI=
-G_DEBUG_INFO_BTF_MODULES),$(KBUILD_BUILTIN),vmlinux) FORCE
->         +$(call if_changed_except,ld_ko_o,vmlinux)
->  ifdef CONFIG_DEBUG_INFO_BTF_MODULES
->         +$(if $(newer-prereqs),$(call cmd,btf_ko))
->  endif
->
-> -targets +=3D $(modules:%.o=3D%.ko) $(modules:%.o=3D%.mod.o)
-> +targets +=3D $(modules:%.o=3D%.ko) $(modules:%.o=3D%.mod.o) scripts/mod/=
-modinfo.o
->
->  # Add FORCE to the prerequisites of a target to force it to be always re=
-built.
->  # ----------------------------------------------------------------------=
------
-> diff --git a/scripts/mod/modinfo.c b/scripts/mod/modinfo.c
-> new file mode 100644
-> index 000000000000..12fbc6d3aae8
-> --- /dev/null
-> +++ b/scripts/mod/modinfo.c
-> @@ -0,0 +1,25 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +
-> +#include <linux/module.h>
-> +/*
-> + * Include build-salt.h after module.h in order to
-> + * inherit the definitions.
-> + */
-> +#define INCLUDE_VERMAGIC
-> +#include <linux/build-salt.h>
-> +#include <linux/elfnote-lto.h>
-> +#include <linux/vermagic.h>
-> +
-> +#ifdef CONFIG_UNWINDER_ORC
-> +#include <asm/orc_header.h>
-> +ORC_HEADER;
-> +#endif
-> +
-> +BUILD_SALT;
-> +BUILD_LTO_INFO;
-> +
-> +MODULE_INFO(vermagic, VERMAGIC_STRING);
-> +
-> +#ifdef CONFIG_MITIGATION_RETPOLINE
-> +MODULE_INFO(retpoline, "Y");
-> +#endif
-> diff --git a/scripts/mod/modpost.c b/scripts/mod/modpost.c
-> index c8cd5d822bb6..107393a8c48a 100644
-> --- a/scripts/mod/modpost.c
-> +++ b/scripts/mod/modpost.c
-> @@ -1755,26 +1755,9 @@ static void check_modname_len(struct module *mod)
->  static void add_header(struct buffer *b, struct module *mod)
->  {
->         buf_printf(b, "#include <linux/module.h>\n");
-> -       /*
-> -        * Include build-salt.h after module.h in order to
-> -        * inherit the definitions.
-> -        */
-> -       buf_printf(b, "#define INCLUDE_VERMAGIC\n");
-> -       buf_printf(b, "#include <linux/build-salt.h>\n");
-> -       buf_printf(b, "#include <linux/elfnote-lto.h>\n");
->         buf_printf(b, "#include <linux/export-internal.h>\n");
-> -       buf_printf(b, "#include <linux/vermagic.h>\n");
->         buf_printf(b, "#include <linux/compiler.h>\n");
->         buf_printf(b, "\n");
-> -       buf_printf(b, "#ifdef CONFIG_UNWINDER_ORC\n");
-> -       buf_printf(b, "#include <asm/orc_header.h>\n");
-> -       buf_printf(b, "ORC_HEADER;\n");
-> -       buf_printf(b, "#endif\n");
-> -       buf_printf(b, "\n");
-> -       buf_printf(b, "BUILD_SALT;\n");
-> -       buf_printf(b, "BUILD_LTO_INFO;\n");
-> -       buf_printf(b, "\n");
-> -       buf_printf(b, "MODULE_INFO(vermagic, VERMAGIC_STRING);\n");
->         buf_printf(b, "MODULE_INFO(name, KBUILD_MODNAME);\n");
->         buf_printf(b, "\n");
->         buf_printf(b, "__visible struct module __this_module\n");
-> @@ -1792,12 +1775,6 @@ static void add_header(struct buffer *b, struct mo=
-dule *mod)
->         if (!external_module)
->                 buf_printf(b, "\nMODULE_INFO(intree, \"Y\");\n");
->
-> -       buf_printf(b,
-> -                  "\n"
-> -                  "#ifdef CONFIG_MITIGATION_RETPOLINE\n"
-> -                  "MODULE_INFO(retpoline, \"Y\");\n"
-> -                  "#endif\n");
-> -
->         if (strstarts(mod->name, "drivers/staging"))
->                 buf_printf(b, "\nMODULE_INFO(staging, \"Y\");\n");
->
-> diff --git a/scripts/package/install-extmod-build b/scripts/package/insta=
-ll-extmod-build
-> index d2c9cacecc0c..15fab6d5dd56 100755
-> --- a/scripts/package/install-extmod-build
-> +++ b/scripts/package/install-extmod-build
-> @@ -37,6 +37,7 @@ mkdir -p "${destdir}"
->         echo include/config/auto.conf
->         echo include/config/kernel.release
->         echo include/generated
-> +       echo scripts/mod/modinfo.o
->         find_in_scripts
->
->         if is_enabled CONFIG_GCC_PLUGINS; then
-> @@ -78,4 +79,4 @@ if [ "${CC}" !=3D "${HOSTCC}" ] && is_enabled CONFIG_CC=
-_CAN_LINK; then
->         rm -f "${destdir}/Kbuild" "${destdir}/scripts/Kbuild"
->  fi
->
-> -find "${destdir}" \( -name '.*.cmd' -o -name '*.o' \) -delete
-> +find "${destdir}" \( -name '.*.cmd' -o \( -name '*.o' -a -! -path '*/scr=
-ipts/mod/modinfo.o' \) \) -delete
+On Sat, Aug 31, 2024 at 10:03:58PM -1000, Tejun Heo wrote:
+> Hello,
+>=20
+> On Sat, Aug 31, 2024 at 07:56:39PM -0500, David Vernet wrote:
+> ...
+> > Sorry, should have been more clear: the testcase dispatched all tasks to
+> > the wrong CPU, which is why it's a kworker in the print output below. I
+> > believe that ksoftiqrd hit the same path as well and just wasn't printed
+> > in the output because it lost the race to scx_bpf_error(). Let me know
+> > if you want the testcase to repro and I can send it, or send a separate
+> > patch to add it to selftests.
+>=20
+> Yeah, please share the repro.
 
+See the attached patch. You can run the test as follows after rebuilding
+selftests:
 
-This is not an enough hack because scripts/mod/modinfo.o
-is a new requirement for building external modules.
+=2E/runner -t ddsp_local_on_invalid
 
-'make clean' would need a similar treatment.
+You may have to run the test a few times to see the repro. Worth noting
+is that the repro doesn't seem to hit if we don't explicitly set the
+fallback target to 0 in ddsp_local_on_invalid_enqueue().
 
-'make help' goes:
+Thanks,
+David
 
-  clean   - Remove most generated files but keep the config and
-            enough build support to build external modules
+--PtTDoeNoVytaOQZP
+Content-Type: text/x-patch; charset=us-ascii
+Content-Disposition: attachment;
+	filename="0001-scx-Add-test-validating-direct-dispatch-with-LOCAL_O.patch"
+Content-Transfer-Encoding: quoted-printable
 
+=46rom 5e1a850b7db989429b94ea5d9cdf786faf3bcd4f Mon Sep 17 00:00:00 2001
+=46rom: David Vernet <void@manifault.com>
+Date: Sat, 31 Aug 2024 19:16:22 -0500
+Subject: [PATCH] scx: Add test validating direct dispatch with LOCAL_ON
 
+SCX_DSQ_LOCAL_ON | cpu can now be invoked on the direct dispatch path.
+Let's ensure we're gracefully handling it being dispatched to a CPU
+that it's not allowed to run on.
 
+Signed-off-by: David Vernet <void@manifault.com>
+---
+ tools/testing/selftests/sched_ext/Makefile    |  1 +
+ .../sched_ext/ddsp_local_on_invalid.bpf.c     | 42 ++++++++++++++
+ .../sched_ext/ddsp_local_on_invalid.c         | 58 +++++++++++++++++++
+ 3 files changed, 101 insertions(+)
+ create mode 100644 tools/testing/selftests/sched_ext/ddsp_local_on_invalid=
+=2Ebpf.c
+ create mode 100644 tools/testing/selftests/sched_ext/ddsp_local_on_invalid=
+=2Ec
 
-
-
-Or, another approach is to generate a different object
-when building external modules.
-
-A patch attached (on top of this).
-
-
-
-
-
->
-> ---
-> base-commit: 184a282d540c3da03f6a229f4792a5f72d3dfc2a
-> change-id: 20240824-modinfo-const-6f0d67e2b301
->
-> Best regards,
-> --
-> Thomas Wei=C3=9Fschuh <linux@weissschuh.net>
->
-
-
+diff --git a/tools/testing/selftests/sched_ext/Makefile b/tools/testing/sel=
+ftests/sched_ext/Makefile
+index 0754a2c110a1..4823a67e6854 100644
+--- a/tools/testing/selftests/sched_ext/Makefile
++++ b/tools/testing/selftests/sched_ext/Makefile
+@@ -165,6 +165,7 @@ auto-test-targets :=3D			\
+ 	enq_last_no_enq_fails		\
+ 	enq_select_cpu_fails		\
+ 	ddsp_bogus_dsq_fail		\
++	ddsp_local_on_invalid		\
+ 	ddsp_vtimelocal_fail		\
+ 	dsp_local_on			\
+ 	exit				\
+diff --git a/tools/testing/selftests/sched_ext/ddsp_local_on_invalid.bpf.c =
+b/tools/testing/selftests/sched_ext/ddsp_local_on_invalid.bpf.c
+new file mode 100644
+index 000000000000..e4512d7cc4b5
+--- /dev/null
++++ b/tools/testing/selftests/sched_ext/ddsp_local_on_invalid.bpf.c
+@@ -0,0 +1,42 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Copyright (c) 2024 Meta Platforms, Inc. and affiliates.
++ * Copyright (c) 2024 David Vernet <dvernet@meta.com>
++ */
++#include <scx/common.bpf.h>
++
++char _license[] SEC("license") =3D "GPL";
++const volatile s32 nr_cpus;
++
++UEI_DEFINE(uei);
++
++s32 BPF_STRUCT_OPS(ddsp_local_on_invalid_select_cpu, struct task_struct *p,
++		   s32 prev_cpu, u64 wake_flags)
++{
++	return prev_cpu;
++}
++
++void BPF_STRUCT_OPS(ddsp_local_on_invalid_enqueue, struct task_struct *p,
++		    u64 enq_flags)
++{
++	int target =3D bpf_cpumask_first_zero(p->cpus_ptr);
++
++	if (target >=3D nr_cpus)
++		target =3D 0;
++
++	scx_bpf_dispatch(p, SCX_DSQ_LOCAL_ON | target, SCX_SLICE_DFL, enq_flags);
++}
++
++void BPF_STRUCT_OPS(ddsp_local_on_invalid_exit, struct scx_exit_info *ei)
++{
++	UEI_RECORD(uei, ei);
++}
++
++SEC(".struct_ops.link")
++struct sched_ext_ops ddsp_local_on_invalid_ops =3D {
++	.select_cpu		=3D ddsp_local_on_invalid_select_cpu,
++	.enqueue		=3D ddsp_local_on_invalid_enqueue,
++	.exit			=3D ddsp_local_on_invalid_exit,
++	.name			=3D "ddsp_local_on_invalid",
++	.timeout_ms		=3D 2000U,
++};
+diff --git a/tools/testing/selftests/sched_ext/ddsp_local_on_invalid.c b/to=
+ols/testing/selftests/sched_ext/ddsp_local_on_invalid.c
+new file mode 100644
+index 000000000000..7bc49df06ee0
+--- /dev/null
++++ b/tools/testing/selftests/sched_ext/ddsp_local_on_invalid.c
+@@ -0,0 +1,58 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Copyright (c) 2024 Meta Platforms, Inc. and affiliates.
++ * Copyright (c) 2024 David Vernet <dvernet@meta.com>
++ */
++#include <bpf/bpf.h>
++#include <scx/common.h>
++#include <unistd.h>
++#include "ddsp_local_on_invalid.bpf.skel.h"
++#include "scx_test.h"
++
++static enum scx_test_status setup(void **ctx)
++{
++	struct ddsp_local_on_invalid *skel;
++
++	skel =3D ddsp_local_on_invalid__open();
++	SCX_FAIL_IF(!skel, "Failed to open");
++
++	skel->rodata->nr_cpus =3D libbpf_num_possible_cpus();
++	SCX_FAIL_IF(ddsp_local_on_invalid__load(skel), "Failed to load skel");
++	*ctx =3D skel;
++
++	return SCX_TEST_PASS;
++}
++
++static enum scx_test_status run(void *ctx)
++{
++	struct ddsp_local_on_invalid *skel =3D ctx;
++	struct bpf_link *link;
++
++	link =3D bpf_map__attach_struct_ops(skel->maps.ddsp_local_on_invalid_ops);
++	SCX_FAIL_IF(!link, "Failed to attach struct_ops");
++
++	/* Just sleeping is fine, plenty of scheduling events happening */
++	sleep(1);
++
++	SCX_EQ(skel->data->uei.kind, EXIT_KIND(SCX_EXIT_ERROR));
++	bpf_link__destroy(link);
++
++	return SCX_TEST_PASS;
++}
++
++static void cleanup(void *ctx)
++{
++	struct ddsp_local_on_invalid *skel =3D ctx;
++
++	ddsp_local_on_invalid__destroy(skel);
++}
++
++struct scx_test ddsp_local_on_invalid =3D {
++	.name =3D "ddsp_local_on_invalid",
++	.description =3D "Verify we can gracefully handle direct dispatch "
++		       "of tasks to an invalid local DSQ from osp.dispatch()",
++	.setup =3D setup,
++	.run =3D run,
++	.cleanup =3D cleanup,
++};
++REGISTER_SCX_TEST(&ddsp_local_on_invalid)
 --=20
-Best Regards
-Masahiro Yamada
+2.45.2
 
---000000000000b372cd0621108f9a
-Content-Type: text/x-patch; charset="US-ASCII"; name="0001-fix.patch"
-Content-Disposition: attachment; filename="0001-fix.patch"
-Content-Transfer-Encoding: base64
-Content-ID: <f_m0jqe27w0>
-X-Attachment-Id: f_m0jqe27w0
 
-RnJvbSBjMTdmMTBlZGNlYmNiOGE5YjY2MzQzODA4Mjk2NDg1YTRmMTRhY2EwIE1vbiBTZXAgMTcg
-MDA6MDA6MDAgMjAwMQpGcm9tOiBNYXNhaGlybyBZYW1hZGEgPG1hc2FoaXJveUBrZXJuZWwub3Jn
-PgpEYXRlOiBTdW4sIDEgU2VwIDIwMjQgMjE6MjI6MjggKzA5MDAKU3ViamVjdDogW1BBVENIXSBm
-aXgKClNpZ25lZC1vZmYtYnk6IE1hc2FoaXJvIFlhbWFkYSA8bWFzYWhpcm95QGtlcm5lbC5vcmc+
-Ci0tLQogc2NyaXB0cy9NYWtlZmlsZS5tb2RmaW5hbCAgICAgICAgICAgICAgICAgIHwgOCArKyst
-LS0tLQogc2NyaXB0cy97bW9kL21vZGluZm8uYyA9PiBtb2R1bGUtY29tbW9uLmN9IHwgMAogc2Ny
-aXB0cy9wYWNrYWdlL2luc3RhbGwtZXh0bW9kLWJ1aWxkICAgICAgIHwgMyArLS0KIDMgZmlsZXMg
-Y2hhbmdlZCwgNCBpbnNlcnRpb25zKCspLCA3IGRlbGV0aW9ucygtKQogcmVuYW1lIHNjcmlwdHMv
-e21vZC9tb2RpbmZvLmMgPT4gbW9kdWxlLWNvbW1vbi5jfSAoMTAwJSkKCmRpZmYgLS1naXQgYS9z
-Y3JpcHRzL01ha2VmaWxlLm1vZGZpbmFsIGIvc2NyaXB0cy9NYWtlZmlsZS5tb2RmaW5hbAppbmRl
-eCBkZGUwOWRjNGJhMTEuLjZjMzExMmZiM2Q5MiAxMDA2NDQKLS0tIGEvc2NyaXB0cy9NYWtlZmls
-ZS5tb2RmaW5hbAorKysgYi9zY3JpcHRzL01ha2VmaWxlLm1vZGZpbmFsCkBAIC0zMCwxMCArMzAs
-OCBAQCBxdWlldF9jbWRfY2Nfb19jID0gQ0MgW01dICAkQAogJS5tb2QubzogJS5tb2QuYyBGT1JD
-RQogCSQoY2FsbCBpZl9jaGFuZ2VkX2RlcCxjY19vX2MpCiAKLWlmZXEgKCQoS0JVSUxEX0VYVE1P
-RCksKQotc2NyaXB0cy9tb2QvbW9kaW5mby5vOiBzY3JpcHRzL21vZC9tb2RpbmZvLmMgRk9SQ0UK
-KyQoZXh0bW9kX3ByZWZpeCkubW9kdWxlLWNvbW1vbi5vOiAkKHNyY3RyZWUpL3NjcmlwdHMvbW9k
-dWxlLWNvbW1vbi5jIEZPUkNFCiAJJChjYWxsIGlmX2NoYW5nZWRfZGVwLGNjX29fYykKLWVuZGlm
-CiAKIHF1aWV0X2NtZF9sZF9rb19vID0gTEQgW01dICAkQAogICAgICAgY21kX2xkX2tvX28gKz0J
-CQkJCQkJXApAQCAtNTksMTMgKzU3LDEzIEBAIGlmX2NoYW5nZWRfZXhjZXB0ID0gJChpZiAkKGNh
-bGwgbmV3ZXJfcHJlcmVxc19leGNlcHQsJCgyKSkkKGNtZC1jaGVjayksICAgICAgXAogCXByaW50
-ZiAnJXNcbicgJ3NhdmVkY21kXyRAIDo9ICQobWFrZS1jbWQpJyA+ICQoZG90LXRhcmdldCkuY21k
-LCBAOikKIAogIyBSZS1nZW5lcmF0ZSBtb2R1bGUgQlRGcyBpZiBlaXRoZXIgbW9kdWxlJ3MgLmtv
-IG9yIHZtbGludXggY2hhbmdlZAotJS5rbzogJS5vICUubW9kLm8gc2NyaXB0cy9tb2R1bGUubGRz
-IHNjcmlwdHMvbW9kL21vZGluZm8ubyAkKGFuZCAkKENPTkZJR19ERUJVR19JTkZPX0JURl9NT0RV
-TEVTKSwkKEtCVUlMRF9CVUlMVElOKSx2bWxpbnV4KSBGT1JDRQorJS5rbzogJS5vICUubW9kLm8g
-JChleHRtb2RfcHJlZml4KS8ubW9kdWxlLWNvbW1vbi5vIHNjcmlwdHMvbW9kdWxlLmxkcyAkKGFu
-ZCAkKENPTkZJR19ERUJVR19JTkZPX0JURl9NT0RVTEVTKSwkKEtCVUlMRF9CVUlMVElOKSx2bWxp
-bnV4KSBGT1JDRQogCSskKGNhbGwgaWZfY2hhbmdlZF9leGNlcHQsbGRfa29fbyx2bWxpbnV4KQog
-aWZkZWYgQ09ORklHX0RFQlVHX0lORk9fQlRGX01PRFVMRVMKIAkrJChpZiAkKG5ld2VyLXByZXJl
-cXMpLCQoY2FsbCBjbWQsYnRmX2tvKSkKIGVuZGlmCiAKLXRhcmdldHMgKz0gJChtb2R1bGVzOiUu
-bz0lLmtvKSAkKG1vZHVsZXM6JS5vPSUubW9kLm8pIHNjcmlwdHMvbW9kL21vZGluZm8ubwordGFy
-Z2V0cyArPSAkKG1vZHVsZXM6JS5vPSUua28pICQobW9kdWxlczolLm89JS5tb2QubykgJChleHRt
-b2RfcHJlZml4KS5tb2R1bGUtY29tbW9uLm8KIAogIyBBZGQgRk9SQ0UgdG8gdGhlIHByZXJlcXVp
-c2l0ZXMgb2YgYSB0YXJnZXQgdG8gZm9yY2UgaXQgdG8gYmUgYWx3YXlzIHJlYnVpbHQuCiAjIC0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLQpkaWZmIC0tZ2l0IGEvc2NyaXB0cy9tb2QvbW9kaW5mby5jIGIvc2Ny
-aXB0cy9tb2R1bGUtY29tbW9uLmMKc2ltaWxhcml0eSBpbmRleCAxMDAlCnJlbmFtZSBmcm9tIHNj
-cmlwdHMvbW9kL21vZGluZm8uYwpyZW5hbWUgdG8gc2NyaXB0cy9tb2R1bGUtY29tbW9uLmMKZGlm
-ZiAtLWdpdCBhL3NjcmlwdHMvcGFja2FnZS9pbnN0YWxsLWV4dG1vZC1idWlsZCBiL3NjcmlwdHMv
-cGFja2FnZS9pbnN0YWxsLWV4dG1vZC1idWlsZAppbmRleCAxNWZhYjZkNWRkNTYuLmQyYzljYWNl
-Y2MwYyAxMDA3NTUKLS0tIGEvc2NyaXB0cy9wYWNrYWdlL2luc3RhbGwtZXh0bW9kLWJ1aWxkCisr
-KyBiL3NjcmlwdHMvcGFja2FnZS9pbnN0YWxsLWV4dG1vZC1idWlsZApAQCAtMzcsNyArMzcsNiBA
-QCBta2RpciAtcCAiJHtkZXN0ZGlyfSIKIAllY2hvIGluY2x1ZGUvY29uZmlnL2F1dG8uY29uZgog
-CWVjaG8gaW5jbHVkZS9jb25maWcva2VybmVsLnJlbGVhc2UKIAllY2hvIGluY2x1ZGUvZ2VuZXJh
-dGVkCi0JZWNobyBzY3JpcHRzL21vZC9tb2RpbmZvLm8KIAlmaW5kX2luX3NjcmlwdHMKIAogCWlm
-IGlzX2VuYWJsZWQgQ09ORklHX0dDQ19QTFVHSU5TOyB0aGVuCkBAIC03OSw0ICs3OCw0IEBAIGlm
-IFsgIiR7Q0N9IiAhPSAiJHtIT1NUQ0N9IiBdICYmIGlzX2VuYWJsZWQgQ09ORklHX0NDX0NBTl9M
-SU5LOyB0aGVuCiAJcm0gLWYgIiR7ZGVzdGRpcn0vS2J1aWxkIiAiJHtkZXN0ZGlyfS9zY3JpcHRz
-L0tidWlsZCIKIGZpCiAKLWZpbmQgIiR7ZGVzdGRpcn0iIFwoIC1uYW1lICcuKi5jbWQnIC1vIFwo
-IC1uYW1lICcqLm8nIC1hIC0hIC1wYXRoICcqL3NjcmlwdHMvbW9kL21vZGluZm8ubycgXCkgXCkg
-LWRlbGV0ZQorZmluZCAiJHtkZXN0ZGlyfSIgXCggLW5hbWUgJy4qLmNtZCcgLW8gLW5hbWUgJyou
-bycgXCkgLWRlbGV0ZQotLSAKMi40My4wCgo=
---000000000000b372cd0621108f9a--
+--PtTDoeNoVytaOQZP--
+
+--ZRQN9mrpzsXEUd+R
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEARYKAB0WIQRBxU1So5MTLwphjdFZ5LhpZcTzZAUCZtSJ1AAKCRBZ5LhpZcTz
+ZFRkAQDuXEod0j/ysAspCxOmxoio+cmkJgvF7EQtU5iE9AnSVAD+JCIW9M4loy9l
+n162Mdod9OxQ1wDZAAYNfXIIIoz9zgo=
+=fzZT
+-----END PGP SIGNATURE-----
+
+--ZRQN9mrpzsXEUd+R--
 
