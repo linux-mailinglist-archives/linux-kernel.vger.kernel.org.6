@@ -1,97 +1,114 @@
-Return-Path: <linux-kernel+bounces-310358-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310359-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4FC6967BBD
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 20:28:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BEA90967BBF
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 20:30:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6B33D1F20FD5
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 18:28:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A14E281B73
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 18:30:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44C22183CC3;
-	Sun,  1 Sep 2024 18:28:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A711442040;
+	Sun,  1 Sep 2024 18:30:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="wybkT605";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="68eVhT6f"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="byA2c9Y/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8878126AE8;
-	Sun,  1 Sep 2024 18:28:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E91BD2C9D;
+	Sun,  1 Sep 2024 18:30:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725215330; cv=none; b=WY+mZECbdraPU1my1eQ7ZTnYDKsMiJyhgl5KSRqVQkJei2akTH4wCNOQZZOVzuzaed817R8IliEHQWMMms4lUlm9LD2ijURwVq2vfcWMP/uX+TQx7Yg0pib45llayNLYRaQh+qe40Zdr1SXxPivix/JV8siGu7RIf0HTYxOfLdo=
+	t=1725215451; cv=none; b=j1XpuROvfqWpuHJ7oSqiNWTsRmTc9VoI6iBybRqoSjcnlff4RXOAJt4jtTK/GYqRLqAWYJO9TfCijjvM3aAKwMpKh7dw1HopkZ7TTv8KyzvpgOMO5sB2lacRXX8SYrEJjPcTKiCYPFdBog4cn23h6Odp4K8sgnFjd7GCVacXryk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725215330; c=relaxed/simple;
-	bh=0RYzoBOKEpaxfeWVQC5LQzV98V0L0r6EBX7krY/RrFY=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=YXW4UFq/XnZ8IbcJmREX5EsETaCpreYM/xPqIrLyV771NaI6fIi3g54tKJPvTadqd5zblnNFwkXbDLyKN4stD2B9IJNoVN6iq1KV68nECsdf3CjCx3ma6wp5ZjHGMG2Kwa/4Bcsj+in4jiNiVb8MIA2uNAjpPSUFcVAYxGp/DJ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=wybkT605; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=68eVhT6f; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1725215326;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RmY8bnVkd8XYMtbhSt4gVywEjTfDYFgtk9dXtbhAvZk=;
-	b=wybkT605r846ulUgMAzCnC/xTrGTKYc/M0WWddUV+oIE6g+FHm/ErUNbiC1kRpwbPbeh3L
-	y7tj9vw8V0J4i6rHaX7hHxPbLzN9Wf3RS4ZAZLcYt7/2rtSEK/hfypmb2eXaKI5Qh4+638
-	NQtpIaTiTWYd+5agFMB2Jdn7hdK3pwcU6AZCV+EoNBgzk3gt/UKa/Ps3NmrDhVvYjvd+Au
-	dFlzxmRwvgXlCetlptMk30IbUeJALXdDYHgru9Jhk5gng+N8g+d1wYDk25eaW5+ckkIpJx
-	r043qJhPJt0v+o1VyvbQYu1mLM8NuAWKPjWwRcnytSyle4fSD5/Ri1MrczTVkw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1725215326;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RmY8bnVkd8XYMtbhSt4gVywEjTfDYFgtk9dXtbhAvZk=;
-	b=68eVhT6fQzvkt5SV/8OYt8KO7oGOnCwpCodHoIMV0E4ZtYGIfScJ/Ub9B0l3wQG/nODaNg
-	dQENZ32qWXkK/pDA==
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, Peter
- Zijlstra <peterz@infradead.org>, Chen Yufan <chenyufan@vivo.com>, Linux
- Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the tip tree
-In-Reply-To: <20240830160210.365b47d7@canb.auug.org.au>
-References: <20240826130137.631e5e31@canb.auug.org.au> <8734mremla.ffs@tglx>
- <20240827080925.32a7aec4@canb.auug.org.au>
- <20240830160210.365b47d7@canb.auug.org.au>
-Date: Sun, 01 Sep 2024 20:28:45 +0200
-Message-ID: <87a5gr8bz6.ffs@tglx>
+	s=arc-20240116; t=1725215451; c=relaxed/simple;
+	bh=rLam6OuvElKfa+4klzcuq+HotmqGXLuMC9ftlVRktjI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZYPulipvixrL8kEAd8KpW484C5Qx5amwaqG38sRh4eOVBiGnE3zbOQ71Yql0+p/PfY0lhpybXSEPIjKbXyoMoLw+0HqpVKXboeAJIvR0iKG65g0oWFcJqwd3N/3a9MllgW+t88jOERUiJ39pIUuc83dafSkF1tWmAMxEVPelwt8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=byA2c9Y/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5EF33C4CEC3;
+	Sun,  1 Sep 2024 18:30:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725215450;
+	bh=rLam6OuvElKfa+4klzcuq+HotmqGXLuMC9ftlVRktjI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=byA2c9Y/uGsgC6Hyrupz6Yox1bOBtSOh0Ta+4KK1WgK6lxFU1FRU6BnXxn8Xuy7+R
+	 iwKVlTdKfFw2q/jshRnrNCmn0cw9DvXU1oPxRyv+Odhb+A+zGnzkdKuHFiAgoYi+BB
+	 PxFc6am1VK9IHbGPWoRuPJIN5wBAZeblBNiamM+D3W2UZlUjL2V++6PlVqFJWW5g6h
+	 EvJPr/xkXxQHwCN+9vfMwxquJ4GS/m5AmXSBA2UI0vDf1PI9reja7Fl7Ff7KR3cz2p
+	 DdoRQbZIP0yvgr/zoX3iJHZLsLf+gfiCQacOcvQFYqdV4niS0vFfE5DmpNO45dYBLy
+	 wxGbgTaJm24pA==
+Date: Sun, 1 Sep 2024 19:30:46 +0100
+From: Simon Horman <horms@kernel.org>
+To: David Laight <David.Laight@aculab.com>
+Cc: 'Yan Zhen' <yanzhen@vivo.com>,
+	"marcin.s.wojtas@gmail.com" <marcin.s.wojtas@gmail.com>,
+	"davem@davemloft.net" <davem@davemloft.net>,
+	"edumazet@google.com" <edumazet@google.com>,
+	"kuba@kernel.org" <kuba@kernel.org>,
+	"pabeni@redhat.com" <pabeni@redhat.com>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"opensource.kernel@vivo.com" <opensource.kernel@vivo.com>
+Subject: Re: [PATCH net-next v3] net: mvneta: Use min macro
+Message-ID: <20240901183046.GB23170@kernel.org>
+References: <20240830010423.3454810-1-yanzhen@vivo.com>
+ <d23dfbf563714d7090d163a075ca9a51@AcuMS.aculab.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d23dfbf563714d7090d163a075ca9a51@AcuMS.aculab.com>
 
-On Fri, Aug 30 2024 at 16:02, Stephen Rothwell wrote:
-> On Tue, 27 Aug 2024 08:09:25 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->> On Mon, 26 Aug 2024 10:04:49 +0200 Thomas Gleixner <tglx@linutronix.de> wrote:
->> >
->> > On Mon, Aug 26 2024 at 13:01, Stephen Rothwell wrote:  
->> > > kernel/time/timekeeping.c: In function 'timekeeping_check_update':
->> > > include/linux/typecheck.h:12:25: error: comparison of distinct pointer types lacks a cast [-Werror]
->> > >    12 |         (void)(&__dummy == &__dummy2); \    
->> > 
->> > Offending commit has been removed.  
->> 
->> That commit is still in the tip tree this morning.
->
-> I am still reverting that commit.
+On Sun, Sep 01, 2024 at 10:52:38AM +0000, David Laight wrote:
+> From: Yan Zhen
+> > Sent: 30 August 2024 02:04
+> > To: marcin.s.wojtas@gmail.com; davem@davemloft.net; edumazet@google.com; kuba@kernel.org;
+> > 
+> > Using the real macro is usually more intuitive and readable,
+> > When the original file is guaranteed to contain the minmax.h header file
+> > and compile correctly.
+> > 
+> > Signed-off-by: Yan Zhen <yanzhen@vivo.com>
+> > ---
+> > 
+> > Changes in v3:
+> > - Rewrite the subject.
+> > 
+> >  drivers/net/ethernet/marvell/mvneta.c | 3 +--
+> >  1 file changed, 1 insertion(+), 2 deletions(-)
+> > 
+> > diff --git a/drivers/net/ethernet/marvell/mvneta.c b/drivers/net/ethernet/marvell/mvneta.c
+> > index d72b2d5f96db..08d277165f40 100644
+> > --- a/drivers/net/ethernet/marvell/mvneta.c
+> > +++ b/drivers/net/ethernet/marvell/mvneta.c
+> > @@ -4750,8 +4750,7 @@ mvneta_ethtool_set_ringparam(struct net_device *dev,
+> > 
+> >  	if ((ring->rx_pending == 0) || (ring->tx_pending == 0))
+> >  		return -EINVAL;
+> > -	pp->rx_ring_size = ring->rx_pending < MVNETA_MAX_RXD ?
+> > -		ring->rx_pending : MVNETA_MAX_RXD;
+> > +	pp->rx_ring_size = umin(ring->rx_pending, MVNETA_MAX_RXD);
+> 
+> Why did you use umin() instead of min() ?
 
-Hrmpf. This was pulled in via some other branch again. I've reverted it
-in that branch and merged that into master
+Possibly because I mistakenly advised it is appropriate, sorry about that.
+Given your explanation elsewhere [1], I now agree min() is appropriate.
 
-Thanks,
+[1] https://lore.kernel.org/netdev/20240901171150.GA23170@kernel.org/T/#mebc52fc11de13eff8a610e3a63c5d1026d527492
 
-        tglx
-
-
+> >  	pp->tx_ring_size = clamp_t(u16, ring->tx_pending,
+> >  				   MVNETA_MAX_SKB_DESCS * 2, MVNETA_MAX_TXD);
+> 
+> Hmmm how about a patch to fix the bug in that line?
+> A typical example of the complete misuse of the '_t' variants.
+> The fact that the LHS is u16 doesn't mean that it is anyway
+> correct to cast the RHS value to u16.
+> In this case if someone tries to set the ring size to 64k they'll
 
