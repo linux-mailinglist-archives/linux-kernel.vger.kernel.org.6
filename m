@@ -1,142 +1,108 @@
-Return-Path: <linux-kernel+bounces-310398-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310399-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72BD7967C34
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 22:50:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D11E967C36
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 22:54:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 257A41F21709
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 20:50:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 12C261F215A5
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 20:54:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64BD878C60;
-	Sun,  1 Sep 2024 20:50:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DzNAAnmD"
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42D836F2FD;
+	Sun,  1 Sep 2024 20:54:10 +0000 (UTC)
+Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.86.151])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 101631E517;
-	Sun,  1 Sep 2024 20:50:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA73E4CE05
+	for <linux-kernel@vger.kernel.org>; Sun,  1 Sep 2024 20:54:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.86.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725223818; cv=none; b=JFcGX2U43W9jugGOEEhPk6taBTYItT9/8IPLQ0OCUKvLBGtk2Xbepol+oOifNhssb81SAndo3T6UZ8Ob0iF5gkVXwg23uGP0dZi+e5eCU35+fNFonSuhh+2QG3UeoBN4cZZpAqPLsTyLY3oHJEF0ZpM2Hw8ndnLP0MKCWNEZdlQ=
+	t=1725224049; cv=none; b=AiINZHcDvbKgjTPW5/05zVdaNVjIBFaC4kPMt2fnmr8csJBGm5V07It80N6/oGGwI0xi3B4cg+utZ6h4eey/5hg5ovSj9ucyAFtCE8yaKYvHXJ+eonugdZIwfwieQc2al9tdWnLlJeCFii/L0AeKceE7ohhsu1JIFUGXQIkmobQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725223818; c=relaxed/simple;
-	bh=krrDibKBxYbpDoeYbKNjC5PPYxNQFs4NRzESdYWoOcc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hKbh5ttlWvN1H4yn4t+zj+CK3lG76y6hWBbRxgE1wxuFx/YuuXdtbRLh7G+lExocRVEux2BgCu41jIoWS++z+I5Qik4Pkt2dNTY8Ww+SmAgwv5cRAJFfKnOt1eVHukvLIMqyXY7SiBxFly3RjB1oBDgUx5aKdlnOtZSN9kBdJ40=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DzNAAnmD; arc=none smtp.client-ip=209.85.167.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-5333b2fbedaso6162076e87.0;
-        Sun, 01 Sep 2024 13:50:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725223815; x=1725828615; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=nmvtuu/nnTTPB5TNvDIzqgJV2raybGXEoThCiuyR1CU=;
-        b=DzNAAnmDXuyB/mz/+Vtlkvx5NAXaHy9DG7+wkJ/KcDD7Luset6cKaEYr1f4yO1EijA
-         NCCvzKe409nLoani5U8T++xg2wDGQAOlIQEDncOb3sq1wh4oJgn6euVKZxzjy9ykgAKd
-         WEBAvZN5iYtWjBn/dGtRYdhF2E3ser3hvDzT5ChAXtSQQmCebC9/DOZP1IryGEvDFHMm
-         SMrxq4uBocfG6XMk8scY78duVT8kLLPulsOG8ZgW7nkxaMPdsklFRw7tYYW86/QsQBUy
-         QKbLGPpS2hEGqC7Z5tFhQN/EA0FxEhqeIljRuGhTQnvVuxh71PcdK1rA2FUIhk2+npR+
-         fkBw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725223815; x=1725828615;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=nmvtuu/nnTTPB5TNvDIzqgJV2raybGXEoThCiuyR1CU=;
-        b=fJ2uY0c/EJFkR9j09EiYnw+e63PdDh30IZrDTgyQLS1r6SvCZGN5XdYm0fZpqpETzx
-         dRkrcMkqoiNXosCmjMh+Da38yLZsXomREfqb7NhgXxqxx/edSkaVKUN38cFpREOiqeJG
-         viDz9UmP+ESIALN4hEWCbE2frx2Z4iki/Sib6tAPX3A/eyNoYcXv4SYUnvT5HsB2wuas
-         vkggfBYyMDhFfeyJxEujX25s5g104Xl5z7U8JRefFwo7k/tsygu0xIm+53B2nanzJRNJ
-         ITVzWpZL3Dvn2xkgrtllWOu5Hn96KpGgVqNhi6zc8B+7G8ZoNE02DgsQcyaHwSzHyFQI
-         ZI3A==
-X-Forwarded-Encrypted: i=1; AJvYcCWb3obd4mZh4BuqSLPIrcpNaqgQi1h+8JnxgZq7Bo61LTXAfuse//wQyAkcis0Wnikp8QUVuUOOWq69@vger.kernel.org, AJvYcCXDItt1Wd0qO52AIvN0X2Qa0kmxRCV30keOp8bfLupJlaUmwrwRxsPlyarN4YJc6w+DWULl06LZyJgEZHfD@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw1p12i5N0M18k/+scotPAhnSq3y+m7aHq2V0CUhzeps1TKaTaA
-	wFEr7YWiTJb9RhL2AMyieot9X8iRRtnx1uQZvsXeI2Q+x/ANnBBlUD7qFlyA8AMw5OZ5vsQr8of
-	gQzHFqz48KQGluz3EziUNDgaWe+gHPA+qp5A=
-X-Google-Smtp-Source: AGHT+IG/8AvC2IZQG8jqrB7dUuMYI9EscwxoJgIuyGSjXS7j3FsDwsUJazVMpgHaKq3g1u2kyX2l4lqKO5wzDzEgD9A=
-X-Received: by 2002:a05:6512:1382:b0:530:dab8:7dd6 with SMTP id
- 2adb3069b0e04-53546ba7bffmr5010405e87.50.1725223814609; Sun, 01 Sep 2024
- 13:50:14 -0700 (PDT)
+	s=arc-20240116; t=1725224049; c=relaxed/simple;
+	bh=y1ZdfCcI7KsN6Fcy/zwWfpagv4xyjNTDkcYo+rseoQM=;
+	h=From:To:Subject:Date:Message-ID:References:In-Reply-To:
+	 MIME-Version:Content-Type; b=bG6/3i9XmYDx5X1ZSx1St0jijuLgujS+LajVzCUUjTM9ahSUkVuXJ8vfZVPxrmy0QTW1LUHKgHxJZgOGuzSEys/a2FalRaH/7o9LbldosIn70J4BMx2/qqSrjiZ5qrh5MGALuJUUVXxpG3i98fMAR5tUJHEEHR/ZjgZg7lBN8E4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.86.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
+Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
+ relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ uk-mta-143-DaDaQP20OJ2k4OkvWLoolA-1; Sun, 01 Sep 2024 21:53:59 +0100
+X-MC-Unique: DaDaQP20OJ2k4OkvWLoolA-1
+Received: from AcuMS.Aculab.com (10.202.163.6) by AcuMS.aculab.com
+ (10.202.163.6) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Sun, 1 Sep
+ 2024 21:53:09 +0100
+Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
+ id 15.00.1497.048; Sun, 1 Sep 2024 21:53:09 +0100
+From: David Laight <David.Laight@ACULAB.COM>
+To: 'Jinjie Ruan' <ruanjinjie@huawei.com>, "tglx@linutronix.de"
+	<tglx@linutronix.de>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH -next] genirq/timings: Use min_t() to simplify the code
+Thread-Topic: [PATCH -next] genirq/timings: Use min_t() to simplify the code
+Thread-Index: AQHa+4gfmYDZ66sauk2kXgIKz/Ql+bJDarZA
+Date: Sun, 1 Sep 2024 20:53:09 +0000
+Message-ID: <b7cc4af3df4c41b3975ac990532e4ba0@AcuMS.aculab.com>
+References: <20240831093654.4139823-1-ruanjinjie@huawei.com>
+In-Reply-To: <20240831093654.4139823-1-ruanjinjie@huawei.com>
+Accept-Language: en-GB, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240901164002.117305-2-thorsten.blum@toblux.com>
-In-Reply-To: <20240901164002.117305-2-thorsten.blum@toblux.com>
-From: Steve French <smfrench@gmail.com>
-Date: Sun, 1 Sep 2024 15:50:03 -0500
-Message-ID: <CAH2r5msAs9Lm=jzWd=pYnK3r9iANSNRTqHvHxNjzsBucgq9Ktw@mail.gmail.com>
-Subject: Re: [RESEND PATCH] smb3: Use min() to improve _smbd_get_connection()
-To: Thorsten Blum <thorsten.blum@toblux.com>, Shen Lichuan <shenlichuan@vivo.com>
-Cc: sfrench@samba.org, pc@manguebit.com, ronniesahlberg@gmail.com, 
-	sprasad@microsoft.com, tom@talpey.com, bharathsm@microsoft.com, 
-	linux-cifs@vger.kernel.org, samba-technical@lists.samba.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: aculab.com
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
 
-There is a similar patch in cifs-2.6.git for-next-next (for 6.12-rc) from
-
-smfrench@smfrench-ThinkPad-P52:~/cifs-2.6$ git show
-commit a85383ccf515f82ad791f9bfe70b0e6fb5a2117f (HEAD ->
-for-next-next, origin/for-next-next)
-Author: Shen Lichuan <shenlichuan@vivo.com>
-Date:   Tue Aug 27 16:54:20 2024 +0800
-
-    smb: client: Use min() macro
-
-    Use the min() macro to simplify the function and improve
-    its readability.
-
-    Signed-off-by: Shen Lichuan <shenlichuan@vivo.com>
-    Signed-off-by: Steve French <stfrench@microsoft.com>
-
-On Sun, Sep 1, 2024 at 11:40=E2=80=AFAM Thorsten Blum <thorsten.blum@toblux=
-.com> wrote:
->
-> Use the min() macro to simplify the _smbd_get_connection() function and
-> improve its readability.
->
-> Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
+From: Jinjie Ruan
+> Sent: 31 August 2024 10:37
+>=20
+> The irq count can not exceed circular buffer IRQ_TIMINGS_SIZE, use
+> min_t() to simplify it.
+>=20
+> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
 > ---
->  fs/smb/client/smbdirect.c | 6 ++----
->  1 file changed, 2 insertions(+), 4 deletions(-)
->
-> diff --git a/fs/smb/client/smbdirect.c b/fs/smb/client/smbdirect.c
-> index 7bcc379014ca..8f782edc3fd7 100644
-> --- a/fs/smb/client/smbdirect.c
-> +++ b/fs/smb/client/smbdirect.c
-> @@ -1585,10 +1585,8 @@ static struct smbd_connection *_smbd_get_connectio=
-n(
->         conn_param.initiator_depth =3D 0;
->
->         conn_param.responder_resources =3D
-> -               info->id->device->attrs.max_qp_rd_atom
-> -                       < SMBD_CM_RESPONDER_RESOURCES ?
-> -               info->id->device->attrs.max_qp_rd_atom :
-> -               SMBD_CM_RESPONDER_RESOURCES;
-> +               min(info->id->device->attrs.max_qp_rd_atom,
-> +                   SMBD_CM_RESPONDER_RESOURCES);
->         info->responder_resources =3D conn_param.responder_resources;
->         log_rdma_mr(INFO, "responder_resources=3D%d\n",
->                 info->responder_resources);
+>  kernel/irq/timings.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+>=20
+> diff --git a/kernel/irq/timings.c b/kernel/irq/timings.c
+> index c43e2ac2f8de..69f103b4c7a6 100644
+> --- a/kernel/irq/timings.c
+> +++ b/kernel/irq/timings.c
+> @@ -406,8 +406,7 @@ static u64 __irq_timings_next_event(struct irqt_stat =
+*irqs, int irq, u64 now)
+>  =09/*
+>  =09 * 'count' will depends if the circular buffer wrapped or not
+>  =09 */
+> -=09count =3D irqs->count < IRQ_TIMINGS_SIZE ?
+> -=09=09irqs->count : IRQ_TIMINGS_SIZE;
+> +=09count =3D min_t(int, irqs->count, IRQ_TIMINGS_SIZE);
+
+Why min_t() ?
+
+=09David
+
+>=20
+>  =09start =3D irqs->count < IRQ_TIMINGS_SIZE ?
+>  =09=090 : (irqs->count & IRQ_TIMINGS_MASK);
 > --
-> 2.46.0
->
->
+> 2.34.1
+>=20
 
+-
+Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1=
+PT, UK
+Registration No: 1397386 (Wales)
 
---=20
-Thanks,
-
-Steve
 
