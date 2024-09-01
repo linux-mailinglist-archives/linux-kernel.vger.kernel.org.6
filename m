@@ -1,91 +1,75 @@
-Return-Path: <linux-kernel+bounces-310381-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310382-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12A0E967C0A
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 22:21:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2273F967C0D
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 22:21:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AAF3F1F21736
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 20:21:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB5DD1F21741
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 20:21:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BB7E7F486;
-	Sun,  1 Sep 2024 20:21:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 888A07581D;
+	Sun,  1 Sep 2024 20:21:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="M1PFd1MZ"
-Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="SOVVBAdV"
+Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69C8837708;
-	Sun,  1 Sep 2024 20:21:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C8C31F957;
+	Sun,  1 Sep 2024 20:21:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725222078; cv=none; b=cvp/f+kiaPWnQW04kQpix/iGCbHvDUwL5imb+GepYl4CC5ykACn2Dl1MceQQl9SA98tb/uUlsJvayYNzGlBMXMoeMVEgpsr2czl+3k1Aj5SBxk+Jlu3ztIC0TT5BH2UIKYvtaGSANGgCJj19vt3AtReuAv2/voKN8O0McmlIpUs=
+	t=1725222089; cv=none; b=fbQ0cJys9PiIydL+VQoK+aU6EHLL4SoxaXF+sr5sEY2r7SoY8dcUO/BMrLg2fbBBMJ7mqM6FC48qPGZWANPwdCrxGCobaDkRzV2+r8B3Z84rCLcJqQBIMJBEqkvxgeIySYlZ7boc1jmjVfNmXam4zBp1qDrbdzHL72gBkIEUAHU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725222078; c=relaxed/simple;
-	bh=HaIaCS8Nv2yQ1qcLVwU5SoDiXtrxb9bzUcXM/cH0z2A=;
+	s=arc-20240116; t=1725222089; c=relaxed/simple;
+	bh=IvJIlDIthNZ1lwypfvBgP2GJ3J5uM3u8jUctdUDC8FQ=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=kTm3HDAloc5CMm7i6rKam7QiibUIvKHSP+lWXcTf/HTE+tjhfRTduh4YyUyiOKaVy2oeL83Wd6V/Uoo7VxBECZbLRiW1J+Ophxap3Tppu9Q87xhvmEe2qIpBzpb6a77/esHMm2PKcMDry+Ii2YM2gUZSy8mcrh8/c5aKIK86QQo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=M1PFd1MZ; arc=none smtp.client-ip=198.47.23.248
+	 MIME-Version:Content-Type; b=kSSR7yMot6iuBSRI5bkeri6CxgNMfBAHr8f3m5kjozcjRRwuzylbHvQIkX8cx+BFEIHikEP47WWNoeScJyNsQ4Do1Pzvt7OdCMK7Ub83GzUYHfD/QkYROEKA/qUx/iIMfvPfirpKrmkxJIAg7Z8jmIevnrxAbbdN50WxQMQ59Tk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=SOVVBAdV; arc=none smtp.client-ip=198.47.19.142
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 481KKjnG013523;
-	Sun, 1 Sep 2024 15:20:45 -0500
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 481KLEA7044066;
+	Sun, 1 Sep 2024 15:21:14 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1725222046;
-	bh=JG/OGPwxAgiRiCp+zCXfMAFKBh+4Laugya0RYoc7vwo=;
+	s=ti-com-17Q1; t=1725222074;
+	bh=Is2+Xz3AM8tEhv1LAOQhmqzsHkHutpPP4GhsnUVEARM=;
 	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=M1PFd1MZmkkrq52keTac7z3DKDCFIt2yZEwPWRAviF/wBMLuNn5Mz1EhmTHM0BhOa
-	 o16ws/Ny856IiY9fZ0Sfy2bVO52IeIzfQ59fUSprknzYPxaggEE6x1ujGiJU7CqQE2
-	 RXCVForXsALOJLzDU2sSXQZ97i+5u5NakVoCnB0s=
-Received: from DFLE107.ent.ti.com (dfle107.ent.ti.com [10.64.6.28])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 481KKjqt015596
+	b=SOVVBAdVmEM0tzUsBnq4dwdDVd1UefDvhKTtNW90DNj1Ot8tAQdLoPP9o2RHoKBnA
+	 wzn+KoR8f9l3ju2xoZH8qFJjSn9Y6nNsxIPtiAg3BjOnouLrIs3ZyK2QjAzZLV7P6H
+	 cZvrsDZa/stY+4ERz2DdvN6y8MZpH/IhXtrR2f04=
+Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 481KLEAI082654
 	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Sun, 1 Sep 2024 15:20:45 -0500
-Received: from DFLE112.ent.ti.com (10.64.6.33) by DFLE107.ent.ti.com
- (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
+	Sun, 1 Sep 2024 15:21:14 -0500
+Received: from DLEE109.ent.ti.com (157.170.170.41) by DLEE115.ent.ti.com
+ (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Sun, 1
- Sep 2024 15:20:45 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE112.ent.ti.com
- (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
+ Sep 2024 15:21:14 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE109.ent.ti.com
+ (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Sun, 1 Sep 2024 15:20:45 -0500
+ Frontend Transport; Sun, 1 Sep 2024 15:21:14 -0500
 Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 481KKjhb124623;
-	Sun, 1 Sep 2024 15:20:45 -0500
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 481KLEaS125018;
+	Sun, 1 Sep 2024 15:21:14 -0500
 From: Nishanth Menon <nm@ti.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>, Roger Quadros <rogerq@kernel.org>,
-        Peter Chen
-	<peter.chen@kernel.org>,
-        Pawel Laszczak <pawell@cadence.com>,
-        Mathias Nyman
-	<mathias.nyman@intel.com>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Tero Kristo
-	<kristo@kernel.org>,
-        =?UTF-8?q?Th=C3=A9o=20Lebrun?= <theo.lebrun@bootlin.com>
-CC: Nishanth Menon <nm@ti.com>, <linux-usb@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        Kevin Hilman <khilman@kernel.org>,
-        =?UTF-8?q?Gr=C3=A9gory=20Clement?= <gregory.clement@bootlin.com>,
-        Thomas
- Petazzoni <thomas.petazzoni@bootlin.com>,
-        Conor Dooley
-	<conor.dooley@microchip.com>
-Subject: Re: (subset) [PATCH v5 00/12] Fix USB suspend on TI J7200 (cdns3-ti, cdns3, xhci)
-Date: Sun, 1 Sep 2024 15:20:42 -0500
-Message-ID: <172522185704.996619.16331297087532612354.b4-ty@ti.com>
+To: Vignesh Raghavendra <vigneshr@ti.com>, Tero Kristo <kristo@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski
+	<krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>, Santhosh Kumar K <s-k6@ti.com>,
+        Andrew Davis <afd@ti.com>
+CC: Nishanth Menon <nm@ti.com>, <linux-arm-kernel@lists.infradead.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 0/4] K3 include entire FSS region in ranges
+Date: Sun, 1 Sep 2024 15:21:11 -0500
+Message-ID: <172522205232.997813.14194810707884898128.b4-ty@ti.com>
 X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20240726-s2r-cdns-v5-0-8664bfb032ac@bootlin.com>
-References: <20240726-s2r-cdns-v5-0-8664bfb032ac@bootlin.com>
+In-Reply-To: <20240828172956.26630-1-afd@ti.com>
+References: <20240828172956.26630-1-afd@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -96,33 +80,30 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-Hi Théo Lebrun,
+Hi Andrew Davis,
 
-On Fri, 26 Jul 2024 20:17:48 +0200, Théo Lebrun wrote:
-> Currently, system-wide suspend is broken on J7200 because of a
-> controller reset. The TI wrapper does not get re-initialised at resume
-> and the first register access from cdns core fails.
+On Wed, 28 Aug 2024 12:29:52 -0500, Andrew Davis wrote:
+> These add the full FSS region to the ranges properties. For Linux
+> currently this should cause no changes, but testing very welcome.
+> Software running on the R5 such as U-Boot makes more complete use
+> of the lower FSS data regions and needs these ranges.
 > 
-> We address that in a few ways:
->  - In cdns3-ti, if a reset has occured at resume, we reconfigure the HW.
->  - We pass the XHCI_RESET_ON_RESUME quirk, meaning the XHCI core expects
->    a resume.
->  - We add a xhci->lost_power flag.
+> Thanks,
+> Andrew
 > 
 > [...]
-
-Since Greg has picked f7fd939e805672417bbf418f6035dec9400230fd ("dt-bindings:
-usb: ti,j721e-usb: fix compatible list"), the corresponding
-patch needs to go via the soc dt tree, so picking just that.
 
 I have applied the following to branch ti-k3-dts-next on [1].
 Thank you!
 
-[12/12] arm64: dts: ti: k3-am64: add USB fallback compatible to J721E
-        commit: 99ced42d6f3ebcae52c2c6d1207d3f96d7cf88ac
-
-Theo: Do let me know if Greg decides to drop the said patch, and I will drop
-this off my PR as well. But, no action at the moment for this.
+[1/4] arm64: dts: ti: k3-am65: Include entire FSS region in ranges
+      commit: 55799866382524cc5dae5bf90d2fa469dc7889a8
+[2/4] arm64: dts: ti: k3-j721e: Include entire FSS region in ranges
+      commit: 16dee71beec8957ab89ee15e6f17fcb33503a9d2
+[3/4] arm64: dts: ti: k3-j721s2: Include entire FSS region in ranges
+      commit: a919e59c0c1563437ab1892ff39df441da7521a4
+[4/4] arm64: dts: ti: k3-j784s4: Include entire FSS region in ranges
+      commit: 6c67a0f1647d486674a064d4abcadfb083a6f6da
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent up the chain during
