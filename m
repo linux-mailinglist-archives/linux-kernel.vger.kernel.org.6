@@ -1,132 +1,115 @@
-Return-Path: <linux-kernel+bounces-310266-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310267-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFAC696773A
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 17:54:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64B0696773E
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 17:57:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8EB661F21308
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 15:54:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 21BF0281D9F
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 15:57:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7403A183CA7;
-	Sun,  1 Sep 2024 15:53:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 848AB183CC1;
+	Sun,  1 Sep 2024 15:57:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IVgnkwRe"
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="HiiY0uiV"
+Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38D6A2A1B8;
-	Sun,  1 Sep 2024 15:53:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3913117E44A;
+	Sun,  1 Sep 2024 15:57:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725206033; cv=none; b=JrevbFu8TdLUe5KExvDNxKr++rvtwHH0jh59pnYtyHHb2IZTA/uRpCIx6oq0+lQ+s2jt1M824+EEw4cR9Zzmq7SFVz9dj3nuJEYlzkabEsyO3rvEZgadV2EqWMejdD/OqmurHGYnYr60bhdFZW+lqiY/dOCXIrfjKEwykMdrlM0=
+	t=1725206267; cv=none; b=YLfreMq4ZLLfuPklkZyPuylc9Y9wMQHnKNQ1xJrETULQIR/1XZ7akDHbBeTi7rzCmgaXVmdqSWz1XR1zmZKvcna4hh1hCV1/BhuS6eEqK47//gei1rRRGCwtk6j9tat12LzEIsWxuZsV+6rhrFfe8i4z2Njn1x6LD3noBB2Y4BI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725206033; c=relaxed/simple;
-	bh=0EsLueHYpE05/k8DkjCbpekvEpEO3R1gaFSQ27++nEk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=h75148B/H+sAWyf/T3CTfnrYSIrrkBCVWJLqD1tDO+rK3s8r9GLm7Lrc3S0wAEpuSAE9oJ9dU2fOhKPEVQBI7T5lRpUfmjVYnl+9nDFcUNsa0TcA4G0CcvRWDAI4vG0FXFJy7KGrycpsO+oXi8qYKz+AWSRC5gvoMfhf7DoJvqA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IVgnkwRe; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5becd359800so3438636a12.0;
-        Sun, 01 Sep 2024 08:53:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725206030; x=1725810830; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0EsLueHYpE05/k8DkjCbpekvEpEO3R1gaFSQ27++nEk=;
-        b=IVgnkwRe/XjULUeYgnT7VH/90MgpZAQuuul3GMqfCt1oi5suW42ShAvlltV8Knsebd
-         AjGJMwX66SnBC6F3SjscjiSs5ECoZY7OovFs0v2YF1pJFxpBSD276dZqXxhEZa6DUfqk
-         xmo/tiQPBCDkJKny6vLHVtSXP/NxBvALQRcVo1QOWUOV/a1Mc/y+lW3HNmga90kgh01+
-         SPiMbRT04gMOUq+qY49BCafQZZU/L6RksH2XrY27uS5oi4T4r/JzwcCVz1+RY/gkdIm7
-         gaCta8/7nLn0EWIXu8q/vLkGanI7dU9ZSQsEfFXGFhdXxfSp2BjPcblEknDC829ikH6K
-         SeeA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725206030; x=1725810830;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0EsLueHYpE05/k8DkjCbpekvEpEO3R1gaFSQ27++nEk=;
-        b=fgA9/bW9e77MQ1YO+I4VSsPb/vt4/MYkrczaC7mgLXlQNNR6+3FxcY1n+Lnb1QRNt+
-         J4rYNhK1SIR3Y4zMBWAkA8eB+E2lp1ztFCwHVeDT5WBwZQs3Xc/2Xmp35gzDYx0HNeBZ
-         SJlKWhfxDO3+CGdV57eLmkYILJ4LD9k/6vcYpxA1BC8tSkRNEyjTjmVldpNqA8Fa68/y
-         HdIqNInaLXCNUeo5JxCVXr97yERzjciGwFZ7wvtfxlg0ke3ztT9cHYeXMYwx4R3cUX7C
-         YYvSVncsXnXr2Y6Io8tYmWgVoBUVbq0tRpKOPoBaRpw0WbTL48FPnV5d/CsgiSnDYeax
-         j6Rw==
-X-Forwarded-Encrypted: i=1; AJvYcCUShbyFb7z1KolbpwWkgBZIuil8kkSZ5zzZreSoAmSQJoIYifUgrAnPz3KHlI7Hul9pHYtGp70e+lUwbV2q@vger.kernel.org, AJvYcCWLzyi56iKx7YRRupCpLQFzP4npUaUwWtNyQs5jjXYJ0c9+G/EWMcj9DPLkEZGTsVeUrSKRTLNgAG0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxabyjxEkbzriwhIrE6UKd2Es2B1nU9mm7Bal+/YifC8uy5OoEG
-	F+eYj8cMunFTNw0PisyS4eUy39ZrAOix4WqVdzoxTDaknkq69k0e4XRpZ3vKkKsoWDOFswxJtcx
-	L/192EsFC2U0V4pAvv9fg79QoEVU=
-X-Google-Smtp-Source: AGHT+IFxtrxJc3Nb0FnT4i6nTdzQ139VEu0nRk8jjN+wzgt++Y7CTCq/rWvxZ3JKTn6Ca8kjQDdxME9HlenXBNPz5Sc=
-X-Received: by 2002:a05:6402:26d2:b0:5c2:1298:35ee with SMTP id
- 4fb4d7f45d1cf-5c243724727mr3165583a12.2.1725206030066; Sun, 01 Sep 2024
- 08:53:50 -0700 (PDT)
+	s=arc-20240116; t=1725206267; c=relaxed/simple;
+	bh=Pz3p6BXkOaHToDqmV2unQYCgJaP4GueoizZQ6wAOk9c=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=IStj1KisDk20Unrjs9aBAO+wbmNM3NeIz8MIi5bSiQdAluSQX885oJwn4GNLjfpwurcMpuAxiIlaGKV5U/BGjYcxmO6oeblHq1Y60oQLn+y7oOm7RDzPPgLT895+NiYzhtwKDWhThFdqobwKzmpGwtLNtOox//Iegu0ynS/yIHc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=HiiY0uiV; arc=none smtp.client-ip=217.194.8.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
+Received: from francesco-nb.pivistrello.it (93-49-2-63.ip317.fastwebnet.it [93.49.2.63])
+	by mail11.truemail.it (Postfix) with ESMTPA id 74D001F9C4;
+	Sun,  1 Sep 2024 17:57:35 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
+	s=default; t=1725206255;
+	bh=AKeiSu4QNwwOqxNa3f8r6M+bdrYx9CoLG51vNSpp5fc=; h=From:To:Subject;
+	b=HiiY0uiVY597sFgVSFVDHVKdvNhlkoJD0FJaElUKI+TfVhDzHg5A4QhjrL7UDwWqg
+	 qSAv6OQvZ4Jj28QQ+rSdUJC1vCVAwttqwvuac6+zNIWHbAsydA1XII3Dn30nuIaDqY
+	 XG+IH4A7zFpWXpGn+chMNngFrkg5qAuLP/dT8iPvgjFnc9PuYnVnwtVarT/7BTFhZa
+	 XM9CA8T9yXKQ/nN2qeUmIvdkICkmfkwAO0EARvHX7TplBipARozaLk0vdi8D41FG6X
+	 adnuKlXrw2R1uhCrHxntfcUxL8hpG3yFxhcwU5BUC1N+P4bmfbiVRO7W5gJMQlXJUu
+	 vHF2caP6PAuiw==
+From: Francesco Dolcini <francesco@dolcini.it>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>
+Cc: Francesco Dolcini <francesco.dolcini@toradex.com>,
+	devicetree@vger.kernel.org,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 00/10] arm64: dts: colibri-imx8x: Various improvements and additions
+Date: Sun,  1 Sep 2024 17:57:11 +0200
+Message-Id: <20240901155721.7912-1-francesco@dolcini.it>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240830034640.7049-1-kfting@nuvoton.com> <20240830034640.7049-7-kfting@nuvoton.com>
- <ZtIbM4NTbldBIDXf@smile.fi.intel.com>
-In-Reply-To: <ZtIbM4NTbldBIDXf@smile.fi.intel.com>
-From: Tali Perry <tali.perry1@gmail.com>
-Date: Sun, 1 Sep 2024 18:53:38 +0300
-Message-ID: <CAHb3i=vWNmokQYyOZJOVeaJaT6XAroct2gZiJYPVQf6rHzR5LA@mail.gmail.com>
-Subject: Re: [PATCH v2 6/7] i2c: npcm: use i2c frequency table
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Tyrone Ting <warp5tw@gmail.com>, avifishman70@gmail.com, tmaimon77@gmail.com, 
-	venture@google.com, yuenn@google.com, benjaminfair@google.com, 
-	andi.shyti@kernel.org, wsa@kernel.org, rand.sec96@gmail.com, 
-	wsa+renesas@sang-engineering.com, tali.perry@nuvoton.com, 
-	Avi.Fishman@nuvoton.com, tomer.maimon@nuvoton.com, KWLIU@nuvoton.com, 
-	JJLIU0@nuvoton.com, kfting@nuvoton.com, openbmc@lists.ozlabs.org, 
-	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Fri, Aug 30, 2024 at 10:19=E2=80=AFPM Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
->
-> On Fri, Aug 30, 2024 at 11:46:39AM +0800, Tyrone Ting wrote:
-> > Modify i2c frequency from table parameters
-> > for NPCM i2c modules.
-> >
-> > Supported frequencies are:
-> >
-> > 1. 100KHz
-> > 2. 400KHz
-> > 3. 1MHz
->
-> There is no explanations "why". What's wrong with the calculations done i=
-n the
-> current code?
->
-> --
-> With Best Regards,
-> Andy Shevchenko
->
->
-Hi Andy,
+From: Francesco Dolcini <francesco.dolcini@toradex.com>
 
-The original equations were tested on a variety of chips and base clocks.
-Since we added devices that use higher frequencies of the module we
-saw that there is a mismatch between the equation and the actual
-results on the bus itself, measured on scope.
-So instead of using the equations we did an optimization per module
-frequency, verified on a device.
-Most of the work was focused on the rise time of the SCL and SDA,
-which depends on external load of the bus and PU.
-We needed to make sure that in all valid range of load the rise time
-is compliant of the SMB spec timing requirements.
+This series improves Toradex Colibri iMX8X support adding:
+ - working ethernet
+ - correct PMIC thermal zones
+ - USB support
+ - analogue audio
+ - ADC
+ - PWM
+ - VPU
 
-This patch include the final values after extensive testing both at
-Nuvoton as well as at customer sites.
+v2: 
+ - Fix USB OTG ID GPIO property (s/id-gpio/id-gpios)
+ - Keep I2C nodes sorted by address
 
-BR,
-Tali Perry
-Nuvoton.
+v1: https://lore.kernel.org/lkml/20240826215922.13225-1-francesco@dolcini.it/
+
+Emanuele Ghidoli (1):
+  arm64: dts: colibri-imx8x: Add usb support
+
+Francesco Dolcini (3):
+  arm64: dts: colibri-imx8x: Add fxl6408 gpio expander
+  arm64: dts: colibri-imx8x: Add PMIC thermal zone
+  arm64: dts: colibri-imx8x: Add USB3803 HUB
+
+João Paulo Gonçalves (5):
+  arm64: dts: colibri-imx8x: Add analog inputs
+  arm64: dts: colibri-imx8x: Add sound card
+  arm64: dts: colibri-imx8x: Add vpu support
+  arm64: dts: colibri-imx8x: Add adma_pwm
+  arm64: dts: colibri-imx8x: Cleanup comments
+
+Philippe Schenker (1):
+  arm64: dts: colibri-imx8x: Add 50mhz clock for eth
+
+ .../boot/dts/freescale/imx8dx-colibri.dtsi    |  11 +
+ .../dts/freescale/imx8x-colibri-aster.dtsi    |  36 +++
+ .../dts/freescale/imx8x-colibri-eval-v3.dtsi  |  36 +++
+ .../dts/freescale/imx8x-colibri-iris.dtsi     |  36 +++
+ .../boot/dts/freescale/imx8x-colibri.dtsi     | 212 +++++++++++++++++-
+ 5 files changed, 322 insertions(+), 9 deletions(-)
+
+-- 
+2.39.2
+
 
