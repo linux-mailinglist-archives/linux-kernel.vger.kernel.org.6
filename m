@@ -1,80 +1,119 @@
-Return-Path: <linux-kernel+bounces-310245-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310246-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F05C9676D6
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 15:52:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 171EB9676DD
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 15:58:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 294981C20F94
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 13:52:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 427A61C20EC9
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 13:58:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78AD01E50B;
-	Sun,  1 Sep 2024 13:52:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9CCC17E8F7;
+	Sun,  1 Sep 2024 13:58:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="GDHW4TeE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fpfklRr+"
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4E6514B08C;
-	Sun,  1 Sep 2024 13:52:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FD7823776;
+	Sun,  1 Sep 2024 13:58:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725198768; cv=none; b=dLj1gYGYypuhZNsFtPyvnZOM1YJmYci/GMrLhi5GHXfV08J6lrWLbjbeZvEVrIQ19zia8SUw3bXr4wgjFInc4MSwVQy8DRWto/vKQzGb32aLn52BbRoralB+HoIHh6rDDSPImQ0/F7QSEIlzWx8j+j44dOwFKgZaIUWARAveFKs=
+	t=1725199098; cv=none; b=SJuVcC4cOTbRw9eQJkb1pRehEEryvas0KDDQGQ8QMfMe9dy1qfmrPnYFV/eVov17fHQfKlyP8eIAfa6xou/DWFQEvZTXjZs6hPPpE4B5dknkOQjl0XYXGT7Ud4imCgzbECsCRw8LYpGmBLxqA18BwPTv/FhpKFRJR2Y/DD5Lfqo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725198768; c=relaxed/simple;
-	bh=0y9K93UXwjJsnbCt45ij1skIhcCJfrm/4S4x14vT7/E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sd44b0CrX3ntXaJIpial/ZEYCUumj4s2MbHBVcd6aNo+3TBbOMpbJDpWxjLcHCxGmW7lIxQzPHaR9axk4mRLPkt1aObM0JKIVo3kG3eiICby7BjJ+gd0TSOgFvktA1B/wXhk6awLz1fI5q+YjXR7YjcoaQm+s/QWbyIhmECJP9U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=GDHW4TeE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1AE28C4CEC7;
-	Sun,  1 Sep 2024 13:52:47 +0000 (UTC)
-Authentication-Results: smtp.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="GDHW4TeE"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
-	t=1725198765;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=etCXFA7FgpS49ISdfZUHG9OzdfOQOU8I699EsHvxUFE=;
-	b=GDHW4TeEXUUXCNXahhp2AvhU30mV3fDnpc9IoxrCMM6cDDAQ4B14kHCCUL1UlxlGBNfx3B
-	vfxZk0pwVozNlbNpZFWXP3xIZcHE3WdF0ULKlLTqvl0m6z7XF7WXMCA2bG7wshisOVnd/S
-	jxTwpMAhrbQLrcHHDkhmg2bpjMij94Y=
-Received: 
-	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 410e3d40 (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
-	Sun, 1 Sep 2024 13:52:45 +0000 (UTC)
-Date: Sun, 1 Sep 2024 15:52:42 +0200
-From: "Jason A. Donenfeld" <Jason@zx2c4.com>
-To: Xi Ruoyao <xry111@xry111.site>
-Cc: Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>,
-	linux-crypto@vger.kernel.org, loongarch@lists.linux.dev,
-	linux-kernel@vger.kernel.org, Jinyang He <hejinyang@loongson.cn>,
-	Tiezhu Yang <yangtiezhu@loongson.cn>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH v6 2/3] LoongArch: vDSO: Wire up getrandom() vDSO
- implementation
-Message-ID: <ZtRxqspL856yVgz9@zx2c4.com>
-References: <20240901061315.15693-1-xry111@xry111.site>
- <20240901061315.15693-3-xry111@xry111.site>
+	s=arc-20240116; t=1725199098; c=relaxed/simple;
+	bh=7U5S3BcfrluzhcaFH6ZlRrmgiZYswEEz59+n3akw6cM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VOXIrNBqffIKLOyR9vCnVrOMdnrGw/3U3BcZSbftNHLyWJuP+xCt9nxofCFqLxNEZk9/T7h/Ej3RjyHfZ1pyk1BSH3DeKxQIQoJbRErLiGQT2ZsaMAK7vnIvj3+d8ERuY34lwTCPrJgrQsN8Ripn7LSCWfsJn0hBDkNNtyXsbI8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fpfklRr+; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a86fa3dea99so186679166b.2;
+        Sun, 01 Sep 2024 06:58:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725199095; x=1725803895; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=lqxrlwZgVOZrfaPkQI4LlyC8aVNLGRmKHeCXm7BpQqU=;
+        b=fpfklRr+5OTUX2Fc8ttzSJpc+HE7BcmorNUJScfaR3m+lHH3ksVPrpDqJPF0AidyDT
+         fV2c9sYlU+EPNa0WyMwNJ6nH+RbyOWPVvK03kIL1Z/Bzy0V1NDoW0dWU4iNoKNp2rvVc
+         BhXFGff1d+gKa767cpeX+XXEoolnIMlMv2/uiVcCKr2y4IeAa5GNOfQgm/iMg3MdYWWj
+         61F5TN2jlSZ2P3gqomVn4fcKS0OpnqSzs9HrFpnAGfsLlHUK0qpPe8g9GJi2zpOtcpYf
+         WFtARJYnchcHOu/95Drne0RJyFit5n6sE/lAqsl9ytMHYmcnDdX3VA6DmGvijmSu2gYj
+         MBoA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725199095; x=1725803895;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=lqxrlwZgVOZrfaPkQI4LlyC8aVNLGRmKHeCXm7BpQqU=;
+        b=Lp77bG0KTDZlU7x8qPEK3oFrNw7RO9eDQMRdTVL43zIScTll5z8rLSE7ZR7DKClO1v
+         tb3iVLaTn0neyY9hg+azRa+3qbsrOZWX2PDdA1EJj2/XASRisRj1r40oX8qDXq0N88Ak
+         lXDqOrL2UDnHVlU1JgDc8jA7DwwC8e+NMqTlEwmiGz9UEUMPQGwrMzGLMJe/W3E5uT2i
+         ssiyBaKtz51LQyqz4QOrYwGqdXcjDGX5slcr4xI0a8N1gd9GHwS7mcStvhwJm1DB2Iqz
+         pgio/8dQ50AAjzFEwapxcseVAPGBtIUycfS9uS8vKQXjf5YPhoGcuYG9AkRaWIyzB9Ny
+         yi2A==
+X-Forwarded-Encrypted: i=1; AJvYcCVXNHu03v7EyVuK82TgaIW5vK80Vrq24h4DbC0mDgJDLGdZq5ZMckLICA+at48KtGBGt/MxRenTRyskRDSN@vger.kernel.org, AJvYcCXbbB8WRF/bMzkNUV5jnuJm5aps4a9c1sDvUyTFTlnrrSkJK3ERacgIjM8ApWSCui7H/R/8rZidiwZbor/K@vger.kernel.org
+X-Gm-Message-State: AOJu0YzYwEk1T+SsnIt+n7wqIrT6Yd/g+JZZNGwjSvgsTZA0R3I3/AiL
+	vo3nZ90jf9v9I7kZ+fxSy5PizFdZlPLsud7fEa4kYECgf3I5biBP
+X-Google-Smtp-Source: AGHT+IGKf5lWnIdWvQXm43UX9gltPdmoOxHDk3rgMDtuWMcrI5JctjcMpoKubosYad2+GjDL5ZOL4g==
+X-Received: by 2002:a05:6402:3506:b0:5c0:a8b4:3d92 with SMTP id 4fb4d7f45d1cf-5c21ed8ba82mr11941841a12.27.1725199094059;
+        Sun, 01 Sep 2024 06:58:14 -0700 (PDT)
+Received: from localhost.localdomain (public-nat-01.vpngate.v4.open.ad.jp. [219.100.37.233])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c226ccff17sm4051295a12.73.2024.09.01.06.58.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 01 Sep 2024 06:58:13 -0700 (PDT)
+From: Vladimir Lypak <vladimir.lypak@gmail.com>
+To: Vladimir Lypak <vladimir.lypak@gmail.com>
+Cc: Rob Clark <robdclark@gmail.com>,
+	Sean Paul <sean@poorly.run>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Abhinav Kumar <quic_abhinavk@quicinc.com>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Marijn Suijten <marijn.suijten@somainline.org>,
+	David Airlie <airlied@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	Jordan Crouse <jordan@cosmicpenguin.net>,
+	linux-arm-msm@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	freedreno@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/4] fixes for Adreno A5Xx preemption
+Date: Sun,  1 Sep 2024 13:53:59 +0000
+Message-ID: <20240901135419.1075412-1-vladimir.lypak@gmail.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240901061315.15693-3-xry111@xry111.site>
+Content-Transfer-Encoding: 8bit
 
-On Sun, Sep 01, 2024 at 02:13:11PM +0800, Xi Ruoyao wrote:
-> Hook up the generic vDSO implementation to the LoongArch vDSO data page
-> by providing the required __arch_chacha20_blocks_nostack,
-> __arch_get_k_vdso_rng_data, and getrandom_syscall implementations.
- 
-Applied, thanks! Congrats on being the first implementation after x86 to
-do this.
+There are several issues with preemption on Adreno A5XX GPUs which
+render system unusable if more than one priority level is used. Those
+issues include persistent GPU faults and hangs, full UI lockups with
+idling GPU.
 
-Jason
+---
+Changes in v2:
+- Use spinlock to serialize preemption initiation in patch 3
+- Added Reviewed-by on patch 2
+---
+Vladimir Lypak (4):
+  drm/msm/a5xx: disable preemption in submits by default
+  drm/msm/a5xx: properly clear preemption records on resume
+  drm/msm/a5xx: fix races in preemption evaluation stage
+  drm/msm/a5xx: workaround early ring-buffer emptiness check
+
+ drivers/gpu/drm/msm/adreno/a5xx_gpu.c     | 12 +++++++--
+ drivers/gpu/drm/msm/adreno/a5xx_gpu.h     |  2 ++
+ drivers/gpu/drm/msm/adreno/a5xx_preempt.c | 30 +++++++++++++++++++++--
+ 3 files changed, 40 insertions(+), 4 deletions(-)
+---
+base-commit: 985bf40edf4343dcb04c33f58b40b4a85c1776d4
+-- 
+2.46.0
+
 
