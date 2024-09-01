@@ -1,98 +1,91 @@
-Return-Path: <linux-kernel+bounces-310323-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310324-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33DDE967AE5
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 19:02:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AB0AD967AF4
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 19:03:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D1A621F2143A
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 17:02:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 545471F21C32
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 17:03:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 525313B79C;
-	Sun,  1 Sep 2024 17:02:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="PychHPat"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.4])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A58917C;
-	Sun,  1 Sep 2024 17:02:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C02B181CE1;
+	Sun,  1 Sep 2024 17:03:01 +0000 (UTC)
+Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B81A026AC1;
+	Sun,  1 Sep 2024 17:02:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725210136; cv=none; b=Ee0GhPRAwLFfUzWfkjPGUXJkVdo7uCVFV1RRA9FzeDH4F+vEcV683xIbAGXPa59c4+LTqpKjbiRoRQTH0i61kpzFg08EBycFdSnzxUYPmL7V95tnFzVEToTToZ6xaFKIioxEq2wiVaQ3ik3+jTSDYPIbknJ0lb818f7HA/nM49Y=
+	t=1725210181; cv=none; b=ZLm4Y5IGnsfK2YN2PWLN/eL84K8Em8Y6lbR2dt14G1+bWBLb8UgRGGfqYwDNaTC2t0pSXPndMfPCFvhbCpG2R4YkbE+Av+6IXeU5oz29lQ/jgBjbswwLdzBN16sFUvtX/t7a6rESeo0oo1OKqiP8Fuyb64j9ZjDrQV0I0lbmCEg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725210136; c=relaxed/simple;
-	bh=FsO8EYvnbAmGqUQe9Pii3BHXPSzNdyieBp00jgaKm7k=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID; b=gKhObldzjeHoMC/zoUzzo+KcdwnM7Uq/dwWGnaTQb2LqkIh3Aw6EhX5Lab6CfUvCR3eyOMZ5DhlSatCiHvjV/WSeqbZU2F1bQ1mFBpwMX3muFea6u2BibVU1hwSW2wuEEEW24zYUgW2ormggtyjbPzP6Uu484LwnUYBd8+W21aQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=PychHPat reason="signature verification failed"; arc=none smtp.client-ip=117.135.210.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Date:From:Subject:Content-Type:MIME-Version:
-	Message-ID; bh=AjyGkwb0KCWQ1NnIxOsmkp9771bZVXLIiIJ0kX0YArs=; b=P
-	ychHPatwvXf5BcFDQSDy3NXr9qKNZ6eJRupeBD4dg8jBZAPPEMg4IQ6ewsf4ZwsA
-	5ZZ8zTMxuOL+AjVRkK2tqFehv4Uu2aOeKzelQ2haiMUsGbaEWNh8l+KKq81UbYde
-	A18PrnUFBG+LEudVg1UxsEAkUgzbZizuUp+lZqE51g=
-Received: from 00107082$163.com ( [111.35.190.113] ) by
- ajax-webmail-wmsvr-40-114 (Coremail) ; Mon, 2 Sep 2024 01:01:07 +0800 (CST)
-Date: Mon, 2 Sep 2024 01:01:07 +0800 (CST)
-From: "David Wang" <00107082@163.com>
-To: mathias.nyman@intel.com, gregkh@linuxfoundation.org
-Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re:[PATCH] usb: xhci: wait for controller ready when resume with
- reinit_xhc
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20240801(9da12a7b)
- Copyright (c) 2002-2024 www.mailtech.cn 163com
-In-Reply-To: <20240901162425.5103-1-00107082@163.com>
-References: <20240901162425.5103-1-00107082@163.com>
-X-NTES-SC: AL_Qu2ZB/6av0gt4SmfbekXn0oTju85XMCzuv8j3YJeN500oyTB5iUpZW9hIlzs+ce1LiCjoAi1QiJDzc1IZKB2cbw2hLX9ZgVPvBhNSXgmNrsJ
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=GBK
+	s=arc-20240116; t=1725210181; c=relaxed/simple;
+	bh=OVNQjqqowNda7FgC3RM/nsXySeZJ1Yhvyh5sDY8cons=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nSwFttST54+7l9Jt3zxlYcHHCLdLMvpdqCMkTOhxGOXqcFrd+A1uPL/FoS85KofNq+lZb1IrcdypRFSDlSysGBq2NOIUfE7ZKqLGNHG2Oz0VlFkGNS8a9rGN6yEs9CFEwfrm3pLF1U+pfJ1k4TTWQJ7SR+KfRnC4YkH68l06Ekw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-7141285db14so3027748b3a.1;
+        Sun, 01 Sep 2024 10:02:59 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725210179; x=1725814979;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FgG5ufTwqxApKfn/2Ijfk0aPvo3cirPxCmRZrhOI98g=;
+        b=ZMN9IIhzad8tkyQAcVjL77AWygFgxvApuDzUI438Boo4PmWBvN3h0HOtVAkLHWTCVv
+         BKGy5BQTqkG3fOL+QmkGBmDMCgHgMTfW2ws+eZ2AKWGwuUD7ktEwfrWNTRY81EVZR/DM
+         gVwkbkx+NTs4XHZ4hOwwuh5ykPhDvOYziUUE0guJyYys8Aj0dv4ZEh/c+jH4DSIcO+xx
+         lIy3tcBBDClpweDQiWMuOUhAJq3T3Akp2rKo54Vi1JKwPsSfWL/eOHvozpyfOPVolqYS
+         zWYVq/WT2xzW8HdwtdvcIKIU9yApJ4wnZdoTMiAjX5nI6pjAPVYAThP+yforXyZqEK6T
+         xpYg==
+X-Forwarded-Encrypted: i=1; AJvYcCVugNW79gay6CZ7aNLMfnogy6hzlPFeabPZgiH/ksz7HLYnh3NcW6Jhlm/VJUYeG2j7Zz34XAsJ7TQ1@vger.kernel.org, AJvYcCX+gx1acDuBW6MAf3udLV2tPxC3T7ZjusuOszcahDQSl6qhAdsHPkn1egSZaFkXdX7EojUjZ9X8aTEQ+P4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwUVyB1ZMdaBWiKKi8ISoSbaFqvTjnlu9OyLFzADcIbkmxvtMEb
+	Mf17Lb17BQTW2dCnsUISL8EvX7KlA2SLKjzCxvehaP6ih1IGzlgF
+X-Google-Smtp-Source: AGHT+IEg/ZRVA7BCDFTqqBOn/0MrVURmNeBnRZWbU8iZhh7zZNHo5SCYcOgYXLzH3ki1Tcwtd50NfQ==
+X-Received: by 2002:a05:6a21:394a:b0:1c6:a576:4252 with SMTP id adf61e73a8af0-1cecdee3d61mr6904510637.8.1725210178837;
+        Sun, 01 Sep 2024 10:02:58 -0700 (PDT)
+Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7d22e77f487sm5253322a12.42.2024.09.01.10.02.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 01 Sep 2024 10:02:58 -0700 (PDT)
+Date: Mon, 2 Sep 2024 02:02:57 +0900
+From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
+To: Riyan Dhiman <riyandhiman14@gmail.com>
+Cc: nirmal.patel@linux.intel.com, jonathan.derrick@linux.dev,
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] PCI: vmd: Fix indentation issue in vmd_shutdown()
+Message-ID: <20240901170257.GI235729@rocinante>
+References: <20240901092602.17414-1-riyandhiman14@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <1fe3e185.3639.191ae88840f.Coremail.00107082@163.com>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID:_____wD3n6zUndRmuSdHAA--.44675W
-X-CM-SenderInfo: qqqrilqqysqiywtou0bp/1tbiqRNNqmVOClTVCwACs0
-X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240901092602.17414-1-riyandhiman14@gmail.com>
 
-T29wcy4uLiBKdXN0IGZpbmQgb3V0IHRoZSB3YXJuaW5nICIgIGVwXzgxOiBQTTogcGFyZW50IDMt
-MS4xOjEuMSBzaG91bGQgbm90IGJlIHNsZWVwaW5nIiBzaG93cyB1cCB3aGVuIEkgc3VzcGVuZCBt
-eSBzeXN0ZW0gd2l0aCBVU0IgY2FtZXJhIG9uLCAKYW5kIHRoaXMgcGF0Y2ggY291bGQgbm90IGZp
-eCBpdC4KUGxlYXNlIGlnbm9yZSB0aGUgcGF0Y2gsIHNvcnJ5IGJvdGhlcmluZy4uLgoKRGF2aWQK
-CgpBdCAyMDI0LTA5LTAyIDAwOjI0OjI1LCAiRGF2aWQgV2FuZyIgPDAwMTA3MDgyQDE2My5jb20+
-IHdyb3RlOgo+V2hlbiByZXN1bWUgc3lzdGVtIHdpdGggcmVpbml0X3hoYyB0cnVlLCBQTSB3b3Vs
-ZCByZXBvcnQga2VybmVsCj53YXJuaW5nIGFib3V0IGRldmljZSBwYXJlbnQ6Cj4KPiA+dXNiIDMt
-MS4xOiByZXNldCBoaWdoLXNwZWVkIFVTQiBkZXZpY2UgbnVtYmVyIDQgdXNpbmcgeGhjaV9oY2QK
-PiA+Li4KPiA+ZXBfODE6IFBNOiBwYXJlbnQgMy0xLjE6MS4xIHNob3VsZCBub3QgYmUgc2xlZXBp
-bmcKPgo+TW92ZSB0aGUgY29kZSB3YWl0aW5nIGZvciBjb250cm9sbGVyIHJlYWR5IG91dCwgYW5k
-IG1ha2UgaXQKPmNhcnJ5IG91dCB3b3JrIG5vIG1hdHRlciByZWluaXRfeGhjIGlzIHRydWUgb3Ig
-ZmFsc2UuCj5UaGUgZXJyb3IgaXMgaWdub3JlZCB3aGVuIHJlaW5pdF94aGMgaXMgdHJ1ZS4KPgo+
-U2lnbmVkLW9mZi1ieTogRGF2aWQgV2FuZyA8MDAxMDcwODJAMTYzLmNvbT4KPi0tLQo+IGRyaXZl
-cnMvdXNiL2hvc3QveGhjaS5jIHwgMTQgKysrKysrKystLS0tLS0KPiAxIGZpbGUgY2hhbmdlZCwg
-OCBpbnNlcnRpb25zKCspLCA2IGRlbGV0aW9ucygtKQo+Cj5kaWZmIC0tZ2l0IGEvZHJpdmVycy91
-c2IvaG9zdC94aGNpLmMgYi9kcml2ZXJzL3VzYi9ob3N0L3hoY2kuYwo+aW5kZXggZWZkZjRjMjI4
-YjhjLi44YWViMWIzNGNkYmYgMTAwNjQ0Cj4tLS0gYS9kcml2ZXJzL3VzYi9ob3N0L3hoY2kuYwo+
-KysrIGIvZHJpdmVycy91c2IvaG9zdC94aGNpLmMKPkBAIC0xMDMyLDEzICsxMDMyLDE1IEBAIGlu
-dCB4aGNpX3Jlc3VtZShzdHJ1Y3QgeGhjaV9oY2QgKnhoY2ksIHBtX21lc3NhZ2VfdCBtc2cpCj4g
-CWlmIChoaWJlcm5hdGVkIHx8IHhoY2ktPnF1aXJrcyAmIFhIQ0lfUkVTRVRfT05fUkVTVU1FIHx8
-IHhoY2ktPmJyb2tlbl9zdXNwZW5kKQo+IAkJcmVpbml0X3hoYyA9IHRydWU7Cj4gCj4rCS8qCj4r
-CSAqIFNvbWUgY29udHJvbGxlcnMgbWlnaHQgbG9zZSBwb3dlciBkdXJpbmcgc3VzcGVuZCwgc28g
-d2FpdAo+KwkgKiBmb3IgY29udHJvbGxlciBub3QgcmVhZHkgYml0IHRvIGNsZWFyLCBqdXN0IGFz
-IGluIHhIQyBpbml0Lgo+KwkgKiBJZ25vcmUgcmV0dmFsIGlmIHJlaW5pdF94aGMgaXMgdHJ1ZSwg
-c2luY2UgdGhlIGRldmljZSB3b3VsZAo+KwkgKiBiZSByZWluaXRlZC4KPisJICovCj4rCXJldHZh
-bCA9IHhoY2lfaGFuZHNoYWtlKCZ4aGNpLT5vcF9yZWdzLT5zdGF0dXMsCj4rCQkJCVNUU19DTlIs
-IDAsIDEwICogMTAwMCAqIDEwMDApOwo+IAlpZiAoIXJlaW5pdF94aGMpIHsKPi0JCS8qCj4tCQkg
-KiBTb21lIGNvbnRyb2xsZXJzIG1pZ2h0IGxvc2UgcG93ZXIgZHVyaW5nIHN1c3BlbmQsIHNvIHdh
-aXQKPi0JCSAqIGZvciBjb250cm9sbGVyIG5vdCByZWFkeSBiaXQgdG8gY2xlYXIsIGp1c3QgYXMg
-aW4geEhDIGluaXQuCj4tCQkgKi8KPi0JCXJldHZhbCA9IHhoY2lfaGFuZHNoYWtlKCZ4aGNpLT5v
-cF9yZWdzLT5zdGF0dXMsCj4tCQkJCQlTVFNfQ05SLCAwLCAxMCAqIDEwMDAgKiAxMDAwKTsKPiAJ
-CWlmIChyZXR2YWwpIHsKPiAJCQl4aGNpX3dhcm4oeGhjaSwgIkNvbnRyb2xsZXIgbm90IHJlYWR5
-IGF0IHJlc3VtZSAlZFxuIiwKPiAJCQkJICByZXR2YWwpOwo+LS0gCj4yLjM5LjIK
+Hello,
+
+> The code in vmd_shutdown() had an indentation
+> issue where spaces were used instead of tabs. This commit
+> corrects the indentation to use tabs, adhering to the
+> Linux kernel coding style guidelines.
+> 
+> Issue reported by checkpatch
+> - ERROR: code indent should use tabs where possible
+> 
+> No functional changes are intended.
+
+Applied to controller/vmd, thank you!
+
+[1/1] PCI: vmd: Fix indentation issue in vmd_shutdown()
+      https://git.kernel.org/pci/pci/c/4654cf52cbd0
+
+	Krzysztof
 
