@@ -1,96 +1,111 @@
-Return-Path: <linux-kernel+bounces-310280-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310281-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F95D96775A
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 18:01:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D36796775D
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 18:04:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DC18BB21354
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 16:01:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5DB341C20CBB
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 16:04:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F8B217E44A;
-	Sun,  1 Sep 2024 16:01:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D130F181B80;
+	Sun,  1 Sep 2024 16:04:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="A/ZcHapl"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jfLasjar"
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADCC23FC7;
-	Sun,  1 Sep 2024 16:01:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CD142C1B4;
+	Sun,  1 Sep 2024 16:04:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725206475; cv=none; b=MVDOmPi45XI0DMs7gUdukOtAoqBeau4rDEu16hxEESBXKZjEfxXLY15nxVj76GlBdys63eDsysIoqnfjDnaD8ty9VNlC+3XflMoi4DpRQhx9kC7r3sS5gCpTjZgcyZD2gz1dZjHJtqonK3PJC0GmfqNW7eUYRAyKmCJHLBwW2sQ=
+	t=1725206676; cv=none; b=XP6X1D2DXcgNBoti5ClnpGOdxxayERMql1t35q26oHcIHIiZCW2Dd2Qk312EWZuqagCah+dscIrMZZkLOtiPnJXWqyGDTp/3B//hIvud7DO4hdL0uKehdn9nkNj5iZwvC68hR4wu5iRKU0ZRCR4we2K5VOopyzs2+lnexQMbSCk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725206475; c=relaxed/simple;
-	bh=ynozkS1VXwufho3gIhMC1eiy7XFxoyfxs5oohDXOf84=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ot2Z1Ug7bck4gF5PU1mS+8hZFTBmAv3aXnNZJDQRSCuWA8s28wBaUIg0HKv7S0UsurKmMsNGaQX8Kyk2aF4xpm/30tXdF0URQHSjNbDolzxTvWGyJtSha5aeU71yamVJNywzUgoOH6gkJYrOwoVFwvob8fM9e2V6xvYwcGPZ5wI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=A/ZcHapl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 955DFC4CEC3;
-	Sun,  1 Sep 2024 16:01:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1725206475;
-	bh=ynozkS1VXwufho3gIhMC1eiy7XFxoyfxs5oohDXOf84=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=A/ZcHaplgLq1Y+BM/2C+YflsroVTsxTQJ59sMSw04PgGzptv6DSdX6XokguTC76pe
-	 CO9m4hOEyXiaCjrGBp13xDZimIFEhHVjMU32wdEfo5d4OSz0Mx5cwmcQOfK7MKHoCu
-	 NRB57sSGbcfHAhkNYGuf7Oro1u8MFTG7JO6tkwiU=
-Date: Sun, 1 Sep 2024 18:01:12 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
-	lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
-	f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org,
-	allen.lkml@gmail.com, broonie@kernel.org
-Subject: Re: [PATCH 6.1 000/321] 6.1.107-rc1 review
-Message-ID: <2024090104-recliner-divisibly-c33d@gregkh>
-References: <20240827143838.192435816@linuxfoundation.org>
- <4f4ac35e-e31c-4f67-b809-a5de4d4b273a@roeck-us.net>
+	s=arc-20240116; t=1725206676; c=relaxed/simple;
+	bh=0wHaGQwAQVzop4AHjrvcO+GoPre7DRSVSnLLN/CQhh8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=fskCCLf1V+PlulLLwYpSA5jMytYzD72SwKGbgtC7smyAmTnY3abaeKHO0hSFyZGVrEeEPgLh2usmgYhulTy4We+CvQ00WrrCjgB7o8WDZdbYJ1s+4WZ2MI4b1r+mWeVueZWZgkFKEew9VEnSKDviTs8/HkmPWADGsJmP4mgqSfk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jfLasjar; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a86859e2fc0so384170766b.3;
+        Sun, 01 Sep 2024 09:04:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725206673; x=1725811473; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Nauj2mG6gKwEyNeEAZXfjLbnZFfMboy1bsezWI6FQEE=;
+        b=jfLasjarXHrANWAljtPM2odyVI4zEcpnzrKfWiEHt8qqhzvRwAqLmHj+eOcNY+JLaP
+         Js8LcezsvvMSN9mVrWmW7yj+XX7bqdV+Po50+D7MFNyqLQVYVJE6MojWgmUUi6B4+6EJ
+         aDxNKJ/H55cY6tv4UvL6fW0bkJsXF56/SxX3+DBSN5yEQx6/O4bjqSLNEZjm/jPvBWB6
+         MPI1CbkLn/Yc56bfJAJVP4gZJ+ioCjTb5UuQgt/aaT6a4uWxlwvTJ3l9vFbgrX+aQtnE
+         eH1dRT/gesx9lp1kjLtLGcKQP+sqE42sRT3QXkJGytOYQCMKJlA5dHIY6LqIykqWwtYI
+         rTSg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725206673; x=1725811473;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Nauj2mG6gKwEyNeEAZXfjLbnZFfMboy1bsezWI6FQEE=;
+        b=mAre3Wpz8MTrcbuy9TTT9IyJLaqkX5jaZ9t/c2xjtlyKjTaIdB1bACUs+wryesPp3P
+         beoVGBHUz5KHfDWok+LmGp0yiPKKpTbx+gHIRvem8liWrQeLTgr8AVWRBxAIAuIktsJA
+         kGmgeWYvPnzpQPiN/KZ8Pq2Ur4KEIjEkaZ+IqmS5sSQKrJm3PgiOugtFabhDF6c29Ez0
+         hnONO3qvLvKfk6dfxXHQpHJCQJ93K8n2+3+UT5k1ovr47YZiUf7kZ8Z3xqxSEHr+A9YK
+         emDejAAOT2vmjPTwdGitH8lTc3jMqwsmrgIH8e1oDc1uRPlmPU+83CbkV7LWrtlvj/A1
+         Y9Vg==
+X-Forwarded-Encrypted: i=1; AJvYcCUd8AzwOPGR6UgoR66W8nMQom23LWEISXHwkTXcNc/iRiROojxDfnRUmpKeQPZRcio8cfH2Huz5wEoitHc=@vger.kernel.org, AJvYcCXkIqHUF8uDtrJnqBBHvvXukp7fy2jSSyfyJfT4QM37fWpyw7UiQpJHvsbkTV984WrQLmaxxxgeAO9joiq6@vger.kernel.org
+X-Gm-Message-State: AOJu0YzjVi/hFlie0H8OLpYIDk9oBpQc4tf30qkZ5MJOOVZEQjcY2mc6
+	dBs/jGtHPCmeXKWlX6ateH7/Ubp4WUmHTSMz3QzyqKpt6U6z1hR6
+X-Google-Smtp-Source: AGHT+IGx9l9mdFxurzW/iqewnjXX4YICQlO9eBNMQFkLfh++SbGivPgkyiMHQuMbhAZcQC/s2yvCww==
+X-Received: by 2002:a17:906:c106:b0:a86:a1cd:5a8c with SMTP id a640c23a62f3a-a897f8614a2mr858304366b.22.1725206672484;
+        Sun, 01 Sep 2024 09:04:32 -0700 (PDT)
+Received: from localhost (craw-09-b2-v4wan-169726-cust2117.vm24.cable.virginm.net. [92.238.24.70])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8988feacbfsm450328166b.27.2024.09.01.09.04.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 01 Sep 2024 09:04:31 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Herbert Xu <herbert@gondor.apana.org.au>,
+	"David S . Miller" <davem@davemloft.net>,
+	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+	linux-crypto@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] crypto: hisilicon/sec - Remove trailing space after \n newline
+Date: Sun,  1 Sep 2024 17:04:30 +0100
+Message-Id: <20240901160430.143143-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4f4ac35e-e31c-4f67-b809-a5de4d4b273a@roeck-us.net>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Sat, Aug 31, 2024 at 02:19:12PM -0700, Guenter Roeck wrote:
-> On 8/27/24 07:35, Greg Kroah-Hartman wrote:
-> > This is the start of the stable review cycle for the 6.1.107 release.
-> > There are 321 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> > 
-> > Responses should be made by Thu, 29 Aug 2024 14:37:36 +0000.
-> > Anything received after that time might be too late.
-> > 
-> [ ... ]
-> 
-> > Abdulrasaq Lawani <abdulrasaqolawani@gmail.com>
-> >      fbdev: offb: replace of_node_put with __free(device_node)
-> > 
-> 
-> This patch triggers:
-> 
-> Building powerpc:defconfig ... failed
-> Building powerpc:ppc64e_defconfig ... failed
-> Building powerpc:ppc6xx_defconfig ... failed
-> --------------
-> Error log:
-> drivers/video/fbdev/offb.c: In function 'offb_init_palette_hacks':
-> drivers/video/fbdev/offb.c:358:24: error: cleanup argument not a function
->   358 |                 struct device_node *pciparent __free(device_node) = of_get_parent(dp);
->       |                        ^~~~~~~~~~~
-> make[5]: *** [scripts/Makefile.build:250: drivers/video/fbdev/offb.o] Error 1
+There is a extraneous space after a newline in a dev_err message.
+Remove it.
 
-Thanks for the report, should now be fixed up.
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/crypto/hisilicon/sec/sec_drv.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-greg k-h
+diff --git a/drivers/crypto/hisilicon/sec/sec_drv.c b/drivers/crypto/hisilicon/sec/sec_drv.c
+index afdddf87cc34..9bafcc5aa404 100644
+--- a/drivers/crypto/hisilicon/sec/sec_drv.c
++++ b/drivers/crypto/hisilicon/sec/sec_drv.c
+@@ -458,7 +458,7 @@ static void sec_ipv6_hashmask(struct sec_dev_info *info, u32 hash_mask[])
+ static int sec_ipv4_hashmask(struct sec_dev_info *info, u32 hash_mask)
+ {
+ 	if (hash_mask & SEC_HASH_IPV4_MASK) {
+-		dev_err(info->dev, "Sec Ipv4 Hash Mask Input Error!\n ");
++		dev_err(info->dev, "Sec Ipv4 Hash Mask Input Error!\n");
+ 		return -EINVAL;
+ 	}
+ 
+-- 
+2.39.2
+
 
