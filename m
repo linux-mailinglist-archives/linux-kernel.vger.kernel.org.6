@@ -1,121 +1,97 @@
-Return-Path: <linux-kernel+bounces-310357-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310358-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D81BD967BBA
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 20:23:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4FC6967BBD
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 20:28:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 656A4B2123E
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 18:23:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6B33D1F20FD5
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 18:28:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7859183CD8;
-	Sun,  1 Sep 2024 18:22:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44C22183CC3;
+	Sun,  1 Sep 2024 18:28:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KGDaC0iH"
-Received: from mail-oo1-f50.google.com (mail-oo1-f50.google.com [209.85.161.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="wybkT605";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="68eVhT6f"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C94F423776;
-	Sun,  1 Sep 2024 18:22:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8878126AE8;
+	Sun,  1 Sep 2024 18:28:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725214974; cv=none; b=NM8qHGltC+qnEplm5KnEBMvqaRiAyr4TE/6j349qqO1p6JG9ZAnXKn+Dq0o/zzflrf5Pm/SwyWLrFLj9X8/r5b3lOI2+AwKwdl/HETGU6NG5K3Ns3VfO1qKwEtYK/RJr87jAGPqLdg5Hp8Zo36vtr/YTr2TdPsSYFGuUoIas07o=
+	t=1725215330; cv=none; b=WY+mZECbdraPU1my1eQ7ZTnYDKsMiJyhgl5KSRqVQkJei2akTH4wCNOQZZOVzuzaed817R8IliEHQWMMms4lUlm9LD2ijURwVq2vfcWMP/uX+TQx7Yg0pib45llayNLYRaQh+qe40Zdr1SXxPivix/JV8siGu7RIf0HTYxOfLdo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725214974; c=relaxed/simple;
-	bh=hpNlgQXfRElTb7PWWpMGDFhZuOJeOPJ0FvdsAa0XCXw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YrdaeDKzE5npFueReUegI0FvFSlh+LWl8aqPnyiJSsNcGFumgCwH1ffal9XyUwa1HuH3Jmg5+cY5oxXBbeqdJTrci+mkCOoPopYrn7Pv47CgrT0oYEqYi4zoiN958mjvXjsDi46umSBUqTqjhnb5chn9mwylC+5hpT58ifSXPAU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KGDaC0iH; arc=none smtp.client-ip=209.85.161.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oo1-f50.google.com with SMTP id 006d021491bc7-5df998d7a44so2099135eaf.2;
-        Sun, 01 Sep 2024 11:22:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725214972; x=1725819772; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=851F5ToijGXyBoO87pKyhwdeDUVtSlD/UcoryzTOI8k=;
-        b=KGDaC0iHOtPbRBHzJq8pa2L9BoIsmrfieODkOlMVM9pZye+h5ncNHiMXv0SyFOedt5
-         LrvWpmYzIGzUxgvLFeGUwDoyDBJxqkWrW1L9xrP9JfFTQe3wDUcaITt8jbbGcfy0xGoa
-         s33KG/5z2oM851N/CziYSyU53myaeT+rw7jcxDE2vmBZKufFGHN8lJW8o2lVPZo38K6L
-         UlDM2AyQV/qGFLZP/hBaOIiveOIjZDdnqUpnlY+y+IIpPqm3hiA4+JGm7Srtx+sDFHbP
-         o/r7ccQDeAXHX2Bh5dvYZk4UvzjuTUIv38MqcGLaDrszFt3hYselM9QtfdbWqxTcHGgZ
-         nL5g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725214972; x=1725819772;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=851F5ToijGXyBoO87pKyhwdeDUVtSlD/UcoryzTOI8k=;
-        b=u9Do9+7DqMzlJoNZDtZUaKV7EApx3oPZmpxeUb1km1nlMisYEX8/ZT6dgZvih3BARJ
-         CKgATw9+KhxDdmt2N3c9r5qtv3jVOQs/w0lSG+39FmNlnySlBEQf04+N5hBwur5XISu2
-         BQ/M74U7L7gL7HKOzBd9PjtGWLXgtx1UCdWY5AUOUxSCx/IHxzKXCDv8fZ054d/D4cAj
-         94bp0X1MiXY6Zm8MOOyx9vBx1J5BfbfKUU+2jGLXZt92vdbPG6QfnhMlhMZRpPOWFrQZ
-         YzKHY7cfd4aZc9hiqVvLheN7rK+Y/ORNUDm+M6JldG5bjHRvW0b8HKvS2Un0nONobWBW
-         zSDw==
-X-Forwarded-Encrypted: i=1; AJvYcCUvsu8qaID5nvhvM9NWhcfzVtst0pRWomvGS+zrCgJ2b+PyRhgF9y7P2Liwr5mSczyE0MwcC1Vj4EyjHXM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzX8tKz6bDPlYFrz2aCCfrup7HOGrqntmXg3I2eG+AKwGPzgf1g
-	DNcyTaZuJ97EbCNMvEV0a3nZOImSP7esoHGl7VQoXQpleHmEVqI/
-X-Google-Smtp-Source: AGHT+IFaPfs0CYZREB9J7MdmoiorlgXKo175W2quFCjrLgWkxWpNCaRGR3QLmTnAWVCe2onjHTXzJg==
-X-Received: by 2002:a05:6871:29d:b0:277:ca2f:905 with SMTP id 586e51a60fabf-277ca2f0c33mr6079901fac.29.1725214971689;
-        Sun, 01 Sep 2024 11:22:51 -0700 (PDT)
-Received: from fedora.. ([106.219.167.196])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-715e56e5439sm5601098b3a.180.2024.09.01.11.22.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 01 Sep 2024 11:22:51 -0700 (PDT)
-From: Riyan Dhiman <riyandhiman14@gmail.com>
-To: ulf.hansson@linaro.org
-Cc: linux-mmc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Riyan Dhiman <riyandhiman14@gmail.com>
-Subject: [PATCH] mmc: core: convert simple_stroul to kstroul
-Date: Sun,  1 Sep 2024 23:52:44 +0530
-Message-ID: <20240901182244.45543-1-riyandhiman14@gmail.com>
-X-Mailer: git-send-email 2.46.0
+	s=arc-20240116; t=1725215330; c=relaxed/simple;
+	bh=0RYzoBOKEpaxfeWVQC5LQzV98V0L0r6EBX7krY/RrFY=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=YXW4UFq/XnZ8IbcJmREX5EsETaCpreYM/xPqIrLyV771NaI6fIi3g54tKJPvTadqd5zblnNFwkXbDLyKN4stD2B9IJNoVN6iq1KV68nECsdf3CjCx3ma6wp5ZjHGMG2Kwa/4Bcsj+in4jiNiVb8MIA2uNAjpPSUFcVAYxGp/DJ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=wybkT605; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=68eVhT6f; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1725215326;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=RmY8bnVkd8XYMtbhSt4gVywEjTfDYFgtk9dXtbhAvZk=;
+	b=wybkT605r846ulUgMAzCnC/xTrGTKYc/M0WWddUV+oIE6g+FHm/ErUNbiC1kRpwbPbeh3L
+	y7tj9vw8V0J4i6rHaX7hHxPbLzN9Wf3RS4ZAZLcYt7/2rtSEK/hfypmb2eXaKI5Qh4+638
+	NQtpIaTiTWYd+5agFMB2Jdn7hdK3pwcU6AZCV+EoNBgzk3gt/UKa/Ps3NmrDhVvYjvd+Au
+	dFlzxmRwvgXlCetlptMk30IbUeJALXdDYHgru9Jhk5gng+N8g+d1wYDk25eaW5+ckkIpJx
+	r043qJhPJt0v+o1VyvbQYu1mLM8NuAWKPjWwRcnytSyle4fSD5/Ri1MrczTVkw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1725215326;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=RmY8bnVkd8XYMtbhSt4gVywEjTfDYFgtk9dXtbhAvZk=;
+	b=68eVhT6fQzvkt5SV/8OYt8KO7oGOnCwpCodHoIMV0E4ZtYGIfScJ/Ub9B0l3wQG/nODaNg
+	dQENZ32qWXkK/pDA==
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, Peter
+ Zijlstra <peterz@infradead.org>, Chen Yufan <chenyufan@vivo.com>, Linux
+ Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: Re: linux-next: build failure after merge of the tip tree
+In-Reply-To: <20240830160210.365b47d7@canb.auug.org.au>
+References: <20240826130137.631e5e31@canb.auug.org.au> <8734mremla.ffs@tglx>
+ <20240827080925.32a7aec4@canb.auug.org.au>
+ <20240830160210.365b47d7@canb.auug.org.au>
+Date: Sun, 01 Sep 2024 20:28:45 +0200
+Message-ID: <87a5gr8bz6.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-simple_strtoul() is obsolete and lacks proper error handling, making it
-unsafe for converting strings to unsigned long values. Replace it with
-kstrtoul(), which provides robust error checking and better safety.
+On Fri, Aug 30 2024 at 16:02, Stephen Rothwell wrote:
+> On Tue, 27 Aug 2024 08:09:25 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>> On Mon, 26 Aug 2024 10:04:49 +0200 Thomas Gleixner <tglx@linutronix.de> wrote:
+>> >
+>> > On Mon, Aug 26 2024 at 13:01, Stephen Rothwell wrote:  
+>> > > kernel/time/timekeeping.c: In function 'timekeeping_check_update':
+>> > > include/linux/typecheck.h:12:25: error: comparison of distinct pointer types lacks a cast [-Werror]
+>> > >    12 |         (void)(&__dummy == &__dummy2); \    
+>> > 
+>> > Offending commit has been removed.  
+>> 
+>> That commit is still in the tip tree this morning.
+>
+> I am still reverting that commit.
 
-This change improves the reliability of the string-to-integer conversion
-and aligns with current kernel coding standards. Error handling is added
-to catch conversion failures, returning -EINVAL when input is invalid.
+Hrmpf. This was pulled in via some other branch again. I've reverted it
+in that branch and merged that into master
 
-Issue reported by checkpatch:
-- WARNING: simple_strtoul is obsolete, use kstrtoul instead
+Thanks,
 
-Signed-off-by: Riyan Dhiman <riyandhiman14@gmail.com>
----
- drivers/mmc/core/block.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+        tglx
 
-diff --git a/drivers/mmc/core/block.c b/drivers/mmc/core/block.c
-index 2c9963248fcb..140d2b3504b3 100644
---- a/drivers/mmc/core/block.c
-+++ b/drivers/mmc/core/block.c
-@@ -307,10 +307,10 @@ static ssize_t force_ro_store(struct device *dev, struct device_attribute *attr,
- 			      const char *buf, size_t count)
- {
- 	int ret;
--	char *end;
- 	struct mmc_blk_data *md = mmc_blk_get(dev_to_disk(dev));
--	unsigned long set = simple_strtoul(buf, &end, 0);
--	if (end == buf) {
-+	unsigned long set;
-+
-+	if (kstrtoul(buf, 0, &set)) {
- 		ret = -EINVAL;
- 		goto out;
- 	}
--- 
-2.46.0
 
 
