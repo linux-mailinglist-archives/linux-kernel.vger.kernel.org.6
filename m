@@ -1,130 +1,79 @@
-Return-Path: <linux-kernel+bounces-310136-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310137-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42ADF967561
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 09:01:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5412796756B
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 09:17:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 44AADB21B33
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 07:01:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F04C282A59
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 07:17:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E91B1419A9;
-	Sun,  1 Sep 2024 07:01:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9174713DDBA;
+	Sun,  1 Sep 2024 07:17:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IHwrnmYZ"
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b="k1ErmVLJ"
+Received: from mail.ispras.ru (mail.ispras.ru [83.149.199.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8DAC23AB;
-	Sun,  1 Sep 2024 07:01:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 158522BAF3
+	for <linux-kernel@vger.kernel.org>; Sun,  1 Sep 2024 07:17:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.149.199.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725174067; cv=none; b=p4qzZK4M9bpb0fXqD5U3+Vn381y+IpH7xDk012KdpmDESQ5H4WXNZk8IN9aDYF1o1HXhs4y2zI50X14hWV0WMak9r5R1ifKANI6FNSeG9VC0I53bHDADANF2kb1Y1IHhNvxqL6erWwlJsCSsYQl9fYEqv9Zoq2wKW3xndh5Sq54=
+	t=1725175032; cv=none; b=ZJ0Mlb4lXMufzVB0og6a4/bJY/FRlehmp1jVx8BhzkFsZfmC5wTqJMDA43iIKACIkXZ9nrMxMOyNc5IeNzykcMS432rDS+uQyaxKtWXQNnCQfXrahlZpnHJLsBGuk56POtIouhC86SvY8v4EeX1LBPsUjGyu90Gssy8Cy9Pa4nA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725174067; c=relaxed/simple;
-	bh=A/Aqg0idiR9dTPMDqDXHWk7lNlNc328DQSDoeUkSoqA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mdXI3fG/WKj07eCi+07ybYhIh3sfdMnFfGYaPRu+LMyR6kZqNO6msCiVmNILICzYJa0IMku3AZYvz8jLg6zhgXT3L5ndZJ1h+TZDjB2GHNnQh67ILFR4i5MrVwnskE0l8xTrY38SHY3/RLPSDjRgkelho76JAXTdYsemdW22Cdc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IHwrnmYZ; arc=none smtp.client-ip=209.85.210.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-715cdc7a153so2280031b3a.0;
-        Sun, 01 Sep 2024 00:01:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725174061; x=1725778861; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=SOR3mKfIagEi6CTRnZb5FU+cHEbUu8vgBTPn6H57S0w=;
-        b=IHwrnmYZ9Nzjh1G6OSTBehyPOkQUp2NlQcdi4AobZ5uasLDlTrN13it+ZmOqmLtEal
-         ZEA4ayry2hnciGIgNNTOY/e/qIshjHUpKY0fQBokQKXFBpWUK3HirzFL8jnD0B2oJySv
-         WupTvSp95gLnYmigHFQqXP2Akw+w360XyyqPivzeYRIrph1oRLQFHFw1o8n7TAqnPLVF
-         LhjcdA+w79ZS+WckxfqsTcNVBNNis4LRmHyEorZa9kzYQLtOzhU5bCiatIkqgv04nF54
-         k/VK2PdYsLPnrkZCKyeKTB+evhCpYP1mf+4uC1umz3VqsObLbqZ7H1AdbIS6fmhBuZ3X
-         n4ew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725174061; x=1725778861;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SOR3mKfIagEi6CTRnZb5FU+cHEbUu8vgBTPn6H57S0w=;
-        b=uX/wusUwHo3Ywb6qBAl8fYZyo2LfYvG7dFzZgrxnQTKLC/4jcS2AvquNt0xcB+k18l
-         bHqmZaSIiQ5a5mLTWPlryabBBiT+KNGD3WW09QPQSoBitv701B1Ra1nZkTiWy1UEbVdb
-         yQTy9vlOw/dkzhxhantYkG6aVQjN/v/2ehooMejmONXq3aE77Lf+OWllZfN5yuoPpEjG
-         +C74EOvt6yHI9NYxTwMUsq4gYHkEIBAF2JdB49c26anGuPf6lSp222sgCuly+Sw5w+Cr
-         xv6rot8ek1dzD4WnU4x7RBMIeMEJQndlY/L0TojU9bpMS2ijm4eSlFa3uqcz3ul81Q32
-         raKg==
-X-Forwarded-Encrypted: i=1; AJvYcCUqBX5eOKg8TjGAyu6RmCAy5Lt1apUdr0cgkWT+fojs8MoxAePdDoDvOyojpy6manIeBc+5LtTsxWlAF/L5@vger.kernel.org, AJvYcCV+mtNXQ1xjhJZqsChf1LMZRgQQgmgeVM2o+U5nTAseWI1gFb9CyZOfuHOg1Dd/T8zy3tdQWvjtcBtSf2iF@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzly81dY1elNUutSvS0F/nnjdU7Vnj0J3MK20lt7MiCrQt5fXNJ
-	g9sVS62eNJSHM1mqJC/xnaEHkrfYtZA1XhjRRCR9IvSReWONo9fD16G+2Q==
-X-Google-Smtp-Source: AGHT+IHJTYwzbEkXY0gErCW2BEzpwy27lw/w9KBdaWJFALcVgx8vsd0l/xw1HxWwQSmYtj36c2I+2g==
-X-Received: by 2002:a05:6a00:8d6:b0:714:228d:e9f2 with SMTP id d2e1a72fcca58-717000c75demr10668308b3a.3.1725174061057;
-        Sun, 01 Sep 2024 00:01:01 -0700 (PDT)
-Received: from visitorckw-System-Product-Name ([140.113.216.168])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-715e56e3f95sm5191660b3a.176.2024.09.01.00.00.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 01 Sep 2024 00:01:00 -0700 (PDT)
-Date: Sun, 1 Sep 2024 15:00:57 +0800
-From: Kuan-Wei Chiu <visitorckw@gmail.com>
-To: imandevel@gmail.com
-Cc: jack@suse.cz, amir73il@gmail.com, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] inotify: set ret in inotify_read() to -EAGAIN only when
- O_NONBLOCK is set
-Message-ID: <ZtQRKfuawk6borTL@visitorckw-System-Product-Name>
-References: <20240901030150.76054-1-ImanDevel@gmail.com>
+	s=arc-20240116; t=1725175032; c=relaxed/simple;
+	bh=vpA9rSaUpAhVMPr+dAxn2EdpbhzfiLUuNmvKKqtR77c=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=h6IhFblA0kQixRGKOOKZYv+EPDs5h3Fp8AQrtjj4jpKg/P2YSrmeNHQjB96+vGBnyZCqv+QG7yXjkMzgskA/UukDHjwww6Uupb+9Tx/BcygYCbuzRuV4IVHEovrxLDejdq+VsunjntjIOP12CAAwuyNlFYVYhprJtKAxuX6P8Iw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru; spf=pass smtp.mailfrom=ispras.ru; dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b=k1ErmVLJ; arc=none smtp.client-ip=83.149.199.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ispras.ru
+Received: from fpc (unknown [10.10.165.5])
+	by mail.ispras.ru (Postfix) with ESMTPSA id 3BFAA4078535;
+	Sun,  1 Sep 2024 07:17:00 +0000 (UTC)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.ispras.ru 3BFAA4078535
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ispras.ru;
+	s=default; t=1725175020;
+	bh=vpA9rSaUpAhVMPr+dAxn2EdpbhzfiLUuNmvKKqtR77c=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=k1ErmVLJLph5onD2rnbZh9zU4oWfgeOtKkn8DUGJ5CHWfsUBh/mG8Q7OxKkZtFAvR
+	 tj0L67wblpmt/HT/mpBi2EfBDmNzvGgeBQKiBgRdtBVr8+cD8BqmI2lKoklDtE1nQq
+	 M7CbVeg++hb0xClxpLf/xHEjYrkzldAVpMs0n/3c=
+Date: Sun, 1 Sep 2024 10:16:55 +0300
+From: Fedor Pchelkin <pchelkin@ispras.ru>
+To: Christian Schoenebeck <linux_oss@crudebyte.com>,
+	Dominique Martinet <asmadeus@codewreck.org>
+Cc: Eric Van Hensbergen <ericvh@kernel.org>,
+	Latchesar Ionkov <lucho@ionkov.net>, v9fs@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Christian Brauner <brauner@kernel.org>,
+	xingwei lee <xrivendell7@gmail.com>,
+	sam sun <samsun1006219@gmail.com>, lvc-project@linuxtesting.org,
+	Alexey Khoroshilov <khoroshilov@ispras.ru>
+Subject: Re: [PATCH] 9p: cap xattr max size to XATTR_SIZE_MAX
+Message-ID: <20240901-075b24ce58df695232e3d345-pchelkin@ispras.ru>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240901030150.76054-1-ImanDevel@gmail.com>
+In-Reply-To: <4091309.WcpKHNDlqE@silver>
 
-On Sat, Aug 31, 2024 at 11:01:50PM -0400, imandevel@gmail.com wrote:
-> From: Iman Seyed <ImanDevel@gmail.com>
-> 
-> Avoid setting ret to -EAGAIN unnecessarily. Only set
-> it when O_NONBLOCK is specified; otherwise, leave ret
-> unchanged and proceed to set it to -ERESTARTSYS.
->
+Hi Dominique and Christian,
 
-Hi Iman,
+the issue is still present in upstream kernel [1].
 
-Have you checked the code generated by gcc before and after applying
-this patch? My intuition suggests that the compiler optimization might
-result in the same code being produced.
+Considering the remark from Christian that limiting the allocation to
+XATTR_SIZE_MAX seems too Linux-specific, maybe just fail silently with
+__GFP_NOWARN flag passed to the allocator and return ENOMEM? I submitted
+the patch [2] sometime ago which looks still applicable to the mainline
+kernel. It was superseded with current discussion.
 
-Regards,
-Kuan-Wei
-
-> Signed-off-by: Iman Seyed <ImanDevel@gmail.com>
-> ---
->  fs/notify/inotify/inotify_user.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
-> 
-> diff --git a/fs/notify/inotify/inotify_user.c b/fs/notify/inotify/inotify_user.c
-> index 4ffc30606e0b..d5d4b306a33d 100644
-> --- a/fs/notify/inotify/inotify_user.c
-> +++ b/fs/notify/inotify/inotify_user.c
-> @@ -279,9 +279,11 @@ static ssize_t inotify_read(struct file *file, char __user *buf,
->  			continue;
->  		}
->  
-> -		ret = -EAGAIN;
-> -		if (file->f_flags & O_NONBLOCK)
-> +		if (file->f_flags & O_NONBLOCK) {
-> +			ret = -EAGAIN;
->  			break;
-> +		}
-> +
->  		ret = -ERESTARTSYS;
->  		if (signal_pending(current))
->  			break;
-> -- 
-> 2.46.0
-> 
+[1]: https://syzkaller.appspot.com/bug?extid=a83dc51a78f0f4cf20da
+[2]: https://lore.kernel.org/lkml/20240202121319.21743-1-pchelkin@ispras.ru/
 
