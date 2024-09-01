@@ -1,144 +1,115 @@
-Return-Path: <linux-kernel+bounces-310392-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310393-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE707967C24
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 22:39:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E8C1967C2A
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 22:45:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C289281BEA
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 20:39:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 58B9E281C4C
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 20:45:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F83B1304B0;
-	Sun,  1 Sep 2024 20:39:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96076139CE3;
+	Sun,  1 Sep 2024 20:45:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ADD3Kqvf"
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="O7vUT6oD"
+Received: from msa.smtpout.orange.fr (smtp-77.smtpout.orange.fr [80.12.242.77])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCFC858222
-	for <linux-kernel@vger.kernel.org>; Sun,  1 Sep 2024 20:39:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D69291E517;
+	Sun,  1 Sep 2024 20:45:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725223185; cv=none; b=PW1p026mfDuOUyXVEowdsHBMCf5+JARflcGE2y9gl1SshQbd6C3H9UDOMG2RIRVODlSxQ0pAB+BQHh4Tl/tuWUJAe4atL7X4XMdzxDDdvMyU8OmUsBKwQt0zUg0EFgWJkufc+uBuTdK+pJB9YT8kzcNO0mfBJgDiNxCiaqa1XGk=
+	t=1725223546; cv=none; b=JwIja2z/JEULinWjIeGafgu0zy4Xmf3Qap3bnmyuXuWq+9exEuRVHtYOf79DFFXQ/xt/uRPT3HLjeJ1iDtfFyOBO+9zx/gSI2us299zr2JLLfX2iXG/zXYuIkH2xQr7HPy3fdod4Z/Sxwknsi+MZ+Rz4dRtdG/b9aVYF7s0re/s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725223185; c=relaxed/simple;
-	bh=Xl2okuGkZ0a70nJFoBBhxciMppCcQYMVoqQHN9oiXJE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=miPWn07UFzYMBBXAb23OjIXzfbPp37XqHJCTM4EI0LUCjd7q2YOlFffsysafmlGXr2dsn1AZWCfGBhSf85X3XimGSydFVo34eFjoMtHxICuflaQi0EMVrpjNBKUXX2b1HEL6ooeRlxDqMMVTYoFn5jqx9a2KjFFPf/dNVjNx0Ww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ADD3Kqvf; arc=none smtp.client-ip=209.85.208.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2f3f163e379so56501921fa.3
-        for <linux-kernel@vger.kernel.org>; Sun, 01 Sep 2024 13:39:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725223182; x=1725827982; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sDffpG2ThY4k2VDFqzoKC8KM31EEPwqyGBslWHRe5RE=;
-        b=ADD3KqvfZLk/z6vPA+BaDiY+oX7PUWbejVRaY4VoetnTvjaBpmDRaYmMwoEqNvLHmq
-         zaUBhqxePdeODk3Gm91gIklMJradM+fli734BVRYzFonywwAKMQnsOGfq3EZEq8kyuJG
-         iH2I3fo5vB94I+woBTiUILjugCbgZBxr1o9FJiWnOvYb/+3YOta7lzrHEQ9kFJh5/Mj0
-         E3gjKZPGAmPVCfHUaVKjB85Rp0XtCmUAnjtqpVHFkhothWNS+JA1FzjwVWPtP+jiZEo6
-         vDtS7xKgpsPhUMdsojuidwDAFH6G5lXq8RLVddlF87OBBMzhiP0UvUrtz9fyNlStvWCj
-         ZG8A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725223182; x=1725827982;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=sDffpG2ThY4k2VDFqzoKC8KM31EEPwqyGBslWHRe5RE=;
-        b=w0OgJckYqcwQ4X+Iffzuib4NNnUV4w6sZ2ur1qBSvHP4rG3+HccAvWj3fEULFNfyG3
-         JuXOOs1pigy7LPLKZf/iIxSpHETdRN1BaEZMPEZZQ8GAt3upeHL48cMlh1vN9/ohSyyP
-         /OMEtemP9TSZcJeyASf8pX5SSHd0fnjkmfl5Yjlt3YaYIk2kpTh1C+r11Xi8msmYogpm
-         1aiyuaYBYNTGZikkIYSf+hymiM+ALAgP2O4qMpVdQ9pJcdZgDKcrx03IJif7Iq27PHe1
-         6QqBNLRB/opyNLBtKIyUjVmA8AA1ZW9+neMPCnpaQggoU84KA6Hu+RO+vumpa3pV9dZW
-         K+Vg==
-X-Forwarded-Encrypted: i=1; AJvYcCWozwD1Am8X+jLH8TSD2/FZfAYDMloXrB63Dw3ZYI9iZjXH7UV2euQhXKUh0bPNLkkd1i2lftpaWKj21x4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywq4FCUUYQ0z9a2/mTQDoJV5W3KeKfwweEQVOjWMMv2horirkrS
-	jw062DncTL0P79bwYaccbO/UQik+bII/EMeg8ndKAeEv95u+PquAHB/RH97A4WmH1uEt26/jzBj
-	hBQ7oVIVawKZH+F823L9G7MvJBn8=
-X-Google-Smtp-Source: AGHT+IEXsrwqoHt2e/ocmAyYQhcGL4ufKNrpXXSo9TpQGlipO+Q4+m2Y5RZRyOqQEU+ML86TDaIl2ayhuo77wQl61EE=
-X-Received: by 2002:a05:651c:b20:b0:2ec:4093:ec7 with SMTP id
- 38308e7fff4ca-2f6108937e3mr103433981fa.30.1725223181373; Sun, 01 Sep 2024
- 13:39:41 -0700 (PDT)
+	s=arc-20240116; t=1725223546; c=relaxed/simple;
+	bh=IpzzL+qffAylT1Kp4b+8Sun0IWPin7IZV0K9T+zFQd8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=EtpZXa94DQZ255VTDGsMlhMCH+OQciJpOU7+5iqd8R6UjY4cJTJWdwwN4B4icZM5biJ2oymducmktNZ6T+ww8qqrCkDCyNgzNOU/T1XRJctT41z1QsgctsYVqgle5G0BgX2MR5Bn9MhVGjwSPIc0inNaNv/mp/AfDTvU0bgGKII=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=O7vUT6oD; arc=none smtp.client-ip=80.12.242.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from fedora.home ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id krRzstoQfjDE7krRzsjq0N; Sun, 01 Sep 2024 22:45:34 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1725223534;
+	bh=OaYwBpcpMqzp3pLDAjlo6pUpuKE0rzYUGot8WgUmNng=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=O7vUT6oD4tCaFxdpGALRGzKNoacDx8+CfVJ4hEoSmoR75kFAoveYEZ+cSTdFe1xvI
+	 cmT2gkMputZBR2hFgYFzAGq+nwV8OwPM4+/S7wCVmPt0p1nt5qxbH9mrrhoTg8WWxe
+	 WtPb5ODITjxYbjjvKb3y5QJ/irjeMzOKH/zLA78/fSNDhGoTMIx6juFyodwAM7UL1d
+	 GKSUUmcDsZemGo/p70fFUEVpSbHGas52ah6zc8ljyXHuSIMLMA0tJPFbdQ+3qcTSuT
+	 khc0fBCY22DxxXvCGcU0zLnROpvySn7RgLGzT5vITABYvmarp5baXI/e4AOYSZKF10
+	 NbYbPGJSb3iJw==
+X-ME-Helo: fedora.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sun, 01 Sep 2024 22:45:34 +0200
+X-ME-IP: 90.11.132.44
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	linux-scsi@vger.kernel.org
+Subject: [PATCH] scsi: libcxgbi: Remove an unused field in struct cxgbi_device
+Date: Sun,  1 Sep 2024 22:45:27 +0200
+Message-ID: <58f77f690d85e2c653447e3e3fc4f8d3c3ce8563.1725223504.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240829102543.189453-1-jingxiangzeng.cas@gmail.com> <20240830173813.c53769f62bf72116266f42ca@linux-foundation.org>
-In-Reply-To: <20240830173813.c53769f62bf72116266f42ca@linux-foundation.org>
-From: Kairui Song <ryncsn@gmail.com>
-Date: Mon, 2 Sep 2024 04:39:24 +0800
-Message-ID: <CAMgjq7AnaNr354zzu-Z-SB6xZtD1+a2zUwFtZ_Qg7pMj0m7y7A@mail.gmail.com>
-Subject: Re: [PATCH] mm/vmscan: wake up flushers conditionally to avoid cgroup OOM
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Jingxiang Zeng <linuszeng@tencent.com>, Jingxiang Zeng <jingxiangzeng.cas@gmail.com>, 
-	linux-mm@kvack.org, Yu Zhao <yuzhao@google.com>, Wei Xu <weixugc@google.com>, 
-	"T . J . Mercier" <tjmercier@google.com>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Sat, Aug 31, 2024 at 8:38=E2=80=AFAM Andrew Morton <akpm@linux-foundatio=
-n.org> wrote:
->
-> On Thu, 29 Aug 2024 18:25:43 +0800 Jingxiang Zeng <jingxiangzeng.cas@gmai=
-l.com> wrote:
->
-> > From: Zeng Jingxiang <linuszeng@tencent.com>
-> >
-> > Commit 14aa8b2d5c2e ("mm/mglru: don't sync disk for each aging cycle")
-> > removed the opportunity to wake up flushers during the MGLRU page
-> > reclamation process can lead to an increased likelihood of triggering
-> > OOM when encountering many dirty pages during reclamation on MGLRU.
-> >
-> > This leads to premature OOM if there are too many dirty pages in cgroup=
-:
-> > Killed
-> >
-> > ...
-> >
-> > The flusher wake up was removed to decrease SSD wearing, but if we are
-> > seeing all dirty folios at the tail of an LRU, not waking up the flushe=
-r
-> > could lead to thrashing easily. So wake it up when a mem cgroups is
-> > about to OOM due to dirty caches.
->
-> Thanks, I'll queue this for testing and review.  Could people please
-> consider whether we should backport this into -stable kernels.
->
+Usage of .dev_ddp_cleanup() in libcxgbi was removed by commit 5999299f1ce9
+("cxgb3i,cxgb4i,libcxgbi: remove iSCSI DDP support") on 2016-07.
 
-Hi Andrew, Thanks for picking this up.
+.csk_rx_pdu_ready() and debugfs_root have apparently never been used since
+introduction by commit 9ba682f01e2f ("[SCSI] libcxgbi: common library for
+cxgb3i and cxgb4i")
 
-> > MGLRU still suffers OOM issue on latest mm tree, so the test is done
-> > with another fix merged [1].
-> >
-> > Link: https://lore.kernel.org/linux-mm/CAOUHufYi9h0kz5uW3LHHS3ZrVwEq-kK=
-p8S6N-MZUmErNAXoXmw@mail.gmail.com/ [1]
->
-> This one is already queued for -stable.
+Remove the now unused function pointer from struct cxgbi_device.
 
-I didn't see this in -unstable or -stable though, is there any other
-repo or branch I missed? Jingxiang is referring to this fix from Yu:
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Compile tested only.
+---
+ drivers/scsi/cxgbi/libcxgbi.h | 3 ---
+ 1 file changed, 3 deletions(-)
 
-diff --git a/mm/vmscan.c b/mm/vmscan.c
-index cfa839284b92..778bf5b7ef97 100644
---- a/mm/vmscan.c
-+++ b/mm/vmscan.c
-@@ -4320,7 +4320,7 @@ static bool sort_folio(struct lruvec *lruvec,
-struct folio *folio, struct scan_c
-        }
+diff --git a/drivers/scsi/cxgbi/libcxgbi.h b/drivers/scsi/cxgbi/libcxgbi.h
+index d92cf1dccc2f..0909b03e2497 100644
+--- a/drivers/scsi/cxgbi/libcxgbi.h
++++ b/drivers/scsi/cxgbi/libcxgbi.h
+@@ -485,7 +485,6 @@ struct cxgbi_device {
+ 	unsigned char nmtus;
+ 	unsigned char nports;
+ 	struct pci_dev *pdev;
+-	struct dentry *debugfs_root;
+ 	struct iscsi_transport *itp;
+ 	struct module *owner;
+ 
+@@ -499,7 +498,6 @@ struct cxgbi_device {
+ 	unsigned int rxq_idx_cntr;
+ 	struct cxgbi_ports_map pmap;
+ 
+-	void (*dev_ddp_cleanup)(struct cxgbi_device *);
+ 	struct cxgbi_ppm* (*cdev2ppm)(struct cxgbi_device *);
+ 	int (*csk_ddp_set_map)(struct cxgbi_ppm *, struct cxgbi_sock *,
+ 			       struct cxgbi_task_tag_info *);
+@@ -512,7 +510,6 @@ struct cxgbi_device {
+ 				   unsigned int, int);
+ 
+ 	void (*csk_release_offload_resources)(struct cxgbi_sock *);
+-	int (*csk_rx_pdu_ready)(struct cxgbi_sock *, struct sk_buff *);
+ 	u32 (*csk_send_rx_credits)(struct cxgbi_sock *, u32);
+ 	int (*csk_push_tx_frames)(struct cxgbi_sock *, int);
+ 	void (*csk_send_abort_req)(struct cxgbi_sock *);
+-- 
+2.46.0
 
-        /* ineligible */
--       if (zone > sc->reclaim_idx || skip_cma(folio, sc)) {
-+       if (!folio_test_lru(folio) || zone > sc->reclaim_idx ||
-skip_cma(folio, sc)) {
-                gen =3D folio_inc_gen(lruvec, folio, false);
-                list_move_tail(&folio->lru, &lrugen->folios[gen][type][zone=
-]);
-                return true;
 
