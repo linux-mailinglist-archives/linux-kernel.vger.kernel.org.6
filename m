@@ -1,239 +1,172 @@
-Return-Path: <linux-kernel+bounces-310254-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310255-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9419E96770C
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 16:24:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CDC6967712
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 16:26:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B1522B21385
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 14:24:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5CB37281D06
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 14:26:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6AC3181B80;
-	Sun,  1 Sep 2024 14:23:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86FEE18132F;
+	Sun,  1 Sep 2024 14:26:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UWDHAnMe"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="VWU9iWS9"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB3C813D606;
-	Sun,  1 Sep 2024 14:23:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 991D123AB
+	for <linux-kernel@vger.kernel.org>; Sun,  1 Sep 2024 14:26:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725200634; cv=none; b=C/Ko/5IZtCf4rlpNhnM1BJY99epc/bVl2LBj8d7sl8vqYyftffz6iPgqWPPKYNV1/jw5I+desw06Zswhkg/hPqbo1V4ppXp17AFMwMPYA3q7ZLrnH+utn2lrfVfbfpfqXF8JQrTvc+H0ysU9j3n4xlcXwqcGmp4MV75tGtqJU0g=
+	t=1725200806; cv=none; b=IbggydfZPANapmpCYn3ptOGfUqFrKoB0vJIYUYd8LYxMxqKD9bBE6pSPb9BHNu9MdlWlvF12+QMPgFKznkejkU2FB4Eh9mOUXv+s3h//AXwXtbH+J8JGMffZhaJR6DBP/UTLuugI/3NS/omHgGUERARtdMB6Vcl/cZTIbHRmO3U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725200634; c=relaxed/simple;
-	bh=zSobwp7oh2TA8YTcBou4k1iduzlWERahemknlMuDCJg=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=NMj+9j50mZD/KJt29PdDvPQFzOpNkbiU9f1/WWPD8snHJWIoQJmTmhuJRVqyqbcpVmU/s572FWKHAmk7J6lcxsqqgsi58u2VP99dPSLJZ55yyZYY24AUPJS7kD2/kXuiLGqrsAz/VMbbCbzBKnahMvxFIi84+Xa516eX2aHyGwo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UWDHAnMe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48E8EC4CEC3;
-	Sun,  1 Sep 2024 14:23:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725200633;
-	bh=zSobwp7oh2TA8YTcBou4k1iduzlWERahemknlMuDCJg=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=UWDHAnMe8lPIoTmRPbYnGOR3d6rN835wAz6+iDakN3mrHVO/2JZApJM5pyADZdFa/
-	 twn+agcPl8uythWecuI3SD/mdYEkH66glcdI2DZ1HueDKGhlaSgG/emNtdOZCUHGiD
-	 sabMxg96rP0gmjkSc4CBiDR2PKmft2YskdJK73Vrn1lkeVuNWM0TcGV5l9xoVlHBtW
-	 siXByeHbq/VEcjtCRWM/nzmQpjS3CKMgFzA/Uzl7FDcMp0DicRmxl9uCniGWXUAqaj
-	 wf0dcnOheXBnM5SiadCPghx7lWSuht/oIYJREsAWCO1eG04SNnWNUaotLmEIGGcA+W
-	 mF9Eyw7xjcRvg==
-Date: Sun, 1 Sep 2024 15:23:46 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: jason liu <jasonliu10041728@gmail.com>
-Cc: Jean-Baptiste Maneyrol <Jean-Baptiste.Maneyrol@tdk.com>,
- "lars@metafoo.de" <lars@metafoo.de>, "linux-iio@vger.kernel.org"
- <linux-iio@vger.kernel.org>, "linux-kernel@vger.kernel.org"
- <linux-kernel@vger.kernel.org>, Wolfram Sang
- <wsa+renesas@sang-engineering.com>, Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH] iio/inv_icm42600: add inv_icm42600 id_table
-Message-ID: <20240901152346.45b096c3@jic23-huawei>
-In-Reply-To: <CAJci1vCztZAnmHrVn=4b9hnRmMCQE=6R7uQnznPQ0FSpFHQK5w@mail.gmail.com>
-References: <20240825063938.56319-1-jasonliu10041728@gmail.com>
-	<FR3P281MB1757A595F22A1F9AE50B76B1CE8B2@FR3P281MB1757.DEUP281.PROD.OUTLOOK.COM>
-	<20240826111858.7824a811@jic23-huawei>
-	<CAJci1vCztZAnmHrVn=4b9hnRmMCQE=6R7uQnznPQ0FSpFHQK5w@mail.gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1725200806; c=relaxed/simple;
+	bh=5tkOh9Mr+FDiVR2Br/fv2eu3xB3uJlL+YSg4mxuYCJE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Th6grLsr6PlXXK6gL4TIv084wD80kvhp1sGJCvXPeu99KYQ98AuCRtgCxY9W/xiu4rj5Ym9UdI1GEkKU4QjbJvwNf+dptF191YOnxQ0yLsU4ArBRKAnPMrrSxOhoIz+1FujNKJBi2+v5JVinVM2ZK4r3Drez2ZVXA/FML1J6UAQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=VWU9iWS9; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47VMTC6n002312;
+	Sun, 1 Sep 2024 14:25:56 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
+	message-id:date:mime-version:subject:to:cc:references:reply-to
+	:from:in-reply-to:content-type:content-transfer-encoding; s=pp1;
+	 bh=BEQB3l9SYwu4WAUshnmcC9Ae+9yNAMi2AdQ0YNnc8mU=; b=VWU9iWS9/354
+	tEIEYAt1oQxESssDo5PWPYEfw376qKwtIkuIhWZse4hHaTj7WweaawRpbDtpCJ7s
+	/QhXKVUnV/O/RBLkGwekQsMoSI8RCm4BjvQ5ZJEzPL3/yslecr5LPFdSFf8iieOg
+	sS8vnAtXJ4e2y+9bk5iUCdLy16is2vAegUzpMNNesDfz/aHVgu8zUi6FnWWbdKje
+	YryCgGZjHjuq67wZYfnDmReN4aA7U+LA+8hSquyafYE7JW+HnoTW8mBZRty3xqk9
+	VmAQiXIpm0duYhRzEflZdWUCbD+NYjzDUvowHwesb4JSVf3SZJmlUnoa1CE6SsXh
+	JbSZ4/uYng==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 41btp953ws-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 01 Sep 2024 14:25:56 +0000 (GMT)
+Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 481EPtpD030557;
+	Sun, 1 Sep 2024 14:25:55 GMT
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 41btp953wp-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 01 Sep 2024 14:25:55 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 481ANJfa000438;
+	Sun, 1 Sep 2024 14:25:54 GMT
+Received: from smtprelay06.dal12v.mail.ibm.com ([172.16.1.8])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 41cdguadta-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 01 Sep 2024 14:25:54 +0000
+Received: from smtpav05.wdc07v.mail.ibm.com (smtpav05.wdc07v.mail.ibm.com [10.39.53.232])
+	by smtprelay06.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 481EPsZw48234904
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Sun, 1 Sep 2024 14:25:54 GMT
+Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 0F6B058053;
+	Sun,  1 Sep 2024 14:25:54 +0000 (GMT)
+Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 5BA2B58043;
+	Sun,  1 Sep 2024 14:25:48 +0000 (GMT)
+Received: from [9.43.44.227] (unknown [9.43.44.227])
+	by smtpav05.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Sun,  1 Sep 2024 14:25:47 +0000 (GMT)
+Message-ID: <e915c024-9a53-4736-9194-988e5cdd06a3@linux.ibm.com>
+Date: Sun, 1 Sep 2024 19:55:46 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] sched: fix warning in sched_setaffinity
+To: Josh Don <joshdon@google.com>
+Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
+        Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
+        linux-kernel@vger.kernel.org, Waiman Long <longman@redhat.com>,
+        Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Madadi Vineeth Reddy <vineethr@linux.ibm.com>
+References: <20240829220427.2764399-1-joshdon@google.com>
+Content-Language: en-US
+Reply-To: 20240829220427.2764399-1-joshdon@google.com
+From: Madadi Vineeth Reddy <vineethr@linux.ibm.com>
+In-Reply-To: <20240829220427.2764399-1-joshdon@google.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: NQUWdtvcZfHOjS03YzmNEs7LiK3DZW91
+X-Proofpoint-ORIG-GUID: Yg26Q_1WRyq-RQmbsekXNGfUcxt13sJx
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-09-01_02,2024-08-30_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ bulkscore=0 lowpriorityscore=0 phishscore=0 impostorscore=0 spamscore=0
+ malwarescore=0 mlxlogscore=999 adultscore=0 mlxscore=0 suspectscore=0
+ clxscore=1011 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2409010120
 
-On Sun, 1 Sep 2024 13:04:59 +0800
-jason liu <jasonliu10041728@gmail.com> wrote:
+Hi Josh Don,
 
-> Hi, I would like to know your current opinion on this patch.
->=20
-> Let me explain the reason for proposing this patch.
->=20
-> First, through __spi_register_driver, we know that when registering an SPI
-> driver, if an id_table is present, it matches the id_table; otherwise, it
-> matches the SPI device's driver_name.
-> Then, in inv_icm_42600spi.c, driver name is "inv-icm42600-spi", but the
-> compatible is compatible =3D "invensense,icm42600".
->=20
-> so I think, it's necessary to add an id_table in the inv_icm42600 driver.
+On 30/08/24 03:34, Josh Don wrote:
+> Commit 8f9ea86fdf99b added some logic to sched_setaffinity that included
+> a WARN when a per-task affinity assignment races with a cpuset update.
+> 
+> Specifically, we can have a race where a cpuset update results in the
+> task affinity no longer being a subset of the cpuset. That's fine; we
+> have a fallback to instead use the cpuset mask. However, we have a WARN
+> set up that will trigger if the cpuset mask has no overlap at all with
+> the requested task affinity. This shouldn't be a warning condition; its
+> trivial to create this condition.
+> 
+> Reproduced the warning by the following setup:
+> 
+> - $PID inside a cpuset cgroup
+> - another thread repeatedly switching the cpuset cpus from 1-2 to just 1
+> - another thread repeatedly setting the $PID affinity (via taskset) to 2
+> 
 
-The quest Jean-Baptiste was raising was whether it would match on the
-of_match_id table instead if it was present.  __spi_register_driver
-does that so I think perhaps what you are actually referring to is
-the comment in there.
+I was testing the patch using the following two scripts run concurrently:
 
-	/*
-	 * For Really Good Reasons we use spi: modaliases not of:
-	 * modaliases for DT so module autoloading won't work if we
-	 * don't have a spi_device_id as well as a compatible string.
-	 */
+Script 1:
+while true; do
+    echo 1 > /sys/fs/cgroup/test_group/cpuset.cpus;
+    echo 1-2 > /sys/fs/cgroup/test_group/cpuset.cpus;
+done
 
-The actually matching is done in spi_match_device.
+Script 2:
+while true; do
+    sudo taskset -p 0x2 $$;
+done
 
-Anyhow, the comment suggests strongly that we do still need the
-spi_device_id table. I'm not 100% sure on the i2c equivalent, but
-I'm fine with adding both.  Please fix up the formatting as requested
-below and send a v2.
+However, I am unable to trigger the warning in dmesg on the unpatched kernel.
+I was expecting to see the warning as described, but it doesn't seem to appear.
 
->=20
->=20
-> Jonathan Cameron <jic23@kernel.org> =E4=BA=8E2024=E5=B9=B48=E6=9C=8826=E6=
-=97=A5=E5=91=A8=E4=B8=80 18:27=E5=86=99=E9=81=93=EF=BC=9A
->=20
-> > On Mon, 26 Aug 2024 08:22:11 +0000
-> > Jean-Baptiste Maneyrol <Jean-Baptiste.Maneyrol@tdk.com> wrote:
-> > =20
-> > > Hello,
-> > >
-> > > I was believing that id tables weren't required anymore when using of=
- =20
-> > tables. =20
-> > >
-> > > Jonathan,
-> > > can you help on this subject?
-> > >
-> > > If we have to add id tables, then we need to add all supported chips =
-=20
-> > (missing here icm42686 and icm42688).
-> >
-> > There were some oddities around autoloading for some busses a while
-> > back but I can't find the reference.
-> >
-> > +CC Mark + Wolfram for input.
-> > Do we currently need i2c_device_id and spi_device_id tables for
-> > autoprobing on DT only platforms?
-> >
-> > A few minor comments inline.
-> >
-> >
-> >
-> > =20
-> > >
-> > > Thanks,
-> > > JB
-> > >
-> > > ________________________________________
-> > > From: Jason Liu <jasonliu10041728@gmail.com>
-> > > Sent: Sunday, August 25, 2024 08:39
-> > > To: Jean-Baptiste Maneyrol <Jean-Baptiste.Maneyrol@tdk.com>
-> > > Cc: jic23@kernel.org <jic23@kernel.org>; lars@metafoo.de <
-> > lars@metafoo.de>; linux-iio@vger.kernel.org <linux-iio@vger.kernel.org>=
-; =20
-> > linux-kernel@vger.kernel.org <linux-kernel@vger.kernel.org>; Jason Liu =
-< =20
-> > jasonliu10041728@gmail.com>
-> > > Subject: [PATCH] iio/inv_icm42600: add inv_icm42600 id_table
-> > >
-> > > This Message Is From an Untrusted Sender
-> > > You have not previously corresponded with this sender.
-> > >
-> > > Add the id_table of inv_icm42600, so the device can probe correctly.
-> > >
-> > > Signed-off-by: Jason Liu <jasonliu10041728@gmail.com>
-> > > ---
-> > >  drivers/iio/imu/inv_icm42600/inv_icm42600_i2c.c | 15 +++++++++++++++
-> > >  drivers/iio/imu/inv_icm42600/inv_icm42600_spi.c | 15 +++++++++++++++
-> > >  2 files changed, 30 insertions(+)
-> > >
-> > > diff --git a/drivers/iio/imu/inv_icm42600/inv_icm42600_i2c.c =20
-> > b/drivers/iio/imu/inv_icm42600/inv_icm42600_i2c.c =20
-> > > index ebb31b385881..8cc550b8cfc3 100644
-> > > --- a/drivers/iio/imu/inv_icm42600/inv_icm42600_i2c.c
-> > > +++ b/drivers/iio/imu/inv_icm42600/inv_icm42600_i2c.c
-> > > @@ -71,6 +71,20 @@ static int inv_icm42600_probe(struct i2c_client =20
-> > *client) =20
-> > >                                      inv_icm42600_i2c_bus_setup);
-> > >  }
-> > >
-> > > +/*
-> > > + * device id table is used to identify what device can be
-> > > + * supported by this driver
-> > > + */
-> > > +static const struct i2c_device_id inv_icm42600_id[] =3D {
-> > > +     {"icm42600", INV_CHIP_ICM42600}, =20
-> > Spaces after { and before } =20
-> > > +     {"icm42602", INV_CHIP_ICM42602},
-> > > +     {"icm42605", INV_CHIP_ICM42605},
-> > > +     {"icm42622", INV_CHIP_ICM42622},
-> > > +     {"icm42631", INV_CHIP_ICM42631},
-> > > +     {} =20
-> > { }
-> >
-> > I'm trying to standardize this in IIO.
-> > =20
-> > > +};
-> > > +MODULE_DEVICE_TABLE(i2c, inv_icm42600_id);
-> > > +
-> > >  static const struct of_device_id inv_icm42600_of_matches[] =3D {
-> > >       {
-> > >               .compatible =3D "invensense,icm42600",
-> > > @@ -104,6 +118,7 @@ static struct i2c_driver inv_icm42600_driver =3D {
-> > >               .of_match_table =3D inv_icm42600_of_matches,
-> > >               .pm =3D pm_ptr(&inv_icm42600_pm_ops),
-> > >       },
-> > > +     .id_table =3D inv_icm42600_id,
-> > >       .probe =3D inv_icm42600_probe,
-> > >  };
-> > >  module_i2c_driver(inv_icm42600_driver);
-> > > diff --git a/drivers/iio/imu/inv_icm42600/inv_icm42600_spi.c =20
-> > b/drivers/iio/imu/inv_icm42600/inv_icm42600_spi.c =20
-> > > index eae5ff7a3cc1..5fe078ddc8a1 100644
-> > > --- a/drivers/iio/imu/inv_icm42600/inv_icm42600_spi.c
-> > > +++ b/drivers/iio/imu/inv_icm42600/inv_icm42600_spi.c
-> > > @@ -67,6 +67,20 @@ static int inv_icm42600_probe(struct spi_device *s=
-pi)
-> > >                                      inv_icm42600_spi_bus_setup);
-> > >  }
-> > >
-> > > +/*
-> > > + * device id table is used to identify what device can be
-> > > + * supported by this driver
-> > > + */
-> > > +static const struct spi_device_id inv_icm42600_id[] =3D {
-> > > +     {"icm42600", INV_CHIP_ICM42600},
-> > > +     {"icm42602", INV_CHIP_ICM42602},
-> > > +     {"icm42605", INV_CHIP_ICM42605},
-> > > +     {"icm42622", INV_CHIP_ICM42622},
-> > > +     {"icm42631", INV_CHIP_ICM42631},
-> > > +     {}
-> > > +};
-> > > +MODULE_DEVICE_TABLE(spi, inv_icm42600_id);
-> > > +
-> > >  static const struct of_device_id inv_icm42600_of_matches[] =3D {
-> > >       {
-> > >               .compatible =3D "invensense,icm42600",
-> > > @@ -100,6 +114,7 @@ static struct spi_driver inv_icm42600_driver =3D {
-> > >               .of_match_table =3D inv_icm42600_of_matches,
-> > >               .pm =3D pm_ptr(&inv_icm42600_pm_ops),
-> > >       },
-> > > +     .id_table =3D inv_icm42600_id,
-> > >       .probe =3D inv_icm42600_probe,
-> > >  };
-> > >  module_spi_driver(inv_icm42600_driver); =20
-> >
-> > =20
+Additionally, I also tried the following script to increase the chances of
+triggering the race condition:
+
+while true; do
+    echo 1 > /sys/fs/cgroup/test_group/cpuset.cpus;
+    sudo taskset -p 0x2 $$;
+    sleep 0.1;
+    echo 1-2 > /sys/fs/cgroup/test_group/cpuset.cpus;
+done
+
+Despite this, the warning still does not appear in dmesg.
+
+Am I missing something in my testing approach, or is there a different setup
+required to reproduce the issue?
+
+Thanks and Regards
+Madadi Vineeth Reddy
+
+> Fixes: 8f9ea86fdf99b ("sched: Always preserve the user requested cpumask")
+> Signed-off-by: Josh Don <joshdon@google.com>
 
 
