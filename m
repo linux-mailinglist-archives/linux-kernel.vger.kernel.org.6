@@ -1,97 +1,121 @@
-Return-Path: <linux-kernel+bounces-310356-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310357-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7D48967BB8
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 20:17:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D81BD967BBA
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 20:23:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9DD7C1F21329
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 18:17:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 656A4B2123E
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 18:23:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAE60183CC4;
-	Sun,  1 Sep 2024 18:17:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7859183CD8;
+	Sun,  1 Sep 2024 18:22:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="eE1lP7bm"
-Received: from mout.web.de (mout.web.de [212.227.15.3])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KGDaC0iH"
+Received: from mail-oo1-f50.google.com (mail-oo1-f50.google.com [209.85.161.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9222433CE;
-	Sun,  1 Sep 2024 18:17:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C94F423776;
+	Sun,  1 Sep 2024 18:22:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725214633; cv=none; b=TL21qoBEdLH6/MaoLkucX9Am/JNiCz2XUHimRybE8H3H/QpTjjUL3mO/w/b+6PJmvdW9vM8Vln/V9eX7ICMsBFGKhMKeW3xnXJlF4Z5jEeyNMG1Vgjc6oNwEi6HX/efPXcyvIiUW8wzZTJEbX32GJd4h2awMwP019htpsGMOYwc=
+	t=1725214974; cv=none; b=NM8qHGltC+qnEplm5KnEBMvqaRiAyr4TE/6j349qqO1p6JG9ZAnXKn+Dq0o/zzflrf5Pm/SwyWLrFLj9X8/r5b3lOI2+AwKwdl/HETGU6NG5K3Ns3VfO1qKwEtYK/RJr87jAGPqLdg5Hp8Zo36vtr/YTr2TdPsSYFGuUoIas07o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725214633; c=relaxed/simple;
-	bh=JlvO8lYcXIn5q4W39SnrcPTvSyxJR+Ym3ZZqAzEHI0I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pVBe0UjdLzjhJ5Wy/ldCxt9vBBWWWaA/QY9mVNtI3Ibb9wJJVpdY0y+sdlQqXa15YuYbXzT/SwFXDJFJ6eRCXZxCX4QJKE1iCeMsUljH1Edk19d6JCwPJJoE2YKUjSMIqOCHQ/epB0eaJmi/jZYnC75DS9HPmBIbKS7vUocE+4g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=eE1lP7bm; arc=none smtp.client-ip=212.227.15.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1725214615; x=1725819415; i=markus.elfring@web.de;
-	bh=JlvO8lYcXIn5q4W39SnrcPTvSyxJR+Ym3ZZqAzEHI0I=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=eE1lP7bmN5UsfOmE0Ad+bYvZxZ4EemRFNkgbMloyp3gF4Cbfc46qDL9YiFsOL94b
-	 rX4nla+OHBcIl5wE0+8pHtZyw0ars8s+8saH1MbWwkfe4xMG5QRExjuW//9jO+MFu
-	 sfGckEf8t1fjAY4ZGv93b8fd+liWlz7LPvC4IMsT0lFfDv45pSZLzEGo3w1p2aHdO
-	 XoqLWbnXhTxAmP754Uv4704SEVZZ3714MCBJdshbIEmsEzVn7cKETj/sP0oeizQXo
-	 emzsgthUoNC0EKr1lyQ5f/7AEZI0KrWNhDhlf5ozyQXwKn4jgdyME0vcHpW43G5Sk
-	 CM30wqJVOof5XNndyw==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.84.95]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MP384-1sPzxL01kq-00KZCb; Sun, 01
- Sep 2024 20:16:55 +0200
-Message-ID: <7b827ee0-9116-4e8c-96e1-1fa5f7267f33@web.de>
-Date: Sun, 1 Sep 2024 20:16:54 +0200
+	s=arc-20240116; t=1725214974; c=relaxed/simple;
+	bh=hpNlgQXfRElTb7PWWpMGDFhZuOJeOPJ0FvdsAa0XCXw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YrdaeDKzE5npFueReUegI0FvFSlh+LWl8aqPnyiJSsNcGFumgCwH1ffal9XyUwa1HuH3Jmg5+cY5oxXBbeqdJTrci+mkCOoPopYrn7Pv47CgrT0oYEqYi4zoiN958mjvXjsDi46umSBUqTqjhnb5chn9mwylC+5hpT58ifSXPAU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KGDaC0iH; arc=none smtp.client-ip=209.85.161.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oo1-f50.google.com with SMTP id 006d021491bc7-5df998d7a44so2099135eaf.2;
+        Sun, 01 Sep 2024 11:22:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725214972; x=1725819772; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=851F5ToijGXyBoO87pKyhwdeDUVtSlD/UcoryzTOI8k=;
+        b=KGDaC0iHOtPbRBHzJq8pa2L9BoIsmrfieODkOlMVM9pZye+h5ncNHiMXv0SyFOedt5
+         LrvWpmYzIGzUxgvLFeGUwDoyDBJxqkWrW1L9xrP9JfFTQe3wDUcaITt8jbbGcfy0xGoa
+         s33KG/5z2oM851N/CziYSyU53myaeT+rw7jcxDE2vmBZKufFGHN8lJW8o2lVPZo38K6L
+         UlDM2AyQV/qGFLZP/hBaOIiveOIjZDdnqUpnlY+y+IIpPqm3hiA4+JGm7Srtx+sDFHbP
+         o/r7ccQDeAXHX2Bh5dvYZk4UvzjuTUIv38MqcGLaDrszFt3hYselM9QtfdbWqxTcHGgZ
+         nL5g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725214972; x=1725819772;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=851F5ToijGXyBoO87pKyhwdeDUVtSlD/UcoryzTOI8k=;
+        b=u9Do9+7DqMzlJoNZDtZUaKV7EApx3oPZmpxeUb1km1nlMisYEX8/ZT6dgZvih3BARJ
+         CKgATw9+KhxDdmt2N3c9r5qtv3jVOQs/w0lSG+39FmNlnySlBEQf04+N5hBwur5XISu2
+         BQ/M74U7L7gL7HKOzBd9PjtGWLXgtx1UCdWY5AUOUxSCx/IHxzKXCDv8fZ054d/D4cAj
+         94bp0X1MiXY6Zm8MOOyx9vBx1J5BfbfKUU+2jGLXZt92vdbPG6QfnhMlhMZRpPOWFrQZ
+         YzKHY7cfd4aZc9hiqVvLheN7rK+Y/ORNUDm+M6JldG5bjHRvW0b8HKvS2Un0nONobWBW
+         zSDw==
+X-Forwarded-Encrypted: i=1; AJvYcCUvsu8qaID5nvhvM9NWhcfzVtst0pRWomvGS+zrCgJ2b+PyRhgF9y7P2Liwr5mSczyE0MwcC1Vj4EyjHXM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzX8tKz6bDPlYFrz2aCCfrup7HOGrqntmXg3I2eG+AKwGPzgf1g
+	DNcyTaZuJ97EbCNMvEV0a3nZOImSP7esoHGl7VQoXQpleHmEVqI/
+X-Google-Smtp-Source: AGHT+IFaPfs0CYZREB9J7MdmoiorlgXKo175W2quFCjrLgWkxWpNCaRGR3QLmTnAWVCe2onjHTXzJg==
+X-Received: by 2002:a05:6871:29d:b0:277:ca2f:905 with SMTP id 586e51a60fabf-277ca2f0c33mr6079901fac.29.1725214971689;
+        Sun, 01 Sep 2024 11:22:51 -0700 (PDT)
+Received: from fedora.. ([106.219.167.196])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-715e56e5439sm5601098b3a.180.2024.09.01.11.22.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 01 Sep 2024 11:22:51 -0700 (PDT)
+From: Riyan Dhiman <riyandhiman14@gmail.com>
+To: ulf.hansson@linaro.org
+Cc: linux-mmc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Riyan Dhiman <riyandhiman14@gmail.com>
+Subject: [PATCH] mmc: core: convert simple_stroul to kstroul
+Date: Sun,  1 Sep 2024 23:52:44 +0530
+Message-ID: <20240901182244.45543-1-riyandhiman14@gmail.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: iio: imu: inv_mpu6050: Remove duplicate code between labels
-To: Gyeyoung Baek <gye976@gmail.com>, linux-iio@vger.kernel.org,
- Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>
-Cc: LKML <linux-kernel@vger.kernel.org>
-References: <20240901091214.15199-1-gye976@gmail.com>
- <533802b3-3034-4b7c-b903-72608917e2f0@web.de>
- <CAKbEznv-TmCr2FAodrM2SKK5A5pbV9p5-OvXPdmuk_4xXmh=Rw@mail.gmail.com>
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <CAKbEznv-TmCr2FAodrM2SKK5A5pbV9p5-OvXPdmuk_4xXmh=Rw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:CR5+TcXozIdoUiOk9FKxRT5nByzFR2Ijwq09PrLtHazWMVdrO+W
- VldNfC5RVP/PCZE7WVKahtEf0YUTKSZreMvdYPF+57h11WLJd7sm0SMHKBFp3CtVovmfYHB
- o0iGx1wvlE4dG4av3uoii/qxzM3CVYGa4fFIutousyHi5McZV6wh9VsbttXTBGztXNTK6yw
- 8/AbyPQRdTVDJja8NJ/GA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:rP7RDYk1/mY=;B+bCIeagcvmncISAUZu+SNOrlG/
- 4J/i/XewD1CRaNRX/yoQnRzoY8byEBSMhQHvm5IOvi5aZHVCPDbSXiNVY3WOvLaXW8AqdGWp/
- 7Vr/JcShZCwyxqOm9Kb8n68YLBy9PdxW6kTjDGZxnk5dFJ+yGtZVCt8+Q48HGmqU8CFTDye5f
- nQS5BXAdWPjqJdDtD07cyzvBZy6UjLhOKOPbB8KDhWgkcdrQGL7THer83nYx8eXPOaTZCMZW3
- qhdr1kfpcfyTbmxV94o9gLh22Q/VasXaYS3wFRsMtYYuA9tCNzenZRgxRGV6jmHtXY0l7tDb2
- 3ZeUtapgkknocPXNFpOfHPXvuFDifTSfg0iVkl4o/YSkC/CBL/71DcBXyexd9MHqxgTLcGr6q
- BuPgzDj2BDiv8zgwsUDYFsLTbFhJltknFvhwLxcSyvI3m9bFPVFjg30AkmX8qyCDHQUN9fUFI
- LjzgzJGU3gLNdJVDRZ2PARMv26tGa7yD9c4hBWRgSy0/E7LnTvYAh2z1HCgNwTCQG55MVxg9b
- 0u065aS4Uhh2gv7TnAZjiQLeqact/fucMLz2mE7X6cLedbng7oyzOCuVZsHtEa5QnE0CzfxNt
- e0hUIiUxDvG2XFTVYgz573Z2sCOxMb8c1GZuM/ceyrDfx7Vu7rB1bUcDODFXbPlqubhHemjCm
- lk2NzzS3Qe6/pRYsSHBswfp89YAG1xFvYT5L6hew2lv5CPBOxuQSQ+RhpAjX9xHY9yBt4oN8m
- ui6JNO89UWaeueZ0+wSfnEwnmwOHD/MoJzGPeVMr5Mye1Ar5nlqpGtgn3uw1VpPxR/U46VeJh
- evOpwFab6JdN4qGxgRlrc4Tw==
+Content-Transfer-Encoding: 8bit
 
-> Hello, I apologize for the insufficient explanation.
+simple_strtoul() is obsolete and lacks proper error handling, making it
+unsafe for converting strings to unsigned long values. Replace it with
+kstrtoul(), which provides robust error checking and better safety.
 
-How will the commit message be improved further?
+This change improves the reliability of the string-to-integer conversion
+and aligns with current kernel coding standards. Error handling is added
+to catch conversion failures, returning -EINVAL when input is invalid.
 
-Regards,
-Markus
+Issue reported by checkpatch:
+- WARNING: simple_strtoul is obsolete, use kstrtoul instead
+
+Signed-off-by: Riyan Dhiman <riyandhiman14@gmail.com>
+---
+ drivers/mmc/core/block.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/mmc/core/block.c b/drivers/mmc/core/block.c
+index 2c9963248fcb..140d2b3504b3 100644
+--- a/drivers/mmc/core/block.c
++++ b/drivers/mmc/core/block.c
+@@ -307,10 +307,10 @@ static ssize_t force_ro_store(struct device *dev, struct device_attribute *attr,
+ 			      const char *buf, size_t count)
+ {
+ 	int ret;
+-	char *end;
+ 	struct mmc_blk_data *md = mmc_blk_get(dev_to_disk(dev));
+-	unsigned long set = simple_strtoul(buf, &end, 0);
+-	if (end == buf) {
++	unsigned long set;
++
++	if (kstrtoul(buf, 0, &set)) {
+ 		ret = -EINVAL;
+ 		goto out;
+ 	}
+-- 
+2.46.0
+
 
