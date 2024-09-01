@@ -1,74 +1,84 @@
-Return-Path: <linux-kernel+bounces-310387-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310388-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18847967C1C
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 22:27:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F1EA967C1E
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 22:27:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C81A22819D4
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 20:27:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DCD0BB21251
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 20:27:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB3601304B0;
-	Sun,  1 Sep 2024 20:27:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 858E51311AC;
+	Sun,  1 Sep 2024 20:27:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="YXtcz0XM"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="PNZKVnJ8"
 Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50B841F957;
-	Sun,  1 Sep 2024 20:27:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42E4B6F2F3;
+	Sun,  1 Sep 2024 20:27:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725222430; cv=none; b=dG4Hbo/jRvwDRgvItRpLeZECnNRCKe6FpytVZeZa495ptVyGzvK1qgM2+/x36u/lvLNg6MAH9wI6bBZFwV79OeR2WTqCT89wLTmPQJ+11ILmyjHOYdH3BYJuJf0likFw8KyZ198/KWLUO2qdBHBum0i+rNXvShqU0KLsnhoYjW4=
+	t=1725222449; cv=none; b=Hx/pso/swIVHRn1FKFhQzvMw2TtbhVnyUuLQjO/QVEDSabFhMtGfoHG2QZ5XkX7d5wEkyeayaHZFYoCau6XMsigxT24tXSE5EE6rALkEJe+UMKW6O3RkEkxoDwp9/MAtiKujzBzlE/OCWY7kG4kdZUEu2IHOftk1Os9l3x0RQsM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725222430; c=relaxed/simple;
-	bh=57VwzEkcZHXXgccDh5EyNjJZFYN3+iigqWVJIHVqyTY=;
+	s=arc-20240116; t=1725222449; c=relaxed/simple;
+	bh=dWWUyZ4W6tv1nKNjX3JmE+vszYZo/H/vp5V145nYC3E=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=I70yqk7+l7aOZGwWGGN9BdHHVTOQ4mU5y+Y6yZPKIiNQ2wZd4oPKO8q4c/VrVlBa80l5m5Uh/dVUp9vUDBsWQ+3pqT9nNSaFZe0N+H8iy8pLNTX3N1DyWfCMRRgZuN3doswhlQYUbcckgwGCZUkh3vU/Zib/Tkj6pJDk3Tc9dJo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=YXtcz0XM; arc=none smtp.client-ip=198.47.23.248
+	 MIME-Version:Content-Type; b=GQS5fQztSRp3tGDSbLkqtM9dIadgOgluAsjXqaMo6gd4s1yrBqDAS3/Wud6UH0RIQGjAZdHUlbFIp3gMsyt2w8HBMNPHMH2Gao21EFIbK0jhO9oaOzCuWgID+x36k1iwqdkZ5qF7Lda8H0j6RP7uN+gmWDVa9VrAwhTMCkKp/Yg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=PNZKVnJ8; arc=none smtp.client-ip=198.47.23.248
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
 Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 481KQv9l014322;
-	Sun, 1 Sep 2024 15:26:57 -0500
+	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 481KRLrK014382;
+	Sun, 1 Sep 2024 15:27:21 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1725222417;
-	bh=gGJth2zii1F5FYDRQafLLKVKyZ9sTdN/soYfw5i3RC0=;
+	s=ti-com-17Q1; t=1725222441;
+	bh=HbMuDKTJn/05b6WVXHNCooo178JomhOxUGwIjE5S+e4=;
 	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=YXtcz0XM/Pv+hOCZnIBufUUTHaM3aTMxAigjQlmT+Aj7gG1Ha40W1FFOjS4BXDnFk
-	 DDwERcyOO/9wu41yTsoEa6Mcv+YkiG2BYqusFZzjpiJIC3XnU3bCErv1bnF0BPwulG
-	 51YubpvfshZYHmNc6oQaSwyS/ZR7MFl628Jk9blE=
-Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 481KQvw9018274
+	b=PNZKVnJ8NgF/U4lIqDNP8z4lj+yetmeI0wFbOu5fkJzCPDrl60US+dIpZSLF1uw7X
+	 KioL7qoFphIAIYtgdV5lCOD5kGqCIRLgSJuNk5u9usOyabBnhzCg6u0XUUlcJrFPHR
+	 Pi5nZGQKpxxJZtOIjww2Vh6WoVEjNaSSLfy0/kws=
+Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 481KRLAe018520
 	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Sun, 1 Sep 2024 15:26:57 -0500
-Received: from DLEE107.ent.ti.com (157.170.170.37) by DLEE108.ent.ti.com
- (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
+	Sun, 1 Sep 2024 15:27:21 -0500
+Received: from DLEE101.ent.ti.com (157.170.170.31) by DLEE115.ent.ti.com
+ (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Sun, 1
- Sep 2024 15:26:56 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE107.ent.ti.com
- (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
+ Sep 2024 15:27:21 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE101.ent.ti.com
+ (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Sun, 1 Sep 2024 15:26:56 -0500
+ Frontend Transport; Sun, 1 Sep 2024 15:27:21 -0500
 Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 481KQuI6023479;
-	Sun, 1 Sep 2024 15:26:56 -0500
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 481KRL6F130225;
+	Sun, 1 Sep 2024 15:27:21 -0500
 From: Nishanth Menon <nm@ti.com>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, Judith Mendez <jm@ti.com>
-CC: Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Jan Kiszka
-	<jan.kiszka@siemens.com>,
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v3 0/6] Add and fix ESM nodes
-Date: Sun, 1 Sep 2024 15:26:55 -0500
-Message-ID: <172522225751.998566.15548857625813492043.b4-ty@ti.com>
+To: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, Robert Nelson <robertcnelson@gmail.com>
+CC: Nishanth Menon <nm@ti.com>,
+        Krzysztof Kozlowski
+	<krzysztof.kozlowski@linaro.org>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Tero
+ Kristo <kristo@kernel.org>, Rob Herring <robh@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>, Andrew Davis <afd@ti.com>,
+        Jared McArthur
+	<j-mcarthur@ti.com>, Andrei Aldea <a-aldea@ti.com>,
+        Jason Kridner
+	<jkridner@beagleboard.org>,
+        Deepak Khatri <lorforlinux@beagleboard.org>,
+        Drew
+ Fustini <drew@beagleboard.org>
+Subject: Re: [PATCH v4 1/2] dt-bindings: arm: ti: Add BeagleY-AI
+Date: Sun, 1 Sep 2024 15:27:20 -0500
+Message-ID: <172522242296.999759.5764187083192053718.b4-ty@ti.com>
 X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20240815204833.452132-1-jm@ti.com>
-References: <20240815204833.452132-1-jm@ti.com>
+In-Reply-To: <20240829213929.48540-1-robertcnelson@gmail.com>
+References: <20240829213929.48540-1-robertcnelson@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,42 +89,23 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-Hi Judith Mendez,
+Hi Robert Nelson,
 
-On Thu, 15 Aug 2024 15:48:27 -0500, Judith Mendez wrote:
-> The following patch adds ESM nodes and fixes ESM source
-> interrupts for Sitara K3 platforms. Currently watchdog cannot
-> reset the CPU because of misconfiguration or missing ESM node
-> in DT.
+On Thu, 29 Aug 2024 16:39:28 -0500, Robert Nelson wrote:
+> This board is based on ti,j722s family using the am67a variation.
 > 
-> ESM node was added for am62ax and am65x. For am62px ESM source
-> interrupts are fixed. Comments were also added for clarity on what
-> source interrupts are routed to ESM based on device TRM.
+> https://beagley-ai.org/
+> https://openbeagle.org/beagley-ai/beagley-ai
 > 
-> [...]
+> 
 
 I have applied the following to branch ti-k3-dts-next on [1].
 Thank you!
 
-[1/6] arm64: dts: ti: k3-am62a: Add ESM nodes
-      commit: 54ed32742a2b722a9eeeca601b5d9b715423381b
-[2/6] arm64: dts: ti: k3-am62p: Fix ESM interrupt sources
-      commit: c94da2159dfdcc44b78a8b1f3ebe4909d4efc9ec
-[3/6] arm64: dts: ti: k3-am62p: Remove 'reserved' status for ESM
-      commit: d4847546b6209876bbbbc00f5b8583387e80b731
-[4/6] arm64: dts: ti: k3-am62: Add comments to ESM nodes
-      commit: cc3a295ebb659a56534a2baea9040dc0dec1980d
-[5/6] arm64: dts: ti: k3-am64: Add more ESM interrupt sources
-      commit: 633bcfa502591103b5d5c4429d90bf10ac9bfd52
-[6/6] arm64: dts: ti: k3-am65: Add ESM nodes
-      commit: 50f368a0c166ebac9301b834aed729b2bb901e6a
-
-NOTE: There were minor reodering fixups I did (e.g.: removes should
-probably precede fixes which precede additions in a patch series
-unless there is a specific reason not to; trm urls should be the
-canonical urls; Follow the dt coding style in ordering properties) -
-please cross check and let me know if you disagree and I can drop the
-series from my branch.
+[1/2] dt-bindings: arm: ti: Add BeagleY-AI
+      commit: b8c773f556936577f8fd7be29c5e579422436784
+[2/2] arm64: dts: ti: Add k3-am67a-beagley-ai
+      commit: c5e615963bbeda0bdb0a97a33bcba46d6eea8a96
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent up the chain during
