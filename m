@@ -1,431 +1,136 @@
-Return-Path: <linux-kernel+bounces-310370-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310373-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88DC8967BDB
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 21:12:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 48D55967BE2
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 21:15:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AAECE1C21011
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 19:12:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7402B1C2195E
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 19:15:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E53578C91;
-	Sun,  1 Sep 2024 19:11:49 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CC1A73467;
+	Sun,  1 Sep 2024 19:15:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NQVPxUsD"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D80D433CE
-	for <linux-kernel@vger.kernel.org>; Sun,  1 Sep 2024 19:11:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AE546F2EA;
+	Sun,  1 Sep 2024 19:15:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725217908; cv=none; b=LSWXTMXjESBtrDiDp/QO/AxYMmth9jXTdirXVgF65lA2quTfrivjPh93HGNPnHD2gUj1bgT0R/6PwDIcHH0TgcaHsiQuuDGLMcO0ZgJ9J5i8/6qrWMakVFJJZbEAclHJsWpp8bZl5V0nUxZNc/YCroeNKH1oCIaNjyE4mgBNEBY=
+	t=1725218113; cv=none; b=AlTEjgYEUXRG5OJGIPLlQrBTRKI4N4X+Pcqb/pR79Wk78ZG5r1IAwtDiZgGsLSl6AcqfjLq7RsWFsboymqzqWJpj13qGyi9l1l1UBmUzMqjyYPMaVf6TtVuFGoUHb8uWu0K1gim7FDN90BMb6SqkVEEY8XFiX04nwOyN0j//cYE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725217908; c=relaxed/simple;
-	bh=4xvwoPMmEWPAjrfryKts+PsmPBpzrWXrp2Ni2jWULTE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=rR20sx9qh+B7MQM95yjivessck328dkbvnpdydEQr3G4t4pGS3X1qJyHScbOSmwRwjVFRnoMAFH3jybs9HjABR+UU2Ak3I7xAnu4EKxRpk9MZGYEvk5cCSAEZ9FkgfTUxy2Z3dZysd+KJCFiuPjRHC9yPVu2UJXoh+o4wbiFJPs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <m.grzeschik@pengutronix.de>)
-	id 1skpyy-0006ZX-E2; Sun, 01 Sep 2024 21:11:28 +0200
-Received: from [2a0a:edc0:0:1101:1d::ac] (helo=dude04.red.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <m.grzeschik@pengutronix.de>)
-	id 1skpyw-004jEt-Ra; Sun, 01 Sep 2024 21:11:26 +0200
-Received: from localhost ([::1] helo=dude04.red.stw.pengutronix.de)
-	by dude04.red.stw.pengutronix.de with esmtp (Exim 4.96)
-	(envelope-from <m.grzeschik@pengutronix.de>)
-	id 1skpyw-00727u-12;
-	Sun, 01 Sep 2024 21:11:26 +0200
-From: Michael Grzeschik <m.grzeschik@pengutronix.de>
-Date: Sun, 01 Sep 2024 21:11:18 +0200
-Subject: [PATCH v12 3/3] tools: usb: p9_fwd: add usb gadget packet
- forwarder script
+	s=arc-20240116; t=1725218113; c=relaxed/simple;
+	bh=+qfJw1DSQU87+Rsqvosf3PH4tbdVDaKcL2ea402s3Jo=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=GEz9l5J5yZ8B6+eEBsOKNxuRrzexGEAz8Lxom3Dlv8lmhk/SR13Q6nTvtzF/8nWnBDPMnr+LMaPQmuO94T89PEJ8FFT9C3Ff4EijkhXSZ008yxGK9h5M0Ee6AbFKonmTrAviabmFYuAVjsHs8d6NSQHGVvl8KIvq7PPsZeB/rLU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NQVPxUsD; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-42bbc70caa4so19438175e9.0;
+        Sun, 01 Sep 2024 12:15:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725218110; x=1725822910; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gIvOM+3Ea3JTsKoS99LUD0McsrINcC5NvVi721+L7d0=;
+        b=NQVPxUsDBXQ04ZllwvM85BuH2cLKdrYtbQ+dMGEfdh0ldlMVbxmXvprsprnfVafxwC
+         YWqTAH8/t0ZdkRMJ9GherU4YPDmYn9Zr8SPjdiQr/bQUFysJ/uHNPK2Rdzqf8kQjHn/x
+         yAMZyfG/FmZwilblsUndr1OvXcaRijYKCuYDikXuVTD7zjA1kS11lNLVgJ+pw/L5rLSe
+         TL1AfgM8fkpSg8K5DXUXYLmPQZXFa8RLTyn5EgZmwvb7IQ3dzT7lJVKN2MKslv9eE6Xt
+         L7tLd1V9MCoyfFh9S6Y5aQCdao95lrvM1h2w3FvjuHtmR/zpZn/sWyry0d+TMA8AqtQk
+         Khcg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725218110; x=1725822910;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=gIvOM+3Ea3JTsKoS99LUD0McsrINcC5NvVi721+L7d0=;
+        b=FnP0p+gpxiChzZxazuLygjrcgTie9C9O1vh+ci0QbAGWIB5L4G+zPzubfCZSinz+jM
+         TZikU39hEoIaDFuHhHocn0a4Owp6KfoCLjupIu6qNgjhObD9tkjlyBVVid8KH3eBKbFF
+         cQPmQ65SobHQM82gsX3wrmhz3i25ykzoL4O6MOcqkG4cZr1O7ZuU8OCHuHF3r3BBTdo4
+         9f1G3Lnfn19GjyRliuRn58hBXeVw2TZTP6B+601RpgGV2GsScR1B+efbL2s/iKLPpH4+
+         mxbLL0B6UhoYwYg/u3Ze7fXZrwU7Ey/wSGDJ2ZZ79SJQinzL5iNKjc5EgHnvVCy2qpHo
+         zlaQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVR1Ic+oZ2VanK4wf9oPpWRflOZw7+IdmpCF9p7xhAZCyaXiw97N97f734OqnocUO/r6jqIOcf2zxcS@vger.kernel.org, AJvYcCWRzyfDbKkiCCyQuhh0Nze5c4tpGd/m4+whKoaEgY228lrjqJBJfde5PVMxJYc8b0fZJxn+4o6P2ok7DO2t@vger.kernel.org
+X-Gm-Message-State: AOJu0YzSJdFmu7HNQ2aqIb5v4ZSmqloSW/UYae7VKwWUgfMOgyl9qxSK
+	g07Aw0FK+UuB1fCGLot2si061W0WtDE4hdU1zKQ87fFtVMWnxIpw+gKAZHuk
+X-Google-Smtp-Source: AGHT+IET8id7t5c5uC/5laJ2QyAvkvcr4Agu6zeeyPezHPxUC9Wr/WP02kksM7s5Q6hF4Hd5oQy9lQ==
+X-Received: by 2002:a05:600c:1d89:b0:427:fa39:b0db with SMTP id 5b1f17b1804b1-42bb01e5bffmr94967795e9.27.1725218110018;
+        Sun, 01 Sep 2024 12:15:10 -0700 (PDT)
+Received: from qamajeed.Home ([39.45.200.117])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-374c61a7f03sm2530455f8f.55.2024.09.01.12.15.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 01 Sep 2024 12:15:09 -0700 (PDT)
+From: Muhammad Qasim Abdul Majeed <qasim.majeed20@gmail.com>
+To: rafael@kernel.org,
+	lenb@kernel.org,
+	linux-acpi@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Muhammad Qasim Abdul Majeed <qasim.majeed20@gmail.com>
+Subject: [PATCH] ACPI: button: Use strscpy instead of strcpy.
+Date: Mon,  2 Sep 2024 00:14:09 +0500
+Message-Id: <20240901191408.419465-1-qasim.majeed20@gmail.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20240804123313>
+References: <20240804123313>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240116-ml-topic-u9p-v12-3-9a27de5160e0@pengutronix.de>
-References: <20240116-ml-topic-u9p-v12-0-9a27de5160e0@pengutronix.de>
-In-Reply-To: <20240116-ml-topic-u9p-v12-0-9a27de5160e0@pengutronix.de>
-To: Eric Van Hensbergen <ericvh@kernel.org>, 
- Latchesar Ionkov <lucho@ionkov.net>, 
- Dominique Martinet <asmadeus@codewreck.org>, 
- Christian Schoenebeck <linux_oss@crudebyte.com>, 
- Jonathan Corbet <corbet@lwn.net>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Andrzej Pietrasiewicz <andrzej.p@collabora.com>, v9fs@lists.linux.dev, 
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-usb@vger.kernel.org, kernel@pengutronix.de, 
- Michael Grzeschik <m.grzeschik@pengutronix.de>, 
- Jan Luebbe <jlu@pengutronix.de>
-X-Mailer: b4 0.12.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=12490;
- i=m.grzeschik@pengutronix.de; h=from:subject:message-id;
- bh=4xvwoPMmEWPAjrfryKts+PsmPBpzrWXrp2Ni2jWULTE=;
- b=owEBbQKS/ZANAwAKAb9pWET5cfSrAcsmYgBm1LxeSBtaBiMtKRlnAYoTgWHlfWBR1MenpbZRQ
- nGtKXVYd7WJAjMEAAEKAB0WIQQV2+2Fpbqd6fvv0Gi/aVhE+XH0qwUCZtS8XgAKCRC/aVhE+XH0
- q+G/EACGxJa68vXSr1L6vyDpyv7lU/K0rzdZRsi3FljVkpBq3UsFXXROdGPDBHcRuB+IHCMw7yu
- wZ4zRxAzcdMO0382HnsdspDrhwYf2IrGcUWoAui7Ek6LuAv41KwZDZVQKgAPiN/iL64TuFkHFvF
- XwIbfjb3OesLxNzNAcnVK+qKyuExnbWJHo9qYJJKYSKpi0E5RbTkyWfgteO++OU56QNgjKNPRBX
- /i4EvUcYKHD4/Lfcp9hYNcsBusOGC/eVB+Vy0BqSB7vaRC/oqvHlcQWonmpldY3WjbUpLq9gAhS
- Tx9YgzY+FGznKjkcbENidnOFXizUKIXSOPAS1kglGL+WsQp8My49W4otiRYBCbHeVIOLPwmNwBq
- 5EhnS53oVtR4WqTsTKE7c6v/ExvZGus7WhhUPtSP7ypKMx/t49cxoEhLTZ90yLfDHQ7Ecosq3EJ
- BP4OHnFOelD4nH1bTY/IsVCrpaYurD+/5CqLJU+ufcoJ6Zp8YAplh5odUkQdXmHWX/hjTnVrMtW
- djAfWgejLwARHmIgIsg3xHutu8G5toL/Pt0vn1zP2Y8K/fVc+8XsRbPT7X9NVBJKmm/knOKqirV
- 8QpXvvUpaZ1QMdcAZfbcGJY+jKFZtA3yMI//mibu6jahlo4X1uVwlZyEcph5NjorUBgnk3zrt9A
- Yws1yDETuTcDZNQ==
-X-Developer-Key: i=m.grzeschik@pengutronix.de; a=openpgp;
- fpr=957BC452CE953D7EA60CF4FC0BE9E3157A1E2C64
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: m.grzeschik@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
 
-This patch is adding an small python tool to forward 9pfs requests
-from the USB gadget to an existing 9pfs TCP server. Since currently all
-9pfs servers lack support for the usb transport this tool is an useful
-helper to get started.
+Replace strcpy() with strscpy() in the ACPI button driver.
 
-Refer the Documentation section "USBG Example" in
-Documentation/filesystems/9p.rst on how to use it.
+strcpy() has been deprecated because it is generally unsafe, so help to
+eliminate it from the kernel source.
 
-Signed-off-by: Jan Luebbe <jlu@pengutronix.de>
-Signed-off-by: Michael Grzeschik <m.grzeschik@pengutronix.de>
+Link: https://github.com/KSPP/linux/issues/88
 
+Signed-off-by: Muhammad Qasim Abdul Majeed <qasim.majeed20@gmail.com>
+
+
+<This is more than advertised in the changelog>
+The patch has been updated.
 ---
-v11 -> v12: -
-v10 -> v11: -
-v6 -> v10: -
-v5 -> v6:
-  - set path parameter to None when unused
-v4 -> v5:
-  - updated documentation for new subcommands list/connect
-  - run ruff format
-  - make vid and pid parameterized
-  - add list as subcommand to scan for devices
-  - move connect to extra subcommand
-v2 -> v4: -
-v1 -> v2:
-  - added usbg 9pfs detailed instructions to 9p.rst doc
----
- Documentation/filesystems/9p.rst |  41 +++++++
- tools/usb/p9_fwd.py              | 243 +++++++++++++++++++++++++++++++++++++++
- 2 files changed, 284 insertions(+)
+ drivers/acpi/button.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/Documentation/filesystems/9p.rst b/Documentation/filesystems/9p.rst
-index 10cf79dc287f8..2cc85f3e8659f 100644
---- a/Documentation/filesystems/9p.rst
-+++ b/Documentation/filesystems/9p.rst
-@@ -67,6 +67,47 @@ To mount a 9p FS on a USB Host accessible via the gadget as root filesystem::
- where <device> is the tag associated by the usb gadget transport.
- It is defined by the configfs instance name.
- 
-+USBG Example
-+============
-+
-+The USB host exports a filesystem, while the gadget on the USB device
-+side makes it mountable.
-+
-+Diod (9pfs server) and the forwarder are on the development host, where
-+the root filesystem is actually stored. The gadget is initialized during
-+boot (or later) on the embedded board. Then the forwarder will find it
-+on the USB bus and start forwarding requests.
-+
-+In this case the 9p requests come from the device and are handled by the
-+host. The reason is that USB device ports are normally not available on
-+PCs, so a connection in the other direction would not work.
-+
-+When using the usbg transport, for now there is no native usb host
-+service capable to handle the requests from the gadget driver. For
-+this we have to use the extra python tool p9_fwd.py from tools/usb.
-+
-+Just start the 9pfs capable network server like diod/nfs-ganesha e.g.:
-+
-+        $ diod -f -n -d 0 -S -l 0.0.0.0:9999 -e $PWD
-+
-+Optionaly scan your bus if there are more then one usbg gadgets to find their path:
-+
-+        $ python $kernel_dir/tools/usb/p9_fwd.py list
-+
-+        Bus | Addr | Manufacturer     | Product          | ID        | Path
-+        --- | ---- | ---------------- | ---------------- | --------- | ----
-+          2 |   67 | unknown          | unknown          | 1d6b:0109 | 2-1.1.2
-+          2 |   68 | unknown          | unknown          | 1d6b:0109 | 2-1.1.3
-+
-+Then start the python transport:
-+
-+        $ python $kernel_dir/tools/usb/p9_fwd.py --path 2-1.1.2 connect -p 9999
-+
-+After that the gadget driver can be used as described above.
-+
-+One use-case is to use it as an alternative to NFS root booting during
-+the development of embedded Linux devices.
-+
- Options
- =======
- 
-diff --git a/tools/usb/p9_fwd.py b/tools/usb/p9_fwd.py
-new file mode 100755
-index 0000000000000..12c76cbb046b7
---- /dev/null
-+++ b/tools/usb/p9_fwd.py
-@@ -0,0 +1,243 @@
-+#!/usr/bin/env python3
-+# SPDX-License-Identifier: GPL-2.0
-+
-+import argparse
-+import errno
-+import logging
-+import socket
-+import struct
-+import time
-+
-+import usb.core
-+import usb.util
-+
-+
-+def path_from_usb_dev(dev):
-+    """Takes a pyUSB device as argument and returns a string.
-+    The string is a Path representation of the position of the USB device on the USB bus tree.
-+
-+    This path is used to find a USB device on the bus or all devices connected to a HUB.
-+    The path is made up of the number of the USB controller followed be the ports of the HUB tree."""
-+    if dev.port_numbers:
-+        dev_path = ".".join(str(i) for i in dev.port_numbers)
-+        return f"{dev.bus}-{dev_path}"
-+    return ""
-+
-+
-+HEXDUMP_FILTER = "".join(chr(x).isprintable() and chr(x) or "." for x in range(128)) + "." * 128
-+
-+
-+class Forwarder:
-+    @staticmethod
-+    def _log_hexdump(data):
-+        if not logging.root.isEnabledFor(logging.TRACE):
-+            return
-+        L = 16
-+        for c in range(0, len(data), L):
-+            chars = data[c : c + L]
-+            dump = " ".join(f"{x:02x}" for x in chars)
-+            printable = "".join(HEXDUMP_FILTER[x] for x in chars)
-+            line = f"{c:08x}  {dump:{L*3}s} |{printable:{L}s}|"
-+            logging.root.log(logging.TRACE, "%s", line)
-+
-+    def __init__(self, server, vid, pid, path):
-+        self.stats = {
-+            "c2s packets": 0,
-+            "c2s bytes": 0,
-+            "s2c packets": 0,
-+            "s2c bytes": 0,
-+        }
-+        self.stats_logged = time.monotonic()
-+
-+        def find_filter(dev):
-+            dev_path = path_from_usb_dev(dev)
-+            if path is not None:
-+                return dev_path == path
-+            return True
-+
-+        dev = usb.core.find(idVendor=vid, idProduct=pid, custom_match=find_filter)
-+        if dev is None:
-+            raise ValueError("Device not found")
-+
-+        logging.info(f"found device: {dev.bus}/{dev.address} located at {path_from_usb_dev(dev)}")
-+
-+        # dev.set_configuration() is not necessary since g_multi has only one
-+        usb9pfs = None
-+        # g_multi adds 9pfs as last interface
-+        cfg = dev.get_active_configuration()
-+        for intf in cfg:
-+            # we have to detach the usb-storage driver from multi gadget since
-+            # stall option could be set, which will lead to spontaneous port
-+            # resets and our transfers will run dead
-+            if intf.bInterfaceClass == 0x08:
-+                if dev.is_kernel_driver_active(intf.bInterfaceNumber):
-+                    dev.detach_kernel_driver(intf.bInterfaceNumber)
-+
-+            if intf.bInterfaceClass == 0xFF and intf.bInterfaceSubClass == 0xFF and intf.bInterfaceProtocol == 0x09:
-+                usb9pfs = intf
-+        if usb9pfs is None:
-+            raise ValueError("Interface not found")
-+
-+        logging.info(f"claiming interface:\n{usb9pfs}")
-+        usb.util.claim_interface(dev, usb9pfs.bInterfaceNumber)
-+        ep_out = usb.util.find_descriptor(
-+            usb9pfs,
-+            custom_match=lambda e: usb.util.endpoint_direction(e.bEndpointAddress) == usb.util.ENDPOINT_OUT,
-+        )
-+        assert ep_out is not None
-+        ep_in = usb.util.find_descriptor(
-+            usb9pfs,
-+            custom_match=lambda e: usb.util.endpoint_direction(e.bEndpointAddress) == usb.util.ENDPOINT_IN,
-+        )
-+        assert ep_in is not None
-+        logging.info("interface claimed")
-+
-+        self.ep_out = ep_out
-+        self.ep_in = ep_in
-+        self.dev = dev
-+
-+        # create and connect socket
-+        self.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-+        self.s.connect(server)
-+
-+        logging.info("connected to server")
-+
-+    def c2s(self):
-+        """forward a request from the USB client to the TCP server"""
-+        data = None
-+        while data is None:
-+            try:
-+                logging.log(logging.TRACE, "c2s: reading")
-+                data = self.ep_in.read(self.ep_in.wMaxPacketSize)
-+            except usb.core.USBTimeoutError:
-+                logging.log(logging.TRACE, "c2s: reading timed out")
-+                continue
-+            except usb.core.USBError as e:
-+                if e.errno == errno.EIO:
-+                    logging.debug("c2s: reading failed with %s, retrying", repr(e))
-+                    time.sleep(0.5)
-+                    continue
-+                logging.error("c2s: reading failed with %s, aborting", repr(e))
-+                raise
-+        size = struct.unpack("<I", data[:4])[0]
-+        while len(data) < size:
-+            data += self.ep_in.read(size - len(data))
-+        logging.log(logging.TRACE, "c2s: writing")
-+        self._log_hexdump(data)
-+        self.s.send(data)
-+        logging.debug("c2s: forwarded %i bytes", size)
-+        self.stats["c2s packets"] += 1
-+        self.stats["c2s bytes"] += size
-+
-+    def s2c(self):
-+        """forward a response from the TCP server to the USB client"""
-+        logging.log(logging.TRACE, "s2c: reading")
-+        data = self.s.recv(4)
-+        size = struct.unpack("<I", data[:4])[0]
-+        while len(data) < size:
-+            data += self.s.recv(size - len(data))
-+        logging.log(logging.TRACE, "s2c: writing")
-+        self._log_hexdump(data)
-+        while data:
-+            written = self.ep_out.write(data)
-+            assert written > 0
-+            data = data[written:]
-+        if size % self.ep_out.wMaxPacketSize == 0:
-+            logging.log(logging.TRACE, "sending zero length packet")
-+            self.ep_out.write(b"")
-+        logging.debug("s2c: forwarded %i bytes", size)
-+        self.stats["s2c packets"] += 1
-+        self.stats["s2c bytes"] += size
-+
-+    def log_stats(self):
-+        logging.info("statistics:")
-+        for k, v in self.stats.items():
-+            logging.info(f"  {k+':':14s} {v}")
-+
-+    def log_stats_interval(self, interval=5):
-+        if (time.monotonic() - self.stats_logged) < interval:
-+            return
-+
-+        self.log_stats()
-+        self.stats_logged = time.monotonic()
-+
-+
-+def try_get_usb_str(dev, name):
-+    try:
-+        with open(f"/sys/bus/usb/devices/{dev.bus}-{dev.address}/{name}") as f:
-+            return f.read().strip()
-+    except FileNotFoundError:
-+        return None
-+
-+
-+def list_usb(args):
-+    vid, pid = [int(x, 16) for x in args.id.split(":", 1)]
-+
-+    print("Bus | Addr | Manufacturer     | Product          | ID        | Path")
-+    print("--- | ---- | ---------------- | ---------------- | --------- | ----")
-+    for dev in usb.core.find(find_all=True, idVendor=vid, idProduct=pid):
-+        path = path_from_usb_dev(dev) or ""
-+        manufacturer = try_get_usb_str(dev, "manufacturer") or "unknown"
-+        product = try_get_usb_str(dev, "product") or "unknown"
-+        print(
-+            f"{dev.bus:3} | {dev.address:4} | {manufacturer:16} | {product:16} | {dev.idVendor:04x}:{dev.idProduct:04x} | {path:18}"
-+        )
-+
-+
-+def connect(args):
-+    vid, pid = [int(x, 16) for x in args.id.split(":", 1)]
-+
-+    f = Forwarder(server=(args.server, args.port), vid=vid, pid=pid, path=args.path)
-+
-+    try:
-+        while True:
-+            f.c2s()
-+            f.s2c()
-+            f.log_stats_interval()
-+    finally:
-+        f.log_stats()
-+
-+
-+def main():
-+    parser = argparse.ArgumentParser(
-+        description="Forward 9PFS requests from USB to TCP",
-+    )
-+
-+    parser.add_argument("--id", type=str, default="1d6b:0109", help="vid:pid of target device")
-+    parser.add_argument("--path", type=str, required=False, help="path of target device")
-+    parser.add_argument("-v", "--verbose", action="count", default=0)
-+
-+    subparsers = parser.add_subparsers()
-+    subparsers.required = True
-+    subparsers.dest = "command"
-+
-+    parser_list = subparsers.add_parser("list", help="List all connected 9p gadgets")
-+    parser_list.set_defaults(func=list_usb)
-+
-+    parser_connect = subparsers.add_parser(
-+        "connect", help="Forward messages between the usb9pfs gadget and the 9p server"
-+    )
-+    parser_connect.set_defaults(func=connect)
-+    connect_group = parser_connect.add_argument_group()
-+    connect_group.required = True
-+    parser_connect.add_argument("-s", "--server", type=str, default="127.0.0.1", help="server hostname")
-+    parser_connect.add_argument("-p", "--port", type=int, default=564, help="server port")
-+
-+    args = parser.parse_args()
-+
-+    logging.TRACE = logging.DEBUG - 5
-+    logging.addLevelName(logging.TRACE, "TRACE")
-+
-+    if args.verbose >= 2:
-+        level = logging.TRACE
-+    elif args.verbose:
-+        level = logging.DEBUG
-+    else:
-+        level = logging.INFO
-+    logging.basicConfig(level=level, format="%(asctime)-15s %(levelname)-8s %(message)s")
-+
-+    args.func(args)
-+
-+
-+if __name__ == "__main__":
-+    main()
-
+diff --git a/drivers/acpi/button.c b/drivers/acpi/button.c
+index cc61020756be..51470208e6da 100644
+--- a/drivers/acpi/button.c
++++ b/drivers/acpi/button.c
+@@ -547,20 +547,20 @@ static int acpi_button_add(struct acpi_device *device)
+ 	    !strcmp(hid, ACPI_BUTTON_HID_POWERF)) {
+ 		button->type = ACPI_BUTTON_TYPE_POWER;
+ 		handler = acpi_button_notify;
+-		strcpy(name, ACPI_BUTTON_DEVICE_NAME_POWER);
++		strscpy(name, ACPI_BUTTON_DEVICE_NAME_POWER, MAX_ACPI_DEVICE_NAME_LEN);
+ 		sprintf(class, "%s/%s",
+ 			ACPI_BUTTON_CLASS, ACPI_BUTTON_SUBCLASS_POWER);
+ 	} else if (!strcmp(hid, ACPI_BUTTON_HID_SLEEP) ||
+ 		   !strcmp(hid, ACPI_BUTTON_HID_SLEEPF)) {
+ 		button->type = ACPI_BUTTON_TYPE_SLEEP;
+ 		handler = acpi_button_notify;
+-		strcpy(name, ACPI_BUTTON_DEVICE_NAME_SLEEP);
++		strscpy(name, ACPI_BUTTON_DEVICE_NAME_SLEEP, MAX_ACPI_DEVICE_NAME_LEN);
+ 		sprintf(class, "%s/%s",
+ 			ACPI_BUTTON_CLASS, ACPI_BUTTON_SUBCLASS_SLEEP);
+ 	} else if (!strcmp(hid, ACPI_BUTTON_HID_LID)) {
+ 		button->type = ACPI_BUTTON_TYPE_LID;
+ 		handler = acpi_lid_notify;
+-		strcpy(name, ACPI_BUTTON_DEVICE_NAME_LID);
++		strscpy(name, ACPI_BUTTON_DEVICE_NAME_LID, MAX_ACPI_DEVICE_NAME_LEN);
+ 		sprintf(class, "%s/%s",
+ 			ACPI_BUTTON_CLASS, ACPI_BUTTON_SUBCLASS_LID);
+ 		input->open = acpi_lid_input_open;
 -- 
-2.39.2
+2.34.1
 
 
