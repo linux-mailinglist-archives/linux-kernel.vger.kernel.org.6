@@ -1,118 +1,83 @@
-Return-Path: <linux-kernel+bounces-310298-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310299-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 090F19678AE
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 18:34:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E43389678B4
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 18:34:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B36191F2198C
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 16:34:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A275A280FCF
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 16:34:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDF0F1822F8;
-	Sun,  1 Sep 2024 16:34:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IcauwPsS"
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94D35184530;
+	Sun,  1 Sep 2024 16:34:34 +0000 (UTC)
+Received: from mail-oo1-f48.google.com (mail-oo1-f48.google.com [209.85.161.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2D0C1C68C;
-	Sun,  1 Sep 2024 16:34:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB0F7537FF;
+	Sun,  1 Sep 2024 16:34:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725208462; cv=none; b=ImHCBkZTwiYV2w9PzTYpxNoNCoIVssnCc6IZl88zbw+zb2dLx4HPuEu6jckAcZhNL4mhtFCAtQNAl/i1DbdV1E7wInXkWAz12ij1E1jYesm/8JIQb0JrzPT8Lwc+J9R0Ykk7dKt8Bbcc9+7n1TuG+A/eZtHydv2tbJNlJU03fa8=
+	t=1725208474; cv=none; b=l+laypASOWwnz4s/WdkNRhLF//1GBeBu7h8vWtXYejTXVaw9H0zOZHxvzgTcg/NVy/eEFmMgGySFZxRqrK/rsDdXhzIJMKWgfyrtYPaRKru6QJa0sHNxkEtOQ6AXD1+RLHP6AKLFiN7XC4ZTW1xCV1uZZ1V1O7aWuTvqBtrOtwg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725208462; c=relaxed/simple;
-	bh=LfOHCToqCJQpzCFvErXcUgw6uiFYg4xX8oDJA6tq5S4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ifnG4KwYSr7PAJt9SC8r9ue/+vHctugzquCd1oYzx6ZsnrvN9AvVPiW1PhZUZJH+aQMFrhEiFnEQYJdMt5UPjtbdMivsfJXs9NkAY3sP2TYipasc7HEigoyuFbt+BjBr78pbMu5+9aln705MPLp1MGZKsz86BBYgBJvCQCTfPA8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IcauwPsS; arc=none smtp.client-ip=209.85.210.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1725208474; c=relaxed/simple;
+	bh=cFygrlWX03Fc7DzVN3oG5eavHuzgxg1G8IXpcreIfBI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GKMpHZezn+TyCMQxLiq43+IOX4n8AYZ3LsCLHvAoj6sq+rA2oP2YtcGu6B1YohKfOSF0oyPSO4IQ9WchbzoarSx2jopK0819s9iwul6xOevTOD54DMJwHcsl0U7XP31n5WhuwfwJclfUwP2uI9QFzdwhvRHqDq4lGda4WWP7JCs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.161.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-71433cba1b7so2440424b3a.0;
-        Sun, 01 Sep 2024 09:34:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725208460; x=1725813260; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LfOHCToqCJQpzCFvErXcUgw6uiFYg4xX8oDJA6tq5S4=;
-        b=IcauwPsSYMzRgq0sR96HywY1DsQEFtuXP19/UloAL31eAhXdDE7BK+NzXQ9LKleBTV
-         GaQfVqNdDcJ8Gvphewf56u6xXlINOtVHfUCuomIOb94ao38slYhsueBoGnpMWhZYtuEk
-         uXMWm8XpDLxUUkVeyxvgJlGL6rr3VU+pdQW27/62bsRzCh56BIIBy/ow994xPj147ADq
-         DUCLN2ejA8wRfl+lGB+syqWbofCEmAYlrMdohGyWQjzo2z3UTIJMyqZ6UeNn0pBRSSwR
-         6fGjXR3Qnq9VFIY6cAxX7Y7+2DEqagYfplfOjBdjYJE+akpBUwY714FlqUjGaitwAETb
-         05Dg==
+Received: by mail-oo1-f48.google.com with SMTP id 006d021491bc7-5e01780b85aso501288eaf.2;
+        Sun, 01 Sep 2024 09:34:30 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725208460; x=1725813260;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=LfOHCToqCJQpzCFvErXcUgw6uiFYg4xX8oDJA6tq5S4=;
-        b=nB3UgVwlYmd+cDrXpL3erm5t4J0twfWoCzdW+R5dvaEbre/5rwhlJ5hgayhxrgyHxk
-         Fn7Qf46upwyR256RUoMsf501jdWs2SJroEidomdLGFT96VSz8kwal0OaKhcaJuprBV4l
-         iCh3I5xAWj91wkX0hAv7NXzJ3oJzo4vPal8ciG89sjcbfApIh/K/Xr+Re+FKZXNBY1Sb
-         yq+E+OhFySdchF68ke/RhRukqNWdvsMWjIcTKRtJODWypM/VHdJHqaZnrVK0Lf9uHkt8
-         cZ0TY4b//i/sKzA1Etywy5YIUC0pXF8w0S1y8W9mh8JyZPX5mPuwh/LrKw4rm54NP4UL
-         SoVQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUyYKlaPrtqwbCQe0//JJH4/zRUlMdQhDPnCsdEN4F5aLxWBi0jQslzXxA7qePOqmavGYUEhtEZBF0aQqI=@vger.kernel.org, AJvYcCXvaZCc5+ZpuDk/guB8cupx4ccEHbJ4JlidmZAaivVD9Rtk3BSzK2ypT5xaUj1t5GNI59KjaEHGnoT47A==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz+gE7zqs7VUo+rYC4m1yjx3BarJHqY10qGOp5DreU+tLNObdTO
-	FFmvyBeD97qPPrVcScx4MmjouC9krHf7zSObJMBtcG/aXqu3h0h+RsLyZks8PZknVCm4xfZDMBB
-	j2VXlrFws2p87yZytI4LLKGCXpKs=
-X-Google-Smtp-Source: AGHT+IF+YjIJUgZgTKVl/F6xoWlrij8Mno8NSN3vwjD6SW/WMix5BukBuDBnXmP02x+pPxQYkgnoJqql1xVKS6m/E40=
-X-Received: by 2002:a05:6a21:3a44:b0:1c4:a49b:403 with SMTP id
- adf61e73a8af0-1cece5e24c1mr4431330637.46.1725208459923; Sun, 01 Sep 2024
- 09:34:19 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1725208470; x=1725813270;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mTp58pLZILxilG/TSa0eywC/sXEwB1GPNx1xi4fjUmY=;
+        b=tAEO9W3tDD/4HFo1Soz3+sT7EVvXHrjbYhuEGPI8wY5roxBju5Dr2EkEhWUHIcDUKF
+         rRRe3nZi3jUvWGPd1i/G/FEWBU+Z2nJ7d4hc18lfVSvap9KzHvEquNb5g+oBPCrMCLcQ
+         xst6i5T6JxQRpOF6xvsRMSA+aso+BC9qUW5JHtB0jv0ZumNCLKQq0bWk+G4zuBD4vNYA
+         UgFa4rm3YGGAqzEPztLpDc1NPaAQb0Ilv9EjDldmNgOlb3LBNWaJoHw0VkAvXDHPOGPc
+         6tkYUQXEzMyiyJynw7HKqqpwsOXwSIjaS2pNcM2Sdl90Ltd8zEiunHGusDFs9ax95YH1
+         uixg==
+X-Forwarded-Encrypted: i=1; AJvYcCVd8U3Vd+IjDskhBxgoiy+juOnhF+8OwvCW6nT9T+wW2LuiMFzCKHm5TKeyojXvtyN9zJyPPMALZaI1@vger.kernel.org, AJvYcCVdtJ4rFwenL18jDhPklusCSFoIK8kDDOAsbdaoWloizE+jcFwJPp/J6G4TtPs7BIVlxPGR4X5Zxib7iAHC@vger.kernel.org, AJvYcCWLve3USgxycQVkwFRivvwbElItV/QhlZPtISeGo60ZUk5ZedVApT+kPlw3XmPHm52kEarf8LKmsrwjud55@vger.kernel.org
+X-Gm-Message-State: AOJu0YzJ5D3CVdHJVk/Wip2pp3EhzRBwVbfubE5fzAmnPSX/9eZqWudI
+	as4gXrOcbMaAAHwN/i22fA6k/2lt6Qgc/iglqlgypgnblPNsfYGR/mWdIjKWBeE=
+X-Google-Smtp-Source: AGHT+IF/cOWLig6V9x65WK7XYxRdovkpMyQrkPe3k678tNYrSdgvKSgNIyyD1FFwrmcHTFFiqL618g==
+X-Received: by 2002:a05:6358:7e4f:b0:1a6:799b:b06c with SMTP id e5c5f4694b2df-1b7e397efe3mr1047119055d.23.1725208470028;
+        Sun, 01 Sep 2024 09:34:30 -0700 (PDT)
+Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7d4e1c38990sm201310a12.44.2024.09.01.09.34.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 01 Sep 2024 09:34:29 -0700 (PDT)
+Date: Mon, 2 Sep 2024 01:34:28 +0900
+From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: lpieralisi@kernel.org, robh@kernel.org, bhelgaas@google.com,
+	linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] PCI: qcom-ep: Do not enable resources during probe()
+Message-ID: <20240901163428.GB235729@rocinante>
+References: <20240727090604.24646-1-manivannan.sadhasivam@linaro.org>
+ <20240813202547.GC1922056@rocinante>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAEwRq=qhHBh5jKdLGb1r2Qem0jia=xcVdevihYfjdrLSYiZuiA@mail.gmail.com>
- <CACRpkdZFQSN_t-Vx7xOXq0aF6Vf-XvsZKGF6yNMn7_dCeaZi_w@mail.gmail.com> <35680bf8-d4f0-4b7a-b358-f71eb39e2a94@app.fastmail.com>
-In-Reply-To: <35680bf8-d4f0-4b7a-b358-f71eb39e2a94@app.fastmail.com>
-From: Vincent Legoll <vincent.legoll@gmail.com>
-Date: Sun, 1 Sep 2024 16:34:09 +0000
-Message-ID: <CAEwRq=qNqbXRPCqd-ukW9q1uNNJL9x42dBk0pHMEB_VCoV4W2w@mail.gmail.com>
-Subject: Re: [RFC} arm architecture board/feature deprecation timeline
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Aaro Koskinen <aaro.koskinen@iki.fi>, 
-	Alexandre Torgue <alexandre.torgue@foss.st.com>, Andrew Lunn <andrew@lunn.ch>, 
-	Mark Brown <broonie@kernel.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
-	Gregory Clement <gregory.clement@bootlin.com>, "Jeremy J. Peper" <jeremy@jeremypeper.com>, 
-	Janusz Krzysztofik <jmkrzyszt@gmail.com>, Kristoffer Ericson <kristoffer.ericson@gmail.com>, 
-	Krzysztof Kozlowski <krzk@kernel.org>, Linux Kernel ML <linux-kernel@vger.kernel.org>, 
-	Russell King <linux@armlinux.org.uk>, Nicolas Pitre <nico@fluxnic.net>, 
-	Nikita Shubin <nikita.shubin@maquefel.me>, Ramana Radhakrishnan <ramanara@nvidia.com>, 
-	Richard Earnshaw <richard.earnshaw@arm.com>, Richard Sandiford <richard.sandiford@arm.com>, 
-	Robert Jarzmik <robert.jarzmik@free.fr>, 
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Tony Lindgren <tony@atomide.com>, 
-	linux-mips@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240813202547.GC1922056@rocinante>
 
-Hello Arnd,
+Hello,
 
-On Mon, Aug 26, 2024 at 2:55=E2=80=AFPM Arnd Bergmann <arnd@arndb.de> wrote=
-:
-> What you see is certainly unrelated to me mentioning that we may remove
-> highmem support from the kernel altogether in the future, but it's
-> possible that OpenWRT turned it off because things work better
-> without it.
->
-> https://github.com/openwrt/openwrt/issues/13151 may explain
-> what ios going on here.
+[...]
+> Applied to controller/qcom, thank you!
 
-Thanks a lot for that hint, indeed there is a solution, which does not rely
-on `CONFIG_HIGHMEM=3Dy`, linked from this issue.
+Based on the conversation here, I removed this patch from the branch.
 
-Just setting `HIGHMEM_START` made space available for that 64MB
-RAM chunk.
-
-Thanks
-
---=20
-Vincent Legoll
+	Krzysztof
 
