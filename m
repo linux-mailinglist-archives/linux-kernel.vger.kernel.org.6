@@ -1,129 +1,190 @@
-Return-Path: <linux-kernel+bounces-310180-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310181-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AFC959675E9
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 12:38:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0F9F9675ED
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 12:49:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 45C4D282148
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 10:38:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 742FA281FAB
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 10:49:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03F18152178;
-	Sun,  1 Sep 2024 10:38:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A56541419A9;
+	Sun,  1 Sep 2024 10:49:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lD7mo890"
-Received: from mail-oa1-f51.google.com (mail-oa1-f51.google.com [209.85.160.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=linumiz.com header.i=@linumiz.com header.b="jib5dOBm"
+Received: from omta40.uswest2.a.cloudfilter.net (omta40.uswest2.a.cloudfilter.net [35.89.44.39])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC7A014A0AB;
-	Sun,  1 Sep 2024 10:38:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C63323C0C
+	for <linux-kernel@vger.kernel.org>; Sun,  1 Sep 2024 10:49:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.39
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725187123; cv=none; b=YZa3W+VsHyDNG4VVZyxaAC1g5TLJhhV51n6RZPuu1qlf2vYz1G3tHq+kn31JMZHAfO5YZl/y6CnvR8P7ik/FQZL7oQD59yj9ggYzPbtb4bCIfsDdOEsLuwdKjVczIJsIErFTKbWcLqGtEhJd4MArS0FxcZUszrvPTusICinGDQo=
+	t=1725187787; cv=none; b=iYPjnhw/b9LuEp832nc7wmvBaSd071jpoDRFlZsvT68m+ihuvMQjrmO2py3lKQ/e8TtBs25z0HJzZa2S2YzEOvtWTod2f2XHnJS3tCtvUHXKXIF5lUEf/WnWPmXFViEFKDSsM403RYku5GJpOpeJKQRNUUXwD+mYtJy1DfU2QQk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725187123; c=relaxed/simple;
-	bh=RtbrHR8X01m8ZmauEKuNsNd8YBX31NLA3tjo7E1zYhE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=D4t5nfoxk3YE7RBNORu3uvX6dMae0anLgOOeHzE3X8cZLVuc4L99yMYUN7Gd6rduWSqKF0fKQb3U6zCykMQHyoLbrlBK9y6/yKr+d121eXcZFF5Is4S8OON9wTBBsyAaYDb6B6u1oQDiLF7U3Qf4lHjO1cyMQpqIYfqcImgoTiI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lD7mo890; arc=none smtp.client-ip=209.85.160.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f51.google.com with SMTP id 586e51a60fabf-2705d31a35cso2061152fac.0;
-        Sun, 01 Sep 2024 03:38:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725187121; x=1725791921; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lyzhfAO6X5H2nFlBE67hjFSOfmqgByxBU/TMolVNnCU=;
-        b=lD7mo890bhKPI87HDp3SUygYcWDKbz7yilxu/8t3EnUoAkZ78W2SktNgfmL7/cXDPn
-         Gn0JT96nYd6UHQqPBN2ZAtpw8/MI+JiktqPihuZ5n4oYbMVI4uOcqaNIGmbVDmPIoVcH
-         zRUhmBbGsxsilIgpeR/DXEDiD93uq0bd8w0LHTp6x5hHAtG867q3nEtKIv60UaM3mIK/
-         wgqLDB79NHWyUpdwRIM/5lQHC1kEliJDpW+jCW5fv13K+BFhh9h9Yezk7b6wA//Q2eXU
-         xhBUJV+E2ui/CAotn/LJeP7NJOFLPI04vI22wK1fuN6kfKw6asXIRVaXposbXJCeM3Xx
-         HQUw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725187121; x=1725791921;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=lyzhfAO6X5H2nFlBE67hjFSOfmqgByxBU/TMolVNnCU=;
-        b=XCrnWJIBfl6KPUK6Gm+dmcq5Vta+fbwMlh3tbAMoOfQmMXP9fkjpMY+Ov3w75ohsSQ
-         /Ddz+EJhuu/cuX8f0ekxr/S3Xwfl25P6Ev+o5ecCk2MLyTb1+/ERb/yY1uAr06UrqmpX
-         LWE/2pdUU4hw3LO6cNzAG12BXcfBHSf80SMIEJ7d+kv5SE3v1p+aSyciQNqMi+k6Ezcq
-         0/b/w74W5+ZVsn57TUOUhehp+7gRYK5RPK5uF7PMJvb6BTMGlilCssTFl5XsPH8MVitf
-         qbPyy7OvwiG2YxIAY3hL8GQOVTv0Si/zJsjOS5bHpMInRNgY0L0esEUw1DAbDmNG+Ulw
-         zDPA==
-X-Forwarded-Encrypted: i=1; AJvYcCV5mEMs5pAYCKgsyuF038CmQmutNLmUNceHqBFzcySxertfb4C7RlchEgbs0tr8i9lXorISqRXFRsQ=@vger.kernel.org, AJvYcCXTmaIkkosRWl2suvB2Yt1S3j2dwUl1DHQtcCd2OzhC8mPc1DaXH7rmVomsQeP4eA0QymWkJd9Nqogigh3N@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw9vkGcmUFYG/5BbUV9oh5DW0IWLrmGeYUM+oYAQkgOjPt1QW8m
-	H0zLd0w9s36q85E++rjVr4mASqrlg9J77cMuWFoipyuOKXAF5m+DtRa21a/rbL9vTkhAh7s6CM4
-	9Wdm+7Ej53l6vZqm3CDxwQGRcQ8s=
-X-Google-Smtp-Source: AGHT+IFwDrFIRchFBPeU5Cmhdf8kTcaSFA4UqvIROjrdvU6DSkfFqOLzuG6/Nk75iyrmFNWILWDA+pXxJaqlFWVRaBE=
-X-Received: by 2002:a05:6871:1cc:b0:25e:b999:d24 with SMTP id
- 586e51a60fabf-277cc63f0f9mr4474832fac.0.1725187120778; Sun, 01 Sep 2024
- 03:38:40 -0700 (PDT)
+	s=arc-20240116; t=1725187787; c=relaxed/simple;
+	bh=1SoUrcuwAezmoBbfSHXp5udejjTS9HsVQxmLO8RhqpI=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=mbCjeTYCyxYyrMvM1VjXUx3D8pFvjwVsZ10IPpG863Xh0sgx/0VljOrtlZVcqYngxaHldNpUJaIntOJF9X614n1iOYZsBnTmRBRd8nhPl2fEWcUFsh2l3BvbHxg05CKIUchwriX31AuE5vjKgL7QJxZAEKVmaM0J5MlXurQmyjc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linumiz.com; spf=pass smtp.mailfrom=linumiz.com; dkim=pass (2048-bit key) header.d=linumiz.com header.i=@linumiz.com header.b=jib5dOBm; arc=none smtp.client-ip=35.89.44.39
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linumiz.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linumiz.com
+Received: from eig-obgw-5002a.ext.cloudfilter.net ([10.0.29.215])
+	by cmsmtp with ESMTPS
+	id kdd5sT1gTvH7lki9KsOaxn; Sun, 01 Sep 2024 10:49:38 +0000
+Received: from md-in-79.webhostbox.net ([43.225.55.182])
+	by cmsmtp with ESMTPS
+	id ki9IsZbOgeieBki9JszHuo; Sun, 01 Sep 2024 10:49:37 +0000
+X-Authority-Analysis: v=2.4 cv=BoBWwpX5 c=1 sm=1 tr=0 ts=66d446c1
+ a=LfuyaZh/8e9VOkaVZk0aRw==:117 a=kofhyyBXuK/oEhdxNjf66Q==:17
+ a=IkcTkHD0fZMA:10 a=EaEq8P2WXUwA:10 a=-pn6D5nKLtMA:10 a=VwQbUJbxAAAA:8
+ a=KKAkSRfTAAAA:8 a=vU9dKmh3AAAA:8 a=DNHG93h_ET7fCttHZXgA:9 a=QEXdDO2ut3YA:10
+ a=cvBusfyB2V15izCimMoJ:22 a=rsP06fVo5MYu2ilr0aT5:22 a=ZCPYImcxYIQFgLOT52_G:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=linumiz.com
+	; s=default; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:To:Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=ywGVdaOBlZPdTax7+8AIJtGdavEx9jH0B5JlhRclrvs=; b=jib5dOBmkXongdaFb6+eNDbK5o
+	jnSqgEzoUpxAB90W3aZjQLVvK28NhDRgji4ZP7rtMiWm1IApK1PVth707D1xd3aNWPSHTxB1M3Zri
+	DE5Zwjl0w+NQ/NnEk0cu96YZ4VzU5JuFIdFi+c1NlkdCsAEUzdzd0UeNGoZneMClDdL0oI2F9YnbJ
+	BS7nUBreTbw26dZ6sWt9dONlE6TUBPxUCb8QMas3OiM06uE1rQiA2qnJIYtAegC6aRnEynuMfcOKZ
+	QoE1mk7vIb2krjM2jVhY8U6o4FhTkl/WxVbeH4J0sF2d3d4qf2X7zZBtg0PboJSMMNa1oziJt1wsR
+	TC/a0KJg==;
+Received: from [122.165.245.213] (port=54982 helo=[192.168.1.5])
+	by md-in-79.webhostbox.net with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96.2)
+	(envelope-from <parthiban@linumiz.com>)
+	id 1ski9D-003WMg-0I;
+	Sun, 01 Sep 2024 16:19:31 +0530
+Message-ID: <ae9c8916-27b4-4296-b827-92336a158294@linumiz.com>
+Date: Sun, 1 Sep 2024 16:19:26 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <35904aa5-9851-4894-b953-689904bf33ca@hust.edu.cn> <58b7c7d2-f60c-4a2d-9cb5-d583182bfef4@gmail.com>
-In-Reply-To: <58b7c7d2-f60c-4a2d-9cb5-d583182bfef4@gmail.com>
-From: Dongliang Mu <mudongliangabcd@gmail.com>
-Date: Sun, 1 Sep 2024 18:38:02 +0800
-Message-ID: <CAD-N9QXks-bFxz+4NVbuvG7BJQZrRiodHXqSadqzdA-ammsM1w@mail.gmail.com>
-Subject: Re: [PATCH v2] docs/zh_CN: add the translation of kbuild/gcc-plugins.rst
-To: Akira Yokosawa <akiyks@gmail.com>
-Cc: dzm91@hust.edu.cn, seakeel@gmail.com, corbet@lwn.net, 
-	hust-os-kernel-patches@googlegroups.com, justinstitt@google.com, 
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, llvm@lists.linux.dev, 
-	morbo@google.com, nathan@kernel.org, ndesaulniers@google.com, 
-	siyanteng@loongson.cn, alexs@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Cc: parthiban@linumiz.com, stable@vger.kernel.org
+Subject: Re: [PATCH 2/2] ARM: dts: imx6ull-seeed-npi: fix fsl,pins property in
+ tscgrp pinctrl
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+ Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>,
+ Michael Trimarchi <michael@amarulasolutions.com>,
+ Matteo Lisi <matteo.lisi@engicam.com>,
+ Jagan Teki <jagan@amarulasolutions.com>, devicetree@vger.kernel.org,
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20240831101129.15640-1-krzysztof.kozlowski@linaro.org>
+ <20240831101129.15640-2-krzysztof.kozlowski@linaro.org>
+Content-Language: en-US
+From: Parthiban <parthiban@linumiz.com>
+Organization: Linumiz
+In-Reply-To: <20240831101129.15640-2-krzysztof.kozlowski@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - md-in-79.webhostbox.net
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - linumiz.com
+X-BWhitelist: no
+X-Source-IP: 122.165.245.213
+X-Source-L: No
+X-Exim-ID: 1ski9D-003WMg-0I
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.1.5]) [122.165.245.213]:54982
+X-Source-Auth: parthiban@linumiz.com
+X-Email-Count: 2
+X-Org: HG=dishared_whb_net_legacy;ORG=directi;
+X-Source-Cap: bGludW1jbWM7aG9zdGdhdG9yO21kLWluLTc5LndlYmhvc3Rib3gubmV0
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfMMBkVDi0wE5VOjPfygx0z7+SjQPZvo9cZicr08byGYZM8qd5byC9n42vTixAgppIoJ9XAwArdth38gisH9BdZUHYybdJkZn9wqQRLD/3GF6TAmgF1pv
+ ybb3oNNEHGCqjcnROO8UvuROvaP/lQ1zlQ+TL6OccvkgRcEUa0FrsEH65TBrIcPKJUlPFf7vKNBvZGxlduatnTQzktIkSAmn2U8=
 
-On Sun, Sep 1, 2024 at 2:03=E2=80=AFPM Akira Yokosawa <akiyks@gmail.com> wr=
-ote:
->
-> Hi,
->
-> I'm not Alex, but let me chime in.
->
-> On Sat, 31 Aug 2024 17:34:11 +0800, Dongliang Mu wrote:
-> > On 2024/8/31 12:11, Alex Shi wrote:
-> >>
-> >> On 8/31/24 11:48 AM, Dongliang Mu wrote:
-> >>> +=E7=9B=AE=E7=9A=84
-> >>> +=3D=3D=3D=3D=3D=3D=3D
-> >>> +
-> >> there are still a lots of sign incorrect. Please be sure everything lo=
-oks fine in a web browser after you 'make htmldocs'
-> >
-> > What do you mean by "sign incorrect"? I check the html rendering in the
-> > vscode. It seems fine to me.
->
-> You are right.  There is nothing wrong as far as the reST specification
-> is concerned.
->
-> Quote from https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.=
-html#sections
-> (emphasis by me):
->
->     An underline/overline is a single repeated punctuation character that
->     begins in column 1 and forms a line extending *at least* as far as th=
-e
->     right edge of the title text.
->
+Thanks.
 
-I see. Will send a v3 patch.
+On 8/31/24 3:41 PM, Krzysztof Kozlowski wrote:
+> The property is "fsl,pins", not "fsl,pin".  Wrong property means the pin
+> configuration was not applied.  Fixes dtbs_check warnings:
+> 
+>   imx6ull-seeed-npi-dev-board-emmc.dtb: pinctrl@20e0000: uart1grp: 'fsl,pins' is a required property
+>   imx6ull-seeed-npi-dev-board-emmc.dtb: pinctrl@20e0000: uart1grp: 'fsl,pin' does not match any of the regexes: 'pinctrl-[0-9]+'
+> 
+> Cc: <stable@vger.kernel.org>
+> Fixes: e3b5697195c8 ("ARM: dts: imx6ull: add seeed studio NPi dev board")
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-> HTH, Akira
->
-> >
-> > Dongliang Mu
->
->
+Reviewed-by: Parthiban Nallathambi <parthiban@linumiz.com>
+
+Thanks,
+Parthiban
+> ---
+>  .../dts/nxp/imx/imx6ull-seeed-npi-dev-board.dtsi     | 12 ++++++------
+>  1 file changed, 6 insertions(+), 6 deletions(-)
+> 
+> diff --git a/arch/arm/boot/dts/nxp/imx/imx6ull-seeed-npi-dev-board.dtsi b/arch/arm/boot/dts/nxp/imx/imx6ull-seeed-npi-dev-board.dtsi
+> index 6bb12e0bbc7e..50654dbf62e0 100644
+> --- a/arch/arm/boot/dts/nxp/imx/imx6ull-seeed-npi-dev-board.dtsi
+> +++ b/arch/arm/boot/dts/nxp/imx/imx6ull-seeed-npi-dev-board.dtsi
+> @@ -339,14 +339,14 @@ MX6UL_PAD_JTAG_TRST_B__SAI2_TX_DATA	0x120b0
+>  	};
+>  
+>  	pinctrl_uart1: uart1grp {
+> -		fsl,pin = <
+> +		fsl,pins = <
+>  			MX6UL_PAD_UART1_TX_DATA__UART1_DCE_TX	0x1b0b1
+>  			MX6UL_PAD_UART1_RX_DATA__UART1_DCE_RX	0x1b0b1
+>  		>;
+>  	};
+>  
+>  	pinctrl_uart2: uart2grp {
+> -		fsl,pin = <
+> +		fsl,pins = <
+>  			MX6UL_PAD_UART2_TX_DATA__UART2_DCE_TX	0x1b0b1
+>  			MX6UL_PAD_UART2_RX_DATA__UART2_DCE_RX	0x1b0b1
+>  			MX6UL_PAD_UART2_CTS_B__UART2_DCE_CTS	0x1b0b1
+> @@ -355,7 +355,7 @@ MX6UL_PAD_UART2_RTS_B__UART2_DCE_RTS	0x1b0b1
+>  	};
+>  
+>  	pinctrl_uart3: uart3grp {
+> -		fsl,pin = <
+> +		fsl,pins = <
+>  			MX6UL_PAD_UART3_TX_DATA__UART3_DCE_TX	0x1b0b1
+>  			MX6UL_PAD_UART3_RX_DATA__UART3_DCE_RX	0x1b0b1
+>  			MX6UL_PAD_UART3_CTS_B__UART3_DCE_CTS	0x1b0b1
+> @@ -364,21 +364,21 @@ MX6UL_PAD_UART3_RTS_B__UART3_DCE_RTS	0x1b0b1
+>  	};
+>  
+>  	pinctrl_uart4: uart4grp {
+> -		fsl,pin = <
+> +		fsl,pins = <
+>  			MX6UL_PAD_UART4_TX_DATA__UART4_DCE_TX	0x1b0b1
+>  			MX6UL_PAD_UART4_RX_DATA__UART4_DCE_RX	0x1b0b1
+>  		>;
+>  	};
+>  
+>  	pinctrl_uart5: uart5grp {
+> -		fsl,pin = <
+> +		fsl,pins = <
+>  			MX6UL_PAD_UART5_TX_DATA__UART5_DCE_TX	0x1b0b1
+>  			MX6UL_PAD_UART5_RX_DATA__UART5_DCE_RX	0x1b0b1
+>  		>;
+>  	};
+>  
+>  	pinctrl_usb_otg1_id: usbotg1idgrp {
+> -		fsl,pin = <
+> +		fsl,pins = <
+>  			MX6UL_PAD_GPIO1_IO00__ANATOP_OTG1_ID	0x17059
+>  		>;
+>  	};
 
