@@ -1,146 +1,149 @@
-Return-Path: <linux-kernel+bounces-310380-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310381-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81BC0967C04
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 22:13:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12A0E967C0A
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 22:21:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 01A4FB209D1
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 20:13:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AAF3F1F21736
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 20:21:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E876B7D3F4;
-	Sun,  1 Sep 2024 20:13:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BB7E7F486;
+	Sun,  1 Sep 2024 20:21:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k6wqzHW1"
-Received: from mail-oo1-f47.google.com (mail-oo1-f47.google.com [209.85.161.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="M1PFd1MZ"
+Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 814AE558BA;
-	Sun,  1 Sep 2024 20:13:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69C8837708;
+	Sun,  1 Sep 2024 20:21:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725221590; cv=none; b=deri725wZDw+xbBQrwYgBsnndVtfWJ3rLSFgEYnwEepdXfXB5qQ9bsNCACdphPj8OV8MB7ALqkVWRv9oi/B9XPea2Xc5l5RIsCOomd2M+5RgOHK2PMs1y122gh8B/pCrm+xdUVB0imTSg3F08oAvGNEZjxjSMdPQdhHCXMEva4U=
+	t=1725222078; cv=none; b=cvp/f+kiaPWnQW04kQpix/iGCbHvDUwL5imb+GepYl4CC5ykACn2Dl1MceQQl9SA98tb/uUlsJvayYNzGlBMXMoeMVEgpsr2czl+3k1Aj5SBxk+Jlu3ztIC0TT5BH2UIKYvtaGSANGgCJj19vt3AtReuAv2/voKN8O0McmlIpUs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725221590; c=relaxed/simple;
-	bh=wNxNeeQJ+63p7djsyOzdK093vhCt0eKPoEsxF1T1m2s=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=V37U5XV/QzXv39bXpPtr0dntATDAHpYG/bO97GhQycJXZ6ST5i4lBWtFlwKy5DkAarOhDe1v5xmn1/l/THJrA6OFh+Fqa1DaCfAE9j0gHLAXVwx1L5znDdmbpggwrDHVeK3saeDWfI2DT5SdryT+zKzvFFw7i8/7xLLF6Zq0yHM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=k6wqzHW1; arc=none smtp.client-ip=209.85.161.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oo1-f47.google.com with SMTP id 006d021491bc7-5de8a3f1cc6so1684068eaf.1;
-        Sun, 01 Sep 2024 13:13:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725221587; x=1725826387; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=F6OwG31c6G0YUx2zi6DHRQVZYeu/WotnlRiMEIHUdAA=;
-        b=k6wqzHW1Phl3ZZXlYZS1sxTR5aMDit8cTW5uDeX38ULxXrvjWLECtHBZGDinvg3b+M
-         YCkXn5GWuzwevuTQBjv73S4Mgvots+yojR5ch+ATLMIFEk7dYrSwupb8YhJaP3FEPzCf
-         iIIgpvaJGkmeGqfhAR5EUEzj/g+SvvjljNrnyAhbXtDxiEMYez4+Vqn7dslsg+OXjPZk
-         t4i9fG2F/dX51iNV2xa6GXoMuGUVHMYmaYhs8Z50Xg1Ou6yareqKWtX0MNNigtyHCk7u
-         ASVqAOsuds2zFfp00H98K9mQmJvD8HVt+pC1oBCUc1qzeqM5eSZz23W2MsjddN+8C4Am
-         yoZA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725221587; x=1725826387;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=F6OwG31c6G0YUx2zi6DHRQVZYeu/WotnlRiMEIHUdAA=;
-        b=EHmaIgamBSYEnvBCUfOBSLGIr6hCRbFKkMCOjQC5A15jNsuSnDjf5kOFdSsxbdRGFE
-         iuYiyZ3/yVRzmHsDI0zyHWj6h1XMe9quJ5tAynjlmC2mo+OGceXFcrRat4lCDnsMPb+U
-         fodkYg0SGi0i+g1eBIRJpDEsD3HNNKT3+iKdzq0sbg2Z9D8om5kR9maopWqDS+XbK4uY
-         8Ar7sKzlFeXagRPe8CIMQIqmqfP18ualsJ1yZ7l+6Fa4Jz9BRUQmO5LZrLhYNfBWFZp2
-         JAf4OPWmoMFMKcsWPm6KJS7V91Y9wIDmYF/4Au1k5aUScFea2GpzKy+sAmn1T13LiI5+
-         3aTQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUzoS2oaqhq7DlA5GzK0bEmhY6O6bM1jkAH9aN06sCvLRAsdVv9XdIOcZYCkqtrLYC5f00x4M1f1Z9P8S8=@vger.kernel.org, AJvYcCXT2Plook3UbyXlRBVeYCU8+L6LbQ4SnDb/UbsDd6nNMz4Szn7CZPXU/wYvGhUQ5LzIFv3UwLkwfyjAzQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxwwAdP7QqzKHpstj1qAZSgsIkN7K2NUeAbSQULyqGO9KXnFhpI
-	2uIrFZ7+eQIcihV5B3xh/OtnBMJxk7AdNk6mihWY3X5I43W6g4A8dbcrwyCZhUiz1WnwBsofOQy
-	l1O3Sp4WCIAy6jMDZI0hqVuyx5/0=
-X-Google-Smtp-Source: AGHT+IFqgM+5p3Af/0c1Ft+OyQ6xAXftNZMOPu3i3M6Opg8NY8o4aVV1A0NS53x+F0YAnEQBnv4X8dzRUJZev3S6p8s=
-X-Received: by 2002:a05:6870:2f0a:b0:277:fd44:9e17 with SMTP id
- 586e51a60fabf-277fd452a72mr42335fac.19.1725221587447; Sun, 01 Sep 2024
- 13:13:07 -0700 (PDT)
+	s=arc-20240116; t=1725222078; c=relaxed/simple;
+	bh=HaIaCS8Nv2yQ1qcLVwU5SoDiXtrxb9bzUcXM/cH0z2A=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=kTm3HDAloc5CMm7i6rKam7QiibUIvKHSP+lWXcTf/HTE+tjhfRTduh4YyUyiOKaVy2oeL83Wd6V/Uoo7VxBECZbLRiW1J+Ophxap3Tppu9Q87xhvmEe2qIpBzpb6a77/esHMm2PKcMDry+Ii2YM2gUZSy8mcrh8/c5aKIK86QQo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=M1PFd1MZ; arc=none smtp.client-ip=198.47.23.248
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 481KKjnG013523;
+	Sun, 1 Sep 2024 15:20:45 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1725222046;
+	bh=JG/OGPwxAgiRiCp+zCXfMAFKBh+4Laugya0RYoc7vwo=;
+	h=From:To:CC:Subject:Date:In-Reply-To:References;
+	b=M1PFd1MZmkkrq52keTac7z3DKDCFIt2yZEwPWRAviF/wBMLuNn5Mz1EhmTHM0BhOa
+	 o16ws/Ny856IiY9fZ0Sfy2bVO52IeIzfQ59fUSprknzYPxaggEE6x1ujGiJU7CqQE2
+	 RXCVForXsALOJLzDU2sSXQZ97i+5u5NakVoCnB0s=
+Received: from DFLE107.ent.ti.com (dfle107.ent.ti.com [10.64.6.28])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 481KKjqt015596
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Sun, 1 Sep 2024 15:20:45 -0500
+Received: from DFLE112.ent.ti.com (10.64.6.33) by DFLE107.ent.ti.com
+ (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Sun, 1
+ Sep 2024 15:20:45 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE112.ent.ti.com
+ (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Sun, 1 Sep 2024 15:20:45 -0500
+Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 481KKjhb124623;
+	Sun, 1 Sep 2024 15:20:45 -0500
+From: Nishanth Menon <nm@ti.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>, Roger Quadros <rogerq@kernel.org>,
+        Peter Chen
+	<peter.chen@kernel.org>,
+        Pawel Laszczak <pawell@cadence.com>,
+        Mathias Nyman
+	<mathias.nyman@intel.com>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Tero Kristo
+	<kristo@kernel.org>,
+        =?UTF-8?q?Th=C3=A9o=20Lebrun?= <theo.lebrun@bootlin.com>
+CC: Nishanth Menon <nm@ti.com>, <linux-usb@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        Kevin Hilman <khilman@kernel.org>,
+        =?UTF-8?q?Gr=C3=A9gory=20Clement?= <gregory.clement@bootlin.com>,
+        Thomas
+ Petazzoni <thomas.petazzoni@bootlin.com>,
+        Conor Dooley
+	<conor.dooley@microchip.com>
+Subject: Re: (subset) [PATCH v5 00/12] Fix USB suspend on TI J7200 (cdns3-ti, cdns3, xhci)
+Date: Sun, 1 Sep 2024 15:20:42 -0500
+Message-ID: <172522185704.996619.16331297087532612354.b4-ty@ti.com>
+X-Mailer: git-send-email 2.46.0
+In-Reply-To: <20240726-s2r-cdns-v5-0-8664bfb032ac@bootlin.com>
+References: <20240726-s2r-cdns-v5-0-8664bfb032ac@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240822142603.3608a26d@canb.auug.org.au> <20240828150900.7ffd7588@canb.auug.org.au>
- <57440a796530c153cd0ee3e7b11c2fbab9887fbf.camel@collabora.com>
-In-Reply-To: <57440a796530c153cd0ee3e7b11c2fbab9887fbf.camel@collabora.com>
-From: Jassi Brar <jassisinghbrar@gmail.com>
-Date: Sun, 1 Sep 2024 15:12:56 -0500
-Message-ID: <CABb+yY2jNpXL+7RhrObh8ec+wxk3SJuX6eXH3YVfSz=P=1oD8w@mail.gmail.com>
-Subject: Re: linux-next: build warning after merge of the rpmsg tree
-To: Martyn Welch <martyn.welch@collabora.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Bjorn Andersson <andersson@kernel.org>, 
-	Mathieu Poirier <mathieu.poirier@linaro.org>, Andrew Davis <afd@ti.com>, Hari Nagalla <hnagalla@ti.com>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-On Wed, Aug 28, 2024 at 4:45=E2=80=AFAM Martyn Welch <martyn.welch@collabor=
-a.com> wrote:
->
-> On Wed, 2024-08-28 at 15:09 +1000, Stephen Rothwell wrote:
-> > Hi all,
-> >
-> > On Thu, 22 Aug 2024 14:26:03 +1000 Stephen Rothwell
-> > <sfr@canb.auug.org.au> wrote:
-> > >
-> > > After merging the rpmsg tree, today's linux-next build (x86_64
-> > > allmodconfig) produced this warning:
-> > >
-> > > WARNING: unmet direct dependencies detected for OMAP2PLUS_MBOX
-> > >   Depends on [n]: MAILBOX [=3Dy] && (ARCH_OMAP2PLUS || ARCH_K3)
-> > >   Selected by [m]:
-> > >   - TI_K3_M4_REMOTEPROC [=3Dm] && REMOTEPROC [=3Dy] && (ARCH_K3 ||
-> > > COMPILE_TEST [=3Dy])
-> > >
-> > > Probably introduced by commit
-> > >
-> > >   ebcf9008a895 ("remoteproc: k3-m4: Add a remoteproc driver for M4F
-> > > subsystem")
-> >
-> > I am still seeing this warning.
-> >
->
-> OK, just taken a look into this. I think the issue is the result of the
-> inclusion of `COMPILE_TEST` in the Kconfig entry:
->
->   config TI_K3_M4_REMOTEPROC
->          tristate "TI K3 M4 remoteproc support"
->          depends on ARCH_K3 || COMPILE_TEST
->          select MAILBOX
->          select OMAP2PLUS_MBOX
->   ...
->
-> Looking at the entry for `OMAP2PLUS_MBOX`, that doesn't have
-> `COMPILE_TEST` listed under it's dependencies:
->
->   config OMAP2PLUS_MBOX
->           tristate "OMAP2+ Mailbox framework support"
->           depends on ARCH_OMAP2PLUS || ARCH_K3
->   ...
->
-> If I understand right, either the `COMPILE_TEST` needs to be removed
-> from `TI_K3_M4_REMOTEPROC` or added to `OMAP2PLUS_MBOX`.
->
-> It appears that the OMAP2+ Mailbox support can at least be compiled on
-> x86_64. so I assume the correct thing to do here is to enable that
-> right?
->
-> Jassi, I assume there's not specific reason for the OMAP2+ Mailbox
-> framework support not having `COMPILE_TEST`, other than potentially
-> being added just before it was a thing?
->
-Seems like it.
+Hi Théo Lebrun,
 
--j
+On Fri, 26 Jul 2024 20:17:48 +0200, Théo Lebrun wrote:
+> Currently, system-wide suspend is broken on J7200 because of a
+> controller reset. The TI wrapper does not get re-initialised at resume
+> and the first register access from cdns core fails.
+> 
+> We address that in a few ways:
+>  - In cdns3-ti, if a reset has occured at resume, we reconfigure the HW.
+>  - We pass the XHCI_RESET_ON_RESUME quirk, meaning the XHCI core expects
+>    a resume.
+>  - We add a xhci->lost_power flag.
+> 
+> [...]
+
+Since Greg has picked f7fd939e805672417bbf418f6035dec9400230fd ("dt-bindings:
+usb: ti,j721e-usb: fix compatible list"), the corresponding
+patch needs to go via the soc dt tree, so picking just that.
+
+I have applied the following to branch ti-k3-dts-next on [1].
+Thank you!
+
+[12/12] arm64: dts: ti: k3-am64: add USB fallback compatible to J721E
+        commit: 99ced42d6f3ebcae52c2c6d1207d3f96d7cf88ac
+
+Theo: Do let me know if Greg decides to drop the said patch, and I will drop
+this off my PR as well. But, no action at the moment for this.
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent up the chain during
+the next merge window (or sooner if it is a relevant bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/ti/linux.git
+-- 
+Regards,
+Nishanth Menon
+Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
+
 
