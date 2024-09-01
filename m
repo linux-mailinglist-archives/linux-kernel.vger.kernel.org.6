@@ -1,90 +1,193 @@
-Return-Path: <linux-kernel+bounces-310335-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310336-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6AEBC967B84
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 19:34:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 97DD9967B86
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 19:36:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9B8361C2145C
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 17:34:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B88C41C216CF
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 17:36:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1042183CD8;
-	Sun,  1 Sep 2024 17:34:01 +0000 (UTC)
-Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 626ED183CC3;
+	Sun,  1 Sep 2024 17:36:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=layalina-io.20230601.gappssmtp.com header.i=@layalina-io.20230601.gappssmtp.com header.b="yxrYVAI+"
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAD5728387;
-	Sun,  1 Sep 2024 17:33:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F02F1181B80
+	for <linux-kernel@vger.kernel.org>; Sun,  1 Sep 2024 17:35:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725212041; cv=none; b=PB8YBpWbknT/iVTb9zLDDOMGDqJclLI9Tt+QR/duClQqJruC74Ed43FZLtycDqbpQ6RuLjXcnrzF1uSohuxYD3v8wZFkCazB3jxRyyH5SuJP+C4DGxu8vuv1w/zJCauSVHBH7U3EW4w5r1GCz24T03FzbmjzTUyoz/4lXQRzw1I=
+	t=1725212160; cv=none; b=oIjkHsEtk78ToEorheiKpxTeET6i8raGYZU7BAW8au8hRIsrovnPNsYKAdyfsZaHdkAAFUhDgXYtCdizUiaO3muwwUqukipUKp2ccMaDUVzjDDg4szDqcpthUn5+AkhOQdZZIQ84qz/9JOql2lF4GbqjrkRkhAsLuyNUlDyhM40=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725212041; c=relaxed/simple;
-	bh=PzDrXFfzqFVdCV2JfpY1TCCOml/OGOWPD8/E2HMkxiM=;
+	s=arc-20240116; t=1725212160; c=relaxed/simple;
+	bh=8fo5RF9hn9Cwx+3dapT7AvCdfyDW7Ccdnmkq86JSTdw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IUaBKH0I7+Yukv0WnSUmX731Te8/NASPFObtCmbVljItiSYGe2DtXdR72puC/pHeMnBGFstWxUuUrhaBCu9iD2qb2lBCzAbncuQC9rzRB3prN3nY/Ozbg/GVe99P9Q5B7x68+6N8QA7UNKcw/CfdfShOr4U089O3ANoYNwJQ4WY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-7141e20e31cso2877830b3a.3;
-        Sun, 01 Sep 2024 10:33:59 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=DVjYCcs4zvab1wwM2HQuNG9BCdMMugWDrnHa0EVlN1r2OU/SUmwo2+mpJ6FHEbXVFrefJREmokijXHxQ/p734eGOEm/XaZUHSSkDi81NNzJpyMm5TV74qSyPdzETsqp/9Inc70fzv7RjsJL14lUwjDW4JuqP8S/YJ+zs1U5S7ws=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=layalina.io; spf=pass smtp.mailfrom=layalina.io; dkim=pass (2048-bit key) header.d=layalina-io.20230601.gappssmtp.com header.i=@layalina-io.20230601.gappssmtp.com header.b=yxrYVAI+; arc=none smtp.client-ip=209.85.218.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=layalina.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=layalina.io
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a7a9cf7d3f3so376338066b.1
+        for <linux-kernel@vger.kernel.org>; Sun, 01 Sep 2024 10:35:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=layalina-io.20230601.gappssmtp.com; s=20230601; t=1725212157; x=1725816957; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=BBXN7KTwAPMDesT9rI+sPHbVfqONlmGBvlSCIWfwlXo=;
+        b=yxrYVAI+4s/+TLFPUiyJvuJfD1g4vmfH6/hb5NfdMxQIGMItIPzxP0x52uAf8SBrde
+         f7nU4PMCSXlT69xouK5lt8Gzzc9vDuk7VPGW7efF+H9mJl+KrUGDNPeHcjumeHzux225
+         s0+8jIEQ1Yu1++byXm8U1cM67ineeoXUe+KJI8ZEhaMRSB5dnt6fdep6NVSiBJoJ/FLN
+         iojG3PYPq3bFzERNifRqI/zIk4gOwrDGfpzXImpAhmMZXuRYycuId9jlJ90k/VbzmwlR
+         FwuSfk5czshAcy3nVSHfvydWOCIq1wdgnrCilD42c8HrCZnzTqk9uB4wv0ayeGT1eRov
+         ++PQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725212039; x=1725816839;
+        d=1e100.net; s=20230601; t=1725212157; x=1725816957;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=TYbqkAtoq8ECBqJqS2WA0sHMNuKw8v0jwauE2w39rHY=;
-        b=ii6kYArK7dR9NhoLXKanlwUAjjPIPrG3Tash9UwdGkKGB8s+c99sIF8P81jZwfpWsS
-         Y+okivLCb6jA37e0BgOGct9WkFKhzb4SkWoxa4i36XaNy7ahH6YaVNX4q+KCf2N1ARz1
-         e3VL0tBbR+IhJZYZm8nU7jFfyJPojHL5pMR0RKXj+sczjoGnkOk91a2eqVDwuE5RtJum
-         TUxfqFG30IvrSmwaGNkSbtlNARNKd3PKvrTl9+vSMzNgLILbDbeaH7ndKBAH6ArUN1Dw
-         +AgmcfaLmml+MMU2n96mm1sQ6XLFNA3+zCGFJUr+plL9J8UZzpUeMFpyQrxq8kToRnlp
-         STqw==
-X-Forwarded-Encrypted: i=1; AJvYcCUQRdbcxF+lPAilRa+GnP2NHnfXMvsCkwVHz+NMHYxQZ1G4ScOBCdy1IQEezydQATBMDlWO96vWDluJuxeF@vger.kernel.org, AJvYcCUhE20kRkSHID5t7ezMm59zDvcRGwB9VqyqzPl9n4CEu2MXo9KEmJbRZI0UpKc6dw3aFyY/4CGp1I3As55FYeY=@vger.kernel.org, AJvYcCVCRMoIv69ZlCZGraF+Ynw4EQLSh+K+nmupu2fYH0U2n0/OMXjsQPGhAT1jMkbZkctP+9e/zArDVCZBSO19KXjvAn4=@vger.kernel.org, AJvYcCWsTA53gOTqN5HthhD84cDchtS9SZTaCR9Yh4Gkc+bhlcc8tQtAnhvuopVwqDO+stSAo8jQMGudFSEK@vger.kernel.org
-X-Gm-Message-State: AOJu0YwarxmhzqJ1XZPX6JGYbhatqAMDVAW+JA8pVFQ0ksXwWZoIV8om
-	Y8K7Q5LqiSWdOSLSnE6AziWe5MOVl7j0DY4gotAkbFtNROlZCTXW
-X-Google-Smtp-Source: AGHT+IEFQMytQM6n1pdKGwJuMZ05wwyEdA7f61XnLpDQzaPQVkTiJH9ySeXrhOSznpoV8xzQYWje1w==
-X-Received: by 2002:a05:6a20:b418:b0:1c6:a562:997f with SMTP id adf61e73a8af0-1cecf757f5cmr6024916637.42.1725212038844;
-        Sun, 01 Sep 2024 10:33:58 -0700 (PDT)
-Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-205439dadabsm26453685ad.166.2024.09.01.10.33.57
+        bh=BBXN7KTwAPMDesT9rI+sPHbVfqONlmGBvlSCIWfwlXo=;
+        b=XsX5egpnFRcLlKapMdAj+21WXw56iDuYJfxbYFQKg5wViUb45MKQzySuB8uKK1IxiR
+         /21wrq7LOzfH7r5DstiM4SzcnS1fLESeqTRhZJDw3KkAyTOK/K45spYFNads51wqZYvN
+         uo41a5aGedJLejxnyiblgLa3mESxa/gLyFio/K4kpJTqpzXoh2EVwflIe+Ncnv8nSJo4
+         zRoY/mofogxsYccV6VaNL5jogTIh5U42fIwHhiNtlYTDLdw29idRqZJ/KT1uctIHnP5P
+         epCHiKQgaoclago36sEP9HFUmsW3ic5RbYYky68JFDuUkWjuGeR4iCq9LlAV7jJOR32N
+         I76g==
+X-Forwarded-Encrypted: i=1; AJvYcCXymMOB0qmC02oQBX/taDwWBYSHkKMg3AKMxCq2p4Ad0E6i2Uh01uxuXoMPtxZzi8J3dV6i1SoMwWYvdg0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywx8/DdYHRNrfwZaOdFVE9H/rCQOJZpAjx6BvU10qnwf+UBk9Ma
+	SmPvwm48SXkVYYoXWQYwxVp10JPieYdU7F6qpA813TtJOSME7xhJjk/Rq732b01lZbws3n9bTrp
+	Sq+4=
+X-Google-Smtp-Source: AGHT+IH7xmYFVMjw6pKYg40WLjly23kzrWCNbQw//RjLCm1t832Y5KCbXETGqptcdCiQK7P1WIaHcw==
+X-Received: by 2002:a17:907:3e83:b0:a86:6fb3:fda5 with SMTP id a640c23a62f3a-a89fae1b889mr121955266b.32.1725212156658;
+        Sun, 01 Sep 2024 10:35:56 -0700 (PDT)
+Received: from airbuntu ([176.29.222.46])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8988ff0465sm458214666b.29.2024.09.01.10.35.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 01 Sep 2024 10:33:58 -0700 (PDT)
-Date: Mon, 2 Sep 2024 02:33:56 +0900
-From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
-To: Colin Ian King <colin.i.king@gmail.com>
-Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	linux-pci@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] PCI: rcar-gen4: make read-only const array
- check_addr static
-Message-ID: <20240901173356.GK235729@rocinante>
-References: <20240822205941.643187-1-colin.i.king@gmail.com>
+        Sun, 01 Sep 2024 10:35:55 -0700 (PDT)
+Date: Sun, 1 Sep 2024 18:35:52 +0100
+From: Qais Yousef <qyousef@layalina.io>
+To: Christian Loehle <christian.loehle@arm.com>
+Cc: Ingo Molnar <mingo@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
+Subject: Re: [PATCH v3] sched: cpufreq: Rename map_util_perf to
+ sugov_apply_dvfs_headroom
+Message-ID: <20240901173552.h2pkra5fhkidzxd4@airbuntu>
+References: <20240808234415.554937-1-qyousef@layalina.io>
+ <bfcedd2d-6459-4611-8c4a-08cfdbdfbc5c@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240822205941.643187-1-colin.i.king@gmail.com>
+In-Reply-To: <bfcedd2d-6459-4611-8c4a-08cfdbdfbc5c@arm.com>
 
-Hello,
+On 08/16/24 16:44, Christian Loehle wrote:
+> On 8/9/24 00:44, Qais Yousef wrote:
+> > We are providing headroom for the utilization to grow until the next
+> > decision point to pick the next frequency. Give the function a better
+> > name and give it some documentation. It is not really mapping anything.
+> > 
+> > Also move it to cpufreq_schedutil.c. This function relies on updating
+> > util signal appropriately to give a headroom to grow. This is tied to
+> > schedutil and scheduler and not something that can be shared with other
+> > governors.
+> > 
+> > Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+> > Acked-by: Rafael J. Wysocki <rafael@kernel.org>
+> > Reviewed-by: Vincent Guittot <vincent.guittot@linaro.org>
+> > Signed-off-by: Qais Yousef <qyousef@layalina.io>
+> > ---
+> > 
+> > Changes in v3:
+> > 
+> > 	1. Add Reviewed-by from Vincent
+> > 
+> > Changes in v2:
+> > 
+> > 	1. Add Acked-by from Viresh and Raphael (Thanks!)
+> > 	2. Move the function to cpufreq_schedutil.c instead of sched.h
+> > 	3. Name space the function with sugov_ to indicate it is special to
+> > 	   this governor only and not generic.
+> > 
+> >  include/linux/sched/cpufreq.h    |  5 -----
+> >  kernel/sched/cpufreq_schedutil.c | 20 +++++++++++++++++++-
+> >  2 files changed, 19 insertions(+), 6 deletions(-)
+> > 
+> > diff --git a/include/linux/sched/cpufreq.h b/include/linux/sched/cpufreq.h
+> > index bdd31ab93bc5..d01755d3142f 100644
+> > --- a/include/linux/sched/cpufreq.h
+> > +++ b/include/linux/sched/cpufreq.h
+> > @@ -28,11 +28,6 @@ static inline unsigned long map_util_freq(unsigned long util,
+> >  {
+> >  	return freq * util / cap;
+> >  }
+> > -
+> > -static inline unsigned long map_util_perf(unsigned long util)
+> > -{
+> > -	return util + (util >> 2);
+> > -}
+> >  #endif /* CONFIG_CPU_FREQ */
+> >  
+> >  #endif /* _LINUX_SCHED_CPUFREQ_H */
+> > diff --git a/kernel/sched/cpufreq_schedutil.c b/kernel/sched/cpufreq_schedutil.c
+> > index eece6244f9d2..575df3599813 100644
+> > --- a/kernel/sched/cpufreq_schedutil.c
+> > +++ b/kernel/sched/cpufreq_schedutil.c
+> > @@ -178,12 +178,30 @@ static unsigned int get_next_freq(struct sugov_policy *sg_policy,
+> >  	return cpufreq_driver_resolve_freq(policy, freq);
+> >  }
+> >  
+> > +/*
+> > + * DVFS decision are made at discrete points. If CPU stays busy, the util will
+> > + * continue to grow, which means it could need to run at a higher frequency
+> > + * before the next decision point was reached. IOW, we can't follow the util as
+> > + * it grows immediately, but there's a delay before we issue a request to go to
+> > + * higher frequency. The headroom caters for this delay so the system continues
+> > + * to run at adequate performance point.
+> > + *
+> > + * This function provides enough headroom to provide adequate performance
+> > + * assuming the CPU continues to be busy.
+> > + *
+> > + * At the moment it is a constant multiplication with 1.25.
+> > + */
+> > +static inline unsigned long sugov_apply_dvfs_headroom(unsigned long util)
+> > +{
+> > +	return util + (util >> 2);
+> > +}
+> > +
+> >  unsigned long sugov_effective_cpu_perf(int cpu, unsigned long actual,
+> >  				 unsigned long min,
+> >  				 unsigned long max)
+> >  {
+> >  	/* Add dvfs headroom to actual utilization */
+> > -	actual = map_util_perf(actual);
+> > +	actual = sugov_apply_dvfs_headroom(actual);
+> 
+> Maybe you can even get rid of the comment above now.
+> sugov_apply_dvfs_headroom(actual) is pretty self-explanatory.
 
-> Don't populate the const read-only array check_addr on the stack at
-> run time, instead make it static.
+It was actually not clear to folks based on previous discussion. And I already
+doing many changes on how dvfs headroom is done on another series. So I think
+it is worth it.
 
-Applied to controller/rcar-gen4, thank you!
+> 
+> Anyway
+> Reviewed-by: Christian Loehle <christian.loehle@arm.com>
 
-[1/1] PCI: rcar-gen4: Make read-only const array check_addr static
-      https://git.kernel.org/pci/pci/c/5603a3491b36
+Thanks for having a look!
 
-	Krzysztof
+> 
+> >  	/* Actually we don't need to target the max performance */
+> >  	if (actual < max)
+> >  		max = actual;
+> 
 
