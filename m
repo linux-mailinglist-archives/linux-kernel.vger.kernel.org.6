@@ -1,237 +1,108 @@
-Return-Path: <linux-kernel+bounces-310208-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310214-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 176F596764E
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 13:55:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C0E8496765F
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 14:10:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6ED2B282010
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 11:55:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E783282201
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 12:09:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65595171644;
-	Sun,  1 Sep 2024 11:55:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAE6817E919;
+	Sun,  1 Sep 2024 12:09:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="qi5JYenb"
-Received: from NAM04-BN8-obe.outbound.protection.outlook.com (mail-bn8nam04on2079.outbound.protection.outlook.com [40.107.100.79])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="l1JBb4QA"
+Received: from mout.web.de (mout.web.de [212.227.15.3])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3CD61C36;
-	Sun,  1 Sep 2024 11:54:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.100.79
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725191701; cv=fail; b=pbD4dTdz7X7q7RE5StIvF+Mip/Nj+1arDU1UqJi3ANLMDa/ujCi4sgOEAgZQ7YGrl6K5BUPkrpIlGZO670Y4Ie75RU67HuZ6s9wNHOF/A8Am32TDd46s16KpK0qwm2GrgzPYySZkVmsmNKXn9IJDN6EdAjZjDVReRmuWKXUeVjk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725191701; c=relaxed/simple;
-	bh=ZGM8/BWSFvxJB/aywcLItpmX8NWqNGXxpfmOYur7OzI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=o2QDMXwjbgNPj5HmZK0Tr2RmXSbeHtO5bzGj2kWNr0CXudsqyjWNTC0h7Pmen0JfmjbdTH04KxN2OuQcVpPWqH8CjVQkAHkJ8b/z+JkTn6LpObHQ+2bONa3RWrVX9jHc73hBgjZWv8wJROXY9GxyFyrc7zVYPS0FFqgLvw5+IJQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=qi5JYenb; arc=fail smtp.client-ip=40.107.100.79
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=DkHOvhqBPYCTg2O3Vu2bnTPdhtrgeiR/jM2mDniMaJv/rOBAgQSUgKwsnr5oRbBdWdin7Pnl+tbyJGlxHxxUIkjpdL6pw2RrFoVD+ajoxqIGzrEhncMbs1YSS+VC3erq+supVW2hU2wpdAoF3fE5wx/14Cn7tslFAiFAXjVLMIXQtSvaKO/KRHzobvbDszpZEeCVlLRXlXioCk9gDWRTxldLwcjCi8Us0vtxhfy1+bvObPUJMEjv9UznIoKHW7P1JxRol+Zz15PMn1okeKHbjnMpFhpUjBoDuGM2IJ9Jy7iBEDIBzNwPAzDkXlHLIKa9qdCa4n1dNtCAD0bhqB45fA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=1qY2FvRq6dY+lNUnXvwvTKjCsOuljRU+nzfhLKnCDoA=;
- b=gkJvddxNYLlmphI9pslbEgFCXTTUa8o43nJcuPHTZXr51cw8o1AYoupPf1o+WxJJeLfWVa/MHgCPKL857zZ0I5x3E6frTJZ5NnQ4umu5IRPxnQ5ftLxSxs51H1rgRv9i50S7YZEvJAuPZKr9SbakzeqcdQyMbk2f1CmJR37IuxMRucGVjTJsp8P2nEfagaj2dwPlgfwUye4giS6K8cjvS9GZYZaX4DVfcXTiSEQYnB8rzmgY9YUp2Pt/1IJUO6NdiLtNNfC6QwbOX7Z4aMv/VKSL7Wo7FMmsh81N5LhnlxbLo467sQ+ZoysbqOlR3tsLVW6Lk0Gq3gok4GdJigmuBA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=1qY2FvRq6dY+lNUnXvwvTKjCsOuljRU+nzfhLKnCDoA=;
- b=qi5JYenb+cillQCkSSu0L/z+RHEOimMK1z1whNXLjSQzKqWw09B/7E0ZZFbar/WfElid83Tf4gD01EYdlmhtZOO5MupLqDZhEwxuXovvsyHSA8vlh2CpDgTNTA0CjBHhQzcvt051r+CzNzavecN+WZSVXBxEH/NsbDdVpUvmeWkry+5Lmci87G10zToHuVT6ymWY+xr/3af5xSTesWHxgTsdJfh3oJ1VGZI/xBiYS2HkDzhImQV69IczCUlm/FoUUwTnpXUzZapZeCOnZ2Z57YvfUCWfUDIpm5K+pdutbVkApV6PywMp44njsUHKzZLwPCCeZUOyD4F6fRHebrnr9A==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from SN1PR12MB2574.namprd12.prod.outlook.com (2603:10b6:802:26::32)
- by DS0PR12MB7583.namprd12.prod.outlook.com (2603:10b6:8:13f::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.23; Sun, 1 Sep
- 2024 11:54:53 +0000
-Received: from SN1PR12MB2574.namprd12.prod.outlook.com
- ([fe80::4a2f:d03:c33b:448d]) by SN1PR12MB2574.namprd12.prod.outlook.com
- ([fe80::4a2f:d03:c33b:448d%3]) with mapi id 15.20.7918.019; Sun, 1 Sep 2024
- 11:54:51 +0000
-Date: Sun, 1 Sep 2024 14:54:40 +0300
-From: Ido Schimmel <idosch@nvidia.com>
-To: Nikolay Aleksandrov <razor@blackwall.org>
-Cc: Jonas Gorski <jonas.gorski@bisdn.de>, Roopa Prabhu <roopa@nvidia.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Petr Machata <petrm@mellanox.com>,
-	Ido Schimmel <idosch@mellanox.com>, bridge@lists.linux.dev,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net] net: bridge: allow users setting EXT_LEARN for user
- FDB entries
-Message-ID: <ZtRWACsOAnha75Ef@shredder.mtl.com>
-References: <20240830145356.102951-1-jonas.gorski@bisdn.de>
- <b0544c31-cf64-41c7-8118-a8b504a982d1@blackwall.org>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b0544c31-cf64-41c7-8118-a8b504a982d1@blackwall.org>
-X-ClientProxiedBy: LO2P265CA0061.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:60::25) To SN1PR12MB2574.namprd12.prod.outlook.com
- (2603:10b6:802:26::32)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2C0917E01C;
+	Sun,  1 Sep 2024 12:09:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725192553; cv=none; b=b3YUhIyDDK8jJZVVQ9dKvaYFHQzAnvuHTkrosrSCYjMvO/4mwgrKzM//5dBbD4L0NYie3GbmYOqkK+JMkSqvOYpKfndaEma/5x1LdVAwTTEF7CHxiDzzRLsWAzTzKApzhzBpJWbvJNrGOXc0XkZN3GO3FYTxBkMpL7HGgaigfo8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725192553; c=relaxed/simple;
+	bh=cu9LJjm1nHCO9NMmkUm4yErSsdVtDA7IFZxoJ7nTO3I=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=gjHwh7pz7B4kL34yxEUJUY3Psc4VrqUbJ0FLmMpLsuXimwaVlu0kHFHMlcq5COrQ8sjVtEhiK3QSq6Xh9diZoQZf7TD4q3EZmxN8DO7IYRPlfIbDObl/FYgSnBkVGuontPm3U7f9f86ICLm5VnIzcnJ4iQDPZX00C7c1+dBZvxc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=l1JBb4QA; arc=none smtp.client-ip=212.227.15.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1725192523; x=1725797323; i=markus.elfring@web.de;
+	bh=mydL1oQ8sljL59ISc3eqaLx0XF1zkrGbHSVKS4Rrctw=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=l1JBb4QA8l4e6ojuCtxvfOS/ianBHxqytBZ/t0xskUiT4KCLMLVWSRP6zguvkaXX
+	 kU1Vn+jn/IcWJ6N9sBTLytApgAUD0Nz64wmLuHuCLCUo+au9nTICOphoAF2AL74mE
+	 Rk+PPlMmZ111IzYeMWHOKE8ZjAL63UKy2BxXl7B1fmPDqb624V9/iD8z5cayp8chP
+	 ivrNIlZUlJKBCbwZKckF78I3joQ3WK6FLN2McQ367BrfjswY5MpuuhARw/JMqCP7o
+	 cbF6JwgcxkZ26RwnzIu9HVFTu16VpJrIoIPYJgRM6eY3eP98VODxtyLZdWseln27c
+	 uHZAJwkw0j+qZ22lrA==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.84.95]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MiuOW-1s69uR1tqe-00Zkc8; Sun, 01
+ Sep 2024 14:08:43 +0200
+Message-ID: <533802b3-3034-4b7c-b903-72608917e2f0@web.de>
+Date: Sun, 1 Sep 2024 14:08:31 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN1PR12MB2574:EE_|DS0PR12MB7583:EE_
-X-MS-Office365-Filtering-Correlation-Id: e4352cc6-1e60-48c9-e08f-08dcca7ce2e3
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?J8ORkeoT4cV1/oxqn1RfgYWi2mdj2xJtOC2ps5Lzkf6nzGVKQPnn0Cbg7k/C?=
- =?us-ascii?Q?8FZtqAI6j6G9kBrng4poToI0JIBrLYP6taPH8VZjEsDoYqoAMhRZc4w2P6XH?=
- =?us-ascii?Q?+I7qFxiLU9g79qTVqSXGfhIRiHbeLaVXZPmPTJSHrYTkPOzCCbkGAR2UsWxU?=
- =?us-ascii?Q?wEGkdMDS0zIjux28KIaeCfuqwK2rHFsmeMcNSKjJkPkxT5KQYrUcPvpJd2Hp?=
- =?us-ascii?Q?Q9dY9lMmn+TLNYSiMdNg2RMcRXAEazHYhxw9wfnls2oH3w23CSIxqwjRBX+a?=
- =?us-ascii?Q?BCmugpkZ5q6d5tY0fm9vB9tfyTxuRjLiJb/eHmYf7o4vnvl+v/6Gob62WCRO?=
- =?us-ascii?Q?RVnErF7ah+4wSC97w5EpRnBJVO0hIVxKREt4SJnrJzgZ8BjDXCz+E7A+Zlr7?=
- =?us-ascii?Q?dK5W08gXiYzL8n4ZzPi77RmAgLkBhOn1PEMpYygMVZcZKiKH0Ze5KZHuK03o?=
- =?us-ascii?Q?nyO3bSmZl2IWNoB5utQmHRenBXHIkzmq57pO8u2Tg86KRHaDTd9e9p9YX1hO?=
- =?us-ascii?Q?2u2hPvaCqy1Y6/YcL2GPoXzYLeo4I+GMyStOawUo780xM/c0rgZATTRepqAW?=
- =?us-ascii?Q?KoYtS7qlaSHPkarsSjH7puyFCPjhnQ+v2Svm2me3t/VecKz0G5iCYzPfy0UF?=
- =?us-ascii?Q?azUecxakmOdf7CQwIA+REvUZcAnLCoXsgjdiAi+TtT8r65sAJvWtJklSjD3M?=
- =?us-ascii?Q?1wejx38Nrj0tcJUltwUMro+Ui2yc6V3GJzRHc337lgrzgoC3Xn03i4vCNera?=
- =?us-ascii?Q?OgcNrxlflY+jQRHUmY6VkeQL2QSNsu3lS8uNZSIG9aC71YcA7wTec3dgdZU5?=
- =?us-ascii?Q?pRALJ0xN/1QiP4VcOdF7bAYHzT5qBsTes0wU5a0iPJEbCDvWorQZY2dL1K6x?=
- =?us-ascii?Q?gHl3J6XpSC8zU7tBwIwd23cUWcg6yZIAgtsjKxkT+HJA5mXsVE85s8dBt892?=
- =?us-ascii?Q?qm9RJoyKWNbyXawrxpVvwSb7DbABj+xtGf4eglMT+b4CH/HjSWxAtglFQ5rY?=
- =?us-ascii?Q?fu6sXSzTG1qeB8iF8Bl4sj2r4FhWqT2UY/YTlXj/4Hzn/bPpC260ByPyON8h?=
- =?us-ascii?Q?9oFvM9wifFqaXD34aeLjzZUSNKBVwqQH81MokS8TEc9NZzV3/KLs4V9bUABQ?=
- =?us-ascii?Q?g28izYRHakqCFHTJalwJb9vJsbN/laS/K54KSFSra3LuOsQ8pzvGn820MHvG?=
- =?us-ascii?Q?n9Ra0eo+jNkwWvux4wMtEhaE3B9mgjGQANaj/MP3gALkyzch0uJeAGUBVY3d?=
- =?us-ascii?Q?tNG8PT38PbOB5xawDGD9ul2AM9aXjmbHVF21/xuFRQF7pXrjE7ZPuNbrwxHv?=
- =?us-ascii?Q?Xhn8IvtkP/zQaELt+N01puvJBIr94doTr1QwHIR/dayrPA=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN1PR12MB2574.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?ARxqZPdS2xg/BLwrsI+lRC4XCm2A1rjXiXFXQB8zYB7H3N2w2ZDB92oisKLT?=
- =?us-ascii?Q?qcliCL4FpJejm25GirJM9RqnHF79AQeNZexZqhd1FOE4OkdEWgXNF7kmbT2Z?=
- =?us-ascii?Q?mO6vXa79e2gZdZKg2anhTLrm52v7H2kOOWgRPXnanxNCAdSkKfngsw3vXM8O?=
- =?us-ascii?Q?uNjh+Zwe1PYDHKDlUnDgOP8u4DbTe+4ofPOtkucTubfD3166UcMZvLvJ5Jml?=
- =?us-ascii?Q?Tfh60xzns2Dxfg1RPpThWGMXwK39aPXwtKzSdn9aLA8MoCK34uYR1ulVTBJ/?=
- =?us-ascii?Q?uYzPgxx4qeQNXlN0ALQ+u0EVxBZy+yivHOhpdnTZm62vAl/UINKXMW/L6XOx?=
- =?us-ascii?Q?8X0S+ZyDJfASddWu99dXMaNc2yQjuHMfmOGZZQ3pQy/bsZPIqkQ5ORfu8+dR?=
- =?us-ascii?Q?Jj310DrQ9UVZ2YfDcBvaWpsWGYJHpfsds3vifO02/SNmeqaqlMiL3o4HYWhq?=
- =?us-ascii?Q?v0Bju5hDGP70/k9okvyL7c0HJyGDqyfsW5TuKdFdnXqsgUwRUkvnI+aXQAsX?=
- =?us-ascii?Q?/knF/xLr8rofmfzsTJtzi88kLzB29SIk3XpqX1iOzOek0VbfJ2fCo4m07bLf?=
- =?us-ascii?Q?TMMDhUxhmJFqGVdpyMjgKXjJQZpRqjMNWu9/YSmQF499gzcnElSiz1HTZrNf?=
- =?us-ascii?Q?r0/Gh8sCrlDs2hYEy0AQ5HbZPOvudDumSFu4U8vZlUpXnnKqFr6ZsdOhlqXx?=
- =?us-ascii?Q?9yfXQ45Z6MPf3BuVYDFsTnufMh1mZGAf0pV8BK5A7iAMuqmkDX1UJ7TnKty5?=
- =?us-ascii?Q?alZksqOb6ap3/SIIdZDd7dOlKbUu/GDxweZoLzyT9EMCIwr7E/t7QVvDpTH6?=
- =?us-ascii?Q?JKYpwpH9hZR5LYl98G9exYiTPgR4LwSz1/7XlXY9x2tqsMyw7Lma7ByX/oTW?=
- =?us-ascii?Q?GO4n6KjFdjpwzrnQ4GIaNXmKPqPFCidqXIOkU1dd8MsiiP/Uk9s54Na3atV3?=
- =?us-ascii?Q?BHIMZxiF6UZHCcLKhcc7M3wbP5+zvr1aDrj1vYPumOfc/D9Y4VnodivSinC3?=
- =?us-ascii?Q?yaNqvM19IQVn5zwitx88owT8+jL0JGFjkM+hi2GaJuOZg2dBnHwWQcGsnUJO?=
- =?us-ascii?Q?8MEeP0GpQJd1EAIJS61bG4LtZwstqukxTC5+ZAK++CwqcIa/NUHJQbBzWOxZ?=
- =?us-ascii?Q?vSzjZTnx1xfMZT2y621Fuz/lMVXKs3z2yS5bxYMGHLg6qY6gd5TrIqrQtB+P?=
- =?us-ascii?Q?MlS/NyUtOB8cX9U5c/1pWsZ+qD/jmzELFewAUS+tmqqRDGrXyn+85PoyVotw?=
- =?us-ascii?Q?6gj3hO5V4gPwbLzma5CV1eM55lhswUZnybKfsVYbCp6KtRmKObC2oiING/lo?=
- =?us-ascii?Q?NBPrGM5t+e80bGqcINPTRlmZgFCK6RFcAFnR7/aabAn0CDowTIh/IQrDIY/e?=
- =?us-ascii?Q?fKPn5VS/LAw85YBjeOMR4kkcJPwAWdlSlGQGurYOvgFNsfDgXIF2RYHYOSHu?=
- =?us-ascii?Q?6PQYzXXNBPC0piuFdp+QYKHyLrQwmdkec1+PCKO5VYuWGNuZTmK7K/M+uiuB?=
- =?us-ascii?Q?QQ7UU0IxtLyuwylwUCm/7a2qkscDVOjED+bXBp7cNgoIjCBSMK+FIStN7rQC?=
- =?us-ascii?Q?IB+bCyso7Wn/jityb0X+dtH2EQlV3s+go5RIDUT1?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e4352cc6-1e60-48c9-e08f-08dcca7ce2e3
-X-MS-Exchange-CrossTenant-AuthSource: SN1PR12MB2574.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Sep 2024 11:54:51.2419
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: D3/TpuCeBQSv2G4yvlHxWzmG547l6FPBlP4nFeRoIpSeHDKBl1Uj3d4QS4K7TdKIrYxYnNiGH9XFTqKPL+uScg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB7583
+User-Agent: Mozilla Thunderbird
+To: Gyeyoung Baek <gye976@gmail.com>, linux-iio@vger.kernel.org,
+ Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>
+Cc: LKML <linux-kernel@vger.kernel.org>
+References: <20240901091214.15199-1-gye976@gmail.com>
+Subject: Re: [PATCH] iio: imu: inv_mpu6050: Remove duplicate code between
+ labels
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240901091214.15199-1-gye976@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:QUKGJHOtld2ZXAvWSqLvppID7RVJ4c11NBPAf6WHwKoXtlm6Ia6
+ PyW6QB4kmCCZxTBVdtjP7cWXeKSGVPxGW192ezZHU4IugbTxjzV5j9U7vakJ7PXnESuDkKJ
+ xMiL4k04DPOFJLy8xtajwfXAS/gDtcdBNEg13xlNBof3L20UmeMVsRyIWR0ClD1/QkIQhxv
+ VDXYXI4G2fCqtuF3Osf9w==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:orIapVHE6vA=;/ryElGWFVX4yl++yUK74o/+7653
+ 0HEhieHVyIsVEw+Vj0Z1a8RX/k1wiXvlBaFvCjNYttgvRjtpzYRKmKN8jG7RE83mFEqg6TIe8
+ 3u7GA+eHIHddFP3k2hR6Zr7ilKvjLMpnOKtVeCVIM3LwL03WUK0jFLHx9omjHi3AHNzUwZX74
+ B/3wVjcd0HTO6j3hwmdt5jrvfTSsp36tTinJKXmkfqzpcJ11x5hOVjTgATAhuVfVYxR13OwWE
+ xX5bS02rtrcMEROuafMpt+oanAZyS1/1K8xv0tqo8jNJN1aqsgaCkL8xbiVu0RaRYqjn8xv/y
+ 37kTAw19ElGECyxKfQhI7ISd6clRnoAgiI1dwXNLEeRppLHO8dJZ8bEsOPNwRX3ahj2JaqAQb
+ dXy3aSBl0ohWPlNgqQsOFqEVEZp5qXeXDd4ZPyUIg4VW7SscoWWBLLvPma8stv0WLlyGK4uI5
+ iA46cTV1kk0cDfhbALm2438/h4CjY06zRGmwPTFMH+NUPYemgO2EPg1VHQlj8EjLwni9dekDm
+ PSx4GDea+flWXpZjvdFa/57cyggEKCGSv2e9TaeZMsXM/9RsXEShQKkuMGGUUjwekkgKV2XOP
+ KpkTP/cc9aSifFH+mU6fiK9DNcjlvaMsy/KDw7aO9Z9x12DvcN2J7P1qh1bbCvODVjgp5jN9u
+ Ftae+ZJ4DLoOHdmDqIwVYmpd4gCKDcs2viyIaoFWLfnT2v3isxaFE4I1Eg/5Dy/xsVPNYErbx
+ M5EHE0JQkB8PiDr0Mp8BqF77MpB1geiLSZW1b9kyaNi3SWpAPyeNYVgUzfh+JjLTTukKO5C/h
+ e+IRa7+nhYfq+NY33dzDQ67Q==
 
-On Sat, Aug 31, 2024 at 11:31:50AM +0300, Nikolay Aleksandrov wrote:
-> On 30/08/2024 17:53, Jonas Gorski wrote:
-> > When userspace wants to take over a fdb entry by setting it as
-> > EXTERN_LEARNED, we set both flags BR_FDB_ADDED_BY_EXT_LEARN and
-> > BR_FDB_ADDED_BY_USER in br_fdb_external_learn_add().
-> > 
-> > If the bridge updates the entry later because its port changed, we clear
-> > the BR_FDB_ADDED_BY_EXT_LEARN flag, but leave the BR_FDB_ADDED_BY_USER
-> > flag set.
-> > 
-> > If userspace then wants to take over the entry again,
-> > br_fdb_external_learn_add() sees that BR_FDB_ADDED_BY_USER and skips
-> > setting the BR_FDB_ADDED_BY_EXT_LEARN flags, thus silently ignores the
-> > update:
-> > 
-> >    if (test_bit(BR_FDB_ADDED_BY_EXT_LEARN, &fdb->flags)) {
-> >            /* Refresh entry */
-> >            fdb->used = jiffies;
-> >    } else if (!test_bit(BR_FDB_ADDED_BY_USER, &fdb->flags)) {
-> >            /* Take over SW learned entry */
-> >            set_bit(BR_FDB_ADDED_BY_EXT_LEARN, &fdb->flags);
-> >            modified = true;
-> >    }
-> > 
-> > Fix this by relaxing the condition for setting BR_FDB_ADDED_BY_EXT_LEARN
-> > by also allowing it if swdev_notify is true, which it will only be for
-> > user initiated updates.
-> > 
-> > Fixes: 710ae7287737 ("net: bridge: Mark FDB entries that were added by user as such")
-> > Signed-off-by: Jonas Gorski <jonas.gorski@bisdn.de>
-> > ---
-> >  net/bridge/br_fdb.c | 3 ++-
-> >  1 file changed, 2 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/net/bridge/br_fdb.c b/net/bridge/br_fdb.c
-> > index c77591e63841..c5d9ae13a6fb 100644
-> > --- a/net/bridge/br_fdb.c
-> > +++ b/net/bridge/br_fdb.c
-> > @@ -1472,7 +1472,8 @@ int br_fdb_external_learn_add(struct net_bridge *br, struct net_bridge_port *p,
-> >  		if (test_bit(BR_FDB_ADDED_BY_EXT_LEARN, &fdb->flags)) {
-> >  			/* Refresh entry */
-> >  			fdb->used = jiffies;
-> > -		} else if (!test_bit(BR_FDB_ADDED_BY_USER, &fdb->flags)) {
-> > +		} else if (swdev_notify ||
-> > +			   !test_bit(BR_FDB_ADDED_BY_USER, &fdb->flags)) {
-> >  			/* Take over SW learned entry */
-> >  			set_bit(BR_FDB_ADDED_BY_EXT_LEARN, &fdb->flags);
-> >  			modified = true;
-> 
-> This literally means if added_by_user || !added_by_user, so you can probably
-> rewrite that whole block to be more straight-forward with test_and_set_bit -
-> if it was already set then refresh, if it wasn't modified = true
+> 'flush_fifo' label performs same task as 'endsession' label
 
-Hi Nik,
+                                            end_session?
 
-You mean like this [1]?
-I deleted the comment about "SW learned entry" since "extern_learn" flag
-not being set does not necessarily mean the entry was learned by SW.
+The number of actions differ between involved jump targets.
 
-[1]
-diff --git a/net/bridge/br_fdb.c b/net/bridge/br_fdb.c
-index c77591e63841..ad7a42b505ef 100644
---- a/net/bridge/br_fdb.c
-+++ b/net/bridge/br_fdb.c
-@@ -1469,12 +1469,10 @@ int br_fdb_external_learn_add(struct net_bridge *br, struct net_bridge_port *p,
-                        modified = true;
-                }
- 
--               if (test_bit(BR_FDB_ADDED_BY_EXT_LEARN, &fdb->flags)) {
-+               if (test_and_set_bit(BR_FDB_ADDED_BY_EXT_LEARN, &fdb->flags)) {
-                        /* Refresh entry */
-                        fdb->used = jiffies;
--               } else if (!test_bit(BR_FDB_ADDED_BY_USER, &fdb->flags)) {
--                       /* Take over SW learned entry */
--                       set_bit(BR_FDB_ADDED_BY_EXT_LEARN, &fdb->flags);
-+               } else {
-                        modified = true;
-                }
+
+> immediately after calling 'env_reset_fifo' function.
+> so i remove that duplication.
+
+* You would like to specify a corresponding goto chain at the moment,
+  don't you?
+  https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/coding-style.rst?h=v6.11-rc5#n526
+
+* How do you think about to increase the application of scope-based resource management?
+
+
+Regards,
+Markus
 
