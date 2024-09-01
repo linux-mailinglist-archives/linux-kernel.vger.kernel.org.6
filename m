@@ -1,110 +1,125 @@
-Return-Path: <linux-kernel+bounces-310418-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310419-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B512967C7F
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 00:12:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70E86967C81
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 00:13:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 268B01F21887
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 22:12:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AA0171C21137
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 22:13:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C1CD185B52;
-	Sun,  1 Sep 2024 22:11:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B177B185B4A;
+	Sun,  1 Sep 2024 22:13:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="JEprkd9q"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L5HoYQvS"
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5E7437708;
-	Sun,  1 Sep 2024 22:11:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73D9C61FCF
+	for <linux-kernel@vger.kernel.org>; Sun,  1 Sep 2024 22:13:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725228712; cv=none; b=Jj1KT209Zfrm7liWiMaMEgZeTeXwgoPAzipqlA8i2wYrGayGh5Yw8Ik8qfW/WMhA+WZvcNbEzKKsvHKVak5nI8DSdouIPWyQJI8qpuNdcr8Xx70Wd7J8gdDFpJ/cwIKFzeTLF0TXiqU9QbP5c+a33B1Z9Z1BlVOWINbT3iqESz4=
+	t=1725228819; cv=none; b=qT2FAmpBdfOLzbLMlzTOG6LyN3M6wp39dPJjMHl80HSfqbBQ9eP1lfI+cFGI4sd9kOPOxAqN8Wtf6JHvWQbaK1rwyZSDnpOmRCNYPGqa9nVTtFF4wah4HjdtztHhYHFHmOHL22BMcnA31r3ETxhon4/HERl4QS9FSSg0CGPPtpA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725228712; c=relaxed/simple;
-	bh=eQUy7zUuZU/m4d6Ml7R4dvTv3QYIJS3O/FWAOaZIk60=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=Sdrp3HNPRTWJLBQow1Gh+p2dgpQq9/bT811jAxJx5rk0yQvGfuzUCAqp0Zsttpjt7PFQS5Tmdv6lRBwYk0ZxCzcdDBA2iNIuv8b/AoiJTlZ9m0LfpcTt51HE8x4Qb9J3roLhyLWjSHLNrKkY5I3/+DopKWVogREv469YEAFGmRc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=JEprkd9q; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1725228705;
-	bh=Dxm2WOeTRLX3AJSN+AvsJRjW0Bjum+sXlPbyKnIkW5M=;
-	h=Date:From:To:Cc:Subject:From;
-	b=JEprkd9qXIGVe2pIEAO//93yoZfJWCxH5w3QNV3fGi3ibCuC1/WsCl6u6lCIWFQey
-	 u6RQtjLq8pBdrkzNYrdBgS0HiNwFfB7xFawguuEKJxhlD0aMXMYwpfN3fVz41knPzQ
-	 lBi0PBA9l7drvy3lWoWtm99LhsWiXaknLskhodKPUyDIvDg4mbn+ZCBjFWT3SgyvWs
-	 jc1ZVZLZmyP0UWVYfYflj72Refk/40buulEDwMxnhsCUEC9PMQS5FcKmDg6FJ25WKE
-	 nD26sn07nrBlMWiL15xmYrvxQT2l9t/U6gn5xKdHfc3n1VSZhOWgP1eo+hrFPevvSj
-	 B/mG/Melk94kQ==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WxmM53xqtz4x87;
-	Mon,  2 Sep 2024 08:11:45 +1000 (AEST)
-Date: Mon, 2 Sep 2024 08:11:25 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Tejun Heo <tj@kernel.org>
-Cc: Waiman Long <longman@redhat.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: Fixes tag needs some work in the cgroup tree
-Message-ID: <20240902081125.4467945f@canb.auug.org.au>
+	s=arc-20240116; t=1725228819; c=relaxed/simple;
+	bh=uu05Fo9Mc9YyfS0pauXPeDLboNox95mhvm+3wRYnh/M=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=j/LXYY4IPqDJz57kKtZUy0NKTGj6ZffJ3h7JHh2MVplArdt1QUDTRO6RErTOrgg3RJhtZ1TZJMe6iMeZsemREXTATJtXzGbaf/ik23yn/+lZd4cqSWidIVxBxByc4Di6c3XImRdiBPDLz2277ma3EX1mYqtOH/UpJofDUjIOXI0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=L5HoYQvS; arc=none smtp.client-ip=209.85.208.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5bed83488b6so3375691a12.2
+        for <linux-kernel@vger.kernel.org>; Sun, 01 Sep 2024 15:13:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725228815; x=1725833615; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=uu05Fo9Mc9YyfS0pauXPeDLboNox95mhvm+3wRYnh/M=;
+        b=L5HoYQvSSlimahe5nDdKY+OsMeQdTe8XPAvdvaR5HPIiB/HeX8TSTeqmdY5/RvAMzh
+         VKW2gn2XX+x/GUnCrKA2hfOa36u5wJlp/qE13DRWHegejgCMbDKF3RoKpd+LRcIrHalN
+         p5Vq2JqHRyq6ZrHe4QAL/lCjv9gYJsKbQX8IwVLmQg0jpyhXDLxhVVQhFetxc1CIljJB
+         qj6nb4iUtgKT7x8eWtlOHVXlc1l/6QAvYitbAOxKCKakk5boThWkL/0BuoXHu/jx7lQA
+         FrMzBmge9ZLr8irQMNjFsI6gkddDQRt/gJvnrOtMCuMIUgsmskmSmFAZQPHJSSk6AK46
+         8mUw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725228815; x=1725833615;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=uu05Fo9Mc9YyfS0pauXPeDLboNox95mhvm+3wRYnh/M=;
+        b=QsZTIDT9o0+S/pvuPFofA47Nzi57UnqGP0U6QpAetGEBOqT2twJ4Q+on+PIlRZU9fS
+         nrupMt+6/2P1J695z/ndnWZMs0bYpLXCpLONrVUbSl0oDPqQAAHZX+40y7rTLSmWTBQr
+         +nC3LfOhdYIFyUn8zs3EoHe1+yK7AeKICjzauzWFg3zYz+601H5TBybPyytaCpIZbVLa
+         M1nvi/rGLP6o2q+2Z2mEXG/bnKuGAlOIfbGwd7eU8uor3AljsbHZ5C3v5o8j0El2Hk3U
+         8jw84c45R4IWXm8jK6vROj+OC11LTKfRJRsqufDZL/z3qVPr6E7sLq+Lhf4BlpzbhQcL
+         9mQQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUnlG7KqqNO6HjwALaBDYn4iAQzLIzeCDlzJdhSvGUbBaYYWNnLdKmrnAssF3JM+hUtLs7F+tuJlYpS1cQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyFX+Gu4myix22TyygyggPaglQIL2B2HhfiTp9CWraiasjqDsq9
+	C8EbuJ0BjPJeYKAPVWOYXemduIX3dPsj+CYYY11CFh5nYIr6KpCkuQmtDqZqfEc1mmuNSEGXSHA
+	NKqwH/yaDc+hJlsd7Ht7bkexb9KQ=
+X-Google-Smtp-Source: AGHT+IFMdVXB5CtReViBHo6ZhW/u0gI00NEcTW4LRdI2PTBS9Mb/sIzLvXxJSyV4w9+NPYGKmPmEWrB7UW/pabnX7Ng=
+X-Received: by 2002:a05:6402:2550:b0:5be:da7c:6176 with SMTP id
+ 4fb4d7f45d1cf-5c21ed3dfd7mr8870092a12.10.1725228814579; Sun, 01 Sep 2024
+ 15:13:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/LTAeC+VP3q5+1xMj=Qo_oxa";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+References: <CAPM=9tzX71UKndfu8JECMOzc9kf4s4pp9cWTMWwE476cQXt_Yw@mail.gmail.com>
+ <CAHk-=wijFJM9MHvwGSS4ADs8ncRagrXYi2E9SvhK8coMH32D7A@mail.gmail.com>
+In-Reply-To: <CAHk-=wijFJM9MHvwGSS4ADs8ncRagrXYi2E9SvhK8coMH32D7A@mail.gmail.com>
+From: Dave Airlie <airlied@gmail.com>
+Date: Mon, 2 Sep 2024 08:13:13 +1000
+Message-ID: <CAPM=9txF4+rC_CXQTftPctUd0N37t306YKcV3oKPjz+_zQGqag@mail.gmail.com>
+Subject: Re: [git pull] drm fixes for 6.11-rc6
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Daniel Vetter <daniel.vetter@ffwll.ch>, dri-devel <dri-devel@lists.freedesktop.org>, 
+	LKML <linux-kernel@vger.kernel.org>, 
+	Arunpravin Paneer Selvam <Arunpravin.PaneerSelvam@amd.com>, Alex Deucher <alexdeucher@gmail.com>, 
+	lingshan.zhu@amd.com, "Koenig, Christian" <Christian.Koenig@amd.com>, 
+	Matthew Brost <matthew.brost@intel.com>, 
+	=?UTF-8?Q?Thomas_Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
 
---Sig_/LTAeC+VP3q5+1xMj=Qo_oxa
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Fri, 30 Aug 2024 at 12:32, Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+>
+> On Fri, 30 Aug 2024 at 14:08, Dave Airlie <airlied@gmail.com> wrote:
+> >
+> > The TTM revert is due to some stuttering graphical apps probably due
+> > to longer stalls while prefaulting.
+>
+> Yeah, trying to pre-fault a PMD worth of pages in one go is just crazy talk.
+>
+> Now, if it was PMD-aligned and you faulted in a single PMD, that would
+> be different. But just doing prn_insert_page() in a loop is insane.
+>
+> The code doesn't even stop when it hits a page that already existed,
+> and it keeps locking and unlocking the last-level page table over and
+> over again.
+>
+> Honestly, that code is questionable even for the *small* value, much
+> less the "a PMD size" case.
+>
+> Now, if you have an array of 'struct page *", you can use
+> vm_insert_pages(), and that's reasonably efficient.
+>
+> And if you have a *contiguous* are of pfns, you can use remap_pfn_range().
+>
+> But that "insert one pfn at a time" that the drm layer does is
+> complete garbage. You're not speeding anything up, you're just digging
+> deeper.
 
-Hi all,
+I wonder if there is functionality that could be provided in a common
+helper, by the mm layers, or if there would be too many locking
+interactions to make it sane,
 
-In commit
+It seems too fraught with danger for drivers or subsystems to be just
+doing this in the simplest way that isn't actually that smart.
 
-  169a8edf147f ("cgroup/cpuset: Move cpu.h include to cpuset-internal.h")
-
-Fixes tag
-
-  Fixes: dd46bd00ab4c ("cgroup/cpuset: move relax_domain_level to cpuset-v1=
-.c")
-
-has these problem(s):
-
-  - Target SHA1 does not exist
-
-Maybe you meant
-
-Fixes: 047b83097448 ("cgroup/cpuset: move relax_domain_level to cpuset-v1.c=
-")
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/LTAeC+VP3q5+1xMj=Qo_oxa
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmbU5o0ACgkQAVBC80lX
-0GyUrQgAkNh2xRytQAlf4COlEjCRktnDpYVdMi2+L6HOBaTLFOT1s/V9gAEO9g5V
-c95EE4bYH3ZyYnrCgvgQARtmKArkIrFkigeY2DZG0o7Co8adtHsq/4euERwSbSyf
-WPWbo+DvOO2oxhTeNAyxGGxu6DYyLx8WU1Mb2WXocJLPCZhCci5CiDw3MesdVzWp
-Z9eGAY78sDVr6aAlmRj5lK63rHaI02RNwDCEb1JTsetw3Cl6U9fluFyZpoEVIt6I
-1Hb7QV+VN/p0luXlnQG52XuPMRe5UFcX87fYRao/8ziAhuj+Xai32PLEYqmrI4wc
-PkdvDWxBQRPFB6Oac4xX73k9sSQYtg==
-=rFh2
------END PGP SIGNATURE-----
-
---Sig_/LTAeC+VP3q5+1xMj=Qo_oxa--
+Dave.
 
