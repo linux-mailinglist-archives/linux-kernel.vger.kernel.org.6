@@ -1,148 +1,129 @@
-Return-Path: <linux-kernel+bounces-310179-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310180-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBF179675E6
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 12:27:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AFC959675E9
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 12:38:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E73C1F216AA
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 10:27:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 45C4D282148
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 10:38:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 283AA15250F;
-	Sun,  1 Sep 2024 10:27:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03F18152178;
+	Sun,  1 Sep 2024 10:38:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eIe/YD/n"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lD7mo890"
+Received: from mail-oa1-f51.google.com (mail-oa1-f51.google.com [209.85.160.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53A9E1448E3;
-	Sun,  1 Sep 2024 10:27:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC7A014A0AB;
+	Sun,  1 Sep 2024 10:38:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725186423; cv=none; b=EiTel6SKXJOcL08BGxO7gMXNK+i2ZxBMAvQh26i1ju/DMjltxHI5YNv3QyETwMYb7LHxtNfc/OiutBLYuu4z6fJJPV0JwrnIAld2PC94Y8ebhEp+4t39wmmmKBS6JsOFTZvOH+eXzfblqHVgyqJIV2muLADPz40+R+b9aFgp1cY=
+	t=1725187123; cv=none; b=YZa3W+VsHyDNG4VVZyxaAC1g5TLJhhV51n6RZPuu1qlf2vYz1G3tHq+kn31JMZHAfO5YZl/y6CnvR8P7ik/FQZL7oQD59yj9ggYzPbtb4bCIfsDdOEsLuwdKjVczIJsIErFTKbWcLqGtEhJd4MArS0FxcZUszrvPTusICinGDQo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725186423; c=relaxed/simple;
-	bh=J8NsIZc4fWtfVb8jxcYgwofFkO1BZ09EtRsFD+tYgh4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lnFaw9WxqktTJAYm9ztLX/Qc0y5BAlgw7YEKd+7ypetYapZnkRZZSpvTwIbKrVvZTkMPH9FkX2MC2h4cxk43yz+jdLQBB7VtozIgJHh2XL3VFuxqOABSVATYFisBU5rquqPy+CMsZKVGpF7xThwtH/I5dQ2Ix3kQ8x9MpsnJZxs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eIe/YD/n; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A625EC4CEC3;
-	Sun,  1 Sep 2024 10:26:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725186422;
-	bh=J8NsIZc4fWtfVb8jxcYgwofFkO1BZ09EtRsFD+tYgh4=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=eIe/YD/nNAZRkTS8mMUKUdT1aVNZJDFKT/GPIW44+mVO+jLtwF+erlBU4GRL4li8C
-	 VfIMHdVrQzxWSXknCJY+6eGKiqTk3RGyXuXdFAInJD7KuuPXcfVJq+VV74Uq0FJE8/
-	 8KZ79R9kylhy3smDQ5pcjl50DIgZX1YuLLrSuNZnL3494nlZSOgqqP1v8tjBLnf2G7
-	 kKOX3D/T+jZ49g2rsfBO3m6e9xGGIWxEk7EXKsws4zra0BPNBPFQ0N7evlnXWpJ2Us
-	 y0zmRiToj+3v0WaR3a656GyD7LLgkwphg+W/DMYtu8dZZvm1EPqPBg5jRZCps2flTo
-	 cx34Xu3rmkaSg==
-Message-ID: <084bc911-a51c-4257-b5bb-25bed445f3b9@kernel.org>
-Date: Sun, 1 Sep 2024 12:26:55 +0200
+	s=arc-20240116; t=1725187123; c=relaxed/simple;
+	bh=RtbrHR8X01m8ZmauEKuNsNd8YBX31NLA3tjo7E1zYhE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=D4t5nfoxk3YE7RBNORu3uvX6dMae0anLgOOeHzE3X8cZLVuc4L99yMYUN7Gd6rduWSqKF0fKQb3U6zCykMQHyoLbrlBK9y6/yKr+d121eXcZFF5Is4S8OON9wTBBsyAaYDb6B6u1oQDiLF7U3Qf4lHjO1cyMQpqIYfqcImgoTiI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lD7mo890; arc=none smtp.client-ip=209.85.160.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oa1-f51.google.com with SMTP id 586e51a60fabf-2705d31a35cso2061152fac.0;
+        Sun, 01 Sep 2024 03:38:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725187121; x=1725791921; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lyzhfAO6X5H2nFlBE67hjFSOfmqgByxBU/TMolVNnCU=;
+        b=lD7mo890bhKPI87HDp3SUygYcWDKbz7yilxu/8t3EnUoAkZ78W2SktNgfmL7/cXDPn
+         Gn0JT96nYd6UHQqPBN2ZAtpw8/MI+JiktqPihuZ5n4oYbMVI4uOcqaNIGmbVDmPIoVcH
+         zRUhmBbGsxsilIgpeR/DXEDiD93uq0bd8w0LHTp6x5hHAtG867q3nEtKIv60UaM3mIK/
+         wgqLDB79NHWyUpdwRIM/5lQHC1kEliJDpW+jCW5fv13K+BFhh9h9Yezk7b6wA//Q2eXU
+         xhBUJV+E2ui/CAotn/LJeP7NJOFLPI04vI22wK1fuN6kfKw6asXIRVaXposbXJCeM3Xx
+         HQUw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725187121; x=1725791921;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=lyzhfAO6X5H2nFlBE67hjFSOfmqgByxBU/TMolVNnCU=;
+        b=XCrnWJIBfl6KPUK6Gm+dmcq5Vta+fbwMlh3tbAMoOfQmMXP9fkjpMY+Ov3w75ohsSQ
+         /Ddz+EJhuu/cuX8f0ekxr/S3Xwfl25P6Ev+o5ecCk2MLyTb1+/ERb/yY1uAr06UrqmpX
+         LWE/2pdUU4hw3LO6cNzAG12BXcfBHSf80SMIEJ7d+kv5SE3v1p+aSyciQNqMi+k6Ezcq
+         0/b/w74W5+ZVsn57TUOUhehp+7gRYK5RPK5uF7PMJvb6BTMGlilCssTFl5XsPH8MVitf
+         qbPyy7OvwiG2YxIAY3hL8GQOVTv0Si/zJsjOS5bHpMInRNgY0L0esEUw1DAbDmNG+Ulw
+         zDPA==
+X-Forwarded-Encrypted: i=1; AJvYcCV5mEMs5pAYCKgsyuF038CmQmutNLmUNceHqBFzcySxertfb4C7RlchEgbs0tr8i9lXorISqRXFRsQ=@vger.kernel.org, AJvYcCXTmaIkkosRWl2suvB2Yt1S3j2dwUl1DHQtcCd2OzhC8mPc1DaXH7rmVomsQeP4eA0QymWkJd9Nqogigh3N@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw9vkGcmUFYG/5BbUV9oh5DW0IWLrmGeYUM+oYAQkgOjPt1QW8m
+	H0zLd0w9s36q85E++rjVr4mASqrlg9J77cMuWFoipyuOKXAF5m+DtRa21a/rbL9vTkhAh7s6CM4
+	9Wdm+7Ej53l6vZqm3CDxwQGRcQ8s=
+X-Google-Smtp-Source: AGHT+IFwDrFIRchFBPeU5Cmhdf8kTcaSFA4UqvIROjrdvU6DSkfFqOLzuG6/Nk75iyrmFNWILWDA+pXxJaqlFWVRaBE=
+X-Received: by 2002:a05:6871:1cc:b0:25e:b999:d24 with SMTP id
+ 586e51a60fabf-277cc63f0f9mr4474832fac.0.1725187120778; Sun, 01 Sep 2024
+ 03:38:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] dt-bindings: arm: fsl: Add Variscite Symphony board
- and VAR-SOM-MX8MP SoM
-To: Tarang Raval <tarang.raval@siliconsignals.io>,
- "shawnguo@kernel.org" <shawnguo@kernel.org>,
- "krzk+dt@kernel.org" <krzk+dt@kernel.org>, "robh@kernel.org"
- <robh@kernel.org>, "festevam@gmail.com" <festevam@gmail.com>
-Cc: Conor Dooley <conor+dt@kernel.org>, Sascha Hauer
- <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>,
- Gregor Herburger <gregor.herburger@ew.tq-group.com>,
- Francesco Dolcini <francesco.dolcini@toradex.com>,
- Hugo Villeneuve <hvilleneuve@dimonoff.com>,
- Hiago De Franco <hiago.franco@toradex.com>,
- Joao Paulo Goncalves <joao.goncalves@toradex.com>,
- Mathieu Othacehe <m.othacehe@gmail.com>,
- Alexander Stein <alexander.stein@ew.tq-group.com>,
- Parthiban Nallathambi <parthiban@linumiz.com>, Yannic Moog
- <y.moog@phytec.de>, Josua Mayer <josua@solid-run.com>,
- Li Yang <leoyang.li@nxp.com>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "imx@lists.linux.dev" <imx@lists.linux.dev>,
- "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-References: <20240831110743.14280-1-tarang.raval@siliconsignals.io>
- <20240831110743.14280-3-tarang.raval@siliconsignals.io>
- <3b28a1e7-586d-452b-bb00-4473d82976b6@kernel.org>
- <PN3P287MB182994A2AA56868084D70CC28B902@PN3P287MB1829.INDP287.PROD.OUTLOOK.COM>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <PN3P287MB182994A2AA56868084D70CC28B902@PN3P287MB1829.INDP287.PROD.OUTLOOK.COM>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <35904aa5-9851-4894-b953-689904bf33ca@hust.edu.cn> <58b7c7d2-f60c-4a2d-9cb5-d583182bfef4@gmail.com>
+In-Reply-To: <58b7c7d2-f60c-4a2d-9cb5-d583182bfef4@gmail.com>
+From: Dongliang Mu <mudongliangabcd@gmail.com>
+Date: Sun, 1 Sep 2024 18:38:02 +0800
+Message-ID: <CAD-N9QXks-bFxz+4NVbuvG7BJQZrRiodHXqSadqzdA-ammsM1w@mail.gmail.com>
+Subject: Re: [PATCH v2] docs/zh_CN: add the translation of kbuild/gcc-plugins.rst
+To: Akira Yokosawa <akiyks@gmail.com>
+Cc: dzm91@hust.edu.cn, seakeel@gmail.com, corbet@lwn.net, 
+	hust-os-kernel-patches@googlegroups.com, justinstitt@google.com, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, llvm@lists.linux.dev, 
+	morbo@google.com, nathan@kernel.org, ndesaulniers@google.com, 
+	siyanteng@loongson.cn, alexs@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 31/08/2024 15:51, Tarang Raval wrote:
-> Hi ,
-> 
->>>                 - toradex,verdin-imx8mp-wifi  # Verdin iMX8M Plus Wi-Fi / BT Modules
->>> +              - variscite,var-som-mx8mp   # i.MX8MP Variscite VAR-SOM-MX8M Plus module
->>
->> That's not correct. You cannot use this SoM alone.
-> 
-> I took the reference from var-som-imx8mm, where they use "variscite,var-som-mx8mm" in a similar manner. However, if you still believe it's incorrect, I will change it.
+On Sun, Sep 1, 2024 at 2:03=E2=80=AFPM Akira Yokosawa <akiyks@gmail.com> wr=
+ote:
+>
+> Hi,
+>
+> I'm not Alex, but let me chime in.
+>
+> On Sat, 31 Aug 2024 17:34:11 +0800, Dongliang Mu wrote:
+> > On 2024/8/31 12:11, Alex Shi wrote:
+> >>
+> >> On 8/31/24 11:48 AM, Dongliang Mu wrote:
+> >>> +=E7=9B=AE=E7=9A=84
+> >>> +=3D=3D=3D=3D=3D=3D=3D
+> >>> +
+> >> there are still a lots of sign incorrect. Please be sure everything lo=
+oks fine in a web browser after you 'make htmldocs'
+> >
+> > What do you mean by "sign incorrect"? I check the html rendering in the
+> > vscode. It seems fine to me.
+>
+> You are right.  There is nothing wrong as far as the reST specification
+> is concerned.
+>
+> Quote from https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.=
+html#sections
+> (emphasis by me):
+>
+>     An underline/overline is a single repeated punctuation character that
+>     begins in column 1 and forms a line extending *at least* as far as th=
+e
+>     right edge of the title text.
+>
 
-I posted that patch, but I don't think it was correct.
+I see. Will send a v3 patch.
 
-> 
-> One more thing: should I change "VAR-SOM-MX8M Plus" to "VAR-SOM-MX8MP" in the DTSI model name and in the YAML file as well, or keep it as it is?
-
-No clue, these comments are basically repeating compatible name so not
-much helpful anyway.
-
-Best regards,
-Krzysztof
-
+> HTH, Akira
+>
+> >
+> > Dongliang Mu
+>
+>
 
