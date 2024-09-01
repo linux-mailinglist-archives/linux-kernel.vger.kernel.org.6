@@ -1,145 +1,73 @@
-Return-Path: <linux-kernel+bounces-310141-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310143-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1DE4967574
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 09:35:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9446967578
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 09:39:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1CAF8B2146B
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 07:35:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ADFBF282933
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 07:39:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D175142E70;
-	Sun,  1 Sep 2024 07:35:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 555761448DC;
+	Sun,  1 Sep 2024 07:39:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XOEGwOy2"
-Received: from mail-qv1-f44.google.com (mail-qv1-f44.google.com [209.85.219.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E96424A1B;
-	Sun,  1 Sep 2024 07:35:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.44
+	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="NvXgLli6"
+Received: from mail-m16.yeah.net (mail-m16.yeah.net [220.197.32.18])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A67391442F6;
+	Sun,  1 Sep 2024 07:39:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725176128; cv=none; b=QXOviUkN/BKHjsJ9WgpFBY2tuDhiyLCX8xSzMgnGnmQD3P2Y/28LB8/QwvbdiTVh+pXDCJ8olaQdfM/j/Shw9z5gAVMKiURywc6a1EjyDec2a2K0INOPeI3MYdKPaVC6zhdziBtdieyJlwDk0tdmgu53ttc3q02knO42c8aVBok=
+	t=1725176376; cv=none; b=uo25hafjtS0gyR8+h702E4flWbUSdCO4OLjCJvfPLbr9b4WyLUoMn/ymrlkYhho2PoZhFrseaQOLiq4CaXGS9xg2kTCR1/vhQkm4nJSnkzWMH0ShPG8NGN9OwM9E5GFNZL17dGMJjNmf2K6YsjmFFRk1IhDWa+aSYHiwT8dxLHU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725176128; c=relaxed/simple;
-	bh=xb2w4zkpdpNjvY/zJYCRxZq9smLkIi0O47kz49XBMuk=;
-	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=a4TMPnNTH0rwYBVbP6PlqYBMGBJLrCcii61/DRrYG1Jh6CHppf2SaEls+i5NpiP1frfXLDVrbQ0t4AYNtKKEaSpI1358dVHq3odPvxuBUyeXnNtfET25feGnbyIZQt19tO1kbt9k67XSzVxkBdAABc94WVDoSf7OdtE091dU690=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XOEGwOy2; arc=none smtp.client-ip=209.85.219.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f44.google.com with SMTP id 6a1803df08f44-6c35b72f943so5115386d6.0;
-        Sun, 01 Sep 2024 00:35:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725176125; x=1725780925; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:user-agent:mime-version:date:message-id:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=zRk8FmcCEyWHwfxzNws/I37iaouQcScazIoErvdmxJQ=;
-        b=XOEGwOy2V1emqBwyWmUL9H1BDodzlh+277M7UFlicvb2pHpz4VAsqAR4x/M6Vw+6BE
-         0mDOyFKnkYrj4MIpgAPSCUAEgU+AbSo7eZr4j0Q9ONWkHtwwSf5fneq0gQOLKM+7hjZF
-         mIM5V7rZ0wx2XVWuT5r3Vk9Upp1dVd9ltZu5hYqHSfdeSzCz7In4eNdeWNs+ViqzqlUB
-         Kf+/qRqWxkDnMb4/DCC7LtYiA9/JAQbl1ttLTU6+H2o3+OyJwlbjyVB21DD4c7at46MW
-         sVyXo3opWwVcHcuafb4gml32WcpmzxtmbLlhkBhNHOKfU7k4N9LhON88HesEqgEULyDn
-         34rQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725176125; x=1725780925;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:user-agent:mime-version:date:message-id:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=zRk8FmcCEyWHwfxzNws/I37iaouQcScazIoErvdmxJQ=;
-        b=mA4yxlAtw6zm/hgiPXwlJTxYcZgpv826Pyrb3LJwPTOEMHJAxo2xeXrlLLMExzt5a9
-         8rNIRG1uXX00pjfa9rC1UsexwvqREZS+imJ8J5fZfQ4vLTf1tIn91CK0ob8UPJUnyeCM
-         lPQbN3B3e9mjOmd6Li0tAY4lq0soZ8HveUjdsoBS7PC9z3DcdCUWU0DIzs2u+zt43HMQ
-         g7C1oe++jhYdM0EIBuw5mT+dE7x23PJd+PCd8kPaHYa/F+R6aiLSd10ch7TM2vj0bn8z
-         misfCjkdHS0b2v5lMIBUjARUSe5Km4kO5vhQ/AGW6hhLt1lUuiJE4RVXZhYKE94qZNTT
-         GPAA==
-X-Forwarded-Encrypted: i=1; AJvYcCU3P9VPKDjAU0lhR8MQhJtvOz03M272xKt/HeizMclLffplP0dU9L0gr+EHiBcNfkCMsTmWks1Arxy9n/cA@vger.kernel.org, AJvYcCXhNqimnajfgN9wRbdsn530NonC02iW6Ox47Rc46qs45w7i9D39extp2ZWvPLg814RLjYlWamvXcfmfC5Gm@vger.kernel.org
-X-Gm-Message-State: AOJu0YxHXT3uiXXuhWsp/YgZzai1ux+bOPYyZlR3NEdcS1/DWQkc1OiW
-	ztUsIU/qeo0wuWrpWrFpIJD3A4Vp2Tat0Baz+UL0zlTuzIiJ0xQd
-X-Google-Smtp-Source: AGHT+IGopVNCbqfR8SyeF9VBFoj3evG9Be/sQnBDiT7qZGdARPPheaeMeOqIT+iO4r/GipINmuMAEg==
-X-Received: by 2002:ad4:5f45:0:b0:6c3:5e89:3b60 with SMTP id 6a1803df08f44-6c35e893d2dmr34342936d6.3.1725176125433;
-        Sun, 01 Sep 2024 00:35:25 -0700 (PDT)
-Received: from [10.36.8.169] (pat-199-212-65-137.resnet.yorku.ca. [199.212.65.137])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6c340ca58f1sm30672066d6.108.2024.09.01.00.35.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 01 Sep 2024 00:35:25 -0700 (PDT)
-From: Iman Seyed <imandevel@gmail.com>
-X-Google-Original-From: Iman Seyed <ImanDevel@gmail.com>
-Message-ID: <3e61af1f-5dd6-4bf1-ad9d-047d015f3888@gmail.com>
-Date: Sun, 1 Sep 2024 03:35:24 -0400
+	s=arc-20240116; t=1725176376; c=relaxed/simple;
+	bh=gMVfahwDd8Bg+Um22R0oyOMnqP9JF6rpt1c3+R0yPsE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=O8SOFbkiIx0t80uHRCrAQn48CAjsrmLkElXp8GjAw2vWGKvy8hLzwLxzbKLBQ5REUcKKOAZBwsRASgSFkr4IM+pbI+fG317SvUvO0JCyuFxX3b6sWT0lJi1AtyFGK0JYj5GRURPzOEsUL03gs2XZ0SGzjYUzed1yalDN/7yVSzA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=NvXgLli6; arc=none smtp.client-ip=220.197.32.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
+	s=s110527; h=Date:From:Subject:Message-ID:MIME-Version:
+	Content-Type; bh=nkkAvqscjV3VwDh+ot+genWNqMJPdPuo/uhphejIV/s=;
+	b=NvXgLli6WLZPoDQ0XyEKC0aYGmLi5vKPbv810e9CQOKyPf8ZsCORYmIkYEPbUY
+	8N87NWGO7meYMWjaaEeHToUwgLswt5FNE6NxucUp/NJ+QYwZOggLj77PxoLGWilM
+	yEzEF08+NmrlksQI1awmve6oeeBdUW8smfNt3NoeO1L9w=
+Received: from dragon (unknown [114.216.210.89])
+	by gzsmtp1 (Coremail) with SMTP id Mc8vCgDH7SYQGtRmwxNDAA--.6687S3;
+	Sun, 01 Sep 2024 15:38:58 +0800 (CST)
+Date: Sun, 1 Sep 2024 15:38:56 +0800
+From: Shawn Guo <shawnguo2@yeah.net>
+To: Liu Ying <victor.liu@nxp.com>
+Cc: devicetree@vger.kernel.org, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
+	festevam@gmail.com, alexander.stein@ew.tq-group.com
+Subject: Re: [PATCH v2] arm64: dts: imx8mp-evk: Add native HDMI output
+Message-ID: <ZtQaEFhedn3X7Cpp@dragon>
+References: <20240823021257.1067054-1-victor.liu@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] inotify: set ret in inotify_read() to -EAGAIN only when
- O_NONBLOCK is set
-To: Kuan-Wei Chiu <visitorckw@gmail.com>
-Cc: jack@suse.cz, amir73il@gmail.com, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240901030150.76054-1-ImanDevel@gmail.com>
- <ZtQRKfuawk6borTL@visitorckw-System-Product-Name>
-Content-Language: en-US
-In-Reply-To: <ZtQRKfuawk6borTL@visitorckw-System-Product-Name>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240823021257.1067054-1-victor.liu@nxp.com>
+X-CM-TRANSID:Mc8vCgDH7SYQGtRmwxNDAA--.6687S3
+X-Coremail-Antispam: 1Uf129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
+	VFW2AGmfu7bjvjm3AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxU4GQ6DUUUU
+X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiBB9NZWbUC2If0QAAsm
 
-Hi Kuan-Wei,
+On Fri, Aug 23, 2024 at 10:12:57AM +0800, Liu Ying wrote:
+> J17 on i.MX8mp EVK base board is a HDMI type A connector.
+> It connects with i.MX8mp HDMI PHY.  Add support for it.
+> 
+> Signed-off-by: Liu Ying <victor.liu@nxp.com>
 
-I just looked over the assembly generated by GCC and Clang
-with the O2 level of optimization, and you're right. Both
-Generate the identical assembly. It seem like my patch
-would only affect the appearance of the code.
+Applied, thanks!
 
-Kind Regards,
-Iman
-
-On 9/1/24 03:00, Kuan-Wei Chiu wrote:
-> On Sat, Aug 31, 2024 at 11:01:50PM -0400, imandevel@gmail.com wrote:
->> From: Iman Seyed <ImanDevel@gmail.com>
->>
->> Avoid setting ret to -EAGAIN unnecessarily. Only set
->> it when O_NONBLOCK is specified; otherwise, leave ret
->> unchanged and proceed to set it to -ERESTARTSYS.
->>
-> Hi Iman,
->
-> Have you checked the code generated by gcc before and after applying
-> this patch? My intuition suggests that the compiler optimization might
-> result in the same code being produced.
->
-> Regards,
-> Kuan-Wei
->
->> Signed-off-by: Iman Seyed <ImanDevel@gmail.com>
->> ---
->>   fs/notify/inotify/inotify_user.c | 6 ++++--
->>   1 file changed, 4 insertions(+), 2 deletions(-)
->>
->> diff --git a/fs/notify/inotify/inotify_user.c b/fs/notify/inotify/inotify_user.c
->> index 4ffc30606e0b..d5d4b306a33d 100644
->> --- a/fs/notify/inotify/inotify_user.c
->> +++ b/fs/notify/inotify/inotify_user.c
->> @@ -279,9 +279,11 @@ static ssize_t inotify_read(struct file *file, char __user *buf,
->>   			continue;
->>   		}
->>   
->> -		ret = -EAGAIN;
->> -		if (file->f_flags & O_NONBLOCK)
->> +		if (file->f_flags & O_NONBLOCK) {
->> +			ret = -EAGAIN;
->>   			break;
->> +		}
->> +
->>   		ret = -ERESTARTSYS;
->>   		if (signal_pending(current))
->>   			break;
->> -- 
->> 2.46.0
->>
 
