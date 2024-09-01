@@ -1,181 +1,148 @@
-Return-Path: <linux-kernel+bounces-310337-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310338-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60680967B89
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 19:40:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7106967B8E
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 19:48:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE0181F21681
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 17:40:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7D2D0B21658
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 17:48:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D6ED183CBE;
-	Sun,  1 Sep 2024 17:40:47 +0000 (UTC)
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AACD184529;
+	Sun,  1 Sep 2024 17:47:57 +0000 (UTC)
+Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5624B28387;
-	Sun,  1 Sep 2024 17:40:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6638F53E15;
+	Sun,  1 Sep 2024 17:47:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725212447; cv=none; b=AuHgmnShmfS5iTnmv31KyFAnRqVNtslhdmu2JFC4atxWVUJoQ1yFj634AixkyFK4fJ+KKzgUz+PnTQLNKLEfrJnZU6WbFIuivJHr6n0Fhl0qEqoQYj7SUezF6qN7ZaWyqcp+jlfgUj+FtWY6BZAXC43FUmSvI315/9NhrgWO++A=
+	t=1725212876; cv=none; b=sxYPFo+TXDbLv4u2UHEAb5nlH8m6c7XWB/QN2kMGl/UAw41e3jSNgBg9HYxDjRtus0x4KvEIdHc9p0S3voGvb7vvjPTb7+n6aV2R0p9Bg3H6NVhpn2kCgE+EQMKKknBKnv5swwFNhVPuio9+AGQp+CprNv2FqW7dcpfNtKuixOM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725212447; c=relaxed/simple;
-	bh=PHtUPU44VJFtzSXOcuumwF4SxIcugVWr0CGUnXoZGaw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Syq47TkMyQJcRXSx6j0fIqwZK4H2QdlWgi3FW4ea8u6sL3kXVdeqCwfyhAos7ebOwAXeV6XvdGmAXv1VS7XoibgVmc1prmGKPHmPd04hs/hJQRrOCcKRU2QX76u3xsOTmSyo+R8LnlPXih4ShteivcNb0wNepFXVDya1fywn5s8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4WxfLM0dd8z9sSN;
-	Sun,  1 Sep 2024 19:40:43 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id Ls-C2eSZZ_8S; Sun,  1 Sep 2024 19:40:43 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4WxfLL6vmFz9sSK;
-	Sun,  1 Sep 2024 19:40:42 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id DE0588B767;
-	Sun,  1 Sep 2024 19:40:42 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id Nf7_4M6aqOFL; Sun,  1 Sep 2024 19:40:42 +0200 (CEST)
-Received: from PO20335.idsi0.si.c-s.fr (unknown [192.168.234.154])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 7C7518B763;
-	Sun,  1 Sep 2024 19:40:42 +0200 (CEST)
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-To: Shuah Khan <shuah@kernel.org>,
-	"Jason A . Donenfeld" <Jason@zx2c4.com>
-Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
-	linux-kernel@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org,
-	linux-kselftest@vger.kernel.org
-Subject: [PATCH] selftests: vDSO: Also test counter in vdso_test_chacha
-Date: Sun,  1 Sep 2024 19:40:33 +0200
-Message-ID: <f9f64c5ded3925ae408f01c1c61e2fdf6f645a71.1725212364.git.christophe.leroy@csgroup.eu>
-X-Mailer: git-send-email 2.44.0
+	s=arc-20240116; t=1725212876; c=relaxed/simple;
+	bh=Xmc/hEdWTjAatvH4xDGup5Qa9uRF6QYKHs5Vb3yKznU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ss3Bb+KBNeQCGfrzmFPEtbk8sGJvB7kCE5aMVIX/r+L/MuzpLYTZCmA5ToKQrReN/lt102wrsIzMS+wk/0Z2L4jmfLuuPewD54w7LT/zaLcH+yRzGnhyplmuUN4Jcwu9EWPN602RO0WrsfXfuwjsGtcz2YMNUxXbF5UKGHHYU+4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.215.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-7cdf2ac6130so1002598a12.2;
+        Sun, 01 Sep 2024 10:47:55 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725212875; x=1725817675;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cJYJQ1zlbAg/HiswfyOpJTEd1H+q6QzgGzUjsdDbFPY=;
+        b=UJKRPrJ0uNU+egfc8HnkDCL2uvkws3XZbNd5Zc4pmLEAHeZCEnSRWXflnaU5Q4TNQW
+         GZTjBk3mYaK9v/G6hpKWMPv2XGy3mY5vArGAAC6MiMK0YefjMpUYV5IMmGIeHwkq2pgC
+         c37YeTslwVGCFe+E+QIaV5ZsMaJRNRfyKQM3ooTGv9zRS90CpUjDzulKKXLmJNYEXaU4
+         9waehK7uNXReodhM9KHVeDTfYh0RvOMcRsMpYDgdFfX5eDWTVsfjv38y8ZqVdp2obNsZ
+         BDVpLrgGRlS3DkXRQvYbPFeS3QoxexBFVpPVpMKYYxHOF5qYWeizMYaxUR4OeDHE4DBZ
+         03ng==
+X-Forwarded-Encrypted: i=1; AJvYcCUv5CKwu6W3+mOdkrUkgFOHI8UYcMZ6orD1WBcaPXT+8Ao+KIwpFepRkFJ3aeAsz4IHzUaNUBq8PQ6U@vger.kernel.org, AJvYcCV8Y4Mk/FY80Obgw19kfpGyI/ykkr9PqNdy9sHNhos92e/qjrSQiblDnFh0YcJDanYDSAkXNAd0y0awXVZq@vger.kernel.org, AJvYcCVjl13GQmDvxGMsvSDVMDnVF9zRcDbZhkMrsyXPivtElGAB81U1cMHmuatGtXBVS2JyTXqMwCJSwlmI@vger.kernel.org, AJvYcCWTosf+r1reefsNdCXsQhKawJ8ZRIgHai7eSQmS2Ll3ByUQ3OaKu1J+qqn4cRmm27UCdOb0bVMzUIlFl92K6Q==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzNH+kGg5fWooOzQKeTyGciSLDg+3YFCLl06f28xx4+D6oKL1G/
+	CM4ZtMwBY29cYIH9lzxWOt9qfzdHNbl2M0ut/DhDwomKVcZOyhPO
+X-Google-Smtp-Source: AGHT+IEneXWt9Gk0g2RG61bxa1zZfsP3uwuDaYDhRSJVUYa7KkQxRn2HCtoVJzwC9/ELD2s3tYj9IA==
+X-Received: by 2002:a05:6a21:3a44:b0:1c4:a49b:403 with SMTP id adf61e73a8af0-1cece5e24c1mr4521500637.46.1725212874415;
+        Sun, 01 Sep 2024 10:47:54 -0700 (PDT)
+Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2051553648fsm54619285ad.172.2024.09.01.10.47.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 01 Sep 2024 10:47:53 -0700 (PDT)
+Date: Mon, 2 Sep 2024 02:47:52 +0900
+From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
+To: manivannan.sadhasivam@linaro.org
+Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>, linux-pci@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Konrad Dybcio <konrad.dybcio@linaro.org>
+Subject: Re: [PATCH v4 00/12] PCI: qcom: Enumerate endpoints based on Link up
+ event in 'global_irq' interrupt
+Message-ID: <20240901174752.GL235729@rocinante>
+References: <20240828-pci-qcom-hotplug-v4-0-263a385fbbcb@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1725212433; l=4431; i=christophe.leroy@csgroup.eu; s=20211009; h=from:subject:message-id; bh=PHtUPU44VJFtzSXOcuumwF4SxIcugVWr0CGUnXoZGaw=; b=kozjp6TIT5Z6o97Fzq42YN3zXL/6TDVJKww3C/AonWORE7rQibXbhGN+4grmNc48D/b8CPzll mX0qccNo+tGC5wR+VczRIhIK8hLahJg6zHOBu8hzRl5452CiYnK/1Tm
-X-Developer-Key: i=christophe.leroy@csgroup.eu; a=ed25519; pk=HIzTzUj91asvincQGOFx6+ZF5AoUuP9GdOtQChs7Mm0=
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240828-pci-qcom-hotplug-v4-0-263a385fbbcb@linaro.org>
 
-The chacha vDSO selftest doesn't check the way the counter is handled
-by __arch_chacha20_blocks_nostack(). It indirectly checks that the
-counter is writen on exit and read back on new entry, but it doesn't
-check that the format is correct. It has led to an invisible erroneous
-implementation on powerpc where the counter was writen and read in
-wrong byte order.
+Hello,
 
-Also, the counter uses two words, but the tests with a zero counter
-and uses a small amount of blocks so at the end the upper part of the
-counter is always 0 so it is not checked.
+> This series adds support to enumerate the PCIe endpoint devices using the Qcom
+> specific 'Link up' event in 'global' IRQ. Historically, Qcom PCIe RC controllers
+> lacked standard hotplug support. So when an endpoint is attached to the SoC,
+> users have to rescan the bus manually to enumerate the device. But this can be
+> avoided by rescanning the bus upon receiving 'Link up' event.
+> 
+> Qcom PCIe RC controllers are capable of generating the 'global' SPI interrupt
+> to the host CPUs. The device driver can use this interrupt to identify events
+> such as PCIe link specific events, safety events etc...
+> 
+> One such event is the PCIe Link up event generated when an endpoint is detected
+> on the bus and the Link is 'up'. This event can be used to enumerate the
+> endpoint devices.
+> 
+> So add support for capturing the PCIe Link up event using the 'global' interrupt
+> in the driver. Once the Link up event is received, the bus underneath the host
+> bridge is scanned to enumerate PCIe endpoint devices.
+> 
+> This series also has some cleanups to the Qcom PCIe EP controller driver for
+> interrupt handling.
+> 
+> NOTE: During v2 review, there was a discussion about removing the devices when
+> 'Link Down' event is received. But this needs some more investigation, so I'm
+> planning to add it later.
+> 
+> Testing
+> =======
+> 
+> This series is tested on Qcom SM8450 based development board that has 2 SoCs
+> connected over PCIe.
+> 
+> Merging Strategy
+> ================
+> 
+> I'm expecting the binding and PCI driver changes to go through PCI tree and DTS
+> patches through Qcom tree.
 
-Add a verification of counter's content in addition to the
-verification of the output.
+Applied to controller/qcom, thank you!
 
-Also add two tests where the counter crosses the u32 upper limit. The
-first test verifies that the function properly writes back the upper
-word, the second test verifies that the function properly reads back
-the upper word.
+[01/08] PCI: qcom-ep: Drop the redundant masking of global IRQ events
+        https://git.kernel.org/pci/pci/c/3858e8a5ea71
 
-While at it, remove 'nonce' which is not unused anymore after the
-replacement of libsodium by open coded chacha implementation.
+[02/08] PCI: qcom-ep: Reword the error message for receiving unknown global IRQ event
+        https://git.kernel.org/pci/pci/c/95bebcbd657c
 
-Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
----
- .../testing/selftests/vDSO/vdso_test_chacha.c | 39 ++++++++++++++-----
- 1 file changed, 30 insertions(+), 9 deletions(-)
+[03/08] dt-bindings: PCI: pci-ep: Update Maintainers
+        https://git.kernel.org/pci/pci/c/99244b999dec
 
-diff --git a/tools/testing/selftests/vDSO/vdso_test_chacha.c b/tools/testing/selftests/vDSO/vdso_test_chacha.c
-index 9d18d49a82f8..ed6cf372d9ee 100644
---- a/tools/testing/selftests/vDSO/vdso_test_chacha.c
-+++ b/tools/testing/selftests/vDSO/vdso_test_chacha.c
-@@ -17,11 +17,12 @@ static uint32_t rol32(uint32_t word, unsigned int shift)
- 	return (word << (shift & 31)) | (word >> ((-shift) & 31));
- }
- 
--static void reference_chacha20_blocks(uint8_t *dst_bytes, const uint32_t *key, size_t nblocks)
-+static void reference_chacha20_blocks(uint8_t *dst_bytes, const uint32_t *key, uint32_t *counter, size_t nblocks)
- {
- 	uint32_t s[16] = {
- 		0x61707865U, 0x3320646eU, 0x79622d32U, 0x6b206574U,
--		key[0], key[1], key[2], key[3], key[4], key[5], key[6], key[7]
-+		key[0], key[1], key[2], key[3], key[4], key[5], key[6], key[7],
-+		counter[0], counter[1],
- 	};
- 
- 	while (nblocks--) {
-@@ -52,6 +53,8 @@ static void reference_chacha20_blocks(uint8_t *dst_bytes, const uint32_t *key, s
- 		if (!++s[12])
- 			++s[13];
- 	}
-+	counter[0] = s[12];
-+	counter[1] = s[13];
- }
- 
- typedef uint8_t u8;
-@@ -66,8 +69,7 @@ typedef uint64_t u64;
- int main(int argc, char *argv[])
- {
- 	enum { TRIALS = 1000, BLOCKS = 128, BLOCK_SIZE = 64 };
--	static const uint8_t nonce[8] = { 0 };
--	uint32_t counter[2];
-+	uint32_t counter1[2], counter2[2];
- 	uint32_t key[8];
- 	uint8_t output1[BLOCK_SIZE * BLOCKS], output2[BLOCK_SIZE * BLOCKS];
- 
-@@ -84,17 +86,36 @@ int main(int argc, char *argv[])
- 			printf("getrandom() failed!\n");
- 			return KSFT_SKIP;
- 		}
--		reference_chacha20_blocks(output1, key, BLOCKS);
-+		memset(counter1, 0, sizeof(counter1));
-+		reference_chacha20_blocks(output1, key, counter1, BLOCKS);
- 		for (unsigned int split = 0; split < BLOCKS; ++split) {
- 			memset(output2, 'X', sizeof(output2));
--			memset(counter, 0, sizeof(counter));
-+			memset(counter2, 0, sizeof(counter2));
- 			if (split)
--				__arch_chacha20_blocks_nostack(output2, key, counter, split);
--			__arch_chacha20_blocks_nostack(output2 + split * BLOCK_SIZE, key, counter, BLOCKS - split);
--			if (memcmp(output1, output2, sizeof(output1)))
-+				__arch_chacha20_blocks_nostack(output2, key, counter2, split);
-+			__arch_chacha20_blocks_nostack(output2 + split * BLOCK_SIZE, key, counter2, BLOCKS - split);
-+			if (memcmp(output1, output2, sizeof(output1)) ||
-+			    memcmp(counter2, counter2, sizeof(counter1)))
- 				return KSFT_FAIL;
- 		}
- 	}
-+	memset(counter1, 0, sizeof(counter1));
-+	counter1[0] = (uint32_t)-BLOCKS + 2;
-+	memset(counter2, 0, sizeof(counter2));
-+	counter2[0] = (uint32_t)-BLOCKS + 2;
-+
-+	reference_chacha20_blocks(output1, key, counter1, BLOCKS);
-+	__arch_chacha20_blocks_nostack(output2, key, counter2, BLOCKS);
-+	if (memcmp(output1, output2, sizeof(output1)) ||
-+	    memcmp(counter2, counter2, sizeof(counter1)))
-+		return KSFT_FAIL;
-+
-+	reference_chacha20_blocks(output1, key, counter1, BLOCKS);
-+	__arch_chacha20_blocks_nostack(output2, key, counter2, BLOCKS);
-+	if (memcmp(output1, output2, sizeof(output1)) ||
-+	    memcmp(counter2, counter2, sizeof(counter1)))
-+		return KSFT_FAIL;
-+
- 	ksft_test_result_pass("chacha: PASS\n");
- 	return KSFT_PASS;
- }
--- 
-2.44.0
+[04/08] dt-bindings: PCI: pci-ep: Document 'linux,pci-domain' property
+        https://git.kernel.org/pci/pci/c/ada94d00620a
 
+[05/08] PCI: endpoint: Assign PCI domain number for endpoint controllers
+        https://git.kernel.org/pci/pci/c/0328947c5032
+
+[06/08] PCI: qcom-ep: Modify 'global_irq' and 'perst_irq' IRQ device names
+        https://git.kernel.org/pci/pci/c/bba1251edf85
+
+[07/08] dt-bindings: PCI: qcom,pcie-sm8450: Add 'global' interrupt
+        https://git.kernel.org/pci/pci/c/6efd853303a5
+
+[08/08] PCI: qcom: Enumerate endpoints based on Link up event in 'global_irq' interrupt
+        https://git.kernel.org/pci/pci/c/4581403f6792
+
+	Krzysztof
 
