@@ -1,128 +1,241 @@
-Return-Path: <linux-kernel+bounces-310184-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310185-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5D289675F4
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 12:53:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6264A9675F8
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 12:55:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C835F2821F0
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 10:53:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B405282237
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 10:55:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A5741552FF;
-	Sun,  1 Sep 2024 10:53:34 +0000 (UTC)
-Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.85.151])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8A3B15FA7B;
+	Sun,  1 Sep 2024 10:55:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="snIbC2cI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B85B51422D3
-	for <linux-kernel@vger.kernel.org>; Sun,  1 Sep 2024 10:53:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.85.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 091051F951;
+	Sun,  1 Sep 2024 10:55:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725188013; cv=none; b=Z/L8RJTYcFUSQznRihkPklUsBgtykp9Rg7+0X8nVvo1cMJSZsnFts2r3LBVidQOCrLPjm2lFaX9VemxoX43u/W3UOH4nU3EcJ3ZWgJUjkc3JhEHpGg27DMZC51sPAbIMAa9Ld21wt3K1NsQvzjnzbL457qHYtkKE6oTu06r9p/0=
+	t=1725188126; cv=none; b=UXLcl5nFu+4uCP6sRnOs1+C0j0GHJhINXW6J68A9xbMidqzqKvJBe3pXEIOyqnb/mxuJqIgyKCT8MLzu/VaHOr2+EYSolTmubd1a0T5WkR1QMzTDd9nVimOiX4gf2HbRZvu7AHb1z0InfqCsMbMoTY0LBAWMmlIK1QRgsZyoqF4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725188013; c=relaxed/simple;
-	bh=7pEGnYA5JzjWaqiWySwcORA8GhR4vtPpk/TuMIf8yH4=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 MIME-Version:Content-Type; b=mgwkAt42qbfIIkkgQKoEHtI5LzKUwoA6P8sU/JM62y2NhT8LdG4jyzqpbklBZTCjcina4DnETjlnBcEQ9BkBypgZ0CT91CCGwO/L66T4JhZi1Id//mgCXI3HCazUlRgjvmgypokwafG1JwD/myxpE6K/ApqOx6e+Gp7kdL60uc0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.85.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
-Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
- relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- uk-mta-172-VAP0I1YNMyeSluF6sMA7cw-1; Sun, 01 Sep 2024 11:53:27 +0100
-X-MC-Unique: VAP0I1YNMyeSluF6sMA7cw-1
-Received: from AcuMS.Aculab.com (10.202.163.6) by AcuMS.aculab.com
- (10.202.163.6) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Sun, 1 Sep
- 2024 11:52:39 +0100
-Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
- id 15.00.1497.048; Sun, 1 Sep 2024 11:52:39 +0100
-From: David Laight <David.Laight@ACULAB.COM>
-To: 'Yan Zhen' <yanzhen@vivo.com>, "marcin.s.wojtas@gmail.com"
-	<marcin.s.wojtas@gmail.com>, "davem@davemloft.net" <davem@davemloft.net>,
-	"edumazet@google.com" <edumazet@google.com>, "kuba@kernel.org"
-	<kuba@kernel.org>, "pabeni@redhat.com" <pabeni@redhat.com>
-CC: "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"opensource.kernel@vivo.com" <opensource.kernel@vivo.com>
-Subject: RE: [PATCH net-next v3] net: mvneta: Use min macro
-Thread-Topic: [PATCH net-next v3] net: mvneta: Use min macro
-Thread-Index: AQHa+niVvLIu7d7EQ0KehbNKS9tSRLJCwu7Q
-Date: Sun, 1 Sep 2024 10:52:38 +0000
-Message-ID: <d23dfbf563714d7090d163a075ca9a51@AcuMS.aculab.com>
-References: <20240830010423.3454810-1-yanzhen@vivo.com>
-In-Reply-To: <20240830010423.3454810-1-yanzhen@vivo.com>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
+	s=arc-20240116; t=1725188126; c=relaxed/simple;
+	bh=plraTNt54P+K1V16ayCFlHbsakgVBMkJL+ftRk9B3+w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LO3VqJc6U4fDToir2uO/N/lfkOhm1gsKFz4utsP1oM4np2fR3zVDxSLd7OYuNpSNZ/qdYNobo8QzQc6G9YE+pFRKUhMd7nO48hilKXz3i131PGNtic4yt01XW6/C3cbX5QD3rAK7fZunnzioFRWbkWkdJhJE2iFjpocTtMSNghI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=snIbC2cI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 63F9AC4CEC3;
+	Sun,  1 Sep 2024 10:55:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725188125;
+	bh=plraTNt54P+K1V16ayCFlHbsakgVBMkJL+ftRk9B3+w=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=snIbC2cItHQrF3rilQGwIjmsM/tQ25x+Ri3zNnhnnBDQRkEHOfsTzX5M5UoSV67QV
+	 yV5XL1CCK52Uc0ZNMNpA3GxJIf+4t2I+3juws8FfCPJ6xoB4TgUOf0y8Hl9UBBVyv+
+	 6DV0zddiF9EZ7yQtUPrLo2TEJThHrsAZciy6i6eEKscPV6dOfuy9Bmxzu8DCXtLMTz
+	 VRhhz/taDkiJXqqMJ3X77imli91Q17F46QDv0O/NatHBjP0xrxVsnsaePJfbOm5Gf4
+	 +L/Z6F4WTN5bV/HvJhE1agzfAT35OisK69BJzxXa4sTowXjUsKUhZfW3oUL6FPAEt9
+	 JAwLH4VI3MCrw==
+Date: Sun, 1 Sep 2024 12:55:21 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Haylen Chu <heylenay@outlook.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] dt-bindings: clock: spacemit: Add clock controlers
+ of Spacemit K1 SoC
+Message-ID: <w4alphet2d56ojfpm5ibgxdkleb54uvvfsrw5iktzph7xsg3zj@ybofz6uo7qd4>
+References: <SEYPR01MB4221B3178F5233EAB5149E41D7902@SEYPR01MB4221.apcprd01.prod.exchangelabs.com>
+ <SEYPR01MB4221019943A7F5361957811FD7902@SEYPR01MB4221.apcprd01.prod.exchangelabs.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: aculab.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <SEYPR01MB4221019943A7F5361957811FD7902@SEYPR01MB4221.apcprd01.prod.exchangelabs.com>
 
-From: Yan Zhen
-> Sent: 30 August 2024 02:04
-> To: marcin.s.wojtas@gmail.com; davem@davemloft.net; edumazet@google.com; =
-kuba@kernel.org;
->=20
-> Using the real macro is usually more intuitive and readable,
-> When the original file is guaranteed to contain the minmax.h header file
-> and compile correctly.
->=20
-> Signed-off-by: Yan Zhen <yanzhen@vivo.com>
+On Sat, Aug 31, 2024 at 03:47:12PM +0000, Haylen Chu wrote:
+> Add definition for the clock controllers of Spacemit K1 SoC. The clock
+> tree is managed by several SoC parts, thus different compatible strings
+> are added for each.
+> 
+> Signed-off-by: Haylen Chu <heylenay@outlook.com>
 > ---
->=20
-> Changes in v3:
-> - Rewrite the subject.
->=20
->  drivers/net/ethernet/marvell/mvneta.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
->=20
-> diff --git a/drivers/net/ethernet/marvell/mvneta.c b/drivers/net/ethernet=
-/marvell/mvneta.c
-> index d72b2d5f96db..08d277165f40 100644
-> --- a/drivers/net/ethernet/marvell/mvneta.c
-> +++ b/drivers/net/ethernet/marvell/mvneta.c
-> @@ -4750,8 +4750,7 @@ mvneta_ethtool_set_ringparam(struct net_device *dev=
-,
->=20
->  =09if ((ring->rx_pending =3D=3D 0) || (ring->tx_pending =3D=3D 0))
->  =09=09return -EINVAL;
-> -=09pp->rx_ring_size =3D ring->rx_pending < MVNETA_MAX_RXD ?
-> -=09=09ring->rx_pending : MVNETA_MAX_RXD;
-> +=09pp->rx_ring_size =3D umin(ring->rx_pending, MVNETA_MAX_RXD);
 
-Why did you use umin() instead of min() ?
+This wasn't ever tested...
 
->=20
->  =09pp->tx_ring_size =3D clamp_t(u16, ring->tx_pending,
->  =09=09=09=09   MVNETA_MAX_SKB_DESCS * 2, MVNETA_MAX_TXD);
+>  .../bindings/clock/spacemit,ccu.yaml          | 116 +++++++++++
+>  include/dt-bindings/clock/spacemit,ccu.h      | 197 ++++++++++++++++++
+>  2 files changed, 313 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/spacemit,ccu.yaml
+>  create mode 100644 include/dt-bindings/clock/spacemit,ccu.h
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/spacemit,ccu.yaml b/Documentation/devicetree/bindings/clock/spacemit,ccu.yaml
+> new file mode 100644
+> index 000000000000..90ddfc5e2a2f
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/spacemit,ccu.yaml
+> @@ -0,0 +1,116 @@
+> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/clock/spacemit,ccu.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Spacemit SoC Clock Controller
 
-Hmmm how about a patch to fix the bug in that line?
-A typical example of the complete misuse of the '_t' variants.
-The fact that the LHS is u16 doesn't mean that it is anyway
-correct to cast the RHS value to u16.
-In this case if someone tries to set the ring size to 64k they'll
-get the minimum supported size and not the maximum.
+What's the SoC name?
 
-=09David
+> +
+> +maintainers:
+> +  - Haylen Chu <heylenay@outlook.com>
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - spacemit,ccu-apbs
+> +      - spacemit,ccu-mpmu
+> +      - spacemit,ccu-apbc
+> +      - spacemit,ccu-apmu
+> +
+> +  clocks: true
 
-> --
-> 2.34.1
->=20
+No, this must be specific. min/maxItems
 
--
-Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1=
-PT, UK
-Registration No: 1397386 (Wales)
+> +
+> +  clock-names: true
+
+No, this must be specific. min/maxItems
+
+> +
+> +  spacemit,mpmu:
+> +    $ref: /schemas/types.yaml#/definitions/phandle
+> +    description:
+> +      Phandle to the syscon managing "Main PMU (MPMU)" registers
+
+Explain what for.
+
+
+> +
+> +  "#clock-cells":
+> +    const: 1
+> +    description:
+> +      See <dt-bindings/clock/spacemit,ccu.h> for valid indices.
+> +
+> +required:
+> +  - compatible
+> +  - "#clock-cells"
+> +
+> +additionalProperties: false
+
+This goes after allOf block.
+
+> +
+> +allOf:
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: spacemit,ccu-apbs
+> +    then:
+> +      properties:
+> +        clocks:
+> +          maxItems: 1
+> +
+> +        clock-names:
+> +          const: pll1_2457p6_vco
+
+Don't use some weird, fake names. That's pll or vco or whatever the
+input is called.
+
+> +
+> +      required:
+> +        - compatible
+> +        - clocks
+> +        - clock-names
+> +        - "#clock-cells"
+> +        - spacemit,mpmu
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: spacemit,ccu-apbc
+> +    then:
+> +      properties:
+> +        clocks:
+> +          maxItems: 4
+> +
+> +        clock-names:
+> +          items:
+> +            - const: clk_32k
+> +            - const: vctcxo_1
+> +            - const: vctcxo_24
+> +            - const: vctcxo_3
+> +
+> +      required:
+> +        - compatible
+> +        - clocks
+> +        - clock-names
+> +        - "#clock-cells"
+> +
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: spacemit,ccu-apmu
+> +    then:
+> +      properties:
+> +        clocks:
+> +          maxItems: 1
+> +
+> +        clock-names:
+> +          const: vctcxo_24
+> +
+> +      required:
+> +        - compatible
+> +        - clocks
+> +        - clock-names
+> +        - "#clock-cells"
+> +
+> +examples:
+> +  - |
+> +    syscon_apbs: system-control@d4090000 {
+> +        compatible = "spacemit,mpmu-syscon", "syscon",
+> +        "simple-mfd";
+
+Messed indentation.
+
+Anyway, parent device nodes should have complete example.
+
+> +        reg = <0x0 0xd4090000 0x0 0x1000>;
+> +
+> +        clk_apbs: clock-controller {
+> +            compatible = "spacemit,ccu-apbs";
+> +            clocks = <&pll1_2457p6_vco>;
+> +            clock-names = "pll1_2457p6_vco";
+> +            #clock-cells = <1>;
+> +            spacemit,mpmu = <&syscon_mpmu>;
+> +        };
+> +    };
+> diff --git a/include/dt-bindings/clock/spacemit,ccu.h b/include/dt-bindings/clock/spacemit,ccu.h
+> new file mode 100644
+> index 000000000000..ce84690684ff
+> --- /dev/null
+> +++ b/include/dt-bindings/clock/spacemit,ccu.h
+> @@ -0,0 +1,197 @@
+> +/* SPDX-License-Identifier: (GPL-2.0-only OR MIT) */
+
+Use the same license. (one pointed out by checkpatch)
+
+Best regards,
+Krzysztof
 
 
