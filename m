@@ -1,112 +1,108 @@
-Return-Path: <linux-kernel+bounces-310345-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310346-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C271967BA1
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 20:03:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A29B967BA3
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 20:04:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 19733281ED2
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 18:03:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A3421C21220
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 18:04:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBD18184531;
-	Sun,  1 Sep 2024 18:03:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="jB7W3KBN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D1BF184523;
+	Sun,  1 Sep 2024 18:04:17 +0000 (UTC)
+Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF9E2183CA5;
-	Sun,  1 Sep 2024 18:03:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87C3517B50B;
+	Sun,  1 Sep 2024 18:04:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725213782; cv=none; b=aQJoSEvT0p/UiDqL+8hCdlBI1ymiB7ejgjGpmPx3PelvHlamVnenSn+uf/96awYokbVm+loYuTScS18JXit61NUlYXTghuTSHg2p9wC1culCSa2DS4YNuw5eQA8sHereKoVDhvV3I9QrySM8mr5tFxr6Gneqzc0rCaW1ikQLNJo=
+	t=1725213856; cv=none; b=Kuj9aS6A6piH7fS7PwGzvOEcLHFttYuM2kEEY78R9PNXR8ZUFpOQU72IgKU4TiL4r3Z7ViZOx+dhT7xoWbBrz74MSR96cA1EOqSbwEPzYxQUikXsZOJNbnRyrI+k6KfCvUk5yCOW0Tm3h0XkOWj/mWjU6F133Ehf5gGwlbMAO/c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725213782; c=relaxed/simple;
-	bh=hO1wExzhmBwqxqbuHDxVyMhMAXda+Y3e58KyFuDMheI=;
+	s=arc-20240116; t=1725213856; c=relaxed/simple;
+	bh=mnSq0J+JAKAOOwz0q8Iy/LxdUvgMeeHZ4n9wNNQXTNI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=T76h4nS/zx2AhJe12+AUle+gmAO+UOkiByMtkyrjCjcdZO6fd3tJbToWh1aSjCEExxdMqlSZhoJQAzOuq6flzAGKbqLT9fNNryl52nFfejeD3WfNRi4BkYGKR7rF1zANTZoRpQkAFvGwaX6nzm5Ha51tAbvKy9G5+leiPn5UIig=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=jB7W3KBN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7D180C4CEC3;
-	Sun,  1 Sep 2024 18:03:00 +0000 (UTC)
-Authentication-Results: smtp.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="jB7W3KBN"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
-	t=1725213778;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Hy7ET87sbWun3jDsXZxlhIDhdifK/ohyR5N1hUzew60=;
-	b=jB7W3KBNxuLuGWJOIH1TfZW0u0d45F/N1GQXTpiO4ktT4bJQgYPiP3n2KKHORr9/t7+uAe
-	C8iX4ACp9m6z1Q/VsGA+eUYG7suGn7maxbI8HBGDHVXrWec86ej9lvWkj4qZCm328cppOn
-	sNbnoBZXrIyL3DVX9apx2Zh9o/Zd9p8=
-Received: 
-	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 7ee1bc57 (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
-	Sun, 1 Sep 2024 18:02:57 +0000 (UTC)
-Date: Sun, 1 Sep 2024 20:02:54 +0200
-From: "Jason A. Donenfeld" <Jason@zx2c4.com>
-To: Christophe Leroy <christophe.leroy@csgroup.eu>
-Cc: linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	Adhemerval Zanella <adhemerval.zanella@linaro.org>,
-	Xi Ruoyao <xry111@xry111.site>, broonie@kernel.org
-Subject: Re: [PATCH] selftests: vDSO: Do not rely on $ARCH for
- vdso_test_getrandom && vdso_test_chacha
-Message-ID: <ZtSsTkTUCGyxaN_d@zx2c4.com>
-References: <ddf594c81787dba708fc392cb03027470dee64fb.1725124064.git.christophe.leroy@csgroup.eu>
- <ZtRqp-uZe5C07qOF@zx2c4.com>
- <667622ae-dde5-410f-a9f8-4801788af278@csgroup.eu>
+	 Content-Type:Content-Disposition:In-Reply-To; b=rpykAe+3VOdJA/b4YUHBXxJFgE8uRiayWVSjXlRZlCr3f5hvvYDv0vmzHM+Mz6PJEqzTq/KOCXSRw0njMPXzRKmjJ6vN74jTjqvvQQj2XpObgvBgP9C8rz4heKq5W3Bx7qwc3DkwddvZiA3xm+tspmqFEXyWX1lYdEl5BrksNAg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-715abede256so2562574b3a.3;
+        Sun, 01 Sep 2024 11:04:15 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725213855; x=1725818655;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bG0+yx6lkiBOBo9wZ1TUCw/nC9WNNgBDrOrRdXxDmtQ=;
+        b=HyNI20b4+8TUnrVGskOh2T7f6Y/Cn2zUMEImDuNGlPDfJ/pFlEIjDpQS4cK4Loc8be
+         JMc3OhZJv3rgWP+zZIUzV59tWMsBilpaUy/v1EClkmTJv08ESFmomaZ6VbmJFvc/rRbb
+         BzFiod4UdfA1GzhRPu6gHO6hyRBKqcaiezbPU8h3jLKYXyhooE5GTCQ845ALeiAYxx9f
+         /QGqHyT2TE8IM0DG8B1vn1VjQD/E34FoZ1XYoLPi1kSt8B1zXxL0aPTT/yM+JLR7Hw/n
+         bqgYmZXKztbznDy++n5/MUAEcXHHrmN3HBlP72tzr5MIkaH4mrOpRW6gYU+p49Jw67FZ
+         Gb2w==
+X-Forwarded-Encrypted: i=1; AJvYcCV4vOMaMcMNXyzs/K4JfO3Z9PyHAG0nSv+T9lXyUQFEeKEWNbuivIGKGp4mPLYoVJw641iKysbfAxjPrek=@vger.kernel.org, AJvYcCVgDEmiYC+B6Mspm9yKQQqX8enfFlUJiSbnQv3hSQ3R+kcnG3Z37CnOCZsjyO72sVGhfEFHUNDoqAmz@vger.kernel.org
+X-Gm-Message-State: AOJu0YyeJw1ipi6gf9sp3nB4dWe9w6vHwimTxgmVRTxRbiCTfsVAGsmN
+	dm2Mp+G8mGPPe/VCF6VgDU0tV33Eh6y5BmsTWm8bsEdqLABQmcX8
+X-Google-Smtp-Source: AGHT+IFdF25jKRbqtpt6HeDfX5701wEoMfBbhZ9oPZdruUyO5yZDmR2lDVhK/v7B8dw7IreFesMVOQ==
+X-Received: by 2002:a05:6a00:c94:b0:70a:9672:c3a2 with SMTP id d2e1a72fcca58-717449b190cmr2631254b3a.24.1725213854767;
+        Sun, 01 Sep 2024 11:04:14 -0700 (PDT)
+Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-715e5576a4dsm5791529b3a.17.2024.09.01.11.04.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 01 Sep 2024 11:04:14 -0700 (PDT)
+Date: Mon, 2 Sep 2024 03:04:13 +0900
+From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
+To: Jim Quinlan <james.quinlan@broadcom.com>
+Cc: Stanimir Varbanov <svarbanov@suse.de>, linux-pci@vger.kernel.org,
+	Nicolas Saenz Julienne <nsaenz@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+	Cyril Brulebois <kibi@debian.org>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	bcm-kernel-feedback-list@broadcom.com, jim2101024@gmail.com,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-rpi-kernel@lists.infradead.org>,
+	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v6 05/13] PCI: brcmstb: Use bridge reset if available
+Message-ID: <20240901180413.GO235729@rocinante>
+References: <1a6d6972-f2db-4d44-b79c-811ba44368f0@suse.de>
+ <CA+-6iNxFotwXW4Cc31daT+KwE_LEdAR=pcpsg_3Ng0ep1vYLBA@mail.gmail.com>
+ <76b528f8-88e2-4954-94cf-7e0933b4ad03@suse.de>
+ <CA+-6iNykVzd1do=dHDVD3_prJkvfRbA2U-DsLFhSA2S48L_A8A@mail.gmail.com>
+ <87b38984-0a54-4773-ba20-3445d9c9c149@suse.de>
+ <CA+-6iNwJZ+OfYaCBBx04-hO1FmpDE36uJWd1jYvaVs_o4iwWqA@mail.gmail.com>
+ <3bb5c6db-11d9-4e65-a581-1a7f6945450a@suse.de>
+ <CA+-6iNy7souF-BZHV1sBk2nx04LwshB=6amnOixfPPza96RmWw@mail.gmail.com>
+ <9b7cff3f-7d22-4bb5-a56e-11d93bd11456@suse.de>
+ <CA+-6iNwAfur96=kftP_pqZDGUoGkb3_rjKnxiGJmL4xxmzTNaA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <667622ae-dde5-410f-a9f8-4801788af278@csgroup.eu>
+In-Reply-To: <CA+-6iNwAfur96=kftP_pqZDGUoGkb3_rjKnxiGJmL4xxmzTNaA@mail.gmail.com>
 
-On Sun, Sep 01, 2024 at 08:00:30PM +0200, Christophe Leroy wrote:
-> Hi Jason,
-> 
-> Le 01/09/2024 à 15:22, Jason A. Donenfeld a écrit :
-> > Hi Christophe,
-> > 
-> > Hmm, I'm not so sure I like this very much. I think it's important for
-> > these tests to fail when an arch tries to hook up the function to the
-> > vDSO, but it's still not exported for some reason. This also regresses
-> > the ARCH=x86_64 vs ARCH=x86 thing, which SRCARCH fixes.
-> > 
-> > What about, instead, something like below, replacing the other commit?
-> 
-> I need to look at it in more details and perfom a test, but after first 
-> look I can't figure out how it would work.
-> 
-> When I build selftests,
-> 
-> to build 32 bits selftests I do:
-> 
-> 	make ARCH=powerpc CROSS_COMPILE=ppc-linux-
-> 
-> to build a 64 bits BE selftests I do:
-> 
-> 	make ARCH=powerpc CROSS_COMPILE=powerpc64-linux-
-> 
-> to build a 64 bits LE selftests I do:
-> 
-> 	make ARCH=powerpc CROSS_COMPILE=powerpc64le-linux-
-> 
-> 
-> I addition, in case someone does the build on a native platform directly,
-> 
-> On 32 bits, uname -m returns 'ppc'
-> On 64 bits, uname -m returns 'ppc64'
-> On 64 bits little endian, uname -m returns 'ppc64le'
-> 
-> How would this fit in the logic where IIUC you just remove '_64' from 
-> 'x86_64' to get 'x86'
+Hello,
 
-Huh? That's not what tools/scripts/Makefile.arch does.
+[...]
+> Let me ask the HW folks if it is acceptable to leave the bridge reset
+> unasserted on remove() or suspend().  Note that if RPi decides to give
+> <clocks> and <clock-names>  valid props then problem will still be
+> there.
+
+I took this series, but if you have some concerns, especially given the
+conversation here, then do let me know... We can always hold for now, and
+get whatever changes you would need to be part of v7.
+
+	Krzysztof
 
