@@ -1,276 +1,125 @@
-Return-Path: <linux-kernel+bounces-310129-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310131-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F89C96754F
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 08:30:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CCE15967553
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 08:37:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D72A282A18
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 06:30:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 035ED1C20E52
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 06:37:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FA171422D3;
-	Sun,  1 Sep 2024 06:30:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 189431420A8;
+	Sun,  1 Sep 2024 06:37:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mzTrEd87"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CjCrvpGK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C04093FB83
-	for <linux-kernel@vger.kernel.org>; Sun,  1 Sep 2024 06:30:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AB3E748A
+	for <linux-kernel@vger.kernel.org>; Sun,  1 Sep 2024 06:37:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725172237; cv=none; b=eT2nqSTSmhBepnHnUp/0kpxbLKKaS6ujUA7/T9DgtiIsvdSKj2348Lb7vhRL0wG/YHPRosyuv3jaNfgnseqWJ8g4wMgoYhQ3ar30cIRoX9R2RhxE1CLINoe6W/YsiVl8lMwGPJbyXRsQkk5C479jmXEAXj2jpUJMTWISYc7JyaY=
+	t=1725172665; cv=none; b=thEG2N+xkXrteGnNUpueuikgxDWZ++jIPMlUdaXbzXpgy60AVhu3b1u8EbqGvMkngLGrPWE7s2G3Vl6qLLYJVbEw/hGz1UpfRtQUGdTB0AOSqtTM3Zos8UeHP8aGuyCfda/loWrNVBXpSDEK7FHPE9xCk2q/ZyzhK+cUx0yhFtg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725172237; c=relaxed/simple;
-	bh=JTd1cMMNRF9o6hlp6EakIQwKe92cu7rKyGpQ79Z8hbg=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=T4j1IIQ5GpfKGyMgd01LEv5lLQFIiakv5IVIqItrTZz4nehaLrCIwqi0Q8uW4rf36tYtzFa9wfsGZa1o3O1H33djb2KX5Tgo8a1SXPbZ/WlcdeGsTRTUFOSkZTLCmCYMleXnG07ug9knC98mv152+eqQKrOpOsFxxeBVjatXvxc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mzTrEd87; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725172235; x=1756708235;
-  h=date:from:to:cc:subject:message-id;
-  bh=JTd1cMMNRF9o6hlp6EakIQwKe92cu7rKyGpQ79Z8hbg=;
-  b=mzTrEd87eyJ9qCcj+Kk8+3QXiLuKhXALKCV5HyJeahdhCfNJa1fmEt30
-   NB6mD+kfmMksZVkZ0f4Ll3mq6lDg0rtUti4cNARkizE7FYwSGtROqexEI
-   WFB1usanXjz2gNae7WxUBKTNEJXgz5KQkMY/vzBm0sP5KrRWJCm3SlQTp
-   zqH2w77QYlIPonZkJR8KGxFmJkCK3TKQvIMxcM6NushG31jLcyT4jyMdx
-   XKBiV/OWDB0yVAQ75rGaCwiKPFUbX6fEE7dJYT1z3Rjun9KKX4v7Kv5VM
-   toX7dltgZTc9aO0LDPjLLWG06Idh0RD6anbz/JOnEIu0kNclpm0T9aBOj
-   w==;
-X-CSE-ConnectionGUID: fGLR2MCfRNu169G0S1Mp6g==
-X-CSE-MsgGUID: gtyQiJXIQK6dB+thZIM8qQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11181"; a="23906259"
-X-IronPort-AV: E=Sophos;i="6.10,193,1719903600"; 
-   d="scan'208";a="23906259"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Aug 2024 23:30:34 -0700
-X-CSE-ConnectionGUID: I20ydVDbRp2ABh5e4SEx4g==
-X-CSE-MsgGUID: nd4lCsfvRsylZK1zzFGtLA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,193,1719903600"; 
-   d="scan'208";a="64109247"
-Received: from lkp-server01.sh.intel.com (HELO 9c6b1c7d3b50) ([10.239.97.150])
-  by orviesa010.jf.intel.com with ESMTP; 31 Aug 2024 23:30:33 -0700
-Received: from kbuild by 9c6b1c7d3b50 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1ske6Z-0003TK-1k;
-	Sun, 01 Sep 2024 06:30:31 +0000
-Date: Sun, 01 Sep 2024 14:29:54 +0800
-From: kernel test robot <lkp@intel.com>
-To: "Paul E. McKenney" <paulmck@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [paulmck-rcu:dev] BUILD SUCCESS
- 58e6b1b6fe9193d1f798d168a2370ac7dec9e83a
-Message-ID: <202409011452.4QPbr1xa-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	s=arc-20240116; t=1725172665; c=relaxed/simple;
+	bh=YTpC/TIiad9U2QDxYGT39G3AcvYMbOXyGx2BdaYU31Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uo4Set4+GgFqE55/uU1a+DcS8Aoq/lcWsR2jYnt3hFFjBnZYvBKIqL1b7aod0Qyc9E3Bkz87IB2RSmLbc653OgAVFQhlnN4WDEj8cY/UhuVUSeOn0fdWXj1DAWODlIkj7VmlD+1Fha37PPZvQ59nlGYz/I7SGt8+fCrLj6Knbes=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CjCrvpGK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 88847C4CEC3;
+	Sun,  1 Sep 2024 06:37:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725172664;
+	bh=YTpC/TIiad9U2QDxYGT39G3AcvYMbOXyGx2BdaYU31Y=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=CjCrvpGKaff97Iv0y6lr8x2VZbvM3LfOCPQBcOUxWr7Y9SkSz7o/5idjbkeqgRieH
+	 0hlEytK1HhVjtR3oV959U3ngBjhh3CmOblVFS0qyMcAU6H6I/L/YfY1NtcA1QSlQqI
+	 Zuo1C8MT2DuivJmZM/tChXQBFOJmEeVb9KmqHcLgh708Cvv9IwBpKRdO8ERokF+lbw
+	 8FBfbOzG9Bp3mCgds1X8ur0duPIpzK8Zgb1UqU7weHRqjW7Ec+gcaTcztkFJV+rSHI
+	 bHBbFGYMWKtxITGNFWXjmHcVop86gxVmkKpEwhKd+nxEC1S/kuvsPzLYpeka2Fqtrt
+	 ZahAY0aQhDrJg==
+Date: Sat, 31 Aug 2024 20:37:43 -1000
+From: Tejun Heo <tj@kernel.org>
+To: David Vernet <void@manifault.com>
+Cc: kernel-team@meta.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 06/11] sched_ext: Reorder args for
+ consume_local/remote_task()
+Message-ID: <ZtQLt-rLQfeAtypd@slm.duckdns.org>
+References: <20240830110415.116090-1-tj@kernel.org>
+ <20240830110415.116090-7-tj@kernel.org>
+ <20240901014000.GG70166@maniforge>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240901014000.GG70166@maniforge>
 
-tree/branch: https://github.com/paulmckrcu/linux dev
-branch HEAD: 58e6b1b6fe9193d1f798d168a2370ac7dec9e83a  rcutorture: Add light-weight SRCU scenario
+Hello,
 
-elapsed time: 748m
+On Sat, Aug 31, 2024 at 08:40:00PM -0500, David Vernet wrote:
+...
+> > @@ -2265,7 +2265,7 @@ static bool consume_remote_task(struct rq *this_rq, struct scx_dispatch_q *dsq,
+> >  }
+> >  #else	/* CONFIG_SMP */
+> >  static inline bool task_can_run_on_remote_rq(struct task_struct *p, struct rq *rq, bool trigger_error) { return false; }
+> > -static inline bool consume_remote_task(struct rq *rq, struct scx_dispatch_q *dsq, struct task_struct *p, struct rq *task_rq) { return false; }
+> > +static inline bool consume_remote_task(struct rq *this_rq, struct task_struct *p, struct scx_dispatch_q *dsq, struct rq *task_rq) { return false; }
+> >  #endif	/* CONFIG_SMP */
+> >  
+> >  static bool consume_dispatch_q(struct rq *rq, struct scx_dispatch_q *dsq)
+> > @@ -2286,12 +2286,12 @@ static bool consume_dispatch_q(struct rq *rq, struct scx_dispatch_q *dsq)
+> >  		struct rq *task_rq = task_rq(p);
+> >  
+> >  		if (rq == task_rq) {
+> > -			consume_local_task(rq, dsq, p);
+> > +			consume_local_task(p, dsq, rq);
+> >  			return true;
+> >  		}
+> >  
+> >  		if (task_can_run_on_remote_rq(p, rq, false)) {
+> 
+> How do you feel about always prefixing src_ and dst_ for any arguments
+> that refer to either (with any @rq before @p implying current as this
+> patch proposes)? In this case it's a bit confusing to read because
+> technically according to the convention proposed in this patch, @rq
+> could be either curr_rq or src_rq in consume_dispatch_q() (there's no
+> @p to disambiguate), and @rq could be either src_rq or dst_rq in
+> task_can_run_on_remote_rq() (they both come after @p).
+> 
+> It's pretty obvious from context that @rq is referring to a dst_rq in
+> task_can_run_on_remote_rq(), but it might still be a bit easier on the
+> eyes to be explicit. And for functions like consume_remote_task() which
+> take both a src_dsq and a src_rq, I think it will be easier to follow
+> then the convention.
 
-configs tested: 184
-configs skipped: 6
+re. these arguments, there are largely two schemes - one coming from sched
+core and shared with other scheds where the leading [this_]rq denotes the
+current / local rq, and the other internal to SCX where more parties are
+involved - this_rq, src_rq and dst_rq. While the latter situation may not be
+unique to SCX, it is a lot more pronounced in SCX than other scheduling
+classes as migrations are integral to how it works.
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+I'm not sure about applying the latter naming scheme to everything. Where
+SCX is interfacing with sched core, I think there are more benefits in
+following the existing naming scheme. This means that there are going to be
+places where the two naming schemes interact, which is what this patch is
+showing - consume*() functions are following the sched core scheme as
+they're always used to pull tasks to the "current" rq for ops.balance() -
+it's still doing what balances do in other sched classes. However, the
+helpers that they use are more generic and flexible ones which are going to
+be used for SCX specific things such as moving tasks between arbitrary DSQs.
 
-tested configs:
-alpha                             allnoconfig   gcc-14.1.0
-alpha                            allyesconfig   clang-20
-alpha                               defconfig   gcc-14.1.0
-arc                              allmodconfig   clang-20
-arc                               allnoconfig   gcc-14.1.0
-arc                              allyesconfig   clang-20
-arc                                 defconfig   gcc-14.1.0
-arc                   randconfig-001-20240901   clang-20
-arc                   randconfig-002-20240901   clang-20
-arm                              allmodconfig   clang-20
-arm                               allnoconfig   gcc-14.1.0
-arm                              allyesconfig   clang-20
-arm                       aspeed_g5_defconfig   clang-20
-arm                         at91_dt_defconfig   clang-20
-arm                        clps711x_defconfig   clang-20
-arm                     davinci_all_defconfig   clang-20
-arm                                 defconfig   gcc-14.1.0
-arm                          exynos_defconfig   clang-20
-arm                             mxs_defconfig   clang-20
-arm                         nhk8815_defconfig   clang-20
-arm                          pxa3xx_defconfig   clang-20
-arm                   randconfig-001-20240901   clang-20
-arm                   randconfig-002-20240901   clang-20
-arm                   randconfig-003-20240901   clang-20
-arm                   randconfig-004-20240901   clang-20
-arm64                            alldefconfig   clang-20
-arm64                            allmodconfig   clang-20
-arm64                             allnoconfig   gcc-14.1.0
-arm64                               defconfig   gcc-14.1.0
-arm64                 randconfig-001-20240901   clang-20
-arm64                 randconfig-002-20240901   clang-20
-arm64                 randconfig-003-20240901   clang-20
-arm64                 randconfig-004-20240901   clang-20
-csky                              allnoconfig   gcc-14.1.0
-csky                                defconfig   gcc-14.1.0
-csky                  randconfig-001-20240901   clang-20
-csky                  randconfig-002-20240901   clang-20
-hexagon                          allmodconfig   clang-20
-hexagon                           allnoconfig   gcc-14.1.0
-hexagon                          allyesconfig   clang-20
-hexagon                             defconfig   gcc-14.1.0
-hexagon               randconfig-001-20240901   clang-20
-hexagon               randconfig-002-20240901   clang-20
-i386                             allmodconfig   clang-18
-i386                              allnoconfig   clang-18
-i386                             allyesconfig   clang-18
-i386         buildonly-randconfig-001-20240901   clang-18
-i386         buildonly-randconfig-002-20240901   clang-18
-i386         buildonly-randconfig-003-20240901   clang-18
-i386         buildonly-randconfig-004-20240901   clang-18
-i386         buildonly-randconfig-005-20240901   clang-18
-i386         buildonly-randconfig-006-20240901   clang-18
-i386                                defconfig   clang-18
-i386                  randconfig-001-20240901   clang-18
-i386                  randconfig-002-20240901   clang-18
-i386                  randconfig-003-20240901   clang-18
-i386                  randconfig-004-20240901   clang-18
-i386                  randconfig-005-20240901   clang-18
-i386                  randconfig-006-20240901   clang-18
-i386                  randconfig-011-20240901   clang-18
-i386                  randconfig-012-20240901   clang-18
-i386                  randconfig-013-20240901   clang-18
-i386                  randconfig-014-20240901   clang-18
-i386                  randconfig-015-20240901   clang-18
-i386                  randconfig-016-20240901   clang-18
-loongarch                        allmodconfig   gcc-14.1.0
-loongarch                         allnoconfig   gcc-14.1.0
-loongarch                           defconfig   gcc-14.1.0
-loongarch             randconfig-001-20240901   clang-20
-loongarch             randconfig-002-20240901   clang-20
-m68k                             allmodconfig   gcc-14.1.0
-m68k                              allnoconfig   gcc-14.1.0
-m68k                             allyesconfig   gcc-14.1.0
-m68k                                defconfig   gcc-14.1.0
-m68k                          hp300_defconfig   clang-20
-microblaze                       allmodconfig   gcc-14.1.0
-microblaze                        allnoconfig   gcc-14.1.0
-microblaze                       allyesconfig   gcc-14.1.0
-microblaze                          defconfig   gcc-14.1.0
-mips                              allnoconfig   gcc-14.1.0
-mips                      bmips_stb_defconfig   clang-20
-mips                           ci20_defconfig   clang-20
-mips                          eyeq5_defconfig   clang-20
-mips                           gcw0_defconfig   clang-20
-mips                           ip28_defconfig   clang-20
-nios2                         10m50_defconfig   clang-20
-nios2                             allnoconfig   gcc-14.1.0
-nios2                               defconfig   gcc-14.1.0
-nios2                 randconfig-001-20240901   clang-20
-nios2                 randconfig-002-20240901   clang-20
-openrisc                          allnoconfig   clang-20
-openrisc                         allyesconfig   gcc-14.1.0
-openrisc                            defconfig   gcc-12
-parisc                           allmodconfig   gcc-14.1.0
-parisc                            allnoconfig   clang-20
-parisc                           allyesconfig   gcc-14.1.0
-parisc                              defconfig   gcc-12
-parisc                randconfig-001-20240901   clang-20
-parisc                randconfig-002-20240901   clang-20
-parisc64                            defconfig   gcc-14.1.0
-powerpc                          allmodconfig   gcc-14.1.0
-powerpc                           allnoconfig   clang-20
-powerpc                          allyesconfig   gcc-14.1.0
-powerpc                       eiger_defconfig   clang-20
-powerpc                        fsp2_defconfig   clang-20
-powerpc                     mpc512x_defconfig   clang-20
-powerpc                 mpc832x_rdb_defconfig   clang-20
-powerpc               randconfig-001-20240901   clang-20
-powerpc               randconfig-002-20240901   clang-20
-powerpc                     sequoia_defconfig   clang-20
-powerpc                     skiroot_defconfig   clang-20
-powerpc                     tqm8540_defconfig   clang-20
-powerpc                         wii_defconfig   clang-20
-powerpc64             randconfig-001-20240901   clang-20
-powerpc64             randconfig-002-20240901   clang-20
-riscv                            allmodconfig   gcc-14.1.0
-riscv                             allnoconfig   clang-20
-riscv                            allyesconfig   gcc-14.1.0
-riscv                               defconfig   gcc-12
-riscv                 randconfig-001-20240901   clang-20
-riscv                 randconfig-002-20240901   clang-20
-s390                             alldefconfig   clang-20
-s390                             allmodconfig   gcc-14.1.0
-s390                              allnoconfig   clang-20
-s390                             allyesconfig   gcc-14.1.0
-s390                                defconfig   gcc-12
-s390                  randconfig-001-20240901   clang-20
-s390                  randconfig-002-20240901   clang-20
-sh                               allmodconfig   gcc-14.1.0
-sh                                allnoconfig   gcc-14.1.0
-sh                               allyesconfig   gcc-14.1.0
-sh                                  defconfig   gcc-12
-sh                         ecovec24_defconfig   clang-20
-sh                               j2_defconfig   clang-20
-sh                          kfr2r09_defconfig   clang-20
-sh                    randconfig-001-20240901   clang-20
-sh                    randconfig-002-20240901   clang-20
-sh                             shx3_defconfig   clang-20
-sh                          urquell_defconfig   clang-20
-sparc                            allmodconfig   gcc-14.1.0
-sparc64                             defconfig   gcc-12
-sparc64               randconfig-001-20240901   clang-20
-sparc64               randconfig-002-20240901   clang-20
-um                               allmodconfig   clang-20
-um                                allnoconfig   clang-20
-um                               allyesconfig   clang-20
-um                                  defconfig   gcc-12
-um                             i386_defconfig   gcc-12
-um                    randconfig-001-20240901   clang-20
-um                    randconfig-002-20240901   clang-20
-um                           x86_64_defconfig   gcc-12
-x86_64                            allnoconfig   clang-18
-x86_64                           allyesconfig   clang-18
-x86_64       buildonly-randconfig-001-20240901   gcc-12
-x86_64       buildonly-randconfig-002-20240901   gcc-12
-x86_64       buildonly-randconfig-003-20240901   gcc-12
-x86_64       buildonly-randconfig-004-20240901   gcc-12
-x86_64       buildonly-randconfig-005-20240901   gcc-12
-x86_64       buildonly-randconfig-006-20240901   gcc-12
-x86_64                              defconfig   clang-18
-x86_64                                  kexec   gcc-12
-x86_64                randconfig-001-20240901   gcc-12
-x86_64                randconfig-002-20240901   gcc-12
-x86_64                randconfig-003-20240901   gcc-12
-x86_64                randconfig-004-20240901   gcc-12
-x86_64                randconfig-006-20240901   gcc-12
-x86_64                randconfig-011-20240901   gcc-12
-x86_64                randconfig-012-20240901   gcc-12
-x86_64                randconfig-013-20240901   gcc-12
-x86_64                randconfig-014-20240901   gcc-12
-x86_64                randconfig-015-20240901   gcc-12
-x86_64                randconfig-016-20240901   gcc-12
-x86_64                randconfig-071-20240901   gcc-12
-x86_64                randconfig-072-20240901   gcc-12
-x86_64                randconfig-073-20240901   gcc-12
-x86_64                randconfig-074-20240901   gcc-12
-x86_64                randconfig-075-20240901   gcc-12
-x86_64                randconfig-076-20240901   gcc-12
-x86_64                          rhel-8.3-rust   clang-18
-x86_64                               rhel-8.3   gcc-12
-xtensa                            allnoconfig   gcc-14.1.0
-xtensa                          iss_defconfig   clang-20
-xtensa                randconfig-001-20240901   clang-20
-xtensa                randconfig-002-20240901   clang-20
+That said, the use of @task_rq instead of @src_rq here is just confusing. I
+will rename it to @src_rq.
+
+Thanks.
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+tejun
 
