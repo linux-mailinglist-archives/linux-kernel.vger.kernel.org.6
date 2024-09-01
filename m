@@ -1,189 +1,134 @@
-Return-Path: <linux-kernel+bounces-310389-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310390-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01171967C1F
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 22:28:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08531967C20
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 22:30:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2D1C0B2113A
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 20:28:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A85DE1F218DE
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 20:30:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B44D1304B0;
-	Sun,  1 Sep 2024 20:28:30 +0000 (UTC)
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C2946F2F4;
+	Sun,  1 Sep 2024 20:30:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="ka8SNJGw"
+Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 282F480631
-	for <linux-kernel@vger.kernel.org>; Sun,  1 Sep 2024 20:28:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0BC545BEF
+	for <linux-kernel@vger.kernel.org>; Sun,  1 Sep 2024 20:30:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725222509; cv=none; b=hChHd3oOwAwto0fqqVLn1oHdiTe7VlQsHR2ALw4IhX0kWHz3VAGdyX7XTGK6Jlb4TLR4toFL0YvVSYO6c8sSgVUyzcHZHCZCpOY7r/PFAz5COeUEdnBvOoDx1WOy8UGJ1Uos4R6KHd836f3mpCqjyD7P1wiBfy03vWj9UIvX8zI=
+	t=1725222633; cv=none; b=XLZoShMkHypQEpVQH6ehGsNn/nGLP3Z1c9gJyPaW5i9vLqY5BUQbKIHOxiTRoaqQ4B6vfPqXSkoAx/PSIqeO+IgZHVXZA61Nqp5GfhBDW+ua8nnFxzFzjWePvM6/Ptp9YKnoPUxUwGMmaBT2KQJKfkiEM01Plw1K5AFSWXd7zw0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725222509; c=relaxed/simple;
-	bh=7EBJOvDTmCgNvh7cUGo5j28NKL1Nz2qMatEEIuHnw0U=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=H2SHQgzAdQ/q9O6GVXuyDGqOYM27gKb50oQdisvdDyhQHelj0MzQDcEtIz2RVe7R/NNRjbTx1VWDf+YjXx9iHQ1c4cVydwidPjzJVzSmxLuq6v2jsZmXNt56rPpLuKSyI3nDjcdTt9Qrcvg7ns+SsJubX3/6NFXM/RnpuXEd3C4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-82a2723a5aeso319733539f.1
-        for <linux-kernel@vger.kernel.org>; Sun, 01 Sep 2024 13:28:27 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725222507; x=1725827307;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=zWnPjTUWwWec2L8dOHWnX8tBqet94rg3TyCYQg7utpA=;
-        b=u8ETZrLbxzxf2Rgk7/dABzPdbljH0bpqk2YZeorv8GELnY3RcPiA/eJ+jjq3AbWNpJ
-         shOTDIY5KyARm910feMJMKJoNym+jEt9WJ70rpnJd+e6BlEpiBIQ7VAYPJlRFO0WXSUt
-         l2gImvxd+HW6MeiJPAXB9MqkKEnIUrPAeJRxRs76h/YMEq4Tn9No0YFvpc9SkuNBkWPf
-         uT+Xq6VZWoPmD4sR+gmvyYvsNuBY29BemqjlkN0EAmES0zmGTv8IHsJZOgyPCIIHIgW6
-         QU7WUWvtBemCbcNS195AmoS77gNReLC73awnC9q7i0LGzZetO+YTv5/WCNdgIafvl9Ot
-         H1Bg==
-X-Forwarded-Encrypted: i=1; AJvYcCX1/H08hxZTl0lXhJJKXCuE0G/ZfR+lyondA7DkarFEwhq4W74hcDlDm31/ucshO41EzHiGb102NEIXxNY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxjYCtEPIBOFc9Llir3Q3jQE0pJans8TjixpNmQV2G1qwAJgxWi
-	gbyMJMSoLDSp/XRQFSFEDOqSfJqQIXAoQEsnEPJBrEDGn3Qkg2Ng3uSAQ8sMzEY13q3YOtyDnle
-	i4rq8W8rkFpLTWWLN7DMRhuwZAo2Km1cQ0ZFq1e302vmhHuBezcfHi3A=
-X-Google-Smtp-Source: AGHT+IGEaa370Q+UzeojF0tIUd3ekWHpQvuZXhMcpI/ygBMzEQJ2dBhpNWfoxJFvl0Ji5ulxSk2PEEkznkEU2RJptY7VYorV4yrO
+	s=arc-20240116; t=1725222633; c=relaxed/simple;
+	bh=g41yC3bEP8cqEYotlsm3ix6iioalK/xccRq7i3vK3u0=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=qd0E5+eB88BcIoCHNWhW8W2w13Opn7YPSKe8LQOAnoz/bbNWXmAE4JXBUaQtaJ5xtyE/L8X2DKg7OMfjW2wbeKSNJdWCl+H2dqOvlG6zxIF9G5zssQv0EwaN+C4ZWDRkgV0q6EAtFJeWMU0QxfEun2w+yjOzVXbsp1moIFs9h0I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=ka8SNJGw; arc=none smtp.client-ip=198.47.23.248
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 481KUPdS014834;
+	Sun, 1 Sep 2024 15:30:25 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1725222625;
+	bh=qrzjMNEzm6bAx70IMT5wQnV4EoRx6mzWpyvwlIFL/Ik=;
+	h=From:To:CC:Subject:Date:In-Reply-To:References;
+	b=ka8SNJGwjgkNsdF+bIkERz/4vQIga4Te75tWNwI/yRE0+IbKxPzoAfB/5WV41jP2J
+	 Mc7vUyDV69C1L7+BtYUUcv8IQr9Clh1XM0Yt4RR+wKyHmhE57NUf+EzX9BKAsmyo84
+	 znOTYiIslL4WcsikOUk4fH2UOR3oT5Bh/EANQIR8=
+Received: from DFLE101.ent.ti.com (dfle101.ent.ti.com [10.64.6.22])
+	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTP id 481KUP54113855;
+	Sun, 1 Sep 2024 15:30:25 -0500
+Received: from DFLE101.ent.ti.com (10.64.6.22) by DFLE101.ent.ti.com
+ (10.64.6.22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Sun, 1
+ Sep 2024 15:30:24 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE101.ent.ti.com
+ (10.64.6.22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Sun, 1 Sep 2024 15:30:24 -0500
+Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 481KUOVF027525;
+	Sun, 1 Sep 2024 15:30:24 -0500
+From: Nishanth Menon <nm@ti.com>
+To: Tero Kristo <kristo@kernel.org>, Santosh Shilimkar <ssantosh@kernel.org>,
+        Markus Schneider-Pargmann <msp@baylibre.com>
+CC: Nishanth Menon <nm@ti.com>, Vibhore Vardhan <vibhore@ti.com>,
+        Kevin Hilman
+	<khilman@baylibre.com>, Dhruva Gole <d-gole@ti.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v11 0/4] firmware: ti_sci: Introduce system suspend support
+Date: Sun, 1 Sep 2024 15:30:21 -0500
+Message-ID: <172522245197.999960.1404822274553467215.b4-ty@ti.com>
+X-Mailer: git-send-email 2.46.0
+In-Reply-To: <20240829201606.1407773-1-msp@baylibre.com>
+References: <20240829201606.1407773-1-msp@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:14c2:b0:81b:d4:3802 with SMTP id
- ca18e2360f4ac-82a2611839amr68123839f.0.1725222507196; Sun, 01 Sep 2024
- 13:28:27 -0700 (PDT)
-Date: Sun, 01 Sep 2024 13:28:27 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000b3424a062114aaa3@google.com>
-Subject: [syzbot] [ntfs3?] KMSAN: uninit-value in ntfs_read_bh
-From: syzbot <syzbot+7a2ba6b7b66340cff225@syzkaller.appspotmail.com>
-To: almaz.alexandrovich@paragon-software.com, linux-kernel@vger.kernel.org, 
-	ntfs3@lists.linux.dev, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-Hello,
+Hi Markus Schneider-Pargmann,
 
-syzbot found the following issue on:
+On Thu, 29 Aug 2024 22:16:01 +0200, Markus Schneider-Pargmann wrote:
+> Abstract
+> ********
+> 
+> This series introduces necessary ti_sci driver functionality to support
+> various Suspend-to-RAM modes on TI AM62 family of devices. These Low
+> Power Modes include Deep Sleep and MCU Only as described in section
+> "6.2.4 Power Modes" of the AM62P Technical Reference Manual [0].
+> 
+> [...]
 
-HEAD commit:    431c1646e1f8 Linux 6.11-rc6
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=137426eb980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=35c699864e165c51
-dashboard link: https://syzkaller.appspot.com/bug?extid=7a2ba6b7b66340cff225
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+I have applied the following to branch ti-drivers-soc-next on [1].
+Thank you!
 
-Unfortunately, I don't have any reproducer for this issue yet.
+[1/4] firmware: ti_sci: Add support for querying the firmware caps
+      commit: 371af6a83b580081d2ed76671f2184c5bb52c5b6
+[2/4] firmware: ti_sci: Add system suspend and resume call
+      commit: 6b48779503a6a080664e917fd91a71bd3f5ae8b5
+[3/4] firmware: ti_sci: Introduce Power Management Ops
+      commit: 235468957c099707d96e30d91f1885afbc7f4175
+[4/4] firmware: ti_sci: add CPU latency constraint management
+      commit: 458d22d2e064ded193d697b0629822dc72814933
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/5ab3219cb5e8/disk-431c1646.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/82e6779c1851/vmlinux-431c1646.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/d5d4a104ce36/bzImage-431c1646.xz
+NOTE: since all other comments are incorporated, I did hand edit patch #1 to
+drop the inclusion of redundant linux/dev_printk.h which was the cause of
+kernel test robot warning
+https://lore.kernel.org/all/202408311026.LluPK1A2-lkp@intel.com/ )
+Let me know if you disagree with the change and I can drop the series from
+my branch.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+7a2ba6b7b66340cff225@syzkaller.appspotmail.com
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent up the chain during
+the next merge window (or sooner if it is a relevant bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
 
-=====================================================
-BUG: KMSAN: uninit-value in ntfs_fix_post_read fs/ntfs3/fsntfs.c:180 [inline]
-BUG: KMSAN: uninit-value in ntfs_read_bh+0x1eb/0xde0 fs/ntfs3/fsntfs.c:1317
- ntfs_fix_post_read fs/ntfs3/fsntfs.c:180 [inline]
- ntfs_read_bh+0x1eb/0xde0 fs/ntfs3/fsntfs.c:1317
- indx_read+0x44e/0x17b0 fs/ntfs3/index.c:1067
- indx_find+0xd12/0x1440 fs/ntfs3/index.c:1181
- indx_update_dup+0x607/0xf80 fs/ntfs3/index.c:2666
- ni_update_parent+0x12de/0x14b0 fs/ntfs3/frecord.c:3301
- ni_write_inode+0x1cf4/0x1de0 fs/ntfs3/frecord.c:3392
- ntfs3_write_inode+0x94/0xb0 fs/ntfs3/inode.c:1052
- write_inode fs/fs-writeback.c:1497 [inline]
- __writeback_single_inode+0x849/0x12c0 fs/fs-writeback.c:1716
- writeback_sb_inodes+0xc95/0x1e00 fs/fs-writeback.c:1947
- wb_writeback+0x4df/0xea0 fs/fs-writeback.c:2127
- wb_do_writeback fs/fs-writeback.c:2274 [inline]
- wb_workfn+0x40b/0x1940 fs/fs-writeback.c:2314
- process_one_work kernel/workqueue.c:3231 [inline]
- process_scheduled_works+0xae0/0x1c40 kernel/workqueue.c:3312
- worker_thread+0xea7/0x14d0 kernel/workqueue.c:3389
- kthread+0x3e2/0x540 kernel/kthread.c:389
- ret_from_fork+0x6d/0x90 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
-Uninit was stored to memory at:
- ntfs_read_run_nb+0x786/0x1070 fs/ntfs3/fsntfs.c:1252
- ntfs_read_bh+0x64/0xde0 fs/ntfs3/fsntfs.c:1313
- indx_read+0x44e/0x17b0 fs/ntfs3/index.c:1067
- indx_find+0xd12/0x1440 fs/ntfs3/index.c:1181
- indx_update_dup+0x607/0xf80 fs/ntfs3/index.c:2666
- ni_update_parent+0x12de/0x14b0 fs/ntfs3/frecord.c:3301
- ni_write_inode+0x1cf4/0x1de0 fs/ntfs3/frecord.c:3392
- ntfs3_write_inode+0x94/0xb0 fs/ntfs3/inode.c:1052
- write_inode fs/fs-writeback.c:1497 [inline]
- __writeback_single_inode+0x849/0x12c0 fs/fs-writeback.c:1716
- writeback_sb_inodes+0xc95/0x1e00 fs/fs-writeback.c:1947
- wb_writeback+0x4df/0xea0 fs/fs-writeback.c:2127
- wb_do_writeback fs/fs-writeback.c:2274 [inline]
- wb_workfn+0x40b/0x1940 fs/fs-writeback.c:2314
- process_one_work kernel/workqueue.c:3231 [inline]
- process_scheduled_works+0xae0/0x1c40 kernel/workqueue.c:3312
- worker_thread+0xea7/0x14d0 kernel/workqueue.c:3389
- kthread+0x3e2/0x540 kernel/kthread.c:389
- ret_from_fork+0x6d/0x90 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
 
-Uninit was created at:
- __alloc_pages_noprof+0x9d6/0xe70 mm/page_alloc.c:4718
- alloc_pages_mpol_noprof+0x299/0x990 mm/mempolicy.c:2263
- alloc_pages_noprof mm/mempolicy.c:2343 [inline]
- folio_alloc_noprof+0x1db/0x310 mm/mempolicy.c:2350
- filemap_alloc_folio_noprof+0xa6/0x440 mm/filemap.c:1008
- __filemap_get_folio+0xa05/0x14b0 mm/filemap.c:1950
- grow_dev_folio fs/buffer.c:1047 [inline]
- grow_buffers fs/buffer.c:1113 [inline]
- __getblk_slow fs/buffer.c:1139 [inline]
- bdev_getblk+0x2c9/0xab0 fs/buffer.c:1441
- __getblk include/linux/buffer_head.h:381 [inline]
- sb_getblk include/linux/buffer_head.h:387 [inline]
- ntfs_get_bh+0x605/0x1190 fs/ntfs3/fsntfs.c:1365
- indx_new+0x1bc/0x780 fs/ntfs3/index.c:955
- indx_insert_into_root+0x2fd1/0x37d0 fs/ntfs3/index.c:1723
- indx_insert_entry+0xe1d/0xee0 fs/ntfs3/index.c:1982
- ntfs_create_inode+0x4391/0x4df0 fs/ntfs3/inode.c:1689
- ntfs_mkdir+0x56/0x70 fs/ntfs3/namei.c:207
- vfs_mkdir+0x4a0/0x780 fs/namei.c:4210
- do_mkdirat+0x529/0x810 fs/namei.c:4233
- __do_sys_mkdirat fs/namei.c:4248 [inline]
- __se_sys_mkdirat fs/namei.c:4246 [inline]
- __x64_sys_mkdirat+0xc6/0x120 fs/namei.c:4246
- x64_sys_call+0x3a81/0x3ba0 arch/x86/include/generated/asm/syscalls_64.h:259
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
 
-CPU: 1 UID: 0 PID: 2918 Comm: kworker/u8:9 Not tainted 6.11.0-rc6-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
-Workqueue: writeback wb_workfn (flush-7:4)
-=====================================================
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/ti/linux.git
+-- 
+Regards,
+Nishanth Menon
+Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
 
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
