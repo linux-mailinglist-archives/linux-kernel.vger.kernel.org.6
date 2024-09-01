@@ -1,99 +1,118 @@
-Return-Path: <linux-kernel+bounces-310297-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310298-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF92F96788D
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 18:33:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 090F19678AE
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 18:34:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2C1B51C21016
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 16:33:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B36191F2198C
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 16:34:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC63318452D;
-	Sun,  1 Sep 2024 16:33:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDF0F1822F8;
+	Sun,  1 Sep 2024 16:34:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qp0Dm8Xk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IcauwPsS"
+Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13C5F183CBD;
-	Sun,  1 Sep 2024 16:33:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2D0C1C68C;
+	Sun,  1 Sep 2024 16:34:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725208383; cv=none; b=lDSyzOtuHU0nlqIltqj3ljpog72iM5z1u1COFbmKHHW98S26UTlyN5JEZyzquWwj3FJWm6DtQ08gubkC0/S0iE2m8i1XtwX0R5TX20slFM2nB3xk4Ta26/mxYfIsYh3VlEhEbinFzARvH90RxP3MJv/AGIl/KHO4675XmDLrWu4=
+	t=1725208462; cv=none; b=ImHCBkZTwiYV2w9PzTYpxNoNCoIVssnCc6IZl88zbw+zb2dLx4HPuEu6jckAcZhNL4mhtFCAtQNAl/i1DbdV1E7wInXkWAz12ij1E1jYesm/8JIQb0JrzPT8Lwc+J9R0Ykk7dKt8Bbcc9+7n1TuG+A/eZtHydv2tbJNlJU03fa8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725208383; c=relaxed/simple;
-	bh=iMGDRvpGmErh3kT77LApW0C+MmED9uptTCxVciaFglc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qM1g2CHdqYZ2RY1DTLJfS23aoOqRYbL9qw5ZOpyU1DxND9t1zE2HfmqJjzoYkJzD5nj84Wczv6OYB8GJNbyAAccsit/5/Cwm8kr1TRg75or1/zVDc5ORSqqXxHqCp6SAqr0flmb9lGqEGUmX/BRka1fUMPwKW9wuKi8fUhIBPvI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qp0Dm8Xk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B658C4CEC8;
-	Sun,  1 Sep 2024 16:33:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725208382;
-	bh=iMGDRvpGmErh3kT77LApW0C+MmED9uptTCxVciaFglc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qp0Dm8Xkyz6mVcS4CLaMgcdwI2IiOxMPJLS0MOSPfed0zjIYIUu82N2Y8pBciQppd
-	 6Yu3j/FmCx5SGPd1jtQSwUnpOyBLiv6qo3+/Op0FTxP3CZCm4z3y3huJxF83Ov/Skm
-	 T3enHKYTUF6118sa8SXSl2Pn8Dj+gz15PkKA+mHb0VIgGnLfki+DyAaRyTkfpl6c/h
-	 pmuvOmDvWG8lUiGYn+k1jgWm2pzkNqTcSaAUum4q5U5/nlk2Dc3++Apu2hoTOaf5qv
-	 lWyVG/ZOdIEqzWuKkCXko8jpwktL/UivpIIcliZBKoJCEl9fp6HXRUBCXQ4des7yLZ
-	 CH2TIip3HFVFw==
-Date: Sun, 1 Sep 2024 22:02:54 +0530
-From: Vinod Koul <vkoul@kernel.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Kishon Vijay Abraham I <kishon@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Abel Vesa <abel.vesa@linaro.org>, Johan Hovold <johan@kernel.org>,
-	linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Johan Hovold <johan+linaro@kernel.org>
-Subject: Re: [PATCH v3 0/2] phy: qcom: qmp-pcie: Add support for Gen4 4-lane
- mode for X1E80100
-Message-ID: <ZtSXNt5ZSrM2t5xK@vaman>
-References: <20240823-x1e80100-phy-add-gen4x4-v3-0-b7765631ca01@linaro.org>
- <172495833400.405683.4328817324548517864.b4-ty@kernel.org>
- <4ab9dcb6-4a0b-493c-943b-5de05457c592@kernel.org>
+	s=arc-20240116; t=1725208462; c=relaxed/simple;
+	bh=LfOHCToqCJQpzCFvErXcUgw6uiFYg4xX8oDJA6tq5S4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ifnG4KwYSr7PAJt9SC8r9ue/+vHctugzquCd1oYzx6ZsnrvN9AvVPiW1PhZUZJH+aQMFrhEiFnEQYJdMt5UPjtbdMivsfJXs9NkAY3sP2TYipasc7HEigoyuFbt+BjBr78pbMu5+9aln705MPLp1MGZKsz86BBYgBJvCQCTfPA8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IcauwPsS; arc=none smtp.client-ip=209.85.210.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-71433cba1b7so2440424b3a.0;
+        Sun, 01 Sep 2024 09:34:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725208460; x=1725813260; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LfOHCToqCJQpzCFvErXcUgw6uiFYg4xX8oDJA6tq5S4=;
+        b=IcauwPsSYMzRgq0sR96HywY1DsQEFtuXP19/UloAL31eAhXdDE7BK+NzXQ9LKleBTV
+         GaQfVqNdDcJ8Gvphewf56u6xXlINOtVHfUCuomIOb94ao38slYhsueBoGnpMWhZYtuEk
+         uXMWm8XpDLxUUkVeyxvgJlGL6rr3VU+pdQW27/62bsRzCh56BIIBy/ow994xPj147ADq
+         DUCLN2ejA8wRfl+lGB+syqWbofCEmAYlrMdohGyWQjzo2z3UTIJMyqZ6UeNn0pBRSSwR
+         6fGjXR3Qnq9VFIY6cAxX7Y7+2DEqagYfplfOjBdjYJE+akpBUwY714FlqUjGaitwAETb
+         05Dg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725208460; x=1725813260;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=LfOHCToqCJQpzCFvErXcUgw6uiFYg4xX8oDJA6tq5S4=;
+        b=nB3UgVwlYmd+cDrXpL3erm5t4J0twfWoCzdW+R5dvaEbre/5rwhlJ5hgayhxrgyHxk
+         Fn7Qf46upwyR256RUoMsf501jdWs2SJroEidomdLGFT96VSz8kwal0OaKhcaJuprBV4l
+         iCh3I5xAWj91wkX0hAv7NXzJ3oJzo4vPal8ciG89sjcbfApIh/K/Xr+Re+FKZXNBY1Sb
+         yq+E+OhFySdchF68ke/RhRukqNWdvsMWjIcTKRtJODWypM/VHdJHqaZnrVK0Lf9uHkt8
+         cZ0TY4b//i/sKzA1Etywy5YIUC0pXF8w0S1y8W9mh8JyZPX5mPuwh/LrKw4rm54NP4UL
+         SoVQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUyYKlaPrtqwbCQe0//JJH4/zRUlMdQhDPnCsdEN4F5aLxWBi0jQslzXxA7qePOqmavGYUEhtEZBF0aQqI=@vger.kernel.org, AJvYcCXvaZCc5+ZpuDk/guB8cupx4ccEHbJ4JlidmZAaivVD9Rtk3BSzK2ypT5xaUj1t5GNI59KjaEHGnoT47A==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz+gE7zqs7VUo+rYC4m1yjx3BarJHqY10qGOp5DreU+tLNObdTO
+	FFmvyBeD97qPPrVcScx4MmjouC9krHf7zSObJMBtcG/aXqu3h0h+RsLyZks8PZknVCm4xfZDMBB
+	j2VXlrFws2p87yZytI4LLKGCXpKs=
+X-Google-Smtp-Source: AGHT+IF+YjIJUgZgTKVl/F6xoWlrij8Mno8NSN3vwjD6SW/WMix5BukBuDBnXmP02x+pPxQYkgnoJqql1xVKS6m/E40=
+X-Received: by 2002:a05:6a21:3a44:b0:1c4:a49b:403 with SMTP id
+ adf61e73a8af0-1cece5e24c1mr4431330637.46.1725208459923; Sun, 01 Sep 2024
+ 09:34:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4ab9dcb6-4a0b-493c-943b-5de05457c592@kernel.org>
+References: <CAEwRq=qhHBh5jKdLGb1r2Qem0jia=xcVdevihYfjdrLSYiZuiA@mail.gmail.com>
+ <CACRpkdZFQSN_t-Vx7xOXq0aF6Vf-XvsZKGF6yNMn7_dCeaZi_w@mail.gmail.com> <35680bf8-d4f0-4b7a-b358-f71eb39e2a94@app.fastmail.com>
+In-Reply-To: <35680bf8-d4f0-4b7a-b358-f71eb39e2a94@app.fastmail.com>
+From: Vincent Legoll <vincent.legoll@gmail.com>
+Date: Sun, 1 Sep 2024 16:34:09 +0000
+Message-ID: <CAEwRq=qNqbXRPCqd-ukW9q1uNNJL9x42dBk0pHMEB_VCoV4W2w@mail.gmail.com>
+Subject: Re: [RFC} arm architecture board/feature deprecation timeline
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Aaro Koskinen <aaro.koskinen@iki.fi>, 
+	Alexandre Torgue <alexandre.torgue@foss.st.com>, Andrew Lunn <andrew@lunn.ch>, 
+	Mark Brown <broonie@kernel.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
+	Gregory Clement <gregory.clement@bootlin.com>, "Jeremy J. Peper" <jeremy@jeremypeper.com>, 
+	Janusz Krzysztofik <jmkrzyszt@gmail.com>, Kristoffer Ericson <kristoffer.ericson@gmail.com>, 
+	Krzysztof Kozlowski <krzk@kernel.org>, Linux Kernel ML <linux-kernel@vger.kernel.org>, 
+	Russell King <linux@armlinux.org.uk>, Nicolas Pitre <nico@fluxnic.net>, 
+	Nikita Shubin <nikita.shubin@maquefel.me>, Ramana Radhakrishnan <ramanara@nvidia.com>, 
+	Richard Earnshaw <richard.earnshaw@arm.com>, Richard Sandiford <richard.sandiford@arm.com>, 
+	Robert Jarzmik <robert.jarzmik@free.fr>, 
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Tony Lindgren <tony@atomide.com>, 
+	linux-mips@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 30-08-24, 12:01, Krzysztof Kozlowski wrote:
-> On 29/08/2024 21:05, Vinod Koul wrote:
-> > 
-> > On Fri, 23 Aug 2024 10:04:14 +0300, Abel Vesa wrote:
-> >> On all X Elite boards currently supported upstream, the NVMe sits
-> >> on the PCIe 6. Until now that has been configured in dual lane mode
-> >> only. The schematics reveal that the NVMe is actually using 4 lanes.
-> >> So add support for the 4-lane mode and document the compatible for it.
-> >>
-> >> This patchset depends on:
-> >> https://lore.kernel.org/all/20240805-phy-qcom-qmp-pcie-write-all-tbls-second-port-v3-1-6967c6bf61d1@linaro.org/
-> >>
-> >> [...]
-> > 
-> > Applied, thanks!
-> > 
-> > [1/2] dt-bindings: phy: qcom,sc8280xp-qmp-pcie-phy: Document the X1E80100 QMP PCIe PHY Gen4 x4
-> >       commit: 0c5f4d23f77631f657b60ef660676303f7620688
-> 
-> Heh, we discussed yesterday on IRC that this should wait.
+Hello Arnd,
 
-I must have miseed that...
- 
-> Why do we keep discussing things in private...
+On Mon, Aug 26, 2024 at 2:55=E2=80=AFPM Arnd Bergmann <arnd@arndb.de> wrote=
+:
+> What you see is certainly unrelated to me mentioning that we may remove
+> highmem support from the kernel altogether in the future, but it's
+> possible that OpenWRT turned it off because things work better
+> without it.
+>
+> https://github.com/openwrt/openwrt/issues/13151 may explain
+> what ios going on here.
 
-This ideally should have followed up as a reply to this thread...
+Thanks a lot for that hint, indeed there is a solution, which does not rely
+on `CONFIG_HIGHMEM=3Dy`, linked from this issue.
 
--- 
-~Vinod
+Just setting `HIGHMEM_START` made space available for that 64MB
+RAM chunk.
+
+Thanks
+
+--=20
+Vincent Legoll
 
