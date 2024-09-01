@@ -1,193 +1,102 @@
-Return-Path: <linux-kernel+bounces-310423-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310424-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 807F4967C8A
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 00:21:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F744967C8B
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 00:40:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F0B631F213F7
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 22:21:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D1B75281A31
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 22:40:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D243913AD29;
-	Sun,  1 Sep 2024 22:21:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFDA14D8AF;
+	Sun,  1 Sep 2024 22:40:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jCISVqJh"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="MyPWQScQ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1579478C60
-	for <linux-kernel@vger.kernel.org>; Sun,  1 Sep 2024 22:21:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0D1378C60
+	for <linux-kernel@vger.kernel.org>; Sun,  1 Sep 2024 22:40:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725229271; cv=none; b=toirfrIBW7L2Nm99iTQH+/DdwvCO2tkiFKHjQ9Yk3PxB3qx+N86ijZ/IeQXckk3cAMkaCjxguagmHp/LUE48fJn4ZlOgP0B9Xi5wCRIsx01AqxjJWxCL+qgvI96yATEzDzCztHDwEE1Wjzky+fC0+EmMfYDVSwP5MUbxQ6hYCc4=
+	t=1725230427; cv=none; b=TcWE0j5Ow13WIbWVvCOg5BUjUJR1limP7EF23KGibSn+TE8T+SmRb0GZSHRd+/IOQADgbuoe7baYjc5cQPOfrg3/NW/goTJWJPimPAUTcWqrzKlUrvLTGY2lq9UrSwlGNVJEGM+kRjK7FdZCadeLf2WEeFpE+FcStTW2ApG0Y98=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725229271; c=relaxed/simple;
-	bh=VP7+xTFJcw8ovI8kPsHFXhgucTnJeclB7GL8SSEB9m0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZQQo+X1/70DFRMzKTCFpzHYarZQrjKqQSZYu3Fv/l5kSfNeKaQz9qzlljR6aMwczzW6cPp2yY1V5qf8J7vf3Zw9kAQELAXcs2ZJNjj2ywpZ0Bf5DixGA2sNj4sTb7k4yqa178grjpbUPXPDUlzcK+RNVcVH+OfMR+ISD5nnHU6c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jCISVqJh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B4CDC4CEC3;
-	Sun,  1 Sep 2024 22:21:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725229270;
-	bh=VP7+xTFJcw8ovI8kPsHFXhgucTnJeclB7GL8SSEB9m0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jCISVqJhZVzF5B8aAcPiVTzPQdQo6MJu2Hg/PcFWMeVQ2WfCtrUmzx9OhKFtjJNhV
-	 IQ3QUVZKc8GSlF9Aa4K3ocNIsepj6yMXNtPOYJELR0Ad5rVHma0eYm9rWKZXkTJmBo
-	 28Pe6Vrpb1nPfFL5/nVwpJTMgu9g5ynEQ4680EJsmARjiTq7ekb8/ReHuo5LkeJil0
-	 NsSaBuVXrevS+l6fvdIfGaP8copuLFHLVhUEb+Y5X9RXlcwrB8hYVJ6508TucVHv/Y
-	 VHDjsdnjL+zIWQ1y2jwwLskHDNcmUoi+YqYKH3sNUapugvKpn7wFUhBbrCuJp+gy9z
-	 dsrpBln4yqDtg==
-Date: Mon, 2 Sep 2024 00:21:07 +0200
-From: Frederic Weisbecker <frederic@kernel.org>
-To: Anna-Maria Behnsen <anna-maria@linutronix.de>
-Cc: linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [PATCH] timers: Annotate possible non critical data race of
- next_expiry
-Message-ID: <ZtTo0wB_Jccoi0oM@pavilion.home>
-References: <000000000000916e55061f969e14@google.com>
- <20240829154305.19259-1-anna-maria@linutronix.de>
+	s=arc-20240116; t=1725230427; c=relaxed/simple;
+	bh=cBK8ifRIkWx9LTf3ePvAC1yp3D3Rig4E4eLktnCzD6c=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=XMi51cTJmwxE/NYUZUikPifIcFf7ErA4Enu/jNOryYE5er44fr9oaunLAPJrJrj8oMd6202S/5Wq6YPQz/qZaNY9qMrLAW3eN6DLxPOHA6j7Wtlo69lWNOhXhFQ6hUqWBT6yA6qCxCxtLRKrjab8lm70Tj9xnr3hkXkzUJZrSDA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=MyPWQScQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2509FC4CEC3;
+	Sun,  1 Sep 2024 22:40:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1725230426;
+	bh=cBK8ifRIkWx9LTf3ePvAC1yp3D3Rig4E4eLktnCzD6c=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=MyPWQScQ09ooZoZlVyqX5nBhbQcSGuqwJxphQsd85Iaap9QtTufkGGhKwGEoVpVvu
+	 fJro5iLbyA6o9itsnAgCjdS2AiOtoi6p+0FuNForCnWmcVWL9j0mrG+DI8UFMR43ud
+	 +kilG3PWLJnzoEQQrCJB07gFkg2HMQiUQAvXJl9s=
+Date: Sun, 1 Sep 2024 15:40:25 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Kairui Song <ryncsn@gmail.com>
+Cc: Jingxiang Zeng <linuszeng@tencent.com>, Jingxiang Zeng
+ <jingxiangzeng.cas@gmail.com>, linux-mm@kvack.org, Yu Zhao
+ <yuzhao@google.com>, Wei Xu <weixugc@google.com>, "T . J . Mercier"
+ <tjmercier@google.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mm/vmscan: wake up flushers conditionally to avoid
+ cgroup OOM
+Message-Id: <20240901154025.bbe4a99e228b36d50c1c91a6@linux-foundation.org>
+In-Reply-To: <CAMgjq7AnaNr354zzu-Z-SB6xZtD1+a2zUwFtZ_Qg7pMj0m7y7A@mail.gmail.com>
+References: <20240829102543.189453-1-jingxiangzeng.cas@gmail.com>
+	<20240830173813.c53769f62bf72116266f42ca@linux-foundation.org>
+	<CAMgjq7AnaNr354zzu-Z-SB6xZtD1+a2zUwFtZ_Qg7pMj0m7y7A@mail.gmail.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240829154305.19259-1-anna-maria@linutronix.de>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Le Thu, Aug 29, 2024 at 05:43:05PM +0200, Anna-Maria Behnsen a écrit :
-> Global timers could be expired remotely when the target CPU is idle. After
-> a remote timer expiry, the remote timer_base->next_expiry value is updated
-> while holding the timer_base->lock. When the formerly idle CPU becomes
-> active at the same time and checks whether timers need to expire, this
-> check is done lockless as it is on the local CPU. This could lead to a data
-> race, which was reported by sysbot:
-> 
->   https://lore.kernel.org/r/000000000000916e55061f969e14@google.com
-> 
-> When the value is read lockless but changed by the remote CPU, only two non
-> critical scenarios could happen:
-> 
-> 1) The already update value is read -> everything is perfect
-> 
-> 2) The old value is read -> a superfluous timer soft interrupt is raised
-> 
-> The same situation could happen when enqueueing a new first pinned timer by
-> a remote CPU also with non critical scenarios:
-> 
-> 1) The already update value is read -> everything is perfect
-> 
-> 2) The old value is read -> when the CPU is idle, an IPI is executed
-> nevertheless and when the CPU isn't idle, the updated value will be visible
-> on the next tick and the timer might be late one jiffie.
-> 
-> As this is very unlikely to happen, the overhead of doing the check under
-> the lock is a way more effort, than a superfluous timer soft interrupt or a
-> possible 1 jiffie delay of the timer.
-> 
-> Document and annotate this non critical behavior in the code by using
-> READ/WRITE_ONCE() pair when accessing timer_base->next_expiry.
-> 
-> Reported-by: syzbot+bf285fcc0a048e028118@syzkaller.appspotmail.com
-> Signed-off-by: Anna-Maria Behnsen <anna-maria@linutronix.de>
-> Closes: https://lore.kernel.org/lkml/000000000000916e55061f969e14@google.com
+On Mon, 2 Sep 2024 04:39:24 +0800 Kairui Song <ryncsn@gmail.com> wrote:
 
-Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
-
-Just a few nits:
-
-> ---
->  kernel/time/timer.c | 41 ++++++++++++++++++++++++++++++++++++-----
->  1 file changed, 36 insertions(+), 5 deletions(-)
+> > > MGLRU still suffers OOM issue on latest mm tree, so the test is done
+> > > with another fix merged [1].
+> > >
+> > > Link: https://lore.kernel.org/linux-mm/CAOUHufYi9h0kz5uW3LHHS3ZrVwEq-kKp8S6N-MZUmErNAXoXmw@mail.gmail.com/ [1]
+> >
+> > This one is already queued for -stable.
 > 
-> diff --git a/kernel/time/timer.c b/kernel/time/timer.c
-> index 18aa759c3cae..71b96a9bf6e8 100644
-> --- a/kernel/time/timer.c
-> +++ b/kernel/time/timer.c
-> @@ -672,7 +672,7 @@ static void enqueue_timer(struct timer_base *base, struct timer_list *timer,
->  		 * Set the next expiry time and kick the CPU so it
->  		 * can reevaluate the wheel:
->  		 */
-> -		base->next_expiry = bucket_expiry;
-> +		WRITE_ONCE(base->next_expiry, bucket_expiry);
->  		base->timers_pending = true;
->  		base->next_expiry_recalc = false;
->  		trigger_dyntick_cpu(base, timer);
-> @@ -1964,7 +1964,7 @@ static void next_expiry_recalc(struct timer_base *base)
->  		clk += adj;
->  	}
->  
-> -	base->next_expiry = next;
-> +	WRITE_ONCE(base->next_expiry, next);
->  	base->next_expiry_recalc = false;
->  	base->timers_pending = !(next == base->clk + NEXT_TIMER_MAX_DELTA);
->  }
-> @@ -2018,7 +2018,7 @@ static unsigned long next_timer_interrupt(struct timer_base *base,
->  	 * easy comparable to find out which base holds the first pending timer.
->  	 */
->  	if (!base->timers_pending)
-> -		base->next_expiry = basej + NEXT_TIMER_MAX_DELTA;
-> +		WRITE_ONCE(base->next_expiry, basej + NEXT_TIMER_MAX_DELTA);
->  
->  	return base->next_expiry;
->  }
-> @@ -2462,8 +2462,39 @@ static void run_local_timers(void)
->  	hrtimer_run_queues();
->  
->  	for (int i = 0; i < NR_BASES; i++, base++) {
-> -		/* Raise the softirq only if required. */
-> -		if (time_after_eq(jiffies, base->next_expiry) ||
-> +		/*
-> +		 * Raise the softirq only if required.
-> +		 *
-> +		 * timer_base::next_expiry can be written by a remote CPU while
-> +		 * holding the lock. If this write happens at the same time than
-> +		 * the lockless local read, sanity checker could complain about
-> +		 * data corruption.
-> +		 *
-> +		 * There are two possible situations where
-> +		 * timer_base::next_expiry is written by a remote CPU:
-> +		 *
-> +		 * 1. Remote CPU expires global timers of this CPU and updates
-> +		 * timer_base::next_expiry of BASE_LOCAL afterwards in
-
-BASE_GLOBAL ?
-
-> +		 * next_timer_interrupt() or timer_recalc_next_expiry(). The
-> +		 * worst outcome is a superfluous raise of the timer softirq
-> +		 * when the not yet updated value is read.
-> +		 *
-> +		 * 2. A new first pinned timer is enqueued by a remote CPU and
-> +		 * therefore timer_base::next_expiry of BASE_GLOBAL is
-
-BASE_LOCAL ?
-
-Thanks.
-
-> +		 * updated. When this update is missed, this isn't a problem, as
-> +		 * an IPI is executed nevertheless when the CPU was idle
-> +		 * before. When the CPU wasn't idle but the update is missed,
-> +		 * then the timer would expire one jiffie late - bad luck.
-> +		 *
-> +		 * Those unlikely corner cases where the worst outcome is only a
-> +		 * one jiffie delay or a superfluous raise of the softirq are
-> +		 * not that expensive as doing the check always while holding
-> +		 * the lock.
-> +		 *
-> +		 * Possible remote writers are using WRITE_ONCE(). Local reader
-> +		 * uses therefore READ_ONCE().
-> +		 */
-> +		if (time_after_eq(jiffies, READ_ONCE(base->next_expiry)) ||
->  		    (i == BASE_DEF && tmigr_requires_handle_remote())) {
->  			raise_softirq(TIMER_SOFTIRQ);
->  			return;
-> -- 
-> 2.39.2
+> I didn't see this in -unstable or -stable though, is there any other
+> repo or branch I missed? Jingxiang is referring to this fix from Yu:
 > 
+> diff --git a/mm/vmscan.c b/mm/vmscan.c
+> index cfa839284b92..778bf5b7ef97 100644
+> --- a/mm/vmscan.c
+> +++ b/mm/vmscan.c
+> @@ -4320,7 +4320,7 @@ static bool sort_folio(struct lruvec *lruvec,
+> struct folio *folio, struct scan_c
+>         }
+> 
+>         /* ineligible */
+> -       if (zone > sc->reclaim_idx || skip_cma(folio, sc)) {
+> +       if (!folio_test_lru(folio) || zone > sc->reclaim_idx ||
+> skip_cma(folio, sc)) {
+>                 gen = folio_inc_gen(lruvec, folio, false);
+>                 list_move_tail(&folio->lru, &lrugen->folios[gen][type][zone]);
+>                 return true;
+
+I was mistaken.  I don't believe we ever received a formal/usable
+version of the above and the mm-hotfixes-unstable commits
+
+	Revert "mm: skip CMA pages when they are not available"
+
+and
+
+	revert-mm-skip-cma-pages-when-they-are-not-available-update
+
+change this code significantly.
 
