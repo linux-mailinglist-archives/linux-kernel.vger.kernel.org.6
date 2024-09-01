@@ -1,209 +1,156 @@
-Return-Path: <linux-kernel+bounces-310103-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310104-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A6B99674FD
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 06:34:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2895967506
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 06:40:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CADB91F21E3B
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 04:34:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1F386B210C8
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 04:40:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63B2D3717F;
-	Sun,  1 Sep 2024 04:34:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E82F28DA0;
+	Sun,  1 Sep 2024 04:40:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="htsEiqXU"
-Received: from mail-vs1-f51.google.com (mail-vs1-f51.google.com [209.85.217.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="mOXsg2MQ"
+Received: from out162-62-57-252.mail.qq.com (out162-62-57-252.mail.qq.com [162.62.57.252])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CC9D1E89C
-	for <linux-kernel@vger.kernel.org>; Sun,  1 Sep 2024 04:34:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C17B17C
+	for <linux-kernel@vger.kernel.org>; Sun,  1 Sep 2024 04:40:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.252
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725165247; cv=none; b=l9HdIV45ljEKl9KY/p+KMIJQixnLoLNTLG50IpcGyuCUs3QQsSykWdR8trzq/uS5SmLah5MhlGgC5zmrJYdQaei3mkqWQvyymPTe0LuamCnp8GTSOoIauTJOT9ot4wvIceY8R2atBff4TWImCLONCad+znwcGreUO4zJHSsWYBc=
+	t=1725165623; cv=none; b=qi9vaB/y4xUvs5pgxGlWheVTM69hJKigN8SUS52jbGb1r8op1fOo3+2rdPnhB5RtHrvXvLLTd4u6YvAP4E2gQZz+U/xMW23cBcKH5qzOHT0O2hxHGxaAWLBRTq6klSK6a/xfuUEkHDx7q5FRNCCuFoS3GxiiKvyAivTXXKvUaBE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725165247; c=relaxed/simple;
-	bh=T4mtg8OVVcl9onqShCy9lLoPf9A4q5m5Q7eAMdYPrIo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JfkSWKfPHf9cy0gyOeuX3AaKP9et1kl5mHhT5Fe6x2SGSL8zfSe9LNgzlCi1/O2TBfrP9RtfR9R8/A8aqXDTfFsWT0HYUyP7vij5krbU1QroC/fAtAan4HaLPKGmyRZLD1WlcPyJVDZXFJ9EW14nZPJvewAPj7B63nYoUVL61ok=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=htsEiqXU; arc=none smtp.client-ip=209.85.217.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-vs1-f51.google.com with SMTP id ada2fe7eead31-498c64c6833so918319137.2
-        for <linux-kernel@vger.kernel.org>; Sat, 31 Aug 2024 21:34:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1725165245; x=1725770045; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8cavqX0K4T8epRFwBR/4Atu+lSqMRFYWZY4pFbhTlcs=;
-        b=htsEiqXUPsSqQo8+N8mqCyFvzs7ItArHdEhFFAvh52V5TInHsr5QJvLeO6dCj2mqyl
-         sktyDmFxarRTFH0WWJv88uSty1ZnRtk4EQ/rlraizwKHF9p5l3+YLGZ/gk7nZw2+x+38
-         eqHnkJxdHtPTa+7o8redj6kcpRgTIJqa8WBKi4wOTOuQev8WdaeBrPZefm+DFXHOM1i6
-         tF++EZiGdB7oje7UK/Z2VAv3hdzSKX3XBw2705kLJUROcEpG2Ah7LBZy4J1dpr5UcJCr
-         9WtfLwl/nLfxqSJV7dujvqtGM/75MtGZsNkZSphhXbBDhW6tFa1NsBve4+6aIrBfuUsO
-         llrA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725165245; x=1725770045;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8cavqX0K4T8epRFwBR/4Atu+lSqMRFYWZY4pFbhTlcs=;
-        b=kDOiCzACDmtmThxUBt5Y9BzKq2XETTBheH5UhIP/4g1heReH17hei/lxbsYkBGpFHG
-         yjK285v1lQiLXGb85+jcCqAYpMUkiin2yGIoj9l8jAxXFDl9VNZi2R+bhxi49dyKDJ1A
-         ncamYfPQICezKVh2U/hRIKtUi3zn4okDraCJsT/zM0n1uJ0t2vvp8Eb+WTEXe0TLyL9m
-         tfGlm8n7vbYTEoexwtdwKzOT7YzqdDkBBAVb3PIBL3DfcC0j+McEJSazQvtHhm7ftrJo
-         AhNKFh+jxvk79hrGOVdZj/zKWIXBdaSEFHG1S5zOj90nrQggBw6785UG2qvA8D2DvlWF
-         7Ogg==
-X-Gm-Message-State: AOJu0YzYk4QXLm4ToYFS5CrQvsvZ5cwQYfLaWJ8G11AVLcduay0FN+ns
-	X+6LEmMxkUYKOV99kChSv9TpgucO1ic+QxhuFCZ+lSNvPyt0cDygvOwFE4P18WxZb4LSi1ormRK
-	n7u+eS6ppkfFs8LcXC5p5VDQPgVRd4tMZRVeL
-X-Google-Smtp-Source: AGHT+IF4Aez5JXCdT7JaIccNuJhWm549sM1XMAVK6lPzRG6vkbPDXkrMPlWuHjlgeXTaYoCx0OnohoWGF016XeAw5RM=
-X-Received: by 2002:a05:6102:440c:b0:493:d41a:1185 with SMTP id
- ada2fe7eead31-49a778e35a1mr5368135137.17.1725165244518; Sat, 31 Aug 2024
- 21:34:04 -0700 (PDT)
+	s=arc-20240116; t=1725165623; c=relaxed/simple;
+	bh=OM5usAhYQPhhGsfjhmJq2PSB9ZwP2Bh8dw/AnmPbLCA=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=jnRuyLtp1eU109y/881r5eZIUrFrlr8C6DgbmSf3pAFDVGJQ6Kgax9KyLW+HLvaBowzkBTMKMO4g4PAuZKHl8Ir3yNHsJ8/zu/u6m2QifKpnDMZhIkxQZ+lhJ9lHGj/cHv9qmEyTy9tIwg3C/4aA1w4dtI9gBJDWF/OpG2a9W58=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=mOXsg2MQ; arc=none smtp.client-ip=162.62.57.252
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1725165309; bh=goP3FOSCRmukplUMiTIStyPDCRL5ys3ZCX+hr+sxWYM=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=mOXsg2MQ5MtUHwtAHp/Bs2OC4n+0Xl0xGpcgcrlMuwwapvoAM3FKH48BGPRSFhnhz
+	 FEHZrky/dYPfk2BqwnFdqj/oYyhvftZA2v3NTXm4vqtgIDAz/hNya/dJFR72oNNJO7
+	 KmE+EyHPOFYseqQUfftdx5YkmyQbbnGDrK6WOPpA=
+Received: from pek-lxu-l1.wrs.com ([111.198.224.50])
+	by newxmesmtplogicsvrszc13-0.qq.com (NewEsmtp) with SMTP
+	id 8C798643; Sun, 01 Sep 2024 12:35:07 +0800
+X-QQ-mid: xmsmtpt1725165307tqmaa4jrz
+Message-ID: <tencent_8764481771D77F06D7136EE36C496203AD05@qq.com>
+X-QQ-XMAILINFO: Ni8Yhdca2hoVcPyM/o+CbY/8FKurS678XqOBJczsnn1vmpJPIlmJH2/G1SlIo0
+	 GA5Moo+qtZ4/6PgS/MlzZHovsDTjVkrD+N7Ai+frSIRbGJPIv4J4quzDZMf/zz5vFJwCVzkC5pWR
+	 QtnVuLRPDbpcXVyQhyaNqltdWdWnP/qKsgdpPqGrjpmJI7pgSPyimC6eJt+o5VBvsNuq56M+drBV
+	 5HEXhJK0X/JCkJNUd16wD8ZaIHFR/38slx9C79TD0YFImcJrFhb0+FoUSzVOu1Ga1bdbCLjSUFb0
+	 QnYRPe3D4lXcvFVxvTLDB5qrklWj3hMHes64jRoErxYAMrSxc2dIPVJV97hC7ziBniLafFRjYQMP
+	 Sarvv1TrZxuI926ZiABMteB7pJTf7N69Prx0uSaJm1J0C+h2LkZCAWqIf9r14EnWLDtSHYeSls8r
+	 Ckcl289nQfbGThgngu+h4gI6O3giYzdPr0QFvK1NK3bw9sWfDFODbtzi1KEHCY5RhgAVvQcIPAhE
+	 8UzOPQ40wC1cmr7oP2+46pFbqeifK22VcZEyd6Wzx6z8Rv9TIk9S1OVwkyLrohPH1abe0fLdznlZ
+	 ZIxVNR6Fcuorif6u6E1hS2okKofebd7nsD9lG+CKm1mOtslmpgtOjPJWzZPc7tswv0MpR60XM/Rf
+	 E7QDwhKsgn3nMJvZKNOy1Cfg2QDJIjQWXCzHCMxbz4vH7iuEjKj+jmX4zKw/69NAXb7eZFjMpMAA
+	 luE8wpNegFYPSJYaN4vLKk6A0FboXpWMhzEFck/lElRpyzmnrxl0RvlzaIxZlLNbIktBezbYnn2X
+	 HslfKb1QqJNIS4fXEHu5stlpxaIbyTBXvbKO2DrIDec1mJOJMUGuLSE/jSBEQdpaBQRaoUbueNwP
+	 FuzuLGVot8MIL3QIz432AZD+aywoBz+t8Gc02qNmeq
+X-QQ-XMRINFO: Mp0Kj//9VHAxr69bL5MkOOs=
+From: Edward Adam Davis <eadavis@qq.com>
+To: syzbot+d1e76d963f757db40f91@syzkaller.appspotmail.com
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [nfs?] INFO: task hung in nfsd_nl_listener_set_doit
+Date: Sun,  1 Sep 2024 12:35:08 +0800
+X-OQ-MSGID: <20240901043507.1915252-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.46.0
+In-Reply-To: <000000000000b5ba900620fec99b@google.com>
+References: <000000000000b5ba900620fec99b@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240826204353.2228736-1-peterx@redhat.com> <20240826204353.2228736-17-peterx@redhat.com>
-In-Reply-To: <20240826204353.2228736-17-peterx@redhat.com>
-From: Yu Zhao <yuzhao@google.com>
-Date: Sat, 31 Aug 2024 22:33:25 -0600
-Message-ID: <CAOUHufYfF3BmTZ1r8cdLSU7ddYO20B8M-gFRAn=Hkd=jtQbcng@mail.gmail.com>
-Subject: Re: [PATCH v2 16/19] mm: Remove follow_pte()
-To: Peter Xu <peterx@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	Gavin Shan <gshan@redhat.com>, Catalin Marinas <catalin.marinas@arm.com>, x86@kernel.org, 
-	Ingo Molnar <mingo@redhat.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Paolo Bonzini <pbonzini@redhat.com>, Dave Hansen <dave.hansen@linux.intel.com>, 
-	Thomas Gleixner <tglx@linutronix.de>, Alistair Popple <apopple@nvidia.com>, kvm@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, Sean Christopherson <seanjc@google.com>, 
-	Oscar Salvador <osalvador@suse.de>, Jason Gunthorpe <jgg@nvidia.com>, Borislav Petkov <bp@alien8.de>, 
-	Zi Yan <ziy@nvidia.com>, Axel Rasmussen <axelrasmussen@google.com>, 
-	David Hildenbrand <david@redhat.com>, Yan Zhao <yan.y.zhao@intel.com>, Will Deacon <will@kernel.org>, 
-	Kefeng Wang <wangkefeng.wang@huawei.com>, Alex Williamson <alex.williamson@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Mon, Aug 26, 2024 at 2:44=E2=80=AFPM Peter Xu <peterx@redhat.com> wrote:
->
-> follow_pte() users have been converted to follow_pfnmap*().  Remove the
-> API.
->
-> Signed-off-by: Peter Xu <peterx@redhat.com>
-> ---
->  include/linux/mm.h |  2 --
->  mm/memory.c        | 73 ----------------------------------------------
->  2 files changed, 75 deletions(-)
->
-> diff --git a/include/linux/mm.h b/include/linux/mm.h
-> index 161d496bfd18..b31d4bdd65ad 100644
-> --- a/include/linux/mm.h
-> +++ b/include/linux/mm.h
-> @@ -2368,8 +2368,6 @@ void free_pgd_range(struct mmu_gather *tlb, unsigne=
-d long addr,
->                 unsigned long end, unsigned long floor, unsigned long cei=
-ling);
->  int
->  copy_page_range(struct vm_area_struct *dst_vma, struct vm_area_struct *s=
-rc_vma);
-> -int follow_pte(struct vm_area_struct *vma, unsigned long address,
-> -              pte_t **ptepp, spinlock_t **ptlp);
->  int generic_access_phys(struct vm_area_struct *vma, unsigned long addr,
->                         void *buf, int len, int write);
->
-> diff --git a/mm/memory.c b/mm/memory.c
-> index b5d07f493d5d..288f81a8698e 100644
-> --- a/mm/memory.c
-> +++ b/mm/memory.c
-> @@ -6100,79 +6100,6 @@ int __pmd_alloc(struct mm_struct *mm, pud_t *pud, =
-unsigned long address)
->  }
->  #endif /* __PAGETABLE_PMD_FOLDED */
->
-> -/**
-> - * follow_pte - look up PTE at a user virtual address
-> - * @vma: the memory mapping
-> - * @address: user virtual address
-> - * @ptepp: location to store found PTE
-> - * @ptlp: location to store the lock for the PTE
-> - *
-> - * On a successful return, the pointer to the PTE is stored in @ptepp;
-> - * the corresponding lock is taken and its location is stored in @ptlp.
-> - *
-> - * The contents of the PTE are only stable until @ptlp is released using
-> - * pte_unmap_unlock(). This function will fail if the PTE is non-present=
-.
-> - * Present PTEs may include PTEs that map refcounted pages, such as
-> - * anonymous folios in COW mappings.
-> - *
-> - * Callers must be careful when relying on PTE content after
-> - * pte_unmap_unlock(). Especially if the PTE maps a refcounted page,
-> - * callers must protect against invalidation with MMU notifiers; otherwi=
-se
-> - * access to the PFN at a later point in time can trigger use-after-free=
-.
-> - *
-> - * Only IO mappings and raw PFN mappings are allowed.  The mmap semaphor=
-e
-> - * should be taken for read.
-> - *
-> - * This function must not be used to modify PTE content.
-> - *
-> - * Return: zero on success, -ve otherwise.
-> - */
-> -int follow_pte(struct vm_area_struct *vma, unsigned long address,
-> -              pte_t **ptepp, spinlock_t **ptlp)
-> -{
-> -       struct mm_struct *mm =3D vma->vm_mm;
-> -       pgd_t *pgd;
-> -       p4d_t *p4d;
-> -       pud_t *pud;
-> -       pmd_t *pmd;
-> -       pte_t *ptep;
-> -
-> -       mmap_assert_locked(mm);
-> -       if (unlikely(address < vma->vm_start || address >=3D vma->vm_end)=
-)
-> -               goto out;
-> -
-> -       if (!(vma->vm_flags & (VM_IO | VM_PFNMAP)))
-> -               goto out;
-> -
-> -       pgd =3D pgd_offset(mm, address);
-> -       if (pgd_none(*pgd) || unlikely(pgd_bad(*pgd)))
-> -               goto out;
-> -
-> -       p4d =3D p4d_offset(pgd, address);
-> -       if (p4d_none(*p4d) || unlikely(p4d_bad(*p4d)))
-> -               goto out;
-> -
-> -       pud =3D pud_offset(p4d, address);
-> -       if (pud_none(*pud) || unlikely(pud_bad(*pud)))
-> -               goto out;
-> -
-> -       pmd =3D pmd_offset(pud, address);
-> -       VM_BUG_ON(pmd_trans_huge(*pmd));
-> -
-> -       ptep =3D pte_offset_map_lock(mm, pmd, address, ptlp);
-> -       if (!ptep)
-> -               goto out;
-> -       if (!pte_present(ptep_get(ptep)))
-> -               goto unlock;
-> -       *ptepp =3D ptep;
-> -       return 0;
-> -unlock:
-> -       pte_unmap_unlock(ptep, *ptlp);
-> -out:
-> -       return -EINVAL;
-> -}
-> -EXPORT_SYMBOL_GPL(follow_pte);
+#syz test
 
-I ran into build errors with this -- removing exported symbols breaks
-ABI, so I think we should make follow_pte() as a wrapper of its new
-equivalent, if that's possible?
+diff --git a/include/net/genetlink.h b/include/net/genetlink.h
+index 9ab49bfeae78..51c4e811c01c 100644
+--- a/include/net/genetlink.h
++++ b/include/net/genetlink.h
+@@ -137,6 +137,7 @@ struct genl_info {
+ 	possible_net_t		_net;
+ 	void *			user_ptr[2];
+ 	struct netlink_ext_ack *extack;
++	struct mutex		fslock;
+ };
+ 
+ static inline struct net *genl_info_net(const struct genl_info *info)
+diff --git a/net/netlink/genetlink.c b/net/netlink/genetlink.c
+index feb54c63a116..abf52285e26a 100644
+--- a/net/netlink/genetlink.c
++++ b/net/netlink/genetlink.c
+@@ -1105,6 +1105,7 @@ static int genl_family_rcv_msg_doit(const struct genl_family *family,
+ 	info.extack = extack;
+ 	genl_info_net_set(&info, net);
+ 	memset(&info.user_ptr, 0, sizeof(info.user_ptr));
++	mutex_init(&info.fslock);
+ 
+ 	if (ops->pre_doit) {
+ 		err = ops->pre_doit(ops, skb, &info);
+diff --git a/fs/nfsd/nfsctl.c b/fs/nfsd/nfsctl.c
+index 34eb2c2cbcde..8d0ac4f699bd 100644
+--- a/fs/nfsd/nfsctl.c
++++ b/fs/nfsd/nfsctl.c
+@@ -1953,11 +1953,11 @@ int nfsd_nl_listener_set_doit(struct sk_buff *skb, struct genl_info *info)
+ 	struct nfsd_net *nn;
+ 	int err, rem;
+ 
+-	mutex_lock(&nfsd_mutex);
++	mutex_lock(&info->fslock);
+ 
+ 	err = nfsd_create_serv(net);
+ 	if (err) {
+-		mutex_unlock(&nfsd_mutex);
++		mutex_unlock(&info->fslock);
+ 		return err;
+ 	}
+ 
+@@ -2080,7 +2080,7 @@ int nfsd_nl_listener_set_doit(struct sk_buff *skb, struct genl_info *info)
+ 		nfsd_destroy_serv(net);
+ 
+ out_unlock_mtx:
+-	mutex_unlock(&nfsd_mutex);
++	mutex_unlock(&info->fslock);
+ 
+ 	return err;
+ }
+@@ -2110,7 +2110,7 @@ int nfsd_nl_listener_get_doit(struct sk_buff *skb, struct genl_info *info)
+ 		goto err_free_msg;
+ 	}
+ 
+-	mutex_lock(&nfsd_mutex);
++	mutex_lock(&info->fslock);
+ 	nn = net_generic(genl_info_net(info), nfsd_net_id);
+ 
+ 	/* no nfs server? Just send empty socket list */
+@@ -2141,14 +2141,14 @@ int nfsd_nl_listener_get_doit(struct sk_buff *skb, struct genl_info *info)
+ 	}
+ 	spin_unlock_bh(&serv->sv_lock);
+ out_unlock_mtx:
+-	mutex_unlock(&nfsd_mutex);
++	mutex_unlock(&info->fslock);
+ 	genlmsg_end(skb, hdr);
+ 
+ 	return genlmsg_reply(skb, info);
+ 
+ err_serv_unlock:
+ 	spin_unlock_bh(&serv->sv_lock);
+-	mutex_unlock(&nfsd_mutex);
++	mutex_unlock(&info->fslock);
+ err_free_msg:
+ 	nlmsg_free(skb);
+ 
+
 
