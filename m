@@ -1,125 +1,183 @@
-Return-Path: <linux-kernel+bounces-310131-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310132-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCE15967553
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 08:37:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A93C967555
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 08:40:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 035ED1C20E52
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 06:37:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 065FA282B98
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 06:40:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 189431420A8;
-	Sun,  1 Sep 2024 06:37:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0AA91420A8;
+	Sun,  1 Sep 2024 06:40:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CjCrvpGK"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ldjtfvUa"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AB3E748A
-	for <linux-kernel@vger.kernel.org>; Sun,  1 Sep 2024 06:37:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 330B1748A
+	for <linux-kernel@vger.kernel.org>; Sun,  1 Sep 2024 06:40:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725172665; cv=none; b=thEG2N+xkXrteGnNUpueuikgxDWZ++jIPMlUdaXbzXpgy60AVhu3b1u8EbqGvMkngLGrPWE7s2G3Vl6qLLYJVbEw/hGz1UpfRtQUGdTB0AOSqtTM3Zos8UeHP8aGuyCfda/loWrNVBXpSDEK7FHPE9xCk2q/ZyzhK+cUx0yhFtg=
+	t=1725172810; cv=none; b=fFQ4GOvSFELQTmn0/AdUe0qaJnlsbmx4OaH1vw3geo0v1YRtPobDDLkXrVN2OtpF9p64/GS6Zzz+lGFwiefu4WaMMXwlsJcRXe065AZrBlfLj/ZqSXZk5jCDzaNTyBveH2tzzVOlCo2YFwjEygDi2MvlZE3QWVl//eWpExQ0vYI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725172665; c=relaxed/simple;
-	bh=YTpC/TIiad9U2QDxYGT39G3AcvYMbOXyGx2BdaYU31Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uo4Set4+GgFqE55/uU1a+DcS8Aoq/lcWsR2jYnt3hFFjBnZYvBKIqL1b7aod0Qyc9E3Bkz87IB2RSmLbc653OgAVFQhlnN4WDEj8cY/UhuVUSeOn0fdWXj1DAWODlIkj7VmlD+1Fha37PPZvQ59nlGYz/I7SGt8+fCrLj6Knbes=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CjCrvpGK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 88847C4CEC3;
-	Sun,  1 Sep 2024 06:37:44 +0000 (UTC)
+	s=arc-20240116; t=1725172810; c=relaxed/simple;
+	bh=tmjR4zaDQqO7YRVjV6+NxBxXp7jCIOzTqAf/ZYvJSWg=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ZhxUL/lomCrnMZS2vsxuzFma/+Tju/aKwAMCEGJ/Mdujl+5lSNbhxpdKowKyX3fJ8mLCmuJERH5X7gStXVrgt479ZFvhhXC1oTt9FyihQRdr3jP72myAoP2pVk/lQkUEOCto2TeZXY+e4Gw2jhNFgcDgO4+23wEOJDgTZC2F8dc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ldjtfvUa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6867FC4CEC3;
+	Sun,  1 Sep 2024 06:40:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725172664;
-	bh=YTpC/TIiad9U2QDxYGT39G3AcvYMbOXyGx2BdaYU31Y=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CjCrvpGKaff97Iv0y6lr8x2VZbvM3LfOCPQBcOUxWr7Y9SkSz7o/5idjbkeqgRieH
-	 0hlEytK1HhVjtR3oV959U3ngBjhh3CmOblVFS0qyMcAU6H6I/L/YfY1NtcA1QSlQqI
-	 Zuo1C8MT2DuivJmZM/tChXQBFOJmEeVb9KmqHcLgh708Cvv9IwBpKRdO8ERokF+lbw
-	 8FBfbOzG9Bp3mCgds1X8ur0duPIpzK8Zgb1UqU7weHRqjW7Ec+gcaTcztkFJV+rSHI
-	 bHBbFGYMWKtxITGNFWXjmHcVop86gxVmkKpEwhKd+nxEC1S/kuvsPzLYpeka2Fqtrt
-	 ZahAY0aQhDrJg==
-Date: Sat, 31 Aug 2024 20:37:43 -1000
-From: Tejun Heo <tj@kernel.org>
-To: David Vernet <void@manifault.com>
-Cc: kernel-team@meta.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 06/11] sched_ext: Reorder args for
- consume_local/remote_task()
-Message-ID: <ZtQLt-rLQfeAtypd@slm.duckdns.org>
-References: <20240830110415.116090-1-tj@kernel.org>
- <20240830110415.116090-7-tj@kernel.org>
- <20240901014000.GG70166@maniforge>
+	s=k20201202; t=1725172809;
+	bh=tmjR4zaDQqO7YRVjV6+NxBxXp7jCIOzTqAf/ZYvJSWg=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=ldjtfvUatoq9YBC87fc5MdxjbiEcER9AURhuULLUaCOs071PXg1Dl+BfXWACnwyu/
+	 PBQLg33aUl579Oda2tTd4R1NGJw1EWpEUBHSds9n0YlfHEO7DA5874CJ1a5LoYG3Yt
+	 ZLPUP9Cp1JHRmHzjQGBCHDMwYpvqK0Q7fcE2m3GsawMWKCee+4s8a844L/OdzGLIuS
+	 18rliCCCPbBuoet2xQBgRNJpGPSfHaGzhVx8bS3CsPig3sH5UUJDhsO5AB8gECihDe
+	 QmC3QlDrl4CPl9LWHiCnhPsxGYcn03VR8ZyyE9LL9mQbL8kEFfHE7VsW2Ic6ylgLzr
+	 lbmjatXIuz6tA==
+Date: Sun, 1 Sep 2024 08:40:04 +0200
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Peter Maydell <peter.maydell@linaro.org>
+Cc: linux-kernel@vger.kernel.org, qemu-arm@nongnu.org, qemu-devel@nongnu.org
+Subject: Re: [PATCH v9 11/12] target/arm: add an experimental mpidr arm cpu
+ property object
+Message-ID: <20240901084004.166a3c96@sal.lan>
+In-Reply-To: <CAFEAcA-wD6U+onh3y4Y-LDTFuYoeWbGShkRPx7emi1ZPfKJP0w@mail.gmail.com>
+References: <cover.1724556967.git.mchehab+huawei@kernel.org>
+	<b88fe895e6f71711387ca153f4f1b3fbb0aa2176.1724556967.git.mchehab+huawei@kernel.org>
+	<CAFEAcA-OaQ1ypa7LXz5nOs+6+fjmYNHzNL0VVgapoXEHU=rHnQ@mail.gmail.com>
+	<20240826035324.6b1edcc7@sal.lan>
+	<CAFEAcA-wD6U+onh3y4Y-LDTFuYoeWbGShkRPx7emi1ZPfKJP0w@mail.gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240901014000.GG70166@maniforge>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hello,
+Em Fri, 30 Aug 2024 17:27:27 +0100
+Peter Maydell <peter.maydell@linaro.org> escreveu:
 
-On Sat, Aug 31, 2024 at 08:40:00PM -0500, David Vernet wrote:
-...
-> > @@ -2265,7 +2265,7 @@ static bool consume_remote_task(struct rq *this_rq, struct scx_dispatch_q *dsq,
-> >  }
-> >  #else	/* CONFIG_SMP */
-> >  static inline bool task_can_run_on_remote_rq(struct task_struct *p, struct rq *rq, bool trigger_error) { return false; }
-> > -static inline bool consume_remote_task(struct rq *rq, struct scx_dispatch_q *dsq, struct task_struct *p, struct rq *task_rq) { return false; }
-> > +static inline bool consume_remote_task(struct rq *this_rq, struct task_struct *p, struct scx_dispatch_q *dsq, struct rq *task_rq) { return false; }
-> >  #endif	/* CONFIG_SMP */
+> On Mon, 26 Aug 2024 at 04:12, Mauro Carvalho Chehab
+> <mchehab+huawei@kernel.org> wrote:
+> >
+> > Em Sun, 25 Aug 2024 12:34:14 +0100
+> > Peter Maydell <peter.maydell@linaro.org> escreveu:
 > >  
-> >  static bool consume_dispatch_q(struct rq *rq, struct scx_dispatch_q *dsq)
-> > @@ -2286,12 +2286,12 @@ static bool consume_dispatch_q(struct rq *rq, struct scx_dispatch_q *dsq)
-> >  		struct rq *task_rq = task_rq(p);
-> >  
-> >  		if (rq == task_rq) {
-> > -			consume_local_task(rq, dsq, p);
-> > +			consume_local_task(p, dsq, rq);
-> >  			return true;
-> >  		}
-> >  
-> >  		if (task_can_run_on_remote_rq(p, rq, false)) {
+> > > On Sun, 25 Aug 2024 at 04:46, Mauro Carvalho Chehab
+> > > <mchehab+huawei@kernel.org> wrote:  
+> > > >
+> > > > Accurately injecting an ARM Processor error ACPI/APEI GHES
+> > > > error record requires the value of the ARM Multiprocessor
+> > > > Affinity Register (mpidr).
+> > > >
+> > > > While ARM implements it, this is currently not visible.
+> > > >
+> > > > Add a field at CPU storing it, and place it at arm_cpu_properties
+> > > > as experimental, thus allowing it to be queried via QMP using
+> > > > qom-get function.  
+> > >  
+> > > >  static Property arm_cpu_properties[] = {
+> > > >      DEFINE_PROP_UINT64("midr", ARMCPU, midr, 0),
+> > > > +    DEFINE_PROP_UINT64("x-mpidr", ARMCPU, mpidr, 0),
+> > > >      DEFINE_PROP_UINT64("mp-affinity", ARMCPU,
+> > > >                          mp_affinity, ARM64_AFFINITY_INVALID),
+> > > >      DEFINE_PROP_INT32("node-id", ARMCPU, node_id, CPU_UNSET_NUMA_NODE_ID),  
+> > >
+> > > Why do we need this?  
+> >
+> > The ACPI HEST tables, in particular when using GHESv2 provide
+> > several kinds of errors. Among them, we have ARM Processor Error,
+> > as defined at UEFI 2.10 spec (and earlier versions), the Common
+> > Platform Error Record (CPER) is defined as:
+> >
+> >    https://uefi.org/specs/UEFI/2.10/Apx_N_Common_Platform_Error_Record.html?highlight=ghes#arm-processor-error-section
+> >
+> > There are two fields that are part of the CPER record. One of them is
+> > mandatory (MIDR); the other one is optional, but needed to decode another
+> > field.
+> >
+> > So, basically those errors need them.  
 > 
-> How do you feel about always prefixing src_ and dst_ for any arguments
-> that refer to either (with any @rq before @p implying current as this
-> patch proposes)? In this case it's a bit confusing to read because
-> technically according to the convention proposed in this patch, @rq
-> could be either curr_rq or src_rq in consume_dispatch_q() (there's no
-> @p to disambiguate), and @rq could be either src_rq or dst_rq in
-> task_can_run_on_remote_rq() (they both come after @p).
-> 
-> It's pretty obvious from context that @rq is referring to a dst_rq in
-> task_can_run_on_remote_rq(), but it might still be a bit easier on the
-> eyes to be explicit. And for functions like consume_remote_task() which
-> take both a src_dsq and a src_rq, I think it will be easier to follow
-> then the convention.
+> OK, but why do scripts outside of QEMU need the information,
+> as opposed to telling QEMU "hey, generate an error" and
+> QEMU knowing the format to use? Do we have any other
+> QMP APIs where something external provides raw ACPI
+> data like this?
 
-re. these arguments, there are largely two schemes - one coming from sched
-core and shared with other scheds where the leading [this_]rq denotes the
-current / local rq, and the other internal to SCX where more parties are
-involved - this_rq, src_rq and dst_rq. While the latter situation may not be
-unique to SCX, it is a lot more pronounced in SCX than other scheduling
-classes as migrations are integral to how it works.
+This was discussed during the review of this patch series. 
 
-I'm not sure about applying the latter naming scheme to everything. Where
-SCX is interfacing with sched core, I think there are more benefits in
-following the existing naming scheme. This means that there are going to be
-places where the two naming schemes interact, which is what this patch is
-showing - consume*() functions are following the sched core scheme as
-they're always used to pull tasks to the "current" rq for ops.balance() -
-it's still doing what balances do in other sched classes. However, the
-helpers that they use are more generic and flexible ones which are going to
-be used for SCX specific things such as moving tasks between arbitrary DSQs.
+See, the ACPI Platform Error Interfaces (APEI) code currently in QEMU
+implements limited support for ACPI HEST - Hardware Error Source Table [1].
 
-That said, the use of @task_rq instead of @src_rq here is just confusing. I
-will rename it to @src_rq.
+[1] https://uefi.org/specs/ACPI/6.5/18_Platform_Error_Interfaces.html#acpi-error-source
 
-Thanks.
+HEST consists of, currently, 9 error types (plus 3 obsoleted ones). Among 
+them, there is support for generic errors via GHES and GHESv2 types. 
+While not officially obsoleted, GHES is superseded by GHESv2.
 
--- 
-tejun
+GHESv2 (and GHES) has a section type field to identify which error type it
+is [2]. Currently, there are +10 defined UUIDs for the section type. 
+
+[2] https://uefi.org/specs/UEFI/2.10/Apx_N_Common_Platform_Error_Record.html#section-descriptor
+
+The current code on ghes.c implements GHESv2 support for a single
+type (memory error), received from the host OS via SIGBUS.
+
+Testing such code and injecting such error is not easy, as the host OS needs
+to send a SIGBUS to the guest, this reflecting an error at the main OS.
+Such code also has several limitations.
+
+-
+
+At the first three versions of this patch set, the code was just doing
+like what you said: it was adding an error injection for a HEST GHESv2 
+ARM Processor Error. So the error record (CPER) were produced in QEMU using 
+some optional parameters passed via QMP to change fields when needed. 
+With such approach, QEMU could use directly the value from MIDR and MPIDR.
+
+The main disadvantage is that, to make full support of HEST, a lot
+of code will be needed to add support for every GHESv2 type and for
+every GHESv2 section type. So, the feedback we had were to re-implement
+it into a generic way.
+
+The generic CPER error inject approach (since v4 of this series), has
+soma advantages:
+
+- it is easy to do fuzz testing, as the entire CPER is built via a python
+  script;
+- no need to modify QEMU to support other GHESv2 types of record and
+  to support other types of processors;
+- GHESv2 fields can also be dynamically generated;
+- It shouldn't be hard to change the code to support other types of
+  HEST table (currently, only GHESv2 is supported).
+
+The disadvantage is that queries are needed to pick configuration and
+register values from the current emulation to do error injection. For
+ARM Processor Error, it means that MPIDR and MIDR, are needed. Other 
+processors and other error types will also require to query other data
+from QEMU, either using already-existing QMP code or by adding new ones.
+
+Yet, the amount of code for such queries seem to be smaller than the
+amount of code to be added for every single GHESv2/HEST type.
+
+-
+
+Worth saying that QEMU may still require internal HEST/GHES errors to be 
+able to reflect at the guests hardware problems detected at the host OS. 
+
+So, for instance, if a host OS memory is poisoned due to hardware errors,
+QEMU and guests need to know, in order to kill processes affected
+by a bad memory. 
+
+Regards,
+Mauro
 
