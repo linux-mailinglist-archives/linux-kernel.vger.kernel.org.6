@@ -1,134 +1,204 @@
-Return-Path: <linux-kernel+bounces-310390-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310391-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08531967C20
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 22:30:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91D5B967C23
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 22:39:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A85DE1F218DE
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 20:30:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A94B2819F6
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 20:39:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C2946F2F4;
-	Sun,  1 Sep 2024 20:30:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="ka8SNJGw"
-Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC52480631;
+	Sun,  1 Sep 2024 20:39:24 +0000 (UTC)
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0BC545BEF
-	for <linux-kernel@vger.kernel.org>; Sun,  1 Sep 2024 20:30:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7692254662
+	for <linux-kernel@vger.kernel.org>; Sun,  1 Sep 2024 20:39:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725222633; cv=none; b=XLZoShMkHypQEpVQH6ehGsNn/nGLP3Z1c9gJyPaW5i9vLqY5BUQbKIHOxiTRoaqQ4B6vfPqXSkoAx/PSIqeO+IgZHVXZA61Nqp5GfhBDW+ua8nnFxzFzjWePvM6/Ptp9YKnoPUxUwGMmaBT2KQJKfkiEM01Plw1K5AFSWXd7zw0=
+	t=1725223164; cv=none; b=Uv+b3v/of7zaPayWbq46hr+6hUwtrn5JAKFiUWdjaVsS7cTrYpZX2L+Q1q9lSmjJ433LBHa+94Z/2bi+nViso4WeDOSt+OKXS+Mnk9RTKR3RA2Q1GW1eNRgopU39n8FKB63MuAQW154n79C0L4tPHVk5fcGr7aNwxYmL6RxfruE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725222633; c=relaxed/simple;
-	bh=g41yC3bEP8cqEYotlsm3ix6iioalK/xccRq7i3vK3u0=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=qd0E5+eB88BcIoCHNWhW8W2w13Opn7YPSKe8LQOAnoz/bbNWXmAE4JXBUaQtaJ5xtyE/L8X2DKg7OMfjW2wbeKSNJdWCl+H2dqOvlG6zxIF9G5zssQv0EwaN+C4ZWDRkgV0q6EAtFJeWMU0QxfEun2w+yjOzVXbsp1moIFs9h0I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=ka8SNJGw; arc=none smtp.client-ip=198.47.23.248
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 481KUPdS014834;
-	Sun, 1 Sep 2024 15:30:25 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1725222625;
-	bh=qrzjMNEzm6bAx70IMT5wQnV4EoRx6mzWpyvwlIFL/Ik=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=ka8SNJGwjgkNsdF+bIkERz/4vQIga4Te75tWNwI/yRE0+IbKxPzoAfB/5WV41jP2J
-	 Mc7vUyDV69C1L7+BtYUUcv8IQr9Clh1XM0Yt4RR+wKyHmhE57NUf+EzX9BKAsmyo84
-	 znOTYiIslL4WcsikOUk4fH2UOR3oT5Bh/EANQIR8=
-Received: from DFLE101.ent.ti.com (dfle101.ent.ti.com [10.64.6.22])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTP id 481KUP54113855;
-	Sun, 1 Sep 2024 15:30:25 -0500
-Received: from DFLE101.ent.ti.com (10.64.6.22) by DFLE101.ent.ti.com
- (10.64.6.22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Sun, 1
- Sep 2024 15:30:24 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE101.ent.ti.com
- (10.64.6.22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Sun, 1 Sep 2024 15:30:24 -0500
-Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 481KUOVF027525;
-	Sun, 1 Sep 2024 15:30:24 -0500
-From: Nishanth Menon <nm@ti.com>
-To: Tero Kristo <kristo@kernel.org>, Santosh Shilimkar <ssantosh@kernel.org>,
-        Markus Schneider-Pargmann <msp@baylibre.com>
-CC: Nishanth Menon <nm@ti.com>, Vibhore Vardhan <vibhore@ti.com>,
-        Kevin Hilman
-	<khilman@baylibre.com>, Dhruva Gole <d-gole@ti.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v11 0/4] firmware: ti_sci: Introduce system suspend support
-Date: Sun, 1 Sep 2024 15:30:21 -0500
-Message-ID: <172522245197.999960.1404822274553467215.b4-ty@ti.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20240829201606.1407773-1-msp@baylibre.com>
-References: <20240829201606.1407773-1-msp@baylibre.com>
+	s=arc-20240116; t=1725223164; c=relaxed/simple;
+	bh=zVdNKVHpbZRnpytZlzP2HvPNhlSGqzarJG+hVKb2raw=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=ixzr5bgiDJALNeIb1D1LoWmY8V0UxdgR9HphcolGPvXm85LMLq+3nqMpML+xfPZ/K3aiYwYODInC90he84ZUXZU4LB4QjG+UdYtR+gQ+1LMb+DMsbTKsRLozJP5bRp/GJRNFmroVYTBwoOjcKzy7C10wquzKH37rgAiocJLnOSk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-82a2109c355so369216439f.2
+        for <linux-kernel@vger.kernel.org>; Sun, 01 Sep 2024 13:39:22 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725223161; x=1725827961;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=E7Jx+9e8vKZXmFDe3Lh781jbbu1xB/DrqqHfXnvqEdE=;
+        b=Wk0k1S/t0lexWxFEZ3FnAZA4BocrxSfkCNoCgTcEp0m+vPUejgLMZ+/eAxff7ERk+F
+         594XmURMCxZ1mXzIoPJxKIyj8b7cd05ZGmDRswtXIABFfyEbztmhXX1vcJOoRskIhqM+
+         ybgkMaxRojTkVNm2wMANKOWe7SmRObFZHq3w3WLAVRLO9+Z9RQ2wMhqV5GcPPPKLMQe+
+         EdpDy2bwxlbWMChnhrWfwElGoLIlLYsPfMZzNa+SCm4scyQe6VCAQxkygaHoa7GTdOzJ
+         CagkrS0Fj890yeioqmuLATgAckF43bw3QoiXLmYJ2jKhENqb8Yfl9vLHgO5sW6AsQxnh
+         lsnQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXMaX+qSX1OYYNakcENQocg1dGJy/NMfsr7x5wXreDPpZvvllzlzncnToK0AM/Mp16TAq95kotCxuADjYA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwKXE5xYVda7bgIKh6Ud/FKpEAAxkCeYKRr23hZfm6aP1hMmkVg
+	5ilIype1Nu8oiyS7QCM3po6q/Rd8G1L+UIwM9971mn0D8+86Wnl36dnLCoQoRxscO5dD+w+xAEa
+	qUpVpn4MDtCtCZLMVMvApzof/gw5tsAnlPmOl7iud/aRPncaHq0RXHSk=
+X-Google-Smtp-Source: AGHT+IEGxNdvHEGH5w/DmQq4MAz4zwanPBILDDn+HS9WBs0qmOUEAn1gqt+1yCegaSkSkqDNaTQZrORwEqvIFaQArITRYmJWviQb
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+X-Received: by 2002:a05:6602:13ce:b0:81f:7d7d:89fd with SMTP id
+ ca18e2360f4ac-82a2623e7eamr60325539f.1.1725223161607; Sun, 01 Sep 2024
+ 13:39:21 -0700 (PDT)
+Date: Sun, 01 Sep 2024 13:39:21 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000b4cf9a062114d132@google.com>
+Subject: [syzbot] [nilfs?] general protection fault in nilfs_btree_insert (2)
+From: syzbot <syzbot+9bff4c7b992038a7409f@syzkaller.appspotmail.com>
+To: konishi.ryusuke@gmail.com, linux-kernel@vger.kernel.org, 
+	linux-nilfs@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Markus Schneider-Pargmann,
+Hello,
 
-On Thu, 29 Aug 2024 22:16:01 +0200, Markus Schneider-Pargmann wrote:
-> Abstract
-> ********
-> 
-> This series introduces necessary ti_sci driver functionality to support
-> various Suspend-to-RAM modes on TI AM62 family of devices. These Low
-> Power Modes include Deep Sleep and MCU Only as described in section
-> "6.2.4 Power Modes" of the AM62P Technical Reference Manual [0].
-> 
-> [...]
+syzbot found the following issue on:
 
-I have applied the following to branch ti-drivers-soc-next on [1].
-Thank you!
+HEAD commit:    86987d84b968 Merge tag 'v6.11-rc5-client-fixes' of git://g..
+git tree:       upstream
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=10c2b835980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=a0455552d0b27491
+dashboard link: https://syzkaller.appspot.com/bug?extid=9bff4c7b992038a7409f
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16fcc40d980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=143f1643980000
 
-[1/4] firmware: ti_sci: Add support for querying the firmware caps
-      commit: 371af6a83b580081d2ed76671f2184c5bb52c5b6
-[2/4] firmware: ti_sci: Add system suspend and resume call
-      commit: 6b48779503a6a080664e917fd91a71bd3f5ae8b5
-[3/4] firmware: ti_sci: Introduce Power Management Ops
-      commit: 235468957c099707d96e30d91f1885afbc7f4175
-[4/4] firmware: ti_sci: add CPU latency constraint management
-      commit: 458d22d2e064ded193d697b0629822dc72814933
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/87692913ef45/disk-86987d84.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/a27da6973d7f/vmlinux-86987d84.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/2e28d02ce725/bzImage-86987d84.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/e3fe6fbe935d/mount_0.gz
 
-NOTE: since all other comments are incorporated, I did hand edit patch #1 to
-drop the inclusion of redundant linux/dev_printk.h which was the cause of
-kernel test robot warning
-https://lore.kernel.org/all/202408311026.LluPK1A2-lkp@intel.com/ )
-Let me know if you disagree with the change and I can drop the series from
-my branch.
+Bisection is inconclusive: the issue happens on the oldest tested release.
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent up the chain during
-the next merge window (or sooner if it is a relevant bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=17f5280d980000
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=140d280d980000
+console output: https://syzkaller.appspot.com/x/log.txt?x=100d280d980000
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+9bff4c7b992038a7409f@syzkaller.appspotmail.com
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+Oops: general protection fault, probably for non-canonical address 0xdffffc0000000005: 0000 [#1] PREEMPT SMP KASAN PTI
+KASAN: null-ptr-deref in range [0x0000000000000028-0x000000000000002f]
+CPU: 1 UID: 0 PID: 5220 Comm: syz-executor243 Not tainted 6.11.0-rc5-syzkaller-00057-g86987d84b968 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
+RIP: 0010:nilfs_btree_get_nonroot_node fs/nilfs2/btree.c:418 [inline]
+RIP: 0010:nilfs_btree_prepare_insert fs/nilfs2/btree.c:1091 [inline]
+RIP: 0010:nilfs_btree_insert+0x6d3/0x1c10 fs/nilfs2/btree.c:1252
+Code: 8d 9f 80 00 00 00 48 89 d8 48 c1 e8 03 42 80 3c 28 00 74 08 48 89 df e8 ab 89 8a fe 48 8b 1b 48 83 c3 28 48 89 d8 48 c1 e8 03 <42> 80 3c 28 00 74 08 48 89 df e8 8e 89 8a fe 4c 89 64 24 28 48 8b
+RSP: 0018:ffffc9000352f4e0 EFLAGS: 00010206
+RAX: 0000000000000005 RBX: 0000000000000028 RCX: 1ffff1100f66a0ee
+RDX: ffff88807d6f9e00 RSI: 0000000000000002 RDI: 0000000000000001
+RBP: ffffc9000352f670 R08: ffffffff836d1ea6 R09: 1ffff1100469939a
+R10: dffffc0000000000 R11: ffffed100469939b R12: 0000000000000000
+R13: dffffc0000000000 R14: 0000000000000002 R15: ffff88807fbd9680
+FS:  0000555573e9d380(0000) GS:ffff8880b9300000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007fc785a110f8 CR3: 000000007ea40000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ nilfs_bmap_do_insert fs/nilfs2/bmap.c:129 [inline]
+ nilfs_bmap_insert+0x25e/0x3c0 fs/nilfs2/bmap.c:155
+ nilfs_get_block+0x428/0x8e0 fs/nilfs2/inode.c:101
+ __block_write_begin_int+0x50c/0x1a70 fs/buffer.c:2125
+ __block_write_begin fs/buffer.c:2174 [inline]
+ block_write_begin+0x9b/0x1e0 fs/buffer.c:2235
+ nilfs_write_begin+0xa0/0x110 fs/nilfs2/inode.c:262
+ generic_perform_write+0x399/0x840 mm/filemap.c:4019
+ generic_file_write_iter+0xaf/0x310 mm/filemap.c:4147
+ new_sync_write fs/read_write.c:497 [inline]
+ vfs_write+0xa72/0xc90 fs/read_write.c:590
+ ksys_write+0x1a0/0x2c0 fs/read_write.c:643
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fc785999a99
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 f1 17 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fff8363c328 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
+RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007fc785999a99
+RDX: 0000000000004000 RSI: 0000000020000000 RDI: 0000000000000004
+RBP: 00007fc785a0d5f0 R08: 0000555573e9e4c0 R09: 0000555573e9e4c0
+R10: 0000000000000a83 R11: 0000000000000246 R12: 00007fff8363c350
+R13: 00007fff8363c578 R14: 431bde82d7b634db R15: 00007fc7859e203b
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:nilfs_btree_get_nonroot_node fs/nilfs2/btree.c:418 [inline]
+RIP: 0010:nilfs_btree_prepare_insert fs/nilfs2/btree.c:1091 [inline]
+RIP: 0010:nilfs_btree_insert+0x6d3/0x1c10 fs/nilfs2/btree.c:1252
+Code: 8d 9f 80 00 00 00 48 89 d8 48 c1 e8 03 42 80 3c 28 00 74 08 48 89 df e8 ab 89 8a fe 48 8b 1b 48 83 c3 28 48 89 d8 48 c1 e8 03 <42> 80 3c 28 00 74 08 48 89 df e8 8e 89 8a fe 4c 89 64 24 28 48 8b
+RSP: 0018:ffffc9000352f4e0 EFLAGS: 00010206
+RAX: 0000000000000005 RBX: 0000000000000028 RCX: 1ffff1100f66a0ee
+RDX: ffff88807d6f9e00 RSI: 0000000000000002 RDI: 0000000000000001
+RBP: ffffc9000352f670 R08: ffffffff836d1ea6 R09: 1ffff1100469939a
+R10: dffffc0000000000 R11: ffffed100469939b R12: 0000000000000000
+R13: dffffc0000000000 R14: 0000000000000002 R15: ffff88807fbd9680
+FS:  0000555573e9d380(0000) GS:ffff8880b9200000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00005582b0414000 CR3: 000000007ea40000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+----------------
+Code disassembly (best guess):
+   0:	8d 9f 80 00 00 00    	lea    0x80(%rdi),%ebx
+   6:	48 89 d8             	mov    %rbx,%rax
+   9:	48 c1 e8 03          	shr    $0x3,%rax
+   d:	42 80 3c 28 00       	cmpb   $0x0,(%rax,%r13,1)
+  12:	74 08                	je     0x1c
+  14:	48 89 df             	mov    %rbx,%rdi
+  17:	e8 ab 89 8a fe       	call   0xfe8a89c7
+  1c:	48 8b 1b             	mov    (%rbx),%rbx
+  1f:	48 83 c3 28          	add    $0x28,%rbx
+  23:	48 89 d8             	mov    %rbx,%rax
+  26:	48 c1 e8 03          	shr    $0x3,%rax
+* 2a:	42 80 3c 28 00       	cmpb   $0x0,(%rax,%r13,1) <-- trapping instruction
+  2f:	74 08                	je     0x39
+  31:	48 89 df             	mov    %rbx,%rdi
+  34:	e8 8e 89 8a fe       	call   0xfe8a89c7
+  39:	4c 89 64 24 28       	mov    %r12,0x28(%rsp)
+  3e:	48                   	rex.W
+  3f:	8b                   	.byte 0x8b
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
 
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/ti/linux.git
--- 
-Regards,
-Nishanth Menon
-Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
