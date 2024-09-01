@@ -1,94 +1,134 @@
-Return-Path: <linux-kernel+bounces-310407-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310408-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6792A967C56
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 23:32:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68B28967C59
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 23:39:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 10EED1F216F0
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 21:32:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1604A1F21757
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 21:39:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4A7818595A;
-	Sun,  1 Sep 2024 21:32:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0F7C185B49;
+	Sun,  1 Sep 2024 21:39:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b="l90DbWeJ"
-Received: from submarine.notk.org (submarine.notk.org [62.210.214.84])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FE2118308A;
-	Sun,  1 Sep 2024 21:32:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.210.214.84
+	dkim=pass (2048-bit key) header.d=asahilina.net header.i=@asahilina.net header.b="r9KKKGI5"
+Received: from mail.marcansoft.com (marcansoft.com [212.63.210.85])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5D1953E22;
+	Sun,  1 Sep 2024 21:39:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.63.210.85
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725226323; cv=none; b=YlgvaqdrBUqV3Y2evVgiVpDomlTXeoZ/N/yzCpGJm5cy5WZ6n36BnvNyhBS8g+29v7rYTzcdZQBWpZFUNhR0QraNVK2KVb62YWyuHjWonQzqhfgkkNJhrsbWfw/Ez8rJOCOeYQz0Wk5S/4aMn0i1hLBRs4IWN6gvn0tXwixqI9E=
+	t=1725226758; cv=none; b=cQEhGNIj9e1tlSydphe1Y6jdvulkH0lyWJD7sk6q1M/QgyBgzLizj0MgUSDHDxaoZxF4tTxc8AlhmQp5FyKwrE7POL6v+oAJWWqMA4NKTPfvlB/6kf6EYKclcOUBBUyBS/mCInir62Hrqpk80LpIWsDciJ3pqyJrGSFqrFGh3zs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725226323; c=relaxed/simple;
-	bh=hAKxii2AHA4r0SKAFo3pvPOxzOVgeBfKCGIQJSUYPXU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SDuSarLX2xeu0jfLOo5xXljI3Gc7U3UJ4q3CvtaNxm9DXAc+r6Br+a6VRxnQb8i5ppCLBCzdI8GhHeJtz04bGJk6MCcB0uptBc7gN1i1VMcKj/bAEFIMxMO4z91XhTCg719oaoPDWn2ia2nAsIgyZU7t/3aHYIypcKMtrWS6GH4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org; spf=pass smtp.mailfrom=codewreck.org; dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b=l90DbWeJ; arc=none smtp.client-ip=62.210.214.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codewreck.org
-Received: from gaia.codewreck.org (localhost [127.0.0.1])
-	by submarine.notk.org (Postfix) with ESMTPS id 452F114C1E1;
-	Sun,  1 Sep 2024 23:31:47 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org;
-	s=2; t=1725226312;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IjF8kFSC1OaoOTtQg6ZwHQDUnXTJvG+nyTqgCngUekA=;
-	b=l90DbWeJ0eSih6v7OKDYJeda3OTeGVgfxuPJZRrmAa2xtWUjyjAH4eceGrjcJNg+V/Qubh
-	O6Uuskt4Je8JiudgTu1SAdW97eUZzPoPFpBBITz+mLgvCLUq76aN30n3ANOF5i2b0babl2
-	wXtdylEN2mxJhNut5rxX4+pJS5LWIZMj6KfVYei0Erc7zpebX9LSDVk7ElQaEHdB5hcID6
-	FzEBwdJGLVqkBtRiz6f/J1SDYirCOz9lhfMO6fCNPxY2mmrr0lNKPoMcMsebqPBnN4jrSU
-	K/TdWmcXG4oXJ+I69it8kbF3Mjg1KErbmw3vgEucOnszsmUFh3wsPpdeetR1gA==
-Received: from localhost (gaia.codewreck.org [local])
-	by gaia.codewreck.org (OpenSMTPD) with ESMTPA id f91a7026;
-	Sun, 1 Sep 2024 21:31:45 +0000 (UTC)
-Date: Mon, 2 Sep 2024 06:31:30 +0900
-From: Dominique Martinet <asmadeus@codewreck.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
-	jonathanh@nvidia.com, f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
-	conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
-Subject: Re: [PATCH 5.10 000/151] 5.10.225-rc1 review
-Message-ID: <ZtTdMijfnu0mqanS@codewreck.org>
-References: <20240901160814.090297276@linuxfoundation.org>
+	s=arc-20240116; t=1725226758; c=relaxed/simple;
+	bh=9005hIvO0B3tQdTeJlc1RChOBA6FhZL33VJhjP5iEn0=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=tkikdZD/5Zg1mEqNSSAH1y1ThP6YLme5wN6NiCJWTXloVZgXrbJB3z+UWjsg1uYI2cEUiL60+mlYP+ZVEEhDB/YW8x9fWHQfzrgLrcWdeci2/bnjVdUvpKn4y14p/nSu8nM+HRvCysfLBFvLxW1nTmoD2F+8twJOIlDEVktqTQE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=asahilina.net; spf=pass smtp.mailfrom=asahilina.net; dkim=pass (2048-bit key) header.d=asahilina.net header.i=@asahilina.net header.b=r9KKKGI5; arc=none smtp.client-ip=212.63.210.85
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=asahilina.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=asahilina.net
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: sendonly@marcansoft.com)
+	by mail.marcansoft.com (Postfix) with ESMTPSA id C4B7243F13;
+	Sun,  1 Sep 2024 21:32:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=asahilina.net;
+	s=default; t=1725226325;
+	bh=9005hIvO0B3tQdTeJlc1RChOBA6FhZL33VJhjP5iEn0=;
+	h=From:Subject:Date:To:Cc;
+	b=r9KKKGI5k9UVV4mh1TbuNVrqC1IyNPTtP2TyhJgeocJct6a9kdgrZ+TZvq7B15+im
+	 ulfaWjwW2paCZRDF1zXC2oKKzY5+XtvpWNi6yCeFwEyJx8eb27XEs6OSPMn4bUFqqA
+	 PphkWfZJ0Zgx7/nAvDBnJYK95NSFT6X2JKHAFKB5Ksj+YvrLP15gcmBjC99n2K6Gwn
+	 EpiXTPlTLsT1sallqbXWhsO/p1VaaOv2CjVGa0hqL9jd9iFQ++WY0OkmeXAi/UWap7
+	 4Xb1f6T9ssiGoPexCsQ1vZuLNb41K9XsdvWoAetw4PuG6BLxG1ORWxO8LO5YZgrpHT
+	 YzoyTR754TJTA==
+From: Asahi Lina <lina@asahilina.net>
+Subject: [PATCH 0/2] ALSA: usb-audio: Add basic support for RME Digiface
+ USB
+Date: Mon, 02 Sep 2024 06:31:49 +0900
+Message-Id: <20240902-rme-digiface-v1-0-6e88472a2744@asahilina.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240901160814.090297276@linuxfoundation.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAEXd1GYC/x3MQQqAIBBA0avIrBNUhKirRAsZR5tFFiNEIN49a
+ fkW/zeoJEwVVtVA6OHKVxmwkwI8QsmkOQ6DM86bxTgtJ+nImVNA0ojW42wxOgowklso8fvvtr3
+ 3D/f1b3BeAAAA
+To: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
+Cc: "Geoffrey D. Bennett" <g@b4.vu>, 
+ Takashi Sakamoto <o-takashi@sakamocchi.jp>, Mark Hills <mark@xwax.org>, 
+ Arun Raghavan <arun@arunraghavan.net>, Cyan Nyan <cyan.vtb@gmail.com>, 
+ linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Asahi Lina <lina@asahilina.net>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1725226324; l=2042;
+ i=lina@asahilina.net; s=20240902; h=from:subject:message-id;
+ bh=9005hIvO0B3tQdTeJlc1RChOBA6FhZL33VJhjP5iEn0=;
+ b=4EhSkc6NT1AchTHnoKaRNKta12AcvWrS161BLV8vz7wYtSUhsd76Gr/UTAqaLX3wXQMUj/G+i
+ ZzUKwnNIFhgDXaL3NcSBFp4x4KwZprFK78Z1wQxnQxwdpdrAHJ99Jy/
+X-Developer-Key: i=lina@asahilina.net; a=ed25519;
+ pk=tpv7cWfUnHNw5jwf6h4t0gGgglt3/xcwlfs0+A/uUu8=
 
-Greg Kroah-Hartman wrote on Sun, Sep 01, 2024 at 06:16:00PM +0200:
-> This is the start of the stable review cycle for the 5.10.225 release.
-> There are 151 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Tue, 03 Sep 2024 16:07:34 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.10.225-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.10.y
-> and the diffstat can be found below.
+Hi everyone,
 
-Tested ee485d4aa099 ("Linux 5.10.225-rc1") on:
-- arm i.MX6ULL (Armadillo 640)
-- arm64 i.MX8MP (Armadillo G4)
+This series adds basic support for the RME Digiface USB interface. This
+is a 4x ADAT I/O interface with an extra headphones output and support
+for S/PDIF mode.
 
-No obvious regression in dmesg or basic tests:
-Tested-by: Dominique Martinet <dominique.martinet@atmark-techno.com>
--- 
-Dominique Martinet
+There are 3 streaming configurations:
+
+- 32in/34out at 1x speed mode
+- 16in/18out at 2x speed mode
+- 8in/10out at 4x speed mode
+
+The appropriate speed mode is automatically set based on the PCM rate,
+and this governs the available channel count.
+
+The first commit adds basic init and streaming support. This is enough
+to use the interface in its default settings (ADAT outputs, internal
+sync) using the ALSA PCM.
+
+The second commit adds basic mixer controls to set up the I/O features
+(output modes, sync source) and report I/O status.
+
+This series does not implement the output faders, matrix mixer, or input
+level meters. These features are more useful when the interface is used
+as a router (possibly stand-alone), and are not really something that
+can be exposed via ALSA mixer controls usable via something like
+alsamixer (the matrix mixer has up to 2048 possible mixer nodes). Since
+we expect users to use a dedicated control app, the intent is that the
+app directly controls these features via the libusb API. This is similar
+to how things work with some FireWire interfaces (ffado-mixer) today.
+
+Of course, there is room for extending the mixer interface to add more
+controls in the future, once we settle on a mechanism to expose
+complex/large matrix mixers.
+
+Signed-off-by: Asahi Lina <lina@asahilina.net>
+---
+Asahi Lina (1):
+      ALSA: usb-audio: Add mixer quirk for RME Digiface USB
+
+Cyan Nyan (1):
+      ALSA: usb-audio: Add quirk for RME Digiface USB
+
+ sound/usb/mixer_quirks.c | 413 +++++++++++++++++++++++++++++++++++++++++++++++
+ sound/usb/quirks-table.h | 194 +++++++++++++++++++++-
+ sound/usb/quirks.c       |  58 +++++++
+ 3 files changed, 664 insertions(+), 1 deletion(-)
+---
+base-commit: 8400291e289ee6b2bf9779ff1c83a291501f017b
+change-id: 20240902-rme-digiface-cc14c71cd2ea
+
+Cheers,
+~~ Lina
+
 
