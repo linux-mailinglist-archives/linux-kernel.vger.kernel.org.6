@@ -1,148 +1,157 @@
-Return-Path: <linux-kernel+bounces-310338-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310339-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7106967B8E
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 19:48:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D529967B90
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 19:52:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7D2D0B21658
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 17:48:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D95EC1F217EA
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 17:52:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AACD184529;
-	Sun,  1 Sep 2024 17:47:57 +0000 (UTC)
-Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44349183CBF;
+	Sun,  1 Sep 2024 17:51:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=layalina-io.20230601.gappssmtp.com header.i=@layalina-io.20230601.gappssmtp.com header.b="vlRdhOCs"
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6638F53E15;
-	Sun,  1 Sep 2024 17:47:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C892C53E15
+	for <linux-kernel@vger.kernel.org>; Sun,  1 Sep 2024 17:51:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725212876; cv=none; b=sxYPFo+TXDbLv4u2UHEAb5nlH8m6c7XWB/QN2kMGl/UAw41e3jSNgBg9HYxDjRtus0x4KvEIdHc9p0S3voGvb7vvjPTb7+n6aV2R0p9Bg3H6NVhpn2kCgE+EQMKKknBKnv5swwFNhVPuio9+AGQp+CprNv2FqW7dcpfNtKuixOM=
+	t=1725213116; cv=none; b=DJf598gnIzcNaCh6C+PDZS8aEu7rUiICQDwb7Sub+HugNaKfTSF0VbnLTtxeocE8bo60CbbGLIiuE5hqTAOpO/wkc0fiQ2NQ9O5LM7BbWupsqmumDPmu6xsn9Mw/FgIYxxByDIZPnbTfoFVpgFwq0SYxsQQAXQ+IS5aORgJf590=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725212876; c=relaxed/simple;
-	bh=Xmc/hEdWTjAatvH4xDGup5Qa9uRF6QYKHs5Vb3yKznU=;
+	s=arc-20240116; t=1725213116; c=relaxed/simple;
+	bh=Tn6tHZIhVIU8zRTnyxfsgdnTgYxw83yj+IEMUQM3pv0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ss3Bb+KBNeQCGfrzmFPEtbk8sGJvB7kCE5aMVIX/r+L/MuzpLYTZCmA5ToKQrReN/lt102wrsIzMS+wk/0Z2L4jmfLuuPewD54w7LT/zaLcH+yRzGnhyplmuUN4Jcwu9EWPN602RO0WrsfXfuwjsGtcz2YMNUxXbF5UKGHHYU+4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.215.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-7cdf2ac6130so1002598a12.2;
-        Sun, 01 Sep 2024 10:47:55 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=YymaKYrwEugW8rPNaKTN7UnV4QGOZ2OsaZbrXFFREjSzpJ/YFALyPyyJ39fPM4vDlGrKLrQb+9CtvQnfOWxJo4PLK1u3YRW9//TGgrDdoFrV0ZHztOw0re8jYIaK5G+qHZ2wmvg8reihQYIr2i+mMDM911+YKbb36j6sqmHFAwk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=layalina.io; spf=pass smtp.mailfrom=layalina.io; dkim=pass (2048-bit key) header.d=layalina-io.20230601.gappssmtp.com header.i=@layalina-io.20230601.gappssmtp.com header.b=vlRdhOCs; arc=none smtp.client-ip=209.85.208.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=layalina.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=layalina.io
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5becfd14353so3249655a12.1
+        for <linux-kernel@vger.kernel.org>; Sun, 01 Sep 2024 10:51:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=layalina-io.20230601.gappssmtp.com; s=20230601; t=1725213113; x=1725817913; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=iRaHoHzfShs9AbyvrFmo6S/xkJsBUX6uusSCB+QrMFI=;
+        b=vlRdhOCs75cyxVEfYdG+vGJwIyZef0z6jmPKwN+vnZOkRxXqs0/i78sUXgxzcnmF98
+         7lRUMoIuPrhIGMf122IlhpgmoP/PbsJ0mnOU0GMnYybB+9dpTkJDQviqAQxmJ0cyFcQC
+         9CBZQ810nnVD5vGTP14sRBkTO73n1QzuyKSxk+hJE3uD3OlP7BMTRFqW5K2QsAqcUAzL
+         x1iH9Wx1dW9B+6mYAxri4WNk92JQjZsBWsYa/TT+JoOqVPuQ6pTZZZMgbB1fylZtP57I
+         2LgGHVGmIhKVg993/tpfKakAmKp+Jcwe4T3HK3BjTjQn6oZSFoSpkbQxbjjU9cXItcpC
+         qtDw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725212875; x=1725817675;
+        d=1e100.net; s=20230601; t=1725213113; x=1725817913;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=cJYJQ1zlbAg/HiswfyOpJTEd1H+q6QzgGzUjsdDbFPY=;
-        b=UJKRPrJ0uNU+egfc8HnkDCL2uvkws3XZbNd5Zc4pmLEAHeZCEnSRWXflnaU5Q4TNQW
-         GZTjBk3mYaK9v/G6hpKWMPv2XGy3mY5vArGAAC6MiMK0YefjMpUYV5IMmGIeHwkq2pgC
-         c37YeTslwVGCFe+E+QIaV5ZsMaJRNRfyKQM3ooTGv9zRS90CpUjDzulKKXLmJNYEXaU4
-         9waehK7uNXReodhM9KHVeDTfYh0RvOMcRsMpYDgdFfX5eDWTVsfjv38y8ZqVdp2obNsZ
-         BDVpLrgGRlS3DkXRQvYbPFeS3QoxexBFVpPVpMKYYxHOF5qYWeizMYaxUR4OeDHE4DBZ
-         03ng==
-X-Forwarded-Encrypted: i=1; AJvYcCUv5CKwu6W3+mOdkrUkgFOHI8UYcMZ6orD1WBcaPXT+8Ao+KIwpFepRkFJ3aeAsz4IHzUaNUBq8PQ6U@vger.kernel.org, AJvYcCV8Y4Mk/FY80Obgw19kfpGyI/ykkr9PqNdy9sHNhos92e/qjrSQiblDnFh0YcJDanYDSAkXNAd0y0awXVZq@vger.kernel.org, AJvYcCVjl13GQmDvxGMsvSDVMDnVF9zRcDbZhkMrsyXPivtElGAB81U1cMHmuatGtXBVS2JyTXqMwCJSwlmI@vger.kernel.org, AJvYcCWTosf+r1reefsNdCXsQhKawJ8ZRIgHai7eSQmS2Ll3ByUQ3OaKu1J+qqn4cRmm27UCdOb0bVMzUIlFl92K6Q==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzNH+kGg5fWooOzQKeTyGciSLDg+3YFCLl06f28xx4+D6oKL1G/
-	CM4ZtMwBY29cYIH9lzxWOt9qfzdHNbl2M0ut/DhDwomKVcZOyhPO
-X-Google-Smtp-Source: AGHT+IEneXWt9Gk0g2RG61bxa1zZfsP3uwuDaYDhRSJVUYa7KkQxRn2HCtoVJzwC9/ELD2s3tYj9IA==
-X-Received: by 2002:a05:6a21:3a44:b0:1c4:a49b:403 with SMTP id adf61e73a8af0-1cece5e24c1mr4521500637.46.1725212874415;
-        Sun, 01 Sep 2024 10:47:54 -0700 (PDT)
-Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2051553648fsm54619285ad.172.2024.09.01.10.47.53
+        bh=iRaHoHzfShs9AbyvrFmo6S/xkJsBUX6uusSCB+QrMFI=;
+        b=gUx7+jWy5PPHtKrXJVw2YlK19VeppLhqP+bXlpter269RaFHnjDHVO/lNJErWJbsWp
+         gW+rWSkzzSQj1ibDy73+QSxEuKoFSETXZhcRi1ZcaeDtCrz3YfSGkHccbVqOXYWKpuAP
+         4WOgRQ7fr1MfD4u0weWO6i34Gx0ju8C370m/p0CWb79OXDy5uX2T4Sg7JZy7kN0tNu39
+         phsoZltLdglJAqglJJLYhlHzq3pY8ZE7smzuy0Gu0sFgn+U+QIoy3TpFaDHMgI5ddcgW
+         7z/aRn1Zkv26QVUgfQFXBUFOo0kVO53UiuUdhBo0JpPQIzRW7SLkXgfOPGgqlcwZnD5U
+         v7UA==
+X-Forwarded-Encrypted: i=1; AJvYcCUXkDL0UQXejXLk0bpIdu7b7KJ1x6Yo13jv+kASgME8b+MeyNa2AHoH5Gsk2PloIJFWF32QWHMhFzr4p2w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyEN4fQGFDwOV1iajj6Apr1tMz/Mz/wA8SBTiOoTtA1I/eSbgKZ
+	8KVLzNEPiD3XIdIoxblVw3fjdAaulY3SODbwBBebBRWRcZL8Z7LkD1ir/u+zJxM=
+X-Google-Smtp-Source: AGHT+IFRRDbGvFCHQXdboqdVjJadxSjBkeetzH05dZheYKJemWnppoFoaTieZCL7fGuQhPEAeiLn9Q==
+X-Received: by 2002:a17:906:dc95:b0:a86:789f:c756 with SMTP id a640c23a62f3a-a897fa754cbmr735860166b.53.1725213113103;
+        Sun, 01 Sep 2024 10:51:53 -0700 (PDT)
+Received: from airbuntu ([176.29.222.46])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a89890219aasm460154066b.65.2024.09.01.10.51.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 01 Sep 2024 10:47:53 -0700 (PDT)
-Date: Mon, 2 Sep 2024 02:47:52 +0900
-From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
-To: manivannan.sadhasivam@linaro.org
-Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>, linux-pci@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Konrad Dybcio <konrad.dybcio@linaro.org>
-Subject: Re: [PATCH v4 00/12] PCI: qcom: Enumerate endpoints based on Link up
- event in 'global_irq' interrupt
-Message-ID: <20240901174752.GL235729@rocinante>
-References: <20240828-pci-qcom-hotplug-v4-0-263a385fbbcb@linaro.org>
+        Sun, 01 Sep 2024 10:51:52 -0700 (PDT)
+Date: Sun, 1 Sep 2024 18:51:49 +0100
+From: Qais Yousef <qyousef@layalina.io>
+To: Vincent Guittot <vincent.guittot@linaro.org>
+Cc: Christian Loehle <christian.loehle@arm.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Ingo Molnar <mingo@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Hongyan Xia <hongyan.xia2@arm.com>,
+	John Stultz <jstultz@google.com>, linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v7] sched: Consolidate cpufreq updates
+Message-ID: <20240901175149.46yfk335niccmfq4@airbuntu>
+References: <20240728184551.42133-1-qyousef@layalina.io>
+ <ca6b1db0-37d9-462e-87e4-d3bbd5eec7a3@arm.com>
+ <CAKfTPtBWLe4hMBhJeSqvoW10dAF3Bgj+zcYGMgBfwUhkgytkEQ@mail.gmail.com>
+ <CAKfTPtAJNjUe=4eQxq0M6==6O7dtJrw6rtwE6-xaWMJdSmfKcA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240828-pci-qcom-hotplug-v4-0-263a385fbbcb@linaro.org>
+In-Reply-To: <CAKfTPtAJNjUe=4eQxq0M6==6O7dtJrw6rtwE6-xaWMJdSmfKcA@mail.gmail.com>
 
-Hello,
-
-> This series adds support to enumerate the PCIe endpoint devices using the Qcom
-> specific 'Link up' event in 'global' IRQ. Historically, Qcom PCIe RC controllers
-> lacked standard hotplug support. So when an endpoint is attached to the SoC,
-> users have to rescan the bus manually to enumerate the device. But this can be
-> avoided by rescanning the bus upon receiving 'Link up' event.
+On 08/13/24 10:27, Vincent Guittot wrote:
+> On Tue, 13 Aug 2024 at 10:25, Vincent Guittot
+> <vincent.guittot@linaro.org> wrote:
+> >
+> > On Mon, 5 Aug 2024 at 17:35, Christian Loehle <christian.loehle@arm.com> wrote:
+> > > Hi Qais,
+> > > the idea of SCHED_CPUFREQ_FORCE_UPDATE and the possiblity of spamming
+> > > freq updates still bothered me so let me share my thoughts even though
+> > > it might be niche enough for us not to care.
+> > >
+> > > 1. On fast_switch systems, assuming they are fine with handling the
+> > > actual updates, we have a bit more work on each context_switch() and
+> > > some synchronisation, too. That should be fine, if anything there's
+> > > some performance regression in a couple of niche cases.
+> > >
+> > > 2. On !fast_switch systems this gets more interesting IMO. So we have
+> > > a sugov DEADLINE task wakeup for every (in a freq-diff resulting)
+> > > update request. This task will preempt whatever and currently will
+> > > pretty much always be running on the CPU it ran last on (so first CPU
+> > > of the PD).
+> >
+> > The !fast_switch is a bit of concern for me too but not for the same
+> > reason and maybe the opposite of yours IIUC your proposal below:
+> >
+> > With fast_switch we have the following sequence:
+> >
+> > sched_switch() to task A
+> > cpufreq_driver_fast_switch -> write new freq target
+> > run task A
+> >
+> > This is pretty straight forward but we have the following sequence
+> > with !fast_switch
+> >
+> > sched_switch() to task A
+> > queue_irq_work -> raise an IPI on local CPU
+> > Handle IPI -> wakeup and queue sugov dl worker on local CPU (always
+> > with 1 CPU per PD)
+> > sched_switch() to sugov dl task
+> > __cpufreq_driver_target() which can possibly block on a lock
+> > sched_switch() to task A
+> > run task A
+> >
 > 
-> Qcom PCIe RC controllers are capable of generating the 'global' SPI interrupt
-> to the host CPUs. The device driver can use this interrupt to identify events
-> such as PCIe link specific events, safety events etc...
+> sent a bit too early
 > 
-> One such event is the PCIe Link up event generated when an endpoint is detected
-> on the bus and the Link is 'up'. This event can be used to enumerate the
-> endpoint devices.
+> > We can possibly have 2 context switch and one IPi for each "normal"
+> > context switch which is not really optimal
 > 
-> So add support for capturing the PCIe Link up event using the 'global' interrupt
-> in the driver. Once the Link up event is received, the bus underneath the host
-> bridge is scanned to enumerate PCIe endpoint devices.
-> 
-> This series also has some cleanups to the Qcom PCIe EP controller driver for
-> interrupt handling.
-> 
-> NOTE: During v2 review, there was a discussion about removing the devices when
-> 'Link Down' event is received. But this needs some more investigation, so I'm
-> planning to add it later.
-> 
-> Testing
-> =======
-> 
-> This series is tested on Qcom SM8450 based development board that has 2 SoCs
-> connected over PCIe.
-> 
-> Merging Strategy
-> ================
-> 
-> I'm expecting the binding and PCI driver changes to go through PCI tree and DTS
-> patches through Qcom tree.
+> It would be good to find a way to skip the spurious back and forth
+> between the normal task and sugov
 
-Applied to controller/qcom, thank you!
+Hmm I think we use affinity to keep the sugov running on policy->related_cpus.
+Relaxing this will make it less of a problem, but won't eliminate it.
 
-[01/08] PCI: qcom-ep: Drop the redundant masking of global IRQ events
-        https://git.kernel.org/pci/pci/c/3858e8a5ea71
+I'll have a think about it, is this a blocker for now?
 
-[02/08] PCI: qcom-ep: Reword the error message for receiving unknown global IRQ event
-        https://git.kernel.org/pci/pci/c/95bebcbd657c
 
-[03/08] dt-bindings: PCI: pci-ep: Update Maintainers
-        https://git.kernel.org/pci/pci/c/99244b999dec
-
-[04/08] dt-bindings: PCI: pci-ep: Document 'linux,pci-domain' property
-        https://git.kernel.org/pci/pci/c/ada94d00620a
-
-[05/08] PCI: endpoint: Assign PCI domain number for endpoint controllers
-        https://git.kernel.org/pci/pci/c/0328947c5032
-
-[06/08] PCI: qcom-ep: Modify 'global_irq' and 'perst_irq' IRQ device names
-        https://git.kernel.org/pci/pci/c/bba1251edf85
-
-[07/08] dt-bindings: PCI: qcom,pcie-sm8450: Add 'global' interrupt
-        https://git.kernel.org/pci/pci/c/6efd853303a5
-
-[08/08] PCI: qcom: Enumerate endpoints based on Link up event in 'global_irq' interrupt
-        https://git.kernel.org/pci/pci/c/4581403f6792
-
-	Krzysztof
 
