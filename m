@@ -1,112 +1,169 @@
-Return-Path: <linux-kernel+bounces-310282-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310283-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9A55967760
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 18:07:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C27F967765
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 18:15:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6D1BBB213BE
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 16:07:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6804C1C20C01
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 16:15:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD1EB183087;
-	Sun,  1 Sep 2024 16:07:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33880183CBE;
+	Sun,  1 Sep 2024 16:15:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nUIznfC5"
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F5h1/eNL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B7323FC7;
-	Sun,  1 Sep 2024 16:07:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51AE817F394;
+	Sun,  1 Sep 2024 16:15:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725206842; cv=none; b=AOluyzduLmutnvpVCmJaWJYp1J2kqgD0gVWorOxvpFQTgCjh2/He0rc0EFCKPpI8uPBD4s/g5gTziTpzjGNjP4X6EFRigl/6d4kDDnp9pd7LTC15VWqXh4zV8FC3NhtgM4sVLZ6/glFP9rHGrZBmnUuHqq67uYsBsHl6JgtgmSE=
+	t=1725207339; cv=none; b=n4wiyz/xPKN6DQqTSVBxy2Cyd1vYzdgS4CI42c77xQezcVmjeYf7LsS9E169qtGH8aXi5O5uSJX+35i9MIeSrSe6UvFAbnKp6J7teOAMZCa+Zr4cyPH8/V3Wd9lTe3ynYW+9mI2HHitdFcgQx8pjnNRG68kKE0DDYVL/5ADDdXo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725206842; c=relaxed/simple;
-	bh=PEKbhOoFlVX8YUiyHbi3XuPmBlu0tFvrDsTCjxY9z5Y=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=uVd31nETouv/YR6DXfJ468Ns+gSs+NCEyKQbjCprVJA5oifd0M5cfdDg65b7M1Ag3WtAyU/GOyJAdsAx3GV9prdsfTT0VzrRfH7LCmdol/jWISYrlGc5g+LkZFT5djiFCNEo2rirKoh6iIH3T4xFWct/4UHE8/sPN9Fud9v6n5Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nUIznfC5; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5c210e23573so3457476a12.0;
-        Sun, 01 Sep 2024 09:07:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725206839; x=1725811639; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=FwcSjCcT+sTlDDTDScDweyeWxNPTfQSTrbXIW/fa5kg=;
-        b=nUIznfC5aPY2AtpkzCrlDF11qvyHiaDgIlGUYDTL/UQy0j+qy8xQCBR3lX6CdbBL2y
-         mNjS2Icw4X97pvRitNp+U83/m2V8SzVc33z9gk5irjuNtxvnZHgHQ9MUoLX7jW2J2aKD
-         n5NlHYTSEMMxEMmC75YdPPqY3ERu96XEz8msmFRRHufYaOlkuqugNlXBzK/urxNJlKyd
-         C0jNLA99jSTAJuOsIbfXSMluh22DRkuYFxs62o9VNOkp7sUgKrBWCB+Qj/m0SYLlJW7v
-         QaeiGhTmdFD9zXn/Z4L6SwUikNHYjIK+gRgPXWX3XCa2nbGKd8YPUEgvXLUu7g3hbO2H
-         3O3w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725206839; x=1725811639;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=FwcSjCcT+sTlDDTDScDweyeWxNPTfQSTrbXIW/fa5kg=;
-        b=WfEElaIGWC+ErzfNQZq5PspctNDQeCAUM8mh+6ygL+4LD4FMdVFQ0087qwlKEVjLTT
-         HMtQLiFP/pNRGvRMw1+AvGNmhCmA1qVYjELD+mtfbyxLJ1gXiHjYbsBTxYTLzWAPKFUV
-         G2mW7LyHGtNap4OGvGYgQIY6GSoWlXihRAR1FFwfDX9xZDh9NpLxBeRc6Tsi9//tAxXw
-         eiemOdOACCiBugEmN4LcgqeFwxpUMDahg0/8Ora+dU12I15uZ8K7Lf37XFyWoJXURTF4
-         s3ftSNfz9GVspA/7gabfgRm4/2R94861vE2W2IOMXNawrpKICdrIshK6l7r8A438EbT5
-         W5Vw==
-X-Forwarded-Encrypted: i=1; AJvYcCW4lQKU1yrV7/sJjuCX4zUZPnAYcMbZ0Ey7JJcypZ7Wz5TjBcCZVSI5IFgWIyxe/Yrh5nD9P8BX2eqApYCB@vger.kernel.org, AJvYcCXrfeus/zjAPO4pAXo+EDkzvfRfqd1Tif855ldIHgs/i3pubarwEVQN3+k/8MozyQ75s9YhC/uJEUrZTV0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yykdl4foMslCOqjG8KcnOZF6Kdufsx6LKsxL24avF2D0cxjomFK
-	i2EFvqtEyhnxEnlf6BUPZf8RX9XvvuZN1kN3z6gQUQSuc2kqUoKg
-X-Google-Smtp-Source: AGHT+IFJmyE3MebeV1DKi0VBZLcVuRBMldbRsVQTZl0XHigxIbVf0OPvW3Ju+JMfaQBINVQn/8iC9g==
-X-Received: by 2002:a05:6402:35cd:b0:5c2:524b:7711 with SMTP id 4fb4d7f45d1cf-5c2524b7c2cmr1211903a12.33.1725206838630;
-        Sun, 01 Sep 2024 09:07:18 -0700 (PDT)
-Received: from localhost (craw-09-b2-v4wan-169726-cust2117.vm24.cable.virginm.net. [92.238.24.70])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c251cf4384sm1010584a12.88.2024.09.01.09.07.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 01 Sep 2024 09:07:18 -0700 (PDT)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Giovanni Cabiddu <giovanni.cabiddu@intel.com>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	"David S . Miller" <davem@davemloft.net>,
-	qat-linux@intel.com,
-	linux-crypto@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] crypto: qat - Remove trailing space after \n newline
-Date: Sun,  1 Sep 2024 17:07:17 +0100
-Message-Id: <20240901160717.143334-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1725207339; c=relaxed/simple;
+	bh=gYIgZOi4sdR4hTdNE3LJJ3LeXGN5BLGNfkofNqnsRBc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=N6qqo20wIkhFTpJlW43OidiwknW60YVmFQQ/2ZN47qOO+nTSh5IRp0EOHOg84KyhTVjQjPaOymrBVRws8KlIDKDO6Vm3N3zddDoosP9lVeOiofyw+Dt9eSr9Fdm4Qsa5IISgmuAnBSVlhDRsc7CLa7QvhG0zjjqvXDQl0NRe1uo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F5h1/eNL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC4C0C4AF09;
+	Sun,  1 Sep 2024 16:15:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725207338;
+	bh=gYIgZOi4sdR4hTdNE3LJJ3LeXGN5BLGNfkofNqnsRBc=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=F5h1/eNLAut+K9xbInA8o1Vqa2sZpvVnt33i+mDoFpaubGehtbFtkTdZKWa1mvOQU
+	 CSsiRwCvOWvZvMvEO8L0Dsxwyr89B9qMvVFfrWbzq6Z8wKms7E7vADuGZJavaJ+Yq9
+	 ddCRkatwMBI2yP8xVSOJokY6nLAtiaa47fyw12UjAMSKYqFuQqVvxjY3Vk9ZgQzRoc
+	 6bOCtTkFHWjSazc04tEnJCsudAEBR8Pcv/himZ9VWJRdbe++qCe48wzQKqTx7uOX07
+	 J7ewjUPy7qvCfaKAR8hR3puGLgD0egOP9gXsf94jOOO8lGHC7jbxrL/PZ8tNivTSUu
+	 C2srQRHZ3LE7g==
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-53346132348so4320896e87.2;
+        Sun, 01 Sep 2024 09:15:38 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUvUcCBe16O8XgY8+8oc+TCjVfgPmpihcSlmXZ2eWIJh3yJSz+FvODvY0t4JxspluH66Zvq5ZQXc/CFfco=@vger.kernel.org, AJvYcCV7ukIK4vcYbvG2qG4F4imGNNoK9b4A4ddvdiF8EMydJ7YPdUHrLT9thOXhIN6rcEXIBEZ9/2gdp17uafY+@vger.kernel.org, AJvYcCVOwvPO53lZozh/S5b7mDMUMdtFB7K/qdU2xG2U0a1ldYfhVQcJGZX37sHXmJ/CtWVPrqEHOFROyA==@vger.kernel.org, AJvYcCVa5cuMyLQb7TuyfbhcTVlVT+iixhGXmJxDK4y8fjqPc+e0tacHps85X4NcVWLmuksZX5znAAyMa1xsUA15@vger.kernel.org
+X-Gm-Message-State: AOJu0YyZla+F39OjMQMjryPzXjQP8oR07FA+yRoQ9uwkEkOy+8X+/3mw
+	NYe1C6xYS3MYTr25Su77PZMeDSQiqv23MDR4WTsOymFpxecb4s+how8H1wArvGpHPZpl/CFay3b
+	EjBPS+7WEU/+Bm6JKYqL28J8H6iM=
+X-Google-Smtp-Source: AGHT+IEvW4vK5zxx451a7ZmsPELGu2ASm3u0aIbHJUwKBVb/P5sQhkJtI91jLzLi0FROvKEcgj/L3zpZL4SS+3Wibx0=
+X-Received: by 2002:a05:6512:282b:b0:533:d3e:16e9 with SMTP id
+ 2adb3069b0e04-53546bb4402mr4892938e87.57.1725207337206; Sun, 01 Sep 2024
+ 09:15:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+References: <20240807-macos-build-support-v1-0-4cd1ded85694@samsung.com>
+ <20240807-macos-build-support-v1-8-4cd1ded85694@samsung.com>
+ <CGME20240807110435eucas1p2eca071b0a0122b8686d43c57bd94dc8c@eucas1p2.samsung.com>
+ <2024080717-cross-retiree-862e@gregkh> <dxkmmrlhlhsrjulnyabfgcr37ojway2dxaypelf3uchkmhw4jn@z54e33jdpxmr>
+ <2024080720-skyline-recapture-d80d@gregkh> <20240807-mottled-stoic-degu-d1e4cb@lindesnes>
+ <20240823225450.spuvjs5b5ruujim4@AALNPWDAGOMEZ1.aal.scsc.local> <ZtIjNBhqdxmMBxfM@fjasle.eu>
+In-Reply-To: <ZtIjNBhqdxmMBxfM@fjasle.eu>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Mon, 2 Sep 2024 01:15:01 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAQhHBi7nSG5SAbqD3HFO3uMR6GHckZHcQXgWao7G8i9gw@mail.gmail.com>
+Message-ID: <CAK7LNAQhHBi7nSG5SAbqD3HFO3uMR6GHckZHcQXgWao7G8i9gw@mail.gmail.com>
+Subject: Re: [PATCH 08/12] include: add elf.h support
+To: Nicolas Schier <nicolas@fjasle.eu>
+Cc: Daniel Gomez <da.gomez@samsung.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Nathan Chancellor <nathan@kernel.org>, Lucas De Marchi <lucas.demarchi@intel.com>, 
+	=?UTF-8?Q?Thomas_Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>, 
+	Rodrigo Vivi <rodrigo.vivi@intel.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
+	William Hubbs <w.d.hubbs@gmail.com>, Chris Brannon <chris@the-brannons.com>, 
+	Kirk Reiser <kirk@reisers.ca>, Samuel Thibault <samuel.thibault@ens-lyon.org>, 
+	Paul Moore <paul@paul-moore.com>, Stephen Smalley <stephen.smalley.work@gmail.com>, 
+	Ondrej Mosnacek <omosnace@redhat.com>, Catalin Marinas <catalin.marinas@arm.com>, 
+	Will Deacon <will@kernel.org>, Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
+	James Morse <james.morse@arm.com>, Suzuki K Poulose <suzuki.poulose@arm.com>, 
+	Zenghui Yu <yuzenghui@huawei.com>, Jiri Slaby <jirislaby@kernel.org>, 
+	Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling <morbo@google.com>, 
+	Justin Stitt <justinstitt@google.com>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"linux-kbuild@vger.kernel.org" <linux-kbuild@vger.kernel.org>, 
+	"intel-xe@lists.freedesktop.org" <intel-xe@lists.freedesktop.org>, 
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, 
+	"speakup@linux-speakup.org" <speakup@linux-speakup.org>, 
+	"selinux@vger.kernel.org" <selinux@vger.kernel.org>, 
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, 
+	"kvmarm@lists.linux.dev" <kvmarm@lists.linux.dev>, 
+	"linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>, 
+	"llvm@lists.linux.dev" <llvm@lists.linux.dev>, Finn Behrens <me@kloenk.dev>, 
+	"Daniel Gomez (Samsung)" <d+samsung@kruces.com>, "gost.dev@samsung.com" <gost.dev@samsung.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-There is a extraneous space after a newline in a pr_err message.
-Remove it.
+On Sat, Aug 31, 2024 at 4:54=E2=80=AFAM Nicolas Schier <nicolas@fjasle.eu> =
+wrote:
+>
+> On Sat, Aug 24, 2024 at 12:54:50AM +0200 Daniel Gomez wrote:
+> > On Wed, Aug 07, 2024 at 05:46:03PM +0200, Nicolas Schier wrote:
+> > > On Wed, Aug 07, 2024 at 04:18:54PM +0200, Greg Kroah-Hartman wrote:
+> > > > On Wed, Aug 07, 2024 at 02:13:57PM +0000, Daniel Gomez wrote:
+> > > > > > Also, as this is not internal for the kernel, but rather for us=
+erspace
+> > > > > > builds, shouldn't the include/ path be different?
+> > > > >
+> > > > > Can you suggest an alternative path or provide documentation that=
+ could help
+> > > > > identify the correct location? Perhaps usr/include?
+> > > >
+> > > > That is better than the generic include path as you are attempting =
+to
+> > > > mix userspace and kernel headers in the same directory :(
+> > >
+> > > Please keep in mind, that usr/include/ currently does not hold a sing=
+le
+> > > header file but is used for dynamically composing the UAPI header tre=
+e.
+> > >
+> > > In general, I do not like the idea of keeping a elf.h file here that
+> > > possibly is out-of-sync with the actual system's version (even though
+> > > elf.h should not see that much changes).  Might it be more helpful to
+> > > provide a "development kit" for Linux devs that need to build on MacO=
+S
+> > > that provides necessary missing system header files, instead of mergi=
+ng
+> > > those into upstream?
+> >
+> > I took this suggestion and tried pushing a Homebrew formula/package her=
+e [1].
+> > I think I chose a wrong name and maybe something like "development kit"=
+ would
+> > have been better. However, would it be possible instead to include the =
+*.rb file
+> > in the scripts/ directory? So users of this can generate the developmen=
+t kit in
+> > their environments. I would maintain the script to keep it in sync with=
+ the
+> > required glibc version for the latest kernel version.
+> >
+> > [1] https://github.com/Homebrew/homebrew-core/pull/181885
+>
+> I think it sounds sensible to hold that formula file in the upstream tree=
+.  But
+> I am not sure if scripts/ is the best location.
+>
+> Masahiro, what do you think?
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/crypto/intel/qat/qat_common/qat_uclo.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/crypto/intel/qat/qat_common/qat_uclo.c b/drivers/crypto/intel/qat/qat_common/qat_uclo.c
-index ad2c64af7427..7ea40b4f6e5b 100644
---- a/drivers/crypto/intel/qat/qat_common/qat_uclo.c
-+++ b/drivers/crypto/intel/qat/qat_common/qat_uclo.c
-@@ -58,7 +58,7 @@ static int qat_uclo_free_ae_data(struct icp_qat_uclo_aedata *ae_data)
- 	unsigned int i;
- 
- 	if (!ae_data) {
--		pr_err("QAT: bad argument, ae_data is NULL\n ");
-+		pr_err("QAT: bad argument, ae_data is NULL\n");
- 		return -EINVAL;
- 	}
- 
--- 
-2.39.2
+I do not know much about the homebrew, but why does the upstream
+kernel need to merge such masOS stuff?
 
+
+
+>
+> Kind regards,
+> Nicolas
+
+
+
+--=20
+Best Regards
+Masahiro Yamada
 
