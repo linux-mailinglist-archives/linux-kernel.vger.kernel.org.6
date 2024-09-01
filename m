@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-310124-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310125-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73492967548
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 08:19:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2636C967549
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 08:19:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 015B3B22187
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 06:19:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 489CE1C21176
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 06:19:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6234149016;
-	Sun,  1 Sep 2024 06:18:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC4D6147C7D;
+	Sun,  1 Sep 2024 06:18:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="dV/rujbY"
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="AIQF7CeM"
 Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 469971448D9
-	for <linux-kernel@vger.kernel.org>; Sun,  1 Sep 2024 06:18:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 607ED145A06
+	for <linux-kernel@vger.kernel.org>; Sun,  1 Sep 2024 06:18:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725171512; cv=none; b=UamjbA2D66Cz7J9fxQoUbQeAFpjZ8HSk5/yLB5sHHneruI+FcoV/B/4CcDMYSQB28KtiKBvfAlCGYgVPUNKP4xpIvmK7a7mrYCk1/5rBPeN3ZTDBc0E3E00esuL161dWjveNM+I9kKBXjmfBmBjEWTBD8TY0m4uxCW81JmrF7Jk=
+	t=1725171513; cv=none; b=FAQGnjHa4ZhHwfquVlx1Ztf9HXUzDtDWGboGFPmqLZeAaG50RA5QcRfNmKGuOT0M+uf5bFU7yN9q5naa/xAxkD2QtJKoxanx7j7+iL+kQrZYBvLNWtlxWKDRh6r9/uIHay2smcb0k3sR0Lj1x6sjuvXieQOzzTWSnRGME5El7OQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725171512; c=relaxed/simple;
-	bh=zn+Jxdj/y5r1FtKrH0dkOQMjWO/9rmeugEScZweFyoE=;
+	s=arc-20240116; t=1725171513; c=relaxed/simple;
+	bh=g3ODtbt12K+LD1JK+pVMEMTmutxcW3H1uL+ewlRZL58=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=X8+Sf3i5XPNT5nHJV5svzOUG+sY9hxJ4qPNz6Os8+wUaBkfsW9rhrEmfflKy3G9s7ckc1nOlhJBPfkU5FBgaC3tXX9vyecvids/sigT4JPQ6STOsgS21Ffq4/80iNgQsd7PHQejRz/lqtSBWLnQLQsmQVDWw1uDPu86+DiwrPXg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=dV/rujbY; arc=none smtp.client-ip=213.167.242.64
+	 MIME-Version; b=JulOgrN5hELPVPpuA9U9XstQ+pJMrvWNI6/uQnjlyEi/Ot0/AZYTYBnUWdq9ZpKyRdSCZGr5z4kHCNgTJaNdAfGEUzBxVfvFub88FRKxmsceFiUvw/9ToSKh1XOOExCjrq3ZXtG1pOwV0imV1NVRBscDb+JoLVwbHpGBMD8fkwI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=AIQF7CeM; arc=none smtp.client-ip=213.167.242.64
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
 Received: from umang.jain (unknown [IPv6:2405:201:2033:3865:19c8:9110:3e7:4518])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 6253E670;
-	Sun,  1 Sep 2024 08:17:12 +0200 (CEST)
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 38F0D89A;
+	Sun,  1 Sep 2024 08:17:15 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1725171434;
-	bh=zn+Jxdj/y5r1FtKrH0dkOQMjWO/9rmeugEScZweFyoE=;
+	s=mail; t=1725171437;
+	bh=g3ODtbt12K+LD1JK+pVMEMTmutxcW3H1uL+ewlRZL58=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=dV/rujbYtXOEMW8VCRC5LPQxoTJF9HA6vLWL9gz02Bvpp2pHEhNAPZdTSjs1YzXTq
-	 qoAIH/jBSAfzTOOG5HJp4m8ZMKmEwuoD1OyVa5TaopVnrpF1MAhMxiX9CFMNjGpcRx
-	 U0uxgPIs8wuRuGU44hkvCtL0fkL3I9FzhUqzoV9A=
+	b=AIQF7CeMB7i9aEbCaOxf3QEHCexIgUtp0wPSZPb59a4B55oFOX5lpTwzKIRkJCPp9
+	 4FxelzLI622b9/g6HeFemeMvvheeyCWxu1RuAL0qCMZ4HuXe3i23jprIMUH0RG7Eks
+	 0o8VXtE4h1yVKR8McRljCROCmuNwJqU10Jlyv5ew=
 From: Umang Jain <umang.jain@ideasonboard.com>
 To: Florian Fainelli <florian.fainelli@broadcom.com>,
 	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
@@ -55,9 +55,9 @@ Cc: linux-rpi-kernel@lists.infradead.org,
 	Phil Elwell <phil@raspberrypi.com>,
 	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
 	Umang Jain <umang.jain@ideasonboard.com>
-Subject: [PATCH v3 3/7] staging: vchiq_core: Factor out bulk transfer for blocking mode
-Date: Sun,  1 Sep 2024 11:48:04 +0530
-Message-ID: <20240901061808.187895-4-umang.jain@ideasonboard.com>
+Subject: [PATCH v3 4/7] staging: vchiq_core: Factor out bulk transfer for (no/)callback mode
+Date: Sun,  1 Sep 2024 11:48:05 +0530
+Message-ID: <20240901061808.187895-5-umang.jain@ideasonboard.com>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20240901061808.187895-1-umang.jain@ideasonboard.com>
 References: <20240901061808.187895-1-umang.jain@ideasonboard.com>
@@ -69,59 +69,84 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Factor out bulk transfer for blocking mode into a separate dedicated
-function bulk_xfer_blocking_interruptible(). It is suffixed by
-"_interruptible" to denote that it can be interrupted and -EAGAIN
-can be returned. It would be up to the users of the function to retry
-the call in those cases.
+Factor out bulk transfer for VCHIQ_BULK_MODE_NOCALLBACK and
+VCHIQ_BULK_MODE_CALLBACK mode into a separate dedicated function
+bulk_xfer_callback_interruptible(). It is suffixed by "_interruptible"
+to denote that it can be interrupted and -EAGAIN can be returned. It
+would be up to the users of the function to retry the call in those cases.
+
+bulk_xfer_callback_interruptible() also takes in 'mode' parameter to
+differentiate between VCHIQ_BULK_MODE_NOCALLBACK and
+VCHIQ_BULK_MODE_CALLBACK, which then is directly passed to
+vchiq_bulk_xfer_queue_msg_interruptible() inside the function.
 
 Adjust the calls to vchiq-dev.c ioctl interface and vchiq_arm.c
-for blocking bulk transfers.
+for the respective bulk transfers.
 
 Signed-off-by: Umang Jain <umang.jain@ideasonboard.com>
 ---
- .../interface/vchiq_arm/vchiq_arm.c           |  5 +--
- .../interface/vchiq_arm/vchiq_core.c          | 44 ++++++++++++++++---
- .../interface/vchiq_arm/vchiq_core.h          |  5 +++
- .../interface/vchiq_arm/vchiq_dev.c           |  6 +++
- 4 files changed, 50 insertions(+), 10 deletions(-)
+ .../interface/vchiq_arm/vchiq_arm.c           | 15 ++++----
+ .../interface/vchiq_arm/vchiq_core.c          | 34 +++++++++++++++++++
+ .../interface/vchiq_arm/vchiq_core.h          |  6 ++++
+ .../interface/vchiq_arm/vchiq_dev.c           |  6 ++++
+ 4 files changed, 54 insertions(+), 7 deletions(-)
 
 diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
-index c4d97dbf6ba8..688c9b1be868 100644
+index 688c9b1be868..3dbeffc650d3 100644
 --- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
 +++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
-@@ -968,9 +968,8 @@ vchiq_blocking_bulk_transfer(struct vchiq_instance *instance, unsigned int handl
- 			return -ENOMEM;
- 	}
- 
--	ret = vchiq_bulk_transfer(instance, handle, data, NULL, size,
--				  &waiter->bulk_waiter,
--				  VCHIQ_BULK_MODE_BLOCKING, dir);
-+	ret = vchiq_bulk_xfer_blocking_interruptible(instance, handle, data, NULL, size,
-+						     &waiter->bulk_waiter, dir);
- 	if ((ret != -EAGAIN) || fatal_signal_pending(current) || !waiter->bulk_waiter.bulk) {
- 		struct vchiq_bulk *bulk = waiter->bulk_waiter.bulk;
- 
+@@ -857,10 +857,10 @@ vchiq_bulk_transmit(struct vchiq_instance *instance, unsigned int handle, const
+ 		switch (mode) {
+ 		case VCHIQ_BULK_MODE_NOCALLBACK:
+ 		case VCHIQ_BULK_MODE_CALLBACK:
+-			ret = vchiq_bulk_transfer(instance, handle,
+-						  (void *)data, NULL,
+-						  size, userdata, mode,
+-						  VCHIQ_BULK_TRANSMIT);
++			ret = vchiq_bulk_xfer_callback_interruptible(instance, handle,
++								     (void *)data, NULL,
++								     size, mode, userdata,
++								     VCHIQ_BULK_TRANSMIT);
+ 			break;
+ 		case VCHIQ_BULK_MODE_BLOCKING:
+ 			ret = vchiq_blocking_bulk_transfer(instance, handle, (void *)data, size,
+@@ -895,9 +895,10 @@ int vchiq_bulk_receive(struct vchiq_instance *instance, unsigned int handle,
+ 		switch (mode) {
+ 		case VCHIQ_BULK_MODE_NOCALLBACK:
+ 		case VCHIQ_BULK_MODE_CALLBACK:
+-			ret = vchiq_bulk_transfer(instance, handle, data, NULL,
+-						  size, userdata,
+-						  mode, VCHIQ_BULK_RECEIVE);
++			ret = vchiq_bulk_xfer_callback_interruptible(instance, handle,
++								     (void *)data, NULL,
++								     size, mode, userdata,
++								     VCHIQ_BULK_RECEIVE);
+ 			break;
+ 		case VCHIQ_BULK_MODE_BLOCKING:
+ 			ret = vchiq_blocking_bulk_transfer(instance, handle, (void *)data, size,
 diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c
-index 6e3d24d4b720..c46634f39f4b 100644
+index c46634f39f4b..17442c586cce 100644
 --- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c
 +++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c
-@@ -2985,6 +2985,42 @@ vchiq_remove_service(struct vchiq_instance *instance, unsigned int handle)
+@@ -3021,6 +3021,40 @@ vchiq_bulk_xfer_blocking_interruptible(struct vchiq_instance *instance, unsigned
  	return status;
  }
  
 +int
-+vchiq_bulk_xfer_blocking_interruptible(struct vchiq_instance *instance, unsigned int handle,
++vchiq_bulk_xfer_callback_interruptible(struct vchiq_instance *instance, unsigned int handle,
 +				       void *offset, void __user *uoffset, int size,
-+				       void __user *userdata, enum vchiq_bulk_dir dir)
++				       enum vchiq_bulk_mode mode, void *userdata,
++				       enum vchiq_bulk_dir dir)
 +{
 +	struct vchiq_service *service = find_service_by_handle(instance, handle);
-+	struct bulk_waiter *bulk_waiter = NULL;
-+	enum vchiq_bulk_mode mode = VCHIQ_BULK_MODE_BLOCKING;
 +	int status = -EINVAL;
 +
 +	if (!service)
 +		return -EINVAL;
++
++	if (mode != VCHIQ_BULK_MODE_CALLBACK &&
++	    mode != VCHIQ_BULK_MODE_NOCALLBACK)
++		goto error_exit;
 +
 +	if (service->srvstate != VCHIQ_SRVSTATE_OPEN)
 +		goto error_exit;
@@ -132,13 +157,8 @@ index 6e3d24d4b720..c46634f39f4b 100644
 +	if (vchiq_check_service(service))
 +		goto error_exit;
 +
-+	bulk_waiter = userdata;
-+	init_completion(&bulk_waiter->event);
-+	bulk_waiter->actual = 0;
-+	bulk_waiter->bulk = NULL;
-+
-+	status = vchiq_bulk_xfer_queue_msg_interruptible(service, offset, uoffset, size,
-+							 userdata, mode, dir);
++	status = vchiq_bulk_xfer_queue_msg_interruptible(service, offset, uoffset,
++							 size, userdata, mode, dir);
 +
 +error_exit:
 +	vchiq_service_put(service);
@@ -149,61 +169,40 @@ index 6e3d24d4b720..c46634f39f4b 100644
  /*
   * This function may be called by kernel threads or user threads.
   * User threads may receive -EAGAIN to indicate that a signal has been
-@@ -2998,7 +3034,7 @@ int vchiq_bulk_transfer(struct vchiq_instance *instance, unsigned int handle,
- 			enum vchiq_bulk_mode mode, enum vchiq_bulk_dir dir)
- {
- 	struct vchiq_service *service = find_service_by_handle(instance, handle);
--	struct bulk_waiter *bulk_waiter = NULL;
-+	struct bulk_waiter *bulk_waiter;
- 	struct vchiq_bulk *bulk;
- 	int status = -EINVAL;
- 
-@@ -3018,12 +3054,6 @@ int vchiq_bulk_transfer(struct vchiq_instance *instance, unsigned int handle,
- 	case VCHIQ_BULK_MODE_NOCALLBACK:
- 	case VCHIQ_BULK_MODE_CALLBACK:
- 		break;
--	case VCHIQ_BULK_MODE_BLOCKING:
--		bulk_waiter = userdata;
--		init_completion(&bulk_waiter->event);
--		bulk_waiter->actual = 0;
--		bulk_waiter->bulk = NULL;
--		break;
- 	default:
- 		goto error_exit;
- 	}
 diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.h b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.h
-index 985d9ea3a06a..2dd89101c1c6 100644
+index 2dd89101c1c6..9c8c076eaaeb 100644
 --- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.h
 +++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.h
-@@ -474,6 +474,11 @@ extern int
- vchiq_bulk_xfer_waiting_interruptible(struct vchiq_instance *instance,
- 				      unsigned int handle, struct bulk_waiter *userdata);
+@@ -479,6 +479,12 @@ vchiq_bulk_xfer_blocking_interruptible(struct vchiq_instance *instance, unsigned
+ 				       void *offset, void __user *uoffset, int size,
+ 				       void __user *userdata, enum vchiq_bulk_dir dir);
  
 +extern int
-+vchiq_bulk_xfer_blocking_interruptible(struct vchiq_instance *instance, unsigned int handle,
++vchiq_bulk_xfer_callback_interruptible(struct vchiq_instance *instance, unsigned int handle,
 +				       void *offset, void __user *uoffset, int size,
-+				       void __user *userdata, enum vchiq_bulk_dir dir);
++				       enum vchiq_bulk_mode mode, void *userdata,
++				       enum vchiq_bulk_dir dir);
 +
  extern int
  vchiq_bulk_transfer(struct vchiq_instance *instance, unsigned int handle, void *offset,
  		    void __user *uoffset, int size, void *userdata, enum vchiq_bulk_mode mode,
 diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_dev.c b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_dev.c
-index 550838d2863b..830633f2326b 100644
+index 830633f2326b..169a2ffda996 100644
 --- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_dev.c
 +++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_dev.c
-@@ -304,6 +304,12 @@ static int vchiq_irq_queue_bulk_tx_rx(struct vchiq_instance *instance,
- 		}
- 
- 		userdata = &waiter->bulk_waiter;
+@@ -336,6 +336,12 @@ static int vchiq_irq_queue_bulk_tx_rx(struct vchiq_instance *instance,
+ 		goto bulk_transfer_handled;
+ 	} else {
+ 		userdata = args->userdata;
 +
-+		status = vchiq_bulk_xfer_blocking_interruptible(instance, args->handle,
-+								NULL, args->data, args->size,
-+								userdata, dir);
++		status = vchiq_bulk_xfer_callback_interruptible(instance, args->handle, NULL,
++								args->data, args->size,
++								args->mode, userdata, dir);
 +
 +		goto bulk_transfer_handled;
- 	} else if (args->mode == VCHIQ_BULK_MODE_WAITING) {
- 		mutex_lock(&instance->bulk_waiter_list_mutex);
- 		list_for_each_entry(iter, &instance->bulk_waiter_list,
+ 	}
+ 
+ 	status = vchiq_bulk_transfer(instance, args->handle, NULL, args->data, args->size,
 -- 
 2.45.2
 
