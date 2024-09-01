@@ -1,74 +1,73 @@
-Return-Path: <linux-kernel+bounces-310404-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310405-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9515967C48
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 23:15:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05848967C4C
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 23:15:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D64D21C2122C
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 21:15:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B12F4281B4B
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 21:15:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B038139D13;
-	Sun,  1 Sep 2024 21:15:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 723E713AD05;
+	Sun,  1 Sep 2024 21:15:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="W2bRrR48"
-Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="NhsY6n/Z"
+Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C720C61FEB;
-	Sun,  1 Sep 2024 21:15:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D73FB53E22;
+	Sun,  1 Sep 2024 21:15:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725225324; cv=none; b=ZwZi+pbf8E57IL93Ws+deDTTpBVlOgyV9icd1sGCOiOHT11MKoMfrQ53JCXXM226KtyDwIKoj3zYqkugrWxcMfJTHf44om2rhJWuViYN8UkX9pr9eHcevzVt/1b2jWWfrfvkilkcgpCnNisRttK5Di6XrgtX9eRFPU/BhfRqaxI=
+	t=1725225348; cv=none; b=kGOri4gc9zIUMHWPWEAB1CdW6xF3bHh/v8jt1O6Oelb9TmGIc91RF045Dghp91rdoC+Emg3P1b6RZOhD5V/sCK6uWSWhCZxIMvdycjNVlvS2MIxq1PfoImLN4NiaENZP16lEa4IMViS5Z13je++uoIZN1Dkq+lAIdonEL1wwO1Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725225324; c=relaxed/simple;
-	bh=FmwrK/v9/kw+kqIyi79POs04aJ3NCnnl8qDbkyaQH8k=;
+	s=arc-20240116; t=1725225348; c=relaxed/simple;
+	bh=lRidtMEWLd9+QwbEUXUvDHAs+HY9t5mjG5L8fjcyWq0=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=HE8hoDHpwK/jvKLvjxkgRNTm0RSwYC1LEsox8Zk7hkBGyU1OGZWryC2qZeg9IlUyDM6haqOpgFhPXtaV0/Req0o3IQaS0sH4o/4u5rOVrl2o5oa55TrlZmYqE81J2P03he77NKds90NpTt2p1MXL35TlCzAyRBp+yU0aQV4j1xM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=W2bRrR48; arc=none smtp.client-ip=198.47.23.248
+	 MIME-Version:Content-Type; b=fdbkQ9skD8HxZG79tn4XPS7ElrFrCPf1kGH15ZqQWk9Xh01yeaGUisz2J4LG/GM+RTqVMy9MI72W+n/20lbLyJZMNzy+WNbA5Gb0K3eN1D8WRwKGOAGqGEH77EROCPDnUM+DdfZYFESPJE5xUBdqdynG1oH4WKHVvuGrjZSAbvM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=NhsY6n/Z; arc=none smtp.client-ip=198.47.19.141
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
 Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 481LFGpR022082;
-	Sun, 1 Sep 2024 16:15:16 -0500
+	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 481LFdGE085501;
+	Sun, 1 Sep 2024 16:15:39 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1725225316;
-	bh=In491Nb3fG7n/tq4kPBIz/wi9PxANMTh1PfN6IJHmE4=;
+	s=ti-com-17Q1; t=1725225339;
+	bh=PBrrMAd7KEbZhXrYvNWs11hT4u7Pvv65Fz+cZMwgh+c=;
 	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=W2bRrR48eRB+0DJcgcK9/1vQ7pbDr3J7HFF1tYx+pN5fRsgxKUITZecWGBrrciTKy
-	 yuUTnSzLXcQFE84a4JF6j2pYhpUb6l3Vb51C04ef2vVG51s34KHmQz6d1goff+7uae
-	 H9gu3pKa7FwUwuaKl85vrsDozf9RM+MEEgnena+E=
-Received: from DFLE109.ent.ti.com (dfle109.ent.ti.com [10.64.6.30])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 481LFGFY021960
+	b=NhsY6n/Z8i6mdnsQEYZ6HmnjeQappDzC0MOzrv8AhE+ThL2TTFyVNs6CgCkIiILZK
+	 uqkysqqo+i+0KxGHCZOjGEym/qIdkCyLe88o//o+LZUQr6gU/10lGlw82zQfcwtJxP
+	 mLMSk3xNRJNykr6G56eoCJjTvuQtCZM/N6c3sEus=
+Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 481LFdGv022102
 	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Sun, 1 Sep 2024 16:15:16 -0500
-Received: from DFLE100.ent.ti.com (10.64.6.21) by DFLE109.ent.ti.com
- (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
+	Sun, 1 Sep 2024 16:15:39 -0500
+Received: from DLEE106.ent.ti.com (157.170.170.36) by DLEE115.ent.ti.com
+ (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Sun, 1
- Sep 2024 16:15:15 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE100.ent.ti.com
- (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
+ Sep 2024 16:15:39 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE106.ent.ti.com
+ (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Sun, 1 Sep 2024 16:15:15 -0500
+ Frontend Transport; Sun, 1 Sep 2024 16:15:39 -0500
 Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 481LFFun070686;
-	Sun, 1 Sep 2024 16:15:15 -0500
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 481LFdGN071033;
+	Sun, 1 Sep 2024 16:15:39 -0500
 From: Nishanth Menon <nm@ti.com>
-To: <vigneshr@ti.com>, <krzk+dt@kernel.org>, <kristo@kernel.org>,
-        <robh@kernel.org>, <conor+dt@kernel.org>,
-        Prasanth Babu Mantena
-	<p-mantena@ti.com>
-CC: Nishanth Menon <nm@ti.com>, <linux-arm-kernel@lists.infradead.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <u-kumar1@ti.com>, <sinthu.raja@ti.com>, <m-chawdhry@ti.com>
-Subject: Re: [PATCH] arm64: dts: ti: k3-am68-sk-som: Update Partition info for OSPI Flash
-Date: Sun, 1 Sep 2024 16:15:14 -0500
-Message-ID: <172522526341.1011162.18366433347986417598.b4-ty@ti.com>
+To: <vigneshr@ti.com>, <kristo@kernel.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        Beleswar Padhi <b-padhi@ti.com>
+CC: Nishanth Menon <nm@ti.com>, <u-kumar1@ti.com>, <j-choudhary@ti.com>,
+        <vaishnav.a@ti.com>, <afd@ti.com>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v5 0/2] Add Remoteproc Support for TI's J722S SoCs
+Date: Sun, 1 Sep 2024 16:15:37 -0500
+Message-ID: <172522532253.1011545.14727446934564211822.b4-ty@ti.com>
 X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20240828060830.555733-1-p-mantena@ti.com>
-References: <20240828060830.555733-1-p-mantena@ti.com>
+In-Reply-To: <20240830161742.925145-1-b-padhi@ti.com>
+References: <20240830161742.925145-1-b-padhi@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,24 +78,28 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-Hi Prasanth Babu Mantena,
+Hi Beleswar Padhi,
 
-On Wed, 28 Aug 2024 11:38:30 +0530, Prasanth Babu Mantena wrote:
-> Commit 73f1f26e2e4c ("arm64: dts: ti: k3-am68-sk-som: Add support
-> for OSPI flash") introduced the flash node with discontinuous
-> partitions. Updating the partition offset to be continuous from
-> the previous partition to maintain linearity.
+On Fri, 30 Aug 2024 21:47:40 +0530, Beleswar Padhi wrote:
+> The K3 J722S SoCs have one single-core Arm Cortex-R5F processor in each
+> of the WAKEUP, MCU and MAIN voltage domain, and two C71x DSP subsystems
+> in MAIN voltage domain. Thus, this series adds the DT Nodes for the
+> remote processors to add support for IPC.
 > 
+> This series also enables IPC on the J722S-EVM platform based on the
+> above SoC by adding the mailbox instances, shared memory carveouts and
+> reserving the conflicting timer nodes (as they are used by remoteproc
+> firmware).
 > 
+> [...]
 
 I have applied the following to branch ti-k3-dts-next on [1].
 Thank you!
 
-[1/1] arm64: dts: ti: k3-am68-sk-som: Update Partition info for OSPI Flash
-      commit: ce9d793b2bbbfdd6d0ce30f94bd014ab5fb87230
-
-NOTE: I have already mentioned this before, so wont repeat it:
-https://lore.kernel.org/all/20240830112452.geyv7tecpb6ydhmz@quotable/
+[1/2] arm64: dts: ti: k3-j722s-main: Add R5F and C7x remote processor nodes
+      commit: 05b1653c4fc148189743e4b3cbef798e49db61f0
+[2/2] arm64: dts: ti: k3-j722s-evm: Enable Inter-Processor Communication
+      commit: 5b035d14a508efd065895607ae7a6f913b26fef8
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent up the chain during
