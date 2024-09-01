@@ -1,216 +1,137 @@
-Return-Path: <linux-kernel+bounces-310341-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310340-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34B72967B97
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 19:56:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F839967B94
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 19:55:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF51B281DBD
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 17:56:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DF13F1F2187D
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 17:55:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7949E184529;
-	Sun,  1 Sep 2024 17:56:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="WH2ct45R"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 705AF184533;
+	Sun,  1 Sep 2024 17:55:31 +0000 (UTC)
+Received: from mail-il1-f182.google.com (mail-il1-f182.google.com [209.85.166.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 590EF17E8EA;
-	Sun,  1 Sep 2024 17:56:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C3AC17ADE1;
+	Sun,  1 Sep 2024 17:55:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725213370; cv=none; b=IezBUoJnWhV1yJ87S4YxwyvubPn3OeggXss30nctPqP1jxkX7m8VpMBztViwR0Q7HuuXENYV6LwWj6pAsADdXtGR3HjNe2MgOn/BE/QMwjp6ZkZUiD9JLlNbGs/nKGAttjeQiCpN2fYN7YjmZvWOx+6ga4FaycLZ+I2MR1mfYeU=
+	t=1725213331; cv=none; b=oY/LWyaMWGtLRi+Jq1AZEGviYNxlqmsmG2NXOeDCldGzGANYRI3BF63GMMXsMtAN8g9dm3OXJbPnsWKv+AZAbw4P2gag7FjOQ7NBsgGPkCm3YLIXSHC7Y+Ydd6N0M5G3nQu7zhOzwFsSoj8zBkcbtdJEktqgdODCo2igl5MCcXY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725213370; c=relaxed/simple;
-	bh=O9dzc+VELQ3LEZwolVQrUazLNfmSz68verP/WHp0L2c=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Ch4ky6xaVRGOVgcHla+z6RcTirsKU+nNMc8D5e7xCVdM5eGtbNFitI7ytgks4CGsFE7bDR+t4HJxkoPZHCDTHT1wWQet+bI/qwrlMszLKiCGFztR/76Oo6WPE3A/0MQFgOMbAO9yJTipCaWwMEemCE1E5sb2dXhC/L3pXQWLDJY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=WH2ct45R; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1725213352;
-	bh=O9dzc+VELQ3LEZwolVQrUazLNfmSz68verP/WHp0L2c=;
-	h=From:Date:Subject:To:Cc:From;
-	b=WH2ct45R1uZBqqeuI0pCM6lKa2A+Ty2b1ShIF71LNcCgUXWMOsPqiYnTgpLbZ8SBw
-	 jCdr/l+5ttz8YswSKox3o266iKp4iyx+lEY7swzh+LIuWcBS8XIZpUTzv1mF+XnR/6
-	 E9C77ZIZZuC0dldnYXLIiSsW17uj1ExqZl4Vsfrg=
-From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Date: Sun, 01 Sep 2024 19:55:21 +0200
-Subject: [PATCH v2] modpost: compile constant module information only once
+	s=arc-20240116; t=1725213331; c=relaxed/simple;
+	bh=IM/chwYrXihDE8FLF8hiPYl6Hkd/A04mZYL++PJG0ug=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sNZDARET1Ujf1Razb8DDI9o1w0C57U2qpuSXMech/XQuGkunkNjpMM1Xeezx+1HBzBdmIayX9Xx6V/86FBIFp2cFSMjBp6D2lgMSnXRhKJFYAUkM8oIFTmdZZFqpfPSKJZHxWh9Y2kcdjfLxtNIxvg87B2uUhzx9bnatppEdSe4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.166.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-il1-f182.google.com with SMTP id e9e14a558f8ab-39d30f0f831so12645055ab.0;
+        Sun, 01 Sep 2024 10:55:29 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725213329; x=1725818129;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TPCSj8FBVReSaeYCO2iGVjW5XuPs23A+QCwQAzU/9t8=;
+        b=e0O1oUo+fOvPZaQr6f1CGJe4Y+4NRSvpFkM8VC/udgHtzL6qr4aNR5Z4C8UmWjnLvM
+         yPKrPf7rtrjp+e9gNZc673Hh7Yv+WB2OEXqVkaLbBkW5b+Zw+lX36qI8hprklzS6MBwx
+         pydwVeY5JbgaXxQzRMtiEOUjEsj32e9H+SRvq+icpSr1SSVLo43TiXe0Szt4J9EePKjW
+         Dnfje+wX5V73lkqE0wJ7T0qyH37vT8nURs+iVS2yan95IqHMtf+uyK+YaEOtH5XiY6qR
+         ZEZ6nfzKbNLImcRKQCXv90GEgaAGEHby30DoSG9WkEcnYTLDU7zrTItJ4Bmf7YeLd2nr
+         bkyw==
+X-Forwarded-Encrypted: i=1; AJvYcCULzz2WtW9/QtcMTwr2c1wIk1m6JKGOIleepD0LKwXKevmOCwsPIdUGFKWl5vGUkXP09d3I6p4PE42Q@vger.kernel.org, AJvYcCUhSwOXiDNG+3qf1FN1vGwx8RY32DK7TXcFVjLxCyP8X6O6oINcHggcJ/l6S55tYPJXJN8=@vger.kernel.org, AJvYcCUsI0YQZs2FCNAYmbukke9z4F4l7ov803BJDa0xNvO6muBo641UbantfHvUvYKfkCaKXANRPYZnU3HOCgy6@vger.kernel.org, AJvYcCVFJjS+TgR8sNB3JLA82n6AwK6qfYPe5n+G7V7mIbwC3iA48g9Qi6WIY2GzsFhaowPw6vQh9FQQmh20Aw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzXZpi8DAhszWOLJOlLs3gnyG+zcqEPXUH2Wz53wZYyOurJPsxe
+	JdMhDIfEM56W5VjnT2Jq8ndHR8VtH4jcLaBq2Y275Mk6RxvlCaO1
+X-Google-Smtp-Source: AGHT+IHBzBuDzpmGhMq1SRqwPuQgXk2zIrVcNlSo1Z3AcvkCcvK8Npof8O6DWfAfKPf7z5UlPibP3A==
+X-Received: by 2002:a05:6e02:1c23:b0:39b:25dc:7bd6 with SMTP id e9e14a558f8ab-39f49a1fc8cmr69803675ab.4.1725213328575;
+        Sun, 01 Sep 2024 10:55:28 -0700 (PDT)
+Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7d22e74388dsm5295193a12.3.2024.09.01.10.55.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 01 Sep 2024 10:55:27 -0700 (PDT)
+Date: Mon, 2 Sep 2024 02:55:26 +0900
+From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
+To: Frank Li <Frank.Li@nxp.com>
+Cc: Richard Zhu <hongxing.zhu@nxp.com>,
+	Lucas Stach <l.stach@pengutronix.de>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	NXP Linux Team <linux-imx@nxp.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-pci@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
+	devicetree@vger.kernel.org, Jason Liu <jason.hui.liu@nxp.com>,
+	Conor Dooley <conor.dooley@microchip.com>
+Subject: Re: [PATCH v8 00/11] PCI: imx6: Fix\rename\clean up and add lut
+ information for imx95
+Message-ID: <20240901175526.GM235729@rocinante>
+References: <20240729-pci2_upstream-v8-0-b68ee5ef2b4d@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20240901-modinfo-const-v2-1-ece53ca15075@weissschuh.net>
-X-B4-Tracking: v=1; b=H4sIAIiq1GYC/3XMQQ7CIBCF4as0sxYDiIiuvIfpwtJBZiEYBqum6
- d3F7l3+L3nfDIyFkOHUzVBwIqacWuhNBz5e0w0Fja1BS22k00bc80gpZOFz4ipskKM9oB52UkH
- 7PAoGeq/epW8diWsun5Wf1G/9J01KKGHcPhy9NYOz7vxCYmYfn3GbsEK/LMsX2Yhiyq8AAAA=
-To: Masahiro Yamada <masahiroy@kernel.org>, 
- Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, 
- Luis Chamberlain <mcgrof@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org, 
- linux-modules@vger.kernel.org, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1725213352; l=5432;
- i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
- bh=O9dzc+VELQ3LEZwolVQrUazLNfmSz68verP/WHp0L2c=;
- b=boIb0wtZpGky+i8ThnaUuOgnkp1qlvtOsIgeWlaWmths9YcHRz2A5QVK6hd/GKXdt5TjK997p
- OXp1EiN0IyPCf1zoQ80ot6rc8yJVxjofxcv0laR58J6cpwRNQVC41Q+
-X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
- pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240729-pci2_upstream-v8-0-b68ee5ef2b4d@nxp.com>
 
-Various information about modules is compiled into the info sections.
-For that a dedicated .mod.c file is generated by modpost for each module
-and then linked into the module.
-However most of the information in the .mod.c is the same for all
-modules, internal and external.
-Split the shared information into a dedicated source file that is
-compiled once and then linked into all modules.
+Hello,
 
-This avoids frequent rebuilds for all .mod.c files when using
-CONFIG_LOCALVERSION_AUTO because the local version ends up in .mod.c
-through UTS_RELEASE and VERMAGIC_STRING.
-The modules are still relinked in this case.
+> Fixed 8mp EP mode problem.
+> 
+> imx6 actaully for all imx chips (imx6*, imx7*, imx8*, imx9*). To avoid
+> confuse, rename all imx6_* to imx_*, IMX6_* to IMX_*. pci-imx6.c to
+> pci-imx.c to avoid confuse.
+> 
+> Using callback to reduce switch case for core reset and refclk.
 
-The code is also easier to maintain as it's now in a proper source file
-instead of an inline string literal.
+Applied to controller/imx6, thank you!
 
-Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
----
-Changes in v2:
-- Remove RFC status
-- Incorporate Masahiro's proposals
-  - Rename modinfo.o to .module-common.o
-  - Build a dedicated .module-common.o for external modules
-- Link to v1: https://lore.kernel.org/r/20240824-modinfo-const-v1-1-485f9c64b868@weissschuh.net
----
-Masahiro, feel free to add some attribution for yourself when applying.
-The new appraoch is pleasantly simpler.
----
- scripts/Makefile.modfinal |  7 +++++--
- scripts/mod/modpost.c     | 23 -----------------------
- scripts/module-common.c   | 25 +++++++++++++++++++++++++
- 3 files changed, 30 insertions(+), 25 deletions(-)
+[01/11] PCI: imx6: Fix establish link failure in EP mode for iMX8MM and iMX8MP
+        https://git.kernel.org/pci/pci/c/c9d04436880c
 
-diff --git a/scripts/Makefile.modfinal b/scripts/Makefile.modfinal
-index 306a6bb86e4d..6b1b72257b29 100644
---- a/scripts/Makefile.modfinal
-+++ b/scripts/Makefile.modfinal
-@@ -30,6 +30,9 @@ quiet_cmd_cc_o_c = CC [M]  $@
- %.mod.o: %.mod.c FORCE
- 	$(call if_changed_dep,cc_o_c)
- 
-+$(extmod_prefix).module-common.o: $(srctree)/scripts/module-common.c FORCE
-+	$(call if_changed_dep,cc_o_c)
-+
- quiet_cmd_ld_ko_o = LD [M]  $@
-       cmd_ld_ko_o +=							\
- 	$(LD) -r $(KBUILD_LDFLAGS)					\
-@@ -54,13 +57,13 @@ if_changed_except = $(if $(call newer_prereqs_except,$(2))$(cmd-check),      \
- 	printf '%s\n' 'savedcmd_$@ := $(make-cmd)' > $(dot-target).cmd, @:)
- 
- # Re-generate module BTFs if either module's .ko or vmlinux changed
--%.ko: %.o %.mod.o scripts/module.lds $(and $(CONFIG_DEBUG_INFO_BTF_MODULES),$(KBUILD_BUILTIN),vmlinux) FORCE
-+%.ko: %.o %.mod.o $(extmod_prefix).module-common.o scripts/module.lds $(and $(CONFIG_DEBUG_INFO_BTF_MODULES),$(KBUILD_BUILTIN),vmlinux) FORCE
- 	+$(call if_changed_except,ld_ko_o,vmlinux)
- ifdef CONFIG_DEBUG_INFO_BTF_MODULES
- 	+$(if $(newer-prereqs),$(call cmd,btf_ko))
- endif
- 
--targets += $(modules:%.o=%.ko) $(modules:%.o=%.mod.o)
-+targets += $(modules:%.o=%.ko) $(modules:%.o=%.mod.o) $(extmod_prefix).module-common.o
- 
- # Add FORCE to the prerequisites of a target to force it to be always rebuilt.
- # ---------------------------------------------------------------------------
-diff --git a/scripts/mod/modpost.c b/scripts/mod/modpost.c
-index c8cd5d822bb6..107393a8c48a 100644
---- a/scripts/mod/modpost.c
-+++ b/scripts/mod/modpost.c
-@@ -1755,26 +1755,9 @@ static void check_modname_len(struct module *mod)
- static void add_header(struct buffer *b, struct module *mod)
- {
- 	buf_printf(b, "#include <linux/module.h>\n");
--	/*
--	 * Include build-salt.h after module.h in order to
--	 * inherit the definitions.
--	 */
--	buf_printf(b, "#define INCLUDE_VERMAGIC\n");
--	buf_printf(b, "#include <linux/build-salt.h>\n");
--	buf_printf(b, "#include <linux/elfnote-lto.h>\n");
- 	buf_printf(b, "#include <linux/export-internal.h>\n");
--	buf_printf(b, "#include <linux/vermagic.h>\n");
- 	buf_printf(b, "#include <linux/compiler.h>\n");
- 	buf_printf(b, "\n");
--	buf_printf(b, "#ifdef CONFIG_UNWINDER_ORC\n");
--	buf_printf(b, "#include <asm/orc_header.h>\n");
--	buf_printf(b, "ORC_HEADER;\n");
--	buf_printf(b, "#endif\n");
--	buf_printf(b, "\n");
--	buf_printf(b, "BUILD_SALT;\n");
--	buf_printf(b, "BUILD_LTO_INFO;\n");
--	buf_printf(b, "\n");
--	buf_printf(b, "MODULE_INFO(vermagic, VERMAGIC_STRING);\n");
- 	buf_printf(b, "MODULE_INFO(name, KBUILD_MODNAME);\n");
- 	buf_printf(b, "\n");
- 	buf_printf(b, "__visible struct module __this_module\n");
-@@ -1792,12 +1775,6 @@ static void add_header(struct buffer *b, struct module *mod)
- 	if (!external_module)
- 		buf_printf(b, "\nMODULE_INFO(intree, \"Y\");\n");
- 
--	buf_printf(b,
--		   "\n"
--		   "#ifdef CONFIG_MITIGATION_RETPOLINE\n"
--		   "MODULE_INFO(retpoline, \"Y\");\n"
--		   "#endif\n");
--
- 	if (strstarts(mod->name, "drivers/staging"))
- 		buf_printf(b, "\nMODULE_INFO(staging, \"Y\");\n");
- 
-diff --git a/scripts/module-common.c b/scripts/module-common.c
-new file mode 100644
-index 000000000000..12fbc6d3aae8
---- /dev/null
-+++ b/scripts/module-common.c
-@@ -0,0 +1,25 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+#include <linux/module.h>
-+/*
-+ * Include build-salt.h after module.h in order to
-+ * inherit the definitions.
-+ */
-+#define INCLUDE_VERMAGIC
-+#include <linux/build-salt.h>
-+#include <linux/elfnote-lto.h>
-+#include <linux/vermagic.h>
-+
-+#ifdef CONFIG_UNWINDER_ORC
-+#include <asm/orc_header.h>
-+ORC_HEADER;
-+#endif
-+
-+BUILD_SALT;
-+BUILD_LTO_INFO;
-+
-+MODULE_INFO(vermagic, VERMAGIC_STRING);
-+
-+#ifdef CONFIG_MITIGATION_RETPOLINE
-+MODULE_INFO(retpoline, "Y");
-+#endif
+[02/11] PCI: imx6: Fix i.MX8MP PCIe EP's occasional failure to trigger MSI
+        https://git.kernel.org/pci/pci/c/f82e7aa14378
 
----
-base-commit: 9f18baf3dd656e7ca166038d51e0b54a892d87db
-change-id: 20240824-modinfo-const-6f0d67e2b301
+[03/11] PCI: imx6: Fix missing call to phy_power_off() in error handling
+        https://git.kernel.org/pci/pci/c/3268637c4f74
 
-Best regards,
--- 
-Thomas Weißschuh <linux@weissschuh.net>
+[04/11] PCI: imx6: Rename imx6_* with imx_*
+        https://git.kernel.org/pci/pci/c/09bec00b3591
 
+[05/11] PCI: imx6: Introduce SoC specific callbacks for controlling REFCLK
+        https://git.kernel.org/pci/pci/c/8bc6b9ccba59
+
+[06/11] PCI: imx6: Simplify switch-case logic by involve core_reset callback
+        https://git.kernel.org/pci/pci/c/79049b791bbc
+
+[07/11] PCI: imx6: Improve comment for workaround ERR010728
+        https://git.kernel.org/pci/pci/c/ea7eddfc0c9d
+
+[08/11] PCI: imx6: Consolidate redundant if-checks
+        https://git.kernel.org/pci/pci/c/dce6ed132a2f
+
+[09/11] dt-bindings: PCI: imx6q-pcie: Add i.MX8Q PCIe compatible string
+        https://git.kernel.org/pci/pci/c/99807815121a
+
+[10/11] PCI: imx6: Call common PHY API to set mode, speed, and submode
+        https://git.kernel.org/pci/pci/c/b7e35e029881
+
+[11/11] PCI: imx6: Add i.MX8Q PCIe Root Complex (RC) support
+        https://git.kernel.org/pci/pci/c/3474e6ceabdc
+
+	Krzysztof
 
