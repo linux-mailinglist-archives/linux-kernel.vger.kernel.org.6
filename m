@@ -1,181 +1,201 @@
-Return-Path: <linux-kernel+bounces-310193-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310188-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA111967611
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 13:08:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21B669675FF
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 13:07:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DB4811C20DE1
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 11:08:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9468A1F2196B
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 11:07:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D5371607AA;
-	Sun,  1 Sep 2024 11:07:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DDC616BE23;
+	Sun,  1 Sep 2024 11:06:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C1MbiZIE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b="pi8VD0Ye";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="tj5Ar7Du"
+Received: from fout6-smtp.messagingengine.com (fout6-smtp.messagingengine.com [103.168.172.149])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F0FF183CA6
-	for <linux-kernel@vger.kernel.org>; Sun,  1 Sep 2024 11:06:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D5ED1CD2A;
+	Sun,  1 Sep 2024 11:06:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.149
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725188820; cv=none; b=Qr6xJtUdyEttSTKMcyh0auLPNeC02VdumrW5IKSMOu+xUSDKbCJxVspVlfPoCB2UpRyGZFmftet2kvyf8JNbnELjBj6mol632AzKXaqV7X3/M+Ovavui7NJZtlAAKlzKRZeQTUVkgNdm+QqYDYzxCCr1+pK6PbGPzjH6G5q4Wnw=
+	t=1725188812; cv=none; b=ERboOIXSuy+oGyFL+W/Xui/+T1qn/3dGc1/bd6+gywBAB/86fCGhvqLwL82ubnVfKBs2ic3GAHnqnfNhsODiA+fTdMAmIX1DomNKSRFNOa9VKmxnOFy3qld/lDs5Vo/ny5K3eiG6kkkEtxtAEG+P0be+yuWnShq9Z5x3a4WxIyM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725188820; c=relaxed/simple;
-	bh=Ol2Ogp1vxUneIXMR+//2nqdCVShC973yDcYgLGzcCPQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=cotl/NRghy7JywE3Iweb52uAYN3IwljWcf4JJtb9CJ0OXmSZF1WSjwxdjszaqbFNYFwiBLU7fnKn8TjkOi7cMzwpiDs+pAtaa17iISVMFvfhVbOVIZqrgkRAb5HpzbXTHtL2MC8bws9V6Zz7xK/e6N7neCXU8QHmlU1AaQdxtMM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C1MbiZIE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED2CDC4CEC9;
-	Sun,  1 Sep 2024 11:06:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725188819;
-	bh=Ol2Ogp1vxUneIXMR+//2nqdCVShC973yDcYgLGzcCPQ=;
-	h=From:Date:Subject:To:Cc:From;
-	b=C1MbiZIEMg8lN7I6qfY13sf1eG6/8ywkynTxk9WS/KH/0a6D1GsGIk8oTHvaKs4k2
-	 uPI4h6fPKq+Wc7Xn64PPdNL9V1lGhnD9dVrh9tGpWdudoqgyLAhBbpvrqquuGcO+Re
-	 JVFx2Pv6RA8PCOC05r67T798eAZS6tFgRyT7x2A1jNtdfo7qDgcGFonNsYJ13m8F9f
-	 W2ChqWQyYNR8jD54hmM5PgLDiUECdo5ZRfcQFGnLDcfTIh1hyEM6AvuwWfAWFCwJzi
-	 kCOrSUcB8GahNtSBQL1vyelGeduaT4EvcRr+XAlDUEtjbhaq+lGMxTiwwdAjuyGa1/
-	 3rRpmsOnigM6Q==
-From: Mark Brown <broonie@kernel.org>
-Date: Sun, 01 Sep 2024 12:06:14 +0100
-Subject: [PATCH] regmap: kunit: Add coverage of spinlocked regmaps
+	s=arc-20240116; t=1725188812; c=relaxed/simple;
+	bh=8EE//13VKyOOyKRwrbm4Wi/1OhvuxH0QAt9zH94+PAU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=WRrrBOPql1XvV6+0dcBDMNC+lk7wtYtnnPKKDg4ECZBorOYHwu8ouyxbCH3e2dnkoGndJM5ecESXFjjQ/Ed7hDv8/T45JHK4ednbwxwH9JdZAShMnAgzH/nzQZQLGH/nn91S6WliAalY2kWff5PgkDZ83f1ZtpgCbcTiG5Ym+RM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp; spf=pass smtp.mailfrom=sakamocchi.jp; dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b=pi8VD0Ye; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=tj5Ar7Du; arc=none smtp.client-ip=103.168.172.149
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sakamocchi.jp
+Received: from phl-compute-01.internal (phl-compute-01.nyi.internal [10.202.2.41])
+	by mailfout.nyi.internal (Postfix) with ESMTP id 6E9FE13802B3;
+	Sun,  1 Sep 2024 07:06:48 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-01.internal (MEProxy); Sun, 01 Sep 2024 07:06:48 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sakamocchi.jp;
+	 h=cc:cc:content-transfer-encoding:content-type:date:date:from
+	:from:in-reply-to:message-id:mime-version:reply-to:subject
+	:subject:to:to; s=fm1; t=1725188808; x=1725275208; bh=fQaHGBYS2v
+	UeI3Tw0ZhFpIQPr/E1ocVBSRnvZo0R4yM=; b=pi8VD0YeVzrO2hgD4uSGdtNyS8
+	nKANw8iXQNIaCD8/ORWUifpyIjxpJmMj2AkOgfY9Wrmq+wZ6Q/FYVHkUj2ah5/cI
+	FGGhw2pjNhfrcngpRZQyIO5N62HAaXqTIEBEZZWk8YinHes5lnVAFu52VJRCe4+x
+	8CaYf9SaSk9KzV5YcM46ctM0yrv0Ktem/+7imPDft9+VX6oxxt03faQSuObDmdfl
+	kDx66BjWb1z+k2cHqRH18SJgXG5pqO8KCz6f8/4f/Bl1TyjW1D4UQkCOeN+yxagL
+	S58YgHHIgzMQFN6NEzRvF1KYN/TTVkf4RjqPH9KienFSW/yCW/UeVXZQ4+BA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:date:date:feedback-id:feedback-id:from:from
+	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm1; t=1725188808; x=1725275208; bh=fQaHGBYS2vUeI3Tw0ZhFpIQPr/E1
+	ocVBSRnvZo0R4yM=; b=tj5Ar7DuZLFwAg78ya0pbiOawfwX1328EZXN7ks0k4BH
+	VM4h7VvuMZr9/mmEEbMm3BaBseTAd+CtkEZyVQ3nyib8TtoqyKO/e/NIlmpOFwAY
+	pJdwaAF9vnASk4fnb6DkXXvZeU0qcqFkBdiMp9xbwEk8NT1fcSdVMUus5VzXGU8T
+	gpv52/uAzJLnLm+9Kmut9BmWNgo75107q9oAtZ9ZX+0rGgjsPr1Do1J74ha7cHz6
+	UwaZgmqMXmo5GzWw0tqiqppJP+nd8B9hW5TEk6e8M3KDxMhqkYwJEXnLAQNGAI44
+	dg1VKl2TaOGNp/LdO5SxxZrlwcywo08BmTpBfEKpVQ==
+X-ME-Sender: <xms:yErUZka4Ay8iJHswOOgnl1Rhu0pYdeZncMUCTPKIOzZ4TppnnDj9vQ>
+    <xme:yErUZvZ1ojhUULeRl5acEnZOEGzD8CxaBd4SoKN_h5fnwe3hlVrqR5KjuyCCpno9g
+    LoDLblXoi8TgrOBY-E>
+X-ME-Received: <xmr:yErUZu-VTx1xv-67afizRcQdz6WhbVmV65-V5xAO10ggsjMA4jTwETLewEHTHHwVMn9Klbwjd2v2nk2VKcMzBaxkX7SW1CFVKaL8eWhEAWw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudeghedgudefucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucenucfjughrpefhvfevuf
+    ffkffoggfgsedtkeertdertddtnecuhfhrohhmpefvrghkrghshhhiucfurghkrghmohht
+    ohcuoehoqdhtrghkrghshhhisehsrghkrghmohgttghhihdrjhhpqeenucggtffrrghtth
+    gvrhhnpefgtdfhteehtdevfedtheehtdduhfevleehueejieffteefvdfhgfetgeekheet
+    ffenucffohhmrghinhepkhgvrhhnvghlrdhorhhgpdhgihhthhhusgdrtghomhenucevlh
+    hushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehoqdhtrghkrghs
+    hhhisehsrghkrghmohgttghhihdrjhhppdhnsggprhgtphhtthhopeejpdhmohguvgepsh
+    hmthhpohhuthdprhgtphhtthhopehlihhnuhigudefleegqdguvghvvghlsehlihhsthhs
+    rdhsohhurhgtvghfohhrghgvrdhnvghtpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvg
+    hlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqshhouhhn
+    ugesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopegrphgrihhssehlihhnuh
+    igrdhmihgtrhhoshhofhhtrdgtohhmpdhrtghpthhtohepvggumhhunhgurdhrrghilhgv
+    sehprhhothhonhhmrghilhdrtghomhdprhgtphhtthhopehlihhnuhigqdhmvgguihgrse
+    hvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepnhgvthguvghvsehvghgvrhdr
+    khgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:yErUZur8zroL-5ZT1O1Y__ws_dU5ojuTzdIgPBFB44O6X8wf8wAIhw>
+    <xmx:yErUZvqvV9Gz0kGrjQkRZ2E3cmWT9s6vuRCuWNqMDcd5YutIxtHe1A>
+    <xmx:yErUZsQlz3HqLpNm10wqSyLWZl28fh4sdemxSlVYgEk579X_TsFDNA>
+    <xmx:yErUZvq9bswMz4rMDuEtbzA7Jwq0B3scWs-7mXGwG3X1JbE_F6xRRA>
+    <xmx:yErUZrJpDUyCvFu_KAkxm67d3wpgIn1eHKZWQnV9XScdyV1yEq4s9peq>
+Feedback-ID: ie8e14432:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
+ 1 Sep 2024 07:06:46 -0400 (EDT)
+From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+To: linux1394-devel@lists.sourceforge.net
+Cc: linux-kernel@vger.kernel.org,
+	linux-sound@vger.kernel.org,
+	apais@linux.microsoft.com,
+	edmund.raile@protonmail.com,
+	linux-media@vger.kernel.org,
+	netdev@vger.kernel.org
+Subject: [RFT][PATCH 0/5] firewire: use sleepable workqueue to handle 1394 OHCI IT/IR context events
+Date: Sun,  1 Sep 2024 20:06:37 +0900
+Message-ID: <20240901110642.154523-1-o-takashi@sakamocchi.jp>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240901-regmap-test-fast-io-v1-1-aad83a871bcc@kernel.org>
-X-B4-Tracking: v=1; b=H4sIAKVK1GYC/x2MywqAIBAAf0X23EJp0ONXosNWa+0hDZUIpH9Pu
- gzMYSZD5CAcYVQZAt8SxbsiTaVgPcjtjLIVB13rtu5Ng4H3ky5MHBNaKhCPi7HD1vXEa6uhlFd
- gK89/neb3/QDT1hLtZQAAAA==
-To: linux-kernel@vger.kernel.org
-Cc: Mark Brown <broonie@kernel.org>
-X-Mailer: b4 0.15-dev-99b12
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4498; i=broonie@kernel.org;
- h=from:subject:message-id; bh=Ol2Ogp1vxUneIXMR+//2nqdCVShC973yDcYgLGzcCPQ=;
- b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBm1ErRMkv2+svBUkfkZk3zEmFcVwPiJlKUrAwNV
- uo5fyReaCOJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZtRK0QAKCRAk1otyXVSH
- 0MQFB/4lTRNOB4/sQU2nnD2J1ZkVHejux/VHRAB1J5CGjyEaYY/8/1dDqhn4GL7dAawwafN/M1X
- FDG7aKdUfEYq0Kv7Lw6XmS5BHSSwbArQLKQkFoZbJJRfGFuD4WSOuyTdTILUA9pDlnmLDZm6H7K
- yhFbM42zaC6E2oc5GVoAu6pL42JwPlD74+gLY13AXrot8XvCiS92VwGaqjlVXWUB9sawXVvr/Tl
- 3o/sStMQOd83Vkxe9mlr2fngCgsRIl5Ij7qLmulYONNSxXyh5PX9PRKuAX9eqq4DLJQqWruWOYR
- 9J5C69hstm9Fe4jN6iQZY32N2GUSn+UJNGLydVW8xwH/1ta+
-X-Developer-Key: i=broonie@kernel.org; a=openpgp;
- fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
+Content-Transfer-Encoding: 8bit
 
-By default regmap uses a mutex to protect the regmap but we also support
-other kinds of locking, including spinlocks, which can have an impact
-especially around allocations. Ensure that we are covering the spinlock
-case by running tests configured using fast I/O, this causes the core to
-use a spinlock instead of a mutex. Running every single test would be
-redundant but cover most of them.
+Hi,
 
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- drivers/base/regmap/regmap-kunit.c | 17 ++++++++++++++++-
- 1 file changed, 16 insertions(+), 1 deletion(-)
+This series of change is inspired by BH workqueue available in recent
+kernel.
 
-diff --git a/drivers/base/regmap/regmap-kunit.c b/drivers/base/regmap/regmap-kunit.c
-index b80b447c87a2..4bf3f1e59ed7 100644
---- a/drivers/base/regmap/regmap-kunit.c
-+++ b/drivers/base/regmap/regmap-kunit.c
-@@ -22,6 +22,7 @@ struct regmap_test_param {
- 	enum regmap_endian val_endian;
- 
- 	unsigned int from_reg;
-+	bool fast_io;
- };
- 
- static void get_changed_bytes(void *orig, void *new, size_t size)
-@@ -80,41 +81,52 @@ static const char *regmap_endian_name(enum regmap_endian endian)
- 
- static void param_to_desc(const struct regmap_test_param *param, char *desc)
- {
--	snprintf(desc, KUNIT_PARAM_DESC_SIZE, "%s-%s @%#x",
-+	snprintf(desc, KUNIT_PARAM_DESC_SIZE, "%s-%s%s @%#x",
- 		 regcache_type_name(param->cache),
- 		 regmap_endian_name(param->val_endian),
-+		 param->fast_io ? " fast I/O" : "",
- 		 param->from_reg);
- }
- 
- static const struct regmap_test_param regcache_types_list[] = {
- 	{ .cache = REGCACHE_NONE },
-+	{ .cache = REGCACHE_NONE, .fast_io = true },
- 	{ .cache = REGCACHE_FLAT },
-+	{ .cache = REGCACHE_FLAT, .fast_io = true },
- 	{ .cache = REGCACHE_RBTREE },
-+	{ .cache = REGCACHE_RBTREE, .fast_io = true },
- 	{ .cache = REGCACHE_MAPLE },
-+	{ .cache = REGCACHE_MAPLE, .fast_io = true },
- };
- 
- KUNIT_ARRAY_PARAM(regcache_types, regcache_types_list, param_to_desc);
- 
- static const struct regmap_test_param real_cache_types_only_list[] = {
- 	{ .cache = REGCACHE_FLAT },
-+	{ .cache = REGCACHE_FLAT, .fast_io = true },
- 	{ .cache = REGCACHE_RBTREE },
-+	{ .cache = REGCACHE_RBTREE, .fast_io = true },
- 	{ .cache = REGCACHE_MAPLE },
-+	{ .cache = REGCACHE_MAPLE, .fast_io = true },
- };
- 
- KUNIT_ARRAY_PARAM(real_cache_types_only, real_cache_types_only_list, param_to_desc);
- 
- static const struct regmap_test_param real_cache_types_list[] = {
- 	{ .cache = REGCACHE_FLAT,   .from_reg = 0 },
-+	{ .cache = REGCACHE_FLAT,   .from_reg = 0, .fast_io = true },
- 	{ .cache = REGCACHE_FLAT,   .from_reg = 0x2001 },
- 	{ .cache = REGCACHE_FLAT,   .from_reg = 0x2002 },
- 	{ .cache = REGCACHE_FLAT,   .from_reg = 0x2003 },
- 	{ .cache = REGCACHE_FLAT,   .from_reg = 0x2004 },
- 	{ .cache = REGCACHE_RBTREE, .from_reg = 0 },
-+	{ .cache = REGCACHE_RBTREE, .from_reg = 0, .fast_io = true },
- 	{ .cache = REGCACHE_RBTREE, .from_reg = 0x2001 },
- 	{ .cache = REGCACHE_RBTREE, .from_reg = 0x2002 },
- 	{ .cache = REGCACHE_RBTREE, .from_reg = 0x2003 },
- 	{ .cache = REGCACHE_RBTREE, .from_reg = 0x2004 },
- 	{ .cache = REGCACHE_MAPLE,  .from_reg = 0 },
-+	{ .cache = REGCACHE_RBTREE, .from_reg = 0, .fast_io = true },
- 	{ .cache = REGCACHE_MAPLE,  .from_reg = 0x2001 },
- 	{ .cache = REGCACHE_MAPLE,  .from_reg = 0x2002 },
- 	{ .cache = REGCACHE_MAPLE,  .from_reg = 0x2003 },
-@@ -125,11 +137,13 @@ KUNIT_ARRAY_PARAM(real_cache_types, real_cache_types_list, param_to_desc);
- 
- static const struct regmap_test_param sparse_cache_types_list[] = {
- 	{ .cache = REGCACHE_RBTREE, .from_reg = 0 },
-+	{ .cache = REGCACHE_RBTREE, .from_reg = 0, .fast_io = true },
- 	{ .cache = REGCACHE_RBTREE, .from_reg = 0x2001 },
- 	{ .cache = REGCACHE_RBTREE, .from_reg = 0x2002 },
- 	{ .cache = REGCACHE_RBTREE, .from_reg = 0x2003 },
- 	{ .cache = REGCACHE_RBTREE, .from_reg = 0x2004 },
- 	{ .cache = REGCACHE_MAPLE,  .from_reg = 0 },
-+	{ .cache = REGCACHE_MAPLE,  .from_reg = 0, .fast_io = true },
- 	{ .cache = REGCACHE_MAPLE,  .from_reg = 0x2001 },
- 	{ .cache = REGCACHE_MAPLE,  .from_reg = 0x2002 },
- 	{ .cache = REGCACHE_MAPLE,  .from_reg = 0x2003 },
-@@ -151,6 +165,7 @@ static struct regmap *gen_regmap(struct kunit *test,
- 	struct reg_default *defaults;
- 
- 	config->cache_type = param->cache;
-+	config->fast_io = param->fast_io;
- 
- 	if (config->max_register == 0) {
- 		config->max_register = param->from_reg;
+In Linux FireWire subsystem, tasklet softIRQ context has been utilized to
+operate 1394 OHCI Isochronous Transmit (IT) and Isochronous Receive (IR)
+contexts. The tasklet context is not preferable, as you know.
 
----
-base-commit: ae0acef3822ed8908e83cd24f337891e6be64eba
-change-id: 20240831-regmap-test-fast-io-b3f9d78aec42
+I have already received a proposal[1][2] to replace the usage of tasklet
+with BH workqueue. However, the proposal includes bare replacement for 1394
+OHCI IT, IR, Asynchronous Transmit (AT), and Asynchronous Receive (AR)
+contexts with neither any care of actual usage for each context nor
+practical test reports. In theory, this kind of change should be done by
+step by step with enough amount of evaluation over software design to avoid
+any disorder.
 
-Best regards,
+In this series of changes, the usage of tasklet for 1394 OHCI IT/IR
+contexts is just replaced, as a first step. In 1394 OHCI IR/IT events,
+software is expected to process the content of page dedicated to DMA
+transmission for each isochronous context. It means that the content can be
+processed concurrently per isochronous context. Additionally, the content
+of page is immutable as long as the software schedules the transmission
+again for the page. It means that the task to process the content can sleep
+or be preempted. Due to the characteristics, BH workqueue is _not_ used.
+
+At present, 1394 OHCI driver is responsible for the maintenance of tasklet
+context, while in this series of change the core function is responsible
+for the maintenance of workqueue and work items. This change is an attempt
+to let each implementation focus on own task.
+
+The change affects the following implementations of unit protocols which
+operate isochronous contexts:
+
+- firewire-net for IP over 1394 (RFC 2734/3146)
+- firedtv
+- drivers in ALSA firewire stack for IEC 61883-1/6
+- user space applications
+
+As long as reading their codes, the first two drivers look to require no
+change. While the drivers in ALSA firewire stack require change to switch
+the type of context in which callback is executed. The series of change
+includes a patch for them to adapt to work process context.
+
+Finally, these changes are tested by devices supported by ALSA firewire
+stack with/without no-period-wakeup runtime of PCM substream. I also tested
+examples in libhinoko[3] as samples of user space applications. Currently I
+face no issue.
+
+On the other hand, I have neither tested for firewire-net nor firedtv,
+since I have never used these functions. If someone has any experience to
+use them, I would request to test the change.
+
+[1] https://lore.kernel.org/lkml/20240403144558.13398-1-apais@linux.microsoft.com/
+[2] https://github.com/allenpais/for-6.9-bh-conversions/issues/1
+[3] https://git.kernel.org/pub/scm/libs/ieee1394/libhinoko.git/
+
+
+Regards
+
+Takashi Sakamoto (5):
+  firewire: core: allocate workqueue to handle isochronous contexts in
+    card
+  firewire: core: add local API for work items scheduled to workqueue
+    specific to isochronous contexts
+  firewire: ohci: process IT/IR events in sleepable work process to
+    obsolete tasklet softIRQ
+  firewire: core: non-atomic memory allocation for isochronous event to
+    user client
+  ALSA: firewire: use nonatomic PCM operation
+
+ drivers/firewire/core-card.c             | 31 +++++++++++--
+ drivers/firewire/core-cdev.c             |  4 +-
+ drivers/firewire/core-iso.c              | 22 ++++++++-
+ drivers/firewire/core.h                  | 14 +++++-
+ drivers/firewire/ohci.c                  | 57 +++++++++++++++++++-----
+ include/linux/firewire.h                 |  3 ++
+ sound/firewire/amdtp-stream.c            |  9 +++-
+ sound/firewire/bebob/bebob_pcm.c         |  1 +
+ sound/firewire/dice/dice-pcm.c           |  1 +
+ sound/firewire/digi00x/digi00x-pcm.c     |  1 +
+ sound/firewire/fireface/ff-pcm.c         |  1 +
+ sound/firewire/fireworks/fireworks_pcm.c |  1 +
+ sound/firewire/isight.c                  |  1 +
+ sound/firewire/motu/motu-pcm.c           |  1 +
+ sound/firewire/oxfw/oxfw-pcm.c           |  1 +
+ sound/firewire/tascam/tascam-pcm.c       |  1 +
+ 16 files changed, 128 insertions(+), 21 deletions(-)
+
 -- 
-Mark Brown <broonie@kernel.org>
+2.43.0
 
 
