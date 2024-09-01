@@ -1,231 +1,189 @@
-Return-Path: <linux-kernel+bounces-310238-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310239-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A99C79676C1
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 15:39:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52AED9676C3
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 15:40:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 61F472809C9
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 13:39:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8F4DEB20BF7
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 13:40:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B01AD17E473;
-	Sun,  1 Sep 2024 13:39:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9A8717E00F;
+	Sun,  1 Sep 2024 13:39:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bCCFAGgJ"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="J6PglX3A"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D29FC3A29F
-	for <linux-kernel@vger.kernel.org>; Sun,  1 Sep 2024 13:39:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE27B3A29F;
+	Sun,  1 Sep 2024 13:39:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725197977; cv=none; b=VUJCdsDzggzhGRpqEiW+QtzTZKxKAmbIDe3rmS429XhaegHSGoEJq7dQylJzZLtQvCMUWG0D7Qq+wb0JzfYeurArbXF0Dutg74yeyLS7x/5baeizZaY82ci12AmP9I7BQgmh+/HfAbkunQjqXQqD/Xfn0wrchBWLhG9mkmRShos=
+	t=1725197999; cv=none; b=h6vDZDIcjlXgQ0fPYxBquEDf1xW3J49fpHjw39PlkUlMcqzr41Bp342t9fk0VHibHPer1AB6QTg/t2H77nxsvBVqaGlD8YJyJ+3IAPLOcKs+UpUYiaL0NKD0NOF3rqCC0N3kRf2te1VNH9WxGl3gpgZYfqFHknhsAvJbp7lEvkI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725197977; c=relaxed/simple;
-	bh=1IlmAJYxN2gOVSyA2laMPlpZM2nE8GFxfbSDPUCpxAg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WuWSviEHH5hqOH/is7hKnizc/w3VFG89PfhedSApb+F2GNnk4G+U+QBgg3yLxtoFlp0GYNnnLoxrz/DJ2mjvIU7MUHiJHF4Y5s1418W452ekoZ/iWHoxqlcF98CJR7qmD4RWWxsBvhMRRtPXFVKVJAj0GCLg4Q+fl4R9Q69Bc1M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bCCFAGgJ; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1725197973;
+	s=arc-20240116; t=1725197999; c=relaxed/simple;
+	bh=ZqAiE1RLqm0j623x1aSzS6lYdmf47dsIk/9BgeMJwss=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pEyLSFUK4ym0SFqHeaa2JrcAX5w8yq3DVkM2YLD++3fHkOrMCxdp1MYnCWlUiyOhRrPPoYLRo2qKYeS7xLr0nee1AmV8EQjoiGlob6joz6QF0jDQLjBHEQ1MsrodAkNHZ7/KfSF2/U+6/AVMKyMgN40azPzf1+QoIp3wMEW0LNU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=J6PglX3A; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84B2EC4CEC3;
+	Sun,  1 Sep 2024 13:39:57 +0000 (UTC)
+Authentication-Results: smtp.kernel.org;
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="J6PglX3A"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
+	t=1725197996;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=vyGDIwF2j/q+RxX/6PvhOnfgGDLJV1PumKrXufZMqJk=;
-	b=bCCFAGgJEonHNydSWRaQ5ta6GfzE0gTgSc3+sjdoN6GssWFgIO9iDYuWM/EbNmla79l4qx
-	RlXW/mwAhruWM97KmFQlM+p8uG14iSVmikroKNYEVMd7D4oIJAISUdIsYYoRcDjD7sKSbN
-	bh1aXyiILNPbQPFnq9RwdMZXVJeU78M=
-Received: from mail-ot1-f69.google.com (mail-ot1-f69.google.com
- [209.85.210.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-253-BZA_R2KdNCStpbG6gpwUFA-1; Sun, 01 Sep 2024 09:39:32 -0400
-X-MC-Unique: BZA_R2KdNCStpbG6gpwUFA-1
-Received: by mail-ot1-f69.google.com with SMTP id 46e09a7af769-70946be6dedso3099138a34.1
-        for <linux-kernel@vger.kernel.org>; Sun, 01 Sep 2024 06:39:32 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725197972; x=1725802772;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=vyGDIwF2j/q+RxX/6PvhOnfgGDLJV1PumKrXufZMqJk=;
-        b=rkJszSHJDr5s/OCnyQZgMWS9fcu1J/yv0/fr7T7OhGt3PFehKE+0+zBtwyCo9IaCcP
-         xY0w1u+zpOJZ1f8fRlLUsHkz0avr2ebcYxtb0xzzfeHgnM6FKpU9UDmsmYoG/S+ZnLT0
-         cGRjfhw2f8tE0g4uxI2Fu8AwogxgKOIfeMLQlD5B3O490atYxOlAEdHBoJaykJqf1/Wt
-         L21Z3KFztpzY8CxG+kx6nFG2wEL+UKShrxr9qdtoCjszpnvAYxaATnU55x8Vxf9tHPM7
-         SpdnKPOXNkXq44z/mJy0BpbMjy1SdX1Ahw3/Ft7SML9jMUA7Sio3nwhvNgO89YUXQz5B
-         BSTw==
-X-Gm-Message-State: AOJu0Yyg0MvMkosLoYd5Y3DQF3+zH45bN3BRTnSGNX1ZfZPKavtdNzsV
-	M73GzHcg4zpe0po/+WUuVjdyck+1joNkoxuluA5IdtWWoYpINSgB9s+/2PN2s5bs0D1QnYeU3fb
-	RzNHiFhskpS62lhLbgVyvb+mcsQuYgJKqArnk8dAKCR1AH00bbObZM5lYXB9PqA==
-X-Received: by 2002:a05:6358:9385:b0:1b5:a043:8f43 with SMTP id e5c5f4694b2df-1b603a26699mr1468280355d.0.1725197971953;
-        Sun, 01 Sep 2024 06:39:31 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEDmQzg0ZPiJwjrC5T+Ay+drE71+FKdZDRY3ijuZM6RzcnlHFemGD4aRZKF9+h5bY5YpETJsQ==
-X-Received: by 2002:a05:6358:9385:b0:1b5:a043:8f43 with SMTP id e5c5f4694b2df-1b603a26699mr1468276255d.0.1725197971407;
-        Sun, 01 Sep 2024 06:39:31 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c720:6600:be4f:7c7a:2bbd:4720? (p200300cbc7206600be4f7c7a2bbd4720.dip0.t-ipconnect.de. [2003:cb:c720:6600:be4f:7c7a:2bbd:4720])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6c353173c45sm20426886d6.92.2024.09.01.06.39.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 01 Sep 2024 06:39:31 -0700 (PDT)
-Message-ID: <8c70fc0d-901c-4a57-8bbd-0a7f8d895f7e@redhat.com>
-Date: Sun, 1 Sep 2024 15:39:21 +0200
+	bh=VD1wcF7Qb+VHpKiC+Y0JiaxySeBNxKbAGen5a4ZQCPU=;
+	b=J6PglX3AACoJl2qbCqVApUcHoIzsCu20NNL2SsmTgdhdJiyMjGNwJHW1iksfRMEK9OlMqt
+	5NiWKdpUXBTM/eF0orfmROdBVDr9oC0rSfNgtJnxSgjMov4CHmsuKGflMwrHHZ51dxo+H3
+	ThGMJnRhGWaMEAODAlVNlBIdeDhxLDE=
+Received: 
+	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 2fedc0c9 (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
+	Sun, 1 Sep 2024 13:39:55 +0000 (UTC)
+Date: Sun, 1 Sep 2024 15:39:52 +0200
+From: "Jason A. Donenfeld" <Jason@zx2c4.com>
+To: Huacai Chen <chenhuacai@kernel.org>
+Cc: Xi Ruoyao <xry111@xry111.site>, WANG Xuerui <kernel@xen0n.name>,
+	linux-crypto@vger.kernel.org, loongarch@lists.linux.dev,
+	linux-kernel@vger.kernel.org, Jinyang He <hejinyang@loongson.cn>,
+	Tiezhu Yang <yangtiezhu@loongson.cn>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH v6 1/3] arch: vDSO: Add a __vdso_getrandom prototype for
+ all architectures
+Message-ID: <ZtRuqESaAG8KMIsp@zx2c4.com>
+References: <20240901061315.15693-1-xry111@xry111.site>
+ <20240901061315.15693-2-xry111@xry111.site>
+ <CAAhV-H4nE3s7e=ouh04VH=yY2iR+ofuEkv8p=2cChJi=jw=pMw@mail.gmail.com>
+ <ZtRq22l9ZLIKP5cf@zx2c4.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 16/19] mm: Remove follow_pte()
-To: Yu Zhao <yuzhao@google.com>, Peter Xu <peterx@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- Gavin Shan <gshan@redhat.com>, Catalin Marinas <catalin.marinas@arm.com>,
- x86@kernel.org, Ingo Molnar <mingo@redhat.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Paolo Bonzini <pbonzini@redhat.com>,
- Dave Hansen <dave.hansen@linux.intel.com>,
- Thomas Gleixner <tglx@linutronix.de>, Alistair Popple <apopple@nvidia.com>,
- kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- Sean Christopherson <seanjc@google.com>, Oscar Salvador <osalvador@suse.de>,
- Jason Gunthorpe <jgg@nvidia.com>, Borislav Petkov <bp@alien8.de>,
- Zi Yan <ziy@nvidia.com>, Axel Rasmussen <axelrasmussen@google.com>,
- Yan Zhao <yan.y.zhao@intel.com>, Will Deacon <will@kernel.org>,
- Kefeng Wang <wangkefeng.wang@huawei.com>,
- Alex Williamson <alex.williamson@redhat.com>
-References: <20240826204353.2228736-1-peterx@redhat.com>
- <20240826204353.2228736-17-peterx@redhat.com>
- <CAOUHufYfF3BmTZ1r8cdLSU7ddYO20B8M-gFRAn=Hkd=jtQbcng@mail.gmail.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-In-Reply-To: <CAOUHufYfF3BmTZ1r8cdLSU7ddYO20B8M-gFRAn=Hkd=jtQbcng@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <ZtRq22l9ZLIKP5cf@zx2c4.com>
 
-Am 01.09.24 um 06:33 schrieb Yu Zhao:
-> On Mon, Aug 26, 2024 at 2:44 PM Peter Xu <peterx@redhat.com> wrote:
->>
->> follow_pte() users have been converted to follow_pfnmap*().  Remove the
->> API.
->>
->> Signed-off-by: Peter Xu <peterx@redhat.com>
->> ---
->>   include/linux/mm.h |  2 --
->>   mm/memory.c        | 73 ----------------------------------------------
->>   2 files changed, 75 deletions(-)
->>
->> diff --git a/include/linux/mm.h b/include/linux/mm.h
->> index 161d496bfd18..b31d4bdd65ad 100644
->> --- a/include/linux/mm.h
->> +++ b/include/linux/mm.h
->> @@ -2368,8 +2368,6 @@ void free_pgd_range(struct mmu_gather *tlb, unsigned long addr,
->>                  unsigned long end, unsigned long floor, unsigned long ceiling);
->>   int
->>   copy_page_range(struct vm_area_struct *dst_vma, struct vm_area_struct *src_vma);
->> -int follow_pte(struct vm_area_struct *vma, unsigned long address,
->> -              pte_t **ptepp, spinlock_t **ptlp);
->>   int generic_access_phys(struct vm_area_struct *vma, unsigned long addr,
->>                          void *buf, int len, int write);
->>
->> diff --git a/mm/memory.c b/mm/memory.c
->> index b5d07f493d5d..288f81a8698e 100644
->> --- a/mm/memory.c
->> +++ b/mm/memory.c
->> @@ -6100,79 +6100,6 @@ int __pmd_alloc(struct mm_struct *mm, pud_t *pud, unsigned long address)
->>   }
->>   #endif /* __PAGETABLE_PMD_FOLDED */
->>
->> -/**
->> - * follow_pte - look up PTE at a user virtual address
->> - * @vma: the memory mapping
->> - * @address: user virtual address
->> - * @ptepp: location to store found PTE
->> - * @ptlp: location to store the lock for the PTE
->> - *
->> - * On a successful return, the pointer to the PTE is stored in @ptepp;
->> - * the corresponding lock is taken and its location is stored in @ptlp.
->> - *
->> - * The contents of the PTE are only stable until @ptlp is released using
->> - * pte_unmap_unlock(). This function will fail if the PTE is non-present.
->> - * Present PTEs may include PTEs that map refcounted pages, such as
->> - * anonymous folios in COW mappings.
->> - *
->> - * Callers must be careful when relying on PTE content after
->> - * pte_unmap_unlock(). Especially if the PTE maps a refcounted page,
->> - * callers must protect against invalidation with MMU notifiers; otherwise
->> - * access to the PFN at a later point in time can trigger use-after-free.
->> - *
->> - * Only IO mappings and raw PFN mappings are allowed.  The mmap semaphore
->> - * should be taken for read.
->> - *
->> - * This function must not be used to modify PTE content.
->> - *
->> - * Return: zero on success, -ve otherwise.
->> - */
->> -int follow_pte(struct vm_area_struct *vma, unsigned long address,
->> -              pte_t **ptepp, spinlock_t **ptlp)
->> -{
->> -       struct mm_struct *mm = vma->vm_mm;
->> -       pgd_t *pgd;
->> -       p4d_t *p4d;
->> -       pud_t *pud;
->> -       pmd_t *pmd;
->> -       pte_t *ptep;
->> -
->> -       mmap_assert_locked(mm);
->> -       if (unlikely(address < vma->vm_start || address >= vma->vm_end))
->> -               goto out;
->> -
->> -       if (!(vma->vm_flags & (VM_IO | VM_PFNMAP)))
->> -               goto out;
->> -
->> -       pgd = pgd_offset(mm, address);
->> -       if (pgd_none(*pgd) || unlikely(pgd_bad(*pgd)))
->> -               goto out;
->> -
->> -       p4d = p4d_offset(pgd, address);
->> -       if (p4d_none(*p4d) || unlikely(p4d_bad(*p4d)))
->> -               goto out;
->> -
->> -       pud = pud_offset(p4d, address);
->> -       if (pud_none(*pud) || unlikely(pud_bad(*pud)))
->> -               goto out;
->> -
->> -       pmd = pmd_offset(pud, address);
->> -       VM_BUG_ON(pmd_trans_huge(*pmd));
->> -
->> -       ptep = pte_offset_map_lock(mm, pmd, address, ptlp);
->> -       if (!ptep)
->> -               goto out;
->> -       if (!pte_present(ptep_get(ptep)))
->> -               goto unlock;
->> -       *ptepp = ptep;
->> -       return 0;
->> -unlock:
->> -       pte_unmap_unlock(ptep, *ptlp);
->> -out:
->> -       return -EINVAL;
->> -}
->> -EXPORT_SYMBOL_GPL(follow_pte);
+On Sun, Sep 01, 2024 at 03:23:39PM +0200, Jason A. Donenfeld wrote:
+> On Sun, Sep 01, 2024 at 04:44:40PM +0800, Huacai Chen wrote:
+> > Hi, Ruoyao,
+> > 
+> > On Sun, Sep 1, 2024 at 2:13 PM Xi Ruoyao <xry111@xry111.site> wrote:
+> > >
+> > > Without a prototype, we'll have to add a prototype for each architecture
+> > > implementing vDSO getrandom.  As most architectures will likely have the
+> > > vDSO getrandom implemented in a near future, and we'd like to keep the
+> > > declarations compatible everywhere (to ease the Glibc work), we should
+> > > really just have one copy of the prototype.
+> > >
+> > > Suggested-by: Huacai Chen <chenhuacai@kernel.org>
+> > > Signed-off-by: Xi Ruoyao <xry111@xry111.site>
+> > > ---
+> > >  arch/x86/entry/vdso/vgetrandom.c | 2 --
+> > >  include/vdso/getrandom.h         | 5 +++++
+> > >  2 files changed, 5 insertions(+), 2 deletions(-)
+> > >
+> > > diff --git a/arch/x86/entry/vdso/vgetrandom.c b/arch/x86/entry/vdso/vgetrandom.c
+> > > index 52d3c7faae2e..430862b8977c 100644
+> > > --- a/arch/x86/entry/vdso/vgetrandom.c
+> > > +++ b/arch/x86/entry/vdso/vgetrandom.c
+> > > @@ -6,8 +6,6 @@
+> > >
+> > >  #include "../../../../lib/vdso/getrandom.c"
+> > >
+> > > -ssize_t __vdso_getrandom(void *buffer, size_t len, unsigned int flags, void *opaque_state, size_t opaque_len);
+> > > -
+> > >  ssize_t __vdso_getrandom(void *buffer, size_t len, unsigned int flags, void *opaque_state, size_t opaque_len)
+> > >  {
+> > >         return __cvdso_getrandom(buffer, len, flags, opaque_state, opaque_len);
+> > > diff --git a/include/vdso/getrandom.h b/include/vdso/getrandom.h
+> > > index 4cf02e678f5e..08b47b002bf7 100644
+> > > --- a/include/vdso/getrandom.h
+> > > +++ b/include/vdso/getrandom.h
+> > > @@ -56,4 +56,9 @@ struct vgetrandom_state {
+> > >   */
+> > >  extern void __arch_chacha20_blocks_nostack(u8 *dst_bytes, const u32 *key, u32 *counter, size_t nblocks);
+> > >
+> > > +/**
+> > Though in this file there are already comments beginning with /**, but
+> > it seems the kernel's code style suggests beginning with /*.
 > 
-> I ran into build errors with this -- removing exported symbols breaks
-> ABI, so I think we should make follow_pte() as a wrapper of its new
-> equivalent, if that's possible?
+> /** is for docbook comments.
 
-Build error with OOT modules or in-tree modules?
+I'll fix this commit up as follows:
 
-If you are talking about OOT modules, it is their responsibility to fix this up 
-in their implementation. There are no real kabi stability guarantees provided by 
-the kernel.
+From de99263bbd61f5199ecbd7ce6cf57ede8bc42c84 Mon Sep 17 00:00:00 2001
+From: Xi Ruoyao <xry111@xry111.site>
+Date: Sun, 1 Sep 2024 14:13:10 +0800
+Subject: [PATCH] random: vDSO: add a __vdso_getrandom prototype for all
+ architectures
 
-If you are talking about in-tree modules, did Peter miss some (probably in -next?)?
+Without a prototype, we'll have to add a prototype for each architecture
+implementing vDSO getrandom. As most architectures will likely have the
+vDSO getrandom implemented in a near future, and we'd like to keep the
+declarations compatible everywhere (to ease the libc implementor work),
+we should really just have one copy of the prototype.
 
--- 
-Thanks,
+This also is what's already done inside of include/vdso/gettime.h for
+those vDSO functions, so this continues that convention.
 
-David / dhildenb
+Suggested-by: Huacai Chen <chenhuacai@kernel.org>
+Signed-off-by: Xi Ruoyao <xry111@xry111.site>
+Acked-by: Huacai Chen <chenhuacai@kernel.org>
+[Jason: rewrite docbook comment for prototype.]
+Signed-off-by: Jason A. Donenfeld <Jason@zx2c4.com>
+---
+ arch/x86/entry/vdso/vgetrandom.c |  2 --
+ include/vdso/getrandom.h         | 16 ++++++++++++++++
+ 2 files changed, 16 insertions(+), 2 deletions(-)
+
+diff --git a/arch/x86/entry/vdso/vgetrandom.c b/arch/x86/entry/vdso/vgetrandom.c
+index 52d3c7faae2e..430862b8977c 100644
+--- a/arch/x86/entry/vdso/vgetrandom.c
++++ b/arch/x86/entry/vdso/vgetrandom.c
+@@ -6,8 +6,6 @@
+
+ #include "../../../../lib/vdso/getrandom.c"
+
+-ssize_t __vdso_getrandom(void *buffer, size_t len, unsigned int flags, void *opaque_state, size_t opaque_len);
+-
+ ssize_t __vdso_getrandom(void *buffer, size_t len, unsigned int flags, void *opaque_state, size_t opaque_len)
+ {
+ 	return __cvdso_getrandom(buffer, len, flags, opaque_state, opaque_len);
+diff --git a/include/vdso/getrandom.h b/include/vdso/getrandom.h
+index 4cf02e678f5e..0d3849145a89 100644
+--- a/include/vdso/getrandom.h
++++ b/include/vdso/getrandom.h
+@@ -56,4 +56,20 @@ struct vgetrandom_state {
+  */
+ extern void __arch_chacha20_blocks_nostack(u8 *dst_bytes, const u32 *key, u32 *counter, size_t nblocks);
+
++/**
++ * __vdso_getrandom - Architecture-specific vDSO implementation of getrandom() syscall.
++ * @buffer:		Passed to __cvdso_getrandom_data().
++ * @len:		Passed to __cvdso_getrandom_data().
++ * @flags:		Passed to __cvdso_getrandom_data().
++ * @opaque_state:	Passed to __cvdso_getrandom_data().
++ * @opaque_len:		Passed to __cvdso_getrandom_data();
++ *
++ * This function acquires a pointer to the architecture-specific shared vDSO RNG datapage, and
++ * passes it, along with all of its arguments, to __cvdso_getrandom_data(), whose documentation may
++ * be consulted for more information.
++ *
++ * Returns:	The value of __cvdso_getrandom_data().
++ */
++extern ssize_t __vdso_getrandom(void *buffer, size_t len, unsigned int flags, void *opaque_state, size_t opaque_len);
++
+ #endif /* _VDSO_GETRANDOM_H */
+--
+2.46.0
 
 
