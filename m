@@ -1,122 +1,78 @@
-Return-Path: <linux-kernel+bounces-310074-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310080-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5E9196747B
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 05:41:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 38AA596748A
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 06:01:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 749B8282C77
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 03:41:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E55BB282879
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 04:01:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAF422AF1B;
-	Sun,  1 Sep 2024 03:41:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 315E037144;
+	Sun,  1 Sep 2024 04:01:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c3KZTeOn"
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NF8Sj5p7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84C1A1DA23;
-	Sun,  1 Sep 2024 03:41:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6935F168C7;
+	Sun,  1 Sep 2024 04:01:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725162111; cv=none; b=catglZtNtf5iA2kXDjiRixNb9+Rw+iHbCgkf42G6QIDuv6F6P1TuwdR4cL8y+JWsfH0peximqG1/BDU/CmIqwbRg2fAIoUMwVsMsfMnVeykhOLbmK/e8L5hYF0yt0aUpyyg3WFqiurACJgJOAe6HUvqgxks/l3F8/QSvZOHv9aM=
+	t=1725163309; cv=none; b=UCS3VOBmSz8snacVsJq81InUpaM4FZzx0QyCuylPQ88P0ye1J/pyfR1A0v8gi19F/oMhczqAXbqnOh3/fP2Uw5hrzPBCRdF2cgJlBTh1MZJfAVy1sKJIae5uIQTvAZ8jbcqEpLt+SDZ15IUCIOK6hXJP+didnoBMkNVYy6mgOTs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725162111; c=relaxed/simple;
-	bh=UbHbmYdZN85OTNJcwDRV7i/N446ooQIH7A2dQJ1zbTo=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=ke7A9D4gabIRpLnXpL7L/5YJvsEBYfGvoHtu2zEpfeIIdMHI2jKGVwP14qsPkzq1wpm1bEmqi+zXlEd5eE0aoTThQ1TBStzQuaC5+w/GYd3roeE2dzKU1poC+KmtMpsEB5kJxCZ+Sqdx6EH4rycLa7B7ZH0hwO5AYu+s8NnDug8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=c3KZTeOn; arc=none smtp.client-ip=209.85.167.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-533488ffaebso3787803e87.0;
-        Sat, 31 Aug 2024 20:41:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725162107; x=1725766907; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=5LNp9eqIe03UDsSrL0b4OTI1ve1dbXw928LMQVgGBoY=;
-        b=c3KZTeOnvpy/jCkwasJa5cXY+ZeGlg5rNxpR1NoHI8YSJvm0Kp7wyUwcUs6rGvD4z1
-         KJ8LxNwBVnEpevaS2lIkZge5aVjbb1t3O/KAI3u9PNh/E0GzdS1wVb79tpUugnO3hkxz
-         d18u1KdLzoVNVazdhA0I8GZU8PE62dFBAQ0+E3lm5mBokMmLdpEo6DzeGhNYj3XbjymA
-         doZ9EfE56VYCPm6xeY8w1OakmrgeqSHXIdKw5jeke4SQhuWIMJ+K7L8YvCavkujgkY3h
-         GeZ3HOfK+0xoVkoEOOdjLbbucy11psIF7Xwf72rm/T/ERn4DvVpBxlvpBVs1QsI/IzTJ
-         raUw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725162107; x=1725766907;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=5LNp9eqIe03UDsSrL0b4OTI1ve1dbXw928LMQVgGBoY=;
-        b=hv7L2N31QlV7HVIdyGjNvKTDlImj01sHfQ4F/7NejpWQ8Zdtf+T0ELKTx6CK15WpYS
-         VoDxW64rRxKGR7Bv8h9aLe3KGGPyLyW/D4yysQgP9XRD7u3k+silGKgAC6ggQMdx9vV7
-         flvPQ3LdwnuewgcTyx/FAOKjExhcvqRc7XapfmtJj/sXqF8Pq7LadH1WrnMHB3Q18Ozp
-         XkkulsUfs++WTMBwqw0cDXwVomJvilwEeEwEIHMrrczKp3pIRxOgTfExb38mUUSx4nG8
-         cfK4DoApoWDtrjl8FWqvZp4+kouIg7xNvTBdy+TMosn5wrkWsoBp/hf5Y6N/Q37rvc+r
-         gWrw==
-X-Forwarded-Encrypted: i=1; AJvYcCWLpFjzCTH7fl3vOv8mzjj4XffHL2Mv86IFSuDAlYSE84nMy2olaOPhUT/RAe7fa7E01XezSspiKme6aZA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzAc56H63ewBl553aVp2ve/7UflnAPSA4M1kCypt9S/UU0WgCnl
-	PKO8LHcCca5HkguPdrkJvaJoFCIxlJAdC3EldPYfToHEXQ/v0uXPPnz67UNjOtQ24647tBZnk5C
-	JzpF+7RNa4AtgB+KyuloQvf/48NIsMozu
-X-Google-Smtp-Source: AGHT+IG6zB4cwXelEIrZXUpKes9Owr+xL90iO4tPEKOSzvJ2IwVcY0YbUiE9XN5reRq7KaDl4y+8kM8KEpnChf1gImc=
-X-Received: by 2002:a05:6512:68b:b0:52e:f367:709b with SMTP id
- 2adb3069b0e04-53546b93fb3mr4833485e87.42.1725162107059; Sat, 31 Aug 2024
- 20:41:47 -0700 (PDT)
+	s=arc-20240116; t=1725163309; c=relaxed/simple;
+	bh=gD+opfgO6/cFGcyVUxtebJ8PQ4e3LjwTfgCDZvVdPbg=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=tTWtVezhzRrkpSk7Yl+ytWPmNQY+EWYCJhyT2u0pxpWqaj83JTal7FF58UhSHghRDS30szzx1KtrxnbxDnJz3BJ1mmvLj9rkpnYxiJ4apLfDt4Q5IpPwaco6Hi1IqGyDoOQCZxg4PvVAamUKaBs3aFGIlLvtI3nnx3FKcjKoAs0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NF8Sj5p7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 01478C4CEC3;
+	Sun,  1 Sep 2024 04:01:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725163309;
+	bh=gD+opfgO6/cFGcyVUxtebJ8PQ4e3LjwTfgCDZvVdPbg=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=NF8Sj5p7ZFYwBN2UvUH/cvJLfKdSOSD2W+9XG7Q8g7YQqrjM1cut70YdvD+WJjhEZ
+	 LYUJ5fxyGLjN4yYE2/3cIfTgX1+DTnI41huOu7ebAgC/7BvHluKnqBzhzNKVJZC21H
+	 8Ea54HsLoZ7/q+7pV+6ryspGybHliPQM+DwIDpfXABOdt1Ed8l76Drmfzj5Yu0+Ydh
+	 qzoNcdfFkcPeehKVUC9xLVon5gYtbAZycHsnnFebiXsDrMG98o5G2q+ruTgIoq4jYG
+	 1ybQKlxXLewi02xGbNSGdgZKAYPt3U5IviUoHR0ZoNJ/AowzFWarFUSzuDZVIOBDsl
+	 nmUsKkNEu4Gzw==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id AE5DA3809A80;
+	Sun,  1 Sep 2024 04:01:50 +0000 (UTC)
+Subject: Re: [GIT PULL] smb3 client fixes
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <CAH2r5msC4LbpzLmJVvkg-9xGXT051dNc0PwbY2dOobvQRb2O_A@mail.gmail.com>
+References: <CAH2r5msC4LbpzLmJVvkg-9xGXT051dNc0PwbY2dOobvQRb2O_A@mail.gmail.com>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <CAH2r5msC4LbpzLmJVvkg-9xGXT051dNc0PwbY2dOobvQRb2O_A@mail.gmail.com>
+X-PR-Tracked-Remote: git://git.samba.org/sfrench/cifs-2.6.git tags/v6.11-rc5-smb-client-fixes
+X-PR-Tracked-Commit-Id: 91d1dfae464987aaf6c79ff51d8674880fb3be77
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 6b9ffc4595ab936b10834167037acb992ebac34a
+Message-Id: <172516330932.2978237.7360903486407516306.pr-tracker-bot@kernel.org>
+Date: Sun, 01 Sep 2024 04:01:49 +0000
+To: Steve French <smfrench@gmail.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, CIFS <linux-cifs@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-From: Steve French <smfrench@gmail.com>
-Date: Sat, 31 Aug 2024 22:41:35 -0500
-Message-ID: <CAH2r5msC4LbpzLmJVvkg-9xGXT051dNc0PwbY2dOobvQRb2O_A@mail.gmail.com>
-Subject: [GIT PULL] smb3 client fixes
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: CIFS <linux-cifs@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
 
-Please pull the following changes since commit
-86987d84b968b69a610fd00ab9006c13db193b4e:
+The pull request you sent on Sat, 31 Aug 2024 22:41:35 -0500:
 
-  Merge tag 'v6.11-rc5-client-fixes' of
-git://git.samba.org/sfrench/cifs-2.6 (2024-08-28 15:05:02 +1200)
+> git://git.samba.org/sfrench/cifs-2.6.git tags/v6.11-rc5-smb-client-fixes
 
-are available in the Git repository at:
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/6b9ffc4595ab936b10834167037acb992ebac34a
 
-  git://git.samba.org/sfrench/cifs-2.6.git tags/v6.11-rc5-smb-client-fixes
+Thank you!
 
-for you to fetch changes up to 91d1dfae464987aaf6c79ff51d8674880fb3be77:
-
-  cifs: Fix FALLOC_FL_ZERO_RANGE to preflush buffered part of target
-region (2024-08-28 16:52:17 -0500)
-
-----------------------------------------------------------------
-Four cifs.ko client fixes
-- copy_file_range fix
-- two read fixes including read past end of file rc fix and read retry
-crediting fix
-- falloc zero range fix
-
-----------------------------------------------------------------
-David Howells (4):
-      cifs: Fix lack of credit renegotiation on read retry
-      netfs, cifs: Fix handling of short DIO read
-      cifs: Fix copy offload to flush destination region
-      cifs: Fix FALLOC_FL_ZERO_RANGE to preflush buffered part of target region
-
- fs/netfs/io.c            | 19 +++++++++++++------
- fs/smb/client/cifsfs.c   | 21 ++++-----------------
- fs/smb/client/cifsglob.h |  1 +
- fs/smb/client/file.c     | 37 +++++++++++++++++++++++++++++++++----
- fs/smb/client/smb2ops.c  | 18 +++++++++++++++---
- fs/smb/client/smb2pdu.c  | 41 ++++++++++++++++++++++++++---------------
- fs/smb/client/trace.h    |  1 +
- include/linux/netfs.h    |  1 +
- 8 files changed, 94 insertions(+), 45 deletions(-)
-
-
---
-Thanks,
-
-Steve
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
