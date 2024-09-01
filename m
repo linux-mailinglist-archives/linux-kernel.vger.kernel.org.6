@@ -1,185 +1,151 @@
-Return-Path: <linux-kernel+bounces-310250-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310251-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC4529676ED
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 15:59:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C513967700
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 16:09:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0A76C1C20F6C
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 13:59:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CFCE51F2173F
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 14:09:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 662EF17E900;
-	Sun,  1 Sep 2024 13:59:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26389181334;
+	Sun,  1 Sep 2024 14:09:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Hk2KR2z2"
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rQr26wMk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0C0317CA1B;
-	Sun,  1 Sep 2024 13:59:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BF6214A4FF;
+	Sun,  1 Sep 2024 14:09:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725199174; cv=none; b=KJoQyeY/SKtIgrLPQLAk8DTJaEhU53p9hlb/7re4znOvo46JudXj2ewHVmsQGntrt69xryaG3PU/QwEHFrD7w6RBLsMCEDKed3AYeRtpN/BVdK1ixgn2htNHtnbtlaV9gb1MmR9f2lG+RujoKKNRSVfaw9akZV6KiNHUElBPjqI=
+	t=1725199745; cv=none; b=Bdi2ggC0q8c14d5ZawXgHwo64pcIWmUJkzedYpQkQNE5tNjzZbuzKuPampF95bZUtS/3ksoydgin0XhQVqK4fOG8oTWgXJJgb1hdve+3f/uVB/WN8sKdcBTR8MOCkm5uV0YvvR2T3FAiOG9pNqttmx8CAOj64a+MKDoqtPM5eK4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725199174; c=relaxed/simple;
-	bh=ppuXfwFLkVoCcl1RlKr5sWejOfYJd+xSscE5E5DdCl0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=n9hpnCR2O173/x5eLE+x+e79RisQXBOlCR4vSTi/LqO3U8r2zDSQFm/GTHViPVaLpnMt++Cfl1ZLX8twHvR50rPR6+OaOs88NvQ4zOgcdH2KETZ5pzX7fE4S3EvZK6Ky5dCo1mzHVvroIcyFBaZ77Zae/QGnl/LX8np2j1njRF4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Hk2KR2z2; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5c24c92f699so891221a12.2;
-        Sun, 01 Sep 2024 06:59:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725199171; x=1725803971; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=p8JB0+Bs8ErmsZEQvGhO4vH+N+VrdVzHLUwxPZWQG6E=;
-        b=Hk2KR2z2EiqWskXbupr+j7wXLUp/kMXKEb8NSUafwz1jdg70MCQRSrBXMIvziWy4f8
-         rY40EIeXNYi1c8iHnnR0gEMQ+D6Zs/mUWE4zWt8eTeg0hj6IwBG5IlaEw00fLSzKSXRY
-         LOfkaxzgeBaoab8bOSpJnqgPaHQqfG695wOInzRZOPVIKkuVs0WObF7RGeZCQBQgob1w
-         +3nXpAi76I82kZzs9pwqjS3a05Zij6Zl+uA33teaWv0VRaYGosPKRraxHSiZHQKwXT82
-         Xo8ZwVAXXA0ec/nAs8rUkxhG/kkYCXPc76ZLPvBAUAmoWYmGjZRQYo6pMThzlG7KEeSc
-         yJ2w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725199171; x=1725803971;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=p8JB0+Bs8ErmsZEQvGhO4vH+N+VrdVzHLUwxPZWQG6E=;
-        b=K5D4t+fe3tz527qJ+9FyA7p35qHmvkda9sZAhIbIvfCIXr0cdqxp1lNWvj0W8HwqYI
-         DtbOVDZqnBpqqQjqnTnxMXYol+X3SC6kctZa09/dZ8HQrpTG7QMiXhQ8I6i7ISBShjGm
-         eV/xb1JdBzQ6sdxDmt5NS8+Qc8I6OYpFvOH8NHt/JypLAL8XQtJnrmZm9pUX+PUvtTQ0
-         4aaW4HisjYB0s8Pwu0tPH00PPwAX94qt85ptU2h/gfRWZAbSksJV4k1bf8MKPoS5R9NC
-         NWZjW0rWsyqeGdsT+qSCrmCvnwS5oBKwodZTBIfbivwiMEVyprq3iVmfqqdM8THMsA9c
-         yUkg==
-X-Forwarded-Encrypted: i=1; AJvYcCU34jrfOAfuG67m6oEw9VcrtZHDKuHxN6+uTx+TUqaFcjyucgi3W8ny2Lm428SB2y14lcat9TBLGUz5zpaw@vger.kernel.org, AJvYcCXyX/v/xLIQTmKUollmzgapvqM35l6MyPknV9NSU4lOZ+W3zBX1GbvSKVQLMSOv+uxvazJDJL4fxx048XDZ@vger.kernel.org
-X-Gm-Message-State: AOJu0YzGgQl/jjM5L6QzveFaAwOtgvwKnHwFB7IDCwwNlrN/JinUvtmR
-	bv04RlyPIzYY7NZsZvBPRTGIvCM58U2mArZkOWx34Kp50VNz8nhn
-X-Google-Smtp-Source: AGHT+IGJ7S2u5swfQvFXUIz2GMCV89hMMGXtojuyCo4a1PrgHeRFYoBgj84CD4toi9BdIGtUsaJ9yA==
-X-Received: by 2002:a05:6402:1d48:b0:5b8:34a9:7fd9 with SMTP id 4fb4d7f45d1cf-5c21ed86b5amr8442101a12.27.1725199170609;
-        Sun, 01 Sep 2024 06:59:30 -0700 (PDT)
-Received: from localhost.localdomain (public-nat-01.vpngate.v4.open.ad.jp. [219.100.37.233])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c226ccff17sm4051295a12.73.2024.09.01.06.59.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 01 Sep 2024 06:59:30 -0700 (PDT)
-From: Vladimir Lypak <vladimir.lypak@gmail.com>
-To: Vladimir Lypak <vladimir.lypak@gmail.com>
-Cc: Rob Clark <robdclark@gmail.com>,
-	Sean Paul <sean@poorly.run>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Abhinav Kumar <quic_abhinavk@quicinc.com>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Marijn Suijten <marijn.suijten@somainline.org>,
-	David Airlie <airlied@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	Jordan Crouse <jordan@cosmicpenguin.net>,
-	linux-arm-msm@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	freedreno@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 4/4] drm/msm/a5xx: workaround early ring-buffer emptiness check
-Date: Sun,  1 Sep 2024 13:54:03 +0000
-Message-ID: <20240901135419.1075412-5-vladimir.lypak@gmail.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20240901135419.1075412-1-vladimir.lypak@gmail.com>
-References: <20240901135419.1075412-1-vladimir.lypak@gmail.com>
+	s=arc-20240116; t=1725199745; c=relaxed/simple;
+	bh=cILu17DLD+7ctAgpLpk0NPj5l1P/CCVYn9sNr9rE0vE=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=OzkxseBiEUIVeft52TLCz9+x15Lt5ylKPT2ru0eZTtnOb2MVyc+3HT3lnHP29LBPUy8HxQnKdAnit8n8IUjCb3+7hlHoVX3G8zjztBPQnEhUhDp0ESuvnpDB40eTYvGzxk4ovYeZ1nA0ZKyKzNxbh7V+9FyG62bndJD3GMZP8eM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rQr26wMk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 581F3C4CEC3;
+	Sun,  1 Sep 2024 14:09:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725199744;
+	bh=cILu17DLD+7ctAgpLpk0NPj5l1P/CCVYn9sNr9rE0vE=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=rQr26wMkyfhc9tuYdGLVMviJaCk3yB8aCgoJS9W45ZDzlkfX5fRVDpQiNsN79qLRg
+	 3VaAYgCKtuszkDn1KP7dQcqLonTj9dvCFRU5g1DRe8Tc/9Khy5W9416isj4niIkQa4
+	 Yy++4IdnFzCY+nud6VvsMxs7ouOBInKqQ5wictXg7DegRcERFEx3UojKj2XcdP6rM0
+	 l+8WwscUUNPVnjVyh91R0ympcx8UdcvKksX3+ApD98HreVCslEFoPnTLWADtb9rjnh
+	 rSMb6Jq8RlMVnVdxf2LKdLkyquoSIrL9G7J/76eS2zkEqE+Qyfn0A5pozl7/plf6+8
+	 QQ8gE0mALUTEQ==
+Date: Sun, 1 Sep 2024 15:08:57 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Abhash jha <abhashkumarjha123@gmail.com>
+Cc: linux-iio@vger.kernel.org, songqiang1304521@gmail.com, lars@metafoo.de,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] iio: proximity: vl53l0x-i2c: Added continuous mode
+ support
+Message-ID: <20240901150857.7f130363@jic23-huawei>
+In-Reply-To: <CAG=0RqLfjPF2_ebuabo0_ddvRxZkTLmKUAXQZWYHRaKxDaOkew@mail.gmail.com>
+References: <20240830201627.298264-1-abhashkumarjha123@gmail.com>
+	<20240830201627.298264-3-abhashkumarjha123@gmail.com>
+	<20240831134219.3d394c1a@jic23-huawei>
+	<CAG=0RqLfjPF2_ebuabo0_ddvRxZkTLmKUAXQZWYHRaKxDaOkew@mail.gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-There is another cause for soft lock-up of GPU in empty ring-buffer:
-race between GPU executing last commands and CPU checking ring for
-emptiness. On GPU side IRQ for retire is triggered by CACHE_FLUSH_TS
-event and RPTR shadow (which is used to check ring emptiness) is updated
-a bit later from CP_CONTEXT_SWITCH_YIELD. Thus if GPU is executing its
-last commands slow enough or we check that ring too fast we will miss a
-chance to trigger switch to lower priority ring because current ring isn't
-empty just yet. This can escalate to lock-up situation described in
-previous patch.
-To work-around this issue we keep track of last submit sequence number
-for each ring and compare it with one written to memptrs from GPU during
-execution of CACHE_FLUSH_TS event.
+On Sat, 31 Aug 2024 22:12:27 +0530
+Abhash jha <abhashkumarjha123@gmail.com> wrote:
 
-Fixes: b1fc2839d2f9 ("drm/msm: Implement preemption for A5XX targets")
-Signed-off-by: Vladimir Lypak <vladimir.lypak@gmail.com>
----
- drivers/gpu/drm/msm/adreno/a5xx_gpu.c     | 4 ++++
- drivers/gpu/drm/msm/adreno/a5xx_gpu.h     | 1 +
- drivers/gpu/drm/msm/adreno/a5xx_preempt.c | 4 ++++
- 3 files changed, 9 insertions(+)
+> > Also, consider if other triggers could be used as if not you need to
+> > both document why and add the validation callbacks to stop other triggers
+> > being assigned (once you've added one that can be!)
+> >
+> > Feel free to ask if you have more questions, but your first reference
+> > should be other drivers (and I hope we don't have any that do it this way).
+> >  
+> I used this driver as a reference
+> https://github.com/torvalds/linux/blob/master/drivers/iio/adc/vf610_adc.c#L556
 
-diff --git a/drivers/gpu/drm/msm/adreno/a5xx_gpu.c b/drivers/gpu/drm/msm/adreno/a5xx_gpu.c
-index 6c80d3003966..7cfefb5e6221 100644
---- a/drivers/gpu/drm/msm/adreno/a5xx_gpu.c
-+++ b/drivers/gpu/drm/msm/adreno/a5xx_gpu.c
-@@ -65,6 +65,8 @@ void a5xx_flush(struct msm_gpu *gpu, struct msm_ringbuffer *ring,
- 
- static void a5xx_submit_in_rb(struct msm_gpu *gpu, struct msm_gem_submit *submit)
- {
-+	struct adreno_gpu *adreno_gpu = to_adreno_gpu(gpu);
-+	struct a5xx_gpu *a5xx_gpu = to_a5xx_gpu(adreno_gpu);
- 	struct msm_ringbuffer *ring = submit->ring;
- 	struct drm_gem_object *obj;
- 	uint32_t *ptr, dwords;
-@@ -109,6 +111,7 @@ static void a5xx_submit_in_rb(struct msm_gpu *gpu, struct msm_gem_submit *submit
- 		}
- 	}
- 
-+	a5xx_gpu->last_seqno[ring->id] = submit->seqno;
- 	a5xx_flush(gpu, ring, true);
- 	a5xx_preempt_trigger(gpu);
- 
-@@ -210,6 +213,7 @@ static void a5xx_submit(struct msm_gpu *gpu, struct msm_gem_submit *submit)
- 	/* Write the fence to the scratch register */
- 	OUT_PKT4(ring, REG_A5XX_CP_SCRATCH_REG(2), 1);
- 	OUT_RING(ring, submit->seqno);
-+	a5xx_gpu->last_seqno[ring->id] = submit->seqno;
- 
- 	/*
- 	 * Execute a CACHE_FLUSH_TS event. This will ensure that the
-diff --git a/drivers/gpu/drm/msm/adreno/a5xx_gpu.h b/drivers/gpu/drm/msm/adreno/a5xx_gpu.h
-index b4d06ca3e499..9c0d701fe4b8 100644
---- a/drivers/gpu/drm/msm/adreno/a5xx_gpu.h
-+++ b/drivers/gpu/drm/msm/adreno/a5xx_gpu.h
-@@ -34,6 +34,7 @@ struct a5xx_gpu {
- 	struct drm_gem_object *preempt_counters_bo[MSM_GPU_MAX_RINGS];
- 	struct a5xx_preempt_record *preempt[MSM_GPU_MAX_RINGS];
- 	uint64_t preempt_iova[MSM_GPU_MAX_RINGS];
-+	uint32_t last_seqno[MSM_GPU_MAX_RINGS];
- 
- 	atomic_t preempt_state;
- 	spinlock_t preempt_start_lock;
-diff --git a/drivers/gpu/drm/msm/adreno/a5xx_preempt.c b/drivers/gpu/drm/msm/adreno/a5xx_preempt.c
-index c65b34a4a8cc..0469fea55010 100644
---- a/drivers/gpu/drm/msm/adreno/a5xx_preempt.c
-+++ b/drivers/gpu/drm/msm/adreno/a5xx_preempt.c
-@@ -55,6 +55,8 @@ static inline void update_wptr(struct msm_gpu *gpu, struct msm_ringbuffer *ring)
- /* Return the highest priority ringbuffer with something in it */
- static struct msm_ringbuffer *get_next_ring(struct msm_gpu *gpu)
- {
-+	struct adreno_gpu *adreno_gpu = to_adreno_gpu(gpu);
-+	struct a5xx_gpu *a5xx_gpu = to_a5xx_gpu(adreno_gpu);
- 	unsigned long flags;
- 	int i;
- 
-@@ -64,6 +66,8 @@ static struct msm_ringbuffer *get_next_ring(struct msm_gpu *gpu)
- 
- 		spin_lock_irqsave(&ring->preempt_lock, flags);
- 		empty = (get_wptr(ring) == gpu->funcs->get_rptr(gpu, ring));
-+		if (!empty && ring == a5xx_gpu->cur_ring)
-+			empty = ring->memptrs->fence == a5xx_gpu->last_seqno[i];
- 		spin_unlock_irqrestore(&ring->preempt_lock, flags);
- 
- 		if (!empty)
--- 
-2.46.0
+ouch.  Whilst that's an ancient driver, its unfortunately handling the buffer
+completely wrongly :(  It's old enough that I suspect there will be no interest
+in improving that one.
+
+> 
+> >
+> > ouch, not a write 1 to clear register?  I can't find docs, but this is really
+> > nasty bit of interface design if you have to toggle the bit.
+> >  
+> Actually ST has not provided a register map or any application note
+> for the sensor.
+> So there's no way to cross reference. Hence I kept the original code.
+> But I will try to write 1 to clear register with my sensor.
+> 
+> > > +             ret = devm_iio_triggered_buffer_setup(&client->dev,
+> > > +                                     indio_dev,
+> > > +                                     &iio_pollfunc_store_time,  
+> >
+> > This is odd.  You don't seem to have a function to be called to actually store
+> > the data.  Note you also need to consider if other triggers might be used.
+> >
+> > I'm not sure what reason we have to do that here though as this is a very
+> > conventional one interrupt per 'scan' of data device.
+> >
+> > So you should be registering a trigger, and a buffer then letting the
+> > trigger drive the buffer.  
+> 
+> Why do I need to register a trigger? Would it be fine to let the irq
+> fill the buffer
+> with data as  it continuously reads it in the poll function?
+
+That is a possibility but it's not nearly as flexible as providing
+a trigger so we generally only do that if there is a fifo in the way
+so no 'per scan' signal is available.
+
+The model of IIO is that you may associate different triggers
+with a device and each trigger can drive capture from multiple devices
+allowing reasonable data synchronisation.  There are lots of
+devices that don't have a sequencer / 'continuous' mode and we
+want the interface to looks the same for those as it does for those
+that do have such support.
+
+> 
+> So according to my understanding,
+> I need to move all the data reading and pushing to the poll function
+> and not do it in the irq handler.
+> Then register that poll function here during iio_triggered_buffer_setup.
+> Is there something that I am missing?
+
+You have it right.
+
+The only other thing is to work out if it is possible to use other
+triggers with the device (I can't see why you wouldn't be able to
+use this trigger to drive other device).  
+
+Sometimes using other triggers requires a slightly more complex
+sequence so you can check if using a devices own trigger or not
+and modify what goes on if it is a different trigger.
+
+If multiple trigger support is complex, it is fine to start out
+with providing a trigger validation function iio_info->validate_trigger()
+and there is an iio_validate_own_trigger() that you can use to
+avoid having to code anything. That relies on the iio_trigger
+and the iio_device having the same parent (which they should
+do here).
+
+Jonathan
+
+> 
+> Regards,
+> Abhash
 
 
