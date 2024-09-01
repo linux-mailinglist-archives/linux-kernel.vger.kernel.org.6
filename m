@@ -1,199 +1,96 @@
-Return-Path: <linux-kernel+bounces-310169-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310170-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1AADC9675C9
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 11:32:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FD859675CD
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 11:43:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 904171F21B70
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 09:32:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE3C51F21D02
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 09:43:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22E3C14C58E;
-	Sun,  1 Sep 2024 09:32:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 312D214E2FA;
+	Sun,  1 Sep 2024 09:43:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b="LkhUq2Qv";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="VR6v3+of"
-Received: from fhigh1-smtp.messagingengine.com (fhigh1-smtp.messagingengine.com [103.168.172.152])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="rnAMA3h9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D203E14A636;
-	Sun,  1 Sep 2024 09:32:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DD5033987;
+	Sun,  1 Sep 2024 09:43:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725183141; cv=none; b=iayhkn1WO+KUgcREh+T1WNViL9ZE5XJWU98Kp6ZIxZK0KIg4D4AMQ1qGlJVrUJ9eAkx1n5mR8S+IvdTGwyxUf2PDXnBgGLbCOHg3ELbbl8rYE9z4R/D9OszlNMPkl6Rs5fhwZLCGSUVk462aUXBvbmyVpTHlfUF0/HV6QcsxMVE=
+	t=1725183807; cv=none; b=t2R4+YdjsTR8UiqcttL1cYVbqSzmeTuU6uZonXk9cGQNMe8I9syC+mMavxntLPE2C4jJ5lvON/frrv0SsLR5+XNp02h3wO+A3LDpAarK/yrPd9fNw66tte8K1gvl47JwKfPUlH3qSQGjNQjOQeLHbGqPPm6F/j5ZTI4DKSSsDYE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725183141; c=relaxed/simple;
-	bh=sFf8auY5LRGN4Zlj/hVBT3H5PeFq+CnUQMXPIctp5IU=;
+	s=arc-20240116; t=1725183807; c=relaxed/simple;
+	bh=ATV3v4eEGH1inz75dlAac4a5OY7uoxTwSMgdr+KFD44=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GCt2WqyWmXySTleJ5dfwG+Y2UYa+mARLq1KF+u8gMMoYJcS46PjBwN0pfLDf0RkIsMfEbL8NBMoPsSgMSrjtkboBaJrmkKIttYPqMYyyOqxMRJSiJGNOmc7aAkHxz4ydhVFVjThjErKxHQZZBpYmcHLLVbtsuXzLYPMsBrAwJJc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se; spf=pass smtp.mailfrom=ragnatech.se; dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b=LkhUq2Qv; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=VR6v3+of; arc=none smtp.client-ip=103.168.172.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ragnatech.se
-Received: from phl-compute-02.internal (phl-compute-02.nyi.internal [10.202.2.42])
-	by mailfhigh.nyi.internal (Postfix) with ESMTP id 6CB9711402A1;
-	Sun,  1 Sep 2024 05:32:15 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-02.internal (MEProxy); Sun, 01 Sep 2024 05:32:15 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ragnatech.se; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1725183135;
-	 x=1725269535; bh=6X0o+gHrvCiTX4Wlqa4eC5NcplPWPJn6R8OF0rvPGsA=; b=
-	LkhUq2Qv4UY5vJ4wja2v8bq1aerKPPC/w/opzo4IkWCH00Gh7sUcFfwWtlpbW9vg
-	tdj8sMxUJwexERR2SboXyYIscup+AksrpPhZuRHFjPdhSyih2CV2jxvTP+7NJRAd
-	qsWrlkHVnrkLlaILLIj0KOZi83jHQXNO2JHQja2x7rGJPCd5fXuST8FrCV3cAMpO
-	6MhYoXkRax01Rza7zKUXpxzg9HujHIZJNs1MBFkohvcQC3UM6Obo74uDt8CHCRaU
-	DSMJazizuy7olTwTMk9+NQZtyWpYhqWYHPUd0gWwB1h69ME1bNBT6+MRCrSUoHYU
-	5VDlJ5/KGvqoZM/12og4XQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1725183135; x=
-	1725269535; bh=6X0o+gHrvCiTX4Wlqa4eC5NcplPWPJn6R8OF0rvPGsA=; b=V
-	R6v3+ofoMf/n+KGBVqfdF9gHiE8/8+WPBS2kUsc7QF4wGh6MQ35E8AnD69tEDt4m
-	iRxSet0xmghSpaaVnKcR3qGRD0J6vtwcvrGFzR0hzMM/8sI9lT+OSyM8+qV+JmH8
-	C3YHBOMvuZLvhLCUNSg26qEW31kVtUZRMBWg/wBFjmUlVfuhx+NmIKnxsFm2X9uY
-	e5mZL2iVUaPNpJ4dUAn8n84EJpAjrJYo/0YNk8N1/6jSwgLnBMxQZN9SuiyevDX5
-	kbsTgfAL7UfGYbyx8Crxw+Ev+j32mCl7pf6GQxSC8Sj88BqudJAKxFFH5Z9GuHMJ
-	XwLfoYNy0uXDZ6gdoAZ0w==
-X-ME-Sender: <xms:nzTUZvOoC5lkU2ENzpxwXrRFTTT3eq5M6RpPABT6iNDOao0RmrrAzQ>
-    <xme:nzTUZp9du2XjcN170djAEMX0rLSyxNyl1EnioXMrvJmD4mZTslt3yz54ZjQtfXEmr
-    6mQ1VsNhBYb1FUdEAY>
-X-ME-Received: <xmr:nzTUZuQO2M43Ik7XIvvfhjzsmwKwthCx8QZ3TKbYS794xvi1rvHUve77RyUchTX1Hw5q7s1oLAhc3xN-CRxiph-iwOLBfh9reA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudeggedgudeiucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggugfgjsehtkeertddttdej
-    necuhfhrohhmpefpihhklhgrshcuufpnuggvrhhluhhnugcuoehnihhklhgrshdrshhoug
-    gvrhhluhhnugesrhgrghhnrghtvggthhdrshgvqeenucggtffrrghtthgvrhhnpeevteeg
-    tddvvdfhtdekgefhfeefheetheekkeegfeejudeiudeuleegtdehkeekteenucevlhhush
-    htvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehnihhklhgrshdrshho
-    uggvrhhluhhnugesrhgrghhnrghtvggthhdrshgvpdhnsggprhgtphhtthhopeegpdhmoh
-    guvgepshhmthhpohhuthdprhgtphhtthhopehmrghsrghhihhrohihsehkvghrnhgvlhdr
-    ohhrghdprhgtphhtthhopehlihhnuhigqdhksghuihhlugesvhhgvghrrdhkvghrnhgvlh
-    drohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgv
-    lhdrohhrghdprhgtphhtthhopehmrghrvgigseguvghngidruggv
-X-ME-Proxy: <xmx:nzTUZjubcuYvV6dHeCowVahPcInIuy1sJMUqLR494soiFSBXnsrDoQ>
-    <xmx:nzTUZnfe6pYme1kiH6YSdJqVr1POj0tf5S9IOs8O-qGWZHpGm9eHFA>
-    <xmx:nzTUZv0-eg6dCBycm7Fmo0y91MsBgy3J9EqFP5r1RQDOZv0efmd7Pg>
-    <xmx:nzTUZj-xfeghjZJdzaT11R3NxjcyLPufOIe50CcLZ-HVEwHdOybR6Q>
-    <xmx:nzTUZu6IVh1pUYvT_Y-uhf_IPKC9eaNkNJ3wkkZiH-ws7jD4lES3M2f9>
-Feedback-ID: i80c9496c:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
- 1 Sep 2024 05:32:14 -0400 (EDT)
-Date: Sun, 1 Sep 2024 11:32:12 +0200
-From: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Marek Vasut <marex@denx.de>
-Subject: Re: [PATCH v2 02/12] kconfig: refactor choice value calculation
-Message-ID: <20240901093212.GC3708622@ragnatech.se>
-References: <20240618103541.3508486-1-masahiroy@kernel.org>
- <20240618103541.3508486-3-masahiroy@kernel.org>
- <20240831173053.GA27734@ragnatech.se>
- <CAK7LNASfpKz+PG+tphZHaSssUHirUBxRB13MdBs3TG3HZ6qrQg@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=VswiI91AByLv72vAcuTxYJ/onijl+1YgfnHk9wUUr1oBtXA9srTIY7YDgsxykXJ0ed2ey0Xzsf6E9c3sf6ooOzrhkUlMJwOD6t8/IuxYBWgmkIAIV1xY0ALFYhIej8N+PxvWukjRPbFK+wLRcGAkIiDHfnoDNliDnmUSpTjn1E8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=rnAMA3h9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9C56DC4CEC3;
+	Sun,  1 Sep 2024 09:43:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1725183807;
+	bh=ATV3v4eEGH1inz75dlAac4a5OY7uoxTwSMgdr+KFD44=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=rnAMA3h9Sa05nQxeMRvrOkeSs2Ui2mWgPuugmL1bnjWg368krM3+HvWGiaLwClKFQ
+	 XGQNr7ltYNuVNHAkmNlDJ/jcbS9+4bOI1IX4262DRXnqlYS+6k51ix8AMaUFti/yqw
+	 HDkT3AW8MvRPNyovfCj6Ap5XEJqUkZrV0SudZxkw=
+Date: Sun, 1 Sep 2024 11:43:24 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
+	lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+	f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org,
+	allen.lkml@gmail.com, broonie@kernel.org
+Subject: Re: [PATCH 6.6 000/341] 6.6.48-rc1 review
+Message-ID: <2024090118-wisdom-footman-ace8@gregkh>
+References: <20240827143843.399359062@linuxfoundation.org>
+ <4b332d8c-4ed0-4ecf-a4db-75c1aa932b48@roeck-us.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAK7LNASfpKz+PG+tphZHaSssUHirUBxRB13MdBs3TG3HZ6qrQg@mail.gmail.com>
+In-Reply-To: <4b332d8c-4ed0-4ecf-a4db-75c1aa932b48@roeck-us.net>
 
-On 2024-09-01 18:10:56 +0900, Masahiro Yamada wrote:
-> On Sun, Sep 1, 2024 at 2:31 AM Niklas Söderlund
-> <niklas.soderlund@ragnatech.se> wrote:
-> >
-> > Hello Yamada-san,
-> >
-> > Thanks for your work.
-> >
-> > I bisected a kconfig issue to this change, but I'm not sure how to
-> > resolve it and would appreciate your help.
-> >
-> > Before this changes if I run menuconfig,
-> >
-> >     $ ARCH=arm64 make menuconfig
-> >
-> > The menu option for by SOC_RENESAS is visible at
-> >
-> >     Device Drivers ->
-> >         SOC (System On Chip) specific Drivers ->
-> >             Renesas SoC driver support
-> >
-> > However after this patch it is not.
-> >
-> > Furthermore searching (/) for any config option protected by SOC_RENESAS
-> > in drivers/soc/renesas/Kconfig (e.g. ARCH_R8A77965) results in a search
-> > hit, but if I try to jump to it by pressing 1 all I get is a blank
-> > screen.
-> >
-> > I'm not sure if a fix to the for mention Kconfig file is needed or if
-> > something else is wrong. This is still true for today's linux-next [1].
-> >
-> > 1. 985bf40edf43 ("Add linux-next specific files for 20240830")
+On Sat, Aug 31, 2024 at 02:26:28PM -0700, Guenter Roeck wrote:
+> On 8/27/24 07:33, Greg Kroah-Hartman wrote:
+> > This is the start of the stable review cycle for the 6.6.48 release.
+> > There are 341 patches in this series, all will be posted as a response
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
+> > 
+> > Responses should be made by Thu, 29 Aug 2024 14:37:36 +0000.
+> > Anything received after that time might be too late.
+> > 
+> [ ... ]
 > 
+> > Suren Baghdasaryan <surenb@google.com>
+> >      change alloc_pages name in dma_map_ops to avoid name conflicts
+> > 
 > 
+> This patch triggers:
 > 
+> Building s390:defconfig ... failed
+> --------------
+> Error log:
+> arch/s390/pci/pci_dma.c:724:10: error: 'const struct dma_map_ops' has no member named 'alloc_pages'; did you mean 'alloc_pages_op'?
+>   724 |         .alloc_pages    = dma_common_alloc_pages,
 > 
+> for pretty much all s390 builds.
 > 
-> 
-> The prompt of SOC_RENESAS depends on
-> COMPILE_TEST && !ARCH_RENESAS.
-> Hence, it is hidden by default.
-> 
-> Pressing (1) navigated to the nearest parent menu.
-> 
-> Setting COMPILE_TEST=y and ARCH_RENESAS=n made it visible.
+> Source code analysis suggests that the problem also affects
+> arch/ia64/hp/common/sba_iommu.c.a
 
-It might be that the Kconfig file needs an update, but the behavior 
-changed with this commit.
+Thanks, already handled.
 
-Before this commit the entry was visible and symbols hidden under the 
-SOC_RENESAS where selectable and I could for example select/deselect 
-ARCH_R8A77965 in menuconfig. After this change I can't navigate to 
-ARCH_R8A77965 at all.
-
-But you are correct that both before and after the commit the 
-SOC_RENESAS symbol is set to only be visible if 'COMPILE_TEST && 
-!ARCH_RENESAS' so this might have been an issue that was fixed and that 
-the Kconfig file needs to be updated.
-
-Thanks for your help!
-
-> 
-> All look quite normal to me.
-> 
-> 
-> 
->  Symbol: SOC_RENESAS [=y]
->  Type  : bool
->  Defined at drivers/soc/renesas/Kconfig:2
->    Prompt: Renesas SoC driver support
->    Visible if: COMPILE_TEST [=n] && !ARCH_RENESAS [=y]
->    Location:
->      -> Device Drivers
->  (1)   -> SOC (System On Chip) specific Drivers
->          -> Renesas SoC driver support (SOC_RENESAS [=y])
->  Selects: GPIOLIB [=y] && PINCTRL [=y] && SOC_BUS [=y]
-> 
-> 
-> 
-> 
-> 
-> 
-> -- 
-> Best Regards
-> Masahiro Yamada
-
--- 
-Kind Regards,
-Niklas Söderlund
+greg k-h
 
