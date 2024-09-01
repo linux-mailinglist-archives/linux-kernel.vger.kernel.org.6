@@ -1,135 +1,107 @@
-Return-Path: <linux-kernel+bounces-310256-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310257-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D653967717
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 16:33:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72AEA96771D
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 16:33:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5E2C71C20DCD
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 14:33:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1ECB11F216AD
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 14:33:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86BB5181334;
-	Sun,  1 Sep 2024 14:33:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B1F9183CAF;
+	Sun,  1 Sep 2024 14:33:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="BGkjPyw1"
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WXkoa9zK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BFF8381DF
-	for <linux-kernel@vger.kernel.org>; Sun,  1 Sep 2024 14:33:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89D1318308A;
+	Sun,  1 Sep 2024 14:33:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725201185; cv=none; b=JSCGhKWf0D/4NGGrNpSVvhnppJHFJFZlz4GHHRGkQeVXPce+gwDPLLKhNDXcEqXuBFsstr+mA995y+iqhiXwbvP6+IVpwulfpdf2O5w1bdeI37S+gnlsRqegOiP+kwD0LdMkxEn5EnuuqblaWnD3Cw0QxvM4DYb+DBqchhwakPg=
+	t=1725201187; cv=none; b=b8FcTEF+WxHLkpLrgcxlaYKmgjDf/diyxTnFLd4u91AHj51btSPqOSzS/HyUw6M0Dl4Ixad92Lui4ls2uGEtMU6P7xwtok44QckXFvHMqS7sfc/Fz6zpQHJkE4o0IVmAKn74rAKdFC/W0in7akKW/5PoE9IzUGP7znEhDJrQFU4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725201185; c=relaxed/simple;
-	bh=Qnho+P7/rrraXQouXon4x/RffWJR5iD4eKYRb+pQmDo=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=eV/a+tlEfvuLSEmVHZAZcfVq8ihPmo4wxq03YJwLVAfI6jI7+jWNBreiWT43qZn6N7kN/Sk+9tCIVACGPPQfzbuPUCG8Qfp/I/ppNHSTd+7pBHS2OiPTQuJuQjuX434ZXpu3mC6PRsCS+YiHFiZqezWUSy+az9bcIdaq7C1nkwk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=BGkjPyw1; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net ACA4A41ABE
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1725201176; bh=Wb4qVt4qrjof3WhfYa/l6tQKLywCYPwwIAXqNw7TYWI=;
-	h=From:To:Subject:Date:From;
-	b=BGkjPyw1LkBmVP6fnUKXPMPe3UGUlrNBiW+iTtpXe5IdN6ffPWFz21XciklFa6/ES
-	 JORrFwHgH2PkrL4oZJmQqP2c2DwB9Pc6LeEoVG72cEqHm4J9yxnBfXTRcAvNwoq0iw
-	 JQkW5IACV64dS7+4RrsEaDuurl6DOYphcigecRzYCGEd5R4u5m2wQ5C4pEE1n1rRJd
-	 BWZWlbHgNcJvAJ2STAzlGVXlRmm5ajVOQeSjVgIUNjhy/yZYtcsU2jnXsmeRgnySZd
-	 ttwmfq7/XjXG18bEE8yYrJjENEIx2uV/PmvNyXKaDWnc3ls40rblxnGdqPMSVtjrGk
-	 OAJugad5zeDOw==
-Received: from localhost (unknown [IPv6:2601:280:5e00:625::1fe])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id ACA4A41ABE;
-	Sun,  1 Sep 2024 14:32:56 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: tab-elections@lists.linux.dev, tech-board-discuss@lists.linux.dev,
- linux-kernel@vger.kernel.org, ksummit@lists.linux.dev
-Subject: 2024 LF Technical Advisory Board election - call for candidates
-Date: Sun, 01 Sep 2024 08:32:55 -0600
-Message-ID: <87zforv3zc.fsf@trenco.lwn.net>
+	s=arc-20240116; t=1725201187; c=relaxed/simple;
+	bh=kwPiH44pV1ANFJhkdOlQ2NoEBgwHo7h8ejpepwo1EGg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=gDBtnSHP/ez1zJsu1Z1CZzC+N+GnEFGxS2CyYcIg2YOXkFdIiy1abH5uUxkfupPrUVTiaY4MD0Gg5FJTQPCzAVjqD03irMCbebJSDizloU88z+RVcTwd0hIwT8nEhOmQEi+AWUdw6zcoO3SZ+QVWH4/CLH0UmYJMlu0jwvV/T00=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WXkoa9zK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83635C4CEC3;
+	Sun,  1 Sep 2024 14:33:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725201187;
+	bh=kwPiH44pV1ANFJhkdOlQ2NoEBgwHo7h8ejpepwo1EGg=;
+	h=From:To:Cc:Subject:Date:From;
+	b=WXkoa9zK+zwyHz3IGIZIBI49Cak3R/xK0dOG42JMjUdpekcS9VOsXzkkAj37LChqv
+	 12/aGUKYtkBI/aLxQdYq9pG0dWmFRYL05d4yGOKcgm3SYMhhhib+YruMcc6pSWt2u4
+	 RWxmHE+d7QEe/Go6VfP+1ipw6eufotuX7wutA0tfE1tJ3ScPfg61GnzskzBTbTWF02
+	 3mKTBYRCp8M9n10iZRsPPuBkhMpaXMKhbO+XCEFcNEJ4eVPo9/RgUq4ALHvtHAXLQN
+	 xS+bZxQp/ojwtOI22cq6rjTdjRhynrZPAk2Yyz4W7dJiemdBR7f9gPVSyzOxBCjh8e
+	 cV7cuBMUi+BQQ==
+From: Chun-Kuang Hu <chunkuang.hu@kernel.org>
+To: Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Moudy Ho <moudy.ho@mediatek.com>,
+	"Jason-JH . Lin" <jason-jh.lin@mediatek.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	linux-media@vger.kernel.org
+Cc: Chun-Kuang Hu <chunkuang.hu@kernel.org>
+Subject: [PATCH v4 0/3] Remove cl in struct cmdq_pkt
+Date: Sun,  1 Sep 2024 14:32:56 +0000
+Message-Id: <20240901143259.16849-1-chunkuang.hu@kernel.org>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 
-The 2024 election for membership on the Linux Foundation Technical
-Advisory Board (TAB) will be held electronically after the 2024 Linux
-Plumbers Conference, from September 20 to 27.  This announcement covers
-both the call for candidates and the details of voting in this election.
+cl in struct cmdq_pkt is used to store struct cmdq_client, but every client
+driver has the struct cmdq_client information, so it's not necessary to
+store struct cmdq_client in struct cmdq_pkt. Because mailbox maintainer
+do not like to mix mailbox patch with other patches in a series, so
+mailbox patch [1] would be sent independently.
 
-The TAB exists to provide advice from the kernel community to the Linux
-Foundation and holds a seat on the LF's board of directors; it also serves
-to facilitate interactions both within the community and with outside
-entities.  Over the last year, the TAB has overseen the organization of the
-Linux Plumbers Conference, advised on the setup of the kernel CVE numbering
-authority, worked behind the scenes to help resolve a number of contentious
-community discussions, worked with the Linux Foundation on community
-conference planning, and more.
+Changes in v4:
+1. Rebase onto mediatek-drm-next-6.12
+2. Fix build error in mpd3 driver
+Changes in v3:
+1. Rebase onto Linux 6.11-rc1 and fix conflicts.
+Changes in v2:
+1. Fix typo of CMDQ_JUMP_RELATIVE
+2. Refine cmdq_pkt_create() and cmdq_pkt_destroy()
+3. Rename cmdq_pkt_jump() to cmdq_pkt_jump_abs()
+4. Add cmdq_pkt_jump_rel() helper function
+5. drm/mediatek: Use cmdq_pkt_create() and cmdq_pkt_destroy()
+6. mtk-mdp3: Get fine-grain control of cmdq_pkt_finalize()
+7. mtk-mdp3: Use cmdq_pkt_create() and cmdq_pkt_destroy()
 
-The public minutes from TAB meetings can be found in this repository:
-https://git.kernel.org/pub/scm/docs/tab/tab.git/.
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/chunkuang.hu/linux.git/commit/?h=mediatek-cmdq8&id=a1b2f7a7488285975c1f439086f1c4cc51a13bb9
 
-Note that there will be an "ask us anything" session with the current TAB
-at the Linux Plumbers Conference; it is currently scheduled for 9:00 on
-Friday, September 20.
 
-CALL FOR NOMINATIONS
+Chun-Kuang Hu (3):
+  media: platform: mtk-mdp3: Get fine-grain control of
+    cmdq_pkt_finalize()
+  media: platform: mtk-mdp3: Use cmdq_pkt_create() and
+    cmdq_pkt_destroy()
+  soc: mediatek: cmdq: Remove cmdq_pkt_finalize() helper function
 
-The TAB has ten members serving two-year terms; half of the board is
-elected each year.  The members whose terms are expiring this year are:
+ .../platform/mediatek/mdp3/mtk-mdp3-cmdq.c    | 49 +++----------------
+ .../platform/mediatek/mdp3/mtk-mdp3-cmdq.h    |  1 +
+ .../platform/mediatek/mdp3/mtk-mdp3-core.c    |  2 +
+ .../platform/mediatek/mdp3/mtk-mdp3-core.h    |  1 +
+ drivers/soc/mediatek/mtk-cmdq-helper.c        | 22 ---------
+ include/linux/soc/mediatek/mtk-cmdq.h         | 13 -----
+ 6 files changed, 11 insertions(+), 77 deletions(-)
 
- - Christian Brauner
- - Kees Cook
- - Dave Hansen
- - Jakub Kicinski
- - Dan Williams
+-- 
+2.34.1
 
-The members whose terms expire next year are:
-
- - Jonathan Corbet
- - Greg Kroah-Hartman
- - Sasha Levin
- - Steve Rostedt
- - Ted Ts'o
-
-Anybody who meets the voting criteria (described below) may
-self-nominate to run in this election.  To nominate yourself, please
-send an email to:
-
-	tech-board-discuss@lists.linux.dev
-
-Please include a short (<= 200 words) statement describing why you are
-running and what you would like to accomplish on the TAB; these
-statements will be collected and made publicly available.
-
-The nomination deadline is 17:00 CET (GMT + 2) on September 20.
-
-VOTING IN THE TAB ELECTION
-
-The criteria for voting in this year's TAB election are unchanged from last
-year.  To be eligible to vote, you must have at least three commits in a
-released mainline or stable kernel that:
-
- - Have a commit date in 2023 or later
- - List your email in a Signed-off-by, Tested-by, Reported-by, Reviewed-
-   by, or Acked-by tag.
-
-Everybody with at least 50 commits meeting this description will receive
-a ballot automatically; they will receive an email confirming this
-status shortly.  Eligible voters with less than 50 commits can receive a
-ballot by sending a request to tab-elections@lists.linuxfoundation.org.
-
-We will, once again, be using the Condorcet Internet Voting Service
-(CIVS) https://civs1.civs.us/ . This is a voting service focused on
-security and privacy. There are sample polls on the website if you would
-like to see what a ballot will look like.
-
-Please contact tab-elections@lists.linux.dev if you have any questions.
 
