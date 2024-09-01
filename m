@@ -1,118 +1,142 @@
-Return-Path: <linux-kernel+bounces-310061-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310062-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 861FE967442
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 05:02:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 81E73967447
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 05:12:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 30BED1F21F52
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 03:02:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 06C7B1F21E78
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 03:12:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED5372AD13;
-	Sun,  1 Sep 2024 03:01:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 264632BAF3;
+	Sun,  1 Sep 2024 03:11:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YEt0tcHc"
-Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com [209.85.222.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="QxWwmqpR"
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3BEC2901;
-	Sun,  1 Sep 2024 03:01:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C36429A5;
+	Sun,  1 Sep 2024 03:11:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725159717; cv=none; b=iM044L8fPBaN28lvq0/fIiufrmmfy9jGhLdbwyzNRQqFJViv+brMFvdYk7A0zr3iXeNWeevKcAXfLqPZEjov8Jic8ASAX2DyxberjVUPr9vD6ZqWxe5NFdv/hUIHXXSgFUybiz3/t2jM1aRifNksA29GMrr6CLtIaAmmkttn2Pk=
+	t=1725160311; cv=none; b=eY0uNFigIHmJztLPsSq+xLXezU2fhCWmwpllQOVwWJSqpOkHpkIwWPx5HPfujYvUlNc4+m74ta2ijFCrytgnp3H4VdSV/GBu1GckErx16dMgU15vkjXpsrR/SGAXLZulJbS9u0audHlAB/iNUHN0Sb+6TK39+UlGlAPPpBh6W8E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725159717; c=relaxed/simple;
-	bh=UBiYJK+p+DohB4gZdvhbm4yFi8h1WeTfzTbREh5PF+g=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sF6NLq7ouRZu2cjmYwUovRvuSQjR458Wj8YU27TBLNK1e5IoV886a/6U45LM6pM2Y3SzikdrNVQXJV3CfJfC5ZdLl5MUV3kdbHnlp5C+oGzuKN3F1IucOyV1KBvBjHqMHQjngRreHzTSuL3S1Gwr5k8//SiZVOHW0CzCt7/57EM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YEt0tcHc; arc=none smtp.client-ip=209.85.222.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f169.google.com with SMTP id af79cd13be357-7a8116a4233so127541885a.2;
-        Sat, 31 Aug 2024 20:01:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725159715; x=1725764515; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=djadNJyuJ2wPfNb4yapWyOvESM2uf5bfPTkIbuzgGKE=;
-        b=YEt0tcHcaCNpPc8z3lPVB2yPX15mylIGg0M43C6SC3x1Enup2jpcD+HoxFb8q8YJSE
-         8aCKAWU+oUAopAAvhXQU9tFiValcKZZdDrrTbadF1xbbIjUqP8hD5GxoXuZsA756Fy4J
-         hyJpfBC8+wq4TY/ripAq373+8s2uaBrT16/eOqJkctYkQtgvQ/2ySlgSGJpprQoVGD/m
-         5j4aJMeaSlvqfFnVseVERiE2aJ4FZiI9wekUOT0p2XA29Wpl0qjkOismFQRtHY/MGHxL
-         KG4kuVdZI0b0qkqsQd75N3/IXB+kI50zteJQmey4A80JzEVSlTHhKxvh/NbGptUtA5uZ
-         FyJA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725159715; x=1725764515;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=djadNJyuJ2wPfNb4yapWyOvESM2uf5bfPTkIbuzgGKE=;
-        b=IzJkvwLZFYsny63LaA7wZ6+jK4Sxnj5s3DZsgG5NqE+RH6cGkNno9ej79dBsijbUR4
-         6+dgk6NQuNmniFbJBsu7qNIYjM0/WMG1oQiBl+chEi3BPA1rWrKtpIXdX6bsUkvEb+VX
-         3iUgiRxB4O8BlZ1nLcD+cKl/w6w6GcEENt39/6i+JuNl+PRcfJ+vcit3UB4VI5rtQyMO
-         b760u9tcQMITAQQYDtZm1LlubZXbScaMEyHpqv+Am0Cq/gdi2p2nc6yVAeCS8hmk4AbO
-         Fg+KfLSWd5mJ+LVoeaw05FT7huGMXXjhtuGYLvfDoTPd6wErRxEOKpDNpAE6rRXfgHdZ
-         fHuw==
-X-Forwarded-Encrypted: i=1; AJvYcCWicYTmIZvl40qhzQzfLmTZjnFJlE7wg7hZOvw8tXdQewwJumOHXhBZDjcn618tf3wJOWbMh/W+niTyG8ah@vger.kernel.org, AJvYcCWyJ1RBkSf+8CGIvjN37hnIAdfAjABD9VC+9me74dNiCjISfgWBrCl1qV+r+Riu46mSo9a3B9hxQJQT8l/H@vger.kernel.org
-X-Gm-Message-State: AOJu0YyTqlQAsXefjz/80IDqcyC0Z3vnMjQXTeBRkIS/O02oLmALyQNb
-	nW6jEmFTZbw9dXGHwQElXOwAewL6ARQM0VZ26hALPLlZuqmWJoHvJlSFwsDV
-X-Google-Smtp-Source: AGHT+IGBbQogDmDi77Qb2ex7TwsHpEzTvhrqviTZ2HakZEqNWIR5roPSL3VQxWhMqCGX4JFan5lByw==
-X-Received: by 2002:a05:620a:3941:b0:7a6:56f7:7b2a with SMTP id af79cd13be357-7a8041b5ea0mr1312131485a.26.1725159714596;
-        Sat, 31 Aug 2024 20:01:54 -0700 (PDT)
-Received: from localhost.localdomain (pat-199-212-65-137.resnet.yorku.ca. [199.212.65.137])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a806c241b4sm292886485a.42.2024.08.31.20.01.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 31 Aug 2024 20:01:54 -0700 (PDT)
-From: imandevel@gmail.com
-X-Google-Original-From: ImanDevel@gmail.com
-To: jack@suse.cz
-Cc: amir73il@gmail.com,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Iman Seyed <ImanDevel@gmail.com>
-Subject: [PATCH] inotify: set ret in inotify_read() to -EAGAIN only when O_NONBLOCK is set
-Date: Sat, 31 Aug 2024 23:01:50 -0400
-Message-ID: <20240901030150.76054-1-ImanDevel@gmail.com>
-X-Mailer: git-send-email 2.46.0
+	s=arc-20240116; t=1725160311; c=relaxed/simple;
+	bh=Gn3ZeVq3s2dJ2JDVX0zGK1/0ntK9iJVduGOXDYUA86k=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=ERQj62M3DyRG2iXEl8GG6WJk5ZeJ+PSpOF9cmn/5hRzkN0EBuaN9MjTEEjEkV5z44Cgft7z8yvjVWBEwd2fyXPw9kDsRPLrRy+C4n9E0Xfo7mXyAGOeKuXhmLZjO+DzqU5OhQ93FeQ+ozGwww+85/fB+jhNzDM5UHhzeM6Ra3hY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=QxWwmqpR; arc=none smtp.client-ip=212.227.17.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1725160275; x=1725765075; i=w_armin@gmx.de;
+	bh=61iovUbYzxeFk07bQVInsGZWHQS/VYBUxCJlz8xdIac=;
+	h=X-UI-Sender-Class:From:To:Cc:Subject:Date:Message-Id:
+	 MIME-Version:Content-Type:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=QxWwmqpR/3JHaQaH/66lZRFRzyvchiFN0Zq75WMEbFsz54rJc8dAK4sGRjC/2B0V
+	 5CMJmhWKvPoJbB0lsgIg7wZiYUWQknZaGn8gj9LpkVOVUAk8fMqlc1K+pfuZFvRdj
+	 atgEo2eVRd+qTOsEVuNFfa8XXdO27x731xE45Gn6PiU3PI4tFw0DwEtUXmzxJrMXY
+	 n/ismuFant5rr9s1pAU6r9ecTtLaKCV7TWvhMVHlv8j9JiXH19puCnVTFlrfWnCqB
+	 dLkJgCQji6MyjMBg902YnQQUNQ9wL0P7UF0q81xl7xrrZXUV/IZiCYlaJgkxJ5Oii
+	 e1E5Cm2J4wKBc5mIhQ==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from mx-amd-b650.users.agdsn.de ([141.30.226.129]) by mail.gmx.net
+ (mrgmx105 [212.227.17.168]) with ESMTPSA (Nemesis) id
+ 1N1OXT-1s3n3I1dHv-015tVz; Sun, 01 Sep 2024 05:11:15 +0200
+From: Armin Wolf <W_Armin@gmx.de>
+To: james@equiv.tech,
+	jlee@suse.com,
+	corentin.chary@gmail.com,
+	luke@ljones.dev,
+	matan@svgalib.org,
+	coproscefalo@gmail.com
+Cc: hdegoede@redhat.com,
+	ilpo.jarvinen@linux.intel.com,
+	linux@roeck-us.net,
+	jdelvare@suse.com,
+	rafael@kernel.org,
+	lenb@kernel.org,
+	platform-driver-x86@vger.kernel.org,
+	linux-hwmon@vger.kernel.org,
+	linux-acpi@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/5] platform/x86: wmi: Pass event data directly to legacy notify handlers
+Date: Sun,  1 Sep 2024 05:10:50 +0200
+Message-Id: <20240901031055.3030-1-W_Armin@gmx.de>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:o4u3UKfkDSEUWuZoiSkM7PtXoWy76rIvZ2VcU48CiI7eEcJEO5r
+ hnvReU9imYCvaRBsbOCnGQohxmm6kFYlg8hsfJHA5kyaNk/HO8oKsdsi0xylGoLaAiqF74h
+ a6OZY/uGZ6IYg9zusX2t2W7jNJGTlAGLOwoiLd5To2mhaHp4Y5ve7XEVKvdf3cF67I+uNLK
+ 9snwFUEnKaOj/0GcPOAEg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:T6dhtErzGBg=;/T1T6/xYWinrkcrJReMWvJ1eTSi
+ fs1v3uhXNNlgIMTRiC2V/CQNtcVOOsGlyIHz3DIa1534awQoyxIU/70RqeakeSnF9YBY4yCrr
+ eweYXE6+VEfH+QUFqIyMO4Do3avivR1ehUq5NzUdMT+n1nm6twixMkw++5kk2GPe/dpGS1XfD
+ Rcwo+U85qQYWlWRhXIL2orXVcxBJSu1Vb32Td/YUfEx56rHWB+zPG0Kw3PbiW4/SzyWvPudyg
+ OBAtSbELDPh8bZVl4gWZZbPRN9RCZX5ZDpC71onGSpe5LcO9awzVkErR8FEoIfyQ1ruLYm9HJ
+ IsjGq47xZj4V6DBbRQ9H74vIdrmBMz4vE0jvMBIaNbHyG7dp/f/KRcGrg0xIk5e4/AFRmcHJO
+ XPufnBD3C4puPV8f9noqNF2x6FnZOckeUUNTenYwnmgwqr88sxnT5DLayeHaXbhv0gd0F3ueH
+ WjE2hOO1H9oesWbQBZX8iSb9WiCcEgOi1RwzGBYu6kkIm3zHcYWd2XVAe4EFqDKjtfHrChbiv
+ J6WYtAVvQ5QDbGqA0R18QCb7Pg0ImIjyqbz6UL+hkBC2zO14aDMqhyxILafVfCfSjcVHiK34m
+ 4LDXn7dwkeTna01Tm4drG3kH+cDNll+vuBaFfTNapht2EgF2sJIX6hRXVD9AT28EtyhFZNDT+
+ 9JPK+ij9p0TXflIk06XMeqik8mezI9Y+SblA9xEnfBvKw6Czo/9zdiec7FLeN9itU4oR+EtgG
+ qtPGjIuz9SnEMMlmIIQJoHw3CkvdpvLB/maR1Pcj3Y44Twmn+rywMu0yX1Ud6pz71SzNqQW85
+ kELaOEJJ5IgHIJlG2XToSZ7Q==
 
-From: Iman Seyed <ImanDevel@gmail.com>
+The current legacy WMI handlers are susceptible to picking up wrong
+WMI event data on systems where different WMI devices share some
+notification IDs.
 
-Avoid setting ret to -EAGAIN unnecessarily. Only set
-it when O_NONBLOCK is specified; otherwise, leave ret
-unchanged and proceed to set it to -ERESTARTSYS.
+Prevent this by letting the WMI driver core taking care of retrieving
+the event data. This also simplifies the legacy WMI handlers and their
+implementation inside the WMI driver core.
 
-Signed-off-by: Iman Seyed <ImanDevel@gmail.com>
----
- fs/notify/inotify/inotify_user.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+The fisr patch fixes a minor issue discovered inside the hp-wmi-sensors
+driver.
+The second patch converts all legacy WMI notify handlers to stop using
+wmi_get_event_data() and instead use the new event data provided by
+the WMI driver core.
+The remaining patches finally perform some cleanups.
 
-diff --git a/fs/notify/inotify/inotify_user.c b/fs/notify/inotify/inotify_user.c
-index 4ffc30606e0b..d5d4b306a33d 100644
---- a/fs/notify/inotify/inotify_user.c
-+++ b/fs/notify/inotify/inotify_user.c
-@@ -279,9 +279,11 @@ static ssize_t inotify_read(struct file *file, char __user *buf,
- 			continue;
- 		}
- 
--		ret = -EAGAIN;
--		if (file->f_flags & O_NONBLOCK)
-+		if (file->f_flags & O_NONBLOCK) {
-+			ret = -EAGAIN;
- 			break;
-+		}
-+
- 		ret = -ERESTARTSYS;
- 		if (signal_pending(current))
- 			break;
--- 
-2.46.0
+The patch series was tested on a Dell Inspiron 3505 and a Acer Aspire
+E1-731 and appears to work.
+
+Changes since v1:
+- Rework the hp-wmi-sensors patch
+- add Reviewed-by tags
+
+Armin Wolf (5):
+  hwmon: (hp-wmi-sensors) Check if WMI event data exists
+  platform/x86: wmi: Pass event data directly to legacy notify handlers
+  platform/x86: wmi: Remove wmi_get_event_data()
+  platform/x86: wmi: Merge get_event_data() with wmi_get_notify_data()
+  platform/x86: wmi: Call both legacy and WMI driver notify handlers
+
+ drivers/hwmon/hp-wmi-sensors.c           |  20 +---
+ drivers/platform/x86/acer-wmi.c          |  16 +--
+ drivers/platform/x86/asus-wmi.c          |  19 +--
+ drivers/platform/x86/dell/dell-wmi-aio.c |  13 +--
+ drivers/platform/x86/hp/hp-wmi.c         |  16 +--
+ drivers/platform/x86/huawei-wmi.c        |  14 +--
+ drivers/platform/x86/lg-laptop.c         |  13 +--
+ drivers/platform/x86/msi-wmi.c           |  20 +---
+ drivers/platform/x86/toshiba-wmi.c       |  15 +--
+ drivers/platform/x86/wmi.c               | 143 ++++++-----------------
+ include/linux/acpi.h                     |   3 +-
+ 11 files changed, 53 insertions(+), 239 deletions(-)
+
+=2D-
+2.39.2
 
 
