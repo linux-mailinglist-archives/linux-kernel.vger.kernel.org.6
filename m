@@ -1,98 +1,120 @@
-Return-Path: <linux-kernel+bounces-310421-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310422-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 299D3967C87
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 00:17:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8032D967C89
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 00:18:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8812C281860
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 22:17:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B18701C21002
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 22:18:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48A9618595A;
-	Sun,  1 Sep 2024 22:17:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B9D014A093;
+	Sun,  1 Sep 2024 22:18:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QQeKyTa1"
-Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="CjuQyzuy"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D855113A3E4
-	for <linux-kernel@vger.kernel.org>; Sun,  1 Sep 2024 22:17:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 772692A1B8;
+	Sun,  1 Sep 2024 22:18:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725229030; cv=none; b=BxpiHUqoKOSHiJfZViEqD/o08toAX+tnMfrD1Bmt42X//88N/BpiJkK2w+PDtv0xelpAjHUkD3EEVgi5Pqrnxs/KGJcNUUOsvgXZEj/AZbEavDbHFGk7CQI7DjK/wt7iTBJq4jI4ltQTlqB0yOkZRv/QNit8tNHm6GYmACb5wb0=
+	t=1725229122; cv=none; b=I263u/hajSukOD+kf3ZNZPU0X/rU64ID2ht1LL0oXAKHkApM/TPU4krcMQ9KF9pQpe/U+MBklnYMif0++sHHDUyd+gM5xIpArhp5KSH2lvc1WOpLyFNrLW0dIHInH49OusZXvePIJ7PbjMFWNkaUceTFskwzrjQsWjt4YcfKP7Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725229030; c=relaxed/simple;
-	bh=A9KquY+Xq9HYGt1l9PNrkt9cxTRdMnsMxi8cD3m9plc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HOBl7+uqZLbxBknDeDN5jyXlBLWMzfc5FzL4Pgmw69kZH/oIVUgSwkXV3pEgtU7VXcSwhH1EYMj/yxIaryDUG4zCE6pjuuRruGnmUOlhFDLbL6FJZNodpQhjIZCPI9c0jENWQBjFg0lV8DjOqGvHZDp8LmVUbQOb9HFgF+VTZXQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=QQeKyTa1; arc=none smtp.client-ip=209.85.208.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2f4f2868710so37868601fa.1
-        for <linux-kernel@vger.kernel.org>; Sun, 01 Sep 2024 15:17:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1725229027; x=1725833827; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=A9KquY+Xq9HYGt1l9PNrkt9cxTRdMnsMxi8cD3m9plc=;
-        b=QQeKyTa1ZHOmdeLtfJQ08oELr7R+lfjvt5DWUSh590msEz57AUPas1fkl/8ZGMqRgl
-         0Iu0opmnDjxtg91FlE9g3nLLVZIYs50mxBV5jwuLKOjV3UYlQireUyT2TB0yDh4uiyY9
-         sFtNWX0fLiMvj9AeZrRxEqrF+bKgbpxgM33j4hZyIe0Z03WMeeSWO1kFXH6F/j/FpT+O
-         LPbqPI5pFhod6fbBZohITmA2zN+58+S9hduNR5fIkbonsuvPHo90j6DzcN3Ur9pvP2n7
-         HJ3t8xY12Wz/oB/4ZwZ99EeBsVnJwZOg+nfyyYIZRdOCq879DzKlIyBArjAGBEukeuSe
-         yKrA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725229027; x=1725833827;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=A9KquY+Xq9HYGt1l9PNrkt9cxTRdMnsMxi8cD3m9plc=;
-        b=W+/DZ42Qb5wuHeVVnn/isFPSEM/DmGyCYQkVyvOvmWdywFXm5WKWQS5FC/fARIOerP
-         8gg6ZWcHZ2LVMHUVBlTRIKNeeTrpJAfYVIoSG3xRm+sP4jzyangzBSYI7g+mDO0YRRvX
-         wktXCahgc08U0TWPT6LD64Tt9lE6OLPKXdOMeVrMym4YeGdcpeJ2NjsARDKS88VyQXlR
-         EAXtJ055pFHbtqNWwzNkhnGsAL5Ela0YxK/e6UH+TKBeGKVCZS8N+E58T2CKzS8FiRy4
-         a8jOOMZI/XS7OF3BQkEuJSnLCkOv/J57552iBvTqpPUAMtzGHbInKyX4KsXcnGCWfKFx
-         kdmA==
-X-Forwarded-Encrypted: i=1; AJvYcCXaB6oktPhJiCGVR0dQCt4alVPs8SeCCW9oN6AnhwUHjxT0ox0+Kc6QAUvQSRqn03ADBAj4j1PO1OJtItQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwOYO1Km1epAcQ/agM4k7ThW5Oa62Ss/RvBXhz3jr5fFS0GMKf5
-	Wrl5Yvsr1z9Us3I5OeW6tWdSD3IBClSxgN2uiUSmIV8Mc9mjsj+OgzAg99bIA96062IGLIwRXTT
-	3uh8RzFT2rG6guTVRj0kdYqgkkYe6Rl8Iy28YXw==
-X-Google-Smtp-Source: AGHT+IELtYHgrwEdRxYDgxD8aHpOX0/GHHaDJQOuj7XAGfQNHkEYFfltRh55fb3ghPbg2gbymDF7rNGgW5udWeVIpUM=
-X-Received: by 2002:a2e:be87:0:b0:2f5:a29:5a42 with SMTP id
- 38308e7fff4ca-2f6108a0ed0mr86585481fa.14.1725229026305; Sun, 01 Sep 2024
- 15:17:06 -0700 (PDT)
+	s=arc-20240116; t=1725229122; c=relaxed/simple;
+	bh=eptuV7wHMzdUKX3/OAc5AxjS9miHiPi5jJdaBMdnXxk=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=F6i0jZxxHCvO8H9YaSxV9ZdEaz3b6KaeIFr7ZH0TXVgFlz9MSzxh6WgKod3hV+E4F0o8Nj8vQCSgGHuSy6/QbS4inmVJFjMvC8+z96jxvNxJsGGib40teXAwZ1k62ufqS6Y4G+ko9mwDKeZyZrKWOTtTvmsD+VJWaqkSOT+ptQo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=CjuQyzuy; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1725229118;
+	bh=qmzMj1DcmTxbQruVvXhQ60t7AS6CI1wZUCHNhYktqnI=;
+	h=Date:From:To:Cc:Subject:From;
+	b=CjuQyzuyh75lMNSo7dkBHqTV+1suV27/zde5kgX+5xcKv/XDrA+s/HlOiL7Cv90jy
+	 CCW/1gHZiFHdHhZId1YgUsQNxB6SK3Lrc+NUMcOgelsbe6AdD4zeRtEzcI2HatDRWe
+	 cFqQC2mp9vHUGCOeSgNqRi2/MUfNTir/mkeWQthTRURkV8s/2ggnZDNGomCiqXXi0r
+	 41RavrxJzknmxwsPkFsOI8+EDwnr7HCs60da2QyzlPfpUbpbc5kgURbUJ7eX5LigUM
+	 8i2EasyAdRXdEwPXMbnHaPfdSnkuPe6eCyQrFFQwsR1V6/hdpH15snZJqllb2PnisL
+	 uAudonsTIGyzg==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WxmW24Nkrz4x1V;
+	Mon,  2 Sep 2024 08:18:38 +1000 (AEST)
+Date: Mon, 2 Sep 2024 08:18:37 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>, Namhyung Kim
+ <namhyung@kernel.org>
+Cc: Veronika Molnarova <vmolnaro@redhat.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: Fixes tag needs some work in the perf-current tree
+Message-ID: <20240902081837.6def2734@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240831072158.789419-1-liaochen4@huawei.com> <20240831072158.789419-3-liaochen4@huawei.com>
-In-Reply-To: <20240831072158.789419-3-liaochen4@huawei.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Mon, 2 Sep 2024 00:16:55 +0200
-Message-ID: <CACRpkdYv5bcDM6B42_pmkEtaiFNQ-mqZzHOPW4UZ-AsPiwuBDA@mail.gmail.com>
-Subject: Re: [PATCH -next v2 2/3] ata: pata_ixp4xx: Enable module autoloading
-To: Liao Chen <liaochen4@huawei.com>
-Cc: linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org, s.shtylyov@omp.ru, 
-	dlemoal@kernel.org, cassel@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; boundary="Sig_/Nl+TKhf6S_Kg=56jlgfY2KZ";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
+
+--Sig_/Nl+TKhf6S_Kg=56jlgfY2KZ
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-On Sat, Aug 31, 2024 at 9:30=E2=80=AFAM Liao Chen <liaochen4@huawei.com> wr=
-ote:
+Hi all,
 
-> Add MODULE_DEVICE_TABLE(), so modules can be properly autoloaded based
-> on the alias from of_device_id table.
->
-> Signed-off-by: Liao Chen <liaochen4@huawei.com>
-> Reviewed-by: Sergey Shtylyov <s.shtylyov@omp.ru>
+In commit
 
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+  387ad33e5410 ("perf test pmu: Set uninitialized PMU alias to null")
 
-Yours,
-Linus Walleij
+Fixes tag
+
+  Fixes: 3e0bf9 ("perf pmu: Restore full PMU name wildcard support")
+
+has these problem(s):
+
+  - Target SHA1 does not exist
+
+Actually, the quoted SHA1 is too short and is ambiguous in my tree:
+
+$ git show 3e0bf9
+error: short object ID 3e0bf9 is ambiguous
+hint: The candidates are:
+hint:   3e0bf9fde298 commit 2024-06-26 - perf pmu: Restore full PMU name wi=
+ldcard support
+hint:   3e0bf93e0354 tree
+fatal: ambiguous argument '3e0bf9': unknown revision or path not in the wor=
+king tree.
+
+so you should use
+
+Fixes: 3e0bf9fde298 ("perf pmu: Restore full PMU name wildcard support")
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/Nl+TKhf6S_Kg=56jlgfY2KZ
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmbU6D0ACgkQAVBC80lX
+0GzfqQf/YXNl5k2TLgM+b0mHmjOC/K9TIO7im9vLSSj7r4jRl/hk0XIobCLWbeSX
+/Nv67QSW6RbroZLmdwBWS79kbil1foLYGjZQE/UZ4pSmRTzcc2k62T3uatzjtquw
+5cJAOr/va05xsRr8dJ0ahBYI0rUMnjPgnEn6Ih0KFdHD2h9tTIa3FZrY2+M8MwTr
+FL5j5dO+okIgmdseFcO6EoBv0IzG0Pf1iddbOU1Veqo4eIjncGNtOYXMffqlbUaH
+uicCKtG+KQ6MUgjFwHWvJJnN5mrcbJ4c3SYlh9cWb8fb0e0I/onKp4X3lZSJ4HN0
+VrN+NQ63f7eLGyKMuhP+O14xgdN1bw==
+=BfRO
+-----END PGP SIGNATURE-----
+
+--Sig_/Nl+TKhf6S_Kg=56jlgfY2KZ--
 
