@@ -1,95 +1,94 @@
-Return-Path: <linux-kernel+bounces-310375-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310376-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 307BB967BE9
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 21:27:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8EB2967BEE
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 21:35:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC3EF281C9A
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 19:27:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 36E77B210B4
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 19:35:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19C066F2EA;
-	Sun,  1 Sep 2024 19:27:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBE5E78C91;
+	Sun,  1 Sep 2024 19:34:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Agw0XhRK";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="8Ib8weqw";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Agw0XhRK";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="8Ib8weqw"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="zI4puSLH";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Fyg5qDA7";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="zI4puSLH";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Fyg5qDA7"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D91326AC1
-	for <linux-kernel@vger.kernel.org>; Sun,  1 Sep 2024 19:27:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29477347A2;
+	Sun,  1 Sep 2024 19:34:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725218822; cv=none; b=Romp3y9sEWUOTs9z4N4UFac//H+MYPcB84kGYDdAiAaMPpQuBseWiAN/U9MVUjiq9JpZO7gz1vBQWa+aspZq7rcxyCTIaIPbPRsWKwllprvV9lkuezSjtiF1HdcMjhuQ+7s+mXKXGZ+jJzV1pNhZi0kq74XNNLM9mqrqd5PVusk=
+	t=1725219288; cv=none; b=Cd11eQenJLi7oN0Zj3+XkTXluDbFSn2GNpsUjXwiLOjwj73hZ95qr8HLUOzneW8WRsO5865SXieTYY7OHogwczTOhvGY2PcrTEFrzws721BblWSxc/W9dYmQY7ooFtiOwtmgwnRfttbirb7juxJK+ek3DUjYmKGitC+d1HXsvoM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725218822; c=relaxed/simple;
-	bh=wqkvWk9UFaZmch8TDBNIzSZPSQNJSDIspS7OJS83p2c=;
+	s=arc-20240116; t=1725219288; c=relaxed/simple;
+	bh=af+iXk7wmRjAMlxMVDNawO+aqNCoPZt9hMjNFi63Nhk=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VJXH8aY71IPWgJAYdg34tP0kBcBBCCdQ0wP83rJ1NjHczoliTZkpc4zc/fJILSucu7+/uO1uJ50n0SL3ktBNMdZOiswj8vK9VDB5kl4g3YgWXl7XXitGFlNUF2Iww12Gdgxy1UJkM09SKMdBdncpYq9DwCuO+j9nAC/wsRhBUwM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Agw0XhRK; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=8Ib8weqw; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Agw0XhRK; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=8Ib8weqw; arc=none smtp.client-ip=195.135.223.130
+	 In-Reply-To:Content-Type; b=uxiGcoFJt6DjWxwOO/q6fFrl3VoKHS65J+ZiFMf/UC5s6CcZ41qiGP83DSWNPJH+amEd/QTI9uTiHSWeLeLsCGytFfOfc519E4RdBvnXdfXtDnhHud19uIh0DGzuFGoYe9lkH5WxAfqN5F4NJbeLadthcXZgbGuS2ywLtGXO5A8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=zI4puSLH; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Fyg5qDA7; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=zI4puSLH; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Fyg5qDA7; arc=none smtp.client-ip=195.135.223.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 5D60621B11;
-	Sun,  1 Sep 2024 19:26:58 +0000 (UTC)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 3B4311FB66;
+	Sun,  1 Sep 2024 19:34:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1725218818; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1725219285; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=aMa3Q5dFeWRQ9UaA9tZCZTEk6DV1+bY7hJY3BALIwzU=;
-	b=Agw0XhRKK2X6sVjWca7hcvWOXeEogz1np2f/wz/iGUESMpJU9mYPbp+8QCdvPgRIlR7YyC
-	2zimbWyKL14Cnvd05VaOZf3tnZa4lApc0exuNdxpXIgq1CfdnW7+7B7DwQDigYX7KaOf6w
-	cW20iwMrQ0ls9Kv/n9syI26Uy8CRpVY=
+	bh=uVt9tFDX8tcgIBy4MepYpkLV3qFHyZuUB2GQ+7GiRWg=;
+	b=zI4puSLHr8pT+Z4p4UgDqiDEPBwvNgXCydVO7wvYs0QUDx/YwXerELaKkIHYPrLpFZeLhs
+	La41IWAf1hg3P9G8SA0OeCekxWwkBPFk9y4LKF+KJsv4vMY5Vo7RlQjkUh1IjMWYksNb3O
+	hx+OOw0dr8gaSG9SgEAqsf1a5gBlHoQ=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1725218818;
+	s=susede2_ed25519; t=1725219285;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=aMa3Q5dFeWRQ9UaA9tZCZTEk6DV1+bY7hJY3BALIwzU=;
-	b=8Ib8weqwggY8otwMxrK4Dp/jH7XgXla/lw/mxf23Xq5WmQfsLwACPOf/O98Eo/Sr8TJtua
-	iRKbRzsxI+Nq2qAQ==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=Agw0XhRK;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=8Ib8weqw
+	bh=uVt9tFDX8tcgIBy4MepYpkLV3qFHyZuUB2GQ+7GiRWg=;
+	b=Fyg5qDA7BOi6FWAyHBfE/8bDSO5idwfi1+Eh1uUp6nkzsz/MHQE8SGFP558Pl8pXzWHerc
+	JO81FZkXDqfKJCBw==
+Authentication-Results: smtp-out2.suse.de;
+	none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1725218818; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1725219285; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=aMa3Q5dFeWRQ9UaA9tZCZTEk6DV1+bY7hJY3BALIwzU=;
-	b=Agw0XhRKK2X6sVjWca7hcvWOXeEogz1np2f/wz/iGUESMpJU9mYPbp+8QCdvPgRIlR7YyC
-	2zimbWyKL14Cnvd05VaOZf3tnZa4lApc0exuNdxpXIgq1CfdnW7+7B7DwQDigYX7KaOf6w
-	cW20iwMrQ0ls9Kv/n9syI26Uy8CRpVY=
+	bh=uVt9tFDX8tcgIBy4MepYpkLV3qFHyZuUB2GQ+7GiRWg=;
+	b=zI4puSLHr8pT+Z4p4UgDqiDEPBwvNgXCydVO7wvYs0QUDx/YwXerELaKkIHYPrLpFZeLhs
+	La41IWAf1hg3P9G8SA0OeCekxWwkBPFk9y4LKF+KJsv4vMY5Vo7RlQjkUh1IjMWYksNb3O
+	hx+OOw0dr8gaSG9SgEAqsf1a5gBlHoQ=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1725218818;
+	s=susede2_ed25519; t=1725219285;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=aMa3Q5dFeWRQ9UaA9tZCZTEk6DV1+bY7hJY3BALIwzU=;
-	b=8Ib8weqwggY8otwMxrK4Dp/jH7XgXla/lw/mxf23Xq5WmQfsLwACPOf/O98Eo/Sr8TJtua
-	iRKbRzsxI+Nq2qAQ==
+	bh=uVt9tFDX8tcgIBy4MepYpkLV3qFHyZuUB2GQ+7GiRWg=;
+	b=Fyg5qDA7BOi6FWAyHBfE/8bDSO5idwfi1+Eh1uUp6nkzsz/MHQE8SGFP558Pl8pXzWHerc
+	JO81FZkXDqfKJCBw==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 3E9581373A;
-	Sun,  1 Sep 2024 19:26:58 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 140221373A;
+	Sun,  1 Sep 2024 19:34:45 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id tWuiDgLA1GbKcgAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Sun, 01 Sep 2024 19:26:58 +0000
-Message-ID: <898571c5-a150-4a0a-8a18-513fb49aecdc@suse.cz>
-Date: Sun, 1 Sep 2024 21:26:57 +0200
+	id VN8+BNXB1GaIdAAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Sun, 01 Sep 2024 19:34:45 +0000
+Message-ID: <860c4f66-0327-4fd0-bd49-5be742c6931d@suse.cz>
+Date: Sun, 1 Sep 2024 21:34:44 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -97,16 +96,21 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm: Removed @freeptr_offset to prevent doc warning
+Subject: Re: [PATCH v3] memcg: add charging of already allocated slab objects
 Content-Language: en-US
-To: R Sundar <prosunofficial@gmail.com>, Christoph Lameter <cl@linux.com>,
- Pekka Enberg <penberg@kernel.org>, David Rientjes <rientjes@google.com>,
- Joonsoo Kim <iamjoonsoo.kim@lge.com>,
- Andrew Morton <akpm@linux-foundation.org>,
+To: Shakeel Butt <shakeel.butt@linux.dev>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+ Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>,
  Roman Gushchin <roman.gushchin@linux.dev>,
- Hyeonggon Yoo <42.hyeyoo@gmail.com>, Christian Brauner <brauner@kernel.org>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <20240901055311.20905-1-prosunofficial@gmail.com>
+ Muchun Song <muchun.song@linux.dev>, David Rientjes <rientjes@google.com>,
+ Hyeonggon Yoo <42.hyeyoo@gmail.com>, Eric Dumazet <edumazet@google.com>,
+ "David S . Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, Meta kernel team <kernel-team@meta.com>,
+ cgroups@vger.kernel.org, netdev@vger.kernel.org
+References: <20240829175339.2424521-1-shakeel.butt@linux.dev>
+ <76079f79-2e72-4a59-9eae-3b05ae6b9a9e@suse.cz>
+ <ukrl43rakgdzlo4fvw3ldwyoke76dgnseobtf75ldghe3fadxc@ag2y4jk77js2>
 From: Vlastimil Babka <vbabka@suse.cz>
 Autocrypt: addr=vbabka@suse.cz; keydata=
  xsFNBFZdmxYBEADsw/SiUSjB0dM+vSh95UkgcHjzEVBlby/Fg+g42O7LAEkCYXi/vvq31JTB
@@ -147,66 +151,48 @@ Autocrypt: addr=vbabka@suse.cz; keydata=
  w9XOLH1IIWh7RURU7G1iOfEfmImFeC3cbbS73LQEFGe1urxvIH5K/7vX+FkNcr9ujwWuPE9b
  1C2o4i/yZPLXIVy387EjA6GZMqvQUFuSTs/GeBcv0NjIQi8867H3uLjz+mQy63fAitsDwLmR
  EP+ylKVEKb0Q2A==
-In-Reply-To: <20240901055311.20905-1-prosunofficial@gmail.com>
+In-Reply-To: <ukrl43rakgdzlo4fvw3ldwyoke76dgnseobtf75ldghe3fadxc@ag2y4jk77js2>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: 5D60621B11
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.01 / 50.00];
+X-Spam-Score: -2.80
+X-Spamd-Result: default: False [-2.80 / 50.00];
 	BAYES_HAM(-3.00)[99.99%];
 	SUSPICIOUS_RECIPS(1.50)[];
 	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.999];
 	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FREEMAIL_TO(0.00)[gmail.com,linux.com,kernel.org,google.com,lge.com,linux-foundation.org,linux.dev];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
 	RCVD_TLS_ALL(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
 	TAGGED_RCPT(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[11];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_TWELVE(0.00)[17];
+	ARC_NA(0.00)[];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TO_DN_SOME(0.00)[]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -3.01
+	MID_RHS_MATCH_FROM(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[linux-foundation.org,cmpxchg.org,kernel.org,linux.dev,google.com,gmail.com,davemloft.net,redhat.com,kvack.org,vger.kernel.org,meta.com];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:mid]
 X-Spam-Flag: NO
+X-Spam-Level: 
 
-On 9/1/24 07:53, R Sundar wrote:
-> ./mm/slab_common.c:385: warning: Excess function parameter 'freeptr_offset' description in 'kmem_cache_create_usercopy'
-> Removed @freeptr_offset to fix above doc warning.  
+On 8/30/24 21:44, Shakeel Butt wrote:
+>> 
+>> Also one thing:
+>> 
+>> We should add some kernel doc for this, no? Explaining when people are
+>> supposed to use this, that objects from KMALLOC_NORMAL will be ignored, and
+>> what the return value means (including where it's faked to be true).
+>> 
 > 
-> Signed-off-by: R Sundar <prosunofficial@gmail.com>
+> Yes this makes sense. I will add this info similar to the kmalloc()
+> have. Should I send a v4 with this details?
 
-This is for Christian's vfs tree, so added him to recipients.
-There was also a lkp report:
-https://lore.kernel.org/all/202408292249.5oUpnCbS-lkp@intel.com/
-
-> ---
->  mm/slab_common.c | 1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/mm/slab_common.c b/mm/slab_common.c
-> index d48ef4fe1ea8..ad438ba62485 100644
-> --- a/mm/slab_common.c
-> +++ b/mm/slab_common.c
-> @@ -353,7 +353,6 @@ do_kmem_cache_create_usercopy(const char *name,
->   * for copying to userspace
->   * @name: A string which is used in /proc/slabinfo to identify this cache.
->   * @size: The size of objects to be created in this cache.
-> - * @freeptr_offset: Custom offset for the free pointer in RCU caches
->   * @align: The required alignment for the objects.
->   * @flags: SLAB flags
->   * @useroffset: Usercopy region offset
-
+Yeah please, will replace v3 with that.
+Thanks
 
