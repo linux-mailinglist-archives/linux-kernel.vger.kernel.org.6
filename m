@@ -1,53 +1,53 @@
-Return-Path: <linux-kernel+bounces-310308-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310309-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45874967977
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 18:45:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F47F967979
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 18:45:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 76D841C21334
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 16:45:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B07FD1F21B27
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 16:45:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D15D18593F;
-	Sun,  1 Sep 2024 16:44:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 437E0185B55;
+	Sun,  1 Sep 2024 16:44:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XJtA5W4u"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tzyEm9rz"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EBCC185928
-	for <linux-kernel@vger.kernel.org>; Sun,  1 Sep 2024 16:44:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79370185952
+	for <linux-kernel@vger.kernel.org>; Sun,  1 Sep 2024 16:44:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725209064; cv=none; b=UH7fUwSLqctwviKzSQxcn9xMAaTOFtjJe5qEUoPwTFQ0GiR2+ZrJf7fT/oGYMwSMssSofiDpw6JJVwgNU/+wDE+OG/rJTk3R+083nF/hNPeHnWdIr/0+x2tmZtn3VhXV0t0xnBeUTfG00sEIlwTc9G+WTli6tA76zORQysyFlHc=
+	t=1725209065; cv=none; b=pE7zD/oBX9buuE6Y9gi4nPdVoAoiBuKQ/mE7ItkvYHRmwlqOJlPj0mro3ZAbBfkTl6nRzcCZ3r5BVfIYxk129rYLcuNL7SkyPZ1L9t2DPoI1KQeZ71RcJvHqf/LVKBCEVvM1m/0JfVJDY+/KfXFF9/ua5cAb6GXWmrIjLtACm8g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725209064; c=relaxed/simple;
-	bh=wdpp4NTpqf58DnAy2hc0evRRxBqe4dNCqnI2TjCWzi4=;
+	s=arc-20240116; t=1725209065; c=relaxed/simple;
+	bh=8+d8pX8S9fJLXlqAg7fhG8TGE62ZMvnvXIpx02Y/oHo=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=O4yLGTzBvBdd6iiTM8skoQ2gqGyw8oNjYljP/IupvL2deN8spT8PXBntC/96rfk9LwBugFGea0DfsmYRRq7szHj9I3te8OPJwjKZEsaHfZWVsbbxncPXevc+JZ8uK5gxCK7pJXUHjb4pmEU8xb+Zhg/LGiJiPQMdIc9QeNXf3P4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XJtA5W4u; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04617C4CECC;
-	Sun,  1 Sep 2024 16:44:23 +0000 (UTC)
+	 MIME-Version; b=T9sgpMnXgwHy1bquW6g+CW2zbefztbcDXhy/b5aA1nGrgZJQraoJj2JbUbPbfvSEYutT98E5RHAs0u9K6/axTm7DObiJgo8Bi5U8KmVtyFfqb/oHxjzzvlUWBlwxSqOiH/vY3+aUzLS/hkh+OvhmbCsioSEPqOju5+3WZQRNrjk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tzyEm9rz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 20152C4CEC3;
+	Sun,  1 Sep 2024 16:44:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725209064;
-	bh=wdpp4NTpqf58DnAy2hc0evRRxBqe4dNCqnI2TjCWzi4=;
+	s=k20201202; t=1725209065;
+	bh=8+d8pX8S9fJLXlqAg7fhG8TGE62ZMvnvXIpx02Y/oHo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=XJtA5W4u31twWh9U8lGucRZQVvIri9PoQ5jAq/FbKXl1griFh+AxpZ/p0RJDn/HZi
-	 ei/rAer4CoYrVRBnMwtFSM/2Ri960kdcmV9B/YTEHxEh13apowL5v1csNzJxPrqlQe
-	 lPQMdFUzPUh2iuA0G0W/KyI1lQBF/xIuBT8h2uKK+EOTAx9RJIShlE/zU8w6duwE8z
-	 16dA9FQ+gSLjueX0c4WFEpnYWYcv5e9lVQYilojlhrehzG27MXb4sHGIAFRsfBdIOV
-	 TuPA9EpNyBrcfoQvOD3Xw5Fd/TEJHShpRc0sL6/sbfxMSVL1oqsa0IO/tjqkQGJ63j
-	 OnL0aCHtcm7cw==
+	b=tzyEm9rza5sk7W5OwhQDq6b6Os5f2NbrEs+7+P26U1+/gXPgsZkoeX3gsE0pei0w0
+	 R+FvtJYAIeD1XcBJQ6J2aOPE1tEpm/ndvsz2Ij++RKjYkldMNOHoqzlG6NlmXH+oq1
+	 L11NlWGun0qrmrpPtMpPAWbqz5asZcU46QQw6f5TShxONDsR1s/bp3VzsJt/xrbfOK
+	 m8TjOt6j6N44kLzHpZMa/mBzRDG7T9lqsghL8GyhrD4MDw02Af0LWp2NQCXerhdRgA
+	 UMob9pOgwYZzagOXzE6XgnEOFYhh8PMIk2cH8OOQc5d/dTeg7RkFfiFZohel4rzP4G
+	 uB4YcsjrHnABg==
 From: Tejun Heo <tj@kernel.org>
 To: void@manifault.com
 Cc: kernel-team@meta.com,
 	linux-kernel@vger.kernel.org,
 	Tejun Heo <tj@kernel.org>
-Subject: [PATCH 04/12] sched_ext: Fix processs_ddsp_deferred_locals() by unifying DTL_INVALID handling
-Date: Sun,  1 Sep 2024 06:43:41 -1000
-Message-ID: <20240901164417.779239-5-tj@kernel.org>
+Subject: [PATCH 05/12] sched_ext: Restructure dispatch_to_local_dsq()
+Date: Sun,  1 Sep 2024 06:43:42 -1000
+Message-ID: <20240901164417.779239-6-tj@kernel.org>
 X-Mailer: git-send-email 2.46.0
 In-Reply-To: <20240901164417.779239-1-tj@kernel.org>
 References: <20240901164417.779239-1-tj@kernel.org>
@@ -59,118 +59,136 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-With the preceding update, the only return value which makes meaningful
-difference is DTL_INVALID, for which one caller, finish_dispatch(), falls
-back to the global DSQ and the other, process_ddsp_deferred_locals(),
-doesn't do anything.
+Now that there's nothing left after the big if block, flip the if condition
+and unindent the body.
 
-It should always fallback to the global DSQ. Move the global DSQ fallback
-into dispatch_to_local_dsq() and remove the return value.
+No functional changes intended.
 
-v2: Patch title and description updated to reflect the behavior fix for
-    process_ddsp_deferred_locals().
+v2: Add BUG() to clarify control can't reach the end of
+    dispatch_to_local_dsq() in UP kernels per David.
 
 Signed-off-by: Tejun Heo <tj@kernel.org>
 Acked-by: David Vernet <void@manifault.com>
 ---
- kernel/sched/ext.c | 41 ++++++++++-------------------------------
- 1 file changed, 10 insertions(+), 31 deletions(-)
+ kernel/sched/ext.c | 96 ++++++++++++++++++++++------------------------
+ 1 file changed, 46 insertions(+), 50 deletions(-)
 
 diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
-index 1d35298ee561..ec61ab676517 100644
+index ec61ab676517..89a393f183dd 100644
 --- a/kernel/sched/ext.c
 +++ b/kernel/sched/ext.c
-@@ -2299,12 +2299,6 @@ static bool consume_dispatch_q(struct rq *rq, struct scx_dispatch_q *dsq)
- 	return false;
- }
- 
--enum dispatch_to_local_dsq_ret {
--	DTL_DISPATCHED,		/* successfully dispatched */
--	DTL_LOST,		/* lost race to dequeue */
--	DTL_INVALID,		/* invalid local dsq_id */
--};
--
- /**
-  * dispatch_to_local_dsq - Dispatch a task to a local dsq
-  * @rq: current rq which is locked
-@@ -2319,9 +2313,8 @@ enum dispatch_to_local_dsq_ret {
-  * The caller must have exclusive ownership of @p (e.g. through
-  * %SCX_OPSS_DISPATCHING).
-  */
--static enum dispatch_to_local_dsq_ret
--dispatch_to_local_dsq(struct rq *rq, struct scx_dispatch_q *dst_dsq,
--		      struct task_struct *p, u64 enq_flags)
-+static void dispatch_to_local_dsq(struct rq *rq, struct scx_dispatch_q *dst_dsq,
-+				  struct task_struct *p, u64 enq_flags)
- {
- 	struct rq *src_rq = task_rq(p);
- 	struct rq *dst_rq = container_of(dst_dsq, struct rq, scx.local_dsq);
-@@ -2334,13 +2327,11 @@ dispatch_to_local_dsq(struct rq *rq, struct scx_dispatch_q *dst_dsq,
- 	 */
- 	if (rq == src_rq && rq == dst_rq) {
- 		dispatch_enqueue(dst_dsq, p, enq_flags | SCX_ENQ_CLEAR_OPSS);
--		return DTL_DISPATCHED;
-+		return;
+@@ -2331,65 +2331,61 @@ static void dispatch_to_local_dsq(struct rq *rq, struct scx_dispatch_q *dst_dsq,
  	}
  
  #ifdef CONFIG_SMP
- 	if (likely(task_can_run_on_remote_rq(p, dst_rq, true))) {
--		bool dsp;
--
- 		/*
- 		 * @p is on a possibly remote @src_rq which we need to lock to
- 		 * move the task. If dequeue is in progress, it'd be locking
-@@ -2365,10 +2356,8 @@ dispatch_to_local_dsq(struct rq *rq, struct scx_dispatch_q *dst_dsq,
- 		}
- 
- 		/* task_rq couldn't have changed if we're still the holding cpu */
--		dsp = p->scx.holding_cpu == raw_smp_processor_id() &&
--			!WARN_ON_ONCE(src_rq != task_rq(p));
--
--		if (likely(dsp)) {
-+		if (likely(p->scx.holding_cpu == raw_smp_processor_id()) &&
-+		    !WARN_ON_ONCE(src_rq != task_rq(p))) {
- 			/*
- 			 * If @p is staying on the same rq, there's no need to
- 			 * go through the full deactivate/activate cycle.
-@@ -2396,11 +2385,11 @@ dispatch_to_local_dsq(struct rq *rq, struct scx_dispatch_q *dst_dsq,
- 			raw_spin_rq_lock(rq);
- 		}
- 
--		return dsp ? DTL_DISPATCHED : DTL_LOST;
+-	if (likely(task_can_run_on_remote_rq(p, dst_rq, true))) {
+-		/*
+-		 * @p is on a possibly remote @src_rq which we need to lock to
+-		 * move the task. If dequeue is in progress, it'd be locking
+-		 * @src_rq and waiting on DISPATCHING, so we can't grab @src_rq
+-		 * lock while holding DISPATCHING.
+-		 *
+-		 * As DISPATCHING guarantees that @p is wholly ours, we can
+-		 * pretend that we're moving from a DSQ and use the same
+-		 * mechanism - mark the task under transfer with holding_cpu,
+-		 * release DISPATCHING and then follow the same protocol. See
+-		 * unlink_dsq_and_lock_src_rq().
+-		 */
+-		p->scx.holding_cpu = raw_smp_processor_id();
++	if (unlikely(!task_can_run_on_remote_rq(p, dst_rq, true))) {
++		dispatch_enqueue(&scx_dsq_global, p, enq_flags | SCX_ENQ_CLEAR_OPSS);
 +		return;
- 	}
- #endif	/* CONFIG_SMP */
++	}
  
--	return DTL_INVALID;
-+	dispatch_enqueue(&scx_dsq_global, p, enq_flags | SCX_ENQ_CLEAR_OPSS);
+-		/* store_release ensures that dequeue sees the above */
+-		atomic_long_set_release(&p->scx.ops_state, SCX_OPSS_NONE);
++	/*
++	 * @p is on a possibly remote @src_rq which we need to lock to move the
++	 * task. If dequeue is in progress, it'd be locking @src_rq and waiting
++	 * on DISPATCHING, so we can't grab @src_rq lock while holding
++	 * DISPATCHING.
++	 *
++	 * As DISPATCHING guarantees that @p is wholly ours, we can pretend that
++	 * we're moving from a DSQ and use the same mechanism - mark the task
++	 * under transfer with holding_cpu, release DISPATCHING and then follow
++	 * the same protocol. See unlink_dsq_and_lock_src_rq().
++	 */
++	p->scx.holding_cpu = raw_smp_processor_id();
+ 
+-		/* switch to @src_rq lock */
+-		if (rq != src_rq) {
+-			raw_spin_rq_unlock(rq);
+-			raw_spin_rq_lock(src_rq);
+-		}
++	/* store_release ensures that dequeue sees the above */
++	atomic_long_set_release(&p->scx.ops_state, SCX_OPSS_NONE);
+ 
+-		/* task_rq couldn't have changed if we're still the holding cpu */
+-		if (likely(p->scx.holding_cpu == raw_smp_processor_id()) &&
+-		    !WARN_ON_ONCE(src_rq != task_rq(p))) {
+-			/*
+-			 * If @p is staying on the same rq, there's no need to
+-			 * go through the full deactivate/activate cycle.
+-			 * Optimize by abbreviating the operations in
+-			 * move_task_to_local_dsq().
+-			 */
+-			if (src_rq == dst_rq) {
+-				p->scx.holding_cpu = -1;
+-				dispatch_enqueue(&dst_rq->scx.local_dsq,
+-						 p, enq_flags);
+-			} else {
+-				move_task_to_local_dsq(p, enq_flags,
+-						       src_rq, dst_rq);
+-			}
++	/* switch to @src_rq lock */
++	if (rq != src_rq) {
++		raw_spin_rq_unlock(rq);
++		raw_spin_rq_lock(src_rq);
++	}
+ 
+-			/* if the destination CPU is idle, wake it up */
+-			if (sched_class_above(p->sched_class,
+-					      dst_rq->curr->sched_class))
+-				resched_curr(dst_rq);
++	/* task_rq couldn't have changed if we're still the holding cpu */
++	if (likely(p->scx.holding_cpu == raw_smp_processor_id()) &&
++	    !WARN_ON_ONCE(src_rq != task_rq(p))) {
++		/*
++		 * If @p is staying on the same rq, there's no need to go
++		 * through the full deactivate/activate cycle. Optimize by
++		 * abbreviating the operations in move_task_to_local_dsq().
++		 */
++		if (src_rq == dst_rq) {
++			p->scx.holding_cpu = -1;
++			dispatch_enqueue(&dst_rq->scx.local_dsq, p, enq_flags);
++		} else {
++			move_task_to_local_dsq(p, enq_flags, src_rq, dst_rq);
+ 		}
+ 
+-		/* switch back to @rq lock */
+-		if (rq != dst_rq) {
+-			raw_spin_rq_unlock(dst_rq);
+-			raw_spin_rq_lock(rq);
+-		}
++		/* if the destination CPU is idle, wake it up */
++		if (sched_class_above(p->sched_class, dst_rq->curr->sched_class))
++			resched_curr(dst_rq);
++	}
+ 
+-		return;
++	/* switch back to @rq lock */
++	if (rq != dst_rq) {
++		raw_spin_rq_unlock(dst_rq);
++		raw_spin_rq_lock(rq);
+ 	}
++#else	/* CONFIG_SMP */
++	BUG();	/* control can not reach here on UP */
+ #endif	/* CONFIG_SMP */
+-
+-	dispatch_enqueue(&scx_dsq_global, p, enq_flags | SCX_ENQ_CLEAR_OPSS);
  }
  
  /**
-@@ -2477,20 +2466,10 @@ static void finish_dispatch(struct rq *rq, struct task_struct *p,
- 
- 	dsq = find_dsq_for_dispatch(this_rq(), dsq_id, p);
- 
--	if (dsq->id == SCX_DSQ_LOCAL) {
--		switch (dispatch_to_local_dsq(rq, dsq, p, enq_flags)) {
--		case DTL_DISPATCHED:
--			break;
--		case DTL_LOST:
--			break;
--		case DTL_INVALID:
--			dispatch_enqueue(&scx_dsq_global, p,
--					 enq_flags | SCX_ENQ_CLEAR_OPSS);
--			break;
--		}
--	} else {
-+	if (dsq->id == SCX_DSQ_LOCAL)
-+		dispatch_to_local_dsq(rq, dsq, p, enq_flags);
-+	else
- 		dispatch_enqueue(dsq, p, enq_flags | SCX_ENQ_CLEAR_OPSS);
--	}
- }
- 
- static void flush_dispatch_buf(struct rq *rq)
 -- 
 2.46.0
 
