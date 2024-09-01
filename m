@@ -1,59 +1,65 @@
-Return-Path: <linux-kernel+bounces-310232-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310233-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E07AE967693
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 15:23:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE947967695
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 15:23:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C3AF8B213B3
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 13:23:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 740CB1F21B27
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 13:23:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C844617C211;
-	Sun,  1 Sep 2024 13:22:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F67217E003;
+	Sun,  1 Sep 2024 13:23:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="VQ5I9I7H"
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="WDthme+O"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6620142E70;
-	Sun,  1 Sep 2024 13:22:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD3D4143895;
+	Sun,  1 Sep 2024 13:23:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725196975; cv=none; b=S2Y01Sh24QxmSI92uX7QfC7cQyDVvfAgjl3Co+IUfr5fTL5/N0pgVnYf85lyJ6yJwoJrqYUSh6w0V3C5JQSZ0Gr2ZZuxV/QBL1iTeS69v+eoOrUgbn2eScOr2YOuwgm7IqW+hiytNZhBbPZk/arthJG/n6W31AuRhAbZJkmMK2s=
+	t=1725197025; cv=none; b=OJQx2wr8/I+48P2+zFNl52KkQOmHyL6AZvIGdDTQQTdqvuar+2RC9tDrV/933MEqVlKQjsO1Yd3oZWX+fRNlwV87GVraVUNc6b7Ph1ftiXn0A+qvRpu1cyZeSCkbV8jrvVWOJmwlNTbyPXuqrMyCbdfwEZu7bfUGhwL8QVqAZoM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725196975; c=relaxed/simple;
-	bh=P66z1AKz07BZpb9PPY6FDagQy0tDy/sPP0zrIgaimkY=;
+	s=arc-20240116; t=1725197025; c=relaxed/simple;
+	bh=8vCGBwnBjc1xHPlc4gNnZpQ9DR1c/49T2LeD4HXaKBc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nOnNuK/WLLI06QLXfHBeFBJdv5HBdxZLu5K9hhuNV/wr2zQTndyg/4WbGnIwPdq3IP5c2fHV1YrKVaGLBMdE8IJH060FJI62+4FwQ7a5PeBVIC/h/fRYshuh3rB/dAGbjFhCVNH3bhk9QeHvEOvGzCxjUPdzn+wJvJ7GuRjWYJI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=VQ5I9I7H; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57933C4CEC3;
-	Sun,  1 Sep 2024 13:22:54 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=fErzANjcVhyxnqhRdgLjjfBB4XlEhGVRKXPEU5LeC4GBoZDSFwwoXZhVyqwNxuCmDon+GssoZ/6ZEg8PPMoZMrlHbkhBbc/CM/XxtCZYK+qHzolVlVT6c19qhstZX+S9BaQj2JFnlHGOcbtdS8xx+lecHljE6vEKTeDKaJ76SrE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=WDthme+O; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 67BECC4CEC3;
+	Sun,  1 Sep 2024 13:23:44 +0000 (UTC)
 Authentication-Results: smtp.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="VQ5I9I7H"
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="WDthme+O"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
-	t=1725196972;
+	t=1725197022;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=VqKtcG/RJHcMiIL0KDs+hlkRdgwkVujibwSSpwSa+yg=;
-	b=VQ5I9I7HIzUdnuQu4Ma+VDY5odRoSHVyACebhPldB473cJrewRJvEdsa1XxWR32SOgX9fq
-	5Y/EH2RZxFq4ZzsGICZ/Ca0YvdwQkm3fWGpuFWh7pc3VW5AxfnInKDNj5QP/zcgeMtrlj3
-	quwuDWMSVvH4mcG0FVyI+//XKMIoX3I=
+	bh=EGyZJQR060VSnwrNk7XiShFR1gPfOwXZ9cHqOSx6lPs=;
+	b=WDthme+ORw/f5s94kpaO7bXjM/rsireYwa5oFT5YsVdJC25Bl+WLIJmLtvL711KuNynve6
+	SVLbCxF89ajAFoLeROjfFKrk9L1QN7nTesDe5DNAo62uKnx2UJFjoMWK7KA4Rx4tKhfi0u
+	JtQDIiBjbWK8E30Vf9rUyIUbFlcvbO8=
 Received: 
-	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id d75b9e0b (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
-	Sun, 1 Sep 2024 13:22:50 +0000 (UTC)
-Date: Sun, 1 Sep 2024 15:22:47 +0200
+	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 60b4ee00 (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
+	Sun, 1 Sep 2024 13:23:42 +0000 (UTC)
+Date: Sun, 1 Sep 2024 15:23:39 +0200
 From: "Jason A. Donenfeld" <Jason@zx2c4.com>
-To: Christophe Leroy <christophe.leroy@csgroup.eu>
-Cc: linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	Adhemerval Zanella <adhemerval.zanella@linaro.org>,
-	Xi Ruoyao <xry111@xry111.site>, broonie@kernel.org
-Subject: Re: [PATCH] selftests: vDSO: Do not rely on $ARCH for
- vdso_test_getrandom && vdso_test_chacha
-Message-ID: <ZtRqp-uZe5C07qOF@zx2c4.com>
-References: <ddf594c81787dba708fc392cb03027470dee64fb.1725124064.git.christophe.leroy@csgroup.eu>
+To: Huacai Chen <chenhuacai@kernel.org>
+Cc: Xi Ruoyao <xry111@xry111.site>, WANG Xuerui <kernel@xen0n.name>,
+	linux-crypto@vger.kernel.org, loongarch@lists.linux.dev,
+	linux-kernel@vger.kernel.org, Jinyang He <hejinyang@loongson.cn>,
+	Tiezhu Yang <yangtiezhu@loongson.cn>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH v6 1/3] arch: vDSO: Add a __vdso_getrandom prototype for
+ all architectures
+Message-ID: <ZtRq22l9ZLIKP5cf@zx2c4.com>
+References: <20240901061315.15693-1-xry111@xry111.site>
+ <20240901061315.15693-2-xry111@xry111.site>
+ <CAAhV-H4nE3s7e=ouh04VH=yY2iR+ofuEkv8p=2cChJi=jw=pMw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,90 +68,51 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <ddf594c81787dba708fc392cb03027470dee64fb.1725124064.git.christophe.leroy@csgroup.eu>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAAhV-H4nE3s7e=ouh04VH=yY2iR+ofuEkv8p=2cChJi=jw=pMw@mail.gmail.com>
 
-Hi Christophe,
+On Sun, Sep 01, 2024 at 04:44:40PM +0800, Huacai Chen wrote:
+> Hi, Ruoyao,
+> 
+> On Sun, Sep 1, 2024 at 2:13 PM Xi Ruoyao <xry111@xry111.site> wrote:
+> >
+> > Without a prototype, we'll have to add a prototype for each architecture
+> > implementing vDSO getrandom.  As most architectures will likely have the
+> > vDSO getrandom implemented in a near future, and we'd like to keep the
+> > declarations compatible everywhere (to ease the Glibc work), we should
+> > really just have one copy of the prototype.
+> >
+> > Suggested-by: Huacai Chen <chenhuacai@kernel.org>
+> > Signed-off-by: Xi Ruoyao <xry111@xry111.site>
+> > ---
+> >  arch/x86/entry/vdso/vgetrandom.c | 2 --
+> >  include/vdso/getrandom.h         | 5 +++++
+> >  2 files changed, 5 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/arch/x86/entry/vdso/vgetrandom.c b/arch/x86/entry/vdso/vgetrandom.c
+> > index 52d3c7faae2e..430862b8977c 100644
+> > --- a/arch/x86/entry/vdso/vgetrandom.c
+> > +++ b/arch/x86/entry/vdso/vgetrandom.c
+> > @@ -6,8 +6,6 @@
+> >
+> >  #include "../../../../lib/vdso/getrandom.c"
+> >
+> > -ssize_t __vdso_getrandom(void *buffer, size_t len, unsigned int flags, void *opaque_state, size_t opaque_len);
+> > -
+> >  ssize_t __vdso_getrandom(void *buffer, size_t len, unsigned int flags, void *opaque_state, size_t opaque_len)
+> >  {
+> >         return __cvdso_getrandom(buffer, len, flags, opaque_state, opaque_len);
+> > diff --git a/include/vdso/getrandom.h b/include/vdso/getrandom.h
+> > index 4cf02e678f5e..08b47b002bf7 100644
+> > --- a/include/vdso/getrandom.h
+> > +++ b/include/vdso/getrandom.h
+> > @@ -56,4 +56,9 @@ struct vgetrandom_state {
+> >   */
+> >  extern void __arch_chacha20_blocks_nostack(u8 *dst_bytes, const u32 *key, u32 *counter, size_t nblocks);
+> >
+> > +/**
+> Though in this file there are already comments beginning with /**, but
+> it seems the kernel's code style suggests beginning with /*.
 
-Hmm, I'm not so sure I like this very much. I think it's important for
-these tests to fail when an arch tries to hook up the function to the
-vDSO, but it's still not exported for some reason. This also regresses
-the ARCH=x86_64 vs ARCH=x86 thing, which SRCARCH fixes.
-
-What about, instead, something like below, replacing the other commit?
-
-Jason
-
-From ccc53425c98f4f5c2a1edaf775089efb56bd106e Mon Sep 17 00:00:00 2001
-From: "Jason A. Donenfeld" <Jason@zx2c4.com>
-Date: Sun, 1 Sep 2024 15:05:01 +0200
-Subject: [PATCH] selftests: vDSO: fix cross build for getrandom and chacha
- tests
-
-Unlike the check for the standalone x86 test, the check for building the
-vDSO getrandom and chacaha tests looks at the architecture for the host
-rather than the architecture for the target when deciding if they should
-be built. Since the chacha test includes some assembler code this means
-that cross building with x86 as either the target or host is broken.
-
-There's also some additional complications, where ARCH can legitimately
-be either x86_64 or x86, but the source code we need to compile lives in
-a directory path containing arch/x86. The standard SRCARCH variable
-handles that. And actually, all these variables and proper substitutions
-are already described in tools/scripts/Makefile.arch, so just include
-that to handle it.
-
-Similarly, ARCH=x86 can actually describe ARCH=x86_64,
-just with CONFIG_64BIT, so we can't rely on ARCH for selecting
-non-32-bit tests. For that, check against $(ARCH)$(CONFIG_X86_32). This
-won't help for people manually running this inside the vDSO selftest
-directory (which isn't really supported anyway and has problems on
-various archs), but it should work for builds of the kselftests, where
-the CONFIG_* variables are defined. On x86_64 machines,
-$(ARCH)$(CONFIG_X86_32) will evaluate to x86. On arm64 machines, it will
-evaluate to arm64. On 32-bit x86 machines, it will evaluate to x86y,
-which won't match the filter list.
-
-Reported-by: Mark Brown <broonie@kernel.org>
-Reported-by: Christophe Leroy <christophe.leroy@csgroup.eu>
-Signed-off-by: Jason A. Donenfeld <Jason@zx2c4.com>
----
- tools/testing/selftests/vDSO/Makefile | 9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
-
-diff --git a/tools/testing/selftests/vDSO/Makefile b/tools/testing/selftests/vDSO/Makefile
-index e21e78aae24d..01a5805062b3 100644
---- a/tools/testing/selftests/vDSO/Makefile
-+++ b/tools/testing/selftests/vDSO/Makefile
-@@ -1,6 +1,5 @@
- # SPDX-License-Identifier: GPL-2.0
--uname_M := $(shell uname -m 2>/dev/null || echo not)
--ARCH ?= $(shell echo $(uname_M) | sed -e s/i.86/x86/ -e s/x86_64/x86/)
-+include ../../../scripts/Makefile.arch
-
- TEST_GEN_PROGS := vdso_test_gettimeofday
- TEST_GEN_PROGS += vdso_test_getcpu
-@@ -10,7 +9,7 @@ ifeq ($(ARCH),$(filter $(ARCH),x86 x86_64))
- TEST_GEN_PROGS += vdso_standalone_test_x86
- endif
- TEST_GEN_PROGS += vdso_test_correctness
--ifeq ($(uname_M),x86_64)
-+ifeq ($(ARCH)$(CONFIG_X86_32),$(filter $(ARCH)$(CONFIG_X86_32),x86))
- TEST_GEN_PROGS += vdso_test_getrandom
- TEST_GEN_PROGS += vdso_test_chacha
- endif
-@@ -38,8 +37,8 @@ $(OUTPUT)/vdso_test_getrandom: CFLAGS += -isystem $(top_srcdir)/tools/include \
-                                          $(KHDR_INCLUDES) \
-                                          -isystem $(top_srcdir)/include/uapi
-
--$(OUTPUT)/vdso_test_chacha: $(top_srcdir)/tools/arch/$(ARCH)/vdso/vgetrandom-chacha.S
-+$(OUTPUT)/vdso_test_chacha: $(top_srcdir)/tools/arch/$(SRCARCH)/vdso/vgetrandom-chacha.S
- $(OUTPUT)/vdso_test_chacha: CFLAGS += -idirafter $(top_srcdir)/tools/include \
--                                      -idirafter $(top_srcdir)/arch/$(ARCH)/include \
-+                                      -idirafter $(top_srcdir)/arch/$(SRCARCH)/include \
-                                       -idirafter $(top_srcdir)/include \
-                                       -D__ASSEMBLY__ -Wa,--noexecstack
---
-2.46.0
-
-
+/** is for docbook comments.
 
