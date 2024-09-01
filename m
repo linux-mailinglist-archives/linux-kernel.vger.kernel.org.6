@@ -1,173 +1,154 @@
-Return-Path: <linux-kernel+bounces-310055-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310056-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48D30967433
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 04:28:39 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F436967435
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 04:39:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BCCE81F21E46
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 02:28:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2A11EB21C2C
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 02:39:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4D7726AEA;
-	Sun,  1 Sep 2024 02:28:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F6C62837D;
+	Sun,  1 Sep 2024 02:39:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lixmEOF2"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hHpRsnaY"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67CFC1DFF8
-	for <linux-kernel@vger.kernel.org>; Sun,  1 Sep 2024 02:28:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1ACD3C0C;
+	Sun,  1 Sep 2024 02:39:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725157713; cv=none; b=ngqQWDfpez51gY4VerK4/Dw6m8DJp5Jc4QuTpD+34+xXXOcMRgt3IhqlOaPXPpzM9FoPuoCR7RJ7N311KkxPpvlVP06fDg3LpcHTYdkQpFQ/l36cLLqrhM4/kFA0IMT669OvkNptTABmjYuLZZi6lZArx/5w6dG2MiINQO8/Gig=
+	t=1725158366; cv=none; b=Zi94JYC6sC4NU7mOjZHfvW/Ffc/xSuSd/NDDcgEC20m7WlaAVxHs5wyWRmcd3BEW7Id5jIsFjeI3UnvUFakd6llk5oCOMpxJYXI71NhV6HTgWXAP75JLFv0OzkiouvJv5TaXgIsLQzB57mJy6f64WlhVFvIK2+oPfS7Gqi2ATg8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725157713; c=relaxed/simple;
-	bh=RLY9vgtFSSAnUSgXvZyFKQwN2JCSEdXEsD6XtAtQBHQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ggleuRCVor7MO5Ou6K92zZ86LA+el0anXQ78y/G+hHewvBGOt3a0keFp7ZUf4aRqA5C8sncil+Lci2cyAxU/SG3kpmjNMm8apxDLAGQppW/hTdKMotdQ6y0P3FbQjPAzhiOHqrdblJkmIpLpwjilo2qC11IzPD5XoCvjkMXdkFg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lixmEOF2; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1725158366; c=relaxed/simple;
+	bh=ljvgU3al89OxEVEIUqvIWyRhZNDvLLNUvd8ePVYiWME=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=u09vuOBiggwTc/6SPRShOs0JL1jHJXEXP1AtVSVc9XY2XXuG0STo9evAgns58l6FnTOCr/NTuSblidHVxOoQM7HnFuSDGsxTQfcTvz3SxZ1zt9GsGGyTDlRNtMfzNjNbh4RDlNMeb3vYRn5/6B899xeqRgdya8HcajxzCI8bp28=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hHpRsnaY; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725157710; x=1756693710;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=RLY9vgtFSSAnUSgXvZyFKQwN2JCSEdXEsD6XtAtQBHQ=;
-  b=lixmEOF2eOJNPQHs9Ss+fmosT9PcEPsTrrTr+OQfhQDWHrysVrqdQM76
-   cjosVoiJBQzOFFLT0UJlJHVH4Ly42jiyEOY8I/haDbBeLFfGZJv033pMF
-   XQN7kpGtzp4duJte4UzebL9n8vMAcaYcvsgI7jVIE0Lab9fpjf/3mkLiV
-   nwKAZC0CALgElE2E7ZgPvYLqMjiumRX23kC0lDoowH3LM/0i39yDIYlHA
-   Izi5w0ottgJ1F/uiR+yggGF+kd5/9UTsAjD4d61Jc6DHzyyVWC9HxFrek
-   Ro2bEC7xLYO/+t5qYgF2AWCPU3czuIXuzJzwcxkjNB3xjvm+rHr5ehZ2y
+  t=1725158365; x=1756694365;
+  h=message-id:date:mime-version:cc:subject:to:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=ljvgU3al89OxEVEIUqvIWyRhZNDvLLNUvd8ePVYiWME=;
+  b=hHpRsnaYCCmDUpV7Fu4pKFDdAKUWaoTfRVUjVjCN2K/shsbMNUg4+GXy
+   sWiPekyyuoN7Z+zoJRENaOadTF3an4SxQnC/XBjoi0MXqEhjtpp9bMnJX
+   W2JIebXV25EDn/d3Ax10NPO4CUWrn16NA9sgqwYzYD6iN82j5xbW7qeMu
+   t6P2H46dScxqaKELGVxBpdsIzir7OMUPioQWUOjw52tju0QIZzYO4ww78
+   m7NJSmSeAFqONIoQED3jWMlCcvWZZqR7q8SBltwkjBAi/ArkGG8pm+MCR
+   qhlPw8wu8UXbypJk3WAyOP7qRr4FPsr+E83TONDXfjQ8xYtzrfmosCjgt
    Q==;
-X-CSE-ConnectionGUID: lKV3onUVQWufwkSqBkO8QQ==
-X-CSE-MsgGUID: 16GfRk08S1GYncgpm9FnLA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11181"; a="23574862"
+X-CSE-ConnectionGUID: 2c4DltLeSkCpZGy+VeSL/w==
+X-CSE-MsgGUID: CSKAzyhbRHOw82RkBkUz0g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11181"; a="41262805"
 X-IronPort-AV: E=Sophos;i="6.10,193,1719903600"; 
-   d="scan'208";a="23574862"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Aug 2024 19:28:29 -0700
-X-CSE-ConnectionGUID: RChm/ESJSJKZdhlxhHKlAA==
-X-CSE-MsgGUID: Jwh5GKJKQty6aQKz3qbSyA==
+   d="scan'208";a="41262805"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Aug 2024 19:39:24 -0700
+X-CSE-ConnectionGUID: 7wSriv9+TWiJh/xQdZiVmg==
+X-CSE-MsgGUID: Wof8a319TkuK6wiSPuTG1w==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.10,193,1719903600"; 
-   d="scan'208";a="64296260"
-Received: from lkp-server01.sh.intel.com (HELO 9c6b1c7d3b50) ([10.239.97.150])
-  by fmviesa009.fm.intel.com with ESMTP; 31 Aug 2024 19:28:26 -0700
-Received: from kbuild by 9c6b1c7d3b50 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1skaKG-0003Hi-10;
-	Sun, 01 Sep 2024 02:28:24 +0000
-Date: Sun, 1 Sep 2024 10:28:14 +0800
-From: kernel test robot <lkp@intel.com>
-To: Umang Jain <umang.jain@ideasonboard.com>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: oe-kbuild-all@lists.linux.dev, linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Kieran Bingham <kieran.bingham@ideasonboard.com>,
-	Arnd Bergmann <arnd@arndb.de>, Stefan Wahren <wahrenst@gmx.net>,
-	Dave Stevenson <dave.stevenson@raspberrypi.com>,
-	Phil Elwell <phil@raspberrypi.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Umang Jain <umang.jain@ideasonboard.com>
-Subject: Re: [PATCH v2 1/7] staging: vchiq: Factor out bulk transfer for
- VCHIQ_BULK_MODE_WAITING
-Message-ID: <202409011052.hHoEnTUy-lkp@intel.com>
-References: <20240831162435.191084-2-umang.jain@ideasonboard.com>
+   d="scan'208";a="64264177"
+Received: from blu2-mobl.ccr.corp.intel.com (HELO [10.125.248.220]) ([10.125.248.220])
+  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Aug 2024 19:39:19 -0700
+Message-ID: <55918c41-65c4-435c-860b-b2a177b0d364@linux.intel.com>
+Date: Sun, 1 Sep 2024 10:39:17 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240831162435.191084-2-umang.jain@ideasonboard.com>
+User-Agent: Mozilla Thunderbird
+Cc: baolu.lu@linux.intel.com, joro@8bytes.org, suravee.suthikulpanit@amd.com,
+ robin.murphy@arm.com, dwmw2@infradead.org, shuah@kernel.org,
+ linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, linux-kselftest@vger.kernel.org,
+ eric.auger@redhat.com, jean-philippe@linaro.org, mdf@kernel.org,
+ mshavit@google.com, shameerali.kolothum.thodi@huawei.com,
+ smostafa@google.com, yi.l.liu@intel.com
+Subject: Re: [PATCH v2 02/19] iommufd/viommu: Add IOMMUFD_OBJ_VIOMMU and
+ IOMMU_VIOMMU_ALLOC ioctl
+To: Nicolin Chen <nicolinc@nvidia.com>, jgg@nvidia.com, kevin.tian@intel.com,
+ will@kernel.org
+References: <cover.1724776335.git.nicolinc@nvidia.com>
+ <c6ac7dc5031e96abb4634db504a0bf4a0c82ca66.1724776335.git.nicolinc@nvidia.com>
+Content-Language: en-US
+From: Baolu Lu <baolu.lu@linux.intel.com>
+In-Reply-To: <c6ac7dc5031e96abb4634db504a0bf4a0c82ca66.1724776335.git.nicolinc@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Umang,
+On 2024/8/28 0:59, Nicolin Chen wrote:
+> +int iommufd_viommu_alloc_ioctl(struct iommufd_ucmd *ucmd)
+> +{
+> +	struct iommu_viommu_alloc *cmd = ucmd->cmd;
+> +	struct iommufd_hwpt_paging *hwpt_paging;
+> +	struct iommufd_viommu *viommu;
+> +	struct iommufd_device *idev;
+> +	int rc;
+> +
+> +	if (cmd->flags)
+> +		return -EOPNOTSUPP;
+> +
+> +	idev = iommufd_get_device(ucmd, cmd->dev_id);
 
-kernel test robot noticed the following build warnings:
+Why does a device reference count is needed here? When is this reference
+count released after the VIOMMU is allocated?
 
-[auto build test WARNING on staging/staging-testing]
+> +	if (IS_ERR(idev))
+> +		return PTR_ERR(idev);
+> +
+> +	hwpt_paging = iommufd_get_hwpt_paging(ucmd, cmd->hwpt_id);
+> +	if (IS_ERR(hwpt_paging)) {
+> +		rc = PTR_ERR(hwpt_paging);
+> +		goto out_put_idev;
+> +	}
+> +
+> +	if (!hwpt_paging->nest_parent) {
+> +		rc = -EINVAL;
+> +		goto out_put_hwpt;
+> +	}
+> +
+> +	if (cmd->type != IOMMU_VIOMMU_TYPE_DEFAULT) {
+> +		rc = -EOPNOTSUPP;
+> +		goto out_put_hwpt;
+> +	}
+> +
+> +	viommu = iommufd_object_alloc(ucmd->ictx, viommu, IOMMUFD_OBJ_VIOMMU);
+> +	if (IS_ERR(viommu)) {
+> +		rc = PTR_ERR(viommu);
+> +		goto out_put_hwpt;
+> +	}
+> +
+> +	viommu->type = cmd->type;
+> +	viommu->ictx = ucmd->ictx;
+> +	viommu->hwpt = hwpt_paging;
+> +
+> +	refcount_inc(&viommu->hwpt->common.obj.users);
+> +
+> +	cmd->out_viommu_id = viommu->obj.id;
+> +	rc = iommufd_ucmd_respond(ucmd, sizeof(*cmd));
+> +	if (rc)
+> +		goto out_abort;
+> +	iommufd_object_finalize(ucmd->ictx, &viommu->obj);
+> +	goto out_put_hwpt;
+> +
+> +out_abort:
+> +	iommufd_object_abort_and_destroy(ucmd->ictx, &viommu->obj);
+> +out_put_hwpt:
+> +	iommufd_put_object(ucmd->ictx, &hwpt_paging->common.obj);
+> +out_put_idev:
+> +	iommufd_put_object(ucmd->ictx, &idev->obj);
+> +	return rc;
+> +}
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Umang-Jain/staging-vchiq-Factor-out-bulk-transfer-for-VCHIQ_BULK_MODE_WAITING/20240901-002839
-base:   staging/staging-testing
-patch link:    https://lore.kernel.org/r/20240831162435.191084-2-umang.jain%40ideasonboard.com
-patch subject: [PATCH v2 1/7] staging: vchiq: Factor out bulk transfer for VCHIQ_BULK_MODE_WAITING
-config: i386-buildonly-randconfig-001-20240901 (https://download.01.org/0day-ci/archive/20240901/202409011052.hHoEnTUy-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240901/202409011052.hHoEnTUy-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202409011052.hHoEnTUy-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
-   drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c: In function 'vchiq_bulk_xfer_waiting_interruptible':
->> drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c:3152:28: warning: variable 'bulk' set but not used [-Wunused-but-set-variable]
-    3152 |         struct vchiq_bulk *bulk;
-         |                            ^~~~
-
-
-vim +/bulk +3152 drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c
-
-  3140	
-  3141	/*
-  3142	 * This function is called by VCHIQ ioctl interface and is interruptible.
-  3143	 * It may receive -EAGAIN to indicate that a signal has been received
-  3144	 * and the call should be retried after being returned to user context.
-  3145	 */
-  3146	int
-  3147	vchiq_bulk_xfer_waiting_interruptible(struct vchiq_instance *instance,
-  3148					      unsigned int handle, struct bulk_waiter *userdata)
-  3149	{
-  3150		struct vchiq_service *service = find_service_by_handle(instance, handle);
-  3151		struct bulk_waiter *bulk_waiter;
-> 3152		struct vchiq_bulk *bulk;
-  3153		int status = -EINVAL;
-  3154	
-  3155		if (!service)
-  3156			goto error_exit;
-  3157	
-  3158		if (!userdata)
-  3159			goto error_exit;
-  3160	
-  3161		if (service->srvstate != VCHIQ_SRVSTATE_OPEN)
-  3162			goto error_exit;
-  3163	
-  3164		if (vchiq_check_service(service))
-  3165			goto error_exit;
-  3166	
-  3167		bulk_waiter = userdata;
-  3168		bulk = bulk_waiter->bulk;
-  3169	
-  3170		vchiq_service_put(service);
-  3171	
-  3172		status = 0;
-  3173	
-  3174		if (wait_for_completion_interruptible(&bulk_waiter->event))
-  3175			return -EAGAIN;
-  3176		else if (bulk_waiter->actual == VCHIQ_BULK_ACTUAL_ABORTED)
-  3177			return -EINVAL;
-  3178	
-  3179		return status;
-  3180	
-  3181	error_exit:
-  3182		if (service)
-  3183			vchiq_service_put(service);
-  3184		return status;
-  3185	}
-  3186	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Thanks,
+baolu
 
