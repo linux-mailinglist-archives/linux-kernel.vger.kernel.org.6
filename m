@@ -1,170 +1,138 @@
-Return-Path: <linux-kernel+bounces-310343-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310344-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72116967B9C
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 20:01:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E7B3967B9F
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 20:01:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27F50281ED7
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 18:01:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 50AA8B217C3
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 18:01:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBB44183CC1;
-	Sun,  1 Sep 2024 18:01:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=layalina-io.20230601.gappssmtp.com header.i=@layalina-io.20230601.gappssmtp.com header.b="C5a7o7RK"
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E912B18452E;
+	Sun,  1 Sep 2024 18:01:42 +0000 (UTC)
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 852DE433CE
-	for <linux-kernel@vger.kernel.org>; Sun,  1 Sep 2024 18:01:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17E7353E15;
+	Sun,  1 Sep 2024 18:01:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725213675; cv=none; b=jAxTQgoq/hIIYzpghK2DagV5brCTMMldY9WC0GpyDEwwqthguRE7xTCFtOGQEuSQjZJywqn0/IWL9JqCsCGqLG4wNRIqC1l/i2y5+T4rQuq6P6BTODK2p/IU5nETEvBFZEeZSC7Ze9tXH0G2tfTGX1SUEjy4MK5Lztd8un4/ECA=
+	t=1725213702; cv=none; b=artRdSVRNNM6RYgSCsEfqXx+SghwngafV2GnewVKF00t4XVce+llG7fM60nRpaZrrWxdebm9NI8ustseYzlGuP2LdknVxrHchCJu3+PkAwP+vlK9DRtZGsNSjiAphCp+2z6p2EnlRYu+Fer7RS6f3Mtip1XhVKUJKhpiqsEabCE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725213675; c=relaxed/simple;
-	bh=oEo8ZMYGVwRLV4zPkeTF7nlpuqkAvjIleDFWxbKsMw4=;
+	s=arc-20240116; t=1725213702; c=relaxed/simple;
+	bh=os9In1glNB/P+9xSeD0ffIpoZPFCua1VhAJK02vFRAU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=er2x6GlY5chC/WBi0lO/hXbqpNszXzTGhzfkzYi7vry9b7yxJfSCoku2GZWndcdR4hQ4IsyNMOoWORB/P1SpKTY7SzCbmH1jUGiz6W0k2NDraZKfmGzuKGl4k48fwbff9ha2Xf27Dt1tyGPjemh+SeOw6KiNyQrfjv4iwTA01o8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=layalina.io; spf=pass smtp.mailfrom=layalina.io; dkim=pass (2048-bit key) header.d=layalina-io.20230601.gappssmtp.com header.i=@layalina-io.20230601.gappssmtp.com header.b=C5a7o7RK; arc=none smtp.client-ip=209.85.208.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=layalina.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=layalina.io
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5c0a9f2b967so3282953a12.2
-        for <linux-kernel@vger.kernel.org>; Sun, 01 Sep 2024 11:01:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=layalina-io.20230601.gappssmtp.com; s=20230601; t=1725213672; x=1725818472; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=mkg7uL0slKF2tnvKNsdIOWdMQ5c3Le9QMStE2DbR0pc=;
-        b=C5a7o7RKEzVQmVntbFDu9WNiIxbaMYdFYg7ERH345x9NMubaf/ExvOdUUMcmlvBKJh
-         Z1ncMAr3pwrQic6nGYtOoJnR8OluA3I0M3WoVO2Ahc2pvVNYwNmEt/99+0hYCFmCMDeZ
-         FfcPe2FYbhbaKQaIeWn1wXP5E8rH5lkgJamgwqhpn4F+QG8uzZPXTQmXLh4Rpw6V3Pir
-         kePL8CKk3zZWlwodT/OTG4JrqZ4v2p8uxb7CC90otd+DPHIoUSpAEyksCvPtrhmxp6Ul
-         CtUPsgi73DgsqJQdh7xzvUSSRa+yApP9GnWL+DOQr+XcZFHE01in+5yGEf2FD3t9AnMr
-         ZbjQ==
+	 Content-Type:Content-Disposition:In-Reply-To; b=s893ALha1ndr5ieDgMxfK1XWjBu6kGlODC1EwQiymu7BU2Q+/+Jnr4JPIJWiBBVD1FZbh+v8pVsuSaHIK7doo6Aw29IOF+ePoAKQSkB1DTZnrePEE4iI6d0jVtCj8wEU0ggJXRMDuZR1SsdNEHK96EV3kfzSixfME7MmGs+cRo8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-70cec4aa1e4so2507496b3a.1;
+        Sun, 01 Sep 2024 11:01:40 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725213672; x=1725818472;
+        d=1e100.net; s=20230601; t=1725213700; x=1725818500;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=mkg7uL0slKF2tnvKNsdIOWdMQ5c3Le9QMStE2DbR0pc=;
-        b=YJtgERBRE9VPrqE2TfnpT1/m/wrtuX6A6b1DH2g1MULylVYOwGJS9+OlzCz7nphTNT
-         A+6m9jAR48kUTNbbGGj4i6zBXl2vfIGNxOcaqIvGeGHe5yAKwLADJBOE83bBq07CEQum
-         bw0te4qLXP01+qJnB/w+He6Lkjyd6qbOKXLAOihO/j7OUZ2fbRH/dG/pojgWz9n4gBFl
-         417m/SpBEZV+Ah5uzY8VksoTMj9mrbd9o4GZyFKqEbj5j5HSo7w4VlcbtEZ9qsmrYXu4
-         pejPIXBcA/plaTFOKbzBhvH3n4uuUxetjDZ1Qwj/bjm+eBZ/OLHU9zcXCffkX3jFIt6p
-         czZA==
-X-Forwarded-Encrypted: i=1; AJvYcCVN8w/PP1/4acVU06HSqWQ87oH/1rcBny/v8MQTksbMtKWJVFUZokKg2f7bjO7l6ySJ130oRoHDxgZ4LUs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yymf564bF9Qe5Dhex2ZaW/3aWEu8KNHR4usa4tATrgVKlILGKpq
-	9kDPvWzdc1ZZp3PPcyTQ5UVq578Qtj4sNc6pnNalcFC4mjlLgr/arH5d5XEZ27I=
-X-Google-Smtp-Source: AGHT+IGT5AyPhsmzSXVOxiitmS907DPKxIB7vmU+zeTaBmXmrVB48INX2SRDNaz9lLzb0C0ONDQnKA==
-X-Received: by 2002:a05:6402:449a:b0:5be:e01c:6b5e with SMTP id 4fb4d7f45d1cf-5c243781e24mr2819633a12.35.1725213671783;
-        Sun, 01 Sep 2024 11:01:11 -0700 (PDT)
-Received: from airbuntu ([176.29.222.46])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c226c6a3easm4320678a12.6.2024.09.01.11.01.09
+        bh=9LHo1+4k3NBJ7PCwXyW4mL26iu3+Ez8AQmnlT23bjP4=;
+        b=Lf499MfPDLBXZtveZdCObfR8Bl8EcI95egov5yX8ExYE5bWLkOIz+LrO6IVFxRSZIz
+         u8i/4BVHZDPFMH/3F4NkHVkwKcLBBBBcKSHBOb/zT5K4LNdrAALB5E14PMQ0og1pHDUc
+         HVgCQUC2qxBzzpz2v5UWLpVUAM9GaKXVCHrISnPTd5E0Jde3VtDH4zDbdX7ThW3pHS9p
+         rCbgnGX2ZdrM+4TWAO+V+rrZCx6QEWOUZ2iNGmulRqmtp07dVlxHiqxg5ALXr0Jatqaj
+         dD8ABBYSPNXTRA/dV7nI5ZgpJdZQ8cAM7WAoL5Pagg2/xNWvHmxcBHUAa7AcxQoWdVt7
+         ATgw==
+X-Forwarded-Encrypted: i=1; AJvYcCUQlV8WMjeQynyYdIJNczCCvdMMqyE+QQaO/MqjQKGJhZm2w1yN48RsWhteC6v3HJrZYg+W9djVDXRwDua1@vger.kernel.org, AJvYcCWFGPYZiXREzh+cVORs7ZiKRb7qoYO9RBegLmAQhbZ+9Hfy+tOzXp3Mf2HGjA9KqPyg3YhHq5x1KbAf@vger.kernel.org
+X-Gm-Message-State: AOJu0YxA7M1qpOaraRwujnV4xOnIKfDo5ZudlYqJbzYDmbZAWtcXUZKu
+	nNrheecsCQhlRBqCdXz2yhRES86UVZYU7GSMRXRtXuktI1u43NQI
+X-Google-Smtp-Source: AGHT+IGKXFiHiHFuq5Nrfq/udJ+nSSmcM0g1xxOmMhM3h3XB5KLleGfrMtC+PPBWStrAgysC0fZKxw==
+X-Received: by 2002:a05:6a21:e8c:b0:1ce:d125:f8ef with SMTP id adf61e73a8af0-1ced125fa1dmr5578883637.51.1725213700033;
+        Sun, 01 Sep 2024 11:01:40 -0700 (PDT)
+Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-715e5749b51sm5585952b3a.184.2024.09.01.11.01.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 01 Sep 2024 11:01:11 -0700 (PDT)
-Date: Sun, 1 Sep 2024 19:01:09 +0100
-From: Qais Yousef <qyousef@layalina.io>
-To: Vincent Guittot <vincent.guittot@linaro.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Ingo Molnar <mingo@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Christian Loehle <christian.loehle@arm.com>,
-	Hongyan Xia <hongyan.xia2@arm.com>,
-	John Stultz <jstultz@google.com>, linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v7] sched: Consolidate cpufreq updates
-Message-ID: <20240901180109.bqcgujqpdjsult5i@airbuntu>
-References: <20240728184551.42133-1-qyousef@layalina.io>
- <CAKfTPtBxFTxZQT=w6iexLEciHD736+ubLOd_PJnvXge09h-rXw@mail.gmail.com>
+        Sun, 01 Sep 2024 11:01:39 -0700 (PDT)
+Date: Mon, 2 Sep 2024 03:01:37 +0900
+From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
+To: Jim Quinlan <james.quinlan@broadcom.com>
+Cc: linux-pci@vger.kernel.org, Nicolas Saenz Julienne <nsaenz@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+	Cyril Brulebois <kibi@debian.org>,
+	Stanimir Varbanov <svarbanov@suse.de>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	bcm-kernel-feedback-list@broadcom.com, jim2101024@gmail.com,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>,
+	open list <linux-kernel@vger.kernel.org>,
+	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-rpi-kernel@lists.infradead.org>,
+	Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v6 00/13] PCI: brcnstb: Enable STB 7712 SOC
+Message-ID: <20240901180137.GN235729@rocinante>
+References: <20240815225731.40276-1-james.quinlan@broadcom.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAKfTPtBxFTxZQT=w6iexLEciHD736+ubLOd_PJnvXge09h-rXw@mail.gmail.com>
+In-Reply-To: <20240815225731.40276-1-james.quinlan@broadcom.com>
 
-On 08/13/24 12:02, Vincent Guittot wrote:
-> >  void wakeup_preempt(struct rq *rq, struct task_struct *p, int flags)
-> > @@ -4913,6 +4923,93 @@ static inline void __balance_callbacks(struct rq *rq)
-> >
-> >  #endif
-> >
-> > +static __always_inline void
-> > +__update_cpufreq_ctx_switch(struct rq *rq, struct task_struct *prev)
-> > +{
-> > +#ifdef CONFIG_CPU_FREQ
-> > +       if (prev && prev->dl.flags & SCHED_FLAG_SUGOV) {
-> > +               /* Sugov just did an update, don't be too aggressive */
-> > +               return;
-> > +       }
-> > +
-> > +       /*
-> > +        * RT and DL should always send a freq update. But we can do some
-> > +        * simple checks to avoid it when we know it's not necessary.
-> > +        *
-> > +        * iowait_boost will always trigger a freq update too.
-> > +        *
-> > +        * Fair tasks will only trigger an update if the root cfs_rq has
-> > +        * decayed.
-> > +        *
-> > +        * Everything else should do nothing.
-> > +        */
-> > +       switch (current->policy) {
-> > +       case SCHED_NORMAL:
-> > +       case SCHED_BATCH:
-> > +       case SCHED_IDLE:
-> > +               if (unlikely(current->in_iowait)) {
-> > +                       cpufreq_update_util(rq, SCHED_CPUFREQ_IOWAIT | SCHED_CPUFREQ_FORCE_UPDATE);
-> > +                       return;
-> > +               }
-> > +
-> > +#ifdef CONFIG_SMP
-> > +               /*
-> > +                * Send an update if we switched from RT or DL as they tend to
-> > +                * boost the CPU and we are likely able to reduce the freq now.
-> > +                */
-> > +               rq->cfs.decayed |= prev && (rt_policy(prev->policy) || dl_policy(prev->policy));
-> > +
-> > +               if (unlikely(rq->cfs.decayed)) {
+Hello,
+
+>   This submission is for the Broadcom STB 7712, sibling SOC of the RPi5 chip.
+>   Stanimir has already submitted a patch "Add PCIe support for bcm2712" for
+>   the RPi version of the SOC.  It is hoped that Stanimir will allow us to
+>   submit this series first and subsequently rebase his patch(es).
 > 
-> My previous use case of a task non preempting current with large
-> util_est is fixed with this version but I'm facing a new one a bit
-> similar because of waiting for the context switch and the decay to try
-> to update the frequency.
-> 
-> When the task wakes up on an idle cpu, you wait for the decay to
-> update the freq but if the freq is low and the pelt has been updated
-> recently (less than 1024us) you can wait a long time before the next
-> decay and the freq update. This is a problem if the task's util_est is
-> large because you can stay several ms at low frequency before taking
-> into account task's util_est
+>   The largest commit, "Refactor for chips with many regular inbound BARs"
+>   affects both the STB and RPi SOCs.  It allows for multiple inbound ranges
+>   where previously only one was effectively used.  This feature will also
+>   be present in future STB chips, as well as Broadcom's Cable Modem group.
 
-It is a symptom of the same problem. It seems we don't decay and we omit the
-cpufreq update.
+Applied to controller/brcmstb, thank you!
 
-Why this was not a problem before? AFAICT we only send an update before my
-patch if we had a decay and I didn't change this condition. Were we just
-getting more lucky or did I change some behavior unwittingly?
+[01/13] dt-bindings: PCI: brcm,stb-pcie: Change brcmstb maintainer and cleanup
+        https://git.kernel.org/pci/pci/c/2cd86a7c2346
 
-The problem with my patch is that I do this unconditional only if we failed
-preemption check. But looks like I must enforce a cpufreq update after every
-enqueue. I think the overhead of not checking rq->cfs.decayed would be high if
-we always call a cpufreq update.
+[02/13] dt-bindings: PCI: brcm,stb-pcie: Use maxItems for reset controllers
+        https://git.kernel.org/pci/pci/c/9014c6b92fbe
 
-I'll just set rq->cfs.decayaed in util_est_enqueue() which should address both
-use cases.
+[03/13] dt-bindings: PCI: brcm,stb-pcie: Add 7712 SoC description
+        https://git.kernel.org/pci/pci/c/154051eae687
 
-Thanks!
+[04/13] PCI: brcmstb: Use common error handling code in brcm_pcie_probe()
+        https://git.kernel.org/pci/pci/c/5ccf0ade7937
+
+[05/13] PCI: brcmstb: Use bridge reset if available
+        https://git.kernel.org/pci/pci/c/996a76b913ab
+
+[06/13] PCI: brcmstb: Use swinit reset if available
+        https://git.kernel.org/pci/pci/c/50fd71c2d2fb
+
+[07/13] PCI: brcmstb: PCI: brcmstb: Make HARD_DEBUG, INTR2_CPU_BASE offsets SoC-specific
+        https://git.kernel.org/pci/pci/c/e42c556de029
+
+[08/13] PCI: brcmstb: Remove two unused constants from driver
+        https://git.kernel.org/pci/pci/c/092001a4ebd0
+
+[09/13] PCI: brcmstb: Don't conflate the reset rescal with PHY ctrl
+        https://git.kernel.org/pci/pci/c/1bed07ffeccb
+
+[10/13] PCI: brcmstb: Refactor for chips with many regular inbound windows
+        https://git.kernel.org/pci/pci/c/22877c1ac638
+
+[11/13] PCI: brcmstb: Check return value of all reset_control_* calls
+        https://git.kernel.org/pci/pci/c/363051fc3ab8
+
+[12/13] PCI: brcmstb: Change field name from 'type' to 'soc_base'
+        https://git.kernel.org/pci/pci/c/e78bade02796
+
+[13/13] PCI: brcmstb: Enable 7712 SOCs
+        https://git.kernel.org/pci/pci/c/1ae791a877e7
+
+	Krzysztof
 
