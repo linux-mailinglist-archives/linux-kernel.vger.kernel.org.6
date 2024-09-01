@@ -1,114 +1,234 @@
-Return-Path: <linux-kernel+bounces-310359-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310360-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BEA90967BBF
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 20:30:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3828C967BC1
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 20:33:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A14E281B73
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 18:30:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E5AA5281C46
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 18:33:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A711442040;
-	Sun,  1 Sep 2024 18:30:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EE0B4AEF6;
+	Sun,  1 Sep 2024 18:33:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="byA2c9Y/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QMdU5GVO"
+Received: from mail-ot1-f46.google.com (mail-ot1-f46.google.com [209.85.210.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E91BD2C9D;
-	Sun,  1 Sep 2024 18:30:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF18017BA6;
+	Sun,  1 Sep 2024 18:33:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725215451; cv=none; b=j1XpuROvfqWpuHJ7oSqiNWTsRmTc9VoI6iBybRqoSjcnlff4RXOAJt4jtTK/GYqRLqAWYJO9TfCijjvM3aAKwMpKh7dw1HopkZ7TTv8KyzvpgOMO5sB2lacRXX8SYrEJjPcTKiCYPFdBog4cn23h6Odp4K8sgnFjd7GCVacXryk=
+	t=1725215630; cv=none; b=EjIrcs3ojgwKgNTYbQ0ioes7izd0jN+G4wIC8kWi7+hLWbwcCLPE+1c6ibk7uYGUjh6JiEVraRWu6QROBYldsbZBTMVA5OWduLfkpDZv4JAGTJRIUm8HB3CPzNxNJwcv7DOqgGZmjm4vvAfJTjEv5Ra7JUn1cjvy8ESVUeb741Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725215451; c=relaxed/simple;
-	bh=rLam6OuvElKfa+4klzcuq+HotmqGXLuMC9ftlVRktjI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZYPulipvixrL8kEAd8KpW484C5Qx5amwaqG38sRh4eOVBiGnE3zbOQ71Yql0+p/PfY0lhpybXSEPIjKbXyoMoLw+0HqpVKXboeAJIvR0iKG65g0oWFcJqwd3N/3a9MllgW+t88jOERUiJ39pIUuc83dafSkF1tWmAMxEVPelwt8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=byA2c9Y/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5EF33C4CEC3;
-	Sun,  1 Sep 2024 18:30:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725215450;
-	bh=rLam6OuvElKfa+4klzcuq+HotmqGXLuMC9ftlVRktjI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=byA2c9Y/uGsgC6Hyrupz6Yox1bOBtSOh0Ta+4KK1WgK6lxFU1FRU6BnXxn8Xuy7+R
-	 iwKVlTdKfFw2q/jshRnrNCmn0cw9DvXU1oPxRyv+Odhb+A+zGnzkdKuHFiAgoYi+BB
-	 PxFc6am1VK9IHbGPWoRuPJIN5wBAZeblBNiamM+D3W2UZlUjL2V++6PlVqFJWW5g6h
-	 EvJPr/xkXxQHwCN+9vfMwxquJ4GS/m5AmXSBA2UI0vDf1PI9reja7Fl7Ff7KR3cz2p
-	 DdoRQbZIP0yvgr/zoX3iJHZLsLf+gfiCQacOcvQFYqdV4niS0vFfE5DmpNO45dYBLy
-	 wxGbgTaJm24pA==
-Date: Sun, 1 Sep 2024 19:30:46 +0100
-From: Simon Horman <horms@kernel.org>
-To: David Laight <David.Laight@aculab.com>
-Cc: 'Yan Zhen' <yanzhen@vivo.com>,
-	"marcin.s.wojtas@gmail.com" <marcin.s.wojtas@gmail.com>,
-	"davem@davemloft.net" <davem@davemloft.net>,
-	"edumazet@google.com" <edumazet@google.com>,
-	"kuba@kernel.org" <kuba@kernel.org>,
-	"pabeni@redhat.com" <pabeni@redhat.com>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"opensource.kernel@vivo.com" <opensource.kernel@vivo.com>
-Subject: Re: [PATCH net-next v3] net: mvneta: Use min macro
-Message-ID: <20240901183046.GB23170@kernel.org>
-References: <20240830010423.3454810-1-yanzhen@vivo.com>
- <d23dfbf563714d7090d163a075ca9a51@AcuMS.aculab.com>
+	s=arc-20240116; t=1725215630; c=relaxed/simple;
+	bh=wXbOweBwwZqT39qzdLK0IKtdEoHAjFiljbSWZCN8IWw=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=SZVBQoyqmSBIhhE28sNQrHiBTUrB76tlEayfNcx7aGIguBKI57t9kf56fA9PzxG5U6KuY5khXd6690SFqKFVSukjlG8KsbA+wG2yF3CCERBdQDpxpV9/h7OxQwCyx202yiPv9K8BEdzNJTpuUDbgCai9wWYE6+29t2AkMoTilDM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QMdU5GVO; arc=none smtp.client-ip=209.85.210.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ot1-f46.google.com with SMTP id 46e09a7af769-70f782d6ba8so508286a34.0;
+        Sun, 01 Sep 2024 11:33:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725215627; x=1725820427; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=v3hUt2zd/u+MBTYnKj2CxW2ztFShOPGgA2cWNzepJbg=;
+        b=QMdU5GVO/E597rGx2dgR504I3ETdVOthRIWIF3g9ccNCIKTRsd2sqHfiYNw4y7CXkp
+         74ndtjZxeTUx1nvZF3i2PEtSzWAfmePs5/G0ukrmDNwRtz26njEeeZ47TgpLivhtmnQb
+         ZMZQBGl4C4YGXQERMG4tQ0VzEoPB9Ej9qG9RQnwzdCqJS6U3/bVeibAEzlzt8CERHa/5
+         hheUFhRtYa8Xl/V6oPMF4vpwV7yjV2sRBSkNVKxnBlG3X43EQlnNlhCI4CwVesy4hExd
+         QUEXruh96t0wKE4BlqD6tlcQJM1VxsPZTYegJ/bIXMkTfduVL9zVaiabMDvQpeHsZFta
+         irlA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725215627; x=1725820427;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=v3hUt2zd/u+MBTYnKj2CxW2ztFShOPGgA2cWNzepJbg=;
+        b=C/swjdNZBmbo+ckYHy0Psn9smdiGo3o+Zo9CvRposayhHsbNsPr3b0CcMUbzwzqB5i
+         5dsl9L+i8h865LJzLmZFM6ySFN5fsM2o97L6zqni5xN/tUiLIshMo7TCPD71Xk+XC7Yq
+         5wkgPjY5AaPIj8S5GY/N6IMBqaImbNn6CdD1I1dmzq8K1uzMsQvJfOE+3fu0FQ31PZzr
+         1da6LAZhGKoUdCpIqHbMn4kYl12hpFEE+h8VwHmIkcbYG3+iQ0oDW7WAglhkSGkWWwdF
+         BllpmJEod2tNG4J/vtINKQhXGFmtZJ4aFU14bH1+zypKatYTCtSHxWRoKFwrsmqTAnsU
+         1INg==
+X-Forwarded-Encrypted: i=1; AJvYcCVUcdKz0KWKDx8lymq/Tkvp5TYSYZRDB5tE4qMFYG4nt2L7TdkcEKQP5WcLrTBQEcT+1YKIdD+ctITv@vger.kernel.org, AJvYcCWoj3Hd+0BXDhf07G4WgaK3bUu2/3QR/XAJx+zSWhOACqMadOX+e5zdhUAgWDDlTp6arU3+DvjqZ9YsCnM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyxg8cEQCmUUfuZd5NAAkZ/orIph0KESC2z4DHgd8IjmposQlwP
+	deirYsUsYAWMF4B68MwAIgc8D5XEDxiAEdy//BhEAENQtIZisVo+
+X-Google-Smtp-Source: AGHT+IEM0vbTBXGonK13acIuJB+r/E4BPJCq932csQ4rmFWx/7Ec1ForDw5xFtmfdKeysT8EotsWmQ==
+X-Received: by 2002:a05:6358:910d:b0:1b1:a811:9e9c with SMTP id e5c5f4694b2df-1b603c44b3fmr1523886655d.18.1725215627503;
+        Sun, 01 Sep 2024 11:33:47 -0700 (PDT)
+Received: from localhost.localdomain ([113.30.217.222])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20559b793f8sm16262405ad.15.2024.09.01.11.33.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 01 Sep 2024 11:33:47 -0700 (PDT)
+From: Anand Moon <linux.amoon@gmail.com>
+To: Shawn Lin <shawn.lin@rock-chips.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Heiko Stuebner <heiko@sntech.de>
+Cc: Anand Moon <linux.amoon@gmail.com>,
+	linux-pci@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v5 1/6] PCI: rockchip: Simplify clock handling by using clk_bulk*() function
+Date: Mon,  2 Sep 2024 00:02:08 +0530
+Message-ID: <20240901183221.240361-2-linux.amoon@gmail.com>
+X-Mailer: git-send-email 2.44.0
+In-Reply-To: <20240901183221.240361-1-linux.amoon@gmail.com>
+References: <20240901183221.240361-1-linux.amoon@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d23dfbf563714d7090d163a075ca9a51@AcuMS.aculab.com>
+Content-Transfer-Encoding: 8bit
 
-On Sun, Sep 01, 2024 at 10:52:38AM +0000, David Laight wrote:
-> From: Yan Zhen
-> > Sent: 30 August 2024 02:04
-> > To: marcin.s.wojtas@gmail.com; davem@davemloft.net; edumazet@google.com; kuba@kernel.org;
-> > 
-> > Using the real macro is usually more intuitive and readable,
-> > When the original file is guaranteed to contain the minmax.h header file
-> > and compile correctly.
-> > 
-> > Signed-off-by: Yan Zhen <yanzhen@vivo.com>
-> > ---
-> > 
-> > Changes in v3:
-> > - Rewrite the subject.
-> > 
-> >  drivers/net/ethernet/marvell/mvneta.c | 3 +--
-> >  1 file changed, 1 insertion(+), 2 deletions(-)
-> > 
-> > diff --git a/drivers/net/ethernet/marvell/mvneta.c b/drivers/net/ethernet/marvell/mvneta.c
-> > index d72b2d5f96db..08d277165f40 100644
-> > --- a/drivers/net/ethernet/marvell/mvneta.c
-> > +++ b/drivers/net/ethernet/marvell/mvneta.c
-> > @@ -4750,8 +4750,7 @@ mvneta_ethtool_set_ringparam(struct net_device *dev,
-> > 
-> >  	if ((ring->rx_pending == 0) || (ring->tx_pending == 0))
-> >  		return -EINVAL;
-> > -	pp->rx_ring_size = ring->rx_pending < MVNETA_MAX_RXD ?
-> > -		ring->rx_pending : MVNETA_MAX_RXD;
-> > +	pp->rx_ring_size = umin(ring->rx_pending, MVNETA_MAX_RXD);
-> 
-> Why did you use umin() instead of min() ?
+Refactor the clock handling in the Rockchip PCIe driver,
+introducing a more robust and efficient method for enabling and
+disabling clocks using clk_bulk*() API. Using the clk_bulk APIs,
+the clock handling for the core clocks becomes much simpler.
 
-Possibly because I mistakenly advised it is appropriate, sorry about that.
-Given your explanation elsewhere [1], I now agree min() is appropriate.
+Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+---
+v5: switch to use use devm_clk_bulk_get_all()? gets rid of hardcoding the
+    clock names in driver.
+v4: use dev_err_probe for error patch.
+v3: Fix typo in commit message, dropped reported by.
+v2: Fix compilation error reported by Intel test robot.
+---
+---
+ drivers/pci/controller/pcie-rockchip.c | 65 +++-----------------------
+ drivers/pci/controller/pcie-rockchip.h |  7 ++-
+ 2 files changed, 10 insertions(+), 62 deletions(-)
 
-[1] https://lore.kernel.org/netdev/20240901171150.GA23170@kernel.org/T/#mebc52fc11de13eff8a610e3a63c5d1026d527492
+diff --git a/drivers/pci/controller/pcie-rockchip.c b/drivers/pci/controller/pcie-rockchip.c
+index c07d7129f1c7..2777ef0cb599 100644
+--- a/drivers/pci/controller/pcie-rockchip.c
++++ b/drivers/pci/controller/pcie-rockchip.c
+@@ -127,29 +127,9 @@ int rockchip_pcie_parse_dt(struct rockchip_pcie *rockchip)
+ 					     "failed to get ep GPIO\n");
+ 	}
+ 
+-	rockchip->aclk_pcie = devm_clk_get(dev, "aclk");
+-	if (IS_ERR(rockchip->aclk_pcie)) {
+-		dev_err(dev, "aclk clock not found\n");
+-		return PTR_ERR(rockchip->aclk_pcie);
+-	}
+-
+-	rockchip->aclk_perf_pcie = devm_clk_get(dev, "aclk-perf");
+-	if (IS_ERR(rockchip->aclk_perf_pcie)) {
+-		dev_err(dev, "aclk_perf clock not found\n");
+-		return PTR_ERR(rockchip->aclk_perf_pcie);
+-	}
+-
+-	rockchip->hclk_pcie = devm_clk_get(dev, "hclk");
+-	if (IS_ERR(rockchip->hclk_pcie)) {
+-		dev_err(dev, "hclk clock not found\n");
+-		return PTR_ERR(rockchip->hclk_pcie);
+-	}
+-
+-	rockchip->clk_pcie_pm = devm_clk_get(dev, "pm");
+-	if (IS_ERR(rockchip->clk_pcie_pm)) {
+-		dev_err(dev, "pm clock not found\n");
+-		return PTR_ERR(rockchip->clk_pcie_pm);
+-	}
++	rockchip->num_clks = devm_clk_bulk_get_all(dev, &rockchip->clks);
++	if (rockchip->num_clks < 0)
++		return dev_err_probe(dev, err, "failed to get clocks\n");
+ 
+ 	return 0;
+ }
+@@ -372,39 +352,11 @@ int rockchip_pcie_enable_clocks(struct rockchip_pcie *rockchip)
+ 	struct device *dev = rockchip->dev;
+ 	int err;
+ 
+-	err = clk_prepare_enable(rockchip->aclk_pcie);
+-	if (err) {
+-		dev_err(dev, "unable to enable aclk_pcie clock\n");
+-		return err;
+-	}
+-
+-	err = clk_prepare_enable(rockchip->aclk_perf_pcie);
+-	if (err) {
+-		dev_err(dev, "unable to enable aclk_perf_pcie clock\n");
+-		goto err_aclk_perf_pcie;
+-	}
+-
+-	err = clk_prepare_enable(rockchip->hclk_pcie);
+-	if (err) {
+-		dev_err(dev, "unable to enable hclk_pcie clock\n");
+-		goto err_hclk_pcie;
+-	}
+-
+-	err = clk_prepare_enable(rockchip->clk_pcie_pm);
+-	if (err) {
+-		dev_err(dev, "unable to enable clk_pcie_pm clock\n");
+-		goto err_clk_pcie_pm;
+-	}
++	err = clk_bulk_prepare_enable(rockchip->num_clks, rockchip->clks);
++	if (err)
++		return dev_err_probe(dev, err, "failed to enable clocks\n");
+ 
+ 	return 0;
+-
+-err_clk_pcie_pm:
+-	clk_disable_unprepare(rockchip->hclk_pcie);
+-err_hclk_pcie:
+-	clk_disable_unprepare(rockchip->aclk_perf_pcie);
+-err_aclk_perf_pcie:
+-	clk_disable_unprepare(rockchip->aclk_pcie);
+-	return err;
+ }
+ EXPORT_SYMBOL_GPL(rockchip_pcie_enable_clocks);
+ 
+@@ -412,10 +364,7 @@ void rockchip_pcie_disable_clocks(void *data)
+ {
+ 	struct rockchip_pcie *rockchip = data;
+ 
+-	clk_disable_unprepare(rockchip->clk_pcie_pm);
+-	clk_disable_unprepare(rockchip->hclk_pcie);
+-	clk_disable_unprepare(rockchip->aclk_perf_pcie);
+-	clk_disable_unprepare(rockchip->aclk_pcie);
++	clk_bulk_disable_unprepare(rockchip->num_clks, rockchip->clks);
+ }
+ EXPORT_SYMBOL_GPL(rockchip_pcie_disable_clocks);
+ 
+diff --git a/drivers/pci/controller/pcie-rockchip.h b/drivers/pci/controller/pcie-rockchip.h
+index 6111de35f84c..bebab80c9553 100644
+--- a/drivers/pci/controller/pcie-rockchip.h
++++ b/drivers/pci/controller/pcie-rockchip.h
+@@ -11,6 +11,7 @@
+ #ifndef _PCIE_ROCKCHIP_H
+ #define _PCIE_ROCKCHIP_H
+ 
++#include <linux/clk.h>
+ #include <linux/kernel.h>
+ #include <linux/pci.h>
+ #include <linux/pci-ecam.h>
+@@ -299,10 +300,8 @@ struct rockchip_pcie {
+ 	struct	reset_control *pm_rst;
+ 	struct	reset_control *aclk_rst;
+ 	struct	reset_control *pclk_rst;
+-	struct	clk *aclk_pcie;
+-	struct	clk *aclk_perf_pcie;
+-	struct	clk *hclk_pcie;
+-	struct	clk *clk_pcie_pm;
++	struct  clk_bulk_data *clks;
++	int	num_clks;
+ 	struct	regulator *vpcie12v; /* 12V power supply */
+ 	struct	regulator *vpcie3v3; /* 3.3V power supply */
+ 	struct	regulator *vpcie1v8; /* 1.8V power supply */
+-- 
+2.44.0
 
-> >  	pp->tx_ring_size = clamp_t(u16, ring->tx_pending,
-> >  				   MVNETA_MAX_SKB_DESCS * 2, MVNETA_MAX_TXD);
-> 
-> Hmmm how about a patch to fix the bug in that line?
-> A typical example of the complete misuse of the '_t' variants.
-> The fact that the LHS is u16 doesn't mean that it is anyway
-> correct to cast the RHS value to u16.
-> In this case if someone tries to set the ring size to 64k they'll
 
