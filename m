@@ -1,189 +1,125 @@
-Return-Path: <linux-kernel+bounces-310239-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310240-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52AED9676C3
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 15:40:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B1F69676C5
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 15:40:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8F4DEB20BF7
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 13:40:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D45121F21532
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 13:40:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9A8717E00F;
-	Sun,  1 Sep 2024 13:39:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8987D17E00E;
+	Sun,  1 Sep 2024 13:40:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="J6PglX3A"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fJ0Qf9/0"
+Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE27B3A29F;
-	Sun,  1 Sep 2024 13:39:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F3483A29F;
+	Sun,  1 Sep 2024 13:40:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725197999; cv=none; b=h6vDZDIcjlXgQ0fPYxBquEDf1xW3J49fpHjw39PlkUlMcqzr41Bp342t9fk0VHibHPer1AB6QTg/t2H77nxsvBVqaGlD8YJyJ+3IAPLOcKs+UpUYiaL0NKD0NOF3rqCC0N3kRf2te1VNH9WxGl3gpgZYfqFHknhsAvJbp7lEvkI=
+	t=1725198022; cv=none; b=GFve+/ST5wEZBsJtMxzgQH55Gr9Osgo6hLhZiRNAD0XzZm0Bju2kuUPYMZZ6sjdKk4P4ZMtyRuWiv7cFVAN6x7fssnPfpOMxzWV41JH+vWqyE7abp+N24bZhYfS+H6LHO2qqtruqQ4lu3b8lpYUH6QdtP0Fldyk6y8YXO33NZFg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725197999; c=relaxed/simple;
-	bh=ZqAiE1RLqm0j623x1aSzS6lYdmf47dsIk/9BgeMJwss=;
+	s=arc-20240116; t=1725198022; c=relaxed/simple;
+	bh=lCud1v0rR2bB8PLBJk5AMKOvsdtpMp2LewJwYiRB7QU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pEyLSFUK4ym0SFqHeaa2JrcAX5w8yq3DVkM2YLD++3fHkOrMCxdp1MYnCWlUiyOhRrPPoYLRo2qKYeS7xLr0nee1AmV8EQjoiGlob6joz6QF0jDQLjBHEQ1MsrodAkNHZ7/KfSF2/U+6/AVMKyMgN40azPzf1+QoIp3wMEW0LNU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=J6PglX3A; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84B2EC4CEC3;
-	Sun,  1 Sep 2024 13:39:57 +0000 (UTC)
-Authentication-Results: smtp.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="J6PglX3A"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
-	t=1725197996;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=VD1wcF7Qb+VHpKiC+Y0JiaxySeBNxKbAGen5a4ZQCPU=;
-	b=J6PglX3AACoJl2qbCqVApUcHoIzsCu20NNL2SsmTgdhdJiyMjGNwJHW1iksfRMEK9OlMqt
-	5NiWKdpUXBTM/eF0orfmROdBVDr9oC0rSfNgtJnxSgjMov4CHmsuKGflMwrHHZ51dxo+H3
-	ThGMJnRhGWaMEAODAlVNlBIdeDhxLDE=
-Received: 
-	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 2fedc0c9 (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
-	Sun, 1 Sep 2024 13:39:55 +0000 (UTC)
-Date: Sun, 1 Sep 2024 15:39:52 +0200
-From: "Jason A. Donenfeld" <Jason@zx2c4.com>
-To: Huacai Chen <chenhuacai@kernel.org>
-Cc: Xi Ruoyao <xry111@xry111.site>, WANG Xuerui <kernel@xen0n.name>,
-	linux-crypto@vger.kernel.org, loongarch@lists.linux.dev,
-	linux-kernel@vger.kernel.org, Jinyang He <hejinyang@loongson.cn>,
-	Tiezhu Yang <yangtiezhu@loongson.cn>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH v6 1/3] arch: vDSO: Add a __vdso_getrandom prototype for
- all architectures
-Message-ID: <ZtRuqESaAG8KMIsp@zx2c4.com>
-References: <20240901061315.15693-1-xry111@xry111.site>
- <20240901061315.15693-2-xry111@xry111.site>
- <CAAhV-H4nE3s7e=ouh04VH=yY2iR+ofuEkv8p=2cChJi=jw=pMw@mail.gmail.com>
- <ZtRq22l9ZLIKP5cf@zx2c4.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=pI5KyAXv1O6W8tU/2vnmGSvOOGUtFFYk8fwPWHuX9zqtQXF3HH5YxEgPIMkfgP5OscsckPg3my00l55EBeCLJqB/B2Nbsshq1lEDOhOmA1zzriPka8nVYZu60O6D2jM3YEq6gXblXIKl5XQ3nRak7X90ZQVVpCIMvUURfwFJJOU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fJ0Qf9/0; arc=none smtp.client-ip=209.85.215.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-7b0c9bbddb4so2289828a12.3;
+        Sun, 01 Sep 2024 06:40:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725198020; x=1725802820; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=YTHaMZtqkTyeTZH7IQINuXTpnisNGkcdp5XTWldTU/E=;
+        b=fJ0Qf9/0VGjbduBWMCVRxLANLDlIEAx7kOrojaMmLIjAiNZI7u8POawBhh8z8TQGXk
+         atCy1t6yoDLgKqyIJOhJUCixos27cwRtgGvn8ikYagRJCLSvRaBhQmIRsz1JK0H3+Pds
+         Q1/yPuj/JsEJR6h9/eOCX+Ps1p26BLQcnJagvIqZ+11ZHkMzAibBARpHM2l35L9uClz7
+         OishMZaP3X4gvrzwBT17m+dy5eYlMw59SStxH7VDAKSj0rpchhkoK0XAK1RCq8TsoOUf
+         ctBorLgjMWdVKPL+ds3A8cUBXmEPhAsppBp8xw1531apH6H4sPp116Fli1ro1SR8I5tE
+         8P4Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725198020; x=1725802820;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=YTHaMZtqkTyeTZH7IQINuXTpnisNGkcdp5XTWldTU/E=;
+        b=SB8MBMt1p9O3qZC8BKn/fx3Bxv+EKQ22+f6bDrnJ9Ql2wgtesXBeknA4huj6rkgbEU
+         bjG3b1t66vByb0AkraotLW7FLCEFb5FBgd6+eybwCnyluzPjlWqhreYqyqbYGvJDWxCZ
+         +i/9ybmXkRScAVj9c/Knis84l+twcTl5vck4MTX8M8pW3KnNXF3k/CybZD2OB5PRVjiw
+         KCH75hnat4WhP+72xLcx0ADIgYnVyMbhOiKEZB4Ddkq4zC6PNItW2+Q8TJc6OMB5edop
+         Bdn1L76ckZPKO2CqFhJzbGP6EbziKBMqg+jFIxnroshwalCLm7Tm+V7pyarrHhKwnac7
+         VfvQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU8ZU+sPmGNTfpV3kOIbo+SAwjAyjN8aquDvWvHxYV85fRcsmZNESPLaFUz6YFlDpNXpFt81xtYt1mg9cE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywj3wyYMuA99JbussRcJr1IMr+lr0NfiLLG65luKAxj5EnzRUPv
+	MWqBqSq/SgWQ5vCgFi8I98PbN0VZFaQFDgL1eo4W8T51DYcQ4QMO
+X-Google-Smtp-Source: AGHT+IEiVH8ogskEW1BM525GsXwdJCwMsLZeo16JFZ/p3zEYokdgH3C0Jp5ob70yHVZZ48hsgQ29ZA==
+X-Received: by 2002:a05:6a21:a247:b0:1cc:eb5c:cfae with SMTP id adf61e73a8af0-1cceb5cd08dmr9724060637.52.1725198020429;
+        Sun, 01 Sep 2024 06:40:20 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-715e575cd8bsm5396935b3a.199.2024.09.01.06.40.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 01 Sep 2024 06:40:19 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date: Sun, 1 Sep 2024 06:40:17 -0700
+From: Guenter Roeck <linux@roeck-us.net>
+To: Pawel Dembicki <paweldembicki@gmail.com>
+Cc: linux-hwmon@vger.kernel.org,
+	Antoniu Miclaus <antoniu.miclaus@analog.com>,
+	Jean Delvare <jdelvare@suse.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] hwmon: ltc2991: fix register bits defines
+Message-ID: <02cf392d-57cb-48fe-930d-597f415520a4@roeck-us.net>
+References: <20240830111349.30531-1-paweldembicki@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ZtRq22l9ZLIKP5cf@zx2c4.com>
+In-Reply-To: <20240830111349.30531-1-paweldembicki@gmail.com>
 
-On Sun, Sep 01, 2024 at 03:23:39PM +0200, Jason A. Donenfeld wrote:
-> On Sun, Sep 01, 2024 at 04:44:40PM +0800, Huacai Chen wrote:
-> > Hi, Ruoyao,
-> > 
-> > On Sun, Sep 1, 2024 at 2:13 PM Xi Ruoyao <xry111@xry111.site> wrote:
-> > >
-> > > Without a prototype, we'll have to add a prototype for each architecture
-> > > implementing vDSO getrandom.  As most architectures will likely have the
-> > > vDSO getrandom implemented in a near future, and we'd like to keep the
-> > > declarations compatible everywhere (to ease the Glibc work), we should
-> > > really just have one copy of the prototype.
-> > >
-> > > Suggested-by: Huacai Chen <chenhuacai@kernel.org>
-> > > Signed-off-by: Xi Ruoyao <xry111@xry111.site>
-> > > ---
-> > >  arch/x86/entry/vdso/vgetrandom.c | 2 --
-> > >  include/vdso/getrandom.h         | 5 +++++
-> > >  2 files changed, 5 insertions(+), 2 deletions(-)
-> > >
-> > > diff --git a/arch/x86/entry/vdso/vgetrandom.c b/arch/x86/entry/vdso/vgetrandom.c
-> > > index 52d3c7faae2e..430862b8977c 100644
-> > > --- a/arch/x86/entry/vdso/vgetrandom.c
-> > > +++ b/arch/x86/entry/vdso/vgetrandom.c
-> > > @@ -6,8 +6,6 @@
-> > >
-> > >  #include "../../../../lib/vdso/getrandom.c"
-> > >
-> > > -ssize_t __vdso_getrandom(void *buffer, size_t len, unsigned int flags, void *opaque_state, size_t opaque_len);
-> > > -
-> > >  ssize_t __vdso_getrandom(void *buffer, size_t len, unsigned int flags, void *opaque_state, size_t opaque_len)
-> > >  {
-> > >         return __cvdso_getrandom(buffer, len, flags, opaque_state, opaque_len);
-> > > diff --git a/include/vdso/getrandom.h b/include/vdso/getrandom.h
-> > > index 4cf02e678f5e..08b47b002bf7 100644
-> > > --- a/include/vdso/getrandom.h
-> > > +++ b/include/vdso/getrandom.h
-> > > @@ -56,4 +56,9 @@ struct vgetrandom_state {
-> > >   */
-> > >  extern void __arch_chacha20_blocks_nostack(u8 *dst_bytes, const u32 *key, u32 *counter, size_t nblocks);
-> > >
-> > > +/**
-> > Though in this file there are already comments beginning with /**, but
-> > it seems the kernel's code style suggests beginning with /*.
+On Fri, Aug 30, 2024 at 01:13:50PM +0200, Pawel Dembicki wrote:
+> In the LTC2991, V5 and V6 channels use the low nibble of the
+> "V5, V6, V7, and V8 Control Register" for configuration, but currently,
+> the high nibble is defined.
 > 
-> /** is for docbook comments.
+> This patch changes the defines to use the low nibble.
+> 
+> Fixes: 2b9ea4262ae9 ("hwmon: Add driver for ltc2991")
+> Signed-off-by: Pawel Dembicki <paweldembicki@gmail.com>
 
-I'll fix this commit up as follows:
+Applied.
 
-From de99263bbd61f5199ecbd7ce6cf57ede8bc42c84 Mon Sep 17 00:00:00 2001
-From: Xi Ruoyao <xry111@xry111.site>
-Date: Sun, 1 Sep 2024 14:13:10 +0800
-Subject: [PATCH] random: vDSO: add a __vdso_getrandom prototype for all
- architectures
+Thanks,
+Guenter
 
-Without a prototype, we'll have to add a prototype for each architecture
-implementing vDSO getrandom. As most architectures will likely have the
-vDSO getrandom implemented in a near future, and we'd like to keep the
-declarations compatible everywhere (to ease the libc implementor work),
-we should really just have one copy of the prototype.
-
-This also is what's already done inside of include/vdso/gettime.h for
-those vDSO functions, so this continues that convention.
-
-Suggested-by: Huacai Chen <chenhuacai@kernel.org>
-Signed-off-by: Xi Ruoyao <xry111@xry111.site>
-Acked-by: Huacai Chen <chenhuacai@kernel.org>
-[Jason: rewrite docbook comment for prototype.]
-Signed-off-by: Jason A. Donenfeld <Jason@zx2c4.com>
----
- arch/x86/entry/vdso/vgetrandom.c |  2 --
- include/vdso/getrandom.h         | 16 ++++++++++++++++
- 2 files changed, 16 insertions(+), 2 deletions(-)
-
-diff --git a/arch/x86/entry/vdso/vgetrandom.c b/arch/x86/entry/vdso/vgetrandom.c
-index 52d3c7faae2e..430862b8977c 100644
---- a/arch/x86/entry/vdso/vgetrandom.c
-+++ b/arch/x86/entry/vdso/vgetrandom.c
-@@ -6,8 +6,6 @@
-
- #include "../../../../lib/vdso/getrandom.c"
-
--ssize_t __vdso_getrandom(void *buffer, size_t len, unsigned int flags, void *opaque_state, size_t opaque_len);
--
- ssize_t __vdso_getrandom(void *buffer, size_t len, unsigned int flags, void *opaque_state, size_t opaque_len)
- {
- 	return __cvdso_getrandom(buffer, len, flags, opaque_state, opaque_len);
-diff --git a/include/vdso/getrandom.h b/include/vdso/getrandom.h
-index 4cf02e678f5e..0d3849145a89 100644
---- a/include/vdso/getrandom.h
-+++ b/include/vdso/getrandom.h
-@@ -56,4 +56,20 @@ struct vgetrandom_state {
-  */
- extern void __arch_chacha20_blocks_nostack(u8 *dst_bytes, const u32 *key, u32 *counter, size_t nblocks);
-
-+/**
-+ * __vdso_getrandom - Architecture-specific vDSO implementation of getrandom() syscall.
-+ * @buffer:		Passed to __cvdso_getrandom_data().
-+ * @len:		Passed to __cvdso_getrandom_data().
-+ * @flags:		Passed to __cvdso_getrandom_data().
-+ * @opaque_state:	Passed to __cvdso_getrandom_data().
-+ * @opaque_len:		Passed to __cvdso_getrandom_data();
-+ *
-+ * This function acquires a pointer to the architecture-specific shared vDSO RNG datapage, and
-+ * passes it, along with all of its arguments, to __cvdso_getrandom_data(), whose documentation may
-+ * be consulted for more information.
-+ *
-+ * Returns:	The value of __cvdso_getrandom_data().
-+ */
-+extern ssize_t __vdso_getrandom(void *buffer, size_t len, unsigned int flags, void *opaque_state, size_t opaque_len);
-+
- #endif /* _VDSO_GETRANDOM_H */
---
-2.46.0
-
+> ---
+>  drivers/hwmon/ltc2991.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/hwmon/ltc2991.c b/drivers/hwmon/ltc2991.c
+> index 573cd8f5721b..7ca139e4b6af 100644
+> --- a/drivers/hwmon/ltc2991.c
+> +++ b/drivers/hwmon/ltc2991.c
+> @@ -42,9 +42,9 @@
+>  #define LTC2991_V7_V8_FILT_EN		BIT(7)
+>  #define LTC2991_V7_V8_TEMP_EN		BIT(5)
+>  #define LTC2991_V7_V8_DIFF_EN		BIT(4)
+> -#define LTC2991_V5_V6_FILT_EN		BIT(7)
+> -#define LTC2991_V5_V6_TEMP_EN		BIT(5)
+> -#define LTC2991_V5_V6_DIFF_EN		BIT(4)
+> +#define LTC2991_V5_V6_FILT_EN		BIT(3)
+> +#define LTC2991_V5_V6_TEMP_EN		BIT(1)
+> +#define LTC2991_V5_V6_DIFF_EN		BIT(0)
+>  
+>  #define LTC2991_REPEAT_ACQ_EN		BIT(4)
+>  #define LTC2991_T_INT_FILT_EN		BIT(3)
 
