@@ -1,124 +1,128 @@
-Return-Path: <linux-kernel+bounces-310183-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310184-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F1E19675F3
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 12:51:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B5D289675F4
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 12:53:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 12D5F28243D
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 10:51:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C835F2821F0
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 10:53:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8319415FA74;
-	Sun,  1 Sep 2024 10:51:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iUaBjzyo"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A5741552FF;
+	Sun,  1 Sep 2024 10:53:34 +0000 (UTC)
+Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.85.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B063914E2FD;
-	Sun,  1 Sep 2024 10:51:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B85B51422D3
+	for <linux-kernel@vger.kernel.org>; Sun,  1 Sep 2024 10:53:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.85.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725187871; cv=none; b=lDhf4XrKnLLDv4DVrKvRvDh1vIsZ8auibshqYt+vHPord7CBs7r1A7ZtPcdb0blIgdmmsfWa+gPqEFy3MYDdB8fSgbl1MII3ntXSRGuEV4TsydZrb9S+JcFv9s74T8akbbh94uSplPvabHKSGIQ9lmAw+MypLR4GUv1n9f0ER1M=
+	t=1725188013; cv=none; b=Z/L8RJTYcFUSQznRihkPklUsBgtykp9Rg7+0X8nVvo1cMJSZsnFts2r3LBVidQOCrLPjm2lFaX9VemxoX43u/W3UOH4nU3EcJ3ZWgJUjkc3JhEHpGg27DMZC51sPAbIMAa9Ld21wt3K1NsQvzjnzbL457qHYtkKE6oTu06r9p/0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725187871; c=relaxed/simple;
-	bh=tEod7l1TOEILAYrzrtgJeK+5LXqWOv/BlAH82sxk6Ag=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gxsCVMerBYXgssYjLYgqO3fw0THOn1SmUvE0iTedGGOwcssW9phIjJRZuQDUms96KUSmYiW334EJxKSbQodmAQK9ciwuRRKM6RZbLzOU47pHCqjeZ7OCQQnur2FIYetl7CYTEnW87GOJucwfgqiGUYTmQs+NhF3CM+angOvVmA8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iUaBjzyo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40412C4CEC9;
-	Sun,  1 Sep 2024 10:51:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725187871;
-	bh=tEod7l1TOEILAYrzrtgJeK+5LXqWOv/BlAH82sxk6Ag=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=iUaBjzyowjcs1/lFuLVGFbd8r1IXSHuD8cNaSC8PxeLC3z0su1gpO4sR0VHhVEOCb
-	 bJmW0hiIPsKF31a8gxb75R98/Ue5fGxlhfosEYJVWgatK6cPQ8wBKRCCXdnQtjcJD0
-	 TsMxEbWF/31yKDLoMgUomTJgtXuKP2alj8/RPAvwarhcqjNrS2DdjkQnwWy5tBfEdM
-	 +P/rb3xiftTcvd/WpoaHEHmCW6yUv3V2HjiQznClU3usw4ctj/yf08Aw3wjlfwjhO9
-	 opJDCWaYgBI386Td+kBBMlzcVuSTL+iq0F2bxXFupXGZq2xiGJLnKHBK4kEY6ia6st
-	 f87Lsv4TI6aTQ==
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-5334c018913so3053967e87.0;
-        Sun, 01 Sep 2024 03:51:11 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU52cN/z7JBRWZZl6B6P/6PtA2cWoHd7UoFp5JvFEG53+nqW0HM0pQ+syh9dxBziZvHHopz7V/EgoaHKzs=@vger.kernel.org, AJvYcCVHSlZ5GTOPiTdKDJi7TJe9diMh3UZGBq/KBRzRIEEcPdrwl2EeUZkreW4HjJEZz83eollKFxsDlY8O9cGv@vger.kernel.org, AJvYcCVK/DyuiYPvXgnxyL4VFAaRwDmPAEPo7rDUmJprYARJEVWn6NZ2R82Bt410yJUWTwu4srxcnuowxBc4JwJG/A==@vger.kernel.org, AJvYcCWFx7r+OMhWye7rjyv2v41JUi8NDrw4/pKMl3r6onFg31cDKQLAlBoiF6eZ9Zq5BUnlbVOrGOHdUOyKZ+NzAwM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzRDN8XYl/xFF37M09DARPWIePxEN2oeAQYennjSiyKbIRkXOpL
-	BRoF6XL25MQIEZ/QlEVJy7mcW5fDond6mpuFMJ6r6vwcRjoAt95w1mG9maV93mhsVmUpzj+k273
-	O2oxW5dvHz7IeF7ukj7IHVW9kQfQ=
-X-Google-Smtp-Source: AGHT+IFj24VJLRe5mGXDbBsTIFHvsslq2fVan6e2JAmdiLbQYfHXryZyyS7TDjp35LE1bYWF/nTCJRQscAz0eiZm6cM=
-X-Received: by 2002:a05:6512:3d07:b0:530:e28a:3c17 with SMTP id
- 2adb3069b0e04-53546b34715mr5450093e87.25.1725187869747; Sun, 01 Sep 2024
- 03:51:09 -0700 (PDT)
+	s=arc-20240116; t=1725188013; c=relaxed/simple;
+	bh=7pEGnYA5JzjWaqiWySwcORA8GhR4vtPpk/TuMIf8yH4=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 MIME-Version:Content-Type; b=mgwkAt42qbfIIkkgQKoEHtI5LzKUwoA6P8sU/JM62y2NhT8LdG4jyzqpbklBZTCjcina4DnETjlnBcEQ9BkBypgZ0CT91CCGwO/L66T4JhZi1Id//mgCXI3HCazUlRgjvmgypokwafG1JwD/myxpE6K/ApqOx6e+Gp7kdL60uc0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.85.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
+Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
+ relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ uk-mta-172-VAP0I1YNMyeSluF6sMA7cw-1; Sun, 01 Sep 2024 11:53:27 +0100
+X-MC-Unique: VAP0I1YNMyeSluF6sMA7cw-1
+Received: from AcuMS.Aculab.com (10.202.163.6) by AcuMS.aculab.com
+ (10.202.163.6) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Sun, 1 Sep
+ 2024 11:52:39 +0100
+Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
+ id 15.00.1497.048; Sun, 1 Sep 2024 11:52:39 +0100
+From: David Laight <David.Laight@ACULAB.COM>
+To: 'Yan Zhen' <yanzhen@vivo.com>, "marcin.s.wojtas@gmail.com"
+	<marcin.s.wojtas@gmail.com>, "davem@davemloft.net" <davem@davemloft.net>,
+	"edumazet@google.com" <edumazet@google.com>, "kuba@kernel.org"
+	<kuba@kernel.org>, "pabeni@redhat.com" <pabeni@redhat.com>
+CC: "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"opensource.kernel@vivo.com" <opensource.kernel@vivo.com>
+Subject: RE: [PATCH net-next v3] net: mvneta: Use min macro
+Thread-Topic: [PATCH net-next v3] net: mvneta: Use min macro
+Thread-Index: AQHa+niVvLIu7d7EQ0KehbNKS9tSRLJCwu7Q
+Date: Sun, 1 Sep 2024 10:52:38 +0000
+Message-ID: <d23dfbf563714d7090d163a075ca9a51@AcuMS.aculab.com>
+References: <20240830010423.3454810-1-yanzhen@vivo.com>
+In-Reply-To: <20240830010423.3454810-1-yanzhen@vivo.com>
+Accept-Language: en-GB, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240815173903.4172139-21-samitolvanen@google.com> <20240815173903.4172139-39-samitolvanen@google.com>
-In-Reply-To: <20240815173903.4172139-39-samitolvanen@google.com>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Sun, 1 Sep 2024 19:50:32 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAQ4Qy-Z7Z2ads7JNRs+aTP5BrRTqCZgmm51e+_6mU3sYg@mail.gmail.com>
-Message-ID: <CAK7LNAQ4Qy-Z7Z2ads7JNRs+aTP5BrRTqCZgmm51e+_6mU3sYg@mail.gmail.com>
-Subject: Re: [PATCH v2 18/19] x86/asm-prototypes: Include <asm/ptrace.h>
-To: Sami Tolvanen <samitolvanen@google.com>
-Cc: Luis Chamberlain <mcgrof@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Matthew Maurer <mmaurer@google.com>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	Petr Pavlu <petr.pavlu@suse.com>, Neal Gompa <neal@gompa.dev>, Hector Martin <marcan@marcan.st>, 
-	Janne Grunau <j@jannau.net>, Asahi Linux <asahi@lists.linux.dev>, linux-kbuild@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: aculab.com
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Aug 16, 2024 at 2:39=E2=80=AFAM Sami Tolvanen <samitolvanen@google.=
-com> wrote:
->
-> <asm/ftrace.h> refers to struct pt_regs, make sure it's visible.
->
-> Signed-off-by: Sami Tolvanen <samitolvanen@google.com>
-
-
-Then, why don't you include <asm/ptrace.h>
-from arch/x86/include/asm/ftrace.h
-instead of from arch/x86/include/asm/asm-prototypes.h
-
-
-And, this patch can get in independently.
-
-You should send it as a standalone patch
-to the x86 ML.
-
-
-
-
-
-
-
+From: Yan Zhen
+> Sent: 30 August 2024 02:04
+> To: marcin.s.wojtas@gmail.com; davem@davemloft.net; edumazet@google.com; =
+kuba@kernel.org;
+>=20
+> Using the real macro is usually more intuitive and readable,
+> When the original file is guaranteed to contain the minmax.h header file
+> and compile correctly.
+>=20
+> Signed-off-by: Yan Zhen <yanzhen@vivo.com>
 > ---
->  arch/x86/include/asm/asm-prototypes.h | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/arch/x86/include/asm/asm-prototypes.h b/arch/x86/include/asm=
-/asm-prototypes.h
-> index 25466c4d2134..c82e68c8b7c2 100644
-> --- a/arch/x86/include/asm/asm-prototypes.h
-> +++ b/arch/x86/include/asm/asm-prototypes.h
-> @@ -1,4 +1,5 @@
->  /* SPDX-License-Identifier: GPL-2.0 */
-> +#include <asm/ptrace.h>
->  #include <asm/ftrace.h>
->  #include <linux/uaccess.h>
->  #include <linux/pgtable.h>
+>=20
+> Changes in v3:
+> - Rewrite the subject.
+>=20
+>  drivers/net/ethernet/marvell/mvneta.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+>=20
+> diff --git a/drivers/net/ethernet/marvell/mvneta.c b/drivers/net/ethernet=
+/marvell/mvneta.c
+> index d72b2d5f96db..08d277165f40 100644
+> --- a/drivers/net/ethernet/marvell/mvneta.c
+> +++ b/drivers/net/ethernet/marvell/mvneta.c
+> @@ -4750,8 +4750,7 @@ mvneta_ethtool_set_ringparam(struct net_device *dev=
+,
+>=20
+>  =09if ((ring->rx_pending =3D=3D 0) || (ring->tx_pending =3D=3D 0))
+>  =09=09return -EINVAL;
+> -=09pp->rx_ring_size =3D ring->rx_pending < MVNETA_MAX_RXD ?
+> -=09=09ring->rx_pending : MVNETA_MAX_RXD;
+> +=09pp->rx_ring_size =3D umin(ring->rx_pending, MVNETA_MAX_RXD);
+
+Why did you use umin() instead of min() ?
+
+>=20
+>  =09pp->tx_ring_size =3D clamp_t(u16, ring->tx_pending,
+>  =09=09=09=09   MVNETA_MAX_SKB_DESCS * 2, MVNETA_MAX_TXD);
+
+Hmmm how about a patch to fix the bug in that line?
+A typical example of the complete misuse of the '_t' variants.
+The fact that the LHS is u16 doesn't mean that it is anyway
+correct to cast the RHS value to u16.
+In this case if someone tries to set the ring size to 64k they'll
+get the minimum supported size and not the maximum.
+
+=09David
+
 > --
-> 2.46.0.184.g6999bdac58-goog
->
+> 2.34.1
+>=20
 
+-
+Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1=
+PT, UK
+Registration No: 1397386 (Wales)
 
---
-Best Regards
-Masahiro Yamada
 
