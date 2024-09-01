@@ -1,94 +1,98 @@
-Return-Path: <linux-kernel+bounces-310320-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310323-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C286A9679DC
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 18:49:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33DDE967AE5
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 19:02:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 788781F210A0
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 16:49:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D1A621F2143A
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 17:02:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78003183CBD;
-	Sun,  1 Sep 2024 16:48:33 +0000 (UTC)
-Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A74701DFD1;
-	Sun,  1 Sep 2024 16:48:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 525313B79C;
+	Sun,  1 Sep 2024 17:02:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="PychHPat"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.4])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A58917C;
+	Sun,  1 Sep 2024 17:02:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725209313; cv=none; b=kI1IkCqRCo3XDr0e0Z7XlFy/HJn7R1ila6piAgiCfF1xiGNpwjXotDTTbt1V+lIWVlOhehZf6uoSYYJroyCrT92OaQB5RvqWrQEqAQIz1RelyXU50gyOErInTcrmQ7Unwgv3MNyPmTMtI8seGrcqPPGB+F2ZQNwI7axw/j47+gk=
+	t=1725210136; cv=none; b=Ee0GhPRAwLFfUzWfkjPGUXJkVdo7uCVFV1RRA9FzeDH4F+vEcV683xIbAGXPa59c4+LTqpKjbiRoRQTH0i61kpzFg08EBycFdSnzxUYPmL7V95tnFzVEToTToZ6xaFKIioxEq2wiVaQ3ik3+jTSDYPIbknJ0lb818f7HA/nM49Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725209313; c=relaxed/simple;
-	bh=ZwZtIghE+btfuynxF46vgcwCbq5RGjkTykzDtRiJwaU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cRmEnYZphqCEjojq/7+ljUcADYgW234ABM6PJKvVHku2Jp1Q8VcF6PmrA4Q3LPKDnuUzd2EKo9LABrzT94+jeeQaCmGXrvufzfYkcFWAgbRvuqQ3BHNLEeXO+qXt9AiRE89eAILiyTe1vpx+qeasP6MTn8gUX2n2voZU1NvGTlE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-70cec4aa1e4so2483501b3a.1;
-        Sun, 01 Sep 2024 09:48:30 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725209310; x=1725814110;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Tm8DW31NTPQ9oBr/UoX+v9NAZdmhZ0D73f/xUI1wyHg=;
-        b=b0hsp5d4OsoQiWnHffojgXzFEklXtitqZrbuAdJq389NUTz/zn3LGl4KnOvrjsSa+f
-         7qdDYIhT/79d/E7x+y0HuxFZ7pNiC+y10tXHrpNht4No47kQ3KnvRE/4J3ceW5z3JMzY
-         4j7HYKZIZJHchWAgdny3WkvrhvCVWUDIcOdDywkwYp7fST2c9yQJVvLQY+gg8ND7/tLS
-         KqsZmHFH1caUQng1qEcv/Q1wbFYGtid0RoAWFBMFRjECTIWcYU/MhuNuLU43QMGrgN9r
-         CUDdyofWfdbfLv3mHOWtGCS0Ksf8K0nuWpPt8fF2eM9UtTVK511ahB9+Q71yOu0GKTqv
-         Ok8A==
-X-Forwarded-Encrypted: i=1; AJvYcCUMRzbGL7LzL1NXUeBt37UUDxmzgxKL3g3kCLLJg45cZcGNrKVXa8ZEe+bW/ZS9QKjyYp7ylLd9YgUa@vger.kernel.org, AJvYcCVkUqiD2G0/3tTWbrep2mM0LsKESWrNxFgomYaISc2AGCy5/AO8MEUfomOp4T2l38U0Zx0He6wi5esT@vger.kernel.org, AJvYcCXO5nrhaMAng7pcEwgU/7++I72OuDfQRTVUMFOSl9GR/0mCy2Mi4cbJg0bGvmTJlWP2gGNW0pL6lqDIU/zg@vger.kernel.org
-X-Gm-Message-State: AOJu0YwQuTWSYfkVys/daH4QmYhnYL0hWDv1/ElgW2M8dHFPjgtGeaM8
-	g/yjFVPzKPyrLkWgV/eX67k15gy26xYqIG1WK0y5Xma9FS18T8cP
-X-Google-Smtp-Source: AGHT+IGBI1VisGzfbAgM1cvQ+sC+vrWtWn784maMtSzYfmgqtekMM+KH3XQkTZ5a1HgyynLHadyDMw==
-X-Received: by 2002:a05:6a00:4f8d:b0:70b:152:331 with SMTP id d2e1a72fcca58-715dfcca5bemr15220453b3a.21.1725209310006;
-        Sun, 01 Sep 2024 09:48:30 -0700 (PDT)
-Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-715e575b7ecsm5540044b3a.189.2024.09.01.09.48.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 01 Sep 2024 09:48:29 -0700 (PDT)
-Date: Mon, 2 Sep 2024 01:48:28 +0900
-From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
-To: Siddharth Vadapalli <s-vadapalli@ti.com>
-Cc: bhelgaas@google.com, lpieralisi@kernel.org,
-	manivannan.sadhasivam@linaro.org, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, vigneshr@ti.com,
-	kishon@kernel.org, linux-pci@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, srk@ti.com
-Subject: Re: [PATCH v4 0/2] Add ACSPCIE refclk support on J784S4-EVM
-Message-ID: <20240901164828.GG235729@rocinante>
-References: <20240829105316.1483684-1-s-vadapalli@ti.com>
+	s=arc-20240116; t=1725210136; c=relaxed/simple;
+	bh=FsO8EYvnbAmGqUQe9Pii3BHXPSzNdyieBp00jgaKm7k=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID; b=gKhObldzjeHoMC/zoUzzo+KcdwnM7Uq/dwWGnaTQb2LqkIh3Aw6EhX5Lab6CfUvCR3eyOMZ5DhlSatCiHvjV/WSeqbZU2F1bQ1mFBpwMX3muFea6u2BibVU1hwSW2wuEEEW24zYUgW2ormggtyjbPzP6Uu484LwnUYBd8+W21aQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=PychHPat reason="signature verification failed"; arc=none smtp.client-ip=117.135.210.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Date:From:Subject:Content-Type:MIME-Version:
+	Message-ID; bh=AjyGkwb0KCWQ1NnIxOsmkp9771bZVXLIiIJ0kX0YArs=; b=P
+	ychHPatwvXf5BcFDQSDy3NXr9qKNZ6eJRupeBD4dg8jBZAPPEMg4IQ6ewsf4ZwsA
+	5ZZ8zTMxuOL+AjVRkK2tqFehv4Uu2aOeKzelQ2haiMUsGbaEWNh8l+KKq81UbYde
+	A18PrnUFBG+LEudVg1UxsEAkUgzbZizuUp+lZqE51g=
+Received: from 00107082$163.com ( [111.35.190.113] ) by
+ ajax-webmail-wmsvr-40-114 (Coremail) ; Mon, 2 Sep 2024 01:01:07 +0800 (CST)
+Date: Mon, 2 Sep 2024 01:01:07 +0800 (CST)
+From: "David Wang" <00107082@163.com>
+To: mathias.nyman@intel.com, gregkh@linuxfoundation.org
+Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re:[PATCH] usb: xhci: wait for controller ready when resume with
+ reinit_xhc
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20240801(9da12a7b)
+ Copyright (c) 2002-2024 www.mailtech.cn 163com
+In-Reply-To: <20240901162425.5103-1-00107082@163.com>
+References: <20240901162425.5103-1-00107082@163.com>
+X-NTES-SC: AL_Qu2ZB/6av0gt4SmfbekXn0oTju85XMCzuv8j3YJeN500oyTB5iUpZW9hIlzs+ce1LiCjoAi1QiJDzc1IZKB2cbw2hLX9ZgVPvBhNSXgmNrsJ
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=GBK
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240829105316.1483684-1-s-vadapalli@ti.com>
+Message-ID: <1fe3e185.3639.191ae88840f.Coremail.00107082@163.com>
+X-Coremail-Locale: zh_CN
+X-CM-TRANSID:_____wD3n6zUndRmuSdHAA--.44675W
+X-CM-SenderInfo: qqqrilqqysqiywtou0bp/1tbiqRNNqmVOClTVCwACs0
+X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
 
-Hello,
- 
-> This series adds support to drive out the reference clock required by
-> the PCIe Endpoint device using the ACSPCIE buffer. Series __doesn't__
-> have any dependencies as the dependent patch:
-> https://lore.kernel.org/r/20240729064012.1915674-1-s-vadapalli@ti.com/
-> which was mentioned in the v2 series has been merged.
-
-Applied to controller/j721e, thank you!
-
-[01/02] dt-bindings: PCI: ti,j721e-pci-host: Add ACSPCIE proxy control property
-        https://git.kernel.org/pci/pci/c/cb08c3a32be4
-
-[02/02] PCI: j721e: Enable ACSPCIE Refclk if "ti,syscon-acspcie-proxy-ctrl" exists
-        https://git.kernel.org/pci/pci/c/82c4be4168e2
-
-	Krzysztof
+T29wcy4uLiBKdXN0IGZpbmQgb3V0IHRoZSB3YXJuaW5nICIgIGVwXzgxOiBQTTogcGFyZW50IDMt
+MS4xOjEuMSBzaG91bGQgbm90IGJlIHNsZWVwaW5nIiBzaG93cyB1cCB3aGVuIEkgc3VzcGVuZCBt
+eSBzeXN0ZW0gd2l0aCBVU0IgY2FtZXJhIG9uLCAKYW5kIHRoaXMgcGF0Y2ggY291bGQgbm90IGZp
+eCBpdC4KUGxlYXNlIGlnbm9yZSB0aGUgcGF0Y2gsIHNvcnJ5IGJvdGhlcmluZy4uLgoKRGF2aWQK
+CgpBdCAyMDI0LTA5LTAyIDAwOjI0OjI1LCAiRGF2aWQgV2FuZyIgPDAwMTA3MDgyQDE2My5jb20+
+IHdyb3RlOgo+V2hlbiByZXN1bWUgc3lzdGVtIHdpdGggcmVpbml0X3hoYyB0cnVlLCBQTSB3b3Vs
+ZCByZXBvcnQga2VybmVsCj53YXJuaW5nIGFib3V0IGRldmljZSBwYXJlbnQ6Cj4KPiA+dXNiIDMt
+MS4xOiByZXNldCBoaWdoLXNwZWVkIFVTQiBkZXZpY2UgbnVtYmVyIDQgdXNpbmcgeGhjaV9oY2QK
+PiA+Li4KPiA+ZXBfODE6IFBNOiBwYXJlbnQgMy0xLjE6MS4xIHNob3VsZCBub3QgYmUgc2xlZXBp
+bmcKPgo+TW92ZSB0aGUgY29kZSB3YWl0aW5nIGZvciBjb250cm9sbGVyIHJlYWR5IG91dCwgYW5k
+IG1ha2UgaXQKPmNhcnJ5IG91dCB3b3JrIG5vIG1hdHRlciByZWluaXRfeGhjIGlzIHRydWUgb3Ig
+ZmFsc2UuCj5UaGUgZXJyb3IgaXMgaWdub3JlZCB3aGVuIHJlaW5pdF94aGMgaXMgdHJ1ZS4KPgo+
+U2lnbmVkLW9mZi1ieTogRGF2aWQgV2FuZyA8MDAxMDcwODJAMTYzLmNvbT4KPi0tLQo+IGRyaXZl
+cnMvdXNiL2hvc3QveGhjaS5jIHwgMTQgKysrKysrKystLS0tLS0KPiAxIGZpbGUgY2hhbmdlZCwg
+OCBpbnNlcnRpb25zKCspLCA2IGRlbGV0aW9ucygtKQo+Cj5kaWZmIC0tZ2l0IGEvZHJpdmVycy91
+c2IvaG9zdC94aGNpLmMgYi9kcml2ZXJzL3VzYi9ob3N0L3hoY2kuYwo+aW5kZXggZWZkZjRjMjI4
+YjhjLi44YWViMWIzNGNkYmYgMTAwNjQ0Cj4tLS0gYS9kcml2ZXJzL3VzYi9ob3N0L3hoY2kuYwo+
+KysrIGIvZHJpdmVycy91c2IvaG9zdC94aGNpLmMKPkBAIC0xMDMyLDEzICsxMDMyLDE1IEBAIGlu
+dCB4aGNpX3Jlc3VtZShzdHJ1Y3QgeGhjaV9oY2QgKnhoY2ksIHBtX21lc3NhZ2VfdCBtc2cpCj4g
+CWlmIChoaWJlcm5hdGVkIHx8IHhoY2ktPnF1aXJrcyAmIFhIQ0lfUkVTRVRfT05fUkVTVU1FIHx8
+IHhoY2ktPmJyb2tlbl9zdXNwZW5kKQo+IAkJcmVpbml0X3hoYyA9IHRydWU7Cj4gCj4rCS8qCj4r
+CSAqIFNvbWUgY29udHJvbGxlcnMgbWlnaHQgbG9zZSBwb3dlciBkdXJpbmcgc3VzcGVuZCwgc28g
+d2FpdAo+KwkgKiBmb3IgY29udHJvbGxlciBub3QgcmVhZHkgYml0IHRvIGNsZWFyLCBqdXN0IGFz
+IGluIHhIQyBpbml0Lgo+KwkgKiBJZ25vcmUgcmV0dmFsIGlmIHJlaW5pdF94aGMgaXMgdHJ1ZSwg
+c2luY2UgdGhlIGRldmljZSB3b3VsZAo+KwkgKiBiZSByZWluaXRlZC4KPisJICovCj4rCXJldHZh
+bCA9IHhoY2lfaGFuZHNoYWtlKCZ4aGNpLT5vcF9yZWdzLT5zdGF0dXMsCj4rCQkJCVNUU19DTlIs
+IDAsIDEwICogMTAwMCAqIDEwMDApOwo+IAlpZiAoIXJlaW5pdF94aGMpIHsKPi0JCS8qCj4tCQkg
+KiBTb21lIGNvbnRyb2xsZXJzIG1pZ2h0IGxvc2UgcG93ZXIgZHVyaW5nIHN1c3BlbmQsIHNvIHdh
+aXQKPi0JCSAqIGZvciBjb250cm9sbGVyIG5vdCByZWFkeSBiaXQgdG8gY2xlYXIsIGp1c3QgYXMg
+aW4geEhDIGluaXQuCj4tCQkgKi8KPi0JCXJldHZhbCA9IHhoY2lfaGFuZHNoYWtlKCZ4aGNpLT5v
+cF9yZWdzLT5zdGF0dXMsCj4tCQkJCQlTVFNfQ05SLCAwLCAxMCAqIDEwMDAgKiAxMDAwKTsKPiAJ
+CWlmIChyZXR2YWwpIHsKPiAJCQl4aGNpX3dhcm4oeGhjaSwgIkNvbnRyb2xsZXIgbm90IHJlYWR5
+IGF0IHJlc3VtZSAlZFxuIiwKPiAJCQkJICByZXR2YWwpOwo+LS0gCj4yLjM5LjIK
 
