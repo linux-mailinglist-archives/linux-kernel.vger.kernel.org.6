@@ -1,60 +1,60 @@
-Return-Path: <linux-kernel+bounces-310384-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310385-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93046967C12
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 22:23:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FA20967C14
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 22:24:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE35A1C20FAB
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 20:23:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B0F601C20FA1
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 20:24:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F8A278C6C;
-	Sun,  1 Sep 2024 20:23:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3866478C6C;
+	Sun,  1 Sep 2024 20:23:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="cg6s0aFA"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="ViUGWnN1"
 Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC14720DF4;
-	Sun,  1 Sep 2024 20:23:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 123F254662;
+	Sun,  1 Sep 2024 20:23:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725222225; cv=none; b=psfxqWhCn5y3PVhDQaoLuHNn1vjRtPZ6JAXmWI+PpiqrXMnYum8X6RjY/3qWt6gAmDd7n+/opHQfnSdGyIVZIWyHDI2nqt8mYohsdf1kEDRjR1rlbOnh4pbpEzF91SZXF96Vxbk46CxCVtbNoz4Va4W4lwcy5Glt70kV5v/U7q8=
+	t=1725222236; cv=none; b=n1C7Yw6EjxAMgIJLb+fLzjgLdVktQJ9n9r+h92M6vNNHZ8r57RwgguDt9Rw3bFRu0BQP1fRzEtvAs/kbLb9a7exPsZ1DhBAqhcLQgudtpbfkuhFOQH3FUzu+V8RO8vkUBWTJLGG1hRJusmg/jDMRaqO7zsEGz9hu9rw6ZDJq804=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725222225; c=relaxed/simple;
-	bh=mhS9wq/z1LmRJm25oMawrdaABZQXIXK+jjXel794nKk=;
+	s=arc-20240116; t=1725222236; c=relaxed/simple;
+	bh=FZrbsELm0g3Ghd5/WGBvUUoerN2XTOCue0gWCNJnbTg=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=U56EZscOuAGgkmBVccLxYfcFFIingV3ScuxWyfKvb0o78HKAbzvSBqmlgGqzNqSt8BhLHMohljfUOeG4oSRkEmQTPrKIM5O1WdIOEtSc0SWXTWlxK4UWaSQzH7FqlX2W95f/T0YeGO6FLMhZJy26jNO16REb2qbDuigbS/Vz2DI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=cg6s0aFA; arc=none smtp.client-ip=198.47.23.249
+	 MIME-Version:Content-Type; b=QRob4AYVLXA4CVp5TJZO0eGiGZ7TPYt9/h3pcCBUWjbOCooVk6AxD8tViCsw6Bp12yXi5gdhoScadyqNRHL6xUBx3/+/EuvLx5sJX/xMsI7QB+MzaNbT4tqjHQqoqlIGhk7BSAvTgjxU7xBdldJ3r1wq77XMi8cxjHt5/Q149jw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=ViUGWnN1; arc=none smtp.client-ip=198.47.23.249
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 481KNQbv022550;
-	Sun, 1 Sep 2024 15:23:26 -0500
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 481KNndD022580;
+	Sun, 1 Sep 2024 15:23:49 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1725222206;
-	bh=P63PBx57TLR3J3nlihP0rfAAdQSDZKmFeLSsxI2ky2k=;
+	s=ti-com-17Q1; t=1725222230;
+	bh=imuvd7icXzSFnS2+tcRq6AcwVEyctqOadbzWaKilcfM=;
 	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=cg6s0aFACZC49WR87Z0XVIBYcfL1xk5vCepikG98ZPIjjn8AE7BJPDiPHAvmxHv3D
-	 9nvxe1DGMKQnzKazMEziZfhKyw5v/6KySpS4EtrBXNncxIQ1VPbbaMWO62chr9jwUu
-	 Hog86MeeUiDPHWu5YLgO/T79l9w5hiHIReVt+0QQ=
-Received: from DFLE104.ent.ti.com (dfle104.ent.ti.com [10.64.6.25])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 481KNQQC016796
+	b=ViUGWnN1MHjssV3uDrKQT32chBa3KuARE9r8nstd2J5AI0ebnaEMc8cA+DFj5RYk0
+	 +5Um5M/He7SUPWkIQvI+i67frLwXnI0mPSdlYzpXCbASgB92NOaEYjp/3vIuujQbHG
+	 N2LjhSQTnwZ/4Lt80maNm0HsTBQjAVGyQ3NBUbMM=
+Received: from DLEE102.ent.ti.com (dlee102.ent.ti.com [157.170.170.32])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 481KNnjQ083515
 	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Sun, 1 Sep 2024 15:23:26 -0500
-Received: from DFLE101.ent.ti.com (10.64.6.22) by DFLE104.ent.ti.com
- (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
+	Sun, 1 Sep 2024 15:23:49 -0500
+Received: from DLEE109.ent.ti.com (157.170.170.41) by DLEE102.ent.ti.com
+ (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Sun, 1
- Sep 2024 15:23:26 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE101.ent.ti.com
- (10.64.6.22) with Microsoft SMTP Server (version=TLS1_2,
+ Sep 2024 15:23:49 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE109.ent.ti.com
+ (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Sun, 1 Sep 2024 15:23:26 -0500
+ Frontend Transport; Sun, 1 Sep 2024 15:23:49 -0500
 Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 481KNQkg126828;
-	Sun, 1 Sep 2024 15:23:26 -0500
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 481KNnk2020607;
+	Sun, 1 Sep 2024 15:23:49 -0500
 From: Nishanth Menon <nm@ti.com>
 To: Conor Dooley <conor+dt@kernel.org>,
         Krzysztof Kozlowski
@@ -63,15 +63,15 @@ To: Conor Dooley <conor+dt@kernel.org>,
 	<nm@ti.com>
 CC: Tero Kristo <kristo@kernel.org>, Vignesh Raghavendra <vigneshr@ti.com>,
         <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, Dhruva Gole <d-gole@ti.com>,
-        Roger
- Quadros <rogerq@kernel.org>
-Subject: Re: [PATCH V2] arm64: dts: ti: k3-am642-evm-nand: Rename pinctrl node and gpio-hog names
-Date: Sun, 1 Sep 2024 15:23:23 -0500
-Message-ID: <172522211850.998098.12472787357819086145.b4-ty@ti.com>
+        <linux-arm-kernel@lists.infradead.org>,
+        Siddharth Vadapalli
+	<s-vadapalli@ti.com>
+Subject: Re: [PATCH] arm64: dts: ti: k3-j721s2-evm-gesi-exp-board: Rename gpio-hog node name
+Date: Sun, 1 Sep 2024 15:23:48 -0500
+Message-ID: <172522221149.998271.7947834668550804221.b4-ty@ti.com>
 X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20240830113137.3986091-1-nm@ti.com>
-References: <20240830113137.3986091-1-nm@ti.com>
+In-Reply-To: <20240830102822.3970269-1-nm@ti.com>
+References: <20240830102822.3970269-1-nm@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,22 +84,18 @@ X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
 Hi Nishanth Menon,
 
-On Fri, 30 Aug 2024 06:31:37 -0500, Nishanth Menon wrote:
-> Rename the pin mux and gpio-hog node names to match up with binding
-> rules. This fixes dtbs_check warnings:
-> 'gpmc0-pins-default' does not match any of the regexes: '-pins(-[0-9]+)?$|-pin$', 'pinctrl-[0-9]+'
-> 'gpio0-36' does not match '^(hog-[0-9]+|.+-hog(-[0-9]+)?)$'
+On Fri, 30 Aug 2024 05:28:22 -0500, Nishanth Menon wrote:
+> Fix the gpio hog node name to p15-hog to match up with gpio-hog
+> convention. This fixes dtbs_check warning:
+> p15: $nodename:0: 'p15' does not match '^(hog-[0-9]+|.+-hog(-[0-9]+)?)$'
 > 
-> While at it, change the phandle name to be consistent with the pinctrl
-> naming.
 > 
-> [...]
 
 I have applied the following to branch ti-k3-dts-next on [1].
 Thank you!
 
-[1/1] arm64: dts: ti: k3-am642-evm-nand: Rename pinctrl node and gpio-hog names
-      commit: 47ca0776e3637e8cfbf84483a0b0c22fbdf3a9f7
+[1/1] arm64: dts: ti: k3-j721s2-evm-gesi-exp-board: Rename gpio-hog node name
+      commit: 5c19aeb8ae4fc539a73d7ff8b25decd745950c39
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent up the chain during
