@@ -1,193 +1,181 @@
-Return-Path: <linux-kernel+bounces-310336-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310337-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97DD9967B86
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 19:36:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60680967B89
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 19:40:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B88C41C216CF
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 17:36:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE0181F21681
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 17:40:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 626ED183CC3;
-	Sun,  1 Sep 2024 17:36:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=layalina-io.20230601.gappssmtp.com header.i=@layalina-io.20230601.gappssmtp.com header.b="yxrYVAI+"
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D6ED183CBE;
+	Sun,  1 Sep 2024 17:40:47 +0000 (UTC)
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F02F1181B80
-	for <linux-kernel@vger.kernel.org>; Sun,  1 Sep 2024 17:35:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5624B28387;
+	Sun,  1 Sep 2024 17:40:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725212160; cv=none; b=oIjkHsEtk78ToEorheiKpxTeET6i8raGYZU7BAW8au8hRIsrovnPNsYKAdyfsZaHdkAAFUhDgXYtCdizUiaO3muwwUqukipUKp2ccMaDUVzjDDg4szDqcpthUn5+AkhOQdZZIQ84qz/9JOql2lF4GbqjrkRkhAsLuyNUlDyhM40=
+	t=1725212447; cv=none; b=AuHgmnShmfS5iTnmv31KyFAnRqVNtslhdmu2JFC4atxWVUJoQ1yFj634AixkyFK4fJ+KKzgUz+PnTQLNKLEfrJnZU6WbFIuivJHr6n0Fhl0qEqoQYj7SUezF6qN7ZaWyqcp+jlfgUj+FtWY6BZAXC43FUmSvI315/9NhrgWO++A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725212160; c=relaxed/simple;
-	bh=8fo5RF9hn9Cwx+3dapT7AvCdfyDW7Ccdnmkq86JSTdw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DVjYCcs4zvab1wwM2HQuNG9BCdMMugWDrnHa0EVlN1r2OU/SUmwo2+mpJ6FHEbXVFrefJREmokijXHxQ/p734eGOEm/XaZUHSSkDi81NNzJpyMm5TV74qSyPdzETsqp/9Inc70fzv7RjsJL14lUwjDW4JuqP8S/YJ+zs1U5S7ws=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=layalina.io; spf=pass smtp.mailfrom=layalina.io; dkim=pass (2048-bit key) header.d=layalina-io.20230601.gappssmtp.com header.i=@layalina-io.20230601.gappssmtp.com header.b=yxrYVAI+; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=layalina.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=layalina.io
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a7a9cf7d3f3so376338066b.1
-        for <linux-kernel@vger.kernel.org>; Sun, 01 Sep 2024 10:35:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=layalina-io.20230601.gappssmtp.com; s=20230601; t=1725212157; x=1725816957; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=BBXN7KTwAPMDesT9rI+sPHbVfqONlmGBvlSCIWfwlXo=;
-        b=yxrYVAI+4s/+TLFPUiyJvuJfD1g4vmfH6/hb5NfdMxQIGMItIPzxP0x52uAf8SBrde
-         f7nU4PMCSXlT69xouK5lt8Gzzc9vDuk7VPGW7efF+H9mJl+KrUGDNPeHcjumeHzux225
-         s0+8jIEQ1Yu1++byXm8U1cM67ineeoXUe+KJI8ZEhaMRSB5dnt6fdep6NVSiBJoJ/FLN
-         iojG3PYPq3bFzERNifRqI/zIk4gOwrDGfpzXImpAhmMZXuRYycuId9jlJ90k/VbzmwlR
-         FwuSfk5czshAcy3nVSHfvydWOCIq1wdgnrCilD42c8HrCZnzTqk9uB4wv0ayeGT1eRov
-         ++PQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725212157; x=1725816957;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BBXN7KTwAPMDesT9rI+sPHbVfqONlmGBvlSCIWfwlXo=;
-        b=XsX5egpnFRcLlKapMdAj+21WXw56iDuYJfxbYFQKg5wViUb45MKQzySuB8uKK1IxiR
-         /21wrq7LOzfH7r5DstiM4SzcnS1fLESeqTRhZJDw3KkAyTOK/K45spYFNads51wqZYvN
-         uo41a5aGedJLejxnyiblgLa3mESxa/gLyFio/K4kpJTqpzXoh2EVwflIe+Ncnv8nSJo4
-         zRoY/mofogxsYccV6VaNL5jogTIh5U42fIwHhiNtlYTDLdw29idRqZJ/KT1uctIHnP5P
-         epCHiKQgaoclago36sEP9HFUmsW3ic5RbYYky68JFDuUkWjuGeR4iCq9LlAV7jJOR32N
-         I76g==
-X-Forwarded-Encrypted: i=1; AJvYcCXymMOB0qmC02oQBX/taDwWBYSHkKMg3AKMxCq2p4Ad0E6i2Uh01uxuXoMPtxZzi8J3dV6i1SoMwWYvdg0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywx8/DdYHRNrfwZaOdFVE9H/rCQOJZpAjx6BvU10qnwf+UBk9Ma
-	SmPvwm48SXkVYYoXWQYwxVp10JPieYdU7F6qpA813TtJOSME7xhJjk/Rq732b01lZbws3n9bTrp
-	Sq+4=
-X-Google-Smtp-Source: AGHT+IH7xmYFVMjw6pKYg40WLjly23kzrWCNbQw//RjLCm1t832Y5KCbXETGqptcdCiQK7P1WIaHcw==
-X-Received: by 2002:a17:907:3e83:b0:a86:6fb3:fda5 with SMTP id a640c23a62f3a-a89fae1b889mr121955266b.32.1725212156658;
-        Sun, 01 Sep 2024 10:35:56 -0700 (PDT)
-Received: from airbuntu ([176.29.222.46])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8988ff0465sm458214666b.29.2024.09.01.10.35.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 01 Sep 2024 10:35:55 -0700 (PDT)
-Date: Sun, 1 Sep 2024 18:35:52 +0100
-From: Qais Yousef <qyousef@layalina.io>
-To: Christian Loehle <christian.loehle@arm.com>
-Cc: Ingo Molnar <mingo@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
-Subject: Re: [PATCH v3] sched: cpufreq: Rename map_util_perf to
- sugov_apply_dvfs_headroom
-Message-ID: <20240901173552.h2pkra5fhkidzxd4@airbuntu>
-References: <20240808234415.554937-1-qyousef@layalina.io>
- <bfcedd2d-6459-4611-8c4a-08cfdbdfbc5c@arm.com>
+	s=arc-20240116; t=1725212447; c=relaxed/simple;
+	bh=PHtUPU44VJFtzSXOcuumwF4SxIcugVWr0CGUnXoZGaw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Syq47TkMyQJcRXSx6j0fIqwZK4H2QdlWgi3FW4ea8u6sL3kXVdeqCwfyhAos7ebOwAXeV6XvdGmAXv1VS7XoibgVmc1prmGKPHmPd04hs/hJQRrOCcKRU2QX76u3xsOTmSyo+R8LnlPXih4ShteivcNb0wNepFXVDya1fywn5s8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4WxfLM0dd8z9sSN;
+	Sun,  1 Sep 2024 19:40:43 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id Ls-C2eSZZ_8S; Sun,  1 Sep 2024 19:40:43 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4WxfLL6vmFz9sSK;
+	Sun,  1 Sep 2024 19:40:42 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id DE0588B767;
+	Sun,  1 Sep 2024 19:40:42 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id Nf7_4M6aqOFL; Sun,  1 Sep 2024 19:40:42 +0200 (CEST)
+Received: from PO20335.idsi0.si.c-s.fr (unknown [192.168.234.154])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 7C7518B763;
+	Sun,  1 Sep 2024 19:40:42 +0200 (CEST)
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+To: Shuah Khan <shuah@kernel.org>,
+	"Jason A . Donenfeld" <Jason@zx2c4.com>
+Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
+	linux-kernel@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org,
+	linux-kselftest@vger.kernel.org
+Subject: [PATCH] selftests: vDSO: Also test counter in vdso_test_chacha
+Date: Sun,  1 Sep 2024 19:40:33 +0200
+Message-ID: <f9f64c5ded3925ae408f01c1c61e2fdf6f645a71.1725212364.git.christophe.leroy@csgroup.eu>
+X-Mailer: git-send-email 2.44.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <bfcedd2d-6459-4611-8c4a-08cfdbdfbc5c@arm.com>
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1725212433; l=4431; i=christophe.leroy@csgroup.eu; s=20211009; h=from:subject:message-id; bh=PHtUPU44VJFtzSXOcuumwF4SxIcugVWr0CGUnXoZGaw=; b=kozjp6TIT5Z6o97Fzq42YN3zXL/6TDVJKww3C/AonWORE7rQibXbhGN+4grmNc48D/b8CPzll mX0qccNo+tGC5wR+VczRIhIK8hLahJg6zHOBu8hzRl5452CiYnK/1Tm
+X-Developer-Key: i=christophe.leroy@csgroup.eu; a=ed25519; pk=HIzTzUj91asvincQGOFx6+ZF5AoUuP9GdOtQChs7Mm0=
+Content-Transfer-Encoding: 8bit
 
-On 08/16/24 16:44, Christian Loehle wrote:
-> On 8/9/24 00:44, Qais Yousef wrote:
-> > We are providing headroom for the utilization to grow until the next
-> > decision point to pick the next frequency. Give the function a better
-> > name and give it some documentation. It is not really mapping anything.
-> > 
-> > Also move it to cpufreq_schedutil.c. This function relies on updating
-> > util signal appropriately to give a headroom to grow. This is tied to
-> > schedutil and scheduler and not something that can be shared with other
-> > governors.
-> > 
-> > Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
-> > Acked-by: Rafael J. Wysocki <rafael@kernel.org>
-> > Reviewed-by: Vincent Guittot <vincent.guittot@linaro.org>
-> > Signed-off-by: Qais Yousef <qyousef@layalina.io>
-> > ---
-> > 
-> > Changes in v3:
-> > 
-> > 	1. Add Reviewed-by from Vincent
-> > 
-> > Changes in v2:
-> > 
-> > 	1. Add Acked-by from Viresh and Raphael (Thanks!)
-> > 	2. Move the function to cpufreq_schedutil.c instead of sched.h
-> > 	3. Name space the function with sugov_ to indicate it is special to
-> > 	   this governor only and not generic.
-> > 
-> >  include/linux/sched/cpufreq.h    |  5 -----
-> >  kernel/sched/cpufreq_schedutil.c | 20 +++++++++++++++++++-
-> >  2 files changed, 19 insertions(+), 6 deletions(-)
-> > 
-> > diff --git a/include/linux/sched/cpufreq.h b/include/linux/sched/cpufreq.h
-> > index bdd31ab93bc5..d01755d3142f 100644
-> > --- a/include/linux/sched/cpufreq.h
-> > +++ b/include/linux/sched/cpufreq.h
-> > @@ -28,11 +28,6 @@ static inline unsigned long map_util_freq(unsigned long util,
-> >  {
-> >  	return freq * util / cap;
-> >  }
-> > -
-> > -static inline unsigned long map_util_perf(unsigned long util)
-> > -{
-> > -	return util + (util >> 2);
-> > -}
-> >  #endif /* CONFIG_CPU_FREQ */
-> >  
-> >  #endif /* _LINUX_SCHED_CPUFREQ_H */
-> > diff --git a/kernel/sched/cpufreq_schedutil.c b/kernel/sched/cpufreq_schedutil.c
-> > index eece6244f9d2..575df3599813 100644
-> > --- a/kernel/sched/cpufreq_schedutil.c
-> > +++ b/kernel/sched/cpufreq_schedutil.c
-> > @@ -178,12 +178,30 @@ static unsigned int get_next_freq(struct sugov_policy *sg_policy,
-> >  	return cpufreq_driver_resolve_freq(policy, freq);
-> >  }
-> >  
-> > +/*
-> > + * DVFS decision are made at discrete points. If CPU stays busy, the util will
-> > + * continue to grow, which means it could need to run at a higher frequency
-> > + * before the next decision point was reached. IOW, we can't follow the util as
-> > + * it grows immediately, but there's a delay before we issue a request to go to
-> > + * higher frequency. The headroom caters for this delay so the system continues
-> > + * to run at adequate performance point.
-> > + *
-> > + * This function provides enough headroom to provide adequate performance
-> > + * assuming the CPU continues to be busy.
-> > + *
-> > + * At the moment it is a constant multiplication with 1.25.
-> > + */
-> > +static inline unsigned long sugov_apply_dvfs_headroom(unsigned long util)
-> > +{
-> > +	return util + (util >> 2);
-> > +}
-> > +
-> >  unsigned long sugov_effective_cpu_perf(int cpu, unsigned long actual,
-> >  				 unsigned long min,
-> >  				 unsigned long max)
-> >  {
-> >  	/* Add dvfs headroom to actual utilization */
-> > -	actual = map_util_perf(actual);
-> > +	actual = sugov_apply_dvfs_headroom(actual);
-> 
-> Maybe you can even get rid of the comment above now.
-> sugov_apply_dvfs_headroom(actual) is pretty self-explanatory.
+The chacha vDSO selftest doesn't check the way the counter is handled
+by __arch_chacha20_blocks_nostack(). It indirectly checks that the
+counter is writen on exit and read back on new entry, but it doesn't
+check that the format is correct. It has led to an invisible erroneous
+implementation on powerpc where the counter was writen and read in
+wrong byte order.
 
-It was actually not clear to folks based on previous discussion. And I already
-doing many changes on how dvfs headroom is done on another series. So I think
-it is worth it.
+Also, the counter uses two words, but the tests with a zero counter
+and uses a small amount of blocks so at the end the upper part of the
+counter is always 0 so it is not checked.
 
-> 
-> Anyway
-> Reviewed-by: Christian Loehle <christian.loehle@arm.com>
+Add a verification of counter's content in addition to the
+verification of the output.
 
-Thanks for having a look!
+Also add two tests where the counter crosses the u32 upper limit. The
+first test verifies that the function properly writes back the upper
+word, the second test verifies that the function properly reads back
+the upper word.
 
-> 
-> >  	/* Actually we don't need to target the max performance */
-> >  	if (actual < max)
-> >  		max = actual;
-> 
+While at it, remove 'nonce' which is not unused anymore after the
+replacement of libsodium by open coded chacha implementation.
+
+Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
+---
+ .../testing/selftests/vDSO/vdso_test_chacha.c | 39 ++++++++++++++-----
+ 1 file changed, 30 insertions(+), 9 deletions(-)
+
+diff --git a/tools/testing/selftests/vDSO/vdso_test_chacha.c b/tools/testing/selftests/vDSO/vdso_test_chacha.c
+index 9d18d49a82f8..ed6cf372d9ee 100644
+--- a/tools/testing/selftests/vDSO/vdso_test_chacha.c
++++ b/tools/testing/selftests/vDSO/vdso_test_chacha.c
+@@ -17,11 +17,12 @@ static uint32_t rol32(uint32_t word, unsigned int shift)
+ 	return (word << (shift & 31)) | (word >> ((-shift) & 31));
+ }
+ 
+-static void reference_chacha20_blocks(uint8_t *dst_bytes, const uint32_t *key, size_t nblocks)
++static void reference_chacha20_blocks(uint8_t *dst_bytes, const uint32_t *key, uint32_t *counter, size_t nblocks)
+ {
+ 	uint32_t s[16] = {
+ 		0x61707865U, 0x3320646eU, 0x79622d32U, 0x6b206574U,
+-		key[0], key[1], key[2], key[3], key[4], key[5], key[6], key[7]
++		key[0], key[1], key[2], key[3], key[4], key[5], key[6], key[7],
++		counter[0], counter[1],
+ 	};
+ 
+ 	while (nblocks--) {
+@@ -52,6 +53,8 @@ static void reference_chacha20_blocks(uint8_t *dst_bytes, const uint32_t *key, s
+ 		if (!++s[12])
+ 			++s[13];
+ 	}
++	counter[0] = s[12];
++	counter[1] = s[13];
+ }
+ 
+ typedef uint8_t u8;
+@@ -66,8 +69,7 @@ typedef uint64_t u64;
+ int main(int argc, char *argv[])
+ {
+ 	enum { TRIALS = 1000, BLOCKS = 128, BLOCK_SIZE = 64 };
+-	static const uint8_t nonce[8] = { 0 };
+-	uint32_t counter[2];
++	uint32_t counter1[2], counter2[2];
+ 	uint32_t key[8];
+ 	uint8_t output1[BLOCK_SIZE * BLOCKS], output2[BLOCK_SIZE * BLOCKS];
+ 
+@@ -84,17 +86,36 @@ int main(int argc, char *argv[])
+ 			printf("getrandom() failed!\n");
+ 			return KSFT_SKIP;
+ 		}
+-		reference_chacha20_blocks(output1, key, BLOCKS);
++		memset(counter1, 0, sizeof(counter1));
++		reference_chacha20_blocks(output1, key, counter1, BLOCKS);
+ 		for (unsigned int split = 0; split < BLOCKS; ++split) {
+ 			memset(output2, 'X', sizeof(output2));
+-			memset(counter, 0, sizeof(counter));
++			memset(counter2, 0, sizeof(counter2));
+ 			if (split)
+-				__arch_chacha20_blocks_nostack(output2, key, counter, split);
+-			__arch_chacha20_blocks_nostack(output2 + split * BLOCK_SIZE, key, counter, BLOCKS - split);
+-			if (memcmp(output1, output2, sizeof(output1)))
++				__arch_chacha20_blocks_nostack(output2, key, counter2, split);
++			__arch_chacha20_blocks_nostack(output2 + split * BLOCK_SIZE, key, counter2, BLOCKS - split);
++			if (memcmp(output1, output2, sizeof(output1)) ||
++			    memcmp(counter2, counter2, sizeof(counter1)))
+ 				return KSFT_FAIL;
+ 		}
+ 	}
++	memset(counter1, 0, sizeof(counter1));
++	counter1[0] = (uint32_t)-BLOCKS + 2;
++	memset(counter2, 0, sizeof(counter2));
++	counter2[0] = (uint32_t)-BLOCKS + 2;
++
++	reference_chacha20_blocks(output1, key, counter1, BLOCKS);
++	__arch_chacha20_blocks_nostack(output2, key, counter2, BLOCKS);
++	if (memcmp(output1, output2, sizeof(output1)) ||
++	    memcmp(counter2, counter2, sizeof(counter1)))
++		return KSFT_FAIL;
++
++	reference_chacha20_blocks(output1, key, counter1, BLOCKS);
++	__arch_chacha20_blocks_nostack(output2, key, counter2, BLOCKS);
++	if (memcmp(output1, output2, sizeof(output1)) ||
++	    memcmp(counter2, counter2, sizeof(counter1)))
++		return KSFT_FAIL;
++
+ 	ksft_test_result_pass("chacha: PASS\n");
+ 	return KSFT_PASS;
+ }
+-- 
+2.44.0
+
 
