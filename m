@@ -1,195 +1,143 @@
-Return-Path: <linux-kernel+bounces-310365-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310366-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC2F8967BC8
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 20:34:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14859967BD2
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 20:43:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A9CF31C21689
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 18:34:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD6F01F21482
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 18:43:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0015139CEC;
-	Sun,  1 Sep 2024 18:34:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KUuYby4T"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCD704CE13;
+	Sun,  1 Sep 2024 18:43:15 +0000 (UTC)
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96289137932
-	for <linux-kernel@vger.kernel.org>; Sun,  1 Sep 2024 18:34:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33C7917BA6;
+	Sun,  1 Sep 2024 18:43:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725215656; cv=none; b=BJgiQ/XvJB2nfUWjwuGcwWYMhhhg9CVi67LVsI+zuIF+nuDQ1GuCXhnfhcj7mJZTSzQkunPqOKw9+AN9JhT5hETR5by6P5+s2B78y9w9LUWQPv8j3oXNSYjIAdEYYaXHp7qwPJZ+L04RK/Xmj4+6Ihs+/Q+UfB68Hacp7OyUwxw=
+	t=1725216195; cv=none; b=oIFjknGmvngqSfD5VOKMrghBjPHPp0avkoqdko0GnGvbs0J3mvMWUhnIVLZvu7ln9cvZhRSINWPgPSo43vcNOs/Ayj1odk06CDs9YSOIFkgSFp5aCOlDtV1+J/YP8eZoVTf/DK7smjdJ2fCrF7RToEzvSEGW4jCTSM0AQW0+vHg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725215656; c=relaxed/simple;
-	bh=jKdUu1ExBco5S0KbNsN6/B0IKs4k668rF87+upIk1BI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=gu2NRhusiQgFKOI4LBKmitIiAYIIlOUdkMJUJh+1G2YJFjtrkWkX58MaGv0rJk4+ek+egWzmcjbyAsv+p28qVdpJF6QGGx0hutBNW5ob6yQBlXkTg8f+uynSfA1nfpcfkDXt7sVI6NvM9Lr/eEObzXIJ1k/WD8iOOVDN3WuwMIk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KUuYby4T; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-2021a99af5eso29041725ad.1
-        for <linux-kernel@vger.kernel.org>; Sun, 01 Sep 2024 11:34:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725215654; x=1725820454; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VLCyRC657hgOtTBOAgAwcacwSzgshdziSy5VI8t2Gq0=;
-        b=KUuYby4TjeQqQ3W2S6Y1SsPQSymbp5alwd4ViqwaJ2djTCPaufu8BuxTXYKDs9etxC
-         ardYFDV/Xa0n/vrdt5uRmkr0emKBBJdjFG4vh6ERIo2nAYfMiUhHRPUoeWCDZ4deSL7B
-         riIfHSR6WMPlKFz58NPcNQxC6DvTl1Y6t5KlMNJe+3UrgctsPADTS2sWqld8/kKYfcDl
-         kKC9r8rStfg0pO3Qeam4xElA8RtAVcc/1ylKVBkdvs/HMl9spx00DHsdsVYNrFlfEXv4
-         MXGO7dXfs6DBoBwNtJ/POe4u1Vs9hrRJHFpsaSY7tQa+1QNy4SVlvE3thTOr+h2G2Q3g
-         iW4Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725215654; x=1725820454;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=VLCyRC657hgOtTBOAgAwcacwSzgshdziSy5VI8t2Gq0=;
-        b=RvGcWOdAVGYFCD9FYP+7aBRYzKqSWqx03nNtyYSDqdkoEBylnYv+Td7g2LrRjN+ZRQ
-         iakxHBtSwwVIp7xlH8UFaYsVC8NLwxCWGACOBqf7Hz777lZT32PGWoHtVRC1rs4O/vjA
-         XtmloGhzOd+Pp/lJU3ZG6x0GQTvSq0OaYvMgZNRl8+aiMi5bDsd6F2EDiF2tjJYqpCnv
-         7JcmMxj0CYiwsmrtaRJsOhsOM4p5JcazavftOvDC3MnFMfdi/ufjM3QwfSsQOgD6nJua
-         UMUy9d7wjuo4Q70JiMxhyzKW2x6OdWpVQl3xiLhSNXqq03h7bK9fF/LLTa1FZjUJ4oUH
-         eJ1A==
-X-Forwarded-Encrypted: i=1; AJvYcCU+0rs2JKvZisKBMEutGDPigqHe4U0XfC02gFpSF+OvoY5BlHZnJa/cNvDgXqMnpmludtPKt7+k4pG+C0Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyacnbVbE3LJUbOnh/REgPm3ddtgIcxfCZxwwatziZ04CHgADLN
-	MMAM1UxwrYWOSITQbH+fHpApNo31cb3sQ2+8bWjSDrzpSSiybk3g
-X-Google-Smtp-Source: AGHT+IE0DF0h8dNkgogZ/U5Ym66OZuvgg8ZiSDLJNUPCI1HaXLR9hpfBmfxTQjfDGWPLFLoNSdDjfw==
-X-Received: by 2002:a17:902:ced2:b0:1fd:791d:1437 with SMTP id d9443c01a7336-2058417b1d9mr426515ad.6.1725215653750;
-        Sun, 01 Sep 2024 11:34:13 -0700 (PDT)
-Received: from localhost.localdomain ([113.30.217.222])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20559b793f8sm16262405ad.15.2024.09.01.11.34.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 01 Sep 2024 11:34:13 -0700 (PDT)
-From: Anand Moon <linux.amoon@gmail.com>
-To: Vinod Koul <vkoul@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Heiko Stuebner <heiko@sntech.de>
-Cc: Anand Moon <linux.amoon@gmail.com>,
-	linux-phy@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v5 6/6] phy: rockchip-pcie: Use regmap_read_poll_timeout for PCIe reference clk PLL status
-Date: Mon,  2 Sep 2024 00:02:13 +0530
-Message-ID: <20240901183221.240361-7-linux.amoon@gmail.com>
-X-Mailer: git-send-email 2.44.0
-In-Reply-To: <20240901183221.240361-1-linux.amoon@gmail.com>
-References: <20240901183221.240361-1-linux.amoon@gmail.com>
+	s=arc-20240116; t=1725216195; c=relaxed/simple;
+	bh=UVSOd/WYdmt9syjO5zHmRNT8dh7mNVs3oIjfiXs0is0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uqxao9csaxiAmiETRlocf4T8QBiO1SVezN4H7a7wwAuKgP4rP3B4rKhZikLWCzOd8Qz8SMARULRYnSK/o1/miMhUT5BiRZvixjYfrhJaTXTHjxYAgc1sFZOi9FpDcPrN88aPvbqgzDR6oatG1rqm7xzL+knFz7PMHEcvNg0Gt9g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4WxgkR2wZlz9sSN;
+	Sun,  1 Sep 2024 20:43:11 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id f-QtdpVYL6Kf; Sun,  1 Sep 2024 20:43:11 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4WxgkR1q5hz9sSK;
+	Sun,  1 Sep 2024 20:43:11 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 243378B767;
+	Sun,  1 Sep 2024 20:43:11 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id hFIeW2c4y8Oo; Sun,  1 Sep 2024 20:43:11 +0200 (CEST)
+Received: from [192.168.234.154] (unknown [192.168.234.154])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id C33B98B763;
+	Sun,  1 Sep 2024 20:43:10 +0200 (CEST)
+Message-ID: <efca582d-20e9-4871-bcd8-5abcdb0c22f3@csgroup.eu>
+Date: Sun, 1 Sep 2024 20:43:10 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] selftests: vDSO: Do not rely on $ARCH for
+ vdso_test_getrandom && vdso_test_chacha
+To: "Jason A. Donenfeld" <Jason@zx2c4.com>
+Cc: linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ Adhemerval Zanella <adhemerval.zanella@linaro.org>,
+ Xi Ruoyao <xry111@xry111.site>, broonie@kernel.org
+References: <ddf594c81787dba708fc392cb03027470dee64fb.1725124064.git.christophe.leroy@csgroup.eu>
+ <ZtRqp-uZe5C07qOF@zx2c4.com>
+ <667622ae-dde5-410f-a9f8-4801788af278@csgroup.eu>
+ <ZtSsTkTUCGyxaN_d@zx2c4.com>
+Content-Language: fr-FR
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+In-Reply-To: <ZtSsTkTUCGyxaN_d@zx2c4.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Replace open-coded phy PCIe reference clk PLL status polling with
-regmap_read_poll_timeout API. This change simplifies the code without
-altering functionality.
 
-Signed-off-by: Anand Moon <linux.amoon@gmail.com>
----
-v5: New patch in this seriese
----
- drivers/phy/rockchip/phy-rockchip-pcie.c | 56 +++++++-----------------
- 1 file changed, 15 insertions(+), 41 deletions(-)
 
-diff --git a/drivers/phy/rockchip/phy-rockchip-pcie.c b/drivers/phy/rockchip/phy-rockchip-pcie.c
-index a1b4b0323e9d..2c4d6f68f02a 100644
---- a/drivers/phy/rockchip/phy-rockchip-pcie.c
-+++ b/drivers/phy/rockchip/phy-rockchip-pcie.c
-@@ -162,7 +162,6 @@ static int rockchip_pcie_phy_power_on(struct phy *phy)
- 	struct rockchip_pcie_phy *rk_phy = to_pcie_phy(inst);
- 	int err = 0;
- 	u32 status;
--	unsigned long timeout;
- 
- 	mutex_lock(&rk_phy->pcie_mutex);
- 
-@@ -191,21 +190,11 @@ static int rockchip_pcie_phy_power_on(struct phy *phy)
- 	 * so we make it large enough here. And we use loop-break
- 	 * method which should not be harmful.
- 	 */
--	timeout = jiffies + msecs_to_jiffies(1000);
--
--	err = -EINVAL;
--	while (time_before(jiffies, timeout)) {
--		regmap_read(rk_phy->reg_base,
--			    rk_phy->phy_data->pcie_status,
--			    &status);
--		if (status & PHY_PLL_LOCKED) {
--			dev_dbg(&phy->dev, "pll locked!\n");
--			err = 0;
--			break;
--		}
--		msleep(20);
--	}
--
-+	err = regmap_read_poll_timeout(rk_phy->reg_base,
-+				       rk_phy->phy_data->pcie_status,
-+				       status,
-+				       status & PHY_PLL_LOCKED,
-+				       200, 100000);
- 	if (err) {
- 		dev_err(&phy->dev, "pll lock timeout!\n");
- 		goto err_pll_lock;
-@@ -214,19 +203,11 @@ static int rockchip_pcie_phy_power_on(struct phy *phy)
- 	phy_wr_cfg(rk_phy, PHY_CFG_CLK_TEST, PHY_CFG_SEPE_RATE);
- 	phy_wr_cfg(rk_phy, PHY_CFG_CLK_SCC, PHY_CFG_PLL_100M);
- 
--	err = -ETIMEDOUT;
--	while (time_before(jiffies, timeout)) {
--		regmap_read(rk_phy->reg_base,
--			    rk_phy->phy_data->pcie_status,
--			    &status);
--		if (!(status & PHY_PLL_OUTPUT)) {
--			dev_dbg(&phy->dev, "pll output enable done!\n");
--			err = 0;
--			break;
--		}
--		msleep(20);
--	}
--
-+	err = regmap_read_poll_timeout(rk_phy->reg_base,
-+				       rk_phy->phy_data->pcie_status,
-+				       status,
-+				       !(status & PHY_PLL_OUTPUT),
-+				       200, 100000);
- 	if (err) {
- 		dev_err(&phy->dev, "pll output enable timeout!\n");
- 		goto err_pll_lock;
-@@ -236,19 +217,12 @@ static int rockchip_pcie_phy_power_on(struct phy *phy)
- 		     HIWORD_UPDATE(PHY_CFG_PLL_LOCK,
- 				   PHY_CFG_ADDR_MASK,
- 				   PHY_CFG_ADDR_SHIFT));
--	err = -EINVAL;
--	while (time_before(jiffies, timeout)) {
--		regmap_read(rk_phy->reg_base,
--			    rk_phy->phy_data->pcie_status,
--			    &status);
--		if (status & PHY_PLL_LOCKED) {
--			dev_dbg(&phy->dev, "pll relocked!\n");
--			err = 0;
--			break;
--		}
--		msleep(20);
--	}
- 
-+	err = regmap_read_poll_timeout(rk_phy->reg_base,
-+				       rk_phy->phy_data->pcie_status,
-+				       status,
-+				       status & PHY_PLL_LOCKED,
-+				       200, 100000);
- 	if (err) {
- 		dev_err(&phy->dev, "pll relock timeout!\n");
- 		goto err_pll_lock;
--- 
-2.44.0
+Le 01/09/2024 à 20:02, Jason A. Donenfeld a écrit :
+> On Sun, Sep 01, 2024 at 08:00:30PM +0200, Christophe Leroy wrote:
+>> Hi Jason,
+>>
+>> Le 01/09/2024 à 15:22, Jason A. Donenfeld a écrit :
+>>> Hi Christophe,
+>>>
+>>> Hmm, I'm not so sure I like this very much. I think it's important for
+>>> these tests to fail when an arch tries to hook up the function to the
+>>> vDSO, but it's still not exported for some reason. This also regresses
+>>> the ARCH=x86_64 vs ARCH=x86 thing, which SRCARCH fixes.
+>>>
+>>> What about, instead, something like below, replacing the other commit?
+>>
+>> I need to look at it in more details and perfom a test, but after first
+>> look I can't figure out how it would work.
+>>
+>> When I build selftests,
+>>
+>> to build 32 bits selftests I do:
+>>
+>> 	make ARCH=powerpc CROSS_COMPILE=ppc-linux-
+>>
+>> to build a 64 bits BE selftests I do:
+>>
+>> 	make ARCH=powerpc CROSS_COMPILE=powerpc64-linux-
+>>
+>> to build a 64 bits LE selftests I do:
+>>
+>> 	make ARCH=powerpc CROSS_COMPILE=powerpc64le-linux-
+>>
+>>
+>> I addition, in case someone does the build on a native platform directly,
+>>
+>> On 32 bits, uname -m returns 'ppc'
+>> On 64 bits, uname -m returns 'ppc64'
+>> On 64 bits little endian, uname -m returns 'ppc64le'
+>>
+>> How would this fit in the logic where IIUC you just remove '_64' from
+>> 'x86_64' to get 'x86'
+> 
+> Huh? That's not what tools/scripts/Makefile.arch does.
 
+Hum ... yes sorry I looked at it too quickly and mixed things up with 
+the other patch.
+
+Nevertheless, if I understand well what tools/scripts/Makefile.arch does 
+on an x86_64 for instance:
+
+uname -m returns x86_64
+HOSTARCH = x86 (sed -e s/x86_64/x86)
+ARCH = x86
+SRCARCH = x86
+
+If you build with make ARCH=x86_64,
+SRCARCH = x86
+
+So I still can't see how you can use that to know if it is a x86_64 or not.
+
+I don't see either what could be the result for powerpc.
+
+By the way, in your patch I don't think you can use CONFIG_X86_32, 
+CONFIG symbols are not known when building selftests.
+
+Christophe
 
