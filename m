@@ -1,108 +1,125 @@
-Return-Path: <linux-kernel+bounces-310399-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310400-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D11E967C36
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 22:54:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 554E0967C39
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 22:54:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 12C261F215A5
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 20:54:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 117B0281985
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 20:54:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42D836F2FD;
-	Sun,  1 Sep 2024 20:54:10 +0000 (UTC)
-Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.86.151])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56C7013AA46;
+	Sun,  1 Sep 2024 20:54:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G9S/kbkr"
+Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA73E4CE05
-	for <linux-kernel@vger.kernel.org>; Sun,  1 Sep 2024 20:54:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.86.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03F014CE05;
+	Sun,  1 Sep 2024 20:54:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725224049; cv=none; b=AiINZHcDvbKgjTPW5/05zVdaNVjIBFaC4kPMt2fnmr8csJBGm5V07It80N6/oGGwI0xi3B4cg+utZ6h4eey/5hg5ovSj9ucyAFtCE8yaKYvHXJ+eonugdZIwfwieQc2al9tdWnLlJeCFii/L0AeKceE7ohhsu1JIFUGXQIkmobQ=
+	t=1725224054; cv=none; b=rptK1Mk9ydDolvIUyfqfeBoOFYdZ1xxsUs5eKtpTfdPRnVYup8qPc5uWcQavV2Stcruwk2DJ2eiFTwSuJUDDSjZdQiMXowLnjvumdv90zCWtLTmBohYPeVvmHhRCIS0YUIA5A6zg32cWTIBoQchogfQZk/+rcUuEIBmJCb21o8o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725224049; c=relaxed/simple;
-	bh=y1ZdfCcI7KsN6Fcy/zwWfpagv4xyjNTDkcYo+rseoQM=;
-	h=From:To:Subject:Date:Message-ID:References:In-Reply-To:
-	 MIME-Version:Content-Type; b=bG6/3i9XmYDx5X1ZSx1St0jijuLgujS+LajVzCUUjTM9ahSUkVuXJ8vfZVPxrmy0QTW1LUHKgHxJZgOGuzSEys/a2FalRaH/7o9LbldosIn70J4BMx2/qqSrjiZ5qrh5MGALuJUUVXxpG3i98fMAR5tUJHEEHR/ZjgZg7lBN8E4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.86.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
-Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
- relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- uk-mta-143-DaDaQP20OJ2k4OkvWLoolA-1; Sun, 01 Sep 2024 21:53:59 +0100
-X-MC-Unique: DaDaQP20OJ2k4OkvWLoolA-1
-Received: from AcuMS.Aculab.com (10.202.163.6) by AcuMS.aculab.com
- (10.202.163.6) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Sun, 1 Sep
- 2024 21:53:09 +0100
-Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
- id 15.00.1497.048; Sun, 1 Sep 2024 21:53:09 +0100
-From: David Laight <David.Laight@ACULAB.COM>
-To: 'Jinjie Ruan' <ruanjinjie@huawei.com>, "tglx@linutronix.de"
-	<tglx@linutronix.de>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH -next] genirq/timings: Use min_t() to simplify the code
-Thread-Topic: [PATCH -next] genirq/timings: Use min_t() to simplify the code
-Thread-Index: AQHa+4gfmYDZ66sauk2kXgIKz/Ql+bJDarZA
-Date: Sun, 1 Sep 2024 20:53:09 +0000
-Message-ID: <b7cc4af3df4c41b3975ac990532e4ba0@AcuMS.aculab.com>
-References: <20240831093654.4139823-1-ruanjinjie@huawei.com>
-In-Reply-To: <20240831093654.4139823-1-ruanjinjie@huawei.com>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
+	s=arc-20240116; t=1725224054; c=relaxed/simple;
+	bh=2/dpL0DywYScHQt477sF2ba9yNukMi6rG+osg5PZIno=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GnDt5A3TTjYAvI2Alx4dSW9abNZFGwn25/MwnmV0G6VXgGzIrkdMOw58NHSv1d47EyU14pK+4hRnlrOisMQuhVq0Ze7w45jQwuDx3ivOivva2wcfiP/zJghd7qVA5UxBONX1YKqZcUCjjkk/tvsYQkzF6VpE6ttVt+5uO1GzIsM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G9S/kbkr; arc=none smtp.client-ip=209.85.160.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-4567d78ad2fso21628711cf.2;
+        Sun, 01 Sep 2024 13:54:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725224052; x=1725828852; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=9mRHAsBGF17GqwCZZSUSOWSrbOHvrWg33W2YfY73OdI=;
+        b=G9S/kbkrWvghry8Gz+ZO1pu12lreR6ns1U+iWUfJRNzShOV1+8k/9zmUGjxVNHuM0b
+         JG4KtZmK7OPmeC6GFv3rRnabvn0w62VTOf3+ysIMZB23qFp9zv44j35fH+v0yZOvdGI6
+         8sbfgRIS+PyojGKRnLTLQ7icFT6lxDfjsPPhJknuvdAdGe170nRWpve1W6Un+w+4bWbn
+         EzlXvUrKLMcI1DuZQyeDh08gkQLtYBw9XFFuVyD/fiekiBmUTe/2YjpvmCkjp4VufIqL
+         STFcdmV3lANC/FtGgsbvOelKfnoORslIjpeACxi1hYYAiRB3p08QZr+b9dA0T3fzmUBi
+         WhwQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725224052; x=1725828852;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=9mRHAsBGF17GqwCZZSUSOWSrbOHvrWg33W2YfY73OdI=;
+        b=BsMo5hUteuUkvNssOc+/dgGRrjtPgJO20JEZFIx3hmQiCEgfwX809FvFZFaYin/ebm
+         pCpkKKsram8u6uUhCH5hJEOFYO2pOEAJdp/NExJK0yzZwG692F5i2MUQqb5LfS2QxERX
+         adWsP2Fo0JfjJ589MojeiukxytFcWVXlXhQ+RSRWlXzWmv8xoNXB/0rg4tuW3/mEqfFi
+         L6MCOcij6I/f2EcockZuVJxLGh7WL2bpvERc3GbV21uuyonxEiIXak9HsuL/x1VqZZ79
+         WSqoqx5clWvNlKVIG3ROGc1pSetcN2XwEeGcFBjlS8POP39Er3JKyQ3H8XYDbnkoS1Fn
+         dt2A==
+X-Forwarded-Encrypted: i=1; AJvYcCV22JIyT5+vxTUQZIzj3xapiiYwyXfr5gDqEsJVkr82vJDgwON8oInfn6l5PW6z8QEO1+xxo5sVWPUH@vger.kernel.org, AJvYcCWpl1ONw9hQmWG8yEXyrhw/5+rOwJIwI5ZcnxEr+XTREGcJ3+7dRnVpfiDw6PzgZNNUIThCKLIB2lZnxEdE@vger.kernel.org, AJvYcCX4UkIjCKCdbhRgYLaVl3ak6AzgVGir8Q/YUObOOKzzDQPfl3N5e/I3rK18LYTzyIcWRNUz791et2aW@vger.kernel.org
+X-Gm-Message-State: AOJu0YyOk8TWjpujS/URlX7W5G3jBraCembSvqfjmTprWd/mGb4w0yCq
+	ve7J59Hk2gbnrUJR+Lxs4ULGr/ZQX7PlZa6FMUxpQ6h13bWu3+wHRQ7ri18j
+X-Google-Smtp-Source: AGHT+IHABzcVDHDqym8tMVEbonoHPiDgFs9wuSC+slplVVB9yJu0NzGbiF6EWZzwW8zQ3N8h9DuRxg==
+X-Received: by 2002:a05:622a:1dc9:b0:456:8170:bfa5 with SMTP id d75a77b69052e-4574e7e95c2mr72177231cf.1.1725224051839;
+        Sun, 01 Sep 2024 13:54:11 -0700 (PDT)
+Received: from localhost.localdomain (ool-1826d901.dyn.optonline.net. [24.38.217.1])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-45682c9a148sm34148231cf.32.2024.09.01.13.54.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 01 Sep 2024 13:54:11 -0700 (PDT)
+From: Alex Lanzano <lanzano.alex@gmail.com>
+To: Alex Lanzano <lanzano.alex@gmail.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Jagath Jog J <jagathjog1996@gmail.com>,
+	Ramona Gradinariu <ramona.bolboaca13@gmail.com>,
+	Nuno Sa <nuno.sa@analog.com>
+Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 0/2] Add I2C driver for Bosch BMI270 IMU
+Date: Sun,  1 Sep 2024 16:53:22 -0400
+Message-ID: <20240901205354.3201261-1-lanzano.alex@gmail.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: aculab.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-From: Jinjie Ruan
-> Sent: 31 August 2024 10:37
->=20
-> The irq count can not exceed circular buffer IRQ_TIMINGS_SIZE, use
-> min_t() to simplify it.
->=20
-> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
-> ---
->  kernel/irq/timings.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
->=20
-> diff --git a/kernel/irq/timings.c b/kernel/irq/timings.c
-> index c43e2ac2f8de..69f103b4c7a6 100644
-> --- a/kernel/irq/timings.c
-> +++ b/kernel/irq/timings.c
-> @@ -406,8 +406,7 @@ static u64 __irq_timings_next_event(struct irqt_stat =
-*irqs, int irq, u64 now)
->  =09/*
->  =09 * 'count' will depends if the circular buffer wrapped or not
->  =09 */
-> -=09count =3D irqs->count < IRQ_TIMINGS_SIZE ?
-> -=09=09irqs->count : IRQ_TIMINGS_SIZE;
-> +=09count =3D min_t(int, irqs->count, IRQ_TIMINGS_SIZE);
+Add basic I2C support for the Bosch BMI270 IMU.
 
-Why min_t() ?
+References:
+https://www.bosch-sensortec.com/products/motion-sensors/imus/bmi270/
 
-=09David
+Signed-off-by: Alex Lanzano <lanzano.alex@gmail.com>
+---
 
->=20
->  =09start =3D irqs->count < IRQ_TIMINGS_SIZE ?
->  =09=090 : (irqs->count & IRQ_TIMINGS_MASK);
-> --
-> 2.34.1
->=20
+Alex Lanzano (2):
+  dt-bindings: iio: imu: add bmi270 bindings
+  iio: imu: Add i2c driver for bmi270 imu
 
--
-Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1=
-PT, UK
-Registration No: 1397386 (Wales)
+ .../bindings/iio/imu/bosch,bmi270.yaml        |  80 +++++
+ MAINTAINERS                                   |   7 +
+ drivers/iio/imu/Kconfig                       |   1 +
+ drivers/iio/imu/Makefile                      |   1 +
+ drivers/iio/imu/bmi270/Kconfig                |  22 ++
+ drivers/iio/imu/bmi270/Makefile               |   6 +
+ drivers/iio/imu/bmi270/bmi270.h               |  18 +
+ drivers/iio/imu/bmi270/bmi270_core.c          | 322 ++++++++++++++++++
+ drivers/iio/imu/bmi270/bmi270_i2c.c           |  56 +++
+ 9 files changed, 513 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/iio/imu/bosch,bmi270.yaml
+ create mode 100644 drivers/iio/imu/bmi270/Kconfig
+ create mode 100644 drivers/iio/imu/bmi270/Makefile
+ create mode 100644 drivers/iio/imu/bmi270/bmi270.h
+ create mode 100644 drivers/iio/imu/bmi270/bmi270_core.c
+ create mode 100644 drivers/iio/imu/bmi270/bmi270_i2c.c
+
+-- 
+2.46.0
 
 
