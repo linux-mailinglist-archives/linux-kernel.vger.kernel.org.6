@@ -1,88 +1,115 @@
-Return-Path: <linux-kernel+bounces-310425-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310426-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D154E967CB8
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 01:09:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4571967CBB
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 01:24:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E4BA1C2088E
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 23:09:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A0B9C1C2100C
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 23:24:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C685116F0D0;
-	Sun,  1 Sep 2024 23:09:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D261A2A1B8;
+	Sun,  1 Sep 2024 23:24:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o2tkx26L"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="iK+K+YqK"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06C58225D7;
-	Sun,  1 Sep 2024 23:09:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9CBA17C;
+	Sun,  1 Sep 2024 23:24:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725232164; cv=none; b=UGko8tLXhwC8Axl+NeCp48XFa2NWJOVxUvKy0Ou/ContJqlzaE5mq5Zawx6w23jf+5E0L0Sa5T0RKnsXTu9mkbos54E29woOpUtuDEiu/ItYNxDNw2+ckprCsNe3IoGtRl2suA7cO00H/7ysM0eon/TGE3LZScbhyEzV9TXeQQ4=
+	t=1725233054; cv=none; b=FVGOFSZppb8tYxtuQ4des3YvVO0v0tJXL6y7PJWjX8f5Uv5u2Ulo6J4fOVCtvkqsIWle1AhG13c2NYuCpoVlCUFqQ6KgQ2sdbDrkF4fWt4BvQ7aXHKOMPG2i6qPqbNhTojwBChTXkkVfSEuLOTiTBahRKN46YKdIaPdaDPWJdDM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725232164; c=relaxed/simple;
-	bh=5Re48F3JclujPa/80a3B5NtTn1HN7Tu1GahftBXbAwY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Eu6g+wCSqKmo8in63EgaIuu/3KyX96xtDek4/7PeBCDPTbmTtaKmDDVNcu9y8eEMCHwcV34cOooY5LpJ3DrEYyGbCLXRe4CDDi7BdU0M53GAxl2js1yWQkfMCTGx3uZJmsumHXib67DWZzAosdXTRs2/fJbgQZAXNNa/py5l+l8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o2tkx26L; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9DB66C4CEC3;
-	Sun,  1 Sep 2024 23:09:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725232163;
-	bh=5Re48F3JclujPa/80a3B5NtTn1HN7Tu1GahftBXbAwY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=o2tkx26L2cSU50aNuJBg01KApbuPWSZE0G7awz1Kgn7HLWBQ0O//agwOSh2bS6Ie5
-	 KqpSt5DpIb7tDcF6SQk5jRi8poxlY8ZHZeqglg6j7JkGEiBmA49eElstDo7x4HsL2a
-	 K7T5BlbperzqyWbAR7UV/jSFF0m5Jw0E3qoNksabAUfg6YvjxJegW3Ul4WDYsKGMq7
-	 8VpwkYXO+2aMYJUxWPXFtTW+A3qz5TkrAktdRkMibMIk8zqiHyGI4PBfSBH+qitC4g
-	 Uj8JPF95i+s/wcC0Dy/oTp8w5xnoUoFFMcXfNfhTfkcdn0FtgcKaVdFF5jGSH2ha0R
-	 hqBuh93NwlAiQ==
-Message-ID: <0a080e02-c21c-4a6b-9e6d-a5d0a913fd9c@kernel.org>
-Date: Mon, 2 Sep 2024 08:09:21 +0900
+	s=arc-20240116; t=1725233054; c=relaxed/simple;
+	bh=yQ4mQ7DbOBnaY0PTFbRhWBxAYEJAKp0m8yrRnI4b5G4=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=J521nIhlMqv2RvgebcpdNrps6WYQoZigcAKdGOUfRVlYCrR2hrgYr+irgwNUyJqdPRDFI/5nlDnmsoaYoRe1aBVYvSyIEI1so3ydMoYLChXNgcC1fedxNJnmDWzudsg0bvVXeJG42B/XMJDFuZcgWGy+c9nVtGDuY8iN9oQIQfo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=iK+K+YqK; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1725233047;
+	bh=YAaF3vQSZ/HIVTNpV2p2t/N03DOqC7FktfW3ek2SkRg=;
+	h=Date:From:To:Cc:Subject:From;
+	b=iK+K+YqK6MVm4n/CYDwCnT47zWA+GTZYu7ZUJ1BCBwowu8AjG+o7k0wyuIQfrFM78
+	 x/AUu+uPPXpon6TiavaKpyDCVWYmkC2QHMCGFR1AZsIWeiY7b/6fSowbdQKMTx1R2Q
+	 jDY3lbUq2707SObB3zH2HyKQuGmh4k8tY8+tUz7rWzqIykoElf+z9fnx6lPSicXHNd
+	 /O9neZqV78DCEiYFN30h5qbN4JZl+LucaOLF7HGeRkizWqfNm9fjDJ0tsbKPAaUx1m
+	 cb8ZY+M6QiD49gQiDOf/6pcFcNJ4PzYy5h+eeMcn7rvizd8bSmc0MNjglinK6iE8jG
+	 HuRRykH2qvmfg==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WxnyZ3YQBz4x1V;
+	Mon,  2 Sep 2024 09:24:06 +1000 (AEST)
+Date: Mon, 2 Sep 2024 09:24:05 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Christian Brauner <brauner@kernel.org>, Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: Chao Yu <chao@kernel.org>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>, "Matthew Wilcox (Oracle)"
+ <willy@infradead.org>
+Subject: linux-next: manual merge of the vfs-brauner tree with the f2fs tree
+Message-ID: <20240902092405.7c26e742@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH -next v2 0/3] ata: Enable module autoloading
-To: Liao Chen <liaochen4@huawei.com>, linux-ide@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Cc: s.shtylyov@omp.ru, linus.walleij@linaro.org, cassel@kernel.org
-References: <20240831072158.789419-1-liaochen4@huawei.com>
-From: Damien Le Moal <dlemoal@kernel.org>
-Content-Language: en-US
-Organization: Western Digital Research
-In-Reply-To: <20240831072158.789419-1-liaochen4@huawei.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; boundary="Sig_/eAQmET9LnzF0YjQ3jUJ=1/P";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On 8/31/24 16:21, Liao Chen wrote:
-> Hi all,
-> 
-> This patchset aims to enable autoloading of some use modules. By 
-> registering MDT, the kernel is allowed to automatically bind modules to
-> devices that match the specified compatible strings.
-> 
-> Liao Chen (3):
->   ata: pata_ftide010: Enable module autoloading
->   ata: pata_ixp4xx: Enable module autoloading
->   ata: sata_gemini: Enable module autoloading
-> 
->  drivers/ata/pata_ftide010.c  | 1 +
->  drivers/ata/pata_ixp4xx_cf.c | 1 +
->  drivers/ata/sata_gemini.c    | 1 +
->  3 files changed, 3 insertions(+)
+--Sig_/eAQmET9LnzF0YjQ3jUJ=1/P
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Applied to for-6.12. Thanks !
+Hi all,
 
+Today's linux-next merge of the vfs-brauner tree got a conflict in:
 
--- 
-Damien Le Moal
-Western Digital Research
+  fs/f2fs/data.c
 
+between commits:
+
+  f13c7184e62e ("f2fs: convert f2fs_write_begin() to use folio")
+  357dd8479f8b ("f2fs: convert f2fs_write_end() to use folio")
+(and maybe others)
+
+from the f2fs tree and commits:
+
+  a0f858d450ce ("f2fs: Convert f2fs_write_end() to use a folio")
+  dfd2e81d37e1 ("f2fs: Convert f2fs_write_begin() to use a folio")
+  a225800f322a ("fs: Convert aops->write_end to take a folio")
+  1da86618bdce ("fs: Convert aops->write_begin to take a folio")
+
+from the vfs-brauner tree.
+
+This was too much for me to fix up, so I just used the f2fs tree from
+next-20240830 for today.  Please discuss this and fix things up.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/eAQmET9LnzF0YjQ3jUJ=1/P
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmbU95UACgkQAVBC80lX
+0Gzgqgf+I1YzeWHfR00vr9aAr4FboCR4mRrgliMNhfAoc3zWuzUtQc+MgKaC0Z6M
+LQTtJLWwSPwCtU6rlNufsO3zAuVV0XGzWVpXnE+vFggmrP6m5N7O/QBTWhl06FOG
+xcIIKUt+lARm28BxCNZOXKpDn7w5Y8LYSrV8gDNuG/Y19y9s/0uZHRt7FGBOI+LI
+fXXOzKMavJjck59bh63JEldImHbI2h/wP9G0jlJDYcxQaCMf5uUaRw37ceWuuaM8
+cSpw8mNS9qHCGE5KZCVwe95oMceXYZiTYSNJqmrzJm3T1u4xKeChgZ1NJ/JHU58v
+HQRBYM/BX6UTShkcioHWxHFjtxn30w==
+=71b8
+-----END PGP SIGNATURE-----
+
+--Sig_/eAQmET9LnzF0YjQ3jUJ=1/P--
 
