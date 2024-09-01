@@ -1,59 +1,80 @@
-Return-Path: <linux-kernel+bounces-310060-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310061-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F68396743D
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 04:50:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 861FE967442
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 05:02:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 346C11C20F53
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 02:50:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 30BED1F21F52
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 03:02:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E162338FA8;
-	Sun,  1 Sep 2024 02:49:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED5372AD13;
+	Sun,  1 Sep 2024 03:01:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Cwn/LY5X"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YEt0tcHc"
+Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com [209.85.222.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E873364AB;
-	Sun,  1 Sep 2024 02:49:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3BEC2901;
+	Sun,  1 Sep 2024 03:01:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725158976; cv=none; b=rd32hiI6yv4aCNuj+rD6wdF4EhgUl5V3iufa5XLUE/qKC0IxySseM6dz9qExPSCzXrpQsG5yf9rfh5o9o6hR5+d036HXJJALosGJqy6C+vx0/bm7cyIuE+ZflJVu+JPRkfZj00tKw3NitvS9Wkz8M7HaV1c+I6FTV3LuQ8AZqh0=
+	t=1725159717; cv=none; b=iM044L8fPBaN28lvq0/fIiufrmmfy9jGhLdbwyzNRQqFJViv+brMFvdYk7A0zr3iXeNWeevKcAXfLqPZEjov8Jic8ASAX2DyxberjVUPr9vD6ZqWxe5NFdv/hUIHXXSgFUybiz3/t2jM1aRifNksA29GMrr6CLtIaAmmkttn2Pk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725158976; c=relaxed/simple;
-	bh=lmiZoFRv3RC9NTR0pOBpjFGmZGtJhe2ymb6X495LMqI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=C68BQ+aKjpBLA1eSHuaeK6wwdcQKj8BUyUtc7vCHwaraXFT117X+KsrcFmkqwLIrJb+rkV14wtKmP9Cyxxxt2wlBJgs/whZ4fXgmVYxL9pj1eVFWbSknvAfDFAbYEzbk4ZB1BpESrXJ6RFE5dqde8t3NnnZ1pG3obIGHyr5RCtM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Cwn/LY5X; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E848CC4CED0;
-	Sun,  1 Sep 2024 02:49:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725158975;
-	bh=lmiZoFRv3RC9NTR0pOBpjFGmZGtJhe2ymb6X495LMqI=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Cwn/LY5XU5e0Ey7LoR/osnHgb8U/0bSZADGOgRyJQ01G/XYJIZdvIjKkS/o+U7tVb
-	 4ygqrQCwlqr67GA+BA9GLNm3Q+mLBbUHxj7ZXXWpOeCckpbLDAov0LYdpem5odzGeM
-	 zFD8a2uUe9T2CFgfFl+sintRzGvQ/g+bMvDKkIUYrPaX6SzpdEwcB6yndGooKa096U
-	 /UafOzROviPOH8xJExIAdVDOiy/7Xsc8QdslDjw3gXtC/tiHaZXeAKS88Y1zPJB10j
-	 fdG89ZxpPdzCsW4zh8lfjGgqRYNfpDZxeQN9Dgv5cr7xm5MtmQbbwxudKtl9ebKFlF
-	 inEqXWplZ+nAg==
-From: Mario Limonciello <superm1@kernel.org>
-To: Meng Li <li.meng@amd.com>,
-	"Gautham R . Shenoy" <gautham.shenoy@amd.com>,
-	Perry Yuan <perry.yuan@amd.com>
-Cc: linux-kernel@vger.kernel.org (open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)),
-	linux-pm@vger.kernel.org (open list:CPU FREQUENCY SCALING FRAMEWORK),
-	ptr1337@cachyos.org,
-	Mario Limonciello <mario.limonciello@amd.com>
-Subject: [PATCH 2/2] cpufreq/amd-pstate-ut: Add test case for mode switches
-Date: Sat, 31 Aug 2024 21:49:12 -0500
-Message-ID: <20240901024912.1217014-3-superm1@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240901024912.1217014-1-superm1@kernel.org>
-References: <20240901024912.1217014-1-superm1@kernel.org>
+	s=arc-20240116; t=1725159717; c=relaxed/simple;
+	bh=UBiYJK+p+DohB4gZdvhbm4yFi8h1WeTfzTbREh5PF+g=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sF6NLq7ouRZu2cjmYwUovRvuSQjR458Wj8YU27TBLNK1e5IoV886a/6U45LM6pM2Y3SzikdrNVQXJV3CfJfC5ZdLl5MUV3kdbHnlp5C+oGzuKN3F1IucOyV1KBvBjHqMHQjngRreHzTSuL3S1Gwr5k8//SiZVOHW0CzCt7/57EM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YEt0tcHc; arc=none smtp.client-ip=209.85.222.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f169.google.com with SMTP id af79cd13be357-7a8116a4233so127541885a.2;
+        Sat, 31 Aug 2024 20:01:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725159715; x=1725764515; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=djadNJyuJ2wPfNb4yapWyOvESM2uf5bfPTkIbuzgGKE=;
+        b=YEt0tcHcaCNpPc8z3lPVB2yPX15mylIGg0M43C6SC3x1Enup2jpcD+HoxFb8q8YJSE
+         8aCKAWU+oUAopAAvhXQU9tFiValcKZZdDrrTbadF1xbbIjUqP8hD5GxoXuZsA756Fy4J
+         hyJpfBC8+wq4TY/ripAq373+8s2uaBrT16/eOqJkctYkQtgvQ/2ySlgSGJpprQoVGD/m
+         5j4aJMeaSlvqfFnVseVERiE2aJ4FZiI9wekUOT0p2XA29Wpl0qjkOismFQRtHY/MGHxL
+         KG4kuVdZI0b0qkqsQd75N3/IXB+kI50zteJQmey4A80JzEVSlTHhKxvh/NbGptUtA5uZ
+         FyJA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725159715; x=1725764515;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=djadNJyuJ2wPfNb4yapWyOvESM2uf5bfPTkIbuzgGKE=;
+        b=IzJkvwLZFYsny63LaA7wZ6+jK4Sxnj5s3DZsgG5NqE+RH6cGkNno9ej79dBsijbUR4
+         6+dgk6NQuNmniFbJBsu7qNIYjM0/WMG1oQiBl+chEi3BPA1rWrKtpIXdX6bsUkvEb+VX
+         3iUgiRxB4O8BlZ1nLcD+cKl/w6w6GcEENt39/6i+JuNl+PRcfJ+vcit3UB4VI5rtQyMO
+         b760u9tcQMITAQQYDtZm1LlubZXbScaMEyHpqv+Am0Cq/gdi2p2nc6yVAeCS8hmk4AbO
+         Fg+KfLSWd5mJ+LVoeaw05FT7huGMXXjhtuGYLvfDoTPd6wErRxEOKpDNpAE6rRXfgHdZ
+         fHuw==
+X-Forwarded-Encrypted: i=1; AJvYcCWicYTmIZvl40qhzQzfLmTZjnFJlE7wg7hZOvw8tXdQewwJumOHXhBZDjcn618tf3wJOWbMh/W+niTyG8ah@vger.kernel.org, AJvYcCWyJ1RBkSf+8CGIvjN37hnIAdfAjABD9VC+9me74dNiCjISfgWBrCl1qV+r+Riu46mSo9a3B9hxQJQT8l/H@vger.kernel.org
+X-Gm-Message-State: AOJu0YyTqlQAsXefjz/80IDqcyC0Z3vnMjQXTeBRkIS/O02oLmALyQNb
+	nW6jEmFTZbw9dXGHwQElXOwAewL6ARQM0VZ26hALPLlZuqmWJoHvJlSFwsDV
+X-Google-Smtp-Source: AGHT+IGBbQogDmDi77Qb2ex7TwsHpEzTvhrqviTZ2HakZEqNWIR5roPSL3VQxWhMqCGX4JFan5lByw==
+X-Received: by 2002:a05:620a:3941:b0:7a6:56f7:7b2a with SMTP id af79cd13be357-7a8041b5ea0mr1312131485a.26.1725159714596;
+        Sat, 31 Aug 2024 20:01:54 -0700 (PDT)
+Received: from localhost.localdomain (pat-199-212-65-137.resnet.yorku.ca. [199.212.65.137])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a806c241b4sm292886485a.42.2024.08.31.20.01.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 31 Aug 2024 20:01:54 -0700 (PDT)
+From: imandevel@gmail.com
+X-Google-Original-From: ImanDevel@gmail.com
+To: jack@suse.cz
+Cc: amir73il@gmail.com,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Iman Seyed <ImanDevel@gmail.com>
+Subject: [PATCH] inotify: set ret in inotify_read() to -EAGAIN only when O_NONBLOCK is set
+Date: Sat, 31 Aug 2024 23:01:50 -0400
+Message-ID: <20240901030150.76054-1-ImanDevel@gmail.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,83 +83,36 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Mario Limonciello <mario.limonciello@amd.com>
+From: Iman Seyed <ImanDevel@gmail.com>
 
-There is a state machine in the amd-pstate driver utilized for
-switches for all modes. To make sure that cleanup and setup works
-properly for each mode add a unit test case that tries all
-combinations.
+Avoid setting ret to -EAGAIN unnecessarily. Only set
+it when O_NONBLOCK is specified; otherwise, leave ret
+unchanged and proceed to set it to -ERESTARTSYS.
 
-Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+Signed-off-by: Iman Seyed <ImanDevel@gmail.com>
 ---
- drivers/cpufreq/amd-pstate-ut.c | 41 ++++++++++++++++++++++++++++++++-
- 1 file changed, 40 insertions(+), 1 deletion(-)
+ fs/notify/inotify/inotify_user.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/cpufreq/amd-pstate-ut.c b/drivers/cpufreq/amd-pstate-ut.c
-index b7318669485e4..c291b3dbec381 100644
---- a/drivers/cpufreq/amd-pstate-ut.c
-+++ b/drivers/cpufreq/amd-pstate-ut.c
-@@ -54,12 +54,14 @@ static void amd_pstate_ut_acpi_cpc_valid(u32 index);
- static void amd_pstate_ut_check_enabled(u32 index);
- static void amd_pstate_ut_check_perf(u32 index);
- static void amd_pstate_ut_check_freq(u32 index);
-+static void amd_pstate_ut_check_driver(u32 index);
+diff --git a/fs/notify/inotify/inotify_user.c b/fs/notify/inotify/inotify_user.c
+index 4ffc30606e0b..d5d4b306a33d 100644
+--- a/fs/notify/inotify/inotify_user.c
++++ b/fs/notify/inotify/inotify_user.c
+@@ -279,9 +279,11 @@ static ssize_t inotify_read(struct file *file, char __user *buf,
+ 			continue;
+ 		}
  
- static struct amd_pstate_ut_struct amd_pstate_ut_cases[] = {
- 	{"amd_pstate_ut_acpi_cpc_valid",   amd_pstate_ut_acpi_cpc_valid   },
- 	{"amd_pstate_ut_check_enabled",    amd_pstate_ut_check_enabled    },
- 	{"amd_pstate_ut_check_perf",       amd_pstate_ut_check_perf       },
--	{"amd_pstate_ut_check_freq",       amd_pstate_ut_check_freq       }
-+	{"amd_pstate_ut_check_freq",       amd_pstate_ut_check_freq       },
-+	{"amd_pstate_ut_check_driver",	   amd_pstate_ut_check_driver     }
- };
- 
- static bool get_shared_mem(void)
-@@ -257,6 +259,43 @@ static void amd_pstate_ut_check_freq(u32 index)
- 	cpufreq_cpu_put(policy);
- }
- 
-+static int amd_pstate_set_mode(enum amd_pstate_mode mode)
-+{
-+	const char *mode_str = amd_pstate_get_mode_string(mode);
-+
-+	pr_debug("->setting mode to %s\n", mode_str);
-+
-+	return amd_pstate_update_status(mode_str, strlen(mode_str));
-+}
-+
-+static void amd_pstate_ut_check_driver(u32 index)
-+{
-+	enum amd_pstate_mode mode1, mode2;
-+	int ret;
-+
-+	for (mode1 = AMD_PSTATE_DISABLE; mode1 < AMD_PSTATE_MAX; mode1++) {
-+		ret = amd_pstate_set_mode(mode1);
-+		if (ret)
-+			goto out;
-+		for (mode2 = AMD_PSTATE_DISABLE; mode2 < AMD_PSTATE_MAX; mode2++) {
-+			if (mode1 == mode2)
-+				continue;
-+			ret = amd_pstate_set_mode(mode2);
-+			if (ret)
-+				goto out;
+-		ret = -EAGAIN;
+-		if (file->f_flags & O_NONBLOCK)
++		if (file->f_flags & O_NONBLOCK) {
++			ret = -EAGAIN;
+ 			break;
 +		}
-+	}
-+out:
-+	if (ret)
-+		pr_warn("%s: failed to update status for %s->%s: %d\n", __func__,
-+			amd_pstate_get_mode_string(mode1),
-+			amd_pstate_get_mode_string(mode2), ret);
 +
-+	amd_pstate_ut_cases[index].result = ret ?
-+					    AMD_PSTATE_UT_RESULT_FAIL :
-+					    AMD_PSTATE_UT_RESULT_PASS;
-+}
-+
- static int __init amd_pstate_ut_init(void)
- {
- 	u32 i = 0, arr_size = ARRAY_SIZE(amd_pstate_ut_cases);
+ 		ret = -ERESTARTSYS;
+ 		if (signal_pending(current))
+ 			break;
 -- 
-2.43.0
+2.46.0
 
 
