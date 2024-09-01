@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-310178-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310179-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 920F09675E2
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 12:23:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DBF179675E6
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 12:27:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 19DBF1F21A03
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 10:23:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E73C1F216AA
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 10:27:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D25D014EC7E;
-	Sun,  1 Sep 2024 10:23:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 283AA15250F;
+	Sun,  1 Sep 2024 10:27:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f0z51M9D"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eIe/YD/n"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09C9B13E02D;
-	Sun,  1 Sep 2024 10:23:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53A9E1448E3;
+	Sun,  1 Sep 2024 10:27:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725186215; cv=none; b=hR7QHIMqwS0u2nq7+MJUkxRfUR7Mns10Qqt5hfKjToUTLCM+a6MnhZGliHGKfeXp5EkvXSclQHp1dgCOdhtBhK6oS5hqBETsgskBjaASf3c0qqfw7wIOzeQfZ/hMJGdy+QsTlasCIe8udH3tY0xO7U8JrDVWDEIbOR9nMh0Isos=
+	t=1725186423; cv=none; b=EiTel6SKXJOcL08BGxO7gMXNK+i2ZxBMAvQh26i1ju/DMjltxHI5YNv3QyETwMYb7LHxtNfc/OiutBLYuu4z6fJJPV0JwrnIAld2PC94Y8ebhEp+4t39wmmmKBS6JsOFTZvOH+eXzfblqHVgyqJIV2muLADPz40+R+b9aFgp1cY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725186215; c=relaxed/simple;
-	bh=NkMBUIsxlLeO24IVny1Yg0LP9ir138ns50UgAd34fQM=;
+	s=arc-20240116; t=1725186423; c=relaxed/simple;
+	bh=J8NsIZc4fWtfVb8jxcYgwofFkO1BZ09EtRsFD+tYgh4=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AAXADLNRzDB4jA8hoCe5UeGzACObme0gvjbIJToUx5R/xiu79sh1U5XQrSdDMYTkwcJ5s3koqSBxJkXEqh6sZZS7OM3lFBuV4/jjlkbmuW5iHM1w0pTIosU14z/s3dfjGUpSeY1fVtG57CifddH9LGRrcPT31ugGTTpwc+truCg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f0z51M9D; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 592C6C4CEC3;
-	Sun,  1 Sep 2024 10:23:28 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=lnFaw9WxqktTJAYm9ztLX/Qc0y5BAlgw7YEKd+7ypetYapZnkRZZSpvTwIbKrVvZTkMPH9FkX2MC2h4cxk43yz+jdLQBB7VtozIgJHh2XL3VFuxqOABSVATYFisBU5rquqPy+CMsZKVGpF7xThwtH/I5dQ2Ix3kQ8x9MpsnJZxs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eIe/YD/n; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A625EC4CEC3;
+	Sun,  1 Sep 2024 10:26:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725186214;
-	bh=NkMBUIsxlLeO24IVny1Yg0LP9ir138ns50UgAd34fQM=;
+	s=k20201202; t=1725186422;
+	bh=J8NsIZc4fWtfVb8jxcYgwofFkO1BZ09EtRsFD+tYgh4=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=f0z51M9DDJ+FPRhuddqfkQiYr8xka/5kwyqyIiRia4J0yzVns1Uad3qox8PBL3kuj
-	 rr6O/27Yt1MBB9n3zXA3vuxjQrn6Jlb4eO7scw2hm1gG3/+sxE3ukrxO2T+9rCnjwE
-	 6Yx/moBBQ17jDwfFoFZsowg9plBa/qWf9wrBqs1oI6hS94Ms8HFHgdQCmkpUHw9/Ub
-	 WTVxX0RXZooJoX4ePsfMyYfU6182tpLfd97HjipI9dwIMQOjizLBtaQRGqp0e8QfRh
-	 gP+L5c6TM2eV5q88xmjEcMrhKrvsoQEa1fH7XRz50hxOzXBehJyoKyDP0rKsxdsM3T
-	 ffhxv9L2nVQyQ==
-Message-ID: <3dc027f4-d5e0-4d0f-823a-f2ca82ab2cd8@kernel.org>
-Date: Sun, 1 Sep 2024 12:23:25 +0200
+	b=eIe/YD/nNAZRkTS8mMUKUdT1aVNZJDFKT/GPIW44+mVO+jLtwF+erlBU4GRL4li8C
+	 VfIMHdVrQzxWSXknCJY+6eGKiqTk3RGyXuXdFAInJD7KuuPXcfVJq+VV74Uq0FJE8/
+	 8KZ79R9kylhy3smDQ5pcjl50DIgZX1YuLLrSuNZnL3494nlZSOgqqP1v8tjBLnf2G7
+	 kKOX3D/T+jZ49g2rsfBO3m6e9xGGIWxEk7EXKsws4zra0BPNBPFQ0N7evlnXWpJ2Us
+	 y0zmRiToj+3v0WaR3a656GyD7LLgkwphg+W/DMYtu8dZZvm1EPqPBg5jRZCps2flTo
+	 cx34Xu3rmkaSg==
+Message-ID: <084bc911-a51c-4257-b5bb-25bed445f3b9@kernel.org>
+Date: Sun, 1 Sep 2024 12:26:55 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,29 +49,32 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 1/4] dt-bindings: display: bridge: Add schema for
- Synopsys DW HDMI QP TX IP
-To: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
- Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-Cc: Andrzej Hajda <andrzej.hajda@intel.com>,
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
- Sandy Huang <hjc@rock-chips.com>, Andy Yan <andy.yan@rock-chips.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Mark Yao <markyao0591@gmail.com>,
- Sascha Hauer <s.hauer@pengutronix.de>, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
- kernel@collabora.com, Alexandre ARNOUD <aarnoud@me.com>,
- Luis de Arquer <ldearquer@gmail.com>
-References: <20240831-b4-rk3588-bridge-upstream-v5-0-9503bece0136@collabora.com>
- <20240831-b4-rk3588-bridge-upstream-v5-1-9503bece0136@collabora.com>
- <57wj2vwjv7eehlix2bmvbm3z4agv5fsyp6vmwwqzotkdsadx7n@azqg2kkaeuxz>
- <10210346.L8ug28u51p@diego>
+Subject: Re: [PATCH 2/2] dt-bindings: arm: fsl: Add Variscite Symphony board
+ and VAR-SOM-MX8MP SoM
+To: Tarang Raval <tarang.raval@siliconsignals.io>,
+ "shawnguo@kernel.org" <shawnguo@kernel.org>,
+ "krzk+dt@kernel.org" <krzk+dt@kernel.org>, "robh@kernel.org"
+ <robh@kernel.org>, "festevam@gmail.com" <festevam@gmail.com>
+Cc: Conor Dooley <conor+dt@kernel.org>, Sascha Hauer
+ <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Gregor Herburger <gregor.herburger@ew.tq-group.com>,
+ Francesco Dolcini <francesco.dolcini@toradex.com>,
+ Hugo Villeneuve <hvilleneuve@dimonoff.com>,
+ Hiago De Franco <hiago.franco@toradex.com>,
+ Joao Paulo Goncalves <joao.goncalves@toradex.com>,
+ Mathieu Othacehe <m.othacehe@gmail.com>,
+ Alexander Stein <alexander.stein@ew.tq-group.com>,
+ Parthiban Nallathambi <parthiban@linumiz.com>, Yannic Moog
+ <y.moog@phytec.de>, Josua Mayer <josua@solid-run.com>,
+ Li Yang <leoyang.li@nxp.com>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "imx@lists.linux.dev" <imx@lists.linux.dev>,
+ "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+References: <20240831110743.14280-1-tarang.raval@siliconsignals.io>
+ <20240831110743.14280-3-tarang.raval@siliconsignals.io>
+ <3b28a1e7-586d-452b-bb00-4473d82976b6@kernel.org>
+ <PN3P287MB182994A2AA56868084D70CC28B902@PN3P287MB1829.INDP287.PROD.OUTLOOK.COM>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -117,30 +120,27 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <10210346.L8ug28u51p@diego>
+In-Reply-To: <PN3P287MB182994A2AA56868084D70CC28B902@PN3P287MB1829.INDP287.PROD.OUTLOOK.COM>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-On 31/08/2024 15:58, Heiko Stübner wrote:
+On 31/08/2024 15:51, Tarang Raval wrote:
+> Hi ,
 > 
-> so I guess the fifth interrupt is meant to be the hotplug?
-> Though I guess this should be specificed in the name-list too.
+>>>                 - toradex,verdin-imx8mp-wifi  # Verdin iMX8M Plus Wi-Fi / BT Modules
+>>> +              - variscite,var-som-mx8mp   # i.MX8MP Variscite VAR-SOM-MX8M Plus module
+>>
+>> That's not correct. You cannot use this SoM alone.
 > 
-> From the SoC's manual it looks like the controller is set up from
-> different modules.
-> Like AVP is the audio-video-packet-module, there is a Main and CEC Module
-> as well as a eARC RX controller inside. I'd guess it might be possible
-> other SoC vendors could leave out specific modules?
-> 
-> 
-> TL;DR I think those clocks and interrupts are dependent on how the
-> IP core was synthesized, so for now I'd think we can only guarantee
-> that they are true for rk3588 and rk3576.
-> 
-> So I guess they should move to the rockchip-specific part of the binding
-> until we have more hdmi-qp controllers in the field?
+> I took the reference from var-som-imx8mm, where they use "variscite,var-som-mx8mm" in a similar manner. However, if you still believe it's incorrect, I will change it.
 
-Which would leave empty "common" binding.
+I posted that patch, but I don't think it was correct.
+
+> 
+> One more thing: should I change "VAR-SOM-MX8M Plus" to "VAR-SOM-MX8MP" in the DTSI model name and in the YAML file as well, or keep it as it is?
+
+No clue, these comments are basically repeating compatible name so not
+much helpful anyway.
 
 Best regards,
 Krzysztof
