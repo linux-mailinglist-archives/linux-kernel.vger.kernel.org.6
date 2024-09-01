@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-310270-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310271-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21414967744
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 17:58:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CFD70967745
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 17:58:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7ACE52809D9
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 15:58:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 87FB31F218CC
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 15:58:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA98718592E;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5A55185938;
 	Sun,  1 Sep 2024 15:57:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="T9hPvvmt"
+	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="DNlMVPKz"
 Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3908517B433;
-	Sun,  1 Sep 2024 15:57:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA35C17E918;
+	Sun,  1 Sep 2024 15:57:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725206269; cv=none; b=iKkpi54bkOWIkEo70CZwKTqj5v+d1nGurtwKmKrFg3iuO09VMrk3w0EwowD/+4QEtPszVqc7vsru8wiv6r8pJTaXhQ9/7B5DyoKOsnDexbVCPbbBBDmB+vhbD5FKQ9Gu5kGu/GKcnL4GulXmZYw/uHCMPSnphRQ0EjRAfjA47kc=
+	t=1725206269; cv=none; b=Q47JQEIEqDoglkahOtCWqI/5ohkIa2eeMrWJNOmuIAbFZU1YDYHSoTVpjbZQJqrxqm+PeMD7ljg5oVLUviO3ef26/cL2L/vMyro0pAa1G7vPaMUkG6cLeyvm73p+4lxq67/jwD+PjCPhCWWNaND+wNouWia4lblh4Xhcfp3VOVI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1725206269; c=relaxed/simple;
-	bh=Oy4yxmX1JX+gOfwgTqDINTY65VmJhtOj/OGOHXiZZc0=;
+	bh=1I/4nwVczaL23HkLU0YUoRp4A+6sI5QCbtY3AzONnK8=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Sbn/TMGLvQZp/sb50kZJZ/7pmMQ0m/AXW2AG1/OEP66ySptwZRxs2nT1Q0cMepCsg4cNSsZ7DFHgY+TkgF5wtt3M6fIICddZ1m7memWICBS/BYA6Ve3zFbwJuNqg4qFtWHGumisDFYEPFwwyWPOWoiSIGeJ9ddXszMyJg753r7k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=T9hPvvmt; arc=none smtp.client-ip=217.194.8.81
+	 MIME-Version:Content-Type; b=rhj6bgUmyjf2QnjBRRetFecg0DK1ORP/051gdV44UsHtiJzcfK6E518yD92AmhmjpSluP+iH0ftF3HBq+3i+zECnZMBh6cAvKihkf4f+OAL0Kv4aG/j2/z70zV7f3WbjWKDffGwpqeF3CjoukMQ6/cvRg6uNgyjn5IUMoF030b8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=DNlMVPKz; arc=none smtp.client-ip=217.194.8.81
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
 Received: from francesco-nb.pivistrello.it (93-49-2-63.ip317.fastwebnet.it [93.49.2.63])
-	by mail11.truemail.it (Postfix) with ESMTPA id 0E6A71F9F1;
+	by mail11.truemail.it (Postfix) with ESMTPA id A47EA1FA18;
 	Sun,  1 Sep 2024 17:57:36 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
-	s=default; t=1725206256;
-	bh=1Ob0e+Qn93ij7b7IP/gAJRwe1k4eBRmfkKD7MG+ku9Y=; h=From:To:Subject;
-	b=T9hPvvmtU3tFcc8K/o9OoQXZ4QBU3svlnRyQENkuKCcsGDZis59iIJLVMyJXpWl+l
-	 1VhHhW537nFvOfIr7mycg9izXvX2QC5wUevKfpr0IE3Xsk4j4EI/ZGbwDGmPyUwMr2
-	 VUuKObO239ajmFjlWL4F3y+ClKnod0FARrAAcvg3bjTqHvjlua/hy4BlO5DNsBUbh/
-	 eUw+4niY8xfqrJYvvb9J5BB/z644/a61Y3xRGeT73H/aWU9UZbUVLw0T/7h04Cy1kG
-	 Sq7o8Xsgp9q046qA2S19PbSdZErH8mB7xCc5GUcASCakzR1Mazi/FzDFOlqs08bSd9
-	 w++QBy4BOtB6Q==
+	s=default; t=1725206257;
+	bh=8K6JD5FK2M93e8eYmr95cJOrSvI5mOVv6u4803sZynU=; h=From:To:Subject;
+	b=DNlMVPKzo0AU6Pw6nLWxr0N1nQnijJIoQlBS5a9MLupMWKsIrFz+AvYa01kfixQPi
+	 h7/dzR2NRJVlj71deeRJ9ZY7WpxZAAR5jckpVHRegx9ZWsDH5xkqAtyAB6q40iDp8x
+	 vE0ZXzcbFrlGFT/KsZTome3ltza3JFOpXRzptn73tjI7VXarL8yfx6gJmthbDZGXR6
+	 2Eq53sEzA+Oy9q+raTcIRRUIfhu3ZqR2ly1EZusC5FI2bEiWSaZCQRs6Qywkq4EaGz
+	 uHBuy/NuAieC0WrCaKlnrAt0854piWTQIviONPT3Osw7tqcJC+L7+IftsFCsanuqDT
+	 rP3QzHXQ1Qerw==
 From: Francesco Dolcini <francesco@dolcini.it>
 To: Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
@@ -50,15 +50,15 @@ To: Rob Herring <robh@kernel.org>,
 	Sascha Hauer <s.hauer@pengutronix.de>,
 	Pengutronix Kernel Team <kernel@pengutronix.de>,
 	Fabio Estevam <festevam@gmail.com>
-Cc: Emanuele Ghidoli <emanuele.ghidoli@toradex.com>,
+Cc: =?UTF-8?q?Jo=C3=A3o=20Paulo=20Gon=C3=A7alves?= <joao.goncalves@toradex.com>,
 	devicetree@vger.kernel.org,
 	imx@lists.linux.dev,
 	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
 	Francesco Dolcini <francesco.dolcini@toradex.com>
-Subject: [PATCH v2 01/10] arm64: dts: colibri-imx8x: Add usb support
-Date: Sun,  1 Sep 2024 17:57:12 +0200
-Message-Id: <20240901155721.7912-2-francesco@dolcini.it>
+Subject: [PATCH v2 02/10] arm64: dts: colibri-imx8x: Add analog inputs
+Date: Sun,  1 Sep 2024 17:57:13 +0200
+Message-Id: <20240901155721.7912-3-francesco@dolcini.it>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20240901155721.7912-1-francesco@dolcini.it>
 References: <20240901155721.7912-1-francesco@dolcini.it>
@@ -68,223 +68,105 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-From: Emanuele Ghidoli <emanuele.ghidoli@toradex.com>
+From: João Paulo Gonçalves <joao.goncalves@toradex.com>
 
-Add USB HOST and OTG support to Colibri-iMX8X carrier boards.
+Add adc nodes for analog inputs support for all Colibri-iMX8X carrier
+boards.
 
-Signed-off-by: Emanuele Ghidoli <emanuele.ghidoli@toradex.com>
+Signed-off-by: João Paulo Gonçalves <joao.goncalves@toradex.com>
 Signed-off-by: Francesco Dolcini <francesco.dolcini@toradex.com>
 ---
-v2: Fix 'id-gpios' property, s/id-gpio/id-gpios/
+v2: no changes
 ---
- .../dts/freescale/imx8x-colibri-aster.dtsi    | 26 +++++++++++++
- .../dts/freescale/imx8x-colibri-eval-v3.dtsi  | 26 +++++++++++++
- .../dts/freescale/imx8x-colibri-iris.dtsi     | 26 +++++++++++++
- .../boot/dts/freescale/imx8x-colibri.dtsi     | 37 +++++++++++++++++--
- 4 files changed, 111 insertions(+), 4 deletions(-)
+ .../boot/dts/freescale/imx8x-colibri-aster.dtsi    |  5 +++++
+ .../boot/dts/freescale/imx8x-colibri-eval-v3.dtsi  |  5 +++++
+ .../boot/dts/freescale/imx8x-colibri-iris.dtsi     |  5 +++++
+ arch/arm64/boot/dts/freescale/imx8x-colibri.dtsi   | 14 +++++++++++++-
+ 4 files changed, 28 insertions(+), 1 deletion(-)
 
 diff --git a/arch/arm64/boot/dts/freescale/imx8x-colibri-aster.dtsi b/arch/arm64/boot/dts/freescale/imx8x-colibri-aster.dtsi
-index bc659066e19a..c02dfdd75b60 100644
+index c02dfdd75b60..503aa5a90503 100644
 --- a/arch/arm64/boot/dts/freescale/imx8x-colibri-aster.dtsi
 +++ b/arch/arm64/boot/dts/freescale/imx8x-colibri-aster.dtsi
-@@ -7,6 +7,10 @@ &colibri_gpio_keys {
+@@ -3,6 +3,11 @@
+  * Copyright 2018-2021 Toradex
+  */
+ 
++/* Colibri Analogue Inputs */
++&adc0 {
++	status = "okay";
++};
++
+ &colibri_gpio_keys {
  	status = "okay";
  };
- 
-+&extcon_usbc_det {
-+	status = "okay";
-+};
-+
- /* Colibri Ethernet */
- &fec1 {
- 	status = "okay";
-@@ -38,6 +42,28 @@ &lpuart3 {
- 	status = "okay";
- };
- 
-+/* USB PHY for usbotg3 */
-+&usb3_phy {
-+	status = "okay";
-+};
-+
-+&usbotg1 {
-+	status = "okay";
-+};
-+
-+&usbotg3 {
-+	status = "okay";
-+};
-+
-+&usbotg3_cdns3 {
-+	status = "okay";
-+};
-+
-+/* USB PHY for usbotg1 */
-+&usbphy1 {
-+	status = "okay";
-+};
-+
- /* Colibri SDCard */
- &usdhc2 {
- 	status = "okay";
 diff --git a/arch/arm64/boot/dts/freescale/imx8x-colibri-eval-v3.dtsi b/arch/arm64/boot/dts/freescale/imx8x-colibri-eval-v3.dtsi
-index 9af769ab8ceb..91de84772e1c 100644
+index 91de84772e1c..a2b2a0865666 100644
 --- a/arch/arm64/boot/dts/freescale/imx8x-colibri-eval-v3.dtsi
 +++ b/arch/arm64/boot/dts/freescale/imx8x-colibri-eval-v3.dtsi
-@@ -23,6 +23,10 @@ &colibri_gpio_keys {
- 	status = "okay";
+@@ -19,6 +19,11 @@ clk16m: clock-16mhz {
+ 	};
  };
  
-+&extcon_usbc_det {
++/* Colibri Analogue Inputs */
++&adc0 {
 +	status = "okay";
 +};
 +
- &i2c1 {
- 	status = "okay";
- 
-@@ -90,6 +94,28 @@ &fec1 {
+ &colibri_gpio_keys {
  	status = "okay";
  };
- 
-+/* USB PHY for usbotg3 */
-+&usb3_phy {
-+	status = "okay";
-+};
-+
-+&usbotg1 {
-+	status = "okay";
-+};
-+
-+&usbotg3 {
-+	status = "okay";
-+};
-+
-+&usbotg3_cdns3 {
-+	status = "okay";
-+};
-+
-+/* USB PHY for usbotg1 */
-+&usbphy1 {
-+	status = "okay";
-+};
-+
- /* Colibri SD/MMC Card */
- &usdhc2 {
- 	status = "okay";
 diff --git a/arch/arm64/boot/dts/freescale/imx8x-colibri-iris.dtsi b/arch/arm64/boot/dts/freescale/imx8x-colibri-iris.dtsi
-index 8d06925a8ebd..a6b013cc6929 100644
+index a6b013cc6929..6d9d54d4e549 100644
 --- a/arch/arm64/boot/dts/freescale/imx8x-colibri-iris.dtsi
 +++ b/arch/arm64/boot/dts/freescale/imx8x-colibri-iris.dtsi
-@@ -21,6 +21,10 @@ &colibri_gpio_keys {
- 	status = "okay";
+@@ -17,6 +17,11 @@ reg_3v3: regulator-3v3 {
+ 	};
  };
  
-+&extcon_usbc_det {
++/* Colibri Analogue Inputs */
++&adc0 {
 +	status = "okay";
 +};
 +
- /* Colibri FastEthernet */
- &fec1 {
- 	status = "okay";
-@@ -108,6 +112,28 @@ &lsio_pwm2 {
+ &colibri_gpio_keys {
  	status = "okay";
  };
- 
-+/* USB PHY for usbotg3 */
-+&usb3_phy {
-+	status = "okay";
-+};
-+
-+&usbotg1 {
-+	status = "okay";
-+};
-+
-+&usbotg3 {
-+	status = "okay";
-+};
-+
-+&usbotg3_cdns3 {
-+	status = "okay";
-+};
-+
-+/* USB PHY for usbotg1 */
-+&usbphy1 {
-+	status = "okay";
-+};
-+
- /* Colibri SD/MMC Card */
- &usdhc2 {
- 	status = "okay";
 diff --git a/arch/arm64/boot/dts/freescale/imx8x-colibri.dtsi b/arch/arm64/boot/dts/freescale/imx8x-colibri.dtsi
-index 49d105eb4769..56de45fb05e7 100644
+index 56de45fb05e7..d88f2dd20afa 100644
 --- a/arch/arm64/boot/dts/freescale/imx8x-colibri.dtsi
 +++ b/arch/arm64/boot/dts/freescale/imx8x-colibri.dtsi
-@@ -23,12 +23,31 @@ key-wakeup {
- 		};
- 	};
- 
-+	extcon_usbc_det: usbc-det {
-+		compatible = "linux,extcon-usb-gpio";
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pinctrl_usbc_det>;
-+		id-gpios = <&lsio_gpio5 9 GPIO_ACTIVE_HIGH>;
-+		status = "disabled";
-+	};
-+
- 	reg_module_3v3: regulator-module-3v3 {
- 		compatible = "regulator-fixed";
- 		regulator-name = "+V3.3";
- 		regulator-min-microvolt = <3300000>;
+@@ -38,6 +38,13 @@ reg_module_3v3: regulator-module-3v3 {
  		regulator-max-microvolt = <3300000>;
  	};
-+
-+	reg_usbh_vbus: regulator-usbh-vbus {
+ 
++	reg_module_vref_1v8: regulator-module-vref-1v8 {
 +		compatible = "regulator-fixed";
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pinctrl_usbh1_reg>;
-+		gpio = <&lsio_gpio4 3 GPIO_ACTIVE_LOW>;
-+		regulator-always-on;
-+		regulator-max-microvolt = <5000000>;
-+		regulator-min-microvolt = <5000000>;
-+		regulator-name = "usbh_vbus";
++		regulator-max-microvolt = <1800000>;
++		regulator-min-microvolt = <1800000>;
++		regulator-name = "vref-1v8";
 +	};
++
+ 	reg_usbh_vbus: regulator-usbh-vbus {
+ 		compatible = "regulator-fixed";
+ 		pinctrl-names = "default";
+@@ -50,7 +57,12 @@ reg_usbh_vbus: regulator-usbh-vbus {
+ 	};
  };
  
- /* TODO Analogue Inputs */
-@@ -329,6 +348,20 @@ &lsio_pwm2 {
- 
- /* TODO On-module i2s / Audio */
- 
-+&usbotg1 {
-+	adp-disable;
-+	disable-over-current;
-+	extcon = <&extcon_usbc_det &extcon_usbc_det>;
-+	hnp-disable;
-+	power-active-high;
-+	srp-disable;
-+	vbus-supply = <&reg_usbh_vbus>;
+-/* TODO Analogue Inputs */
++/* Colibri Analogue Inputs */
++&adc0 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_adc0>;
++	vref-supply = <&reg_module_vref_1v8>;
 +};
-+
-+&usbotg3_cdns3 {
-+	dr_mode = "host";
-+};
-+
- /* On-module eMMC */
- &usdhc1 {
- 	bus-width = <8>;
-@@ -356,10 +389,6 @@ &usdhc2 {
- 	no-1-8-v;
- };
  
--/* TODO USB Client/Host */
--
--/* TODO USB Host */
--
- /* TODO VPU Encoder/Decoder */
+ /* TODO Cooling maps for DX */
  
- &iomuxc {
 -- 
 2.39.2
 
