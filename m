@@ -1,180 +1,77 @@
-Return-Path: <linux-kernel+bounces-310427-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310428-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D8E6967CC0
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 01:34:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B429967CC3
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 01:39:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C412281861
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 23:34:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 418B72818D3
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 23:39:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6EF01581E5;
-	Sun,  1 Sep 2024 23:34:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E1BC171E69;
+	Sun,  1 Sep 2024 23:39:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="eYwTVVU5"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="MirVDSpE"
+Received: from out-185.mta1.migadu.com (out-185.mta1.migadu.com [95.215.58.185])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F6311C36;
-	Sun,  1 Sep 2024 23:34:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84A0613AA46
+	for <linux-kernel@vger.kernel.org>; Sun,  1 Sep 2024 23:39:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.185
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725233648; cv=none; b=mX4PRtKzvi/aGUgQ53AkgzD569G2Ov0IxyFhtdAu+hd0pxSbYk5aP1UDZvLp/ulh1S0r8ir5ej1b28a+uvunjomwMc/XD+8PAnGd3bBOhs+6ejk/qv5cKLp0xZJQUtosQa596VBC6c99hieWIZGFs+nFKfGcXPqGjAt26u8HTYU=
+	t=1725233972; cv=none; b=pJCBn1RC0Q3svJD6BexD61o0551JssZ6NtEIXUeL7fft3v+1wCQtm1g3pCKfu/J9sS2TIYD6vwTlDRjg+KazHhPf7aZ4lCAZ7VzhPlNfkwMeaehCJ27SfiZpfr9pHdQdGiOx2ba2JhcgT/vcH2FDkthtL+dfaoWeir8ex2ZIZko=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725233648; c=relaxed/simple;
-	bh=uFm77d8A5Ycn0lEjQFpWt1p3B7z8UidcBW0fVcc4MRY=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=BRSjSEck7G2DaWI2xGZV7ykE/LDVQinOiSWxbqvgOaBJylgjIb9ig7UvV7plq7kLZpfJM2JN5bsCj7Lr5l/eJfyidbN+ihb6zQRPTZyWHzrnVsJ4xCsBfCTMTuiAdpn4zt7MFZi+Q9twIda1fH6Qsb+ebqx05GDYUNUfbrGRRr0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=eYwTVVU5; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1725233643;
-	bh=9TobitMH5ql+6OWkLM4eE8LYSzzM3QH5JtT16J3f7ns=;
-	h=Date:From:To:Cc:Subject:From;
-	b=eYwTVVU5fgR6CVLLeq26usaaWI26m3uOiokofD+xiQI7Q40zg+C+pkJnK2Ne2H+Zo
-	 RxFxLdNEZjgiUBwfXAfrCB0gDzF7ZpCAcivxztZZwKZPil6XYyZqLWsGGktiKlJVId
-	 oKe7RaDLQ/ET4ipvWPMz3ovXMOeUbqvnIkUHotqkt+RraN/6U0qK8MsCGhf2iw7a7F
-	 CSkfDHoq0Q0bEgR3DG9zm/W8Y2MMKqU4gIoVIflCNZbUX+1HsBMjQ3LY56jdRf1fT5
-	 CXGqoUgfaxSmhhiYyAdHHgQ9orfY3cxCaUorjFpEfVxAr7nDW3V66CtAoyYNMJKh2l
-	 KLCYA9PxswfCA==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WxpB25FmPz4w2L;
-	Mon,  2 Sep 2024 09:34:02 +1000 (AEST)
-Date: Mon, 2 Sep 2024 09:34:02 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Christian Brauner <brauner@kernel.org>, Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>, Alexander
- Mikhalitsyn <alexander@mihalicyn.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>, Miklos Szeredi <mszeredi@redhat.com>, yangyun
- <yangyun50@huawei.com>
-Subject: linux-next: manual merge of the vfs-brauner tree with the fuse tree
-Message-ID: <20240902093402.2916922d@canb.auug.org.au>
+	s=arc-20240116; t=1725233972; c=relaxed/simple;
+	bh=vJJLZL7EXiHDAQZKZt7Ro7eOvHHQwIrsRJlWKWn0FDE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UdvMfc0vivZYHJiCWvTQidwQ3ORx0cKx2scd1Ok99++pd7krm1cW/2Emsd3h1L0NLpF5mIb+CGxg58KZdNoX36kxmnR76erZCeND4aUKAEK5C7olKqF19n0QukWEQsverSZYn/q4kXcmsronx/8sewkyjTtEXBda+AfVKS9iAqQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=MirVDSpE; arc=none smtp.client-ip=95.215.58.185
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Sun, 1 Sep 2024 19:39:24 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1725233967;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7TPE9pQPxvJvC8UseSLNO4rP5+Iiy2ETekuVQASdDi4=;
+	b=MirVDSpEeWVf4foQZRRw9YOME9PmDAwXg3L56cV9Zv9e2xm54cTM/3bMzFmhUXQb65Z2Py
+	0ixmKe+XNE+DU+D73pTWp56NtvG/sYKRdUN/IlGuBAuWpa2wSTy+vGyUjSdfeeYPjZ5I9x
+	/4WC7a/DOHBnDwyDdsm8zUyJxQcn6/o=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Feiko Nanninga <feiko.nanninga@fnanninga.de>
+Cc: linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] Fix sysfs rebalance duration waited formatting
+Message-ID: <q33j7al3vh4bjavsiuwouhrghvoijk2ubi2qvq5ccz5v4ogn7b@yzaki3ispzzr>
+References: <20240901170821.10617-2-feiko.nanninga@fnanninga.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/eSrYCYxMSPfbC=T6bpQfjRK";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240901170821.10617-2-feiko.nanninga@fnanninga.de>
+X-Migadu-Flow: FLOW_OUT
 
---Sig_/eSrYCYxMSPfbC=T6bpQfjRK
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Sun, Sep 01, 2024 at 07:08:05PM GMT, Feiko Nanninga wrote:
+> cat /sys/fs/bcachefs/*/internal/rebalance_status
+> waiting
+>   io wait duration:  13.5 GiB
+>   io wait remaining: 627 MiB
+>   duration waited:   1392 m
+> 
+> duration waited was increasing at a rate of about 14 times the expected
+> rate.
+> 
+> div_u64 takes a u32 divisor, but u->nsecs (from time_units[]) can be
+> bigger than u32.
+> 
+> Signed-off-by: Feiko Nanninga <feiko.nanninga@fnanninga.de>
 
-Hi all,
-
-Today's linux-next merge of the vfs-brauner tree got conflicts in:
-
-  fs/fuse/inode.c
-  include/uapi/linux/fuse.h
-
-between commit:
-
-  5fb9c98e9d8d ("fuse: add support for no forget requests")
-
-from the fuse tree and commits:
-
-  d2c5937035e5 ("fs/fuse: add FUSE_OWNER_UID_GID_EXT extension")
-  9aace2eda1bd ("fs/fuse: allow idmapped mounts")
-
-from the vfs-brauner tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc fs/fuse/inode.c
-index ef9c35c6210b,b840189ac8be..000000000000
---- a/fs/fuse/inode.c
-+++ b/fs/fuse/inode.c
-@@@ -1347,8 -1343,14 +1347,16 @@@ static void process_init_reply(struct f
-  			}
-  			if (flags & FUSE_NO_EXPORT_SUPPORT)
-  				fm->sb->s_export_op =3D &fuse_export_fid_operations;
- +			if (flags & FUSE_NO_FORGET)
- +				fc->no_forget =3D 1;
-+ 			if (flags & FUSE_OWNER_UID_GID_EXT)
-+ 				fc->owner_uid_gid_ext =3D 1;
-+ 			if (flags & FUSE_ALLOW_IDMAP) {
-+ 				if (fc->owner_uid_gid_ext && fc->default_permissions)
-+ 					fm->sb->s_iflags &=3D ~SB_I_NOIDMAP;
-+ 				else
-+ 					ok =3D false;
-+ 			}
-  		} else {
-  			ra_pages =3D fc->max_read / PAGE_SIZE;
-  			fc->no_lock =3D 1;
-@@@ -1396,7 -1398,8 +1404,8 @@@ void fuse_send_init(struct fuse_mount *
-  		FUSE_HANDLE_KILLPRIV_V2 | FUSE_SETXATTR_EXT | FUSE_INIT_EXT |
-  		FUSE_SECURITY_CTX | FUSE_CREATE_SUPP_GROUP |
-  		FUSE_HAS_EXPIRE_ONLY | FUSE_DIRECT_IO_ALLOW_MMAP |
-- 		FUSE_NO_EXPORT_SUPPORT | FUSE_HAS_RESEND | FUSE_NO_FORGET;
- -		FUSE_NO_EXPORT_SUPPORT | FUSE_HAS_RESEND | FUSE_OWNER_UID_GID_EXT |
- -		FUSE_ALLOW_IDMAP;
-++		FUSE_NO_EXPORT_SUPPORT | FUSE_HAS_RESEND | FUSE_NO_FORGET |
-++		FUSE_OWNER_UID_GID_EXT | FUSE_ALLOW_IDMAP;
-  #ifdef CONFIG_FUSE_DAX
-  	if (fm->fc->dax)
-  		flags |=3D FUSE_MAP_ALIGNMENT;
-diff --cc include/uapi/linux/fuse.h
-index d7be14947152,b23e8247ce43..000000000000
---- a/include/uapi/linux/fuse.h
-+++ b/include/uapi/linux/fuse.h
-@@@ -217,7 -217,11 +217,12 @@@
-   *  - add backing_id to fuse_open_out, add FOPEN_PASSTHROUGH open flag
-   *  - add FUSE_NO_EXPORT_SUPPORT init flag
-   *  - add FUSE_NOTIFY_RESEND, add FUSE_HAS_RESEND init flag
- + *  - add FUSE_NO_FORGET init flag
-+  *
-+  *  7.41
-+  *  - add FUSE_EXT_OWNER_UID_GID
-+  *  - add FUSE_OWNER_UID_GID_EXT
-+  *  - add FUSE_ALLOW_IDMAP
-   */
- =20
-  #ifndef _LINUX_FUSE_H
-@@@ -422,7 -426,9 +427,10 @@@ struct fuse_file_lock=20
-   * FUSE_NO_EXPORT_SUPPORT: explicitly disable export support
-   * FUSE_HAS_RESEND: kernel supports resending pending requests, and the h=
-igh bit
-   *		    of the request ID indicates resend requests
- + * FUSE_NO_FORGET: 	disable forget requests
-+  * FUSE_OWNER_UID_GID_EXT: add inode owner UID/GID info to create, mkdir,
-+  *			   symlink and mknod
-+  * FUSE_ALLOW_IDMAP: allow creation of idmapped mounts
-   */
-  #define FUSE_ASYNC_READ		(1 << 0)
-  #define FUSE_POSIX_LOCKS	(1 << 1)
-
---Sig_/eSrYCYxMSPfbC=T6bpQfjRK
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmbU+eoACgkQAVBC80lX
-0GxOlgf+IY9WcNw5I4iM9knS+2SOIGO5vDlIrMX+Hn20sSJfNt4WniJBkxRevejG
-4HGtlWPOrUGiZmW6vM4+TP8iQpqUFteRGSW1CmooKR6nP+JQlTQCoa13Iub9Qk58
-onwX2akuxaSpQZ1ejTbLGoFO4dhEG9ew7ZIBJE7CUOPADwWt4Vratb6X9U4R2XyF
-s8WQmQ5rx444/I9CVFlRnO8foLmLWqvtD8iQGjFGQODcqfsmyvW/FsyrKVElyYhl
-3daD56fvJJ+HBf6aBHVlScAbBKB2J/Jd0n0+92V+hUfS+oYd5hFg5iYIqwZlpqml
-ENIXPE58x05t8n6cfjjbEjmJfHwpeA==
-=NKIi
------END PGP SIGNATURE-----
-
---Sig_/eSrYCYxMSPfbC=T6bpQfjRK--
+Thanks, applied
 
