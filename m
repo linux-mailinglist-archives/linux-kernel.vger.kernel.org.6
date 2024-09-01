@@ -1,63 +1,53 @@
-Return-Path: <linux-kernel+bounces-310260-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310261-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CFC0967723
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 16:34:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8346F967726
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 16:51:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C89D3280F4F
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 14:34:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B49801C20C21
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 14:51:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 163DA181D00;
-	Sun,  1 Sep 2024 14:33:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4808C17E91A;
+	Sun,  1 Sep 2024 14:51:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i6MkhTrF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59922185927;
-	Sun,  1 Sep 2024 14:33:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="SNUYNWPo"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.2])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1D962A1B8
+	for <linux-kernel@vger.kernel.org>; Sun,  1 Sep 2024 14:51:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725201196; cv=none; b=M1FzYylv9m7dzClLToeTpvsrWNyNCNmPkGfCgiYanAWMRN5fCef60XbtvDMNKksZBdq6OktoizkkZcrZkyThsps6wtto11QBvtwJ3++ZhcA/TzO0RUeiVU6D6KseC3m3Qz4EMbhfC1KB6weBpsJPjtztEsIf8sQnZy61IUDB3PQ=
+	t=1725202280; cv=none; b=o5COOR9Flhp7BioJGtnHbF0dWlUTowsX7yhRE78fnFZBR9xWRYI1t0Ohr+SbmSOLOB8Th5nG16U+Ut2l0DBzpPdoVtrywKIjGkuMczHrXvk3FHSdCivdMOsbyDzYWrdA1a8skHDXDZWD1Wm0/2Ix7wwBeMuxDUPyegUPj8oCH6Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725201196; c=relaxed/simple;
-	bh=ROGEn5ECVelo0EfWlJ1OSMy/l5R+qmtaTbsKv+Infh4=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=dKLn8i5wRBMYF2dYUvX2ExhsskkwNH6Oscsw0kthcfVETYmCJjttp+YsmWzvZYg81bg+iikLW/VXVobI6mCFZM65AJ2AAWpwctFRA4qbpCM/yPGcNouQnppswKS1L3K3eyachsuq7SuYxTzTYsyGra/tzzXVHSuq/rRBvy+ZEB8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i6MkhTrF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 56570C4CEC8;
-	Sun,  1 Sep 2024 14:33:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725201195;
-	bh=ROGEn5ECVelo0EfWlJ1OSMy/l5R+qmtaTbsKv+Infh4=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=i6MkhTrFq716cdv+8qD66wvIL1A8tVM3FVlgHNjG3zO3nFUrcjfTC7JZLpInpP/Q3
-	 0NiMeypm1Lnf0c5Y6eNvbTEpbBlVdc1ff6hslU0NsODASxmRd2Z0rXCT2SMuzebont
-	 FLxi+knnKYiGKcArMn2iLv3IX/SBwkF2eunhz7evzPoJsuSxxHgWbtkJvrwKQz0Zbo
-	 lRZTDB8F+FrKzMABEQUdYk2al3otfZ6zfvfep/FGVoAkJ2y/lq7Al4m1d1aeSvdoII
-	 9pHenYqLpsfI0Ag8f+obus8e2aoqu1tKiT/F1BbT0Km1cUbsHElSpNnOj+eNEfBOTE
-	 lOmB9NHPCJRxA==
-From: Chun-Kuang Hu <chunkuang.hu@kernel.org>
-To: Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Moudy Ho <moudy.ho@mediatek.com>,
-	"Jason-JH . Lin" <jason-jh.lin@mediatek.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	linux-media@vger.kernel.org
-Cc: Chun-Kuang Hu <chunkuang.hu@kernel.org>
-Subject: [PATCH v4 3/3] soc: mediatek: cmdq: Remove cmdq_pkt_finalize() helper function
-Date: Sun,  1 Sep 2024 14:32:59 +0000
-Message-Id: <20240901143259.16849-4-chunkuang.hu@kernel.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240901143259.16849-1-chunkuang.hu@kernel.org>
-References: <20240901143259.16849-1-chunkuang.hu@kernel.org>
+	s=arc-20240116; t=1725202280; c=relaxed/simple;
+	bh=ClAEUVbqVKJD72S7dtnY7ZtcEoAx+Oqzxt9ZovDMhmk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=l41Cqj6xwewDXVs/dVFHfsHYQEfHmkTDp1vTktnmazsFzseoyCrcgJ6YZpf4LRCJzyvrVwxI3kUob4JcbBEwAuCcNCfelZ9wY/VuZ0/y9Vifhi/aFYFeJO5rzALBPmTqchL0KXnyuuL0o4Ru8udV0Ts0vXPrlc5OnwdAXdeTGoM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=SNUYNWPo; arc=none smtp.client-ip=220.197.31.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-ID:MIME-Version; bh=P0iqe
+	6vXWSjMmRXDrMjZrivCVdtRvOplSj137lptWKg=; b=SNUYNWPoBCluXsWkItYvY
+	qyMDY62i5MFeU5ycVwREEshcJ/mIcASlz/zJlkojT6P3iqNpTOVkr6b40Ht40fpP
+	ALSOteL47xEQ270K1hBPa5a0s6Ri6aLs39tEOV2OZzN6RbsqPoNd/lZAW4ANSlVf
+	A6p7aldKFeYk7ORrKkJyO0=
+Received: from fedora40-vm.. (unknown [160.86.227.247])
+	by gzga-smtp-mta-g3-1 (Coremail) with SMTP id _____wD3_0Q0f9Rm6pl+BA--.39198S2;
+	Sun, 01 Sep 2024 22:50:31 +0800 (CST)
+From: Xiao Yang <ice_yangxiao@163.com>
+To: Liam.Howlett@Oracle.com,
+	linux-mm@kvack.org
+Cc: linux-kernel@vger.kernel.org,
+	ltp@lists.linux.it,
+	andrea.cervesato@suse.com,
+	oliver.sang@intel.com,
+	Xiao Yang <ice_yangxiao@163.com>
+Subject: [PATCH] mm/vma: Return the exact errno for vms_gather_munmap_vmas()
+Date: Sun,  1 Sep 2024 23:50:25 +0900
+Message-ID: <20240901145025.2311-1-ice_yangxiao@163.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,80 +55,42 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wD3_0Q0f9Rm6pl+BA--.39198S2
+X-Coremail-Antispam: 1Uf129KBjvdXoWrKr4DtF4fArWUKF47Zw4rGrg_yoWkXwb_Wr
+	W093WkWFsYkFnIyw17Zr9xtrn2grWqvrZ7GFnYkF1aq3ZrC3WrXrWvv3sxArn0qr4qvr9x
+	GwnIkrZayw1j9jkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7sRknYn5UUUUU==
+X-CM-SenderInfo: 5lfhs5xdqj5xldr6il2tof0z/1tbiqRxNXmVOClPWIAAAsi
 
-In order to have fine-grained control, use cmdq_pkt_eoc() and
-cmdq_pkt_jump_rel() to replace cmdq_pkt_finalize().
+can_modify_vma() in vms_gather_munmap_vmas() returns -EPERM if vma is
+sealed so don't always return the fixed -ENOMEM on failure.
 
-Signed-off-by: Chun-Kuang Hu <chunkuang.hu@kernel.org>
+Fixes: c2eb22189bbc ("mm/vma: inline munmap operation in mmap_region()")
+Fixes: 5887a7ac2383 ("mm/vma: expand mmap_region() munmap call")
+Signed-off-by: Xiao Yang <ice_yangxiao@163.com>
+Reported-by: kernel test robot <oliver.sang@intel.com>
+Closes: https://lore.kernel.org/oe-lkp/202408312155.fd26a58c-oliver.sang@intel.com
 ---
- drivers/soc/mediatek/mtk-cmdq-helper.c | 22 ----------------------
- include/linux/soc/mediatek/mtk-cmdq.h  | 13 -------------
- 2 files changed, 35 deletions(-)
+ mm/mmap.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/soc/mediatek/mtk-cmdq-helper.c b/drivers/soc/mediatek/mtk-cmdq-helper.c
-index a8fccedba83f..2a47dda4dd4a 100644
---- a/drivers/soc/mediatek/mtk-cmdq-helper.c
-+++ b/drivers/soc/mediatek/mtk-cmdq-helper.c
-@@ -538,27 +538,5 @@ int cmdq_pkt_eoc(struct cmdq_pkt *pkt)
- }
- EXPORT_SYMBOL(cmdq_pkt_eoc);
+diff --git a/mm/mmap.c b/mm/mmap.c
+index c1781f643046..c9a0dc035819 100644
+--- a/mm/mmap.c
++++ b/mm/mmap.c
+@@ -1386,8 +1386,9 @@ unsigned long mmap_region(struct file *file, unsigned long addr,
+ 		mt_on_stack(mt_detach);
+ 		mas_init(&mas_detach, &mt_detach, /* addr = */ 0);
+ 		/* Prepare to unmap any existing mapping in the area */
+-		if (vms_gather_munmap_vmas(&vms, &mas_detach))
+-			return -ENOMEM;
++		error = vms_gather_munmap_vmas(&vms, &mas_detach);
++		if (error)
++			return error;
  
--int cmdq_pkt_finalize(struct cmdq_pkt *pkt)
--{
--	struct cmdq_instruction inst = { {0} };
--	int err;
--
--	/* insert EOC and generate IRQ for each command iteration */
--	inst.op = CMDQ_CODE_EOC;
--	inst.value = CMDQ_EOC_IRQ_EN;
--	err = cmdq_pkt_append_command(pkt, inst);
--	if (err < 0)
--		return err;
--
--	/* JUMP to end */
--	inst.op = CMDQ_CODE_JUMP;
--	inst.value = CMDQ_JUMP_PASS >>
--		cmdq_get_shift_pa(((struct cmdq_client *)pkt->cl)->chan);
--	err = cmdq_pkt_append_command(pkt, inst);
--
--	return err;
--}
--EXPORT_SYMBOL(cmdq_pkt_finalize);
--
- MODULE_DESCRIPTION("MediaTek Command Queue (CMDQ) driver");
- MODULE_LICENSE("GPL v2");
-diff --git a/include/linux/soc/mediatek/mtk-cmdq.h b/include/linux/soc/mediatek/mtk-cmdq.h
-index 5bee6f7fc400..0c3906e8ad19 100644
---- a/include/linux/soc/mediatek/mtk-cmdq.h
-+++ b/include/linux/soc/mediatek/mtk-cmdq.h
-@@ -391,14 +391,6 @@ int cmdq_pkt_jump_rel(struct cmdq_pkt *pkt, s32 offset, u8 shift_pa);
-  */
- int cmdq_pkt_eoc(struct cmdq_pkt *pkt);
- 
--/**
-- * cmdq_pkt_finalize() - Append EOC and jump command to pkt.
-- * @pkt:	the CMDQ packet
-- *
-- * Return: 0 for success; else the error code is returned
-- */
--int cmdq_pkt_finalize(struct cmdq_pkt *pkt);
--
- #else /* IS_ENABLED(CONFIG_MTK_CMDQ) */
- 
- static inline int cmdq_dev_get_client_reg(struct device *dev,
-@@ -519,11 +511,6 @@ static inline int cmdq_pkt_eoc(struct cmdq_pkt *pkt)
- 	return -EINVAL;
- }
- 
--static inline int cmdq_pkt_finalize(struct cmdq_pkt *pkt)
--{
--	return -EINVAL;
--}
--
- #endif /* IS_ENABLED(CONFIG_MTK_CMDQ) */
- 
- #endif	/* __MTK_CMDQ_H__ */
+ 		vmg.next = vms.next;
+ 		vmg.prev = vms.prev;
 -- 
-2.34.1
+2.44.0
 
 
