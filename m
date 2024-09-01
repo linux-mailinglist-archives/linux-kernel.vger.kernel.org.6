@@ -1,87 +1,113 @@
-Return-Path: <linux-kernel+bounces-310164-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310162-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A9BB9675B1
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 11:12:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A24819675AD
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 11:12:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E99F91F21ACF
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 09:12:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 59D0B1F21265
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 09:12:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 525F914A4FF;
-	Sun,  1 Sep 2024 09:12:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B539B146D79;
+	Sun,  1 Sep 2024 09:12:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="UAiP9Yli"
-Received: from mail-m16.yeah.net (mail-m16.yeah.net [220.197.32.17])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D761341C73;
-	Sun,  1 Sep 2024 09:12:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.17
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RbvmsaGp"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8EF241C73
+	for <linux-kernel@vger.kernel.org>; Sun,  1 Sep 2024 09:12:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725181945; cv=none; b=ofe2oltStiVQCeYFOk6I3a956qDjLTs1WwAXe7mI/ZnJ37vQ1TxGgTp7zDgfpOBbvzdEBfnZF72arVe3K8hQV1qOvtDzY1j1ZtGxV6SIUW59uvgD5ep/4YTWLWvUdUBVDzeYxdhd2BKnI2etHYGNULhcy+ZucezFxnE+yCVsap8=
+	t=1725181939; cv=none; b=V0wkBXRTRckpO/yVurQFWFuBYLLdyhDD61f1+9izcJgnw/QTO4e68MP5i9BEu9KKWbRZUQNzWHk8g/TD8XaJ9ja5IZ1YN2dOKe4aV+AnIXuF5cCiiK3k0REcXG2n9kE8gRB46jqSQhd2I4mR6NxSboljWegLbWostvq/Zuzj0Mw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725181945; c=relaxed/simple;
-	bh=cmYNT5S0qfMVfLTDfqNsumB8zTDkIjF4Bt9pmtpz9zs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WKvpCRNwlH7Z6Qfc9o5mSuFUpKWXYvlmhJF7aeY+CTZCOwFxKgkG5KVJJthO29uirtqa9ougtW22ielnIFzgOMXMigSSYW2kNsg6ZB5RxEcibQwM16WMKlmP2Ti2M063n/HeZBxiBm0aWkrrWIOnpKrTKIGyHeVMDZXVDR4CwwM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=UAiP9Yli; arc=none smtp.client-ip=220.197.32.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
-	s=s110527; h=Date:From:Subject:Message-ID:MIME-Version:
-	Content-Type; bh=cgFI24ocR6b/eVGC3R3NeznnmdVG4p1OYniHdh2gE1s=;
-	b=UAiP9Yli0cg83XIe9C1XH0t5DB+cNvSMQ8rRboSqZ6BM3ibaGMMpiop0273VII
-	Mb3EdP+Ewn/rw9/JbrRD3EnlxOC8O01OYbirYY72YFJIyC+/yrpHlZtnlAcDms87
-	jCIMiZ6giY5agikxi3pp3qw/Vj7i2S4oZLYtQWQexz83I=
-Received: from dragon (unknown [114.216.210.89])
-	by gzsmtp2 (Coremail) with SMTP id Ms8vCgD3X0nEL9Rm3QhFAA--.21923S3;
-	Sun, 01 Sep 2024 17:11:34 +0800 (CST)
-Date: Sun, 1 Sep 2024 17:11:32 +0800
-From: Shawn Guo <shawnguo2@yeah.net>
-To: Liu Ying <victor.liu@nxp.com>
-Cc: devicetree@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
-	festevam@gmail.com, catalin.marinas@arm.com, will@kernel.org,
-	quic_bjorande@quicinc.com, geert+renesas@glider.be,
-	dmitry.baryshkov@linaro.org, neil.armstrong@linaro.org,
-	arnd@arndb.de, nfraprado@collabora.com
-Subject: Re: [PATCH 0/2] arm64: dts: imx93-11x11-evk: Add PWM backlight for
- "LVDS" connector
-Message-ID: <ZtQvxJi7lRBGRjvL@dragon>
-References: <20240827064717.2383292-1-victor.liu@nxp.com>
+	s=arc-20240116; t=1725181939; c=relaxed/simple;
+	bh=vhbxosuo5ppzs+Cd1QVJhsR1FrFtWypTTMALXVWUgLQ=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=smogtzTczgSW6HofVf0scSqnVCU9W9LuhfA5KOlrfek8jSS05Hgi6m56bsdp2KrNdCYSRmOp28PmcvKkcoMo0eEWivUasaaU9l2l/NEfIjPLA12PmSWoFmhybDyHGOLv9nVTB6PcXXj4+MO7uAmQhjjsNdH2MceJ5jBmV20iPkc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RbvmsaGp; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725181938; x=1756717938;
+  h=message-id:date:mime-version:cc:subject:to:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=vhbxosuo5ppzs+Cd1QVJhsR1FrFtWypTTMALXVWUgLQ=;
+  b=RbvmsaGp1Bnho58b3b+RPQKwnPc0XlyofsA5VYeZfi9Qvw4lN0fnx3P1
+   SwY9OqbvaxCRoHMksHq+kRxqD6OVICiACsbMM/cYCXv28Twawmxb5MHfv
+   79OQ+2aAzh9IZkJee5tJJ1EjmfZJk1vmSU1+kim7cWwX80UNowJKLrDJs
+   VGV5qC9suj/qsYn8CqyrirTATUZb+O4X/q1VF+YfEujUUkCuR1FliG5ft
+   4NkeXsSSORDYtH+/nQNWKa22rJU3PK0ftKVHdZLe9Z+ZZ7Hu0KGniYKrR
+   EACo9ek+4g/GaMl0JoLJ7msUunsyROXp52Inc5UkrVU1ASgwZFena8J/i
+   g==;
+X-CSE-ConnectionGUID: s8qB4wOSSCqx32/+6UqgFg==
+X-CSE-MsgGUID: LSBtqW+hRFuht/yCO+eLog==
+X-IronPort-AV: E=McAfee;i="6700,10204,11181"; a="41255346"
+X-IronPort-AV: E=Sophos;i="6.10,193,1719903600"; 
+   d="scan'208";a="41255346"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Sep 2024 02:12:17 -0700
+X-CSE-ConnectionGUID: y+ZH+4fGRbeU3GeLx6KDtg==
+X-CSE-MsgGUID: wH0QC7YrRkWPjftf2f6bZQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,193,1719903600"; 
+   d="scan'208";a="87554229"
+Received: from blu2-mobl.ccr.corp.intel.com (HELO [10.124.240.228]) ([10.124.240.228])
+  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Sep 2024 02:12:15 -0700
+Message-ID: <b909bc01-327a-427b-9900-8f324a229770@linux.intel.com>
+Date: Sun, 1 Sep 2024 17:12:12 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240827064717.2383292-1-victor.liu@nxp.com>
-X-CM-TRANSID:Ms8vCgD3X0nEL9Rm3QhFAA--.21923S3
-X-Coremail-Antispam: 1Uf129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
-	VFW2AGmfu7bjvjm3AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxUarb1UUUUU
-X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiAgtNZWbUDStNBAAAs8
+User-Agent: Mozilla Thunderbird
+Cc: baolu.lu@linux.intel.com,
+ Linux regressions mailing list <regressions@lists.linux.dev>,
+ Will Deacon <will@kernel.org>, David Woodhouse <dwmw2@infradead.org>,
+ Joerg Roedel <joro@8bytes.org>, "iommu@lists.linux.dev"
+ <iommu@lists.linux.dev>, LKML <linux-kernel@vger.kernel.org>,
+ Jacob Pan <jacob.jun.pan@linux.intel.com>,
+ Adam Williamson <awilliam@redhat.com>
+Subject: Re: [regression] usb and thunderbould are misbehaving or broken due
+ to iommu/vt-d change
+To: "Tian, Kevin" <kevin.tian@intel.com>, Markus Rathgeb <maggu2810@gmail.com>
+References: <c844faa0-343a-46f4-a54f-0fd65f4d4679@leemhuis.info>
+ <BN9PR11MB5276CA2E1922D9FD6B9F2ECF8C962@BN9PR11MB5276.namprd11.prod.outlook.com>
+ <CAOcK=CN3-v=dgMC9XTbh-h0zaD01uatOZKjvSF7ocofTCOGp7Q@mail.gmail.com>
+ <CAOcK=CPi1TokgySF77X+zuQ10kxfsfCXekYVanPhF51+Ow1XRg@mail.gmail.com>
+ <CAOcK=CM4Poawy2AN3f6C2ooPdoT=dg4J9Bg1Fu=gsFjvkrBpQw@mail.gmail.com>
+ <CAOcK=COEd0njBPGhJ8idaLbaqvATr_zSB1O9dyzwi+fbU8GhqA@mail.gmail.com>
+ <BN9PR11MB5276F533DC882B182F1A4C268C972@BN9PR11MB5276.namprd11.prod.outlook.com>
+Content-Language: en-US
+From: Baolu Lu <baolu.lu@linux.intel.com>
+In-Reply-To: <BN9PR11MB5276F533DC882B182F1A4C268C972@BN9PR11MB5276.namprd11.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Aug 27, 2024 at 02:47:15PM +0800, Liu Ying wrote:
-> Hi,
+On 2024/8/30 8:29, Tian, Kevin wrote:
+>> From: Markus Rathgeb<maggu2810@gmail.com>
+>> Sent: Thursday, August 29, 2024 4:34 PM
+>>
+>> With respect to my previous comment I tested to fix it myself (I am
+>> not a kernel hacker and do not know anything about iommu etc.).
+>>
+>> After applying the following change to the v6.11-rc5 it seems to fix my
+>> problem.
+>> I can connect, disconnect and connect the dock and USB is working and
+>> no DMAR error.
+>>
+> as said there was already a fix posted which is similar to below:
 > 
-> This patch set adds PWM backlight support for "LVDS" connector on i.MX93
-> 11x11 EVK.
-> 
-> This patch set is based on next-20240826 and targets for v6.12.
-> 
-> Patch 1 adds device tree support for the PWM backlight.
-> Patch 2 updates defconfig for ARM64 to build ADP5585 MFD/GPIO/PWM drivers
-> as modules.
-> 
-> Liu Ying (2):
->   arm64: dts: imx93-11x11-evk: Add PWM backlight for "LVDS" connector
->   arm64: defconfig: Enable ADP5585 GPIO and PWM drivers
+> https://lore.kernel.org/linux-iommu/20240815124857.70038-1-baolu.lu@linux.intel.com/
 
-Applied both, thanks!
+Above patch has been merged in v6.11-rc6. Please try the latest kernel
+version.
 
+Thanks,
+baolu
 
