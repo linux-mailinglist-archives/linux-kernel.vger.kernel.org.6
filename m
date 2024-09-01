@@ -1,142 +1,105 @@
-Return-Path: <linux-kernel+bounces-310067-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310068-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A14C96745B
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 05:13:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB61696745C
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 05:14:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 319781F21F5D
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 03:13:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A7834280C82
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 03:14:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F8022BD05;
-	Sun,  1 Sep 2024 03:12:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FEA12C6B6;
+	Sun,  1 Sep 2024 03:14:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="Mjl0aqus"
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Zv3xNt67"
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89E1161FCF;
-	Sun,  1 Sep 2024 03:11:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63F5B1E87B
+	for <linux-kernel@vger.kernel.org>; Sun,  1 Sep 2024 03:14:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725160320; cv=none; b=GR+ZQzjEyLAEbNnhK2Igukj9kcs4g6R5tS4FQMHDFoG9gwYljoQSnMDgdmeI0G72EYMEJ+cdNiuRYjX8WYA0fXGD2+xCbOu038VduIygMWPlr0AFwjiQ4Ypzrn7Iu95T3t+bQgVdMtC70NdkjEDYwqh12dVxsdpaEq8RlWY1G+w=
+	t=1725160442; cv=none; b=X0j9Evcz8w8GzW4BW9irxljsxSU4Z5xYAaaUrzWt7oWqTlN/1vzIAZ/u4Ran/xxPkF4v8Dj5WDFbYWHX+G1tojPP4NnHz5ndCL9Bq9g+S3E2epFZt+5zDdiuYVBfYOA/LTOulTxa3yRpry3pOXWdTBug7DaWkKTYYWV90ff6kgk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725160320; c=relaxed/simple;
-	bh=N1SRxLIMiaHEWQcXmpZUWs7IxLXL+xAMhqICn9t2VOY=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=cNdpI51LJDxNaBW860K4vm7javYWumxQjgGVtmfMKZM9MqTvLiE88T7x4G0QttIw53mROzpxMkIIcvv4h9DYwKxrD9pRYhlIgf2ycMpJ6XjKhA4pvVMRfEhR+PRglYlHYMJHwABJZAA4cq0ZThwevUmtmKIZha0P2TqTanpYHB0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=Mjl0aqus; arc=none smtp.client-ip=212.227.17.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1725160287; x=1725765087; i=w_armin@gmx.de;
-	bh=Fh+NRxC7VdSPBTxoHvz8oXusb/Km1qqXvRO90lsQ+bY=;
-	h=X-UI-Sender-Class:From:To:Cc:Subject:Date:Message-Id:In-Reply-To:
-	 References:MIME-Version:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=Mjl0aqusaFE6B4ajtDRJ+J/vCGAfF8aze8sRMLciQXVuC3JWTl49F0iplfmn0iSS
-	 e7pHxH9t8vXhIyy6xCTKAWUH4dIPfyk6nUKWUg53laJZ5VZtJBh7XAT3mVv03P9jt
-	 7ETxFKPp0vFJNBkLkrKIs32xOY48oV+D2mBvYFEaPgCXRS9JLTb/kj/MFu/I5mvvo
-	 rfArt5G/DAsL/WY5zm/IZ3fVRyuBXUschMR8u7TguqLn2lUrCykK+84bNSZPAbrS6
-	 I1Xzx/1BarrwaaNgrQ4LAj36YnDGgm+JuIvbxCG+C7PUmpCG9fUumF0lRBqLHT+K/
-	 cVKhoVKrx9t/H1dZdw==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from mx-amd-b650.users.agdsn.de ([141.30.226.129]) by mail.gmx.net
- (mrgmx104 [212.227.17.168]) with ESMTPSA (Nemesis) id
- 1N4z6q-1s3X0E3jgS-013fiD; Sun, 01 Sep 2024 05:11:26 +0200
-From: Armin Wolf <W_Armin@gmx.de>
-To: james@equiv.tech,
-	jlee@suse.com,
-	corentin.chary@gmail.com,
-	luke@ljones.dev,
-	matan@svgalib.org,
-	coproscefalo@gmail.com
-Cc: hdegoede@redhat.com,
-	ilpo.jarvinen@linux.intel.com,
-	linux@roeck-us.net,
-	jdelvare@suse.com,
-	rafael@kernel.org,
-	lenb@kernel.org,
-	platform-driver-x86@vger.kernel.org,
-	linux-hwmon@vger.kernel.org,
-	linux-acpi@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 5/5] platform/x86: wmi: Call both legacy and WMI driver notify handlers
-Date: Sun,  1 Sep 2024 05:10:55 +0200
-Message-Id: <20240901031055.3030-6-W_Armin@gmx.de>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240901031055.3030-1-W_Armin@gmx.de>
-References: <20240901031055.3030-1-W_Armin@gmx.de>
+	s=arc-20240116; t=1725160442; c=relaxed/simple;
+	bh=YWMWPcMqHWLz5765/EzioozPxEQli1yw5/WJvX7GxB8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tkyheBsJQnMnKTSBVIKnJkQcTjbgs5CDvRgwA1rwzHTd4dK4Wjkj8lDUlBSK6BJ91VvoOfUPAEgvSMGQo1P/73wtCDPs/onChwSM+W9h4hRQfbIWVB5hEiPS7cLy0c07DT+bUohRiHGfedYMcK3S3e2fbnPTZ7LYUMH7XVJkmT8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=Zv3xNt67; arc=none smtp.client-ip=209.85.208.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5c22b1f470dso2718987a12.1
+        for <linux-kernel@vger.kernel.org>; Sat, 31 Aug 2024 20:14:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1725160439; x=1725765239; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=vA9fKAepAjJP0Y+uK6ZVIFt69/fpi4A0HmGXHcekQRc=;
+        b=Zv3xNt67ZjQzziEpwFTz33fuZbWvHn7A6OD2u2oisxiX8DVElO1G8jInHVHw8kTUUE
+         miBYos3XJba2VQxUZMQP5hNL33qD32kP2CagGDqRu++jKRxpTWJNWB5MNUVrIIf++zJU
+         x6kURTetG7vjMF39r/DBMMGN8hY2MGFwubcYE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725160439; x=1725765239;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=vA9fKAepAjJP0Y+uK6ZVIFt69/fpi4A0HmGXHcekQRc=;
+        b=ee5YKPyBqU1kbsl1FUykH6/b4lVKucE0dux3juASsNwu6AB4sT975lkilScKRiaanr
+         f22rKbZs168XX1d5QrAeciJdlh+vIjIB2psNrRMmxsHzsAQNeeESDMdhIoFipkY/1kfS
+         rJ9no2XRSR213bhKI9acyxA1V/sl+LP5dbSOqMut5FeHzW5ZvZSN5PLNABzIL5657bE8
+         D1Ai+6VDSzLHNscvb9N/maBFLprqyz4DSOAyme+ge5LcfF2eB10QBPbUSQ4/trgIbH5D
+         T0qHhDYFNjsZe3Yj1ZjhBKOuaDtJSZzo3yokowQU8sOQEaLnuzcq5O7RBkhrtxKnS7J+
+         Wz6w==
+X-Forwarded-Encrypted: i=1; AJvYcCUfTXTGxzD4e51Qu8GvCNkmZdwd3DlcamjYahzpwhkkIoYhBc9W5DvNqrK/sy3YUrisuyrHFozqwLZglek=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzLayPCzogdCDwggy7nEWRtDSFWMp92PixIFIqHY8ynkn/lTcJP
+	1Y/ylTu3JoIEjJbV66RjWtjGeI5b+3GIhqyYngZ3X8R/2JJOMflCKrAcNA6vCTsecyP9RMxQxkf
+	zNrNUqA==
+X-Google-Smtp-Source: AGHT+IFqC2B1rG30EATiKIKE/g8Lynq8ZGblnexeGgjGgS6ew7GYkwPBlY0/btAX3RccjbLuT4mxLQ==
+X-Received: by 2002:a05:6402:3783:b0:5af:3af2:e2df with SMTP id 4fb4d7f45d1cf-5c242f21841mr2663388a12.30.1725160438087;
+        Sat, 31 Aug 2024 20:13:58 -0700 (PDT)
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com. [209.85.208.44])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c226ccfeb7sm3545481a12.63.2024.08.31.20.13.56
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 31 Aug 2024 20:13:57 -0700 (PDT)
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-58ef19aa69dso2840900a12.3
+        for <linux-kernel@vger.kernel.org>; Sat, 31 Aug 2024 20:13:56 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVm0fxPY9/cyR6Y2leogtXBg4InCo2584x2NXWKMTFx6nQ5t0/xCmPyAwbcvh8b3FXnRfgKw2xw5jlsvps=@vger.kernel.org
+X-Received: by 2002:a05:6402:270c:b0:5c2:53a1:c209 with SMTP id
+ 4fb4d7f45d1cf-5c253a1c259mr266984a12.25.1725160436527; Sat, 31 Aug 2024
+ 20:13:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:Q8iapphxleB0wEpmapMSDOSsrBZf3Tuc6vg2za1AvOK0/PAerH7
- gETG8EHGDBFVe/mSiSAGpjOwiDkzQFeVx5HY6x+mpOB2e5oFGXfxPDo5ixAoLqWEXnfOBp5
- syANV0+Okd5jIcGZp7QCTPV4N7xOXoWdfMTuWR4N+obWm/gcjdNCOfe1j1q0QiTB62YWnt1
- RpysFHd2cp8njXU0KZS9w==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:5GzjSi1jG/E=;a7fjHAiFAoEAM5Mt1Ki5bigJWza
- sM5wGwL2rEazra1oD7bSgzHUtDm/obKvcbmzP16SLCn75yRjco1/Rf0khfF4gwYhqdcz4izQP
- ILp+Q7AZCShuqPWgbtZi8JI3TPCR2PZBxxwMBLZkr7smpE4+wUUsYy8XU5bL3lWP71QhxYjvU
- 2OWkuRe+y+vl8TgB99yeQ+OMmp5o0gEAsIxPy76HNgyfzKV+WB5+a0V2QB2WuYPiiutbq/W5m
- CWKo4zANdzVBOmS1zT7mdRMC0fFWieJaWrXtxnfGx+Zg2YAnM46GLb5GuHDTsCyp1A2iJfPz8
- lbxNP32n9xkqPIxLM31nNW3h37Kl0CizDNps6ZqPTzrJDc95tYwvBCdUcas0yP3Ujnq5o08Be
- YlW+kTIftN+jymw2AnexkBi5FtV5qsygk05iQ29EqskZRhMbNZNCRWYhxLHNWCXvAw5UfwXqf
- 3c0qWaGEpVG23gliF0juu7cfmLt0xRGiEy9d0p8tt/r8hXa2tYRfzML/Ms2BPV41187zr/Lfu
- IyCOzvUemqUiuYhBTGpPrAm+wSJgB8vm6tGWsvR/H177QMSdvtpXKRJF1CCJCoqqFyDs37QPT
- FND8veLznMXscD4TILdlMEj874l4i6vsHh63xOOhMlPu1op7Tg4ArWrrTUvsnvFwdEV0uJP1D
- QQkT9Ffyd45q3nj1z4pSAJcWcuLEeEiPM4mwD27562AHBClhpC1/RFzw0PrajziVxKlEAk8P7
- QsWbNwZesJBId45TKStbyjsygklsF37v92FwIE5EefpxPTBacEflL/MzZn5PvENeve0US2gRN
- nABUesSbSXm4TV5SI01mf1eA==
+References: <erydumpfxcjakfllmh3y4d7wtgwz7omkg44pyvpesoisolt44v@kfa4jcpo7i73>
+In-Reply-To: <erydumpfxcjakfllmh3y4d7wtgwz7omkg44pyvpesoisolt44v@kfa4jcpo7i73>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Sun, 1 Sep 2024 15:13:39 +1200
+X-Gmail-Original-Message-ID: <CAHk-=wjBNzWL5MmtF86ETJzwato38t+NDxeLQ3nYJ3o9y308gw@mail.gmail.com>
+Message-ID: <CAHk-=wjBNzWL5MmtF86ETJzwato38t+NDxeLQ3nYJ3o9y308gw@mail.gmail.com>
+Subject: Re: [GIT PULL] bcachefs fixes for 6.11-rc6
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Since the legacy WMI notify handlers are now using the WMI event data
-provided by the WMI driver core, they can coexist with modern WMI
-driver notify handlers.
+On Sun, 1 Sept 2024 at 14:44, Kent Overstreet <kent.overstreet@linux.dev> wrote:
+>
+>   git://evilpiepirate.org/bcachefs.git tags/bcachefs-2024-08-21
 
-Remove the precedence of WMI driver notify handlers and call both
-when receiving an event.
+Hmm. Your git host is often slow, but now it seems to be even worse than usual.
 
-Reviewed-by: Hans de Goede <hdegoede@redhat.com>
-Signed-off-by: Armin Wolf <W_Armin@gmx.de>
-=2D--
- drivers/platform/x86/wmi.c | 14 ++++++--------
- 1 file changed, 6 insertions(+), 8 deletions(-)
+I blamed my phone hotspot at first, but everything else is fine.
 
-diff --git a/drivers/platform/x86/wmi.c b/drivers/platform/x86/wmi.c
-index 6b27833ba5d9..3cbe180c3fc0 100644
-=2D-- a/drivers/platform/x86/wmi.c
-+++ b/drivers/platform/x86/wmi.c
-@@ -1175,15 +1175,13 @@ static int wmi_notify_device(struct device *dev, v=
-oid *data)
- 	}
+evilpiepirate.org takes a few minutes, and then I get a "Connection
+reset by peer" error.
 
- 	down_read(&wblock->notify_lock);
--	/* The WMI driver notify handler conflicts with the legacy WMI handler.
--	 * Because of this the WMI driver notify handler takes precedence.
--	 */
--	if (wblock->dev.dev.driver && wblock->driver_ready) {
-+
-+	if (wblock->dev.dev.driver && wblock->driver_ready)
- 		wmi_notify_driver(wblock, obj);
--	} else {
--		if (wblock->handler)
--			wblock->handler(obj, wblock->handler_data);
--	}
-+
-+	if (wblock->handler)
-+		wblock->handler(obj, wblock->handler_data);
-+
- 	up_read(&wblock->notify_lock);
+Maybe kick that machine? Or even just use something like a github mirror?
 
- 	kfree(obj);
-=2D-
-2.39.2
-
+               Linus
 
