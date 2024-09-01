@@ -1,52 +1,56 @@
-Return-Path: <linux-kernel+bounces-310304-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310305-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6294A967971
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 18:44:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64169967973
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 18:44:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F2AE28119D
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 16:44:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C92EEB227FC
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 16:44:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65570181CE1;
-	Sun,  1 Sep 2024 16:44:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE65D184527;
+	Sun,  1 Sep 2024 16:44:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YervSnaf"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NnlaIzwm"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEC0D1C68C
-	for <linux-kernel@vger.kernel.org>; Sun,  1 Sep 2024 16:44:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2117F17DFFC
+	for <linux-kernel@vger.kernel.org>; Sun,  1 Sep 2024 16:44:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725209059; cv=none; b=C48+7DkIrjCe4zaT2rG2aG3G5WtzLSaL/jsTRU4jm32OAYjY2ZAwsUZklN5v5uXAKsucW8mj4sYVDlWC0J5hZ3/dBsGMW4ePt3emX4lHPITsoUfaeuesiOhif+IKYzeT/00sUaE/AWCCCFOVQUb5y/nA71HnjyINbaNOWie5lKk=
+	t=1725209061; cv=none; b=AfZ+h5VqK9YG6zIsIKAeNEn/OhQu4QCAkBFP/rJWasNAEF7QWr/3a+ASB/DWoMY8Pf8lWvq/kF/QbA409d6Iraet+NVMTTvoSVJelqtqR4uYPS97ryQK7V4DyC76SVMG+OWEBKPhLaqnCEh7CspZjNwAQHnxBD5zzjkyVbKqfxE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725209059; c=relaxed/simple;
-	bh=jCaD4BYF6M+4Lo3R0hV4sxW4iO3MoXg/akwxDtMBt+k=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=uIpROL6/M4T4KHASNX2Rb9YwQKZ51tlSL9O7Tmv0V5DRDVDj45tbdhplctEbNovYpLW+JSoN/qz/ezVsFRPdDRpW96d5m557nqLO4jZCDiJqE2SNEHWNNeJuI1WTdXBjKgAjwBhmlEmyfYShne1N/aKKLGs1OWQUdbJPgFFQaWU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YervSnaf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 62A80C4CEC3;
-	Sun,  1 Sep 2024 16:44:19 +0000 (UTC)
+	s=arc-20240116; t=1725209061; c=relaxed/simple;
+	bh=Vk2TZS2tzxfyfGN1pM2/Us+l1gNK8jIJFJfsnQgjWWg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=T/+9RujPa0cpDpbw2OxnU2FwQY77RbIZy3EoSWNYwJB5SL/szewF1A47C7WzK7XAEoxs/9aNva2HLg6LKsO4mVx3oZNbW9kHNkdvkE0vfkt+/s16D2vy0y6SqqGV0PSJqwRKoT1nht3OtFktFmrl4i11SUIvQzIwbQb5m+y5vUE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NnlaIzwm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8BDFEC4CEC8;
+	Sun,  1 Sep 2024 16:44:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725209059;
-	bh=jCaD4BYF6M+4Lo3R0hV4sxW4iO3MoXg/akwxDtMBt+k=;
-	h=From:To:Cc:Subject:Date:From;
-	b=YervSnafyOJnDkzZN4y7b3gs3FfSZ48G5k1g6bUjCbeFCnqMqWCMN3CA327OTWEkS
-	 o3Iyknt7+1VxEDPewqt62RQdTuK3XI+aVJcCbARwjUv+eZkV+XwyimPdvIhYqjJac3
-	 vFR1VxRJ+/c/aqeID0Weljn63uf4sjNn44Ma5Pv6YHmOk3qcu1SXb44nw6+Ey6YDCS
-	 JzVR7m9ShDmRg6DiotdI6kU1Ox3n5APVMnPs2XF6jLf1zwXy7Svd5k2wOBjblKqpOH
-	 isZ8AUFllza8n8IuQNCMG2EHM69FxThhxS90Jv70nngWKazCafXhGfDh5pOG8JlAN3
-	 YRk+JrCwcPi7A==
+	s=k20201202; t=1725209060;
+	bh=Vk2TZS2tzxfyfGN1pM2/Us+l1gNK8jIJFJfsnQgjWWg=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=NnlaIzwmcS0jDj8c1ciSZ9G9dDJ/gjkvFzCTj45j3CnZ3ey3hFbCs1chu0Fh0Z4pK
+	 N4RdQRK2X0WJwUimFBeIT1Z10CMMy+gyo+AoXEbXQqz6foIkYfYWvDZ9aA3TmCIqzX
+	 ZC+kVX8u9NhNtjI3QTBKUwxH+zK7rs0eRJaCGzS1/2L3QAcCWefF2ByJyjflcJRmVd
+	 sK6Vg4WCAT65yhHO+Ld4vFCMCmSNSrBisuoeseDOnyDukY6SxUZJ4qI1Qbjpb4h6xp
+	 d40x2QqSlEmGwBkTEfBgjjjPP2zTP2fJSuDuoaotPHBSeYFpxmaQhEYTzBOxC4uLxe
+	 C9HLs2xy/tdHw==
 From: Tejun Heo <tj@kernel.org>
 To: void@manifault.com
 Cc: kernel-team@meta.com,
-	linux-kernel@vger.kernel.org
-Subject: [PATCHSET v2 sched_ext/for-6.12] sched_ext: Implement scx_bpf_dispatch[_vtime]_from_dsq()
-Date: Sun,  1 Sep 2024 06:43:37 -1000
-Message-ID: <20240901164417.779239-1-tj@kernel.org>
+	linux-kernel@vger.kernel.org,
+	Tejun Heo <tj@kernel.org>
+Subject: [PATCH 01/12] sched_ext: Rename scx_kfunc_set_sleepable to unlocked and relocate
+Date: Sun,  1 Sep 2024 06:43:38 -1000
+Message-ID: <20240901164417.779239-2-tj@kernel.org>
 X-Mailer: git-send-email 2.46.0
+In-Reply-To: <20240901164417.779239-1-tj@kernel.org>
+References: <20240901164417.779239-1-tj@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,76 +59,118 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Hello,
+Sleepables don't need to be in its own kfunc set as each is tagged with
+KF_SLEEPABLE. Rename to scx_kfunc_set_unlocked indicating that rq lock is
+not held and relocate right above the any set. This will be used to add
+kfuncs that are allowed to be called from SYSCALL but not TRACING.
 
-This is v2. Changes from v1
-(http://lkml.kernel.org/r/20240830110415.116090-1-tj@kernel.org) are:
+No functional changes intended.
 
-- @slice and @vtime dropped from scx_bpf_dispatch[_vtime]_from_dsq() as
-  scx_bpf_dispatch_vtime_from_dsq() was pushing past kfunc parameter count
-  limit and often weren't needed anyway. Instead
-  scx_bpf_dispatch_from_slice_set_{slice|vtime}() are added so that the
-  parameters can be overridden when necessary.
+Signed-off-by: Tejun Heo <tj@kernel.org>
+Acked-by: David Vernet <void@manifault.com>
+---
+ kernel/sched/ext.c | 66 +++++++++++++++++++++++-----------------------
+ 1 file changed, 33 insertions(+), 33 deletions(-)
 
-- 0010-sched_ext-Compact-struct-bpf_iter_scx_dsq_kern.patch was added to
-  enable the above.
+diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
+index 450389c2073d..e7c6e824f875 100644
+--- a/kernel/sched/ext.c
++++ b/kernel/sched/ext.c
+@@ -5393,35 +5393,6 @@ void __init init_sched_ext_class(void)
+ 
+ __bpf_kfunc_start_defs();
+ 
+-/**
+- * scx_bpf_create_dsq - Create a custom DSQ
+- * @dsq_id: DSQ to create
+- * @node: NUMA node to allocate from
+- *
+- * Create a custom DSQ identified by @dsq_id. Can be called from any sleepable
+- * scx callback, and any BPF_PROG_TYPE_SYSCALL prog.
+- */
+-__bpf_kfunc s32 scx_bpf_create_dsq(u64 dsq_id, s32 node)
+-{
+-	if (unlikely(node >= (int)nr_node_ids ||
+-		     (node < 0 && node != NUMA_NO_NODE)))
+-		return -EINVAL;
+-	return PTR_ERR_OR_ZERO(create_dsq(dsq_id, node));
+-}
+-
+-__bpf_kfunc_end_defs();
+-
+-BTF_KFUNCS_START(scx_kfunc_ids_sleepable)
+-BTF_ID_FLAGS(func, scx_bpf_create_dsq, KF_SLEEPABLE)
+-BTF_KFUNCS_END(scx_kfunc_ids_sleepable)
+-
+-static const struct btf_kfunc_id_set scx_kfunc_set_sleepable = {
+-	.owner			= THIS_MODULE,
+-	.set			= &scx_kfunc_ids_sleepable,
+-};
+-
+-__bpf_kfunc_start_defs();
+-
+ /**
+  * scx_bpf_select_cpu_dfl - The default implementation of ops.select_cpu()
+  * @p: task_struct to select a CPU for
+@@ -5764,6 +5735,35 @@ static const struct btf_kfunc_id_set scx_kfunc_set_cpu_release = {
+ 
+ __bpf_kfunc_start_defs();
+ 
++/**
++ * scx_bpf_create_dsq - Create a custom DSQ
++ * @dsq_id: DSQ to create
++ * @node: NUMA node to allocate from
++ *
++ * Create a custom DSQ identified by @dsq_id. Can be called from any sleepable
++ * scx callback, and any BPF_PROG_TYPE_SYSCALL prog.
++ */
++__bpf_kfunc s32 scx_bpf_create_dsq(u64 dsq_id, s32 node)
++{
++	if (unlikely(node >= (int)nr_node_ids ||
++		     (node < 0 && node != NUMA_NO_NODE)))
++		return -EINVAL;
++	return PTR_ERR_OR_ZERO(create_dsq(dsq_id, node));
++}
++
++__bpf_kfunc_end_defs();
++
++BTF_KFUNCS_START(scx_kfunc_ids_unlocked)
++BTF_ID_FLAGS(func, scx_bpf_create_dsq, KF_SLEEPABLE)
++BTF_KFUNCS_END(scx_kfunc_ids_unlocked)
++
++static const struct btf_kfunc_id_set scx_kfunc_set_unlocked = {
++	.owner			= THIS_MODULE,
++	.set			= &scx_kfunc_ids_unlocked,
++};
++
++__bpf_kfunc_start_defs();
++
+ /**
+  * scx_bpf_kick_cpu - Trigger reschedule on a CPU
+  * @cpu: cpu to kick
+@@ -6460,10 +6460,6 @@ static int __init scx_init(void)
+ 	 * check using scx_kf_allowed().
+ 	 */
+ 	if ((ret = register_btf_kfunc_id_set(BPF_PROG_TYPE_STRUCT_OPS,
+-					     &scx_kfunc_set_sleepable)) ||
+-	    (ret = register_btf_kfunc_id_set(BPF_PROG_TYPE_SYSCALL,
+-					     &scx_kfunc_set_sleepable)) ||
+-	    (ret = register_btf_kfunc_id_set(BPF_PROG_TYPE_STRUCT_OPS,
+ 					     &scx_kfunc_set_select_cpu)) ||
+ 	    (ret = register_btf_kfunc_id_set(BPF_PROG_TYPE_STRUCT_OPS,
+ 					     &scx_kfunc_set_enqueue_dispatch)) ||
+@@ -6471,6 +6467,10 @@ static int __init scx_init(void)
+ 					     &scx_kfunc_set_dispatch)) ||
+ 	    (ret = register_btf_kfunc_id_set(BPF_PROG_TYPE_STRUCT_OPS,
+ 					     &scx_kfunc_set_cpu_release)) ||
++	    (ret = register_btf_kfunc_id_set(BPF_PROG_TYPE_STRUCT_OPS,
++					     &scx_kfunc_set_unlocked)) ||
++	    (ret = register_btf_kfunc_id_set(BPF_PROG_TYPE_SYSCALL,
++					     &scx_kfunc_set_unlocked)) ||
+ 	    (ret = register_btf_kfunc_id_set(BPF_PROG_TYPE_STRUCT_OPS,
+ 					     &scx_kfunc_set_any)) ||
+ 	    (ret = register_btf_kfunc_id_set(BPF_PROG_TYPE_TRACING,
+-- 
+2.46.0
 
-- @task_rq renamed to @src_rq for consistency.
-
-Once a task is put into a DSQ, the allowed operations are fairly limited.
-Tasks in the built-in local and global DSQs are executed automatically and,
-ignoring dequeue, there is only one way a task in a user DSQ can be
-manipulated - scx_bpf_consume() moves the first task to the dispatching
-local DSQ. This inflexibility sometimes gets in the way and is an area where
-multiple feature requests have been made.
-
-Implement scx_bpf_dispatch[_vtime]_from_dsq(), which can be called during
-DSQ iteration and can move the task to any DSQ - local DSQs, global DSQ and
-user DSQs. The kfuncs can be called from ops.dispatch() and any BPF context
-which dosen't hold a rq lock including BPF timers and SYSCALL programs.
-
-This patchset is on top of:
-
-   sched_ext/for-6.12 62607d033bb8 ("sched_ext: Use sched_clock_cpu() instead of rq_clock_task() in touch_core_sched()")
- + bpf/master 2ad6d23f465a ("selftests/bpf: Do not update vmlinux.h unnecessarily")
-
-and is also available at:
-
- git://git.kernel.org/pub/scm/linux/kernel/git/tj/sched_ext.git scx-dispatch_from_dsq-v2
-
-This patchset contains the following patches:
-
- 0001-sched_ext-Rename-scx_kfunc_set_sleepable-to-unlocked.patch
- 0002-sched_ext-Refactor-consume_remote_task.patch
- 0003-sched_ext-Make-find_dsq_for_dispatch-handle-SCX_DSQ_.patch
- 0004-sched_ext-Fix-processs_ddsp_deferred_locals-by-unify.patch
- 0005-sched_ext-Restructure-dispatch_to_local_dsq.patch
- 0006-sched_ext-Reorder-args-for-consume_local-remote_task.patch
- 0007-sched_ext-Move-sanity-check-and-dsq_mod_nr-into-task.patch
- 0008-sched_ext-Move-consume_local_task-upward.patch
- 0009-sched_ext-Replace-consume_local_task-with-move_local.patch
- 0010-sched_ext-Compact-struct-bpf_iter_scx_dsq_kern.patch
- 0011-sched_ext-Implement-scx_bpf_dispatch-_vtime-_from_ds.patch
- 0012-scx_qmap-Implement-highpri-boosting.patch
-
- 0001-0010 are prep patches. The logic to bounce tasks across DSQs and CPUs
- is rather complicated due to synchronization. The prep patches do quite a
- bit of refactoring so that the helpers are more composable and can be used
- for the new kfuncs.
-
- 0011 implements scx_bpf_dispatch[_vtime]_from_dsq().
-
- 0012 adds demo usages to scx_qmap.
-
-diffstat follows. Thanks.
-
- include/linux/sched/ext.h                |   10
- kernel/sched/ext.c                       |  667 ++++++++++++++++++++++++++++++++++-------------------
- tools/sched_ext/include/scx/common.bpf.h |   10
- tools/sched_ext/scx_qmap.bpf.c           |  133 +++++++++-
- tools/sched_ext/scx_qmap.c               |   11
- 5 files changed, 585 insertions(+), 246 deletions(-)
-
---
-tejun
 
