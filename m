@@ -1,192 +1,145 @@
-Return-Path: <linux-kernel+bounces-310140-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310141-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20E6D967572
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 09:32:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1DE4967574
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 09:35:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 41D621C212B6
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 07:32:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1CAF8B2146B
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 07:35:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45242142E70;
-	Sun,  1 Sep 2024 07:32:32 +0000 (UTC)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D175142E70;
+	Sun,  1 Sep 2024 07:35:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XOEGwOy2"
+Received: from mail-qv1-f44.google.com (mail-qv1-f44.google.com [209.85.219.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C0CD4A1B
-	for <linux-kernel@vger.kernel.org>; Sun,  1 Sep 2024 07:32:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E96424A1B;
+	Sun,  1 Sep 2024 07:35:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725175951; cv=none; b=LGI5ZJB5t5eZUjQAs1oPbxWQ+6y72ni+83BDsGbit4BYtGNVvXwNUDx9WC9pxlRbfmG8YO3hesWGEn8g5/TEzIYlnrYqe6LQqqP9lLFhXfPfWE7ezXcfuZd9i+tgWPNSgJg1GBNlbADhBSYORlj6IQ2DoV4fohSACqMAG2NA2gA=
+	t=1725176128; cv=none; b=QXOviUkN/BKHjsJ9WgpFBY2tuDhiyLCX8xSzMgnGnmQD3P2Y/28LB8/QwvbdiTVh+pXDCJ8olaQdfM/j/Shw9z5gAVMKiURywc6a1EjyDec2a2K0INOPeI3MYdKPaVC6zhdziBtdieyJlwDk0tdmgu53ttc3q02knO42c8aVBok=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725175951; c=relaxed/simple;
-	bh=lhHmSIFlfOhsvXH4BF49h/sJ9P/P4k781SaVMjCr8mk=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=lCZuQyJhMfSEzEi4dCR4HijRfBLtDpLQACYkHLmNMESX2LgSi+5OInjBaEmhX3ABQrq3ghZxZx/T29PPgSsAN9oRR20V1CupI8+D8qMYzJCWTBabpSoS1vEQ+l7pwcerQ5hXOoYXru9aVGtFm7DERF1eJIq5L57lQ9oQjRVrsPI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-82a14eb2247so376056039f.0
-        for <linux-kernel@vger.kernel.org>; Sun, 01 Sep 2024 00:32:29 -0700 (PDT)
+	s=arc-20240116; t=1725176128; c=relaxed/simple;
+	bh=xb2w4zkpdpNjvY/zJYCRxZq9smLkIi0O47kz49XBMuk=;
+	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=a4TMPnNTH0rwYBVbP6PlqYBMGBJLrCcii61/DRrYG1Jh6CHppf2SaEls+i5NpiP1frfXLDVrbQ0t4AYNtKKEaSpI1358dVHq3odPvxuBUyeXnNtfET25feGnbyIZQt19tO1kbt9k67XSzVxkBdAABc94WVDoSf7OdtE091dU690=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XOEGwOy2; arc=none smtp.client-ip=209.85.219.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f44.google.com with SMTP id 6a1803df08f44-6c35b72f943so5115386d6.0;
+        Sun, 01 Sep 2024 00:35:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725176125; x=1725780925; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:user-agent:mime-version:date:message-id:from:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=zRk8FmcCEyWHwfxzNws/I37iaouQcScazIoErvdmxJQ=;
+        b=XOEGwOy2V1emqBwyWmUL9H1BDodzlh+277M7UFlicvb2pHpz4VAsqAR4x/M6Vw+6BE
+         0mDOyFKnkYrj4MIpgAPSCUAEgU+AbSo7eZr4j0Q9ONWkHtwwSf5fneq0gQOLKM+7hjZF
+         mIM5V7rZ0wx2XVWuT5r3Vk9Upp1dVd9ltZu5hYqHSfdeSzCz7In4eNdeWNs+ViqzqlUB
+         Kf+/qRqWxkDnMb4/DCC7LtYiA9/JAQbl1ttLTU6+H2o3+OyJwlbjyVB21DD4c7at46MW
+         sVyXo3opWwVcHcuafb4gml32WcpmzxtmbLlhkBhNHOKfU7k4N9LhON88HesEqgEULyDn
+         34rQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725175949; x=1725780749;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=RhtyiptobKnf7p7yUACoKUO35fQRerDujRz4nFJZpwo=;
-        b=oFvOkbFZd6+8ZuWER3y/9jw9XsVCWUYtAuLJkwTEogCt0UsALEAE+hiZ++t3MuC0JY
-         hqv3F5x73of/sNDFNs8xswe+0lsyaYvYu3XhcEBdR++uv4Nn+BG0HxPmOwTUgIcv4px4
-         /FSTcmIa7E+Xw5u80TThziHCd3ANgxVGY4KOtRI7pCMxU0k5sUyh2SAjZX1uLRdxyBAR
-         gTRkVdQ9y21P0r5y96vK/yzXmdPDDrk5fGAwYzFro3Y3d84SHe58eObKPovlhwCiZKAG
-         fkepPWEI5UqSbmtkBclW0SZugckT7dl4lwk5CLHCXm6moz2XQM4gWnUrUMMnulQHAIrK
-         kkaw==
-X-Forwarded-Encrypted: i=1; AJvYcCVQbGZgYuu78PGDQ1uS+dOqUawczssxSBZaem6bGnSliwUjKzvgQgFPT2hK6i2oBr89A96r4jDpskesI/A=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzuc7RQtJP7u1acaWqzmuAQaFHeS50XvTLkOfZY3PCRVnLEnmhR
-	//jMysbRe51O7EDgXOmee+HQ2OxTV/4rdZ1gVfqp4SlYW57jQ3yCsCFs0gT9bYZmbxAJuk13YlU
-	DhfFJewZl9wufpQWJ2GvmcvZ92FcKVtXLdJLWGk6Q7oQd0RJMDJtSguQ=
-X-Google-Smtp-Source: AGHT+IGODkJ2/t8+7n+KOiKKcdu5qVfUKk207pcOTqjUBPB4dCRViVB09xipg/PUOQvTF7WuePbs+Ju3htihSoKwkm2J1wJBilIg
+        d=1e100.net; s=20230601; t=1725176125; x=1725780925;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:user-agent:mime-version:date:message-id:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=zRk8FmcCEyWHwfxzNws/I37iaouQcScazIoErvdmxJQ=;
+        b=mA4yxlAtw6zm/hgiPXwlJTxYcZgpv826Pyrb3LJwPTOEMHJAxo2xeXrlLLMExzt5a9
+         8rNIRG1uXX00pjfa9rC1UsexwvqREZS+imJ8J5fZfQ4vLTf1tIn91CK0ob8UPJUnyeCM
+         lPQbN3B3e9mjOmd6Li0tAY4lq0soZ8HveUjdsoBS7PC9z3DcdCUWU0DIzs2u+zt43HMQ
+         g7C1oe++jhYdM0EIBuw5mT+dE7x23PJd+PCd8kPaHYa/F+R6aiLSd10ch7TM2vj0bn8z
+         misfCjkdHS0b2v5lMIBUjARUSe5Km4kO5vhQ/AGW6hhLt1lUuiJE4RVXZhYKE94qZNTT
+         GPAA==
+X-Forwarded-Encrypted: i=1; AJvYcCU3P9VPKDjAU0lhR8MQhJtvOz03M272xKt/HeizMclLffplP0dU9L0gr+EHiBcNfkCMsTmWks1Arxy9n/cA@vger.kernel.org, AJvYcCXhNqimnajfgN9wRbdsn530NonC02iW6Ox47Rc46qs45w7i9D39extp2ZWvPLg814RLjYlWamvXcfmfC5Gm@vger.kernel.org
+X-Gm-Message-State: AOJu0YxHXT3uiXXuhWsp/YgZzai1ux+bOPYyZlR3NEdcS1/DWQkc1OiW
+	ztUsIU/qeo0wuWrpWrFpIJD3A4Vp2Tat0Baz+UL0zlTuzIiJ0xQd
+X-Google-Smtp-Source: AGHT+IGopVNCbqfR8SyeF9VBFoj3evG9Be/sQnBDiT7qZGdARPPheaeMeOqIT+iO4r/GipINmuMAEg==
+X-Received: by 2002:ad4:5f45:0:b0:6c3:5e89:3b60 with SMTP id 6a1803df08f44-6c35e893d2dmr34342936d6.3.1725176125433;
+        Sun, 01 Sep 2024 00:35:25 -0700 (PDT)
+Received: from [10.36.8.169] (pat-199-212-65-137.resnet.yorku.ca. [199.212.65.137])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6c340ca58f1sm30672066d6.108.2024.09.01.00.35.24
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 01 Sep 2024 00:35:25 -0700 (PDT)
+From: Iman Seyed <imandevel@gmail.com>
+X-Google-Original-From: Iman Seyed <ImanDevel@gmail.com>
+Message-ID: <3e61af1f-5dd6-4bf1-ad9d-047d015f3888@gmail.com>
+Date: Sun, 1 Sep 2024 03:35:24 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:6d82:b0:806:bf73:1167 with SMTP id
- ca18e2360f4ac-82a262d1ac0mr19847939f.3.1725175949220; Sun, 01 Sep 2024
- 00:32:29 -0700 (PDT)
-Date: Sun, 01 Sep 2024 00:32:29 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000a0ed7b062109d3da@google.com>
-Subject: [syzbot] [ext4?] kernel BUG in ext4_inline_data_truncate
-From: syzbot <syzbot+8aa6090cbe3c97dc9565@syzkaller.appspotmail.com>
-To: adilger.kernel@dilger.ca, jack@suse.cz, libaokun1@huawei.com, 
-	linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	ritesh.list@gmail.com, syzkaller-bugs@googlegroups.com, tytso@mit.edu
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] inotify: set ret in inotify_read() to -EAGAIN only when
+ O_NONBLOCK is set
+To: Kuan-Wei Chiu <visitorckw@gmail.com>
+Cc: jack@suse.cz, amir73il@gmail.com, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240901030150.76054-1-ImanDevel@gmail.com>
+ <ZtQRKfuawk6borTL@visitorckw-System-Product-Name>
+Content-Language: en-US
+In-Reply-To: <ZtQRKfuawk6borTL@visitorckw-System-Product-Name>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hello,
+Hi Kuan-Wei,
 
-syzbot found the following issue on:
+I just looked over the assembly generated by GCC and Clang
+with the O2 level of optimization, and you're right. Both
+Generate the identical assembly. It seem like my patch
+would only affect the appearance of the code.
 
-HEAD commit:    86987d84b968 Merge tag 'v6.11-rc5-client-fixes' of git://g..
-git tree:       upstream
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=14411109980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=a0455552d0b27491
-dashboard link: https://syzkaller.appspot.com/bug?extid=8aa6090cbe3c97dc9565
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=147eff87980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16f6122b980000
+Kind Regards,
+Iman
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/87692913ef45/disk-86987d84.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/a27da6973d7f/vmlinux-86987d84.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/2e28d02ce725/bzImage-86987d84.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/dd0ff7b97552/mount_0.gz
-
-The issue was bisected to:
-
-commit 67d7d8ad99beccd9fe92d585b87f1760dc9018e3
-Author: Baokun Li <libaokun1@huawei.com>
-Date:   Thu Jun 16 02:13:56 2022 +0000
-
-    ext4: fix use-after-free in ext4_xattr_set_entry
-
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1282b835980000
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=1182b835980000
-console output: https://syzkaller.appspot.com/x/log.txt?x=1682b835980000
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+8aa6090cbe3c97dc9565@syzkaller.appspotmail.com
-Fixes: 67d7d8ad99be ("ext4: fix use-after-free in ext4_xattr_set_entry")
-
-loop0: detected capacity change from 1024 to 1023
-------------[ cut here ]------------
-kernel BUG at fs/ext4/inline.c:1953!
-Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN PTI
-CPU: 0 UID: 0 PID: 5220 Comm: syz-executor398 Not tainted 6.11.0-rc5-syzkaller-00057-g86987d84b968 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
-RIP: 0010:ext4_inline_data_truncate+0xced/0xcf0 fs/ext4/inline.c:1953
-Code: e9 17 fd ff ff 89 f9 80 e1 07 80 c1 03 38 c1 0f 8c 44 fd ff ff e8 c3 fb a1 ff e9 3a fd ff ff e8 09 ad 58 09 e8 04 df 3d ff 90 <0f> 0b 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 f3 0f 1e
-RSP: 0018:ffffc900035cf660 EFLAGS: 00010293
-RAX: ffffffff8255ac9c RBX: ffffc900035cf700 RCX: ffff8880241b9e00
-RDX: 0000000000000000 RSI: 00000000ffffffc3 RDI: 0000000000000000
-RBP: ffffc900035cf7f0 R08: ffffffff8255a948 R09: 1ffff1100e59f149
-R10: dffffc0000000000 R11: ffffed100e59f14a R12: ffffc900035cf760
-R13: dffffc0000000000 R14: 0000000000000002 R15: 0000000000000000
-FS:  0000000000000000(0000) GS:ffff8880b9200000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00005649eaf8b000 CR3: 000000000e534000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- ext4_truncate+0x3c7/0x11a0 fs/ext4/inode.c:4174
- ext4_evict_inode+0x90f/0xf50 fs/ext4/inode.c:258
- evict+0x532/0x950 fs/inode.c:704
- __dentry_kill+0x20d/0x630 fs/dcache.c:610
- dput+0x19f/0x2b0 fs/dcache.c:852
- __fput+0x5f8/0x8a0 fs/file_table.c:430
- task_work_run+0x24f/0x310 kernel/task_work.c:228
- exit_task_work include/linux/task_work.h:40 [inline]
- do_exit+0xa2f/0x27f0 kernel/exit.c:882
- do_group_exit+0x207/0x2c0 kernel/exit.c:1031
- __do_sys_exit_group kernel/exit.c:1042 [inline]
- __se_sys_exit_group kernel/exit.c:1040 [inline]
- __x64_sys_exit_group+0x3f/0x40 kernel/exit.c:1040
- x64_sys_call+0x2634/0x2640 arch/x86/include/generated/asm/syscalls_64.h:232
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f841d2244b9
-Code: Unable to access opcode bytes at 0x7f841d22448f.
-RSP: 002b:00007fffda637bd8 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f841d2244b9
-RDX: 000000000000003c RSI: 00000000000000e7 RDI: 0000000000000000
-RBP: 00007f841d2a0370 R08: ffffffffffffffb8 R09: 00007fffda637df8
-R10: 0000000000000007 R11: 0000000000000246 R12: 00007f841d2a0370
-R13: 0000000000000000 R14: 00007f841d2a10e0 R15: 00007f841d1f2d80
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:ext4_inline_data_truncate+0xced/0xcf0 fs/ext4/inline.c:1953
-Code: e9 17 fd ff ff 89 f9 80 e1 07 80 c1 03 38 c1 0f 8c 44 fd ff ff e8 c3 fb a1 ff e9 3a fd ff ff e8 09 ad 58 09 e8 04 df 3d ff 90 <0f> 0b 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 f3 0f 1e
-RSP: 0018:ffffc900035cf660 EFLAGS: 00010293
-RAX: ffffffff8255ac9c RBX: ffffc900035cf700 RCX: ffff8880241b9e00
-RDX: 0000000000000000 RSI: 00000000ffffffc3 RDI: 0000000000000000
-RBP: ffffc900035cf7f0 R08: ffffffff8255a948 R09: 1ffff1100e59f149
-R10: dffffc0000000000 R11: ffffed100e59f14a R12: ffffc900035cf760
-R13: dffffc0000000000 R14: 0000000000000002 R15: 0000000000000000
-FS:  0000000000000000(0000) GS:ffff8880b9200000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00005649eaf8b000 CR3: 000000000e534000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+On 9/1/24 03:00, Kuan-Wei Chiu wrote:
+> On Sat, Aug 31, 2024 at 11:01:50PM -0400, imandevel@gmail.com wrote:
+>> From: Iman Seyed <ImanDevel@gmail.com>
+>>
+>> Avoid setting ret to -EAGAIN unnecessarily. Only set
+>> it when O_NONBLOCK is specified; otherwise, leave ret
+>> unchanged and proceed to set it to -ERESTARTSYS.
+>>
+> Hi Iman,
+>
+> Have you checked the code generated by gcc before and after applying
+> this patch? My intuition suggests that the compiler optimization might
+> result in the same code being produced.
+>
+> Regards,
+> Kuan-Wei
+>
+>> Signed-off-by: Iman Seyed <ImanDevel@gmail.com>
+>> ---
+>>   fs/notify/inotify/inotify_user.c | 6 ++++--
+>>   1 file changed, 4 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/fs/notify/inotify/inotify_user.c b/fs/notify/inotify/inotify_user.c
+>> index 4ffc30606e0b..d5d4b306a33d 100644
+>> --- a/fs/notify/inotify/inotify_user.c
+>> +++ b/fs/notify/inotify/inotify_user.c
+>> @@ -279,9 +279,11 @@ static ssize_t inotify_read(struct file *file, char __user *buf,
+>>   			continue;
+>>   		}
+>>   
+>> -		ret = -EAGAIN;
+>> -		if (file->f_flags & O_NONBLOCK)
+>> +		if (file->f_flags & O_NONBLOCK) {
+>> +			ret = -EAGAIN;
+>>   			break;
+>> +		}
+>> +
+>>   		ret = -ERESTARTSYS;
+>>   		if (signal_pending(current))
+>>   			break;
+>> -- 
+>> 2.46.0
+>>
 
