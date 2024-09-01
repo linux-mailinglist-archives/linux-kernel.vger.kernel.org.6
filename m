@@ -1,69 +1,71 @@
-Return-Path: <linux-kernel+bounces-310075-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310076-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D80496747D
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 05:42:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9747696747F
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 05:42:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7AD62B21A47
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 03:42:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2515BB20E80
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 03:42:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C13E2C190;
-	Sun,  1 Sep 2024 03:42:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C9932C6B6;
+	Sun,  1 Sep 2024 03:42:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EsPXTDtQ"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cPejINPH"
 Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91BF5249ED;
-	Sun,  1 Sep 2024 03:42:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B50E26AC6;
+	Sun,  1 Sep 2024 03:42:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725162138; cv=none; b=PmP/JpKTrA1hUyGLarOdafhsUkobM+LpkV5maJIz48rYkv5bJJEq0YILP2pcUOdZjPp4b1VaGJdzauPh6JCxZ8ZzCdoCaaMV1UPBpIqDglFvlTZKh9lqn5OQScUbb7nCYkK5BS4r3BX2ee2U5IlNFvy3ERvT38bL/UItqTFh1k4=
+	t=1725162157; cv=none; b=Qa7il4NDwSQz5K/YQMLXqh2OU4yE+uo+oK72iygDn6kHF3hofPc7P3YaX1k4I0IOpJhHpkHUY/MInmEI2vxWlUxgnkXXpEg3JBNG7nqO3tCjO3S5JfLbLWOHImrqDkVfBKdes5+KpJXjfIuDJWH0gYw+PbICOtZyX+2n+BtmMdM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725162138; c=relaxed/simple;
-	bh=yZ/CVVYjtuS64DONtMZBty84ukZc3qILy66xVEON1SI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MGeep0dN0NzNkkabG4DfqrzhGY6iGzXzC9fHZh6sV9LC7rBTNw5cW0YLPEhnek8FgeHRpcyr/MX1SujPYM3Z8xvQxfGWg+tF/NFTz7Q0H12dDpETlyUImgYHTdiShcbc1v+qnbVk36TGRl7tAjqP8KxU0mOVCKBbKTkb6UQWUBw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EsPXTDtQ; arc=none smtp.client-ip=209.85.210.171
+	s=arc-20240116; t=1725162157; c=relaxed/simple;
+	bh=XTKSZNA1PDZHsBQHwS6oF9do6WxomCMOodlSA/e5p34=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=VhxlMidNcteYXP7ix3d3TYZCEVNeYxh2uhgLE5gNlDEdreCzGCd2YgmA5TbZhKBQZ7R0udieB8xvv2jKNWff6FRkrum6n106I2Z1ME6lFqmacWUVxB3F6do1KPlcYAaGImqutMb265YI6ecQFmGqqTLLKMRv2Ob8mbqrdjXpUo8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cPejINPH; arc=none smtp.client-ip=209.85.210.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-71423704ef3so2371390b3a.3;
-        Sat, 31 Aug 2024 20:42:17 -0700 (PDT)
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-715cdc7a153so2242183b3a.0;
+        Sat, 31 Aug 2024 20:42:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725162137; x=1725766937; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=9gYVZX9F0tsvEizawck6Gs6K9CkXboSi1RjrBxnHjqQ=;
-        b=EsPXTDtQkQTazBC/wHIbFIzApAbXUZWnwi5paifXlPvPZdhWbXstHrfYgJZLhBsD2y
-         oTh3PaymzkXZlZ/cZLlM/3rjpeFTR5IZRrJsCimqmJj5tPf2NOkE/FvmVOKlLbaFy2sB
-         zD8KRnG87SQadShtABVhKRxn+TucuL9V3RgxjTkPfBeSsgk1jdXOwyvRv30shagYpQfP
-         U5Zn96/CRyulPYe6C9QJxpOOzKx32pH3k/da+sYIH75oxKWi47XNFk0dZZw+pUH+5W5J
-         zjY4kssKnrMLlD25ee0aXfmn7AqD0SnkOBF7lDs9NSv15W1y2mWMkh1643ehKsjv8XfD
-         JcOg==
+        d=gmail.com; s=20230601; t=1725162155; x=1725766955; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yH9DpB2vOqWFl9C9V+jaABjITs0KYB7EL4dBUQbha48=;
+        b=cPejINPH/0FT3aQkz6HWm/605Xkr1HBCeF6Lcxm7un4eeFfLIi6Semx4btUj967IpJ
+         hX9NQzW1ondz3HCZHBrvAUmaf1jlKiDC27Ba5gsaxcwlZ425mOX8dRSThPhLm1XUSw23
+         M0Uo/crkDEPVFBD0HfpmXSr6Lccnn1MNGLuTYyVlQdj+p5ZbNAT4WwQihhP6TGtodQPj
+         c8AQQZsnuLduRs3839LKZQnMhf6ZXdhroOOOrdXKURD/ai+UOUvaKiXRA+pgJeRS3BVH
+         N71U5l///rw1w2W968rKU1a4lJxVsc6Ege4Rs1k0piCKcPtarKv/dTyxcpltGd2INfhJ
+         EL7Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725162137; x=1725766937;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=9gYVZX9F0tsvEizawck6Gs6K9CkXboSi1RjrBxnHjqQ=;
-        b=WZwjs7NwfJEvDfapGldc45UsoaZaVYbH/PaUZptP5d61TcBGh/nq/jIa2mlAu6ERMK
-         FJz6x6cZU3AgAYybRSeyo5LpQnnV4SjtgWyH5y/JKxVK6GAoIaXnLqUqIHAOTBcc2Eky
-         gfOKm3WuBC1JbyrFlVEpfR/8MJr5937giH+IYvoMMT0qquBlQaavCP7SzCpcKwmI2G64
-         jZ2OzbH7pIi0vk8/FeJgpUBWXYdlNl5tr5DXniqGrrJT7snd3NNZTVP9R1ofJ3I/fb6N
-         4FlTCemhcJZsHcLbNCPkXAqDnDuqe9wS1Qs5v5fkv2JdaB4f4hqAxw4TmOhDNJTO9lav
-         VNhg==
-X-Forwarded-Encrypted: i=1; AJvYcCUtR9EvlDc0qEvLsq1CK3AJvk3xsEc6XeuDvTS6CEAMxAZvFUa13WVCoac+aoDvnn0IUimMzc2jXe1Mf3FB@vger.kernel.org, AJvYcCXu1PYvtk2YMTPchXTN7Ml3BgXdBBbXYDJ67Z74VQ68inQNUH9fAWIJ7SAW6M+BhBXz0Bfn8Y/f2sT8@vger.kernel.org
-X-Gm-Message-State: AOJu0YwNLXcl2C2LWXXtbCpkrjvmlPslHXD96XaXSNYgEsqRs6h1ZpQD
-	7RdqW14VKgtuydeY1mo/pt7wXNCptl8NHoT10aLgS64gVk4M+j/y
-X-Google-Smtp-Source: AGHT+IFPTZn+Qx6Y7uy1KDmqweQR1DLiZyvrq+mdNBFj8DsOiSWLbxltzHOIzgIY1JSGFgGkZe/9gw==
-X-Received: by 2002:a05:6a00:813:b0:714:389d:6e6e with SMTP id d2e1a72fcca58-7173b690c10mr5859132b3a.21.1725162136682;
-        Sat, 31 Aug 2024 20:42:16 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1725162155; x=1725766955;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=yH9DpB2vOqWFl9C9V+jaABjITs0KYB7EL4dBUQbha48=;
+        b=iE4yWCzDP94kGfhZ59u8UwPpnx5XCJS+p6vz4WTZsXLS3wLcuXz8VLMKzAK3wTGGHH
+         5CCyVz2MJoOKvLZfry8MREkXoDX9GAiXsRdsTAuG/sNXsJpdfsuYHk8Ch0CAqfz2dCjI
+         yDiVQfqasEsAiPco2GPV8DI/XaiC5v9RFIzEpgxf/TXX9ho0LNLSxlrwjawsHUr6xV1Y
+         MTFaHI+T514SOzEykl29hH7jxB8fDBh3YZpSBjV4ziOYI1KBvyoyF6+BMpG1MB3YEsu3
+         N23QytlGs224ZzMOYZc1zJ/275VbJgPoR/QDEUBZZHHJgQejCVhqSd8sYOLMSViHfBPM
+         K/1Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUwMUxkEtHPRi7QO2VjuF582rHQYMVIjrvm30qyGKrDtJc2VV4haj8xYmmo6zPZRXQTzmpecE5gk9OD7Hru@vger.kernel.org, AJvYcCVdlL0iJtyTElyxv/WsHq86wyD9LFZ2XyoUu3ffhh35vJquJEdGV8uu7VeVmNOnIx0GRFZTklx/ISMV@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyr8xFkqEohJUdr+wkqZuLbLLJKyXgmYGnX0XlrUqHBNFDh2bI2
+	w4aYdQ7eO0F1llNAHzTPsIjfiXiQATk7z87poMN2ZARB9xUu0QhA
+X-Google-Smtp-Source: AGHT+IEObdUwisREopDN74WlXGu+MwK3ECILVmBEK+u0lfuO5t0y0gHsYBPq4cQjNKSsi8PuduAg6w==
+X-Received: by 2002:a05:6a00:181a:b0:714:2922:7c6d with SMTP id d2e1a72fcca58-715e101f8d7mr19711987b3a.12.1725162155177;
+        Sat, 31 Aug 2024 20:42:35 -0700 (PDT)
 Received: from localhost.localdomain ([49.130.72.113])
-        by smtp.googlemail.com with ESMTPSA id d2e1a72fcca58-715e55771ccsm4826767b3a.43.2024.08.31.20.42.12
+        by smtp.googlemail.com with ESMTPSA id d2e1a72fcca58-715e55771ccsm4826767b3a.43.2024.08.31.20.42.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 31 Aug 2024 20:42:16 -0700 (PDT)
+        Sat, 31 Aug 2024 20:42:34 -0700 (PDT)
 From: Nick Chan <towinchenmi@gmail.com>
 To: Hector Martin <marcan@marcan.st>,
 	Sven Peter <sven@svenpeter.dev>,
@@ -78,11 +80,14 @@ To: Hector Martin <marcan@marcan.st>,
 	devicetree@vger.kernel.org
 Cc: ~postmarketos/upstreaming@lists.sr.ht,
 	konrad.dybcio@somainline.org,
-	Nick Chan <towinchenmi@gmail.com>
-Subject: [PATCH v3 0/4] Add support for A7-A11 AIC
-Date: Sun,  1 Sep 2024 11:40:03 +0800
-Message-ID: <20240901034143.12731-1-towinchenmi@gmail.com>
+	Nick Chan <towinchenmi@gmail.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH v3 1/4] dt-bindings: apple,aic: Document A7-A11 compatibles
+Date: Sun,  1 Sep 2024 11:40:04 +0800
+Message-ID: <20240901034143.12731-2-towinchenmi@gmail.com>
 X-Mailer: git-send-email 2.46.0
+In-Reply-To: <20240901034143.12731-1-towinchenmi@gmail.com>
+References: <20240901034143.12731-1-towinchenmi@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -91,61 +96,57 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Hi,
+Document and describe the compatibles for Apple A7-A11 SoCs.
 
-This patch series introduce support for A7-A11 SoCs into the AIC driver by
-if'ing out some features unavailable on them. For background information
-about these SoCs, see v1.
+There are three feature levels:
+- apple,aic: No fast IPI, for A7-A10
+- apple,t8015-aic: fast IPI, global only, for A11
+- apple,t8103-aic: fast IPI with local and global support, for M1
 
-Changes since v2:
-- Removed mention of the IPI-always-ack code path in aic_handle_fiq(). The
-patch to enable A7-A10 SoC to work is a bug fix to avoid accessing sysregs
-on configurations that do not provide them, and the rest of the message
-already explains what's going on.
+Each feature level is an extension of the previous, for example, M1 will
+also work with the A7 feature level.
 
-Changes since v1:
+All of A7-M1 gets its own SoC-specific compatible, and the "apple,aic"
+compatible as a fallback.
 
-- Corrected dt-binding issues pointed out by Rob, all of A7-M1 gets its own
-SoC compat, as well as the "apple,aic" generic fallback.
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Reviewed-by: Sven Peter <sven@svenpeter.dev>
+Signed-off-by: Nick Chan <towinchenmi@gmail.com>
+---
+ .../bindings/interrupt-controller/apple,aic.yaml   | 14 +++++++++++++-
+ 1 file changed, 13 insertions(+), 1 deletion(-)
 
-- Order the AIC dt-bindings of the SoCs by release dates instead of alphabetical
-order: 's5l8960x' (A7) -> 't7000' (A8) -> 's8000' (A9) -> 't8010' (A10)
--> 't8015' (A11) -> 't8103' (M1)
-
-- The patch to disallow local fast IPI on A11 now comes before the patch
-that enables to AIC driver to work on slow IPI systems. This ensures all
-IPI-always-ack code path in aic_handle_fiq() is removed by the slow IPI
-patch.
-
-- Keep local fast IPI enabled on AIC2, mistake in V1
-- Describe the feature levels in the description of AIC.
-- Add new patch to remove unneccessary enablement of use_fast_ipi.
-- Do not try to enable use_local_fast_ipi, because it is enabled by default.
-
-In theory M1 can also get the apple,t8015-aic (A11) compatible. However, I
-do not see a point in doing that.
-
-Previous versions:
-v1: https://lore.kernel.org/asahi/20240829092610.89731-1-towinchenmi@gmail.com
-v2: https://lore.kernel.org/asahi/20240831055605.3542-1-towinchenmi@gmail.com
-
-Nick Chan
-
-Konrad Dybcio (1):
-  irqchip/apple-aic: Only access system registers on SoCs which provide
-    them
-
-Nick Chan (3):
-  dt-bindings: apple,aic: Document A7-A11 compatibles
-  irqchip/apple-aic: Skip unnecessary setting of use_fast_ipi
-  irqchip/apple-aic: Add a new "Global fast IPIs only" feature level
-
- .../interrupt-controller/apple,aic.yaml       | 14 ++++-
- drivers/irqchip/irq-apple-aic.c               | 53 +++++++++++++------
- 2 files changed, 49 insertions(+), 18 deletions(-)
-
-
-base-commit: 985bf40edf4343dcb04c33f58b40b4a85c1776d4
+diff --git a/Documentation/devicetree/bindings/interrupt-controller/apple,aic.yaml b/Documentation/devicetree/bindings/interrupt-controller/apple,aic.yaml
+index 698588e9aa86..4be9b596a790 100644
+--- a/Documentation/devicetree/bindings/interrupt-controller/apple,aic.yaml
++++ b/Documentation/devicetree/bindings/interrupt-controller/apple,aic.yaml
+@@ -31,13 +31,25 @@ description: |
+   This device also represents the FIQ interrupt sources on platforms using AIC,
+   which do not go through a discrete interrupt controller.
+ 
++  IPIs may be performed via MMIO registers on all variants of AIC. Starting
++  from A11, system registers may also be used for "fast" IPIs. Starting from
++  M1, even faster IPIs within the same cluster may be achieved by writing to
++  a "local" fast IPI register as opposed to using the "global" fast IPI
++  register.
++
+ allOf:
+   - $ref: /schemas/interrupt-controller.yaml#
+ 
+ properties:
+   compatible:
+     items:
+-      - const: apple,t8103-aic
++      - enum:
++          - apple,s5l8960x-aic
++          - apple,t7000-aic
++          - apple,s8000-aic
++          - apple,t8010-aic
++          - apple,t8015-aic
++          - apple,t8103-aic
+       - const: apple,aic
+ 
+   interrupt-controller: true
 -- 
 2.46.0
 
