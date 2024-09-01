@@ -1,53 +1,53 @@
-Return-Path: <linux-kernel+bounces-310309-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310310-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F47F967979
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 18:45:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9090C96797A
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 18:45:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B07FD1F21B27
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 16:45:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3C6931F21B04
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 16:45:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 437E0185B55;
-	Sun,  1 Sep 2024 16:44:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6439C185B75;
+	Sun,  1 Sep 2024 16:44:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tzyEm9rz"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WtqasJ4Q"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79370185952
-	for <linux-kernel@vger.kernel.org>; Sun,  1 Sep 2024 16:44:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8D4A185B61
+	for <linux-kernel@vger.kernel.org>; Sun,  1 Sep 2024 16:44:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725209065; cv=none; b=pE7zD/oBX9buuE6Y9gi4nPdVoAoiBuKQ/mE7ItkvYHRmwlqOJlPj0mro3ZAbBfkTl6nRzcCZ3r5BVfIYxk129rYLcuNL7SkyPZ1L9t2DPoI1KQeZ71RcJvHqf/LVKBCEVvM1m/0JfVJDY+/KfXFF9/ua5cAb6GXWmrIjLtACm8g=
+	t=1725209066; cv=none; b=MbxpA7qhB1QH31WJ+FVYBpm6pqvH1UWGl2fNvt2F4lVMajjCAALBnUtrHAaI3RiZu3x8oIGgQcABlgvOvYSCP2TXDgZe+nAVjmU3BmeIqmv6HAN+yRpN/131gi/8R81vg5FpOTFlrYNSWuH8vG2yoLqY193gKhXyMsKayL6cWtk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725209065; c=relaxed/simple;
-	bh=8+d8pX8S9fJLXlqAg7fhG8TGE62ZMvnvXIpx02Y/oHo=;
+	s=arc-20240116; t=1725209066; c=relaxed/simple;
+	bh=qBpA/zAi41pUWCiZChHMNOJxO610LB7mM0BlmCcmX9A=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=T9sgpMnXgwHy1bquW6g+CW2zbefztbcDXhy/b5aA1nGrgZJQraoJj2JbUbPbfvSEYutT98E5RHAs0u9K6/axTm7DObiJgo8Bi5U8KmVtyFfqb/oHxjzzvlUWBlwxSqOiH/vY3+aUzLS/hkh+OvhmbCsioSEPqOju5+3WZQRNrjk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tzyEm9rz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 20152C4CEC3;
-	Sun,  1 Sep 2024 16:44:25 +0000 (UTC)
+	 MIME-Version; b=m6uA1Nq0LcAIhyfjVnSR1gunARc3HR4q0X8NxB+ho9qOqHu01gIlJVZZX7kgwr9PUADre+bFLeEgZkM7SvBrUrxbEEFODRMTXMYGcfROhK/kHRiER0BhI44vkQbAYlVZI+k9aLDMN7zVEbAffzOIarwpMWWVwuCmSkQeeXNm1tA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WtqasJ4Q; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53B6AC4CEC9;
+	Sun,  1 Sep 2024 16:44:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725209065;
-	bh=8+d8pX8S9fJLXlqAg7fhG8TGE62ZMvnvXIpx02Y/oHo=;
+	s=k20201202; t=1725209066;
+	bh=qBpA/zAi41pUWCiZChHMNOJxO610LB7mM0BlmCcmX9A=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=tzyEm9rza5sk7W5OwhQDq6b6Os5f2NbrEs+7+P26U1+/gXPgsZkoeX3gsE0pei0w0
-	 R+FvtJYAIeD1XcBJQ6J2aOPE1tEpm/ndvsz2Ij++RKjYkldMNOHoqzlG6NlmXH+oq1
-	 L11NlWGun0qrmrpPtMpPAWbqz5asZcU46QQw6f5TShxONDsR1s/bp3VzsJt/xrbfOK
-	 m8TjOt6j6N44kLzHpZMa/mBzRDG7T9lqsghL8GyhrD4MDw02Af0LWp2NQCXerhdRgA
-	 UMob9pOgwYZzagOXzE6XgnEOFYhh8PMIk2cH8OOQc5d/dTeg7RkFfiFZohel4rzP4G
-	 uB4YcsjrHnABg==
+	b=WtqasJ4QZNv378/V1VxZxiRGZAuqvydJMr2vqLwUFwYRbzlalQloGXG31v8rguESy
+	 blOmRw7JY88kHqA8esVKp18VrucBrscEVnaeKRpRAZEnvSzMu/yAOGbnNcl9iLwiXd
+	 ZBMQTPK+J6CQEa85XF+4nAU9rDv10Jh6dLR4K6Fauxc2fNxH294h/NdrmQmNZZyNyU
+	 UDuS63nLXSeBxoxXwJpJq8ozjNp3fn4heSuST1LUuhIUzekKN6hk9GiocRiZT1ULfG
+	 kFI5szq3AjkTw28X124/ODIlrRd905lxLgvVMU3CUJldgFCIcj1wgBSC8yaJpm5EUE
+	 Te+4y17udamrw==
 From: Tejun Heo <tj@kernel.org>
 To: void@manifault.com
 Cc: kernel-team@meta.com,
 	linux-kernel@vger.kernel.org,
 	Tejun Heo <tj@kernel.org>
-Subject: [PATCH 05/12] sched_ext: Restructure dispatch_to_local_dsq()
-Date: Sun,  1 Sep 2024 06:43:42 -1000
-Message-ID: <20240901164417.779239-6-tj@kernel.org>
+Subject: [PATCH 06/12] sched_ext: Reorder args for consume_local/remote_task()
+Date: Sun,  1 Sep 2024 06:43:43 -1000
+Message-ID: <20240901164417.779239-7-tj@kernel.org>
 X-Mailer: git-send-email 2.46.0
 In-Reply-To: <20240901164417.779239-1-tj@kernel.org>
 References: <20240901164417.779239-1-tj@kernel.org>
@@ -59,136 +59,67 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Now that there's nothing left after the big if block, flip the if condition
-and unindent the body.
+Reorder args for consistency in the order of:
+
+  current_rq, p, src_[rq|dsq], dst_[rq|dsq].
 
 No functional changes intended.
 
-v2: Add BUG() to clarify control can't reach the end of
-    dispatch_to_local_dsq() in UP kernels per David.
-
 Signed-off-by: Tejun Heo <tj@kernel.org>
-Acked-by: David Vernet <void@manifault.com>
 ---
- kernel/sched/ext.c | 96 ++++++++++++++++++++++------------------------
- 1 file changed, 46 insertions(+), 50 deletions(-)
+ kernel/sched/ext.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
 diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
-index ec61ab676517..89a393f183dd 100644
+index 89a393f183dd..0829b7637c52 100644
 --- a/kernel/sched/ext.c
 +++ b/kernel/sched/ext.c
-@@ -2331,65 +2331,61 @@ static void dispatch_to_local_dsq(struct rq *rq, struct scx_dispatch_q *dst_dsq,
- 	}
+@@ -2137,8 +2137,8 @@ static void move_task_to_local_dsq(struct task_struct *p, u64 enq_flags,
  
- #ifdef CONFIG_SMP
--	if (likely(task_can_run_on_remote_rq(p, dst_rq, true))) {
--		/*
--		 * @p is on a possibly remote @src_rq which we need to lock to
--		 * move the task. If dequeue is in progress, it'd be locking
--		 * @src_rq and waiting on DISPATCHING, so we can't grab @src_rq
--		 * lock while holding DISPATCHING.
--		 *
--		 * As DISPATCHING guarantees that @p is wholly ours, we can
--		 * pretend that we're moving from a DSQ and use the same
--		 * mechanism - mark the task under transfer with holding_cpu,
--		 * release DISPATCHING and then follow the same protocol. See
--		 * unlink_dsq_and_lock_src_rq().
--		 */
--		p->scx.holding_cpu = raw_smp_processor_id();
-+	if (unlikely(!task_can_run_on_remote_rq(p, dst_rq, true))) {
-+		dispatch_enqueue(&scx_dsq_global, p, enq_flags | SCX_ENQ_CLEAR_OPSS);
-+		return;
-+	}
- 
--		/* store_release ensures that dequeue sees the above */
--		atomic_long_set_release(&p->scx.ops_state, SCX_OPSS_NONE);
-+	/*
-+	 * @p is on a possibly remote @src_rq which we need to lock to move the
-+	 * task. If dequeue is in progress, it'd be locking @src_rq and waiting
-+	 * on DISPATCHING, so we can't grab @src_rq lock while holding
-+	 * DISPATCHING.
-+	 *
-+	 * As DISPATCHING guarantees that @p is wholly ours, we can pretend that
-+	 * we're moving from a DSQ and use the same mechanism - mark the task
-+	 * under transfer with holding_cpu, release DISPATCHING and then follow
-+	 * the same protocol. See unlink_dsq_and_lock_src_rq().
-+	 */
-+	p->scx.holding_cpu = raw_smp_processor_id();
- 
--		/* switch to @src_rq lock */
--		if (rq != src_rq) {
--			raw_spin_rq_unlock(rq);
--			raw_spin_rq_lock(src_rq);
--		}
-+	/* store_release ensures that dequeue sees the above */
-+	atomic_long_set_release(&p->scx.ops_state, SCX_OPSS_NONE);
- 
--		/* task_rq couldn't have changed if we're still the holding cpu */
--		if (likely(p->scx.holding_cpu == raw_smp_processor_id()) &&
--		    !WARN_ON_ONCE(src_rq != task_rq(p))) {
--			/*
--			 * If @p is staying on the same rq, there's no need to
--			 * go through the full deactivate/activate cycle.
--			 * Optimize by abbreviating the operations in
--			 * move_task_to_local_dsq().
--			 */
--			if (src_rq == dst_rq) {
--				p->scx.holding_cpu = -1;
--				dispatch_enqueue(&dst_rq->scx.local_dsq,
--						 p, enq_flags);
--			} else {
--				move_task_to_local_dsq(p, enq_flags,
--						       src_rq, dst_rq);
--			}
-+	/* switch to @src_rq lock */
-+	if (rq != src_rq) {
-+		raw_spin_rq_unlock(rq);
-+		raw_spin_rq_lock(src_rq);
-+	}
- 
--			/* if the destination CPU is idle, wake it up */
--			if (sched_class_above(p->sched_class,
--					      dst_rq->curr->sched_class))
--				resched_curr(dst_rq);
-+	/* task_rq couldn't have changed if we're still the holding cpu */
-+	if (likely(p->scx.holding_cpu == raw_smp_processor_id()) &&
-+	    !WARN_ON_ONCE(src_rq != task_rq(p))) {
-+		/*
-+		 * If @p is staying on the same rq, there's no need to go
-+		 * through the full deactivate/activate cycle. Optimize by
-+		 * abbreviating the operations in move_task_to_local_dsq().
-+		 */
-+		if (src_rq == dst_rq) {
-+			p->scx.holding_cpu = -1;
-+			dispatch_enqueue(&dst_rq->scx.local_dsq, p, enq_flags);
-+		} else {
-+			move_task_to_local_dsq(p, enq_flags, src_rq, dst_rq);
- 		}
- 
--		/* switch back to @rq lock */
--		if (rq != dst_rq) {
--			raw_spin_rq_unlock(dst_rq);
--			raw_spin_rq_lock(rq);
--		}
-+		/* if the destination CPU is idle, wake it up */
-+		if (sched_class_above(p->sched_class, dst_rq->curr->sched_class))
-+			resched_curr(dst_rq);
-+	}
- 
--		return;
-+	/* switch back to @rq lock */
-+	if (rq != dst_rq) {
-+		raw_spin_rq_unlock(dst_rq);
-+		raw_spin_rq_lock(rq);
- 	}
-+#else	/* CONFIG_SMP */
-+	BUG();	/* control can not reach here on UP */
  #endif	/* CONFIG_SMP */
--
--	dispatch_enqueue(&scx_dsq_global, p, enq_flags | SCX_ENQ_CLEAR_OPSS);
+ 
+-static void consume_local_task(struct rq *rq, struct scx_dispatch_q *dsq,
+-			       struct task_struct *p)
++static void consume_local_task(struct task_struct *p,
++			       struct scx_dispatch_q *dsq, struct rq *rq)
+ {
+ 	lockdep_assert_held(&dsq->lock);	/* released on return */
+ 
+@@ -2247,8 +2247,8 @@ static bool unlink_dsq_and_lock_src_rq(struct task_struct *p,
+ 		!WARN_ON_ONCE(src_rq != task_rq(p));
  }
  
- /**
+-static bool consume_remote_task(struct rq *this_rq, struct scx_dispatch_q *dsq,
+-				struct task_struct *p, struct rq *src_rq)
++static bool consume_remote_task(struct rq *this_rq, struct task_struct *p,
++				struct scx_dispatch_q *dsq, struct rq *src_rq)
+ {
+ 	raw_spin_rq_unlock(this_rq);
+ 
+@@ -2263,7 +2263,7 @@ static bool consume_remote_task(struct rq *this_rq, struct scx_dispatch_q *dsq,
+ }
+ #else	/* CONFIG_SMP */
+ static inline bool task_can_run_on_remote_rq(struct task_struct *p, struct rq *rq, bool trigger_error) { return false; }
+-static inline bool consume_remote_task(struct rq *rq, struct scx_dispatch_q *dsq, struct task_struct *p, struct rq *task_rq) { return false; }
++static inline bool consume_remote_task(struct rq *this_rq, struct task_struct *p, struct scx_dispatch_q *dsq, struct rq *task_rq) { return false; }
+ #endif	/* CONFIG_SMP */
+ 
+ static bool consume_dispatch_q(struct rq *rq, struct scx_dispatch_q *dsq)
+@@ -2284,12 +2284,12 @@ static bool consume_dispatch_q(struct rq *rq, struct scx_dispatch_q *dsq)
+ 		struct rq *task_rq = task_rq(p);
+ 
+ 		if (rq == task_rq) {
+-			consume_local_task(rq, dsq, p);
++			consume_local_task(p, dsq, rq);
+ 			return true;
+ 		}
+ 
+ 		if (task_can_run_on_remote_rq(p, rq, false)) {
+-			if (likely(consume_remote_task(rq, dsq, p, task_rq)))
++			if (likely(consume_remote_task(rq, p, dsq, task_rq)))
+ 				return true;
+ 			goto retry;
+ 		}
 -- 
 2.46.0
 
