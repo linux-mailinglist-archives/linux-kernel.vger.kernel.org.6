@@ -1,154 +1,100 @@
-Return-Path: <linux-kernel+bounces-310056-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310057-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F436967435
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 04:39:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6FE9967436
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 04:44:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2A11EB21C2C
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 02:39:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D1C741C20F7C
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 02:44:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F6C62837D;
-	Sun,  1 Sep 2024 02:39:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A21482BAE1;
+	Sun,  1 Sep 2024 02:44:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hHpRsnaY"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="KKTC2J6E"
+Received: from out-174.mta1.migadu.com (out-174.mta1.migadu.com [95.215.58.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1ACD3C0C;
-	Sun,  1 Sep 2024 02:39:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A55001E517
+	for <linux-kernel@vger.kernel.org>; Sun,  1 Sep 2024 02:44:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725158366; cv=none; b=Zi94JYC6sC4NU7mOjZHfvW/Ffc/xSuSd/NDDcgEC20m7WlaAVxHs5wyWRmcd3BEW7Id5jIsFjeI3UnvUFakd6llk5oCOMpxJYXI71NhV6HTgWXAP75JLFv0OzkiouvJv5TaXgIsLQzB57mJy6f64WlhVFvIK2+oPfS7Gqi2ATg8=
+	t=1725158659; cv=none; b=bdxuh9bkKGTwhNRrGed7hGUeq4RTDbbis9Lj9FVzy50nPGqp2pW9T8xhpdRv3MdHKsXqqdTGx/zjFU707Esf6xT2nFRLURnFwtrvU8VAnCpbeUFYyaoEZd1ZwtTz2gQXu11ASDomfQGllBsOQQONMPNxWOFr1QuDkZNfLGlV2iQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725158366; c=relaxed/simple;
-	bh=ljvgU3al89OxEVEIUqvIWyRhZNDvLLNUvd8ePVYiWME=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=u09vuOBiggwTc/6SPRShOs0JL1jHJXEXP1AtVSVc9XY2XXuG0STo9evAgns58l6FnTOCr/NTuSblidHVxOoQM7HnFuSDGsxTQfcTvz3SxZ1zt9GsGGyTDlRNtMfzNjNbh4RDlNMeb3vYRn5/6B899xeqRgdya8HcajxzCI8bp28=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hHpRsnaY; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725158365; x=1756694365;
-  h=message-id:date:mime-version:cc:subject:to:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=ljvgU3al89OxEVEIUqvIWyRhZNDvLLNUvd8ePVYiWME=;
-  b=hHpRsnaYCCmDUpV7Fu4pKFDdAKUWaoTfRVUjVjCN2K/shsbMNUg4+GXy
-   sWiPekyyuoN7Z+zoJRENaOadTF3an4SxQnC/XBjoi0MXqEhjtpp9bMnJX
-   W2JIebXV25EDn/d3Ax10NPO4CUWrn16NA9sgqwYzYD6iN82j5xbW7qeMu
-   t6P2H46dScxqaKELGVxBpdsIzir7OMUPioQWUOjw52tju0QIZzYO4ww78
-   m7NJSmSeAFqONIoQED3jWMlCcvWZZqR7q8SBltwkjBAi/ArkGG8pm+MCR
-   qhlPw8wu8UXbypJk3WAyOP7qRr4FPsr+E83TONDXfjQ8xYtzrfmosCjgt
-   Q==;
-X-CSE-ConnectionGUID: 2c4DltLeSkCpZGy+VeSL/w==
-X-CSE-MsgGUID: CSKAzyhbRHOw82RkBkUz0g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11181"; a="41262805"
-X-IronPort-AV: E=Sophos;i="6.10,193,1719903600"; 
-   d="scan'208";a="41262805"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Aug 2024 19:39:24 -0700
-X-CSE-ConnectionGUID: 7wSriv9+TWiJh/xQdZiVmg==
-X-CSE-MsgGUID: Wof8a319TkuK6wiSPuTG1w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,193,1719903600"; 
-   d="scan'208";a="64264177"
-Received: from blu2-mobl.ccr.corp.intel.com (HELO [10.125.248.220]) ([10.125.248.220])
-  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Aug 2024 19:39:19 -0700
-Message-ID: <55918c41-65c4-435c-860b-b2a177b0d364@linux.intel.com>
-Date: Sun, 1 Sep 2024 10:39:17 +0800
+	s=arc-20240116; t=1725158659; c=relaxed/simple;
+	bh=T0vJEr20YR9EI6JvkFASOgeagEnispNIS2R7rjFHidQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=Q1v3kIUKFPCkNk4j/PGUB+9xgmoBnGxQiRUX+nxlEV1Fuhn949LCaoKFCmeMq091PEryNZaDpdpnQ/jLQG3OSB3UuEQ2Q3qHO4KqiLb9g2pzgxZnxsBu/A4jKSQtpUb/G6ZJjMve8f2YbHLiFtecDxdsbHW2wt13Wr3/pfR9EiQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=KKTC2J6E; arc=none smtp.client-ip=95.215.58.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Sat, 31 Aug 2024 22:44:08 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1725158652;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
+	bh=ClXa1gmMCVObHX6r1bSkfS0W6OLKBF4+9diKlyGhcm4=;
+	b=KKTC2J6Ef7EIK5vwWYxWuT84ObtZbm97oDZCEO0mw25aFP1+4gvP8eYHL0yDE1oB7lqCsh
+	yyZ3lx3C6i/6IIsSRDaEBOJJ1/d7LQuPqKJYh7oIk0QqWiNE3Eb/vciISvOraDW+bIfQpY
+	JJ0/MrzjzokfPYA1MjGdmNgq1dgTKRU=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL] bcachefs fixes for 6.11-rc6
+Message-ID: <erydumpfxcjakfllmh3y4d7wtgwz7omkg44pyvpesoisolt44v@kfa4jcpo7i73>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: baolu.lu@linux.intel.com, joro@8bytes.org, suravee.suthikulpanit@amd.com,
- robin.murphy@arm.com, dwmw2@infradead.org, shuah@kernel.org,
- linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, linux-kselftest@vger.kernel.org,
- eric.auger@redhat.com, jean-philippe@linaro.org, mdf@kernel.org,
- mshavit@google.com, shameerali.kolothum.thodi@huawei.com,
- smostafa@google.com, yi.l.liu@intel.com
-Subject: Re: [PATCH v2 02/19] iommufd/viommu: Add IOMMUFD_OBJ_VIOMMU and
- IOMMU_VIOMMU_ALLOC ioctl
-To: Nicolin Chen <nicolinc@nvidia.com>, jgg@nvidia.com, kevin.tian@intel.com,
- will@kernel.org
-References: <cover.1724776335.git.nicolinc@nvidia.com>
- <c6ac7dc5031e96abb4634db504a0bf4a0c82ca66.1724776335.git.nicolinc@nvidia.com>
-Content-Language: en-US
-From: Baolu Lu <baolu.lu@linux.intel.com>
-In-Reply-To: <c6ac7dc5031e96abb4634db504a0bf4a0c82ca66.1724776335.git.nicolinc@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Migadu-Flow: FLOW_OUT
 
-On 2024/8/28 0:59, Nicolin Chen wrote:
-> +int iommufd_viommu_alloc_ioctl(struct iommufd_ucmd *ucmd)
-> +{
-> +	struct iommu_viommu_alloc *cmd = ucmd->cmd;
-> +	struct iommufd_hwpt_paging *hwpt_paging;
-> +	struct iommufd_viommu *viommu;
-> +	struct iommufd_device *idev;
-> +	int rc;
-> +
-> +	if (cmd->flags)
-> +		return -EOPNOTSUPP;
-> +
-> +	idev = iommufd_get_device(ucmd, cmd->dev_id);
+Hi Linus, just a couple small ones.
 
-Why does a device reference count is needed here? When is this reference
-count released after the VIOMMU is allocated?
+the data corruption in the buffered write path is troubling; inode lock
+should not have been able to cause that...
 
-> +	if (IS_ERR(idev))
-> +		return PTR_ERR(idev);
-> +
-> +	hwpt_paging = iommufd_get_hwpt_paging(ucmd, cmd->hwpt_id);
-> +	if (IS_ERR(hwpt_paging)) {
-> +		rc = PTR_ERR(hwpt_paging);
-> +		goto out_put_idev;
-> +	}
-> +
-> +	if (!hwpt_paging->nest_parent) {
-> +		rc = -EINVAL;
-> +		goto out_put_hwpt;
-> +	}
-> +
-> +	if (cmd->type != IOMMU_VIOMMU_TYPE_DEFAULT) {
-> +		rc = -EOPNOTSUPP;
-> +		goto out_put_hwpt;
-> +	}
-> +
-> +	viommu = iommufd_object_alloc(ucmd->ictx, viommu, IOMMUFD_OBJ_VIOMMU);
-> +	if (IS_ERR(viommu)) {
-> +		rc = PTR_ERR(viommu);
-> +		goto out_put_hwpt;
-> +	}
-> +
-> +	viommu->type = cmd->type;
-> +	viommu->ictx = ucmd->ictx;
-> +	viommu->hwpt = hwpt_paging;
-> +
-> +	refcount_inc(&viommu->hwpt->common.obj.users);
-> +
-> +	cmd->out_viommu_id = viommu->obj.id;
-> +	rc = iommufd_ucmd_respond(ucmd, sizeof(*cmd));
-> +	if (rc)
-> +		goto out_abort;
-> +	iommufd_object_finalize(ucmd->ictx, &viommu->obj);
-> +	goto out_put_hwpt;
-> +
-> +out_abort:
-> +	iommufd_object_abort_and_destroy(ucmd->ictx, &viommu->obj);
-> +out_put_hwpt:
-> +	iommufd_put_object(ucmd->ictx, &hwpt_paging->common.obj);
-> +out_put_idev:
-> +	iommufd_put_object(ucmd->ictx, &idev->obj);
-> +	return rc;
-> +}
+Cheers,
+Kent
 
-Thanks,
-baolu
+The following changes since commit 49aa7830396bce33b00fa7ee734c35de36521138:
+
+  bcachefs: Fix rebalance_work accounting (2024-08-24 10:16:21 -0400)
+
+are available in the Git repository at:
+
+  git://evilpiepirate.org/bcachefs.git tags/bcachefs-2024-08-21
+
+for you to fetch changes up to 3d3020c461936009dc58702e267ff67b0076cbf2:
+
+  bcachefs: Mark more errors as autofix (2024-08-31 19:27:01 -0400)
+
+----------------------------------------------------------------
+bcachefs fixes for 6.11-rc6
+
+- Fix a rare data corruption in the rebalance path, caught as a nonce
+  inconsistency on encrypted filesystems
+- Revert lockless buffered write path
+- Mark more errors as autofix
+
+----------------------------------------------------------------
+Kent Overstreet (4):
+      bcachefs: Fix failure to return error in data_update_index_update()
+      bcachefs: Fix bch2_extents_match() false positive
+      bcachefs: Revert lockless buffered IO path
+      bcachefs: Mark more errors as autofix
+
+ fs/bcachefs/data_update.c      |   1 +
+ fs/bcachefs/errcode.h          |   1 -
+ fs/bcachefs/extents.c          |  23 ++++++-
+ fs/bcachefs/fs-io-buffered.c   | 149 +++++++++++------------------------------
+ fs/bcachefs/sb-errors_format.h |  10 +--
+ 5 files changed, 68 insertions(+), 116 deletions(-)
 
