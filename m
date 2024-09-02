@@ -1,103 +1,99 @@
-Return-Path: <linux-kernel+bounces-311424-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311426-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46BF09688FA
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 15:35:59 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F606968901
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 15:36:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7625F1C21BCB
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 13:35:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8524AB22349
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 13:36:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3DDC20FA98;
-	Mon,  2 Sep 2024 13:35:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C64FF20FA8B;
+	Mon,  2 Sep 2024 13:36:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="SlYu+qup";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="qGfvrtC2";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="SlYu+qup";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="qGfvrtC2"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="U8JD3QvR"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BE1015E81;
-	Mon,  2 Sep 2024 13:35:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AA4A20012E
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 13:36:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725284151; cv=none; b=J9jTf8Ijqohzh9PsjqrzsV4F2ef0S3pUS5b/FZBMjoBwSRZLtefGO8m/r0uM8TUlLUL9H17MSgIbd5NktqQuSsmt5fBmT0KtJQpWqzAAkgjQLPK1kbQTR3n3/MifAEqC6SOC30bPkFxhEF75CQ5QIfh9B80Ym76gnAhAkU7pX8M=
+	t=1725284178; cv=none; b=Jpz6je7Dvm6ocb0Pke3A1b+r698X1bs5kvJsOnJV3Ai1eRR6dvLfh53qLrPBnUl8neGXGvIH+lrs5BADvDS7xBc8iOtejURQf56KJsEtPCag00zTu7nZKGLBlwC6jSp+eXOS73rZF63Y1lLPArp1a0NUBB7EtcACCqTIrf4AZxE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725284151; c=relaxed/simple;
-	bh=BYOcur5wsgKwqmtScmDH7+SGVIW1wpmx7gq7vRrs3CQ=;
+	s=arc-20240116; t=1725284178; c=relaxed/simple;
+	bh=E/VZ7GrHjsNixiI5+URY2Wc2RKp6Poy1SHD9++Jjmv8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cZWFAUEXUj4mhrT290XwPpVaaARyR+RyAdQzYO4TIdYIog2LMdiMXYiVnZ24RhxluVNPxjVIZDGgRJB0XTMHl/YvVv28vmv3mPrUUJe5UNmVD1eDCjpe0InLMkNdBqBhVQvldh8KahpvaXh/W31GWMCqa3CbjXMvNXXrf8T89JE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=SlYu+qup; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=qGfvrtC2; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=SlYu+qup; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=qGfvrtC2; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 827DC21B0B;
-	Mon,  2 Sep 2024 13:35:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1725284146; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=y1mxnWaMwl9qHAe7DXwp+6PNcBmAQUGuKb7aKLaqbAA=;
-	b=SlYu+qupQ11kpPLKGceI86c9lJNabxkk/S2UVGgWknLitMbsfPUNyz6Nb/w2XbHQ6e/yBa
-	yA8UgIL33VVPUzzYvzQ4s9HxoUnuj9akxyI/k3kSzBaQsMsHnv0ZW5w3YIu3tz0x0I8yy9
-	whIK3yZ53OVR0AolHEWTlLhIDdRVUS8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1725284146;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=y1mxnWaMwl9qHAe7DXwp+6PNcBmAQUGuKb7aKLaqbAA=;
-	b=qGfvrtC2jyCr+pWcqSTr59MBvIU59LLYnaQaV9CVHDax4eTJeevVBjpSihv84Jkv7Ps1lf
-	xCHAaUw5QD9HPSAA==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=SlYu+qup;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=qGfvrtC2
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1725284146; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=y1mxnWaMwl9qHAe7DXwp+6PNcBmAQUGuKb7aKLaqbAA=;
-	b=SlYu+qupQ11kpPLKGceI86c9lJNabxkk/S2UVGgWknLitMbsfPUNyz6Nb/w2XbHQ6e/yBa
-	yA8UgIL33VVPUzzYvzQ4s9HxoUnuj9akxyI/k3kSzBaQsMsHnv0ZW5w3YIu3tz0x0I8yy9
-	whIK3yZ53OVR0AolHEWTlLhIDdRVUS8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1725284146;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=y1mxnWaMwl9qHAe7DXwp+6PNcBmAQUGuKb7aKLaqbAA=;
-	b=qGfvrtC2jyCr+pWcqSTr59MBvIU59LLYnaQaV9CVHDax4eTJeevVBjpSihv84Jkv7Ps1lf
-	xCHAaUw5QD9HPSAA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 7823A13A7C;
-	Mon,  2 Sep 2024 13:35:46 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 8UZPHTK/1Wa0JAAAD6G6ig
-	(envelope-from <jack@suse.cz>); Mon, 02 Sep 2024 13:35:46 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 3D528A0965; Mon,  2 Sep 2024 15:35:46 +0200 (CEST)
-Date: Mon, 2 Sep 2024 15:35:46 +0200
-From: Jan Kara <jack@suse.cz>
-To: zhangshida <starzhangzsd@gmail.com>
-Cc: tytso@mit.edu, adilger.kernel@dilger.ca, jack@suse.com,
-	ebiggers@kernel.org, linux-ext4@vger.kernel.org,
-	linux-kernel@vger.kernel.org, zhangshida@kylinos.cn,
-	Jan Kara <jack@suse.cz>
-Subject: Re: [PATCH 4/4] ext4: remove the special buffer dirty handling in
- do_journal_get_write_access
-Message-ID: <20240902133546.wify64w2yif7vvh5@quack3>
-References: <20240830053739.3588573-1-zhangshida@kylinos.cn>
- <20240830053739.3588573-5-zhangshida@kylinos.cn>
+	 Content-Type:Content-Disposition:In-Reply-To; b=PE6u+SCQQ//Mgb6fC06ADAz5JQ4T8VRg1WguHYrIm+a1tii5ozYIqjbP/UyX0cXGZ5fKjwhpN+VrpKYRNmqsLL/s0E+9tKGMu52VGJl6/X8l8/5nRmLdft6IdKY8nrpzDaTH9UGXf6rz9NT7rGVHUIBePQui003feyB47AGnmno=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch; spf=none smtp.mailfrom=ffwll.ch; dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b=U8JD3QvR; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ffwll.ch
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-42c5347b2f7so19970735e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2024 06:36:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google; t=1725284175; x=1725888975; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=6v3FtktqquHZEtnfmY82ilNEJb6ksXTawePio7XooLM=;
+        b=U8JD3QvR0plnR/9zQ8J4RcZYvy9OhWenwuPO8WX/tyJoff+w971/fq45JRB3iUB1bS
+         7HplsRTnr9LZOIGI185oB3tt9O56ths50KPECvRrcO0Xm/ZSt6ypbGcmlz2AGPTsNH6y
+         LGzRz2t9me1D6vJ5ST/p+GGdV0Z8hpF++SWZA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725284175; x=1725888975;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=6v3FtktqquHZEtnfmY82ilNEJb6ksXTawePio7XooLM=;
+        b=Ie/HyuxsCy7ly346NrBIoMebLP6+Is4wFF2g4VkSyHiugzf6KnLTZ1UyjsBFfsv4I+
+         qYifUK4v3GK2W8LwMJtgSeCh5jPU6crxHGDeVxZmV2rf54ec8R3H7nMSue1E0/sAEKWR
+         s6yiKjcQ9v4Ko0Sft97rPNu0NPSToCwq5sZOKnp+7tmncowSz7rjQY2IHPL/X+7kmibV
+         rePoCyfpvyAzmIjEynxe8O7w3pxpSRHONPlf6+R0/nGqETRFWnzwCUsw9cPgRrTNReVZ
+         HMKSmg+RuVwvMdJR1G4vArverYynqfhapd+6BIgc7Xino+c2M+dqomWPvDKgekfZloZ0
+         Kn+Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWYHBjH6h2/ARc0tKGhG52DJmOOh4KP/pvyg4AfyT5m/y20BmijOH0/NLp4tRJrc1LCoH25cnReZSwlbSo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzysbiZnCgDGI3jzOUn9euiFSSyE408dbdO7cvaTMsMQHcPSjOm
+	3vfLEethz95pvoM7wUanpp6VXPn5sT6/rNwRnya7/ulzSggFJqXLXMDXs1b5ngU=
+X-Google-Smtp-Source: AGHT+IFmCAd/UKn+8RiDLAzhiVps6I/r8wIzIThrxAPcZIbCaz99pcPpBKWDT6e22RdxtT79ulMxyg==
+X-Received: by 2002:a05:600c:3b11:b0:429:a05:32fb with SMTP id 5b1f17b1804b1-42bb01b4428mr88808955e9.10.1725284174404;
+        Mon, 02 Sep 2024 06:36:14 -0700 (PDT)
+Received: from phenom.ffwll.local ([2a02:168:57f4:0:5485:d4b2:c087:b497])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-374c7fa443esm4065467f8f.41.2024.09.02.06.36.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 02 Sep 2024 06:36:14 -0700 (PDT)
+Date: Mon, 2 Sep 2024 15:36:11 +0200
+From: Daniel Vetter <daniel.vetter@ffwll.ch>
+To: Jessica Zhang <quic_jesszhan@quicinc.com>
+Cc: Rob Clark <robdclark@gmail.com>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	quic_abhinavk@quicinc.com, Sean Paul <sean@poorly.run>,
+	Marijn Suijten <marijn.suijten@somainline.org>,
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>, quic_ebharadw@quicinc.com,
+	linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	Rob Clark <robdclark@chromium.org>
+Subject: Re: [PATCH 13/21] drm/msm/dpu: Require modeset if clone mode status
+ changes
+Message-ID: <ZtW_S0j5AEr4g0QW@phenom.ffwll.local>
+Mail-Followup-To: Jessica Zhang <quic_jesszhan@quicinc.com>,
+	Rob Clark <robdclark@gmail.com>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	quic_abhinavk@quicinc.com, Sean Paul <sean@poorly.run>,
+	Marijn Suijten <marijn.suijten@somainline.org>,
+	David Airlie <airlied@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>, quic_ebharadw@quicinc.com,
+	linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	Rob Clark <robdclark@chromium.org>
+References: <20240829-concurrent-wb-v1-0-502b16ae2ebb@quicinc.com>
+ <20240829-concurrent-wb-v1-13-502b16ae2ebb@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -106,97 +102,85 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240830053739.3588573-5-zhangshida@kylinos.cn>
-X-Rspamd-Queue-Id: 827DC21B0B
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_COUNT_THREE(0.00)[3];
-	FREEMAIL_TO(0.00)[gmail.com];
-	ARC_NA(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.com:email,suse.cz:dkim,suse.cz:email]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -4.01
-X-Spam-Flag: NO
+In-Reply-To: <20240829-concurrent-wb-v1-13-502b16ae2ebb@quicinc.com>
+X-Operating-System: Linux phenom 6.9.12-amd64 
 
-On Fri 30-08-24 13:37:39, zhangshida wrote:
-> From: Shida Zhang <zhangshida@kylinos.cn>
+On Thu, Aug 29, 2024 at 01:48:34PM -0700, Jessica Zhang wrote:
+> If the clone mode enabled status is changing, a modeset needs to happen
+> so that the resources can be reassigned
 > 
-> This kinda revert the commit 56d35a4cd13e("ext4: Fix dirtying of
-> journalled buffers in data=journal mode") made by Jan 14 years ago,
-> since the do_get_write_access() itself can deal with the extra
-> unexpected buf dirting things in a proper way now.
-> 
-> Suggested-by: Jan Kara <jack@suse.cz>
-> Signed-off-by: Shida Zhang <zhangshida@kylinos.cn>
-
-Looks good. Feel free to add:
-
-Reviewed-by: Jan Kara <jack@suse.cz>
-
-								Honza
-
+> Signed-off-by: Jessica Zhang <quic_jesszhan@quicinc.com>
 > ---
->  fs/ext4/inode.c | 18 +-----------------
->  1 file changed, 1 insertion(+), 17 deletions(-)
+>  drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c | 6 ++++++
+>  1 file changed, 6 insertions(+)
 > 
-> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-> index a28f279fd02f..2687bf451a25 100644
-> --- a/fs/ext4/inode.c
-> +++ b/fs/ext4/inode.c
-> @@ -1023,27 +1023,11 @@ static int ext4_dirty_journalled_data(handle_t *handle, struct buffer_head *bh)
->  int do_journal_get_write_access(handle_t *handle, struct inode *inode,
->  				struct buffer_head *bh)
->  {
-> -	int dirty = buffer_dirty(bh);
-> -	int ret;
-> -
->  	if (!buffer_mapped(bh) || buffer_freed(bh))
->  		return 0;
-> -	/*
-> -	 * ext4_block_write_begin() could have dirtied some buffers. Clean
-> -	 * the dirty bit as jbd2_journal_get_write_access() could complain
-> -	 * otherwise about fs integrity issues. Setting of the dirty bit
-> -	 * by ext4_block_write_begin() isn't a real problem here as we clear
-> -	 * the bit before releasing a page lock and thus writeback cannot
-> -	 * ever write the buffer.
-> -	 */
-> -	if (dirty)
-> -		clear_buffer_dirty(bh);
->  	BUFFER_TRACE(bh, "get write access");
-> -	ret = ext4_journal_get_write_access(handle, inode->i_sb, bh,
-> +	return ext4_journal_get_write_access(handle, inode->i_sb, bh,
->  					    EXT4_JTR_NONE);
-> -	if (!ret && dirty)
-> -		ret = ext4_dirty_journalled_data(handle, bh);
-> -	return ret;
->  }
+> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
+> index 1b0cc899e8c1..99eaaca405a4 100644
+> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
+> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
+> @@ -1306,6 +1306,8 @@ static int dpu_crtc_atomic_check(struct drm_crtc *crtc,
+>  	int rc = 0;
 >  
->  int ext4_block_write_begin(handle_t *handle, struct folio *folio,
-> -- 
-> 2.33.0
+>  	bool needs_dirtyfb = dpu_crtc_needs_dirtyfb(crtc_state);
+> +	bool clone_mode_requested = drm_crtc_in_clone_mode(crtc->state);
+> +	bool clone_mode_enabled = drm_crtc_in_clone_mode(crtc_state);
+>  
+>  	/* there might be cases where encoder needs a modeset too */
+>  	drm_for_each_encoder_mask(drm_enc, crtc->dev, crtc_state->encoder_mask) {
+> @@ -1313,6 +1315,10 @@ static int dpu_crtc_atomic_check(struct drm_crtc *crtc,
+>  			crtc_state->mode_changed = true;
+>  	}
+>  
+> +	if ((clone_mode_requested && !clone_mode_enabled) ||
+> +			(!clone_mode_requested && clone_mode_enabled))
+> +		crtc_state->mode_changed = true;
+
+So two things, and kinda about the overall patch series:
+
+- msm is confused about crtc_state->mode_changed, e.g. it sets it if
+  crtc_state->active_changed, which is wrong. Or msm dpu code doesn't use
+  drm_atomic_crtc_needs_modeset() correctly.
+
+- changing crtc_state->mode_changed from your crtc or plane callbacks
+  means you cannot use drm_atomic_helper_check directly, but need to roll
+  your own that calls drm_atomic_helper_check_modesets again as needed.
+  See the kerneldoc comment for drm_atomic_helper_check_modesets()
+
+- the same holds if you set mode_changed from your encoder or bridge
+  functions, but I think this doesn't apply here for this patch.
+
+I think it'd be really good to
+
+- review existing kerneldoc and please submit patches where it's not clear
+  or detailed enough
+
+- add checks to the atomic helper code to catch this. I think the best way
+  would be to check if drm_atomic_crtc_needs_modeset() changes outside of
+  areas where the helper code allows it already (essentially connector
+  functions setting ->connectors_changed), and set a new
+  drm_atomic_state->dirty_needs_modeset. Which
+  drm_atomic_helper_check_modeset would clear, and which would result in a
+  WARN_ON in drm_atomic_check if it's not yet cleared when the driver
+  returns with success.
+
+  Otherwise there's just no way I think to make sure drivers get this
+  right.
+
+Can I please sign you up for these patches?
+
+Thanks, Sima
+
+> +
+>  	if (drm_atomic_crtc_needs_modeset(crtc_state)) {
+>  		rc = dpu_crtc_assign_resources(crtc, crtc_state);
+>  		if (rc < 0)
 > 
+> -- 
+> 2.34.1
+> 
+
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Simona Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
 
