@@ -1,57 +1,101 @@
-Return-Path: <linux-kernel+bounces-311865-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311867-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C73E968EBB
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 22:07:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C4A2968EBF
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 22:12:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DA47EB21716
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 20:07:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A0F261C220E1
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 20:12:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 823AB20FA83;
-	Mon,  2 Sep 2024 20:06:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FDEB1A4E72;
+	Mon,  2 Sep 2024 20:12:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="6ABIrLRT"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="jGiuiM2J";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="LJVp0npa";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="jGiuiM2J";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="LJVp0npa"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 051CC1A4E99;
-	Mon,  2 Sep 2024 20:06:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8228E1A4E60;
+	Mon,  2 Sep 2024 20:12:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725307583; cv=none; b=WHLSCi7fzwt7fJ2OHNZhfagEHdseq/7UFLV1RC/X89pgJrH6BpXYGmabqhmAGrMD8i8qvFWqJ/9BrsI0MjjkTSEicrRsBiJW4L37u95n6IaMw5B9/oZikqOSkfndSFjDhr6mucHzHBkJhW/+zpR7jA3Wr0XMSxSCvQQ06LtlD2Q=
+	t=1725307924; cv=none; b=Op3EmFIrucWLUqJsHnAo7NiK3J3PsgU9yp+IyYfPBpipffJChnLqGp7aEmih47p4JuK9VeJusu5K4bqQjnNV0dKo97QQN7EyWyTPi2X/0FO9ihlgx7hwyzYSkYbb3u/8CAuYCDB/FtHu+ztDzfms/3CSiK4hYxAvnBY1tpk3b7E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725307583; c=relaxed/simple;
-	bh=B/+0StplH1RHDGfN7NxuJ1nu5k0Gw/z/vX9zMjSShFU=;
+	s=arc-20240116; t=1725307924; c=relaxed/simple;
+	bh=CC2cxi4YGQy65RVqryZridxiofsecHHacEBoO18k1hY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gJyujDos82++J/FST6cSDRUxhC1rk0a9kan357CxX0GC0v/tpAw1Ds0jBng8//yv3gXHjXMmZRW/7yu341Oruiumm94vG7NkPodYshJgrnWfT+Cy/RlWDk4GA70Z3xc3xkZiCX6seSfT8RaZymfA+N7lqPnKLLYoPMX2tbqtH+k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=6ABIrLRT; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=4ko4oJaKsPBrSHMqxY8h/Bc8e5D5+9ThHWKUHsZ8sGI=; b=6ABIrLRTwGNjNRWmQALSNMFBlP
-	3w71BY9PgN7stMuVhHjV+e0jsXtX+gaJDnd1i+IRz26FlLoXxPwNNKlFj/oc3LSohv5qkT7ZmZWOd
-	xaJZhLi+g81Z34ylJZwebO78rALaX1fd/qvOQRCTmhLN6CY50Zl9xKY2qCZoOUo/YJFA=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1slDJW-006KtV-AX; Mon, 02 Sep 2024 22:06:14 +0200
-Date: Mon, 2 Sep 2024 22:06:14 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Rosen Penev <rosenp@gmail.com>
-Cc: netdev@vger.kernel.org, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, linux-kernel@vger.kernel.org,
-	jacob.e.keller@intel.com, horms@kernel.org, sd@queasysnail.net,
-	chunkeey@gmail.com
-Subject: Re: [PATCH 2/6] net: ibm: emac: manage emac_irq with devm
-Message-ID: <7812014c-a77f-441c-bcab-36846a3037cf@lunn.ch>
-References: <20240902181530.6852-1-rosenp@gmail.com>
- <20240902181530.6852-3-rosenp@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=clHJr0Y/ipKZnhF7MCNzUuYMUiN52yZdL10kgPisqoji2KgLpLqyXCzYnNQhX3WhndKabzG1T7G3SjoGi4YmGZpX8ebeX78zhVUMCm/kQ+x/EJqXCWOF1DhEmb/mDe/ZyuEwzmf9e1FDZt47n9xf+hqeQDlcVwxVHEgrsVPrNxc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=jGiuiM2J; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=LJVp0npa; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=jGiuiM2J; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=LJVp0npa; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 4519C1F79B;
+	Mon,  2 Sep 2024 20:12:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1725307920;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8YSa0oRjJvAUZTYJeMNY8fs0ZfMIj4kLxEv4Q87cFhg=;
+	b=jGiuiM2Jm6JmLEQISDQfiYtVhyFpZ3zDsPN/XJndF6uof6FwQitxqKl+3teMlLexQbvIG0
+	uNhrnK8KemKG2mHMNJNEmo1GdDRyYsvHgEHzehveoVKZBEkf6MlvTN3tB19H9LPSLlt2Ws
+	JWEQ8s0rFNwE+IFiQh9VX/rrTgvWkVk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1725307920;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8YSa0oRjJvAUZTYJeMNY8fs0ZfMIj4kLxEv4Q87cFhg=;
+	b=LJVp0npaWTft3yLnk63Y2+NLviBZZWDWz8y6y4Nw0a5/q1IaOHBAQJ8oMfkkrwA6/O3etI
+	DQmn2U+78x88RaBA==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=jGiuiM2J;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=LJVp0npa
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1725307920;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8YSa0oRjJvAUZTYJeMNY8fs0ZfMIj4kLxEv4Q87cFhg=;
+	b=jGiuiM2Jm6JmLEQISDQfiYtVhyFpZ3zDsPN/XJndF6uof6FwQitxqKl+3teMlLexQbvIG0
+	uNhrnK8KemKG2mHMNJNEmo1GdDRyYsvHgEHzehveoVKZBEkf6MlvTN3tB19H9LPSLlt2Ws
+	JWEQ8s0rFNwE+IFiQh9VX/rrTgvWkVk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1725307920;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8YSa0oRjJvAUZTYJeMNY8fs0ZfMIj4kLxEv4Q87cFhg=;
+	b=LJVp0npaWTft3yLnk63Y2+NLviBZZWDWz8y6y4Nw0a5/q1IaOHBAQJ8oMfkkrwA6/O3etI
+	DQmn2U+78x88RaBA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 203A913A21;
+	Mon,  2 Sep 2024 20:12:00 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id ub5VBxAc1mbkFgAAD6G6ig
+	(envelope-from <dsterba@suse.cz>); Mon, 02 Sep 2024 20:12:00 +0000
+Date: Mon, 2 Sep 2024 22:11:50 +0200
+From: David Sterba <dsterba@suse.cz>
+To: Luca Stefani <luca.stefani.ge1@gmail.com>
+Cc: Qu Wenruo <quwenruo.btrfs@gmx.com>, Chris Mason <clm@fb.com>,
+	Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,
+	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] btrfs: Split remaining space to discard in chunks
+Message-ID: <20240902201150.GB26776@twin.jikos.cz>
+Reply-To: dsterba@suse.cz
+References: <20240902114303.922472-1-luca.stefani.ge1@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,28 +104,89 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240902181530.6852-3-rosenp@gmail.com>
+In-Reply-To: <20240902114303.922472-1-luca.stefani.ge1@gmail.com>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+X-Rspamd-Queue-Id: 4519C1F79B
+X-Spam-Level: 
+X-Spamd-Result: default: False [-2.71 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	HAS_REPLYTO(0.30)[dsterba@suse.cz];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FREEMAIL_TO(0.00)[gmail.com];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	FREEMAIL_CC(0.00)[gmx.com,fb.com,toxicpanda.com,suse.com,vger.kernel.org];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	REPLYTO_ADDR_EQ_FROM(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TAGGED_RCPT(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[7];
+	REPLYTO_DOM_NEQ_TO_DOM(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com,gmx.com]
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -2.71
+X-Spam-Flag: NO
 
-On Mon, Sep 02, 2024 at 11:15:11AM -0700, Rosen Penev wrote:
-> It's the last to go in remove. Safe to let devm handle it.
-> 
-> Also move request_irq to probe for clarity. It's removed in _remove not
-> close.
-> 
-> Use dev_err instead of printk. Handles names automatically.
-> 
-> +	/* Setup error IRQ handler */
-> +	err = devm_request_irq(&ofdev->dev, dev->emac_irq, emac_irq, 0, "EMAC", dev);
-> +	if (err) {
-> +		dev_err(&ofdev->dev, "failed to request IRQ %d", dev->emac_irq);
-> +		goto err_gone;
-> +	}
+On Mon, Sep 02, 2024 at 01:43:00PM +0200, Luca Stefani wrote:
+> Per Qu Wenruo in case we have a very large disk, e.g. 8TiB device,
+> mostly empty although we will do the split according to our super block
+> locations, the last super block ends at 256G, we can submit a huge
+> discard for the range [256G, 8T), causing a super large delay.
 
-Is this an internal interrupt, or a GPIO? It could be it is done in
-open because there is a danger the GPIO controller has not probed
-yet. So here you might get an EPROBE_DEFFER, where as the much older
-kernel this was written for might not of done, if just gave an error
-had gave up. So dev_err_probe() might be better.
+I'm not sure that this will be different than what we already do, or
+have the large delays been observed in practice? The range passed to
+blkdev_issue_discard() might be large but internally it's still split to
+smaller sizes depending on the queue limits, IOW the device.
 
-	Andrew
+Bio is allocated and limited by bio_discard_limit(bdev, *sector);
+https://elixir.bootlin.com/linux/v6.10.7/source/block/blk-lib.c#L38
+
+  struct bio *blk_alloc_discard_bio(struct block_device *bdev,
+		  sector_t *sector, sector_t *nr_sects, gfp_t gfp_mask)
+  {
+	  sector_t bio_sects = min(*nr_sects, bio_discard_limit(bdev, *sector));
+	  struct bio *bio;
+
+	  if (!bio_sects)
+		  return NULL;
+
+	  bio = bio_alloc(bdev, 0, REQ_OP_DISCARD, gfp_mask);
+  ...
+
+
+Then used in __blkdev_issue_discard()
+https://elixir.bootlin.com/linux/v6.10.7/source/block/blk-lib.c#L63
+
+  int __blkdev_issue_discard(struct block_device *bdev, sector_t sector,
+		  sector_t nr_sects, gfp_t gfp_mask, struct bio **biop)
+  {
+	  struct bio *bio;
+
+	  while ((bio = blk_alloc_discard_bio(bdev, &sector, &nr_sects,
+			  gfp_mask)))
+		  *biop = bio_chain_and_submit(*biop, bio);
+	  return 0;
+  }
+
+This is basically just a loop, chopping the input range as needed. The
+btrfs code does effectively the same, there's only the superblock,
+progress accounting and error handling done.
+
+As the maximum size of a single discard request depends on a device we
+don't need to artificially limit it because this would require more IO
+requests and can be slower.
 
