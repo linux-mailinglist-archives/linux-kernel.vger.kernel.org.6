@@ -1,106 +1,96 @@
-Return-Path: <linux-kernel+bounces-310836-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310837-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E5D59681D6
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 10:30:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29E1E9681DA
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 10:30:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4C5CF1F22CC2
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 08:30:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DAE082813B1
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 08:30:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9ECF4186604;
-	Mon,  2 Sep 2024 08:29:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 826E7186E53;
+	Mon,  2 Sep 2024 08:29:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="oAbeW4gg"
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K0E/fMkM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 597BE185B65
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 08:29:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0A9C1865EA;
+	Mon,  2 Sep 2024 08:29:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725265743; cv=none; b=Sl71ESiNb5OiUIjq7u/qYoo41Vo6kr4ry9v7Dau0G01u8t2pR+OdfTOLjF0nR8/VGE1DzQNYjFDKXIW/VdFcBcsELqHA7KMYMtNrqdaj2XKwyL0TKa0pwdoq6xB6SmbbJU6CHE3Nt500W//L/65rD26xm8RrOSr6ApqQcExjT2U=
+	t=1725265758; cv=none; b=S917JwyjsgIGEI2tFB6FKK8IhROKPuEjEtb6ooOYUA5Voj5k046ZOj6RLLjyV89BinOAUnARbhBGYxcqW3mdHyOG8gcYwf2Hv6tQn4DxLHJrX6+LjkOT3wpN8hkQGHxxyuEMAZocoH07KHjpzX1humKUBYbLYntrU2IkbwKGxCA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725265743; c=relaxed/simple;
-	bh=MIaHRBbleOvp5Fm3wN0MH4xZRqewJGpHkVCnZieq1Fc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GjO6xC3+jklh7GVX8/i9qmZY9GhypeXFr8PyoxRNeZwgy2Hmmh8bx9Ec9uUQaGZuRAsjgbwpFrvxkNifnSmfgSk12PewOKi8gR9sG4wjr00ZE6pVrXaa8bCSJiYzR+20PpVA2uPJMlgElrLhOOhJWlXQGzIMnNg4p1CauZp3nGw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=oAbeW4gg; arc=none smtp.client-ip=209.85.167.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-5334c4cc17fso5476934e87.2
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2024 01:29:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1725265739; x=1725870539; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MIaHRBbleOvp5Fm3wN0MH4xZRqewJGpHkVCnZieq1Fc=;
-        b=oAbeW4ggX0U4yqUs0IosVF8L62fxzOdOxQKGRYvIrHSB2mpCicW40wLgftKlx5WFwb
-         bbJzm6eokrSy928Ld+WMT2Q8oPAuMowVAD00HSl1aAEh5l+F/mgnMuB+56CYXLq8Z6Cy
-         e+fqTfmIYdVnUU490uF0mPfg7CaftHFGQOxSLKBCnnS4uEQqsh3toV2zu9/SLvwltcMp
-         H+rmUKPaqKHyhpSOKNE1W8MuC2LxvUjWyIzmaAmACiyPqmDKAMZ6l+iGYIlVqGlzkauM
-         3bwjZm+1PPH4OHOdVuLdkYXwk4YHbizlN2/XN1+SsNirjNtbINujcn2qkysgUR6UF7m1
-         ncIg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725265739; x=1725870539;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=MIaHRBbleOvp5Fm3wN0MH4xZRqewJGpHkVCnZieq1Fc=;
-        b=r4TJxh7kznqqMNO9WSt89rgfrKP8Sc+/xPwSpBHbLIETcYNPUVoW1iQ18gNuruKeAK
-         3p8SwVlIvFtV87YQLWnG/G/nzp/5YAC17GoyXgEZOSz2mQvNEXje3DbWU6PtILZGXocZ
-         1NGeaDSaK4IeT5XeLBLqCVQd3MI8wD8gWxz49x3K5aH2mBvWbmQcW+AiYojO42bx/yNX
-         UCcgtIhaF34oxK2kkbDYujmf/CbaHIduI/Ufd5P9g16glZErxBhAdyX7VBe4/MHEbMSm
-         Ye9HaYBfsqZe+xs7QD/NL52qa7dHlDq8ZfYMuVm+sBJWeamX/iCNJqtxb1Zvkf8SJm+9
-         fJxw==
-X-Forwarded-Encrypted: i=1; AJvYcCX1CjPwhs4128Um/zm/9ev1pIUUF4ko6hUa4E2GklqJlWefMkV0+rU7Gqp/tr2rhTvEUhwxQA3whJ3XxVA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy8hfVWgD7WwNWLv06U4Zf2YMe4AJ/kyw2LYnIQQAuRrKWmTPQO
-	RRu8S03kW6DtJHYdDR5mY1ip0nc7dWdBdFiN0RcKXbQeKnkxXpLtZI5mh7w1oWry0kJSYOGh8c1
-	o1s9vzjwNWv/Psqm2Wsr+fOpGsgsFj42yBmvSGQ==
-X-Google-Smtp-Source: AGHT+IHPWy3EoCohm4ZQ7Nw+pjtHINUGWbi0iXZ9E+VhoJRrDChfQmlQqhKT7iJcy1rrIoGEA3CKMiarlVi0MZwFT9s=
-X-Received: by 2002:ac2:4e06:0:b0:52e:9481:eaa1 with SMTP id
- 2adb3069b0e04-53546b25d21mr6803224e87.23.1725265738824; Mon, 02 Sep 2024
- 01:28:58 -0700 (PDT)
+	s=arc-20240116; t=1725265758; c=relaxed/simple;
+	bh=cxKDCdCiqIYOE5vwlnqkPpcgy/ZNa0A4fziYZeuC258=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=m/a31xVUMyym8GE8BMi7mrsuzW1YbWEZor2JkdTridR9E9AZIPlTF1tgcM7lGILPsMVa6hzGw8XN2UnJ/jmowAiz8VcWkrSYJjapn3YeDUD/BAZHllSTYE9dQg7gsQ/zdUVTDDXO+tU3fHc+SCP+gwIN3g02LPIH6I4tSOYq/IA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K0E/fMkM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 62960C4CEC8;
+	Mon,  2 Sep 2024 08:29:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725265757;
+	bh=cxKDCdCiqIYOE5vwlnqkPpcgy/ZNa0A4fziYZeuC258=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=K0E/fMkMAVtRD/E0g2t9G1nI2nuYeKPDLA7N1xTHwYgSeerdXkGgInLCjPD7H5LF6
+	 cKuLUHBjBGwUiS8n9lpvvCLRGq4H1OgPifoRItKxem5U6AhbKXlPVcoJZJOWqk18Cw
+	 OhsAmW3Roc1m6mmUuzwjqDidi7bF87RC02nwbXJTJb7IbZBAd3s+rcVdEYWKfT3hrZ
+	 JkxQYWGWpu0MPDwhFjKEHKwBu4oK9ZiYqXdI3reyTXMrHQn/pKj/1D40ClgiTiHd1L
+	 R36AjBJdtKmZaZyNI6YrHP3BuJAKNokIroLepJePgXtHPH0uvibSXL+u6udtWEAd0y
+	 t6N18NItgbIQg==
+From: Vinod Koul <vkoul@kernel.org>
+To: dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ ricardo@marliere.net, Amit Vadhavana <av2082000@gmail.com>
+Cc: linux-kernel-mentees@lists.linux.dev, skhan@linuxfoundation.org, 
+ olivierdautricourt@gmail.com, sr@denx.de, ludovic.desroches@microchip.com, 
+ florian.fainelli@broadcom.com, bcm-kernel-feedback-list@broadcom.com, 
+ rjui@broadcom.com, sbranden@broadcom.com, wangzhou1@hisilicon.com, 
+ haijie1@huawei.com, fenghua.yu@intel.com, dave.jiang@intel.com, 
+ zhoubinbin@loongson.cn, sean.wang@mediatek.com, matthias.bgg@gmail.com, 
+ angelogioacchino.delregno@collabora.com, afaerber@suse.de, 
+ manivannan.sadhasivam@linaro.org, Basavaraj.Natikar@amd.com, 
+ linus.walleij@linaro.org, ldewangan@nvidia.com, jonathanh@nvidia.com, 
+ thierry.reding@gmail.com, laurent.pinchart@ideasonboard.com, 
+ michal.simek@amd.com, Frank.Li@nxp.com, n.shubin@yadro.com, 
+ yajun.deng@linux.dev, quic_jjohnson@quicinc.com, lizetao1@huawei.com, 
+ pliem@maxlinear.com, konrad.dybcio@linaro.org, kees@kernel.org, 
+ gustavoars@kernel.org, bryan.odonoghue@linaro.org, linux@treblig.org, 
+ dan.carpenter@linaro.org, linux-arm-kernel@lists.infradead.org, 
+ linux-rpi-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
+ linux-actions@lists.infradead.org, linux-arm-msm@vger.kernel.org, 
+ linux-tegra@vger.kernel.org
+In-Reply-To: <20240831172949.13189-1-av2082000@gmail.com>
+References: <20240831172949.13189-1-av2082000@gmail.com>
+Subject: Re: [PATCH RESEND V2] dmaengine: Fix spelling mistakes
+Message-Id: <172526574398.510261.10954732298871538.b4-ty@kernel.org>
+Date: Mon, 02 Sep 2024 13:59:03 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240829044835.2047794-1-yanzhen@vivo.com>
-In-Reply-To: <20240829044835.2047794-1-yanzhen@vivo.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Mon, 2 Sep 2024 10:28:47 +0200
-Message-ID: <CACRpkdYMn1FyUFrhGMx=Kq=zK28o1QX-pnJ_tKihduouML4aeg@mail.gmail.com>
-Subject: Re: [PATCH v2] pinctrl: Simplify with dev_err_probe()
-To: Yan Zhen <yanzhen@vivo.com>
-Cc: ckeepax@opensource.cirrus.com, rf@opensource.cirrus.com, 
-	linux-sound@vger.kernel.org, patches@opensource.cirrus.com, 
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	opensource.kernel@vivo.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.13.0
 
-On Thu, Aug 29, 2024 at 6:48=E2=80=AFAM Yan Zhen <yanzhen@vivo.com> wrote:
 
-> Switch to use dev_err_probe() to simplify the error path and
-> unify a message template.
->
-> Using this helper is totally fine even if err is known to never
-> be -EPROBE_DEFER.
->
-> The benefit compared to a normal dev_err() is the standardized format
-> of the error code, it being emitted symbolically and the fact that
-> the error code is returned which allows more compact error paths.
->
->
-> Signed-off-by: Yan Zhen <yanzhen@vivo.com>
+On Sat, 31 Aug 2024 22:59:49 +0530, Amit Vadhavana wrote:
+> Correct spelling mistakes in the DMA engine to improve readability
+> and clarity without altering functionality.
+> 
+> 
 
-Fixed up the subject and applied the patch.
+Applied, thanks!
 
-Yours,
-Linus Walleij
+[1/1] dmaengine: Fix spelling mistakes
+      commit: a688efea0f2a084aee372e5b7b12d4d2d172f99a
+
+Best regards,
+-- 
+~Vinod
+
+
 
