@@ -1,256 +1,262 @@
-Return-Path: <linux-kernel+bounces-311605-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311606-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 785B6968B10
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 17:30:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF37B968B15
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 17:31:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 050E91F21522
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 15:30:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 334DC1F22A94
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 15:31:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73BCB14A61B;
-	Mon,  2 Sep 2024 15:30:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EC2B19F13A;
+	Mon,  2 Sep 2024 15:31:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Y8PCkQd4"
-Received: from NAM02-DM3-obe.outbound.protection.outlook.com (mail-dm3nam02on2043.outbound.protection.outlook.com [40.107.95.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EQOf2V/b"
+Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 168B31CB514
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 15:30:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.95.43
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725291041; cv=fail; b=GUfYHhbfDVcXqFKQKq7VCXixV6tbDudkOG5/ajTZNorlYA5KqKv4+3Y8a0jZcs4B+38gWhE0lsXMZisONge0uWT4VthD30eHQROtV8BWyenDwPOYWCg9ePas10KA7fpMWDvY9VO/RkbVuDXgBeFYjF1lpSL6/OGH/CfojQyGcno=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725291041; c=relaxed/simple;
-	bh=Fj1hUqmt0XavqptQ5w2Pwd96nD3a/0FkArNYYf5dM/Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=bQPvdXl4vitcrV0/YMn42Bib8Iprvm3LZFzCIt4jiHaHcK4KJYpUL4XNsqTxNBdfq0rNyHsAMeHZxVSA/v79JCK9nRPZQptPlaPrkGY4nyKDqsEG8wEpefvDJb/EERVTlvSH+QOZEJVc0woA+QSOpAjPBxumuC3YZ543866aT2g=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Y8PCkQd4; arc=fail smtp.client-ip=40.107.95.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=qqYoay1PROu9boaNCW42xL7azZoNzCQjLVMm7k9SOKpNiNyoLNluMVTJXbOcmU4oI9b+6DyBgc2ANEikm6uaZSHH/JxXJAOSJBoP6faM5IFX+DI8aWsa1Tf1Y87nDh/tQYEvMqRKbqSdkB9Mt22zKZ9kLYptq4GRFVuBHI4RGH4ug6ooEcmIe/lC65DyMwmHf0nWbjhXi2mmD4TvzYctQP2qjFUizA/Gx20S2/8bJgZUXUcfltnl11TlOChE8CufVT6YzYFcT6MOw5n5D/pAYU3HTT6N3dRK5D5mJs5Vr3ATqfV1/qlKkUmx3qk47UoQZcg0D5KGuU3hdzMRKM/rIg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=iXyJb8eYmRcvpNwf8kwYPP+wQ9/rEPjZefEUwbst+tM=;
- b=bHM64ct/1aqMwWU2WA3O1i08YQbZK/ufUY4O2vBSJfQZOgTvNlFH01KC/xoiNnroEROJ4zIkGKw+3nDW81WwsIhZxtIc5HqkvBoahyrMBu/bEvZlVkjN3Dd+iroeOq8GIZFbnyMwFt5PmYDhFksknkmjiwhU2cvw5QOqf4kk48sSBvdFb2OQji+WA2k7IDYNDB16j2cN8Dt+PWNsUsY5oGiF1OQU8HWs/PgPOTEC+O91NHlfFiBXOMj3Fj6jKCIgOxvfD6OJGPuCM+ur4nVp+QLPs0U9dJaMaebQRWP4lOwdzgjwOXrfdV6O3tjWL+3sMZEUJIFheQoCQi4kReXDFA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=iXyJb8eYmRcvpNwf8kwYPP+wQ9/rEPjZefEUwbst+tM=;
- b=Y8PCkQd4OlhEw+bKjsreSLyOoZEqEJWa7//hXOMltizW18bZCYVSjjYhxYTtexkNusKL4QaahZEop8EdBjCQqrCWR7tJAb0knKbzZ76XoUg5HU1oP+fG5RfNaugl0Ccyi3xg8xQLqyPCk6qjx2o144FyhrYEFel82uCcS3HU2X/BzoFZn+o80dCb+B4UR9bYFHd1/7OWg0mO4ulXrqXPzuwYIkd73yzCnz2PfiPvUenlWKrIsNhprIj4MFLV3hwlBvieCMv+YcYqhjjr05in4Fs6dUTEScmMJykE/XjAh0/7VHKJdLAtNqa4DBPLN4QKFNNxzC4ZMTO/V+m7tFxbeg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CYXPR12MB9320.namprd12.prod.outlook.com (2603:10b6:930:e6::9)
- by IA1PR12MB8288.namprd12.prod.outlook.com (2603:10b6:208:3fe::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.25; Mon, 2 Sep
- 2024 15:30:37 +0000
-Received: from CYXPR12MB9320.namprd12.prod.outlook.com
- ([fe80::9347:9720:e1df:bb5f]) by CYXPR12MB9320.namprd12.prod.outlook.com
- ([fe80::9347:9720:e1df:bb5f%5]) with mapi id 15.20.7918.024; Mon, 2 Sep 2024
- 15:30:36 +0000
-From: Zi Yan <ziy@nvidia.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: linux-mm@kvack.org, Oscar Salvador <osalvador@suse.de>,
- Vlastimil Babka <vbabka@suse.cz>, Johannes Weiner <hannes@cmpxchg.org>,
- Baolin Wang <baolin.wang@linux.alibaba.com>,
- "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
- Mel Gorman <mgorman@suse.de>, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH 2/4] mm/page_isolation: remove migratetype from
- move_freepages_block_isolate()
-Date: Mon, 02 Sep 2024 11:30:34 -0400
-X-Mailer: MailMate (1.14r6064)
-Message-ID: <AAD39CDF-6AC3-432F-B5E1-5D8FD8DA7B42@nvidia.com>
-In-Reply-To: <8f9f16e9-4d89-44ba-a244-9389233b5325@redhat.com>
-References: <20240828202240.2809740-1-ziy@nvidia.com>
- <20240828202240.2809740-3-ziy@nvidia.com>
- <8f9f16e9-4d89-44ba-a244-9389233b5325@redhat.com>
-Content-Type: multipart/signed;
- boundary="=_MailMate_7A8A1798-73B2-4C20-9094-3F389D94C2A5_=";
- micalg=pgp-sha512; protocol="application/pgp-signature"
-X-ClientProxiedBy: MN2PR01CA0024.prod.exchangelabs.com (2603:10b6:208:10c::37)
- To CYXPR12MB9320.namprd12.prod.outlook.com (2603:10b6:930:e6::9)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7FB81CB514;
+	Mon,  2 Sep 2024 15:31:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725291091; cv=none; b=VUV9a+lw6IKSXxYIN1ICoZ+tqwtssc3nlTfvHIedFDAkH3WDQxDdQgw+c9/K5uRqWTFqDGXCeiR5kQHOelhF/mzefVY1wxLpWqBTh9w4jgbIStZglBZZwYyiLQHZ5snBGysI64D/OBsLiJkvtZpUjW2xIjjsVY3Zi5vT2ptB+QY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725291091; c=relaxed/simple;
+	bh=fHYCrATv0YNMW+dvVDb2XEurW2FCe0swC9jmdEUKmLE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=dIKeB2WlmVFbK5hHnvetl95t/10qnkZeRTJ3R7T7iL2d8x+7GBnhiIO3s/Nasy3ijCMRCrGWuXK41GBKSyzMLA2ni1eUYFmK4VetV4GS2C9th6I0mz+GoSu+FSo0Cd7ooL1whRqGevM19iWdbOR9xlf3VaLZVbdekMqpSsiMNuc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EQOf2V/b; arc=none smtp.client-ip=209.85.208.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2f3f163e379so70766901fa.3;
+        Mon, 02 Sep 2024 08:31:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725291088; x=1725895888; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=zgWcvugTcq0n4IcB8sHG/SbLm3GxVM4wHTGq3cvMrNM=;
+        b=EQOf2V/bugoUBzNcQBturkm6PTN/Fo0PSiTNhxRTrcILWjQTKyy+eDBU+og+T8Jxqj
+         7Ixm7uJZTfzVK+oDhzNiy8lxq7YKqlHnHxbmx44DJIFQVA9huZK1tbDP+/WfWZVdcSQL
+         tqLjAdj7snIVl17jPcr7HPCgHzWoL+2js6s3HDlZ4nkvX0uSV2syxEZYcmiX3sK+7+5u
+         CShpMiXWc5bYZp+owZKvAX09LT91Gw/S5kUePXUue/y/6hA7iRi8rbTWoMZsL2f2+1JC
+         7U49dM66jSzK6km/RyDFrAyoyLb5jEGa/f+TaMZ7vymUN9PV4XAQiLUMjH3qvXQTDLZ8
+         Sltw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725291088; x=1725895888;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=zgWcvugTcq0n4IcB8sHG/SbLm3GxVM4wHTGq3cvMrNM=;
+        b=pnwKiQNUxlhFSVCzx7kgM8oo5TuopKk0ZsnAPQxJgsHSGMMJfNbTV/IhaWdqJb+SOw
+         Uvf7mBvJOOhiPSun4RR4+DBuXxmim5t+Ns5gtI0Xs4iLCwPE6xb5ov909LN4lwiK7xB5
+         4yhzJv1fkkajH3qUZrUqN6orXqGpH4SC07WUqGa7VlqA1qnEhKlkIODoE28ObiJs6fwM
+         lLvhCGT8U9NCt98e5Kjo6RflMjP1IILwnfhASrbhf+vqWdh+BwmUckLSkuqSlN7l9wvw
+         67WwrZe/JA+La20LpmzbLsCjJtah9vZVUoR81xmlZravvZm5mdyQOYFjnhR05Yd+f3Oc
+         8n0Q==
+X-Forwarded-Encrypted: i=1; AJvYcCULpyqwzP2eX5043gwVC3fLNkxcCNCec8EW9VFrLqAUpO8G0HlL70bvvrF7LbzNh1wnOAc00ChXQA+671I=@vger.kernel.org, AJvYcCVfLM7mKYmkjo4nqFIDFz1WS2GBtfOD/W+YCs+u9wRIUuKQTxIy9nPxTryoXEEPghQSs3PjhYsvZnPdb78=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxLcNoLhge+iVmoaDQGztK0NTPuXfTncydMhTC7RkRDN0+Iy6PO
+	uFMXGnPBweRquTd7szUs26pRLDemLBzt9/b2i9azxdPoQ6yQQxRm
+X-Google-Smtp-Source: AGHT+IHxV1Ic5u6QxGdGvSwxSn91NdIhv16sGfo2ufqHeeF2dqvYS7NMoiTVZIKB1TAarfANOvwn5g==
+X-Received: by 2002:a05:651c:19a3:b0:2ef:c8a1:ff4 with SMTP id 38308e7fff4ca-2f6105c49a9mr126039951fa.7.1725291087133;
+        Mon, 02 Sep 2024 08:31:27 -0700 (PDT)
+Received: from [192.168.0.20] ([148.56.230.39])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a898900e95dsm573187066b.54.2024.09.02.08.31.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 02 Sep 2024 08:31:25 -0700 (PDT)
+Message-ID: <1d4e9e86-aaaf-4d19-b89f-6f7207ab72d8@gmail.com>
+Date: Mon, 2 Sep 2024 17:31:24 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CYXPR12MB9320:EE_|IA1PR12MB8288:EE_
-X-MS-Office365-Filtering-Correlation-Id: dd441a7c-9a01-4167-e0bd-08dccb643167
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?LNiJp6LmYtGkmGfB/GyP7/ZD+szsjKB40qIj2U7UVDr02/LCyWqsmZxACkKx?=
- =?us-ascii?Q?XIjjN5oK03ZgleeWEWxhSS5taMtMDGq2X65PlPrmzJc84P6KiZE+1KVFGKAu?=
- =?us-ascii?Q?O+Z6e+3I6lwA+reGDhOqsk3XPw6/yyTYzNJ7JvIeUocBbSQpwa9OJiipnMi4?=
- =?us-ascii?Q?dEPDrg7F/mDgNrcqGAEru4o+vsfWwO2i40CCOaBlbuMHe4rgrUDWJLGlo7kj?=
- =?us-ascii?Q?YD32VXtvsnAEKSlF5WgjCY2GlHPPE+Cymz2j+RpA8rFDfW4d0xB9rXkaLKXE?=
- =?us-ascii?Q?oQglRAOk2jOy/kjgS97Zvmaq1/F1XHCdmTPDg4sBwQ6IFXrewwU1AMRmai+/?=
- =?us-ascii?Q?YwNDW4oMUtDQPPzgsOrWwQq8LfLMV+vZRfWDrjSnLoENVlwmd8uAW2D7BMrK?=
- =?us-ascii?Q?Z1rlvIV5qgXjB1bqrZ8NNej60ol96/TUR1S+IaRCMPkiCWoWc7LZVgMXXltv?=
- =?us-ascii?Q?MsTRUY2fHcL3WwgenoOgE+qbmieWoDeN4sD3ClNyaUbUo1xuXYLkKqTaaPiU?=
- =?us-ascii?Q?FrpOYCX+IUAxiDFFUUl6bsFzBkQNXEMMDfOpmwXPlM/vMiaB2QUuDvpatQ4j?=
- =?us-ascii?Q?I508QOnSCHRbf3MTfKMrP9/1PBX2K1g/fSfmzNCxgPQH/yVVgA9zw4Y5eBeb?=
- =?us-ascii?Q?UXfkX4LtXR0eFJvVsDrstyH82qokrH6z6A9RWW8wFZIURecY6OLbiuRY07ZY?=
- =?us-ascii?Q?6xezXyz4lpp+MiEO32Iun+U7cuVySplf8pQx2mLr2COW0oFnJv29wpo9cmba?=
- =?us-ascii?Q?Qg+zw65Zxmu3/h5eKqQb0r3qDP2DLff6YREXbKLPYesYd5MDJg4H+CaGCGFT?=
- =?us-ascii?Q?EwMYkRiH69EbgFYN2SXh4Jay6vqNUM7MwTDkp5GKK0jf8r2cTLfVIZNVlSik?=
- =?us-ascii?Q?XP4rspYC49TyzY/UyQ/9BqDoIw9LmjnOsii+FAzICBEcEkTUDTK0kJjyG+vM?=
- =?us-ascii?Q?wcV1rX+BQaALEw2Wy+OceltK6tO8L2xeClFwTl31kfwU6D2HpeIrMn2em080?=
- =?us-ascii?Q?/67B73xMvSr7DCtHIHxvi6OtG7tL9Hi5O2RPZFSfOWGwFTPkuQoqnn6fFSrb?=
- =?us-ascii?Q?qPpnkIpqYOTM+9UgGR5m4x/z4ZzHPNysrDclYov6lm9LPjvBJXjESDe8wVRy?=
- =?us-ascii?Q?L4ieaguR/XtP9BkIh6hBeaU7jmLOme7cTCJQ4yBatWXLnUi5WYEg+vFpssca?=
- =?us-ascii?Q?srTgMFL6efXAKeAvqtU9vJ/AwhX9kkphnd5MtBm7/gdOS6FPVX7h6HjMY6CL?=
- =?us-ascii?Q?dNRVjtC0ostKXp3bDopLxMyUfGb/Pnpvm4WyRSRU1nqWvQRhA3EQl7gTOAgW?=
- =?us-ascii?Q?eRbcrkjD8CvPqqkLVlI0F6H5q0CX5l11SB6jtgd5YOV8Hg=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CYXPR12MB9320.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?WEx0LSVDqVfr+5e4LYgh69Haj/qO52WDf8x6MwtGRiDE/ur9JrEf5Ydsh7mX?=
- =?us-ascii?Q?Q0Lxo6MI7MpTPmf3nckhVExxNJASjgrzuSznMD82uHDm/LnyUkViNorClS2R?=
- =?us-ascii?Q?hrNfwMW+VB+ltqMIWVqq++HqV1tQdgJLKp1WpTq9SGknowZThDSl2WRfw5Pk?=
- =?us-ascii?Q?IYNYsqgT5OKG9rf4tJLecRly+playecpgq5ghP3qK938F7kbgJ+VT/WJYZ2e?=
- =?us-ascii?Q?gttC7YOwb0sr0XUNqSo3otV+hqAhnabYOUF/JNe9h0bV2wIwkBfHzahsk6mg?=
- =?us-ascii?Q?DyQMNu0qiK5AI8fHMoEPzQPXtHl4K4w9Cb2ndt+JuudXyrLxFz+tQnJjDklS?=
- =?us-ascii?Q?Caa2qr1f+8nmfCG/9GPCc7rAQDRNKBiR4pIdQFsfa9KuZY9RfYOsfraV/Zq7?=
- =?us-ascii?Q?ygYLH6PcipphhvsRxqXCnKezthCoOf5NOJEzVcOVQHxq0xyKOjcSofIHXf13?=
- =?us-ascii?Q?bv/iLr4xdhr5nzTfTJIQZJeUVTUJDM2Ez52OBjHvZNRzDzZK1aYnIEemew56?=
- =?us-ascii?Q?haZfm8sTPlJBI5qIlOltk+Y+HBEIcbimNz1sLkM5mXT2ipKNlrM47p2nYu8E?=
- =?us-ascii?Q?MhYY3Y7qbu/nz4ydyy/X/CVFibsD07sgd2AH9Xd4JmjBCKqU/XIpN3dMLDqc?=
- =?us-ascii?Q?j4JMKegjMEFnwCurXyZJNTLofWCSg9r+tfkr/Sk4di1pbgifoXk88rswt4hn?=
- =?us-ascii?Q?mGl+aUVDapDIPtyFeA146UZEfpPvGsEqwVX2bP87HroC+m971GslwZO3ZKkF?=
- =?us-ascii?Q?hT0mmBNzDauXVAgZm9PXa+G7iEnu5klMK5YI4u7A0J6dnuZZ2NIRv6pkqR3A?=
- =?us-ascii?Q?R/HJ1OmjYCi1QE6pV1HNH0s6VVYxqCyA/ENkz9MGQCH+u1BpuIVr6gWHzTVb?=
- =?us-ascii?Q?niNI8rd+RQ6lIsuRw/jdpxwyjUH+ef8DzukXSJY01BhyAaub/A+B6kWAZhaY?=
- =?us-ascii?Q?R6XV56R4TgAAfCfhxmDMaaMhhhrRpjstTHeaIE+H50myjxOZwip8UfXyr4qh?=
- =?us-ascii?Q?fxzQUCZKuORTKtkXNWU9Wm2vJps/GCOqTfgiiV3jgjo7LccVBdPHY7Fox7j4?=
- =?us-ascii?Q?fsRdeNWfqlDBbR9f/u8y0VYDhyMuyaloPOzFMEULYtB3pCtU58pjjCwbVjMy?=
- =?us-ascii?Q?9G1P3cXtVmKJosQCzLCrK7qULnAfQuCyi/KMZenlPRm10+KdbKjDuZdyXPEn?=
- =?us-ascii?Q?Msz1Npb3u2wmgR4sndA59SmLBCRCKyn0wNeRqbL6a+7E6HadiagrYZV177nt?=
- =?us-ascii?Q?CPBYbeL9G6ULhT5vadkoQkdpjlAP2b3lV5Hb9Ws3f7aJfBame0y5ZDebuSGd?=
- =?us-ascii?Q?MskPdfNts9WuMOgT6NQ/wXuchdDWbXGqE8jsdBIchftRDN0BfCNDmthTqycb?=
- =?us-ascii?Q?pBslCSTf3Gls2N/yDcNPN0+IVhCUu744iBt8B8n0tB0Ha6r8a8EzU+fIDwNT?=
- =?us-ascii?Q?+JhjX6Ys058XvCytnYNSRYsT9kb3hlR9uiWljIQhjCkhGUyloVK3VreaQ9YI?=
- =?us-ascii?Q?BS19+mzuldnzXs297D4sbSDGdfshlO/9APjYuAcIC2CjeiwCxWSTVBYLgHh8?=
- =?us-ascii?Q?lcgu298S0Gt2dxjgD/L6QcW+RLOYfQupeVXRqsZQ?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: dd441a7c-9a01-4167-e0bd-08dccb643167
-X-MS-Exchange-CrossTenant-AuthSource: CYXPR12MB9320.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Sep 2024 15:30:36.7862
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: o/K40AlpAX431Q6ksPz6w2UlS0OHC9TsHrfX8AqYTHECJBiSc5527k6D2bhky/UQ
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB8288
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 2/3] media: platform: mtk-mdp3: Use cmdq_pkt_create()
+ and cmdq_pkt_destroy()
+To: Chun-Kuang Hu <chunkuang.hu@kernel.org>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Moudy Ho
+ <moudy.ho@mediatek.com>, "Jason-JH . Lin" <jason-jh.lin@mediatek.com>,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ linux-media@vger.kernel.org
+References: <20240901143259.16849-1-chunkuang.hu@kernel.org>
+ <20240901143259.16849-3-chunkuang.hu@kernel.org>
+Content-Language: en-US, ca-ES, es-ES
+From: Matthias Brugger <matthias.bgg@gmail.com>
+Autocrypt: addr=matthias.bgg@gmail.com; keydata=
+ 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
+In-Reply-To: <20240901143259.16849-3-chunkuang.hu@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
---=_MailMate_7A8A1798-73B2-4C20-9094-3F389D94C2A5_=
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
 
-On 2 Sep 2024, at 10:42, David Hildenbrand wrote:
 
-> On 28.08.24 22:22, Zi Yan wrote:
->> Since migratetype is no longer overwritten during pageblock isolation,=
+On 01/09/2024 16:32, Chun-Kuang Hu wrote:
+> Use cmdq_pkt_create() and cmdq_pkt_destroy() common function
+> instead of implementing mdp3 version.
+> 
+> Signed-off-by: Chun-Kuang Hu <chunkuang.hu@kernel.org>
+> ---
+>   .../platform/mediatek/mdp3/mtk-mdp3-cmdq.c    | 46 ++-----------------
+>   .../platform/mediatek/mdp3/mtk-mdp3-cmdq.h    |  1 +
+>   2 files changed, 6 insertions(+), 41 deletions(-)
+> 
+> diff --git a/drivers/media/platform/mediatek/mdp3/mtk-mdp3-cmdq.c b/drivers/media/platform/mediatek/mdp3/mtk-mdp3-cmdq.c
+> index ef5dade35fd3..740a484c8eb4 100644
+> --- a/drivers/media/platform/mediatek/mdp3/mtk-mdp3-cmdq.c
+> +++ b/drivers/media/platform/mediatek/mdp3/mtk-mdp3-cmdq.c
+> @@ -471,43 +471,6 @@ static int mdp_path_config(struct mdp_dev *mdp, struct mdp_cmdq_cmd *cmd,
+>   	return 0;
+>   }
+>   
+> -static int mdp_cmdq_pkt_create(struct cmdq_client *client, struct cmdq_pkt *pkt,
+> -			       size_t size)
+> -{
+> -	struct device *dev;
+> -	dma_addr_t dma_addr;
+> -
+> -	pkt->va_base = kzalloc(size, GFP_KERNEL);
+> -	if (!pkt->va_base)
+> -		return -ENOMEM;
+> -
+> -	pkt->buf_size = size;
+> -	pkt->cl = (void *)client;
 
->> moving pageblocks to and from MIGRATE_ISOLATE do not need migratetype.=
+cmdq_pkt_create does not set the callback. Why doesn't that break things?
+Same holds for the crtc driver that is already in linux-next.
 
->>
->> Signed-off-by: Zi Yan <ziy@nvidia.com>
->> ---
->>   include/linux/page-isolation.h |  3 +--
->>   mm/page_alloc.c                | 27 +++++++++++++++++++++------
->>   mm/page_isolation.c            | 19 +++++++++----------
->>   3 files changed, 31 insertions(+), 18 deletions(-)
->>
->> diff --git a/include/linux/page-isolation.h b/include/linux/page-isola=
-tion.h
->> index 11b8695115ea..6a62401410c3 100644
->> --- a/include/linux/page-isolation.h
->> +++ b/include/linux/page-isolation.h
->> @@ -35,8 +35,7 @@ static inline bool is_migrate_isolate(int migratetyp=
-e)
->>    void set_pageblock_migratetype(struct page *page, int migratetype);=
+Regards,
+Matthias
 
->>  -bool move_freepages_block_isolate(struct zone *zone, struct page *pa=
-ge,
->> -				  int migratetype);
->> +bool move_freepages_block_isolate(struct zone *zone, struct page *pag=
-e);
->>    int start_isolate_page_range(unsigned long start_pfn, unsigned long=
- end_pfn,
->>   			     int migratetype, int flags, gfp_t gfp_flags);
->> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
->> index 4ea5cd1a07e2..dc7c36461953 100644
->> --- a/mm/page_alloc.c
->> +++ b/mm/page_alloc.c
->> @@ -1764,10 +1764,12 @@ static unsigned long find_large_buddy(unsigned=
- long start_pfn)
->>    *
->>    * Returns %true if pages could be moved, %false otherwise.
->>    */
->> -bool move_freepages_block_isolate(struct zone *zone, struct page *pag=
-e,
->> -				  int migratetype)
->> +bool move_freepages_block_isolate(struct zone *zone, struct page *pag=
-e)
->>   {
->>   	unsigned long start_pfn, pfn;
->> +	bool is_block_isolated =3D get_pageblock_isolate(page);
->> +	int from_mt;
->
-> I think we should have two functions, one that isolates, another one th=
-at un-isolates. Or at least make the semantics not depend on the current =
-state of the pageblock.
->
-> bool pageblock_set_isolated_and_move_free_pages(struct zone *zone, stru=
-ct page *page, bool isolated);
->
-> vs.
->
-> pageblock_isolate_and_move_free_pages()
-> pageblock_unisolate_and_move_free_pages()
-
-Sure. Will do.
-
---
-Best Regards,
-Yan, Zi
-
---=_MailMate_7A8A1798-73B2-4C20-9094-3F389D94C2A5_=
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename=signature.asc
-Content-Type: application/pgp-signature; name=signature.asc
-
------BEGIN PGP SIGNATURE-----
-
-iQJDBAEBCgAtFiEE6rR4j8RuQ2XmaZol4n+egRQHKFQFAmbV2hoPHHppeUBudmlk
-aWEuY29tAAoJEOJ/noEUByhU3FgP/3dxbIRNPFuguoc9+/wB21o+hp3bI7e/hEOC
-TCn5hVFmoZ40uLcDtyE1f35jraNo52CVlCIv75g+4LZvzX4ZSTVX8IwZhmBy6LdO
-TQdpJbMDTURg+2Sly8a8VabnBxoHLhGFRxDfvELTtVxrtqTR/mfeG6ObXcMpT5Ry
-IzL811ZdYVu4FZqSZdB1mbY36P88FueBTl64SID00dPGfEyLnY/sxGfQ4MoqOl96
-LPZ/5n0S/pXJwhwdjjcR19fV0WlkhdYzXN5/i1DhMXtMVCs1APmfAwxd25FUROwF
-0tAxU1lvuPVvbNJeWfEVRE0T6nMPqePFi8f5y8ox2w1yIy4ESSe8Q65AbP/JzuUQ
-lclKhwDKd/bkO//QZY6ZsU4r3gxwMOI/ziKJ6ENNAWuRMAkC4EuK/rql/HhQc/8Q
-ZcprTKHCoRkUovJOtG6n4VYxW4eNc3XpO7CsPmW3mwnZ9QfDQ76lWzFobdjZ7mlV
-cwpkKIHPfG4Qa1dg3uvIoeMLbdMPCPuixJuOtEbe7oO9nBjCemVVMjOKD8ZMKJoJ
-UaL2fqJ1G3uHX9IDMdXbaCXvY7GoRJ5VCVoFem1O94v2MY3F9J3bQAucJkq/3jo+
-iazOug5f3arxDrEz7YWUX8rCd1hipWgacD/v4+iLEYYSvDZElF8ZqieQn/QxpNaT
-NP6s4HBp
-=zNyj
------END PGP SIGNATURE-----
-
---=_MailMate_7A8A1798-73B2-4C20-9094-3F389D94C2A5_=--
+> -
+> -	dev = client->chan->mbox->dev;
+> -	dma_addr = dma_map_single(dev, pkt->va_base, pkt->buf_size,
+> -				  DMA_TO_DEVICE);
+> -	if (dma_mapping_error(dev, dma_addr)) {
+> -		dev_err(dev, "dma map failed, size=%u\n", (u32)(u64)size);
+> -		kfree(pkt->va_base);
+> -		return -ENOMEM;
+> -	}
+> -
+> -	pkt->pa_base = dma_addr;
+> -
+> -	return 0;
+> -}
+> -
+> -static void mdp_cmdq_pkt_destroy(struct cmdq_pkt *pkt)
+> -{
+> -	struct cmdq_client *client = (struct cmdq_client *)pkt->cl;
+> -
+> -	dma_unmap_single(client->chan->mbox->dev, pkt->pa_base, pkt->buf_size,
+> -			 DMA_TO_DEVICE);
+> -	kfree(pkt->va_base);
+> -	pkt->va_base = NULL;
+> -}
+> -
+>   static void mdp_auto_release_work(struct work_struct *work)
+>   {
+>   	struct mdp_cmdq_cmd *cmd;
+> @@ -538,7 +501,7 @@ static void mdp_auto_release_work(struct work_struct *work)
+>   		wake_up(&mdp->callback_wq);
+>   	}
+>   
+> -	mdp_cmdq_pkt_destroy(&cmd->pkt);
+> +	cmdq_pkt_destroy(mdp->cmdq_clt[cmd->pp_idx], &cmd->pkt);
+>   	kfree(cmd->comps);
+>   	cmd->comps = NULL;
+>   	kfree(cmd);
+> @@ -578,7 +541,7 @@ static void mdp_handle_cmdq_callback(struct mbox_client *cl, void *mssg)
+>   		if (refcount_dec_and_test(&mdp->job_count))
+>   			wake_up(&mdp->callback_wq);
+>   
+> -		mdp_cmdq_pkt_destroy(&cmd->pkt);
+> +		cmdq_pkt_destroy(mdp->cmdq_clt[cmd->pp_idx], &cmd->pkt);
+>   		kfree(cmd->comps);
+>   		cmd->comps = NULL;
+>   		kfree(cmd);
+> @@ -620,7 +583,7 @@ static struct mdp_cmdq_cmd *mdp_cmdq_prepare(struct mdp_dev *mdp,
+>   		goto err_uninit;
+>   	}
+>   
+> -	ret = mdp_cmdq_pkt_create(mdp->cmdq_clt[pp_idx], &cmd->pkt, SZ_16K);
+> +	ret = cmdq_pkt_create(mdp->cmdq_clt[pp_idx], &cmd->pkt, SZ_16K);
+>   	if (ret)
+>   		goto err_free_cmd;
+>   
+> @@ -700,6 +663,7 @@ static struct mdp_cmdq_cmd *mdp_cmdq_prepare(struct mdp_dev *mdp,
+>   	cmd->comps = comps;
+>   	cmd->num_comps = num_comp;
+>   	cmd->mdp_ctx = param->mdp_ctx;
+> +	cmd->pp_idx = pp_idx;
+>   
+>   	kfree(path);
+>   	return cmd;
+> @@ -711,7 +675,7 @@ static struct mdp_cmdq_cmd *mdp_cmdq_prepare(struct mdp_dev *mdp,
+>   err_free_comps:
+>   	kfree(comps);
+>   err_destroy_pkt:
+> -	mdp_cmdq_pkt_destroy(&cmd->pkt);
+> +	cmdq_pkt_destroy(mdp->cmdq_clt[pp_idx], &cmd->pkt);
+>   err_free_cmd:
+>   	kfree(cmd);
+>   err_uninit:
+> diff --git a/drivers/media/platform/mediatek/mdp3/mtk-mdp3-cmdq.h b/drivers/media/platform/mediatek/mdp3/mtk-mdp3-cmdq.h
+> index 53a30ad7e0b0..935ae9825728 100644
+> --- a/drivers/media/platform/mediatek/mdp3/mtk-mdp3-cmdq.h
+> +++ b/drivers/media/platform/mediatek/mdp3/mtk-mdp3-cmdq.h
+> @@ -35,6 +35,7 @@ struct mdp_cmdq_cmd {
+>   	struct mdp_comp *comps;
+>   	void *mdp_ctx;
+>   	u8 num_comps;
+> +	u8 pp_idx;
+>   };
+>   
+>   struct mdp_dev;
 
