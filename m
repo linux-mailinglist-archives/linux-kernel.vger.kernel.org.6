@@ -1,109 +1,115 @@
-Return-Path: <linux-kernel+bounces-311078-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311081-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A8E296849F
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 12:26:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B90999684A8
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 12:28:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1826F282E21
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 10:26:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EA03E1C228CA
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 10:28:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FCEE13CFB7;
-	Mon,  2 Sep 2024 10:26:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A19C715FD13;
+	Mon,  2 Sep 2024 10:28:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="142CfxvF"
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Pb+rmYci"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74F5713B5A1
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 10:26:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CEE91420B6;
+	Mon,  2 Sep 2024 10:28:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725272782; cv=none; b=G1NK5lNuNUmsE0Vo51z03prFxprO1ZRM5f0I50IT+lT+0EyluCm32hP0zx/Ki60Sd2/5UfbtetFZ1nIyhIop4HJ5rrkIfq+wAF+KkJvCYzjRPOIkH6uHw8g4NVnYlS8vcLztx47ER5rVAHErgMSURqs109S1zkuSdC1Svx0gY2U=
+	t=1725272914; cv=none; b=CqkhZyXK5S1v4j+ia5OurSt1bfRlzqGW53/j0SNuWtSqmaSgaOTlAbOSbD9q7Jsmm9L0P5EQfbjc7or+WGjB6Ym6+l+g0Ary34RDhztfZWVvM7fpkeh/mAcSlqoW/kafrm3dpESetmIWxwCdYFD20+xI43GPL6Rbd7n05YoMGxc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725272782; c=relaxed/simple;
-	bh=BFfI9FpfzIUUD35IcnYqFMz6uCrKmc0IhIxkRuHGttc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=fTctQT7TmWV+a7ygAEflJnv9F6jLnQk45KAdq0l4oWbO9D5/kfLLM8n5Nv+XocrfMKpdjU7VZcSjYYDAPXSa9iEAlO3zTUh2JYsPwTdUONZByrT+ZMkVK+PiWIX0Dm7unZ78Ng+sQJbjo2ap1tjB88HA0b9tu/+/k/lktOk30b8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=142CfxvF; arc=none smtp.client-ip=209.85.167.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-533de5a88f8so4163082e87.3
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2024 03:26:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1725272779; x=1725877579; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DdhTD91gUIx/ayxEiTnAVXsfq4RDl8NYrdKQ/eSSaWw=;
-        b=142CfxvFvbe+EMdVWutvCO62d7hai6gVs8vR1R0Fr4qOIZXsN6loN5vX9/JdcD967S
-         WRtb0Ss7GDD5t+ilp5t9YLuiPoucEgE0+YWpjkDqsoT54uIEDktlyvKK6CVaIEb/Z6Wg
-         sOcm3hQR5Luz34dcAtFUtns3wL6HP4w2SvVYfCJPbxiH1nsQlii2ncKS5pggxbfArVGE
-         cMJXyydPf8HQiNNT5Ivlt/oTmb2WJrQ1BsJva1EimBXtvImiti8cjFAwwGviodFyw2f6
-         ZvpnGOw2CwcwGPpDtevpl5jn3WSnqoBXvv/QmK07bGeD3gGhvL7z68JRozxUUGtfekY2
-         YSyA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725272779; x=1725877579;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=DdhTD91gUIx/ayxEiTnAVXsfq4RDl8NYrdKQ/eSSaWw=;
-        b=g0mkxSHd4h7IPixAaJ8fhkgDUQkuZ07+iLxAZUySzi5Rf9tnb7fMoB0mDjyqEMfIUr
-         AGiYVqzsV4xDGuX3rKNW6oYyYXZ8WdY42pKNOvFhdMTn4L0IQtX7X1rhC5rOobyVYLn2
-         0W8F+CGM6kbevRTahYGzIThUjlwOfGG0sMrngnH884OOtH7f4VHH5vQ0jyqqDmZCWXC0
-         nw9v4Yj9Ur24b3N0b23iDdUygXVWiZetWhXUX3cV7l8i0Y5W0JlO2aiwxALxWKlR9fqd
-         M/U7wIQRULIZs4fdZoA33hjWsB8doserse7wP6p7yvil+D1iQITFTdF/x9/HVASSvqLj
-         SJSg==
-X-Forwarded-Encrypted: i=1; AJvYcCU7bzYpE70Wb2LDC18WXPd+a7zbBtgVXtLmOxAf78K0xCD34sNWDGoxGdX8ymkuZpXhcYet5CkQZFzoQLM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzDuPVZkwkW5JA2o40drc8rKTYDG7EPbbl6k75YYqctJoW5FZlV
-	KMsSRlUxfHOw6BeihNzF72nlW1x+fr25g8dz89pkx6J9EgSmwhGC4FkTT8a/PeY=
-X-Google-Smtp-Source: AGHT+IH9DTMtOJ9FIs1C+aKzuRz2rSULKJyaElIQQSnn51mT2lijrn3LSYXHij8nULaRtHH6QBi+JA==
-X-Received: by 2002:ac2:4c4f:0:b0:533:42ae:c985 with SMTP id 2adb3069b0e04-53546b2df7emr6922742e87.25.1725272778785;
-        Mon, 02 Sep 2024 03:26:18 -0700 (PDT)
-Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:b496:9e67:73c9:9f5a])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42bbf15b9b1sm92362725e9.10.2024.09.02.03.26.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Sep 2024 03:26:18 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: Re: [PATCH v2 1/1] gpiolib: legacy: Consolidate devm_gpio_*() with other legacy APIs
-Date: Mon,  2 Sep 2024 12:26:17 +0200
-Message-ID: <172527277542.24997.2961040710217329263.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240828151357.2677340-1-andriy.shevchenko@linux.intel.com>
-References: <20240828151357.2677340-1-andriy.shevchenko@linux.intel.com>
+	s=arc-20240116; t=1725272914; c=relaxed/simple;
+	bh=o49/VfeHx/55xDTE8RkgShWImK7IhvTHRkQEAshuhMk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Dgck9h4XUy4F6Yw6dtCaNpuHRnWWdYPtUB4AhjdOyGgwzv61C9jE5KD4PIdtmXD6fnpDaOcDLfW2RTb5oo1GsRnYfT1IMI9H5kfxSsaWgqu+le7kcekwegEo/dvgkNOnA+oeSfWe1ypWqYM0ed1odWdt2KaISrSffatf34ZbFe0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Pb+rmYci; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725272913; x=1756808913;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=o49/VfeHx/55xDTE8RkgShWImK7IhvTHRkQEAshuhMk=;
+  b=Pb+rmYcirWJr8dMR2aXc6AG0UoP0dLKMnujbf1eaMg0gBd1UstjzzDNR
+   GG/ue6OUnR5uB9VQgnSualFi6OEqTAGj60bmqUzKa4MeKwMHrTvBzFv7k
+   UF8SBzVY8TGDqIF+CESajSN7E9TqswEXslzUQxZRnZ76Gj9cd5Od+7WeX
+   WOwLAJAIYkKAFvkDqgD5o/arweuOSA1pBffoQE9CAxNc7TV6oKZFRuBP+
+   3V9nPoAbTih9yZ6qxlzZkilc2SuI5u1GPDXlw0W4Hel8k5yuAfgrDjD2b
+   o79h8x4y5Dcgj7VF96Hfwbyq/14oj0mMgrQ52vrRuHmYdC7D9EJUUkNKr
+   A==;
+X-CSE-ConnectionGUID: Hl1mh1rMRR+GyU1LsGEGZQ==
+X-CSE-MsgGUID: ULn6hUKpTXK0rrbecOMWsA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11182"; a="35212552"
+X-IronPort-AV: E=Sophos;i="6.10,195,1719903600"; 
+   d="scan'208";a="35212552"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2024 03:28:31 -0700
+X-CSE-ConnectionGUID: Wc7OZ2yRTDCpjdhgK2f/gg==
+X-CSE-MsgGUID: n9tgonAsSpu3UO8zxaXCnA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,195,1719903600"; 
+   d="scan'208";a="64574120"
+Received: from ahunter6-mobl1.ger.corp.intel.com (HELO [10.0.2.15]) ([10.246.0.178])
+  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2024 03:28:25 -0700
+Message-ID: <f348f927-ada2-4c85-93e9-e2c3a99df33a@intel.com>
+Date: Mon, 2 Sep 2024 13:27:31 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/2] mmc: cqhci: Fix checking of CQHCI_HALT state
+To: Seunghwan Baek <sh8267.baek@samsung.com>, linux-kernel@vger.kernel.org,
+ linux-mmc@vger.kernel.org, ulf.hansson@linaro.org, ritesh.list@gmail.com,
+ quic_asutoshd@quicinc.com
+Cc: grant.jung@samsung.com, jt77.jang@samsung.com, junwoo80.lee@samsung.com,
+ dh0421.hwang@samsung.com, jangsub.yi@samsung.com, sh043.lee@samsung.com,
+ cw9316.lee@samsung.com, wkon.kim@samsung.com, stable@vger.kernel.org
+References: <20240829061823.3718-1-sh8267.baek@samsung.com>
+ <CGME20240829061840epcas1p4ceeaea9b00a34cae0c2e82652be0d0ee@epcas1p4.samsung.com>
+ <20240829061823.3718-2-sh8267.baek@samsung.com>
+Content-Language: en-US
+From: Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+In-Reply-To: <20240829061823.3718-2-sh8267.baek@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-
-
-On Wed, 28 Aug 2024 18:12:43 +0300, Andy Shevchenko wrote:
-> There is no reason to keep deprecated legacy API implementations
-> in the gpiolib-devres.c. Consolidate devm_gpio_*() with other legacy
-> APIs. While at it, clean up header inclusion block in gpiolib-devres.c.
+On 29/08/24 09:18, Seunghwan Baek wrote:
+> To check if mmc cqe is in halt state, need to check set/clear of CQHCI_HALT
+> bit. At this time, we need to check with &, not &&.
 > 
+> Fixes: a4080225f51d ("mmc: cqhci: support for command queue enabled host")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Seunghwan Baek <sh8267.baek@samsung.com>
+
+Acked-by: Adrian Hunter <adrian.hunter@intel.com>
+
+> ---
+>  drivers/mmc/host/cqhci-core.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
+> diff --git a/drivers/mmc/host/cqhci-core.c b/drivers/mmc/host/cqhci-core.c
+> index c14d7251d0bb..a02da26a1efd 100644
+> --- a/drivers/mmc/host/cqhci-core.c
+> +++ b/drivers/mmc/host/cqhci-core.c
+> @@ -617,7 +617,7 @@ static int cqhci_request(struct mmc_host *mmc, struct mmc_request *mrq)
+>  		cqhci_writel(cq_host, 0, CQHCI_CTL);
+>  		mmc->cqe_on = true;
+>  		pr_debug("%s: cqhci: CQE on\n", mmc_hostname(mmc));
+> -		if (cqhci_readl(cq_host, CQHCI_CTL) && CQHCI_HALT) {
+> +		if (cqhci_readl(cq_host, CQHCI_CTL) & CQHCI_HALT) {
+>  			pr_err("%s: cqhci: CQE failed to exit halt state\n",
+>  			       mmc_hostname(mmc));
+>  		}
 
-Applied, thanks!
-
-[1/1] gpiolib: legacy: Consolidate devm_gpio_*() with other legacy APIs
-      commit: ef2753797e31a126ead23258d73fd8d979679e81
-
-Best regards,
--- 
-Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
