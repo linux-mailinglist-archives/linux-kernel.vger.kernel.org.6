@@ -1,191 +1,146 @@
-Return-Path: <linux-kernel+bounces-311347-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311340-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1ACF69687E0
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 14:49:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BF219687C5
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 14:44:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 83183B20E62
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 12:49:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 28130281F9C
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 12:44:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5826019C56C;
-	Mon,  2 Sep 2024 12:49:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 464EC19C556;
+	Mon,  2 Sep 2024 12:44:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="A7EdX6XC"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48BF32570;
-	Mon,  2 Sep 2024 12:49:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="iEDaMUUp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3CD019E998;
+	Mon,  2 Sep 2024 12:44:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725281347; cv=none; b=REwN5Fi70jT9HJgIEehbj/FsFdkRll1QOZyQgbWmYLtMJpqkNMZAyUPgKQLLetx9hk/qjH4/TztvAtVzkKmDWSkC8aNMk6aGW+WRC3Ilk7fbwHNvS/bWfGa2pBu2MIxuxgs5fsD2gHlkwlbE3bJesmhrWiSZLFXybBwilMb65Ak=
+	t=1725281043; cv=none; b=YA+VF/2HJKC3lk6kHKs76e12yzy79j8O2zUSsE6uWc1fDAt3SrEvCjtgJnztwpTFtreYYpYCL0MzX/M6TFG9sMhYCJoAtwNGruhsseOoy1DWOf0q4uAt5w9JqPHWSf0poTp4f+VOpYLG6npd54OhS8X51+DHJqyKVfgM8uWKvDc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725281347; c=relaxed/simple;
-	bh=YzWM6nwQGHK9jZzcaTacrJZ4xwlKlWEBZBYAcAKWIvI=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=OqoxGp4RygxmFBwGv/4e5i4a1BUv3bfOrYwle7JCoSl1VNYmyLIFMjnHHiBuUBiZpWEB61+jK7rDDsCagTYQ1QILGYu8KsCIoWsyxWjg/kuVbPM+Dw7C/dXCgYRZD5JJB6Q2FZ28evcK8oK/9YcSHTiJcrbGigq6VCGoEIQF75A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=A7EdX6XC; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: by linux.microsoft.com (Postfix, from userid 1099)
-	id DB4F420B7165; Mon,  2 Sep 2024 05:43:49 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com DB4F420B7165
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1725281029;
-	bh=QePnS9pURR28M4mdGDE4ee0nwvMcy04D78FQiNn5+gs=;
-	h=From:To:Cc:Subject:Date:From;
-	b=A7EdX6XCbR97yDKc1g7nc9ONNtgRX0kgdvaN2lqrwN1MEnWXGUOIJ1ATOB+2MB6Q6
-	 WdRk32R+7XuprFBDbpuO7JvJkib7TSbCCFovfhw0kan9+elWNrIr8hxs6gKXb14H3h
-	 vntKNmGXMtp/R2GvfRttz5qSr/0o+oIxaVwd+Tc8=
-From: Souradeep Chakrabarti <schakrabarti@linux.microsoft.com>
-To: kys@microsoft.com,
-	haiyangz@microsoft.com,
-	wei.liu@kernel.org,
-	decui@microsoft.com,
-	davem@davemloft.net,
-	longli@microsoft.com,
-	ssengar@linux.microsoft.com,
-	linux-hyperv@vger.kernel.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-rdma@vger.kernel.org
-Cc: schakrabarti@microsoft.com,
-	Souradeep Chakrabarti <schakrabarti@linux.microsoft.com>,
-	stable@vger.kernel.org
-Subject: [PATCH V4 net] net: mana: Fix error handling in mana_create_txq/rxq's NAPI cleanup
-Date: Mon,  2 Sep 2024 05:43:47 -0700
-Message-Id: <1725281027-29331-1-git-send-email-schakrabarti@linux.microsoft.com>
-X-Mailer: git-send-email 1.8.3.1
+	s=arc-20240116; t=1725281043; c=relaxed/simple;
+	bh=Z/MqSDwibNNOwSmy9SNlgAXImBvag7svcBS3F7xHE8I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=N2C30C23D9g7NCbVpmHLfHQRSDL4NWJAj7s2cnLbYU3WKMh/9A+54Rg4J4qbXEMg+soo2R9O/kLNW35aMWLdKRoSOumQCPYmZqQBVtE5xQOraY7HVF5f08amy0Yth0YJzIrwNV7mN7ai1L2TjYKtRjenDjKz/NwQ8YCQqFlTx/E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=iEDaMUUp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 77DA3C4CEC6;
+	Mon,  2 Sep 2024 12:44:02 +0000 (UTC)
+Authentication-Results: smtp.kernel.org;
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="iEDaMUUp"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
+	t=1725281040;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3aV4K9444XI0Q3K5olKe1hWC2BF0Ubr/a28h7+2Pj1I=;
+	b=iEDaMUUpcIwjZJ4xz0xNXnWXSbGHaVssQO9Y7Gz2pHueO7YaTkcvypWkr49zNHwJzVLq9q
+	/CZ0p4KRNl3zHuvQhxEMYK8lu9MXzbxWhapGB4vyb2S43n4x4+dlAYDxAT86WG0gMkgaLj
+	X6br+kRpOv/Bd1ZUfjfYttuXV5lNL4o=
+Received: 
+	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 91b03f06 (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
+	Mon, 2 Sep 2024 12:44:00 +0000 (UTC)
+Date: Mon, 2 Sep 2024 14:43:57 +0200
+From: "Jason A. Donenfeld" <Jason@zx2c4.com>
+To: LEROY Christophe <christophe.leroy2@cs-soprasteria.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
+	Adhemerval Zanella <adhemerval.zanella@linaro.org>,
+	Xi Ruoyao <xry111@xry111.site>,
+	"broonie@kernel.org" <broonie@kernel.org>
+Subject: Re: [PATCH] selftests: vDSO: Do not rely on $ARCH for
+ vdso_test_getrandom && vdso_test_chacha
+Message-ID: <ZtWzDZbJDrViFqke@zx2c4.com>
+References: <ddf594c81787dba708fc392cb03027470dee64fb.1725124064.git.christophe.leroy@csgroup.eu>
+ <ZtRqp-uZe5C07qOF@zx2c4.com>
+ <667622ae-dde5-410f-a9f8-4801788af278@csgroup.eu>
+ <ZtSsTkTUCGyxaN_d@zx2c4.com>
+ <efca582d-20e9-4871-bcd8-5abcdb0c22f3@csgroup.eu>
+ <ZtUS3TecFTjE5A94@zx2c4.com>
+ <74494efd-7cfc-4535-a33d-b86fbae1c322@cs-soprasteria.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <74494efd-7cfc-4535-a33d-b86fbae1c322@cs-soprasteria.com>
 
-Currently napi_disable() gets called during rxq and txq cleanup,
-even before napi is enabled and hrtimer is initialized. It causes
-kernel panic.
+On Mon, Sep 02, 2024 at 12:39:17PM +0000, LEROY Christophe wrote:
+> 
+> 
+> Le 02/09/2024 à 03:20, Jason A. Donenfeld a écrit :
+> > On Sun, Sep 01, 2024 at 08:43:10PM +0200, Christophe Leroy wrote:
+> >>>> How would this fit in the logic where IIUC you just remove '_64' from
+> >>>> 'x86_64' to get 'x86'
+> >>>
+> >>> Huh? That's not what tools/scripts/Makefile.arch does.
+> >>
+> >> Hum ... yes sorry I looked at it too quickly and mixed things up with
+> >> the other patch.
+> >>
+> >> Nevertheless, if I understand well what tools/scripts/Makefile.arch does
+> >> on an x86_64 for instance:
+> >>
+> >> uname -m returns x86_64
+> >> HOSTARCH = x86 (sed -e s/x86_64/x86)
+> >> ARCH = x86
+> >> SRCARCH = x86
+> >>
+> >> If you build with make ARCH=x86_64,
+> >> SRCARCH = x86
+> >>
+> >> So I still can't see how you can use that to know if it is a x86_64 or not.
+> > 
+> > By the use of CONFIG_X86_32, which is also used elsewhere in that
+> > samme makefile for something else (so I assume it's wired up in the
+> > context where it counts, and if not, that's a bug that affects both
+> > spots and should be fixed)..
+> 
+> I looks like it is a left-over from the time vDSO selftests were in 
+> Documentation/vDSO and were likely built with kernel config.
+> 
+> CONFIG_X86_32 was brought into tools/testing/selftests/vDSO by commit 
+> f9b6b0ef6034 ("selftests: move vDSO tests from Documentation/vDSO") and 
+> was meant to pass -lgcc_s when building vdso_standalone_test_x86 for 
+> i386, but obviously it doesn't work:
+> 
+> $ make ARCH=i386 V=1
+> gcc -std=gnu99 -O2 -D_GNU_SOURCE=    vdso_test_gettimeofday.c 
+> parse_vdso.c  -o 
+> /home/chleroy/linux-powerpc/tools/testing/selftests/vDSO/vdso_test_gettimeofday
+> gcc -std=gnu99 -O2 -D_GNU_SOURCE=    vdso_test_getcpu.c parse_vdso.c  -o 
+> /home/chleroy/linux-powerpc/tools/testing/selftests/vDSO/vdso_test_getcpu
+> gcc -std=gnu99 -O2 -D_GNU_SOURCE=    vdso_test_abi.c parse_vdso.c  -o 
+> /home/chleroy/linux-powerpc/tools/testing/selftests/vDSO/vdso_test_abi
+> gcc -std=gnu99 -O2 -D_GNU_SOURCE=    vdso_test_clock_getres.c  -o 
+> /home/chleroy/linux-powerpc/tools/testing/selftests/vDSO/vdso_test_clock_getres
+> gcc -std=gnu99 -O2 -D_GNU_SOURCE=  -ldl  vdso_test_correctness.c  -o 
+> /home/chleroy/linux-powerpc/tools/testing/selftests/vDSO/vdso_test_correctness
+> 
+> In another place in selftests (tools/testing/selftests/ipc/), they 
+> manually add it:
+> 
+> ifeq ($(ARCH),i386)
+>          ARCH := x86
+> 	CFLAGS := -DCONFIG_X86_32 -D__i386__
+> endif
+> ifeq ($(ARCH),x86_64)
+> 	ARCH := x86
+> 	CFLAGS := -DCONFIG_X86_64 -D__x86_64__
+> endif
+> 
+> 
+> So I think this is a confirmation that CONFIG_X86_32 doesn't exist in 
+> selftests.
 
-? page_fault_oops+0x136/0x2b0
-  ? page_counter_cancel+0x2e/0x80
-  ? do_user_addr_fault+0x2f2/0x640
-  ? refill_obj_stock+0xc4/0x110
-  ? exc_page_fault+0x71/0x160
-  ? asm_exc_page_fault+0x27/0x30
-  ? __mmdrop+0x10/0x180
-  ? __mmdrop+0xec/0x180
-  ? hrtimer_active+0xd/0x50
-  hrtimer_try_to_cancel+0x2c/0xf0
-  hrtimer_cancel+0x15/0x30
-  napi_disable+0x65/0x90
-  mana_destroy_rxq+0x4c/0x2f0
-  mana_create_rxq.isra.0+0x56c/0x6d0
-  ? mana_uncfg_vport+0x50/0x50
-  mana_alloc_queues+0x21b/0x320
-  ? skb_dequeue+0x5f/0x80
-
-Cc: stable@vger.kernel.org
-Fixes: e1b5683ff62e ("net: mana: Move NAPI from EQ to CQ")
-Signed-off-by: Souradeep Chakrabarti <schakrabarti@linux.microsoft.com>
-Reviewed-by: Haiyang Zhang <haiyangz@microsoft.com>
-Reviewed-by: Shradha Gupta <shradhagupta@linux.microsoft.com>
----
-V4 -> V3:
-Made napi_initialized from atomic_t to bool in txq, as per review comment.
-Also used validate_state for rxq as a check.
-
-V3 -> V2:
-Instead of using napi internal attribute, using an atomic
-attribute to verify napi is initialized for a particular txq / rxq.
-
-V2 -> V1:
-Addressed the comment on cleaning up napi for the queues,
-where queue creation was successful.
----
- drivers/net/ethernet/microsoft/mana/mana_en.c | 22 +++++++++++--------
- include/net/mana/mana.h                       |  2 ++
- 2 files changed, 15 insertions(+), 9 deletions(-)
-
-diff --git a/drivers/net/ethernet/microsoft/mana/mana_en.c b/drivers/net/ethernet/microsoft/mana/mana_en.c
-index 39f56973746d..3d151700f658 100644
---- a/drivers/net/ethernet/microsoft/mana/mana_en.c
-+++ b/drivers/net/ethernet/microsoft/mana/mana_en.c
-@@ -1872,10 +1872,12 @@ static void mana_destroy_txq(struct mana_port_context *apc)
- 
- 	for (i = 0; i < apc->num_queues; i++) {
- 		napi = &apc->tx_qp[i].tx_cq.napi;
--		napi_synchronize(napi);
--		napi_disable(napi);
--		netif_napi_del(napi);
--
-+		if (apc->tx_qp[i].txq.napi_initialized) {
-+			napi_synchronize(napi);
-+			napi_disable(napi);
-+			netif_napi_del(napi);
-+			apc->tx_qp[i].txq.napi_initialized = false;
-+		}
- 		mana_destroy_wq_obj(apc, GDMA_SQ, apc->tx_qp[i].tx_object);
- 
- 		mana_deinit_cq(apc, &apc->tx_qp[i].tx_cq);
-@@ -1931,6 +1933,7 @@ static int mana_create_txq(struct mana_port_context *apc,
- 		txq->ndev = net;
- 		txq->net_txq = netdev_get_tx_queue(net, i);
- 		txq->vp_offset = apc->tx_vp_offset;
-+		txq->napi_initialized = false;
- 		skb_queue_head_init(&txq->pending_skbs);
- 
- 		memset(&spec, 0, sizeof(spec));
-@@ -1997,6 +2000,7 @@ static int mana_create_txq(struct mana_port_context *apc,
- 
- 		netif_napi_add_tx(net, &cq->napi, mana_poll);
- 		napi_enable(&cq->napi);
-+		txq->napi_initialized = true;
- 
- 		mana_gd_ring_cq(cq->gdma_cq, SET_ARM_BIT);
- 	}
-@@ -2008,7 +2012,7 @@ static int mana_create_txq(struct mana_port_context *apc,
- }
- 
- static void mana_destroy_rxq(struct mana_port_context *apc,
--			     struct mana_rxq *rxq, bool validate_state)
-+			     struct mana_rxq *rxq, bool napi_initialized)
- 
- {
- 	struct gdma_context *gc = apc->ac->gdma_dev->gdma_context;
-@@ -2023,15 +2027,15 @@ static void mana_destroy_rxq(struct mana_port_context *apc,
- 
- 	napi = &rxq->rx_cq.napi;
- 
--	if (validate_state)
-+	if (napi_initialized) {
- 		napi_synchronize(napi);
- 
--	napi_disable(napi);
-+		napi_disable(napi);
- 
-+		netif_napi_del(napi);
-+	}
- 	xdp_rxq_info_unreg(&rxq->xdp_rxq);
- 
--	netif_napi_del(napi);
--
- 	mana_destroy_wq_obj(apc, GDMA_RQ, rxq->rxobj);
- 
- 	mana_deinit_cq(apc, &rxq->rx_cq);
-diff --git a/include/net/mana/mana.h b/include/net/mana/mana.h
-index 7caa334f4888..b8a6c7504ee1 100644
---- a/include/net/mana/mana.h
-+++ b/include/net/mana/mana.h
-@@ -98,6 +98,8 @@ struct mana_txq {
- 
- 	atomic_t pending_sends;
- 
-+	bool napi_initialized;
-+
- 	struct mana_stats_tx stats;
- };
- 
--- 
-2.34.1
-
+Interesting... Seems like both sites, then, should be fixed somehow...
 
