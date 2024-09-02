@@ -1,83 +1,135 @@
-Return-Path: <linux-kernel+bounces-310491-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310493-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B576967DB0
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 04:10:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5100967DB2
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 04:12:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 19F6A280FEF
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 02:10:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E94A32825AB
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 02:11:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D8F62C182;
-	Mon,  2 Sep 2024 02:10:40 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A0222BAEF;
+	Mon,  2 Sep 2024 02:11:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="aYI8qhf2"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01A8C8F6C;
-	Mon,  2 Sep 2024 02:10:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F5BC8F6C;
+	Mon,  2 Sep 2024 02:11:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725243040; cv=none; b=L7KizZUqEQx1vlHBql4aE0vcuhhrPIsRqRrLzyGfxB/O0dhFBrix3Bt9mqOzOWjaE8kkEiockKPCxC5hnOqOd18eEj2QjCm9+hcqHCn1SeEQYOz1QcFh7fr0THmtLJvZLeTtngEj0MhWkDKZcIA/D3ffozpHqu4vn/zV12vUlOQ=
+	t=1725243109; cv=none; b=T6IzmSyeGyOE3PTdYfHkgfeFFxU5yA9XLd1AMQGYZK7Onx2va9qhXbpHtDUqYySb9nynpjj5TXM5OIJbevRCHeSa6D1pLgqEmoD+yKc5ywhXVctcww7RbHff1i7q8umFCI5C9+fnOwWKuVt4DqQlPHAH4s/v2dignAqOR8wd+lQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725243040; c=relaxed/simple;
-	bh=NywgQX5uVanACwXn0eOYKwiWw3QHEo8iwJBzG8PXgfg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kDv8SQsWbUHvf0raV9trcaVtXT7fUBDpM2RH0RgudpndfFNW35W3fTF8faNP6sf90prLqU0dtPFlPTJeRnz991/mDrNC4l6RMWigFM5Dwwy4X5PiFLnt0w2MEp2uJVxBhXxOPm4Ydp664anUeAd+WeGbI+IqG1Cgpr5iHQ1dSZw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B817C4CEC3;
-	Mon,  2 Sep 2024 02:10:38 +0000 (UTC)
-Message-ID: <9bc18998-821b-42d1-8c6b-abc528be33f2@linux-m68k.org>
-Date: Mon, 2 Sep 2024 12:10:35 +1000
+	s=arc-20240116; t=1725243109; c=relaxed/simple;
+	bh=CYuFYJUNAPQZE/t9XwqerHX+6ScGFfgnN55lm/Pa4Bk=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=N6wPm6sAfZ/rKF6ZGjY+vVGcnkRsnVCnJlEz1M2WJV0R1Z35JmATKJp+RJUMdZ2DIicuXNq3SasBlkaSvprXTCdgP9/k88plZtPl9uljkuQxL2CVhY/lS31t8mxPNdkszxpWGRLZiMsJLOqsAcQQgxcpyGrr1sOTDFllOLqDnBs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=aYI8qhf2; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1725243102;
+	bh=9VVl1NddvHtnzZAKEpaYIgAMWRRqbcJqWNNCCf+BMTo=;
+	h=Date:From:To:Cc:Subject:From;
+	b=aYI8qhf2BPz3pTv6vLSh1i8DBN6e66bVTMqizCfB0Xq/zosmcnNwGE1MDElNM1kyt
+	 EQottIom56zS9/3Sryv26XpRborrewg0RQerDpgn6d0kU9RTd3KGbYT8pktGMWf/Lo
+	 LXdPaOEzdeiCkxBepNhCiDUGIHUqsKqNw8EcyIQfN14XqenKXRgE41gavra1D0efTQ
+	 rs5OW0aveGVrIlBcaYUxQOdBYdETNfAbPoMCRfrqSp5wZBJ52k6vdGg7aO58sLBATa
+	 iGhvt0tDi9/WfNX9J9IpBrGkt55/0CACUM/Pfu+zd99cenOzK+1NbK3h6PcsQ+lZ5W
+	 7X3FOsSwkvAog==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Wxsgx0Z06z4x9G;
+	Mon,  2 Sep 2024 12:11:40 +1000 (AEST)
+Date: Mon, 2 Sep 2024 12:11:40 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Palmer Dabbelt
+ <palmer@dabbelt.com>, Paul Walmsley <paul@pwsan.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>, Palmer Dabbelt
+ <palmer@rivosinc.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+ Ryo Takakura <takakura@valinux.co.jp>, Sunil V L <sunilvl@ventanamicro.com>
+Subject: linux-next: manual merge of the pm tree with the risc-v tree
+Message-ID: <20240902121140.51cc49c9@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH][next] m68k: remove trailing space after \n newline
-To: Colin Ian King <colin.i.king@gmail.com>,
- Geert Uytterhoeven <geert@linux-m68k.org>, linux-m68k@lists.linux-m68k.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240901155846.142816-1-colin.i.king@gmail.com>
-Content-Language: en-US
-From: Greg Ungerer <gerg@linux-m68k.org>
-In-Reply-To: <20240901155846.142816-1-colin.i.king@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; boundary="Sig_/U4+eS=4WkyHYdJpRfvBEEE5";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-Hi Colin,
+--Sig_/U4+eS=4WkyHYdJpRfvBEEE5
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-On 2/9/24 01:58, Colin Ian King wrote:
-> There is a extraneous space after a newline in a pr_debug message.
-> Remove it.
-> 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+Hi all,
 
-Thanks, looks good.
-I have applied to for-next branch of m68knommu git tree.
+Today's linux-next merge of the pm tree got a conflict in:
 
-Regards
-Greg
+  arch/riscv/include/asm/irq.h
 
+between commit:
 
-> ---
->   arch/m68k/kernel/setup_no.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/arch/m68k/kernel/setup_no.c b/arch/m68k/kernel/setup_no.c
-> index 37fb663559b4..c926da9d5ec2 100644
-> --- a/arch/m68k/kernel/setup_no.c
-> +++ b/arch/m68k/kernel/setup_no.c
-> @@ -138,7 +138,7 @@ void __init setup_arch(char **cmdline_p)
->   
->   	pr_debug("KERNEL -> TEXT=0x%p-0x%p DATA=0x%p-0x%p BSS=0x%p-0x%p\n",
->   		 _stext, _etext, _sdata, _edata, __bss_start, __bss_stop);
-> -	pr_debug("MEMORY -> ROMFS=0x%p-0x%06lx MEM=0x%06lx-0x%06lx\n ",
-> +	pr_debug("MEMORY -> ROMFS=0x%p-0x%06lx MEM=0x%06lx-0x%06lx\n",
->   		 __bss_stop, memory_start, memory_start, memory_end);
->   
->   	memblock_add(_rambase, memory_end - _rambase);
+  f15c21a3de1b ("RISC-V: Enable IPI CPU Backtrace")
+
+from the risc-v tree and commit:
+
+  f8619b66bdb1 ("irqchip/riscv-intc: Add ACPI support for AIA")
+
+from the pm tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc arch/riscv/include/asm/irq.h
+index 8330d16b05b5,7e9a84a005ed..000000000000
+--- a/arch/riscv/include/asm/irq.h
++++ b/arch/riscv/include/asm/irq.h
+@@@ -12,11 -12,8 +12,13 @@@
+ =20
+  #include <asm-generic/irq.h>
+ =20
++ #define INVALID_CONTEXT UINT_MAX
++=20
+ +#ifdef CONFIG_SMP
+ +void arch_trigger_cpumask_backtrace(const cpumask_t *mask, int exclude_cp=
+u);
+ +#define arch_trigger_cpumask_backtrace arch_trigger_cpumask_backtrace
+ +#endif
+ +
+  void riscv_set_intc_hwnode_fn(struct fwnode_handle *(*fn)(void));
+ =20
+  struct fwnode_handle *riscv_get_intc_hwnode(void);
+
+--Sig_/U4+eS=4WkyHYdJpRfvBEEE5
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmbVHtwACgkQAVBC80lX
+0Gx/BAf/S0laIaLxR9VuPFZy3CdHnRi8yK84gfMIchYM9VV4qlH9cTtSOdjKPnZ1
+IzjxKpl9mkmiIr8Z9tqRpKTvqBj2gU6SCVghKsPtWWhNIeCS2+votY5CM0drQW4A
+xHpiYYk5l95BLTnOfAAf57Hcd4Y5ExCd23MJxeH2DFiD7IK9briwje2ew0mmjaes
+51RYOasm9FcWP9Y5UetunsViHRoWhTEzHKEGGCTCDmGGeUqjvGawjUG+Uqsspm1G
+miBUgnJF74azQxWKme5Lt9vhvYyf3p+S1ZjRILJnoEJlFuge07Y5cj/zTMV2PgVb
+t0Ehqjz56hrtCj/GC/BxSwKyF5+dgA==
+=xapy
+-----END PGP SIGNATURE-----
+
+--Sig_/U4+eS=4WkyHYdJpRfvBEEE5--
 
