@@ -1,171 +1,190 @@
-Return-Path: <linux-kernel+bounces-311338-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311339-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 342079687BD
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 14:43:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D24899687BF
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 14:43:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B61111F22EED
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 12:43:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 00B0F1C21C69
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 12:43:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B278B19C551;
-	Mon,  2 Sep 2024 12:43:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wPt4PGPJ"
-Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD3CC19C556;
+	Mon,  2 Sep 2024 12:43:35 +0000 (UTC)
+Received: from out28-98.mail.aliyun.com (out28-98.mail.aliyun.com [115.124.28.98])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80D28185B6B
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 12:43:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03AD019E99E;
+	Mon,  2 Sep 2024 12:43:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.28.98
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725281000; cv=none; b=YVsNzUyMULANVJYCGvuskiR3SvfTONAZ/sqF3FCvtvh/ZFUDoL+YFE/i1OV6+cEdGS/oE/1cX5gLvd6QmhKoGiWxXYfCHSL8WgdXMMHAc7PxnZYY4IthkPGNuhTNMB4B1fXZHdEYTKDtRHDbv2AGDERYcafafYkd7iR9hbOKINQ=
+	t=1725281015; cv=none; b=kyWW2pR52kGvKnF8vBFtRbriIoe+yjidg8M469GWvmxP3xx2wUtyQoRKU+PQbxN0h54F5oQ/VIAK9dFh6ry1jxb1gg8QBfTkpZO3JnHhgZRBUMoDSdAsugCEf9pLOrs2KS205x/ef2PYQ0Ht7/cj1AQeej8lheyaELDbsjUgLws=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725281000; c=relaxed/simple;
-	bh=XmtoA1dxOzDS6roQ6BNIs04PwekYRQD9RJ6htg3/v6I=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IbUJF9z7CcFvy4tZHjnvbBUJtYdC8/+V5SoiaYd1Hk696auKX8OmJEZbLadU3TNjAfxWC+Odjh4WxI6z9eOu+Q+MpMd/Sp1Arh5HMEHhEAPwUHZGoeEUGcdsCLydRD20ySQctnoys/BYpj7BCo3yopP48nwX57gOTNuCUOmHsSI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wPt4PGPJ; arc=none smtp.client-ip=209.85.216.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-2d8f06c2459so372315a91.0
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2024 05:43:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1725280998; x=1725885798; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=XmtoA1dxOzDS6roQ6BNIs04PwekYRQD9RJ6htg3/v6I=;
-        b=wPt4PGPJRvBxUgSLs3i8A5Tu98Y0IvbWPQHKJdTxk+RwYoxYS9kMkvROVH8C4uL2vD
-         TXABtVhxPJzdR//P6r3YJBByUliNjIHd9wtZ6P+g/zdOuu2D62laXRpxPzo/SbJlAkaw
-         CDRfEdQkiUyY0L/KAhXEI82L0pOJctErhxDNLMhkdcrAgRhO3mY4rk1vXP0Lg728akyw
-         ljKnBFN4+6YzeFKpcpViXiK1+vp395xGPw9WPmJQtII6e8dv8wd/uFqqlfVs8tbZ/XLN
-         nDKxSHqJcCYDyD69dFJDG4O5c5ugHKRls9jrWHIMYp6/wRGLkzHvrgB7aLaC8Cvd3mBZ
-         cUFQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725280998; x=1725885798;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=XmtoA1dxOzDS6roQ6BNIs04PwekYRQD9RJ6htg3/v6I=;
-        b=lbe7ncGrH2s3Eg/jdtx1bkRuuf1lqkJkPs5c9nFzzyVKVZkVG66fjvpFC3czPtuitW
-         L6cfQ+Z/H2KCVXctvcFh79Tzt/NsjQsbU9YUE3fjT/qKtZQ1JD6M07HB7s5F8D3pj7Bo
-         /mgb6yrLO6S9RJcKTbSlNCGCb0yLiaX6pi1Y1XMQZJQaaRoYcF1mPqDAslaV4lWsxFcg
-         PCD27i2Fby6AoBK/haEM5v2+zAxnMKAybAzZmkCr20aJtdPxPMXcG5q3/KKJQfSr9h1D
-         j0oUK+KyzfmwQqpvtEcZVokNYg+y2pEfC0E4vjWCA5Xs833FV9W+QXB6urgu3mu984aj
-         6kog==
-X-Forwarded-Encrypted: i=1; AJvYcCXQDKi2M/Qdv1cLeUEFaZ4xZbWzD4e76lhISKaXsp4BzDmSSGXJNr1F4UEvLpQncR9Um65jvVeuP9LWpn0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxMIJkiTLAUgXP73LwQGm0fSTPpiEyaujIHJcjI7S0obGxvIy4U
-	iYOx2/50fRQD0sXT0RSw05yIramblUdGFZNb+/AytNWRwT1jFUXAtPyIKQRHFx9zykn6PlqwBLn
-	W0wfC5L380reTjqJxFhuQwwPQ0efTJHz/8vL83g==
-X-Google-Smtp-Source: AGHT+IEtSBzuiPn8cwPFsnMtjISfPJE3LhaEPiYOtkJUA/snvFWxhOgQplzmnq8OTq6PPWXLEpJ7D5AgzgWDNRQ3Psc=
-X-Received: by 2002:a17:90a:67cc:b0:2cf:2bf6:b030 with SMTP id
- 98e67ed59e1d1-2d8564cb306mr12854219a91.33.1725280997722; Mon, 02 Sep 2024
- 05:43:17 -0700 (PDT)
+	s=arc-20240116; t=1725281015; c=relaxed/simple;
+	bh=QqLgtho2VPe4uk3Z/TNXYAPGt2xMCUiSaF4pv/07XkA=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=C34AYOaD4C5GjA/yP+PW4/+G8VOoWAE+2chB7KM7lQB+G5J3/1mQHtLAH5svJ1IsXSEducvo2zXuyVO6OajXhdV3N+tiCGoDpSXCT8OvGc+TNKujLSENnvRwvI5yRKj41uDB5tq6t7qM/NyG6mRrGiaZn1hj991DvyUdp6A12ZM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inceptio.ai; spf=pass smtp.mailfrom=inceptio.ai; arc=none smtp.client-ip=115.124.28.98
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inceptio.ai
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inceptio.ai
+Received: from localhost.localdomain(mailfrom:junjie.wan@inceptio.ai fp:SMTPD_---.Z8k9nMo_1725280998)
+          by smtp.aliyun-inc.com;
+          Mon, 02 Sep 2024 20:43:23 +0800
+From: Wan Junjie <junjie.wan@inceptio.ai>
+To: horms@kernel.org
+Cc: davem@davemloft.net,
+	edumazet@google.com,
+	ioana.ciornei@nxp.com,
+	junjie.wan@inceptio.ai,
+	kuba@kernel.org,
+	linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org,
+	pabeni@redhat.com
+Subject: Re: [PATCH v2] dpaa2-switch: fix flooding domain among multiple vlans
+Date: Mon,  2 Sep 2024 20:43:18 +0800
+Message-Id: <20240902124318.263883-1-junjie.wan@inceptio.ai>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20240902105714.GH23170@kernel.org>
+References: <20240902105714.GH23170@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240728184551.42133-1-qyousef@layalina.io> <ca6b1db0-37d9-462e-87e4-d3bbd5eec7a3@arm.com>
- <CAKfTPtBWLe4hMBhJeSqvoW10dAF3Bgj+zcYGMgBfwUhkgytkEQ@mail.gmail.com>
- <CAKfTPtAJNjUe=4eQxq0M6==6O7dtJrw6rtwE6-xaWMJdSmfKcA@mail.gmail.com>
- <20240901175149.46yfk335niccmfq4@airbuntu> <CAKfTPtBahrD5L8CbB4BijAvnwq=yG375TWDUuEvNipyTDYGQTA@mail.gmail.com>
- <24a4a74f-0d46-420a-894c-9aa01ea4abcc@arm.com>
-In-Reply-To: <24a4a74f-0d46-420a-894c-9aa01ea4abcc@arm.com>
-From: Vincent Guittot <vincent.guittot@linaro.org>
-Date: Mon, 2 Sep 2024 14:43:06 +0200
-Message-ID: <CAKfTPtBjJ4uN5CgBjCEPL198ME_TKgQu6bpVVU4-DKY6CNm4BQ@mail.gmail.com>
-Subject: Re: [PATCH v7] sched: Consolidate cpufreq updates
-To: Christian Loehle <christian.loehle@arm.com>
-Cc: Qais Yousef <qyousef@layalina.io>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Viresh Kumar <viresh.kumar@linaro.org>, Ingo Molnar <mingo@kernel.org>, 
-	Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>, 
-	Steven Rostedt <rostedt@goodmis.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
-	Valentin Schneider <vschneid@redhat.com>, Hongyan Xia <hongyan.xia2@arm.com>, 
-	John Stultz <jstultz@google.com>, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-On Mon, 2 Sept 2024 at 14:35, Christian Loehle <christian.loehle@arm.com> wrote:
+> On Mon, Sep 02, 2024 at 09:50:51AM +0800, Wan Junjie wrote:
+> > Currently, dpaa2 switch only cares dst mac and egress interface
+> > in FDB. And all ports with different vlans share the same FDB.
+> > 
+> > This will make things messed up when one device connected to
+> > dpaa2 switch via two interfaces. Ports get two different vlans
+> > assigned. These two ports will race for a same dst mac entry
+> > since multiple vlans share one FDB.
+> > 
+> > FDB below may not show up at the same time.
+> > 02:00:77:88:99:aa dev swp0 self
+> > 02:00:77:88:99:aa dev swp1 self
+> > But in fact, for rules on the bridge, they should be:
+> > 02:00:77:88:99:aa dev swp0 vlan 10 master br0
+> > 02:00:77:88:99:aa dev swp1 vlan 20 master br0
+> > 
+> > This patch address this by borrowing unused form ports' FDB
+> > when ports join bridge. And append offload flag to hardware
+> > offloaded rules so we can tell them from those on bridges.
+> > 
+> > Signed-off-by: Wan Junjie <junjie.wan@inceptio.ai>
 >
-> On 9/2/24 13:30, Vincent Guittot wrote:
-> > On Sun, 1 Sept 2024 at 19:51, Qais Yousef <qyousef@layalina.io> wrote:
-> >>
-> >> On 08/13/24 10:27, Vincent Guittot wrote:
-> >>> On Tue, 13 Aug 2024 at 10:25, Vincent Guittot
-> >>> <vincent.guittot@linaro.org> wrote:
-> >>>>
-> >>>> On Mon, 5 Aug 2024 at 17:35, Christian Loehle <christian.loehle@arm.com> wrote:
-> >>>>> Hi Qais,
-> >>>>> the idea of SCHED_CPUFREQ_FORCE_UPDATE and the possiblity of spamming
-> >>>>> freq updates still bothered me so let me share my thoughts even though
-> >>>>> it might be niche enough for us not to care.
-> >>>>>
-> >>>>> 1. On fast_switch systems, assuming they are fine with handling the
-> >>>>> actual updates, we have a bit more work on each context_switch() and
-> >>>>> some synchronisation, too. That should be fine, if anything there's
-> >>>>> some performance regression in a couple of niche cases.
-> >>>>>
-> >>>>> 2. On !fast_switch systems this gets more interesting IMO. So we have
-> >>>>> a sugov DEADLINE task wakeup for every (in a freq-diff resulting)
-> >>>>> update request. This task will preempt whatever and currently will
-> >>>>> pretty much always be running on the CPU it ran last on (so first CPU
-> >>>>> of the PD).
-> >>>>
-> >>>> The !fast_switch is a bit of concern for me too but not for the same
-> >>>> reason and maybe the opposite of yours IIUC your proposal below:
-> >>>>
-> >>>> With fast_switch we have the following sequence:
-> >>>>
-> >>>> sched_switch() to task A
-> >>>> cpufreq_driver_fast_switch -> write new freq target
-> >>>> run task A
-> >>>>
-> >>>> This is pretty straight forward but we have the following sequence
-> >>>> with !fast_switch
-> >>>>
-> >>>> sched_switch() to task A
-> >>>> queue_irq_work -> raise an IPI on local CPU
-> >>>> Handle IPI -> wakeup and queue sugov dl worker on local CPU (always
-> >>>> with 1 CPU per PD)
-> >>>> sched_switch() to sugov dl task
-> >>>> __cpufreq_driver_target() which can possibly block on a lock
-> >>>> sched_switch() to task A
-> >>>> run task A
-> >>>>
-> >>>
-> >>> sent a bit too early
-> >>>
-> >>>> We can possibly have 2 context switch and one IPi for each "normal"
-> >>>> context switch which is not really optimal
-> >>>
-> >>> It would be good to find a way to skip the spurious back and forth
-> >>> between the normal task and sugov
-> >>
-> >> Hmm I think we use affinity to keep the sugov running on policy->related_cpus.
-> >> Relaxing this will make it less of a problem, but won't eliminate it.
-> >
-> > yes, but it's not a problem of relaxing affinity here
-> >
-> > The problem is that the 1st switch to task A will be preempted by
-> > sugov so the 1st switch is useless. You should call cpufreq_update
-> > before switching to A so that we skip the useless switch to task A and
-> > directly switch to sugov 1st then task A
+> Hi Wan Junjie,
 >
-> Not necessarily, if you relax them to all CPUs the sugov tasks for all PDs
-> can run on CPU0, no matter which CPU task A is on.
-
-You can't always run sugov on other CPUs than those impacted by the freq change
-
+> Some minor feedback from my side.
 >
-> There is some benefit on having all sugov threads on the littles for many
-> platforms (i.e. restricting them), making a good mainline policy out of
-> it isn't quite so obvious to me.
+> ...
 
-This is a particular case whereas we want this to work in all cases
+Hi Simon Horman,
 
->
+Thanks for your commnets.
+
+> > diff --git a/drivers/net/ethernet/freescale/dpaa2/dpaa2-switch.c b/drivers/net/ethernet/freescale/dpaa2/dpaa2-switch.c
+> > index a293b08f36d4..217c68bb0faa 100644
+> > --- a/drivers/net/ethernet/freescale/dpaa2/dpaa2-switch.c
+> > +++ b/drivers/net/ethernet/freescale/dpaa2/dpaa2-switch.c
+> > @@ -25,8 +25,17 @@
+> >  
+> >  #define DEFAULT_VLAN_ID			1
+> >  
+> > -static u16 dpaa2_switch_port_get_fdb_id(struct ethsw_port_priv *port_priv)
+> > +static u16 dpaa2_switch_port_get_fdb_id(struct ethsw_port_priv *port_priv, u16 vid)
+> 
+> This, and several other lines in this patch, could be trivially
+> line wrapped in order for them to be <= 80 columns wide, as is
+> still preferred in Networking code.
+> 
+> This and a number of other minor problems are flagged by:
+> ./scripts/checkpatch.pl --strict --codespell --max-line-length=80
+
+It is hard to keep all lines limited to the length of 80 since some function
+names are really long. I have tried to make the line length to 85 without
+breaking some if conditions into multiple lines. You will see in v3.
+
+> >  {
+> > +	struct ethsw_core *ethsw = port_priv->ethsw_data;
+> > +	int i;
+> > +
+> > +	if (port_priv->fdb->bridge_dev) {
+> > +		for (i = 0; i < ethsw->sw_attr.max_fdbs; i++)
+> > +			if (ethsw->fdbs[i].vid == vid)
+> > +				return ethsw->fdbs[i].fdb_id;
+> > +	}
+> > +	/* Default vlan, use port's fdb id directly */
+> >  	return port_priv->fdb->fdb_id;
+> >  }
+> >  
+> 
+> ...
+> 
+> > @@ -191,10 +212,38 @@ static void *dpaa2_iova_to_virt(struct iommu_domain *domain,
+> >  static int dpaa2_switch_add_vlan(struct ethsw_port_priv *port_priv, u16 vid)
+> >  {
+> >  	struct ethsw_core *ethsw = port_priv->ethsw_data;
+> > +	struct net_device *netdev = port_priv->netdev;
+> > +	struct dpsw_fdb_cfg fdb_cfg = {0};
+> >  	struct dpsw_vlan_cfg vcfg = {0};
+> > +	struct dpaa2_switch_fdb *fdb;
+> > +	u16 fdb_id;
+> >  	int err;
+> >  
+> > -	vcfg.fdb_id = dpaa2_switch_port_get_fdb_id(port_priv);
+> > +	/* If ports are under a bridge, then
+> > +	 * every VLAN domain should use a different fdb.
+> > +	 * If ports are standalone, and
+> > +	 * vid is 1 this should reuse the allocated port fdb.
+> > +	 */
+> > +	if (port_priv->fdb->bridge_dev) {
+> > +		fdb = dpaa2_switch_fdb_get_unused(ethsw);
+> > +		if (!fdb) {
+> > +			/* if not available, create a new fdb */
+> > +			err = dpsw_fdb_add(ethsw->mc_io, 0, ethsw->dpsw_handle,
+> > +					   &fdb_id, &fdb_cfg);
+> > +			if (err) {
+> > +				netdev_err(netdev, "dpsw_fdb_add err %d\n", err);
+> > +				return err;
+> > +			}
+> 
+> fdb is still NULL here. Based on my reading of dpaa2_switch_port_init()
+> I think you need the following. Possibly also with an error check.
+> 
+> 			fdb = dpaa2_switch_fdb_get_unused(ethsw);
+> 
+> Flagged by Smatch.
+
+Nice catch. The fdb is not assigned anyway. And num of fdbs is limited by HW.
+So here I can do a judge instead of creating a new one.
+	if (port_priv->fdb->bridge_dev) {
+		fdb = dpaa2_switch_fdb_get_unused(ethsw);
+		if (!fdb) {
+			netdev_err(netdev, "vlan nums reach max_fdbs limits\n");
+			return -ENOENT;
+		}
+
+Thank you.
+
+> > +			fdb->fdb_id = fdb_id;
+> > +		}
+> > +		fdb->vid = vid;
+> > +		fdb->in_use = true;
+> > +		fdb->bridge_dev = NULL;
+> > +		vcfg.fdb_id = fdb->fdb_id;
+> > +	} else {
+> > +		/* Standalone, port's private fdb shared */
+> > +		vcfg.fdb_id = dpaa2_switch_port_get_fdb_id(port_priv, vid);
+> > +	}
+> >  	err = dpsw_vlan_add(ethsw->mc_io, 0,
+> >  			    ethsw->dpsw_handle, vid, &vcfg);
+> >  	if (err) {
+> 
+> ...
+
 
