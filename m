@@ -1,109 +1,80 @@
-Return-Path: <linux-kernel+bounces-310968-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310969-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7017968369
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 11:36:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB0E596836B
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 11:37:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 132F51C222A3
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 09:36:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 601661F22239
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 09:37:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD0491D1F6B;
-	Mon,  2 Sep 2024 09:36:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B340E1D1F6B;
+	Mon,  2 Sep 2024 09:36:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="ivRxZIKP"
-Received: from out30-97.freemail.mail.aliyun.com (out30-97.freemail.mail.aliyun.com [115.124.30.97])
+	dkim=pass (2048-bit key) header.d=tlmp.cc header.i=@tlmp.cc header.b="es0FvngQ"
+Received: from mail.tlmp.cc (unknown [148.135.17.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D400179654
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 09:36:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.97
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7A4318661C
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 09:36:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.135.17.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725269803; cv=none; b=ttsStKa9vT1EFYmLn+Fqrv/Zo91FdCy8mi1ywK1MAwfPDw6V2EScwafGmUZHeCETCu+dHgyi1PoWuQ2t8XtAIpfZQb1pyJd0ahVtKfjsKEjolxYUwHMfn2yUihKXLM19IsEwbmeFCFHVuYVX9QpM8S8oPwM0QaVnA3ix1qOmm4k=
+	t=1725269816; cv=none; b=QvtPJ0+yIbPJK0/wTIVH880u50J3mzWO1Jbw0MLhycbiate6lJBhOuKU1/3WtNcdS82Gm+AK1SuzXcBhit8m74GOH7+lTVqkVUvKNQSL+d4McGgAtXX41Oy18L5mM6Uq9ObzBMLOeuniJ6cjDKpilcQDY2g+Z1iDUGDGePIsXS0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725269803; c=relaxed/simple;
-	bh=4Uc95Up5EPHLOZHOhrukaU4Z0lHX7dRAuCNVi60dbfk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YbXCH0O66SaEEoFDNvsPlAyjyOekil+SDRzMeVt5bQxAbTvlL50Ynu0hZJnxoqEyO7dArTJpfvZJjDvkKMpjmi7poXR11EE8EHUm9Nk26cHIoVmmo52biZ2jKW5XKkZPTGJysWdLp4ClbbBKKRsIL/Ew3QHEpvuQEAXi9bncU9k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=ivRxZIKP; arc=none smtp.client-ip=115.124.30.97
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1725269799; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=g9V99G/fQuvajLco/VpGaPuxaTwxa+LXYCFJSoYupVA=;
-	b=ivRxZIKPmUaf5a+IZxbJ4JIFIfydV7bFr7MFRm8Y9rUISZTHR2RhY0DjjL7aNORB3iru1S5URECneKTfhJDQV6u5GkeUyyH4eXuApHhUPt00nc7thmU7zSvSCvOIFeFQH53hluJCFkScDNd3wiZrK5I+WKFbSTCBCXXdq1+W/+A=
-Received: from 30.74.144.122(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WE74Bmk_1725269797)
-          by smtp.aliyun-inc.com;
-          Mon, 02 Sep 2024 17:36:38 +0800
-Message-ID: <2cfb4e1a-d9be-47ab-b92d-94cd65bfec43@linux.alibaba.com>
-Date: Mon, 2 Sep 2024 17:36:36 +0800
+	s=arc-20240116; t=1725269816; c=relaxed/simple;
+	bh=rnuXzdgCGoImph8Ipq8xud3DbZM8UBv3EMrMcvHGWbY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UZfZS13hNONMvjRkhP3hcSMWh/MrYw6Sf6HyQ+tgA9XLIGxF7OVzDCDGG6fKHWP/gh/HXfAlQnXnz1FuKBvuDkPVrGN3xPK+uwA7aZoRizW/bUsm+K/s1SdPGnyMtRr+J2J7pfM9vjjp4y2E4fu1B3n3htMdwaiG2yOYHDqe09s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=tlmp.cc; spf=pass smtp.mailfrom=tlmp.cc; dkim=pass (2048-bit key) header.d=tlmp.cc header.i=@tlmp.cc header.b=es0FvngQ; arc=none smtp.client-ip=148.135.17.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=tlmp.cc
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tlmp.cc
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 39EAE6983C;
+	Mon,  2 Sep 2024 05:36:51 -0400 (EDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tlmp.cc; s=dkim;
+	t=1725269813;
+	h=from:reply-to:subject:date:message-id:to:cc:mime-version:content-type:
+	 in-reply-to:references; bh=EqEGzAiSFpj6BRzXs2WVH89o1of8MQ5nzTl56kfrrR8=;
+	b=es0FvngQszJgDVQeFkoupklBku32Kv6QHNpv43O/egwQufhYhjLnrkf/mvaS5Tjs9elqtT
+	KNkU5j7JzQuUYxX934RDkWsiLG4fnq5MCXXpX5zDiSPojOzfHvXTLGRjkw3ALstI+eNVFd
+	4orPj67gx0mgUl1HPMg8cbCkv1voNJqzZd4qThczllznSrmYc2lI+I7k1l6EFWp9binNd4
+	rbZAj+HUSFR8ek06dIT29/T1mTgDCE4dhaZ/xRBwU5ua1DKAc8cw4oVv/gA+jvt0aySOdA
+	5iLG4Y97OXMAz1AK8jc5LUWaHPVVa0K0ypK44ScCC8QEhW/IHauo5l1ElaBaNw==
+Date: Mon, 2 Sep 2024 17:36:48 +0800
+From: Yiyang Wu <toolmanp@tlmp.cc>
+To: Gao Xiang <hsiangkao@linux.alibaba.com>
+Cc: linux-erofs@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V4 2/2] erofs: refactor read_inode calling convention
+Message-ID: <3qxpexpa6gd2yc2ez2miar2vhdswbj6juxc6zdawyktpjorwds@mljzzugbspxc>
+Reply-To: ca8dea24-1ef2-46a8-bfca-72aeffa1f6e6@linux.alibaba.com
+References: <20240902083147.450558-1-toolmanp@tlmp.cc>
+ <20240902083147.450558-3-toolmanp@tlmp.cc>
+ <ca8dea24-1ef2-46a8-bfca-72aeffa1f6e6@linux.alibaba.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH] mm: control mthp per process/cgroup
-To: Nanyong Sun <sunnanyong@huawei.com>, Matthew Wilcox <willy@infradead.org>
-Cc: hughd@google.com, akpm@linux-foundation.org, david@redhat.com,
- ryan.roberts@arm.com, baohua@kernel.org, ioworker0@gmail.com,
- peterx@redhat.com, ziy@nvidia.com, wangkefeng.wang@huawei.com,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <20240816091327.54183-1-sunnanyong@huawei.com>
- <Zr-XVn1ExJ7_LSLS@casper.infradead.org>
- <3ac1e404-a531-a380-7a2f-6adae4640da6@huawei.com>
-From: Baolin Wang <baolin.wang@linux.alibaba.com>
-In-Reply-To: <3ac1e404-a531-a380-7a2f-6adae4640da6@huawei.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ca8dea24-1ef2-46a8-bfca-72aeffa1f6e6@linux.alibaba.com>
+X-Last-TLS-Session-Version: TLSv1.3
 
-
-
-On 2024/8/19 13:58, Nanyong Sun wrote:
-> On 2024/8/17 2:15, Matthew Wilcox wrote:
+On Mon, Sep 02, 2024 at 04:53:02PM GMT, Gao Xiang wrote:
 > 
->> On Fri, Aug 16, 2024 at 05:13:27PM +0800, Nanyong Sun wrote:
->>> Now the large folio control interfaces is system wide and tend to be
->>> default on: file systems use large folio by default if supported,
->>> mTHP is tend to default enable when boot [1].
->>> When large folio enabled, some workloads have performance benefit,
->>> but some may not and some side effects can happen: the memory usage
->>> may increase, direct reclaim maybe more frequently because of more
->>> large order allocations, result in cpu usage also increases. We observed
->>> this on a product environment which run nginx, the pgscan_direct count
->>> increased a lot than before, can reach to 3000 times per second, and
->>> disable file large folio can fix this.
->> Can you share any details of your nginx workload that shows a regression?
->> The heuristics for allocating large folios are completely untuned, so
->> having data for a workload which performs better with small folios is
->> very valuable.
->>
->> .
-> The RPS(/Requests per second/) which is the performance metric of nginx 
-> workload has no
-> regression(also no improvement)，we just observed that  pgscan_direct 
-> rate is much higher
-> with large folio.
-> So far, we have tested some workloads' benchmark, some did not have 
-> performance improvement
-> but also did not have regression.
-> In a production environment, different workloads may be deployed on a 
-> machine. Therefore,
-> do we need to add a process/cgroup level control to prevent workloads 
-> that will not have
-> performance improvement from using mTHP? In this way, the memory 
-> overhead and direct reclaim
-> caused by mTHP can be avoided for those process/cgroup.
-
-OK. So no regression with mTHP, seems just some theoretical analysis.
-
-IMHO, it would be better to evaluate your 'per-cgroup mTHP control' idea 
-on some real workloads, and gather some data to evaluation, which can be 
-more convincing.
-
-Just my 2 cents:)
+> I don't quite like this new line too, since
+> it's already simple enough.
+> 
+> New line is used to seperate different logic,
+> not just different block.  Yet that is my
+> own perference though.
+> 
+I have refactored all of them and rebased the patch to dev-test branch.
+Please check it out.
+> Thanks,
+> Gao Xiang
+Best Regards,
+Yiyang Wu
 
