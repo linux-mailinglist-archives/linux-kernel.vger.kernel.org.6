@@ -1,164 +1,372 @@
-Return-Path: <linux-kernel+bounces-311213-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311214-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FF6796862A
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 13:25:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59E6496862B
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 13:26:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 81AA61C22A23
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 11:25:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 839AFB212AE
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 11:26:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24CE7185939;
-	Mon,  2 Sep 2024 11:25:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C486D185924;
+	Mon,  2 Sep 2024 11:26:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="HysFPBmK"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="v2Hs3Nz0"
+Received: from out30-110.freemail.mail.aliyun.com (out30-110.freemail.mail.aliyun.com [115.124.30.110])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3373E13B2A8;
-	Mon,  2 Sep 2024 11:24:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D18031428E0
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 11:26:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.110
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725276302; cv=none; b=iVc6/7nGbjI9dBDqyTneu8PCT1cH7bxaj1HlxZa+o8j3AOIrWL5sLKVm65VrR3Ek1S7arSoEaSef5jRMgHPW+mkHvEwriDx1MEC55+EMwYvs+XH9iRwRev93aMw63YPvZ1M2fliGDMA9eHNSk4XNqGQwGbjcg/98zCUAOVfc5+Y=
+	t=1725276371; cv=none; b=PmnBPXuuWZmgw1T8++4foTms8Vilg3ms6KfULkJsjbCLxjwc5u1cl3WELfCHe7jdu5DL1um8FEldO9WIc0J1bgaMzIXqKih+ZRIekEpM4b7z0kmrrRNtl7qWBMaPUsQW6iyrmIeERcjz6P4NffziJISq9XjQRiDJoQ8e5iTJAkE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725276302; c=relaxed/simple;
-	bh=43N3eERPpZSiAWFa7ZHGO+ZY8fm7EsglftDcQeTsfzY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pZ9/c6pIi+a8icaptMyJQebPVhceh9r7GEnc513gxQ5RGBonoTEgNDWCU0RAcoBY7Exf2RePo+IugtioRw5YwkCyNWqBLbOVGxE+qhJ9OSrwLKkvC5mqyu6dVba4kM0p4Ex6sng10Ra3JbJp5FeTC8rm3a5FaYuiYMyW3YNLZ8k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=HysFPBmK; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id A5C7E40E0191;
-	Mon,  2 Sep 2024 11:24:55 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id MoBoLPHXyDDP; Mon,  2 Sep 2024 11:24:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1725276291; bh=sZg3hbW3j7qspX2oVQJRU4r10UvGMmdPEa/Jk2S1BgU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HysFPBmK+n8s+O2jLtwRbrVJh+wGaJCaP7cwJ7rpbErkx24ttZW81lVQWcnN/dJyx
-	 kSJwNZQ8s+p3LEwCMoa16nNmxN1vOEMj62x5I46Ro6LpRHz7h5vgYn17IJti1OmXBo
-	 mKH6K1K7qupfMd3Mxq24T8CoRDgh1e6ZwxsPWW53pvR513fwAuMTZ0N/hxowiCBgx8
-	 BPxxDN2/EnquHzmt9Jp3BE9pnqrG/BOogMrRkQpQz1+emOow3hdkV0eDKmrX/+QnXX
-	 sMdWQteJgZ/yfVeSYfLNr5E0SwdHEoy+fZkdskL0UkRdZWdbQ0wwqaApdbbVmlTSPF
-	 70l0sME0H5PtSy7VuGSzqh8eDqW3sS/LeM6KTs4BaVr8tXvJN3J2doSQwjjHQw2lZP
-	 /hLK5nZ/qRcRBuDojGABw8SGh5O8vXpY76qlB9sNtvsQdx3wEHiCa0YNm9PFlLGXBY
-	 9GoTlNZWqkaeWOc2nh1Mj1msTupcTEMhOUWcNgdMjeBCJ/7ueg2pkAAGaZ0df4xr27
-	 AIZLpr2tmXqAaqoaqKorSeD2mVVFMpwsm2kp1A93mNh4v1GQWrnfTf8N+IPlS4d8ho
-	 GyxgWfPlfOEnipZA87CxwCNWo5BqzblZrF+g72KvLYjGOiaRTcOsv5cL94Twca/S5K
-	 mo/uEQ4YGwzDzgu7NUFX0Ne0=
-Received: from zn.tnic (p5de8e8eb.dip0.t-ipconnect.de [93.232.232.235])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id B596440E0198;
-	Mon,  2 Sep 2024 11:24:35 +0000 (UTC)
-Date: Mon, 2 Sep 2024 13:24:29 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Cc: Tony Luck <tony.luck@intel.com>, Ard Biesheuvel <ardb@kernel.org>,
-	James Morse <james.morse@arm.com>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Len Brown <lenb@kernel.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Shiju Jose <shiju.jose@huawei.com>,
-	Alison Schofield <alison.schofield@intel.com>,
-	Dave Jiang <dave.jiang@intel.com>, Ira Weiny <ira.weiny@intel.com>,
-	linux-acpi@vger.kernel.org, linux-edac@vger.kernel.org,
-	linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 3/5] efi/cper: Add a new helper function to print
- bitmasks
-Message-ID: <20240902112429.GEZtWgbSo0EVe0EyWE@fat_crate.local>
-References: <cover.1720679234.git.mchehab+huawei@kernel.org>
- <5bb5f806a763b295401972fdff17bb455bee2e82.1720679234.git.mchehab+huawei@kernel.org>
+	s=arc-20240116; t=1725276371; c=relaxed/simple;
+	bh=RZsxKuBTnzSlTHx0LSxjjzFcSogANWW4hkiYaCfKeHs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BEFBqPmBKwyYAmLL/9/2CDbAOF74/rhaHr/vrlzqIS7ZseYdUijdh2tkvreffPK7tnUZEJbL29ywmAiNFjYGL/p+jOSo2ISBEL2b47EuamIqpn2Q/agy/qx/OX9NmVPHAofVwzOxAG2HJHzYn/tlPjRlLd6jDamLIJbzIUGXEDQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=v2Hs3Nz0; arc=none smtp.client-ip=115.124.30.110
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1725276359; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=6mX9mVOMNF6lwAxmPBnJjc59OnLTuABeZzQSRa8ykiE=;
+	b=v2Hs3Nz09xFKfAWDE9KavB33zFiAQ73gObfK6RWD14LIUi598w+WEy6J23HXWb2HeV5dD8ZW4whmh6vs6uwmZYW7WOCSRa37iojV6V1H6SNhdNWuZNHmqrttj5wv+JkE2Z8jcBLL2W0EuYFT4QJrfIOB8QsHoCPBnxIfAcVfeaw=
+Received: from 30.221.129.135(mailfrom:joseph.qi@linux.alibaba.com fp:SMTPD_---0WE8BclQ_1725276357)
+          by smtp.aliyun-inc.com;
+          Mon, 02 Sep 2024 19:25:58 +0800
+Message-ID: <88c9e6fd-db43-4c58-81f1-caa38369e732@linux.alibaba.com>
+Date: Mon, 2 Sep 2024 19:25:57 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <5bb5f806a763b295401972fdff17bb455bee2e82.1720679234.git.mchehab+huawei@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/3] ocfs2: give ocfs2 the ability to reclaim suballoc
+ free bg
+To: Heming Zhao <heming.zhao@suse.com>, glass.su@suse.com
+Cc: ocfs2-devel@lists.linux.dev,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20240729080454.12771-1-heming.zhao@suse.com>
+ <20240729080454.12771-2-heming.zhao@suse.com>
+Content-Language: en-US
+From: Joseph Qi <joseph.qi@linux.alibaba.com>
+In-Reply-To: <20240729080454.12771-2-heming.zhao@suse.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Jul 11, 2024 at 08:28:54AM +0200, Mauro Carvalho Chehab wrote:
-> Sometimes it is desired to produce a single log line for errors.
-> Add a new helper function for such purpose.
 
-How does this have anything to do with the below function?
 
-Example?
-
-Why isn't anything in lib/bitmap-str.c not useful for this?
-
-> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-> ---
->  drivers/firmware/efi/cper.c | 43 +++++++++++++++++++++++++++++++++++++
->  include/linux/cper.h        |  2 ++
->  2 files changed, 45 insertions(+)
+On 7/29/24 4:04 PM, Heming Zhao wrote:
+> The current ocfs2 code can't reclaim suballocator block group space.
+> This cause ocfs2 to hold onto a lot of space in some cases. for example,
+> when creating lots of small files, the space is held/managed by
+> '//inode_alloc'. After the user deletes all the small files, the space
+> never returns to '//global_bitmap'. This issue prevents ocfs2 from
+> providing the needed space even when there is enough free space in a
+> small ocfs2 volume.
+> This patch gives ocfs2 the ability to reclaim suballoc free space when
+> the block group is free. For performance reasons, ocfs2 doesn't release
+> the first suballocator block group.
 > 
-> diff --git a/drivers/firmware/efi/cper.c b/drivers/firmware/efi/cper.c
-> index 7d2cdd9e2227..462d739e8dd1 100644
-> --- a/drivers/firmware/efi/cper.c
-> +++ b/drivers/firmware/efi/cper.c
-> @@ -106,6 +106,49 @@ void cper_print_bits(const char *pfx, unsigned int bits,
->  		printk("%s\n", buf);
+> Signed-off-by: Heming Zhao <heming.zhao@suse.com>
+> ---
+>  fs/ocfs2/suballoc.c | 211 ++++++++++++++++++++++++++++++++++++++++++--
+>  1 file changed, 206 insertions(+), 5 deletions(-)
+> 
+> diff --git a/fs/ocfs2/suballoc.c b/fs/ocfs2/suballoc.c
+> index f7b483f0de2a..1b64f4c87607 100644
+> --- a/fs/ocfs2/suballoc.c
+> +++ b/fs/ocfs2/suballoc.c
+> @@ -294,6 +294,60 @@ static int ocfs2_validate_group_descriptor(struct super_block *sb,
+>  	return ocfs2_validate_gd_self(sb, bh, 0);
 >  }
 >  
-> +/**
-> + * cper_bits_to_str - return a string for set bits
-> + * @buf: buffer to store the output string
-> + * @buf_size: size of the output string buffer
-> + * @bits: bit mask
-> + * @strs: string array, indexed by bit position
-> + * @strs_size: size of the string array: @strs
-> + *
-> + * Add to @buf the bitmask in hexadecimal. 
-
-Where does it do that?
-
-> Then, for each set bit in @bits,
-> + * add the corresponding string describing the bit in @strs to @buf.
-> + *
-> + * Return: number of bytes stored or an error code if lower than zero.
+> +/*
+> + * hint gd may already be released in _ocfs2_free_suballoc_bits(),
+> + * we first check gd descriptor signature, then do the
+> + * ocfs2_read_group_descriptor() jobs.
 > + */
-> +int cper_bits_to_str(char *buf, int buf_size, unsigned long bits,
-> +		     const char * const strs[], unsigned int strs_size)
+> +static int ocfs2_read_hint_group_descriptor(struct inode *inode, struct ocfs2_dinode *di,
+> +				u64 gd_blkno, struct buffer_head **bh)
 > +{
-> +	int len = buf_size;
-> +	char *str = buf;
-> +	int i, size;
+> +	int rc;
+> +	struct buffer_head *tmp = *bh;
+> +	struct ocfs2_group_desc *gd;
 > +
-> +	*buf = '\0';
+> +	rc = ocfs2_read_block(INODE_CACHE(inode), gd_blkno, &tmp, NULL);
+> +	if (rc)
+> +		goto out;
 > +
-> +	for_each_set_bit(i, &bits, strs_size) {
-> +		if (!(bits & (1U << (i))))
-
-BIT_UL()
-
-> +			continue;
+> +	gd = (struct ocfs2_group_desc *) tmp->b_data;
+> +	if (!OCFS2_IS_VALID_GROUP_DESC(gd)) {
+> +		/*
+> +		 * Invalid gd cache was set in ocfs2_read_block(),
+> +		 * which will affect block_group allocation.
+> +		 * Path:
+> +		 * ocfs2_reserve_suballoc_bits
+> +		 *  ocfs2_block_group_alloc
+> +		 *   ocfs2_block_group_alloc_contig
+> +		 *    ocfs2_set_new_buffer_uptodate
+> +		 */
+> +		ocfs2_remove_from_cache(INODE_CACHE(inode), tmp);
+> +		rc = -EIDRM;
+> +		goto free_bh;
+> +	}
 > +
-> +		if (*buf && len > 0) {
+> +	if (!buffer_jbd(tmp)) {
+> +		rc = ocfs2_validate_group_descriptor(inode->i_sb, tmp);
+> +		if (rc)
+> +			goto free_bh;
+> +	}
+> +
+> +	rc = ocfs2_validate_gd_parent(inode->i_sb, di, tmp, 0);
+> +	if (rc)
+> +		goto free_bh;
+> +
+> +	/* If ocfs2_read_block() got us a new bh, pass it up. */
+> +	if (!*bh)
+> +		*bh = tmp;
+> +
+> +	return rc;
+> +
+> +free_bh:
+> +	brelse(tmp);
+> +out:
+> +	return rc;
+> +}
+> +
+>  int ocfs2_read_group_descriptor(struct inode *inode, struct ocfs2_dinode *di,
+>  				u64 gd_blkno, struct buffer_head **bh)
+>  {
+> @@ -1730,10 +1784,11 @@ static int ocfs2_search_one_group(struct ocfs2_alloc_context *ac,
+>  	struct ocfs2_dinode *di = (struct ocfs2_dinode *)ac->ac_bh->b_data;
+>  	struct inode *alloc_inode = ac->ac_inode;
+>  
+> -	ret = ocfs2_read_group_descriptor(alloc_inode, di,
+> +	ret = ocfs2_read_hint_group_descriptor(alloc_inode, di,
+>  					  res->sr_bg_blkno, &group_bh);
+>  	if (ret < 0) {
+> -		mlog_errno(ret);
+> +		if (ret != -EIDRM)
+> +			mlog_errno(ret);
+>  		return ret;
+>  	}
+>  
+> @@ -1961,6 +2016,7 @@ static int ocfs2_claim_suballoc_bits(struct ocfs2_alloc_context *ac,
+>  		goto bail;
+>  	}
+>  
+> +	/* the hint bg may already be released, we quiet search this group. */
+>  	res->sr_bg_blkno = hint;
+>  	if (res->sr_bg_blkno) {
+>  		/* Attempt to short-circuit the usual search mechanism
+> @@ -1971,12 +2027,16 @@ static int ocfs2_claim_suballoc_bits(struct ocfs2_alloc_context *ac,
+>  						min_bits, res, &bits_left);
+>  		if (!status)
+>  			goto set_hint;
+> +		if (status == -EIDRM) {
+> +			res->sr_bg_blkno = 0;
+> +			goto chain_search;
+> +		}
+>  		if (status < 0 && status != -ENOSPC) {
+>  			mlog_errno(status);
+>  			goto bail;
+>  		}
+>  	}
+> -
+> +chain_search:
+>  	cl = (struct ocfs2_chain_list *) &fe->id2.i_chain;
+>  
+>  	victim = ocfs2_find_victim_chain(cl);
+> @@ -2077,6 +2137,12 @@ int ocfs2_claim_metadata(handle_t *handle,
+>  	return status;
+>  }
+>  
+> +/*
+> + * after ocfs2 has the ability to release block group unused space,
+> + * the ->ip_last_used_group may be invalid. so this function returns
+> + * ac->ac_last_group need to verify.
+> + * refer the 'hint' in ocfs2_claim_suballoc_bits() for more details.
+> + */
+>  static void ocfs2_init_inode_ac_group(struct inode *dir,
+>  				      struct buffer_head *parent_di_bh,
+>  				      struct ocfs2_alloc_context *ac)
+> @@ -2534,6 +2600,16 @@ static int _ocfs2_free_suballoc_bits(handle_t *handle,
+>  	struct ocfs2_group_desc *group;
+>  	__le16 old_bg_contig_free_bits = 0;
+>  
+> +	struct buffer_head *main_bm_bh = NULL;
+> +	struct inode *main_bm_inode = NULL;
+> +	struct ocfs2_super *osb = OCFS2_SB(alloc_inode->i_sb);
+> +	struct ocfs2_chain_rec *rec;
+> +	u64 start_blk;
+> +	int idx, i, next_free_rec, len = 0;
+> +	int free_main_bm_inode = 0, free_main_bm_bh = 0;
+> +	u16 bg_start_bit;
+> +
+> +reclaim:
+>  	/* The alloc_bh comes from ocfs2_free_dinode() or
+>  	 * ocfs2_free_clusters().  The callers have all locked the
+>  	 * allocator and gotten alloc_bh from the lock call.  This
+> @@ -2577,13 +2653,138 @@ static int _ocfs2_free_suballoc_bits(handle_t *handle,
+>  		goto bail;
+>  	}
+>  
+> -	le32_add_cpu(&cl->cl_recs[le16_to_cpu(group->bg_chain)].c_free,
+> -		     count);
+> +	idx = le16_to_cpu(group->bg_chain);
+> +	rec = &(cl->cl_recs[idx]);
+> +
+> +	le32_add_cpu(&rec->c_free, count);
+>  	tmp_used = le32_to_cpu(fe->id1.bitmap1.i_used);
+>  	fe->id1.bitmap1.i_used = cpu_to_le32(tmp_used - count);
+>  	ocfs2_journal_dirty(handle, alloc_bh);
+>  
+> +	/* bypass: global_bitmap, not empty rec, first item in cl_recs[] */
+> +	if (ocfs2_is_cluster_bitmap(alloc_inode) ||
+> +	    (le32_to_cpu(rec->c_free) != (le32_to_cpu(rec->c_total) - 1)) ||
+> +	    (le16_to_cpu(cl->cl_next_free_rec) == 1)) {
+> +		goto bail;
+> +	}
+> +
+> +	status = ocfs2_extend_trans(handle,
+> +				ocfs2_calc_group_alloc_credits(osb->sb,
+> +						 le16_to_cpu(cl->cl_cpg)));
+> +	if (status) {
+> +		mlog_errno(status);
+> +		goto bail;
+> +	}
+> +	status = ocfs2_journal_access_di(handle, INODE_CACHE(alloc_inode),
+> +					 alloc_bh, OCFS2_JOURNAL_ACCESS_WRITE);
+> +	if (status < 0) {
+> +		mlog_errno(status);
+> +		goto bail;
+> +	}
+> +
+> +	/*
+> +	 * Only clear the rec item in-place.
+> +	 *
+> +	 * If idx is not the last, we don't compress (remove the empty item)
+> +	 * the cl_recs[]. If not, we need to do lots jobs.
+> +	 *
+> +	 * Compress cl_recs[] code example:
+> +	 * if (idx != cl->cl_next_free_rec - 1)
+> +	 * 	memmove(&cl->cl_recs[idx], &cl->cl_recs[idx + 1],
+> +	 * 		sizeof(struct ocfs2_chain_rec) *
+> +	 * 		(cl->cl_next_free_rec - idx - 1));
+> +	 * for(i = idx; i < cl->cl_next_free_rec-1; i++) {
+> +	 * 	group->bg_chain = "later group->bg_chain";
+> +	 * 	group->bg_blkno = xxx;
+> +	 * 	... ...
+> +	 * }
+> +	 */
+> +
+> +	tmp_used = le32_to_cpu(fe->id1.bitmap1.i_total);
+> +	fe->id1.bitmap1.i_total = cpu_to_le32(tmp_used - le32_to_cpu(rec->c_total));
+> +
+> +	/* Substraction 1 for the block group itself */
+> +	tmp_used = le32_to_cpu(fe->id1.bitmap1.i_used);
+> +	fe->id1.bitmap1.i_used = cpu_to_le32(tmp_used - 1);
+> +
+> +	tmp_used = le32_to_cpu(fe->i_clusters);
+> +	fe->i_clusters = cpu_to_le32(tmp_used - le16_to_cpu(cl->cl_cpg));
+> +
+> +	spin_lock(&OCFS2_I(alloc_inode)->ip_lock);
+> +	OCFS2_I(alloc_inode)->ip_clusters -= le32_to_cpu(fe->i_clusters);
+> +	fe->i_size = cpu_to_le64(ocfs2_clusters_to_bytes(alloc_inode->i_sb,
+> +					     le32_to_cpu(fe->i_clusters)));
+> +	spin_unlock(&OCFS2_I(alloc_inode)->ip_lock);
+> +	i_size_write(alloc_inode, le64_to_cpu(fe->i_size));
+> +	alloc_inode->i_blocks = ocfs2_inode_sector_count(alloc_inode);
+> +
+> +	ocfs2_journal_dirty(handle, alloc_bh);
+> +	ocfs2_update_inode_fsync_trans(handle, alloc_inode, 0);
+> +
+> +	start_blk = le64_to_cpu(rec->c_blkno);
+> +	count = le32_to_cpu(rec->c_total) / le16_to_cpu(cl->cl_bpc);
+> +
+> +	/*
+> +	 * If the rec is the last one, let's compress the chain list by
+> +	 * removing the empty cl_recs[] at the end.
+> +	 */
+> +	next_free_rec = le16_to_cpu(cl->cl_next_free_rec);
+> +	if (idx == (next_free_rec - 1)) {
+> +		len++; /* the last item */
+> +		for (i = (next_free_rec - 2); i > 0; i--) {
+> +			if (cl->cl_recs[i].c_free == cl->cl_recs[i].c_total)
+> +				len++;
+> +			else
+> +				break;
+> +		}
+> +	}
+> +	le16_add_cpu(&cl->cl_next_free_rec, -len);
+> +
+> +	rec->c_free = 0;
+> +	rec->c_total = 0;
+> +	rec->c_blkno = 0;
+> +	ocfs2_remove_from_cache(INODE_CACHE(alloc_inode), group_bh);
+> +	memset(group, 0, sizeof(struct ocfs2_group_desc));
+> +
+> +	/* prepare job for reclaim clusters */
+> +	main_bm_inode = ocfs2_get_system_file_inode(osb,
+> +						    GLOBAL_BITMAP_SYSTEM_INODE,
+> +						    OCFS2_INVALID_SLOT);
+> +	if (!main_bm_inode)
+> +		goto bail; /* ignore the error in reclaim path */
+> +
+> +	inode_lock(main_bm_inode);
+> +	free_main_bm_inode = 1;
+> +
+> +	status = ocfs2_inode_lock(main_bm_inode, &main_bm_bh, 1);
+> +	if (status < 0)
+> +		goto bail; /* ignore the error in reclaim path */
+> +	free_main_bm_bh = 1;
+> +
+> +	ocfs2_block_to_cluster_group(main_bm_inode, start_blk, &bg_blkno,
+> +				     &bg_start_bit);
+> +	alloc_inode = main_bm_inode;
+> +	alloc_bh = main_bm_bh;
+> +	fe = (struct ocfs2_dinode *) alloc_bh->b_data;
+> +	cl = &fe->id2.i_chain;
+> +	old_bg_contig_free_bits = 0;
+> +	brelse(group_bh);
+> +	group_bh = NULL;
+> +	start_bit = bg_start_bit;
+> +	undo_fn = _ocfs2_clear_bit;
+> +
+> +	/* reclaim clusters to global_bitmap */
+> +	goto reclaim;
+> +
+>  bail:
+> +	if (free_main_bm_bh) {
+> +		ocfs2_inode_unlock(main_bm_inode, 1);
+> +		brelse(main_bm_bh);
+> +	}
+> +	if (free_main_bm_inode) {
+> +		inode_unlock(main_bm_inode);
+> +		iput(main_bm_inode);
+> +	}
 
-Uff, this is testing the first char in buf and it gets copied in below in
-strscpy() through the str pointer.
+You've add too much logic into _ocfs2_free_suballoc_bits() and make it
+hard to review.
+Could you please factor out a new function and describe it clearly?
+e.g. why we need this function and how to achieve it.
+BTW, it seems that it contains a big loop, so please explictly specify
+the end condition.
 
-So this function converts a set of set bits to their corresponding *names*
-from strs[].
+Cc lkml as well.
 
-This name doesn't even begin to explain what this function does - it converts
-a bitmap to the corresponding names of the bits in @strs. If anything, the
-above comment needs an example and the function needs to be named properly.
+Thanks,
+Joseph
 
--- 
-Regards/Gruss,
-    Boris.
+>  	brelse(group_bh);
+>  	return status;
+>  }
 
-https://people.kernel.org/tglx/notes-about-netiquette
 
