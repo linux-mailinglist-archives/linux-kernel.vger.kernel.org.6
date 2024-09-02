@@ -1,144 +1,111 @@
-Return-Path: <linux-kernel+bounces-310913-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310864-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C0AD9682CB
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 11:11:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70D1C968225
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 10:37:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 59003281FF2
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 09:11:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A1C121C222DA
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 08:37:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9BED185B62;
-	Mon,  2 Sep 2024 09:11:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 167B4186E23;
+	Mon,  2 Sep 2024 08:37:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="J8bQVCkG"
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jqnikrbl"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B2CD186E5A
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 09:11:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFC36185952;
+	Mon,  2 Sep 2024 08:37:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725268275; cv=none; b=SBrvk5PfzcaXbZLZzyLtlaZ8dl/XiSGDz93nnhPBlCePs92oUyFDMjkcHKsmpNgZ/Dn9yK3hDLB61ueNf9UkSPRb4Ca9+X03QU1m7AIQkcv+qD4E+p7jq8PSnLxxRM2fyMNcUy5o9oppwEJaGYCxQafgNomKKEpGC5yfe/OyFtU=
+	t=1725266250; cv=none; b=efBdPi7yk+XUDKglYam6OUH/O10KVJKjwOBdvYRhS0yIAjbqgpX6fxSQxgDj2hy+35tAo+iQvcHiXvs+bZ9u/gUCrkGbDFL+Gy/k67VCXdwCpE6v0wwmAU/0PljyGIwSweCXHDgsBBe3AzbepXVAMkNQTtUA3RkIgXSfPGki13U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725268275; c=relaxed/simple;
-	bh=SdiPHKnCa3L4fefBVI4PmPPfp6Agp5HYbiAU4hJOxww=;
-	h=Date:From:To:CC:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To:References; b=hgdgpytEs78bCUfssyY7glACC/JUd8xf6jKroLxKYQLJd03wE39sjg3E3OpVBUx7R0rE+IVUCLstTB/4zKoNs/M2BrOM3ykG1M8FHRH+QGwYX9WlXNqKmh9EDRm2MOWyMjIF032b06R/4Wk3Pk5Uv3+rtBDYuSPn4xzhLMs3V84=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=J8bQVCkG; arc=none smtp.client-ip=210.118.77.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20240902091111euoutp02fbc54883b1a195037b82d8a12ba8a58f~xYloS-XJO0054400544euoutp027
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 09:11:11 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20240902091111euoutp02fbc54883b1a195037b82d8a12ba8a58f~xYloS-XJO0054400544euoutp027
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1725268271;
-	bh=fuvRpVOJoRgsyoj9M2cmAAz5t3JWPzGXNiUZUEg/vKI=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=J8bQVCkGbsZnPUOzNaDX5rYnCmdzlchQt6vjvaKe+r/5O8n7m9sawKAsSMx9cJ8ya
-	 ys6nuUl/KN1JDeR3neAIXqMa1z2eujVP24s5ojAT9HTYarEdr9os3RyzaDpydsEsGK
-	 fao4cCdz4xo70H19CZp6+/eI/s/akTvsF28i8cjU=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-	20240902091111eucas1p11e66eb26adc6cdf48aa69f7ec9847fd2~xYloKpd_n0411404114eucas1p1z;
-	Mon,  2 Sep 2024 09:11:11 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-	eusmges1new.samsung.com (EUCPMTA) with SMTP id E5.E1.09624.E2185D66; Mon,  2
-	Sep 2024 10:11:11 +0100 (BST)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-	20240902091110eucas1p23de28e4283497e5aae24a2916cf5c357~xYlnxJbVt2396123961eucas1p23;
-	Mon,  2 Sep 2024 09:11:10 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-	eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20240902091110eusmtrp10a399ffab40c3f5a566bbe7fb32acc78~xYlnwlc0_1257012570eusmtrp1G;
-	Mon,  2 Sep 2024 09:11:10 +0000 (GMT)
-X-AuditID: cbfec7f2-c11ff70000002598-f3-66d5812ef41d
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-	eusmgms2.samsung.com (EUCPMTA) with SMTP id 21.B7.19096.E2185D66; Mon,  2
-	Sep 2024 10:11:10 +0100 (BST)
-Received: from CAMSVWEXC02.scsc.local (unknown [106.1.227.72]) by
-	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20240902091109eusmtip290aa8c6ce88afc6a4b2512e2f1334dc8~xYlm7mucD0925109251eusmtip2F;
-	Mon,  2 Sep 2024 09:11:09 +0000 (GMT)
-Received: from localhost (106.110.32.44) by CAMSVWEXC02.scsc.local
-	(2002:6a01:e348::6a01:e348) with Microsoft SMTP Server (TLS) id 15.0.1497.2;
-	Mon, 2 Sep 2024 10:11:08 +0100
-Date: Mon, 2 Sep 2024 10:38:55 +0200
-From: Joel Granados <j.granados@samsung.com>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-CC: Luis Chamberlain <mcgrof@kernel.org>, Kees Cook <kees@kernel.org>, Linux
-	Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
-	<linux-next@vger.kernel.org>
-Subject: Re: linux-next: Signed-off-by missing for commit in the sysctl tree
-Message-ID: <20240902083855.seu2euueeizr5at6@joelS2.panther.com>
+	s=arc-20240116; t=1725266250; c=relaxed/simple;
+	bh=ny5p268ylb9XxqUvmpwKxgCwaNPtmNT6ZEP5TQPr+HY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pG945K7GRzSg5YketTZl1/DC+3QFy74TzZuSG7cejAEiCk9dNHKRDxYefwYJ9RgrsjDZ6E38TbQtQew5RRLhIGDbC/19/OhL4auj0Bd86CW3XBoLNb37Y9ciW5NaWvK/4BaptD5tkEtYBaEqOVHC4kXBpHMz1tPD5huV0SI/JVI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jqnikrbl; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725266249; x=1756802249;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=ny5p268ylb9XxqUvmpwKxgCwaNPtmNT6ZEP5TQPr+HY=;
+  b=jqnikrbl3S2oM5D5x5Pv+MNHPyP7yNMmAKUrkI8b8KZ2mk35syqH3iUc
+   0LMncLCzxo1uAxH0RZonf1IJzDu9fjKun+7Y4prt4eB010Ss2VGbvDehI
+   OXO9sjMgjDEHpVORq3PldreNayIw2z3UsCoS0UKbH+n+lFiq7rr5ZcuLl
+   NACWpNzT/voQQD1b6w9WPOogDlYMCAs+YGFO3ehQOqT3oRsy7LX8myuGh
+   6PyC69XvXf5nniBZGEYYhPB57a0ywc6d67mEBAhgfmvg/LdG3haNefRyV
+   7y1LkrB8HTP9mUmNE9zG6m6q8EXw9/ynDPpdn2xdlh2BqHdNOuGG/QNgK
+   Q==;
+X-CSE-ConnectionGUID: vOon06ULSJmjv2oYfBs1vw==
+X-CSE-MsgGUID: x8QOkhdaSxmE6NziQ8XqBQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11182"; a="46348519"
+X-IronPort-AV: E=Sophos;i="6.10,195,1719903600"; 
+   d="scan'208";a="46348519"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2024 01:37:29 -0700
+X-CSE-ConnectionGUID: 7nBHhvGDR3Gk9cAX654KhA==
+X-CSE-MsgGUID: YHtUhXiQRa6eBeDSI1lcMw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,195,1719903600"; 
+   d="scan'208";a="95354839"
+Received: from mattu-haswell.fi.intel.com (HELO [10.237.72.199]) ([10.237.72.199])
+  by fmviesa001.fm.intel.com with ESMTP; 02 Sep 2024 01:37:25 -0700
+Message-ID: <45435906-0a30-4546-a7e3-20f1f7d50713@linux.intel.com>
+Date: Mon, 2 Sep 2024 11:39:30 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20240829071743.0b1052b9@canb.auug.org.au>
-X-ClientProxiedBy: CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) To
-	CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348)
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Se1BMYRjG+/ac3T3bOHxtmV7lumjGYrWYsSaaXMZETA3/JDNYOl10Y49F
-	aKZtTLQTu9PWyEoiuewOTTtIF8q6q2lHKitq6PZHMYioLTs6ncJ/v+95n+eZ9535KEI6TPpR
-	8ckHGU2yOlEm8iTvPh1yLF6ia44JbLoiUN367BCqXlcWiFQPL2UildPYjVR37jeLQ4ShOqdT
-	FGqzZIlCv9tmRhBRnquimcT4Q4xmSfBuz7jGvC9o/3nBkW5XjTgdtSA9klCAl0OhyyTSI09K
-	iq8jMDVZxdxAin8gyDOv5Pk7gg/V+yYCQ035Qj5wDUF/Tj3x13TDvocf2EYDPVythCLxPLCa
-	9QKORXgROD69Hw1QlA9eCLXDmPMTuALBybqcMb833gxtVWfGmMYhYHzzGvHsBS/OdZEcE6M9
-	RVX9Iq6HwP5wzU1xsgSvgEJdoYBfdA4MFLeTPKfBy9ut43o9BeUG4KKA14PTupSXvaH32W0x
-	z9OhzpRNcqsBNiGocX8V8w8rgqu6gfGiIDjR1DWeWANvivMRXzoZnJ+9+DUnQ87dswQv03Aq
-	U8q7A8Da/ok0ornm/w4z/3eY+d9hRYiwIF9GyybFMqwymTmsYNVJrDY5VrE3JcmGRv9HnftZ
-	/z10ofebwo4EFLIjoAiZD11S/SpGSkerU48ympRdGm0iw9qRP0XKfOn50bMYKY5VH2QSGGY/
-	o5mYCiiJX7og91Dk1hS6o6Vq8IeKfitpfGxpe1vgL+sr3VJJHM2IboyyKtBshS7opm94vmW7
-	X+qT8CnOTJd3qeFycJvOo0qJXW2ODw/CSozBF8N+ybUbLsh6PnbkDbbLw83HxI5Ad4DA/GpR
-	7p1t9YaexwkZK7u8ZF0bC2pd680Kj/Khc7j80tWyzgNHRnZ39obZ3+lt6xJqd+yc8fO44cbv
-	qFQhLVTUpEUOLmNTI5R0w4GKoLWTptZl72sNWzUdtT5a3dlnwt3GXQsrg05vilP6GvTPF/QV
-	+VSw7jJt4nZX1rqy6/KepaYSS9YCOdHQp6wuG/lqJ5tHtmSEDnRPK4qx782TlspINk6tlBMa
-	Vv0HAFbbf44DAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprFIsWRmVeSWpSXmKPExsVy+t/xe7p6jVfTDLZ0aVise3ue1eLyrjls
-	FgcXtjFa3JjwlNFi696r7A6sHo03brB5bFrVyebxeZNcAHOUnk1RfmlJqkJGfnGJrVK0oYWR
-	nqGlhZ6RiaWeobF5rJWRqZK+nU1Kak5mWWqRvl2CXsalqe8ZC2YzVTz9tZ+9gfEaYxcjJ4eE
-	gInEzyszWEFsIYGljBJz52RCxGUkNn65ygphC0v8udbFBlHzkVHizSG1LkYuIHsTo8TfO8/A
-	BrEIqEisntXFBGKzCehInH9zh7mLkYNDREBb4sBvAZB6ZoGdjBKvp78FqxEW8JG4u7sPbCiv
-	gIPEhOuXGSGGdjFKHNu4gBEiIShxcuYTFhCbGWjogt2f2ECGMgtISyz/xwES5hQwl5jXOI8J
-	4lBFia+L77FA2LUSn/8+Y5zAKDwLyaRZSCbNQpi0gJF5FaNIamlxbnpusZFecWJucWleul5y
-	fu4mRmAkbTv2c8sOxpWvPuodYmTiYDzEKMHBrCTCu3TPxTQh3pTEyqrUovz4otKc1OJDjKbA
-	oJjILCWanA+M5bySeEMzA1NDEzNLA1NLM2MlcV62K+fThATSE0tSs1NTC1KLYPqYODilGpjK
-	5Nc0vhS8tNl2mp6L/gQ9Dw7HnhufOquun/nrs9DyzUXt9/OMFZ3bBWZvzTiadIlXV7S1KUPy
-	xXyO8sbD51lU5xvpvjV/rc1UGffzWVm47/t2x8zP//KEJ+s+Fw15de/+Mrn0GOZ3zCHbHpkk
-	L7/sUS3y6mVpy+qePUbfI39tzrwY6pPxZslJFg7WhS8+nXDqWsU745y20qI54nO0/vZM2vGc
-	2z/bV/0Vi/nzS1tZVCqf6C6Nz/GKOLQ/1nDWMz5XlV/LnawzXKsUdQ5ZzF2Z2Zi+6JFRgun2
-	tCkXt3idbOIQvFJqXpnyWk7434vDe9mjM9tK0jkOfZl/mUf9XmnFtaw7Fcfnv12hz8nudkWJ
-	pTgj0VCLuag4EQAUGltMLQMAAA==
-X-CMS-MailID: 20240902091110eucas1p23de28e4283497e5aae24a2916cf5c357
-X-Msg-Generator: CA
-X-RootMTR: 20240828211751eucas1p15dce08fef267343b2b904ef9d7f9e42c
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20240828211751eucas1p15dce08fef267343b2b904ef9d7f9e42c
-References: <CGME20240828211751eucas1p15dce08fef267343b2b904ef9d7f9e42c@eucas1p1.samsung.com>
-	<20240829071743.0b1052b9@canb.auug.org.au>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] usb: xhci: fixes lost of data for xHCI Cadence
+ Controllers
+To: =?UTF-8?Q?Micha=C5=82_Pecio?= <michal.pecio@gmail.com>,
+ pawell@cadence.com, peter.chen@kernel.org
+Cc: gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
+ linux-usb@vger.kernel.org, mathias.nyman@intel.com, stable@vger.kernel.org
+References: <20240830174504.1282f7b4@foxbook>
+Content-Language: en-US
+From: Mathias Nyman <mathias.nyman@linux.intel.com>
+In-Reply-To: <20240830174504.1282f7b4@foxbook>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Thu, Aug 29, 2024 at 07:17:43AM +1000, Stephen Rothwell wrote:
-> Hi all,
+On 30.8.2024 18.45, Michał Pecio wrote:
+> Hi,
 > 
-> Commit
+>> Field Rsvd0 is reserved field, so patch should not have impact for
+>> other xHCI controllers.
+> Wait, is this a case of Linux failing to zero-initialize something that
+> should be zero initialized before use (why not explain it as such?), or
+> are you suggesting monkeying with internal xHC data at run time, in area
+> which is known to actually be used by at least one implementation?
 > 
->   ed674ae9a6e6 ("sysctl: avoid spurious permanent empty tables")
+
+Patch is monkeying with internal xHC RsvdO field.
+
+
+> There is no mention of Rsvd0 in the xHCI spec, did you mean RsvdO?
 > 
-> is missing a Signed-off-by from its committer.
-Fixed this. Thx for the report.
+> Reserved and Opaque,
+> For exclusive use by the xHC.
+> Software shall *not* write this, unless allowed by the vendor.
+> 
+> Cadence isn't the only xHC vendor...
+> 
 
-Best
+Makes sense,  Pawel Laszczak, could you make this patch Cadence
+specific.
 
--- 
+Thanks
+Mathias
 
-Joel Granados
 
