@@ -1,110 +1,129 @@
-Return-Path: <linux-kernel+bounces-311776-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311777-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A589968D7F
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 20:32:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AEA6C968D84
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 20:33:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DD984282D25
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 18:32:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6860C283891
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 18:33:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51A9C1C62A1;
-	Mon,  2 Sep 2024 18:32:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B8143B1AC;
+	Mon,  2 Sep 2024 18:32:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HFriyin2"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Y4IeYJjb"
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30ED75680;
-	Mon,  2 Sep 2024 18:32:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEAA819CC3A
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 18:32:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725301965; cv=none; b=ayXJgjjae8iewKw9UN5GHWSAGE6sFg9t6GkDAAWWMsp0g2TPqnWqJqCuRz+AVeSS2ryir+mIe6XCfyta7QPwtUusE68Lg3y9aQuURuyp1quB0l2Un4RrjHMyE9TJJiuf7nmns9DFiznUCaUSFzkSbd4VdKCZyzSQSWFSeXlPQ3c=
+	t=1725301966; cv=none; b=ttLpBMXFE7ZxAyERTa9ZU/fSLiMdZYMjOYcNMYcGhokwlZ4qxL2a9YhAVJJ9WzuM85/tXxfTtKRlJ0Wu7l5Htng4jg7KkjCENh5mz8GBSiXsF0wTtxa+XqeQILwUgSuR3hCyt2fi8waZaQPznfCvHAqdedg+fT6rfw7OSswU0Vw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725301965; c=relaxed/simple;
-	bh=1PzOhJJY2LeQBaJd2Bcw0TdQoPlV8i5sNgTxX2h7qYQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=AtsTBaeaDxt5raUXWJLqfr/ZYkSRdVTK3AITiZRxVRnuWQgi/kFa+MBN+RYB7KDZkEsO14KDXDnJMmrZyOWSyEZNwlpG16Q9DM+/5HuSqZzkFPlZR67lEXyAs7OzrsznuTTFT0NHCi+o62zSrS8yaadvyglzz6pDwXtGHBQrswg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HFriyin2; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-42bac9469e8so37599955e9.3;
-        Mon, 02 Sep 2024 11:32:43 -0700 (PDT)
+	s=arc-20240116; t=1725301966; c=relaxed/simple;
+	bh=2bhsdKcMRpmC7lcu20iYO4nQImhTbdGjiKkJUnNLMrE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bb+jtVMKdKp7gaHD0/doRfk//Ce0O8zPrWl2rLMuox4CbqrAyXSRCNK14fQeSztdGnGIJqbqS3Upi8yhK/SkGm+5LrSlU0JRyp9HM9FO9WGGuipVpqPaySPDNhVruPa5x8wwIQMJIeEHyMf576S2x+pNIUtqAkwBrGdrBADx6UA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Y4IeYJjb; arc=none smtp.client-ip=209.85.208.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2f3f90295a9so50740601fa.0
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2024 11:32:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725301962; x=1725906762; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=b6Vltd8viCzWqgRL1P5eoxbS5xCxFYSk50A+3pCWiIk=;
-        b=HFriyin2fLn9nF/y0DzHn8wdRY8Ir9sjPvXPds7MzVLXXcxsmGhUwd4CEFmsGjwvys
-         82gSVK/7HFjV1GQBPzeo8NGzOKZg07xvaLO9HIAAnatpi1sbtD9+c1zahZOyjBBmA0fI
-         7UoOvp2rsfq4OM9HLm4m0/8SocEqazs5/xPQAnwK26mGyQyDitqIGDyQti9QQ+E6Bon2
-         YXy4hAZ1ufoIi7apU5o5e8JouoZg5uQVkahhwwYe31pLa6cUe4OxaTJ3RxDF5ad1WHi2
-         v3HEIDVPhBRz5K8XSCttfEDg9M3PNvmEXN3of8QJMXXt1s0RAOcWTXOPTMt43UWrpFrr
-         8SzQ==
+        d=linaro.org; s=google; t=1725301963; x=1725906763; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=XAmaK13K/WB/CMiEFbhMPPJZl/VZU34ltwhJvlIpIAU=;
+        b=Y4IeYJjbuHeMQ0FEBlIO/oYqGuMOqtbwhg7qHZs/Mhu4bp+JDajDk1qrWRFHd+d8Xk
+         5wz3+WKB7Rkn9i0dpkwbihzx7NZjG2kOYmwU3TnyqvxHZBQAiIpy9okCT/KEV1BuButP
+         dRXBnboakEp5AcQhT+O/VAK2fARmpSW4VchUfRlmsNeAXhtt/jTOP6t/EJ80CN3ilfrP
+         rjaUVz+gm6dTguoFc8kuZCu5HpoJV8rBhczJaMwD5K+oLQLlWD1ETLQaSua6xVPbJdNO
+         LSQ4VZ+jr/cAYj1eqc2QcJV4AKals+RCoK0E1v17JIIQfh57NvYD0CFKNcSUjbuIlqpj
+         o8RQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725301962; x=1725906762;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=b6Vltd8viCzWqgRL1P5eoxbS5xCxFYSk50A+3pCWiIk=;
-        b=TfN3eO79NgTsvR0PNSLNO4h84OGzb2imhD4gd95JUOTASCQXDoHnCRsl8mMO6qQJTC
-         WhWQlGPpRtBaWoBa/CnCWoSBu/jI1sYMGWA7nTXZ61OIsoOz0bdX16dZcsCY5LILttvc
-         86/+cwtYYiZSWv2Jvym9IOrw1fKFvQG5ciSLOcPkcGugZo/l6Tn5DtahmJc5bwb12mUQ
-         KuNHMAah0P8xOVLKFB9RzfDIlck0SQP83E42e+oy4TPtcQcO7IZgdn7RLX2UJpl6IYhk
-         88e+SrvM5zGgDTWHaIcVKGZ6bcCV/qQy65I/lVbnE0ILaHUuX7byA14ALDrVFqdK02Ly
-         elIg==
-X-Forwarded-Encrypted: i=1; AJvYcCUKuFbKzdToMBVBb6lPsGJuyFZA4bqrMBmLe91W+ascXPto2/tUKLaCsac+qykt3dows3/MJg6qviq/v2X2@vger.kernel.org, AJvYcCWOV2h1od3CgogiIKRf6fwz8Kl48sHQD0MUnYuU00IHOzDMf/Y/ex5/nnbs7iBflFxXOZvoTKb3pZeo@vger.kernel.org, AJvYcCXE/h//+Ib1YbKFLn7raUdGlZ+/iAmDe+u3omL3DDdGAT1y39K0Ba0OnMFuaCsBRL9Ul2jkv0X7n6BqZFdSVqg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyicNrWX+BCmKjn4G/byr69eXn1M/5s7wY7JSFafKbV61I1ES7o
-	qNXDuuR6//lZOBq8MSPsoscMDBNk9Y9v7228tVmfAvTJ7+2oXzxj
-X-Google-Smtp-Source: AGHT+IEuijIqFI6OQlhAdRImRAPPN07texv3tKxOiUMeIi1SzD5bVxGHWNZ7z/oU6Gc9t12Xhw4Zxw==
-X-Received: by 2002:a05:600c:4f53:b0:426:55a3:71af with SMTP id 5b1f17b1804b1-42c82f6cf51mr28782565e9.33.1725301961742;
-        Mon, 02 Sep 2024 11:32:41 -0700 (PDT)
-Received: from void.void ([141.226.8.198])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42bb6deb43esm146783615e9.7.2024.09.02.11.32.40
+        d=1e100.net; s=20230601; t=1725301963; x=1725906763;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XAmaK13K/WB/CMiEFbhMPPJZl/VZU34ltwhJvlIpIAU=;
+        b=VJ1SvxZbqZpcU0BGTuFw3p1K3w8Sr1jn5KQ9egHo/Me+36pK1H55F9CF2yb9J0kCGR
+         664nV2F1MJUS+GHyTy6bLTGNzwmbrxI2QTqpiUECYmsgkLixSLyg5nGefkpWSQj4P1tu
+         I6ylmET0aeoRBpQn13L1oiA39QmiWMF4Wm0Yxdo7VfBD50YjLXKwohX5qs1ki1m+wAsk
+         5KsCVstfq4aW/owuoVv/GyIa6D8sBe2TY1Jw3hzbO7b48xJBw3vKvBDGH1JGJzPz5dP1
+         X147xSraMj4y/DtfaZmcBhLsA9DC5U23pm4AQaLLNCnZLpIJxzf05RWoWJvTLQyKlewP
+         AMNA==
+X-Forwarded-Encrypted: i=1; AJvYcCU+LjaWDc+23BrEHHf75qOXA3rk/s52k9DLD+gUlEgvRifRYlxdxbkl8Je7D6FsDfR1NWeuEUe3DdHzBkc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxRdYlJMyp0cTvDnp5yldgZTrvoFGw4/Dq6mvG64V8hj95DMLNY
+	GM/oSjPYqq37HBapk3kgIyKXpGvh0aT596GyTR3lvyaQPyW7LP3de4hDGlFI+4A=
+X-Google-Smtp-Source: AGHT+IFoxXqWCv/ngb9lgpMsTD9vhJJKzXGkPrdhSMLDmCQIQH9tyjM0XY+PSycHN7Ixop/BuNjPWw==
+X-Received: by 2002:a05:651c:1548:b0:2ef:2d3a:e70a with SMTP id 38308e7fff4ca-2f636a1372amr28845121fa.18.1725301962343;
+        Mon, 02 Sep 2024 11:32:42 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2f614f3396esm19546081fa.54.2024.09.02.11.32.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Mon, 02 Sep 2024 11:32:41 -0700 (PDT)
-From: Andrew Kreimer <algonell@gmail.com>
-To: =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
-	Jonathan Corbet <corbet@lwn.net>
-Cc: linux-mm@kvack.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Andrew Kreimer <algonell@gmail.com>
-Subject: [PATCH] docs/mm: fix a typo
-Date: Mon,  2 Sep 2024 21:32:05 +0300
-Message-ID: <20240902183210.2130-1-algonell@gmail.com>
-X-Mailer: git-send-email 2.46.0
+Date: Mon, 2 Sep 2024 21:32:39 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Krishna Chaitanya Chundru <quic_krichai@quicinc.com>
+Cc: Bjorn Helgaas <helgaas@kernel.org>, 
+	Lorenzo Pieralisi <lpieralisi@kernel.org>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>, 
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Konrad Dybcio <konrad.dybcio@linaro.org>, cros-qcom-dts-watchers@chromium.org, 
+	Bartosz Golaszewski <brgl@bgdev.pl>, Jingoo Han <jingoohan1@gmail.com>, 
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, andersson@kernel.org, quic_vbadigan@quicinc.com, 
+	linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: Re: [PATCH v2 7/8] PCI: qcom: Add support for host_stop_link() &
+ host_start_link()
+Message-ID: <ar63lbc5nl6jujeadd4srfd2dacsjk7la5kzma24bi2cqb7awj@vfawrbnr7an4>
+References: <20240806191203.GA73014@bhelgaas>
+ <9c37c36d-1091-5d5e-58d4-4a20bda65244@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <9c37c36d-1091-5d5e-58d4-4a20bda65244@quicinc.com>
 
-Fix a typo in documentation.
+On Mon, Sep 02, 2024 at 12:21:22PM GMT, Krishna Chaitanya Chundru wrote:
+> 
+> 
+> On 8/7/2024 12:42 AM, Bjorn Helgaas wrote:
+> > On Sat, Aug 03, 2024 at 08:52:53AM +0530, Krishna chaitanya chundru wrote:
+> > > For the switches like QPS615 which needs to configure it before
+> > > the PCIe link is established.
+> > > 
+> > > if the link is not up assert the PERST# and disable LTSSM bit so
+> > > that PCIe controller will not participate in the link training
+> > > as part of host_stop_link().
+> > > 
+> > > De-assert the PERST# and enable LTSSM bit back in host_start_link().
+> > > 
+> > > Introduce ltssm_disable function op to stop the link training.
+> > 
+> > pcie-qcom.c is a driver for a PCIe host controller.  Apparently QPS615
+> > is a switch in a hierarchy that could be below any PCIe host
+> > controller, so I'm missing the connection with pcie-qcom.c.
+> > 
+> > Does this fix a problem that only occurs with pcie-qcom.c?  What
+> > happens if you put a QPS615 below some other controller?
+> > 
+> Hi Bjorn,
+> 
+> The qps615 is the qualcomm in-house PCIe switch it is not available to
+> others. so we are trying to add for qualcomm soc's only.
 
-Signed-off-by: Andrew Kreimer <algonell@gmail.com>
----
- Documentation/mm/hmm.rst | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Any guarantee that the status quo will stay so in future? Or that it
+won't appear on Qualcomm platform with the virtualized PCIe controller?
 
-diff --git a/Documentation/mm/hmm.rst b/Documentation/mm/hmm.rst
-index 0595098a74d9..3dcf1b69e807 100644
---- a/Documentation/mm/hmm.rst
-+++ b/Documentation/mm/hmm.rst
-@@ -405,7 +405,7 @@ can be used to make a memory range inaccessible from userspace.
- 
- This replaces all mappings for pages in the given range with special swap
- entries. Any attempt to access the swap entry results in a fault which is
--resovled by replacing the entry with the original mapping. A driver gets
-+resolved by replacing the entry with the original mapping. A driver gets
- notified that the mapping has been changed by MMU notifiers, after which point
- it will no longer have exclusive access to the page. Exclusive access is
- guaranteed to last until the driver drops the page lock and page reference, at
 -- 
-2.46.0
-
+With best wishes
+Dmitry
 
