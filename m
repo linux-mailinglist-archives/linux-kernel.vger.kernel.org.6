@@ -1,129 +1,123 @@
-Return-Path: <linux-kernel+bounces-311013-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311014-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B8D69683E9
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 11:59:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C87209683ED
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 12:01:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ACBE4B22C0A
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 09:59:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E9671F21136
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 10:01:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A57521D363D;
-	Mon,  2 Sep 2024 09:59:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B974D13BC0C;
+	Mon,  2 Sep 2024 10:00:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="IswkE108"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="aO21rqgP"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24C80187847
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 09:59:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 972C986126
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 10:00:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725271164; cv=none; b=jrkez/qX2d1vhLeoIZEFS+hH3V3Pjc5uPbL/oRBpiwknJAOzJXfLXBcRp0YZhMoGdVqF472lbI2rDnGQV/k29osa/xNyUknBjspDRARaozWoRubuv7x6dpAXccV999xP+L6a1uwtVHdIHrc2i6D0uGlpaByOQsUEY75CDB8C7lU=
+	t=1725271252; cv=none; b=Z2tZL+kkRe3YCvCE0p+uBIUi/QhtG+N7OMYjYRKO5wk76CWe+vvpQJw/KMl8TF/rf57bALaiq0ogBz53tslBy9xYbO8o+UAxZJWLrdsRyMAkv6QwdCtlJPsnWsbWNAsk1sm9VoXldKay/d0uOGM+dBF2HKvBdPnGaS7GzIeRKFg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725271164; c=relaxed/simple;
-	bh=hnq9H7DibZbVqQdGQHBG53i3ao96Sy2t0ZjKR/T0Kjs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jdqRkb7XyAngHVVNm59mQDAdRH5JLAl2i/UFXz0s5l8Kvoua9WxR/09GA5AcfwZ+HskVYmXu/mom3oSusxo6gjuZl7RB05UfkQtT5Uwul4by2pPimhBOYLQiqE0d7GlmEtrkuCV3gxClxUK/IKcscyTn6v7tpY/Hn6TEbas1BvY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=IswkE108; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
-	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-	Sender:Reply-To:Content-ID:Content-Description;
-	bh=cyDVp9aHEgfgAflJKuO8N4CCgQNkhBJr92+WMNNlHAs=; b=IswkE108iwbRn6RJqaSDEyIFu7
-	OlCvJ1RFN3K8YpSQ1E6Lc9Bl9G9y4dOD2e+b3hsjqunKDi2xJhvLn+E7f2PYqZkokWM477OjqyIBh
-	ObjK9JNroQ+zfE0m9FQ5MTf/oWJUcgmeuK8bjQ/6MM7+O02JIUYSilIoB1rR0zeKjFMBOGUqwTlZz
-	3g+NOk0c+xQruj56tvVM0k7IPdWD34MI2JI1c70I8g7Z3YmEbuyP/qYAZghW+lTOvI+yb7ODB0Zny
-	Ujlk+wvEI2e3fvOAObeylBRODAQb8B17S9l508hqqbhMjuaBw0yC3Jcn9IIiK91vCFpqdJ9CHe3EH
-	ySSmb5tA==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1sl3qB-00000006Pvy-0dM9;
-	Mon, 02 Sep 2024 09:59:19 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 65783300642; Mon,  2 Sep 2024 11:59:18 +0200 (CEST)
-Date: Mon, 2 Sep 2024 11:59:18 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: David Vernet <void@manifault.com>
-Cc: Tejun Heo <tj@kernel.org>, linux-kernel@vger.kernel.org,
-	kernel-team@meta.com
-Subject: Re: [PATCH 2/2 sched_ext/for-6.12] sched_ext: Use ktime_get_ns()
- instead of rq_clock_task() in touch_core_sched()
-Message-ID: <20240902095918.GE4723@noisy.programming.kicks-ass.net>
-References: <ZtGkPKgoE5BeI7fN@slm.duckdns.org>
- <ZtGkgCEkgNLzjxUC@slm.duckdns.org>
- <20240830174014.GD5055@maniforge>
+	s=arc-20240116; t=1725271252; c=relaxed/simple;
+	bh=LBIzi1LpQ/rTjLpmqqbTh+L8ZKr4rAACHWK5C8SLLBI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=sf5J4bnHgqcK5u6I/dZBzqPyrgXWiyVy3mE4xkhjeDTLVdNdTFF1xBrLixD9pm95HGwYLGCWWbHJzKFsvNW5ylTDpVBs1aEdjRHvrY57uWUTdXnH6m2fmz+b+tFlCnkxwwBYDd+MIT6Jc8nGhBwY6moaI5+vjx49b2O/FebN4X4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=aO21rqgP; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1725271248;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zwCtVYjTsC/+5qLh9aBp3HoHm+8Qd+MXKxdiS5FMHAw=;
+	b=aO21rqgPtgD4NZv3G0JQndMpWc7jpBFRboAQLGGtYLmA3PEZPKuc8bfJpR3JJZM5vfDpbQ
+	MTAy3JhvbFwh8zJBuZghUSK+889fM46MlmM1wihxdQKuVL8RSGq4yPUSHM5CN4kpJILNhj
+	DZCiDJ4RNHX05t+IC6My6u/NTrkVSkQ=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-515-OMaKYJyHMfKZ0BGi58sJhA-1; Mon, 02 Sep 2024 06:00:47 -0400
+X-MC-Unique: OMaKYJyHMfKZ0BGi58sJhA-1
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-42bb68e16b0so46278765e9.1
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2024 03:00:47 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725271246; x=1725876046;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=zwCtVYjTsC/+5qLh9aBp3HoHm+8Qd+MXKxdiS5FMHAw=;
+        b=As9AjmiTznGBlthLEZEGL77nM8qkQzKco79D44G0HCOyzIeqAp9bd7eVHThVjWCRVe
+         ATeKE8f4uLH8vdZKZzVgfMruWZjrB0Y3iGtQ++PlP6+Gqf7BOz298zPHCidhHSWlwLgd
+         NPkNiAXRJ431VmnowIB99w7PUo2rG+XS4ijgbYNGHXrlYkciJz2rX9ogMKIoM9Zf2wNd
+         b90wyjGK3Mz+Ym4lljCoTU8Kmr62Gao0pIMSs0cBrJNVLX+4CFkOaQLIR1IhfYbHo71T
+         PHCCXO9fe1Q7PFzux7AxMmGCgLImu5lA45lhrsEksL684P1z1YararKQy2uxj2aDD54W
+         mVOQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV4JczMIIR00V6ZNr9jpbNXR05JrFDn8bRbf2ycfzSgBWzIc8wnrN2pCBiD32TJDYIhmsOXKCTG1hnWBFI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwvEh2fBVkhwy2jcIBgTnVNs5B1jBpGlODG8gRdK1md7fmMlyno
+	HzVCEqF0gJbD+4LWJmrV7tbl08kBzSDU6IyJVF8Y7rZNp/TENerPdoJk6Ebhnt11AUA8iv1NzvE
+	E4n4TrllhZLnl0toBlSG90IDZmt9NCQM/PMFHHNnrK0b9Iuz148Xzb3wygUHzwIO/lmImgBm7e5
+	872BnzSxOvj7Hu4PAOuHxfkkBY0qg5rwJMYFCy
+X-Received: by 2002:a05:600c:474c:b0:429:c674:d9de with SMTP id 5b1f17b1804b1-42bb01ad776mr118711095e9.2.1725271246049;
+        Mon, 02 Sep 2024 03:00:46 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGOuviAeUInZpYXRD0meSDjikwC0zm0YoIdWxbYwWDChPxMnaeeJFb7+Xg7Qs/JQBeQAgsR71gAvgnbt2b40qQ=
+X-Received: by 2002:a05:600c:474c:b0:429:c674:d9de with SMTP id
+ 5b1f17b1804b1-42bb01ad776mr118710895e9.2.1725271245574; Mon, 02 Sep 2024
+ 03:00:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20240802195120.325560-1-seanjc@google.com> <172506359625.339073.2989659682393219819.b4-ty@google.com>
+In-Reply-To: <172506359625.339073.2989659682393219819.b4-ty@google.com>
+From: Paolo Bonzini <pbonzini@redhat.com>
+Date: Mon, 2 Sep 2024 12:00:34 +0200
+Message-ID: <CABgObfb390uz6c42PwjF=3Gss+H4MW1_Cs2r=V3cEG7xhYC9RQ@mail.gmail.com>
+Subject: Re: [PATCH 0/5] KVM: x86: Fastpath cleanup, fix, and enhancement
+To: Sean Christopherson <seanjc@google.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20240830174014.GD5055@maniforge>
 
-On Fri, Aug 30, 2024 at 12:40:14PM -0500, David Vernet wrote:
-> On Fri, Aug 30, 2024 at 12:52:48AM -1000, Tejun Heo wrote:
-> > Since sched_ext: Unpin and repin rq lock from balance_scx(), sched_ext's
-> > balance path terminates rq_pin in the outermost function. This is simpl=
-er
-> > and in line with what other balance functions are doing but it loses co=
-ntrol
-> > over rq->clock_update_flags which makes assert_clock_udpated() trigger =
-if
-> > other CPUs pins the rq lock.
-> >=20
-> > The only place this matters is touch_core_sched() which uses the timest=
-amp
-> > to order tasks from sibling rq's. For now, switch to ktime_get_ns(). La=
-ter,
-> > it'd be better to use per-core dispatch sequence number.
-> >=20
-> > Signed-off-by: Tejun Heo <tj@kernel.org>
-> > Fixes: 3cf78c5d01d6 ("sched_ext: Unpin and repin rq lock from balance_s=
-cx()")
-> > Cc: Peter Zijlstra <peterz@infradead.org>
-> > ---
-> >  kernel/sched/ext.c |   10 ++++++++--
-> >  1 file changed, 8 insertions(+), 2 deletions(-)
-> >=20
-> > --- a/kernel/sched/ext.c
-> > +++ b/kernel/sched/ext.c
-> > @@ -1453,13 +1453,20 @@ static void schedule_deferred(struct rq
-> >   */
-> >  static void touch_core_sched(struct rq *rq, struct task_struct *p)
-> >  {
-> > +	lockdep_assert_rq_held(rq);
-> > +
-> >  #ifdef CONFIG_SCHED_CORE
-> >  	/*
-> >  	 * It's okay to update the timestamp spuriously. Use
-> >  	 * sched_core_disabled() which is cheaper than enabled().
-> > +	 *
-> > +	 * TODO: ktime_get_ns() is used because rq_clock_task() can't be used=
- as
-> > +	 * SCX balance path doesn't pin the rq. As this is used to determine
-> > +	 * ordering between tasks of sibling CPUs, it'd be better to use
-> > +	 * per-core dispatch sequence instead.
-> >  	 */
-> >  	if (!sched_core_disabled())
-> > -		p->scx.core_sched_at =3D rq_clock_task(rq);
-> > +		p->scx.core_sched_at =3D ktime_get_ns();
->=20
-> Should we just use sched_clock_cpu()? That's what rq->clock is updated
-> from, and it's what fair.c does on the balance path when the rq lock is
-> unpinned.
+On Sat, Aug 31, 2024 at 2:21=E2=80=AFAM Sean Christopherson <seanjc@google.=
+com> wrote:
+> Applied to kvm-x86 misc, I gave myself enough confidence the fastpath fix=
+ is
+> correct with a selftest update[*] (which I'll get applied next week).
 
-Right, so on x86 with wobbly TSC (still possible in this day and age)
-ktime *must* use the HPET, while sched_clock_cpu() makes an 'educated'
-guess using TSC and tick based HPET stamps and windows.
+Sorry for not reviewing this before vacation; done this belatedly and
+patches 1/2 may require another thought (or a revert). Hopefully I'm
+wrong.
 
-IOW, on same machines it doesn't matter much, but for the HPET case the
-sched_clock() thing is a lot faster.
+Paolo
+
+
+> [*] https://lore.kernel.org/all/20240830044448.130449-1-seanjc@google.com
+>
+> [1/5] KVM: x86: Re-enter guest if WRMSR(X2APIC_ICR) fastpath is successfu=
+l
+>       https://github.com/kvm-x86/linux/commit/0dd45f2cd8cc
+> [2/5] KVM: x86: Dedup fastpath MSR post-handling logic
+>       https://github.com/kvm-x86/linux/commit/ea60229af7fb
+> [3/5] KVM: x86: Exit to userspace if fastpath triggers one on instruction=
+ skip
+>       https://github.com/kvm-x86/linux/commit/f7f39c50edb9
+> [4/5] KVM: x86: Reorganize code in x86.c to co-locate vCPU blocking/runni=
+ng helpers
+>       https://github.com/kvm-x86/linux/commit/70cdd2385106
+> [5/5] KVM: x86: Add fastpath handling of HLT VM-Exits
+>       https://github.com/kvm-x86/linux/commit/1876dd69dfe8
+>
+> --
+> https://github.com/kvm-x86/linux/tree/next
+>
+
 
