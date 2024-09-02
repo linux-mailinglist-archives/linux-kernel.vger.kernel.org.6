@@ -1,79 +1,79 @@
-Return-Path: <linux-kernel+bounces-311039-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311045-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8370D968438
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 12:11:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83262968443
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 12:13:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3DCA3281C85
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 10:11:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B37061C229D8
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 10:13:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B557183CB7;
-	Mon,  2 Sep 2024 10:10:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19D7A1D364B;
+	Mon,  2 Sep 2024 10:11:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fe8m+bT3"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="f7qBvZag"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16268149C6F
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 10:10:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 007231D2F69
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 10:11:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725271850; cv=none; b=YA4uwtZUyJ8t1I6jjuo/naBPwCUabgPoEni/8OpVqL2bDwo3FwTTwTwa5yKOKu6DYgl4fJYczn+93Rsrjycd+Bfgp8guqSBne8IMyamyKr40jPTAr4MK86WaT2M7YXwIDSGsREQaFxtPW8sjmIiQexqCTsu3i48w6kM6dRFQIeE=
+	t=1725271868; cv=none; b=a91cBIxN0IfB5CHiTi1C005WdahPp+/awxcuBUkyT4INENK2v8mLpx8vWO0YOeS4sNoBkHMVmFOEt3l7RCjxf9tesOsvfaR3ASY+c04Mw8awGb56Lu/6JpaXIkgeA0/SJUmkxrEyFV6WI4amWXOLVflwnOnxIFFeyj93A2Xlc2E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725271850; c=relaxed/simple;
-	bh=vjEG4yTZwz2x2AHPoS0jcARdsLxSSxZ+JUhFPRRJUIM=;
+	s=arc-20240116; t=1725271868; c=relaxed/simple;
+	bh=9XvawMPR1TqnxefGQw2FYTDCsf2yPR9KDm/4mVxa4v0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UPVfq2XN8pT+cOzPGgb2TkmEvMpHL1DJVs8l8p1WE08/tNAJ2I6tJP0TdoJTssR0LxVVrCTew//lmHww6viOZbRtdLtC3mcuGkhN0DyrNYYppTtFOVCDYQPx0yOLjkWtrcmyGOwwrSBnUURVW2zba5UjlbZr7WcqyvWKcKYGASk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fe8m+bT3; arc=none smtp.client-ip=170.10.129.124
+	 In-Reply-To:Content-Type; b=ncx+U+2yGxwMyex3CGiZleYQS2iH2ho5Zn1/UhTrqTuYgEvMEpYdEjLTZNWuty/97g12yyE8Tt48qEQoL0iguIY+VlNP5Q86LAgKHyz/G52Ql1GiOpLQ8j+XcD9mDhYkZcuu9BcJ103+hcHCkErX53NpkZhL6+b19O4hT61HuTY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=f7qBvZag; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1725271848;
+	s=mimecast20190719; t=1725271866;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=H9RKF9H7s72V4OZfPOTUgjyYaIyw8mcKokBoElqIGAw=;
-	b=fe8m+bT30rJT2I+27TytAmsJikIu37VrTtKkCqktbt9HF1GW9V8mg26qUxdSVbbDzEoFGG
-	QGScUB3K9OwvBa5kNrs90dQfDfIbURxW4KsvRAEjTYZMvpk3S5lcybHnI81aMJDf1Jh+nr
-	vvfHkjZHraMn0gR9NDz7qNC3VkdGFCM=
-Received: from mail-lf1-f70.google.com (mail-lf1-f70.google.com
- [209.85.167.70]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=p5CBDMsPHpZMCmp2hILtl0CkuYFTnIMO037HYoPS0tM=;
+	b=f7qBvZagIGM4RntJOaS3qROR4eDB/dFfy61vUoQiKUaWqTBSGJDxxQ0WISvIrWoQnXbHXZ
+	kmJ4tEvEb+VEoOxJV/Po1GtS/iH59EmSRSLqhhu8sU8jvOqr28YeCe6ZVn62JLIymRtkuN
+	PNX5KF4MTL3wRDAHIu1fTnSh32M1E+I=
+Received: from mail-ed1-f69.google.com (mail-ed1-f69.google.com
+ [209.85.208.69]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-453-hNsDgpNdO4eFjeHj6wcHaA-1; Mon, 02 Sep 2024 06:10:46 -0400
-X-MC-Unique: hNsDgpNdO4eFjeHj6wcHaA-1
-Received: by mail-lf1-f70.google.com with SMTP id 2adb3069b0e04-53340bcd229so4858319e87.0
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2024 03:10:46 -0700 (PDT)
+ us-mta-683-98GOjB_fN0OW3QUAuG4Ulw-1; Mon, 02 Sep 2024 06:11:04 -0400
+X-MC-Unique: 98GOjB_fN0OW3QUAuG4Ulw-1
+Received: by mail-ed1-f69.google.com with SMTP id 4fb4d7f45d1cf-5bec65fd3bbso2675007a12.2
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2024 03:11:04 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725271845; x=1725876645;
+        d=1e100.net; s=20230601; t=1725271864; x=1725876664;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=H9RKF9H7s72V4OZfPOTUgjyYaIyw8mcKokBoElqIGAw=;
-        b=shLDpfYJBPDHzlIVq81d3XnNaiZ/HXT3UyN+6T4qthvXtPjkfuCy+txb0RVoAOgL3Y
-         1n5vTBZ+LQRsIRkz943lkRKQRotVb5w2FgAZCaSB05dCVHoF0JZ7lTV1VFMPRYr23nRb
-         1C62rl5azJkDKlsa636wwZ38MGO5X4eES9awQ/ZogvibUC92EJNcqu86DR9FFqJcrEAz
-         SJ6xgkNrpHZFHCcwQbLNmdxTe52FVorCGw/RlFWtsGsuSUyFGEXrJn20D2TdJ1fevGTZ
-         g2k07Xvh3wHQetR/OBYDxee3nkJfUULwzHl7zyWalNMoW9ivUK/rd/PkU8eBEIhlsFr2
-         de+w==
-X-Forwarded-Encrypted: i=1; AJvYcCXxqWkUagyvQDOx5DUe7ublXFqpJHMBbG8Rt53DLO64StaWPHUyKsjo+LLbui45mNI6ZUMMYy0PnB89QGA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwBAZKwntjjRbA43Za6nK9ytPTMiT8UjmuBnJKmpSYhpQ+s9YlQ
-	TPj3RgzYQ7oZZ6YrLAJ90fZK+DgsExlwTIvnDCvmKrfnTCHoTke4tKBjxGMYyyvfjEabmgNjIKS
-	Or7lCQ4KjI3cjwUGX2zqjQrVTpTPPkTNfec7A4+/1O9kemUj6oWKwAuEJQq2Mcw==
-X-Received: by 2002:a05:6512:b15:b0:52e:976a:b34b with SMTP id 2adb3069b0e04-53546b33aadmr8012011e87.15.1725271845228;
-        Mon, 02 Sep 2024 03:10:45 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFYItbefjD4lhCqtpm3GS4ZxCJzNfGCn2KlBrohSSQm0qTa4hwnKBwDrS5pTLOuniFpdKxW/Q==
-X-Received: by 2002:a05:6512:b15:b0:52e:976a:b34b with SMTP id 2adb3069b0e04-53546b33aadmr8011985e87.15.1725271844799;
-        Mon, 02 Sep 2024 03:10:44 -0700 (PDT)
+        bh=p5CBDMsPHpZMCmp2hILtl0CkuYFTnIMO037HYoPS0tM=;
+        b=ax+e/vC/PGybbEvgXiHfJHb+hfqWzzQjlNLZAS7LeGc5LsiWXQwxyUi6kw1xzoz/8Z
+         5HJn9PJ+2md44P4Nzi5+j9hbcL2fDvZQTiY6qZltcrLKFiC9dgKU4FHrLCy1bcqRO9uw
+         XNecqVX/q7kVfjud7yotLQDhUC4cA7UNUfnxDXW19yiMI98c9KycVD7fila7vWHecsFo
+         39GNmXEpkAcVNFmhEVcSsaVhMHPA74TzDZug57Z9zO1L8X67aTsUSAO53SaCNd0OhY7H
+         StgC2z8T9D1x3Nro7shaBh7iFjG2WWxdHMVu7bqVE5cxsNRSSsoTLAIYxo62KV2QhzJ9
+         u0uA==
+X-Forwarded-Encrypted: i=1; AJvYcCXE3+g71FzIBqHC4WhJjUyQJsLyk1k50+aYvnWOeCYWoWigD0uoOFY+fK7t7AoZZaG1Cj6TgEt7YL1aP/k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxVX3MKTP2t9jDdXbCF6urQVWImmJPqA37wfnqK7jdd4Mza5MOu
+	PDQCMMhqp6eRP7oGcUG3D0/I0dZCz9aDOooDEAwc8dspY3OUmXPz0wRK6/RlH7KQsHJAlEZisZc
+	2sxxFGPIWXGD+KHkUwgIpvCpxWAlACF7R1DDJgUa53d+YXe3K5IWI2zhGZ1ijNw==
+X-Received: by 2002:a05:6402:40ca:b0:5c2:112d:b744 with SMTP id 4fb4d7f45d1cf-5c21ed9fca6mr9727326a12.38.1725271863602;
+        Mon, 02 Sep 2024 03:11:03 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF3+6lb3LMTCQdb284HwCgL+cuzD6UKpH+7OBGNQMIHdb8i+3P4gIqMd1oKDsAnkf6Lc/TCYA==
+X-Received: by 2002:a05:6402:40ca:b0:5c2:112d:b744 with SMTP id 4fb4d7f45d1cf-5c21ed9fca6mr9727305a12.38.1725271863036;
+        Mon, 02 Sep 2024 03:11:03 -0700 (PDT)
 Received: from [192.168.171.203] ([109.38.145.100])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8988feb410sm540035566b.21.2024.09.02.03.10.42
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c226c7c055sm5066957a12.47.2024.09.02.03.11.00
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 02 Sep 2024 03:10:44 -0700 (PDT)
-Message-ID: <389b81a7-a7be-48c0-adc0-40d313a38c5d@redhat.com>
-Date: Mon, 2 Sep 2024 12:10:41 +0200
+        Mon, 02 Sep 2024 03:11:02 -0700 (PDT)
+Message-ID: <52a23d6c-b50c-4079-b0e7-4c1ca2fbc394@redhat.com>
+Date: Mon, 2 Sep 2024 12:10:58 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,27 +81,26 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] media: atomisp: move trailing statement to next line.
-To: Sakirnth Nagarasa <sakirnth@gmail.com>, mchehab@kernel.org,
+Subject: Re: [PATCH] media: atomisp: move trailing */ to separate lines
+To: Sergio de Almeida Cipriano Junior <sergiosacj@riseup.net>
+Cc: ~lkcamp/patches@lists.sr.ht, mchehab@kernel.org,
  sakari.ailus@linux.intel.com, gregkh@linuxfoundation.org,
  linux-media@vger.kernel.org, linux-staging@lists.linux.dev,
- linux-kernel@vger.kernel.org
-Cc: ~lkcamp/patches@lists.sr.ht, helen.koike@collabora.com
-References: <sakirnth@gmail.com> <20240730084220.38204-1-sakirnth@gmail.com>
+ linux-kernel@vger.kernel.org, helen.koike@collabora.com
+References: <20240730071904.1047-1-sergiosacj@riseup.net>
 Content-Language: en-US
 From: Hans de Goede <hdegoede@redhat.com>
-In-Reply-To: <20240730084220.38204-1-sakirnth@gmail.com>
+In-Reply-To: <20240730071904.1047-1-sergiosacj@riseup.net>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 Hi,
 
-On 7/30/24 10:42 AM, Sakirnth Nagarasa wrote:
-> Fix checkpath error "ERROR: trailing statements should be on next line"
-> in ia_css_fpn.host.c:46.
+On 7/30/24 9:19 AM, Sergio de Almeida Cipriano Junior wrote:
+> Fix checkpatch diagnostic "WARNING: Block comments use a trailing */ on
+> a separate line" in assert_support.h file.
 > 
-> Signed-off-by: Sakirnth Nagarasa <sakirnth@gmail.com>
-
+> Signed-off-by: Sergio de Almeida Cipriano Junior <sergiosacj@riseup.net>
 
 Thank you for your patch(es).
 
@@ -118,26 +117,36 @@ Hans
 
 
 
+
 > ---
-> 
-> Hello, this is my first patch to the kernel.
+> Hi, this is my first patch to the kernel.
 > ---
->  .../atomisp/pci/isp/kernels/fpn/fpn_1.0/ia_css_fpn.host.c      | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
+>  .../media/atomisp/pci/hive_isp_css_include/assert_support.h | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
 > 
-> diff --git a/drivers/staging/media/atomisp/pci/isp/kernels/fpn/fpn_1.0/ia_css_fpn.host.c b/drivers/staging/media/atomisp/pci/isp/kernels/fpn/fpn_1.0/ia_css_fpn.host.c
-> index 57b5e11e1..8ccfa99c6 100644
-> --- a/drivers/staging/media/atomisp/pci/isp/kernels/fpn/fpn_1.0/ia_css_fpn.host.c
-> +++ b/drivers/staging/media/atomisp/pci/isp/kernels/fpn/fpn_1.0/ia_css_fpn.host.c
-> @@ -43,7 +43,8 @@ ia_css_fpn_dump(
->      const struct sh_css_isp_fpn_params *fpn,
->      unsigned int level)
->  {
-> -	if (!fpn) return;
-> +	if (!fpn)
-> +		return;
->  	ia_css_debug_dtrace(level, "Fixed Pattern Noise Reduction:\n");
->  	ia_css_debug_dtrace(level, "\t%-32s = %d\n",
->  			    "fpn_shift", fpn->shift);
+> diff --git a/drivers/staging/media/atomisp/pci/hive_isp_css_include/assert_support.h b/drivers/staging/media/atomisp/pci/hive_isp_css_include/assert_support.h
+> index d294ac402..c5ab13511 100644
+> --- a/drivers/staging/media/atomisp/pci/hive_isp_css_include/assert_support.h
+> +++ b/drivers/staging/media/atomisp/pci/hive_isp_css_include/assert_support.h
+> @@ -27,7 +27,8 @@
+>   * #define assert(cnd) BUG_ON(cnd)
+>   * but that causes many compiler warnings (==errors) under Android
+>   * because it seems that the BUG_ON() macro is not seen as a check by
+> - * gcc like the BUG() macro is. */
+> + * gcc like the BUG() macro is.
+> + */
+>  #define assert(cnd) \
+>  	do { \
+>  		if (!(cnd)) \
+> @@ -37,7 +38,8 @@
+>  #ifndef PIPE_GENERATION
+>  /* Deprecated OP___assert, this is still used in ~1000 places
+>   * in the code. This will be removed over time.
+> - * The implementation for the pipe generation tool is in see support.isp.h */
+> + * The implementation for the pipe generation tool is in see support.isp.h
+> + */
+>  #define OP___assert(cnd) assert(cnd)
+>  
+>  static inline void compile_time_assert(unsigned int cond)
 
 
