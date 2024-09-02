@@ -1,103 +1,150 @@
-Return-Path: <linux-kernel+bounces-310940-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310942-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91517968318
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 11:23:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F77A96831B
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 11:23:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 48E1E280235
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 09:23:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4E7CF1C22545
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 09:23:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 717DE1C3F00;
-	Mon,  2 Sep 2024 09:22:44 +0000 (UTC)
-Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03B351C3308;
+	Mon,  2 Sep 2024 09:22:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HxN6a4K8"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E92401C3302;
-	Mon,  2 Sep 2024 09:22:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.255.230.98
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75BD41C2DB4;
+	Mon,  2 Sep 2024 09:22:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725268964; cv=none; b=V6a/Gi8zd+gCDOmqO36UHH76VEvW1T4xhY2si4sUWbqE9SIdVbR7Ls/SC45Enbjx+ad2sKH3Kvf1rZ/6w0Xf4hz+o40xWFNYISo05DPCVU5g4KkEu72yE4aAsUNT21bi2Qgt2mMZMswamlhSzI1n2fc93Cdiwiv0x2AC5lFoX/4=
+	t=1725268977; cv=none; b=ShnKSKyMbAcBBvhg8tzFt5bhBHc7Yyj97bR2AvLolEDe1DpcaQqPGD5JvfXi+alP3jCtEbRqynFLb5kaWj/+jWZIqMFdyhzMDct8Jrb4Tltby7rW/DgOEacDfEpSqdsnwyEvnDVbQEUG/+OJ/Gx6bVrcYcbrRFISgmTCaTekzas=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725268964; c=relaxed/simple;
-	bh=U18uxgrAwxlpsONTG3cU9Ne10ekdPt/kx4SnKlVAhJg=;
+	s=arc-20240116; t=1725268977; c=relaxed/simple;
+	bh=VZ8OdXN/IOYSuq/x5xY1eTO72fQw8fjegXdeCILRuyA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hJvptM4bNqkHLvX09OASdhQRSoRcgHpLCKHdLJNy+JtT9LzaRlDGREDu0fSyMxH5p2lRcCSDjiweliQIotaH//Ydo9l1ObKquN0G4VVgWscaeEyY37Nr6mNphx3N61CyQAgY80qls9db/G1cbLs7yQdlL0HU3ebNBmasPvIQYKs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=denx.de; spf=fail smtp.mailfrom=denx.de; arc=none smtp.client-ip=46.255.230.98
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=denx.de
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-	id 039961C009A; Mon,  2 Sep 2024 11:22:40 +0200 (CEST)
-Date: Mon, 2 Sep 2024 11:22:39 +0200
-From: Pavel Machek <pavel@denx.de>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
-	jonathanh@nvidia.com, f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
-	conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
-Subject: Re: [PATCH 6.10 000/149] 6.10.8-rc1 review
-Message-ID: <ZtWD39hotzRekF0p@duo.ucw.cz>
-References: <20240901160817.461957599@linuxfoundation.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=XlSOzGE4HjBDuSHDHsxpjiGklAW+cjwF0qnrCNxHMneQT4j07by5JcTZ4F1gyRXkKjOpcdYlRohdmnBY9Xv2/FElhhvN/dfG4s4gyOzr0NQ8h6gyPTsfJCNMd9ikgfkNUPKX1imSB2uLC+c6pzagr9908jXuAI3iP4TaGU2sAss=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HxN6a4K8; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725268975; x=1756804975;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=VZ8OdXN/IOYSuq/x5xY1eTO72fQw8fjegXdeCILRuyA=;
+  b=HxN6a4K85MwG+WlUMpbjlZjWouQ2jz2zKnNdZCP9KHUnXBsi0geqS2DR
+   IdyDLaamP3sITqxnFI98FtYHb2s0yTbX5A6rkAq+s4kWPiwoDkwxsnSAN
+   tzeXcFG1uPFXY1306y60FjbpzIbbJWKZnA9XOMvbpw5L5zEl/Ubd6DoA8
+   PtLsYJkayvIrAO/rJxKqiNOZnuFIf3oW4ujOEZY0991thw76P8AXvXJDf
+   OJuKfD2wauzcDfFhFzvVh+MZAZop1NQxzNNbE92Rjs3KJGh1Pxi68yN5S
+   fWajBosSCwhQUfzxJEvKVrzVXhfXAaidMW4eryU4ZsSwO20wRJ0mmwiEU
+   g==;
+X-CSE-ConnectionGUID: aCI3kz4FRLWWZDMVGsfiBQ==
+X-CSE-MsgGUID: aL+YJ3rsSmSdOI5g+SN7Kg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11182"; a="23649348"
+X-IronPort-AV: E=Sophos;i="6.10,195,1719903600"; 
+   d="scan'208";a="23649348"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2024 02:22:55 -0700
+X-CSE-ConnectionGUID: YYpNXTnnS8io8W/naGh2sQ==
+X-CSE-MsgGUID: plyfOy16RkO8CD6qidMJZQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,195,1719903600"; 
+   d="scan'208";a="68942886"
+Received: from lbogdanm-mobl3.ger.corp.intel.com (HELO tlindgre-MOBL1) ([10.245.246.223])
+  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2024 02:22:50 -0700
+Date: Mon, 2 Sep 2024 12:22:44 +0300
+From: Tony Lindgren <tony.lindgren@linux.intel.com>
+To: Nikolay Borisov <nik.borisov@suse.com>
+Cc: Rick Edgecombe <rick.p.edgecombe@intel.com>, seanjc@google.com,
+	pbonzini@redhat.com, kvm@vger.kernel.org, kai.huang@intel.com,
+	isaku.yamahata@gmail.com, xiaoyao.li@intel.com,
+	linux-kernel@vger.kernel.org,
+	Isaku Yamahata <isaku.yamahata@intel.com>,
+	Sean Christopherson <sean.j.christopherson@intel.com>,
+	Yan Zhao <yan.y.zhao@intel.com>
+Subject: Re: [PATCH 13/25] KVM: TDX: create/destroy VM structure
+Message-ID: <ZtWD5G0ZUp5Ui1Zp@tlindgre-MOBL1>
+References: <20240812224820.34826-1-rick.p.edgecombe@intel.com>
+ <20240812224820.34826-14-rick.p.edgecombe@intel.com>
+ <e7c16241-100a-4830-9628-65edb44ca78d@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="SXAaYyJtKBc9mggX"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240901160817.461957599@linuxfoundation.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <e7c16241-100a-4830-9628-65edb44ca78d@suse.com>
 
+On Mon, Aug 19, 2024 at 06:09:06PM +0300, Nikolay Borisov wrote:
+> On 13.08.24 г. 1:48 ч., Rick Edgecombe wrote:
+> > From: Isaku Yamahata <isaku.yamahata@intel.com>
+> > +static u64 ____tdx_reclaim_page(hpa_t pa, u64 *rcx, u64 *rdx, u64 *r8)
+> 
+> Just inline this into its sole caller. Yes each specific function is rather
+> small but if you have to go through several levels of indirection then
+> there's no point in splitting it...
 
---SXAaYyJtKBc9mggX
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Makes sense, will do a patch for this.
 
-Hi!
+> > +static inline u8 tdx_sysinfo_nr_tdcs_pages(void)
+> > +{
+> > +	return tdx_sysinfo->td_ctrl.tdcs_base_size / PAGE_SIZE;
+> > +}
+> 
+> Just add a nr_tdcs_pages to struct tdx_sysinfo_td_ctrl and claculate this
+> value in get_tdx_td_ctrl() rather than having this long-named non-sense.
+> This value can't be calculated at compiletime anyway.
 
-> This is the start of the stable review cycle for the 6.10.8 release.
-> There are 149 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+The struct tdx_sysinfo_td_ctrl is defined in the TDX module API json files.
+Probably best to add nr_tdcs_pages to struct kvm_tdx.
 
-CIP testing did not find any problems here:
+> > +void tdx_vm_free(struct kvm *kvm)
+> > +{
+> > +	struct kvm_tdx *kvm_tdx = to_kvm_tdx(kvm);
+> > +	u64 err;
+> > +	int i;
+> > +
+> > +	/*
+> > +	 * tdx_mmu_release_hkid() failed to reclaim HKID.  Something went wrong
+> > +	 * heavily with TDX module.  Give up freeing TD pages.  As the function
+> > +	 * already warned, don't warn it again.
+> > +	 */
+> > +	if (is_hkid_assigned(kvm_tdx))
+> > +		return;
+> > +
+> > +	if (kvm_tdx->tdcs_pa) {
+> > +		for (i = 0; i < tdx_sysinfo_nr_tdcs_pages(); i++) {
+> > +			if (!kvm_tdx->tdcs_pa[i])
+> > +				continue;
+> > +
+> > +			tdx_reclaim_control_page(kvm_tdx->tdcs_pa[i]);
+> > +		}
+> > +		kfree(kvm_tdx->tdcs_pa);
+> > +		kvm_tdx->tdcs_pa = NULL;
+> > +	}
+> > +
+> > +	if (!kvm_tdx->tdr_pa)
+> > +		return;
+> 
+> Use is_td_created() helper. Also isn't this check redundant since you've
+> already executed is_hkid_assigned() and if the VM is not properly created
+> i.e __tdx_td_init() has failed for whatever reason then the is_hkid_assigned
+> check will also fail?
 
-https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-/tree/linux-=
-6.10.y
+On the error path __tdx_td_init() calls tdx_mmu_release_hkid().
 
-6.6, 5.15, 5.4 pass our testing, too:
+I'll do a patch to change to use is_td_created(). The error path is a bit
+hard to follow so likely needs some more patches :)
 
-https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-/tree/linux-=
-6.6.y
-https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-/tree/linux-=
-5.15.y
-https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-/tree/linux-=
-5.4.y
+Regards,
 
-Tested-by: Pavel Machek (CIP) <pavel@denx.de>
-
-Best regards,
-                                                                Pavel
---=20
-DENX Software Engineering GmbH,        Managing Director: Erika Unter
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
-
---SXAaYyJtKBc9mggX
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZtWD3wAKCRAw5/Bqldv6
-8jlSAKCAB23dcrmkZu4i3f8DnZ74sG410wCgwCbKRf0ebObFbNE9UiosdEEFNC0=
-=XQrq
------END PGP SIGNATURE-----
-
---SXAaYyJtKBc9mggX--
+Tony
 
