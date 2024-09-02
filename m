@@ -1,129 +1,212 @@
-Return-Path: <linux-kernel+bounces-311950-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311951-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE5BE968FD1
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 00:35:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C76D3968FD2
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 00:36:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 988861F25BF3
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 22:35:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 80872288328
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 22:36:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 633AE18890A;
-	Mon,  2 Sep 2024 22:32:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76BB7187345;
+	Mon,  2 Sep 2024 22:36:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="umujh2Un"
-Received: from out-188.mta1.migadu.com (out-188.mta1.migadu.com [95.215.58.188])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="J16BW/DJ"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C7E8188007
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 22:32:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B48EA1A4E71
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 22:36:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725316366; cv=none; b=WejCtwMaSD5hIb6mPRe3zb4ej+w81L0WprG0Y5JYD/laLT/WyLO3o5eUOsDCWK6zF0u/xMntvnUZZzTHVGBojXDbauzlUpp/bH8nO9dDRPVKBYtdCnZmZrOgVxRJ5hx5h9XJAeMj7lehrMR2mvJn2AEd2CXoDnrilyD4pBNUacM=
+	t=1725316588; cv=none; b=I4kqC3j0yreCZgcFFh9y2yY84Tnat3KRuwiCxha3shsVbKTC/aklr/TtCBTiPCTH8JsOXWysWqxAcT3up8bT25LrGTAw6+PuIh0Z3ZKaGBMnHPtqpjraVu3ojeGhrPZ6xptBcSTwlqlIKthpPJzMeZUq7g91YSr9rKEGTT8kjTs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725316366; c=relaxed/simple;
-	bh=yXaIotM8BdESL2nGvdQndlyL1aKaMU+Rp53IfN8oEes=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LTD61F1q+4rJbnCDDpbRtZndcdApSEsJq/HCRM6RiJuhYs3RgX1CqX2DOpkoI90P9mGdbX5yR7faAjNzhd0GXac/PaHJSelxxHRNzAYnpWwAYZSZT6VE8r7Qmo71kGOmmJFKbvHXwqmXS3eytCcDRphCMRDsaJv9H5zGD9NRZrg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=umujh2Un; arc=none smtp.client-ip=95.215.58.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Mon, 2 Sep 2024 18:32:33 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1725316359;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=CChicL5CaDGtmLSJf1vi34yqR67dtLRNpZXAsSTNcoA=;
-	b=umujh2UnaAGmMihjCzRLKqvCZZGmAsBfwXENr0g2sZqZvXzMFKqDXVC1Ve9bQ+0pZkKCnv
-	G0IJqpN17zbRBc90S1MhpC5enVZy8Do2D5jEev27oscgRIne9oKA6WuYDHthrtEWX67Dtk
-	FclhxdraZegGjTP9EWxLPqAW0kENOL0=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Michal Hocko <mhocko@kernel.org>, Christoph Hellwig <hch@lst.de>, 
-	Yafang Shao <laoar.shao@gmail.com>, jack@suse.cz, Vlastimil Babka <vbabka@suse.cz>, 
-	Dave Chinner <dchinner@redhat.com>, Christian Brauner <brauner@kernel.org>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Paul Moore <paul@paul-moore.com>, 
-	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, linux-bcachefs@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/2 v2] remove PF_MEMALLOC_NORECLAIM
-Message-ID: <yewfyeumr2vj3o6dqcrv6b2giuno66ki7vzib3syitrstjkksk@e2k5rx3xbt67>
-References: <20240902095203.1559361-1-mhocko@kernel.org>
- <ggrt5bn2lvxnnebqtzivmge3yjh3dnepqopznmjmkrcllb3b35@4vnnapwr36ur>
- <20240902145252.1d2590dbed417d223b896a00@linux-foundation.org>
+	s=arc-20240116; t=1725316588; c=relaxed/simple;
+	bh=JeKAIV8Qs1+w6IaBQoCKZtopNY1wXWgBLUY+Nn5mHLM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rViA9X9BeeZDTOq/BiV0ZcXMfADytN138+H7te4NzFWcAgGYdDtdfVXSS3rVCc4VMuFyoGYH5paXc0DTiNOs96Wys9VX6FIyXjIdRx39PCCaUccgBm6xJ7nIMDZeBsPZlGoUg5nwQ4FtjGodUAg1gZv1zBATOBz4Notco0sRzOY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=J16BW/DJ; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-42c7b5b2d01so25108175e9.3
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2024 15:36:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1725316585; x=1725921385; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=aiGY7FrMUgB/JFXLqO9FHvLDXWOoOx/leerdKf01sPA=;
+        b=J16BW/DJosK8QO9CpFtGctl8Gautj+AB2jfpNL2HdLL+kz0cANzZr2c4oHl02+Mruq
+         XSuM5hv+99sG8SgTMkRnzPr47uRO7qdcyNqTyURA906GIBbIIg8gd2MIjZkIzTmMid/b
+         HYDwn+DuergE5CFtJRcJX8hZ6sDR0/TAM+dMZVLZNv98ojWUDefYhcyuQ/2J1Yb5aXU+
+         b3bhROCnO0l3SD7vntkd9VlWItddlkJvdtMhHm+lNmlWvehrsQC3j+Fy5F89CddVuiiA
+         StbLoiZTnONbh/Y8jFnn4SeDIcqUuS4jtmoMKjwRq8FE+bLxNJMGRYJ96NyAAjJlTO3s
+         HahA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725316585; x=1725921385;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=aiGY7FrMUgB/JFXLqO9FHvLDXWOoOx/leerdKf01sPA=;
+        b=GTlAkQyNCOavtvcR+J5u6BAk3sUUaOK6FtUzUrXZ4jJE1YaCV6T5AK211LM3G75lrm
+         nXj1KKcpGvvTgyTK43HGgK12kQ28arhfottd0UBunxVbPXG9l0X/nDHfZn8npAKFqxkY
+         ebPmXG9h0xx5Rpo+al1tTSvAqCGsnonhBp/8RaEVJkMYI5MPycx4uxMxSrqBSThDD90D
+         LUbMbblNHg4tefa2JF3a/Klh7GGCmvWV9Ah2S3AYzwBlmc6RF+Xqn36k7kRHQBPXuYIj
+         XfBpCHLbTFh4GRjTjZUTod3gaMRCyCvgIkbdf7jaNV7i2GEkVKkRWItwSYeLnkxenpb0
+         T6cg==
+X-Forwarded-Encrypted: i=1; AJvYcCWuNkylGmORwRT1q4AoFUmc/MBdJr+MMkkFuijxu5xSBkpDzzeqqPoUtW3YlvDQcRPmgV5ty5WdQFduQ6k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyW8tpzvc9etFvuZZnwi4BFTTPVU2/lXms501qW91ed67SiObwz
+	E+tJmGU6N1vo/ZP531fRUvDL6d68GD1uR4FSO07VUIQHzTBLu0GUSqLWyQGKABo=
+X-Google-Smtp-Source: AGHT+IHtb2QavBah0ufS5XufJQhqFWTnBfXdA4IaAMKaRk0IUL3FulKXfBZZtdpGDA0qi5EHUlB1lA==
+X-Received: by 2002:adf:f1cb:0:b0:374:bde8:66af with SMTP id ffacd0b85a97d-374bde866f9mr6352144f8f.57.1725316584451;
+        Mon, 02 Sep 2024 15:36:24 -0700 (PDT)
+Received: from ?IPV6:2403:580d:fda1::299? (2403-580d-fda1--299.ip6.aussiebb.net. [2403:580d:fda1::299])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d8e79bb5d7sm2271408a91.55.2024.09.02.15.36.21
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 02 Sep 2024 15:36:23 -0700 (PDT)
+Message-ID: <6416ac73-0a2a-4568-b407-62fbeb6d5540@suse.com>
+Date: Tue, 3 Sep 2024 08:06:18 +0930
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240902145252.1d2590dbed417d223b896a00@linux-foundation.org>
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 3/3] btrfs: Don't block system suspend during fstrim
+To: Luca Stefani <luca.stefani.ge1@gmail.com>
+Cc: Jens Axboe <axboe@kernel.dk>, Chris Mason <clm@fb.com>,
+ Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,
+ linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-btrfs@vger.kernel.org
+References: <20240902205828.943155-1-luca.stefani.ge1@gmail.com>
+ <20240902205828.943155-4-luca.stefani.ge1@gmail.com>
+Content-Language: en-US
+From: Qu Wenruo <wqu@suse.com>
+Autocrypt: addr=wqu@suse.com; keydata=
+ xsBNBFnVga8BCACyhFP3ExcTIuB73jDIBA/vSoYcTyysFQzPvez64TUSCv1SgXEByR7fju3o
+ 8RfaWuHCnkkea5luuTZMqfgTXrun2dqNVYDNOV6RIVrc4YuG20yhC1epnV55fJCThqij0MRL
+ 1NxPKXIlEdHvN0Kov3CtWA+R1iNN0RCeVun7rmOrrjBK573aWC5sgP7YsBOLK79H3tmUtz6b
+ 9Imuj0ZyEsa76Xg9PX9Hn2myKj1hfWGS+5og9Va4hrwQC8ipjXik6NKR5GDV+hOZkktU81G5
+ gkQtGB9jOAYRs86QG/b7PtIlbd3+pppT0gaS+wvwMs8cuNG+Pu6KO1oC4jgdseFLu7NpABEB
+ AAHNGFF1IFdlbnJ1byA8d3F1QHN1c2UuY29tPsLAlAQTAQgAPgIbAwULCQgHAgYVCAkKCwIE
+ FgIDAQIeAQIXgBYhBC3fcuWlpVuonapC4cI9kfOhJf6oBQJjTSJVBQkNOgemAAoJEMI9kfOh
+ Jf6oapEH/3r/xcalNXMvyRODoprkDraOPbCnULLPNwwp4wLP0/nKXvAlhvRbDpyx1+Ht/3gW
+ p+Klw+S9zBQemxu+6v5nX8zny8l7Q6nAM5InkLaD7U5OLRgJ0O1MNr/UTODIEVx3uzD2X6MR
+ ECMigQxu9c3XKSELXVjTJYgRrEo8o2qb7xoInk4mlleji2rRrqBh1rS0pEexImWphJi+Xgp3
+ dxRGHsNGEbJ5+9yK9Nc5r67EYG4bwm+06yVT8aQS58ZI22C/UeJpPwcsYrdABcisd7dddj4Q
+ RhWiO4Iy5MTGUD7PdfIkQ40iRcQzVEL1BeidP8v8C4LVGmk4vD1wF6xTjQRKfXHOwE0EWdWB
+ rwEIAKpT62HgSzL9zwGe+WIUCMB+nOEjXAfvoUPUwk+YCEDcOdfkkM5FyBoJs8TCEuPXGXBO
+ Cl5P5B8OYYnkHkGWutAVlUTV8KESOIm/KJIA7jJA+Ss9VhMjtePfgWexw+P8itFRSRrrwyUf
+ E+0WcAevblUi45LjWWZgpg3A80tHP0iToOZ5MbdYk7YFBE29cDSleskfV80ZKxFv6koQocq0
+ vXzTfHvXNDELAuH7Ms/WJcdUzmPyBf3Oq6mKBBH8J6XZc9LjjNZwNbyvsHSrV5bgmu/THX2n
+ g/3be+iqf6OggCiy3I1NSMJ5KtR0q2H2Nx2Vqb1fYPOID8McMV9Ll6rh8S8AEQEAAcLAfAQY
+ AQgAJgIbDBYhBC3fcuWlpVuonapC4cI9kfOhJf6oBQJjTSJuBQkNOge/AAoJEMI9kfOhJf6o
+ rq8H/3LJmWxL6KO2y/BgOMYDZaFWE3TtdrlIEG8YIDJzIYbNIyQ4lw61RR+0P4APKstsu5VJ
+ 9E3WR7vfxSiOmHCRIWPi32xwbkD5TwaA5m2uVg6xjb5wbdHm+OhdSBcw/fsg19aHQpsmh1/Q
+ bjzGi56yfTxxt9R2WmFIxe6MIDzLlNw3JG42/ark2LOXywqFRnOHgFqxygoMKEG7OcGy5wJM
+ AavA+Abj+6XoedYTwOKkwq+RX2hvXElLZbhYlE+npB1WsFYn1wJ22lHoZsuJCLba5lehI+//
+ ShSsZT5Tlfgi92e9P7y+I/OzMvnBezAll+p/Ly2YczznKM5tV0gboCWeusM=
+In-Reply-To: <20240902205828.943155-4-luca.stefani.ge1@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Mon, Sep 02, 2024 at 02:52:52PM GMT, Andrew Morton wrote:
-> On Mon, 2 Sep 2024 05:53:59 -0400 Kent Overstreet <kent.overstreet@linux.dev> wrote:
+
+
+在 2024/9/3 06:26, Luca Stefani 写道:
+> Sometimes the system isn't able to suspend because the task
+> responsible for trimming the device isn't able to finish in
+> time, especially since we have a free extent discarding phase,
+> which can trim a lot of unallocated space, and there is no
+> limits on the trim size (unlike the block group part).
 > 
-> > On Mon, Sep 02, 2024 at 11:51:48AM GMT, Michal Hocko wrote:
-> > > The previous version has been posted in [1]. Based on the review feedback
-> > > I have sent v2 of patches in the same threat but it seems that the
-> > > review has mostly settled on these patches. There is still an open
-> > > discussion on whether having a NORECLAIM allocator semantic (compare to
-> > > atomic) is worthwhile or how to deal with broken GFP_NOFAIL users but
-> > > those are not really relevant to this particular patchset as it 1)
-> > > doesn't aim to implement either of the two and 2) it aims at spreading
-> > > PF_MEMALLOC_NORECLAIM use while it doesn't have a properly defined
-> > > semantic now that it is not widely used and much harder to fix.
-> > > 
-> > > I have collected Reviewed-bys and reposting here. These patches are
-> > > touching bcachefs, VFS and core MM so I am not sure which tree to merge
-> > > this through but I guess going through Andrew makes the most sense.
-> > > 
-> > > Changes since v1;
-> > > - compile fixes
-> > > - rather than dropping PF_MEMALLOC_NORECLAIM alone reverted eab0af905bfc
-> > >   ("mm: introduce PF_MEMALLOC_NORECLAIM, PF_MEMALLOC_NOWARN") suggested
-> > >   by Matthew.
-> > 
-> > To reiterate:
-> > 
+> Since discard isn't a critical call it can be interrupted
+> at any time, in such cases we stop the trim, report the amount
+> of discarded bytes and return failure.
 > 
-> It would be helpful to summarize your concerns.
+> Link: https://bugzilla.kernel.org/show_bug.cgi?id=219180
+> Link: https://bugzilla.suse.com/show_bug.cgi?id=1229737
+> Signed-off-by: Luca Stefani <luca.stefani.ge1@gmail.com>
+> ---
+>   fs/btrfs/extent-tree.c | 17 ++++++++++++++++-
+>   1 file changed, 16 insertions(+), 1 deletion(-)
 > 
-> What runtime impact do you expect this change will have upon bcachefs?
+> diff --git a/fs/btrfs/extent-tree.c b/fs/btrfs/extent-tree.c
+> index 894684f4f497..7c78ed4044db 100644
+> --- a/fs/btrfs/extent-tree.c
+> +++ b/fs/btrfs/extent-tree.c
+> @@ -16,6 +16,7 @@
+>   #include <linux/percpu_counter.h>
+>   #include <linux/lockdep.h>
+>   #include <linux/crc32c.h>
+> +#include <linux/freezer.h>
+>   #include "ctree.h"
+>   #include "extent-tree.h"
+>   #include "transaction.h"
+> @@ -1235,6 +1236,11 @@ static int remove_extent_backref(struct btrfs_trans_handle *trans,
+>   	return ret;
+>   }
+>   
+> +static bool btrfs_trim_interrupted(void)
+> +{
+> +	return fatal_signal_pending(current) || freezing(current);
+> +}
+> +
+>   static int btrfs_issue_discard(struct block_device *bdev, u64 start, u64 len,
+>   			       u64 *discarded_bytes)
+>   {
+> @@ -1302,6 +1308,9 @@ static int btrfs_issue_discard(struct block_device *bdev, u64 start, u64 len,
+>   	}
+>   
+>   	while (bytes_left) {
+> +		if (btrfs_trim_interrupted())
+> +			break;
+> +
 
-For bcachefs: I try really hard to minimize tail latency and make
-performance robust in extreme scenarios - thrashing. A large part of
-that is that btree locks must be held for no longer than necessary.
+Although with this change, the check should be more than enough to cover 
+everything, better than the existing per-block-group check and the 
+possibly large discard for the free extents.
 
-We definitely don't want to recurse into other parts of the kernel,
-taking other locks (i.e. in memory reclaim) while holding btree locks;
-that's a great way to stack up (and potentially multiply) latencies.
+Thus just this check would be enough.
 
-But gfp flags don't work with vmalloc allocations (and that's unlikely
-to change), and we require vmalloc fallbacks for e.g. btree node
-allocation. That's the big reason we want MEMALLOC_PF_NORECLAIM.
+The other thing is the old return value, I guess you can just add "ret = 
+-EERESTARTSYS;" before the break.
 
-Besides that, it's just cleaner, memalloc flags are the direction we
-want to be moving in, and it's going to be necessary if we ever want to
-do a malloc() that doesn't require a gfp flags parameter. That would be
-a win for safety and correctness in the kernel, and it's also likely
-required for proper Rust support.
-
-And the "GFP_NOFAIL must not fail" argument makes no sense, because a
-failing a GFP_NOFAIL allocation is the only sane thing to do if the
-allocation is buggy (too big, i.e. resulting from an integer overflow
-bug, or wrong context). The alternatives are at best never returning
-(stuck unkillable process), or a scheduling while atomic bug, or Michal
-was even proposing killing the process (handling it like a BUG()!).
-
-But we don't use BUG_ON() for things that we can't prove won't happen in
-the wild if we can write an error path.
-
-That is, PF_MEMALLOC_NORECLAIM lets us turn bugs into runtime errors.
+Thanks,
+Qu
+>   		sector = start >> SECTOR_SHIFT;
+>   		nr_sects = bytes_left >> SECTOR_SHIFT;
+>   		bio_sects = min(nr_sects, bio_discard_limit(bdev, sector));
+> @@ -6470,7 +6479,7 @@ static int btrfs_trim_free_extents(struct btrfs_device *device, u64 *trimmed)
+>   		start += len;
+>   		*trimmed += bytes;
+>   
+> -		if (fatal_signal_pending(current)) {
+> +		if (btrfs_trim_interrupted()) {
+>   			ret = -ERESTARTSYS;
+>   			break;
+>   		}
+> @@ -6519,6 +6528,9 @@ int btrfs_trim_fs(struct btrfs_fs_info *fs_info, struct fstrim_range *range)
+>   
+>   	cache = btrfs_lookup_first_block_group(fs_info, range->start);
+>   	for (; cache; cache = btrfs_next_block_group(cache)) {
+> +		if (btrfs_trim_interrupted())
+> +			break;
+> +
+>   		if (cache->start >= range_end) {
+>   			btrfs_put_block_group(cache);
+>   			break;
+> @@ -6558,6 +6570,9 @@ int btrfs_trim_fs(struct btrfs_fs_info *fs_info, struct fstrim_range *range)
+>   
+>   	mutex_lock(&fs_devices->device_list_mutex);
+>   	list_for_each_entry(device, &fs_devices->devices, dev_list) {
+> +		if (btrfs_trim_interrupted())
+> +			break;
+> +
+>   		if (test_bit(BTRFS_DEV_STATE_MISSING, &device->dev_state))
+>   			continue;
+>   
 
