@@ -1,122 +1,180 @@
-Return-Path: <linux-kernel+bounces-311725-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311726-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F347F968CD5
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 19:27:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86DC1968CD8
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 19:30:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 313721C2275A
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 17:27:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F3E961F23EFB
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 17:30:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D7F71C62AB;
-	Mon,  2 Sep 2024 17:27:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KYXab5WC"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B9DC1AB6E8;
+	Mon,  2 Sep 2024 17:30:34 +0000 (UTC)
+Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4171183CBB;
-	Mon,  2 Sep 2024 17:27:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62009183CBB
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 17:30:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725298033; cv=none; b=ONYeRrVxh+1+i/Qv8zeQwEOFTJG1KsODrpU647xik4k6MOKF7SBdxFBYaCc3iZT+jLNjh2WWFxPqcJSejI3DrgM8FiHkRg3EwOdgcCYwkzsiojWF/c0mH2Sf+5nLztXGIMrfk/HguyLbSVAhWiThEL8l9uOFMSh4tQ1gXQS4cjk=
+	t=1725298233; cv=none; b=kaYZJ9NJt0QUWgQovvBT6/QKb/+VITgLrRgVFSI2+FfS1GkbMTk2FgxKkN6lGOoIqiLcqAMEShbMTwVPypnHjk+gHYp2YB1VH+0LCe/7zgJq/FCj58v+HZEnkbTLcw+Zu9e/c7IaVbHsxyXieyCjnWFbbm/CVELGSnbjn6k6qlE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725298033; c=relaxed/simple;
-	bh=bKwv7PTScplyThgl7fVwhkZHF0Z9uOyJYG3hZpnXuXY=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=gXjOxrcJzBNeB19UVICfIcrDPzdDO22qTwBkz82BM2IDK8a5/Jsi7IYMb+UYpSaZD1eHbCdw7wpNO8MRiSlIAZr/JG5L2nsNCTrJTuzGZpSr9WUXrEqeWTqP7eDniznnnzv1scdQqlVjp7VC6qU4SkvMuiTsBi9k4rPU266HYVQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KYXab5WC; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1725298233; c=relaxed/simple;
+	bh=/snvTa0uroGmf+sTeHxwzoukVu05rGMxpWtGZxFYu3k=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=e2u/F33x6/WMA5Xznsc8FRmDhowjr5WOw7TKYsxPMXr2w6Dnhd71tIohMZIJiFv92HGjgFXsAMFF9EgyJAs7Qy0gDsTPJK8eGagpfwYn0HKSDlrGsJqDsRBoX+v6wUYa0pM31pQWaCA2DYBvLyGhFS8D3OaGIOODtGTVu/Z6tLU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.216.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-42bbffe38e6so21782825e9.0;
-        Mon, 02 Sep 2024 10:27:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725298030; x=1725902830; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=L4Xue4TSRIddUTjFb4xLBuFSp8O+ZsGp4epKVCdznvY=;
-        b=KYXab5WCLQfm3w4u/hZrtupfTJF9EwcZDyL9RV/p5JQCm4v8PKujwNpY6E83A+PRAr
-         dPEUiBU6AM29qqJ1Wdhv40OrPq4oBwuCvegOWWtDp/41+MH6JWC/BHc/pzjeR/sZntbz
-         m404gGQ9jQCYgwu2MYoCOCiVo+QTSmNcRHzG6QvSh3O5GEJXC1JYCtnuZa1mkC+sarz3
-         rohtRUbP3Q5frtQINKmEiGW0pnijjUqGYJ17PUCRZK9vOyKqO4m+OoMWWffWZKwDO8LM
-         qLnZOrMvFCYnHEEIFJPq11Dr9PgwxGlQWwugwkQGWsEZjNKP14llfYzzGn7TY3yFFBeL
-         alZg==
+Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-2d89229ac81so1594286a91.0
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2024 10:30:32 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725298030; x=1725902830;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=L4Xue4TSRIddUTjFb4xLBuFSp8O+ZsGp4epKVCdznvY=;
-        b=nyM4CS6pWSfbRR6S2qbPySbmftu+6XJKxFQ7MHF3vUdA7ffEv74JxbPeBtLhROZuUM
-         UFR55UFt0nMLKjwmTEXq5ZNZbNm3CvyGM1l7PkrbY5GfnPSTRkMAbeUpagfW/J3V8NuW
-         DNc2i+CdMjhWZ2Rbo6JAcqZ8QSVdjjX2NaE7IvKVkJqcduC9Nw5hdMtAIHP73CB0o5bV
-         cuxQfw06me6rCsEsKajbX2YUxL1EAh6C3Y12VF+bYHlCz+4LxP63JzkJJQ5ygwdYpIlp
-         9pC/BM7moOFVzVdnjDkFlzKv9bhWbiCcTwsBV9egQvSX0rrlj4qb2ZZaoQJDTRT4Atxw
-         c08g==
-X-Forwarded-Encrypted: i=1; AJvYcCUEFZWdzV/61wYuah/XD02nJsg4NGq7yicBzG6zbzyP9CX2cl6EjwcKn6Zvz9e3Yl+eeqbSclIVipOOMQ==@vger.kernel.org, AJvYcCVRF++Qe4F7nJmBnl2GhdGHhpE38HcsN1Xxd7XZkKDGO2Ikk6KAfcdqiBlZ/CxnS1c8KnHF5NKBggrCbIk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxw04DEbdPMa63nVHNvkQ2W+bco36Nr0PDiccxnxH/D/DRsBmkD
-	3ujO/yDKL3kP02/8TaUq3HZtKGgF02Esx+vANeiuu5TBGwZzLWEBbQP1npDW
-X-Google-Smtp-Source: AGHT+IE0Cq7vS54YOMDsAz35O1QxsQPrPpj+yty2reHAikKprAxZ3TI9wS5m0sg8FVR7g7OSULYFpA==
-X-Received: by 2002:a5d:4a46:0:b0:374:c481:3f6 with SMTP id ffacd0b85a97d-374c4810438mr3766464f8f.8.1725298029759;
-        Mon, 02 Sep 2024 10:27:09 -0700 (PDT)
-Received: from localhost (craw-09-b2-v4wan-169726-cust2117.vm24.cable.virginm.net. [92.238.24.70])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-374bd0ce240sm7653214f8f.70.2024.09.02.10.27.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Sep 2024 10:27:09 -0700 (PDT)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Sathya Prakash <sathya.prakash@broadcom.com>,
-	Sreekanth Reddy <sreekanth.reddy@broadcom.com>,
-	Suganath Prabu Subramani <suganath-prabu.subramani@broadcom.com>,
-	"James E . J . Bottomley" <James.Bottomley@HansenPartnership.com>,
-	"Martin K . Petersen" <martin.petersen@oracle.com>,
-	MPT-FusionLinux.pdl@broadcom.com,
-	linux-scsi@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH][next][V2] scsi: mpt3sas: Remove trailing space after \n newline
-Date: Mon,  2 Sep 2024 18:27:08 +0100
-Message-Id: <20240902172708.369741-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.39.2
+        d=1e100.net; s=20230601; t=1725298231; x=1725903031;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=i203f9s6t0ft4wQbLxaC4/ETLBTWXgogKsC9yrqdZGo=;
+        b=hZaBZDRTkd92c2IWx9KDayNqG/S5RQhY+o3OSbLij1Ne7qw0bp6D9V9/KvFmEcNna6
+         yN5Qs00TCqSBTBiN/Di8J314F/zrFRPt3n4PPmj3jfjmU0nnLvBsthDZhzFzk9RP2m8l
+         xcxjl3uSpxYejlXgIEY0h4FbfbYh87jy2jZsfSoHuvSUzVIEkZTadWr8ZyBS7yrBtelb
+         4CbKOj56h7jtP2a0us8K0NoHNnNvdcEYe5bR5qCDkLkLX7A8SDmBiOM0hKAGKOH+PQir
+         GMlv31/94EPBEODVtcnqDnmSh5XTlTgTKSQV8FqcN16D339N1vTRhWe4dFjjA7i0K70+
+         /ygQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVKNo3XwnnUj6l6v8WQ+tsvmF3evGbCx08KF6vVfIEVAwvB0gaxu0A5oxLTpRKREA43jjO1KG47NEJE2Mw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyXH8SluSnu7XVpl2Vu2DrIgMITmxl68fl6501kD3yGFqvslt16
+	mp1NPz77r2dtvoscpr6NCy6fJGLThxQBHnVfT/auiQF8qXQ61g0EUz6naC8/TMdm/ixqIAkr/H2
+	ilz96N5azVKEG41kSYsqmbigRTck=
+X-Google-Smtp-Source: AGHT+IH4p7U8BI8qM9nOTimuqnSbS+S5qyXuAwUt0ggrHsw5MzDW3VuI7I/KNTolIhsdwvjNVcuKUE4Jzn3j95FmQI8=
+X-Received: by 2002:a17:90a:bc89:b0:2d8:8991:211f with SMTP id
+ 98e67ed59e1d1-2d889912298mr9288377a91.28.1725298231390; Mon, 02 Sep 2024
+ 10:30:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+References: <20240830232910.1839548-1-namhyung@kernel.org> <20240830232910.1839548-5-namhyung@kernel.org>
+ <20240902091232.GB4723@noisy.programming.kicks-ass.net>
+In-Reply-To: <20240902091232.GB4723@noisy.programming.kicks-ass.net>
+From: Namhyung Kim <namhyung@kernel.org>
+Date: Mon, 2 Sep 2024 10:30:19 -0700
+Message-ID: <CAM9d7cg-7USE-Ofusc1VDpr3qtviX4xZmoKmBjmEfBDw9XJ+nw@mail.gmail.com>
+Subject: Re: [RFC/PATCH 4/4] perf/x86: Relax privilege filter restriction on
+ AMD IBS
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Ingo Molnar <mingo@kernel.org>, Kan Liang <kan.liang@linux.intel.com>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	Stephane Eranian <eranian@google.com>, Ravi Bangoria <ravi.bangoria@amd.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-There is a extraneous space after a newline in an ioc_info message.
-Remove it and join to split literal strings into one.
+On Mon, Sep 2, 2024 at 2:12=E2=80=AFAM Peter Zijlstra <peterz@infradead.org=
+> wrote:
+>
+> On Fri, Aug 30, 2024 at 04:29:10PM -0700, Namhyung Kim wrote:
+> > While IBS is available for per-thread profiling, still regular users
+> > cannot open an event due to the default paranoid setting (2) which
+> > doesn't allow unprivileged users to get kernel samples.  That means
+> > it needs to set exclude_kernel bit in the attribute but IBS driver
+> > would reject it since it has PERF_PMU_CAP_NO_EXCLUDE.  This is not what
+> > we want and I've been getting requests to fix this issue.
+> >
+> > This should be done in the hardware, but until we get the HW fix we may
+> > allow exclude_{kernel,user} in the attribute and silently drop the
+> > samples in the PMU IRQ handler.  It won't guarantee the sampling
+> > frequency or even it'd miss some with fixed period too.  Not ideal,
+> > but that'd still be helpful to regular users.
+>
+> Urgh.... this is really rather bad. And I'm sure a bunch of people are
+> going to be spending a lot of time trying to figure out why their
+> results don't make sense.
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
+I agree it can be confusing but there are use cases where regular users
+want IBS information like memory data source, data address and so on.
+Also I realized that software events like cpu-clock use the same logic to
+discard samples by privilege mode already.
 
-V2: join split literal strings into one as noted by Christophe Jaillet
+>
+> I realize that having entry hooks to disable/enable the counters is also
+> not going to happen, this has a ton of problems too.
 
----
- drivers/scsi/mpt3sas/mpt3sas_base.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+Do you mean kernel/user mode change hook?  I guess it'd be too costly.
 
-diff --git a/drivers/scsi/mpt3sas/mpt3sas_base.c b/drivers/scsi/mpt3sas/mpt3sas_base.c
-index 9a24f7776d64..ed5046593fda 100644
---- a/drivers/scsi/mpt3sas/mpt3sas_base.c
-+++ b/drivers/scsi/mpt3sas/mpt3sas_base.c
-@@ -8898,9 +8898,8 @@ _base_check_ioc_facts_changes(struct MPT3SAS_ADAPTER *ioc)
- 		    ioc->device_remove_in_progress, pd_handles_sz, GFP_KERNEL);
- 		if (!device_remove_in_progress) {
- 			ioc_info(ioc,
--			    "Unable to allocate the memory for "
--			    "device_remove_in_progress of sz: %d\n "
--			    , pd_handles_sz);
-+			    "Unable to allocate the memory for device_remove_in_progress of sz: %d\n",
-+			    pd_handles_sz);
- 			return -ENOMEM;
- 		}
- 		memset(device_remove_in_progress +
--- 
-2.39.2
+>
+> Also, that PMU passthrough patch set has guest hooks, so you can
+> actually do the exclude_host/guest nonsense with those, right?
 
+Oh.. this patch is about exclude_user/kernel not host/guest.  Anyway
+it'd be great if IBS could support the guest hooks and allow the exclude
+bits.
+
+Thanks,
+Namhyung
+
+>
+> > This uses perf_exclude_event() which checks regs->cs.  But it should be
+> > fine because set_linear_ip() also updates the CS according to the RIP
+> > provided by IBS.
+> >
+> > Cc: Ravi Bangoria <ravi.bangoria@amd.com>
+> > Cc: Stephane Eranian <eranian@google.com>
+> > Signed-off-by: Namhyung Kim <namhyung@kernel.org>
+> > ---
+> >  arch/x86/events/amd/ibs.c | 13 +++++++++++--
+> >  1 file changed, 11 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/arch/x86/events/amd/ibs.c b/arch/x86/events/amd/ibs.c
+> > index e91970b01d62..e40e2255239a 100644
+> > --- a/arch/x86/events/amd/ibs.c
+> > +++ b/arch/x86/events/amd/ibs.c
+> > @@ -290,6 +290,11 @@ static int perf_ibs_init(struct perf_event *event)
+> >       if (has_branch_stack(event))
+> >               return -EOPNOTSUPP;
+> >
+> > +     /* handle exclude_{user,kernel} in the IRQ handler */
+> > +     if (event->attr.exclude_hv || event->attr.exclude_idle ||
+> > +         event->attr.exclude_host || event->attr.exclude_guest)
+> > +             return -EINVAL;
+> > +
+> >       ret =3D validate_group(event);
+> >       if (ret)
+> >               return ret;
+> > @@ -667,7 +672,6 @@ static struct perf_ibs perf_ibs_fetch =3D {
+> >               .start          =3D perf_ibs_start,
+> >               .stop           =3D perf_ibs_stop,
+> >               .read           =3D perf_ibs_read,
+> > -             .capabilities   =3D PERF_PMU_CAP_NO_EXCLUDE,
+> >       },
+> >       .msr                    =3D MSR_AMD64_IBSFETCHCTL,
+> >       .config_mask            =3D IBS_FETCH_CONFIG_MASK,
+> > @@ -691,7 +695,6 @@ static struct perf_ibs perf_ibs_op =3D {
+> >               .start          =3D perf_ibs_start,
+> >               .stop           =3D perf_ibs_stop,
+> >               .read           =3D perf_ibs_read,
+> > -             .capabilities   =3D PERF_PMU_CAP_NO_EXCLUDE,
+> >       },
+> >       .msr                    =3D MSR_AMD64_IBSOPCTL,
+> >       .config_mask            =3D IBS_OP_CONFIG_MASK,
+> > @@ -1111,6 +1114,12 @@ static int perf_ibs_handle_irq(struct perf_ibs *=
+perf_ibs, struct pt_regs *iregs)
+> >               regs.flags |=3D PERF_EFLAGS_EXACT;
+> >       }
+> >
+> > +     if (perf_exclude_event(event, &regs)) {
+> > +             throttle =3D perf_event_account_interrupt(event);
+> > +             atomic64_inc(&event->dropped_samples);
+> > +             goto out;
+> > +     }
+> > +
+> >       if (event->attr.sample_type & PERF_SAMPLE_RAW) {
+> >               raw =3D (struct perf_raw_record){
+> >                       .frag =3D {
+> > --
+> > 2.46.0.469.g59c65b2a67-goog
+> >
 
