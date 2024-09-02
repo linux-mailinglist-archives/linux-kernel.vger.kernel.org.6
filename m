@@ -1,509 +1,345 @@
-Return-Path: <linux-kernel+bounces-311235-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311236-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94978968668
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 13:41:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C27CB96866F
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 13:42:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B54311C21F00
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 11:41:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 45BE61F237AD
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 11:42:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99EB01D6184;
-	Mon,  2 Sep 2024 11:41:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 927AE181B88;
+	Mon,  2 Sep 2024 11:41:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JUYbqN7C"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="fq6UHlB7";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="h/ftKBZl";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="fq6UHlB7";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="h/ftKBZl"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54C521D67B9
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 11:40:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82D721D4142;
+	Mon,  2 Sep 2024 11:41:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725277259; cv=none; b=dYpcgMXhqkAI0jZnw0apStPqPJhbYTdb0LhvqdA0SaEdma5cd9srXbWQ9bGPOs1/p82bljFccgS5s4ivShr1zxHsITzox3RTU9sS2xcRDPr30oMLdgz9YplglN8V0O5cZG9Hy0NDE9s06llv1ovVbhdVqm9EjO52amNrbpXJ6Bc=
+	t=1725277298; cv=none; b=E9nOJ3lcWDkquyWQYvTLW0Gcr5YCdkMrxBWn4JzerCQMmWzndaM/Xp368kC6s/e4cVUNtoQh0Z6UBy2farv7SGVTIqMclkLluvzW6/D14h+Hx0dbLUN2MoDQpacAraC/KYaK00LiwEBC1geNTHPswTJkZdAkU5qHb21VvrgRqQo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725277259; c=relaxed/simple;
-	bh=J138BfmIUP+DsGFhuQ6tmQ+KFExTDC0caq5a6QTQpR0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=U5H3k0H0Q012bqUSLNgANG8C/o0x0NigTtQUlAsmK60QBuHs1dNF+sMescK+rGe5YTIwe/w5vafIF3CoRv6LDKEfD62RPI2eSyTQBPXd+cnrKcXg/Axq2SeFn5FFkUN484P1UeLWkGyXz8F5oK7l4Fy+OilQOFkMPoXH61dyeIo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JUYbqN7C; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-42bb9a23ea7so5106375e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2024 04:40:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1725277255; x=1725882055; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=stq3m356GXIwneY5TQElVnJK65z1Q8tunPXavfni1Po=;
-        b=JUYbqN7C/3rob8Uby4vYQt4yNVlISbmJZMtYm27nptDR0DiuV8s0nQuudjVRVCBpk2
-         V8LFf4qnDYC/KZSsU6P6EwG5uw5QrsNExB6/TQ76EiQHSw0jq7rxIYTCKsdI3VZk/pGE
-         /Ocl+n0sZL9DicR0rKBK0dT1THxlxD/rJW+NGz5im40/13zBxQneXiEwoaap4HzVlDzB
-         R9zVFzaZzqumncZLpe4KBmGZVO+McY66vcDF2QzZAFYSxMQdRNSOyAgQsramDiIiYWw6
-         FUn8IF9oCMz4DaHMilDNRnwY76mOY8NxB3x9QTvwPutZKc3/9UC9dlfqjgZDUWjyf8PM
-         JBbQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725277255; x=1725882055;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=stq3m356GXIwneY5TQElVnJK65z1Q8tunPXavfni1Po=;
-        b=lKX69UAovSUkxnFHejvv+ziI1IyCyFmxYjEWyoQxNT50tn95VWNyt/QgfPEio4QwZe
-         2pJG10e95bB2QTNGjqn9HjCC2Oyhof97BkGxcQ9i5s4+N1pMNnJFEWuocwPJc7bDfAcP
-         +/CHYPmBgSLT0MDP/Ms4/EysDVclRUrccwH9x/FSZCbiGABRAH1A0XCTZ90I/ZxE3ZMb
-         T2iUlN7mM/1F+gQgWcJtlDHp8j+uf1v4OuXRk08hDYy26pvtHFmGn0OgX5v61NwR18Oz
-         ZiqdugpMD8z2Cs+5VmkjCmwWX4cP5w9SyQvA+Iw0aRCMW8zBHwPn1wqbq7vKYu29fh3U
-         7Cig==
-X-Forwarded-Encrypted: i=1; AJvYcCU6y+HTJjmgGwm0zu2gKpzSbVvljrEiQKotXnFZQorSH/WyZzcvXocU28vQl5U78dLjG0UUBfpZGdniciY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwFHOsPvpkfrqgKmMM35c659EYQuZGv5t4d8/nKXVNZoQtfUbv2
-	9vDjvRaP2ehbhgsHR6fmuzgR7cJxgN48Fb3F+tozvUrkFYL5m/PiwYds35jdOoU=
-X-Google-Smtp-Source: AGHT+IFhutwBdu7DG5yHj/lPmaMVpJV3yHqZN+By2ShndFLRElgTROe/iXqSPia5mIOemiWhGr5eaA==
-X-Received: by 2002:a05:600c:1554:b0:42b:ac7f:4bd5 with SMTP id 5b1f17b1804b1-42bbb4461efmr40674775e9.5.1725277255348;
-        Mon, 02 Sep 2024 04:40:55 -0700 (PDT)
-Received: from [127.0.1.1] ([178.197.222.82])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42ba642594dsm171515245e9.47.2024.09.02.04.40.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Sep 2024 04:40:54 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Date: Mon, 02 Sep 2024 13:40:40 +0200
-Subject: [PATCH v2 4/4] ARM: dts: imx6qdl: align pin config nodes with
- bindings
+	s=arc-20240116; t=1725277298; c=relaxed/simple;
+	bh=eICccrgtvjw+7xO1AQQYFoOUDkI0ng/i/eCR3elk/ro=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SFYM+rE2kW5pgE2lBgd4fsUC260EMO3KIPnyFAGIczjEywDzJDdVZe7Y6ODxByItVqF6JkYaiL8er+9T7OUklUNH8/9SDJpA0MSLm1cyYrnX3d8409ccgooPvMP2dHD00KpYtyXuafPE69jooq6Vs3UrA6amZkpwPLPq2FQWGew=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=fq6UHlB7; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=h/ftKBZl; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=fq6UHlB7; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=h/ftKBZl; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 8A70021B28;
+	Mon,  2 Sep 2024 11:41:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1725277294; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=2Kmq/khHwzhDWpb30ji07toCrKswxh+ogfXu7DygWTQ=;
+	b=fq6UHlB7m8dgVOyw+EkizPrq5m3SKPW8ICn/MLrlImH0PYYHoVGYaLqGvI6pkMVbBdfG71
+	XljS6LoUtfXV0pBw21lz+c/vePq0AveH2Rp8qz5uL+ngk86h8QphsIXd0DghGWmK/pGhCR
+	UdLDfX7Mi/cyoOnBQV6mQhJLE3VDDIg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1725277294;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=2Kmq/khHwzhDWpb30ji07toCrKswxh+ogfXu7DygWTQ=;
+	b=h/ftKBZlv07FzWt+nnTOiabNT7Mj47fkoA7b9pZnJdf3ZgCJuO/qqfECtu4lU6pWjnQr48
+	GsjfUfKv7d3sEoCQ==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=fq6UHlB7;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b="h/ftKBZl"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1725277294; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=2Kmq/khHwzhDWpb30ji07toCrKswxh+ogfXu7DygWTQ=;
+	b=fq6UHlB7m8dgVOyw+EkizPrq5m3SKPW8ICn/MLrlImH0PYYHoVGYaLqGvI6pkMVbBdfG71
+	XljS6LoUtfXV0pBw21lz+c/vePq0AveH2Rp8qz5uL+ngk86h8QphsIXd0DghGWmK/pGhCR
+	UdLDfX7Mi/cyoOnBQV6mQhJLE3VDDIg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1725277294;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=2Kmq/khHwzhDWpb30ji07toCrKswxh+ogfXu7DygWTQ=;
+	b=h/ftKBZlv07FzWt+nnTOiabNT7Mj47fkoA7b9pZnJdf3ZgCJuO/qqfECtu4lU6pWjnQr48
+	GsjfUfKv7d3sEoCQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 4E76213A7C;
+	Mon,  2 Sep 2024 11:41:34 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id WoS0EW6k1WYGfwAAD6G6ig
+	(envelope-from <tzimmermann@suse.de>); Mon, 02 Sep 2024 11:41:34 +0000
+Message-ID: <7cf68133-e6f5-4fef-92ae-7a8c30631fb5@suse.de>
+Date: Mon, 2 Sep 2024 13:41:33 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240902-dts-nxp-imx6-pinctrl-v2-4-ab8196baa07a@linaro.org>
-References: <20240902-dts-nxp-imx6-pinctrl-v2-0-ab8196baa07a@linaro.org>
-In-Reply-To: <20240902-dts-nxp-imx6-pinctrl-v2-0-ab8196baa07a@linaro.org>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
- Sascha Hauer <s.hauer@pengutronix.de>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>, 
- Fabio Estevam <festevam@gmail.com>
-Cc: devicetree@vger.kernel.org, imx@lists.linux.dev, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=14512;
- i=krzysztof.kozlowski@linaro.org; h=from:subject:message-id;
- bh=J138BfmIUP+DsGFhuQ6tmQ+KFExTDC0caq5a6QTQpR0=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBm1aQ+fymCywwFL3wN/cf70wfLbB0eadcwSbeDF
- Lr4h2ovNQuJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCZtWkPgAKCRDBN2bmhouD
- 109kD/9rN2yGkjvzwmHjIv75/RpNrtrn0zgGkKBHK87+DMWHWlZHVgsP9fuMqblZ3MhNYq2x2Tb
- V+Ue1Dg4O2pJPt+RyChRSmHuxlXwkQEZwwwxjfAgdLjiVnLJbRgTWMDhKrgUYRPYfIngUAN+qNA
- jAPdPhwUOgU0Mc7I7++mEc8kN47bO2tIYldzwAoq0o+zYoN9wKfUdzORZsokbDY31TOxBzv5pHq
- qTqoeNlFtNk7bxD3g23A1NI+wDuEEDoxp6utS5RkPNNdCCOWRlfPNBPnGc2a4KIWhS8DB7ho1YM
- VMI2gy4oaIU1HFohvm60H/cKxLUhYAETR35L18d5B35W+eMZsCa//UayBjV2lmqCeCEkMIAUNGn
- 1H8fPyQCvV0M3gVxxi3IKXzydYJD2p/J7bNUWVd580efzjvZkekIr0CHTHB14F6G+Bx63H8C+F2
- QTljRn/SQZSOdpcpV6nXqjofomkudkhxn3Jk4PmKU7/zwB+vqh6zVoFPRBnR9LfJMVubBsoOsdp
- WfHhECruhkFsdJZBAL4CWySFhYR8+3PpB6vWDnTIvU6F5BvHDBWHW991S9k8vvwXEzrZ9jxI1ay
- 3Ip6P/leqxp/13t1ulTOzSExgRN6c7F9Umq7C8S48PMmhJ3VZG2Xe93P3/Yn2jEKMZBAdlBt4or
- lBJYNm/jipYDBSQ==
-X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp;
- fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
+User-Agent: Mozilla Thunderbird
+Subject: Re: WARNING: CPU: 0 PID: 8 at drivers/video/fbdev/core/fbmem.c:467
+ unregister_framebuffer+0x45/0x160
+To: Borislav Petkov <bp@alien8.de>, "V, Narasimhan" <Narasimhan.V@amd.com>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>,
+ Daniel Vetter <daniel@ffwll.ch>, Helge Deller <deller@gmx.de>,
+ linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ open list <linux-kernel@vger.kernel.org>
+References: <DM4PR12MB5086C89FD0EAF070D167733389912@DM4PR12MB5086.namprd12.prod.outlook.com>
+ <20240902084546.GAZtV7Ot58w7D90fwQ@fat_crate.local>
+Content-Language: en-US
+From: Thomas Zimmermann <tzimmermann@suse.de>
+Autocrypt: addr=tzimmermann@suse.de; keydata=
+ xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
+ XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
+ BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
+ hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
+ 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
+ AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
+ AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
+ AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
+ lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
+ U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
+ vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
+ 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
+ j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
+ T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
+ 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
+ GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
+ hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
+ EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
+ C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
+ yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
+ SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
+ Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
+ 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
+In-Reply-To: <20240902084546.GAZtV7Ot58w7D90fwQ@fat_crate.local>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Rspamd-Queue-Id: 8A70021B28
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	DWL_DNSWL_BLOCKED(0.00)[suse.de:dkim];
+	FREEMAIL_ENVRCPT(0.00)[gmx.de];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[8];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[vger.kernel.org,ffwll.ch,gmx.de,lists.freedesktop.org];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,suse.de:mid,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	DKIM_TRACE(0.00)[suse.de:+]
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -4.51
+X-Spam-Flag: NO
 
-Bindings for other NXP pin controllers expect pin configuration nodes in
-pinctrl to match certain naming, so adjust these as well, even though
-their bindings are not yet in dtschema format.
+Hi
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Am 02.09.24 um 10:45 schrieb Borislav Petkov:
+> Fixing subject and recipients and leaving the whole mail untouched.
+>
+> On Sun, Sep 01, 2024 at 05:01:28PM +0200, V, Narasimhan wrote:
+>> [AMD Official Use Only - AMD Internal Distribution Only]
+>>
+>> Hi,
+>>
+>> Seeing the following warning and bug on boot with linux-next-20240829
+>>
+>> WARNING: CPU: 0 PID: 8 at drivers/video/fbdev/core/fbmem.c:467 unregister_framebuffer+0x45/0x160
+>> BUG: kernel NULL pointer dereference, address: 0000000000000000
 
----
+Does it work if you revert one of these commits?
 
-Changes in v2:
-1. Fix "grpgrp" -> "grp"
----
- arch/arm/boot/dts/nxp/imx/imx6qdl-aristainetos2.dtsi |  2 +-
- arch/arm/boot/dts/nxp/imx/imx6qdl-gw52xx.dtsi        |  4 ++--
- arch/arm/boot/dts/nxp/imx/imx6qdl-gw53xx.dtsi        |  4 ++--
- arch/arm/boot/dts/nxp/imx/imx6qdl-gw54xx.dtsi        |  4 ++--
- arch/arm/boot/dts/nxp/imx/imx6qdl-gw553x.dtsi        |  4 ++--
- arch/arm/boot/dts/nxp/imx/imx6qdl-gw560x.dtsi        |  4 ++--
- arch/arm/boot/dts/nxp/imx/imx6qdl-gw5903.dtsi        | 10 +++++-----
- arch/arm/boot/dts/nxp/imx/imx6qdl-gw5904.dtsi        |  4 ++--
- arch/arm/boot/dts/nxp/imx/imx6qdl-gw5910.dtsi        |  4 ++--
- arch/arm/boot/dts/nxp/imx/imx6qdl-gw5912.dtsi        |  4 ++--
- arch/arm/boot/dts/nxp/imx/imx6qdl-icore-rqs.dtsi     |  8 ++++----
- arch/arm/boot/dts/nxp/imx/imx6qdl-sabreauto.dtsi     |  4 ++--
- arch/arm/boot/dts/nxp/imx/imx6qdl-tx6.dtsi           |  4 ++--
- arch/arm/boot/dts/nxp/imx/imx6qdl-var-dart.dtsi      |  4 ++--
- arch/arm/boot/dts/nxp/imx/imx6qdl-var-som.dtsi       |  4 ++--
- 15 files changed, 34 insertions(+), 34 deletions(-)
+   b49420d6a1ae ("video/aperture: optionally match the device in 
+sysfb_disable()")
 
-diff --git a/arch/arm/boot/dts/nxp/imx/imx6qdl-aristainetos2.dtsi b/arch/arm/boot/dts/nxp/imx/imx6qdl-aristainetos2.dtsi
-index 758eaf9d93d2..f7fac86f0a6b 100644
---- a/arch/arm/boot/dts/nxp/imx/imx6qdl-aristainetos2.dtsi
-+++ b/arch/arm/boot/dts/nxp/imx/imx6qdl-aristainetos2.dtsi
-@@ -506,7 +506,7 @@ MX6QDL_PAD_EIM_A22__GPIO2_IO16		0x1b0b0 /* PCIe reset */
- 		>;
- 	};
- 
--	pinctrl_gpmi_nand: gpmi-nand {
-+	pinctrl_gpmi_nand: gpminandgrp {
- 		fsl,pins = <
- 			MX6QDL_PAD_NANDF_CLE__NAND_CLE     0xb0b1
- 			MX6QDL_PAD_NANDF_ALE__NAND_ALE     0xb0b1
-diff --git a/arch/arm/boot/dts/nxp/imx/imx6qdl-gw52xx.dtsi b/arch/arm/boot/dts/nxp/imx/imx6qdl-gw52xx.dtsi
-index 082a2e3a391f..b57f4073f881 100644
---- a/arch/arm/boot/dts/nxp/imx/imx6qdl-gw52xx.dtsi
-+++ b/arch/arm/boot/dts/nxp/imx/imx6qdl-gw52xx.dtsi
-@@ -761,7 +761,7 @@ MX6QDL_PAD_NANDF_CS1__SD3_VSELECT	0x17059
- 		>;
- 	};
- 
--	pinctrl_usdhc3_100mhz: usdhc3grp100mhz {
-+	pinctrl_usdhc3_100mhz: usdhc3-100mhz-grp {
- 		fsl,pins = <
- 			MX6QDL_PAD_SD3_CMD__SD3_CMD		0x170b9
- 			MX6QDL_PAD_SD3_CLK__SD3_CLK		0x170b9
-@@ -774,7 +774,7 @@ MX6QDL_PAD_NANDF_CS1__SD3_VSELECT	0x170b9
- 		>;
- 	};
- 
--	pinctrl_usdhc3_200mhz: usdhc3grp200mhz {
-+	pinctrl_usdhc3_200mhz: usdhc3-200mhz-grp {
- 		fsl,pins = <
- 			MX6QDL_PAD_SD3_CMD__SD3_CMD		0x170f9
- 			MX6QDL_PAD_SD3_CLK__SD3_CLK		0x100f9
-diff --git a/arch/arm/boot/dts/nxp/imx/imx6qdl-gw53xx.dtsi b/arch/arm/boot/dts/nxp/imx/imx6qdl-gw53xx.dtsi
-index 8ec442038ea0..090c0057d117 100644
---- a/arch/arm/boot/dts/nxp/imx/imx6qdl-gw53xx.dtsi
-+++ b/arch/arm/boot/dts/nxp/imx/imx6qdl-gw53xx.dtsi
-@@ -750,7 +750,7 @@ MX6QDL_PAD_NANDF_CS1__SD3_VSELECT	0x17059
- 		>;
- 	};
- 
--	pinctrl_usdhc3_100mhz: usdhc3grp100mhz {
-+	pinctrl_usdhc3_100mhz: usdhc3-100mhz-grp {
- 		fsl,pins = <
- 			MX6QDL_PAD_SD3_CMD__SD3_CMD		0x170b9
- 			MX6QDL_PAD_SD3_CLK__SD3_CLK		0x100b9
-@@ -763,7 +763,7 @@ MX6QDL_PAD_NANDF_CS1__SD3_VSELECT	0x170b9
- 		>;
- 	};
- 
--	pinctrl_usdhc3_200mhz: usdhc3grp200mhz {
-+	pinctrl_usdhc3_200mhz: usdhc3-200mhz-grp {
- 		fsl,pins = <
- 			MX6QDL_PAD_SD3_CMD__SD3_CMD		0x170f9
- 			MX6QDL_PAD_SD3_CLK__SD3_CLK		0x100f9
-diff --git a/arch/arm/boot/dts/nxp/imx/imx6qdl-gw54xx.dtsi b/arch/arm/boot/dts/nxp/imx/imx6qdl-gw54xx.dtsi
-index 9df9f79affae..0ed6d25024a2 100644
---- a/arch/arm/boot/dts/nxp/imx/imx6qdl-gw54xx.dtsi
-+++ b/arch/arm/boot/dts/nxp/imx/imx6qdl-gw54xx.dtsi
-@@ -833,7 +833,7 @@ MX6QDL_PAD_NANDF_CS1__SD3_VSELECT	0x17059
- 		>;
- 	};
- 
--	pinctrl_usdhc3_100mhz: usdhc3grp100mhz {
-+	pinctrl_usdhc3_100mhz: usdhc3-100mhz-grp {
- 		fsl,pins = <
- 			MX6QDL_PAD_SD3_CMD__SD3_CMD		0x170b9
- 			MX6QDL_PAD_SD3_CLK__SD3_CLK		0x100b9
-@@ -846,7 +846,7 @@ MX6QDL_PAD_NANDF_CS1__SD3_VSELECT	0x170b9
- 		>;
- 	};
- 
--	pinctrl_usdhc3_200mhz: usdhc3grp200mhz {
-+	pinctrl_usdhc3_200mhz: usdhc3-200mhz-grp {
- 		fsl,pins = <
- 			MX6QDL_PAD_SD3_CMD__SD3_CMD		0x170f9
- 			MX6QDL_PAD_SD3_CLK__SD3_CLK		0x100f9
-diff --git a/arch/arm/boot/dts/nxp/imx/imx6qdl-gw553x.dtsi b/arch/arm/boot/dts/nxp/imx/imx6qdl-gw553x.dtsi
-index 7f16c602cc07..c6e231de674a 100644
---- a/arch/arm/boot/dts/nxp/imx/imx6qdl-gw553x.dtsi
-+++ b/arch/arm/boot/dts/nxp/imx/imx6qdl-gw553x.dtsi
-@@ -704,7 +704,7 @@ MX6QDL_PAD_NANDF_CS1__SD3_VSELECT	0x17059
- 		>;
- 	};
- 
--	pinctrl_usdhc3_100mhz: usdhc3grp100mhz {
-+	pinctrl_usdhc3_100mhz: usdhc3-100mhz-grp {
- 		fsl,pins = <
- 			MX6QDL_PAD_SD3_CMD__SD3_CMD		0x170b9
- 			MX6QDL_PAD_SD3_CLK__SD3_CLK		0x100b9
-@@ -717,7 +717,7 @@ MX6QDL_PAD_NANDF_CS1__SD3_VSELECT	0x170b9
- 		>;
- 	};
- 
--	pinctrl_usdhc3_200mhz: usdhc3grp200mhz {
-+	pinctrl_usdhc3_200mhz: usdhc3-200mhz-grp {
- 		fsl,pins = <
- 			MX6QDL_PAD_SD3_CMD__SD3_CMD		0x170f9
- 			MX6QDL_PAD_SD3_CLK__SD3_CLK		0x100f9
-diff --git a/arch/arm/boot/dts/nxp/imx/imx6qdl-gw560x.dtsi b/arch/arm/boot/dts/nxp/imx/imx6qdl-gw560x.dtsi
-index 7693f92195d5..d0f648938cae 100644
---- a/arch/arm/boot/dts/nxp/imx/imx6qdl-gw560x.dtsi
-+++ b/arch/arm/boot/dts/nxp/imx/imx6qdl-gw560x.dtsi
-@@ -896,7 +896,7 @@ MX6QDL_PAD_NANDF_CS1__SD3_VSELECT	0x17059
- 		>;
- 	};
- 
--	pinctrl_usdhc3_100mhz: usdhc3grp100mhz {
-+	pinctrl_usdhc3_100mhz: usdhc3-100mhz-grp {
- 		fsl,pins = <
- 			MX6QDL_PAD_SD3_CMD__SD3_CMD		0x170b9
- 			MX6QDL_PAD_SD3_CLK__SD3_CLK		0x100b9
-@@ -909,7 +909,7 @@ MX6QDL_PAD_NANDF_CS1__SD3_VSELECT	0x170b9
- 		>;
- 	};
- 
--	pinctrl_usdhc3_200mhz: usdhc3grp200mhz {
-+	pinctrl_usdhc3_200mhz: usdhc3-200mhz-grp {
- 		fsl,pins = <
- 			MX6QDL_PAD_SD3_CMD__SD3_CMD		0x170f9
- 			MX6QDL_PAD_SD3_CLK__SD3_CLK		0x100f9
-diff --git a/arch/arm/boot/dts/nxp/imx/imx6qdl-gw5903.dtsi b/arch/arm/boot/dts/nxp/imx/imx6qdl-gw5903.dtsi
-index 9d0836df0fed..71911df881cc 100644
---- a/arch/arm/boot/dts/nxp/imx/imx6qdl-gw5903.dtsi
-+++ b/arch/arm/boot/dts/nxp/imx/imx6qdl-gw5903.dtsi
-@@ -680,7 +680,7 @@ MX6QDL_PAD_KEY_COL4__GPIO4_IO14		0x1b0b0 /* OC */
- 		>;
- 	};
- 
--	pinctrl_usdhc1_200mhz: usdhc1grp200mhz {
-+	pinctrl_usdhc1_200mhz: usdhc1-200mhz-grp {
- 		fsl,pins = <
- 			MX6QDL_PAD_NANDF_D3__GPIO2_IO03		0x4001b0b0 /* EMMY_EN */
- 			MX6QDL_PAD_NANDF_D4__GPIO2_IO04		0x4001b0b0 /* EMMY_CFG1# */
-@@ -710,7 +710,7 @@ MX6QDL_PAD_KEY_ROW1__SD2_VSELECT	0x17059
- 		>;
- 	};
- 
--	pinctrl_usdhc2_100mhz: usdhc2grp100mhz {
-+	pinctrl_usdhc2_100mhz: usdhc2-100mhz-grp {
- 		fsl,pins = <
- 			MX6QDL_PAD_SD2_CMD__SD2_CMD		0x170b9
- 			MX6QDL_PAD_SD2_CLK__SD2_CLK		0x100b9
-@@ -723,7 +723,7 @@ MX6QDL_PAD_KEY_ROW1__SD2_VSELECT	0x170b9
- 		>;
- 	};
- 
--	pinctrl_usdhc2_200mhz: usdhc2grp200mhz {
-+	pinctrl_usdhc2_200mhz: usdhc2-200mhz-grp {
- 		fsl,pins = <
- 			MX6QDL_PAD_SD2_CMD__SD2_CMD		0x170f9
- 			MX6QDL_PAD_SD2_CLK__SD2_CLK		0x100f9
-@@ -752,7 +752,7 @@ MX6QDL_PAD_SD3_DAT7__SD3_DATA7		0x17059
- 		>;
- 	};
- 
--	pinctrl_usdhc3_100mhz: usdhc3grp100mhz {
-+	pinctrl_usdhc3_100mhz: usdhc3-100mhz-grp {
- 		fsl,pins = <
- 			MX6QDL_PAD_SD3_CMD__SD3_CMD		0x170b9
- 			MX6QDL_PAD_SD3_CLK__SD3_CLK		0x100b9
-@@ -768,7 +768,7 @@ MX6QDL_PAD_SD3_DAT7__SD3_DATA7		0x170b9
- 		>;
- 	};
- 
--	pinctrl_usdhc3_200mhz: usdhc3grp200mhz {
-+	pinctrl_usdhc3_200mhz: usdhc3-200mhz-grp {
- 		fsl,pins = <
- 			MX6QDL_PAD_SD3_CMD__SD3_CMD		0x170f9
- 			MX6QDL_PAD_SD3_CLK__SD3_CLK		0x100f9
-diff --git a/arch/arm/boot/dts/nxp/imx/imx6qdl-gw5904.dtsi b/arch/arm/boot/dts/nxp/imx/imx6qdl-gw5904.dtsi
-index f4cb9e1d34a9..716c324a7458 100644
---- a/arch/arm/boot/dts/nxp/imx/imx6qdl-gw5904.dtsi
-+++ b/arch/arm/boot/dts/nxp/imx/imx6qdl-gw5904.dtsi
-@@ -817,7 +817,7 @@ MX6QDL_PAD_SD3_DAT7__SD3_DATA7		0x17059
- 		>;
- 	};
- 
--	pinctrl_usdhc3_100mhz: usdhc3grp100mhz {
-+	pinctrl_usdhc3_100mhz: usdhc3-100mhz-grp {
- 		fsl,pins = <
- 			MX6QDL_PAD_SD3_CMD__SD3_CMD		0x170b9
- 			MX6QDL_PAD_SD3_CLK__SD3_CLK		0x100b9
-@@ -833,7 +833,7 @@ MX6QDL_PAD_SD3_DAT7__SD3_DATA7		0x170b9
- 		>;
- 	};
- 
--	pinctrl_usdhc3_200mhz: usdhc3grp200mhz {
-+	pinctrl_usdhc3_200mhz: usdhc3-200mhz-grp {
- 		fsl,pins = <
- 			MX6QDL_PAD_SD3_CMD__SD3_CMD		0x170f9
- 			MX6QDL_PAD_SD3_CLK__SD3_CLK		0x100f9
-diff --git a/arch/arm/boot/dts/nxp/imx/imx6qdl-gw5910.dtsi b/arch/arm/boot/dts/nxp/imx/imx6qdl-gw5910.dtsi
-index 424dc7fcd533..453dee4d9227 100644
---- a/arch/arm/boot/dts/nxp/imx/imx6qdl-gw5910.dtsi
-+++ b/arch/arm/boot/dts/nxp/imx/imx6qdl-gw5910.dtsi
-@@ -629,7 +629,7 @@ MX6QDL_PAD_NANDF_CS1__SD3_VSELECT	0x17059
- 		>;
- 	};
- 
--	pinctrl_usdhc3_100mhz: usdhc3grp100mhz {
-+	pinctrl_usdhc3_100mhz: usdhc3-100mhz-grp {
- 		fsl,pins = <
- 			MX6QDL_PAD_SD3_CMD__SD3_CMD		0x170b9
- 			MX6QDL_PAD_SD3_CLK__SD3_CLK		0x170b9
-@@ -642,7 +642,7 @@ MX6QDL_PAD_NANDF_CS1__SD3_VSELECT	0x170b9
- 		>;
- 	};
- 
--	pinctrl_usdhc3_200mhz: usdhc3grp200mhz {
-+	pinctrl_usdhc3_200mhz: usdhc3-200mhz-grp {
- 		fsl,pins = <
- 			MX6QDL_PAD_SD3_CMD__SD3_CMD		0x170f9
- 			MX6QDL_PAD_SD3_CLK__SD3_CLK		0x100f9
-diff --git a/arch/arm/boot/dts/nxp/imx/imx6qdl-gw5912.dtsi b/arch/arm/boot/dts/nxp/imx/imx6qdl-gw5912.dtsi
-index 49ea25c71967..add700bc11cc 100644
---- a/arch/arm/boot/dts/nxp/imx/imx6qdl-gw5912.dtsi
-+++ b/arch/arm/boot/dts/nxp/imx/imx6qdl-gw5912.dtsi
-@@ -569,7 +569,7 @@ MX6QDL_PAD_NANDF_CS1__SD3_VSELECT	0x17059
- 		>;
- 	};
- 
--	pinctrl_usdhc3_100mhz: usdhc3grp100mhz {
-+	pinctrl_usdhc3_100mhz: usdhc3-100mhz-grp {
- 		fsl,pins = <
- 			MX6QDL_PAD_SD3_CMD__SD3_CMD		0x170b9
- 			MX6QDL_PAD_SD3_CLK__SD3_CLK		0x100b9
-@@ -582,7 +582,7 @@ MX6QDL_PAD_NANDF_CS1__SD3_VSELECT	0x170b9
- 		>;
- 	};
- 
--	pinctrl_usdhc3_200mhz: usdhc3grp200mhz {
-+	pinctrl_usdhc3_200mhz: usdhc3-200mhz-grp {
- 		fsl,pins = <
- 			MX6QDL_PAD_SD3_CMD__SD3_CMD		0x170f9
- 			MX6QDL_PAD_SD3_CLK__SD3_CLK		0x100f9
-diff --git a/arch/arm/boot/dts/nxp/imx/imx6qdl-icore-rqs.dtsi b/arch/arm/boot/dts/nxp/imx/imx6qdl-icore-rqs.dtsi
-index d339957cc097..dff184a119f3 100644
---- a/arch/arm/boot/dts/nxp/imx/imx6qdl-icore-rqs.dtsi
-+++ b/arch/arm/boot/dts/nxp/imx/imx6qdl-icore-rqs.dtsi
-@@ -397,7 +397,7 @@ MX6QDL_PAD_GPIO_4__GPIO1_IO04  0x1f059	/* PWR */
- 		>;
- 	};
- 
--	pinctrl_usdhc3_100mhz: usdhc3grp_100mhz {
-+	pinctrl_usdhc3_100mhz: usdhc3-100mhz-grp {
- 		fsl,pins = <
- 			MX6QDL_PAD_SD3_CMD__SD3_CMD    0x170B1
- 			MX6QDL_PAD_SD3_CLK__SD3_CLK    0x100B1
-@@ -408,7 +408,7 @@ MX6QDL_PAD_SD3_DAT3__SD3_DATA3 0x170B1
- 		>;
- 	};
- 
--	pinctrl_usdhc3_200mhz: usdhc3grp_200mhz {
-+	pinctrl_usdhc3_200mhz: usdhc3-200mhz-grp {
- 		fsl,pins = <
- 			MX6QDL_PAD_SD3_CMD__SD3_CMD    0x170F9
- 			MX6QDL_PAD_SD3_CLK__SD3_CLK    0x100F9
-@@ -434,7 +434,7 @@ MX6QDL_PAD_SD4_DAT7__SD4_DATA7 0x17070
- 		>;
- 	};
- 
--	pinctrl_usdhc4_100mhz: usdhc4grp_100mhz {
-+	pinctrl_usdhc4_100mhz: usdhc4-100mhz-grp {
- 		fsl,pins = <
- 			MX6QDL_PAD_SD4_CMD__SD4_CMD    0x170B1
- 			MX6QDL_PAD_SD4_CLK__SD4_CLK    0x100B1
-@@ -449,7 +449,7 @@ MX6QDL_PAD_SD4_DAT7__SD4_DATA7 0x170B1
- 		>;
- 	};
- 
--	pinctrl_usdhc4_200mhz: usdhc4grp_200mhz {
-+	pinctrl_usdhc4_200mhz: usdhc4-200mhz-grp {
- 		fsl,pins = <
- 			MX6QDL_PAD_SD4_CMD__SD4_CMD    0x170F9
- 			MX6QDL_PAD_SD4_CLK__SD4_CLK    0x100F9
-diff --git a/arch/arm/boot/dts/nxp/imx/imx6qdl-sabreauto.dtsi b/arch/arm/boot/dts/nxp/imx/imx6qdl-sabreauto.dtsi
-index 0a3deaf92eea..99386421a48d 100644
---- a/arch/arm/boot/dts/nxp/imx/imx6qdl-sabreauto.dtsi
-+++ b/arch/arm/boot/dts/nxp/imx/imx6qdl-sabreauto.dtsi
-@@ -690,7 +690,7 @@ MX6QDL_PAD_SD3_DAT7__SD3_DATA7		0x17059
- 			>;
- 		};
- 
--		pinctrl_usdhc3_100mhz: usdhc3grp100mhz {
-+		pinctrl_usdhc3_100mhz: usdhc3-100mhz-grp {
- 			fsl,pins = <
- 				MX6QDL_PAD_SD3_CMD__SD3_CMD		0x170b9
- 				MX6QDL_PAD_SD3_CLK__SD3_CLK		0x100b9
-@@ -705,7 +705,7 @@ MX6QDL_PAD_SD3_DAT7__SD3_DATA7		0x170b9
- 			>;
- 		};
- 
--		pinctrl_usdhc3_200mhz: usdhc3grp200mhz {
-+		pinctrl_usdhc3_200mhz: usdhc3-200mhz-grp {
- 			fsl,pins = <
- 				MX6QDL_PAD_SD3_CMD__SD3_CMD		0x170f9
- 				MX6QDL_PAD_SD3_CLK__SD3_CLK		0x100f9
-diff --git a/arch/arm/boot/dts/nxp/imx/imx6qdl-tx6.dtsi b/arch/arm/boot/dts/nxp/imx/imx6qdl-tx6.dtsi
-index e2fe337f7d9e..5a194f4c0cb9 100644
---- a/arch/arm/boot/dts/nxp/imx/imx6qdl-tx6.dtsi
-+++ b/arch/arm/boot/dts/nxp/imx/imx6qdl-tx6.dtsi
-@@ -373,7 +373,7 @@ MX6QDL_PAD_KEY_COL1__AUD5_TXFS		0x130b0 /* SSI1_FS */
- 		>;
- 	};
- 
--	pinctrl_disp0_1: disp0grp-1 {
-+	pinctrl_disp0_1: disp0-1-grp {
- 		fsl,pins = <
- 			MX6QDL_PAD_DI0_DISP_CLK__IPU1_DI0_DISP_CLK 0x10
- 			MX6QDL_PAD_DI0_PIN15__IPU1_DI0_PIN15       0x10
-@@ -406,7 +406,7 @@ MX6QDL_PAD_DISP0_DAT23__IPU1_DISP0_DATA23  0x10
- 		>;
- 	};
- 
--	pinctrl_disp0_2: disp0grp-2 {
-+	pinctrl_disp0_2: disp0-2-grp {
- 		fsl,pins = <
- 			MX6QDL_PAD_DI0_DISP_CLK__IPU1_DI0_DISP_CLK 0x10
- 			MX6QDL_PAD_DI0_PIN15__IPU1_DI0_PIN15       0x10
-diff --git a/arch/arm/boot/dts/nxp/imx/imx6qdl-var-dart.dtsi b/arch/arm/boot/dts/nxp/imx/imx6qdl-var-dart.dtsi
-index 200559d7158d..d8283eade43e 100644
---- a/arch/arm/boot/dts/nxp/imx/imx6qdl-var-dart.dtsi
-+++ b/arch/arm/boot/dts/nxp/imx/imx6qdl-var-dart.dtsi
-@@ -346,7 +346,7 @@ MX6QDL_PAD_SD3_RST__GPIO7_IO08  0x17071
- 		>;
- 	};
- 
--	pinctrl_usdhc1_100mhz: usdhc1grp100mhz {
-+	pinctrl_usdhc1_100mhz: usdhc1-100mhz-grp {
- 		fsl,pins = <
- 			MX6QDL_PAD_SD1_CMD__SD1_CMD	0x170B9
- 			MX6QDL_PAD_SD1_CLK__SD1_CLK	0x100B9
-@@ -357,7 +357,7 @@ MX6QDL_PAD_SD1_DAT3__SD1_DATA3	0x170B9
- 		>;
- 	};
- 
--	pinctrl_usdhc1_200mhz: usdhc1grp200mhz {
-+	pinctrl_usdhc1_200mhz: usdhc1-200mhz-grp {
- 		fsl,pins = <
- 			MX6QDL_PAD_SD1_CMD__SD1_CMD	0x170F9
- 			MX6QDL_PAD_SD1_CLK__SD1_CLK	0x100F9
-diff --git a/arch/arm/boot/dts/nxp/imx/imx6qdl-var-som.dtsi b/arch/arm/boot/dts/nxp/imx/imx6qdl-var-som.dtsi
-index a1ea33c4eeb7..59833e8d11d8 100644
---- a/arch/arm/boot/dts/nxp/imx/imx6qdl-var-som.dtsi
-+++ b/arch/arm/boot/dts/nxp/imx/imx6qdl-var-som.dtsi
-@@ -436,7 +436,7 @@ MX6QDL_PAD_SD3_RST__GPIO7_IO08  0x13059
- 		>;
- 	};
- 
--	pinctrl_usdhc3_100mhz: usdhc3grp100mhzgrp {
-+	pinctrl_usdhc3_100mhz: usdhc3-100mhz-grp {
- 		fsl,pins = <
- 			MX6QDL_PAD_SD3_CMD__SD3_CMD	0x170B9
- 			MX6QDL_PAD_SD3_CLK__SD3_CLK	0x100B9
-@@ -451,7 +451,7 @@ MX6QDL_PAD_SD3_RST__GPIO7_IO08  0x130B9
- 		>;
- 	};
- 
--	pinctrl_usdhc3_200mhz: usdhc3grp200mhzgrp {
-+	pinctrl_usdhc3_200mhz: usdhc3-200mhz-grp {
- 		fsl,pins = <
- 			MX6QDL_PAD_SD3_CMD__SD3_CMD	0x170F9
- 			MX6QDL_PAD_SD3_CLK__SD3_CLK	0x100F9
+   c2fe0480cd77 ("fbdev/efifb: Use devm_register_framebuffer()")
+
+For the latter, there might be a fix at
+
+https://patchwork.freedesktop.org/patch/611902/?series=138008&rev=1
+
+Best regards
+Thomas
+
+>>
+>>
+>>
+>> 19:07:54  [   18.395285] WARNING: CPU: 0 PID: 8 at drivers/video/fbdev/core/fbmem.c:467 unregister_framebuffer+0x45/0x160
+>> 19:07:54  [   18.406264] Modules linked in: ast(+) i2c_algo_bit drm_shmem_helper crct10dif_pclmul crc32_pclmul drm_kms_helper ghash_clmulni_intel sha256_ssse3 drm tg3 nvme sha1_ssse3 ahci i2c_piix4 libahci i2c_smbus nvme_core aesni_intel crypto_simd cryptd
+>> 19:07:54  [   18.430347] CPU: 0 UID: 0 PID: 8 Comm: kworker/0:0 Not tainted 6.11.0-rc5-next-20240830-1725196918033 #1
+>> 19:07:54  [   18.440929] Hardware name: AMD Corporation Shale96/Shale96, BIOS RSH100BD 12/11/2023
+>> 19:07:54  [   18.449572] Workqueue: events work_for_cpu_fn
+>> 19:07:54  [   18.454435] RIP: 0010:unregister_framebuffer+0x45/0x160
+>> 19:07:54  [   18.460267] Code: 83 ec 08 e8 7d 4a 76 00 49 63 44 24 04 83 f8 1f 77 18 48 83 f8 1f 0f 87 d6 00 00 00 4c 3b 24 c5 80 76 a7 83 0f 84 85 00 00 00 <0f> 0b 49 8b bc 24 d0 01 00 00 48 85 ff 74 0b 41 f6 84 24 ec 01 00
+>> 19:07:54  [   18.481224] RSP: 0018:ff56f06f800efb50 EFLAGS: 00010286
+>> 19:07:54  [   18.487058] RAX: 0000000000000000 RBX: ff2d2a8913c77a40 RCX: ff2d2a8913c77400
+>> 19:07:54  [   18.495023] RDX: ff2d2a8900956000 RSI: ff2d2a8913c77428 RDI: ffffffff83918360
+>> 19:07:54  [   18.502987] RBP: ff56f06f800efb68 R08: ffffffff82dce06a R09: 0000000000000010
+>> 19:07:54  [   18.510950] R10: ff2d2a8913cfc2b0 R11: 0000000000000004 R12: ff2d2a8913cffc00
+>> 19:07:54  [   18.518911] R13: ff56f06f800efbd0 R14: ff2d2a8913cfc010 R15: 0000000000000202
+>> 19:07:54  [   18.526873] FS:  0000000000000000(0000) GS:ff2d2a980ba00000(0000) knlGS:0000000000000000
+>> 19:07:54  [   18.535903] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>> 19:07:54  [   18.542312] CR2: 0000558d19347c98 CR3: 000000011827a006 CR4: 0000000000771ef0
+>> 19:07:54  [   18.550275] PKRU: 55555554
+>> 19:07:54  [   18.553293] Call Trace:
+>> 19:07:54  [   18.556016]  <TASK>
+>> 19:07:54  [   18.558354]  ? show_regs+0x6d/0x80
+>> 19:07:54  [   18.562153]  ? __warn+0x91/0x140
+>> 19:07:54  [   18.565756]  ? unregister_framebuffer+0x45/0x160
+>> 19:07:54  [   18.570917]  ? report_bug+0x193/0x1a0
+>> 19:07:54  [   18.575008]  ? handle_bug+0x63/0xa0
+>> 19:07:54  [   18.578901]  ? exc_invalid_op+0x1d/0x80
+>> 19:07:54  [   18.583181]  ? asm_exc_invalid_op+0x1f/0x30
+>> 19:07:54  [   18.587842]  ? unregister_framebuffer+0x45/0x160
+>> 19:07:54  [   18.592994]  devm_unregister_framebuffer+0x12/0x20
+>> 19:07:54  [   18.598338]  devm_action_release+0x16/0x20
+>> 19:07:54  [   18.602910]  release_nodes+0x47/0xc0
+>> 19:07:54  [   18.606898]  devres_release_all+0x9f/0xe0
+>> 19:07:54  [   18.611371]  device_unbind_cleanup+0x12/0x80
+>> 19:07:54  [   18.616136]  device_release_driver_internal+0x20c/0x250
+>> 19:07:54  [   18.621967]  ? srso_alias_return_thunk+0x5/0xfbef5
+>> 19:07:54  [   18.627315]  device_release_driver+0x16/0x20
+>> 19:07:54  [   18.632079]  bus_remove_device+0xcf/0x130
+>> 19:07:54  [   18.636551]  device_del+0x16a/0x3c0
+>> 19:07:54  [   18.640444]  ? srso_alias_return_thunk+0x5/0xfbef5
+>> 19:07:54  [   18.645791]  platform_device_del.part.0+0x18/0x90
+>> 19:07:54  [   18.651042]  platform_device_unregister+0x24/0x40
+>> 19:07:54  [   18.656303]  sysfb_disable+0x5c/0xa0
+>> 19:07:54  [   18.660296]  aperture_remove_conflicting_pci_devices+0x33/0x140
+>> 19:07:54  [   18.666907]  drm_aperture_remove_conflicting_pci_framebuffers+0x19/0x20 [drm]
+>> 19:07:54  [   18.674886]  ast_pci_probe+0x2c/0x540 [ast]
+>> 19:07:54  [   18.679556]  ? srso_alias_return_thunk+0x5/0xfbef5
+>> 19:07:54  [   18.684904]  local_pci_probe+0x4c/0xb0
+>> 19:07:54  [   18.689087]  work_for_cpu_fn+0x1b/0x30
+>> 19:07:54  [   18.693271]  process_one_work+0x17a/0x3b0
+>> 19:07:54  [   18.697745]  worker_thread+0x2a0/0x3a0
+>> 19:07:54  [   18.701927]  ? __pfx_worker_thread+0x10/0x10
+>> 19:07:54  [   18.706688]  kthread+0xe5/0x120
+>> 19:07:54  [   18.710192]  ? __pfx_kthread+0x10/0x10
+>> 19:07:54  [   18.714375]  ret_from_fork+0x3d/0x60
+>> 19:07:54  [   18.718363]  ? __pfx_kthread+0x10/0x10
+>> 19:07:54  [   18.722544]  ret_from_fork_asm+0x1a/0x30
+>> 19:07:54  [   18.726923]  </TASK>
+>> 19:07:54  [   18.729359] ---[ end trace 0000000000000000 ]---
+>> 09:13:40  [   18.100937] BUG: kernel NULL pointer dereference, address: 0000000000000000
+>> 09:13:40  [   18.108694] #PF: supervisor read access in kernel mode
+>> 09:13:40  [   18.114424] #PF: error_code(0x0000) - not-present page
+>> 09:13:40  [   18.120153] PGD 1156fa067 P4D 0
+>> 09:13:40  [   18.123751] Oops: Oops: 0000 [#1] PREEMPT SMP NOPTI
+>> 09:13:40  [   18.129194] CPU: 0 UID: 0 PID: 458 Comm: kworker/0:2 Tainted: G        W          6.11.0-rc5-next-20240829-1725075030567 #1
+>> 09:13:40  [   18.141618] Tainted: [W]=WARN
+>> 09:13:40  [   18.144922] Hardware name: AMD Corporation Shale96/Shale96, BIOS RSH100BD 12/11/2023
+>> 09:13:40  [   18.153551] Workqueue: events work_for_cpu_fn
+>> 09:13:40  [   18.158412] RIP: 0010:fb_destroy_modelist+0x1a/0x70
+>> 09:13:40  [   18.163853] Code: 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 f3 0f 1e fa 0f 1f 44 00 00 55 48 89 e5 41 56 41 55 41 54 49 89 fc 53 48 8b 3f <48> 8b 1f 49 39 fc 74 36 49 be 00 01 00 00 00 00 ad de 49 bd 22 01
+>> 09:13:40  [   18.184809] RSP: 0018:ff42b545c14e7b20 EFLAGS: 00010246
+>> 09:13:40  [   18.190638] RAX: 0000000000000000 RBX: ff2cd8a142f7ce00 RCX: ff2cd8a142f7cf00
+>> 09:13:40  [   18.198597] RDX: ff2cd8b088b74000 RSI: ff2cd8a142f7cf28 RDI: 0000000000000000
+>> 09:13:40  [   18.206557] RBP: ff42b545c14e7b40 R08: ffffffff907cca2c R09: 0000000000000010
+>> 09:13:40  [   18.214520] R10: ff2cd8a142fb06b0 R11: 0000000000000004 R12: ff2cd8a142fb5288
+>> 09:13:40  [   18.222480] R13: ff42b545c14e7bd0 R14: ff2cd8a142fb0410 R15: 0000000000000283
+>> 09:13:40  [   18.230440] FS:  0000000000000000(0000) GS:ff2cd8b046600000(0000) knlGS:0000000000000000
+>> 09:13:40  [   18.239466] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>> 09:13:40  [   18.245874] CR2: 0000000000000000 CR3: 00000001156cc005 CR4: 0000000000771ef0
+>> 09:13:40  [   18.253836] PKRU: 55555554
+>> 09:13:40  [   18.256851] Call Trace:
+>> 09:13:40  [   18.259573]  <TASK>
+>> 09:13:40  [   18.261901]  ? show_regs+0x6d/0x80
+>> 09:13:40  [   18.265695]  ? __die+0x29/0x70
+>> 09:13:40  [   18.269098]  ? page_fault_oops+0x15c/0x550
+>> 09:13:40  [   18.273664]  ? unregister_framebuffer+0x45/0x160
+>> 09:13:40  [   18.278813]  ? srso_alias_return_thunk+0x5/0xfbef5
+>> 09:13:40  [   18.284157]  ? vprintk+0x3f/0x70
+>> 09:13:40  [   18.287755]  ? srso_alias_return_thunk+0x5/0xfbef5
+>> 09:13:40  [   18.293097]  ? _printk+0x5c/0x80
+>> 09:13:40  [   18.296699]  ? do_user_addr_fault+0x47a/0x7e0
+>> 09:13:40  [   18.301559]  ? __warn+0xbc/0x140
+>> 09:13:40  [   18.305158]  ? unregister_framebuffer+0x45/0x160
+>> 09:13:40  [   18.310307]  ? exc_page_fault+0x7c/0x1b0
+>> 09:13:40  [   18.314680]  ? asm_exc_page_fault+0x2b/0x30
+>> 09:13:40  [   18.319347]  ? fb_destroy_modelist+0x1a/0x70
+>> 09:13:40  [   18.324107]  unregister_framebuffer+0x6c/0x160
+>> 09:13:40  [   18.329063]  devm_unregister_framebuffer+0x12/0x20
+>> 09:13:40  [   18.334408]  devm_action_release+0x16/0x20
+>> 09:13:40  [   18.338978]  release_nodes+0x47/0xc0
+>> 09:13:40  [   18.342965]  devres_release_all+0x9f/0xe0
+>> 09:13:40  [   18.347436]  device_unbind_cleanup+0x12/0x80
+>> 09:13:40  [   18.352196]  device_release_driver_internal+0x20c/0x250
+>> 09:13:40  [   18.358024]  ? srso_alias_return_thunk+0x5/0xfbef5
+>> 09:13:40  [   18.363367]  device_release_driver+0x16/0x20
+>> 09:13:40  [   18.368128]  bus_remove_device+0xcf/0x130
+>> 09:13:40  [   18.372599]  device_del+0x16a/0x3c0
+>> 09:13:40  [   18.376488]  ? srso_alias_return_thunk+0x5/0xfbef5
+>> 09:13:40  [   18.381837]  platform_device_del.part.0+0x18/0x90
+>> 09:13:40  [   18.387086]  platform_device_unregister+0x24/0x40
+>> 09:13:40  [   18.392330]  sysfb_disable+0x5c/0xa0
+>> 09:13:40  [   18.396316]  aperture_remove_conflicting_pci_devices+0x33/0x140
+>> 09:13:40  [   18.402921]  drm_aperture_remove_conflicting_pci_framebuffers+0x19/0x20 [drm]
+>> 09:13:40  [   18.410899]  ast_pci_probe+0x2c/0x540 [ast]
+>> 09:13:40  [   18.415566]  ? srso_alias_return_thunk+0x5/0xfbef5
+>> 09:13:40  [   18.420914]  local_pci_probe+0x4c/0xb0
+>> 09:13:40  [   18.425095]  work_for_cpu_fn+0x1b/0x30
+>> 09:13:40  [   18.429277]  process_one_work+0x17a/0x3b0
+>> 09:13:40  [   18.433746]  ? __pfx_worker_thread+0x10/0x10
+>> 09:13:40  [   18.438507]  worker_thread+0x2a0/0x3a0
+>> 09:13:40  [   18.442685]  ? __pfx_worker_thread+0x10/0x10
+>> 09:13:40  [   18.447445]  kthread+0xe5/0x120
+>> 09:13:40  [   18.450946]  ? __pfx_kthread+0x10/0x10
+>> 09:13:40  [   18.455125]  ret_from_fork+0x3d/0x60
+>> 09:13:40  [   18.459112]  ? __pfx_kthread+0x10/0x10
+>> 09:13:40  [   18.463293]  ret_from_fork_asm+0x1a/0x30
+>> 09:13:44  [   18.467673]  </TASK>
+>> 09:13:44  [   18.470106] Modules linked in: ast(+) i2c_algo_bit drm_shmem_helper crct10dif_pclmul crc32_pclmul drm_kms_helper ghash_clmulni_intel sha256_ssse3 drm sha1_ssse3 nvme i2c_piix4 tg3 ahci nvme_core i2c_smbus libahci aesni_intel crypto_simd cryptd
+>> 09:13:44  [   18.494181] CR2: 0000000000000000
+>> 09:13:44  [   18.497876] ---[ end trace 0000000000000000 ]---
+>>
+>> --
+>> Regards
+>> Narasimhan V
+>>
 
 -- 
-2.43.0
+--
+Thomas Zimmermann
+Graphics Driver Developer
+SUSE Software Solutions Germany GmbH
+Frankenstrasse 146, 90461 Nuernberg, Germany
+GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
+HRB 36809 (AG Nuernberg)
 
 
