@@ -1,296 +1,215 @@
-Return-Path: <linux-kernel+bounces-311429-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311430-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 073D696890B
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 15:38:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF81E96890F
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 15:39:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 43121B23173
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 13:38:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 424D01F216FB
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 13:39:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22FDD20FA83;
-	Mon,  2 Sep 2024 13:38:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD59B20012E;
+	Mon,  2 Sep 2024 13:39:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="k0CCwUTb"
-Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
+	dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b="GRm0fadM"
+Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A3DC184D;
-	Mon,  2 Sep 2024 13:38:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725284317; cv=none; b=PCrMQ03kV1kGsSMqN8ZNmlWDQ5UYAmN5ojw0/dZE/adUe6jS2FaaBrn3CAz6rHKSm7OJm+bvyapFEBTicLq83U3iE7Q3CkPgyiD1kAWKPdQ49PV9SiPSnsCC4c9+eILEmQW48CZrmwMnRNRohj7tgLXU9dvMmFJ8TTjwodGtfII=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725284317; c=relaxed/simple;
-	bh=VmbSlwz30CrgBjxHN1m/rtFJOQFx3FRyCzp3Ry2x69s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=twk/6kxs0FTb+Dt10NLPnXHcDzuVNbLGb51TWPRBGD0mlsJSI5RhVe1vAXGzhxXPVdVtluTMQ0KvtGPSML5dUQtIeMzlZAwuQ/48HU5c2GeiKXVszN1j6KX8USS9Hd1kZ1CdIqHI4crTw5b/+3E1vnalQnKopblepXxyfDHA3ug=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=k0CCwUTb; arc=none smtp.client-ip=217.70.183.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id D7C8A40006;
-	Mon,  2 Sep 2024 13:38:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1725284305;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=xQY4ArvB7ONJr6lW7dYcvuSILbt3nf3xqfBfKcm34kM=;
-	b=k0CCwUTbIe+E+p6iI7jRvjha8V3FntUrfWrWbfTojJwp6sv+/k6g2jXTYCsc5viQVGz2ik
-	/BNqnhbIGPuZGgmkfgiW6qNcLlgBYKe907EsCVFnYCyCa8uXELTBB6SGIkFaLRSQpOHkJv
-	BBG+W2oz9x2gIb1OS7tBgzMlpxwnQyP7P8ezng/AtibztVPy2T68tNo9SBTHMQQowBYrWg
-	Mmv8fX26CMPzknYLLm/QLpFT8YqrYKXukJob9pGBdqi8HtU2yuk8nzjiVzP4cBa1Iaa1gw
-	9I+En5JjFKpvi5a7rip8Ew9zP+8naSzdLbWb8iFgwjGGtBtWrShBoWXgTcyBkw==
-Message-ID: <13c328c9-eb44-4a40-9f0e-734a84594bef@bootlin.com>
-Date: Mon, 2 Sep 2024 15:38:23 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDB17184D
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 13:39:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725284390; cv=pass; b=eba+Bj7qH2K7QzlaxYQHMi9h/8sRjrphsX4rdTkZKNn2gwcz7e1hou13znnC1j3sdYEsJ6kG2W0wuJjORztCUIo87Gg/XZtha/RC2kvMvEwhHDDafWf7LWylAlmS9kOejYWIX4COEQxNpLyqk3rVcTw8FF7lBLxNt4sykuzZWFg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725284390; c=relaxed/simple;
+	bh=PP/u8bXCq7JycjIUyLaINlBi2Bw5x9mhyqnDyIpX3R4=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Psls8FsZx1U0rv8fal5fHSsUD4/hfAjQzyO691KT2PkijQrm/1cH02sDK1Kd/2tPtw1dEsOmZMtzeyWvHNLHVl0KXXVfHwRxZhqy4irXjpSKen1E6WSC1fefgbnOJPZN5bKpTp/yQaSSwHkB794sXP3KSpJjzw6b6vQymnW+vKg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me; spf=pass smtp.mailfrom=icenowy.me; dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b=GRm0fadM; arc=pass smtp.client-ip=136.143.188.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icenowy.me
+ARC-Seal: i=1; a=rsa-sha256; t=1725284376; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=OMwm615M/G2OQmYPSYC/WNLRova+BvPQTzUnxcgEeVU16pW9i+vi5acdpKPuJMxnDQg9VRHWHEY6K5XJmMcAd4OsTpmznI2Q8waFvEQzDDtYidD8LPY3WU5jKClbN3zAbNq+u2jmaSSsQ4fpErUTQVtKMglfGkfZXGuThsOm+nY=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1725284376; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=PP/u8bXCq7JycjIUyLaINlBi2Bw5x9mhyqnDyIpX3R4=; 
+	b=a0enIWNffVEKxtWmP5TTajzzI1sAN42orEdWhLwwOqbYo5vtUrtKOQZiTVrSc9vPoSwFYFRKY9UBiW/yXAtgu8Igp0aK6RGSatUQ51VQW/r1hNoMuigAkRnen4Xmvd6fGPQehXmome1Daldw4fy8FnAhWvUVb9Q4hGFUZdDA9k4=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=icenowy.me;
+	spf=pass  smtp.mailfrom=uwu@icenowy.me;
+	dmarc=pass header.from=<uwu@icenowy.me>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1725284376;
+	s=zmail2; d=icenowy.me; i=uwu@icenowy.me;
+	h=Message-ID:Subject:Subject:From:From:To:To:Cc:Cc:Date:Date:In-Reply-To:References:Content-Type:Content-Transfer-Encoding:MIME-Version:Message-Id:Reply-To;
+	bh=PP/u8bXCq7JycjIUyLaINlBi2Bw5x9mhyqnDyIpX3R4=;
+	b=GRm0fadMccjoFVTnWrnBwdN9hmzpTpqkAJd3HFlSF4C79XoNcbkCxv88SbK3eW+L
+	MvVLhXwLKhq6nOKUsYiBhMgrbhhr61VFzJ9nALuVOe4bZzTWu9lTLPIiMTNsrnHHIIS
+	7UGQJ9B5SjBOpzxRLsvMApiKn/iLTG+W2gLSF+20+hKiqSE5ri12gRdXiVDcK+KygqX
+	xpbThmylFXgkdQ6m2UXqqTlpQlyZbrusUQIGQ8B7ff6QSo74eKhff+wpOSgDW6gJtFU
+	SyTlaVoHZ/aNaHacBblOdPugSAn6yul4vpvTIZq/UO/fK1Fy9ofbbU74z7HYG6Kqce3
+	rIO88P2/iw==
+Received: by mx.zohomail.com with SMTPS id 1725284374914692.3812347141264;
+	Mon, 2 Sep 2024 06:39:34 -0700 (PDT)
+Message-ID: <06b399a14a0a42d7d9a49d546e2f499f03106bdf.camel@icenowy.me>
+Subject: Re: [PATCH] drm/imagination: properly support stopping LAYOUT_MARS
+ = 1 cores
+From: Icenowy Zheng <uwu@icenowy.me>
+To: Matt Coster <Matt.Coster@imgtec.com>, "dri-devel@lists.freedesktop.org"
+	 <dri-devel@lists.freedesktop.org>, "linux-kernel@vger.kernel.org"
+	 <linux-kernel@vger.kernel.org>
+Cc: Frank Binns <Frank.Binns@imgtec.com>, Maarten Lankhorst
+ <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+ Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
+ Daniel Vetter <daniel@ffwll.ch>
+Date: Mon, 02 Sep 2024 21:39:24 +0800
+In-Reply-To: <8e024981-c531-498e-8ae1-b20f0773f112@imgtec.com>
+References: <20240811082813.245871-1-uwu@icenowy.me>
+	 <8e024981-c531-498e-8ae1-b20f0773f112@imgtec.com>
+Organization: Anthon Open-Source Community
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: base64
+User-Agent: Evolution 3.44.4 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/5] watchdog: Congatec Board Controller watchdog timer
- driver
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: Lee Jones <lee@kernel.org>, Linus Walleij <linus.walleij@linaro.org>,
- Bartosz Golaszewski <brgl@bgdev.pl>, Andi Shyti <andi.shyti@kernel.org>,
- Wim Van Sebroeck <wim@linux-watchdog.org>, linux-kernel@vger.kernel.org,
- linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org,
- linux-watchdog@vger.kernel.org, thomas.petazzoni@bootlin.com,
- blake.vermeer@keysight.com
-References: <20240503-congatec-board-controller-v1-0-fec5236270e7@bootlin.com>
- <20240503-congatec-board-controller-v1-4-fec5236270e7@bootlin.com>
- <d37e3fea-d35e-4688-a845-02be6ea5eaa3@roeck-us.net>
-Content-Language: en-US
-From: Thomas Richard <thomas.richard@bootlin.com>
-In-Reply-To: <d37e3fea-d35e-4688-a845-02be6ea5eaa3@roeck-us.net>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-GND-Sasl: thomas.richard@bootlin.com
+X-ZohoMailClient: External
 
-Hi Guenter,
+5ZyoIDIwMjQtMDktMDLmmJ/mnJ/kuIDnmoQgMDk6MjQgKzAwMDDvvIxNYXR0IENvc3RlcuWGmemB
+k++8mgo+IE9uIDExLzA4LzIwMjQgMDk6MjgsIEljZW5vd3kgWmhlbmcgd3JvdGU6Cj4gPiBTb21l
+IG5ldyBSb2d1ZSBHUFUgY29yZXMgaGF2ZSBhbiBleHRyYSBNQVJTIHBvd2VyIGRvbWFpbiwgd2hp
+Y2gKPiA+IGNvbnRyb2xscyB0aGUgcG93ZXIgb2YgdGhlIGZpcm13YXJlIGNvcmUgYW5kIGFsbG93
+cyB0aGUgZmlybXdhcmUKPiA+IGNvcmUgdG8KPiA+IHBvd2VyIGRvd24gbW9zdCBwYXJ0cyBvZiB0
+aGUgR1BVLgo+ID4gCj4gPiBBZGFwdCB0byB0aGlzIGJ5IGlnbm9yaW5nIHBvd2VyIGRvbWFpbnMg
+dGhhdCBzaG91bGQgYmUgcG93ZXJlZCBkb3duCj4gPiBieQo+ID4gdGhlIGZpd21hcmUgYW5kIGNo
+ZWNraW5nIE1BUlMgaWRsZSBzdGF0dXMgaW5zdGVhZC4KPiA+IAo+ID4gVGhlIGxvZ2ljIG1pbWlj
+cyBSR1hTdG9wKCkgZnVuY3Rpb24gaW4gdGhlIERESyBrZXJuZWwgbW9kZSBzb3VyY2UKPiA+IGNv
+ZGUuCj4gPiAKPiA+IFRlc3RlZCBvbiBCWEUtNC0zMiAoMzYuNTAuNTQuMTgyKSB3aXRoIGZpcm13
+YXJlIGJ1aWxkIDY1MDM3MjUgT1MKPiA+IHByb3ZpZGVkCj4gPiBieSBJbWFnaW5hdGlvbiBUZWNo
+bm9sb2dpZXMuCj4gPiAKPiA+IFNpZ25lZC1vZmYtYnk6IEljZW5vd3kgWmhlbmcgPHV3dUBpY2Vu
+b3d5Lm1lPgo+IAo+IEhpIEljZW5vd3ksCj4gCj4gVGhhbmtzIGZvciB0aGUgcGF0Y2ghIEl0J3Mg
+Z3JlYXQgdG8gc2VlIHBlb3BsZSBnZXR0aW5nIGludm9sdmVkIGluCj4gZ2V0dGluZyB0aGlzIGRy
+aXZlciB3b3JraW5nIG9uIG1vcmUgcGxhdGZvcm1zLiAKPiAKPiA+IC0tLQo+ID4gwqAuLi4vZ3B1
+L2RybS9pbWFnaW5hdGlvbi9wdnJfZndfc3RhcnRzdG9wLmPCoMKgwqAgfCA0OSArKysrKysrKysr
+KysrLS0KPiA+IC0tLS0KPiA+IMKgMSBmaWxlIGNoYW5nZWQsIDM1IGluc2VydGlvbnMoKyksIDE0
+IGRlbGV0aW9ucygtKQo+ID4gCj4gPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2ltYWdp
+bmF0aW9uL3B2cl9md19zdGFydHN0b3AuYwo+ID4gYi9kcml2ZXJzL2dwdS9kcm0vaW1hZ2luYXRp
+b24vcHZyX2Z3X3N0YXJ0c3RvcC5jCj4gPiBpbmRleCAxNTlhNGMzZGQ2NWIuLjQzMDFhN2FkZWQ2
+NCAxMDA2NDQKPiA+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9pbWFnaW5hdGlvbi9wdnJfZndfc3Rh
+cnRzdG9wLmMKPiA+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9pbWFnaW5hdGlvbi9wdnJfZndfc3Rh
+cnRzdG9wLmMKPiA+IEBAIC0yMDEsMTkgKzIwMSwyOCBAQCBwdnJfZndfc3RvcChzdHJ1Y3QgcHZy
+X2RldmljZSAqcHZyX2RldikKPiA+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAKPiA+IH4oUk9HVUVfQ1Jf
+U0lERUtJQ0tfSURMRV9HQVJURU5fRU4gfAo+ID4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAKPiA+
+IFJPR1VFX0NSX1NJREVLSUNLX0lETEVfU09DSUZfRU4gfAo+ID4gwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqAKPiA+IFJPR1VFX0NSX1NJREVLSUNLX0lETEVfSE9TVElGX0VOKTsKPiA+ICvCoMKgwqDC
+oMKgwqDCoGNvbnN0IHUzMiBtYXJzX2lkbGVfbWFzayA9IFJPR1VFX0NSX01BUlNfSURMRV9DUFVf
+RU4gfAo+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoAo+ID4gUk9HVUVfQ1JfTUFSU19JRExFX01IX1NZU0FSQjBfRU47
+Cj4gPiDCoMKgwqDCoMKgwqDCoMKgYm9vbCBza2lwX2dhcnRlbl9pZGxlID0gZmFsc2U7Cj4gPiAr
+wqDCoMKgwqDCoMKgwqB1MzIgbWFycyA9IDA7Cj4gPiDCoMKgwqDCoMKgwqDCoMKgdTMyIHJlZ192
+YWx1ZTsKPiA+IMKgwqDCoMKgwqDCoMKgwqBpbnQgZXJyOwo+ID4gwqAKPiA+ICvCoMKgwqDCoMKg
+wqDCoGlmIChQVlJfSEFTX0ZFQVRVUkUocHZyX2RldiwgbGF5b3V0X21hcnMpKQo+ID4gK8KgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoFBWUl9GRUFUVVJFX1ZBTFVFKHB2cl9kZXYsIGxheW91
+dF9tYXJzLCAmbWFycyk7Cj4gPiArCj4gCj4gVGhpcyBjaGVjayBpcyB1bm5lY2Vzc2FyeSDigJMg
+dGhlIFBWUl9GRUFUVVJFX1ZBTFVFKCkgbWFjcm8gYWxyZWFkeQo+IGNoZWNrcwo+IGZvciB0aGUg
+ZmVhdHVyZSBwcmVzZW5jZSBpbnRlcm5hbGx5IGFuZCBkb2Vzbid0IGNoYW5nZSB0aGUgb3V0cHV0
+Cj4gdmFsdWUKPiBpZiBpdCdzIG5vdCBwcmVzZW50LiAKPiAKPiA+IMKgwqDCoMKgwqDCoMKgwqAv
+Kgo+ID4gwqDCoMKgwqDCoMKgwqDCoCAqIFdhaXQgZm9yIFNpZGVraWNrL0pvbmVzIHRvIHNpZ25h
+bCBJRExFIGV4Y2VwdCBmb3IgdGhlCj4gPiBHYXJ0ZW4gV3JhcHBlci4KPiA+IMKgwqDCoMKgwqDC
+oMKgwqAgKiBGb3IgY29yZXMgd2l0aCB0aGUgTEFZT1VUX01BUlMgZmVhdHVyZSwgU0lERUtJQ0sg
+d291bGQKPiA+IGhhdmUgYmVlbgo+ID4gwqDCoMKgwqDCoMKgwqDCoCAqIHBvd2VyZWQgZG93biBi
+eSB0aGUgRlcuCj4gPiDCoMKgwqDCoMKgwqDCoMKgICovCj4gPiAtwqDCoMKgwqDCoMKgwqBlcnIg
+PSBwdnJfY3JfcG9sbF9yZWczMihwdnJfZGV2LCBST0dVRV9DUl9TSURFS0lDS19JRExFLAo+ID4g
+c2lkZWtpY2tfaWRsZV9tYXNrLAo+ID4gLcKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgc2lkZWtpY2tfaWRsZV9tYXNrLAo+ID4gUE9M
+TF9USU1FT1VUX1VTRUMpOwo+ID4gLcKgwqDCoMKgwqDCoMKgaWYgKGVycikKPiA+IC3CoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqByZXR1cm4gZXJyOwo+ID4gK8KgwqDCoMKgwqDCoMKgaWYg
+KG1hcnMpIHsKPiAKPiBJIHRoaW5rIHlvdSBtaWdodCBoYXZlIHRoZXNlIGNvbmRpdGlvbmFscyBi
+YWNrd2FyZHMuIFRoaXMgaXMgc2F5aW5nCj4gd2UKPiBuZWVkIHRvIHRvdWNoIHNpZGVraWNrIGlm
+ZiBtYXJzIGlzIHByZXNlbnQsIGJ1dCB0aGUgY29tbWVudHMgc2F5IHRoaXMKPiBpcwo+IHRoZSBv
+dGhlciB3YXkgYXJvdW5kIChtYXJzIHRha2VzIGNhcmUgb2YgcG93ZXJpbmcgc2lkZWtpY2ssIHNv
+IHdlCj4gZG9uJ3QKPiBuZWVkIHRvKS4KClRoYW5rcyBmb3IgdGhpcyB0aXAuIEkgYW0gdGhpbmtp
+bmcgSSBnb3QgdGhpcyB3cm9uZyB0b28sIHNvIEkgYW0gZ29pbmcKdG8gY2hhbmdlIHRoaXMuCgo+
+IAo+IENoZWVycywKPiBNYXR0IAo+IAo+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oGVyciA9IHB2cl9jcl9wb2xsX3JlZzMyKHB2cl9kZXYsCj4gPiBST0dVRV9DUl9TSURFS0lDS19J
+RExFLAo+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoHNpZGVraWNrX2lkbGVfbWFzaywKPiA+ICvC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqBzaWRla2lja19pZGxlX21hc2ssCj4gPiBQT0xMX1RJTUVPVVRf
+VVNFQyk7Cj4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgaWYgKGVycikKPiA+ICvC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgcmV0dXJuIGVycjsK
+PiA+ICvCoMKgwqDCoMKgwqDCoH0KPiA+IMKgCj4gPiDCoMKgwqDCoMKgwqDCoMKgLyogVW5zZXQg
+TVRTIERNIGFzc29jaWF0aW9uIHdpdGggdGhyZWFkcy4gKi8KPiA+IMKgwqDCoMKgwqDCoMKgwqBw
+dnJfY3Jfd3JpdGUzMihwdnJfZGV2LAo+ID4gUk9HVUVfQ1JfTVRTX0lOVENUWF9USFJFQUQwX0RN
+X0FTU09DLAo+ID4gQEAgLTI2NywyMSArMjc2LDI3IEBAIHB2cl9md19zdG9wKHN0cnVjdCBwdnJf
+ZGV2aWNlICpwdnJfZGV2KQo+ID4gwqDCoMKgwqDCoMKgwqDCoCAqIEZvciBjb3JlcyB3aXRoIHRo
+ZSBMQVlPVVRfTUFSUyBmZWF0dXJlLCBTTEMgd291bGQgaGF2ZQo+ID4gYmVlbiBwb3dlcmVkCj4g
+PiDCoMKgwqDCoMKgwqDCoMKgICogZG93biBieSB0aGUgRlcuCj4gPiDCoMKgwqDCoMKgwqDCoMKg
+ICovCj4gPiAtwqDCoMKgwqDCoMKgwqBlcnIgPSBwdnJfY3JfcG9sbF9yZWczMihwdnJfZGV2LCBS
+T0dVRV9DUl9TTENfSURMRSwKPiA+IC3CoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoFJPR1VFX0NSX1NMQ19JRExFX01BU0tGVUxMLAo+
+ID4gLcKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgUk9HVUVfQ1JfU0xDX0lETEVfTUFTS0ZVTEwsCj4gPiBQT0xMX1RJTUVPVVRfVVNF
+Qyk7Cj4gPiAtwqDCoMKgwqDCoMKgwqBpZiAoZXJyKQo+ID4gLcKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoHJldHVybiBlcnI7Cj4gPiArwqDCoMKgwqDCoMKgwqBpZiAobWFycykgewo+ID4g
+K8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoGVyciA9IHB2cl9jcl9wb2xsX3JlZzMyKHB2
+cl9kZXYsIFJPR1VFX0NSX1NMQ19JRExFLAo+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoFJPR1VF
+X0NSX1NMQ19JRExFX01BU0tGVUxMLAo+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoFJPR1VFX0NS
+X1NMQ19JRExFX01BU0tGVUxMLAo+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoFBPTExfVElNRU9V
+VF9VU0VDKTsKPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBpZiAoZXJyKQo+ID4g
+K8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqByZXR1cm4gZXJy
+Owo+ID4gK8KgwqDCoMKgwqDCoMKgfQo+ID4gwqAKPiA+IMKgwqDCoMKgwqDCoMKgwqAvKgo+ID4g
+wqDCoMKgwqDCoMKgwqDCoCAqIFdhaXQgZm9yIFNpZGVraWNrL0pvbmVzIHRvIHNpZ25hbCBJRExF
+IGV4Y2VwdCBmb3IgdGhlCj4gPiBHYXJ0ZW4gV3JhcHBlci4KPiA+IMKgwqDCoMKgwqDCoMKgwqAg
+KiBGb3IgY29yZXMgd2l0aCB0aGUgTEFZT1VUX01BUlMgZmVhdHVyZSwgU0lERUtJQ0sgd291bGQK
+PiA+IGhhdmUgYmVlbiBwb3dlcmVkCj4gPiDCoMKgwqDCoMKgwqDCoMKgICogZG93biBieSB0aGUg
+RlcuCj4gPiDCoMKgwqDCoMKgwqDCoMKgICovCj4gPiAtwqDCoMKgwqDCoMKgwqBlcnIgPSBwdnJf
+Y3JfcG9sbF9yZWczMihwdnJfZGV2LCBST0dVRV9DUl9TSURFS0lDS19JRExFLAo+ID4gc2lkZWtp
+Y2tfaWRsZV9tYXNrLAo+ID4gLcKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgc2lkZWtpY2tfaWRsZV9tYXNrLAo+ID4gUE9MTF9USU1F
+T1VUX1VTRUMpOwo+ID4gLcKgwqDCoMKgwqDCoMKgaWYgKGVycikKPiA+IC3CoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqByZXR1cm4gZXJyOwo+ID4gK8KgwqDCoMKgwqDCoMKgaWYgKG1hcnMp
+IHsKPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBlcnIgPSBwdnJfY3JfcG9sbF9y
+ZWczMihwdnJfZGV2LAo+ID4gUk9HVUVfQ1JfU0lERUtJQ0tfSURMRSwKPiA+ICvCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqBzaWRla2lja19pZGxlX21hc2ssCj4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+c2lkZWtpY2tfaWRsZV9tYXNrLAo+ID4gUE9MTF9USU1FT1VUX1VTRUMpOwo+ID4gK8KgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoGlmIChlcnIpCj4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoHJldHVybiBlcnI7Cj4gPiArwqDCoMKgwqDCoMKgwqB9
+Cj4gPiDCoAo+ID4gwqDCoMKgwqDCoMKgwqDCoGlmIChwdnJfZGV2LT5md19kZXYucHJvY2Vzc29y
+X3R5cGUgPT0KPiA+IFBWUl9GV19QUk9DRVNTT1JfVFlQRV9NRVRBKSB7Cj4gPiDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoGVyciA9IHB2cl9tZXRhX2NyX3JlYWQzMihwdnJfZGV2LAo+
+ID4gTUVUQV9DUl9UeFZFQ0lOVF9CSEFMVCwgJnJlZ192YWx1ZSk7Cj4gPiBAQCAtMjk3LDcgKzMx
+MiwxMyBAQCBwdnJfZndfc3RvcChzdHJ1Y3QgcHZyX2RldmljZSAqcHZyX2RldikKPiA+IMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoHNraXBfZ2FydGVuX2lk
+bGUgPSB0cnVlOwo+ID4gwqDCoMKgwqDCoMKgwqDCoH0KPiA+IMKgCj4gPiAtwqDCoMKgwqDCoMKg
+wqBpZiAoIXNraXBfZ2FydGVuX2lkbGUpIHsKPiA+ICvCoMKgwqDCoMKgwqDCoGlmIChtYXJzKSB7
+Cj4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgZXJyID0gcHZyX2NyX3BvbGxfcmVn
+MzIocHZyX2RldiwKPiA+IFJPR1VFX0NSX01BUlNfSURMRSwKPiA+ICvCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqBtYXJzX2lkbGVfbWFzaywKPiA+IG1hcnNfaWRsZV9tYXNrLAo+ID4gK8KgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoFBPTExfVElNRU9VVF9VU0VDKTsKPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqBpZiAoZXJyKQo+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqByZXR1cm4gZXJyOwo+ID4gK8KgwqDCoMKgwqDCoMKgfSBlbHNlIGlmICghc2tp
+cF9nYXJ0ZW5faWRsZSkgewo+ID4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBlcnIg
+PSBwdnJfY3JfcG9sbF9yZWczMihwdnJfZGV2LAo+ID4gUk9HVUVfQ1JfU0lERUtJQ0tfSURMRSwK
+PiA+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgUk9HVUVfQ1JfU0lERUtJQ0tfSURMRV9HQVJUCj4g
+PiBFTl9FTiwKPiA+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgUk9HVUVfQ1JfU0lERUtJQ0tfSURM
+RV9HQVJUCj4gPiBFTl9FTiwKCg==
 
->> +
->> +struct cgbc_wdt_cmd_cfg {
->> +	u8 cmd;
->> +	u8 mode;
->> +	u8 action;
->> +	u8 timeout1[3];
->> +	u8 timeout2[3];
->> +	u8 reserved[3];
->> +	u8 delay[3];
->> +} __packed;
->> +
->> +static_assert(sizeof(struct cgbc_wdt_cmd_cfg) == 15);
-> 
-> static_assert() is declared in linux/build_bug.h. Please include all
-> necessary include files explicitly and do not depend on indirect includes.
-
-Fixed in next iteration.
-
-> 
->> +
->> +static int cgbc_wdt_start(struct watchdog_device *wdd)
->> +{
->> +	struct cgbc_wdt_data *wdt_data = watchdog_get_drvdata(wdd);
-> 
-> Unusual way to get wdt_data instead of using container_of().
-> Any special reason ?
-
-No special reason, I saw that watchdog_get_drvdata() was often used in
-watchdog drivers (more than container_of()) to get wdt_data.
-But I can use container_of() if you think I should.
-
-> 
->> +	struct cgbc_device_data *cgbc = wdt_data->cgbc;
->> +	unsigned int timeout1 = (wdd->timeout - wdd->pretimeout) * 1000;
->> +	unsigned int timeout2 = wdd->pretimeout * 1000;
->> +	u8 action;
->> +
->> +	struct cgbc_wdt_cmd_cfg cmd_start = {
->> +		.cmd = CGBC_WDT_CMD_INIT,
->> +		.mode = CGBC_WDT_MODE_SINGLE_EVENT,
->> +		.timeout1[0] = (u8)timeout1,
->> +		.timeout1[1] = (u8)(timeout1 >> 8),
->> +		.timeout1[2] = (u8)(timeout1 >> 16),
->> +		.timeout2[0] = (u8)timeout2,
->> +		.timeout2[1] = (u8)(timeout2 >> 8),
->> +		.timeout2[2] = (u8)(timeout2 >> 16),
->> +	};
->> +
->> +	if (wdd->pretimeout) {
->> +		action = 2;
->> +		action |= wdt_data->pretimeout_action << 2;
->> +		action |= wdt_data->timeout_action << 4;
->> +	} else {
->> +		action = 1;
->> +		action |= wdt_data->timeout_action << 2;
->> +	}
->> +
->> +	cmd_start.action = action;
->> +
->> +	return cgbc_command(cgbc, &cmd_start, sizeof(cmd_start), NULL, 0, NULL);
->> +}
->> +
->> +static int cgbc_wdt_stop(struct watchdog_device *wdd)
->> +{
->> +	struct cgbc_wdt_data *wdt_data = watchdog_get_drvdata(wdd);
->> +	struct cgbc_device_data *cgbc = wdt_data->cgbc;
->> +	struct cgbc_wdt_cmd_cfg cmd_stop = {
->> +		.cmd = CGBC_WDT_CMD_INIT,
->> +		.mode = CGBC_WDT_DISABLE,
->> +	};
->> +
->> +	return cgbc_command(cgbc, &cmd_stop, sizeof(cmd_stop), NULL, 0, NULL);
->> +}
->> +
->> +static int cgbc_wdt_keepalive(struct watchdog_device *wdd)
->> +{
->> +	struct cgbc_wdt_data *wdt_data = watchdog_get_drvdata(wdd);
->> +	struct cgbc_device_data *cgbc = wdt_data->cgbc;
->> +	u8 cmd_ping = CGBC_WDT_CMD_TRIGGER;
->> +
->> +	return cgbc_command(cgbc, &cmd_ping, sizeof(cmd_ping), NULL, 0, NULL);
->> +}
->> +
->> +static int cgbc_wdt_set_pretimeout(struct watchdog_device *wdd,
->> +				   unsigned int pretimeout)
->> +{
->> +	struct cgbc_wdt_data *wdt_data = watchdog_get_drvdata(wdd);
->> +
->> +	wdd->pretimeout = pretimeout;
->> +	wdt_data->pretimeout_action = ACTION_SMI;
->> +
->> +	if (watchdog_active(wdd))
->> +		return cgbc_wdt_start(wdd);
->> +
->> +	return 0;
->> +}
->> +
->> +static int cgbc_wdt_set_timeout(struct watchdog_device *wdd,
->> +				unsigned int timeout)
->> +{
->> +	struct cgbc_wdt_data *wdt_data = watchdog_get_drvdata(wdd);
->> +
->> +	if (timeout < wdd->pretimeout) {
->> +		dev_warn(wdd->parent, "timeout <= pretimeout. Setting pretimeout to zero\n");
-> 
-> That is a normal condition which does not warrant a log message.
-> Also see drivers/watchdog/watchdog_dev.c around line 385.
-
-Fixed in next iteration.
-
-> 
->> +		wdd->pretimeout = 0;
->> +	}
->> +
->> +	wdd->timeout = timeout;
->> +	wdt_data->timeout_action = ACTION_RESET;
-> 
-> Both timeout_action and pretimeout_action are set statically.
-> What is the point of doing that instead of just using
-> ACTION_RESET and ACTION_SMI as needed irectly ?
-
-Yes indeed, using ACTION_RESET and ACTION_SMI directly in
-cgbc_wdt_start() makes the code smaller.
-
-> 
->> +
->> +	if (watchdog_active(wdd))
->> +		return cgbc_wdt_start(wdd);
->> +
->> +	return 0;
->> +}
->> +
->> +static const struct watchdog_info cgbc_wdt_info = {
->> +	.identity	= "CGBC Watchdog",
->> +	.options	= WDIOF_SETTIMEOUT | WDIOF_KEEPALIVEPING |
->> +		WDIOF_MAGICCLOSE | WDIOF_PRETIMEOUT
->> +};
->> +
->> +static const struct watchdog_ops cgbc_wdt_ops = {
->> +	.owner		= THIS_MODULE,
->> +	.start		= cgbc_wdt_start,
->> +	.stop		= cgbc_wdt_stop,
->> +	.ping		= cgbc_wdt_keepalive,
->> +	.set_timeout	= cgbc_wdt_set_timeout,
->> +	.set_pretimeout = cgbc_wdt_set_pretimeout,
->> +};
->> +
->> +static int cgbc_wdt_probe(struct platform_device *pdev)
->> +{
->> +	struct cgbc_device_data *cgbc = dev_get_drvdata(pdev->dev.parent);
->> +	struct device *dev = &pdev->dev;
->> +	struct cgbc_wdt_data *wdt_data;
->> +	struct watchdog_device *wdd;
->> +	int ret;
->> +
->> +	wdt_data = devm_kzalloc(dev, sizeof(*wdt_data), GFP_KERNEL);
-> 
-> devm_kzalloc() is declared in linux/device.h. Again, please include all
-> necessary include files explicitly.
-
-Fixed in next iteration.
-
-> 
->> +	if (!wdt_data)
->> +		return -ENOMEM;
->> +
->> +	wdt_data->cgbc = cgbc;
->> +	wdd = &wdt_data->wdd;
->> +	wdd->parent = dev;
->> +
-> 
-> No limits ? That is unusual. Are you sure the driver accepts all
-> timeouts from 0 to UINT_MAX ?
-
-Yes limits are needed.
-For next iteration I added 1s as min_timeout (which seems to be the
-usual value, and it is accepted by the hardware), and a max_timeout.
-
-> 
->> +	wdd->info = &cgbc_wdt_info;
->> +	wdd->ops = &cgbc_wdt_ops;
->> +
->> +	watchdog_set_drvdata(wdd, wdt_data);
->> +	watchdog_set_nowayout(wdd, nowayout);
->> +
->> +	cgbc_wdt_set_timeout(wdd, timeout);
->> +	cgbc_wdt_set_pretimeout(wdd, pretimeout);
-> 
-> The more common approach would be to set default limits in wdd->{timout,pretimeout}
-> and only override the values if needed, ie if provided using module parameters.
-> That implies initializing the module parameters with 0. YOur call, though.
-
-Ok.
-For next iteration I added limits (min_timeout, max_timeout), the
-timeout module parameter is set to 0 by default, and
-watchdog_init_timeout() is called in the probe.
-
-> 
->> +
->> +	platform_set_drvdata(pdev, wdt_data);
->> +	watchdog_stop_on_reboot(wdd);
->> +	watchdog_stop_on_unregister(wdd);
->> +
->> +	ret = devm_watchdog_register_device(dev, wdd);
->> +	if (ret)
->> +		return ret;
->> +
->> +	return 0;
-> 
-> Why not just
-> 	return devm_watchdog_register_device(dev, wdd);
-> ?
-
-I don't know :)
-Fixed in the next iteration.
-
-Thanks for the review !!
-
-Thomas.
 
