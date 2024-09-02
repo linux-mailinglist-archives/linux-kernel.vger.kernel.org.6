@@ -1,111 +1,182 @@
-Return-Path: <linux-kernel+bounces-311374-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311376-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6DEF96884D
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 15:02:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DAEE968853
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 15:03:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 25D721C227E1
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 13:02:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 629B61C2295F
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 13:03:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5F35205E31;
-	Mon,  2 Sep 2024 13:02:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9EEB1DAC47;
+	Mon,  2 Sep 2024 13:03:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="OPoqgt2U"
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b="h/FiAcy4"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EAE4205E23
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 13:02:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725282137; cv=none; b=nld5jklnQ8/2lnjbblgVCobyjT0lO4QMHg0HAz7f5FxqkrrzH6TDrfwR0C7XcaxP4UkV/4G9hPtC0Apyrex1adLNfzIGUkf4ehlqGiamTVjACmdqOumrUADpORgtexHdVFSd+SQH3f6NQQksuv305lWWuUoQy1D7eRiOoOkKQjo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725282137; c=relaxed/simple;
-	bh=GCCz/+hgN4bFM6qcWCJa9mTTDF1JriNper6mrbNBu/0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PIOhG28xiO1z+g+neitefKLaeQ3XqKI7BP7eC5LsoSYaTaM3hzeN8LfHL7CqX0hKINg2sch89zz2juQKlZaN5OmP+VRpRZmHGE0ol0QbaP2CrI2+Ndi1MAbfDRd5QHCNwQYn8qgQXg5T6H2v9PfE1TfucKAeXgFNV9WhkwURO5w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=OPoqgt2U; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-53349ee42a9so5623127e87.3
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2024 06:02:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1725282133; x=1725886933; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3C/PjLZSrrEOmnpe9Vyo2eMd8wib1QehUQG237JMjPw=;
-        b=OPoqgt2UXN4eGivudj1Ad9Ut3h9JMnsyElJTiCs7+J/+N4JthHdcrvROQT6rznu78b
-         CP36ifHRMzho6oLoMafFIHQD3ASOJGio4T1RKqm/4Xcb/YWxF9ZQNOl3Wsdgjmlpe8S+
-         JHJNRJNmKsXaBt0cVi1gxu9pNr8Y2tQCRvbxFbBvDVMqEjVNU32hkHjaiM4cfh2O6e1v
-         jrn6MfPHU5KRmup3eyNzC8RTWigm+XmMQv4oIZl4MaozZkkUtm+Kux6sdwY/+dOxVHh5
-         1U/LwTzFn8Gd2EXXIeo5N6PVTxnsCWNKbq6uZQanLRLDH6d25K2VablVE46h+RK/Epot
-         XSGA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725282133; x=1725886933;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3C/PjLZSrrEOmnpe9Vyo2eMd8wib1QehUQG237JMjPw=;
-        b=HK8voFMiz8Gj0WCzG8HnnCQUP3j+r8gJTuqSNoxletSXx96D7gpXSqjz9y9IfEV11E
-         Vyvbo3IPjK8B1YkN+hU07QjxNnWaIflYQQrmsDF5dYv/eo70CdRh4po/BgxrWus8rb8O
-         WcPAsS7Cc9BArW8Wa7f++W1F2rB1hIopcjPINZXfxntKa5HlXYb3+9jABXGqYKt1gEKo
-         PTSszkkdTEKFu1oXoahEH51EMloLbqUwAmjkDZBoy6rkkMQsg7gqt+ZkvYe3p+Iu5Y4x
-         lQog4NwQVUViEpL6Fayve30c4CHjqVTRa9Al/D5hVCe8m0RbOguemXoib/AYh7ZykOlh
-         /1Zg==
-X-Forwarded-Encrypted: i=1; AJvYcCWI33sRQotn8ClJjpqgNOMMcWXDmX/fEd1xq/UYrlrfEL9rpXEA+6DpNUkvqijBkSqDzBKMlwoJ2YDitVE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxdGqRVfPHxmFmAW/000esOW4PGMfLb0qr3KNs6H/S3c/vNhrig
-	9DJgWTdM7tD9XWz7T1JwU91zUKcEaAN1S+NICJ3BDIMl+5yBgW58ihI8gtXZn4yhTov/s7mOqAE
-	rTvAeICxbrtfOsrHXzxUANTyf9gH62ZMneUbIUA==
-X-Google-Smtp-Source: AGHT+IGkPP32QmOnnqN/wO4JYMvkwbJgK1HcfkWTHSHNsP+HKLmR+8IHSLf8TCFMGLJVOqvkDQ3sdIsar5MOj3baL10=
-X-Received: by 2002:a05:6512:1329:b0:533:4817:7280 with SMTP id
- 2adb3069b0e04-53546b5a5f5mr8227258e87.35.1725282132925; Mon, 02 Sep 2024
- 06:02:12 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C5016FD5;
+	Mon,  2 Sep 2024 13:03:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725282189; cv=pass; b=T7qL0N46/+PYq6Vla8MreCtGhnU6zhuwn0bqCpg7D5p1yRc5k4Bu6W1s2KE9WClqoe90o2k+/HD2Owc5KJnMr+cFtIFFyVcVJSA5KxbSoe8sj+XjV1i29kPVMYhBCueueSIYGyEdabMhGP2+gkVicIGQ1o3mlv1HjIoQNnb4lgA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725282189; c=relaxed/simple;
+	bh=yWdbDjlau8/h3UdPdiFtLXjKt+u/b1XdXUfIDnYDEEM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=W63QFTY8R5aKDImWjrilWJv98g7d8nynrHWppl7RlE+W242v5+r+XlKu1EywiuwzY7+YjrC+ZUSvTU3mV/oEMV0O3arzNPTlfICHQ2/adC1euF/2coaZ66fBGQrTnYWBFKzJeWDNHydmUExhTdSx4QotSnaNSdzHLSSQvLkismk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b=h/FiAcy4; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+Delivered-To: boris.brezillon@collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1725282168; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=IxgM0rh5k+5c0zWm/1wUlrPWmfd01Ti2fghY3yP6waDWq4Uu+2WgJHe/KNOkV+kVN37JFZb8uJiT7Kn0qR59S12UPX4MYsfoa9gs9C740WKHvE3drMO/T5G6i/P9Fw/0kth9D2fURvsGf0885v2Jme4LTcKzSJoinx1Nrops+Fk=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1725282168; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=9+L0GBf3vPT32fi0AGa2zryyQeNV2ow2e2t/sljkbPk=; 
+	b=OKA+gqAW1tPsYld9LGM46zvEnSOk5XA7LNB/zHRIlLblyr9HTmycB/BeyNbk3DZIExu/EO8u72bt1j6yeoy3nhkX8/qpL+8ESbKUOl0+wEXlrzSkmzZr5pUSHmw8k2hYXZEdJeCbXTD86EvmEsDR5bTynrWRFrrGfLOoRWDnGdA=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=adrian.larumbe@collabora.com;
+	dmarc=pass header.from=<adrian.larumbe@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1725282168;
+	s=zohomail; d=collabora.com; i=adrian.larumbe@collabora.com;
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=9+L0GBf3vPT32fi0AGa2zryyQeNV2ow2e2t/sljkbPk=;
+	b=h/FiAcy4Mn2EhJVJSeRC+BX1smhHHV5OundPhflhfnHnCd2hz4IJPPkn/1Qy+SL9
+	CTWSP5554x66TWNPJoNOT6fEe1/OTy+PNn7B2OE1bu7w08WEq+gKoG3782Fpw3bOCoU
+	KKuBUpPgSs6N3EcgfIrdev65s1MSc5zGJWh/sNqA=
+Received: by mx.zohomail.com with SMTPS id 1725282165489611.5287835344354;
+	Mon, 2 Sep 2024 06:02:45 -0700 (PDT)
+From: =?UTF-8?q?Adri=C3=A1n=20Larumbe?= <adrian.larumbe@collabora.com>
+To: Boris Brezillon <boris.brezillon@collabora.com>,
+	Steven Price <steven.price@arm.com>,
+	Liviu Dudau <liviu.dudau@arm.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Grant Likely <grant.likely@linaro.org>
+Cc: kernel@collabora.com,
+	=?UTF-8?q?Adri=C3=A1n=20Larumbe?= <adrian.larumbe@collabora.com>,
+	stable@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] drm/panthor: flush FW AS caches in slow reset path
+Date: Mon,  2 Sep 2024 14:02:35 +0100
+Message-ID: <20240902130237.3440720-1-adrian.larumbe@collabora.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240902115848.904227-1-liaochen4@huawei.com> <172528209370.32205.2474872138444087655.b4-ty@linaro.org>
-In-Reply-To: <172528209370.32205.2474872138444087655.b4-ty@linaro.org>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Mon, 2 Sep 2024 15:02:01 +0200
-Message-ID: <CAMRc=Mca=p0Agz5d8iHJbxZaTfjoXC_qkjPF=xHPO8-o6N7DOQ@mail.gmail.com>
-Subject: Re: [PATCH -next] gpio: modepin: Enable module autoloading
-To: linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, Liao Chen <liaochen4@huawei.com>
-Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, linus.walleij@linaro.org, 
-	michal.simek@amd.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Mon, Sep 2, 2024 at 3:01=E2=80=AFPM Bartosz Golaszewski <brgl@bgdev.pl> =
-wrote:
->
-> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
->
->
-> On Mon, 02 Sep 2024 11:58:48 +0000, Liao Chen wrote:
-> > Add MODULE_DEVICE_TABLE(), so modules could be properly autoloaded base=
-d
-> > on the alias from of_device_id table.
-> >
-> >
->
-> Applied, thanks!
->
-> [1/1] gpio: modepin: Enable module autoloading
->       commit: a5135526426df5319d5f4bcd15ae57c45a97714b
->
-> Best regards,
-> --
-> Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+In the off-chance that waiting for the firmware to signal its booted status
+timed out in the fast reset path, one must flush the cache lines for the
+entire FW VM address space before reloading the regions, otherwise stale
+values eventually lead to a scheduler job timeout.
 
-I also added the Fixes tag.
+Fixes: 647810ec2476 ("drm/panthor: Add the MMU/VM logical block")
+Cc: stable@vger.kernel.org
+Signed-off-by: Adrián Larumbe <adrian.larumbe@collabora.com>
+Acked-by: Liviu Dudau <liviu.dudau@arm.com>
+---
+ drivers/gpu/drm/panthor/panthor_fw.c  |  8 +++++++-
+ drivers/gpu/drm/panthor/panthor_mmu.c | 21 ++++++++++++++++++---
+ drivers/gpu/drm/panthor/panthor_mmu.h |  1 +
+ 3 files changed, 26 insertions(+), 4 deletions(-)
 
-Bart
+diff --git a/drivers/gpu/drm/panthor/panthor_fw.c b/drivers/gpu/drm/panthor/panthor_fw.c
+index 857f3f11258a..ef232c0c2049 100644
+--- a/drivers/gpu/drm/panthor/panthor_fw.c
++++ b/drivers/gpu/drm/panthor/panthor_fw.c
+@@ -1089,6 +1089,12 @@ int panthor_fw_post_reset(struct panthor_device *ptdev)
+ 		panthor_fw_stop(ptdev);
+ 		ptdev->fw->fast_reset = false;
+ 		drm_err(&ptdev->base, "FW fast reset failed, trying a slow reset");
++
++		ret = panthor_vm_flush_all(ptdev->fw->vm);
++		if (ret) {
++			drm_err(&ptdev->base, "FW slow reset failed (couldn't flush FW's AS l2cache)");
++			return ret;
++		}
+ 	}
+ 
+ 	/* Reload all sections, including RO ones. We're not supposed
+@@ -1099,7 +1105,7 @@ int panthor_fw_post_reset(struct panthor_device *ptdev)
+ 
+ 	ret = panthor_fw_start(ptdev);
+ 	if (ret) {
+-		drm_err(&ptdev->base, "FW slow reset failed");
++		drm_err(&ptdev->base, "FW slow reset failed (couldn't start the FW )");
+ 		return ret;
+ 	}
+ 
+diff --git a/drivers/gpu/drm/panthor/panthor_mmu.c b/drivers/gpu/drm/panthor/panthor_mmu.c
+index d47972806d50..bbc12728437f 100644
+--- a/drivers/gpu/drm/panthor/panthor_mmu.c
++++ b/drivers/gpu/drm/panthor/panthor_mmu.c
+@@ -576,6 +576,12 @@ static int mmu_hw_do_operation_locked(struct panthor_device *ptdev, int as_nr,
+ 	if (as_nr < 0)
+ 		return 0;
+ 
++	/*
++	 * If the AS number is greater than zero, then we can be sure
++	 * the device is up and running, so we don't need to explicitly
++	 * power it up
++	 */
++
+ 	if (op != AS_COMMAND_UNLOCK)
+ 		lock_region(ptdev, as_nr, iova, size);
+ 
+@@ -874,14 +880,23 @@ static int panthor_vm_flush_range(struct panthor_vm *vm, u64 iova, u64 size)
+ 	if (!drm_dev_enter(&ptdev->base, &cookie))
+ 		return 0;
+ 
+-	/* Flush the PTs only if we're already awake */
+-	if (pm_runtime_active(ptdev->base.dev))
+-		ret = mmu_hw_do_operation(vm, iova, size, AS_COMMAND_FLUSH_PT);
++	ret = mmu_hw_do_operation(vm, iova, size, AS_COMMAND_FLUSH_PT);
+ 
+ 	drm_dev_exit(cookie);
+ 	return ret;
+ }
+ 
++/**
++ * panthor_vm_flush_all() - Flush L2 caches for the entirety of a VM's AS
++ * @vm: VM whose cache to flush
++ *
++ * Return: 0 on success, a negative error code if flush failed.
++ */
++int panthor_vm_flush_all(struct panthor_vm *vm)
++{
++	return panthor_vm_flush_range(vm, vm->base.mm_start, vm->base.mm_range);
++}
++
+ static int panthor_vm_unmap_pages(struct panthor_vm *vm, u64 iova, u64 size)
+ {
+ 	struct panthor_device *ptdev = vm->ptdev;
+diff --git a/drivers/gpu/drm/panthor/panthor_mmu.h b/drivers/gpu/drm/panthor/panthor_mmu.h
+index f3c1ed19f973..6788771071e3 100644
+--- a/drivers/gpu/drm/panthor/panthor_mmu.h
++++ b/drivers/gpu/drm/panthor/panthor_mmu.h
+@@ -31,6 +31,7 @@ panthor_vm_get_bo_for_va(struct panthor_vm *vm, u64 va, u64 *bo_offset);
+ int panthor_vm_active(struct panthor_vm *vm);
+ void panthor_vm_idle(struct panthor_vm *vm);
+ int panthor_vm_as(struct panthor_vm *vm);
++int panthor_vm_flush_all(struct panthor_vm *vm);
+ 
+ struct panthor_heap_pool *
+ panthor_vm_get_heap_pool(struct panthor_vm *vm, bool create);
+-- 
+2.46.0
+
 
