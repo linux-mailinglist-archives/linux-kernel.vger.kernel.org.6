@@ -1,94 +1,111 @@
-Return-Path: <linux-kernel+bounces-311534-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311535-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15EA7968A2A
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 16:41:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BB49968A2D
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 16:42:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 970CEB23F2C
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 14:41:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C62931F229BF
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 14:42:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3E6F1A2651;
-	Mon,  2 Sep 2024 14:41:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 940561A264F;
+	Mon,  2 Sep 2024 14:41:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="oC+MStkb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eN0CEyp7"
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 247841A2623;
-	Mon,  2 Sep 2024 14:41:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E3DC1A2627;
+	Mon,  2 Sep 2024 14:41:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725288095; cv=none; b=PDW87hauDqJEuG7FV9VDcaad05N0bcyqf6IXA39+n/93iLBqDNDWHWnUbwLvI2DQa/EsZEE9ky6slvt/LTyj5jT21x+8Jwr42uZXwlx1ofPnULapD5S0PkVQyCpNRRzgDFpkDNURTjN+9NH40qbQznsTXboaR8PwmYyWvKqVCJA=
+	t=1725288118; cv=none; b=mR168hCZRPA010ZlzYRDAUWF30vp2vae5h+0XR69seXJyTRxkonLQdDgk6LumTg2bDtWhuVSrQ6tQus9y+S8dHVoZ3HocvwIY8RqG4wNsmcmp8mRo7tTN5qdgmos67TzY7qH+/NOGgwuDWMJqfRuN4u5Ll2gx1c7J28mqf1d6OI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725288095; c=relaxed/simple;
-	bh=n6pixgFJm/W7VxoBNxj40RKzDl7YlyerQp4unEJnep8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=M75I8obcHRbJlFPa002cPuGKcs2jwHJpq+rh6/LSQ6mLK+AE/VJC0+ZOSrjHRLOaHI5mF21MOHLHlLDr9bkijQl+tLdIDsnJbo7VUysksNrPx+Gj7cQaMcrUAjjCSHFjL6hMYPevqYTXex8Gzs3W2cOJPWa/5kXyNIh+YlbmLqA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=oC+MStkb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6F411C4CEC2;
-	Mon,  2 Sep 2024 14:41:33 +0000 (UTC)
-Authentication-Results: smtp.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="oC+MStkb"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
-	t=1725288092;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3yUcMtLgoLG9tzCuXt+yY+rp6XTZocqr3Yjofx3Z2Ag=;
-	b=oC+MStkbWG8SIsGeZ0TJLGzYBxRZjy7xt6yjTvTgKTB8gciUKdBNYK5k5k0aaKqVC4tdRR
-	hnv0w0qJDCdhpX1yUiZeuGINbWbJxSGAuUeAmFmUCJPpB9si5u3zQL2vCkwkAcPkm+8hex
-	4MD3RQ74UKyWrrbJpiLM02HOD6skMt4=
-Received: 
-	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id fd46b2e8 (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
-	Mon, 2 Sep 2024 14:41:31 +0000 (UTC)
-Date: Mon, 2 Sep 2024 16:41:28 +0200
-From: "Jason A. Donenfeld" <Jason@zx2c4.com>
-To: Mark Rutland <mark.rutland@arm.com>
-Cc: Adhemerval Zanella <adhemerval.zanella@linaro.org>,
-	Theodore Ts'o <tytso@mit.edu>, linux-kernel@vger.kernel.org,
-	linux-crypto@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-arch@vger.kernel.org,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
-	Eric Biggers <ebiggers@kernel.org>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>
-Subject: Re: [PATCH v3] aarch64: vdso: Wire up getrandom() vDSO implementation
-Message-ID: <ZtXOmHYuTI9DQGij@zx2c4.com>
-References: <20240902125312.3934-1-adhemerval.zanella@linaro.org>
- <ZtXMT3qSFgneeZb9@J2N7QTR9R3>
+	s=arc-20240116; t=1725288118; c=relaxed/simple;
+	bh=lzb1ZazmLEsALfcMax2ZZ+lPe0yXf6bsbyx2Poz/udQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=qgt/Am5wpjwpn8mc8g/bDl9dSww+ibpfF4UWhoW0yEdUD6T3l/i6RGlLBhMKjpBfGgZIR8qZNwZHNd5GduEwdzqcseNBj0bZF0Cv652Vrb1qP4nz8a0v+7wfn+F3j8lH4/kAYqImQ5Erv0crzIfmP+ChjUjaU9szDj/zqVNVfTs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eN0CEyp7; arc=none smtp.client-ip=209.85.221.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-374c0a8c7a9so1306537f8f.0;
+        Mon, 02 Sep 2024 07:41:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725288115; x=1725892915; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=WWlZagbdo5OAaezYG6br8ZTTQPvSDcg07kSABaERzT4=;
+        b=eN0CEyp7Cp4sHG3bN851WRxiSZYU/1NzmMeugc7ps3WGA49Xam53AMJwsYdtVdghXh
+         8ngCAMF6GL1irLBjyOgOlR5Bx3u8L6AQzZI0ItI3kwCRb0V3VYoZFtpr+cmu5RFQn/Jq
+         3medIrBjeoYUSCgszrgLEHbprWyC0q1IR38/OUtEkXFU136f+P+veOakMOW5aL9kWWPC
+         LnDwXv3fa8VzKBGsfl0esw0eioEFjFQzXM/fs6ntxTRPLHOuH1dVOLhCtWbc7/iPifsl
+         iOXoq5eIXGG6ccakfryzbvGdez2v09D/iD5Uvmd4fR/nUexgkU3QzG5iOxy8dQPJDyl7
+         rlew==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725288115; x=1725892915;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=WWlZagbdo5OAaezYG6br8ZTTQPvSDcg07kSABaERzT4=;
+        b=nCbPxvXh/mESFRI+mgHYGAl+b/XU4To0yVUpU9tOzhTeO0oVyH1WYhErDOo+4owu7X
+         jzXNw3aLk1l1BSaT9BHWEsFPiPTJqlvrDu/hCl7dgEj9EX6HV7uDGyWNotvF8TacKRqu
+         wxhg3NMKJupCfNvFMcATGlc0JKnPWIHUOhZ5L2p1hGJLI2zF7fGoX0BU2e5xh0CMrxaZ
+         zU/MwhIe+f3lzl1KjS4jcNavH4MldkfUkP0tl5nwOMFl2fS1JIIiAgWHaoPzEwSsBY+E
+         BMsDO8/sHit5vNgTZ4JbjJyciNoDUAkdhI3BJT65/WIhWEPQwuGWsp/ynsby1/+7DCUF
+         DyRA==
+X-Forwarded-Encrypted: i=1; AJvYcCUEA0YE8GX4vDZAoEziFkaNQ0350NBtMNzrOir6qnICGFLOn8XfpCen2J2iD8uoCb/0k8fwiGm882OOfEw=@vger.kernel.org, AJvYcCWNmlSkJlqvxubmEkS/c15pZnRQAULD4rTbYVBbKogMA2gTnuUwbV6BvGxAz6gF7+0GFf9A1kQYGM7FPA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxHyu7dR7a+kGFDU9xXIAsOTh959sBUl5W3y84Iluw8C43lJHz/
+	N5MD59d2NG/RsgqHN9Mnz4ajLMa+DjfBtHvEknY6noQ9gArxbJn8m+y0UbcG
+X-Google-Smtp-Source: AGHT+IEaDbDBHJN8s4DMGUkMtDPHapHA++XA2ag5za8MkGXzzJPIbLYNDGzCw5gbPP1CanSxIWIUbg==
+X-Received: by 2002:a5d:4685:0:b0:374:c3cd:73ea with SMTP id ffacd0b85a97d-374eccc2990mr173898f8f.35.1725288114581;
+        Mon, 02 Sep 2024 07:41:54 -0700 (PDT)
+Received: from localhost (craw-09-b2-v4wan-169726-cust2117.vm24.cable.virginm.net. [92.238.24.70])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42bba7f9f3esm82775615e9.0.2024.09.02.07.41.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 02 Sep 2024 07:41:54 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Yihang Li <liyihang9@huawei.com>,
+	"James E . J . Bottomley" <James.Bottomley@HansenPartnership.com>,
+	"Martin K . Petersen" <martin.petersen@oracle.com>,
+	linux-scsi@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] scsi: hisi_sas: Remove trailing space after \n newline
+Date: Mon,  2 Sep 2024 15:41:53 +0100
+Message-Id: <20240902144153.309920-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <ZtXMT3qSFgneeZb9@J2N7QTR9R3>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Mon, Sep 02, 2024 at 03:31:43PM +0100, Mark Rutland wrote:
-> ssize_t __kernel_getrandom(void *buffer, size_t len, unsigned int flags,
-> 			   void *opaque_state, size_t opaque_len)
-> {
-> 	if (alternative_has_cap_likely(ARM64_HAS_FPSIMD)) {
-> 		return __cvdso_getrandom(buffer, len, flags,
-> 					 opaque_state, opaque_len);
-> 	}
-> 
-> 	if (unlikely(opaque_len == ~0UL && !buffer && !len && !flags))
-> 		return -ENOSYS;
-> 	
-> 	return getrandom_syscall(buffer, len, flags);
-> }
-> 
-> ... though the conditions for returning -ENOSYS look very odd to me; why
-> do we care about fast-pathing that specific case rather than forwarding
-> that to the kernel, and does __cvdso_getrandom() handle that correctly?
+There is a extraneous space after a newline in a dev_info message.
+Remove it.
 
-Adhemerval's code here is fine and correct. The opaque_len==~0UL thing
-is a special vDSO case for getting the param struct back, not something
-related to the kernel. See __cvdso_getrandom_data() for details.
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/scsi/hisi_sas/hisi_sas_v3_hw.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c b/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
+index feda9b54b443..4cd3a3eab6f1 100644
+--- a/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
++++ b/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
+@@ -2421,7 +2421,7 @@ static void slot_complete_v3_hw(struct hisi_hba *hisi_hba,
+ 		spin_lock_irqsave(&device->done_lock, flags);
+ 		if (test_bit(SAS_HA_FROZEN, &ha->state)) {
+ 			spin_unlock_irqrestore(&device->done_lock, flags);
+-			dev_info(dev, "slot complete: task(%pK) ignored\n ",
++			dev_info(dev, "slot complete: task(%pK) ignored\n",
+ 				 task);
+ 			return;
+ 		}
+-- 
+2.39.2
+
 
