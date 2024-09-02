@@ -1,65 +1,75 @@
-Return-Path: <linux-kernel+bounces-311281-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311282-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 495DC968718
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 14:07:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF33796871A
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 14:07:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7B0021C22EEE
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 12:07:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A4A341F244F9
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 12:07:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 722CA20010A;
-	Mon,  2 Sep 2024 12:07:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7A09200118;
+	Mon,  2 Sep 2024 12:07:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="zerv2uSV";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="wKdFbhGU"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RA+a4TzH"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7157E185939
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 12:07:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90F71185939
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 12:07:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725278859; cv=none; b=X0TMbl0vIXU9vd5LNZO+22mHcaQQ+hiISn/8Bzj66Jim1CBiMgSxXm9snhECzKAjZ7+B4nlT4Cj60h+JUObbAmQ47hrOrunikpvpSzqq28BY0U8CQUquv5sthcolwggW9v3VNqKjuCRDzi6vS3lbUVn891TGzZIk8T59Ztapqeo=
+	t=1725278868; cv=none; b=XevLrQPouoNB3hHFbPWbxakLiVgZdtwHZSmq4rQc1cdBlxvJyZrLau2GuOmoZzBbTauAcQdNOep2hN+leohwKRoKV8J6ddiFTDscw9Gbdw00s2IVhMIord77UDESH5XYDasbcTZ6WW1LMqpZ853FJujT4jSl4kCJBAfwXNOJSb0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725278859; c=relaxed/simple;
-	bh=3RKhMpMoMpoERW/E0jf7hvgk9k9TjBxRCuln/UbJfVU=;
+	s=arc-20240116; t=1725278868; c=relaxed/simple;
+	bh=cNfn8v57qzoh4X8pwiukWydCJ1lDZU4LMycDmGx9rY0=;
 	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=tlYjDA2fLc9eQINnQRcMmmEliCxwLKyN+cc2JRcrdnrVdIuG7ooVPO8i6BkWEBoaI+GDBd+qoxaYn4xDnTkJmRB4cO715sPKVYRITXJjEhh9U40g40FD4wtJ1I+D+weyKX5lIZVjh6rvM/ojOD008Qjmw4xrY+K1LVw0LWHE4a8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=zerv2uSV; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=wKdFbhGU; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: John Ogness <john.ogness@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1725278856;
+	 MIME-Version:Content-Type; b=ceX5fYftEkAjNkRak3oduDu1laQAXW7qsVCoetnCjO0c0K/dy5f3zJm6YxbzmX1gCNVfPgXfx0aSVPCHq6AIrW3L/Q3UjcjbdJb9r1NKGIG3YTpxOqnYZC7PY0BNB/Hi141Q+032qjYbZvgiNmIieuCBilW+a120cSQoWQPHGj4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RA+a4TzH; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1725278865;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=BIRPmB7QbQaJVZ3PwlY1SyYg5vG2mHbfWm12wEhfRks=;
-	b=zerv2uSVKfkxSnHxAHzESOiQ4YhLUWe67BZGLGOney0aXKwcxhc1ufmqO09GmuzgcoUfzH
-	Q5hLBQKDECS5wZdkk7avK9THy76EkziKrEE7AKSUCvgadehCIT3vE+A07bSgOJZmLir8ys
-	UsTFXqdjHShd3OTCl8dyni4TVse0gsjO3YJOI2uJkPRFPIKuVaXi1D4nGp7vxlrmaLXjig
-	2CsNHRmChO96cf103oppwdAgsk+FXW+eNYrX8Q67qktDC45rUrLKpTGQsJXdMJpj0/TkA1
-	B4LAYvqsEfwX1C2S+CJXt1UpKSQHCo6pMo073TgkhfDx7OHZftO4JYObVoeLWQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1725278856;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=BIRPmB7QbQaJVZ3PwlY1SyYg5vG2mHbfWm12wEhfRks=;
-	b=wKdFbhGU1gm/V4v/3gDUtbaVdNukhmykxqUx0ZmXDdUFRKW9Lebznb6SocAYFycdeNgjko
-	nqoXnzojMs9uyuBw==
-To: Jinjie Ruan <ruanjinjie@huawei.com>, pmladek@suse.com,
- rostedt@goodmis.org, senozhatsky@chromium.org,
- linux-kernel@vger.kernel.org
-Cc: ruanjinjie@huawei.com
-Subject: Re: [PATCH -next] printk: Use the BITS_PER_LONG macro
-In-Reply-To: <20240902110903.2686082-1-ruanjinjie@huawei.com>
-References: <20240902110903.2686082-1-ruanjinjie@huawei.com>
-Date: Mon, 02 Sep 2024 14:13:36 +0206
-Message-ID: <87y14auulz.fsf@jogness.linutronix.de>
+	bh=pjOW0E49Yqw0mfiCURQMWGxKRTpi1ev/eO7YHhvgkrY=;
+	b=RA+a4TzHDooF9t2syeJfnaOAtINCfXQebUq8fbaeU+9O2ajFEGDpIBi8O/qGO7trFvJT3n
+	vxY+PQvc+14nNo2WQAoZuRmlZAD7VH9eokd0JYtoLZ1WL7WdSPGPqkub+WVeR8yGaXvqG6
+	jaa7RhMd4pEUlR8w8KmzkVDrvQLk53I=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-204-CfVNYkG0OgOLqsUrGaZQyA-1; Mon,
+ 02 Sep 2024 08:07:44 -0400
+X-MC-Unique: CfVNYkG0OgOLqsUrGaZQyA-1
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 46F441956080;
+	Mon,  2 Sep 2024 12:07:42 +0000 (UTC)
+Received: from oldenburg3.str.redhat.com (unknown [10.39.194.42])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 29DF61956048;
+	Mon,  2 Sep 2024 12:07:39 +0000 (UTC)
+From: Florian Weimer <fweimer@redhat.com>
+To: Rich Felker <dalias@libc.org>
+Cc: "H.J. Lu" <hjl.tools@gmail.com>,  Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>,  linux-api@vger.kernel.org,
+  libc-alpha@sourceware.org,  musl@lists.openwall.com
+Subject: Re: [musl] AT_MINSIGSTKSZ mismatched interpretation kernel vs libc
+In-Reply-To: <20240831154101.GN32249@brightrain.aerifal.cx> (Rich Felker's
+	message of "Sat, 31 Aug 2024 11:41:02 -0400")
+References: <20240829205436.GA14562@brightrain.aerifal.cx>
+	<20240831092902.GA2724612@port70.net>
+	<20240831150241.GP10433@brightrain.aerifal.cx>
+	<CAMe9rOqSSX_YP7dq5WK7vDyrQ5RP6nUNrim-8FjJi1X_8NfAvg@mail.gmail.com>
+	<20240831154101.GN32249@brightrain.aerifal.cx>
+Date: Mon, 02 Sep 2024 14:07:36 +0200
+Message-ID: <87v7zetg1j.fsf@oldenburg3.str.redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,30 +77,32 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-On 2024-09-02, Jinjie Ruan <ruanjinjie@huawei.com> wrote:
-> sizeof(unsigned long) * 8 is the number of bits in an unsigned long
-> variable, replace it with BITS_PER_LONG macro to make it simpler.
+* Rich Felker:
+
+> This is ambiguously worded (does "operating system" mean kernel?) and
+> does not agree with POSIX, which defines it as:
 >
-> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
-> ---
->  kernel/printk/printk_ringbuffer.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>     Minimum stack size for a signal handler.
 >
-> diff --git a/kernel/printk/printk_ringbuffer.h b/kernel/printk/printk_ringbuffer.h
-> index bd2a892deac1..7433fe477e08 100644
-> --- a/kernel/printk/printk_ringbuffer.h
-> +++ b/kernel/printk/printk_ringbuffer.h
-> @@ -122,7 +122,7 @@ enum desc_state {
->  
->  #define _DATA_SIZE(sz_bits)	(1UL << (sz_bits))
->  #define _DESCS_COUNT(ct_bits)	(1U << (ct_bits))
-> -#define DESC_SV_BITS		(sizeof(unsigned long) * 8)
-> +#define DESC_SV_BITS		BITS_PER_LONG
+> And otherwise just specifies that sigaltstack shall fail if given a
+> smaller size.
+>
+> The POSIX definition is also underspecified but it's clear that it
+> should be possible to execute at least a do-nothing signal handler
+> (like one which immediately returns and whose sole purpose is to
+> induce EINTR when intalled without SA_RESTART), or even a minimal one
+> that does something like storing to a global variable, with such a
+> small stack. Allowing a size where even a do-nothing signal handler
+> results in a memory-clobbering overflow or access fault seems
+> non-conforming to me.
 
-We should also add:
+POSIX does not specify what happens on a stack overflow (or more
+generally, if most resource limits are exceeded), so I think the
+behavior is conforming on a technicality.
 
-#include <linux/bits.h>
+Thanks,
+Florian
 
-John Ogness
 
