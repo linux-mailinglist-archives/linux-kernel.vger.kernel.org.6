@@ -1,103 +1,172 @@
-Return-Path: <linux-kernel+bounces-311332-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311333-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A17659687A0
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 14:37:29 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D2CE9687A2
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 14:37:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D23D51C21E86
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 12:37:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6D4AAB226B8
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 12:37:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B497619C540;
-	Mon,  2 Sep 2024 12:37:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KiR084Gq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D79019C54E;
+	Mon,  2 Sep 2024 12:37:33 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C49E19E98E;
-	Mon,  2 Sep 2024 12:37:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2E5B19E98E;
+	Mon,  2 Sep 2024 12:37:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725280642; cv=none; b=fAPk4gP8j9w4FT/cDzc11WD8wLo1EckCKIIciYO5oMFSd3aMM8Bda1oP74TbEsKWMpn7n1hECnjZNtzNADpA1+DlXW2myZXicbRFLsu5+kVWbeRF1F5L6Qh2hS1YLcWoNsSLdrQNqH6OCsU8bh4PoKwqNX/nKA87zktMwArXB8M=
+	t=1725280653; cv=none; b=mde7daXhVO7BF03hYpmbvWoft5HO8C5AZoxFQRSvrvCMogLzd3z2l/+NvVLDqEqVgMjwMUpy/PKg2wuSWySdchH4JThnxMUMpO7HsFqxZu/XEfITxhrdPEmuJ5j1eQ4B9phOdcea0Dws+Sn3x58Qi/2PMNbsUJYt7ZzpPaZAjSE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725280642; c=relaxed/simple;
-	bh=D8VtvsQuvIpOqRNcsehv1Db0iQ7Qrya2A4PT1Nyu1h8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=meNQnYfgZthqRsZWRudvrJFq6ILVfTlL8h9eKySHYrFQQo/xKQpeyVFLsUBTwgOb8ggU4g+zehSuxGf17STiQ6J9sUQUEqTdXb8q/liEeIq9Ps2JyCS0shj9YhZQ40o13O4GBckenYau07YpO1DV0pTJHwdbfWbfwbkjHe10Qf8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KiR084Gq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 32170C4CEC2;
-	Mon,  2 Sep 2024 12:37:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725280641;
-	bh=D8VtvsQuvIpOqRNcsehv1Db0iQ7Qrya2A4PT1Nyu1h8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=KiR084GqIYL/Bc9QK69ACAqVoLNsVyurvC0SfiwuPdvDbm85m70yINX1dvnptFjdc
-	 NyJ+84qOcyVEbSz+V+itIk0L5g41osX19zD7mioS6ooKBw8aQnftv6t7z65PIU9f/u
-	 BjWw9/cZeLqZJt2G92pZX2hdnTGeHPKK0MHK4Z/Ug6fKIL07PYeJJa6InbInJQxAg/
-	 bKWZVjuaMcSiYrcsHg3brAiwp85aN6qVSo2Fzdgij/H1FPT7DzJfOERYfW4Gf4Rqa4
-	 zRrHOWQ5AfR2ep7RiCOMa095cXTW2sLgwqy7YM9XHLe5pN/6QjTic/74Gb8Q9/e3dB
-	 zMf60wyw70GtA==
-Date: Mon, 2 Sep 2024 13:37:12 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Christophe Leroy <christophe.leroy@csgroup.eu>
-Cc: "Jason A. Donenfeld" <Jason@zx2c4.com>, linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	Adhemerval Zanella <adhemerval.zanella@linaro.org>,
-	Xi Ruoyao <xry111@xry111.site>
-Subject: Re: [PATCH] selftests: vDSO: Do not rely on $ARCH for
- vdso_test_getrandom && vdso_test_chacha
-Message-ID: <ec7bfeb4-30aa-4874-98b7-7877a12cb98f@sirena.org.uk>
-References: <ddf594c81787dba708fc392cb03027470dee64fb.1725124064.git.christophe.leroy@csgroup.eu>
- <ZtRqp-uZe5C07qOF@zx2c4.com>
- <fe8ea6a6-71d7-4cfc-b20b-fa0a7f39a4be@csgroup.eu>
+	s=arc-20240116; t=1725280653; c=relaxed/simple;
+	bh=ndZB4etJas4dKkxxuzhbNLrh6RPaMuLCbVWOGFDUQKs=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=d+eVevQTN9ZQC64uQkN3RXeiJwQ8vmXUuV70YTvAQLOOUvl164hw9JYLgLQfntTZ3DvY1qVoq+I+/dLaS0vucooHVEdS/B79z4nmQcV3PsE/N3KIyVeYcrrtdpmJrfD6OdDCW37sm+a3yWmxj4TtV8706J/5ACCd4ffh0G0n2Qw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4Wy7Yh70Ypz4f3jM9;
+	Mon,  2 Sep 2024 20:37:12 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id DA4291A14A0;
+	Mon,  2 Sep 2024 20:37:27 +0800 (CST)
+Received: from [10.174.176.73] (unknown [10.174.176.73])
+	by APP4 (Coremail) with SMTP id gCh0CgAnXMiEsdVmMBm_AA--.24651S3;
+	Mon, 02 Sep 2024 20:37:26 +0800 (CST)
+Subject: Re: [PATCH md-6.12 3/7] md: don't record new badblocks for faulty
+ rdev
+To: Mariusz Tkaczyk <mariusz.tkaczyk@linux.intel.com>,
+ Yu Kuai <yukuai1@huaweicloud.com>
+Cc: mariusz.tkaczyk@intel.com, song@kernel.org, linux-raid@vger.kernel.org,
+ linux-kernel@vger.kernel.org, yi.zhang@huawei.com, yangerkun@huawei.com,
+ "yukuai (C)" <yukuai3@huawei.com>
+References: <20240830072721.2112006-1-yukuai1@huaweicloud.com>
+ <20240830072721.2112006-4-yukuai1@huaweicloud.com>
+ <20240830122831.0000127d@linux.intel.com>
+ <c9af88ac-111e-19a2-b135-d2a379ed23fc@huaweicloud.com>
+ <20240902105539.00007655@linux.intel.com>
+From: Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <f704a35f-bb4c-67d5-e32e-37bed99a1f9e@huaweicloud.com>
+Date: Mon, 2 Sep 2024 20:37:24 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="+hvW1VMoMitmE2LX"
-Content-Disposition: inline
-In-Reply-To: <fe8ea6a6-71d7-4cfc-b20b-fa0a7f39a4be@csgroup.eu>
-X-Cookie: You are fairminded, just and loving.
+In-Reply-To: <20240902105539.00007655@linux.intel.com>
+Content-Type: text/plain; charset=gbk; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgAnXMiEsdVmMBm_AA--.24651S3
+X-Coremail-Antispam: 1UD129KBjvJXoWxCw43JrykuFWkKFW5Wry3Arb_yoW5GFW3pF
+	WfJFW3CF4DWr17Zw10vw1xJa4F934vgr48Xry3W34UGas0yryfWw4kKw4Y9ry09r9xWan8
+	ZF48Ka4fZa4kX37anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvC14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lc7I2V7IY0VAS07AlzVAY
+	IcxG8wCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbV
+	WUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF
+	67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42
+	IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF
+	0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUvcSsGvfC2Kf
+	nxnUUI43ZEXa7VUbGQ6JUUUUU==
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
+Hi,
 
---+hvW1VMoMitmE2LX
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+在 2024/09/02 16:55, Mariusz Tkaczyk 写道:
+> On Sat, 31 Aug 2024 09:14:39 +0800
+> Yu Kuai <yukuai1@huaweicloud.com> wrote:
+> 
+>> Hi,
+>>
+>> 在 2024/08/30 18:28, Mariusz Tkaczyk 写道:
+>>> On Fri, 30 Aug 2024 15:27:17 +0800
+>>> Yu Kuai <yukuai1@huaweicloud.com> wrote:
+>>>    
+>>>> From: Yu Kuai <yukuai3@huawei.com>
+>>>>
+>>>> Faulty will be checked before issuing IO to the rdev, however, rdev can
+>>>> be faulty at any time, hence it's possible that rdev_set_badblocks()
+>>>> will be called for faulty rdev. In this case, mddev->sb_flags will be
+>>>> set and some other path can be blocked by updating super block.
+>>>>
+>>>> Since faulty rdev will not be accesed anymore, there is no need to
+>>>> record new babblocks for faulty rdev and forcing updating super block.
+>>>>
+>>>> Noted this is not a bugfix, just prevent updating superblock in some
+>>>> corner cases, and will help to slice a bug related to external
+>>>> metadata[1].
+>>>>
+>>>> [1]
+>>>> https://lore.kernel.org/all/f34452df-810b-48b2-a9b4-7f925699a9e7@linux.intel.com/
+>>>>
+>>>> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
+>>>> ---
+>>>>    drivers/md/md.c | 4 ++++
+>>>>    1 file changed, 4 insertions(+)
+>>>>
+>>>> diff --git a/drivers/md/md.c b/drivers/md/md.c
+>>>> index 675d89597c7b..a3f7f407fe42 100644
+>>>> --- a/drivers/md/md.c
+>>>> +++ b/drivers/md/md.c
+>>>> @@ -9757,6 +9757,10 @@ int rdev_set_badblocks(struct md_rdev *rdev,
+>>>> sector_t s, int sectors, {
+>>>>    	struct mddev *mddev = rdev->mddev;
+>>>>    	int rv;
+>>>> +
+>>>> +	if (test_bit(Faulty, &rdev->flags))
+>>>> +		return 1;
+>>>> +
+>>>
+>>> Blame is volatile, this is why we need a comment here :)
+>>> Otherwise, someone may remove that.
+>>
+>> Perhaps something like following?
+>>
+>> /*
+>>    * record new babblocks for faulty rdev will force unnecessary
+>>    * super block updating.
+>>    */
+>>
+> 
+> Almost, we need to refer to external context because this is important to
+> mention where to expect issues:
+> 
+> /*
+>   * Recording new badblocks for faulty rdev will force unnecessary
+>   * super block updating. This is fragile for external management because
+>   * userspace daemon may trying to remove this device and deadlock may
+>   * occur. This will be probably solved in the mdadm, but it is safer to avoid
+>   * it.
+>   */
+> 
+> In my testing, I observed that it improves failing bios and device removal
+> path (recording badblock is simply expensive if there are many badblocks) so
+> the devices are removed faster but I don't have data here, this is what I saw.
 
-On Mon, Sep 02, 2024 at 02:22:38PM +0200, Christophe Leroy wrote:
+I'll mention this in the commit message, and add the above comment in
+v2.
 
-> When vdso_test_getcpu doesn't find the vDSO entry point, it prints an error
-> text and returns KSFT_SKIP
+Thanks,
+Kuai
 
-> I thought it would be more correct to have the same behaviour on
-> vdso_test_getrandom instead of trying to build it only when the underlying
-> kernel supports it.
+> 
+> Obviously, it is optimization.
+> 
+> Mariusz
+> 
+> .
+> 
 
-The problem is that the test incorporates assembler code so it simply
-won't build for architectures without explicit porting, the issue isn't
-if the target kernel supports it but rather that the test won't compile
-in the first place.
-
---+hvW1VMoMitmE2LX
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmbVsXcACgkQJNaLcl1U
-h9D3mAf/dS+qv6Qt8ulv2/CzOosH2KqxoDIi27uUhzq4itbQbnGjNTDMo7SoHwWP
-9luA5xoKVqI1r32V7f2VUZJ1IlZdc9h77diqQdSpOxlMfDlFfECIQcWnaPB2HBSq
-WOB3RuxIY8ovwPYyBYC+QQENn3H5UKkPLaWkko912mwb3a6ZXC/afnIkFrPPw0fi
-FkRQL45KnnHsH3hVi+ur4OsiuEnU8zwadlOrQWkh77EdTCMnj4TBfqVxleRrvgn1
-kqASZgnCzoYCEwX6unHXgEqPSUHlvjwhccdwCyYKyCVsZVmyn+gc0uWv6i3BoVD9
-7YSyJmNLntPUIc+pOcJCGB2hbf6QVg==
-=CY43
------END PGP SIGNATURE-----
-
---+hvW1VMoMitmE2LX--
 
