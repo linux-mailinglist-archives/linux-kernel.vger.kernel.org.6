@@ -1,123 +1,209 @@
-Return-Path: <linux-kernel+bounces-311752-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311753-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36C7B968D09
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 19:58:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1734968D0B
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 20:00:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9C2C2B223CE
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 17:58:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2A80A1F22FE0
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 18:00:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E0BF1AB6E0;
-	Mon,  2 Sep 2024 17:58:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA7311C62AE;
+	Mon,  2 Sep 2024 18:00:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Ovwvto6C"
-Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
+	dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b="W0E1ioUE"
+Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com [209.85.219.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C88E1AB6F7
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 17:58:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E87C19F12F
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 18:00:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725299899; cv=none; b=Ve3GZyoSLMDK8VUb+tXwPOHBqOp93D5MJGQdSyD/GW/equhzhuUzDbYNmXa1oZfhcuXtZAX85VsGqc+i9KPcTDTL449xYmScBt9O5auc6pSDUdPyudG1VnCWBoXFLd+FJXdQh7poBlh7PqUGGm/J5BIVsARvT6vMOX+yEkTQdLU=
+	t=1725300031; cv=none; b=sozADlbEX4wsmcYV91/y0R8btLl0WUdj93bC8dsdNNcgs+Tyq7ZtDHZATfOl5f7CR7mOakM66sEwPSxfC0voNS+MqG8wWhFNX6rw8o6SqzUsj9M9qAXnsjolGKjnOerw9mcM4B2f7GicBQ7/q9XZOlDCUM+DCAd7YTs+yrBKUfo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725299899; c=relaxed/simple;
-	bh=4kzEsaQgEmzVzzfopdsGcAYx1LDjy9ZtSHVQooEPCW8=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=twZ1LHc6Fhshc7LYkqe+K6TEB2I+gLt8W5QrKrYGMkp/zy1jU17RZYbkrHCkKduWCo6+9PVQaLliR8bMVOHtJyyzFrqk5LG8ZhKWNXqtCLj/hgq9qJczZHAOh2G2XXATCrZJgbIKy+W28KzRebC8wyteb/CvgJHFJR33dpizQTk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--cmllamas.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Ovwvto6C; arc=none smtp.client-ip=209.85.214.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--cmllamas.bounces.google.com
-Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-1fd9a0efe4eso46362225ad.0
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2024 10:58:18 -0700 (PDT)
+	s=arc-20240116; t=1725300031; c=relaxed/simple;
+	bh=eIdZarM1ZLkVjotRPPZmnvVFmvtd6W2DF0WIqNGWdp0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Z23c3AJDR4OPNJFVKboiCRsQIm2m3ZqIbh/jw7fL2yMnXYXscn26JWU9oc/wykGBo86DchKn+Gr0XtT0JMF6QtdCJj2FnP8ElEEeNy2oIDI+WDra0QPcgwaER+NDH5TYgO1FHKVKZNMNIBTA69qVvkxBy86ANv6jIJl9OxvuVMs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com; spf=pass smtp.mailfrom=raspberrypi.com; dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b=W0E1ioUE; arc=none smtp.client-ip=209.85.219.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=raspberrypi.com
+Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-e13d5cbc067so4759739276.2
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2024 11:00:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1725299897; x=1725904697; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=cCbFzRw/DuV8itIPIbeFQvrbmd5zaqmR5Px/qsB2pkw=;
-        b=Ovwvto6CdcmhQvbSAvATPzjUc71Sq1kxQTZduN50heP3WqOwrxmoMspca49xSf7kCC
-         ZScP9pqVRT++xEEOPbpFUNVGwb9YA/AaTMFf2+tcuy3jntSiABu5uqFM1Q+w0bkysGLh
-         xskYGVtGH95Rb6Ay3RZY2y8FH6Z7rHPBhAAAFMRfaUOA8m5f6xD+0V5sUO2B3NDzVYbC
-         oEcig22UvL55zPtLfVJCh+Uvd1cYizCuiklCXJKX/dzALYl+qHLcgVoLwv4tAVGnX95t
-         zMwV7ulf9WQ8TpDg+uoX+tvgm6Yij2VnRcWrna5eThxuqe5X0wwWYKwCzhfWqrfcuQGD
-         yzcg==
+        d=raspberrypi.com; s=google; t=1725300028; x=1725904828; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=TDNeSmr+pEwKiBUwbmQzYPYqs+N6cVSAJynan+v3I9Q=;
+        b=W0E1ioUEEe626nTl+afl8lO4DVm2lEoZZ6RWB2n7LmwxDYJjXMj60+ApB83mftARpu
+         v+EXTrCvmAdt8W8+5XLR3JxMwk606dKA0DlfGLy0pjjvzAIGDH1o35F6OgTgJoWLBO1J
+         qUQ9G1cwGm3O+5T/sL+698kNbq/BRSAmipYkZp8VhmEP1S4zb2LhUrmLosZYScEKshD5
+         upxs0rCAyv/K0qM4h2V6GW58iG+UDtN2ZbXJOSYGVgbH+C3EgG9qWNnfzDvClN7NQWKp
+         eEchcQTd40LTRv/Hfl+RyuhQ2U8B/dGRXxGPd2oiDvluD8K/zM6Nuw+ha+/c66qi6o+5
+         JQxA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725299897; x=1725904697;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=cCbFzRw/DuV8itIPIbeFQvrbmd5zaqmR5Px/qsB2pkw=;
-        b=fvCgERIHu0iAcNw3SXkTyYQgdqtRzia+ylMqOxnS+/nDW21s/6MyPZiUjNpjE4730s
-         Y6QWQ+jleaqtkj8v71XO8xs763Z/CBLpReKUzSV3YVEqwtJf657HBklYa0o4q+U189XJ
-         9Fon/dyNEqKueapxPBcNTDmQg2/xDEcn7vJnFbwjo/5dOxcZvhf26ZWEO/RH/AW9hGH7
-         EpXm1b0laG/TTKt9Esixp8nqUWbzkqEojBQmkqCY0aVc+Br+zjifEsjZmp7S+uoGFYrd
-         xVoaXN80+3IEQfVR9Oi4Dddu0sORf7INuHYBZoM1CH5iUS+tsyp1aznK7SB2GYB+A9rU
-         jKtA==
-X-Gm-Message-State: AOJu0Yz8vIli96QHasojsT0ms+9mojKpVRtjIVSraRxrdqalxHwhbw3p
-	VEoHkshwibnN+wrK/JXKARtf16PFVIRyxIm4kA7IkngQ+lRkDSXUvCKxVfyMxRLx25HV9T+2n3d
-	AtyGq57ANHw==
-X-Google-Smtp-Source: AGHT+IGIDuqx+5qheu2BI1hhS4dg90zd7hg1VEbxWnqmECtcRFXoSSuQmeJyzIlgfkDalczwPboAidV0siCfFA==
-X-Received: from xllamas.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5070])
- (user=cmllamas job=sendgmr) by 2002:a17:902:ec8f:b0:1fb:1ae6:6ab9 with SMTP
- id d9443c01a7336-205271aa1c6mr11723385ad.0.1725299897407; Mon, 02 Sep 2024
- 10:58:17 -0700 (PDT)
-Date: Mon,  2 Sep 2024 17:58:09 +0000
-In-Reply-To: <20240902175446.3757185-1-cmllamas@google.com>
+        d=1e100.net; s=20230601; t=1725300028; x=1725904828;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=TDNeSmr+pEwKiBUwbmQzYPYqs+N6cVSAJynan+v3I9Q=;
+        b=qVT+qKBgzpzpa+SIEA1KJk6dOKmeyOLZWE8LFn7nTEuzUZc/yRuWuq2A3b0jbcJEUM
+         PCNpgPJNe6/6MUgwN4NAaWX/w6wYTOWM0JfYwBKl94/vQeG6Si5JEIXAPvaE0cIBDa7V
+         lNAdEmNmf2waDomC2hfcTqv5pnyRMuVsBfNRCWujM6ju9zfVqwMtySds2D190M0K3qOZ
+         8wH4MgEqkxMzcx7i1X81REWG+SuYgzRCez2DTk9V0qiveop4g9Pvq8efp/LpHmVsYopj
+         b3nhFZaaKnVQgHn8w3XqfctTxyRK9Tz3BYXZL9pwoJUMhr3PdTOdLchi5GErRwKW6CBF
+         SbNA==
+X-Forwarded-Encrypted: i=1; AJvYcCX7dZwD+TPIm7Ev7xkN5/ZBUfqHg5/0I0f5sR705b1aFi0qbNKxkXEyATb46CeLv08U3/oSf6xvL1KSvq4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyLbnOmGrgzlgA85mBdsRDWm8KonULkKRw70NByCOvYfkuKKYmp
+	+UpXr2cetkGuUGqjB2jtbaktJ4f1Upfa9lVgiXxfSNULwpp5wOxYwWBdHXxGfD04JV1Q60j7yNs
+	eWfD8986f4Fsh2IsrMHHRtr7s5YuHrt1zJ185eA==
+X-Google-Smtp-Source: AGHT+IFn4wQQczLIIxtXiQbYwUwHLtres2LmVlKhTtBWt0g9+wQzEl6+uilrT4mQe/H3yg5cNi2SGciwpTKS3FNIHAo=
+X-Received: by 2002:a25:ce50:0:b0:e1a:8026:e71b with SMTP id
+ 3f1490d57ef6-e1a8026e893mr9541600276.54.1725300028277; Mon, 02 Sep 2024
+ 11:00:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240902175446.3757185-1-cmllamas@google.com>
-X-Mailer: git-send-email 2.46.0.469.g59c65b2a67-goog
-Message-ID: <20240902175810.3758196-1-cmllamas@google.com>
-Subject: [PATCH v3] binder: modify the comment for binder_proc_unlock
-From: Carlos Llamas <cmllamas@google.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	"=?UTF-8?q?Arve=20Hj=C3=B8nnev=C3=A5g?=" <arve@android.com>, Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, 
-	Joel Fernandes <joel@joelfernandes.org>, Christian Brauner <brauner@kernel.org>, 
-	Carlos Llamas <cmllamas@google.com>, Suren Baghdasaryan <surenb@google.com>
-Cc: linux-kernel@vger.kernel.org, kernel-team@android.com, 
-	bajing <bajing@cmss.chinamobile.com>
+MIME-Version: 1.0
+References: <20240902-imx290-avail-v3-0-b32a12799fed@skidata.com> <20240902-imx290-avail-v3-2-b32a12799fed@skidata.com>
+In-Reply-To: <20240902-imx290-avail-v3-2-b32a12799fed@skidata.com>
+From: Dave Stevenson <dave.stevenson@raspberrypi.com>
+Date: Mon, 2 Sep 2024 19:00:12 +0100
+Message-ID: <CAPY8ntCj=u4ZQJwjhvZF30x08Cf0h7R5yQTim7QCKd8bi_M08w@mail.gmail.com>
+Subject: Re: [PATCH v3 2/7] media: i2c: imx290: Define absolute control ranges
+To: bbara93@gmail.com
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, 
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
+	Sakari Ailus <sakari.ailus@linux.intel.com>, Hans de Goede <hdegoede@redhat.com>, 
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+	Alexander Stein <alexander.stein@ew.tq-group.com>, linux-media@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Benjamin Bara <benjamin.bara@skidata.com>
 Content-Type: text/plain; charset="UTF-8"
 
-From: bajing <bajing@cmss.chinamobile.com>
+Hi Benjamin
 
-Modify the comment for binder_proc_unlock() to clearly indicate which
-spinlock it releases and to better match the acquire comment block in
-binder_proc_lock().
+On Mon, 2 Sept 2024 at 16:58, <bbara93@gmail.com> wrote:
+>
+> From: Benjamin Bara <benjamin.bara@skidata.com>
+>
+> For now, the driver activates the first mode (1080p) as current active
+> mode in probe(). This e.g. means that one cannot set VBLANK below 45
+> (vmax_min - height), although theoretically the minimum is 30 (720p
+> mode). Define the absolute possible/supported ranges to have them
+> available later.
 
-Signed-off-by: bajing <bajing@cmss.chinamobile.com>
-Signed-off-by: Carlos Llamas <cmllamas@google.com>
----
+Currently the driver will set the ranges for VBLANK and HBLANK
+whenever the mode changes.
 
-Notes:
-    v1: https://lore.kernel.org/all/20240830073743.2052-1-bajing@cmss.chinamobile.com/
-    
-    v2: Reword commit log per suggestions from cmllamas@
-    https://lore.kernel.org/all/20240902013636.1739-1-bajing@cmss.chinamobile.com/
-    
-    v3: Wrap commit message. Add version history.
+How is it helpful to fake these numbers? Seeing as they aren't
+reflecting anything useful, they may as well all be 0.
 
- drivers/android/binder.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> Signed-off-by: Benjamin Bara <benjamin.bara@skidata.com>
+> ---
+> Changes since v2:
+> - new
+> ---
+>  drivers/media/i2c/imx290.c | 36 ++++++++++++++++++++++++++++++++----
+>  1 file changed, 32 insertions(+), 4 deletions(-)
+>
+> diff --git a/drivers/media/i2c/imx290.c b/drivers/media/i2c/imx290.c
+> index 1c97f9650eb4..466492bab600 100644
+> --- a/drivers/media/i2c/imx290.c
+> +++ b/drivers/media/i2c/imx290.c
+> @@ -499,6 +499,10 @@ static const struct imx290_clk_cfg imx290_720p_clock_config[] = {
+>  };
+>
+>  /* Mode configs */
+> +#define WIDTH_720P     1280
+> +#define HEIGHT_720P    720
+> +#define MINIMUM_WIDTH  WIDTH_720P
+> +#define MINIMUM_HEIGHT HEIGHT_720P
+>  static const struct imx290_mode imx290_modes_2lanes[] = {
+>         {
+>                 .width = 1920,
+> @@ -512,8 +516,8 @@ static const struct imx290_mode imx290_modes_2lanes[] = {
+>                 .clk_cfg = imx290_1080p_clock_config,
+>         },
+>         {
+> -               .width = 1280,
+> -               .height = 720,
+> +               .width = WIDTH_720P,
+> +               .height = HEIGHT_720P,
+>                 .hmax_min = 3300,
+>                 .vmax_min = 750,
+>                 .link_freq_index = FREQ_INDEX_720P,
+> @@ -537,8 +541,8 @@ static const struct imx290_mode imx290_modes_4lanes[] = {
+>                 .clk_cfg = imx290_1080p_clock_config,
+>         },
+>         {
+> -               .width = 1280,
+> -               .height = 720,
+> +               .width = WIDTH_720P,
+> +               .height = HEIGHT_720P,
+>                 .hmax_min = 3300,
+>                 .vmax_min = 750,
+>                 .link_freq_index = FREQ_INDEX_720P,
+> @@ -846,6 +850,30 @@ static const char * const imx290_test_pattern_menu[] = {
+>         "000/555h Toggle Pattern",
+>  };
+>
+> +/* absolute supported control ranges */
+> +#define HBLANK_MAX     (IMX290_HMAX_MAX - MINIMUM_WIDTH)
+> +#define VBLANK_MAX     (IMX290_VMAX_MAX - MINIMUM_HEIGHT)
+> +static unsigned int imx290_get_blank_min(const struct imx290 *imx290, bool v)
+> +{
 
-diff --git a/drivers/android/binder.c b/drivers/android/binder.c
-index 905290c98c3c..089bf2b45f0d 100644
---- a/drivers/android/binder.c
-+++ b/drivers/android/binder.c
-@@ -277,7 +277,7 @@ _binder_proc_lock(struct binder_proc *proc, int line)
- }
- 
- /**
-- * binder_proc_unlock() - Release spinlock for given binder_proc
-+ * binder_proc_unlock() - Release outer lock for given binder_proc
-  * @proc:                struct binder_proc to acquire
-  *
-  * Release lock acquired via binder_proc_lock()
--- 
-2.46.0.469.g59c65b2a67-goog
+This function is never used in this patch. I'm surprised the compiler
+doesn't throw an error on a static function not being used.
+You first use it in patch 4 "Introduce initial "off" mode & link freq"
 
+> +       const struct imx290_mode *modes = imx290_modes_ptr(imx290);
+> +       unsigned int min = UINT_MAX;
+> +       int i;
+> +
+> +       for (i = 0; i < imx290_modes_num(imx290); i++) {
+> +               unsigned int tmp;
+> +
+> +               if (v)
+> +                       tmp = modes[i].hmax_min - modes[i].width;
+
+if (v)
+   return h
+
+With the complete series my sensor comes up with controls defined as
+vertical_blanking 0x009e0901 (int)    : min=280 max=261423 step=1
+default=280 value=280
+horizontal_blanking 0x009e0902 (int)    : min=30 max=64255 step=1
+default=30 value=30
+
+Set the mode to 1080p and I get
+vertical_blanking 0x009e0901 (int)    : min=45 max=261063 step=1
+default=45 value=1169
+horizontal_blanking 0x009e0902 (int)    : min=280 max=63615 step=1
+default=280 value=280
+
+  Dave
+
+> +               else
+> +                       tmp = modes[i].vmax_min - modes[i].height;
+> +
+> +               if (tmp < min)
+> +                       min = tmp;
+> +       }
+> +
+> +       return min;
+> +}
+> +
+>  static void imx290_ctrl_update(struct imx290 *imx290,
+>                                const struct imx290_mode *mode)
+>  {
+>
+> --
+> 2.46.0
+>
+>
 
