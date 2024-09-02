@@ -1,124 +1,119 @@
-Return-Path: <linux-kernel+bounces-311735-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311737-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97DD1968CEB
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 19:41:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B10C9968CEF
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 19:43:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5EE5C2854FD
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 17:41:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 66C6D1F232BE
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 17:43:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C844A1C62BA;
-	Mon,  2 Sep 2024 17:41:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC5431C62DB;
+	Mon,  2 Sep 2024 17:43:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l6cQZiqa"
-Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VDSOHung"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F22381CB508;
-	Mon,  2 Sep 2024 17:41:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 865071C62C3
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 17:43:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725298904; cv=none; b=byW6M8RSdf+eJ2Rjwg37jOzz20bPGjg9jy6HFcI6QPt/RWXc1IxIqh/vVP9A0r0G+8C78vW0WQKXu1ukJqrdchWwWMQ6OWnm35R0kFQTvZ7zgFn2qSHxtr0SMCkvQqZUizshS25Xw/dqsrnC6ETjWxPZrkBVyHiSlZY5sdEJdmQ=
+	t=1725299002; cv=none; b=YTuyMffMeY+TnsRv8TcfpZUXvaYDmFeJdr0u9wEScnhENW+JjhqeQc3ISzi/aUKr7hvSBhP3PR26ih12VKdGhzRkcuHgHd1Ph7F4bfA3Lvz66n0jvWLn7sVOruWLOUFQteie5rsJN4It8N4rzuXVf+qdWqLhyQCWUVwv6tGJwpQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725298904; c=relaxed/simple;
-	bh=+yq+2739O6Ht/F2E5lU+5ItgxhwlrFgrtAYcefbippw=;
+	s=arc-20240116; t=1725299002; c=relaxed/simple;
+	bh=+PVE2BE0hCOuoyGx4L9PZC+Duiu/od1+1laH5fT0KPk=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=O902yzoKkFmbMjLL7gjRyT78/Wt4uXsjP5dv+0IJSEw5nmSffAS0NMfdmQfnkNeLfLMpuD+sdJpX9pdN+r42A06tpahy8KMxSiSb3/j9R0CXVNkCviR2CGDNZfXjqIR0YAw9bY115dFBEbTdBcF4xKIS6N3IQMxtvppweEXSuvE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l6cQZiqa; arc=none smtp.client-ip=209.85.215.176
+	 To:Cc:Content-Type; b=uDx7Szm2IOR75FUhK3IZqhQYhF9hxpZ252PPbGhzJPwHa5fbvQpOwLtpxpK2qX2uf6eA6N1upNzoerVrBWP5IAvrweLAaZBPbxusqEsNyunFf+4K+C8SO5cKO+0j+guPKZD7x9sEkTgwF1YqzeMgWllmfKv2kqg9vVUe5+muC2A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VDSOHung; arc=none smtp.client-ip=209.85.214.177
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-7c3d415f85eso553856a12.0;
-        Mon, 02 Sep 2024 10:41:41 -0700 (PDT)
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-2055a524017so566785ad.1
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2024 10:43:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725298901; x=1725903701; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1725299000; x=1725903800; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=p+wNgYxU7oLzYD3y0Bt7MyKXymsVh78qZSxkiBUsM4A=;
-        b=l6cQZiqaNZsawj7ByjF1h083ZtHpDinKJmvWxeQNXDrAFQmQEkTpgeMEKnX2xRaAUe
-         bc8PXRmjDhb0pJgh3F9xxYsPES3NF4m1dHEN72RRTtasdcXcnjNPcpwBkePxJf3gkxLk
-         lmy6TVfEaX2uJDBPnch/gEVAT0mACLKaVdgl9LUz1MrPBAf8mOqMM0dLaAIginZxF/0S
-         61L9Cr0z2uFJnLvpAW/lI73/ae/+F9auZnvOQFPyZcuHw8t/pLzcS/tQonohpreCdpmG
-         hKwX/Q1D56lcLnN5v83oVmZ1Pw+UVgJF/TZuU+g2wrQIFACCo1pDYkuBkgWb06dW7pXZ
-         fZIw==
+        bh=x1Y4xLoBMjp3sOTUCmMpURmHtSqY58C0Dbpo7vkEAHg=;
+        b=VDSOHung/ecsIY37+LFvr6lJTTNntfLSKUMInAP0WcJBlhjxNOfFRJEUXBFyDYYOSB
+         By3YeP5lttGfq7IDASC0wU/ee+iraOPwo2574B++ppp1NPBaAqi9EIJWTEXICVGzXY32
+         9dYeN5vT6NhpwMQclx7D+bOMVg92/rvedDFqHmR6iRjWSxGiVahCgLWFjGa1pNIfyDah
+         mPQze/V20zh8jF9x9WaS/7A1Dnmmz4asyXfJugTKVLLQrQxZ/Rj/1VNLfvDwgclQiEaB
+         GFMS/zeS6JDMOiSEy5KfqQxYKwixSw9nvnsvGu6f5wBGGhiTzqB5htAD4F44IIyakVga
+         3h1A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725298901; x=1725903701;
+        d=1e100.net; s=20230601; t=1725299000; x=1725903800;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=p+wNgYxU7oLzYD3y0Bt7MyKXymsVh78qZSxkiBUsM4A=;
-        b=q0qrZVdqA01lkhz40bifnykIML7uJN7ULtUIK22etCXK3kPII1e95NjF8kKgUkkBui
-         T+X4r6cLY7J+6oiXNLRSWjzXMPk4JO2r5asp5gWPTX1fUEJ9FR/iFCWWeINuUInuCydG
-         /xxjMN/Yaa28HMu3n/NhGdLZPbknSc+B9L0dDXuICxVW2FPHjlpc/RyMqAJQVkQzfERB
-         F5sHKDaId03S7R72ztkOqmDbU39dIRke+uxcXHD5ZnxxynShmKJ5Do0M7y6fNgY7J8aH
-         +7Zdud3RmJaIlvKtniW4brQrvgV+Bj/AN83XYr9ItO7XUvJztza6Gg0YySutzjHCZXbW
-         UVBA==
-X-Forwarded-Encrypted: i=1; AJvYcCUWwdOiyIm9AoGOygjj6BxDgOkL7UvWSZwKgMrnt8eQ3Xlz3i793PpTaAliHh4r6Dhzi+5hcKdyhVk6Ltmw@vger.kernel.org, AJvYcCWb6jHfe5fNv5cWi18QvxjuFjPWy/9oR+yIMjnWQLVtkalJLILFP8Ki5OPHLREpGec5/Z5zsgtFdhKVgefEqGU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyIK3zhDxsbcyEuGXbwQKB6pI/vqK6V4uyFtCESsfvM13NyB4Nl
-	8Niv2+hbD2KQuVVPEV1aejZO8VrCDAIAUHQDleqW3Zpwitb1kOX1c7wlWXIZpfDm+elga1WKw50
-	WE42xJZdbDs5asQ8m6rZUcdFNXrA=
-X-Google-Smtp-Source: AGHT+IGkg12Pi/6mf66io9D4Xdsd85fJlC6soRLCamM5arxcv6bY2hHX75vh/HfsgiJ/ZJ20leY3s+4dgW2u7NweAM8=
-X-Received: by 2002:a17:903:2346:b0:205:938b:f387 with SMTP id
- d9443c01a7336-205938bf846mr10502095ad.8.1725298901041; Mon, 02 Sep 2024
- 10:41:41 -0700 (PDT)
+        bh=x1Y4xLoBMjp3sOTUCmMpURmHtSqY58C0Dbpo7vkEAHg=;
+        b=Js6qMHEEHXovXgECTri9LrPHG9322IgQn75OfZ/22zBYiqccz0j7UwclNfQ8zXNqP9
+         6L/2GXwXgWdtWMxcCzT9gzAyJRc1oduq1co0/NVBluAml8gdMDUmSm8DagL0EuhC/w7t
+         NeQEWV4ZM2w6OKLE5emg5/4goGdt7J3ycdqrgF8tdI/ZwcUzsUXbViPCy8/+L/cplQeY
+         VF8r8W8y4S6Te9mAy4A1uLL/WUguKGptohZSGQuV4+W5xJv1gqtPxY5p+Z/sPIaJyFBn
+         gYMlVR24dPZ65FcDrw7cjn5+1ARoMh9wMsD0acbJOIwe5EyStIg1JTgQbRL46XJrPEDG
+         EAlg==
+X-Forwarded-Encrypted: i=1; AJvYcCVyQrHRutacd1u9z2j1qAiAr4uvd/LE7AVXpKII2Qlo3gY8qQ3iQbaEn/u9u6OLpgrM8KqCthCVfjkZs2k=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz5K9xaxmLulbxAFfWvYqZwQRmzMUF4oLWmRRf7sPvLrVmwK7F/
+	2+IVAYhmOAl+Nw/OPJyZizGyjeF/g+DXscuSZBfDodXpMOg3lBVQyW0kQXRsYToWFVZXWgSCLJI
+	gceYDwzu3g8BqI+sy4SSjctuX2krthw==
+X-Google-Smtp-Source: AGHT+IEfFDhE0Cdt/LAKBpKKXNaAe3MnoIOSWwH2RMO0h9YyJyv6leTurOP8FeU0UlwFR/9vrWhOfz1BCfbBHfgMVFY=
+X-Received: by 2002:a17:903:1103:b0:202:18d7:7ffb with SMTP id
+ d9443c01a7336-20528847f02mr66200305ad.11.1725298999623; Mon, 02 Sep 2024
+ 10:43:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240828093250.271358-1-colin.i.king@gmail.com>
-In-Reply-To: <20240828093250.271358-1-colin.i.king@gmail.com>
+References: <20240830072554.128132-1-yaolu@kylinos.cn>
+In-Reply-To: <20240830072554.128132-1-yaolu@kylinos.cn>
 From: Alex Deucher <alexdeucher@gmail.com>
-Date: Mon, 2 Sep 2024 13:41:29 -0400
-Message-ID: <CADnq5_MJYokqxKs+TJz5-ut-Gsy_SxP79g9Xr-hQxkJAb-86yA@mail.gmail.com>
-Subject: Re: [PATCH][next] drm/amd/display: Fix spelling mistake "recompte" -> "recompute"
-To: Colin Ian King <colin.i.king@gmail.com>
-Cc: Harry Wentland <harry.wentland@amd.com>, Leo Li <sunpeng.li@amd.com>, 
-	Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>, Alex Deucher <alexander.deucher@amd.com>, 
-	=?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
-	Xinhui Pan <Xinhui.Pan@amd.com>, David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
+Date: Mon, 2 Sep 2024 13:43:08 -0400
+Message-ID: <CADnq5_NhytCVtif=3OLvBkJqq1zTtm_Hkmrt1m4fREC9CSbf+w@mail.gmail.com>
+Subject: Re: [PATCH] drm/amdgpu: add raven1 gfxoff quirk
+To: Lu Yao <yaolu@kylinos.cn>
+Cc: alexander.deucher@amd.com, christian.koenig@amd.com, Xinhui.Pan@amd.com, 
+	sunil.khatri@amd.com, Prike.Liang@amd.com, Felix.Kuehling@amd.com, 
 	amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
-	kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+	linux-kernel@vger.kernel.org, liupeng01@kylinos.cn
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
 Applied.  Thanks!
 
-On Wed, Aug 28, 2024 at 5:43=E2=80=AFAM Colin Ian King <colin.i.king@gmail.=
-com> wrote:
+On Fri, Aug 30, 2024 at 3:26=E2=80=AFAM Lu Yao <yaolu@kylinos.cn> wrote:
 >
-> There is a spelling mistake in a DRM_DEBUG_DRIVER message. Fix it.
+> From: Peng Liu <liupeng01@kylinos.cn>
 >
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> Fix screen corruption with openkylin.
+>
+> Link: https://bbs.openkylin.top/t/topic/171497
+> Signed-off-by: Peng Liu <liupeng01@kylinos.cn>
 > ---
->  drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_mst_types.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c | 2 ++
+>  1 file changed, 2 insertions(+)
 >
-> diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_mst_types.c =
-b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_mst_types.c
-> index 0859a7173a06..669fd8fb6c24 100644
-> --- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_mst_types.c
-> +++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_mst_types.c
-> @@ -1325,7 +1325,7 @@ static bool is_dsc_need_re_compute(
->                 if (new_crtc_state->enable && new_crtc_state->active) {
->                         if (new_crtc_state->mode_changed || new_crtc_stat=
-e->active_changed ||
->                                         new_crtc_state->connectors_change=
-d) {
-> -                               DRM_DEBUG_DRIVER("%s:%d MST_DSC dsc recom=
-pte required."
-> +                               DRM_DEBUG_DRIVER("%s:%d MST_DSC dsc recom=
-pute required."
->                                                  "stream 0x%p in new dc_s=
-tate\n",
->                                                  __func__, __LINE__, stre=
-am);
->                                 is_dsc_need_re_compute =3D true;
+> diff --git a/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c b/drivers/gpu/drm/amd/=
+amdgpu/gfx_v9_0.c
+> index 2929c8972ea7..0cd5fd3fa18b 100644
+> --- a/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c
+> +++ b/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c
+> @@ -1301,6 +1301,8 @@ static const struct amdgpu_gfxoff_quirk amdgpu_gfxo=
+ff_quirk_list[] =3D {
+>         { 0x1002, 0x15dd, 0x1002, 0x15dd, 0xc6 },
+>         /* Apple MacBook Pro (15-inch, 2019) Radeon Pro Vega 20 4 GB */
+>         { 0x1002, 0x69af, 0x106b, 0x019a, 0xc0 },
+> +       /* https://bbs.openkylin.top/t/topic/171497 */
+> +       { 0x1002, 0x15d8, 0x19e5, 0x3e14, 0xc2},
+>         { 0, 0, 0, 0, 0 },
+>  };
+>
 > --
-> 2.39.2
+> 2.25.1
 >
 
