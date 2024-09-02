@@ -1,119 +1,203 @@
-Return-Path: <linux-kernel+bounces-310765-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310766-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69D179680F8
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 09:52:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F8159680F9
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 09:53:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E713FB2171C
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 07:52:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 40B511C21FBE
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 07:53:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C88E1836D5;
-	Mon,  2 Sep 2024 07:52:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D25A178388;
+	Mon,  2 Sep 2024 07:53:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ULcAEcr5"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=asahilina.net header.i=@asahilina.net header.b="gwQ+kXdp"
+Received: from mail.marcansoft.com (marcansoft.com [212.63.210.85])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27AF215DBB3
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 07:52:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47A6314900E;
+	Mon,  2 Sep 2024 07:53:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.63.210.85
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725263549; cv=none; b=M9HQdlbcoD4QC6DPdG+HX2Oml0y1q0YC+Vvz3Etq9G/d+uD7xoCXnOMkefUSEtkz/2vmQK0QHYo4raEPyBn/KB5lhr3frC3LJWUkLnYVjRAoiW5v7loGw+QrenrapP49dJMA3e2PmZBcFNu3QEs22/OxFMdRuJkBvVsEaQ7Uqtg=
+	t=1725263593; cv=none; b=AVVKzAm3IPMqHh/0MsaJBxnKKJqJfsQaOR+8tdHzBRJOJaSKTeXwcKKlYV/sF3rE5UrBWVjKWYJ2ksOgRwKX2dPmWSI335eb38+mBcEv7G007MZx0Uc3Uvv31gwbQptNKDK9BTayySr4fofVHtvTOHde+BOwNC1vsHMOeZ/g7yo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725263549; c=relaxed/simple;
-	bh=VtLOYfIjN0uBhjbISwMXqd8736p/pJMKe+ytQyFy1dU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=reMA4gXSoD59W458GL+SijaeebCD7zEA/HHm8Uwi4qNST2qFr9DeRyiJt7NDwmTL/fWW27pnQlwgZLGjtSoTWsHPejVbXWm0TN89OArhXRlGNznMjCs+53Zi5T8lvff+shKuBKoh8aIzM2Hm/jySNPQcIhpF/u+YD3mx2TZHcSU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ULcAEcr5; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-42bbaf45044so4093155e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2024 00:52:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1725263546; x=1725868346; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yDHe7Orx+Th2PDmF7/6guu7StnLFN0wqEj3VbhImekM=;
-        b=ULcAEcr58fCl1J0VkbvXyg5QrcISTKBpnOMijZzYRVuHnMGq4Zq2RVzoJK+TxbvK17
-         23fKFHXCNhBCjWKQbh+fISg0kXBwegS8+cPxNm8IT1k6HfZEtuGFIubHsgFCRx5pLazZ
-         ZZSPg1WBle17mCkQ7PnnHQaCbcXU+HIzphPjSPCPqMGXXfXx5kReoLiTVcElLYSxQxbR
-         BwfdNvw4mmRRH+IVoe4X50GYeUbKBT47J1IZcL1KRvW+UZ1MfS9tZJsyHWBRWKCmnABr
-         qi7G/zswJV00+1Wd55/icqqzrdv3J0XQ7XY9aqzSIIMZldXIJPRO0Wzzj+JJ5gQfZ2Yg
-         VleA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725263546; x=1725868346;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=yDHe7Orx+Th2PDmF7/6guu7StnLFN0wqEj3VbhImekM=;
-        b=LQyrDRNGurNDvEs19a2k/lc8xgEaVCqsOXHR1THHSQnlAPZP4J2ydl8lBVLXO7JRQV
-         BEhHzoenluIf04ldqn7Cjt5i8qBV/pZxfECNUxLBxH1sHsNmqq6QY+Lh1qfa7ouz/xpE
-         Lh7vrFwIathiQSjt28kWy9jrLp2YQBWz1hWn9LScVeLEcIGYHSIJdFfsX7mkhUzWoDKz
-         ML7QoikQRrB8Y3aHYRlY7+ZIpMmY+GtvsqpoSaKMTQ3GsklgIC7FyI1SRWTLUw9ZKbt4
-         T+5kPB6M7odcvk3vaezssVYyn7XrP/KKgR2KeA/brUAbTVgeYFHyxh8LSHM0isTwtTiU
-         gDlw==
-X-Forwarded-Encrypted: i=1; AJvYcCXbD9KVkTiBOR5VTxVp81UYOxHsZfdh3Z9WzzgFm/qFmPkQMokPY2RTu04hrsefw4kyEco5w/Mip+6LNWc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzzDrLkmjaIMcDZpryLIUBJYZHSIGLtTKfChu3Kg8AezL2MppOR
-	LdLoPZRJ6cGV2ZNi8l0+kc4z86SQIYEIfiCWe3xQQXdoB0PYynn7KzjdMpmCPqY=
-X-Google-Smtp-Source: AGHT+IFT8sUGSPYAj9NIAeo7nipApgLXpvIfSZw4LjQwp9teCQB3AmXKax7EgOm2S5MSgixPp9Akew==
-X-Received: by 2002:a05:600c:46c9:b0:424:ac9f:5c61 with SMTP id 5b1f17b1804b1-42bbb43423dmr36953945e9.3.1725263546383;
-        Mon, 02 Sep 2024 00:52:26 -0700 (PDT)
-Received: from krzk-bin.. ([178.197.222.82])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42ba641db12sm164768265e9.35.2024.09.02.00.52.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Sep 2024 00:52:25 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH 2/2] dt-bindings: arm: fsl: drop usage of VAR-SOM-MX8MM SoM compatible alone
-Date: Mon,  2 Sep 2024 09:52:20 +0200
-Message-ID: <20240902075220.27971-2-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240902075220.27971-1-krzysztof.kozlowski@linaro.org>
-References: <20240902075220.27971-1-krzysztof.kozlowski@linaro.org>
+	s=arc-20240116; t=1725263593; c=relaxed/simple;
+	bh=jgsZYlTQdATRaDgliWYQJCkQ3Kk3J3OmBNJ3kUXZ7W8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Jw2QSv9+K43BjYxCnuWXIVEyOy5j15Fq3Gmb5wyi8gORbfDkcIOPKnZo/r+obqzsjFFoZmLBVaCCqKGc12VnX5A5XgoPDO/9giN3RzAN7k29AYyzcn4gVqr0iR637xNj9aLLkUdTqZb/XofOkmR0liOUGLE3e89HZiZIV4RMcNo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=asahilina.net; spf=pass smtp.mailfrom=asahilina.net; dkim=pass (2048-bit key) header.d=asahilina.net header.i=@asahilina.net header.b=gwQ+kXdp; arc=none smtp.client-ip=212.63.210.85
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=asahilina.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=asahilina.net
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
+	(No client certificate requested)
+	(Authenticated sender: lina@asahilina.net)
+	by mail.marcansoft.com (Postfix) with ESMTPSA id 99A8443F55;
+	Mon,  2 Sep 2024 07:53:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=asahilina.net;
+	s=default; t=1725263586;
+	bh=jgsZYlTQdATRaDgliWYQJCkQ3Kk3J3OmBNJ3kUXZ7W8=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=gwQ+kXdpGLYSFoBu57hqOyEyDXCWTqTCpOyj2fwjlI7YsPurQQ+LnPwHvmDBGPTvi
+	 blHqglsvw929z4JyJdU+hhN4DxwmVNv1QS4nKSdhB0mlS0SoTyLqOmAx/aNXfpfdcC
+	 HVFPZXnouuT6KoIq1ly0yyRAGlTAygFFe/eepVS8yAvx3grIPa4mMOSNQzdCUq4BIb
+	 bAI5m1Q9Ki58vIEsTL9cNP6Jpdldc+g+X42UMtFpcRq+7jnmoI4jiC7BHaeJyw/lsF
+	 S0BBBD8XkhQ3EEgdO+FRS7Rd0bLgCaSXd9eLizRJee0N0C83Uz8dqbKr3G6mo/fIav
+	 e7KD8XGIKHF8w==
+Message-ID: <e9b208f8-6dee-4b17-b63b-64b67eee1c93@asahilina.net>
+Date: Mon, 2 Sep 2024 16:53:04 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] ALSA: usb-audio: Add mixer quirk for RME Digiface USB
+To: kernel test robot <lkp@intel.com>, Jaroslav Kysela <perex@perex.cz>,
+ Takashi Iwai <tiwai@suse.com>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+ "Geoffrey D. Bennett" <g@b4.vu>, Takashi Sakamoto <o-takashi@sakamocchi.jp>,
+ Mark Hills <mark@xwax.org>, Arun Raghavan <arun@arunraghavan.net>,
+ Cyan Nyan <cyan.vtb@gmail.com>, linux-sound@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240902-rme-digiface-v1-2-6e88472a2744@asahilina.net>
+ <202409021549.DbXWdqGa-lkp@intel.com>
+Content-Language: en-US
+From: Asahi Lina <lina@asahilina.net>
+In-Reply-To: <202409021549.DbXWdqGa-lkp@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-The Variscite VAR-SOM-MX8MM System-on-Module cannot be used alone
-without motherboard, so drop the usage of its compatible alone.
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- Documentation/devicetree/bindings/arm/fsl.yaml | 1 -
- 1 file changed, 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/arm/fsl.yaml b/Documentation/devicetree/bindings/arm/fsl.yaml
-index 1abdeb804468..e5f982fa750b 100644
---- a/Documentation/devicetree/bindings/arm/fsl.yaml
-+++ b/Documentation/devicetree/bindings/arm/fsl.yaml
-@@ -953,7 +953,6 @@ properties:
-               - toradex,verdin-imx8mm     # Verdin iMX8M Mini Modules
-               - toradex,verdin-imx8mm-nonwifi  # Verdin iMX8M Mini Modules without Wi-Fi / BT
-               - toradex,verdin-imx8mm-wifi  # Verdin iMX8M Mini Wi-Fi / BT Modules
--              - variscite,var-som-mx8mm   # i.MX8MM Variscite VAR-SOM-MX8MM module
-               - prt,prt8mm                # i.MX8MM Protonic PRT8MM Board
-           - const: fsl,imx8mm
- 
--- 
-2.43.0
+On 9/2/24 4:29 PM, kernel test robot wrote:
+> Hi Asahi,
+> 
+> kernel test robot noticed the following build warnings:
+> 
+> [auto build test WARNING on 8400291e289ee6b2bf9779ff1c83a291501f017b]
+> 
+> url:    https://github.com/intel-lab-lkp/linux/commits/Asahi-Lina/ALSA-usb-audio-Add-quirk-for-RME-Digiface-USB/20240902-054004
+> base:   8400291e289ee6b2bf9779ff1c83a291501f017b
+> patch link:    https://lore.kernel.org/r/20240902-rme-digiface-v1-2-6e88472a2744%40asahilina.net
+> patch subject: [PATCH 2/2] ALSA: usb-audio: Add mixer quirk for RME Digiface USB
+> config: mips-mtx1_defconfig (https://download.01.org/0day-ci/archive/20240902/202409021549.DbXWdqGa-lkp@intel.com/config)
+> compiler: clang version 16.0.6 (https://github.com/llvm/llvm-project 7cbf1a2591520c2491aa35339f227775f4d3adf6)
+> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240902/202409021549.DbXWdqGa-lkp@intel.com/reproduce)
+> 
+> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes: https://lore.kernel.org/oe-kbuild-all/202409021549.DbXWdqGa-lkp@intel.com/
+> 
+> All warnings (new ones prefixed by >>):
+> 
+>>> sound/usb/mixer_quirks.c:3000:42: warning: shift count >= width of type [-Wshift-count-overflow]
+>            bool invert = kcontrol->private_value & RME_DIGIFACE_INVERT;
+>                                                    ^~~~~~~~~~~~~~~~~~~
+>    sound/usb/mixer_quirks.c:2948:29: note: expanded from macro 'RME_DIGIFACE_INVERT'
+>    #define RME_DIGIFACE_INVERT BIT(32)
 
+Oops, this was supposed to be BIT(31). I'll fix it for v2.
+
+>                                ^~~~~~~
+>    include/vdso/bits.h:7:26: note: expanded from macro 'BIT'
+>    #define BIT(nr)                 (UL(1) << (nr))
+>                                           ^  ~~~~
+>    sound/usb/mixer_quirks.c:3063:42: warning: shift count >= width of type [-Wshift-count-overflow]
+>            bool invert = kcontrol->private_value & RME_DIGIFACE_INVERT;
+>                                                    ^~~~~~~~~~~~~~~~~~~
+>    sound/usb/mixer_quirks.c:2948:29: note: expanded from macro 'RME_DIGIFACE_INVERT'
+>    #define RME_DIGIFACE_INVERT BIT(32)
+>                                ^~~~~~~
+>    include/vdso/bits.h:7:26: note: expanded from macro 'BIT'
+>    #define BIT(nr)                 (UL(1) << (nr))
+>                                           ^  ~~~~
+>    sound/usb/mixer_quirks.c:3160:4: warning: shift count >= width of type [-Wshift-count-overflow]
+>                            RME_DIGIFACE_INVERT,
+>                            ^~~~~~~~~~~~~~~~~~~
+>    sound/usb/mixer_quirks.c:2948:29: note: expanded from macro 'RME_DIGIFACE_INVERT'
+>    #define RME_DIGIFACE_INVERT BIT(32)
+>                                ^~~~~~~
+>    include/vdso/bits.h:7:26: note: expanded from macro 'BIT'
+>    #define BIT(nr)                 (UL(1) << (nr))
+>                                           ^  ~~~~
+>    sound/usb/mixer_quirks.c:3185:4: warning: shift count >= width of type [-Wshift-count-overflow]
+>                            RME_DIGIFACE_INVERT,
+>                            ^~~~~~~~~~~~~~~~~~~
+>    sound/usb/mixer_quirks.c:2948:29: note: expanded from macro 'RME_DIGIFACE_INVERT'
+>    #define RME_DIGIFACE_INVERT BIT(32)
+>                                ^~~~~~~
+>    include/vdso/bits.h:7:26: note: expanded from macro 'BIT'
+>    #define BIT(nr)                 (UL(1) << (nr))
+>                                           ^  ~~~~
+>    sound/usb/mixer_quirks.c:3210:4: warning: shift count >= width of type [-Wshift-count-overflow]
+>                            RME_DIGIFACE_INVERT,
+>                            ^~~~~~~~~~~~~~~~~~~
+>    sound/usb/mixer_quirks.c:2948:29: note: expanded from macro 'RME_DIGIFACE_INVERT'
+>    #define RME_DIGIFACE_INVERT BIT(32)
+>                                ^~~~~~~
+>    include/vdso/bits.h:7:26: note: expanded from macro 'BIT'
+>    #define BIT(nr)                 (UL(1) << (nr))
+>                                           ^  ~~~~
+>    sound/usb/mixer_quirks.c:3235:4: warning: shift count >= width of type [-Wshift-count-overflow]
+>                            RME_DIGIFACE_INVERT,
+>                            ^~~~~~~~~~~~~~~~~~~
+>    sound/usb/mixer_quirks.c:2948:29: note: expanded from macro 'RME_DIGIFACE_INVERT'
+>    #define RME_DIGIFACE_INVERT BIT(32)
+>                                ^~~~~~~
+>    include/vdso/bits.h:7:26: note: expanded from macro 'BIT'
+>    #define BIT(nr)                 (UL(1) << (nr))
+>                                           ^  ~~~~
+>    6 warnings generated.
+> 
+> 
+> vim +3000 sound/usb/mixer_quirks.c
+> 
+>   2995	
+>   2996	static int snd_rme_digiface_get_status_val(struct snd_kcontrol *kcontrol)
+>   2997	{
+>   2998		int err;
+>   2999		u32 status[4];
+>> 3000		bool invert = kcontrol->private_value & RME_DIGIFACE_INVERT;
+>   3001		u8 reg = kcontrol->private_value >> 16;
+>   3002		u16 mask = kcontrol->private_value & 0xffff;
+>   3003		u16 val;
+>   3004	
+>   3005		err = snd_rme_digiface_read_status(kcontrol, status);
+>   3006		if (err < 0)
+>   3007			return err;
+>   3008	
+>   3009		switch (reg) {
+>   3010		/* Status register halfwords */
+>   3011		case RME_DIGIFACE_STATUS_REG0L ... RME_DIGIFACE_STATUS_REG3H:
+>   3012			break;
+>   3013		case RME_DIGIFACE_CTL_REG1: /* Control register 1, present in halfword 3L */
+>   3014			reg = RME_DIGIFACE_STATUS_REG3L;
+>   3015			break;
+>   3016		case RME_DIGIFACE_CTL_REG2: /* Control register 2, present in halfword 3H */
+>   3017			reg = RME_DIGIFACE_STATUS_REG3H;
+>   3018			break;
+>   3019		default:
+>   3020			return -EINVAL;
+>   3021		}
+>   3022	
+>   3023		if (reg & 1)
+>   3024			val = status[reg >> 1] >> 16;
+>   3025		else
+>   3026			val = status[reg >> 1] & 0xffff;
+>   3027	
+>   3028		if (invert)
+>   3029			val ^= mask;
+>   3030	
+>   3031		return field_get(mask, val);
+>   3032	}
+>   3033	
+> 
+
+~~ Lina
 
