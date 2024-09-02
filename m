@@ -1,430 +1,209 @@
-Return-Path: <linux-kernel+bounces-311277-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311278-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4283968712
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 14:06:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2F0A968713
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 14:06:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 00EDD1C22D81
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 12:06:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6919B1F2439B
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 12:06:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0037820FAA6;
-	Mon,  2 Sep 2024 12:05:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7058E200108;
+	Mon,  2 Sep 2024 12:06:34 +0000 (UTC)
 Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9225F200138;
-	Mon,  2 Sep 2024 12:05:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5327933CA
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 12:06:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725278711; cv=none; b=QlDnLzBmM/rER1oRTq3HLpcy9kE735nVEchkNc0mn9mGTrByzzPNp+pKNyMLO7kYQXm7beCBBcsHdfR9sz5u22b+8/P+bcovdkVrND4n39W+U1xJXlbm5erbNC1TrmccGrsfSbPIBsp6e8NZuD6axCN3PfuVjAdssUhaM9Krq+0=
+	t=1725278793; cv=none; b=jx6iPGGe5cEBxlhMDnJiBBFm6oSb+RXC3bdxYwxoQw+JVw+PDB40iotCv/FCJNSZXBrxX+Bd86qWXCuwEvyACaclbqrWRkmlHqvWQwc2hup7Ewm261ET9aAJDOUL+7bqVq90huN2W3qQzdpO48IKZVcrgnytOQIxXwXOdSB4gGI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725278711; c=relaxed/simple;
-	bh=cOOZykEmFqkZRyJ1E/vRN/T5sHb1DXPD+zLw58NgmJc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=OBZlwS5zCjGdMua46IRrTl0oVwqAhmVBXAsWd7pZbrG8hDYKdqcpjD0qs7+qQfzYcbx5C8TVyOib8ZrqftKRlBhNCsMBxSkf+rCYLBjJgXHdDnkbd/OHokXdcFusdBhaub4sMvTi7VeKNOvXr/Mu+JskIpV0m1kH/aM+XQPnMd4=
+	s=arc-20240116; t=1725278793; c=relaxed/simple;
+	bh=mB4mvwxVjyTEo/P/nAw1eiwbovFSuEN2a8d7z33xzDQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=PNoZt57A5k2MhAarPiS88+ISgf2JhOvSkymW28KAnGqexd8JaksRXXEh/R6agyv1ou0pYso8mf0W77xstVp+pmUn4qHigjCYStm3Ke70GcKznpJ690ZFbq2SQp9fxjDBm61XTPJ/MiRJByj9IoLA25T6Cb5kr6Kpd3jUht011T8=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
 Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4Wy6rM1R4wz9sSY;
-	Mon,  2 Sep 2024 14:04:51 +0200 (CEST)
+	by localhost (Postfix) with ESMTP id 4Wy6tG6Wkrz9sSN;
+	Mon,  2 Sep 2024 14:06:30 +0200 (CEST)
 X-Virus-Scanned: amavisd-new at c-s.fr
 Received: from pegase2.c-s.fr ([172.26.127.65])
 	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id H2HBx5amsJ9z; Mon,  2 Sep 2024 14:04:51 +0200 (CEST)
+	with ESMTP id ujgMA4Cl-EaS; Mon,  2 Sep 2024 14:06:30 +0200 (CEST)
 Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4Wy6rL4VqZz9sST;
-	Mon,  2 Sep 2024 14:04:50 +0200 (CEST)
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4Wy6tG5Sz2z9sS7;
+	Mon,  2 Sep 2024 14:06:30 +0200 (CEST)
 Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 836838B763;
-	Mon,  2 Sep 2024 14:04:50 +0200 (CEST)
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id A99058B76C;
+	Mon,  2 Sep 2024 14:06:30 +0200 (CEST)
 X-Virus-Scanned: amavisd-new at c-s.fr
 Received: from messagerie.si.c-s.fr ([127.0.0.1])
 	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id 7ZlsiK2UwxjX; Mon,  2 Sep 2024 14:04:50 +0200 (CEST)
-Received: from PO20335.idsi0.si.c-s.fr (unknown [192.168.234.167])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 7C90F8B76C;
-	Mon,  2 Sep 2024 14:04:49 +0200 (CEST)
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-To: Andrew Morton <akpm@linux-foundation.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Naveen N Rao <naveen@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>,
-	Shuah Khan <shuah@kernel.org>,
-	"Jason A . Donenfeld" <Jason@zx2c4.com>
-Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
-	linux-kernel@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org,
-	linux-kselftest@vger.kernel.org,
-	llvm@lists.linux.dev,
-	linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org,
-	linux-trace-kernel@vger.kernel.org,
-	Adhemerval Zanella <adhemerval.zanella@linaro.org>,
-	Xi Ruoyao <xry111@xry111.site>
-Subject: [PATCH v4 5/5] powerpc/vdso: Wire up getrandom() vDSO implementation on PPC64
-Date: Mon,  2 Sep 2024 14:04:42 +0200
-Message-ID: <27de70dcc356e56754a03a2887a97597f5e840a4.1725278148.git.christophe.leroy@csgroup.eu>
-X-Mailer: git-send-email 2.44.0
-In-Reply-To: <cover.1725278148.git.christophe.leroy@csgroup.eu>
-References: <cover.1725278148.git.christophe.leroy@csgroup.eu>
+	with ESMTP id V1dIutosb2ja; Mon,  2 Sep 2024 14:06:30 +0200 (CEST)
+Received: from [192.168.234.167] (unknown [192.168.234.167])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 48D408B763;
+	Mon,  2 Sep 2024 14:06:30 +0200 (CEST)
+Message-ID: <d6c0cfeb-f4bd-4564-84e4-a0db71608a6b@csgroup.eu>
+Date: Mon, 2 Sep 2024 14:06:30 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1725278679; l=9613; i=christophe.leroy@csgroup.eu; s=20211009; h=from:subject:message-id; bh=cOOZykEmFqkZRyJ1E/vRN/T5sHb1DXPD+zLw58NgmJc=; b=iQVBXnbAbleCScAmhC4jQI8rTg2g1n1MPrzXTpClLQc0uELa0PfoAKC764KONLv8nzMGwr0R9 iJ5HnlZ1f9ODzWAZUSyHZvhWNR+2jEWzNVCX7WzFkz1GcvkhH/eVYP1
-X-Developer-Key: i=christophe.leroy@csgroup.eu; a=ed25519; pk=HIzTzUj91asvincQGOFx6+ZF5AoUuP9GdOtQChs7Mm0=
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] static_call: Fix a wild-memory-access bug in
+ static_call_del_module()
+To: Jinjie Ruan <ruanjinjie@huawei.com>, tglx@linutronix.de,
+ linux-kernel@vger.kernel.org, "Peter Zijlstra (Intel)"
+ <peterz@infradead.org>, Josh Poimboeuf <jpoimboe@kernel.org>
+References: <20230915082126.4187913-1-ruanjinjie@huawei.com>
+ <0f339f49-bb8d-e28d-c9d6-8f16bd62995d@huawei.com>
+Content-Language: fr-FR
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+In-Reply-To: <0f339f49-bb8d-e28d-c9d6-8f16bd62995d@huawei.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Extend getrandom() vDSO implementation to powerpc64.
+Hi,
 
-Tested on QEMU on both ppc64_defconfig and ppc64le_defconfig.
+Le 02/09/2024 à 14:01, Jinjie Ruan a écrit :
+> Hi, it seems that this bug still exit.
 
-The results are not precise as it is QEMU on an x86 laptop, but
-no need to be precise to see the benefit.
+Can you provide more details ?
 
-~ # ./vdso_test_getrandom bench-single
-   vdso: 25000000 times in 4.977777162 seconds
-   libc: 25000000 times in 75.516749981 seconds
-syscall: 25000000 times in 86.842242014 seconds
+In particular, what makes you think it is the exact same bug ?
 
-~ # ./vdso_test_getrandom bench-single
-   vdso: 25000000 times in 6.473814156 seconds
-   libc: 25000000 times in 73.875109463 seconds
-syscall: 25000000 times in 71.805066229 seconds
+Christophe
 
-Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
----
-v4:
-- Use __BIG_ENDIAN__ which is defined by GCC instead of CONFIG_CPU_BIG_ENDIAN which is unknown by selftests
-- Implement a cleaner/smaller output copy for little endian instead of keeping compat macro.
 
-v3: New (split out of previous patch)
----
- arch/powerpc/Kconfig                         |   2 +-
- arch/powerpc/include/asm/mman.h              |   2 +-
- arch/powerpc/kernel/vdso/Makefile            |  11 +-
- arch/powerpc/kernel/vdso/getrandom.S         |  16 +--
- arch/powerpc/kernel/vdso/vgetrandom-chacha.S | 117 ++++++++++++++++++-
- arch/powerpc/kernel/vdso/vgetrandom.c        |   2 -
- 6 files changed, 132 insertions(+), 18 deletions(-)
-
-diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
-index 54b270ef18b1..b45452ac4a73 100644
---- a/arch/powerpc/Kconfig
-+++ b/arch/powerpc/Kconfig
-@@ -311,7 +311,7 @@ config PPC
- 	select SYSCTL_EXCEPTION_TRACE
- 	select THREAD_INFO_IN_TASK
- 	select TRACE_IRQFLAGS_SUPPORT
--	select VDSO_GETRANDOM			if PPC32
-+	select VDSO_GETRANDOM
- 	#
- 	# Please keep this list sorted alphabetically.
- 	#
-diff --git a/arch/powerpc/include/asm/mman.h b/arch/powerpc/include/asm/mman.h
-index 17a77d47ed6d..42a51a993d94 100644
---- a/arch/powerpc/include/asm/mman.h
-+++ b/arch/powerpc/include/asm/mman.h
-@@ -6,7 +6,7 @@
- 
- #include <uapi/asm/mman.h>
- 
--#ifdef CONFIG_PPC64
-+#if defined(CONFIG_PPC64) && !defined(BUILD_VDSO)
- 
- #include <asm/cputable.h>
- #include <linux/mm.h>
-diff --git a/arch/powerpc/kernel/vdso/Makefile b/arch/powerpc/kernel/vdso/Makefile
-index af3ba61b022e..56fb1633529a 100644
---- a/arch/powerpc/kernel/vdso/Makefile
-+++ b/arch/powerpc/kernel/vdso/Makefile
-@@ -9,7 +9,7 @@ obj-vdso32 = sigtramp32-32.o gettimeofday-32.o datapage-32.o cacheflush-32.o not
- obj-vdso64 = sigtramp64-64.o gettimeofday-64.o datapage-64.o cacheflush-64.o note-64.o getcpu-64.o
- 
- obj-vdso32 += getrandom-32.o vgetrandom-chacha-32.o
--obj-vdso64 += getrandom-64.o
-+obj-vdso64 += getrandom-64.o vgetrandom-chacha-64.o
- 
- ifneq ($(c-gettimeofday-y),)
-   CFLAGS_vgettimeofday-32.o += -include $(c-gettimeofday-y)
-@@ -22,6 +22,7 @@ endif
- 
- ifneq ($(c-getrandom-y),)
-   CFLAGS_vgetrandom-32.o += -include $(c-getrandom-y)
-+  CFLAGS_vgetrandom-64.o += -include $(c-getrandom-y) $(call cc-option, -ffixed-r30)
- endif
- 
- # Build rules
-@@ -35,10 +36,10 @@ endif
- targets := $(obj-vdso32) vdso32.so.dbg vgettimeofday-32.o vgetrandom-32.o
- targets += crtsavres-32.o
- obj-vdso32 := $(addprefix $(obj)/, $(obj-vdso32))
--targets += $(obj-vdso64) vdso64.so.dbg vgettimeofday-64.o
-+targets += $(obj-vdso64) vdso64.so.dbg vgettimeofday-64.o vgetrandom-64.o
- obj-vdso64 := $(addprefix $(obj)/, $(obj-vdso64))
- 
--ccflags-y := -fno-common -fno-builtin
-+ccflags-y := -fno-common -fno-builtin -DBUILD_VDSO
- ccflags-y += $(DISABLE_LATENT_ENTROPY_PLUGIN)
- ccflags-y += $(call cc-option, -fno-stack-protector)
- ccflags-y += -DDISABLE_BRANCH_PROFILING
-@@ -72,7 +73,7 @@ CPPFLAGS_vdso64.lds += -P -C
- # link rule for the .so file, .lds has to be first
- $(obj)/vdso32.so.dbg: $(obj)/vdso32.lds $(obj-vdso32) $(obj)/vgettimeofday-32.o $(obj)/vgetrandom-32.o $(obj)/crtsavres-32.o FORCE
- 	$(call if_changed,vdso32ld_and_check)
--$(obj)/vdso64.so.dbg: $(obj)/vdso64.lds $(obj-vdso64) $(obj)/vgettimeofday-64.o FORCE
-+$(obj)/vdso64.so.dbg: $(obj)/vdso64.lds $(obj-vdso64) $(obj)/vgettimeofday-64.o $(obj)/vgetrandom-64.o FORCE
- 	$(call if_changed,vdso64ld_and_check)
- 
- # assembly rules for the .S files
-@@ -88,6 +89,8 @@ $(obj-vdso64): %-64.o: %.S FORCE
- 	$(call if_changed_dep,vdso64as)
- $(obj)/vgettimeofday-64.o: %-64.o: %.c FORCE
- 	$(call if_changed_dep,cc_o_c)
-+$(obj)/vgetrandom-64.o: %-64.o: %.c FORCE
-+	$(call if_changed_dep,cc_o_c)
- 
- # Generate VDSO offsets using helper script
- gen-vdso32sym := $(src)/gen_vdso32_offsets.sh
-diff --git a/arch/powerpc/kernel/vdso/getrandom.S b/arch/powerpc/kernel/vdso/getrandom.S
-index 7db51c0635a5..a957cd2b2b03 100644
---- a/arch/powerpc/kernel/vdso/getrandom.S
-+++ b/arch/powerpc/kernel/vdso/getrandom.S
-@@ -5,8 +5,6 @@
-  *
-  * Copyright (C) 2024 Christophe Leroy <christophe.leroy@csgroup.eu>, CS GROUP France
-  */
--#include <linux/errno.h>
--
- #include <asm/processor.h>
- #include <asm/ppc_asm.h>
- #include <asm/vdso.h>
-@@ -29,10 +27,18 @@
-   .cfi_adjust_cfa_offset PPC_MIN_STKFRM
- 	PPC_STL		r0, PPC_MIN_STKFRM + PPC_LR_STKOFF(r1)
-   .cfi_rel_offset lr, PPC_MIN_STKFRM + PPC_LR_STKOFF
-+#ifdef __powerpc64__
-+	PPC_STL		r2, PPC_MIN_STKFRM + STK_GOT(r1)
-+  .cfi_rel_offset r2, PPC_MIN_STKFRM + STK_GOT
-+#endif
- 	get_datapage	r8
- 	addi		r8, r8, VDSO_RNG_DATA_OFFSET
- 	bl		CFUNC(DOTSYM(\funct))
- 	PPC_LL		r0, PPC_MIN_STKFRM + PPC_LR_STKOFF(r1)
-+#ifdef __powerpc64__
-+	PPC_LL		r2, PPC_MIN_STKFRM + STK_GOT(r1)
-+  .cfi_restore r2
-+#endif
- 	cmpwi		r3, 0
- 	mtlr		r0
- 	addi		r1, r1, 2 * PPC_MIN_STKFRM
-@@ -48,11 +54,5 @@
- 
- 	.text
- V_FUNCTION_BEGIN(__kernel_getrandom)
--#ifdef CONFIG_PPC64
--	li	r3, ENOSYS
--	crset	so
--	blr
--#else
- 	cvdso_call __c_kernel_getrandom
--#endif
- V_FUNCTION_END(__kernel_getrandom)
-diff --git a/arch/powerpc/kernel/vdso/vgetrandom-chacha.S b/arch/powerpc/kernel/vdso/vgetrandom-chacha.S
-index 17a2f586223a..6b334bcef017 100644
---- a/arch/powerpc/kernel/vdso/vgetrandom-chacha.S
-+++ b/arch/powerpc/kernel/vdso/vgetrandom-chacha.S
-@@ -80,14 +80,58 @@
-  */
- SYM_FUNC_START(__arch_chacha20_blocks_nostack)
- #ifdef __powerpc64__
--	blr
-+	std	r5, -216(r1)
-+
-+	std	r14, -144(r1)
-+	std	r15, -136(r1)
-+	std	r16, -128(r1)
-+	std	r17, -120(r1)
-+	std	r18, -112(r1)
-+	std	r19, -104(r1)
-+	std	r20, -96(r1)
-+	std	r21, -88(r1)
-+	std	r22, -80(r1)
-+	std	r23, -72(r1)
-+	std	r24, -64(r1)
-+	std	r25, -56(r1)
-+	std	r26, -48(r1)
-+	std	r27, -40(r1)
-+	std	r28, -32(r1)
-+	std	r29, -24(r1)
-+	std	r30, -16(r1)
-+	std	r31, -8(r1)
- #else
- 	stwu	r1, -96(r1)
- 	stw	r5, 20(r1)
-+#ifdef __BIG_ENDIAN__
- 	stmw	r14, 24(r1)
-+#else
-+	stw	r14, 24(r1)
-+	stw	r15, 28(r1)
-+	stw	r16, 32(r1)
-+	stw	r17, 36(r1)
-+	stw	r18, 40(r1)
-+	stw	r19, 44(r1)
-+	stw	r20, 48(r1)
-+	stw	r21, 52(r1)
-+	stw	r22, 56(r1)
-+	stw	r23, 60(r1)
-+	stw	r24, 64(r1)
-+	stw	r25, 68(r1)
-+	stw	r26, 72(r1)
-+	stw	r27, 76(r1)
-+	stw	r28, 80(r1)
-+	stw	r29, 84(r1)
-+	stw	r30, 88(r1)
-+	stw	r31, 92(r1)
-+#endif
-+#endif
- 
- 	lwz	r14, 0(r5)
- 	lwz	r15, 4(r5)
-+#ifdef __powerpc64__
-+	rldimi	r14, r15, 32, 0
-+#endif
- 	mr	r0, r6
- 	subi	r3, r3, 4
- 
-@@ -156,6 +200,7 @@ SYM_FUNC_START(__arch_chacha20_blocks_nostack)
- 	add	r28, r28, r14
- 	add	r29, r29, r15
- 
-+#ifdef __BIG_ENDIAN__
- 	stwbrx	r16, r4, r3
- 	addi	r3, r3, 8
- 	stwbrx	r17, 0, r3
-@@ -180,15 +225,42 @@ SYM_FUNC_START(__arch_chacha20_blocks_nostack)
- 	stwbrx	r30, r4, r3
- 	addi	r3, r3, 8
- 	stwbrx	r31, 0, r3
-+#else
-+	stw	r16, 4(r3)
-+	stw	r17, 8(r3)
-+	stw	r18, 12(r3)
-+	stw	r19, 16(r3)
-+	stw	r20, 20(r3)
-+	stw	r21, 24(r3)
-+	stw	r22, 28(r3)
-+	stw	r23, 32(r3)
-+	stw	r24, 36(r3)
-+	stw	r25, 40(r3)
-+	stw	r26, 44(r3)
-+	stw	r27, 48(r3)
-+	stw	r28, 52(r3)
-+	stw	r29, 56(r3)
-+	stw	r30, 60(r3)
-+	stwu	r31, 64(r3)
-+#endif
- 
- 	subic.	r0, r0, 1	/* subi. can't use r0 as source */
- 
-+#ifdef __powerpc64__
-+	addi	r14, r14, 1
-+	srdi	r15, r14, 32
-+#else
- 	addic	r14, r14, 1
- 	addze	r15, r15
-+#endif
- 
- 	bne	.Lblock
- 
-+#ifdef __powerpc64__
-+	ld	r5, -216(r1)
-+#else
- 	lwz	r5, 20(r1)
-+#endif
- 	stw	r14, 0(r5)
- 	stw	r15, 4(r5)
- 
-@@ -200,8 +272,49 @@ SYM_FUNC_START(__arch_chacha20_blocks_nostack)
- 	li	r11, 0
- 	li	r12, 0
- 
-+#ifdef __powerpc64__
-+	ld	r14, -144(r1)
-+	ld	r15, -136(r1)
-+	ld	r16, -128(r1)
-+	ld	r17, -120(r1)
-+	ld	r18, -112(r1)
-+	ld	r19, -104(r1)
-+	ld	r20, -96(r1)
-+	ld	r21, -88(r1)
-+	ld	r22, -80(r1)
-+	ld	r23, -72(r1)
-+	ld	r24, -64(r1)
-+	ld	r25, -56(r1)
-+	ld	r26, -48(r1)
-+	ld	r27, -40(r1)
-+	ld	r28, -32(r1)
-+	ld	r29, -24(r1)
-+	ld	r30, -16(r1)
-+	ld	r31, -8(r1)
-+#else
-+#ifdef __BIG_ENDIAN__
- 	lmw	r14, 24(r1)
-+#else
-+	lwz	r14, 24(r1)
-+	lwz	r15, 28(r1)
-+	lwz	r16, 32(r1)
-+	lwz	r17, 36(r1)
-+	lwz	r18, 40(r1)
-+	lwz	r19, 44(r1)
-+	lwz	r20, 48(r1)
-+	lwz	r21, 52(r1)
-+	lwz	r22, 56(r1)
-+	lwz	r23, 60(r1)
-+	lwz	r24, 64(r1)
-+	lwz	r25, 68(r1)
-+	lwz	r26, 72(r1)
-+	lwz	r27, 76(r1)
-+	lwz	r28, 80(r1)
-+	lwz	r29, 84(r1)
-+	lwz	r30, 88(r1)
-+	lwz	r31, 92(r1)
-+#endif
- 	addi	r1, r1, 96
--	blr
- #endif
-+	blr
- SYM_FUNC_END(__arch_chacha20_blocks_nostack)
-diff --git a/arch/powerpc/kernel/vdso/vgetrandom.c b/arch/powerpc/kernel/vdso/vgetrandom.c
-index 923330845b2c..5f855d45fb7b 100644
---- a/arch/powerpc/kernel/vdso/vgetrandom.c
-+++ b/arch/powerpc/kernel/vdso/vgetrandom.c
-@@ -7,10 +7,8 @@
- #include <linux/time.h>
- #include <linux/types.h>
- 
--#ifndef CONFIG_PPC64
- ssize_t __c_kernel_getrandom(void *buffer, size_t len, unsigned int flags, void *opaque_state,
- 			     size_t opaque_len, const struct vdso_rng_data *vd)
- {
- 	return __cvdso_getrandom_data(vd, buffer, len, flags, opaque_state, opaque_len);
- }
--#endif
--- 
-2.44.0
-
+> 
+> On 2023/9/15 16:21, Jinjie Ruan wrote:
+>> Inject fault while probing btrfs.ko, if the first kzalloc() fails
+>> in __static_call_init(), key->mods will no be initialized. And then
+>> in static_call_del_module() the site_mod->mod will cause
+>> wild-memory-access as below:
+>>
+>> So assign key->mods to NULL in __static_call_init() if it fails
+>> to fix the issue. And if kzalloc fails, it will just return in init
+>> func, so it should break if it the key->mods is NULL in exit func.
+>>
+>>   general protection fault, probably for non-canonical address 0xeb800159c89f94a0: 0000 [#1] PREEMPT SMP KASAN
+>>   KASAN: maybe wild-memory-access in range [0x5c002ace44fca500-0x5c002ace44fca507]
+>>   CPU: 2 PID: 1843 Comm: modprobe Tainted: G        W        N 6.6.0-rc1+ #60
+>>   Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.13.0-1ubuntu1.1 04/01/2014
+>>   RIP: 0010:static_call_del_module+0x113/0x280
+>>   Code: 3c 20 00 0f 85 ef 00 00 00 49 8b 6e 08 48 85 ed 75 0d eb 75 48 85 db 74 70 49 89 ef 48 89 dd 48 8d 7d 08 48 89 f8 48 c1 e8 03 <42> 80 3c 20 00 75 78 48 89 e8 4c 8b 6d 08 48 c1 e8 03 42 80 3c 20
+>>   RSP: 0018:ffff888101d3f860 EFLAGS: 00010206
+>>   RAX: 0b800559c89f94a0 RBX: 5c002ace44fca4f8 RCX: ffffffffa0210f00
+>>   RDX: ffffffffa0210ed4 RSI: ffffffffa0210edc RDI: 5c002ace44fca500
+>>   RBP: 5c002ace44fca4f8 R08: 0000000000000000 R09: ffffed10233e4eea
+>>   R10: ffffed10233e4ee9 R11: ffff888119f2774b R12: dffffc0000000000
+>>   R13: 80002ace3cfca4f8 R14: ffffffff85196de0 R15: ffffffff84ee9f99
+>>   FS:  00007f4ff6faa540(0000) GS:ffff888119f00000(0000) knlGS:0000000000000000
+>>   CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>>   CR2: 00007ffc3d1f19e8 CR3: 0000000109fa6001 CR4: 0000000000170ee0
+>>   DR0: ffffffff8faefce8 DR1: ffffffff8faefce9 DR2: ffffffff8faefcea
+>>   DR3: ffffffff8faefceb DR6: 00000000ffff0ff0 DR7: 0000000000000600
+>>   Call Trace:
+>>    <TASK>
+>>    ? __die_body+0x1b/0x60
+>>    ? die_addr+0x43/0x70
+>>    ? exc_general_protection+0x121/0x210
+>>    ? asm_exc_general_protection+0x22/0x30
+>>    ? static_call_del_module+0x113/0x280
+>>    ? __SCT__tp_func_ipi_exit+0x8/0x8
+>>    static_call_module_notify+0x27f/0x390
+>>    ? rcu_segcblist_inc_len+0x17/0x20
+>>    notifier_call_chain+0xbf/0x280
+>>    notifier_call_chain_robust+0x7f/0xe0
+>>    ? notifier_call_chain+0x280/0x280
+>>    ? kasan_quarantine_put+0x46/0x160
+>>    blocking_notifier_call_chain_robust+0x5b/0x80
+>>    load_module+0x4d1d/0x69f0
+>>    ? module_frob_arch_sections+0x20/0x20
+>>    ? update_cfs_group+0x10c/0x2a0
+>>    ? __wake_up_common+0x10b/0x5d0
+>>    ? kernel_read_file+0x3ca/0x510
+>>    ? __x64_sys_fsconfig+0x650/0x650
+>>    ? __schedule+0xa0b/0x2a60
+>>    ? init_module_from_file+0xd2/0x130
+>>    init_module_from_file+0xd2/0x130
+>>    ? __ia32_sys_init_module+0xa0/0xa0
+>>    ? _raw_spin_lock_irqsave+0xe0/0xe0
+>>    ? ptrace_stop+0x487/0x790
+>>    idempotent_init_module+0x32d/0x6a0
+>>    ? init_module_from_file+0x130/0x130
+>>    ? __fget_light+0x57/0x500
+>>    __x64_sys_finit_module+0xbb/0x130
+>>    do_syscall_64+0x35/0x80
+>>    entry_SYSCALL_64_after_hwframe+0x46/0xb0
+>>   RIP: 0033:0x7f4ff691b839
+>>   Code: 00 f3 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d 1f f6 2c 00 f7 d8 64 89 01 48
+>>   RSP: 002b:00007ffc07b09718 EFLAGS: 00000246 ORIG_RAX: 0000000000000139
+>>   RAX: ffffffffffffffda RBX: 000055978f13e070 RCX: 00007f4ff691b839
+>>   RDX: 0000000000000000 RSI: 000055978da1bc2e RDI: 0000000000000003
+>>   RBP: 000055978da1bc2e R08: 0000000000000000 R09: 000055978f13ddb0
+>>   R10: 0000000000000003 R11: 0000000000000246 R12: 0000000000000000
+>>   R13: 000055978f13e020 R14: 0000000000040000 R15: 000055978f13ddb0
+>>    </TASK>
+>>   Modules linked in: tifm_core(+)
+>>   Dumping ftrace buffer:
+>>      (ftrace buffer empty)
+>>   ---[ end trace 0000000000000000 ]---
+>>   RIP: 0010:static_call_del_module+0x113/0x280
+>>   Code: 3c 20 00 0f 85 ef 00 00 00 49 8b 6e 08 48 85 ed 75 0d eb 75 48 85 db 74 70 49 89 ef 48 89 dd 48 8d 7d 08 48 89 f8 48 c1 e8 03 <42> 80 3c 20 00 75 78 48 89 e8 4c 8b 6d 08 48 c1 e8 03 42 80 3c 20
+>>   RSP: 0018:ffff888101d3f860 EFLAGS: 00010206
+>>   RAX: 0b800559c89f94a0 RBX: 5c002ace44fca4f8 RCX: ffffffffa0210f00
+>>   RDX: ffffffffa0210ed4 RSI: ffffffffa0210edc RDI: 5c002ace44fca500
+>>   RBP: 5c002ace44fca4f8 R08: 0000000000000000 R09: ffffed10233e4eea
+>>   R10: ffffed10233e4ee9 R11: ffff888119f2774b R12: dffffc0000000000
+>>   R13: 80002ace3cfca4f8 R14: ffffffff85196de0 R15: ffffffff84ee9f99
+>>   FS:  00007f4ff6faa540(0000) GS:ffff888119f00000(0000) knlGS:0000000000000000
+>>   CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>>   CR2: 00007ffc3d1f19e8 CR3: 0000000109fa6001 CR4: 0000000000170ee0
+>>   DR0: ffffffff8faefce8 DR1: ffffffff8faefce9 DR2: ffffffff8faefcea
+>>   DR3: ffffffff8faefceb DR6: 00000000ffff0ff0 DR7: 0000000000000600
+>>   Kernel panic - not syncing: Fatal exception
+>>   Dumping ftrace buffer:
+>>      (ftrace buffer empty)
+>>   Kernel Offset: disabled
+>>   Rebooting in 1 seconds..
+>>
+>> Fixes: 8fd4ddda2f49 ("static_call: Don't make __static_call_return0 static")
+>> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
+>> ---
+>>   kernel/static_call_inline.c | 6 ++++--
+>>   1 file changed, 4 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/kernel/static_call_inline.c b/kernel/static_call_inline.c
+>> index 639397b5491c..e7aa70d33530 100644
+>> --- a/kernel/static_call_inline.c
+>> +++ b/kernel/static_call_inline.c
+>> @@ -256,8 +256,10 @@ static int __static_call_init(struct module *mod,
+>>   			}
+>>   
+>>   			site_mod = kzalloc(sizeof(*site_mod), GFP_KERNEL);
+>> -			if (!site_mod)
+>> +			if (!site_mod) {
+>> +				key->mods = NULL;
+>>   				return -ENOMEM;
+>> +			}
+>>   
+>>   			/*
+>>   			 * When the key has a direct sites pointer, extract
+>> @@ -422,7 +424,7 @@ static void static_call_del_module(struct module *mod)
+>>   			;
+>>   
+>>   		if (!site_mod)
+>> -			continue;
+>> +			break;
+>>   
+>>   		*prev = site_mod->next;
+>>   		kfree(site_mod);
 
