@@ -1,70 +1,92 @@
-Return-Path: <linux-kernel+bounces-310474-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310476-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 846C9967D7F
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 03:47:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A4A8967D89
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 03:51:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E2D6281B25
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 01:47:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 047CF1F218B8
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 01:51:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4823E3BB22;
-	Mon,  2 Sep 2024 01:46:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31BD928DB3;
+	Mon,  2 Sep 2024 01:51:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QaUJ+SZP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RLaEmzqI"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68AE3376E0;
-	Mon,  2 Sep 2024 01:46:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D2DF2209D;
+	Mon,  2 Sep 2024 01:51:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725241586; cv=none; b=TZTntpuWWuXHeCljT/QBm/QrN1vVT4Pd2Q5efFD7u4p+cowP672nDcbxdPJBTyO3X0lJIe5athN8h1medhwCdSAuvQnldSvKVuRD45TSLULu7UV6BuIs3GQoYp0WwBrIBtCo6UCzK1gaSCjM/IHs3ZWC+6ma4vKRrgxlvwkADTE=
+	t=1725241863; cv=none; b=rrQBJEQ9bu6Tr3yfg1AiEZ4eeJsN9FNaNBE4Jfa9Ek5KmOrd+W/9DYdJRIEdWH5EZLrzATQTWBl7Ee0zA7fRhR2XpaMedjyiSxVHERsuDMZwD8CLD2Tid//NwhuUOFkT+dD+JLXcXO1EFNo9ozU0fl2euFhicR1o3ZzyRMgun1Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725241586; c=relaxed/simple;
-	bh=SZsKD9uCuchZVWAml/dCRK+oDW3QBVeOZ/uiMQe13NI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=GkH94fTNqbhSOWdhe3av6xnjeeTF6jgcGmboqgc6dqbcPsqW88ME6VTg5LU2VUyjGTNyIwDpglswvKvq54SQfFvgspLCftDOFJAvLCBrxkUQdZSEyHcr9NXalUvSCX1TsWK35d4chS+kAMygMdhisdgLlNXjoyXyzmZwrVzlDP4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QaUJ+SZP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5857EC4CECC;
-	Mon,  2 Sep 2024 01:46:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725241586;
-	bh=SZsKD9uCuchZVWAml/dCRK+oDW3QBVeOZ/uiMQe13NI=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=QaUJ+SZPPT+iM4j6LjpFJNxBTfbFkXvsm9KfWgDN9kZTgqNBjKYfSbLQrwMAHLD9x
-	 BSCKHlpBiDIBup9cdTDi7Kd+Git8JNv2w9UoFhhSJOde5qYG8HsXQKMhIP/AV58KuZ
-	 xFVT7lQumzf525U1BOXI6ujBd6+r+tuICTBy1dKPW8aoDyp/61abGyIjcuO4WN30GO
-	 tpSg0tlCam1MqfVQWJR7HnuMPJWy/5IdX6uHrjtKNq5C5SpM/YIQ3uwxi9Uz9Gf2e9
-	 zpOvD9pYW01u1aL5m5xjIW9sbw9vflJJIJa1URCEexYmV52AimHVedv21v5tF1Iwcc
-	 3NlstVAoMZK+Q==
-From: Namhyung Kim <namhyung@kernel.org>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Kan Liang <kan.liang@linux.intel.com>
-Cc: Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	linux-perf-users@vger.kernel.org,
-	Ravi Bangoria <ravi.bangoria@amd.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	James Clark <james.clark@arm.com>,
-	Athira Rajeev <atrajeev@linux.vnet.ibm.com>,
-	Kajol Jain <kjain@linux.ibm.com>,
-	Thomas Richter <tmricht@linux.ibm.com>,
-	Atish Patra <atishp@atishpatra.org>,
-	Palmer Dabbelt <palmer@rivosinc.com>,
-	Mingwei Zhang <mizhang@google.com>
-Subject: [PATCH 4/4] perf tools: Do not set exclude_guest for precise_ip
-Date: Sun,  1 Sep 2024 18:46:21 -0700
-Message-ID: <20240902014621.2002343-5-namhyung@kernel.org>
-X-Mailer: git-send-email 2.46.0.469.g59c65b2a67-goog
-In-Reply-To: <20240902014621.2002343-1-namhyung@kernel.org>
-References: <20240902014621.2002343-1-namhyung@kernel.org>
+	s=arc-20240116; t=1725241863; c=relaxed/simple;
+	bh=aBpacNPMohRcwSsOR11sSC5U39gBhwta0pqjN6fSZyw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=UStXsSN1mSCc0nnjml3pqInmY3fzsazS9EJ3NIj5VkQbmeLA02voLTWU9ySWqpvqRSA0DDRUehMPIlA454423rnMJ4xMnYiJ5ai7ViLoaeYlrwMmj6UZSEsbVgm6iIInIDJeSyEk+EaaP6wNn1atvvl31xvRorTkFDIjQ1tjt0c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RLaEmzqI; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725241862; x=1756777862;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=aBpacNPMohRcwSsOR11sSC5U39gBhwta0pqjN6fSZyw=;
+  b=RLaEmzqIbGpCIbyjRy9ml87mhLGBzrpHJaukVDXV1KgvYXCsuspo0TMg
+   6rNEXNs4HIujVRGkoyyqAtI3pNDlRdkTEmnXZXVYvQryt+4wKoc8ymaQZ
+   +Z8gfE0oDvT9pNEyjnuQMPk0sK23K82mZ1WptEfgrspDuYRwSmdckzSI9
+   kQ3LW5K9SsTHqhLyKtu8SuOMH45s+R5p8GWvBakPeVRTFqQIY6UaYaBVf
+   D+Gj0UqcRdowKPetD86GTX6ZZv+ZYem+ciyyf7UC5AGL+zGqVoW24be7b
+   KSOrHGAHJV0m5TMcpDWvKeoZASHdkt0Y//cHUNgm7cbk2+USSKpGhxDqy
+   Q==;
+X-CSE-ConnectionGUID: l+SABho7QWKhPkxX6i9vOQ==
+X-CSE-MsgGUID: AV4ds3qkTDe4NfcmsFBN/w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11182"; a="41307647"
+X-IronPort-AV: E=Sophos;i="6.10,194,1719903600"; 
+   d="scan'208";a="41307647"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Sep 2024 18:51:01 -0700
+X-CSE-ConnectionGUID: IRhh+f7nQQCcc3lrV/qkew==
+X-CSE-MsgGUID: V2HiG/ObQqC4xEN2WrNWAA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,194,1719903600"; 
+   d="scan'208";a="64817612"
+Received: from allen-box.sh.intel.com ([10.239.159.127])
+  by orviesa006.jf.intel.com with ESMTP; 01 Sep 2024 18:50:55 -0700
+From: Lu Baolu <baolu.lu@linux.intel.com>
+To: Karol Herbst <kherbst@redhat.com>,
+	Lyude Paul <lyude@redhat.com>,
+	Danilo Krummrich <dakr@redhat.com>,
+	David Airlie <airlied@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Sandy Huang <hjc@rock-chips.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Mikko Perttunen <mperttunen@nvidia.com>,
+	Joerg Roedel <joro@8bytes.org>,
+	Will Deacon <will@kernel.org>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Jason Gunthorpe <jgg@ziepe.ca>,
+	Kevin Tian <kevin.tian@intel.com>
+Cc: dri-devel@lists.freedesktop.org,
+	nouveau@lists.freedesktop.org,
+	linux-tegra@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-media@vger.kernel.org,
+	iommu@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Lu Baolu <baolu.lu@linux.intel.com>
+Subject: [PATCH v2 0/3] drm: Use iommu_paging_domain_alloc()
+Date: Mon,  2 Sep 2024 09:46:57 +0800
+Message-Id: <20240902014700.66095-1-baolu.lu@linux.intel.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -73,124 +95,41 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-It seems perf sets the exclude_guest bit because of Intel PEBS
-implementation which uses a virtual address.  IIUC now kernel disables
-PEBS when it goes to the guest mode regardless of this bit so we don't
-need to set it explicitly.  At least for the other archs/vendors.
+Commit <17de3f5fdd35> ("iommu: Retire bus ops") removes iommu ops from
+the bus structure. The iommu subsystem no longer relies on bus for
+operations. So iommu_domain_alloc() interface is no longer relevant.
 
-I found the commit 1342798cc13e set the exclude_guest for precise_ip
-in the tool and the commit 20b279ddb38c added kernel side enforcement
-which was reverted by commit a706d965dcfd later.
+A new helper named iommu_paging_domain_alloc() was introduced in the
+iommu subsystem as a replacement of iommu_domain_alloc(). This helper
+relies on the device for IOMMU API use instead of the bus.
 
-Actually it doesn't set the exclude_guest for the default event
-(cycles:P) already.
+The replacement work started from this series:
 
-  $ grep -m1 vendor /proc/cpuinfo
-  vendor_id	: GenuineIntel
+https://lore.kernel.org/linux-iommu/20240610085555.88197-1-baolu.lu@linux.intel.com/
 
-  $ perf record -e cycles:P true
-  [ perf record: Woken up 1 times to write data ]
-  [ perf record: Captured and wrote 0.002 MB perf.data (9 samples) ]
+Several patches have already been merged into the mainline kernel, but
+we've decided to route all remaining ones through the subsystem tree.
 
-  $ perf evlist -v | tr ',' '\n' | grep -e exclude -e precise
-   precise_ip: 3
+Change log:
+v2:
+ - Patch 3/3: use dev->dev.parent as the input for
+   iommu_paging_domain_alloc(), suggested by Thierry Reding.
+   https://lore.kernel.org/linux-iommu/qyvyd2ftebjlgmzyayfvxsqa64c4wgx7keix3a6eexdspbvawy@a5ffnm5h5tgp/
 
-But having lower 'p' modifier set the bit for some reason.
+v1:
+ - https://lore.kernel.org/linux-iommu/20240812071034.9443-1-baolu.lu@linux.intel.com/
 
-  $ perf record -e cycles:pp true
-  [ perf record: Woken up 1 times to write data ]
-  [ perf record: Captured and wrote 0.002 MB perf.data (9 samples) ]
+Lu Baolu (3):
+  drm/nouveau/tegra: Use iommu_paging_domain_alloc()
+  drm/rockchip: Use iommu_paging_domain_alloc()
+  drm/tegra: Use iommu_paging_domain_alloc()
 
-  $ perf evlist -v | tr ',' '\n' | grep -e exclude -e precise
-   precise_ip: 2
-   exclude_guest: 1
+ drivers/gpu/drm/nouveau/nvkm/engine/device/tegra.c |  4 ++--
+ drivers/gpu/drm/rockchip/rockchip_drm_drv.c        | 10 +++++++---
+ drivers/gpu/drm/tegra/drm.c                        |  5 +++--
+ 3 files changed, 12 insertions(+), 7 deletions(-)
 
-Actually AMD IBS suffers from this because it doesn't support excludes
-and having this bit effectively disables new features in the current
-implementation (due to the missing feature check).
-
-  $ grep -m1 vendor /proc/cpuinfo
-  vendor_id	: AuthenticAMD
-
-  $ perf record -W -e cycles:p -vv true 2>&1 | grep switching
-  switching off PERF_FORMAT_LOST support
-  switching off weight struct support
-  switching off bpf_event
-  switching off ksymbol
-  switching off cloexec flag
-  switching off mmap2
-  switching off exclude_guest, exclude_host
-
-By not setting exclude_guest, we can fix this inconsistency and the
-troubles.
-
-Signed-off-by: Namhyung Kim <namhyung@kernel.org>
----
- tools/perf/tests/parse-events.c | 12 ++++--------
- tools/perf/util/parse-events.c  |  4 ----
- 2 files changed, 4 insertions(+), 12 deletions(-)
-
-diff --git a/tools/perf/tests/parse-events.c b/tools/perf/tests/parse-events.c
-index 9179bf3084c3..900107a171ee 100644
---- a/tools/perf/tests/parse-events.c
-+++ b/tools/perf/tests/parse-events.c
-@@ -898,8 +898,7 @@ static int test__group1(struct evlist *evlist)
- 		TEST_ASSERT_VAL("wrong exclude_user", !evsel->core.attr.exclude_user);
- 		TEST_ASSERT_VAL("wrong exclude_kernel", evsel->core.attr.exclude_kernel);
- 		TEST_ASSERT_VAL("wrong exclude_hv", evsel->core.attr.exclude_hv);
--		/* use of precise requires exclude_guest */
--		TEST_ASSERT_VAL("wrong exclude guest", evsel->core.attr.exclude_guest);
-+		TEST_ASSERT_VAL("wrong exclude guest", !evsel->core.attr.exclude_guest);
- 		TEST_ASSERT_VAL("wrong exclude host", !evsel->core.attr.exclude_host);
- 		TEST_ASSERT_VAL("wrong precise_ip", evsel->core.attr.precise_ip == 2);
- 		TEST_ASSERT_VAL("wrong leader", evsel__has_leader(evsel, leader));
-@@ -1016,9 +1015,8 @@ static int test__group3(struct evlist *evlist __maybe_unused)
- 				TEST_ASSERT_VAL("wrong exclude_kernel",
- 						!evsel->core.attr.exclude_kernel);
- 				TEST_ASSERT_VAL("wrong exclude_hv", evsel->core.attr.exclude_hv);
--				/* use of precise requires exclude_guest */
- 				TEST_ASSERT_VAL("wrong exclude guest",
--						evsel->core.attr.exclude_guest);
-+						!evsel->core.attr.exclude_guest);
- 				TEST_ASSERT_VAL("wrong exclude host",
- 						!evsel->core.attr.exclude_host);
- 				TEST_ASSERT_VAL("wrong precise_ip",
-@@ -1103,8 +1101,7 @@ static int test__group4(struct evlist *evlist __maybe_unused)
- 		TEST_ASSERT_VAL("wrong exclude_user", !evsel->core.attr.exclude_user);
- 		TEST_ASSERT_VAL("wrong exclude_kernel", evsel->core.attr.exclude_kernel);
- 		TEST_ASSERT_VAL("wrong exclude_hv", evsel->core.attr.exclude_hv);
--		/* use of precise requires exclude_guest */
--		TEST_ASSERT_VAL("wrong exclude guest", evsel->core.attr.exclude_guest);
-+		TEST_ASSERT_VAL("wrong exclude guest", !evsel->core.attr.exclude_guest);
- 		TEST_ASSERT_VAL("wrong exclude host", !evsel->core.attr.exclude_host);
- 		TEST_ASSERT_VAL("wrong precise_ip", evsel->core.attr.precise_ip == 1);
- 		TEST_ASSERT_VAL("wrong group name", !evsel->group_name);
-@@ -1122,8 +1119,7 @@ static int test__group4(struct evlist *evlist __maybe_unused)
- 		TEST_ASSERT_VAL("wrong exclude_user", evsel->core.attr.exclude_user);
- 		TEST_ASSERT_VAL("wrong exclude_kernel", !evsel->core.attr.exclude_kernel);
- 		TEST_ASSERT_VAL("wrong exclude_hv", evsel->core.attr.exclude_hv);
--		/* use of precise requires exclude_guest */
--		TEST_ASSERT_VAL("wrong exclude guest", evsel->core.attr.exclude_guest);
-+		TEST_ASSERT_VAL("wrong exclude guest", !evsel->core.attr.exclude_guest);
- 		TEST_ASSERT_VAL("wrong exclude host", !evsel->core.attr.exclude_host);
- 		TEST_ASSERT_VAL("wrong precise_ip", evsel->core.attr.precise_ip == 2);
- 		TEST_ASSERT_VAL("wrong leader", evsel__has_leader(evsel, leader));
-diff --git a/tools/perf/util/parse-events.c b/tools/perf/util/parse-events.c
-index ab73b3d45f04..4fa46ef7213c 100644
---- a/tools/perf/util/parse-events.c
-+++ b/tools/perf/util/parse-events.c
-@@ -1732,10 +1732,6 @@ static int parse_events__modifier_list(struct parse_events_state *parse_state,
- 		int exclude = eu | ek | eh;
- 		int exclude_GH = group ? evsel->exclude_GH : 0;
- 
--		if (mod.precise) {
--			/* use of precise requires exclude_guest */
--			eG = 1;
--		}
- 		if (mod.user) {
- 			if (!exclude)
- 				exclude = eu = ek = eh = 1;
 -- 
-2.46.0.469.g59c65b2a67-goog
+2.34.1
 
 
