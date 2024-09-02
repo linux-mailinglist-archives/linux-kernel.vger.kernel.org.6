@@ -1,141 +1,128 @@
-Return-Path: <linux-kernel+bounces-311137-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311138-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C363B96854C
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 12:52:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 219D596854E
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 12:52:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8661B2826B6
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 10:52:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 85328B278DB
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 10:52:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15D5C17F389;
-	Mon,  2 Sep 2024 10:50:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50D791D54D1;
+	Mon,  2 Sep 2024 10:50:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nBLHtNvF"
-Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nFSu85Kq"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C563A7347B
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 10:50:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 339FE1865F7;
+	Mon,  2 Sep 2024 10:50:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725274223; cv=none; b=Ma4pN/IFJrPxESzD/y2A9mGP4GDZ3IJp1AuP2sMn53YIqLjFcGcKtHSFysBdfkDYp5m4/UomsMgzwsNEXznzjGJt8vsta/jDVo/XL7mKwWwep19MyAoCk/sB48uScdJiW//5Bsu8ygoJSuLRS73aWx3Uh3Vg//iO9fBhd50bDAA=
+	t=1725274225; cv=none; b=uRAozlAe7Mv93/wrd11W86mr/gcp/zmV8mO+rKYcvt/6qOtOJL2mv+33vkvj46emvDCQ+ND3JH294x8AYLO4u/28TmZExBm85J2Wem07dfURO7nDMq086MzyBtyU0YUpELqj3DR14rJzkp4gJRX+pMM3lehgnrM2qUyM4jUQ9Lw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725274223; c=relaxed/simple;
-	bh=xzIxyvFaGu/lXt7uMruDYTE1w8muyitkE+oBI99apMI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=M3Id2D7/HHhQfPbaEL44wIzSiVDzwD+bkOd/Mf28IAw8EaiYzXIfFzq65878ihkEnudV7aTWbSqFMtKV0tct1JBoBM6Q5+1Q1mVL7k/jNtin1fh1WotChjuvBE3sK+hd5nBT6K+W4NXHnyGnpoNgDDl1m0/UMZ0ysuVSTbJb0eI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nBLHtNvF; arc=none smtp.client-ip=209.85.208.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2f50f1d864fso46342561fa.1
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2024 03:50:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725274220; x=1725879020; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DWUP7HRNyt+jwib8gjx7GjoaGXD/YcwYZvl6nvy2rdA=;
-        b=nBLHtNvFcsPfz4YvD3jhB0QKOpKiHBJNPDMg5c0aWpKPpUNemrbrFRQ3Sxkj6wGt8S
-         ih5fh00yUH2odluEsP9bTez8pSz4KlvgjrxZyjdrAK/Cf9aH3LNDCeJ6xKg27qDyNmr6
-         c1Tt0kKf8repHAXABgoi1//RDeqkgj386xnwAxdfxRj35U8q8ncPHdi4HQbP97nBLVGF
-         fLqWQ3URIyO73JFwsa/dWp10k1X2ERdABf6NGRBAYZtid30y+Nf9HuZwBd+sY5jyTxGg
-         SZIZ0o2kWDNP3FoF+T8s7J0JNBAJzY7/U5vAlTFuQxHqA2gen4UBD4ysZSBgrRClcPeg
-         +TIQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725274220; x=1725879020;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=DWUP7HRNyt+jwib8gjx7GjoaGXD/YcwYZvl6nvy2rdA=;
-        b=vMUAeJ00IMHQDkxWbUpS8ZsGkqQd3dyCYxuZ5yCa7uvogP4x3+TBabbRqPs2Mzgfm5
-         YKOqAvTCQDYXbCRLG2vVy5t+UxrTu2Wp1qN9gfq3zhZP4sOL20EacG2urxcbBQ8JUQUI
-         Ye5iSI27BzgCN/PGGwMcQOq3j/XNznpoQCyvxG06O9FgqFSbUVqXqNnxhG7XMLB3lD+0
-         PB3LAto9+LTuhhFyH+WXumkAEUpmr2hN9EtKxVHd2r/LHWnz9yRJlouarPIG9ctHFpap
-         j08HuU6PRTX8SbPywsqGMtetyNmBkOoFhWHteNgV7KcNgG1Y9afjtYIn0bctaxxg+8MO
-         CJJA==
-X-Forwarded-Encrypted: i=1; AJvYcCXAGcWWtC/Dz/BPGlXXYemyMsix7ZapK7K5pRLH+ET6lFyVNVWlpeRz+8pkT3dl5iKAN8PbZPGD97fJcEc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwlnyZ40IsKc8krE0OI0DS1VsrIoAzHb2ad2XpAHv+5HKNQi6vu
-	sSYjP7BeY6VOTZhrosZ9bwMb+us48098+jHygB9QNlnRHsQ/xYBMZj15UYfCBGVoyd5BD8NT+yB
-	e0/jNV+6LScEwMO/gCG26ewNKTGW7Hnbj
-X-Google-Smtp-Source: AGHT+IHiuHr77PXksfUPMShCT2zicDgFvA8LCQMqvPwonzT7kasMIlWFb4LaB2abfsytx1TmSTCD3vvahmbEB8U5tCM=
-X-Received: by 2002:a2e:be9e:0:b0:2f3:aed8:aa9b with SMTP id
- 38308e7fff4ca-2f62902dcd4mr44556831fa.5.1725274219089; Mon, 02 Sep 2024
- 03:50:19 -0700 (PDT)
+	s=arc-20240116; t=1725274225; c=relaxed/simple;
+	bh=AEaIXiu53hxryNpNO8eDMjDqmM+l9TZPumbBomopLk4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Z9tGhgv5CRjEim4JqUq6ZZeTm5HGQt5YOZm+mgfeeNeYhkTPT8x5o8RB3Z2z4/tqXFLgDsTXwwCy1TT03X5CkqkingywfNR82KK20C1Z5K+gaGKqwOfqPcf/tJnXYUBpA1TJSlphYEBqNOwITqhq7zIkm8SsikRcSVOjVx1ZBfg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nFSu85Kq; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725274224; x=1756810224;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=AEaIXiu53hxryNpNO8eDMjDqmM+l9TZPumbBomopLk4=;
+  b=nFSu85Kq5b8N2CwmJXDz+Gidhp9A937NMEDjboQH8+G42KCv7YsvB1ni
+   2cid50T0SmuGQ/biCAqwYR1Zg/pbXwFaFVS9isR+n5Gm054/6EQxzVvIM
+   zRP94xfT1PO9FeHteKG7MmcNzfTq0GiSeHP42TaatMVwU//Jlvh/zFp4f
+   n5Z43Np8YrxfjFWa3vI2pkjNpiHBBemFx/z102wVQZO32FsdGZkCSwmO+
+   ulM4o7k3OpH2g7tsc0Kic1z9A3OrGa/0ZnV2Ni64Xa3sWaOs8glMGWHZC
+   2AOfnGVijl3DhSiZVwYgf5BCfdspzZHXuREmWsT33TXvVsf9qx50SWjL2
+   g==;
+X-CSE-ConnectionGUID: kGim64ozTLqoTWql9KTyqw==
+X-CSE-MsgGUID: ETg3L/PQTvGQ40mbgZCYbw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11182"; a="46362443"
+X-IronPort-AV: E=Sophos;i="6.10,195,1719903600"; 
+   d="scan'208";a="46362443"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2024 03:50:23 -0700
+X-CSE-ConnectionGUID: 0l1TgIuRSeKYHB5edMecew==
+X-CSE-MsgGUID: dXk8sIACTpeGnuPOVAyt0w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,195,1719903600"; 
+   d="scan'208";a="68963077"
+Received: from lbogdanm-mobl3.ger.corp.intel.com (HELO tlindgre-MOBL1) ([10.245.246.223])
+  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2024 03:50:19 -0700
+Date: Mon, 2 Sep 2024 13:50:14 +0300
+From: Tony Lindgren <tony.lindgren@linux.intel.com>
+To: Binbin Wu <binbin.wu@linux.intel.com>
+Cc: Rick Edgecombe <rick.p.edgecombe@intel.com>, seanjc@google.com,
+	pbonzini@redhat.com, kvm@vger.kernel.org, kai.huang@intel.com,
+	isaku.yamahata@gmail.com, xiaoyao.li@intel.com,
+	linux-kernel@vger.kernel.org,
+	Isaku Yamahata <isaku.yamahata@intel.com>
+Subject: Re: [PATCH 17/25] KVM: TDX: create/free TDX vcpu structure
+Message-ID: <ZtWYZo9xWibJWgxU@tlindgre-MOBL1>
+References: <20240812224820.34826-1-rick.p.edgecombe@intel.com>
+ <20240812224820.34826-18-rick.p.edgecombe@intel.com>
+ <c03df364-4cce-4c7e-b9db-191f7b10ca70@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240730132015.8920-1-ubizjak@gmail.com> <51c33ede-b379-41ab-88b0-71615e214853@linaro.org>
- <CAFULd4Y83ciewbJe36jsuTVXL705_DoS_QpjKayniSCdqkpsEw@mail.gmail.com> <21cc2173-2934-470e-a151-ed3fe2bba9db@linaro.org>
-In-Reply-To: <21cc2173-2934-470e-a151-ed3fe2bba9db@linaro.org>
-From: Uros Bizjak <ubizjak@gmail.com>
-Date: Mon, 2 Sep 2024 12:50:07 +0200
-Message-ID: <CAFULd4Ya-dx-=8yYeOd_gmzvXdriZX1i+pUaG9L+X5ykwJxXJQ@mail.gmail.com>
-Subject: Re: [PATCH] clocksource/drivers/jcore: Use request_percpu_irq()
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Rich Felker <dalias@libc.org>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c03df364-4cce-4c7e-b9db-191f7b10ca70@linux.intel.com>
 
-On Mon, Sep 2, 2024 at 12:33=E2=80=AFPM Daniel Lezcano
-<daniel.lezcano@linaro.org> wrote:
->
-> On 02/09/2024 12:11, Uros Bizjak wrote:
-> > On Mon, Sep 2, 2024 at 11:17=E2=80=AFAM Daniel Lezcano
-> > <daniel.lezcano@linaro.org> wrote:
-> >>
-> >> On 30/07/2024 15:20, Uros Bizjak wrote:
-> >>> Use request_percpu_irq() instead of request_irq() to solve
-> >>> the following sparse warning:
-> >>>
-> >>> jcore-pit.c:173:40: warning: incorrect type in argument 5 (different =
-address spaces)
-> >>> jcore-pit.c:173:40:    expected void *dev
-> >>> jcore-pit.c:173:40:    got struct jcore_pit [noderef] __percpu *stati=
-c [assigned] [toplevel] jcore_pit_percpu
-> >>>
-> >>> Compile tested only.
-> >>>
-> >>> Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
-> >>> Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
-> >>> Cc: Thomas Gleixner <tglx@linutronix.de>
-> >>> ---
-> >>
-> >> Added Rich Felker in Cc
-> >>
-> >> Applied, thanks
-> >
-> > I think we also need the following patch, since we changed request_irq
-> > to request_percpu_irq:
->
-> Hmm, I think you are right:
->
-> I would say it is:
->
-> static irqreturn_t jcore_timer_interrupt(int irq, void *dev_id)
-> {
->          struct jcore_pit *pit =3D dev_id;
->
->         OR
->
->         struct jcore_pit *pit =3D this_cpu_ptr(jcore_pit_percpu);
->
->         [ ... ]
-> }
->
-> The former the better for the encapsulation.
->
-> Do you mind to update the patch ?
+On Tue, Aug 13, 2024 at 05:15:28PM +0800, Binbin Wu wrote:
+> On 8/13/2024 6:48 AM, Rick Edgecombe wrote:
+> > From: Isaku Yamahata <isaku.yamahata@intel.com>
+> > +void tdx_vcpu_reset(struct kvm_vcpu *vcpu, bool init_event)
+> > +{
+> > +
+> > +	/* Ignore INIT silently because TDX doesn't support INIT event. */
+> > +	if (init_event)
+> > +		return;
+> > +
+> > +	/* This is stub for now. More logic will come here. */
+> > +}
+> > +
+> For TDX, it actually doesn't do any thing meaningful in vcpu reset.
+> Maybe we can drop the helper and move the comments to vt_vcpu_reset()?
 
-Done, v2 with changed jcore_timer_interrupt() was just sent.
+Good point, will do a patch to drop tdx_vcpu_reset().
 
-Sorry for the inconvenience.
+> > --- a/arch/x86/kvm/x86.c
+> > +++ b/arch/x86/kvm/x86.c
+> > @@ -488,6 +488,7 @@ int kvm_set_apic_base(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
+> >   	kvm_recalculate_apic_map(vcpu->kvm);
+> >   	return 0;
+> >   }
+> > +EXPORT_SYMBOL_GPL(kvm_set_apic_base);
+> >   /*
+> >    * Handle a fault on a hardware virtualization (VMX or SVM) instruction.
+> > @@ -12630,6 +12631,7 @@ bool kvm_vcpu_is_reset_bsp(struct kvm_vcpu *vcpu)
+> >   {
+> >   	return vcpu->kvm->arch.bsp_vcpu_id == vcpu->vcpu_id;
+> >   }
+> > +EXPORT_SYMBOL_GPL(kvm_vcpu_is_reset_bsp);
+> >   bool kvm_vcpu_is_bsp(struct kvm_vcpu *vcpu)
+> >   {
+> 
+> kvm_set_apic_base() and kvm_vcpu_is_reset_bsp() is not used in
+> this patch. The symbol export should move to the next patch, which
+> uses them.
 
-Thanks,
-Uros.
+Yes that should have been in the following patch.
+
+Regards,
+
+Tony
+
 
