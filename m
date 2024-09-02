@@ -1,116 +1,126 @@
-Return-Path: <linux-kernel+bounces-311060-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311061-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 393E696846C
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 12:18:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D87996846E
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 12:18:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 944ABB20431
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 10:17:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1BA672809DC
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 10:18:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8022413D502;
-	Mon,  2 Sep 2024 10:17:49 +0000 (UTC)
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF39E13CFB7;
+	Mon,  2 Sep 2024 10:18:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MhR9r9xK"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70F9F2C6AF;
-	Mon,  2 Sep 2024 10:17:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 624C461FEB;
+	Mon,  2 Sep 2024 10:18:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725272269; cv=none; b=TmDmQgpWQyY1k9IQXXvb8f0HA8Qg3iXoYn4kPpd6yu7ARUHKxP36p+bRI5l+3EFCh8egNeG+2D24fJm60VMcOxN77EQEY6wmvlhqQiezWMT9IQc29d4mbFSTgj6ysLDFpGGgkMAlhxTy2F/wwGOAmykTkCXvM2DxnljkgDGvoUs=
+	t=1725272295; cv=none; b=HLtDix99Cy/b3uCFtyj1cByZOW0dQrruGvd1SVKrzoHgbN2T1Al/XkxSME+WN4Wmek8yo8OIKeXPEY55MnSgAqiHdY9IttIGyZKz996zqClQ7YZRqSrBru3XSLTLua7a78xt+NB0W6nCgv5xyvzRNW5FErbmi0vsYeEjUc7Pcjs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725272269; c=relaxed/simple;
-	bh=nbX9KfI/+DDTr5d4yM+MfCmQLM1WG+Gg/zOaSMRtfvQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Oi4KydpJ48NIw9SJMBBy33R0KcEEC3J5BKrLBznnm9XOGt9LA27uSzLtPqiEWqZGv0b2sRYnhJgjWvZux8oQJVMlGGOlSO45j3J1nz3t2VJ4Tm1pM+83b6ZPxUIRsy1yLlnIAuXlbuHhkJ9ADxFIsA6vk18TjD7BqW2P3q7tPjQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a869f6ce2b9so436478866b.2;
-        Mon, 02 Sep 2024 03:17:47 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725272266; x=1725877066;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Xp68GOlzkW0Wm/qTOXUyBI6eoQvITkZK/0/+aDmZ0uk=;
-        b=TlPzFJwKRyKCljFQoYb16y+BGUWgQf8LrMrvS/lKiK01zU46et5ynyK19OxJU9f0bk
-         5NEBjkr0ZrZLB6NfZ4OPgFwHYQ7Eca/rDldSflsPa2ZN0MV2i0KF8tGegaxmIkhNQyiw
-         J2weqBQE8NpZEw+mihECnb2w2H4Oc5Mbkl++V9M5ogYgNMp2QAzohB/2w0o+kE0i+ApY
-         2PsilPHchczXppFdYV2wO0RdmIVqK1hQi2sUhAGycvfK7hiMMEqPvCSj+48lrnCjmqP/
-         krVTUIEHUwLH6kK5FqQgPrn91niS9cLT3i6S6budka8Q/pq8CIkZmkdzz9i33NbeYFEj
-         dNRw==
-X-Forwarded-Encrypted: i=1; AJvYcCWNr8Z7ojb3ujkwqLEpKX44PYYJQKun1gfxZemfWLMCnaAtQQZKxvBcbbfiUCJA+xr1rXZyfBGk@vger.kernel.org, AJvYcCX6zTrecCzJMcGx6TcFYIc+mMhkvw0AHGbNuDyrpSrSJ8Nyshypt+WSLwcXxmq8KfsI5I/U7b/sscoEmh8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzzUTbJAKzNa3J8f1FJyzm/32eExCoKxBVM4P9wU6u+6lGb7C1K
-	d+1TzNpqFkz3i3DCV+hCJHPB6Vuog9KW+vyYEcMLab2qUKtk/fzO
-X-Google-Smtp-Source: AGHT+IGCufznu0i4cMADPoZDO+Y9Jp5Q4Ua4zfgtG0RygJGYNzpjmM8yQ+sDEUh5b9OABvtagM5YPw==
-X-Received: by 2002:a17:907:7e95:b0:a7a:a138:dbc1 with SMTP id a640c23a62f3a-a897f84d7b0mr1056427166b.20.1725272265068;
-        Mon, 02 Sep 2024 03:17:45 -0700 (PDT)
-Received: from localhost (fwdproxy-lla-012.fbsv.net. [2a03:2880:30ff:c::face:b00c])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8988fef4c3sm535742866b.32.2024.09.02.03.17.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Sep 2024 03:17:44 -0700 (PDT)
-From: Breno Leitao <leitao@debian.org>
-To: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>
-Cc: leit@meta.com,
-	kernel test robot <lkp@intel.com>,
-	Johannes Berg <johannes.berg@intel.com>,
-	Jamie Bainbridge <jamie.bainbridge@gmail.com>,
-	netdev@vger.kernel.org (open list:NETWORKING [GENERAL]),
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH net] net: dqs: Do not use extern for unused dql_group
-Date: Mon,  2 Sep 2024 03:17:30 -0700
-Message-ID: <20240902101734.3260455-1-leitao@debian.org>
-X-Mailer: git-send-email 2.43.5
+	s=arc-20240116; t=1725272295; c=relaxed/simple;
+	bh=GaMmyKHdZWZAQw653fQ+MGXw3Ni90psnatbML82zq10=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HwFOzz5n9hAq1QDSoSiwE9TlAHCV2EWiqEjYnElUjTzJEdNDon6hzR29hX+4BzSpSGisCmC7mtvOMk+Ra8p4hb5CElflbyH6Igu3ISbh6Ma54S2KFOllmuOSn8Oq9vJdNRISq7BMkS+OJMYDWsQ4vIhU9rxbt7FDoXnSbYXrOCU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MhR9r9xK; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725272292; x=1756808292;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=GaMmyKHdZWZAQw653fQ+MGXw3Ni90psnatbML82zq10=;
+  b=MhR9r9xKu3eUC2D+IE6qG1tJn90TujtwLGvv55eqxmdUx+40rIz/zXud
+   PfhATDz2/JgHIdpVL8i6mivDgmXbbr+EzuRwC8J7axOM3KcoyvnWsFrhr
+   mlYsIPLTYSG+T5xi+UYB4cAz9pT83KA7svl37YHbVDnU5uxc71VaDJykf
+   WDtCeTEZNev/McvSbYsOAUl/JEQT4gtFlIhh3Hs469nts54Iwt+89icrs
+   cg1gkbnyNfVMtIkFzHsr0z3G4A6PVDcEizX6CnlbM4nforG0+9DtdZXxf
+   OAvZmdIprNaBiFZObF1Pav4K2/0QV2oQNCdYbKbQLdcEncTsifHpQ7ZXX
+   A==;
+X-CSE-ConnectionGUID: arTVof5dS+qkDX1cBrbpMg==
+X-CSE-MsgGUID: myL9FmOiTUG7cgBCoMTNag==
+X-IronPort-AV: E=McAfee;i="6700,10204,11182"; a="13328524"
+X-IronPort-AV: E=Sophos;i="6.10,195,1719903600"; 
+   d="scan'208";a="13328524"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2024 03:18:11 -0700
+X-CSE-ConnectionGUID: 3inN7/nQQ+y50FdryI0b5A==
+X-CSE-MsgGUID: CAbety6mRYy+tohwK0HG3Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,195,1719903600"; 
+   d="scan'208";a="95277957"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by orviesa002.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2024 03:18:08 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1sl487-00000004Jep-1vmR;
+	Mon, 02 Sep 2024 13:17:51 +0300
+Date: Mon, 2 Sep 2024 13:17:51 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: oe-kbuild@lists.linux.dev,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Hans de Goede <hdegoede@redhat.com>, linux-kernel@vger.kernel.org,
+	platform-driver-x86@vger.kernel.org, lkp@intel.com,
+	oe-kbuild-all@lists.linux.dev,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Daniel Scally <djrscally@gmail.com>
+Subject: Re: [PATCH v2 2/4] platform/x86: int3472: Simplify dev_err_probe()
+ usage
+Message-ID: <ZtWQzwvo7f0QfeCI@smile.fi.intel.com>
+References: <20240822130722.1261891-3-andriy.shevchenko@linux.intel.com>
+ <20dd56f0-78ea-4255-86ac-32151160b83d@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20dd56f0-78ea-4255-86ac-32151160b83d@stanley.mountain>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-When CONFIG_DQL is not enabled, dql_group should be treated as a dead
-declaration. However, its current extern declaration assumes the linker
-will ignore it, which is generally true across most compiler and
-architecture combinations.
+On Sat, Aug 31, 2024 at 11:31:53AM +0300, Dan Carpenter wrote:
+> Hi Andy,
+> 
+> kernel test robot noticed the following build warnings:
+> 
+> https://git-scm.com/docs/git-format-patch#_base_tree_information]
+> 
+> url:    https://github.com/intel-lab-lkp/linux/commits/Andy-Shevchenko/driver-core-Ignore-0-in-dev_err_probe/20240826-113856
+> base:   driver-core/driver-core-testing
+> patch link:    https://lore.kernel.org/r/20240822130722.1261891-3-andriy.shevchenko%40linux.intel.com
+> patch subject: [PATCH v2 2/4] platform/x86: int3472: Simplify dev_err_probe() usage
+> config: i386-randconfig-141-20240830 (https://download.01.org/0day-ci/archive/20240831/202408310807.sNPe5Mr2-lkp@intel.com/config)
+> compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+> 
+> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+> | Closes: https://lore.kernel.org/r/202408310807.sNPe5Mr2-lkp@intel.com/
+> 
+> smatch warnings:
+> drivers/platform/x86/intel/int3472/discrete.c:292 skl_int3472_handle_gpio_resources() error: uninitialized symbol 'err_msg'.
+> drivers/platform/x86/intel/int3472/discrete.c:292 skl_int3472_handle_gpio_resources() warn: passing zero to 'dev_err_probe'
 
-But in certain cases, the linker still attempts to resolve the extern
-struct, even when the associated code is dead, resulting in a linking
-error. For instance the following error in loongarch64:
+Okay, I might agree on the err_msg, which is good to have to be passed anyway.
+In such a case it might be good to have a dev_dbg() in the dev_err_probe() to
+say that it is likely a bug in the code.
 
->> loongarch64-linux-ld: net-sysfs.c:(.text+0x589c): undefined reference to `dql_group'
+Would you accept that approach?
 
-Modify the declaration of the dead object to be an empty declaration
-instead of an extern. This change will prevent the linker from
-attempting to resolve an undefined reference.
-
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202409012047.eCaOdfQJ-lkp@intel.com/
-Fixes: 74293ea1c4db ("net: sysfs: Do not create sysfs for non BQL device")
-Signed-off-by: Breno Leitao <leitao@debian.org>
----
- net/core/net-sysfs.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/net/core/net-sysfs.c b/net/core/net-sysfs.c
-index 444f23e74f8e..291fdf4a328b 100644
---- a/net/core/net-sysfs.c
-+++ b/net/core/net-sysfs.c
-@@ -1524,7 +1524,7 @@ static const struct attribute_group dql_group = {
- };
- #else
- /* Fake declaration, all the code using it should be dead */
--extern const struct attribute_group dql_group;
-+static const struct attribute_group dql_group = {};
- #endif /* CONFIG_BQL */
- 
- #ifdef CONFIG_XPS
 -- 
-2.43.5
+With Best Regards,
+Andy Shevchenko
+
 
 
