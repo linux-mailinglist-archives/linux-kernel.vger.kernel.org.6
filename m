@@ -1,191 +1,294 @@
-Return-Path: <linux-kernel+bounces-311080-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311099-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 237B09684A4
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 12:28:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C57E49684DB
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 12:37:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 740CFB20DFD
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 10:28:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E6D751C2269E
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 10:37:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 515C0140397;
-	Mon,  2 Sep 2024 10:28:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21DAB14A092;
+	Mon,  2 Sep 2024 10:37:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="i0SIo6pS"
-Received: from EUR05-AM6-obe.outbound.protection.outlook.com (mail-am6eur05on2055.outbound.protection.outlook.com [40.107.22.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="yBJBm+Mu"
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B182E13D52F;
-	Mon,  2 Sep 2024 10:28:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.22.55
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725272910; cv=fail; b=TdP2zHppYqOzemIGrHYRT8gLUNZ2ey2vAxY95YSTyGEHhQNci6bONWt0nki6CrYdRzaQS3+aVcpx8ES3WAkCb5sKs0NcnlaM2ASM/fgzd8Q7umPaeGx3sptGtAV1VKbZCfRVtIh7Uvtldfoo5oQia4tkdF7czg0PXmrKXt0sTF0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725272910; c=relaxed/simple;
-	bh=8uMuCxmNR71MPNMBr+N0ACNooORvhrUa5mlyCKnjEvY=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=KOBsQrr0CpLA2vYnUXQCpbqu4BCwmx7snc9szXjYD836IiLNzKPEvz/IcJeVt/NqRDOA21deFsZLfng6SUKzGwlFpxsKeAvXwDYIE3SieUvBxuZNP6/1CSGhN/ZdT+B7InOlovOVTyzj3SBCHAS0CoLFpB6Ts2wT97nYdO2MecQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=i0SIo6pS; arc=fail smtp.client-ip=40.107.22.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=R9623Elv9C5I+4Wnys4v6jq6Q0cHF20JEQQC2pvoCz3Uncq5kCGjtE3KUBJTkWc0dEg2qplADVql2Xe/4w4JWtfkjcn5ctk+xhZL8N4FSNBs+I1sWNDRkMDSI/sWIPqza+89If8uH0LM04P77KHGe2TNFLzqD3S3HeInvHsdzAag1aKT42gPQRzgSv8myT+A+kPUmA3sBIvEafsTuQMoOILfCpl//gkyLjK46kk6zHI4o2RJRoMuI5c+Q/eG88GFbYjmuwfo0KzH29syuX9nd+hLoi8yXwrJX9Kys11CIWCbPOOYXIBD/2s/c/ShGhlxF1qcUKxsaFYhQI1x+y6mLw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=+ZP4WjcVS+RhHrOKgJzP5QYcOEooxTv3DwqzefZ8iJI=;
- b=Xex7kAPKvPRgXbHGCc2h9ZpopQsL/MWVUHCO2W/5ZF8LuR8c1pTRco90kXERd5yxFHmJ5Gh23ECZvo1s0Cz2V5Zh1Y3xo4vfdUu25OCTs9m4134XxYJz76mRMwo/eHpAkUX9/0q1tfeILWZzDw9/s6G00Qb2EAmWjmV20JasFAC7QurmTziQhh0/ZV+xJS14f1WdPQhD2wDvMSQKSucz7mRipecDm0IJwTIHIlMELsDNweMNjXPBWE3atfuUwQH0mFAHm3LbGyESA6PIlUiffj7lepM+QJoiiORL8hrj6yATv5I74U1vn4m+VbjlQrkyO+ZLoM0RAXAP3/17OAvAmQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=+ZP4WjcVS+RhHrOKgJzP5QYcOEooxTv3DwqzefZ8iJI=;
- b=i0SIo6pSAstRRi68439nVXa6WlDfq7q0hc+kxGdptprCg7S/OYH9Qb6gdYtJDhwvfBL1AqNBm745KLkq6Kcv96JUnxpupHgkmb4yBU3ayrMXkOquPmurgjFSinHJZ6xyNTFPRlqsrlTb9ARjgcnqILzI8iKd0eZJtFmtvP3TUuiNydbH39+yA18I+8qb0ObE5k2hPq5g2mF8/ISLkxDnEy4y99V/b1xmzKvlcfXEXt8CRBsfPx5Vi67y97rmh3AUNgdVJFn9RacC35lkQ7dDEPkQBdVLxD7KeTciNxBYi9rwR8EJI7jFUiz573VFy643OUE6GEpzs5Q6E6Kpjr2i1A==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from AS4PR04MB9386.eurprd04.prod.outlook.com (2603:10a6:20b:4e9::8)
- by AS5PR04MB9896.eurprd04.prod.outlook.com (2603:10a6:20b:67d::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.23; Mon, 2 Sep
- 2024 10:28:25 +0000
-Received: from AS4PR04MB9386.eurprd04.prod.outlook.com
- ([fe80::261e:eaf4:f429:5e1c]) by AS4PR04MB9386.eurprd04.prod.outlook.com
- ([fe80::261e:eaf4:f429:5e1c%3]) with mapi id 15.20.7918.024; Mon, 2 Sep 2024
- 10:28:25 +0000
-From: Joy Zou <joy.zou@nxp.com>
-To: frank.li@nxp.com,
-	ye.li@nxp.com,
-	ping.bai@nxp.com,
-	peng.fan@nxp.com,
-	shawnguo@kernel.org,
-	robh@kernel.org,
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6AC618454E
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 10:37:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725273424; cv=none; b=OSAcHxlH5wy/P+UsVKakpI9T7h+fU+MfVG8/nhMVxjGezG9vd38R3yhQLrCCqcehcTehUYoRX71fOKzhGw9KhDQZuQ0fg/C9RNLpXGENr0jURPVg0kDz3/dCWXuS4eIkJ14nPvR37XacSUjrSRSJizxUZY1AbJTfmVsJm/WII28=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725273424; c=relaxed/simple;
+	bh=ZK9Z1/Q4filbKX1kKWRghKSgUBwXpAJI26eeyznAt94=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=UlQwqDP6Vc06ILskYEZ9VWIcLtoh1QAgeSxUMI2/I/jV2OqfcrdESnNrG99BigzH0JkMswkHI0/Wd2fTtmCeUVNjU7Z9YlzNTMHdmRMlS4AEBVLwPTylMoMK5J+D1PP82/rbHTCuFvuIqHbHDMfQKL4i3PVn9O6g34QIwyYttv4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=yBJBm+Mu; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a8682bb5e79so500667166b.2
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2024 03:37:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1725273420; x=1725878220; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=OMjsY+V8C+xpLeayM52S92PbmAJB3Osj5meZbpqVaZk=;
+        b=yBJBm+MuyMkQC2qgckrBAiNklLctI6pYBOEcHYMJdpRYyVl0oMq02z2OINDjqhL3qM
+         0RHAtQdLgCN9Ph1q2sIQAj3sNTE2ocyiTjnfiBEs8bPeDWSpfjImF6ArY1mEjA77hV8i
+         Y+o8BPNMcHHzjLFBtxyNO0COFhPfQmuqZ5MwG6WYIugoLYC2RI7KCNSs1c84YH/N1rdm
+         ArSKtrtF5h0YURQEiiBYz+OJvHjPTANQprgHbBMmfMtvqlgWsvjhhQr1sz29LZNxRBsy
+         fmzxUDokN9jMbgFxBQ/caC+BW5DjOe1owZqTJypTR+nvGcrrBbWa6KZ/PXQuLeRp4ld7
+         Ox7w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725273420; x=1725878220;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=OMjsY+V8C+xpLeayM52S92PbmAJB3Osj5meZbpqVaZk=;
+        b=UbxQ3W+TmFLMXHVytAFa0T7iwE4v+5itY+xmi9tklbpql24cXIpBBmmTZxJe8FuPE3
+         Aa8x6MPWyHSwr69aob35ZF4LBYNnsc7ABImm/cfARZ4OVV8VwuWeF9pZX7b7JYhoRvJ8
+         VNThyvPrg8ibqUt+F1dHx53LqTGY161vVRIfyZSPS7f47FsGlaz2ExkR7HkAu7DMAlP1
+         RL3ErIlfaQfQahj5mCZeB2+IEOKJIqL3I7FXZ6JWdn8866+dyMbIYh7ZwUNGdBa8xjyD
+         lZFLJFJglF4EX4ovrDvedVmapLk3nQLKoYHubJ2u2++TGNkGvkUAbCiVWUtg7245SOke
+         ahZQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV/IfmrcwEkTZP/wOobA+LO1/FfuB9VAYdARlyEl0XK5zvaSa812F6qQpvpbCbuqBiY4EbmyVTs8YrHaK8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz9tkUwjAZH8+wVVJHCQrJtWBZzNOZkfvofHZKEecr1oq4JQ3Mo
+	F2drxTX4gWau8XmADXCn1zJV5kbIehxHZ9ihN3dRbsQzV3uKD6Q9TPPnQh78P4k=
+X-Google-Smtp-Source: AGHT+IHbARjgXwn7U30aU7FiHDg9/USz40lejw6I66iDFr8Nx2RdLSAgcWmS+PdSGk/Gcyk6KOUVsg==
+X-Received: by 2002:a17:907:744:b0:a86:85eb:bdd1 with SMTP id a640c23a62f3a-a89fae10b76mr269890566b.31.1725273419663;
+        Mon, 02 Sep 2024 03:36:59 -0700 (PDT)
+Received: from neptune.local ([2a02:2f0e:3004:6100:e124:ce40:67a4:fcf0])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a89891da22bsm540876766b.182.2024.09.02.03.36.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 02 Sep 2024 03:36:59 -0700 (PDT)
+From: Alexandru Ardelean <aardelean@baylibre.com>
+To: linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org
+Cc: jic23@kernel.org,
 	krzk+dt@kernel.org,
-	conor+dt@kernel.org
-Cc: imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] arm64: dts: ls1088ardb: add new RTC PCF2131 support
-Date: Mon,  2 Sep 2024 18:36:26 +0800
-Message-Id: <20240902103626.1414595-1-joy.zou@nxp.com>
-X-Mailer: git-send-email 2.37.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SI1PR02CA0026.apcprd02.prod.outlook.com
- (2603:1096:4:1f4::11) To AS4PR04MB9386.eurprd04.prod.outlook.com
- (2603:10a6:20b:4e9::8)
+	robh@kernel.org,
+	lars@metafoo.de,
+	michael.hennerich@analog.com,
+	gstols@baylibre.com,
+	Alexandru Ardelean <aardelean@baylibre.com>
+Subject: [PATCH v2 4/8] iio: adc: ad7606: wrap channel ranges & scales into struct
+Date: Mon,  2 Sep 2024 13:36:27 +0300
+Message-ID: <20240902103638.686039-5-aardelean@baylibre.com>
+X-Mailer: git-send-email 2.46.0
+In-Reply-To: <20240902103638.686039-1-aardelean@baylibre.com>
+References: <20240902103638.686039-1-aardelean@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS4PR04MB9386:EE_|AS5PR04MB9896:EE_
-X-MS-Office365-Filtering-Correlation-Id: 48a7b654-eed5-4f35-b893-08dccb39fa2a
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|366016|376014|52116014|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?1U+sMC09Y6MqQM4NWab4WLEnRufJaHB0hEikyZpdrlDWlRvb8ZBJxRafy3WE?=
- =?us-ascii?Q?kSUiWjXnqJ9wboRA6vy0RojrlWANdYHzl/j0LwhApCm6HJgP34cKM9FY9LE2?=
- =?us-ascii?Q?q1KtJTMJ4b165Jd3I8y9CbxpvGWGZsioFe8lziwcZFnpkqzi8dPBSidOzEJO?=
- =?us-ascii?Q?BIe9sJWB68JBYDt5rgfhB7yPVYmev/gSvACKt0ZZ/RATDQIpHwH1RtZ32EEN?=
- =?us-ascii?Q?Mmlu/0czO/+MWzDyf7uUHK+tsfyBS5jVVj6PHHE1sWk+VXEh5FrxSwaOk5L3?=
- =?us-ascii?Q?ACHix9qDiTfwRNzysaHEmfbC9lWgDqxDbaLLLKUORoabJiw8Pd/i5S0yopys?=
- =?us-ascii?Q?3MtDt66ue8h+W023Z5z+UW/lggwgXhk2dAVJPimQgMlRN0zwvOV6sfLVK0SC?=
- =?us-ascii?Q?znqjBmMhEuuwZkPYCQh+EW7X8lf2FCMzaykgcMomHBsWMPTIHxgoWW2OyUI/?=
- =?us-ascii?Q?YkQTj5MtnDe1lsWpwpODiBAFHeyyDF28J+wTa6aelLOxHMh6rNL58KFEA2wN?=
- =?us-ascii?Q?EAt/7ibUoDNGNpH2Di5QcGCPSjPeTWjZqF8DfI6uaFMXa4+lTPuLoPdvHUZO?=
- =?us-ascii?Q?EkS2NXpDN25/h99fDqcDdM5lMvR1yQ1cDo/lXcHjlab9wRmk9aD3IQGPkQg4?=
- =?us-ascii?Q?PLv3jhv7tfTVAOQIBuYy2QnTPwpwTz3mYy0ekLZf82MUIJOeTRXWPk8t07ZX?=
- =?us-ascii?Q?dItM/8+xY7lEerwdVh6XpgsFDokD/c4DB6IsCrO02vwn1TANb0YW+E4qvMN+?=
- =?us-ascii?Q?9XoJCExOtUB+pvyYi/GplVoq1LmjvvpasB0X6Zk7MlGgonCIAUN0XpQmbLDb?=
- =?us-ascii?Q?1TjnVjCfSod2lXJ7ITsdDV4aUCy6/+NmRl7VuM3OeVwzMfYsuDqVvITnFwEO?=
- =?us-ascii?Q?L38IOIdQPL8ufTd7jebhpufheSSyfcxwb4UVXjKC+cAVAg81QCGbD2P2/EV5?=
- =?us-ascii?Q?GTR6IAVwo4fmwSBrjigrA78Gi2uehto6abfknBF565SYdXyaDi3mD77XCSV3?=
- =?us-ascii?Q?5899Wdgslt3n8kWXFm0ksUBRcKkEodDet4RmPI5oYcWrP58l20/QuWyuNmLk?=
- =?us-ascii?Q?8tm3R7W5cx27RBtBIWqyTFpN+/LLusZfbZVViDWQocX7/oEb/O5AqogYWTXu?=
- =?us-ascii?Q?BRlplrWfQpXnLxOQ2I0a2Kxb+cVyiYctk5Tc5KghMfzX5RGaW2KQk7NUn8fv?=
- =?us-ascii?Q?Ow7TlhcvwoU+N7jRZ7dKV7MeyQdfif/k9L0UPwJCNjC5sAlG/R5Y7QpNPj6I?=
- =?us-ascii?Q?pkWCq9CWZJZAKSQaQL6X3PGyat64mry1WFphURasQF2jg+spBlMo1wiYFozP?=
- =?us-ascii?Q?O+36bYttizawmr+o4WP0ox62fwb1H29LKXvSdX+FC3Z2bOzIySGWZelPtyVC?=
- =?us-ascii?Q?NgDTURqyRYB9F4hqdnEx2GZQ9wio3iklYxVwiPKpTIOVUZxL5A=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR04MB9386.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(52116014)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?USPB3MYUd15z9GkuvoZtmy8f/GPqYoMVYza+oJ9DAU6O/7IwjCEUXZ5xQ3eI?=
- =?us-ascii?Q?NWP64UrdZOpOiZdSmePWagi7KGbFfDT4eEUuBLASg60jcgU/ItfO8Fh9W4+y?=
- =?us-ascii?Q?HkoQ/4xv5VwOpOPBzT8USz23M28NzqKkkXd2nSKIcsR9LtDEB01sM3V4BDbh?=
- =?us-ascii?Q?Y8HE3cWtCgME4pDM1mXLEIW2KV9y2G0Zv9a1RqG6OTtsrnrvZUAFJ4bKFAGQ?=
- =?us-ascii?Q?a2Q5NJiiNI+CFvL9icmF0sOUtOgnQkQPYgsx5LIL9NbpWYgXtg46mFlogCQt?=
- =?us-ascii?Q?xgW40xyl2BukKruJige+2qbWWew2lao3O239LKUnBk7a39ROXB5FMa6AYmYP?=
- =?us-ascii?Q?7ww2PUdwWDFWjLXDAxtREWmgC+fFsrHu75SITutqj8MXaXGDXI1E5XOmZb5M?=
- =?us-ascii?Q?5+c+lH8NTagwgnbHVNkkLXBAHjPxbL7LXfq0C7/6K1vxwQt4kjbg1U96JtKt?=
- =?us-ascii?Q?fv1mQ2UM6n4xJvMiCx+H4EvtIyTqNf39aJj6wszj7i2FpCuVlsxwWn2Kzo4m?=
- =?us-ascii?Q?s+y6eq+4OnPpRTefbzXNkoA1VPBikedzl3P7AAWamJBqMn4ZoqLPgaBXVVoG?=
- =?us-ascii?Q?1ZvhF6zPnbP7AUZhxDfSWjzOY/P8AAUqadBcn/pFpOykOvlE8rxn36i0Gk2p?=
- =?us-ascii?Q?RknzhhPOgewDpkd4STbLSZu+SsHOof9kkbvy8BBnmCVyD0DZYid9WqFDLU/R?=
- =?us-ascii?Q?DWO/MVB3g6GoSthWiT3oHO0uY8mzfzWSIOQgsaN/RLG4wFxL/dMOHCvriuUT?=
- =?us-ascii?Q?vj22GNTuvJlOC/0+t0ha+sWJX2BbM254zB0GOclw5o4Wm9maLHMEusNUAqxk?=
- =?us-ascii?Q?xPsiX46A3J9HF3VxClgEf4/IeTny5KvVspU2+5z3TfX6Eege0AeYB9t0Fc+I?=
- =?us-ascii?Q?WbMssYlNw9pvxwE6ty+tzLw66cjphvsMfsbg44Dq9z3jvSnJqhRs/4nt0xWr?=
- =?us-ascii?Q?/Z7xgC/rSLPcYe4pbO61zFQGVNw0FUoHyZ+CnVLoO4LDfkVEiK0JpuRUBbLK?=
- =?us-ascii?Q?LTq8TcZBcrw2tCSCrfj86hGZP2CUO5BRuh3QsQ3Q92E4CqrSbLZKPpZDzL+u?=
- =?us-ascii?Q?LTtG4OwXF4Uj86QVg9TtcYtQFu/6joO3F+J3XEKqN3Bqd/9c6cLtcnVoORpd?=
- =?us-ascii?Q?rtw8QHB/PONExS2roMwtTbnuFGDC7hX9NYSFDfSOjHiwhZ2mjOIe4BPJSh+w?=
- =?us-ascii?Q?G71EuP/H2XnZWAjrHxvUfdW7n3vjCCL8KNpRtEAS7nFO+iWlzLiHpLgYE0W2?=
- =?us-ascii?Q?fDrkedmDTLsg3fR9v6SKhbHa6cbo5wA+XegPSXtAyhRhDX+wJhhDnP9cuqwt?=
- =?us-ascii?Q?lKmx516B34PoJyxijRqWjMu/UKVr3HEpxVjEQQ0qHbM9P77XnaMATR4oG2Q4?=
- =?us-ascii?Q?W/J97MXUUH96iX8ixpSXE3+e0gsAqtD357yt7hS9ck5Zjvzo3yXKbgsOvIg+?=
- =?us-ascii?Q?+6kgPF+HFwEBikxu2Zrg7Tv0OaUypp7UEovQfLgoOkL7QwhyErbHSixfoeSW?=
- =?us-ascii?Q?ZkbWerBiHs5Pl6TYN7T+q1BLzPi+uRhfhvq2yR9517o12b20brTXtXUU6ZWh?=
- =?us-ascii?Q?CWT9AcSzfd8tiE1inSWv9BggzJRH9VuX03UBWbxR?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 48a7b654-eed5-4f35-b893-08dccb39fa2a
-X-MS-Exchange-CrossTenant-AuthSource: AS4PR04MB9386.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Sep 2024 10:28:25.3918
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: igsvL2RXMxmeYcARxiSEF+Lm8F867YdLudFtEfAN4KqUFquFkH0oogdbSvN9231i
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS5PR04MB9896
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Add RTC PCF2131 node for new ls1088ardb board..
+With the addition of AD7606C-16,18 which have differential & bipolar
+channels (and ranges), which can vary from channel to channel, we'll need
+to keep more information about each channel range.
 
-Signed-off-by: Joy Zou <joy.zou@nxp.com>
+To do that, we'll add a 'struct ad7606_chan_scale' type to hold just
+configuration for each channel.
+This includes the scales per channel (which can be different with
+AD7606C-16,18), as well as the range for each channel.
+This driver was already keeping the range value for each channel before,
+and since this is couple with the scales, it also makes sense to put them
+in the same struct.
+
+Signed-off-by: Alexandru Ardelean <aardelean@baylibre.com>
 ---
-Changes for v2:
-1. modify the commit message.
+ drivers/iio/adc/ad7606.c | 37 +++++++++++++++++++++++++------------
+ drivers/iio/adc/ad7606.h | 22 ++++++++++++++++------
+ 2 files changed, 41 insertions(+), 18 deletions(-)
 
- arch/arm64/boot/dts/freescale/fsl-ls1088a-rdb.dts | 7 +++++++
- 1 file changed, 7 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1088a-rdb.dts b/arch/arm64/boot/dts/freescale/fsl-ls1088a-rdb.dts
-index ee8e932628d1..2df16bfb901c 100644
---- a/arch/arm64/boot/dts/freescale/fsl-ls1088a-rdb.dts
-+++ b/arch/arm64/boot/dts/freescale/fsl-ls1088a-rdb.dts
-@@ -170,6 +170,13 @@ rtc@51 {
- 				/* IRQ_RTC_B -> IRQ0_B(CPLD) -> IRQ00(CPU), active low */
- 				interrupts-extended = <&extirq 0 IRQ_TYPE_LEVEL_LOW>;
- 			};
+diff --git a/drivers/iio/adc/ad7606.c b/drivers/iio/adc/ad7606.c
+index b400c9b2519d..2554a4a4a9c0 100644
+--- a/drivers/iio/adc/ad7606.c
++++ b/drivers/iio/adc/ad7606.c
+@@ -170,6 +170,7 @@ static int ad7606_read_raw(struct iio_dev *indio_dev,
+ {
+ 	int ret, ch = 0;
+ 	struct ad7606_state *st = iio_priv(indio_dev);
++	struct ad7606_chan_scale *cs;
+ 
+ 	switch (m) {
+ 	case IIO_CHAN_INFO_RAW:
+@@ -183,8 +184,9 @@ static int ad7606_read_raw(struct iio_dev *indio_dev,
+ 	case IIO_CHAN_INFO_SCALE:
+ 		if (st->sw_mode_en)
+ 			ch = chan->address;
++		cs = &st->chan_scales[ch];
+ 		*val = 0;
+-		*val2 = st->scale_avail[st->range[ch]];
++		*val2 = cs->scale_avail[cs->range];
+ 		return IIO_VAL_INT_PLUS_MICRO;
+ 	case IIO_CHAN_INFO_OVERSAMPLING_RATIO:
+ 		*val = st->oversampling;
+@@ -214,8 +216,9 @@ static ssize_t in_voltage_scale_available_show(struct device *dev,
+ {
+ 	struct iio_dev *indio_dev = dev_to_iio_dev(dev);
+ 	struct ad7606_state *st = iio_priv(indio_dev);
++	struct ad7606_chan_scale *cs = &st->chan_scales[0];
+ 
+-	return ad7606_show_avail(buf, st->scale_avail, st->num_scales, true);
++	return ad7606_show_avail(buf, cs->scale_avail, cs->num_scales, true);
+ }
+ 
+ static IIO_DEVICE_ATTR_RO(in_voltage_scale_available, 0);
+@@ -253,19 +256,21 @@ static int ad7606_write_raw(struct iio_dev *indio_dev,
+ 			    long mask)
+ {
+ 	struct ad7606_state *st = iio_priv(indio_dev);
++	struct ad7606_chan_scale *cs;
+ 	int i, ret, ch = 0;
+ 
+ 	guard(mutex)(&st->lock);
+ 
+ 	switch (mask) {
+ 	case IIO_CHAN_INFO_SCALE:
+-		i = find_closest(val2, st->scale_avail, st->num_scales);
+ 		if (st->sw_mode_en)
+ 			ch = chan->address;
++		cs = &st->chan_scales[ch];
++		i = find_closest(val2, cs->scale_avail, cs->num_scales);
+ 		ret = st->write_scale(indio_dev, ch, i);
+ 		if (ret < 0)
+ 			return ret;
+-		st->range[ch] = i;
++		cs->range = i;
+ 
+ 		return 0;
+ 	case IIO_CHAN_INFO_OVERSAMPLING_RATIO:
+@@ -547,7 +552,9 @@ static const struct iio_trigger_ops ad7606_trigger_ops = {
+ 
+ static int ad7606_sw_mode_setup(struct iio_dev *indio_dev)
+ {
++	unsigned int num_channels = indio_dev->num_channels - 1;
+ 	struct ad7606_state *st = iio_priv(indio_dev);
++	int ch;
+ 
+ 	if (!st->bops->sw_mode_config)
+ 		return 0;
+@@ -559,11 +566,14 @@ static int ad7606_sw_mode_setup(struct iio_dev *indio_dev)
+ 	indio_dev->info = &ad7606_info_os_range_and_debug;
+ 
+ 	/* Scale of 0.076293 is only available in sw mode */
+-	st->scale_avail = ad7616_sw_scale_avail;
+-	st->num_scales = ARRAY_SIZE(ad7616_sw_scale_avail);
+-
+ 	/* After reset, in software mode, ±10 V is set by default */
+-	memset32(st->range, 2, ARRAY_SIZE(st->range));
++	for (ch = 0; ch < num_channels; ch++) {
++		struct ad7606_chan_scale *cs = &st->chan_scales[ch];
 +
-+			rtc@53 {
-+				compatible = "nxp,pcf2131";
-+				reg = <0x53>;
-+				/* IRQ_RTC_B -> IRQ0_B(CPLD) -> IRQ00(CPU), active low */
-+				interrupts-extended = <&extirq 0 IRQ_TYPE_LEVEL_LOW>;
-+			};
- 		};
- 	};
++		cs->scale_avail = ad7616_sw_scale_avail;
++		cs->num_scales = ARRAY_SIZE(ad7616_sw_scale_avail);
++		cs->range = 2;
++	}
+ 
+ 	return st->bops->sw_mode_config(indio_dev);
+ }
+@@ -572,6 +582,7 @@ int ad7606_probe(struct device *dev, int irq, void __iomem *base_address,
+ 		 const char *name, unsigned int id,
+ 		 const struct ad7606_bus_ops *bops)
+ {
++	struct ad7606_chan_scale *cs;
+ 	struct ad7606_state *st;
+ 	int ret;
+ 	struct iio_dev *indio_dev;
+@@ -588,10 +599,12 @@ int ad7606_probe(struct device *dev, int irq, void __iomem *base_address,
+ 	st->bops = bops;
+ 	st->base_address = base_address;
+ 	/* tied to logic low, analog input range is +/- 5V */
+-	st->range[0] = 0;
+ 	st->oversampling = 1;
+-	st->scale_avail = ad7606_scale_avail;
+-	st->num_scales = ARRAY_SIZE(ad7606_scale_avail);
++
++	cs = &st->chan_scales[0];
++	cs->range = 0;
++	cs->scale_avail = ad7606_scale_avail;
++	cs->num_scales = ARRAY_SIZE(ad7606_scale_avail);
+ 
+ 	ret = devm_regulator_get_enable(dev, "avcc");
+ 	if (ret)
+@@ -698,7 +711,7 @@ static int ad7606_resume(struct device *dev)
+ 	struct ad7606_state *st = iio_priv(indio_dev);
+ 
+ 	if (st->gpio_standby) {
+-		gpiod_set_value(st->gpio_range, st->range[0]);
++		gpiod_set_value(st->gpio_range, st->chan_scales[0].range);
+ 		gpiod_set_value(st->gpio_standby, 1);
+ 		ad7606_reset(st);
+ 	}
+diff --git a/drivers/iio/adc/ad7606.h b/drivers/iio/adc/ad7606.h
+index 771121350f98..afe6a4030e0e 100644
+--- a/drivers/iio/adc/ad7606.h
++++ b/drivers/iio/adc/ad7606.h
+@@ -8,6 +8,8 @@
+ #ifndef IIO_ADC_AD7606_H_
+ #define IIO_ADC_AD7606_H_
+ 
++#define AD760X_MAX_CHANNELS	16
++
+ #define AD760X_CHANNEL(num, mask_sep, mask_type, mask_all, bits) {	\
+ 		.type = IIO_VOLTAGE,				\
+ 		.indexed = 1,					\
+@@ -60,17 +62,27 @@ struct ad7606_chip_info {
+ 	unsigned long			init_delay_ms;
  };
+ 
++/**
++ * struct ad7606_chan_scale - channel scale configuration
++ * @scale_avail		pointer to the array which stores the available scales
++ * @num_scales		number of elements stored in the scale_avail array
++ * @range		voltage range selection, selects which scale to apply
++ */
++struct ad7606_chan_scale {
++	const unsigned int		*scale_avail;
++	unsigned int			num_scales;
++	unsigned int			range;
++};
++
+ /**
+  * struct ad7606_state - driver instance specific data
+  * @dev		pointer to kernel device
+  * @chip_info		entry in the table of chips that describes this device
+  * @bops		bus operations (SPI or parallel)
+- * @range		voltage range selection, selects which scale to apply
++ * @chan_scales		scale configuration for channels
+  * @oversampling	oversampling selection
+  * @base_address	address from where to read data in parallel operation
+  * @sw_mode_en		software mode enabled
+- * @scale_avail		pointer to the array which stores the available scales
+- * @num_scales		number of elements stored in the scale_avail array
+  * @oversampling_avail	pointer to the array which stores the available
+  *			oversampling ratios.
+  * @num_os_ratios	number of elements stored in oversampling_avail array
+@@ -94,12 +106,10 @@ struct ad7606_state {
+ 	struct device			*dev;
+ 	const struct ad7606_chip_info	*chip_info;
+ 	const struct ad7606_bus_ops	*bops;
+-	unsigned int			range[16];
++	struct ad7606_chan_scale	chan_scales[AD760X_MAX_CHANNELS];
+ 	unsigned int			oversampling;
+ 	void __iomem			*base_address;
+ 	bool				sw_mode_en;
+-	const unsigned int		*scale_avail;
+-	unsigned int			num_scales;
+ 	const unsigned int		*oversampling_avail;
+ 	unsigned int			num_os_ratios;
+ 	int (*write_scale)(struct iio_dev *indio_dev, int ch, int val);
 -- 
-2.37.1
+2.46.0
 
 
