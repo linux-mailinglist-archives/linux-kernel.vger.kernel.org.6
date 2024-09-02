@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-310473-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310472-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34B56967D7E
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 03:47:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53404967D7C
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 03:46:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD73C1F21B8E
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 01:46:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 83F211C20AAD
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 01:46:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31B0D3BB21;
-	Mon,  2 Sep 2024 01:46:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 198C133993;
+	Mon,  2 Sep 2024 01:46:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aIFNVEnS"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="juZUXaoU"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68B0D376E9;
-	Mon,  2 Sep 2024 01:46:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5235C28683;
+	Mon,  2 Sep 2024 01:46:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725241586; cv=none; b=slNEG43oSOSnVL7CuXwXi1Zgmbf1uwDmOKtI5lMra7g2HRIf+6FdelkPOAEwBdMTa/FrfcGgjr322mC7lQtiIXfOrF8tfirT4b11eTOAQUCcj1Hf5Fuf6z+bpRRbBeAcqC/RPjeMNuJS6ZZ9vw7Jbx+wU5NFuoQqoW8IeOHanJo=
+	t=1725241585; cv=none; b=gnMHOxI3ciYipaWUR0hwwP3gTOwk5XMzVlqhlw/PZuGINoG6tuPPU1X6UmEhok0csVKnQ/nbCte+W3rYXhA7jFziVz+u3ifAaiIKgPdsZphtfkhnELq6lNLbtLf+QY9zkWtVxuQgZ7eJV+bqejY9EVnOKAm/kqnqwfY5VMVVHlk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725241586; c=relaxed/simple;
-	bh=32VDGrtfHMytoPOOFqHZVvYDvIox7PLmSkvoaBgXsIA=;
+	s=arc-20240116; t=1725241585; c=relaxed/simple;
+	bh=suv85j1m1/NXNAqq3RNaOfwXgswYvyBgpuW6ErDVBEA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ag/0oLWqCAlAlvlPJDPqSLMFcwROiW6j3df/i9HUSvO4TYwN+nayQW41ORpn4eTLIXvHfpgFbzHsy2q0zoiTy/91h5eMEvsCdOwrcdtLJ8oosRGBnCvWEKtJlVdE6uhlTY5GZK6EAk9LOMfhjxTnO2eW/deFa10z8kL2Okc1BWU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aIFNVEnS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C60E1C4CECE;
-	Mon,  2 Sep 2024 01:46:23 +0000 (UTC)
+	 MIME-Version; b=BtOKJQSxUeSHnPwo2CtsuI0N2j7q14g+AZGv/IMxkpxbcZPdtpFnJmHCojawlj32Pqr5KoToT1+BkMycXuLUZoAWEHI0GHDmsWn/tbvPnYExwoEH6xS7z+q83zy7zB5cmxiCiTB12wy8k3I7P6p9bnJSND9Vz92nW+xpatueiq4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=juZUXaoU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 89235C4CECB;
+	Mon,  2 Sep 2024 01:46:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725241584;
-	bh=32VDGrtfHMytoPOOFqHZVvYDvIox7PLmSkvoaBgXsIA=;
+	s=k20201202; t=1725241585;
+	bh=suv85j1m1/NXNAqq3RNaOfwXgswYvyBgpuW6ErDVBEA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=aIFNVEnSxcEGkzGCw7l2Te5Q58MnTyN15NRRL+8wGpFx4ELY8VYcjhaPYdDfEIpPp
-	 3921zsPtICec10+cXv1DdVfPnVmpAnxCBTCCjMZb0pGwb5tetPYrxuBdPR8kXl7vRb
-	 M/jw37OZ6dE6Bk65bgCo5h3PovWCSQ6oltLEnPIrCKzPFe8jZ/p8GQy3qP9cq7zHt+
-	 QtOzBOmWpAXq4357kNQ5BFKP7e4SWIEts6JT15KimcVu+LdHQ/TAnTzwoIg9w0XJN5
-	 eDphdxxg0hnjbV1U5bMNaJuh/Tv3yI/waw/Tad0hZL110wYR5KcDrvqke/4+STjVPx
-	 WQzePK8kMpgUA==
+	b=juZUXaoUAZ+p0Kjj2lc3/kAFdZI104nWvLNlGg2+9iAZmiZs/M4rzsHm/b9faQ3Lp
+	 550N3jsaFsyFReNQTQTf9Msz3lTgBFn13tGLxzkwW5Iz+YjHLL9G3l+9LgRw54404g
+	 3YCBqMGmtZvk85Ck0n8maXMavemizPG3Vdz5YbbGuPnA/8P3wNUQzYMDc3Oalv/vCj
+	 SR58CrZkEgM6wIDXxOsSCxLvXmzLHl3VZ9odvseCyTMFNZmWMiGprb3z2jhcFkIqkD
+	 vEmkK8+/OJ5FElISRPRuNfm3wnke3gI3L61RgTeqUWPoeMNSYiav5FLokxsEb4+52j
+	 zFdFWlK/t5V6Q==
 From: Namhyung Kim <namhyung@kernel.org>
 To: Arnaldo Carvalho de Melo <acme@kernel.org>,
 	Ian Rogers <irogers@google.com>,
@@ -59,9 +59,9 @@ Cc: Jiri Olsa <jolsa@kernel.org>,
 	Atish Patra <atishp@atishpatra.org>,
 	Palmer Dabbelt <palmer@rivosinc.com>,
 	Mingwei Zhang <mizhang@google.com>
-Subject: [PATCH 2/4] perf tools: Simplify evsel__add_modifier()
-Date: Sun,  1 Sep 2024 18:46:19 -0700
-Message-ID: <20240902014621.2002343-3-namhyung@kernel.org>
+Subject: [PATCH 3/4] perf stat: Add --exclude-guest option
+Date: Sun,  1 Sep 2024 18:46:20 -0700
+Message-ID: <20240902014621.2002343-4-namhyung@kernel.org>
 X-Mailer: git-send-email 2.46.0.469.g59c65b2a67-goog
 In-Reply-To: <20240902014621.2002343-1-namhyung@kernel.org>
 References: <20240902014621.2002343-1-namhyung@kernel.org>
@@ -73,45 +73,67 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Since it doesn't set the exclude_guest, no need to special handle the
-bit and simply show only if one of host or guest bit is set.
+This option is to support the old behavior of setting exclude_guest by
+default.  Now it doesn't set the bit so users want the old behavior can
+use this option.
+
+  $ perf stat true
+
+   Performance counter stats for 'true':
+
+                0.86 msec task-clock:u                     #    0.443 CPUs utilized
+                   0      context-switches:u               #    0.000 /sec
+                   0      cpu-migrations:u                 #    0.000 /sec
+                  49      page-faults:u                    #   56.889 K/sec
+                 ...
+
+  $ perf stat --exclude-guest true
+
+   Performance counter stats for 'true':
+
+                0.79 msec task-clock:Hu                    #    0.490 CPUs utilized
+                   0      context-switches:Hu              #    0.000 /sec
+                   0      cpu-migrations:Hu                #    0.000 /sec
+                  49      page-faults:Hu                   #   62.078 K/sec
+                 ...
 
 Signed-off-by: Namhyung Kim <namhyung@kernel.org>
 ---
- tools/perf/util/evsel.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+ tools/perf/Documentation/perf-stat.txt | 7 +++++++
+ tools/perf/builtin-stat.c              | 2 ++
+ 2 files changed, 9 insertions(+)
 
-diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
-index 49cc71511c0c..57fe0f9b06f9 100644
---- a/tools/perf/util/evsel.c
-+++ b/tools/perf/util/evsel.c
-@@ -548,7 +548,6 @@ static int evsel__add_modifiers(struct evsel *evsel, char *bf, size_t size)
- {
- 	int colon = 0, r = 0;
- 	struct perf_event_attr *attr = &evsel->core.attr;
--	bool exclude_guest_default = false;
+diff --git a/tools/perf/Documentation/perf-stat.txt b/tools/perf/Documentation/perf-stat.txt
+index 2bc063672486..d28d8370a856 100644
+--- a/tools/perf/Documentation/perf-stat.txt
++++ b/tools/perf/Documentation/perf-stat.txt
+@@ -382,6 +382,13 @@ color the metric's computed value.
+ Don't print output, warnings or messages. This is useful with perf stat
+ record below to only write data to the perf.data file.
  
- #define MOD_PRINT(context, mod)	do {					\
- 		if (!attr->exclude_##context) {				\
-@@ -560,17 +559,15 @@ static int evsel__add_modifiers(struct evsel *evsel, char *bf, size_t size)
- 		MOD_PRINT(kernel, 'k');
- 		MOD_PRINT(user, 'u');
- 		MOD_PRINT(hv, 'h');
--		exclude_guest_default = true;
- 	}
- 
- 	if (attr->precise_ip) {
- 		if (!colon)
- 			colon = ++r;
- 		r += scnprintf(bf + r, size - r, "%.*s", attr->precise_ip, "ppp");
--		exclude_guest_default = true;
- 	}
- 
--	if (attr->exclude_host || attr->exclude_guest == exclude_guest_default) {
-+	if (attr->exclude_host || attr->exclude_guest) {
- 		MOD_PRINT(host, 'H');
- 		MOD_PRINT(guest, 'G');
- 	}
++--exclude-guest::
++Don't count event in the guest mode.  It was the old behavior but the
++default is changed to count guest events also.  Use this option if you
++want the old behavior (host only).  Note that this option needs to be
++before other events in case you added -e/--event option in the command
++line.
++
+ STAT RECORD
+ -----------
+ Stores stat data into perf data file.
+diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
+index cf985cdb9a6e..8b9889873d3e 100644
+--- a/tools/perf/builtin-stat.c
++++ b/tools/perf/builtin-stat.c
+@@ -2492,6 +2492,8 @@ int cmd_stat(int argc, const char **argv)
+ 		OPT_BOOLEAN_FLAG(0, "all-user", &stat_config.all_user,
+ 				"Configure all used events to run in user space.",
+ 				PARSE_OPT_EXCLUSIVE),
++		OPT_BOOLEAN(0, "exclude-guest", &exclude_HG_default,
++			"Don't count events in the guest mode"),
+ 		OPT_BOOLEAN(0, "percore-show-thread", &stat_config.percore_show_thread,
+ 			"Use with 'percore' event qualifier to show the event "
+ 			"counts of one hardware thread by sum up total hardware "
 -- 
 2.46.0.469.g59c65b2a67-goog
 
