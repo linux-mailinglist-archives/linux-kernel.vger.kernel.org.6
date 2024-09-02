@@ -1,183 +1,185 @@
-Return-Path: <linux-kernel+bounces-311538-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311539-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3DEE968A35
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 16:43:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E6EB5968A37
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 16:43:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 020BCB22A03
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 14:43:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 48B45B22F5F
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 14:43:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57C751A2656;
-	Mon,  2 Sep 2024 14:43:18 +0000 (UTC)
-Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com [209.85.128.177])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 901741A264E;
+	Mon,  2 Sep 2024 14:43:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IAUWYhyk"
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 669E31A263E;
-	Mon,  2 Sep 2024 14:43:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34F051A2644
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 14:43:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725288197; cv=none; b=MlIzI3pIHVe14nEwrw7RmhmeUj4CNLIy2wMF7tz+xRDHnW+1G8tkIurRZdUW1uXC76jJGuwk3bMaAd727wadJAomO30VaEYdPehXAD0jIWXqmbHicecY/kNNrwHzfTD9poHPAgDKrxkCWMQIBt4hgEfUUbGedMKxEUlzMwh3PVE=
+	t=1725288229; cv=none; b=dBbUy0bMwDE84Yrd06WaHJ3Rh/NaxL9c0KTPWunxyBX2W6q+zwVVqTlRFu1Gxi1nO+gpINl5CQHgWfcJSC+LiFXHejfUcCRwNKHLod9omGW1t2RpT07q+YdAJ6i08cWLSkZeINmEZJK4wbrnvZaa2tBTHA+tIHtLwXTBjjJA4nI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725288197; c=relaxed/simple;
-	bh=1QsvRZPsbUtInZWprJeCMReKLKwUDzy1CVFK+e51Ehw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=daa63iTcVywbdTxzFeyiDrlyMnIpd3pJLz99uNXbzzSGYav7IcWVTTro6Cp+PnaweOjVhnPipBioWIpWn8Zno4iNKMGq7oLVu7OjvrVcd22bdJHHQJt9ecYmqBo61+eXMd8SD7DAU9FJ8BwiU84FdbKsNjjwBqnbAM+xOeXRabQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	s=arc-20240116; t=1725288229; c=relaxed/simple;
+	bh=JF4dhqTJSFmyNFgmZgqyjkKlHlOhNF1IGzCfM9eHi1Q=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Ej9m5i0dJfhMDgpvMdNCNEcQOxd8lGfSx8KeGivcpyNk21SPwrBakzz4mDMMihjOtiEcoIuXEnm1Nf+Xi2619n56hOPcIIOUca3/cFK0LZ0ia4py85j6snN2sbtg4yYhDF4MBmLjfN0OBe+UFIQasQ5A1YHwo9lxLR6rZ/H+JbY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IAUWYhyk; arc=none smtp.client-ip=209.85.208.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-690aabe2600so35055387b3.0;
-        Mon, 02 Sep 2024 07:43:15 -0700 (PDT)
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5a10835487fso5718211a12.1
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2024 07:43:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725288225; x=1725893025; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yFRFdizmhc2CJwy4/CKQA005aAYjoT9/YpO+LeBpeuY=;
+        b=IAUWYhykwTlnxOO3oRslB4tXArEJX6FAZWA0EnwUeZO8jl8OMI3U6bHvCdNJTFc9Xc
+         8WPO9HzpbrXhvpxVtIV2DRgDE+zAhT8qgLlZsUjyE9UBBNdXz43iTSQ2aDV7TPAOYlAX
+         Tvsk7JNPtaV8Z8fOIY2Y6IwbueM+T2LAP4JmqWpCgTH6A8L4NXV8oZqzQfbNAZi8Yb3A
+         /VbXOSBqqhf7lhblSQL8wsun1qcOmw6S5D5a3XDLEmCs17aNeY4zwyqGSUI5Q/yRtqhv
+         fAY69hpxg2VSFnijjEDia+kVjMhMTmeMCBVdmqw+RqDCd237zNW2ogTZXHB0PZs+8Nz6
+         huZg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725288193; x=1725892993;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1725288225; x=1725893025;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=dv4mKq/aci7xE5SWjH3tcrLRVVBdtWwRIP4tHhTb83s=;
-        b=MSoxpQMDtByPWiXRIfllVn1MbOKnCl6AbPYap9UuqGgZ+kX9vUBq2JFPnaALtlKvJq
-         WcHLdLqN97e5/yDZtxd5etCUQdYz6dbleUpQw8B6RcwwGGqtI6dx+aTalxJRNO4m8A2S
-         JWp/aIXdIrpvZyiVLlDkdPeUCKyWp89+hnWZI2Y2apD0Y0toYEb69dS9XRgJB38BOk62
-         E4gdPH1PFVIHJsYt10/RwrCQ3bGXPcF7atQN/GlPvpqG3rld7DZDF7gcExrsf5FDU5vQ
-         j6+9hi8ny0xXiDhE0ib3vs6GWRnnkalNMBAP9IOQ4cZKhoiaD9EQag3V4SpqIbvkfj9u
-         Z4yg==
-X-Forwarded-Encrypted: i=1; AJvYcCUvs6F1l8X/Q7xmokoY4W5dniE8ARrDpnbbjmktlKi4ISrkOWNwKQxvcmjOkZJb4ZN0aLNkrRZFKF0d6ZQ=@vger.kernel.org, AJvYcCV/vIEiwKGayFxga6WHS/hBcIHvLLWB15KFQBJdN+gAIIloA4OhYas7GjTCUZzPvhKONOhcUHSs8/251k6Rjhs=@vger.kernel.org, AJvYcCXCIHAJ92s7VXZko/crhnax2tLS8hSthuOKtAqY9ZfgEL1oMtx1fXaZKDndvcTkWVEDAhpg6G6zaF8=@vger.kernel.org, AJvYcCXuJAdCezQYvBWI4Jm2QrvR6Mv719wPLA9NAtt8IXlUkgFFFDVwcxBsqCL241YyLUK4+Hi1/c6NcAN36g==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyDvatIyThrxGGnxB99rTK4Wb3N+n3TZuWQPqxltFbNwieckpPA
-	dYmhobYjT/7aXLQV6r9G8xg7HcC0enrYR5YXMz2jOH7BMpNKLX1VKNTpaoCK
-X-Google-Smtp-Source: AGHT+IHE7KMq2vuwYqHIzsubXSUphR2zdCVZm0cwpCl19BOSXbZ7mfcj6+OkqFaQlK6/BdPWmlBK8w==
-X-Received: by 2002:a05:690c:428c:b0:63b:df6e:3f6d with SMTP id 00721157ae682-6d411193e4fmr96372977b3.37.1725288193139;
-        Mon, 02 Sep 2024 07:43:13 -0700 (PDT)
-Received: from mail-yb1-f179.google.com (mail-yb1-f179.google.com. [209.85.219.179])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6d2d3abf883sm16086877b3.13.2024.09.02.07.43.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 02 Sep 2024 07:43:11 -0700 (PDT)
-Received: by mail-yb1-f179.google.com with SMTP id 3f1490d57ef6-e1a7d43a226so2779063276.3;
-        Mon, 02 Sep 2024 07:43:10 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU3se31yG47oOPqxlhR/ucK8Y+UUt0V1jfH1Wwrdp5WnILffyg4EkCkhbzaBX5S5S+kfITwY0HewEN2bQ==@vger.kernel.org, AJvYcCUcK6JchS0/g7TIOiz0zhGRCan8qEF3d4pKrcPJsicUlgj870Z5scfqnuRwvFpmO+f/4PCrHH5eZkAYVYU=@vger.kernel.org, AJvYcCWMEQ/++mtJpyR848Axg1T2b2GfvqLgiqyWYIXTH6KCXBXorOIhJtinEG5DTxk1BvETIicJBbt1mdY=@vger.kernel.org, AJvYcCWVyPniYFu9tKsgz6gTZInxpJZRnHqaoLe4KEnvjbqG25bNpfGYZIsPI+P4QvuJIykg8Fjlqtfsu+f9nIIKkzE=@vger.kernel.org
-X-Received: by 2002:a05:690c:64c8:b0:6d5:1b7:ab81 with SMTP id
- 00721157ae682-6d501b7af55mr99049107b3.22.1725288190742; Mon, 02 Sep 2024
- 07:43:10 -0700 (PDT)
+        bh=yFRFdizmhc2CJwy4/CKQA005aAYjoT9/YpO+LeBpeuY=;
+        b=Jp9KBJMkyiZ0/DrxmjBJN/TzDCjL+QfIOM5LW3iQEfB4WO/JeU3aG3MNC96D5jbL1R
+         dqezZEv1foECHWqrBrot9teSfaURL9E5zQZktKTlt5Lp23PgVMrxcKC8D7FTFGbiqaqh
+         LreKoUq/PTHQXpVjQObWxDgulb38uF/vzxru6/xqCE6BKfBRG149EtOGRmjgibisQ/QQ
+         4AIHrXnw1y30v7cafMw14ob2IR+imtYeIzYMKuiIZT+MJ7JYTJS6BqgjXZfzJn1guvwV
+         SHFvuvnVLdkHauF/5ah7WXyHtVSIX+gKlp329wm/fH+013hYxZk+e+AtISTNHDpS3x2A
+         E8OA==
+X-Forwarded-Encrypted: i=1; AJvYcCXhy/JlWCutACgSg4WkNGA7lUZqkqDCLEXmGZ9y9jPgihuVjNuXuJi/y2DGKWzVStsEkHdsD+AzES7I5+A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwjyUgSqbvNWjBeCFhM7eaQv5tnGXctOhKeAoSSiidyg/KdPpGo
+	1Dhk4CxEexnSDZWxs2ri3a/QecJYwt3W+kl4OlBT5sjxeDxp61Oi
+X-Google-Smtp-Source: AGHT+IFVrmcQ2LyLLYhiHo5LRdWuFIggl65+Wa6I1kVeqYevDcItonWteNGDfQxRBC1yUAzXhRpMfg==
+X-Received: by 2002:a17:906:f5a8:b0:a7a:9226:6511 with SMTP id a640c23a62f3a-a8a1d3268cemr29177566b.31.1725288224997;
+        Mon, 02 Sep 2024 07:43:44 -0700 (PDT)
+Received: from localhost.localdomain ([31.19.114.250])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a89891968e9sm563655266b.120.2024.09.02.07.43.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 02 Sep 2024 07:43:44 -0700 (PDT)
+From: raoul.van.rueschen@gmail.com
+To: tjakobi@math.uni-bielefeld.de
+Cc: Rodrigo.Siqueira@amd.com,
+	Xinhui.Pan@amd.com,
+	airlied@gmail.com,
+	alexander.deucher@amd.com,
+	amd-gfx@lists.freedesktop.org,
+	christian.koenig@amd.com,
+	daniel@ffwll.ch,
+	dri-devel@lists.freedesktop.org,
+	harry.wentland@amd.com,
+	linux-kernel@vger.kernel.org,
+	mario.limonciello@amd.com,
+	sunpeng.li@amd.com,
+	raoul.van.rueschen@gmail.com
+Subject: Re: [PATCH 1/2] drm/amd/display: Avoid race between dcn10_set_drr() and dc_state_destruct()
+Date: Mon,  2 Sep 2024 16:43:36 +0200
+Message-ID: <20240902144337.18223-1-raoul.van.rueschen@gmail.com>
+X-Mailer: git-send-email 2.46.0
+In-Reply-To: <7b9dbbbb1e6a3aa6d7a4d9367d44d18ddd947158.1725269643.git.tjakobi@math.uni-bielefeld.de>
+References: <7b9dbbbb1e6a3aa6d7a4d9367d44d18ddd947158.1725269643.git.tjakobi@math.uni-bielefeld.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240527142557.321610-1-ulf.hansson@linaro.org>
- <20240527142557.321610-4-ulf.hansson@linaro.org> <CAMuHMdUoZBJewA6nQZLhnbebZuoZo85UCCfwuOv8or_N_e-0qg@mail.gmail.com>
- <CAPDyKFqcpxUJWL7FoRSXLXVhS5B9PjcTY5ryG8HAY_E1Btgwag@mail.gmail.com> <CAMuHMdWB2zjF1jajkQzFpt2=4oj25myG1CJ5i6450gkUVX19+g@mail.gmail.com>
-In-Reply-To: <CAMuHMdWB2zjF1jajkQzFpt2=4oj25myG1CJ5i6450gkUVX19+g@mail.gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 2 Sep 2024 16:42:58 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdXM2qHGzcLDfZQNC1Zqj_vh72S9+rV6-xuM+p=w7-oHyQ@mail.gmail.com>
-Message-ID: <CAMuHMdXM2qHGzcLDfZQNC1Zqj_vh72S9+rV6-xuM+p=w7-oHyQ@mail.gmail.com>
-Subject: Re: [PATCH v2 3/7] pmdomain: core: Use dev_name() instead of
- kobject_get_path() in debugfs
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: "Rafael J . Wysocki" <rafael@kernel.org>, Sudeep Holla <sudeep.holla@arm.com>, linux-pm@vger.kernel.org, 
-	Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>, Nikunj Kela <nkela@quicinc.com>, 
-	Prasad Sodagudi <psodagud@quicinc.com>, Maulik Shah <quic_mkshah@quicinc.com>, 
-	Daniel Lezcano <daniel.lezcano@linaro.org>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, linux-rt-users@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	"open list:TI ETHERNET SWITCH DRIVER (CPSW)" <linux-omap@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi Ulf,
-
-On Fri, Aug 30, 2024 at 5:50=E2=80=AFPM Geert Uytterhoeven <geert@linux-m68=
-k.org> wrote:
-> On Tue, Aug 20, 2024 at 10:58=E2=80=AFAM Ulf Hansson <ulf.hansson@linaro.=
-org> wrote:
-> > On Tue, 20 Aug 2024 at 10:55, Geert Uytterhoeven <geert@linux-m68k.org>=
- wrote:
-> > > On Mon, May 27, 2024 at 4:27=E2=80=AFPM Ulf Hansson <ulf.hansson@lina=
-ro.org> wrote:
-> > > > Using kobject_get_path() means a dynamic memory allocation gets don=
-e, which
-> > > > doesn't work on a PREEMPT_RT based configuration while holding genp=
-d's raw
-> > > > spinlock.
-> > > >
-> > > > To fix the problem, let's convert into using the simpler dev_name()=
-. This
-> > > > means the information about the path doesn't get presented in debug=
-fs, but
-> > > > hopefully this shouldn't be an issue.
-> > > >
-> > > > Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
-> > > > ---
-> > > > Changes in v2:
-> > > >         - New patch.
-> > >
-> > > Thanks for your patch, which is now commit 9094e53ff5c86ebe ("pmdomai=
-n:
-> > > core: Use dev_name() instead of kobject_get_path() in debugfs")
-> > > in pmdomain/next.
-> > >
-> > > > --- a/drivers/pmdomain/core.c
-> > > > +++ b/drivers/pmdomain/core.c
-> > > > @@ -3215,16 +3214,9 @@ static int genpd_summary_one(struct seq_file=
- *s,
-> > > >         }
-> > > >
-> > > >         list_for_each_entry(pm_data, &genpd->dev_list, list_node) {
-> > > > -               kobj_path =3D kobject_get_path(&pm_data->dev->kobj,
-> > > > -                               genpd_is_irq_safe(genpd) ?
-> > > > -                               GFP_ATOMIC : GFP_KERNEL);
-> > > > -               if (kobj_path =3D=3D NULL)
-> > > > -                       continue;
-> > > > -
-> > > > -               seq_printf(s, "\n    %-50s  ", kobj_path);
-> > > > +               seq_printf(s, "\n    %-50s  ", dev_name(pm_data->de=
-v));
-> > >
-> > > While some of the old names didn't even fit in 50 characters, the new
-> > > names need much less space, so perhaps this is a good opportunity to
-> > > decrease the table width?
-> >
-> > Sure, it seems reasonable! Do you want to send a patch?
+> From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
 >
-> I started looking into it.  Then I noticed that on some systems
-> (e.g. TI am335x) the device names may have a longer format than
-> the typical <unit-address>.<nodename>. So I wanted to verify on
-> BeagleBone Black, but recent kernels crash during early boot.
-> Apparently that platform was broken between v6.8 and v6.9-rc1.
-> And during bisection, I encountered 3 different failure modes...
+> dc_state_destruct() nulls the resource context of the DC state. The
+> pipe
+> context passed to dcn10_set_drr() is a member of this resource
+> context.
 >
-> To be continued...
+> If dc_state_destruct() is called parallel to the IRQ processing
+> (which
+> calls dcn10_set_drr() at some point), we can end up using already
+> nulled
+> function callback fields of struct stream_resource.
+>
+> The logic in dcn10_set_drr() already tries to avoid this, by checking
+> tg
+> against NULL. But if the nulling happens exactly after the NULL check
+> and
+> before the next access, then we get a race.
+>
+> Avoid this by copying tg first to a local variable, and then use this
+> variable for all the operations. This should work, as long as nobody
+> frees the resource pool where the timing generators live.
+>
+> Closes: https://gitlab.freedesktop.org/drm/amd/-/issues/3142
+> Fixes: 06ad7e164256 ("drm/amd/display: Destroy DC context while
+> keeping DML and DML2")
+> Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+> ---
+>  .../amd/display/dc/hwss/dcn10/dcn10_hwseq.c   | 20 +++++++++++------
+> --
+>  1 file changed, 12 insertions(+), 8 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/amd/display/dc/hwss/dcn10/dcn10_hwseq.c
+> b/drivers/gpu/drm/amd/display/dc/hwss/dcn10/dcn10_hwseq.c
+> index 3306684e805a..da8f2cb3c5db 100644
+> --- a/drivers/gpu/drm/amd/display/dc/hwss/dcn10/dcn10_hwseq.c
+> +++ b/drivers/gpu/drm/amd/display/dc/hwss/dcn10/dcn10_hwseq.c
+> @@ -3223,15 +3223,19 @@ void dcn10_set_drr(struct pipe_ctx
+> **pipe_ctx,
+>  	 * as well.
+>  	 */
+>  	for (i = 0; i < num_pipes; i++) {
+> -		if ((pipe_ctx[i]->stream_res.tg != NULL) &&
+> pipe_ctx[i]->stream_res.tg->funcs) {
+> -			if (pipe_ctx[i]->stream_res.tg->funcs-
+> >set_drr)
+> -				pipe_ctx[i]->stream_res.tg->funcs-
+> >set_drr(
+> -					pipe_ctx[i]->stream_res.tg,
+> &params);
+> +		/* dc_state_destruct() might null the stream
+> resources, so fetch tg
+> +		 * here first to avoid a race condition. The
+> lifetime of the pointee
+> +		 * itself (the timing_generator object) is not a
+> problem here.
+> +		 */
+> +		struct timing_generator *tg = pipe_ctx[i]-
+> >stream_res.tg;
+> +
+> +		if ((tg != NULL) && tg->funcs) {
+> +			if (tg->funcs->set_drr)
+> +				tg->funcs->set_drr(tg, &params);
+>  			if (adjust.v_total_max != 0 &&
+> adjust.v_total_min != 0)
+> -				if (pipe_ctx[i]->stream_res.tg-
+> >funcs->set_static_screen_control)
+> -					pipe_ctx[i]->stream_res.tg-
+> >funcs->set_static_screen_control(
+> -						pipe_ctx[i]-
+> >stream_res.tg,
+> -						event_triggers,
+> num_frames);
+> +				if (tg->funcs-
+> >set_static_screen_control)
+> +					tg->funcs-
+> >set_static_screen_control(
+> +						tg, event_triggers,
+> num_frames);
+>  		}
+>  	}
+>  }
 
-The longest generic node names documented in the Devicetree
-Specification are "air-pollution-sensor" and "interrupt-controller"
-(both counting 20 characters), so a typical device name needs 8
-(32-bit unit address) + 1 (dot) + 20 =3D 29 characters.
-However, I assume some devices lie outside the 32-bit address space,
-and thus need more space?
+This fixes full system freezes when taking screenshots at low framerates with VRR enabled on an RX 7900 XTX.
 
-With the BeagleBone Black boot issue fixed:
-"/devices/platform/ocp/5600fe00.target-module"
-resp. "/devices/platform/ocp/44c00000.interconnect/44c00000.interconnect:se=
-gment@200000/44e3e074.target-module"
-are now shortened to "5600fe00.target-module" resp. "44e3e074.target-module=
-".
-However, "/devices/platform/ocp/48000000.interconnect/48000000.interconnect=
-:segment@200000/48000000.interconnect:segment@200000:target-module@0"
-is shortened to "48000000.interconnect:segment@200000:target-module@0",
-which is still longer than the old column width...
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+Tested-by: Raoul van Rüschen <raoul.van.rueschen@gmail.com>
 
