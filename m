@@ -1,110 +1,93 @@
-Return-Path: <linux-kernel+bounces-310944-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310943-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A446F96831F
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 11:24:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C55896831D
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 11:24:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D56E61C223D0
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 09:24:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D780A1F21BD6
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 09:23:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD7BA1C3309;
-	Mon,  2 Sep 2024 09:23:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="lzrkKoqB"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C679C187355;
-	Mon,  2 Sep 2024 09:23:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 100E41C3317;
+	Mon,  2 Sep 2024 09:23:15 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 518AD1C2DB0
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 09:23:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725269015; cv=none; b=iZ3dwL4l/+zac2cISsPzfQV9u4mA727UB4RedRL3v+Wn5VHqzZZ6jo9RXkE61Xept5FSWQh++W9O9FaSH2jH4saPMbGCuWDlPVZ5NEwQRbo+dDn6jsHAqGXI3hcxnOVIFYUyjhRUZaTvjxASxGMZK3/WcufBbFPy6DinDPQ2Za0=
+	t=1725268994; cv=none; b=HNrzXZEGjhaE7GpFqsPk6xvnZ5f2o5//7g00UHNmbYbEGRH4r/lYtF66im44KQnXNFCwN8IIcEHqrGsCLtcJoO+VtBke1GaihH/chwHUXQelopjJD2zyLW0COeykZr+AX5EDRotEj2y6VgxIe3Kw95UqzUn9TENpN/0hCNJciY8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725269015; c=relaxed/simple;
-	bh=cCFseqcH4z5OSqatyQ8Njvobnvsuzyx5wOOXtcdAbc4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KAX7UY/u1SngF7yzQ7XUPAhtP/Zsyq28Jx0JlqXuNYyq2BvAmz6FH9L5gHdMYLpMwQ+OKFUy2pxZ/vRExEY4SEIlUKH3UiOdg3OUyfz9KPtXDShAjZqjexk4VjBllZtSyh2jp+KTdNxRp07jIssn+DXVt9/CTI218gkuvEAP2E8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=lzrkKoqB; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=k8fNp4lPEgrhIlaN+v3O0Q3/cbsRJ7Y/SUZlytKJl78=; b=lzrkKoqBk9ddfuYiQtaezmQCY9
-	qQH6VLJGsuaTvibz6mCM2E9uabi/UmI2NBr3jqZIfsGHTOqS82k4aeyDGpEZCs2sF2voB0R9FjoQk
-	/Nc8uO6wF5RW1GjfkGRByItVtxpE6Q6Ptn84BGh0lTJX4B7vd77ZPie49HMycq4bCFQoImQZ4aoOo
-	+Vthr5UiNlFXpf1FevZxIXuH9a6Fy6ul9uhETJk2nIKCN3wL84YCyxUEWzY7iFDs3yRlC/Qgb5yq4
-	Ih4JhokutM3IeqTvOiithyBNEcT/ZGP4yM2HUxCdimtYfiiHTVkwnpqv/7SGtJCAJmbS00llXWDzz
-	XYyX7uog==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:46394)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1sl3HF-0005tr-2y;
-	Mon, 02 Sep 2024 10:23:13 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1sl3H9-0001gG-1n;
-	Mon, 02 Sep 2024 10:23:07 +0100
-Date: Mon, 2 Sep 2024 10:23:07 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Wentai Deng <wtdeng24@m.fudan.edu.cn>
-Cc: davem <davem@davemloft.net>, edumazet <edumazet@google.com>,
-	kuba <kuba@kernel.org>, pabeni <pabeni@redhat.com>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	netdev <netdev@vger.kernel.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>,
-	=?utf-8?B?5p2c6Zuq55uI?= <21210240012@m.fudan.edu.cn>
-Subject: Re: [BUG] Possible Use-After-Free Vulnerability in ether3 Driver Due
- to Race Condition
-Message-ID: <ZtWD+/veJzhA9WH2@shell.armlinux.org.uk>
-References: <tencent_4212C4F240B0666B49355184@qq.com>
+	s=arc-20240116; t=1725268994; c=relaxed/simple;
+	bh=3dZ+qMEdTPAnExXnKwgW7L+RBL/mU1jNp+/RCwY3Eag=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=DFaBirLalcfYJpovbti/2UsZTTZjRXHnF58Ukf/UXrm72Ve603UaD8K9PHpCgVdyvhfp0pPRr9P2fNGS+yd0BLaCA8lX5rr4UxoZcKM3KHbWoMnffiL9mvf7VS1E3IrXN9QcZd2WD/vesQCD6Z5A6PDz/FIbwd2V4aoYLhVYjN8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E3890FEC;
+	Mon,  2 Sep 2024 02:23:38 -0700 (PDT)
+Received: from [10.57.74.147] (unknown [10.57.74.147])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 887C83F73F;
+	Mon,  2 Sep 2024 02:23:10 -0700 (PDT)
+Message-ID: <33ff88fc-0372-48ed-b66e-85841eda83aa@arm.com>
+Date: Mon, 2 Sep 2024 10:23:08 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <tencent_4212C4F240B0666B49355184@qq.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH -next] drm/panthor: Use the BITS_PER_LONG macro
+To: Jinjie Ruan <ruanjinjie@huawei.com>, boris.brezillon@collabora.com,
+ liviu.dudau@arm.com, maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+ tzimmermann@suse.de, airlied@gmail.com, daniel@ffwll.ch,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <20240831024532.455361-1-ruanjinjie@huawei.com>
+From: Steven Price <steven.price@arm.com>
+Content-Language: en-GB
+In-Reply-To: <20240831024532.455361-1-ruanjinjie@huawei.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Sep 02, 2024 at 01:19:43PM +0800, Wentai Deng wrote:
-> In the ether3_probe function, a timer is initialized with a callback function ether3_ledoff, bound to &amp;prev(dev)-&gt;timer. Once the timer is started, there is a risk of a race condition if the module or device is removed, triggering the ether3_remove function to perform cleanup. The sequence of operations that may lead to a UAF bug is as follows:
+On 31/08/2024 03:45, Jinjie Ruan wrote:
+> sizeof(unsigned long) * 8 is the number of bits in an unsigned long
+> variable, replace it with BITS_PER_LONG macro to make them simpler.
 > 
+> And fix the warning:
+> 	WARNING: Comparisons should place the constant on the right side of the test
+> 	#23: FILE: drivers/gpu/drm/panthor/panthor_mmu.c:2696:
+> 	+       if (BITS_PER_LONG < va_bits) {
 > 
-> CPU0&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; CPU1
+> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
+> ---
+>  drivers/gpu/drm/panthor/panthor_mmu.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> 
-> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; |&nbsp; &nbsp;ether3_ledoff
-> ether3_remove&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;|
-> &nbsp; &nbsp; free_netdev(dev);&nbsp; &nbsp; &nbsp; &nbsp;|
-> &nbsp; &nbsp; put_device&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; |
-> &nbsp; &nbsp; kfree(dev);&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;|
-> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; |&nbsp; &nbsp; &nbsp; &nbsp;ether3_outw(priv(dev)-&gt;regs.config2 |= CFG2_CTRLO, REG_CONFIG2);
-> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; |&nbsp; &nbsp; &nbsp; &nbsp;// use dev
+> diff --git a/drivers/gpu/drm/panthor/panthor_mmu.c b/drivers/gpu/drm/panthor/panthor_mmu.c
+> index d47972806d50..2a0c46391374 100644
+> --- a/drivers/gpu/drm/panthor/panthor_mmu.c
+> +++ b/drivers/gpu/drm/panthor/panthor_mmu.c
+> @@ -2693,7 +2693,7 @@ int panthor_mmu_init(struct panthor_device *ptdev)
+>  	 * which passes iova as an unsigned long. Patch the mmu_features to reflect this
+>  	 * limitation.
+>  	 */
+> -	if (sizeof(unsigned long) * 8 < va_bits) {
+> +	if (va_bits > BITS_PER_LONG) {
+>  		ptdev->gpu_info.mmu_features &= ~GENMASK(7, 0);
+>  		ptdev->gpu_info.mmu_features |= sizeof(unsigned long) * 8;
 
-This is unreadable.
+Can you fix this to BITS_PER_LONG too? Since this code is clamping the
+value in mmu_features it looks really odd to have the new value written
+differently to the test in the 'if' statement.
 
-> Request for Review:
-> 
-> 
-> We would appreciate your expert insight to confirm whether this vulnerability indeed poses a risk to the system, and if the proposed fix is appropriate.
+Also, a minor point, but the "-next" tag in the subject is
+pointless/confusing - this code is in mainline already (merged for
+v6.10-rc1).
 
-Please resend without the HTML junk in the plain text part.
-
--- 
-*** please note that I probably will only be occasionally responsive
-*** for an unknown period of time due to recent eye surgery making
-*** reading quite difficult.
-
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+Thanks,
+Steve
 
