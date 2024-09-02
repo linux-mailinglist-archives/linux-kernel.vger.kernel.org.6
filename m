@@ -1,148 +1,172 @@
-Return-Path: <linux-kernel+bounces-311242-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311243-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4BB196867C
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 13:43:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB38996867D
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 13:43:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 65EE3B24575
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 11:43:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 820EC1F22486
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 11:43:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1CB81D679D;
-	Mon,  2 Sep 2024 11:43:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B57F1D6195;
+	Mon,  2 Sep 2024 11:43:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VNXrlT7t"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="KThnB83G"
+Received: from out30-133.freemail.mail.aliyun.com (out30-133.freemail.mail.aliyun.com [115.124.30.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B256D1D61A4;
-	Mon,  2 Sep 2024 11:43:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 381191D54FD
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 11:43:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725277390; cv=none; b=NTRZQmbKjv8SO6x8BHaN/vhf2lN1Y5t4tUP4mdCBI7IFhzVDuFLFvzfXYwEa0AGh6QV+tcc8Iq3gLgaWPpJqOzvc6ItD7KOm5K8QPWfsNWBRs2FVvN++U/nzAhab0tRotdmxUf1848SlcATHVm6C54ftbrfD4rXB7j6D5FQr0io=
+	t=1725277431; cv=none; b=jnb+jfICBGbaGa2UltJhzbObGH6wM/t5+OUKN2U0braKvBg9tCTKMvVmgDph5AyNwW3hQbocsxzNAn2mc/jOUHBj+BblEQ/aPFi8hxgm0psORu5j0PTFBKe6pr0dqu+ufelnzaDzDE/xZmOYgyN82SDLAez72IDgJl8slX6ePZw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725277390; c=relaxed/simple;
-	bh=KE3h6tXE+RE3rlbTABeMAqaykIvLYaMlD5zODlIksVc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=eAA1gxUXPwId+QxJiiypnSMTWAj4c8wqRLHDZqI6XKxuKgrdB/pNNW2MQJyWHebMNYu0YMoS84Ureuq5r+fg8qAKNZ4fNe0vW6lb9PIAySICiHcdJavjxDLEreWJQoQSazqY/dPZhPpesPhCydxxiK3ce4c+KkAdQu66b0i7V8g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VNXrlT7t; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-42bbe809b06so22915205e9.1;
-        Mon, 02 Sep 2024 04:43:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725277387; x=1725882187; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=4sVPD01q+sp9GhLaXZ0ALw8RcGZeWI4NIEtqmbs5IO8=;
-        b=VNXrlT7tq8TeTxv5A/YI6pNhgKlLF9gpG/gZpaUvzIlgFh3G+YiddvBCujZC5khRFA
-         4Ds9qGq8kiYGVOQg+0/cyLf5ki7RBRo9SqcGJzJVkRpPD1VjdbtunkvgXs+OJIUdnBbi
-         QtkoJmHo/tK7RwQ3+HqF6C0PSUujQ3jW5s78A/CRDOxd7BngXyDhoA+T6c451+8EH8KY
-         8jwaEsJsILSmuz2MnmQGJZ9MK/ljlgh3N/5vPZKYqNtMo3RU+ZJ6j/9IJ5o968iLFupH
-         T22RYeQ1Yc/qurSs3Rd4j6iqzW3iLMFXBR8rodKJkQlegRdBI7XC3IJR8XIwWyheU4f0
-         P3hQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725277387; x=1725882187;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=4sVPD01q+sp9GhLaXZ0ALw8RcGZeWI4NIEtqmbs5IO8=;
-        b=Km31XOGwbr1jgrv84//zHy4//fDl96oKhnGm6ZYrJcZRTkmHLB+JRQDTvIFkfVu9g4
-         1f/3ZOWRJhxk9OEo6u4WWG74eHfQ/okNlPbLo4M91A5TDEKl/tOAe7h3zs8zxuQkjI/P
-         V4VV0phzTxZ9Mb30O0pZytfW3/Ut3vvDPUCad8BGMFQAReAT7752tB1dw0twuz3fUzUw
-         AKgP/3Y6YXj7ixADuH7i7BOIvKsuIkVRNjzAWh5fIvM9qFvftTo4rXKf7fsyQIltMwE8
-         eqQUfAinlXAYf5hz4uNjIhEAh98krvz/foGpXsFSGkgG5Hl/qaOyAgcVWxQH2EvTZBsa
-         /tRg==
-X-Forwarded-Encrypted: i=1; AJvYcCVTKhhuKLMm3lWj4dz1goyJ4V+lxZLimeI3MyzRxYXJpLfjQjnv/7h3JXgeIAgEHzQzBz3rlsOsz0RW8Q==@vger.kernel.org, AJvYcCX8m64MmaY9e5L8IlZTqq6MnWKyRKQai6f7F4xCd2hqufIDMxx0wRnQ0QMVF7+CCAt0AoItHsI6dHP6v+W6@vger.kernel.org
-X-Gm-Message-State: AOJu0YzC5oiYf86ZYC+XhrNeC2woLd1eMIii1nBL55XK0Jshfbeh3+vw
-	596adQ+kiuiJjRuDEGPksmntfE2/dMS/qnqxiWQb7yU2JMxeDotg
-X-Google-Smtp-Source: AGHT+IFBCaxP6BeMbZaB1F1NjtsK2uFzuEbSmm9dXk1j3mJRaUWA175Y/poi4lglTA8IHIfcXLC5dw==
-X-Received: by 2002:a05:600c:1914:b0:426:8884:2c58 with SMTP id 5b1f17b1804b1-42bb02c10bemr119629185e9.4.1725277386860;
-        Mon, 02 Sep 2024 04:43:06 -0700 (PDT)
-Received: from fedora-thinkpad.lan (net-109-116-17-225.cust.vodafonedsl.it. [109.116.17.225])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-374b34725desm8473607f8f.81.2024.09.02.04.43.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Sep 2024 04:43:06 -0700 (PDT)
-From: Luca Stefani <luca.stefani.ge1@gmail.com>
-To: 
-Cc: Luca Stefani <luca.stefani.ge1@gmail.com>,
-	Qu Wenruo <quwenruo.btrfs@gmx.com>,
-	Chris Mason <clm@fb.com>,
-	Josef Bacik <josef@toxicpanda.com>,
-	David Sterba <dsterba@suse.com>,
-	linux-btrfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] btrfs: Split remaining space to discard in chunks
-Date: Mon,  2 Sep 2024 13:43:00 +0200
-Message-ID: <20240902114303.922472-1-luca.stefani.ge1@gmail.com>
-X-Mailer: git-send-email 2.46.0
+	s=arc-20240116; t=1725277431; c=relaxed/simple;
+	bh=x5tMgBrEEKlLU5Afk9WaUgS4zcJ+RyoQmJW8thN7O3M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FllB4c0vBCex3pt5eNZO2lIoqD7yR9fUgBl8iAQdnecXnyP7OqT7ds5EKJP5bmXbAqKUbS0j7ZiEKuNW7VKHtgZp1/ULPmnXtxdbeNRhx1e/q0qAsYhilwc+6MquvsYos6L84hjBtiMg2HcPZaxHaIcEEOSVB0DxBflQuwWnZE8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=KThnB83G; arc=none smtp.client-ip=115.124.30.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1725277426; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=EpaDzX0hYxnpqXgfjqgj8769zqdOSOrb6l5mvkWaOeQ=;
+	b=KThnB83GAFyZ9d2Ub3nBmePC35QnjYkhbmR2FXtAUMjaEweVAEOtasXHegvaj8pLSEKVATRLicc/EFHdtHxiVPa8lQCsBqgx3iPTcKC7uCVTDps3SrByp/ZwrQId10v9D914T6Qd6HC0x+ob48p6WBY+PgAYvyQlvjYJ0lVGxeU=
+Received: from 30.221.129.135(mailfrom:joseph.qi@linux.alibaba.com fp:SMTPD_---0WE8Dc19_1725277424)
+          by smtp.aliyun-inc.com;
+          Mon, 02 Sep 2024 19:43:45 +0800
+Message-ID: <d7d8fb47-c32e-4764-9c96-5d22cb278cb0@linux.alibaba.com>
+Date: Mon, 2 Sep 2024 19:43:44 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/3] ocfs2: detect released suballocator bg for
+ fh_to_[dentry|parent]
+To: Heming Zhao <heming.zhao@suse.com>, glass.su@suse.com
+Cc: ocfs2-devel@lists.linux.dev,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20240729080454.12771-1-heming.zhao@suse.com>
+ <20240729080454.12771-3-heming.zhao@suse.com>
+Content-Language: en-US
+From: Joseph Qi <joseph.qi@linux.alibaba.com>
+In-Reply-To: <20240729080454.12771-3-heming.zhao@suse.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Per Qu Wenruo in case we have a very large disk, e.g. 8TiB device,
-mostly empty although we will do the split according to our super block
-locations, the last super block ends at 256G, we can submit a huge
-discard for the range [256G, 8T), causing a super large delay.
 
-We now split the space left to discard based off the max data
-chunk size (10G) to solve the problem.
 
-Reported-by: Qu Wenruo <quwenruo.btrfs@gmx.com>
-Closes: https://lore.kernel.org/lkml/2e15214b-7e95-4e64-a899-725de12c9037@gmail.com/T/#mdfef1d8b36334a15c54cd009f6aadf49e260e105
-Signed-off-by: Luca Stefani <luca.stefani.ge1@gmail.com>
----
- fs/btrfs/extent-tree.c | 20 ++++++++++++++++----
- 1 file changed, 16 insertions(+), 4 deletions(-)
+On 7/29/24 4:04 PM, Heming Zhao wrote:
+> After ocfs2 has the ability to reclaim suballoc free bg, the
+> suballocator block group may be released. This change makes xfstest
+> case 426 failed.
+> 
+> The existed code call stack:
+> 
+> ocfs2_fh_to_dentry //or ocfs2_fh_to_parent
+>  ocfs2_get_dentry
+>   ocfs2_test_inode_bit
+>    ocfs2_test_suballoc_bit
+>     ocfs2_read_group_descriptor
+>      + read released bg, triggers validate fails, then cause -EROFS
+> 
+> how to fix:
+> The read bg failure is expectation, we should ignore this error.
+> 
+> Signed-off-by: Heming Zhao <heming.zhao@suse.com>
+> ---
+>  fs/ocfs2/suballoc.c | 27 ++++++++++++++++++---------
+>  1 file changed, 18 insertions(+), 9 deletions(-)
+> 
+> diff --git a/fs/ocfs2/suballoc.c b/fs/ocfs2/suballoc.c
+> index 1b64f4c87607..dc421f55ed8f 100644
+> --- a/fs/ocfs2/suballoc.c
+> +++ b/fs/ocfs2/suballoc.c
+> @@ -3037,7 +3037,7 @@ static int ocfs2_test_suballoc_bit(struct ocfs2_super *osb,
+>  	struct ocfs2_group_desc *group;
+>  	struct buffer_head *group_bh = NULL;
+>  	u64 bg_blkno;
+> -	int status;
+> +	int status, quiet = 0;
+>  
+>  	trace_ocfs2_test_suballoc_bit((unsigned long long)blkno,
+>  				      (unsigned int)bit);
+> @@ -3053,11 +3053,16 @@ static int ocfs2_test_suballoc_bit(struct ocfs2_super *osb,
+>  
+>  	bg_blkno = group_blkno ? group_blkno :
+>  		   ocfs2_which_suballoc_group(blkno, bit);
+> -	status = ocfs2_read_group_descriptor(suballoc, alloc_di, bg_blkno,
+> +	status = ocfs2_read_hint_group_descriptor(suballoc, alloc_di, bg_blkno,
+>  					     &group_bh);
+>  	if (status < 0) {
+> -		mlog(ML_ERROR, "read group %llu failed %d\n",
+> -		     (unsigned long long)bg_blkno, status);
+> +		if (status == -EIDRM) {
 
-diff --git a/fs/btrfs/extent-tree.c b/fs/btrfs/extent-tree.c
-index feec49e6f9c8..6ad92876bca0 100644
---- a/fs/btrfs/extent-tree.c
-+++ b/fs/btrfs/extent-tree.c
-@@ -1239,7 +1239,7 @@ static int btrfs_issue_discard(struct block_device *bdev, u64 start, u64 len,
- 			       u64 *discarded_bytes)
- {
- 	int j, ret = 0;
--	u64 bytes_left, end;
-+	u64 bytes_left, bytes_to_discard, end;
- 	u64 aligned_start = ALIGN(start, 1 << SECTOR_SHIFT);
- 
- 	/* Adjust the range to be aligned to 512B sectors if necessary. */
-@@ -1300,13 +1300,25 @@ static int btrfs_issue_discard(struct block_device *bdev, u64 start, u64 len,
- 		bytes_left = end - start;
- 	}
- 
--	if (bytes_left) {
-+	while (bytes_left) {
-+		if (bytes_left > BTRFS_MAX_DATA_CHUNK_SIZE)
-+			bytes_to_discard = BTRFS_MAX_DATA_CHUNK_SIZE;
-+		else
-+			bytes_to_discard = bytes_left;
-+
- 		ret = blkdev_issue_discard(bdev, start >> SECTOR_SHIFT,
--					   bytes_left >> SECTOR_SHIFT,
-+					   bytes_to_discard >> SECTOR_SHIFT,
- 					   GFP_NOFS);
-+
- 		if (!ret)
--			*discarded_bytes += bytes_left;
-+			*discarded_bytes += bytes_to_discard;
-+		else if (ret != -EOPNOTSUPP)
-+			return ret;
-+
-+		start += bytes_to_discard;
-+		bytes_left -= bytes_to_discard;
- 	}
-+
- 	return ret;
- }
- 
--- 
-2.46.0
+I don't think EIDRM is a proper error code in this case.
+We can pass a output parameter or a flag to indicate a released one.
+And please explicitly specify that this can be treated normally in
+the related code logic of ocfs2_read_hint_group_descriptor().
+
+Thanks,
+Joseph
+
+> +			quiet = 1;
+> +			status = -EINVAL;
+> +		} else {
+> +			mlog(ML_ERROR, "read group %llu failed %d\n",
+> +					(unsigned long long)bg_blkno, status);
+> +		}
+>  		goto bail;
+>  	}
+>  
+> @@ -3067,7 +3072,7 @@ static int ocfs2_test_suballoc_bit(struct ocfs2_super *osb,
+>  bail:
+>  	brelse(group_bh);
+>  
+> -	if (status)
+> +	if (status && (!quiet))
+>  		mlog_errno(status);
+>  	return status;
+>  }
+> @@ -3087,7 +3092,7 @@ static int ocfs2_test_suballoc_bit(struct ocfs2_super *osb,
+>   */
+>  int ocfs2_test_inode_bit(struct ocfs2_super *osb, u64 blkno, int *res)
+>  {
+> -	int status;
+> +	int status, quiet = 0;
+>  	u64 group_blkno = 0;
+>  	u16 suballoc_bit = 0, suballoc_slot = 0;
+>  	struct inode *inode_alloc_inode;
+> @@ -3129,8 +3134,12 @@ int ocfs2_test_inode_bit(struct ocfs2_super *osb, u64 blkno, int *res)
+>  
+>  	status = ocfs2_test_suballoc_bit(osb, inode_alloc_inode, alloc_bh,
+>  					 group_blkno, blkno, suballoc_bit, res);
+> -	if (status < 0)
+> -		mlog(ML_ERROR, "test suballoc bit failed %d\n", status);
+> +	if (status < 0) {
+> +		if (status == -EINVAL)
+> +			quiet = 1;
+> +		else
+> +			mlog(ML_ERROR, "test suballoc bit failed %d\n", status);
+> +	}
+>  
+>  	ocfs2_inode_unlock(inode_alloc_inode, 0);
+>  	inode_unlock(inode_alloc_inode);
+> @@ -3138,7 +3147,7 @@ int ocfs2_test_inode_bit(struct ocfs2_super *osb, u64 blkno, int *res)
+>  	iput(inode_alloc_inode);
+>  	brelse(alloc_bh);
+>  bail:
+> -	if (status)
+> +	if (status && !quiet)
+>  		mlog_errno(status);
+>  	return status;
+>  }
 
 
