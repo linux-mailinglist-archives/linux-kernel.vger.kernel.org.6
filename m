@@ -1,45 +1,68 @@
-Return-Path: <linux-kernel+bounces-310726-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310727-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C64BF96806F
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 09:22:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECD38968072
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 09:23:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4844F1F257DB
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 07:22:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4F7EFB2308F
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 07:23:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 351AC18661D;
-	Mon,  2 Sep 2024 07:19:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50B6117D378;
+	Mon,  2 Sep 2024 07:20:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="dQ+i9xOJ"
-Received: from out199-15.us.a.mail.aliyun.com (out199-15.us.a.mail.aliyun.com [47.90.199.15])
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="gLjKyA66"
+Received: from mx08-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A410217C9E7
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 07:19:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=47.90.199.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE95F15DBB3;
+	Mon,  2 Sep 2024 07:20:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725261557; cv=none; b=gHAKh05t4ZZ+O4N4GcacHAqY88IlzC4rGfJ1txi2q/rc37MilD3Lg0Wt2/tBkbClliVk5ZMolBhQ96J2POs0DxLDTkm7RI6yjcg3Qyfbv9DUf5wyuqqT14sTplPGPUayWCMXxsMyHuyH9SwX8zdZQNAsYgFq/WNACK60XGX+OIs=
+	t=1725261652; cv=none; b=b416Gj6ELbrQ5iL5rrrF+5xsrPD+RCuEa6gsDppruBIEKkZGbmTgcV7/xkfOpEos0BOoGCQCZg1Iy4LT7uqIjb+Nt/SSQFWIJv7f/UYyr3Q6UioinTmKQ9kaAnOQ5x/6kdzI57IdGIIvEyb8Bf8GwhIoYDxIlNnZJbd5e+bNOtU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725261557; c=relaxed/simple;
-	bh=WfZfTHj6jyeHw1i8kin0YSOU3AcXw0d/gswtiG32D8c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Rh+W585lPCTdeqYJAqmQprVt73KPO9uhFk9nZazNzHcMqX9792CSC1rApCE+m6QBNBOYbv/vDzc+O6RX04I/AZ0PDO0HI3j2yBOa29ziw9EVmw051iVmw3kVLfxCuvWoTSXyW5Hb4Mtp+VRBdAPVoiv9EaU/cGjLhRX8BMB2gT8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=dQ+i9xOJ; arc=none smtp.client-ip=47.90.199.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1725261536; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=o3KY1048xX8iTaUzpS3u10C/iYTS8rXb7+01vfWalWc=;
-	b=dQ+i9xOJGRYcw5YIYN0k5VoWniNAaIw5ZLW9w2LUhUahMr9JuPSQeT4Q4m3sLmNmlaDn3ZjnWC3lvrrFokLxV4ECbgwSbiVONjqZdBpvm2jntorn1dgFEdS7psWvR/+Y1l1DI5+tj8phuCp7dd311CFWdHo8nSTCEsrJewByW2s=
-Received: from 30.244.151.91(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WE5DaGW_1725261535)
-          by smtp.aliyun-inc.com;
-          Mon, 02 Sep 2024 15:18:56 +0800
-Message-ID: <1067fd19-495e-40d7-9acf-bf2735ca89fb@linux.alibaba.com>
-Date: Mon, 2 Sep 2024 15:18:54 +0800
+	s=arc-20240116; t=1725261652; c=relaxed/simple;
+	bh=++hGo6b12+vxq83JdLH9ooYDjvTjt3PqY5WgAfKFms4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=LR1gXHhZoOFDat+q2FT/oxCOLxmTGrk7FQWSG4gEGKZKpiIgqLAnunLybL17q4M5gBKC0nKIDdWXbHRNiC1FPwlT5z/b3NjBhFEXij4dKxQzILElgJdTTnu6fLbDZBwnGX/Mz+WmDz9k+4y4p50WMvzpnZU7tsEewCB6Rw1RF6Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=gLjKyA66; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0369457.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4824snrq008347;
+	Mon, 2 Sep 2024 09:20:07 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	sLn8YX8O3WDqoWEd6Wy0yt1v1YptlaDbfBdJJeo6sw0=; b=gLjKyA66m6ulkqnY
+	9BvNbbR8zZoLSZ0gmKbPABqYi3hKbtGhMSnD1TT0+eHvXPGh3GgZTz0lFY2mjj6s
+	77ZuiokvGtQknaIbGPcrPOuYt1G7q49VbODXkpqeLVFiEn7ZotFmHXAotDr2FfBC
+	zoyd6A9J3Mrvs5Pq0IoGWcwTqrjCaO2v9AZxwbdVhTZz8KAoiwjzaFETpA7uRcVd
+	+Bf9K7Rge/UcM1FALM/zfaPjjBqYaEgsF4Qf1sb78dwj+qEit+Xc17wZ18/Xz3BP
+	93O+dtiiJyB1BHEJ9xpCCUbPNRoG0b0RJG9pFDfwYzcOh8qTTiW/LfPzkE9ZQxep
+	q0b89w==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 41ce4j3eb4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 02 Sep 2024 09:20:07 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 47CF240058;
+	Mon,  2 Sep 2024 09:19:57 +0200 (CEST)
+Received: from Webmail-eu.st.com (eqndag1node5.st.com [10.75.129.134])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 0B84121D23A;
+	Mon,  2 Sep 2024 09:18:58 +0200 (CEST)
+Received: from SAFDAG1NODE1.st.com (10.75.90.17) by EQNDAG1NODE5.st.com
+ (10.75.129.134) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Mon, 2 Sep
+ 2024 09:18:57 +0200
+Received: from [10.48.86.121] (10.48.86.121) by SAFDAG1NODE1.st.com
+ (10.75.90.17) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Mon, 2 Sep
+ 2024 09:18:57 +0200
+Message-ID: <cfc164a7-9cf9-42d8-8b66-b4567d3971ae@foss.st.com>
+Date: Mon, 2 Sep 2024 09:18:56 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -47,292 +70,81 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V2 2/2] erofs: refactor read_inode calling convention
-To: Yiyang Wu <toolmanp@tlmp.cc>
-Cc: linux-erofs@lists.ozlabs.org, linux-kernel@vger.kernel.org,
- Al Viro <viro@zeniv.linux.org.uk>
-References: <20240902070047.384952-1-toolmanp@tlmp.cc>
- <20240902070047.384952-3-toolmanp@tlmp.cc>
-From: Gao Xiang <hsiangkao@linux.alibaba.com>
-In-Reply-To: <20240902070047.384952-3-toolmanp@tlmp.cc>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Subject: Re: [PATCH v9 4/7] remoteproc: core: Add TEE interface support for
+ firmware release
+To: kernel test robot <lkp@intel.com>, Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Jens Wiklander
+	<jens.wiklander@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        "Krzysztof
+ Kozlowski" <krzk@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+CC: <oe-kbuild-all@lists.linux.dev>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <op-tee@lists.trustedfirmware.org>, <devicetree@vger.kernel.org>
+References: <20240830095147.3538047-5-arnaud.pouliquen@foss.st.com>
+ <202409010034.Tln3soEY-lkp@intel.com>
+Content-Language: en-US
+From: Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
+Organization: STMicroelectronics
+In-Reply-To: <202409010034.Tln3soEY-lkp@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: EQNCAS1NODE4.st.com (10.75.129.82) To SAFDAG1NODE1.st.com
+ (10.75.90.17)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-09-01_06,2024-08-30_01,2024-05-17_01
 
 
 
-On 2024/9/2 15:00, Yiyang Wu via Linux-erofs wrote:
-> Refactor out the iop binding behavior out of the erofs_fill_symlink
-> and move erofs_buf into the erofs_read_inode, so that erofs_fill_inode
-> can only deal with inode operation bindings and can be decoupled from
-> metabuf operations. This results in better calling conventions.
+On 8/31/24 18:43, kernel test robot wrote:
+> Hi Arnaud,
 > 
-> Note that after this patch, we do not need erofs_buf and ofs as
-> parameters any more when calling erofs_read_inode as
-> all the data operations are now included in itself.
+> kernel test robot noticed the following build warnings:
 > 
-> Suggested-by: Al Viro <viro@zeniv.linux.org.uk>
-> Link: https://lore.kernel.org/all/20240425222847.GN2118490@ZenIV/
-> Signed-off-by: Yiyang Wu <toolmanp@tlmp.cc>
-> ---
->   fs/erofs/inode.c | 126 ++++++++++++++++++++++++-----------------------
->   1 file changed, 65 insertions(+), 61 deletions(-)
+> [auto build test WARNING on 5be63fc19fcaa4c236b307420483578a56986a37]
 > 
-> diff --git a/fs/erofs/inode.c b/fs/erofs/inode.c
-> index d051afe39670..d854509bb082 100644
-> --- a/fs/erofs/inode.c
-> +++ b/fs/erofs/inode.c
-> @@ -8,8 +8,39 @@
->   
->   #include <trace/events/erofs.h>
->   
-> -static void *erofs_read_inode(struct erofs_buf *buf,
-> -			      struct inode *inode, unsigned int *ofs)
-> +static int erofs_fill_symlink(struct inode *inode, void *kaddr,
-> +			      unsigned int m_pofs)
-> +{
-> +	struct erofs_inode *vi = EROFS_I(inode);
-> +	unsigned int bsz = i_blocksize(inode);
-> +	char *lnk;
-> +
-> +	/* if it cannot be handled with fast symlink scheme */
-> +	if (vi->datalayout != EROFS_INODE_FLAT_INLINE ||
-> +	    inode->i_size >= bsz || inode->i_size < 0) {
-> +		return 0;
-> +	}
-> +
-> +	m_pofs += vi->xattr_isize;
-> +	/* inline symlink data shouldn't cross block boundary */
-> +	if (m_pofs + inode->i_size > bsz) {
-> +		erofs_err(inode->i_sb,
-> +			  "inline data cross block boundary @ nid %llu",
-> +			  vi->nid);
+> url:    https://github.com/intel-lab-lkp/linux/commits/Arnaud-Pouliquen/remoteproc-core-Introduce-rproc_pa_to_va-helper/20240830-175609
+> base:   5be63fc19fcaa4c236b307420483578a56986a37
+> patch link:    https://lore.kernel.org/r/20240830095147.3538047-5-arnaud.pouliquen%40foss.st.com
+> patch subject: [PATCH v9 4/7] remoteproc: core: Add TEE interface support for firmware release
+> config: loongarch-allmodconfig (https://download.01.org/0day-ci/archive/20240901/202409010034.Tln3soEY-lkp@intel.com/config)
+> compiler: loongarch64-linux-gcc (GCC) 14.1.0
+> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240901/202409010034.Tln3soEY-lkp@intel.com/reproduce)
+> 
+> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes: https://lore.kernel.org/oe-kbuild-all/202409010034.Tln3soEY-lkp@intel.com/
+> 
+> All warnings (new ones prefixed by >>):
+> 
+>    In file included from drivers/remoteproc/remoteproc_core.c:32:
+>>> include/linux/remoteproc_tee.h:52:12: warning: 'tee_rproc_parse_fw' defined but not used [-Wunused-function]
+>       52 | static int tee_rproc_parse_fw(struct rproc *rproc, const struct firmware *fw)
+>          |            ^~~~~~~~~~~~~~~~~~
+> 
+> 
+> vim +/tee_rproc_parse_fw +52 include/linux/remoteproc_tee.h
+> 
+> 498143a453d14e Arnaud Pouliquen 2024-08-30  51  
+> 498143a453d14e Arnaud Pouliquen 2024-08-30 @52  static int tee_rproc_parse_fw(struct rproc *rproc, const struct firmware *fw)
+> 498143a453d14e Arnaud Pouliquen 2024-08-30  53  {
+> 498143a453d14e Arnaud Pouliquen 2024-08-30  54  	/* This shouldn't be possible */
+> 498143a453d14e Arnaud Pouliquen 2024-08-30  55  	WARN_ON(1);
+> 498143a453d14e Arnaud Pouliquen 2024-08-30  56  
+> 498143a453d14e Arnaud Pouliquen 2024-08-30  57  	return 0;
+> 498143a453d14e Arnaud Pouliquen 2024-08-30  58  }
+> 498143a453d14e Arnaud Pouliquen 2024-08-30  59  
+> 
 
-Since you move the code block of erofs_fill_symlink,
+The inline attribute is missing. As it is a minor fix, I'm waiting for more
+reviews before fixing it in the next version.
 
-I think it'd be better to update this statement to
-		erofs_err(inode->i_sb, "inline data cross block boundary @ nid %llu",
-			  vi->nid);
-
-As I mentioned, the print message doesn't have line limitation.
-
-> +		DBG_BUGON(1);
-> +		return -EFSCORRUPTED;
-> +	}
-> +
-> +	lnk = kmemdup_nul(kaddr + m_pofs, inode->i_size, GFP_KERNEL);
-> +
-> +	if (!lnk)
-> +		return -ENOMEM;
-
-As I mentioned in the previous patch, so it could become
-	inode->i_link = kmemdup_nul(kaddr + m_pofs, inode->i_size, GFP_KERNEL);
-	return inode->i_link ? 0 : -ENOMEM;
-
-> +
-> +	inode->i_link = lnk;
-> +	return 0;
-> +}
-> +
-> +static int erofs_read_inode(struct inode *inode)
->   {
->   	struct super_block *sb = inode->i_sb;
->   	struct erofs_sb_info *sbi = EROFS_SB(sb);
-> @@ -20,20 +51,21 @@ static void *erofs_read_inode(struct erofs_buf *buf,
->   	struct erofs_inode_compact *dic;
->   	struct erofs_inode_extended *die, *copied = NULL;
->   	union erofs_inode_i_u iu;
-> -	unsigned int ifmt;
-> +	struct erofs_buf buf;
-> +	unsigned int ifmt, ofs;
->   	int err;
->   
->   	blkaddr = erofs_blknr(sb, inode_loc);
-> -	*ofs = erofs_blkoff(sb, inode_loc);
-> +	ofs = erofs_blkoff(sb, inode_loc);
->   
-> -	kaddr = erofs_read_metabuf(buf, sb, erofs_pos(sb, blkaddr), EROFS_KMAP);
-> +	kaddr = erofs_read_metabuf(&buf, sb, erofs_pos(sb, blkaddr), EROFS_KMAP);
->   	if (IS_ERR(kaddr)) {
->   		erofs_err(sb, "failed to get inode (nid: %llu) page, err %ld",
->   			  vi->nid, PTR_ERR(kaddr));
-> -		return kaddr;
-> +		return PTR_ERR(kaddr);
->   	}
->   
-> -	dic = kaddr + *ofs;
-> +	dic = kaddr + ofs;
->   	ifmt = le16_to_cpu(dic->i_format);
->   	if (ifmt & ~EROFS_I_ALL) {
->   		erofs_err(sb, "unsupported i_format %u of nid %llu",
-> @@ -54,11 +86,11 @@ static void *erofs_read_inode(struct erofs_buf *buf,
->   	case EROFS_INODE_LAYOUT_EXTENDED:
->   		vi->inode_isize = sizeof(struct erofs_inode_extended);
->   		/* check if the extended inode acrosses block boundary */
-> -		if (*ofs + vi->inode_isize <= sb->s_blocksize) {
-> -			*ofs += vi->inode_isize;
-> +		if (ofs + vi->inode_isize <= sb->s_blocksize) {
-> +			ofs += vi->inode_isize;
->   			die = (struct erofs_inode_extended *)dic;
->   		} else {
-> -			const unsigned int gotten = sb->s_blocksize - *ofs;
-> +			const unsigned int gotten = sb->s_blocksize - ofs;
->   
->   			copied = kmalloc(vi->inode_isize, GFP_KERNEL);
->   			if (!copied) {
-> @@ -66,16 +98,16 @@ static void *erofs_read_inode(struct erofs_buf *buf,
->   				goto err_out;
->   			}
->   			memcpy(copied, dic, gotten);
-> -			kaddr = erofs_read_metabuf(buf, sb, erofs_pos(sb, blkaddr + 1),
-> +			kaddr = erofs_read_metabuf(&buf, sb, erofs_pos(sb, blkaddr + 1),
->   						   EROFS_KMAP);
->   			if (IS_ERR(kaddr)) {
->   				erofs_err(sb, "failed to get inode payload block (nid: %llu), err %ld",
->   					  vi->nid, PTR_ERR(kaddr));
->   				kfree(copied);
-> -				return kaddr;
-> +				return PTR_ERR(kaddr);
->   			}
-> -			*ofs = vi->inode_isize - gotten;
-> -			memcpy((u8 *)copied + gotten, kaddr, *ofs);
-> +			ofs = vi->inode_isize - gotten;
-> +			memcpy((u8 *)copied + gotten, kaddr, ofs);
->   			die = copied;
->   		}
->   		vi->xattr_isize = erofs_xattr_ibody_size(die->i_xattr_icount);
-> @@ -95,7 +127,7 @@ static void *erofs_read_inode(struct erofs_buf *buf,
->   		break;
->   	case EROFS_INODE_LAYOUT_COMPACT:
->   		vi->inode_isize = sizeof(struct erofs_inode_compact);
-> -		*ofs += vi->inode_isize;
-> +		ofs += vi->inode_isize;
->   		vi->xattr_isize = erofs_xattr_ibody_size(dic->i_xattr_icount);
->   
->   		inode->i_mode = le16_to_cpu(dic->i_mode);
-> @@ -119,6 +151,11 @@ static void *erofs_read_inode(struct erofs_buf *buf,
->   	case S_IFREG:
->   	case S_IFDIR:
->   	case S_IFLNK:
-> +		if(S_ISLNK(inode->i_mode)) {
-> +			err = erofs_fill_symlink(inode, kaddr, ofs);
-> +			if(err)
-
-missing a blank:
-			if (err)
-
-
-> +				goto err_out;
-> +		}
->   		vi->raw_blkaddr = le32_to_cpu(iu.raw_blkaddr);
->   		break;
->   	case S_IFCHR:
-> @@ -165,63 +202,29 @@ static void *erofs_read_inode(struct erofs_buf *buf,
->   		inode->i_blocks = round_up(inode->i_size, sb->s_blocksize) >> 9;
->   	else
->   		inode->i_blocks = nblks << (sb->s_blocksize_bits - 9);
-> -	return kaddr;
-> +
-> +	erofs_put_metabuf(&buf);
-> +	return 0;
->   
->   err_out:
-
-I wonder this can be unified too as:
-
-err_out:
-	DBG_BUGON(err);
-	kfree(copied);			I'm not sure if it's really needed now.
-	erofs_put_metabuf(&buf);
-	return err;
-
->   	DBG_BUGON(1);
->   	kfree(copied);
-> -	erofs_put_metabuf(buf);
-> -	return ERR_PTR(err);
-> +	erofs_put_metabuf(&buf);
-> +	return err;
->   }
->   
-> -static int erofs_fill_symlink(struct inode *inode, void *kaddr,
-> -			      unsigned int m_pofs)
-> -{
-> -	struct erofs_inode *vi = EROFS_I(inode);
-> -	unsigned int bsz = i_blocksize(inode);
-> -	char *lnk;
-> -
-> -	/* if it cannot be handled with fast symlink scheme */
-> -	if (vi->datalayout != EROFS_INODE_FLAT_INLINE ||
-> -	    inode->i_size >= bsz || inode->i_size < 0) {
-> -		inode->i_op = &erofs_symlink_iops;
-> -		return 0;
-> -	}
-> -
-> -	m_pofs += vi->xattr_isize;
-> -	/* inline symlink data shouldn't cross block boundary */
-> -	if (m_pofs + inode->i_size > bsz) {
-> -		erofs_err(inode->i_sb,
-> -			  "inline data cross block boundary @ nid %llu",
-> -			  vi->nid);
-> -		DBG_BUGON(1);
-> -		return -EFSCORRUPTED;
-> -	}
-> -
-> -	lnk = kmemdup_nul(kaddr + m_pofs, inode->i_size, GFP_KERNEL);
-> -
-> -	if (!lnk)
-> -		return -ENOMEM;
-> -
-> -	inode->i_link = lnk;
-> -	inode->i_op = &erofs_fast_symlink_iops;
-> -	return 0;
-> -}
->   
->   static int erofs_fill_inode(struct inode *inode)
->   {
->   	struct erofs_inode *vi = EROFS_I(inode);
-> -	struct erofs_buf buf = __EROFS_BUF_INITIALIZER;
-> -	void *kaddr;
-> -	unsigned int ofs;
->   	int err = 0;
->   
->   	trace_erofs_fill_inode(inode);
->   
->   	/* read inode base data from disk */
-> -	kaddr = erofs_read_inode(&buf, inode, &ofs);
-> -	if (IS_ERR(kaddr))
-> -		return PTR_ERR(kaddr);
-> +	err = erofs_read_inode(inode);
-> +	if (err)
-> +		goto out_unlock;
-
-out_unlock can be avoided too, just
-		return err;
-
->   
->   	/* setup the new inode */
->   	switch (inode->i_mode & S_IFMT) {
-> @@ -238,9 +241,11 @@ static int erofs_fill_inode(struct inode *inode)
->   		inode_nohighmem(inode);
->   		break;
->   	case S_IFLNK:
-> -		err = erofs_fill_symlink(inode, kaddr, ofs);
-> -		if (err)
-> -			goto out_unlock;
-> +		if (inode->i_link)
-> +			inode->i_op = &erofs_fast_symlink_iops;
-> +		else
-> +			inode->i_op = &erofs_symlink_iops;
-> +
->   		inode_nohighmem(inode);
->   		break;
->   	case S_IFCHR:
-> @@ -273,7 +278,6 @@ static int erofs_fill_inode(struct inode *inode)
->   #endif
->   	}
->   out_unlock:
-
-Remove this.
-
-Thanks,
-Gao Xiang
+Regards,
+Arnaud
 
