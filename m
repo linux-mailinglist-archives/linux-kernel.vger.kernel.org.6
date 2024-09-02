@@ -1,119 +1,148 @@
-Return-Path: <linux-kernel+bounces-311244-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311242-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 560E0968680
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 13:44:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4BB196867C
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 13:43:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 874E51C228FC
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 11:44:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 65EE3B24575
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 11:43:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4EC51D61BC;
-	Mon,  2 Sep 2024 11:44:36 +0000 (UTC)
-Received: from smtpbgjp3.qq.com (smtpbgjp3.qq.com [54.92.39.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1CB81D679D;
+	Mon,  2 Sep 2024 11:43:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VNXrlT7t"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D8DE1D6184;
-	Mon,  2 Sep 2024 11:44:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.92.39.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B256D1D61A4;
+	Mon,  2 Sep 2024 11:43:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725277476; cv=none; b=B1nTHhxqmwESIbXipZAxdhRaVXcDhb1sgCNR6RneEr/y3mC4PuHXahJrikZiUokd5xztg81LDoToc70nMASOKoEjK64+wp+RQ6X9EJq6jEvT6cI0xtHBdCy/ito4xTj0pVyhf/gn1xIOvuoFWsIMH9cgUEDRnuH93heeDqE6nic=
+	t=1725277390; cv=none; b=NTRZQmbKjv8SO6x8BHaN/vhf2lN1Y5t4tUP4mdCBI7IFhzVDuFLFvzfXYwEa0AGh6QV+tcc8Iq3gLgaWPpJqOzvc6ItD7KOm5K8QPWfsNWBRs2FVvN++U/nzAhab0tRotdmxUf1848SlcATHVm6C54ftbrfD4rXB7j6D5FQr0io=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725277476; c=relaxed/simple;
-	bh=uTSWWEcMWHAb3DoesgJoSb8LvIGywPMBaKl0Srbj/XY=;
-	h=From:To:Cc:Subject:Mime-Version:Content-Type:Date:Message-ID; b=f+qFhZDgZAekiRWIZ6MzDidWT4QvPHr2FCJPMON/E9+Gd3z7eZhhZLt2mmEgMJCJg1X68AzI/WwPq65wHfPRm+rQrJnZ913pdutaYyUDSE/1u0JXTwkHHe4lL+elkqbkLxFedP0jqQDd8uv+z7XSuYHBqBZwz/EVRFj+HoJYVZ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=m.fudan.edu.cn; spf=pass smtp.mailfrom=m.fudan.edu.cn; arc=none smtp.client-ip=54.92.39.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=m.fudan.edu.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=m.fudan.edu.cn
-X-QQ-GoodBg: 2
-X-QQ-SSF: 0040000000000000
-X-QQ-XMRINFO: OD9hHCdaPRBwq3WW+NvGbIU=
-X-QQ-XMAILINFO: OSjQccS6YHkHb45SII8Ftfw23r+kCfO1I9L8eJcWUl+ckgWG6oPRWtux
-	e+7bIjnoXJ2mzekK2Al88AZlfoA/y3jIj6f1+DIn/wNJk71a5ye4d07PVLU1E+rsVZI/ecG
-	FvtIzxnKgPep4H05cwPfiHgnIj5QGHv2kcWcQprG3WTdVePrXzwpQpuNfj9Tl5LTv4VyzBd
-	tFgm+PZwCcOWiZ6O1zdpgJBixSYHOGqlBZe8DPsl06tmrqGEyjX9PeixTfYd6TghTyGD4fp
-	icXVXw3/azIrkbSQectKiSV5baOcxBekkgEEo0/hI8WiLid7R0Gd66LmJZhcZ84eaKuMRoM
-	BKI/DkdU9xue92oUV6VAtnXDEmENEnvlKY5bpDpYcbb2dh0zAnh59yMLYyn4iuRBHc55on3
-	z7CUMQcxp2CqxxalmC956MZcDBR1j5ADkbRAJqh1fDYUP0NHpgBpDupKlfIAH8kS9muQIRX
-	8rDzwtCfknshhZ1KU/wm7GmEsXeC9QgF6EWexaa1IxqUfWrJ2BFHXZKM8ENh88dEQdpsIFH
-	SlaEOOVx36PKsv8r92VThmh/bxcjhkM1mnFtsDdRGA1ES4lYpQEOmYH7+SfbxsPUO5n1ZyW
-	qy5b+T9jsjQzGKOGieZgGMUQpAuvUWKIoq/wiarN3ohw+5xQYkE+OcLw76QnrgMMxhPwQHV
-	fk1cNDevyW8l3k5Oc66Y/6XG5WJtsIEyhTquWNrd1MWqdpsqkdjX+eH8sS7YQJ23c6UMci9
-	0HPPbVfRDOKzChldWb7JclTphfHaPm0T4zquRr1RzHBvMiDKTnXqwkNFbrcA2npt4Q+Vg1O
-	3ul3Ay4+GPoW3JlYaDvOiF3Z2Wqg3oPNQfogqJGssBy/iQMY75gYOoOf3aCrgn3hrZVZ3MG
-	EvMruvbJwYqY80bpivhSJ7uJp4JygN/0tC0ECm3zyV0B0Z+y9BNUkcIjot8V9IaPyZuQclH
-	Uh4/MSLFEaweM6g==
-X-QQ-FEAT: 2Rmh/KmsIngruwTONLJY3WAWKAdbrRsw
-X-QQ-BUSINESS-ORIGIN: 2
-X-QQ-Originating-IP: dmuZ05ao3G3kluBycU5Jr9cTKcstfsVjiTFlSQbb574=
-X-QQ-STYLE: 
-X-QQ-mid: t6sz3a-0t1725277376t9055661
-From: "=?utf-8?B?V2VudGFpIERlbmc=?=" <wtdeng24@m.fudan.edu.cn>
-To: "=?utf-8?B?bGludXg=?=" <linux@armlinux.org.uk>
-Cc: "=?utf-8?B?ZGF2ZW0=?=" <davem@davemloft.net>, "=?utf-8?B?ZWR1bWF6ZXQ=?=" <edumazet@google.com>, "=?utf-8?B?a3ViYQ==?=" <kuba@kernel.org>, "=?utf-8?B?cGFiZW5p?=" <pabeni@redhat.com>, "=?utf-8?B?bGludXgtYXJtLWtlcm5lbA==?=" <linux-arm-kernel@lists.infradead.org>, "=?utf-8?B?bmV0ZGV2?=" <netdev@vger.kernel.org>, "=?utf-8?B?bGludXgta2VybmVs?=" <linux-kernel@vger.kernel.org>, "=?utf-8?B?5p2c6Zuq55uI?=" <21210240012@m.fudan.edu.cn>
-Subject: [BUG] Possible Use-After-Free Vulnerability in ether3 Driver Due to Race Condition
+	s=arc-20240116; t=1725277390; c=relaxed/simple;
+	bh=KE3h6tXE+RE3rlbTABeMAqaykIvLYaMlD5zODlIksVc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=eAA1gxUXPwId+QxJiiypnSMTWAj4c8wqRLHDZqI6XKxuKgrdB/pNNW2MQJyWHebMNYu0YMoS84Ureuq5r+fg8qAKNZ4fNe0vW6lb9PIAySICiHcdJavjxDLEreWJQoQSazqY/dPZhPpesPhCydxxiK3ce4c+KkAdQu66b0i7V8g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VNXrlT7t; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-42bbe809b06so22915205e9.1;
+        Mon, 02 Sep 2024 04:43:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725277387; x=1725882187; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=4sVPD01q+sp9GhLaXZ0ALw8RcGZeWI4NIEtqmbs5IO8=;
+        b=VNXrlT7tq8TeTxv5A/YI6pNhgKlLF9gpG/gZpaUvzIlgFh3G+YiddvBCujZC5khRFA
+         4Ds9qGq8kiYGVOQg+0/cyLf5ki7RBRo9SqcGJzJVkRpPD1VjdbtunkvgXs+OJIUdnBbi
+         QtkoJmHo/tK7RwQ3+HqF6C0PSUujQ3jW5s78A/CRDOxd7BngXyDhoA+T6c451+8EH8KY
+         8jwaEsJsILSmuz2MnmQGJZ9MK/ljlgh3N/5vPZKYqNtMo3RU+ZJ6j/9IJ5o968iLFupH
+         T22RYeQ1Yc/qurSs3Rd4j6iqzW3iLMFXBR8rodKJkQlegRdBI7XC3IJR8XIwWyheU4f0
+         P3hQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725277387; x=1725882187;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=4sVPD01q+sp9GhLaXZ0ALw8RcGZeWI4NIEtqmbs5IO8=;
+        b=Km31XOGwbr1jgrv84//zHy4//fDl96oKhnGm6ZYrJcZRTkmHLB+JRQDTvIFkfVu9g4
+         1f/3ZOWRJhxk9OEo6u4WWG74eHfQ/okNlPbLo4M91A5TDEKl/tOAe7h3zs8zxuQkjI/P
+         V4VV0phzTxZ9Mb30O0pZytfW3/Ut3vvDPUCad8BGMFQAReAT7752tB1dw0twuz3fUzUw
+         AKgP/3Y6YXj7ixADuH7i7BOIvKsuIkVRNjzAWh5fIvM9qFvftTo4rXKf7fsyQIltMwE8
+         eqQUfAinlXAYf5hz4uNjIhEAh98krvz/foGpXsFSGkgG5Hl/qaOyAgcVWxQH2EvTZBsa
+         /tRg==
+X-Forwarded-Encrypted: i=1; AJvYcCVTKhhuKLMm3lWj4dz1goyJ4V+lxZLimeI3MyzRxYXJpLfjQjnv/7h3JXgeIAgEHzQzBz3rlsOsz0RW8Q==@vger.kernel.org, AJvYcCX8m64MmaY9e5L8IlZTqq6MnWKyRKQai6f7F4xCd2hqufIDMxx0wRnQ0QMVF7+CCAt0AoItHsI6dHP6v+W6@vger.kernel.org
+X-Gm-Message-State: AOJu0YzC5oiYf86ZYC+XhrNeC2woLd1eMIii1nBL55XK0Jshfbeh3+vw
+	596adQ+kiuiJjRuDEGPksmntfE2/dMS/qnqxiWQb7yU2JMxeDotg
+X-Google-Smtp-Source: AGHT+IFBCaxP6BeMbZaB1F1NjtsK2uFzuEbSmm9dXk1j3mJRaUWA175Y/poi4lglTA8IHIfcXLC5dw==
+X-Received: by 2002:a05:600c:1914:b0:426:8884:2c58 with SMTP id 5b1f17b1804b1-42bb02c10bemr119629185e9.4.1725277386860;
+        Mon, 02 Sep 2024 04:43:06 -0700 (PDT)
+Received: from fedora-thinkpad.lan (net-109-116-17-225.cust.vodafonedsl.it. [109.116.17.225])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-374b34725desm8473607f8f.81.2024.09.02.04.43.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 02 Sep 2024 04:43:06 -0700 (PDT)
+From: Luca Stefani <luca.stefani.ge1@gmail.com>
+To: 
+Cc: Luca Stefani <luca.stefani.ge1@gmail.com>,
+	Qu Wenruo <quwenruo.btrfs@gmx.com>,
+	Chris Mason <clm@fb.com>,
+	Josef Bacik <josef@toxicpanda.com>,
+	David Sterba <dsterba@suse.com>,
+	linux-btrfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] btrfs: Split remaining space to discard in chunks
+Date: Mon,  2 Sep 2024 13:43:00 +0200
+Message-ID: <20240902114303.922472-1-luca.stefani.ge1@gmail.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain;
-	charset="utf-8"
-Content-Transfer-Encoding: base64
-Date: Mon, 2 Sep 2024 19:42:55 +0800
-X-Priority: 1
-Message-ID: <tencent_48E7914150CBB05A03CD68C4@qq.com>
-X-QQ-MIME: TCMime 1.0 by Tencent
-X-Mailer: QQMail 2.x
-X-QQ-Mailer: QQMail 2.x
-X-BIZMAIL-ID: 10923399988514903829
-X-QQ-SENDSIZE: 520
-Received: from qq.com (unknown [127.0.0.1])
-	by smtp.qq.com (ESMTP) with SMTP
-	id ; Mon, 02 Sep 2024 19:42:57 +0800 (CST)
-Feedback-ID: t:m.fudan.edu.cn:qybglogicsvrgz:qybglogicsvrgz7a-0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-T3VyIHRlYW0gcmVjZW50bHkgZGV2ZWxvcGVkIGEgdnVsbmVyYWJpbGl0eSBkZXRlY3Rpb24g
-dG9vbCwgYW5kIHdlIGhhdmUgZW1wbG95ZWQgaXQgdG8gc2NhbiB0aGUgTGludXggS2VybmVs
-ICh2ZXJzaW9uIDYuOS42KS4gQWZ0ZXIgbWFudWFsIHJldmlldywgd2UgZm91bmQgc29tZSBw
-b3RlbnRpYWxseSB2dWxuZXJhYmxlIGNvZGUgc25pcHBldHMgd2hpY2ggbWF5IGhhdmUgdXNl
-LWFmdGVyLWZyZWUgYnVncyBkdWUgdG8gcmFjZSBjb25kaXRpb25zLiBUaGVyZWZvcmUsIHdl
-IHdvdWxkIGFwcHJlY2lhdGUgeW91ciBleHBlcnQgaW5zaWdodCB0byBjb25maXJtIHdoZXRo
-ZXIgdGhlc2UgdnVsbmVyYWJpbGl0aWVzIGNvdWxkIGluZGVlZCBwb3NlIGEgcmlzayB0byB0
-aGUgc3lzdGVtLg0KDQpWdWxuZXJhYmlsaXR5IERlc2NyaXB0aW9uOg0KDQpGaWxlOiAvZHJp
-dmVycy9uZXQvZXRoZXJuZXQvc2VlcS9ldGhlcjMuYw0KDQpJbiB0aGUgZXRoZXIzX3Byb2Jl
-IGZ1bmN0aW9uLCBhIHRpbWVyIGlzIGluaXRpYWxpemVkIHdpdGggYSBjYWxsYmFjayBmdW5j
-dGlvbiBldGhlcjNfbGVkb2ZmLCBib3VuZCB0byAmcHJldihkZXYpLT50aW1lci4gT25jZSB0
-aGUgdGltZXIgaXMgc3RhcnRlZCwgdGhlcmUgaXMgYSByaXNrIG9mIGEgcmFjZSBjb25kaXRp
-b24gaWYgdGhlIG1vZHVsZSBvciBkZXZpY2UgaXMgcmVtb3ZlZCwgdHJpZ2dlcmluZyB0aGUg
-ZXRoZXIzX3JlbW92ZSBmdW5jdGlvbiB0byBwZXJmb3JtIGNsZWFudXAuIFRoZSBzZXF1ZW5j
-ZSBvZiBvcGVyYXRpb25zIHRoYXQgbWF5IGxlYWQgdG8gYSBVQUYgYnVnIGlzIGFzIGZvbGxv
-d3M6DQoNCkNQVTAgICAgICAgICAgICAgICAgICAgICAgICAgICAgQ1BVMQ0KDQogICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgfCAgIGV0aGVyM19sZWRvZmYNCmV0aGVyM19yZW1vdmUg
-ICAgICAgICAgICAgICB8DQogICAgZnJlZV9uZXRkZXYoZGV2KTsgICAgICAgfA0KICAgIHB1
-dF9kZXZpY2UgICAgICAgICAgICAgIHwNCiAgICBrZnJlZShkZXYpOyAgICAgICAgICAgICB8
-DQogICAgICAgICAgICAgICAgICAgICAgICAgICAgfCAgICAgICBldGhlcjNfb3V0dyhwcml2
-KGRldiktPnJlZ3MuY29uZmlnMiB8PSBDRkcyX0NUUkxPLCBSRUdfQ09ORklHMik7DQogICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgfCAgICAgICAvLyB1c2UgZGV2DQoNClByb3Bvc2Vk
-IEZpeDoNCg0KVGhlIGlzc3VlIGNhbiBiZSByZXNvbHZlZCBieSBlbnN1cmluZyB0aGF0IHRo
-ZSB0aW1lciBpcyBjYW5jZWxlZCBiZWZvcmUgcHJvY2VlZGluZyB3aXRoIHRoZSBjbGVhbnVw
-IGluIGV0aGVyM19yZW1vdmUgb3IgZXRoZXIzX2Nsb3NlLiBUaGlzIHdpbGwgcHJldmVudCBh
-bnkgcGVuZGluZyBvciBhY3RpdmUgdGltZXIgZnVuY3Rpb25zIGZyb20gYWNjZXNzaW5nIG1l
-bW9yeSB0aGF0IGhhcyBhbHJlYWR5IGJlZW4gZnJlZWQuDQoNClJlbGV2YW50IENWRSBhbmQg
-UmVmZXJlbmNlOg0KDQpUaGlzIGlzc3VlIGlzIHNpbWlsYXIgdG8gdGhlIHZ1bG5lcmFiaWxp
-dHkgZG9jdW1lbnRlZCBpbiBDVkUtMjAyMy0zMTQxLCBhbmQgYSByZWxhdGVkIGZpeCB3YXMg
-aW1wbGVtZW50ZWQgYXMgc2hvd24gaW4gdGhlIGZvbGxvd2luZyBjb21taXQ6DQoNCm1lbXN0
-aWNrOiByNTkyOiBGaXggVUFGIGJ1ZyBpbiByNTkyX3JlbW92ZSBkdWUgdG8gcmFjZSBjb25k
-aXRpb24gKGh0dHBzOi8vZ2l0Lmtlcm5lbC5vcmcvcHViL3NjbS9saW51eC9rZXJuZWwvZ2l0
-L3RvcnZhbGRzL2xpbnV4LmdpdC9jb21taXQvP2lkPTYzMjY0NDIyNzg1MDIxNzA0YzM5YjM4
-ZjY1YTc4YWI5ZTRhMTg2ZDcpDQoNClJlcXVlc3QgZm9yIFJldmlldzoNCg0KV2Ugd291bGQg
-YXBwcmVjaWF0ZSB5b3VyIGV4cGVydCBpbnNpZ2h0IHRvIGNvbmZpcm0gd2hldGhlciB0aGlz
-IHZ1bG5lcmFiaWxpdHkgaW5kZWVkIHBvc2VzIGEgcmlzayB0byB0aGUgc3lzdGVtIGFuZCBp
-ZiB0aGUgcHJvcG9zZWQgZml4IGlzIGFwcHJvcHJpYXRlLg0KDQpUaGFuayB5b3UgZm9yIHlv
-dXIgdGltZSBhbmQgY29uc2lkZXJhdGlvbi4NCg0KQmVzdCByZWdhcmRzLA0KV2VudGFpIERl
-bmcNCnd0ZGVuZzI0QG0uZnVkYW4uZWR1LmNu
+Per Qu Wenruo in case we have a very large disk, e.g. 8TiB device,
+mostly empty although we will do the split according to our super block
+locations, the last super block ends at 256G, we can submit a huge
+discard for the range [256G, 8T), causing a super large delay.
+
+We now split the space left to discard based off the max data
+chunk size (10G) to solve the problem.
+
+Reported-by: Qu Wenruo <quwenruo.btrfs@gmx.com>
+Closes: https://lore.kernel.org/lkml/2e15214b-7e95-4e64-a899-725de12c9037@gmail.com/T/#mdfef1d8b36334a15c54cd009f6aadf49e260e105
+Signed-off-by: Luca Stefani <luca.stefani.ge1@gmail.com>
+---
+ fs/btrfs/extent-tree.c | 20 ++++++++++++++++----
+ 1 file changed, 16 insertions(+), 4 deletions(-)
+
+diff --git a/fs/btrfs/extent-tree.c b/fs/btrfs/extent-tree.c
+index feec49e6f9c8..6ad92876bca0 100644
+--- a/fs/btrfs/extent-tree.c
++++ b/fs/btrfs/extent-tree.c
+@@ -1239,7 +1239,7 @@ static int btrfs_issue_discard(struct block_device *bdev, u64 start, u64 len,
+ 			       u64 *discarded_bytes)
+ {
+ 	int j, ret = 0;
+-	u64 bytes_left, end;
++	u64 bytes_left, bytes_to_discard, end;
+ 	u64 aligned_start = ALIGN(start, 1 << SECTOR_SHIFT);
+ 
+ 	/* Adjust the range to be aligned to 512B sectors if necessary. */
+@@ -1300,13 +1300,25 @@ static int btrfs_issue_discard(struct block_device *bdev, u64 start, u64 len,
+ 		bytes_left = end - start;
+ 	}
+ 
+-	if (bytes_left) {
++	while (bytes_left) {
++		if (bytes_left > BTRFS_MAX_DATA_CHUNK_SIZE)
++			bytes_to_discard = BTRFS_MAX_DATA_CHUNK_SIZE;
++		else
++			bytes_to_discard = bytes_left;
++
+ 		ret = blkdev_issue_discard(bdev, start >> SECTOR_SHIFT,
+-					   bytes_left >> SECTOR_SHIFT,
++					   bytes_to_discard >> SECTOR_SHIFT,
+ 					   GFP_NOFS);
++
+ 		if (!ret)
+-			*discarded_bytes += bytes_left;
++			*discarded_bytes += bytes_to_discard;
++		else if (ret != -EOPNOTSUPP)
++			return ret;
++
++		start += bytes_to_discard;
++		bytes_left -= bytes_to_discard;
+ 	}
++
+ 	return ret;
+ }
+ 
+-- 
+2.46.0
 
 
