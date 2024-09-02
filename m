@@ -1,87 +1,113 @@
-Return-Path: <linux-kernel+bounces-310622-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310616-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D6AA967F35
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 08:14:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BED3E967F22
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 08:07:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BDCFE2810C2
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 06:14:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D3DE21C218BB
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 06:07:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B2C2154C04;
-	Mon,  2 Sep 2024 06:14:14 +0000 (UTC)
-Received: from cmccmta1.chinamobile.com (cmccmta6.chinamobile.com [111.22.67.139])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19B091AACA;
-	Mon,  2 Sep 2024 06:14:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.22.67.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 925AB1552E1;
+	Mon,  2 Sep 2024 06:07:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="HCoMZWQh"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB59E76048;
+	Mon,  2 Sep 2024 06:06:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725257654; cv=none; b=eMmVXGsS24XMb5DbN/a6jiJ0O9S2Ot6polfY3vwKODTT1AiffC/2cDBq5vobymBYFMQ2caWN9tJLbrc8SQoY8dFu1fR/z+6a+oy60Q8jL+ciZWIVr1Xc16X5Tk2bG7+R7KWUxoYeaKQmNTPH0uGhpzQtkT59SLVVtNpxhpTLCcA=
+	t=1725257219; cv=none; b=qKZxTWPVWzjIyiiD1V1EFB2t7bs9WQIgZZIvAQCZn3Euejii6Fq3HN9W1qnv6YDRg+cmzUZLzGM2LEWVzfO9rAUmzwEkXube6PxcaiCWq20NO+WKZb8UVrljGRw5ENZO2iNQ96LXo0fa4cEDqZeRrQVHXdz0ZZeMnfrLSKmVwCg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725257654; c=relaxed/simple;
-	bh=3DAWqnVCfA9f+ulc7JhR2oVaVpHUUinchMrXeR052DU=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=rryx2xS0ph/Rxn9iFfvTTtgr9e62yrLEuCixNEHahU2MUwEVJ/qUTrqnWJhBCrixUGI34+NRGQ0pGRSMPz/G8HX88Hpk2v9O8XKpSv2r9OBzTIGAzqEQVg3uin0PVdW55TU8wC8TtQHZ0wMVLDMEWT7USxQVhaWKVeRHKE4On7s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com; spf=pass smtp.mailfrom=cmss.chinamobile.com; arc=none smtp.client-ip=111.22.67.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
-	by rmmx-syy-dmz-app01-12001 (RichMail) with SMTP id 2ee166d557b0805-a0105;
-	Mon, 02 Sep 2024 14:14:08 +0800 (CST)
-X-RM-TRANSID:2ee166d557b0805-a0105
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from localhost.localdomain (unknown[223.108.79.98])
-	by rmsmtp-syy-appsvr05-12005 (RichMail) with SMTP id 2ee566d557af5da-8abab;
-	Mon, 02 Sep 2024 14:14:08 +0800 (CST)
-X-RM-TRANSID:2ee566d557af5da-8abab
-From: zhangjiao2 <zhangjiao2@cmss.chinamobile.com>
-To: kys@microsoft.com
-Cc: haiyangz@microsoft.com,
-	wei.liu@kernel.org,
-	decui@microsoft.com,
-	linux-hyperv@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	zhang jiao <zhangjiao2@cmss.chinamobile.com>
-Subject: [PATCH] tools: hv: rm .*.cmd when make clean
-Date: Mon,  2 Sep 2024 12:21:03 +0800
-Message-Id: <20240902042103.5867-1-zhangjiao2@cmss.chinamobile.com>
-X-Mailer: git-send-email 2.33.0
+	s=arc-20240116; t=1725257219; c=relaxed/simple;
+	bh=4xHw3RWoXX0ZLhLJOCY0yD5ZVOLA3CCx54tGGES5+FI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dIxS8f2ybszC4X4T/uRu3v3dq9Wlrlp0QsP+EFjVGVwj4qtk5WEnpGYErD7kv0YocqBtsiTyWRngIbOgywcdgjscQ/DawVqW4T33Bb58sEjaoYFD21Sk/fczpLLSUmw4Wfi/VxYkwKf8/wJqqrK+6lcu7gxMX0B78Put767f0zY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=HCoMZWQh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DBC70C4CEC2;
+	Mon,  2 Sep 2024 06:06:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1725257219;
+	bh=4xHw3RWoXX0ZLhLJOCY0yD5ZVOLA3CCx54tGGES5+FI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=HCoMZWQhb1uPQ5BwvCBIpubFKmzYNANEGbLu2SMlcmxQk4p0InOkeZ8Gbqkb9Hf1i
+	 0ES0SaEL4z34Bui/JMwWI0K+u8+n4dvNC/1+T8dKHwlq1H7MV2hHBscZl84ES0nHsa
+	 /+WAElRHuYbOxSZYPzJRBnx4D/dRgqQKjwtcboNc=
+Date: Mon, 2 Sep 2024 08:06:55 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Jan Kiszka <jan.kiszka@siemens.com>
+Cc: Johan Hovold <johan@kernel.org>, linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] USB: serial: pl2303: account for deficits of clones
+Message-ID: <2024090203-challenge-paper-e1fe@gregkh>
+References: <a07922bd-4550-41d8-a7cd-8943baf6f8fb@siemens.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a07922bd-4550-41d8-a7cd-8943baf6f8fb@siemens.com>
 
-From: zhang jiao <zhangjiao2@cmss.chinamobile.com>
+On Sun, Sep 01, 2024 at 11:11:29PM +0200, Jan Kiszka wrote:
+> From: Jan Kiszka <jan.kiszka@siemens.com>
+> 
+> There are apparently incomplete clones of the HXD type chip in use.
+> Those return -EPIPE on GET_LINE_REQUEST and BREAK_REQUEST. Avoid
+> flooding the kernel log with those errors. Rather use the
+> line_settings cache for GET_LINE_REQUEST and signal missing support by
+> returning -ENOTTY from pl2303_set_break.
+> 
+> Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
+> ---
+>  drivers/usb/serial/pl2303.c | 13 +++++++------
+>  1 file changed, 7 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/usb/serial/pl2303.c b/drivers/usb/serial/pl2303.c
+> index d93f5d584557..04cafa819390 100644
+> --- a/drivers/usb/serial/pl2303.c
+> +++ b/drivers/usb/serial/pl2303.c
+> @@ -731,12 +731,13 @@ static int pl2303_get_line_request(struct usb_serial_port *port,
+>  				GET_LINE_REQUEST, GET_LINE_REQUEST_TYPE,
+>  				0, 0, buf, 7, 100);
+>  	if (ret != 7) {
+> -		dev_err(&port->dev, "%s - failed: %d\n", __func__, ret);
+> +		struct pl2303_private *priv = usb_get_serial_port_data(port);
+>  
+> -		if (ret >= 0)
+> -			ret = -EIO;
+> +		dev_dbg(&port->dev, "%s - failed, falling back on cache: %d\n",
+> +			__func__, ret);
+> +		memcpy(buf, priv->line_settings, 7);
 
-rm .*.cmd when make clean
+Ugh, how is this device working in other operating systems?
 
-Signed-off-by: zhang jiao <zhangjiao2@cmss.chinamobile.com>
----
- tools/hv/Makefile | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+>  
+> -		return ret;
+> +		return 0;
+>  	}
+>  
+>  	dev_dbg(&port->dev, "%s - %7ph\n", __func__, buf);
+> @@ -1078,8 +1079,8 @@ static int pl2303_set_break(struct usb_serial_port *port, bool enable)
+>  				 BREAK_REQUEST, BREAK_REQUEST_TYPE, state,
+>  				 0, NULL, 0, 100);
+>  	if (result) {
+> -		dev_err(&port->dev, "error sending break = %d\n", result);
+> -		return result;
+> +		dev_dbg(&port->dev, "error sending break = %d\n", result);
+> +		return -ENOTTY;
 
-diff --git a/tools/hv/Makefile b/tools/hv/Makefile
-index 2e60e2c212cd..34ffcec264ab 100644
---- a/tools/hv/Makefile
-+++ b/tools/hv/Makefile
-@@ -52,7 +52,7 @@ $(OUTPUT)hv_fcopy_uio_daemon: $(HV_FCOPY_UIO_DAEMON_IN)
- 
- clean:
- 	rm -f $(ALL_PROGRAMS)
--	find $(or $(OUTPUT),.) -name '*.o' -delete -o -name '\.*.d' -delete
-+	find $(or $(OUTPUT),.) -name '*.o' -delete -o -name '\.*.d' -delete -o -name '\.*.cmd' -delete
- 
- install: $(ALL_PROGRAMS)
- 	install -d -m 755 $(DESTDIR)$(sbindir); \
--- 
-2.33.0
+Are you sure that ENOTTY is correct here?  Why not just send back
+-EINVAL or something like that telling userspace that this is not
+allowed for this device?
 
+thanks,
 
-
+greg k-h
 
