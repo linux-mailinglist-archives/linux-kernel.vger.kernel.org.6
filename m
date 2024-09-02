@@ -1,160 +1,153 @@
-Return-Path: <linux-kernel+bounces-310937-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310934-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58031968311
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 11:22:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F99896830A
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 11:21:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F29151F2278A
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 09:22:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 616F71C208DF
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 09:21:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBD9B1C3F07;
-	Mon,  2 Sep 2024 09:22:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7D451C330E;
+	Mon,  2 Sep 2024 09:21:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="dZOv8rbu"
-Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="UA7k4zL2"
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11A2C1C2DCE;
-	Mon,  2 Sep 2024 09:21:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F95F1C3308
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 09:21:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725268921; cv=none; b=cPggr6x+0Piga/+WtGEnd1SbXPnuvWnfrQAV3tQhE77UYAHCPvxFSyTT6PpRLTpjMjuC01kL+f6CROpMQVub8P+AOcjmL+Exv8EqvV1FDEODOjwPPaJG9UNJoRj/Z+Gl6chWrJUsXMClbyiBv520VbrT7lZtrsuEkVge6IAycpg=
+	t=1725268898; cv=none; b=KmFrCutT+cioreFT/RMJLVNZECxjYxaP3HE6y4Asz2nPIqrO+j7H3FyX88AM5nRU6BLaU43+2Gwb26IZli8I95vYyfp5Dp8ewVhP5Ty6XiMuOdaBfWKVUgu2VnQAWcvSN8EO7lNGQgbD9XSqyWWeX9O7RhiMXl7VwqWwLfRv9qI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725268921; c=relaxed/simple;
-	bh=Zgwy2BubG1EWnEAVj32BYQf+bJia6D8EG0ogAUOM+4g=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=REXQaUpfzOVMpJC6vJTofurwCVgn0TEN99j2tVXQPu7iQvC/x0u1lZ1/23uH/ZY5iXP7LnJQHSKKmbS3zzpO+S2PWoP/O22nh3Nef+c80ZpV0YFfsASdddbWz+rOOg/NuU/utZHOFtE1DsfJbVo2DAP8MA5I2xgPSUZsbpU7TwE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=dZOv8rbu; arc=none smtp.client-ip=198.47.19.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4829LsND010209;
-	Mon, 2 Sep 2024 04:21:54 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1725268914;
-	bh=4XY6mWtzGjvu3ZEih9CjkESASisTpY3rzk2pXbnSDOo=;
-	h=From:To:CC:Subject:Date;
-	b=dZOv8rbunHurN9gclDV48Eg+pRH2pI1Q2X7xN6wxYH8Q/37QGH1A+7UFlyuTbJ+kM
-	 zUhhplAtB9XNfHW0Vy9c3T/IKW52x7DBKfPCqySP6PDXStnbXXUSUhorn9FhZ7yGBW
-	 LCC8xOWIRgLMer43AbWW8RfpYXvZtLkyEEI2po4g=
-Received: from DFLE104.ent.ti.com (dfle104.ent.ti.com [10.64.6.25])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4829LsQS031681;
-	Mon, 2 Sep 2024 04:21:54 -0500
-Received: from DFLE108.ent.ti.com (10.64.6.29) by DFLE104.ent.ti.com
- (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 2
- Sep 2024 04:21:53 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE108.ent.ti.com
- (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Mon, 2 Sep 2024 04:21:54 -0500
-Received: from lcpd911.dhcp.ti.com (lcpd911.dhcp.ti.com [172.24.227.68])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4829Lo2A092500;
-	Mon, 2 Sep 2024 04:21:51 -0500
-From: Dhruva Gole <d-gole@ti.com>
-To: <rafael@kernel.org>, <viresh.kumar@linaro.org>
-CC: <linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Dhruva Gole
-	<d-gole@ti.com>, Nishanth Menon <nm@ti.com>,
-        Vignesh Raghavendra
-	<vigneshr@ti.com>,
-        Vibhore Vardhan <vibhore@ti.com>, Bryan Brattlof
-	<bb@ti.com>
-Subject: [PATCH] cpufreq: ti-cpufreq: Use socinfo to get revision in AM62 family
-Date: Mon, 2 Sep 2024 14:51:35 +0530
-Message-ID: <20240902092135.2826470-1-d-gole@ti.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1725268898; c=relaxed/simple;
+	bh=BSpqubEdJ/sRUU6vWaBwncVg7qOd28rdyPPZgAweRno=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oyyrPSz+kiigdl9pkqNXoKaK3AE9xjPC3kEMZPc5I6Jmm4pOFyTHSUwRM3L0VzWRi1/bThlimD9nq/hQHIamRp7MPMOYG2ETNToqoPNheHido+FqB3Q9GiGc5L+vbdjVjGmPUTCozHaNXFojFXLW+p9wXCfkc22xzExy+ZryMqk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=UA7k4zL2; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a86859e2fc0so448909666b.3
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2024 02:21:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1725268894; x=1725873694; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=1ZDs/9l3dOZ4/JRpcNDnT31Gwsua2/3rtLsltEu9Mww=;
+        b=UA7k4zL27EtQiyL1sHrgRCfTMPBXKeFmHxdZe3ebhOMpjrG/LvCIEKtNXE/wR+fdC0
+         nGc8eVPdONCBPfmOl9gVV5Fv0lB3hSjTq0u7jK/66YtY2pXMeS7fTFAN/VGpzWJRkzbn
+         XkzYzfEsazl03MK/eExlEnIgkIx/NmtK0yvuqYc+fGv4VEIvD6oZ63hEUR6e55d0Th+H
+         ragU4vi9H2cqQqxMviFP196JUbdigDpKSrLJLnTZGWB3zija/D7YC9Eh6CtjA96jSPtL
+         GZudEXjpOBEz/hjpIjWhdIeragV3oITHm659ApbXz3h2is871vprXeJBwVBuOXrAGPUJ
+         LX/g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725268894; x=1725873694;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1ZDs/9l3dOZ4/JRpcNDnT31Gwsua2/3rtLsltEu9Mww=;
+        b=f231wNutiqL/E+TxFDm3ZvhWByn32M1FTxfMgdp+UUnnNS8iQSH6m6aHYGDCOKI9X2
+         o9G5nsVPFH2XZjbSYjuKRAAteMX3WdWjA42V6qnV1lHLkT42ld/jI46yeVn93WhWa4fO
+         A0AtMcMKf9Blf8JkuYeZQfBt5R1lzvdySXzsaX3dzwyAt3zELTTqqV5mWgVQLSQyxKB2
+         jbybTL6vOUxcGA/QNbNcRJ3urM/oP9/xbKVHIEswjkpXJdJ9KHGrJpwsKopDb6Th6xLR
+         wiA8YEmwxVjQEBhkZ2ruOWrcnk6jNeyxXxE8gMF0nc0jzY2Msxmwv2EH8xy5K9AFXM8W
+         OC9g==
+X-Forwarded-Encrypted: i=1; AJvYcCV61mPTgv0rFRoFFYa9lTswfWGmZ+nTtgrlesA4mSSmztkkwDF9r80CdoxtPQJSlC+CKjvEXapCJw2kT2o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxaSeYWkzOu44wtnZnEg8C6XxlA4RnDOKvIjtcSM2kUrvSiuCM5
+	zxoUyBEPXTTcEjBtqFggfSo24ZtxITuk+XI0tM27vNeHAGUfUlgr5/b0ANUqjAI=
+X-Google-Smtp-Source: AGHT+IFiJyKI83M4pAEH+bJt4D+2x9ZKVCIWaumLPxOS3x0JckDJtyYxve6HAvVZNlN6e2kKZafDDw==
+X-Received: by 2002:a17:907:6094:b0:a7a:adac:57d5 with SMTP id a640c23a62f3a-a897f84d7efmr930072566b.18.1725268894023;
+        Mon, 02 Sep 2024 02:21:34 -0700 (PDT)
+Received: from localhost (host-80-182-198-72.retail.telecomitalia.it. [80.182.198.72])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a89891db42fsm527788266b.184.2024.09.02.02.21.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 02 Sep 2024 02:21:33 -0700 (PDT)
+From: Andrea della Porta <andrea.porta@suse.com>
+X-Google-Original-From: Andrea della Porta <aporta@suse.de>
+Date: Mon, 2 Sep 2024 11:21:41 +0200
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Andrea della Porta <andrea.porta@suse.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Derek Kiernan <derek.kiernan@amd.com>,
+	Dragan Cvetic <dragan.cvetic@amd.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Saravana Kannan <saravanak@google.com>,
+	Bjorn Helgaas <bhelgaas@google.com>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org, netdev@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-arch@vger.kernel.org,
+	Lee Jones <lee@kernel.org>, Stefan Wahren <wahrenst@gmx.net>
+Subject: Re: [PATCH 00/11] Add support for RaspberryPi RP1 PCI device using a
+ DT overlay
+Message-ID: <ZtWDpaqUG9d9yPPf@apocalypse>
+References: <cover.1724159867.git.andrea.porta@suse.com>
+ <14990d25-40a2-46c0-bf94-25800f379a30@kernel.org>
+ <Zsb_ZeczWd-gQ5po@apocalypse>
+ <45a41ed9-2e42-4fd5-a1d5-35de93ce0512@lunn.ch>
+ <ZtBjMpMGtA4WfDij@apocalypse>
+ <e6e6c230-370f-4b04-8cb7-4158dd51efdc@lunn.ch>
+ <ZtFWyAX_7OR5yYDS@apocalypse>
+ <334b382a-c9ab-47e4-b860-b8477f04c3fb@lunn.ch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <334b382a-c9ab-47e4-b860-b8477f04c3fb@lunn.ch>
 
-In the AM62x, AM62Ax, and AM62Px devices, we already have the revision
-info within the k3-socinfo driver. Hence, re-use this information from
-there instead of re using the offset for 2 drivers trying to get the
-same information ie. revision.
+Hi Andrew,
 
-Signed-off-by: Dhruva Gole <d-gole@ti.com>
----
+On 16:10 Fri 30 Aug     , Andrew Lunn wrote:
+> > On a second thought, are you really sure we want to proceed with the header file?
+> > After all the only line in it would be the extern declaration and the only one to
+> > include it would be rp1-dev.c. Moreover, an header file would convey the false
+> > premise that you can include it and use that symbol while in fact it should be
+> > only used inside the driver.
+> > OTOH, not creating that header file will continue to trigger the warning...
+> 
+> The header file does not need to be in global scope. It could be in
+> the driver source directory. As such, nothing outside of the driver
+> can use it.
 
-Hi,
-This patch depends on [1] and if someone wants to test, can use my
-github branch [2]. I was able to test this on SK-AM625 [3].
+Ack.
 
-[1] https://lore.kernel.org/linux-arm-kernel/20240828131915.3198081-1-nm@ti.com/
-[2] https://github.com/DhruvaG2000/v-linux/tree/ti-cpufreq-revision-fix
-[3] https://gist.github.com/DhruvaG2000/d0c360b0bd7e43d0fd28cfe3eab941d2
+> 
+> Headers like this have multiple proposes. One is they make a symbol
+> visible to the linker. But having two different .c files include the
 
-Cc: Nishanth Menon <nm@ti.com>
-Cc: Vignesh Raghavendra <vigneshr@ti.com>
-Cc: Vibhore Vardhan <vibhore@ti.com>
-Cc: Bryan Brattlof <bb@ti.com>
+Hmm... not sure what second file is including it, since only rp1_pci.c needs it.
 
----
- drivers/cpufreq/ti-cpufreq.c | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
+> header enables type checking, which for long term maintenance is just
+> as important. So a one line header is fine.
 
-diff --git a/drivers/cpufreq/ti-cpufreq.c b/drivers/cpufreq/ti-cpufreq.c
-index 804329e81eb8..ba621ce1cdda 100644
---- a/drivers/cpufreq/ti-cpufreq.c
-+++ b/drivers/cpufreq/ti-cpufreq.c
-@@ -16,6 +16,7 @@
- #include <linux/pm_opp.h>
- #include <linux/regmap.h>
- #include <linux/slab.h>
-+#include <linux/sys_soc.h>
- 
- #define REVISION_MASK				0xF
- #define REVISION_SHIFT				28
-@@ -303,6 +304,13 @@ static struct ti_cpufreq_soc_data am3517_soc_data = {
- 	.quirks = TI_QUIRK_SYSCON_MAY_BE_MISSING,
- };
- 
-+static const struct soc_device_attribute k3_cpufreq_soc[] = {
-+	{ .family = "AM62X", .revision = "SR1.0" },
-+	{ .family = "AM62AX", .revision = "SR1.0" },
-+	{ .family = "AM62PX", .revision = "SR1.0" },
-+	{ /* sentinel */ }
-+};
-+
- static struct ti_cpufreq_soc_data am625_soc_data = {
- 	.efuse_xlate = am625_efuse_xlate,
- 	.efuse_offset = 0x0018,
-@@ -384,6 +392,16 @@ static int ti_cpufreq_get_rev(struct ti_cpufreq_data *opp_data,
- 	struct device *dev = opp_data->cpu_dev;
- 	u32 revision;
- 	int ret;
-+	if (soc_device_match(k3_cpufreq_soc)) {
-+		/*
-+		 * Since the SR is 1.0, hard code the revision_value as
-+		 * 0x1 here. This way we avoid re using the same register
-+		 * that is giving us required information inside socinfo
-+		 * anyway.
-+		 */
-+		*revision_value = 0x1;
-+		goto done;
-+	}
- 
- 	ret = regmap_read(opp_data->syscon, opp_data->soc_data->rev_offset,
- 			  &revision);
-@@ -406,6 +424,7 @@ static int ti_cpufreq_get_rev(struct ti_cpufreq_data *opp_data,
- 
- 	*revision_value = BIT((revision >> REVISION_SHIFT) & REVISION_MASK);
- 
-+done:
- 	return 0;
- }
- 
+Done.
 
-base-commit: ecc768a84f0b8e631986f9ade3118fa37852fef0
--- 
-2.34.1
+Cheers,
+Andrea
 
+> 
+> 	Andrew
+> 
 
