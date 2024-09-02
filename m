@@ -1,39 +1,39 @@
-Return-Path: <linux-kernel+bounces-311456-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311455-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47842968982
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 16:10:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C8B49968981
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 16:10:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 028682832E1
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 14:10:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8660828326A
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 14:10:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F295819E992;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1B342139BF;
 	Mon,  2 Sep 2024 14:09:47 +0000 (UTC)
-Received: from szxga07-in.huawei.com (szxga07-in.huawei.com [45.249.212.35])
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78C6D21018F
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0C6721019C
 	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 14:09:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.35
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725286187; cv=none; b=cGWlDI0SkhSATaRHLMO+QJ7JFeErCwunu+tbPs9aKklzK8z1MxbUWynPKSPmSNCYYCwOWMBwG85AUfQlgUpqXfUMKkbT+FSPlXEO9I9GaeQLVWGdQzULK7h+tNWL9MvZTvmdb/LKe4KyhxjiTYsymxPtVenu32Jpwlba2+craRM=
+	t=1725286187; cv=none; b=XhuoLCriSGmrLqhaytGVjxz1au889qIoIE50THJGpdtJ4cH49AsJmNpNwTvZx73y+1pMzPrRJ+gg5BOO0p59SgtcG1g9fLSY4BNjc4TVLe+JJb+ZCOv97LTRK+CtkY9mj7LSt1Il6EvPfduvWHicFI3KCD1fa76gMjWmhtXiNuA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1725286187; c=relaxed/simple;
-	bh=L8pJ9sYAixGyyDr7T0fwgN2WWBSMszASMnDXD2rpsWU=;
+	bh=q2fKjLrs2NiGAyevC46WOaaOqsgpMOMmZb36Y7TisgY=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=qBvmJ9srz2iAjl3kElGgkORz6PZjkgCy3YxdQx7AkIJsKj96Em6f4Vp/9Jq93kuqUpN9U2NI6g1hjR6t911BSqEyMocrtkJr5bt6CJqpbTT/eoE2z2oUX9ptINJOlNGaXDClobdUSxeXxosVAvYyR+6zhqPAqZR0xT5iqd4hoYc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.35
+	 MIME-Version:Content-Type; b=o9T971H5yFIRbyMW0LTJVZBq0dES5u/SF+aAKr107LaZvoC7Zg8ziBDQLJydeEgGOH0ZhHnqhEPi73zptqmAQVLuqPyT7o3CqD8SKLwN7csm8ORJSlSsm13fi7Sv/pe0iG/4xPRKlM30w2JGQqtBMkiIofo5v2XG1XLVWbRvNxw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.17])
-	by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4Wy9c40sMxz1S9NK;
-	Mon,  2 Sep 2024 22:09:24 +0800 (CST)
+Received: from mail.maildlp.com (unknown [172.19.88.163])
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4Wy9XT4Zmzz1HJ5x;
+	Mon,  2 Sep 2024 22:06:17 +0800 (CST)
 Received: from dggpemf100006.china.huawei.com (unknown [7.185.36.228])
-	by mail.maildlp.com (Postfix) with ESMTPS id A49721A0188;
-	Mon,  2 Sep 2024 22:09:42 +0800 (CST)
+	by mail.maildlp.com (Postfix) with ESMTPS id 17F3518001B;
+	Mon,  2 Sep 2024 22:09:43 +0800 (CST)
 Received: from thunder-town.china.huawei.com (10.174.178.55) by
  dggpemf100006.china.huawei.com (7.185.36.228) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
@@ -42,9 +42,9 @@ From: Zhen Lei <thunder.leizhen@huawei.com>
 To: Andrew Morton <akpm@linux-foundation.org>, Thomas Gleixner
 	<tglx@linutronix.de>, <linux-kernel@vger.kernel.org>
 CC: Zhen Lei <thunder.leizhen@huawei.com>
-Subject: [PATCH 3/5] debugobjects: Don't start fill if there are remaining nodes locally
-Date: Mon, 2 Sep 2024 22:05:30 +0800
-Message-ID: <20240902140532.2028-4-thunder.leizhen@huawei.com>
+Subject: [PATCH 4/5] debugobjects: Use hlist_splice_init() to reduce lock conflicts
+Date: Mon, 2 Sep 2024 22:05:31 +0800
+Message-ID: <20240902140532.2028-5-thunder.leizhen@huawei.com>
 X-Mailer: git-send-email 2.37.3.windows.1
 In-Reply-To: <20240902140532.2028-1-thunder.leizhen@huawei.com>
 References: <20240902140532.2028-1-thunder.leizhen@huawei.com>
@@ -59,36 +59,53 @@ Content-Type: text/plain
 X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
  dggpemf100006.china.huawei.com (7.185.36.228)
 
-If the conditions for starting fill are met, it means that all cores that
-call fill() later are blocked until the first core completes the fill
-operation. But obviously, for a core that has free nodes locally, it does
-not need to be blocked. This is good in stress situations.
+The sub list can be prepared in advance outside the lock, so that the
+operation time inside the lock can be reduced and the possibility of
+lock conflict can be reduced.
 
 Signed-off-by: Zhen Lei <thunder.leizhen@huawei.com>
 ---
- lib/debugobjects.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ lib/debugobjects.c | 18 ++++++++++--------
+ 1 file changed, 10 insertions(+), 8 deletions(-)
 
 diff --git a/lib/debugobjects.c b/lib/debugobjects.c
-index aba3e62a4315f51..fc8224f9f0eda8f 100644
+index fc8224f9f0eda8f..998724e9dee526b 100644
 --- a/lib/debugobjects.c
 +++ b/lib/debugobjects.c
-@@ -130,10 +130,15 @@ static void fill_pool(void)
- 	gfp_t gfp = __GFP_HIGH | __GFP_NOWARN;
- 	struct debug_obj *obj;
- 	unsigned long flags;
-+	struct debug_percpu_free *percpu_pool;
- 
- 	if (likely(READ_ONCE(obj_pool_free) >= debug_objects_pool_min_level))
+@@ -167,23 +167,25 @@ static void fill_pool(void)
  		return;
  
-+	percpu_pool = this_cpu_ptr(&percpu_obj_pool);
-+	if (likely(obj_cache) && percpu_pool->obj_free > 0)
-+		return;
-+
- 	/*
- 	 * Reuse objs from the global free list; they will be reinitialized
- 	 * when allocating.
+ 	while (READ_ONCE(obj_pool_free) < debug_objects_pool_min_level) {
+-		struct debug_obj *new[ODEBUG_BATCH_SIZE];
++		HLIST_HEAD(batch_list);
++		struct debug_obj *new, *last;
+ 		int cnt;
+ 
+ 		for (cnt = 0; cnt < ODEBUG_BATCH_SIZE; cnt++) {
+-			new[cnt] = kmem_cache_zalloc(obj_cache, gfp);
+-			if (!new[cnt])
++			new = kmem_cache_zalloc(obj_cache, gfp);
++			if (!new)
+ 				break;
++			hlist_add_head(&new->node, &batch_list);
++			if (cnt == 0)
++				last = new;
+ 		}
+ 		if (!cnt)
+ 			return;
+ 
+ 		raw_spin_lock_irqsave(&pool_lock, flags);
+-		while (cnt) {
+-			hlist_add_head(&new[--cnt]->node, &obj_pool);
+-			debug_objects_allocated++;
+-			WRITE_ONCE(obj_pool_free, obj_pool_free + 1);
+-		}
++		hlist_splice_init(&batch_list, &last->node, &obj_pool);
++		debug_objects_allocated += cnt;
++		WRITE_ONCE(obj_pool_free, obj_pool_free + cnt);
+ 		raw_spin_unlock_irqrestore(&pool_lock, flags);
+ 	}
+ }
 -- 
 2.34.1
 
