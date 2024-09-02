@@ -1,187 +1,138 @@
-Return-Path: <linux-kernel+bounces-311785-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311786-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 029BD968D9E
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 20:38:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA5B0968DA2
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 20:39:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 277711C22142
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 18:38:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 00445B22E4C
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 18:39:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEC101AB6F1;
-	Mon,  2 Sep 2024 18:38:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 130C21C62C2;
+	Mon,  2 Sep 2024 18:39:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="TBYIQggY"
-Received: from mail-ua1-f49.google.com (mail-ua1-f49.google.com [209.85.222.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57F531A3027
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 18:38:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.49
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="dn/8QSmL"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01EE019CC11;
+	Mon,  2 Sep 2024 18:38:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725302331; cv=none; b=RvqAT464PrKlRJeFBny7DFV964E2sEb0J6lTHiHYI2t5PoFXQIcPeCl0ZinYo5EWRRtlOAwq5pwNh5feR79EWJpQm1SqOnLggFbk1GgwdLkZZdLmm2OOOdT5qe9yZ0qP4RdaoTsyAhkmLDcN1/0YQzeBYuzoustzjFXqhpadJWA=
+	t=1725302339; cv=none; b=oOGIs+mkAM+aX6JUlF+aRORcqKa80Ok8xLN2w45sfxnlhd6RTOvVAkyQlJX0VqjOueye6A4ymOXVA2Dj2uwxYwmYAFhP70IvwFlJK8O6u7QJz8+jH546/3IZf73VxO6zht1ZsomAxeKTHZ4pPfqU+IcrApRjSG5HiOkKOm1Zd+Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725302331; c=relaxed/simple;
-	bh=qvGR0hnmxdDXx26rcKer0OOFReGA3haiPLSH0odUurk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=coQPH8ECY4MeFYVscLp91JbX8RLT0oQtWsKI7KeEmPN/6m1uQfD0rTbNWiuqPidFWmRRM1XmpE+j0arl7h4NHsLAkPru3J/ycBvGmfFpXUDSw3iZZpFn41UuGDK0v4ivkhcEKTg5WWPw7ts1mOTHtoq4ogyPsnvq8GzuZBCOatM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=TBYIQggY; arc=none smtp.client-ip=209.85.222.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ua1-f49.google.com with SMTP id a1e0cc1a2514c-846cdfbb153so485509241.0
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2024 11:38:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1725302327; x=1725907127; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uUH6Sq+2/lRd4KWEdNd4C2TjbnVZU4PCrWh/KXQdHK8=;
-        b=TBYIQggYdj0nr7UfWGapXwSwP8rc4s5jnhrxPLAGLcLAkbDWwd5eSnnu6J2h0eQbge
-         AWK2Rr8rFjdQeJPJ7pmXHUnrkRtVDVbBSnEy4y0+6G/t3FXkbSPk7NNoXgycOBt+l7mn
-         H6M5jHZ6xXmrAGtUAuyVmVdVmxmPKARo/7FvV+bm9ZmsqNSYDIReMJlfabMJqroUiBwT
-         jTmx3tulrMrmN3EHmDOYNvOpsHUrTnNtn3zKD4r1Hu68peuoGlU0IIM8SnuRNpOZCZOX
-         V4q+ch2jWnFs4ZsBvSMOoHCfr4Bf/R9ej9kFLrNk8lXulHxLr9QZKNhoFDpTtv3dU82V
-         B+jg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725302327; x=1725907127;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=uUH6Sq+2/lRd4KWEdNd4C2TjbnVZU4PCrWh/KXQdHK8=;
-        b=Gu3j9q5Axq+1ZZLHRfC4O9kq0yikToV2ia4NQ+GKfj/wUPzbx1sbOgXuOtUiXT0+ro
-         KdzRSFwfxRHImwDlafgQhmpmUuhmXTIunbzr09Yc/xMpFCJZ8mvc/MRCoBdrjJMjAWB6
-         4aDfhmNb63/IU3Nmyby1DWqOUuF+SQ8WoUnGBT2sgO4nQeiDSwEwl+aSuW2DYESI532D
-         DjNRkqewNAlOoIYGi11VsQIIVsu2zsjaMMO0YvceKUjyzXko8Cslx0xgjeFEC7WNM8SI
-         Fk1jczsSHZmUoJKpfg2xyoICjmLikq62CCSxrmL/aWJyWqPps8Ne/VFALN5JA6E8loe6
-         +H2g==
-X-Forwarded-Encrypted: i=1; AJvYcCX9DEGUO3I7mCsV9riyRl7spzspg12lWV5USovMhcD3ddJApuLy3I5wn/qOPEcFM/37JNroHmByOEUgdzw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz6hnoAU7uXsOjREvtr2Obj6VO0AXI/jUr+9t8VVFCPWydFNKUC
-	RY73Y+AgUQ3D/zkHtk7op7J7FXA1UnS2rw1+UiwOZgWPMActX16bfFnT2V1Hd+hpUQJE/ofg33v
-	fVeKZrPxl699LOt4p69zBdSTndzVdrD2fNPclpQ==
-X-Google-Smtp-Source: AGHT+IFAftsIG39b8r6G5jZKOPUmUgLsYOAXRb/zKUNViiQ+B8flLdJStRybK5kjdj31iVJvY1Gx1xwD36/LdADxIQE=
-X-Received: by 2002:a05:6122:3b12:b0:4f6:ad2d:c867 with SMTP id
- 71dfb90a1353d-5009b162580mr8806758e0c.12.1725302327196; Mon, 02 Sep 2024
- 11:38:47 -0700 (PDT)
+	s=arc-20240116; t=1725302339; c=relaxed/simple;
+	bh=uk7adA90J4zwNHlHrRTqEAmyf+IwyLytRkqXXWSNIow=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kQcjCBungk5ylp+WLf25UCxNnQZRu9I7GFgVeyPH/BZr+GxfBcYQtpRliBbc5C0/5b48KHcH9j7StUPHOoDqvWjlladrJG03XyCt9X0COWAo0Pnve+I5aBOL3aLLr7CBK2s4Ngy+SPKGIqcReuRmR4WRtWa9JzF4F0l6MPg6Ng8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=dn/8QSmL; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: by linux.microsoft.com (Postfix, from userid 1127)
+	id 7402920B7177; Mon,  2 Sep 2024 11:38:57 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 7402920B7177
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1725302337;
+	bh=PG1sLYF4c+um3BXrI8d4Ov1RYDUMMEXzsGo9Niw5cZI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=dn/8QSmLpHZ3Q2aAG8NFkrFNoQrPo7WXssTerVeVnJ+Hme3L6EArT3cDLANqipUif
+	 iLE8rB6+zLDsn2TwY8+4+IVmYnlxrTrL+ZQyQ2iN4d9ewqrum9oD6gHlnKvDSwduDE
+	 XUWbsvvtR6sVqkr/F+6ewQpyqbLDpE4ZzOmg/k0A=
+Date: Mon, 2 Sep 2024 11:38:57 -0700
+From: Saurabh Singh Sengar <ssengar@linux.microsoft.com>
+To: Michael Kelley <mhklinux@outlook.com>
+Cc: Yunhong Jiang <yunhong.jiang@linux.intel.com>,
+	"tglx@linutronix.de" <tglx@linutronix.de>,
+	"mingo@redhat.com" <mingo@redhat.com>,
+	"bp@alien8.de" <bp@alien8.de>,
+	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+	"x86@kernel.org" <x86@kernel.org>, "hpa@zytor.com" <hpa@zytor.com>,
+	"robh@kernel.org" <robh@kernel.org>,
+	"krzk+dt@kernel.org" <krzk+dt@kernel.org>,
+	"conor+dt@kernel.org" <conor+dt@kernel.org>,
+	"kys@microsoft.com" <kys@microsoft.com>,
+	"haiyangz@microsoft.com" <haiyangz@microsoft.com>,
+	"wei.liu@kernel.org" <wei.liu@kernel.org>,
+	"decui@microsoft.com" <decui@microsoft.com>,
+	"rafael@kernel.org" <rafael@kernel.org>,
+	"lenb@kernel.org" <lenb@kernel.org>,
+	"kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
+	"linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>
+Subject: Re: [PATCH v2 5/9] x86/hyperv: Mark ACPI wakeup mailbox page as
+ private
+Message-ID: <20240902183857.GA11785@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
+References: <20240823232327.2408869-1-yunhong.jiang@linux.intel.com>
+ <20240823232327.2408869-6-yunhong.jiang@linux.intel.com>
+ <BN7PR02MB4148A328FA019239196CFB15D4922@BN7PR02MB4148.namprd02.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240902103638.686039-1-aardelean@baylibre.com>
- <20240902103638.686039-8-aardelean@baylibre.com> <rdk2f6c457k462g5v6s5vumdmhejefyfareio5f6bogslg4wg5@ket4vfwwbyi7>
-In-Reply-To: <rdk2f6c457k462g5v6s5vumdmhejefyfareio5f6bogslg4wg5@ket4vfwwbyi7>
-From: Alexandru Ardelean <aardelean@baylibre.com>
-Date: Mon, 2 Sep 2024 21:38:36 +0300
-Message-ID: <CA+GgBR-aQw+JHky5XwRDQj=6y1pHD=OvBeGW1ocd=ZR6ieBJrw@mail.gmail.com>
-Subject: Re: [PATCH v2 7/8] dt-bindings: iio: adc: add adi,ad7606c-{16,18}
- compatible strings
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, jic23@kernel.org, krzk+dt@kernel.org, 
-	robh@kernel.org, lars@metafoo.de, michael.hennerich@analog.com, 
-	gstols@baylibre.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <BN7PR02MB4148A328FA019239196CFB15D4922@BN7PR02MB4148.namprd02.prod.outlook.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 
-On Mon, Sep 2, 2024 at 2:55=E2=80=AFPM Krzysztof Kozlowski <krzk@kernel.org=
-> wrote:
->
-> On Mon, Sep 02, 2024 at 01:36:30PM +0300, Alexandru Ardelean wrote:
-> >    reg:
-> > @@ -114,6 +118,25 @@ properties:
-> >        assumed that the pins are hardwired to VDD.
-> >      type: boolean
-> >
-> > +patternProperties:
-> > +  "^channel@([0-7])$":
-> > +    type: object
-> > +    $ref: adc.yaml
-> > +    unevaluatedProperties: false
+On Mon, Sep 02, 2024 at 03:35:18AM +0000, Michael Kelley wrote:
+> From: Yunhong Jiang <yunhong.jiang@linux.intel.com> Sent: Friday, August 23, 2024 4:23 PM
+> > 
+> > Current code maps MMIO devices as shared (decrypted) by default in a
+> > confidential computing VM. However, the wakeup mailbox must be accessed
+> > as private (encrypted) because it's accessed by the OS and the firmware,
+> > both are in the guest's context and encrypted. Set the wakeup mailbox
+> > range as private explicitly.
+> > 
+> > Signed-off-by: Yunhong Jiang <yunhong.jiang@linux.intel.com>
+> > ---
+> >  arch/x86/hyperv/hv_vtl.c | 16 ++++++++++++++++
+> >  1 file changed, 16 insertions(+)
+> > 
+> > diff --git a/arch/x86/hyperv/hv_vtl.c b/arch/x86/hyperv/hv_vtl.c
+> > index 04775346369c..987a6a1200b0 100644
+> > --- a/arch/x86/hyperv/hv_vtl.c
+> > +++ b/arch/x86/hyperv/hv_vtl.c
+> > @@ -22,10 +22,26 @@ static bool __init hv_vtl_msi_ext_dest_id(void)
+> >  	return true;
+> >  }
+> > 
+> > +static inline bool within_page(u64 addr, u64 start)
+> > +{
+> > +	return addr >= start && addr < (start + PAGE_SIZE);
+> > +}
 > > +
-> > +    properties:
-> > +      reg:
-> > +        description: The channel number.
-> > +        minimum: 0
-> > +        maximum: 7
+> > +/*
+> > + * The ACPI wakeup mailbox are accessed by the OS and the BIOS, both are in the
+> > + * guest's context, instead of the hypervisor/VMM context.
+> > + */
+> > +static bool hv_is_private_mmio_tdx(u64 addr)
+> > +{
+> > +	return wakeup_mailbox_addr && within_page(addr, wakeup_mailbox_addr);
+> > +}
 > > +
-> > +      diff-channels: true
->
-> Shouldn't this be specific?
+> >  void __init hv_vtl_init_platform(void)
+> >  {
+> >  	pr_info("Linux runs in Hyper-V Virtual Trust Level\n");
+> > 
+> > +	if (hv_isolation_type_tdx())
+> > +		x86_platform.hyper.is_private_mmio = hv_is_private_mmio_tdx;
+> 
+> hv_vtl_init_platform() is unconditionally called in
+> ms_hyperv_init_platform(). So in the case of a normal TDX guest
+> running with a paravisor on Hyper-V, the above code will overwrite
+> the is_private_mmio function that was set in hv_vtom_init(). Then
+> the mapping of the emulated IOAPIC and TPM provided by the
+> paravisor won't be correct.
+> 
+> Michael
 
-Umm.
-Specific how?
-Like if:then check for certain compatible strings?
+non-VTL Hyper-V platforms are expected to disable CONFIG_HYPERV_VTL_MODE,
+that means for a normal TDX guest hv_vtl_init_platform will be an empty
+stub. Have I missed anything ?
 
->
-> > +
-> > +      bipolar: true
-> > +
-> > +    required:
-> > +      - reg
-> > +
-> >  required:
-> >    - compatible
-> >    - reg
-> > @@ -202,4 +225,44 @@ examples:
-> >              standby-gpios =3D <&gpio 24 GPIO_ACTIVE_LOW>;
-> >          };
-> >      };
-> > +  - |
-> > +    #include <dt-bindings/gpio/gpio.h>
-> > +    #include <dt-bindings/interrupt-controller/irq.h>
-> > +    spi {
-> > +        #address-cells =3D <1>;
-> > +        #size-cells =3D <0>;
-> > +
-> > +        adc@0 {
-> > +            compatible =3D "adi,ad7606c-18";
-> > +            reg =3D <0>;
-> > +            spi-max-frequency =3D <1000000>;
-> > +            spi-cpol;
-> > +            spi-cpha;
-> > +
-> > +            avcc-supply =3D <&adc_vref>;
-> > +            vdrive-supply =3D <&vdd_supply>;
-> > +
-> > +            interrupts =3D <25 IRQ_TYPE_EDGE_FALLING>;
-> > +            interrupt-parent =3D <&gpio>;
-> > +
-> > +            adi,conversion-start-gpios =3D <&gpio 17 GPIO_ACTIVE_HIGH>=
-;
-> > +
-> > +            adi,conversion-start-gpios =3D <&gpio 17 GPIO_ACTIVE_HIGH>=
-;
-> > +            reset-gpios =3D <&gpio 27 GPIO_ACTIVE_HIGH>;
-> > +            adi,first-data-gpios =3D <&gpio 22 GPIO_ACTIVE_HIGH>;
-> > +            standby-gpios =3D <&gpio 24 GPIO_ACTIVE_LOW>;
-> > +
-> > +            adi,sw-mode;
-> > +
-> > +            channel@1 {
-> > +                reg =3D <1>;
-> > +                diff-channel;
->
-> Where is this property defined (which schema)?
->
-> Did you test it?
-
-Tested on my board.
-But forgot to update the DT schema docs.
-Though, if you're referring to testing it somehow via some make
-command, I'm a little behind on how all this works now.
-I'll go re-check the "make dtbs_check" and similar commands.
-
-Maybe I sound a bit old (now), but when I last saw these DT bindings
-going from txt-to-yaml, they seemed relatively simple.
-Now, they're almost like their own programming language.
-I'll search for some quick setup guides for these; any pointers are welcome=
- :)
-
->
-> Best regards,
-> Krzysztof
->
+- Saurabh
 
