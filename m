@@ -1,172 +1,170 @@
-Return-Path: <linux-kernel+bounces-311229-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311231-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 717BD968659
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 13:38:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B2C196865F
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 13:41:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E85ED1F238B6
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 11:38:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E98961F239AF
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 11:40:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D6981D175E;
-	Mon,  2 Sep 2024 11:38:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE48C1D6184;
+	Mon,  2 Sep 2024 11:40:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IoN4UyUg"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mcr0MeAc"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D57A818455B;
-	Mon,  2 Sep 2024 11:38:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D2421D3184
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 11:40:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725277105; cv=none; b=QGrNMYkeZMkpkCZDPHiYUretCqjxYrL30ERgYxJutD2TdAe1eCJo40fyW5y6C05cZ2J4w8FwcUcgOtKxmF9+T/dv/yaACb48KoPsugs2Qt/1NwY02B1E0ZEjxydyuWShYb3BlJA9wik67I68lpZmqPo2fUJXvlCZu2UonAWTJg8=
+	t=1725277252; cv=none; b=XrZGN3j9PHDKbI77i/v8FT09QiWZfpKtCJLNQGELQtiHwg5fjELTy2+k+lZ530ZwvH8djywvImHFn1HDQvaKLCgvszIqvFqS3aXRr7jKpEXiF6mb/Bt+YFmOIXBaKoqqYriEehpHp5q8FMrbwkMDncsWIQXh1ZEBt/LHM4DY+Fo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725277105; c=relaxed/simple;
-	bh=4pnFvsWfkpHTyg9bH+andsa9SLKI4qCs7vP3a+fOQNM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uXU72omlfo2K5jhGNVCgKhW7xSI2GUxqe8lPZgJuwfwVzTPzaKVsy0VyN1aHRSF1IjAkhJj8XAgkpiUGHEwmiqx0Ow0CPt+szhF9lndAVk3JQC9iXAHCzwp9tDWZpOxv9lBYvKH7s8kkOjWpoz0hy4mKbPGEJNE8uu5WQ3eHRWA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IoN4UyUg; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725277104; x=1756813104;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=4pnFvsWfkpHTyg9bH+andsa9SLKI4qCs7vP3a+fOQNM=;
-  b=IoN4UyUgW07QNtZ2MkWxcVPNp+1kfBfpDDsC+MsMVLGul9CPJ2wG/s9e
-   xPsr7vwvPW4fjMWg5excEeKK+szJ60saU0N27lkOsdyKYfcO/iDpRnC+w
-   NCyU81vIrl2HthHme0DL/g5RGIuYNzpXdl8VnvGRiiKrUrMKofTriT3oA
-   3IXdAbBrRaKLdF8I9R1Gw1S01prH/K+hgPcmFXCV7eDfiEgLg8RWxLm+I
-   1J3f81T2g/I3lE5DTyeJLC4q3nDKV2M8hurd18K8jx1PsuE/SDhlPXoQH
-   SMk3ubbbVgHL5MFyTEZrlCq+3563h1wWcCp0Zr8vKBlEYZGIwR00QdWJL
-   A==;
-X-CSE-ConnectionGUID: AGCk4bYwTIKZL5LQ2WhWbQ==
-X-CSE-MsgGUID: NPuUUgpxTmKwkpqfnpCUqQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11182"; a="41329986"
-X-IronPort-AV: E=Sophos;i="6.10,195,1719903600"; 
-   d="scan'208";a="41329986"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2024 04:38:23 -0700
-X-CSE-ConnectionGUID: FxSTbZA2RqO6adpzBr9uLg==
-X-CSE-MsgGUID: +aqW+f0uRaSw+4JQKcgwdg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,195,1719903600"; 
-   d="scan'208";a="64264954"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmviesa007.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2024 04:38:21 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1sl5Ny-00000004LP4-23Gy;
-	Mon, 02 Sep 2024 14:38:18 +0300
-Date: Mon, 2 Sep 2024 14:38:18 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Baolin Wang <baolin.wang@linux.alibaba.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Hans de Goede <hdegoede@redhat.com>, linux-kernel@vger.kernel.org,
-	platform-driver-x86@vger.kernel.org,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Daniel Scally <djrscally@gmail.com>
-Subject: Re: [PATCH v2 1/4] driver core: Ignore 0 in dev_err_probe()
-Message-ID: <ZtWjqkQUi74JFN1s@smile.fi.intel.com>
-References: <20240822130722.1261891-1-andriy.shevchenko@linux.intel.com>
- <20240822130722.1261891-2-andriy.shevchenko@linux.intel.com>
- <ce59c3c6-8729-469f-a0df-b6844792e324@stanley.mountain>
- <96a19237-9380-4173-9e52-e8295a0f4883@stanley.mountain>
- <ZtWQcXerriSnWgf1@smile.fi.intel.com>
- <4e8fa6fa-89aa-422f-b603-e2a3e1a2c704@stanley.mountain>
+	s=arc-20240116; t=1725277252; c=relaxed/simple;
+	bh=GqYwfy3C8buj3wjtrDwLQoBSAzkARfETSztvR9cAM1w=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=i5rRDWfdZxBNPCncGMOL01Ys2SePO5IimNd3NNKt/FYWDsMuOumFDJpmlN2mEXReyYlXciLObsfcvZnVZZ0NIOHySZ0K6WtHO5mlxl1wVbIcB++kpWwuSmkvSK04FnqNnKSZh7pH+Bt0AEpeGmXxi08vzE0rSwzXulmhLaM76NI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mcr0MeAc; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-42bbea92505so3955415e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2024 04:40:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1725277249; x=1725882049; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=0c87l9HizZr/gVCQ7mdytqHKt3WBojzubXbqdO2h8ME=;
+        b=mcr0MeAcLAO1L6HX5rYzFVdAN0n+A0GDN13jNf7hbeq5/14HW8VOA+I89bisnioexs
+         EcnKq53HWTdzeu9LsYyJRfC644lCUqDCoheYo0qTyKtwszm4+S9HiQN1hyX3c2F/tbe3
+         3b7TAzopRrKF12JqA9XAckdWcFJRAkyHOypJ89gqA4LpAmPtD6zDvfVuAVyPLaWy2fKQ
+         yexpGSLVL5UPy1L3F1fZeInf46llGQqWs7YfLVvHlhl/LXqrcjFp6eVflEolBpjC7tZX
+         OtX9aKSI3VM0NE859tuEPOoNoQvwRaClMh/AOAhM4UtzP+CVQB2D+1tyAMyVIDNmr7r8
+         gYiA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725277249; x=1725882049;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=0c87l9HizZr/gVCQ7mdytqHKt3WBojzubXbqdO2h8ME=;
+        b=l5ZQjY1OkVEhNhgr1N7J/ZdY7jcLAoa5zkXwgg2rVSyaQPHa0nVXkMpO5B64x3AMIl
+         cR15QxXRGRM0s0LZoFEc1npou1u5OgYzmeFoz3vf6tWW5Lf8zaHQCIa4fVHKYtM0CApm
+         3dYGII1kmCvXVXsnszAWWzNo3ClLAFncyuczsCNeavF2xFvROuk429sQDQdsG9VU+ux2
+         GFQ3mSg3GOM4PGndgoUnrMgCGPduN37R/R6AyBO5rrCp1//e6bcdnuCxZR91oM+mNGd3
+         gd0OO6/SeEpj2/yin/8JR7qfa9Kt9IEjMRVzfMonmR/OuXDcog3/NFzsiy6C2ywjR/Dn
+         oTxQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWKQep6omYZNyzT52Sk980if9zKcNg96VwhLP38Rv4BY3ps4LFfQBbHenfsk359Ukjq02iiJ7wrhI7pRbw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzVB0Pa/cjhbWuBFcz2aixHctpRzH6xzeEoi6JtwOwyxqabLx6z
+	drdmo+KbTqC4+nl1pkDGItxA/L/ooBQzKhcAq9MItcbjmeXF4Sr5DBlKcsm1rb4=
+X-Google-Smtp-Source: AGHT+IG/7KS8r0mZp+XmomeF1weh0MUMEE3dkcvGgU+H9bSVTStWXW3sU0djdrdQP34ZuMuWHPw7pw==
+X-Received: by 2002:a5d:6d8c:0:b0:374:cd01:8b72 with SMTP id ffacd0b85a97d-374cd018dd8mr738256f8f.9.1725277248541;
+        Mon, 02 Sep 2024 04:40:48 -0700 (PDT)
+Received: from [127.0.1.1] ([178.197.222.82])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42ba642594dsm171515245e9.47.2024.09.02.04.40.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 02 Sep 2024 04:40:47 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH v2 0/4] ARM: dts: nxp: imx: mnor pinctrl node improvements
+Date: Mon, 02 Sep 2024 13:40:36 +0200
+Message-Id: <20240902-dts-nxp-imx6-pinctrl-v2-0-ab8196baa07a@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <4e8fa6fa-89aa-422f-b603-e2a3e1a2c704@stanley.mountain>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIADSk1WYC/22NQQqDMBBFryKz7pQk2pB25T2KCzVRB2wiE5EU8
+ e5Npcsu34P//g7RMbkIj2IHdhtFCj6DuhTQT60fHZLNDEqoShh1R7tG9GlBeiWNC/l+5RmNcNr
+ qTlrTlpCnC7uB0pl9Npknimvg9/myya/9BUv5P7hJFDjcjJSiVJ2tRD2TbzlcA4/QHMfxARiZ/
+ s25AAAA
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
+ Sascha Hauer <s.hauer@pengutronix.de>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Fabio Estevam <festevam@gmail.com>
+Cc: devicetree@vger.kernel.org, imx@lists.linux.dev, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3142;
+ i=krzysztof.kozlowski@linaro.org; h=from:subject:message-id;
+ bh=GqYwfy3C8buj3wjtrDwLQoBSAzkARfETSztvR9cAM1w=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBm1aQ3qDxf7xFAdwIWqHV45pdOryGWihIIjK1y5
+ Zm5akcFgFOJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCZtWkNwAKCRDBN2bmhouD
+ 1y01D/wIWcdUSsQ3C0b8PZEcXW2ROSbq9HCc+rilGVcppDS/RPKWX6NM+cMAf0EvgCPCE6/0Yik
+ FQcPnkIL3OcnQY8ATyYwDyx1p55lG2oGbutTFJ5GqjBa4/bgWZpi9O3aEAU4vsm2D3B6QqlJkjD
+ VGxI2lNrYDOosTz9crGVucNSrura0+w19AvuETGSd4r0f6BUTm2EKzsKc1pZ10xUGyBaeHCtkvC
+ 5TqAWoMY7j3SoMgAQa7FVCDiNZRYmYM3fTadgbJeBMuJF/d9/kzKePsY6ecduX95BUms5Mrv7IU
+ e3rts3OO+Aq19T1X8U/UE5rsmG+R9JTBbLq7235Ovz/Ob68LfiopGVsHWhutjVy4eWbPo7eqrcM
+ HgzJCUE94ulMDJX5To7FpEx2sg5eAr6lwQziDyDIg3sxrlBdTiMf3xdUdsp9znhsh1mAMrY8Grf
+ IxoVtxChrH4K4FOXy1TyKYE5JEj3EgkRvcWy6e8RZG4tDPjVBH/Zo1BDrbStL5sv0ltYQS4039R
+ T2TpNlCQ0IwUUx1d6pcB+xIsDnHsXlBcKF7Wqq1oGb0raFHucA2vdyVK3AyvjSwVppHO6YoS+MX
+ Z/2ZgTtU9Tu/6n38e4LN3rHFMaDl5qDTG3GusBwWXxeZssWmM/Q/kT/cD4PMvLJuVlRmE18vXvI
+ /6ITc8HwzeBLyyA==
+X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp;
+ fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
 
-On Mon, Sep 02, 2024 at 02:10:41PM +0300, Dan Carpenter wrote:
-> On Mon, Sep 02, 2024 at 01:16:17PM +0300, Andy Shevchenko wrote:
-> > On Sat, Aug 31, 2024 at 11:53:51AM +0300, Dan Carpenter wrote:
-> > > On Sat, Aug 31, 2024 at 11:25:54AM +0300, Dan Carpenter wrote:
-> > > > On Thu, Aug 22, 2024 at 04:05:38PM +0300, Andy Shevchenko wrote:
-> > > > > In the similar way, ignore 0 error code (AKA "success") in
-> > > > > dev_err_probe(). This helps to simplify a code such as
-> > > > > 
-> > > > >   if (ret < 0)
-> > > > >     return dev_err_probe(int3472->dev, ret, err_msg);
-> > > > > 
-> > > > >   return ret;
-> > > > > 
-> > > > > to
-> > > > > 
-> > > > >   return dev_err_probe(int3472->dev, ret, err_msg);
-> > > > > 
-> > > > > Reviewed-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
-> > > > > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> > > > 
-> > > > This is a terrible idea because currently Smatch is able to detect about one
-> > > > bug per month where someone unintentionally passes the wrong error variable
-> > > > to dev_err_probe().
-> > 
-> > How many cases you know where smatch is false positive about this?
-> 
-> This check has a very low false positive rate.
+Changes in v2:
+- Fix "grpgrp" -> "grp"
+- Link to v1: https://lore.kernel.org/r/20240831-dts-nxp-imx6-pinctrl-v1-0-f5811032bd40@linaro.org
 
-Yes, that's my expectation as well.
+Align the pinctrl node names with the bindings.
 
-> There is only one potential
-> false positive in the current linux-next.  Let me add Baolin Wang to get his
-> take on this.  I never mentioned reported this warning because the code was old
-> when I wrote the check.
-> 
-> drivers/spi/spi-sprd-adi.c
->    550          ret = of_hwspin_lock_get_id(np, 0);
->    551          if (ret > 0 || (IS_ENABLED(CONFIG_HWSPINLOCK) && ret == 0)) {
-> 
-> Is it possible for the CONFIG_ to not be enabled but ret is zero?
-> 
->    552                  sadi->hwlock =
->    553                          devm_hwspin_lock_request_specific(&pdev->dev, ret);
->    554                  if (!sadi->hwlock) {
->    555                          ret = -ENXIO;
->    556                          goto put_ctlr;
->    557                  }
->    558          } else {
->    559                  switch (ret) {
->    560                  case -ENOENT:
->    561                          dev_info(&pdev->dev, "no hardware spinlock supplied\n");
->    562                          break;
->    563                  default:
->    564                          dev_err_probe(&pdev->dev, ret, "failed to find hwlock id\n");
->                                                           ^^^
-> 
->    565                          goto put_ctlr;
->    566                  }
->    567          }
-> 
-> 
-> > I believe the number is only a few at most, which means that you may easily
-> > detect this still with this change being applied, i.e. "anything that
-> > terminates function flow with code 0, passed to dev_err_probe(), is
-> > suspicious".
-> 
-> I think you mean the opposite of what you wrote?  That if we're passing zero to
-> dev_err_probe() and it's the last line in a function it's *NOT* suspicious?
+Best regards,
+Krzysztof
 
-Yes, sorry, I meant "...terminates function flow _in the middle_...".
+---
+Krzysztof Kozlowski (4):
+      ARM: dts: imx6ul-tx6ul: drop empty pinctrl placeholder
+      ARM: dts: imx6ul: align pin config nodes with bindings
+      ARM: dts: imx6sl: align pin config nodes with bindings
+      ARM: dts: imx6qdl: align pin config nodes with bindings
 
-> Otherwise, I don't really understand the heuristic you're proposing.
+ arch/arm/boot/dts/nxp/imx/imx6qdl-aristainetos2.dtsi   |  2 +-
+ arch/arm/boot/dts/nxp/imx/imx6qdl-gw52xx.dtsi          |  4 ++--
+ arch/arm/boot/dts/nxp/imx/imx6qdl-gw53xx.dtsi          |  4 ++--
+ arch/arm/boot/dts/nxp/imx/imx6qdl-gw54xx.dtsi          |  4 ++--
+ arch/arm/boot/dts/nxp/imx/imx6qdl-gw553x.dtsi          |  4 ++--
+ arch/arm/boot/dts/nxp/imx/imx6qdl-gw560x.dtsi          |  4 ++--
+ arch/arm/boot/dts/nxp/imx/imx6qdl-gw5903.dtsi          | 10 +++++-----
+ arch/arm/boot/dts/nxp/imx/imx6qdl-gw5904.dtsi          |  4 ++--
+ arch/arm/boot/dts/nxp/imx/imx6qdl-gw5910.dtsi          |  4 ++--
+ arch/arm/boot/dts/nxp/imx/imx6qdl-gw5912.dtsi          |  4 ++--
+ arch/arm/boot/dts/nxp/imx/imx6qdl-icore-rqs.dtsi       |  8 ++++----
+ arch/arm/boot/dts/nxp/imx/imx6qdl-sabreauto.dtsi       |  4 ++--
+ arch/arm/boot/dts/nxp/imx/imx6qdl-tx6.dtsi             |  4 ++--
+ arch/arm/boot/dts/nxp/imx/imx6qdl-var-dart.dtsi        |  4 ++--
+ arch/arm/boot/dts/nxp/imx/imx6qdl-var-som.dtsi         |  4 ++--
+ arch/arm/boot/dts/nxp/imx/imx6sl-evk.dts               | 12 ++++++------
+ arch/arm/boot/dts/nxp/imx/imx6sl-warp.dts              |  8 ++++----
+ arch/arm/boot/dts/nxp/imx/imx6ul-14x14-evk.dtsi        |  4 ++--
+ .../arm/boot/dts/nxp/imx/imx6ul-ccimx6ulsbcexpress.dts |  4 ++--
+ arch/arm/boot/dts/nxp/imx/imx6ul-ccimx6ulsbcpro.dts    | 14 +++++++-------
+ arch/arm/boot/dts/nxp/imx/imx6ul-ccimx6ulsom.dtsi      |  4 ++--
+ arch/arm/boot/dts/nxp/imx/imx6ul-geam.dts              |  4 ++--
+ arch/arm/boot/dts/nxp/imx/imx6ul-isiot.dtsi            |  4 ++--
+ .../arm/boot/dts/nxp/imx/imx6ul-kontron-bl-common.dtsi |  2 +-
+ arch/arm/boot/dts/nxp/imx/imx6ul-liteboard.dts         |  2 +-
+ .../dts/nxp/imx/imx6ul-phytec-segin-peb-wlbt-05.dtsi   |  4 ++--
+ arch/arm/boot/dts/nxp/imx/imx6ul-phytec-segin.dtsi     |  6 +++---
+ arch/arm/boot/dts/nxp/imx/imx6ul-tqma6ul-common.dtsi   |  2 +-
+ arch/arm/boot/dts/nxp/imx/imx6ul-tx6ul-mainboard.dts   |  2 +-
+ arch/arm/boot/dts/nxp/imx/imx6ul-tx6ul.dtsi            | 18 ++++++------------
+ arch/arm/boot/dts/nxp/imx/imx6ull-myir-mys-6ulx.dtsi   |  8 ++++----
+ .../boot/dts/nxp/imx/imx6ull-seeed-npi-dev-board.dtsi  |  8 ++++----
+ arch/arm/boot/dts/nxp/imx/imx6ull-seeed-npi.dtsi       |  6 +++---
+ arch/arm/boot/dts/nxp/imx/imx6ulz-bsh-smm-m2.dts       |  2 +-
+ arch/arm/boot/dts/nxp/imx/mba6ulx.dtsi                 |  6 +++---
+ 35 files changed, 91 insertions(+), 97 deletions(-)
+---
+base-commit: 07f4822c25a849fc553d74e52c7b0c6953fd230a
+change-id: 20240829-dts-nxp-imx6-pinctrl-80e6d6b1d8a3
 
+Best regards,
 -- 
-With Best Regards,
-Andy Shevchenko
-
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 
