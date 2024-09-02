@@ -1,206 +1,187 @@
-Return-Path: <linux-kernel+bounces-310859-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310860-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08B15968217
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 10:36:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F234796821D
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 10:36:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B4830283645
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 08:36:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C46E1F23189
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 08:36:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42074185B78;
-	Mon,  2 Sep 2024 08:35:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C6C8185B78;
+	Mon,  2 Sep 2024 08:36:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="PwJFxT9y"
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2064.outbound.protection.outlook.com [40.107.244.64])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="tSZYq9Pm"
+Received: from out30-133.freemail.mail.aliyun.com (out30-133.freemail.mail.aliyun.com [115.124.30.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7154A183092
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 08:35:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.64
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725266151; cv=fail; b=Vbcr3RJ/0BnsBNNubCEYFgmqRxIyRqcnxSkOx7HibfB6zDRoL6KNYWW+6lsyUumPGkRj4ZEvJTuguhL5NE+bS1DlT5pFzYRabjmugdrt24E/j5kvL8pYvWf+yZ53DnJwu7ZeHhKDEPYhlpsKRoVi7681aavs30O2cQunwVEjo9I=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725266151; c=relaxed/simple;
-	bh=ZINlj3dCbUmAVRY8E6blvJPlpY6sUmO0ONgzS+MyNeA=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=Q1AnjR+UJ9iKqiBDKtuHTUYxS9vs1LaVv0D2OnNpq99aC128oODUAdKznltIi+1NitmPxKtZRmPf2oKUGychqUABqq7plJjd8JYVZEtwRC2L4bNNBG9Yh/ky8/M5RYhJ79+0ak//NJtUv53Oe41wiOAULO+9dT/4fh9of3PQvDY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=PwJFxT9y; arc=fail smtp.client-ip=40.107.244.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=hqlu3OrgrJc9sJhmfF0g7zYPFQ5EgL0mB7qIz9sCL9RQOk/3DYbcNTH0KrBnIz9lUOtApGQ8HmJbWzh72Nc2LNQ4uCZaPKUeM5Zjkw8ew3C1Jhvf/5TtmV7DuZkSXm0+aLf2k5R/NLtBiijOH7B/iX6uLDt/0OUfgIx6gLl6BZFetsmpn+oyq3thhqV9/xG/hXQ8Zz2CVnD3ifIrKGIF+x6B6Ftb+zT/kBqZzBTEzh4PZUX1+RN9URm5wjDTlXvzUn9WRKMKqbpFB85UUeBoMZXDdpAXz+jWlhIBgL4Ag/peEADjFKq9fAqRG2rWtDYLllbhz6+V/kuV2E4s+f1L4w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ZINlj3dCbUmAVRY8E6blvJPlpY6sUmO0ONgzS+MyNeA=;
- b=OBvJhZGpgwKN0kkV6XAv45p/gTf3UAv3pHKbECKqySIbp6KUgNjG2Gma+52kcF6VUrx0w9tlCOnZ3B968daFnmk+bOXA13/G+1Gl8sa2w0e0J9CJ494OtustCyznC9PXMIe7FkKeRUC8PPXBwtcxmIwgGxiE30M7yNb4E3TJHw5mz/vLuH/4/DzEu8M64ubA50ZtTsLuv+HNOQ1swc4eyyLg3lex2zOHHp00V/iKcs0lCBFBt9S0TyGu3FyQjf5LDGKiU6NPUvAM9AV1HXbk34C5k8nX7cXC2VLUDWRBRN7ovOldpz1XpxwAjbVM2c4z1clVMaNfhZgYjhWOJd8nXQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=microchip.com; dmarc=pass action=none
- header.from=microchip.com; dkim=pass header.d=microchip.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microchip.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ZINlj3dCbUmAVRY8E6blvJPlpY6sUmO0ONgzS+MyNeA=;
- b=PwJFxT9ytCGIQBkhn/JwrvQ2WD78s0aDFrZb3/yqZFtp43cTCHcNev/AlLGWzeDX8bfH759zCNIEPndO/41hnOmtsmeSySMd5MAx8CmDcp7Oa4Rzod2fsroy2v8UKC2z3547ahr3F8qPthU/veZmKRL+2Adz1QZJLQshFXCO0Yh5x66ZQ4QyiRF6DjNHeB4VRMGnzTS4jw4S/fTyaOeGhiGg28rfNzmU8eEJClwNSH9fBIw04kNOZOyAW3izE3/U16Ul5zJaDeWcFKAcFmKXmw+oFIJBLyKTpbwJifHZLfgyS+nt3cKLB81tZKHOH2viOAhDM/WE/4KybxHgsPg9bw==
-Received: from PH7PR11MB6451.namprd11.prod.outlook.com (2603:10b6:510:1f4::16)
- by LV8PR11MB8485.namprd11.prod.outlook.com (2603:10b6:408:1e6::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.24; Mon, 2 Sep
- 2024 08:35:47 +0000
-Received: from PH7PR11MB6451.namprd11.prod.outlook.com
- ([fe80::80a8:f388:d92e:41f8]) by PH7PR11MB6451.namprd11.prod.outlook.com
- ([fe80::80a8:f388:d92e:41f8%6]) with mapi id 15.20.7918.020; Mon, 2 Sep 2024
- 08:35:47 +0000
-From: <Dharma.B@microchip.com>
-To: <claudiu.beznea@tuxon.dev>, <Manikandan.M@microchip.com>,
-	<andrzej.hajda@intel.com>, <neil.armstrong@linaro.org>, <rfoss@kernel.org>,
-	<Laurent.pinchart@ideasonboard.com>, <jonas@kwiboo.se>,
-	<jernej.skrabec@gmail.com>, <maarten.lankhorst@linux.intel.com>,
-	<mripard@kernel.org>, <tzimmermann@suse.de>, <airlied@gmail.com>,
-	<daniel@ffwll.ch>, <Hari.PrasathGE@microchip.com>
-CC: <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 3/3] drm/bridge: microchip-lvds: Use
- devm_platform_ioremap_resource()
-Thread-Topic: [PATCH 3/3] drm/bridge: microchip-lvds: Use
- devm_platform_ioremap_resource()
-Thread-Index: AQHa+Jv6o1VJo8WIvk6M+dMWgRJh+7JENP4A
-Date: Mon, 2 Sep 2024 08:35:47 +0000
-Message-ID: <3ceb248f-aa3a-4aa7-ac8b-dbfe9527f541@microchip.com>
-References: <20240827161223.4152195-1-claudiu.beznea@tuxon.dev>
- <20240827161223.4152195-4-claudiu.beznea@tuxon.dev>
-In-Reply-To: <20240827161223.4152195-4-claudiu.beznea@tuxon.dev>
-Accept-Language: en-GB, en-US
-Content-Language: en-GB
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=microchip.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PH7PR11MB6451:EE_|LV8PR11MB8485:EE_
-x-ms-office365-filtering-correlation-id: 3e45d272-b1aa-43c8-d096-08dccb2a3e21
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR11MB6451.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016)(38070700018)(921020);DIR:OUT;SFP:1101;
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|376014|7416014|1800799024|366016|38070700018|921020;
-x-microsoft-antispam-message-info:
- =?utf-8?B?aW55Ykx3SW5FVlUwdWs1TzlHdlAyWFlOS0ZLaDNCT0YreWpTU1diMGFTYUkw?=
- =?utf-8?B?V0t6N1lFRkl5Ylp6dW1sMGRvYTNKalpsTytXR3g5b21sRVhPck9sZDNwc1JI?=
- =?utf-8?B?R2hDdE1MSDlVdU1lRnZYS0trVy9xVUR6ZllQTUZOMzRJQXVRbnNPb2ljbEov?=
- =?utf-8?B?eEdwWTQ1MCtFRFhEaUZNeWtMbkhNKzZUNzFZS1NOdG5WSVk5ekc0d1BUNmk4?=
- =?utf-8?B?UkVpL1hTVzFGSWxueE5lQ3kxKytmVkdzckVOMDZ0bTdKQ1R6Y1MxQzBWRkk1?=
- =?utf-8?B?THExV000d2Z1UkZzYXJYYUVJYUtSamlvTkxnY1cyeFVwZDVGdUg5YmJ0RFZq?=
- =?utf-8?B?RE1JeE1PNjBTSFIyeGVGbTdqZDdFZmNubEZVQ2M5NWUxQ0EveFpGYnBhZ3d1?=
- =?utf-8?B?bUd2UjRUQkxFYThBOVpna3ZDYjhtRDNXNkkzRnBZU3h4MDZEMDdDNFhWM0pS?=
- =?utf-8?B?Z0duOXM2QWRFcTdGQ3lhWmtQSWVGZzRPRTUwTjhXZWN5RytDeFgyVG9mZWk2?=
- =?utf-8?B?RlZMTEZHZmZzaENTVjVqYWRDSVBib1ZlbzJZL252Nml2a21kSGZhMnJ3ekdE?=
- =?utf-8?B?Mng5bHJ1djdZb0ZyRkFmRVNtdnFUODBTTTYyamtWUmF6Z0JxTmt1TDYwdkVq?=
- =?utf-8?B?OVhGNTI5S056RmQvb2VHbVVkUDVSMW9qa2h4bnN4dllydTkyK2pYbkN6a0xr?=
- =?utf-8?B?NWtEdXpWYSt1c1F6UVBlRVkzWHpoUWVuNXQxWU14cGY3VzhiS3dIZ21zcFFn?=
- =?utf-8?B?YTZYY2lhL3FORkFQdnFXc0xEbFFrZ1pGS2kxbCttcEhuejMxR3BqNHNScFRM?=
- =?utf-8?B?QWZSZ0Z1RHRTbjBmZStCMmxBemhYU2d5YVpDa2RqZVF1NGJWb0JCMmI4RDVm?=
- =?utf-8?B?bVpKbEdxc0RhenBPTVpBRGJUQ3hoS2hka3gzdGZ6M0tSUzZOaEVSdEtrUXhT?=
- =?utf-8?B?WHdXQVZTdndUQUJBTlViNkdBUHFhZW9OZGdITEZJSkJHQ1hQQTMyR1pURTVk?=
- =?utf-8?B?V3FUdXpkMUJPM1ZaVW9kdXFxU2UvSEJiRmxLb1RxN2FHNkNDWlJVNDNoeXda?=
- =?utf-8?B?MGMxcmQ4bVJaYUtJVWM4bFlESWErL3A2ZGRxNjhJUkxiVGxxSGZkNWh5clln?=
- =?utf-8?B?ak1scW1rbW5xL2hFL3lhcmdtbHk0ZGNScHN0YUNDK2tpTm1XMEpMbFltSlQ3?=
- =?utf-8?B?cHg4am9qSlFNTXRpaDJhVWVEa0hEV0F4MTJNOGJCaU9OQjBIZ1dacDA1Y0No?=
- =?utf-8?B?c2VwYmpPbTZwamF6bDBXQ2pTNU1nV3hhZUFqcU1UUVl1QUp3dVFDNnk0NFZ1?=
- =?utf-8?B?OGl1ZVY1Ti9wRk9hUW4xQkl0Qmxkc0hDSVB4Zk5KRDBTS0FXNGoyaGhpLzZh?=
- =?utf-8?B?MFk1SnZVSU5HS1MzZDNvNVlBNitFbVg3bk5tUHVRSUUxblFyTVE1VnI1THB1?=
- =?utf-8?B?QWZSSEd3WkZmUkZJcUtWTlpaK0dsYmFBVmhlTXZCTW40RzRXazFvU29XdDFa?=
- =?utf-8?B?RXpWenNjYldQZlE1b1FxQnZPaWdUQjV2QVdmcEN3ZVp2ZjVkVkZ5eHpLUFpN?=
- =?utf-8?B?cDQxQ3hqRHNTQlV6Z05DN3pXN1NwU09oSjYvNzAwU1daRGZ6MVc3RVJIRnZB?=
- =?utf-8?B?emduaW5jeEFDUFRhZHl0aWlXSFl3VlZHdDUwQnVJSThIdUd6Z1N6emFGYjc1?=
- =?utf-8?B?QXNqVm96azFucFpySENYN3NUS0xERkJQZXh6Q3JIUEpEU3VlQ0swNEdHWFVM?=
- =?utf-8?B?WWtBUHNIUHEvUXNiWkliZk5ZTTNkWUVZdW13Smt0K0tmUXh6ZUltcUlsQS9F?=
- =?utf-8?B?TmR1ZFVlMmdpZjd2aHA5dmpCeGNxV3ptRVQxNGIvS2pxa2l2WXpxU2FzTnlW?=
- =?utf-8?B?akM3azJhRWNuTUNrcUFNM0phbGEzS1lqUmhZamw4Z25XcW5SYVVjU01nUkZ5?=
- =?utf-8?Q?GFq+hRf7YHw=3D?=
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?dk1jdFJmc0ZBNmVTRDVNRVFEN1JuSkpNQk5YVHRzN1B1RTBwMzAyQTE3Qzht?=
- =?utf-8?B?U01VZmQvdVNYV3hOOUdvemNJY0djMU5MYzZ4amI0YXRkNUxrMGliUlNrVFpk?=
- =?utf-8?B?MEo2WXI4OVFMVE1FWXA1N0x5ZVZ3Nyt3aFRRQm5VTTRSVUtDa1RNc1hORG1p?=
- =?utf-8?B?RFpYV3B0c3VEK0k5eFNmbnlVeVM1NVZNY1FjeGpLdHY5NWpaa1hrZzRaRjBk?=
- =?utf-8?B?Q3hyS29nRVZqQlUvR0k5cWp1N010cGdJUzZKVVUwcEJsM1UyUTEyd2xlVnZW?=
- =?utf-8?B?cVBsKytEVXJab29pN0VNdDdLbHlSa2d0aEs0dG5iUFkwNzZaWnp2VXJZeFov?=
- =?utf-8?B?Wmtwd1FLejhDMUlRTC9INnhFeThMMUVNTnY3cUpFcUlVNFlnclRVTTdsN2tK?=
- =?utf-8?B?YUI2Z1FOWEgxVWdUaU4rVzQ5N3A4TWwxM1kwNFRybzY5cGZuQmlPcS93a21H?=
- =?utf-8?B?L1RTWVhKMkxvTE1IclZxY09QWC9WbzJRaXh2NFZTTm1qOFNxYW16WmR1YkhO?=
- =?utf-8?B?M0pqZFRmOFlQNUtOUXpsVzJOTEVtRjFvVlpZbUJmZk5qMEsrWFF4S3ZTK2hN?=
- =?utf-8?B?ckEvbTZIV0J5YmVycjdxSXdCRzc0US90SGhyZXJlOFpab2ZJaHdZRzFyNHZO?=
- =?utf-8?B?MytiUUkrRERUTzZoa1c5cWthMzRRQ3JSRndGaXVHOTJuanVNTFhRdDVpOGkz?=
- =?utf-8?B?eXY4V2dQaUJPcndRQUR1by93WktpbWE0WUZNQUJxSjF4aHRDU2FJNDErcFRY?=
- =?utf-8?B?Ymx2dlBibzJJS3dHbGk0MHlQbjFWU0dFV2U5TytjUVIvYkJ3YnV2TzF5TnNC?=
- =?utf-8?B?S0tLL3Bod250M2JaU0NOUmJwL25zQ2hSRVpsck04RXVuT1J3TmlYKzlmcWIx?=
- =?utf-8?B?ZExRMDVSVHlkZ3BheWdJaUhRSmJZdnhtdWtPeXoreXR0ekE0clMwVktOeFlB?=
- =?utf-8?B?cDEyeTNqWlZ3SlFFYk5QWVZLVE5mVkhCamlnUW14Nm5QbFJja1ZEdXlNWXMw?=
- =?utf-8?B?RzJ2SitsdXJQTU1oRmZKYTNCU25ta0pWMVozZXY0T2VhT2krdElWYjZOMzk2?=
- =?utf-8?B?RWRyaVIrVFB6Z3lzTUJtUTJLMjhrTTRJM3hQa2Fhd0xnUjV4d2hlVUdiQUNY?=
- =?utf-8?B?MmZnbjh6OUo1U0RRRU9xRzF5REtORXoyZzJaTXpvcElkSGlTQURQN2NzTmIz?=
- =?utf-8?B?cS9RVXNNVGw3S3B4L1JMQWdDVktvZ2JWUHduODIwWmZkL3pKWDFuekQzYUR0?=
- =?utf-8?B?YTFIR2FKUUNINEJReUdTWlk5Z25iN2F5SGY2LzB3ZitOUWFhdzdud0luKzc0?=
- =?utf-8?B?RFFwZ2JKODhoTEhHNVRvc3NxdlRFY3YwaGZLR3dzV21Ob0pabXUxMmdlVFpO?=
- =?utf-8?B?SUhsZUVZZGJEV3gwWEFxbEU0bUNaYzR6OWtCb2NHSHl5RnRhZWdHcXRLZE9K?=
- =?utf-8?B?cGk5T3I2NngzYVBjckZCckNVQkVKb0NZejUvYzRSdHp6S3JablhGU1RPbWgv?=
- =?utf-8?B?ZmJaNTVLRHhjd2s3ZzcwYk00OFdNbTlrVytGeWZtZWN2aFcvNU9LcEtPV2VR?=
- =?utf-8?B?STR1TnJsSXN1b1BLWHFwSFFObWhwZTZxNXZCMzRVYmkrdlQ4ZlpCeGJKQUND?=
- =?utf-8?B?cWZ4MXFHeUVqSXpldVU3YlhZdVZ5aldVdHNxR29wVTZneWJBRlc1M0VrZjgw?=
- =?utf-8?B?ZElFWGV3Yk05cjl4Q3NIdmd4U3FHZHdVYkQ1TTdDSnlOTGVvUUcvTXQwRHpR?=
- =?utf-8?B?RmxmNW9LZDdSOUtUb3ZOMHhyb0ZSNWczeEtLanNhVjNUb01OZXdkNUlUbjhW?=
- =?utf-8?B?blZacCtqNk1ESjBuVFM0TlBQbnVaM05MdmR4WGFaa2ZBaVlvbUVtbHJadnV3?=
- =?utf-8?B?dmNCRytabENZYURwUDNsUTYzNWo1NlNKaHp1bHJpczJtVExoZXhyNXhTVkEx?=
- =?utf-8?B?WXl1UWQwYUxESGUvNjJIRXJVVm1yRVE1dGFmSG9GVXRKZ1pwYXp2d243cERp?=
- =?utf-8?B?c1R6aWxBbW90UmFxYmNOVFJTZUJFQTlHMkZrRG9Pc2ViMHo0bmxDTjR0UFAx?=
- =?utf-8?B?dUY2WWxJYnA3RWZ5MlYzRUhzMlduZTNjb1BmNGQrcnpYcCtBOEFsRjZ2b3RW?=
- =?utf-8?Q?5/V1nNNpRc8RaT88dzUKjNjzm?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <09BD2EDE22C1244F9AEB6E2351ADE564@namprd11.prod.outlook.com>
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AFB3161310
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 08:36:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.133
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725266176; cv=none; b=KSkn9vyBArwPe1AgBJNAYhAIV7daCNNnY8sDweuL0VZe7qD/rrk6Yt/fFpKz57cjMV9216B9uJ10T15VQgUmYuJJ5UWLVxFtB1o4W1hQu9YhaxSTXJHoQWVkWNf2NGEchMeXVk05epmNPZ01+If9RA1W/yUy4lbLs41mFl+LU+Q=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725266176; c=relaxed/simple;
+	bh=onUFYEuHZVIJfx464Mcn7n8IFtixASHc9Jb6IJYCcVM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BHJUKhJH7LZeL4EDWyYbNtqp/xwluKyqK3Dq1mwuC1h/qDIG1JpHRn730uAIbI4sE1kh2ATS723FABsyDGt0fTnwKxbOk6v9XBvxZX/zdLD6YCLKwpmIUYGO74hkT2PDc8ay0xuJjy59YZb4KHsGotlRvj84g1oI6wSyMIQx/rM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=tSZYq9Pm; arc=none smtp.client-ip=115.124.30.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1725266169; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=gqogtgI3FS2H6sxfDkFSml13NwueUA6Yx4J8h4K0pCc=;
+	b=tSZYq9PmmE+wA165aeCMMQilBy8W35c+DFwrmFrsUjVdpOQrIuuLhtPX3SWUbNOp1s64rC9gOC54gFVrN+fh1yVdSnKt1WiqO0Z3rHlag4fCM9oLQm480YzgqNnGJIBGL1tF4ZcqD0jA7mOlS8DWmYonYQmSGXwSPrWpfi0Fids=
+Received: from 30.74.144.122(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WE63r6B_1725266168)
+          by smtp.aliyun-inc.com;
+          Mon, 02 Sep 2024 16:36:09 +0800
+Message-ID: <fdd5a942-6382-49c7-90d9-5b2b1fea9671@linux.alibaba.com>
+Date: Mon, 2 Sep 2024 16:36:08 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: microchip.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PH7PR11MB6451.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3e45d272-b1aa-43c8-d096-08dccb2a3e21
-X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Sep 2024 08:35:47.0251
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: HOOc1qK5I8MEpE+ejBPLirTzZwCCF+Q/hpTWLFAQ11JFIW2KZsFwunSa8wS2cYnDiJuZYVeEjoqRm2+fqs9cbQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV8PR11MB8485
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] mm,tmpfs: consider end of file write in shmem_is_huge
+To: Rik van Riel <riel@surriel.com>, Hugh Dickins <hughd@google.com>
+Cc: kernel-team@meta.com, Andrew Morton <akpm@linux-foundation.org>,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ Dave Chinner <dchinner@redhat.com>, "Darrick J. Wong" <djwong@kernel.org>,
+ Vlastimil Babka <vbabka@suse.cz>
+References: <20240829235415.57374fc3@imladris.surriel.com>
+From: Baolin Wang <baolin.wang@linux.alibaba.com>
+In-Reply-To: <20240829235415.57374fc3@imladris.surriel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-T24gMjcvMDgvMjQgOTo0MiBwbSwgQ2xhdWRpdSBCZXpuZWEgd3JvdGU6DQo+IEVYVEVSTkFMIEVN
-QUlMOiBEbyBub3QgY2xpY2sgbGlua3Mgb3Igb3BlbiBhdHRhY2htZW50cyB1bmxlc3MgeW91IGtu
-b3cgdGhlIGNvbnRlbnQgaXMgc2FmZQ0KPiANCj4gVGhlIGRldm1fcGxhdGZvcm1faW9yZW1hcF9y
-ZXNvdWNlKCkgZG9lcyBleGFjdGx5IHdoYXQNCj4gZGV2bV9pb3JlbWFwX3Jlc291cmNlKCkgY29t
-YmluZWQgd2l0aCBwbGF0Zm9ybV9nZXRfcmVzb3VjZSgpIGRvZXMuDQo+IFRodXMgdXNlIGl0Lg0K
-PiANCj4gU2lnbmVkLW9mZi1ieTogQ2xhdWRpdSBCZXpuZWEgPGNsYXVkaXUuYmV6bmVhQHR1eG9u
-LmRldj4NClJldmlld2VkLWJ5OiBEaGFybWEgQmFsYXN1YmlyYW1hbmkgPGRoYXJtYS5iQG1pY3Jv
-Y2hpcC5jb20+DQpUZXN0ZWQtYnk6IERoYXJtYSBCYWxhc3ViaXJhbWFuaSA8ZGhhcm1hLmJAbWlj
-cm9jaGlwLmNvbT4NCj4gLS0tDQo+ICAgZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9taWNyb2NoaXAt
-bHZkcy5jIHwgMyArLS0NCj4gICAxIGZpbGUgY2hhbmdlZCwgMSBpbnNlcnRpb24oKyksIDIgZGVs
-ZXRpb25zKC0pDQo+IA0KPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9taWNy
-b2NoaXAtbHZkcy5jIGIvZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9taWNyb2NoaXAtbHZkcy5jDQo+
-IGluZGV4IGYwNDgzMTEwNmVlYS4uODVhZmY4YzVhYWY0IDEwMDY0NA0KPiAtLS0gYS9kcml2ZXJz
-L2dwdS9kcm0vYnJpZGdlL21pY3JvY2hpcC1sdmRzLmMNCj4gKysrIGIvZHJpdmVycy9ncHUvZHJt
-L2JyaWRnZS9taWNyb2NoaXAtbHZkcy5jDQo+IEBAIC0xNTQsOCArMTU0LDcgQEAgc3RhdGljIGlu
-dCBtY2hwX2x2ZHNfcHJvYmUoc3RydWN0IHBsYXRmb3JtX2RldmljZSAqcGRldikNCj4gDQo+ICAg
-ICAgICAgIGx2ZHMtPmRldiA9IGRldjsNCj4gDQo+IC0gICAgICAgbHZkcy0+cmVncyA9IGRldm1f
-aW9yZW1hcF9yZXNvdXJjZShsdmRzLT5kZXYsDQo+IC0gICAgICAgICAgICAgICAgICAgICAgIHBs
-YXRmb3JtX2dldF9yZXNvdXJjZShwZGV2LCBJT1JFU09VUkNFX01FTSwgMCkpOw0KPiArICAgICAg
-IGx2ZHMtPnJlZ3MgPSBkZXZtX3BsYXRmb3JtX2lvcmVtYXBfcmVzb3VyY2UocGRldiwgMCk7DQo+
-ICAgICAgICAgIGlmIChJU19FUlIobHZkcy0+cmVncykpDQo+ICAgICAgICAgICAgICAgICAgcmV0
-dXJuIFBUUl9FUlIobHZkcy0+cmVncyk7DQo+IA0KPiAtLQ0KPiAyLjM5LjINCj4gDQoNCg0KLS0g
-DQpXaXRoIEJlc3QgUmVnYXJkcywNCkRoYXJtYSBCLg0K
+
+
+On 2024/8/30 11:54, Rik van Riel wrote:
+> Take the end of a file write into consideration when deciding whether
+> or not to use huge folios for tmpfs files when the tmpfs filesystem is
+> mounted with huge=within_size
+> 
+> This allows large writes that append to the end of a file to automatically
+> use large folios.
+
+Make sense to me.
+
+> 
+> Doing 4MB squential writes without fallocate to a 16GB tmpfs file:
+> - 4kB pages:       1560 MB/s
+> - huge=within_size 4720 MB/s
+> - huge=always:     4720 MB/s
+> 
+> Signed-off-by: Rik van Riel <riel@surriel.com>
+> ---
+>   fs/xfs/scrub/xfile.c     |  6 +++---
+>   fs/xfs/xfs_buf_mem.c     |  2 +-
+>   include/linux/shmem_fs.h | 12 ++++++-----
+>   mm/huge_memory.c         |  2 +-
+>   mm/khugepaged.c          |  2 +-
+>   mm/shmem.c               | 44 +++++++++++++++++++++-------------------
+>   mm/userfaultfd.c         |  2 +-
+>   7 files changed, 37 insertions(+), 33 deletions(-)
+> 
+> diff --git a/fs/xfs/scrub/xfile.c b/fs/xfs/scrub/xfile.c
+> index d848222f802b..e6e1c1fd23cb 100644
+
+[snip]
+
+> diff --git a/include/linux/shmem_fs.h b/include/linux/shmem_fs.h
+> index 1d06b1e5408a..846c1ea91f50 100644
+> --- a/include/linux/shmem_fs.h
+> +++ b/include/linux/shmem_fs.h
+> @@ -111,13 +111,15 @@ extern void shmem_truncate_range(struct inode *inode, loff_t start, loff_t end);
+>   int shmem_unuse(unsigned int type);
+>   
+>   #ifdef CONFIG_TRANSPARENT_HUGEPAGE
+> -extern bool shmem_is_huge(struct inode *inode, pgoff_t index, bool shmem_huge_force,
+> -			  struct mm_struct *mm, unsigned long vm_flags);
+> +extern bool shmem_is_huge(struct inode *inode, pgoff_t index, loff_t write_end,
+> +	       		  bool shmem_huge_force, struct mm_struct *mm,
+> +			  unsigned long vm_flags);
+>   unsigned long shmem_allowable_huge_orders(struct inode *inode,
+>   				struct vm_area_struct *vma, pgoff_t index,
+>   				bool global_huge);
+>   #else
+> -static __always_inline bool shmem_is_huge(struct inode *inode, pgoff_t index, bool shmem_huge_force,
+> +static __always_inline bool shmem_is_huge(struct inode *inode, pgoff_t index,
+> +					  loff_t write_end, bool shmem_huge_force,
+>   					  struct mm_struct *mm, unsigned long vm_flags)
+>   {
+>   	return false;
+> @@ -150,8 +152,8 @@ enum sgp_type {
+>   	SGP_FALLOC,	/* like SGP_WRITE, but make existing page Uptodate */
+>   };
+>   
+> -int shmem_get_folio(struct inode *inode, pgoff_t index, struct folio **foliop,
+> -		enum sgp_type sgp);
+> +int shmem_get_folio(struct inode *inode, pgoff_t index, loff_t write_end,
+> +		    struct folio **foliop, enum sgp_type sgp);
+>   struct folio *shmem_read_folio_gfp(struct address_space *mapping,
+>   		pgoff_t index, gfp_t gfp);
+>   
+> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+> index 67c86a5d64a6..8c09071e78cd 100644
+> --- a/mm/huge_memory.c
+> +++ b/mm/huge_memory.c
+> @@ -160,7 +160,7 @@ unsigned long __thp_vma_allowable_orders(struct vm_area_struct *vma,
+>   	 * own flags.
+>   	 */
+>   	if (!in_pf && shmem_file(vma->vm_file)) {
+> -		bool global_huge = shmem_is_huge(file_inode(vma->vm_file), vma->vm_pgoff,
+> +		bool global_huge = shmem_is_huge(file_inode(vma->vm_file), vma->vm_pgoff, 0,
+>   							!enforce_sysfs, vma->vm_mm, vm_flags);
+>   
+>   		if (!vma_is_anon_shmem(vma))
+> diff --git a/mm/khugepaged.c b/mm/khugepaged.c
+> index cdd1d8655a76..0ebabff10f97 100644
+> --- a/mm/khugepaged.c
+> +++ b/mm/khugepaged.c
+> @@ -1866,7 +1866,7 @@ static int collapse_file(struct mm_struct *mm, unsigned long addr,
+>   			if (xa_is_value(folio) || !folio_test_uptodate(folio)) {
+>   				xas_unlock_irq(&xas);
+>   				/* swap in or instantiate fallocated page */
+> -				if (shmem_get_folio(mapping->host, index,
+> +				if (shmem_get_folio(mapping->host, index, 0,
+>   						&folio, SGP_NOALLOC)) {
+>   					result = SCAN_FAIL;
+>   					goto xa_unlocked;
+> diff --git a/mm/shmem.c b/mm/shmem.c
+> index 5a77acf6ac6a..964c24fc480f 100644
+> --- a/mm/shmem.c
+> +++ b/mm/shmem.c
+> @@ -548,7 +548,7 @@ static bool shmem_confirm_swap(struct address_space *mapping,
+>   
+>   static int shmem_huge __read_mostly = SHMEM_HUGE_NEVER;
+>   
+> -static bool __shmem_is_huge(struct inode *inode, pgoff_t index,
+> +static bool __shmem_is_huge(struct inode *inode, pgoff_t index, loff_t write_end,
+>   			    bool shmem_huge_force, struct mm_struct *mm,
+>   			    unsigned long vm_flags)
+>   {
+> @@ -568,7 +568,8 @@ static bool __shmem_is_huge(struct inode *inode, pgoff_t index,
+>   		return true;
+>   	case SHMEM_HUGE_WITHIN_SIZE:
+>   		index = round_up(index + 1, HPAGE_PMD_NR);
+> -		i_size = round_up(i_size_read(inode), PAGE_SIZE);
+> +		i_size = max(write_end, i_size_read(inode));
+> +		i_size = round_up(i_size, PAGE_SIZE);
+>   		if (i_size >> PAGE_SHIFT >= index)
+>   			return true;
+>   		fallthrough;
+
+The shmem_is_huge() is no longer exported and has been renamed to 
+shmem_huge_global_enabled() by the series[1]. So you need rebase on the 
+latest mm-unstable branch.
+
+[1] 
+https://lore.kernel.org/all/cover.1721626645.git.baolin.wang@linux.alibaba.com/T/#md2580130f990af0b1428010bfb4cc789bb865136 
+
 
