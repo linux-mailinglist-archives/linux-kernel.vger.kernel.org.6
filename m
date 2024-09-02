@@ -1,222 +1,177 @@
-Return-Path: <linux-kernel+bounces-311428-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311427-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 292E1968906
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 15:38:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 587A1968904
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 15:37:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8D5A9B20E32
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 13:38:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8C683B2213B
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 13:37:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A05FA201253;
-	Mon,  2 Sep 2024 13:37:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31E36184D;
+	Mon,  2 Sep 2024 13:37:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="QISSaH6f"
-Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hpV0mk8H"
+Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D56241A80
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 13:37:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 160A619C54E
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 13:37:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725284278; cv=none; b=MElZdMzTVHlfBa5iuWnm+8n5xjTppadQoqwxfMfniRn8DJGuzBL0kdbJo7ysvLsXdONBHk0sHwgOZIL/ZT9UVdS1Cu+mb6dzUF6a9aNefa0DiL2frb8LJrNuB45vSanfG1bUKXvfZLvS2GGGiboXhhfl4S42TLGIuG66Ar9l7v8=
+	t=1725284224; cv=none; b=JXVBkivARuhbXi8gz8cYiGjRykLcudmRHcKZ4NOKjxNYKpK0ldEfiCm0DvzGBMV2CbNvIX/2TDvBUYq0ZcxCzxagDdLChjNewYeaPTY4a0UIqG84IDj0/+nd4CPorChkoX5u9H8XeC7C3e1S7P2gJnn9LM0mtLpE7aWXy5rtrKc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725284278; c=relaxed/simple;
-	bh=s4G8+xz/zmaWDvHhyNvdWXS0q0N5AomzZuH3bsjzkb8=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=F99vtq8xKuwiLH+ykM+VMHVDfrUNsp58PLqz1jfSmwI5+cugru5TInI4jOi6ehSZb4CeePl1Q2YXjU66qrtT1D/5sU8iGFRUBkTfa9hAWNmC8/IQVOTIc4qXtbxnDWRJ236gUe1CEpiQZhVmepXbVlqZN2JhV4Mx/ZzLCNxgVZY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=QISSaH6f; arc=none smtp.client-ip=60.244.123.138
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: 894ba956693011ef8593d301e5c8a9c0-20240902
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=zP4cGg7CUphsBzvMJGs84P/fiBMkQ+3J/IWvuPTx6wA=;
-	b=QISSaH6fWkiP/CBeZjN4NGmffPGsKINRQeGOJqRvzwknAY0Jfu5OziDZhW2mmDuXgzTwlsMD6lKRN+Z5hl7eW7Rs9Y0YDvcCPhciuxqBNvEjtEu15GsfBJqLpLN8MkSEU5G9eQK93LmxBffa6+yBSsO4UTz/6jy5CV2nJQiE7n4=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.41,REQID:d32f88e5-7e48-4228-b5bc-60da9e185a2e,IP:0,U
-	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:0
-X-CID-META: VersionHash:6dc6a47,CLOUDID:60392f15-737d-40b3-9394-11d4ad6e91a1,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
-	RL:1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,
-	SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULS
-X-UUID: 894ba956693011ef8593d301e5c8a9c0-20240902
-Received: from mtkmbs13n2.mediatek.inc [(172.21.101.108)] by mailgw01.mediatek.com
-	(envelope-from <liankun.yang@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 1307397206; Mon, 02 Sep 2024 21:37:45 +0800
-Received: from mtkmbs13n1.mediatek.inc (172.21.101.193) by
- MTKMBS14N1.mediatek.inc (172.21.101.75) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.26; Mon, 2 Sep 2024 21:37:45 +0800
-Received: from mszsdhlt06.gcn.mediatek.inc (10.16.6.206) by
- mtkmbs13n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1118.26 via Frontend Transport; Mon, 2 Sep 2024 21:37:45 +0800
-From: Liankun Yang <liankun.yang@mediatek.com>
-To: <chunkuang.hu@kernel.org>, <p.zabel@pengutronix.de>, <airlied@gmail.com>,
-	<daniel@ffwll.ch>, <matthias.bgg@gmail.com>,
-	<angelogioacchino.delregno@collabora.com>, <ck.hu@mediatek.com>,
-	<shuijing.li@mediatek.com>, <jitao.shi@mediatek.com>,
-	<mac.shen@mediatek.com>, <liankun.yang@mediatek.com>
-CC: <Project_Global_Chrome_Upstream_Group@mediatek.com>,
-	<dri-devel@lists.freedesktop.org>, <linux-mediatek@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-Subject: [PATCH v2 1/1] drm/mediatek: Fix get efuse issue for MT8188 DPTX
-Date: Mon, 2 Sep 2024 21:36:35 +0800
-Message-ID: <20240902133736.16461-1-liankun.yang@mediatek.com>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1725284224; c=relaxed/simple;
+	bh=dKgFBPTPCLDPW+xcxCISmbsFqEFW0cs33FNM5roea3c=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fATrUf8CkMQwAYH2p9NdL1B/aPjnPxPsfUJo6Mb+Pond1vvSasGuiGNjkgc+AjvWh5I7DZ62xhCduVlspjkVoW2ISPZDTrxDpNbHoR8TsVsPoJAHL2hGQxgPz3RojgszU8hvPAoHHKTgc/RmS2TSHR6mR7HMzPX03C2sKgXUApY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hpV0mk8H; arc=none smtp.client-ip=209.85.216.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-2d873dc644dso1986057a91.3
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2024 06:37:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1725284222; x=1725889022; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=dKgFBPTPCLDPW+xcxCISmbsFqEFW0cs33FNM5roea3c=;
+        b=hpV0mk8HvlsZOZLjTD4Gs4Fk3+UM5PeEW96gEEzXtwU/LxqlE4GzH8EDd31KiR9Frm
+         Y+o0QuZ2wiox6t7H9UMno2tddg/4M/EfMjLne3SZsJFYlokYINq2TeI4vISXf4gRT81x
+         avlhe38KrLz1sHsEortLKk+jwKhC6+73YNi8md+WBnH1LhXMFSTdZ81ueDSEWdgvoLRQ
+         vNUv22XQTNzk4wVWIjHpZTycWqKzykGhKRjkkDeag8H4oO3StT6GpoNeV3GxUSE3bxDw
+         MgaR/3yfik6/gJ6yUtu6cY0AOOnMK24ct3aVCAd/15HEV6q7pp6SvIuO8iyL89UEFvUz
+         gj2g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725284222; x=1725889022;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=dKgFBPTPCLDPW+xcxCISmbsFqEFW0cs33FNM5roea3c=;
+        b=lVsbGT36Sy7xTVVwWYNz96JdQyAt78jIgo+ZYNwRkdW1PP+DoIox1ZpmzYmfSNyNyf
+         6mZdI49glzNFBvbDUbhVwdohkVkCvoHY+E/PWe+gjenWQNDCoy9qpN12x6SNBby87Zc3
+         YCys4L1gU4VceqpzE+xe/xh52tCAVnnOsjQRKK2rux66Rcz4I7s3iC9p5/iNsfAdDj5V
+         lalsZkuny3Ko2uhe8SW1odQXbm3k92Nwptd7lXWzGpbB+kFCysMRFA/gQBBc4qcZa7sK
+         5mRhlv0jkYcDHVaq02wZna6eybh36zk/25g+4CjcndnmisgdJfDzO9V7Cnw1Rn/LNCzz
+         ouHQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWXF5O26COCKz37fnj1/qPNxp7IjnoYMVDeeJarFq76PxDro52wobUxptle+gMjXB4LZ5DKlquP6cQBCL0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyUJlDexTk2m+vQ8vtcjdlhPJhtsCfdpCuHNLj87AkYmpjBQh56
+	hYwOPbjc5kCXhtWT4Rb82ZEYwQ+UXJAhgQ6A56OEKmzWk01/e60xhhngBCMXp5dD5gekv78O6d8
+	uaIhBetG0HnWCWGqT2RFbHkZEOUiXlm0/kk9FsPlE/GNkspuS
+X-Google-Smtp-Source: AGHT+IEbpvQJofWdB/L63zkErG3AQrOMk5GCwdArxvFkwi1pwDg95bSgSzlr/VYNWZeCRErImVxWzKhQOfaLugZy+TU=
+X-Received: by 2002:a17:90a:fa42:b0:2cb:e429:f525 with SMTP id
+ 98e67ed59e1d1-2d856382f44mr14849679a91.33.1725284222194; Mon, 02 Sep 2024
+ 06:37:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-TM-AS-Product-Ver: SMEX-14.0.0.3152-9.1.1006-23728.005
-X-TM-AS-Result: No-10--1.188600-8.000000
-X-TMASE-MatchedRID: jW2Old1ajwAQkelDZj2VREKcYi5Qw/RVxBgaBynd2vlcKZwALwMGs039
-	pXYjpT7k6PIMT6GeywFIT4SOZxkibrGaAH5r9EhkhK8o4aoss8qeEP0DdJrullxTR00Ss4P6+Vi
-	hXqn9xLGFWYX2TPbDEoT7/Vs2JNl8WrGyEceiJjNtPeYaZY+k11o1rFkFFs1aaVRQ51WzrJqjxY
-	yRBa/qJcFwgTvxipFa9xS3mVzWUuAojN1lLei7RSBsp71x5CnUirOsjA55EK+k7LjKY7svMtkSk
-	4NoKJ09zxb/HOenQ+UczlaPt9MZttgaDNEduXtvyup6iSf7FQSWKQcroFQqehz+PhojlLUuev0Y
-	PTN868QBqq+/+aGCsUu0bcffALXE
-X-TM-AS-User-Approved-Sender: No
-X-TM-AS-User-Blocked-Sender: No
-X-TMASE-Result: 10--1.188600-8.000000
-X-TMASE-Version: SMEX-14.0.0.3152-9.1.1006-23728.005
-X-TM-SNTS-SMTP:
-	CF585BE6CBE2F48BBC827E841D267628A408271CE606D1727C63A1D75A9F8F292000:8
-X-MTK: N
+References: <20240728184551.42133-1-qyousef@layalina.io> <ca6b1db0-37d9-462e-87e4-d3bbd5eec7a3@arm.com>
+ <CAKfTPtBWLe4hMBhJeSqvoW10dAF3Bgj+zcYGMgBfwUhkgytkEQ@mail.gmail.com>
+ <CAKfTPtAJNjUe=4eQxq0M6==6O7dtJrw6rtwE6-xaWMJdSmfKcA@mail.gmail.com>
+ <20240901175149.46yfk335niccmfq4@airbuntu> <CAKfTPtBahrD5L8CbB4BijAvnwq=yG375TWDUuEvNipyTDYGQTA@mail.gmail.com>
+ <20240902125815.vu3s25ciib34eu3a@airbuntu>
+In-Reply-To: <20240902125815.vu3s25ciib34eu3a@airbuntu>
+From: Vincent Guittot <vincent.guittot@linaro.org>
+Date: Mon, 2 Sep 2024 15:36:51 +0200
+Message-ID: <CAKfTPtDr5nEHYJ0=_-3a6wVZ25TPoiohBNmhGBaZMCrYHydh8w@mail.gmail.com>
+Subject: Re: [PATCH v7] sched: Consolidate cpufreq updates
+To: Qais Yousef <qyousef@layalina.io>
+Cc: Christian Loehle <christian.loehle@arm.com>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Viresh Kumar <viresh.kumar@linaro.org>, Ingo Molnar <mingo@kernel.org>, 
+	Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>, 
+	Steven Rostedt <rostedt@goodmis.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
+	Valentin Schneider <vschneid@redhat.com>, Hongyan Xia <hongyan.xia2@arm.com>, 
+	John Stultz <jstultz@google.com>, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Update efuse data for MT8188 displayport.
+On Mon, 2 Sept 2024 at 14:58, Qais Yousef <qyousef@layalina.io> wrote:
+>
+> On 09/02/24 14:30, Vincent Guittot wrote:
+> > On Sun, 1 Sept 2024 at 19:51, Qais Yousef <qyousef@layalina.io> wrote:
+> > >
+> > > On 08/13/24 10:27, Vincent Guittot wrote:
+> > > > On Tue, 13 Aug 2024 at 10:25, Vincent Guittot
+> > > > <vincent.guittot@linaro.org> wrote:
+> > > > >
+> > > > > On Mon, 5 Aug 2024 at 17:35, Christian Loehle <christian.loehle@arm.com> wrote:
+> > > > > > Hi Qais,
+> > > > > > the idea of SCHED_CPUFREQ_FORCE_UPDATE and the possiblity of spamming
+> > > > > > freq updates still bothered me so let me share my thoughts even though
+> > > > > > it might be niche enough for us not to care.
+> > > > > >
+> > > > > > 1. On fast_switch systems, assuming they are fine with handling the
+> > > > > > actual updates, we have a bit more work on each context_switch() and
+> > > > > > some synchronisation, too. That should be fine, if anything there's
+> > > > > > some performance regression in a couple of niche cases.
+> > > > > >
+> > > > > > 2. On !fast_switch systems this gets more interesting IMO. So we have
+> > > > > > a sugov DEADLINE task wakeup for every (in a freq-diff resulting)
+> > > > > > update request. This task will preempt whatever and currently will
+> > > > > > pretty much always be running on the CPU it ran last on (so first CPU
+> > > > > > of the PD).
+> > > > >
+> > > > > The !fast_switch is a bit of concern for me too but not for the same
+> > > > > reason and maybe the opposite of yours IIUC your proposal below:
+> > > > >
+> > > > > With fast_switch we have the following sequence:
+> > > > >
+> > > > > sched_switch() to task A
+> > > > > cpufreq_driver_fast_switch -> write new freq target
+> > > > > run task A
+> > > > >
+> > > > > This is pretty straight forward but we have the following sequence
+> > > > > with !fast_switch
+> > > > >
+> > > > > sched_switch() to task A
+> > > > > queue_irq_work -> raise an IPI on local CPU
+> > > > > Handle IPI -> wakeup and queue sugov dl worker on local CPU (always
+> > > > > with 1 CPU per PD)
+> > > > > sched_switch() to sugov dl task
+> > > > > __cpufreq_driver_target() which can possibly block on a lock
+> > > > > sched_switch() to task A
+> > > > > run task A
+> > > > >
+> > > >
+> > > > sent a bit too early
+> > > >
+> > > > > We can possibly have 2 context switch and one IPi for each "normal"
+> > > > > context switch which is not really optimal
+> > > >
+> > > > It would be good to find a way to skip the spurious back and forth
+> > > > between the normal task and sugov
+> > >
+> > > Hmm I think we use affinity to keep the sugov running on policy->related_cpus.
+> > > Relaxing this will make it less of a problem, but won't eliminate it.
+> >
+> > yes, but it's not a problem of relaxing affinity here
+>
+> If we have 1 CPU per PD, then relaxing affinity will allow it to run anywhere.
+> I am just this will be safe on all platforms of course.
+>
+> But yeah, I don't think this is a solution anyway but the simplest thing to
+> make it harder to hit.
+>
+> > The problem is that the 1st switch to task A will be preempted by
+> > sugov so the 1st switch is useless. You should call cpufreq_update
+> > before switching to A so that we skip the useless switch to task A and
+> > directly switch to sugov 1st then task A
+>
+> Can we do this safely after we pick task A, but before we do the actual context
+> switch? One of the reasons I put this too late is because there's a late call
+> to balance_calbacks() that can impact the state of the rq and important to take
+> into account based on my previous testing and analysis.
 
-The DP monitor can not display when DUT connected to USB-c to DP dongle.
-Analysis view is invalid DP efuse data.
+I don't have all cases in mind and it would need more thinking but
+this should be doable
 
-Fixes: 350c3fe907fb ("drm/mediatek: dp: Add support MT8188 dp/edp function")
+>
+> Any reason we need to run the sugov worker as DL instead for example being
+> a softirq?
 
-Changes in V2:
-- Add Fixes tag.
-- Update the commit title.
-- Update the commit description.
-Per suggestion from the previous thread:
-https://patchwork.kernel.org/project/linux-mediatek/patch/
-20240510061716.31103-1-liankun.yang@mediatek.com/
-
-Signed-off-by: Liankun Yang <liankun.yang@mediatek.com>
----
- drivers/gpu/drm/mediatek/mtk_dp.c | 85 ++++++++++++++++++++++++++++++-
- 1 file changed, 84 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/gpu/drm/mediatek/mtk_dp.c b/drivers/gpu/drm/mediatek/mtk_dp.c
-index d8796a904eca..f2bee617f063 100644
---- a/drivers/gpu/drm/mediatek/mtk_dp.c
-+++ b/drivers/gpu/drm/mediatek/mtk_dp.c
-@@ -145,6 +145,89 @@ struct mtk_dp_data {
- 	u16 audio_m_div2_bit;
- };
- 
-+static const struct mtk_dp_efuse_fmt mt8188_dp_efuse_fmt[MTK_DP_CAL_MAX] = {
-+	[MTK_DP_CAL_GLB_BIAS_TRIM] = {
-+		.idx = 0,
-+		.shift = 10,
-+		.mask = 0x1f,
-+		.min_val = 1,
-+		.max_val = 0x1e,
-+		.default_val = 0xf,
-+	},
-+	[MTK_DP_CAL_CLKTX_IMPSE] = {
-+		.idx = 0,
-+		.shift = 15,
-+		.mask = 0xf,
-+		.min_val = 1,
-+		.max_val = 0xe,
-+		.default_val = 0x8,
-+	},
-+	[MTK_DP_CAL_LN_TX_IMPSEL_PMOS_0] = {
-+		.idx = 1,
-+		.shift = 0,
-+		.mask = 0xf,
-+		.min_val = 1,
-+		.max_val = 0xe,
-+		.default_val = 0x8,
-+	},
-+	[MTK_DP_CAL_LN_TX_IMPSEL_PMOS_1] = {
-+		.idx = 1,
-+		.shift = 8,
-+		.mask = 0xf,
-+		.min_val = 1,
-+		.max_val = 0xe,
-+		.default_val = 0x8,
-+	},
-+	[MTK_DP_CAL_LN_TX_IMPSEL_PMOS_2] = {
-+		.idx = 1,
-+		.shift = 16,
-+		.mask = 0xf,
-+		.min_val = 1,
-+		.max_val = 0xe,
-+		.default_val = 0x8,
-+	},
-+	[MTK_DP_CAL_LN_TX_IMPSEL_PMOS_3] = {
-+		.idx = 1,
-+		.shift = 24,
-+		.mask = 0xf,
-+		.min_val = 1,
-+		.max_val = 0xe,
-+		.default_val = 0x8,
-+	},
-+	[MTK_DP_CAL_LN_TX_IMPSEL_NMOS_0] = {
-+		.idx = 1,
-+		.shift = 4,
-+		.mask = 0xf,
-+		.min_val = 1,
-+		.max_val = 0xe,
-+		.default_val = 0x8,
-+	},
-+	[MTK_DP_CAL_LN_TX_IMPSEL_NMOS_1] = {
-+		.idx = 1,
-+		.shift = 12,
-+		.mask = 0xf,
-+		.min_val = 1,
-+		.max_val = 0xe,
-+		.default_val = 0x8,
-+	},
-+	[MTK_DP_CAL_LN_TX_IMPSEL_NMOS_2] = {
-+		.idx = 1,
-+		.shift = 20,
-+		.mask = 0xf,
-+		.min_val = 1,
-+		.max_val = 0xe,
-+		.default_val = 0x8,
-+	},
-+	[MTK_DP_CAL_LN_TX_IMPSEL_NMOS_3] = {
-+		.idx = 1,
-+		.shift = 28,
-+		.mask = 0xf,
-+		.min_val = 1,
-+		.max_val = 0xe,
-+		.default_val = 0x8,
-+	},
-+};
-+
- static const struct mtk_dp_efuse_fmt mt8195_edp_efuse_fmt[MTK_DP_CAL_MAX] = {
- 	[MTK_DP_CAL_GLB_BIAS_TRIM] = {
- 		.idx = 3,
-@@ -2771,7 +2854,7 @@ static SIMPLE_DEV_PM_OPS(mtk_dp_pm_ops, mtk_dp_suspend, mtk_dp_resume);
- static const struct mtk_dp_data mt8188_dp_data = {
- 	.bridge_type = DRM_MODE_CONNECTOR_DisplayPort,
- 	.smc_cmd = MTK_DP_SIP_ATF_VIDEO_UNMUTE,
--	.efuse_fmt = mt8195_dp_efuse_fmt,
-+	.efuse_fmt = mt8188_dp_efuse_fmt,
- 	.audio_supported = true,
- 	.audio_pkt_in_hblank_area = true,
- 	.audio_m_div2_bit = MT8188_AUDIO_M_CODE_MULT_DIV_SEL_DP_ENC0_P0_DIV_2,
--- 
-2.45.2
-
+sugov can sleep
 
