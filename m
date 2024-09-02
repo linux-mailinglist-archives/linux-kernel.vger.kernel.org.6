@@ -1,100 +1,89 @@
-Return-Path: <linux-kernel+bounces-310603-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310560-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2B65967EEC
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 07:49:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81888967E5E
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 06:11:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EA9361C218F0
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 05:49:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A3D92821A9
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 04:11:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1386A15250F;
-	Mon,  2 Sep 2024 05:49:36 +0000 (UTC)
-Received: from cmccmta1.chinamobile.com (cmccmta8.chinamobile.com [111.22.67.151])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFDB033F6;
-	Mon,  2 Sep 2024 05:49:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.22.67.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D4DE1494B3;
+	Mon,  2 Sep 2024 04:11:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Ats43WXn"
+Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A2C8A32
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 04:11:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725256175; cv=none; b=LSk8qg/RksBA9KY+VFI9BxScDvyeu81YJKasR6WnrVi8pH0GAYob7MyM/Sp9Z2cr7673UEESdKbe44W4UTge1+NdD6kyk9YILqm10sGcpM038udLy4e98sRDRgiRii8Y1EnCTI1MXA54zVgb2TGfEx767IlhM5qgtIQhtOsTKrQ=
+	t=1725250305; cv=none; b=sqDidCODF6+JcswhVvSEuCjNDTlf1KyAbjrRzP1vHVUsAmUdTtiBkOGDlAjIypb6FwNOp/3QtT5LFX57J/rT54Xn0OGQfi365eBRF1CbCTZJ6/sWD+QFe/nCTHaLamSmN0LX+5P7jLCYGJTURPi9YFWEPUrBaeHIoDdf4YCpCjk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725256175; c=relaxed/simple;
-	bh=TceHUtx5GxjWUVhuqfqamkAFjBFTFKj3XO6mCtNgIV8=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=ob8DjG8U+abbTtk24e/xwKyGFi4MorwvDv8KfEOdCB4MxOgcQouIRAgVfphbvj5NOhVb9PqPIvBJFZ+9lJNFnWnFE9SO0bYfrtOFUxXyPE9GbELGhWYLUwQd1L0XjSCVi2Fe1ZD3VGq53IKZ5E1WKCUEXrcAK2HO7guD35VIXHI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com; spf=pass smtp.mailfrom=cmss.chinamobile.com; arc=none smtp.client-ip=111.22.67.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
-	by rmmx-syy-dmz-app02-12002 (RichMail) with SMTP id 2ee266d551e1d21-05d28;
-	Mon, 02 Sep 2024 13:49:21 +0800 (CST)
-X-RM-TRANSID:2ee266d551e1d21-05d28
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from localhost.localdomain (unknown[223.108.79.98])
-	by rmsmtp-syy-appsvr07-12007 (RichMail) with SMTP id 2ee766d551e0741-8a810;
-	Mon, 02 Sep 2024 13:49:21 +0800 (CST)
-X-RM-TRANSID:2ee766d551e0741-8a810
-From: zhangjiao2 <zhangjiao2@cmss.chinamobile.com>
-To: jic23@kernel.org
-Cc: lars@metafoo.de,
-	linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	zhangjiao <zhangjiao2@cmss.chinamobile.com>
-Subject: Re: [PATCH] tools: iio: rm .*.cmd when make clean
-Date: Mon,  2 Sep 2024 11:54:12 +0800
-Message-Id: <20240902035412.4835-1-zhangjiao2@cmss.chinamobile.com>
-X-Mailer: git-send-email 2.33.0
-In-Reply-To: <20240831115931.596e35fb@jic23-huawei>
-References: <20240831115931.596e35fb@jic23-huawei>
+	s=arc-20240116; t=1725250305; c=relaxed/simple;
+	bh=ldg+LbqnHJ9gwDMdSZ9tPLEGrNZoIczhjCXH+CAGglY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=t3qGV9ynpOSmMG6XJOHc0ufrZKKNhcPizcJLHYuHLH87wbzrsBVm4WJR478ViQWymZzxQspqFyJ4u16w3Nea2JDJrSfj2f99OyPF6NErSAvg0K7Xg6v43/Jn1++y3NGu7wzp/JYmfMabXxSrxLBkbo9tSnVs5ZPZ1WeUYdf9qUo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Ats43WXn; arc=none smtp.client-ip=209.85.215.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-70b2421471aso2009349a12.0
+        for <linux-kernel@vger.kernel.org>; Sun, 01 Sep 2024 21:11:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1725250303; x=1725855103; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=ldg+LbqnHJ9gwDMdSZ9tPLEGrNZoIczhjCXH+CAGglY=;
+        b=Ats43WXnWxyY6y17ZWFQzbdNtOKKoS2EO4g0v8E6UMD6DvM+wLrVRBty+2/4X/eLu0
+         9HZrgcvywEI4IfGumSOQAQroLQYTajP4VYkPYT1dSisMokPHIBAiS04NErtBd6+CRM9M
+         Bb3o3QISiUc0FtmWGAK9Hg1bCpN3PPjQgkn7fYcj3u9cAmYim4D1gFGz9TIFTWwrCRTw
+         1iz01fqbw/GtN5xOG+dCc8VTkxPttlm+EKSX9023M15eQHLhITU4DXCY0wDsYeMThjmO
+         ycD3FklA+iZaV7CK/B4gjxNI7yu/egOJerG4cRx3jmDfFAOzQBqjxLDmRW4GP6XHEI43
+         X+kg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725250303; x=1725855103;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ldg+LbqnHJ9gwDMdSZ9tPLEGrNZoIczhjCXH+CAGglY=;
+        b=C9ZI29K2H2ff2a/JowFPgpm2zPnkWaJaaRk+xx4YZssty+EGUu594umtzfxnOHIiXX
+         w7z6f+JhzUx4BA5RPtKRFcKkHUb4Gxr96jTHUsDVU0d2Q6Dd52t4peS/yDO+PCcHqEwg
+         A7OaDAczW40I2vCvhJBgFmkomi7jCbywUOSTtaHdr1twIGrSgOUltn0O6CFPt7oCsczg
+         BHoNBz5kg2SML9MZpxpE/SBevboAnAT5N7lOOSy6GReGXxgaAtAQrzRawwHFspZhkYUp
+         vIbN+/nKG/xefkjT4W7ZKZWj7kxG/y/IS4MT1dP6sGZtignnN3ovP/vLdoslR8Bv5WKt
+         8kEQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVUZEJGjiiYfpkZgD1d5P7W+4Tmj1oYWwgW5aAWg572XXz7HEICswNxRpsFTLCKktrKZue52d4HR8WGOA4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwsKLqlydpZAnGLnY/q78fUf3omTn04fPOJxzTL+ij3NV/HhvBs
+	NPJZFw6FxK0p72N7SHxrLklcNJJrZBJlOeiiQbK3F4Bj29ZlEUf1oFBmaoWffYEt3/vbyJ+heip
+	5BU56XUznKElVdpA2E4uvgfkEoIgdGxhAoMJNQvr6wezUCLLTIb8c
+X-Google-Smtp-Source: AGHT+IErP80g0TsP9SLnDEA8znXKCZFsQKgYrAPROqAoutzo7mYcs5UeyLpD1pkgx52HWZCKAIeg/oiWCN9HxbfP5uo=
+X-Received: by 2002:a05:6a21:6b0a:b0:1c4:9ef6:499b with SMTP id
+ adf61e73a8af0-1ced62a0dcbmr4201357637.29.1725250303019; Sun, 01 Sep 2024
+ 21:11:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240828095232.571946-1-hsiangkao@linux.alibaba.com>
+In-Reply-To: <20240828095232.571946-1-hsiangkao@linux.alibaba.com>
+From: Sandeep Dhavale <dhavale@google.com>
+Date: Sun, 1 Sep 2024 21:11:31 -0700
+Message-ID: <CAB=BE-ShG+2o88LTDi9Me47F=-qh-NptQx_H5ch+eXkT4p7B0Q@mail.gmail.com>
+Subject: Re: [PATCH] erofs: clean up erofs_register_sysfs()
+To: Gao Xiang <hsiangkao@linux.alibaba.com>
+Cc: linux-erofs@lists.ozlabs.org, LKML <linux-kernel@vger.kernel.org>, 
+	kernel-team@android.com
+Content-Type: text/plain; charset="UTF-8"
 
-From: zhangjiao <zhangjiao2@cmss.chinamobile.com>
+LGTM.
 
-Hi
+Reviewed-by: Sandeep Dhavale <dhavale@google.com>
 
-On Sat, 31 Aug 2024 11:59:31, Jonathan Cameron wrote:
->> On Thu, 29 Aug 2024 13:33:09 +0800
->> zhangjiao2 <zhangjiao2@cmss.chinamobile.com> wrote:
->> From: zhangjiao <zhangjiao2@cmss.chinamobile.com>
->> 
->> rm .*.cmd when make clean
-> Where do those come from?
-	Those come from tools/build/Build.include.
-These .*.cmd files ware created when make.
-So clean them when make clean.
->> Signed-off-by: zhangjiao <zhangjiao2@cmss.chinamobile.com>
->> ---
->>  tools/iio/Makefile | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->> 
->> diff --git a/tools/iio/Makefile b/tools/iio/Makefile
->> index fa720f062229..3bcce0b7d10f 100644
->> --- a/tools/iio/Makefile
->> +++ b/tools/iio/Makefile
->> @@ -58,7 +58,7 @@ $(OUTPUT)iio_generic_buffer: $(IIO_GENERIC_BUFFER_IN)
->>  clean:
->>  	rm -f $(ALL_PROGRAMS)
->>  	rm -rf $(OUTPUT)include/linux/iio
->> -	find $(or $(OUTPUT),.) -name '*.o' -delete -o -name '\.*.d' -delete
->> +	find $(or $(OUTPUT),.) -name '*.o' -delete -o -name '\.*.d' -delete -o -name '\.*.cmd' -delete
->>  
->>  install: $(ALL_PROGRAMS)
->>  	install -d -m 755 $(DESTDIR)$(bindir);		\
--- 
-Thanks
-
-zhang jiao
-
-
-
+Thanks,
+Sandeep.
 
