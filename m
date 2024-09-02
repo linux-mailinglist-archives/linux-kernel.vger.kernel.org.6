@@ -1,112 +1,149 @@
-Return-Path: <linux-kernel+bounces-311487-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311488-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0CA29689BF
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 16:19:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7DEB39689C1
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 16:19:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2FB46B23640
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 14:19:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C76ADB23986
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 14:19:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 743B219E98A;
-	Mon,  2 Sep 2024 14:18:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D83721019E;
+	Mon,  2 Sep 2024 14:19:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="kmp7tOfD"
-Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="PkvlhCBc"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A182719E97C
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 14:18:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84E6419E97B
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 14:19:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725286735; cv=none; b=ry2E209BN0OCIC2xpHpnOiQqGOcRc595oT5BxBuv5SHC9ljSdQGLt+tqsXMC1XG3oNK6BMv6PfLcl2ks0YxaRqefWLnS5BP3Tnex+t6e2Tpi3+0q85Okz0Hb/Isi2gPcEtls0l26pcnTHWgUWyP6eiAFFs/BJO7J06i8mud6X/s=
+	t=1725286750; cv=none; b=onxbZv0t/V8ls0aMJEVg7tXhJTl8VP4lsONsIRY2KWDjWVg7t2RrR0Ceax3aPzkxt839tJQb72JUzIOFmGx7ls0C3CopfoBe3j70hJd7+QfTLKlDSsOsMIr6PPVNza/LGef86MCT2VL0iw8jLa/VRCnjaC+TheaePlgW8rL8adA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725286735; c=relaxed/simple;
-	bh=MXUsWjaPweiZIZEehN6iMcKrX5UI1bittIfnLKaBrHI=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=U1Am+30ffc+SymuaWMf19tZ4UO2NCtlBZDDyl5DF7/zThIBSrtcsCUgaCpVXzGXPDSZskRHE7AubHYy14+T/+WOIs8ppMM9vf/ESM4DSGsa9rf589J3v6/JKXLSsMDNUidiTfjubk3WDHg7MLaGF59f3xZ/pp+9Xwr6q7sH3Unc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=kmp7tOfD; arc=none smtp.client-ip=217.70.183.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 2F3F6FF802;
-	Mon,  2 Sep 2024 14:18:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1725286726;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=JF7JwMRD9iwv16HTVdkRVbNX1b4HkqNeP3wNC+6sYi4=;
-	b=kmp7tOfDYQRIxM4dxZwo5PUGEyMKtUFGcxhq/4Scxhh5ecbzZRxRcFP66Q+agVwruXGj+x
-	Q2gIpAICGAs1nXXelxQCG147MmAhje3LnpbbzKWP8xStceAM29ZdMa5/HVJDkzLB1nRLA5
-	eNBDokn/ZBHR+eNAJxkSZoBpgivegWpFO1fds1pLxtlFipEgCqAZg34clZvC4DWAQaxbZw
-	oRZ2cu/bD4Oea5o9k6xZ16TS29MS4pypNd3uQ5bHSctUZWhZXNZmiO/mxkyJN0q0RONDVh
-	pldNef6z3hYC5zowqhrAh/Ky4W52SKIu++f9y5ZNvnXR6jpTLLa0zApqcOCHJg==
-Date: Mon, 2 Sep 2024 16:18:44 +0200
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: Martin Kurbanov <mmkurbanov@salutedevices.com>
-Cc: <linux-kernel@vger.kernel.org>, <linux-mtd@lists.infradead.org>,
- <kernel@salutedevices.com>, Richard Weinberger <richard@nod.at>, "Vignesh
- Raghavendra" <vigneshr@ti.com>, Mika Westerberg
- <mika.westerberg@linux.intel.com>, Michael Walle <michael@walle.cc>, "Mark
- Brown" <broonie@kernel.org>, Chia-Lin Kao <acelan.kao@canonical.com>, "Md
- Sadre Alam" <quic_mdalam@quicinc.com>, Ezra Buehler
- <ezra.buehler@husqvarnagroup.com>, Sridharan S N <quic_sridsn@quicinc.com>,
- Frieder Schrempf <frieder.schrempf@kontron.de>, Alexey Romanov
- <avromanov@salutedevices.com>
-Subject: Re: [PATCH v2 2/5] mtd: spinand: add OTP support
-Message-ID: <20240902161844.2bf982ef@xps-13>
-In-Reply-To: <bb137aef-4ca9-4825-99b7-12f7e17c9550@salutedevices.com>
-References: <20240827174920.316756-1-mmkurbanov@salutedevices.com>
-	<20240827174920.316756-3-mmkurbanov@salutedevices.com>
-	<bb137aef-4ca9-4825-99b7-12f7e17c9550@salutedevices.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1725286750; c=relaxed/simple;
+	bh=SLGdTn07ubtZV6/hUwLuYIoHIRjobY+U0ouygKTMHA4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qPlAUANTJGWjzvujWcc0qxHrWhFCnG5MhFKhhGiKOfIRKnwRYqCEQ7rlSSr/orvDpq44LyhkrqIkawZT2WExR8DIL8Q6M1trtHrRvylwbQKxkqHKB7oSsfgACH1LMF11RgwwMFzO9hU6N+YDMhqVsx+vFy6kpYW/CpUVg+hm9GI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=PkvlhCBc; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a869332c2c2so842055166b.0
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2024 07:19:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1725286745; x=1725891545; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=uyQjlRpKvPqTe2Vvys+QBD2N8AIKIgckiJUDqZFzBsY=;
+        b=PkvlhCBc4pFrgrEJif00LKz+CapjsKcPSlkBtY23eHF8k+AcpLvYczOAf/IsMABeVH
+         LGRuB3VnbqfHex5jYj6cXyJ1dHcr2EWghBskWVZfYv7dC+uQXVxcribr6PwGKqHziWJX
+         QBg7r8lCEp8Hsj640a2M16mwHVFusiEnQhFLQqYpFey64aNx6OZuqQ6ZrJ0gKBWnfday
+         OiG6Mxe7GUMYNRksR37y8QN+TcIKSrDTiwHUkE18O9r7Uve3dKI6N3TE9w1Qs3AbnrkH
+         A4scCkizhZriFzkF4/Z/jY36lEyzc+KD7iza/SD1+Er7OaVkDY84m9yYnGKh9tLqNgxY
+         i13w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725286745; x=1725891545;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=uyQjlRpKvPqTe2Vvys+QBD2N8AIKIgckiJUDqZFzBsY=;
+        b=oyhmphplUbtk3FPT9bpPVgDd7hlWM+Nd8tqH9DOVw4HBrmZM5zO8VOgQOtaeFSCj7T
+         CWFiK2MQeywpyLQEucJrqQ3O2CpdrNmqFsMCbAEyotJE70s1Ujms85AMhyv8l+Whse7+
+         e0LcRMXUwBTLNpn1JuHXG/ZkoaLhwjMpzHDaMWa5Rxobhs4Qq4SYEsS/UhGFK6RszOuy
+         ISxobv8Yj24FwBqqr7K7feyLstCwDdY4VBLm4hFIMBzq5M9fJLkXahiOuS4OKmiIljyL
+         4zQpC8PtcAfaQyzuLt3oBpefTlcJ4tQc7R/d3UQgaCzEmmT89jnp03RvdVt0qf5Kk3Pr
+         srYw==
+X-Forwarded-Encrypted: i=1; AJvYcCXkGWSwiAS1h/rmAxbbcL0asZM/kiAy000bYqfeSVkJpisgjP/P5AsXmC4bujm5eqgCUZMrBnSpa4IkB+Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxV62qQkxC0U315mcGJ1oVb+LKa/w9yFMxmsxOTy7xhywhzji2b
+	Z/nwuWSNHGeuYEL5eFzzLGNW68eMwBI54xhIaujQ1HzYCAFuFqcAMnpkCrh/zAlKixl1g5iZDDX
+	O
+X-Google-Smtp-Source: AGHT+IHZ+0ilJpGlXDpC+TLSggtI+tYYb6aoKjE8QCfgLYzhbjycS+rUWvgpyuCYE+F8eXr5WPUrDQ==
+X-Received: by 2002:a17:907:608c:b0:a80:f646:c9c4 with SMTP id a640c23a62f3a-a898231c37emr1576759366b.1.1725286744521;
+        Mon, 02 Sep 2024 07:19:04 -0700 (PDT)
+Received: from pathway.suse.cz ([193.86.92.181])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a898900ec17sm567413766b.62.2024.09.02.07.19.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 02 Sep 2024 07:19:04 -0700 (PDT)
+Date: Mon, 2 Sep 2024 16:19:02 +0200
+From: Petr Mladek <pmladek@suse.com>
+To: John Ogness <john.ogness@linutronix.de>
+Cc: Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH printk v5 06/17] printk: nbcon: Introduce printer kthreads
+Message-ID: <ZtXJVvtDNDV7ZaTZ@pathway.suse.cz>
+References: <20240830152916.10136-1-john.ogness@linutronix.de>
+ <20240830152916.10136-7-john.ogness@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-Sasl: miquel.raynal@bootlin.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240830152916.10136-7-john.ogness@linutronix.de>
 
-Hi Martin,
+On Fri 2024-08-30 17:35:05, John Ogness wrote:
+> From: Thomas Gleixner <tglx@linutronix.de>
+> 
+> Provide the main implementation for running a printer kthread
+> per nbcon console that is takeover/handover aware. This
+> includes:
+> 
+> - new mandatory write_thread() callback
+> - kthread creation
+> - kthread main printing loop
+> - kthread wakeup mechanism
+> - kthread shutdown
 
-mmkurbanov@salutedevices.com wrote on Tue, 27 Aug 2024 20:57:04 +0300:
+I have found one more small problem.
 
-> Hello, Miquel. Thank you for the review.
-> Regarding your question ( https://lore.kernel.org/all/20240717103623.6d6b=
-63be@xps-13/ ):
->=20
-> >> +int spinand_otp_read(struct spinand_device *spinand, loff_t from, siz=
-e_t len,
-> >> +		     u8 *buf, size_t *retlen);
-> >> +
-> >> +int spinand_otp_write(struct spinand_device *spinand, loff_t from, si=
-ze_t len,
-> >> +		      const u8 *buf, size_t *retlen);
-> >> + =20
-> >=20
-> > Why exposing spinand_otp_read and spinand_otp_write ? =20
->=20
-> For the SPI-NAND chips we have (Micron, ESMT, FORESEE), the command
-> sequence for reading/writing OTP is the same. I decided to make these
-> functions global because other chips probably have similar read/write
-> OTP operations as well.
+> --- a/kernel/printk/nbcon.c
+> +++ b/kernel/printk/nbcon.c
+> @@ -1036,6 +1042,225 @@ static bool nbcon_emit_next_record(struct nbcon_write_context *wctxt, bool use_a
+[...]
+> +/**
+> + * nbcon_kthreads_wake - Wake up printing threads using irq_work
+> + */
+> +void nbcon_kthreads_wake(void)
+> +{
+> +	struct console *con;
+> +	int cookie;
+> +
+> +	if (!printk_kthreads_running)
+> +		return;
+> +
+> +	cookie = console_srcu_read_lock();
+> +	for_each_console_srcu(con) {
+> +		/*
+> +		 * Only schedule irq_work if the printing thread is
+> +		 * actively waiting. If not waiting, the thread will
+> +		 * notice by itself that it has work to do.
+> +		 */
+> +		if (rcuwait_has_sleeper(&con->rcuwait))
 
-Of course, I understand you might need them, but then the change does
-not belong to this patch. Actually you've done that correctly for the
-spinand_wait() helper.
+This is called for all consoles but con->rcuwait is initialized
+only for nbcon consoles.
 
-You can do all the "make foo() global" operations in a single patch if
-you want.
+I would add above this check:
 
-I will soon review more in deep the content of this patchset again.
++		if (!(console_srcu_read_flags(con) & CON_NBCON))
++			continue;
 
-Thanks,
-Miqu=C3=A8l
+> +			irq_work_queue(&con->irq_work);
+> +	}
+> +	console_srcu_read_unlock(cookie);
+> +}
+> +
+
+With the added check:
+
+Reviewed-by: Petr Mladek <pmladek@suse.com>
+
+Best Regards,
+Petr
 
