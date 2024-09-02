@@ -1,83 +1,56 @@
-Return-Path: <linux-kernel+bounces-311258-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311257-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C1609686C7
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 13:54:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16B6A9686C5
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 13:54:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3389C1F22FC7
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 11:54:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C95772836E7
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 11:54:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC1FA1DAC65;
-	Mon,  2 Sep 2024 11:54:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 090941DAC46;
+	Mon,  2 Sep 2024 11:54:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mPeA2BJm"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rjZtWnsO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75BD61DAC42;
-	Mon,  2 Sep 2024 11:54:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6037817F394;
+	Mon,  2 Sep 2024 11:54:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725278082; cv=none; b=V1dr2uy+6jFdHl3PTL1t8XD0P3r7nkJA7GhGWQKJ2JyeGF4KapZ91XJxF4Bhm/+KC7BuZLJexmQ5/737JNPeyw6p3A+bcsf8I4g+UU+qYSlMtE/WJwZPFTYR5RbQA9Vv4X7tPomFcWULEP5SddRy50cM0XC9U3IYH6M5TlXDt/I=
+	t=1725278076; cv=none; b=VuzjTi2MUgAAJ/M5Dz4Ri6sKq/Y/ZJT4Rz6blYorTtTxm54NbL2je2fr2weQHZE/wxdaZ6ou8o6XJ4WVJNDbiZq1uM/RPSQK0ZZxe/SUsSxPNLdnjaOUgCoc5BnId/mRSavYfYe7h8YxOr5x98TFZZnYBAB2I4cHjk+PLVIWyhU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725278082; c=relaxed/simple;
-	bh=sCdVNs/IlL95N+ZKq2piCTHeDB0GFDDYsaZYUbXVBnM=;
+	s=arc-20240116; t=1725278076; c=relaxed/simple;
+	bh=Qoy6TXYrDxb7VDyVoMvrB2KIvBuOAimyxOxwy2B2xwY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hwba5jaD+ywGWMpIbeFHntDQzkiG0D9ajjXVPfDAIFzxTwc6y+FGswiTkkgVQFMqMy9KM1RrNb2yozgR/HA64HJAP+mdKnX6RSZI/1u1Dtehn4054W0tNbpiz3iJIITP87SEKxL9s01xS4NJru4joHIAVTx+VSAWGfPrY4/8wy4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mPeA2BJm; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725278081; x=1756814081;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=sCdVNs/IlL95N+ZKq2piCTHeDB0GFDDYsaZYUbXVBnM=;
-  b=mPeA2BJmD1fqmTbDzLB2rib5BPENknmrTZ87cvd7TnrIe5EArYbZ+yYh
-   Sg/OK4tnCbMB5Nv0PbP+FnFqrJCjT53Ns+zZRAf/HrwNSedGlb9ZiCu7u
-   XaNej3+Fqu42ELF9bApLUzRtghKZMQn35zSPrIaeEQUrTK4MoQs5q1Uti
-   kfbtahBGSw37elKa4y9+qlci1eJ/CLqKzmYoT3Wnk8wH6tZuTfb7vRovd
-   5LYxQUToAra0l0fN7FwRCbVH9gtrNwFrGyMiImfAnCdXvdgOPOnZxgebo
-   XHdTPJaYJCV4ZVFYZIXXjtC8PhrFiF+JhrGMPU16unszfiniosXsLHGI2
-   Q==;
-X-CSE-ConnectionGUID: ccYtE2sfRCmUSGnL9dmjwQ==
-X-CSE-MsgGUID: ozVUue1HSziIzs7/yl62zA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11182"; a="24014060"
-X-IronPort-AV: E=Sophos;i="6.10,195,1719903600"; 
-   d="scan'208";a="24014060"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2024 04:54:40 -0700
-X-CSE-ConnectionGUID: OvdcPaPcTuqTjN4oqZCmQw==
-X-CSE-MsgGUID: yJ7JoR8XSVylSgT57ULXtg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,195,1719903600"; 
-   d="scan'208";a="64945939"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by orviesa006.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2024 04:54:35 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1sl5df-00000004LgL-2a60;
-	Mon, 02 Sep 2024 14:54:31 +0300
-Date: Mon, 2 Sep 2024 14:54:31 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Tyrone Ting <warp5tw@gmail.com>
-Cc: avifishman70@gmail.com, tmaimon77@gmail.com, tali.perry1@gmail.com,
-	venture@google.com, yuenn@google.com, benjaminfair@google.com,
-	andi.shyti@kernel.org, wsa@kernel.org, rand.sec96@gmail.com,
-	wsa+renesas@sang-engineering.com, tali.perry@nuvoton.com,
-	avi.fishman@nuvoton.com, tomer.maimon@nuvoton.com,
-	kwliu@nuvoton.com, jjliu0@nuvoton.com, kfting@nuvoton.com,
-	openbmc@lists.ozlabs.org, linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 5/7] i2c: npcm: Modify the client address assignment
-Message-ID: <ZtWnd8bmiu-M4fQg@smile.fi.intel.com>
-References: <20240830034640.7049-1-kfting@nuvoton.com>
- <20240830034640.7049-6-kfting@nuvoton.com>
- <ZtIaofiTqyFwNXrO@smile.fi.intel.com>
- <CACD3sJbZ-Yy3PfPWisMSiPYCbztbi1+Q+=udMG8EjNvE+xA1mg@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=qOdJGOAF2ZlotYxCSMKLaFENMt/sSOSskpqmlEOmtBXnm34IJExjER74CnUxF/1RKA8oOxf6JYKtQQbyqTRw9X0X7QjC6Q0S/usvHk4EgVUHLONPu3tfBK9hyx/p06zlaiJB/UhDYyHRN2ZYsP5WvzItIiezkGFOTYEjQzQrZpU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rjZtWnsO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB4A5C4CEC2;
+	Mon,  2 Sep 2024 11:54:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725278076;
+	bh=Qoy6TXYrDxb7VDyVoMvrB2KIvBuOAimyxOxwy2B2xwY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=rjZtWnsOxeRzyuI7Z4qmPAKCdx1AvBKFI2lSofSFykDSP2ZMddVNl1yGd8dQZ/4Us
+	 fvzb+3z8YINo3shAunu7qYN8vY3e9m2TJAiW2zNYY3V3pKs+AlUxWxtBMhL+O2DYsh
+	 BpPLh+tkTCHB2Sl0UU8/ENIg6Owa3587xsqSGDSRg21Tm+A4TQVFGeX6OjB2akqJRl
+	 LyE75B6FBGBpc8H1zssczwP/eGRETY1oMkmyq/KjykAgyPcJJf4ZfzLZxjJ/Az7hG/
+	 Zcvhza5hyL7Qq7zpdy+vNYQXMijvD0Fovvva4neFklk6lMbCGngHwickdK6alRoCgt
+	 o5NBYK47YP8Dw==
+Date: Mon, 2 Sep 2024 13:54:33 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Alexandru Ardelean <aardelean@baylibre.com>
+Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, jic23@kernel.org, krzk+dt@kernel.org, robh@kernel.org, 
+	lars@metafoo.de, michael.hennerich@analog.com, gstols@baylibre.com
+Subject: Re: [PATCH v2 6/8] dt-bindings: iio: adc: document diff-channels
+ corner case for some ADCs
+Message-ID: <pu536g76q5xanhwnvhpr52mttonb4gkmxfwwof4fyo4sww2g3l@6s7x3joiuzfa>
+References: <20240902103638.686039-1-aardelean@baylibre.com>
+ <20240902103638.686039-7-aardelean@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -86,29 +59,42 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CACD3sJbZ-Yy3PfPWisMSiPYCbztbi1+Q+=udMG8EjNvE+xA1mg@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <20240902103638.686039-7-aardelean@baylibre.com>
 
-On Mon, Sep 02, 2024 at 09:40:09AM +0800, Tyrone Ting wrote:
-> Andy Shevchenko <andriy.shevchenko@linux.intel.com> 於 2024年8月31日 週六 上午3:16寫道：
-> > On Fri, Aug 30, 2024 at 11:46:38AM +0800, Tyrone Ting wrote:
-> > > Store the client address earlier since it's used in the i2c_recover_bus
-> > > logic flow.
-> >
-> > Here no explanation why it's now left-shifted by one bit.
+On Mon, Sep 02, 2024 at 01:36:29PM +0300, Alexandru Ardelean wrote:
+> Some ADCs have channels with negative and positive inputs, which can be
+> used to measure differential voltage levels. These inputs/pins are
+> dedicated (to the given channel) and cannot be muxed as with other ADCs.
 > 
-> The address is stored from bit 1 to bit 7 in the register for sending
-> the i2c address later.
+> For those types of setups, the 'diff-channels' property can be specified to
+> be used with the channel number (or reg property) for both negative and
+> positive inputs/pins.
+> 
+> Signed-off-by: Alexandru Ardelean <aardelean@baylibre.com>
+> ---
+>  Documentation/devicetree/bindings/iio/adc/adc.yaml | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/iio/adc/adc.yaml b/Documentation/devicetree/bindings/iio/adc/adc.yaml
+> index 8e7835cf36fd..9b7a8e149639 100644
+> --- a/Documentation/devicetree/bindings/iio/adc/adc.yaml
+> +++ b/Documentation/devicetree/bindings/iio/adc/adc.yaml
+> @@ -37,6 +37,10 @@ properties:
+>        to both the positive and negative inputs of a differential ADC.
+>        The first value specifies the positive input pin, the second
+>        specifies the negative input pin.
+> +      There are also some ADCs, where the differential channel has dedicated
+> +      positive and negative inputs which can be used to measure differential
+> +      voltage levels. For those setups, this property can be configured with
+> +      the the 'reg' property (i.e. diff-channels = <reg reg>).
 
-Yes, but previously it was stored w/o that shift.
+Please run scripts/checkpatch.pl and fix reported warnings. Then please
+run  and (probably) fix more warnings.
+Some warnings can be ignored, especially from --strict run, but the code
+here looks like it needs a fix. Feel free to get in touch if the warning
+is not clear.
 
-> I'll write some comments about the left-shifted by one bit behavior
-> above this modification in next patch set.
-
--- 
-With Best Regards,
-Andy Shevchenko
-
+Best regards,
+Krzysztof
 
 
