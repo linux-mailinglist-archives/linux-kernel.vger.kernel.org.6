@@ -1,138 +1,187 @@
-Return-Path: <linux-kernel+bounces-310851-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310850-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A51F5968202
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 10:33:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48FC1968201
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 10:33:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 45FEEB20D5A
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 08:33:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C97D72809CB
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 08:33:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FA96186E36;
-	Mon,  2 Sep 2024 08:33:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dhf0CwZI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FC7018660A;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07E411865FE;
 	Mon,  2 Sep 2024 08:33:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Bs0s7Uij"
+Received: from mail-vs1-f53.google.com (mail-vs1-f53.google.com [209.85.217.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D16E7154C0B
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 08:33:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725266009; cv=none; b=uSMgxGlutMulljBFoLImzboEDGzN3nkv5mDq5enkcyycidvr0cgW7pIDZ/++E72kPqpiMrxDFYjBTUP8bHsuy5JJWqkX26/dWkq7FgpMntW95uN53NKGlhc0wXZN1tPwQuoTc9x0GeB86ruiWuEXKNo4O+riiHCExn2dyrVJzkg=
+	t=1725266008; cv=none; b=F4DOsSXz0vqj36g5nG2wNU0wSjYo5UlRABl8yxsWjM8gH3YxZEtiBFzsvsCpHej20EiQTj0dmL7AlFBP7cvzTYinmBKMKxlJpDt1v4iW3N9T2unINlx4rXN/FK71C+sSv8VUSbC2QgztHTtJPcq1WePGjEQ9wIep0jJ/q7PxdPY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725266009; c=relaxed/simple;
-	bh=xVjeuEAK/3aM0vsGYPY4dUHOj95o8OgLHPHyeTgQBDc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=o2CqVj3iyIWYW248ytBCnZbQbftR5bDPqIEUXALHrtA4w0njhq0MXNOn+Rg4XwbueREVP9mFL7bSBZvDGBy3e/QxNdA2Hurkghim94g6X6tPMVJzm9GjcE2675V2oV1DTXKn5BD2ye9XscXeJLGZRCjshnWStyrhuuY5GMYNY6E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dhf0CwZI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93BD7C4CEC2;
-	Mon,  2 Sep 2024 08:33:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725266009;
-	bh=xVjeuEAK/3aM0vsGYPY4dUHOj95o8OgLHPHyeTgQBDc=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=dhf0CwZILv2FE3RAkA+PMGNIxZiLaJ/IVq8TExQUefYmf+cEPh741TudQROZG687t
-	 a7/kiWXGQptaaCXFdAu92XYaQbA5/vqeCSw+pj1tecKorXSka3TinTFN49IBcL3Xhq
-	 cOLs4r/ZnCNdW533F8t1rgsNhYCNSa1aTjOfX7FYX0F9DjJzHYr97pKu6Dd3dKqQXf
-	 4JYBaZbbl7lSG5oaNc9m45BpGlTuHDo7c1CXcWIy8wZiIkeOHd/IzS2kkggZJKPnBq
-	 9Ze5OaxyuVA4Vk/pkpu1yLunrB2n+raJNSos3VE+uLS9LusBLX7w8xKjfZ/LqWQgvh
-	 nwFjO0huovE0A==
-From: Christian Brauner <brauner@kernel.org>
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Matthew Wilcox <willy@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Daniel Xu <dxu@dxuuu.xyz>,
-	Martin Rodriguez Reboredo <yakoyoku@gmail.com>,
-	Trevor Gross <tmgross@umich.edu>,
-	linux-kernel@vger.kernel.org,
-	rust-for-linux@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	Kees Cook <kees@kernel.org>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Wedson Almeida Filho <wedsonaf@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	Bjoern Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@samsung.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Arve Hjonnevag <arve@android.com>,
-	Todd Kjos <tkjos@android.com>,
-	Martijn Coenen <maco@android.com>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Carlos Llamas <cmllamas@google.com>,
-	Suren Baghdasaryan <surenb@google.com>
-Subject: Re: [PATCH v9 0/8] File abstractions needed by Rust Binder
-Date: Mon,  2 Sep 2024 10:33:11 +0200
-Message-ID: <20240902-ofenfrisch-deretwegen-52d00d98ba90@brauner>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240808-alice-file-v9-0-2cb7b934e0e1@google.com>
-References: <20240808-alice-file-v9-0-2cb7b934e0e1@google.com>
+	s=arc-20240116; t=1725266008; c=relaxed/simple;
+	bh=PNR1y5jFFyZ/U+8iJvaIrnMTI8sRD1ojmA0BXADfGWk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=bxbw/pGUwFv7kna1SdwnKzAh48JxOQi0BSKagxIQeu7wbfF8nhhAlLlDpEvoEUkEATflsHKl2/ghiZ7qnghZwNz9I8L6tlxPxEXF9sRBZfouC1wfNpEkgr4jrriyRwWMy8Ev+e2aKvRIwPo3mXm5cuj09UMFbSlUfiYb6M5Xis4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Bs0s7Uij; arc=none smtp.client-ip=209.85.217.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-vs1-f53.google.com with SMTP id ada2fe7eead31-498cffc6a9fso1516389137.1
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2024 01:33:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1725266005; x=1725870805; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=kXkIyZQ0PjK6x8WUxNBMo+VFGKPoaaBPUMlbMlC+lj4=;
+        b=Bs0s7UijXm7LEFj8GsrFuOStOIIVTdEsAXMqF5L0aTrCdgjgIuS3UIaY6YMxi36/Iy
+         vHbl/8QJdNFfFrR752wCbXKEGER/OiYCC36ZmGedr88Dzno+nxgPRukgWCZDfZ2kDnTI
+         GjxfHf2h3bB7FNUpBlA5SbSyvN2FhZ/ANWkSNVVhfYGrow9AuLdRswLqgSrxzyFISzZt
+         zT9GyX+YfEuLcvbNgklB55W48XIgFn6gNLZ5QRkdBHzwP/3aKLfur3JBsMOXVHm8OE0d
+         UqaMUdDFLryf4QY7SG8bD3huvs89iUvWAGB+pkDx8+6eU38E5RbbRdbYyx2HI+OGsQM+
+         vCGg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725266005; x=1725870805;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=kXkIyZQ0PjK6x8WUxNBMo+VFGKPoaaBPUMlbMlC+lj4=;
+        b=Ia4VNysD8VlB3wxnJ3z9CoNxfLZRXtqjATMahKebb4ErN691IH2w6pufBg1ybodMVc
+         mwqtu67SzXn/L/vSktjFRdMd1E8B4JpzbqaUxFopPM1mxLbE3Gc3iAK7cSywr2S4wfDT
+         LSpurm7rfAiIinQIuzmq0MSRxY5LssbE2OtiZ1Lkbvh7QUd1KD/Tmhbk5IMsGkXi9Gta
+         OihKqccexcqWqld3st1u0EqJ4488mJPdecSr4VXxYnn0HR7ue0Vm3kfy2a2GQHcOEWWc
+         1DEjKV8bD5HN+/ncB9CyzUZ8rn7GEQcVb6tFLxzgTYwToSCelsV+NdXWOXki2IK8MTGo
+         WZzA==
+X-Forwarded-Encrypted: i=1; AJvYcCU7BFSYRpgs3EsZZZSpinNIzNvFfEUY84EJylyM2sZnnT2s6Gxf4KtOQ1qgWt+b5zgVOFfpE6VqHJxQB7Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzE6TrxawqjxkXLdoMqbBpfh6/vPvLaEivVCeRHVesQoPXo6ax9
+	nnTgQl21mEQpwHmuVDplhkURvnPfWtwAwhd99jEB/2aq0j5neH8IdmfmJM2jMhBBDhexFZ0MoLn
+	3rGejQAI15WSIWrGCBA6c3PwdAKN23b2DtcqJryCo6BDIWbZUMeY=
+X-Google-Smtp-Source: AGHT+IFgxqoz93mmdsCr/aVqqjJRfDjqLFg0pIrx7sVX8EGEj0YgIu7R6T9ldniFExdERZD+0nImtPHiL+lQnbVegXM=
+X-Received: by 2002:a05:6102:441d:b0:48f:4bba:778c with SMTP id
+ ada2fe7eead31-49a774f6011mr7832345137.8.1725266004923; Mon, 02 Sep 2024
+ 01:33:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2031; i=brauner@kernel.org; h=from:subject:message-id; bh=xVjeuEAK/3aM0vsGYPY4dUHOj95o8OgLHPHyeTgQBDc=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaRdrfDYXlD4Pr09UPbZvNiej/kCIrPdvs1qqBPVbef0a ttx1LOio5SFQYyLQVZMkcWh3SRcbjlPxWajTA2YOaxMIEMYuDgFYCLcKgz/A/cKqed7TPqcZLI5 ruUGn1zohQ2R4Vq7rRbv/vDD/s3Nrwz/HV1PMx1hki09fkvb+O++g5c3TnONOTT3v/9qrr4ZdnP PcQMA
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+References: <20240901160814.090297276@linuxfoundation.org>
+In-Reply-To: <20240901160814.090297276@linuxfoundation.org>
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Mon, 2 Sep 2024 14:03:13 +0530
+Message-ID: <CA+G9fYuK+=YW6F+mBMeHAZoUrQQS6-AgAezRfQGEpZui4JUepg@mail.gmail.com>
+Subject: Re: [PATCH 5.10 000/151] 5.10.225-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
+	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, 
+	broonie@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, 08 Aug 2024 16:15:43 +0000, Alice Ryhl wrote:
-> This patchset contains the file abstractions needed by the Rust
-> implementation of the Binder driver.
-> 
-> Please see the Rust Binder RFC for usage examples:
-> https://lore.kernel.org/rust-for-linux/20231101-rust-binder-v1-0-08ba9197f637@google.com/
-> 
-> Users of "rust: types: add `NotThreadSafe`":
-> 	[PATCH 5/9] rust: file: add `FileDescriptorReservation`
-> 
-> [...]
+On Sun, 1 Sept 2024 at 22:20, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> This is the start of the stable review cycle for the 5.10.225 release.
+> There are 151 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Tue, 03 Sep 2024 16:07:34 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.10.225-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.10.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
-Moving this to vfs.rust.file. This won't show up in -next for quite a while
-(until v6.12-rc1 is out).
+The Powerpc defconfig builds failed on Linux stable-rc due to following
+build warnings / errors with clang-18 and gcc-12.
 
----
+This is a same problem on current stable-rc review on
+   - 5.4.283-rc1 review
+   - 5.10.225-rc1 review
+   - 5.15.166-rc1 review
 
-Applied to the vfs.rust.file branch of the vfs/vfs.git tree.
-Patches in the vfs.rust.file branch should appear in linux-next soon.
+In the case of stable-rc linux-5.10.y
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
+Anders bisected this to first bad commit id as,
+  fbdev: offb: replace of_node_put with __free(device_node)
+  [ Upstream commit ce4a7ae84a58b9f33aae8d6c769b3c94f3d5ce76 ]
 
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
+build log:
+--------
+drivers/video/fbdev/offb.c: In function 'offb_init_palette_hacks':
+drivers/video/fbdev/offb.c:357:47: error: expected '=', ',', ';',
+'asm' or '__attribute__' before '__free'
+  357 |                 struct device_node *pciparent
+__free(device_node) = of_get_parent(dp);
+      |                                               ^~~~~~
+drivers/video/fbdev/offb.c:357:47: error: implicit declaration of
+function '__free'; did you mean 'kfree'?
+[-Werror=implicit-function-declaration]
+  357 |                 struct device_node *pciparent
+__free(device_node) = of_get_parent(dp);
+      |                                               ^~~~~~
+      |                                               kfree
+drivers/video/fbdev/offb.c:357:54: error: 'device_node' undeclared
+(first use in this function)
+  357 |                 struct device_node *pciparent
+__free(device_node) = of_get_parent(dp);
+      |                                                      ^~~~~~~~~~~
+drivers/video/fbdev/offb.c:357:54: note: each undeclared identifier is
+reported only once for each function it appears in
+drivers/video/fbdev/offb.c:358:17: warning: ISO C90 forbids mixed
+declarations and code [-Wdeclaration-after-statement]
+  358 |                 const u32 *vid, *did;
+      |                 ^~~~~
+drivers/video/fbdev/offb.c:359:39: error: 'pciparent' undeclared
+(first use in this function); did you mean 'xa_parent'?
+  359 |                 vid = of_get_property(pciparent, "vendor-id", NULL);
+      |                                       ^~~~~~~~~
+      |                                       xa_parent
+cc1: some warnings being treated as errors
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.rust.file
 
-[1/8] rust: types: add `NotThreadSafe`
-      https://git.kernel.org/vfs/vfs/c/1fc5fbeff010
-[2/8] rust: task: add `Task::current_raw`
-      https://git.kernel.org/vfs/vfs/c/dff63ff65920
-[3/8] rust: file: add Rust abstraction for `struct file`
-      https://git.kernel.org/vfs/vfs/c/3d52041c524e
-[4/8] rust: cred: add Rust abstraction for `struct cred`
-      https://git.kernel.org/vfs/vfs/c/bd5715551277
-[5/8] rust: security: add abstraction for secctx
-      https://git.kernel.org/vfs/vfs/c/b94bf604a856
-[6/8] rust: file: add `FileDescriptorReservation`
-      https://git.kernel.org/vfs/vfs/c/b7af88a7d25d
-[7/8] rust: file: add `Kuid` wrapper
-      https://git.kernel.org/vfs/vfs/c/73cd06e92529
-[8/8] rust: file: add abstraction for `poll_table`
-      https://git.kernel.org/vfs/vfs/c/891ad53c3c62
+Build Log links,
+--------
+ - https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-5.10.y/build/v5.10.224-152-gee485d4aa099/testrun/24999742/suite/build/test/gcc-12-ppc6xx_defconfig/log
+
+Build failed comparison:
+ - https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-5.10.y/build/v5.10.224-152-gee485d4aa099/testrun/24999742/suite/build/test/gcc-12-ppc6xx_defconfig/history/
+
+metadata:
+----
+  git describe: v5.10.224-152-gee485d4aa099
+  git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
+  git sha: ee485d4aa099209aaf39d4a5b8fe624ce3b3499d
+  kernel config:
+https://storage.tuxsuite.com/public/linaro/lkft/builds/2lTio0YVAvyu3ldUd5EvqiE4ii0/config
+  build url: https://storage.tuxsuite.com/public/linaro/lkft/builds/2lTio0YVAvyu3ldUd5EvqiE4ii0/
+  toolchain: clang-18 and gcc-12
+  config: defconfig
+  arch: powerpc
+
+Steps to reproduce:
+---------
+ - tuxmake --runtime podman --target-arch powerpc --toolchain gcc-12
+--kconfig ppc6xx_defconfig
+
+
+--
+Linaro LKFT
+https://lkft.linaro.org
 
