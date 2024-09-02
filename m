@@ -1,164 +1,134 @@
-Return-Path: <linux-kernel+bounces-311440-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311441-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00770968942
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 15:56:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EED5968945
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 15:57:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 742971F2242F
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 13:56:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 45D241F221B6
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 13:57:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 438BA20FAAE;
-	Mon,  2 Sep 2024 13:55:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9E5120FAA6;
+	Mon,  2 Sep 2024 13:57:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="UeIlEDAM";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="5db7eGO6";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="UeIlEDAM";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="5db7eGO6"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="ZaG7VmH1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE4F41865F6;
-	Mon,  2 Sep 2024 13:55:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E9FF20127D;
+	Mon,  2 Sep 2024 13:57:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725285358; cv=none; b=Tu5TN27ghw2FCU6PfgHIyZdWbE0g9QD0kUBkprhJri8l2FGPiRrwhHnNRnA+CyLfJ+9X7nSrLXLZYKaEvgwTyKnJbw38g9dT0pitbvGiJs8Id6DKXlSxoUUoXgiyBt1hzEqPOmm7uOb7bFux2QQwb7jv0Ui4x56k68O3u/YIccQ=
+	t=1725285463; cv=none; b=amiyl7CAfbLJcJiq5fccY1u3+sDgO1Jv+svIjZyVTLehoV5OqiXYbhono45ijOp5L6VXARirLV4NeG5eRQv1KyNip6nQ7/20NrRPxriyK6WzisAh7sKj2byQzWDPlD9yUDNTNgBlqbNOE7c7YahWwzgDmuXoDpUyZ8tk1TFmgTQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725285358; c=relaxed/simple;
-	bh=qDwgUgA6BFRCJnZk2ZnLHYuW6GNf5pmOBpojoH40Qpc=;
+	s=arc-20240116; t=1725285463; c=relaxed/simple;
+	bh=K3Nz0t56Y4xmMOv2gO7zRPgnO0PXH8nPl6/yC/1uBoo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hBHr62ebSEuvPILSZJF7A2GuLgJwiWHmBneg4ReYoM1GyM7JIakourLK4R3dC7QyBa+wZkImumaSgILqQ42pUmlNEQqcJG+kW10VSHlcq8zqIhPnUE6EDy/QPGx7gNwjgKwRI+oN+9h5VWugUoASwIZVrOJrGRVU4QC3c6llym4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=UeIlEDAM; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=5db7eGO6; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=UeIlEDAM; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=5db7eGO6; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 45E8D21B0B;
-	Mon,  2 Sep 2024 13:55:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1725285355; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZU5SHmNNVS4RrFCgUDMw1JJJts+Ve42Bh8+s6XDVDYnl3VsE4Cm3uzcRobyD8DuuERDLp+fvbO+KgKFVSrkMzquUofF/IRdznsnjgBcF/uDeO6dzC8JRt3DkA5LHqTynbWnzGBYYbczvVDMORzXfjFjsqeFKRjCUDRUiZF0sDXI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=ZaG7VmH1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C830C4CEC2;
+	Mon,  2 Sep 2024 13:57:41 +0000 (UTC)
+Authentication-Results: smtp.kernel.org;
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="ZaG7VmH1"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
+	t=1725285459;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=4038p6ypsmLl7oHu34zkmir0R68SGXAAGBzY5mWGhqw=;
-	b=UeIlEDAMemVjcNiNR2XZIBkOuzlMrD71xDt00PUzZf5Wjkd45qZPRdZS+OGciG7ETVp2fz
-	hMzwuutDQ6Q2+0Jvl1riItgaADkLdWEJoxx8NxIR5HAlDVN6njerpCzacZhR3pak2zizBC
-	WGEMdpMJ1ie+KPCnbQt4En454mFxePU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1725285355;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4038p6ypsmLl7oHu34zkmir0R68SGXAAGBzY5mWGhqw=;
-	b=5db7eGO6LpwPt3n0kG/UGeHdTQKtl1dYeIRY0muRmv/GvMoWpV5MX641WDS88/kqwMF6d8
-	ayytcXT5Sppv/BCQ==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1725285355; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4038p6ypsmLl7oHu34zkmir0R68SGXAAGBzY5mWGhqw=;
-	b=UeIlEDAMemVjcNiNR2XZIBkOuzlMrD71xDt00PUzZf5Wjkd45qZPRdZS+OGciG7ETVp2fz
-	hMzwuutDQ6Q2+0Jvl1riItgaADkLdWEJoxx8NxIR5HAlDVN6njerpCzacZhR3pak2zizBC
-	WGEMdpMJ1ie+KPCnbQt4En454mFxePU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1725285355;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4038p6ypsmLl7oHu34zkmir0R68SGXAAGBzY5mWGhqw=;
-	b=5db7eGO6LpwPt3n0kG/UGeHdTQKtl1dYeIRY0muRmv/GvMoWpV5MX641WDS88/kqwMF6d8
-	ayytcXT5Sppv/BCQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 3A5F513AE0;
-	Mon,  2 Sep 2024 13:55:55 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id K6c8DuvD1WZCKwAAD6G6ig
-	(envelope-from <jack@suse.cz>); Mon, 02 Sep 2024 13:55:55 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id E0E8BA0965; Mon,  2 Sep 2024 15:55:54 +0200 (CEST)
-Date: Mon, 2 Sep 2024 15:55:54 +0200
-From: Jan Kara <jack@suse.cz>
-To: Thorsten Blum <thorsten.blum@toblux.com>
-Cc: jack@suse.cz, kees@kernel.org, gustavoars@kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org
-Subject: Re: [PATCH] isofs: Annotate struct SL_component with __counted_by()
-Message-ID: <20240902135554.xpeqg724t2hsqx2u@quack3>
-References: <20240830164902.112682-2-thorsten.blum@toblux.com>
+	bh=2QnrBZwa4ejRMDjXi2anDzBPi6AUjES+ZWZ/N14PmWg=;
+	b=ZaG7VmH1Gu8z1MTPddZIqchgCHOgTeb2+WrfVBW/ZLRDJtpXfCQxsBz60gtsLPQvFWlpMW
+	8dAbQ1PRk87pD3dXTztw9DGQZ5tTqQ58snrY4+mmztFjCmWeKlFIN/+XUeoGCjojeTfsNW
+	9xIL7vKNkD2mkhqb9uqAIYikaI5qIZU=
+Received: 
+	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 65390bb6 (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
+	Mon, 2 Sep 2024 13:57:39 +0000 (UTC)
+Date: Mon, 2 Sep 2024 15:57:37 +0200
+From: "Jason A. Donenfeld" <Jason@zx2c4.com>
+To: Christophe Leroy <christophe.leroy@csgroup.eu>
+Cc: Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	Adhemerval Zanella <adhemerval.zanella@linaro.org>,
+	Xi Ruoyao <xry111@xry111.site>
+Subject: Re: [PATCH] selftests: vDSO: Do not rely on $ARCH for
+ vdso_test_getrandom && vdso_test_chacha
+Message-ID: <ZtXEUZC_jRBSAG9k@zx2c4.com>
+References: <ddf594c81787dba708fc392cb03027470dee64fb.1725124064.git.christophe.leroy@csgroup.eu>
+ <ZtRqp-uZe5C07qOF@zx2c4.com>
+ <fe8ea6a6-71d7-4cfc-b20b-fa0a7f39a4be@csgroup.eu>
+ <ec7bfeb4-30aa-4874-98b7-7877a12cb98f@sirena.org.uk>
+ <ffc5600d-362f-4400-8f8b-a1ea77ca51bf@csgroup.eu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240830164902.112682-2-thorsten.blum@toblux.com>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	RCVD_COUNT_THREE(0.00)[3];
-	FROM_HAS_DN(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_DN_SOME(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_TLS_LAST(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email]
-X-Spam-Score: -3.80
-X-Spam-Flag: NO
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ffc5600d-362f-4400-8f8b-a1ea77ca51bf@csgroup.eu>
 
-On Fri 30-08-24 18:49:03, Thorsten Blum wrote:
-> Add the __counted_by compiler attribute to the flexible array member
-> text to improve access bounds-checking via CONFIG_UBSAN_BOUNDS and
-> CONFIG_FORTIFY_SOURCE.
+On Mon, Sep 02, 2024 at 03:23:47PM +0200, Christophe Leroy wrote:
 > 
-> Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
-
-Thanks. I've added the patch to my tree.
-
-								Honza
-
-> ---
->  fs/isofs/rock.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/fs/isofs/rock.h b/fs/isofs/rock.h
-> index ee9660e9671c..7755e587f778 100644
-> --- a/fs/isofs/rock.h
-> +++ b/fs/isofs/rock.h
-> @@ -44,7 +44,7 @@ struct RR_PN_s {
->  struct SL_component {
->  	__u8 flags;
->  	__u8 len;
-> -	__u8 text[];
-> +	__u8 text[] __counted_by(len);
->  } __attribute__ ((packed));
->  
->  struct RR_SL_s {
-> -- 
-> 2.46.0
+> Le 02/09/2024 à 14:37, Mark Brown a écrit :
+> > On Mon, Sep 02, 2024 at 02:22:38PM +0200, Christophe Leroy wrote:
+> > 
+> >> When vdso_test_getcpu doesn't find the vDSO entry point, it prints an error
+> >> text and returns KSFT_SKIP
+> > 
+> >> I thought it would be more correct to have the same behaviour on
+> >> vdso_test_getrandom instead of trying to build it only when the underlying
+> >> kernel supports it.
+> > 
+> > The problem is that the test incorporates assembler code so it simply
+> > won't build for architectures without explicit porting, the issue isn't
+> > if the target kernel supports it but rather that the test won't compile
+> > in the first place.
 > 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+> Yes indeed and that was the purpose of my patch, have a macro in 
+> vdso_config.h to tell where the assembler code is:
+> 
+> diff --git a/tools/testing/selftests/vDSO/vdso_config.h 
+> b/tools/testing/selftests/vDSO/vdso_config.h
+> index 740ce8c98d2e..693920471160 100644
+> --- a/tools/testing/selftests/vDSO/vdso_config.h
+> +++ b/tools/testing/selftests/vDSO/vdso_config.h
+> @@ -47,6 +47,7 @@
+>   #elif defined(__x86_64__)
+>   #define VDSO_VERSION		0
+>   #define VDSO_NAMES		1
+> +#define VDSO_GETRANDOM	 
+> "../../../../arch/x86/entry/vdso/vgetrandom-chacha.S"
+>   #elif defined(__riscv__) || defined(__riscv)
+>   #define VDSO_VERSION		5
+>   #define VDSO_NAMES		1
+> 
+> 
+> And then:
+> 
+> diff --git a/tools/testing/selftests/vDSO/vdso_test_chacha-asm.S 
+> b/tools/testing/selftests/vDSO/vdso_test_chacha-asm.S
+> new file mode 100644
+> index 000000000000..8e704165f6f2
+> --- /dev/null
+> +++ b/tools/testing/selftests/vDSO/vdso_test_chacha-asm.S
+> @@ -0,0 +1,7 @@
+> +#include "vdso_config.h"
+> +
+> +#ifdef VDSO_GETRANDOM
+> +
+> +#include VDSO_GETRANDOM
+> +
+> +#endif
+> 
+> I thought it was a lot easier to handle if through necessary #ifdefs in 
+> vdso_config.h that implementing an additional logic in Makefiles.
+
+Yet it still tripped up the test robot, right?
+
+In general I'm not crazy about this approach.
 
