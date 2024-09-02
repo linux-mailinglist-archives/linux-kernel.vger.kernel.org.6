@@ -1,140 +1,144 @@
-Return-Path: <linux-kernel+bounces-310778-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310781-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1557C96811F
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 09:58:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA903968127
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 09:59:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C67B2281B5F
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 07:58:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 278811C208D4
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 07:59:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA6B317E8E2;
-	Mon,  2 Sep 2024 07:57:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD870183063;
+	Mon,  2 Sep 2024 07:59:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="aFrVMRvT"
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+	dkim=pass (2048-bit key) header.d=9elements.com header.i=@9elements.com header.b="Hv7jFPoy"
+Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com [209.85.219.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82215155A47
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 07:57:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D40EA176FB0
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 07:59:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725263870; cv=none; b=EvcdEIfNrO9NP/7kFe5JPwkXdrxpRgnLjpH9lO69fKHzUGa5i6SaGYDb7NNRruFMn4whrUR5pht7qBcrQeV8KVtewXv3BW2Or1xb7+PK10Dc3pGy09zGLAWNUo01UZ9wGVOCgPjyP53yBLKsGAEXvHpBfXDwlq/XPNhgkq3LN5M=
+	t=1725263962; cv=none; b=A6cLcZ4wpAL/yU8lph75B/+VnjalaSt90r9mHSF+efi+WCxrTNZh1tMQTSNi1cYriV4WEvdfmx15Mtg+5BhOPCVSYi0xp/DYQXH14psIgoMBFb79fwTe1A3ZQ9gJemIwXNPwVdVKEzOY75kqdtwvzufBxHcxZ9i5k2U0D5ZwrjQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725263870; c=relaxed/simple;
-	bh=En+nIWNDSFSZuQsfhskR7e/CS2zONHhXfEB14u5LG4U=;
+	s=arc-20240116; t=1725263962; c=relaxed/simple;
+	bh=vhV4BVVQM6CAG7RwBEC00SZcvreLlPa1U2nyzEKmfJ8=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gQYGARKLlu4KeltqJhdJLhb1RrFJWNWOHDQb1HhSl9iKgUuiMjHwi7kOSjMis0VIC/+16Ov1Fl6nnTqlamW+ozpeW7B+6qo3dPv30+40VUHKfOvkjv+1V/L287m+gwSzOGjvTkKKX4LqGpxK0Ywu7P2OPJvBwc5deSHi9Jz872w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=aFrVMRvT; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-5353cd18c20so4641990e87.0
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2024 00:57:48 -0700 (PDT)
+	 To:Cc:Content-Type; b=sTSWRuj88aAQb4k3Kty42rj8WMvr2m5wcJZogPGMajT/klrzqYmtmeso95+V8YftCKtNEka8zI45Pe4xNTvdK4tOQAJqM2Tr+mUPrIK5T4lT3gE6mHJVB2DAKAxTm0iQyA08QIL8zthkwgrnyvdX39/OstBLRuEL2AsuVeud74w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=9elements.com; spf=pass smtp.mailfrom=9elements.com; dkim=pass (2048-bit key) header.d=9elements.com header.i=@9elements.com header.b=Hv7jFPoy; arc=none smtp.client-ip=209.85.219.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=9elements.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=9elements.com
+Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-e1a7e54b898so2579587276.2
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2024 00:59:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1725263867; x=1725868667; darn=vger.kernel.org;
+        d=9elements.com; s=google; t=1725263960; x=1725868760; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=PNe6UTfwv3omDdjm4VbXZLqk/p1g7r/jSnlTORtmwfY=;
-        b=aFrVMRvTS4zmEafXHicYdnOzG7YFxMPyETptOvCFlUCgkLWwK4t9yT1awAWPiTcT3E
-         oj/XU5oAWJXAfxdcv+F3SE/LGClwzOuhv79NT3l16WY8T230CVG68g8kBjze3Dz6JUDz
-         GGA33F3i6LkPBQHwWHEX2zeKy7MDh1PvCM7yTme9W/It7FSiWZSW1DykFNhfLgd8DcHg
-         QAuKF6bA5NWgR11+MATwf6uDsUT6yxM1NxVYvBeUSm6gmxXVydKv8qHT9sPiea+L9jkP
-         iSwo62BbFC79HrRlzdmXLyvyuL+rSgCo8kYQfUpaIyrnmWrwOcGyfvwMrR4Qcy4D3jtm
-         ZuTw==
+        bh=ven0VZ9chnd8qNKAFYNxN3g9TOzcbW3MCaO9NwDmZg4=;
+        b=Hv7jFPoyFHnvRZgXMF+JyWye5ivRx4IgJn3lAAQQgsO3VV5WhIGmOBs4NzzZCorYZN
+         fA8dX33Utk46+ONFfz0X2bNPsvgoVbCI+mIglyoxhPxhhdQFcIDAVQRAoL1YByjWdzda
+         loG55Sf1nKbsLUn2qPq/PtUOFiMEoWz/b9A0a1J4g5qjj3qzMVKeywBdxtA09Kkb6ECG
+         UKYiY5Z5oVSgvTSFiZIbgNzuJ/NRWz/UHJQhnavggq5AIC7zdHbzKjHFIBGH3Ik7myhp
+         JgfIlk3njQ2gYWVsA+afHcnF1+bUcTAh52jVFtjIdpmXIjAf525tMypcHgCrSOM23r3d
+         y5jQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725263867; x=1725868667;
+        d=1e100.net; s=20230601; t=1725263960; x=1725868760;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=PNe6UTfwv3omDdjm4VbXZLqk/p1g7r/jSnlTORtmwfY=;
-        b=Sq2KH7mXXhV1gyQ1WJ+jhA3XTncIOWznBiKYY8HCw4m2cNGdtuYLvcGsQ78UobU7Ml
-         yyuQDMSybizvtwY0LqWI6bcrVx8Oy/k3gXhQdN8BGcgkhBPGBCfHBIdD0IQjok8FcT7+
-         Io3is3hu9rlXOlZBNkUtULafpp9jFlf228ogty5B1KGgSfpwikrLmpZMewK2PD77xFO/
-         l7/YWAPdceB2NDfYw9aq9re4eDRCfQxUjBp5kadopbo+ynjt5vBc6B0PRHFFmeqG6rf8
-         fmdWjRQmfbo+x0kMLRc15M7XYXV6fmaBzrvwpiujemzKzs0ChgavHpZ1fJ3CX7USAwU3
-         QRHQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWAOhpo1SRV5MMdAO9UOCifNThZm54BtiH5zipDpzSEmdgAtzyanbNP2azSclEVTo9yeOpXFH0+MV2zlAE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxXS5FocFywdYfSeQz4/udUu/8I+58GGk79FqTm928AYuhSDlJR
-	9w15mvcbk/R+A0Gw1vK+ZL1fR4oM9MC1iidYMoghQeqFTZN50u7weYWq97SfJAKovYmmiBId5Vr
-	XaQNHyjYwrYTeUFV8GHAMIaFYEOl0GTrGYc8k1A==
-X-Google-Smtp-Source: AGHT+IFg1jywu70GIrr3YvtBUAZYZFTHQtiU2/ai0tVMiXStJdKaZQevzq+obbjVJrGPamFdvFFxc2T7vlG6O+T6+Q8=
-X-Received: by 2002:a05:6512:3a8d:b0:52f:c0ee:3b5f with SMTP id
- 2adb3069b0e04-53546aef1f9mr6278575e87.10.1725263866032; Mon, 02 Sep 2024
- 00:57:46 -0700 (PDT)
+        bh=ven0VZ9chnd8qNKAFYNxN3g9TOzcbW3MCaO9NwDmZg4=;
+        b=pouK9csND9OScqCoAVgAoGQeWxsCl4QWFdn45JFym6YGFUkmRiMbwUSClTBmfXOHPB
+         YCw+UmVQl6FTTIPpMYr/EH2wNlqFljHcQd8LxvOfgQzkSVY9TDayJKU2eVNhZqm916kt
+         H3eTdE/LNQgwLvOOboiI8HB6Z/vOBy9m18Wm/bfka+tN7Un8QH8TifZ8qUr3knbdmCtQ
+         /LLTv1IrP2JL8qgVPlg6+mBwWt9Whitcy7uzVPYPLY/NhWEaovtVj7GrIHTNMi8H1k33
+         BuqtDUnWdJUxWTbOl7INsxF+IxDfoz5WOlIfw1oP0/BMp4RSk0jNuNBug1VAP7+vKAMA
+         45dA==
+X-Gm-Message-State: AOJu0YxDFRAGmO0P+JAo1oaGirYDkUbj0SifEwlD1bC7rUPBkVt9xynR
+	eWmBZ9KSUxD9N8ExE/bIlP6Ywkp0+3pd51SnU3UPlpW0L/UdpcnHdEDNb55eecu5HzgMhgW2/kW
+	wNITbDRycoMe+g0nqSauduW/imunCQoHeJt/EPg==
+X-Google-Smtp-Source: AGHT+IE6js/hmiiao1RBm1Y4j0GdEjZ3EfEAZOSsLehXrOho4PxrdoWGpDsumgtVPbZAIuPnkZLS88SLfYVNR/kOJCU=
+X-Received: by 2002:a05:6902:70a:b0:e0e:8941:c37f with SMTP id
+ 3f1490d57ef6-e1a7a1a30cemr11053504276.46.1725263959910; Mon, 02 Sep 2024
+ 00:59:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240828-02-k1-pinctrl-v3-0-1fed6a22be98@gentoo.org> <20240828-02-k1-pinctrl-v3-2-1fed6a22be98@gentoo.org>
-In-Reply-To: <20240828-02-k1-pinctrl-v3-2-1fed6a22be98@gentoo.org>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Mon, 2 Sep 2024 09:57:35 +0200
-Message-ID: <CACRpkdZLdbKr41yXg6ETM6ANCD+Rbd_tnz0hQ0NyU9oRXR+PnA@mail.gmail.com>
-Subject: Re: [PATCH v3 2/4] pinctrl: spacemit: add support for SpacemiT K1 SoC
-To: Yixun Lan <dlan@gentoo.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Conor Dooley <conor@kernel.org>, Yangyu Chen <cyy@cyyself.name>, Jesse Taube <jesse@rivosinc.com>, 
-	Jisheng Zhang <jszhang@kernel.org>, Inochi Amaoto <inochiama@outlook.com>, 
-	Icenowy Zheng <uwu@icenowy.me>, Meng Zhang <zhangmeng.kevin@spacemit.com>, 
-	Meng Zhang <kevin.z.m@hotmail.com>, devicetree@vger.kernel.org, 
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-gpio@vger.kernel.org
+References: <20240717073000.786228-1-patrick.rudolph@9elements.com>
+ <e83aada2-79b2-4272-ab10-4453083193cd@roeck-us.net> <bb433a53-47ac-41eb-bd21-013da93b0bb7@roeck-us.net>
+In-Reply-To: <bb433a53-47ac-41eb-bd21-013da93b0bb7@roeck-us.net>
+From: Patrick Rudolph <patrick.rudolph@9elements.com>
+Date: Mon, 2 Sep 2024 09:59:08 +0200
+Message-ID: <CALNFmy24TreXDf+gGLmJd7h2F5Aaz1WXzw_76gWEuEo+M_GuoA@mail.gmail.com>
+Subject: Re: [PATCH v2 1/5] hwmon: pmbus: Implement generic bus access delay
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: linux-kernel@vger.kernel.org, Jean Delvare <jdelvare@suse.com>, 
+	linux-hwmon@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi Yixun,
+On Sun, Sep 1, 2024 at 3:43=E2=80=AFPM Guenter Roeck <linux@roeck-us.net> w=
+rote:
+>
+> On 7/17/24 07:42, Guenter Roeck wrote:
+> > Patrick,
+> >
+> > On 7/17/24 00:29, Patrick Rudolph wrote:
+> >> Some drivers, like the max15301 or zl6100, are intentionally delaying
+> >> SMBus communications, to prevent transmission errors. As this is neces=
+sary
+> >> on additional PMBus compatible devices, implement a generic delay mech=
+anism
+> >> in the pmbus core.
+> >>
+> >> Introduces two delay settings in the pmbus_driver_info struct, one app=
+lies
+> >> to every SMBus transaction and the other is for write transaction only=
+.
+> >> Once set by the driver the SMBus traffic, using the generic pmbus acce=
+ss
+> >> helpers, is automatically delayed when necessary.
+> >>
+> >> The two settings are:
+> >> access_delay:
+> >>    - Unit in microseconds
+> >>    - Stores the accessed timestamp after every SMBus access
+> >>    - Delays when necessary before the next SMBus access
+> >>
+> >> write_delay:
+> >>    - Unit in microseconds
+> >>    - Stores the written timestamp after a write SMBus access
+> >>    - Delays when necessary before the next SMBus access
+> >>
+> >> This allows to drop the custom delay code from the drivers and easily
+> >> introduce this feature in additional pmbus drivers.
+> >>
+> >> Signed-off-by: Patrick Rudolph <patrick.rudolph@9elements.com>
+> >> ---
+> >
+> > Sigh (sorry, but this isn't your first patch, and you should know).
+> >
+> > Change log goes here.
+> >
+>
+> Maybe I was not explicit enough, or maybe I offended you with the above.
+> If so, I am sorry.
+>
+> Either case, I am not accepting patches or patch series without change lo=
+g.
+>
+> Guenter
+>
+Hi Guenter,
+Thanks for reminding me and being patient.
+It's a good habit to make no exceptions when it comes to the quality
+of submitted patches.
 
-thanks for your patch! Overall the driver looks very good, it's using the
-right helpers and abstractions etc.
-
-There is this thing that needs some elaboration:
-
-On Wed, Aug 28, 2024 at 1:31=E2=80=AFPM Yixun Lan <dlan@gentoo.org> wrote:
-
-> +/* pin offset */
-> +#define PINID(x)       ((x) + 1)
-> +
-> +#define GPIO_INVAL  0
-> +#define GPIO_00     PINID(0)
-> +#define GPIO_01     PINID(1)
-(...)
-
-So GPIO 00 has pin ID 1 actually etc.
-
-But why?
-
-If there is no datasheet or other conflicting documentation, just
-begin numbering the GPIOs at 1 instead of 0 to match the
-hardware:
-
-#define GPIO_01 1
-#define GPIO_02 2
-
-and all is fine.
-
-It's just very uninituitive for developers. I guess that there
-is a reason, such as that the datasheet has stated that the pin
-with pin ID 1 is GPIO 00, then this needs to be explained with
-a comment in the code: "we are doing this because otherwise
-the developers will see an offset of -1 between the number the
-pin has in the datasheet and the number they put into the
-device tree, while the hardware starts the numbering at 1, the
-documentation starts the numbering at 0".
-
-It is common that engineers from analog electronics background
-start numbering things from 1 while any computer science
-engineer start the numbering at 0. So this is what you get when
-an analog engineer designs the electronics and a computer
-science engineer writes that datasheet and decides to "fix"
-the problem.
-
-Yours,
-Linus Walleij
+Please find my updated patch series, this time with a changelog.
+Patrick
 
