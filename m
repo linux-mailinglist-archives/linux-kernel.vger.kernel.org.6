@@ -1,138 +1,207 @@
-Return-Path: <linux-kernel+bounces-311181-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311183-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 802E59685AC
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 13:06:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 432809685B8
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 13:07:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 34A781F218ED
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 11:06:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EEF652824D9
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 11:07:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BBB51D6785;
-	Mon,  2 Sep 2024 11:03:30 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14AB41D61BD
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 11:03:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0010A187335;
+	Mon,  2 Sep 2024 11:04:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="hI6RQIWC";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="fzhotnCT";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="SB/dkSu3";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Kwxmk9pL"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 700EF184530;
+	Mon,  2 Sep 2024 11:04:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725275010; cv=none; b=uDyH6UXy7+XVHvmbDYKISf6xXji1vRB6nUjvUgc3OgMz9i8bjwpK0EgfBckFzjPpBfw8mXTNgI6h4EsGdo4pph5XfxWH09Kf/1guOxb05qG8tMMDXIeUNFLfKSPwzEAaSDkpDzrCSaMAn9pJVOgl32Q/+2Q+cX7FR2BtNv06owY=
+	t=1725275088; cv=none; b=kJL8CxLGDTUyE+JqEpHJmSsa4DmI+gKxqXujpbpXgR+QLujJNZr97cpIx709u1fyG0s2YVvACaryyBlVbYUAEiBt5yYEOWNcS0glmLP2QUzjKcaVG9VHgI4YR3ZUKT4cta6Oxf40Nm9mc2MtTFS3rOZ5TDv/d11vjyyUvby5pU0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725275010; c=relaxed/simple;
-	bh=D5Zd+YXYUgY0BjRp8kFaofANSPag5yi+/w5XM+LWXhI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qqaPH9AI2xqigFrkAlQihm+WgYcymV/fVkLilzNzIl8jZ+bGLd/KExfak9N+9gg53Zr/UtJ0MqKpfnRyqkyCt7u3zWfeUIoEB9P9dn6xFHwV4GPrREQ0CE9TkilqTmraCaphxFNN73gi3Ke7iXDUwbowBjSc49FzMD/k/eDavJA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BAEBBFEC;
-	Mon,  2 Sep 2024 04:03:53 -0700 (PDT)
-Received: from [10.57.50.57] (unknown [10.57.50.57])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A37C93F73B;
-	Mon,  2 Sep 2024 04:03:24 -0700 (PDT)
-Message-ID: <066b7de8-0854-424b-8888-b18fc61ec21c@arm.com>
-Date: Mon, 2 Sep 2024 12:03:22 +0100
+	s=arc-20240116; t=1725275088; c=relaxed/simple;
+	bh=iw2MVwhX51dJhWKxubjYLfJi88FIn5V4riiOr6+qcOI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nagJJmHXDWALIpx6kZKDybFModkJ2+6Y7Y01JJPBry2QxkTbkL+qfzoV0SNvQCKK+7XdY2ZVtcxjFnRZeypUEoRRyKrHuR4OOfNZV9ab7qCzQt3bktq0ik5uJmAksEt0y8xdprvJoPlPlXtNLTBUbaxhO7UC7pVN6xugYPphB1w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=hI6RQIWC; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=fzhotnCT; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=SB/dkSu3; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Kwxmk9pL; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 7D31D1FBA6;
+	Mon,  2 Sep 2024 11:04:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1725275084; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=LrwrQnk3AUWu3toRtwqVBHqDGPavhHbdLcu1XMq0qOs=;
+	b=hI6RQIWCMmhPKWpe6o9I9QXZIyKLX6nWwWERaF7rK0FX8gm7K4+VUeqm/gFHwJBmh8ZpTC
+	N116j6rdT4K+BTuz7Z9A53qZSjmFH15sKy5bgWIRjmG8sLatsYFBzdpdNRTgSVXvMUO/4z
+	lVrGKOkxI+zsCsPmoMXcvFGzHJGHLcM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1725275084;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=LrwrQnk3AUWu3toRtwqVBHqDGPavhHbdLcu1XMq0qOs=;
+	b=fzhotnCTLWLF4CazDLISpd0l0merMT3jIRmD475OHBF3W/wb4SdZkLUwSiLaH5yoZB77A7
+	hV9pNWjqdDeRMhAA==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b="SB/dkSu3";
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=Kwxmk9pL
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1725275083; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=LrwrQnk3AUWu3toRtwqVBHqDGPavhHbdLcu1XMq0qOs=;
+	b=SB/dkSu3SP2u2hBSzXm6S9gz7Spy5gi22kJpDyJ52c71E7p6DO8AlWmq6zyQ0pVQ9G9Uhn
+	2pFLu2+HoeeP/nKHNnsHmIDGpO6u4B5XSwKuLfQknyqk7TByYid/m80rz/ABTvePGVGXJ2
+	WaiGtSCgxKRWIag/SHT6W4usWrRFiAo=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1725275083;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=LrwrQnk3AUWu3toRtwqVBHqDGPavhHbdLcu1XMq0qOs=;
+	b=Kwxmk9pLByDZhraqS548Om7S4OJTeE0qbNRB5Q+QkqOnXvG1vuRf3Ro2cc3zr2feQ9z2yX
+	AdMOesNtHuAjMwBA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 6D4B113A7C;
+	Mon,  2 Sep 2024 11:04:43 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id HruoGsub1WYKcwAAD6G6ig
+	(envelope-from <jack@suse.cz>); Mon, 02 Sep 2024 11:04:43 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 1FCC7A0965; Mon,  2 Sep 2024 13:04:28 +0200 (CEST)
+Date: Mon, 2 Sep 2024 13:04:28 +0200
+From: Jan Kara <jack@suse.cz>
+To: Kees Cook <kees@kernel.org>
+Cc: Kaixiong Yu <yukaixiong@huawei.com>, akpm@linux-foundation.org,
+	mcgrof@kernel.org, ysato@users.sourceforge.jp, dalias@libc.org,
+	glaubitz@physik.fu-berlin.de, luto@kernel.org, tglx@linutronix.de,
+	bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com,
+	viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
+	j.granados@samsung.com, willy@infradead.org,
+	Liam.Howlett@oracle.com, vbabka@suse.cz, lorenzo.stoakes@oracle.com,
+	trondmy@kernel.org, anna@kernel.org, chuck.lever@oracle.com,
+	jlayton@kernel.org, neilb@suse.de, okorniev@redhat.com,
+	Dai.Ngo@oracle.com, tom@talpey.com, davem@davemloft.net,
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+	paul@paul-moore.com, jmorris@namei.org, linux-sh@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org, linux-nfs@vger.kernel.org,
+	netdev@vger.kernel.org, linux-security-module@vger.kernel.org,
+	wangkefeng.wang@huawei.com
+Subject: Re: [PATCH -next 12/15] fs: dcache: move the sysctl into its own file
+Message-ID: <20240902110428.os726rhlt6y5i4ak@quack3>
+References: <20240826120449.1666461-1-yukaixiong@huawei.com>
+ <20240826120449.1666461-13-yukaixiong@huawei.com>
+ <202408261253.D155EA0@keescook>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/5] sched/fair: Rework feec() to use cost instead of
- spare capacity
-To: Vincent Guittot <vincent.guittot@linaro.org>, linux-kernel@vger.kernel.org
-Cc: qyousef@layalina.io, mingo@redhat.com, peterz@infradead.org,
- juri.lelli@redhat.com, dietmar.eggemann@arm.com, rostedt@goodmis.org,
- bsegall@google.com, vschneid@redhat.com, lukasz.luba@arm.com,
- mgorman@suse.de, rafael.j.wysocki@intel.com
-References: <20240830130309.2141697-1-vincent.guittot@linaro.org>
- <20240830130309.2141697-4-vincent.guittot@linaro.org>
-Content-Language: en-US
-From: Hongyan Xia <hongyan.xia2@arm.com>
-In-Reply-To: <20240830130309.2141697-4-vincent.guittot@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <202408261253.D155EA0@keescook>
+X-Rspamd-Queue-Id: 7D31D1FBA6
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_HAS_DN(0.00)[];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[42];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	MIME_TRACE(0.00)[0:+];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCVD_COUNT_THREE(0.00)[3];
+	RCVD_TLS_LAST(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	R_RATELIMIT(0.00)[to_ip_from(RLdxgs459xdbsauns6rcjztsec)];
+	MISSING_XM_UA(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[huawei.com:email,suse.com:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.cz:dkim,suse.cz:email]
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -4.01
+X-Spam-Flag: NO
 
-On 30/08/2024 14:03, Vincent Guittot wrote:
-> feec() looks for the CPU with highest spare capacity in a PD assuming that
-> it will be the best CPU from a energy efficiency PoV because it will
-> require the smallest increase of OPP. Although this is true generally
-> speaking, this policy also filters some others CPUs which will be as
-> efficients because of using the same OPP.
-> In fact, we really care about the cost of the new OPP that will be
-> selected to handle the waking task. In many cases, several CPUs will end
-> up selecting the same OPP and as a result using the same energy cost. In
-> these cases, we can use other metrics to select the best CPU for the same
-> energy cost.
+On Mon 26-08-24 12:56:00, Kees Cook wrote:
+> On Mon, Aug 26, 2024 at 08:04:46PM +0800, Kaixiong Yu wrote:
+> > The sysctl_vfs_cache_pressure belongs to fs/dcache.c, move it to
+> > its own file from kernel/sysctl.c. As a part of fs/dcache.c cleaning,
+> > sysctl_vfs_cache_pressure is changed to a static variable, and export
+> > vfs_pressure_ratio with EXPORT_SYMBOL_GPL to be used by other files.
+> > And move the unneeded include(linux/dcache.h).
+> > 
+> > Signed-off-by: Kaixiong Yu <yukaixiong@huawei.com>
+> > ---
+> >  fs/dcache.c            | 21 +++++++++++++++++++--
+> >  include/linux/dcache.h |  7 +------
+> >  kernel/sysctl.c        |  9 ---------
+> >  3 files changed, 20 insertions(+), 17 deletions(-)
+> > 
+> > diff --git a/fs/dcache.c b/fs/dcache.c
+> > index 1af75fa68638..8717d5026cda 100644
+> > --- a/fs/dcache.c
+> > +++ b/fs/dcache.c
+> > @@ -73,8 +73,13 @@
+> >   * If no ancestor relationship:
+> >   * arbitrary, since it's serialized on rename_lock
+> >   */
+> > -int sysctl_vfs_cache_pressure __read_mostly = 100;
+> > -EXPORT_SYMBOL_GPL(sysctl_vfs_cache_pressure);
+> > +static int sysctl_vfs_cache_pressure __read_mostly = 100;
+> > +
+> > +unsigned long vfs_pressure_ratio(unsigned long val)
+> > +{
+> > +	return mult_frac(val, sysctl_vfs_cache_pressure, 100);
+> > +}
+> > +EXPORT_SYMBOL_GPL(vfs_pressure_ratio);
 > 
-> Rework feec() to look 1st for the lowest cost in a PD and then the most
-> performant CPU between CPUs.
+> This was a static inline, but AFAICT it's only called through
+> alloc_super() which is hardly "fast path". If this series gets another
+> version it may be worth calling out this inline->out-of-line change in
+> the commit log.
 > 
-> Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
-> ---
->   kernel/sched/fair.c | 466 +++++++++++++++++++++++---------------------
->   1 file changed, 244 insertions(+), 222 deletions(-)
-> 
-> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> index e67d6029b269..2273eecf6086 100644
-> --- a/kernel/sched/fair.c
-> +++ b/kernel/sched/fair.c
-> [...]
->   
-> -	energy = em_cpu_energy(pd->em_pd, max_util, busy_time, eenv->cpu_cap);
-> +/* For a same cost, select the CPU that will povide best performance for the task */
-> +static bool select_best_cpu(struct energy_cpu_stat *target,
-> +			    struct energy_cpu_stat *min,
-> +			    int prev, struct sched_domain *sd)
-> +{
-> +	/*  Select the one with the least number of running tasks */
-> +	if (target->nr_running < min->nr_running)
-> +		return true;
-> +	if (target->nr_running > min->nr_running)
-> +		return false;
->   
-This makes me a bit worried about systems with coarse-grained OPPs. All 
-my dev boards and one of my old phones have <= 3 OPPs. On my Juno board, 
-the lowest OPP on the big core spans across 512 utilization, half of the 
-full capacity. Assuming a scenario where there are 4 tasks, each with 
-300, 100, 100, 100 utilization, the placement should be 300 on one core 
-and 3 tasks with 100 on another, but the nr_running check here would 
-give 2 tasks (300 + 100) on one CPU and 2 tasks (100 + 100) on another 
-because they are still under the lowest OPP on Juno. The second CPU will 
-also finish faster and idle more than the first one.
+> I don't think it's a blocker, but I'm not a VFS maintainer. :)
 
-To give an extreme example, assuming the system has only one OPP (such a 
-system is dumb to begin with, but just to make a point), before this 
-patch EAS would still work okay in task placement, but after this patch, 
-EAS would just balance on the number of tasks, regardless of utilization 
-of tasks on wake-up.
+It's actually called from about 7 shrinkers of filesystem objects. They get
+called relatively frequently during memory reclaim but I don't think a
+function call is *that* expensive to matter in this case. Feel free to add:
 
-I wonder if there is a way to still take total utilization as a factor. 
-It used to be 100% of the decision making, but maybe now it is only 60%, 
-and the other 40% are things like number of tasks and contention.
+Reviewed-by: Jan Kara <jack@suse.cz>
 
-> -	trace_sched_compute_energy_tp(p, dst_cpu, energy, max_util, busy_time);
-> +	/* Favor previous CPU otherwise */
-> +	if (target->cpu == prev)
-> +		return true;
-> +	if (min->cpu == prev)
-> +		return false;
->   
-> -	return energy;
-> +	/*
-> +	 * Choose CPU with lowest contention. One might want to consider load instead of
-> +	 * runnable but we are supposed to not be overutilized so there is enough compute
-> +	 * capacity for everybody.
-> +	 */
-> +	if ((target->runnable * min->capa * sd->imbalance_pct) >=
-> +			(min->runnable * target->capa * 100))
-> +		return false;
-> +
-> +	return true;
->   }
-> [...]
 
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
