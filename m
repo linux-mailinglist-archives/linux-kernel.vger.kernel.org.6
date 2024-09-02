@@ -1,192 +1,111 @@
-Return-Path: <linux-kernel+bounces-311867-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311868-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C4A2968EBF
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 22:12:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE4CA968EC4
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 22:14:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A0F261C220E1
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 20:12:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 998852839C1
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 20:14:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FDEB1A4E72;
-	Mon,  2 Sep 2024 20:12:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AA361A4E76;
+	Mon,  2 Sep 2024 20:14:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="jGiuiM2J";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="LJVp0npa";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="jGiuiM2J";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="LJVp0npa"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=umich.edu header.i=@umich.edu header.b="UTTeGmJe"
+Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8228E1A4E60;
-	Mon,  2 Sep 2024 20:12:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B6591A4E64
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 20:14:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725307924; cv=none; b=Op3EmFIrucWLUqJsHnAo7NiK3J3PsgU9yp+IyYfPBpipffJChnLqGp7aEmih47p4JuK9VeJusu5K4bqQjnNV0dKo97QQN7EyWyTPi2X/0FO9ihlgx7hwyzYSkYbb3u/8CAuYCDB/FtHu+ztDzfms/3CSiK4hYxAvnBY1tpk3b7E=
+	t=1725308091; cv=none; b=Tstd6UTOGjrYex14jBgwSKXtVDQA7NAONO5oFCnfRfPNbYBbbv6iRIgbg114Xo+ijOJDFm5z/4xH3EmyP/bsIrmmIGzfGyQnjgC2OwlbPEVCub3x9AImsBhCrWKZkt8p6x7gVHjRN8IiOfMkwh5iLBMjK1vsBqJxybGROUWzGZY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725307924; c=relaxed/simple;
-	bh=CC2cxi4YGQy65RVqryZridxiofsecHHacEBoO18k1hY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=clHJr0Y/ipKZnhF7MCNzUuYMUiN52yZdL10kgPisqoji2KgLpLqyXCzYnNQhX3WhndKabzG1T7G3SjoGi4YmGZpX8ebeX78zhVUMCm/kQ+x/EJqXCWOF1DhEmb/mDe/ZyuEwzmf9e1FDZt47n9xf+hqeQDlcVwxVHEgrsVPrNxc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=jGiuiM2J; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=LJVp0npa; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=jGiuiM2J; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=LJVp0npa; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 4519C1F79B;
-	Mon,  2 Sep 2024 20:12:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1725307920;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8YSa0oRjJvAUZTYJeMNY8fs0ZfMIj4kLxEv4Q87cFhg=;
-	b=jGiuiM2Jm6JmLEQISDQfiYtVhyFpZ3zDsPN/XJndF6uof6FwQitxqKl+3teMlLexQbvIG0
-	uNhrnK8KemKG2mHMNJNEmo1GdDRyYsvHgEHzehveoVKZBEkf6MlvTN3tB19H9LPSLlt2Ws
-	JWEQ8s0rFNwE+IFiQh9VX/rrTgvWkVk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1725307920;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8YSa0oRjJvAUZTYJeMNY8fs0ZfMIj4kLxEv4Q87cFhg=;
-	b=LJVp0npaWTft3yLnk63Y2+NLviBZZWDWz8y6y4Nw0a5/q1IaOHBAQJ8oMfkkrwA6/O3etI
-	DQmn2U+78x88RaBA==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=jGiuiM2J;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=LJVp0npa
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1725307920;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8YSa0oRjJvAUZTYJeMNY8fs0ZfMIj4kLxEv4Q87cFhg=;
-	b=jGiuiM2Jm6JmLEQISDQfiYtVhyFpZ3zDsPN/XJndF6uof6FwQitxqKl+3teMlLexQbvIG0
-	uNhrnK8KemKG2mHMNJNEmo1GdDRyYsvHgEHzehveoVKZBEkf6MlvTN3tB19H9LPSLlt2Ws
-	JWEQ8s0rFNwE+IFiQh9VX/rrTgvWkVk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1725307920;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8YSa0oRjJvAUZTYJeMNY8fs0ZfMIj4kLxEv4Q87cFhg=;
-	b=LJVp0npaWTft3yLnk63Y2+NLviBZZWDWz8y6y4Nw0a5/q1IaOHBAQJ8oMfkkrwA6/O3etI
-	DQmn2U+78x88RaBA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 203A913A21;
-	Mon,  2 Sep 2024 20:12:00 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id ub5VBxAc1mbkFgAAD6G6ig
-	(envelope-from <dsterba@suse.cz>); Mon, 02 Sep 2024 20:12:00 +0000
-Date: Mon, 2 Sep 2024 22:11:50 +0200
-From: David Sterba <dsterba@suse.cz>
-To: Luca Stefani <luca.stefani.ge1@gmail.com>
-Cc: Qu Wenruo <quwenruo.btrfs@gmx.com>, Chris Mason <clm@fb.com>,
-	Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,
-	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] btrfs: Split remaining space to discard in chunks
-Message-ID: <20240902201150.GB26776@twin.jikos.cz>
-Reply-To: dsterba@suse.cz
-References: <20240902114303.922472-1-luca.stefani.ge1@gmail.com>
+	s=arc-20240116; t=1725308091; c=relaxed/simple;
+	bh=VUBUrgI8fZ9UdZTf7JBIxZO5g8A0/zi0bMsBWCmBpmI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FPa+zyAb7OxnrY+JcfkowlLl+fBNQDqT/c48CPyeuMSKit80WiA/L2S0brIowHOrUhbZQ3mIF4C74Tk81+HyOEPd44g4MLm+keZCoN8UrNYEvPPYIVrS+VQinr3GHdUw5ALedaIzOTSbv+84/P70N7LbMEjVd8ojGyxIOU3bLcU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=umich.edu; spf=pass smtp.mailfrom=umich.edu; dkim=pass (2048-bit key) header.d=umich.edu header.i=@umich.edu header.b=UTTeGmJe; arc=none smtp.client-ip=209.85.128.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=umich.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=umich.edu
+Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-6d5893cd721so20424107b3.0
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2024 13:14:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=umich.edu; s=google-2016-06-03; t=1725308087; x=1725912887; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VUBUrgI8fZ9UdZTf7JBIxZO5g8A0/zi0bMsBWCmBpmI=;
+        b=UTTeGmJewPywWFuxoGo4e2v1cT/VTq1hCiE7ogEgBRNdlRnze46w+3ady4jkTA5+UU
+         VtRyBC1b2ftd46znZf4fu9quiVDmEc1BOj6uoCx7XxYPoEuqErhetSm8ioALW5WNOZ3l
+         lSV31tpklmLkrIFxHnBNOp116ag8JeJp9RBxCXv68DGVnDiHcEus3UcCfHLtnIuOAKnW
+         1ZLmhWUPNW+aegWuMkSGKTDUNiwBnTwfVWbqkzm1bWAh4m8p7U3e9ggnm+PdWjYakbzQ
+         OEaqKZ42nK+OGxAhhe8lB9SnkRU1ZLf9Hitnwyd2PzmZum22fhmdix6AaIF1omVIrZGM
+         Xh5Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725308087; x=1725912887;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=VUBUrgI8fZ9UdZTf7JBIxZO5g8A0/zi0bMsBWCmBpmI=;
+        b=m8+W5S1RhPpVhS8bDwexaj132iz73B6vEJSfWxJLKPR9cyRlHapLjE94l4cyDlsIbF
+         FpC9jM8ynbntCMR+zt4CeWFO0b5Y7goT+b0G4Q0pZqOD7eMyUh+BiQEfU2va8BO/Vzc7
+         paFmSH68zv7YYc+2a/EjeMeqgjeLuRIOpXDPuSRkSfeHDb+3Zwn5/BzgG3QtfK7X7bhe
+         8Y0AL9r46RW5ieD0hgbmy2NXcD9Rglg93/n8Nm1/N04gf2ratkwAOoIkmKJXuApyfO0C
+         xSqv3rOtvcpjXhQyGRQ0p4yEYb6pdm8rnccdrQn7S2ltoVtKn2n7rxqHcAUFwSGpou0h
+         j4+w==
+X-Forwarded-Encrypted: i=1; AJvYcCWPQ1Vdj6GrvMkn3i3Q8cFJmqNYVCG6iKkeRdq62mvjdQn200CxyApTRI0TeXkwM+xl7f8j2Q/QCJD9+Xk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzgvCKVDSVNHoaq4KaAN+egu0RpyUlMjNYzRWfoIQXV9j5pl1Yz
+	fhHzFt4+qZrNiFL9gK07dKDmEcUU3iHe8hT0ghqem9IjxcvX8+cNiXPbURWmdFTfMj8AcIZ2xha
+	4PRrsE4foTzbvqeJXdO5+QetO5Id2C2b/aqIEZg==
+X-Google-Smtp-Source: AGHT+IGsXiR+Wz+6S4QOoyChhXUKek0EL7dfcorJfeKc88gOTnhJF8XcgdnaFG0Y0Q9vn6kCbLybTQ+QQtTSSBDJQwA=
+X-Received: by 2002:a05:690c:418f:b0:6d3:f400:81e1 with SMTP id
+ 00721157ae682-6d40e17f6a2mr89660447b3.14.1725308087698; Mon, 02 Sep 2024
+ 13:14:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240902114303.922472-1-luca.stefani.ge1@gmail.com>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
-X-Rspamd-Queue-Id: 4519C1F79B
-X-Spam-Level: 
-X-Spamd-Result: default: False [-2.71 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	HAS_REPLYTO(0.30)[dsterba@suse.cz];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FREEMAIL_TO(0.00)[gmail.com];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	FREEMAIL_CC(0.00)[gmx.com,fb.com,toxicpanda.com,suse.com,vger.kernel.org];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	REPLYTO_ADDR_EQ_FROM(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TAGGED_RCPT(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	REPLYTO_DOM_NEQ_TO_DOM(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com,gmx.com]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -2.71
-X-Spam-Flag: NO
+References: <20240902173255.1105340-1-ojeda@kernel.org>
+In-Reply-To: <20240902173255.1105340-1-ojeda@kernel.org>
+From: Trevor Gross <tmgross@umich.edu>
+Date: Mon, 2 Sep 2024 16:14:36 -0400
+Message-ID: <CALNs47s_DT4Vt3WuAAcP54GA7so_aNg=LY4CCB01xn2nGiUjDA@mail.gmail.com>
+Subject: Re: [PATCH] MAINTAINERS: add Trevor Gross as Rust reviewer
+To: Miguel Ojeda <ojeda@kernel.org>
+Cc: Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
+	Alice Ryhl <aliceryhl@google.com>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, patches@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Sep 02, 2024 at 01:43:00PM +0200, Luca Stefani wrote:
-> Per Qu Wenruo in case we have a very large disk, e.g. 8TiB device,
-> mostly empty although we will do the split according to our super block
-> locations, the last super block ends at 256G, we can submit a huge
-> discard for the range [256G, 8T), causing a super large delay.
+On Mon, Sep 2, 2024 at 1:33=E2=80=AFPM Miguel Ojeda <ojeda@kernel.org> wrot=
+e:
+>
+> Trevor has been involved with the Rust for Linux project for more than
+> a year now. He has been active reviewing Rust code in the mailing list,
+> and he already is a formal reviewer of the Rust PHY library and the two
+> PHY drivers.
+>
+> In addition, he is also part of several upstream Rust teams:
+> libs-contributors (contributors to the Rust standard library on a regular
+> basis), crate-maintainers (maintainers of official Rust crates), the
+> binary size working group and the Rust for Linux ping group.
+>
+> His expertise with the language will be very useful to have around in
+> the future if Rust keeps growing within the kernel, thus add him to the
+> `RUST` entry as a reviewer.
+>
+> Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
 
-I'm not sure that this will be different than what we already do, or
-have the large delays been observed in practice? The range passed to
-blkdev_issue_discard() might be large but internally it's still split to
-smaller sizes depending on the queue limits, IOW the device.
+Thank you Miguel!
 
-Bio is allocated and limited by bio_discard_limit(bdev, *sector);
-https://elixir.bootlin.com/linux/v6.10.7/source/block/blk-lib.c#L38
-
-  struct bio *blk_alloc_discard_bio(struct block_device *bdev,
-		  sector_t *sector, sector_t *nr_sects, gfp_t gfp_mask)
-  {
-	  sector_t bio_sects = min(*nr_sects, bio_discard_limit(bdev, *sector));
-	  struct bio *bio;
-
-	  if (!bio_sects)
-		  return NULL;
-
-	  bio = bio_alloc(bdev, 0, REQ_OP_DISCARD, gfp_mask);
-  ...
-
-
-Then used in __blkdev_issue_discard()
-https://elixir.bootlin.com/linux/v6.10.7/source/block/blk-lib.c#L63
-
-  int __blkdev_issue_discard(struct block_device *bdev, sector_t sector,
-		  sector_t nr_sects, gfp_t gfp_mask, struct bio **biop)
-  {
-	  struct bio *bio;
-
-	  while ((bio = blk_alloc_discard_bio(bdev, &sector, &nr_sects,
-			  gfp_mask)))
-		  *biop = bio_chain_and_submit(*biop, bio);
-	  return 0;
-  }
-
-This is basically just a loop, chopping the input range as needed. The
-btrfs code does effectively the same, there's only the superblock,
-progress accounting and error handling done.
-
-As the maximum size of a single discard request depends on a device we
-don't need to artificially limit it because this would require more IO
-requests and can be slower.
+Acked-by: Trevor Gross <tmgross@umich.edu>
 
