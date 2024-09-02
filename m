@@ -1,179 +1,91 @@
-Return-Path: <linux-kernel+bounces-311141-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311140-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BAD72968555
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 12:54:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30B13968551
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 12:53:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 20746B24772
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 10:54:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E1BB52855A9
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 10:53:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9001314A4E0;
-	Mon,  2 Sep 2024 10:54:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Pbqh7Mcq"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10F2D13B5B6;
+	Mon,  2 Sep 2024 10:53:07 +0000 (UTC)
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6697E1E51D;
-	Mon,  2 Sep 2024 10:54:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 461C713AD18
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 10:53:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725274467; cv=none; b=Sp4vlcSbbQBCfGhHBRUbpO6U+TgqnOJjhFHwPYSlwj9ie8WmRI/NIdSTkcXmYK0Pj3BZWBhuOENO78THT2fKazeRpIYM9Pcf3N9quOh7aBDVnw2iKvNZoq1oEVaQlLohWLqSfMQun0qLwMuSx8Ukr3O5kcTxvfsIgbhpzOLQTqY=
+	t=1725274386; cv=none; b=kJaIe/b11JBfJp+IROUfdhRIIilzuQTrwLxvVO0STi8lbkw5/CQc/3tF6iz1fOLSXfGG65idUvk4rtkBNHhv2F+NhLNp/JFpMTMPYRprjeL7oxcaU16MaDl+wCSRQaYbQ8YjOJxffWtYdw/7cpuS4jLfPfJBsK8Nkuhq/SzA66g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725274467; c=relaxed/simple;
-	bh=1ox6/8Pljv8b73NeRXJoFS9ibX5dEGrklAxOVjdb0xU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KVPtw0Gv85JJ8A0TTOo9vdvA8BWtzyv4vVDXTHbcokCw8eHkDWv9sXtXf+cAiZuyopuZGLMiLb4hxo2kZdKndz3fGcEUBecS7z5c0zao8ciy2bDjHOoQ+hQ7tJb0gtmY2N+nO0Ma92M64IfNBIgmkEbaKrbKVzroP+smBOkX3Sc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Pbqh7Mcq; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725274466; x=1756810466;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=1ox6/8Pljv8b73NeRXJoFS9ibX5dEGrklAxOVjdb0xU=;
-  b=Pbqh7McqCW85XCGdWNfDGwhPN0piy9sr43klN6I80Eftis899xmSqptC
-   TNsBm6DzkEQyTnmanUSV9LV2GxsrtRoUD2AEwkN8oOxcd67K5D+DNJ4bi
-   YSQuXSQ1dZwcBKTA0pxAJWmJnY6DTxd0RMLo4NnhxmEVL6H1fHzate/F3
-   8UKRMeiT+F2TPITEAh1SkKzSsVmkZCNFApSYlsxoAczN2z4kXGYva1vq8
-   4ruqLrHWxweCSa6zkAN6LJHhFtkz5LAcjeisDqV6zG+ywSgXUILHHPHwZ
-   2u1+ljSI1fiOA5C0UrPZ79ic3anLD41qNYPak2TapWOkkltYTR5UUItYH
-   w==;
-X-CSE-ConnectionGUID: AGqcI8i0Tx6Je6kJNc/5wg==
-X-CSE-MsgGUID: bn+0nEzaQaSqjxiGwla60A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11182"; a="23804299"
-X-IronPort-AV: E=Sophos;i="6.10,195,1719903600"; 
-   d="scan'208";a="23804299"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2024 03:54:25 -0700
-X-CSE-ConnectionGUID: 8Do9u97wSAe6K19+Wlzz9A==
-X-CSE-MsgGUID: Ylj5ZuI6RGeUkzBghnZv2w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,195,1719903600"; 
-   d="scan'208";a="64931669"
-Received: from mev-dev.igk.intel.com ([10.237.112.144])
-  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2024 03:54:22 -0700
-Date: Mon, 2 Sep 2024 12:52:21 +0200
-From: Michal Swiatkowski <michal.swiatkowski@linux.intel.com>
-To: Michal Schmidt <mschmidt@redhat.com>
-Cc: Wojciech Drewek <wojciech.drewek@intel.com>,
-	Marcin Szycik <marcin.szycik@intel.com>,
-	Timothy Miskell <timothy.miskell@intel.com>,
-	Tony Nguyen <anthony.l.nguyen@intel.com>,
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Petr Oros <poros@redhat.com>,
-	Daniel Machon <daniel.machon@microchip.com>,
-	Dave Ertman <david.m.ertman@intel.com>,
-	intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH iwl-net] ice: fix VSI lists confusion when adding VLANs
-Message-ID: <ZtWY5ZJkAc3OGth0@mev-dev.igk.intel.com>
-References: <20240902100652.269398-1-mschmidt@redhat.com>
+	s=arc-20240116; t=1725274386; c=relaxed/simple;
+	bh=oWhd4Rf0zHHpbpst9n9x+vifq8Bnir5pNyheMKTt/fQ=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=rqFg2XvO7Q+ZwIHgS5aQnQM/H/DrogBEXOmy5Jn248gOZDaugVdcFp0mGTXp3kl8ZIQOqm0pSyhfTieY+KCY2DiPfLGi6AZX4g/3ykxWZPS/E900ekCpNwnStbiJS0IHJDj0IFCGruSaa8nlfIEe3h5G/ln3ULQQqx14rdRdX0Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-82a2cd95bf7so357536039f.0
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2024 03:53:05 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725274384; x=1725879184;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=KRPnLHsiu9UwQQIF05EoEjumpQG8FgwHNRyv/yjcl8I=;
+        b=d7KOKLZuoNOA1K2e6D6UGs0qTdufc71iAOZG/0/hzfPUgvuhOE9UbR0g+iLtcRnXUw
+         uNH3faDy7NXXCorNKGsCAqcfmWUb/oBQr0b2+WsJ4MoIXHosDW1i9mgSek/pzv2g8ubp
+         E6zaLxNItbxmZhPQk1CriVLVzCo/wc3CIcyCVSmEa1mUcwFIt+BzZ2dscUmhDB4aT4Hr
+         UQSi5R1ynzUzZwIpXY4YIiibxfKZZvPwBrbUHgnOHU31gI0a57ALUXVzJXYLMUWVVsCl
+         OUU8TL2v2DZ4zKAEPAxDQPBIzWd1NJGcTLKJ1UmODJbF0Rrggie9mGN7o0Eu1xxJnhzT
+         RO2g==
+X-Forwarded-Encrypted: i=1; AJvYcCW+uNC/TTPjjKkfu2ZT9HVUz8q4ak6fmH2t2u/eQI9I0OMh6XvNqBVYN45Y2GY0OIInclAAgQUxqaGaaQ0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzUuDC3bCv7hONyCwwigguFjU+E/D5Jt7gacZ7wCb/I4BUafrJD
+	CCNHiaPh9JG/IRVUqkOGdqjSdjnHywH3Lv4CRjvkrbtO449F0MyoXqaVCoDy3v4hGtOkLa2B1Do
+	mlOiS/jjzNhlA/0NO2cP5JlYK88VLUThDHyokBciBR3q0bnJSUpF1AD0=
+X-Google-Smtp-Source: AGHT+IHZrX5x+ddAmSe22mb55IktNZwUNEVFFkWhX/k6jYUcdMLP4AIIqXZgJiGhfVkY/uP4CjKDxwJZ4R27HzDpYzvkC1APeXZu
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240902100652.269398-1-mschmidt@redhat.com>
+X-Received: by 2002:a05:6e02:1489:b0:397:ca8e:d377 with SMTP id
+ e9e14a558f8ab-39f40e1f884mr10470655ab.0.1725274384455; Mon, 02 Sep 2024
+ 03:53:04 -0700 (PDT)
+Date: Mon, 02 Sep 2024 03:53:04 -0700
+In-Reply-To: <0000000000004169f9061ceadd8a@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000d369bd062120bed7@google.com>
+Subject: Re: [syzbot] [bcachefs?] kernel BUG in bch2_journal_noflush_seq
+From: syzbot <syzbot+85700120f75fc10d4e18@syzkaller.appspotmail.com>
+To: bfoster@redhat.com, kent.overstreet@linux.dev, 
+	linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Sep 02, 2024 at 12:06:52PM +0200, Michal Schmidt wrote:
-> The description of function ice_find_vsi_list_entry says:
->   Search VSI list map with VSI count 1
-> 
-> However, since the blamed commit (see Fixes below), the function no
-> longer checks vsi_count. This causes a problem in ice_add_vlan_internal,
-> where the decision to share VSI lists between filter rules relies on the
-> vsi_count of the found existing VSI list being 1.
-> 
-> The reproducing steps:
-> 1. Have a PF and two VFs.
->    There will be a filter rule for VLAN 0, refering to a VSI list
->    containing VSIs: 0 (PF), 2 (VF#0), 3 (VF#1).
-> 2. Add VLAN 1234 to VF#0.
->    ice will make the wrong decision to share the VSI list with the new
->    rule. The wrong behavior may not be immediately apparent, but it can
->    be observed with debug prints.
-> 3. Add VLAN 1234 to VF#1.
->    ice will unshare the VSI list for the VLAN 1234 rule. Due to the
->    earlier bad decision, the newly created VSI list will contain
->    VSIs 0 (PF) and 3 (VF#1), instead of expected 2 (VF#0) and 3 (VF#1).
-> 4. Try pinging a network peer over the VLAN interface on VF#0.
->    This fails.
-> 
-> Reproducer script at:
-> https://gitlab.com/mschmidt2/repro/-/blob/master/RHEL-46814/test-vlan-vsi-list-confusion.sh
-> Commented debug trace:
-> https://gitlab.com/mschmidt2/repro/-/blob/master/RHEL-46814/ice-vlan-vsi-lists-debug.txt
-> Patch adding the debug prints:
-> https://gitlab.com/mschmidt2/linux/-/commit/f8a8814623944a45091a77c6094c40bfe726bfdb
-> 
-> One thing I'm not certain about is the implications for the LAG feature,
-> which is another caller of ice_find_vsi_list_entry. I don't have a
-> LAG-capable card at hand to test.
-> 
-> Fixes: 25746e4f06a5 ("ice: changes to the interface with the HW and FW for SRIOV_VF+LAG")
-> Signed-off-by: Michal Schmidt <mschmidt@redhat.com>
-> ---
->  drivers/net/ethernet/intel/ice/ice_switch.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/net/ethernet/intel/ice/ice_switch.c b/drivers/net/ethernet/intel/ice/ice_switch.c
-> index fe8847184cb1..4e6e7af962bd 100644
-> --- a/drivers/net/ethernet/intel/ice/ice_switch.c
-> +++ b/drivers/net/ethernet/intel/ice/ice_switch.c
-> @@ -3264,7 +3264,7 @@ ice_find_vsi_list_entry(struct ice_hw *hw, u8 recp_id, u16 vsi_handle,
->  
->  	list_head = &sw->recp_list[recp_id].filt_rules;
->  	list_for_each_entry(list_itr, list_head, list_entry) {
-> -		if (list_itr->vsi_list_info) {
-> +		if (list_itr->vsi_count == 1 && list_itr->vsi_list_info) {
->  			map_info = list_itr->vsi_list_info;
->  			if (test_bit(vsi_handle, map_info->vsi_map)) {
->  				*vsi_list_id = map_info->vsi_list_id;
-> -- 
-> 2.45.2
-> 
+syzbot suspects this issue was fixed by commit:
 
-Thanks, it for sure looks correct. Reusing VSI list when the rule is new
-seems like an error. I don't know why it was needed for LAG, probably
-Dave will now.
+commit 2744e5c9eb1a1090b5f61c955e934c70bfe6b04c
+Author: Kent Overstreet <kent.overstreet@linux.dev>
+Date:   Wed Dec 27 23:31:46 2023 +0000
 
-You can add in the description that bug is caused because of reusing VSI
-list created for VLAN 0. All created VFs VSIs are added to VLAN 0
-filter. When none zero VLAN is created on VF which is already in VLAN 0
-(normal case) the VSI list from VLAN 0 is reused. It leads to a problem
-because all VFs (VSIs to be sepcific) that are subscribed to VLAN 0 will
-now receive a new VLAN tag traffic. This is one bug, another is the bug
-that you described. Removing filters from one VF will remove VLAN filter
-from the previous VF. It happens in case of reset of VF.
+    bcachefs: KEY_TYPE_accounting
 
-For example:
-- creation of 3 VFs
-- we have VSI list (used for VLAN 0) [0 (pf), 2 (vf1), 3 (vf2), 4 (vf3)]
-- we are adding VLAN 100 on VF1, we are reusing the previous list
-  because 2 is there
-- VLAN traffic works fine, but VLAN 100 tagged traffic can be received
-  on all VSIs from the list (for example broadcast or unicast)
-- trust is turing on on VF2, VF2 is resetting, all filters from VF2 are
-  removed; the VLAN 100 filter is also remove because 3 is on the list
-- VLAN traffic to VF1 isn't working anymore, there is a need to recreate
-  VLAN interface to readd VLAN filter
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=10761263980000
+start commit:   1dd28064d416 Merge tag 'integrity-v6.10-fix' of ssh://ra.k..
+git tree:       upstream
+kernel config:  https://syzkaller.appspot.com/x/.config?x=1ace69f521989b1f
+dashboard link: https://syzkaller.appspot.com/bug?extid=85700120f75fc10d4e18
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=120f9c9e980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=158b8d69980000
 
-In summary, I don't see the use case when reusing VSI list which more
-than one VSI on it for new rule is valid scenario.
+If the result looks correct, please mark the issue as fixed by replying with:
 
-Reviewed-by: Michal Swiatkowski <michal.swiatkowski@linux.intel.com>
+#syz fix: bcachefs: KEY_TYPE_accounting
 
-Thanks,
-Michal 
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
