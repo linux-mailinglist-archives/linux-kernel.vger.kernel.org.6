@@ -1,90 +1,110 @@
-Return-Path: <linux-kernel+bounces-310443-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310444-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80218967D10
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 02:44:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60D9B967D14
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 02:51:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 65A3C1C213F5
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 00:44:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0A12A1F216AF
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 00:51:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 772FA8F6D;
-	Mon,  2 Sep 2024 00:44:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCE518494;
+	Mon,  2 Sep 2024 00:51:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="VOfr7+Ge"
-Received: from mail-m16.yeah.net (mail-m16.yeah.net [220.197.32.17])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99BAC2C9D;
-	Mon,  2 Sep 2024 00:44:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.17
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="lKH0J3s4"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7383763B9;
+	Mon,  2 Sep 2024 00:51:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725237888; cv=none; b=TroULWqKg1AExU4hsxNwqfxQcI6kaNpcJiyUvoJd5ZjRZ7CbWVJs/P4B2WZZ2qS8Q6gfv0FDyXMcLsB2fkQt4VJ1KmXtwzjgm4A9AcEKER3AEkBnXMFCPhgLRBk9xGVJ/wPaT95jD6eMgV0TpKAoJUlu0D2opTTycmsCyBRmEE4=
+	t=1725238291; cv=none; b=Mkha9G+pZbtc1wwGmJQHjBcbYxMmM00Lg7wr4/hQUgY1wN82eFaXBy56POai600mrZhu9NhNsve/YLZlFZv5o/UUka0hjkfi5CWZ97YglNMMsWW1lpCMCBfcFaJFy1oVMjses7MyRs4QM9oivypbwfYPzzwKmbDtQkwCuHJe+FE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725237888; c=relaxed/simple;
-	bh=/x705rAfgF75MUo9iF/CKwEW1aloVRl/vdZnmjt8W3Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IQHBZWnmnME35fa7RePGYHIP8//Ig3hOWlz76OHFasVZ3DAD0JKrkuTWEWsRwGTF2/LLP0j0zYvFMd745/97+DnTzRYcMJvG9HdXP1bHigac4+IVZCyST+BBHDcKRrRom0ovG7SzQsxHapC6Z/loCWyCxoXM81LUl6O3/FSQzQY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=VOfr7+Ge; arc=none smtp.client-ip=220.197.32.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
-	s=s110527; h=Date:From:Subject:Message-ID:MIME-Version:
-	Content-Type; bh=EY/h5LzwGRTv5EzCS/bIRFPXd5nGllWSOGp5Qy6FBLM=;
-	b=VOfr7+GeYMicO13dJOYP3NK6J4OgGhPTDFgaXgIexUgofZda7zn/TWGIWryDc2
-	/7CsIzY0ykr/UYP/f+ZvPA/C9J5tZ82495AjsmjalrteB+r51f/4mEayvKZzTFIN
-	2VU43g1wpy1d5muv3V56Fd9TulTuSKswy+Y/Opoa5IDJs=
-Received: from dragon (unknown [114.216.210.89])
-	by gzsmtp1 (Coremail) with SMTP id Mc8vCgDn_1hhCtVmQStLAA--.41797S3;
-	Mon, 02 Sep 2024 08:44:19 +0800 (CST)
-Date: Mon, 2 Sep 2024 08:44:17 +0800
-From: Shawn Guo <shawnguo2@yeah.net>
-To: Fabio Estevam <festevam@gmail.com>
-Cc: Frank Li <Frank.li@nxp.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Dong Aisheng <aisheng.dong@nxp.com>, devicetree@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 2/8] arm64: dts: imx8qm: add lvds subsystem
-Message-ID: <ZtUKYSe6Psx8hbZ9@dragon>
-References: <20240701-imx8qm-dts-usb-v4-0-03cdbc8c44b6@nxp.com>
- <20240701-imx8qm-dts-usb-v4-2-03cdbc8c44b6@nxp.com>
- <ZoN90rHfpK7niqEr@dragon>
- <ZoOAjSUp29DBhY+/@lizhi-Precision-Tower-5810>
- <ZoObnDqMd2EL4W6F@dragon>
- <CAOMZO5BigqCqfou7NAzeVZ0Fp+AJQV20BYexROnaCJwU+etF2A@mail.gmail.com>
+	s=arc-20240116; t=1725238291; c=relaxed/simple;
+	bh=RbSGX0UOcgxxW7iRPTx7wOAI+BIEyoz2vHNCnYPa1Hg=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=i5kwzuvMPBqPA66aSHibAQMxvP42N5Au1HZbMmufjHiqu7ssttXEv97PakbzCITo0kJ0mXV27WL7v0EDAyJ/KVV7vt8iNkIgWca2RK0EEg+3oLe0sssBhTf53vuHmWFbSUAEHJLwBmkFqoBaaoCbvBZYog5moa4tSrDthMzDAuc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=lKH0J3s4; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1725238284;
+	bh=17hM6iILcwwlZ/x8DZy+68FDVyPD/80SkMXiNMEAlB8=;
+	h=Date:From:To:Cc:Subject:From;
+	b=lKH0J3s44oA1Y9/kgHZ0skSfa6V5s81uL0aCxnaoF83xfqIh0gb7Xlnj4EOW1tTl/
+	 zDL/JpXs2YSLHJeVgFntHodORtYZ9geywiCv4gNKdXFDPjNo5wF3vwSvvmA8zP2xn4
+	 QXXUBNWmIzt2GXhAuqv0jJqXHfCffrBHqiCKcnzzzhMnChtmngexBnTxNdCh4j+iRH
+	 nuIF2gAh1uxdPtYvcaYkju1suMyYHQS4hcOrD3eCACbE0anWTlMUw7S2Teq7izhwqF
+	 LKD0rxKq+fpR/mwxdlJ0NTbvIjGSjtLObu9n1yyAB65P2Cz6n7oRPoeDcQ9/rT8CJW
+	 KR+zBgCs+CdXA==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WxqvH6cqPz4wyR;
+	Mon,  2 Sep 2024 10:51:22 +1000 (AEST)
+Date: Mon, 2 Sep 2024 10:51:21 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>, Namhyung Kim
+ <namhyung@kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: duplicate patches in the perf tree
+Message-ID: <20240902105121.1a5b25f8@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAOMZO5BigqCqfou7NAzeVZ0Fp+AJQV20BYexROnaCJwU+etF2A@mail.gmail.com>
-X-CM-TRANSID:Mc8vCgDn_1hhCtVmQStLAA--.41797S3
-X-Coremail-Antispam: 1Uf129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
-	VFW2AGmfu7bjvjm3AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxUa73kDUUUU
-X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiAhlOZWbU5NNHqQAAsb
+Content-Type: multipart/signed; boundary="Sig_/wVMvj.YsV61lDsX0jv=zj=o";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On Tue, Jul 02, 2024 at 07:56:03AM -0300, Fabio Estevam wrote:
-> Hi Shawn,
-> 
-> On Tue, Jul 2, 2024 at 3:18 AM Shawn Guo <shawnguo2@yeah.net> wrote:
-> 
-> > I do not see "fsl,imx8qm-irqsteer" in the patch.
-> 
-> I sent a patch for it yesterday:
-> 
-> https://lore.kernel.org/linux-devicetree/1c1e3224-1b3d-438c-bce4-56143292462c@kernel.org/
+--Sig_/wVMvj.YsV61lDsX0jv=zj=o
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-I applied the series.  Please help push the bindings update to get
-landed.
+Hi all,
 
-Shawn
+The following commits are also in the perf-current tree as different
+commits (but the same patches):
 
+  6236ebe07131 ("perf daemon: Fix the build on more 32-bit architectures")
+  2518e13275ab ("perf python: Fix the build on 32-bit arm by including miss=
+ing "util/sample.h"")
+  74fd69a35cae ("perf lock contention: Fix spinlock and rwlock accounting")
+  37e2a19c98bf ("perf test pmu: Set uninitialized PMU alias to null")
+
+These are commits
+
+  478e3c7ebbe7 ("perf daemon: Fix the build on more 32-bit architectures")
+  4cb80590f12d ("perf python: include "util/sample.h"")
+  60f47d2c58cb ("perf lock contention: Fix spinlock and rwlock accounting")
+  387ad33e5410 ("perf test pmu: Set uninitialized PMU alias to null")
+
+and this last one is causing an unnecessary conflict.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/wVMvj.YsV61lDsX0jv=zj=o
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmbVDAkACgkQAVBC80lX
+0Gwf8ggAoAxqDsQup61pXCVNhGAxxHbU+yE9pPjWMdK2IxXanMsgIRbFygMcLW0j
+WyrdU0e6s7ZybUtmwEtqfozCscOyWtzI88TqqmlGSnS3UkI/JppuM4qIsfEAQyzv
+7l2Q1XNyV1HWNYs3P90YyHFcDkVyFCyWMrxRPvMLIMSvohlEbQipo4r03wQ2+gXF
+eocGgLMeaL75SB0LNXkn9IIIr2nwqCReWbSbO8bUq+unQocy8c7LgO/VP42TMHS2
+yXDbJ1Lj9VzE9L4AFWwhUp1+2GMoHQFtiCQDE5/djqZLPz1DA4+nGueCxpnDPZ8S
+Ach0aV/zeEUv62y3vFBZWQe+nY4pFw==
+=hNDa
+-----END PGP SIGNATURE-----
+
+--Sig_/wVMvj.YsV61lDsX0jv=zj=o--
 
