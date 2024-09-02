@@ -1,113 +1,67 @@
-Return-Path: <linux-kernel+bounces-310795-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310810-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AEEBD968159
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 10:05:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5805296817C
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 10:15:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 596C21F21151
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 08:05:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EEC2A1F23463
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 08:15:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA9D5186606;
-	Mon,  2 Sep 2024 08:04:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KpRh+uVV"
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3E328460;
+	Mon,  2 Sep 2024 08:15:49 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BE7317E017
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 08:04:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3C5514D702;
+	Mon,  2 Sep 2024 08:15:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725264289; cv=none; b=jZOxYhcSTIvqmKGFvp9HZml7X/2Yut2yh963HOLElTo6JVNyTNhOSeH5uSNtpKU1Y2zUfrjsRtIosBzOVa5qvVycOzq07p7rZkG9VhCR1Qt7fJ3RNIzWhMl1A/GGOn1xOhIlnKrtWzcW/9Gm+1TpSPilA1F29ym6j+ClLCGzKFo=
+	t=1725264949; cv=none; b=fezm3PK93L7/KsmBUk+gaS6X4fsEvgKIFReq6zaS8nzt7jU3mLcAzlL+0l3SEZthrVvQN7y6ezblK5c+8vTj+Ym+gfvPNfXftgJ6sUTA3OYNFBjRNVfbfkc33GEDQv1K4r52AKLrwNQyiDrULDqjVV6gbDU7RTcaJj2H17fjb/M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725264289; c=relaxed/simple;
-	bh=+UTkjM/YpFeicUPaHWpIAijZq8DD+lel03KrAl7Eqn0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YQKsaYVENqVuKQKRctOz38LD8rWpIuVJo2LCvCgzTMwP7wYCuF+SsSy1PxO6AIf/2bps+1w6KjS/9FMkQMbK74llb0/cuw2quB9gUaHKWZo75+42EZytbJVec2UAe4L0pRY86eMnZvDXzR7IgWEyPfgQlqItY5SSHRzmlv3r5bU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=KpRh+uVV; arc=none smtp.client-ip=209.85.208.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2f40a1a2c1aso36201521fa.3
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2024 01:04:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1725264285; x=1725869085; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+UTkjM/YpFeicUPaHWpIAijZq8DD+lel03KrAl7Eqn0=;
-        b=KpRh+uVVyE6rv3WYK/eXnl8mE6+ez2C4Cu9CukSxOFB5pSVO3r0UEPece1wwLiO1Qv
-         JO21Lpg26PewAGKRClUfCAxkxtImWx2g8Zfo2b5MEkcHzD3ofzsjnO7Y3RbeRs2JyXvX
-         fQFGGd6sJyaC7NMNVdlDq+ULQiripPIKOlI3bO9bqNui1T2ejw6eBCxqk43DB0tnEXq9
-         984V8tMF/9Ovv5b5T02eTHdaKC2AwubMcCkwKmX3BbshiVux2XVytXHZHIJLG+nhCUjs
-         tVgitYJzo3kQl1Xcp0TjvWDW25rD1N0MR1DzAMmh8Wd+e5oRtTl2iOKuEAiKsdufWX2k
-         lYzA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725264285; x=1725869085;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+UTkjM/YpFeicUPaHWpIAijZq8DD+lel03KrAl7Eqn0=;
-        b=hjO3owteQstrhfGOdw1hSraHSm3Arm4ceRudX8j2WpMuIp8BXNiE+n/qSjzN+zMtqS
-         O1pDFU9+5jz0Xz1/dqrAQQsqOE2Iz2p5FUqWrpw1EUg6BWf/utMUmJ2q6dcYj9LoCazb
-         G0Py3YC+t5IzJVVqOyM8EF0svSQPFKWDKYOjYpGnzZYNEpjDPUjxGfY5FjuuCm5gh63x
-         G8NFa255ochy0qi5+y80u17cDCZgQ+C+u5bfgjW9Qd9MGqXKmvFDTGqWFWe/NJZjziyy
-         mYes5jGNV5oxJAi1VKca4Xrh4it7KNuZqZN0OhnHWO+LT8syiNBI9tbhxGexJb1jBntl
-         2GIA==
-X-Forwarded-Encrypted: i=1; AJvYcCWj3AfHuF82XI1CWfY2R7NrdbCSAsMESt0XsUXxdXRWal1Pnzr68LxjlpigJoa3UQigk+I9rst/kOmzrfI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxTudzyB9751n/gBdW3pObmJsJ+rGPS0zJuZby1K8uNHpPuRyPh
-	06oZiIMIoftdT1zEL6x0yhek+QLc5Ce7cEBQuZ07lTg6Z92xR7vw3nyVsu9WfSHXxrGzjeGzlr5
-	JblpLavwXSEeO0JUoJbDYQHG1DtpvTvKNAjKjDQ==
-X-Google-Smtp-Source: AGHT+IH/2Sron2senQlaG+hNYCIf5KgSiTssWFHnzlYklHs8dJj/QIMBsSouj5aXuELLgPa/B5+9AnhJvxEmPM1PyIw=
-X-Received: by 2002:a05:651c:1505:b0:2ef:216c:c97 with SMTP id
- 38308e7fff4ca-2f6103a520emr84062511fa.19.1725264284861; Mon, 02 Sep 2024
- 01:04:44 -0700 (PDT)
+	s=arc-20240116; t=1725264949; c=relaxed/simple;
+	bh=eRuhdcpvNMEE+QALMOZ3ZpIJp/HtHjvVouJYDJn1HMQ=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=CphJoaRNFkM8sz/5dnqM7nV9tWk9oE64s8TjK2tb51kejuztS/93XBXQJZY5krfqbF/4nNvL5KgYY/00fS67sntGpDa2QxFCdTQ/R034KPqGdxsj7jvH65czZ5V5Da31ZueIeSY7xkYs39II7WnjuEAMRYDu6H+TVqYBt25ZRFE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.254])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4Wy1js6MKMzpVHR;
+	Mon,  2 Sep 2024 16:13:53 +0800 (CST)
+Received: from dggpemf100008.china.huawei.com (unknown [7.185.36.138])
+	by mail.maildlp.com (Postfix) with ESMTPS id 4E6FB1800FE;
+	Mon,  2 Sep 2024 16:15:43 +0800 (CST)
+Received: from mdc.huawei.com (10.175.112.208) by
+ dggpemf100008.china.huawei.com (7.185.36.138) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Mon, 2 Sep 2024 16:15:42 +0800
+From: Chen Jun <chenjun102@huawei.com>
+To: <gregkh@linuxfoundation.org>
+CC: <cve@kernel.org>, <linux-cve-announce@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, Chen Jun <chenjun102@huawei.com>
+Subject: Re: CVE-2024-43867: drm/nouveau: prime: fix refcount underflow
+Date: Mon, 2 Sep 2024 16:01:14 +0800
+Message-ID: <20240902080114.69287-1-chenjun102@huawei.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <2024082157-CVE-2024-43867-0620@gregkh>
+References: <2024082157-CVE-2024-43867-0620@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240528120424.3353880-1-arnd@kernel.org>
-In-Reply-To: <20240528120424.3353880-1-arnd@kernel.org>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Mon, 2 Sep 2024 10:04:33 +0200
-Message-ID: <CACRpkdZqj7-mxCBBoWZm5QAVfNhak6PdrMnSmUWRKb6DpJLQNA@mail.gmail.com>
-Subject: Re: [PATCH] net: dsa: realtek: add LEDS_CLASS dependency
-To: Arnd Bergmann <arnd@kernel.org>, netdev <netdev@vger.kernel.org>, 
-	Jakub Kicinski <kuba@kernel.org>, "David S. Miller" <davem@davemloft.net>
-Cc: Andrew Lunn <andrew@lunn.ch>, Florian Fainelli <f.fainelli@gmail.com>, 
-	Vladimir Oltean <olteanv@gmail.com>, Arnd Bergmann <arnd@arndb.de>, 
-	=?UTF-8?Q?Alvin_=C5=A0ipraga?= <alsi@bang-olufsen.dk>, 
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, 
-	Luiz Angelo Daros de Luca <luizluca@gmail.com>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ dggpemf100008.china.huawei.com (7.185.36.138)
 
-Hi David/Jakub,
+Hi,
 
-On Tue, May 28, 2024 at 2:04=E2=80=AFPM Arnd Bergmann <arnd@kernel.org> wro=
-te:
+This issue seems to be introduced by 019cbd4a4feb instead of ab9ccb96a6e6.
+Could anyone help check again?
 
-> From: Arnd Bergmann <arnd@arndb.de>
->
-> This driver fails to link when LED support is disabled:
->
-> ERROR: modpost: "led_init_default_state_get" [drivers/net/dsa/realtek/rtl=
-8366.ko] undefined!
-> ERROR: modpost: "devm_led_classdev_register_ext" [drivers/net/dsa/realtek=
-/rtl8366.ko] undefined!
->
-> Add a dependency that prevents this configuration.
->
-> Fixes: 32d617005475 ("net: dsa: realtek: add LED drivers for rtl8366rb")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-
-Can you please apply this patch, the buildbots keep complaining about this,
-and we agreed (I think) to take this dependency approach for now.
-
-Yours,
-Linus Walleij
+Thanks.
 
