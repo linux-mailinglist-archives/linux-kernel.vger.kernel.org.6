@@ -1,134 +1,107 @@
-Return-Path: <linux-kernel+bounces-311656-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311657-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 234E2968BAE
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 18:10:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1886B968BB2
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 18:11:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 54DAA1C22934
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 16:10:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7D044B2263B
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 16:11:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECD081A3048;
-	Mon,  2 Sep 2024 16:10:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06C441A3051;
+	Mon,  2 Sep 2024 16:11:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NmcmQjsN"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bsA1r4U9"
+Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A07E71A3029;
-	Mon,  2 Sep 2024 16:10:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BBA71A3029;
+	Mon,  2 Sep 2024 16:11:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725293444; cv=none; b=Om4E/1xGj5UlVk4FGNn+tlzu278gDOHCdpS27NxxIH6U/cISBT/+sUNDO5UYxTwZEBdqRtu8QzcgOmLzt4WCiTzjyn+bCcqP+mFeJ+nAHdy0DciA/ElqFEqTYCyntIqq9Iacg+R0AR0Tx2XF6sDSsis3rKg+QafM3SehfZqyiac=
+	t=1725293478; cv=none; b=HRIdSp4gvkzSaPvtFj4NrIgVP8kBrepG8R36u/UH+u218imF6Im4TYRrimFfwWBso8gF5gEZnLZBdwGxF9dY4tRxhA9fb1r6JQ746s+eZt0kDccsziJuytMsUALbb66SxL6F0R1dVaIxSj8FmIelaQep1Bo4BaQx38pa/zz05Ew=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725293444; c=relaxed/simple;
-	bh=mA/5m1vT4go9SHXgOa8ntC2WafuD4Q9BAslIHx8wLbo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LQzL0dGgAWOHzi4kxyuDVLac++uYxDPDZKEw9wTtEuWfCvlN4O4goH/1Uhz0IrzhmpHxnW6Kq2s9zL683cg1BUw+awmxhAB4LCoZvXK+alnsWKMXEu017xZ3qh7pnKXxi5nNnVpKo4CkMaGtftEL+oKCwVnY2guJ8aMPRf5Z6LE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NmcmQjsN; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725293443; x=1756829443;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=mA/5m1vT4go9SHXgOa8ntC2WafuD4Q9BAslIHx8wLbo=;
-  b=NmcmQjsNDwFmqlhOWmktRqClsp46kK/SH0bNytLanYDmfkvpBFKloHjn
-   L5w3LZLFXlP/UmSTu/WP/kOGPQk2IAUzHJS9wyc4yvV3BsAi99Oebsv3N
-   uW1Q+IWfsNd8auwAgdeatBljjAkATFCtOyLsEwd0ushJ0xuR6kgRvNDU8
-   GVgnNJpnpse8CZjRxDDbm6VWT1ybi/rTxr3Fz7lywoapCdSUKamZ9BmTN
-   VPu5+819BHkN5GD1Txw/ksPQ/hl75jhvR4l4syMH+t2Dzq64K8Qjcv7ry
-   PIEXArnyI5jat1eEEVY4JBvWuub0yW/iYvH/k8wkvP5c2EFNCKKDWjJbT
-   A==;
-X-CSE-ConnectionGUID: LIi1WJgDQPC6JIuJZxXtmA==
-X-CSE-MsgGUID: VZDtbNoPRlWOSUo5CbJiyA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11183"; a="23745507"
-X-IronPort-AV: E=Sophos;i="6.10,195,1719903600"; 
-   d="scan'208";a="23745507"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2024 09:10:42 -0700
-X-CSE-ConnectionGUID: cRBbmkcERmWy1Sm8SOABkA==
-X-CSE-MsgGUID: e+YrE425SoWK1qyhwTIliA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,195,1719903600"; 
-   d="scan'208";a="69286841"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2024 09:10:40 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1sl9dV-00000004QP0-0nAq;
-	Mon, 02 Sep 2024 19:10:37 +0300
-Date: Mon, 2 Sep 2024 19:10:36 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Johan Hovold <johan@kernel.org>
-Cc: Dan Carpenter <dan.carpenter@linaro.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Hans de Goede <hdegoede@redhat.com>, linux-kernel@vger.kernel.org,
-	platform-driver-x86@vger.kernel.org,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Daniel Scally <djrscally@gmail.com>
-Subject: Re: [PATCH v2 1/4] driver core: Ignore 0 in dev_err_probe()
-Message-ID: <ZtXjfB115MN22aQi@smile.fi.intel.com>
-References: <20240822130722.1261891-1-andriy.shevchenko@linux.intel.com>
- <20240822130722.1261891-2-andriy.shevchenko@linux.intel.com>
- <ce59c3c6-8729-469f-a0df-b6844792e324@stanley.mountain>
- <ZtXgmi0TDfDMwnlz@hovoldconsulting.com>
+	s=arc-20240116; t=1725293478; c=relaxed/simple;
+	bh=wk7mJjx0Xs0Q7CfUTyDNU+Eh3I4XTXvSQzWkhmeVDwY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Y6QCZwnT/Tz0TapfWSE9foHPxImbE63lv8ws+URsj7JmmLpEnreaZTD7QiHvJdycY3kDw1Lfr+n58NYiGa+q71tV/wKUx6zcZkz7b6KDG1WKL8Ze/jHDh2CMEcTuPWj8M1egPk+Vb4plfxoh8cqh2kJ855lqzWbou5U9zbwYYOY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bsA1r4U9; arc=none smtp.client-ip=209.85.216.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-2d42c59df79so723053a91.1;
+        Mon, 02 Sep 2024 09:11:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725293476; x=1725898276; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wk7mJjx0Xs0Q7CfUTyDNU+Eh3I4XTXvSQzWkhmeVDwY=;
+        b=bsA1r4U9bkRj2ayNmnFpAm1V99ya6TFLF6NRGlB2a0zEUorcR/cwEfJmEQVsbSDxHb
+         uA8h3G7KLfi8C+jL9ROyMRSceaqsNJZ54qJLqJxgaLFcYQQQSFA6LJ9WDaRsjLFR/ZXr
+         LBRAZHILeZ/va75y7efmZRGuewtfGh66ibuuMOxI0bUtqEGgomGUAQ9PTXcMM/tHAjND
+         tiQyJUHW5IvT8HuDCmqx1a3DsCu3/sPfTHJaO+0mNL9gMlzltA7M7ZfuCMUIVLaadAlV
+         LHYHJZczAwhBH73S2nbokZ0k2pGCME/PUB9K0MvE2E1OrtllXwvyyfVO8PgZeOGVg9da
+         xT2A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725293476; x=1725898276;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=wk7mJjx0Xs0Q7CfUTyDNU+Eh3I4XTXvSQzWkhmeVDwY=;
+        b=YqavNTCkHB+yW3Jk48yI6Z5AIjk8aP1Y9Lu0i97Z3VQrdOzWaSPf5dSAgIJHyghlS8
+         aLMfzJ7umrHkuNz/nVi5NbSBFdaU5UCZ8Cl89QhUmxOuKaFUmLuemU5tdl5gpdyg3rQb
+         /W5WnqHfF5oV9h3KA0fS6Rxt9k4D4hhq9L4lj7+XQcCa/LOhyNTH9Su35xcXrlYPBzRc
+         86bIskU+WueoUL87LhErZz3/irGT2QGD71p+FukpWWw7ppRIwbzajCpiyCna1+GlS1r3
+         Uk+GvHUjPv/H+meXByVH4nKkd2VBswP8UBOCl0Ztpz1Y8ZclMOz1DWf2vGqqF/X2p/Ck
+         Oh7w==
+X-Forwarded-Encrypted: i=1; AJvYcCUTFwGahhsmqmSk4Mq8/3SMZyVH/XMH0+RWLRL6aj4BmH+Q5nE103ooYNU4jhuBSFGEqnNNvd3Uf/qJNj/Z@vger.kernel.org, AJvYcCUxtVo88ntOe/T3lB2BAcMGuZRIXTmZd0D0y7R2m+kBrsat9Er1DLyXsuav0OFFcgMXJM1vPpkVJB2OeUei@vger.kernel.org, AJvYcCWB2ay0K/JCz6xf7hkd2Jxila6L+ZWrgOZPoG6UwEf6U1b+Bff0xM4Q0n0n9HOzC9CvfsU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxq3wrxI4k2NwQZ+XGSFuxBbQsLC8i/vw8EkxlEN9H5KnZz3m6P
+	lVnHQzX84weVtumsjmLmHlCaC8P4KTUiu2PmjUJ+oVw+YwEs2aKX+FBab/cOy/1haBmBifLUphw
+	bC3xDauszHD462tnDPzSn1/5yELQ=
+X-Google-Smtp-Source: AGHT+IHuwEJDhCc4s+mmfVcupdQTMg6prAW9eGXQCrQq50fzIiiapvtm80hin/j+dLtZBzIECbJiloot8yiAcR4eJR0=
+X-Received: by 2002:a17:902:e303:b0:205:40f5:d1a with SMTP id
+ d9443c01a7336-20540f50db1mr48362355ad.6.1725293476345; Mon, 02 Sep 2024
+ 09:11:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ZtXgmi0TDfDMwnlz@hovoldconsulting.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20240728125527.690726-1-ojeda@kernel.org> <CAK7LNARhR=GGZ2Vr-SSog1yjnjh6iT7cCEe4mpYg889GhJnO9g@mail.gmail.com>
+ <ZsiV0V5-UYFGkxPE@bergen> <CANiq72khCDjCVbU=t+vpR+EfJucNBpYhZkW2VVjnXbD9S77C0A@mail.gmail.com>
+ <CAK7LNARJjM2t_sqE-MePzEEF3D3SznNYh99F5bM003N_xGFpug@mail.gmail.com>
+In-Reply-To: <CAK7LNARJjM2t_sqE-MePzEEF3D3SznNYh99F5bM003N_xGFpug@mail.gmail.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Mon, 2 Sep 2024 18:11:04 +0200
+Message-ID: <CANiq72=3V2XYgmFME3kab9VMrT1yBi9nr99X6CMrqUjvTVMTtA@mail.gmail.com>
+Subject: Re: [PATCH] kbuild: pahole-version: avoid errors if executing fails
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: Nicolas Schier <nicolas@fjasle.eu>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
+	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
+	Jiri Olsa <jolsa@kernel.org>, bpf@vger.kernel.org, 
+	Nathan Chancellor <nathan@kernel.org>, linux-kbuild@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, patches@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Sep 02, 2024 at 05:58:18PM +0200, Johan Hovold wrote:
-> On Sat, Aug 31, 2024 at 11:25:54AM +0300, Dan Carpenter wrote:
-> > On Thu, Aug 22, 2024 at 04:05:38PM +0300, Andy Shevchenko wrote:
-> > > In the similar way, ignore 0 error code (AKA "success") in
-> > > dev_err_probe(). This helps to simplify a code such as
-> > > 
-> > >   if (ret < 0)
-> > >     return dev_err_probe(int3472->dev, ret, err_msg);
-> > > 
-> > >   return ret;
-> > > 
-> > > to
-> > > 
-> > >   return dev_err_probe(int3472->dev, ret, err_msg);
-> > > 
-> > > Reviewed-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
-> > > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> > 
-> > This is a terrible idea because currently Smatch is able to detect about one
-> > bug per month where someone unintentionally passes the wrong error variable
-> > to dev_err_probe().
-> > 
-> > I really hate this.
-> > 
-> > NAKed-by: Dan Carpenter <dan.carpenter@linaro.org>
-> 
-> Regardless of any issues this may cause for tooling, I fully agree that
-> this is a terrible idea that will only result in unreadable code.
-> 
-> 	return dev_err_probe(dev, ret, "registration failed\n");
-> 
-> Except it did not fail...
-> 
-> NAK
+On Mon, Sep 2, 2024 at 4:15=E2=80=AFAM Masahiro Yamada <masahiroy@kernel.or=
+g> wrote:
+>
+> Ensuring this should be easy.
+> Why don't we fix it properly while we are here?
 
-Fair enough. Thank you, guys, for reviewing.
+That is great, I would prefer that.
 
--- 
-With Best Regards,
-Andy Shevchenko
+Sent v2: https://lore.kernel.org/all/20240902160828.1092891-1-ojeda@kernel.=
+org/
 
-
+Cheers,
+Miguel
 
