@@ -1,276 +1,211 @@
-Return-Path: <linux-kernel+bounces-311883-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311884-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF9FD968EF5
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 22:55:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2AF7968EF7
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 22:55:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 497FA28362D
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 20:55:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EDBCAB21ED5
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 20:55:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 111BE19CC04;
-	Mon,  2 Sep 2024 20:55:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A821C1A3A90;
+	Mon,  2 Sep 2024 20:55:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Dr8+R4LK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P6yD2Na+"
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 536211A4E7E;
-	Mon,  2 Sep 2024 20:55:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EAAE69959;
+	Mon,  2 Sep 2024 20:55:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725310501; cv=none; b=Q460ZNIAMFkEDSFyrF9m3poOXGpbAC+lpZ4lvl2YgdoA1tPwG+EUpwnIun/JYj+hoUYMeFKuzdoPaFlVWQGsZ/F7LUxiCPTB9jfU/c94iHfwJH3Uj3huQ5ZIo4CcRGlZFzvvqAZJuFHsEa3RLXLI8DgrS4/uAwenRyvOxkgV2YQ=
+	t=1725310519; cv=none; b=aymmZNrLzPyyfMMq/cTO5SQGVu4TcfXhT5goDQTj5e9YkU26u8lcEYV7XRY+P8FMTDWMHIj2LOvwPkd1acRIkxo44E2/pYfd2ljCta+wowMfRtSj8RhLptYH/SmDOda1dKlzOl1wnx5uEfHWLmfDPC5VtSMyIJT9LtOPdWT4jsQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725310501; c=relaxed/simple;
-	bh=FGHKapTIenGnlnPA+DpU84gT8/KM2p7zRNiALDGngyg=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=O/INEbblKXpQNSVDqintQpBCax39ETMkFFgnPubPjBUuMcdLH8xwUv6ZZXSG61HhRrLi9faGSGa4JxWqZ9o5ocUt/wR+XYZcIgj+J3powdwDUnbgmxdanwAY7gpQhvAyY7Vm+L4mZMqX0P8krxOX+WnT1lGKtyj6ha4M1xiPFRg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Dr8+R4LK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F25EC4CEC2;
-	Mon,  2 Sep 2024 20:55:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725310500;
-	bh=FGHKapTIenGnlnPA+DpU84gT8/KM2p7zRNiALDGngyg=;
-	h=From:To:Cc:Subject:Date:From;
-	b=Dr8+R4LKpqGgyCr1SSh67dRIa0Fb+bjfWOH+/9sddxZHvuBFF4lRWPqNxnJ/tnoJv
-	 QpYwgZBCOiL0pj3Le88zL2ksCs+r52qZaIUS7EFfsqNqGFYXqH5lJQf9uxX44py5Dp
-	 fcYorokBO6obVlvflvTF1WWiw/lguXBpeOS0J3vqufxIEWDaUdPQHZovyQN+XNXSMS
-	 X4lLPOCu86K758f/v6IQCAKCEYkJ+EdbC3A8shKnDQM9SsHOZ2yRCxrXaTQZS/7kRq
-	 Xup5K3CCIw18OvS9qtZfAqSMzURx3rg5MlinNZHYRqyjCYsBQ2sxdpKTRlGr2foxk6
-	 Kd79vJwLMKY1Q==
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Jim Quinlan <james.quinlan@broadcom.com>
-Cc: Nicolas Saenz Julienne <nsaenz@kernel.org>,
-	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-	Cyril Brulebois <kibi@debian.org>,
-	Stanimir Varbanov <svarbanov@suse.de>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	jim2101024@gmail.com,
-	bcm-kernel-feedback-list@broadcom.com,
-	linux-pci@vger.kernel.org,
-	linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Bjorn Helgaas <bhelgaas@google.com>
-Subject: [PATCH] PCI: brcmstb: Sort enums, pcie_offsets[], pcie_cfg_data, .compatible strings
-Date: Mon,  2 Sep 2024 15:54:56 -0500
-Message-Id: <20240902205456.227409-1-helgaas@kernel.org>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1725310519; c=relaxed/simple;
+	bh=QkELulMvb7h/k6ZvvEb9NTwkc1cm2REAcITQnec8rHA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=EUyW5bDqfePeLyeKfekXfBrSfVG4BIpVboQ93iYHPjbcaDMjLX8tnEQ6VzFibSAnXdEXTq8QPB+BNqCCcADx1oeVeAkdi3YklzrQSltrhR64+qxPq6XVz+gsegzgc/3hbVEkc8qCLqnQy1oCyjbjjyFElUfOcBEPtKhzY9SrFAI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P6yD2Na+; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5bf01bdaff0so4265876a12.3;
+        Mon, 02 Sep 2024 13:55:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725310515; x=1725915315; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Des4hBWDUWbYEBIVGxFeT8B5qH+Agsie2aIRmTRDSwo=;
+        b=P6yD2Na+CMUtwzEThUbLzeco/g01G2/QP6HBocWmNiUyTrkWs3CT1sdbDUXyntOvD3
+         fDPJHbWQ/KWpAYziZzt1vt8YVjUcjXTFdLC1WQ2Q736p9IRXfyxOlJn0XwKmeEGbCRi/
+         GZT4S+DC0OeNFN+TfBXPTnCexk8bfAugnOX6RM2CMSjNQWCjItOeU4ki5x1G+gxo6U+9
+         sPxLCNSABZ03b/XOf7m/696Y0lbooj8uTgKM5ecsyNSvpEJQRH8xnR2mcOmG14dpC8ce
+         fmBf6i7Z4DBAY9/SbjlpPTyK9nzLB6mpzXDXUrYIY7SZ8aL/CxWMQ7GXC0ONodS1XA1j
+         l22g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725310515; x=1725915315;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Des4hBWDUWbYEBIVGxFeT8B5qH+Agsie2aIRmTRDSwo=;
+        b=cBqLam5fkbSxMh98M4m5cYqWm4De5ma199c4vAvjPBFplaFL8E0dRvWDFz9amrSttR
+         4zHV5z9gQKNtClIcxfdX0gtSqs54cxJIHpgkQ0kgvWhzAEDxylB2R0w9TD3IF+50j9v1
+         xE1tOPy+svX0Q/GzMsL6Zzb6uBbbBALipqFjo/KK/+EEX3rAdpFizAl0Es+MwqXt88Dl
+         JO2j5Mbrr5vLhKjNncrJMyUDb+wkJk7UhSX34MOOBv8vJQQfexCr9KiOVXHVGD60CT55
+         3sxXavsrjaddZ6Ag0C6Xv4QNHn2rNW+MHMXmgi/dtN9LezCDTgfAq3uw9wimBMam1XqA
+         hFPg==
+X-Forwarded-Encrypted: i=1; AJvYcCVJo9jewyJ/TrS7xS0oMlJC0smDIu/aPaMeIDcRfxiXCHkJcdzfiWFbxs5B3/YXJaBugeRTHKjrausAjjM=@vger.kernel.org, AJvYcCVYW8x+I4DgnH7Ahfwc5lBin9Eia/gbBQyjyTm8Kzs03oSFxnDBsHNhXADzVvGPzTmm8e8vRYjR9Wq9EtM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzNH2aFjV9qOcbeo+Cv5v0SVXG4gsf1hT3u/ybsn5h37LQW2Jjv
+	XqbTqvdR4IQATAnDuzrHqOwMijmKLykdpssDgsjYw3fG/SqzDXsmtou30ntv217hWC9dPalLsLa
+	u/sqvkCRKWIoXnnijfDNLwmxfrhA7/As8Abk=
+X-Google-Smtp-Source: AGHT+IEq0JltcCgLv2KQZcouPz4FtRqIru3SLe0NK/4po9xd7i/eH9mCRivUdGO5TKiXr1Wj5/TEir5Hv7ryhXlV84k=
+X-Received: by 2002:a05:6402:348f:b0:5be:caf6:9dc7 with SMTP id
+ 4fb4d7f45d1cf-5c21ed89d01mr10019052a12.25.1725310515158; Mon, 02 Sep 2024
+ 13:55:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240902-imx290-avail-v3-0-b32a12799fed@skidata.com>
+ <20240902-imx290-avail-v3-4-b32a12799fed@skidata.com> <20240902195821.GQ1995@pendragon.ideasonboard.com>
+In-Reply-To: <20240902195821.GQ1995@pendragon.ideasonboard.com>
+From: Benjamin Bara <bbara93@gmail.com>
+Date: Mon, 2 Sep 2024 22:55:04 +0200
+Message-ID: <CAJpcXm6r_LAD+NC7u5aNvkEHq3Vb3osCea8MAn8nQ45dCtoxSg@mail.gmail.com>
+Subject: Re: [PATCH v3 4/7] media: i2c: imx290: Introduce initial "off" mode &
+ link freq
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, 
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
+	Sakari Ailus <sakari.ailus@linux.intel.com>, Hans de Goede <hdegoede@redhat.com>, 
+	Alexander Stein <alexander.stein@ew.tq-group.com>, linux-media@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Benjamin Bara <benjamin.bara@skidata.com>
+Content-Type: text/plain; charset="UTF-8"
 
-From: Bjorn Helgaas <bhelgaas@google.com>
+Hi Laurent!
 
-Sort enum pcie_soc_base values.
+On Mon, 2 Sept 2024 at 21:58, Laurent Pinchart
+<laurent.pinchart@ideasonboard.com> wrote:
+> On Mon, Sep 02, 2024 at 05:57:29PM +0200, bbara93@gmail.com wrote:
+> > From: Benjamin Bara <benjamin.bara@skidata.com>
+> >
+> > To be compliant to the V4L2 API, the driver currently "randomly" decides
+> > on one of the two supported modes which also implies a link frequency.
+> >
+> > Add a new mode and frequency which symbolize that the sensor is not in
+> > use. This can be used as a default value during probe() and enables us
+> > to avoid communication with the sensor.
+>
+> I really doin't like this change. I would like to instead move away from
+> modes and make the driver freely configurable.
 
-Rename pcie_offsets_bmips_7425[] to pcie_offsets_bcm7425[] to match BCM7425
-pcie_soc_base enum, bcm7425_cfg, and "brcm,bcm7425-pcie" .compatible
-string.
+Which controls do you want to have freely configurable? At least on the
+imx290 the exposure limits depend on the blanking, and the blanking
+limits depend on the format. As the format is defined by the mode on
+imx290, I think this will be quite hard with the current controls.
 
-Rename pcie_offset_bcm7278[] to pcie_offsets_bcm7278[] to match other
-"pcie_offsets" names.
+> Furthermore, the concept of an initial unconfigured state isn't valid
+> in V4L2. The driver must fully initialize the whole device state at
+> probe time.
 
-Rename pcie_offset_bcm7712[] to pcie_offsets_bcm7712[] to match other
-"pcie_offsets" names.
+I understand that and it makes sense to me. But given the dependencies
+from above and the fact that the format is currently part of this
+"state", it makes the "freely configurable" intention even harder :-(
 
-Sort pcie_offsets_*[] by SoC name, move them all together, indent values
-for easy reading.
+Kind regards
+Benjamin
 
-Sort pcie_cfg_data structs by SoC name.
-
-Sort .compatible strings by SoC name.
-
-No functional change intended.
-
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
----
-This is based on Jim's v6 series at
-https://lore.kernel.org/r/20240815225731.40276-1-james.quinlan@broadcom.com
-as applied at
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=1ae791a877e7
-
- drivers/pci/controller/pcie-brcmstb.c | 114 +++++++++++++-------------
- 1 file changed, 57 insertions(+), 57 deletions(-)
-
-diff --git a/drivers/pci/controller/pcie-brcmstb.c b/drivers/pci/controller/pcie-brcmstb.c
-index 21e692a57882..07b415fa04ea 100644
---- a/drivers/pci/controller/pcie-brcmstb.c
-+++ b/drivers/pci/controller/pcie-brcmstb.c
-@@ -220,11 +220,11 @@ enum {
- 
- enum pcie_soc_base {
- 	GENERIC,
--	BCM7425,
--	BCM7435,
-+	BCM2711,
- 	BCM4908,
- 	BCM7278,
--	BCM2711,
-+	BCM7425,
-+	BCM7435,
- 	BCM7712,
- };
- 
-@@ -1663,26 +1663,34 @@ static void brcm_pcie_remove(struct platform_device *pdev)
- }
- 
- static const int pcie_offsets[] = {
--	[RGR1_SW_INIT_1] = 0x9210,
--	[EXT_CFG_INDEX]  = 0x9000,
--	[EXT_CFG_DATA]   = 0x9004,
--	[PCIE_HARD_DEBUG] = 0x4204,
--	[PCIE_INTR2_CPU_BASE] = 0x4300,
-+	[RGR1_SW_INIT_1]	= 0x9210,
-+	[EXT_CFG_INDEX]		= 0x9000,
-+	[EXT_CFG_DATA]		= 0x9004,
-+	[PCIE_HARD_DEBUG]	= 0x4204,
-+	[PCIE_INTR2_CPU_BASE]	= 0x4300,
- };
- 
--static const int pcie_offsets_bmips_7425[] = {
--	[RGR1_SW_INIT_1] = 0x8010,
--	[EXT_CFG_INDEX]  = 0x8300,
--	[EXT_CFG_DATA]   = 0x8304,
--	[PCIE_HARD_DEBUG] = 0x4204,
--	[PCIE_INTR2_CPU_BASE] = 0x4300,
-+static const int pcie_offsets_bcm7278[] = {
-+	[RGR1_SW_INIT_1]	= 0xc010,
-+	[EXT_CFG_INDEX]		= 0x9000,
-+	[EXT_CFG_DATA]		= 0x9004,
-+	[PCIE_HARD_DEBUG]	= 0x4204,
-+	[PCIE_INTR2_CPU_BASE]	= 0x4300,
- };
- 
--static const int pcie_offset_bcm7712[] = {
--	[EXT_CFG_INDEX]  = 0x9000,
--	[EXT_CFG_DATA]   = 0x9004,
--	[PCIE_HARD_DEBUG] = 0x4304,
--	[PCIE_INTR2_CPU_BASE] = 0x4400,
-+static const int pcie_offsets_bcm7425[] = {
-+	[RGR1_SW_INIT_1]	= 0x8010,
-+	[EXT_CFG_INDEX]		= 0x8300,
-+	[EXT_CFG_DATA]		= 0x8304,
-+	[PCIE_HARD_DEBUG]	= 0x4204,
-+	[PCIE_INTR2_CPU_BASE]	= 0x4300,
-+};
-+
-+static const int pcie_offsets_bcm7712[] = {
-+	[EXT_CFG_INDEX]		= 0x9000,
-+	[EXT_CFG_DATA]		= 0x9004,
-+	[PCIE_HARD_DEBUG]	= 0x4304,
-+	[PCIE_INTR2_CPU_BASE]	= 0x4400,
- };
- 
- static const struct pcie_cfg_data generic_cfg = {
-@@ -1693,8 +1701,32 @@ static const struct pcie_cfg_data generic_cfg = {
- 	.num_inbound_wins = 3,
- };
- 
-+static const struct pcie_cfg_data bcm2711_cfg = {
-+	.offsets	= pcie_offsets,
-+	.soc_base	= BCM2711,
-+	.perst_set	= brcm_pcie_perst_set_generic,
-+	.bridge_sw_init_set = brcm_pcie_bridge_sw_init_set_generic,
-+	.num_inbound_wins = 3,
-+};
-+
-+static const struct pcie_cfg_data bcm4908_cfg = {
-+	.offsets	= pcie_offsets,
-+	.soc_base	= BCM4908,
-+	.perst_set	= brcm_pcie_perst_set_4908,
-+	.bridge_sw_init_set = brcm_pcie_bridge_sw_init_set_generic,
-+	.num_inbound_wins = 3,
-+};
-+
-+static const struct pcie_cfg_data bcm7278_cfg = {
-+	.offsets	= pcie_offsets_bcm7278,
-+	.soc_base	= BCM7278,
-+	.perst_set	= brcm_pcie_perst_set_7278,
-+	.bridge_sw_init_set = brcm_pcie_bridge_sw_init_set_7278,
-+	.num_inbound_wins = 3,
-+};
-+
- static const struct pcie_cfg_data bcm7425_cfg = {
--	.offsets	= pcie_offsets_bmips_7425,
-+	.offsets	= pcie_offsets_bcm7425,
- 	.soc_base	= BCM7425,
- 	.perst_set	= brcm_pcie_perst_set_generic,
- 	.bridge_sw_init_set = brcm_pcie_bridge_sw_init_set_generic,
-@@ -1709,40 +1741,8 @@ static const struct pcie_cfg_data bcm7435_cfg = {
- 	.num_inbound_wins = 3,
- };
- 
--static const struct pcie_cfg_data bcm4908_cfg = {
--	.offsets	= pcie_offsets,
--	.soc_base	= BCM4908,
--	.perst_set	= brcm_pcie_perst_set_4908,
--	.bridge_sw_init_set = brcm_pcie_bridge_sw_init_set_generic,
--	.num_inbound_wins = 3,
--};
--
--static const int pcie_offset_bcm7278[] = {
--	[RGR1_SW_INIT_1] = 0xc010,
--	[EXT_CFG_INDEX] = 0x9000,
--	[EXT_CFG_DATA] = 0x9004,
--	[PCIE_HARD_DEBUG] = 0x4204,
--	[PCIE_INTR2_CPU_BASE] = 0x4300,
--};
--
--static const struct pcie_cfg_data bcm7278_cfg = {
--	.offsets	= pcie_offset_bcm7278,
--	.soc_base	= BCM7278,
--	.perst_set	= brcm_pcie_perst_set_7278,
--	.bridge_sw_init_set = brcm_pcie_bridge_sw_init_set_7278,
--	.num_inbound_wins = 3,
--};
--
--static const struct pcie_cfg_data bcm2711_cfg = {
--	.offsets	= pcie_offsets,
--	.soc_base	= BCM2711,
--	.perst_set	= brcm_pcie_perst_set_generic,
--	.bridge_sw_init_set = brcm_pcie_bridge_sw_init_set_generic,
--	.num_inbound_wins = 3,
--};
--
- static const struct pcie_cfg_data bcm7216_cfg = {
--	.offsets	= pcie_offset_bcm7278,
-+	.offsets	= pcie_offsets_bcm7278,
- 	.soc_base	= BCM7278,
- 	.perst_set	= brcm_pcie_perst_set_7278,
- 	.bridge_sw_init_set = brcm_pcie_bridge_sw_init_set_7278,
-@@ -1751,7 +1751,7 @@ static const struct pcie_cfg_data bcm7216_cfg = {
- };
- 
- static const struct pcie_cfg_data bcm7712_cfg = {
--	.offsets	= pcie_offset_bcm7712,
-+	.offsets	= pcie_offsets_bcm7712,
- 	.perst_set	= brcm_pcie_perst_set_7278,
- 	.bridge_sw_init_set = brcm_pcie_bridge_sw_init_set_generic,
- 	.soc_base	= BCM7712,
-@@ -1762,11 +1762,11 @@ static const struct of_device_id brcm_pcie_match[] = {
- 	{ .compatible = "brcm,bcm2711-pcie", .data = &bcm2711_cfg },
- 	{ .compatible = "brcm,bcm4908-pcie", .data = &bcm4908_cfg },
- 	{ .compatible = "brcm,bcm7211-pcie", .data = &generic_cfg },
--	{ .compatible = "brcm,bcm7278-pcie", .data = &bcm7278_cfg },
- 	{ .compatible = "brcm,bcm7216-pcie", .data = &bcm7216_cfg },
--	{ .compatible = "brcm,bcm7445-pcie", .data = &generic_cfg },
--	{ .compatible = "brcm,bcm7435-pcie", .data = &bcm7435_cfg },
-+	{ .compatible = "brcm,bcm7278-pcie", .data = &bcm7278_cfg },
- 	{ .compatible = "brcm,bcm7425-pcie", .data = &bcm7425_cfg },
-+	{ .compatible = "brcm,bcm7435-pcie", .data = &bcm7435_cfg },
-+	{ .compatible = "brcm,bcm7445-pcie", .data = &generic_cfg },
- 	{ .compatible = "brcm,bcm7712-pcie", .data = &bcm7712_cfg },
- 	{},
- };
--- 
-2.34.1
-
+> > Signed-off-by: Benjamin Bara <benjamin.bara@skidata.com>
+> > ---
+> > Changes since v2:
+> > - new
+> > ---
+> >  drivers/media/i2c/imx290.c | 29 +++++++++++++++++++++++------
+> >  1 file changed, 23 insertions(+), 6 deletions(-)
+> >
+> > diff --git a/drivers/media/i2c/imx290.c b/drivers/media/i2c/imx290.c
+> > index 6812e7cb9e23..ece4d66001f5 100644
+> > --- a/drivers/media/i2c/imx290.c
+> > +++ b/drivers/media/i2c/imx290.c
+> > @@ -425,14 +425,17 @@ static const struct imx290_csi_cfg imx290_csi_297mhz = {
+> >  /* supported link frequencies */
+> >  #define FREQ_INDEX_1080P     0
+> >  #define FREQ_INDEX_720P              1
+> > +#define FREQ_INDEX_OFF               2
+> >  static const s64 imx290_link_freq_2lanes[] = {
+> >       [FREQ_INDEX_1080P] = 445500000,
+> >       [FREQ_INDEX_720P] = 297000000,
+> > +     [FREQ_INDEX_OFF] = 0,
+> >  };
+> >
+> >  static const s64 imx290_link_freq_4lanes[] = {
+> >       [FREQ_INDEX_1080P] = 222750000,
+> >       [FREQ_INDEX_720P] = 148500000,
+> > +     [FREQ_INDEX_OFF] = 0,
+> >  };
+> >
+> >  /*
+> > @@ -552,6 +555,10 @@ static const struct imx290_mode imx290_modes_4lanes[] = {
+> >       },
+> >  };
+> >
+> > +static const struct imx290_mode imx290_mode_off = {
+> > +     .link_freq_index = FREQ_INDEX_OFF,
+> > +};
+> > +
+> >  static inline const struct imx290_mode *imx290_modes_ptr(const struct imx290 *imx290)
+> >  {
+> >       if (imx290->nlanes == 2)
+> > @@ -876,10 +883,19 @@ static unsigned int imx290_get_blank_min(const struct imx290 *imx290, bool v)
+> >  static void imx290_ctrl_update(struct imx290 *imx290,
+> >                              const struct imx290_mode *mode)
+> >  {
+> > -     unsigned int hblank_min = mode->hmax_min - mode->width;
+> > -     unsigned int hblank_max = IMX290_HMAX_MAX - mode->width;
+> > -     unsigned int vblank_min = mode->vmax_min - mode->height;
+> > -     unsigned int vblank_max = IMX290_VMAX_MAX - mode->height;
+> > +     unsigned int hblank_min, hblank_max, vblank_min, vblank_max;
+> > +
+> > +     if (mode == &imx290_mode_off) {
+> > +             hblank_min = imx290_get_blank_min(imx290, false);
+> > +             hblank_max = HBLANK_MAX;
+> > +             vblank_min = imx290_get_blank_min(imx290, true);
+> > +             vblank_max = VBLANK_MAX;
+> > +     } else {
+> > +             hblank_min = mode->hmax_min - mode->width;
+> > +             hblank_max = IMX290_HMAX_MAX - mode->width;
+> > +             vblank_min = mode->vmax_min - mode->height;
+> > +             vblank_max = IMX290_VMAX_MAX - mode->height;
+> > +     }
+> >
+> >       __v4l2_ctrl_s_ctrl(imx290->link_freq, mode->link_freq_index);
+> >
+> > @@ -932,7 +948,8 @@ static int imx290_ctrl_init(struct imx290 *imx290)
+> >       imx290->link_freq =
+> >               v4l2_ctrl_new_int_menu(&imx290->ctrls, &imx290_ctrl_ops,
+> >                                      V4L2_CID_LINK_FREQ,
+> > -                                    imx290_link_freqs_num(imx290) - 1, 0,
+> > +                                    imx290_link_freqs_num(imx290) - 1,
+> > +                                    FREQ_INDEX_OFF,
+> >                                      imx290_link_freqs_ptr(imx290));
+> >       if (imx290->link_freq)
+> >               imx290->link_freq->flags |= V4L2_CTRL_FLAG_READ_ONLY;
+> > @@ -1278,7 +1295,7 @@ static int imx290_subdev_init(struct imx290 *imx290)
+> >       struct v4l2_subdev_state *state;
+> >       int ret;
+> >
+> > -     imx290->current_mode = &imx290_modes_ptr(imx290)[0];
+> > +     imx290->current_mode = &imx290_mode_off;
+> >
+> >       v4l2_i2c_subdev_init(&imx290->sd, client, &imx290_subdev_ops);
+> >       imx290->sd.internal_ops = &imx290_internal_ops;
+> >
+>
+> --
+> Regards,
+>
+> Laurent Pinchart
 
