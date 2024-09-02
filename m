@@ -1,88 +1,167 @@
-Return-Path: <linux-kernel+bounces-311717-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311718-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E4F6968CAC
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 19:06:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6521E968CAE
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 19:06:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3D1D9283CC0
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 17:06:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D2AE283CE2
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 17:06:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7D291AB6E7;
-	Mon,  2 Sep 2024 17:06:04 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CE561C62A9;
+	Mon,  2 Sep 2024 17:06:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="yQUXHPzw"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2697914A0AB
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 17:06:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DF8D1AB6DE
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 17:06:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725296764; cv=none; b=r3CtRT8D8YmSNEzPdeZ4jp47dL6Z/d7LBUMa2nol1ceQrtWdPS9mWPLkz7abH0bcPG+MxZdGG/lcitdRt2sp4wiMDQrrIrDiGpZpfSbKN9zJbOJksIU93fJSDB8x3SXD295pM9PXB/PrQvdFOZ76Uk0KJv3r2RqQK12QFSMvDIQ=
+	t=1725296781; cv=none; b=MDHUIIQKGPSa2J8FVq5oj4obdItKHMSvrGtGDV7CLBPuusna8VKs6GjHgDEA/w9Y+3G5mIk3/ihFHEpamayfkWT8AN/dRbU/5+0IEEbE2pLPWYFMxn2s8Jvgq7mbphevVVf1cLlHii6FNt/CuZk6OC5IDl/t2/33HEicQ5h6pSw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725296764; c=relaxed/simple;
-	bh=HOVuxjh35ngrgfxee8gTrNkL4Q+ttvvmZJhms8WiX2I=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=Rs51NG7YTg9B1oZTMNOBLWhVAyAysHbyb6fQD9rz3qhk/2XnrxmUr2LiMDzvkHHe/bXTYOwo0vuJ4j2DqjadRMzW80+cYYnyjguV1b6AD3ZtOG4nhR4NKLFiSr36DiuMETrLXRpE6zLsPcb0091DPlIb1vry4C25edtjLXUNYho=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-39d505a087aso37504775ab.1
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2024 10:06:02 -0700 (PDT)
+	s=arc-20240116; t=1725296781; c=relaxed/simple;
+	bh=m/Hl05dGE8DG9LV4d7LMKZdjId9IkoBTCyuBgmslKIU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EwpoR9Bgz1ctI3kY53yfKM0imWX2mdldWZPRB5POfCXTIzc6KgjEZWuNaKBsbzR4Sj4aOOLBK0vPAiNP4UtEQf2zO3pIJkxiIlcR2mITTC52MJ6ZHrluliytjIlT74PYX+J/PbLpZJyAVU5P8vlIULUz8Auw/GdzXgk4j05XGVg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=yQUXHPzw; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a8696e9bd24so516903866b.0
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2024 10:06:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fastly.com; s=google; t=1725296777; x=1725901577; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:mail-followup-to:message-id:subject:cc:to
+         :from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=7M8BT8N6vTwP+D5Hjg4AMJAeuxuEG1WY11kk9v24ceA=;
+        b=yQUXHPzwLakaHPlXkCRrO7aUae8f5P9dSXdXRoBhuFclC9S0bOMhP2XckKQIwQJY1G
+         e+FgxkoxrD7MZED9W94hzfslKWzxVOwr50I44Lev2VSVriG/ZTp1gzQjxxKx82A7bXtW
+         INwcl5qaPc4Qyq64vuqPBYVdGKiGziQd94m3Y=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725296762; x=1725901562;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+9h8gvuBv7gC6hTSducA5gk1xPgAH5x4Z4ANO2RXsDg=;
-        b=F4gDt54s7HDzvYUD4Vev7ozz6Fzn1nA3NRQ/0Gc5jmTEi7YN6F6oUqd2Rz9K2JhW9B
-         M6Suqqe20fJM+JUWcyeokh44UhKLvWUObD/YV8zqNL2LEkgyVlAOym7qIzScph/I/MyY
-         71XbKJM9mXlHs8ippcbAPTpS6suKiNa35XXHfUl3OYZq1XjajnkdXwPi9Bi5P9B/UUGF
-         iQjVM2/eXZ3y1QYHJGlpXU4qlokEynGysfch8RvoAEZJDT5oS84Nic3kVwXj3PWHY4dx
-         RU4xNLnKGCzqziNjyAZmVSU9xOl8pQDpZb2okR2an3o9Qjzi4SFfNH1W/HKsTfnx9XeH
-         UTAQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWpPae6B9M+Y2m2tCglh1cd14fJozhel6wcZFad5godRdpXcRePeWtF1I8rg3Wraa6uupPpT9EYgm2Z6cg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwqCeFhL0zEhidzIdLzPvgOF7W4wh9hQ9U/bCdoN7IkGVQazjI5
-	rey6xLx4SxtapSSM86O1U1d0GVq3l4UXDV/t6snt8pMeMdqcoU56kCjFD4lCc7DqYTya4nPmHB7
-	YKuN1V9Hz3lN69ofRlJDod3rxKjrT8G2P4Md2qTyDGr8j+QdZRbsR0Z4=
-X-Google-Smtp-Source: AGHT+IEe6jLSLtpb87ZQ/VnQKgC+L9fl50UNNSivU+n4GBtPHWB8Jggov4IARNh/WWDFpQrJuocyo7Zt71lYa8YpdIK2taJ1RW8+
+        d=1e100.net; s=20230601; t=1725296777; x=1725901577;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:mail-followup-to:message-id:subject:cc:to
+         :from:date:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=7M8BT8N6vTwP+D5Hjg4AMJAeuxuEG1WY11kk9v24ceA=;
+        b=kuN4VXvEPDkJ+iaO3a5b6Bnn5M0oV06Dtmg1hMuxmQj7UNnxVH0n9qBeBznVyqfnp7
+         fbHs6cO/ReF1LIn7phHgOKdAgy/XSkaY17eAivSg/i3zv+B1p8a1P68mFhkAh7LmAwtm
+         vdFXL7pVKvqDMjQRNjhgLmtCJlln847GLoVgXj+cuu4ymolCpA14QMC+TH0j4wi6LimE
+         FXTWjQDc731+5+IxdeshFAhbBqcSverb6XEp78awW/IFZIs7r3bbEWbygmgXWaGFmxw2
+         w5wCgl0qiL9AFJ3G+tK6Osnt/E2SBfzsz0sSzhPMS4ecmw1SWkKjdBnhcp2W8Yft4mIf
+         kyJA==
+X-Forwarded-Encrypted: i=1; AJvYcCXQdiCqz9GpSYkPpIiohziBfjkKrm8WvT2vZ4yw01pPPCZpcI1omQbKf5Ck8cqzFQPwyDqxLWz9z46XMdo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxU86Qh5bHVWvXy1RI4fcBnwFI1SFZOGjLjdY2Qwy4EtD8sK655
+	cbE3k1rgGjDbG6AmONEBZUg9luETqf4m2/zPvD/SQxpNPd6JVTPO7csyfFA2MIY=
+X-Google-Smtp-Source: AGHT+IGWJf9Avan9MoUFQ6Ai0+z5nn+fJXzqwnGlBi2FTipYcSbwZOLN+wfh53hpdVGR9SMXe/vXdg==
+X-Received: by 2002:a17:907:60d0:b0:a86:acbe:8d61 with SMTP id a640c23a62f3a-a897fa71c13mr1003988366b.53.1725296777056;
+        Mon, 02 Sep 2024 10:06:17 -0700 (PDT)
+Received: from LQ3V64L9R2.station (net-2-42-195-208.cust.vodafonedsl.it. [2.42.195.208])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8989092143sm584447366b.96.2024.09.02.10.06.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 02 Sep 2024 10:06:16 -0700 (PDT)
+Date: Mon, 2 Sep 2024 19:06:14 +0200
+From: Joe Damato <jdamato@fastly.com>
+To: Eric Dumazet <edumazet@google.com>
+Cc: netdev@vger.kernel.org, mkarsten@uwaterloo.ca, stable@kernel.org,
+	Jakub Kicinski <kuba@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Paolo Abeni <pabeni@redhat.com>, Jonathan Corbet <corbet@lwn.net>,
+	Breno Leitao <leitao@debian.org>,
+	Johannes Berg <johannes.berg@intel.com>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Alexander Lobakin <aleksander.lobakin@intel.com>,
+	"open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH net] net: napi: Make napi_defer_irqs u32
+Message-ID: <ZtXwhnVzR6ofBJhb@LQ3V64L9R2.station>
+Mail-Followup-To: Joe Damato <jdamato@fastly.com>,
+	Eric Dumazet <edumazet@google.com>, netdev@vger.kernel.org,
+	mkarsten@uwaterloo.ca, stable@kernel.org,
+	Jakub Kicinski <kuba@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Paolo Abeni <pabeni@redhat.com>, Jonathan Corbet <corbet@lwn.net>,
+	Breno Leitao <leitao@debian.org>,
+	Johannes Berg <johannes.berg@intel.com>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Alexander Lobakin <aleksander.lobakin@intel.com>,
+	"open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>
+References: <20240831113223.9627-1-jdamato@fastly.com>
+ <CANn89iK+09DW95LTFwN1tA=_hV7xvA0mY4O4d-LwVbmNkO0y3w@mail.gmail.com>
+ <ZtXn9gK6Dr-JGo81@LQ3V64L9R2.station>
+ <CANn89iLhrKyFKf9DpJSSM9CZ9sgoRo7jovg2GhjsJABoqzzVsQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1647:b0:381:37d6:e590 with SMTP id
- e9e14a558f8ab-39f413c0904mr8119985ab.2.1725296762125; Mon, 02 Sep 2024
- 10:06:02 -0700 (PDT)
-Date: Mon, 02 Sep 2024 10:06:02 -0700
-In-Reply-To: <20240902164326.76207-2-djahchankoike@gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000a39036062125f43f@google.com>
-Subject: Re: [syzbot] [ntfs3?] BUG: sleeping function called from invalid
- context in ntfs_d_hash
-From: syzbot <syzbot+7f71f79bbfb4427b00e1@syzkaller.appspotmail.com>
-To: djahchankoike@gmail.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CANn89iLhrKyFKf9DpJSSM9CZ9sgoRo7jovg2GhjsJABoqzzVsQ@mail.gmail.com>
 
-Hello,
+On Mon, Sep 02, 2024 at 07:00:48PM +0200, Eric Dumazet wrote:
+> On Mon, Sep 2, 2024 at 6:29 PM Joe Damato <jdamato@fastly.com> wrote:
+> >
+> > On Mon, Sep 02, 2024 at 03:01:28PM +0200, Eric Dumazet wrote:
+> > > On Sat, Aug 31, 2024 at 1:32 PM Joe Damato <jdamato@fastly.com> wrote:
+> > > >
+> > > > In commit 6f8b12d661d0 ("net: napi: add hard irqs deferral feature")
+> > > > napi_defer_irqs was added to net_device and napi_defer_irqs_count was
+> > > > added to napi_struct, both as type int.
+> > > >
+> > > > This value never goes below zero. Change the type for both from int to
+> > > > u32, and add an overflow check to sysfs to limit the value to S32_MAX.
+> > > >
+> > > > Before this patch:
+> > > >
+> > > > $ sudo bash -c 'echo 2147483649 > /sys/class/net/eth4/napi_defer_hard_irqs'
+> > > > $ cat /sys/class/net/eth4/napi_defer_hard_irqs
+> > > > -2147483647
+> > > >
+> > > > After this patch:
+> > > >
+> > > > $ sudo bash -c 'echo 2147483649 > /sys/class/net/eth4/napi_defer_hard_irqs'
+> > > > bash: line 0: echo: write error: Numerical result out of range
+> > > >
+> > > > Fixes: 6f8b12d661d0 ("net: napi: add hard irqs deferral feature")
+> > > > Cc: stable@kernel.org
+> > > > Cc: Eric Dumazet <edumazet@google.com>
+> > > > Suggested-by: Jakub Kicinski <kuba@kernel.org>
+> > > > Signed-off-by: Joe Damato <jdamato@fastly.com>
+> > > > ---
+> > >
+> > > I do not think this deserves a change to stable trees.
+> >
+> > OK, I can send any other revisions to -next, instead.
+> >
+> > > Signed or unsigned, what is the issue ?
+> > >
+> > > Do you really need one extra bit ?
+> >
+> > I made the maximum S32_MAX because the practical limit has always
+> > been S32_MAX. Any larger values overflow. Keeping it at S32_MAX does
+> > not change anything about existing behavior, which was my goal.
+> >
+> > Would you prefer if it was U32_MAX instead?
+> >
+> > Or are you asking me to leave it the way it is?
+> 
+> I think this would target net-next at most, please lets avoid hassles
+> for stable teams.
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+Sure, that's fine with me.
 
-Reported-by: syzbot+7f71f79bbfb4427b00e1@syzkaller.appspotmail.com
-Tested-by: syzbot+7f71f79bbfb4427b00e1@syzkaller.appspotmail.com
+I'm just not sure what you meant by your comment about the extra
+bit and what you are asking me to make the maximum limit? I have no
+preference.
 
-Tested on:
-
-commit:         67784a74 Merge tag 'ata-6.11-rc7' of git://git.kernel...
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1534c70b980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=d34743b6e48523a6
-dashboard link: https://syzkaller.appspot.com/bug?extid=7f71f79bbfb4427b00e1
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=15d4c70b980000
-
-Note: testing is done by a robot and is best-effort only.
+I just want to prevent overflow and then make the per-NAPI stuff
+compatible with existing sysfs code as much as possible.
 
