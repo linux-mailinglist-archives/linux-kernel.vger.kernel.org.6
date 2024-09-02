@@ -1,127 +1,146 @@
-Return-Path: <linux-kernel+bounces-310759-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310760-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B2B89680E4
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 09:46:49 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 281969680E7
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 09:47:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ACC3D1C21EDC
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 07:46:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A5900B22180
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 07:47:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF529176FB0;
-	Mon,  2 Sep 2024 07:46:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93426176FD2;
+	Mon,  2 Sep 2024 07:47:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tlmp.cc header.i=@tlmp.cc header.b="Tgga4mPI"
-Received: from mail.tlmp.cc (unknown [148.135.17.20])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YSmLLnbI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C348415688E
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 07:46:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.135.17.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E06ED15382C;
+	Mon,  2 Sep 2024 07:47:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725263203; cv=none; b=gnxDFTBdc6G9XADT7QTuGOPtLoPeNFp89OfJ1UMLiTL4zPO/vubQOORBerOLcH2bYP/PzDDT9bkXDNXJE2XNT721mBv4Khc2uj+JfAEo+fvRhNPm5hj4ek5dPxqaanHJ+XMkL547ncruXcHbi3lVZCj/wC2V0PWVCo+psSgdyz8=
+	t=1725263253; cv=none; b=IKErSNQXwwxhaG+BO0lKbwtSW/E+JcNM5aUfWqtdwC5gBGHPa4hveO40rl7Y42suWO/keasJHSWpyhKLtsgk6kelxoVykxc2pw+y0BvU4omDYO7zAPZR8J+o3VgyiHzmZcL7U5y9MDsCkho1IWHFCfZQHYqB4JPXGNbSJWnVa4w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725263203; c=relaxed/simple;
-	bh=WprL5RVcjUhl0ehm3M+XVmwNDO6O/AMbjzvIUFtgQnA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=D9GYKP/r/rNMCDLywZA0jVJ4H/+TaZW6NC85XgH6mzmWYk2gIV4zM2VxXcIG+SUV6J4o2e92pTqRrxB8br8Q3C0TVBHCu5czsj69t8Z4WR2jbtQxq2tYLfQlac/eu/vD9NfOFI4CP5jW+nalB3Ah3jAE/IBSbm1oGXVSp9DcSkc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=tlmp.cc; spf=pass smtp.mailfrom=tlmp.cc; dkim=pass (2048-bit key) header.d=tlmp.cc header.i=@tlmp.cc header.b=Tgga4mPI; arc=none smtp.client-ip=148.135.17.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=tlmp.cc
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tlmp.cc
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 773D5697AA;
-	Mon,  2 Sep 2024 03:46:24 -0400 (EDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tlmp.cc; s=dkim;
-	t=1725263199; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 in-reply-to:references; bh=LU82ZRnbNG36KcEB2cwtYaBM+0PeNRrwjU7twoI8AUc=;
-	b=Tgga4mPIkaqw+cvxchA9OIX6PIR3zgw9gt7iryTiSylTJfuXCV5KT3G3bRFzxAcow7HPdw
-	P9nkrolNQGj2yxQRdLCKfHZpr0J8c+5mSMJ/9SU0qkVJEeYWhlQEPXkPTnlaBFtQDgoogv
-	yZYe8ajqCdPMoI9GnvUt2QyjUej5wWeGK3Q3Gqk2Psfh/cmHffAsm+5d9afJmlUvycFqC8
-	iOQnOzhEDYmVsjRaugefqeeg/TrDxZwxVDwStNGdq4Tb1F/p3k0V+qspdsuLby6J2SJGGV
-	XwaR+VcAP988/o41eYSphQgieLNYz79BcF/WW+kFzmLam2ElNOacKyp/750m9A==
-Date: Mon, 2 Sep 2024 15:46:17 +0800
-From: Yiyang Wu <toolmanp@tlmp.cc>
-To: Gao Xiang <hsiangkao@linux.alibaba.com>
-Cc: linux-erofs@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V2 1/2] erofs: use kmemdup_nul in erofs_fill_symlink
-Message-ID: <ql2vdd74fzsfzgxixa3hymagvo42dfnawpr53jgximuh7cwra6@2gn4skmbqkhz>
-References: <20240902070047.384952-1-toolmanp@tlmp.cc>
- <20240902070047.384952-2-toolmanp@tlmp.cc>
- <bfcd83f8-87ef-4282-b9e9-700c45fc3302@linux.alibaba.com>
+	s=arc-20240116; t=1725263253; c=relaxed/simple;
+	bh=zaQa0W/lWAq86PBVE9eO9YvaPbLNrwo61FWQzJWC3rA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=a/fn1/uM1rbAas4feL+0x7THg6TEjv74aZhZAF+djsQuXPJMERFbQOC2CQ4W2eBkAumBA033ic910Mw9fPTmpJMXuo4lS5TYl3E84d2zxlvuiuNMoirhg4syLoPke5wC6TRdvHiQwZYGB35GcIL2f9vRY1r5c59bg85hbrgOOvE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YSmLLnbI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2F47C4CEC2;
+	Mon,  2 Sep 2024 07:47:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725263252;
+	bh=zaQa0W/lWAq86PBVE9eO9YvaPbLNrwo61FWQzJWC3rA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=YSmLLnbIdYQcZ4DR8W1/q7dGjXRjnum5BPPpt71BxsM+a5G1sI9U3PWlmHZKziBAz
+	 G3q8mfdtXzeEeYLzR3NJP5QQahw064FFCS6CUzFW+8IgpZiHTbgIS/KzN59ck2XJ0W
+	 QLhsuQM/8PoYyMoCcwnGRLuNcIlsruK4Edi/ftO0u+acUcQKJgLj7EJJOVETfc441C
+	 /DUnpr53WZIMn8AGkI1NOyiz31cYSrVfGHXYdDsapvVv4Q8SYvAJb/PPWB4LULT5g9
+	 /YyCGtHUAFJJ+Jvg/aHBs0sPaXbhjYExgePbek0G2rxkSuKlOChEUze8KXV4s3oGqY
+	 tPF9UgE0D1ZxA==
+Message-ID: <e294c334-8d02-4f56-b4ba-e63d94a70a12@kernel.org>
+Date: Mon, 2 Sep 2024 09:47:23 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <bfcd83f8-87ef-4282-b9e9-700c45fc3302@linux.alibaba.com>
-X-Last-TLS-Session-Version: TLSv1.3
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/2] dt-bindings: arm: fsl: Add Variscite Symphony
+ board and VAR-SOM-MX8MP SoM
+To: Tarang Raval <tarang.raval@siliconsignals.io>
+Cc: Conor Dooley <conor+dt@kernel.org>, Sascha Hauer
+ <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Hugo Villeneuve <hvilleneuve@dimonoff.com>,
+ Gregor Herburger <gregor.herburger@ew.tq-group.com>,
+ Joao Paulo Goncalves <joao.goncalves@toradex.com>,
+ Hiago De Franco <hiago.franco@toradex.com>,
+ Mathieu Othacehe <m.othacehe@gmail.com>,
+ Alexander Stein <alexander.stein@ew.tq-group.com>,
+ Josua Mayer <josua@solid-run.com>, Yannic Moog <y.moog@phytec.de>,
+ Li Yang <leoyang.li@nxp.com>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "imx@lists.linux.dev" <imx@lists.linux.dev>,
+ "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+References: <20240902065606.8072-1-tarang.raval@siliconsignals.io>
+ <20240902065606.8072-3-tarang.raval@siliconsignals.io>
+ <f3f65c33-335f-4769-958c-9b75fa7083dd@kernel.org>
+ <PN3P287MB18293C640A4A027E6292758C8B922@PN3P287MB1829.INDP287.PROD.OUTLOOK.COM>
+ <taacgew4rjjh6q53pog4jv2waamso7ytor5a2womrm3txowjo3@t3yimdusgc6g>
+ <PN3P287MB182944940AB38804B65D58888B922@PN3P287MB1829.INDP287.PROD.OUTLOOK.COM>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <PN3P287MB182944940AB38804B65D58888B922@PN3P287MB1829.INDP287.PROD.OUTLOOK.COM>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Sep 02, 2024 at 03:11:45PM GMT, Gao Xiang wrote:
+On 02/09/2024 09:23, Tarang Raval wrote:
+> Hi,
+> 
+>>> as per your comment, I did update the board name to "variscite,var-som-mx8mp-symphony" instead of "variscite,var-som-mx8mp."
+>>
+>> ??? No, there is no difference. You did not test your patches either.
+> 
+> I did test my patches using "dt_binding_check" and "CHECK_DTBS," and there were no warnings or errors.
+
+Ah, you are right, I missed what actually changed.
 
 > 
+>> When I wrote "This is not correct", it means you should drop it.
+>> Incorrect compatibles should not be added.
 > 
-> On 2024/9/2 15:00, Yiyang Wu via Linux-erofs wrote:
-> > Remove open coding in erofs_fill_symlink.
-> > 
-> > Suggested-by: Al Viro <viro@zeniv.linux.org.uk>
-> > Link: https://lore.kernel.org/all/20240425222847.GN2118490@ZenIV
-> > Signed-off-by: Yiyang Wu <toolmanp@tlmp.cc>
-> > ---
-> >   fs/erofs/inode.c | 12 +++++-------
-> >   1 file changed, 5 insertions(+), 7 deletions(-)
-> > 
-> > diff --git a/fs/erofs/inode.c b/fs/erofs/inode.c
-> > index 419432be3223..d051afe39670 100644
-> > --- a/fs/erofs/inode.c
-> > +++ b/fs/erofs/inode.c
-> > @@ -188,22 +188,20 @@ static int erofs_fill_symlink(struct inode *inode, void *kaddr,
-> >   		return 0;
-> >   	}
-> > -	lnk = kmalloc(inode->i_size + 1, GFP_KERNEL);
-> > -	if (!lnk)
-> > -		return -ENOMEM;
-> > -
-> >   	m_pofs += vi->xattr_isize;
-> >   	/* inline symlink data shouldn't cross block boundary */
-> >   	if (m_pofs + inode->i_size > bsz) {
-> > -		kfree(lnk);
-> >   		erofs_err(inode->i_sb,
-> >   			  "inline data cross block boundary @ nid %llu",
-> >   			  vi->nid);
-> >   		DBG_BUGON(1);
-> >   		return -EFSCORRUPTED;
-> >   	}
-> > -	memcpy(lnk, kaddr + m_pofs, inode->i_size);
-> > -	lnk[inode->i_size] = '\0';
-> > +
-> > +	lnk = kmemdup_nul(kaddr + m_pofs, inode->i_size, GFP_KERNEL);
-> > +
-> 
-> Unnecessary new line.
-> 
-> Also I wonder if it's possible to just
-> 	inode->i_link = kmemdup_nul(kaddr + m_pofs, inode->i_size, GFP_KERNEL);
-> 	if (!inode->i_link)
-> 		return -ENOMEM;
-> 
-> here, and get rid of variable lnk.
-> 
-> Otherwise it looks good to me.
-> 
-> Thanks,
-> Gao Xiang
->  
-Yeah, it looks good to me. Fixed.
-> > +	if (!lnk)
-> > +		return -ENOMEM;
-> >   	inode->i_link = lnk;
-> >   	inode->i_op = &erofs_fast_symlink_iops;
-> 
+> Sure I will Drop it.
 
-Best Regards,
-Yiyang Wu
+I guess I wasn't precise. Please drop that one diff hunk.
+
+Best regards,
+Krzysztof
+
 
