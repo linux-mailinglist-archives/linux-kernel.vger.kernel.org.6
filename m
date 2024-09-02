@@ -1,144 +1,122 @@
-Return-Path: <linux-kernel+bounces-311736-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311738-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2B50968CEE
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 19:43:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C987F968CF2
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 19:47:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BA6A71C2285B
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 17:43:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 786B11F22EC9
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 17:47:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D80061C62B9;
-	Mon,  2 Sep 2024 17:43:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 931511AB6F7;
+	Mon,  2 Sep 2024 17:47:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EGjwJhx1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LoG3a4uQ"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4249C1CB508;
-	Mon,  2 Sep 2024 17:43:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95D2538396
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 17:47:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725298999; cv=none; b=WXbmUUcO8NUNe+8Edi7pZmrOinBgaKtN1jcBNz6mQ/mmFJo1hX7zxa43VZqbhg6co16Ip+qiZgEjl5Xt6s9oYFAvo9+VyWOev5eqIzUbguzMCrRnhIy+MGLHIyTESGmqEpSsWg6CsfXO6Oc9MKOcapYoNvna4fVDY9dhln4vXsg=
+	t=1725299223; cv=none; b=CduY/vs1A5CG5CJAW3eQYIh/U3KInAO9aEgsrjSzXt/DSH4w4FRrm+luEJeiDAV0hN2TPVkjtNBdUz5/6iEpTdGPEhiPyfTvUk9aujyKkBWdyz6mcJxmDq8wxujJxKnw7OV1MPu3GMwOpShtHnOZMEoRCtcey9ON+vb5rWypXvM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725298999; c=relaxed/simple;
-	bh=pQjq5637RhyeLyjUbHTYNQQZXlfmZQqh2HY8sgaNvyU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iLz+Z8h7xK1MLu91bOsplgC7KqQsle4n3zKOigxw2/0sc4FMB3jb7eERMyVvSc9iWxEkUE7sdAi0qEeJ+rzVjD/f60wJuUGF+vt8jg/pLZtWCU5oDdPFrA4SsAWy6Io2/APb3w2ol8r3R7+bORq4GadoG1iRFelvPAa1W97JNuk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EGjwJhx1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C405DC4CEC2;
-	Mon,  2 Sep 2024 17:43:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725298998;
-	bh=pQjq5637RhyeLyjUbHTYNQQZXlfmZQqh2HY8sgaNvyU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=EGjwJhx1h8jDsC78GRLKmR4Hdh/xNYAf7ROCcShPyQgGLvGt3uXVNqrzdQvKXizOM
-	 boxw7X+phdUjTY0jPM7Qs3mKt9tlVFuDubX0eTD7Z3FSSNahemHE+zOmTl1VErIZWh
-	 l2IZMSV6UMHOrUGZ5AgrHE0DnqgfOM6CkJXyOmCRLGcSGHPe5wUtrvzfKOkwV5Fmr+
-	 GqlAUW4oBrru/8i+P+/o/0KZNkMr+nZ8SxXAIbflX+bCYhWw73s74lSUVvp3ClxrNZ
-	 s6nHGZbiblbNsVsB4RPQ+jFX+5gxZeLqu9KQ9ikc4mxk2qdvPbx/KS7HQT0RoDgb/B
-	 FCU9fSxU6y4cQ==
-Date: Mon, 2 Sep 2024 10:43:15 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: James Clark <james.clark@linaro.org>
-Cc: irogers@google.com, linux-perf-users@vger.kernel.org,
-	kan.liang@linux.intel.com, ak@linux.intel.com,
-	John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>,
-	Mike Leach <mike.leach@linaro.org>, Leo Yan <leo.yan@linux.dev>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Weilin Wang <weilin.wang@intel.com>,
-	Dominique Martinet <asmadeus@codewreck.org>,
-	Athira Rajeev <atrajeev@linux.vnet.ibm.com>,
-	Colin Ian King <colin.i.king@gmail.com>,
-	Yang Jihong <yangjihong@bytedance.com>,
-	Ze Gao <zegao2021@gmail.com>, Sun Haiyong <sunhaiyong@loongson.cn>,
-	Jing Zhang <renyu.zj@linux.alibaba.com>,
-	Yicong Yang <yangyicong@hisilicon.com>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 7/7] perf test: Add a test for default perf stat
- command
-Message-ID: <ZtX5Mw8Iuc5qgBWz@google.com>
-References: <20240828140736.156703-1-james.clark@linaro.org>
- <20240828140736.156703-8-james.clark@linaro.org>
- <ZtFnbq_158fxttmW@google.com>
- <52de8df9-4554-4bc0-9735-fdbd197dbb7c@linaro.org>
- <b9a1f3fd-de17-492b-91c3-950131912f71@linaro.org>
+	s=arc-20240116; t=1725299223; c=relaxed/simple;
+	bh=4Xg6DlGnTEaNPPJxfeqZ9IRzoJyN+atRjSPf7XlXA+o=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hw8Lav/v36BFowniMQEFVt7wE7tkkK7stSb0dY+DFaZh1xnL57TBaXCpM3/uHy9PCYxqC394k2CGlII+GtWDRFs4vaKleEgy4EreSVNV/MvcuC8rx4uWe8U+TY7u3/z6DwZMTPOe/qTITupcezCKDbebZZgzLhECQ8EavI1KQLI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LoG3a4uQ; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-2055548469aso2706655ad.3
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2024 10:47:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725299221; x=1725904021; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=f5dsshy/c+kaWBmpWBBqZVmXiicMNvJuoJNc+L9CI4k=;
+        b=LoG3a4uQyDBpMSwkepvlhtoqD8m7bIEJAwdJ5ksz9qodzMWLiuHs5iimJPOvILUbvY
+         JsdIIFG9zCe7nDednxddoFJxr97A2wxVg+zTdSrC/nltWKqrN3Hb87WwQ3SYvk67bSd+
+         QuHc9lNw9pqstuILNsm9G+1dWSho2NgIirocyzvOPgVOiOyaCaJcj1dDX+pAIowId7IX
+         g6x7FzV6vVB7D2dw9VmDWwP2zsnE6B6rvrfSdnDfSb4As3l6aXeVPpRuYjPWeQxXor00
+         3vpUIORULIuA1Vc6RKl+8ZMVeHZeo89BJG6ziS8xcbt54lkt6ikxxKjQ5XaO73p5wXOZ
+         7yOw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725299221; x=1725904021;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=f5dsshy/c+kaWBmpWBBqZVmXiicMNvJuoJNc+L9CI4k=;
+        b=RzHeqSyIppUACCjjVrXmunNRze+BdU+soffGWlgcIP76wxKOwPFL+cli92ORmdtnAS
+         Ip3HlvVTFUvthHarw2FRZCaWDAHVXp+Uwfgwp0jLbenCvpyv/JUMy2+z6IKLD4YBvNzW
+         C3cCnQcy4bsGDQIhd9zrPqFnxMk/PtCQm5E97Dfdriy9WmbjvARg1CE4X27GaqkoJFtq
+         QC30Wy0c2LbXdHgebICbnuq4lfK6vzzTc/tdYgtexVJwcHpTTqgwnL1AduLc0tUevV0B
+         pR8Cv9ahcSyC2DJ34g50ZcCjE6nGgiS0vE3y+kITcOHSvVQxjrXcknC9uS2Qisq9CYlo
+         tYdQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUtSxA8hgFXsH2N/MAof0Z1sdGWZm3V5GsHUdyfX9FFKxHLTj6YeRAd2SuN7O87iyYKBKHZltqQzt8h7pk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwZaVNDzsJ4euHzPPqpxwhG+72XbZ5R1IsqeFDaBJCKr4SDFibW
+	X6WvEMOPnnjkG91xBygsY8xQ3ju2/gZ/uhcT8Vq1BWQMvmcz89aIZnia5wn4uuexkQR/kzCub0i
+	uBXLCwjcSuH22pUP5hmrmEO+U5LU=
+X-Google-Smtp-Source: AGHT+IHLPLQSiXJyGvUinhSNLnatd1UsY5FyvVDChDU2kqJ0Yp0NfNjYZj4NYw97xpqV/8VKDLtnj4VfPHj0wFRji9A=
+X-Received: by 2002:a17:902:ce8b:b0:205:76f3:fc22 with SMTP id
+ d9443c01a7336-20576f3fe16mr25817525ad.3.1725299220657; Mon, 02 Sep 2024
+ 10:47:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <b9a1f3fd-de17-492b-91c3-950131912f71@linaro.org>
+References: <20240830072708.128502-1-yaolu@kylinos.cn>
+In-Reply-To: <20240830072708.128502-1-yaolu@kylinos.cn>
+From: Alex Deucher <alexdeucher@gmail.com>
+Date: Mon, 2 Sep 2024 13:46:49 -0400
+Message-ID: <CADnq5_MmsZQynuYPz64UL0jCE3E80MU86RNR4+rM9yGtDqOWgQ@mail.gmail.com>
+Subject: Re: [PATCH] drm/amdgpu: enable gfxoff quirk on HP 705G4
+To: Lu Yao <yaolu@kylinos.cn>
+Cc: alexander.deucher@amd.com, christian.koenig@amd.com, Xinhui.Pan@amd.com, 
+	sunil.khatri@amd.com, Prike.Liang@amd.com, Felix.Kuehling@amd.com, 
+	amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org, liupeng01@kylinos.cn
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Aug 30, 2024 at 09:45:11AM +0100, James Clark wrote:
-> 
-> 
-> On 30/08/2024 9:29 am, James Clark wrote:
-> > 
-> > 
-> > On 30/08/2024 7:32 am, Namhyung Kim wrote:
-> > > Hello,
-> > > 
-> > > On Wed, Aug 28, 2024 at 03:07:21PM +0100, James Clark wrote:
-> > > > Test that one cycles event is opened for each core PMU when "perf stat"
-> > > > is run without arguments.
-> > > > 
-> > > > The event line can either be output as "pmu/cycles/" or just "cycles" if
-> > > > there is only one PMU. Include 2 spaces for padding in the one PMU case
-> > > > to avoid matching when the word cycles is included in metric
-> > > > descriptions.
-> > > > 
-> > > > Signed-off-by: James Clark <james.clark@linaro.org>
-> > > > ---
-> > > >   tools/perf/tests/shell/stat.sh | 21 +++++++++++++++++++++
-> > > >   1 file changed, 21 insertions(+)
-> > > > 
-> > > > diff --git a/tools/perf/tests/shell/stat.sh
-> > > > b/tools/perf/tests/shell/stat.sh
-> > > > index 525d0c44fdc6..24ace1de71cc 100755
-> > > > --- a/tools/perf/tests/shell/stat.sh
-> > > > +++ b/tools/perf/tests/shell/stat.sh
-> > > > @@ -148,6 +148,26 @@ test_cputype() {
-> > > >     echo "cputype test [Success]"
-> > > >   }
-> > > > +test_hybrid() {
-> > > > +  # Test the default stat command on hybrid devices opens one
-> > > > cycles event for
-> > > > +  # each CPU type.
-> > > > +  echo "hybrid test"
-> > > > +
-> > > > +  # Count the number of core PMUs
-> > > > +  pmus=$(ls /sys/bus/event_source/devices/*/cpus 2>/dev/null | wc -l)
-> > > 
-> > > Is it working on non-hybrid systems?  I don't think they have cpus file
-> > > in the core PMU.
-> > > 
-> > > Thanks,
-> > > Namhyung
-> > > 
-> > 
-> > Good point I only tested on Arm non-hybrid. I can change it to assume 1
-> > PMU for no cpus files?
-> 
-> Or maybe assume 1 if a /sys/bus/event_source/devices/cpu folder exists? Not
-> sure which is best but either will work.
+Applied.  Thanks!
 
-Some arch might not have a cpu PMU, I think we can assume 1 and update
-only if it finds cpus files.
-
-Thanks,
-Namhyung
-
+On Fri, Aug 30, 2024 at 3:27=E2=80=AFAM Lu Yao <yaolu@kylinos.cn> wrote:
+>
+> From: Peng Liu <liupeng01@kylinos.cn>
+>
+> Enabling gfxoff quirk results in perfectly usable
+> graphical user interface on HP 705G4 DM with R5 2400G.
+>
+> Without the quirk, X server is completely unusable as
+> every few seconds there is gpu reset due to ring gfx timeout.
+>
+> Signed-off-by: Peng Liu <liupeng01@kylinos.cn>
+> ---
+>  drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c | 2 ++
+>  1 file changed, 2 insertions(+)
+>
+> diff --git a/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c b/drivers/gpu/drm/amd/=
+amdgpu/gfx_v9_0.c
+> index 2929c8972ea7..bd17e32b432d 100644
+> --- a/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c
+> +++ b/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c
+> @@ -1301,6 +1301,8 @@ static const struct amdgpu_gfxoff_quirk amdgpu_gfxo=
+ff_quirk_list[] =3D {
+>         { 0x1002, 0x15dd, 0x1002, 0x15dd, 0xc6 },
+>         /* Apple MacBook Pro (15-inch, 2019) Radeon Pro Vega 20 4 GB */
+>         { 0x1002, 0x69af, 0x106b, 0x019a, 0xc0 },
+> +       /* HP 705G4 DM with R5 2400G */
+> +       { 0x1002, 0x15dd, 0x103c, 0x8464, 0xd6},
+>         { 0, 0, 0, 0, 0 },
+>  };
+>
+> --
+> 2.25.1
+>
 
