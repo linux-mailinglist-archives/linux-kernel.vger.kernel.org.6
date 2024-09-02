@@ -1,318 +1,94 @@
-Return-Path: <linux-kernel+bounces-310687-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310688-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8933968026
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 09:11:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 022EF968028
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 09:11:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 754001F22173
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 07:11:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ACF021F2126A
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 07:11:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C0C018754E;
-	Mon,  2 Sep 2024 07:08:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZNZArRXP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A6961714CC;
+	Mon,  2 Sep 2024 07:10:18 +0000 (UTC)
+Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94AFB14EC7D;
-	Mon,  2 Sep 2024 07:08:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A4AB42AB9;
+	Mon,  2 Sep 2024 07:10:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.255.230.98
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725260921; cv=none; b=EEULwpT8WJ3KSfbOA11vshdYlJAOUjKHV3R3k6m8Rk47oQUtp6+hdLqdRPU4XGtJihA/8HjJSvve0vNS9tkqCHmMym5a/wgICQ2f+wNvAsVeBjA1vwsajPvGW178o7b2ViinS87e7qP1GbpXHLihynnMiWECOJb4EHab/JD3MTg=
+	t=1725261017; cv=none; b=Gwu882hMij/+BgI71P7G83Exii6E1LoiSJKc6uO8iwu8ys+o1QqTR3s3YFtKYa4Hpznc0ADdQxgu/l8R2TKbH8MvN88HCHUIXQOk7m31PIwY1XRpK6xIKVFJQ54xepmgfUKUBwIUgs4TS4kmmZT1m11hDYCZ6/uBvHl07v4yQlo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725260921; c=relaxed/simple;
-	bh=0U5MIAu8Q82LcBY8UVBN64tiCqTPj2lJUBHmoGnZiHU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PIVePP2a9ZUpSOnCbYcx3GgGf5Y8oAOo2patlRtARxd4JeIdu0N9aYXbQHZGkR8oL5m1ZPyyI2L4OnLHA7g59BSJFCeB+njj/NyJBQKhbXCFZ9Jaw284nncCDjxjWe/Dj231pR3jHU5frpNcu0iccDnCK3ZGo7BkNOfhjsKjyvM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZNZArRXP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD952C4CEC2;
-	Mon,  2 Sep 2024 07:08:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725260921;
-	bh=0U5MIAu8Q82LcBY8UVBN64tiCqTPj2lJUBHmoGnZiHU=;
-	h=From:To:Cc:Subject:Date:From;
-	b=ZNZArRXPedv9ktcmGvSRFAVt22vWqZ1AGPvXme8x5q4cYl7AOcQX9J3prQS/XJvaQ
-	 4jWUhnfE6iXADAO2uU7V0yOZtD5FsNJhRXuvquZ/+PqZv51pqwe9HyaPLC5HbAjWbF
-	 yntKquHMXLGf/kwal4VCv9XUmh7oN6yB3sKn4fZMdY/aAuz88kFzXfA6KifVwyUbiK
-	 tzCAH26nNjqPl93P3CbKxHksmMp4iMLJj4xg4f8LL6YB+qNjPwQdI2SROfQ5H/RA39
-	 YsvofRPwBcmZMmlV0ERN3XBndHJ4BEE8TNleQ0i3qC7Juw9R3Cl2UPRGdyclAfCa27
-	 oPV9X6COfdtAw==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan+linaro@kernel.org>)
-	id 1sl1BF-000000002E7-2OpE;
-	Mon, 02 Sep 2024 09:08:54 +0200
-From: Johan Hovold <johan+linaro@kernel.org>
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-arm-msm@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Johan Hovold <johan+linaro@kernel.org>
-Subject: [PATCH] clk: qcom: gcc-sc8280xp: don't use parking clk_ops for QUPs
-Date: Mon,  2 Sep 2024 09:08:30 +0200
-Message-ID: <20240902070830.8535-1-johan+linaro@kernel.org>
-X-Mailer: git-send-email 2.44.2
+	s=arc-20240116; t=1725261017; c=relaxed/simple;
+	bh=YPC3VoqsD87Sp65DLyc9F9bwPyq/jD4yZxZdXmDVhQs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=b54bLupScj0NKpRjP4nH2aZ5SypdfUAuj4+OgayDJciTRn1J0b1r6t6TPONrXvvsZbO2IvR/jf0EmDunkDS0Md73uFrWIRtBtex3F0rg0Fw90UR23U8wXON2rO2k6cdqX7t/ANFg+NqXFpgee+yt+kdwfyzRgUnHLIrpWd8g3Jc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=denx.de; spf=fail smtp.mailfrom=denx.de; arc=none smtp.client-ip=46.255.230.98
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=denx.de
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+	id 9AD681C0082; Mon,  2 Sep 2024 09:10:06 +0200 (CEST)
+Date: Mon, 2 Sep 2024 09:10:06 +0200
+From: Pavel Machek <pavel@denx.de>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+	jonathanh@nvidia.com, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+	conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
+Subject: Re: [PATCH 6.1 00/71] 6.1.108-rc1 review
+Message-ID: <ZtVkzoOn+V733ARk@duo.ucw.cz>
+References: <20240901160801.879647959@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="WK/NPMud4oG8IuvU"
+Content-Disposition: inline
+In-Reply-To: <20240901160801.879647959@linuxfoundation.org>
 
-A recent change started parking the RCG at an always on parent during
-registration, something which specifically breaks handover from an early
-serial console.
 
-Quoting Stephen Boyd who fixed this issue for SM8550 [1]:
+--WK/NPMud4oG8IuvU
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-	The QUPs aren't shared in a way that requires parking the RCG at
-	an always on parent in case some other entity turns on the clk.
-	The hardware is capable of setting a new frequency itself with
-	the DFS mode, so parking is unnecessary. Furthermore, there
-	aren't any GDSCs for these devices, so there isn't a possibility
-	of the GDSC turning on the clks for housekeeping purposes.
+Hi!
 
-	This wasn't a problem to mark these clks shared until we started
-	parking shared RCGs at clk registration time in commit
-	01a0a6cc8cfd ("clk: qcom: Park shared RCGs upon registration").
-	Parking at init is actually harmful to the UART when earlycon is
-	used. If the device is pumping out data while the frequency
-	changes you'll see garbage on the serial console until the
-	driver can probe and actually set a proper frequency.
+> This is the start of the stable review cycle for the 6.1.108 release.
+> There are 71 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 
-Fixes: 01a0a6cc8cfd ("clk: qcom: Park shared RCGs upon registration")
-Fixes: d65d005f9a6c ("clk: qcom: add sc8280xp GCC driver")
-Link: https://lore.kernel.org/all/20240819233628.2074654-2-swboyd@chromium.org/ [1]
-Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
----
- drivers/clk/qcom/gcc-sc8280xp.c | 48 ++++++++++++++++-----------------
- 1 file changed, 24 insertions(+), 24 deletions(-)
+CIP testing did not find any problems here:
 
-diff --git a/drivers/clk/qcom/gcc-sc8280xp.c b/drivers/clk/qcom/gcc-sc8280xp.c
-index 5f11760cf73f..f27d0003f427 100644
---- a/drivers/clk/qcom/gcc-sc8280xp.c
-+++ b/drivers/clk/qcom/gcc-sc8280xp.c
-@@ -1500,7 +1500,7 @@ static struct clk_init_data gcc_qupv3_wrap0_s0_clk_src_init = {
- 	.parent_data = gcc_parent_data_0,
- 	.num_parents = ARRAY_SIZE(gcc_parent_data_0),
- 	.flags = CLK_SET_RATE_PARENT,
--	.ops = &clk_rcg2_shared_ops,
-+	.ops = &clk_rcg2_ops,
- };
- 
- static struct clk_rcg2 gcc_qupv3_wrap0_s0_clk_src = {
-@@ -1517,7 +1517,7 @@ static struct clk_init_data gcc_qupv3_wrap0_s1_clk_src_init = {
- 	.parent_data = gcc_parent_data_0,
- 	.num_parents = ARRAY_SIZE(gcc_parent_data_0),
- 	.flags = CLK_SET_RATE_PARENT,
--	.ops = &clk_rcg2_shared_ops,
-+	.ops = &clk_rcg2_ops,
- };
- 
- static struct clk_rcg2 gcc_qupv3_wrap0_s1_clk_src = {
-@@ -1534,7 +1534,7 @@ static struct clk_init_data gcc_qupv3_wrap0_s2_clk_src_init = {
- 	.parent_data = gcc_parent_data_0,
- 	.num_parents = ARRAY_SIZE(gcc_parent_data_0),
- 	.flags = CLK_SET_RATE_PARENT,
--	.ops = &clk_rcg2_shared_ops,
-+	.ops = &clk_rcg2_ops,
- };
- 
- static struct clk_rcg2 gcc_qupv3_wrap0_s2_clk_src = {
-@@ -1551,7 +1551,7 @@ static struct clk_init_data gcc_qupv3_wrap0_s3_clk_src_init = {
- 	.parent_data = gcc_parent_data_0,
- 	.num_parents = ARRAY_SIZE(gcc_parent_data_0),
- 	.flags = CLK_SET_RATE_PARENT,
--	.ops = &clk_rcg2_shared_ops,
-+	.ops = &clk_rcg2_ops,
- };
- 
- static struct clk_rcg2 gcc_qupv3_wrap0_s3_clk_src = {
-@@ -1568,7 +1568,7 @@ static struct clk_init_data gcc_qupv3_wrap0_s4_clk_src_init = {
- 	.parent_data = gcc_parent_data_0,
- 	.num_parents = ARRAY_SIZE(gcc_parent_data_0),
- 	.flags = CLK_SET_RATE_PARENT,
--	.ops = &clk_rcg2_shared_ops,
-+	.ops = &clk_rcg2_ops,
- };
- 
- static struct clk_rcg2 gcc_qupv3_wrap0_s4_clk_src = {
-@@ -1585,7 +1585,7 @@ static struct clk_init_data gcc_qupv3_wrap0_s5_clk_src_init = {
- 	.parent_data = gcc_parent_data_0,
- 	.num_parents = ARRAY_SIZE(gcc_parent_data_0),
- 	.flags = CLK_SET_RATE_PARENT,
--	.ops = &clk_rcg2_shared_ops,
-+	.ops = &clk_rcg2_ops,
- };
- 
- static struct clk_rcg2 gcc_qupv3_wrap0_s5_clk_src = {
-@@ -1617,7 +1617,7 @@ static struct clk_init_data gcc_qupv3_wrap0_s6_clk_src_init = {
- 	.parent_data = gcc_parent_data_0,
- 	.num_parents = ARRAY_SIZE(gcc_parent_data_0),
- 	.flags = CLK_SET_RATE_PARENT,
--	.ops = &clk_rcg2_shared_ops,
-+	.ops = &clk_rcg2_ops,
- };
- 
- static struct clk_rcg2 gcc_qupv3_wrap0_s6_clk_src = {
-@@ -1634,7 +1634,7 @@ static struct clk_init_data gcc_qupv3_wrap0_s7_clk_src_init = {
- 	.parent_data = gcc_parent_data_0,
- 	.num_parents = ARRAY_SIZE(gcc_parent_data_0),
- 	.flags = CLK_SET_RATE_PARENT,
--	.ops = &clk_rcg2_shared_ops,
-+	.ops = &clk_rcg2_ops,
- };
- 
- static struct clk_rcg2 gcc_qupv3_wrap0_s7_clk_src = {
-@@ -1651,7 +1651,7 @@ static struct clk_init_data gcc_qupv3_wrap1_s0_clk_src_init = {
- 	.parent_data = gcc_parent_data_0,
- 	.num_parents = ARRAY_SIZE(gcc_parent_data_0),
- 	.flags = CLK_SET_RATE_PARENT,
--	.ops = &clk_rcg2_shared_ops,
-+	.ops = &clk_rcg2_ops,
- };
- 
- static struct clk_rcg2 gcc_qupv3_wrap1_s0_clk_src = {
-@@ -1668,7 +1668,7 @@ static struct clk_init_data gcc_qupv3_wrap1_s1_clk_src_init = {
- 	.parent_data = gcc_parent_data_0,
- 	.num_parents = ARRAY_SIZE(gcc_parent_data_0),
- 	.flags = CLK_SET_RATE_PARENT,
--	.ops = &clk_rcg2_shared_ops,
-+	.ops = &clk_rcg2_ops,
- };
- 
- static struct clk_rcg2 gcc_qupv3_wrap1_s1_clk_src = {
-@@ -1685,7 +1685,7 @@ static struct clk_init_data gcc_qupv3_wrap1_s2_clk_src_init = {
- 	.parent_data = gcc_parent_data_0,
- 	.num_parents = ARRAY_SIZE(gcc_parent_data_0),
- 	.flags = CLK_SET_RATE_PARENT,
--	.ops = &clk_rcg2_shared_ops,
-+	.ops = &clk_rcg2_ops,
- };
- 
- static struct clk_rcg2 gcc_qupv3_wrap1_s2_clk_src = {
-@@ -1702,7 +1702,7 @@ static struct clk_init_data gcc_qupv3_wrap1_s3_clk_src_init = {
- 	.parent_data = gcc_parent_data_0,
- 	.num_parents = ARRAY_SIZE(gcc_parent_data_0),
- 	.flags = CLK_SET_RATE_PARENT,
--	.ops = &clk_rcg2_shared_ops,
-+	.ops = &clk_rcg2_ops,
- };
- 
- static struct clk_rcg2 gcc_qupv3_wrap1_s3_clk_src = {
-@@ -1719,7 +1719,7 @@ static struct clk_init_data gcc_qupv3_wrap1_s4_clk_src_init = {
- 	.parent_data = gcc_parent_data_0,
- 	.num_parents = ARRAY_SIZE(gcc_parent_data_0),
- 	.flags = CLK_SET_RATE_PARENT,
--	.ops = &clk_rcg2_shared_ops,
-+	.ops = &clk_rcg2_ops,
- };
- 
- static struct clk_rcg2 gcc_qupv3_wrap1_s4_clk_src = {
-@@ -1736,7 +1736,7 @@ static struct clk_init_data gcc_qupv3_wrap1_s5_clk_src_init = {
- 	.parent_data = gcc_parent_data_0,
- 	.num_parents = ARRAY_SIZE(gcc_parent_data_0),
- 	.flags = CLK_SET_RATE_PARENT,
--	.ops = &clk_rcg2_shared_ops,
-+	.ops = &clk_rcg2_ops,
- };
- 
- static struct clk_rcg2 gcc_qupv3_wrap1_s5_clk_src = {
-@@ -1753,7 +1753,7 @@ static struct clk_init_data gcc_qupv3_wrap1_s6_clk_src_init = {
- 	.parent_data = gcc_parent_data_0,
- 	.num_parents = ARRAY_SIZE(gcc_parent_data_0),
- 	.flags = CLK_SET_RATE_PARENT,
--	.ops = &clk_rcg2_shared_ops,
-+	.ops = &clk_rcg2_ops,
- };
- 
- static struct clk_rcg2 gcc_qupv3_wrap1_s6_clk_src = {
-@@ -1770,7 +1770,7 @@ static struct clk_init_data gcc_qupv3_wrap1_s7_clk_src_init = {
- 	.parent_data = gcc_parent_data_0,
- 	.num_parents = ARRAY_SIZE(gcc_parent_data_0),
- 	.flags = CLK_SET_RATE_PARENT,
--	.ops = &clk_rcg2_shared_ops,
-+	.ops = &clk_rcg2_ops,
- };
- 
- static struct clk_rcg2 gcc_qupv3_wrap1_s7_clk_src = {
-@@ -1787,7 +1787,7 @@ static struct clk_init_data gcc_qupv3_wrap2_s0_clk_src_init = {
- 	.parent_data = gcc_parent_data_0,
- 	.num_parents = ARRAY_SIZE(gcc_parent_data_0),
- 	.flags = CLK_SET_RATE_PARENT,
--	.ops = &clk_rcg2_shared_ops,
-+	.ops = &clk_rcg2_ops,
- };
- 
- static struct clk_rcg2 gcc_qupv3_wrap2_s0_clk_src = {
-@@ -1804,7 +1804,7 @@ static struct clk_init_data gcc_qupv3_wrap2_s1_clk_src_init = {
- 	.parent_data = gcc_parent_data_0,
- 	.num_parents = ARRAY_SIZE(gcc_parent_data_0),
- 	.flags = CLK_SET_RATE_PARENT,
--	.ops = &clk_rcg2_shared_ops,
-+	.ops = &clk_rcg2_ops,
- };
- 
- static struct clk_rcg2 gcc_qupv3_wrap2_s1_clk_src = {
-@@ -1821,7 +1821,7 @@ static struct clk_init_data gcc_qupv3_wrap2_s2_clk_src_init = {
- 	.parent_data = gcc_parent_data_0,
- 	.num_parents = ARRAY_SIZE(gcc_parent_data_0),
- 	.flags = CLK_SET_RATE_PARENT,
--	.ops = &clk_rcg2_shared_ops,
-+	.ops = &clk_rcg2_ops,
- };
- 
- static struct clk_rcg2 gcc_qupv3_wrap2_s2_clk_src = {
-@@ -1838,7 +1838,7 @@ static struct clk_init_data gcc_qupv3_wrap2_s3_clk_src_init = {
- 	.parent_data = gcc_parent_data_0,
- 	.num_parents = ARRAY_SIZE(gcc_parent_data_0),
- 	.flags = CLK_SET_RATE_PARENT,
--	.ops = &clk_rcg2_shared_ops,
-+	.ops = &clk_rcg2_ops,
- };
- 
- static struct clk_rcg2 gcc_qupv3_wrap2_s3_clk_src = {
-@@ -1855,7 +1855,7 @@ static struct clk_init_data gcc_qupv3_wrap2_s4_clk_src_init = {
- 	.parent_data = gcc_parent_data_0,
- 	.num_parents = ARRAY_SIZE(gcc_parent_data_0),
- 	.flags = CLK_SET_RATE_PARENT,
--	.ops = &clk_rcg2_shared_ops,
-+	.ops = &clk_rcg2_ops,
- };
- 
- static struct clk_rcg2 gcc_qupv3_wrap2_s4_clk_src = {
-@@ -1872,7 +1872,7 @@ static struct clk_init_data gcc_qupv3_wrap2_s5_clk_src_init = {
- 	.parent_data = gcc_parent_data_0,
- 	.num_parents = ARRAY_SIZE(gcc_parent_data_0),
- 	.flags = CLK_SET_RATE_PARENT,
--	.ops = &clk_rcg2_shared_ops,
-+	.ops = &clk_rcg2_ops,
- };
- 
- static struct clk_rcg2 gcc_qupv3_wrap2_s5_clk_src = {
-@@ -1889,7 +1889,7 @@ static struct clk_init_data gcc_qupv3_wrap2_s6_clk_src_init = {
- 	.parent_data = gcc_parent_data_0,
- 	.num_parents = ARRAY_SIZE(gcc_parent_data_0),
- 	.flags = CLK_SET_RATE_PARENT,
--	.ops = &clk_rcg2_shared_ops,
-+	.ops = &clk_rcg2_ops,
- };
- 
- static struct clk_rcg2 gcc_qupv3_wrap2_s6_clk_src = {
-@@ -1906,7 +1906,7 @@ static struct clk_init_data gcc_qupv3_wrap2_s7_clk_src_init = {
- 	.parent_data = gcc_parent_data_0,
- 	.num_parents = ARRAY_SIZE(gcc_parent_data_0),
- 	.flags = CLK_SET_RATE_PARENT,
--	.ops = &clk_rcg2_shared_ops,
-+	.ops = &clk_rcg2_ops,
- };
- 
- static struct clk_rcg2 gcc_qupv3_wrap2_s7_clk_src = {
--- 
-2.44.2
+https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-/tree/linux-=
+6.1.y
 
+Tested-by: Pavel Machek (CIP) <pavel@denx.de>
+
+Best regards,
+                                                                Pavel
+--=20
+DENX Software Engineering GmbH,        Managing Director: Erika Unter
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+
+--WK/NPMud4oG8IuvU
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZtVkzgAKCRAw5/Bqldv6
+8u/2AKDDRSTD7UgM+CrsppyGHKbPCqWcRgCfT81t4ywhysaeJaILeIcJ6l6XIco=
+=oMLD
+-----END PGP SIGNATURE-----
+
+--WK/NPMud4oG8IuvU--
 
