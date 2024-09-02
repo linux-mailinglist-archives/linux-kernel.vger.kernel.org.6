@@ -1,168 +1,187 @@
-Return-Path: <linux-kernel+bounces-311784-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311785-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13C62968D97
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 20:37:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 029BD968D9E
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 20:38:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C60F9281EBD
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 18:37:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 277711C22142
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 18:38:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1A071C62C8;
-	Mon,  2 Sep 2024 18:37:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEC101AB6F1;
+	Mon,  2 Sep 2024 18:38:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="p81gWxaR"
-Received: from mail-io1-f74.google.com (mail-io1-f74.google.com [209.85.166.74])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="TBYIQggY"
+Received: from mail-ua1-f49.google.com (mail-ua1-f49.google.com [209.85.222.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 775C21AB6E0
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 18:37:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57F531A3027
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 18:38:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725302260; cv=none; b=EwxxziwdiCvMJkZb4hj0P9+gOb7uzJIuLqccPGj1DCkLk3G9fPzncPvhp9HSFEpvEdVe6Dc530xG956asuYdbUHdT/QDZKPgHc/y9qxqY/DQPXdDkfxuVuABipd+u/Ezs/O2ywF4ZMr2kqe5ozB/0v4lk9WgG2WizElK9bYsDYs=
+	t=1725302331; cv=none; b=RvqAT464PrKlRJeFBny7DFV964E2sEb0J6lTHiHYI2t5PoFXQIcPeCl0ZinYo5EWRRtlOAwq5pwNh5feR79EWJpQm1SqOnLggFbk1GgwdLkZZdLmm2OOOdT5qe9yZ0qP4RdaoTsyAhkmLDcN1/0YQzeBYuzoustzjFXqhpadJWA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725302260; c=relaxed/simple;
-	bh=0f1aN9HLbWF92dFi99NsPlbmjKqZ++MNJBcwsjyzqWg=;
-	h=Date:In-Reply-To:Mime-Version:Message-ID:Subject:From:To:Cc:
-	 Content-Type; b=l6zNmU6CyHS/by5LiE8iShyzy8pGGwYGRnjPm6povQGABHza+T+QcKtRh84nSaQzerdFJmZLL6AiDrc3pegy+n8jje2krPG6rKPbP3OAyo3eVaDzm37C/6Qj19g3rf3G9pvWp5siSquJVXsS5/S5SI044SHyjs2aIg9RsQSB0/A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--coltonlewis.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=p81gWxaR; arc=none smtp.client-ip=209.85.166.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--coltonlewis.bounces.google.com
-Received: by mail-io1-f74.google.com with SMTP id ca18e2360f4ac-82a4f65fa5aso106401639f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2024 11:37:38 -0700 (PDT)
+	s=arc-20240116; t=1725302331; c=relaxed/simple;
+	bh=qvGR0hnmxdDXx26rcKer0OOFReGA3haiPLSH0odUurk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=coQPH8ECY4MeFYVscLp91JbX8RLT0oQtWsKI7KeEmPN/6m1uQfD0rTbNWiuqPidFWmRRM1XmpE+j0arl7h4NHsLAkPru3J/ycBvGmfFpXUDSw3iZZpFn41UuGDK0v4ivkhcEKTg5WWPw7ts1mOTHtoq4ogyPsnvq8GzuZBCOatM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=TBYIQggY; arc=none smtp.client-ip=209.85.222.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-ua1-f49.google.com with SMTP id a1e0cc1a2514c-846cdfbb153so485509241.0
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2024 11:38:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1725302257; x=1725907057; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:in-reply-to:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=nAO/71uT5RCAsBJVu4g+dwe4+a2p2kFZ1jdndEbhd+o=;
-        b=p81gWxaR6mfBj2uJUybRfMAov24UYxjpQVk+WPzMhg6b4ab+wFJGq5oJUdGcD1aKO1
-         NjXiAWZVBr+8rLJwxpwubnA7izc6vBey+XXUluAtuRRF/zSBUPZ6TKV9hP5b10MIbuko
-         obTrpFy7xsgEV2e2v0gom7RVSma4CJMQ8FT+WsVCuyHWZrQu4JDIv8uxbPtr8yeQOOj4
-         yAhoLlep9fK71AaHD+x4U3uzBntIrngHn27rs1wbXMCQrz9+2UZgHmI53BRcg5Q8yH3t
-         UmIfIdST5/8L5Z0/+Yx/OvCSyX+00DI9MzsIduTwxyrVUIkAJA1qvqm1ScX6jD4Z1wKr
-         ZTlg==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1725302327; x=1725907127; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=uUH6Sq+2/lRd4KWEdNd4C2TjbnVZU4PCrWh/KXQdHK8=;
+        b=TBYIQggYdj0nr7UfWGapXwSwP8rc4s5jnhrxPLAGLcLAkbDWwd5eSnnu6J2h0eQbge
+         AWK2Rr8rFjdQeJPJ7pmXHUnrkRtVDVbBSnEy4y0+6G/t3FXkbSPk7NNoXgycOBt+l7mn
+         H6M5jHZ6xXmrAGtUAuyVmVdVmxmPKARo/7FvV+bm9ZmsqNSYDIReMJlfabMJqroUiBwT
+         jTmx3tulrMrmN3EHmDOYNvOpsHUrTnNtn3zKD4r1Hu68peuoGlU0IIM8SnuRNpOZCZOX
+         V4q+ch2jWnFs4ZsBvSMOoHCfr4Bf/R9ej9kFLrNk8lXulHxLr9QZKNhoFDpTtv3dU82V
+         B+jg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725302257; x=1725907057;
-        h=cc:to:from:subject:message-id:mime-version:in-reply-to:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=nAO/71uT5RCAsBJVu4g+dwe4+a2p2kFZ1jdndEbhd+o=;
-        b=SkSgdbNUsAXiiOoeWs4lUabGwWEGS9TTVtPy54Ya/JEpwy+3S8DtE3PlgG1WzvBMRz
-         Hg6W8igKzow2VWTKM1kRA3TO0h37wFbEGyiaJCDq/hFHmZVMwlqKWXkC3u7HgnC8x2Mm
-         a+iOxd6BM8PRUjhvBtfsU5NB5Ap0MHzPkXW9A2PDaCGs+rM4oinM5Iiu20iALDzG/yUM
-         Na8Mldmcif5xy1pSw8tMFScs6hI7fwleQGuXb0S/OZbmyzAPco/edm5agse54iAr8EnI
-         1bs2j8yCQle2JTX/HfxVgbVETzpPc8bqPVlCg7nnDSAz1sMAJMPx3w/ooRmH7Tuxx6o1
-         Gk+w==
-X-Forwarded-Encrypted: i=1; AJvYcCU1qvbg87P6SxODZv1VwD6z2TNzmNmc+ZGzapGhObQ9if3qKnrDqaQ9PMlTslWFWI4AmLNm1hLz7tagt+I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyWGk8NupKUpwfn8iNw2DcsB+cSn2ucG+Wm4IiY8VViReciQo2Q
-	KSaHB+CF2K8TbUOqQMw9IqAG2brjUuuxlteIbb67R0ixTjriUuGhE8xwEajCJErz1UCUk48PBk2
-	rs+EMT4yU3+eqGpQj1RdwZw==
-X-Google-Smtp-Source: AGHT+IEklshSlPXSKl7m3pGgCZOFN2urZDLNUZ1eyTQmaZKHwzCs7QJN/43WSSevJlLHSgMuDO6x0IIt8x1YU2sS7w==
-X-Received: from coltonlewis-kvm.c.googlers.com ([fda3:e722:ac3:cc00:2b:ff92:c0a8:14ce])
- (user=coltonlewis job=sendgmr) by 2002:a05:6638:3494:b0:4ce:928f:ad9a with
- SMTP id 8926c6da1cb9f-4d017a1e518mr490136173.1.1725302257619; Mon, 02 Sep
- 2024 11:37:37 -0700 (PDT)
-Date: Mon, 02 Sep 2024 18:37:37 +0000
-In-Reply-To: <ZtDd9YVc33b8Qt__@google.com> (message from Sean Christopherson
- on Thu, 29 Aug 2024 13:45:41 -0700)
+        d=1e100.net; s=20230601; t=1725302327; x=1725907127;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=uUH6Sq+2/lRd4KWEdNd4C2TjbnVZU4PCrWh/KXQdHK8=;
+        b=Gu3j9q5Axq+1ZZLHRfC4O9kq0yikToV2ia4NQ+GKfj/wUPzbx1sbOgXuOtUiXT0+ro
+         KdzRSFwfxRHImwDlafgQhmpmUuhmXTIunbzr09Yc/xMpFCJZ8mvc/MRCoBdrjJMjAWB6
+         4aDfhmNb63/IU3Nmyby1DWqOUuF+SQ8WoUnGBT2sgO4nQeiDSwEwl+aSuW2DYESI532D
+         DjNRkqewNAlOoIYGi11VsQIIVsu2zsjaMMO0YvceKUjyzXko8Cslx0xgjeFEC7WNM8SI
+         Fk1jczsSHZmUoJKpfg2xyoICjmLikq62CCSxrmL/aWJyWqPps8Ne/VFALN5JA6E8loe6
+         +H2g==
+X-Forwarded-Encrypted: i=1; AJvYcCX9DEGUO3I7mCsV9riyRl7spzspg12lWV5USovMhcD3ddJApuLy3I5wn/qOPEcFM/37JNroHmByOEUgdzw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz6hnoAU7uXsOjREvtr2Obj6VO0AXI/jUr+9t8VVFCPWydFNKUC
+	RY73Y+AgUQ3D/zkHtk7op7J7FXA1UnS2rw1+UiwOZgWPMActX16bfFnT2V1Hd+hpUQJE/ofg33v
+	fVeKZrPxl699LOt4p69zBdSTndzVdrD2fNPclpQ==
+X-Google-Smtp-Source: AGHT+IFAftsIG39b8r6G5jZKOPUmUgLsYOAXRb/zKUNViiQ+B8flLdJStRybK5kjdj31iVJvY1Gx1xwD36/LdADxIQE=
+X-Received: by 2002:a05:6122:3b12:b0:4f6:ad2d:c867 with SMTP id
+ 71dfb90a1353d-5009b162580mr8806758e0c.12.1725302327196; Mon, 02 Sep 2024
+ 11:38:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Message-ID: <gsntcyllaolq.fsf@coltonlewis-kvm.c.googlers.com>
-Subject: Re: [PATCH 3/6] KVM: x86: selftests: Set up AMD VM in pmu_counters_test
-From: Colton Lewis <coltonlewis@google.com>
-To: Sean Christopherson <seanjc@google.com>
-Cc: mizhang@google.com, kvm@vger.kernel.org, ljr.kernel@gmail.com, 
-	jmattson@google.com, aaronlewis@google.com, pbonzini@redhat.com, 
-	shuah@kernel.org, linux-kselftest@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+MIME-Version: 1.0
+References: <20240902103638.686039-1-aardelean@baylibre.com>
+ <20240902103638.686039-8-aardelean@baylibre.com> <rdk2f6c457k462g5v6s5vumdmhejefyfareio5f6bogslg4wg5@ket4vfwwbyi7>
+In-Reply-To: <rdk2f6c457k462g5v6s5vumdmhejefyfareio5f6bogslg4wg5@ket4vfwwbyi7>
+From: Alexandru Ardelean <aardelean@baylibre.com>
+Date: Mon, 2 Sep 2024 21:38:36 +0300
+Message-ID: <CA+GgBR-aQw+JHky5XwRDQj=6y1pHD=OvBeGW1ocd=ZR6ieBJrw@mail.gmail.com>
+Subject: Re: [PATCH v2 7/8] dt-bindings: iio: adc: add adi,ad7606c-{16,18}
+ compatible strings
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, jic23@kernel.org, krzk+dt@kernel.org, 
+	robh@kernel.org, lars@metafoo.de, michael.hennerich@analog.com, 
+	gstols@baylibre.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Sean Christopherson <seanjc@google.com> writes:
+On Mon, Sep 2, 2024 at 2:55=E2=80=AFPM Krzysztof Kozlowski <krzk@kernel.org=
+> wrote:
+>
+> On Mon, Sep 02, 2024 at 01:36:30PM +0300, Alexandru Ardelean wrote:
+> >    reg:
+> > @@ -114,6 +118,25 @@ properties:
+> >        assumed that the pins are hardwired to VDD.
+> >      type: boolean
+> >
+> > +patternProperties:
+> > +  "^channel@([0-7])$":
+> > +    type: object
+> > +    $ref: adc.yaml
+> > +    unevaluatedProperties: false
+> > +
+> > +    properties:
+> > +      reg:
+> > +        description: The channel number.
+> > +        minimum: 0
+> > +        maximum: 7
+> > +
+> > +      diff-channels: true
+>
+> Shouldn't this be specific?
 
-> On Wed, Aug 28, 2024, Mingwei Zhang wrote:
->> > >> +static void test_core_counters(void)
->> > >> +{
->> > >> +    uint8_t nr_counters = nr_core_counters();
->> > >> +    bool core_ext = kvm_cpu_has(X86_FEATURE_PERF_CTR_EXT_CORE);
->> > >> +    bool perf_mon_v2 = kvm_cpu_has(X86_FEATURE_PERF_MON_V2);
->> > >> +    struct kvm_vcpu *vcpu;
->> > >> +    struct kvm_vm *vm;
->> >
->> > >> -    kvm_pmu_version = kvm_cpu_property(X86_PROPERTY_PMU_VERSION);
->> > >> -    kvm_has_perf_caps = kvm_cpu_has(X86_FEATURE_PDCM);
->> > >> +    vm = vm_create_with_one_vcpu(&vcpu, guest_test_core_counters);
->> >
->> > >> -    test_intel_counters();
->> > >> +    /* This property may not be there in older underlying CPUs,
->> > >> +     * but it simplifies the test code for it to be set
->> > >> +     * unconditionally.
+Umm.
+Specific how?
+Like if:then check for certain compatible strings?
 
-> But then the test isn't verifying that KVM is honoring the architecture.   
-> I.e.
-> backdooring information to the guest risks getting false passes because  
-> KVM
-> incorrectly peeks at the same information, which shouldn't exist.
+>
+> > +
+> > +      bipolar: true
+> > +
+> > +    required:
+> > +      - reg
+> > +
+> >  required:
+> >    - compatible
+> >    - reg
+> > @@ -202,4 +225,44 @@ examples:
+> >              standby-gpios =3D <&gpio 24 GPIO_ACTIVE_LOW>;
+> >          };
+> >      };
+> > +  - |
+> > +    #include <dt-bindings/gpio/gpio.h>
+> > +    #include <dt-bindings/interrupt-controller/irq.h>
+> > +    spi {
+> > +        #address-cells =3D <1>;
+> > +        #size-cells =3D <0>;
+> > +
+> > +        adc@0 {
+> > +            compatible =3D "adi,ad7606c-18";
+> > +            reg =3D <0>;
+> > +            spi-max-frequency =3D <1000000>;
+> > +            spi-cpol;
+> > +            spi-cpha;
+> > +
+> > +            avcc-supply =3D <&adc_vref>;
+> > +            vdrive-supply =3D <&vdd_supply>;
+> > +
+> > +            interrupts =3D <25 IRQ_TYPE_EDGE_FALLING>;
+> > +            interrupt-parent =3D <&gpio>;
+> > +
+> > +            adi,conversion-start-gpios =3D <&gpio 17 GPIO_ACTIVE_HIGH>=
+;
+> > +
+> > +            adi,conversion-start-gpios =3D <&gpio 17 GPIO_ACTIVE_HIGH>=
+;
+> > +            reset-gpios =3D <&gpio 27 GPIO_ACTIVE_HIGH>;
+> > +            adi,first-data-gpios =3D <&gpio 22 GPIO_ACTIVE_HIGH>;
+> > +            standby-gpios =3D <&gpio 24 GPIO_ACTIVE_LOW>;
+> > +
+> > +            adi,sw-mode;
+> > +
+> > +            channel@1 {
+> > +                reg =3D <1>;
+> > +                diff-channel;
+>
+> Where is this property defined (which schema)?
+>
+> Did you test it?
 
->> > >> +     */
+Tested on my board.
+But forgot to update the DT schema docs.
+Though, if you're referring to testing it somehow via some make
+command, I'm a little behind on how all this works now.
+I'll go re-check the "make dtbs_check" and similar commands.
 
-> 	/*
-> 	 * Multi-line function comments should start on the line after the
-> 	 * opening slash-asterisk, like so.
-> 	 */
+Maybe I sound a bit old (now), but when I last saw these DT bindings
+going from txt-to-yaml, they seemed relatively simple.
+Now, they're almost like their own programming language.
+I'll search for some quick setup guides for these; any pointers are welcome=
+ :)
 
->> > >> +    vcpu_set_cpuid_property(vcpu, X86_PROPERTY_NUM_PERF_CTR_CORE,
->> > >> nr_counters);
->> > >> +    if (core_ext)
->> > >> +            vcpu_set_cpuid_feature(vcpu,  
->> X86_FEATURE_PERF_CTR_EXT_CORE);
->> > >> +    if (perf_mon_v2)
->> > >> +            vcpu_set_cpuid_feature(vcpu, X86_FEATURE_PERF_MON_V2);
->> >
->> > > hmm, I think this might not be enough. So, when the baremetal machine
->> > > supports Perfmon v2, this code is just testing v2. But we should be  
->> able
->> > > to test anything below v2, ie., v1, v1 without core_ext. So, three
->> > > cases need to be tested here: v1 with 4 counters; v1 with core_ext (6
->> > > counters); v2.
->> >
->> > > If, the machine running this selftest does not support v2 but it does
->> > > support core extension, then we fall back to test v1 with 4 counters  
->> and
->> > > v1 with 6 counters.
->> >
->> > This should cover all cases the way I wrote it. I detect the number of
->> > counters in nr_core_counters(). That tells me if I am dealing with 4 or
->> > 6 and then I set the cpuid property based on that so I can read that
->> > number in later code instead of duplicating the logic.
-
->> right. in the current code, you set up the counters properly according
->> to the hw capability. But the test can do more on a hw with perfmon
->> v2, right? Because it can test multiple combinations of setup for a
->> VM: say v1 + 4 counters and v1 + 6 counters etc. I am just following
->> the style of this selftest on Intel side, in which they do a similar
->> kind of enumeration of PMU version + PDCM capabilities. In each
->> configuration, it will invoke a VM and do the test.
-
-> Ya.  This is similar my comments on setting NUM_PER_CTR_CORE when the  
-> field
-> shouldn't exist.  One of the main goals of this test is to verify the KVM  
-> honors
-> the architecture based on userspace's defined virtual CPU model, i.e.  
-> guest
-> CPUID.  That means testing all (or at least, within reason) possible  
-> combinations
-> that can feasibly be supported by KVM given the underlying hardware.
-
-> As written, this essentially just tests the maximal configuration that  
-> can be
-> exposed to a guest, which isn't _that_ interesting because KVM tends to  
-> get plenty
-> of coverage for such setups, e.g. by running "real" VMs.
-
-Ok. I get what you and Mingwei are saying. I can test those combinations.
+>
+> Best regards,
+> Krzysztof
+>
 
