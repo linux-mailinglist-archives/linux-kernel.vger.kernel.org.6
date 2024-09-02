@@ -1,127 +1,129 @@
-Return-Path: <linux-kernel+bounces-311119-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311130-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E11CB968518
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 12:46:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B827F968537
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 12:50:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9F2BA285EBD
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 10:46:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 56887B213BE
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 10:50:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04B9B18592F;
-	Mon,  2 Sep 2024 10:46:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAE5A18593F;
+	Mon,  2 Sep 2024 10:47:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XMZM73cP"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="rUwEktDk"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EE50184531;
-	Mon,  2 Sep 2024 10:46:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6B1D17E00C
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 10:47:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725273974; cv=none; b=qYBj+M6IfK7KUaMm4w7uv9SgJEYRGbsZsfxdOTJoZhwPDpo5XVfFNX+goSXC2s+Cf6BVVAVU8JMJ2xMnMQooRJVFJUSfFg10sfH0v0phf3UMyFymMYokFu1XK/oXMdcGXkwDXgFWeLKjELOWg8rLwfAjRdUvXuHlhm38ZG5jroM=
+	t=1725274029; cv=none; b=uOFiXV3bQB5xAPjR4S2u3wo+I1p3n0pbIEJwefS+xHGRoSCMKiLtgBAAXjWPD6XmqBC9uWHIsT9wDBehgUv7fqJXjyIKUTIBy3fkxWsKMZhfCfN4mnDoBxWay8YkeX6K4pgMQ6tHpbsXsQoe+bbHVUjuSkP56ONz8HDn70cprv0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725273974; c=relaxed/simple;
-	bh=bZkng4mXiygiiT22/n5K2YMDGgQe85+QACIfHdscwC8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dqH92xBxFCWZLF66UAbNeZrHT4MvhQpCfyP6+HGPPu5eXm/owHYfw6BYK+/YoiV+VQbT2Rqr7Kd7L00GHXdJWy2fotEbmhNfWfJ6vOpP4mDO1QaS2ZTui5DoJskEB9Q0Nk4yDZR4oo8wSA8xL2iIg828uqtEgbGAwWgY7ubrLPA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XMZM73cP; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725273972; x=1756809972;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=bZkng4mXiygiiT22/n5K2YMDGgQe85+QACIfHdscwC8=;
-  b=XMZM73cP9ehZL0zOr28GlqoyE+8Hag9chZPZ2+DQ+8h7MADxP49XPX8Q
-   Gw/bYatHlnNa4sIjZtdY5pCiHTC5nlq4FTqpD9EflinzOEh+jsvnSYqE6
-   oDdMzGXyf1DUBPuSuh0daKIZAmmowu3eI4FTAGJ2c9KvrBBduuJTQVN27
-   l7ui8mq06vdiVxeBJII5Q6AuakDYWuYxssd8uW/G1nyFzkKvVxAsZK/GY
-   15EjmZGVoSIG39HTRDvKdUu/AIpb35MOL3VxojZG17cp11nB5ky75GftT
-   ybvMPl5fLUOoc/PPUNS5nF0+M0EghCx6zwXItt5D2QZBmoNlitlgVCUnR
-   Q==;
-X-CSE-ConnectionGUID: 33LTC2KSQ/+dITc4hfW7Qg==
-X-CSE-MsgGUID: alyDXASqSTOxI+bYN3iwIw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11182"; a="41349770"
-X-IronPort-AV: E=Sophos;i="6.10,195,1719903600"; 
-   d="scan'208";a="41349770"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2024 03:46:11 -0700
-X-CSE-ConnectionGUID: DT0h7GmkTGOhCgCyr3mDzg==
-X-CSE-MsgGUID: DdtrjTPwRiGhfizJEil8mw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,195,1719903600"; 
-   d="scan'208";a="69444479"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by orviesa004.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2024 03:46:10 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1sl4ZT-00000004KQa-2FRa;
-	Mon, 02 Sep 2024 13:46:07 +0300
-Date: Mon, 2 Sep 2024 13:46:07 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Heiner Kallweit <hkallweit1@gmail.com>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Mika Westerberg <mika.westerberg@linux.intel.com>,
-	Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v1 0/5] pinctrl: intel: High impedance impl. and cleanups
-Message-ID: <ZtWXb_vkzUL8U7-F@smile.fi.intel.com>
-References: <20240828184018.3097386-1-andriy.shevchenko@linux.intel.com>
- <Zs-B9m4jO9x3wX4d@smile.fi.intel.com>
- <e46d7c57-4534-41fb-a274-5e96a93488d1@gmail.com>
+	s=arc-20240116; t=1725274029; c=relaxed/simple;
+	bh=tDah0EiX2QJRFB9Cf/8cXLOBVOtbqSnLW1c0fNSrnDM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=R91uVyw4wUxktnlxHTQJ+98J6Md3R2gsoy8A+7RAmbIF6OSarlrOKzU753JoYzP98C/wPC+Ly1nyFufRm+ybLdWoh2r5aru/nm0zq4Rf30daqmlAa/V37H3JsB+Gv/zMeyLAYfv2+K4PNcRGZ8uyKBya001iBXTHfWT4lT/3oDo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=rUwEktDk; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-42bb4f8a4bfso21845635e9.1
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2024 03:47:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1725274026; x=1725878826; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tDah0EiX2QJRFB9Cf/8cXLOBVOtbqSnLW1c0fNSrnDM=;
+        b=rUwEktDkHulBV0pS1DHhAdkq8vI1nvHYkJ1ftcseHEsnTQveiPA3IqFqGegCqS9svB
+         ffW6HUGwmu7BVrrKNf5Lke0vwNb7T/lb7ulE+7I0I8+ypdoJ1ilFZrCgKlS3ELfIy5yM
+         Ut5CnNxmdE8GIQShI4LdG8Arv9GtH+1eXUMQwrOgrvk0pe550SpQ93jr0PZQY3ScskOa
+         FKmJfZNDzFuWlwIFzkip4J0Q3EJIjiEI/VKeb9SGBhUrsKj56Buv7PLA5q4RTYdf23BU
+         ONC69c+8zZFoLVvgqeVc/ZWnINKgXyBBvaPIkNNrYMxZb163HXlIQbBRB7+40+T0EosJ
+         vvfg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725274026; x=1725878826;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=tDah0EiX2QJRFB9Cf/8cXLOBVOtbqSnLW1c0fNSrnDM=;
+        b=UePEZ7WI36suURQCpXzafdf3y8QgYYCt6+N6nQ5+qnU7HUR3YNQAQOBE81xz4NVk/A
+         1lQ0qm33CPmfBBC8Jhygr13YOPEK/9apJMhv2KABswS7Lzo69NqNtrOKmI8e4d/tRq+V
+         0SGJuFCvlY7VfPvnqfkYvpQzj7gD14jZC17AA7viaR3v7Vso23J0UJqryoO/mW6m9N1N
+         8FB6AqvFTxbzXUZswXH1wJzwHQjdmG4u9EhhCotaMH0mnOiMk/GcMIxRCfVE0LdV0tQ9
+         3M6AWxv/Kq7rgE2TDK/6vCYaePn5OyAwCE/oWALZhRdtXAxSZkwlDKdY3tZp986gZloR
+         JpYg==
+X-Forwarded-Encrypted: i=1; AJvYcCVgM2Nu54lsW9qxCIm+T2IbAMmfFiGIQVIxOFGzRwt1ohpvP+QJQ0XkJ02JFxOw7jxeUytuU26e2Ng+2WY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyMwUSSkdwjY4H3PrErt3EN4Ut2b72+REmi7W4sRuTOINIfKXcL
+	mBBFzN8n/1vaPB5Ex2E9onB7HXwqI1BcSq+BbP3/97m09x9euKEc2l4WExBE7pQ8rD/BwJ48BN6
+	ikVUnKjoV5hk2gCkkp9AyPguCK7kI2WKjYIyR
+X-Google-Smtp-Source: AGHT+IHIqV4yykcuSDh8/L9j2xuNA7UB6o306ceirl6YASbGc8rNGJOeqVEHOSBb9wDUJJnEZZEv+Rd0P/hFLHw6zjc=
+X-Received: by 2002:adf:b31a:0:b0:374:c618:7fd2 with SMTP id
+ ffacd0b85a97d-374c6188127mr2867899f8f.8.1725274025625; Mon, 02 Sep 2024
+ 03:47:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e46d7c57-4534-41fb-a274-5e96a93488d1@gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20240827-static-mutex-v2-1-17fc32b20332@google.com>
+ <10453342-d269-4b78-8962-821ef53d3cb5@proton.me> <CAH5fLgh-DYvXobXQVaQ9txYS4Rx8QhjyVvfTphk6vvnUOGzPnw@mail.gmail.com>
+ <20240830160953.768e38c2@eugeo>
+In-Reply-To: <20240830160953.768e38c2@eugeo>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Mon, 2 Sep 2024 12:46:53 +0200
+Message-ID: <CAH5fLgjasg1UKyF84f-6dnzGZMKgjgZ6n7e+bL7nWkJoYBsSyA@mail.gmail.com>
+Subject: Re: [PATCH v2] rust: add global lock support
+To: Gary Guo <gary@garyguo.net>
+Cc: Benno Lossin <benno.lossin@proton.me>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Andreas Hindborg <a.hindborg@samsung.com>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Aug 30, 2024 at 11:24:06PM +0200, Heiner Kallweit wrote:
-> On 28.08.2024 22:00, Andy Shevchenko wrote:
-> > On Wed, Aug 28, 2024 at 09:38:33PM +0300, Andy Shevchenko wrote:
-> >> We would need a high impedance implementation for a quirk, so here it
-> >> is. While doing this series I also noticed a couple of opportunities
-> >> to clean up, hence two more patches (1st and 5th).
-> > 
-> > Sorry it took a while to actually start implementing the quirk for your case.
-> > Here I'm asking for the following things:
-> > 
-> > 1) what is the marketing name of the device you have problems with?
-> > (I believe it's available on the free market, correct?);
-> > 
-> > 2) does it have any BIOS updates and, if it has, does it fix the issue?
-> > 
-> > 3) can you apply patches 2,3,4,5 from this series (the first one is buggy and
-> > not needed for you) and replace the hack I mentioned earlier with
-> > 
-> > 	ret = intel_gpio_set_high_impedance(pctrl, 3);
-> > 	if (ret)
-> > 		return ret;
-> > 
-> > somewhere at the end of intel_pinctrl_probe()?
-> > 
-> > Does it still work as expected?
-> > 
-> > 
-> In latest series the return value of intel_gpio_set_high_impedance()
-> has been removed. With the call to intel_gpio_set_high_impedance()
-> changed accordingly this fixes the problem on my system.
-> Thanks a lot for your efforts!
+On Fri, Aug 30, 2024 at 5:10=E2=80=AFPM Gary Guo <gary@garyguo.net> wrote:
+>
+> On Fri, 30 Aug 2024 07:34:00 +0200
+> Alice Ryhl <aliceryhl@google.com> wrote:
+>
+> > > > Due to the initialization requirement, constructing a global mutex =
+is
+> > > > unsafe with the current approach. In the future, it would be really=
+ nice
+> > > > to support global mutexes that don't need to be initialized, which =
+would
+> > > > make them safe. Unfortunately, this is not possible today because
+> > > > bindgen refuses to expose __ARCH_SPIN_LOCK_UNLOCKED to Rust as a
+> > > > compile-time constant. It just generates an `extern "C"` global
+> > > > reference instead.
+> > >
+> > > Ideally, we would have support for static initialization in pinned-in=
+it.
+> >
+> > I don't think traits work with const today, so pin-init would need an
+> > entirely different mechanism? If you're talking about using
+> > CONSTRUCTORS, then I think it's an undesirable solution. C code can
+> > define static mutexes without load-time initialization hooks. We
+> > should be able to do the same.
+>
+> I think I actually prefer using constructors to unsafe.
 
-Thank you! I will think now, how to make the real quirk (which I may ask you to
-test in the future, when it will be ready) that looks and feels not as an ugly
-hack.
+Constructors are used pretty rarely. They're not enabled in the
+Android build right now at all. I could ask to enable the option, but
+I think "global mutexes" are a rather weak reason.
 
--- 
-With Best Regards,
-Andy Shevchenko
+I also think they're a can of worms safety-wise. You can't run
+arbitrary code in them since otherwise one constructor could use
+another global before it gets initialized, so we will still need
+global-mutex/spinlock-specific functionality even with constructors.
+At that point, I think it would be better to just strive for real
+const mutexes.
 
-
+Alice
 
