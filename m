@@ -1,47 +1,75 @@
-Return-Path: <linux-kernel+bounces-311639-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311641-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3B16968B71
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 18:00:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2930B968B76
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 18:01:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E885A1C229EA
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 16:00:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 770221F21A82
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 16:01:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14DC11A2639;
-	Mon,  2 Sep 2024 16:00:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 557661A3029;
+	Mon,  2 Sep 2024 16:01:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qWuDi0lf"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="e8wK5sYs"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F5141CB512;
-	Mon,  2 Sep 2024 16:00:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E923742AB7
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 16:01:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725292827; cv=none; b=qMvVWHXZJiNglpPI2ekg/dN+zlfs/Ijd+GTZoJSAlsZ4vaK6AsVFzqTWxMG/oISHJc5agVFR0H9J5OpYriIiLWIsdCi60W+35m3zdC3qUkKsh2RO6zcYG/+QPIBtomjz9+Gdl4SOZgd6L6W6V90D7FCLw2VykSjrK5+ehgoAYL8=
+	t=1725292908; cv=none; b=b/lgwYOYM67VaaugnBRdAueA4WO4s3Qnh/9cduhwS47gfBxy77qxupJZISAx3oDMQyAQJCkATYjAN8CJHNhp07ADv4BH5ZNKVRLswie/1UggzWt1VDzUfV4Yb52X6vBDZCTQWwPIj23WvMavg09i/A18idD1CvBdGz5cBAR7aP8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725292827; c=relaxed/simple;
-	bh=rmax+sHluXuQRSV9il3QO6Srk5sL18Fdd6bxpT9Ycew=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cPtXcuVqzxu+GawDTCsOY67LmtE09pp6i0eXabgOFK0xDY/zqeLzXszUeYXhyCE1Lr6DKWCN37qdmSWKDUfWoUZF5GiRYT10w8y7lQmS8tonHEJSMnkJHyNiz2hy7rLdLRt+aJy/6orDfSEDrJgqTBFulcd3l0q8BfgWnkC7JxQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qWuDi0lf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0517BC4CEC2;
-	Mon,  2 Sep 2024 16:00:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725292826;
-	bh=rmax+sHluXuQRSV9il3QO6Srk5sL18Fdd6bxpT9Ycew=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=qWuDi0lfzCOdMYJ5vEWmLa0H1lN3sbwccxQ75HP6/Bt3tb0BhbjY/yjDuiMdXzwjr
-	 uAVIgnhFPCXPTxdHO3vxpob1GfdY06WdIrOfcX9KxadM56aA3t4BHHhng1MiK8vzu1
-	 lGdLfluP/S7utQy7vOukgZmgd8m74zHDvJXsNQbojEYORIJ1bm/vW0BmGaZaU0z9Yg
-	 bmBADaeHbQASsBLRdS7PQHw1B5xuYHHcnlDcv5Hu6PaCqbKizenDgPL9Hc1CPblKpo
-	 bmcBQmBw9yHA+xunUxcWSA5zo9h+ibnNjEsXPNVNidFxjw5IfCr5lWkSIWuiNxc2Fo
-	 y+Ggs+L/wq/3Q==
-Message-ID: <470a9ca2-93b6-44e3-865c-9d425f4df8dc@kernel.org>
-Date: Mon, 2 Sep 2024 18:00:18 +0200
+	s=arc-20240116; t=1725292908; c=relaxed/simple;
+	bh=q1Sk8iuFNM9LQs8bptLDUAHhOMaqgVIg77iI7T6Vu8A=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=by9y1BZoJIcN6e5R4enXr6htLURUfmypVMQqfGKWEhxzdq+Hiqsceo8FqGVDroFV8rp/6285atCs9Zxodt3bW23crSwI5Op9SLtf0yg96OmPkkPOLKaDSnI+CP4cyKmZzYGWdEWBDW+ip9jO7OFJOFj0482v+racY2zQD2l3FwM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=e8wK5sYs; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-42c828c8863so11487055e9.3
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2024 09:01:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1725292905; x=1725897705; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=SF/Ff5WyVgapJBUAlK400SzZpWZqi3ZPw8P5uireNeY=;
+        b=e8wK5sYsjM0AD8LzuG7K+7Xl/+zk638xdmWTZ1BTH4jI2VoTmhmjzRW4vmu0KveuED
+         pTUiuldzjftnjn5xS/dllodJFBde9dDHHazU/T+gD8/iUn3EL/+RKDKwT+RDjN4cOuSY
+         DabfxJih/6s2w2OlarvpL0Bp7F9f3/Q/CX9zRVuVB0IIzeXXCvCe9tlUB2rDgJv0cqwm
+         Drm4JwFO2QWFJIeuGtPl42BxX+TIFt5G0S5B/WilEvfXOL5flVLn2c9ApoXeLaztFsZq
+         ESIU41qcBrDzBkCFm8LQ9rGmWptL2MneSC/7CWww1gShlvQjurc4vJKFqUsQs0dBrwEx
+         EejQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725292905; x=1725897705;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=SF/Ff5WyVgapJBUAlK400SzZpWZqi3ZPw8P5uireNeY=;
+        b=DALdoORSxBP+YmA87xZEGB94YHG8tJL/x/MnWJ/LkXNxn042ERP14s4lEez5YLqhH7
+         w4eKBnWsmcY/nR9jQG+DqSfuBaWuq5jnB+D836/w8D3V89AMOBMFsQcqnFH0Rvv5TkVk
+         Ho7XJCgoj5EEiBt2g9MkNOBgN6sFhbJV4ub27FISoVwkwBC5P6ufHgKlN+VXwPOUcI9E
+         syWmKmNsWypdnq6qsZkiT5IbGfUsqP8V895WsiTlTa9/wHAqdPzAxjpgCkdTTy5MVqEt
+         uyuoj/vuHeRrQeWxeL7pbA8e9AnybAGKb8hmhwXJPy2fp9pTPqrh4rwJuq4wbMRmE7i3
+         qg+Q==
+X-Forwarded-Encrypted: i=1; AJvYcCV5y1B67vxDfKy+FYF4+izhZvJfL9fr2/xYtxWeqeiuV6n4M6mBha7bWax/VSbe7DLqgwr8Rc1HzYSq/4Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxA7Fs1Vwri/Bju1PKX4rVI04loPjU02f/MMKBUVObgQXkI8tGP
+	oh0UukzTOJKtI49d3dn9XqaWF2Jd4j0QyqPolXcUmhPhUMv3Gcop7nvrUq20I9E=
+X-Google-Smtp-Source: AGHT+IF1FhUQ7IvRKPdMigexj7urXN7rPlu172HF+X6OH59nohe9A0m5J5raB29jCzlTZvWnIcmgDA==
+X-Received: by 2002:a05:600c:1d27:b0:428:9ba:39f with SMTP id 5b1f17b1804b1-42bdc6333bdmr57198385e9.11.1725292904649;
+        Mon, 02 Sep 2024 09:01:44 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:982:cbb0:7dba:3cd0:a1f4:e3fa? ([2a01:e0a:982:cbb0:7dba:3cd0:a1f4:e3fa])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42ba639d512sm175180525e9.18.2024.09.02.09.01.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 02 Sep 2024 09:01:44 -0700 (PDT)
+Message-ID: <925061d3-9894-4332-8c2a-e494ad22c66b@linaro.org>
+Date: Mon, 2 Sep 2024 18:01:43 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,168 +77,157 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dt-bindings: ARM: at91: Document Microchip SAMA7D65
- Curiosity
-To: Nicolas Ferre <nicolas.ferre@microchip.com>,
- Dharma Balasubiramani <dharma.b@microchip.com>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>,
- Claudiu Beznea <claudiu.beznea@tuxon.dev>, Arnd Bergmann <arnd@arndb.de>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, Romain Sioen <romain.sioen@microchip.com>,
- Ryan Wanner <Ryan.Wanner@microchip.com>,
- Varshini Rajendran <Varshini.Rajendran@microchip.com>
-References: <20240829-sama7d65-core-dt-v1-1-e5d882886f59@microchip.com>
- <eb96bcf2-8bcd-4801-b381-96583d733b87@kernel.org>
- <7a4160cf-d170-4bbd-a4bc-da69c2c43d55@microchip.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <7a4160cf-d170-4bbd-a4bc-da69c2c43d55@microchip.com>
-Content-Type: text/plain; charset=UTF-8
+From: neil.armstrong@linaro.org
+Reply-To: neil.armstrong@linaro.org
+Subject: Re: [PATCH 2/2] arm64: dts: qcom: x1e80100-romulus: Set up USB
+ Multiport controller
+To: Konrad Dybcio <konradybcio@kernel.org>,
+ Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: Marijn Suijten <marijn.suijten@somainline.org>,
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Konrad Dybcio <quic_kdybcio@quicinc.com>,
+ 20240830-nxp-ptn3222-v2-0-4c6d8535cf6c@linaro.org
+References: <20240902-topic-sl7_updates-v1-0-3ee667e6652d@quicinc.com>
+ <20240902-topic-sl7_updates-v1-2-3ee667e6652d@quicinc.com>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <20240902-topic-sl7_updates-v1-2-3ee667e6652d@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 02/09/2024 17:10, Nicolas Ferre wrote:
-> On 31/08/2024 at 15:38, Krzysztof Kozlowski wrote:
->> On 29/08/2024 11:57, Dharma Balasubiramani wrote:
->>> From: Romain Sioen <romain.sioen@microchip.com>
->>>
->>> Document device tree binding of the Microchip SAMA7D65 Curiosity board.
->>>
->>> Signed-off-by: Romain Sioen <romain.sioen@microchip.com>
->>> Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
->>> Signed-off-by: Dharma Balasubiramani <dharma.b@microchip.com>
->>> ---
->>>   Documentation/devicetree/bindings/arm/atmel-at91.yaml | 7 +++++++
->>>   1 file changed, 7 insertions(+)
->>>
->>> diff --git a/Documentation/devicetree/bindings/arm/atmel-at91.yaml b/Documentation/devicetree/bindings/arm/atmel-at91.yaml
->>> index 82f37328cc69..8e897680d43a 100644
->>> --- a/Documentation/devicetree/bindings/arm/atmel-at91.yaml
->>> +++ b/Documentation/devicetree/bindings/arm/atmel-at91.yaml
->>> @@ -174,6 +174,13 @@ properties:
->>>             - const: atmel,sama5d4
->>>             - const: atmel,sama5
->>>
->>> +      - description: Microchip SAMA7D65 Curiosity Board
->>> +        items:
->>> +          - const: microchip,sama7d65-curiosity
->>> +          - const: microchip,sama7d65
->>> +          - const: microchip,sama7d6
->>> +          - const: microchip,sama7
->>> +
->>
->> No. This must go with the DTS.
->>
->> It's second patch you sent entirely split from the rest. That's not how
->> upstreaming of DTS and drivers work.
+On 02/09/2024 16:50, Konrad Dybcio wrote:
+> From: Konrad Dybcio <quic_kdybcio@quicinc.com>
 > 
-> Krzystof,
+> The USB MP controller is wired up to the USB-A port on the left side
+> and to the Surface Connector on the right side. Configure it.
 > 
-> We have been upstreaming sam9x75 SoC and now are trying with sama7d65 
-> SoC using a different approach.
+> While at it, remove a stray double \n.
 > 
-> It was mentioned to us to reduce the number of patches sent in a series, 
-> convert the remaining DT bindings from txt to yaml (we had quite a few), 
-> avoid generating new errors from the DT bot when sending new .dtsi/dts 
-> files... So we're trying to comply to these (valid) requirements... But 
-> well, it's not easy and I would like to emphasize that we are doing our 
-> best to address most of the (sometimes contradictory) challenges.
-
-I understand.
-
+> Signed-off-by: Konrad Dybcio <quic_kdybcio@quicinc.com>
+> ---
+>   .../boot/dts/qcom/x1e80100-microsoft-romulus.dtsi  | 59 +++++++++++++++++++++-
+>   1 file changed, 57 insertions(+), 2 deletions(-)
 > 
-> So now, we're trying to be very minimal in what we're sending. Address 
-> peripherals incrementally with trying to generate as few DT check errors 
-> as possible. Trying this, we're facing chicken and eggs problems: How to 
+> diff --git a/arch/arm64/boot/dts/qcom/x1e80100-microsoft-romulus.dtsi b/arch/arm64/boot/dts/qcom/x1e80100-microsoft-romulus.dtsi
+> index 5419d0b02785..ac2acf949b70 100644
+> --- a/arch/arm64/boot/dts/qcom/x1e80100-microsoft-romulus.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/x1e80100-microsoft-romulus.dtsi
+> @@ -572,7 +572,17 @@ &i2c5 {
+>   
+>   	status = "okay";
+>   
+> -	/* Something @4f */
+> +	ptn3222: redriver@4f {
+> +		compatible = "nxp,ptn3222";
+> +		reg = <0x4f>;
+> +
+> +		reset-gpios = <&tlmm 7 GPIO_ACTIVE_LOW>;
+> +
+> +		vdd3v3-supply = <&vreg_l13b>;
+> +		vdd1v8-supply = <&vreg_l4b>;
+> +
+> +		#phy-cells = <0>;
 
-That's fine.
+It's unrelated to mutiport USB-A, should go in a separate change,
+and also probably in a bigger change enabling usb-c features using
+the retimer.
 
-> comply to a binding that is not yet accepted? How to organize 
-> introduction of a new SoC with a limited number of patch in a series? 
-> How to convert bindings to yaml and still be able to add new SoCs?
+Neil
 
-Before I answer to above, let me just clarify that patch here is not
-related to this problem. You are not converting bindings here, you are
-not fixing dtbs_check errors.
-
-At least as far as I understood.
-
-This is binding for new board (new DTS). All of such bindings should
-come with the board DTS. Especially that they will physically go via
-same branch of maintainer's tree. That's why combing this bindings patch
-with DTS patch does not result in any new warning.
-
-Now if you ask about organizing patches, then guideline from me:
-1. Send device bindings with device driver changes to respective
-maintainers. Each is separate patchset.
-2. Another patchset: Send bindings going through SoC maintainer with new
-DTSI and DTS. Provide link lore link to the bindings, if feasible.
-
-> Be sure that we have been coordinating internally to be ready and send 
-> these patch series together. We're a team and are splitting the 
-> workload, I believe that it should be possible.
-> I feel that upstreaming a SoC is becoming overly difficult, and I added 
-> quite a few to Mainline throughout the years.
+> +	};
+>   };
+>   
+>   &i2c7 {
+> @@ -583,7 +593,6 @@ &i2c7 {
+>   	/* PS8830 USB retimer @8 */
+>   };
+>   
+> -
+>   &mdss {
+>   	status = "okay";
+>   };
+> @@ -717,6 +726,15 @@ &smb2360_1_eusb2_repeater {
+>   	vdd3-supply = <&vreg_l14b>;
+>   };
+>   
+> +&smb2360_2 {
+> +	status = "okay";
+> +};
+> +
+> +&smb2360_2_eusb2_repeater {
+> +	vdd18-supply = <&vreg_l3d>;
+> +	vdd3-supply = <&vreg_l8b>;
+> +};
+> +
+>   &tlmm {
+>   	gpio-reserved-ranges = <44 4>, /* SPI (TPM) */
+>   			       <238 1>; /* UFS Reset */
+> @@ -856,3 +874,40 @@ &usb_1_ss1_dwc3_hs {
+>   &usb_1_ss1_qmpphy_out {
+>   	remote-endpoint = <&pmic_glink_ss1_ss_in>;
+>   };
+> +
+> +/* MP0 goes to the Surface Connector, MP1 goes to the USB-A port */
+> +&usb_mp {
+> +	status = "okay";
+> +};
+> +
+> +&usb_mp_hsphy0 {
+> +	vdd-supply = <&vreg_l2e>;
+> +	vdda12-supply = <&vreg_l2j>;
+> +
+> +	phys = <&smb2360_2_eusb2_repeater>;
+> +
+> +	status = "okay";
+> +};
+> +
+> +&usb_mp_hsphy1 {
+> +	vdd-supply = <&vreg_l2e>;
+> +	vdda12-supply = <&vreg_l2j>;
+> +
+> +	phys = <&ptn3222>;
+> +
+> +	status = "okay";
+> +};
+> +
+> +&usb_mp_qmpphy0 {
+> +	vdda-phy-supply = <&vreg_l3e>;
+> +	vdda-pll-supply = <&vreg_l3c>;
+> +
+> +	status = "okay";
+> +};
+> +
+> +&usb_mp_qmpphy1 {
+> +	vdda-phy-supply = <&vreg_l3e>;
+> +	vdda-pll-supply = <&vreg_l3c>;
+> +
+> +	status = "okay";
+> +};
 > 
-> Can you please let us post this minimal set of patch series, give you 
-> the needed information and cross-reference links, but also understand 
-> that we're adding pieces of a big puzzle that would require a bit of 
-> flexibility?
-
-Sure, I am flexible here. But you posted:
-1. Device bindings separate from the drivers, which is just wrong and it
-does not bring you anywhere. It only creates confusion and additional
-effort for maintainers, because they need to review separate bindings
-from drivers.
-
-2. DTS board bindings without DTS. There is no single explanation for
-this, no benefit, no reason to do that way.
-
-Best regards,
-Krzysztof
 
 
