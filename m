@@ -1,441 +1,168 @@
-Return-Path: <linux-kernel+bounces-311783-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311784-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A6A1968D99
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 20:38:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13C62968D97
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 20:37:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F0EF01F2440D
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 18:38:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C60F9281EBD
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 18:37:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18E321AB6C0;
-	Mon,  2 Sep 2024 18:37:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1A071C62C8;
+	Mon,  2 Sep 2024 18:37:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ywru1nI2"
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="p81gWxaR"
+Received: from mail-io1-f74.google.com (mail-io1-f74.google.com [209.85.166.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C27819CC3A
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 18:37:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 775C21AB6E0
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 18:37:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725302260; cv=none; b=occTeziRumb+RGz0N/uBSorfBH5tbq5E8eE7UjwU6CwpelAvA5HfTJy8sOyPOb1v/bSv/zMynH7TRfVaFQUVHzAhyzIZv33y4Mk1llsNvdBLml4vWE2efZGWuMM/3mMpZVBeulYuRIxR8fjF0qbgbDxbu6NXT6pgVb43Q8v1cAY=
+	t=1725302260; cv=none; b=EwxxziwdiCvMJkZb4hj0P9+gOb7uzJIuLqccPGj1DCkLk3G9fPzncPvhp9HSFEpvEdVe6Dc530xG956asuYdbUHdT/QDZKPgHc/y9qxqY/DQPXdDkfxuVuABipd+u/Ezs/O2ywF4ZMr2kqe5ozB/0v4lk9WgG2WizElK9bYsDYs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1725302260; c=relaxed/simple;
-	bh=Dsp38Cct5JZb9A32kTk2lYSZBszkKftdSXzYWR0muKY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TsuFabiryIXms9vsaJrm3aO/QucbfgSscsdd3+gJSjZsargs1kB3Ktf57tYjXFjtvMlRyUsAxN5fKkT8hpSux8qMpJioV8aoNkiIQscrvyrMx/EbQ5YBzrgpgo/WZ2lG0OdWi+ctksTSTGoZgjM2Povjr9vQ/9itxsx53WkCB7M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Ywru1nI2; arc=none smtp.client-ip=209.85.167.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-533488ffaebso5401594e87.0
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2024 11:37:36 -0700 (PDT)
+	bh=0f1aN9HLbWF92dFi99NsPlbmjKqZ++MNJBcwsjyzqWg=;
+	h=Date:In-Reply-To:Mime-Version:Message-ID:Subject:From:To:Cc:
+	 Content-Type; b=l6zNmU6CyHS/by5LiE8iShyzy8pGGwYGRnjPm6povQGABHza+T+QcKtRh84nSaQzerdFJmZLL6AiDrc3pegy+n8jje2krPG6rKPbP3OAyo3eVaDzm37C/6Qj19g3rf3G9pvWp5siSquJVXsS5/S5SI044SHyjs2aIg9RsQSB0/A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--coltonlewis.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=p81gWxaR; arc=none smtp.client-ip=209.85.166.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--coltonlewis.bounces.google.com
+Received: by mail-io1-f74.google.com with SMTP id ca18e2360f4ac-82a4f65fa5aso106401639f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2024 11:37:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1725302255; x=1725907055; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=9xKEu2s7Z+1VCI7BapxbaueK4cWY4QKnmPl75pBw1i0=;
-        b=Ywru1nI2frm2poyLr3qCv5fvMNCicdwo/lQgLNJ7dx2AscOMQpbYzpyxrEG1/M3wQ7
-         4eLCgaBp7/19AG//ntITFDoOkXKf2OUOK8sWBEVrnpFVDUM2gllkmwpfJ+U+OB7bT5NA
-         C0oPjNfdyhbj0GPa26zW6CEOgpBJQoLZrWrfhlZEfp/GdU8nrNk1aIjXSym5SRzjlWLK
-         5acOLHpulzDAOVq+tG8suHyZfBAWcfZcyF0EkLen9pgKNiWIQ1XfFnOm8swwMBJ7swXo
-         NO+8t88rOECZKhpIDCInUMfUmz3Qj8f76tpia7Rt12m+dQ3Id97GDOG9vftlgs/OJszS
-         xCiw==
+        d=google.com; s=20230601; t=1725302257; x=1725907057; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:in-reply-to:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=nAO/71uT5RCAsBJVu4g+dwe4+a2p2kFZ1jdndEbhd+o=;
+        b=p81gWxaR6mfBj2uJUybRfMAov24UYxjpQVk+WPzMhg6b4ab+wFJGq5oJUdGcD1aKO1
+         NjXiAWZVBr+8rLJwxpwubnA7izc6vBey+XXUluAtuRRF/zSBUPZ6TKV9hP5b10MIbuko
+         obTrpFy7xsgEV2e2v0gom7RVSma4CJMQ8FT+WsVCuyHWZrQu4JDIv8uxbPtr8yeQOOj4
+         yAhoLlep9fK71AaHD+x4U3uzBntIrngHn27rs1wbXMCQrz9+2UZgHmI53BRcg5Q8yH3t
+         UmIfIdST5/8L5Z0/+Yx/OvCSyX+00DI9MzsIduTwxyrVUIkAJA1qvqm1ScX6jD4Z1wKr
+         ZTlg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725302255; x=1725907055;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9xKEu2s7Z+1VCI7BapxbaueK4cWY4QKnmPl75pBw1i0=;
-        b=m7+PJxMfAljPszBnH+H98AAqquGN6vPWCMmAvPjcsCvxtrHq9WeLQPzS06WksQxSSu
-         5qAW2N5Ylzot88aOLLpsPIn7g3L6EPZptXIYAKPz5ETL1Mst2mVIBgwne9J300mx5y/k
-         H4MX/wpSUKTrNlbRrBED0yyMtSC7UuK31SF3zCCAIvM0ehCje2I/HBEGIEzoOjQHM7xK
-         xvyEHc7XAvcK+wg6vAbntWrYYfLXfCfdFCAncqDIs2WsDCFa57YKT99jlrcBgxi1gYd/
-         qGQ/3bkPyO9jH3/OZiHWoIq0dG9XHvOPabpcldsnA9WLaxQg/1ysqwliNlHsnqMh5yo0
-         e8zw==
-X-Forwarded-Encrypted: i=1; AJvYcCXpj1OqKY6cdHzjPiasBvugIpEs9hpGuKIADXVV0Fxj80S6Ucj3G7fUxhOmF/fsk75HkPI+jvsDScEP4pc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzWAY+/UYOlE8RxExGzXHJcUJerCJyxs1Isr2RNziXh0+BB61K0
-	X0kWU/fVBuCcOErP8NoiWBT2YGUO3IQ+XgwXCNLZJwqSLZW1ayB+ubd6CCBbl64=
-X-Google-Smtp-Source: AGHT+IF0GVR8WQmeR/FywLPUVQFKKPZxgl2SZGvXNjKPVZ/5LIp2Fqkzh4Q8z+PwYOgfLfbdADqzyQ==
-X-Received: by 2002:a05:6512:3089:b0:52c:8abe:51fb with SMTP id 2adb3069b0e04-53546af36dbmr7817271e87.10.1725302253942;
-        Mon, 02 Sep 2024 11:37:33 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53540827aecsm1712832e87.174.2024.09.02.11.37.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Sep 2024 11:37:33 -0700 (PDT)
-Date: Mon, 2 Sep 2024 21:37:31 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Krishna Chaitanya Chundru <quic_krichai@quicinc.com>
-Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>, 
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>, Rob Herring <robh@kernel.org>, 
-	Bjorn Helgaas <bhelgaas@google.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
-	cros-qcom-dts-watchers@chromium.org, Bartosz Golaszewski <brgl@bgdev.pl>, 
-	Jingoo Han <jingoohan1@gmail.com>, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
-	andersson@kernel.org, quic_vbadigan@quicinc.com, linux-arm-msm@vger.kernel.org, 
-	linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: Re: [PATCH v2 8/8] PCI: pwrctl: Add power control driver for qps615
-Message-ID: <w547dmmxqqa4atd62jqiqcfzhlnpjc7n64btjmre5pmbsci4br@w45tuny3mcmn>
-References: <20240803-qps615-v2-0-9560b7c71369@quicinc.com>
- <20240803-qps615-v2-8-9560b7c71369@quicinc.com>
- <spaudnuoam3cj7glxmnlw7y3m46d2vsm42s576jqwrcrmywl2n@oyrynorzhddg>
- <872e1c39-4547-7cd3-ba49-bbbe59e52087@quicinc.com>
- <32488500-05B7-4D25-9AAF-06A249CC6B1D@linaro.org>
- <d0c8b466-5df2-853c-608d-ab67af1a9f32@quicinc.com>
- <CAA8EJpo7J9ZXC9uERg=WkjMbDD-fDTOO2VXaRVOCVZXiN18oSw@mail.gmail.com>
- <4d67915a-d57d-0a33-cdef-3bdf05961d16@quicinc.com>
- <CAA8EJppa2Z-h0vH2Cmeem_1Cw8C+53q7pXkJ03mut4Bsn+Vm7A@mail.gmail.com>
- <4c111681-03b8-9b4c-6b5b-ebfa4c5a7377@quicinc.com>
+        d=1e100.net; s=20230601; t=1725302257; x=1725907057;
+        h=cc:to:from:subject:message-id:mime-version:in-reply-to:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=nAO/71uT5RCAsBJVu4g+dwe4+a2p2kFZ1jdndEbhd+o=;
+        b=SkSgdbNUsAXiiOoeWs4lUabGwWEGS9TTVtPy54Ya/JEpwy+3S8DtE3PlgG1WzvBMRz
+         Hg6W8igKzow2VWTKM1kRA3TO0h37wFbEGyiaJCDq/hFHmZVMwlqKWXkC3u7HgnC8x2Mm
+         a+iOxd6BM8PRUjhvBtfsU5NB5Ap0MHzPkXW9A2PDaCGs+rM4oinM5Iiu20iALDzG/yUM
+         Na8Mldmcif5xy1pSw8tMFScs6hI7fwleQGuXb0S/OZbmyzAPco/edm5agse54iAr8EnI
+         1bs2j8yCQle2JTX/HfxVgbVETzpPc8bqPVlCg7nnDSAz1sMAJMPx3w/ooRmH7Tuxx6o1
+         Gk+w==
+X-Forwarded-Encrypted: i=1; AJvYcCU1qvbg87P6SxODZv1VwD6z2TNzmNmc+ZGzapGhObQ9if3qKnrDqaQ9PMlTslWFWI4AmLNm1hLz7tagt+I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyWGk8NupKUpwfn8iNw2DcsB+cSn2ucG+Wm4IiY8VViReciQo2Q
+	KSaHB+CF2K8TbUOqQMw9IqAG2brjUuuxlteIbb67R0ixTjriUuGhE8xwEajCJErz1UCUk48PBk2
+	rs+EMT4yU3+eqGpQj1RdwZw==
+X-Google-Smtp-Source: AGHT+IEklshSlPXSKl7m3pGgCZOFN2urZDLNUZ1eyTQmaZKHwzCs7QJN/43WSSevJlLHSgMuDO6x0IIt8x1YU2sS7w==
+X-Received: from coltonlewis-kvm.c.googlers.com ([fda3:e722:ac3:cc00:2b:ff92:c0a8:14ce])
+ (user=coltonlewis job=sendgmr) by 2002:a05:6638:3494:b0:4ce:928f:ad9a with
+ SMTP id 8926c6da1cb9f-4d017a1e518mr490136173.1.1725302257619; Mon, 02 Sep
+ 2024 11:37:37 -0700 (PDT)
+Date: Mon, 02 Sep 2024 18:37:37 +0000
+In-Reply-To: <ZtDd9YVc33b8Qt__@google.com> (message from Sean Christopherson
+ on Thu, 29 Aug 2024 13:45:41 -0700)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4c111681-03b8-9b4c-6b5b-ebfa4c5a7377@quicinc.com>
+Mime-Version: 1.0
+Message-ID: <gsntcyllaolq.fsf@coltonlewis-kvm.c.googlers.com>
+Subject: Re: [PATCH 3/6] KVM: x86: selftests: Set up AMD VM in pmu_counters_test
+From: Colton Lewis <coltonlewis@google.com>
+To: Sean Christopherson <seanjc@google.com>
+Cc: mizhang@google.com, kvm@vger.kernel.org, ljr.kernel@gmail.com, 
+	jmattson@google.com, aaronlewis@google.com, pbonzini@redhat.com, 
+	shuah@kernel.org, linux-kselftest@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 
-On Mon, Sep 02, 2024 at 04:17:06PM GMT, Krishna Chaitanya Chundru wrote:
-> 
-> 
-> On 9/2/2024 3:42 PM, Dmitry Baryshkov wrote:
-> > On Mon, 2 Sept 2024 at 11:32, Krishna Chaitanya Chundru
-> > <quic_krichai@quicinc.com> wrote:
-> > > 
-> > > 
-> > > 
-> > > On 9/2/2024 12:50 PM, Dmitry Baryshkov wrote:
-> > > > On Mon, 2 Sept 2024 at 10:13, Krishna Chaitanya Chundru
-> > > > <quic_krichai@quicinc.com> wrote:
-> > > > > 
-> > > > > 
-> > > > > 
-> > > > > On 8/8/2024 9:00 AM, Dmitry Baryshkov wrote:
-> > > > > > On August 5, 2024 1:14:47 PM GMT+07:00, Krishna Chaitanya Chundru <quic_krichai@quicinc.com> wrote:
-> > > > > > > 
-> > > > > > > 
-> > > > > > > On 8/3/2024 5:04 PM, Dmitry Baryshkov wrote:
-> > > > > > > > On Sat, Aug 03, 2024 at 08:52:54AM GMT, Krishna chaitanya chundru wrote:
-> > > > > > > > > QPS615 switch needs to be configured after powering on and before
-> > > > > > > > > PCIe link was up.
-> > > > > > > > > 
-> > > > > > > > > As the PCIe controller driver already enables the PCIe link training
-> > > > > > > > > at the host side, stop the link training. Otherwise the moment we turn
-> > > > > > > > > on the switch it will participate in the link training and link may come
-> > > > > > > > > up before switch is configured through i2c.
-> > > > > > > > > 
-> > > > > > > > > The device tree properties are parsed per node under pci-pci bridge in the
-> > > > > > > > > driver. Each node has unique bdf value in the reg property, driver
-> > > > > > > > > uses this bdf to differentiate ports, as there are certain i2c writes to
-> > > > > > > > > select particular port.
-> > > > > > > > > 
-> > > > > > > > > Based up on dt property and port, qps615 is configured through i2c.
-> > > > > > > > > 
-> > > > > > > > > Signed-off-by: Krishna chaitanya chundru <quic_krichai@quicinc.com>
-> > > > > > > > > ---
-> > > > > > > > >      drivers/pci/pwrctl/Kconfig             |   7 +
-> > > > > > > > >      drivers/pci/pwrctl/Makefile            |   1 +
-> > > > > > > > >      drivers/pci/pwrctl/pci-pwrctl-qps615.c | 638 +++++++++++++++++++++++++++++++++
-> > > > > > > > >      3 files changed, 646 insertions(+)
-> > > > > > > > > 
+Sean Christopherson <seanjc@google.com> writes:
 
-> > > > > > > > > +
-> > > > > > > > > +  return qps615_pwrctl_i2c_write(ctx->client,
-> > > > > > > > > +                                 is_l1 ? QPS615_PORT_L1_DELAY : QPS615_PORT_L0S_DELAY, units);
-> > > > > > > > > +}
-> > > > > > > > > +
-> > > > > > > > > +static int qps615_pwrctl_set_tx_amplitude(struct qps615_pwrctl_ctx *ctx,
-> > > > > > > > > +                                    enum qps615_pwrctl_ports port, u32 amp)
-> > > > > > > > > +{
-> > > > > > > > > +  int port_access;
-> > > > > > > > > +
-> > > > > > > > > +  switch (port) {
-> > > > > > > > > +  case QPS615_USP:
-> > > > > > > > > +          port_access = 0x1;
-> > > > > > > > > +          break;
-> > > > > > > > > +  case QPS615_DSP1:
-> > > > > > > > > +          port_access = 0x2;
-> > > > > > > > > +          break;
-> > > > > > > > > +  case QPS615_DSP2:
-> > > > > > > > > +          port_access = 0x8;
-> > > > > > > > > +          break;
-> > > > > > > > > +  default:
-> > > > > > > > > +          return -EINVAL;
-> > > > > > > > > +  };
-> > > > > > > > > +
-> > > > > > > > > +  struct qps615_pwrctl_reg_setting tx_amp_seq[] = {
-> > > > > > > > > +          {QPS615_PORT_ACCESS_ENABLE, port_access},
-> > > > > > > > 
-> > > > > > > > Hmm, this looks like another port selection, so most likely it should
-> > > > > > > > also be under the same lock.
-> > > > > > > > 
-> > > > > > > > > +          {QPS615_PORT_LANE_ACCESS_ENABLE, 0x3},
-> > > > > > > > > +          {QPS615_TX_MARGIN, amp},
-> > > > > > > > > +  };
-> > > > > > > > > +
-> > > > > > > > > +  return qps615_pwrctl_i2c_bulk_write(ctx->client, tx_amp_seq, ARRAY_SIZE(tx_amp_seq));
-> > > > > > > > > +}
-> > > > > > > > > +
-> > > > > > > > > +static int qps615_pwrctl_disable_dfe(struct qps615_pwrctl_ctx *ctx,
-> > > > > > > > > +                               enum qps615_pwrctl_ports port)
-> > > > > > > > > +{
-> > > > > > > > > +  int port_access, lane_access = 0x3;
-> > > > > > > > > +  u32 phy_rate = 0x21;
-> > > > > > > > > +
-> > > > > > > > > +  switch (port) {
-> > > > > > > > > +  case QPS615_USP:
-> > > > > > > > > +          phy_rate = 0x1;
-> > > > > > > > > +          port_access = 0x1;
-> > > > > > > > > +          break;
-> > > > > > > > > +  case QPS615_DSP1:
-> > > > > > > > > +          port_access = 0x2;
-> > > > > > > > > +          break;
-> > > > > > > > > +  case QPS615_DSP2:
-> > > > > > > > > +          port_access = 0x8;
-> > > > > > > > > +          lane_access = 0x1;
-> > > > > > > > > +          break;
-> > > > > > > > > +  default:
-> > > > > > > > > +          return -EINVAL;
-> > > > > > > > > +  };
-> > > > > > > > > +
-> > > > > > > > > +  struct qps615_pwrctl_reg_setting disable_dfe_seq[] = {
-> > > > > > > > > +          {QPS615_PORT_ACCESS_ENABLE, port_access},
-> > > > > > > > > +          {QPS615_PORT_LANE_ACCESS_ENABLE, lane_access},
-> > > > > > > > > +          {QPS615_DFE_ENABLE, 0x0},
-> > > > > > > > > +          {QPS615_DFE_EQ0_MODE, 0x411},
-> > > > > > > > > +          {QPS615_DFE_EQ1_MODE, 0x11},
-> > > > > > > > > +          {QPS615_DFE_EQ2_MODE, 0x11},
-> > > > > > > > > +          {QPS615_DFE_PD_MASK, 0x7},
-> > > > > > > > > +          {QPS615_PHY_RATE_CHANGE_OVERRIDE, 0x10},
-> > > > > > > > > +          {QPS615_PHY_RATE_CHANGE, phy_rate},
-> > > > > > > > > +          {QPS615_PHY_RATE_CHANGE, 0x0},
-> > > > > > > > > +          {QPS615_PHY_RATE_CHANGE_OVERRIDE, 0x0},
-> > > > > > > > > +
-> > > > > > > > > +  };
-> > > > > > > > > +
-> > > > > > > > > +  return qps615_pwrctl_i2c_bulk_write(ctx->client,
-> > > > > > > > > +                                      disable_dfe_seq, ARRAY_SIZE(disable_dfe_seq));
-> > > > > > > > > +}
-> > > > > > > > > +
-> > > > > > > > > +static int qps615_pwrctl_set_nfts(struct qps615_pwrctl_ctx *ctx,
-> > > > > > > > > +                            enum qps615_pwrctl_ports port, u32 nfts)
-> > > > > > > > > +{
-> > > > > > > > > +  int ret;
-> > > > > > > > > +  struct qps615_pwrctl_reg_setting nfts_seq[] = {
-> > > > > > > > > +          {QPS615_NFTS_2_5_GT, nfts},
-> > > > > > > > > +          {QPS615_NFTS_5_GT, nfts},
-> > > > > > > > > +  };
-> > > > > > > > > +
-> > > > > > > > > +  ret =  qps615_pwrctl_i2c_write(ctx->client, QPS615_PORT_SELECT, BIT(port));
-> > > > > > > > > +  if (ret)
-> > > > > > > > > +          return ret;
-> > > > > > > > > +
-> > > > > > > > > +  return qps615_pwrctl_i2c_bulk_write(ctx->client, nfts_seq, ARRAY_SIZE(nfts_seq));
-> > > > > > > > > +}
-> > > > > > > > > +
-> > > > > > > > > +static int qps615_pwrctl_assert_deassert_reset(struct qps615_pwrctl_ctx *ctx, bool deassert)
-> > > > > > > > > +{
-> > > > > > > > > +  int ret, val = 0;
-> > > > > > > > > +
-> > > > > > > > > +  if (deassert)
-> > > > > > > > > +          val = 0xc;
-> > > > > > > > > +
-> > > > > > > > > +  ret = qps615_pwrctl_i2c_write(ctx->client, QPS615_GPIO_CONFIG, 0xfffffff3);
-> > > > > > > > 
-> > > > > > > > It's a kind of magic
-> > > > > > > > 
-> > > > > > > I will add a macro in next patch.
-> > > > > > > > > +  if (ret)
-> > > > > > > > > +          return ret;
-> > > > > > > > > +
-> > > > > > > > > +  return qps615_pwrctl_i2c_write(ctx->client, QPS615_RESET_GPIO, val);
-> > > > > > > > > +}
-> > > > > > > > > +
-> > > > > > > > > +static int qps615_pwrctl_parse_device_dt(struct qps615_pwrctl_ctx *ctx, struct device_node *node)
-> > > > > > > > > +{
-> > > > > > > > > +  enum qps615_pwrctl_ports port;
-> > > > > > > > > +  struct qps615_pwrctl_cfg *cfg;
-> > > > > > > > > +  struct device_node *np;
-> > > > > > > > > +  int bdf, fun_no;
-> > > > > > > > > +
-> > > > > > > > > +  bdf = of_pci_get_bdf(node);
-> > > > > > > > > +  if (bdf < 0) {
-> > > > > > > > 
-> > > > > > > > This is incorrect, it will fail if at any point BDF uses the most
-> > > > > > > > significant bit (which is permitted by the spec, if I'm not mistaken).
-> > > > > > > > 
-> > > > > > > As per the reg property as described in the binding document we are not
-> > > > > > > expecting any change here.
-> > > > > > > https://elixir.bootlin.com/linux/v6.10.3/source/Documentation/devicetree/bindings/pci/pci.txt#L50.
-> > > > > > 
-> > > > > > What will this function return if the bus no is 256?
-> > > > > > The supported PCI bus number is from 0x0 to 0xff only. so we
-> > > > > are not expecting any numbers greater than 0xff.
-> > > > > > Also please either move the function to the generic PCI code is change its name to match the rest of the driver. The of_pci_ prefix is reserved for the generic code.
-> > > > > > 
-> > > > > ack.
-> > > > > > 
-> > > > > > > > > +          dev_err(ctx->pwrctl.dev, "Getting BDF failed\n");
-> > > > > > > > > +          return 0;
-> > > > > > > > > +  }
-> > > > > > > > > +
-> > > > > > > > > +  fun_no = bdf & 0x7;
-> > > > > > > > 
-> > > > > > > > I assume that ARI is not supported?
-> > > > > > > > 
-> > > > > > > Yes this doesn't support ARI.
-> > > > > > > > > +
-> > > > > > > > > +  /* In multi function node, ignore function 1 node */
-> > > > > > > > > +  if (of_pci_get_bdf(of_get_parent(node)) == ctx->bdf->dsp3_bdf && !fun_no)
-> > > > > > > > > +          port = QPS615_ETHERNET;
-> > > > > > > > > +  else if (bdf == ctx->bdf->usp_bdf)
-> > > > > > > > > +          port = QPS615_USP;
-> > > > > > > > 
-> > > > > > > > The function is being called for child device nodes. Thus upstream
-> > > > > > > > facing port (I assume that this is what USP means) can not be enumerated
-> > > > > > > > in this way.
-> > > > > > > Sorry, but I didn't your question.
-> > > > > > > 
-> > > > > > > These settings will not affect the enumeration sequence these are
-> > > > > > > for configuring ports only.
-> > > > > > 
-> > > > > > You are handling the case of bdf equal to the USP. Is it possible at all?
-> > > > > > 
-> > > > > at the time of the configuration the PCI link is not enabled yet,
-> > > > > once we are done with the configurations only we are resumeing the link
-> > > > > training. so when we start this configuration the link is not up yet.
-> > > > 
-> > > > Is your answer relevant to the question I have asked?
-> > > > 
-> > > sorry dmitry I might got your question wrong. what I understood is
-> > > "you are configuring USP port before the link is up, is that possible?"
-> > > I might read your statement wrongly.
-> > > 
-> > > If the question is "why do we need to configure USP?" I will try to
-> > > respond below.
-> > > "USP also will have l0s, L1 entry delays, nfts etc which can be
-> > > configured".
-> > > 
-> > > Sorry once again if your question doesn't fall in both can you tell
-> > > me your question.
-> > 
-> > My question was why the function gets executed for the root port. But
-> > after reading the qps615_pwrctl_parse_device_dt() I have another
-> > question: you are parsing DT nodes recursively. You should stop
-> > parsing at the first level, so that grandchildren nodes can not
-> > override your data (and so that the time isn't spent on parsing
-> > useless data). Also I have the feeling that BDF parsing isn't so
-> > correct. Will it work if QPS is sitting behind a PCI-PCI bridge?
-> > 
-> we are not executing for root port. we are configuring for USP
-> since there are some features of USP which can be configured.
+> On Wed, Aug 28, 2024, Mingwei Zhang wrote:
+>> > >> +static void test_core_counters(void)
+>> > >> +{
+>> > >> +    uint8_t nr_counters = nr_core_counters();
+>> > >> +    bool core_ext = kvm_cpu_has(X86_FEATURE_PERF_CTR_EXT_CORE);
+>> > >> +    bool perf_mon_v2 = kvm_cpu_has(X86_FEATURE_PERF_MON_V2);
+>> > >> +    struct kvm_vcpu *vcpu;
+>> > >> +    struct kvm_vm *vm;
+>> >
+>> > >> -    kvm_pmu_version = kvm_cpu_property(X86_PROPERTY_PMU_VERSION);
+>> > >> -    kvm_has_perf_caps = kvm_cpu_has(X86_FEATURE_PDCM);
+>> > >> +    vm = vm_create_with_one_vcpu(&vcpu, guest_test_core_counters);
+>> >
+>> > >> -    test_intel_counters();
+>> > >> +    /* This property may not be there in older underlying CPUs,
+>> > >> +     * but it simplifies the test code for it to be set
+>> > >> +     * unconditionally.
 
-What is USP? Upstream side port?
+> But then the test isn't verifying that KVM is honoring the architecture.   
+> I.e.
+> backdooring information to the guest risks getting false passes because  
+> KVM
+> incorrectly peeks at the same information, which shouldn't exist.
 
-> 
-> we are trying to store each configurations in below line.
-> cfg = &ctx->cfg[port];
-> 
-> port will have enum value based upon the bdf. after filling
-> the parent node we calling recursive function for child nodes.
-> As the BDF is unique value for each node we not expecting to get
-> same enum value for child or grand child nodes and there will
-> be no overwrite. If the BDF is not matched we are just returning
-> instead of looking for the properties.
-> 
-> QPS615 node is defined as child of the pci-pci bridge only.
-> The pwrctl framework is designed to work if the device
-> is represented as child node in the pci-pci bridge only.
+>> > >> +     */
 
-Of course. Each PCIe device is either a child of the root port or a
-child of a pci-pci bridge. So are the BDFs specific to the case of
-QPS615 being a child of the root PCIe bridge?
+> 	/*
+> 	 * Multi-line function comments should start on the line after the
+> 	 * opening slash-asterisk, like so.
+> 	 */
 
-> 
-> Hope it clarifies all the queries.
+>> > >> +    vcpu_set_cpuid_property(vcpu, X86_PROPERTY_NUM_PERF_CTR_CORE,
+>> > >> nr_counters);
+>> > >> +    if (core_ext)
+>> > >> +            vcpu_set_cpuid_feature(vcpu,  
+>> X86_FEATURE_PERF_CTR_EXT_CORE);
+>> > >> +    if (perf_mon_v2)
+>> > >> +            vcpu_set_cpuid_feature(vcpu, X86_FEATURE_PERF_MON_V2);
+>> >
+>> > > hmm, I think this might not be enough. So, when the baremetal machine
+>> > > supports Perfmon v2, this code is just testing v2. But we should be  
+>> able
+>> > > to test anything below v2, ie., v1, v1 without core_ext. So, three
+>> > > cases need to be tested here: v1 with 4 counters; v1 with core_ext (6
+>> > > counters); v2.
+>> >
+>> > > If, the machine running this selftest does not support v2 but it does
+>> > > support core extension, then we fall back to test v1 with 4 counters  
+>> and
+>> > > v1 with 6 counters.
+>> >
+>> > This should cover all cases the way I wrote it. I detect the number of
+>> > counters in nr_core_counters(). That tells me if I am dealing with 4 or
+>> > 6 and then I set the cpuid property based on that so I can read that
+>> > number in later code instead of duplicating the logic.
 
-Yes. Please drop recursive parsing and add explicit single
-for_each_child_of_node().
+>> right. in the current code, you set up the counters properly according
+>> to the hw capability. But the test can do more on a hw with perfmon
+>> v2, right? Because it can test multiple combinations of setup for a
+>> VM: say v1 + 4 counters and v1 + 6 counters etc. I am just following
+>> the style of this selftest on Intel side, in which they do a similar
+>> kind of enumeration of PMU version + PDCM capabilities. In each
+>> configuration, it will invoke a VM and do the test.
 
-> 
-> - Krishna chaitanya.
-> > > > > > 
-> > > > > > > > 
-> > > > > > > > > +  else if (bdf == ctx->bdf->dsp1_bdf)
-> > > > > > > > > +          port = QPS615_DSP1;
-> > > > > > > > > +  else if (bdf == ctx->bdf->dsp2_bdf)
-> > > > > > > > > +          port = QPS615_DSP2;
-> > > > > > > > > +  else if (bdf == ctx->bdf->dsp3_bdf)
-> > > > > > > > > +          port = QPS615_DSP3;
-> > > > > > > > > +  else
-> > > > > > > > > +          return 0;
-> > > > > > > > 
-> > > > > > > > -EINVAL >
-> > > > > > > There are can be nodes describing endpoints also,
-> > > > > > > for those nodes bdf will not match and we are not
-> > > > > > > returning since it is expected for endpoint nodes.
-> > > > > > 
-> > > > > > Which endpoints? Bindings don't describe them.
-> > > > > > 
-> > > > > The client drivers like ethernet will add them once
-> > > > > this series is merged. Their drivers are not present
-> > > > > in the linux as of now.
-> > > > 
-> > > > The bindings describe the hardware, not the drivers. Also the driver
-> > > > should work with the bindings that you have submitted, not some
-> > > > imaginary to-be-submitted state. Please either update the bindings
-> > > > within the patchset or fix the driver to return -EINVAL.
-> > > > 
-> > > The qps615 bindings describes only the PCIe switch part,
-> > > the endpoints binding connected to the switch should be described by the
-> > > respective clients like USB hub, NVMe, ethernet etc bindings should
-> > > describe their hardware and its properties. And these bindings will
-> > > defined in seperate bindinds file not in qps615 bindings.
-> > > 
-> > > for example:-
-> > > 
-> > > in the following example pcie@0,0 describes usp and
-> > > pcie@1,0 & pcie@2,0 describes dsp's of the switch.
-> > > now if we say usb hub is connected to dsp1 i.e to the
-> > > node pcie@1,0 there will be a child node to the pcie@1,0
-> > > to denote usb hub hardware.
-> > > And that node is external to the switch and we are not
-> > > configuring it through i2c. As these are pcie devices
-> > > representation is generic one we can't say if the client
-> > > nodes(in this case usb hub) will be present or not. if the child
-> > > node( for example usb hub) is present we can't return -EINVAL
-> > > because qps615 will not configure it.
-> > > 
-> > > &pcieport {
-> > >          pcie@0,0 {
-> > >                  pcie@1,0 {
-> > >                          reg = <0x20800 0x0 0x0 0x0 0x0>;
-> > >                          #address-cells = <3>;
-> > >                          #size-cells = <2>;
-> > > 
-> > >                          device_type = "pci";
-> > >                          ranges;
-> > >                          usb_hub@0,0 {
-> > >                                  //describes USB hub
-> > >                          };
-> > >                  };
-> > > 
-> > >                  pcie@2,0 {
-> > >                          reg = <0x21000 0x0 0x0 0x0 0x0>;
-> > >                          #address-cells = <3>;
-> > >                          #size-cells = <2>;
-> > > 
-> > >                          device_type = "pci";
-> > >                          ranges;
-> > >                  };
-> > >          };
-> > > };
+> Ya.  This is similar my comments on setting NUM_PER_CTR_CORE when the  
+> field
+> shouldn't exist.  One of the main goals of this test is to verify the KVM  
+> honors
+> the architecture based on userspace's defined virtual CPU model, i.e.  
+> guest
+> CPUID.  That means testing all (or at least, within reason) possible  
+> combinations
+> that can feasibly be supported by KVM given the underlying hardware.
 
--- 
-With best wishes
-Dmitry
+> As written, this essentially just tests the maximal configuration that  
+> can be
+> exposed to a guest, which isn't _that_ interesting because KVM tends to  
+> get plenty
+> of coverage for such setups, e.g. by running "real" VMs.
+
+Ok. I get what you and Mingwei are saying. I can test those combinations.
 
