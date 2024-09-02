@@ -1,197 +1,187 @@
-Return-Path: <linux-kernel+bounces-310645-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310647-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64C9E967F91
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 08:39:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61B34967F96
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 08:41:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C254AB21727
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 06:39:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E2E5D1F2290F
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 06:40:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C791155398;
-	Mon,  2 Sep 2024 06:38:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aeEZQhFA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C6F2155A2F;
+	Mon,  2 Sep 2024 06:40:46 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CA8C2AE99
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 06:38:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 653F8155398
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 06:40:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725259137; cv=none; b=tjlvWX8mqVI2RL+lAt7A8mF3cClIaYRQs5lLPMSa99aQoG4cwpeB5LL8ykEfVCO/cwoT2/9+f69dU/AMPipkNSua5zl3/5Kqk46h6DEkfsaPB0YfDnbMSE3WyWEY+fktLsFWVvEJRBIN41epMqrJRXO6mbiUKYeBtJN9GfRemC4=
+	t=1725259246; cv=none; b=Qxq5iHp0zZV86dkrwdJd6/T1ztDjuGPqa+GoAvLdKwfO7v24yiYI8rbiXo4F9ITvppS/MtNdJoD5j3T+OnAoK0l3aMLWBBkOcMNxd2j8YLVwzcdAHqNY4DPt0MrXVZZu7E3wkfQ8FHxZcGUdVGW5Von648LS8a4d86+wPtxn48g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725259137; c=relaxed/simple;
-	bh=G1icPgc+gQNpQFnudDAc0SplXHoQua417+2XKBssUF4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TI7HrXe6NnaOC5O4M881Npgs8MSAX2clbX6gTITlzgDqIEEDHoF7OvyfsT03NVNdqVGXry3r5oxWaZ1xP+0JRwfOyvH0ZUad/wy0swQrKdTAtCZQ9CWDCkpB5sQwUGCEJyg/oNx5Q2H802X5YUGkDP0QZjOKZqfOHMqvnJmRqJs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aeEZQhFA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 177C2C4CEC2;
-	Mon,  2 Sep 2024 06:38:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725259137;
-	bh=G1icPgc+gQNpQFnudDAc0SplXHoQua417+2XKBssUF4=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=aeEZQhFAX8FbCd32gz78SW3SBnaldTRBkhooG5WkqOKIqRmvCPIC1NaLorw0QR2ia
-	 TsmcdiQP2o3UHLSLyumM5JQfuOdz/WUH4vHDbvQZjAK2ETW0dJrWE31oFH0LJ8ataG
-	 xKzVhI4d08YKru25jj1JNi/0ejTP0g9tsTiQuhE75nGGiB6Sx8T394iitQgLz3rEMI
-	 irusV1GUfEq8JJg4gP4ycMTDx1o8rEzLo8GllvdJAQ3Ao22HqwFJLNSFMwJKcG2dyv
-	 fwgx4lBlRELEtvTb5nIdOlZ5cwcT9TpAsz6ESRZqO1xMaKUZWP97yMyhuUlEms/qBD
-	 QI57grHzbj9mA==
-Message-ID: <27e01c20-2fb6-4d51-b2c0-1c5e3f0d4f26@kernel.org>
-Date: Mon, 2 Sep 2024 14:38:53 +0800
+	s=arc-20240116; t=1725259246; c=relaxed/simple;
+	bh=Kg0dKyORwMyYc2KUGG2ucR8CXCobYKSxhwUUOFnx2xE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iwZTwPJd0J/OiGe6rVqe3S1+NPxcHCA0mA/uMm0hE4U4/pICU3vTmOWGKjavIIlv9uXFz7Nsa5kTgw34xlbMYJ+Huq8JeiJF1xh9fkkznPW+TkuVZnmFgv2Nvs33UI1fSDHWWn8KjiBW95r8msqDRDnxfPlu6FvchGmDgQKOfak=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <sha@pengutronix.de>)
+	id 1sl0jo-0008Kh-EN; Mon, 02 Sep 2024 08:40:32 +0200
+Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <sha@pengutronix.de>)
+	id 1sl0jn-004q7G-G4; Mon, 02 Sep 2024 08:40:31 +0200
+Received: from sha by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <sha@pengutronix.de>)
+	id 1sl0jn-002TPc-1G;
+	Mon, 02 Sep 2024 08:40:31 +0200
+Date: Mon, 2 Sep 2024 08:40:31 +0200
+From: Sascha Hauer <s.hauer@pengutronix.de>
+To: David Lin <yu-hao.lin@nxp.com>
+Cc: Francesco Dolcini <francesco@dolcini.it>,
+	Calvin Owens <calvin@wbinvd.org>,
+	Brian Norris <briannorris@chromium.org>,
+	Kalle Valo <kvalo@kernel.org>,
+	"linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"kernel@pengutronix.de" <kernel@pengutronix.de>
+Subject: Re: [EXT] [RFC PATCH 0/4] mwifiex: add support for iw61x
+Message-ID: <ZtVd3__wfm6EOOgH@pengutronix.de>
+References: <20240826072648.167004-1-s.hauer@pengutronix.de>
+ <PA4PR04MB9638016F363BFF87D62B70D1D1922@PA4PR04MB9638.eurprd04.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [f2fs-dev] [PATCH v2 2/4] f2fs: atomic: fix to not allow GC to
- pollute atomic_file
-To: Sunmin Jeong <s_min.jeong@samsung.com>, jaegeuk@kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-References: <CGME20240814135008epcas1p3e11d629481d51a4cc4af78dbe3e66fda@epcas1p3.samsung.com>
- <20240814134815.801303-1-chao@kernel.org>
- <002e01daf2aa$f22d5430$d687fc90$@samsung.com>
-Content-Language: en-US
-From: Chao Yu <chao@kernel.org>
-In-Reply-To: <002e01daf2aa$f22d5430$d687fc90$@samsung.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <PA4PR04MB9638016F363BFF87D62B70D1D1922@PA4PR04MB9638.eurprd04.prod.outlook.com>
+X-Sent-From: Pengutronix Hildesheim
+X-URL: http://www.pengutronix.de/
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: sha@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On 2024/8/20 10:44, Sunmin Jeong wrote:
-> Hello Chao Yu,
+On Mon, Sep 02, 2024 at 02:24:53AM +0000, David Lin wrote:
+> > From: Sascha Hauer <s.hauer@pengutronix.de>
+> > Sent: Monday, August 26, 2024 3:27 PM
+> > To: Francesco Dolcini <francesco@dolcini.it>
+> > Cc: Calvin Owens <calvin@wbinvd.org>; Brian Norris
+> > <briannorris@chromium.org>; Kalle Valo <kvalo@kernel.org>; David Lin
+> > <yu-hao.lin@nxp.com>; linux-wireless@vger.kernel.org;
+> > linux-kernel@vger.kernel.org; kernel@pengutronix.de; Sascha Hauer
+> > <s.hauer@pengutronix.de>
+> > Subject: [EXT] [RFC PATCH 0/4] mwifiex: add support for iw61x
+> >
+> > Caution: This is an external email. Please take care when clicking links or
+> > opening attachments. When in doubt, report the message using the 'Report
+> > this email' button
+> >
+> >
+> > This series adds support for the iw61x chips to the mwifiex driver.
+> > There are a few things to address, hence the RFC status. See the commit
+> > messages for details. The series is based on wireless-next/main.
+> >
+> > I am sending this now since people requested it here [1], but as it's out now
+> > feel free to leave your comments to the issues mentioned (or others I haven't
+> > mentioned ;)
+> >
+> > [1]
+> > https://lore.kern/
+> > el.org%2Fall%2F20240809094533.1660-1-yu-hao.lin%40nxp.com%2F&data=05
+> > %7C02%7Cyu-hao.lin%40nxp.com%7C184ab4fed58647150f8508dcc5a0789a%7
+> > C686ea1d3bc2b4c6fa92cd99c5c301635%7C0%7C0%7C638602540229716119%
+> > 7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJB
+> > TiI6Ik1haWwiLCJXVCI6Mn0%3D%7C0%7C%7C%7C&sdata=cACBHxaQvcOqu6ri
+> > BoAlZDONRlGQ4j5DcglEV9T%2BpYU%3D&reserved=0
+> >
+> > Sascha
+> >
+> >
+> > Sascha Hauer (4):
+> >   wifi: mwifiex: release firmware at remove time
+> >   wifi: mwifiex: handle VDLL
+> >   wifi: mwifiex: wait longer for SDIO card status
+> >   mwifiex: add iw61x support
+> >
+> >  drivers/net/wireless/marvell/mwifiex/cmdevt.c | 86 +++++++++++++++++++
+> >  drivers/net/wireless/marvell/mwifiex/fw.h     | 16 ++++
+> >  drivers/net/wireless/marvell/mwifiex/main.c   |  9 +-
+> >  drivers/net/wireless/marvell/mwifiex/main.h   |  4 +
+> >  drivers/net/wireless/marvell/mwifiex/sdio.c   | 81 ++++++++++++++++-
+> >  drivers/net/wireless/marvell/mwifiex/sdio.h   |  3 +
+> >  .../net/wireless/marvell/mwifiex/sta_event.c  |  4
+> > +  .../net/wireless/marvell/mwifiex/uap_event.c  |  4 +
+> >  include/linux/mmc/sdio_ids.h                  |  3 +
+> >  9 files changed, 205 insertions(+), 5 deletions(-)
+> >
+> > --
+> > 2.39.2
 > 
->> SQLite App			GC Thread	Shrinker
->> - f2fs_ioc_start_atomic_write
->>
->> - f2fs_ioc_commit_atomic_write
->> - f2fs_commit_atomic_write
->>   - filemap_write_and_wait_range
->>   : write atomic_file's data to cow_inode
->> 						echo 3 > drop_caches
->> 				- f2fs_gc
->> 				 - gc_data_segment
->> 				  - move_data_page
-> 
-> We modified the code to make GC of the atomic file go to move_data_block
-> in commit b40a2b003709 (f2fs: use meta inode for GC of atomic file).
-> Could you please check if this patch is still necessary?
+> I think you ported VDLL related code from nxpwifi and you also traced
+> our private/downstream MXM driver.
 
-Sunmin,
+I ported it from this repository:
 
-Yes, you're right.
+https://github.com/nxp-imx/mwifiex-iw612.git
 
-Also, I've checked f2fs/003 of xfstests w/ commit b40a2b003709, it can fix the
-regression issue as well, so let's drop it.
+Is that the one you are referring to as MXM driver?
 
-Thanks for pointing it out. :)
+> If this is the case, I think you should know nxpwifi already cleaned
+> up the porting VDLL code from MXM driver.
+> I check your patch quickly. You ported the new SDIO data type
+> (MWIFIEX_TYPE_VDLL) from nxpwifi, but you
+> did not port the code to support this new data type from nxpwifi. In
+> other word, you did not test your
+> patch before submission (same as some of your patches).
 
-Thanks,
+I did test it. It works with the iw61x as well as older chips. There are
+likely details I haven't tested, but it generally works. If there are
+details I should test additionally please let me know.
 
 > 
-> Thanks,
+> Another thing is that this new SDIO data type should be handled
+> carefully with other existed SDIO data type.
 > 
->> 				   - set_page_dirty
->> 				   : it may load data of previous
->> 				     transaction into pagecache.
->>   - f2fs_down_write(&fi->i_gc_rwsem[WRITE])
->>   - __f2fs_commit_atomic_write
->>   - f2fs_up_write(&fi->i_gc_rwsem[WRITE])
->>
->> During committing atomic_file, GC may be triggered to migrate atomic_file's
->> block, so it may contain data of previous transaction in page cache, we
->> should drop atomic_file's cache once it was migrated by GC.
->>
->> And also, we should writeback atomic_file and cow_file's data w/ i_gc_rwsem
->> lock held, in order to avoid block address change during
->> __f2fs_commit_atomic_write().
->>
->> Meahwhile, this patch adds f2fs_wait_on_block_writeback_range()
->> to wait completion of block migration.
->>
->> Fixes: 3db1de0e582c ("f2fs: change the current atomic write way")
->> Signed-off-by: Chao Yu <chao@kernel.org>
->> ---
->> v2:
->> - fix error path handling.
->> fs/f2fs/segment.c | 27 +++++++++++++++++++++++----
->> 1 file changed, 23 insertions(+), 4 deletions(-)
->>
->> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c index
->> 3aee71c9f3c6..a43054ab0cf1 100644
->> --- a/fs/f2fs/segment.c
->> +++ b/fs/f2fs/segment.c
->> @@ -236,6 +236,9 @@ static int __replace_atomic_write_block(struct inode
->> *inode, pgoff_t index,
->> 		return err;
->> 	}
->>
->> +	if (__is_valid_data_blkaddr(dn.data_blkaddr))
->> +		f2fs_wait_on_block_writeback_range(inode, dn.data_blkaddr,
-> 1);
->> +
->> 	if (recover) {
->> 		/* dn.data_blkaddr is always valid */
->> 		if (!__is_valid_data_blkaddr(new_addr)) { @@ -339,6 +342,9
-> @@
->> static int __f2fs_commit_atomic_write(struct inode *inode)
->> 				goto out;
->> 			}
->>
->> +			f2fs_wait_on_block_writeback_range(cow_inode,
->> +								blkaddr, 1);
->> +
->> 			new = f2fs_kmem_cache_alloc(revoke_entry_slab,
-> GFP_NOFS,
->> 							true, NULL);
->>
->> @@ -379,16 +385,29 @@ int f2fs_commit_atomic_write(struct inode *inode)
->> 	struct f2fs_inode_info *fi = F2FS_I(inode);
->> 	int err;
->>
->> +	f2fs_down_write(&fi->i_gc_rwsem[WRITE]);
->> +
->> 	err = filemap_write_and_wait_range(inode->i_mapping, 0, LLONG_MAX);
->> 	if (err)
->> -		return err;
->> +		goto out;
->>
->> -	f2fs_down_write(&fi->i_gc_rwsem[WRITE]);
->> -	f2fs_lock_op(sbi);
->> +	/* writeback GCing page of cow_inode */
->> +	err = filemap_write_and_wait_range(fi->cow_inode->i_mapping,
->> +							0, LLONG_MAX);
->> +	if (err)
->> +		goto out;
->>
->> -	err = __f2fs_commit_atomic_write(inode);
->> +	filemap_invalidate_lock(inode->i_mapping);
->> +
->> +	/* don't allow clean page loaded by GC to pollute atomic_file */
->> +	truncate_pagecache(inode, 0);
->>
->> +	f2fs_lock_op(sbi);
->> +	err = __f2fs_commit_atomic_write(inode);
->> 	f2fs_unlock_op(sbi);
->> +
->> +	filemap_invalidate_unlock(inode->i_mapping);
->> +out:
->> 	f2fs_up_write(&fi->i_gc_rwsem[WRITE]);
->>
->> 	return err;
->> --
->> 2.40.1
->>
->>
->>
->> _______________________________________________
->> Linux-f2fs-devel mailing list
->> Linux-f2fs-devel@lists.sourceforge.net
->> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+> Nxpwifi only supports new SDIO mode, so the modification to support
+> NXPWIFI_TYPE_VDLL can be clean and simple. If you want to port the
+> code to Mwifiex, there is no one-to-one modification of the code.
 > 
+> Another important thing is that you should consider if your
+> modifications will affect existed devices or not.
+> You need to check if you should check firmware version or chip type
+> before adding some code.
 
+The VDLL code I added for the iw61x only reacts to the EVENT_VDLL_IND
+event. So as long as a firmware doesn't send such an event nothing is
+changed with this patch, and I haven't seen an older chip sending a VDLL
+event.
+
+> 
+> BTW, no matter if you add the code with or without checking of
+> firmware version or chip type, you should test
+> your modifications for IW61x and at least one legacy device if the
+> code is added to Mwifiex.
+
+I did.
+
+Sascha
+
+-- 
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
 
