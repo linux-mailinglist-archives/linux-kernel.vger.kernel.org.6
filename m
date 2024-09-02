@@ -1,187 +1,284 @@
-Return-Path: <linux-kernel+bounces-310527-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310529-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A81F967DEF
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 04:42:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDE0E967DF2
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 04:46:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 72026B22ACA
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 02:42:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 666A3282547
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 02:46:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C3533BB21;
-	Mon,  2 Sep 2024 02:42:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OI2fhqN5"
-Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1643125DB;
-	Mon,  2 Sep 2024 02:42:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B32F38FA1;
+	Mon,  2 Sep 2024 02:45:49 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAC59EEC0;
+	Mon,  2 Sep 2024 02:45:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725244942; cv=none; b=CndAInVET6RZOj69W8CX2rKO8ityQhD8WC9BQgFdaooQKjWgVuY1ZdYIB9eyYdrsd9a7MsyCbP5VH/1vw5W2T1a2eo+Ku9PsUvC4j1OAz+UA56HQOrmOiVbFV8/h7Wjm+u0bXWy8fd7XlFvcLSoJBAbyvmuGzhpcZ1cCetOTnaY=
+	t=1725245148; cv=none; b=M5WIWHZQL+7AQCoCOsoaUooXWFFcrqMoky5Hnuh3jmJy93ZripT5l4HUTyUy2+v6Y0pyso0NPpZxjVArEVBEWwRiNUWxQ7XKKTFzCvKJ+wqa0WK6ympOK51tc4cBQfK7jTEVRZg7WBjN17Sr9orjYK6M6geGXW3CeSHPy9qk1XU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725244942; c=relaxed/simple;
-	bh=t6chKW6RMvMt2i9pgxOGJ5l7bmaMm7fN5NVEpyqYIHY=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=WNWTwntSQbnGeWJkwGzzu2+V8aOudhP0RvAwSD3uUM+tjQPBLACfPKgmM+rctJqQ7Ok0y0+OEVoEX4De5VUDsohmt1/sN0DV7CqFyw60DoQpfLQsznuJLi2T0Ep7wdGIuRo55YIyXnJgca6SHSocAxTgQ1n7RNslK1pRtPb6UE4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OI2fhqN5; arc=none smtp.client-ip=209.85.216.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-2d8818337a5so1369314a91.1;
-        Sun, 01 Sep 2024 19:42:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725244940; x=1725849740; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yXd0X4HGrs7xpc3uqMOVPvCYkT/FBY5ETInSg1kYP44=;
-        b=OI2fhqN5aH7QktoJvwdHA0TfSVunVllMedaDPcUZYnQQ7lFunOZgws2LE8rT+XmbKD
-         Bty1E0JpJSC2+yfhNxDc1c/PGMtD4oSRRIUoySYXH9GMqkC8BuI6ClATgD9cPrqf3FhY
-         +VOx/bfD/sJLjY8HE3hKOwj7gLe1683pSApbmb2nv2/1ukUD8SRxXm21Vg6jBRk4F95s
-         IK0tH0qVeSqRYdC/g9mLGkcOj8IMWJ5lPn1SzFxHpij2G9uQfeDGk+14QlGtGd/UA3jj
-         bopvBN8cifzAUTz5pH9CD5tko6JOkHTOad5dph1J3DH7RGN9VKE5tH5lINjywivTD4a7
-         F7+g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725244940; x=1725849740;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=yXd0X4HGrs7xpc3uqMOVPvCYkT/FBY5ETInSg1kYP44=;
-        b=pMZNldTjdrTtYz99XtzMI5Xd4rsz8Y6FOS4aF7jG46bmBzl/TTWC6r5UJMzT0GrvbQ
-         miu8rFrA5JSZD975cBIny3q89SxrfsVUzRWwy3bpPXRwoHuEjdfoozV1Cd14rIFomWOi
-         Ik01eziUCREH8dG5j2NViEjT7c+mfi5MbEFl2z+Qo2z6IWmvgfWNgCOhMe27Vi4zgzs4
-         CW4Bt1psHAnXRtrC/R5HR2UQUiry90Z/Qjtuh9JzcwEZAffZla5Dwo3rrqDMDGvFOSKF
-         OWceXKpGr9WUr14lCmJlPysSQqRmAdSJU7BSM7ExK/ZgZ82WZ0xKv0GNJo4Im73Lsie6
-         90vg==
-X-Forwarded-Encrypted: i=1; AJvYcCWffTdPd9t2UTsOLHjjQAZ9vhn50AjJOyhg8Ep+JtIoPjOsvAApbSXKPJfN/U83g7XMOECTwoakWmitwA==@vger.kernel.org, AJvYcCXB95j6Z4bL/9BMaPaSxCehVy4oMuAb5uYrV3dUHrTFC32rlBY2oTPs+cl/SpaMlZGRbegXD65BuMJ/Xbem@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywt1g1DsG7PafO8VFNmrX7KBY9EY+t0vZogWVF6v88IkvuLBADv
-	zaF/t3SUcG9aVe7PwEjreqd5TfXBNJT8IfHm/3MDuGIUOz2WTfEx
-X-Google-Smtp-Source: AGHT+IFbP04WevZii1FQd+1xfh1FpFgPQh+p+H/vJhSqt+lAcxOjo4/qNj5li6ohhC9f5GcFNoRwPw==
-X-Received: by 2002:a17:90b:3c8:b0:2d8:999a:bc37 with SMTP id 98e67ed59e1d1-2d8999abeb0mr8334608a91.19.1725244939864;
-        Sun, 01 Sep 2024 19:42:19 -0700 (PDT)
-Received: from localhost.localdomain ([220.241.42.160])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d8f1b74a26sm59624a91.52.2024.09.01.19.42.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 01 Sep 2024 19:42:19 -0700 (PDT)
-From: "Wei Ping.Xiao" <xiaoweiping.pccw@gmail.com>
-To: jikos@kernel.org,
-	benjamin.tissoires@redhat.com,
-	linux-input@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: svv@google.com,
-	hadess@hadess.net,
-	Jiri Kosina <jkosina@suse.cz>
-Subject: [PATCH 5.10.y] HID: microsoft: Add rumble support to latest xbox controllers
-Date: Mon,  2 Sep 2024 10:42:05 +0800
-Message-Id: <20240902024205.9243-2-xiaoweiping.pccw@gmail.com>
-X-Mailer: git-send-email 2.33.0
-In-Reply-To: <20240902024205.9243-1-xiaoweiping.pccw@gmail.com>
-References: <20240902024205.9243-1-xiaoweiping.pccw@gmail.com>
+	s=arc-20240116; t=1725245148; c=relaxed/simple;
+	bh=w+9SY737nL+mWM+wWsXEyhwRrxMniT2UGHSekAaUZAE=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=b1Y5BEHziKjqYEC5wY1cR/QV9mcr1+3QCjnacRvqG25OSDKT8l/hb7mBb8VndmHmYhLAipqqqZDRvSPTV+YReU3ANtnE3d0aAHucXQEr761AHTO8OWuIY7ZD6OwcnoCJQdtnxBIm0asazJg+qBzJqoMFNQHQYD3nfjw0euIcz+k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [10.20.42.62])
+	by gateway (Coremail) with SMTP id _____8Cx+enWJtVmIOwnAA--.12416S3;
+	Mon, 02 Sep 2024 10:45:42 +0800 (CST)
+Received: from [10.20.42.62] (unknown [10.20.42.62])
+	by front2 (Coremail) with SMTP id qciowMAx_8XSJtVmEqADAA--.10093S3;
+	Mon, 02 Sep 2024 10:45:41 +0800 (CST)
+Subject: Re: [PATCH v6 3/3] LoongArch: KVM: Add vm migration support for LBT
+ registers
+To: Huacai Chen <chenhuacai@kernel.org>
+Cc: Tianrui Zhao <zhaotianrui@loongson.cn>, WANG Xuerui <kernel@xen0n.name>,
+ kvm@vger.kernel.org, loongarch@lists.linux.dev,
+ linux-kernel@vger.kernel.org, Jiaxun Yang <jiaxun.yang@flygoat.com>
+References: <20240730075744.1215856-1-maobibo@loongson.cn>
+ <20240730075744.1215856-4-maobibo@loongson.cn>
+ <CAAhV-H7D80huYzF6ewZqcgx8MTzWZNFXJHOahoJ33zJYX1kyAw@mail.gmail.com>
+ <13276416-c62b-b33d-1824-7764122ef863@loongson.cn>
+ <CAAhV-H4RhhYB0LHeOs+Cjr6LZj6np_S4-neEtYnLUU_K=upV_w@mail.gmail.com>
+From: maobibo <maobibo@loongson.cn>
+Message-ID: <1daacc02-2bdc-928b-6291-7604c841d219@loongson.cn>
+Date: Mon, 2 Sep 2024 10:45:08 +0800
+User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+In-Reply-To: <CAAhV-H4RhhYB0LHeOs+Cjr6LZj6np_S4-neEtYnLUU_K=upV_w@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qciowMAx_8XSJtVmEqADAA--.10093S3
+X-CM-SenderInfo: xpdruxter6z05rqj20fqof0/
+X-Coremail-Antispam: 1Uk129KBj93XoWxtFW5Ar4UZw13ZFWfZF4DZFc_yoWxtryUpr
+	1UAF4fGr48Jr1xC3yIg3Wq9rnFqr1xJr1kZFyIqay8KrZ0qryftw48trsxCFyfAr1kCrWx
+	Z3Wqyw4YkF93J3gCm3ZEXasCq-sJn29KB7ZKAUJUUUU5529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUU9Fb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_JFI_Gr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Jr0_Gr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
+	Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12xvs2x26I8E6xACxx1l5I
+	8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1Y6r17McIj6I8E87Iv67AK
+	xVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7I2V7IY0VAS07AlzV
+	AYIcxG8wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwCFI7km07C267AK
+	xVWUAVWUtwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67
+	AF67kF1VAFwI0_JF0_Jw1lIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI
+	42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMI
+	IF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUvcSsGvfC2
+	KfnxnUUI43ZEXa7IU8zwZ7UUUUU==
 
-From: Siarhei Vishniakou <svv@google.com>
 
-Currently, rumble is only supported via bluetooth on a single xbox
-controller, called 'model 1708'. On the back of the device, it's named
-'wireless controller for xbox one'. However, in 2021, Microsoft released
-a firmware update for this controller. As part of this update, the HID
-descriptor of the device changed. The product ID was also changed from
-0x02fd to 0x0b20. On this controller, rumble was supported via
-hid-microsoft, which matched against the old product id (0x02fd). As a
-result, the firmware update broke rumble support on this controller.
 
-See:
-https://news.xbox.com/en-us/2021/09/08/xbox-controller-firmware-update-rolling-out-to-insiders-starting-today/
+On 2024/9/2 上午10:20, Huacai Chen wrote:
+> On Mon, Sep 2, 2024 at 9:56 AM maobibo <maobibo@loongson.cn> wrote:
+>>
+>>
+>> Hi Huacai,
+>>
+>> On 2024/8/31 下午10:49, Huacai Chen wrote:
+>>> Hi, Bibo,
+>>>
+>>> On Tue, Jul 30, 2024 at 3:57 PM Bibo Mao <maobibo@loongson.cn> wrote:
+>>>>
+>>>> Every vcpu has separate LBT registers. And there are four scr registers,
+>>>> one flags and ftop register for LBT extension. When VM migrates, VMM
+>>>> needs to get LBT registers for every vcpu.
+>>>>
+>>>> Here macro KVM_REG_LOONGARCH_LBT is added for new vcpu lbt register type,
+>>>> the following macro is added to get/put LBT registers.
+>>>>     KVM_REG_LOONGARCH_LBT_SCR0
+>>>>     KVM_REG_LOONGARCH_LBT_SCR1
+>>>>     KVM_REG_LOONGARCH_LBT_SCR2
+>>>>     KVM_REG_LOONGARCH_LBT_SCR3
+>>>>     KVM_REG_LOONGARCH_LBT_EFLAGS
+>>>>     KVM_REG_LOONGARCH_LBT_FTOP
+>>>>
+>>>> Signed-off-by: Bibo Mao <maobibo@loongson.cn>
+>>>> ---
+>>>>    arch/loongarch/include/uapi/asm/kvm.h |  9 +++++
+>>>>    arch/loongarch/kvm/vcpu.c             | 56 +++++++++++++++++++++++++++
+>>>>    2 files changed, 65 insertions(+)
+>>>>
+>>>> diff --git a/arch/loongarch/include/uapi/asm/kvm.h b/arch/loongarch/include/uapi/asm/kvm.h
+>>>> index 49bafac8b22d..003fb766c93f 100644
+>>>> --- a/arch/loongarch/include/uapi/asm/kvm.h
+>>>> +++ b/arch/loongarch/include/uapi/asm/kvm.h
+>>>> @@ -64,6 +64,7 @@ struct kvm_fpu {
+>>>>    #define KVM_REG_LOONGARCH_KVM          (KVM_REG_LOONGARCH | 0x20000ULL)
+>>>>    #define KVM_REG_LOONGARCH_FPSIMD       (KVM_REG_LOONGARCH | 0x30000ULL)
+>>>>    #define KVM_REG_LOONGARCH_CPUCFG       (KVM_REG_LOONGARCH | 0x40000ULL)
+>>>> +#define KVM_REG_LOONGARCH_LBT          (KVM_REG_LOONGARCH | 0x50000ULL)
+>>>>    #define KVM_REG_LOONGARCH_MASK         (KVM_REG_LOONGARCH | 0x70000ULL)
+>>> I think KVM_REG_LOONGARCH_MASK should contain all above register
+>>> classes, so should it be  (KVM_REG_LOONGARCH | 0x370000ULL)?
+>> Sorry, maybe I miss something. What is the meaning of 0x370000ULL? How
+>> does the value come from?
+> It seems I misunderstood the mask, please ignore.
+> 
+>>
+>>>
+>>>>    #define KVM_CSR_IDX_MASK               0x7fff
+>>>>    #define KVM_CPUCFG_IDX_MASK            0x7fff
+>>>> @@ -77,6 +78,14 @@ struct kvm_fpu {
+>>>>    /* Debugging: Special instruction for software breakpoint */
+>>>>    #define KVM_REG_LOONGARCH_DEBUG_INST   (KVM_REG_LOONGARCH_KVM | KVM_REG_SIZE_U64 | 3)
+>>>>
+>>>> +/* LBT registers */
+>>>> +#define KVM_REG_LOONGARCH_LBT_SCR0     (KVM_REG_LOONGARCH_LBT | KVM_REG_SIZE_U64 | 1)
+>>>> +#define KVM_REG_LOONGARCH_LBT_SCR1     (KVM_REG_LOONGARCH_LBT | KVM_REG_SIZE_U64 | 2)
+>>>> +#define KVM_REG_LOONGARCH_LBT_SCR2     (KVM_REG_LOONGARCH_LBT | KVM_REG_SIZE_U64 | 3)
+>>>> +#define KVM_REG_LOONGARCH_LBT_SCR3     (KVM_REG_LOONGARCH_LBT | KVM_REG_SIZE_U64 | 4)
+>>>> +#define KVM_REG_LOONGARCH_LBT_EFLAGS   (KVM_REG_LOONGARCH_LBT | KVM_REG_SIZE_U64 | 5)
+>>>> +#define KVM_REG_LOONGARCH_LBT_FTOP     (KVM_REG_LOONGARCH_LBT | KVM_REG_SIZE_U64 | 6)
+>>> FTOP is a 32bit register in other place of the kernel, is it correct
+>>> to use U64 here?
+>> It is deliberate and there is no 32bit compat requirement for kvm. ALL
+>> regiester interfaces are defined as 64-bit.
+>> On kernel and qemu side, ftop can be defined as 32bit still, however the
+>> interface is 64-bit. So there is forced type conversion between u32 and
+>> u64. There is no problem here.
+> If you are sure, then no problem. But there is indeed KVM_REG_SIZE_U32
+> in include/uapi/linux/kvm.h, and if we append more fields after ftop,
+> define it as U64 may break memcpy().
+yes, there is KVM_REG_SIZE_U32 definition, however LoongArch KVM does 
+not use it, else the safer checking is a little complicated. Now 
+parameter with KVM_REG_SIZE_U32 is simply treated as illegal.
 
-The hid-microsoft driver actually supports rumble on the new firmware,
-as well. So simply adding new product id is sufficient to bring back
-this support.
+And no memcpy() is used for ftop/cpucfg, there is assignment for every 
+single register like this:
 
-After discussing further with the xbox team, it was pointed out that
-another xbox controller, xbox elite series 2, can be supported in a
-similar way.
+For cpucfg read/write:
+   vcpu->arch.cpucfg[id] = (u32)v;
+   *v = vcpu->arch.cpucfg[id];
+For ftop read/write:
+   vcpu->arch.fpu.ftop = v;
+   *v = vcpu->arch.fpu.ftop;
 
-Add rumble support for all of these devices in this patch. Two of the
-devices have received firmware updates that caused their product id's to
-change. Both old and new firmware versions of these devices were tested.
-
-The tested controllers are:
-
-1. 'wireless controller for xbox one', model 1708
-2. 'xbox wireless controller', model 1914. This is also sometimes
-   referred to as 'xbox series S|X'.
-3. 'elite series 2', model 1797.
-
-The tested configurations are:
-1. model 1708, pid 0x02fd (old firmware)
-2. model 1708, pid 0x0b20 (new firmware)
-3. model 1914, pid 0x0b13
-4. model 1797, pid 0x0b05 (old firmware)
-5. model 1797, pid 0x0b22 (new firmware)
-
-I verified rumble support on both bluetooth and usb.
-
-Reviewed-by: Bastien Nocera <hadess@hadess.net>
-Signed-off-by: Siarhei Vishniakou <svv@google.com>
-Signed-off-by: Jiri Kosina <jkosina@suse.cz>
----
- drivers/hid/hid-ids.h       | 10 +++++++++-
- drivers/hid/hid-microsoft.c | 11 ++++++++++-
- 2 files changed, 19 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/hid/hid-ids.h b/drivers/hid/hid-ids.h
-index 9f3f7588fe46..c4e4a24692f6 100644
---- a/drivers/hid/hid-ids.h
-+++ b/drivers/hid/hid-ids.h
-@@ -875,7 +875,15 @@
- #define USB_DEVICE_ID_MS_TYPE_COVER_2    0x07a9
- #define USB_DEVICE_ID_MS_POWER_COVER     0x07da
- #define USB_DEVICE_ID_MS_SURFACE3_COVER		0x07de
--#define USB_DEVICE_ID_MS_XBOX_ONE_S_CONTROLLER	0x02fd
-+/*
-+ * For a description of the Xbox controller models, refer to:
-+ * https://en.wikipedia.org/wiki/Xbox_Wireless_Controller#Summary
-+ */
-+#define USB_DEVICE_ID_MS_XBOX_CONTROLLER_MODEL_1708	0x02fd
-+#define USB_DEVICE_ID_MS_XBOX_CONTROLLER_MODEL_1708_BLE	0x0b20
-+#define USB_DEVICE_ID_MS_XBOX_CONTROLLER_MODEL_1914	0x0b13
-+#define USB_DEVICE_ID_MS_XBOX_CONTROLLER_MODEL_1797	0x0b05
-+#define USB_DEVICE_ID_MS_XBOX_CONTROLLER_MODEL_1797_BLE	0x0b22
- #define USB_DEVICE_ID_MS_PIXART_MOUSE    0x00cb
- #define USB_DEVICE_ID_8BITDO_SN30_PRO_PLUS      0x02e0
- #define USB_DEVICE_ID_MS_MOUSE_0783      0x0783
-diff --git a/drivers/hid/hid-microsoft.c b/drivers/hid/hid-microsoft.c
-index 071fd093a5f4..9345e2bfd56e 100644
---- a/drivers/hid/hid-microsoft.c
-+++ b/drivers/hid/hid-microsoft.c
-@@ -446,7 +446,16 @@ static const struct hid_device_id ms_devices[] = {
- 		.driver_data = MS_PRESENTER },
- 	{ HID_BLUETOOTH_DEVICE(USB_VENDOR_ID_MICROSOFT, 0x091B),
- 		.driver_data = MS_SURFACE_DIAL },
--	{ HID_BLUETOOTH_DEVICE(USB_VENDOR_ID_MICROSOFT, USB_DEVICE_ID_MS_XBOX_ONE_S_CONTROLLER),
-+
-+	{ HID_BLUETOOTH_DEVICE(USB_VENDOR_ID_MICROSOFT, USB_DEVICE_ID_MS_XBOX_CONTROLLER_MODEL_1708),
-+		.driver_data = MS_QUIRK_FF },
-+	{ HID_BLUETOOTH_DEVICE(USB_VENDOR_ID_MICROSOFT, USB_DEVICE_ID_MS_XBOX_CONTROLLER_MODEL_1708_BLE),
-+		.driver_data = MS_QUIRK_FF },
-+	{ HID_BLUETOOTH_DEVICE(USB_VENDOR_ID_MICROSOFT, USB_DEVICE_ID_MS_XBOX_CONTROLLER_MODEL_1914),
-+		.driver_data = MS_QUIRK_FF },
-+	{ HID_BLUETOOTH_DEVICE(USB_VENDOR_ID_MICROSOFT, USB_DEVICE_ID_MS_XBOX_CONTROLLER_MODEL_1797),
-+		.driver_data = MS_QUIRK_FF },
-+	{ HID_BLUETOOTH_DEVICE(USB_VENDOR_ID_MICROSOFT, USB_DEVICE_ID_MS_XBOX_CONTROLLER_MODEL_1797_BLE),
- 		.driver_data = MS_QUIRK_FF },
- 	{ HID_BLUETOOTH_DEVICE(USB_VENDOR_ID_MICROSOFT, USB_DEVICE_ID_8BITDO_SN30_PRO_PLUS),
- 		.driver_data = MS_QUIRK_FF },
--- 
-2.39.1
+Regards
+Bibo Mao
+> 
+>>
+>>>
+>>>> +
+>>>>    #define LOONGARCH_REG_SHIFT            3
+>>>>    #define LOONGARCH_REG_64(TYPE, REG)    (TYPE | KVM_REG_SIZE_U64 | (REG << LOONGARCH_REG_SHIFT))
+>>>>    #define KVM_IOC_CSRID(REG)             LOONGARCH_REG_64(KVM_REG_LOONGARCH_CSR, REG)
+>>>> diff --git a/arch/loongarch/kvm/vcpu.c b/arch/loongarch/kvm/vcpu.c
+>>>> index b5324885a81a..b2500d4fa729 100644
+>>>> --- a/arch/loongarch/kvm/vcpu.c
+>>>> +++ b/arch/loongarch/kvm/vcpu.c
+>>>> @@ -597,6 +597,34 @@ static int kvm_get_one_reg(struct kvm_vcpu *vcpu,
+>>>>                           break;
+>>>>                   }
+>>>>                   break;
+>>>> +       case KVM_REG_LOONGARCH_LBT:
+>>> What about adding FPU/LSX/LASX registers (if needed for migration) in
+>>> kvm_{get, set}_one_reg() here?
+>> If there is 512bit SIMD or other requirement, it will be added in
+>> kvm_{get, set}_one_reg(). For FPU/LSX/LASX registers, there is common
+>> API KVM_GET_FPU/KVM_SET_FPU here. The impmentation of QEMU only gets
+>> FPU, the upper LSX/LASX is lost, we will submit a patch in qemu side,
+>> the kvm kernel side is ok.
+> OK, no problem.
+> 
+> Huacai
+>>
+>> /*
+>>    * for KVM_GET_FPU and KVM_SET_FPU
+>>    */
+>> struct kvm_fpu {
+>>           __u32 fcsr;
+>>           __u64 fcc;    /* 8x8 */
+>>           struct kvm_fpureg {
+>>                   __u64 val64[4];
+>>           } fpr[32];
+>> };
+>>
+>> Regards
+>> Bibo Mao
+>>>
+>>> Huacai
+>>>
+>>>> +               if (!kvm_guest_has_lbt(&vcpu->arch))
+>>>> +                       return -ENXIO;
+>>>> +
+>>>> +               switch (reg->id) {
+>>>> +               case KVM_REG_LOONGARCH_LBT_SCR0:
+>>>> +                       *v = vcpu->arch.lbt.scr0;
+>>>> +                       break;
+>>>> +               case KVM_REG_LOONGARCH_LBT_SCR1:
+>>>> +                       *v = vcpu->arch.lbt.scr1;
+>>>> +                       break;
+>>>> +               case KVM_REG_LOONGARCH_LBT_SCR2:
+>>>> +                       *v = vcpu->arch.lbt.scr2;
+>>>> +                       break;
+>>>> +               case KVM_REG_LOONGARCH_LBT_SCR3:
+>>>> +                       *v = vcpu->arch.lbt.scr3;
+>>>> +                       break;
+>>>> +               case KVM_REG_LOONGARCH_LBT_EFLAGS:
+>>>> +                       *v = vcpu->arch.lbt.eflags;
+>>>> +                       break;
+>>>> +               case KVM_REG_LOONGARCH_LBT_FTOP:
+>>>> +                       *v = vcpu->arch.fpu.ftop;
+>>>> +                       break;
+>>>> +               default:
+>>>> +                       ret = -EINVAL;
+>>>> +                       break;
+>>>> +               }
+>>>> +               break;
+>>>>           default:
+>>>>                   ret = -EINVAL;
+>>>>                   break;
+>>>> @@ -663,6 +691,34 @@ static int kvm_set_one_reg(struct kvm_vcpu *vcpu,
+>>>>                           break;
+>>>>                   }
+>>>>                   break;
+>>>> +       case KVM_REG_LOONGARCH_LBT:
+>>>> +               if (!kvm_guest_has_lbt(&vcpu->arch))
+>>>> +                       return -ENXIO;
+>>>> +
+>>>> +               switch (reg->id) {
+>>>> +               case KVM_REG_LOONGARCH_LBT_SCR0:
+>>>> +                       vcpu->arch.lbt.scr0 = v;
+>>>> +                       break;
+>>>> +               case KVM_REG_LOONGARCH_LBT_SCR1:
+>>>> +                       vcpu->arch.lbt.scr1 = v;
+>>>> +                       break;
+>>>> +               case KVM_REG_LOONGARCH_LBT_SCR2:
+>>>> +                       vcpu->arch.lbt.scr2 = v;
+>>>> +                       break;
+>>>> +               case KVM_REG_LOONGARCH_LBT_SCR3:
+>>>> +                       vcpu->arch.lbt.scr3 = v;
+>>>> +                       break;
+>>>> +               case KVM_REG_LOONGARCH_LBT_EFLAGS:
+>>>> +                       vcpu->arch.lbt.eflags = v;
+>>>> +                       break;
+>>>> +               case KVM_REG_LOONGARCH_LBT_FTOP:
+>>>> +                       vcpu->arch.fpu.ftop = v;
+>>>> +                       break;
+>>>> +               default:
+>>>> +                       ret = -EINVAL;
+>>>> +                       break;
+>>>> +               }
+>>>> +               break;
+>>>>           default:
+>>>>                   ret = -EINVAL;
+>>>>                   break;
+>>>> --
+>>>> 2.39.3
+>>>>
+>>
+>>
 
 
