@@ -1,109 +1,147 @@
-Return-Path: <linux-kernel+bounces-311650-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311652-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 052E5968B97
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 18:07:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E79EE968BA0
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 18:09:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AFFD51F21A86
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 16:07:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9EB051F22B7D
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 16:09:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFD641A304A;
-	Mon,  2 Sep 2024 16:07:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2DFF1A302E;
+	Mon,  2 Sep 2024 16:08:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cgHR+blr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="cNNUa0S3"
+Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10CB41A2653;
-	Mon,  2 Sep 2024 16:07:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D27221A3023;
+	Mon,  2 Sep 2024 16:08:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725293261; cv=none; b=HLMdPYaBF0akSYpjBbOKnwZOTcKaXqNPR2omXk6AX18c+DGMm5lGl9CxNKQjwEZCO9sfiPa3cqPRAqvbSaVw3+UuWqfNr+Am3BcuYr1iOtphx+IAjaXBvVYHKg2JlSt/7xhpm+11dCIL5iBpNIXbXBpcd0h66Fj7LjSO5qFp0lQ=
+	t=1725293328; cv=none; b=CNy9z/tA1r3kJcJS6m28Yxm9qQG257u0TJNugY3e1TwF29S7Q8aQ/7A0eJ8omVFpP/GypbbvNVRq2TZlGCYfwXNI1bYF3WRptEv0hG/OQ/2OESBx/jCRENzmqkz9vSEm+FG2IKxVSSYYW4K8i9K9QMwXZhu/X2NmgXtyghsSZOQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725293261; c=relaxed/simple;
-	bh=VvHmQGZKkX2eGFQymZ0Kewqry4twUgs0EDXwzaCavc4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=A82tl2o3l3SkPg4eukRC/T8JYLC/crLa+oRIHp6RXMUxraSPaLt3twGbsyWorV1kYkC7JiiB0aM/I4uba/RZHMgBnsm/5dYu5Q87g120snGPVLISNz7TICtsKzm/KdqJ1wDERPHh1F73izz04obj9UFzxvOFj4LlmUEkeXeujo0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cgHR+blr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53EE6C4CEC2;
-	Mon,  2 Sep 2024 16:07:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725293260;
-	bh=VvHmQGZKkX2eGFQymZ0Kewqry4twUgs0EDXwzaCavc4=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=cgHR+blrzPmmrfoyw+1IdBot0rHFwRpSVJOz8H8XTx9mN3IE+hRbQUX4sEtel9Gyc
-	 7oVcZ12Ej0NV0Wc9YN/eUg/+SCwfXtKCsq0ZFpX2LKvZY55zSKAdnGwHGUkcnZmQsK
-	 u/q8QRX1FfD4IeHoG3KGedDiNwRzPb4rZOaShmGepVogLxPQWaWRD2xrMrhBBvzEJK
-	 cDuS/1MBoyrNXR/p5CEbq4jr0MCrVKsVUBnJq99UHZWpIsfNzwkWujZJpYAT13W8Op
-	 BkwFRDVkCOcKQ8Ts1d3W432kqKMomUZmf+gz4xH05qkrlw1spAV6YbN/OP99IKSXVV
-	 trPIh3hxNfKxg==
-Message-ID: <eb17ba5c-d7b4-4463-a0a3-95ab584988f6@kernel.org>
-Date: Mon, 2 Sep 2024 18:07:34 +0200
+	s=arc-20240116; t=1725293328; c=relaxed/simple;
+	bh=udCLYS03vFzY0pDP0VXNCARsSZDvZr7IQUhpJq1Ey+U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=onEpcdftinpaHWC3P4qCUBC+xIZNIgJx8GfFplOR+2F3I6qeYpx1xMCHMPoJw5K/w50qZfeJyR9mKFo24qMRD1p8xLWyq1k0q7dxyDTA4cW7H9GJuWiXhfaZidooy+NXF/xq69mtlkKKWkSknwZ4lJ8Sqv//mhXtPHne9fRlEYA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=cNNUa0S3; arc=none smtp.client-ip=80.241.56.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyphar.com
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:b231:465::1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4WyDFj5pVYz9t1t;
+	Mon,  2 Sep 2024 18:08:41 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
+	t=1725293321;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=bnehve9VjMnII0s4fDhfCcbW2zyjJe5jdh+Zfgbp8WE=;
+	b=cNNUa0S3Iq182pJH+ahbE5zzdZTntjXR7caJZLh8wQQK2pMWA6nS8n0jBn0sakWP6e24vw
+	kMyOlQqR1AxWzazQMHSjUF9doKKXWRwz+IPz2sGzN7DGBIJeXXfdFWb08AQ258ZuzGVxSu
+	LXj+t+WneeeH68MNhgSIWKr6buPAbu1oOas4jIHbs3z0YfK2pWm7Qq2XTxwRSrSOmJguNE
+	MsJF+6bK8BpckmA6qEi0k+NY/ft5i1QVgD4PPuwH0jflDz5he3FpP1GP9xto7ln1lyc6OH
+	XSKAzWs8jgM0FzNrXYZFk7E1i0JDtXbXUSB+OU3vohpz0STXzPCQx2Oqly+/7g==
+Date: Tue, 3 Sep 2024 02:08:26 +1000
+From: Aleksa Sarai <cyphar@cyphar.com>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>, 
+	Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>, 
+	Benjamin Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
+	Valentin Schneider <vschneid@redhat.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, shuah <shuah@kernel.org>, 
+	Kees Cook <kees@kernel.org>, Florian Weimer <fweimer@redhat.com>, 
+	Mark Rutland <mark.rutland@arm.com>, linux-kernel@vger.kernel.org, linux-api@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, Linux-Arch <linux-arch@vger.kernel.org>, 
+	linux-kselftest@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH RFC 3/8] openat2: explicitly return -E2BIG for (usize >
+ PAGE_SIZE)
+Message-ID: <20240902.160305-cuddly.doc.quaint.provider-RsRaXpw78cll@cyphar.com>
+References: <20240902-extensible-structs-check_fields-v1-0-545e93ede2f2@cyphar.com>
+ <20240902-extensible-structs-check_fields-v1-3-545e93ede2f2@cyphar.com>
+ <63193b87-7057-4ad0-aef2-fdb5d15138c3@app.fastmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] arm64: dts: qcom: x1e80100-romulus: Set up USB
- Multiport controller
-To: neil.armstrong@linaro.org, Konrad Dybcio <konradybcio@kernel.org>,
- Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: Marijn Suijten <marijn.suijten@somainline.org>,
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, Konrad Dybcio <quic_kdybcio@quicinc.com>,
- 20240830-nxp-ptn3222-v2-0-4c6d8535cf6c@linaro.org
-References: <20240902-topic-sl7_updates-v1-0-3ee667e6652d@quicinc.com>
- <20240902-topic-sl7_updates-v1-2-3ee667e6652d@quicinc.com>
- <925061d3-9894-4332-8c2a-e494ad22c66b@linaro.org>
-Content-Language: en-US
-From: Konrad Dybcio <konradybcio@kernel.org>
-In-Reply-To: <925061d3-9894-4332-8c2a-e494ad22c66b@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="3itig22h2tekijst"
+Content-Disposition: inline
+In-Reply-To: <63193b87-7057-4ad0-aef2-fdb5d15138c3@app.fastmail.com>
+X-Rspamd-Queue-Id: 4WyDFj5pVYz9t1t
 
-On 2.09.2024 6:01 PM, neil.armstrong@linaro.org wrote:
-> On 02/09/2024 16:50, Konrad Dybcio wrote:
->> From: Konrad Dybcio <quic_kdybcio@quicinc.com>
->>
->> The USB MP controller is wired up to the USB-A port on the left side
->> and to the Surface Connector on the right side. Configure it.
->>
->> While at it, remove a stray double \n.
->>
->> Signed-off-by: Konrad Dybcio <quic_kdybcio@quicinc.com>
->> ---
->>   .../boot/dts/qcom/x1e80100-microsoft-romulus.dtsi  | 59 +++++++++++++++++++++-
->>   1 file changed, 57 insertions(+), 2 deletions(-)
->>
->> diff --git a/arch/arm64/boot/dts/qcom/x1e80100-microsoft-romulus.dtsi b/arch/arm64/boot/dts/qcom/x1e80100-microsoft-romulus.dtsi
->> index 5419d0b02785..ac2acf949b70 100644
->> --- a/arch/arm64/boot/dts/qcom/x1e80100-microsoft-romulus.dtsi
->> +++ b/arch/arm64/boot/dts/qcom/x1e80100-microsoft-romulus.dtsi
->> @@ -572,7 +572,17 @@ &i2c5 {
->>         status = "okay";
->>   -    /* Something @4f */
->> +    ptn3222: redriver@4f {
->> +        compatible = "nxp,ptn3222";
->> +        reg = <0x4f>;
->> +
->> +        reset-gpios = <&tlmm 7 GPIO_ACTIVE_LOW>;
->> +
->> +        vdd3v3-supply = <&vreg_l13b>;
->> +        vdd1v8-supply = <&vreg_l4b>;
->> +
->> +        #phy-cells = <0>;
-> 
-> It's unrelated to mutiport USB-A, should go in a separate change,
-> and also probably in a bigger change enabling usb-c features using
-> the retimer.
 
-No, this chip converts between eUSB on the PHY and USB on the port
+--3itig22h2tekijst
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Konrad
+On 2024-09-02, Arnd Bergmann <arnd@arndb.de> wrote:
+> On Mon, Sep 2, 2024, at 07:06, Aleksa Sarai wrote:
+> > While we do currently return -EFAULT in this case, it seems prudent to
+> > follow the behaviour of other syscalls like clone3. It seems quite
+> > unlikely that anyone depends on this error code being EFAULT, but we can
+> > always revert this if it turns out to be an issue.
+>=20
+> Right, it's probably a good idea to have a limit there rather than
+> having a busy loop with a user-provided length when the only bound is
+> the available virtual memory.
+>=20
+> >  	if (unlikely(usize < OPEN_HOW_SIZE_VER0))
+> >  		return -EINVAL;
+> > +	if (unlikely(usize > PAGE_SIZE))
+> > +		return -E2BIG;
+> >=20
+>=20
+> Is PAGE_SIZE significant here? If there is a need to enforce a limit,
+> I would expect this to be the same regardless of kernel configuration,
+> since the structure layout is also independent of the configuration.
+
+PAGE_SIZE is what clone3, perf_event_open, sched_setattr, bpf, etc all
+use. The idea was that PAGE_SIZE is the absolute limit of any reasonable
+extensible structure size because we are never going to have argument
+structures that are larger than a page (I think this was discussed in
+the original copy_struct_from_user() patchset thread in late 2019, but I
+can't find the reference at the moment.)
+
+I simply forgot to add this when I first submitted openat2, the original
+intention was to just match the other syscalls.
+
+> Where is the current -EFAULT for users passing more than a page?
+> I only see it for reads beyond the VMA, but not e.g. when checking
+> terabytes of zero pages from an anonymous mapping.
+
+I meant that we in practice return -EFAULT if you pass a really large
+size (because you end up running off the end of mapped memory). There is
+no explicit -EFAULT for large sizes, which is exactly the problem. :P
+
+>=20
+>     Arnd
+
+--=20
+Aleksa Sarai
+Senior Software Engineer (Containers)
+SUSE Linux GmbH
+<https://www.cyphar.com/>
+
+--3itig22h2tekijst
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQS2TklVsp+j1GPyqQYol/rSt+lEbwUCZtXi+gAKCRAol/rSt+lE
+b/CVAP4/UIPzUm7VHMdeZy4qfDO8V7V0ojxi/W5gHbAzDDpC9AEA+OOBAKvxJ0NQ
+ghIM9lErOJb+9JyKInzhgYT3v5S9KQ4=
+=pzTi
+-----END PGP SIGNATURE-----
+
+--3itig22h2tekijst--
 
