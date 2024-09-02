@@ -1,89 +1,112 @@
-Return-Path: <linux-kernel+bounces-310609-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310611-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82388967F07
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 08:00:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49FD3967F10
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 08:01:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 101561F2139C
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 06:00:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A30D9B20D32
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 06:01:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACABC155353;
-	Mon,  2 Sep 2024 06:00:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC2FE1547EE;
+	Mon,  2 Sep 2024 06:01:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="oIo4Qytb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="HjOWstQO"
+Received: from mout.web.de (mout.web.de [212.227.17.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8F9C154C00;
-	Mon,  2 Sep 2024 06:00:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2025144D0A;
+	Mon,  2 Sep 2024 06:01:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725256812; cv=none; b=S35DaL8hVgzwpCK/F9nzPse9m5C63TbWHVScJ2eQDJC2WqPVllDQ+/K7xRyr+GZneA8/qE/sL9ReZsEFhPBudF/Vp22jDVO8SQ437/xOZiGgKEdZyO4YP2Gx+pXFATfOs5GX2fh5QEl/hvUyczQ1SuapONvqMqPQKVmf7aqOjy8=
+	t=1725256883; cv=none; b=igWrRpKcZ1ovl2bFObqKjETLWz/k+jG5RB8J+5VYyZuBnMnjv6cDca8lAtrwnJ1+yrHDHylt8wz9zRlP7HaHNPaYnDwMh5pKqVouLk2VgMKD28eWi4KaLZkTPbzPXWaUCA62Rr4NsclhTvNWr2AOzgb5u2KlBekh1qBnVQ+wqAE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725256812; c=relaxed/simple;
-	bh=fkYfWMLlfk5e2VJ1eg33dBxjDkhjDPqpeRo+qkVeL00=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hdD2xmqwe2ZclRf0TgYYP+dPnks7T5OBhpro+KplewL1tPkRn/Z6lRBIpSIUb+nBVhwF2UzJoPrWqpFi46OUQdD3hkQ+YssBM1r67QaORT3qaK81lOSVO7cCtqiYvEqSCnevEupiON7cNfTvuDcGaFn1oJjFUZCzSiNESpb6Cp0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=oIo4Qytb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 068CFC4CEC2;
-	Mon,  2 Sep 2024 06:00:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1725256812;
-	bh=fkYfWMLlfk5e2VJ1eg33dBxjDkhjDPqpeRo+qkVeL00=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=oIo4Qytbe/iyRXPwnfYn9skDnjW1uH6B6CMf0AAs8IycOmXcgYAcSUvYiHwbalw1H
-	 AUhtuaV/nN+PkUQzRjh7p1MfLP6qgxtg1H3hhF/4euS3MgFgqgOh5EhsqK//ojDhez
-	 vIaEejmsQrubCPr32jvW58gTqmg315O23VDc1lPU=
-Date: Mon, 2 Sep 2024 08:00:08 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Yenchia Chen <yenchia.chen@mediatek.com>
-Cc: stable@vger.kernel.org,
-	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>,
-	Matthias Brugger <matthias.bgg@gmail.com>, linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH 5.15 1/1] PM: sleep: Restore asynchronous device resume
- optimization
-Message-ID: <2024090250-reliably-ecard-3b58@gregkh>
-References: <20240902031047.9865-1-yenchia.chen@mediatek.com>
- <20240902031047.9865-2-yenchia.chen@mediatek.com>
+	s=arc-20240116; t=1725256883; c=relaxed/simple;
+	bh=r+h5DdKH7BiVvXGTx7RSRB8pHqivoswfNU02zUKuXhs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=t+QkcKR3oXASCS5fDrjlXlahs3ciwXH/ZjP9VuHt/2Faw+FKP5xVHx7rx+/0E0GDk4nhv/wIP7O1zthexpIWGu5utpeRnhYgczWG7raqMSG65mhEfQzyMd9NWZrI6h+c9+5PzCIKCahfFumU5DnEUj8FFvqyQLhTiCOUzkJq8M8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=HjOWstQO; arc=none smtp.client-ip=212.227.17.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1725256855; x=1725861655; i=markus.elfring@web.de;
+	bh=r+h5DdKH7BiVvXGTx7RSRB8pHqivoswfNU02zUKuXhs=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=HjOWstQOBP/xhi1WSSuMx+E87vC0NR8Jr8QYEYwaVuRFRNkA6UbZWP/GlN2rbZNe
+	 nEV3TgKSM8fq6cEVs92qbHZmJchqI5PEl3CMKyeagTzJOvOS8eMGN+rD3+EF87CJI
+	 s+Il6MArnhFKJhqe9qkngPFBXxhht3uhUZ5XvQhkfVKMrqQcA2If7Q+s4tcTDKzZr
+	 +mSPGtQ0/86YA1eMasCSzeJVhTKTFqNXtph5j6JDxONa5mUGEFl/GVRgZVAm16cXU
+	 c51GvryD878qWYeCavuSzkp/kPtu1BDs1oHG5/elf8V2+TFv18k4o4W7fQn03sIjE
+	 i263FnWOh8p7s3ucHw==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.84.95]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MqIB7-1sGdS020BP-00ckDW; Mon, 02
+ Sep 2024 08:00:55 +0200
+Message-ID: <3c60e167-7815-49c8-89f1-fe1139879d6b@web.de>
+Date: Mon, 2 Sep 2024 08:00:46 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240902031047.9865-2-yenchia.chen@mediatek.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: iio: imu: inv_mpu6050: Remove duplicate code between labels
+To: Gyeyoung Baek <gye976@gmail.com>, linux-iio@vger.kernel.org,
+ Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>
+Cc: LKML <linux-kernel@vger.kernel.org>
+References: <20240901091214.15199-1-gye976@gmail.com>
+ <533802b3-3034-4b7c-b903-72608917e2f0@web.de>
+ <CAKbEznv-TmCr2FAodrM2SKK5A5pbV9p5-OvXPdmuk_4xXmh=Rw@mail.gmail.com>
+ <7b827ee0-9116-4e8c-96e1-1fa5f7267f33@web.de>
+ <CAKbEznu=+Bkw4kmoo7qG9h2wM=2XV54j_SYzHMAH1uWhtUPCvg@mail.gmail.com>
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <CAKbEznu=+Bkw4kmoo7qG9h2wM=2XV54j_SYzHMAH1uWhtUPCvg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:R8zRGZ0uGHgckq3I2sYqcn2+0B9e3cQGyK5AhzcFFsGDaMnMN96
+ 9ZYuTV+I1hO2F4/6wCt4kPvZE7av1NIMl0O190whm6y+zBugC/0gP36s5OBeecnzmMKooGQ
+ 2EOcz5K7h04Zx9sBBEaqjzue70udnHPqKA26j+P/ww7bk6XupLN7SCBbuw40rqBC+rdIxf/
+ M7HvOS52ks+ayNtI/Oe2A==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:s/sGC0twEzQ=;uzdz+FV4i+M4gOEZyFA9ca/rLaR
+ xggvm8fg4HUui3WNaqLAVzXQ7xqhJn44gWkkPCyccEzbOXqgrUgyRX56FnXjJmQyS9gMwadGi
+ SaYnkF4g/Orf/TGmdqalxP+Cuz10vyqWSLcMOOjdtSuNbiOUptJfX5pv09phW+pf4H0nRj2LA
+ 2I34nH1bQDxIf1TgueWdRlp4EVTdcvNX9PZBHvWuFbW/Z25lRYztyV/J0LLR5Qtoo17pzdtpq
+ Dp19/xnFmSYj0QEXHHN7p4SOXL2shHioeM0BxtgMVYZOY+miYac98q6NUiT9z448ozeNNPBTF
+ ezUHwHkMNLzmR0LL4J8xQM+oUHj8PwoAFY2esqdo7F5v09da8SzlgVj4EJw0Bi+8JyNepXs/I
+ 4pn5FkWVhvlqxQoMriZj3y1aQKyxyDxIG4okYpGRDcEGtWHMw1fNiyloSx1TCp9JHSl8n83dh
+ nuW1/LWce+PiXmPTUcjEgdNGiRjrlzIPnJ09jTEIsqUp3DVthHiDM+tcNoX2nH+C5eUpqRreS
+ Ptf26IYramW3nMdeIRvjTFtU4x+1UGRoAigvcPJcUoUjJdkAboeY4CCp5VVVLsHPXBQcferSD
+ P8yONH1Kv1ScqZcDat5SNsyrxDiGyAHDN47XuvfM35gvrBKZw76lBzt3YrxmUJ1DfK04MF/iA
+ bkpUx2ZqyQtKB9YC+hyGpujkiM4E9aNvZg1aJnEJfI1uVK5OedSqWYdBAYzbmWeuWkhyLc7IZ
+ iTtoGQV4wiHiOLLrEmYahUiz5iM25lhAuWP5IcKeSHcu/ZkQXRU6ZKV/GGo0NF7pAMA0By+wf
+ KCR1G0u10NjV27Xoa9PEj3fQ==
 
-On Mon, Sep 02, 2024 at 11:10:45AM +0800, Yenchia Chen wrote:
-> From: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-> 
-> Before commit 7839d0078e0d ("PM: sleep: Fix possible deadlocks in core
-> system-wide PM code"), the resume of devices that were allowed to resume
-> asynchronously was scheduled before starting the resume of the other
-> devices, so the former did not have to wait for the latter unless
-> functional dependencies were present.
-> 
-> Commit 7839d0078e0d removed that optimization in order to address a
-> correctness issue, but it can be restored with the help of a new device
-> power management flag, so do that now.
-> 
-> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> Reviewed-by: Stanislaw Gruszka <stanislaw.gruszka@linux.intel.com>
-> Signed-off-by: yenchia.chen <yenchia.chen@mediatek.com>
+>>> Hello, I apologize for the insufficient explanation.
+>>
+>> How will the commit message be improved further?
+=E2=80=A6
+> Since the code is short,
 
-Please sign off using your name, not your email alias.
+This implementation detail can be nice.
 
-Also, what git id is this?
 
-thanks,
+> I think it's fine for now.
 
-greg k-h
+Please reconsider such a view once more.
+Are imperative wordings also more desirable for a better change descriptio=
+n?
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
+cumentation/process/submitting-patches.rst?h=3Dv6.11-rc6#n45
+
+Regards,
+Markus
 
