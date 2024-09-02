@@ -1,117 +1,179 @@
-Return-Path: <linux-kernel+bounces-311364-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311365-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E493968813
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 14:57:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C773968817
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 14:58:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B44228342B
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 12:57:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5140D1C21AB5
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 12:58:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 224361D61A5;
-	Mon,  2 Sep 2024 12:57:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A66A19C571;
+	Mon,  2 Sep 2024 12:58:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Glj3Z303"
-Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=layalina-io.20230601.gappssmtp.com header.i=@layalina-io.20230601.gappssmtp.com header.b="nVgQGO7i"
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9038719C56C;
-	Mon,  2 Sep 2024 12:57:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC76919C56F
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 12:58:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725281848; cv=none; b=hXbKFVl7cdLPpyMI+J3c53qqUV2yOPMosfp9k1fpdSLWumLwxs4iO1oQxl0ATxB4OFxL19B7U4qWnV3vHO9ceBPsrHy/zGlceWtiea4tOryYfOfdCACG9zH14AV3M/ayoln5eD7qEQke72jO54ffco6ajKNBKMsRwmHB9jRs1bk=
+	t=1725281902; cv=none; b=edQ+A2hNLFMXm+ECwsU98fOxSf3ZC4VVdRk6kAIsfRCDeRjoLi4DrOsMvMA96lftPE2RuKXQfLh//sg/lRC/xHIcupfCh3l+C2tEJiMNtToe43SybSg2i0uSxVAaOiwKCXZbnWN2enrChh27RChAUm2EmtDUq/t+gPMbQ0cAeCk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725281848; c=relaxed/simple;
-	bh=M91o09vL1bMwOmCoznkjH6oG2YpxUT+4OOrtCFleyvs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=V84VkMY5J5SMDwZmtXOUUIYyU0R7K0GPe+HJw2Nf9HqC7CMSgu1NzxFsS5yDiLkJ3AeHuT7+bpdsfKUH/MXM21cuU917iNZzOW9HVnMJcbcYVYhBl2Tg01kMa+C4nyNDDqvCOwdHjkZZX8IdGZg1Y4vKyhpMzLd/8dq0Cr9HJqI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=Glj3Z303; arc=none smtp.client-ip=198.47.19.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 482CvJ1B059155;
-	Mon, 2 Sep 2024 07:57:19 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1725281839;
-	bh=YSefBqAQwm5Gsbjw4LNtV2qjJ+bxbq24H+xHL/t+zj0=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=Glj3Z303kQvg44KuY6NjMSwB7bPvuvZETLpbI31DM3TUSojw8ioiLlVsu7khFGB8R
-	 k8HIf2Mt8V6K+INLVRQ72yOd2MudEuRJoMpL+gP5B19wZ431h4YOHdYJADmnoqykrm
-	 FCktfOQfAURH5fchCJjnrm8g5XsJwecsRmYgJNbg=
-Received: from DLEE102.ent.ti.com (dlee102.ent.ti.com [157.170.170.32])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 482CvJ9C062914
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Mon, 2 Sep 2024 07:57:19 -0500
-Received: from DLEE109.ent.ti.com (157.170.170.41) by DLEE102.ent.ti.com
- (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 2
- Sep 2024 07:57:19 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE109.ent.ti.com
- (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Mon, 2 Sep 2024 07:57:19 -0500
-Received: from [10.249.141.75] ([10.249.141.75])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 482CvETp036513;
-	Mon, 2 Sep 2024 07:57:15 -0500
-Message-ID: <a778d080-9cc5-4b1d-ab4b-6a6d930d36f9@ti.com>
-Date: Mon, 2 Sep 2024 18:27:13 +0530
+	s=arc-20240116; t=1725281902; c=relaxed/simple;
+	bh=q96VyqN/0ySkCB+PIyJA7FN2MaTeZbJOnNfW8MS+37A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bdTEM2G/x55CMEf9YKvaIn6zH4VAENPEP73XgVy8jRvYTkCxRh6Gj9i0USGVxEZPSZZlfYUWP4EAKb+AOf0vpNci7D9ljlPoYjwZUkqXp+JNatq8lClvaZZbTpv6ZHrTuMnwAHZ0asCT6Wif+BZEon9pS3ru4nanqpsGogEzFaY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=layalina.io; spf=pass smtp.mailfrom=layalina.io; dkim=pass (2048-bit key) header.d=layalina-io.20230601.gappssmtp.com header.i=@layalina-io.20230601.gappssmtp.com header.b=nVgQGO7i; arc=none smtp.client-ip=209.85.208.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=layalina.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=layalina.io
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5bf009cf4c0so4244224a12.1
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2024 05:58:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=layalina-io.20230601.gappssmtp.com; s=20230601; t=1725281899; x=1725886699; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=cR9cfhYSepdl+YX2QY2BUARaBieMmfjXY8jZwYs5OIo=;
+        b=nVgQGO7iivrQ6EQr5n5NaangxB0ricUPuYDKXBJ3dF1R3YtP/KjsZ5Z7cItJtA1J2N
+         +WS7+8wK3P5ky8jyxJS21ENmUcAgHo6Be9mCpRsLXNMd6W31Z1aAuu8cWsTxi0nqAQjA
+         qKaN+s7eXGmttArUpmafrK9UvcuSrEFRlDKjMy0PyLdZTuesw5aJn3Tug3f/Z2guqXBH
+         07tzbu8DESInsJzXjy3xibHzN2BZ+PCpRwilJmvsWx8bTBgexfZ2fQt+fexiUIed5L9L
+         uIygil8y6OyXLYrzPE/wSGgEz6y49jJeRWq3N01bmeX4nNAnuCd9F7ya+VA1M22v0Tac
+         pdnA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725281899; x=1725886699;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cR9cfhYSepdl+YX2QY2BUARaBieMmfjXY8jZwYs5OIo=;
+        b=vWEcXSiDlPG1nWP0cSC/g+H9l3wzhSU+w3+7KWyC9YhueP/Tem1Ma1g7wSPEQweENh
+         dp5uSa/XDoNYZO7Gl3b/jqoGhbNLggGvswVJ44UtrJPYQDuivzRdEdI0DsjA/X0r7UFp
+         +oOg3wOMfF1lvbtm6sZjJmGAEG6ChewvPRvd0Q3wSBd3uPZbNFpIjTTLIU2vzPexgNui
+         kjf6imNtX5pdHYFP1keFAYl8dar87ceCXCI6fwb9FabeGIUZcFZzp8AhPTS8fwjbJVra
+         donc3mygudsH8Y3kWujav+F3ta1J8MVbqtmpJiITnLRXragLs3wkslEDBVAVFSuAt/Rv
+         NZLg==
+X-Forwarded-Encrypted: i=1; AJvYcCULjgy9smm6M3cVX4MQ5klpFgMVezbkZwJoXEjqYQ9RnsEN9r1SeOyAVXVWdb7D7ARppeWRbdu3WQRVFik=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyKy+ZwV/c8sXXY/tfl08ZCn7esnfQjlUY41HZGq+IU4fj0nGv9
+	js7NUety/JGjWrjNzWaSHJGnDIb2McMDrbtVfJ4bVswQsE5NzTJsn8xOkMaU5zM=
+X-Google-Smtp-Source: AGHT+IHlH58uD98kUK0m8/eegTUlU87wVLPhG2mjSyCo7xehUKX9Qzii7s7RaH363XfrLJooW3C2CQ==
+X-Received: by 2002:a05:6402:5111:b0:5c2:12b5:3b83 with SMTP id 4fb4d7f45d1cf-5c21ed33cd0mr10236149a12.4.1725281898768;
+        Mon, 02 Sep 2024 05:58:18 -0700 (PDT)
+Received: from airbuntu ([176.29.222.46])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c24372d393sm3139014a12.23.2024.09.02.05.58.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 02 Sep 2024 05:58:18 -0700 (PDT)
+Date: Mon, 2 Sep 2024 13:58:15 +0100
+From: Qais Yousef <qyousef@layalina.io>
+To: Vincent Guittot <vincent.guittot@linaro.org>
+Cc: Christian Loehle <christian.loehle@arm.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Ingo Molnar <mingo@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Hongyan Xia <hongyan.xia2@arm.com>,
+	John Stultz <jstultz@google.com>, linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v7] sched: Consolidate cpufreq updates
+Message-ID: <20240902125815.vu3s25ciib34eu3a@airbuntu>
+References: <20240728184551.42133-1-qyousef@layalina.io>
+ <ca6b1db0-37d9-462e-87e4-d3bbd5eec7a3@arm.com>
+ <CAKfTPtBWLe4hMBhJeSqvoW10dAF3Bgj+zcYGMgBfwUhkgytkEQ@mail.gmail.com>
+ <CAKfTPtAJNjUe=4eQxq0M6==6O7dtJrw6rtwE6-xaWMJdSmfKcA@mail.gmail.com>
+ <20240901175149.46yfk335niccmfq4@airbuntu>
+ <CAKfTPtBahrD5L8CbB4BijAvnwq=yG375TWDUuEvNipyTDYGQTA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 1/5] arm64: dts: ti: Refactor J784s4 SoC files to a
- common file
-To: Manorit Chawdhry <m-chawdhry@ti.com>, Nishanth Menon <nm@ti.com>,
-        Vignesh
- Raghavendra <vigneshr@ti.com>,
-        Tero Kristo <kristo@kernel.org>, Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>
-CC: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Neha Malcom Francis <n-francis@ti.com>,
-        Aniket Limaye <a-limaye@ti.com>, Beleswar Padhi <b-padhi@ti.com>,
-        Siddharth
- Vadapalli <s-vadapalli@ti.com>, <u-kumar1@ti.com>
-References: <20240902-b4-upstream-j742s2-v6-0-6a7aa2736797@ti.com>
- <20240902-b4-upstream-j742s2-v6-1-6a7aa2736797@ti.com>
-Content-Language: en-US
-From: "Kumar, Udit" <u-kumar1@ti.com>
-In-Reply-To: <20240902-b4-upstream-j742s2-v6-1-6a7aa2736797@ti.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAKfTPtBahrD5L8CbB4BijAvnwq=yG375TWDUuEvNipyTDYGQTA@mail.gmail.com>
 
+On 09/02/24 14:30, Vincent Guittot wrote:
+> On Sun, 1 Sept 2024 at 19:51, Qais Yousef <qyousef@layalina.io> wrote:
+> >
+> > On 08/13/24 10:27, Vincent Guittot wrote:
+> > > On Tue, 13 Aug 2024 at 10:25, Vincent Guittot
+> > > <vincent.guittot@linaro.org> wrote:
+> > > >
+> > > > On Mon, 5 Aug 2024 at 17:35, Christian Loehle <christian.loehle@arm.com> wrote:
+> > > > > Hi Qais,
+> > > > > the idea of SCHED_CPUFREQ_FORCE_UPDATE and the possiblity of spamming
+> > > > > freq updates still bothered me so let me share my thoughts even though
+> > > > > it might be niche enough for us not to care.
+> > > > >
+> > > > > 1. On fast_switch systems, assuming they are fine with handling the
+> > > > > actual updates, we have a bit more work on each context_switch() and
+> > > > > some synchronisation, too. That should be fine, if anything there's
+> > > > > some performance regression in a couple of niche cases.
+> > > > >
+> > > > > 2. On !fast_switch systems this gets more interesting IMO. So we have
+> > > > > a sugov DEADLINE task wakeup for every (in a freq-diff resulting)
+> > > > > update request. This task will preempt whatever and currently will
+> > > > > pretty much always be running on the CPU it ran last on (so first CPU
+> > > > > of the PD).
+> > > >
+> > > > The !fast_switch is a bit of concern for me too but not for the same
+> > > > reason and maybe the opposite of yours IIUC your proposal below:
+> > > >
+> > > > With fast_switch we have the following sequence:
+> > > >
+> > > > sched_switch() to task A
+> > > > cpufreq_driver_fast_switch -> write new freq target
+> > > > run task A
+> > > >
+> > > > This is pretty straight forward but we have the following sequence
+> > > > with !fast_switch
+> > > >
+> > > > sched_switch() to task A
+> > > > queue_irq_work -> raise an IPI on local CPU
+> > > > Handle IPI -> wakeup and queue sugov dl worker on local CPU (always
+> > > > with 1 CPU per PD)
+> > > > sched_switch() to sugov dl task
+> > > > __cpufreq_driver_target() which can possibly block on a lock
+> > > > sched_switch() to task A
+> > > > run task A
+> > > >
+> > >
+> > > sent a bit too early
+> > >
+> > > > We can possibly have 2 context switch and one IPi for each "normal"
+> > > > context switch which is not really optimal
+> > >
+> > > It would be good to find a way to skip the spurious back and forth
+> > > between the normal task and sugov
+> >
+> > Hmm I think we use affinity to keep the sugov running on policy->related_cpus.
+> > Relaxing this will make it less of a problem, but won't eliminate it.
+> 
+> yes, but it's not a problem of relaxing affinity here
 
-On 9/2/2024 5:56 PM, Manorit Chawdhry wrote:
-> Refactor J784s4 SoC files to a common file which uses the
-> superset device to allow reuse in j742s2-evm which uses the subset part.
->
-> Signed-off-by: Manorit Chawdhry <m-chawdhry@ti.com>
-> Reviewed-by: Beleswar Padhi <b-padhi@ti.com>
-> ---
->
-> Notes:
->      v6:
->      - Rebased with conflicts
->      - Added a comment for MSMC node runtime fixup (Udit)
+If we have 1 CPU per PD, then relaxing affinity will allow it to run anywhere.
+I am just this will be safe on all platforms of course.
 
+But yeah, I don't think this is a solution anyway but the simplest thing to
+make it harder to hit.
 
-Thanks
+> The problem is that the 1st switch to task A will be preempted by
+> sugov so the 1st switch is useless. You should call cpufreq_update
+> before switching to A so that we skip the useless switch to task A and
+> directly switch to sugov 1st then task A
 
-Reviewed-by: Udit Kumar <u-kumar1@ti.com>
+Can we do this safely after we pick task A, but before we do the actual context
+switch? One of the reasons I put this too late is because there's a late call
+to balance_calbacks() that can impact the state of the rq and important to take
+into account based on my previous testing and analysis.
 
-
->
->   .../arm64/boot/dts/ti/k3-j784s4-j742s2-common.dtsi |  148 +
->   .../boot/dts/ti/k3-j784s4-j742s2-main-common.dtsi  | 2671 ++++++++++++++++++
->   ...tsi => k3-j784s4-j742s2-mcu-wakeup-common.dtsi} |    2 +-
->   ...l.dtsi => k3-j784s4-j742s2-thermal-common.dtsi} |    0
-> [...]
+Any reason we need to run the sugov worker as DL instead for example being
+a softirq?
 
