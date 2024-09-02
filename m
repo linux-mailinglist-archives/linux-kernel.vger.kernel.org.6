@@ -1,101 +1,127 @@
-Return-Path: <linux-kernel+bounces-311902-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311903-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17DAE968F2C
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 23:38:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E1AB968F33
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 23:43:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4A8BC1C22199
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 21:38:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5AB41280D52
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 21:43:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA2B7205E25;
-	Mon,  2 Sep 2024 21:38:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABA18205E32;
+	Mon,  2 Sep 2024 21:43:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="bbi+2nPC"
-Received: from mail-4316.protonmail.ch (mail-4316.protonmail.ch [185.70.43.16])
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="jmr49rwt"
+Received: from smtpout.efficios.com (smtpout.efficios.com [167.114.26.122])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1F631A4E8D;
-	Mon,  2 Sep 2024 21:38:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D88F1865F0
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 21:43:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.114.26.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725313089; cv=none; b=ZeZuPkAcRYsM+muWiszDxNgYZg3QZ1bDi6i9R23ZjHZBanOLgEMJAxp4YU9BCchP0mxLOcP6AXnM6L2w1dxplgrg7jUkcP/pSwL0TeuIPSN2jJh+dhk3erORXftkFSsIglWbKMdR5xF2oPQjtUCveck9zJhTS4n0maQNUtLR4DU=
+	t=1725313394; cv=none; b=onLVJ+Iw0Z/wC4iYc7wURQ6+N0bH0PUYm7mJQA2DdePrMbq/EGRJNJnXF3WJHYBy8hqyQCrz5+XUsnqeIwHYHo4/JB3GvtRCzudUE56g9f6dX2R+QWT6tweQZM1+q1kPekGsXrj6I0RmcvmsSbdRQG6bScIaH+6cGdoEtwUvGAU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725313089; c=relaxed/simple;
-	bh=vrpGGX2NQaqB57eYvVx4w0vr9yKpbPl3dneG1r9ulYg=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=WUkCzlTvrIVgq9Xs0lwtjp+9matpxHgFU4QnRRMd6UwN8gjTZhnMNr5/zAUMr17NCFx6d2c374+TzRzzitGI/w3IAFQy7seUAZTicUVOCUjHBMbxJluHMsze8awf0lOAomvuCVD4xoAnYJB1flLcN66+f0aNMgyzAKzOvl3hV1Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=bbi+2nPC; arc=none smtp.client-ip=185.70.43.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1725313078; x=1725572278;
-	bh=vrpGGX2NQaqB57eYvVx4w0vr9yKpbPl3dneG1r9ulYg=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=bbi+2nPCJiC7dzW8V7s6DjzmTt/HNKP6qO/dzWIYHqbnS4lpSmw8wCH7pneT2pIE+
-	 te/S8ihHAtqpSzIgwPRsQm6VsinOU08Nn0WKkBS33kZvpcQOk0jzznKpD+iGGZJF35
-	 OKmVmTBnyaM4BaV5OZwMCbparlgeZSqpRiT2krcebKDeUd8CBxuArnGr4AAEko7w1W
-	 r5hSK5bOVP3Pg1TGi3xGg2T0xmDKSTu0GJ5PFRy4lfpiMs1fWh391vkgT/aBWs6BTe
-	 u6uAFFKFo+fjkalNHi9RNvKr3d5jdkA21cGztCurkRdANjRikx+yS/qb2e0KwiYuru
-	 Kg+/xgpKVuZXw==
-Date: Mon, 02 Sep 2024 21:37:53 +0000
-To: Alice Ryhl <aliceryhl@google.com>
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@samsung.com>, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] rust: add global lock support
-Message-ID: <8bcd10eb-97ac-4dbf-b59b-b7f12c4e24c6@proton.me>
-In-Reply-To: <CAH5fLggE-fWDuZXH_F3ixDSo7sQEFwnUV3cd+9_rpFH+XmnA2Q@mail.gmail.com>
-References: <20240827-static-mutex-v2-1-17fc32b20332@google.com> <10453342-d269-4b78-8962-821ef53d3cb5@proton.me> <CAH5fLgh-DYvXobXQVaQ9txYS4Rx8QhjyVvfTphk6vvnUOGzPnw@mail.gmail.com> <3b557f61-cead-4568-b2b4-4a56c4cbff52@proton.me> <CAH5fLggE-fWDuZXH_F3ixDSo7sQEFwnUV3cd+9_rpFH+XmnA2Q@mail.gmail.com>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: ca9e744c05ead387e4ea040278402994b57024f5
+	s=arc-20240116; t=1725313394; c=relaxed/simple;
+	bh=/LmvAI0nw6QPoke1J8AIDm/FiQqGZUXx/VmMhF64N0o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=L4FhXCJ8kitdIN3GNEjY6sN3dP/+bt9ONjPDAq9ALVBBsmJBnm2eCOELS6hecYe/S7gNX4dIvgEILY6jT543tkAmAixBQqTy8ELmK0O/L4+lRD9Z3fr5419ESPZbch2P5pmFGfPw7Qd86zE3CWQ/YnjqvAWuZAaTaBwwOaeLBKE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=jmr49rwt; arc=none smtp.client-ip=167.114.26.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
+	s=smtpout1; t=1725313390;
+	bh=/LmvAI0nw6QPoke1J8AIDm/FiQqGZUXx/VmMhF64N0o=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=jmr49rwtoFOgngKyrc/3ISBxYMVDiXUaOuyRGBg/SSh9wVEuaDbqMviT0g80sazso
+	 E+MSRTA2lxPfHwLshOuczLpZnedVHkdCcITLokJ3HjeNpjnR8bP5k1fRPgDXvI/xiH
+	 R4efastQu2JOk6DbWq6FJ1jhc8wS+Ts85BfdHeZzF5oFXb/ClZw9w5LlOXAMA2tcjE
+	 kLQGdQ3diWd9QP6HFFrfj4NhVrWVHqKg+KuzHNoZrpUoCOYj62rUzWXGOqt6z3k6G5
+	 gLYsOsZF6fNdYSY3ppZJR6b7wu0bMv7xuyvuDr/1yiGUQSERT0lDhkmKV4WOJspaMZ
+	 +J3+gS+E/iiNw==
+Received: from [IPV6:2606:6d00:100:4000:cacb:9855:de1f:ded2] (unknown [IPv6:2606:6d00:100:4000:cacb:9855:de1f:ded2])
+	by smtpout.efficios.com (Postfix) with ESMTPSA id 4WyMgf0vdKz1JmD;
+	Mon,  2 Sep 2024 17:43:10 -0400 (EDT)
+Message-ID: <f0dbd190-df68-4b0e-963c-d6f7ada5dc77@efficios.com>
+Date: Mon, 2 Sep 2024 17:42:50 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 0/6] lib: Extend bitmap find binary operations
+To: Yury Norov <yury.norov@gmail.com>
+Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+ linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>
+References: <20240830191043.1028827-1-mathieu.desnoyers@efficios.com>
+ <ZtJPis2WKGgk9hvz@yury-ThinkPad>
+Content-Language: en-US
+From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+In-Reply-To: <ZtJPis2WKGgk9hvz@yury-ThinkPad>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 02.09.24 13:37, Alice Ryhl wrote:
-> On Fri, Aug 30, 2024 at 3:22=E2=80=AFPM Benno Lossin <benno.lossin@proton=
-.me> wrote:
+On 2024-08-30 19:02, Yury Norov wrote:
+> On Fri, Aug 30, 2024 at 03:10:37PM -0400, Mathieu Desnoyers wrote:
+>> Extend bitmap find.h and cpumask.h with additional binary operations
+>> such as "nor".
 >>
->> On 30.08.24 07:34, Alice Ryhl wrote:
->>> On Thu, Aug 29, 2024 at 8:17=E2=80=AFPM Benno Lossin <benno.lossin@prot=
-on.me> wrote:
->>>>
->>>> On 27.08.24 10:41, Alice Ryhl wrote:
->>>>> We don't currently have any support for global locks in Rust, however
->>>>> they are very useful and I have needed to work around this limitation
->>>>> several times. My workarounds generally involve initializing the mute=
-x
->>>>> in the module's init function, and this workaround is reflected here.
->>>>
->>>> I would not exactly call this a "workaround". If your use-case is
->>>> covered by putting a `Mutex`, then I would prefer it. Or did you need
->>>> additional ugly code to access it?
->>>
->>> Not sure what you mean by "putting a Mutex" but the workaround is
+>> Also extend the testing and benchmark coverage of those bitmap find with
+>> binary operations.
 >>
->> Oh sorry, seems like I forgot to write the rest of that... Let me try
->> again: If your use-case is covered by putting a `Mutex` inside of the
->> type that implements `Module`, then I think you should do that instead
->> of using a global. (you need the inplace module patch for that)
->=20
-> I don't think it's possible to access the `Module` struct after `init`
-> returns? Even with in-place init.
+>> This is useful for NUMA-aware rseq concurrency IDs which depend on this
+>> series. The series can be found at:
+>>
+>> https://lore.kernel.org/lkml/20240823185946.418340-1-mathieu.desnoyers@efficios.com/
+>>
+> 
+> Added in bitmap-for-next for testing.
 
-Oh I see... Maybe if you create it inside of an `Arc` or `Box` and then
-pass it to something inside of your module that will then be called by
-some other mechanism?
+Hi Yuri,
 
----
-Cheers,
-Benno
+FYI, after a lot of performance results analysis on variations over
+the NUMA-aware rseq patch, I figured I need to take a drastically
+different (and much simpler) approach to solve this in order to improve
+cache locality as well, and it turns out I likely won't need the new
+bitwise ops added by this series.
+
+So feel free to keep it as a general improvement, or to drop it for
+now.
+
+Thanks,
+
+Mathieu
+
+> 
+> Thanks,
+> Yury
+> 
+>>
+>> Mathieu Desnoyers (6):
+>>    lib: Clarify comment on top of find_next_andnot_bit
+>>    lib: Implement find_{first,next,nth}_nor_bit, for_each_nor_bit,
+>>      find_first_andnot_bit
+>>    lib: test bitmap sets binary operation iterators
+>>    lib: Fix test_find_first_and_bit and test_find_next_and_bit benchmark
+>>    lib: benchmark bitmap sets binary operation find
+>>    cpumask: Implement cpumask_{first,next}_{nor,andnot}
+>>
+>>   include/linux/cpumask.h  |  60 ++++++++++++++++
+>>   include/linux/find.h     | 124 +++++++++++++++++++++++++++++++--
+>>   lib/find_bit.c           |  36 ++++++++++
+>>   lib/find_bit_benchmark.c | 143 +++++++++++++++++++++++++++++++++------
+>>   lib/test_bitmap.c        |  81 ++++++++++++++++++++++
+>>   5 files changed, 418 insertions(+), 26 deletions(-)
+>>
+>> -- 
+>> 2.39.2
+
+-- 
+Mathieu Desnoyers
+EfficiOS Inc.
+https://www.efficios.com
 
 
