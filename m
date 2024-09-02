@@ -1,119 +1,144 @@
-Return-Path: <linux-kernel+bounces-311737-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311736-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B10C9968CEF
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 19:43:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2B50968CEE
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 19:43:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 66C6D1F232BE
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 17:43:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BA6A71C2285B
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 17:43:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC5431C62DB;
-	Mon,  2 Sep 2024 17:43:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D80061C62B9;
+	Mon,  2 Sep 2024 17:43:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VDSOHung"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EGjwJhx1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 865071C62C3
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 17:43:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4249C1CB508;
+	Mon,  2 Sep 2024 17:43:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725299002; cv=none; b=YTuyMffMeY+TnsRv8TcfpZUXvaYDmFeJdr0u9wEScnhENW+JjhqeQc3ISzi/aUKr7hvSBhP3PR26ih12VKdGhzRkcuHgHd1Ph7F4bfA3Lvz66n0jvWLn7sVOruWLOUFQteie5rsJN4It8N4rzuXVf+qdWqLhyQCWUVwv6tGJwpQ=
+	t=1725298999; cv=none; b=WXbmUUcO8NUNe+8Edi7pZmrOinBgaKtN1jcBNz6mQ/mmFJo1hX7zxa43VZqbhg6co16Ip+qiZgEjl5Xt6s9oYFAvo9+VyWOev5eqIzUbguzMCrRnhIy+MGLHIyTESGmqEpSsWg6CsfXO6Oc9MKOcapYoNvna4fVDY9dhln4vXsg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725299002; c=relaxed/simple;
-	bh=+PVE2BE0hCOuoyGx4L9PZC+Duiu/od1+1laH5fT0KPk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uDx7Szm2IOR75FUhK3IZqhQYhF9hxpZ252PPbGhzJPwHa5fbvQpOwLtpxpK2qX2uf6eA6N1upNzoerVrBWP5IAvrweLAaZBPbxusqEsNyunFf+4K+C8SO5cKO+0j+guPKZD7x9sEkTgwF1YqzeMgWllmfKv2kqg9vVUe5+muC2A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VDSOHung; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-2055a524017so566785ad.1
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2024 10:43:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725299000; x=1725903800; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=x1Y4xLoBMjp3sOTUCmMpURmHtSqY58C0Dbpo7vkEAHg=;
-        b=VDSOHung/ecsIY37+LFvr6lJTTNntfLSKUMInAP0WcJBlhjxNOfFRJEUXBFyDYYOSB
-         By3YeP5lttGfq7IDASC0wU/ee+iraOPwo2574B++ppp1NPBaAqi9EIJWTEXICVGzXY32
-         9dYeN5vT6NhpwMQclx7D+bOMVg92/rvedDFqHmR6iRjWSxGiVahCgLWFjGa1pNIfyDah
-         mPQze/V20zh8jF9x9WaS/7A1Dnmmz4asyXfJugTKVLLQrQxZ/Rj/1VNLfvDwgclQiEaB
-         GFMS/zeS6JDMOiSEy5KfqQxYKwixSw9nvnsvGu6f5wBGGhiTzqB5htAD4F44IIyakVga
-         3h1A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725299000; x=1725903800;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=x1Y4xLoBMjp3sOTUCmMpURmHtSqY58C0Dbpo7vkEAHg=;
-        b=Js6qMHEEHXovXgECTri9LrPHG9322IgQn75OfZ/22zBYiqccz0j7UwclNfQ8zXNqP9
-         6L/2GXwXgWdtWMxcCzT9gzAyJRc1oduq1co0/NVBluAml8gdMDUmSm8DagL0EuhC/w7t
-         NeQEWV4ZM2w6OKLE5emg5/4goGdt7J3ycdqrgF8tdI/ZwcUzsUXbViPCy8/+L/cplQeY
-         VF8r8W8y4S6Te9mAy4A1uLL/WUguKGptohZSGQuV4+W5xJv1gqtPxY5p+Z/sPIaJyFBn
-         gYMlVR24dPZ65FcDrw7cjn5+1ARoMh9wMsD0acbJOIwe5EyStIg1JTgQbRL46XJrPEDG
-         EAlg==
-X-Forwarded-Encrypted: i=1; AJvYcCVyQrHRutacd1u9z2j1qAiAr4uvd/LE7AVXpKII2Qlo3gY8qQ3iQbaEn/u9u6OLpgrM8KqCthCVfjkZs2k=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz5K9xaxmLulbxAFfWvYqZwQRmzMUF4oLWmRRf7sPvLrVmwK7F/
-	2+IVAYhmOAl+Nw/OPJyZizGyjeF/g+DXscuSZBfDodXpMOg3lBVQyW0kQXRsYToWFVZXWgSCLJI
-	gceYDwzu3g8BqI+sy4SSjctuX2krthw==
-X-Google-Smtp-Source: AGHT+IEfFDhE0Cdt/LAKBpKKXNaAe3MnoIOSWwH2RMO0h9YyJyv6leTurOP8FeU0UlwFR/9vrWhOfz1BCfbBHfgMVFY=
-X-Received: by 2002:a17:903:1103:b0:202:18d7:7ffb with SMTP id
- d9443c01a7336-20528847f02mr66200305ad.11.1725298999623; Mon, 02 Sep 2024
- 10:43:19 -0700 (PDT)
+	s=arc-20240116; t=1725298999; c=relaxed/simple;
+	bh=pQjq5637RhyeLyjUbHTYNQQZXlfmZQqh2HY8sgaNvyU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iLz+Z8h7xK1MLu91bOsplgC7KqQsle4n3zKOigxw2/0sc4FMB3jb7eERMyVvSc9iWxEkUE7sdAi0qEeJ+rzVjD/f60wJuUGF+vt8jg/pLZtWCU5oDdPFrA4SsAWy6Io2/APb3w2ol8r3R7+bORq4GadoG1iRFelvPAa1W97JNuk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EGjwJhx1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C405DC4CEC2;
+	Mon,  2 Sep 2024 17:43:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725298998;
+	bh=pQjq5637RhyeLyjUbHTYNQQZXlfmZQqh2HY8sgaNvyU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=EGjwJhx1h8jDsC78GRLKmR4Hdh/xNYAf7ROCcShPyQgGLvGt3uXVNqrzdQvKXizOM
+	 boxw7X+phdUjTY0jPM7Qs3mKt9tlVFuDubX0eTD7Z3FSSNahemHE+zOmTl1VErIZWh
+	 l2IZMSV6UMHOrUGZ5AgrHE0DnqgfOM6CkJXyOmCRLGcSGHPe5wUtrvzfKOkwV5Fmr+
+	 GqlAUW4oBrru/8i+P+/o/0KZNkMr+nZ8SxXAIbflX+bCYhWw73s74lSUVvp3ClxrNZ
+	 s6nHGZbiblbNsVsB4RPQ+jFX+5gxZeLqu9KQ9ikc4mxk2qdvPbx/KS7HQT0RoDgb/B
+	 FCU9fSxU6y4cQ==
+Date: Mon, 2 Sep 2024 10:43:15 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: James Clark <james.clark@linaro.org>
+Cc: irogers@google.com, linux-perf-users@vger.kernel.org,
+	kan.liang@linux.intel.com, ak@linux.intel.com,
+	John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>,
+	Mike Leach <mike.leach@linaro.org>, Leo Yan <leo.yan@linux.dev>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Weilin Wang <weilin.wang@intel.com>,
+	Dominique Martinet <asmadeus@codewreck.org>,
+	Athira Rajeev <atrajeev@linux.vnet.ibm.com>,
+	Colin Ian King <colin.i.king@gmail.com>,
+	Yang Jihong <yangjihong@bytedance.com>,
+	Ze Gao <zegao2021@gmail.com>, Sun Haiyong <sunhaiyong@loongson.cn>,
+	Jing Zhang <renyu.zj@linux.alibaba.com>,
+	Yicong Yang <yangyicong@hisilicon.com>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 7/7] perf test: Add a test for default perf stat
+ command
+Message-ID: <ZtX5Mw8Iuc5qgBWz@google.com>
+References: <20240828140736.156703-1-james.clark@linaro.org>
+ <20240828140736.156703-8-james.clark@linaro.org>
+ <ZtFnbq_158fxttmW@google.com>
+ <52de8df9-4554-4bc0-9735-fdbd197dbb7c@linaro.org>
+ <b9a1f3fd-de17-492b-91c3-950131912f71@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240830072554.128132-1-yaolu@kylinos.cn>
-In-Reply-To: <20240830072554.128132-1-yaolu@kylinos.cn>
-From: Alex Deucher <alexdeucher@gmail.com>
-Date: Mon, 2 Sep 2024 13:43:08 -0400
-Message-ID: <CADnq5_NhytCVtif=3OLvBkJqq1zTtm_Hkmrt1m4fREC9CSbf+w@mail.gmail.com>
-Subject: Re: [PATCH] drm/amdgpu: add raven1 gfxoff quirk
-To: Lu Yao <yaolu@kylinos.cn>
-Cc: alexander.deucher@amd.com, christian.koenig@amd.com, Xinhui.Pan@amd.com, 
-	sunil.khatri@amd.com, Prike.Liang@amd.com, Felix.Kuehling@amd.com, 
-	amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org, liupeng01@kylinos.cn
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <b9a1f3fd-de17-492b-91c3-950131912f71@linaro.org>
 
-Applied.  Thanks!
+On Fri, Aug 30, 2024 at 09:45:11AM +0100, James Clark wrote:
+> 
+> 
+> On 30/08/2024 9:29 am, James Clark wrote:
+> > 
+> > 
+> > On 30/08/2024 7:32 am, Namhyung Kim wrote:
+> > > Hello,
+> > > 
+> > > On Wed, Aug 28, 2024 at 03:07:21PM +0100, James Clark wrote:
+> > > > Test that one cycles event is opened for each core PMU when "perf stat"
+> > > > is run without arguments.
+> > > > 
+> > > > The event line can either be output as "pmu/cycles/" or just "cycles" if
+> > > > there is only one PMU. Include 2 spaces for padding in the one PMU case
+> > > > to avoid matching when the word cycles is included in metric
+> > > > descriptions.
+> > > > 
+> > > > Signed-off-by: James Clark <james.clark@linaro.org>
+> > > > ---
+> > > >   tools/perf/tests/shell/stat.sh | 21 +++++++++++++++++++++
+> > > >   1 file changed, 21 insertions(+)
+> > > > 
+> > > > diff --git a/tools/perf/tests/shell/stat.sh
+> > > > b/tools/perf/tests/shell/stat.sh
+> > > > index 525d0c44fdc6..24ace1de71cc 100755
+> > > > --- a/tools/perf/tests/shell/stat.sh
+> > > > +++ b/tools/perf/tests/shell/stat.sh
+> > > > @@ -148,6 +148,26 @@ test_cputype() {
+> > > >     echo "cputype test [Success]"
+> > > >   }
+> > > > +test_hybrid() {
+> > > > +  # Test the default stat command on hybrid devices opens one
+> > > > cycles event for
+> > > > +  # each CPU type.
+> > > > +  echo "hybrid test"
+> > > > +
+> > > > +  # Count the number of core PMUs
+> > > > +  pmus=$(ls /sys/bus/event_source/devices/*/cpus 2>/dev/null | wc -l)
+> > > 
+> > > Is it working on non-hybrid systems?  I don't think they have cpus file
+> > > in the core PMU.
+> > > 
+> > > Thanks,
+> > > Namhyung
+> > > 
+> > 
+> > Good point I only tested on Arm non-hybrid. I can change it to assume 1
+> > PMU for no cpus files?
+> 
+> Or maybe assume 1 if a /sys/bus/event_source/devices/cpu folder exists? Not
+> sure which is best but either will work.
 
-On Fri, Aug 30, 2024 at 3:26=E2=80=AFAM Lu Yao <yaolu@kylinos.cn> wrote:
->
-> From: Peng Liu <liupeng01@kylinos.cn>
->
-> Fix screen corruption with openkylin.
->
-> Link: https://bbs.openkylin.top/t/topic/171497
-> Signed-off-by: Peng Liu <liupeng01@kylinos.cn>
-> ---
->  drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c | 2 ++
->  1 file changed, 2 insertions(+)
->
-> diff --git a/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c b/drivers/gpu/drm/amd/=
-amdgpu/gfx_v9_0.c
-> index 2929c8972ea7..0cd5fd3fa18b 100644
-> --- a/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c
-> +++ b/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c
-> @@ -1301,6 +1301,8 @@ static const struct amdgpu_gfxoff_quirk amdgpu_gfxo=
-ff_quirk_list[] =3D {
->         { 0x1002, 0x15dd, 0x1002, 0x15dd, 0xc6 },
->         /* Apple MacBook Pro (15-inch, 2019) Radeon Pro Vega 20 4 GB */
->         { 0x1002, 0x69af, 0x106b, 0x019a, 0xc0 },
-> +       /* https://bbs.openkylin.top/t/topic/171497 */
-> +       { 0x1002, 0x15d8, 0x19e5, 0x3e14, 0xc2},
->         { 0, 0, 0, 0, 0 },
->  };
->
-> --
-> 2.25.1
->
+Some arch might not have a cpu PMU, I think we can assume 1 and update
+only if it finds cpus files.
+
+Thanks,
+Namhyung
+
 
