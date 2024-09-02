@@ -1,62 +1,62 @@
-Return-Path: <linux-kernel+bounces-310506-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310507-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA0FF967DD2
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 04:32:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A981E967DD3
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 04:32:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E95C1F22505
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 02:32:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D7ECAB22302
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 02:32:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1A254AEF4;
-	Mon,  2 Sep 2024 02:31:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E13E24A08;
+	Mon,  2 Sep 2024 02:31:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HFHRasqq"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bUzQLRdb"
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5478342AB4
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 02:31:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B86342ABE
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 02:31:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725244288; cv=none; b=tvkV4CCDBLVmjmD8dMasJScpdmpoWIYTCDnMBfUQ4TLnARD+4K4EK7q2xTmB1u9MNC8RaH6y+HrNFnpGuqF0JNe0m1IE+/lWfbsZuTT2onlgZJzyRBZ00ATVHphjURJkNo4m62eZPqI36GVzF29Zko1bBpt7FH8u9ocPxKZutlE=
+	t=1725244290; cv=none; b=RjFGNWTc0YMLFpHaAya0hL8o18jPrrJuhXfGUsL6hq6C9eiz432Modj/rZfwI/VqW+5dh6irEFFbYwVv8gM+PhNZ7TfDZ4DFxOTh/N4m+t1bm7i7TXilAA2YBkXrY/ZPY4zi3usz3fiHOSGSSzyFNTFHNDxZ+R8dxgTTmxVtE8Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725244288; c=relaxed/simple;
-	bh=s0E6ICdgpmiD25EF4GAVXtGxvzQCqhxtQQwT91zUvSA=;
+	s=arc-20240116; t=1725244290; c=relaxed/simple;
+	bh=3HzOKvzO9pY4piCmz7QwkmYFBvAbH4HKR8epidlTfh4=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=me0FKL7BnZXm6w+nOOM4jMIYZBYzACeNTKQVAop25QfqK6gCllINcSMg1Mh63EpnZVCU1rL5Lt8k9JZOijJL8A5+n24PraqebUp7E81AR5EhfAHGrwwZKzF79bPhNeOmh+J9pfq/WJXQiIRTM+2SoIdN3lHDKdxA8ml9NZPaqdY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HFHRasqq; arc=none smtp.client-ip=192.198.163.14
+	 MIME-Version; b=TdUs8zyikuecc4Ne7SZIvp38+CjmZCBsVjwPxTQ2twO3h+UUtwJAGYM/GUN10ty9XicIWFQ+QvC81rAnTFwF7cgn9zEubZfJ1vWQ+8NUK2RydwwT+gc4+AxI/ZWj9NJArMgOBP7yliLAsUq8kWSzcwb80lu6D14r+Jid/shvhSo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bUzQLRdb; arc=none smtp.client-ip=192.198.163.14
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725244287; x=1756780287;
+  t=1725244289; x=1756780289;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=s0E6ICdgpmiD25EF4GAVXtGxvzQCqhxtQQwT91zUvSA=;
-  b=HFHRasqqnP1Dm91gfXrYQM6XCnjvdrtdXOay8C55jrirH0NROrAg4omn
-   irBAtKHyHVowBxnwtb7nmAkn+S2Zk5KTWSzu4CLhxXxIbngkOZWjLM5Sy
-   BkVlEy+w6y0f7HEdFC1ZY5DlFFBpWI7vCJzJBIrbNRIV4i0N8RhNsynKv
-   KgpEsAekGAcUxQoRbJELJjE6Bag+QWrQMyJ0eKVbx/vbJrGchLtYmUIe2
-   NDG82fZdwiyLY9SWRvPDIUvi0hyYuO4NNvohcUDG9fmRAShaR36JkmW75
-   3COA17Q8zd6u8gnSHrgvfyRoi14PR4ISeeC8nKNJzAxYlJQdzgPMMnreB
+  bh=3HzOKvzO9pY4piCmz7QwkmYFBvAbH4HKR8epidlTfh4=;
+  b=bUzQLRdbjTHRCsuPJmUbrQBiwmoGBvsNjQFGK1IyI63m3qol4gegXqXH
+   O0aIezCaNRQ4UP0rDDAVrzXSWYNChtwPnncWnv9ldGZ2JIct1wwUMiiyU
+   N+86pyTnnZCqNR1oyu9FGFYK6y/5gHRJZxOTcan2Rbq3aTUqNbrX5CZZe
+   DfETNMK5T7hnXC9nJsM4Nb/SZv/fJhICNJjTJpaFuyMjDhze4Rya+ezlA
+   +BevX9ni//TH7UP/uVmajT/1KUCqw/Q7I2Bby6tq2UjK7ppvcA9tfJ0Mq
+   ZDCafTXCNROWv4SxQ7A8nDD3BbIZ/YDJ9x0haa2FVULjaqn0Oc9BKy5zc
    g==;
-X-CSE-ConnectionGUID: X7MtvuBBQJu4jSWDB1vMEQ==
-X-CSE-MsgGUID: xrxLJ/1fQ4K0OaMsvRW+FQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11182"; a="23994286"
+X-CSE-ConnectionGUID: XdOr5oXJScWBTHzlqKDTAw==
+X-CSE-MsgGUID: g3j9X/i4TGqLnHQZEJxlBQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11182"; a="23994294"
 X-IronPort-AV: E=Sophos;i="6.10,195,1719903600"; 
-   d="scan'208";a="23994286"
+   d="scan'208";a="23994294"
 Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Sep 2024 19:31:27 -0700
-X-CSE-ConnectionGUID: YIDfa1x5TEuVlJrU8gvHNQ==
-X-CSE-MsgGUID: H45BLma4QHe0ZRF5+wsVxw==
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Sep 2024 19:31:29 -0700
+X-CSE-ConnectionGUID: ShBLQgMMTjuv53qus+FYLA==
+X-CSE-MsgGUID: hh7nf8p0TgSZ2uDpnpzAww==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.10,195,1719903600"; 
-   d="scan'208";a="69359287"
+   d="scan'208";a="69359299"
 Received: from allen-box.sh.intel.com ([10.239.159.127])
-  by orviesa004.jf.intel.com with ESMTP; 01 Sep 2024 19:31:25 -0700
+  by orviesa004.jf.intel.com with ESMTP; 01 Sep 2024 19:31:27 -0700
 From: Lu Baolu <baolu.lu@linux.intel.com>
 To: Joerg Roedel <joro@8bytes.org>,
 	Will Deacon <will@kernel.org>
@@ -64,9 +64,9 @@ Cc: Tina Zhang <tina.zhang@intel.com>,
 	Sanjay K Kumar <sanjay.k.kumar@intel.com>,
 	iommu@lists.linux.dev,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 04/14] iommu/vt-d: Remove has_iotlb_device flag
-Date: Mon,  2 Sep 2024 10:27:14 +0800
-Message-Id: <20240902022724.67059-5-baolu.lu@linux.intel.com>
+Subject: [PATCH 05/14] iommu/vt-d: Factor out helpers from domain_context_mapping_one()
+Date: Mon,  2 Sep 2024 10:27:15 +0800
+Message-Id: <20240902022724.67059-6-baolu.lu@linux.intel.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240902022724.67059-1-baolu.lu@linux.intel.com>
 References: <20240902022724.67059-1-baolu.lu@linux.intel.com>
@@ -78,141 +78,144 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The has_iotlb_device flag was used to indicate if a domain had attached
-devices with ATS enabled. Domains without this flag didn't require device
-TLB invalidation during unmap operations, optimizing performance by
-avoiding unnecessary device iteration.
+Extract common code from domain_context_mapping_one() into new helpers,
+making it reusable by other functions such as the upcoming identity domain
+implementation. No intentional functional changes.
 
-With the introduction of cache tags, this flag is no longer needed. The
-code to iterate over attached devices was removed by commit 06792d067989
-("iommu/vt-d: Cleanup use of iommu_flush_iotlb_psi()").
-
-Remove has_iotlb_device to avoid unnecessary code.
-
-Suggested-by: Jason Gunthorpe <jgg@nvidia.com>
 Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
+Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
 Reviewed-by: Kevin Tian <kevin.tian@intel.com>
-Link: https://lore.kernel.org/r/20240809055431.36513-5-baolu.lu@linux.intel.com
+Reviewed-by: Jerry Snitselaar <jsnitsel@redhat.com>
+Link: https://lore.kernel.org/r/20240809055431.36513-6-baolu.lu@linux.intel.com
 ---
- drivers/iommu/intel/iommu.h  |  2 --
- drivers/iommu/intel/iommu.c  | 34 +---------------------------------
- drivers/iommu/intel/nested.c |  2 --
- 3 files changed, 1 insertion(+), 37 deletions(-)
+ drivers/iommu/intel/iommu.c | 99 ++++++++++++++++++++++---------------
+ 1 file changed, 58 insertions(+), 41 deletions(-)
 
-diff --git a/drivers/iommu/intel/iommu.h b/drivers/iommu/intel/iommu.h
-index a969be2258b1..b3b295e60626 100644
---- a/drivers/iommu/intel/iommu.h
-+++ b/drivers/iommu/intel/iommu.h
-@@ -588,7 +588,6 @@ struct dmar_domain {
- 	int	nid;			/* node id */
- 	struct xarray iommu_array;	/* Attached IOMMU array */
- 
--	u8 has_iotlb_device: 1;
- 	u8 iommu_coherency: 1;		/* indicate coherency of iommu access */
- 	u8 force_snooping : 1;		/* Create IOPTEs with snoop control */
- 	u8 set_pte_snp:1;
-@@ -1104,7 +1103,6 @@ int qi_submit_sync(struct intel_iommu *iommu, struct qi_desc *desc,
-  */
- #define QI_OPT_WAIT_DRAIN		BIT(0)
- 
--void domain_update_iotlb(struct dmar_domain *domain);
- int domain_attach_iommu(struct dmar_domain *domain, struct intel_iommu *iommu);
- void domain_detach_iommu(struct dmar_domain *domain, struct intel_iommu *iommu);
- void device_block_translation(struct device *dev);
 diff --git a/drivers/iommu/intel/iommu.c b/drivers/iommu/intel/iommu.c
-index baf79c6a5a84..b58137ecaf87 100644
+index b58137ecaf87..41c47410736b 100644
 --- a/drivers/iommu/intel/iommu.c
 +++ b/drivers/iommu/intel/iommu.c
-@@ -485,7 +485,6 @@ void domain_update_iommu_cap(struct dmar_domain *domain)
- 		domain->domain.geometry.aperture_end = __DOMAIN_MAX_ADDR(domain->gaw);
- 
- 	domain->domain.pgsize_bitmap |= domain_super_pgsize_bitmap(domain);
--	domain_update_iotlb(domain);
+@@ -1597,6 +1597,61 @@ static void domain_exit(struct dmar_domain *domain)
+ 	kfree(domain);
  }
  
- struct context_entry *iommu_context_addr(struct intel_iommu *iommu, u8 bus,
-@@ -1263,32 +1262,6 @@ domain_lookup_dev_info(struct dmar_domain *domain,
- 	return NULL;
- }
++/*
++ * For kdump cases, old valid entries may be cached due to the
++ * in-flight DMA and copied pgtable, but there is no unmapping
++ * behaviour for them, thus we need an explicit cache flush for
++ * the newly-mapped device. For kdump, at this point, the device
++ * is supposed to finish reset at its driver probe stage, so no
++ * in-flight DMA will exist, and we don't need to worry anymore
++ * hereafter.
++ */
++static void copied_context_tear_down(struct intel_iommu *iommu,
++				     struct context_entry *context,
++				     u8 bus, u8 devfn)
++{
++	u16 did_old;
++
++	if (!context_copied(iommu, bus, devfn))
++		return;
++
++	assert_spin_locked(&iommu->lock);
++
++	did_old = context_domain_id(context);
++	context_clear_entry(context);
++
++	if (did_old < cap_ndoms(iommu->cap)) {
++		iommu->flush.flush_context(iommu, did_old,
++					   (((u16)bus) << 8) | devfn,
++					   DMA_CCMD_MASK_NOBIT,
++					   DMA_CCMD_DEVICE_INVL);
++		iommu->flush.flush_iotlb(iommu, did_old, 0, 0,
++					 DMA_TLB_DSI_FLUSH);
++	}
++
++	clear_context_copied(iommu, bus, devfn);
++}
++
++/*
++ * It's a non-present to present mapping. If hardware doesn't cache
++ * non-present entry we only need to flush the write-buffer. If the
++ * _does_ cache non-present entries, then it does so in the special
++ * domain #0, which we have to flush:
++ */
++static void context_present_cache_flush(struct intel_iommu *iommu, u16 did,
++					u8 bus, u8 devfn)
++{
++	if (cap_caching_mode(iommu->cap)) {
++		iommu->flush.flush_context(iommu, 0,
++					   (((u16)bus) << 8) | devfn,
++					   DMA_CCMD_MASK_NOBIT,
++					   DMA_CCMD_DEVICE_INVL);
++		iommu->flush.flush_iotlb(iommu, did, 0, 0, DMA_TLB_DSI_FLUSH);
++	} else {
++		iommu_flush_write_buffer(iommu);
++	}
++}
++
+ static int domain_context_mapping_one(struct dmar_domain *domain,
+ 				      struct intel_iommu *iommu,
+ 				      u8 bus, u8 devfn)
+@@ -1625,31 +1680,9 @@ static int domain_context_mapping_one(struct dmar_domain *domain,
+ 	if (context_present(context) && !context_copied(iommu, bus, devfn))
+ 		goto out_unlock;
  
--void domain_update_iotlb(struct dmar_domain *domain)
--{
--	struct dev_pasid_info *dev_pasid;
--	struct device_domain_info *info;
--	bool has_iotlb_device = false;
--	unsigned long flags;
+-	/*
+-	 * For kdump cases, old valid entries may be cached due to the
+-	 * in-flight DMA and copied pgtable, but there is no unmapping
+-	 * behaviour for them, thus we need an explicit cache flush for
+-	 * the newly-mapped device. For kdump, at this point, the device
+-	 * is supposed to finish reset at its driver probe stage, so no
+-	 * in-flight DMA will exist, and we don't need to worry anymore
+-	 * hereafter.
+-	 */
+-	if (context_copied(iommu, bus, devfn)) {
+-		u16 did_old = context_domain_id(context);
 -
--	spin_lock_irqsave(&domain->lock, flags);
--	list_for_each_entry(info, &domain->devices, link) {
--		if (info->ats_enabled) {
--			has_iotlb_device = true;
--			break;
+-		if (did_old < cap_ndoms(iommu->cap)) {
+-			iommu->flush.flush_context(iommu, did_old,
+-						   (((u16)bus) << 8) | devfn,
+-						   DMA_CCMD_MASK_NOBIT,
+-						   DMA_CCMD_DEVICE_INVL);
+-			iommu->flush.flush_iotlb(iommu, did_old, 0, 0,
+-						 DMA_TLB_DSI_FLUSH);
 -		}
+-
+-		clear_context_copied(iommu, bus, devfn);
 -	}
 -
--	list_for_each_entry(dev_pasid, &domain->dev_pasids, link_domain) {
--		info = dev_iommu_priv_get(dev_pasid->dev);
--		if (info->ats_enabled) {
--			has_iotlb_device = true;
--			break;
--		}
--	}
--	domain->has_iotlb_device = has_iotlb_device;
--	spin_unlock_irqrestore(&domain->lock, flags);
--}
++	copied_context_tear_down(iommu, context, bus, devfn);
+ 	context_clear_entry(context);
++
+ 	context_set_domain_id(context, did);
+ 
+ 	if (translation != CONTEXT_TT_PASS_THROUGH) {
+@@ -1685,23 +1718,7 @@ static int domain_context_mapping_one(struct dmar_domain *domain,
+ 	context_set_present(context);
+ 	if (!ecap_coherent(iommu->ecap))
+ 		clflush_cache_range(context, sizeof(*context));
 -
- /*
-  * The extra devTLB flush quirk impacts those QAT devices with PCI device
-  * IDs ranging from 0x4940 to 0x4943. It is exempted from risky_device()
-@@ -1325,10 +1298,8 @@ static void iommu_enable_pci_caps(struct device_domain_info *info)
- 		info->pasid_enabled = 1;
- 
- 	if (info->ats_supported && pci_ats_page_aligned(pdev) &&
--	    !pci_enable_ats(pdev, VTD_PAGE_SHIFT)) {
-+	    !pci_enable_ats(pdev, VTD_PAGE_SHIFT))
- 		info->ats_enabled = 1;
--		domain_update_iotlb(info->domain);
+-	/*
+-	 * It's a non-present to present mapping. If hardware doesn't cache
+-	 * non-present entry we only need to flush the write-buffer. If the
+-	 * _does_ cache non-present entries, then it does so in the special
+-	 * domain #0, which we have to flush:
+-	 */
+-	if (cap_caching_mode(iommu->cap)) {
+-		iommu->flush.flush_context(iommu, 0,
+-					   (((u16)bus) << 8) | devfn,
+-					   DMA_CCMD_MASK_NOBIT,
+-					   DMA_CCMD_DEVICE_INVL);
+-		iommu->flush.flush_iotlb(iommu, did, 0, 0, DMA_TLB_DSI_FLUSH);
+-	} else {
+-		iommu_flush_write_buffer(iommu);
 -	}
- }
- 
- static void iommu_disable_pci_caps(struct device_domain_info *info)
-@@ -1343,7 +1314,6 @@ static void iommu_disable_pci_caps(struct device_domain_info *info)
- 	if (info->ats_enabled) {
- 		pci_disable_ats(pdev);
- 		info->ats_enabled = 0;
--		domain_update_iotlb(info->domain);
- 	}
- 
- 	if (info->pasid_enabled) {
-@@ -1517,7 +1487,6 @@ static struct dmar_domain *alloc_domain(unsigned int type)
- 	domain->nid = NUMA_NO_NODE;
- 	if (first_level_by_default(type))
- 		domain->use_first_level = true;
--	domain->has_iotlb_device = false;
- 	INIT_LIST_HEAD(&domain->devices);
- 	INIT_LIST_HEAD(&domain->dev_pasids);
- 	INIT_LIST_HEAD(&domain->cache_tags);
-@@ -3520,7 +3489,6 @@ static struct dmar_domain *paging_domain_alloc(struct device *dev, bool first_st
- 	xa_init(&domain->iommu_array);
- 
- 	domain->nid = dev_to_node(dev);
--	domain->has_iotlb_device = info->ats_enabled;
- 	domain->use_first_level = first_stage;
- 
- 	/* calculate the address width */
-diff --git a/drivers/iommu/intel/nested.c b/drivers/iommu/intel/nested.c
-index 16a2bcf5cfeb..36a91b1b52be 100644
---- a/drivers/iommu/intel/nested.c
-+++ b/drivers/iommu/intel/nested.c
-@@ -66,8 +66,6 @@ static int intel_nested_attach_dev(struct iommu_domain *domain,
- 	list_add(&info->link, &dmar_domain->devices);
- 	spin_unlock_irqrestore(&dmar_domain->lock, flags);
- 
--	domain_update_iotlb(dmar_domain);
 -
- 	return 0;
- unassign_tag:
- 	cache_tag_unassign_domain(dmar_domain, dev, IOMMU_NO_PASID);
++	context_present_cache_flush(iommu, did, bus, devfn);
+ 	ret = 0;
+ 
+ out_unlock:
 -- 
 2.34.1
 
