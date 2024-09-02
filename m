@@ -1,146 +1,128 @@
-Return-Path: <linux-kernel+bounces-310429-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310430-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DC5F967CC9
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 01:41:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DC473967CE6
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 02:02:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 49BEF281A44
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2024 23:41:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 979EF2818CE
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 00:02:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78E3A185B65;
-	Sun,  1 Sep 2024 23:41:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3CFC12E7F;
+	Mon,  2 Sep 2024 00:02:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="arzHjtbj"
-Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jGE0VhGY"
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA81D13AA46;
-	Sun,  1 Sep 2024 23:41:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5517110F1
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 00:02:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725234080; cv=none; b=jn6WDNCRYXQDCnjZhqfh/bkLwHgrXaG/HXeXrbNk8d/uXeGIVS0SwrMaYrH8hMCj5JGtqvSWhIi6dBs5/kiFjQEUv1QG0PUwdUKr+n17cv2k+RjBL8jdvYoNvpLX5hmahkylSmcY7x0rk3Mu7nTfvsHBMJ3oeMiMRAMDHJrdVsE=
+	t=1725235328; cv=none; b=hBK1orSkGZmSY4CghrS8N6xgRZk6a+x+AZ5/+Cm785IPR79PHeuD/95SFF/KcZs/t69k1QaPbPYiYjVPPBI7x00Lg3uU7qFKzMr25srXOY4EgOBWtvGa6wrolqtmxh+I1byrtEVDnuP6gy7TfoEEWGwcEMJSBURUO1eYLzr8DUk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725234080; c=relaxed/simple;
-	bh=MOF3+IXawLy9SIlMBfajQDdPJDqrahG9DjBoz/9HRR4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gOgZpEBsAM4IP0ekTYYDqkc7c/62Lp7plbe3S2VREwrKcKT65PfFeWLX0eBtSDuwvMWfk13hd10Hkb4jbzPXFNOwTUT86dI8kZjr9qzHOnS526jdsxj/UE/r1DjCSFAzeTbkIIP+O02qLi93mIuxhN+NXbfggYh2Dd8T0DRox8s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=arzHjtbj; arc=none smtp.client-ip=209.85.208.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2f406034874so42614521fa.1;
-        Sun, 01 Sep 2024 16:41:18 -0700 (PDT)
+	s=arc-20240116; t=1725235328; c=relaxed/simple;
+	bh=jihjezE4SKxxXHigHPjddOU+sXmPRtYhm5RHPU8ik18=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fO7cBTHUU/asjgB6uCDEYItVfv7hc3zgwcFVm7UjmR183nwo2lQMaZTtXhpBx0dShgT+gawSl3ilRdKo6fk0Xj0zAh6ZA9P6k6t47GvLbEDs81XqTcy6vYvwjyvIQTYXgCdj2ljgp6BPdBcWy9QDsaJwa5dK1jnfp7exr1BtjD0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jGE0VhGY; arc=none smtp.client-ip=209.85.167.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-533463f6b16so4644808e87.1
+        for <linux-kernel@vger.kernel.org>; Sun, 01 Sep 2024 17:02:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725234077; x=1725838877; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0OptCrhRONfMIpYiriIyIArvvwMoZ9X5KBzqF2jB2C8=;
-        b=arzHjtbjkzNva0NcZZQaRqGAZxNO6Lh3o6l+UU2Arh4H+tVW798SAR2UCOrLI85isa
-         nJwkbpzxGya80LVPj/Nn/0gf/8xN/Uc4hdC+T1Yfonjb2v6RB2L/IhkZKBtaSqCvudMH
-         I+YoR/JGYRcuPaNq/4evVMyRUV7hC4KPH+2S/Jv2JCkJtw+ONHr13uEEi+4KITOmshxk
-         H4QXE4X9dEu/T0tYkaTZju5t86pXcAp5AvISel8G4C5CSB1I0tj75l4KTQvFQqiA1uSY
-         I6K1GNd+InOBTDkFJxniF34q0MIi5a+n/9fHzoowRoPvY/fGUZ2CxKi7CwaYMlH3LPii
-         /Cjg==
+        d=linaro.org; s=google; t=1725235324; x=1725840124; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Q9++1ZHzcZI4fcRNlptm+zAcB1O/Jr3h7F0QPCUj+I4=;
+        b=jGE0VhGYQJc82tG/3vgEFrrGSOpotm5Oegx1utzMh0C5aXnYJerOF4avlKU0FXzShY
+         PlVVawlOV0buU3+h28LbgWwrqVE3M/b3X1/uwvTKL2sKVxJFQRoEvqfp7e+ukoI4Icc2
+         vqUBMB4Br5Dli6rnL0qs2RqRlWU/sYXRyoKbuZ9ms1pI0YxVqb0NmrpjYhSfI1WR4otq
+         S9tRe6CbLovBObbb8KnWXuMVcIhKnYmp/6cgJl/Hy99XzEgbPnaiMabFv3Froy6BCFx3
+         6gHxvxFhzICtKLL72sJPPHXCRLpmfULpBxOj9iHK4wS6zSZuAjqVE1rw/0j/wjqWvTdR
+         qVOA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725234077; x=1725838877;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0OptCrhRONfMIpYiriIyIArvvwMoZ9X5KBzqF2jB2C8=;
-        b=waznXLgd3mWb0iMtWfRbSWkq87KDjTRhPIQWhw7hN7hIvxvrbEALUkM00o12fTeHNt
-         DMjrLZUc3O3K7A4NaboZoSuwrDPH2aJEJzym5VAu/mk5nrqhbwfBaazrB7T6qgecbefD
-         QmDhLuIKb921BprNEcgkfaGdRdMr5ECRNnXqDCZ2mPzX42mMpUhWtmre1F7KD2kzg6Gh
-         bOSlzNIXr6TcvZqy19FWvhjBZhf4v/F3jl+bwj7Ck/rPWZRezKs3DqWNluhJDDG8IPju
-         /Szy5F5a9iRKNxiPpJJT0zgD09iO4b7q2L7HStrxQPWnR+2UxZT5EbjX1QfJFwBeg3kE
-         xhzw==
-X-Forwarded-Encrypted: i=1; AJvYcCW2WoS4s9Z4Qn4M1KtXSzTcL3Aul4nO6uUodBkWrwJ9bfJaNjChDczkUSqvQ7MZOq/L+k9NySV3uXeg@vger.kernel.org, AJvYcCWjXI0NEP2OMcY8wLX3S7HyHyct+1ZBhBuffBCWDWbPynBNvKiIq+WjpixlDlvRziYHrq2ujiOmtmzEGImS@vger.kernel.org, AJvYcCWneAzEXWcSHYNVC1oQlehYE25R/cdqhtchh27McfWs8iICrJD2yeOswEspqbymTOc+UBx+y2YmucZSWA==@vger.kernel.org, AJvYcCX/5Q7MUN9+OyEOJDOQlnorKI0unzZHhIxfpQBHYD18LEXPl1puaEjHjGFahTAGyneUoiSrfdFao9Y0XJVzCw==@vger.kernel.org, AJvYcCXeNIORl75gm26DiltzaxuA54PZPO3nP+V+vPamDPkGUSyVKEKNsKiBlTHc250qR12Nskb9fZIn7LdZ@vger.kernel.org
-X-Gm-Message-State: AOJu0YxRN2v1a0ibF37XCS/OmRsosa9pLSsDlRDfTYzN/I88B02/5In8
-	L/dx/yKp/VVYCbC6/4MVFkUc9Id6+IMlTYwMmGdZpcHYEVHdyNN2pAVeEvNqimwyMT+mILpw3Rd
-	IhgFvWmLPuzbtMbkoRTfKpRE77+0=
-X-Google-Smtp-Source: AGHT+IHrpw2kTpvaZiyKJAHMxmQ/fhZpxqRdKI1vFWTY9ydD57nABAkwYo+y3SH1kUAvMU7Md95wbwacKxJ+67IyRxg=
-X-Received: by 2002:a2e:be29:0:b0:2f5:23a:106b with SMTP id
- 38308e7fff4ca-2f610890868mr90286721fa.34.1725234076595; Sun, 01 Sep 2024
- 16:41:16 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1725235324; x=1725840124;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Q9++1ZHzcZI4fcRNlptm+zAcB1O/Jr3h7F0QPCUj+I4=;
+        b=tWaICz315HWs0ya782wUvqHj7Eey5aEyfc/SuuhZtTZqSwIr7jbwDGFNB8RUkmvTc9
+         nGNw/NwB/SHj0p/oF10/mSE5vMIsgwxPeV9WbxvaMPwSn34eZhJ52dH2TIZSVH0oWY3z
+         p/fzrYVR70ca7QwZm+9t2sVFAuojw0CruTQp6xtslEXWc90y88iG5pLJ89JbkrS37WCX
+         +utJ0NBvZnEH+wQWj0mjaztpglRrX7X8A1KZ0CBE0boKhJkEAWPR7YJRaXh9DKCC4t1Q
+         PlK2aQZ72/eenKCsaM7w4mly4F5H3t3DR0b4q6Nys+BOqbjoheNrR8Gdg2kL1KFUzJ3C
+         cAww==
+X-Forwarded-Encrypted: i=1; AJvYcCXpcw4jmUndRWDefP1VodsK+n+tu8VBljfyrlFOnYnALCPnqG5/qCJ1uKZk8Tu34NTxSVElvm9T2nBcLPM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxx9EXaQDB6/vgg2hoQIXslgNCFIrLO0yqoGcUUwVF4N3GJE5yN
+	0Nib8PGRVeziqXyasiMAjCJQqdLud619nMFgBkwXw3v2CZ6McNVz2spCCEouKos=
+X-Google-Smtp-Source: AGHT+IECIQ8duDhzqxT+Vo3df1TEVRNCkaDmJpN6C1Sl4Mk9RAef7hTVdU+HKUJDzazX/Oygc8itYw==
+X-Received: by 2002:a05:6512:1598:b0:52f:cbce:b9b7 with SMTP id 2adb3069b0e04-53546a56c49mr5702705e87.0.1725235323524;
+        Sun, 01 Sep 2024 17:02:03 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5354079bd95sm1383884e87.62.2024.09.01.17.02.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 01 Sep 2024 17:02:02 -0700 (PDT)
+Date: Mon, 2 Sep 2024 03:02:01 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Cc: quic_dikshita@quicinc.com, Vikash Garodia <quic_vgarodia@quicinc.com>, 
+	Abhinav Kumar <quic_abhinavk@quicinc.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Vedang Nagar <quic_vnagar@quicinc.com>
+Subject: Re: [PATCH v3 00/29] Qualcomm iris video decoder driver
+Message-ID: <xwkibtfakensuzrj4ycmyh4nqjr4nwkgqr63og7n6ejiw3hjqo@rvl3hhznfftx>
+References: <20240827-iris_v3-v3-0-c5fdbbe65e70@quicinc.com>
+ <3a62b4cb-5c41-4c76-a957-af8e594ca8b1@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240828210249.1078637-1-dhowells@redhat.com> <20240828210249.1078637-5-dhowells@redhat.com>
- <20240830-anteil-haarfarbe-d11935ac1017@brauner>
-In-Reply-To: <20240830-anteil-haarfarbe-d11935ac1017@brauner>
-From: Steve French <smfrench@gmail.com>
-Date: Sun, 1 Sep 2024 18:41:05 -0500
-Message-ID: <CAH2r5mv8merj9J=UK-U2xsSArL2s9zuRP-bZHnM39jU6Ujx9JQ@mail.gmail.com>
-Subject: Re: (subset) [PATCH 4/6] mm: Fix filemap_invalidate_inode() to use invalidate_inode_pages2_range()
-To: Christian Brauner <brauner@kernel.org>
-Cc: David Howells <dhowells@redhat.com>, Paulo Alcantara <pc@manguebit.com>, Tom Talpey <tom@talpey.com>, 
-	Dominique Martinet <asmadeus@codewreck.org>, Jeff Layton <jlayton@kernel.org>, 
-	Matthew Wilcox <willy@infradead.org>, netfs@lists.linux.dev, linux-afs@lists.infradead.org, 
-	linux-cifs@vger.kernel.org, linux-nfs@vger.kernel.org, 
-	ceph-devel@vger.kernel.org, v9fs@lists.linux.dev, 
-	linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org, 
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	Miklos Szeredi <miklos@szeredi.hu>, Trond Myklebust <trond.myklebust@hammerspace.com>, 
-	Christoph Hellwig <hch@lst.de>, Andrew Morton <akpm@linux-foundation.org>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, devel@lists.orangefs.org, 
-	Steve French <sfrench@samba.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3a62b4cb-5c41-4c76-a957-af8e594ca8b1@linaro.org>
 
-This looks like an important one as it fixes multiple xfstests see e.g.
-with the patch:
-http://smb311-linux-testing.southcentralus.cloudapp.azure.com/#/builders/3/=
-builds/213
-vs without
-http://smb311-linux-testing.southcentralus.cloudapp.azure.com/#/builders/3/=
-builds/212
+On Sat, Aug 31, 2024 at 04:18:35PM GMT, Bryan O'Donoghue wrote:
+> > The result of v4l2-compliance test on SM8250:
+> > 
+> > v4l2-compliance 1.29.0-5239, 64 bits, 64-bit time_t
+> > v4l2-compliance SHA: a1ebb4dad512 2024-08-08 20:00:17
+> > 
+> > Compliance test for iris_driver device /dev/video0:
+> > 
+> > Driver Info:
+> >          Driver name      : iris_driver
+> >          Card type        : iris_decoder
+> 
+> Hmm, so this is decoder only ?
+> 
+> What's the intention here for encoding support ?
+> 
+> I've verified your results on the test branch but I just noticed that sm8250
+> with the iris driver is decoder only - whereas the venus driver does both,
+> which strikes me as a bit odd.
 
-Can add:
-Tested--by: Steve French <stfrench@microsoft.com>
+I think we all have discussed this during the review of the previous
+series: complete driver becomes very huge and complicated to review. So
+the recommendation was to submit the limited features driver (decoding,
+1 codec) and get more features (more codecs, encoding support, etc)
+after getting the Iris driver in. Of course sm8250 support in Venus
+driver will stay in until Iris driver reaches feature parity.
 
-On Fri, Aug 30, 2024 at 8:12=E2=80=AFAM Christian Brauner <brauner@kernel.o=
-rg> wrote:
->
-> On Wed, 28 Aug 2024 22:02:45 +0100, David Howells wrote:
-> > Fix filemap_invalidate_inode() to use invalidate_inode_pages2_range()
-> > rather than truncate_inode_pages_range().  The latter clears the
-> > invalidated bit of a partial pages rather than discarding it entirely.
-> > This causes copy_file_range() to fail on cifs because the partial pages=
- at
-> > either end of the destination range aren't evicted and reread, but rath=
-er
-> > just partly cleared.
-> >
-> > [...]
->
-> Applied to the vfs.fixes branch of the vfs/vfs.git tree.
-> Patches in the vfs.fixes branch should appear in linux-next soon.
->
-> Please report any outstanding bugs that were missed during review in a
-> new review to the original patch series allowing us to drop it.
->
-> It's encouraged to provide Acked-bys and Reviewed-bys even though the
-> patch has now been applied. If possible patch trailers will be updated.
->
-> Note that commit hashes shown below are subject to change due to rebase,
-> trailer updates or similar. If in doubt, please check the listed branch.
->
-> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-> branch: vfs.fixes
->
-> [4/6] mm: Fix filemap_invalidate_inode() to use invalidate_inode_pages2_r=
-ange()
->       https://git.kernel.org/vfs/vfs/c/c26096ee0278
->
+> 
+> Is your intention to publish more patches to enable the encoder in another
+> series ?
+> 
+> ---
+> bod
 
-
---=20
-Thanks,
-
-Steve
+-- 
+With best wishes
+Dmitry
 
