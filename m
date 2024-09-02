@@ -1,109 +1,155 @@
-Return-Path: <linux-kernel+bounces-311091-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311093-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 254A09684C0
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 12:34:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E6A49684C5
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 12:35:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C40881F233A0
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 10:34:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 196AC1F23568
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 10:35:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D907013C9D3;
-	Mon,  2 Sep 2024 10:34:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3F1613C810;
+	Mon,  2 Sep 2024 10:35:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="iZ0ySCTP"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="g3AWfNU/"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E981613B2A8
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 10:34:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 472D813B2A8;
+	Mon,  2 Sep 2024 10:35:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725273249; cv=none; b=saC6U3BgmyTkCJJFWyjZ7FeMS186v0593yalP4pe5Ux6e1Gqd/QpA4DJ/+H1W9or+IYVUCrD2NHfw8WxYv8rLB42XqE2njCW9aqqgYVjOTjFeMQ1T7TifmE1Hb9dWMcOtkvXi5NsJuKen/RH5uPfGfiITCRULoVOi30++gauEDA=
+	t=1725273322; cv=none; b=nqx9VAPkO3Kf668iE7h/dmd3F/dgDl8y/WlVLnRGiUQUneDQPq3TMuCFugD1wsjuMbRL/8OrNZ2DHWhYRoAVlQH0cCUXY/SrVZpldxQ9OiynHQZyWpFe74rWvHf+nP64BPuofz2AArSeumYL+SCUex+yPB8ZUE+o3uL+It4LByU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725273249; c=relaxed/simple;
-	bh=thNj+m9tysdWqjtQSV+YNo4/kN/AS2FzgErK1XihFw4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=RZRwK2LVmqlNT1HHa4qMrWeCwVeDPcIe9QHaqYk3ebmcFneAgB8Se5Ino0GvwTJ4uJhAg6x95W7V1Ui+gLAySmFt6l37uqEIQz01t8SKwZHUdC6PE7w/VACIwL3LdMVSvZPGSMachM86vxJZLr/6XaXqGtv8FFl5bkt2goe3jrI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=iZ0ySCTP; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-42ba9b47f4eso23371625e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2024 03:34:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1725273246; x=1725878046; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EfnknnSI88SMEAmIK9ZIqu4FUp3tloSoVvgrsROObkc=;
-        b=iZ0ySCTPKMVrA5sRakqEgSqSdfMzqrTKrVrKBgJCse14fx1PKv7RdonTwxIVlu2bCp
-         IjhFWvLC84U+0fFGIm9Rr5Nq9uem7ML6ujpc1IcptYnT5HNolruguDoBsDgnPgDaJXuw
-         aod518deaAioQfKAWt2gGUF1fsxbBBsojUNbnf8hCTmXxwcChLKWkPJx1ci0vY/KMQQV
-         RD/PWoaRHmO2XhK0kHBDBRpgohnCM/g7gaQ2s+nBnnVoJ0rH5p5X7nbkuONj2VtMyYfR
-         u9UCeDA9w6JB60wjWOuRVYnct6lldhk/ZLTAy1y3iqb95Wyqm0Z9evyZr3amLC5cWfBX
-         PAQg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725273246; x=1725878046;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=EfnknnSI88SMEAmIK9ZIqu4FUp3tloSoVvgrsROObkc=;
-        b=w/vc23kaqQn0r5oPnTROthLi6O+FHnHBE3NOFVur27qedJz/IlC1SHzxhqew4mKFzi
-         uZMkCcjq73qHlElB85eV1GvDRw4g3bpSBxzvmfCb8gFRTUQGhkL6dbFr3Lj+r95IaByX
-         Bc1DA5sBuv+5hcSdVs4M07LxIn7lDfYiB4o3rLuEt+PsVXYm4wigya8zaEuuSb6jbXOK
-         DFAVBcXTmUkVuI9tfeq4R4+MOmrph/oDCA+RqNTPBj5vycRNaC8RLBEbEShJN1WxFZX1
-         cmzpBKENQJFtJE5Ha2jAlcyvCgfrudn262JOG+bVmpFJGxTzFj67IietUZ4wCiy9EHJW
-         4tww==
-X-Forwarded-Encrypted: i=1; AJvYcCU3yI4Lc0ETPphGay1z3nyukKowBRz30shIRQ+kcsdAjsixS4ZuQ6wzOzwnsqXMxV8gGxmt8+qZRZlTzEI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzU8tWnxITNYSk8ugHkx0QOnlQSYOZFCaoB6ZNzCxnaQcqijFsq
-	AcVyfAVwyASYr7QaDz5F87mkum6rnL1neBg/etjGh4ZWeZD+ND/LMScjgMFLSHA=
-X-Google-Smtp-Source: AGHT+IFdFPgO+oZwmws/3Yz5eXsbV5a/tr2eiQTpD1UeVF7Ht5uaERbyauIo9GDIAHqXqR8KYzVoRQ==
-X-Received: by 2002:a05:600c:4584:b0:42a:b32b:cc65 with SMTP id 5b1f17b1804b1-42bb4c4058fmr83572515e9.2.1725273245644;
-        Mon, 02 Sep 2024 03:34:05 -0700 (PDT)
-Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:b496:9e67:73c9:9f5a])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-374c32793b4sm5085844f8f.7.2024.09.02.03.34.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Sep 2024 03:34:05 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Dhruva Gole <d-gole@ti.com>
-Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] gpio-syscon: fix excess struct member build warning
-Date: Mon,  2 Sep 2024 12:34:03 +0200
-Message-ID: <172527323991.25859.15792653428426761773.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240902-b4-gpio-fix-v1-1-49a997994fa5@ti.com>
-References: <20240902-b4-gpio-fix-v1-1-49a997994fa5@ti.com>
+	s=arc-20240116; t=1725273322; c=relaxed/simple;
+	bh=Cw+TYaCrtkpShMImHhn75FMmM32Kcy/WMVCCSaCo+64=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=M9+8EvJ71coDkweye/bAiS7rPkv0gq8SKHfm6FrP6PkeEAHRH2RZcQ/aKtWn9jddfYOAcRCYEI5FHcRc6DI4kiGOE+xI5mb8sLIMrMGZX3rTRkzhRQgKQdSqj8Ra7bIAJS7Omb8DX1DtSGXicoBYYSqSXg6A2vYFNJnS7YQTNd0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=g3AWfNU/; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725273320; x=1756809320;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=Cw+TYaCrtkpShMImHhn75FMmM32Kcy/WMVCCSaCo+64=;
+  b=g3AWfNU//Ekw9U53iLMHLKimLmB7qA1fkrjpL6XQyCqPTjcWCDD89Sc6
+   v251C3USIZ4y5XsMoy+1TVxTfyVp5rcf7JWIZb2cq+PFrKTpK5CFkNlX5
+   xTQCToym8Okla7o+c9IF41UhD5YfnEGPltWq3WhC2hZKzDc7KLEaJOlGl
+   MJMmC4d8+W8GSN4Fq6MZPCfoo6i28kTURdYfrzH6Yk8Q7cdxBUHWP0u4e
+   vTxFYrk2cq9ve/XHptyXLylY57UPxqdDoyKjunSOAzTanUD3SU61yKrYs
+   87zJGORcvvPGhySDEI6FJQw99MBSwkV0hTV4qRUdUJFXqvWXlYqa/PPnU
+   A==;
+X-CSE-ConnectionGUID: hO7o0DjbS0OcwuJx1UsdCw==
+X-CSE-MsgGUID: PuEv18+vTcK/ZrT2rDIDKQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11182"; a="23980790"
+X-IronPort-AV: E=Sophos;i="6.10,195,1719903600"; 
+   d="scan'208";a="23980790"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2024 03:35:20 -0700
+X-CSE-ConnectionGUID: Xda4DPLAQDGRyksF2aubNQ==
+X-CSE-MsgGUID: mLlH/IfoTkuDAGM+f3C3qA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,195,1719903600"; 
+   d="scan'208";a="69366478"
+Received: from ahunter6-mobl1.ger.corp.intel.com (HELO [10.0.2.15]) ([10.246.0.178])
+  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2024 03:35:15 -0700
+Message-ID: <724c873c-97b8-48cd-9543-03f051cde9a3@intel.com>
+Date: Mon, 2 Sep 2024 13:34:20 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/2] cqhci-core: Make use cqhci_halted() routine
+To: Seunghwan Baek <sh8267.baek@samsung.com>, linux-kernel@vger.kernel.org,
+ linux-mmc@vger.kernel.org, ulf.hansson@linaro.org, ritesh.list@gmail.com,
+ quic_asutoshd@quicinc.com
+Cc: grant.jung@samsung.com, jt77.jang@samsung.com, junwoo80.lee@samsung.com,
+ dh0421.hwang@samsung.com, jangsub.yi@samsung.com, sh043.lee@samsung.com,
+ cw9316.lee@samsung.com, wkon.kim@samsung.com
+References: <20240829061823.3718-1-sh8267.baek@samsung.com>
+ <CGME20240829061842epcas1p25b97a685d0946c360338adf716bfaf2b@epcas1p2.samsung.com>
+ <20240829061823.3718-3-sh8267.baek@samsung.com>
+Content-Language: en-US
+From: Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+In-Reply-To: <20240829061823.3718-3-sh8267.baek@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+On 29/08/24 09:18, Seunghwan Baek wrote:
+> Code to check whether cqe is in halt state is modified to cqhci_halted,
 
+'to cqhci_halted' -> to use 'cqhci_halted()'
 
-On Mon, 02 Sep 2024 16:00:02 +0530, Dhruva Gole wrote:
-> Fix the build warning with W=1 flag,
-> "Excess struct member 'compatible' description in 'syscon_gpio_data' "
-> by removing the documentation for the non existent member.
+(and re-wrap text to 75 columns)
+
+> which has already been implemented.
 > 
+> Signed-off-by: Seunghwan Baek <sh8267.baek@samsung.com>
+
+For consistency subject could start "mmc: cqhci:" instead of "cqhci-core:"
+
+Otherwise:
+
+Acked-by: Adrian Hunter <adrian.hunter@intel.com>
+
+> ---
+>  drivers/mmc/host/cqhci-core.c | 14 +++++++-------
+>  1 file changed, 7 insertions(+), 7 deletions(-)
 > 
+> diff --git a/drivers/mmc/host/cqhci-core.c b/drivers/mmc/host/cqhci-core.c
+> index a02da26a1efd..178277d90c31 100644
+> --- a/drivers/mmc/host/cqhci-core.c
+> +++ b/drivers/mmc/host/cqhci-core.c
+> @@ -33,6 +33,11 @@ struct cqhci_slot {
+>  #define CQHCI_HOST_OTHER	BIT(4)
+>  };
+>  
+> +static bool cqhci_halted(struct cqhci_host *cq_host)
+> +{
+> +	return cqhci_readl(cq_host, CQHCI_CTL) & CQHCI_HALT;
+> +}
+> +
+>  static inline u8 *get_desc(struct cqhci_host *cq_host, u8 tag)
+>  {
+>  	return cq_host->desc_base + (tag * cq_host->slot_sz);
+> @@ -282,7 +287,7 @@ static void __cqhci_enable(struct cqhci_host *cq_host)
+>  
+>  	cqhci_writel(cq_host, cqcfg, CQHCI_CFG);
+>  
+> -	if (cqhci_readl(cq_host, CQHCI_CTL) & CQHCI_HALT)
+> +	if (cqhci_halted(cq_host))
+>  		cqhci_writel(cq_host, 0, CQHCI_CTL);
+>  
+>  	mmc->cqe_on = true;
+> @@ -617,7 +622,7 @@ static int cqhci_request(struct mmc_host *mmc, struct mmc_request *mrq)
+>  		cqhci_writel(cq_host, 0, CQHCI_CTL);
+>  		mmc->cqe_on = true;
+>  		pr_debug("%s: cqhci: CQE on\n", mmc_hostname(mmc));
+> -		if (cqhci_readl(cq_host, CQHCI_CTL) & CQHCI_HALT) {
+> +		if (cqhci_halted(cq_host)) {
+>  			pr_err("%s: cqhci: CQE failed to exit halt state\n",
+>  			       mmc_hostname(mmc));
+>  		}
+> @@ -953,11 +958,6 @@ static bool cqhci_clear_all_tasks(struct mmc_host *mmc, unsigned int timeout)
+>  	return ret;
+>  }
+>  
+> -static bool cqhci_halted(struct cqhci_host *cq_host)
+> -{
+> -	return cqhci_readl(cq_host, CQHCI_CTL) & CQHCI_HALT;
+> -}
+> -
+>  static bool cqhci_halt(struct mmc_host *mmc, unsigned int timeout)
+>  {
+>  	struct cqhci_host *cq_host = mmc->cqe_private;
 
-Applied, thanks!
-
-[1/1] gpio-syscon: fix excess struct member build warning
-      commit: 3cbf09bfb6162a90bda5e1228d0c46ad3e4c0d6c
-
-Best regards,
--- 
-Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
