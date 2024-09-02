@@ -1,196 +1,179 @@
-Return-Path: <linux-kernel+bounces-311139-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311141-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 591B7968550
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 12:52:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BAD72968555
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 12:54:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0FCC9284FE1
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 10:52:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 20746B24772
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 10:54:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E1C1170A03;
-	Mon,  2 Sep 2024 10:51:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9001314A4E0;
+	Mon,  2 Sep 2024 10:54:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amlogic.com header.i=@amlogic.com header.b="EYInuWL1"
-Received: from APC01-SG2-obe.outbound.protection.outlook.com (mail-sgaapc01on2136.outbound.protection.outlook.com [40.107.215.136])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Pbqh7Mcq"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDBFC56B7C;
-	Mon,  2 Sep 2024 10:51:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.215.136
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725274296; cv=fail; b=KH87RkLCKjPqS2OqSCjMEgos3yzvk1a12crVQ6XaCFEQ5MlsWrKAQ2h7TvTiQx6dmaFUTva6mHOgFgA1fSz/U9+GSVyEqHjJAGr+oq0aSYDvoq5bAZ3ntQAvxLwMb2YjR7nYf1VmHAxjWUvxD2+tSSf3xsB6IcB9fkrA48Xp+Fo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725274296; c=relaxed/simple;
-	bh=5urlK2BQBr0UfFkXSdkFUuXooI2cXt7DdC8suIfLYMw=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=Y/O0VuetyrZU/2cq/Qn7TisShlCPzf/RG9+kQd85vw6EATYUoKtICE8uS7S4BWW2QKPF1FQBA0dd1b7sXDz8ZkiQfnq/bUIDZoBaNkNSeKkblGhaopEXEA6+6GkggSBFNWTLuj6hBiKcG9pDyPbMnhnufPKZBjv0wlqUii5Kjl0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amlogic.com; spf=pass smtp.mailfrom=amlogic.com; dkim=pass (2048-bit key) header.d=amlogic.com header.i=@amlogic.com header.b=EYInuWL1; arc=fail smtp.client-ip=40.107.215.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amlogic.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amlogic.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=tos/+o1yCsv9uboQZa1/0Qy6hyeCpP1H/S7S/9eXauTNxindqAaWRl99Of4VpZFu1p3tUdxaNqhaQHsJzr44OveDUHBh8446IdBHf7wFA3AWniQw9q+IuhFjDInLHBajLNENT2G5vhmBu1dhK+1/Hy9jpyasa6RX4A09Qx8YTCOnKTAcUHhEDiBgQ6k+yhzaUG8StMQ/Ghm7Fvf7LgbwLRb2P2Na5WJXt7RgRyp6DveaW9pokuLvlM8lZ2JspIejwKC4FGPph6FK5NNG0aopyj8R+Lb5GGAqRi2Mv7yLMZqqHirqnRQIZPN0jeQd0D4eR9wclqmzSpVO+ZIDU5pPGg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=/8/UMEButdOK1F4MiNXTKGhB6O3r1Ztkvad/lj6GGbk=;
- b=sxJtl9RZjb62psfzGOAM2tFMAktCr/UAccfH8lcuLulvZkBg+2c9vL/dIjs0/qNePTi1rwNoMarM110e3g7UkI91NiS1WdKWZxqxWk8ZbvgN2IxJ7v2MTnjPOgBv0Q/d8S8sY8/HLqcpWiEcaLvLbqj/bkbYzoomKy+ifuY+HG7k2YkOwGD1gd8vvJDfgeykNCEw5STjtTM/KCmOmF0d3YyVC/r0Xp0ZDJ+e38K/kJ8Tp8J86h9Dif2H/udrbsu3uSKIYcBv2JN2gIVws0pH2uP9GFIWRkxTiR8qB3YWp5u5r3iK9KRiwSOwV2qTEEC/wvevN+WtXArAaaC+1n5aOQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amlogic.com; dmarc=pass action=none header.from=amlogic.com;
- dkim=pass header.d=amlogic.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amlogic.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=/8/UMEButdOK1F4MiNXTKGhB6O3r1Ztkvad/lj6GGbk=;
- b=EYInuWL1k2gUJ2WzNnDTG3BjFBV1Yw+moRAvJyp+8iPGJrepPtd7nFGXcLoviASzA11kKnb+8j0p+KJ02IzlG0HSpOoTYKMxzDyNpSlPG+k1dPBso4k8Ch11bbZBGZf8fw/oO0efB9QT4nNVcK48OECpKcloVN1KajJ3LCs+uXD8ZDI8x2+qSHka5OZbt9r6hw226OKjQCjjY7YaMmouPYxQXqpMlBKivOgu4a5l9kxO9xgwikEK59KvfSvwGM9SD2hKv+ZiONHzt/hyMEL3xU39/LpccEJaiH/HDXSP3gIGmCjE00Uc5i6gXL9gi9xWc1drpDyFcKt/14vtUfifRg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amlogic.com;
-Received: from TY0PR03MB7240.apcprd03.prod.outlook.com (2603:1096:400:276::8)
- by SEZPR03MB7376.apcprd03.prod.outlook.com (2603:1096:101:127::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.23; Mon, 2 Sep
- 2024 10:51:30 +0000
-Received: from TY0PR03MB7240.apcprd03.prod.outlook.com
- ([fe80::a51:b6f1:1090:757a]) by TY0PR03MB7240.apcprd03.prod.outlook.com
- ([fe80::a51:b6f1:1090:757a%2]) with mapi id 15.20.7918.020; Mon, 2 Sep 2024
- 10:51:28 +0000
-Message-ID: <a0342c08-9c91-77a7-105c-af91af49d5fa@amlogic.com>
-Date: Mon, 2 Sep 2024 18:50:41 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH v2 0/3] Add support for Amlogic T7 reset controller
-To: Philipp Zabel <p.zabel@pengutronix.de>, kelvin.zhang@amlogic.com,
- Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Neil Armstrong <neil.armstrong@linaro.org>,
- Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>,
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20240422-t7-reset-v2-0-cb82271d3296@amlogic.com>
- <d00b9c940d5b6156c846b8e513adff1eba0993aa.camel@pengutronix.de>
-From: Zelong Dong <Zelong.Dong@amlogic.com>
-In-Reply-To: <d00b9c940d5b6156c846b8e513adff1eba0993aa.camel@pengutronix.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SI2P153CA0017.APCP153.PROD.OUTLOOK.COM
- (2603:1096:4:140::10) To TY0PR03MB7240.apcprd03.prod.outlook.com
- (2603:1096:400:276::8)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6697E1E51D;
+	Mon,  2 Sep 2024 10:54:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725274467; cv=none; b=Sp4vlcSbbQBCfGhHBRUbpO6U+TgqnOJjhFHwPYSlwj9ie8WmRI/NIdSTkcXmYK0Pj3BZWBhuOENO78THT2fKazeRpIYM9Pcf3N9quOh7aBDVnw2iKvNZoq1oEVaQlLohWLqSfMQun0qLwMuSx8Ukr3O5kcTxvfsIgbhpzOLQTqY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725274467; c=relaxed/simple;
+	bh=1ox6/8Pljv8b73NeRXJoFS9ibX5dEGrklAxOVjdb0xU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KVPtw0Gv85JJ8A0TTOo9vdvA8BWtzyv4vVDXTHbcokCw8eHkDWv9sXtXf+cAiZuyopuZGLMiLb4hxo2kZdKndz3fGcEUBecS7z5c0zao8ciy2bDjHOoQ+hQ7tJb0gtmY2N+nO0Ma92M64IfNBIgmkEbaKrbKVzroP+smBOkX3Sc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Pbqh7Mcq; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725274466; x=1756810466;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=1ox6/8Pljv8b73NeRXJoFS9ibX5dEGrklAxOVjdb0xU=;
+  b=Pbqh7McqCW85XCGdWNfDGwhPN0piy9sr43klN6I80Eftis899xmSqptC
+   TNsBm6DzkEQyTnmanUSV9LV2GxsrtRoUD2AEwkN8oOxcd67K5D+DNJ4bi
+   YSQuXSQ1dZwcBKTA0pxAJWmJnY6DTxd0RMLo4NnhxmEVL6H1fHzate/F3
+   8UKRMeiT+F2TPITEAh1SkKzSsVmkZCNFApSYlsxoAczN2z4kXGYva1vq8
+   4ruqLrHWxweCSa6zkAN6LJHhFtkz5LAcjeisDqV6zG+ywSgXUILHHPHwZ
+   2u1+ljSI1fiOA5C0UrPZ79ic3anLD41qNYPak2TapWOkkltYTR5UUItYH
+   w==;
+X-CSE-ConnectionGUID: AGqcI8i0Tx6Je6kJNc/5wg==
+X-CSE-MsgGUID: bn+0nEzaQaSqjxiGwla60A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11182"; a="23804299"
+X-IronPort-AV: E=Sophos;i="6.10,195,1719903600"; 
+   d="scan'208";a="23804299"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2024 03:54:25 -0700
+X-CSE-ConnectionGUID: 8Do9u97wSAe6K19+Wlzz9A==
+X-CSE-MsgGUID: Ylj5ZuI6RGeUkzBghnZv2w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,195,1719903600"; 
+   d="scan'208";a="64931669"
+Received: from mev-dev.igk.intel.com ([10.237.112.144])
+  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2024 03:54:22 -0700
+Date: Mon, 2 Sep 2024 12:52:21 +0200
+From: Michal Swiatkowski <michal.swiatkowski@linux.intel.com>
+To: Michal Schmidt <mschmidt@redhat.com>
+Cc: Wojciech Drewek <wojciech.drewek@intel.com>,
+	Marcin Szycik <marcin.szycik@intel.com>,
+	Timothy Miskell <timothy.miskell@intel.com>,
+	Tony Nguyen <anthony.l.nguyen@intel.com>,
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Petr Oros <poros@redhat.com>,
+	Daniel Machon <daniel.machon@microchip.com>,
+	Dave Ertman <david.m.ertman@intel.com>,
+	intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH iwl-net] ice: fix VSI lists confusion when adding VLANs
+Message-ID: <ZtWY5ZJkAc3OGth0@mev-dev.igk.intel.com>
+References: <20240902100652.269398-1-mschmidt@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: TY0PR03MB7240:EE_|SEZPR03MB7376:EE_
-X-MS-Office365-Filtering-Correlation-Id: 32882398-8c33-4faf-f530-08dccb3d32c9
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?M2ZuenowckhUTFFiT2I5STRPODVQVzM3bkg3MEFHYWRwZ2Yrb2dqNEdXRTJq?=
- =?utf-8?B?TjFNR1hqS3JFTWdaK1BxaHRPZ2JoV3o1Ly9pUkdzaG5iaVdlZG4rSEVCUFYv?=
- =?utf-8?B?UTNRa0pCckxybWxSREpDK3FPU3ZHeDR2b3FQZFNpdWJRaXdTVVRaWUZsNzQx?=
- =?utf-8?B?SDg4aTNGbnlJZFRBVTN4WmQwUU1WbGVWSiswb2NwTU5OQVAzNWlrVHc4MHZT?=
- =?utf-8?B?UzZFSXV2eXhwZVp4VmJSWEFFUWFGbllXMkt0WWwyam9HMTRwalg1bjZ3ZjlI?=
- =?utf-8?B?K2hIUFZFclZ2bW5NYkpHV2FIVHNaSmdqU1RhNHZpV3FNN1Q5QVhad2tNVS95?=
- =?utf-8?B?TEdXYWZ0cU5WV0xWSXgwdXlYZlZOSmR1TUVlTEJ5MUxoNW1pUGRlZ2NGbDhh?=
- =?utf-8?B?dHNyRGNzWVRkWTEyZTgzVE1YOXkrWGRrVlBFdWl6dGlzQ0d6aDRRUUZHL0hN?=
- =?utf-8?B?dlViKzNJQWxhNXRNamM0OXBKYTRwNmRyVFRlRXRHVVB4ZmFtbDRsblVkaEFJ?=
- =?utf-8?B?Q1ZFbzJsUUgvRXpkMDI2bFcxQm00Q0pML1J0bFRpSGJINHNMc3NMYkE5TE4y?=
- =?utf-8?B?V1ByOEJKR2xLQnhEanZwTXBTMlJ6Ym5NWllrR1ptWkpTR1NZbWl6NVREcWMv?=
- =?utf-8?B?YU81WGZoWWZKbVNLSXpoQ0JIOTNFNmcrSlR5OWl0aDRnVS9FeDNSeXp1aUdz?=
- =?utf-8?B?TGUwNnlreXFHWnZCWTlsN0ptR3k3K3dpN2w2ZHN2RzY4RVVUQzNoWVplalRK?=
- =?utf-8?B?NWk2c3RWZnUveDF0NzFlTVlkbzNuMSt2T05KVStrakUrS0M3ZzZseW5od0RC?=
- =?utf-8?B?K1hkdUhvcmZHbGVITFpBRXI4RlpTcTI0M0ZFRjBEZDlMMUxaSDExRzhoS25H?=
- =?utf-8?B?NUUwcGtOTnlUUzVudHlrU1doYTR5cXBLZXg3WDVtQk5EdWlMdktVSEUxcmpL?=
- =?utf-8?B?N1FWNk1sRXhxTm1RNDZZSE1sZXdOSk4rWUFZZUQycFRKTVlqVU05NnFPTTVX?=
- =?utf-8?B?SXlOWHhsaUNHOGhYSnB0UEhzMW5sODVDMXgzTS8xQkZzajFSSEFJMnZpUlZG?=
- =?utf-8?B?T1FRN3ZLOVpWbHI2SEhHYXhJTkEzcGFFbnd3S2FWSUM5c282c3l4bFo5eWsw?=
- =?utf-8?B?cFNrMGlJS05kTmR2U21hWFBYMXd5TWJXNU9VY2g4a0hyUDJFZ0xFdEJZU1ZO?=
- =?utf-8?B?ZnN5Vmhyb0sxdlJNUTAzUU14OVpXN1B3Y2JiRWd3TmFuNGxWSkZPWE1HVEJr?=
- =?utf-8?B?UUh0NGZhc2JwSkxxOUwvWFlkR3pkKzlHcDNNYjhVY0lhUmcvK2pxdjBuRE83?=
- =?utf-8?B?UUdTMnlWbWlONHFLL0p2YnZmNHJxY3FQei95MmpsQlhndlZwbHowSFEvYzJG?=
- =?utf-8?B?cHZnNERXR2U5MTVndXdqOEdmLzlaZTFZZVlrSlBKbW8wbjJTaWVmY3p5VFZ3?=
- =?utf-8?B?dHg1NUhIZGtXSjFCaVBRVGNiWUtGUGRGbWJkd2ljeUZ3L1RtbHJScUdUcWty?=
- =?utf-8?B?NnE3UWdnSVpjM2NDbkJ2ZGxacmZybWJzMk4raG5LeTg1MUZlenNWMkZBUVBX?=
- =?utf-8?B?WkVHOWxPRTRHSVFwOTJvSUVmVW43Q1FsUm9IcUtDRXBjQklLelNvZFRQUzNk?=
- =?utf-8?B?RC9DdlpRbzJnbk5VdGtjYjgyTWZ1TUZaTXlJeTd3aitqbUJwRVJCR1lUOUNk?=
- =?utf-8?B?c1dKQXBIQmZQaVIrcVUzZzJkVVlJbHR0U0dlb2I0eUowNTc4ODJ4bDN1NU9B?=
- =?utf-8?B?SFREcG4zbkhyM21YOUNlWWlvTy92Y2drYlFpYmNncmMwbVFZcDZXMGNUMkVN?=
- =?utf-8?B?N25FK0N6ejBiSlJWS0laQT09?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY0PR03MB7240.apcprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?MG1rUk9hSU05Vk1LeEhuNHJTbkVNdnBObjNrVS90dzA3Q2ZMVDFhQXYyaExa?=
- =?utf-8?B?Tlp3bXl2M29tcm1ydTBCTXZoMDl1TUtMVW5TWVJLYVpOSmQvK0U3WVVWbGpQ?=
- =?utf-8?B?MHFPSHZQOTNLTjBtSjF4ckRkdklCT3RoU250bUx2alpnSUQzeWNMQ3lKazh0?=
- =?utf-8?B?M0Z5alhkdkZzK0J4dDdmWUNOT29GQzZwM1JLKzQzUlI5bFlrWFAra0c2NnRv?=
- =?utf-8?B?bzAxT3NWMzZxamZ6TkFac1kyQWJFSVZsZ3IxcXlPUERncHc1NnRwVzFlTzZP?=
- =?utf-8?B?d3JyTGNueGgyNU03Q0tYbWNXOE9GNFd4OFRBbSsrSndLck5HYmV1UG1HNjg5?=
- =?utf-8?B?cjVmZHZhYzBwb0ZoYTVyc00zVDVsTmRCMlU0NWRnN1p4bUUybnJ3ajBBdEg1?=
- =?utf-8?B?TVFvSXZJQUNtV2dQbk0wdnB1ZFNISVEzR0dHTlNWT3ZCdjB6Yi9YeGF0bEFz?=
- =?utf-8?B?Zk16aVdBVkxSNnEyTExwN2hmTXZpQXJEQmJGanBpQ2JqcjFseFpZb3hIcDJn?=
- =?utf-8?B?ZU1ody9OOUxNeE05bnlUQTlRTGNxWTRNbWFQbkZsVjJKdlo0ZFpndHp4M29S?=
- =?utf-8?B?eXFlU3V5dWlIRzBwbkVwVlRHS05xa3dCSGhNa0VMWUVtcWVkeUxsNG1GY0tk?=
- =?utf-8?B?emlpYWdtL1dMSDE0WEl0VFJNdEZudmlPNDZic0pmakxhS0lVMmM1ZDJhYmlJ?=
- =?utf-8?B?V2VReGgvMEIzL2s2K3o0N1lSMmxwd091cU9NLzRqUDJPa1dOa2FXYzNuYjVj?=
- =?utf-8?B?andWcWkvMld5SldCaXIzT3VuMFIxbDZIRnFUdHd6cnNudU1qbUI3bExVTkxm?=
- =?utf-8?B?NGtLSDZ6eHgyLzFEenhGeHBSb1J3TDVPUXJxQ0J6NFRNYkNFeEw5NWdKUXYv?=
- =?utf-8?B?UFlENHo3Z0F4bE5CUktVdGVKdjdvV1BTK2NaWWxmOERFZk8yUkxSTkRyWGN4?=
- =?utf-8?B?djJ5ekk2TW90bWRDRklJMWlJNnAyT1RBWm56elkwTHFtNkM3cEhvVU5nSHV5?=
- =?utf-8?B?UXl3ckk1SVNMazh1MnMrczAwSHNCYjM5OG9IemRJLy9EUUt5YlJzaWNheW5G?=
- =?utf-8?B?MWZ1a3ZUYldYTTJxMlR2bGxzc3NmR1FYYWRYUGRrYUNyK3Z5RHpJVFE5MEZq?=
- =?utf-8?B?SUJZVkgzQnFVNyt3VVQ5YU0xNWltcWhrd1VvaEljWHdWOUEvNGp3RGc5UUFo?=
- =?utf-8?B?Tld2VU5ITnNRZldlMHg0NVgvQ2hEcFIzbzBDRVJkWm52U2tVK2lPUm0va0tJ?=
- =?utf-8?B?eTZVc0hoUjRKQ2htT1BUeTFjU29kbTRlKzlKZlJDeGUrOUUzOXIrNmk1Vkdh?=
- =?utf-8?B?Wm1mVTAvREJvWmhqdkVCQ01pWHE2cml2ZEZySkxzU2RLR0w2cStENnk3Yk15?=
- =?utf-8?B?SzU0TGRjVVg1L0xncVRxV045TjQ1UXhLd21BVDEzRTAzYytLUWNtZ3J6R3FK?=
- =?utf-8?B?V3h6bzErUHBBWkd4UExwaFkzREhyd0JwOEFHWkFjSUJsUHNPa0t1K2hlSEdO?=
- =?utf-8?B?b3h4TXowRi9TUkM2MFFPWVlUYnNVQ01tQlNFeUpETzQ2MWtKQ0dmamtzSmYr?=
- =?utf-8?B?ZXJoODk2R2gvcFVnK0gxZUtXYTF6OVk2K1lZTVQycy9lMnZtWmJta3lzYkNq?=
- =?utf-8?B?RXdybFZhbUk0SnlzbVNKYkREZEdOWEoxMm9jTWxUQzRBVXFmSmc5MVh5eWNK?=
- =?utf-8?B?aERzTm85dGVxU3RLWGVCN3gvZ3lld252YjdpTUw4UWROZkVUZVJqbXVIaDV5?=
- =?utf-8?B?K0I3WUltNFg3Q3FyZHNUSExMdUVBZkIrK3U1MW1zcEpTeC9zTEZyYmhmczZl?=
- =?utf-8?B?MFo0WndWUGc5UVZxelpNYWlhREY1eU5WSzZrRGlvbGVndlRyeVBNRFpoTVFi?=
- =?utf-8?B?SG1WQWtNR1k3MzZqQmxsRlg2OUVrVERXdnpQUm9XcGNOcXFIL1R2cWo4UGFM?=
- =?utf-8?B?ZGpPSEVJaGlVNUsrR3l0NnQxVldMbFUyYWl6K3d0SDk3UHRZQlpFOFdPamRs?=
- =?utf-8?B?dExNSnFOVnpwYmJ4NFh4ek94RndMSE1JbkZRbXpCaVVKb3N2SEh0L1Bpdmhp?=
- =?utf-8?B?TWJCUGhqeGp6cW90V0VlSVBNUVVjcGcxemgwdjJpVXM0Rm95VXhTMGE4bjNq?=
- =?utf-8?B?a0hWU2tjRnFKS3Ura1BxVy9WZm1EVFRHbURPQjIya0VMUUx0WTdpNEZIZVpV?=
- =?utf-8?B?Y1E9PQ==?=
-X-OriginatorOrg: amlogic.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 32882398-8c33-4faf-f530-08dccb3d32c9
-X-MS-Exchange-CrossTenant-AuthSource: TY0PR03MB7240.apcprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Sep 2024 10:51:28.6709
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 0df2add9-25ca-4b3a-acb4-c99ddf0b1114
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: xlDZ33b6X8GwESP17uRcm5uUKSU4JpN/itOll+HsCvq9uVIWzfsA4YCVCC7PmqDlNJQdRrIFYlP+HPTv6Jnv4Q==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEZPR03MB7376
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240902100652.269398-1-mschmidt@redhat.com>
 
-Hi Philipp,
+On Mon, Sep 02, 2024 at 12:06:52PM +0200, Michal Schmidt wrote:
+> The description of function ice_find_vsi_list_entry says:
+>   Search VSI list map with VSI count 1
+> 
+> However, since the blamed commit (see Fixes below), the function no
+> longer checks vsi_count. This causes a problem in ice_add_vlan_internal,
+> where the decision to share VSI lists between filter rules relies on the
+> vsi_count of the found existing VSI list being 1.
+> 
+> The reproducing steps:
+> 1. Have a PF and two VFs.
+>    There will be a filter rule for VLAN 0, refering to a VSI list
+>    containing VSIs: 0 (PF), 2 (VF#0), 3 (VF#1).
+> 2. Add VLAN 1234 to VF#0.
+>    ice will make the wrong decision to share the VSI list with the new
+>    rule. The wrong behavior may not be immediately apparent, but it can
+>    be observed with debug prints.
+> 3. Add VLAN 1234 to VF#1.
+>    ice will unshare the VSI list for the VLAN 1234 rule. Due to the
+>    earlier bad decision, the newly created VSI list will contain
+>    VSIs 0 (PF) and 3 (VF#1), instead of expected 2 (VF#0) and 3 (VF#1).
+> 4. Try pinging a network peer over the VLAN interface on VF#0.
+>    This fails.
+> 
+> Reproducer script at:
+> https://gitlab.com/mschmidt2/repro/-/blob/master/RHEL-46814/test-vlan-vsi-list-confusion.sh
+> Commented debug trace:
+> https://gitlab.com/mschmidt2/repro/-/blob/master/RHEL-46814/ice-vlan-vsi-lists-debug.txt
+> Patch adding the debug prints:
+> https://gitlab.com/mschmidt2/linux/-/commit/f8a8814623944a45091a77c6094c40bfe726bfdb
+> 
+> One thing I'm not certain about is the implications for the LAG feature,
+> which is another caller of ice_find_vsi_list_entry. I don't have a
+> LAG-capable card at hand to test.
+> 
+> Fixes: 25746e4f06a5 ("ice: changes to the interface with the HW and FW for SRIOV_VF+LAG")
+> Signed-off-by: Michal Schmidt <mschmidt@redhat.com>
+> ---
+>  drivers/net/ethernet/intel/ice/ice_switch.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/net/ethernet/intel/ice/ice_switch.c b/drivers/net/ethernet/intel/ice/ice_switch.c
+> index fe8847184cb1..4e6e7af962bd 100644
+> --- a/drivers/net/ethernet/intel/ice/ice_switch.c
+> +++ b/drivers/net/ethernet/intel/ice/ice_switch.c
+> @@ -3264,7 +3264,7 @@ ice_find_vsi_list_entry(struct ice_hw *hw, u8 recp_id, u16 vsi_handle,
+>  
+>  	list_head = &sw->recp_list[recp_id].filt_rules;
+>  	list_for_each_entry(list_itr, list_head, list_entry) {
+> -		if (list_itr->vsi_list_info) {
+> +		if (list_itr->vsi_count == 1 && list_itr->vsi_list_info) {
+>  			map_info = list_itr->vsi_list_info;
+>  			if (test_bit(vsi_handle, map_info->vsi_map)) {
+>  				*vsi_list_id = map_info->vsi_list_id;
+> -- 
+> 2.45.2
+> 
 
-Thank, please let me know if you have any comments.
+Thanks, it for sure looks correct. Reusing VSI list when the rule is new
+seems like an error. I don't know why it was needed for LAG, probably
+Dave will now.
 
-在 2024/9/2 18:10, Philipp Zabel 写道:
-> 
-> On Mo, 2024-04-22 at 19:11 +0800, Kelvin Zhang via B4 Relay wrote:
->> Add a new compatible and device node for Amlogic T7 reset controller.
->> And modify the driver accordingly.
->>
->> Signed-off-by: Zelong Dong <zelong.dong@amlogic.com>
->> Signed-off-by: Kelvin Zhang <kelvin.zhang@amlogic.com>
-> 
-> Thank you, applied patches 1-2 to reset/next.
-> 
-> regards
-> Philipp
+You can add in the description that bug is caused because of reusing VSI
+list created for VLAN 0. All created VFs VSIs are added to VLAN 0
+filter. When none zero VLAN is created on VF which is already in VLAN 0
+(normal case) the VSI list from VLAN 0 is reused. It leads to a problem
+because all VFs (VSIs to be sepcific) that are subscribed to VLAN 0 will
+now receive a new VLAN tag traffic. This is one bug, another is the bug
+that you described. Removing filters from one VF will remove VLAN filter
+from the previous VF. It happens in case of reset of VF.
+
+For example:
+- creation of 3 VFs
+- we have VSI list (used for VLAN 0) [0 (pf), 2 (vf1), 3 (vf2), 4 (vf3)]
+- we are adding VLAN 100 on VF1, we are reusing the previous list
+  because 2 is there
+- VLAN traffic works fine, but VLAN 100 tagged traffic can be received
+  on all VSIs from the list (for example broadcast or unicast)
+- trust is turing on on VF2, VF2 is resetting, all filters from VF2 are
+  removed; the VLAN 100 filter is also remove because 3 is on the list
+- VLAN traffic to VF1 isn't working anymore, there is a need to recreate
+  VLAN interface to readd VLAN filter
+
+In summary, I don't see the use case when reusing VSI list which more
+than one VSI on it for new rule is valid scenario.
+
+Reviewed-by: Michal Swiatkowski <michal.swiatkowski@linux.intel.com>
+
+Thanks,
+Michal 
 
