@@ -1,150 +1,139 @@
-Return-Path: <linux-kernel+bounces-311773-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311774-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B0FD968D62
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 20:27:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B6D5968D6B
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 20:29:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD89E2838FC
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 18:27:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C50F12838E5
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 18:29:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABF0C19CC1C;
-	Mon,  2 Sep 2024 18:27:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2340D19CC18;
+	Mon,  2 Sep 2024 18:29:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qaGYBIST"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="UY9Z1Chi"
+Received: from mail-ua1-f41.google.com (mail-ua1-f41.google.com [209.85.222.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1360F19CC0C;
-	Mon,  2 Sep 2024 18:27:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 689C45680
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 18:29:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725301627; cv=none; b=ukQonmZRYHqI75l6yWx8Ti527F7n/rWssH0lUdCJaCbvyiuV59PTSyTEO30mO64rmDOwcrHmiwH0SrKQH23S9ItOnGdkxba/hHc8ymyJXebrW+Di2CKMFX0ZSGJxkpVB3HZ99Dq/R+OsAjIfU+8YZDFV4G1UCEG9Fs0SmYwFK40=
+	t=1725301742; cv=none; b=WytB74jo8gaCIMLP+OSHJKUzJGKdnVnvPwBc2M8N7zrlCDAjFh15KLwBvt0RhEzQ1ylvPcFHEGJ9c5Oa7h1yZ0VWUeIuY3p3ligg25i+U5Z1OUTA1rlT5OWdjPE0Jev8sMzMubX8TMZ+XaVWlPmQ6fGxwwlIkvYV2CaMNyAl0dg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725301627; c=relaxed/simple;
-	bh=+GQtJqRYkvNY82ROtDZoMSPZ3IkE/UiyNuyLQiJxBZU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QUnupUy/GYNRCfUlE1BRGeNz0DQsUOXmpQMe9tli3iBrIjDkFAdErokfh+TAn2phSsyGNP33XHKqDTEVJMQhSqQLtOqXoejl2HhXmfeL6zr0+jjE9FbMWFs0tjXwd8CAaQ+Kp7qwKbOavEkNguYO81Ozd7RXscX0oCd+GHQJOjo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qaGYBIST; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BDD53C4CEC2;
-	Mon,  2 Sep 2024 18:27:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725301626;
-	bh=+GQtJqRYkvNY82ROtDZoMSPZ3IkE/UiyNuyLQiJxBZU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qaGYBISTMqt6rBTz+VMI2Xicm9Sec+smM/CZxxKXhIA+PqTe0zuWvVwOqu1vbOFb4
-	 ed3YZ5uzkqxsmC+0o/yGGKIKnOVMPSb2xJ6aOO+xNpF9pVfQ9rSQs0Uz3rcmyF56ZL
-	 P46KhqUzQdGeN+Z+C+iwfU7Vme9PjEp3nqrJBq5ydg6/84ETumC0m1K7Ak7kCYFJ4a
-	 EUVarvtkCYe9msmq0h3yG3OsgivkG9/R26W2twDWS0CVrqPetPnJZUSAIRDKQLsqh1
-	 +N1JTd9cA9RQ99IRmHjnKi5jVU4xJhMois+jyORHNOOu05IEzNNZHxAyqcqjef5n17
-	 DUqGLaGeionxQ==
-Date: Mon, 2 Sep 2024 11:27:04 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>, Jann Horn <jannh@google.com>,
-	Colin Ian King <colin.i.king@gmail.com>,
-	Casey Chen <cachen@purestorage.com>,
-	Athira Rajeev <atrajeev@linux.vnet.ibm.com>,
-	Chaitanya S Prakash <chaitanyas.prakash@arm.com>,
-	James Clark <james.clark@linaro.org>, Ze Gao <zegao2021@gmail.com>,
-	Yang Jihong <yangjihong1@huawei.com>,
-	Yunseong Kim <yskelg@gmail.com>,
-	Weilin Wang <weilin.wang@intel.com>,
-	Dominique Martinet <asmadeus@codewreck.org>,
-	Anne Macedo <retpolanne@posteo.net>,
-	Sun Haiyong <sunhaiyong@loongson.cn>,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 00/13] perf inject improvements
-Message-ID: <ZtYDeE5kTy4KrRC5@google.com>
-References: <20240817064442.2152089-1-irogers@google.com>
+	s=arc-20240116; t=1725301742; c=relaxed/simple;
+	bh=t0E67JOygrLpMEMGSs25nFjDBPpRV6ypA1lR9ObqNU8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FE3CPk8sWgJWgb/beVML7OJ+nzJCkb6VinXTf7ElolVnytmIJ1aM8oiTOxvshGLscxV08/1gzeFBJZmcg6gsaUynb5czvLrEs/xrcExIbnii6FTZd3XbcyoPt1o+8AJGFHUDpeIZKzPrbp80ppUVTvbluYgj4KIR3e5B9XHK3S0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=UY9Z1Chi; arc=none smtp.client-ip=209.85.222.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-ua1-f41.google.com with SMTP id a1e0cc1a2514c-846c59979efso468478241.3
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2024 11:29:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1725301739; x=1725906539; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UIf5ftqS5rRzhHiAEScVat73BFgeVAnuYHMec3uMxpc=;
+        b=UY9Z1ChintIBXZvS7iiHgdT1/6nZXbyqjO9TaJVljF0kMo+pnDiPQY5CmefkoJIaOE
+         PbStIQw3m0cegOqufJPOzULEZzqlbYLnnkpDaA8ZBS7g+q3nKGo4bWXv4n5GkF5Vr6LF
+         MQS7Rs1d66z2el+GUIXw9032xRxGvzv6+NmZKi1ARIqEFhlP6fF+sKjowuqJJ4F0DDrY
+         Z8AzhIBdoMdvxInahapjX6VcQnuIgE5Lhc513CQUNMfoS4+yofQzzQv4h6PpCMZcYMnF
+         zA1fsKg8tfuLQIxnI0xkF4+0eMyA4iQ1ubqgmgGmIfEbYjRTPOssxttLz956wxXGkak+
+         zIhA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725301739; x=1725906539;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=UIf5ftqS5rRzhHiAEScVat73BFgeVAnuYHMec3uMxpc=;
+        b=uhJLwozcc/qEkZjj4wlXbZYbWkn9PWIduXxyk3f5PU8I1Kzrt/wNx5WSNiNcrCdMxR
+         MnLF2fdUQNY91sLx9ZDdHbcb6MecjPrfkUn2Hy/LnCVqxqO+AVYYl4NYJLJNy58WhX5W
+         wV3gpuIg+7wsUvurzXUt7H7pCCtOnsS+VQDVf89P2PYKlEuBjgoTerpjQYcr5xDc1+Hk
+         4/6VSb3aUx1I48XzqlbcjlX8eivFmCdOg3Ar+NwNcQZcHfuEhXLb+udCrluYCKXf4CJD
+         ILboJdOvtJUi+EIddQXkneNk9XaKKOFhD7jVuYUXGDK1LubQbTqhqQEWEne8UhU5vrya
+         bmiA==
+X-Forwarded-Encrypted: i=1; AJvYcCVCEMDbMQB0XzCe+Y48iLpJz/I/kf027eXLb/wfsxPcF8cxY0SvB4zm+DaSwRkalDP/zpYV8nU+Xh6ue2s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YymDHW3tJy6+Aa5Gu2bJUSI0fg8gcRxs5L02pxXNwjzH+i3HS++
+	NRUGwIPOWN135tcoiIwYhpzbLS29UDWVA8eqyWbuPrEzf41FeE4ta/treXGVvcUk04HkxTAtOMk
+	NqSxllbunoEfFhjza4AeCPJAx0lLaHnswQxcBuw==
+X-Google-Smtp-Source: AGHT+IFNN2YsGI4d9NkyVLuaCOIeDwnWgM8L40kWHQUqrjU70AVxBuLatdXI26wVgPjb7BnwfErs7+wo7zLY8grbChg=
+X-Received: by 2002:a05:6122:2225:b0:4fc:e5c6:be51 with SMTP id
+ 71dfb90a1353d-4ffe4a5d540mr17617641e0c.3.1725301739139; Mon, 02 Sep 2024
+ 11:28:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240817064442.2152089-1-irogers@google.com>
+References: <20240902103638.686039-1-aardelean@baylibre.com>
+ <20240902103638.686039-7-aardelean@baylibre.com> <pu536g76q5xanhwnvhpr52mttonb4gkmxfwwof4fyo4sww2g3l@6s7x3joiuzfa>
+In-Reply-To: <pu536g76q5xanhwnvhpr52mttonb4gkmxfwwof4fyo4sww2g3l@6s7x3joiuzfa>
+From: Alexandru Ardelean <aardelean@baylibre.com>
+Date: Mon, 2 Sep 2024 21:28:48 +0300
+Message-ID: <CA+GgBR_uO-qOP8mRCmWdhEFMJRz4KvVvpx2tVVsZy2iZCvPD-w@mail.gmail.com>
+Subject: Re: [PATCH v2 6/8] dt-bindings: iio: adc: document diff-channels
+ corner case for some ADCs
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, jic23@kernel.org, krzk+dt@kernel.org, 
+	robh@kernel.org, lars@metafoo.de, michael.hennerich@analog.com, 
+	gstols@baylibre.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Aug 16, 2024 at 11:44:29PM -0700, Ian Rogers wrote:
-> Fix the existing build id injection by adding sample IDs on to the
-> synthesized events. This correctly orders the events and addresses
-> issues such as a profiled executable being replaced during its
-> execution.
-> 
-> Add a new --mmap2-buildid-all option that rewrites all mmap events as
-> mmap2 events containing build IDs. This removes the need for build_id
-> events.
-> 
-> Add a new -B option that like --mmap2-buildid-all synthesizes mmap2
-> with build id events. With -B the behavior is to do it lazily, so only
-> when a sample references the particular map. With system wide
-> profiling that synthesizes mmap events for all running processes the
-> perf.data file savings can be greater than 50%.
-> 
-> Reduce the memory footprint of perf inject by avoiding creating
-> symbols in the callchain, the symbols aren't used during perf inject
-> and necessitate the loading of dsos.
-> 
-> Ian Rogers (13):
->   perf synthetic-events: Avoid unnecessary memset
->   perf map: API clean up
->   perf jit: Constify filename argument
->   perf dso: Constify dso_id
->   perf evsel: Constify evsel__id_hdr_size argument
->   perf test: Expand pipe/inject test
->   perf inject: Combine build_ids and build_id_all into enum
->   perf inject: Combine different mmap and mmap2 functions
->   perf inject: Combine mmap and mmap2 handling
->   perf inject: Fix build ID injection
->   perf inject: Add new mmap2-buildid-all option
->   perf inject: Lazy build-id mmap2 event insertion
->   perf callchain: Allow symbols to be optional when resolving a
->     callchain
+On Mon, Sep 2, 2024 at 2:54=E2=80=AFPM Krzysztof Kozlowski <krzk@kernel.org=
+> wrote:
+>
+> On Mon, Sep 02, 2024 at 01:36:29PM +0300, Alexandru Ardelean wrote:
+> > Some ADCs have channels with negative and positive inputs, which can be
+> > used to measure differential voltage levels. These inputs/pins are
+> > dedicated (to the given channel) and cannot be muxed as with other ADCs=
+.
+> >
+> > For those types of setups, the 'diff-channels' property can be specifie=
+d to
+> > be used with the channel number (or reg property) for both negative and
+> > positive inputs/pins.
+> >
+> > Signed-off-by: Alexandru Ardelean <aardelean@baylibre.com>
+> > ---
+> >  Documentation/devicetree/bindings/iio/adc/adc.yaml | 4 ++++
+> >  1 file changed, 4 insertions(+)
+> >
+> > diff --git a/Documentation/devicetree/bindings/iio/adc/adc.yaml b/Docum=
+entation/devicetree/bindings/iio/adc/adc.yaml
+> > index 8e7835cf36fd..9b7a8e149639 100644
+> > --- a/Documentation/devicetree/bindings/iio/adc/adc.yaml
+> > +++ b/Documentation/devicetree/bindings/iio/adc/adc.yaml
+> > @@ -37,6 +37,10 @@ properties:
+> >        to both the positive and negative inputs of a differential ADC.
+> >        The first value specifies the positive input pin, the second
+> >        specifies the negative input pin.
+> > +      There are also some ADCs, where the differential channel has ded=
+icated
+> > +      positive and negative inputs which can be used to measure differ=
+ential
+> > +      voltage levels. For those setups, this property can be configure=
+d with
+> > +      the the 'reg' property (i.e. diff-channels =3D <reg reg>).
+>
+> Please run scripts/checkpatch.pl and fix reported warnings. Then please
+> run  and (probably) fix more warnings.
+> Some warnings can be ignored, especially from --strict run, but the code
+> here looks like it needs a fix. Feel free to get in touch if the warning
+> is not clear.
 
-For the remaining bits,
+Right.
+Will fix.
+Seems checkpatch.pl is able to catch my stutter.
 
-Acked-by: Namhyung Kim <namhyung@kernel.org>
-
-Thanks,
-Namhyung
-
-> 
->  tools/perf/builtin-inject.c         | 532 ++++++++++++++++++----------
->  tools/perf/builtin-top.c            |   2 +-
->  tools/perf/tests/shell/pipe_test.sh | 103 ++++--
->  tools/perf/tests/vmlinux-kallsyms.c |   4 +-
->  tools/perf/util/build-id.c          |   6 +-
->  tools/perf/util/callchain.c         |   8 +-
->  tools/perf/util/callchain.h         |   2 +-
->  tools/perf/util/dso.c               |   4 +-
->  tools/perf/util/dso.h               |   4 +-
->  tools/perf/util/dsos.c              |  12 +-
->  tools/perf/util/dsos.h              |   2 +-
->  tools/perf/util/evsel.c             |   2 +-
->  tools/perf/util/evsel.h             |   2 +-
->  tools/perf/util/jit.h               |   3 +-
->  tools/perf/util/jitdump.c           |   6 +-
->  tools/perf/util/machine.c           |  95 ++---
->  tools/perf/util/machine.h           |  36 +-
->  tools/perf/util/map.c               |  25 +-
->  tools/perf/util/map.h               |  22 +-
->  tools/perf/util/synthetic-events.c  | 103 +++++-
->  tools/perf/util/synthetic-events.h  |  21 +-
->  21 files changed, 682 insertions(+), 312 deletions(-)
-> 
-> -- 
-> 2.46.0.184.g6999bdac58-goog
-> 
+>
+> Best regards,
+> Krzysztof
+>
 
