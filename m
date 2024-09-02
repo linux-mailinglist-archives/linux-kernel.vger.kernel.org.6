@@ -1,64 +1,55 @@
-Return-Path: <linux-kernel+bounces-310625-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310626-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6053F967F3B
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 08:17:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01FF6967F42
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 08:19:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1DAFE28249C
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 06:17:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ABA121F2246E
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 06:19:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 523F315688E;
-	Mon,  2 Sep 2024 06:17:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XAxuFiaj"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E61051552FC;
+	Mon,  2 Sep 2024 06:19:40 +0000 (UTC)
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 814721547C6
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 06:17:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B285714A611;
+	Mon,  2 Sep 2024 06:19:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725257840; cv=none; b=L28+Khz0HbTDyitEu9K0YdWqJ7CjlfdwcE+WlQUUy/hj7/CeLgPuOOq8nQiD7Xn563PCrp/dlsgDWF49EaehGWvUYKpnvE0LE9nltU/y9H6YNPcdztg5lI1ch7XUNbP5RHBa9Zr+iqSSiGasn7fe5xpFY0A4VB65m5pGva8DVRw=
+	t=1725257980; cv=none; b=Xndu++EaWJxCtMd55mFFFlYoytdjxTHjZ7hCywiam7HXcBposXpjum6UD19GpBGLdOnC6R5XYtBXSkjdiFu3shwhQ2Knl59mgnOH8k1N8OZj+Fl++CMGSabeskJMuyasD08Y5LvweNPKVTysxOS0N1y2Vn+HeExU92ksNtlIDU8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725257840; c=relaxed/simple;
-	bh=NhnQQVmqO2sXYSwuZSo9bUAfvG2luwZXQ0/0pV7TRJQ=;
+	s=arc-20240116; t=1725257980; c=relaxed/simple;
+	bh=67XBHzOk5D5qjbAgaxjj54HcSeehB3J7Kc4PFUNyQKs=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KL6N73ER6k06VVlmncs99m+XtkZn4ImgDYu3ev1P7JWZIH0aIfz9KDSwb+hCDDaZYLzPoI4Y+/+wcMsQehu/01/KcW9ClE5ctlbjdO5CPWW6iMH12i3udFpSXBpt3ueNfm/mVX4lZS/ZSmojM+wKPY47cu+iKXiGFRFoKI88OFE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XAxuFiaj; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725257839; x=1756793839;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=NhnQQVmqO2sXYSwuZSo9bUAfvG2luwZXQ0/0pV7TRJQ=;
-  b=XAxuFiaj/Dml1Gmfb1Ye2MI2w1kf76nVZra5pNTrweeoQW1aX5PAIeTV
-   h9qEJcycs8adsDpaW/JIgvefSQetT5rI6nilYZghy95qZKYGUSOQLcQoW
-   wNzUKY3QiB4K3FaygqlbBKiKlHPVwLD3KZWPdlmXH+vNTPvFsGV6CAH5l
-   3nXeHKfJ5O9fHaCOigwu0zodmK9xKtUuK+Iw6jPaMCK+tUEs27aTQgGxt
-   ePqc1lPKS+cbakLtmPseP7xIhh9JHdSzy0UByZZzrhTPOsLodGw39vzfR
-   Y5VfF1VF4nVqBC+Ed66PGhVT3DcDIdQOkqcvvY9XwLT/02o60XiMIhvta
-   g==;
-X-CSE-ConnectionGUID: WjvNp1epQFynbk7UyLLIWQ==
-X-CSE-MsgGUID: MgyyFE9DQV6QoFPonHz6bQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11182"; a="35189865"
-X-IronPort-AV: E=Sophos;i="6.10,195,1719903600"; 
-   d="scan'208";a="35189865"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Sep 2024 23:17:18 -0700
-X-CSE-ConnectionGUID: hAHGdfuhQumbegvrmC+Bpw==
-X-CSE-MsgGUID: iSDzmkMtT1qMqGCYN1bU0g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,195,1719903600"; 
-   d="scan'208";a="64197559"
-Received: from mylly.fi.intel.com (HELO [10.237.72.58]) ([10.237.72.58])
-  by fmviesa007.fm.intel.com with ESMTP; 01 Sep 2024 23:17:16 -0700
-Message-ID: <f7476172-32b8-4eea-b1d9-bae9de8f2ffa@linux.intel.com>
-Date: Mon, 2 Sep 2024 09:17:15 +0300
+	 In-Reply-To:Content-Type; b=gwfu891kicOMmitB5BzQtST+pAM5p/2z8eotA+D+exhMyx7k4f9Poh857fJ6qgsSTKwlznI8fTVSDvUwiUaagaTq7yfS05dhD7xLvMe8X8UFhk1q4H+o/rZNKe6xVgPODVCdI5oifooichf96NzGZKkAUGnS7Z8kf1Atz6J4u0E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4Wxz9y3zggz9sSN;
+	Mon,  2 Sep 2024 08:19:34 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id oh9ReoBVOWjB; Mon,  2 Sep 2024 08:19:34 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4Wxz9y2zjLz9sSH;
+	Mon,  2 Sep 2024 08:19:34 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 50A268B76C;
+	Mon,  2 Sep 2024 08:19:34 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id gAfIussLeGez; Mon,  2 Sep 2024 08:19:34 +0200 (CEST)
+Received: from [192.168.234.158] (PO19952.IDSI0.si.c-s.fr [192.168.234.158])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id B2F1A8B763;
+	Mon,  2 Sep 2024 08:19:33 +0200 (CEST)
+Message-ID: <5fa50d78-6764-4f99-87b3-7bd7edbeea5a@csgroup.eu>
+Date: Mon, 2 Sep 2024 08:19:33 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,34 +57,67 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 1/6] i3c: mipi-i3c-hci: Add AMDI5017 ACPI ID to the I3C
- Support List
-To: Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc: Guruvendra Punugupati <Guruvendra.Punugupati@amd.com>,
- Krishnamoorthi M <krishnamoorthi.m@amd.com>, linux-i3c@lists.infradead.org,
- linux-kernel@vger.kernel.org,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-References: <20240829091713.736217-1-Shyam-sundar.S-k@amd.com>
- <20240829091713.736217-2-Shyam-sundar.S-k@amd.com>
-Content-Language: en-US
-From: Jarkko Nikula <jarkko.nikula@linux.intel.com>
-In-Reply-To: <20240829091713.736217-2-Shyam-sundar.S-k@amd.com>
+Subject: Re: [PATCH 0/2] mm: make copy_to_kernel_nofault() not fault on user
+ addresses
+To: Omar Sandoval <osandov@osandov.com>, linux-mm@kvack.org,
+ Andrew Morton <akpm@linux-foundation.org>
+Cc: Christoph Hellwig <hch@lst.de>, x86@kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ loongarch@lists.linux.dev, linux-mips@vger.kernel.org,
+ linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+ linux-um@lists.infradead.org, kernel-team@fb.com
+References: <cover.1725223574.git.osandov@fb.com>
+Content-Language: fr-FR
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+In-Reply-To: <cover.1725223574.git.osandov@fb.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 8/29/24 12:17 PM, Shyam Sundar S K wrote:
-> The current driver code lacks the necessary plumbing for ACPI IDs,
-> preventing the mipi-i3c-hci driver from being loaded on x86
-> platforms that advertise I3C ACPI support.
+
+
+Le 02/09/2024 à 07:31, Omar Sandoval a écrit :
+> [Vous ne recevez pas souvent de courriers de osandov@osandov.com. Découvrez pourquoi ceci est important à https://aka.ms/LearnAboutSenderIdentification ]
 > 
-> Add the AMDI5017 ACPI ID to the list of supported IDs.
+> From: Omar Sandoval <osandov@fb.com>
 > 
-> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> Signed-off-by: Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
-> ---
->   drivers/i3c/master/mipi-i3c-hci/core.c | 7 +++++++
->   1 file changed, 7 insertions(+)
+> Hi,
 > 
-Reviewed-by: Jarkko Nikula <jarkko.nikula@linux.intel.com>
+> I hit a case where copy_to_kernel_nofault() will fault (lol): if the
+> destination address is in userspace and x86 Supervisor Mode Access
+> Prevention is enabled. Patch 2 has the details and the fix. Patch 1
+> renames a helper function so that its use in patch 2 makes more sense.
+> If the rename is too intrusive, I can drop it.
+
+The name of the function is "copy_to_kernel". If the destination is a 
+user address, it is not a copy to kernel but a copy to user and you 
+already have the function copy_to_user() for that. copy_to_user() 
+properly handles SMAP.
+
+Christophe
+
+
+> 
+> Thanks,
+> Omar
+> 
+> Omar Sandoval (2):
+>    mm: rename copy_from_kernel_nofault_allowed() to
+>      copy_kernel_nofault_allowed()
+>    mm: make copy_to_kernel_nofault() not fault on user addresses
+> 
+>   arch/arm/mm/fault.c         |  2 +-
+>   arch/loongarch/mm/maccess.c |  2 +-
+>   arch/mips/mm/maccess.c      |  2 +-
+>   arch/parisc/lib/memcpy.c    |  2 +-
+>   arch/powerpc/mm/maccess.c   |  2 +-
+>   arch/um/kernel/maccess.c    |  2 +-
+>   arch/x86/mm/maccess.c       |  4 ++--
+>   include/linux/uaccess.h     |  2 +-
+>   mm/maccess.c                | 10 ++++++----
+>   9 files changed, 15 insertions(+), 13 deletions(-)
+> 
+> --
+> 2.46.0
+> 
+> 
 
