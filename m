@@ -1,211 +1,292 @@
-Return-Path: <linux-kernel+bounces-310630-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310636-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C458C967F53
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 08:24:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44B30967F78
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 08:29:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 526051F22816
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 06:24:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9B11BB21DC7
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 06:29:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6A4D1547DB;
-	Mon,  2 Sep 2024 06:24:23 +0000 (UTC)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EE71154C1D;
+	Mon,  2 Sep 2024 06:28:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=siemens.com header.i=@siemens.com header.b="lk+0biKP"
+Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05on2072.outbound.protection.outlook.com [40.107.21.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 384F2155759
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 06:24:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725258262; cv=none; b=DH2mCo1Tb7O9ehC0ZTCzUzYxAxKIha5kCRrOkXibY4sChAIXPRMxWrDuL5njaB7UBvd2fKqFGjvp1/mOYSI+4AxPMpREH3sEynyijT1knHf3ryDPtKZx5In6FHAX6mDmkUTRZf0XijjgYGO4aR6T7gjX5o9p7t9KvOmkPpp1YEk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725258262; c=relaxed/simple;
-	bh=us0DGNXDrLF2vTAcATKdjmallMIjPKrgSf/B3yoOQfQ=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=TToHac5cHCusjtEaXjaHFuy6Vb18xqu8Gs27D4vsQEBPEJraGpMfC0TCKP61ew3Ry8I6PJGLnx8KtBsxTOUW91vxV7Gj7MPZcGu66KoL4zmlqGSrkZ2o72jL/HQJ79/vN7cu97uT9Zr+TYKyBw5NvGsR7r5orXexQ+/G2oDnKfU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-82a20e57f6aso466490639f.0
-        for <linux-kernel@vger.kernel.org>; Sun, 01 Sep 2024 23:24:20 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725258260; x=1725863060;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=pcKlK/amcxXO9GQjH+AZuDivLwBdOIjvwn47dOF9fbI=;
-        b=CEzwUDkOvs5up0sN4wTghR1/XQBMp4wj+PP5JQgbx2hyghTmY+aLuNoWfwWgnavoxk
-         C7UV3uDEOEETX8JSE86KuwRztOzyD5LqpCdxeqB45EwzkNRrY83DzQfgpvpM9Xx8eZuN
-         3+lp9xEA1IPgZhGRWyD1JcB4cnN432AGw3eA1SlKzE1mlPPdpVQZVDsCOFavIj6IsGHe
-         UN7RBAKuUzYx+d/fcoUldJt/WqplpuJcYAPzHeZrf1o2SbqmG3QLqgSn6xTAy3M+8yPL
-         gr7DnxcWkiHwXPLB3lw5nwF4odLkE2ORwt2OU/XkfwxNkxEBYZB+V0sDTuMIUZyL0MYo
-         FPfg==
-X-Forwarded-Encrypted: i=1; AJvYcCUQJlEJKMfVRfooxE0OHjlVbT2Qg+9VsL0+ABzRiRIRJPy2+PqXor0pq2npf8/f9kbDeIKa378hJ0JKk10=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxveWruwSBwk0L933NN6OrRdArt6+lqLVDwviHxqO3Q0M9WD1pC
-	zli/h5mNu5X1Fg4I3H1uh/Ip7yPpg5pS2+Uij0HGii5dD7XzSKqoM/L3KI2ZpxlDCW1X3FsZSI9
-	z3M0HBxKUODHM65t2w3zsKRrzO52AWB4WNuDT721oeC2UuxG2nrJ4z0g=
-X-Google-Smtp-Source: AGHT+IGT5cCsIhdn3wtPa5F5mhUrwoO4B5s7f1VPnIWfQbfTh9j13gVaF6TcFVo+z0nrE0KEWTxBfeZoxSRMPYuGMFDFOZLoqMMj
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59B4B2AE99;
+	Mon,  2 Sep 2024 06:28:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.21.72
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725258529; cv=fail; b=eOyKRQeX3Hb3enkPiq+Itxw1nSOUEjdrpZq1FroxaFg3nbDd84pqpaCY5IK0u12RaOFQH+TLhsSFDKiCZdDd9TLzm+9Gs5ezhAoUzVYu8m7a0rglHUpL31yGmPteMEaFvPzbKnLELhmPzk/O5kI/z+PDNCiwSu5TJ24Z2Heticg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725258529; c=relaxed/simple;
+	bh=aB+OwRYVmIMVFwvtkebJqPfMlK2U87UtSjhy11RgQ6I=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=hXGdStaZEm8uqyaw9jU28PJTj83dYIFdzWdU+ldWQQMhLjfoQsHYzWOl/khKAayLWU78fVDCbVXMt0kRsmSP5WpqX9F7JaKH9VedOAX/f/9nCAvCXxhpXC/Q5oT34mHeqRuRC0dxbYXU38ylq54OTcD40SHq/uF8ERgQTnVqxCI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com; spf=pass smtp.mailfrom=siemens.com; dkim=pass (2048-bit key) header.d=siemens.com header.i=@siemens.com header.b=lk+0biKP; arc=fail smtp.client-ip=40.107.21.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=siemens.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Q6YXmHK8uZ+vCBK99PUm7NVDju2zY3hqPEWcwPcMLL0BPOG4VKV0AcxAI4ETsZ88en1LoRKyGhdK1C+17AN/RHU8f3jECNG/NzlP5KiDaVKmMbS5utIjIuA0KZvmSuF3BWc1BNrPhgBH4jt2uY32mN0MIGsVvWa+M515XISYpy6iNPjcSNJx6X93fji05DjkZopu37NVk15hwba1dQu4wEz+ZxO/SlX9pj4doFNv6ZomNy7IGpXJ635wE3CmZFSUxeXplnzkBvmqD7bg4pgcVOAsWB0F/sIoFuLuwst05uEHhTd8Rln5sZQxL7bnj7CErWh6iNO33x9JxhTNtkwtSg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=6EjJSPoCsWEBx9sxwLOLE4XUQ2PFS/9opkddK0BYASY=;
+ b=UOCyq9losMB53PwS9njAzjnUmznKAzg7qEiEoCgGkUCS2sGbkN/gd9hbI7fU/dPm47MhUpU2K3Y4oKdDYDMMEMjyCiqUeqd77dKqJu0e2h5Q/hVRWjkmJrHVeS5ffsUrKGUtEGkvv+Gl6ZGtOKHHpNDbNPTq1ZTYvfP89wljYyY7Yzeb74lpojTUIlBpURILJDbOwxefZ2M8U0xja9pze+E3kj8zu3/Z9rnsEFnEpYdRpxxz5OhxRvbheuHlIgRphn3SuxttnT/DOihEc58Cek7hGc4OxkvyJCiDxWHLSWwnDDFkeIsvIm2GjRpuZ+Bht716i7OwEzbRjOHZkFMPrg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
+ dkim=pass header.d=siemens.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=6EjJSPoCsWEBx9sxwLOLE4XUQ2PFS/9opkddK0BYASY=;
+ b=lk+0biKPzG0dbLvBkKQHgLTaetR0ZQh1fIg+G6at4KNoKSoslPBpmtQwiEqW+wp8QUFhKMXOEFwRAeJJ2dy/KYiYssiIbRHTIuZ60F2ndOZqEZTT1U5IVUC1A0ZyINe6Vnep38KmO5C0Ylc66ayBE8YOJcM9jlhinA4NPLD18qX3a3uSXemo+1A29Y6D899qWW0Qp69ddn3jRe16QEf2PA2p5sdMHQXTmt7nRD+AVJk220tlyWQOdTaXnV2bngAs9Lz/Nwd1xD07C851iFSbvLc8kS2N7GeKAwY7QXItsuWjBDNZIYCIC3PfuHHI5uxlCNt5HML3RS8Xbwpd6Y2YKQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=siemens.com;
+Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:588::19)
+ by AS8PR10MB6338.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:53e::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.24; Mon, 2 Sep
+ 2024 06:28:44 +0000
+Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::8fe1:7e71:cf4a:7408]) by AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::8fe1:7e71:cf4a:7408%3]) with mapi id 15.20.7918.020; Mon, 2 Sep 2024
+ 06:28:44 +0000
+Message-ID: <4ccbc9ad-7d19-430c-95aa-d726b6b83412@siemens.com>
+Date: Mon, 2 Sep 2024 08:28:42 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] USB: serial: pl2303: account for deficits of clones
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Johan Hovold <johan@kernel.org>, linux-usb@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <a07922bd-4550-41d8-a7cd-8943baf6f8fb@siemens.com>
+ <2024090203-challenge-paper-e1fe@gregkh>
+From: Jan Kiszka <jan.kiszka@siemens.com>
+Content-Language: en-US
+Autocrypt: addr=jan.kiszka@siemens.com; keydata=
+ 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
+In-Reply-To: <2024090203-challenge-paper-e1fe@gregkh>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: FR4P281CA0029.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:c9::14) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+ (2603:10a6:20b:588::19)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:8624:b0:4c0:a8a5:81f5 with SMTP id
- 8926c6da1cb9f-4d017e9b260mr543395173.4.1725258260323; Sun, 01 Sep 2024
- 23:24:20 -0700 (PDT)
-Date: Sun, 01 Sep 2024 23:24:20 -0700
-In-Reply-To: <00000000000087bd88062117d676@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000c0ac1206211cfde5@google.com>
-Subject: Re: [syzbot] [fs?] [mm?] INFO: task hung in page_cache_ra_unbounded (2)
-From: syzbot <syzbot+265e1cae90f8fa08f14d@syzkaller.appspotmail.com>
-To: akpm@linux-foundation.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	syzkaller-bugs@googlegroups.com, willy@infradead.org
-Content-Type: text/plain; charset="UTF-8"
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|AS8PR10MB6338:EE_
+X-MS-Office365-Filtering-Correlation-Id: 75a37d21-2025-4268-6986-08dccb187e5d
+X-MS-Exchange-AtpMessageProperties: SA
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?ZXJ0RFV2cVlPbjgybjlZSVlIUlV2bHBhN1I3M1g0Q3F6ajk4L2F1em9TMWh5?=
+ =?utf-8?B?aWphWnhyN3I4Q3lmMjVpOHFzanBiWmN3OVJLL1J6c0RTQzgzYUtzNEtqdXVI?=
+ =?utf-8?B?ZUJidmRucE5oRGxidDMrZG9IMnR6T3FmTWhXQVJaeWVVV2dlVEE1ZnBDTEE5?=
+ =?utf-8?B?UEJaazkrZWtHYm1ETDBjVEpoZUx3aUVXU1Z2Z3dGbDJjTEUyU1l5M29rTk95?=
+ =?utf-8?B?VWYycHRFb2hHb1ltdzEyUGczdzlacmxNYmNWN0pVaU1ZT2JLdzQxRU9sKzhr?=
+ =?utf-8?B?RFBsTUlzK0lUMTVBOUhKU2UxWkZTUGRzU1RPS2taaThRTUdlb2FwY3dGd0ZT?=
+ =?utf-8?B?WGVyck1SVkwwczAycWJrS0d4Szlpa1Y4YkR2dlR5dGxvdUlkcFZMSGFwVUNT?=
+ =?utf-8?B?dUZBczBkWUduVDFnc0lxcXAwVkNNUTRLWkNCUldFbzJHald4MjdOZjRnTldG?=
+ =?utf-8?B?ZGRKTHZ1QmltbGpxSVdFaGEzOElxNEdIc0gyUlhEa2NlZld4WHNEZk1pMjFq?=
+ =?utf-8?B?bTUyZ2xlalBqN2RwZnozSEIwN0Z1MDNtakpBRXFHd3RLMHdSMy9LUWUxMzVp?=
+ =?utf-8?B?WGFIU1JIZXFpaG00WXRiSXRLM0NSSy9DbWZzSTZlSUptYlJ2ZktQNEpCMUZW?=
+ =?utf-8?B?TkJRc0lpaHFTdzVVLy9odjNkRGplclc3RDEzenJ3WmdFUWExaFpoaXJGSi9r?=
+ =?utf-8?B?N1RMZCt3MGdsczdvaWJucHJiTVFDbm5Tc29pVWFLNzBRcHdnQ0dFbmtDdis2?=
+ =?utf-8?B?bkhweXdaWkVqQ3NkU2ZTYldVTDlGQXpFTU5TZGprc2hpVHRITHZURXkxY2Zo?=
+ =?utf-8?B?Ri9SWHhSRTFXbXR5bXFSOEYybDUzV3BOd0w1RkE4bUlKUXJldkxhQXYyOXp1?=
+ =?utf-8?B?d205SU53cXZRRS9Xakt3MllNdWZEd0tlR3V1OUg1QTAyVzU1Q2hSTmZRcHYw?=
+ =?utf-8?B?M0RhNWUrV1ljZ1lXK0YrMkx2UWUyWXJ1ek8weWsrU3ZNcUk3b0FXdUJxVkRQ?=
+ =?utf-8?B?cGxPREdGZ2w2UzdJcXNMTEljVFFxcXhGcC9BYVpab2lYWDlUald2bHlpSjBD?=
+ =?utf-8?B?NjJ4cUlITlNpa1V5M0JmN1JlUUlxMHpmVHRXSk8vNVFFTHQwVXVmRERIaXRm?=
+ =?utf-8?B?Sk5wYjZudnFMTmdaVW9oU0ZmbmtSakcyK0RsckJLQm1uU0RjNVcwNjc3Q0Jv?=
+ =?utf-8?B?VHFTaXNtd0FIYktYUFdnUnNxeGtpNkNDQ2ZSL3Z1UlNCa3BCK0xVS3dPZ3VB?=
+ =?utf-8?B?WDIrdXR4dS9GMXEyZldubkpUNjhTUTlUdithYTBZcXRLUFBHcytQUzljeWkx?=
+ =?utf-8?B?RXZIa3JERUltRjRSdmlXSUlzbEpTakxOQTJaeTZQaVc1MGV5a0h5WE5Ta2RK?=
+ =?utf-8?B?RkxETE00UW5HRG1FV2NnZERnN0QzRTJRR1p1bmptVklQdTRBY1MrSkU2RWVn?=
+ =?utf-8?B?NGQ5RS90SHUrU3pWMEZiZEZlL0ZPckpIN3VtNEFFcm12VnlxQVBYdXRCb3VV?=
+ =?utf-8?B?eTJnM2FpTW45OHhtSEo1L1hoOU5udmdWaFkvSTZydWNUb1hsYXU4R2lPRm5P?=
+ =?utf-8?B?UGNHOS83WmlaNnJsd0MvSW9Ed25ZSzdHZ1ZBT1pyQ0JRejV2aG1qNU1ycFdN?=
+ =?utf-8?B?b0dLbkZSK1VZVHh0dmFrMGlzYlZMWEZVcnJWTzd3dXpDZjBIeGJ6Nk92b2xJ?=
+ =?utf-8?B?SDZyYnpncUhTbWV1eEptdndzMGJiY2hJZUswTnNHL0JtK2VFdE1JbG40dmVM?=
+ =?utf-8?Q?IWVmU/p9P9zZ3z9Oa0=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?ZHlqeVM2Q3Jtd2t2cVN6bzIrZ3pYZjJ4Y3JEUTdiNTIrSERWaGhsa1JtUHUz?=
+ =?utf-8?B?UzBPbE5PZGJLV1lyRUhNZk1zdDZWY3NtUHVYMXFNLzdjeDVLVkFTNWt6aUdT?=
+ =?utf-8?B?RlFxZ1FQOEZrd251SFN4NFdoTFYzbDFIVkthR2dLOE1pNVJrWDRqVzFxSWJt?=
+ =?utf-8?B?MDNzVDFXZ3oxcTZmRmxoTXVodDhvUmxGVzRZTmNRaWE5d1N5RDlSOGl5TEF3?=
+ =?utf-8?B?Qjg5MVliQzhYZzNLajQ2Vjc5ejFKa1FpaWc3TEROTmpxSWliRjlsQ0F3cVh0?=
+ =?utf-8?B?U1NyYkdEU2RTUHRmM3Y1Vk9xcXpNOXBrR2ZZRTl3UmhXZFR4bHFNRnZJVlVp?=
+ =?utf-8?B?aWxqZE8wTXZOYjMzeGxMU2xqcll0TGNXUUNoYklzZEVqTVk2akJCUksvZHRT?=
+ =?utf-8?B?MENKTGVkYUh3VTBDTTVMMlNlSnBGOWV6NkN5cmp5dE9PblVCdjVteFlGbm00?=
+ =?utf-8?B?d0xnT054NVh2M3lWOUZWMVI3eU9CT3ZkazNXUDdCeFd6dWgrS2RlNnljN204?=
+ =?utf-8?B?ZGRvUFAwd3IzZEZLWHcxYW02SEFzeTNIZFE2YWtYN1NycmVyZUs4bmdCc01k?=
+ =?utf-8?B?U0p0TEk0dTBhMThNOXM5dVBKenFORkJFVmVwbnk2MDU5ZlNBaStEU2hkYU9C?=
+ =?utf-8?B?MUdoUitDcjBpc1ZvelFSdEQvOXFuWGlNYVRhOFVMK0xrQnY0L2ZJcm9wWEgy?=
+ =?utf-8?B?K2tkdHpacTJGNXQ1RWdheFcvL1lKb014aXhNYy9pODdjaVdtVmlmZmIzcnlh?=
+ =?utf-8?B?U3VlYkxWMU9sUWJXMWVvZlJuSVhjcGdndnB2OXNiWTBqczE1VDdEZ3FIdjBE?=
+ =?utf-8?B?ZEVUQ3dwZGJUdUZPcU1rVHZMeDVTVzdoUmZhUXVCdTNCYldheXdOaUIrTjJZ?=
+ =?utf-8?B?ZUcwRXp1TVF1WGhmN01sa01VQ0R4dEZSaEcwbGxjL2RoMk90NlV2MFdROFBi?=
+ =?utf-8?B?bTQzMXNCRGNKR21MWjBFbktTaExuNEN6TW9GNVErT0l3TjRDRnRBVnZFV3gw?=
+ =?utf-8?B?YStZMkw5UU5kTVllVUtvWDZ6S3JuNk13RUtwQ2IyV29VQTRCS005VUg0Ukx0?=
+ =?utf-8?B?VEdmTEhPclFESHc0L2xsYU9ELzFlRC93UmRpalNWdjJqMEtkU0RPeEZCQ21Z?=
+ =?utf-8?B?Z3pEL2w2cUE2dldwNm5LQjZMcDhaaWVjWU9SR0lvcGRvdTRQbkJsMXY1TE9h?=
+ =?utf-8?B?YjE3SXhyQ2xCTzVCRHVKb2FZOTVyc2VOQVFQczlITDNHcitiWlpmWHhIMXEx?=
+ =?utf-8?B?OHRwb0I5UlhWdkp2WXVNQm9rZFhMMlBESGhKaXFiWHV2bUMvNFBGNVptU3c0?=
+ =?utf-8?B?NzAwTkJlWldQYXBCRUg1NFRQSVBYTkozVGpKTGZwc3lURU40MGhpSDdENUo0?=
+ =?utf-8?B?ZHpjTTZzVEp4RXRjWmdKb2R1UGk2eEtPNXVURVFCWlNEd1Bwb0pBRVZwMjlj?=
+ =?utf-8?B?MU1LMVhvaXdoTCtmNXBwUlExajFGZG9jeU9jdjZyV1FOVDF1LytOM29pMnE4?=
+ =?utf-8?B?SHR6TUpsRHZlbWxrUEsvalkyRGFrd3BZZ05WK2lIeXRCTm9vNVRwVDhXS21Q?=
+ =?utf-8?B?d0x5b1ZDQnF4ZVRPT1VFQzN6N25VQ08xcFpmNnF1d2xTUTZkTVRFZ25waDM3?=
+ =?utf-8?B?SUZyb0pQVjhpMzJiUEt1WDVZa3FZaTltK2RXMmk1M2hzbjZjckFFYUwrMHVO?=
+ =?utf-8?B?U1BCMmJMZEhITVVZSUdwNXlSWXNaYTl0V3NVQ1N5NFdhVEdScVJoN0xXUmk0?=
+ =?utf-8?B?VUNiUGZ1QVpQMlBMWlo1bXV1RFAzYmRJYWVxdnNncFJBclk1RnNKSU5qM1BQ?=
+ =?utf-8?B?Y0ZLa0VDaENvTTJwdllhelI0aVkwSThid3ZtZzhlZE9ZTjh5M3lPMlFaRnVP?=
+ =?utf-8?B?SGdzbDVtWUY4MWdvUEE0ZDMzU0tGQXpiZXVIUHEyUGpWRkp5d0VKc3JRYWVn?=
+ =?utf-8?B?c25RTHZlSVl5MjczdUx4bVk2N2czYVBpdURzbmtkWEhiaWptT293dWNjRytq?=
+ =?utf-8?B?aWpmdXZURzVkVXBEeDNaWEgrMWxmNjZmalVZM0FRc1ltUjlHTHQyUTA0STh4?=
+ =?utf-8?B?OFpaSk91OFRvR2F4bmpQTHZIdnVXMzNFbkhuWGErVjFoREFtaXJxelIzUGVo?=
+ =?utf-8?Q?gcbC860p4BockSDA4f8jEu9nU?=
+X-OriginatorOrg: siemens.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 75a37d21-2025-4268-6986-08dccb187e5d
+X-MS-Exchange-CrossTenant-AuthSource: AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Sep 2024 06:28:44.0210
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: eEy6+KZo0eNqxyYjSWlks2Duv9IUri+BJoFXuqDo0z7FCK2AJHRATJaBJ2jGjCzXnqEPek9gKlszcb02V/ZqNw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR10MB6338
 
-syzbot has found a reproducer for the following issue on:
+On 02.09.24 08:06, Greg Kroah-Hartman wrote:
+> On Sun, Sep 01, 2024 at 11:11:29PM +0200, Jan Kiszka wrote:
+>> From: Jan Kiszka <jan.kiszka@siemens.com>
+>>
+>> There are apparently incomplete clones of the HXD type chip in use.
+>> Those return -EPIPE on GET_LINE_REQUEST and BREAK_REQUEST. Avoid
+>> flooding the kernel log with those errors. Rather use the
+>> line_settings cache for GET_LINE_REQUEST and signal missing support by
+>> returning -ENOTTY from pl2303_set_break.
+>>
+>> Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
+>> ---
+>>  drivers/usb/serial/pl2303.c | 13 +++++++------
+>>  1 file changed, 7 insertions(+), 6 deletions(-)
+>>
+>> diff --git a/drivers/usb/serial/pl2303.c b/drivers/usb/serial/pl2303.c
+>> index d93f5d584557..04cafa819390 100644
+>> --- a/drivers/usb/serial/pl2303.c
+>> +++ b/drivers/usb/serial/pl2303.c
+>> @@ -731,12 +731,13 @@ static int pl2303_get_line_request(struct usb_serial_port *port,
+>>  				GET_LINE_REQUEST, GET_LINE_REQUEST_TYPE,
+>>  				0, 0, buf, 7, 100);
+>>  	if (ret != 7) {
+>> -		dev_err(&port->dev, "%s - failed: %d\n", __func__, ret);
+>> +		struct pl2303_private *priv = usb_get_serial_port_data(port);
+>>  
+>> -		if (ret >= 0)
+>> -			ret = -EIO;
+>> +		dev_dbg(&port->dev, "%s - failed, falling back on cache: %d\n",
+>> +			__func__, ret);
+>> +		memcpy(buf, priv->line_settings, 7);
+> 
+> Ugh, how is this device working in other operating systems?
+> 
 
-HEAD commit:    c9f016e72b5c Merge tag 'x86-urgent-2024-09-01' of git://gi..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=14e68963980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=8926d683f62db53e
-dashboard link: https://syzkaller.appspot.com/bug?extid=265e1cae90f8fa08f14d
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15ec21b7980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16d50f33980000
+I don't know. Also, the last downstream driver Prolific posted [1]
+didn't point to this specialty.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/e47617e91522/disk-c9f016e7.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/69d8aef7dff1/vmlinux-c9f016e7.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/dd5392c61560/bzImage-c9f016e7.xz
+I opened a few of those adapter cables (some received from [2], others
+from a different source), and the chips were not labeled (in contrast to
+the picture from [2]). So I'm suspecting clones to be in play. Reminds
+me of the quest for sane WIFI USB adapters.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+265e1cae90f8fa08f14d@syzkaller.appspotmail.com
+>>  
+>> -		return ret;
+>> +		return 0;
+>>  	}
+>>  
+>>  	dev_dbg(&port->dev, "%s - %7ph\n", __func__, buf);
+>> @@ -1078,8 +1079,8 @@ static int pl2303_set_break(struct usb_serial_port *port, bool enable)
+>>  				 BREAK_REQUEST, BREAK_REQUEST_TYPE, state,
+>>  				 0, NULL, 0, 100);
+>>  	if (result) {
+>> -		dev_err(&port->dev, "error sending break = %d\n", result);
+>> -		return result;
+>> +		dev_dbg(&port->dev, "error sending break = %d\n", result);
+>> +		return -ENOTTY;
+> 
+> Are you sure that ENOTTY is correct here?  Why not just send back
+> -EINVAL or something like that telling userspace that this is not
+> allowed for this device?
 
-INFO: task syz-executor317:17764 blocked for more than 143 seconds.
-      Not tainted 6.11.0-rc6-syzkaller-00017-gc9f016e72b5c #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:syz-executor317 state:D stack:26976 pid:17764 tgid:17761 ppid:5248   flags:0x00004006
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5188 [inline]
- __schedule+0x17ae/0x4a10 kernel/sched/core.c:6529
- __schedule_loop kernel/sched/core.c:6606 [inline]
- schedule+0x14b/0x320 kernel/sched/core.c:6621
- schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6678
- rwsem_down_read_slowpath kernel/locking/rwsem.c:1086 [inline]
- __down_read_common kernel/locking/rwsem.c:1250 [inline]
- __down_read kernel/locking/rwsem.c:1263 [inline]
- down_read+0x705/0xa40 kernel/locking/rwsem.c:1528
- filemap_invalidate_lock_shared include/linux/fs.h:855 [inline]
- page_cache_ra_unbounded+0xf7/0x7f0 mm/readahead.c:225
- do_sync_mmap_readahead+0x49c/0x970
- filemap_fault+0x828/0x1760 mm/filemap.c:3314
- __do_fault+0x135/0x460 mm/memory.c:4655
- do_shared_fault mm/memory.c:5121 [inline]
- do_fault mm/memory.c:5195 [inline]
- do_pte_missing mm/memory.c:3947 [inline]
- handle_pte_fault+0x1176/0x6fc0 mm/memory.c:5521
- __handle_mm_fault mm/memory.c:5664 [inline]
- handle_mm_fault+0x1056/0x1ad0 mm/memory.c:5832
- do_user_addr_fault arch/x86/mm/fault.c:1389 [inline]
- handle_page_fault arch/x86/mm/fault.c:1481 [inline]
- exc_page_fault+0x2b9/0x8c0 arch/x86/mm/fault.c:1539
- asm_exc_page_fault+0x26/0x30 arch/x86/include/asm/idtentry.h:623
-RIP: 0033:0x7f07b1048f2a
-RSP: 002b:00007f07b1035170 EFLAGS: 00010246
-RAX: 6c756e2f7665642f RBX: 00007f07b11151c8 RCX: 00007f07b1063d36
-RDX: 3ef326170ff63611 RSI: 0000000000000000 RDI: 00007f07b10355a0
-RBP: 00007f07b11151c0 R08: 0000000000000000 R09: 00007ffd34428c27
-R10: 0000000000000008 R11: 0000000000000246 R12: 00007f07b11151cc
-R13: 000000000000000b R14: 00007ffd34428b40 R15: 00007ffd34428c28
- </TASK>
+I was copying from serial_break() which now returns -ENOTTY if the
+handler is NULL. If you prefer -EINVAL, I can change. Just looking for a
+consistent code.
 
-Showing all locks held in the system:
-1 lock held by khungtaskd/30:
- #0: ffffffff8e738320 (rcu_read_lock){....}-{1:2}, at: rcu_lock_acquire include/linux/rcupdate.h:326 [inline]
- #0: ffffffff8e738320 (rcu_read_lock){....}-{1:2}, at: rcu_read_lock include/linux/rcupdate.h:838 [inline]
- #0: ffffffff8e738320 (rcu_read_lock){....}-{1:2}, at: debug_show_all_locks+0x55/0x2a0 kernel/locking/lockdep.c:6626
-2 locks held by getty/4975:
- #0: ffff88802fe640a0 (&tty->ldisc_sem){++++}-{0:0}, at: tty_ldisc_ref_wait+0x25/0x70 drivers/tty/tty_ldisc.c:243
- #1: ffffc90002f162f0 (&ldata->atomic_read_lock){+.+.}-{3:3}, at: n_tty_read+0x6ac/0x1e00 drivers/tty/n_tty.c:2211
-2 locks held by syz-executor317/5250:
- #0: ffff8880b893e998 (&rq->__lock){-.-.}-{2:2}, at: raw_spin_rq_lock_nested+0x2a/0x140 kernel/sched/core.c:560
- #1: ffffe8ffffd6e488 (&per_cpu_ptr(group->pcpu, cpu)->seq){-.-.}-{0:0}, at: psi_task_switch+0x3a7/0x770 kernel/sched/psi.c:977
-1 lock held by syz-executor317/5313:
- #0: ffff888022ca7c40 (mapping.invalidate_lock#2){++++}-{3:3}, at: filemap_invalidate_lock include/linux/fs.h:845 [inline]
- #0: ffff888022ca7c40 (mapping.invalidate_lock#2){++++}-{3:3}, at: blkdev_fallocate+0x1fc/0x530 block/fops.c:807
-1 lock held by syz-executor317/17764:
- #0: ffff888022ca7c40 (mapping.invalidate_lock#2){++++}-{3:3}, at: filemap_invalidate_lock_shared include/linux/fs.h:855 [inline]
- #0: ffff888022ca7c40 (mapping.invalidate_lock#2){++++}-{3:3}, at: page_cache_ra_unbounded+0xf7/0x7f0 mm/readahead.c:225
+Jan
 
-=============================================
+[1]
+https://prolificusa.com/wp-content/uploads/2021/01/PL2303G_Linux_Driver_v1.0.6.zip
+[2]
+https://www.berrybase.de/en/usb-ttl/uart/rs232-adapter-mit-pl2303hx-chipsatz
 
-NMI backtrace for cpu 0
-CPU: 0 UID: 0 PID: 30 Comm: khungtaskd Not tainted 6.11.0-rc6-syzkaller-00017-gc9f016e72b5c #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:93 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:119
- nmi_cpu_backtrace+0x49c/0x4d0 lib/nmi_backtrace.c:113
- nmi_trigger_cpumask_backtrace+0x198/0x320 lib/nmi_backtrace.c:62
- trigger_all_cpu_backtrace include/linux/nmi.h:162 [inline]
- check_hung_uninterruptible_tasks kernel/hung_task.c:223 [inline]
- watchdog+0xff4/0x1040 kernel/hung_task.c:379
- kthread+0x2f0/0x390 kernel/kthread.c:389
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-Sending NMI from CPU 0 to CPUs 1:
-NMI backtrace for cpu 1
-CPU: 1 UID: 0 PID: 4237 Comm: syz-executor317 Not tainted 6.11.0-rc6-syzkaller-00017-gc9f016e72b5c #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
-RIP: 0010:bytes_is_nonzero mm/kasan/generic.c:87 [inline]
-RIP: 0010:memory_is_nonzero mm/kasan/generic.c:104 [inline]
-RIP: 0010:memory_is_poisoned_n mm/kasan/generic.c:129 [inline]
-RIP: 0010:memory_is_poisoned mm/kasan/generic.c:161 [inline]
-RIP: 0010:check_region_inline mm/kasan/generic.c:180 [inline]
-RIP: 0010:kasan_check_range+0x82/0x290 mm/kasan/generic.c:189
-Code: 01 00 00 00 00 fc ff df 4f 8d 3c 31 4c 89 fd 4c 29 dd 48 83 fd 10 7f 29 48 85 ed 0f 84 3e 01 00 00 4c 89 cd 48 f7 d5 48 01 dd <41> 80 3b 00 0f 85 c9 01 00 00 49 ff c3 48 ff c5 75 ee e9 1e 01 00
-RSP: 0000:ffffc90002defd90 EFLAGS: 00000286
-RAX: 1ffff920005bdf01 RBX: 1ffff920005bdfcb RCX: ffffffff81df1a50
-RDX: 0000000000000001 RSI: 0000000000000010 RDI: ffffc90002defe58
-RBP: ffffffffffffffff R08: ffffc90002defe67 R09: 1ffff920005bdfcc
-R10: dffffc0000000000 R11: fffff520005bdfcc R12: ffffc90002defe40
-R13: 0000000000000255 R14: dffffc0000000001 R15: fffff520005bdfcd
-FS:  0000555577e59480(0000) GS:ffff8880b8900000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000555577e5a8d8 CR3: 00000000322a6000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <NMI>
- </NMI>
- <TASK>
- __asan_memset+0x23/0x50 mm/kasan/shadow.c:84
- lock_vma_under_rcu+0xf0/0x6e0 mm/memory.c:5989
- do_user_addr_fault arch/x86/mm/fault.c:1329 [inline]
- handle_page_fault arch/x86/mm/fault.c:1481 [inline]
- exc_page_fault+0x17b/0x8c0 arch/x86/mm/fault.c:1539
- asm_exc_page_fault+0x26/0x30 arch/x86/include/asm/idtentry.h:623
-RIP: 0033:0x7f07b106b42b
-Code: 81 0a 00 48 8d 34 19 48 39 d5 48 89 75 60 0f 95 c2 48 29 d8 48 83 c1 10 0f b6 d2 48 83 c8 01 48 c1 e2 02 48 09 da 48 83 ca 01 <48> 89 51 f8 48 89 46 08 eb 80 48 8d 0d c1 21 07 00 48 8d 15 c5 33
-RSP: 002b:00007ffd34428b20 EFLAGS: 00010206
-RAX: 0000000000020611 RBX: 0000000000000120 RCX: 0000555577e5a8e0
-RDX: 0000000000000121 RSI: 0000555577e5a9f0 RDI: 0000000000000004
-RBP: 00007f07b11135e0 R08: 00000000ffffffff R09: 0000000000000000
-R10: 0000000000021000 R11: 0000000000000010 R12: 0000000000000110
-R13: 0000000000000012 R14: 00007f07b1113640 R15: 0000000000000120
- </TASK>
+-- 
+Siemens AG, Technology
+Linux Expert Center
 
-
----
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
 
