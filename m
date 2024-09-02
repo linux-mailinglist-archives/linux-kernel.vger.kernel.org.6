@@ -1,228 +1,117 @@
-Return-Path: <linux-kernel+bounces-310874-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310896-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 409FC968256
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 10:47:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BCFF968296
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 10:58:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A1F76B2117E
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 08:47:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A8A1281A23
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 08:58:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5985156885;
-	Mon,  2 Sep 2024 08:47:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0147F187324;
+	Mon,  2 Sep 2024 08:58:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="JOwaJQa7"
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="MDe3fjvi"
+Received: from out203-205-221-240.mail.qq.com (out203-205-221-240.mail.qq.com [203.205.221.240])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6901F12EBEA
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 08:47:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2235B186E57;
+	Mon,  2 Sep 2024 08:58:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.240
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725266851; cv=none; b=YHM+I27LPTBwKsMWiy4SwJYiQNknnoIciisZtgo+912fA70FSVolKYgot3uAR9JTFf/kMfGE8Hd+mrBivt7dkO64skJARwAoo/uAGSy6ryrO/w0LYGVPcJgG3JFjkJiSoZ3b7n25yPswVoNzLKWZ+NbtIuTYyN6qdrhSkjgf2ig=
+	t=1725267529; cv=none; b=hcTZLkGRYcmUkJbw1x6TPwL5rry+i79R4QZeCyGjEPXBAtePAiI7VSpJXUjkOn4ROQhf6BTrL4kXbRqXn+U0TkFm+4DWU3GMzr0OjrHknM4Cq9zuKu0wxop58/lBtgr+m0NTjs7Bd+ClAgMzNdf3jC/want7oAnQMcD1sDs9Hnk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725266851; c=relaxed/simple;
-	bh=N2g00tuABoBPM0sSD+eLbo4vma8qIxTBQwjDX+kBOwY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=a892ISQS5wYIjKgX85BohopvhdxY4GAlz/Dj8Nec0cj9EAMjk21PxS1tEgIrj2JGe1CO3mGAnGrkCTt9VlqAwP+wkRv8sKh90h/1DF4wMG8oomfDP6wmVNxk3szvxtICcmiyTwirQM+qUcYdDo60AjIt6g9OLhxkTJFFYTVy8w8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=JOwaJQa7; arc=none smtp.client-ip=209.85.167.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-5334c018913so3659925e87.0
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2024 01:47:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1725266847; x=1725871647; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=oOaSphN4uqIVyGx4/lf/Z0TMBGuenM0C4nTClydRFg4=;
-        b=JOwaJQa7oe0E2nuM/9p9QTTllF4o7QC8SPrdiGTm4A+0CzJpTWjOtKcgg49SsjD0NB
-         ZZk4IR6JDv7Ejtx8dnfzr3At5DycGmJBoy1SylS/VZchjiIiN63oUWCnsBMQNA8bOmIT
-         ZEBWsWWKCceWaPlHSgfuN2bKTYMd4sEtaR94p3uE2Mdzv97Z8CKtgkR3AEd0vZVZpS2b
-         VkOiWUOoQtQOl96pQt/+J/q41Hbzis5CI3JJU60XId8GBHw77SoTRZ87KCgRR1DDAgUS
-         IT1M6AdUGpj+8/6kzRbllNIdfTBH/N1b1a78rWKDzzH/n5C2+d97GNUBAwx49CrrJjXE
-         KGxg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725266847; x=1725871647;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=oOaSphN4uqIVyGx4/lf/Z0TMBGuenM0C4nTClydRFg4=;
-        b=s+P7hbOpv9zWyz8NvjJMf9JzdHuqza0L8ZCkQ25OQf0ShqKJZKjg26TpkB+uZBFK5/
-         EJEBZ4WHxsq6+nW4D02hPrWMIAx8VLl6un2emnDEv1Dv63SgXgYsNzqXZnFTaq1V6Q5F
-         w5eQwcIYkv3Ia/Gq+Cy6C6P/3Ho0i/ig2Tb9jmtE0ZGuM06n+FZOKB7eiwnzbzvGgsg5
-         p/EQndRBsidfLbcEe0Ft6nwndLnjMqHsnl7NudQAg0zg4l2nYeGl57Vf8BsBarJF65ZY
-         NLXW71TOATRueGKyhFPZa5zD5YRfDRMer1pWHwX80lwisNIslOsQhI1ZuKKe2SxgFliM
-         jPhw==
-X-Forwarded-Encrypted: i=1; AJvYcCWqmEtqy7T7QU7tw6e1jaTJcQfeHOUnJb0RY51p2q3Ki9QPhvdARnRUiESCZkfaIqUcDOD2Hz1AejzLDY8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx4dfhgZ070eaXIT8XqX5oJzDqiT7O8KdyyV5rwuh1VapPbA20P
-	eMNYPIup5n2aBI+s8B8nE7VsMQAQVqrnqWyTtkAkjdT+6T2NW+WuQGwDwFqcOl0=
-X-Google-Smtp-Source: AGHT+IFKP+TMYUf8hSyMMTGOziIULq1HvfnDIOTbDSCryKJ5amdlOmDWug+wIx0ZuZ/E3sdbRQoVKA==
-X-Received: by 2002:a05:6512:15a5:b0:52e:9e70:d068 with SMTP id 2adb3069b0e04-53546afad74mr5564997e87.4.1725266847009;
-        Mon, 02 Sep 2024 01:47:27 -0700 (PDT)
-Received: from [192.168.50.4] ([82.78.167.144])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8988fef4c3sm525445666b.32.2024.09.02.01.47.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 02 Sep 2024 01:47:26 -0700 (PDT)
-Message-ID: <5556d176-cca7-492c-ba21-48256d5d6338@tuxon.dev>
-Date: Mon, 2 Sep 2024 11:47:24 +0300
+	s=arc-20240116; t=1725267529; c=relaxed/simple;
+	bh=gdMjarlsxkIjz3GacO7XUTqQrGRcxTtT3SPegpVNcMg=;
+	h=Message-ID:From:To:Cc:Subject:Date:MIME-Version; b=Sy7XfN8ecKj26qBXWQXhEcz5pxi2YHP4MyEmdhehBNlr6gSrCY5fYp1SViFoe5X8TzIdm0ZcltXvz/3fCysCE1oAfRtEycPClUGOwuR2N375pJxoA0g1/NLZ6s9+Qw6Ukz7neiiUyNNYxkz2LpYJMSiqVG1wLdaRNmICIwASMto=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=MDe3fjvi; arc=none smtp.client-ip=203.205.221.240
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
+	s=s201512; t=1725267218;
+	bh=xyAiDIvAC8LrbiIkOc9JTsgcYxtGvhFsoImt2CUMHWo=;
+	h=From:To:Cc:Subject:Date;
+	b=MDe3fjviYVCLiUcQ9mKVnurW6tr5JYmzhHgju/1E5GBqoc0blTHlyudPJP0pHTQqE
+	 aq+lj1YRVVGkRLNs93JTSaBx+UGXZbicWcOeTkos+bR/MT8uANbGYqd8wxqB7vxpR4
+	 d+knpO3Et4DcPFB6lHsnFMLDyau0f3zUHJXIitXQ=
+Received: from localhost.localdomain ([114.246.200.160])
+	by newxmesmtplogicsvrsza29-0.qq.com (NewEsmtp) with SMTP
+	id BD832428; Mon, 02 Sep 2024 16:47:24 +0800
+X-QQ-mid: xmsmtpt1725266844t1yiwz6e7
+Message-ID: <tencent_39FA49154F494DFE0FEC2F20A9A34AA9B308@qq.com>
+X-QQ-XMAILINFO: NhpLzBn2I3XwmRtRQDLpav3czAf1B15RF2AP0KtjFIMLaqOSxwqtGhfKMHR3QP
+	 d7XXIDUS9BpKwgKtlXOw/BrO3UZO3L7uN+fbgBeFOdk/KLeaqRrwBLxi9BCOaX8ps7A5PZYEF1iY
+	 wQ6Ocq1WWiKYVWfPEXBJI7656swXoxA07NdjpsVw1dI+gDwzpBMczQB1zFIFuSQAW5Mretg/6bUC
+	 TlbI3h0iTN7DE5IS8nQkkZXxYDt4hqieOGdorIiwRZenyGG3s7Uy6ab7KbYV6jaZVoB6zUz/PAm7
+	 /TTgTEGQh65po5WlQ5NpakCVxNljXTEQvRwvwhw4tZmNr5GLg2jnwnxOu8jKFDQVWDXulRAvUPZa
+	 KBjE6ctScF2nJyCYEm8A6L7LwP4jgsqqPx6m/hNRabGoT7FoObPdX/OdgJLkYwTkAmFsq8BUVicl
+	 ShRuNLWHazGtJaPUYNzJve1qG4VChmTEJuOQ6L45SdWA3eKEJluW8t0G7HXvULkEESYGSZ7FSPd8
+	 4lBFL2UK4x/GnfQxTSvXooHJHdhz89hbaXXzS6ESps4FjKWv2tqUqGwZhM5jT6U1STWmaqN6nFPu
+	 cTklZs679/ovcnys/rLPqWjRd9TEa2x3IIwqJWKlOIsZDudOCsUMjuLvWlaRZYOpm/vKppIgFHQP
+	 BVl0dOsWmq4al+ZVuNEGtUofRMDZZajTxhaUS6fZzZz712mYT6MmbWkwXTGqW/GZhlKncQa8bZI9
+	 RxHnoUhDWhj0Mq4TW5E4cp1YWXxsLGNMHeysv8jHjncTTK/9RUk1zhx6pVLdG26Q4zS0i7bSUErf
+	 yrIM61UP1LvvRByfWm3mk63GQ6aEvd9P3VIfOA/1vM9nhE2ENf1UnFmmRHsftG0bu8kOxaIx8Bd5
+	 hh0qxmGIBH94329tQcsK+8pjOo3fM4zrfGQHyB0ZtBK7b8hoAssG8l86eJhRZMmeZ5vIyA7m1XR5
+	 ZksvImJZWjjoQiAw0uFPxQJhBHvfzD+VfRU23ET/JBki9vcopPS29x41hkQqGRYvry6uBIjPRUzY
+	 ajxjdGTKWj0RriK6W5lpgdGSazwiG3cy+bAUuc1PnJ0zM7q2DHmDtWHAezAFHzR+v9me4AvA==
+X-QQ-XMRINFO: OWPUhxQsoeAVDbp3OJHYyFg=
+From: Jiawei Ye <jiawei.ye@foxmail.com>
+To: casey@schaufler-ca.com,
+	paul@paul-moore.com,
+	jmorris@namei.org,
+	serge@hallyn.com,
+	pawan.kumar.gupta@linux.intel.com
+Cc: linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] smackfs: Use rcu_assign_pointer() to ensure safe assignment in smk_set_cipso
+Date: Mon,  2 Sep 2024 08:47:26 +0000
+X-OQ-MSGID: <20240902084726.26179-1-jiawei.ye@foxmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 00/16] Add initial USB support for the Renesas RZ/G3S SoC
-Content-Language: en-US
-To: Biju Das <biju.das.jz@bp.renesas.com>,
- Ulf Hansson <ulf.hansson@linaro.org>
-Cc: "vkoul@kernel.org" <vkoul@kernel.org>,
- "kishon@kernel.org" <kishon@kernel.org>, "robh@kernel.org"
- <robh@kernel.org>, "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
- "conor+dt@kernel.org" <conor+dt@kernel.org>,
- "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
- "geert+renesas@glider.be" <geert+renesas@glider.be>,
- "magnus.damm@gmail.com" <magnus.damm@gmail.com>,
- "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
- "mturquette@baylibre.com" <mturquette@baylibre.com>,
- "sboyd@kernel.org" <sboyd@kernel.org>,
- Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
- "linux-phy@lists.infradead.org" <linux-phy@lists.infradead.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
- "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
- "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
- Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-References: <20240822152801.602318-1-claudiu.beznea.uj@bp.renesas.com>
- <CAPDyKFrS4Dhd7DZa2zz=oPro1TiTJFix0awzzzp8Qatm-8Z2Ug@mail.gmail.com>
- <99bef301-9f6c-4797-b47e-c83e56dfbda9@tuxon.dev>
- <TY3PR01MB1134652F9587CFA0ADE851CA486902@TY3PR01MB11346.jpnprd01.prod.outlook.com>
- <TY3PR01MB113467275C519B729FCAB1ACB86922@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-From: claudiu beznea <claudiu.beznea@tuxon.dev>
-In-Reply-To: <TY3PR01MB113467275C519B729FCAB1ACB86922@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Hi, Biju,
+In the `smk_set_cipso` function, the `skp->smk_netlabel.attr.mls.cat`
+field is directly assigned to a new value without using the appropriate
+RCU pointer assignment functions. According to RCU usage rules, this is
+illegal and can lead to unpredictable behavior, including data
+inconsistencies and impossible-to-diagnose memory corruption issues.
 
-On 02.09.2024 10:54, Biju Das wrote:
-> Hi Claudiu,
-> 
->> -----Original Message-----
->> From: Biju Das
->> Sent: Saturday, August 31, 2024 6:14 AM
->> Subject: RE: [PATCH 00/16] Add initial USB support for the Renesas RZ/G3S SoC
->>
->> Hi Claudiu,
->>
->>> -----Original Message-----
->>> From: claudiu beznea <claudiu.beznea@tuxon.dev>
->>> Sent: Friday, August 30, 2024 9:23 AM
->>> Subject: Re: [PATCH 00/16] Add initial USB support for the Renesas
->>> RZ/G3S SoC
->>>
->>> Hi, Ulf,
->>>
->>> On 29.08.2024 18:26, Ulf Hansson wrote:
->>>> On Thu, 22 Aug 2024 at 17:28, Claudiu <claudiu.beznea@tuxon.dev> wrote:
->>>>>
->>>>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->>>>>
->>>>> Hi,
->>>>>
->>>>> Series adds initial USB support for the Renesas RZ/G3S SoC.
->>>>>
->>>>> Series is split as follows:
->>>>>
->>>>> - patch 01/16           - add clock reset and power domain support for USB
->>>>> - patch 02-04/16        - add reset control support for a USB signal
->>>>>                           that need to be controlled before/after
->>>>>                           the power to USB area is turned on/off.
->>>>>
->>>>>                           Philipp, Ulf, Geert, all,
->>>>>
->>>>>                           I detailed my approach for this in patch
->>>>>                           04/16, please have a look and let me know
->>>>>                           your input.
->>>>
->>>> I have looked briefly. Your suggested approach may work, but I have
->>>> a few thoughts, see below.
->>>>
->>>> If I understand correctly, it is the consumer driver for the device
->>>> that is attached to the USB power domain that becomes responsible
->>>> for asserting/de-asserting this new signal. Right?
->>>
->>> Right!
->>>
->>>>
->>>> In this regard, please note that the consumer driver doesn't really
->>>> know when the power domain really gets powered-on/off. Calling
->>>> pm_runtime_get|put*() is dealing with the reference counting. For
->>>> example, a call to pm_runtime_get*() just makes sure that the PM
->>>> domain gets-or-remains powered-on. Could this be a problem from the
->>>> reset-signal point of view?
->>>
->>> It should be safe. From the HW manual I understand the hardware block is something like the
->> following:
->>>
->>>
->>>                   USB area
->>>          +-------------------------+
->>>          |                         |
->>>          | PHY --->USB controller  |
->>> SYSC --> |  ^                      |
->>>          |  |                      |
->>>          | PHY reset               |
->>>          +-------------------------+
->>
->> How USB PWRRDY signal is connected to USB?
->>
->> USB block consists of PHY control, PHY, USB HOST and USB OTG Controller IPs.
->>
->> Is it connected to top level block or connected to each IP's for turning off the USB region power?
->>
->> ? Or Just PHY (HW manual mentions for AWO, the USB PWRRDY signal->USB PHY PWRRDY signal control)?
-> 
-> As per the update from HW team,
-> 
-> "SYS_USB_PWRRDY and SYS_PCIE_RST_RSM_B are used when transition from ALL_ON to AWO (or from AWO to ALL_ON).
-> 
-> Refer to step 8,9 in Table 41.10 Example Transition Flow Outline from ALL_ON Mode to AWO Mode.
-> Refer to step 9,10 in Table 41.11 Example Transition Flow Outline from AWO Mode to ALL_ON Mode.
+This possible bug was identified using a static analysis tool developed
+by myself, specifically designed to detect RCU-related issues.
 
-All this is not new information.
+To address this, the assignment is now done using rcu_assign_pointer(),
+which ensures that the pointer assignment is done safely, with the
+necessary memory barriers and synchronization. This change prevents
+potential RCU dereference issues by ensuring that the `cat` field is
+safely updated while still adhering to RCU's requirements.
 
-From experiments, we need to control these signals also when booting as
-intermediary booting application may control and leave it in improper
-state. W/o having SYSC signals configured properly there is no chance for
-USB to work (it should be the same for PCIe but I haven't explored it yet).
+Fixes: 0817534ff9ea ("smackfs: Fix use-after-free in netlbl_catmap_walk()")
+Signed-off-by: Jiawei Ye <jiawei.ye@foxmail.com>
+---
+ security/smack/smackfs.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> 
-> When turning off USB PHY and PCIe PHY, if they are not controlled, PHY may break."
+diff --git a/security/smack/smackfs.c b/security/smack/smackfs.c
+index e22aad7604e8..5dd1e164f9b1 100644
+--- a/security/smack/smackfs.c
++++ b/security/smack/smackfs.c
+@@ -932,7 +932,7 @@ static ssize_t smk_set_cipso(struct file *file, const char __user *buf,
+ 	}
+ 	if (rc >= 0) {
+ 		old_cat = skp->smk_netlabel.attr.mls.cat;
+-		skp->smk_netlabel.attr.mls.cat = ncats.attr.mls.cat;
++		rcu_assign_pointer(skp->smk_netlabel.attr.mls.cat, ncats.attr.mls.cat);
+ 		skp->smk_netlabel.attr.mls.lvl = ncats.attr.mls.lvl;
+ 		synchronize_rcu();
+ 		netlbl_catmap_free(old_cat);
+-- 
+2.34.1
 
-From experiments, I know this, as this is the reason the SYSC USB PWRRDY
-has been implemented in Linux and proposed in this series.
-
-> 
-> Do you have any plan to control this power transitions(ALL_ON to AWO and vice versa) in linux? 
-
-As you know, the RZ/G3S USB PM code is already prepared. This is also
-configuring these signals when going to suspend/exiting from resume. W/o
-configuring properly these signals the USB is not working after a
-suspend/resume cycle.
-
-Thank you,
-Claudiu Beznea
-
-
-> Cheers,
-> Biju
->  
 
