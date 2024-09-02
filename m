@@ -1,227 +1,181 @@
-Return-Path: <linux-kernel+bounces-311642-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311643-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F1C3968B7E
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 18:02:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CFC94968B83
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 18:03:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 17879282B33
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 16:02:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E001281CAC
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 16:03:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 914501A302E;
-	Mon,  2 Sep 2024 16:02:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DADBE1A2639;
+	Mon,  2 Sep 2024 16:03:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CRAXP0Ih"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="yT7+80O+"
+Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1D942A8D0;
-	Mon,  2 Sep 2024 16:02:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB4E442AB7;
+	Mon,  2 Sep 2024 16:03:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725292952; cv=none; b=WuqvvmJCSw2CCjNS0lRgSoiKaogO7wwu/qiaHWPsAO/rpBYREc84q/N3+EwMp80o0iwvddZQTYDE+3QmKLabYosZf3+sYsfosF+QXxlcsO6yoJV8XZkaCoOsDJpaY3hzdyrqUgcoed/pvxc0ErF8ru53jun46S72LlEPbFONGmU=
+	t=1725292984; cv=none; b=KFm49FngRPFEsBoT2KfDxyTVno/Cf0f30Foc/MW4esPxTsc5Xf8bjdkoKnuQY28jRXGGISbYYJuMbTWDqxe0N85/iJKjISYohykcgMWXE++DRKfdK2ZAno40HMZvT9YSTQXUg+lmXVEkjoVibb7lVDEmGECXE4Tk8p9RhKyeFGA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725292952; c=relaxed/simple;
-	bh=6LeCsdM8CqtOIi4hNTfkKo04Af3xwWWjHmr/+DqmEPo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WQIxDB2TsYclJM5taWIO0vUnSucY6VFPwbCOAg05wDlb0n7k05cr5pxl4GfDUg1wGXjmvwqNiZvfe2ljkmbNir1eASJLAAK2HT8q9QymXPvZBo6Fc/FenxDoyf9MHEwPnJblJoHYA7T+eBhDUVKAYQy94ltweHJBGj/DQe+xwnM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CRAXP0Ih; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BC3D6C4CEC2;
-	Mon,  2 Sep 2024 16:02:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725292951;
-	bh=6LeCsdM8CqtOIi4hNTfkKo04Af3xwWWjHmr/+DqmEPo=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=CRAXP0IhQSi+6W2FU8hkG1UG9b9yeW0eF3Dd1kxh2x3nqJ4T/Y/34p1IBpSVix4MD
-	 XS4/rjeoVnkI/VCPvk4xZvpqgsQDosxPhUeZaQVmRWJ81ZCgoFl8ysDcUwEWFoGwXv
-	 psbdS3MPjdcC1BffysLVBd0t+mATAN6jYzv1uqRPI9OeqMpLQ8gE5mRWMOQHE9p0nc
-	 x91ZGo+z/e1fubYOy2IhNmp1ISwnYMWuOXSZwYwA2U2W7dmFFxJIBMOaQwa3/+gOHw
-	 HdCiVD/ckhhKfCvnffXUNO1dvIzWLRAWqaKtQNRWcnPDITAcO83tpWnyqBm9XUqnXO
-	 DEoxU3PHv5eQw==
-Message-ID: <45037518-41b7-4cc1-a7f4-c4a0c9873950@kernel.org>
-Date: Mon, 2 Sep 2024 18:02:24 +0200
+	s=arc-20240116; t=1725292984; c=relaxed/simple;
+	bh=0JjunB37iEzXMOdt1r0c+A6zpwOdxB9KTs1TOBOETQE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=esDtetWJjufJwUCAlRVuvdtAxkajUP5+ErsjMt/7kj+Lzbas0k5QutRh0i5DdRhxndPi1uW5j3Y5eSkjOdyzkZ2eXeCu3hT7T3K332aoYBbF+ZYQpZRy56n8YxWBENApsY+aQYbrQG8PbMYl4IKdlsBY55b4v0zfcosjpqgU6D0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=yT7+80O+; arc=none smtp.client-ip=80.241.56.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyphar.com
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [10.196.197.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4WyD755BNrz9spX;
+	Mon,  2 Sep 2024 18:02:57 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
+	t=1725292977;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=y/WAo2wEKoXQ1DpuWFNQF/dhkLU3MgM/L7pMsMzDa3U=;
+	b=yT7+80O+kLvfJIrums1mfAqfnvoGfVHmaHUI+A/suaeyi/wLufx8aoPjR6TGbQJMA6pIFn
+	afRiGRZ8YQUI/ph+gpDduYcnhcUVbDMYti4YUKKPU0FZUFpkZUHZFMZlNONPEsh5QojeLG
+	TkH8TKJ+jyILftA8RMkFHvCz/DMnt7WcDIZ9dQ/uNANWE0ZiWO9fq2JaxSXo+7cWHH6nMz
+	iF22V25OedR07/sWWrqyaKokkeL1FIDzPQ//+onct3j12jk/ANX5Invv8QIz6YIDMZ5Jvh
+	/rOdEQkdo2iTwwZ8fM7yBib0eEieFm3Mz5GKE9Hf0Jyg7f1autSh3UZdhXEbjg==
+Date: Tue, 3 Sep 2024 02:02:39 +1000
+From: Aleksa Sarai <cyphar@cyphar.com>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>, 
+	Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>, 
+	Benjamin Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
+	Valentin Schneider <vschneid@redhat.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, shuah <shuah@kernel.org>, 
+	Kees Cook <kees@kernel.org>, Florian Weimer <fweimer@redhat.com>, 
+	Mark Rutland <mark.rutland@arm.com>, linux-kernel@vger.kernel.org, linux-api@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, Linux-Arch <linux-arch@vger.kernel.org>, 
+	linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH RFC 1/8] uaccess: add copy_struct_to_user helper
+Message-ID: <20240902.090015-soviet.bowling.selfish.chin-kvAI3lnuyqH@cyphar.com>
+References: <20240902-extensible-structs-check_fields-v1-0-545e93ede2f2@cyphar.com>
+ <20240902-extensible-structs-check_fields-v1-1-545e93ede2f2@cyphar.com>
+ <319c0da6-3d9c-4b45-a14c-07c5bbc3afb7@app.fastmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: AW: [PATCH 1/2] dt-bindings: hwmon: Introduce ADS71x8
-To: "Sperling, Tobias" <Tobias.Sperling@Softing.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-hwmon@vger.kernel.org" <linux-hwmon@vger.kernel.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
- "jdelvare@suse.com" <jdelvare@suse.com>,
- "linux@roeck-us.net" <linux@roeck-us.net>, "robh@kernel.org"
- <robh@kernel.org>, "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
- "conor+dt@kernel.org" <conor+dt@kernel.org>, "corbet@lwn.net"
- <corbet@lwn.net>
-References: <BE1P281MB24208CB90AF549578AA5C384EF972@BE1P281MB2420.DEUP281.PROD.OUTLOOK.COM>
- <ypez4vjmasehqflgi4ylylpicldabf2dc6wwjco34qr2zmkdvx@enejrjjyaulf>
- <BE1P281MB24208DE67DB0B1E9A75823ECEF922@BE1P281MB2420.DEUP281.PROD.OUTLOOK.COM>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
- FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
- QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
- gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
- /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
- iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
- VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
- 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
- xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
- eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
- AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
- MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
- Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
- MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
- OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
- GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
- 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
- YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
- 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
- BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
- JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
- 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
- YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
- Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
- ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
- vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
- oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
- lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
- t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
- uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
- 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
- 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <BE1P281MB24208DE67DB0B1E9A75823ECEF922@BE1P281MB2420.DEUP281.PROD.OUTLOOK.COM>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="ftgkfoq5ev7h23w4"
+Content-Disposition: inline
+In-Reply-To: <319c0da6-3d9c-4b45-a14c-07c5bbc3afb7@app.fastmail.com>
 
-On 02/09/2024 15:48, Sperling, Tobias wrote:
->> On Fri, Aug 30, 2024 at 11:49:53AM +0000, Sperling, Tobias wrote:
->>> >From b2e04ce5500faf274654be5284be9db4f3abefce Mon Sep 17 00:00:00
->> 2001
->>
->> Some junk ^^^ above. Please investigate how you send patches.
-> 
-> Yeah also saw this line, but of course tried to apply the patch again after sending it
-> as mail and that worked fine. But just checked again and seems like this line can be
-> dropped.
-> And yes, I sent the patches manually, as we likely have some restrictions for smtp,
-> but as I was able to apply them again it's fine I guess.
-> 
->>> From: Tobias Sperling <tobias.sperling@softing.com>
->>> Date: Fri, 23 Aug 2024 12:08:33 +0200
->>> Subject: [PATCH 1/2] dt-bindings: hwmon: Introduce ADS71x8
->>
->> And all this suggests malformed patch.
-> 
-> Why? If I drop this I'm not able to apply the patch, so I think this should be fine.
 
-OK, it works with b4, but seeing duplicated subject is not expected and
-might not work with all tools.
+--ftgkfoq5ev7h23w4
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> 
->>>
->>> Add documentation for the driver of ADS7128 and ADS7138 12-bit, 8-channel
->>> analog-to-digital converters. These ADCs have a wide operating range and
->>> a wide feature set. Communication is based on an I2C interface.
->>> The driver provides the functionality of manually reading single channels
->>> or sequentially reading all channels automatically.
->>>
->>> Signed-off-by: Tobias Sperling <tobias.sperling@softing.com>
->>> ---
->>>  .../devicetree/bindings/hwmon/ti,ads71x8.yaml |  85 +++++++++++
->>>  Documentation/hwmon/ads71x8.rst               | 140 ++++++++++++++++++
->>>  Documentation/hwmon/index.rst                 |   1 +
->>
->> Please run scripts/checkpatch.pl and fix reported warnings. Then please
->> run  and (probably) fix more warnings.
->> Some warnings can be ignored, especially from --strict run, but the code
->> here looks like it needs a fix. Feel free to get in touch if the warning
->> is not clear.
-> 
-> Had done this already before submitting the patches (at least without --strict),
-> but only reports a warning about splitting the patch (which I got wrong here)
-> and updating the maintainers.
-> I guess you were about suggesting a second script to run. Which one is that?
+On 2024-09-02, Arnd Bergmann <arnd@arndb.de> wrote:
+> On Mon, Sep 2, 2024, at 07:06, Aleksa Sarai wrote:
+> > This is based on copy_struct_from_user(), but there is one additional
+> > case to consider when creating a syscall that returns an
+> > extensible-struct to userspace -- how should data in the struct that
+> > cannot fit into the userspace struct be handled (ksize > usize)?
+> >
+> > There are three possibilies:
+> >
+> >  1. The interface is like sched_getattr(2), where new information will
+> >     be silently not provided to userspace. This is probably what most
+> >     interfaces will want to do, as it provides the most possible
+> >     backwards-compatibility.
+> >
+> >  2. The interface is like lsm_list_modules(2), where you want to return
+> >     an error like -EMSGSIZE if not providing information could result in
+> >     the userspace program making a serious mistake (such as one that
+> >     could lead to a security problem) or if you want to provide some
+> >     flag to userspace so they know that they are missing some
+> >     information.
+>=20
+> I'm not sure if EMSGSIZE is the best choice here, my feeling is that
+> the kernel should instead try to behave the same way as an older kernel
+> that did not know about the extra fields:
 
-Please split the patches.
+I agree this API is not ideal for syscalls because it can lead to
+backward-compatibility issues, but that is how lsm_list_modules(2)
+works. I suspect most syscalls will go with designs (1) or (3).
 
-> 
->>> +$id:
->> https://deu01.safelinks.protection.outlook.com/?url=http%3A%2F%2Fdevicetree.
->> org%2Fschemas%2Fhwmon%2Fti%2Cads71x8.yaml%23&data=05%7C02%7C%7C
->> ff09fedbe2744394f78508dcc9881ee7%7Cfe3606fad3974238999768dcd7851f64
->> %7C1%7C0%7C638606833686313557%7CUnknown%7CTWFpbGZsb3d8eyJWIjoi
->> MC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C0%7C
->> %7C%7C&sdata=vZaCpdaNzELpNNnd6wp5P9MNLQTnAmWXYD%2BNKQYCJ78%
->> 3D&reserved=0
->>> +$schema:
->> https://deu01.safelinks.protection.outlook.com/?url=http%3A%2F%2Fdevicetree.
->> org%2Fmeta-
->> schemas%2Fcore.yaml%23&data=05%7C02%7C%7Cff09fedbe2744394f78508dcc
->> 9881ee7%7Cfe3606fad3974238999768dcd7851f64%7C1%7C0%7C63860683368
->> 6326954%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2lu
->> MzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C0%7C%7C%7C&sdata=EJflznuTZYGR
->> BRjULwohiHk8gPF9iRusSbmF8CKkl5Q%3D&reserved=0
->>> +
->>> +title: Texas Instruments ADS7128/ADS7138 Analog to Digital Converter (ADC)
->>> +
->>> +maintainers:
->>> +  - None
->>
->> Fidn a person... otherwise why would we care?
-> 
-> I know it's not nice, but we are likely not implementing further features, but OK, will
-> add myself then.
-> 
->>> +    default: 1
->>> +
->>> +  interrupts:
->>> +    description: |
->>> +      Only considered in mode 1!
->>
->> What is "considered"? Driver considers? This does not matter. Describe
->> the hardware and if this is hardware related, you should have
->> allOf:if:then restricting this.
-> 
-> It's possible to define a mode, either manual sampling or autosampling. In the
-> latter mode, also the hardware capabilities change, e.g. the driver is able to
-> trigger an interrupt so defining the interrupt only makes sense in that mode.
-> Will have a look to allOf:if:then then.
-> 
->>> +            compatible = "ti,ads7138";
->>> +            reg = <0x10>;
->>> +            avdd-supply = <&reg_stb_3v3>;
->>> +            ti,mode = /bits/ 8 <1>;
->>> +            ti,interval = /bits/ 16 <1000>;
->>> +            interrupt-parent = <&gpio2>;
->>> +            interrupts = <12 IRQ_TYPE_LEVEL_LOW>;
->>> +            status = "okay";
->>
->> Drop
-> 
-> I guess, I shall only drop the "status" not the whole section?
+> - if the structure has always been longer than the provided buffer,
+>   -EMSGSIZE should likely have been returned all along. If older
+>   kernels just provided a short buffer, changing it now is an ABI
+>   change that would only affect intentionally broken callers, and
+>   I think keeping the behavior unchanged is more consistent.
+>=20
+> - if an extra flag was added along with the larger buffer size,
+>   the old kernel would likely have rejected the new flag with -EINVAL,
+>   so I think returning the same thing for userspace built against
+>   the old kernel headers is more consistent.
+>=20
+>=20
+> > +static __always_inline __must_check int
+> > +copy_struct_to_user(void __user *dst, size_t usize, const void *src,
+> > +		    size_t ksize, bool *ignored_trailing)
+>=20
+> This feels like the kind of function that doesn't need to be inline
+> at all and could be moved to lib/usercopy.c instead. It should clearly
+> stay in the same place as copy_struct_from_user(), but we could move
+> that as well.
 
-Only status
+IIRC Kees suggested copy_struct_from_user() be inline when I first
+included it, though I would have to dig through the old threads to find
+the reasoning. __builtin_object_size() was added some time after it was
+merged so that wasn't the original reason.
 
-Best regards,
-Krzysztof
+> > +{
+> > +	size_t size =3D min(ksize, usize);
+> > +	size_t rest =3D max(ksize, usize) - size;
+> > +
+> > +	/* Double check if ksize is larger than a known object size. */
+> > +	if (WARN_ON_ONCE(ksize > __builtin_object_size(src, 1)))
+> > +		return -E2BIG;
+>=20
+> I guess the __builtin_object_size() check is the reason for making
+> it __always_inline, but that could be done in a trivial inline
+> wrapper around the extern function.  If ksize is always expected
+> to be a constant for all callers, the check could even become a
+> compile-time check instead of a WARN_ON_ONCE() that feels wrong
+> here: if there is a code path where this can get triggered, there
+> is clearly a kernel bug, but the only way to find out is to have
+> a userspace caller that triggers the code path.
+>=20
+> Again, the same code is already in copy_struct_from_user(), so
+> this is not something you are adding but rather something we
+> may want to change for both.
+>=20
+>       Arnd
 
+--=20
+Aleksa Sarai
+Senior Software Engineer (Containers)
+SUSE Linux GmbH
+<https://www.cyphar.com/>
+
+--ftgkfoq5ev7h23w4
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQS2TklVsp+j1GPyqQYol/rSt+lEbwUCZtXhnwAKCRAol/rSt+lE
+b0i1AP4n3zvF3EnvaHU3j7y6pOFoMZsPTUgIjM9al7nMqGnp9gD/YOPgm1jLZUNd
+4zg7QxzxYtCbzS8HNsO28bO+uW/C1A4=
+=93Iu
+-----END PGP SIGNATURE-----
+
+--ftgkfoq5ev7h23w4--
 
