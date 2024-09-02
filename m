@@ -1,36 +1,36 @@
-Return-Path: <linux-kernel+bounces-311945-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311941-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 197D1968FC1
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 00:33:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16383968FB9
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 00:32:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4D2921C24453
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 22:33:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C7CC12867CB
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 22:32:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D66F18893F;
-	Mon,  2 Sep 2024 22:29:53 +0000 (UTC)
-Received: from fgw22-7.mail.saunalahti.fi (fgw22-7.mail.saunalahti.fi [62.142.5.83])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F58918DF7B;
+	Mon,  2 Sep 2024 22:29:37 +0000 (UTC)
+Received: from fgw20-7.mail.saunalahti.fi (fgw20-7.mail.saunalahti.fi [62.142.5.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7577188938
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 22:29:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.142.5.83
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83B2E18C01C
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 22:29:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.142.5.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725316193; cv=none; b=NZli1lNshu7L4GQ3xMpV7/5wu/S1ilhZkXfGIAXiFNRzXLaOe2W2g7VHbWQbPP9jSuEXsEw+PmwTdtnq7PQIQYWIhayIkJlG2ZmDOfXDBvjCFHg/BPf4skTZ9ooBGfqm+1gY41T045MH6FCeXarW63/nmRZ2lBKmbOP5Eb+ly8M=
+	t=1725316177; cv=none; b=JwOZG3mrYLKKR91ghKgm+Y6HR2hGYYkRLTrGoJsvlhB5FMrBJkqLfHjVz6H+BH3Zt09FRJoV0/tsrQ9vpZxlb9o8mNNIPlf8UdMd11THl8i2rJXtZ6BIWeo5DxILqiO5TMbVABNgvW1YGeS4V5IULFtMKf+c2bRi8r7HWlIGZbE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725316193; c=relaxed/simple;
-	bh=wVFOFwNG96ZS5JTknDbiM35iEs7p1s20pBFB9wSWHWs=;
+	s=arc-20240116; t=1725316177; c=relaxed/simple;
+	bh=q2W2x5oyaNvC8UUAdV6wNNKiWrB5DlPCM9Iu48dwc60=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=n7D8iztUAVoua9YMAihu2VBbNkDTgLJx5vWMbJ3zJj4y1BIej9JClSBvuu60WZ7dN2OW1G/hdzs0xAmDmoJq9i8BRre65c2fhhMXqZ+S5kfKU8xibK+zQw0vcU28lfMYO12Vd3vkYr/llgu8TOGGBaDu2zkx9+ZLwBo+Ar73jPI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=fail smtp.mailfrom=gmail.com; arc=none smtp.client-ip=62.142.5.83
+	 MIME-Version; b=WnoZFXXD16LG5e/7L88d4yOWC0a5WLFkleCR1DE3a55R5b5WcrBSbpaem6QDshtVY7idP/oYOglSCCacH48sNfh453xqslprXIs0MwE9lPuWiNO8ZJ+pipcjAtl8DWC/TDZUyW5OU+kwfUq0fqENK3fDj0XWiPyZuID0KuvNKUU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=fail smtp.mailfrom=gmail.com; arc=none smtp.client-ip=62.142.5.81
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=gmail.com
 Received: from localhost (88-113-25-87.elisa-laajakaista.fi [88.113.25.87])
-	by fgw20.mail.saunalahti.fi (Halon) with ESMTP
-	id b6db18c5-697a-11ef-8e8a-005056bd6ce9;
+	by fgw22.mail.saunalahti.fi (Halon) with ESMTP
+	id b77fda6b-697a-11ef-8ecb-005056bdf889;
 	Tue, 03 Sep 2024 01:28:45 +0300 (EEST)
 From: Andy Shevchenko <andy.shevchenko@gmail.com>
 To: Jonathan Cameron <Jonathan.Cameron@huawei.com>,
@@ -50,9 +50,9 @@ Cc: Jiri Kosina <jikos@kernel.org>,
 	Lars-Peter Clausen <lars@metafoo.de>,
 	Michael Hennerich <Michael.Hennerich@analog.com>,
 	Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: [PATCH v1 20/22] iio: orientation: hid-sensor-rotation: Get platform data via dev_get_platdata()
-Date: Tue,  3 Sep 2024 01:17:05 +0300
-Message-ID: <20240902222824.1145571-21-andy.shevchenko@gmail.com>
+Subject: [PATCH v1 21/22] iio: position: hid-sensor-custom-intel-hinge: Get platform data via dev_get_platdata()
+Date: Tue,  3 Sep 2024 01:17:06 +0300
+Message-ID: <20240902222824.1145571-22-andy.shevchenko@gmail.com>
 X-Mailer: git-send-email 2.46.0
 In-Reply-To: <20240902222824.1145571-1-andy.shevchenko@gmail.com>
 References: <20240902222824.1145571-1-andy.shevchenko@gmail.com>
@@ -70,34 +70,32 @@ Access to platform data via dev_get_platdata() getter to make code cleaner.
 
 Signed-off-by: Andy Shevchenko <andy.shevchenko@gmail.com>
 ---
- drivers/iio/orientation/hid-sensor-rotation.c | 4 ++--
+ drivers/iio/position/hid-sensor-custom-intel-hinge.c | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/iio/orientation/hid-sensor-rotation.c b/drivers/iio/orientation/hid-sensor-rotation.c
-index 5e8cadd5177a..107adadf7711 100644
---- a/drivers/iio/orientation/hid-sensor-rotation.c
-+++ b/drivers/iio/orientation/hid-sensor-rotation.c
-@@ -230,11 +230,11 @@ static int dev_rot_parse_report(struct platform_device *pdev,
+diff --git a/drivers/iio/position/hid-sensor-custom-intel-hinge.c b/drivers/iio/position/hid-sensor-custom-intel-hinge.c
+index 76e173850a35..63a9f2fcada7 100644
+--- a/drivers/iio/position/hid-sensor-custom-intel-hinge.c
++++ b/drivers/iio/position/hid-sensor-custom-intel-hinge.c
+@@ -263,9 +263,9 @@ static int hinge_parse_report(struct platform_device *pdev,
  /* Function to initialize the processing for usage id */
- static int hid_dev_rot_probe(struct platform_device *pdev)
+ static int hid_hinge_probe(struct platform_device *pdev)
  {
 +	struct hid_sensor_hub_device *hsdev = dev_get_platdata(&pdev->dev);
- 	int ret;
- 	char *name;
+ 	struct hinge_state *st;
  	struct iio_dev *indio_dev;
- 	struct dev_rot_state *rot_state;
 -	struct hid_sensor_hub_device *hsdev = pdev->dev.platform_data;
+ 	int ret;
+ 	int i;
  
- 	indio_dev = devm_iio_device_alloc(&pdev->dev,
- 					  sizeof(struct dev_rot_state));
-@@ -329,7 +329,7 @@ static int hid_dev_rot_probe(struct platform_device *pdev)
+@@ -344,7 +344,7 @@ static int hid_hinge_probe(struct platform_device *pdev)
  /* Function to deinitialize the processing for usage id */
- static void hid_dev_rot_remove(struct platform_device *pdev)
+ static void hid_hinge_remove(struct platform_device *pdev)
  {
 -	struct hid_sensor_hub_device *hsdev = pdev->dev.platform_data;
 +	struct hid_sensor_hub_device *hsdev = dev_get_platdata(&pdev->dev);
  	struct iio_dev *indio_dev = platform_get_drvdata(pdev);
- 	struct dev_rot_state *rot_state = iio_priv(indio_dev);
+ 	struct hinge_state *st = iio_priv(indio_dev);
  
 -- 
 2.46.0
