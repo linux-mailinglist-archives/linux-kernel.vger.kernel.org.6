@@ -1,91 +1,119 @@
-Return-Path: <linux-kernel+bounces-311140-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311143-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30B13968551
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 12:53:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A99A968560
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 12:55:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E1BB52855A9
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 10:53:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9B7911C22D0F
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 10:55:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10F2D13B5B6;
-	Mon,  2 Sep 2024 10:53:07 +0000 (UTC)
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8F92183CA6;
+	Mon,  2 Sep 2024 10:55:35 +0000 (UTC)
+Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 461C713AD18
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 10:53:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E730A7347B;
+	Mon,  2 Sep 2024 10:55:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725274386; cv=none; b=kJaIe/b11JBfJp+IROUfdhRIIilzuQTrwLxvVO0STi8lbkw5/CQc/3tF6iz1fOLSXfGG65idUvk4rtkBNHhv2F+NhLNp/JFpMTMPYRprjeL7oxcaU16MaDl+wCSRQaYbQ8YjOJxffWtYdw/7cpuS4jLfPfJBsK8Nkuhq/SzA66g=
+	t=1725274535; cv=none; b=bbN/cHXsqBk4MBKDaEYfyDnQsPxuZZ7L8rfu0Dsdbv++4/A4aQGMBEi+UQXjfQk4B+3QmQa00E93JtEvFpdtfeJTwvxdlX0VZVbgkzhvPezSqxEZGkW1WdCWdZCDBgd/ko3/DCbVURvy3m60cPPJEG/kRP49Z0zMUkrLd1CJO70=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725274386; c=relaxed/simple;
-	bh=oWhd4Rf0zHHpbpst9n9x+vifq8Bnir5pNyheMKTt/fQ=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=rqFg2XvO7Q+ZwIHgS5aQnQM/H/DrogBEXOmy5Jn248gOZDaugVdcFp0mGTXp3kl8ZIQOqm0pSyhfTieY+KCY2DiPfLGi6AZX4g/3ykxWZPS/E900ekCpNwnStbiJS0IHJDj0IFCGruSaa8nlfIEe3h5G/ln3ULQQqx14rdRdX0Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-82a2cd95bf7so357536039f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2024 03:53:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725274384; x=1725879184;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=KRPnLHsiu9UwQQIF05EoEjumpQG8FgwHNRyv/yjcl8I=;
-        b=d7KOKLZuoNOA1K2e6D6UGs0qTdufc71iAOZG/0/hzfPUgvuhOE9UbR0g+iLtcRnXUw
-         uNH3faDy7NXXCorNKGsCAqcfmWUb/oBQr0b2+WsJ4MoIXHosDW1i9mgSek/pzv2g8ubp
-         E6zaLxNItbxmZhPQk1CriVLVzCo/wc3CIcyCVSmEa1mUcwFIt+BzZ2dscUmhDB4aT4Hr
-         UQSi5R1ynzUzZwIpXY4YIiibxfKZZvPwBrbUHgnOHU31gI0a57ALUXVzJXYLMUWVVsCl
-         OUU8TL2v2DZ4zKAEPAxDQPBIzWd1NJGcTLKJ1UmODJbF0Rrggie9mGN7o0Eu1xxJnhzT
-         RO2g==
-X-Forwarded-Encrypted: i=1; AJvYcCW+uNC/TTPjjKkfu2ZT9HVUz8q4ak6fmH2t2u/eQI9I0OMh6XvNqBVYN45Y2GY0OIInclAAgQUxqaGaaQ0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzUuDC3bCv7hONyCwwigguFjU+E/D5Jt7gacZ7wCb/I4BUafrJD
-	CCNHiaPh9JG/IRVUqkOGdqjSdjnHywH3Lv4CRjvkrbtO449F0MyoXqaVCoDy3v4hGtOkLa2B1Do
-	mlOiS/jjzNhlA/0NO2cP5JlYK88VLUThDHyokBciBR3q0bnJSUpF1AD0=
-X-Google-Smtp-Source: AGHT+IHZrX5x+ddAmSe22mb55IktNZwUNEVFFkWhX/k6jYUcdMLP4AIIqXZgJiGhfVkY/uP4CjKDxwJZ4R27HzDpYzvkC1APeXZu
+	s=arc-20240116; t=1725274535; c=relaxed/simple;
+	bh=/ZnDWgOWryVILcL4vVPJWm3z55PNypoxLjeVJcXAz5Y=;
+	h=Subject:To:References:CC:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=qo77AkXr3gQQFpoHq0HpoAs54egzlJovKrd+ARLC4gKQWwSqD2eCTRu0McFkXcuascQLpiETmnBs+FKHINK0ECvNDkVo1lZOFAOnq1ocpCMf1s8DMjAxC2y95Sgd8TpM7mfEMMlY2YtgM3DkxrRQAL7AEVvH5OMmurE32sEqzh4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.252])
+	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4Wy5Bd2g8rz69Qt;
+	Mon,  2 Sep 2024 18:50:33 +0800 (CST)
+Received: from kwepemh100016.china.huawei.com (unknown [7.202.181.102])
+	by mail.maildlp.com (Postfix) with ESMTPS id A2AB51800A7;
+	Mon,  2 Sep 2024 18:55:28 +0800 (CST)
+Received: from [10.174.178.75] (10.174.178.75) by
+ kwepemh100016.china.huawei.com (7.202.181.102) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Mon, 2 Sep 2024 18:55:25 +0800
+Subject: Re: [PATCH -next 00/15] sysctl: move sysctls from vm_table into its
+ own files
+To: Joel Granados <j.granados@samsung.com>
+References: <CGME20240826120559eucas1p1a1517b9f4dbeeae893fd2fa770b47232@eucas1p1.samsung.com>
+ <20240826120449.1666461-1-yukaixiong@huawei.com>
+ <20240902071752.5ieq3khrnpjqq6qv@joelS2.panther.com>
+CC: <akpm@linux-foundation.org>, <mcgrof@kernel.org>, <ysato@users.osdn.me>,
+	<dalias@libc.org>, <glaubitz@physik.fu-berlin.de>, <luto@kernel.org>,
+	<tglx@linutronix.de>, <bp@alien8.de>, <dave.hansen@linux.intel.com>,
+	<hpa@zytor.com>, <viro@zeniv.linux.org.uk>, <brauner@kernel.org>,
+	<jack@suse.cz>, <kees@kernel.org>, <willy@infradead.org>,
+	<Liam.Howlett@oracle.com>, <vbabka@suse.cz>, <lorenzo.stoakes@oracle.com>,
+	<trondmy@kernel.org>, <anna@kernel.org>, <chuck.lever@oracle.com>,
+	<jlayton@kernel.org>, <neilb@suse.de>, <okorniev@redhat.com>,
+	<Dai.Ngo@oracle.com>, <tom@talpey.com>, <davem@davemloft.net>,
+	<edumazet@google.com>, <kuba@kernel.org>, <pabeni@redhat.com>,
+	<paul@paul-moore.com>, <jmorris@namei.org>, <linux-sh@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+	<linux-mm@kvack.org>, <linux-nfs@vger.kernel.org>, <netdev@vger.kernel.org>,
+	<linux-security-module@vger.kernel.org>, <wangkefeng.wang@huawei.com>
+From: yukaixiong <yukaixiong@huawei.com>
+Message-ID: <003ce112-d895-5f1d-d034-b61b7f68cebd@huawei.com>
+Date: Mon, 2 Sep 2024 18:55:24 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.7.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1489:b0:397:ca8e:d377 with SMTP id
- e9e14a558f8ab-39f40e1f884mr10470655ab.0.1725274384455; Mon, 02 Sep 2024
- 03:53:04 -0700 (PDT)
-Date: Mon, 02 Sep 2024 03:53:04 -0700
-In-Reply-To: <0000000000004169f9061ceadd8a@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000d369bd062120bed7@google.com>
-Subject: Re: [syzbot] [bcachefs?] kernel BUG in bch2_journal_noflush_seq
-From: syzbot <syzbot+85700120f75fc10d4e18@syzkaller.appspotmail.com>
-To: bfoster@redhat.com, kent.overstreet@linux.dev, 
-	linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20240902071752.5ieq3khrnpjqq6qv@joelS2.panther.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggpeml500014.china.huawei.com (7.185.36.63) To
+ kwepemh100016.china.huawei.com (7.202.181.102)
 
-syzbot suspects this issue was fixed by commit:
 
-commit 2744e5c9eb1a1090b5f61c955e934c70bfe6b04c
-Author: Kent Overstreet <kent.overstreet@linux.dev>
-Date:   Wed Dec 27 23:31:46 2023 +0000
 
-    bcachefs: KEY_TYPE_accounting
+On 2024/9/2 15:17, Joel Granados wrote:
+> On Mon, Aug 26, 2024 at 08:04:34PM +0800, Kaixiong Yu wrote:
+>> This patch series moves sysctls of vm_table in kernel/sysctl.c to
+>> places where they actually belong, and do some related code clean-ups.
+>> After this patch series, all sysctls in vm_table have been moved into its
+>> own files, meanwhile, delete vm_table.
+>>
+>> All the modifications of this patch series base on
+>> linux-next(tags/next-20240823). To test this patch series, the code was
+>> compiled with both the CONFIG_SYSCTL enabled and disabled on arm64 and
+>> x86_64 architectures. After this patch series is applied, all files
+>> under /proc/sys/vm can be read or written normally.
+>>
+>> Kaixiong Yu (15):
+>>    mm: vmstat: move sysctls to its own files
+>>    mm: filemap: move sysctl to its own file
+>>    mm: swap: move sysctl to its own file
+>>    mm: vmscan: move vmscan sysctls to its own file
+>>    mm: util: move sysctls into it own files
+>>    mm: mmap: move sysctl into its own file
+>>    security: min_addr: move sysctl into its own file
+>>    mm: nommu: move sysctl to its own file
+>>    fs: fs-writeback: move sysctl to its own file
+>>    fs: drop_caches: move sysctl to its own file
+>>    sunrpc: use vfs_pressure_ratio() helper
+>>    fs: dcache: move the sysctl into its own file
+>>    x86: vdso: move the sysctl into its own file
+>>    sh: vdso: move the sysctl into its own file
+>>    sysctl: remove unneeded include
+>>
+> Thx for this.
+>
+> I passed this through 0-day testing and it return some errors. Please
+> address those build errors/regrssions before you send V2.
+>
+> Best
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=10761263980000
-start commit:   1dd28064d416 Merge tag 'integrity-v6.10-fix' of ssh://ra.k..
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=1ace69f521989b1f
-dashboard link: https://syzkaller.appspot.com/bug?extid=85700120f75fc10d4e18
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=120f9c9e980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=158b8d69980000
+ok，I will fix those  errors/warnings in v2
 
-If the result looks correct, please mark the issue as fixed by replying with:
-
-#syz fix: bcachefs: KEY_TYPE_accounting
-
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
