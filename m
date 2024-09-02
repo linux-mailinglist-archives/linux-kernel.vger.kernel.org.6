@@ -1,279 +1,310 @@
-Return-Path: <linux-kernel+bounces-310922-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310921-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F6B79682E3
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 11:15:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1008B9682E1
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 11:15:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 270CF280DB2
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 09:15:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BDFEC28394F
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 09:15:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42602181B82;
-	Mon,  2 Sep 2024 09:15:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 371A0185B48;
+	Mon,  2 Sep 2024 09:14:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="iLxwCPiN";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="P5CnceUR"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kMp7PaLx"
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3ECD179C0;
-	Mon,  2 Sep 2024 09:15:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725268532; cv=fail; b=pXBTNpmJKgPDA1jFo1SSx4LdbOjdI1kYYyBepC7AW8lWJxBduOir4CrSNgm1hgsZzRClEh35iI/fpUNu/K1sez6I74aZubq0X1IpFF3IFbI0Aoefm6Q7W+dbPWLfoA5+o0AR7OY5ZeNu7q45ASc0mlfTpmo1M9mq5hvARZyaWVQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725268532; c=relaxed/simple;
-	bh=Zuh1xOzDQj7mjwSs6zc85QLKBgQ07QGy4jcF0bOtxJw=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=H0SbRyn1CGfnO/nq0qgA0IpwCk+RA9CMExhPELE0YK+040pxBm6lvNUiHzbxNmFKDaAUFUCjJq2BtTINSkKX87DmRqhIB2tBSwdK1FV6NudWexX1y9fsn8af7TM+Ap2ZXlIIfknaDOMOus07/v6YmjoEiNh0NBife7PkemqnHkg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=iLxwCPiN; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=P5CnceUR; arc=fail smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4828I9OW020863;
-	Mon, 2 Sep 2024 09:15:00 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
-	message-id:date:subject:to:cc:references:from:in-reply-to
-	:content-type:content-transfer-encoding:mime-version; s=
-	corp-2023-11-20; bh=iYcwojuIorsOHrrcmKhbFY3YMryORG5pRA2ebOaFhSw=; b=
-	iLxwCPiNX2BbYbaJPb6QaOUo7ueKb0tKNzoQiR3i8ivqX3Q8r1AXm/nQr9wd0YRc
-	16KE45sSqeVHql40WpvheSj94pXtlgC3CDr3zT+8JcrX+W7eNqNnQUOzTnbse7sB
-	pZMXd7uHRmeb267U/lsJVSs/6Shs1dW9xpo18/M+ISkyDZ7Pm0poXtzhvNPtONKk
-	N4/zuwhOAR7J/fshJPmJv2WuQ5SBse2lRYMIlQ0zxS3Jt6RQY0butvBBNKNpu+Zi
-	XmlLGXOsBI3y1teHqlJAXXn+Hp8jj+l/B47ucVTFCjYjOvWuo8KDLTbqkp7Udutg
-	fiz2R/rKPiJ281ZpSMKtEA==
-Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 41d9qu053b-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 02 Sep 2024 09:15:00 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 4827Ojro040116;
-	Mon, 2 Sep 2024 09:14:59 GMT
-Received: from nam11-co1-obe.outbound.protection.outlook.com (mail-co1nam11lp2169.outbound.protection.outlook.com [104.47.56.169])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 41bsm7ftv3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 02 Sep 2024 09:14:59 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=sZRCKGP481dbyl7WreGHEspX/v/tW5wWVVtmXRhRzASDkNLHWvc+UnM25qFL3FFuQaLzW3T6uSzTnTUg1w2M024TVdzjv7xr0dRE+LZmCHH9ZxEmbOALdSohYqPyuWhi/te3+qT0fI51W+5YSIWhkhocN2FsuwDL9FZwQVSVWvZi9wc5zcOxou7WRe1pgJvsNPxWEL1iSpJInWSm6mLIqtWxc+Mp0dZTf7R56XrzdFOBF9oAy4S6QEA3YborI/66Np2UQBP41HoSU0K/wHXnPGKHpT/9cw0theKgVjHw9hs0oiKVv9Toy4HkvPRDR+FjEFZw3joxMsF0sAWdsQ5g1w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=iYcwojuIorsOHrrcmKhbFY3YMryORG5pRA2ebOaFhSw=;
- b=vWphTfUzfWm3sQE45dIzglzc0czOZggTF+86GiPEgM8IUvKJKU7Rt82EJNmvaNiUShRQR2Pu2uu0R+7iqGz98WTOPeaAUXBJfplpKioxuMXF8vRdMs++ps5pckCQ5JV5X++ysWsTemmaeBzEHHnqDk/61sly80Edpx2CEdhSg9ZUp56oUFeY3WQ+1A0+IEWHUyh1zyioqBuCuaRNfOWPQ+NqfTOLbVE29pNvuKmm4GPOkpNkrCwkyqQyTGP7tn2+K9iW2nJaBGaOJtmjVWKQXkadJw9WLPFUzGwggrPn0bv4P33xsWqn7khGy4oG54ReCFL0PWC2FKin5FhmjcN0RA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F911187347;
+	Mon,  2 Sep 2024 09:14:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725268494; cv=none; b=TfgTCQWeuSmJxLoNJSy8MOIV6ihIEgIzRoEKoOvd2cDpQ6XfCEbaZyiAQT4B1+zErNgP8ZQJKwiaNbqQyYkOwrXvoBmTLVX3+qAykAMhppvRLQHomOjE0LxxFO6yV7c7K2EuWFWq53omdy1D2ji92RNXaxc9mWqbGAZQO14Iu5A=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725268494; c=relaxed/simple;
+	bh=BiOfTQ/ScWjx2UeroMLEiJGQTe7d+mkNi8Eh/fXNXLE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qFtVzgcvisRzmvoAKNr1ZAPHaM+eu1ZTp5aekW/SFoLlkdm5hzodkrNoUt8CCIlSkKK/678dxAu3etaF4P/HkQA4vZ/NChtRdlqUKG23Us02HQ95dKXOSMF54Oep4g5TbkUr6L+Bu7DdQZHxGPxSWDR/wSxN/1SXNXsXh1tVfOI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kMp7PaLx; arc=none smtp.client-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-374c962e5adso430456f8f.1;
+        Mon, 02 Sep 2024 02:14:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=iYcwojuIorsOHrrcmKhbFY3YMryORG5pRA2ebOaFhSw=;
- b=P5CnceUR6SdQL2eJUAQuSZcH6yQII5HvHOwAkcauxgABGZoTMmgHTWEl0GDsnPPKn4EKhcmFg60eB2PCWT1lK8wrxe+yeqfth0LUg8lT1FCYAF2e17t82asI1m5glfR2lrKeC04tAOqx4r8F4USbEoWNw+jliVPQnSVAVAOZomA=
-Received: from PH8PR10MB6290.namprd10.prod.outlook.com (2603:10b6:510:1c1::7)
- by SJ0PR10MB4413.namprd10.prod.outlook.com (2603:10b6:a03:2d9::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.23; Mon, 2 Sep
- 2024 09:14:57 +0000
-Received: from PH8PR10MB6290.namprd10.prod.outlook.com
- ([fe80::309b:26bb:11d5:cc76]) by PH8PR10MB6290.namprd10.prod.outlook.com
- ([fe80::309b:26bb:11d5:cc76%6]) with mapi id 15.20.7918.024; Mon, 2 Sep 2024
- 09:14:57 +0000
-Message-ID: <98f6ad0c-65d0-4a39-8a11-a55b3dd83b7b@oracle.com>
-Date: Mon, 2 Sep 2024 14:44:44 +0530
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4.19 00/98] 4.19.321-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
-        torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
-        lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
-        f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
-        rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com,
-        broonie@kernel.org, Vegard Nossum <vegard.nossum@oracle.com>
-References: <20240901160803.673617007@linuxfoundation.org>
-Content-Language: en-US
-From: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
-In-Reply-To: <20240901160803.673617007@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SG2PR02CA0020.apcprd02.prod.outlook.com
- (2603:1096:3:17::32) To PH8PR10MB6290.namprd10.prod.outlook.com
- (2603:10b6:510:1c1::7)
+        d=gmail.com; s=20230601; t=1725268491; x=1725873291; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Wvfx7uXnphEAcqrxryp1hC4hXuppYE7B9WLMIBchYMk=;
+        b=kMp7PaLxmtfJsu4Bfbgl8Fjj5iKz4+9NcNfz9N4X7PywNSR9Ijx3Fj24NWKpuqivx7
+         2tZ82Mu1i98luYLGi1kD++K0XZ8mDN65x6mgbOzqqmDlRU56tTHdp3qHM4ArlVCy065E
+         BnGDdbBX/uxbTnuOVznKJdV8xoZ/P00v85yyO1oKI+IwJUpkYDVUMolduGdAn/XLSIlU
+         qiXdr1PWSPbPcXA21Aqbiq1fCjey3MC0JYorbKxabH/Apjn79W53zxz0uxh1kRNZ8f1Q
+         PvKXkzToRF6RbFv798bRaTC/nICybmIQpm57gCvFyN8YHZVjU/OER7ndEyXmB7auUSZB
+         njOg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725268491; x=1725873291;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Wvfx7uXnphEAcqrxryp1hC4hXuppYE7B9WLMIBchYMk=;
+        b=gXh2DyZmEWVMABZiC/xGY6vDocTC1zRsWsDkmzHQjqi+H6JiU2wwCFS1JTHYFPW67Q
+         G8dp4YaI48bHwbrNZp+KD678EA0pPYsUUUv1hoaHuwcOMnCNTVFBsdYUgWUSW31FCwF3
+         Xb6gujk/GFZq2DXg2wdLS7tFmBbEm8KTUaX4LvFgttE9K8Nu48ywZDk9Xd7bqKlCbKEm
+         K/6IqQRxKOksp087zPVI0cLtyfb8mMzPvmsmM/NGWyk6ol3SH1nMnIjEBlDVm+Q+xWRk
+         Lx4ATwrApXeuxc3Tx131UWKdMvK//Apv36kvZS95KWWPtWJy/nYXeLfYrmSbmvqWwnZI
+         oAvw==
+X-Forwarded-Encrypted: i=1; AJvYcCV1NKPUPLJBfW2VeE/B8NvPmNHKA1Tyr/Ca5j3hSDpL5hVTKtW4oaQJ0HLQQ+aSz6L050EtsTJXj91tgQ==@vger.kernel.org, AJvYcCWF2Rt16TbIZnNT/9M45a9RXq0zXtCB+s5X6Q3r9a7NiDBgs2+hsZPbVwu4/rzjPtAe6Uow9rv62boQdi/D@vger.kernel.org
+X-Gm-Message-State: AOJu0YyDvyaVxuHhNIhDVS+bj/iLGZeHfNIPh4Nk2rH65eNHpf/J1akI
+	zb4XesQIa+qr9/wwzF1Xjw3PXsleID1MqaMO2uHNjikX6Qcsb0If
+X-Google-Smtp-Source: AGHT+IFYe03u+im4J+AJUgJqbaank06o4XJpkOwEeIgY9Cech6X8TxAQCPPRv8y3D1pC3N6sWNW+VA==
+X-Received: by 2002:a5d:6190:0:b0:374:c7cd:8818 with SMTP id ffacd0b85a97d-374c7cd8a12mr2011202f8f.22.1725268490298;
+        Mon, 02 Sep 2024 02:14:50 -0700 (PDT)
+Received: from [192.168.50.7] (net-109-116-17-225.cust.vodafonedsl.it. [109.116.17.225])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42bb6e33b41sm130542065e9.40.2024.09.02.02.14.49
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 02 Sep 2024 02:14:49 -0700 (PDT)
+Message-ID: <f5e30162-8642-419f-877c-c7c9ecc27051@gmail.com>
+Date: Mon, 2 Sep 2024 11:14:48 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH8PR10MB6290:EE_|SJ0PR10MB4413:EE_
-X-MS-Office365-Filtering-Correlation-Id: a62a1d49-ba8a-421f-71a5-08dccb2fb695
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?UUF4UnpCdWZ5RUVMTUFKZm1IYTZXL1EvNnFZY1hBbG9uR2loQTlINWN0UHlW?=
- =?utf-8?B?MkZKeVFVMVgrUzNLNnpMbnNoL29OZU5MVzdkNjRYeG41WmY5Y2R3T1czTGVk?=
- =?utf-8?B?bk5YSndXclBDTitoN1dFVmI3cktXN0l5SDVVckd6Y3dxOTd3M29WaGw3Rmlw?=
- =?utf-8?B?U2Zjc3l3SDdxekFhTEticHVnWG1mZzFGaGRBTmkwUXpRd244cExJa3JkTGFz?=
- =?utf-8?B?eThXRkd0bzJMMzNLb2s2WlNSNXpmSjF1MWNNNlJwWWdiK21sUFZEMFYyL0RJ?=
- =?utf-8?B?QjZVcjhLcUUrbjgvK3pOY2NBck10MkJMNjN0QzBnQWg1RytQQ3N2S1hqL2Zh?=
- =?utf-8?B?VXRMQytrK2tpN2FKclo3SnVua2NHR3NMZ3F5VUMzempWMFp4SmJsaHFkRWFE?=
- =?utf-8?B?L1pZZXYxTU53bCsxeS8zMWZZOHhuYzhITnBUQnZtN0JCZGErNXkyUEsvS25y?=
- =?utf-8?B?Ly85Y04wR3htVXBJNU9tRm1SR0IwMDlUMEpaejdzMjh5VGZXazh3eTIwLy9E?=
- =?utf-8?B?ZlV1ZHlBeXZRTkZtbVJMTlJZd1dTMVN5bHFWUWIvM0pES3hjVElEUk51aVNa?=
- =?utf-8?B?c3lQMjI2MkMyeTZKc2lxNjBLK2VWdi91T09qM09ZMjhheUpiTGNNaHZPdDhu?=
- =?utf-8?B?S2xmTDVvZ1VvNHdSa2QyMTBhZXQ5c2g4czZiYkRrd0FDZ0NiYmNQSE1rNVJs?=
- =?utf-8?B?Q2NIMFRxYUxLLzhFS0prMnMwVnJyMjhZYTVwNlErSHAyVHI5TThEOVYzbXJJ?=
- =?utf-8?B?UE8yMlB2SElZSm5SNGVocHJxQitSQm1rVlpETkUxeEVtTWpiSnhEdjBWMnlp?=
- =?utf-8?B?dlh1M3kwSS9TSlAwcEZoWXk1eFNJRTZVYUplb1B4ZXNwZTROMm9DdFJGcXA1?=
- =?utf-8?B?L0pQRDFrM1M3WGUydmVJZmZsYXYxMzhEdEl0dy9jTUNtRFRjOXFKVzh4aTNr?=
- =?utf-8?B?S1luRytKQUQ0Z0t6V05ZOG9sa0hQaitFaWowem1paFdHRllNNkw1ZTdDam92?=
- =?utf-8?B?bExFdW5ZSGd5eXBHNEx4bEZDREZhU0F6UWlrZzkvWUlwbjNoU3MrR2dZbkRY?=
- =?utf-8?B?WEpPOTNReFFWQTYyMUZ0V1Yra0ZsVTMvT2dCOFZPR3BYL2Z2TFlyeGVCcDds?=
- =?utf-8?B?ZEJaMDZpRlkyaERqNVNmVGV0b3M0cDhnTlFwSHd1NnNiZDc2ak9pZGlCUDJu?=
- =?utf-8?B?VVdUbnkvUUx1Smp5ZjB6ZmtQRUl3ZVJYclVQT2JNSS9zL1c4SVY1akhjY1dE?=
- =?utf-8?B?N1BpQ1VYaFlPMWZTSGI4NUdhWkFXbDNvMTJBbjB4VGZkWTJjcDMxRHE4NWU0?=
- =?utf-8?B?cmJYTjZERVpieHp0bCt1ZjBTbXdwcXhLZmdsdTF0bmpyMzM4U09sMG5UZ0ww?=
- =?utf-8?B?VDFqKzBoN295dWhVc3dYVU9FbU1PeHRPUmc1NWw1SzR5VUhqRjJxejVRNkxP?=
- =?utf-8?B?cENoYjJJS1Urc1Z1ckZ6dnk4Mzh1TWwxbnZ5V1hFdkN4eTJnUldSZjVHWjg2?=
- =?utf-8?B?TFFDY2d1NExoVFltNHlFV3R2a3pHZDM4WEpjOGJDT0RGUWZCSWV4ejNFS2JV?=
- =?utf-8?B?UjdXSjg3Q2lUS29uMjBxOEJVcjlGUVlCZHVsOUFDQVl1dUMyZjBtMmtxSkVq?=
- =?utf-8?B?b0l4aWY3eHVCdEdndldNcWJUSFQzdEthdFZjV252MnFlWHZyRVM0Y3NYdlRx?=
- =?utf-8?B?dThpRng0bHUyei8vNFdXSmdxcjRqT2pPbGkyMkJRTzZPZUFYYzhNajBwc3FC?=
- =?utf-8?B?WVNUS1NzZytmYmYvdytxRTdBTGVBQ2kzZjJ1b1ZTa1hqOUF5YkFYV3NGdHpk?=
- =?utf-8?B?VnBJZ0pMRSt4TUdhVDdzQT09?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH8PR10MB6290.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?STY3Q0NjKzBmc2Rsd243UUZiL1c1a1lCb0tpOGtyVGN0bHYzV29LTisyVnls?=
- =?utf-8?B?ZlNhZWQvS2hhTnNWWU9zR0hJdTV6ZU1kcER5MXZhNG83QTgxZGpvSXZPdWJU?=
- =?utf-8?B?aVlMdU4vZS9LMXNVblNHYjhOOHlBRkhzOWJtU3AreVpMWkh4ZGRsZlNSZ0l2?=
- =?utf-8?B?WitURjUzck1OMXIyVDZ1Y01LcTFjNldOUGx2bW5pSlErSG83Z1FMN2dQTkJD?=
- =?utf-8?B?aTFNNUIyMXdtcHBtQ3paZzk2enNKUzNGaThMc3VYMGZKOHY3K3FQV2hyZGRj?=
- =?utf-8?B?dFhZaUtqNUJXTGsrenFuN2xScjJza2FYMUVuUzdkNVNpRWxpbHh6YVFvaERP?=
- =?utf-8?B?ZVJKNnR3SGJLbG1XdU5jQk1NS2JSRVc3V0pnalJCdFVBM2ZRdXdjdFczZG9j?=
- =?utf-8?B?VnZaOGRaRXFKWHZWaVlHOVdQWkFmTVZrbVB2aVd5OUh2SUp5MVhlRTl2MExI?=
- =?utf-8?B?KzJLbzFjQTNtUS9EczZDZXZ3K2QrR0FWRmQwQlVFV0VhVDh6QWFFUGg5ZWs5?=
- =?utf-8?B?b3JlMHhQeXN0ZlEzNHhUbkVEVS93aFIyMHNUSXBITHgwcFFDZnpzQXo3Ymlv?=
- =?utf-8?B?WXFpbXNDYm04b1NzZ0VYZzl4RzVpNnE5VXBSNkUxemE3MjdWakJFdDRuYllz?=
- =?utf-8?B?U2JDSERLZk55L1pwWmREa0xPbm5qSWF2dExBV0dMbW15R3FBcUJhbkVJdDdh?=
- =?utf-8?B?WktwUVdENDBxTWhKdzVOUkdSVEczSDQvQ3FCQTNQME9xQld1Y1VIUGw3Mjl6?=
- =?utf-8?B?Z2dKa0c4R1ZXT0UwT2F1WDJWbUI0SHdrdlBGcmRJVGZvQU5JdVVwb1JBUXFS?=
- =?utf-8?B?eW5NQTFxM3F2VDUrektDSVBZLzRieTMvVHZmRFdjKzc5dmIvb1FQRFcrc2V4?=
- =?utf-8?B?OW9IV1IzSW1LZmRWTUJoRXZ4dzgwNGJSUnc1b05Kc1g1UTdxL210YUsvdHZs?=
- =?utf-8?B?cEt3WjNKazk2Mzh2QnlTNnF3M1I3dnRVMm8rbWJjYndzUjZpUm9qRGY3Tkxo?=
- =?utf-8?B?Yms0SThzaHI4WHU1YVhGSFZTQk5GOEVlWGVZa01YK1JGVXJiMkNML3NoaEdP?=
- =?utf-8?B?NnFwSllVTVp4WFc5RFJHWUN6T0lmQXhIeDh4STFMNktRUHlNNy81TnBVc1ZU?=
- =?utf-8?B?L3M4WVRteEx4OTFuS0NxY1Y2Z0tPMlcvbytaRWpUckxJdHA1V2NVNEh0UEVB?=
- =?utf-8?B?N3ZpTmtnWlhPNzVYZE8zRE4xcS9naHo0a2x4MlcyUUVoZmVLSTB0Q1FrU1h2?=
- =?utf-8?B?SXdwYndVVCtmRkQyU2VPOGVyU3ZUNEgxSVJ5d0c0YW9nNEZvbUxFaHRsdU1C?=
- =?utf-8?B?VXJlWVBOQW5tQ2lRdTNPaWNUMVVmREovSUsrNUQzanVUcDE4S0Nic1Nkbkpl?=
- =?utf-8?B?MEk4eFdKTXoyOGk2Sk1ydTR2TThrTWswRTFyazJhdEdnM21zMDBWaTJpSmRR?=
- =?utf-8?B?Nlo3MXNXZlVKTUU1T05wcjdRNXQxVEJUVVNLVmlRUnpBVU5OM01Sa3h6bEdJ?=
- =?utf-8?B?d0ZTakdOYS9MSXBvZ1RDYnFRcTZKV0dET2RoSGpIV3lydDFHTWdhT0dyQzhx?=
- =?utf-8?B?SDdSSld0SDAxVDhKS1JUeklIU0J0eUU1UnpwRVE4QTZNc21wWXV0MERXNWN6?=
- =?utf-8?B?aGVqbVlxc3NSK3RFSnJqOWhsVVZzejl5TWx1ZklzSHFFZHp4ZU9VallaMjhQ?=
- =?utf-8?B?cS9veUNtZW9MdlRnZUhQOEJDa3RYVjBLWGJjSW1kRzVQSHVWZGRKRlgvWVpJ?=
- =?utf-8?B?L2YzU05YK2NMbVU4WDNtZElpL1d0b2hWMFJZVXZIYVZycHBtTUNqK1BpY3dX?=
- =?utf-8?B?ZXN4ZEticllDY2o2Z0R2VlFNZnJtL2E1bkdkUjJzVWZ5TmRHdmt0UnUrMk9h?=
- =?utf-8?B?ckZGRFhZT3ArcHU0aGd5Qk5FQnpXMHlVZGpCSHlRMWR6b1NlbXkyR1ZhTk1m?=
- =?utf-8?B?U2Q1RlRnejBVbDZ3eHJsSTFpMCt1UndUbUtxSjZuSzBSaUxpUE9ySzVCMXl3?=
- =?utf-8?B?dG44VEU1WXNIc2xzV2Q0VVZEMFZUTTlCRWZRbWs0bHF0NnhHckxKUC9Rdm16?=
- =?utf-8?B?akRhUmppOFU0WDZHUDBUZlhRSk40V3N4S1VGV05keXFhQUl0VEpVVTIrVVJF?=
- =?utf-8?B?aHVMSnZ4b1I1ZW5mckRyMnJTUTJIOW8wS1p2NXhDSktVU2ZIcXZPaitwRllt?=
- =?utf-8?Q?wNaM72lbO2rYXa6cEL4g+3I=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	Ha01WDH2h0kthmHV/Q9VoN7AUbt853XvrFnBkLQdBS4O+IVzaWOpU8lQlBMfPs81czEFmAZMFm8bZTgfz87BEhR7RCyiTR1RtXvWqrjkwZZMjde64nsFOAzCpRTUFH8WDaxYYpMcFDBcXhCCvdWw70dlZCfv7qWIlUL55/nAHUYq7wHOc0utpaCDz/gaHFh/RRW0/TsZcRrgp5pjxU++zLTtJ9cdVJ/lso2wewp7OKiFgTR6ulvAMFNhsslk98TXOdND6Il/o5I9eiUoaZdJfwEDMdSKt7rwZfmosur9GPxCxoa2AKZvtEg9e18gx/dS6IYBIpmMf0hFP7uSgbXw90+MtZaogi03IS/xMfjIiAxasTStyMZwFrunxKl6citCLqthDoriKDItZARy9RkmMyV4P6RiWtopI50ZPv7fqRZwPpAcPJ9mA2L0uNFWLtLUaH//H9f32Zq85ffLAACFmaQCWh8YrEQHgY2vHv6IradUGWYikaK3rwWwgKL2NrxwyCpduibtgyIzCrsFVRurLHt859SDdhLjrvmCGGq2BIYQr404v4PFSFC+PxO/m7LQqr4PYUy5P8/QLe00ptZlwX5xhGN7bWCKOuu/ISvGm5E=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a62a1d49-ba8a-421f-71a5-08dccb2fb695
-X-MS-Exchange-CrossTenant-AuthSource: PH8PR10MB6290.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Sep 2024 09:14:57.0050
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 6fqRCQLncIKaUiAxRzER2qp/NlcTrfzUaDO7cS56IAcDFGAq2HiJ1oLrLVpuEyQkisSG/YIX77CIP7NMgJORszT0kPMs2AdzP9P+Mvaw3FX42MedAWdnzxiPXjSLjp59
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR10MB4413
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-09-02_02,2024-08-30_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 malwarescore=0
- mlxlogscore=999 suspectscore=0 bulkscore=0 spamscore=0 adultscore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2407110000 definitions=main-2409020075
-X-Proofpoint-GUID: MiC2XkPOf0QO1IC9kG3zTtXTlsMa8EGt
-X-Proofpoint-ORIG-GUID: MiC2XkPOf0QO1IC9kG3zTtXTlsMa8EGt
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] btrfs: Don't block system suspend during fstrim
+To: Qu Wenruo <quwenruo.btrfs@gmx.com>
+Cc: Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
+ David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240822164908.4957-1-luca.stefani.ge1@gmail.com>
+ <400d2855-59c2-47d2-9224-f76f219ae993@gmail.com>
+ <745754f6-0728-4682-95a0-39807675bb18@gmx.com>
+Content-Language: en-US
+From: Luca Stefani <luca.stefani.ge1@gmail.com>
+In-Reply-To: <745754f6-0728-4682-95a0-39807675bb18@gmx.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hi Greg,
+Re-sending, was discarded because of HTML blocks, sorry!
 
-On 01/09/24 21:45, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.19.321 release.
-> There are 98 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On 02/09/24 10:49, Qu Wenruo wrote:
 > 
-> Responses should be made by Tue, 03 Sep 2024 16:07:34 +0000.
-> Anything received after that time might be too late.
+> 
+> 在 2024/9/2 18:02, Luca Stefani 写道:
+>> Any update on this? It's not critical but I'd like to know if it's in
+>> some part proper.
+>> Thanks, Luca.
+> 
+> Sorry I didn't see your patch in the list, thus sent a different fix for
+> it later:
+> 
+> https://lore.kernel.org/linux-btrfs/20240830185113.GW25962@twin.jikos.cz/T/#t
+> 
+No worries, glad it got picked up!
+>>> Sometimes the system isn't able to suspend because
+>>> the task responsible for trimming the device isn't
+>>> able to finish in time.
+>>>
+>>> Since discard isn't a critical call it can be interrupted
+>>> at any time, we can simply report the amount of discarded
+>>> bytes in such cases and stop the trim.
+>>>
+>>> Closes: https://bugzilla.kernel.org/show_bug.cgi?id=219180
+>>> Signed-off-by: Luca Stefani <luca.stefani.ge1@gmail.com>
+>>> ---
+>>> I have no idea if that's correct, just something I implemented
+>>> looking at the same solution made in ext4 by 5229a658f645.
+>>>
+>>> The patch in itself seems to solve the issue.
+>>>
+>>> repro is as follows:
+>>> sudo /sbin/fstrim --listed-in /etc/fstab:/proc/self/mountinfo
+>>> --verbose --quiet-unsupported &
+>>> sudo ./sleepgraph.py -m mem -rtcwake 5
+>>>
+>>> [836563.289069] PM: suspend exit
+>>> [836563.909298] PM: suspend entry (s2idle)
+>>> [836563.935447] Filesystems sync: 0.026 seconds
+>>> [836563.951391] Freezing user space processes
+>>> [836583.958957] Freezing user space processes failed after 20.007
+>>> seconds (1 tasks refusing to freeze, wq_busy=0):
+>>> [836583.959582] task:fstrim          state:D stack:0     pid:241865
+>>> tgid:241865 ppid:241864 flags:0x00004006
+>>> [836583.959592] Call Trace:
+>>> [836583.959595]  <TASK>
+>>> [836583.959600]  __schedule+0x400/0x1720
+>>> [836583.959612]  ? mod_delayed_work_on+0xa4/0xb0
+>>> [836583.959622]  ? srso_alias_return_thunk+0x5/0xfbef5
+>>> [836583.959628]  ? srso_alias_return_thunk+0x5/0xfbef5
+>>> [836583.959631]  ? blk_mq_flush_plug_list.part.0+0x1e3/0x610
+>>> [836583.959640]  schedule+0x27/0xf0
+>>> [836583.959644]  schedule_timeout+0x12f/0x160
+>>> [836583.959652]  io_schedule_timeout+0x51/0x70
+>>> [836583.959657]  wait_for_completion_io+0x8a/0x160
+>>> [836583.959663]  submit_bio_wait+0x60/0x90
+>>> [836583.959671]  blkdev_issue_discard+0x91/0x100
+>>> [836583.959680]  btrfs_issue_discard+0xc4/0x140
+>>> [836583.959689]  btrfs_discard_extent+0x241/0x2a0
+>>> [836583.959695]  ? srso_alias_return_thunk+0x5/0xfbef5
+>>> [836583.959702]  do_trimming+0xd2/0x240
+>>> [836583.959712]  trim_bitmaps+0x350/0x4c0
+>>> [836583.959723]  btrfs_trim_block_group+0xb8/0x110
+>>> [836583.959729]  btrfs_trim_fs+0x118/0x440
+>>> [836583.959734]  ? srso_alias_return_thunk+0x5/0xfbef5
+>>> [836583.959738]  ? security_capable+0x41/0x70
+>>> [836583.959746]  btrfs_ioctl_fitrim+0x113/0x180
+>>> [836583.959752]  btrfs_ioctl+0xdaf/0x2670
+>>> [836583.959759]  ? srso_alias_return_thunk+0x5/0xfbef5
+>>> [836583.959763]  ? ioctl_has_perm.constprop.0.isra.0+0xd8/0x130
+>>> [836583.959774]  __x64_sys_ioctl+0x94/0xd0
+>>> [836583.959782]  do_syscall_64+0x82/0x160
+>>> [836583.959790]  ? srso_alias_return_thunk+0x5/0xfbef5
+>>> [836583.959793]  ? syscall_exit_to_user_mode+0x72/0x220
+>>> [836583.959799]  ? srso_alias_return_thunk+0x5/0xfbef5
+>>> [836583.959802]  ? do_syscall_64+0x8e/0x160
+>>> [836583.959807]  ? srso_alias_return_thunk+0x5/0xfbef5
+>>> [836583.959811]  ? do_sys_openat2+0x9c/0xe0
+>>> [836583.959821]  ? srso_alias_return_thunk+0x5/0xfbef5
+>>> [836583.959825]  ? syscall_exit_to_user_mode+0x72/0x220
+>>> [836583.959828]  ? srso_alias_return_thunk+0x5/0xfbef5
+>>> [836583.959832]  ? do_syscall_64+0x8e/0x160
+>>> [836583.959835]  ? syscall_exit_to_user_mode+0x72/0x220
+>>> [836583.959838]  ? srso_alias_return_thunk+0x5/0xfbef5
+>>> [836583.959842]  ? do_syscall_64+0x8e/0x160
+>>> [836583.959845]  ? srso_alias_return_thunk+0x5/0xfbef5
+>>> [836583.959849]  ? do_syscall_64+0x8e/0x160
+>>> [836583.959851]  ? srso_alias_return_thunk+0x5/0xfbef5
+>>> [836583.959855]  ? do_syscall_64+0x8e/0x160
+>>> [836583.959858]  ? srso_alias_return_thunk+0x5/0xfbef5
+>>> [836583.959861]  ? do_syscall_64+0x8e/0x160
+>>> [836583.959864]  ? srso_alias_return_thunk+0x5/0xfbef5
+>>> [836583.959868]  ? srso_alias_return_thunk+0x5/0xfbef5
+>>> [836583.959873]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+>>> [836583.959878] RIP: 0033:0x7f3e4261af2d
+>>> [836583.959944] RSP: 002b:00007ffec002f400 EFLAGS: 00000246 ORIG_RAX:
+>>> 0000000000000010
+>>> [836583.959950] RAX: ffffffffffffffda RBX: 00007ffec002f570 RCX:
+>>> 00007f3e4261af2d
+>>> [836583.959952] RDX: 00007ffec002f470 RSI: 00000000c0185879 RDI:
+>>> 0000000000000003
+>>> [836583.959955] RBP: 00007ffec002f450 R08: 0000562d74da7010 R09:
+>>> 00007ffec002e7f2
+>>> [836583.959957] R10: 0000000000000000 R11: 0000000000000246 R12:
+>>> 0000562d74daafc0
+>>> [836583.959960] R13: 0000000000000003 R14: 0000562d74daa970 R15:
+>>> 0000562d74daad40
+>>> [836583.959967]  </TASK>
+>>> ---
+>>>   fs/btrfs/extent-tree.c | 20 ++++++++++++++++----
+>>>   1 file changed, 16 insertions(+), 4 deletions(-)
+>>>
+>>> diff --git a/fs/btrfs/extent-tree.c b/fs/btrfs/extent-tree.c
+>>> index feec49e6f9c8..7e4c1d4f2f7c 100644
+>>> --- a/fs/btrfs/extent-tree.c
+>>> +++ b/fs/btrfs/extent-tree.c
+>>> @@ -16,6 +16,7 @@
+>>>   #include <linux/percpu_counter.h>
+>>>   #include <linux/lockdep.h>
+>>>   #include <linux/crc32c.h>
+>>> +#include <linux/freezer.h>
+>>>   #include "ctree.h"
+>>>   #include "extent-tree.h"
+>>>   #include "transaction.h"
+>>> @@ -6361,6 +6362,11 @@ void btrfs_error_unpin_extent_range(struct
+>>> btrfs_fs_info *fs_info, u64 start, u6
+>>>       unpin_extent_range(fs_info, start, end, false);
+>>>   }
+>>> +static bool btrfs_trim_interrupted(void)
+>>> +{
+>>> +    return fatal_signal_pending(current) || freezing(current);
+>>> +}
+>>> +
+>>>   /*
+>>>    * It used to be that old block groups would be left around forever.
+>>>    * Iterating over them would be enough to trim unused space.  Since we
+>>> @@ -6459,8 +6465,8 @@ static int btrfs_trim_free_extents(struct
+>>> btrfs_device *device, u64 *trimmed)
+>>>           start += len;
+>>>           *trimmed += bytes;
+>>> -        if (fatal_signal_pending(current)) {
+>>> -            ret = -ERESTARTSYS;
+>>> +        if (btrfs_trim_interrupted()) {
+>>> +            ret = 0;
+>>>               break;
+> 
+> Here we should still return the same error number other than 0, to let
+> the caller know the operation is interrupted, other than finished normally.
+> 
+Here I was following how ext4 did it, my explanation for that was that 
+the kernel may have still discarded some data before the thread was 
+interrupted thus it made sense to report success.
+>>>           }
+>>> @@ -6508,6 +6514,9 @@ int btrfs_trim_fs(struct btrfs_fs_info *fs_info,
+>>> struct fstrim_range *range)
+>>>       cache = btrfs_lookup_first_block_group(fs_info, range->start);
+>>>       for (; cache; cache = btrfs_next_block_group(cache)) {
+>>> +        if (btrfs_trim_interrupted())
+>>> +            break;
+>>> +
+> 
+> The same here.
+> 
+ditto
+>>>           if (cache->start >= range_end) {
+>>>               btrfs_put_block_group(cache);
+>>>               break;
+>>> @@ -6547,17 +6556,20 @@ int btrfs_trim_fs(struct btrfs_fs_info
+>>> *fs_info, struct fstrim_range *range)
+>>>       mutex_lock(&fs_devices->device_list_mutex);
+>>>       list_for_each_entry(device, &fs_devices->devices, dev_list) {
+>>> +        if (btrfs_trim_interrupted())
+>>> +            break;
+>>> +
+> 
+> The same here.
+> 
+> Furthermore, I think we may not need the extra checks.
+> 
+> The fstrim is based on block groups, and a block group is normally 1GiB,
+> at most 10GiB (for RAID0/5/6/10 only), thus exiting at each block group
+> boundary should be enough to meet the hibernation/suspension timeout.
+> 
+> 
+That's probably true, but 10 seconds here wasn't enough and forcing the 
+early return in the other cases was also required.
+I tried the current patch you linked earlier in my testings and that was 
+the conclusion that led to me adding more checks.
+> 
+>>>           if (test_bit(BTRFS_DEV_STATE_MISSING, &device->dev_state))
+>>>               continue;
+>>>           ret = btrfs_trim_free_extents(device, &group_trimmed);
+>>> +
+>>> +        trimmed += group_trimmed;
+>>>           if (ret) {
+>>>               dev_failed++;
+>>>               dev_ret = ret;
+>>>               break;
+>>>           }
+>>> -
+>>> -        trimmed += group_trimmed;
+> 
+> Any special reason moving the code here?
 
-Build fails on our infrastructure.
+Same as not returning errno before in case of interrupt.
+I checked the code paths and it's still possible to trim some data 
+(group_trimmed != 0) even in case of failure.
 
+> 
+> Thanks,
+> Qu
+> 
+>>>       }
+>>>       mutex_unlock(&fs_devices->device_list_mutex);
+>>
 
-BUILDSTDERR: In file included from 
-/builddir/build/BUILD/kernel-4.19.321/linux-4.19.321-master.20240901.el7.dev/tools/include/linux/bitmap.h:6,
-BUILDSTDERR:                  from 
-/builddir/build/BUILD/kernel-4.19.321/linux-4.19.321-master.20240901.el7.dev/tools/perf/util/include/../../util/pmu.h:5,
-BUILDSTDERR:                  from arch/x86/util/pmu.c:9:
-BUILDSTDERR: 
-/builddir/build/BUILD/kernel-4.19.321/linux-4.19.321-master.20240901.el7.dev/tools/include/linux/align.h:6:10: 
-fatal error: uapi/linux/const.h: No such file or directory
-BUILDSTDERR:  #include <uapi/linux/const.h>
-BUILDSTDERR:           ^~~~~~~~~~~~~~~~~~~~
-BUILDSTDERR: compilation terminated.
-
-
-Looked at the commits:
-
-This commit 993a20bf6225c: ("tools: move alignment-related macros to new 
-<linux/align.h>") is causing that perf build to fail.
-
-Solution is not to drop this patch as this is probably pulled in to 
-support bitmap_size() macros in these commits(which are also part of 
-this release):
-
-6fbe5a3920f48 fix bitmap corruption on close_range() with 
-CLOSE_RANGE_UNSHARE
-ef9ebc42c10f8 bitmap: introduce generic optimized bitmap_size()
-
-
-
-Applying the below diff, helps the perf build to pass: I think we should 
-fold this into: commit 993a20bf6225c: ("tools: move alignment-related 
-macros to new <linux/align.h>")
-
-diff --git a/tools/include/linux/align.h b/tools/include/linux/align.h
-index 14e34ace80dda..a27bc1edf6e5c 100644
---- a/tools/include/linux/align.h
-+++ b/tools/include/linux/align.h
-@@ -3,7 +3,7 @@
-  #ifndef _TOOLS_LINUX_ALIGN_H
-  #define _TOOLS_LINUX_ALIGN_H
-
--#include <uapi/linux/const.h>
-+#include <linux/const.h>
-
-  #define ALIGN(x, a)            __ALIGN_KERNEL((x), (a))
-  #define ALIGN_DOWN(x, a)       __ALIGN_KERNEL((x) - ((a) - 1), (a))
-
-!! But this breaks the build for arm here.
-!! Not sure what is the best way to solve this problem.
-
-
-Thanks,
-Harshit
-
+Thanks, Luca.
 
