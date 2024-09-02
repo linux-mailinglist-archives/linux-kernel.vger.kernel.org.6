@@ -1,38 +1,38 @@
-Return-Path: <linux-kernel+bounces-311238-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311240-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DED7968674
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 13:42:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2A4E968677
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 13:42:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4CB052855EA
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 11:42:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2EF311C227B4
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 11:42:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D71F1D6C48;
-	Mon,  2 Sep 2024 11:41:49 +0000 (UTC)
-Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D14B1D6C7C;
+	Mon,  2 Sep 2024 11:41:50 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 158E71D679F;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DCE21D67A0;
 	Mon,  2 Sep 2024 11:41:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725277309; cv=none; b=T22keAdE+bgpF71jnVCdgnMK08IWfbdD29CdjgCkweqlB5/mppApTzgxotjzyGKCdnRRVh2MxiUxgS9HrwSl52w+Lg+Hls1iA6u6hR6a7XdhcN2pqubHUd0yTA/TaDei88rWBGJHgy3q2zuAS31+oXwG1s9i8ygKnmiy+L/a1EA=
+	t=1725277309; cv=none; b=a96FvpO1tBsOo1Szmc+XR6HoIEQleDTwoCGvbePTjjZDNpBTgt5UCuBKH/+3f3vz3acx4iWMg7vixQYXRIT56+MShxDKNw4bX7w/Qoc1Nqrkjk0jHZvTys6LJ562Je49QgSSqBscARc1DH9lo4/SnnY9e8BoUnb66VyGdyyUIn0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1725277309; c=relaxed/simple;
-	bh=/Wq4fiU2OcPZ9gAE+z6hSL9qqK59qz0dNW8ai/RTLwM=;
+	bh=/fuBQlxJd0NJLtZVgdncjwLx5HAYWxFZueKbZgfYZfQ=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=A6lYvbWHlVQShtI3qUuE9/SrUyrsmTlRXHIAL2wSdx6wuXnxiEb+3H5oug0RHeAk6uXeCWKi14eKyWW/CksxoDZzvQStBuQi0QpNnYFpeKZvzSI2IkTll4HUXiWUQmBfXdpiVEW1eZmyGdOudOwMiqLAkHnJ7qAtbUFg8SHKCu8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
+	 MIME-Version:Content-Type; b=RYl0gg6mT7Skg0Za0vpmwg+AALnXNpqnx7GFBLZQPrdUFw6QZqkzsKOAps2nWtQphnIeiSxJ5wGUqUwMBM2l6d8mC3TPiB8dyuNMjHun9caqEoXTHfxLrK8nuXLlv5O7dqcgEqHd65P8tX0BKiQGOaw4BLCagoeL2YG4Wsz1YwI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
 Received: from mail.maildlp.com (unknown [172.19.163.48])
-	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4Wy6D11G1Qz69M6;
-	Mon,  2 Sep 2024 19:36:49 +0800 (CST)
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4Wy6K068b6zyRMJ;
+	Mon,  2 Sep 2024 19:41:08 +0800 (CST)
 Received: from dggpemm500020.china.huawei.com (unknown [7.185.36.49])
-	by mail.maildlp.com (Postfix) with ESMTPS id 840E6180087;
+	by mail.maildlp.com (Postfix) with ESMTPS id BC93A180087;
 	Mon,  2 Sep 2024 19:41:44 +0800 (CST)
 Received: from huawei.com (10.67.174.77) by dggpemm500020.china.huawei.com
  (7.185.36.49) with Microsoft SMTP Server (version=TLS1_2,
@@ -47,9 +47,9 @@ CC: <andrzej.hajda@intel.com>, <neil.armstrong@linaro.org>,
 	<mripard@kernel.org>, <tzimmermann@suse.de>, <airlied@gmail.com>,
 	<daniel@ffwll.ch>, <linus.walleij@linaro.org>, <thierry.reding@gmail.com>,
 	<mperttunen@nvidia.com>, <jonathanh@nvidia.com>, <liaochen4@huawei.com>
-Subject: [PATCH -next 2/3] drm/tegra: Enable module autoloading
-Date: Mon, 2 Sep 2024 11:33:19 +0000
-Message-ID: <20240902113320.903147-3-liaochen4@huawei.com>
+Subject: [PATCH -next 3/3] drm/mcde: Enable module autoloading
+Date: Mon, 2 Sep 2024 11:33:20 +0000
+Message-ID: <20240902113320.903147-4-liaochen4@huawei.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240902113320.903147-1-liaochen4@huawei.com>
 References: <20240902113320.903147-1-liaochen4@huawei.com>
@@ -69,20 +69,20 @@ on the alias from of_device_id table.
 
 Signed-off-by: Liao Chen <liaochen4@huawei.com>
 ---
- drivers/gpu/drm/tegra/drm.c | 1 +
+ drivers/gpu/drm/mcde/mcde_drv.c | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/drivers/gpu/drm/tegra/drm.c b/drivers/gpu/drm/tegra/drm.c
-index 03d1c76aec2d..1a12f2eaad86 100644
---- a/drivers/gpu/drm/tegra/drm.c
-+++ b/drivers/gpu/drm/tegra/drm.c
-@@ -1390,6 +1390,7 @@ static const struct of_device_id host1x_drm_subdevs[] = {
- 	{ .compatible = "nvidia,tegra234-nvdec", },
- 	{ /* sentinel */ }
+diff --git a/drivers/gpu/drm/mcde/mcde_drv.c b/drivers/gpu/drm/mcde/mcde_drv.c
+index 10c06440c7e7..f1bb38f4e673 100644
+--- a/drivers/gpu/drm/mcde/mcde_drv.c
++++ b/drivers/gpu/drm/mcde/mcde_drv.c
+@@ -473,6 +473,7 @@ static const struct of_device_id mcde_of_match[] = {
+ 	},
+ 	{},
  };
-+MODULE_DEVICE_TABLE(of, host1x_drm_subdevs);
++MODULE_DEVICE_TABLE(of, mcde_of_match);
  
- static struct host1x_driver host1x_drm_driver = {
+ static struct platform_driver mcde_driver = {
  	.driver = {
 -- 
 2.34.1
