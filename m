@@ -1,254 +1,229 @@
-Return-Path: <linux-kernel+bounces-310776-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310775-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFB3996811B
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 09:57:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27516968119
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 09:57:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 87ADA2810C0
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 07:57:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 491931C203BD
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 07:57:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3D72183CCB;
-	Mon,  2 Sep 2024 07:57:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1A7F176FD2;
+	Mon,  2 Sep 2024 07:57:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gk8pRW5f"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	dkim=pass (2048-bit key) header.d=tlmp.cc header.i=@tlmp.cc header.b="gcFEFHtz"
+Received: from mail.tlmp.cc (unknown [148.135.17.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 636D2182D2;
-	Mon,  2 Sep 2024 07:57:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.14
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725263853; cv=fail; b=JUX8EJLsjx28AWXXYsptVXxnVdpf8h+PUNy8ww9Iqo38T3y3yIhPhp5e6vlJSrRsUwi1gwqJ8t1VLuZgaeHK6KdbLjR23dHwAhdeFhOW5h2R7JSiKE3bwuolHGXn2EWsR/cXLi4gpo5KBzGNMvFrFGaayQoGpdfynAwh1D/408U=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725263853; c=relaxed/simple;
-	bh=3/nX5z8z0mTjiKSRAUHryRPg3sBS5w6lrMrAqEO02hc=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=AORyKT4hr1bL56FuWlp6j7TjgXL+dA7PiI7y+HlJMvkhIBGfXGyrAa2FZlRn8vJGGtSqp97uNFn+u7JE6yPJLkXttQGx93wtX0vS0jyUjjPgqRf5D2tIXM1IGz/HekyDHttulLM3ZVgNI/jk/brczeorJ062bQ9TrHwddmNzyVw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gk8pRW5f; arc=fail smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725263851; x=1756799851;
-  h=date:from:to:cc:subject:message-id:references:
-   in-reply-to:mime-version;
-  bh=3/nX5z8z0mTjiKSRAUHryRPg3sBS5w6lrMrAqEO02hc=;
-  b=gk8pRW5fS5pykLZOcVLP86Bbwpt617sUV4FKUlTdfmeApNGOCE4iwEBT
-   fpWPaOGTWG2C5BlOeXgvBkKWUD6dubR/cVHP84CvKjdrqY86CTZx4nGbn
-   no7YcrxnbpKx7YmZ0u7RKV0KyuTsngIuZqx91RKedz6kHpG5K3Dp+HECq
-   us3Ft7CnrCK9YeUOH9dyOdB5QXw2Laj/R76u0DhO2/w/KXr3EiXYUc86u
-   rTRzTQqeqpTXGRPUhGnPdj+ml4SmOdEsVMhwYViCbnTttpbKxa2vGh4mP
-   2QcnGkK5NJuFtfoN2N1riaTDI/G6KNhSNrRnIg4oIljbdBe/eEHZySzx7
-   w==;
-X-CSE-ConnectionGUID: hDI62YnQTKeTRWznOWD13Q==
-X-CSE-MsgGUID: d5sDGhhTSC29z+heHhr/Cg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11182"; a="24014993"
-X-IronPort-AV: E=Sophos;i="6.10,195,1719903600"; 
-   d="scan'208";a="24014993"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2024 00:57:30 -0700
-X-CSE-ConnectionGUID: uG/4sSALQQ++3839XTi/FA==
-X-CSE-MsgGUID: YK2ZdRyUQIe60RJC5L2znA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,195,1719903600"; 
-   d="scan'208";a="69160728"
-Received: from fmsmsx601.amr.corp.intel.com ([10.18.126.81])
-  by fmviesa004.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 02 Sep 2024 00:57:21 -0700
-Received: from fmsmsx601.amr.corp.intel.com (10.18.126.81) by
- fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Mon, 2 Sep 2024 00:57:19 -0700
-Received: from fmsedg601.ED.cps.intel.com (10.1.192.135) by
- fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Mon, 2 Sep 2024 00:57:19 -0700
-Received: from NAM04-BN8-obe.outbound.protection.outlook.com (104.47.74.45) by
- edgegateway.intel.com (192.55.55.70) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Mon, 2 Sep 2024 00:57:19 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=NpHZt6BRjJNmx9lMewG8vuMVSQvC1+P2bKf40GQcr2pbVc39O4+jdtWGlFo/VjgU8Qt+96VZQ5WTizOSOMSykgHRLDYybm3l+dA4bf1wox5vLyIjM/8kq1zgjviTZTLZUISHEBBco/99GDHDXRH36L7qAsJXlmd0OnatxReSKwjSqcPgPNfCYzS6X9O+rLBB8IH9fDc1uJgWvddojJcrms8vK5z0rj9ywf183cM52zY+cmIwG54E//XxNVS23avi8lEFoErCRggm2HzvXvvAgbvZ5X/ksLRZEgkL8pucSMsXqZ53x9S20Qwk1SYlXEfBOJV+NMyJdwueAT6rt3S09w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=hT32dny80WJHnHWqLOluvs0kFEWISJqqGYKUQoi93OU=;
- b=WzUj354WQbU1f5OPvnuovDoNGdz3cFTipEeoZlWxbd8v1ox3W6BYh/cTwfBRp+WPEl7mPE6ueQs8cmlKcqxW0eXPmoLbWvNBdJ0QTGgYxPtMhTIWWe3VHIg7cHWpLR1tzqyEriEL6o5iSiJMFU9kjtTgK0F46kv0PvVBWvk4oRjL31iP2SPaI4lhfoefQcVqFCY3EPT4g9H384R/4sFv9JYiRzctwhGO9qhdUkbG7JT4JeP+gADXw1pS4nv6cofsBsjzxMxDjqYjk5GONTHM68diHmTTX7T5W5+9VNvvF0Tb8ENkpvrL4YZLWzL0HAqWH35/9YnGVHtk4hFC3TTEZw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from CY8PR11MB6985.namprd11.prod.outlook.com (2603:10b6:930:57::6)
- by MN0PR11MB5986.namprd11.prod.outlook.com (2603:10b6:208:371::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.25; Mon, 2 Sep
- 2024 07:57:17 +0000
-Received: from CY8PR11MB6985.namprd11.prod.outlook.com
- ([fe80::77ac:889c:cfd9:b9f5]) by CY8PR11MB6985.namprd11.prod.outlook.com
- ([fe80::77ac:889c:cfd9:b9f5%4]) with mapi id 15.20.7918.020; Mon, 2 Sep 2024
- 07:57:16 +0000
-Date: Mon, 2 Sep 2024 15:57:06 +0800
-From: Aaron Lu <aaron.lu@intel.com>
-To: Dave Hansen <dave.hansen@intel.com>
-CC: Jarkko Sakkinen <jarkko@kernel.org>, Dave Hansen
-	<dave.hansen@linux.intel.com>, <x86@kernel.org>, <linux-sgx@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, Zhimin Luo <zhimin.luo@intel.com>, Kai Huang
-	<kai.huang@intel.com>
-Subject: Re: [PATCH] x86/sgx: Fix deadloop in __sgx_alloc_epc_page()
-Message-ID: <ZtVv0mic9YUTpZO-@ziqianlu-kbl>
-References: <20240829023800.1671210-1-aaron.lu@intel.com>
- <f2b0ffc7-f8f8-4ebc-99da-9139c372bd09@intel.com>
- <ZtFgem6_2j05S0MJ@ziqianlu-kbl>
- <50688c67-59a3-46e4-a2b5-10c1e93d4b3c@intel.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <50688c67-59a3-46e4-a2b5-10c1e93d4b3c@intel.com>
-X-ClientProxiedBy: SI1PR02CA0015.apcprd02.prod.outlook.com
- (2603:1096:4:1f7::18) To CY8PR11MB6985.namprd11.prod.outlook.com
- (2603:10b6:930:57::6)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8901B182D2
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 07:57:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.135.17.20
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725263847; cv=none; b=R97OoujlIb006YytJ7iImQHGpcOJjPJLKCtRivOFr35XD0WHi9yTh7Chh0S1OaNvLbiAVrvZwaBZbjwXIDp/4/PlzeMXZa7UR/wbj0ycjRXA1v3bXZFND1ApLJ3trBGsX5dub9blJVXQZ9FUz5t+a03ozRXQ7er3rYK2keyw5vc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725263847; c=relaxed/simple;
+	bh=k4Hy8FC0VaK07pAeOJgQG/g7DZWasyp68I4VcA0Zyxg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sWi4aaJ/1JGqu0bnOjS9mdpNpU7xSfFi3HmqTJyQc9n/bwXdhkSWH7PCFwXnL0sBhTXra0Vz65wtIeHjl0DXHdzfKZACZHGO2jYMxBXPR6b0wIzMCdRjBcbHJfQzY+ahIcGnxId08cwgWERVIjSHtYdmUJpFNEMzwhoVBlCkl0Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=tlmp.cc; spf=pass smtp.mailfrom=tlmp.cc; dkim=pass (2048-bit key) header.d=tlmp.cc header.i=@tlmp.cc header.b=gcFEFHtz; arc=none smtp.client-ip=148.135.17.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=tlmp.cc
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tlmp.cc
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 4B15B69840;
+	Mon,  2 Sep 2024 03:57:19 -0400 (EDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tlmp.cc; s=dkim;
+	t=1725263843; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 in-reply-to:references; bh=vFg7frQZFwf8sr2E7jIEdq9FvqRSKuqpQbVH+tIiz2E=;
+	b=gcFEFHtzUx81lI4ANpjib9RaxtJt76JdX8yt+3bJ2QQrHaFLMlvwFxQkvchSdZ9eljFAZi
+	cKH1hufcOstX1zvSPqc3k0pA71xYQi60FtIMqwoN6pKBeOG1xJdXyJFHN6s3b9yr9v2Moo
+	q/CU6zhjVdma+k7+fEITRGoFNr0blM/oYS3xMqV248euzNxlsmGgKfWokouXUG7YvU8wjA
+	sAFVaTraW0mig5xnCURLydegWJwUoyqDE1c19RPW5bDY/QHWpxmqpYMQT3dFmuv3oon7dT
+	NqDtFuMrJTxSAw6fbvZUJ7/A5Cb6Dvrg9s40dyPT5Tc35QTrCnBX3/sRBNCd9g==
+Date: Mon, 2 Sep 2024 15:57:17 +0800
+From: Yiyang Wu <toolmanp@tlmp.cc>
+To: Gao Xiang <hsiangkao@linux.alibaba.com>
+Cc: linux-erofs@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V2 2/2] erofs: refactor read_inode calling convention
+Message-ID: <kcqmmpzzd3zr244dceocn7gbnvltrlyhqbku5aj52nnimoxzfu@eyj26z254w4b>
+References: <20240902070047.384952-1-toolmanp@tlmp.cc>
+ <20240902070047.384952-3-toolmanp@tlmp.cc>
+ <1067fd19-495e-40d7-9acf-bf2735ca89fb@linux.alibaba.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY8PR11MB6985:EE_|MN0PR11MB5986:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8c37c03f-d15d-434b-5002-08dccb24dcf1
-X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?sl7rYP3wkHE/xAjXqT+Kc611DDPfDDea10+0AMxAdq9QNo72Mz3gCq8WxFmW?=
- =?us-ascii?Q?dR7XovVoHxaCj1/3/vXBZsNejfm+DMofPFsq1TqcoR/9Jr4LTwnAFbsujOB3?=
- =?us-ascii?Q?z77UddNCtmzfvq+SGK5DdSNohhlN9/2o0lUi049jtHBwJ5xXFMzDMgO0GvVX?=
- =?us-ascii?Q?592jfQUt1RKSd8l/YMam3+wpy5XxDS3+Ci5ucNxDapRJAmb4aivJXsSfNWfm?=
- =?us-ascii?Q?Ntfxowm7VAKlwIFWHqv5WcDPzjl3OYVyzJ/fkwN8wdnyoAfY5oQgOfri5R9C?=
- =?us-ascii?Q?v91jOj6nRHe+4B6MNrAC/47OK8+Y8syc/veBXW6FzmhCQ837WPT2j3A+6aK5?=
- =?us-ascii?Q?riUti9vlx14WN7DvQi9tr+E2u52tSPNPhKi+TBd4zyXHiY6hvk7YIstqkzJ1?=
- =?us-ascii?Q?tRVCe82ePHSLZSa3NtVsCcov6wKbegFJlKPdIrHTQp+1yoItRVldx18vykv5?=
- =?us-ascii?Q?tbONH/Eybc/fMS227kXW8BI5ewADQLnbAputaHzTZoSGbQlWBPnuNvCOSnE6?=
- =?us-ascii?Q?y5Eb6iaR0nMQGXO2nI5HVP7QbJw0s7Z115fqEUVX30O8+R1EsigTONF7TVNG?=
- =?us-ascii?Q?lDadcic7OKv+4b1bFhY3LqJ/nvLrxgwvW9IWpRHClLytVmHWkeE5CS05KIfy?=
- =?us-ascii?Q?0cAlNBBfVe43jI1bWxt4z2Ifa74BWDb0g91ZnAQntc7Vm1Yo8dOKC/hPsb6c?=
- =?us-ascii?Q?fuZ+VKkMEu4KM0ESOzZNkaH1kYAcnQDf8dlW2JpE2S3eQRQlgW5Fv85MiX5v?=
- =?us-ascii?Q?iNsWBa1VoU6XoivwM3Sn+oUBbJh5epI047TxxsdzaTO5ZaiHaXcVWQLYjccO?=
- =?us-ascii?Q?9PJVsoSD+43Azs8kH9fjnUVLS/93S2dBLJNRbSWCLsQ+ZmoPn9bHOEx5k/+k?=
- =?us-ascii?Q?I4KleMpiqpa0g+xp78JklBAx3iUkRPqiYb94TxL6CTULubwKb7lUd+3h/rE5?=
- =?us-ascii?Q?BarmMfGR9KlsLjprCpx8Si27/FfPuVy/e+02tpxRKr2Hpg3qHoL5gT7LNmS2?=
- =?us-ascii?Q?y47mdS0Z9id4S60KK3U69GMOI2rHucRf6KElHmhiy8B9txx5jg9Qu3UPu3zy?=
- =?us-ascii?Q?Na7Vv1XwbtMviBmYlVIrIRZdL7TljLM70bOpmiebpJdb0ORAEFjYbYPewPje?=
- =?us-ascii?Q?5rTzW/t6s1cJpW5xWO/DckBGeZdSO7PBloQ3cdSDVEMVuCE+NjTxTSFAMmnf?=
- =?us-ascii?Q?xNrslWdADRz5DLM47FewTqWuAffgRqwVFES0G4QfQESdEmnHe3q4SDktgxD7?=
- =?us-ascii?Q?G5ux3cjvBy1tCDyWwAh8jW0Y+LZuAr452J5cv2HypcAw0L8QdRdwOgyHOSZh?=
- =?us-ascii?Q?1AqN1PqIGRxtO1NpNyLpj2lhNGMIUfIaKFfvUt81IPPexg=3D=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY8PR11MB6985.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?rsQhn7qpJHW+IV1KegTwiXTWTLwnnzK2RC4gGYIm12I7+1Pw6lnxtGz5yDzf?=
- =?us-ascii?Q?eY3SM2srg1OIjMjRFMmhVmN6MjwH2/WQNQUY81gIeGA62UpIgg1pPx9u1s1C?=
- =?us-ascii?Q?vZ8MTF7RVLzA28n+4CAdxUKPU1gAmPBUeMyr7kOtbSjO2wx660grm2LePiX+?=
- =?us-ascii?Q?A1Qkbs/lBrWVwG2Y7CGMSBQ7FCe2iOmg/bo7OYei0uF+4SVEfpc146L03CFs?=
- =?us-ascii?Q?b/oJc3HP3DxshVPWf3QgofipK+dc56PVfEpdGSUKyooa9PEVDNTnokSkIW1u?=
- =?us-ascii?Q?qOUzS/SMMfI3GFyOQGWg3tRe1Hhm11xkD2ZB+WZssiWu2fYwMY6uW1gpkbDm?=
- =?us-ascii?Q?ao4XlSfn/sYDJAMRM+T/59xybB0qZvMuTcMvK+sft0dFKTwSqfJFJYUJBC5A?=
- =?us-ascii?Q?CQtzUtSTwSfJmO4xcft7ft92obc1dqrpj+9xMbsgemf/2W66OZW4cui8qnEX?=
- =?us-ascii?Q?m0GPD5ACMA9aDhVT3A/HvFgSeIB1+U0iuYbAxpFiM6nLuwepio10kXxtyUo9?=
- =?us-ascii?Q?0vU2nvtop+X6LyeIOLH/OnivtbpDXzFB5krn7kXcDSfJc7Gd8s7V9E+HN46s?=
- =?us-ascii?Q?S06pjLAwbQWDE6IZCizqPKdnYUNe+GBAVus1oNIykq80CbqtcQfSI4SxsT7p?=
- =?us-ascii?Q?wUyomNgDL3iY3GtEormjZvg5tVCA6XOiVBbQ9otTNQU6Yt2cofWLxwgXpHEi?=
- =?us-ascii?Q?ohM/lz7QZNHY9G1RebdBhL1h3z7earLK1X07qg8N1PV4+XkqZrFOmHKPNQ6N?=
- =?us-ascii?Q?2VXzBh8aCyladd3N3Hff6R/TW0CQu4MChnADOogDCnOfnZfKCFngSFCthRCy?=
- =?us-ascii?Q?RkrrkZ93g7ZWoH6t1lU11b0ZpF8yrMH063z072TYPLtjsqfWejrcUKjFa/rW?=
- =?us-ascii?Q?kdLDdU5D1TDKjYC+QC063r/8gYUsdIWFslAdDBYcJcloey1ocz/lVGpEuRzg?=
- =?us-ascii?Q?xC/S2YP8Ff+aeCgLA0ufw702aiRTDZWIne/ccJBzek/u0XlHaECfdbSJOCa0?=
- =?us-ascii?Q?ZpXDfubyO01n3Zgzk34FgCtyuJ4fpsZGUXn7QCc171aw20b5TPdH83MyOsiA?=
- =?us-ascii?Q?QVqVCrUNQukS0VeOsp2ap/kp/51Dt093aEGiBjAY1ViyHMY/tTjR7u1Chqkg?=
- =?us-ascii?Q?L9nX8NfmgsBMeh8l+53MbpFMqjKL4nChKzNhHF9Tiy8S+hUmBMTx9NgW8c1T?=
- =?us-ascii?Q?FneUf93vsajJxGqyxU3cQeDaAlSoiS5ZmVu9dxNBsyzGNMswGmt5Y+vj3gH7?=
- =?us-ascii?Q?HdeV4p8NdPFWvbqtzd3Q6rPa0MEAG4tIylF/vuT18sxvBogDJqdL+4l63I6k?=
- =?us-ascii?Q?Wx1kPdO0aF2NIsK4whJfJR6Mo0enwr66Ufuag0HNr1mvGd5+1z75vbFJc6Qk?=
- =?us-ascii?Q?bRdBpBvAV+JGG3qOoA0yRn4QsXQ2AEDhcyVqat+SVFj/PxlonaY4rciv6Xub?=
- =?us-ascii?Q?+fcqqotSb7fxuP3NvLsG7b/ySmTIBRCpS9ciTxy5X6tESb+oL9yIpUuhXWwo?=
- =?us-ascii?Q?s/KEM91quRNlgOZDSEb4GfPSHo92TtYKY5K8FIJzU7c5/7MPALvUJJVT0lbl?=
- =?us-ascii?Q?dNHtWJb+7p3Uzh4Qh17rsfMDz93JojyoiAlPQjYv?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8c37c03f-d15d-434b-5002-08dccb24dcf1
-X-MS-Exchange-CrossTenant-AuthSource: CY8PR11MB6985.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Sep 2024 07:57:16.7320
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: KHXMLJtyCfzqKxB+ihA2P+gKheKf89u624/W4mmURzkRnDw6DGm6a38bPO9ka/r2Gn7dDic+wa4Mj5UXwgXVGA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR11MB5986
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1067fd19-495e-40d7-9acf-bf2735ca89fb@linux.alibaba.com>
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Fri, Aug 30, 2024 at 07:03:33AM -0700, Dave Hansen wrote:
-> On 8/29/24 23:02, Aaron Lu wrote:
-> >> Also, I do think we should probably add some kind of sanity warning to
-> >> the SGX code in another patch.  If a node on an SGX system has CPUs and
-> >> memory, it's very likely it will also have some EPC.  It can be
-> >> something soft like a pr_info(), but I think it would be nice to have.
-> > I think there are systems with valid reason to not setup an EPC section
-> > per node, e.g. a 8 sockets system with SNC=2, there would be a total of
-> > 16 nodes and it's not possible to have one EPC section per node because
-> > the upper limit of EPC sections is 8. I'm not sure a warning is
-> > appropriate here, what do you think?
+On Mon, Sep 02, 2024 at 03:18:54PM GMT, Gao Xiang wrote:
 > 
-> While possible, those systems are pretty rare.  I don't think a
-> softly-worded pr_info() will scare anyone too much.
+> 
+> > +	m_pofs += vi->xattr_isize;
+> > +	/* inline symlink data shouldn't cross block boundary */
+> > +	if (m_pofs + inode->i_size > bsz) {
+> > +		erofs_err(inode->i_sb,
+> > +			  "inline data cross block boundary @ nid %llu",
+> > +			  vi->nid);
+> 
+> Since you move the code block of erofs_fill_symlink,
+> 
+> I think it'd be better to update this statement to
+> 		erofs_err(inode->i_sb, "inline data cross block boundary @ nid %llu",
+> 			  vi->nid);
+> 
+> As I mentioned, the print message doesn't have line limitation.
 
-Understood.
+I just simply cannot tell the difference here. But since you put it
+here, I will change this in the next version.
 
-Maybe something like below?
+> > +		DBG_BUGON(1);
+> > +		return -EFSCORRUPTED;
+> > +	}
+> > +
+> > +	lnk = kmemdup_nul(kaddr + m_pofs, inode->i_size, GFP_KERNEL);
+> > +
+> > +	if (!lnk)
+> > +		return -ENOMEM;
+> 
+> As I mentioned in the previous patch, so it could become
+> 	inode->i_link = kmemdup_nul(kaddr + m_pofs, inode->i_size, GFP_KERNEL);
+> 	return inode->i_link ? 0 : -ENOMEM;
+> 
 
-From e49a78f27956b3d62c5ef962320e63dc3eeb897c Mon Sep 17 00:00:00 2001
-From: Aaron Lu <aaron.lu@intel.com>
-Date: Mon, 2 Sep 2024 11:46:07 +0800
-Subject: [PATCH] x86/sgx: Log information when a node lacks an EPC section
+Looks good to me.
 
-For optimized performance, firmware typically distributes EPC sections
-evenly across different NUMA nodes. However, there are scenarios where
-a node may have both CPUs and memory but no EPC section configured. For
-example, in an 8-socket system with a Sub-Numa-Cluster=2 setup, there
-are a total of 16 nodes. Given that the maximum number of supported EPC
-sections is 8, it is simply not feasible to assign one EPC section to
-each node. This configuration is not incorrect - SGX will still operate
-correctly; it is just not optimized from a NUMA standpoint.
+> > +		if(S_ISLNK(inode->i_mode)) {
+> > +			err = erofs_fill_symlink(inode, kaddr, ofs);
+> > +			if(err)
+> 
+> missing a blank:
+> 			if (err)
+> 
+> 
 
-For this reason, log a message when a node with both CPUs and memory
-lacks an EPC section. This will provide users with a hint as to why they
-might be experiencing less-than-ideal performance when running SGX
-enclaves.
+Fixed here.
+> > +				goto err_out;
+> > +		}
+> >   		vi->raw_blkaddr = le32_to_cpu(iu.raw_blkaddr);
+> >   		break;
+> >   	case S_IFCHR:
+> > @@ -165,63 +202,29 @@ static void *erofs_read_inode(struct erofs_buf *buf,
+> >   		inode->i_blocks = round_up(inode->i_size, sb->s_blocksize) >> 9;
+> >   	else
+> >   		inode->i_blocks = nblks << (sb->s_blocksize_bits - 9);
+> > -	return kaddr;
+> > +
+> > +	erofs_put_metabuf(&buf);
+> > +	return 0;
+> >   err_out:
+> 
+> I wonder this can be unified too as:
+> 
+> err_out:
+> 	DBG_BUGON(err);
+> 	kfree(copied);			I'm not sure if it's really needed now.
+I agree. copied doesn't need to be freed anymore as it's already freed when error happens in the first switch block of inode format part. 
+Will be fixed in the next version.
+> 	erofs_put_metabuf(&buf);
+> 	return err;
+> 
+> >   	DBG_BUGON(1);
+> >   	kfree(copied);
+> > -	erofs_put_metabuf(buf);
+> > -	return ERR_PTR(err);
+> > +	erofs_put_metabuf(&buf);
+> > +	return err;
+> >   }
+> > -static int erofs_fill_symlink(struct inode *inode, void *kaddr,
+> > -			      unsigned int m_pofs)
+> > -{
+> > -	struct erofs_inode *vi = EROFS_I(inode);
+> > -	unsigned int bsz = i_blocksize(inode);
+> > -	char *lnk;
+> > -
+> > -	/* if it cannot be handled with fast symlink scheme */
+> > -	if (vi->datalayout != EROFS_INODE_FLAT_INLINE ||
+> > -	    inode->i_size >= bsz || inode->i_size < 0) {
+> > -		inode->i_op = &erofs_symlink_iops;
+> > -		return 0;
+> > -	}
+> > -
+> > -	m_pofs += vi->xattr_isize;
+> > -	/* inline symlink data shouldn't cross block boundary */
+> > -	if (m_pofs + inode->i_size > bsz) {
+> > -		erofs_err(inode->i_sb,
+> > -			  "inline data cross block boundary @ nid %llu",
+> > -			  vi->nid);
+> > -		DBG_BUGON(1);
+> > -		return -EFSCORRUPTED;
+> > -	}
+> > -
+> > -	lnk = kmemdup_nul(kaddr + m_pofs, inode->i_size, GFP_KERNEL);
+> > -
+> > -	if (!lnk)
+> > -		return -ENOMEM;
+> > -
+> > -	inode->i_link = lnk;
+> > -	inode->i_op = &erofs_fast_symlink_iops;
+> > -	return 0;
+> > -}
+> >   static int erofs_fill_inode(struct inode *inode)
+> >   {
+> >   	struct erofs_inode *vi = EROFS_I(inode);
+> > -	struct erofs_buf buf = __EROFS_BUF_INITIALIZER;
+> > -	void *kaddr;
+> > -	unsigned int ofs;
+> >   	int err = 0;
+> >   	trace_erofs_fill_inode(inode);
+> >   	/* read inode base data from disk */
+> > -	kaddr = erofs_read_inode(&buf, inode, &ofs);
+> > -	if (IS_ERR(kaddr))
+> > -		return PTR_ERR(kaddr);
+> > +	err = erofs_read_inode(inode);
+> > +	if (err)
+> > +		goto out_unlock;
+> 
+> out_unlock can be avoided too, just
+> 		return err;
+> 
+> >   	/* setup the new inode */
+> >   	switch (inode->i_mode & S_IFMT) {
+> > @@ -238,9 +241,11 @@ static int erofs_fill_inode(struct inode *inode)
+> >   		inode_nohighmem(inode);
+> >   		break;
+> >   	case S_IFLNK:
+> > -		err = erofs_fill_symlink(inode, kaddr, ofs);
+> > -		if (err)
+> > -			goto out_unlock;
+> > +		if (inode->i_link)
+> > +			inode->i_op = &erofs_fast_symlink_iops;
+> > +		else
+> > +			inode->i_op = &erofs_symlink_iops;
+> > +
+> >   		inode_nohighmem(inode);
+> >   		break;
+> >   	case S_IFCHR:
+> > @@ -273,7 +278,6 @@ static int erofs_fill_inode(struct inode *inode)
+> >   #endif
+> >   	}
+> >   out_unlock:
+> 
+> Remove this.
 
-Suggested-by: Dave Hansen <dave.hansen@intel.com>
-Signed-off-by: Aaron Lu <aaron.lu@intel.com>
----
- arch/x86/kernel/cpu/sgx/main.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+I'm not sure whether we need to remove this becasue device inodes do not
+need other operation bindings below and still needs the out_unlock to be
+early out. Another solution is to use the early return but i deem the
+goto solution is clearer.
 
-diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
-index 694fcf7a5e3a..3a79105455f1 100644
---- a/arch/x86/kernel/cpu/sgx/main.c
-+++ b/arch/x86/kernel/cpu/sgx/main.c
-@@ -848,6 +848,13 @@ static bool __init sgx_page_cache_init(void)
- 		return false;
- 	}
- 
-+	for_each_online_node(nid) {
-+		if (!node_isset(nid, sgx_numa_mask) &&
-+		    node_state(nid, N_MEMORY) && node_state(nid, N_CPU))
-+			pr_info("node%d has both CPUs and memory but doesn't have an EPC section\n",
-+				nid);
-+	}
-+
- 	return true;
- }
- 
--- 
-2.45.2
+> 
+> Thanks,
+> Gao Xiang
 
+Best Regards,
+Yiyang Wu
 
