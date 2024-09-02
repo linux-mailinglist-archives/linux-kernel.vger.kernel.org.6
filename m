@@ -1,175 +1,171 @@
-Return-Path: <linux-kernel+bounces-311477-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311478-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3ACC9689AC
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 16:17:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DF7B9689AE
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 16:17:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 90C7E284647
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 14:17:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0526D2847E7
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 14:17:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBEFF20FABE;
-	Mon,  2 Sep 2024 14:16:53 +0000 (UTC)
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A60A6201253;
+	Mon,  2 Sep 2024 14:17:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="miNkKwNd"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2E5B19F139;
-	Mon,  2 Sep 2024 14:16:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 425B519E969
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 14:17:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725286613; cv=none; b=lfuafBwqUVnhflP1Vg1iAGz/Mynh8geV0vjoOrvZxFxoDjB0ycizi8qP1ndXHqXGEUk4SqQ2mt5zjyrEf8a3BjQCPOOAIgdGcODFNARiqorcoTbyMJafryQ1bPnVk3bTbzGzPuWvV80C4tF+TRsOs3cUzBa9rbS+/fs1GYMKyh4=
+	t=1725286626; cv=none; b=oiCj/C9GM0USspDHcU4N2G0HrlZzUaMt2HcLj2RypcTBn/cgw2ztZjEhwEx8EBLbjAyZwBMY38K4YDiBFutKUH+HCJRHyzzQER1yv956OHrBmDtaOY+xohY6813WyiSi8KhNlLHcCANZ/Q5O0YUVmTfAYUkYflsZ0Is+eHlVSas=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725286613; c=relaxed/simple;
-	bh=fDdlvjnkEKdpqrb9ron6CVSr4nVE9CrITrM5DE48suM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FBtnUI4jvpe5uRW1/L0FZBcpiJAL0BWg9YSU6Zcn2LuRKAmKhM1SxM+lcM2mrFlWQJgtK38OXTNwJxoaF9H5NuW5zJFx+diTCa+LfPq0bj1SRY/HAjrI2UrIH/PKaIt0yqyKcdK2WCBABlr1Qrfk583r1EWmGMvMgtS2Fvp5l7I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4Wy9mf0dPHz9sST;
-	Mon,  2 Sep 2024 16:16:50 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id 6Tgia6VqhxQ6; Mon,  2 Sep 2024 16:16:49 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4Wy9md6m7Rz9sSS;
-	Mon,  2 Sep 2024 16:16:49 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id D570A8B76C;
-	Mon,  2 Sep 2024 16:16:49 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id 7vewUwjhFmRj; Mon,  2 Sep 2024 16:16:49 +0200 (CEST)
-Received: from [192.168.234.167] (unknown [192.168.234.167])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id D65958B763;
-	Mon,  2 Sep 2024 16:16:48 +0200 (CEST)
-Message-ID: <c411b0c6-1806-4e4d-8bcf-51f0747fcd19@csgroup.eu>
-Date: Mon, 2 Sep 2024 16:16:48 +0200
+	s=arc-20240116; t=1725286626; c=relaxed/simple;
+	bh=vh2QgxSX2L75UOqalaQcbV73L5PLbsUphxMNDQ2BtJQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YVkmg2wxXkw0qbr3lgu7FjIE1Buz8usUkV2JC9STeu5PkJgP8aq7S9u6J170PUzS/8iYC85hh9ZdBef2J5mCyJlYTmkEHSS5HRgPOJV0wLGWk44OeTHpnOpDuFDrC7x6tYMd6N+Qzwcj4smIAOGaGyAIAPOEqTR4UcSYNYsi9Mw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=miNkKwNd; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-42bb8cf8a5bso32507255e9.2
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2024 07:17:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1725286622; x=1725891422; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0nZ+9fn7BwVDUG445G81+75wyZkpZMEfiuxhieME3PM=;
+        b=miNkKwNdeWS4tpogmKrBjbky7evnbuusOAVqBFv5H0ON4npDnYvHnvTLNxlePMq+bl
+         zQ3XwfiJ4QNcoVYKR+FtuicLJM8qCRdEtViJHzTFo17JvfXQ5VcfLQnCF8yh9LVZv4xm
+         EvY7UkSTaMbTUmC2k1Ynlas9dWiYgWt0HnFuX2KfdSTvFbxJwA/X4j6Zhmr5NCQvj8zH
+         eo8AAQIFys7OF0m1rYkVBMW71E+RZqOq1ZooFgdotdjtCch4wWlmWkZreRAVYOQeViSx
+         FD206ABBeYdg7TMllW41z7ocWEIBR+CyNYJb2esN+tspWJikjNYdksJc01pEuBWZ9nzI
+         4Qyw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725286622; x=1725891422;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=0nZ+9fn7BwVDUG445G81+75wyZkpZMEfiuxhieME3PM=;
+        b=vRf9fqILzWKQqGYdpwuE+pglqY5Y/KvCuq35vtY23uyxfu1LmfgDYoY8lsJ/YwyJ+2
+         ubixi6UBy8R4xNI27AM0+VbVl0tEcJFY7xSMLRmH/yQkaKwCfr1YIuytyfQ7KD7+/LLU
+         NhCERt3aEcVtdzIQmYWy82W1ahEtW+rdJTRGTQYBsgJIdDdJyiAOzBtWGjG9rxkC+Vj+
+         ogkmZqZ87gqGEkZs5UAy0VcMxIzMG7nxc7zsCpvFX38hMP4WDV6GAf8Nuw7kgNyEqpvb
+         RmEcMyTa/3c7b6wKSTRuXWiQwGx3EGYicQ7af3eFqWqwx1/adB9xVijQS01I9tz/6LLl
+         Ywnw==
+X-Forwarded-Encrypted: i=1; AJvYcCUsRRGilEXXSFtmQHU5bTuzvYN52O1cVeYUwNtGgJdHyohmQBFGIHIB9esQq/B2tul5hd6Vh0TL3fKPCc4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyU0u3rjy8fJ6JsHXyEzplCnXz+En3K9p6Loa7HdT/0C6b0UvLG
+	it5NBSA5jqHm/qM0pkVEZrbWH4iJseHbvGBp1lE7Z5SuEV8saIC+3Fh+Ems0JVT82iZYtIN5Ce0
+	5EAIsaTfcNVK1yJJoaYiWC7TEFYNdYLakxIEj
+X-Google-Smtp-Source: AGHT+IGTiHL3dLiYbM7/qkPUXctMrWRqR8rS7ipP+OnuURlbIUWlRU6s9EcTEKznODPu2Frc6lmN7cFFpOek3NTUuYc=
+X-Received: by 2002:a05:600c:46c6:b0:426:4978:65f0 with SMTP id
+ 5b1f17b1804b1-42c82f56727mr29036395e9.18.1725286622239; Mon, 02 Sep 2024
+ 07:17:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 5/5] powerpc/vdso: Wire up getrandom() vDSO
- implementation on PPC64
-To: "Jason A. Donenfeld" <Jason@zx2c4.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
- Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
- <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
- Naveen N Rao <naveen@kernel.org>, Nathan Chancellor <nathan@kernel.org>,
- Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling
- <morbo@google.com>, Justin Stitt <justinstitt@google.com>,
- Shuah Khan <shuah@kernel.org>, linux-kernel@vger.kernel.org,
- linuxppc-dev@lists.ozlabs.org, linux-kselftest@vger.kernel.org,
- llvm@lists.linux.dev, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
- linux-trace-kernel@vger.kernel.org,
- Adhemerval Zanella <adhemerval.zanella@linaro.org>,
- Xi Ruoyao <xry111@xry111.site>
-References: <cover.1725278148.git.christophe.leroy@csgroup.eu>
- <27de70dcc356e56754a03a2887a97597f5e840a4.1725278148.git.christophe.leroy@csgroup.eu>
- <ZtWyeuCfzZ66fVsg@zx2c4.com>
- <bdf1a515-b3d0-471d-89ee-989ae0d63202@csgroup.eu>
- <ZtXE-AISB4w9U9Yc@zx2c4.com>
-Content-Language: fr-FR
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-In-Reply-To: <ZtXE-AISB4w9U9Yc@zx2c4.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20240808-alice-file-v9-0-2cb7b934e0e1@google.com> <20240902-dickdarm-zumeist-3858e57fb425@brauner>
+In-Reply-To: <20240902-dickdarm-zumeist-3858e57fb425@brauner>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Mon, 2 Sep 2024 16:16:49 +0200
+Message-ID: <CAH5fLgjho1p7EHkqpot4pXvrKLFkXLsw9MWcriNCOHXZ0NJ5bw@mail.gmail.com>
+Subject: Re: [PATCH v9 0/8] File abstractions needed by Rust Binder
+To: Christian Brauner <brauner@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, =?UTF-8?B?QXJ2ZSBIasO4bm5ldsOlZw==?= <arve@android.com>, 
+	Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, 
+	Joel Fernandes <joel@joelfernandes.org>, Carlos Llamas <cmllamas@google.com>, 
+	Suren Baghdasaryan <surenb@google.com>, Dan Williams <dan.j.williams@intel.com>, 
+	Matthew Wilcox <willy@infradead.org>, Thomas Gleixner <tglx@linutronix.de>, Daniel Xu <dxu@dxuuu.xyz>, 
+	Martin Rodriguez Reboredo <yakoyoku@gmail.com>, Trevor Gross <tmgross@umich.edu>, linux-kernel@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	Kees Cook <kees@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Mon, Sep 2, 2024 at 10:02=E2=80=AFAM Christian Brauner <brauner@kernel.o=
+rg> wrote:
+>
+> On Thu, Aug 08, 2024 at 04:15:43PM GMT, Alice Ryhl wrote:
+> > This patchset contains the file abstractions needed by the Rust
+> > implementation of the Binder driver.
+> >
+> > Please see the Rust Binder RFC for usage examples:
+> > https://lore.kernel.org/rust-for-linux/20231101-rust-binder-v1-0-08ba91=
+97f637@google.com/
+> >
+> > Users of "rust: types: add `NotThreadSafe`":
+> >       [PATCH 5/9] rust: file: add `FileDescriptorReservation`
+> >
+> > Users of "rust: task: add `Task::current_raw`":
+> >       [PATCH 7/9] rust: file: add `Kuid` wrapper
+> >       [PATCH 8/9] rust: file: add `DeferredFdCloser`
+> >
+> > Users of "rust: file: add Rust abstraction for `struct file`":
+> >       [PATCH RFC 02/20] rust_binder: add binderfs support to Rust binde=
+r
+> >       [PATCH RFC 03/20] rust_binder: add threading support
+> >
+> > Users of "rust: cred: add Rust abstraction for `struct cred`":
+> >       [PATCH RFC 05/20] rust_binder: add nodes and context managers
+> >       [PATCH RFC 06/20] rust_binder: add oneway transactions
+> >       [PATCH RFC 11/20] rust_binder: send nodes in transaction
+> >       [PATCH RFC 13/20] rust_binder: add BINDER_TYPE_FD support
+> >
+> > Users of "rust: security: add abstraction for secctx":
+> >       [PATCH RFC 06/20] rust_binder: add oneway transactions
+> >
+> > Users of "rust: file: add `FileDescriptorReservation`":
+> >       [PATCH RFC 13/20] rust_binder: add BINDER_TYPE_FD support
+> >       [PATCH RFC 14/20] rust_binder: add BINDER_TYPE_FDA support
+> >
+> > Users of "rust: file: add `Kuid` wrapper":
+> >       [PATCH RFC 05/20] rust_binder: add nodes and context managers
+> >       [PATCH RFC 06/20] rust_binder: add oneway transactions
+> >
+> > Users of "rust: file: add abstraction for `poll_table`":
+> >       [PATCH RFC 07/20] rust_binder: add epoll support
+> >
+> > This patchset has some uses of read_volatile in place of READ_ONCE.
+> > Please see the following rfc for context on this:
+> > https://lore.kernel.org/all/20231025195339.1431894-1-boqun.feng@gmail.c=
+om/
+> >
+> > Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+> > ---
+>
+> So, this won't make v6.12 anymore. There already were pretty big changes
+> around files for the coming cycle so I did not also want to throw this
+> into the mix as well. (Sorry that this had to miss it's birthday, Alice.)
 
+This has also gained a conflict with the helpers split [1] in
+rust-next, so maybe that is for the best.
 
-Le 02/09/2024 à 16:00, Jason A. Donenfeld a écrit :
-> On Mon, Sep 02, 2024 at 03:12:47PM +0200, Christophe Leroy wrote:
->>
->>
->> Le 02/09/2024 à 14:41, Jason A. Donenfeld a écrit :
->>> On Mon, Sep 02, 2024 at 02:04:42PM +0200, Christophe Leroy wrote:
->>>>    SYM_FUNC_START(__arch_chacha20_blocks_nostack)
->>>>    #ifdef __powerpc64__
->>>> -	blr
->>>> +	std	r5, -216(r1)
->>>> +
->>>> +	std	r14, -144(r1)
->>>> +	std	r15, -136(r1)
->>>> +	std	r16, -128(r1)
->>>> +	std	r17, -120(r1)
->>>> +	std	r18, -112(r1)
->>>> +	std	r19, -104(r1)
->>>> +	std	r20, -96(r1)
->>>> +	std	r21, -88(r1)
->>>> +	std	r22, -80(r1)
->>>> +	std	r23, -72(r1)
->>>> +	std	r24, -64(r1)
->>>> +	std	r25, -56(r1)
->>>> +	std	r26, -48(r1)
->>>> +	std	r27, -40(r1)
->>>> +	std	r28, -32(r1)
->>>> +	std	r29, -24(r1)
->>>> +	std	r30, -16(r1)
->>>> +	std	r31, -8(r1)
->>>>    #else
->>>>    	stwu	r1, -96(r1)
->>>>    	stw	r5, 20(r1)
->>>> +#ifdef __BIG_ENDIAN__
->>>>    	stmw	r14, 24(r1)
->>>> +#else
->>>> +	stw	r14, 24(r1)
->>>> +	stw	r15, 28(r1)
->>>> +	stw	r16, 32(r1)
->>>> +	stw	r17, 36(r1)
->>>> +	stw	r18, 40(r1)
->>>> +	stw	r19, 44(r1)
->>>> +	stw	r20, 48(r1)
->>>> +	stw	r21, 52(r1)
->>>> +	stw	r22, 56(r1)
->>>> +	stw	r23, 60(r1)
->>>> +	stw	r24, 64(r1)
->>>> +	stw	r25, 68(r1)
->>>> +	stw	r26, 72(r1)
->>>> +	stw	r27, 76(r1)
->>>> +	stw	r28, 80(r1)
->>>> +	stw	r29, 84(r1)
->>>> +	stw	r30, 88(r1)
->>>> +	stw	r31, 92(r1)
->>>> +#endif
->>>> +#endif
->>>
->>> This confuses me. Why are you adding code to the !__powerpc64__ branch
->>> in this commit? (Also, why does stmw not work on LE?)
->>
->> That's for the VDSO32 ie running 32 bits binaries on a 64 bits kernel.
->>
->> "Programming Environments Manual for 32-Bit Implementations of the
->> PowerPC™ Architecture" say: In some implementations operating with
->> little-endian byte order, execution of an lmw or stmw instruction
->> causes the system alignment error handler to be invoked
->>
->> And GCC doesn't like it either:
->>
->> tools/arch/powerpc/vdso/vgetrandom-chacha.S:84: Error: `stmw' invalid
->> when little-endian
-> 
-> Does it make sense to do all the 32-bit stuff in the PPC32 commit (and
-> then you can introduce the selftests there without the error you
-> mentioned), and then add the 64-bit stuff in this commit?
+I will look into whether any other changes are needed given what is
+going in for 6.12 and send a new version. It looks like you already
+added it to an vfs.rust.file branch, and it doesn't look like anything
+in vfs.file required changes in this series.
 
-Can do that, but there will still be a problem with chacha selftests if 
-I don't opt-out the entire function content when it is ppc64. It will 
-build properly but if someone runs it on a ppc64 it will likely crash 
-because only the low 32 bits of registers will be saved.
+[1]: https://lore.kernel.org/r/20240815103016.2771842-1-nmi@metaspace.dk
 
-That's the reason why I really prefered the approach where I set 
-something in vdso_config.h so that the assembly is used only for 
-powerpc32 and when building powerpc64 the assembly part is kept out and 
-vdso_test_chacha simply tells it is not supported.
+> However, I do intend to merge a version for this for v6.13. There's some
+> wrapping of struct cred and specifically of struct secctx that I can
+> only handwave at. Ideally you get a nod from the LSM maintainers as well
+> but if that doesn't come in I don't see much point in making this sit in
+> limbo indefinitely.
 
-Christophe
+Okay thanks! I can look into that.
+
+Alice
 
