@@ -1,64 +1,73 @@
-Return-Path: <linux-kernel+bounces-310932-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310933-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1AE8D968300
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 11:21:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A44E5968303
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 11:21:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4C2131C22252
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 09:21:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C1801F225FC
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 09:21:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FE8E1C2DBD;
-	Mon,  2 Sep 2024 09:21:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F10AA1C32F1;
+	Mon,  2 Sep 2024 09:21:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="KDzoTJ3F";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="GvDkMwI6"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="cJKZVsM9"
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E327187355
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 09:21:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C59261C2DB3;
+	Mon,  2 Sep 2024 09:21:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725268875; cv=none; b=qmnC+awVK0a5rwNPU6yssLCMcunYA1/fHzUH5mbbZINHVcp49gQYgG1w3QKb1kuZENzax8ANo9eQAIlqPMMIrQd6Ye8wSHVA/MX9OiwFazQfS8mHYok1jIRjHkmNl2LlhnNhtRs7gn8pDY0VEYpph91M1Ls20kqCrZDA1kGdPgI=
+	t=1725268893; cv=none; b=OVQG2fRWsMthsJSfeumhrO/XbeKxK1IkmzA0CbcOyLU8xLI1B0aNhSNd1QWmTEkayVpZXyOO5fUEqbK1Y5XydPblkHJ7IcXLcQdraAaQlrvgG6GuyHWVzubNSjYFKtL0uB08n68IKQucH6jT+xmwbSaw9UzewUryr9SOIKrL5Dg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725268875; c=relaxed/simple;
-	bh=P3RFR3w9OGKb7/aT/u9MBYytXXSbIUzoU/rnrYfruag=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=tMwqmYRJFdMmdktI94RPOB9fPIyijR63wbm9lT/LxfH6r26ocwD6D0UaBFDP1f5vcxucgazQmEAd7MUwDgZHous7iZCY8wEcF2Tg779t7WDQsUAKfW3y6V4+u/3C5EV5JSt28wTSZQ/KKN3Ji/jnQSyRf9iwvCmwYhOx8dZNtCQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=KDzoTJ3F; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=GvDkMwI6; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1725268872;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ezJ86gMHAl9kksvHdXlVMp+lrI2MsRBPUc3qEVfL37o=;
-	b=KDzoTJ3FNcFB3d3MAotEbymvq/O70JY1KKTQv4NKvjyG9v+kxY/hyAV5UWWSaQnUs/JwiV
-	ph7HwtT/0UgfPAm5ATCFt7jV6Ouska+u1r1TrFCjBiuMxPJ1uyTVXDJ//is6tfd4TBiazz
-	yyBojNtQDiCCC9sTHvu00CQEv10CUwKLFUjdi/7FzXb6l6Te/JR7/zLL5wR/V5Q/yYCv+r
-	iWZShThdkM0AgXJ4nXqSUb09QTQuuObVAAuY3hhHXonGIU3s8Ubt9ZxLlQajNkSJoDwqIQ
-	a3n9t2JkabQm/cUhCZLbk6hIa5UoMAZcvQd8DMl5Yqj27vQXZaHc/VgbAxcfQQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1725268872;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ezJ86gMHAl9kksvHdXlVMp+lrI2MsRBPUc3qEVfL37o=;
-	b=GvDkMwI6i5ETQ35y27uKoJdpLQsmdPxSSwCiNfFTkoBp7h/iQgVd0Ayu1t6M8Xtx/cEd5s
-	hp2WFo2A6vOR48BQ==
-To: Xingyu Li <xli399@ucr.edu>, akpm@linux-foundation.org,
- linux-kernel@vger.kernel.org
-Cc: Yu Hao <yhao016@ucr.edu>
-Subject: Re: BUG: general protection fault in __free_object
-In-Reply-To: <CALAgD-7TsMdA7rjxfpheXc=MNqikEXY9TZNxJt4z9vm6Yfs5qQ@mail.gmail.com>
-References: <CALAgD-7TsMdA7rjxfpheXc=MNqikEXY9TZNxJt4z9vm6Yfs5qQ@mail.gmail.com>
-Date: Mon, 02 Sep 2024 11:21:11 +0200
-Message-ID: <87frqi76ns.ffs@tglx>
+	s=arc-20240116; t=1725268893; c=relaxed/simple;
+	bh=4oGHD2UiJxI8f66x4TrkRtiznhG3g5NXt0ulddIBRGk=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=h8iTegF6lCPH5YzA6mXIM2N7kjkQj7iebJAfwOo1gyxIOiJUA5cCMSqBsgN8qo5F67LI1rEP81UCCOYeCeZjBX0EI8lCiavx0Okx79Ht36twPGLs19Cpf6WdZPUH7U5WerWlO5lyiyN+lxSlrW0tezgIAUZukDLLKZK0kXiPIYc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=cJKZVsM9; arc=none smtp.client-ip=60.244.123.138
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: b8904d12690c11ef8593d301e5c8a9c0-20240902
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=xMzH3qhRngUXHdpYWln6cgACFVJGt1ZJWn8uMS7Y4Vo=;
+	b=cJKZVsM92DDk0Fj/NaudsLL2S2O/Tu4KDoC2AURBfNiQWLsFOQ2DyhZSKygyt5WriRMWsZxuB/Ln+zu8S6OOMqZDSj6fz4YULL9+fY3c0CAQ8c0mTT5WIT4S9psj5L+UAxVa4YbH+S1x+WJZi68gLUvoHz++6I7EMDnxOe2WUiM=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.41,REQID:3bc820f3-073c-41fe-9fef-d2168c3e9f40,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:0
+X-CID-META: VersionHash:6dc6a47,CLOUDID:199b4fbf-d7af-4351-93aa-42531abf0c7b,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
+	RL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,
+	SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: b8904d12690c11ef8593d301e5c8a9c0-20240902
+Received: from mtkmbs14n1.mediatek.inc [(172.21.101.75)] by mailgw01.mediatek.com
+	(envelope-from <yenchia.chen@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 1972345126; Mon, 02 Sep 2024 17:21:22 +0800
+Received: from mtkmbs11n1.mediatek.inc (172.21.101.185) by
+ mtkmbs13n2.mediatek.inc (172.21.101.108) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.26; Mon, 2 Sep 2024 17:21:23 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
+ mtkmbs11n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1118.26 via Frontend Transport; Mon, 2 Sep 2024 17:21:23 +0800
+From: Yenchia Chen <yenchia.chen@mediatek.com>
+To: <stable@vger.kernel.org>
+CC: Yenchia Chen <yenchia.chen@mediatek.com>, "Rafael J. Wysocki"
+	<rafael@kernel.org>, Pavel Machek <pavel@ucw.cz>, Len Brown
+	<len.brown@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>, <linux-pm@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-mediatek@lists.infradead.org>
+Subject: [PATCH 6.1 0/1] pm, restore async device resume optimization
+Date: Mon, 2 Sep 2024 17:21:19 +0800
+Message-ID: <20240902092121.16369-1-yenchia.chen@mediatek.com>
+X-Mailer: git-send-email 2.18.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,63 +76,18 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain
 
-On Wed, Aug 28 2024 at 16:27, Xingyu Li wrote:
-> We found a bug in Linux 6.10 using syzkaller. It is possibly a null
-> pointer dereference  bug.
-> The reproducer is
-> https://gist.github.com/freexxxyyy/5aefd53c6567415e9fe8c76cc2ad390c
+We have met a deadlock issue on our device which use 5.15.y when resuming.
+After applying this patch which is picked from mainline, issue solved.
+Backport to 6.1.y also.
 
-Reproducer alone is not really helpful. This needs the corresponding
-kernel config, the exact kernel version and a description of the
-reproduction environment (compiler, qemu command line ....)
+Rafael J. Wysocki (1):
+  PM: sleep: Restore asynchronous device resume optimization
 
-It does not reproduce here at all.
+ drivers/base/power/main.c | 117 +++++++++++++++++++++-----------------
+ include/linux/pm.h        |   1 +
+ 2 files changed, 65 insertions(+), 53 deletions(-)
 
-Also if it really reproduces, then have you checked against current
-mainline as well?
-
-> RIP: 0010:hlist_add_head include/linux/list.h:1032 [inline]
-> RIP: 0010:__free_object+0x903/0xaa0 lib/debugobjects.c:396
->  __debug_check_no_obj_freed lib/debugobjects.c:994 [inline]
->  debug_check_no_obj_freed+0x135/0x530 lib/debugobjects.c:1019
->  slab_free_hook mm/slub.c:2163 [inline]
->  slab_free_freelist_hook mm/slub.c:2225 [inline]
->  slab_free_bulk mm/slub.c:4462 [inline]
->  kmem_cache_free_bulk+0x1bf/0x360 mm/slub.c:4676
-
-The code in question is serialized against objpool modifications with
-pool_lock. So nothing can change any of the related data.
-
-    if (obj_pool_free > debug_objects_pool_size &&
-        obj_nr_tofree < ODEBUG_FREE_WORK_MAX) {
-
-	for (i = 0; i < ODEBUG_BATCH_SIZE; i++) {
-		obj = __alloc_object(&obj_pool);
-		hlist_add_head(&obj->node, &obj_to_free); <- fail
-
-debug_objects_pool_size is initialized to:
-
-        ODEBUG_POOL_SIZE + num_possible_cpus() * ODEBUG_BATCH_SIZE;
-=
-        1024 + num_possible_cpus() * 16
-
-The minimum size is 1040, so there are at least 1040 objects in
-obj_pool. The loop allocates at max 16 objects, which means
-
-             __alloc_object(&obj_pool);
-
-is guaranteed to return an object and cannot return NULL.
-
-So the only reason why this can result in a NULL pointer dereference is
-that the obj_to_free list is corrupted. No idea how that should happen.
-
-Maybe some proper reproducer instructions shed some light to it.
-
-Thanks,
-
-        tglx
-
-
-
+-- 
+2.18.0
 
 
