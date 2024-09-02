@@ -1,111 +1,156 @@
-Return-Path: <linux-kernel+bounces-311868-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311869-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE4CA968EC4
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 22:14:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07AD2968EC6
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 22:17:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 998852839C1
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 20:14:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A35B01F23127
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 20:17:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AA361A4E76;
-	Mon,  2 Sep 2024 20:14:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 138AB1A4E8C;
+	Mon,  2 Sep 2024 20:17:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=umich.edu header.i=@umich.edu header.b="UTTeGmJe"
-Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Zd/qlJ8P"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B6591A4E64
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 20:14:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5F351A4E66;
+	Mon,  2 Sep 2024 20:17:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725308091; cv=none; b=Tstd6UTOGjrYex14jBgwSKXtVDQA7NAONO5oFCnfRfPNbYBbbv6iRIgbg114Xo+ijOJDFm5z/4xH3EmyP/bsIrmmIGzfGyQnjgC2OwlbPEVCub3x9AImsBhCrWKZkt8p6x7gVHjRN8IiOfMkwh5iLBMjK1vsBqJxybGROUWzGZY=
+	t=1725308264; cv=none; b=WoWeHrpzGG+JEgvyPCNtgvXO7Q5DlOPmqaQ9GN6f6ITrK7jPiOof6VtrXDxrKNn8eFPWg2o6300LzA7lu1Ss6xNjVd27OSL3EE2glK88rWmS7CeOitRFhWFdj1U7S1o2prCgEICM8Nx6b5mE86mRui19bTLuPUjZh4wysqVbSZg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725308091; c=relaxed/simple;
-	bh=VUBUrgI8fZ9UdZTf7JBIxZO5g8A0/zi0bMsBWCmBpmI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FPa+zyAb7OxnrY+JcfkowlLl+fBNQDqT/c48CPyeuMSKit80WiA/L2S0brIowHOrUhbZQ3mIF4C74Tk81+HyOEPd44g4MLm+keZCoN8UrNYEvPPYIVrS+VQinr3GHdUw5ALedaIzOTSbv+84/P70N7LbMEjVd8ojGyxIOU3bLcU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=umich.edu; spf=pass smtp.mailfrom=umich.edu; dkim=pass (2048-bit key) header.d=umich.edu header.i=@umich.edu header.b=UTTeGmJe; arc=none smtp.client-ip=209.85.128.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=umich.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=umich.edu
-Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-6d5893cd721so20424107b3.0
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2024 13:14:48 -0700 (PDT)
+	s=arc-20240116; t=1725308264; c=relaxed/simple;
+	bh=EB/x75EAibkANYQIaP3MTaEX9zr/3ffhy9x4AZEIMHU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DaWsTKjg5gIp6pLwMSkTBtDp8NdDlHoLVkubbjqBH9w7i/JTMyfnPJfc4f57D4i0h+FYoRwasJMfGlsUaP4AF4MM2Rg0dCQLhZp5YLhPECa1TnDoVSqj9AXF3yRd7M1hBYzqw1lGJThPxaFVQ3AdhcvruIHv1T9bgyoUGy4GvN8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Zd/qlJ8P; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-42bbc70caa4so28670305e9.0;
+        Mon, 02 Sep 2024 13:17:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=umich.edu; s=google-2016-06-03; t=1725308087; x=1725912887; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VUBUrgI8fZ9UdZTf7JBIxZO5g8A0/zi0bMsBWCmBpmI=;
-        b=UTTeGmJewPywWFuxoGo4e2v1cT/VTq1hCiE7ogEgBRNdlRnze46w+3ady4jkTA5+UU
-         VtRyBC1b2ftd46znZf4fu9quiVDmEc1BOj6uoCx7XxYPoEuqErhetSm8ioALW5WNOZ3l
-         lSV31tpklmLkrIFxHnBNOp116ag8JeJp9RBxCXv68DGVnDiHcEus3UcCfHLtnIuOAKnW
-         1ZLmhWUPNW+aegWuMkSGKTDUNiwBnTwfVWbqkzm1bWAh4m8p7U3e9ggnm+PdWjYakbzQ
-         OEaqKZ42nK+OGxAhhe8lB9SnkRU1ZLf9Hitnwyd2PzmZum22fhmdix6AaIF1omVIrZGM
-         Xh5Q==
+        d=gmail.com; s=20230601; t=1725308260; x=1725913060; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=KMqAXZ/qtCvfEyB7syUW1Ky2cH4kdnpVfwZL+bkVgZU=;
+        b=Zd/qlJ8PkNn5DXtx//EqIGi7MRITB/P19vAeqzrP7QUmlgDnS9rKiD+ZHnVg5tivSt
+         FvQjZ6b+mCYW1L/EGJBg32PxJF9SgUd6dUuICKoxzaC4kLvuV1jehvLidbnQezHykUM4
+         PYkgzYItCkygPSjTe5XibRxDO5u5olWrrmm+/DkFlfLVkBXXYfBFlvlBXuVV1Lr4h3t1
+         lw67x/s19kZu8C+8/RgaeIUqlCWkSaREGtRCr4sJRf7H8ytb/Zm9BS5JR+s0aVSVODU+
+         caD9zC/3H9GPyTj759oOU0ViB/rWzGgZfqcS9jAKzrQ3LdnIBAq0fQRYZRHDn4YPThxL
+         pzXw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725308087; x=1725912887;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=VUBUrgI8fZ9UdZTf7JBIxZO5g8A0/zi0bMsBWCmBpmI=;
-        b=m8+W5S1RhPpVhS8bDwexaj132iz73B6vEJSfWxJLKPR9cyRlHapLjE94l4cyDlsIbF
-         FpC9jM8ynbntCMR+zt4CeWFO0b5Y7goT+b0G4Q0pZqOD7eMyUh+BiQEfU2va8BO/Vzc7
-         paFmSH68zv7YYc+2a/EjeMeqgjeLuRIOpXDPuSRkSfeHDb+3Zwn5/BzgG3QtfK7X7bhe
-         8Y0AL9r46RW5ieD0hgbmy2NXcD9Rglg93/n8Nm1/N04gf2ratkwAOoIkmKJXuApyfO0C
-         xSqv3rOtvcpjXhQyGRQ0p4yEYb6pdm8rnccdrQn7S2ltoVtKn2n7rxqHcAUFwSGpou0h
-         j4+w==
-X-Forwarded-Encrypted: i=1; AJvYcCWPQ1Vdj6GrvMkn3i3Q8cFJmqNYVCG6iKkeRdq62mvjdQn200CxyApTRI0TeXkwM+xl7f8j2Q/QCJD9+Xk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzgvCKVDSVNHoaq4KaAN+egu0RpyUlMjNYzRWfoIQXV9j5pl1Yz
-	fhHzFt4+qZrNiFL9gK07dKDmEcUU3iHe8hT0ghqem9IjxcvX8+cNiXPbURWmdFTfMj8AcIZ2xha
-	4PRrsE4foTzbvqeJXdO5+QetO5Id2C2b/aqIEZg==
-X-Google-Smtp-Source: AGHT+IGsXiR+Wz+6S4QOoyChhXUKek0EL7dfcorJfeKc88gOTnhJF8XcgdnaFG0Y0Q9vn6kCbLybTQ+QQtTSSBDJQwA=
-X-Received: by 2002:a05:690c:418f:b0:6d3:f400:81e1 with SMTP id
- 00721157ae682-6d40e17f6a2mr89660447b3.14.1725308087698; Mon, 02 Sep 2024
- 13:14:47 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1725308260; x=1725913060;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=KMqAXZ/qtCvfEyB7syUW1Ky2cH4kdnpVfwZL+bkVgZU=;
+        b=t3ZdGxEAxy/Rk6IiGrJtjs7+hYsXvnUjjUpfQGQndSh0YMhCcHW8J79UfBZjhCa4eZ
+         BDz2CcZs2jVoQJMufRuJhhPaVa1X2DKim00ftZH9wQLQ/fpSNys57kJ4ySWaYp8hYwPs
+         Uky+zk9PZ9CD9bFX0ZmcCstPduLOvMjZxgIAHibpu4tteGfTan8O3yoxiQsMYgyaFJD2
+         PAlo/6j+/54VhNN3bMxe90n852YDxN5IicQSBJwIuP7F/ly3N5C7o9S3CpCU6qf3Cn+h
+         3Kl9vARPUWyCr619WsIpoIrJJP7CSa2thKBrl7Hiq1qTNO3Yl5q1NlteFHdKuaVo0PwL
+         NAhw==
+X-Forwarded-Encrypted: i=1; AJvYcCVwLX8+INucc41wVowxNBguBEs5wp+epLQwTc2GRWWqsexFv/Wj5yzgSgHFSeJEprQyrrm7egH9cDiHZdv5@vger.kernel.org, AJvYcCW4wglTaU4RjIWxJLNWeqetCGwg6NxgozrNCTMnbV90xqJfAXG1BGU5Qq5/G4Jn08QPaoBwm9dy1SVwzA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwmUUpi1P9OY1AhKqKcyJB9E0sIE9CoAy/AAGf1Y6LKCAG2WYaO
+	QWSX/blZD6rYwWn37fYc4oPUG3zMryNT0V86QfyqphA83YJYPQ9C
+X-Google-Smtp-Source: AGHT+IE2bNPNSqzBvVQl30H9s9ivT0ttIo+fYHOJROFk/QaEKdiHp1tBfI8jfFzEjoLPBVQ1RLOv6A==
+X-Received: by 2002:a05:600c:4594:b0:426:6d1a:d497 with SMTP id 5b1f17b1804b1-42bb01b993amr109429415e9.12.1725308259724;
+        Mon, 02 Sep 2024 13:17:39 -0700 (PDT)
+Received: from [192.168.50.7] (net-109-116-17-225.cust.vodafonedsl.it. [109.116.17.225])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3749ee9c48csm12298552f8f.51.2024.09.02.13.17.38
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 02 Sep 2024 13:17:39 -0700 (PDT)
+Message-ID: <4bef0c7b-df8b-41dc-9fe1-022cc4937def@gmail.com>
+Date: Mon, 2 Sep 2024 22:17:37 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240902173255.1105340-1-ojeda@kernel.org>
-In-Reply-To: <20240902173255.1105340-1-ojeda@kernel.org>
-From: Trevor Gross <tmgross@umich.edu>
-Date: Mon, 2 Sep 2024 16:14:36 -0400
-Message-ID: <CALNs47s_DT4Vt3WuAAcP54GA7so_aNg=LY4CCB01xn2nGiUjDA@mail.gmail.com>
-Subject: Re: [PATCH] MAINTAINERS: add Trevor Gross as Rust reviewer
-To: Miguel Ojeda <ojeda@kernel.org>
-Cc: Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
-	Alice Ryhl <aliceryhl@google.com>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, patches@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] btrfs: Split remaining space to discard in chunks
+To: dsterba@suse.cz
+Cc: Qu Wenruo <quwenruo.btrfs@gmx.com>, Chris Mason <clm@fb.com>,
+ Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,
+ linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240902114303.922472-1-luca.stefani.ge1@gmail.com>
+ <20240902201150.GB26776@twin.jikos.cz>
+Content-Language: en-US
+From: Luca Stefani <luca.stefani.ge1@gmail.com>
+In-Reply-To: <20240902201150.GB26776@twin.jikos.cz>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Sep 2, 2024 at 1:33=E2=80=AFPM Miguel Ojeda <ojeda@kernel.org> wrot=
-e:
->
-> Trevor has been involved with the Rust for Linux project for more than
-> a year now. He has been active reviewing Rust code in the mailing list,
-> and he already is a formal reviewer of the Rust PHY library and the two
-> PHY drivers.
->
-> In addition, he is also part of several upstream Rust teams:
-> libs-contributors (contributors to the Rust standard library on a regular
-> basis), crate-maintainers (maintainers of official Rust crates), the
-> binary size working group and the Rust for Linux ping group.
->
-> His expertise with the language will be very useful to have around in
-> the future if Rust keeps growing within the kernel, thus add him to the
-> `RUST` entry as a reviewer.
->
-> Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
 
-Thank you Miguel!
 
-Acked-by: Trevor Gross <tmgross@umich.edu>
+On 02/09/24 22:11, David Sterba wrote:
+> On Mon, Sep 02, 2024 at 01:43:00PM +0200, Luca Stefani wrote:
+>> Per Qu Wenruo in case we have a very large disk, e.g. 8TiB device,
+>> mostly empty although we will do the split according to our super block
+>> locations, the last super block ends at 256G, we can submit a huge
+>> discard for the range [256G, 8T), causing a super large delay.
+> 
+> I'm not sure that this will be different than what we already do, or
+> have the large delays been observed in practice? The range passed to
+> blkdev_issue_discard() might be large but internally it's still split to
+> smaller sizes depending on the queue limits, IOW the device.
+> 
+> Bio is allocated and limited by bio_discard_limit(bdev, *sector);
+> https://elixir.bootlin.com/linux/v6.10.7/source/block/blk-lib.c#L38
+> 
+>    struct bio *blk_alloc_discard_bio(struct block_device *bdev,
+> 		  sector_t *sector, sector_t *nr_sects, gfp_t gfp_mask)
+>    {
+> 	  sector_t bio_sects = min(*nr_sects, bio_discard_limit(bdev, *sector));
+> 	  struct bio *bio;
+> 
+> 	  if (!bio_sects)
+> 		  return NULL;
+> 
+> 	  bio = bio_alloc(bdev, 0, REQ_OP_DISCARD, gfp_mask);
+>    ...
+> 
+> 
+> Then used in __blkdev_issue_discard()
+> https://elixir.bootlin.com/linux/v6.10.7/source/block/blk-lib.c#L63
+> 
+>    int __blkdev_issue_discard(struct block_device *bdev, sector_t sector,
+> 		  sector_t nr_sects, gfp_t gfp_mask, struct bio **biop)
+>    {
+> 	  struct bio *bio;
+> 
+> 	  while ((bio = blk_alloc_discard_bio(bdev, &sector, &nr_sects,
+> 			  gfp_mask)))
+> 		  *biop = bio_chain_and_submit(*biop, bio);
+> 	  return 0;
+>    }
+> 
+> This is basically just a loop, chopping the input range as needed. The
+> btrfs code does effectively the same, there's only the superblock,
+> progress accounting and error handling done.
+> 
+> As the maximum size of a single discard request depends on a device we
+> don't need to artificially limit it because this would require more IO
+> requests and can be slower.
+
+Thanks for taking a look, this change was prompted after I've been 
+seeing issues due to the discard kthread blocking an userspace process 
+causing device not to suspend.
+https://lore.kernel.org/lkml/20240822164908.4957-1-luca.stefani.ge1@gmail.com/ 
+is the proposed solution, but Qu mentioned that there is another place 
+where it could happen that I didn't cover, and I think what I change 
+here (unless it's the wrong place) allows me to add the similar 
+`btrfs_trim_interrupted` checks to stop.
+
+Please let me know if that makes sense to you, if that's the case I 
+guess it would make sense to send the 2 patches together?
+
+Luca.
 
