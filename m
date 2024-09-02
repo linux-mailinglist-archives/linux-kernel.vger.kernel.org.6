@@ -1,110 +1,83 @@
-Return-Path: <linux-kernel+bounces-311465-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311466-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2065196898C
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 16:12:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC74596898F
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 16:12:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA00A1F239B6
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 14:12:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A030283FF7
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 14:12:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75D0819F112;
-	Mon,  2 Sep 2024 14:12:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NoE6E7dt"
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0D3219F111;
+	Mon,  2 Sep 2024 14:12:38 +0000 (UTC)
+Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 526CB19F103;
-	Mon,  2 Sep 2024 14:12:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 006B719F100;
+	Mon,  2 Sep 2024 14:12:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725286326; cv=none; b=MPBKbbXRQXJ2Hg+6D+H8UZi7zJSt72Ci51GVH4yiF+UbbV585GZtKd4ChW2lTl4OOXc4jVIW2D4mzH3IO6WFNlnur60hablz+P2ZpRKcSYxw8JsobozZ44O79M6Z9KO8DQ/NUtpS+MEzGpuZZ5ZtqP+h1mJDuVu6ZPnnOdrc37s=
+	t=1725286358; cv=none; b=MBbdC3dinSqkS9xoBY4iRTJjA0pTj8qB/f9BO4CHEVTwuFZFvMg7sXBoC557X8lQGUhuU/1NIW+9O+gIIJ7+Lm3uAdfajdHgl5D0LzSqe/HSaosjUitCgzLNgFGAA3oyD8RmTexQixC3wfCLd33eygWhSyrJAEu+ZTgC7h2bBws=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725286326; c=relaxed/simple;
-	bh=Y3dT1cqEaGxeNcpHnUz7gh7yRKuWdeTj/5wcehnNv6A=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=CYn3mwPcYy17x7uozVf/5KJJTOwp8retbQk2FBXF13jtgOzXTEwldLFt8Fe8shv1Ln9ne8s/vqLTcS35jTu1P4ilzpHpPJ8UivwWcn+oF5/cm5B/zJvDXGhGTmsPHZC7ZYvQNYjYSLgp3F+MpHcbv88+WY50gv5ZRG0tWsloakU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NoE6E7dt; arc=none smtp.client-ip=209.85.208.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1725286358; c=relaxed/simple;
+	bh=Kk8CHL+kR6atoREqYqkSYJwr9BSSnxuF4pNB/FP5hzA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=THLZ69zNxhgrVDQ+zbjfJ7fVF1AusotxB1wvHDxNoNFRtxzBwg5PMBNtD8liz2cyMzdp3tQfQFYcucuC6owBKfDDWjj6pE2rmOoW+eYXGMLhtrlVOXfU86QdauwMhwzYZC1BYD/ugfM10GPIT10Tl87rTfy6PHI8ghyyiqXzj8A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.216.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5c26815e174so639852a12.0;
-        Mon, 02 Sep 2024 07:12:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725286323; x=1725891123; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=RptCdAZky21+tAU1YnkwI1FByFYF8uROiRobK4HGMq4=;
-        b=NoE6E7dtXsy56oVOfAKVjeeNYvTR8pC3oe1mRFKP/iCgfeaBcl5mXDvcflZU0WJ1+L
-         cLs5bUYaDWY1oQxE+/cD5WbLy2mCj1AVQ7OUXalKJ0BshKghrZQUJMOgBPmykYd7p3se
-         8EGaqqshME1cySaeRK7I0Xtil8XH0QS1rrN5MXtYHarVu61JCoJXTVeAYiIXBnTaRgZA
-         0+7giRS6EuDOlb02i33NKpfPo/HrbYeK6NDTnEf86w9G2or+i+5+v5kqMfuP0RdSBvI/
-         x6rSbAZvks3RhOdsYoKSbLR4p7Tr79+mz+sCyzHVg3+7cWB1a3OQO+dFl6XyqOqje5YB
-         0m+g==
+Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-2d877dab61fso1694747a91.3;
+        Mon, 02 Sep 2024 07:12:36 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725286323; x=1725891123;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=RptCdAZky21+tAU1YnkwI1FByFYF8uROiRobK4HGMq4=;
-        b=m0PNCzqyUFVCFFMkBJhz8LtF27QdQVn61iZR5TCX0jC//bp9S08jSSNRGhcsqN7MXv
-         TVcA7ZFELAJJv4iLWyW3VoiME8+9HZC+JYQhHxtvhMjLpYm6RNHdV1iwFe8dQKtVCzy3
-         cpOJ2GQQ504VHHZT917C5DYuAHq6Jaqgta+9iJagtsiYDEy1VERVqJZsrd8MIueNUXJD
-         p3+ZLYdgvttU6q8urjAAva0gvb8KSz04h2RVE6zvGPhmHKY9A1mqaqO0+8ndgMvmWg+V
-         0ZfU7N5qif7JHhpw1PPDopefRExLY0xKmg08jBEW3e74m5PuMum1v6o2gnVyK+XOLPjj
-         Fo+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVUs+Kvuy4gohNPgW3UJUQ45hgGEVgc6b/8A00gXxOEOcuDjVTCGQCd5KVkKymBVQVnEgqZ1rJDSWb0PA==@vger.kernel.org, AJvYcCWlS0/svOCTsdbdvAP0Vq+51IUCRrOWkStu3mMa/bSC10QdyeNBKu3eeHouL+KO5bZJuVrKdhtGm69Xz6A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxayVQK91SL5zT/5t3NvkOu+36rw5WX7a7BL/YAMQKKQs48nTJz
-	OuWFyr4gcLte/OqdR87TXPCG6wLZ+GpgxRlME/EyGiLvQ3bWbRj9
-X-Google-Smtp-Source: AGHT+IH8+ym5kCfrw/asOTbITqJyF7SOHJahHtR/KU4AxQeW5WnCSDCJSg5AiZSfLxAdOIT83maKXQ==
-X-Received: by 2002:a17:906:da86:b0:a86:722c:1460 with SMTP id a640c23a62f3a-a89d8782136mr498124666b.18.1725286323328;
-        Mon, 02 Sep 2024 07:12:03 -0700 (PDT)
-Received: from localhost (craw-09-b2-v4wan-169726-cust2117.vm24.cable.virginm.net. [92.238.24.70])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8a1cc8a2d5sm12301266b.28.2024.09.02.07.12.02
+        d=1e100.net; s=20230601; t=1725286356; x=1725891156;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=F64bS6DRw3UKsmpMpP0QQPIepPXU+WPPJPaEDVUhgo8=;
+        b=OQfeC8zhJGvNsY05V5pz9b/V8D3eBcKwRtmY68Cb4ZsOEu2qpxFvEs/jBWrujcmthJ
+         QVNKNGqlEvsn31w4jfAUqY7xGPs9VhqIZ816yrfLmDDa6YCZFEras9klCxO5tkvrx4Br
+         2Pe3q+ZPYmkXraBNYLzMARrGh0gf2evXMwGbAsjJRFqNDotqUwhFUiT9gas7k02cuX/m
+         dnGsrqTSXYid2ugu/zjdOHcfEfIWZMgSNjjwB6bu0KWoWwL5cVGrz/9KmJSRR0KfMvJW
+         2/q6oqNj5ZkcDZAbOt8hKg4yPSbuylJ8t0U4joBqiSUHstlA9vVDgta5AEbMTciYOSXg
+         9smA==
+X-Forwarded-Encrypted: i=1; AJvYcCV5WI+QlPKzfc+r5dfaZS+Pfu3OD28bNYaGEfpjWbCcjWsEiD2cWvDVaMAlVvsTUUnMmAcC8BPzJnyL@vger.kernel.org, AJvYcCWMVGLVo5dh7G5s8Ml2HkVrUi5/XFlbc/HZAFmeo0D5CcilNOoeK22w0VKpi6GXI0MZF+VpCw7Asf4K/Bg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwW1mAGPIqGlNBZu169t+xK2s8XjqffxEfElxTrnpimhCW/0UGN
+	0ZE10YP00iZt9am/MGNJX7f3xzM6cBgzDJ/aWT+s04zrwHQY19hh
+X-Google-Smtp-Source: AGHT+IGsWW78e/zRV1dWhn7tH0/rGhlf3HuFQMz2+LGZYfUGsIT8PRfJ25tgS4V1WDe6lJrUL0V4hw==
+X-Received: by 2002:a17:90a:4481:b0:2d3:db91:ee82 with SMTP id 98e67ed59e1d1-2d856503a10mr11179272a91.40.1725286356015;
+        Mon, 02 Sep 2024 07:12:36 -0700 (PDT)
+Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d8b8fe1f68sm3237345a91.31.2024.09.02.07.12.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Sep 2024 07:12:02 -0700 (PDT)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: "James E . J . Bottomley" <James.Bottomley@HansenPartnership.com>,
-	"Martin K . Petersen" <martin.petersen@oracle.com>,
-	linux-scsi@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] scsi: zalon: Remove trailing space after \n newline
-Date: Mon,  2 Sep 2024 15:12:02 +0100
-Message-Id: <20240902141202.308632-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.39.2
+        Mon, 02 Sep 2024 07:12:35 -0700 (PDT)
+Date: Mon, 2 Sep 2024 23:12:33 +0900
+From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
+To: zhangjiao2 <zhangjiao2@cmss.chinamobile.com>
+Cc: manivannan.sadhasivam@linaro.org, kishon@kernel.org,
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] tools: pci: rm .*.cmd when make clean
+Message-ID: <20240902141233.GA261040@rocinante>
+References: <20240902041240.5475-1-zhangjiao2@cmss.chinamobile.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240902041240.5475-1-zhangjiao2@cmss.chinamobile.com>
 
-There is a extraneous space after a newline in a dev_printk message,
-remove it. Also fix non-tabbed indentation of the statement.
+Hello,
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/scsi/zalon.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> rm .*.cmd when make clean
 
-diff --git a/drivers/scsi/zalon.c b/drivers/scsi/zalon.c
-index 22d412cab91d..15602ec862e3 100644
---- a/drivers/scsi/zalon.c
-+++ b/drivers/scsi/zalon.c
-@@ -139,7 +139,7 @@ zalon_probe(struct parisc_device *dev)
- 		return -ENODEV;
- 
- 	if (request_irq(dev->irq, ncr53c8xx_intr, IRQF_SHARED, "zalon", host)) {
--	  dev_printk(KERN_ERR, &dev->dev, "irq problem with %d, detaching\n ",
-+		dev_printk(KERN_ERR, &dev->dev, "irq problem with %d, detaching\n",
- 		     dev->irq);
- 		goto fail;
- 	}
--- 
-2.39.2
+Applied to misc, thank you!
 
+[1/1] tools: PCI: Remove .*.cmd files with make clean
+      https://git.kernel.org/pci/pci/c/f5383c543de0
+
+	Krzysztof
 
