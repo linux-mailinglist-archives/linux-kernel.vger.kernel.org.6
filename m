@@ -1,125 +1,152 @@
-Return-Path: <linux-kernel+bounces-310789-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310790-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35F2F96813D
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 10:03:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80503968140
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 10:03:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6754F1C20A65
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 08:03:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 29FAC1F2272E
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 08:03:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 526E2185944;
-	Mon,  2 Sep 2024 08:02:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5915181B82;
+	Mon,  2 Sep 2024 08:03:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gYQEBuN4"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I7qJrHMb"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99CE9155739;
-	Mon,  2 Sep 2024 08:02:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39BEFEEB1;
+	Mon,  2 Sep 2024 08:03:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725264173; cv=none; b=LYNJ+Z9EjUpBNBmzojlfC5ByTygAJxPQZQfwjMl8qMRAIii7Zw4ifuJg32r7qYXzi1I89sPQ1w3dp4ZQX0FCs0dsHoWMaCu8Z+zEZCbck6vt/oQ08n1YVdhDXxq/BrqpihCRucAbU+NrNnd6DIuFQVqGpod7SRqZqunqTgKmb7Y=
+	t=1725264218; cv=none; b=SfoopZaclMfD6qGS9+SorDdMxhNO4SVLx0nVc/Ti8F1nxTUHZnXUceo41S1Pw2tFaeX88sMBEKZV1U9MbGTU7OlbwT4wQWyu3bYIZfOjoN+RjRof+e99ZtNYtnv0sgCqrryXrsRpVrlpwrLyDZT2Lo9g3I1KpK+rLoxCwU7CbVs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725264173; c=relaxed/simple;
-	bh=o/vVg9cH/6lPXA0xLYlKu3oCei4KbktAECxPbfZLKVA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=A67aKshaernggprXuz2Nd+Zdf+t53F04nuXdK4QqFAqCj9soQszLg8TgMujzvm39iKgMbqrI5zFzZWik+dfJsq3klwomaDLO8xuTYCRwa6bG52+w7imfxUOvYk4AgiNE6f02/NGx0t4WuAEtVfdnBxrhTqYaandDvkmYlJLbf+g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gYQEBuN4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E4C9AC4CEC2;
-	Mon,  2 Sep 2024 08:02:46 +0000 (UTC)
+	s=arc-20240116; t=1725264218; c=relaxed/simple;
+	bh=0KSzUfUcET/TS1chJhmyFXPM67UbWHlOo2oFMznUyn8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YdRIvi7tyV9lFLH2Ty/FB/TKUN2TPPfzlYOrb+Eow6eTbjTX2TAMfGoiy4TWm0gWp5eSrSCQoyq6B7M8vEUSARri+9oXjugbSMvv4Iwj2q1Lp2xuQQE12SfaS+DcxfAj3LI0V9mIznQDI1qsM2/fxNdcosRoHGXIZ7ip4IPOY+E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I7qJrHMb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 535AFC4CEC2;
+	Mon,  2 Sep 2024 08:03:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725264173;
-	bh=o/vVg9cH/6lPXA0xLYlKu3oCei4KbktAECxPbfZLKVA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gYQEBuN4ayOMO+zLup7I2SSmnCTaggmjKmoqm50eBwFjFePaiJrgsWk2rKnCqWwyP
-	 tx1kPTnxGHx+YOpiADwlrAe6kxCBzQEyBDYsJv8dkNthcpB+J9i5HPc8lAuHKZFesx
-	 r48I/5gqMIss+YAjp1i9Z+kXCh8T0mbFhGrmQmTvImNuA6f6gSdryCMDilrj7MhCqu
-	 6yeotN1kr1QGQeylATdaZZEd7whlAIjKGWZo9mAq8wD9iVF15k/fQA1LeKLL2N0ha4
-	 9xtASR+chibXFMjPfAcq/4251z85PJ7CbE9n68D7KjU3BCACoqMZt6btVENg9Q0thc
-	 rv/ypnkbAuhAg==
-Date: Mon, 2 Sep 2024 10:02:43 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, 
-	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
-	Andreas Hindborg <a.hindborg@samsung.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Arve =?utf-8?B?SGrDuG5uZXbDpWc=?= <arve@android.com>, Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, 
-	Joel Fernandes <joel@joelfernandes.org>, Carlos Llamas <cmllamas@google.com>, 
-	Suren Baghdasaryan <surenb@google.com>, Dan Williams <dan.j.williams@intel.com>, 
-	Matthew Wilcox <willy@infradead.org>, Thomas Gleixner <tglx@linutronix.de>, Daniel Xu <dxu@dxuuu.xyz>, 
-	Martin Rodriguez Reboredo <yakoyoku@gmail.com>, Trevor Gross <tmgross@umich.edu>, linux-kernel@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org, linux-fsdevel@vger.kernel.org, Kees Cook <kees@kernel.org>
-Subject: Re: [PATCH v9 0/8] File abstractions needed by Rust Binder
-Message-ID: <20240902-dickdarm-zumeist-3858e57fb425@brauner>
-References: <20240808-alice-file-v9-0-2cb7b934e0e1@google.com>
+	s=k20201202; t=1725264217;
+	bh=0KSzUfUcET/TS1chJhmyFXPM67UbWHlOo2oFMznUyn8=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=I7qJrHMbnfcF5d/yIuNRLgQuwt5s75PNSKbSYCL0nTWp1sm4o5iu/EhD8PdKQiXKk
+	 6MTen0LZ5VNDo3A1gcKvaoVobLKZ6hk+SSv5o+NR5W8arGeFseH76HOYMtYEW/J0WR
+	 d9UiqTKpHPBB1lQMR4l3XLhHS3/4B6QpkELlsgFrSNMymgsJPjtH0/cWHcCdAaVD5i
+	 hs363UwoJ/7FMcKdKhRaUqSeow1p72Jp/z6+ToBtkZdtn5jOfBIMtrpPho38zid7fg
+	 zip/3PNVZMbFHYStYR+GnzD7J4EMgnQD+Z+KVVJKj6YrfHzsDqyo+eEynZD+HTngsj
+	 vDxJc10jj299A==
+Message-ID: <eff3f5c5-3a25-498e-80da-ad8e039f7575@kernel.org>
+Date: Mon, 2 Sep 2024 10:03:31 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240808-alice-file-v9-0-2cb7b934e0e1@google.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/4] dt-bindings: pinctrl: spacemit: add support for K1
+ SoC
+To: Conor Dooley <conor.dooley@microchip.com>,
+ Chen Wang <unicorn_wang@outlook.com>
+Cc: Yixun Lan <dlan@gentoo.org>, Linus Walleij <linus.walleij@linaro.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Paul Walmsley
+ <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>,
+ Albert Ou <aou@eecs.berkeley.edu>, Conor Dooley <conor@kernel.org>,
+ devicetree@vger.kernel.org, Meng Zhang <zhangmeng.kevin@spacemit.com>,
+ linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Jesse Taube <jesse@rivosinc.com>, Yangyu Chen <cyy@cyyself.name>,
+ Inochi Amaoto <inochiama@outlook.com>, Jisheng Zhang <jszhang@kernel.org>,
+ Meng Zhang <kevin.z.m@hotmail.com>, linux-riscv@lists.infradead.org
+References: <20240828-02-k1-pinctrl-v3-0-1fed6a22be98@gentoo.org>
+ <20240828-02-k1-pinctrl-v3-1-1fed6a22be98@gentoo.org>
+ <MA0P287MB28226AF473BF6A261E4C5D84FE962@MA0P287MB2822.INDP287.PROD.OUTLOOK.COM>
+ <20240830-tidy-identify-90dce7a21abc@wendy>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240830-tidy-identify-90dce7a21abc@wendy>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Aug 08, 2024 at 04:15:43PM GMT, Alice Ryhl wrote:
-> This patchset contains the file abstractions needed by the Rust
-> implementation of the Binder driver.
+On 30/08/2024 09:06, Conor Dooley wrote:
+> On Fri, Aug 30, 2024 at 07:48:17AM +0800, Chen Wang wrote:
+>>
+>> On 2024/8/28 19:30, Yixun Lan wrote:
+>>> Add dt-bindings for the pinctrl driver of SpacemiT's K1 SoC.
+>>>
+>>> Signed-off-by: Yixun Lan <dlan@gentoo.org>
+>>> ---
+>>> Changes in v3:
+>>> - drop spacemit,slew-rate-{enable,disable} property
+>>> - use drive-strength instead of drive-strength-microamp
+>>> - fold strong-pull-up into bias-pull-up
+>>> - format fixed
+>>> - title fixed
+>>
+>> Drop this change history here, you can add this in the cover letter.
+>>
+>> [......]
 > 
-> Please see the Rust Binder RFC for usage examples:
-> https://lore.kernel.org/rust-for-linux/20231101-rust-binder-v1-0-08ba9197f637@google.com/
+> It's perfectly fine to provide per-patch changelogs fyi, rather than in
+> the cover letter.
 > 
-> Users of "rust: types: add `NotThreadSafe`":
-> 	[PATCH 5/9] rust: file: add `FileDescriptorReservation`
-> 
-> Users of "rust: task: add `Task::current_raw`":
-> 	[PATCH 7/9] rust: file: add `Kuid` wrapper
-> 	[PATCH 8/9] rust: file: add `DeferredFdCloser`
-> 
-> Users of "rust: file: add Rust abstraction for `struct file`":
-> 	[PATCH RFC 02/20] rust_binder: add binderfs support to Rust binder
-> 	[PATCH RFC 03/20] rust_binder: add threading support
-> 
-> Users of "rust: cred: add Rust abstraction for `struct cred`":
-> 	[PATCH RFC 05/20] rust_binder: add nodes and context managers
-> 	[PATCH RFC 06/20] rust_binder: add oneway transactions
-> 	[PATCH RFC 11/20] rust_binder: send nodes in transaction
-> 	[PATCH RFC 13/20] rust_binder: add BINDER_TYPE_FD support
-> 
-> Users of "rust: security: add abstraction for secctx":
-> 	[PATCH RFC 06/20] rust_binder: add oneway transactions
-> 
-> Users of "rust: file: add `FileDescriptorReservation`":
-> 	[PATCH RFC 13/20] rust_binder: add BINDER_TYPE_FD support
-> 	[PATCH RFC 14/20] rust_binder: add BINDER_TYPE_FDA support
-> 
-> Users of "rust: file: add `Kuid` wrapper":
-> 	[PATCH RFC 05/20] rust_binder: add nodes and context managers
-> 	[PATCH RFC 06/20] rust_binder: add oneway transactions
-> 
-> Users of "rust: file: add abstraction for `poll_table`":
-> 	[PATCH RFC 07/20] rust_binder: add epoll support
-> 
-> This patchset has some uses of read_volatile in place of READ_ONCE.
-> Please see the following rfc for context on this:
-> https://lore.kernel.org/all/20231025195339.1431894-1-boqun.feng@gmail.com/
-> 
-> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
-> ---
 
-So, this won't make v6.12 anymore. There already were pretty big changes
-around files for the coming cycle so I did not also want to throw this
-into the mix as well. (Sorry that this had to miss it's birthday, Alice.)
+And honestly, since some time I prefer it much more. Much, much easier
+to spot which patch changed instead of something in cover letter like:
+1. Patch #1: changed foo
+2. Patch #3: dropped
+3. Patch #4 (so patch #5 or #4?): changed bar
 
-However, I do intend to merge a version for this for v6.13. There's some
-wrapping of struct cred and specifically of struct secctx that I can
-only handwave at. Ideally you get a nod from the LSM maintainers as well
-but if that doesn't come in I don't see much point in making this sit in
-limbo indefinitely.
+
+Best regards,
+Krzysztof
+
 
