@@ -1,150 +1,112 @@
-Return-Path: <linux-kernel+bounces-310942-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310941-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F77A96831B
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 11:23:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5775A96831A
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 11:23:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4E7CF1C22545
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 09:23:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 88A6F1C225C6
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 09:23:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03B351C3308;
-	Mon,  2 Sep 2024 09:22:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B41C1C3F14;
+	Mon,  2 Sep 2024 09:22:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HxN6a4K8"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qgpFQHIC"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75BD41C2DB4;
-	Mon,  2 Sep 2024 09:22:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A4E91C2DB2
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 09:22:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725268977; cv=none; b=ShnKSKyMbAcBBvhg8tzFt5bhBHc7Yyj97bR2AvLolEDe1DpcaQqPGD5JvfXi+alP3jCtEbRqynFLb5kaWj/+jWZIqMFdyhzMDct8Jrb4Tltby7rW/DgOEacDfEpSqdsnwyEvnDVbQEUG/+OJ/Gx6bVrcYcbrRFISgmTCaTekzas=
+	t=1725268975; cv=none; b=KK8WWiY16m8kYDK07wc409APdrjtp4Jvaxp4WgKD/+v+eCMx+c8dlPut0k7GQW69L1kE5oD3ycCUq/m465uizMGuGyNiE3nzs6EmIR9OWy3tLyTvf+XP/rni5TXqsgMmcsvqZ+PwPshwSs4/D3fDRvjHVCiM+YnWRrxx1S48dF8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725268977; c=relaxed/simple;
-	bh=VZ8OdXN/IOYSuq/x5xY1eTO72fQw8fjegXdeCILRuyA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XlSOzGE4HjBDuSHDHsxpjiGklAW+cjwF0qnrCNxHMneQT4j07by5JcTZ4F1gyRXkKjOpcdYlRohdmnBY9Xv2/FElhhvN/dfG4s4gyOzr0NQ8h6gyPTsfJCNMd9ikgfkNUPKX1imSB2uLC+c6pzagr9908jXuAI3iP4TaGU2sAss=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HxN6a4K8; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725268975; x=1756804975;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=VZ8OdXN/IOYSuq/x5xY1eTO72fQw8fjegXdeCILRuyA=;
-  b=HxN6a4K85MwG+WlUMpbjlZjWouQ2jz2zKnNdZCP9KHUnXBsi0geqS2DR
-   IdyDLaamP3sITqxnFI98FtYHb2s0yTbX5A6rkAq+s4kWPiwoDkwxsnSAN
-   tzeXcFG1uPFXY1306y60FjbpzIbbJWKZnA9XOMvbpw5L5zEl/Ubd6DoA8
-   PtLsYJkayvIrAO/rJxKqiNOZnuFIf3oW4ujOEZY0991thw76P8AXvXJDf
-   OJuKfD2wauzcDfFhFzvVh+MZAZop1NQxzNNbE92Rjs3KJGh1Pxi68yN5S
-   fWajBosSCwhQUfzxJEvKVrzVXhfXAaidMW4eryU4ZsSwO20wRJ0mmwiEU
-   g==;
-X-CSE-ConnectionGUID: aCI3kz4FRLWWZDMVGsfiBQ==
-X-CSE-MsgGUID: aL+YJ3rsSmSdOI5g+SN7Kg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11182"; a="23649348"
-X-IronPort-AV: E=Sophos;i="6.10,195,1719903600"; 
-   d="scan'208";a="23649348"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2024 02:22:55 -0700
-X-CSE-ConnectionGUID: YYpNXTnnS8io8W/naGh2sQ==
-X-CSE-MsgGUID: plyfOy16RkO8CD6qidMJZQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,195,1719903600"; 
-   d="scan'208";a="68942886"
-Received: from lbogdanm-mobl3.ger.corp.intel.com (HELO tlindgre-MOBL1) ([10.245.246.223])
-  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2024 02:22:50 -0700
-Date: Mon, 2 Sep 2024 12:22:44 +0300
-From: Tony Lindgren <tony.lindgren@linux.intel.com>
-To: Nikolay Borisov <nik.borisov@suse.com>
-Cc: Rick Edgecombe <rick.p.edgecombe@intel.com>, seanjc@google.com,
-	pbonzini@redhat.com, kvm@vger.kernel.org, kai.huang@intel.com,
-	isaku.yamahata@gmail.com, xiaoyao.li@intel.com,
-	linux-kernel@vger.kernel.org,
-	Isaku Yamahata <isaku.yamahata@intel.com>,
-	Sean Christopherson <sean.j.christopherson@intel.com>,
-	Yan Zhao <yan.y.zhao@intel.com>
-Subject: Re: [PATCH 13/25] KVM: TDX: create/destroy VM structure
-Message-ID: <ZtWD5G0ZUp5Ui1Zp@tlindgre-MOBL1>
-References: <20240812224820.34826-1-rick.p.edgecombe@intel.com>
- <20240812224820.34826-14-rick.p.edgecombe@intel.com>
- <e7c16241-100a-4830-9628-65edb44ca78d@suse.com>
+	s=arc-20240116; t=1725268975; c=relaxed/simple;
+	bh=wTXjzMm1LaXvc6LZZwsmTnZ2rjRxz8FNqEBBjV5GM5o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XZ0LQz+ZSwri3D1BnuULIjqwXzNWbkYltzfeZBPVni29lQMDSZrlFC0nfcAVWJTDrrl5SrJ/12RAkZajktSTng5ukAX9TpCpmzqDi5Lrf8PZJjV+KLJSzZrOEg5ZRwq2lXh/ILWN64zfAG83ToUC5KGfdKXD8mcRYM7AbRNBy9o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qgpFQHIC; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-42c828c8863so8051605e9.3
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2024 02:22:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1725268973; x=1725873773; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Yo9xRnJdvUPVCwcTQSc6bKjRX1ZXMbBoRKEkXONSfNg=;
+        b=qgpFQHICt2VF2XelYEYJhzIyz+d9Yjm+LW73DITwSP4QOOQ7slbzs/hrzqIFRPE/3C
+         G8bDp5nF8FUasQow9USAbNcgvISXVIitTVV/nbZ+Jn5vFEI3TuG37daLMBzU90bGGZIa
+         0J0jI+XSV1P7D8IF7QH9YGvbwDtjY3NbX5pO+xXH0vWuHmijVTBINaqfS990Xus70kB4
+         smC712yLBrFYhGnJAOnrCpjgxURLeuIIoLnevreAXEh60sXu1rIwwzZlEg8c7ZbU2CNP
+         OH0AAQlIczFO/K5pOcmyAHd4Lgu4j8EizA0QHibebDLlMJJj/6332uKvM5/DeKEy1Plt
+         MzLQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725268973; x=1725873773;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Yo9xRnJdvUPVCwcTQSc6bKjRX1ZXMbBoRKEkXONSfNg=;
+        b=C+JAYkhWZ42qaiGsVIsNCCrgg/aDqvVmOvl6kaNvrMG4an5YUIgjWkgYD+De08JHDP
+         sLoMbrr2EuedzZPeYUN8DvjQp5w5zF9+Gs/mtH0Q8GJUxd0LQ2Rct3j9ot3Gc/GhXuv1
+         gjIwgByQVFX0sPZ3LfTz7v1mA/7AVYzKL6VrBBY53bVjCT/T75ZmuGdWuFdmGRPAyQ0Q
+         WS2NkBKwhmn4CacuprBVblgLzAXQVvVQ98scsKNWoBKjI2BjlY1wNuzpjH+9B126LD7n
+         4k0FxW9JrFjTJcN8L10icDbyu294bc6oIxgohGYy/Qw7EalJA8qYLCay6oYco9thosBa
+         fxGQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXQI02gTWePKIuY4kHqMH/pttUK9Lr6699bzeyoz9zNl3rQq6xkhwvL2RJvuzF7Z7+GKJfwLdwGJg1DDW4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzo7qrFxgcDu8bA1QheAjX8JAqFT9kylSwRMuskSVlQq2FK+2df
+	jfs4tsZpiI7mHZJT760/p9vdS+xIzDPoHI8PELVS5v+oPsPM6eQ50EpBEHxGuVg=
+X-Google-Smtp-Source: AGHT+IF2gbQEyM2KIz31TtTPfHNgiRlJUVBglGH3hjJxPTZSWs56UQKIWHzmRWcrPQDNaxXj4vwmzQ==
+X-Received: by 2002:a05:600c:1c07:b0:426:6b92:387d with SMTP id 5b1f17b1804b1-42bdc6377efmr55810205e9.21.1725268972166;
+        Mon, 02 Sep 2024 02:22:52 -0700 (PDT)
+Received: from [192.168.10.46] (146725694.box.freepro.com. [130.180.211.218])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-42bb6df92f1sm131711915e9.25.2024.09.02.02.22.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 02 Sep 2024 02:22:51 -0700 (PDT)
+Message-ID: <9fd1fa22-caa8-47d1-a576-2cab2c65a4dc@linaro.org>
+Date: Mon, 2 Sep 2024 11:22:51 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] clocksource: qcom: Add missing iounmap() on errors in
+ msm_dt_timer_init()
+To: Ankit Agrawal <agrawal.ag.ankit@gmail.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konrad.dybcio@linaro.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>, linux-arm-msm@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240713095713.GA430091@bnew-VirtualBox>
+Content-Language: en-US
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+In-Reply-To: <20240713095713.GA430091@bnew-VirtualBox>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <e7c16241-100a-4830-9628-65edb44ca78d@suse.com>
 
-On Mon, Aug 19, 2024 at 06:09:06PM +0300, Nikolay Borisov wrote:
-> On 13.08.24 г. 1:48 ч., Rick Edgecombe wrote:
-> > From: Isaku Yamahata <isaku.yamahata@intel.com>
-> > +static u64 ____tdx_reclaim_page(hpa_t pa, u64 *rcx, u64 *rdx, u64 *r8)
+On 13/07/2024 11:57, Ankit Agrawal wrote:
+> Add the missing iounmap() when clock frequency fails to get read by the
+> of_property_read_u32() call, or if the call to msm_timer_init() fails.
 > 
-> Just inline this into its sole caller. Yes each specific function is rather
-> small but if you have to go through several levels of indirection then
-> there's no point in splitting it...
+> Fixes: 6e3321631ac2 ("ARM: msm: Add DT support to msm_timer")
+> Signed-off-by: Ankit Agrawal <agrawal.ag.ankit@gmail.com>
+> Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+> ---
 
-Makes sense, will do a patch for this.
+Applied, thanks
 
-> > +static inline u8 tdx_sysinfo_nr_tdcs_pages(void)
-> > +{
-> > +	return tdx_sysinfo->td_ctrl.tdcs_base_size / PAGE_SIZE;
-> > +}
-> 
-> Just add a nr_tdcs_pages to struct tdx_sysinfo_td_ctrl and claculate this
-> value in get_tdx_td_ctrl() rather than having this long-named non-sense.
-> This value can't be calculated at compiletime anyway.
+Sorry for the delay. In the future, please send to To: instead of Cc: 
+for the maintainers
 
-The struct tdx_sysinfo_td_ctrl is defined in the TDX module API json files.
-Probably best to add nr_tdcs_pages to struct kvm_tdx.
+-- 
+<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
 
-> > +void tdx_vm_free(struct kvm *kvm)
-> > +{
-> > +	struct kvm_tdx *kvm_tdx = to_kvm_tdx(kvm);
-> > +	u64 err;
-> > +	int i;
-> > +
-> > +	/*
-> > +	 * tdx_mmu_release_hkid() failed to reclaim HKID.  Something went wrong
-> > +	 * heavily with TDX module.  Give up freeing TD pages.  As the function
-> > +	 * already warned, don't warn it again.
-> > +	 */
-> > +	if (is_hkid_assigned(kvm_tdx))
-> > +		return;
-> > +
-> > +	if (kvm_tdx->tdcs_pa) {
-> > +		for (i = 0; i < tdx_sysinfo_nr_tdcs_pages(); i++) {
-> > +			if (!kvm_tdx->tdcs_pa[i])
-> > +				continue;
-> > +
-> > +			tdx_reclaim_control_page(kvm_tdx->tdcs_pa[i]);
-> > +		}
-> > +		kfree(kvm_tdx->tdcs_pa);
-> > +		kvm_tdx->tdcs_pa = NULL;
-> > +	}
-> > +
-> > +	if (!kvm_tdx->tdr_pa)
-> > +		return;
-> 
-> Use is_td_created() helper. Also isn't this check redundant since you've
-> already executed is_hkid_assigned() and if the VM is not properly created
-> i.e __tdx_td_init() has failed for whatever reason then the is_hkid_assigned
-> check will also fail?
-
-On the error path __tdx_td_init() calls tdx_mmu_release_hkid().
-
-I'll do a patch to change to use is_td_created(). The error path is a bit
-hard to follow so likely needs some more patches :)
-
-Regards,
-
-Tony
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
 
