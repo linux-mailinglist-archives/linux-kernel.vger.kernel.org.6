@@ -1,314 +1,186 @@
-Return-Path: <linux-kernel+bounces-310884-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310885-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C6D4968277
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 10:54:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDD39968278
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 10:54:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A59551C222EF
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 08:54:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3E0D91F21B9F
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 08:54:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81FFC186E3B;
-	Mon,  2 Sep 2024 08:54:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="EqpatxPB"
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2087.outbound.protection.outlook.com [40.107.94.87])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2FBF186E3B;
+	Mon,  2 Sep 2024 08:54:30 +0000 (UTC)
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B40A218660B
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 08:54:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.87
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725267249; cv=fail; b=myQhYw1adfVwWvrSOHwFuWD6D3IsutjEBLv5OoiOHV7JpKRY/8dv9iaHzYU39LIAbWAj1t4lyaimdLpJ8YraGwJuNq8o321CuMObxYgSC2xDhmCwi4nCbNl9mpc94l1syZ/t4DbWhm5UFoepLtv0u5DDAN6SzICS/SspGg+rHaU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725267249; c=relaxed/simple;
-	bh=OANTE5WmXvLkULLZzWyraWaGSUzWw2v+/7NzzgfXWog=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=CISP1o1LL6Cvu7KC1JTu0UNphKoPMqJjwLq+HoDkV6iZa1GTRh+MgLneFyCrqmTbkc8VaWm2gPCY6RCxIpeK+mQaftbe0Dk/dHv69xBpUBItdqQKapFmYVYkNWZKqKP87cuQu7kx0unKZQfbgojX2A9kPlZRI/j5ck6w021VlKs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=EqpatxPB; arc=fail smtp.client-ip=40.107.94.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=GQRxNXYdU9J5gINw5Vbf8CqWjAz4n63tXr22XSoPwX6XmVr9ydCWNfGTYAG15ph2MAnma7k8Wp4dxVHs5C7UlKkSlskhvqh04YSXnBOSMb0ruAp/S1yI98bz4Xxg/0qvBgt9dtYX/5aSoLsiTei0kGHFfaFELsA6zrQqlZBvuwXoNs7H4K1zMTUBQkg3DRwzQvUhD1JVD4E27fmKOVWGwYISA4Ber+PJndA+0+WE2UZse/e7me3Ujf+F3yuhUFoqyx/9Hz65BNHLo7HwtfP9JFa8go44GjJdxB2jlCittQs9NvoMs86nuYFQVqP2VjYo+9GUZvJmiDp4as+yBq97iA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=22Gh8jL+dzscSfRj1GFfGyXpUFPW2+0nMLEmXJOIE/E=;
- b=aHVPrsLzReOMa6RU+a7BkxvNM3TyJM8FNWQpvtOXVRM64QI/DaMDQ+tpYijJ7A5bWH63rV8Y7pi8+XCAkLBpU2qQSf5VZaPifrlI3eP0Ikb2fhTJDDEff5m4KFczDm0DamFocIeDdxmqjybkefRm1/7EFaafROrcR5yglPNKvwEv9a/w4IDUx/Y5C/m0stJLjZzsc7Qh5b/BbkZm29+YdxZuiCZBLOokn6Dj+YTDu6OQIyv/d57u6DJem4oo2AVbCLPBoKZ1LYOQ5aYOSfIpsgMAd/RqOOXoi7Z2Be3neqG3+ljHApMhU4HO5jbHr3btdPN4zM9d4tOicA17VbOQSw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=22Gh8jL+dzscSfRj1GFfGyXpUFPW2+0nMLEmXJOIE/E=;
- b=EqpatxPBOOX0/UsqpYuTVzZYbkP97RCwMyC1I7vX9A3iv6Mwq68aq7BMsd5+zhO+2cTXcnX0zcxbxpr2Wi7sV5pM6hebpkSUtVZUt2FpHV11kyywd3U4mYxLP65PDHKZICUfWL2SN+c9ZQf8eW+gd8nSw5RTGBUQ1jeYS7kpEGDhaWPMylyJgy2CjRYWLfQRHgieBQcJg3Oc7VQmQOIW6/VU4qvJ2mVTVQw/eaDckg/rdf2KMzSeG/Axq8acuSqG33N4ukopBbkuI2aftkXZxMl0Qg0RvOGI6kz/iiGHN7ve9NgJqugScGOSuYgJr2S1lLDIMjfiIv95ep6qfHcN1Q==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CY8PR12MB8297.namprd12.prod.outlook.com (2603:10b6:930:79::18)
- by DS7PR12MB6007.namprd12.prod.outlook.com (2603:10b6:8:7e::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.24; Mon, 2 Sep
- 2024 08:54:03 +0000
-Received: from CY8PR12MB8297.namprd12.prod.outlook.com
- ([fe80::b313:73f4:6e6b:74a4]) by CY8PR12MB8297.namprd12.prod.outlook.com
- ([fe80::b313:73f4:6e6b:74a4%5]) with mapi id 15.20.7918.024; Mon, 2 Sep 2024
- 08:54:03 +0000
-Message-ID: <4936c228-a3e6-4dc3-a8b4-0f9706e7541f@nvidia.com>
-Date: Mon, 2 Sep 2024 10:53:57 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] vdpa/mlx5: Use random MAC address when no nic vport MAC
- set
-To: Cindy Lu <lulu@redhat.com>
-Cc: Jason Wang <jasowang@redhat.com>, "Michael S. Tsirkin" <mst@redhat.com>,
- Xuan Zhuo <xuanzhuo@linux.alibaba.com>, =?UTF-8?Q?Eugenio_P=C3=A9rez?=
- <eperezma@redhat.com>, si-wei.liu@oracle.com, Jiri Pirko <jiri@nvidia.com>,
- virtualization@lists.linux.dev, linux-kernel@vger.kernel.org
-References: <20240827160256.2446626-2-dtatulea@nvidia.com>
- <CACGkMEuRvqu8W9-OqPBRhn1DG-+DO6TCzFdHqc7zB74GkNDkAQ@mail.gmail.com>
- <CACLfguXjiyp+Ya4mUKXu6Dmb3Wx5wW0bbNGRSFWE-Z0E5gALTA@mail.gmail.com>
- <8daf221f-8d87-4da1-944c-3bcd0edea604@nvidia.com>
- <CACLfguVr1bd6=bkGn6hX3W7xBr45qydaCpQ1mNpsATeWFqe2ZA@mail.gmail.com>
- <55b7ae23-6000-4699-9bac-5e72fbdcd803@nvidia.com>
- <CACLfguUZVDGaY4MD+_tDqM9DQC-C6cuPfCf34X59e2RkMztEkA@mail.gmail.com>
- <cfece74e-a979-4f74-8a6a-fc8869e354f7@nvidia.com>
- <750da215-adea-422c-8130-7524671a8779@nvidia.com>
- <CACLfguWu=1aZ=mhtzMGXGG2s3iG-SVAFB8QkObWfg+npdV0X9g@mail.gmail.com>
-Content-Language: en-US
-From: Dragos Tatulea <dtatulea@nvidia.com>
-In-Reply-To: <CACLfguWu=1aZ=mhtzMGXGG2s3iG-SVAFB8QkObWfg+npdV0X9g@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: FR4P281CA0001.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:c8::15) To CY8PR12MB8297.namprd12.prod.outlook.com
- (2603:10b6:930:79::18)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCE29186E29
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 08:54:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725267270; cv=none; b=uA8gsfxNEIdlIsWkalyQL66FpKFxk1+wwXn0kaNBlri66FhvcEBsSmL64cP/n4wELFPr/PTBelx72Tx6qWMTosy2pAnxLMzGewAmB3PF2/b4nhhEvm24x+QNIY9H7nOkQKQZIgGlZwnxRMW3/aerUeSdGwk9q1sfQtdyVJ8G9DE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725267270; c=relaxed/simple;
+	bh=CAATabSCr5CKZj+7nol0qkzBbFz1DplMI5QO7FJBzGI=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=OToWB66YYKFStKK2GPxeFUNwRQVmIQW+xfhUuaKnvZF+0zFCB/TMOT9xB6eNO2l/I/osCH9Gj9WLyW3qRPvzqMs88uFEJWfqXOSYzgP0IhRz8xMS1l9xuxlNWwU55zN8vIQydka+BBsGHHFKa4rMZTG5LMn9usDqUKJXTU6Ct1o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-82a2cd95bf7so348863439f.0
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2024 01:54:28 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725267268; x=1725872068;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Z/CIsymnBzIqW1PBO0525sxPG7c5ImAMzTvr4SODwBk=;
+        b=gFqYh5QWzBaJrW4G0MyCAWyxOsVB7d2y/WgUgBDnJtbMshggJReAc4R+XODLN0nCb6
+         kUlyX0U846rb6uMJw38Y/mYW3bulY6j+/skJxH4Ua1xJTyAVavWPeL/nJ8Vdq4OiwahB
+         i3X0ZsMZxde06/1dgjJxdue4GRR83TZRZeRLVwkJg3fsoFbwArwU6ev+bR0QBuUcnU7X
+         8IA1pVXLlT3zlVxsI//fyFrtmlw1QEPHkd5kcoUlTohABtaG4FN7ry5i+glGS4eYvLaX
+         1JAEG5bxVq+iGCvlwcgaL5ZGNDLFUlQ0KMd7rTTZxET7zQsGdAX5T5YFk/jHKN8bztCe
+         GXNg==
+X-Forwarded-Encrypted: i=1; AJvYcCVab5GX0ZRlX315mK/BxJLgeeZoXWVcDvE2S7tg42ULcZQ6fWQ8ETlz3yX4ex6HfnQjQVgynPwRWf48DD8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw3rkOQdJpKdYEo+w9cy4jnC7ecLoj4cw1NWsjwxrCkOstpVjMD
+	3SFqpOR/63gTBfaQuJwh+Qsh14u8tX1IBrMOXsZOIDZ1NeOjQh4nMRnvLTQA9+ByJ9SjEBm04MQ
+	LDpHAZv+o1+T//05452pLLT6DpD1XHUzKSB4ZKrILzrNmdCiiU0/3xZk=
+X-Google-Smtp-Source: AGHT+IHdEqahd/WpfkzJfahG0HAilrL2z+XzKuERzqkNKckNS21qCjTnadX9f3/YE6tajvhTbCtXXpf+hidjUHSKTskreDTziCRb
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY8PR12MB8297:EE_|DS7PR12MB6007:EE_
-X-MS-Office365-Filtering-Correlation-Id: 910f5fc5-30b0-457c-0ceb-08dccb2ccb38
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?eVdESThIazNlRXEwWnFNb0hxdXJYa0JvRnlOVytvOGZTbFdDbzFzbkxrOEtT?=
- =?utf-8?B?YnAwUlhYTUd1REJtM3FzUGp5L2NQY0NFcmZlNk1CNVdCcGJGZHluNnlQbFhw?=
- =?utf-8?B?dG9wcSs3SDFPV2FJWnVuWUx4VGhBNmVETDV3dHRzZENqUWliNU5qSXg5MC9L?=
- =?utf-8?B?ZE9hRTFaZFpNdlp4dW8reXhVV2ZtZFNTTVk5NEFudXFVNmJWY2xyY2w2cXEx?=
- =?utf-8?B?TGRxZzg0OG1NRW04c1lxYUxCM011RFFLQjhPSmNRcnQ0dTRFQk5mNU4wSGY5?=
- =?utf-8?B?ZHJXMUlROCtZREhJUnpNaGpsNlpaVHlPNjJzcnJMMzZsTVhwOG12OTdUZkxh?=
- =?utf-8?B?akhkMFFNWDFKQk53NEtPeGRUTmd1M3Frall5SzJEVHcxUm04c0o3eFZab3p2?=
- =?utf-8?B?UDRpS29uQm1mWDkrQ0YxQXd5L0dJak5aSGdIK0xubnp5T1d1Wnh5YzlZUUZu?=
- =?utf-8?B?bXBKM09CS3pDYzhDVDhyYklIZ2wxY0g2YS93TUpwTytya1pKZjZBcWxSQlpo?=
- =?utf-8?B?MlNXWENzNFFmN2N4NE5kcldtTEoyc1hhQ1NlTWQ0bEFoRFlWK3RtQ25GWGhz?=
- =?utf-8?B?V0oxcExJOUx6ZURhTHRJMGFmY1RSZXRFQ2l3U1lpWDc3K1NKK3BWbmJmN0kw?=
- =?utf-8?B?c3dpV0NVMC9INkhRdkh5cm5MNGE5TlBsN0VmbmgwRzZBdnhkS2FtSmZiMHI4?=
- =?utf-8?B?RWM0RkJSNE5TbXlWMnU2Q0JPQnFHZHJaeVdTN252S0NYdTRWQ3RUbThGS3Nw?=
- =?utf-8?B?YitVZDFjS0Q3MUdtZzJxOEpVYTEzQis2ZXVPQXN4eWhuOCtwWWR5VjU2aU5N?=
- =?utf-8?B?RndCcnZtVnRlSGl1TDVINEhyYWNSVTVkYngwTkpPd1dsTG9CMTN4VEZ1aUww?=
- =?utf-8?B?S1hOMldPM2tJOGxzWnkrOHdPL1lZT3RrcnBYS0RjZGw1S1JpMGNOeDBCdDBa?=
- =?utf-8?B?Z05WSmwyeWJ1THlFYlpvWWMwUit1eDRRbDhFbkxlREdYZGZLcGlBcXFwY1VD?=
- =?utf-8?B?TTZ2WUhaUXFZZStQRXdoMkFCaWRsUFpwRld4RERUS2NHVmlOcHplQjdFVU1x?=
- =?utf-8?B?alNLSVErQTFrSGNOWVI0Z1h6cEFiY3d2Y2Y5VzhSdUl1d0kvWGw3d3Rya0Ju?=
- =?utf-8?B?bUJiNE1VSi9KYXpwenlhN2lJcEtIUEcrLzFwbThYVk9ndml6bm5JLzJ5alJh?=
- =?utf-8?B?U1lLN0lKRjFmQkFQOGpGUWNJb3BVRzlET213c1pkbENueXdmcWhHZllJUG1L?=
- =?utf-8?B?K0dkckxzc0NLRzRZSDN6Q0NPRFBZTjBrWEZGVC9KdFFGekVUU1ZRazJKMlpW?=
- =?utf-8?B?NUl3YnBJNjBXQk5sbHFpbVFoaGozWnZ0aWdBcWtoeU9JWmJUU000L3BaZ2g2?=
- =?utf-8?B?V1hzV1pnK2ZGbFNEMk1mUVRSTG9nREtRRkVFcWp6VEEwT1N1YUVqTVl4UVp5?=
- =?utf-8?B?T2p0Njg5WTF6YjNwVU5iZGovUVZEdEROL0pGRTZDYmdoenVadzF6MVlSSFJP?=
- =?utf-8?B?VEVJS2Nnd0tNUmYwMzllZWowRWhMQnNueFo0bjBlczRvLzJFR3kzL3E1Y1FM?=
- =?utf-8?B?aERtUkh6d0gxMjdIWGZpWklvYWcvQ0trTDUwYkkycWx0dU9SRHo2R3F3OE5a?=
- =?utf-8?B?TWUvWEtaNDVwRUNDeWVpZzlkY0QzTk9rZ05jNUkyYVVPTFVhcTRxemdxaEdK?=
- =?utf-8?B?aTJvZG5aTk85VXdDNkkyL21aVnNvRmo3ZzFVblYwUS9kUktYaUFKQVZOcVQx?=
- =?utf-8?B?dGVrZzFZU2U3NGgxc2w1ZlRiUi9DVGVVUHZmRmFxVE8vQ3dJV1g2d2pmY3Vt?=
- =?utf-8?B?bVV0RmY5czdlZ1Z3VkVMUT09?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY8PR12MB8297.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?NmgyNy9zS2c2MVIvdjltSi9DaFgzaXRwQW1kcDltTGtUQnMydnBEUWlOU1Ri?=
- =?utf-8?B?Q3ZJdnJCcU5KV2lQL1hPUFdFdG1JT2FyRmEwRFhKK29yMlo5bFA0b0w5OWpK?=
- =?utf-8?B?N3lrSzdzdnpqOHdBUHFJZHdlWDZoRnZJZ3VCbFJRck14VytUemlKY3p1R3dx?=
- =?utf-8?B?L2JVSkFPd3RqTUthQStGd3N1dndSSDFVZmd2L1NXc2dDV0FJaW5yajBxT3h4?=
- =?utf-8?B?Skh4TGQ3MldPQm5mMTRhQ0J1NkZBZHhUa1hhTk5UNUI1NFdnUWRTSmxCUGVB?=
- =?utf-8?B?SWFoL0ttUlhNZEl6VEZoS0FJNnUyQlBza3p0c0hqYnNpZU4yQ3VhWi9qUHlh?=
- =?utf-8?B?ZVZlTVhEV3hNQjJjN0M0bHJ0bTF2Nyt0WGxXdlY3dGw2UDNlRkNULzhNVWlP?=
- =?utf-8?B?VElvQ3NvT2NLVno2dTUxUnQ0TWcxVHBQSnB3S1ZTRGtrclFidTk2WDNsRGRY?=
- =?utf-8?B?c3pTQjFpQzdaWkM5Y0JsQ09rNHk1NkNGL0FGVnpQcTRhaDdRR0E1djdqdTdo?=
- =?utf-8?B?RFNwSXhCemJDTUR2NlVmTTdoeDhEdWRKcjU2bUEwK21PNzFrSjBsTURSTWVi?=
- =?utf-8?B?aHZlNm03QWxaeUZYTFZUbU9Ec1RzMUpSRW1INDl3NHZqQ1lveHV3OHNVcjYw?=
- =?utf-8?B?N0dha0YzWmxPK1RhWXBMdURiTWYvTTRuRndsUC9GQkNZK0I3ZjZOZGcxaGRR?=
- =?utf-8?B?RmNIaVRFSWFkNG5yQUluM0lLVEUwZkYrMEdTQzZ3OWswdENLSy9uOW83RVNS?=
- =?utf-8?B?SlRnaVJnbENyZUtUSnRUT3krdzM3Zmh2N0lVUTVEKzloNDJSd0lLbWUyMGJi?=
- =?utf-8?B?bm1DckVhSlNWdHk0OFJaWk5iWFRsR05FSlBMWDZsdERSNi9lTUMvdC84WE9j?=
- =?utf-8?B?V0RFYXBnZmk5V2NPMmQzWDJlS0JDczM5Mld1b2JwN0hHZUk5TlpHVnFULzUy?=
- =?utf-8?B?RjBUWEowM2ZyaEpma1FQazcweVFtbElwWkJncWtiZUZvcEJHMTl3NFZDYjVh?=
- =?utf-8?B?YVNqVTFnZUdBck0xdTJMSWVuUGtqU01uWElBb2FTK0F3VUtkZVpCQlBpeXBO?=
- =?utf-8?B?RjE5dXl0WjNXcFJQblllOElQVlhGZEh0UEg5Uk8vWm43b2hWcnR5MG9id1hU?=
- =?utf-8?B?Ykp3a2FnNDl3WHozVlV3dnh3Q1EzT0c3eWltanBGTHBpYlA0YUxPblkzNU0x?=
- =?utf-8?B?QnFvYXo5SnlKZFdQSUVncHk2UU5SVDNKcDJEeWozMFB0V2c1am9jNGdyMlha?=
- =?utf-8?B?d3AzRW9XbW9UQjBiM1Z0ZlFUem1LRHJvSHVEYklIcWVYUnpvQWdySGY1Z0hy?=
- =?utf-8?B?NjNDK0E3bk9mT2JIblpIcjFwd3E0cUdOcDJxYlRza1IwVWpSaHQwSnJ2Q2Nx?=
- =?utf-8?B?UndOVmpBOXhFME5WYWtta3lTWVZib0xkUURQSVdLOFFkNlVZMGdXVUhzTGw4?=
- =?utf-8?B?NU9KMmIybUxuSGRpM2NqcTl3SkRUN3ptZVNqNlZscWdTMDhLZTJuTFV2amRL?=
- =?utf-8?B?NUh0dDNMd3VRYUJadFdBT0ZYRXMwU0cvSHRWVFBWV2g3ei9hMWkwb2R5ZXA2?=
- =?utf-8?B?Y0IzSlhoTW55bWkrVWtjL2dxL0p6ZUFJbzZjeVNDNXdhZ0JxV0R3VHZFaWdK?=
- =?utf-8?B?aUp6ajViUkY3YTg4ZEJpbklDVlVvdUlQYXVjNXpLNXJXdWVGNlUwUnRmSkFB?=
- =?utf-8?B?VHg0Tm10L2NYT21tVFZRUDhFN3BKTjlYZkhpbWxTQ21DMWVOaVMvenJiWlZY?=
- =?utf-8?B?ZUdNZHRSRTJFcExwVCsrTVNseml1Tld6U21aSkd4QXRRR0tJK1BFWjNUREh4?=
- =?utf-8?B?a1FGSkF5TWoxOUM1MEZZcnZoeldrd21tdE9DMnV6V2xZM1gvTjZSK3JMYndT?=
- =?utf-8?B?MWN6THVOakh6V1pZQlB4ZUovTTB4TUdKTEl4a2FlQWxEY2JzaVJ5QzRLRVRz?=
- =?utf-8?B?eDNLc0hTU1h1ZExHdzRLNEpHVjJES1lmQk1JRHJhUFJycHY5ZXZzWTNIaU93?=
- =?utf-8?B?VlE2T0Z1MVROL3JmM3FtaFBSSjU0R0pDejdRY3BrZ0J4Q0RFNGVzeCtZbm1F?=
- =?utf-8?B?YmsyK2MwR2xqZ0tMTmJoZm9qRktmK2RDRGhuUEpzaVk2WEJZVDAzU2xNZ3lo?=
- =?utf-8?Q?RzXGpWF9HdI1GFDtR40Eo2zjQ?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 910f5fc5-30b0-457c-0ceb-08dccb2ccb38
-X-MS-Exchange-CrossTenant-AuthSource: CY8PR12MB8297.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Sep 2024 08:54:02.9411
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Z4l4o13Z7pvoy/HCVtr8r+MjCNDzUwNvV4KkqFWz8uzANKu1yHD2rgqh12DeVo0fcChNJXFxKDQyCT+YBQWduw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB6007
+X-Received: by 2002:a05:6e02:1805:b0:39d:1ca5:3903 with SMTP id
+ e9e14a558f8ab-39f40f042d4mr8857135ab.1.1725267268010; Mon, 02 Sep 2024
+ 01:54:28 -0700 (PDT)
+Date: Mon, 02 Sep 2024 01:54:27 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000a7170b06211f16b3@google.com>
+Subject: [syzbot] [gfs2?] kernel BUG in gfs2_withdraw
+From: syzbot <syzbot+ed42f17ebcb58526788c@syzkaller.appspotmail.com>
+To: agruenba@redhat.com, gfs2@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+
+Hello,
+
+syzbot found the following issue on:
+
+HEAD commit:    928f79a188aa Merge tag 'loongarch-fixes-6.11-2' of git://g..
+git tree:       upstream
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=14987643980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=a0455552d0b27491
+dashboard link: https://syzkaller.appspot.com/bug?extid=ed42f17ebcb58526788c
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12d2f62b980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=109fb60b980000
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/f1ca818b8564/disk-928f79a1.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/2cae3d4d58a7/vmlinux-928f79a1.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/d66b706213bc/bzImage-928f79a1.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/d2e2e3a9aae8/mount_0.gz
+
+Bisection is inconclusive: the issue happens on the oldest tested release.
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=108f297b980000
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=128f297b980000
+console output: https://syzkaller.appspot.com/x/log.txt?x=148f297b980000
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+ed42f17ebcb58526788c@syzkaller.appspotmail.com
+
+gfs2: fsid=_){&.s: fatal: filesystem consistency error - inode = 1 19, function = gfs2_jdesc_check, file = fs/gfs2/super.c, line = 119
+gfs2: fsid=_){&.s: G:  s:SH n:2/13 f:aqob t:SH d:EX/0 a:0 v:0 r:2 m:20 p:3
+gfs2: fsid=_){&.s:  H: s:SH f:eEcH e:0 p:5212 [syz-executor117] init_journal+0x1881/0x2420 fs/gfs2/ops_fstype.c:806
+gfs2: fsid=_){&.s:  I: n:1/19 t:8 f:0x00 d:0x00000200 s:8388608 p:0
+gfs2: fsid=_){&.s: about to withdraw this file system
+------------[ cut here ]------------
+kernel BUG at fs/gfs2/util.c:340!
+Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN PTI
+CPU: 1 UID: 0 PID: 5212 Comm: syz-executor117 Not tainted 6.11.0-rc5-syzkaller-00079-g928f79a188aa #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
+RIP: 0010:gfs2_withdraw+0x1459/0x1460 fs/gfs2/util.c:340
+Code: ff ff 48 8b 4c 24 10 80 e1 07 80 c1 03 38 c1 0f 8c 51 fd ff ff 48 8b 7c 24 10 e8 02 2c 14 fe e9 42 fd ff ff e8 48 0f b0 fd 90 <0f> 0b 0f 1f 44 00 00 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90
+RSP: 0018:ffffc900033373c0 EFLAGS: 00010293
+RAX: ffffffff83e37c58 RBX: 0000000000000004 RCX: ffff88807b0a0000
+RDX: 0000000000000000 RSI: 0000000000000004 RDI: 0000000000000000
+RBP: ffffc90003337560 R08: ffffffff83e36aae R09: 1ffff92000666e18
+R10: dffffc0000000000 R11: fffff52000666e19 R12: 1ffff11005354815
+R13: 1ffff92000666e8c R14: dffffc0000000000 R15: ffff888029aa4340
+FS:  0000555569397380(0000) GS:ffff8880b9300000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00000000005fdeb8 CR3: 000000007ae7c000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ gfs2_jdesc_check+0x17b/0x2e0
+ check_journal_clean+0x162/0x360 fs/gfs2/util.c:69
+ init_journal+0x1881/0x2420 fs/gfs2/ops_fstype.c:806
+ init_inodes+0xdc/0x320 fs/gfs2/ops_fstype.c:864
+ gfs2_fill_super+0x1c18/0x2500 fs/gfs2/ops_fstype.c:1249
+ get_tree_bdev+0x3f7/0x570 fs/super.c:1635
+ gfs2_get_tree+0x54/0x220 fs/gfs2/ops_fstype.c:1329
+ vfs_get_tree+0x90/0x2b0 fs/super.c:1800
+ do_new_mount+0x2be/0xb40 fs/namespace.c:3472
+ do_mount fs/namespace.c:3812 [inline]
+ __do_sys_mount fs/namespace.c:4020 [inline]
+ __se_sys_mount+0x2d6/0x3c0 fs/namespace.c:3997
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f9b18ad2b3a
+Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 5e 04 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffd7482ab88 EFLAGS: 00000282 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 00007ffd7482aba0 RCX: 00007f9b18ad2b3a
+RDX: 00000000200124c0 RSI: 0000000020012500 RDI: 00007ffd7482aba0
+RBP: 0000000000000004 R08: 00007ffd7482abe0 R09: 0000000000012613
+R10: 0000000002800002 R11: 0000000000000282 R12: 0000000002800002
+R13: 00007ffd7482abe0 R14: 0000000000000003 R15: 0000000001000000
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:gfs2_withdraw+0x1459/0x1460 fs/gfs2/util.c:340
+Code: ff ff 48 8b 4c 24 10 80 e1 07 80 c1 03 38 c1 0f 8c 51 fd ff ff 48 8b 7c 24 10 e8 02 2c 14 fe e9 42 fd ff ff e8 48 0f b0 fd 90 <0f> 0b 0f 1f 44 00 00 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90
+RSP: 0018:ffffc900033373c0 EFLAGS: 00010293
+RAX: ffffffff83e37c58 RBX: 0000000000000004 RCX: ffff88807b0a0000
+RDX: 0000000000000000 RSI: 0000000000000004 RDI: 0000000000000000
+RBP: ffffc90003337560 R08: ffffffff83e36aae R09: 1ffff92000666e18
+R10: dffffc0000000000 R11: fffff52000666e19 R12: 1ffff11005354815
+R13: 1ffff92000666e8c R14: dffffc0000000000 R15: ffff888029aa4340
+FS:  0000555569397380(0000) GS:ffff8880b9300000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00000000005fdeb8 CR3: 000000007ae7c000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 
 
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-On 02.09.24 10:40, Cindy Lu wrote:
-> On Fri, 30 Aug 2024 at 22:46, Dragos Tatulea <dtatulea@nvidia.com> wrote:
->>
->> Hi Cindy,
->>
->> On 30.08.24 15:52, Dragos Tatulea wrote:
->>>
->>>
->>> On 30.08.24 11:12, Cindy Lu wrote:
->>>> On Thu, 29 Aug 2024 at 18:00, Dragos Tatulea <dtatulea@nvidia.com> wrote:
->>>>>
->>>>>
->>>>>
->>>>> On 29.08.24 11:05, Cindy Lu wrote:
->>>>>> On Wed, 28 Aug 2024 at 17:37, Dragos Tatulea <dtatulea@nvidia.com> wrote:
->>>>>>>
->>>>>>>
->>>>>>>
->>>>>>> On 28.08.24 11:00, Cindy Lu wrote:
->>>>>>>> On Wed, 28 Aug 2024 at 09:51, Jason Wang <jasowang@redhat.com> wrote:
->>>>>>>>>
->>>>>>>>> On Wed, Aug 28, 2024 at 12:03 AM Dragos Tatulea <dtatulea@nvidia.com> wrote:
->>>>>>>>>>
->>>>>>>>>> When the vdpa device is configured without a specific MAC
->>>>>>>>>> address, the vport MAC address is used. However, this
->>>>>>>>>> address can be 0 which prevents the driver from properly
->>>>>>>>>> configuring the MPFS and breaks steering.
->>>>>>>>>>
->>>>>>>>>> The solution is to simply generate a random MAC address
->>>>>>>>>> when no MAC is set on the nic vport.
->>>>>>>>>>
->>>>>>>>>> Now it's possible to create a vdpa device without a
->>>>>>>>>> MAC address and run qemu with this device without needing
->>>>>>>>>> to configure an explicit MAC address.
->>>>>>>>>>
->>>>>>>>>> Signed-off-by: Dragos Tatulea <dtatulea@nvidia.com>
->>>>>>>>>> Reviewed-by: Jiri Pirko <jiri@nvidia.com>
->>>>>>>>>
->>>>>>>>> Acked-by: Jason Wang <jasowang@redhat.com>
->>>>>>>>>
->>>>>>>>> (Adding Cindy for double checking if it has any side effect on Qemu side)
->>>>>>>>>
->>>>>>>>> Thanks
->>>>>>>>>
->>>>>>>> But Now there is a bug in QEMU: if the hardware MAC address does not
->>>>>>>> match the one in the QEMU command line, it will cause traffic loss.
->>>>>>>>
->>>>>>> Why is this a new issue in qemu? qemu in it's current state won't work
->>>>>>> with a different mac address that the one that is set in HW anyway.
->>>>>>>
->>>>>> this is not a new bug. We are trying to fix it because it will cause
->>>>>> traffic lose without any warning.
->>>>>> in my fix , this setting (different mac in device and Qemu) will fail
->>>>>> to load the VM.
->>>>> Which is a good thing, right? Some feedback to the user that there is
->>>>> a misconfig. I got bitten by this so many times... Thank you for adding it.
->>>>>
->>>>>>
->>>>>>>> So, Just an FYI here: if your patch merged, it may cause traffic loss.
->>>>>>>> and now I'm working in the fix it in qemu, the link is
->>>>>>>> https://patchew.org/QEMU/20240716011349.821777-1-lulu@redhat.com/
->>>>>>>> The idea of this fix is
->>>>>>>> There are will only two acceptable situations for qemu:
->>>>>>>> 1. The hardware MAC address is the same as the MAC address specified
->>>>>>>> in the QEMU command line, and both MAC addresses are not 0.
->>>>>>>> 2. The hardware MAC address is not 0, and the MAC address in the QEMU
->>>>>>>> command line is 0. In this situation, the hardware MAC address will
->>>>>>>> overwrite the QEMU command line address.
->>>>>>>>
->>>>>>> Why would this not work with this patch? This patch simply sets a MAC
->>>>>>> if the vport doesn't have one set. Which allows for more scenarios to
->>>>>>> work.
->>>>>>>
->>>>>> I do not mean your patch will not work, I just want to make some
->>>>>> clarify here.Your patch + my fix may cause the VM to fail to load in
->>>>>> some situations, and this is as expected.
->>>>>> Your patch is good to merge.
->>>>> Ack. Thank you for the clarification.
->>>>>
->>>>> Thanks,
->>>>> Dragos
->>>>>
->>>> Hi Dragos，
->>>>  I think we need to hold this patch. Because it may not be working
->>>> with upstream qemu.
->>>>
->>>> MLX will create a random MAC address for your patch. Additionally, if
->>>> there is no specific MAC in the QEMU command line, QEMU will also
->>>> generate a random MAC.
->>>> these two MAC are not the same. and this will cause traffic loss.
->>> Ahaa, it turns out that qemu 8.x and 9.x have different behaviour.
->>>
->>> Initially I was testing this scenario (vdpa device created with no mac
->>> and no mac set in qemu cli) with qemu 8.x. There, qemu was not being
->>> able to set the qemu generated random mac addres because .set_config()
->>> is a nop in mlx5_vdpa.
->>>
->>> Then I moved to qemu 9.x and saw that this scenario was working because
->>> now the CVQ was used instead to configure the mac on the device.
->>>
->>> So this patch should definitely not be applied.
->>>
->>> I was thinking if there are ways to fix this for 8.x. The only feasible
->>> way is to implement .set_config() in mlx5_vdpa for the mac
->>> configuration. But as you previousy said, this is discouraged.
->>>
->> I just tested your referenced qemu fix from patchwork and I found that
->> for the case when a vdpa device doesn't have a mac address (mac address
->> 0 and VIRTIO_NET_F_MAC not set) qemu will return an error. So with this
->> fix we'd be back to square one where the user always has to set a mac
->> somewhere.
->>
->> Would it be possible to take this case into consideration with your
->> fix?
->>
->> Thanks,
->> Dragos
->>
-> Hi Dragos
-> 
-> Thanks for your test and help, I think I can add a check for
-> VIRTIO_NET_F_MAC in the qemu code. if the device's Mac is 0 and the
-> VIRTIO_NET_F_MAC is not set. The guest VM will fail to load. I will
-> double-check this
-My request was to use the random MAC from qemu in this case. qemu is
-able to configure the device via CVQ. At least this device...
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
-Thanks,
-Dragos
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
