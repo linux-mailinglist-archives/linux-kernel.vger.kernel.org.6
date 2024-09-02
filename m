@@ -1,37 +1,37 @@
-Return-Path: <linux-kernel+bounces-311938-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311930-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75551968FB3
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 00:32:01 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57EE0968F9C
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 00:30:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 31CE0285FBF
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 22:32:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E98D7B22E1A
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 22:30:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F3A918BC1D;
-	Mon,  2 Sep 2024 22:29:28 +0000 (UTC)
-Received: from fgw22-7.mail.saunalahti.fi (fgw22-7.mail.saunalahti.fi [62.142.5.83])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7ABA8188598;
+	Mon,  2 Sep 2024 22:29:06 +0000 (UTC)
+Received: from fgw23-7.mail.saunalahti.fi (fgw23-7.mail.saunalahti.fi [62.142.5.84])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8FB6187FF7
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 22:29:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.142.5.83
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83EDC188599
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 22:29:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.142.5.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725316168; cv=none; b=cgkh2CnPYKm2QVP2Bk4nfklZxkzchPiP0uEuXeTiCxEsjQZDWahnC1YRQCQremk5jbcN5LCYDhkeimLBd4EoZQ6Sm4lyOAWB/rnMMOf1yasVm4vPj2FoXxIyoCbdFc0Ngw3yl5+eQDUSNDvlkWAWGZjNzVyhXHYy87aaQqv1Zfg=
+	t=1725316146; cv=none; b=dcvTykP5AF53YkHv8kBWTj1hhqD2bfriNl+z8/JWj1vs7bygT4v7Z9VPYMS/S/r30Zl1sxqbjuc4jvR5++2IGvT+TqEAb7zCny34Nrz1cRUVJQK3IRld2RTPp5ixBAJZJyJ9F9awkloyBcA8qKYh3bOYVRzDHNCcldNzCOyzvvQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725316168; c=relaxed/simple;
-	bh=3dUeMEczuVrufl8SGQjkyOoqnQqLp4XWk+aY6v1VujM=;
+	s=arc-20240116; t=1725316146; c=relaxed/simple;
+	bh=rz4cPLPk4U/N9gxi84pXdf1L9hx4wLHD3D5UxEPPbnc=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=q5QIxw5FIn6R94xncra5qHGdAjnG8PkbdY/fNcPqdspzKQ/PQNT+uS1UwKvAScWzzFfWAu6o4D08CarPgqrIahozoMnvYRpemWng/qFMG92FI4SBzX57nMqUihvzpq1DfYUKFCF/4wzaRnD4YlzFYanUtV7S+a15etePOCn6G+E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=fail smtp.mailfrom=gmail.com; arc=none smtp.client-ip=62.142.5.83
+	 MIME-Version; b=TIndE731LBVhU1rkVAc+zA6Md9VhJg1f38Od39huOg0WWs5nRm7WLfiBKytF/djTos8AfUJKjT1o54Y9X3ZQriwztGWU3B7a4OszqM0FPmMmFzzzbDy6n2qWacCilMf1vvUCg6B/g4zc09nWSthnTyvg8JQ6bBdpMTV6zQNhqgQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=fail smtp.mailfrom=gmail.com; arc=none smtp.client-ip=62.142.5.84
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=gmail.com
 Received: from localhost (88-113-25-87.elisa-laajakaista.fi [88.113.25.87])
-	by fgw21.mail.saunalahti.fi (Halon) with ESMTP
-	id b330a4cc-697a-11ef-abae-005056bdd08f;
-	Tue, 03 Sep 2024 01:28:38 +0300 (EEST)
+	by fgw20.mail.saunalahti.fi (Halon) with ESMTP
+	id b3ad4428-697a-11ef-8e8a-005056bd6ce9;
+	Tue, 03 Sep 2024 01:28:39 +0300 (EEST)
 From: Andy Shevchenko <andy.shevchenko@gmail.com>
 To: Jonathan Cameron <Jonathan.Cameron@huawei.com>,
 	David Lechner <dlechner@baylibre.com>,
@@ -50,9 +50,9 @@ Cc: Jiri Kosina <jikos@kernel.org>,
 	Lars-Peter Clausen <lars@metafoo.de>,
 	Michael Hennerich <Michael.Hennerich@analog.com>,
 	Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: [PATCH v1 13/22] iio: gyro: hid-sensor-gyro-3d: Get platform data via dev_get_platdata()
-Date: Tue,  3 Sep 2024 01:16:58 +0300
-Message-ID: <20240902222824.1145571-14-andy.shevchenko@gmail.com>
+Subject: [PATCH v1 14/22] iio: imu: st_lsm6dsx: Get platform data via dev_get_platdata()
+Date: Tue,  3 Sep 2024 01:16:59 +0300
+Message-ID: <20240902222824.1145571-15-andy.shevchenko@gmail.com>
 X-Mailer: git-send-email 2.46.0
 In-Reply-To: <20240902222824.1145571-1-andy.shevchenko@gmail.com>
 References: <20240902222824.1145571-1-andy.shevchenko@gmail.com>
@@ -70,35 +70,74 @@ Access to platform data via dev_get_platdata() getter to make code cleaner.
 
 Signed-off-by: Andy Shevchenko <andy.shevchenko@gmail.com>
 ---
- drivers/iio/gyro/hid-sensor-gyro-3d.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_core.c | 15 +++++----------
+ 1 file changed, 5 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/iio/gyro/hid-sensor-gyro-3d.c b/drivers/iio/gyro/hid-sensor-gyro-3d.c
-index 59a38bf9459b..490c325897bd 100644
---- a/drivers/iio/gyro/hid-sensor-gyro-3d.c
-+++ b/drivers/iio/gyro/hid-sensor-gyro-3d.c
-@@ -279,11 +279,11 @@ static int gyro_3d_parse_report(struct platform_device *pdev,
- /* Function to initialize the processing for usage id */
- static int hid_gyro_3d_probe(struct platform_device *pdev)
+diff --git a/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_core.c b/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_core.c
+index ed0267929725..3958b5e1a3f6 100644
+--- a/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_core.c
++++ b/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_core.c
+@@ -2132,14 +2132,11 @@ st_lsm6dsx_get_drdy_reg(struct st_lsm6dsx_hw *hw,
+ 			const struct st_lsm6dsx_reg **drdy_reg)
  {
-+	struct hid_sensor_hub_device *hsdev = dev_get_platdata(&pdev->dev);
- 	int ret = 0;
- 	static const char *name = "gyro_3d";
- 	struct iio_dev *indio_dev;
- 	struct gyro_3d_state *gyro_state;
--	struct hid_sensor_hub_device *hsdev = pdev->dev.platform_data;
+ 	struct device *dev = hw->dev;
++	const struct st_sensors_platform_data *pdata = dev_get_platdata(dev);
+ 	int err = 0, drdy_pin;
  
- 	indio_dev = devm_iio_device_alloc(&pdev->dev, sizeof(*gyro_state));
- 	if (!indio_dev)
-@@ -361,7 +361,7 @@ static int hid_gyro_3d_probe(struct platform_device *pdev)
- /* Function to deinitialize the processing for usage id */
- static void hid_gyro_3d_remove(struct platform_device *pdev)
+-	if (device_property_read_u32(dev, "st,drdy-int-pin", &drdy_pin) < 0) {
+-		struct st_sensors_platform_data *pdata;
+-
+-		pdata = (struct st_sensors_platform_data *)dev->platform_data;
++	if (device_property_read_u32(dev, "st,drdy-int-pin", &drdy_pin) < 0)
+ 		drdy_pin = pdata ? pdata->drdy_int_pin : 1;
+-	}
+ 
+ 	switch (drdy_pin) {
+ 	case 1:
+@@ -2162,14 +2159,13 @@ st_lsm6dsx_get_drdy_reg(struct st_lsm6dsx_hw *hw,
+ static int st_lsm6dsx_init_shub(struct st_lsm6dsx_hw *hw)
  {
--	struct hid_sensor_hub_device *hsdev = pdev->dev.platform_data;
-+	struct hid_sensor_hub_device *hsdev = dev_get_platdata(&pdev->dev);
- 	struct iio_dev *indio_dev = platform_get_drvdata(pdev);
- 	struct gyro_3d_state *gyro_state = iio_priv(indio_dev);
+ 	const struct st_lsm6dsx_shub_settings *hub_settings;
+-	struct st_sensors_platform_data *pdata;
+ 	struct device *dev = hw->dev;
++	const struct st_sensors_platform_data *pdata = dev_get_platdata(dev);
+ 	unsigned int data;
+ 	int err = 0;
  
+ 	hub_settings = &hw->settings->shub_settings;
+ 
+-	pdata = (struct st_sensors_platform_data *)dev->platform_data;
+ 	if (device_property_read_bool(dev, "st,pullups") ||
+ 	    (pdata && pdata->pullups)) {
+ 		if (hub_settings->pullup_en.sec_page) {
+@@ -2524,9 +2520,9 @@ static irqreturn_t st_lsm6dsx_sw_trigger_handler_thread(int irq,
+ 
+ static int st_lsm6dsx_irq_setup(struct st_lsm6dsx_hw *hw)
+ {
+-	struct st_sensors_platform_data *pdata;
+ 	const struct st_lsm6dsx_reg *reg;
+ 	struct device *dev = hw->dev;
++	const struct st_sensors_platform_data *pdata = dev_get_platdata(dev);
+ 	unsigned long irq_type;
+ 	bool irq_active_low;
+ 	int err;
+@@ -2554,7 +2550,6 @@ static int st_lsm6dsx_irq_setup(struct st_lsm6dsx_hw *hw)
+ 	if (err < 0)
+ 		return err;
+ 
+-	pdata = (struct st_sensors_platform_data *)dev->platform_data;
+ 	if (device_property_read_bool(dev, "drive-open-drain") ||
+ 	    (pdata && pdata->open_drain)) {
+ 		reg = &hw->settings->irq_config.od;
+@@ -2639,7 +2634,7 @@ static int st_lsm6dsx_init_regulators(struct device *dev)
+ int st_lsm6dsx_probe(struct device *dev, int irq, int hw_id,
+ 		     struct regmap *regmap)
+ {
+-	struct st_sensors_platform_data *pdata = dev->platform_data;
++	const struct st_sensors_platform_data *pdata = dev_get_platdata(dev);
+ 	const struct st_lsm6dsx_shub_settings *hub_settings;
+ 	struct st_lsm6dsx_hw *hw;
+ 	const char *name = NULL;
 -- 
 2.46.0
 
