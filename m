@@ -1,182 +1,138 @@
-Return-Path: <linux-kernel+bounces-311180-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311181-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 436AE9685AA
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 13:06:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 802E59685AC
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 13:06:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F35F4287472
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 11:06:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 34A781F218ED
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 11:06:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD2801D61A8;
-	Mon,  2 Sep 2024 11:03:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=scrumplex.net header.i=@scrumplex.net header.b="CRTnr98n"
-Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32BE3185B56
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 11:03:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BBB51D6785;
+	Mon,  2 Sep 2024 11:03:30 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14AB41D61BD
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 11:03:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725275003; cv=none; b=eSjd4NNptS8tvBQRVTP2VtAUYxgIjIX3vN3iCs5Wn5Qb+NxA3DGV6TWkUMB7ZnT89+80gu82B/Dyo0VAekE5FA7yGYj4VclkIgXtMUXTAOtRXubtB3g2kiEJdxb0OZYMHIhyU9MPQbyKkxGk8F77mwXfmYWYCdYDeEUw2aCzrgE=
+	t=1725275010; cv=none; b=uDyH6UXy7+XVHvmbDYKISf6xXji1vRB6nUjvUgc3OgMz9i8bjwpK0EgfBckFzjPpBfw8mXTNgI6h4EsGdo4pph5XfxWH09Kf/1guOxb05qG8tMMDXIeUNFLfKSPwzEAaSDkpDzrCSaMAn9pJVOgl32Q/+2Q+cX7FR2BtNv06owY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725275003; c=relaxed/simple;
-	bh=yKAniYDup19w5bAb3ijERiqyFUkCRm+E0lzkWj4PpUQ=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=bZjfQPDVz1MhbPeyYhPTRZeAPpf2DLfldAYkjfX5ct4XOVW90bju2tSC7ypELdIgF85tVY5MIraUY83Dua/L3QiBQfeBqPyFWPttTXFkl8RxbmTqdo3Ye1bHluEtBbyRX6ydMsUEWlvHrzyhCRrXhjcR1uHV2WVRJm5hYWXmUG4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=scrumplex.net; spf=pass smtp.mailfrom=scrumplex.net; dkim=pass (2048-bit key) header.d=scrumplex.net header.i=@scrumplex.net header.b=CRTnr98n; arc=none smtp.client-ip=80.241.56.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=scrumplex.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=scrumplex.net
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [10.196.197.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4Wy5TH6gX3z9s51;
-	Mon,  2 Sep 2024 13:03:15 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=scrumplex.net;
-	s=MBO0001; t=1725274996;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mdI66KMK6lKhDVRjj6ESMSKTeCR8cIAJ7x8sCBJ8p6s=;
-	b=CRTnr98nw7pds/oHETJD0m15GVJcfwB9251OxIppdHCb+wdDhCsExhLZspVq/p3N/6wIsV
-	oHwdG9TxuColVJPT/cm+dZljkAwcXOyzPwyeJmOEt4D668Mv1J7Z6f2KAqzOuBYRJVJU08
-	Q77SvdMEIVmexfF4FFh3P7Y6AqYuAMqCfYGY3TrLEbY5xcOB8WPyJ7dX1srk4dimigdTS1
-	xxqwlOtk8ZpfojqMtQvtJj7xIjqT3BTpkfL3xJhk0H5tv80qB+DYqHBmoYZC/pdNnuJZOf
-	h3DN391yaH5/J3vSV5fWS6r2LY7Qmqbsr2d2TEdwFOKKpRiix3DWz5hL4jSrNQ==
-Message-ID: <62065e7c858ed2d532543d6defaac22f69f3f1e8.camel@scrumplex.net>
-Subject: Re: [PATCH 1/2] drm/amd/display: Avoid race between dcn10_set_drr()
- and dc_state_destruct()
-From: Sefa Eyeoglu <contact@scrumplex.net>
-To: tjakobi@math.uni-bielefeld.de, Harry Wentland <harry.wentland@amd.com>, 
- Leo Li <sunpeng.li@amd.com>, Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>,
- Alex Deucher <alexander.deucher@amd.com>, Christian
- =?ISO-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>, "Pan, Xinhui"
- <Xinhui.Pan@amd.com>, David Airlie <airlied@gmail.com>, Daniel Vetter
- <daniel@ffwll.ch>, Mario Limonciello <mario.limonciello@amd.com>
-Cc: amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org
-Date: Mon, 02 Sep 2024 13:03:07 +0200
-In-Reply-To: <7b9dbbbb1e6a3aa6d7a4d9367d44d18ddd947158.1725269643.git.tjakobi@math.uni-bielefeld.de>
-References: <cover.1725269643.git.tjakobi@math.uni-bielefeld.de>
-	 <7b9dbbbb1e6a3aa6d7a4d9367d44d18ddd947158.1725269643.git.tjakobi@math.uni-bielefeld.de>
-Content-Type: multipart/signed; micalg="pgp-sha512";
-	protocol="application/pgp-signature"; boundary="=-ZxEGB9cY50KrDsfsrhPG"
+	s=arc-20240116; t=1725275010; c=relaxed/simple;
+	bh=D5Zd+YXYUgY0BjRp8kFaofANSPag5yi+/w5XM+LWXhI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qqaPH9AI2xqigFrkAlQihm+WgYcymV/fVkLilzNzIl8jZ+bGLd/KExfak9N+9gg53Zr/UtJ0MqKpfnRyqkyCt7u3zWfeUIoEB9P9dn6xFHwV4GPrREQ0CE9TkilqTmraCaphxFNN73gi3Ke7iXDUwbowBjSc49FzMD/k/eDavJA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BAEBBFEC;
+	Mon,  2 Sep 2024 04:03:53 -0700 (PDT)
+Received: from [10.57.50.57] (unknown [10.57.50.57])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A37C93F73B;
+	Mon,  2 Sep 2024 04:03:24 -0700 (PDT)
+Message-ID: <066b7de8-0854-424b-8888-b18fc61ec21c@arm.com>
+Date: Mon, 2 Sep 2024 12:03:22 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/5] sched/fair: Rework feec() to use cost instead of
+ spare capacity
+To: Vincent Guittot <vincent.guittot@linaro.org>, linux-kernel@vger.kernel.org
+Cc: qyousef@layalina.io, mingo@redhat.com, peterz@infradead.org,
+ juri.lelli@redhat.com, dietmar.eggemann@arm.com, rostedt@goodmis.org,
+ bsegall@google.com, vschneid@redhat.com, lukasz.luba@arm.com,
+ mgorman@suse.de, rafael.j.wysocki@intel.com
+References: <20240830130309.2141697-1-vincent.guittot@linaro.org>
+ <20240830130309.2141697-4-vincent.guittot@linaro.org>
+Content-Language: en-US
+From: Hongyan Xia <hongyan.xia2@arm.com>
+In-Reply-To: <20240830130309.2141697-4-vincent.guittot@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-
---=-ZxEGB9cY50KrDsfsrhPG
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-On Mon, 2024-09-02 at 11:40 +0200, tjakobi@math.uni-bielefeld.de wrote:
-> From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
->=20
-> dc_state_destruct() nulls the resource context of the DC state. The
-> pipe
-> context passed to dcn10_set_drr() is a member of this resource
-> context.
->=20
-> If dc_state_destruct() is called parallel to the IRQ processing
-> (which
-> calls dcn10_set_drr() at some point), we can end up using already
-> nulled
-> function callback fields of struct stream_resource.
->=20
-> The logic in dcn10_set_drr() already tries to avoid this, by checking
-> tg
-> against NULL. But if the nulling happens exactly after the NULL check
-> and
-> before the next access, then we get a race.
->=20
-> Avoid this by copying tg first to a local variable, and then use this
-> variable for all the operations. This should work, as long as nobody
-> frees the resource pool where the timing generators live.
->=20
-> Closes: https://gitlab.freedesktop.org/drm/amd/-/issues/3142
-> Fixes: 06ad7e164256 ("drm/amd/display: Destroy DC context while
-> keeping DML and DML2")
-> Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+On 30/08/2024 14:03, Vincent Guittot wrote:
+> feec() looks for the CPU with highest spare capacity in a PD assuming that
+> it will be the best CPU from a energy efficiency PoV because it will
+> require the smallest increase of OPP. Although this is true generally
+> speaking, this policy also filters some others CPUs which will be as
+> efficients because of using the same OPP.
+> In fact, we really care about the cost of the new OPP that will be
+> selected to handle the waking task. In many cases, several CPUs will end
+> up selecting the same OPP and as a result using the same energy cost. In
+> these cases, we can use other metrics to select the best CPU for the same
+> energy cost.
+> 
+> Rework feec() to look 1st for the lowest cost in a PD and then the most
+> performant CPU between CPUs.
+> 
+> Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
 > ---
-> =C2=A0.../amd/display/dc/hwss/dcn10/dcn10_hwseq.c=C2=A0=C2=A0 | 20 ++++++=
-+++++------
-> --
-> =C2=A01 file changed, 12 insertions(+), 8 deletions(-)
->=20
-> diff --git a/drivers/gpu/drm/amd/display/dc/hwss/dcn10/dcn10_hwseq.c
-> b/drivers/gpu/drm/amd/display/dc/hwss/dcn10/dcn10_hwseq.c
-> index 3306684e805a..da8f2cb3c5db 100644
-> --- a/drivers/gpu/drm/amd/display/dc/hwss/dcn10/dcn10_hwseq.c
-> +++ b/drivers/gpu/drm/amd/display/dc/hwss/dcn10/dcn10_hwseq.c
-> @@ -3223,15 +3223,19 @@ void dcn10_set_drr(struct pipe_ctx
-> **pipe_ctx,
-> =C2=A0	 * as well.
-> =C2=A0	 */
-> =C2=A0	for (i =3D 0; i < num_pipes; i++) {
-> -		if ((pipe_ctx[i]->stream_res.tg !=3D NULL) &&
-> pipe_ctx[i]->stream_res.tg->funcs) {
-> -			if (pipe_ctx[i]->stream_res.tg->funcs-
-> >set_drr)
-> -				pipe_ctx[i]->stream_res.tg->funcs-
-> >set_drr(
-> -					pipe_ctx[i]->stream_res.tg,
-> &params);
-> +		/* dc_state_destruct() might null the stream
-> resources, so fetch tg
-> +		 * here first to avoid a race condition. The
-> lifetime of the pointee
-> +		 * itself (the timing_generator object) is not a
-> problem here.
-> +		 */
-> +		struct timing_generator *tg =3D pipe_ctx[i]-
-> >stream_res.tg;
+>   kernel/sched/fair.c | 466 +++++++++++++++++++++++---------------------
+>   1 file changed, 244 insertions(+), 222 deletions(-)
+> 
+> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> index e67d6029b269..2273eecf6086 100644
+> --- a/kernel/sched/fair.c
+> +++ b/kernel/sched/fair.c
+> [...]
+>   
+> -	energy = em_cpu_energy(pd->em_pd, max_util, busy_time, eenv->cpu_cap);
+> +/* For a same cost, select the CPU that will povide best performance for the task */
+> +static bool select_best_cpu(struct energy_cpu_stat *target,
+> +			    struct energy_cpu_stat *min,
+> +			    int prev, struct sched_domain *sd)
+> +{
+> +	/*  Select the one with the least number of running tasks */
+> +	if (target->nr_running < min->nr_running)
+> +		return true;
+> +	if (target->nr_running > min->nr_running)
+> +		return false;
+>   
+This makes me a bit worried about systems with coarse-grained OPPs. All 
+my dev boards and one of my old phones have <= 3 OPPs. On my Juno board, 
+the lowest OPP on the big core spans across 512 utilization, half of the 
+full capacity. Assuming a scenario where there are 4 tasks, each with 
+300, 100, 100, 100 utilization, the placement should be 300 on one core 
+and 3 tasks with 100 on another, but the nr_running check here would 
+give 2 tasks (300 + 100) on one CPU and 2 tasks (100 + 100) on another 
+because they are still under the lowest OPP on Juno. The second CPU will 
+also finish faster and idle more than the first one.
+
+To give an extreme example, assuming the system has only one OPP (such a 
+system is dumb to begin with, but just to make a point), before this 
+patch EAS would still work okay in task placement, but after this patch, 
+EAS would just balance on the number of tasks, regardless of utilization 
+of tasks on wake-up.
+
+I wonder if there is a way to still take total utilization as a factor. 
+It used to be 100% of the decision making, but maybe now it is only 60%, 
+and the other 40% are things like number of tasks and contention.
+
+> -	trace_sched_compute_energy_tp(p, dst_cpu, energy, max_util, busy_time);
+> +	/* Favor previous CPU otherwise */
+> +	if (target->cpu == prev)
+> +		return true;
+> +	if (min->cpu == prev)
+> +		return false;
+>   
+> -	return energy;
+> +	/*
+> +	 * Choose CPU with lowest contention. One might want to consider load instead of
+> +	 * runnable but we are supposed to not be overutilized so there is enough compute
+> +	 * capacity for everybody.
+> +	 */
+> +	if ((target->runnable * min->capa * sd->imbalance_pct) >=
+> +			(min->runnable * target->capa * 100))
+> +		return false;
 > +
-> +		if ((tg !=3D NULL) && tg->funcs) {
-> +			if (tg->funcs->set_drr)
-> +				tg->funcs->set_drr(tg, &params);
-> =C2=A0			if (adjust.v_total_max !=3D 0 &&
-> adjust.v_total_min !=3D 0)
-> -				if (pipe_ctx[i]->stream_res.tg-
-> >funcs->set_static_screen_control)
-> -					pipe_ctx[i]->stream_res.tg-
-> >funcs->set_static_screen_control(
-> -						pipe_ctx[i]-
-> >stream_res.tg,
-> -						event_triggers,
-> num_frames);
-> +				if (tg->funcs-
-> >set_static_screen_control)
-> +					tg->funcs-
-> >set_static_screen_control(
-> +						tg, event_triggers,
-> num_frames);
-> =C2=A0		}
-> =C2=A0	}
-> =C2=A0}
+> +	return true;
+>   }
+> [...]
 
-This fixes the panics with my RX 6800 XT on Sway with VRR enabled!
-
-Tested-by: Sefa Eyeoglu <contact@scrumplex.net>
-
---=-ZxEGB9cY50KrDsfsrhPG
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQThcyN6x4IpbZj1razhPf1LRxJ5UQUCZtWbawAKCRDhPf1LRxJ5
-URouAQClbMaSkmkbxtKXPZ/lGXFoSSzNd2gpI6XFdv7BbYP7ggEAtVhhKRf9EXtg
-2ctl7Tt+Kr6WVn5mddDd2YbJyqWJGww=
-=h4TA
------END PGP SIGNATURE-----
-
---=-ZxEGB9cY50KrDsfsrhPG--
 
