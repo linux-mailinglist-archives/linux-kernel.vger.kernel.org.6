@@ -1,211 +1,109 @@
-Return-Path: <linux-kernel+bounces-311884-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311887-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2AF7968EF7
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 22:55:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7948A968F02
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 23:00:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EDBCAB21ED5
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 20:55:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ACE7F1C21BB8
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 21:00:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A821C1A3A90;
-	Mon,  2 Sep 2024 20:55:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0EA020FA81;
+	Mon,  2 Sep 2024 21:00:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P6yD2Na+"
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I34JQPBk"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EAAE69959;
-	Mon,  2 Sep 2024 20:55:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DB3B1AB6C2;
+	Mon,  2 Sep 2024 21:00:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725310519; cv=none; b=aymmZNrLzPyyfMMq/cTO5SQGVu4TcfXhT5goDQTj5e9YkU26u8lcEYV7XRY+P8FMTDWMHIj2LOvwPkd1acRIkxo44E2/pYfd2ljCta+wowMfRtSj8RhLptYH/SmDOda1dKlzOl1wnx5uEfHWLmfDPC5VtSMyIJT9LtOPdWT4jsQ=
+	t=1725310802; cv=none; b=KLiY2Qt+uLMCjAthPCxRXvy2dvsVN2izsi4nyzW9AR0Vs+eNPNjc32TKzEXzKHiDHtE0qFcX8cjahstcRMCR2Hdhbd/wUC5PjCXbNb/0ia7lSHQaBXGXjj5DS5BDieJksj+G1ZInYOhbjtzC2mnRGdqn5Q2WnrbMH31KVqh7CgE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725310519; c=relaxed/simple;
-	bh=QkELulMvb7h/k6ZvvEb9NTwkc1cm2REAcITQnec8rHA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EUyW5bDqfePeLyeKfekXfBrSfVG4BIpVboQ93iYHPjbcaDMjLX8tnEQ6VzFibSAnXdEXTq8QPB+BNqCCcADx1oeVeAkdi3YklzrQSltrhR64+qxPq6XVz+gsegzgc/3hbVEkc8qCLqnQy1oCyjbjjyFElUfOcBEPtKhzY9SrFAI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P6yD2Na+; arc=none smtp.client-ip=209.85.208.42
+	s=arc-20240116; t=1725310802; c=relaxed/simple;
+	bh=jtVPDlL69fasPswaGQl07C+4X4MgfXXfXKb8B2UMDtQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ocAgGfO3fsb1ELTTmMCZSDhAQcFJzd3hSD9dPjEKJ3XpRf6t2bGZqf/2usC+zjlAlft45no0+hCqrdsU6CwogV6T/18Fg/4el0sR38vTxhSE+hvfk20gAn9548SlNeADKubJbXSIWwkVB8+iOJJa82zrcpFEdpkqcd/nDIACwQg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=I34JQPBk; arc=none smtp.client-ip=209.85.128.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5bf01bdaff0so4265876a12.3;
-        Mon, 02 Sep 2024 13:55:16 -0700 (PDT)
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-42bbe809b06so26913955e9.1;
+        Mon, 02 Sep 2024 14:00:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725310515; x=1725915315; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Des4hBWDUWbYEBIVGxFeT8B5qH+Agsie2aIRmTRDSwo=;
-        b=P6yD2Na+CMUtwzEThUbLzeco/g01G2/QP6HBocWmNiUyTrkWs3CT1sdbDUXyntOvD3
-         fDPJHbWQ/KWpAYziZzt1vt8YVjUcjXTFdLC1WQ2Q736p9IRXfyxOlJn0XwKmeEGbCRi/
-         GZT4S+DC0OeNFN+TfBXPTnCexk8bfAugnOX6RM2CMSjNQWCjItOeU4ki5x1G+gxo6U+9
-         sPxLCNSABZ03b/XOf7m/696Y0lbooj8uTgKM5ecsyNSvpEJQRH8xnR2mcOmG14dpC8ce
-         fmBf6i7Z4DBAY9/SbjlpPTyK9nzLB6mpzXDXUrYIY7SZ8aL/CxWMQ7GXC0ONodS1XA1j
-         l22g==
+        d=gmail.com; s=20230601; t=1725310799; x=1725915599; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=KLomT+JOYe+3Bd9KrcDWYYSpigUrZ/r+BaH0p1DDjlc=;
+        b=I34JQPBkSSsoaAoVEdOrIwPSTU/ryJTLluFSmSw8JNOr2CVVgAwG9uFco4rVI+EmHE
+         rMapFhqu6Yd/cZHxw7m8/ZODr0uQExndDovG/5DRacJysrE0lWQW1WznwykEVmL3E2PK
+         l73mCU14sUFShEdO/3F2UPgsN0ZIv92Z42/4GKpYyLB9/3wqqGnls9byqbz9GUKJzUC7
+         p8aL4luLdsgbFaCIVP5NWZSgC7/WDjnwkyci60/XC9lu624eTTXheAFvLkS+nRrClkqz
+         uW+vSaB4YgLq+Yr1zE6d/fDKx8z1JKmWiIEmVyzJchuZcHDH0W9k7fA7Nnetbu2Fk35d
+         jgvw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725310515; x=1725915315;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1725310799; x=1725915599;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=Des4hBWDUWbYEBIVGxFeT8B5qH+Agsie2aIRmTRDSwo=;
-        b=cBqLam5fkbSxMh98M4m5cYqWm4De5ma199c4vAvjPBFplaFL8E0dRvWDFz9amrSttR
-         4zHV5z9gQKNtClIcxfdX0gtSqs54cxJIHpgkQ0kgvWhzAEDxylB2R0w9TD3IF+50j9v1
-         xE1tOPy+svX0Q/GzMsL6Zzb6uBbbBALipqFjo/KK/+EEX3rAdpFizAl0Es+MwqXt88Dl
-         JO2j5Mbrr5vLhKjNncrJMyUDb+wkJk7UhSX34MOOBv8vJQQfexCr9KiOVXHVGD60CT55
-         3sxXavsrjaddZ6Ag0C6Xv4QNHn2rNW+MHMXmgi/dtN9LezCDTgfAq3uw9wimBMam1XqA
-         hFPg==
-X-Forwarded-Encrypted: i=1; AJvYcCVJo9jewyJ/TrS7xS0oMlJC0smDIu/aPaMeIDcRfxiXCHkJcdzfiWFbxs5B3/YXJaBugeRTHKjrausAjjM=@vger.kernel.org, AJvYcCVYW8x+I4DgnH7Ahfwc5lBin9Eia/gbBQyjyTm8Kzs03oSFxnDBsHNhXADzVvGPzTmm8e8vRYjR9Wq9EtM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzNH2aFjV9qOcbeo+Cv5v0SVXG4gsf1hT3u/ybsn5h37LQW2Jjv
-	XqbTqvdR4IQATAnDuzrHqOwMijmKLykdpssDgsjYw3fG/SqzDXsmtou30ntv217hWC9dPalLsLa
-	u/sqvkCRKWIoXnnijfDNLwmxfrhA7/As8Abk=
-X-Google-Smtp-Source: AGHT+IEq0JltcCgLv2KQZcouPz4FtRqIru3SLe0NK/4po9xd7i/eH9mCRivUdGO5TKiXr1Wj5/TEir5Hv7ryhXlV84k=
-X-Received: by 2002:a05:6402:348f:b0:5be:caf6:9dc7 with SMTP id
- 4fb4d7f45d1cf-5c21ed89d01mr10019052a12.25.1725310515158; Mon, 02 Sep 2024
- 13:55:15 -0700 (PDT)
+        bh=KLomT+JOYe+3Bd9KrcDWYYSpigUrZ/r+BaH0p1DDjlc=;
+        b=VuaTk9HudwWen2Wm7T4zs9exPGKx1a8GNy4F9S9t5uToPgFpCrGOYGCmWRcXmwVa0p
+         Bigtye/T02dLlh+77NuEzcmOR35ejcAUtuvaLz/vfWS/2eq4qbwQPk5AiYqFlPIAZNjp
+         R5qih5HWlcFnrCecKe+/skPTbrVOo7Uus/znan/BXec46/mufsfJbvJpYEopT+ZOLSNO
+         FRvNw6e8xSY8DMl/4obc+T7u1eHcU4v8O0+zDcn8ypZdZJh5UAmLqPEdCd3zE2hS0snS
+         Nf3uKj5OzbFsX2tRQ/h4bQ3+PYsQEtK49WGgeDDpPj/3fdJWvD8K4zT4PlVBhySgq4/r
+         vSZQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV19QGHMQPho9ApsKxKrANJii93gotieWCmMeS2xxCpY3xzHZOxlA/9wyOIDfXDRN+Khyzk7oeuJyf0cWlq@vger.kernel.org, AJvYcCVWjV6618lpYfhvctxvfVQsMR6mrlF0OZQf8fr9ogN3XqqupM/xcClh1dF4sTLVVVL9g8ZwyvMZVR6YDQ==@vger.kernel.org, AJvYcCW0YJsKgqZ1/6/b2Hj+XGJ/IRNMTGD3ck4qv9yPWTK01yY9cNb7r42nzffznmn8gHLB++K8CPzsNoy/9mc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxSswwTTsv0eYAEhy+DOALTl2AYvUlWpGLIt+jOzPoE7OMN66EI
+	rSCBWxJd23X0oXP6xhMQWd6pmjQC3EbOOZML6KZMMpQAXbay4toQ
+X-Google-Smtp-Source: AGHT+IHJ9pBT9ytsk5tzNva8P095WxsjFs7tjWt4r2Bdp1wdA7GW5O8Hu0pL/1xrREBHGc1IX3+k9A==
+X-Received: by 2002:a05:600c:1ca8:b0:426:6f17:531 with SMTP id 5b1f17b1804b1-42bb02edaf6mr113745395e9.13.1725310798523;
+        Mon, 02 Sep 2024 13:59:58 -0700 (PDT)
+Received: from fedora-thinkpad.lan (net-109-116-17-225.cust.vodafonedsl.it. [109.116.17.225])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-42c89dca8absm2913705e9.27.2024.09.02.13.59.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 02 Sep 2024 13:59:58 -0700 (PDT)
+From: Luca Stefani <luca.stefani.ge1@gmail.com>
+To: 
+Cc: Luca Stefani <luca.stefani.ge1@gmail.com>,
+	Jens Axboe <axboe@kernel.dk>,
+	Chris Mason <clm@fb.com>,
+	Josef Bacik <josef@toxicpanda.com>,
+	David Sterba <dsterba@suse.com>,
+	linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-btrfs@vger.kernel.org
+Subject: [PATCH v2 0/3] btrfs: Don't block suspend during fstrim
+Date: Mon,  2 Sep 2024 22:56:09 +0200
+Message-ID: <20240902205828.943155-1-luca.stefani.ge1@gmail.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240902-imx290-avail-v3-0-b32a12799fed@skidata.com>
- <20240902-imx290-avail-v3-4-b32a12799fed@skidata.com> <20240902195821.GQ1995@pendragon.ideasonboard.com>
-In-Reply-To: <20240902195821.GQ1995@pendragon.ideasonboard.com>
-From: Benjamin Bara <bbara93@gmail.com>
-Date: Mon, 2 Sep 2024 22:55:04 +0200
-Message-ID: <CAJpcXm6r_LAD+NC7u5aNvkEHq3Vb3osCea8MAn8nQ45dCtoxSg@mail.gmail.com>
-Subject: Re: [PATCH v3 4/7] media: i2c: imx290: Introduce initial "off" mode &
- link freq
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, 
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
-	Sakari Ailus <sakari.ailus@linux.intel.com>, Hans de Goede <hdegoede@redhat.com>, 
-	Alexander Stein <alexander.stein@ew.tq-group.com>, linux-media@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Benjamin Bara <benjamin.bara@skidata.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hi Laurent!
+Changes since v1:
+* Use bio_discard_limit to calculate chunk size
+* Makes use of the split chunks
 
-On Mon, 2 Sept 2024 at 21:58, Laurent Pinchart
-<laurent.pinchart@ideasonboard.com> wrote:
-> On Mon, Sep 02, 2024 at 05:57:29PM +0200, bbara93@gmail.com wrote:
-> > From: Benjamin Bara <benjamin.bara@skidata.com>
-> >
-> > To be compliant to the V4L2 API, the driver currently "randomly" decides
-> > on one of the two supported modes which also implies a link frequency.
-> >
-> > Add a new mode and frequency which symbolize that the sensor is not in
-> > use. This can be used as a default value during probe() and enables us
-> > to avoid communication with the sensor.
->
-> I really doin't like this change. I would like to instead move away from
-> modes and make the driver freely configurable.
+v1: https://lore.kernel.org/lkml/20240902114303.922472-1-luca.stefani.ge1@gmail.com/
+Original discussion: https://lore.kernel.org/lkml/20240822164908.4957-1-luca.stefani.ge1@gmail.com/
 
-Which controls do you want to have freely configurable? At least on the
-imx290 the exposure limits depend on the blanking, and the blanking
-limits depend on the format. As the format is defined by the mode on
-imx290, I think this will be quite hard with the current controls.
+Luca Stefani (3):
+  block: Export bio_discard_limit
+  btrfs: Split remaining space to discard in chunks
+  btrfs: Don't block system suspend during fstrim
 
-> Furthermore, the concept of an initial unconfigured state isn't valid
-> in V4L2. The driver must fully initialize the whole device state at
-> probe time.
+ block/blk-lib.c        |  3 ++-
+ fs/btrfs/extent-tree.c | 40 +++++++++++++++++++++++++++++++++-------
+ include/linux/blkdev.h |  1 +
+ 3 files changed, 36 insertions(+), 8 deletions(-)
 
-I understand that and it makes sense to me. But given the dependencies
-from above and the fact that the format is currently part of this
-"state", it makes the "freely configurable" intention even harder :-(
+-- 
+2.46.0
 
-Kind regards
-Benjamin
-
-> > Signed-off-by: Benjamin Bara <benjamin.bara@skidata.com>
-> > ---
-> > Changes since v2:
-> > - new
-> > ---
-> >  drivers/media/i2c/imx290.c | 29 +++++++++++++++++++++++------
-> >  1 file changed, 23 insertions(+), 6 deletions(-)
-> >
-> > diff --git a/drivers/media/i2c/imx290.c b/drivers/media/i2c/imx290.c
-> > index 6812e7cb9e23..ece4d66001f5 100644
-> > --- a/drivers/media/i2c/imx290.c
-> > +++ b/drivers/media/i2c/imx290.c
-> > @@ -425,14 +425,17 @@ static const struct imx290_csi_cfg imx290_csi_297mhz = {
-> >  /* supported link frequencies */
-> >  #define FREQ_INDEX_1080P     0
-> >  #define FREQ_INDEX_720P              1
-> > +#define FREQ_INDEX_OFF               2
-> >  static const s64 imx290_link_freq_2lanes[] = {
-> >       [FREQ_INDEX_1080P] = 445500000,
-> >       [FREQ_INDEX_720P] = 297000000,
-> > +     [FREQ_INDEX_OFF] = 0,
-> >  };
-> >
-> >  static const s64 imx290_link_freq_4lanes[] = {
-> >       [FREQ_INDEX_1080P] = 222750000,
-> >       [FREQ_INDEX_720P] = 148500000,
-> > +     [FREQ_INDEX_OFF] = 0,
-> >  };
-> >
-> >  /*
-> > @@ -552,6 +555,10 @@ static const struct imx290_mode imx290_modes_4lanes[] = {
-> >       },
-> >  };
-> >
-> > +static const struct imx290_mode imx290_mode_off = {
-> > +     .link_freq_index = FREQ_INDEX_OFF,
-> > +};
-> > +
-> >  static inline const struct imx290_mode *imx290_modes_ptr(const struct imx290 *imx290)
-> >  {
-> >       if (imx290->nlanes == 2)
-> > @@ -876,10 +883,19 @@ static unsigned int imx290_get_blank_min(const struct imx290 *imx290, bool v)
-> >  static void imx290_ctrl_update(struct imx290 *imx290,
-> >                              const struct imx290_mode *mode)
-> >  {
-> > -     unsigned int hblank_min = mode->hmax_min - mode->width;
-> > -     unsigned int hblank_max = IMX290_HMAX_MAX - mode->width;
-> > -     unsigned int vblank_min = mode->vmax_min - mode->height;
-> > -     unsigned int vblank_max = IMX290_VMAX_MAX - mode->height;
-> > +     unsigned int hblank_min, hblank_max, vblank_min, vblank_max;
-> > +
-> > +     if (mode == &imx290_mode_off) {
-> > +             hblank_min = imx290_get_blank_min(imx290, false);
-> > +             hblank_max = HBLANK_MAX;
-> > +             vblank_min = imx290_get_blank_min(imx290, true);
-> > +             vblank_max = VBLANK_MAX;
-> > +     } else {
-> > +             hblank_min = mode->hmax_min - mode->width;
-> > +             hblank_max = IMX290_HMAX_MAX - mode->width;
-> > +             vblank_min = mode->vmax_min - mode->height;
-> > +             vblank_max = IMX290_VMAX_MAX - mode->height;
-> > +     }
-> >
-> >       __v4l2_ctrl_s_ctrl(imx290->link_freq, mode->link_freq_index);
-> >
-> > @@ -932,7 +948,8 @@ static int imx290_ctrl_init(struct imx290 *imx290)
-> >       imx290->link_freq =
-> >               v4l2_ctrl_new_int_menu(&imx290->ctrls, &imx290_ctrl_ops,
-> >                                      V4L2_CID_LINK_FREQ,
-> > -                                    imx290_link_freqs_num(imx290) - 1, 0,
-> > +                                    imx290_link_freqs_num(imx290) - 1,
-> > +                                    FREQ_INDEX_OFF,
-> >                                      imx290_link_freqs_ptr(imx290));
-> >       if (imx290->link_freq)
-> >               imx290->link_freq->flags |= V4L2_CTRL_FLAG_READ_ONLY;
-> > @@ -1278,7 +1295,7 @@ static int imx290_subdev_init(struct imx290 *imx290)
-> >       struct v4l2_subdev_state *state;
-> >       int ret;
-> >
-> > -     imx290->current_mode = &imx290_modes_ptr(imx290)[0];
-> > +     imx290->current_mode = &imx290_mode_off;
-> >
-> >       v4l2_i2c_subdev_init(&imx290->sd, client, &imx290_subdev_ops);
-> >       imx290->sd.internal_ops = &imx290_internal_ops;
-> >
->
-> --
-> Regards,
->
-> Laurent Pinchart
 
