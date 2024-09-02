@@ -1,179 +1,137 @@
-Return-Path: <linux-kernel+bounces-311151-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311171-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E5DE96857F
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 12:58:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 679799685A0
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 13:04:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F0B32881B5
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 10:58:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 12C91B2880B
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 11:03:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9763F1D3641;
-	Mon,  2 Sep 2024 10:57:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74C7C17DFFC;
+	Mon,  2 Sep 2024 10:58:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="frZjQsXH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="eFfiQkgY"
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6E521D2F4A;
-	Mon,  2 Sep 2024 10:57:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2211114A4E0
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 10:58:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725274639; cv=none; b=PTjr3otHdZhxlI8ESOFPraAVTqxRg2C/ctIR0h4KpDsc6CHEOO9L9r//onCQV8dgOiAMXdCdLF1Vy542ptYncbCYy3/FuR8RG4B/gGlijdpz+Ugmk+zBq/JzLkgGukk+xkm1XQd9ALpK2yaaBONzyp/e/rEsWw4EHVkE7yYP+2o=
+	t=1725274694; cv=none; b=GQO3+biu91DAT59n0SaEdfRLVPrIOqXSBccfV71gtwPOUICqhkP6Xo0w7rQfyno88EKhkIcsAG82iBgMVsKRyqWm67j7VEtlAy0EvgUF2snKPg72O1xt7ccpBedjM4WroGiQuzamwjAOWlI/trDQHusC2fXBM3ezTuqos8zukTI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725274639; c=relaxed/simple;
-	bh=pe2+YVpcPCEGBw7dXpbzrFvyMUWq05N49C+gayZKyDk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lcTjtetuGBFV55+SMrJXuzbdUyR2GUqy5VfmOPPuf4Uzea+Q0FoHqHvoQZGYny2leT9NEWfB4fwBrGyJf2oJD0q/NrC5Amn4PADgeyX6E+x6atZ8+3TzDQ3COEkk6svHb+1LdLOdDbpMXoqr0dei1fkN8TSP+SiroOO/kZQ3/IM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=frZjQsXH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DDE23C4CEC2;
-	Mon,  2 Sep 2024 10:57:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725274638;
-	bh=pe2+YVpcPCEGBw7dXpbzrFvyMUWq05N49C+gayZKyDk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=frZjQsXHnAbljS1NUeUtoOLs3pmN28Zy3MCS+V7FV7p5qtWD2ksJZ5iL7E+UQfsC2
-	 +G51RPigBC5OEA/dZxSgwA3AirzCaxHomUswkyvOwcoRQp8w4PhxxZqntWY/RR6KZb
-	 PRV0pX7qxv9OLFH1poEflJmLfcynGAnSIYVmC78s+Q7YyD5wsMSY0jjDcyBhKp+tgg
-	 lSX/Kb9TT005DrypYF0bQRWgEbfvynixCfZrYskWfBpzRQmH2sCHor/deel0360NLw
-	 LzJBd9b/9zr7fY6+c4zOxK6OugG+i76S9w5dkVbIgl5bBjNhJMqFNGrTWseTc0Qywc
-	 uowsrnk8WOz9w==
-Date: Mon, 2 Sep 2024 11:57:14 +0100
-From: Simon Horman <horms@kernel.org>
-To: Wan Junjie <junjie.wan@inceptio.ai>
-Cc: Ioana Ciornei <ioana.ciornei@nxp.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] dpaa2-switch: fix flooding domain among multiple vlans
-Message-ID: <20240902105714.GH23170@kernel.org>
-References: <20240902015051.11159-1-junjie.wan@inceptio.ai>
+	s=arc-20240116; t=1725274694; c=relaxed/simple;
+	bh=nVURptpefAkaUi2gD1BgDnvEIMUGmkTN0KAW3iwmleo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=nAOLBa1zWR/QOVFfIKZuOx8RMA88R48XzL1+JR7hBPZ3ElN4/IicrI5Ewac7KupHm9Zsb3xO6+c/KudzLtecCtR0wHflXNdcsb1/Mty6T9BO55943ySgICJrBpJNA1DJ6Ki80sHkxJL2PihfJhhrypbw9mr/2Zyw1VtbWR8nE4c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=eFfiQkgY; arc=none smtp.client-ip=209.85.167.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-52f01b8738dso2846449e87.1
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2024 03:58:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1725274690; x=1725879490; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=6DvaNteBdUmwn8dGMcWnnT03kWdIbrrlcc6VtDNmM/M=;
+        b=eFfiQkgYhxrvZOuB3onGXAdPGNbal9jXhqReQMVczBNw+MSp4IbbIK9iv6ZbNgskTx
+         KscgzFm6lKGC00xEcr9jD8ysp7GZSLY09Lu0InOFc3y7puXedV6eR1SMpV393n7jLRQb
+         WfZDAt55qsa1whScrs5xUaSe2Qeq838LiYEVZGYAT8IuDaOjX1fgwfduRZcZzs2uyTjD
+         q6d7TPQbIJf7wY4W1HRTqPVgm3k1fsEiY7Tw2tT9LxH8/sAEfkfn7aP443qyy/PaaQnI
+         KzTaXKdMm0zAnINSFWM2CimEIiJ2LXtTQ+7qoFWAi4MuoU7foyHJoNks9dawcJS+qvYu
+         MqHA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725274690; x=1725879490;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=6DvaNteBdUmwn8dGMcWnnT03kWdIbrrlcc6VtDNmM/M=;
+        b=K1ElivkMTdtfn8keBR2vHM1RW5ibzHseGrdmru40vmqPwxiunGYxd7BOHHDfFsnKIE
+         rUyuW26XnaRIvScpLcFdDbsuX+4dIdFm1xVm2SH3+zqwzPpxRs0V6VfIGzV8jLW68/9J
+         1dntgQuQrHSUQGvYqsovp1Y0kxN1RHCBypTgAJvUcN79eFc5lNwpABZbeWEcOR3KqN8i
+         3YtvYuodtjOccUp3HeOb8tjchNgkVajjLhs90z1kYsDAYWpkzJdUyPzqi7IHYicE4EYp
+         l0vIadmAPZ8VnPWFjECQSN2/WZwre4rsBlx56M7+PFyvk01DE5Zs1YAA6eAF+0zEctu0
+         bx/A==
+X-Gm-Message-State: AOJu0YxiaR/MZHPIzveGRkH8aouddvkaTS/3fdWHu9XnVWjfhSNx1GzO
+	O/MexbYA03Ks2GpOvaQodmSc383sv4jpRtAOthx8QvsEMvlEw2nZNIk4h6BXmebYmEev/gtx92G
+	kvYo=
+X-Google-Smtp-Source: AGHT+IHK+9VjObj4U3R0f/vvjZ+U5Or1uvL+m6lHg5VuJD7FNeik04LGzM1+Hi6ENllE7tqtemUzmg==
+X-Received: by 2002:a05:6512:e88:b0:530:ad8b:de0a with SMTP id 2adb3069b0e04-53546af3514mr6140872e87.9.1725274690407;
+        Mon, 02 Sep 2024 03:58:10 -0700 (PDT)
+Received: from rayden.urgonet (h-217-31-164-171.A175.priv.bahnhof.se. [217.31.164.171])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a89891d6d88sm545416166b.151.2024.09.02.03.58.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 02 Sep 2024 03:58:09 -0700 (PDT)
+From: Jens Wiklander <jens.wiklander@linaro.org>
+To: linux-kernel@vger.kernel.org,
+	Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jens Wiklander <jens.wiklander@linaro.org>,
+	Dan Carpenter <dan.carpenter@linaro.org>
+Subject: [PATCH v2] rpmb: fix error path in rpmb_dev_register()
+Date: Mon,  2 Sep 2024 12:58:03 +0200
+Message-Id: <20240902105803.2885544-1-jens.wiklander@linaro.org>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240902015051.11159-1-junjie.wan@inceptio.ai>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Sep 02, 2024 at 09:50:51AM +0800, Wan Junjie wrote:
-> Currently, dpaa2 switch only cares dst mac and egress interface
-> in FDB. And all ports with different vlans share the same FDB.
-> 
-> This will make things messed up when one device connected to
-> dpaa2 switch via two interfaces. Ports get two different vlans
-> assigned. These two ports will race for a same dst mac entry
-> since multiple vlans share one FDB.
-> 
-> FDB below may not show up at the same time.
-> 02:00:77:88:99:aa dev swp0 self
-> 02:00:77:88:99:aa dev swp1 self
-> But in fact, for rules on the bridge, they should be:
-> 02:00:77:88:99:aa dev swp0 vlan 10 master br0
-> 02:00:77:88:99:aa dev swp1 vlan 20 master br0
-> 
-> This patch address this by borrowing unused form ports' FDB
-> when ports join bridge. And append offload flag to hardware
-> offloaded rules so we can tell them from those on bridges.
-> 
-> Signed-off-by: Wan Junjie <junjie.wan@inceptio.ai>
+Until this patch was rpmb_dev_register() always freeing rdev in the
+error path. However, past device_register() it must not do that since
+the memory is now managed by the device even if it failed to register
+properly. So fix this by doing a device_put() before returning the error
+code.
 
-Hi Wan Junjie,
+Fixes the smatch warning:
+        drivers/misc/rpmb-core.c:204 rpmb_dev_register()
+        warn: freeing device managed memory (leak): 'rdev'
 
-Some minor feedback from my side.
+Fixes: 1e9046e3a154 ("rpmb: add Replay Protected Memory Block (RPMB) subsystem")
+Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+Signed-off-by: Jens Wiklander <jens.wiklander@linaro.org>
+---
+Changes in v2:
+- Remove the now unused err_id_remove label in rpmb_dev_register(),
+  reported by the kernel test robot
+---
+ drivers/misc/rpmb-core.c | 10 ++++------
+ 1 file changed, 4 insertions(+), 6 deletions(-)
 
-...
-
-> diff --git a/drivers/net/ethernet/freescale/dpaa2/dpaa2-switch.c b/drivers/net/ethernet/freescale/dpaa2/dpaa2-switch.c
-> index a293b08f36d4..217c68bb0faa 100644
-> --- a/drivers/net/ethernet/freescale/dpaa2/dpaa2-switch.c
-> +++ b/drivers/net/ethernet/freescale/dpaa2/dpaa2-switch.c
-> @@ -25,8 +25,17 @@
->  
->  #define DEFAULT_VLAN_ID			1
->  
-> -static u16 dpaa2_switch_port_get_fdb_id(struct ethsw_port_priv *port_priv)
-> +static u16 dpaa2_switch_port_get_fdb_id(struct ethsw_port_priv *port_priv, u16 vid)
-
-This, and several other lines in this patch, could be trivially
-line wrapped in order for them to be <= 80 columns wide, as is
-still preferred in Networking code.
-
-This and a number of other minor problems are flagged by:
-./scripts/checkpatch.pl --strict --codespell --max-line-length=80
-
->  {
-> +	struct ethsw_core *ethsw = port_priv->ethsw_data;
-> +	int i;
-> +
-> +	if (port_priv->fdb->bridge_dev) {
-> +		for (i = 0; i < ethsw->sw_attr.max_fdbs; i++)
-> +			if (ethsw->fdbs[i].vid == vid)
-> +				return ethsw->fdbs[i].fdb_id;
-> +	}
-> +	/* Default vlan, use port's fdb id directly */
->  	return port_priv->fdb->fdb_id;
->  }
->  
-
-...
-
-> @@ -191,10 +212,38 @@ static void *dpaa2_iova_to_virt(struct iommu_domain *domain,
->  static int dpaa2_switch_add_vlan(struct ethsw_port_priv *port_priv, u16 vid)
->  {
->  	struct ethsw_core *ethsw = port_priv->ethsw_data;
-> +	struct net_device *netdev = port_priv->netdev;
-> +	struct dpsw_fdb_cfg fdb_cfg = {0};
->  	struct dpsw_vlan_cfg vcfg = {0};
-> +	struct dpaa2_switch_fdb *fdb;
-> +	u16 fdb_id;
->  	int err;
->  
-> -	vcfg.fdb_id = dpaa2_switch_port_get_fdb_id(port_priv);
-> +	/* If ports are under a bridge, then
-> +	 * every VLAN domain should use a different fdb.
-> +	 * If ports are standalone, and
-> +	 * vid is 1 this should reuse the allocated port fdb.
-> +	 */
-> +	if (port_priv->fdb->bridge_dev) {
-> +		fdb = dpaa2_switch_fdb_get_unused(ethsw);
-> +		if (!fdb) {
-> +			/* if not available, create a new fdb */
-> +			err = dpsw_fdb_add(ethsw->mc_io, 0, ethsw->dpsw_handle,
-> +					   &fdb_id, &fdb_cfg);
-> +			if (err) {
-> +				netdev_err(netdev, "dpsw_fdb_add err %d\n", err);
-> +				return err;
-> +			}
-
-fdb is still NULL here. Based on my reading of dpaa2_switch_port_init()
-I think you need the following. Possibly also with an error check.
-
-			fdb = dpaa2_switch_fdb_get_unused(ethsw);
-
-Flagged by Smatch.
-
-> +			fdb->fdb_id = fdb_id;
-> +		}
-> +		fdb->vid = vid;
-> +		fdb->in_use = true;
-> +		fdb->bridge_dev = NULL;
-> +		vcfg.fdb_id = fdb->fdb_id;
-> +	} else {
-> +		/* Standalone, port's private fdb shared */
-> +		vcfg.fdb_id = dpaa2_switch_port_get_fdb_id(port_priv, vid);
-> +	}
->  	err = dpsw_vlan_add(ethsw->mc_io, 0,
->  			    ethsw->dpsw_handle, vid, &vcfg);
->  	if (err) {
-
-...
-
+diff --git a/drivers/misc/rpmb-core.c b/drivers/misc/rpmb-core.c
+index c8888267c222..bc68cde1a8bf 100644
+--- a/drivers/misc/rpmb-core.c
++++ b/drivers/misc/rpmb-core.c
+@@ -187,17 +187,15 @@ struct rpmb_dev *rpmb_dev_register(struct device *dev,
+ 	rdev->dev.parent = dev;
+ 
+ 	ret = device_register(&rdev->dev);
+-	if (ret)
+-		goto err_id_remove;
++	if (ret) {
++		put_device(&rdev->dev);
++		return ERR_PTR(ret);
++	}
+ 
+ 	dev_dbg(&rdev->dev, "registered device\n");
+ 
+ 	return rdev;
+ 
+-err_id_remove:
+-	mutex_lock(&rpmb_mutex);
+-	ida_simple_remove(&rpmb_ida, rdev->id);
+-	mutex_unlock(&rpmb_mutex);
+ err_free_dev_id:
+ 	kfree(rdev->descr.dev_id);
+ err_free_rdev:
 -- 
-pw-bot: cr
+2.34.1
+
 
