@@ -1,132 +1,112 @@
-Return-Path: <linux-kernel+bounces-311084-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311085-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 256679684B2
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 12:31:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BA569684B4
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 12:32:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AB127281778
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 10:31:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE002281AF2
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 10:32:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 914A113C9D4;
-	Mon,  2 Sep 2024 10:31:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DECF13D529;
+	Mon,  2 Sep 2024 10:32:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WFVNqGDm"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="xc6vTKAN"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B83D53E15;
-	Mon,  2 Sep 2024 10:31:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 132BA13B2A8
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 10:31:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725273101; cv=none; b=n2xTfyXVCFxQUwYnc9ifiJlV57gAuFhm3xwr6qHPrXg4LCj+INsWj+0BvW3GOL2tq9ogz7aGx2069Vj8pFa9p3EKOJOip7zCrWZLGJOwe0gWjgWGSUFgG3GNSvDToHi4FinjoHu5G4Kvqttv3BlTlUb2UEckvVKzjyVWE7S4pOE=
+	t=1725273119; cv=none; b=WgovLjHssYXe3R/9bNzqerL4zDyk+qQtWFpl03Pr+m1A5aPFuOK4o0MnyZ/cMLVw6fKGW9jb2CyUakHGRYAcU5I6qeEfxg3aqkwJ/KHAhDAtZcDtUnD5oQC+filCXtqI66x+TiQKjEmfjvgpSByK19VXeL2KXTQlJh4xwTalbYA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725273101; c=relaxed/simple;
-	bh=r9xXHU6kp7B8Y4fDffwOQIWFSjsqzEw90KZxhqEjb/4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BeetAiGf9KsWED8milVOi7qUJAb3a4ugmYf85cDQuIyuPmfnOl561RQ+Gxu5DGkud02NjWo7A3unAps1dqOvYC/Q5DUunxSmVEfupHCSBVGHvCcSK8WY3u0X6n6yjjzRab3bC8ZqYsRVpQeCAHORpBZD4GzBxsIgDjM087aUC08=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WFVNqGDm; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725273099; x=1756809099;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=r9xXHU6kp7B8Y4fDffwOQIWFSjsqzEw90KZxhqEjb/4=;
-  b=WFVNqGDm1gcnw+R4U0New+ARgwpKusiGpvNnDODvrI76lMbzBnPOP1H3
-   5jAz5f1qX69kXpGXrZy5I3qIbTmXrm1GbcILYyVIRne+SYp05TY6zXMqu
-   a9mCklwbtDV2vZpHFB3K4h163qWiStONi/ZNI6kpi91jxJ1A94BoTJXH0
-   nobEt30+ksvyCLy8GXQKYmD4nko8oF7Vz0Vpv+2gGXmtNHSy3OV3cXaT5
-   IhDzikRd2RopEYlrVywbTL+dJ+mhVR9kcwVJhcF62Y7HUfdVU/EMjuNmS
-   3x1LfCF0cIgg1zpstzMNBgFZrhD0BU+qxgYXxSdXNDDYxoh9lo8n6VeYS
-   A==;
-X-CSE-ConnectionGUID: n5K0c7mhT2S2y8/QM0HwDA==
-X-CSE-MsgGUID: FrniisdeSFy26SsRCdUbSg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11182"; a="35005342"
-X-IronPort-AV: E=Sophos;i="6.10,195,1719903600"; 
-   d="scan'208";a="35005342"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2024 03:31:38 -0700
-X-CSE-ConnectionGUID: e7yJ1H3CSxeSzV5a+Ilxbg==
-X-CSE-MsgGUID: HT9qwmxNQD2/GRDH5GY9Zw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,195,1719903600"; 
-   d="scan'208";a="87807274"
-Received: from lbogdanm-mobl3.ger.corp.intel.com (HELO tlindgre-MOBL1) ([10.245.246.223])
-  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2024 03:31:34 -0700
-Date: Mon, 2 Sep 2024 13:31:29 +0300
-From: Tony Lindgren <tony.lindgren@linux.intel.com>
-To: Yan Zhao <yan.y.zhao@intel.com>
-Cc: Rick Edgecombe <rick.p.edgecombe@intel.com>, seanjc@google.com,
-	pbonzini@redhat.com, kvm@vger.kernel.org, kai.huang@intel.com,
-	isaku.yamahata@gmail.com, xiaoyao.li@intel.com,
+	s=arc-20240116; t=1725273119; c=relaxed/simple;
+	bh=E//9i3rBC3Mu3CinKYbPASsoeyN5yH642sDsswD5CaI=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=WXhTsrlcMhJS7nXB3x/yRdlRqOvzhf7CK1eIA8Hz9y9JAXwQjsNOUonhcQhX3k6E3HPc6F/VcGJ7MKla4kxBnY/NiTDaR5lYuxfBirUCdkdYhJzvOnGAjHDX2WSHsBbi08pcEHZnv0rXhFiFSMMLYNeSZceC1FBWhxw/TVYifAs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=xc6vTKAN; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-42bfb50e4e6so17273225e9.2
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2024 03:31:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1725273116; x=1725877916; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wZz5aEve9gJnmWAIJx6ZX5ka1gAEq2augQUIkDSiEzc=;
+        b=xc6vTKANzErgDRMuW5u37LDUyNV9DPtS8Ig1rfVcIeApUZ8ZNJv7rjzO7DiXCGzNM9
+         X4SU6jkE13mw3xl6iZMZWbrfeUvVv3qpWJZzOBJOPn7zd0nzjw/e1xUGfzePXBbOxxN2
+         ak5iQbRqvJynlVLlb6cnrbmL9cgtBfzmd3S5NVyzM8LcacqmNzfcqZEJtRtLSXMqXN15
+         nHPTOWfgeJHTZwFQPxkGOlklR7j++KRsjqzk0owHY9SPiiz/+/zb5++X6uRY2dv7+PMc
+         Wa0c6rIiUmGHSu9nhNJUBVv60V1TaOy8UcSWv0cNdBBeqhpy+aS/dXomTQ+54j60DYLR
+         Y9RA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725273116; x=1725877916;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=wZz5aEve9gJnmWAIJx6ZX5ka1gAEq2augQUIkDSiEzc=;
+        b=HGOOc/4P2XcOfTdSro37rDAG0At2r4iF6p5E58cZcT/rjl4ruW2Xq9+JnLEoXAFEDr
+         kgSf47g04O4uf2k6tqjg+jLJC0ndg0RjcL/P02AZg0U60oxEs2BFWNlZ+lDipxeri9s5
+         fR55uVwFmQLtQ6BGpfZPDFYcpVGWUbZbTOlV5so3snJW8ShsZDfzw9M2VHJsItlRI518
+         4aeMm7P3MoAlh2oyZnbenNFx3yw3icucSgWypcJPSimHdBSzndxwM2K0q815asl+7yvO
+         awrI/nD9frP0NAkduWptYA5wxem8zVJ3RWvdrscTvy87HaTGT+qr4jGgcyvW8MVwTSxu
+         CSkQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWCI5zg+970DwwxSgclEP+FQu3PajZ3SEPufMH8PKFGD6IUXD9h9mVgMqHHGiTfJH8391VnPJ0+MW8RlH0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz2bIfK12HtyGe1EjEdvV7nFj5dh9fnWVqEC8Fn4+ptZ1KXGMyj
+	G3svdfDbIEHKMobCkR+ZseEyF7yIbIzZv0bbJZ3rq+6HSFvWMGtGSD9Hrbwk4vk=
+X-Google-Smtp-Source: AGHT+IFe+kSVm4VczVX0txVhurxYCvaDzKfUsg3clGmZJTp2CX77i8Kf9WevGLDkeTB1G96m7kOb8Q==
+X-Received: by 2002:a05:600c:3d9a:b0:426:63ff:f763 with SMTP id 5b1f17b1804b1-42bb27bdffemr87907015e9.36.1725273115781;
+        Mon, 02 Sep 2024 03:31:55 -0700 (PDT)
+Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:b496:9e67:73c9:9f5a])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42baf1b0c18sm150196505e9.37.2024.09.02.03.31.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 02 Sep 2024 03:31:55 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>,
+	Srinivas Neeli <srinivas.neeli@amd.com>,
+	Michal Simek <michal.simek@amd.com>,
+	linux-gpio@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Isaku Yamahata <isaku.yamahata@intel.com>
-Subject: Re: [PATCH 14/25] KVM: TDX: initialize VM with TDX specific
- parameters
-Message-ID: <ZtWUATuc5wim02rN@tlindgre-MOBL1>
-References: <20240812224820.34826-1-rick.p.edgecombe@intel.com>
- <20240812224820.34826-15-rick.p.edgecombe@intel.com>
- <ZtAU7FIV2Xkw+L3O@yzhao56-desk.sh.intel.com>
+	linux-arm-kernel@lists.infradead.org,
+	Rong Qianfeng <rongqianfeng@vivo.com>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	opensource.kernel@vivo.com
+Subject: Re: [PATCH v1 1/2] gpio: stp-xway: Simplify using devm_clk_get_enabled()
+Date: Mon,  2 Sep 2024 12:31:53 +0200
+Message-ID: <172527311082.25578.2725532526030192371.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240820121651.29706-2-rongqianfeng@vivo.com>
+References: <20240820121651.29706-1-rongqianfeng@vivo.com> <20240820121651.29706-2-rongqianfeng@vivo.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZtAU7FIV2Xkw+L3O@yzhao56-desk.sh.intel.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Thu, Aug 29, 2024 at 02:27:56PM +0800, Yan Zhao wrote:
-> On Mon, Aug 12, 2024 at 03:48:09PM -0700, Rick Edgecombe wrote:
-> > From: Isaku Yamahata <isaku.yamahata@intel.com>
-> > 
-> ...
-> > +static int tdx_td_init(struct kvm *kvm, struct kvm_tdx_cmd *cmd)
-> > +{
-...
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-> > +	kvm_tdx->tsc_offset = td_tdcs_exec_read64(kvm_tdx, TD_TDCS_EXEC_TSC_OFFSET);
-> > +	kvm_tdx->attributes = td_params->attributes;
-> > +	kvm_tdx->xfam = td_params->xfam;
-> > +
-> > +	if (td_params->exec_controls & TDX_EXEC_CONTROL_MAX_GPAW)
-> > +		kvm->arch.gfn_direct_bits = gpa_to_gfn(BIT_ULL(51));
-> > +	else
-> > +		kvm->arch.gfn_direct_bits = gpa_to_gfn(BIT_ULL(47));
-> > +
-> Could we introduce a initialized field in struct kvm_tdx and set it true
-> here? e.g
-> +       kvm_tdx->initialized = true;
+
+On Tue, 20 Aug 2024 20:16:50 +0800, Rong Qianfeng wrote:
+> Use devm_clk_get_enabled() simplify xway_stp_probe().
 > 
-> Then reject vCPU creation in tdx_vcpu_create() before KVM_TDX_INIT_VM is
-> executed successfully? e.g.
 > 
-> @@ -584,6 +589,9 @@ int tdx_vcpu_create(struct kvm_vcpu *vcpu)
->         struct kvm_tdx *kvm_tdx = to_kvm_tdx(vcpu->kvm);
->         struct vcpu_tdx *tdx = to_tdx(vcpu);
-> 
-> +       if (!kvm_tdx->initialized)
-> +               return -EIO;
-> +
->         /* TDX only supports x2APIC, which requires an in-kernel local APIC. */
->         if (!vcpu->arch.apic)
->                 return -EINVAL;
-> 
-> Allowing vCPU creation only after TD is initialized can prevent unexpected
-> userspace access to uninitialized TD primitives.
 
-Makes sense to check for initialized TD before allowing other calls. Maybe
-the check is needed in other places too in additoin to the tdx_vcpu_create().
+Applied, thanks!
 
-How about just a function to check for one or more of the already existing
-initialized struct kvm_tdx values?
+[1/2] gpio: stp-xway: Simplify using devm_clk_get_enabled()
+      commit: ece70e79868c75d946819db4fba095c8c96ddb32
 
-Regards,
-
-Tony
+Best regards,
+-- 
+Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
