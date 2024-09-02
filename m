@@ -1,161 +1,91 @@
-Return-Path: <linux-kernel+bounces-311668-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311673-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F2A0968BE5
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 18:17:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5125B968BF6
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 18:20:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 636251C210EE
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 16:17:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E5E1AB21456
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 16:20:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6594B1AB6F4;
-	Mon,  2 Sep 2024 16:16:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 408B01A3022;
+	Mon,  2 Sep 2024 16:20:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UvXw2XgR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="pdkTPLTG"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8AC53BBC1;
-	Mon,  2 Sep 2024 16:16:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D38C313AA3E;
+	Mon,  2 Sep 2024 16:20:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725293773; cv=none; b=nRO39AwilVeaIwT1Ap9Z2ZLJLryPDHlj8a4ZyIF/OMC0Mn4XJTPbrG2Y7MXv+1UnHiit4fQ+xJ7ltmZ4YtZWVR5p7CvggrguBwtUFMI6cPF193eaIlqVKKlxCSnAA2eGexSzq5ZK6jTVudgBRSqTEk/rtp/OUDMiTxXq8mqdDk4=
+	t=1725294035; cv=none; b=p7G+10qlhya4CUIulnfjWX8U1XMO+iUD7bDYFz/0NjPSAgrbKwAQBODlCkSS4yisEUygY5HhkraOneOF8OegSgf1poGpBdIFaIefbQjX+dQ9kojGUghN0gaAEHNvQe+CPWiyvXrFUELmHyn0bx1k/OrO3nyqxcOkNrua1TQv08g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725293773; c=relaxed/simple;
-	bh=yP+DQzvw63ChFrvj3CjBpQFX8iR05V2bAnDs8DmZ0ng=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mSW6O750B8l8JsCavY2Q7YFYl0GFFXgik4CtsMkzqDoRt5YC3k73WeEqHUFlSrTlawAHt/KfW/UbLE/GgoXYWzbGIjPBDBku+JWJvuRl9Vdkqv1ANqTzh7r2WZiOiafstWejRJqFcwN2NwDMeCTGoQW5xI7rV653AhhsR0CKOKQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UvXw2XgR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A990C4CEC2;
-	Mon,  2 Sep 2024 16:16:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725293773;
-	bh=yP+DQzvw63ChFrvj3CjBpQFX8iR05V2bAnDs8DmZ0ng=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=UvXw2XgRbUEkpGX21v00vwgbghwNg31bp//RynLl8Ojtu61grwn1ZWKVTOmaWUww7
-	 1Orh24E/s62LK/GKaFMifKmGGbdUDH0Kiyc774IBOSWpQx28vE//M8iREmB1NXyKAY
-	 Fd5589smw6P1DwbbXFajJDpSMYemOb3L5IW6INpTOqFPr7UYkYxpBhKCpa7CHY/4Pi
-	 VYUbY0a+MjGOsGwwpDWxvd69YeXixkwVP0ypUKflf+axnMKMyAOeLB+0IJx5tAfiLM
-	 vNYca1mPdA0YCrbS10vsNf6lp6UTGbHq5RqJIuTcLnViCAOdu/+PFaoxjmmXbi0i6s
-	 4awim7gc5a46Q==
-Message-ID: <329f65dd-a23b-460f-85ee-84fe674fe97d@kernel.org>
-Date: Mon, 2 Sep 2024 18:16:06 +0200
+	s=arc-20240116; t=1725294035; c=relaxed/simple;
+	bh=CkJkF/373yx2wrwwgj2iFiYDhvrw4DB8j1vqmdmXuEw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ftGsjJ7rwr3tw887nYIjRZD3MOHrF9IOin+5IYCjYSJu9kIHzZgtvJRNoqtNOwhp7116PYcpLvaKwaX0oCPRosSoeuWbOE5nT4QlbGz0iCLSmDElX01Wawi2UiOnE/KvABg03HtZGNFAPTBaOkC2VMl9D/rCpIMspllzwt8Plo4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=pdkTPLTG; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=uomZ8Qg+6Fky99H3+8KCFFJi9wmMw34y2Q0dhOmFcJU=; b=pdkTPLTGBh9DAQnu6QZg8QARE0
+	0IDtGF9wu7yvBQcvFsXrMowZYfKi4bWoOO4uVaMxKsBc2aavX+ImROTLq4AHSzvfvxbiP7a7tLYp8
+	zb8F7umZRSvUK3630eoB4FMTefP5WkEMWjIL68dzbKlk/hqTomN/0cAhWHBGIDrNl13s=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1sl9n1-006K7c-2d; Mon, 02 Sep 2024 18:20:27 +0200
+Date: Mon, 2 Sep 2024 18:20:27 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Wei Fang <wei.fang@nxp.com>
+Cc: davem@davemloft.net, pabeni@redhat.com, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, f.fainelli@gmail.com,
+	hkallweit1@gmail.com, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	imx@lists.linux.dev
+Subject: Re: [PATCH net] dt-bindings: net: tja11xx: fix the broken binding
+Message-ID: <8bd356c9-1cf4-4e79-81ba-582c270982e8@lunn.ch>
+References: <20240902063352.400251-1-wei.fang@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9] usb: gadget: u_serial: Add null pointer check in
- gs_read_complete & gs_write_complete
-To: =?UTF-8?B?6IOh6L+e5Yuk?= <hulianqin@vivo.com>,
- Michael Nazzareno Trimarchi <michael@amarulasolutions.com>,
- Prashanth K <quic_prashk@quicinc.com>,
- "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
-Cc: "quic_jjohnson@quicinc.com" <quic_jjohnson@quicinc.com>,
- "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "opensource.kernel" <opensource.kernel@vivo.com>,
- "akpm@linux-foundation.org" <akpm@linux-foundation.org>
-References: <TYUPR06MB6217DE28012FFEC5E808DD64D2962@TYUPR06MB6217.apcprd06.prod.outlook.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
- FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
- QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
- gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
- /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
- iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
- VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
- 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
- xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
- eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
- AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
- MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
- Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
- MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
- OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
- GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
- 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
- YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
- 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
- BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
- JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
- 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
- YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
- Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
- ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
- vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
- oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
- lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
- t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
- uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
- 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
- 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <TYUPR06MB6217DE28012FFEC5E808DD64D2962@TYUPR06MB6217.apcprd06.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240902063352.400251-1-wei.fang@nxp.com>
 
-On 29/08/2024 13:54, 胡连勤 wrote:
-> From: Lianqin Hu <hulianqin@vivo.com>
-> 
-> Considering that in some extreme cases, when the unbind operation
-> is being executed, gserial_disconnect has already cleared gser->ioport,
-> triggering a gadget reconfiguration at this time and gs_read_complete
-> gets called afterwards, which results in accessing null pointer,
-> add a null pointer check to prevent this situation.
-> 
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - ethernet-phy-id0180.dc40
+> +      - ethernet-phy-id0180.dd00
+> +      - ethernet-phy-id0180.dc80
+> +      - ethernet-phy-id001b.b010
+> +      - ethernet-phy-id001b.b031
 
-...
+This shows the issues with using a compatible. The driver has:
 
->  
->  static void gs_write_complete(struct usb_ep *ep, struct usb_request *req)
->  {
-> -	struct gs_port	*port = ep->driver_data;
-> +	struct gs_port	*port;
-> +	unsigned long  flags;
-> +
-> +	spin_lock_irqsave(&serial_port_lock, flags);
-> +	port = ep->driver_data;
-> +
-> +	if (!port) {
-> +		spin_unlock_irqrestore(&serial_port_lock, flags);
-> +		return;
-> +	}
->  
->  	spin_lock(&port->port_lock);
-> +	spin_unlock(&serial_port_lock);
+#define PHY_ID_TJA_1120                 0x001BB031
 
-You pinged us for this after 4 days. This is damn v9 and still
-unresolved comments from previous review.
+                PHY_ID_MATCH_MODEL(PHY_ID_TJA_1120),
 
-Explain, how did you resolve Greg's comment about this unintuitive code:
-https://lore.kernel.org/all/2024082251-grief-profanity-b0da@gregkh/
+which means the lowest nibble is ignored. The driver will quite happy
+also probe for hardware using 001b.b030, 001b.b032, 001b.b033,
+... 001b.b03f
 
-Pattern of immediacy, rush and impatience was used in one of latest big
-messes (just google about harassing open source maintainers by some
-random contributors).
+Given you are inside NXP, do any of these exist? Was 001b.b030 too
+broken it never left the QA lab? Are there any hardware issues which
+might result in a new silicon stepping?
 
-I suggest go back to drawing board and improve the code instead of
-making it spaghetti without explanation, even though we asked for that
-explanation.
+Does ethernet-phy-id0180.dc41 exist? etc.
 
-
-Best regards,
-Krzysztof
-
+	Andrew
 
