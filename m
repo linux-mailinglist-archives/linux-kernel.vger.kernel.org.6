@@ -1,111 +1,134 @@
-Return-Path: <linux-kernel+bounces-311655-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311656-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12C17968BAB
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 18:10:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 234E2968BAE
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 18:10:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B22C11F2155B
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 16:10:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 54DAA1C22934
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 16:10:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09C701A304A;
-	Mon,  2 Sep 2024 16:09:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECD081A3048;
+	Mon,  2 Sep 2024 16:10:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="dk3v4ddq"
-Received: from mout.web.de (mout.web.de [212.227.17.12])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NmcmQjsN"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24D851A3029;
-	Mon,  2 Sep 2024 16:09:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A07E71A3029;
+	Mon,  2 Sep 2024 16:10:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725293396; cv=none; b=DqsMg9Oxh2ugDPrIpeKRJ8kDu3+/Czj69xIgGYdne8Dh9WGTovyEUah3mJYmRdREECQmYTiMcGjYQU9SJLMfWCZJuBm0e90WCQdPTLi4PkhUSDDe1XINpRDfcAlnvwH0E+w+17HoyBLGsI6a9Vh8nJsSXT0/ioUEovdAKr8SlQY=
+	t=1725293444; cv=none; b=Om4E/1xGj5UlVk4FGNn+tlzu278gDOHCdpS27NxxIH6U/cISBT/+sUNDO5UYxTwZEBdqRtu8QzcgOmLzt4WCiTzjyn+bCcqP+mFeJ+nAHdy0DciA/ElqFEqTYCyntIqq9Iacg+R0AR0Tx2XF6sDSsis3rKg+QafM3SehfZqyiac=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725293396; c=relaxed/simple;
-	bh=uW78ttQeZfySdExpqlFHWcPaS9qRF0bSqhB1ftl+Li0=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=X3DrcOgreaigr76j+RtaKuaSTZES1TLo4Pr22MLBLllTHAYJ3fEyghpwzzr8rLYyeW9OLRMFj8MFl+zt259Ch6J0XmN277e9M1u3gdd57VAM2DwJR2n9z87bK2vC3zGtYkSyEfMZagfUg/e56VDGcHOkH6G4+2IfetMBiaG9H1o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=dk3v4ddq; arc=none smtp.client-ip=212.227.17.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1725293365; x=1725898165; i=markus.elfring@web.de;
-	bh=KMmYQS/7ZWS7BkK51oztGFjFJOQWg3j7Kq7b8VXcAto=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=dk3v4ddqLwtFIcOOuHQ9RPzCsrwU7qNiCLsHYMcNwi9QEjeYgrG49LD68BS9O2HI
-	 +NKTbtZUs/VRD4ba/8CahUeGTrommqwtsWJMKRW8Hy5dnrZi4Ps68Ihi0eLkzz3ev
-	 bZaWdMpSdhlD8OZ8em51VbDplUJXAkmrCnXs/4K4t0MTqkT3QZkLVX9kXSx74diQB
-	 SB+WzTFOdnD+ESe4DqA7EZ++q2DsR9Ai/FTnjWVg3b3WLlqtmrv9kSVCo9ksKzYbw
-	 fyfGZCewcPQA7mQIeLFY/CQAspXGd7k1Rew9hX5zChrd6Xw4Q1NuKi3yqQ10MRcqu
-	 KTqJa7P0DqZ87IKEmQ==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.84.95]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MCXZh-1suBtO184J-00Gfls; Mon, 02
- Sep 2024 18:09:25 +0200
-Message-ID: <8d30da7f-7a12-4052-b846-66fad0ccb392@web.de>
-Date: Mon, 2 Sep 2024 18:09:23 +0200
+	s=arc-20240116; t=1725293444; c=relaxed/simple;
+	bh=mA/5m1vT4go9SHXgOa8ntC2WafuD4Q9BAslIHx8wLbo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LQzL0dGgAWOHzi4kxyuDVLac++uYxDPDZKEw9wTtEuWfCvlN4O4goH/1Uhz0IrzhmpHxnW6Kq2s9zL683cg1BUw+awmxhAB4LCoZvXK+alnsWKMXEu017xZ3qh7pnKXxi5nNnVpKo4CkMaGtftEL+oKCwVnY2guJ8aMPRf5Z6LE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NmcmQjsN; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725293443; x=1756829443;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=mA/5m1vT4go9SHXgOa8ntC2WafuD4Q9BAslIHx8wLbo=;
+  b=NmcmQjsNDwFmqlhOWmktRqClsp46kK/SH0bNytLanYDmfkvpBFKloHjn
+   L5w3LZLFXlP/UmSTu/WP/kOGPQk2IAUzHJS9wyc4yvV3BsAi99Oebsv3N
+   uW1Q+IWfsNd8auwAgdeatBljjAkATFCtOyLsEwd0ushJ0xuR6kgRvNDU8
+   GVgnNJpnpse8CZjRxDDbm6VWT1ybi/rTxr3Fz7lywoapCdSUKamZ9BmTN
+   VPu5+819BHkN5GD1Txw/ksPQ/hl75jhvR4l4syMH+t2Dzq64K8Qjcv7ry
+   PIEXArnyI5jat1eEEVY4JBvWuub0yW/iYvH/k8wkvP5c2EFNCKKDWjJbT
+   A==;
+X-CSE-ConnectionGUID: LIi1WJgDQPC6JIuJZxXtmA==
+X-CSE-MsgGUID: VZDtbNoPRlWOSUo5CbJiyA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11183"; a="23745507"
+X-IronPort-AV: E=Sophos;i="6.10,195,1719903600"; 
+   d="scan'208";a="23745507"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2024 09:10:42 -0700
+X-CSE-ConnectionGUID: cRBbmkcERmWy1Sm8SOABkA==
+X-CSE-MsgGUID: e+YrE425SoWK1qyhwTIliA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,195,1719903600"; 
+   d="scan'208";a="69286841"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2024 09:10:40 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1sl9dV-00000004QP0-0nAq;
+	Mon, 02 Sep 2024 19:10:37 +0300
+Date: Mon, 2 Sep 2024 19:10:36 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Johan Hovold <johan@kernel.org>
+Cc: Dan Carpenter <dan.carpenter@linaro.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Hans de Goede <hdegoede@redhat.com>, linux-kernel@vger.kernel.org,
+	platform-driver-x86@vger.kernel.org,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Daniel Scally <djrscally@gmail.com>
+Subject: Re: [PATCH v2 1/4] driver core: Ignore 0 in dev_err_probe()
+Message-ID: <ZtXjfB115MN22aQi@smile.fi.intel.com>
+References: <20240822130722.1261891-1-andriy.shevchenko@linux.intel.com>
+ <20240822130722.1261891-2-andriy.shevchenko@linux.intel.com>
+ <ce59c3c6-8729-469f-a0df-b6844792e324@stanley.mountain>
+ <ZtXgmi0TDfDMwnlz@hovoldconsulting.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Matt Coster <Matt.Coster@imgtec.com>, Frank Binns
- <Frank.Binns@imgtec.com>, Jinjie Ruan <ruanjinjie@huawei.com>,
- Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org,
- dri-devel@lists.freedesktop.org, Sarah Walker <sarah.walker@imgtec.com>
-References: <ea4ec650-d858-42c2-ab59-e17824069ba9@imgtec.com>
-Subject: Re: [PATCH -next v2] drm/imagination: Use memdup_user() helper
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <ea4ec650-d858-42c2-ab59-e17824069ba9@imgtec.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:2IP641OvAqySSsQCSeno5LeZ0c8/U6wHIWmAl0Jl1s1cnFAkVuh
- s2Zf3eSI5p2YDKoFk+o6qoMkVH+ZeKPiMgeF8+aLwNQD1xE9kL41LH8GhvYTOsJoS3brU2e
- IJmAtthSCiVzjy5jy66xuQjdjAfs4sh+ojKU6CINmx6LRoJSz12VsZlW3xJwruK0vn0gaj4
- x0HFi2UfHi1rxxVwMse6w==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:quvIM9LSWoE=;zatZvy5PHOFpPDYXB4g0J1t/uib
- CMX60/faYt1H0s1MkAaYi+iAaR0EW5lRJSEJosfepws58A+lM1jwT+2k3Usz/LYhmVBqbTLB+
- 3yXhNzxhsYTQ6QTs+KQlQgbTwHM8bHL+NlvwNnvIBMe3Fkg1RLbzsiFWv43I1JdF60fk0XilG
- lED+TYt9oAJNHWS67QNFzBQFFx5+1IE5pqyXSC6g5yFJnspOrxz9m0EtYUUfPqsDxMiybWetC
- gbAVgEJotb914mAZHojqR7bItOjqQW7tts8V83jO53MQH6gq4ACsRMmzMVyMIZTpaMKsIgl1h
- pIx5xj3b4iSbaTJqSqpFjYeh9ZjpAePIek8JYz5L1Bd2C+VZlkla5lklVuUxcFhNoNqL0u/LP
- B0TDpXgJGNTg2Ez8DzA0DHW1AmKE1/AHtWHJiASh04S3mzE4JOoqy6FKx8Nzz2Gd6/PGCNGnE
- 5Vo2yy6NSeV7giMgOgY5kSSbxxYaPKCyxFU4wd1iVkKiJ4ilw2m4F+xzuFvETGwXCak+9f0E/
- ymcBbjcWDeV2jSQMzg8GR86P9upRyomTZf8InvBIVG0nwHd3M46ADM+U6rENWsnW8aqKEm3zN
- G4Dwaplfow8wNnmXWLtwuNwNmFPkaqtNO9w5LSHqcJi33INsJ3adj768NMHN/DKpe0HPW27uC
- NYsYD0vKlL7ID8enS25w0Ke/UZLBbHejYKrBz9+YmU3o8W+7g2BKAmL4qX9HQoKp36HX6Pt6B
- 3TobWqCGcj7+zTmDg4NNrBVRiu+x94Z6dTr2dqnOs5uDJ+3Z5PBQdNr/+xSOqvGErtC1W+45y
- 1caZHVQRfBNfLSWNQmS8mbpQ==
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ZtXgmi0TDfDMwnlz@hovoldconsulting.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-> > Switching to memdup_user(), which combines kmalloc() and copy_from_use=
-r(),
-> > and it can simplfy code.
->
-> Applied, thanks!
->
-> [1/1] drm/imagination: Use memdup_user() helper
->       commit: 2872a57c7ad427d428c6d12e95e55b32bdc8e3b8
+On Mon, Sep 02, 2024 at 05:58:18PM +0200, Johan Hovold wrote:
+> On Sat, Aug 31, 2024 at 11:25:54AM +0300, Dan Carpenter wrote:
+> > On Thu, Aug 22, 2024 at 04:05:38PM +0300, Andy Shevchenko wrote:
+> > > In the similar way, ignore 0 error code (AKA "success") in
+> > > dev_err_probe(). This helps to simplify a code such as
+> > > 
+> > >   if (ret < 0)
+> > >     return dev_err_probe(int3472->dev, ret, err_msg);
+> > > 
+> > >   return ret;
+> > > 
+> > > to
+> > > 
+> > >   return dev_err_probe(int3472->dev, ret, err_msg);
+> > > 
+> > > Reviewed-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
+> > > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> > 
+> > This is a terrible idea because currently Smatch is able to detect about one
+> > bug per month where someone unintentionally passes the wrong error variable
+> > to dev_err_probe().
+> > 
+> > I really hate this.
+> > 
+> > NAKed-by: Dan Carpenter <dan.carpenter@linaro.org>
+> 
+> Regardless of any issues this may cause for tooling, I fully agree that
+> this is a terrible idea that will only result in unreadable code.
+> 
+> 	return dev_err_probe(dev, ret, "registration failed\n");
+> 
+> Except it did not fail...
+> 
+> NAK
 
-Do you find any previous contributions still similarly interesting?
+Fair enough. Thank you, guys, for reviewing.
 
-Example:
-[PATCH] drm/imagination: Use memdup_user() rather than duplicating its imp=
-lementation
-https://lore.kernel.org/r/c07221ed-8eaf-490e-9672-033b1cfe7b6e@web.de
-https://lkml.org/lkml/2024/1/28/438
+-- 
+With Best Regards,
+Andy Shevchenko
 
-Regards,
-Markus
+
 
