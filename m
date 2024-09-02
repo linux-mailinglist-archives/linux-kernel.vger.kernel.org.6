@@ -1,218 +1,137 @@
-Return-Path: <linux-kernel+bounces-310597-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310598-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 045B7967ED9
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 07:36:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B4B1967EDB
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 07:37:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 41336B21C6B
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 05:36:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E8D411F225C5
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 05:37:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B03C21514CC;
-	Mon,  2 Sep 2024 05:36:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B81414BF89;
+	Mon,  2 Sep 2024 05:36:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="YkHX6Zb0"
-Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="31RmTM0C"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 082DA195;
-	Mon,  2 Sep 2024 05:36:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 039E564A8F
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 05:36:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725255370; cv=none; b=ghCHeOUGLWhbAZvG6x5kzXdLfP+pS04mWspJhVTXH60kmoALnVfP+1EbTBPLDWjaYcIGygLlclTYt5xVZAsJIz5HSvj8JiUWOSjU59Xn//5Yw2yOniKrZmysHq0SfseTc2H6EA6rljlp3v7WLKqxlALOiGrvJvqsN7ybg5XlcSQ=
+	t=1725255418; cv=none; b=s6buMhUcoUBw8+Wpm39lmDWhqyXaj3tW3x2hCC6FG6BPYL660pk9DvGUlKnL6jeGNDsC2QX98QLwBKAzdkrJaFlsQb1+kkw0hfOeLrAMwdhiAxEgi5AKYs5tvcT0PTPT5eNNuzcE12a3idLibqnzdEL4YE2NJD5qknczwC/4HeI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725255370; c=relaxed/simple;
-	bh=uDwQKpz+rQf9nOxJn7c2gkv6Bl9b3ZM0TcssRbvz+jQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=COIZIf++YClXCZOvfscDEXGanyEHNsX8hBHxORIqX8zA1hoejdRwierc8NFF+sIErAMLJMn8N6IvRzm321iB4RABbctVE+MeFizuzgNzAbT4b+biQunbw5awykC3IYw3Wd4ksxi4P70Na7JOhfBDoXMEAhlA3ygWfEWAIrOkAUA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=YkHX6Zb0; arc=none smtp.client-ip=198.47.23.248
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4825ZpkR120665;
-	Mon, 2 Sep 2024 00:35:51 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1725255351;
-	bh=WZ59zBqwq+723lxdIL24tUg61XO83oLUhG1HMUJwh6A=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=YkHX6Zb0FSJgXps0yjktJVDeW/y7sMG+3ezYuLncD4OZ1j4cAgvgmdnyQdhuWmGkW
-	 vG9W6A5nTpE0ZVZOCqpPenr6p1E8DLMA+XRB9XlFV/47jFYPjAyz0j2c22uOjVQynj
-	 QcQT2T39KrN5o3J/3Ts4LDRqGYr3Xmvxw+8YERbM=
-Received: from DFLE108.ent.ti.com (dfle108.ent.ti.com [10.64.6.29])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4825ZpPt009351
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Mon, 2 Sep 2024 00:35:51 -0500
-Received: from DFLE114.ent.ti.com (10.64.6.35) by DFLE108.ent.ti.com
- (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 2
- Sep 2024 00:35:51 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE114.ent.ti.com
- (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Mon, 2 Sep 2024 00:35:51 -0500
-Received: from [10.249.135.225] ([10.249.135.225])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4825Zjtv078931;
-	Mon, 2 Sep 2024 00:35:46 -0500
-Message-ID: <9ef62d97-e72b-4b66-b535-a1de8fe43d57@ti.com>
-Date: Mon, 2 Sep 2024 11:05:45 +0530
+	s=arc-20240116; t=1725255418; c=relaxed/simple;
+	bh=vyexIiq0G3KdAGHxQw2FFAbj2lEAiY2GbjMYb6gvJLI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EsAdMbBGj1oB9O5WF8qmRXvkc41P3WOPNpYCCbC8n7NmzKNsbrW5G8tg3HGz7VjZT4tjeOYfpKalCNJBaDLaqGYKa/3SWpipIcflTlVd6th4jC4F0gw5fHiRHCBI5L97/udjBQ3sWXqGhLMJdfvOkwoXFmDpy+t0ePtV7ha8ziM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=31RmTM0C; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-427fc9834deso54865e9.0
+        for <linux-kernel@vger.kernel.org>; Sun, 01 Sep 2024 22:36:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1725255415; x=1725860215; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=MQ7nhItI8VmPcJbkkl0nLAZengIZ/zDRojcMk7WM8B8=;
+        b=31RmTM0CbfKDJL5kZC6Kx4BxgQ4KzwypfOJu+0Xpr8I2twWE7LTVtHWIKyjJ+Uv3Xc
+         +eHxyBPi0ENIvgnyqwIHCzVfvR3qtvCYzI2C4nYl7MYLj+ohlq5a2XgB90EkAO+6V2d9
+         5v/SMA6zMz699v/cXHZ69Uh1m9fpPXyaA1JJ/gWJG/x6gvwA06mOmZhtuGbqxAZZcazK
+         xC//DwbWtSmguJF+XQs/Q7PwbX4OrtQNJuCEv8sohOY9pQFmvMt0HtWpOzEnX+jbcjP6
+         Z4JhpbEK6LhQxByoZ+2f0yyVU89Y7CO9wd7dne/6mckNUx9KjAvfbooP104BAGo0hIoZ
+         QxkQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725255415; x=1725860215;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MQ7nhItI8VmPcJbkkl0nLAZengIZ/zDRojcMk7WM8B8=;
+        b=q1b5RmqF+ZvCVxWQvAsGRNG3o9+1U9GVy87loQuBzV5sp3PDIMqEdBrvZHys7STlul
+         PeY9qSPKVbCQPNwpYKbcwiT0qtx3DQGRZJML+Wn6KZweKOADkPZEwCIXP3W8SsoBQN+b
+         Bn5M2joMuto1NMYp3tQYQKW+iCNdoKRF3u/O4etLm+5SJ182jr15akveE2D8EG8P0P0T
+         DBrfTqvy9FluQHNBr0yoJOmOBQ7xKWkq63MStaO+5/k6rUgRuXJJwUt7taadSe9WQXiK
+         Ip6nwGKsogrK3h7FVJ8ab4rffhQHDZCVyi+FllxA6Icdtol9Et3U9zl9jjjpoIFQHgwC
+         WO3w==
+X-Forwarded-Encrypted: i=1; AJvYcCUvP18HtllaFujWXBIfZDjViYY3bO89N23HqswEyASyVmucCHp5NIJDhvKylnOnnYIJVnC8dirLcdifDRU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzp30JiZiELDhz0sJf6cS+0d5/ZTolX02Nvt2kfD1clVUHgTy7u
+	gHQYp40eFQPXd5Wcr0J90UPOUAhnt5xpXpL6+KzHzLGZAgCA8ANY+KbuzXRC9g==
+X-Google-Smtp-Source: AGHT+IGH0lniufb3F4A3bPXzpfW2OpZ/dm4ZIb2y+w4AUpvlVhKTQmc4hKWVFLY4JC77+3GFg8WYZA==
+X-Received: by 2002:a05:600c:c15:b0:426:68ce:c97a with SMTP id 5b1f17b1804b1-42c787718b8mr1641265e9.7.1725255415043;
+        Sun, 01 Sep 2024 22:36:55 -0700 (PDT)
+Received: from google.com (44.232.78.34.bc.googleusercontent.com. [34.78.232.44])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42c846d2fdesm11837575e9.22.2024.09.01.22.36.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 01 Sep 2024 22:36:54 -0700 (PDT)
+Date: Mon, 2 Sep 2024 05:36:53 +0000
+From: Sebastian Ene <sebastianene@google.com>
+To: Marc Zyngier <maz@kernel.org>
+Cc: akpm@linux-foundation.org, alexghiti@rivosinc.com, ankita@nvidia.com,
+	ardb@kernel.org, catalin.marinas@arm.com,
+	christophe.leroy@csgroup.eu, james.morse@arm.com,
+	vdonnefort@google.com, mark.rutland@arm.com, oliver.upton@linux.dev,
+	rananta@google.com, ryan.roberts@arm.com, shahuang@redhat.com,
+	suzuki.poulose@arm.com, will@kernel.org, yuzenghui@huawei.com,
+	kvmarm@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, kernel-team@android.com
+Subject: Re: [PATCH v9 2/5] arm64: ptdump: Expose the attribute parsing
+ functionality
+Message-ID: <ZtVO9VDe-26jQFUK@google.com>
+References: <20240827084549.45731-1-sebastianene@google.com>
+ <20240827084549.45731-3-sebastianene@google.com>
+ <868qwew5xn.wl-maz@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v3 4/6] net: ti: icssg-prueth: Enable HSR Tx
- Packet duplication offload
-To: Roger Quadros <rogerq@kernel.org>, MD Danish Anwar <danishanwar@ti.com>,
-        Andrew Lunn <andrew@lunn.ch>, Dan Carpenter <dan.carpenter@linaro.org>,
-        Jan
- Kiszka <jan.kiszka@siemens.com>,
-        Javier Carrasco
-	<javier.carrasco.cruz@gmail.com>,
-        Jacob Keller <jacob.e.keller@intel.com>,
-        Diogo Ivo <diogo.ivo@siemens.com>, Simon Horman <horms@kernel.org>,
-        Richard
- Cochran <richardcochran@gmail.com>,
-        Paolo Abeni <pabeni@redhat.com>, Jakub
- Kicinski <kuba@kernel.org>,
-        Eric Dumazet <edumazet@google.com>,
-        "David S.
- Miller" <davem@davemloft.net>
-CC: <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <srk@ti.com>,
-        Vignesh Raghavendra
-	<vigneshr@ti.com>
-References: <20240828091901.3120935-1-danishanwar@ti.com>
- <20240828091901.3120935-5-danishanwar@ti.com>
- <7ebd7657-8e79-44e4-9680-832946fab523@kernel.org>
-Content-Language: en-US
-From: "Anwar, Md Danish" <a0501179@ti.com>
-In-Reply-To: <7ebd7657-8e79-44e4-9680-832946fab523@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <868qwew5xn.wl-maz@kernel.org>
 
+On Fri, Aug 30, 2024 at 01:28:36PM +0100, Marc Zyngier wrote:
+> On Tue, 27 Aug 2024 09:45:45 +0100,
+> Sebastian Ene <sebastianene@google.com> wrote:
+> > 
+> > Reuse the descriptor parsing functionality to keep the same output format
+> > as the original ptdump code.
 
+Hello Mark,
 
-On 8/30/2024 7:00 PM, Roger Quadros wrote:
 > 
+> This sentence seems either out of place or missing something, because
+> this change it not reusing anything...
 > 
-> On 28/08/2024 12:18, MD Danish Anwar wrote:
->> From: Ravi Gunasekaran <r-gunasekaran@ti.com>
->>
->> The HSR stack allows to offload its Tx packet duplication functionality to
->> the hardware. Enable this offloading feature for ICSSG driver
->>
->> Signed-off-by: Ravi Gunasekaran <r-gunasekaran@ti.com>
->> Signed-off-by: MD Danish Anwar <danishanwar@ti.com>
->> ---
->>  drivers/net/ethernet/ti/icssg/icssg_common.c | 13 ++++++++++---
->>  drivers/net/ethernet/ti/icssg/icssg_prueth.c |  5 +++--
->>  drivers/net/ethernet/ti/icssg/icssg_prueth.h |  2 ++
->>  3 files changed, 15 insertions(+), 5 deletions(-)
->>
->> diff --git a/drivers/net/ethernet/ti/icssg/icssg_common.c b/drivers/net/ethernet/ti/icssg/icssg_common.c
->> index b9d8a93d1680..2d6d8648f5a9 100644
->> --- a/drivers/net/ethernet/ti/icssg/icssg_common.c
->> +++ b/drivers/net/ethernet/ti/icssg/icssg_common.c
->> @@ -660,14 +660,15 @@ enum netdev_tx icssg_ndo_start_xmit(struct sk_buff *skb, struct net_device *ndev
->>  {
->>  	struct cppi5_host_desc_t *first_desc, *next_desc, *cur_desc;
->>  	struct prueth_emac *emac = netdev_priv(ndev);
->> +	struct prueth *prueth = emac->prueth;
->>  	struct netdev_queue *netif_txq;
->>  	struct prueth_tx_chn *tx_chn;
->>  	dma_addr_t desc_dma, buf_dma;
->> +	u32 pkt_len, dst_tag_id;
->>  	int i, ret = 0, q_idx;
->>  	bool in_tx_ts = 0;
->>  	int tx_ts_cookie;
->>  	void **swdata;
->> -	u32 pkt_len;
->>  	u32 *epib;
->>  
->>  	pkt_len = skb_headlen(skb);
->> @@ -712,9 +713,15 @@ enum netdev_tx icssg_ndo_start_xmit(struct sk_buff *skb, struct net_device *ndev
->>  
->>  	/* set dst tag to indicate internal qid at the firmware which is at
->>  	 * bit8..bit15. bit0..bit7 indicates port num for directed
->> -	 * packets in case of switch mode operation
->> +	 * packets in case of switch mode operation and port num 0
->> +	 * for undirected packets in case of HSR offload mode
->>  	 */
->> -	cppi5_desc_set_tags_ids(&first_desc->hdr, 0, (emac->port_id | (q_idx << 8)));
->> +	dst_tag_id = emac->port_id | (q_idx << 8);
->> +
->> +	if (prueth->is_hsr_offload_mode && (ndev->features & NETIF_F_HW_HSR_DUP))
->> +		dst_tag_id = PRUETH_UNDIRECTED_PKT_DST_TAG;
->> +
->> +	cppi5_desc_set_tags_ids(&first_desc->hdr, 0, dst_tag_id);
->>  	k3_udma_glue_tx_dma_to_cppi5_addr(tx_chn->tx_chn, &buf_dma);
->>  	cppi5_hdesc_attach_buf(first_desc, buf_dma, pkt_len, buf_dma, pkt_len);
->>  	swdata = cppi5_hdesc_get_swdata(first_desc);
->> diff --git a/drivers/net/ethernet/ti/icssg/icssg_prueth.c b/drivers/net/ethernet/ti/icssg/icssg_prueth.c
->> index f4fd346fe6f5..b60efe7bd7a7 100644
->> --- a/drivers/net/ethernet/ti/icssg/icssg_prueth.c
->> +++ b/drivers/net/ethernet/ti/icssg/icssg_prueth.c
->> @@ -41,7 +41,8 @@
->>  #define DEFAULT_PORT_MASK	1
->>  #define DEFAULT_UNTAG_MASK	1
->>  
->> -#define NETIF_PRUETH_HSR_OFFLOAD_FEATURES	NETIF_F_HW_HSR_FWD
->> +#define NETIF_PRUETH_HSR_OFFLOAD_FEATURES	(NETIF_F_HW_HSR_FWD | \
->> +						 NETIF_F_HW_HSR_DUP)
+> > In order for this to happen, move the state
+> > tracking objects into a common header.
 > 
-> You mentioned that these 2 features can't be enabled individually.
+> ... but instead doing this ^^^.
 > 
-
-Not these two but NETIF_F_HW_HSR_TAG_INS and NETIF_F_HW_HSR_DUP needs to
-be enabled together. NETIF_F_HW_HSR_TAG_INS is added in patch 6/6.
-
-2) Inorder to enable hsr-tag-ins-offload, hsr-dup-offload
-   must also be enabled as these are tightly coupled in
-   the firmware implementation.
-
-
-> So better to squash this with previous patch and use ndo_fix_features() to make sure both
-> are set or cleared together.
+> I propose to rewrite the commit message as:
 > 
-
-I will squash patch 6/6 with this patch so that both are added in the
-same patch. I will use ndo_fix_features() to make sure they re set /
-unset together. I will add this also in this patch. Let me know if this
-sounds good to you.
-
->>  
->>  /* CTRLMMR_ICSSG_RGMII_CTRL register bits */
->>  #define ICSSG_CTRL_RGMII_ID_MODE                BIT(24)
->> @@ -897,7 +898,7 @@ static int prueth_netdev_init(struct prueth *prueth,
->>  	ndev->ethtool_ops = &icssg_ethtool_ops;
->>  	ndev->hw_features = NETIF_F_SG;
->>  	ndev->features = ndev->hw_features;
->> -	ndev->hw_features |= NETIF_F_HW_HSR_FWD;
->> +	ndev->hw_features |= NETIF_PRUETH_HSR_OFFLOAD_FEATURES;
->>  
->>  	netif_napi_add(ndev, &emac->napi_rx, icssg_napi_rx_poll);
->>  	hrtimer_init(&emac->rx_hrtimer, CLOCK_MONOTONIC,
->> diff --git a/drivers/net/ethernet/ti/icssg/icssg_prueth.h b/drivers/net/ethernet/ti/icssg/icssg_prueth.h
->> index a4b025fae797..e110a5f92684 100644
->> --- a/drivers/net/ethernet/ti/icssg/icssg_prueth.h
->> +++ b/drivers/net/ethernet/ti/icssg/icssg_prueth.h
->> @@ -59,6 +59,8 @@
->>  
->>  #define IEP_DEFAULT_CYCLE_TIME_NS	1000000	/* 1 ms */
->>  
->> +#define PRUETH_UNDIRECTED_PKT_DST_TAG	0
->> +
->>  /* Firmware status codes */
->>  #define ICSS_HS_FW_READY 0x55555555
->>  #define ICSS_HS_FW_DEAD 0xDEAD0000	/* lower 16 bits contain error code */
+> "Adding a new page-table dumper for stage-2 requires parsing the page
+> tables, and reusing the descriptor parsing functionality would help
+> keeping the same output format as the original ptdump code.
 > 
+> In order for this to happen, move the state tracking object
+> definitions into a common header."
 
--- 
-Thanks and Regards,
-Md Danish Anwar
+Thanks for the feedback, I think the re-wording works much better and
+I'll make use of it.
+
+> 
+> Shout if you object to it!
+> 
+> Thanks,
+> 
+> 	M.
+>
+
+Seb
+
+> -- 
+> Without deviation from the norm, progress is not possible.
 
