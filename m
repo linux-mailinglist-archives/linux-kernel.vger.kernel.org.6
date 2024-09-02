@@ -1,190 +1,259 @@
-Return-Path: <linux-kernel+bounces-310605-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310606-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 013B3967EF2
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 07:51:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32002967EFF
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 07:58:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 73A4D1F225F1
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 05:51:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 543951C21966
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 05:58:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DEFB153837;
-	Mon,  2 Sep 2024 05:51:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67454154425;
+	Mon,  2 Sep 2024 05:58:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="wBUFu7y1"
-Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="FHHNSaGQ"
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2057.outbound.protection.outlook.com [40.107.94.57])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D81A7382;
-	Mon,  2 Sep 2024 05:51:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725256299; cv=none; b=iEo6DFfRiXEBlh6nd4cnfTybuhwi6RF9NMYw+O8tvFqLOp2cfLu4+3UhaBRGbEMkEA1Pw4t3ftWJxXbQztI9navLLPZEm5KTPxXNsaeDX8mOMrzLtt+j6YFPdHwAb4ojyQrudF5WHtqlT+hpl50yHWNoVW19PNzjjL/OQ1F5ILM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725256299; c=relaxed/simple;
-	bh=Gj55G6lKu7n2NTnDEeH4khTSGvxEJMBnE3JGgtlxO88=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Agd0gxKx823BacnCruGwz6wNdj56htCqv9PlJjphgNKjbUGX2LZM14UjzWK/rZtNPPQQjf9g4czXRBRMWbrgBsroa7zGRb12C319WZPftJ6tVXiVt3GRs+g6tKUZp46ow7n47nfI1FLezht3uUTadQ+KVfRRnmtZXohzz76amTA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=wBUFu7y1; arc=none smtp.client-ip=198.47.23.248
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4825pG4D125643;
-	Mon, 2 Sep 2024 00:51:16 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1725256276;
-	bh=cLRmH+kA6kXQ99zzZv3DTHnhkab52gAqrsPA8vh6zi4=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=wBUFu7y1B+QKOl71jXftrZnXwAHIzOqNupw2H97FdCTp4Bejr+VG1LGtYjzH4Tj+Z
-	 XIHqzQYTdF/fQCuYiOnv4vDgnJag2zeqe61qVHnM8ju4BSGdLLgK5wcUuB3bBxfbGP
-	 V4VBf9H0lt5rnkMwSVgZLZBBjofmXhbqtj80JZtw=
-Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4825pG6V064283
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Mon, 2 Sep 2024 00:51:16 -0500
-Received: from DLEE112.ent.ti.com (157.170.170.23) by DLEE108.ent.ti.com
- (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 2
- Sep 2024 00:51:16 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE112.ent.ti.com
- (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Mon, 2 Sep 2024 00:51:16 -0500
-Received: from [10.249.135.225] ([10.249.135.225])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4825p8Lo075490;
-	Mon, 2 Sep 2024 00:51:09 -0500
-Message-ID: <040b3b26-a7ef-47c7-845d-068a0c734e61@ti.com>
-Date: Mon, 2 Sep 2024 11:21:08 +0530
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B897B14F100;
+	Mon,  2 Sep 2024 05:58:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.57
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725256684; cv=fail; b=cNDld1W5DQeyjHX21PRp+jMTcM/skIoipI3QbBr1s+FGMmG+xnypIHOc5ipUy6iB5ntfFI1Jf/6MeWdaa+4gzZyHe6fKPw33VSUcx/WI+Z3nad6CNzYiJW4Mh3Q6OtVbquu6l9edy0sw5AOqOpaZMhS4gyhrvxyyyJyRuL9NlGg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725256684; c=relaxed/simple;
+	bh=KDICsT1k1L+QQdL3U7Fz7Vbnv/zvb6zO5TKJCn/sQ2M=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Ue3RQnlqMoggTz1ac7PRWCjz34xtuw7oSxWTxQ5SShYQu/DHRmxcpLDrtGAYSd6ArMKN8mPiGa0t3quYGALIIrJV4gUHty8q+AayIBSlnHUWqRneoo9rFkOc2VmrENCzoE8juPNNjKpp17IQrpDICMCakjN5dIWaE67OWxKHUq8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=FHHNSaGQ; arc=fail smtp.client-ip=40.107.94.57
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=tp0AvvPauDuIpCLSvW001g1l7s8ja+i0Ra/enRmFbfmjNAOe0BCU6tBaXqh2LTSBCFuXl355QjduscFo3OlcYA6mu2wSUHhui42Lv9DafWpxo6Gtc/LE1S7327k3h3qsdk9MGwhzR1d/kLZ8D+1vo56fCFDqJI+fzhffcZFKpAGxdpk2nP7BVA+nreBgm9wJFkOqcsi+f3kZ0JuzHW2OuUGjvEfCMOZjWpzSPHb2YVQFZVYAbV0T7MssNpsWsRXB8M5EE3L9C1dtO+a20UC/N+cskC2dPXArH1XwGjwePEySjqVQDU+x4Bhu3uRo7deIITHkW+MuPMOimQO5dp71Rw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=NQI7bKPyyjZD4ONb1cqsRzh9eKQ7GYDoxqPSC0IZybE=;
+ b=c8aAshYPaHBXbby9RuF7LGcB8fobPRWCV/WjXbDx2kyohDnR0EFzi2buQfzcRCyBeotov3XxsAonj0OGYOaaN/h7aOQyu2saN0MwvRn2ALH1NKywqSiS9vDbF4YJt0oKO/N6vOtgLQBq4RLiKOVfNyP0g0kbWyZO+NTgjxEDB+mC27w4XOkuaoz63C6ZE8N27XulH5PGs7QuBmwk2zX18Zd3dyVopOrHyfYPXsWTpXSuVKelrKitMZTuDlwP7cOoe/VvQ7WQteuhS8R6V6V1OsMB7UYcHPQZ297oP973GH4jIqBRHHWt/yoTNqlmGEo4qVW/EGwBeupP6wLtcAVqtA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.233) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=NQI7bKPyyjZD4ONb1cqsRzh9eKQ7GYDoxqPSC0IZybE=;
+ b=FHHNSaGQDdxMTImEZvCKJ6NmQjcMc0vbtih8hoAo/g7Ini/mEBkTRH4RMRu7Dk4AJmbx8L8z2iPT750lzgc1BHMfYJ1J0+PxEh96jMyDLY6KS7rDnjLRCM+ODqrVLetNL8hxZqFZP2QW0z1wbEowpyKYXx2LSa8SsnqT6iRK0vpsvRwSyCk3eoPx3r1YvNGMox48+BDSDll990su+BU+P7Aa1IX0ak7LNPCDXIl4m28DhQQSpX75Tz2OfsjkqWaKS7r5sLNu1M+vMWn4/bBARHM6spsDpmXD1HOXDTCEDcYqtXl62OmNEeL6X+3nNtjNLq2CN7mvDc67ZX5MeQm0KA==
+Received: from BN0PR04CA0056.namprd04.prod.outlook.com (2603:10b6:408:e8::31)
+ by BY5PR12MB4212.namprd12.prod.outlook.com (2603:10b6:a03:202::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.22; Mon, 2 Sep
+ 2024 05:57:58 +0000
+Received: from BN3PEPF0000B370.namprd21.prod.outlook.com
+ (2603:10b6:408:e8:cafe::51) by BN0PR04CA0056.outlook.office365.com
+ (2603:10b6:408:e8::31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.24 via Frontend
+ Transport; Mon, 2 Sep 2024 05:57:57 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.233)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.233 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.233; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.233) by
+ BN3PEPF0000B370.mail.protection.outlook.com (10.167.243.167) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7962.2 via Frontend Transport; Mon, 2 Sep 2024 05:57:57 +0000
+Received: from drhqmail201.nvidia.com (10.126.190.180) by mail.nvidia.com
+ (10.127.129.6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Sun, 1 Sep 2024
+ 22:57:54 -0700
+Received: from drhqmail201.nvidia.com (10.126.190.180) by
+ drhqmail201.nvidia.com (10.126.190.180) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Sun, 1 Sep 2024 22:57:53 -0700
+Received: from Asurada-Nvidia.nvidia.com (10.127.8.14) by mail.nvidia.com
+ (10.126.190.180) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Sun, 1 Sep 2024 22:57:53 -0700
+From: Nicolin Chen <nicolinc@nvidia.com>
+To: <will@kernel.org>
+CC: <thierry.reding@gmail.com>, <vdumpa@nvidia.com>, <robin.murphy@arm.com>,
+	<joro@8bytes.org>, <jonathanh@nvidia.com>, <jgg@nvidia.com>,
+	<linux-tegra@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<iommu@lists.linux.dev>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH] iommu/tegra241-cmdqv: Fix -Wformat-truncation warnings in lvcmdq_error_header
+Date: Sun, 1 Sep 2024 22:57:45 -0700
+Message-ID: <20240902055745.629456-1-nicolinc@nvidia.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v3 3/6] net: ti: icssg-prueth: Add support for
- HSR frame forward offload
-To: Andrew Lunn <andrew@lunn.ch>, Roger Quadros <rogerq@kernel.org>
-CC: MD Danish Anwar <danishanwar@ti.com>,
-        Dan Carpenter
-	<dan.carpenter@linaro.org>,
-        Jan Kiszka <jan.kiszka@siemens.com>,
-        Javier
- Carrasco <javier.carrasco.cruz@gmail.com>,
-        Jacob Keller
-	<jacob.e.keller@intel.com>,
-        Diogo Ivo <diogo.ivo@siemens.com>, Simon Horman
-	<horms@kernel.org>,
-        Richard Cochran <richardcochran@gmail.com>,
-        Paolo Abeni
-	<pabeni@redhat.com>, Jakub Kicinski <kuba@kernel.org>,
-        Eric Dumazet
-	<edumazet@google.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <srk@ti.com>,
-        Vignesh Raghavendra
-	<vigneshr@ti.com>
-References: <20240828091901.3120935-1-danishanwar@ti.com>
- <20240828091901.3120935-4-danishanwar@ti.com>
- <22f5442b-62e6-42d0-8bf8-163d2c4ea4bd@kernel.org>
- <177dd95f-8577-4096-a3e8-061d29b88e9c@lunn.ch>
-Content-Language: en-US
-From: "Anwar, Md Danish" <a0501179@ti.com>
-In-Reply-To: <177dd95f-8577-4096-a3e8-061d29b88e9c@lunn.ch>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Transfer-Encoding: 8bit
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN3PEPF0000B370:EE_|BY5PR12MB4212:EE_
+X-MS-Office365-Filtering-Correlation-Id: c7982b39-12e1-45a9-1d49-08dccb143205
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|1800799024|36860700013|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?YTJpZzl4bVVlcVBJM1hibGlNdzZKd0taa0FTVG5YSjVDZzN0YmpveWJnVFhX?=
+ =?utf-8?B?WWY2bHZ1YzRYakRNWlpCcEtaRHBVWWJSUDduL083TWExdVJGOTRoeUlPaVdO?=
+ =?utf-8?B?SGxiNXJJRmJwOXpVV21TUmhJd2lnSEZCM296TFN3YjRvVnpTOCtjaHpKdGdP?=
+ =?utf-8?B?WHQwVXprWDZjRld5UnlDVk5HTEZpNElLeWJyV1QzWnF6Q096WmxJMU9ocFpR?=
+ =?utf-8?B?cmNJRlBUODUyVy8vSEw0VDdLMTdxbU9oNlc0ZHdWMnhLajExanBuK0F5NmFt?=
+ =?utf-8?B?QUtKMzBPeUs1N1BmdWxwOHFjMnlJdVlIaHpsUlJaWkQ4OEFLOG9ObE5RVG54?=
+ =?utf-8?B?cFRjTUpyb3NLamxkNGVORlJmYW4wM0pSbFd1NE93eEo3Zkc3c2ZTSWlmRE5n?=
+ =?utf-8?B?WG5teUtGMklQeXNRZno5cTg1MDBYUnA0c044WUVuNll4bTdxcHJ6SXlYTUtp?=
+ =?utf-8?B?djJTcWdaRDF5bFR4eDVvOWZ6T2lOVjBMSlpOdUc5cFUxRS9TQklvR2NGTHd0?=
+ =?utf-8?B?azNidnlpSVhBOVlsb3VGZUFUOS8xenNKMy9ybGtFUDJQaWRId1ZMR0pLZFVJ?=
+ =?utf-8?B?S3lVSFJKd05CVm84OUpIVzhvVmtTQjF6cUJUbjFVcFdDcEllMHpwanZBWTdI?=
+ =?utf-8?B?KzkvUjNudkxjNWhkd2JEeU1NaEJVMmdxQkU0ZzkwOVl1VEZ6Uk83TUVVWEFX?=
+ =?utf-8?B?RC9Ndk5FVnQzVmFGU0d4SWxFYXRCV1MwL3BLY0tONWFMUGlqS04zY2dLY0VR?=
+ =?utf-8?B?M2ZnWlo1MzF3ZVUwbVlBeUwyKzRYbFFiTmNLSVptTENjUFlkVE43VjJVQi9D?=
+ =?utf-8?B?T0s3c09KVStRUGxGSlRKRUp3RnM5RTBuTEFQTis4Qm4xc2RUaVRJcy8ra0sz?=
+ =?utf-8?B?RDlqNzlrVkNoOXZEMXZ3VitUcENSc285SlRQdmp5NWFkSEk1RlNkamlyRG5z?=
+ =?utf-8?B?SEtSeWsweStwQWoycVFkQTkwMEhUQVVSSTE1MDI5blljeHB3WlNCUTZPTk45?=
+ =?utf-8?B?NTFNbTlBSnQyRGVrMkwyeXltekNySzA5Q2gzdnNGaTFKSWxDNGx5WUhkN2hL?=
+ =?utf-8?B?clY2ZG1YajZhOVpGazlGYUk0ZXJKU1VWckZ4c093L1R2eFpDTmtHUGhobDN4?=
+ =?utf-8?B?dEZvdUswMWpSK3Y1RllQd1IrN1RnUW9DbXRWbitBN2RSY284WlRxY05reGlZ?=
+ =?utf-8?B?THdRNHZ5Y0ltY096UW1oN2l2ZEY2Rnp4QWI0TGVXRWNqaWlYdnJ0dlVQeVhh?=
+ =?utf-8?B?bURCS2ZEemlmR2JBUHRiemNLU3RHK1JESFNHUDN0N0dWMnBhWW9PL3RvQWdj?=
+ =?utf-8?B?M1dDeVRKYkg5aXN2YnBNcWlRUVdKMTBDenFVQjJSR3Z2VWVNZUFBS3VCVDlQ?=
+ =?utf-8?B?bkJmZGVPS0k4Tnl4N084bVZ0ZWZCZTFJeURudkVRU2p2WnBQdmE3NHRnVW1o?=
+ =?utf-8?B?RGpaWk51dWxidkpoNm41a2hCdUVGQWY0WSt2UGdDOUhoaFozVlE2WVZxeUxy?=
+ =?utf-8?B?RGJoWUNMK2kvYW9tdHFJODNONXpGOHpubWlVS0ZaOVNQR1JkL1ZlTE9nTWoy?=
+ =?utf-8?B?R1lQVjNOQmc5SzZjbFgwTzAzQ2xUYWx5NTVPMXFIU3J2Ti9hNGVOMmE4d3Rv?=
+ =?utf-8?B?K25jNVFlZGF4RGZkeHZKOUlWYzdQTkJyR2lObit6WUsxQTJoMUF1OHNRdU1E?=
+ =?utf-8?B?aU1zWmN4ZW5yNGRNWk9JMk5PNnBiNE5RRkEyU0gwZUc3SlpzRk45MS9GVXQ1?=
+ =?utf-8?B?UTdDUkwvR2FVRDJvc1hDSHZhYnd2MjM1Z3dMaWx3eUoyOXVlZXhJNEhDK1d0?=
+ =?utf-8?B?cjVGU2FhMGpCeHNTa1dZN3lwdkF0NC9BVmxQTGZnV3dmSVhGOEllTW9LU3BC?=
+ =?utf-8?B?amtsK255dzErNG9vNXlPM3hrWklTZFB0bnIxUEkxa0dVM3JBZ3ZXekxvTVpM?=
+ =?utf-8?Q?pN+ztU9gjkrUdc17pJj80Gz1C8ECTP08?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.118.233;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge2.nvidia.com;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(36860700013)(376014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Sep 2024 05:57:57.6716
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: c7982b39-12e1-45a9-1d49-08dccb143205
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.233];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BN3PEPF0000B370.namprd21.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR12MB4212
 
+Kernel test robot reported a few trucation warnings at the snprintf:
+drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c:
+	In function ‘tegra241_vintf_free_lvcmdq’:
+drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c:239:56:
+	warning: ‘%u’ directive output may be truncated writing between 1 and
+	5 bytes into a region of size between 3 and 11 [-Wformat-truncation=]
+  239 |         snprintf(header, hlen, "VINTF%u: VCMDQ%u/LVCMDQ%u: ",
+      |                                                        ^~
+drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c:239:32: note: directive argument
+	in the range [0, 65535]
+  239 |         snprintf(header, hlen, "VINTF%u: VCMDQ%u/LVCMDQ%u: ",
+      |                                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c:239:9: note: ‘snprintf’ output
+	between 25 and 37 bytes into a destination of size 32
+  239 |         snprintf(header, hlen, "VINTF%u: VCMDQ%u/LVCMDQ%u: ",
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  240 |                  vcmdq->vintf->idx, vcmdq->idx, vcmdq->lidx);
 
+Fix by bumping up the size of the header to hold more characters.
 
-On 8/30/2024 7:30 PM, Andrew Lunn wrote:
-> On Fri, Aug 30, 2024 at 04:27:34PM +0300, Roger Quadros wrote:
->>
->>
->> On 28/08/2024 12:18, MD Danish Anwar wrote:
->>> Add support for offloading HSR port-to-port frame forward to hardware.
->>> When the slave interfaces are added to the HSR interface, the PRU cores
->>> will be stopped and ICSSG HSR firmwares will be loaded to them.
->>>
->>> Similarly, when HSR interface is deleted, the PRU cores will be stopped
->>> and dual EMAC firmware will be loaded to them.
->>
->> And what happens if we first started with switch mode and then switched to HSR mode?
->> Is this case possible and if yes should it revert to the last used mode
->> instead of forcing to dual EMAC mode?
->>
->>>
->>> This commit also renames some APIs that are common between switch and
->>> hsr mode with '_fw_offload' suffix.
->>>
->>> Signed-off-by: MD Danish Anwar <danishanwar@ti.com>
->>> ---
+Fixes: 918eb5c856f6 ("iommu/arm-smmu-v3: Add in-kernel support for NVIDIA Tegra241 (Grace) CMDQV")
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202409020406.7ed5uojF-lkp@intel.com/
+Signed-off-by: Nicolin Chen <nicolinc@nvidia.com>
+---
+ drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
-[...]
-
->>
->> Can you please check that if we are not in dual emac mode then we should
->> error out if any HSR feature is requested to be set.
-> 
-> This is where all the shenanigans with firmware makes things complex.
-> 
-> One of these options say 'If the interface is used for HSR, offload it
-> to hardware if possible'. You should be able to set this flag
-> anytime. It only has any effect when an interface is put into HSR
-> mode, or if it is already in HSR mode. Hence, the firmware running
-> right now should not matter.
-> 
-> I suspect the same is true for many of these flags.
-> 
-
-Andrew that is correct. Ideally the current running firmware should not
-matter. But the firmware team only recommends dual EMAC -> HSR offload
-and vise versa transitions. They suspect some configuration issues when
-switch -> HSR transition happen. That is why they have recommended not
-to do HSR hw offloading from switch mode. We can however keep doing SW
-offload as suggested by you in v2.
-
->> As you mentioned there are some contstraints on what HSR features can be
->> enabled individually.
->> "2) Inorder to enable hsr-tag-ins-offload, hsr-dup-offload
->>    must also be enabled as these are tightly coupled in
->>    the firmware implementation."
->> You could do this check there by setting/clearing both features in tandem
->> if either one was set/cleared.
-> 
-> Software HSR should always work. Offloading is generally thought as
-> accelerating this, if the hardware supports the current
-> configuration. When offloading, if the hardware cannot support the
-> current configuration, in general it should return -EOPNOTSUPP, and
-> the software will keep doing the work.
-> 
-> It is not particularly friendly, more of a documentation issue, but
-> the user needs to set the options the correct way for offload to
-> work. Otherwise it keeps chugging along in software. I would not
-> expect to see any error messages when offload is not possible.
-> 
-
-Yes, and I have already added this in this series based on your feedback
-on v2.
-
-I have one question though, in emac_ndo_set_features() should I change
-these HSR related features irrespective of the current mode?
-
-AFAIK, if NETIF_F_HW_HSR_FWD is set, the forwarding is offloaded to HW.
-If NETIF_F_HW_HSR_FWD is not set the forwarding is not offloaded to HW
-and is done in SW.
-
-So, I don't see any need to enable this features if we are currently in
-switch mode. Let me know what do you think. Should I still enable this
-feature irrespective of current mode and later handle this in
-prueth_hsr_port_link / unlink()?
-
-> 	Andrew
-
+diff --git a/drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c b/drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c
+index 9eb9d959f3e5..03fd13c21dcc 100644
+--- a/drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c
++++ b/drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c
+@@ -233,7 +233,7 @@ static inline int vintf_write_config(struct tegra241_vintf *vintf, u32 regval)
+ static inline char *lvcmdq_error_header(struct tegra241_vcmdq *vcmdq,
+ 					char *header, int hlen)
+ {
+-	WARN_ON(hlen < 32);
++	WARN_ON(hlen < 64);
+ 	if (WARN_ON(!vcmdq->vintf))
+ 		return "";
+ 	snprintf(header, hlen, "VINTF%u: VCMDQ%u/LVCMDQ%u: ",
+@@ -243,7 +243,7 @@ static inline char *lvcmdq_error_header(struct tegra241_vcmdq *vcmdq,
+ 
+ static inline int vcmdq_write_config(struct tegra241_vcmdq *vcmdq, u32 regval)
+ {
+-	char header[32], *h = lvcmdq_error_header(vcmdq, header, 32);
++	char header[64], *h = lvcmdq_error_header(vcmdq, header, 64);
+ 
+ 	return tegra241_cmdqv_write_config(vcmdq->cmdqv,
+ 					   REG_VCMDQ_PAGE0(vcmdq, CONFIG),
+@@ -354,7 +354,7 @@ tegra241_cmdqv_get_cmdq(struct arm_smmu_device *smmu,
+ 
+ static void tegra241_vcmdq_hw_deinit(struct tegra241_vcmdq *vcmdq)
+ {
+-	char header[32], *h = lvcmdq_error_header(vcmdq, header, 32);
++	char header[64], *h = lvcmdq_error_header(vcmdq, header, 64);
+ 	u32 gerrorn, gerror;
+ 
+ 	if (vcmdq_write_config(vcmdq, 0)) {
+@@ -382,7 +382,7 @@ static void tegra241_vcmdq_hw_deinit(struct tegra241_vcmdq *vcmdq)
+ 
+ static int tegra241_vcmdq_hw_init(struct tegra241_vcmdq *vcmdq)
+ {
+-	char header[32], *h = lvcmdq_error_header(vcmdq, header, 32);
++	char header[64], *h = lvcmdq_error_header(vcmdq, header, 64);
+ 	int ret;
+ 
+ 	/* Reset VCMDQ */
+@@ -555,13 +555,13 @@ static int tegra241_vintf_init_lvcmdq(struct tegra241_vintf *vintf, u16 lidx,
+ static void tegra241_vintf_free_lvcmdq(struct tegra241_vintf *vintf, u16 lidx)
+ {
+ 	struct tegra241_vcmdq *vcmdq = vintf->lvcmdqs[lidx];
+-	char header[32];
++	char header[64];
+ 
+ 	tegra241_vcmdq_free_smmu_cmdq(vcmdq);
+ 	tegra241_vintf_deinit_lvcmdq(vintf, lidx);
+ 
+ 	dev_dbg(vintf->cmdqv->dev,
+-		"%sdeallocated\n", lvcmdq_error_header(vcmdq, header, 32));
++		"%sdeallocated\n", lvcmdq_error_header(vcmdq, header, 64));
+ 	kfree(vcmdq);
+ }
+ 
+@@ -570,7 +570,7 @@ tegra241_vintf_alloc_lvcmdq(struct tegra241_vintf *vintf, u16 lidx)
+ {
+ 	struct tegra241_cmdqv *cmdqv = vintf->cmdqv;
+ 	struct tegra241_vcmdq *vcmdq;
+-	char header[32];
++	char header[64];
+ 	int ret;
+ 
+ 	vcmdq = kzalloc(sizeof(*vcmdq), GFP_KERNEL);
+@@ -587,7 +587,7 @@ tegra241_vintf_alloc_lvcmdq(struct tegra241_vintf *vintf, u16 lidx)
+ 		goto deinit_lvcmdq;
+ 
+ 	dev_dbg(cmdqv->dev,
+-		"%sallocated\n", lvcmdq_error_header(vcmdq, header, 32));
++		"%sallocated\n", lvcmdq_error_header(vcmdq, header, 64));
+ 	return vcmdq;
+ 
+ deinit_lvcmdq:
 -- 
-Thanks and Regards,
-Md Danish Anwar
+2.43.0
+
 
