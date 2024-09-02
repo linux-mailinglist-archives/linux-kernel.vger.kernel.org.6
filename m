@@ -1,87 +1,149 @@
-Return-Path: <linux-kernel+bounces-311116-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311117-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA11D968510
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 12:45:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2DA0968513
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 12:46:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DBB0A1C22395
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 10:45:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 896E72850ED
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 10:46:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9455B166F28;
-	Mon,  2 Sep 2024 10:45:00 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 187E617E919;
+	Mon,  2 Sep 2024 10:46:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i4h6tffD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DCEA13B2A8
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 10:44:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B86156B7C;
+	Mon,  2 Sep 2024 10:46:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725273900; cv=none; b=uW/QvC/rmK+AEwUYLsR/zDL474x8BGiM+d1BC4/8FAybQmF8yyyMK1z7QIhpq9s+ipueLoV4w9weer0ZyP2g6ALYEZj81tppO0dDvOV00PdAE8n9RAinAAGqlXoLWJTdBHjMxBBOwmA7xOR1ttuM+yo//VD/bSoRtfv9KdElBIM=
+	t=1725273969; cv=none; b=cMbwoWHly2eGS6TW4gd+JmpuNemRlFs7X0dXGtrmgLKPX8xVE+0v6dqLou4g451c+QqPBez5RR2mgptfBF7QvOrtAwXCrs+9jG21tVVCL5Al94CJjV9oemO3KhrE5eSBrCA6T0J4ZvpSIKHjWYnylXS1Hx3a8iCgwgqa5yOZYDw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725273900; c=relaxed/simple;
-	bh=J5AVmty/kNkLhkqYmqIkStp49fFb+743PjNX7jVOMbA=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=qHkAu0OaviMJ54l9CoDZ5IUWxhfUJMJN8YF2+sLIAB5WGax/RL6bUZA3YK5yc8qpk/ZksEJV+XbflUTpKFhQwhPmI+9yB2NsfEB8LlCu9pznmm+JzpzUrWFpzF3bdQwfTSyR1jB4nfmp6dafpaOuLM/vItiheV3sZtR7fgkB4Jg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1sl4YK-00060V-Rn; Mon, 02 Sep 2024 12:44:56 +0200
-Received: from [2a0a:edc0:0:900:1d::4e] (helo=lupine)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1sl4YK-004soH-0B; Mon, 02 Sep 2024 12:44:56 +0200
-Received: from pza by lupine with local (Exim 4.96)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1sl4YJ-000htx-32;
-	Mon, 02 Sep 2024 12:44:55 +0200
-Message-ID: <a73a4bfb60b63a1253514289e59b8aa989cbd47a.camel@pengutronix.de>
-Subject: Re: [PATCH RFC] reset: Provide new devm_reset helpers for get and
- deassert reset control
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: Yuesong Li <liyuesong@vivo.com>
-Cc: linux-kernel@vger.kernel.org, opensource.kernel@vivo.com
-Date: Mon, 02 Sep 2024 12:44:55 +0200
-In-Reply-To: <743d4b6b-c854-468f-a0c4-8adbf58cd0ea@vivo.com>
-References: <20240830033351.233263-1-liyuesong@vivo.com>
-	 <743d4b6b-c854-468f-a0c4-8adbf58cd0ea@vivo.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4-2 
+	s=arc-20240116; t=1725273969; c=relaxed/simple;
+	bh=JZjtdwQfSEp8GA124fcMpM+PxDlG3oF/fyGd7aXpRh4=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=uGJYkrjZrFrmQEoF+ZwSy4xsOwsAYI0wgkBhy2Ecdj+/ZsiJaGrEvFSICNyF4OeikZLr7kWkV2rx9zXWZm4erHtqCNdC8aGtR2T/XlJuU35I5meQuoQXpwIGowwIrutlaTPYsShS51zu5AShZRGfjqZ9MUCZHWtOjn1pRA961gk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i4h6tffD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 62127C4CEC2;
+	Mon,  2 Sep 2024 10:46:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725273969;
+	bh=JZjtdwQfSEp8GA124fcMpM+PxDlG3oF/fyGd7aXpRh4=;
+	h=From:Subject:Date:To:Cc:From;
+	b=i4h6tffDcd0lRuLY/mgKx5uSgS8HjkThv9StR6Lvyiz8gBTUd9yQYxsk/X0ylCWle
+	 9opFLUHlEAB4otes39jbetOavpss+qjpIxyUf+Mk0B6yEzicG/9ZDRjhaXId2Ds8tM
+	 G3Ui/b2wuhEPT5IiOKmWQUtgmhNBKcx4JG5u6N3exVHJQFvf61ooXdInt8+SOpA077
+	 J+RUqmECcah7fZfcaYcrI/xhELGAoztGKPrP7/N2/knoYVF8qBcxhvkpv3TohGONM1
+	 aSQPODGK+qM6OEmkJeaD0jBoAPNqgHN9+mdNm+3ZqgJ5I+uxLW+zTFpp+BE9NPE018
+	 SETRk2bilBTFw==
+From: "Matthieu Baerts (NGI0)" <matttbe@kernel.org>
+Subject: [PATCH net-next 00/11] mptcp: MIB counters for MPJ TX + misc
+ improvements
+Date: Mon, 02 Sep 2024 12:45:51 +0200
+Message-Id: <20240902-net-next-mptcp-mib-mpjtx-misc-v1-0-d3e0f3773b90@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAF+X1WYC/zWMQQqEMAxFryJZTyB2ZKheRWahNaMRrKUtUhDvP
+ kFw8eG9xX8nJI7CCbrqhMiHJNm9Sv2qwC2DnxllUgdDpqGWDHrOupJxC9kF3GRUWnNRSg4nS6a
+ 1zdtS/QFthMg/KXe/h+cK3+v6A2CKXRR5AAAA
+To: mptcp@lists.linux.dev, Mat Martineau <martineau@kernel.org>, 
+ Geliang Tang <geliang@kernel.org>, "David S. Miller" <davem@davemloft.net>, 
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+ Paolo Abeni <pabeni@redhat.com>, Shuah Khan <shuah@kernel.org>
+Cc: netdev@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, "Matthieu Baerts (NGI0)" <matttbe@kernel.org>, 
+ Geliang Tang <geliang@kernel.org>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2953; i=matttbe@kernel.org;
+ h=from:subject:message-id; bh=JZjtdwQfSEp8GA124fcMpM+PxDlG3oF/fyGd7aXpRh4=;
+ b=owEBbQKS/ZANAwAIAfa3gk9CaaBzAcsmYgBm1Zdtiw8kWDftZWvx84/2hCxkcRC3HiCSNv1fD
+ 7hl+94VRDOJAjMEAAEIAB0WIQToy4X3aHcFem4n93r2t4JPQmmgcwUCZtWXbQAKCRD2t4JPQmmg
+ cylnEADqL9SfjVBe7EZSSSAV0VWYXqnQpwFYKfa+LValfOeYrGwia4YDquvoAC33HtCGzDG/F+u
+ Y5ZGBPwldJnniGFGFxQZE47yEZThSxnM1LZpWGOY5hlfpaO6a3WXO0Y9Ad6BasFO2+25Kq7y30D
+ AcIiStDtzjwNDk5tqvsLEjL8bb3B3i/s0F8H2B11w5Hk/R0KDb1SCmbmAqxBiGRBugQD+sOkPM3
+ pBtt1B2YBi3MGHHo7FMRkHHbtJnuHK2OGgwX4b8l/xczX8zFnkEsjoVfUuptVDKhqDK403jCU/U
+ xjsLYmjMlECMuyBgWeCkNMDqOQeeZAsV1hEKxYFrdtLTtXwGVneiryUBUUx/wRNiyhiUjKrCXpp
+ A6by0rP29WTctfTK4CMnnY2kq4pZfaMLknCmdPAwXmRyZN+Al6wFKNXC3Sw3p4TFXdHSFClpZzd
+ LU6mBiWT6lOsHpXm+FpnnxCTBA3G+/TKMSJL11GRgRODzE7W7qUod6O6Po+/cQ0FtiHTBl/FE4Z
+ mdmNwQeuecVSy59CrMzjDr8CBzJoenSQgzbCpJFEgV0TYECUmvNFygEJytNCPntbgint+OucLSG
+ qMvnVetSHeILE1zHGLwgU9T/cAX7CHbRudvYhsjcpaiKWj8e9dVkeNMPo99jqUpxD73sjeRzTPH
+ XTbGtMmlaxDaH5Q==
+X-Developer-Key: i=matttbe@kernel.org; a=openpgp;
+ fpr=E8CB85F76877057A6E27F77AF6B7824F4269A073
 
-On Mo, 2024-09-02 at 17:52 +0800, Yuesong Li wrote:
->=20
-> On 2024/8/30 11:33, Yuesong Li wrote:
-> > When a driver wants to get reset control and deassert it,this
-> > helper will handle the return value of these function, also it
-> > will register a devres so that when the device been detached, the
-> > reset control will be assert.
-> >=20
-> > Signed-off-by: Yuesong Li <liyuesong@vivo.com>
+Recently, a few issues have been discovered around the creation of
+additional subflows. Without these counters, it was difficult to point
+out the reason why some subflows were not created as expected.
 
-Could you have a look at the pre-deasserted / auto-reasserting reset
-control series [1] and see if that would fit your use case?
+In patch 3, all error paths from __mptcp_subflow_connect() are covered,
+except the one related to the 'fully established mode', because it can
+only happen with the userspace PM, which will propagate the error to the
+userspace in this case (ENOTCONN).
 
-[1] https://lore.kernel.org/all/20240621-reset-get-deasserted-v1-0-94ee76fb=
-7b7d@pengutronix.de/
+These new counters are also verified in the MPTCP Join selftest in patch
+6.
 
-regards
-Philipp
+While at it, a few other patches are improving the MPTCP path-manager
+code ...
+
+ - Patch 1: 'flush' related helpers are renamed to avoid confusions
+ - Patch 2: directly pass known ID and flags to create a new subflow,
+            i/o getting them later by iterating over all endpoints again
+
+... and the MPJoin selftests:
+
+ - Patch 4: reduce the number of positional parameters
+ - Patch 5: only one line for the 'join' checks, instead of 3
+ - Patch 7: more explicit check names, instead of sometimes too cryptic
+            ones: rtx, ptx, ftx, ctx, fclzrx, sum
+ - Patch 8: specify client/server instead of 'invert' for some checks
+            not suggesting one specific direction
+ - Patch 9: mute errors of mptcp_connect when ran in the background
+ - Patch 10: simplify checksum_tests by using a for-loop
+ - Patch 11: remove 'define' re-definitions
+
+Signed-off-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
+---
+Geliang Tang (1):
+      selftests: mptcp: join: simplify checksum_tests
+
+Matthieu Baerts (NGI0) (10):
+      mptcp: pm: rename helpers linked to 'flush'
+      mptcp: pm: reduce entries iterations on connect
+      mptcp: MIB counters for sent MP_JOIN
+      selftests: mptcp: join: reduce join_nr params
+      selftests: mptcp: join: one line for join check
+      selftests: mptcp: join: validate MPJ SYN TX MIB counters
+      selftests: mptcp: join: more explicit check name
+      selftests: mptcp: join: specify host being checked
+      selftests: mptcp: join: mute errors when ran in the background
+      selftests: mptcp: pm_nl_ctl: remove re-definition
+
+ net/mptcp/mib.c                                 |   4 +
+ net/mptcp/mib.h                                 |   4 +
+ net/mptcp/pm.c                                  |  11 -
+ net/mptcp/pm_netlink.c                          |  78 ++----
+ net/mptcp/pm_userspace.c                        |  40 +--
+ net/mptcp/protocol.h                            |  16 +-
+ net/mptcp/subflow.c                             |  50 +++-
+ tools/testing/selftests/net/mptcp/mptcp_join.sh | 350 ++++++++++++++----------
+ tools/testing/selftests/net/mptcp/pm_nl_ctl.c   |  10 +-
+ 9 files changed, 309 insertions(+), 254 deletions(-)
+---
+base-commit: 221f9cce949ac8042f65b71ed1fde13b99073256
+change-id: 20240902-net-next-mptcp-mib-mpjtx-misc-d80298438016
+
+Best regards,
+-- 
+Matthieu Baerts (NGI0) <matttbe@kernel.org>
+
 
