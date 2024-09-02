@@ -1,209 +1,353 @@
-Return-Path: <linux-kernel+bounces-310599-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310600-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2248967EE0
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 07:40:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91B63967EE1
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 07:44:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2BF561F224E7
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 05:40:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4ACF328209F
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 05:44:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4D3914F12D;
-	Mon,  2 Sep 2024 05:40:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C14E514F132;
+	Mon,  2 Sep 2024 05:44:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CkI+z5Hx"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LFEk1Jlp"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2588A149E03
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 05:40:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725255648; cv=none; b=NYvuQlrtobAO+FBi1GmcKKB0ChAWdeFCTjgvyP0rUHb34q+c+L/oNb9ClgwolgMTc4DJ5L3ONKkelfyebPlH4CZSrSocWkeQqyslEOi8RfWY5xODw7j1mg138fv027R29tpmbTbgUwCkgxwI3mG2sEi8pY2b7/W1v44d8JvmOG8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725255648; c=relaxed/simple;
-	bh=ZKgLXVxqGBlMX/HSes9KJsdiqRiK6uEOxtIu0/mc+1o=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AraAiHzmoJC2Sl+rsfpv2wJY22NbvIX4KrE7+deCJR1zeKZy6zts7fvCZdOz2+2wsHv9l1QIZZb1oSsZn9TDtqBZmT80LzVwmfyKJVohrLO4BTaub97eGoEXSjhcaSjojNGhfSFPYVpUSCJec/7QwaZA0a5TRJlDArPpEkgOLko=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CkI+z5Hx; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1725255646;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=eRnSBt/Y5eceLh55m3HnCPqU2nMHi0V+SDsqesK2W8g=;
-	b=CkI+z5Hx18ajs7DF2Dvx7iz6FopIzK63wEKXNUPc0aADgVnK+0vS+giDDuqRQp6txdSJqi
-	V4QgUK2cBT/YKbkjta7Fj+igXnQznrvrZbkLV76oU4q4EQuGnMr348n3xVhR2Dh+Cdjcz1
-	MI+eRIgjDMM5IFBjvCTIF+XuSM3eM9I=
-Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com
- [209.85.219.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-596-ayr4-XJKNZW3xYhnj_W0tA-1; Mon, 02 Sep 2024 01:40:44 -0400
-X-MC-Unique: ayr4-XJKNZW3xYhnj_W0tA-1
-Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-6c366f8b1ebso11646966d6.1
-        for <linux-kernel@vger.kernel.org>; Sun, 01 Sep 2024 22:40:44 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725255644; x=1725860444;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=eRnSBt/Y5eceLh55m3HnCPqU2nMHi0V+SDsqesK2W8g=;
-        b=gJihplUu7xBqC2yix81dv/7ibki0l7iVd1XwVh10bDYtoK5k/R0GRNkTDG4QAptRcb
-         C8olEnB47tGTFJdbCOs/mqLpULbn43xKE9R5ygTly5IQwbqIA3UJ+g6yslEI1+NmHNy7
-         sOfUglHYO+Pu+NMQDFSCmu0zI+E1VVc/+ZDJTD/VoFXi99NoNkCwrne5HOnKYUWlb0qO
-         kqc4DjMz0htKhWVYMIwbzQHXsN52C92albSpfekOHvfHmQLKKT6+5G7rMTpA4adY7EtN
-         48QUPGJXQ87Y+OFVoi7juuWrRd1zR9LzReczzPvrC2i2+qGKKmV8dIG3+xXoF3lsTonN
-         mNzw==
-X-Forwarded-Encrypted: i=1; AJvYcCUlgH2b6ph8j1sbrGImWsoEbpPniHtHlZZkK5sx9wfPW13O2ROR0qjw+dXqMidKIOlia+BQJw1kgbYcAGU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyQPVdv2tp63xkmoVRpogG/X0bt1QJPhz7wk8lYJTMrU+pp/dAj
-	4OcF5I5MPCpLqM4wZ2d6XN7zHzHOuZsBxYGJNrHIejDvjvWxH5vwvorqQq0WwT/Kk3VuCPHX/EU
-	Qq8Wjlpvd0cVBksgRV//5IWMlXbZYlOC5pM7vkMY8QUg8zhm8x8Na+cuWsIGArFtKSNnYoeDE7G
-	ubc3scnDOvEe02A2DVipfH0HausqNuKQx+l33h
-X-Received: by 2002:a05:6214:412:b0:6bd:738c:842e with SMTP id 6a1803df08f44-6c33f33ba2dmr247844976d6.7.1725255644360;
-        Sun, 01 Sep 2024 22:40:44 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHLG3n6qFXQd6j9fD3rpLTzswKzCAwE4mH3nVuq4KI5nupSC1ibIcr0+CQALAep1tMuUKdJQcZNOkRaJG2tSkY=
-X-Received: by 2002:a05:6214:412:b0:6bd:738c:842e with SMTP id
- 6a1803df08f44-6c33f33ba2dmr247844836d6.7.1725255643983; Sun, 01 Sep 2024
- 22:40:43 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67E1A195
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 05:44:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.14
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725255859; cv=fail; b=c8sw8HuZNlO8eA/LnU6P+/jfPTVDQA9lvwZIpMpLrl9wk5+NTbllEtBvsvcqi4hdv+DMlbnyUvF1wd4fbNLYpdNy1wVo2KVzRaynJC8WjAG2l1dLf+SQHBKyaJeitcMTm/pjmzflFsb5NsR3TYrP9INXeHowBhoqfNs2LT1N6sU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725255859; c=relaxed/simple;
+	bh=G7hx0MqSa8wwSo1kLIYd7m6EoiYM4hvicyGcVpVOmRw=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=tHr7pCRPWh8f9xkQPHDwWjfbsYqx5xi+fMK/gnoD7sSvfCnXqNS/2Lb8N+BXt2AxowWNTdIt9b0SLxlcQ+im645NAi1FFtkLCHKFj17z/XoVNvdDNiHKdGArDIPQbg7Arq7+nnwUPQGEh+n1KkYLVLBhMH+a1KCpBWR65T6Tg0A=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LFEk1Jlp; arc=fail smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725255858; x=1756791858;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=G7hx0MqSa8wwSo1kLIYd7m6EoiYM4hvicyGcVpVOmRw=;
+  b=LFEk1Jlpqe49YHkXiy507JwPoiACTyJhOgTbxfFZXTASn2A+jlh2f6JT
+   5AzZdjzeewaYOvSIv5CrcMMfkPuKUmTkQwPkRUF2+10p6FeELk4oblbuG
+   S99T/G5iIEmIVU0vm8F3zmRg6f+s42ICdFKAZt0lZMqP5PdU4M1VqTfOy
+   hoyNKffDQv6AmXp4HcC4XrPIHy8m0V9i2UZl8rWUZjCAXpxHxAavckedN
+   QdZzVq+OUpsamhNmGL0FK4Wy7eg+d6S57c0WAakz00ahpG7KCz4lXf+fL
+   iG7dGT9z6KzpKAZuWRovuvtQe8Fc+ek8JnAS0LdmGRxoc+3ch0PEKfX4E
+   w==;
+X-CSE-ConnectionGUID: E0AKY9WLQgCWNcaH7ubGaw==
+X-CSE-MsgGUID: 6x+ouBECTpmHU047iIJUgA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11182"; a="24004038"
+X-IronPort-AV: E=Sophos;i="6.10,195,1719903600"; 
+   d="scan'208";a="24004038"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Sep 2024 22:44:17 -0700
+X-CSE-ConnectionGUID: PXVPKjbiSy2OssKelVo+yA==
+X-CSE-MsgGUID: Sn6wlFReT82078RZjZVJeA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,195,1719903600"; 
+   d="scan'208";a="68902968"
+Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
+  by fmviesa005.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 01 Sep 2024 22:44:16 -0700
+Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Sun, 1 Sep 2024 22:44:16 -0700
+Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
+ orsmsx610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Sun, 1 Sep 2024 22:44:16 -0700
+Received: from NAM04-DM6-obe.outbound.protection.outlook.com (104.47.73.42) by
+ edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Sun, 1 Sep 2024 22:44:15 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Uu07u90UKqOu4bvQd5S0P+8YWSeN8/uEQMt4TxJjbEVOvhFjVJqhYz1tQECOcLJx/4B0D8SJiIkO6r1fOeswwRqJrSOAmU1d8qsrxmU5Q0qgVKZBWlHPssZVjvptlQcGGsQJ8zZx6Y0N0ENzIH+AbOrGBuQ4P+v6o8jkPvPuqxx6osRcis/3c3Rboe1p68+e+RJKtT62QfHFS9yIg5wl99h0C71myBxCzmKmTPxTiCAuhkx+7NtLAVo5BlEFOZ76nf62yRPI6h5EVW/wt4OMZ0XFxr5NHqgFmj0FtzyIrBINcCT+j/hMSMIqR6oW93Z0pp4U/C2sedjDZEQuanbx2Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=41WFbkM2dNX6DfdcZ9MTQ8d7rMjr72ODE4UOSft26qY=;
+ b=uy5sBNXl6Ee6/4skGZgGUwQth53pCAEZHTCn0ypbKcB6psKCi+LfCmOGW5sCBHjniFjKYWNWmap0NkcQzcOubzGceaSdtAo2nwdlNEQvL3/JYZlVAySqj45rsu2ezGg1fiisykh+vK9oCnasILj+YsEkQ/yoG/lRL4THiobsa5xEmfht9hOIKatZhAyqii1YcVRj2Zm05eXDEXKSpVP1OSc093a/GktJIeC2KIV/aWu8+dSPAsNN4fjUyGPxQ/qJ8srD0qAxCbSoU3vMLT3f9bv0FQNCHjW6rUtDmNj08ANV3eLW0JABTA7CoQXfJTOunHFg4Z2ECgJ3cvKPnV1Z8Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from BN9PR11MB5275.namprd11.prod.outlook.com (2603:10b6:408:134::24)
+ by SJ0PR11MB6742.namprd11.prod.outlook.com (2603:10b6:a03:47b::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.23; Mon, 2 Sep
+ 2024 05:44:12 +0000
+Received: from BN9PR11MB5275.namprd11.prod.outlook.com
+ ([fe80::d113:e69e:54bf:3fea]) by BN9PR11MB5275.namprd11.prod.outlook.com
+ ([fe80::d113:e69e:54bf:3fea%3]) with mapi id 15.20.7918.024; Mon, 2 Sep 2024
+ 05:44:12 +0000
+From: "Kumar, Sanjay K" <sanjay.k.kumar@intel.com>
+To: Jacob Pan <jacob.jun.pan@linux.intel.com>, "Tian, Kevin"
+	<kevin.tian@intel.com>
+CC: "iommu@lists.linux.dev" <iommu@lists.linux.dev>, LKML
+	<linux-kernel@vger.kernel.org>, Lu Baolu <baolu.lu@linux.intel.com>, "Liu, Yi
+ L" <yi.l.liu@intel.com>, "Zhang, Tina" <tina.zhang@intel.com>
+Subject: RE: [PATCH] iommu/vt-d: Fix potential soft lockup due to reclaim
+Thread-Topic: [PATCH] iommu/vt-d: Fix potential soft lockup due to reclaim
+Thread-Index: AQHa2gc92sMgifw/PU2hpZyfn6cIbbIFhW+AgACSwQCAAItBgIABVtmAgAA0QoCAACgrgIA76dNA
+Date: Mon, 2 Sep 2024 05:44:12 +0000
+Message-ID: <BN9PR11MB52757A48BE716BECB20FB240CA922@BN9PR11MB5275.namprd11.prod.outlook.com>
+References: <20240719181725.1446021-1-jacob.jun.pan@linux.intel.com>
+	<BN9PR11MB527638BC2FD50C4D90508D578CAA2@BN9PR11MB5276.namprd11.prod.outlook.com>
+	<20240724092540.6ef4d28a@jacob-builder>
+	<BL1PR11MB5271D3D84F93BA16852233F98CAB2@BL1PR11MB5271.namprd11.prod.outlook.com>
+	<20240725141111.6889dd62@jacob-builder>
+	<BN9PR11MB52766AC7AEFA103E5B1D067B8CB42@BN9PR11MB5276.namprd11.prod.outlook.com>
+ <20240725194159.41192480@jacob-builder>
+In-Reply-To: <20240725194159.41192480@jacob-builder>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: BN9PR11MB5275:EE_|SJ0PR11MB6742:EE_
+x-ms-office365-filtering-correlation-id: 2c4e3664-4ea5-4037-e8d4-08dccb1245d5
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|376014|366016|1800799024|38070700018;
+x-microsoft-antispam-message-info: =?us-ascii?Q?sjuiebC5FXAb6rBNC/5b6b6K+xdDf5iQGDq4UhnoiUxAkcTHVV9FY0JmoHE0?=
+ =?us-ascii?Q?iH5LNWvoNq+IotfAv3AHdBQeRkrdQkHmT1WyClx4tizJ2351uCw/LZ+TdX45?=
+ =?us-ascii?Q?BQmRRyjl7Vd7UXlHVBt3Qoz/FpL68QHXkjLSrzE+77poL7hYiQvodeF3Lon9?=
+ =?us-ascii?Q?+PcEJwrwt7aX3g7pjTjPJrDqN4OTDiXE09En5lQ5cLdrHs2TxLBZp+jq7EGh?=
+ =?us-ascii?Q?auA852BqLFumb6ldZwvlCQagLVKj5G8vLYvfUGcVet7Vf+3CRRPG1+IQkNH2?=
+ =?us-ascii?Q?XQaHkl6FcQVXe+K5SwR9UEYo5KSS+UbxJz5U5fB55gE4P0bCfuNL6/6+eGBg?=
+ =?us-ascii?Q?LPzn3AEOV28cXS4EiKbIDPfu4wHo3DyyeeOYqc4udwuyh1cw9e6gPAzPwVLA?=
+ =?us-ascii?Q?xGlE74FOBzqzYnsMSSrtuO27Udxp+W/d9EqSS1vU0vYnCkh3LKyxHmSEN638?=
+ =?us-ascii?Q?cO5t4rBpX9/uMjmdWfXMdDZA0hsc9eufGCBeLYLFzuDQEBdcskh4r61awYkN?=
+ =?us-ascii?Q?0uBnUeslpSSCkNUJvlEiTMVJPOtjtitMF9SCJtMixQckVveWJeSi+RUDo48r?=
+ =?us-ascii?Q?55rrmeSWw6ZdZDgyFhLbvaQOuI0AgmwgL6WFdwsPvfCnrsTi2DTldtjzbTxY?=
+ =?us-ascii?Q?tS9Cd8B6irglbYYxx+nRgA3SS+pdqf973pI/b0wA0DiNl67V8uG3WVTZI5m0?=
+ =?us-ascii?Q?JCbEeSQo7mu5mcgGtFpe81F5TIVYnPU1Z7uLYAnrPIzw1VkWyy9dIWgwhxsV?=
+ =?us-ascii?Q?GMQzBG2UkCCoMKQ6ibDMCzIOGvAQwLKpNNYkCi0FGhgeqamWyFyaBmc29AU7?=
+ =?us-ascii?Q?vG8mD7cyGj51YQAnDVpv+wwEQLf7HhlEH3DrH0NMvYOEJlAMDmI0xCTrtj11?=
+ =?us-ascii?Q?gU1sR8OOjHWwI80C6LPSmz7rUm28BFHNLCYBjJkuyHsnHyNhJ2+PIzsMxpU1?=
+ =?us-ascii?Q?mxn1kZk5NhkT+3UPCIe7kYTQTa+Q6OTazm1+HUriRtAEbJqnos1u+HLSuf5L?=
+ =?us-ascii?Q?GKNzJd2xQO5guYzQuQ8ZRd27Et/UdaWuCIXl4nMJ1QHGRwZv/ZDH+elk9MCN?=
+ =?us-ascii?Q?/7ovak4TwRfBRSdSE78D6+JfxmqWweNG+RNAcYZo04na/bhotlr3yn8ehbXv?=
+ =?us-ascii?Q?IHmVcpizctk5RrzBAmen8mjlfMP5wnGG1IkHUf2/pdKtQrOAbaxYJ0CTXdPB?=
+ =?us-ascii?Q?CR9fRAC2NNFHE+Lt3vq3RqEWQFc5PcJzrpCasxcuDChbc+d1CCpb+LcLmbPk?=
+ =?us-ascii?Q?QX0D00rm2IwYumPD0qQWFv1CDTiWA66/npO+wOTz4Lx9U3MxNC5I6h5cH4Dm?=
+ =?us-ascii?Q?cihncrjczL8KcMQtIFRwNwU2koYzUysc9qQ9RLVU0Nzax02YwY43DOhsImxx?=
+ =?us-ascii?Q?Cy1sMvmkBm5e5oO9meEhOtTPQYwI9HedDLef4Duu2uvfRCj+Lw=3D=3D?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN9PR11MB5275.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?yAEoQYBmScJVE0NQtVZDfD6CgVIizRqhqHJTSyVcrBrdz0ERkPo3mqqONrp8?=
+ =?us-ascii?Q?u4TlhQcDFaDD4qTiXPjFmLV4jROG9x0k7U+9ouNMUmQYgdSVF3qE3/2ADOBq?=
+ =?us-ascii?Q?MzcmQIeq9eeB8BlMrNPS6KfhdJ4OmZrj7IEuDOBMZmoVx2GVB77lxvUTuJ6N?=
+ =?us-ascii?Q?4Y1THVhBcDk+mUzqETXnLYDn4xb6gZYXmpY9kOsrmEWoSSprHylI4N+9eiIt?=
+ =?us-ascii?Q?qcBAet43qhOaFAq1ZPELhKHADz+v9JRtruF60AXVz5olnRH3776P0Q9DFcxl?=
+ =?us-ascii?Q?aqu/0tIXHI7lMqxckrtfBzJTsaKWwJJxgt7HaNiMu0oKPh5GZzQKv/DgAK1v?=
+ =?us-ascii?Q?zmpSmEI8pOCyi7fAQa+zukpRCy6YU8qTGSDPzS0J77auv89u9fYlpm3ijNzj?=
+ =?us-ascii?Q?nqqsDDcARAM3iSV776DKbCH2z7EqUtBrfrEazy6PV5X9MHZdRKnaVjQVEyJY?=
+ =?us-ascii?Q?2YCdBgqjVdHmiBdJgUa9Z8UYUjwEuwH8mUr9kye9qQhgzVR/ndWnoVr/erJr?=
+ =?us-ascii?Q?CFile50eAaVRm6MrCfUDk2ZSDQt6ILzmcansnoxOPRh63j/3xAoLyWsYVEFb?=
+ =?us-ascii?Q?TdNTMxh1LY4iXBJNrktl786sNagYfMgt3V+eVkhBT5E7nzfBeRxGaOygyJmb?=
+ =?us-ascii?Q?R4Oa7I2jRf7TxIkz0V9kQTFdl18h5Zc2qP9l4M9OB36B4YKKEkdaSsnC+JDC?=
+ =?us-ascii?Q?i5EbgvBtLjFEdqIuWIdv6bhPvEocmvDFtRTZSs5TF2W/m5WQcnnpvvO0zjMa?=
+ =?us-ascii?Q?c6gz3oFLqer/xL9dcSNrqGzQDoRoOQA0ZttbL6t9UBzQevTnbnv3N8Jm6Upy?=
+ =?us-ascii?Q?/CcgMWfFRXv0mf3BzC9vZBegUQ+UdDRcd8aXnE+P1DW00vjnkjp4s5hDXCFV?=
+ =?us-ascii?Q?ifenbcUHlRkWAQpCdzkqz+M36gTQl7Pc3mCLQ3vGMbtqnf46RDMzL86udrMQ?=
+ =?us-ascii?Q?HTPVIyZQj6alt72918SZDbGpvcfcp/VeuSH+LgPvvmPk3mHjUdtPHynPBmXx?=
+ =?us-ascii?Q?2JLZqyyx+G5E1ZTKGdgEVrFjw/Rs1eCgiGcfUTHsK83W/eS3Gndfaf5jEwXu?=
+ =?us-ascii?Q?KsuydL2Xkv2GChmPC0aL65vcLJ8SY8uxt0EX9+sjSK8wLwYi1ClsLeWpRERK?=
+ =?us-ascii?Q?TyreHSL+ijLhzuvuKrIKqZWMdHeSeVwM4qt0MQ8736dKp5vGojyDZLFrPWhG?=
+ =?us-ascii?Q?/JH1s3/qYfDUurZNFglYjJGJzeMYe+vJHZ+kFLj8PeQDBcAPRS0ko+dWZ2+n?=
+ =?us-ascii?Q?DQ4Q/Zc6qApLfjlgkSQhHvFCi0MGYN/U0lrNXzDcgktQqeMtg+Fa4xHZOqUI?=
+ =?us-ascii?Q?SQpshb5zupNuKQQX7zF640H/o0EOIuW/kE/MNSzrOVYjqPjPVZ3I5pTsdYWx?=
+ =?us-ascii?Q?9MRApYiOoMgTb87sWb9fMYshDtw/kWykxxLLXHCEJcAeGxRcv97g8kTFB9Lu?=
+ =?us-ascii?Q?9b5/r7Rbvvu9JdzNymof7TtR5+ldmNgnYdp1vQNswCINz4/I2hqNd/DSoJ7L?=
+ =?us-ascii?Q?331cjqSL8zwWjigVdclApJ6GFmwrDREjioGQgD/QO+QZeLp5kIyX0VLC6ziu?=
+ =?us-ascii?Q?i/LxePLzzk6NkXl2RsypdsBf+PonC+DkuPl08GYT?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240819145417.23367-1-piliu@redhat.com> <CAMj1kXGB3VF=NAQBADkdmodSVaZyf8h2n0FXwi5fXLUE2WgXag@mail.gmail.com>
-In-Reply-To: <CAMj1kXGB3VF=NAQBADkdmodSVaZyf8h2n0FXwi5fXLUE2WgXag@mail.gmail.com>
-From: Pingfan Liu <piliu@redhat.com>
-Date: Mon, 2 Sep 2024 13:40:33 +0800
-Message-ID: <CAF+s44QWjyswV3Huh5AWJzDwRCjvdjjEX2WDPaie9KrH0QOxOg@mail.gmail.com>
-Subject: Re: [RFCv2 0/9] UEFI emulator for kexec
-To: Ard Biesheuvel <ardb@kernel.org>
-Cc: Jan Hendrik Farr <kernel@jfarr.cc>, Philipp Rudo <prudo@redhat.com>, 
-	Lennart Poettering <mzxreary@0pointer.de>, Jarkko Sakkinen <jarkko@kernel.org>, 
-	Eric Biederman <ebiederm@xmission.com>, Baoquan He <bhe@redhat.com>, Dave Young <dyoung@redhat.com>, 
-	Mark Rutland <mark.rutland@arm.com>, Will Deacon <will@kernel.org>, 
-	Catalin Marinas <catalin.marinas@arm.com>, kexec@lists.infradead.org, 
-	linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: BN9PR11MB5275.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2c4e3664-4ea5-4037-e8d4-08dccb1245d5
+X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Sep 2024 05:44:12.0736
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 5g7E9yllhssRcNJKIjZwqHsbdC430FdLIjB5l3NBmf8HaJiTAX5ZzW/SvEziBwNaFeAqiG4BIWIYbcXgndn8Geft2GT+XxGPs7u+IPLjfrU=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR11MB6742
+X-OriginatorOrg: intel.com
 
-On Thu, Aug 29, 2024 at 1:08=E2=80=AFAM Ard Biesheuvel <ardb@kernel.org> wr=
-ote:
->
-[...]
+Sorry, just catching up with emails.
+I noticed another thing.=20
+In qi_submit_sync() input parameters, when the count is 0, the expectation =
+should be that desc should be NULL right?
+In that case, the below code will cause a problem.
 
-Hi Ard,
+type =3D desc->qw0 & GENMASK_ULL(3, 0);
 
-Thanks for sharing your insight and thoughts.
+The above line requires caller (when calling with count =3D 0) to pass a fa=
+ke non-NULL desc pointer. Should we fix this as well? Alternatively, we can=
+ fix it whenever we create the use case of caller calling with count=3D0.
 
->
-> Thanks for putting this RFC together. This is useful work, and gives
-> us food for thought and discussion.
->
-> There are a few problems that become apparent when going through these ch=
-anges.
->
-> 1. Implementing UEFI entirely is intractable, and unnecessary.
-> Implementing the subset of UEFI that is actually needed to boot Linux
-> *is* tractable, though, but we need to work together to write this
-> down somewhere.
->   - the EFI stub needs the boot services for the EFI memory map and
-> the allocation routines
->   - GRUB needs block I/O
->   - systemd-stub/UKI needs file I/O to look for sidecars
->   - etc etc
->
-> I implemented a Rust 'efiloader' crate a while ago that encapsulates
-> most of this (it can boot Linux/arm64 on QEMU and boot x86 via GRUB in
-> user space **). Adding file I/O to this should be straight-forward -
-> as Lennart points out, we only need the protocol, it doesn't need to
-> be backed by an actual file system, it just needs to be able to expose
-> other files in the right way.
->
-> 2. Running the UEFI emulator on bare metal is not going to scale.
-> Cloning UART driver code and MMU code etc is a can of worms that you
-> want to leave closed. And as Lennart points out, there is other
+Thanks,
+Sanjay
 
-As for MMU code, if the 1st kernel does not turn it off, it can be
-eliminated from the emulator code, which should not be hard to
-implement on arm64. And already done in x86.
-
-> hardware (TPM) that needs to be accessible as well. Providing a
-> separate set of drivers for all hardware that the EFI emulator may
-> need to access is not a tractable problem either.
->
-> The fix for this, as I see it, is to run the EFI emulator in user
-> space, to the point where the payload calls ExitBootServices(). This
-> will allow all I/O and memory protocol to be implemented trivially,
-> using C library routines. I have a crude prototype** of this running
-
-Yes, that is a definitely promising method, By this way, we can handle
-device operations more elegantly. In fact, I used it to develop and
-debug part of my emulator service code.
-
-But when debugging x86 efi-stub, I encounter some problem with the
-privileged instruction, which causes segment fault. It originates from
-kaslr_get_random_long().  I think it can be worked around by emulating
-the instruction if the instruction reads the system state. But if the
-instruction tries to update system state, it can not be fixed since
-the system is still owned by the kernel instead of owned by the
-emulator exclusively.
-
-So here we need another agreement on the stub's behavior before
-ExitBootServices().
-
-> to the point where ExitBootServices() is called (and then it crashes).
-> The tricky yet interesting bit here is how we migrate a chunk of user
-> space memory to the bare metal context that will be created by the
-> kexec syscall later (in which the call to ExitBootServices() would
-> return and proceed with the boot). But the principle is rather
-> straight-forward, and would permit us, e.g., to kexec an OS installer
-> too.
->
-> 3. We need to figure out how to support TPM and PCRs in the context of
-> kexec. This is a fundamental issue with verified boot, given that the
-> kexec PCR state is necessarily different from the boot state, and so
-> we cannot reuse the TPM directly if we want to pretend that we are
-> doing an ordinary boot in kexec. The alternative is to leave the TPM
-
-Here, I miss the big picture. Could you enlighten me more about this?
-As I thought, the linux kernel will not lock itself down onto a
-specific firmware. So the trust is one direction, i.e. from bootloader
-to kernel. In UKI case, systemd-stub takes the measurement and extends
-the PCR 11/12/13 as in
-https://uapi-group.org/specifications/specs/linux_tpm_pcr_registry/
-
-Later systemd-pcrlock appraises the value in those registers. If the
-sections in UKI are intact, the kexec reboot will go smoothly.
+-----Original Message-----
+From: Jacob Pan <jacob.jun.pan@linux.intel.com>=20
+Sent: Thursday, July 25, 2024 7:42 PM
+To: Tian, Kevin <kevin.tian@intel.com>
+Cc: iommu@lists.linux.dev; LKML <linux-kernel@vger.kernel.org>; Lu Baolu <b=
+aolu.lu@linux.intel.com>; Liu, Yi L <yi.l.liu@intel.com>; Zhang, Tina <tina=
+.zhang@intel.com>; Kumar, Sanjay K <sanjay.k.kumar@intel.com>; jacob.jun.pa=
+n@linux.intel.com
+Subject: Re: [PATCH] iommu/vt-d: Fix potential soft lockup due to reclaim
 
 
-> in a state where the kexec kernel can access its sealed secrets, and
-> mock up the TCG2 EFI protocols using a shim that sits between the TPM
-> hardware (as the real TCG2 protocols will be long gone) and the EFI
-> payload. But as I said, this is a fundamental issue, as the ability to
-> pretend that a kexec boot is a pristine boot would mean that verified
-> boot is broken.
->
->
-> As future work, I'd like to propose to collaborate on some alignment
-> regarding a UEFI baseline for Linux, i.e., the parts that we actually
-> need to boot Linux.
->
+On Fri, 26 Jul 2024 00:18:13 +0000, "Tian, Kevin" <kevin.tian@intel.com>
+wrote:
 
-Do you mean that user space code and kernel code? And I think for the
-user space code, it should be better to integrate the code in
-kexec-tools so that we have a uniform interface for kexec boot.
+> > From: Jacob Pan <jacob.jun.pan@linux.intel.com>
+> > Sent: Friday, July 26, 2024 5:11 AM
+> > > > > > @@ -1463,8 +1462,14 @@ int qi_submit_sync(struct intel_iommu
+> > > > *iommu,
+> > > > > > struct qi_desc *desc,
+> > > > > >  		raw_spin_lock(&qi->q_lock);
+> > > > > >  	}
+> > > > > >
+> > > > > > -	for (i =3D 0; i < count; i++)
+> > > > > > -		qi->desc_status[(index + i) % QI_LENGTH] =3D
+> > > > > > QI_DONE;
+> > > > > > +	/*
+> > > > > > +	 * The reclaim code can free descriptors from multiple
+> > > > > > submissions
+> > > > > > +	 * starting from the tail of the queue. When count =3D=3D
+> > > > > > 0, the
+> > > > > > +	 * status of the standalone wait descriptor at the
+> > > > > > tail of the queue
+> > > > > > +	 * must be set to QI_TO_BE_FREED to allow the reclaim
+> > > > > > code to proceed.
+> > > > > > +	 */
+> > > > > > +	for (i =3D 0; i <=3D count; i++)
+> > > > > > +		qi->desc_status[(index + i) % QI_LENGTH] =3D
+> > > > > > QI_TO_BE_FREED;
+> > > > >
+> > > > > We don't really need a new flag. Just set them to QI_FREE and=20
+> > > > > then reclaim QI_FREE slots until hitting qi->head in=20
+> > > > > reclaim_free_desc().
+> > > > We do need to have a separate state for descriptors pending to=20
+> > > > be freed. Otherwise, reclaim code will advance pass the intended ra=
+nge.
+> > > > =20
+> > >
+> > > The commit msg said that QI_DONE is currently used for conflicting=20
+> > > purpose.
+> > >
+> > > Using QI_FREE keeps it only for signaling that a wait desc is=20
+> > > completed.
+> > >
+> > > The key is that reclaim() should not change a desc's state before=20
+> > > it's consumed by the owner. Instead we always let the owner to=20
+> > > change the state and reclaim() only does scan and adjust the=20
+> > > tracking fields then such race condition disappears.
+> > >
+> > > In this example T2's slots are changed to QI_FREE by T2 after it=20
+> > > completes all the checks. Only at this point those slots can be=20
+> > > reclaimed.
+> >=20
+> > The problem is that without the TO_BE_FREED state, the reclaim code=20
+> > would have no way of knowing which ones are to be reclaimed and=20
+> > which ones are currently free. Therefore, it cannot track free_cnt.
+> >=20
+> > The current reclaim code is not aware of owners nor how many to reclaim=
+.
+> >=20
+> > If I make the following changes and run, free_cnt will keep going up=20
+> > and system cannot boot. Perhaps you meant another way?
+> >=20
+> > --- a/drivers/iommu/intel/dmar.c
+> > +++ b/drivers/iommu/intel/dmar.c
+> > @@ -1204,8 +1204,7 @@ static void free_iommu(struct intel_iommu
+> > *iommu)
+> >   */
+> >  static inline void reclaim_free_desc(struct q_inval *qi)  {
+> > -       while (qi->desc_status[qi->free_tail] =3D=3D QI_TO_BE_FREED) {
+> > -               qi->desc_status[qi->free_tail] =3D QI_FREE;
+> > +       while (qi->desc_status[qi->free_tail] =3D=3D QI_FREE) {
+> >                 qi->free_tail =3D (qi->free_tail + 1) % QI_LENGTH;
+> >                 qi->free_cnt++;
+>=20
+> Here miss a check to prevent reclaiming unused slots:
+>=20
+> 		if (qi->free_tail =3D=3D qi->free_head)
+> 			break;
+>=20
+> In the example flow reclaim_free_desc() in T1 will only reclaim slots=20
+> used by T1 as slots of T2 are either QI_IN_USE or QI_DONE. T2 slots=20
+> will be reclaimed when T2 calls reclaim_free_desc() after setting them=20
+> to QI_FREE, and reclaim will stop at qi->free_head.
+>=20
+> If for some reason T2 completes earlier than T1. reclaim_free_desc()=20
+> in T2 does nothing as the first slot qi->free_tail belongs to T1 still=20
+> IN_USE. T2's slots will then wait until reclaim is triggered by T1 later.
+>=20
+This makes sense. Unlike the original code, we now only allow freeing the s=
+ubmitter's own descriptors.
 
-Looking forward to the collaboration to make kexec able to boot UKI soon.
+> >         }
+> > @@ -1466,10 +1465,10 @@ int qi_submit_sync(struct intel_iommu=20
+> > *iommu, struct qi_desc *desc,
+> >          * The reclaim code can free descriptors from multiple=20
+> > submissions
+> >          * starting from the tail of the queue. When count =3D=3D 0, th=
+e
+> >          * status of the standalone wait descriptor at the tail of=20
+> > the queue
+> > -        * must be set to QI_TO_BE_FREED to allow the reclaim code to
+> > proceed.
+> > +        * must be set to QI_FREE to allow the reclaim code to proceed.
+> >          */
+> >         for (i =3D 0; i <=3D count; i++)
+> > -               qi->desc_status[(index + i) % QI_LENGTH] =3D
+> > QI_TO_BE_FREED;
+> > +               qi->desc_status[(index + i) % QI_LENGTH] =3D QI_FREE;
+> >=20
+> >         reclaim_free_desc(qi);
+> >         raw_spin_unlock_irqrestore(&qi->q_lock, flags); diff --git=20
+> > a/drivers/iommu/intel/iommu.h b/drivers/iommu/intel/iommu.h index=20
+> > 1ab39f9145f2..eaf015b4353b 100644
+> > --- a/drivers/iommu/intel/iommu.h
+> > +++ b/drivers/iommu/intel/iommu.h
+> > @@ -382,8 +382,7 @@ enum {
+> >         QI_FREE,
+> >         QI_IN_USE,
+> >         QI_DONE,
+> > -       QI_ABORT,
+> > -       QI_TO_BE_FREED
+> > +       QI_ABORT
+> >  };
+> >=20
+> > Thanks,
+> >=20
+> > Jacob
+>=20
 
 
 Thanks,
 
-Pingfan
-
+Jacob
 
