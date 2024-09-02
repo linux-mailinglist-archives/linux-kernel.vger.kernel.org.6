@@ -1,170 +1,144 @@
-Return-Path: <linux-kernel+bounces-310996-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310994-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84E3D9683B9
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 11:53:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 704609683B1
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 11:52:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AF8871C22717
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 09:53:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CF51FB216F7
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 09:52:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C69B1D54C2;
-	Mon,  2 Sep 2024 09:52:17 +0000 (UTC)
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 113E71D4169;
+	Mon,  2 Sep 2024 09:52:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="HACGL+ST"
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 462061D4142;
-	Mon,  2 Sep 2024 09:52:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74FB31D1F6E
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 09:52:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725270737; cv=none; b=DM2pcC7wkeKmGA/U4swMDcoTerQizLgTl3G5GBE7VYMvT1LccsdqUDv6tPFDlt4Pc8l/k6PBsQyI+umJXkrtXMtkoPwGPuvGEsJa/nYbV5uIAKOSivdZhz6caJBIfW8Jsiuhu1BirgDJSsFhD8/5KuaemxsxbLbSiFLqGo7iydc=
+	t=1725270734; cv=none; b=sYujlskKlCc+3SkvOQoE/y8rFKjUAX/9J4Bb3Mw9RQq8DZsAuUX8+k9Yb9wjFfi2exeBEHcm5fWcbZPCPmBcowWBIZraaNmNqCIavEy+XTk/U2oWLYIQwhK/zIpH2B29+0Qz0ipJtIbiYvPdSi000CYG94Jn7buJkASuVnk7tIw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725270737; c=relaxed/simple;
-	bh=UnnOxysnYIVE0lfzosvVxtlnZhIMcEr1N3hjgvRmdr8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=e2wF9A4ANOplX0dmrNNB/JXprloe1apqfhrU6uQ9L4tYJ5zOlywrDrrUBTdMbVs9cdZKdMkRpZ8RGTrrP1HRMiX11b2Zu3pruQaBYcFLuI/ZT5B5hnGPb57rHFC4zrtfcnQvgBn4VjvbUNj3cMvIYJFInUyWDSbIQBG0fDsZNrs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a86859e2fc0so453037166b.3;
-        Mon, 02 Sep 2024 02:52:15 -0700 (PDT)
+	s=arc-20240116; t=1725270734; c=relaxed/simple;
+	bh=Y3286RFIN/qanbnIGpLD1sy9reDUKmRfsP0fszQnG2A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=eAPMpmhAGegLW4aFNCFLG0eXpQq+J8cq5I09RNMWMqb3Hn7MImg2TBenG6vYSgRNuEz5QOZuOJiaiKWfef1uT7NJLX/wTmoil+KGQv8byiMuXr8eTawTKwVMRJ8UEvvCmoYGuk7Z9JHWU1139SoHv8YnUugMmBvsLyPEj0DVyF0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=HACGL+ST; arc=none smtp.client-ip=209.85.167.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-5343eeb4973so6107072e87.2
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2024 02:52:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1725270730; x=1725875530; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=yx8BEfb/mnbcgYtxco8Iy/KiPiqDzvW3Qbyqerwej2A=;
+        b=HACGL+STIeP144wMpOhb48Z6YNQigumPtmMYXzA2vs7mIqbLKjZMDSxucgaZ6BEIht
+         oREQMtSTR1K04lndTwRN5oiF+/c3nI6Yc28H6sV6uLlyQHrQcVId8lvLDIKwA3MvQCl8
+         YIRLSAwTDsaUBs41rB/VxAEZBDZWNqGdV8EYUHF1nxEoufHgfdflEesEU2MxhY4HWzDN
+         D5MMz9LILoHP9fIsIZve237SOigbmLoWmcGJU9j54TRT1D433FfgNR1D18Dm/A8/4Xzh
+         k/3sMykomZ/At4HWniqfBYJjn71IrOymgAz1y8thK+IZs8cloTW0b2dC5Z30AAerec/Z
+         KVGA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725270733; x=1725875533;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6o9ygZ5FbRqLnsF4xwAbutRPIFsChsjRgZv2/olxe98=;
-        b=wMPC7nXYuYbFMYB0sRUO1ER43b/VdritipfEQscOCkzs6+CaFniE2BawYcT/Ko+yPo
-         QoyqRP2KczI2B5vEECZpg9dPuw4Oez+HkhkWarjmAkv4QCy18HSmP3K7+puctSQJiOxE
-         iaoH+YmlWnsDEo4t39Ko5AHDIFYLvSypvW4ZTtSzEe1e05jKY3ZFbpmMQ/fN/QVN+hPs
-         kU8KthdqCyRGVjohRmkbsMpKpwlLRQ93d881QTBrFxDN8Elnm7JAKF4YybPayaiQrzpi
-         Zol2HNNEDyS+U/wH/2crQmisiAoWXPuxS45H+PuSqfvcUcktMVvj9Vux1M9z2rvoydm4
-         6mAQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUH+huCxb2rBZOV0NrgEwMLkBPW7hhGGOvUnJJKBfkxPZGn9TKboby9M0F/jz+uTcn4avC/ZRO+yIXDqSDO9w==@vger.kernel.org, AJvYcCWgO/zRlOMsCHvOJaMkySEinDA2ns5TKNJZsHsScDI7rbJbkE8ZZ4elTN2k0af+wfezhcqNzZZ//EJriTmo@vger.kernel.org, AJvYcCX+2QUhqjZqmtZxmTQdaHpDin8+8ubNo3xGizBLnAjkYDsvNCjKpw41Bz6HegbSsz4OBIOLqEnSEeyIv0zNel5/AzCQoxAY@vger.kernel.org, AJvYcCXMPYp8bc67cT655jr4eAJZ6Qfg4QgG9gWP4EzJZTWA2Flik1W9b7LpQkWFZ32sGl1qRA8uIVh1fuiYE77ewg==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx/e6psCkQUz0bzGxj7hXbYp3wYU0gDJ89G3Q3TCeWxY1zfXzLQ
-	OIDL2tUPlZXc2BH8HCwcj0/Q2YtD2ymGQOMuIJUaV3Yh+PhDjg+E
-X-Google-Smtp-Source: AGHT+IHugKwJ39IPMvFnRChZY0EvVCQYJUWKLCu3bRnc6OhGcrV7kB+jwS2h0M529y96bsLiRTRvnA==
-X-Received: by 2002:a17:907:31c4:b0:a86:92fa:cd1d with SMTP id a640c23a62f3a-a897fa75723mr976108766b.49.1725270732803;
-        Mon, 02 Sep 2024 02:52:12 -0700 (PDT)
-Received: from localhost.localdomain (109-81-82-19.rct.o2.cz. [109.81.82.19])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a898900f079sm535327166b.66.2024.09.02.02.52.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Sep 2024 02:52:12 -0700 (PDT)
-From: Michal Hocko <mhocko@kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Christoph Hellwig <hch@lst.de>,
-	Yafang Shao <laoar.shao@gmail.com>,
-	Kent Overstreet <kent.overstreet@linux.dev>,
-	jack@suse.cz,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Dave Chinner <dchinner@redhat.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org,
-	linux-bcachefs@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Michal Hocko <mhocko@suse.com>,
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>
-Subject: [PATCH 2/2] Revert "mm: introduce PF_MEMALLOC_NORECLAIM, PF_MEMALLOC_NOWARN"
-Date: Mon,  2 Sep 2024 11:51:50 +0200
-Message-ID: <20240902095203.1559361-3-mhocko@kernel.org>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20240902095203.1559361-1-mhocko@kernel.org>
-References: <20240902095203.1559361-1-mhocko@kernel.org>
+        d=1e100.net; s=20230601; t=1725270730; x=1725875530;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=yx8BEfb/mnbcgYtxco8Iy/KiPiqDzvW3Qbyqerwej2A=;
+        b=HJ0GfirfvZop2m8VTFnowqczJEPlLRdU41mGt6oXAM0dQb+F29pprP1564AnZOPz/i
+         97L9Tgn0dyU4mGUDYY24dbTcFKXwnaMAV+Q4yeYB/X2XHMlqc2Rt4udInHI7O2ZEq3dn
+         bXraXm4YAqgSEcDhquuvDpAIyKcTBSeMYIbyi1/7dPaFrsT3bUPkHoPOhLeRXM+En5a0
+         IzgS20rT+BpiWxhwNmFPmaHKeUB0SoJA3SA3A19IAyrV3uh1imXQE4DLktz29p/iEZ8M
+         0xfhyr6T0tcryt//f3V8SDHhfQfmnybjgLF27GYctOk55anTOC0AI0+Vml3G51/lI1mZ
+         EQzQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVY4eMqDlZ37flEFz/lvSFSqNcJambc+1N4vkYhZkrAD9nH43s0sWft1rRFoD4gNxcsWS0bZSIerxF4JDQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw6lf7jY9AzCy//6lB2J8P3PAIWB2pg30ZRXteoflE7PRNt7RrN
+	kFmB1j/CpzFdXmmSGXkxJg44K2pAoqLKR+oK5mRdXyBKRlCH2byZzBAG4vZuGWA=
+X-Google-Smtp-Source: AGHT+IFsKjRAuLVJClwA0Nrt/yFrgmXM54r0gk3+x482UZ6mR7qGdsUfVkQo6Wdbf5SvREoe7xnxYQ==
+X-Received: by 2002:a05:6512:3c9e:b0:52c:deb9:904b with SMTP id 2adb3069b0e04-53546bde550mr7411628e87.38.1725270730406;
+        Mon, 02 Sep 2024 02:52:10 -0700 (PDT)
+Received: from [10.100.51.161] ([193.86.92.181])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a89892333a0sm530996466b.220.2024.09.02.02.52.09
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 02 Sep 2024 02:52:10 -0700 (PDT)
+Message-ID: <1c7d9094-c893-4423-822c-4ec33ae06d1b@suse.com>
+Date: Mon, 2 Sep 2024 11:52:08 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 02/19] gendwarfksyms: Add symbol list handling
+To: Sami Tolvanen <samitolvanen@google.com>
+Cc: Masahiro Yamada <masahiroy@kernel.org>,
+ Luis Chamberlain <mcgrof@kernel.org>, Miguel Ojeda <ojeda@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Matthew Maurer <mmaurer@google.com>, Alex Gaynor <alex.gaynor@gmail.com>,
+ Wedson Almeida Filho <wedsonaf@gmail.com>, Gary Guo <gary@garyguo.net>,
+ Neal Gompa <neal@gompa.dev>, Hector Martin <marcan@marcan.st>,
+ Janne Grunau <j@jannau.net>, Asahi Linux <asahi@lists.linux.dev>,
+ linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-modules@vger.kernel.org, rust-for-linux@vger.kernel.org
+References: <20240815173903.4172139-21-samitolvanen@google.com>
+ <20240815173903.4172139-23-samitolvanen@google.com>
+ <95db3178-a2ce-421e-8024-afd7fa3359a3@suse.com>
+ <20240828230919.GI2130480@google.com>
+Content-Language: en-US
+From: Petr Pavlu <petr.pavlu@suse.com>
+In-Reply-To: <20240828230919.GI2130480@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-From: Michal Hocko <mhocko@suse.com>
+On 8/29/24 01:09, Sami Tolvanen wrote:
+> On Wed, Aug 28, 2024 at 02:35:29PM +0200, Petr Pavlu wrote:
+>> On 8/15/24 19:39, Sami Tolvanen wrote:
+>>> diff --git a/scripts/gendwarfksyms/dwarf.c b/scripts/gendwarfksyms/dwarf.c
+>>> index 65a29d0bd8f4..71cfab0553da 100644
+>>> --- a/scripts/gendwarfksyms/dwarf.c
+>>> +++ b/scripts/gendwarfksyms/dwarf.c
+>>> @@ -5,6 +5,48 @@
+>>> [...]
+>>> +
+>>> +static bool is_export_symbol(struct state *state, Dwarf_Die *die)
+>>> +{
+>>> +	Dwarf_Die *source = die;
+>>> +	Dwarf_Die origin;
+>>> +
+>>> +	state->sym = NULL;
+>>> +
+>>> +	/* If the DIE has an abstract origin, use it for type information. */
+>>> +	if (get_ref_die_attr(die, DW_AT_abstract_origin, &origin))
+>>> +		source = &origin;
+>>> +
+>>> +	state->sym = symbol_get(get_name(die));
+>>> +
+>>> +	/* Look up using the origin name if there are no matches. */
+>>> +	if (!state->sym && source != die)
+>>> +		state->sym = symbol_get(get_name(source));
+>>> +
+>>> +	state->die = *source;
+>>> +	return !!state->sym;
+>>> +}
+>>
+>> Sorry, I don't want to comment much on function names.. but I realized
+>> the name of is_export_symbol() isn't really great. The "is_" prefix
+>> strongly indicates that it is only a query function, yet it changes the
+>> state. It makes its caller process_exported_symbols() hard to understand
+>> on the first read.
+> 
+> I see your point. How would you make this more obvious? get_ doesn't
+> seem entirely accurate either. match_ perhaps?
 
-This reverts commit eab0af905bfc3e9c05da2ca163d76a1513159aa4.
+Looks reasonable to me.
 
-There is no existing user of those flags. PF_MEMALLOC_NOWARN is
-dangerous because a nested allocation context can use GFP_NOFAIL which
-could cause unexpected failure. Such a code would be hard to maintain
-because it could be deeper in the call chain.
-
-PF_MEMALLOC_NORECLAIM has been added even when it was pointed out [1]
-that such a allocation contex is inherently unsafe if the context
-doesn't fully control all allocations called from this context.
-
-While PF_MEMALLOC_NOWARN is not dangerous the way PF_MEMALLOC_NORECLAIM
-is it doesn't have any user and as Matthew has pointed out we are
-running out of those flags so better reclaim it without any real users.
-
-[1] https://lore.kernel.org/all/ZcM0xtlKbAOFjv5n@tiehlicka/
-
-Reviewed-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Reviewed-by: Dave Chinner <dchinner@redhat.com>
-Reviewed-by: Vlastimil Babka <vbabka@suse.cz>
-Signed-off-by: Michal Hocko <mhocko@suse.com>
----
- include/linux/sched.h    |  4 ++--
- include/linux/sched/mm.h | 17 ++++-------------
- 2 files changed, 6 insertions(+), 15 deletions(-)
-
-diff --git a/include/linux/sched.h b/include/linux/sched.h
-index f8d150343d42..731ff1078c9e 100644
---- a/include/linux/sched.h
-+++ b/include/linux/sched.h
-@@ -1657,8 +1657,8 @@ extern struct pid *cad_pid;
- 						 * I am cleaning dirty pages from some other bdi. */
- #define PF_KTHREAD		0x00200000	/* I am a kernel thread */
- #define PF_RANDOMIZE		0x00400000	/* Randomize virtual address space */
--#define PF_MEMALLOC_NORECLAIM	0x00800000	/* All allocation requests will clear __GFP_DIRECT_RECLAIM */
--#define PF_MEMALLOC_NOWARN	0x01000000	/* All allocation requests will inherit __GFP_NOWARN */
-+#define PF__HOLE__00800000	0x00800000
-+#define PF__HOLE__01000000	0x01000000
- #define PF__HOLE__02000000	0x02000000
- #define PF_NO_SETAFFINITY	0x04000000	/* Userland is not allowed to meddle with cpus_mask */
- #define PF_MCE_EARLY		0x08000000      /* Early kill for mce process policy */
-diff --git a/include/linux/sched/mm.h b/include/linux/sched/mm.h
-index 91546493c43d..07c4fde32827 100644
---- a/include/linux/sched/mm.h
-+++ b/include/linux/sched/mm.h
-@@ -258,25 +258,16 @@ static inline gfp_t current_gfp_context(gfp_t flags)
- {
- 	unsigned int pflags = READ_ONCE(current->flags);
- 
--	if (unlikely(pflags & (PF_MEMALLOC_NOIO |
--			       PF_MEMALLOC_NOFS |
--			       PF_MEMALLOC_NORECLAIM |
--			       PF_MEMALLOC_NOWARN |
--			       PF_MEMALLOC_PIN))) {
-+	if (unlikely(pflags & (PF_MEMALLOC_NOIO | PF_MEMALLOC_NOFS | PF_MEMALLOC_PIN))) {
- 		/*
--		 * Stronger flags before weaker flags:
--		 * NORECLAIM implies NOIO, which in turn implies NOFS
-+		 * NOIO implies both NOIO and NOFS and it is a weaker context
-+		 * so always make sure it makes precedence
- 		 */
--		if (pflags & PF_MEMALLOC_NORECLAIM)
--			flags &= ~__GFP_DIRECT_RECLAIM;
--		else if (pflags & PF_MEMALLOC_NOIO)
-+		if (pflags & PF_MEMALLOC_NOIO)
- 			flags &= ~(__GFP_IO | __GFP_FS);
- 		else if (pflags & PF_MEMALLOC_NOFS)
- 			flags &= ~__GFP_FS;
- 
--		if (pflags & PF_MEMALLOC_NOWARN)
--			flags |= __GFP_NOWARN;
--
- 		if (pflags & PF_MEMALLOC_PIN)
- 			flags &= ~__GFP_MOVABLE;
- 	}
 -- 
-2.46.0
-
+Thanks,
+Petr
 
