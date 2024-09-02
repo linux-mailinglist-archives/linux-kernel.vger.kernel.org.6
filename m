@@ -1,158 +1,176 @@
-Return-Path: <linux-kernel+bounces-311208-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311209-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66961968601
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 13:17:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F33E968606
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 13:19:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E90041F227DA
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 11:17:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 446092834A8
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 11:19:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 757911D2791;
-	Mon,  2 Sep 2024 11:17:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F290E185923;
+	Mon,  2 Sep 2024 11:19:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SDZ85pGO"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="E9wTynXz"
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41A0413AD33;
-	Mon,  2 Sep 2024 11:17:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BA8F13AD33
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 11:19:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725275845; cv=none; b=QGpFjZJdO3GnOh+V3d2mnqaegZzpnF3vEn9qY0yJF76M5BDqlMaI5lS9cqMarXVq77G+vKY7IR7rxMw4HU1iSw4V+rC8dCRU6FOGsHeih2hIzopLn0pQnf+BryV3LXdcmHaHpdpDWDmaKcOVUO6JPxAQhtUEIAthKZk8KsjQbg8=
+	t=1725275976; cv=none; b=QNA8pHjcFTfb6MHoZ929LL7EqcK6SYdyCIJk4IehCDK5QOwi+lBeGjenlKaTB2WDWZo/UHE8BIoA84d/24lNt5HkfA/nWtnCPyRdp/L5g5DG9v0kDRFyrdLOXuUpYBV8L7Bx6n0o5BQA2URMJjr7xq5JE0fZbxws8UjYV2Zme4Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725275845; c=relaxed/simple;
-	bh=8DEefCqgBp4T3qc8isMYaNfkFHMDF7RpRIonm0LXhyE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LQwkKSImvvdLsxxK0Iqe27ffOxTTRmrPgf8P33+UesV3c/ZnQRQE6YSbSNGRq7EM1203nFL2EizXGoXHrVEQZKdS7gEm2M09lVAOpEooqEAFjkP0IbkG/jXv8AMxGpAtN6DtXi+zQWg33JoC33tRhaPTP7dDrKhpVsiL3kaCFFg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SDZ85pGO; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725275845; x=1756811845;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=8DEefCqgBp4T3qc8isMYaNfkFHMDF7RpRIonm0LXhyE=;
-  b=SDZ85pGOLYcT8HuSVRqim9TsEns9m1vQ1tM4mJNoV7y6A2BdNZIG5RKL
-   cmmb23fQx7d3YPUQ0MBqGzG52UP5txrGZ98AjsNCxxTnhKHFCBqF44AV7
-   V3n1c5MDfYcFU/J/PUM819tqXSvVbUC1oGleyLhPr5VAybjoFTEQDC5u0
-   nCgE585p6FckxaiE3/Y/7zRdPaak/WRb4drSkpOSfQPK3XyHCarPOtRpw
-   e8RssKLNFSiyvcRtslUN4ujClsPBJ4YriPU219uqtJdxY+nGzDHOFoUZK
-   BVDRnGzt02kjz/QyZVTqoxmgo8NKsm/FS/YZ4F++y/LiA58BV6uoZjzCv
-   Q==;
-X-CSE-ConnectionGUID: vJ2PFT1EQwa9X05xQbePMg==
-X-CSE-MsgGUID: FrUfyi4KR9CtKY7OokBt3g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11182"; a="23720746"
-X-IronPort-AV: E=Sophos;i="6.10,195,1719903600"; 
-   d="scan'208";a="23720746"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2024 04:17:24 -0700
-X-CSE-ConnectionGUID: 7fkqkPvKRZiRE6zcl8aVzA==
-X-CSE-MsgGUID: 9vFS3yhCS5q9XrsIuL6u4A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,195,1719903600"; 
-   d="scan'208";a="64260974"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmviesa007.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2024 04:17:16 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1sl53Y-00000004L3B-2Uqd;
-	Mon, 02 Sep 2024 14:17:12 +0300
-Date: Mon, 2 Sep 2024 14:17:12 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Stephen Boyd <swboyd@chromium.org>
-Cc: chrome-platform@lists.linux.dev, linux-kernel@vger.kernel.org,
-	patches@lists.linux.dev, devicetree@vger.kernel.org,
-	Douglas Anderson <dianders@chromium.org>,
-	Pin-yen Lin <treapking@chromium.org>,
-	Andrzej Hajda <andrzej.hajda@intel.com>,
-	Benson Leung <bleung@chromium.org>,
-	Conor Dooley <conor+dt@kernel.org>, Daniel Vetter <daniel@ffwll.ch>,
-	David Airlie <airlied@gmail.com>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	dri-devel@lists.freedesktop.org,
-	Guenter Roeck <groeck@chromium.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	Lee Jones <lee@kernel.org>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Prashant Malani <pmalani@chromium.org>,
-	Robert Foss <rfoss@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Tzung-Bi Shih <tzungbi@kernel.org>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Daniel Scally <djrscally@gmail.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Ivan Orlov <ivan.orlov0322@gmail.com>, linux-acpi@vger.kernel.org,
-	linux-usb@vger.kernel.org,
-	Mika Westerberg <mika.westerberg@linux.intel.com>,
-	"Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Vinod Koul <vkoul@kernel.org>
-Subject: Re: [PATCH v4 10/18] devcon property: Document devcon_match_fn_t
-Message-ID: <ZtWeuFUEgnF9e2S4@smile.fi.intel.com>
-References: <20240901040658.157425-1-swboyd@chromium.org>
- <20240901040658.157425-11-swboyd@chromium.org>
+	s=arc-20240116; t=1725275976; c=relaxed/simple;
+	bh=b8PjYVxZvhv1xfIAqlqxTDyUHLdGPvqdgWutgoPXPlw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UWacfXny8T4J3rAfEJKAtvXRLZ1nibaThor1ypB/jVG+GatpznG6FR2xyz74OKahO0ARzZrRKThk+Eq45NBcSTr+MROCxNCix7mqnb56+d25JfapZv8FTp2DmsBl2W7if+eL99tlOfC0hzPyi7FEcg/Kfy2HjUynVmBr5EL5KK8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=E9wTynXz; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-371b97cfd6fso2748374f8f.2
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2024 04:19:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1725275972; x=1725880772; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=EtLLRwzDcELeb0ZO2e/wMEHsMwK2Lp+CL6px/dCTXBY=;
+        b=E9wTynXzpRHilLp5xYXju7oJ1eCgZA2bJvaFHJr8KHmqolExMdJE9vmAdg67y7xz+N
+         Upo1hwchpRkVjO5k6XkgGMmiiRbgARie+ECcocRQQkPksbRiNkLQvcd6rxKbUqnoNKoz
+         8pcvWkEpr/iRC/ysKO758ZFMUO/2Z2XZie3A1VPfBXYFMH/COtXs46DA4ERILGC8AImx
+         BBmPJhtyMQbtANZerPgf81AixQufhxzMtYPLCMi+bEIlaGwkTAivKjuUin+Fm0GwNw/2
+         1wo5UFURnNdTACLEUr3z8lJHA9f42yoF+ruTwDlIYV1HXoPhwbCUdgl66mUgWm36WXw3
+         B9qw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725275972; x=1725880772;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=EtLLRwzDcELeb0ZO2e/wMEHsMwK2Lp+CL6px/dCTXBY=;
+        b=HgBfmVGwPVnkVvvzt9p+sbUr1kCEDvmrgJoc1FaKD5KuQ352MWl4Ws5/dGgDav3Wu3
+         ixprcj6+tgcFeHvDh5+7gCw7xWLvW7FSIx5Ebqz2dW+s5qcfQVMjiuIYlu5OMWl1nWSr
+         Iq0lpR3XQzxTjU5n9YTlBQCpP0KMEvI16xGweJpYWKlU/QkksC8IGx4PeQbOQKfam9Wm
+         OpoVI76B7VcffB/f4IrbTUVkU2CjNAMRcMTP+rhFCUIcxZRkFy6D3UgV5ru89p2B5DIj
+         luKgFilBlhj0h+7PS8KOQ5W14CBSAPKB1BnKAI3y0MNHGI07W+cNGmuN0w1A5Ci8+vdz
+         I/1g==
+X-Forwarded-Encrypted: i=1; AJvYcCUVEq7kPVNGqL7v2hCP/1fHI1Pf4WXQr46Rmbs0iAFI95HHPa9RJ4CgXh2vgM5TWVoNX0m5hwzohgKug4g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzS3fRCRtlmSrp5JHx5jwpT3gOY2SJuUrKCoc1bmPMK1QVuvgEX
+	PjvYyi9OKUTELnGmQ0H1lVlJ3pGAMdI/Ryj6Kfo98q/0YndIn9j6/TuSOeA576I=
+X-Google-Smtp-Source: AGHT+IHCc+0pl/tPsds9z0P6xI6/le7SPsaow0P6+hezx8fuBZ0z6OcbdQ+qtG7i8NaSHx3J/sP7lw==
+X-Received: by 2002:a5d:648d:0:b0:374:c6ad:a7c6 with SMTP id ffacd0b85a97d-374c6adab4amr2527245f8f.20.1725275971100;
+        Mon, 02 Sep 2024 04:19:31 -0700 (PDT)
+Received: from ?IPV6:2403:580d:fda1::299? (2403-580d-fda1--299.ip6.aussiebb.net. [2403:580d:fda1::299])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-715e5576c9bsm6651241b3a.24.2024.09.02.04.19.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 02 Sep 2024 04:19:30 -0700 (PDT)
+Message-ID: <d8383884-3ebe-445d-bd8a-6232b1c6753e@suse.com>
+Date: Mon, 2 Sep 2024 20:49:25 +0930
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240901040658.157425-11-swboyd@chromium.org>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-
-On Sat, Aug 31, 2024 at 09:06:48PM -0700, Stephen Boyd wrote:
-> The usage of this match function is hard to understand at a glance.
-> Document the arguments and the return value so it is clear how to
-> implement the function.
-
-Thank you for the patch!
-
-...
-
-I believe we still use "device property:" in the subject for this header file changes.
-$ git log --oneline --no-merges -- include/linux/property.h
-
-...
-
-> +/**
-> + * devcon_match_fn_t - device connection match function
-> + * @fwnode: Remote connection's device node
-> + * @con_id: Identifier for the connection
-> + * @data: Match function caller specific data
-> + *
-> + * Implement a callback with this function signature to search a fwnode's
-> + * connections for a match with a function like device_connection_find_match().
-> + * This function will be called possibly multiple times, once for each
-> + * connection. The match function should inspect the @fwnode to look for a
-> + * match. The @con_id and @data provided are the same as the @con_id and @data
-> + * arguments passed to the functions that take a devcon_match_fn_t argument.
-
-> + * Note: This function can be called multiple times.
-
-As noted in the next patch, this would be nice to elaborate (at least to me
-this sounds like declaration of idempotency which is unlikely what is
-meant, or am I mistaken?).
-
-> + * Return: Pointer to match or NULL if no match found.
-> + */
-> +typedef void *(*devcon_match_fn_t)(const struct fwnode_handle *fwnode,
-> +				   const char *con_id, void *data);
-
--- 
-With Best Regards,
-Andy Shevchenko
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] btrfs: Always update fstrim_range on failure
+To: Luca Stefani <luca.stefani.ge1@gmail.com>
+Cc: Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
+ David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240902111110.746509-1-luca.stefani.ge1@gmail.com>
+Content-Language: en-US
+From: Qu Wenruo <wqu@suse.com>
+Autocrypt: addr=wqu@suse.com; keydata=
+ xsBNBFnVga8BCACyhFP3ExcTIuB73jDIBA/vSoYcTyysFQzPvez64TUSCv1SgXEByR7fju3o
+ 8RfaWuHCnkkea5luuTZMqfgTXrun2dqNVYDNOV6RIVrc4YuG20yhC1epnV55fJCThqij0MRL
+ 1NxPKXIlEdHvN0Kov3CtWA+R1iNN0RCeVun7rmOrrjBK573aWC5sgP7YsBOLK79H3tmUtz6b
+ 9Imuj0ZyEsa76Xg9PX9Hn2myKj1hfWGS+5og9Va4hrwQC8ipjXik6NKR5GDV+hOZkktU81G5
+ gkQtGB9jOAYRs86QG/b7PtIlbd3+pppT0gaS+wvwMs8cuNG+Pu6KO1oC4jgdseFLu7NpABEB
+ AAHNGFF1IFdlbnJ1byA8d3F1QHN1c2UuY29tPsLAlAQTAQgAPgIbAwULCQgHAgYVCAkKCwIE
+ FgIDAQIeAQIXgBYhBC3fcuWlpVuonapC4cI9kfOhJf6oBQJjTSJVBQkNOgemAAoJEMI9kfOh
+ Jf6oapEH/3r/xcalNXMvyRODoprkDraOPbCnULLPNwwp4wLP0/nKXvAlhvRbDpyx1+Ht/3gW
+ p+Klw+S9zBQemxu+6v5nX8zny8l7Q6nAM5InkLaD7U5OLRgJ0O1MNr/UTODIEVx3uzD2X6MR
+ ECMigQxu9c3XKSELXVjTJYgRrEo8o2qb7xoInk4mlleji2rRrqBh1rS0pEexImWphJi+Xgp3
+ dxRGHsNGEbJ5+9yK9Nc5r67EYG4bwm+06yVT8aQS58ZI22C/UeJpPwcsYrdABcisd7dddj4Q
+ RhWiO4Iy5MTGUD7PdfIkQ40iRcQzVEL1BeidP8v8C4LVGmk4vD1wF6xTjQRKfXHOwE0EWdWB
+ rwEIAKpT62HgSzL9zwGe+WIUCMB+nOEjXAfvoUPUwk+YCEDcOdfkkM5FyBoJs8TCEuPXGXBO
+ Cl5P5B8OYYnkHkGWutAVlUTV8KESOIm/KJIA7jJA+Ss9VhMjtePfgWexw+P8itFRSRrrwyUf
+ E+0WcAevblUi45LjWWZgpg3A80tHP0iToOZ5MbdYk7YFBE29cDSleskfV80ZKxFv6koQocq0
+ vXzTfHvXNDELAuH7Ms/WJcdUzmPyBf3Oq6mKBBH8J6XZc9LjjNZwNbyvsHSrV5bgmu/THX2n
+ g/3be+iqf6OggCiy3I1NSMJ5KtR0q2H2Nx2Vqb1fYPOID8McMV9Ll6rh8S8AEQEAAcLAfAQY
+ AQgAJgIbDBYhBC3fcuWlpVuonapC4cI9kfOhJf6oBQJjTSJuBQkNOge/AAoJEMI9kfOhJf6o
+ rq8H/3LJmWxL6KO2y/BgOMYDZaFWE3TtdrlIEG8YIDJzIYbNIyQ4lw61RR+0P4APKstsu5VJ
+ 9E3WR7vfxSiOmHCRIWPi32xwbkD5TwaA5m2uVg6xjb5wbdHm+OhdSBcw/fsg19aHQpsmh1/Q
+ bjzGi56yfTxxt9R2WmFIxe6MIDzLlNw3JG42/ark2LOXywqFRnOHgFqxygoMKEG7OcGy5wJM
+ AavA+Abj+6XoedYTwOKkwq+RX2hvXElLZbhYlE+npB1WsFYn1wJ22lHoZsuJCLba5lehI+//
+ ShSsZT5Tlfgi92e9P7y+I/OzMvnBezAll+p/Ly2YczznKM5tV0gboCWeusM=
+In-Reply-To: <20240902111110.746509-1-luca.stefani.ge1@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
 
+
+在 2024/9/2 20:40, Luca Stefani 写道:
+> Even in case of failure we could've discarded
+> some data and userspace should be made aware of it,
+> so copy fstrim_range to userspace regardless.
+> 
+> Also make sure to update the trimmed bytes amount
+> even if btrfs_trim_free_extents fails.
+> 
+> Signed-off-by: Luca Stefani <luca.stefani.ge1@gmail.com>
+
+Reviewed-by: Qu Wenruo <wqu@suse.com>
+
+Thanks,
+Qu
+
+> ---
+>   fs/btrfs/extent-tree.c | 4 ++--
+>   fs/btrfs/ioctl.c       | 4 +---
+>   2 files changed, 3 insertions(+), 5 deletions(-)
+> 
+> diff --git a/fs/btrfs/extent-tree.c b/fs/btrfs/extent-tree.c
+> index feec49e6f9c8..a5966324607d 100644
+> --- a/fs/btrfs/extent-tree.c
+> +++ b/fs/btrfs/extent-tree.c
+> @@ -6551,13 +6551,13 @@ int btrfs_trim_fs(struct btrfs_fs_info *fs_info, struct fstrim_range *range)
+>   			continue;
+>   
+>   		ret = btrfs_trim_free_extents(device, &group_trimmed);
+> +
+> +		trimmed += group_trimmed;
+>   		if (ret) {
+>   			dev_failed++;
+>   			dev_ret = ret;
+>   			break;
+>   		}
+> -
+> -		trimmed += group_trimmed;
+>   	}
+>   	mutex_unlock(&fs_devices->device_list_mutex);
+>   
+> diff --git a/fs/btrfs/ioctl.c b/fs/btrfs/ioctl.c
+> index e0a664b8a46a..94d8f29b04c5 100644
+> --- a/fs/btrfs/ioctl.c
+> +++ b/fs/btrfs/ioctl.c
+> @@ -543,13 +543,11 @@ static noinline int btrfs_ioctl_fitrim(struct btrfs_fs_info *fs_info,
+>   
+>   	range.minlen = max(range.minlen, minlen);
+>   	ret = btrfs_trim_fs(fs_info, &range);
+> -	if (ret < 0)
+> -		return ret;
+>   
+>   	if (copy_to_user(arg, &range, sizeof(range)))
+>   		return -EFAULT;
+>   
+> -	return 0;
+> +	return ret;
+>   }
+>   
+>   int __pure btrfs_is_empty_uuid(const u8 *uuid)
 
