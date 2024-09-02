@@ -1,88 +1,137 @@
-Return-Path: <linux-kernel+bounces-311322-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311325-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63156968785
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 14:29:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29A03968789
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 14:30:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 212A5284000
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 12:29:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA5CD281772
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 12:30:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43EDC19E96A;
-	Mon,  2 Sep 2024 12:27:54 +0000 (UTC)
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 176F5200108;
+	Mon,  2 Sep 2024 12:29:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="kpfS69Z2"
+Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 690A019C554
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 12:27:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87C0819E996
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 12:29:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725280073; cv=none; b=K8POI5gsddlm/IfYO4NnWN3DsCMBw0C0IXj7OPHloukyByNaORESHgEfApR5ZnIZgHufKPkXsA/WLUDBkil2Mp19kctUpCkJnCZpDl4oM2EHVTLqoviKk9WqQGhIQb5EKNnbb6Z1Lxo3ZsL7QWhGwnTPH5Qwy2YcKApYLMjT5Ao=
+	t=1725280146; cv=none; b=XRcZZnEOpheY8+TnVvXsqvDJzCDzHYztjwM4nsQaUN6uEnP/pWr6pxC1eL440ElNjr9ThPBzkacd2DXpgIHhmTkyPQNrh+B8TVR78DJUr817p8VFwViwbtrf89dwXwREZ3pg2FIZnYMvO90ybYA90yz4Wcm0Irz9wgfbsmBwBL8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725280073; c=relaxed/simple;
-	bh=SR1KS3N9YaYuvzSuWb1PS6WfnS9eHlaKUIy65FRD9/M=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=n42YP8el7ZxvQM46BWI8Ucv7oPKvzKiLvMA2nANYARF1Jy9beY+fiyAbQq605s+4KQFBv7bm9dGD9SQ1rIRBU4M9IIuROdfggzfMvNsUO7P69dt+CSRn0Tk6O7ft21CJJvfMzgpi4s9NiVblkam9lGVglNTRph5BZsDC+1e97WE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-82a3fa4ecd3so216288139f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2024 05:27:52 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725280071; x=1725884871;
-        h=content-transfer-encoding:to:from:subject:message-id:in-reply-to
-         :date:mime-version:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SR1KS3N9YaYuvzSuWb1PS6WfnS9eHlaKUIy65FRD9/M=;
-        b=QJ4pCT3AW4scOsEeExYstNTGnYlvKAkdBCyBe49KJiWUvMlEDcUgGODG4cPTyywMKu
-         TGlNgnpXLJQFZqyU0keosibDez9DVdduv0ynMJSYeYCeY3K5NaEdnLFIDrMEvv35kXRe
-         mHYi4Wdptss5kUAGJ5cJ7UAJ9DVnnskCJkRhpgh0sVNplCrLinlN/ekbZpJE6Ws1Vyxw
-         Ts1I8OPmgUDngcs2fiUk3MxfrB79lh8opj/QAFarEr9QaLwfm6GPE8pqSYvr7JESgFAZ
-         uFqRwsFK/wKbUKMg93I9vU+yaPGE5+SO9O3hQjUj9g40hP/F6DPMb26tNJMRwsQsukyu
-         wdAA==
-X-Gm-Message-State: AOJu0YxYy+CcGsmYrkTPKFH3WrShOMeLjKIcOgu72YAoUdKIy5oYDmVH
-	aS7ojKl+6USylaq8SCo2M2blklPyuiJddkDhy2bR5hm/RZLEtuTtN++JSEHS9+ntkWAmyxT4EH9
-	vHsPrbgKl6lhOGRayMCXNUxBEb8ydBDVsaKClrU0GLLTPMXXRlh93nJM=
-X-Google-Smtp-Source: AGHT+IEAPZHbdGubIyeCOCliEXQmuHfh3+1kjmz34mLl1DvWjSC6ZC+bTHMSTQMunwK5fIhMRAVRDjEeUZ6feVxO3sbDLMT4O8/w
+	s=arc-20240116; t=1725280146; c=relaxed/simple;
+	bh=9q1kmcSWYGxbky2NAXn5eFd+ketKfs+U8FEZnXas1L0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Ed3u6c5bjS+69n+gbGPIYAC6JZJYiU84kDdCpt0Enfg5lyYgYeC6+6kBZbBkPbqiV6rMI1FpAAzwKereawj+QDIR0BC++dYlKVTtJ3P7WpF0923eZdvMOi6w2FIfmTwr3y3ODuB+whh9XdUi9P/mz3T3hM669tZHp0kCQjwCShs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=kpfS69Z2; arc=none smtp.client-ip=217.70.183.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 844CD6000D;
+	Mon,  2 Sep 2024 12:28:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1725280136;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3bHLgPC9UcNLmBmxjD3JWZOBGlNzvtP7G+tkWxSr6cw=;
+	b=kpfS69Z2MKp2rNQmnV05UEwL+5em9prQmKegSFNYIkmVlEZ4QNcA2xC4oLYOiKk/aWLpmg
+	oMHf++ykE5xkdnkvRqzmfYRBCRvManeVrRqU/nRaUTR0K8F+6S3vnO7WZDcGDeEbSCJnsX
+	P71dvOWQau5e24O47/gYlvDA/eKTxjJx9+buLl5vR69HC1fIjEm78zcgs++bZddvUP1vxw
+	6Rdya358OfbwLuiUdOOXC5a2zMf8niBgmEia/5T2fTkanz6ZwGvD5tkxHZXQpQCDTxRu9C
+	PX6+etLucv8G2uhq8/VbMsmaXBCKl10/LSlJHbU2i/zyy/3lkT5egZdRbQCrEA==
+Date: Mon, 2 Sep 2024 14:28:53 +0200
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+To: Cheng Ming Lin <linchengming884@gmail.com>
+Cc: vigneshr@ti.com, linux-mtd@lists.infradead.org,
+ linux-kernel@vger.kernel.org, richard@nod.at, alvinzhou@mxic.com.tw,
+ leoyu@mxic.com.tw, Cheng Ming Lin <chengminglin@mxic.com.tw>
+Subject: Re: [PATCH v5 1/2] mtd: spinand: Add support for setting plane
+ select bits
+Message-ID: <20240902142853.5fff056a@xps-13>
+In-Reply-To: <CAAyq3Sbta_p9WNOTEdCA7V=huPkeFFxUvxTqfzRJz0dsJMJBwg@mail.gmail.com>
+References: <20240830100310.1553675-1-linchengming884@gmail.com>
+	<20240830100310.1553675-2-linchengming884@gmail.com>
+	<20240830175504.746fb2ec@xps-13>
+	<CAAyq3Sbta_p9WNOTEdCA7V=huPkeFFxUvxTqfzRJz0dsJMJBwg@mail.gmail.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:12e5:b0:397:35d4:3811 with SMTP id
- e9e14a558f8ab-39f41085d90mr8156185ab.3.1725280071574; Mon, 02 Sep 2024
- 05:27:51 -0700 (PDT)
-Date: Mon, 02 Sep 2024 05:27:51 -0700
-In-Reply-To: <000000000000acfa76061fcca330@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000cdf5240621221146@google.com>
-Subject: Re: [syzbot] possible fix (linux-ntfs3)
-From: syzbot <syzbot+4d2aaeff9eb5a2cfec70@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-GND-Sasl: miquel.raynal@bootlin.com
 
-Rm9yIGFyY2hpdmFsIHB1cnBvc2VzLCBmb3J3YXJkaW5nIGFuIGluY29taW5nIGNvbW1hbmQgZW1h
-aWwgdG8KbGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZywgc3l6a2FsbGVyLWJ1Z3NAZ29vZ2xl
-Z3JvdXBzLmNvbS4KCioqKgoKU3ViamVjdDogcG9zc2libGUgZml4IChsaW51eC1udGZzMykKQXV0
-aG9yOiBhbG1hei5hbGV4YW5kcm92aWNoQHBhcmFnb24tc29mdHdhcmUuY29tCgojc3l6IHRlc3Q6
-IGh0dHBzOi8vZ2l0aHViLmNvbS9QYXJhZ29uLVNvZnR3YXJlLUdyb3VwL2xpbnV4LW50ZnMzLmdp
-dCBtYXN0ZXINCg0KZGlmZiAtLWdpdCBhL2ZzL250ZnMzL3N1cGVyLmMgYi9mcy9udGZzMy9zdXBl
-ci5jDQppbmRleCAxMjhkNDk1MTJmNWQuLmMwOGJiYWNjMDAzMCAxMDA2NDQNCi0tLSBhL2ZzL250
-ZnMzL3N1cGVyLmMNCisrKyBiL2ZzL250ZnMzL3N1cGVyLmMNCkBAIC0xMjUsOCArMTI1LDkgQEAg
-dm9pZCBudGZzX2lub2RlX3ByaW50ayhzdHJ1Y3QgaW5vZGUgKmlub2RlLCBjb25zdCANCmNoYXIg
-KmZtdCwgLi4uKQ0KDQogwqDCoMKgwqDCoMKgwqDCoCBpZiAoZGUpIHsNCiDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqAgc3Bpbl9sb2NrKCZkZS0+ZF9sb2NrKTsNCi3CoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgIHNucHJpbnRmKG5hbWUsIHNpemVvZihzX25hbWVfYnVmKSwgIiBcIiVzXCIiLA0KLcKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIGRlLT5kX25hbWUubmFtZSk7DQorwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoCBpZiAoc25wcmludGYobmFtZSwgc2l6ZW9mKHNfbmFtZV9idWYpLCAiIFwi
-JXNcIiIsDQorwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBkZS0+ZF9u
-YW1lLm5hbWUpID49IHNpemVvZihzX25hbWVfYnVmKSkNCivCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqAgbmFtZVtzaXplb2Yoc19uYW1lX2J1ZikgLSAxXSA9IDA7DQogwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgIHNwaW5fdW5sb2NrKCZkZS0+ZF9sb2NrKTsNCiDCoMKgwqDCoMKgwqDCoMKg
-IH0gZWxzZSB7DQogwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIG5hbWVbMF0gPSAwOw0KDQoNCg==
+Hi Cheng,
+
+linchengming884@gmail.com wrote on Mon, 2 Sep 2024 16:42:55 +0800:
+
+> Hi Miquel,
+>=20
+> I accidentally sent the previous email before it was finished.
+>=20
+> Miquel Raynal <miquel.raynal@bootlin.com> =E6=96=BC 2024=E5=B9=B48=E6=9C=
+=8830=E6=97=A5 =E9=80=B1=E4=BA=94 =E4=B8=8B=E5=8D=8811:55=E5=AF=AB=E9=81=93=
+=EF=BC=9A
+> >
+> > Hi ChengMing,
+> >
+> > linchengming884@gmail.com wrote on Fri, 30 Aug 2024 18:03:09 +0800:
+> > =20
+> > > From: Cheng Ming Lin <chengminglin@mxic.com.tw>
+> > >
+> > > Add two flags for inserting the Plane Select bit into the column
+> > > address during the write_to_cache and the read_from_cache operation.
+> > >
+> > > Add the SPINAND_HAS_PP_PLANE_SELECT_BIT flag for serial NAND flash =20
+> >
+> > This flag has been renamed :) =20
+>=20
+> Thank you for the reminder. I will make the necessary changes.
+>=20
+> > =20
+> > > that require inserting the Plane Select bit into the column address
+> > > during the write_to_cache operation.
+> > >
+> > > Add the SPINAND_HAS_READ_PLANE_SELECT_BIT flag for serial NAND flash
+> > > that require inserting the Plane Select bit into the column address
+> > > during the read_from_cache operation.
+> > >
+> > > Signed-off-by: Cheng Ming Lin <chengminglin@mxic.com.tw>
+> > > ---
+> > >  drivers/mtd/nand/spi/core.c | 6 ++++++
+> > >  include/linux/mtd/spinand.h | 2 ++
+> > >  2 files changed, 8 insertions(+)
+> > >
+> > > diff --git a/drivers/mtd/nand/spi/core.c b/drivers/mtd/nand/spi/core.c
+> > > index e0b6715e5dfe..e7b592cdbb4c 100644
+> > > --- a/drivers/mtd/nand/spi/core.c
+> > > +++ b/drivers/mtd/nand/spi/core.c
+> > > @@ -386,6 +386,9 @@ static int spinand_read_from_cache_op(struct spin=
+and_device *spinand,
+> > >       else
+> > >               rdesc =3D spinand->dirmaps[req->pos.plane].rdesc_ecc;
+> > >
+> > > +     if (spinand->flags & SPINAND_HAS_READ_PLANE_SELECT_BIT)
+> > > +             column |=3D req->pos.plane << fls(nanddev_page_size(nan=
+d)); =20
+> >
+> > Isn't there any better way to know what the bit position is? =20
+>=20
+> There are two other methods to determine the bit position:
+> - column |=3D res->pos.plane << fls(nand->memorg.pagesize)
+> - column |=3D wdesc->info.offset
+
+Ok, let's keep it is as-is for now.
+
+Thanks,
+Miqu=C3=A8l
 
