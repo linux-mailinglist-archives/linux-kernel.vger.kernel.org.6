@@ -1,116 +1,136 @@
-Return-Path: <linux-kernel+bounces-311892-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311893-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF293968F12
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 23:03:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5835D968F14
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 23:03:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1DD021C20A19
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 21:03:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B6FA1C2085D
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 21:03:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F34C1865FB;
-	Mon,  2 Sep 2024 21:03:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A976520124A;
+	Mon,  2 Sep 2024 21:03:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="SENdJMwb"
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kieS5xAq"
+Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE6FD1865F1
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 21:03:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A2F11A4E6C;
+	Mon,  2 Sep 2024 21:03:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725310999; cv=none; b=SG3iBVTie/WoUAEJf/beyq0OJriR9Vk7BlWdc+TcAX8SdTGlPY+5z1BpIbXa9t6qfi66pbciXi0qO4cL4BGuBZYdUMZD204NydCx6IOpTX9R62mmAGhx64sWSkPmaXtQSZU3/6Fo1LSF9wNNne3IuipFhE6yNeu4BifMDckgz+s=
+	t=1725311001; cv=none; b=b+EEbfDXzoRNW+UsNdWO8YK2MKGEcaAafAGE1VvU1NxikqXSzgSMPdRIcWeqLUxuCHqxyYaRlRJHy/M7V7hmnGXqK0AO1xXsE4ibM5A5JFJ9iwaVJrCqDxHz0sAlRsmJ0irC/NuNxaYYz3so40q5k23CMwe08LVsCTnOt9VZUwc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725310999; c=relaxed/simple;
-	bh=CMQa/33WZzfL31kcG3CjB/U+R/8uJ/2tlmE8nlhm9PE=;
+	s=arc-20240116; t=1725311001; c=relaxed/simple;
+	bh=lW3L5CKB1oq8Zcf3wKEXswTMk5kZdnv4UW68BtX3nzk=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sJJI+YhHwGj3OsycrvXl+5anBPGJyBXzuaQ/YEr8GPxJYy7KvnoeTsS6jdIwIjgRfMqUeC1B+3VLLzzk5brbV5zdRPoFsmb2P+wm0fQfd/8dwHhwjjX1Ho8WXfWEpkMGGmu5Zjfi7x7TmFYnfDeyHL1tXpisZdCZuSnWiGPpTh0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=SENdJMwb; arc=none smtp.client-ip=209.85.208.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2f4f24263acso69262791fa.0
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2024 14:03:16 -0700 (PDT)
+	 To:Cc:Content-Type; b=Uj52JUUQXx/FLtmP+k88p8AITuxm95bvXsc23JxaZqGhtQTTZLx7Ydg2K8uOI/Vr12+Ednpt9ADNaMQnz8xeegtqWWA4XpgsjCzCCvUa+E3F9dtYPYhVE1Z16t5lv3ZkGmL8ZUb48rK/JHLDV7MPpxMtEwVP5EbXbk3yFyghNUM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kieS5xAq; arc=none smtp.client-ip=209.85.208.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2f43de7ad5eso59399481fa.1;
+        Mon, 02 Sep 2024 14:03:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1725310995; x=1725915795; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1725310998; x=1725915798; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=po+MmfD4nq5cLkClRRslOxFglpMwsYkFajj19L5Hzi0=;
-        b=SENdJMwb4OebbRrnn4zA8+bwlG+5tf/9bg2dky9ChRqToXHyEavEIuW7TIBFLnlFrJ
-         qepi05YcwDfcFfC0d/1sZ+zkRByPivxVWyOozJVTlhBHBmryETmO+dyYgrkI6tzPE5Xz
-         GMUcBvvb3hoV3T/cPqHBd8ZX8Bc9bvLHjDBjQ=
+        bh=Z1tTJDVFsykwelGtaYjBYv2TZV/t0faWkcIiWiqfjTc=;
+        b=kieS5xAqbM1h3rO2ugDgKorg6f91oyjiv0PnjMo5xnedhStyP7EgxDvYypUr0I/hST
+         ZRdn3UxWuMyaV5dLof1+f2G6Cxpr1FX+8/APXhUMfAbN4QzF3bcBXioTHlweKRtNpQLB
+         +ZefM63qX+diTC/0/WpY0Wc2Oo/22t8iDppYIPcNyowVEEMY7VCJFhNiVvnsAodqt2dO
+         L1BYuXlnmfZBmq8QG4rR3704C+j8ef898GqssE/Tf5tUtwNGSwSQxJbaL9TIB4pIRPsR
+         xRpSEOs038SOhjGu8O5JfEWH2mAUVP9rXx/Dnh58FomkeZsJPpIKYLUky94bNvaNzMPe
+         S2tw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725310995; x=1725915795;
+        d=1e100.net; s=20230601; t=1725310998; x=1725915798;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=po+MmfD4nq5cLkClRRslOxFglpMwsYkFajj19L5Hzi0=;
-        b=m7giZP0cXY9KFmno04FLUIV2RjvZEx5jYRpYqtMV71JvQ+P1vRfuzHUY8t7qYgZMLT
-         raXZWAREibKvAoOEMKVKHZ2CIrk8zXHXYgx5lKRu+dtlh6Ks+AhPIujUbG+i7H45bZ4y
-         DzsNWWmgigD8icQFj7A1OJu3a6y2LgI4JUZVz9tWnkT0ZMEkYeTqzLQeHNILzP7RhmiF
-         JiWizm9p0wT8OuEdDLiZif408Nh9K5Q7VTpV6uvmqEzyEzTgR9sR58NSFteuUNeVIPRU
-         NmWKxA69dj8sb4MUpbuoQ2o7XVByTvBdd5bb62KPyWdJoquz47+jmvDuGs4f+s45x40Y
-         GW7w==
-X-Forwarded-Encrypted: i=1; AJvYcCWP6/a22W0NlMlnR+IwJMgzdj0qfxcbqCYk5A8WewHhGdYtBTRMjY6dPrseeL7WKn9SQvt2goheytLkF4s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzCx30pEaUdWUKy3Zf6+KB5nc/OYsZEgX501qD/MA66YWa4D8io
-	/eGdOf5FY0Zou19NZEKP7O7Q6SioZpb5F8AoLDOavWc5CrYFoyTDwGPMN04fVq3xJBADI84Zs/Y
-	gKZHHmQ==
-X-Google-Smtp-Source: AGHT+IE2p+q5wX+QmsHkEcHsu09HB2in4Ap5cydjrE7Y4zzJ365np1Rw1ON+ud0OlB8dmkSNiDiw+A==
-X-Received: by 2002:a05:651c:b0f:b0:2f3:e9fb:6d5a with SMTP id 38308e7fff4ca-2f6105d755amr141203901fa.13.1725310994440;
-        Mon, 02 Sep 2024 14:03:14 -0700 (PDT)
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com. [209.85.218.54])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a89891d72c3sm606466966b.147.2024.09.02.14.03.13
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 02 Sep 2024 14:03:13 -0700 (PDT)
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a86b64ebd8aso281368366b.1
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2024 14:03:13 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUlIo6dBl0KDUq1Fm0MzmTfDduSHmjind6z8rQt77RDYgw+Nn346Hj4niMxgEEzItRFbewI+j+qjo0ZXFI=@vger.kernel.org
-X-Received: by 2002:a05:6402:34d6:b0:5c2:5d34:a45a with SMTP id
- 4fb4d7f45d1cf-5c25d34a63fmr2793579a12.2.1725310993097; Mon, 02 Sep 2024
- 14:03:13 -0700 (PDT)
+        bh=Z1tTJDVFsykwelGtaYjBYv2TZV/t0faWkcIiWiqfjTc=;
+        b=mL65m8LqdTjcQlwILrV07CeG13jg1cuRa3JbdWz8YYCs0voLgU/HRR09ttD2vczOIG
+         i1cwFW4fg7y0ihzTPsB7iWDeqHwWHkLb5kYw5GRI0AyA/IQY8zoNaFh2rifBn7GHQwqu
+         8BKn+8xMUraXRtujijcvYyYbXgcgVUl+1mANn2KVMXxbC6SUbGYy4FZAUN1coNt7yZre
+         9v3x9tNdWvJF4PvmoEWP1QRS4lMIKksmscCBYtOq4hmUquZXkNHZ6TIQEDkHhKeZivCb
+         PWyBJOf4v+AyLF64DmOE31RxwSJar0ejVjsHPrpbANYmIMi5J0FHQ16L2DKTSxgH+gaT
+         lrPQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW7QilC4A8Ci5NdjQqT2swKmDj/gzujqHFtsbeZEJ1gog9fxFlwZ+BJS0oSRN+WIytCHa5CAB5amw/3l4o=@vger.kernel.org, AJvYcCXQI+T+t5ZucMW5Uaon3owZC+XEyTIYkUFXOo66v9Z9zuHCJgwYWYM0c36XecRZHkJ1g9FP2h9Ty8HARaw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YygvdjvPMII/SnVl/Uxs5HHrSzJMnuuh75GrATWNBl+v76CfTRW
+	qhDERIybXgqpkiGA8yRgFDY9BrWEHp3qNJzVR0y6QEHz/q49iwxjRI/PcR11Wi4qjgkiDbTXzjv
+	cK7fv002/VUeHzqG8ns4bv0jUgkc=
+X-Google-Smtp-Source: AGHT+IEHvI2NFPqZUXb7j82Apr1b7fxkp7URsrBFAvelcoXN16epsx+rrEhxUsqQ07soil7oj6wH0iwCv7FK+/QrPgM=
+X-Received: by 2002:a05:651c:1991:b0:2f1:922f:874a with SMTP id
+ 38308e7fff4ca-2f626564f62mr61758261fa.14.1725310997377; Mon, 02 Sep 2024
+ 14:03:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240812082605.743814-1-mpe@ellerman.id.au> <20240819185253.GA2333884@thelio-3990X>
- <yt9dy149vprr.fsf@linux.ibm.com> <20240902134953.e834bc2e57d36b1d3b1397e4@linux-foundation.org>
-In-Reply-To: <20240902134953.e834bc2e57d36b1d3b1397e4@linux-foundation.org>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Mon, 2 Sep 2024 14:02:56 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wjD0XLhkzou89J-TK=L6B88pFoNYxN1uTWRQB3U5Czywg@mail.gmail.com>
-Message-ID: <CAHk-=wjD0XLhkzou89J-TK=L6B88pFoNYxN1uTWRQB3U5Czywg@mail.gmail.com>
-Subject: Re: [PATCH v2 1/4] mm: Add optional close() to struct vm_special_mapping
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Sven Schnelle <svens@linux.ibm.com>, Nathan Chancellor <nathan@kernel.org>, 
-	Michael Ellerman <mpe@ellerman.id.au>, linux-mm@kvack.org, linuxppc-dev@lists.ozlabs.org, 
-	christophe.leroy@csgroup.eu, jeffxu@google.com, Liam.Howlett@oracle.com, 
-	linux-kernel@vger.kernel.org, npiggin@gmail.com, oliver.sang@intel.com, 
-	pedro.falcato@gmail.com, linux-um@lists.infradead.org, 
-	linux-s390@vger.kernel.org, Ravi Bangoria <ravi.bangoria@linux.ibm.com>, 
-	Steven Rostedt <rostedt@goodmis.org>
+References: <20240902-imx290-avail-v3-0-b32a12799fed@skidata.com>
+ <20240902-imx290-avail-v3-5-b32a12799fed@skidata.com> <20240902200004.GR1995@pendragon.ideasonboard.com>
+In-Reply-To: <20240902200004.GR1995@pendragon.ideasonboard.com>
+From: Benjamin Bara <bbara93@gmail.com>
+Date: Mon, 2 Sep 2024 23:03:06 +0200
+Message-ID: <CAJpcXm7OYMn+TJNhHiO6z19ipfxat=YcH-iCvto_zW5omi8=ew@mail.gmail.com>
+Subject: Re: [PATCH v3 5/7] media: i2c: imx290: Avoid communication during probe()
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, 
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
+	Sakari Ailus <sakari.ailus@linux.intel.com>, Hans de Goede <hdegoede@redhat.com>, 
+	Alexander Stein <alexander.stein@ew.tq-group.com>, linux-media@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Benjamin Bara <benjamin.bara@skidata.com>
 Content-Type: text/plain; charset="UTF-8"
 
-On Mon, 2 Sept 2024 at 13:49, Andrew Morton <akpm@linux-foundation.org> wrote:
+Hi Laurent!
+
+On Mon, 2 Sept 2024 at 22:00, Laurent Pinchart
+<laurent.pinchart@ideasonboard.com> wrote:
+> On Mon, Sep 02, 2024 at 05:57:30PM +0200, bbara93@gmail.com wrote:
+> > From: Benjamin Bara <benjamin.bara@skidata.com>
+> >
+> > As we don't know the mode during probe(), it doesn't make sense to
+> > update the sensors' registers with assumptions. Avoid the communication
+> > in this case.
 >
-> uprobe_clear_state() is a pretty simple low-level thing.  Side-effects
-> seem unlikely?
+> That doesn't seem right. I think you can fix the problem by
+> moving initialization of the controls at probe time after the device
+> gets runtime-suspended. Please try it, and if it doesn't work, let's
+> figure out why.
 
-I think uprobe_clear_state() should be removed from fork.c entirely,
-made 'static', and then we'd have
+Will do for the next iteration.
 
-        area->xol_mapping.close = uprobe_clear_state;
+Thanks & kind regards
+Benjamin
 
-in __create_xol_area() instead (ok, the arguments change, instead of
-looking up "mm->uprobes_state.xol_area", it would get it as the vma
-argument)
-
-That's how it should always have been, except we didn't have a close() function.
-
-Hmm?
-
-            Linus
+> > Signed-off-by: Benjamin Bara <benjamin.bara@skidata.com>
+> > ---
+> > Changes since v2:
+> > - new
+> > ---
+> >  drivers/media/i2c/imx290.c | 4 ++++
+> >  1 file changed, 4 insertions(+)
+> >
+> > diff --git a/drivers/media/i2c/imx290.c b/drivers/media/i2c/imx290.c
+> > index ece4d66001f5..9610e9fd2059 100644
+> > --- a/drivers/media/i2c/imx290.c
+> > +++ b/drivers/media/i2c/imx290.c
+> > @@ -769,6 +769,10 @@ static int imx290_set_ctrl(struct v4l2_ctrl *ctrl)
+> >       if (!pm_runtime_get_if_in_use(imx290->dev))
+> >               return 0;
+> >
+> > +     /* V4L2 controls values will be applied only when mode is known */
+> > +     if (imx290->current_mode == &imx290_mode_off)
+> > +             return 0;
+> > +
+> >       state = v4l2_subdev_get_locked_active_state(&imx290->sd);
+> >       format = v4l2_subdev_state_get_format(state, 0);
+> >
+>
+> --
+> Regards,
+>
+> Laurent Pinchart
 
