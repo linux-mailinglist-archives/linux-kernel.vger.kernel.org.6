@@ -1,135 +1,136 @@
-Return-Path: <linux-kernel+bounces-310741-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310742-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ABAE99680A8
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 09:33:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13FAD9680AA
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 09:34:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 680AA281635
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 07:33:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B21881F25FA3
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 07:34:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29BC4178CC5;
-	Mon,  2 Sep 2024 07:33:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF9D9155A52;
+	Mon,  2 Sep 2024 07:34:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Jm+wZYrN"
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="XqlsMWPC";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="0XqcNPHh"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 064AB1547C3
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 07:33:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89E8BEAD0
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 07:34:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725262425; cv=none; b=cMsXaZEa6AJkH7uOznqdT/ZU36PQmD/ahwaK2tPvz6BsLSt/l22pDfkwCi4nMnrucPEIHpoCOFGnD1kX8rjrEYHRSO05++l5bQCPkySNQzAjrwH1Oi1MyVeXNVyBmhfj9OV2x9F/UshI9NFZo5ReNUmy1DDzW3kpGZHTNEeP3bo=
+	t=1725262464; cv=none; b=prMnRWV/69DoDnPbyxvp3k9mafMdwL01xP+POlMnpGCZqE6xrylMVPFkZo1QrfMu/6LshmBeHBz88dxqf/pNMoqcuPPKL4o/MKkmiI58rdFwWQ/3cTibBzRj9JjkFAF32khKzBiwGDxvkhxXXxv7OK5IrsubC6960I7zGFLIaMc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725262425; c=relaxed/simple;
-	bh=keakdINUGQQykwIW03n+sUlMVBu4gHUpnFRuqxOzes8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pnz4Q7VugtaKElRy7PNmkAmeCmnoECcF5DZBLc7JXEh+ourO0cXinf/nBCKe/aP3wTaBfple9L/ehhXi7kMnyZUk06/6Zjn0IwZFlEQFmsGgt0vVF/3q6rXZkXUXYhcRhNzNC2PgIs8DYCzzTASbswrd9CxTaFJH3mlliatysoU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Jm+wZYrN; arc=none smtp.client-ip=209.85.210.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-7141b04e7a3so3296326b3a.3
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2024 00:33:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1725262422; x=1725867222; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=K/HbDe/HSz6pkXiW0JkEGHwpwJAfk4nlDzkL2IIO73Y=;
-        b=Jm+wZYrNDyp4ha/GwbJDLllPKL+7RKSeNNjKIG0ICQjbgaDpxjT3hVvjxzmnVps1Tk
-         ar1rlHb4VlEom0S1pPMhX59BuQ9SpqgkME6RWt/g4SNLTk8Ykdj30gAOZb7Sd7sYNT/F
-         kYPKojlaqGDq/kW+jPmpVJN3ubeGJkw9XBz+nOFLG/M325ZXVoCawSJjLOQJf5PQsHY9
-         p9YQoJGrywTn+H/L3Gux1NkUC9QKBU+Ne78dblqUB/PR33RznbDsHP+6ApPIJULbMTzO
-         BOhVVQEB8XITSn1MPLyZmDTWp3hMEFXkPlcuI3RZ4fNsh0iqHvl1SuYut461pAFL+3x0
-         FEXQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725262422; x=1725867222;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=K/HbDe/HSz6pkXiW0JkEGHwpwJAfk4nlDzkL2IIO73Y=;
-        b=uIcnae8fXrsdy54xeo96shkl2Psc78DAYWwAlB5pnPO9ZODMHpYwKQuvFj47Vgj2O/
-         2p/dvi7bpzkHfv2YaGb/0eE/t2qFTZFliuwZI8ST5nZ2TkWh78FC/wOfdECRgiURof4K
-         gyKNFXtWwqXRH+zW7kfEVHsl41ih5FrQiHpfhs3CRcXU8vCAH2QQZqBFuUOnfRBz7J0q
-         vlouzUpX1DoeDRUHljghJJ82OqI7a0+gyLG0DJetoqzH5ppgvSrlAObi5Ux1RyU6zm0y
-         CEurGn6CblBxLatDthpsKIXGdGUlHmxtdZdR6/gLeRRVjiHgJbqaB6bBSjCpKDiTHyaA
-         0A4w==
-X-Forwarded-Encrypted: i=1; AJvYcCXW8wMvw75QUDm4HfEGPSUee8dzfk3lWcRXpyWus/8oLWTEGgypkjszvI2BqCWDBu081/HiV/ok02HukUY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwWJOfMlzMBImKCTf46ALTkM1Y954h1F/V703dPkBxW3RwcTrnU
-	L3O8ByrkeM7RfuKPpl6qyrAr6dPCb4cG6LbkA1uVp96CRIDrZKUGHTgH3mc0gA==
-X-Google-Smtp-Source: AGHT+IEQZNvphTM9Na+10ZEQH+EVEVCFHgFa3BpTs1lm8QBLXCV8lFWg/7nLZZbMHQm9nljqgMjFIA==
-X-Received: by 2002:a05:6a20:ae86:b0:1cc:e41d:58f0 with SMTP id adf61e73a8af0-1cce41d59b5mr10376233637.13.1725262422332;
-        Mon, 02 Sep 2024 00:33:42 -0700 (PDT)
-Received: from thinkpad ([120.60.58.247])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-205152cd543sm60805665ad.76.2024.09.02.00.33.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Sep 2024 00:33:41 -0700 (PDT)
-Date: Mon, 2 Sep 2024 13:03:36 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Siddharth Vadapalli <s-vadapalli@ti.com>
-Cc: bhelgaas@google.com, lpieralisi@kernel.org, kw@linux.com,
-	robh@kernel.org, vigneshr@ti.com, kishon@kernel.org,
-	j-keerthy@ti.com, linux-omap@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, stable@vger.kernel.org,
-	u-kumar1@ti.com, srk@ti.com
-Subject: Re: [PATCH 1/2] PCI: dra7xx: Fix threaded IRQ request for
- "dra7xx-pcie-main" IRQ
-Message-ID: <20240902073336.fwyjm27ruvfb7gva@thinkpad>
-References: <20240827122422.985547-1-s-vadapalli@ti.com>
- <20240827122422.985547-2-s-vadapalli@ti.com>
+	s=arc-20240116; t=1725262464; c=relaxed/simple;
+	bh=gHIat7E1OmcsL9++sMcM0lOcZWWlzkQK4RPZ7ULK3Bg=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=CxSgwFR0Kn8OuuTs5Kr1mcdV415Kbl/kVarIiymHml4vDnN7NrZLL35k2FCNcIRz2IHQ/UOGplquxYhDn28Gs+/V2PMwwpi6xQi8gJJzmYfMDpcD5v+3bnk+MV6s65HEu4nI2W91n/A8SfesQWwBkZ1eg7e1tjXC0xLs/b8gRds=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=XqlsMWPC; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=0XqcNPHh; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1725262461;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=yXVxKmdLptWcQCY4ZWfrhM8giQpKNSqHBQPRe6/X2nE=;
+	b=XqlsMWPC7CLr2RYrAhq7Nu29wOJ5AGzNSm0TFkoIXLyPUuCB2AkiLyLqD+vMHvW9TCuAom
+	rNJ3umU5liB/m71EjbTvRW+S0c8qh15pGNWtmExZFRkrT2QPcbbrsjaitsvnybJjfm5vBz
+	QI7cmN/nV7FwufKxOvdxm8yg3j7ymt8xoewju9nPkU/xwz7YidTuR7TA4ZkjWv9qYHw+ub
+	r+7L9HWYxbzpL/zDTl8+yTuoRDYzWft3M/cXsEITUo1NJ+Blqoutmr201GS+6W4K8hp7E0
+	BYi14yi6EXLupC4EVWPs8GJxX/SGAT4Lr0Ijnm/e8OLRjmd3KDha1IbV3/x4DQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1725262461;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=yXVxKmdLptWcQCY4ZWfrhM8giQpKNSqHBQPRe6/X2nE=;
+	b=0XqcNPHhfwpydVQFoeKRjjSPGdESjrglZ/PFBsSp+pE/BkTDuY25FKIjOmbSvBHQsBuOVQ
+	jPPC2UriM1sjLoAA==
+To: Richard Clark <richard.xnu.clark@gmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ torvalds@linux-foundation.org, richard.xnu.clark@gmail.com
+Subject: Re: [PATCH] irq: fix the interrupt trigger type override issue
+In-Reply-To: <ZtUuYXSq8g2Mphuq@den-build>
+References: <ZtUuYXSq8g2Mphuq@den-build>
+Date: Mon, 02 Sep 2024 09:34:20 +0200
+Message-ID: <87r0a27blv.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240827122422.985547-2-s-vadapalli@ti.com>
+Content-Type: text/plain
 
-On Tue, Aug 27, 2024 at 05:54:21PM +0530, Siddharth Vadapalli wrote:
-> Commit da87d35a6e51 ("PCI: dra7xx: Use threaded IRQ handler for
-> "dra7xx-pcie-main" IRQ") switched from devm_request_irq() to
-> devm_request_threaded_irq() for the "dra7xx-pcie-main" interrupt.
-> Since the primary handler was set to NULL, the "IRQF_ONESHOT" flag
-> should have also been set. Fix this.
-> 
-> Fixes: da87d35a6e51 ("PCI: dra7xx: Use threaded IRQ handler for "dra7xx-pcie-main" IRQ")
-> Cc: <stable@vger.kernel.org>
-> Reported-by: Udit Kumar <u-kumar1@ti.com>
-> Suggested-by: Vignesh Raghavendra <vigneshr@ti.com>
-> Signed-off-by: Siddharth Vadapalli <s-vadapalli@ti.com>
+Richard!
 
-Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+On Mon, Sep 02 2024 at 11:17, Richard Clark wrote:
 
-- Mani
+The subsystem prefix is 'irqdomain' not 'irq'
 
-> ---
->  drivers/pci/controller/dwc/pci-dra7xx.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/pci/controller/dwc/pci-dra7xx.c b/drivers/pci/controller/dwc/pci-dra7xx.c
-> index 4fe3b0cb72ec..20fb50741f3d 100644
-> --- a/drivers/pci/controller/dwc/pci-dra7xx.c
-> +++ b/drivers/pci/controller/dwc/pci-dra7xx.c
-> @@ -850,7 +850,8 @@ static int dra7xx_pcie_probe(struct platform_device *pdev)
->  	dra7xx->mode = mode;
->  
->  	ret = devm_request_threaded_irq(dev, irq, NULL, dra7xx_pcie_irq_handler,
-> -			       IRQF_SHARED, "dra7xx-pcie-main", dra7xx);
-> +					IRQF_SHARED | IRQF_ONESHOT,
-> +					"dra7xx-pcie-main", dra7xx);
->  	if (ret) {
->  		dev_err(dev, "failed to request irq\n");
->  		goto err_gpio;
-> -- 
-> 2.40.1
-> 
+# git log --online $FILE
 
--- 
-மணிவண்ணன் சதாசிவம்
+gives you a decent hint.
+
+> In current implementation, the trigger type in 'flags' when calling request_irq
+> will override the type value get from the firmware(dt/acpi node) if they are
+> not consistent, and the overrided trigger type value will be retained by irq_data,
+> consequently the type value get from the firmware will not match the retained one
+> next time in case the virq is available.
+>
+> Thus below error message will be observed by the __2nd__ 'insmod' within the
+> 'insmod - rmmod - insmod' operation sequence for the same device driver kernel
+> module, in which request_irq(..., IRQ_TYPE_LEVEL_HIGH, ...) is used:
+>
+> 	irq: type mismatch, failed to map hwirq-182 for interrupt-controller!
+
+How so?
+
+1) insmod()
+     irq_create_fwspec_mapping(fwspec)
+       irq_domain_translate(fwspec, ... &type); <- Sets type to the FW value
+     
+       virq = irq_find_mapping(domain, hwirq);
+       if (virq) {
+         // Path not taken
+       }
+
+       // Map interrupt
+       ...
+       
+       irqd_set_trigger_type(..., type);
+
+2) rmmod()
+     tears down mapping
+
+3) insmod()
+
+      Should be exactly the same as #1 because the previous mapping was
+      torn down by rmmod()
+
+Even if the first mapping is not torn down by rmmod(), which is a bug in
+itself, then the type is exactly the same as the firmware describes it, no?
+
+So how exactly does that happen what you describe?
+
+> The corresponding 'interrupts' property of that device node is:
+> 	interrupts = <0 150 1>;
+>
+> This commit fixes the above issue by adding a new checker -
+> irqd_trigger_type_was_set:
+
+This commit is equaly redundant as 'This patch'
+
+# git grep 'This patch' Documentation/process/
+
+Also 'new checker' is not really a technical term.
+
+Thanks,
+
+        tglx
 
