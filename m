@@ -1,103 +1,164 @@
-Return-Path: <linux-kernel+bounces-311270-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311271-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1A699686F1
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 14:04:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A02679686F9
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 14:04:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 89508285606
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 12:04:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 55DAB1F23ACB
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 12:04:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CDCA1DAC51;
-	Mon,  2 Sep 2024 12:04:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="JDkJHJrz"
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33185200108;
+	Mon,  2 Sep 2024 12:04:50 +0000 (UTC)
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0625E142651
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 12:04:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2320142651;
+	Mon,  2 Sep 2024 12:04:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725278654; cv=none; b=rJHeNrBP188ko0GaAor+NjtqnJ29LBAVbjGHTLDy3dninUzdcJYnrf1EVkV1KslrjlZedDJQVLUB8X4BBZghP5R24SBPMla+x5UbfvqbDU8ZpXJFeOnYVahsb6+L3qM+5KGOA9tjBh/KW3NBjMu7A+APRioxgWv7QdeGHveWXEA=
+	t=1725278689; cv=none; b=VJHPIw+CL7hknvk8ian/x42QgGLbeXmkLAnPHoKIg1GHN53GPtp6UGCnWmM94K5ZH1Vqff7Pe9EPJsLwYMm4Bk6FIpfTJPoMmEG9v3oOIqwtpOAmw9XQLUh6oymhFdt5y4SpBss6pDzQR73l4GYWLt/yOnnv0RWOhI5yarhJ8pA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725278654; c=relaxed/simple;
-	bh=aJwqbTQI9DGIgXVMitmiF8X8rBG4gd6JRzjG03U7FHk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lrw2uR2kDPllfqPsAGNJ/AdG2VvnwPWcbI+uVwiqJQcAgig8IweWSoqMsU5J9BlLaFOHNn+pIkDFLvj3YYfkXEjL+nXQCV7ko5TROF7xtYMdQPPbcKzN3fiM2ze3Xggx8fnANPfCldMKhopHHZIyUrw+hGFKt5/DRGMXZxY6pZA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=JDkJHJrz; arc=none smtp.client-ip=209.85.167.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-533496017f8so5524058e87.0
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2024 05:04:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1725278651; x=1725883451; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RfeUtZ6B5pDlVbEaBzbzexWcTj0QriXatTBO8FS0nAo=;
-        b=JDkJHJrzrkq1UzrEB3HQsWtgiWg8xFwm8kJ8FqjwOcHWZP9yD+cmTdF181qeCUZwmG
-         fPNyvHfoe1hJnNc1sPN2vhAmPtKJD9nk932onKmSsDcx/5UR/L3HOuK27KHBD7bjcnUR
-         G+UFPU135oEmrRS71ULCgYnd1xrXuXysu4eRgXbkN4KL8Q3r4qSoJOgrlJuhmTJm7FTv
-         b7g7UyROMF+BDqqNEwAgNWpyRLRT8c6qw/Z48l14aZd3wF7kldx/tOFboS89GCXZq8/L
-         zPIZvY02NwlbruOYtEtqkwk8f0/6XlugOzEyFSfRUCtluE+5vA1fCuN+tH8Wr6SIZFOx
-         4hwg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725278651; x=1725883451;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=RfeUtZ6B5pDlVbEaBzbzexWcTj0QriXatTBO8FS0nAo=;
-        b=BIUdWXIL7gljWEVzDd5iDeR+Vfi52Ku9eQ5StUPZvXZ8WbbXKvBpn82xAu1AY5ASg4
-         PeyBBijnkDIwVPwxnazU6piLRxLNS05+16zPx5D8VviOO+RO0nGncsWj7mBuDLvHiZnr
-         KHO/u+wPHkLoxeU36NV67JsrFVkMdUOV3KNiBv2k7rzHLAEFHIyk5dbSFOaIuTQMxwCT
-         T7yp0mVmuSyYIEd3JbNAa0G6lil9jVQ4DCLyIBKZJs4hXRrPzpVqli33S7Q6MI8oSqsd
-         PlTxcZk7AmtfbOdcRgYTYgubaVHzdt9lrv/j5sfnL4lJU88AERYp9eihzlhC6H2eGvVR
-         XKDA==
-X-Forwarded-Encrypted: i=1; AJvYcCWygDSHqij/Mbdw1quyV/anMbjmJ/WAW+OXTvYxQdASDSjnl6tHspsc5TMjG/wDBxr3L+JITHsck2q6z6E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzoL+6GZFKlAMlgvjcw0OOGxzRJZDZtuogpbJQ/rlHA6PPT2XDx
-	IRIz8XRPHj3RFBmQ9NHO1QrBqxqmzrRfugJcDXPBdQ9Z9Hl7f5P1P1bT91MVggE6UpXHrW4+qkY
-	7uXnrb1jNQrYL9K4W2PAHFhHzI9iovdy1qYG5dw==
-X-Google-Smtp-Source: AGHT+IGIZuTye8K4bzrJnnZAxLQdrPoKxySbuZgdViXBdZYXFrvBs/1ZBZ+OqX+qellnTsLL0xbkk/J6FCD02n0ANbM=
-X-Received: by 2002:ac2:4c41:0:b0:533:4191:fa47 with SMTP id
- 2adb3069b0e04-53546b69167mr5994649e87.47.1725278650402; Mon, 02 Sep 2024
- 05:04:10 -0700 (PDT)
+	s=arc-20240116; t=1725278689; c=relaxed/simple;
+	bh=6QJA22qLgaef3fSOvlKvx8xuZHLDNXZ+/mQjcDCzEMY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=uVjXy6nOQxcaUrxvHUcnkLWCzaqARXY9ZtuljvhgKcNga/7glXGp7pvwclw3oXdM0+hywG3PN8Dh0ZB2psvjm98z29LK3x/XsKHmCDTy8Q8CdonaNIq3XUFFgajoci5k2p3NN9QX8VWEYfzvBMmtTDCCUgGPf7rrq3X2yLMhBos=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4Wy6rF4LfZz9sSN;
+	Mon,  2 Sep 2024 14:04:45 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id yk9NbO304bBT; Mon,  2 Sep 2024 14:04:45 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4Wy6rF35r3z9sS7;
+	Mon,  2 Sep 2024 14:04:45 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 5422D8B76D;
+	Mon,  2 Sep 2024 14:04:45 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id 52TK7Nj36tHo; Mon,  2 Sep 2024 14:04:45 +0200 (CEST)
+Received: from PO20335.idsi0.si.c-s.fr (unknown [192.168.234.167])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 524D28B763;
+	Mon,  2 Sep 2024 14:04:44 +0200 (CEST)
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+To: Andrew Morton <akpm@linux-foundation.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Naveen N Rao <naveen@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	Shuah Khan <shuah@kernel.org>,
+	"Jason A . Donenfeld" <Jason@zx2c4.com>
+Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
+	linux-kernel@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org,
+	linux-kselftest@vger.kernel.org,
+	llvm@lists.linux.dev,
+	linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org,
+	linux-trace-kernel@vger.kernel.org,
+	Adhemerval Zanella <adhemerval.zanella@linaro.org>,
+	Xi Ruoyao <xry111@xry111.site>
+Subject: [PATCH v4 0/5] Wire up getrandom() vDSO implementation on powerpc
+Date: Mon,  2 Sep 2024 14:04:37 +0200
+Message-ID: <cover.1725278148.git.christophe.leroy@csgroup.eu>
+X-Mailer: git-send-email 2.44.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240826161850.74447-1-krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20240826161850.74447-1-krzysztof.kozlowski@linaro.org>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Mon, 2 Sep 2024 14:03:59 +0200
-Message-ID: <CAMRc=McgbL5DCu2mr6oWERMQMFQU1Bm-1BkC+XR=-2fPXpOW4A@mail.gmail.com>
-Subject: Re: [PATCH] gpio: kerneldoc fixes for excess members
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Andy Shevchenko <andy@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, 
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1725278679; l=3360; i=christophe.leroy@csgroup.eu; s=20211009; h=from:subject:message-id; bh=6QJA22qLgaef3fSOvlKvx8xuZHLDNXZ+/mQjcDCzEMY=; b=rkRd0PJANyDxoARin8UZaDw85VDVM67JUNJRPKtg/l5osHwVfNdLo2rqVgI+mMAut8vXZ2bwB KXoGERc0HRoCjQSpBMuxuW9ZLqlOAtlY/8R4T+eTO3MO/rpoaIMyeN7
+X-Developer-Key: i=christophe.leroy@csgroup.eu; a=ed25519; pk=HIzTzUj91asvincQGOFx6+ZF5AoUuP9GdOtQChs7Mm0=
+Content-Transfer-Encoding: 8bit
 
-On Mon, Aug 26, 2024 at 6:18=E2=80=AFPM Krzysztof Kozlowski
-<krzysztof.kozlowski@linaro.org> wrote:
->
-> Drop kerneldoc descriptions of struct members which do not exist to fix
-> W=3D1 warnings:
->
->   drivers/gpio/gpio-pch.c:101: warning: Excess struct member 'lock' descr=
-iption in 'pch_gpio'
->   drivers/gpio/gpio-syscon.c:46: warning: Excess struct member 'compatibl=
-e' description in 'syscon_gpio_data'
->
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> ---
+This series wires up getrandom() vDSO implementation on powerpc.
 
-I have a different patch in my queue that addresses the syscon warning
-already. Can you resend just the pch part?
+Tested on PPC32 on real hardware.
+Tested on PPC64 (both BE and LE) on QEMU:
 
-Bart
+Performance on powerpc 885:
+	~# ./vdso_test_getrandom bench-single
+	   vdso: 25000000 times in 62.938002291 seconds
+	   libc: 25000000 times in 535.581916866 seconds
+	syscall: 25000000 times in 531.525042806 seconds
+
+Performance on powerpc 8321:
+	~# ./vdso_test_getrandom bench-single
+	   vdso: 25000000 times in 16.899318858 seconds
+	   libc: 25000000 times in 131.050596522 seconds
+	syscall: 25000000 times in 129.794790389 seconds
+
+Performance on QEMU pseries:
+	~ # ./vdso_test_getrandom bench-single
+	   vdso: 25000000 times in 4.977777162 seconds
+	   libc: 25000000 times in 75.516749981 seconds
+	syscall: 25000000 times in 86.842242014 seconds
+
+Changes in v4:
+- Rebased on recent random git tree (963233ff0133) (The new tree includes selftests fixes)
+- Read/write counter in native byte order
+- Don't use anymore compat macros to write output
+- Fixed selftests build failure with patch 4 (without patch 5) on little endian on PPC64
+- Implement a __kernel_getrandom() stub returning ENOSYS on ppc64 in patch 4 (without patch 5) to make selftests happy.
+
+Changes in v3:
+- Rebased on recent random git tree (0c7e00e22c21)
+- Fixed build failures reported by robots around VM_DROPPABLE
+- Fixed crash on PPC64 due to clobbered r13 by not using r13 anymore (saving it was not enough for signals).
+- Split final patch in two, first for PPC32, second for PPC64
+- Moved selftest fixes out of this series
+
+Changes in v2:
+- Define VM_DROPPABLE for powerpc/32
+- Fixes generic vDSO getrandom headers to enable CONFIG_COMPAT build.
+- Fixed size of generation counter
+- Fixed selftests to work on non x86 architectures
+
+Christophe Leroy (5):
+  mm: Define VM_DROPPABLE for powerpc/32
+  powerpc/vdso32: Add crtsavres
+  powerpc/vdso: Refactor CFLAGS for CVDSO build
+  powerpc/vdso: Wire up getrandom() vDSO implementation on PPC32
+  powerpc/vdso: Wire up getrandom() vDSO implementation on PPC64
+
+ arch/powerpc/Kconfig                         |   1 +
+ arch/powerpc/include/asm/mman.h              |   2 +-
+ arch/powerpc/include/asm/vdso/getrandom.h    |  54 ++++
+ arch/powerpc/include/asm/vdso/vsyscall.h     |   6 +
+ arch/powerpc/include/asm/vdso_datapage.h     |   2 +
+ arch/powerpc/kernel/asm-offsets.c            |   1 +
+ arch/powerpc/kernel/vdso/Makefile            |  57 ++--
+ arch/powerpc/kernel/vdso/getrandom.S         |  58 ++++
+ arch/powerpc/kernel/vdso/gettimeofday.S      |  13 -
+ arch/powerpc/kernel/vdso/vdso32.lds.S        |   1 +
+ arch/powerpc/kernel/vdso/vdso64.lds.S        |   1 +
+ arch/powerpc/kernel/vdso/vgetrandom-chacha.S | 320 +++++++++++++++++++
+ arch/powerpc/kernel/vdso/vgetrandom.c        |  14 +
+ fs/proc/task_mmu.c                           |   4 +-
+ include/linux/mm.h                           |   4 +-
+ include/trace/events/mmflags.h               |   4 +-
+ tools/testing/selftests/vDSO/Makefile        |   2 +-
+ 17 files changed, 501 insertions(+), 43 deletions(-)
+ create mode 100644 arch/powerpc/include/asm/vdso/getrandom.h
+ create mode 100644 arch/powerpc/kernel/vdso/getrandom.S
+ create mode 100644 arch/powerpc/kernel/vdso/vgetrandom-chacha.S
+ create mode 100644 arch/powerpc/kernel/vdso/vgetrandom.c
+
+-- 
+2.44.0
+
 
