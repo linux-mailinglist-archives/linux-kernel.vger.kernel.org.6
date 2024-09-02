@@ -1,222 +1,144 @@
-Return-Path: <linux-kernel+bounces-311846-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311847-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF633968E83
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 21:44:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1AC0D968E8A
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 21:47:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7BF901F22A3E
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 19:44:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B827E1F2299C
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 19:46:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BBD01C62BB;
-	Mon,  2 Sep 2024 19:43:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED4511A3AB0;
+	Mon,  2 Sep 2024 19:46:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XPuH37Eh"
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PBAP/dxI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 353C31A3A8D;
-	Mon,  2 Sep 2024 19:43:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56A1D13AA3E;
+	Mon,  2 Sep 2024 19:46:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725306232; cv=none; b=U+Nfh9FNO3AbsXBajxdKDZYzE5rYt3TmP65Llh046sTyyEsOLGtIiq3TbjsCDL0zm9F/40a6m0H5+ZdspWcyjbEad2q9+I0GWiKZ6ULFcAUx2t8aesshha+klmWXtXDzYbKpMfR4YXYwgeaHR+mCy60p4qa+ddZmkDGflJOWzMA=
+	t=1725306412; cv=none; b=jitRJSfBLtcLdRgg2QLR6+8kesSDKKat0//gO4/ez0+Zwo/mnrB04DVHfUyqxx7wLCF0e2bAkRtYHhFkZ27CuKGychtdr8Hhmb6nRoASTxLoOfta/cqk8iNvJu5M9BufpPunsKQGRlhG0qj+CHXzbuAfdW7JSoi/bxohwDNx3eQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725306232; c=relaxed/simple;
-	bh=WmaQEMd3JE9ZTkRCyNerdZexPn2Yb8jAQcwyAeVm24g=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=koFckrijXMk58RCdg65FAqOpHtnEIHfz1J9W0aQ1vnKhvQZdZKNRgQxWTRQU/P6Om9hfvSZ0mozSafVyVzwArObfq9Rm8jVeNeFY8DC7jKv+iQM0TBhUtSgMtA+D1A8Mm7RordbZ3JYfN6fnsCeBLkvJiweS5agIis+Bxu8/iOg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XPuH37Eh; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5c25dd38824so506445a12.0;
-        Mon, 02 Sep 2024 12:43:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725306229; x=1725911029; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=PAcVm81xwjNlpuXjiQxC/gQknWTt88XBwjwjsmfyxGE=;
-        b=XPuH37EhbkQ6Z0ZEQnaVxg299omvVeUla0R3iy4z8T+3Tzg5zz+teiUxd7ReBzUkre
-         hnh2u22Ibcf9wY3DXifgs3VnmEXi/c/bOtlZ6kI8GEYa8mUSLwbFpHppQB6ewsPKVHj9
-         P8zXSHLtSP/1oJKnRh/PVoX+eRWHa/1EjyOagB0MHmszcxesOYXrN9SVAAxbi06jcWw4
-         4aDpaYIRpetXTelVm1Rf88RxWwblsi9LFZz/t06pmul4ROLWqrH+13LpgrnAPpyWOpmK
-         9MXQVLah3+6O5JRngEh1Nw0gPlyJbbD6nF0Hklo+4LEs4z9qHcfZwzTlHDRFv7bx6Dx/
-         pnRg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725306229; x=1725911029;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=PAcVm81xwjNlpuXjiQxC/gQknWTt88XBwjwjsmfyxGE=;
-        b=Gru7eStqINH2Fl5X1K9WlgXgiBpa/Vqww07xzgSNc944VMPDuqwOAF1mZxdBWetNZj
-         f3HBocLg9ykvAoS/+1lwIsBY1FdmbjyXp6faibH/PMNoh1NbgQ2DV6B07UHwUPMSgVGV
-         8XtFxGxRDkBnkflJbvkcoPouT1LCLle18UzSIiCfaytlDSXUEGHDxK97ws6PQFM53Dsn
-         DszgArNUgHcAlc3QdwFWKPWuXUOZsBre0TkxMXuhdSnWdayPNEWdXanU98lHAReGg6+u
-         AQD08vwjn12zWHXpHMVKAeeZXycYgduCO9IEw1NqegHW9ZrIAWMuIpcBjNyfc2Hz77m3
-         j+6Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUnA/zDFfZuv5tHYjIuyA6it/WLhK9CFvm2n70wU9JU8pXneFkgm/rd50o7NFo4OBn/ND3nUMLrHz5Q43E=@vger.kernel.org, AJvYcCX+wpA7rwbwksDki2NGDPfB89FWPZjeUZt0ffDJ5Xj+LiDp7mFyfGH7Ygrk8NBDf5BqS8yp4F4SEEXvyyc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxl6AIe3QKjlbQsCZIMPDODSRTpAGUf3lYdueXqISqTqJPwT7Ua
-	wtN90zVg5Qo4Lg5gYF22MtHoKmL4jI7UOnew4YcSsExVsfC74F6plTD8V7JczAbMntSXx+TOat+
-	sEe3rIvg3aJQAyLOFtMeDJo5jsP4=
-X-Google-Smtp-Source: AGHT+IEaHkDNCvjAQuSZ8l8bPEDxb20m9nLYGFlUiHesvjoFSC2+ib5Sn1iQENQ9fWh8ry89wR1LdxyQj2UMjkSyOuI=
-X-Received: by 2002:a05:6402:35ce:b0:5bf:7dc:bb8d with SMTP id
- 4fb4d7f45d1cf-5c22f8a199bmr11796155a12.13.1725306229093; Mon, 02 Sep 2024
- 12:43:49 -0700 (PDT)
+	s=arc-20240116; t=1725306412; c=relaxed/simple;
+	bh=vdkiPzrYmE5RUCC9GcrISY44Jm6tRQ85m3k0DgjEVqM=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=pw+Prsyfl9cfzp4olWU65xBd/6stgO8ZOtVfuZR2S72sJTtF/RaKVi0xTIOFarqdwH1dyGBjltDUFfMJTFQdxDJmKauWTf6WTmVxBRka21Q746tADWnqnH4/66eoOQ2iIJr4DYJlVKsTrkgPqLEH+GN3IYi+fkVjh0mk5GLFkME=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PBAP/dxI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D7D8C4CEC2;
+	Mon,  2 Sep 2024 19:46:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725306411;
+	bh=vdkiPzrYmE5RUCC9GcrISY44Jm6tRQ85m3k0DgjEVqM=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=PBAP/dxI/1mlNP11Qd9ptptG7K6TLp+p6QjLpf8Z0EbHWeJGspD1/hFfyy1tE696C
+	 NnSgSqLwJhfRkPkSdfh5vur6cxH3M/j5y6dSSMRQGfTz1c9NaZM7m+UxXF3H9p/HAz
+	 ifDBg++zhUJVBCHJynZUt0wYMkOeUSn0pdMz8OoULBFZPoyl2ye7erNOBR4bVy4yLJ
+	 hWMaW6tCjkdMPgWdJz7K/2Aa8BUaT/pEzwqXyNsa60+2U54BpGio4j8WdDTT9EjfvI
+	 N1myy2FSDRlhLro3IMYXCiJrsbCaei9DbyFY8heZFbdKeUYQNuocdejpGJwWDo3Irf
+	 IskSg0j3RnoKA==
+Date: Mon, 2 Sep 2024 14:46:49 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Jim Quinlan <james.quinlan@broadcom.com>
+Cc: linux-pci@vger.kernel.org, Nicolas Saenz Julienne <nsaenz@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+	Cyril Brulebois <kibi@debian.org>,
+	Stanimir Varbanov <svarbanov@suse.de>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	bcm-kernel-feedback-list@broadcom.com, jim2101024@gmail.com,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Rob Herring <robh@kernel.org>,
+	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-rpi-kernel@lists.infradead.org>,
+	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v6 07/13] PCI: brcmstb: PCI: brcmstb: Make HARD_DEBUG,
+ INTR2_CPU_BASE offsets SoC-specific
+Message-ID: <20240902194649.GA224705@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240902-imx290-avail-v3-0-b32a12799fed@skidata.com>
- <20240902-imx290-avail-v3-2-b32a12799fed@skidata.com> <CAPY8ntCj=u4ZQJwjhvZF30x08Cf0h7R5yQTim7QCKd8bi_M08w@mail.gmail.com>
-In-Reply-To: <CAPY8ntCj=u4ZQJwjhvZF30x08Cf0h7R5yQTim7QCKd8bi_M08w@mail.gmail.com>
-From: Benjamin Bara <bbara93@gmail.com>
-Date: Mon, 2 Sep 2024 21:43:36 +0200
-Message-ID: <CAJpcXm5cLjvqkuCB25strgYaUo4p058yLAXg8+LZ_7T12+3-ug@mail.gmail.com>
-Subject: Re: [PATCH v3 2/7] media: i2c: imx290: Define absolute control ranges
-To: Dave Stevenson <dave.stevenson@raspberrypi.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, 
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
-	Sakari Ailus <sakari.ailus@linux.intel.com>, Hans de Goede <hdegoede@redhat.com>, 
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
-	Alexander Stein <alexander.stein@ew.tq-group.com>, linux-media@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Benjamin Bara <benjamin.bara@skidata.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240815225731.40276-8-james.quinlan@broadcom.com>
 
-Hi Dave!
+On Thu, Aug 15, 2024 at 06:57:20PM -0400, Jim Quinlan wrote:
+> Do prepatory work for the 7712 SoC, which is introduced in a future commit.
+> Our HW design has changed two register offsets for the 7712, where
+> previously it was a common value for all Broadcom SOCs with PCIe cores.
+> Specifically, the two offsets are to the registers HARD_DEBUG and
+> INTR2_CPU_BASE.
 
-On Mon, 2 Sept 2024 at 20:00, Dave Stevenson
-<dave.stevenson@raspberrypi.com> wrote:
-> On Mon, 2 Sept 2024 at 16:58, <bbara93@gmail.com> wrote:
-> >
-> > From: Benjamin Bara <benjamin.bara@skidata.com>
-> >
-> > For now, the driver activates the first mode (1080p) as current active
-> > mode in probe(). This e.g. means that one cannot set VBLANK below 45
-> > (vmax_min - height), although theoretically the minimum is 30 (720p
-> > mode). Define the absolute possible/supported ranges to have them
-> > available later.
->
-> Currently the driver will set the ranges for VBLANK and HBLANK
-> whenever the mode changes.
->
-> How is it helpful to fake these numbers? Seeing as they aren't
-> reflecting anything useful, they may as well all be 0.
->
-> > Signed-off-by: Benjamin Bara <benjamin.bara@skidata.com>
-> > ---
-> > Changes since v2:
-> > - new
-> > ---
-> >  drivers/media/i2c/imx290.c | 36 ++++++++++++++++++++++++++++++++----
-> >  1 file changed, 32 insertions(+), 4 deletions(-)
-> >
-> > diff --git a/drivers/media/i2c/imx290.c b/drivers/media/i2c/imx290.c
-> > index 1c97f9650eb4..466492bab600 100644
-> > --- a/drivers/media/i2c/imx290.c
-> > +++ b/drivers/media/i2c/imx290.c
-> > @@ -499,6 +499,10 @@ static const struct imx290_clk_cfg imx290_720p_clock_config[] = {
-> >  };
-> >
-> >  /* Mode configs */
-> > +#define WIDTH_720P     1280
-> > +#define HEIGHT_720P    720
-> > +#define MINIMUM_WIDTH  WIDTH_720P
-> > +#define MINIMUM_HEIGHT HEIGHT_720P
-> >  static const struct imx290_mode imx290_modes_2lanes[] = {
-> >         {
-> >                 .width = 1920,
-> > @@ -512,8 +516,8 @@ static const struct imx290_mode imx290_modes_2lanes[] = {
-> >                 .clk_cfg = imx290_1080p_clock_config,
-> >         },
-> >         {
-> > -               .width = 1280,
-> > -               .height = 720,
-> > +               .width = WIDTH_720P,
-> > +               .height = HEIGHT_720P,
-> >                 .hmax_min = 3300,
-> >                 .vmax_min = 750,
-> >                 .link_freq_index = FREQ_INDEX_720P,
-> > @@ -537,8 +541,8 @@ static const struct imx290_mode imx290_modes_4lanes[] = {
-> >                 .clk_cfg = imx290_1080p_clock_config,
-> >         },
-> >         {
-> > -               .width = 1280,
-> > -               .height = 720,
-> > +               .width = WIDTH_720P,
-> > +               .height = HEIGHT_720P,
-> >                 .hmax_min = 3300,
-> >                 .vmax_min = 750,
-> >                 .link_freq_index = FREQ_INDEX_720P,
-> > @@ -846,6 +850,30 @@ static const char * const imx290_test_pattern_menu[] = {
-> >         "000/555h Toggle Pattern",
-> >  };
-> >
-> > +/* absolute supported control ranges */
-> > +#define HBLANK_MAX     (IMX290_HMAX_MAX - MINIMUM_WIDTH)
-> > +#define VBLANK_MAX     (IMX290_VMAX_MAX - MINIMUM_HEIGHT)
-> > +static unsigned int imx290_get_blank_min(const struct imx290 *imx290, bool v)
-> > +{
->
-> This function is never used in this patch. I'm surprised the compiler
-> doesn't throw an error on a static function not being used.
-> You first use it in patch 4 "Introduce initial "off" mode & link freq"
->
-> > +       const struct imx290_mode *modes = imx290_modes_ptr(imx290);
-> > +       unsigned int min = UINT_MAX;
-> > +       int i;
-> > +
-> > +       for (i = 0; i < imx290_modes_num(imx290); i++) {
-> > +               unsigned int tmp;
-> > +
-> > +               if (v)
-> > +                       tmp = modes[i].hmax_min - modes[i].width;
->
-> if (v)
->    return h
->
-> With the complete series my sensor comes up with controls defined as
-> vertical_blanking 0x009e0901 (int)    : min=280 max=261423 step=1
-> default=280 value=280
-> horizontal_blanking 0x009e0902 (int)    : min=30 max=64255 step=1
-> default=30 value=30
->
-> Set the mode to 1080p and I get
-> vertical_blanking 0x009e0901 (int)    : min=45 max=261063 step=1
-> default=45 value=1169
-> horizontal_blanking 0x009e0902 (int)    : min=280 max=63615 step=1
-> default=280 value=280
+> @@ -1499,12 +1502,16 @@ static const int pcie_offsets[] = {
+>  	[RGR1_SW_INIT_1] = 0x9210,
+>  	[EXT_CFG_INDEX]  = 0x9000,
+>  	[EXT_CFG_DATA]   = 0x9004,
+> +	[PCIE_HARD_DEBUG] = 0x4204,
+> +	[PCIE_INTR2_CPU_BASE] = 0x4300,
+>  };
+>  
+>  static const int pcie_offsets_bmips_7425[] = {
+>  	[RGR1_SW_INIT_1] = 0x8010,
+>  	[EXT_CFG_INDEX]  = 0x8300,
+>  	[EXT_CFG_DATA]   = 0x8304,
+> +	[PCIE_HARD_DEBUG] = 0x4204,
+> +	[PCIE_INTR2_CPU_BASE] = 0x4300,
+>  };
+>  
+>  static const struct pcie_cfg_data generic_cfg = {
+> @@ -1539,6 +1546,8 @@ static const int pcie_offset_bcm7278[] = {
+>  	[RGR1_SW_INIT_1] = 0xc010,
+>  	[EXT_CFG_INDEX] = 0x9000,
+>  	[EXT_CFG_DATA] = 0x9004,
+> +	[PCIE_HARD_DEBUG] = 0x4204,
+> +	[PCIE_INTR2_CPU_BASE] = 0x4300,
+>  };
 
-The idea here is to have VBLANK=30 available in the initial "after
-probe" state of the sensor. VBLANK=30 is a valid value for 720p mode,
-but it cannot be set after probe, because the driver (not the user)
-decided that 1080 mode is active. The idea is to relax the ranges while
-the mode is not set. Once the mode is known, the values are tightened
-to the real mode-dependent values.
+What's the organization scheme here?  We now have:
 
-Kind regards
-Benjamin
+  static const int pcie_offsets[] = { ... };
+  static const int pcie_offsets_bmips_7425[] = { ... };
+  static const int pcie_offset_bcm7712[] = { ... };
 
->   Dave
->
-> > +               else
-> > +                       tmp = modes[i].vmax_min - modes[i].height;
-> > +
-> > +               if (tmp < min)
-> > +                       min = tmp;
-> > +       }
-> > +
-> > +       return min;
-> > +}
-> > +
-> >  static void imx290_ctrl_update(struct imx290 *imx290,
-> >                                const struct imx290_mode *mode)
-> >  {
-> >
-> > --
-> > 2.46.0
-> >
-> >
+  static const struct pcie_cfg_data generic_cfg = { ... };
+  static const struct pcie_cfg_data bcm7425_cfg = { ... };
+  static const struct pcie_cfg_data bcm7435_cfg = { ... };
+  static const struct pcie_cfg_data bcm4908_cfg = { ... };
+
+  static const int pcie_offset_bcm7278[] = { ... };
+
+  static const struct pcie_cfg_data bcm7278_cfg = { ... };
+  static const struct pcie_cfg_data bcm2711_cfg = { ... };
+  static const struct pcie_cfg_data bcm7216_cfg = { ... };
+  static const struct pcie_cfg_data bcm7712_cfg = { ... };
+
+So we have pcie_offsets_bmips_7425[] and pcie_offset_bcm7712[] (with
+gratuituously different "offset" vs "offsets") which are all together
+before the pcie_cfg_data.
+
+Then we have pcie_offset_bcm7278[] (again gratuitously different
+"offset") separately, next to bcm7278_cfg.
+
+It would be nice to pick one scheme and stick to it.
+
+Also a seemingly random order of the pcie_cfg_data structs and
+.compatible strings.
+
+Also a little confusing to have "bmips_7425" and "bcm7425" associated
+with the same chip.  I suppose there's historical reason for it, but I
+don't think it's helpful in this usage.
+
+>  static const struct pcie_cfg_data bcm7278_cfg = {
+> -- 
+> 2.17.1
+> 
 
