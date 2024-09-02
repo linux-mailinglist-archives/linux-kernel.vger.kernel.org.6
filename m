@@ -1,251 +1,119 @@
-Return-Path: <linux-kernel+bounces-311328-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311329-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC84B968796
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 14:35:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3366968797
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 14:35:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3BC32B21EDE
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 12:35:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 307131C21883
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 12:35:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F362819C548;
-	Mon,  2 Sep 2024 12:35:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD033185B6B;
+	Mon,  2 Sep 2024 12:35:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="GvCPvbhW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="LAt6zT9U"
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D5CF1547D2;
-	Mon,  2 Sep 2024 12:34:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77F50184523
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 12:35:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725280500; cv=none; b=Ta6Gl3bdliOeHeug/u8f9NJTkIyue1IF5zfGhtW6+8gt8MyWlDRrTCFMRC7dhR14t4ND1zwIy/kk08PbW/0SnO7e+FxpODv/aExcI7zbPXY6u+CMmvu7h0vaHfTavvcBtX+ee0+MtYSmC3YNutHjGmUF/OebGTRnDs3fGEDNzjc=
+	t=1725280512; cv=none; b=HlfwpOBtpSvS1UqNC56b1we8p28zP/qDtGXY4piomENEFCa2UszDzofUwXwaLuzwhyb2/Kv34LQW5/UGQ+TgMUOnyg3nXTT6B+x8G7Tak9jxZGBaSHYbvJ/l+7rm8vX9loqHHupYclsbmOfXdBqBqTPIjKF7WD6p6/4FIkPNFlE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725280500; c=relaxed/simple;
-	bh=SpaQhol4jKQT3OZEyvYFwyTWnRWt14Va6wLPDT2DG/I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sN/YMql7PcWXlfc1YBqbvMnfS9ZxPw35UXPlxSGC4wO/Cv5E370Hep3tALtPjpVLLVvm/ocyEyBbdY+gp/xMDwT4tAASG13CvuJA9Q+/oyorN9ugqxe8tPnieX4tbcfL/MPjzraffx5J/D9+KttVryOyvvuDIzIffxUjpfggaG4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=GvCPvbhW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 839DDC4CEC2;
-	Mon,  2 Sep 2024 12:34:57 +0000 (UTC)
-Authentication-Results: smtp.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="GvCPvbhW"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
-	t=1725280495;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=882s/0oxY3IaUveWmEXQ9Cl4UCSpcI/yfMpsZGvZIqQ=;
-	b=GvCPvbhW2m2jYoAxPU1wvqvYj9FboQLHWShrj+s+adjZAJT3TuHPHxTV7jxhkLBDOaMexZ
-	lgOnLbMwcrBalkcwK2Us5lCoS0HPCfmqmBrkvHWRXH4kgn5eiovHjf2iVAYU/SglD3w6gQ
-	EdxGyEKCEpN2M6xkxzv9bOZ82o4t/fw=
-Received: 
-	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 6aea6560 (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
-	Mon, 2 Sep 2024 12:34:54 +0000 (UTC)
-Date: Mon, 2 Sep 2024 14:34:49 +0200
-From: "Jason A. Donenfeld" <Jason@zx2c4.com>
-To: Christophe Leroy <christophe.leroy@csgroup.eu>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Naveen N Rao <naveen@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>,
-	Shuah Khan <shuah@kernel.org>, linux-kernel@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org, linux-kselftest@vger.kernel.org,
-	llvm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org, linux-trace-kernel@vger.kernel.org,
-	Adhemerval Zanella <adhemerval.zanella@linaro.org>,
-	Xi Ruoyao <xry111@xry111.site>
-Subject: Re: [PATCH v4 4/5] powerpc/vdso: Wire up getrandom() vDSO
- implementation on PPC32
-Message-ID: <ZtWw6Wuudqj4IYWL@zx2c4.com>
-References: <cover.1725278148.git.christophe.leroy@csgroup.eu>
- <ec4d2919836a9f3a7791c2540ee79067396d701b.1725278148.git.christophe.leroy@csgroup.eu>
+	s=arc-20240116; t=1725280512; c=relaxed/simple;
+	bh=5ePKlOnV1wWn86HVHXuHwt4L9SKwu7vupgGNA7ENl08=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Ol892/bE+2hrcYk971YQn8wICDupCc3LDM7RkOoRS/3wuXCwO1oLknqvHKwHb16u2Hh2u3URMylWkB/0/tZnSjuAxcv8l6ERo0Tx9/Y+m2Pedg7ZeFrg8CiRkr6Xa0SW8poFijPO50Gov1USjkqZKxxgqn4+RrN7ko9ZdVGBBeU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=LAt6zT9U; arc=none smtp.client-ip=209.85.167.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-53436e04447so4348863e87.1
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2024 05:35:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1725280508; x=1725885308; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Pw1aJAOXrixR6TUTNnns/dVDr/oIQjUDJUJrPgQykCQ=;
+        b=LAt6zT9UqqmKV/18BvWq6c1m08xB9eTrOPOc8xSGHkAvrL3hD6Z01BkJHG9ODoDumN
+         H4Fgq6VwU15AmtQkQcX/1y571An14DgaR+Pm33qFNNAToGsvzQAGHyQbP1QwoXL3cFNt
+         +vYFGnfj36lSj+tzLyjAL9HOCl1gkerhz9AZS5RbGuTgvehQGhscaNQ4Z6UotwxFD6xl
+         VRtnDf7d1eCSYY8q3jSVrNGMLnNCCZM6UIsN6SRF6kfp6j+5WPdxzlLipLZutxV6GRqG
+         sIjLHYZ2uox7AHxr0wvB4xPwW/5VYA/gi3oxIeTxeonjkhLoGfcLKJlN3BFdlXTVdoX2
+         Hd2A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725280508; x=1725885308;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Pw1aJAOXrixR6TUTNnns/dVDr/oIQjUDJUJrPgQykCQ=;
+        b=rIIc2GDLgOi9x+H1+pyuKPs4mmUWATX01FhZ3nLEQ2VDn2cYg7jvWqVZPGBV5ShZA6
+         E8HcjyDVKVJjhDekbfbzk5ezjyBKKPySpWZsNnxWoxfgR//J7TCZp6zhGb+6Rlgl9tmW
+         aeXKrFkfqeGwLjJhW0f11P7Jz886PHwAdDP9lSgsv8aBrh9+h3IT4ESURGt8euFtIwkq
+         +Lz8kPC4+cv3Vmsv4KzljFKLfSwr57uKD/St2QcSx1CEhaHixaHGV1GZoBrcQ3AwR/V5
+         44hQfxwcqJQ4Q+OxKLmAvaXgTzU6ZYKs4D2hMjypTatlgriqINFNb+GiO21WOLGQ7xfG
+         XH9w==
+X-Forwarded-Encrypted: i=1; AJvYcCXZFoLIU3uSzE/DNIdYZl5vSQo5/2c4Q9+yyKt+7deQtg/LlfjeLtPsrflP8HVpD5CBosdkXjPvZoGepkA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxpp7j0TpE10Iu207SxrCmqzmyYgIcjdXTb3n31rqSz7vpcJUl5
+	b9T+eXgHm1a7NBsqdmAG5Zoqbfe/kI1AGVBjoB8th0irZwjjRBnX3ta7fBJlws9kcZAHtMdiWbh
+	z1vzsQ1TM3anmfiJRekPPopv78UNoXKLh85QA3A==
+X-Google-Smtp-Source: AGHT+IFR8ir3pzwR1vG03zebP3b957HnmOuJCMw+Yhq7P3ScciiovNTTo3H2/+/m/x2OGk+vk1tFadnUcofYIkrYpok=
+X-Received: by 2002:a05:6512:2812:b0:52b:bee8:e987 with SMTP id
+ 2adb3069b0e04-535462ee2cemr3730497e87.3.1725280506817; Mon, 02 Sep 2024
+ 05:35:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <ec4d2919836a9f3a7791c2540ee79067396d701b.1725278148.git.christophe.leroy@csgroup.eu>
+References: <20240826161850.74447-1-krzysztof.kozlowski@linaro.org>
+ <CAMRc=McgbL5DCu2mr6oWERMQMFQU1Bm-1BkC+XR=-2fPXpOW4A@mail.gmail.com> <b67efbc8-ff21-486b-9961-498eae0f85bf@linaro.org>
+In-Reply-To: <b67efbc8-ff21-486b-9961-498eae0f85bf@linaro.org>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Mon, 2 Sep 2024 14:34:55 +0200
+Message-ID: <CAMRc=MfnyapSZUWRfTFbfmD-b5YotmWLFzdxG_W=s=bdLULgGA@mail.gmail.com>
+Subject: Re: [PATCH] gpio: kerneldoc fixes for excess members
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Andy Shevchenko <andy@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, 
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Sep 02, 2024 at 02:04:41PM +0200, Christophe Leroy wrote:
-> This first patch adds support for PPC32. As selftests cannot easily
-> be generated only for PPC32, and because the following patch brings
-> support for PPC64 anyway, this patch opts out all code in
-> __arch_chacha20_blocks_nostack() so that vdso_test_chacha will not
-> fail to compile and will not crash on PPC64/PPC64LE, allthough the
-> selftest itself will fail. This patch also adds a dummy
-> __kernel_getrandom() function that returns ENOSYS on PPC64 so that
-> vdso_test_getrandom returns KSFT_SKIP instead of KSFT_FAIL.
+On Mon, Sep 2, 2024 at 2:10=E2=80=AFPM Krzysztof Kozlowski
+<krzysztof.kozlowski@linaro.org> wrote:
+>
+> On 02/09/2024 14:03, Bartosz Golaszewski wrote:
+> > On Mon, Aug 26, 2024 at 6:18=E2=80=AFPM Krzysztof Kozlowski
+> > <krzysztof.kozlowski@linaro.org> wrote:
+> >>
+> >> Drop kerneldoc descriptions of struct members which do not exist to fi=
+x
+> >> W=3D1 warnings:
+> >>
+> >>   drivers/gpio/gpio-pch.c:101: warning: Excess struct member 'lock' de=
+scription in 'pch_gpio'
+> >>   drivers/gpio/gpio-syscon.c:46: warning: Excess struct member 'compat=
+ible' description in 'syscon_gpio_data'
+> >>
+> >> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> >> ---
+> >
+> > I have a different patch in my queue that addresses the syscon warning
+> > already. Can you resend just the pch part?
+>
+> Heh, you just picked up something which was sent week after mine. :/
+>
+> Best regards,
+> Krzysztof
+>
 
-Why not just wire up the selftests in the next patch like you did for
-v3? This seems like extra stuff for no huge reason?
+Sorry, I got back from vacation and was just going through the inbox
+in no particular order. If you really insist, I can back the other one
+out but I'd prefer to not rebase if I don't have to.
 
->  arch/powerpc/Kconfig                         |   1 +
->  arch/powerpc/include/asm/vdso/getrandom.h    |  54 +++++
->  arch/powerpc/include/asm/vdso/vsyscall.h     |   6 +
->  arch/powerpc/include/asm/vdso_datapage.h     |   2 +
->  arch/powerpc/kernel/asm-offsets.c            |   1 +
->  arch/powerpc/kernel/vdso/Makefile            |  13 +-
->  arch/powerpc/kernel/vdso/getrandom.S         |  58 ++++++
->  arch/powerpc/kernel/vdso/vdso32.lds.S        |   1 +
->  arch/powerpc/kernel/vdso/vdso64.lds.S        |   1 +
->  arch/powerpc/kernel/vdso/vgetrandom-chacha.S | 207 +++++++++++++++++++
->  arch/powerpc/kernel/vdso/vgetrandom.c        |  16 ++
->  tools/testing/selftests/vDSO/Makefile        |   2 +-
->  12 files changed, 359 insertions(+), 3 deletions(-)
->  create mode 100644 arch/powerpc/include/asm/vdso/getrandom.h
->  create mode 100644 arch/powerpc/kernel/vdso/getrandom.S
->  create mode 100644 arch/powerpc/kernel/vdso/vgetrandom-chacha.S
->  create mode 100644 arch/powerpc/kernel/vdso/vgetrandom.c
-
-I think you might have forgotten to add the symlink in this commit (or
-the next one, per my comment above, if you agree with it).
-
-> +/*
-> + * Very basic 32 bits implementation of ChaCha20. Produces a given positive number
-> + * of blocks of output with a nonce of 0, taking an input key and 8-byte
-> + * counter. Importantly does not spill to the stack. Its arguments are:
-> + *
-> + *	r3: output bytes
-> + *	r4: 32-byte key input
-> + *	r5: 8-byte counter input/output (saved on stack)
-> + *	r6: number of 64-byte blocks to write to output
-> + *
-> + *	r0: counter of blocks (initialised with r6)
-> + *	r4: Value '4' after key has been read.
-> + *	r5-r12: key
-> + *	r14-r15: counter
-> + *	r16-r31: state
-> + */
-> +SYM_FUNC_START(__arch_chacha20_blocks_nostack)
-> +#ifdef __powerpc64__
-> +	blr
-> +#else
-> +	stwu	r1, -96(r1)
-> +	stw	r5, 20(r1)
-> +	stmw	r14, 24(r1)
-> +
-> +	lwz	r14, 0(r5)
-> +	lwz	r15, 4(r5)
-> +	mr	r0, r6
-> +	subi	r3, r3, 4
-> +
-> +	lwz	r5, 0(r4)
-> +	lwz	r6, 4(r4)
-> +	lwz	r7, 8(r4)
-> +	lwz	r8, 12(r4)
-> +	lwz	r9, 16(r4)
-> +	lwz	r10, 20(r4)
-> +	lwz	r11, 24(r4)
-> +	lwz	r12, 28(r4)
-
-If you don't want to do this, don't worry about it, but while I'm
-commenting on things, I think it's worth noting that x86, loongarch, and
-arm64 implementations all use the preprocessor or macros to give names
-to these registers -- state1,2,3,...copy1,2,3 and so forth. Might be
-worth doing the same if you think there's an easy and obvious way of
-doing it. If not -- or if that kind of work abhors you -- don't worry
-about it, as I'm confident enough that this code works fine. But it
-might be "nice to have". Up to you.
-
-> +
-> +	li	r4, 4
-> +.Lblock:
-> +	li	r31, 10
-> +
-
-Maybe a comment here, "expand 32-byte k" or similar.
-
-> +	lis	r16, 0x6170
-> +	lis	r17, 0x3320
-> +	lis	r18, 0x7962
-> +	lis	r19, 0x6b20
-> +	addi	r16, r16, 0x7865
-> +	addi	r17, r17, 0x646e
-> +	addi	r18, r18, 0x2d32
-> +	addi	r19, r19, 0x6574
-> +
-> +	mtctr	r31
-> +
-> +	mr	r20, r5
-> +	mr	r21, r6
-> +	mr	r22, r7
-> +	mr	r23, r8
-> +	mr	r24, r9
-> +	mr	r25, r10
-> +	mr	r26, r11
-> +	mr	r27, r12
-> +
-> +	mr	r28, r14
-> +	mr	r29, r15
-> +	li	r30, 0
-> +	li	r31, 0
-> +
-> +.Lpermute:
-> +	QUARTERROUND4( 0, 4, 8,12, 1, 5, 9,13, 2, 6,10,14, 3, 7,11,15)
-> +	QUARTERROUND4( 0, 5,10,15, 1, 6,11,12, 2, 7, 8,13, 3, 4, 9,14)
-> +
-> +	bdnz	.Lpermute
-> +
-> +	addis	r16, r16, 0x6170
-> +	addis	r17, r17, 0x3320
-> +	addis	r18, r18, 0x7962
-> +	addis	r19, r19, 0x6b20
-> +	addi	r16, r16, 0x7865
-> +	addi	r17, r17, 0x646e
-> +	addi	r18, r18, 0x2d32
-> +	addi	r19, r19, 0x6574
-> +
-> +	add	r20, r20, r5
-> +	add	r21, r21, r6
-> +	add	r22, r22, r7
-> +	add	r23, r23, r8
-> +	add	r24, r24, r9
-> +	add	r25, r25, r10
-> +	add	r26, r26, r11
-> +	add	r27, r27, r12
-> +
-> +	add	r28, r28, r14
-> +	add	r29, r29, r15
-> +
-> +	stwbrx	r16, r4, r3
-> +	addi	r3, r3, 8
-> +	stwbrx	r17, 0, r3
-> +	stwbrx	r18, r4, r3
-> +	addi	r3, r3, 8
-> +	stwbrx	r19, 0, r3
-> +	stwbrx	r20, r4, r3
-> +	addi	r3, r3, 8
-> +	stwbrx	r21, 0, r3
-> +	stwbrx	r22, r4, r3
-> +	addi	r3, r3, 8
-> +	stwbrx	r23, 0, r3
-> +	stwbrx	r24, r4, r3
-> +	addi	r3, r3, 8
-> +	stwbrx	r25, 0, r3
-> +	stwbrx	r26, r4, r3
-> +	addi	r3, r3, 8
-> +	stwbrx	r27, 0, r3
-> +	stwbrx	r28, r4, r3
-> +	addi	r3, r3, 8
-> +	stwbrx	r29, 0, r3
-> +	stwbrx	r30, r4, r3
-> +	addi	r3, r3, 8
-> +	stwbrx	r31, 0, r3
-> +
-> +	subic.	r0, r0, 1	/* subi. can't use r0 as source */
-
-Never seen the period suffix. Just looked this up. Neat.
+Bart
 
