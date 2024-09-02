@@ -1,37 +1,38 @@
-Return-Path: <linux-kernel+bounces-311458-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311454-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CF22968984
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 16:10:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE73A968980
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 16:10:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D7D21C223F9
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 14:10:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7AA2C281A03
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 14:09:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8FE8210186;
-	Mon,  2 Sep 2024 14:09:48 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C610D2139AC;
+	Mon,  2 Sep 2024 14:09:47 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 829022101B9
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 14:09:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D62412139A1
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 14:09:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725286188; cv=none; b=Sa8+ARIzJ/Mg/ULE44/Az63H9vom+5MUefQlyJyhAD2sqzEjtr4jTw+QOnB0j70lKdcqred66aSMZefy5WZ+yKdIefAGCIeEf9H0xX84yQbGvIoH4IA55HOyT0zFbwo22rTRzh1ZvvKHWU9q0hf3NP347PRiJtJSVwL6H2Ecxp4=
+	t=1725286187; cv=none; b=jVd6KOkDXTAJQt7K8w4wWQWQwVCnCHzogKFFKF/Apv+rTrdUIXf8Km33IZvrXZdCVviotVOYYO4Ec4paOGq7iniqfQL0MSeLuh+gLG6kDI8SfFdc+GxQ7EFFB+hG6r376N2DdwN7vul8JhFNWaU/dJ2REAoSJrfKS1e3Ix7YAkQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725286188; c=relaxed/simple;
-	bh=ywJR/hW8fn3tAmq6sJYige11GgWOf7pc16QAJcigBB0=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Grah2ya2MeTnx3+U1PQTK0LbXNnzIpqvML8rBpOZveEpYOo7e7pj8Tmos2JJO97zeepe8ygd50IvkoXYogmSSNycrUHhFye1+XvH/puygehnuUQfJNXh90/gUAOnOxlKHjtNMF6sGMDxJwypL70Xa2Ere63DLB1B3+WQbWXwGkY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+	s=arc-20240116; t=1725286187; c=relaxed/simple;
+	bh=lMwmFHmCi+nOQxA0agkXT33ljy87fXmy942ayPk0K9o=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=lNml+1hsmeZNzoSaWaSjIQwT3kdm0W2JSEY/erHjSYBVAbXSFb6ihEvl+BaQnO4mMLKDz9Snc4EhaufXsmxkNy4QXEnLteOUd/oiKnnomts+rCjAulELDRoEsBTZr7priYaP+AZZzl1S2H2yNglAdIYCXThiOa4ZZIkXJfWtM3U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.44])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4Wy9Vk2Y4mz20nKB;
-	Mon,  2 Sep 2024 22:04:46 +0800 (CST)
+Received: from mail.maildlp.com (unknown [172.19.88.105])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4Wy9Yz3FtvzgYqx;
+	Mon,  2 Sep 2024 22:07:35 +0800 (CST)
 Received: from dggpemf100006.china.huawei.com (unknown [7.185.36.228])
-	by mail.maildlp.com (Postfix) with ESMTPS id 642A31400D4;
+	by mail.maildlp.com (Postfix) with ESMTPS id C9F7A1400D1;
 	Mon,  2 Sep 2024 22:09:41 +0800 (CST)
 Received: from thunder-town.china.huawei.com (10.174.178.55) by
  dggpemf100006.china.huawei.com (7.185.36.228) with Microsoft SMTP Server
@@ -41,10 +42,12 @@ From: Zhen Lei <thunder.leizhen@huawei.com>
 To: Andrew Morton <akpm@linux-foundation.org>, Thomas Gleixner
 	<tglx@linutronix.de>, <linux-kernel@vger.kernel.org>
 CC: Zhen Lei <thunder.leizhen@huawei.com>
-Subject: [PATCH 0/5] debugobjects: Do some minor optimizations, fixes and cleaups
-Date: Mon, 2 Sep 2024 22:05:27 +0800
-Message-ID: <20240902140532.2028-1-thunder.leizhen@huawei.com>
+Subject: [PATCH 1/5] debugobjects: Fix the misuse of global variables in fill_pool()
+Date: Mon, 2 Sep 2024 22:05:28 +0800
+Message-ID: <20240902140532.2028-2-thunder.leizhen@huawei.com>
 X-Mailer: git-send-email 2.37.3.windows.1
+In-Reply-To: <20240902140532.2028-1-thunder.leizhen@huawei.com>
+References: <20240902140532.2028-1-thunder.leizhen@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,30 +59,39 @@ Content-Type: text/plain
 X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
  dggpemf100006.china.huawei.com (7.185.36.228)
 
-The summary changes of the first two patches is as follows:
- if (likely(READ_ONCE(obj_pool_free) >= debug_objects_pool_min_level))
-	return;
+The global variable 'obj_pool_min_free' records the lowest historical
+value of the number of nodes in the global list 'obj_pool', instead of
+being used as the lowest threshold value. This may be a mistake and
+should be replaced with variable 'debug_objects_pool_min_level'.
 
-- while (READ_ONCE(obj_nr_tofree) && (READ_ONCE(obj_pool_free) < obj_pool_min_free)) {
-+ if (READ_ONCE(obj_nr_tofree)) {
-	raw_spin_lock_irqsave(&pool_lock, flags);
--	while (obj_nr_tofree && (obj_pool_free < obj_pool_min_free)) {
-+	while (obj_nr_tofree && (obj_pool_free < debug_objects_pool_min_level)) {
-		... ...
-	}
-	raw_spin_unlock_irqrestore(&pool_lock, flags);
+Fixes: d26bf5056fc0 ("debugobjects: Reduce number of pool_lock acquisitions in fill_pool()")
+Fixes: 36c4ead6f6df ("debugobjects: Add global free list and the counter")
+Signed-off-by: Zhen Lei <thunder.leizhen@huawei.com>
+---
+ lib/debugobjects.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-
-Zhen Lei (5):
-  debugobjects: Fix the misuse of global variables in fill_pool()
-  debugobjects: Remove redundant checks in fill_pool()
-  debugobjects: Don't start fill if there are remaining nodes locally
-  debugobjects: Use hlist_splice_init() to reduce lock conflicts
-  debugobjects: Delete a piece of redundant code
-
- lib/debugobjects.c | 32 ++++++++++++++++++--------------
- 1 file changed, 18 insertions(+), 14 deletions(-)
-
+diff --git a/lib/debugobjects.c b/lib/debugobjects.c
+index 7cea91e193a8f04..1ea8af72849cdb1 100644
+--- a/lib/debugobjects.c
++++ b/lib/debugobjects.c
+@@ -142,13 +142,14 @@ static void fill_pool(void)
+ 	 * READ_ONCE()s pair with the WRITE_ONCE()s in pool_lock critical
+ 	 * sections.
+ 	 */
+-	while (READ_ONCE(obj_nr_tofree) && (READ_ONCE(obj_pool_free) < obj_pool_min_free)) {
++	while (READ_ONCE(obj_nr_tofree) &&
++	       READ_ONCE(obj_pool_free) < debug_objects_pool_min_level) {
+ 		raw_spin_lock_irqsave(&pool_lock, flags);
+ 		/*
+ 		 * Recheck with the lock held as the worker thread might have
+ 		 * won the race and freed the global free list already.
+ 		 */
+-		while (obj_nr_tofree && (obj_pool_free < obj_pool_min_free)) {
++		while (obj_nr_tofree && (obj_pool_free < debug_objects_pool_min_level)) {
+ 			obj = hlist_entry(obj_to_free.first, typeof(*obj), node);
+ 			hlist_del(&obj->node);
+ 			WRITE_ONCE(obj_nr_tofree, obj_nr_tofree - 1);
 -- 
 2.34.1
 
