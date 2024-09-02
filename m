@@ -1,100 +1,154 @@
-Return-Path: <linux-kernel+bounces-311620-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311622-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38B10968B44
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 17:46:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B600968B48
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 17:47:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E8027283C8C
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 15:46:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 76417B22A54
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 15:47:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40AB81A263C;
-	Mon,  2 Sep 2024 15:46:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="rPhc5llT";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="RP5rxC2g"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD1571A2653;
+	Mon,  2 Sep 2024 15:47:15 +0000 (UTC)
+Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EF9419F11B
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 15:45:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D54F013D8AC;
+	Mon,  2 Sep 2024 15:47:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725291961; cv=none; b=sUIYui32dz0Z59X2WupwpLVb9kYpDdDGT1stmllADF7rNielBFfOsRhF3gc/mXwGf1JgMMAXBszFwVR0oM5gkh0AhoIjnTnHfvA5qsyf4qISppTaElsTQlidBaa0A/8Or7VSaAsdO65pVHxackc3r3R5kXZXcYx/Puxyzu9KcZk=
+	t=1725292035; cv=none; b=hua3UAvIvj1FvdFY7hPYNYlRP5a2SAWt7FWH3JSYz9jLjd2yH2PdpX4yOLZtGmvADhneQ4tacweeEeCiwwoHzwN8pF/loi/GiLE59I8TfC4Hrz5UtSVg6KAvhUaOyhSDGc4QFERclUkAKcrd2ineu59OKc2T/zni+3Njw62nBgA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725291961; c=relaxed/simple;
-	bh=FQblTQ4fDywVmDq3pnMIepWR9RpKypd4WZtzFZ2r/ng=;
-	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:MIME-Version:
-	 Content-Type; b=Qaj/C7pd8ZsbyGru8sv/XhTSSCUdNpHFrhsrdt2uQIz/UHrkOLQd2YMP9moDWB049GBf1OlF2G3bpFfY/QLhy72iEJ3HlKw2dKV2wKnyovgB9CHQXYBivNh3C866Bar0KJZ0R3qsUJ83ZvSaSfgmvksQM6pzVSALtcjrFs5Dmrs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=rPhc5llT; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=RP5rxC2g; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1725291957;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to; bh=kev1oRGrYa+W+VWnc037PvIT4DkU6+C0Y0Ro9XAucIw=;
-	b=rPhc5llTmyjbbHF2n8p24XEtat+8mO4HQ6wlGL+QFKFquvfFAwW6yG6XZ4Wbqf7p7lIahS
-	mB4IT5yAbHo/jOp5qrOePlLP5Enk+sgHNceZ/uQzgGhTrXXH0SbtHHMiN8nSLhI7rjFTpT
-	YhxJPeyxUA0mfd/sCO/qV6qcl4T39VujufV9HHxzNUtAVoqywgrm88NYZiXH2CA1QFbRbC
-	JKQJ70KR8dwL2esy++pNlm39dg8EG7zWDbqLgjK0WgD3SIrEV4/IBFnRcxWdB5NgFvNOZf
-	PoAZ0OWoj0dDr8ozGD3PFoZ5B110SeQ6EGmidSzBQ8AkK/P0wTnIil7PhZOVzw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1725291957;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to; bh=kev1oRGrYa+W+VWnc037PvIT4DkU6+C0Y0Ro9XAucIw=;
-	b=RP5rxC2gUqfAQPCUOPD664Nvh2+MlVkw1IxAuk6CMohsx+7jic549RntAmONzJ4S6cQC9m
-	YLdN3OBPXF2kElCw==
-To: John Stultz <jstultz@google.com>, LKML <linux-kernel@vger.kernel.org>
-Cc: John Stultz <jstultz@google.com>, Stephen Boyd <sboyd@kernel.org>,
- Anna-Maria Behnsen <anna-maria@linutronix.de>, Frederic Weisbecker
- <frederic@kernel.org>
-Subject: Re: [PATCH] time: Rename CLOCK_SET_* as BASEMASK_*_CLOCK_SET
-In-Reply-To: <20240815200325.2474604-1-jstultz@google.com>
-Date: Mon, 02 Sep 2024 17:45:57 +0200
-Message-ID: <87plpm5aa2.ffs@tglx>
+	s=arc-20240116; t=1725292035; c=relaxed/simple;
+	bh=ZBuD0L2VOnX/fg4NpUBZgbIYocdesxoP4ZpyXqoCcCg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=te9DRVB6yBbUNfNV1vOz89r1TaMqHQTsOS2rSRALBciw99a1PXr5gDK5uQNxRv4YDoiuwmsMsUe/V6ODDdx3NKFHGf9bCJMuotWzc0tWjX3fV2av3NNG+NEal1+i3BmrYjbDWvhDMuQMogeS+o2ghmF7J7kAgamlSfVCk23flfc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
+Date: Mon, 2 Sep 2024 15:47:02 +0000
+From: Yixun Lan <dlan@gentoo.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Conor Dooley <conor@kernel.org>,
+	Yangyu Chen <cyy@cyyself.name>, Jesse Taube <jesse@rivosinc.com>,
+	Jisheng Zhang <jszhang@kernel.org>,
+	Inochi Amaoto <inochiama@outlook.com>,
+	Icenowy Zheng <uwu@icenowy.me>,
+	Meng Zhang <zhangmeng.kevin@spacemit.com>,
+	Meng Zhang <kevin.z.m@hotmail.com>, devicetree@vger.kernel.org,
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org
+Subject: Re: [PATCH v3 2/4] pinctrl: spacemit: add support for SpacemiT K1 SoC
+Message-ID: <20240902154702-GYA840562@gentoo>
+References: <20240828-02-k1-pinctrl-v3-0-1fed6a22be98@gentoo.org>
+ <20240828-02-k1-pinctrl-v3-2-1fed6a22be98@gentoo.org>
+ <CACRpkdZLdbKr41yXg6ETM6ANCD+Rbd_tnz0hQ0NyU9oRXR+PnA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CACRpkdZLdbKr41yXg6ETM6ANCD+Rbd_tnz0hQ0NyU9oRXR+PnA@mail.gmail.com>
 
-On Thu, Aug 15 2024 at 13:03, John Stultz wrote:
-> In commit 5916be8a53de ("timekeeping: Fix bogus clock_was_set()
-> invocation in do_adjtimex()"), Thomas fixed a bug where instead
-> of passing one of the CLOCK_SET_* values to clock_was_set(),a
-> conceptually related clockid (CLOCK_REALTIME) was incorrectly
-> passed.
->
-> Just to make this type of accident less likely, lets rename the
+Hi Linus:
 
-s/lets//
+On 09:57 Mon 02 Sep     , Linus Walleij wrote:
+> Hi Yixun,
+> 
+> thanks for your patch! Overall the driver looks very good, it's using the
+> right helpers and abstractions etc.
+> 
+> There is this thing that needs some elaboration:
+> 
+> On Wed, Aug 28, 2024 at 1:31 PM Yixun Lan <dlan@gentoo.org> wrote:
+> 
+> > +/* pin offset */
+> > +#define PINID(x)       ((x) + 1)
+> > +
+> > +#define GPIO_INVAL  0
+> > +#define GPIO_00     PINID(0)
+> > +#define GPIO_01     PINID(1)
+> (...)
+> 
+> So GPIO 00 has pin ID 1 actually etc.
+> 
+yes, in current version
 
-> base masks used by clock_was_set() to something that doesn't
-> resemble a clockid.
->
-> Thus:
-> CLOCK_SET_WALL -> BASEMASK_WALL_CLOCK_SET
-> CLOCK_SET_BOOT -> BASEMASK_BOOT_CLOCK_SET
+> But why?
+> 
+good question!
 
-I don't think that's the actual problem. What's the confusing part is
-the function name itself clock_was_set().
+from hw perspective, the GPIO_00 pinctrl register start at offset 0x4,
+see chap 3.3.1 of "Pin Information" section at [1]
 
-Renaming that to at the same time to something unambiguous would be
-helpful.
+and in this version of patch, we are extracting pinid from register offset,
+using the algorithem pinid = (offset >> 2). this idea was something I
+borrowed from vendor's driver, and now you remind me this might be wrong..
 
-hrtimer_refresh_bases() or something like that should be descriptive
-enough.
+> If there is no datasheet or other conflicting documentation, just
+> begin numbering the GPIOs at 1 instead of 0 to match the
+> hardware:
+> 
+> #define GPIO_01 1
+> #define GPIO_02 2
+> 
 
-Thanks,
+as current patch version, there will be some non-linear mapping, such as
+#define GPIO_98 93
+#define GPIO_99 92
+..
+#define GPIO_110 116
+...
 
-        tglx
+I think we could fix this by introducing a pinid_to_register_offset() function,
+which should drop the pinid = (offset >> 2) mapping, but instead, doing in the
+reverse way, retrive register offset from pinid, so idealy we should get
+a linear mapping of GPIO to pinid, like
 
+#define GPIO_00 0
+#define GPIO_01 1
+..
+#define GPIO_127 127
 
+I will work this in next patch version.
+
+> and all is fine.
+> 
+> It's just very uninituitive for developers. I guess that there
+> is a reason, such as that the datasheet has stated that the pin
+> with pin ID 1 is GPIO 00, then this needs to be explained with
+> a comment in the code: "we are doing this because otherwise
+> the developers will see an offset of -1 between the number the
+> pin has in the datasheet and the number they put into the
+> device tree, while the hardware starts the numbering at 1, the
+> documentation starts the numbering at 0".
+> 
+see above, a potential solution to fix this
+
+> It is common that engineers from analog electronics background
+> start numbering things from 1 while any computer science
+> engineer start the numbering at 0. So this is what you get when
+> an analog engineer designs the electronics and a computer
+> science engineer writes that datasheet and decides to "fix"
+> the problem.
+> 
+true, things happens, sometimes there is gap in understanding between
+analog engineers and software developers..
+
+Link: https://developer.spacemit.com/documentation?token=An1vwTwKaigaXRkYfwmcznTXned [1]
+
+-- 
+Yixun Lan (dlan)
+Gentoo Linux Developer
+GPG Key ID AABEFD55
 
