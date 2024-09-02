@@ -1,129 +1,129 @@
-Return-Path: <linux-kernel+bounces-311777-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311778-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AEA6C968D84
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 20:33:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E326968D8D
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 20:36:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6860C283891
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 18:33:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 294631F243F2
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 18:36:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B8143B1AC;
-	Mon,  2 Sep 2024 18:32:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 159AC1A3027;
+	Mon,  2 Sep 2024 18:36:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Y4IeYJjb"
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QVjkwj07"
+Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com [209.85.128.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEAA819CC3A
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 18:32:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DE88149C50
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 18:36:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725301966; cv=none; b=ttLpBMXFE7ZxAyERTa9ZU/fSLiMdZYMjOYcNMYcGhokwlZ4qxL2a9YhAVJJ9WzuM85/tXxfTtKRlJ0Wu7l5Htng4jg7KkjCENh5mz8GBSiXsF0wTtxa+XqeQILwUgSuR3hCyt2fi8waZaQPznfCvHAqdedg+fT6rfw7OSswU0Vw=
+	t=1725302174; cv=none; b=EfKceJ0yiCEvEDkwG7G3xbKMRBkEnZOGPYZOMt9Y/4CUM3umTX+WmbmmitnsmC5GsaT5Fk3XVTXon0lzmMvK1SKu0EPv+wr/4lBM0zPQpnIl2fZA1DIy1LzFzXKqiXpvOZHxbAXBAwI/otHTIb3IO9I+5V+dsWcxcFb+7+wUrJQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725301966; c=relaxed/simple;
-	bh=2bhsdKcMRpmC7lcu20iYO4nQImhTbdGjiKkJUnNLMrE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bb+jtVMKdKp7gaHD0/doRfk//Ce0O8zPrWl2rLMuox4CbqrAyXSRCNK14fQeSztdGnGIJqbqS3Upi8yhK/SkGm+5LrSlU0JRyp9HM9FO9WGGuipVpqPaySPDNhVruPa5x8wwIQMJIeEHyMf576S2x+pNIUtqAkwBrGdrBADx6UA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Y4IeYJjb; arc=none smtp.client-ip=209.85.208.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2f3f90295a9so50740601fa.0
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2024 11:32:44 -0700 (PDT)
+	s=arc-20240116; t=1725302174; c=relaxed/simple;
+	bh=+vGLb0NBivlHrGqyzlpN+7bAmaLuim5LpxbDnOVWUP8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VVDRbzUeL9ZhXqGCRyR1E5W9cZpmpS4AvBUCblc/MTCe7W/9jjr3a7LtiEuMWhS0HWqqbsqboCap4blN6Bk2sVfzs4ejINy6bqbieshLD7W6S6BB6k1KPb/ztPnjDcyNddQP4rOYJtwK+lsmAQXohkYeaKB5RKpN/vDOQ5+Ce6w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QVjkwj07; arc=none smtp.client-ip=209.85.128.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-68518bc1407so47468517b3.2
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2024 11:36:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1725301963; x=1725906763; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=XAmaK13K/WB/CMiEFbhMPPJZl/VZU34ltwhJvlIpIAU=;
-        b=Y4IeYJjbuHeMQ0FEBlIO/oYqGuMOqtbwhg7qHZs/Mhu4bp+JDajDk1qrWRFHd+d8Xk
-         5wz3+WKB7Rkn9i0dpkwbihzx7NZjG2kOYmwU3TnyqvxHZBQAiIpy9okCT/KEV1BuButP
-         dRXBnboakEp5AcQhT+O/VAK2fARmpSW4VchUfRlmsNeAXhtt/jTOP6t/EJ80CN3ilfrP
-         rjaUVz+gm6dTguoFc8kuZCu5HpoJV8rBhczJaMwD5K+oLQLlWD1ETLQaSua6xVPbJdNO
-         LSQ4VZ+jr/cAYj1eqc2QcJV4AKals+RCoK0E1v17JIIQfh57NvYD0CFKNcSUjbuIlqpj
-         o8RQ==
+        d=gmail.com; s=20230601; t=1725302172; x=1725906972; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=c6b1/h0FuC9amuMCH8KFFKz3TQuVjiCQzzcUoM8rgRE=;
+        b=QVjkwj07e0c2+osm6LutTA2j7S6jR0/KBTwA5z+UoRokFNMub8ZOhPspbjA4Cv5bfG
+         7p9iZ3iILZDLoq9g5K5oknzHRDKa0PniuPoD5qzDXHBJsw1PoHfzcKsa7H1nZ1MN9JVG
+         JEmOaNm2wUQ5uTkSM+SXGW/Qnp+PfrPtnPdJJbhWM6Z0CBpgmJKUkLGhtYKonyBWjY8k
+         9rOTtcbN/uQU6z1eMKrGIaHo2ImxEYZSwYXQLhIYQI8yZInnVg2zPlEuXCbwjM5+3Iyh
+         2/LoagmLSdQjMscG9w7mgLk+ZtU8dFh4RcE7Rq15V7ZmWQBXkdG92Q4+sIUDkTcvoVoq
+         HCwQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725301963; x=1725906763;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XAmaK13K/WB/CMiEFbhMPPJZl/VZU34ltwhJvlIpIAU=;
-        b=VJ1SvxZbqZpcU0BGTuFw3p1K3w8Sr1jn5KQ9egHo/Me+36pK1H55F9CF2yb9J0kCGR
-         664nV2F1MJUS+GHyTy6bLTGNzwmbrxI2QTqpiUECYmsgkLixSLyg5nGefkpWSQj4P1tu
-         I6ylmET0aeoRBpQn13L1oiA39QmiWMF4Wm0Yxdo7VfBD50YjLXKwohX5qs1ki1m+wAsk
-         5KsCVstfq4aW/owuoVv/GyIa6D8sBe2TY1Jw3hzbO7b48xJBw3vKvBDGH1JGJzPz5dP1
-         X147xSraMj4y/DtfaZmcBhLsA9DC5U23pm4AQaLLNCnZLpIJxzf05RWoWJvTLQyKlewP
-         AMNA==
-X-Forwarded-Encrypted: i=1; AJvYcCU+LjaWDc+23BrEHHf75qOXA3rk/s52k9DLD+gUlEgvRifRYlxdxbkl8Je7D6FsDfR1NWeuEUe3DdHzBkc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxRdYlJMyp0cTvDnp5yldgZTrvoFGw4/Dq6mvG64V8hj95DMLNY
-	GM/oSjPYqq37HBapk3kgIyKXpGvh0aT596GyTR3lvyaQPyW7LP3de4hDGlFI+4A=
-X-Google-Smtp-Source: AGHT+IFoxXqWCv/ngb9lgpMsTD9vhJJKzXGkPrdhSMLDmCQIQH9tyjM0XY+PSycHN7Ixop/BuNjPWw==
-X-Received: by 2002:a05:651c:1548:b0:2ef:2d3a:e70a with SMTP id 38308e7fff4ca-2f636a1372amr28845121fa.18.1725301962343;
-        Mon, 02 Sep 2024 11:32:42 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2f614f3396esm19546081fa.54.2024.09.02.11.32.41
+        d=1e100.net; s=20230601; t=1725302172; x=1725906972;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=c6b1/h0FuC9amuMCH8KFFKz3TQuVjiCQzzcUoM8rgRE=;
+        b=mEX26h04DwYNU0ITFshZ3BdMMvjZmvH8fknFwNtx6Ecb9ou+9vKKZWnqxCUtwai4SR
+         e9upWcV4loJx6rHYZ2c+xwNG1nU3uSuUrDfZaH9HpYJwkSA1eJDj6J51KDypbzZ29QW5
+         17RBKZG0iBU15bAcIl52VJxzS+3Ln2eRsrgynxJ+HYF6BZUnsGUwryCHbzIg9bWnmEIA
+         NFNciAM3Ll/cPo9MIdMLGiFYB8glKft9qNUl5YZt5gXX6rPNmfIjPI2FP2PHU0KLpV+M
+         dvBOI32sXTuTEbCUyqFGXIK8iybaD1azSEFkiKPt8MREyCnGL+iaVgSDAA/vU3ibBjGT
+         6Trw==
+X-Gm-Message-State: AOJu0YyZpRhr8VCMCDDUl9THbyXJZS012fhA2WL4QBkXfuvGQqo7hmOH
+	nppKv/ZZveXSsS7Tdy9a3NRuQuecDKrgxFXVsIHd/z7UCabqOLvhRd8HiUbt
+X-Google-Smtp-Source: AGHT+IHx/3wZs0gZigHGtsu0y0IHcC108ZGbzbxPPds1XQR8YzibuM/vucodvMrd+jUfX+bPH9pezA==
+X-Received: by 2002:a05:690c:dca:b0:631:78a1:baf with SMTP id 00721157ae682-6d40ee58397mr131926667b3.6.1725302172052;
+        Mon, 02 Sep 2024 11:36:12 -0700 (PDT)
+Received: from localhost (c-71-203-131-184.hsd1.fl.comcast.net. [71.203.131.184])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6d52b49ba97sm9751667b3.107.2024.09.02.11.36.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Sep 2024 11:32:41 -0700 (PDT)
-Date: Mon, 2 Sep 2024 21:32:39 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Krishna Chaitanya Chundru <quic_krichai@quicinc.com>
-Cc: Bjorn Helgaas <helgaas@kernel.org>, 
-	Lorenzo Pieralisi <lpieralisi@kernel.org>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>, 
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Konrad Dybcio <konrad.dybcio@linaro.org>, cros-qcom-dts-watchers@chromium.org, 
-	Bartosz Golaszewski <brgl@bgdev.pl>, Jingoo Han <jingoohan1@gmail.com>, 
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, andersson@kernel.org, quic_vbadigan@quicinc.com, 
-	linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: Re: [PATCH v2 7/8] PCI: qcom: Add support for host_stop_link() &
- host_start_link()
-Message-ID: <ar63lbc5nl6jujeadd4srfd2dacsjk7la5kzma24bi2cqb7awj@vfawrbnr7an4>
-References: <20240806191203.GA73014@bhelgaas>
- <9c37c36d-1091-5d5e-58d4-4a20bda65244@quicinc.com>
+        Mon, 02 Sep 2024 11:36:11 -0700 (PDT)
+From: Yury Norov <yury.norov@gmail.com>
+To: linux-kernel@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: Yury Norov <yury.norov@gmail.com>,
+	Chen Yu <yu.c.chen@intel.com>,
+	Leonardo Bras <leobras@redhat.com>,
+	Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>,
+	Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>
+Subject: [PATCH v3 0/3] sched/topology: optimize topology_span_sane()
+Date: Mon,  2 Sep 2024 11:36:04 -0700
+Message-ID: <20240902183609.1683756-1-yury.norov@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9c37c36d-1091-5d5e-58d4-4a20bda65244@quicinc.com>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Sep 02, 2024 at 12:21:22PM GMT, Krishna Chaitanya Chundru wrote:
-> 
-> 
-> On 8/7/2024 12:42 AM, Bjorn Helgaas wrote:
-> > On Sat, Aug 03, 2024 at 08:52:53AM +0530, Krishna chaitanya chundru wrote:
-> > > For the switches like QPS615 which needs to configure it before
-> > > the PCIe link is established.
-> > > 
-> > > if the link is not up assert the PERST# and disable LTSSM bit so
-> > > that PCIe controller will not participate in the link training
-> > > as part of host_stop_link().
-> > > 
-> > > De-assert the PERST# and enable LTSSM bit back in host_start_link().
-> > > 
-> > > Introduce ltssm_disable function op to stop the link training.
-> > 
-> > pcie-qcom.c is a driver for a PCIe host controller.  Apparently QPS615
-> > is a switch in a hierarchy that could be below any PCIe host
-> > controller, so I'm missing the connection with pcie-qcom.c.
-> > 
-> > Does this fix a problem that only occurs with pcie-qcom.c?  What
-> > happens if you put a QPS615 below some other controller?
-> > 
-> Hi Bjorn,
-> 
-> The qps615 is the qualcomm in-house PCIe switch it is not available to
-> others. so we are trying to add for qualcomm soc's only.
+The function may call cpumask_equal with tl->mask(cpu) == tl->mask(i),
+even when cpu != i. In such case, cpumask_equal() would always return
+true, and we can proceed to the next iteration immediately.
 
-Any guarantee that the status quo will stay so in future? Or that it
-won't appear on Qualcomm platform with the virtualized PCIe controller?
+Valentin Schneider shares on it:
+
+  PKG can potentially hit that condition, and so can any
+  sched_domain_mask_f that relies on the node masks...
+
+  I'm thinking ideally we should have checks in place to
+  ensure all node_to_cpumask_map[] masks are disjoint,
+  then we could entirely skip the levels that use these
+  masks in topology_span_sane(), but there's unfortunately
+  no nice way to flag them... Also there would be cases
+  where there's no real difference between PKG and NODE
+  other than NODE is still based on a per-cpu cpumask and
+  PKG isn't, so I don't see a nicer way to go about this.
+
+v1: https://lore.kernel.org/lkml/ZrJk00cmVaUIAr4G@yury-ThinkPad/T/
+v2: https://lkml.org/lkml/2024/8/7/1299
+v3:
+ - add topology_cpumask_equal() helper in #3;
+ - re-use 'cpu' as an iterator int the for_each_cpu() loop;
+ - add proper versioning for all patches.
+
+Yury Norov (3):
+  sched/topology: pre-compute topology_span_sane() loop params
+  sched/topology: optimize topology_span_sane()
+  sched/topology: reorganize topology_span_sane() checking order
+
+ kernel/sched/topology.c | 29 +++++++++++++++++++++++++----
+ 1 file changed, 25 insertions(+), 4 deletions(-)
 
 -- 
-With best wishes
-Dmitry
+2.43.0
+
 
