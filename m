@@ -1,83 +1,97 @@
-Return-Path: <linux-kernel+bounces-310453-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310454-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EEFC0967D42
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 03:20:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 09FBE967D44
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 03:20:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2462D1C2122C
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 01:20:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3B5221C21405
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 01:20:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14F66179AA;
-	Mon,  2 Sep 2024 01:20:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D947018622;
+	Mon,  2 Sep 2024 01:20:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="MbAYQRFd"
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="Uesik63H"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 532168460
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 01:20:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A511515E97;
+	Mon,  2 Sep 2024 01:20:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725240016; cv=none; b=k3rMze2uOHJG3nun0EDAyjVPMS4al/C/BRLGf4dHUmeVzKUYNO9oYaQElXWWdv43ZLoMhxf+OA1k4vn1rOzdkSJRe2E7YJFbrjZ5yqdC22dUGNHXzgc2JWVsIeFGEEXzXP1RizNoTklP15oF8/CFTJJZEy+NzC76wm5M69/fhIo=
+	t=1725240036; cv=none; b=d0VLHqVkBDddnY/FIqWHsXz82NacER/sZdyWqgaZZ2z0ssXtD6bRzbhaRXclI8CHyAF1LhmZegbmQnUDoW8NTH2A7KgNxaEDJSlIeL/VMUuMIBgQsqZS+b+pGN38XpfR2F4ojTZgHRNT+qlHamPsHRBhLgfZZ0cfV9TGo5ZcVAo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725240016; c=relaxed/simple;
-	bh=GqUXs4xVcUDFOljdnRBw1sWw73ZCq55GneuW1ZNi/bs=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=kchg9lKzLq0r29VUS4z7XF0VWVlWMZc5n+JRsYUdQ47I81BfEwhCHhFpi4bazeH2TH7a027FRlxqgHlEgiGBNGwi6BwH3cQS1OLfTrqjFMzzuuAQ48LwKXAUeJKw3HaCuO/lWSwgwxf3dQdyHwEAPoLCf0VLHmAT2EfVrnRutEM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=MbAYQRFd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9A175C4CEC3;
-	Mon,  2 Sep 2024 01:20:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1725240015;
-	bh=GqUXs4xVcUDFOljdnRBw1sWw73ZCq55GneuW1ZNi/bs=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=MbAYQRFdxGKZ3Lg72rs9hbSYMxBZ3hj1ULHRLJd1dlobkub7A14MzgApe/SX/ps1Y
-	 UEOJ/TPfWWWKWHUqm4KwTX871N0yR+GMzBFpRH4yIhcW29rh4FlSv342IvM76sslxN
-	 eFrJP83mS8UbKLQsf1FHijrUVDdqMoYKJ7hPcai4=
-Date: Sun, 1 Sep 2024 18:20:15 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Chris Li <chrisl@kernel.org>
-Cc: Kairui Song <kasong@tencent.com>, Hugh Dickins <hughd@google.com>, Ryan
- Roberts <ryan.roberts@arm.com>, "Huang, Ying" <ying.huang@intel.com>,
- Kalesh Singh <kaleshsingh@google.com>, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org, Barry Song <baohua@kernel.org>
-Subject: Re: [PATCH v5 0/9] mm: swap: mTHP swap allocator base on swap
- cluster order
-Message-Id: <20240901182015.854b470ca8ecf454bd42bf60@linux-foundation.org>
-In-Reply-To: <20240730-swap-allocator-v5-0-cb9c148b9297@kernel.org>
-References: <20240730-swap-allocator-v5-0-cb9c148b9297@kernel.org>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1725240036; c=relaxed/simple;
+	bh=uG/xXCVOKjY0KM5DAbPkcSmJlXYAF9BrMu1xiOZ8kwU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RLgbam05gUOBlc7N1nladIZ9Qpcg6KsJC+8k7RGtJ8Yjh7Ldnu4/gO5BEuEFtlLhu25LA+DhxSML4WgWZPcyk/eJfZDGRSYj1dwdSRcSmEi8ybOwtsYP/ClrfLvb4qK5crwJ7c3kAzsQN+4CU+ndqlq4WQNiTRdc21PNWpO5b10=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=Uesik63H; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 80D45C4CEC3;
+	Mon,  2 Sep 2024 01:20:35 +0000 (UTC)
+Authentication-Results: smtp.kernel.org;
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="Uesik63H"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
+	t=1725240034;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=o5l743c4I7GdnoeSRRi8sYZLmE7SZs2043vDOhLDuRU=;
+	b=Uesik63HTiOhqO5Sn7oJWQ5z50ypFw7kd7XIqDXPU6rIv7aF77u4glqc1IOD1s78fiDEfC
+	/Yo4ZxYDnSJfPMqvjREuL2xNJdfKnfhViUv+uWf5PUNc4S+ZGgrNJwVxR89/flQOMlY9JB
+	BtH+eYmar7hq9EISCKoePXGjxLAf57s=
+Received: 
+	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id eafaafb5 (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
+	Mon, 2 Sep 2024 01:20:32 +0000 (UTC)
+Date: Mon, 2 Sep 2024 03:20:29 +0200
+From: "Jason A. Donenfeld" <Jason@zx2c4.com>
+To: Christophe Leroy <christophe.leroy@csgroup.eu>
+Cc: linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	Adhemerval Zanella <adhemerval.zanella@linaro.org>,
+	Xi Ruoyao <xry111@xry111.site>, broonie@kernel.org
+Subject: Re: [PATCH] selftests: vDSO: Do not rely on $ARCH for
+ vdso_test_getrandom && vdso_test_chacha
+Message-ID: <ZtUS3TecFTjE5A94@zx2c4.com>
+References: <ddf594c81787dba708fc392cb03027470dee64fb.1725124064.git.christophe.leroy@csgroup.eu>
+ <ZtRqp-uZe5C07qOF@zx2c4.com>
+ <667622ae-dde5-410f-a9f8-4801788af278@csgroup.eu>
+ <ZtSsTkTUCGyxaN_d@zx2c4.com>
+ <efca582d-20e9-4871-bcd8-5abcdb0c22f3@csgroup.eu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <efca582d-20e9-4871-bcd8-5abcdb0c22f3@csgroup.eu>
 
-On Tue, 30 Jul 2024 23:49:12 -0700 Chris Li <chrisl@kernel.org> wrote:
+On Sun, Sep 01, 2024 at 08:43:10PM +0200, Christophe Leroy wrote:
+> >> How would this fit in the logic where IIUC you just remove '_64' from
+> >> 'x86_64' to get 'x86'
+> > 
+> > Huh? That's not what tools/scripts/Makefile.arch does.
+> 
+> Hum ... yes sorry I looked at it too quickly and mixed things up with 
+> the other patch.
+> 
+> Nevertheless, if I understand well what tools/scripts/Makefile.arch does 
+> on an x86_64 for instance:
+> 
+> uname -m returns x86_64
+> HOSTARCH = x86 (sed -e s/x86_64/x86)
+> ARCH = x86
+> SRCARCH = x86
+> 
+> If you build with make ARCH=x86_64,
+> SRCARCH = x86
+> 
+> So I still can't see how you can use that to know if it is a x86_64 or not.
 
-> This is the short term solutions "swap cluster order" listed
-> in my "Swap Abstraction" discussion slice 8 in the recent
-> LSF/MM conference.
-
-Well this patchset hasn't needed a -fix patch since Aug 5, which is
-hopeful.
-
-How do people feel about moving this series into mm-stable for the next
-merge window?
-
-A few notes I've made are
-
-https://lkml.kernel.org/r/CACePvbX1EWQk03YcC47s7+vn40kEFb_3wp3D_GmJV-8Fn2j+=Q@mail.gmail.com
-https://lkml.kernel.org/r/87bk23250r.fsf@yhuang6-desk2.ccr.corp.intel.com
-https://lkml.kernel.org/r/CACePvbU9NUgfD-QC-hdYEmeMbLc5whOKeW4hb2ijcPonZ4i6mg@mail.gmail.com
-
-Have these all been resolved?
-
-Thanks.
+By the use of CONFIG_X86_32, which is also used elsewhere in that
+samme makefile for something else (so I assume it's wired up in the
+context where it counts, and if not, that's a bug that affects both
+spots and should be fixed)..
 
