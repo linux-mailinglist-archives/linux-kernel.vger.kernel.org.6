@@ -1,127 +1,105 @@
-Return-Path: <linux-kernel+bounces-311115-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311182-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93AD696850D
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 12:43:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A28B9685AE
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 13:06:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4FF242812F2
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 10:43:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 304811F21B95
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 11:06:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19B9B17E46E;
-	Mon,  2 Sep 2024 10:43:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 946CA17DFEC;
+	Mon,  2 Sep 2024 11:04:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="hOa92Dx9"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=metafoo.de header.i=@metafoo.de header.b="WLacHvz/"
+Received: from www381.your-server.de (www381.your-server.de [78.46.137.84])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD80913B2A8;
-	Mon,  2 Sep 2024 10:43:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6D0613C810;
+	Mon,  2 Sep 2024 11:04:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.46.137.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725273805; cv=none; b=kYLufEtVZUeuDlGZVB++5Anz7QZhxFXqIF5nmSA7oYwAplDF98I5mhkaZFVlu7GkoXdiYy5yxy5nKLTBMU3NrDAvrA/trfpGZqGROUlRligmdGMNA1MfOQJOMmIusYzJrr2LnTT3t3wf8R1uLIqGYMe4xB/1MZC8EQjz0mGA/i4=
+	t=1725275081; cv=none; b=e06eHLKkW4bCAnMZgIAEBE+JzRDcN0juqkK7e33PzbV2CGXP+TLbozJ/htF5Zh3lSooESljXEXAJ1lPKPQPhS+rjjxE+AT/AJHBlNQa/6BduaNKeHvPI3XrJdzBqTMwR8OJTgaNw5XGAl/lvvP2PTTVdvxLYvoLupQZyHJN42f8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725273805; c=relaxed/simple;
-	bh=q5lfXAaNbvzzQSeMLC+CUltjU/oMV1zUF3qQtgKTbUc=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=BfsbpCSMSZKeOfjd4TSUxapB+q42MrPbqkLuR1GmUbWvgp6+BNSSKZaAKP6VisC90uG+yPdcEKRsApF1XmiIQgL2wpZiuE+7je8ZOxabL3+9tyoLsJNHViJfv6ZpJvkqmd/AdCKbYO+a1a9wNgWLS9aW92Z4jv5/XR/wt4EVR7U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=hOa92Dx9; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 481NZmdx020414;
-	Mon, 2 Sep 2024 10:43:20 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=qcppdkim1; bh=2nxOabKfuJEVJc2f7fFTLr6hxJkwXtxN9U5
-	bfEmmFcM=; b=hOa92Dx9qIFUQyF/sYutRGxgEVsfSnm/gP5ZCd9UCbWVxGRFzax
-	1pIdSi+GPC8WYZnWrhZPTCXR7MJo2pKP45JWa7a6FxCh+I5BAi2UiTge3kBpvA+o
-	o+PhC4QPwfHy9KjHy+UMRUJx/Cbxt8JtXJdpXmejK1kMRWzf2W58VJw6eX29OIBx
-	QJpPSk+TL9Yi2INxe6cUowWosNs/SKVNFfQfZaOlk+BOj/V6Wmmj3smdI0TCvGC3
-	P9t7SfEJ+eBgZMh1EjE8oxA0dRmT9hVUb/7ywRYGXm9K3yS2j8Ecs1Fw4QFDvLfA
-	EU8J2pgIksqKT+KiN9SMkoe/bWlHEEmKykw==
-Received: from aptaippmta01.qualcomm.com (tpe-colo-wan-fw-bordernet.qualcomm.com [103.229.16.4])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41buj6va9t-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 02 Sep 2024 10:43:19 +0000 (GMT)
-Received: from pps.filterd (APTAIPPMTA01.qualcomm.com [127.0.0.1])
-	by APTAIPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 482AhGXs004926;
-	Mon, 2 Sep 2024 10:43:16 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by APTAIPPMTA01.qualcomm.com (PPS) with ESMTPS id 41bv8k9qah-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 02 Sep 2024 10:43:16 +0000
-Received: from APTAIPPMTA01.qualcomm.com (APTAIPPMTA01.qualcomm.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 482AhGeM004920;
-	Mon, 2 Sep 2024 10:43:16 GMT
-Received: from cse-cd02-lnx.ap.qualcomm.com (cse-cd02-lnx.qualcomm.com [10.64.75.246])
-	by APTAIPPMTA01.qualcomm.com (PPS) with ESMTPS id 482AhFEv004912
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 02 Sep 2024 10:43:16 +0000
-Received: by cse-cd02-lnx.ap.qualcomm.com (Postfix, from userid 2370279)
-	id 456C8BA2; Mon,  2 Sep 2024 18:43:14 +0800 (CST)
-From: Tingguo Cheng <quic_tingguoc@quicinc.com>
-To: andersson@kernel.org, konradybcio@kernel.org, robh@kernel.org,
-        krzk+dt@kernel.org, conor+dt@kernel.org
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel@quicinc.com,
-        quic_kotarake@quicinc.com, quic_kamalw@quicinc.com,
-        quic_skakitap@quicinc.com, quic_fenglinw@quicinc.com,
-        Tingguo Cheng <quic_tingguoc@quicinc.com>
-Subject: [PATCH] arm64: dts: qcom: sa8775p: pmic: enable rtc
-Date: Mon,  2 Sep 2024 18:43:02 +0800
-Message-Id: <20240902104302.3959670-1-quic_tingguoc@quicinc.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1725275081; c=relaxed/simple;
+	bh=EE8fo0xV2sVsTfrR/ysjBjJNENwSiQnPCm4dDGYdiNc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=iwGUNeqq6Z9xvDt37BweOcniuHF2tB0FT8WZ5OAu5616F/HnqUSn/+RdYs685U+/5kUplx7OBRKaFwfmVU/sqEE956Qg/CAq5jqbQwnuo7WNKC9tD/hvT5YxhsJ5dp5LhtRDIrhZpcMpYhDIRIAFdQfCmq207OI7XUdOPkNGW0Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=metafoo.de; spf=pass smtp.mailfrom=metafoo.de; dkim=pass (2048-bit key) header.d=metafoo.de header.i=@metafoo.de header.b=WLacHvz/; arc=none smtp.client-ip=78.46.137.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=metafoo.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=metafoo.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=metafoo.de;
+	s=default2002; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID;
+	bh=t1uvNNj/PeO6tL7UteiTv0T9DTrMfCU93Ae13Fcw+qs=; b=WLacHvz/tCJMv8FRkF0KyDgtaG
+	o9muD+powxtEW15a8Lm8zCQtI2uJe9bmEFSmFJuI+NMJyakv0hwmpLpx6h7txvTxOmsdWTh+Wd4Cc
+	/JfvR1S1zCSXoSDxLvrty0Zo3r/R64uOivOBkfsYjwWgRfMB6wrESpDiw2zhDYR2A/EJ7d1Y1FEE/
+	KkWc77CElHHPaGd6VPyQTVh0N+vMPvt1qAL1IqpFmPBYJpKR0KSdr4s7ACdco1+RO8jj5E/gqhhYU
+	gSA+tQAXeom9dqumruXFnPeHmn6Vm+aWu1hghE6OWmTKR338GHXZWd0HXmNJ4JwXiEZr5JMPWldQ2
+	INpUye1Q==;
+Received: from sslproxy07.your-server.de ([78.47.199.104])
+	by www381.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <lars@metafoo.de>)
+	id 1sl4X3-000EVO-7K; Mon, 02 Sep 2024 12:43:37 +0200
+Received: from [199.175.221.143] (helo=[192.168.178.88])
+	by sslproxy07.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <lars@metafoo.de>)
+	id 1sl4X2-000JwP-2B;
+	Mon, 02 Sep 2024 12:43:37 +0200
+Message-ID: <e2106a4f-ed3a-4b02-b1d2-d54c096fcab8@metafoo.de>
+Date: Mon, 2 Sep 2024 12:43:36 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QCInternal: smtphost
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: qSgAXK4NWHFfXReHEFsax6fiX4FKEYpv
-X-Proofpoint-GUID: qSgAXK4NWHFfXReHEFsax6fiX4FKEYpv
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-09-02_02,2024-09-02_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 mlxscore=0
- mlxlogscore=542 impostorscore=0 suspectscore=0 clxscore=1011
- lowpriorityscore=0 phishscore=0 bulkscore=0 priorityscore=1501
- adultscore=0 malwarescore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2407110000 definitions=main-2409020087
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] iio: proximity: hx9023s: Use 'CLOCK_BOOTTIME' as the
+ default clock source
+To: Yasin Lee <yasin.lee.x@gmail.com>
+Cc: jic23@kernel.org, dan.carpenter@linaro.org, nuno.sa@analog.com,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240902103210.31369-1-yasin.lee.x@gmail.com>
+Content-Language: en-US
+From: Lars-Peter Clausen <lars@metafoo.de>
+In-Reply-To: <20240902103210.31369-1-yasin.lee.x@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Authenticated-Sender: lars@metafoo.de
+X-Virus-Scanned: Clear (ClamAV 0.103.10/27386/Mon Sep  2 10:35:36 2024)
 
-Add RTC node, the RTC is controlled by PMIC device via spmi bus.
+On 9/2/24 12:32, Yasin Lee wrote:
+> Override the default (CLOCK_REALTIME) clock source to 'CLOCK_BOOTTIME'.
+Why? Won't this break existing applications that rely on the current 
+default?
+>
+> Signed-off-by: Yasin Lee <yasin.lee.x@gmail.com>
+> ---
+>   drivers/iio/proximity/hx9023s.c | 4 ++++
+>   1 file changed, 4 insertions(+)
+>
+> diff --git a/drivers/iio/proximity/hx9023s.c b/drivers/iio/proximity/hx9023s.c
+> index 8b9f84400e00..5363357a9a46 100644
+> --- a/drivers/iio/proximity/hx9023s.c
+> +++ b/drivers/iio/proximity/hx9023s.c
+> @@ -1074,6 +1074,10 @@ static int hx9023s_probe(struct i2c_client *client)
+>   					     "iio trigger register failed\n");
+>   	}
+>   
+> +	ret = iio_device_set_clock(indio_dev, CLOCK_BOOTTIME);
+> +	if (ret)
+> +		return dev_err_probe(dev, ret, "clock boottime set failed\n");
+> +
+>   	ret = devm_iio_triggered_buffer_setup(dev, indio_dev,
+>   					      iio_pollfunc_store_time,
+>   					      hx9023s_trigger_handler,
 
-Signed-off-by: Tingguo Cheng <quic_tingguoc@quicinc.com>
----
- arch/arm64/boot/dts/qcom/sa8775p-pmics.dtsi | 8 ++++++++
- 1 file changed, 8 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/qcom/sa8775p-pmics.dtsi b/arch/arm64/boot/dts/qcom/sa8775p-pmics.dtsi
-index 1369c3d43f86..47d05b897d5a 100644
---- a/arch/arm64/boot/dts/qcom/sa8775p-pmics.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sa8775p-pmics.dtsi
-@@ -132,6 +132,14 @@ pmm8654au_0_pon_resin: resin {
- 			};
- 		};
- 
-+		pmm8654au_0_rtc: rtc@6100 {
-+			compatible = "qcom,pmk8350-rtc";
-+			reg = <0x6100>, <0x6200>;
-+			reg-names = "rtc", "alarm";
-+			interrupts = <0x0 0x62 0x1 IRQ_TYPE_EDGE_RISING>;
-+			allow-set-time;
-+		};
-+
- 		pmm8654au_0_gpios: gpio@8800 {
- 			compatible = "qcom,pmm8654au-gpio", "qcom,spmi-gpio";
- 			reg = <0x8800>;
--- 
-2.34.1
 
 
