@@ -1,112 +1,99 @@
-Return-Path: <linux-kernel+bounces-310602-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310604-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D39D967EEA
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 07:48:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D257967EEE
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 07:50:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 17987B2138C
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 05:48:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 322471F22659
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 05:50:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65CCB1531D2;
-	Mon,  2 Sep 2024 05:48:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BAE41531D2;
+	Mon,  2 Sep 2024 05:50:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VWeRYnR0"
-Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60BD933F6;
-	Mon,  2 Sep 2024 05:48:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.175
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="dcdvGIrK"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.2])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAADE382;
+	Mon,  2 Sep 2024 05:50:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725256094; cv=none; b=nDRjNj9rAN2EQCYNmyj1eXsm7FqBU0Rcq6hFhPfSaYixOEPs0J90fgQb8Ulcg5ik1DtHWdYvZMWDzsjnr4uXdIqObUCYfOzyxA/FySPOp2snknztHB0Q9AAJ6xlCpE56CMdAz9/tIc9U1No//GPibJvuHYqkH6SLJO/N0WXXtO4=
+	t=1725256243; cv=none; b=QMwCTfnDKGl0N8dbW7UFxJ6J7LkOO83k0s6ToLjeisrV3HrXd0PSOseHHR6WI5qhU6MAESB6XEYrcKJVjc86/v6tW3wPSj6zKu3w0HDWzEi+MSl4LlrPjGRLC2CSHxhyd0iF7EKgajbF2NJTv1kUavsAvTRcGjC9jeUxiRz51d0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725256094; c=relaxed/simple;
-	bh=agQ9K+4rQ6Dz2BKdz9UdlfxfgH4HVojpBR3m6Be8j90=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mY0G/bEjQNvsKbvwoYHdQrZELqt89kZVUlEeMqplxNX7lYItUF8PR8aXPByV6qeFHutW8FRnaD2Z95GLjFOztjO5b98GUTTsosLGg44T6bQVptekw9HZpDFSpqjTVyxW1cMvoRFdvFZYw0ysWnvMohA4DH4JaMqEBPf4H6MBpRU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VWeRYnR0; arc=none smtp.client-ip=209.85.128.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-6d74ff7216eso4720097b3.1;
-        Sun, 01 Sep 2024 22:48:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725256092; x=1725860892; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=agQ9K+4rQ6Dz2BKdz9UdlfxfgH4HVojpBR3m6Be8j90=;
-        b=VWeRYnR0aYmUdypLYN0mAzAt8nnBwj7pM3jYPbbdD0Dck7/5i/hxNo5dGcPmH7oObY
-         FE6ZCmhWCa7Y9YszjvCk1fGXcRQWuWO7Vtps89x7dTiUjErPVB0Y2CfT0tlgpvon9Lxd
-         wx+4fIHM/kTqm15ZdXSigDVh1FyOow2PGSIwfhV7mJ0E4pgNqTkcH78d7UpPTN8tYknh
-         88KAOvmZlUxF6l90P5BD3vLfHbch6g4/tUmbVPy2L7aQplPPs7+eQYx72m3dBDDOcJpt
-         M3aX2babRKhqg8D55xL2T0Rq+sNZ4pFwiUJnDNuDPK7sgmWBihHnukNazulG99eZum8B
-         lqqA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725256092; x=1725860892;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=agQ9K+4rQ6Dz2BKdz9UdlfxfgH4HVojpBR3m6Be8j90=;
-        b=Y2CUQZDiZ5hkm/mNh7NZ/0kU1MK8FleWV57U3RFHIbbwOpXlfSFINvOz57gkfiqQQX
-         6jtpj0auGjZvg1VnJvC2DYtDztCP94yvK7J9S6TQ3HmKVHW+GMsF1syhqYBFEZjCL8Nq
-         zjSmq5Swwp9yGYBF2aEw6z45na8rVaFfvqSMZLspJYwyi0WUHKFTwHTDZijz4kvkYlnS
-         L9hzsL61QgwrJBbwZ4d1DVx5ZQ6MW6NDqEAgEhRYRWscryDYRV/CfloUFB7MoqRhaHYY
-         bVvKCbwooFsTmwXSZDWXWFs4dOBjKlJ5YjR6VHOlDnb2X2mbTf31yfr7oI+o8l8/0Wh1
-         eMNg==
-X-Forwarded-Encrypted: i=1; AJvYcCUeVZ/QUtXKWGwG/F1tbpkXRoSIELn7UPHE8ZODcmDe6IXXUKO1akvA8roewk3TWjT6xgV5DfW2t+pfrCo=@vger.kernel.org, AJvYcCVCAfTv6Wp862WV0ySGGUg7S3vPcHgtgytjxECqFkRtiwo6SGfTAgQ7fy1hwFJhwYP4+/K5x+9j@vger.kernel.org
-X-Gm-Message-State: AOJu0YyqCz/BVRIx5+na+CuIeLcpd9hM5HqIreGU861F5Gj8gt6rtAQB
-	pO8SiXKa2klcSFW/PMv/lDWHCWMRf4T0o+41J3MUk5JBGE7Es6B2P06gr85s/J7WR3+80u97xWd
-	LwVIAsMsn++gsWIxYLWjcXp244LA=
-X-Google-Smtp-Source: AGHT+IEYmBJuNieRAMqiqgHqD0icX1LoNHE5+KCuQqfrE6Bp1kqfG8ga8CIxHoWoqZiuSmgKK0H8ycb97GOYZf+Fvlk=
-X-Received: by 2002:a05:690c:490a:b0:699:7d04:c7b4 with SMTP id
- 00721157ae682-6d410cb38b7mr109638337b3.31.1725256092148; Sun, 01 Sep 2024
- 22:48:12 -0700 (PDT)
+	s=arc-20240116; t=1725256243; c=relaxed/simple;
+	bh=LtyyknAItHycdQMa9FuDDiyr/xupbTKn+Hda+8wSxQI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=tclvRS7fbQz97XgTNRyX4hZp0hDzLbEC6lcDhfiNxiietvr85htqKZs3RY2i86on5mwIweiPm2adI6yz6YASsf99EoesDC9jXxAZ0H+WBCkz8gJw4rA/4HYYsfoysD0xzfgqyLffN5jnTbBM2ig/X+SbdWeJBvfIv9LzIrVGd9s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=dcdvGIrK; arc=none smtp.client-ip=220.197.31.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=kA196
+	EWbpjw8KYWYM2zO8iP1yxz/k8Xt5pfPY1wpqzM=; b=dcdvGIrKO93EYhpjwl9SV
+	uL1KrTGaEu7Zebm+YgHEkXI6BYQSiu58ze020idWSx2LPlym7a4q3en5teT0NIOG
+	XLQ272q4xiqLwIk7fBjlg+cOQmw/bfLXKogOoxxsyO00lLnDToL+sjwARorw5xRz
+	9WHqPdd91kuTZWOrfTNt88=
+Received: from localhost.localdomain (unknown [111.35.190.113])
+	by gzga-smtp-mta-g3-0 (Coremail) with SMTP id _____wCHZ6IIUtVmqASeBg--.52399S4;
+	Mon, 02 Sep 2024 13:50:04 +0800 (CST)
+From: David Wang <00107082@163.com>
+To: rafael@kernel.org,
+	len.brown@intel.com,
+	pavel@ucw.cz,
+	gregkh@linuxfoundation.org
+Cc: linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	David Wang <00107082@163.com>
+Subject: [PATCH] PM: add: move warn message out of mutex lock.
+Date: Mon,  2 Sep 2024 13:49:59 +0800
+Message-Id: <20240902054959.28073-1-00107082@163.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240827133210.1418411-1-bbhushan2@marvell.com>
- <20240827133210.1418411-2-bbhushan2@marvell.com> <20240828182140.18e386c3@kernel.org>
- <CAAeCc_=3vXvRgo1wxzHwSY6LJS-vUzeShSdJKLotYSuHBi-Vzw@mail.gmail.com> <20240829074832.0f091f53@kernel.org>
-In-Reply-To: <20240829074832.0f091f53@kernel.org>
-From: Bharat Bhushan <bharatb.linux@gmail.com>
-Date: Mon, 2 Sep 2024 11:18:00 +0530
-Message-ID: <CAAeCc_mDM+XygbBDLG+8axXAXgsmh2eUnqdGSFjiLek96LeKxA@mail.gmail.com>
-Subject: Re: [net-next PATCH v7 1/8] octeontx2-pf: map skb data as device writeable
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: Bharat Bhushan <bbhushan2@marvell.com>, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, sgoutham@marvell.com, gakula@marvell.com, 
-	sbhatta@marvell.com, hkelam@marvell.com, davem@davemloft.net, 
-	edumazet@google.com, pabeni@redhat.com, jerinj@marvell.com, 
-	lcherian@marvell.com, richardcochran@gmail.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wCHZ6IIUtVmqASeBg--.52399S4
+X-Coremail-Antispam: 1Uf129KBjvJXoW7JFWxZr1UZrW8ArWDtr4fXwb_yoW8JrWxp3
+	ZxCF1fAr47WF40y3W3t3ZIkF15Ka13WFWUJryfCas7C3yDXrsFyr9xJayDXw15X34xA3yq
+	qrW3t3y5CF47WF7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0pE8nYUUUUUU=
+X-CM-SenderInfo: qqqrilqqysqiywtou0bp/1tbiMw9OqmXAnkxztAAAso
 
-On Thu, Aug 29, 2024 at 8:18=E2=80=AFPM Jakub Kicinski <kuba@kernel.org> wr=
-ote:
->
-> On Thu, 29 Aug 2024 11:17:25 +0530 Bharat Bhushan wrote:
-> > > How did you test this prior to adding skb_unshare()?
-> > > Could you share some performance data with this change?
-> >
-> > testing using flood ping and iperf with multiple instance,
->
-> Makes sense, neither of these will detect corruption of data pages :(
-> IIRC iperf just ignores the data, ping doesn't retransmit.
-> You gotta beef up your testing...
->
-> > I do not see any drop in performance numbers
->
-> Well. What's the difference in CPU busy time of v5 vs v7?
-> You'll copy all TCP packets, they are (pretty much) all clones.
+dpm_list_mtx does not protect any data used by
+dev_warn for checking parent's power, move
+dev_warn out of mutex lock block make the
+lock more efficient, especially when the warn
+is triggered. This can happen on some HW when
+resume from suspend with USB camera opened:
+ >usb 3-1.1: reset high-speed USB device number 4 using xhci_hcd
+ >..
+ >ep_81: PM: parent 3-1.1:1.1 should not be sleeping
 
-cpu is 5-8% more busy when skb unshare.
+Signed-off-by: David Wang <00107082@163.com>
+---
+ drivers/base/power/main.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks
--Bharat
+diff --git a/drivers/base/power/main.c b/drivers/base/power/main.c
+index 4a67e83300e1..934e5bb61f13 100644
+--- a/drivers/base/power/main.c
++++ b/drivers/base/power/main.c
+@@ -134,10 +134,10 @@ void device_pm_add(struct device *dev)
+ 	pr_debug("Adding info for %s:%s\n",
+ 		 dev->bus ? dev->bus->name : "No Bus", dev_name(dev));
+ 	device_pm_check_callbacks(dev);
+-	mutex_lock(&dpm_list_mtx);
+ 	if (dev->parent && dev->parent->power.is_prepared)
+ 		dev_warn(dev, "parent %s should not be sleeping\n",
+ 			dev_name(dev->parent));
++	mutex_lock(&dpm_list_mtx);
+ 	list_add_tail(&dev->power.entry, &dpm_list);
+ 	dev->power.in_dpm_list = true;
+ 	mutex_unlock(&dpm_list_mtx);
+-- 
+2.39.2
+
 
