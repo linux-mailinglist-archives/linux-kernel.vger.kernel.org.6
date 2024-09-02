@@ -1,148 +1,142 @@
-Return-Path: <linux-kernel+bounces-311210-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311211-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F18EB968615
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 13:22:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B7A596861D
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 13:23:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A1E1C1F22FE3
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 11:22:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EBF941F23B40
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 11:23:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27ED01849E7;
-	Mon,  2 Sep 2024 11:22:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1D7218455B;
+	Mon,  2 Sep 2024 11:23:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="euV7kv3z"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DCLSVYGR"
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19D3D183CB7;
-	Mon,  2 Sep 2024 11:22:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6ACBD183CB7
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 11:23:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725276137; cv=none; b=nc66hIGT+WnjAIR8LTXGMVJj28TD1UAcH6N2DoiKL6Bfo+yJY6dCTpKoNZ/PRn7auMllHMjfdO++wRg2x/1pdumyozLkd6wfKyvTfdZWHnQASe3LkFfEaWGqA21datBYfX5kEfcvbNTgGF83ZiRqju1g3RqBwnN1GDv+/ffcYGw=
+	t=1725276194; cv=none; b=CB/vf+/xk2WgZTtTdpCqbMLt51X3qBEiRFMIKm/1lQu3f/2P3jj7ojeNYfH7EVudE8urIVYwZkQo5JT52lkaYrv6NHh0iWkl4EDq4EMPeC37m03RM1BuuyMF1/RO0uCJLaaVEcXzGe6wkUV6ROYO4Qr6LLiqqbYkv7twbBNsnwk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725276137; c=relaxed/simple;
-	bh=fehs2+E64I0ZFEnYzghltUagaBJu6yND9Ki/e2rbcLA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cKHgqQ/1kUxepOP0UHKEM4ZMaEUXgntMDO4osFIQYBIjqC2b0CheFYvpYxa+yM4wFNMDU64gtPFwfKsNEQLQyqMiGUHgNxbPA/U3+yG1CiyVhYoLEsbSW/kYC+7KhDSowqk2RCWNUG0kTc8Vi15WSCz2V6rw9Sve58zi9ea4Xgc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=euV7kv3z; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725276136; x=1756812136;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=fehs2+E64I0ZFEnYzghltUagaBJu6yND9Ki/e2rbcLA=;
-  b=euV7kv3zWoc06+7n+5WlQrWoaKuQXKDorUV3fa34d2LsSlIX9JvQhOHx
-   sdXsCNUByspR+fsZtWVA93pD+VGUiTlS5jIDZ7vCR9W8ULogiR0rhSTZm
-   h49XBP8X01dW8Z5HidHWHUdR2w5iurvrI+upmPOxtKAOGIFBjXWcrdq3d
-   YDGfHrCYpK24FOulZL2ulh8Xptedkr6SMEkMUG9ETcJ/D/jg8FwOvxJEk
-   rVY00k0bDCD1QOLhglC+brXMus6MpN9226ZqK1J94+9hYTbUTE1A7eWnP
-   zApT9JTweD5Hggaem97r2lXDeCfNVYuTYt2dwKmXsjj+aNzKtbp4gwXQu
-   A==;
-X-CSE-ConnectionGUID: 20+IiVlvRcqRaHoJgYeJYA==
-X-CSE-MsgGUID: hGuwVpa+StiTgF2beXCetg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11182"; a="41353281"
-X-IronPort-AV: E=Sophos;i="6.10,195,1719903600"; 
-   d="scan'208";a="41353281"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2024 04:22:15 -0700
-X-CSE-ConnectionGUID: r9dZ1SjQR7mt8hDhn4QGFQ==
-X-CSE-MsgGUID: HvRqsXktRSmLSzJ4FQaJ5A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,195,1719903600"; 
-   d="scan'208";a="68718584"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmviesa003.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2024 04:22:07 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1sl58G-00000004L8V-0vHk;
-	Mon, 02 Sep 2024 14:22:04 +0300
-Date: Mon, 2 Sep 2024 14:22:03 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Stephen Boyd <swboyd@chromium.org>
-Cc: chrome-platform@lists.linux.dev, linux-kernel@vger.kernel.org,
-	patches@lists.linux.dev, devicetree@vger.kernel.org,
-	Douglas Anderson <dianders@chromium.org>,
-	Pin-yen Lin <treapking@chromium.org>,
-	Andrzej Hajda <andrzej.hajda@intel.com>,
-	Benson Leung <bleung@chromium.org>,
-	Conor Dooley <conor+dt@kernel.org>, Daniel Vetter <daniel@ffwll.ch>,
-	David Airlie <airlied@gmail.com>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	dri-devel@lists.freedesktop.org,
-	Guenter Roeck <groeck@chromium.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	Lee Jones <lee@kernel.org>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Prashant Malani <pmalani@chromium.org>,
-	Robert Foss <rfoss@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Tzung-Bi Shih <tzungbi@kernel.org>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Daniel Scally <djrscally@gmail.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Ivan Orlov <ivan.orlov0322@gmail.com>, linux-acpi@vger.kernel.org,
-	linux-usb@vger.kernel.org,
-	Mika Westerberg <mika.westerberg@linux.intel.com>,
-	"Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Vinod Koul <vkoul@kernel.org>
-Subject: Re: [PATCH v4 05/18] usb: typec: Add device managed
- typec_switch_register()
-Message-ID: <ZtWf2y8vGJyerSXs@smile.fi.intel.com>
-References: <20240901040658.157425-1-swboyd@chromium.org>
- <20240901040658.157425-6-swboyd@chromium.org>
+	s=arc-20240116; t=1725276194; c=relaxed/simple;
+	bh=Ie/943GTb1SgXq1257UVGaSTpxiBzcYcTMR/6/Y7a1s=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=sN8/RvJtnvIhhLBG43Fgzfx2FsY+ry0wQLPt2XGaIK40gcCntfex/yWhLKNfitAHejEy1GpNGMGPjJaUl+FM89UkNKPLyRXgYXHdP85UvSma+OFmoM1H82vebwmM3G3P/x/AzGOkcB5VdU4YRDdUbtXTuWB6UgImNEy6fu8clbo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=DCLSVYGR; arc=none smtp.client-ip=209.85.221.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-371ba7e46easo2734207f8f.0
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2024 04:23:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1725276191; x=1725880991; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=waKQFxwjFd+XzD3jq2Y4F+AkwNTHxMuKGYVGHmUxWwI=;
+        b=DCLSVYGRr26RQsYsLEOr2Yqg4hr5iauwNMqJeh3/ijv3PSvAaMLN8cmDPVZIFbASNw
+         euPgmbzibGtxGQNxLj/rz5m4kHKEpGgQgNakSjmLsN7tvkKVFKncTarb8wbX3BDTPEMe
+         CC0IYlMkTS8BpRh5v8pejedUqRNwHBtMhJYqTSB7boLX9Koz0Qhz001fxby0f5EHXds1
+         7J+49eWcSyQQAiAcYcDQeJWk5+xAhk7JDZ3X1fUqLxibjzxFWKFn5r9nj/Bh41Gwb4BO
+         iXv8JgQWbxXv1iKPxSojlgegYcPkjEqgEOAQnbIDJYhpc5TwxTGA3caMN+OD0eNg2c3A
+         BDYA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725276191; x=1725880991;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=waKQFxwjFd+XzD3jq2Y4F+AkwNTHxMuKGYVGHmUxWwI=;
+        b=qeGBAv9r9wM2j8IwPoIcuqJKHrEJForShT6msND+k/dQrLmhAn5ZcaMNhqw296RJ0e
+         hhITSY4dwEJkeuIZblVRsQ14T0jfPmuxZdYMmmcs1TB/Gql0IBkwX8wUedRc03Bpe3Bh
+         8i0c/JbIjDroX3Sx+7TSILhGgZfExBEbf3YVnkJ+kfJR8IF0fs2fBwutSSvQNcLZdCL2
+         BXAH+R1n7xZdlmSkiHoekJ6fA0wSC3QL+1NW1NWSrNMTFngs6yLbFNb94g+M6xPpQ6ZY
+         MRZCu73l2r4vTWYxXBG4pch/MqP+h9lA70r6YXe2MXE7Cc2op/QQe8/Onl9TQVYluqBM
+         AJug==
+X-Forwarded-Encrypted: i=1; AJvYcCUrh5P/r6k0w7m7gk9rLvhgQTtKTD7cDWsoz+xGhrcUV1MHl+ADnM4RS6ZiSX3cZWIZgLlslZrfMleCS64=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz5bt0TWVpnUDop9JVTPk3piCkT03LLQB16qxMUqelQIgDyJTeI
+	hShrtY/p6X1D9BdfJsxpKrxtOKnNbc2MfMkx5RdCxFpjplUvr+1MOHmzx9kl79Y=
+X-Google-Smtp-Source: AGHT+IEpDNmYXrpdpf10EomzDiJNq0Gvm63STkduz8MpJgaoCh/B3DWwulrMva9nsI/EQHJe1qmbCQ==
+X-Received: by 2002:a5d:55ca:0:b0:371:8750:419e with SMTP id ffacd0b85a97d-374bcfe5ea4mr4340412f8f.47.1725276190283;
+        Mon, 02 Sep 2024 04:23:10 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:982:cbb0:7dba:3cd0:a1f4:e3fa? ([2a01:e0a:982:cbb0:7dba:3cd0:a1f4:e3fa])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42bb6e2737dsm134290575e9.29.2024.09.02.04.23.09
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 02 Sep 2024 04:23:09 -0700 (PDT)
+Message-ID: <f526b786-e9d0-4004-a4c5-d158a0824587@linaro.org>
+Date: Mon, 2 Sep 2024 13:23:08 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240901040658.157425-6-swboyd@chromium.org>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mozilla Thunderbird
+From: Neil Armstrong <neil.armstrong@linaro.org>
+Reply-To: neil.armstrong@linaro.org
+Subject: Re: [PATCH v2 0/3] Add support for Amlogic T7 reset controller
+To: Philipp Zabel <p.zabel@pengutronix.de>, kelvin.zhang@amlogic.com,
+ Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>, Kevin Hilman <khilman@baylibre.com>,
+ Jerome Brunet <jbrunet@baylibre.com>,
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Zelong Dong <zelong.dong@amlogic.com>
+References: <20240422-t7-reset-v2-0-cb82271d3296@amlogic.com>
+ <d00b9c940d5b6156c846b8e513adff1eba0993aa.camel@pengutronix.de>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <d00b9c940d5b6156c846b8e513adff1eba0993aa.camel@pengutronix.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Sat, Aug 31, 2024 at 09:06:43PM -0700, Stephen Boyd wrote:
-> Simplify driver error paths by adding devm_typec_switch_register() which
-> will unregister the typec switch when the parent device is unbound.
+On 02/09/2024 12:10, Philipp Zabel wrote:
+> On Mo, 2024-04-22 at 19:11 +0800, Kelvin Zhang via B4 Relay wrote:
+>> Add a new compatible and device node for Amlogic T7 reset controller.
+>> And modify the driver accordingly.
+>>
+>> Signed-off-by: Zelong Dong <zelong.dong@amlogic.com>
+>> Signed-off-by: Kelvin Zhang <kelvin.zhang@amlogic.com>
+> 
+> Thank you, applied patches 1-2 to reset/next.
 
-...
+Thanks!
 
-> +struct typec_switch_dev *
-> +devm_typec_switch_register(struct device *parent,
-> +			   const struct typec_switch_desc *desc)
-> +{
-> +	int ret;
-> +	struct typec_switch_dev *switch_dev;
-> +
-> +	switch_dev = typec_switch_register(parent ,desc);
+Neil
 
-Slipped typo, i.e. wrong location of the white space character.
-
-> +	if (IS_ERR(switch_dev))
-> +		return switch_dev;
-> +
-> +	ret = devm_add_action_or_reset(parent, devm_typec_switch_unregister, switch_dev);
-> +	if (ret)
-> +		return ERR_PTR(ret);
-> +
-> +	return switch_dev;
-> +}
-
--- 
-With Best Regards,
-Andy Shevchenko
-
+> 
+> regards
+> Philipp
 
 
