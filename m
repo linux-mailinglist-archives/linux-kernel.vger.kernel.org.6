@@ -1,102 +1,169 @@
-Return-Path: <linux-kernel+bounces-311825-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311830-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E447968E21
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 21:08:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 622EC968E46
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 21:13:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B26E2B2122F
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 19:08:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0B226283FA1
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 19:13:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD50119CC2E;
-	Mon,  2 Sep 2024 19:08:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDB9B19CC3F;
+	Mon,  2 Sep 2024 19:12:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JtxoRv1q"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pY5N3Kj/"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17F681A3A97;
-	Mon,  2 Sep 2024 19:08:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2635E1A3A93;
+	Mon,  2 Sep 2024 19:12:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725304109; cv=none; b=d9z6a8ilt9PmtJq7/nPFjnUUdDsloOByPYNgFtvFSxOqdkNjo079Ku8I7BV3+Ch9JbXhixzUoSa19iUpNhLhG1/3xW6m0uh/ldKVPGxPFg03hw75sCWif5lTA81ERzTUEZEwxai3ju8/Ad6fufzGwiP7DQnVtJtjJWQr/5PjtSQ=
+	t=1725304375; cv=none; b=FdJ9SXTjCx3RcJUuaLR2PHqorzB1+6FGpKL7jn7ioUBr2goTl1RSf61zaGnsnJLYXK29dN8fxh6qTqJ56hfRkzANofg3xVmEhEwvZivPCw6Y+vlENblb22Cf678wJ24Os8wlFHHqXk9WNcj95tgqiCJme7dPf6eCIZHJjvN8Xxc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725304109; c=relaxed/simple;
-	bh=L/v8ja7U3poGx/rL4/awxrsM/dIZpV15uF3Vk7OelJQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XFnJ2U44bs8EUnAloDN6/p9cNt6l2OevHlJa9SJtWCfKGg8STu627yTVNz6iL3PiOLACSxMYF+JYKGsNWw9VjhJfKYgblLC3i9hOmSjir1IUSYOwKVJflHAp46yzDuwMY23hKQcXrccqucyhiQ2mm0hlIX9/EdJlTk5t5SvLKD0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JtxoRv1q; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8ACEBC4CEC2;
-	Mon,  2 Sep 2024 19:08:28 +0000 (UTC)
+	s=arc-20240116; t=1725304375; c=relaxed/simple;
+	bh=GMVnn22J0kYs5YTaIdMO4all44aS9lj+6fg+x5dH8D0=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ECnjmAS9NG0v3G/i3jhYR78LpTMVviCMgxVmUaHi6XWkN1ojhDUvCKT6PCTlGHG8WdrY7oAI48eBelQ3vMvTBuDJVLl/PgwV0tUJpbWB/tF1NAsftWyjcs2cdacD+cDAwjI74ZVJKxnU9ImdnkMgX8P9KRis9lX0ZMmEGOJS6eM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pY5N3Kj/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8EB3FC4CEC2;
+	Mon,  2 Sep 2024 19:12:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725304108;
-	bh=L/v8ja7U3poGx/rL4/awxrsM/dIZpV15uF3Vk7OelJQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JtxoRv1q/aJlCtREh37W45BQfuQy6nS1jVgUCVYiWIGfw1ei5kQ+nKFUGljjj82mR
-	 GxFDm2k5OF2yz+1z3EQoia7ATf8BoKJUIHgDDb/WN2ATF4Yg6BT1pGtOFq9YBLLuh0
-	 0Os92Zxq/aFKrlngOEFeWnIwk7CnISLsCiigC/olD7yKrp8zH8n4cTjGLjBlm+orSd
-	 O67sTYp6V2mFj4v3vhMKxFpwKanxb/nGEZwUwdy/Am6pciLaCArm74HTRDitQcP2tE
-	 fGcQOqO8aoFAxPiHeURNV3vRPlUvTFxHbkY/ga7xTlCsLkxQRFH+dUzGWbLit00oAc
-	 cPdWrH0jYqY1w==
-Date: Mon, 2 Sep 2024 12:08:28 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Zizhi Wo <wozizhi@huawei.com>
-Cc: chandan.babu@oracle.com, dchinner@redhat.com, osandov@fb.com,
-	john.g.garry@oracle.com, linux-xfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org, yangerkun@huawei.com
-Subject: Re: [PATCH 0/2] Some boundary error bugfix related to XFS fsmap.
-Message-ID: <20240902190828.GA6224@frogsfrogsfrogs>
-References: <20240826031005.2493150-1-wozizhi@huawei.com>
- <9337ebda-8e27-4754-bc57-748e44f3b5e0@huawei.com>
+	s=k20201202; t=1725304374;
+	bh=GMVnn22J0kYs5YTaIdMO4all44aS9lj+6fg+x5dH8D0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=pY5N3Kj/BU1o+ddbmefgRH5itJPL7HzzRHShngaIA00aPwOvX4i416FEgAJU5TzNE
+	 yZsQjysi6g2pmEXdy1C5TgF4yxwwklqpPj44O078O/rQGagLwa0mFWTrRIOhO+Q2n9
+	 vKopbc/51ysI+HKKObFXrPx9pXTsADlynHTi4dZc0x3dEfFjSh210EfrgoixlRfESt
+	 kMDSdEMmv4/gOSkl5GL1bL1OjnMEvLSCHXLHs9Y+71CFbv13wp/93AaxQAoCCvdadq
+	 K5uonAVrDRMQzDLONq1d7XneiA2WW1GfI0suYXoWNSkJ0itOdV0OVDd4ZlVX+9wcH5
+	 xRrQ2OfDeGcQQ==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1slCTs-0091pX-0Q;
+	Mon, 02 Sep 2024 20:12:52 +0100
+Date: Mon, 02 Sep 2024 20:12:51 +0100
+Message-ID: <86ttexvpho.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: Oliver Upton <oliver.upton@linux.dev>,
+	James Morse <james.morse@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Joey Gouly <joey.gouly@arm.com>,
+	linux-arm-kernel@lists.infradead.org,
+	kvmarm@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	20240813144738.2048302-1-maz@kernel.org
+Subject: Re: [PATCH v2 2/3] KVM: arm64: Hide TCR2_EL1 from userspace when disabled for guests
+In-Reply-To: <20240822-kvm-arm64-hide-pie-regs-v2-2-376624fa829c@kernel.org>
+References: <20240822-kvm-arm64-hide-pie-regs-v2-0-376624fa829c@kernel.org>
+	<20240822-kvm-arm64-hide-pie-regs-v2-2-376624fa829c@kernel.org>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <9337ebda-8e27-4754-bc57-748e44f3b5e0@huawei.com>
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: broonie@kernel.org, oliver.upton@linux.dev, james.morse@arm.com, suzuki.poulose@arm.com, catalin.marinas@arm.com, will@kernel.org, joey.gouly@arm.com, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org, 20240813144738.2048302-1-maz@kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Thu, Aug 29, 2024 at 07:24:55PM +0800, Zizhi Wo wrote:
-> friendly ping
-
-Sorry, I'm not going to get to this until late September.
-
---D
-
-> 在 2024/8/26 11:10, Zizhi Wo 写道:
-> > Prior to this, I had already sent out a patchset related to xfs fsmap
-> > bugfix, which mainly introduced "info->end_daddr" to fix omitted extents[1]
-> > and Darrick had already sent out a patchbomb for merging into stable[2],
-> > which included my previous patches.
-> > 
-> > However, I recently discovered two new fsmap problems...What follows is a
-> > brief description of them:
-> > 
-> > Patch 1: In this scenario, fsmap lost one block count. The root cause is
-> > that during the calculation of highkey, the calculation of start_block is
-> > missing an increment by one, which leads to the last query missing one
-> > This problem is resolved by adding a sentinel node.
-> > 
-> > Patch 2: In this scenario, the fsmap query for realtime deivce may display
-> > extra intervals. This is due to an extra increase in "end_rtb". The issue
-> > is resolved by adjusting the relevant calculations. And this patch depends
-> > on the previous patch that introduced "info->end_daddr".
-> > 
-> > [1] https://lore.kernel.org/all/20240819005320.304211-1-wozizhi@huawei.com/
-> > [2] https://lore.kernel.org/all/172437083728.56860.10056307551249098606.stgit@frogsfrogsfrogs/
-> > 
-> > Zizhi Wo (2):
-> >    xfs: Fix missing block calculations in xfs datadev fsmap
-> >    xfs: Fix incorrect parameter calculation in rt fsmap
-> > 
-> >   fs/xfs/libxfs/xfs_rtbitmap.c |  4 +---
-> >   fs/xfs/xfs_fsmap.c           | 39 +++++++++++++++++++++++++++++++-----
-> >   2 files changed, 35 insertions(+), 8 deletions(-)
-> > 
+On Thu, 22 Aug 2024 00:35:37 +0100,
+Mark Brown <broonie@kernel.org> wrote:
 > 
+> When the guest does not support FEAT_TCR2 we should not allow any access
+> to it in order to ensure that we do not create spurious issues with guest
+> migration. Add a visibility operation for it.
+> 
+> Fixes: fbff56068232 ("KVM: arm64: Save/restore TCR2_EL1")
+> Signed-off-by: Mark Brown <broonie@kernel.org>
+> ---
+>  arch/arm64/include/asm/kvm_host.h |  3 +++
+>  arch/arm64/kvm/sys_regs.c         | 29 ++++++++++++++++++++++++++---
+>  2 files changed, 29 insertions(+), 3 deletions(-)
+> 
+> diff --git a/arch/arm64/include/asm/kvm_host.h b/arch/arm64/include/asm/kvm_host.h
+> index ab4c675b491d..7889e5f4009f 100644
+> --- a/arch/arm64/include/asm/kvm_host.h
+> +++ b/arch/arm64/include/asm/kvm_host.h
+> @@ -1476,4 +1476,7 @@ void kvm_set_vm_id_reg(struct kvm *kvm, u32 reg, u64 val);
+>  		(pa + pi + pa3) == 1;					\
+>  	})
+>  
+> +#define kvm_has_tcr2(k)				\
+> +	(kvm_has_feat((k), ID_AA64MMFR3_EL1, TCRX, IMP))
+> +
+>  #endif /* __ARM64_KVM_HOST_H__ */
+> diff --git a/arch/arm64/kvm/sys_regs.c b/arch/arm64/kvm/sys_regs.c
+> index 1af15140e067..6d5f43781042 100644
+> --- a/arch/arm64/kvm/sys_regs.c
+> +++ b/arch/arm64/kvm/sys_regs.c
+> @@ -2319,6 +2319,27 @@ static bool access_zcr_el2(struct kvm_vcpu *vcpu,
+>  	return true;
+>  }
+>  
+> +static unsigned int tcr2_visibility(const struct kvm_vcpu *vcpu,
+> +				    const struct sys_reg_desc *rd)
+> +{
+> +	if (kvm_has_tcr2(vcpu->kvm))
+> +		return 0;
+> +
+> +	return REG_HIDDEN;
+> +}
+> +
+> +static unsigned int tcr2_el2_visibility(const struct kvm_vcpu *vcpu,
+> +				    const struct sys_reg_desc *rd)
+> +{
+> +	unsigned int r;
+> +
+> +	r = el2_visibility(vcpu, rd);
+> +	if (r)
+> +		return r;
+> +
+> +	return tcr2_visibility(vcpu, rd);
+> +}
+> +
+>  /*
+>   * Architected system registers.
+>   * Important: Must be sorted ascending by Op0, Op1, CRn, CRm, Op2
+> @@ -2503,7 +2524,8 @@ static const struct sys_reg_desc sys_reg_descs[] = {
+>  	{ SYS_DESC(SYS_TTBR0_EL1), access_vm_reg, reset_unknown, TTBR0_EL1 },
+>  	{ SYS_DESC(SYS_TTBR1_EL1), access_vm_reg, reset_unknown, TTBR1_EL1 },
+>  	{ SYS_DESC(SYS_TCR_EL1), access_vm_reg, reset_val, TCR_EL1, 0 },
+> -	{ SYS_DESC(SYS_TCR2_EL1), access_vm_reg, reset_val, TCR2_EL1, 0 },
+> +	{ SYS_DESC(SYS_TCR2_EL1), access_vm_reg, reset_val, TCR2_EL1, 0,
+> +	  .visibility = tcr2_visibility },
+
+With this, we should be able to simplify the accessor, shouldn't we?
+
+>  
+>  	PTRAUTH_KEY(APIA),
+>  	PTRAUTH_KEY(APIB),
+> @@ -2820,7 +2842,8 @@ static const struct sys_reg_desc sys_reg_descs[] = {
+>  	EL2_REG(TTBR0_EL2, access_rw, reset_val, 0),
+>  	EL2_REG(TTBR1_EL2, access_rw, reset_val, 0),
+>  	EL2_REG(TCR_EL2, access_rw, reset_val, TCR_EL2_RES1),
+> -	EL2_REG(TCR2_EL2, access_tcr2_el2, reset_val, TCR2_EL2_RES1),
+> +	EL2_REG_FILTERED(TCR2_EL2, access_tcr2_el2, reset_val, TCR2_EL2_RES1,
+> +			 tcr2_el2_visibility),
+
+Same thing here.
+
+Thanks,
+
+	M.
+
+-- 
+Without deviation from the norm, progress is not possible.
 
