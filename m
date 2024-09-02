@@ -1,147 +1,191 @@
-Return-Path: <linux-kernel+bounces-311652-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311653-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E79EE968BA0
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 18:09:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79A77968BA3
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 18:09:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9EB051F22B7D
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 16:09:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B6456B22DFB
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 16:09:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2DFF1A302E;
-	Mon,  2 Sep 2024 16:08:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C37F01A304C;
+	Mon,  2 Sep 2024 16:09:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="cNNUa0S3"
-Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WWLB+Q0D"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D27221A3023;
-	Mon,  2 Sep 2024 16:08:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2661F1A3035;
+	Mon,  2 Sep 2024 16:09:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725293328; cv=none; b=CNy9z/tA1r3kJcJS6m28Yxm9qQG257u0TJNugY3e1TwF29S7Q8aQ/7A0eJ8omVFpP/GypbbvNVRq2TZlGCYfwXNI1bYF3WRptEv0hG/OQ/2OESBx/jCRENzmqkz9vSEm+FG2IKxVSSYYW4K8i9K9QMwXZhu/X2NmgXtyghsSZOQ=
+	t=1725293341; cv=none; b=uftNwXb0mmzhM0J/pIzK9dxsywK5qCA4ROJfH7fkpDCKcdHx7t7hhQYl1x35BEpC51OSJN9jds+1mxsuzYXAIXXzWgO9rTn7WiRswh3sxOcXDEYsd2sdE7ntlgdR/uP/dfnRYVAabsY3rj7dBk2qS2e0ymdRkzCaDQ1Sy+pSQvU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725293328; c=relaxed/simple;
-	bh=udCLYS03vFzY0pDP0VXNCARsSZDvZr7IQUhpJq1Ey+U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=onEpcdftinpaHWC3P4qCUBC+xIZNIgJx8GfFplOR+2F3I6qeYpx1xMCHMPoJw5K/w50qZfeJyR9mKFo24qMRD1p8xLWyq1k0q7dxyDTA4cW7H9GJuWiXhfaZidooy+NXF/xq69mtlkKKWkSknwZ4lJ8Sqv//mhXtPHne9fRlEYA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=cNNUa0S3; arc=none smtp.client-ip=80.241.56.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyphar.com
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:b231:465::1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4WyDFj5pVYz9t1t;
-	Mon,  2 Sep 2024 18:08:41 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
-	t=1725293321;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=bnehve9VjMnII0s4fDhfCcbW2zyjJe5jdh+Zfgbp8WE=;
-	b=cNNUa0S3Iq182pJH+ahbE5zzdZTntjXR7caJZLh8wQQK2pMWA6nS8n0jBn0sakWP6e24vw
-	kMyOlQqR1AxWzazQMHSjUF9doKKXWRwz+IPz2sGzN7DGBIJeXXfdFWb08AQ258ZuzGVxSu
-	LXj+t+WneeeH68MNhgSIWKr6buPAbu1oOas4jIHbs3z0YfK2pWm7Qq2XTxwRSrSOmJguNE
-	MsJF+6bK8BpckmA6qEi0k+NY/ft5i1QVgD4PPuwH0jflDz5he3FpP1GP9xto7ln1lyc6OH
-	XSKAzWs8jgM0FzNrXYZFk7E1i0JDtXbXUSB+OU3vohpz0STXzPCQx2Oqly+/7g==
-Date: Tue, 3 Sep 2024 02:08:26 +1000
-From: Aleksa Sarai <cyphar@cyphar.com>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>, 
-	Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>, 
-	Benjamin Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
-	Valentin Schneider <vschneid@redhat.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, shuah <shuah@kernel.org>, 
-	Kees Cook <kees@kernel.org>, Florian Weimer <fweimer@redhat.com>, 
-	Mark Rutland <mark.rutland@arm.com>, linux-kernel@vger.kernel.org, linux-api@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, Linux-Arch <linux-arch@vger.kernel.org>, 
-	linux-kselftest@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH RFC 3/8] openat2: explicitly return -E2BIG for (usize >
- PAGE_SIZE)
-Message-ID: <20240902.160305-cuddly.doc.quaint.provider-RsRaXpw78cll@cyphar.com>
-References: <20240902-extensible-structs-check_fields-v1-0-545e93ede2f2@cyphar.com>
- <20240902-extensible-structs-check_fields-v1-3-545e93ede2f2@cyphar.com>
- <63193b87-7057-4ad0-aef2-fdb5d15138c3@app.fastmail.com>
+	s=arc-20240116; t=1725293341; c=relaxed/simple;
+	bh=qjaCILSPADp+QF5J8NfEpPzn45HQksLGDvClBftKjxg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=oREZMyWqIuEBY3Yk3hufznD9vmen55V+DN4SaaZ3uUb9Gn9LcAs6ylmeY+hQp7TAnWRkuQZ2ZY9UuLquqFnFKn6OiSEqWsS6qUQyaytOIvtiqcSPRZGSWMccFhvrWqvn5yWzi/QMfaB/IxVzacDqzVorkJgerZYKxJlDYlcRfzA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WWLB+Q0D; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E819BC4CEC2;
+	Mon,  2 Sep 2024 16:08:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725293340;
+	bh=qjaCILSPADp+QF5J8NfEpPzn45HQksLGDvClBftKjxg=;
+	h=From:To:Cc:Subject:Date:From;
+	b=WWLB+Q0DXyI4j5whUEzMRNcNDwks40IyMPYrEC+3st9ouqw876MbzLCFR5AV/bJAm
+	 rOnIvuIKhF1SIkj3seZyjQeQoceuU6eLvmheGPlNU8wUp8axpg0DDjHhMB43DZ4f9g
+	 YhZhVJDWn17+l/IIKMZ+qew7Xm8IbgGHGS2b4I+K9wChy+2c6LimaORsPrOHeOtS5U
+	 aTHVgKzbbNfMIuIXMooIRuc/5+q5i+Q7HMvITc7B5B9u89XfWIOURJl0Ol/BtC1XXL
+	 kLK4jUDHmJ/9+ppJThWmtoimMwDrcZMVqMgEq9rbCTPUd1zKQf2UoDB1UX82V5By57
+	 j1+UNkCEDOYSQ==
+From: Miguel Ojeda <ojeda@kernel.org>
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: Nathan Chancellor <nathan@kernel.org>,
+	Nicolas Schier <nicolas@fjasle.eu>,
+	linux-kbuild@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	patches@lists.linux.dev,
+	Miguel Ojeda <ojeda@kernel.org>
+Subject: [PATCH v2] kbuild: pahole-version: improve overall checking and error messages
+Date: Mon,  2 Sep 2024 18:08:28 +0200
+Message-ID: <20240902160828.1092891-1-ojeda@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="3itig22h2tekijst"
-Content-Disposition: inline
-In-Reply-To: <63193b87-7057-4ad0-aef2-fdb5d15138c3@app.fastmail.com>
-X-Rspamd-Queue-Id: 4WyDFj5pVYz9t1t
+Content-Transfer-Encoding: 8bit
 
+Like patch "rust: suppress error messages from
+CONFIG_{RUSTC,BINDGEN}_VERSION_TEXT" [1], do not assume the file existing
+and being executable implies executing it will succeed.
 
---3itig22h2tekijst
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Instead, bail out if executing it fails for any reason, as well as if
+the program does not print to standard output what we are expecting from
+`pahole --version`. The script needs to ensure that it always returns
+an integer, since its output will go into a Kconfig `int`-type symbol.
 
-On 2024-09-02, Arnd Bergmann <arnd@arndb.de> wrote:
-> On Mon, Sep 2, 2024, at 07:06, Aleksa Sarai wrote:
-> > While we do currently return -EFAULT in this case, it seems prudent to
-> > follow the behaviour of other syscalls like clone3. It seems quite
-> > unlikely that anyone depends on this error code being EFAULT, but we can
-> > always revert this if it turns out to be an issue.
->=20
-> Right, it's probably a good idea to have a limit there rather than
-> having a busy loop with a user-provided length when the only bound is
-> the available virtual memory.
->=20
-> >  	if (unlikely(usize < OPEN_HOW_SIZE_VER0))
-> >  		return -EINVAL;
-> > +	if (unlikely(usize > PAGE_SIZE))
-> > +		return -E2BIG;
-> >=20
->=20
-> Is PAGE_SIZE significant here? If there is a need to enforce a limit,
-> I would expect this to be the same regardless of kernel configuration,
-> since the structure layout is also independent of the configuration.
+In addition, check whether the program exists first, and provide
+error messages for each error condition, similar to how it is done in
+e.g. `scripts/rust_is_available.sh`.
 
-PAGE_SIZE is what clone3, perf_event_open, sched_setattr, bpf, etc all
-use. The idea was that PAGE_SIZE is the absolute limit of any reasonable
-extensible structure size because we are never going to have argument
-structures that are larger than a page (I think this was discussed in
-the original copy_struct_from_user() patchset thread in late 2019, but I
-can't find the reference at the moment.)
+For instance, currently `pahole` may be built for another architecture
+or may be a program we do not expect that fails:
 
-I simply forgot to add this when I first submitted openat2, the original
-intention was to just match the other syscalls.
+    $ echo 'bad' > bad-pahole
+    $ chmod u+x bad-pahole
+    $ make PAHOLE=./bad-pahole defconfig
+    ...
+    ./bad-pahole: 1: bad: not found
+    init/Kconfig:112: syntax error
+    init/Kconfig:112: invalid statement
 
-> Where is the current -EFAULT for users passing more than a page?
-> I only see it for reads beyond the VMA, but not e.g. when checking
-> terabytes of zero pages from an anonymous mapping.
+With this applied, we get instead:
 
-I meant that we in practice return -EFAULT if you pass a really large
-size (because you end up running off the end of mapped memory). There is
-no explicit -EFAULT for large sizes, which is exactly the problem. :P
+    ***
+    *** Running './bad-pahole' to check the pahole version failed with
+    *** code 127. pahole will not be used.
+    ***
+    ...
+    $ grep CONFIG_PAHOLE_VERSION .config
+    CONFIG_PAHOLE_VERSION=0
 
->=20
->     Arnd
+Similarly, `pahole` currently may be a program that returns successfully,
+but that does not print the version that we would expect:
 
---=20
-Aleksa Sarai
-Senior Software Engineer (Containers)
-SUSE Linux GmbH
-<https://www.cyphar.com/>
+    $ echo 'echo' > bad-pahole
+    $ chmod u+x bad-pahole
+    $ make PAHOLE=./bad-pahole defconfig
+    ...
+    init/Kconfig:114: syntax error
+    init/Kconfig:114: invalid statement
 
---3itig22h2tekijst
-Content-Type: application/pgp-signature; name="signature.asc"
+With this applied, we get instead:
 
------BEGIN PGP SIGNATURE-----
+    ***
+    *** pahole './bad-pahole' returned an unexpected version output.
+    *** pahole will not be used.
+    ***
+    ...
+    $ grep CONFIG_PAHOLE_VERSION .config
+    CONFIG_PAHOLE_VERSION=0
 
-iHUEABYKAB0WIQS2TklVsp+j1GPyqQYol/rSt+lEbwUCZtXi+gAKCRAol/rSt+lE
-b/CVAP4/UIPzUm7VHMdeZy4qfDO8V7V0ojxi/W5gHbAzDDpC9AEA+OOBAKvxJ0NQ
-ghIM9lErOJb+9JyKInzhgYT3v5S9KQ4=
-=pzTi
------END PGP SIGNATURE-----
+Finally, with this applied, if the program does not exist, we get:
 
---3itig22h2tekijst--
+    $ make PAHOLE=./bad-pahole defconfig
+    ...
+    ***
+    *** pahole './bad-pahole' could not be found. pahole will not be used.
+    ***
+    ...
+    $ grep CONFIG_PAHOLE_VERSION .config
+    CONFIG_PAHOLE_VERSION=0
+
+Link: https://lore.kernel.org/rust-for-linux/20240727140302.1806011-1-masahiroy@kernel.org/ [1]
+Co-developed-by: Nicolas Schier <nicolas@fjasle.eu>
+Signed-off-by: Nicolas Schier <nicolas@fjasle.eu>
+Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
+---
+v1: https://lore.kernel.org/all/20240728125527.690726-1-ojeda@kernel.org/
+v2:
+
+Reworked to catch successful programs that may not output what we expect from
+pahole as well as to do the checking step-by-step (for better error messages).
+
+I didn't change the regular expression to reduce the changes (except adding
+`p`) -- it can be improved separately.
+
+Also, please note that I added Nicolas as co-author since he proposed part of
+the solution, but he has not formally signed off yet.
+
+ scripts/pahole-version.sh | 30 +++++++++++++++++++++++++++---
+ 1 file changed, 27 insertions(+), 3 deletions(-)
+
+diff --git a/scripts/pahole-version.sh b/scripts/pahole-version.sh
+index f8a32ab93ad1..cdb80a3d6e4f 100755
+--- a/scripts/pahole-version.sh
++++ b/scripts/pahole-version.sh
+@@ -5,9 +5,33 @@
+ #
+ # Prints pahole's version in a 3-digit form, such as 119 for v1.19.
+
+-if [ ! -x "$(command -v "$@")" ]; then
+-	echo 0
++set -e
++trap "echo 0; exit 1" EXIT
++
++if ! command -v "$@" >/dev/null; then
++	echo >&2 "***"
++	echo >&2 "*** pahole '$@' could not be found. pahole will not be used."
++	echo >&2 "***"
++	exit 1
++fi
++
++output=$("$@" --version 2>/dev/null) || code=$?
++if [ -n "$code" ]; then
++	echo >&2 "***"
++	echo >&2 "*** Running '$@' to check the pahole version failed with"
++	echo >&2 "*** code $code. pahole will not be used."
++	echo >&2 "***"
++	exit 1
++fi
++
++output=$(echo "$output" | sed -nE 's/v([0-9]+)\.([0-9]+)/\1\2/p')
++if [ -z "${output}" ]; then
++	echo >&2 "***"
++	echo >&2 "*** pahole '$@' returned an unexpected version output."
++	echo >&2 "*** pahole will not be used."
++	echo >&2 "***"
+ 	exit 1
+ fi
+
+-"$@" --version | sed -E 's/v([0-9]+)\.([0-9]+)/\1\2/'
++echo "${output}"
++trap EXIT
+
+base-commit: 431c1646e1f86b949fa3685efc50b660a364c2b6
+--
+2.46.0
 
