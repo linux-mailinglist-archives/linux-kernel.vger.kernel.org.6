@@ -1,85 +1,88 @@
-Return-Path: <linux-kernel+bounces-310445-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310447-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADDA1967D17
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 02:54:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EEA2967D1D
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 02:57:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6617A28179A
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 00:54:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A049B1C20CA1
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 00:57:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 528EA8BE7;
-	Mon,  2 Sep 2024 00:54:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09C82C13B;
+	Mon,  2 Sep 2024 00:57:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="pKYcWAvB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AF682F36;
-	Mon,  2 Sep 2024 00:54:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="IiMxtUUI"
+Received: from mail-m16.yeah.net (mail-m16.yeah.net [220.197.32.17])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 283EB4A29;
+	Mon,  2 Sep 2024 00:57:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725238443; cv=none; b=ZWvD9O8VQoSSAjvvuU8536dSIGRhX33bQybt3hE0TZ16F2yKtFZoBIGwsmwPVgr3Ln/cCQDMMbd9rjXtKIvKtGo0qFi0UWsoQi/B/SHdmDCBW8TjRRxwqGxolZtTFJ4Dsl1d3UNckGSxKAEeeqkKj29i0IhjXiPB4kQ1wmklDn8=
+	t=1725238641; cv=none; b=oHvd3ife8h67wF3graksmpb72qCz26gVErPKNmbhFxl9Pq404Aj/n75Uu1zY9YakYBSNtjFvCftyPpDxi/K5tsrGrrWEaf60ktoMfhXw0l7i7RmasbYQg3JWhogixp50t5P0WseMdj25svrBn/y9K98l5l2boZYarRPHufi+kAo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725238443; c=relaxed/simple;
-	bh=gNYRihM4e/LeYh2zWZgs1Y8LOprbRtH/I0zksNICO+g=;
-	h=Date:From:To:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=oC1JXZpSR5jO0SqqV5A0dRzC03/3DkUf9Je6X1O69g0A+e5D2Rua7G/x8Q6ppDwNavTQ/biL22c/tcbH40bAVA1TcHfvxl0xUsMZRP6B6SA46qkXsEoC4oiW7fl/eCRt9ZUissfFyl68vEFpVzffxi38SQfousqTbm3Lwc3WvKY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=pKYcWAvB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6889C4CEC3;
-	Mon,  2 Sep 2024 00:54:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1725238442;
-	bh=gNYRihM4e/LeYh2zWZgs1Y8LOprbRtH/I0zksNICO+g=;
-	h=Date:From:To:Subject:In-Reply-To:References:From;
-	b=pKYcWAvBRMF6dQg8fEJ9kxxYENyMWw/MXTFFAeqFnZmHqxK1rGlsxSuC6H4D4keAw
-	 aQxZhw/ZDxol5F+i+XJ1R0oJ40jhBMFmyTbuLhGJcuUPscfqQ0ItwYftbjnV7GnfKK
-	 UQamBFY3MCWGwGnFdo+b+6u1VnywKNLT6IIc5hOk=
-Date: Sun, 1 Sep 2024 17:54:02 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Heming Zhao <heming.zhao@suse.com>, Lizhi Xu <lizhi.xu@windriver.com>,
- joseph.qi@linux.alibaba.com, jlbec@evilplan.org,
- linux-kernel@vger.kernel.org, mark@fasheh.com, ocfs2-devel@lists.linux.dev,
- syzbot+ab134185af9ef88dfed5@syzkaller.appspotmail.com,
- syzkaller-bugs@googlegroups.com
-Subject: Re: [PATCH V4 2/2] ocfs2: Fix possible null-ptr-deref in
- ocfs2_set_buffer_uptodate
-Message-Id: <20240901175402.816203db096c2e9e49d75363@linux-foundation.org>
-In-Reply-To: <20240821143911.cec82fac50c08947523da2e6@linux-foundation.org>
-References: <1a063827-5cf3-42df-a690-f3c644c10996@linux.alibaba.com>
-	<20240821091459.681136-1-lizhi.xu@windriver.com>
-	<25f2be6c-3e9c-4484-a44e-d26e9c4c8a74@suse.com>
-	<20240821143911.cec82fac50c08947523da2e6@linux-foundation.org>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1725238641; c=relaxed/simple;
+	bh=MaPmVxulV2klEvBUto/0dUhphxIMQveDnJvQ339rxus=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=T3nL4qQfec6jpIMI9NhjsT+17d9LMe25y1xFqvkpcs2lEHjGDNUVdNOaK+6emK2H8QlFqxQ51T9Cw+IxOlCC32LGa0DnOxFsRz/1b4LBFY4HD9r5iEdrL3ELlov/Pl8OrxbA6A88lt09xSoct/pYqxoP/br4cCR/0Q6YTlkZEBE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=IiMxtUUI; arc=none smtp.client-ip=220.197.32.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
+	s=s110527; h=Date:From:Subject:Message-ID:MIME-Version:
+	Content-Type; bh=XGVn9bbamNrnXSoS6civZQ68s+RVUPDpsuvPeT4kxqY=;
+	b=IiMxtUUI8nB/BA2sbwuzz+X9VTvc8ZV4bGhIRBbphXsAns2dqUx8bbULnKPWBt
+	nQGHv+WmFAyAPKcoulVrUjtEZvBC2OTSxyLuyyXGZoqLl6TvoqcZm5CrgvgKUBVs
+	WgIVdBFAEz4utKTVxBL1eFLd+A0d3ivpzgMicpkAe1Svc=
+Received: from dragon (unknown [114.216.210.89])
+	by gzsmtp2 (Coremail) with SMTP id Ms8vCgD3t0MZDdVm0ZxMAA--.30459S3;
+	Mon, 02 Sep 2024 08:55:55 +0800 (CST)
+Date: Mon, 2 Sep 2024 08:55:53 +0800
+From: Shawn Guo <shawnguo2@yeah.net>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Michael Trimarchi <michael@amarulasolutions.com>,
+	Matteo Lisi <matteo.lisi@engicam.com>,
+	Jagan Teki <jagan@amarulasolutions.com>,
+	Parthiban Nallathambi <parthiban@linumiz.com>,
+	devicetree@vger.kernel.org, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH 1/2] ARM: dts: imx6ul-geam: fix fsl,pins property in
+ tscgrp pinctrl
+Message-ID: <ZtUNGdH3U4HbN2ok@dragon>
+References: <20240831101129.15640-1-krzysztof.kozlowski@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240831101129.15640-1-krzysztof.kozlowski@linaro.org>
+X-CM-TRANSID:Ms8vCgD3t0MZDdVm0ZxMAA--.30459S3
+X-Coremail-Antispam: 1Uf129KBjvdXoW5Kr45WFy8Jw1fJFy7Wr1fXrb_yoWxXwb_CF
+	y8Ja4xXwnrWr92qw1xKFs2vr929a18AryUWrW0vFsIgryak3yUZ3yfJry5Kr90qr45uFyD
+	J348WF1DWrZ7GjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IU0eyIUUUUUU==
+X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiER5OZWbU5TRObAAAsl
 
-On Wed, 21 Aug 2024 14:39:11 -0700 Andrew Morton <akpm@linux-foundation.org> wrote:
+On Sat, Aug 31, 2024 at 12:11:28PM +0200, Krzysztof Kozlowski wrote:
+> The property is "fsl,pins", not "fsl,pin".  Wrong property means the pin
+> configuration was not applied.  Fixes dtbs_check warnings:
+> 
+>   imx6ul-geam.dtb: pinctrl@20e0000: tscgrp: 'fsl,pins' is a required property
+>   imx6ul-geam.dtb: pinctrl@20e0000: tscgrp: 'fsl,pin' does not match any of the regexes: 'pinctrl-[0-9]+'
+> 
+> Cc: <stable@vger.kernel.org>
+> Fixes: a58e4e608bc8 ("ARM: dts: imx6ul-geam: Add Engicam IMX6UL GEA M6UL initial support")
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-> OK I think I found the correct patches - v3 of [1/2] and v4 of [2/2].
-> 
-> For clarity can we please have a full resend of both patches?
-> 
-> And let's please have a [0/n] cover letter which describes the problems
-> which are being addressed and which also briefly describes how they
-> were addressed.
-> 
-> Also, it appears that both of these fixes should be backported into
-> -stable kernels.  So let's please try to identify when these bugs were
-> introduced and to add a suitable Fixes: to the individual changelogs.
-> 
+Applied both, thanks!
 
-Again, can we please have a full resend of these two patches with the
-above issues addressed?  Particularly the identification of the Fixes:
-targets.
-
-Thanks.
 
