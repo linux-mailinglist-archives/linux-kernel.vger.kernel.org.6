@@ -1,112 +1,110 @@
-Return-Path: <linux-kernel+bounces-310941-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310944-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5775A96831A
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 11:23:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A446F96831F
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 11:24:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 88A6F1C225C6
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 09:23:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D56E61C223D0
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 09:24:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B41C1C3F14;
-	Mon,  2 Sep 2024 09:22:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD7BA1C3309;
+	Mon,  2 Sep 2024 09:23:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qgpFQHIC"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="lzrkKoqB"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A4E91C2DB2
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 09:22:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C679C187355;
+	Mon,  2 Sep 2024 09:23:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725268975; cv=none; b=KK8WWiY16m8kYDK07wc409APdrjtp4Jvaxp4WgKD/+v+eCMx+c8dlPut0k7GQW69L1kE5oD3ycCUq/m465uizMGuGyNiE3nzs6EmIR9OWy3tLyTvf+XP/rni5TXqsgMmcsvqZ+PwPshwSs4/D3fDRvjHVCiM+YnWRrxx1S48dF8=
+	t=1725269015; cv=none; b=iZ3dwL4l/+zac2cISsPzfQV9u4mA727UB4RedRL3v+Wn5VHqzZZ6jo9RXkE61Xept5FSWQh++W9O9FaSH2jH4saPMbGCuWDlPVZ5NEwQRbo+dDn6jsHAqGXI3hcxnOVIFYUyjhRUZaTvjxASxGMZK3/WcufBbFPy6DinDPQ2Za0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725268975; c=relaxed/simple;
-	bh=wTXjzMm1LaXvc6LZZwsmTnZ2rjRxz8FNqEBBjV5GM5o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XZ0LQz+ZSwri3D1BnuULIjqwXzNWbkYltzfeZBPVni29lQMDSZrlFC0nfcAVWJTDrrl5SrJ/12RAkZajktSTng5ukAX9TpCpmzqDi5Lrf8PZJjV+KLJSzZrOEg5ZRwq2lXh/ILWN64zfAG83ToUC5KGfdKXD8mcRYM7AbRNBy9o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qgpFQHIC; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-42c828c8863so8051605e9.3
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2024 02:22:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1725268973; x=1725873773; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Yo9xRnJdvUPVCwcTQSc6bKjRX1ZXMbBoRKEkXONSfNg=;
-        b=qgpFQHICt2VF2XelYEYJhzIyz+d9Yjm+LW73DITwSP4QOOQ7slbzs/hrzqIFRPE/3C
-         G8bDp5nF8FUasQow9USAbNcgvISXVIitTVV/nbZ+Jn5vFEI3TuG37daLMBzU90bGGZIa
-         0J0jI+XSV1P7D8IF7QH9YGvbwDtjY3NbX5pO+xXH0vWuHmijVTBINaqfS990Xus70kB4
-         smC712yLBrFYhGnJAOnrCpjgxURLeuIIoLnevreAXEh60sXu1rIwwzZlEg8c7ZbU2CNP
-         OH0AAQlIczFO/K5pOcmyAHd4Lgu4j8EizA0QHibebDLlMJJj/6332uKvM5/DeKEy1Plt
-         MzLQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725268973; x=1725873773;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Yo9xRnJdvUPVCwcTQSc6bKjRX1ZXMbBoRKEkXONSfNg=;
-        b=C+JAYkhWZ42qaiGsVIsNCCrgg/aDqvVmOvl6kaNvrMG4an5YUIgjWkgYD+De08JHDP
-         sLoMbrr2EuedzZPeYUN8DvjQp5w5zF9+Gs/mtH0Q8GJUxd0LQ2Rct3j9ot3Gc/GhXuv1
-         gjIwgByQVFX0sPZ3LfTz7v1mA/7AVYzKL6VrBBY53bVjCT/T75ZmuGdWuFdmGRPAyQ0Q
-         WS2NkBKwhmn4CacuprBVblgLzAXQVvVQ98scsKNWoBKjI2BjlY1wNuzpjH+9B126LD7n
-         4k0FxW9JrFjTJcN8L10icDbyu294bc6oIxgohGYy/Qw7EalJA8qYLCay6oYco9thosBa
-         fxGQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXQI02gTWePKIuY4kHqMH/pttUK9Lr6699bzeyoz9zNl3rQq6xkhwvL2RJvuzF7Z7+GKJfwLdwGJg1DDW4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzo7qrFxgcDu8bA1QheAjX8JAqFT9kylSwRMuskSVlQq2FK+2df
-	jfs4tsZpiI7mHZJT760/p9vdS+xIzDPoHI8PELVS5v+oPsPM6eQ50EpBEHxGuVg=
-X-Google-Smtp-Source: AGHT+IF2gbQEyM2KIz31TtTPfHNgiRlJUVBglGH3hjJxPTZSWs56UQKIWHzmRWcrPQDNaxXj4vwmzQ==
-X-Received: by 2002:a05:600c:1c07:b0:426:6b92:387d with SMTP id 5b1f17b1804b1-42bdc6377efmr55810205e9.21.1725268972166;
-        Mon, 02 Sep 2024 02:22:52 -0700 (PDT)
-Received: from [192.168.10.46] (146725694.box.freepro.com. [130.180.211.218])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-42bb6df92f1sm131711915e9.25.2024.09.02.02.22.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 02 Sep 2024 02:22:51 -0700 (PDT)
-Message-ID: <9fd1fa22-caa8-47d1-a576-2cab2c65a4dc@linaro.org>
-Date: Mon, 2 Sep 2024 11:22:51 +0200
+	s=arc-20240116; t=1725269015; c=relaxed/simple;
+	bh=cCFseqcH4z5OSqatyQ8Njvobnvsuzyx5wOOXtcdAbc4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KAX7UY/u1SngF7yzQ7XUPAhtP/Zsyq28Jx0JlqXuNYyq2BvAmz6FH9L5gHdMYLpMwQ+OKFUy2pxZ/vRExEY4SEIlUKH3UiOdg3OUyfz9KPtXDShAjZqjexk4VjBllZtSyh2jp+KTdNxRp07jIssn+DXVt9/CTI218gkuvEAP2E8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=lzrkKoqB; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=k8fNp4lPEgrhIlaN+v3O0Q3/cbsRJ7Y/SUZlytKJl78=; b=lzrkKoqBk9ddfuYiQtaezmQCY9
+	qQH6VLJGsuaTvibz6mCM2E9uabi/UmI2NBr3jqZIfsGHTOqS82k4aeyDGpEZCs2sF2voB0R9FjoQk
+	/Nc8uO6wF5RW1GjfkGRByItVtxpE6Q6Ptn84BGh0lTJX4B7vd77ZPie49HMycq4bCFQoImQZ4aoOo
+	+Vthr5UiNlFXpf1FevZxIXuH9a6Fy6ul9uhETJk2nIKCN3wL84YCyxUEWzY7iFDs3yRlC/Qgb5yq4
+	Ih4JhokutM3IeqTvOiithyBNEcT/ZGP4yM2HUxCdimtYfiiHTVkwnpqv/7SGtJCAJmbS00llXWDzz
+	XYyX7uog==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:46394)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1sl3HF-0005tr-2y;
+	Mon, 02 Sep 2024 10:23:13 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1sl3H9-0001gG-1n;
+	Mon, 02 Sep 2024 10:23:07 +0100
+Date: Mon, 2 Sep 2024 10:23:07 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Wentai Deng <wtdeng24@m.fudan.edu.cn>
+Cc: davem <davem@davemloft.net>, edumazet <edumazet@google.com>,
+	kuba <kuba@kernel.org>, pabeni <pabeni@redhat.com>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	netdev <netdev@vger.kernel.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>,
+	=?utf-8?B?5p2c6Zuq55uI?= <21210240012@m.fudan.edu.cn>
+Subject: Re: [BUG] Possible Use-After-Free Vulnerability in ether3 Driver Due
+ to Race Condition
+Message-ID: <ZtWD+/veJzhA9WH2@shell.armlinux.org.uk>
+References: <tencent_4212C4F240B0666B49355184@qq.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] clocksource: qcom: Add missing iounmap() on errors in
- msm_dt_timer_init()
-To: Ankit Agrawal <agrawal.ag.ankit@gmail.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konrad.dybcio@linaro.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>, linux-arm-msm@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240713095713.GA430091@bnew-VirtualBox>
-Content-Language: en-US
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-In-Reply-To: <20240713095713.GA430091@bnew-VirtualBox>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <tencent_4212C4F240B0666B49355184@qq.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-On 13/07/2024 11:57, Ankit Agrawal wrote:
-> Add the missing iounmap() when clock frequency fails to get read by the
-> of_property_read_u32() call, or if the call to msm_timer_init() fails.
+On Mon, Sep 02, 2024 at 01:19:43PM +0800, Wentai Deng wrote:
+> In the ether3_probe function, a timer is initialized with a callback function ether3_ledoff, bound to &amp;prev(dev)-&gt;timer. Once the timer is started, there is a risk of a race condition if the module or device is removed, triggering the ether3_remove function to perform cleanup. The sequence of operations that may lead to a UAF bug is as follows:
 > 
-> Fixes: 6e3321631ac2 ("ARM: msm: Add DT support to msm_timer")
-> Signed-off-by: Ankit Agrawal <agrawal.ag.ankit@gmail.com>
-> Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
-> ---
+> 
+> CPU0&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; CPU1
+> 
+> 
+> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; |&nbsp; &nbsp;ether3_ledoff
+> ether3_remove&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;|
+> &nbsp; &nbsp; free_netdev(dev);&nbsp; &nbsp; &nbsp; &nbsp;|
+> &nbsp; &nbsp; put_device&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; |
+> &nbsp; &nbsp; kfree(dev);&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;|
+> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; |&nbsp; &nbsp; &nbsp; &nbsp;ether3_outw(priv(dev)-&gt;regs.config2 |= CFG2_CTRLO, REG_CONFIG2);
+> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; |&nbsp; &nbsp; &nbsp; &nbsp;// use dev
 
-Applied, thanks
+This is unreadable.
 
-Sorry for the delay. In the future, please send to To: instead of Cc: 
-for the maintainers
+> Request for Review:
+> 
+> 
+> We would appreciate your expert insight to confirm whether this vulnerability indeed poses a risk to the system, and if the proposed fix is appropriate.
+
+Please resend without the HTML junk in the plain text part.
 
 -- 
-<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+*** please note that I probably will only be occasionally responsive
+*** for an unknown period of time due to recent eye surgery making
+*** reading quite difficult.
 
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
