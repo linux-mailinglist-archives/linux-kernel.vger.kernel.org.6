@@ -1,74 +1,55 @@
-Return-Path: <linux-kernel+bounces-311209-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311215-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F33E968606
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 13:19:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA8F996862D
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 13:26:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 446092834A8
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 11:19:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8840E28125D
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 11:26:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F290E185923;
-	Mon,  2 Sep 2024 11:19:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1280F185949;
+	Mon,  2 Sep 2024 11:26:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="E9wTynXz"
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="MjlEB9Zn"
+Received: from mout.web.de (mout.web.de [217.72.192.78])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BA8F13AD33
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 11:19:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0E6113B2A8;
+	Mon,  2 Sep 2024 11:26:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725275976; cv=none; b=QNA8pHjcFTfb6MHoZ929LL7EqcK6SYdyCIJk4IehCDK5QOwi+lBeGjenlKaTB2WDWZo/UHE8BIoA84d/24lNt5HkfA/nWtnCPyRdp/L5g5DG9v0kDRFyrdLOXuUpYBV8L7Bx6n0o5BQA2URMJjr7xq5JE0fZbxws8UjYV2Zme4Q=
+	t=1725276388; cv=none; b=qApbilcO4cXOJEdFa75Z1l3Vrr9F+8NaS8HtAWmv6N7v7Who4R638BjDK5KMq6WPp55uWRdMZZzoOjFtGFNPyoJ//70GU2rLsqZLU9IkyIl6vqH0MtP3op0nEB9eZypJAIvtWU7fDzH07ZW79VCBHdwrCLLO9RtS8RHeLllf0IE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725275976; c=relaxed/simple;
-	bh=b8PjYVxZvhv1xfIAqlqxTDyUHLdGPvqdgWutgoPXPlw=;
+	s=arc-20240116; t=1725276388; c=relaxed/simple;
+	bh=yc93DkTwkPu1XtVmy+hZb0mOhWjy2fEGE62jH04ltfo=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UWacfXny8T4J3rAfEJKAtvXRLZ1nibaThor1ypB/jVG+GatpznG6FR2xyz74OKahO0ARzZrRKThk+Eq45NBcSTr+MROCxNCix7mqnb56+d25JfapZv8FTp2DmsBl2W7if+eL99tlOfC0hzPyi7FEcg/Kfy2HjUynVmBr5EL5KK8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=E9wTynXz; arc=none smtp.client-ip=209.85.221.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-371b97cfd6fso2748374f8f.2
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2024 04:19:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1725275972; x=1725880772; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=EtLLRwzDcELeb0ZO2e/wMEHsMwK2Lp+CL6px/dCTXBY=;
-        b=E9wTynXzpRHilLp5xYXju7oJ1eCgZA2bJvaFHJr8KHmqolExMdJE9vmAdg67y7xz+N
-         Upo1hwchpRkVjO5k6XkgGMmiiRbgARie+ECcocRQQkPksbRiNkLQvcd6rxKbUqnoNKoz
-         8pcvWkEpr/iRC/ysKO758ZFMUO/2Z2XZie3A1VPfBXYFMH/COtXs46DA4ERILGC8AImx
-         BBmPJhtyMQbtANZerPgf81AixQufhxzMtYPLCMi+bEIlaGwkTAivKjuUin+Fm0GwNw/2
-         1wo5UFURnNdTACLEUr3z8lJHA9f42yoF+ruTwDlIYV1HXoPhwbCUdgl66mUgWm36WXw3
-         B9qw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725275972; x=1725880772;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EtLLRwzDcELeb0ZO2e/wMEHsMwK2Lp+CL6px/dCTXBY=;
-        b=HgBfmVGwPVnkVvvzt9p+sbUr1kCEDvmrgJoc1FaKD5KuQ352MWl4Ws5/dGgDav3Wu3
-         ixprcj6+tgcFeHvDh5+7gCw7xWLvW7FSIx5Ebqz2dW+s5qcfQVMjiuIYlu5OMWl1nWSr
-         Iq0lpR3XQzxTjU5n9YTlBQCpP0KMEvI16xGweJpYWKlU/QkksC8IGx4PeQbOQKfam9Wm
-         OpoVI76B7VcffB/f4IrbTUVkU2CjNAMRcMTP+rhFCUIcxZRkFy6D3UgV5ru89p2B5DIj
-         luKgFilBlhj0h+7PS8KOQ5W14CBSAPKB1BnKAI3y0MNHGI07W+cNGmuN0w1A5Ci8+vdz
-         I/1g==
-X-Forwarded-Encrypted: i=1; AJvYcCUVEq7kPVNGqL7v2hCP/1fHI1Pf4WXQr46Rmbs0iAFI95HHPa9RJ4CgXh2vgM5TWVoNX0m5hwzohgKug4g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzS3fRCRtlmSrp5JHx5jwpT3gOY2SJuUrKCoc1bmPMK1QVuvgEX
-	PjvYyi9OKUTELnGmQ0H1lVlJ3pGAMdI/Ryj6Kfo98q/0YndIn9j6/TuSOeA576I=
-X-Google-Smtp-Source: AGHT+IHCc+0pl/tPsds9z0P6xI6/le7SPsaow0P6+hezx8fuBZ0z6OcbdQ+qtG7i8NaSHx3J/sP7lw==
-X-Received: by 2002:a5d:648d:0:b0:374:c6ad:a7c6 with SMTP id ffacd0b85a97d-374c6adab4amr2527245f8f.20.1725275971100;
-        Mon, 02 Sep 2024 04:19:31 -0700 (PDT)
-Received: from ?IPV6:2403:580d:fda1::299? (2403-580d-fda1--299.ip6.aussiebb.net. [2403:580d:fda1::299])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-715e5576c9bsm6651241b3a.24.2024.09.02.04.19.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 02 Sep 2024 04:19:30 -0700 (PDT)
-Message-ID: <d8383884-3ebe-445d-bd8a-6232b1c6753e@suse.com>
-Date: Mon, 2 Sep 2024 20:49:25 +0930
+	 In-Reply-To:Content-Type; b=lKZrqlicink37T5CU4lJ84DMzS+AVLzg0keUNrhDY2bIBlLyhc9mRNKqjSeggdYdGRp+EZ6V1yGc+4KDCV8WH+Hr4JjpM3wjHx5LgX9uqoHzQAFwy4qYjmVpgo22WoavRC8fwY/3GKdHOTjYA1zDG3UtdvYvilOcLypKYAJO4+s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=MjlEB9Zn; arc=none smtp.client-ip=217.72.192.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1725276372; x=1725881172; i=markus.elfring@web.de;
+	bh=yc93DkTwkPu1XtVmy+hZb0mOhWjy2fEGE62jH04ltfo=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=MjlEB9ZnBGZABCneEeKp/js0zule7jM5nyw8KuwhRHECem6HH7RIAAiNxiSMERvE
+	 4jSY5Y8xV/isMnaHyotBjdQsl98Ss/4X6oNL4P6MdGmXvujUUXqTDt0R3tQaKKXAs
+	 9Ga1y2/2GmnNzBorPVFP8m82GgFsM+6u9EjbmLN0mCvUxGFJPjH/m70fNdScX6Pxf
+	 sN5v3x/g9eWBzBj0KaJu+AlQXA0zrWVFF0ROBH5mga6T39yoKrNv9J9gu/DAzqptD
+	 EYCmH/SM3VsA7lsoyY7XopYLryVo2N6BFcOuDFCsBkc33fw2SEF6F2kBWHa4jtO6b
+	 M2mghvvDnSUqa7gJ0A==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.84.95]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1Ml4B4-1sLfRA2L5o-00gAn0; Mon, 02
+ Sep 2024 13:20:28 +0200
+Message-ID: <42eb1dd6-f070-4f81-9959-fdad2598b7f2@web.de>
+Date: Mon, 2 Sep 2024 13:20:11 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,101 +57,58 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] btrfs: Always update fstrim_range on failure
-To: Luca Stefani <luca.stefani.ge1@gmail.com>
-Cc: Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
- David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240902111110.746509-1-luca.stefani.ge1@gmail.com>
-Content-Language: en-US
-From: Qu Wenruo <wqu@suse.com>
-Autocrypt: addr=wqu@suse.com; keydata=
- xsBNBFnVga8BCACyhFP3ExcTIuB73jDIBA/vSoYcTyysFQzPvez64TUSCv1SgXEByR7fju3o
- 8RfaWuHCnkkea5luuTZMqfgTXrun2dqNVYDNOV6RIVrc4YuG20yhC1epnV55fJCThqij0MRL
- 1NxPKXIlEdHvN0Kov3CtWA+R1iNN0RCeVun7rmOrrjBK573aWC5sgP7YsBOLK79H3tmUtz6b
- 9Imuj0ZyEsa76Xg9PX9Hn2myKj1hfWGS+5og9Va4hrwQC8ipjXik6NKR5GDV+hOZkktU81G5
- gkQtGB9jOAYRs86QG/b7PtIlbd3+pppT0gaS+wvwMs8cuNG+Pu6KO1oC4jgdseFLu7NpABEB
- AAHNGFF1IFdlbnJ1byA8d3F1QHN1c2UuY29tPsLAlAQTAQgAPgIbAwULCQgHAgYVCAkKCwIE
- FgIDAQIeAQIXgBYhBC3fcuWlpVuonapC4cI9kfOhJf6oBQJjTSJVBQkNOgemAAoJEMI9kfOh
- Jf6oapEH/3r/xcalNXMvyRODoprkDraOPbCnULLPNwwp4wLP0/nKXvAlhvRbDpyx1+Ht/3gW
- p+Klw+S9zBQemxu+6v5nX8zny8l7Q6nAM5InkLaD7U5OLRgJ0O1MNr/UTODIEVx3uzD2X6MR
- ECMigQxu9c3XKSELXVjTJYgRrEo8o2qb7xoInk4mlleji2rRrqBh1rS0pEexImWphJi+Xgp3
- dxRGHsNGEbJ5+9yK9Nc5r67EYG4bwm+06yVT8aQS58ZI22C/UeJpPwcsYrdABcisd7dddj4Q
- RhWiO4Iy5MTGUD7PdfIkQ40iRcQzVEL1BeidP8v8C4LVGmk4vD1wF6xTjQRKfXHOwE0EWdWB
- rwEIAKpT62HgSzL9zwGe+WIUCMB+nOEjXAfvoUPUwk+YCEDcOdfkkM5FyBoJs8TCEuPXGXBO
- Cl5P5B8OYYnkHkGWutAVlUTV8KESOIm/KJIA7jJA+Ss9VhMjtePfgWexw+P8itFRSRrrwyUf
- E+0WcAevblUi45LjWWZgpg3A80tHP0iToOZ5MbdYk7YFBE29cDSleskfV80ZKxFv6koQocq0
- vXzTfHvXNDELAuH7Ms/WJcdUzmPyBf3Oq6mKBBH8J6XZc9LjjNZwNbyvsHSrV5bgmu/THX2n
- g/3be+iqf6OggCiy3I1NSMJ5KtR0q2H2Nx2Vqb1fYPOID8McMV9Ll6rh8S8AEQEAAcLAfAQY
- AQgAJgIbDBYhBC3fcuWlpVuonapC4cI9kfOhJf6oBQJjTSJuBQkNOge/AAoJEMI9kfOhJf6o
- rq8H/3LJmWxL6KO2y/BgOMYDZaFWE3TtdrlIEG8YIDJzIYbNIyQ4lw61RR+0P4APKstsu5VJ
- 9E3WR7vfxSiOmHCRIWPi32xwbkD5TwaA5m2uVg6xjb5wbdHm+OhdSBcw/fsg19aHQpsmh1/Q
- bjzGi56yfTxxt9R2WmFIxe6MIDzLlNw3JG42/ark2LOXywqFRnOHgFqxygoMKEG7OcGy5wJM
- AavA+Abj+6XoedYTwOKkwq+RX2hvXElLZbhYlE+npB1WsFYn1wJ22lHoZsuJCLba5lehI+//
- ShSsZT5Tlfgi92e9P7y+I/OzMvnBezAll+p/Ly2YczznKM5tV0gboCWeusM=
-In-Reply-To: <20240902111110.746509-1-luca.stefani.ge1@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Subject: Re: iio: imu: inv_mpu6050: Remove duplicate code between labels
+To: Gyeyoung Baek <gye976@gmail.com>, linux-iio@vger.kernel.org,
+ Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Jean-Baptiste Maneyrol <Jean-Baptiste.Maneyrol@tdk.com>
+References: <20240901091214.15199-1-gye976@gmail.com>
+ <533802b3-3034-4b7c-b903-72608917e2f0@web.de>
+ <CAKbEznv-TmCr2FAodrM2SKK5A5pbV9p5-OvXPdmuk_4xXmh=Rw@mail.gmail.com>
+ <7b827ee0-9116-4e8c-96e1-1fa5f7267f33@web.de>
+ <CAKbEznu=+Bkw4kmoo7qG9h2wM=2XV54j_SYzHMAH1uWhtUPCvg@mail.gmail.com>
+ <3c60e167-7815-49c8-89f1-fe1139879d6b@web.de>
+ <CAKbEznvpazyV905CFOp_sDs+S=ihhXe2QH=Gc38oitjFFKOW=A@mail.gmail.com>
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <CAKbEznvpazyV905CFOp_sDs+S=ihhXe2QH=Gc38oitjFFKOW=A@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:3UusnGLyfD1UxdTEg7gZmO6CNYcyC3g/kfK0AH2yKXqxY0PgQUx
+ ZvQ0EOuDmaZKqthoVzwJ/DaBh9v7wOmYvBuB0WS0xZU79KjQb48Y42eZgZOveALTJnUmWbp
+ Nxq9O8v1XaR5h33EmT4yGBPN7cqhCbUdPEtfyVhuUASd3a4jjjyQ/EcsTvOCf94CC7v1eWV
+ Jp54WaNMtE0SOVPyZYX8g==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:wL0/GlDqSMI=;JgOPVlN8aLPgx0qTBd6kd9nGvv2
+ suAjD24rNFQC6pwXZOy/4zOIBtvmEUo2R0XAbEenKE4lv7KR2vXl24YEz7BfedgDaKon3eZbW
+ 1pco15ASSPjvmiKhgeK8w65grKbtYJkc2xX1oqPkPe/q6utVccBE0DsSCT4XBxTetn7zTAB3J
+ XDPFFByz0S0IRQ92L9sve+03tfjUXEm5wY7ehEB0jJJhqA4I0PQHG1yY3V2vxsD/Em2OWx/Yf
+ 2tpQQGEnyx20f9UGgz/SnjS0qnGGQ5LhEQDfJfyCgj97ZVg3DVnwoeRzFCfIjf+bw7EBkLCnj
+ MeQrJtFqiEA4OdOSSXhFoGuUraqZP7nmMkVnM1xgDIvbtnRFg4/HAszkyehClleyjVfJc5ye1
+ AglPhLa0GcBN+IQ6bzUMiJRjvxOCSr4DU17eCVZjpaKg3soxUjBT2TljYkXbCgPiTecs5DW2t
+ n0jn2qeDxyuo6DjqNeZLD4zb+l4UvjAhuwfzbgg3V8F4dZsXoeAC9CwqTFRHZa2pN5rHoKTfe
+ p8dFBqzfDtW5AwltjvAu3Ish2hO7h/SuH3A67J6UD63A7vrXTHlzpGA5BN6dsxkY6oP/vgIvm
+ lUAzAwjSJCIACi7DsihKWk8psXaMEUvsHpzpE3eyvTEUua3Qe2URWpX/G7Ym057PDVKV2u4X2
+ E5zpUdqODU68hoEnrICMiWaW9GRgKfFRi1bnnqYwBVhHLJld5c4ZZY6IsEM5v2rDZPclX1naF
+ S//RSBHe66/6uLk3AjMxFYT9/mfymYMaQQZqe+mGuzW+GxgkLnaXoPv/FytLsZbv3fEaPEHJD
+ 203CUBTJ0A9/Ct2KcAXhIrSA==
+
+> =E2=80=A6, But I just suggested a minor thing as,
+
+This suggestion can trigger further patch review consequences.
 
 
+> and since the maintainer made the decision and approved,
 
-在 2024/9/2 20:40, Luca Stefani 写道:
-> Even in case of failure we could've discarded
-> some data and userspace should be made aware of it,
-> so copy fstrim_range to userspace regardless.
-> 
-> Also make sure to update the trimmed bytes amount
-> even if btrfs_trim_free_extents fails.
-> 
-> Signed-off-by: Luca Stefani <luca.stefani.ge1@gmail.com>
+How did you get such an impression?
 
-Reviewed-by: Qu Wenruo <wqu@suse.com>
 
-Thanks,
-Qu
+> I did not feel the need to go any further.
 
-> ---
->   fs/btrfs/extent-tree.c | 4 ++--
->   fs/btrfs/ioctl.c       | 4 +---
->   2 files changed, 3 insertions(+), 5 deletions(-)
-> 
-> diff --git a/fs/btrfs/extent-tree.c b/fs/btrfs/extent-tree.c
-> index feec49e6f9c8..a5966324607d 100644
-> --- a/fs/btrfs/extent-tree.c
-> +++ b/fs/btrfs/extent-tree.c
-> @@ -6551,13 +6551,13 @@ int btrfs_trim_fs(struct btrfs_fs_info *fs_info, struct fstrim_range *range)
->   			continue;
->   
->   		ret = btrfs_trim_free_extents(device, &group_trimmed);
-> +
-> +		trimmed += group_trimmed;
->   		if (ret) {
->   			dev_failed++;
->   			dev_ret = ret;
->   			break;
->   		}
-> -
-> -		trimmed += group_trimmed;
->   	}
->   	mutex_unlock(&fs_devices->device_list_mutex);
->   
-> diff --git a/fs/btrfs/ioctl.c b/fs/btrfs/ioctl.c
-> index e0a664b8a46a..94d8f29b04c5 100644
-> --- a/fs/btrfs/ioctl.c
-> +++ b/fs/btrfs/ioctl.c
-> @@ -543,13 +543,11 @@ static noinline int btrfs_ioctl_fitrim(struct btrfs_fs_info *fs_info,
->   
->   	range.minlen = max(range.minlen, minlen);
->   	ret = btrfs_trim_fs(fs_info, &range);
-> -	if (ret < 0)
-> -		return ret;
->   
->   	if (copy_to_user(arg, &range, sizeof(range)))
->   		return -EFAULT;
->   
-> -	return 0;
-> +	return ret;
->   }
->   
->   int __pure btrfs_is_empty_uuid(const u8 *uuid)
+There are other software design options to take better into account
+for further development considerations (according to the original control =
+flow).
+
+Regards,
+Markus
 
