@@ -1,130 +1,101 @@
-Return-Path: <linux-kernel+bounces-311837-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311838-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38756968E61
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 21:19:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A920E968E67
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 21:19:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E7171284B1A
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 19:19:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 546E31F23CD5
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 19:19:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A23AF1A3036;
-	Mon,  2 Sep 2024 19:18:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FFC21AB6ED;
+	Mon,  2 Sep 2024 19:19:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i/2GE23d"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aiH15ebP"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0220619CC3E;
-	Mon,  2 Sep 2024 19:18:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4B351A3AB6;
+	Mon,  2 Sep 2024 19:19:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725304710; cv=none; b=az8i7jS/IKuZe/ayk7bk4S4nex3Z7znee4SbTyVVxn93JXks79Dv7NscGqyBKp4HUDDzxq9sNSP9tY9raQsKPODYz7VSzaWGCFViRDuG5p13VNdZNCtPpGz7h6e6P5gygGqlok+LSnZuulQGoIN5Hk79s9dFfXgEinZx+WYjSg4=
+	t=1725304782; cv=none; b=Gm7vJTTSNLfO0FUWoETwjUFduGoPJITi6qvovAGr2MbFlpwzq2NAP9VXEn0NvsT2Pr+Twm4bLWhyZbyUMS21nN19uTcHoqiW43PNWvNRZWHODoIFQKEgKGx9BLMduOia/WhjKxUzm6RLPkV+vtouoz5r09FLu2s79oUEqyscR40=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725304710; c=relaxed/simple;
-	bh=lVD6NdQtOSiq4Qr2J9qExnjFEtwYqUvBaZrGo41wt28=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=bxaFNI9f/ThWM/hs6PvH2lyeL8ZtZ9ZYVoqbnsFBBRCLNBDpzgYRR9uVVjoTq1yRY6RBzOBGfB8gVfqjx6iG70r2LkC1LqIs577WXKDcyzYWUgXAKRpSUEVd3BHxpbDI+UJt876vEJLqArgXjS0zJjzoVgDJxL8qd5MhmAynFeY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i/2GE23d; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 37A85C4CEC2;
-	Mon,  2 Sep 2024 19:18:29 +0000 (UTC)
+	s=arc-20240116; t=1725304782; c=relaxed/simple;
+	bh=CSG42c0Zza6vQ2aeIZ0JWOH/0VvsfGO1cv6kMXBDw6U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=AbcyhXHswgO327doaJNlMN31bJ/66vINjC+jTEBkY2BEiDS3vp+zxv46AjutYAoORQXrfR4/SQXtP5Plg1lMFyMXmLyDg5ac47Xs/o7OW7uptLvgIMNjB70EXl0/tHlaq7M2k1UVMynRMqWhaumTSSuTXvmzuGQ1CrtbImJGqK8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aiH15ebP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CD8B6C4CEC8;
+	Mon,  2 Sep 2024 19:19:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725304709;
-	bh=lVD6NdQtOSiq4Qr2J9qExnjFEtwYqUvBaZrGo41wt28=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=i/2GE23dWychP1K6x47bYp0CIj0J+5yO9gjCNex4s0iGlgq5ZeBXROW72YJ/rOjM7
-	 zLhWOJQ/vNZ1Ql3QnpyFofuZ3sDhUUDR6RxW/Vh5Nd0MG7knAO8LlpQP/E3aRc9rVE
-	 oO2qnpYTd2p8PJuKJjlG34GRb+ddOyZYuftrNsD45IiUX8t0sosMLVss3RhCAy4DbK
-	 DLjmQHgwjx0PMoISULpHa8vW0aics6L3GfXbiWPlx/paw3bI8/BoWT90gU5VxHcB04
-	 LWBg/Nx0RG2wuXvjf6wqg3wQkypZp0kVz4qUg0mBr6d5uwou8/m/5KMQZ24eR87GHG
-	 lIFksc4Hb9QGg==
-Date: Mon, 2 Sep 2024 14:18:27 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Jim Quinlan <james.quinlan@broadcom.com>
-Cc: linux-pci@vger.kernel.org, Nicolas Saenz Julienne <nsaenz@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-	Cyril Brulebois <kibi@debian.org>,
-	Stanimir Varbanov <svarbanov@suse.de>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	bcm-kernel-feedback-list@broadcom.com, jim2101024@gmail.com,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Rob Herring <robh@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-rpi-kernel@lists.infradead.org>,
-	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v6 05/13] PCI: brcmstb: Use bridge reset if available
-Message-ID: <20240902191827.GA224376@bhelgaas>
+	s=k20201202; t=1725304781;
+	bh=CSG42c0Zza6vQ2aeIZ0JWOH/0VvsfGO1cv6kMXBDw6U=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=aiH15ebPMb+BTMSWl1RX4qe0PycRIQbNRQToY6db+26jTPBqCFdgFvktJdpRNQWmt
+	 5PoM+81kb8Q5tVXb7lzZZzXwFntFrX7959Lb8wNl5sNizqB0ZcIbjhRkPZnmmCbpYJ
+	 7Eghso8DNUif2f4LbBt7CcZkDYohImO46sSpo2CqpySPKQnge2vjnpdLLbI8RGNs8r
+	 nwmVGbEpi4Nc3lawsCs6nWOLCQF9d0cj4ouLErWVM3sroS0qlFGiCze2rf18nrFjW1
+	 PUFDWy44/PlKnmiVm+r1HOdD11OgicewSFl1TJX79hBRxjUqa+UsBlBvI5mao3MX87
+	 igNaukAwdmJdQ==
+Message-ID: <815b7445-3113-4ef7-ab36-b4a216308dd6@kernel.org>
+Date: Mon, 2 Sep 2024 22:19:34 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240815225731.40276-6-james.quinlan@broadcom.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 4/8] dt-bindings: interconnect: Update master/slave id
+ list
+To: Varadarajan Narayanan <quic_varada@quicinc.com>, andersson@kernel.org,
+ mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, konradybcio@kernel.org,
+ catalin.marinas@arm.com, will@kernel.org, richardcochran@gmail.com,
+ geert+renesas@glider.be, dmitry.baryshkov@linaro.org,
+ neil.armstrong@linaro.org, arnd@arndb.de, nfraprado@collabora.com,
+ linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
+ netdev@vger.kernel.org
+References: <20240829082830.56959-1-quic_varada@quicinc.com>
+ <20240829082830.56959-5-quic_varada@quicinc.com>
+Content-Language: en-US
+From: Georgi Djakov <djakov@kernel.org>
+In-Reply-To: <20240829082830.56959-5-quic_varada@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Aug 15, 2024 at 06:57:18PM -0400, Jim Quinlan wrote:
-> The 7712 SOC has a bridge reset which can be described in the device tree.
-> Use it if present.  Otherwise, continue to use the legacy method to reset
-> the bridge.
+On 29.08.24 11:28, Varadarajan Narayanan wrote:
+> Update the GCC master/slave list to include couple of
+> more interfaces needed by the Network Subsystem Clock
+> Controller (NSSCC)
+> 
+> Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
 
->  static void brcm_pcie_bridge_sw_init_set_generic(struct brcm_pcie *pcie, u32 val)
->  {
-> -	u32 tmp, mask =  RGR1_SW_INIT_1_INIT_GENERIC_MASK;
-> -	u32 shift = RGR1_SW_INIT_1_INIT_GENERIC_SHIFT;
-> +	if (val)
-> +		reset_control_assert(pcie->bridge_reset);
-> +	else
-> +		reset_control_deassert(pcie->bridge_reset);
->  
-> -	tmp = readl(pcie->base + PCIE_RGR1_SW_INIT_1(pcie));
-> -	tmp = (tmp & ~mask) | ((val << shift) & mask);
-> -	writel(tmp, pcie->base + PCIE_RGR1_SW_INIT_1(pcie));
-> +	if (!pcie->bridge_reset) {
-> +		u32 tmp, mask =  RGR1_SW_INIT_1_INIT_GENERIC_MASK;
-> +		u32 shift = RGR1_SW_INIT_1_INIT_GENERIC_SHIFT;
-> +
-> +		tmp = readl(pcie->base + PCIE_RGR1_SW_INIT_1(pcie));
-> +		tmp = (tmp & ~mask) | ((val << shift) & mask);
-> +		writel(tmp, pcie->base + PCIE_RGR1_SW_INIT_1(pcie));
-> +	}
+Acked-by: Georgi Djakov <djakov@kernel.org>
 
-This pattern looks goofy:
+> ---
+>   include/dt-bindings/interconnect/qcom,ipq5332.h | 4 ++++
+>   1 file changed, 4 insertions(+)
+> 
+> diff --git a/include/dt-bindings/interconnect/qcom,ipq5332.h b/include/dt-bindings/interconnect/qcom,ipq5332.h
+> index 16475bb07a48..5c08dd3c4f47 100644
+> --- a/include/dt-bindings/interconnect/qcom,ipq5332.h
+> +++ b/include/dt-bindings/interconnect/qcom,ipq5332.h
+> @@ -28,6 +28,10 @@
+>   #define SLAVE_NSSNOC_TIMEOUT_REF	23
+>   #define MASTER_NSSNOC_XO_DCD		24
+>   #define SLAVE_NSSNOC_XO_DCD		25
+> +#define MASTER_SNOC_NSSNOC_1_CLK	26
+> +#define SLAVE_SNOC_NSSNOC_1_CLK		27
+> +#define MASTER_SNOC_NSSNOC_CLK		28
+> +#define SLAVE_SNOC_NSSNOC_CLK		29
+>   
+>   #define MASTER_NSSNOC_PPE		0
+>   #define SLAVE_NSSNOC_PPE		1
 
-  reset_control_assert(pcie->bridge_reset);
-  if (!pcie->bridge_reset) {
-    ...
-
-If we're going to test pcie->bridge_reset at all, it should be first
-so it's obvious what's going on and the reader doesn't have to go
-verify that reset_control_assert() ignores and returns success for a
-NULL pointer:
-
-  if (pcie->bridge_reset) {
-    if (val)
-      reset_control_assert(pcie->bridge_reset);
-    else
-      reset_control_deassert(pcie->bridge_reset);
-
-    return;
-  }
-
-  u32 tmp, mask =  RGR1_SW_INIT_1_INIT_GENERIC_MASK;
-  ...
-
-Krzysztof, can you amend this on the branch?
-
-It will also make the eventual return checking and error message
-simpler because we won't have to initialize "ret" first, and we can
-"return 0" directly for the legacy case.
-
-Bjorn
 
