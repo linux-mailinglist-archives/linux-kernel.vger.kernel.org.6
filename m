@@ -1,137 +1,117 @@
-Return-Path: <linux-kernel+bounces-311249-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311250-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DCE88968693
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 13:48:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F67A968695
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 13:48:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4A6A5B20E86
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 11:48:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0B8BDB2259D
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 11:48:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 079761D6C7B;
-	Mon,  2 Sep 2024 11:48:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BB631D6C66;
+	Mon,  2 Sep 2024 11:48:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="i7PgdnAd"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pa4+LJtv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE3C11D67A1;
-	Mon,  2 Sep 2024 11:48:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DFFEA32;
+	Mon,  2 Sep 2024 11:48:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725277692; cv=none; b=GTzFwbqRajd7ZzAR6V4AzG4/qwNIlLEhb6hSPCHe0yAxdHI7zZyxeOUYToYcR+1uC1p+tVru15EmAYwx4CXUyiULcWXeHbrXgLnhekZGSTYfqlm6Ff37a0POplNNUkTIhpiXRH4jYJ+Zpax0UwnLa0T2uf2mqx+0Pewh+fSQNh0=
+	t=1725277723; cv=none; b=i1jF9HgJUK2/6awddGtg+jajPEgHSk6v/zSX0bKxzZOGTodHNfPGUQXdSByKMx7heRNL80l2DtKOaY9OH0LIKPaoERyatRyBaqKAwIrynmkcLN5zaeO09CqBDOQnlbsshtAqsHAsd6SU3Ptrlzpcm3E63PxoUItmZMZb3kbiQW0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725277692; c=relaxed/simple;
-	bh=xv9RTyrY2YdiOK26ifjwaZIOl9RR5ISuy6sY+L0GNEY=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=mKkVsvZ9ubBIMXwXXuiQAVn6mIPMMGL/5S6fcME6i8CQsuV4hyXcHYl2t68K9ontTyIb0PT3hSlPjoURg776bMHS+dm7ejUMpxovPIZd38O0VBoVed0gAyvHB7EGpY9DWnUURcMjozVG/g4xczLkf+QGvwBg1Zbf6WLgIoI8ne8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=i7PgdnAd; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 482B3fRW003309;
-	Mon, 2 Sep 2024 11:48:03 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-type:date:from:message-id:mime-version:subject:to; s=
-	qcppdkim1; bh=vg+Rw9NLwO5MqfbNuhjdC69lcjqK8RkT6HzrLJTrC3g=; b=i7
-	PgdnAdzfkgQ6MaD1nvpZcZb+1SjbL8EdtSWZGnddIB0GJlME2poYRZsWPzwTLd3F
-	JfECfs0v4hvX6hsAFhgdb58uq9XWZIWta2Dojd7CdWSTNXc/ipKL+mnERrl+Lkwh
-	GUy83YL2ppGUgC3VpoNnRwkUGMAnHAO3kwIcRNGzuMlPhZhzf1h5UY7BUGOODwZ0
-	dXm5lUAjFNoDhvJ/xDkzSYRaPWVjBi+4WM4AEH2mLbOUdJisJGWd7eiJ7vZjYMbU
-	LOuInRpOupgtw5YCcMhxbPr80xAj8ngvnGpIp/ZtZMnU9vk6U8KV4iYZ3lBrB+nN
-	9IewXFFOYTZdbfbhpkzw==
-Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41bvf8vhud-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 02 Sep 2024 11:48:03 +0000 (GMT)
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 482Bm2b6017858
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 2 Sep 2024 11:48:02 GMT
-Received: from hu-mapa-hyd.qualcomm.com (10.80.80.8) by
- nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Mon, 2 Sep 2024 04:47:58 -0700
-From: Manish Pandey <quic_mapa@quicinc.com>
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        "James E.J.
- Bottomley" <James.Bottomley@HansenPartnership.com>,
-        "Martin K. Petersen"
-	<martin.petersen@oracle.com>
-CC: <linux-arm-msm@vger.kernel.org>, <linux-scsi@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <quic_nitirawa@quicinc.com>,
-        <quic_bhaskarv@quicinc.com>, <quic_narepall@quicinc.com>,
-        <quic_rampraka@quicinc.com>, <quic_mapa@quicinc.com>,
-        <quic_cang@quicinc.com>, <quic_nguyenb@quicinc.com>,
-        <stable@vger.kernel.org>
-Subject: [PATCH V5] scsi: ufs: qcom: update MODE_MAX cfg_bw value
-Date: Mon, 2 Sep 2024 17:17:37 +0530
-Message-ID: <20240902114737.3740-1-quic_mapa@quicinc.com>
-X-Mailer: git-send-email 2.17.1
+	s=arc-20240116; t=1725277723; c=relaxed/simple;
+	bh=fqh7S4l5FfCjahVC6pG6dmAPfdOpQaUhApgL1T/Xfl0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=L43IijgGQ4yhvKS9RK6v3HAvnpvt70N2MT+w9j3zSDXqX2OOJ4QSI8S5wH16XCmiP1IvXZ+EQzC4XFfm+6dGCWgw2dYtxAVBSBokTkbSyNWE5mvib6+jS3u9DGeuO3q26sET2wd93AzNqk30LtFiNecse4cKWZ4N45bPVJ/t7LQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pa4+LJtv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE960C4CEC2;
+	Mon,  2 Sep 2024 11:48:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725277723;
+	bh=fqh7S4l5FfCjahVC6pG6dmAPfdOpQaUhApgL1T/Xfl0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=pa4+LJtvkKSQMzjPRPFDvFNzKlQxAqjwpyOCdkW9fv07g3S1T1kNxD+O5cwcgI+7S
+	 LJLaC8L+56LdgFT/bQBAnq9RRekDAknsGsuYG8EQSmP+PnwhDuzNWYpYCVCn/Wf04L
+	 /p2lxSlynXGM/nRTB7uue228zIWda5rN7YmZIvsXxUPW3qqQn7oU9BKkIQKLDg2/4P
+	 ZkPAmJ/8apEMWdk46CyN5oGPmSV2TTNnQp0CnT0v5vLkCgMuog4JMUqoznunyGXvkV
+	 w1WQx/lOhNUm/vJF81C+OAcEJYt5cpChMQ4cTrOfY0DU6ahKQ5KqmRdLy4pfDJyYuO
+	 sOkQuzGbYnhvg==
+Date: Mon, 2 Sep 2024 12:48:37 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Nathan Chancellor <nathan@kernel.org>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+	Yang Ruibin <11162571@vivo.com>, Daniel Mack <daniel@zonque.org>,
+	Haojian Zhuang <haojian.zhuang@gmail.com>,
+	Robert Jarzmik <robert.jarzmik@free.fr>,
+	linux-arm-kernel@lists.infradead.org, linux-spi@vger.kernel.org,
+	linux-kernel@vger.kernel.org, opensource.kernel@vivo.com,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: Re: [PATCH v2] drivers: spi: Insert the missing pci_dev_put()before
+ return
+Message-ID: <116033b0-a701-40ef-a5ab-a2d46885872b@sirena.org.uk>
+References: <20240829033511.1917015-1-11162571@vivo.com>
+ <CAMuHMdWNjo69_W6f+R9QJJOf8uF0htg2XazeS-yjugJv3UM+kg@mail.gmail.com>
+ <0a906ee9-7b28-45e4-be67-ab3b6c5f89b1@sirena.org.uk>
+ <20240830222332.GA3862110@thelio-3990X>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: v1VeKsK4V4clikGNS7R2Uf3p_BAD6N_y
-X-Proofpoint-ORIG-GUID: v1VeKsK4V4clikGNS7R2Uf3p_BAD6N_y
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-02_02,2024-09-02_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 mlxlogscore=999
- suspectscore=0 clxscore=1015 priorityscore=1501 adultscore=0
- malwarescore=0 phishscore=0 lowpriorityscore=0 impostorscore=0 spamscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2409020095
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="Zbu+YNh/9tKK5I1D"
+Content-Disposition: inline
+In-Reply-To: <20240830222332.GA3862110@thelio-3990X>
+X-Cookie: You are fairminded, just and loving.
 
-Commit 8db8f6ce556a ("scsi: ufs: qcom: Add missing interconnect
-bandwidth values for Gear 5") updates the ufs_qcom_bw_table for
-Gear 5. However, it misses updating the cfg_bw value for the max
-mode.
 
-Hence update the cfg_bw value for the max mode for UFS 4.x devices.
+--Zbu+YNh/9tKK5I1D
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Fixes: 8db8f6ce556a ("scsi: ufs: qcom: Add missing interconnect
-bandwidth values for Gear 5")
-Cc: stable@vger.kernel.org
-Signed-off-by: Manish Pandey <quic_mapa@quicinc.com>
----
-Changes from v4:
-- Updated commit message.
+On Fri, Aug 30, 2024 at 03:23:32PM -0700, Nathan Chancellor wrote:
+> On Fri, Aug 30, 2024 at 08:57:47PM +0100, Mark Brown wrote:
 
-Changes from v3:
-- Cced stable@vger.kernel.org.
+> > I'm a bit concerned that this isn't picked up by an allmodconfig with
+> > the -Werror...  I'm currently using GCC 12 for that.
+>=20
+> It shows up with -Wmaybe-uninitialized for GCC but that's disabled for
+> the normal kernel build with commit 78a5255ffb6a ("Stop the ad-hoc games
+> with -Wno-maybe-initialized"). With GCC 12:
 
-Changes from v2:
-- Addressed Mani comment, added fixes tag.
+=2E..
 
-Changes from v1:
-- Updated commit message.
----
- drivers/ufs/host/ufs-qcom.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> Perhaps a KCFLAGS=3D-Wmaybe-uninitialized in your make command or adding
+>=20
+>   subdir-ccflags-$(CONFIG_CC_IS_GCC) :=3D -Wmaybe-uninitialized
+>=20
+> to the makefiles of the drivers that you maintain might not be a bad
+> idea.
 
-diff --git a/drivers/ufs/host/ufs-qcom.c b/drivers/ufs/host/ufs-qcom.c
-index c87fdc849c62..ecdfff2456e3 100644
---- a/drivers/ufs/host/ufs-qcom.c
-+++ b/drivers/ufs/host/ufs-qcom.c
-@@ -93,7 +93,7 @@ static const struct __ufs_qcom_bw_table {
- 	[MODE_HS_RB][UFS_HS_G3][UFS_LANE_2] = { 1492582,	204800 },
- 	[MODE_HS_RB][UFS_HS_G4][UFS_LANE_2] = { 2915200,	409600 },
- 	[MODE_HS_RB][UFS_HS_G5][UFS_LANE_2] = { 5836800,	819200 },
--	[MODE_MAX][0][0]		    = { 7643136,	307200 },
-+	[MODE_MAX][0][0]		    = { 7643136,	819200 },
- };
- 
- static void ufs_qcom_get_default_testbus_cfg(struct ufs_qcom_host *host);
--- 
-2.17.1
+If it's causing so many false positives that it's been disabled then
+that'll just cause trouble, it's always miserable whenever a subsystem
+decides to go with custom warning options.
 
+--Zbu+YNh/9tKK5I1D
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmbVphQACgkQJNaLcl1U
+h9Ch/wf/X3dD1QdG+xX7qaqiz+UzIAIlp0QgQsHwrHEN1cvuL1ld/lpCmTlagzZP
+cl3h88DlfB2PVWGSwrweozTmbqBc8dM380m98xmEamAGOUWgHwMRGdDtLNlnl0Y6
+7/hZA9r4wI1vyj/KFAcXY9jQEOCJDt9hIw0dzRjZjAwpEA/gN9n/t3F6z82qnM48
+15cuO/WIReKKwLuT6GI1QkvwrUbiJaUBTgFI0tq/XBV8B8x46wQ/a1nhaevwxdM0
+80amAW4blsKm5KEwsyoKBKNq2skC69yrbP4iuK2+BgKGs06OtCgB3xwJ3IxY9EI8
+GjU5JDGCvC8HxYHuY3wmHlZ4TKYFGA==
+=CknE
+-----END PGP SIGNATURE-----
+
+--Zbu+YNh/9tKK5I1D--
 
