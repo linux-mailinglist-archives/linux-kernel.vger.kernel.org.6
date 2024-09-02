@@ -1,114 +1,148 @@
-Return-Path: <linux-kernel+bounces-311215-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311210-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA8F996862D
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 13:26:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F18EB968615
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 13:22:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8840E28125D
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 11:26:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A1E1C1F22FE3
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 11:22:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1280F185949;
-	Mon,  2 Sep 2024 11:26:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27ED01849E7;
+	Mon,  2 Sep 2024 11:22:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="MjlEB9Zn"
-Received: from mout.web.de (mout.web.de [217.72.192.78])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="euV7kv3z"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0E6113B2A8;
-	Mon,  2 Sep 2024 11:26:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19D3D183CB7;
+	Mon,  2 Sep 2024 11:22:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725276388; cv=none; b=qApbilcO4cXOJEdFa75Z1l3Vrr9F+8NaS8HtAWmv6N7v7Who4R638BjDK5KMq6WPp55uWRdMZZzoOjFtGFNPyoJ//70GU2rLsqZLU9IkyIl6vqH0MtP3op0nEB9eZypJAIvtWU7fDzH07ZW79VCBHdwrCLLO9RtS8RHeLllf0IE=
+	t=1725276137; cv=none; b=nc66hIGT+WnjAIR8LTXGMVJj28TD1UAcH6N2DoiKL6Bfo+yJY6dCTpKoNZ/PRn7auMllHMjfdO++wRg2x/1pdumyozLkd6wfKyvTfdZWHnQASe3LkFfEaWGqA21datBYfX5kEfcvbNTgGF83ZiRqju1g3RqBwnN1GDv+/ffcYGw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725276388; c=relaxed/simple;
-	bh=yc93DkTwkPu1XtVmy+hZb0mOhWjy2fEGE62jH04ltfo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lKZrqlicink37T5CU4lJ84DMzS+AVLzg0keUNrhDY2bIBlLyhc9mRNKqjSeggdYdGRp+EZ6V1yGc+4KDCV8WH+Hr4JjpM3wjHx5LgX9uqoHzQAFwy4qYjmVpgo22WoavRC8fwY/3GKdHOTjYA1zDG3UtdvYvilOcLypKYAJO4+s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=MjlEB9Zn; arc=none smtp.client-ip=217.72.192.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1725276372; x=1725881172; i=markus.elfring@web.de;
-	bh=yc93DkTwkPu1XtVmy+hZb0mOhWjy2fEGE62jH04ltfo=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=MjlEB9ZnBGZABCneEeKp/js0zule7jM5nyw8KuwhRHECem6HH7RIAAiNxiSMERvE
-	 4jSY5Y8xV/isMnaHyotBjdQsl98Ss/4X6oNL4P6MdGmXvujUUXqTDt0R3tQaKKXAs
-	 9Ga1y2/2GmnNzBorPVFP8m82GgFsM+6u9EjbmLN0mCvUxGFJPjH/m70fNdScX6Pxf
-	 sN5v3x/g9eWBzBj0KaJu+AlQXA0zrWVFF0ROBH5mga6T39yoKrNv9J9gu/DAzqptD
-	 EYCmH/SM3VsA7lsoyY7XopYLryVo2N6BFcOuDFCsBkc33fw2SEF6F2kBWHa4jtO6b
-	 M2mghvvDnSUqa7gJ0A==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.84.95]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1Ml4B4-1sLfRA2L5o-00gAn0; Mon, 02
- Sep 2024 13:20:28 +0200
-Message-ID: <42eb1dd6-f070-4f81-9959-fdad2598b7f2@web.de>
-Date: Mon, 2 Sep 2024 13:20:11 +0200
+	s=arc-20240116; t=1725276137; c=relaxed/simple;
+	bh=fehs2+E64I0ZFEnYzghltUagaBJu6yND9Ki/e2rbcLA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cKHgqQ/1kUxepOP0UHKEM4ZMaEUXgntMDO4osFIQYBIjqC2b0CheFYvpYxa+yM4wFNMDU64gtPFwfKsNEQLQyqMiGUHgNxbPA/U3+yG1CiyVhYoLEsbSW/kYC+7KhDSowqk2RCWNUG0kTc8Vi15WSCz2V6rw9Sve58zi9ea4Xgc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=euV7kv3z; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725276136; x=1756812136;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=fehs2+E64I0ZFEnYzghltUagaBJu6yND9Ki/e2rbcLA=;
+  b=euV7kv3zWoc06+7n+5WlQrWoaKuQXKDorUV3fa34d2LsSlIX9JvQhOHx
+   sdXsCNUByspR+fsZtWVA93pD+VGUiTlS5jIDZ7vCR9W8ULogiR0rhSTZm
+   h49XBP8X01dW8Z5HidHWHUdR2w5iurvrI+upmPOxtKAOGIFBjXWcrdq3d
+   YDGfHrCYpK24FOulZL2ulh8Xptedkr6SMEkMUG9ETcJ/D/jg8FwOvxJEk
+   rVY00k0bDCD1QOLhglC+brXMus6MpN9226ZqK1J94+9hYTbUTE1A7eWnP
+   zApT9JTweD5Hggaem97r2lXDeCfNVYuTYt2dwKmXsjj+aNzKtbp4gwXQu
+   A==;
+X-CSE-ConnectionGUID: 20+IiVlvRcqRaHoJgYeJYA==
+X-CSE-MsgGUID: hGuwVpa+StiTgF2beXCetg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11182"; a="41353281"
+X-IronPort-AV: E=Sophos;i="6.10,195,1719903600"; 
+   d="scan'208";a="41353281"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2024 04:22:15 -0700
+X-CSE-ConnectionGUID: r9dZ1SjQR7mt8hDhn4QGFQ==
+X-CSE-MsgGUID: HvRqsXktRSmLSzJ4FQaJ5A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,195,1719903600"; 
+   d="scan'208";a="68718584"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by fmviesa003.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2024 04:22:07 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1sl58G-00000004L8V-0vHk;
+	Mon, 02 Sep 2024 14:22:04 +0300
+Date: Mon, 2 Sep 2024 14:22:03 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Stephen Boyd <swboyd@chromium.org>
+Cc: chrome-platform@lists.linux.dev, linux-kernel@vger.kernel.org,
+	patches@lists.linux.dev, devicetree@vger.kernel.org,
+	Douglas Anderson <dianders@chromium.org>,
+	Pin-yen Lin <treapking@chromium.org>,
+	Andrzej Hajda <andrzej.hajda@intel.com>,
+	Benson Leung <bleung@chromium.org>,
+	Conor Dooley <conor+dt@kernel.org>, Daniel Vetter <daniel@ffwll.ch>,
+	David Airlie <airlied@gmail.com>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	dri-devel@lists.freedesktop.org,
+	Guenter Roeck <groeck@chromium.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Lee Jones <lee@kernel.org>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Prashant Malani <pmalani@chromium.org>,
+	Robert Foss <rfoss@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Tzung-Bi Shih <tzungbi@kernel.org>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Daniel Scally <djrscally@gmail.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Ivan Orlov <ivan.orlov0322@gmail.com>, linux-acpi@vger.kernel.org,
+	linux-usb@vger.kernel.org,
+	Mika Westerberg <mika.westerberg@linux.intel.com>,
+	"Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Vinod Koul <vkoul@kernel.org>
+Subject: Re: [PATCH v4 05/18] usb: typec: Add device managed
+ typec_switch_register()
+Message-ID: <ZtWf2y8vGJyerSXs@smile.fi.intel.com>
+References: <20240901040658.157425-1-swboyd@chromium.org>
+ <20240901040658.157425-6-swboyd@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: iio: imu: inv_mpu6050: Remove duplicate code between labels
-To: Gyeyoung Baek <gye976@gmail.com>, linux-iio@vger.kernel.org,
- Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Jean-Baptiste Maneyrol <Jean-Baptiste.Maneyrol@tdk.com>
-References: <20240901091214.15199-1-gye976@gmail.com>
- <533802b3-3034-4b7c-b903-72608917e2f0@web.de>
- <CAKbEznv-TmCr2FAodrM2SKK5A5pbV9p5-OvXPdmuk_4xXmh=Rw@mail.gmail.com>
- <7b827ee0-9116-4e8c-96e1-1fa5f7267f33@web.de>
- <CAKbEznu=+Bkw4kmoo7qG9h2wM=2XV54j_SYzHMAH1uWhtUPCvg@mail.gmail.com>
- <3c60e167-7815-49c8-89f1-fe1139879d6b@web.de>
- <CAKbEznvpazyV905CFOp_sDs+S=ihhXe2QH=Gc38oitjFFKOW=A@mail.gmail.com>
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <CAKbEznvpazyV905CFOp_sDs+S=ihhXe2QH=Gc38oitjFFKOW=A@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:3UusnGLyfD1UxdTEg7gZmO6CNYcyC3g/kfK0AH2yKXqxY0PgQUx
- ZvQ0EOuDmaZKqthoVzwJ/DaBh9v7wOmYvBuB0WS0xZU79KjQb48Y42eZgZOveALTJnUmWbp
- Nxq9O8v1XaR5h33EmT4yGBPN7cqhCbUdPEtfyVhuUASd3a4jjjyQ/EcsTvOCf94CC7v1eWV
- Jp54WaNMtE0SOVPyZYX8g==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:wL0/GlDqSMI=;JgOPVlN8aLPgx0qTBd6kd9nGvv2
- suAjD24rNFQC6pwXZOy/4zOIBtvmEUo2R0XAbEenKE4lv7KR2vXl24YEz7BfedgDaKon3eZbW
- 1pco15ASSPjvmiKhgeK8w65grKbtYJkc2xX1oqPkPe/q6utVccBE0DsSCT4XBxTetn7zTAB3J
- XDPFFByz0S0IRQ92L9sve+03tfjUXEm5wY7ehEB0jJJhqA4I0PQHG1yY3V2vxsD/Em2OWx/Yf
- 2tpQQGEnyx20f9UGgz/SnjS0qnGGQ5LhEQDfJfyCgj97ZVg3DVnwoeRzFCfIjf+bw7EBkLCnj
- MeQrJtFqiEA4OdOSSXhFoGuUraqZP7nmMkVnM1xgDIvbtnRFg4/HAszkyehClleyjVfJc5ye1
- AglPhLa0GcBN+IQ6bzUMiJRjvxOCSr4DU17eCVZjpaKg3soxUjBT2TljYkXbCgPiTecs5DW2t
- n0jn2qeDxyuo6DjqNeZLD4zb+l4UvjAhuwfzbgg3V8F4dZsXoeAC9CwqTFRHZa2pN5rHoKTfe
- p8dFBqzfDtW5AwltjvAu3Ish2hO7h/SuH3A67J6UD63A7vrXTHlzpGA5BN6dsxkY6oP/vgIvm
- lUAzAwjSJCIACi7DsihKWk8psXaMEUvsHpzpE3eyvTEUua3Qe2URWpX/G7Ym057PDVKV2u4X2
- E5zpUdqODU68hoEnrICMiWaW9GRgKfFRi1bnnqYwBVhHLJld5c4ZZY6IsEM5v2rDZPclX1naF
- S//RSBHe66/6uLk3AjMxFYT9/mfymYMaQQZqe+mGuzW+GxgkLnaXoPv/FytLsZbv3fEaPEHJD
- 203CUBTJ0A9/Ct2KcAXhIrSA==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240901040658.157425-6-swboyd@chromium.org>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-> =E2=80=A6, But I just suggested a minor thing as,
+On Sat, Aug 31, 2024 at 09:06:43PM -0700, Stephen Boyd wrote:
+> Simplify driver error paths by adding devm_typec_switch_register() which
+> will unregister the typec switch when the parent device is unbound.
 
-This suggestion can trigger further patch review consequences.
+...
+
+> +struct typec_switch_dev *
+> +devm_typec_switch_register(struct device *parent,
+> +			   const struct typec_switch_desc *desc)
+> +{
+> +	int ret;
+> +	struct typec_switch_dev *switch_dev;
+> +
+> +	switch_dev = typec_switch_register(parent ,desc);
+
+Slipped typo, i.e. wrong location of the white space character.
+
+> +	if (IS_ERR(switch_dev))
+> +		return switch_dev;
+> +
+> +	ret = devm_add_action_or_reset(parent, devm_typec_switch_unregister, switch_dev);
+> +	if (ret)
+> +		return ERR_PTR(ret);
+> +
+> +	return switch_dev;
+> +}
+
+-- 
+With Best Regards,
+Andy Shevchenko
 
 
-> and since the maintainer made the decision and approved,
-
-How did you get such an impression?
-
-
-> I did not feel the need to go any further.
-
-There are other software design options to take better into account
-for further development considerations (according to the original control =
-flow).
-
-Regards,
-Markus
 
