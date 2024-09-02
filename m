@@ -1,169 +1,172 @@
-Return-Path: <linux-kernel+bounces-311830-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311831-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 622EC968E46
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 21:13:01 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A371F968E4D
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 21:17:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0B226283FA1
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 19:13:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1511AB2128F
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 19:17:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDB9B19CC3F;
-	Mon,  2 Sep 2024 19:12:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pY5N3Kj/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26B781A2650;
+	Mon,  2 Sep 2024 19:17:42 +0000 (UTC)
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2635E1A3A93;
-	Mon,  2 Sep 2024 19:12:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CC321A3A9C;
+	Mon,  2 Sep 2024 19:17:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725304375; cv=none; b=FdJ9SXTjCx3RcJUuaLR2PHqorzB1+6FGpKL7jn7ioUBr2goTl1RSf61zaGnsnJLYXK29dN8fxh6qTqJ56hfRkzANofg3xVmEhEwvZivPCw6Y+vlENblb22Cf678wJ24Os8wlFHHqXk9WNcj95tgqiCJme7dPf6eCIZHJjvN8Xxc=
+	t=1725304661; cv=none; b=ijhVgAPjj7RLbi1J0WmYTezldbFAMbSi3WtMslR05Ayne+JUuwbWr9D9SujwlcmpoMB8e0tc0blyY2RnPmNplOjjdmBmXuMb4UBBTx+pZH67cZx/oJpU6F75XVpwQW8VraPt81ra4JCpphga4gLvw/XfLBwNKpuT07iePGakm04=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725304375; c=relaxed/simple;
-	bh=GMVnn22J0kYs5YTaIdMO4all44aS9lj+6fg+x5dH8D0=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ECnjmAS9NG0v3G/i3jhYR78LpTMVviCMgxVmUaHi6XWkN1ojhDUvCKT6PCTlGHG8WdrY7oAI48eBelQ3vMvTBuDJVLl/PgwV0tUJpbWB/tF1NAsftWyjcs2cdacD+cDAwjI74ZVJKxnU9ImdnkMgX8P9KRis9lX0ZMmEGOJS6eM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pY5N3Kj/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8EB3FC4CEC2;
-	Mon,  2 Sep 2024 19:12:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725304374;
-	bh=GMVnn22J0kYs5YTaIdMO4all44aS9lj+6fg+x5dH8D0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=pY5N3Kj/BU1o+ddbmefgRH5itJPL7HzzRHShngaIA00aPwOvX4i416FEgAJU5TzNE
-	 yZsQjysi6g2pmEXdy1C5TgF4yxwwklqpPj44O078O/rQGagLwa0mFWTrRIOhO+Q2n9
-	 vKopbc/51ysI+HKKObFXrPx9pXTsADlynHTi4dZc0x3dEfFjSh210EfrgoixlRfESt
-	 kMDSdEMmv4/gOSkl5GL1bL1OjnMEvLSCHXLHs9Y+71CFbv13wp/93AaxQAoCCvdadq
-	 K5uonAVrDRMQzDLONq1d7XneiA2WW1GfI0suYXoWNSkJ0itOdV0OVDd4ZlVX+9wcH5
-	 xRrQ2OfDeGcQQ==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1slCTs-0091pX-0Q;
-	Mon, 02 Sep 2024 20:12:52 +0100
-Date: Mon, 02 Sep 2024 20:12:51 +0100
-Message-ID: <86ttexvpho.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: Oliver Upton <oliver.upton@linux.dev>,
-	James Morse <james.morse@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Joey Gouly <joey.gouly@arm.com>,
-	linux-arm-kernel@lists.infradead.org,
-	kvmarm@lists.linux.dev,
+	s=arc-20240116; t=1725304661; c=relaxed/simple;
+	bh=G56Surs4RcPMKqkQ+D4HRpn8ohpC1w0ACTtV2JlOfkQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Qet41TWcslwoVk14q5vRFJOqsVmKXT2qqZgnTpJdyhkWbkPfL27bs7p5ivPJMMiF3/bN1hZW/jpeox0Fw7NeW/Pif6yRbYae2p+U0dCm/kuL2KoldzkNgq4MRkSWjcUcGyGkVKi2752buUts/jPfqP5c5z45ZIcxMKzogbPE5eY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4WyJRZ4rkWz9sSC;
+	Mon,  2 Sep 2024 21:17:30 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id ax3nmbJ-MmBS; Mon,  2 Sep 2024 21:17:30 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4WyJRZ3bHMz9sS7;
+	Mon,  2 Sep 2024 21:17:30 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 63ACB8B773;
+	Mon,  2 Sep 2024 21:17:30 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id Gzm3BpU0vDdS; Mon,  2 Sep 2024 21:17:30 +0200 (CEST)
+Received: from PO20335.idsi0.si.c-s.fr (unknown [192.168.234.167])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 655368B76E;
+	Mon,  2 Sep 2024 21:17:29 +0200 (CEST)
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+To: Andrew Morton <akpm@linux-foundation.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Naveen N Rao <naveen@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	Shuah Khan <shuah@kernel.org>,
+	"Jason A . Donenfeld" <Jason@zx2c4.com>
+Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
 	linux-kernel@vger.kernel.org,
-	20240813144738.2048302-1-maz@kernel.org
-Subject: Re: [PATCH v2 2/3] KVM: arm64: Hide TCR2_EL1 from userspace when disabled for guests
-In-Reply-To: <20240822-kvm-arm64-hide-pie-regs-v2-2-376624fa829c@kernel.org>
-References: <20240822-kvm-arm64-hide-pie-regs-v2-0-376624fa829c@kernel.org>
-	<20240822-kvm-arm64-hide-pie-regs-v2-2-376624fa829c@kernel.org>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	linuxppc-dev@lists.ozlabs.org,
+	linux-kselftest@vger.kernel.org,
+	llvm@lists.linux.dev,
+	linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org,
+	linux-trace-kernel@vger.kernel.org,
+	Adhemerval Zanella <adhemerval.zanella@linaro.org>,
+	Xi Ruoyao <xry111@xry111.site>
+Subject: [PATCH v5 0/5] Wire up getrandom() vDSO implementation on powerpc
+Date: Mon,  2 Sep 2024 21:17:17 +0200
+Message-ID: <cover.1725304404.git.christophe.leroy@csgroup.eu>
+X-Mailer: git-send-email 2.44.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: broonie@kernel.org, oliver.upton@linux.dev, james.morse@arm.com, suzuki.poulose@arm.com, catalin.marinas@arm.com, will@kernel.org, joey.gouly@arm.com, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org, 20240813144738.2048302-1-maz@kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1725304637; l=3687; i=christophe.leroy@csgroup.eu; s=20211009; h=from:subject:message-id; bh=G56Surs4RcPMKqkQ+D4HRpn8ohpC1w0ACTtV2JlOfkQ=; b=L7YIZ5u53kP07q3XacSpkIO1Xjr62J1hUfE5txFxRpTNzPgGtylrmGgBb9ZY29iqGucj6655o E5MakVa329fBcczeFP71VjjmQ8YbRTi4BpFAc8ULVyQWxF+LYYG38qW
+X-Developer-Key: i=christophe.leroy@csgroup.eu; a=ed25519; pk=HIzTzUj91asvincQGOFx6+ZF5AoUuP9GdOtQChs7Mm0=
+Content-Transfer-Encoding: 8bit
 
-On Thu, 22 Aug 2024 00:35:37 +0100,
-Mark Brown <broonie@kernel.org> wrote:
-> 
-> When the guest does not support FEAT_TCR2 we should not allow any access
-> to it in order to ensure that we do not create spurious issues with guest
-> migration. Add a visibility operation for it.
-> 
-> Fixes: fbff56068232 ("KVM: arm64: Save/restore TCR2_EL1")
-> Signed-off-by: Mark Brown <broonie@kernel.org>
-> ---
->  arch/arm64/include/asm/kvm_host.h |  3 +++
->  arch/arm64/kvm/sys_regs.c         | 29 ++++++++++++++++++++++++++---
->  2 files changed, 29 insertions(+), 3 deletions(-)
-> 
-> diff --git a/arch/arm64/include/asm/kvm_host.h b/arch/arm64/include/asm/kvm_host.h
-> index ab4c675b491d..7889e5f4009f 100644
-> --- a/arch/arm64/include/asm/kvm_host.h
-> +++ b/arch/arm64/include/asm/kvm_host.h
-> @@ -1476,4 +1476,7 @@ void kvm_set_vm_id_reg(struct kvm *kvm, u32 reg, u64 val);
->  		(pa + pi + pa3) == 1;					\
->  	})
->  
-> +#define kvm_has_tcr2(k)				\
-> +	(kvm_has_feat((k), ID_AA64MMFR3_EL1, TCRX, IMP))
-> +
->  #endif /* __ARM64_KVM_HOST_H__ */
-> diff --git a/arch/arm64/kvm/sys_regs.c b/arch/arm64/kvm/sys_regs.c
-> index 1af15140e067..6d5f43781042 100644
-> --- a/arch/arm64/kvm/sys_regs.c
-> +++ b/arch/arm64/kvm/sys_regs.c
-> @@ -2319,6 +2319,27 @@ static bool access_zcr_el2(struct kvm_vcpu *vcpu,
->  	return true;
->  }
->  
-> +static unsigned int tcr2_visibility(const struct kvm_vcpu *vcpu,
-> +				    const struct sys_reg_desc *rd)
-> +{
-> +	if (kvm_has_tcr2(vcpu->kvm))
-> +		return 0;
-> +
-> +	return REG_HIDDEN;
-> +}
-> +
-> +static unsigned int tcr2_el2_visibility(const struct kvm_vcpu *vcpu,
-> +				    const struct sys_reg_desc *rd)
-> +{
-> +	unsigned int r;
-> +
-> +	r = el2_visibility(vcpu, rd);
-> +	if (r)
-> +		return r;
-> +
-> +	return tcr2_visibility(vcpu, rd);
-> +}
-> +
->  /*
->   * Architected system registers.
->   * Important: Must be sorted ascending by Op0, Op1, CRn, CRm, Op2
-> @@ -2503,7 +2524,8 @@ static const struct sys_reg_desc sys_reg_descs[] = {
->  	{ SYS_DESC(SYS_TTBR0_EL1), access_vm_reg, reset_unknown, TTBR0_EL1 },
->  	{ SYS_DESC(SYS_TTBR1_EL1), access_vm_reg, reset_unknown, TTBR1_EL1 },
->  	{ SYS_DESC(SYS_TCR_EL1), access_vm_reg, reset_val, TCR_EL1, 0 },
-> -	{ SYS_DESC(SYS_TCR2_EL1), access_vm_reg, reset_val, TCR2_EL1, 0 },
-> +	{ SYS_DESC(SYS_TCR2_EL1), access_vm_reg, reset_val, TCR2_EL1, 0,
-> +	  .visibility = tcr2_visibility },
+This series wires up getrandom() vDSO implementation on powerpc.
 
-With this, we should be able to simplify the accessor, shouldn't we?
+Tested on PPC32 on real hardware.
+Tested on PPC64 (both BE and LE) on QEMU:
 
->  
->  	PTRAUTH_KEY(APIA),
->  	PTRAUTH_KEY(APIB),
-> @@ -2820,7 +2842,8 @@ static const struct sys_reg_desc sys_reg_descs[] = {
->  	EL2_REG(TTBR0_EL2, access_rw, reset_val, 0),
->  	EL2_REG(TTBR1_EL2, access_rw, reset_val, 0),
->  	EL2_REG(TCR_EL2, access_rw, reset_val, TCR_EL2_RES1),
-> -	EL2_REG(TCR2_EL2, access_tcr2_el2, reset_val, TCR2_EL2_RES1),
-> +	EL2_REG_FILTERED(TCR2_EL2, access_tcr2_el2, reset_val, TCR2_EL2_RES1,
-> +			 tcr2_el2_visibility),
+Performance on powerpc 885:
+	~# ./vdso_test_getrandom bench-single
+	   vdso: 25000000 times in 62.938002291 seconds
+	   libc: 25000000 times in 535.581916866 seconds
+	syscall: 25000000 times in 531.525042806 seconds
 
-Same thing here.
+Performance on powerpc 8321:
+	~# ./vdso_test_getrandom bench-single
+	   vdso: 25000000 times in 16.899318858 seconds
+	   libc: 25000000 times in 131.050596522 seconds
+	syscall: 25000000 times in 129.794790389 seconds
 
-Thanks,
+Performance on QEMU pseries:
+	~ # ./vdso_test_getrandom bench-single
+	   vdso: 25000000 times in 4.977777162 seconds
+	   libc: 25000000 times in 75.516749981 seconds
+	syscall: 25000000 times in 86.842242014 seconds
 
-	M.
+Changes in v5:
+- The split between last two patches is not anymore PPC32/PPC64 but VDSO32/VDSO64
+- Removed the stub returning ENOSYS
+- Using meaningfull names for registers
+- Restored symbolic link that disappeared in v4
+
+Changes in v4:
+- Rebased on recent random git tree (963233ff0133) (The new tree includes selftests fixes)
+- Read/write counter in native byte order
+- Don't use anymore compat macros to write output
+- Fixed selftests build failure with patch 4 (without patch 5) on little endian on PPC64
+- Implement a __kernel_getrandom() stub returning ENOSYS on ppc64 in patch 4 (without patch 5) to make selftests happy.
+
+Changes in v3:
+- Rebased on recent random git tree (0c7e00e22c21)
+- Fixed build failures reported by robots around VM_DROPPABLE
+- Fixed crash on PPC64 due to clobbered r13 by not using r13 anymore (saving it was not enough for signals).
+- Split final patch in two, first for PPC32, second for PPC64
+- Moved selftest fixes out of this series
+
+Changes in v2:
+- Define VM_DROPPABLE for powerpc/32
+- Fixes generic vDSO getrandom headers to enable CONFIG_COMPAT build.
+- Fixed size of generation counter
+- Fixed selftests to work on non x86 architectures
+
+Christophe Leroy (5):
+  mm: Define VM_DROPPABLE for powerpc/32
+  powerpc/vdso32: Add crtsavres
+  powerpc/vdso: Refactor CFLAGS for CVDSO build
+  powerpc/vdso: Wire up getrandom() vDSO implementation on VDSO32
+  powerpc/vdso: Wire up getrandom() vDSO implementation on VDSO64
+
+ arch/powerpc/Kconfig                         |   1 +
+ arch/powerpc/include/asm/mman.h              |   2 +-
+ arch/powerpc/include/asm/vdso/getrandom.h    |  54 +++
+ arch/powerpc/include/asm/vdso/vsyscall.h     |   6 +
+ arch/powerpc/include/asm/vdso_datapage.h     |   2 +
+ arch/powerpc/kernel/asm-offsets.c            |   1 +
+ arch/powerpc/kernel/vdso/Makefile            |  57 +--
+ arch/powerpc/kernel/vdso/getrandom.S         |  58 +++
+ arch/powerpc/kernel/vdso/gettimeofday.S      |  13 -
+ arch/powerpc/kernel/vdso/vdso32.lds.S        |   1 +
+ arch/powerpc/kernel/vdso/vdso64.lds.S        |   1 +
+ arch/powerpc/kernel/vdso/vgetrandom-chacha.S | 365 +++++++++++++++++++
+ arch/powerpc/kernel/vdso/vgetrandom.c        |  14 +
+ fs/proc/task_mmu.c                           |   4 +-
+ include/linux/mm.h                           |   4 +-
+ include/trace/events/mmflags.h               |   4 +-
+ tools/arch/powerpc/vdso                      |   1 +
+ tools/testing/selftests/vDSO/Makefile        |   2 +-
+ 18 files changed, 547 insertions(+), 43 deletions(-)
+ create mode 100644 arch/powerpc/include/asm/vdso/getrandom.h
+ create mode 100644 arch/powerpc/kernel/vdso/getrandom.S
+ create mode 100644 arch/powerpc/kernel/vdso/vgetrandom-chacha.S
+ create mode 100644 arch/powerpc/kernel/vdso/vgetrandom.c
+ create mode 120000 tools/arch/powerpc/vdso
 
 -- 
-Without deviation from the norm, progress is not possible.
+2.44.0
+
 
