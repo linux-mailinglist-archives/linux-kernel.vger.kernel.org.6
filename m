@@ -1,58 +1,59 @@
-Return-Path: <linux-kernel+bounces-311878-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311879-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA23F968EE6
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 22:37:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65C28968EE9
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 22:40:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5771D1F23517
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 20:37:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3D9D5B215DF
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 20:39:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC71B183063;
-	Mon,  2 Sep 2024 20:37:28 +0000 (UTC)
-Received: from fgw23-7.mail.saunalahti.fi (fgw23-7.mail.saunalahti.fi [62.142.5.84])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E104519CC13;
+	Mon,  2 Sep 2024 20:39:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="xNNL5Yrx"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E48D81428E0
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 20:37:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.142.5.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91BB614AD0A;
+	Mon,  2 Sep 2024 20:39:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725309448; cv=none; b=uriEYVv2OsXCZFQl+j8JXmSbj1j97gw8veW5rOSShgTHKBlaq6jb8EjbMOPfmzI+vvmOm4DTJqqnjV84BbuShPsN5rDlLXXtAFn+IN14EikqvJi1s9B6zjLtw5preek3i8uFXJhWdjm1B8PSA01zmByvWc8H3h2rfObfCIC19U0=
+	t=1725309587; cv=none; b=uPLYHBRrgpOeTGVQdApVkMKKSmIDfeWcyggpQhU0d6A51pObr683eicfe3xFpd2/tmCQCx+GKND0d5Ypvm08S5YYGm0RoEcWJlPVGvQueEgU8qj0uEWFteWwerlLN/i999aXa9gqfzAT90SRa/E5/qUGJzKurQrPUrx46kpyE/U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725309448; c=relaxed/simple;
-	bh=kfH2+W1R2W5ZJM+H60zVdLSui4KadwG9+9YnszFJ9F0=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JbK1uMxj4wpYB/yjIlh0zbxVh8wwmZFr7WHYTuBKxLq0G/gLTb460HbT7kh976TlzJ1z9Ax190LOGiPBJnTsXvM6KtaEPt2RUbOrZcAmvLuEpBlSBkIZmTzcTxYEQcbibX9qCucYaUTGreGf5wx+4L91w+kJoaFrjrdhMtDg3DA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=fail smtp.mailfrom=gmail.com; arc=none smtp.client-ip=62.142.5.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=gmail.com
-Received: from localhost (88-113-25-87.elisa-laajakaista.fi [88.113.25.87])
-	by fgw23.mail.saunalahti.fi (Halon) with ESMTP
-	id 1a2ba198-696b-11ef-8256-005056bdfda7;
-	Mon, 02 Sep 2024 23:37:01 +0300 (EEST)
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Mon, 2 Sep 2024 23:36:59 +0300
-To: Thomas Bonnefille <thomas.bonnefille@bootlin.com>
-Cc: Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Chen Wang <unicorn_wang@outlook.com>,
-	Inochi Amaoto <inochiama@outlook.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	=?iso-8859-1?Q?Miqu=E8l?= Raynal <miquel.raynal@bootlin.com>,
-	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v5 2/3] iio: adc: sophgo-saradc: Add driver for Sophgo
- CV1800B SARADC
-Message-ID: <ZtYh6xUcP8zo3xMj@surfacebook.localdomain>
-References: <20240829-sg2002-adc-v5-0-aacb381e869b@bootlin.com>
- <20240829-sg2002-adc-v5-2-aacb381e869b@bootlin.com>
+	s=arc-20240116; t=1725309587; c=relaxed/simple;
+	bh=trpqDhvvhC6HnrvqYYZkNccfa0XBeDrTCgFemPAbVfw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dx7DPJCB5wlw8carF+tBwUKi1no+UgyNjThvUiCsvcVJ3jx0i5V15NJxiVB1wzkK9nXZbiqyx/7VYa64KnBqcnEytVtMmnHwOIc8ag7+syoWCe1VcvUX0K7ZvJT9GdWuycmsb4wR+pUBU+nSo53FLv6O7tXYquxGWIon95tlEj8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=xNNL5Yrx; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=/CD0X/9PVFg5y9BzQ+5ua7WJJ6YEngTP0n9rU/d3Qwc=; b=xNNL5YrxC24ZsZkwrngHQELbk+
+	8Ffr1J6RULAO6F7VfWkrtMaF49oaXElaISC2FxDzGymF1XOS5YHfCGjl9yfxuCxQl5ukLEevSXWMl
+	Gksi3Vw8gV3sPSd/B32Ks9Y8/mIBOVHfqhjWys3B0laGTiPxSrSA3SC5TsVsWFfUBm7w=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1slDpp-006Kxu-6W; Mon, 02 Sep 2024 22:39:37 +0200
+Date: Mon, 2 Sep 2024 22:39:37 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Rosen Penev <rosenp@gmail.com>
+Cc: netdev@vger.kernel.org, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, linux-kernel@vger.kernel.org,
+	jacob.e.keller@intel.com, horms@kernel.org, sd@queasysnail.net,
+	chunkeey@gmail.com
+Subject: Re: [PATCH 2/6] net: ibm: emac: manage emac_irq with devm
+Message-ID: <1b4d53d9-b797-4a4b-bce5-227efedac451@lunn.ch>
+References: <20240902181530.6852-1-rosenp@gmail.com>
+ <20240902181530.6852-3-rosenp@gmail.com>
+ <7812014c-a77f-441c-bcab-36846a3037cf@lunn.ch>
+ <CAKxU2N8TsYHvM7a_Dhu34xHbvrWev9eL8VOa1JZcu_naW3fwjg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,196 +62,26 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240829-sg2002-adc-v5-2-aacb381e869b@bootlin.com>
+In-Reply-To: <CAKxU2N8TsYHvM7a_Dhu34xHbvrWev9eL8VOa1JZcu_naW3fwjg@mail.gmail.com>
 
-Thu, Aug 29, 2024 at 02:31:51PM +0200, Thomas Bonnefille kirjoitti:
-> This adds a driver for the Sophgo CV1800B SARADC.
+> > Is this an internal interrupt, or a GPIO? It could be it is done in
+> > open because there is a danger the GPIO controller has not probed
+> > yet. So here you might get an EPROBE_DEFFER, where as the much older
+> > kernel this was written for might not of done, if just gave an error
+> > had gave up. So dev_err_probe() might be better.
 
-Jonathan, please consider the below improvements to be folded in as well.
+> Good call on that. In my experience, I get these EPROBE_DEFER errors
+> on OpenWrt's ath79 target (QCA MIPS) but not on PowerPC when trying to
+> use GPIOs. Nevertheless it seems to be good practice to use
+> dev_err_probe anyway. Will fix in v2.
 
-...
+You might want to look at
 
-+ array_size.h
+https://elixir.bootlin.com/linux/v6.10.7/source/drivers/net/ethernet/ibm/emac/core.c#L2418
 
-> +#include <linux/bitfield.h>
+and then replace it by correctly handling EPROBE_DEFER.
 
-+ bits.h
-+ cleanup.h
+As you said, an old driver, needing some cleanup.
 
-> +#include <linux/clk.h>
-> +#include <linux/completion.h>
-
-+ err.h
-
-> +#include <linux/interrupt.h>
-
-> +#include <linux/iio/iio.h>
-
-I would split it into a separate group already.
-
-> +#include <linux/iopoll.h>
-> +#include <linux/mod_devicetable.h>
-> +#include <linux/module.h>
-> +#include <linux/mutex.h>
-> +#include <linux/platform_device.h>
-
-+ types.h
-
-...
-
-> +#define CV1800B_READ_TIMEOUT_MS				1000
-> +#define CV1800B_READ_TIMEOUT_US				(CV1800B_READ_TIMEOUT_MS * 1000)
-
-Effectively these may be written as
-
-(1 * MSEC_PER_SEC)
-(1 * USEC_PER_SEC)
-
-...
-
-> +static int cv1800b_adc_wait(struct cv1800b_adc *saradc)
-> +{
-> +	if (saradc->irq < 0) {
-> +		u32 reg;
-> +
-> +		return readl_poll_timeout(saradc->regs + CV1800B_ADC_STATUS_REG,
-> +					  reg, !(reg & CV1800B_ADC_BUSY),
-> +					  500, CV1800B_READ_TIMEOUT_US);
-> +	}
-> +
-> +	return wait_for_completion_timeout(&saradc->completion,
-> +					  msecs_to_jiffies(CV1800B_READ_TIMEOUT_MS)) > 0
-> +					  ? 0 : -ETIMEDOUT;
-
-Usually we leave "?" part on the previous line.
-
-> +}
-> +
-> +static int cv1800b_adc_read_raw(struct iio_dev *indio_dev,
-> +				struct iio_chan_spec const *chan,
-> +				int *val, int *val2, long mask)
-> +{
-> +	struct cv1800b_adc *saradc = iio_priv(indio_dev);
-> +
-> +	switch (mask) {
-> +	case IIO_CHAN_INFO_RAW:{
-
-Missing space
-
-> +		u32 sample;
-> +
-> +		scoped_guard(mutex, &saradc->lock) {
-> +			int ret;
-> +
-> +			cv1800b_adc_start_measurement(saradc, chan->scan_index);
-> +			ret = cv1800b_adc_wait(saradc);
-> +			if (ret < 0)
-> +				return ret;
-> +
-> +			sample = readl(saradc->regs + CV1800B_ADC_CH_RESULT_REG(chan->scan_index));
-> +		}
-> +		if (!(sample & CV1800B_ADC_CH_VALID))
-> +			return -ENODATA;
-> +
-> +		*val = sample & CV1800B_ADC_CH_RESULT;
-> +		return IIO_VAL_INT;
-> +		}
-
-This should be indented as 'c' in the above 'case'.
-
-> +	case IIO_CHAN_INFO_SCALE:
-> +		*val = 3300;
-> +		*val2 = 12;
-> +		return IIO_VAL_FRACTIONAL_LOG2;
-> +	case IIO_CHAN_INFO_SAMP_FREQ:
-> +		u32 status_reg = readl(saradc->regs + CV1800B_ADC_CYC_SET_REG);
-
-> +		int clk_div = (1 + FIELD_GET(CV1800B_MASK_CLKDIV, status_reg));
-> +		int freq = clk_get_rate(saradc->clk) / clk_div;
-
-Why are these signed?
-
-> +		int nb_startup_cycle = 1 + FIELD_GET(CV1800B_MASK_STARTUP_CYCLE, status_reg);
-> +		int nb_sample_cycle = 1 + FIELD_GET(CV1800B_MASK_SAMPLE_WINDOW, status_reg);
-> +		int nb_compare_cycle = 1 + FIELD_GET(CV1800B_MASK_COMPARE_CYCLE, status_reg);
-> +
-> +		*val = freq / (nb_startup_cycle + nb_sample_cycle + nb_compare_cycle);
-> +		return IIO_VAL_INT;
-> +	default:
-> +		return -EINVAL;
-> +	}
-> +}
-
-...
-
-> +static int cv1800b_adc_probe(struct platform_device *pdev)
-> +{
-
-Having
-
-	struct device *dev = &pdev->dev;
-
-here helps making below code neater.
-
-> +	struct cv1800b_adc *saradc;
-> +	struct iio_dev *indio_dev;
-> +	int ret;
-> +
-> +	indio_dev = devm_iio_device_alloc(&pdev->dev, sizeof(*saradc));
-> +	if (!indio_dev)
-> +		return -ENOMEM;
-> +
-> +	saradc = iio_priv(indio_dev);
-> +	indio_dev->name = "sophgo-cv1800b-adc";
-> +	indio_dev->modes = INDIO_DIRECT_MODE;
-> +	indio_dev->info = &cv1800b_adc_info;
-> +	indio_dev->num_channels = ARRAY_SIZE(sophgo_channels);
-> +	indio_dev->channels = sophgo_channels;
-> +
-> +	saradc->clk = devm_clk_get_enabled(&pdev->dev, NULL);
-> +	if (IS_ERR(saradc->clk))
-> +		return PTR_ERR(saradc->clk);
-> +
-> +	saradc->regs = devm_platform_ioremap_resource(pdev, 0);
-> +	if (IS_ERR(saradc->regs))
-> +		return PTR_ERR(saradc->regs);
-> +
-> +	saradc->irq = platform_get_irq_optional(pdev, 0);
-> +	if (saradc->irq >= 0) {
-
-'=' is redundant
-
-> +		init_completion(&saradc->completion);
-> +		ret = devm_request_irq(&pdev->dev, saradc->irq,
-> +				       cv1800b_adc_interrupt_handler, 0,
-> +				       dev_name(&pdev->dev), saradc);
-> +		if (ret)
-> +			return ret;
-> +
-> +		writel(1, saradc->regs + CV1800B_ADC_INTR_EN_REG);
-
-BIT(0)
-
-> +	}
-> +
-> +	ret = devm_mutex_init(&pdev->dev, &saradc->lock);
-> +	if (ret)
-> +		return ret;
-
-+ blank line?
-
-> +	writel(FIELD_PREP(CV1800B_MASK_STARTUP_CYCLE, 15) |
-> +	       FIELD_PREP(CV1800B_MASK_SAMPLE_WINDOW, 15) |
-> +	       FIELD_PREP(CV1800B_MASK_CLKDIV, 1) |
-> +	       FIELD_PREP(CV1800B_MASK_COMPARE_CYCLE, 15),
-> +	       saradc->regs + CV1800B_ADC_CYC_SET_REG);
-> +
-> +	return devm_iio_device_register(&pdev->dev, indio_dev);
-> +}
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+	Andrew
 
