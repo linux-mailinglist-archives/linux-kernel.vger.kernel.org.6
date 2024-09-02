@@ -1,238 +1,204 @@
-Return-Path: <linux-kernel+bounces-310872-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310873-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9989096824C
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 10:46:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 022F6968250
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 10:47:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1C4B51F219E1
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 08:46:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 636A6B2283B
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 08:47:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BFFF18130D;
-	Mon,  2 Sep 2024 08:46:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0BB8185B47;
+	Mon,  2 Sep 2024 08:47:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="kOYuobLz"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ab2ZaHKr"
+Received: from mail-vk1-f180.google.com (mail-vk1-f180.google.com [209.85.221.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AFB32AEFE;
-	Mon,  2 Sep 2024 08:46:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CAFC2AEFE
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 08:47:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725266782; cv=none; b=KS+rI0RUNJJJWqUwjkOANTaK+MxwoMynLkvyIQeBj5z2YP8R+MllWwUJniCW/ZBE5w4E4GDlhQJosmDK5Levx2F/qrRHRNatThVuuop+2mZtNXQbiA5W/Ji7Vev8tRMsE4UGvAOZ0FQErVtfW6AwDylt44yLJ+/ah6ZDGIE+Vyw=
+	t=1725266823; cv=none; b=PCkCoEcedWJScjzvPiiLz1Ck3WfLWHQDZGIqsObYkE8LrwN/TbBTjZQVyjlUa39cezc86aP70Eb0+lAvJW3pyx9ivdUwWgJtslT9bMaQ+LaZlFHaZyOpIJnGq4ot0Uu0a5nqrQtIM4OIt6yrrMfNpBDibniqYIH03yVNwzmiTdY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725266782; c=relaxed/simple;
-	bh=hSXxkiSZeLDIu5vNXLKXnA9SFRIeB7O4GPcucxIC2QA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=I3zZ8DQQfO9yzTBJEPXcgZGB3SrkLq+zEig5p3yzaLLf7TGCSpDl67De+MvTeCZCxL65lgZ4MmgKmgqXT9DTQWT7sMYlNXfIZDnvoJfoqKycFrS6ucH13N0GDwFGtHI4gcnlV58Q74CohvyCShUWm7BKl8m+eZn3v+bxZO2CFVY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=kOYuobLz; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 618D240E0081;
-	Mon,  2 Sep 2024 08:46:08 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id 7gskwZdp3wAb; Mon,  2 Sep 2024 08:46:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1725266762; bh=ieYWg9D1+m2IMD1+NLyBqX6ssI4aWplO+4yreStprIY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kOYuobLz4WaHHJZwHpndAAfzyrLdGqOuzk12NF4PxJ1sWRMYKZ74yyLBVEsHDdeea
-	 xPoRG1ySM3HJwDdABkT76GD/KGsAjXRYNaZermGWdiEpH3GGe7k4ahRKof7ZrtMbrs
-	 pmGFxbmtRlyLJa2cw7+OVHz/Js6gcj5cpG/kvUqTRfKEjZfdVIlUvXWxiIeACT07oJ
-	 Yu0ZLLfSfqzx4hO+G4794DKFINIPj+LYpftUQx7h01wW9/cgW8V1eIxEQKrjI14/cg
-	 k7+apCj4KecviJvV98RwvwkwGi4LmFuM78F+OKbgg7phebJY/tXuM1794hWbzs98x3
-	 qq7OHGaXcvdRmrYQr/p6kMMPmF0f5+9nDPQhBFTLDO8hHTJaEpoXefy8LDXC5RInOK
-	 JtfWyBdbs1v07BSljpHKgv25AUT2O1X3jbtYCpoJDOhAeEgmdJX3D/T6Tb3DVd2dbt
-	 t8XbDSzj+GiMjUhJxq+m9KSz9XAxen5ZiESzvf2T7tP8WQMt+9OjhoE7M4pzUfs6Kl
-	 D2Zhcz32h3SpmLgDtE+/uk/76/pLJppGZ5R/pEIMEp+Z6bWdUI7Qw6hDbS1zgG6thL
-	 UmPWrE9o5qqMXRFdKuXYlMufgJKp26WnugAWP8MUrmZpIRaYWkDj5I4wc+FXeGljPc
-	 aa+/8DOwnqmzesLDdv/ZVTGk=
-Received: from zn.tnic (p5de8e8eb.dip0.t-ipconnect.de [93.232.232.235])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 0AA7B40E0198;
-	Mon,  2 Sep 2024 08:45:53 +0000 (UTC)
-Date: Mon, 2 Sep 2024 10:45:46 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: "V, Narasimhan" <Narasimhan.V@amd.com>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Daniel Vetter <daniel@ffwll.ch>, Helge Deller <deller@gmx.de>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	open list <linux-kernel@vger.kernel.org>
-Subject: WARNING: CPU: 0 PID: 8 at drivers/video/fbdev/core/fbmem.c:467
- unregister_framebuffer+0x45/0x160 (was: Re: BUG: kernel NULL pointer
- dereference, address: 0000000000000000 on boot with linux-next-20240829)
-Message-ID: <20240902084546.GAZtV7Ot58w7D90fwQ@fat_crate.local>
-References: <DM4PR12MB5086C89FD0EAF070D167733389912@DM4PR12MB5086.namprd12.prod.outlook.com>
+	s=arc-20240116; t=1725266823; c=relaxed/simple;
+	bh=5koipN301NbdmYrqYHB4egArEglH64vZt7s8+esDVR0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=f3ap1ujr79CQZoUecOFgaBNM/GNlwJaXVbv88wfTIz4AsckX0bGQDFSThpjv+y1qh/iJ2QV5JqF6goEkmeoQ1Blu6AORfNOocjktGXyHEQBCaicvDQd98UQ2DvqVhs92rFy/jGzND3YuviNIVF7zifkuZpge7mc5J39xVoq5BGo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ab2ZaHKr; arc=none smtp.client-ip=209.85.221.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-vk1-f180.google.com with SMTP id 71dfb90a1353d-4fd094c88afso1369099e0c.0
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2024 01:47:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1725266820; x=1725871620; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=KsE6U/k1vC2HTRZ1j0u0FBej1GCe3nPlUj861Ab8TNU=;
+        b=ab2ZaHKrnu8OfdA9vst8/za5DA33ej4MAX0YdaHll1+hGtU4brg0nIP8Re6G/IyZJw
+         VTQ/DuXqSy+YAePzjJ2kn4/YJIyJ/D7qb6OfpVQjwULBpCcmrutuvUp3nVCEYRsak32K
+         pIo5F3GoaB9ITl28hrOwP+sE5TMnFGChvZ/EWvBx9vo0IP9D2V8jFcHE+Oc4z8HMN5+t
+         NYT8j2mkrSUg0KmO4KRQaHuu1uHI0lMRmljIBZ5MNrvOzcYGkC1rVg1CpV3x+n9lTp07
+         bJyQkbYMFbQCFWN2VOZCJRAeU5ZKosb+1S6qpv7M4WotBj3hKIA97sf5j0v5f+mvQHZM
+         4HcA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725266820; x=1725871620;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=KsE6U/k1vC2HTRZ1j0u0FBej1GCe3nPlUj861Ab8TNU=;
+        b=ok5PQDHo6cmJOLV8wBQ0SMxXAtDQhFoCVLJiuHV2dYko5kYPGFNBCpG1nOCeiRqsBy
+         ZBTsYgK1egV53YWRzWLERfBkT6kbABR2W+IFAYPqLamarxFGo5QxBv9GvBHT1tA71k2h
+         xp06LBctbdRSKkaWuxZPDPr3t52n8RhDjUnQCSCQ17wiDDEQa8ta7O24SyzqvksjjzGy
+         akmDUjRYKCDbwnd9+kJG/8xIFuTTkpnkdwienLupneKfPxS1fZ/F3OxTC+dH1wD7xwW/
+         0ofoIJ237EQRkCnrrqAAKnOBbP6O9VJ7Fdwn0PJH0Qmig7/cr1V+6uFS1JHSZ91yoQjM
+         NHEw==
+X-Forwarded-Encrypted: i=1; AJvYcCV8E6MviDrPkSj8x6FZ39yHFxbZMumpjuo6J8It5x4kTn4mgImZ0HEsU72hW6JA+Mzuu7pibpCg9fd1e34=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwhznYGRn43hdoEOHyOUGCmRPhi1XbkmmWielKXEr24jlSSOL+W
+	n6Esx5kdxeR8agSHsjfJwFvH8R+6ycy6mvjOomprFayl9Z2jJx3dqENXkTLdVxBwq6Xyuy9GOar
+	gG2jOyKWgLxprBIE+V5jhjoTSSw7ZmYz6dFVtnw==
+X-Google-Smtp-Source: AGHT+IGvJFgpWZW72qkUe5lgjauVaBz/o+InxFAah8g4mLKkhioQWBVrVTLkZiBIbyncFCcLhz/zHgWGk2gh5yVhBqk=
+X-Received: by 2002:a05:6122:3b06:b0:4f6:ae34:9659 with SMTP id
+ 71dfb90a1353d-5009ac36f2amr7433710e0c.5.1725266820224; Mon, 02 Sep 2024
+ 01:47:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <DM4PR12MB5086C89FD0EAF070D167733389912@DM4PR12MB5086.namprd12.prod.outlook.com>
+References: <20240901160803.673617007@linuxfoundation.org>
+In-Reply-To: <20240901160803.673617007@linuxfoundation.org>
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Mon, 2 Sep 2024 14:16:48 +0530
+Message-ID: <CA+G9fYvS_NL7bcKkOJEX2irsBHcrYHz_yOOU84T9V9XB7n92RQ@mail.gmail.com>
+Subject: Re: [PATCH 4.19 00/98] 4.19.321-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
+	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, 
+	broonie@kernel.org, Anders Roxell <anders.roxell@linaro.org>, abdulrasaqolawani@gmail.com, 
+	Helge Deller <deller@gmx.de>
+Content-Type: text/plain; charset="UTF-8"
 
-Fixing subject and recipients and leaving the whole mail untouched.
+On Sun, 1 Sept 2024 at 21:50, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> This is the start of the stable review cycle for the 4.19.321 release.
+> There are 98 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Tue, 03 Sep 2024 16:07:34 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.19.321-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.19.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
-On Sun, Sep 01, 2024 at 05:01:28PM +0200, V, Narasimhan wrote:
-> [AMD Official Use Only - AMD Internal Distribution Only]
-> 
-> Hi,
-> 
-> Seeing the following warning and bug on boot with linux-next-20240829
-> 
-> WARNING: CPU: 0 PID: 8 at drivers/video/fbdev/core/fbmem.c:467 unregister_framebuffer+0x45/0x160
-> BUG: kernel NULL pointer dereference, address: 0000000000000000
-> 
-> 
-> 
-> 19:07:54  [   18.395285] WARNING: CPU: 0 PID: 8 at drivers/video/fbdev/core/fbmem.c:467 unregister_framebuffer+0x45/0x160
-> 19:07:54  [   18.406264] Modules linked in: ast(+) i2c_algo_bit drm_shmem_helper crct10dif_pclmul crc32_pclmul drm_kms_helper ghash_clmulni_intel sha256_ssse3 drm tg3 nvme sha1_ssse3 ahci i2c_piix4 libahci i2c_smbus nvme_core aesni_intel crypto_simd cryptd
-> 19:07:54  [   18.430347] CPU: 0 UID: 0 PID: 8 Comm: kworker/0:0 Not tainted 6.11.0-rc5-next-20240830-1725196918033 #1
-> 19:07:54  [   18.440929] Hardware name: AMD Corporation Shale96/Shale96, BIOS RSH100BD 12/11/2023
-> 19:07:54  [   18.449572] Workqueue: events work_for_cpu_fn
-> 19:07:54  [   18.454435] RIP: 0010:unregister_framebuffer+0x45/0x160
-> 19:07:54  [   18.460267] Code: 83 ec 08 e8 7d 4a 76 00 49 63 44 24 04 83 f8 1f 77 18 48 83 f8 1f 0f 87 d6 00 00 00 4c 3b 24 c5 80 76 a7 83 0f 84 85 00 00 00 <0f> 0b 49 8b bc 24 d0 01 00 00 48 85 ff 74 0b 41 f6 84 24 ec 01 00
-> 19:07:54  [   18.481224] RSP: 0018:ff56f06f800efb50 EFLAGS: 00010286
-> 19:07:54  [   18.487058] RAX: 0000000000000000 RBX: ff2d2a8913c77a40 RCX: ff2d2a8913c77400
-> 19:07:54  [   18.495023] RDX: ff2d2a8900956000 RSI: ff2d2a8913c77428 RDI: ffffffff83918360
-> 19:07:54  [   18.502987] RBP: ff56f06f800efb68 R08: ffffffff82dce06a R09: 0000000000000010
-> 19:07:54  [   18.510950] R10: ff2d2a8913cfc2b0 R11: 0000000000000004 R12: ff2d2a8913cffc00
-> 19:07:54  [   18.518911] R13: ff56f06f800efbd0 R14: ff2d2a8913cfc010 R15: 0000000000000202
-> 19:07:54  [   18.526873] FS:  0000000000000000(0000) GS:ff2d2a980ba00000(0000) knlGS:0000000000000000
-> 19:07:54  [   18.535903] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> 19:07:54  [   18.542312] CR2: 0000558d19347c98 CR3: 000000011827a006 CR4: 0000000000771ef0
-> 19:07:54  [   18.550275] PKRU: 55555554
-> 19:07:54  [   18.553293] Call Trace:
-> 19:07:54  [   18.556016]  <TASK>
-> 19:07:54  [   18.558354]  ? show_regs+0x6d/0x80
-> 19:07:54  [   18.562153]  ? __warn+0x91/0x140
-> 19:07:54  [   18.565756]  ? unregister_framebuffer+0x45/0x160
-> 19:07:54  [   18.570917]  ? report_bug+0x193/0x1a0
-> 19:07:54  [   18.575008]  ? handle_bug+0x63/0xa0
-> 19:07:54  [   18.578901]  ? exc_invalid_op+0x1d/0x80
-> 19:07:54  [   18.583181]  ? asm_exc_invalid_op+0x1f/0x30
-> 19:07:54  [   18.587842]  ? unregister_framebuffer+0x45/0x160
-> 19:07:54  [   18.592994]  devm_unregister_framebuffer+0x12/0x20
-> 19:07:54  [   18.598338]  devm_action_release+0x16/0x20
-> 19:07:54  [   18.602910]  release_nodes+0x47/0xc0
-> 19:07:54  [   18.606898]  devres_release_all+0x9f/0xe0
-> 19:07:54  [   18.611371]  device_unbind_cleanup+0x12/0x80
-> 19:07:54  [   18.616136]  device_release_driver_internal+0x20c/0x250
-> 19:07:54  [   18.621967]  ? srso_alias_return_thunk+0x5/0xfbef5
-> 19:07:54  [   18.627315]  device_release_driver+0x16/0x20
-> 19:07:54  [   18.632079]  bus_remove_device+0xcf/0x130
-> 19:07:54  [   18.636551]  device_del+0x16a/0x3c0
-> 19:07:54  [   18.640444]  ? srso_alias_return_thunk+0x5/0xfbef5
-> 19:07:54  [   18.645791]  platform_device_del.part.0+0x18/0x90
-> 19:07:54  [   18.651042]  platform_device_unregister+0x24/0x40
-> 19:07:54  [   18.656303]  sysfb_disable+0x5c/0xa0
-> 19:07:54  [   18.660296]  aperture_remove_conflicting_pci_devices+0x33/0x140
-> 19:07:54  [   18.666907]  drm_aperture_remove_conflicting_pci_framebuffers+0x19/0x20 [drm]
-> 19:07:54  [   18.674886]  ast_pci_probe+0x2c/0x540 [ast]
-> 19:07:54  [   18.679556]  ? srso_alias_return_thunk+0x5/0xfbef5
-> 19:07:54  [   18.684904]  local_pci_probe+0x4c/0xb0
-> 19:07:54  [   18.689087]  work_for_cpu_fn+0x1b/0x30
-> 19:07:54  [   18.693271]  process_one_work+0x17a/0x3b0
-> 19:07:54  [   18.697745]  worker_thread+0x2a0/0x3a0
-> 19:07:54  [   18.701927]  ? __pfx_worker_thread+0x10/0x10
-> 19:07:54  [   18.706688]  kthread+0xe5/0x120
-> 19:07:54  [   18.710192]  ? __pfx_kthread+0x10/0x10
-> 19:07:54  [   18.714375]  ret_from_fork+0x3d/0x60
-> 19:07:54  [   18.718363]  ? __pfx_kthread+0x10/0x10
-> 19:07:54  [   18.722544]  ret_from_fork_asm+0x1a/0x30
-> 19:07:54  [   18.726923]  </TASK>
-> 19:07:54  [   18.729359] ---[ end trace 0000000000000000 ]---
-> 09:13:40  [   18.100937] BUG: kernel NULL pointer dereference, address: 0000000000000000
-> 09:13:40  [   18.108694] #PF: supervisor read access in kernel mode
-> 09:13:40  [   18.114424] #PF: error_code(0x0000) - not-present page
-> 09:13:40  [   18.120153] PGD 1156fa067 P4D 0
-> 09:13:40  [   18.123751] Oops: Oops: 0000 [#1] PREEMPT SMP NOPTI
-> 09:13:40  [   18.129194] CPU: 0 UID: 0 PID: 458 Comm: kworker/0:2 Tainted: G        W          6.11.0-rc5-next-20240829-1725075030567 #1
-> 09:13:40  [   18.141618] Tainted: [W]=WARN
-> 09:13:40  [   18.144922] Hardware name: AMD Corporation Shale96/Shale96, BIOS RSH100BD 12/11/2023
-> 09:13:40  [   18.153551] Workqueue: events work_for_cpu_fn
-> 09:13:40  [   18.158412] RIP: 0010:fb_destroy_modelist+0x1a/0x70
-> 09:13:40  [   18.163853] Code: 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 f3 0f 1e fa 0f 1f 44 00 00 55 48 89 e5 41 56 41 55 41 54 49 89 fc 53 48 8b 3f <48> 8b 1f 49 39 fc 74 36 49 be 00 01 00 00 00 00 ad de 49 bd 22 01
-> 09:13:40  [   18.184809] RSP: 0018:ff42b545c14e7b20 EFLAGS: 00010246
-> 09:13:40  [   18.190638] RAX: 0000000000000000 RBX: ff2cd8a142f7ce00 RCX: ff2cd8a142f7cf00
-> 09:13:40  [   18.198597] RDX: ff2cd8b088b74000 RSI: ff2cd8a142f7cf28 RDI: 0000000000000000
-> 09:13:40  [   18.206557] RBP: ff42b545c14e7b40 R08: ffffffff907cca2c R09: 0000000000000010
-> 09:13:40  [   18.214520] R10: ff2cd8a142fb06b0 R11: 0000000000000004 R12: ff2cd8a142fb5288
-> 09:13:40  [   18.222480] R13: ff42b545c14e7bd0 R14: ff2cd8a142fb0410 R15: 0000000000000283
-> 09:13:40  [   18.230440] FS:  0000000000000000(0000) GS:ff2cd8b046600000(0000) knlGS:0000000000000000
-> 09:13:40  [   18.239466] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> 09:13:40  [   18.245874] CR2: 0000000000000000 CR3: 00000001156cc005 CR4: 0000000000771ef0
-> 09:13:40  [   18.253836] PKRU: 55555554
-> 09:13:40  [   18.256851] Call Trace:
-> 09:13:40  [   18.259573]  <TASK>
-> 09:13:40  [   18.261901]  ? show_regs+0x6d/0x80
-> 09:13:40  [   18.265695]  ? __die+0x29/0x70
-> 09:13:40  [   18.269098]  ? page_fault_oops+0x15c/0x550
-> 09:13:40  [   18.273664]  ? unregister_framebuffer+0x45/0x160
-> 09:13:40  [   18.278813]  ? srso_alias_return_thunk+0x5/0xfbef5
-> 09:13:40  [   18.284157]  ? vprintk+0x3f/0x70
-> 09:13:40  [   18.287755]  ? srso_alias_return_thunk+0x5/0xfbef5
-> 09:13:40  [   18.293097]  ? _printk+0x5c/0x80
-> 09:13:40  [   18.296699]  ? do_user_addr_fault+0x47a/0x7e0
-> 09:13:40  [   18.301559]  ? __warn+0xbc/0x140
-> 09:13:40  [   18.305158]  ? unregister_framebuffer+0x45/0x160
-> 09:13:40  [   18.310307]  ? exc_page_fault+0x7c/0x1b0
-> 09:13:40  [   18.314680]  ? asm_exc_page_fault+0x2b/0x30
-> 09:13:40  [   18.319347]  ? fb_destroy_modelist+0x1a/0x70
-> 09:13:40  [   18.324107]  unregister_framebuffer+0x6c/0x160
-> 09:13:40  [   18.329063]  devm_unregister_framebuffer+0x12/0x20
-> 09:13:40  [   18.334408]  devm_action_release+0x16/0x20
-> 09:13:40  [   18.338978]  release_nodes+0x47/0xc0
-> 09:13:40  [   18.342965]  devres_release_all+0x9f/0xe0
-> 09:13:40  [   18.347436]  device_unbind_cleanup+0x12/0x80
-> 09:13:40  [   18.352196]  device_release_driver_internal+0x20c/0x250
-> 09:13:40  [   18.358024]  ? srso_alias_return_thunk+0x5/0xfbef5
-> 09:13:40  [   18.363367]  device_release_driver+0x16/0x20
-> 09:13:40  [   18.368128]  bus_remove_device+0xcf/0x130
-> 09:13:40  [   18.372599]  device_del+0x16a/0x3c0
-> 09:13:40  [   18.376488]  ? srso_alias_return_thunk+0x5/0xfbef5
-> 09:13:40  [   18.381837]  platform_device_del.part.0+0x18/0x90
-> 09:13:40  [   18.387086]  platform_device_unregister+0x24/0x40
-> 09:13:40  [   18.392330]  sysfb_disable+0x5c/0xa0
-> 09:13:40  [   18.396316]  aperture_remove_conflicting_pci_devices+0x33/0x140
-> 09:13:40  [   18.402921]  drm_aperture_remove_conflicting_pci_framebuffers+0x19/0x20 [drm]
-> 09:13:40  [   18.410899]  ast_pci_probe+0x2c/0x540 [ast]
-> 09:13:40  [   18.415566]  ? srso_alias_return_thunk+0x5/0xfbef5
-> 09:13:40  [   18.420914]  local_pci_probe+0x4c/0xb0
-> 09:13:40  [   18.425095]  work_for_cpu_fn+0x1b/0x30
-> 09:13:40  [   18.429277]  process_one_work+0x17a/0x3b0
-> 09:13:40  [   18.433746]  ? __pfx_worker_thread+0x10/0x10
-> 09:13:40  [   18.438507]  worker_thread+0x2a0/0x3a0
-> 09:13:40  [   18.442685]  ? __pfx_worker_thread+0x10/0x10
-> 09:13:40  [   18.447445]  kthread+0xe5/0x120
-> 09:13:40  [   18.450946]  ? __pfx_kthread+0x10/0x10
-> 09:13:40  [   18.455125]  ret_from_fork+0x3d/0x60
-> 09:13:40  [   18.459112]  ? __pfx_kthread+0x10/0x10
-> 09:13:40  [   18.463293]  ret_from_fork_asm+0x1a/0x30
-> 09:13:44  [   18.467673]  </TASK>
-> 09:13:44  [   18.470106] Modules linked in: ast(+) i2c_algo_bit drm_shmem_helper crct10dif_pclmul crc32_pclmul drm_kms_helper ghash_clmulni_intel sha256_ssse3 drm sha1_ssse3 nvme i2c_piix4 tg3 ahci nvme_core i2c_smbus libahci aesni_intel crypto_simd cryptd
-> 09:13:44  [   18.494181] CR2: 0000000000000000
-> 09:13:44  [   18.497876] ---[ end trace 0000000000000000 ]---
-> 
-> --
-> Regards
-> Narasimhan V
-> 
+The Powerpc defconfig builds failed on Linux stable-rc due to following
+build warnings / errors with clang-18 and gcc-12.
 
--- 
-Regards/Gruss,
-    Boris.
+This is a same problem on current stable-rc review on
+   - 4.19.321-rc1 review
+   - 5.4.283-rc1 review
+   - 5.10.225-rc1 review
+   - 5.15.166-rc1 review
 
-https://people.kernel.org/tglx/notes-about-netiquette
+In the case of stable-rc linux-4.19.y
+
+Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+
+Anders bisected this to first bad commit id as,
+  fbdev: offb: replace of_node_put with __free(device_node)
+  [ Upstream commit ce4a7ae84a58b9f33aae8d6c769b3c94f3d5ce76 ]
+
+build log:
+--------
+kernel/profile.c: In function 'profile_dead_cpu':
+kernel/profile.c:346:27: warning: the comparison will always evaluate
+as 'true' for the address of 'prof_cpu_mask' will never be NULL
+[-Waddress]
+  346 |         if (prof_cpu_mask != NULL)
+      |                           ^~
+kernel/profile.c:49:22: note: 'prof_cpu_mask' declared here
+   49 | static cpumask_var_t prof_cpu_mask;
+      |                      ^~~~~~~~~~~~~
+kernel/profile.c: In function 'profile_online_cpu':
+kernel/profile.c:383:27: warning: the comparison will always evaluate
+as 'true' for the address of 'prof_cpu_mask' will never be NULL
+[-Waddress]
+  383 |         if (prof_cpu_mask != NULL)
+      |                           ^~
+kernel/profile.c:49:22: note: 'prof_cpu_mask' declared here
+   49 | static cpumask_var_t prof_cpu_mask;
+      |                      ^~~~~~~~~~~~~
+kernel/profile.c: In function 'profile_tick':
+kernel/profile.c:413:47: warning: the comparison will always evaluate
+as 'true' for the address of 'prof_cpu_mask' will never be NULL
+[-Waddress]
+  413 |         if (!user_mode(regs) && prof_cpu_mask != NULL &&
+      |                                               ^~
+kernel/profile.c:49:22: note: 'prof_cpu_mask' declared here
+   49 | static cpumask_var_t prof_cpu_mask;
+      |                      ^~~~~~~~~~~~~
+fs/xfs/libxfs/xfs_inode_fork.c: In function 'xfs_ifork_verify_attr':
+fs/xfs/libxfs/xfs_inode_fork.c:731:13: warning: the comparison will
+always evaluate as 'true' for the address of 'i_df' will never be NULL
+[-Waddress]
+  731 |         if (!XFS_IFORK_PTR(ip, XFS_ATTR_FORK))
+      |             ^
+In file included from fs/xfs/libxfs/xfs_inode_fork.c:14:
+fs/xfs/xfs_inode.h:38:33: note: 'i_df' declared here
+   38 |         struct xfs_ifork        i_df;           /* data fork */
+      |                                 ^~~~
+drivers/video/fbdev/offb.c: In function 'offb_init_palette_hacks':
+drivers/video/fbdev/offb.c:355:47: error: expected '=', ',', ';',
+'asm' or '__attribute__' before '__free'
+  355 |                 struct device_node *pciparent
+__free(device_node) = of_get_parent(dp);
+      |                                               ^~~~~~
+drivers/video/fbdev/offb.c:355:47: error: implicit declaration of
+function '__free'; did you mean 'kzfree'?
+[-Werror=implicit-function-declaration]
+  355 |                 struct device_node *pciparent
+__free(device_node) = of_get_parent(dp);
+      |                                               ^~~~~~
+      |                                               kzfree
+drivers/video/fbdev/offb.c:355:54: error: 'device_node' undeclared
+(first use in this function)
+  355 |                 struct device_node *pciparent
+__free(device_node) = of_get_parent(dp);
+      |                                                      ^~~~~~~~~~~
+drivers/video/fbdev/offb.c:355:54: note: each undeclared identifier is
+reported only once for each function it appears in
+drivers/video/fbdev/offb.c:356:17: warning: ISO C90 forbids mixed
+declarations and code [-Wdeclaration-after-statement]
+  356 |                 const u32 *vid, *did;
+      |                 ^~~~~
+drivers/video/fbdev/offb.c:357:39: error: 'pciparent' undeclared
+(first use in this function); did you mean 'pci_alert'?
+  357 |                 vid = of_get_property(pciparent, "vendor-id", NULL);
+      |                                       ^~~~~~~~~
+      |                                       pci_alert
+cc1: some warnings being treated as errors
+
+Build Log links,
+--------
+ - https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-4.19.y/build/v4.19.320-99-g0cc44dd838a6/testrun/24994095/suite/build/test/gcc-12-ppc64e_defconfig/log
+
+--
+Linaro LKFT
+https://lkft.linaro.org
 
