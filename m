@@ -1,184 +1,222 @@
-Return-Path: <linux-kernel+bounces-311845-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311846-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 533D4968E80
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 21:40:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF633968E83
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 21:44:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6573FB2224A
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 19:40:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7BF901F22A3E
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 19:44:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 341211A304D;
-	Mon,  2 Sep 2024 19:40:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BBD01C62BB;
+	Mon,  2 Sep 2024 19:43:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TaudoaM/"
-Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XPuH37Eh"
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD95219CC03;
-	Mon,  2 Sep 2024 19:40:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 353C31A3A8D;
+	Mon,  2 Sep 2024 19:43:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725306043; cv=none; b=mo6BQDM2d7wuBGvU/lI5by0fUb5pBCVsCRE71ANLAk55lGbH2zsnA5PV5pniY7kud4WiN4rSJzYLlWVfYB6HI1hwjnOAh1TwNUbTRYIPWMU/R7w8tUmeSEKB5008RV7LGzAXHhzkQDgQMBH2wMY6j09qEvRt9Nw5dWFxMm9TWy0=
+	t=1725306232; cv=none; b=U+Nfh9FNO3AbsXBajxdKDZYzE5rYt3TmP65Llh046sTyyEsOLGtIiq3TbjsCDL0zm9F/40a6m0H5+ZdspWcyjbEad2q9+I0GWiKZ6ULFcAUx2t8aesshha+klmWXtXDzYbKpMfR4YXYwgeaHR+mCy60p4qa+ddZmkDGflJOWzMA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725306043; c=relaxed/simple;
-	bh=HnOo/lhyYG30a6WcorZmTIcDTZw4joZ5duCIPOEY1lE=;
+	s=arc-20240116; t=1725306232; c=relaxed/simple;
+	bh=WmaQEMd3JE9ZTkRCyNerdZexPn2Yb8jAQcwyAeVm24g=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=a4CB5/iGDSibgue6xDJ94QopPQ8oAOp/W6qPamchyM4RjN8HnxPIWyI8VqnNbpOeQHreEusjfkx0pKqlZNTveYvRHq5jVLA7k0OeTI/g1wuUWgxLkapuPNriTl24w2exUsSice2/ImZEm+3MZUJj9BjLnyZMIVDs+WhyHw/2Arg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TaudoaM/; arc=none smtp.client-ip=209.85.208.176
+	 To:Cc:Content-Type; b=koFckrijXMk58RCdg65FAqOpHtnEIHfz1J9W0aQ1vnKhvQZdZKNRgQxWTRQU/P6Om9hfvSZ0mozSafVyVzwArObfq9Rm8jVeNeFY8DC7jKv+iQM0TBhUtSgMtA+D1A8Mm7RordbZ3JYfN6fnsCeBLkvJiweS5agIis+Bxu8/iOg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XPuH37Eh; arc=none smtp.client-ip=209.85.208.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2f50966c448so51730211fa.2;
-        Mon, 02 Sep 2024 12:40:40 -0700 (PDT)
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5c25dd38824so506445a12.0;
+        Mon, 02 Sep 2024 12:43:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725306039; x=1725910839; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HpWpRt3vqUwfo4uZB5tvXqlfhuEFClUtNuDAJ3mY3P8=;
-        b=TaudoaM/+ssJydxv/wCKvXkm8NdLHAQyBpIhSkLrhlE4SlgyOoNz3y2V9u2z3kY/XG
-         rznWnAbsUfkqbzTSz4Y5bjT6cr6HOeNHXYd4ctKLcfkNRSOJdXxGHmrUtc0SwJXjCMAa
-         9bYs1HdtMUdgFUalGgbX7GpFNgyE8ADl3bIH3k/AnLeBcHO51Uhbyi6uNMKZhmXe7FX4
-         EkNE0h/iMSekLCK4Wa+S65BZEzrMPkIT4ssRfygM7Qiso/n2HItRj7xoiRjXSKhJM+Op
-         S2nngO7fi1fo+v1TQ0/X5XS1PzwQoTUHb30/hsVdPSHH++495KJ097RJlBx3Ad3vsabT
-         ihRw==
+        d=gmail.com; s=20230601; t=1725306229; x=1725911029; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=PAcVm81xwjNlpuXjiQxC/gQknWTt88XBwjwjsmfyxGE=;
+        b=XPuH37EhbkQ6Z0ZEQnaVxg299omvVeUla0R3iy4z8T+3Tzg5zz+teiUxd7ReBzUkre
+         hnh2u22Ibcf9wY3DXifgs3VnmEXi/c/bOtlZ6kI8GEYa8mUSLwbFpHppQB6ewsPKVHj9
+         P8zXSHLtSP/1oJKnRh/PVoX+eRWHa/1EjyOagB0MHmszcxesOYXrN9SVAAxbi06jcWw4
+         4aDpaYIRpetXTelVm1Rf88RxWwblsi9LFZz/t06pmul4ROLWqrH+13LpgrnAPpyWOpmK
+         9MXQVLah3+6O5JRngEh1Nw0gPlyJbbD6nF0Hklo+4LEs4z9qHcfZwzTlHDRFv7bx6Dx/
+         pnRg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725306039; x=1725910839;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=HpWpRt3vqUwfo4uZB5tvXqlfhuEFClUtNuDAJ3mY3P8=;
-        b=pwY5ahUZpyuF4quFPrvcwCoGqTPPE5zOvdQguccRzYGx0EjpFlFihwP/HfVc+otTJA
-         FsAmLARJUqNwpTpEmYfuj1xhyM5PH6PF5hHSyqzhPuCRUmadXwzfLyD+VtY+rx50WOUR
-         eJAbBuM6t8Q5uXjMQx4Bq0N4xJNNlwrpY0Pa80NI511PJy9S79z1KA+8ZgGaGJMQgVYV
-         DG3YXBJKvoj4DKqR99YhHiBsSyMj6Ej/RoNmou2gGhBfWGDZ8FiDLb6LBM3cuN/d+FAo
-         LAfnzcJINmDGznEl7b/spM1crT/uY8mjIwgda27cCw8FjzucsfXSRMIK9SsR7qyke01u
-         kxdA==
-X-Forwarded-Encrypted: i=1; AJvYcCVs/aw4fA4ifpYH01qLDlQhj6XIRobAuOXJo78cB8wGrr6Tdvtna8+tuLUIKyRPvP7hK3GL2+xWX+cCbvs=@vger.kernel.org, AJvYcCWHwLcOQlypBKdQsgrn7SkESm4H3DpqjBV0c3BjiezPZZHO6TFG44mXfjPN1f4QzrOoPG0liyvk4+hU2QI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwYLVSpMI2pQ/Gfa2+WDq91NQclTNDgQhRpB7dSqytSqgNKhKIM
-	FjW/dP+A7UhMHO8hBJDGEUACylOsD/16hzRjP0QJrPDTYJDL3punMNbUkMAWA8GorZzax7dW7wj
-	WzDfKRX3bzYlfrGAxldjXDuXR3SA=
-X-Google-Smtp-Source: AGHT+IHvqxlebRz23fBdc7+x4Kxynynh/CzQIlyEUmpae5/E7hDepmKTA1GmE4aPmagGHHDiX+k0jlIfHtrzeik2HdA=
-X-Received: by 2002:a05:6512:33ce:b0:52c:d27b:ddcb with SMTP id
- 2adb3069b0e04-53546afd60amr7874352e87.3.1725306038019; Mon, 02 Sep 2024
- 12:40:38 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1725306229; x=1725911029;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=PAcVm81xwjNlpuXjiQxC/gQknWTt88XBwjwjsmfyxGE=;
+        b=Gru7eStqINH2Fl5X1K9WlgXgiBpa/Vqww07xzgSNc944VMPDuqwOAF1mZxdBWetNZj
+         f3HBocLg9ykvAoS/+1lwIsBY1FdmbjyXp6faibH/PMNoh1NbgQ2DV6B07UHwUPMSgVGV
+         8XtFxGxRDkBnkflJbvkcoPouT1LCLle18UzSIiCfaytlDSXUEGHDxK97ws6PQFM53Dsn
+         DszgArNUgHcAlc3QdwFWKPWuXUOZsBre0TkxMXuhdSnWdayPNEWdXanU98lHAReGg6+u
+         AQD08vwjn12zWHXpHMVKAeeZXycYgduCO9IEw1NqegHW9ZrIAWMuIpcBjNyfc2Hz77m3
+         j+6Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUnA/zDFfZuv5tHYjIuyA6it/WLhK9CFvm2n70wU9JU8pXneFkgm/rd50o7NFo4OBn/ND3nUMLrHz5Q43E=@vger.kernel.org, AJvYcCX+wpA7rwbwksDki2NGDPfB89FWPZjeUZt0ffDJ5Xj+LiDp7mFyfGH7Ygrk8NBDf5BqS8yp4F4SEEXvyyc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxl6AIe3QKjlbQsCZIMPDODSRTpAGUf3lYdueXqISqTqJPwT7Ua
+	wtN90zVg5Qo4Lg5gYF22MtHoKmL4jI7UOnew4YcSsExVsfC74F6plTD8V7JczAbMntSXx+TOat+
+	sEe3rIvg3aJQAyLOFtMeDJo5jsP4=
+X-Google-Smtp-Source: AGHT+IEaHkDNCvjAQuSZ8l8bPEDxb20m9nLYGFlUiHesvjoFSC2+ib5Sn1iQENQ9fWh8ry89wR1LdxyQj2UMjkSyOuI=
+X-Received: by 2002:a05:6402:35ce:b0:5bf:7dc:bb8d with SMTP id
+ 4fb4d7f45d1cf-5c22f8a199bmr11796155a12.13.1725306229093; Mon, 02 Sep 2024
+ 12:43:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <000000000000b4cf9a062114d132@google.com> <20240902084101.138971-1-lizhi.xu@windriver.com>
-In-Reply-To: <20240902084101.138971-1-lizhi.xu@windriver.com>
-From: Ryusuke Konishi <konishi.ryusuke@gmail.com>
-Date: Tue, 3 Sep 2024 04:40:21 +0900
-Message-ID: <CAKFNMom+we=aMXZz_f4zVGR6VRO3Zj+y1GC=KZSwLq8MdxO7BQ@mail.gmail.com>
-Subject: Re: [syzbot] [nilfs?] general protection fault in nilfs_btree_insert (2)
-To: Lizhi Xu <lizhi.xu@windriver.com>
-Cc: syzbot+9bff4c7b992038a7409f@syzkaller.appspotmail.com, 
-	linux-kernel@vger.kernel.org, linux-nilfs@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
+References: <20240902-imx290-avail-v3-0-b32a12799fed@skidata.com>
+ <20240902-imx290-avail-v3-2-b32a12799fed@skidata.com> <CAPY8ntCj=u4ZQJwjhvZF30x08Cf0h7R5yQTim7QCKd8bi_M08w@mail.gmail.com>
+In-Reply-To: <CAPY8ntCj=u4ZQJwjhvZF30x08Cf0h7R5yQTim7QCKd8bi_M08w@mail.gmail.com>
+From: Benjamin Bara <bbara93@gmail.com>
+Date: Mon, 2 Sep 2024 21:43:36 +0200
+Message-ID: <CAJpcXm5cLjvqkuCB25strgYaUo4p058yLAXg8+LZ_7T12+3-ug@mail.gmail.com>
+Subject: Re: [PATCH v3 2/7] media: i2c: imx290: Define absolute control ranges
+To: Dave Stevenson <dave.stevenson@raspberrypi.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, 
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
+	Sakari Ailus <sakari.ailus@linux.intel.com>, Hans de Goede <hdegoede@redhat.com>, 
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+	Alexander Stein <alexander.stein@ew.tq-group.com>, linux-media@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Benjamin Bara <benjamin.bara@skidata.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Mon, Sep 2, 2024 at 5:41=E2=80=AFPM Lizhi Xu wrote:
+Hi Dave!
+
+On Mon, 2 Sept 2024 at 20:00, Dave Stevenson
+<dave.stevenson@raspberrypi.com> wrote:
+> On Mon, 2 Sept 2024 at 16:58, <bbara93@gmail.com> wrote:
+> >
+> > From: Benjamin Bara <benjamin.bara@skidata.com>
+> >
+> > For now, the driver activates the first mode (1080p) as current active
+> > mode in probe(). This e.g. means that one cannot set VBLANK below 45
+> > (vmax_min - height), although theoretically the minimum is 30 (720p
+> > mode). Define the absolute possible/supported ranges to have them
+> > available later.
 >
-> In nilfs_btree_do_lookup, if the number of children in the btree root nod=
-e is 0,
-> path[x].bp_bh will not be initialized by __nilfs_btree_get_block,
-> which will result in uaf when executing nilfs-btree_get_nonroot_node
-> in nilfs_btree_prepare_insert.
+> Currently the driver will set the ranges for VBLANK and HBLANK
+> whenever the mode changes.
 >
-> In nilfs_bmap_do_insert will run bop_check_insert, so implement
-> bop_check_insert and determine the number of children in the btree root
-> node within it. If it is 0, return a negative value to avoid calling
-> bop_intsert.
-
-Thank you Lizhi for helping us solve this problem.
-
-However, your proposed patch has a few issues (more on that later),
-and this anomaly detection should be done when the root node is read,
-not just before insertion.  So, instead of adding bop_check_insert, I
-will modify the existing sanity check routine
-nilfs_btree_root_broken() by adding the following failure condition:
-
-diff --git a/fs/nilfs2/btree.c b/fs/nilfs2/btree.c
-index 862bdf23120e..d390b8ba00d4 100644
---- a/fs/nilfs2/btree.c
-+++ b/fs/nilfs2/btree.c
-@@ -381,7 +381,8 @@ static int nilfs_btree_root_broken(const struct
-nilfs_btree_node *node,
-        if (unlikely(level < NILFS_BTREE_LEVEL_NODE_MIN ||
-                     level >=3D NILFS_BTREE_LEVEL_MAX ||
-                     nchildren < 0 ||
--                    nchildren > NILFS_BTREE_ROOT_NCHILDREN_MAX)) {
-+                    nchildren > NILFS_BTREE_ROOT_NCHILDREN_MAX ||
-+                    (nchildren =3D=3D 0 && level > NILFS_BTREE_LEVEL_NODE_=
-MIN))) {
-                nilfs_crit(inode->i_sb,
-                           "bad btree root (ino=3D%lu): level =3D %d,
-flags =3D 0x%x, nchildren =3D %d",
-                           inode->i_ino, level, flags, nchildren);
-
----
-Going back to your proposed patch, there are two problems:
-
-(1) nilfs_btree_node_get_nchildren(node) =3D=3D 0 is a normal state in
-itself, so it is not OK to return this as an error.
-
-(2) Even if we use bop_check_insert to perform a sanity check, the
-error code that should be returned is -EINVAL.
--ENOENT is an internal error code, but if bop_check_insert() returns
-it, it may be wrongly exposed to userspace (i.e. system
-calls).  If it is -EINVAL, it will be treated as metadata corruption
-at the bmap layer with nilfs_bmap_convert_error(), and the error code
-will be converted for return to userspace.
-
-So this time I'll be fixing and testing it myself, and will mention
-your help in the patch commit log.
-
-Thanks,
-Ryusuke Konishi
-
+> How is it helpful to fake these numbers? Seeing as they aren't
+> reflecting anything useful, they may as well all be 0.
 >
-> #syz test
+> > Signed-off-by: Benjamin Bara <benjamin.bara@skidata.com>
+> > ---
+> > Changes since v2:
+> > - new
+> > ---
+> >  drivers/media/i2c/imx290.c | 36 ++++++++++++++++++++++++++++++++----
+> >  1 file changed, 32 insertions(+), 4 deletions(-)
+> >
+> > diff --git a/drivers/media/i2c/imx290.c b/drivers/media/i2c/imx290.c
+> > index 1c97f9650eb4..466492bab600 100644
+> > --- a/drivers/media/i2c/imx290.c
+> > +++ b/drivers/media/i2c/imx290.c
+> > @@ -499,6 +499,10 @@ static const struct imx290_clk_cfg imx290_720p_clock_config[] = {
+> >  };
+> >
+> >  /* Mode configs */
+> > +#define WIDTH_720P     1280
+> > +#define HEIGHT_720P    720
+> > +#define MINIMUM_WIDTH  WIDTH_720P
+> > +#define MINIMUM_HEIGHT HEIGHT_720P
+> >  static const struct imx290_mode imx290_modes_2lanes[] = {
+> >         {
+> >                 .width = 1920,
+> > @@ -512,8 +516,8 @@ static const struct imx290_mode imx290_modes_2lanes[] = {
+> >                 .clk_cfg = imx290_1080p_clock_config,
+> >         },
+> >         {
+> > -               .width = 1280,
+> > -               .height = 720,
+> > +               .width = WIDTH_720P,
+> > +               .height = HEIGHT_720P,
+> >                 .hmax_min = 3300,
+> >                 .vmax_min = 750,
+> >                 .link_freq_index = FREQ_INDEX_720P,
+> > @@ -537,8 +541,8 @@ static const struct imx290_mode imx290_modes_4lanes[] = {
+> >                 .clk_cfg = imx290_1080p_clock_config,
+> >         },
+> >         {
+> > -               .width = 1280,
+> > -               .height = 720,
+> > +               .width = WIDTH_720P,
+> > +               .height = HEIGHT_720P,
+> >                 .hmax_min = 3300,
+> >                 .vmax_min = 750,
+> >                 .link_freq_index = FREQ_INDEX_720P,
+> > @@ -846,6 +850,30 @@ static const char * const imx290_test_pattern_menu[] = {
+> >         "000/555h Toggle Pattern",
+> >  };
+> >
+> > +/* absolute supported control ranges */
+> > +#define HBLANK_MAX     (IMX290_HMAX_MAX - MINIMUM_WIDTH)
+> > +#define VBLANK_MAX     (IMX290_VMAX_MAX - MINIMUM_HEIGHT)
+> > +static unsigned int imx290_get_blank_min(const struct imx290 *imx290, bool v)
+> > +{
 >
-> diff --git a/fs/nilfs2/btree.c b/fs/nilfs2/btree.c
-> index 862bdf23120e..d7fa4d914638 100644
-> --- a/fs/nilfs2/btree.c
-> +++ b/fs/nilfs2/btree.c
-> @@ -1231,6 +1231,17 @@ static void nilfs_btree_commit_insert(struct nilfs=
-_bmap *btree,
->                 nilfs_bmap_set_dirty(btree);
->  }
+> This function is never used in this patch. I'm surprised the compiler
+> doesn't throw an error on a static function not being used.
+> You first use it in patch 4 "Introduce initial "off" mode & link freq"
 >
-> +static int nilfs_btree_check_insert(const struct nilfs_bmap *btree, __u6=
-4 key)
-> +{
-> +       struct nilfs_btree_node *node;
-> +       int level;
-> +
-> +       node =3D nilfs_btree_get_root(btree);
-> +       level =3D nilfs_btree_node_get_level(node);
-> +       return (level < NILFS_BTREE_LEVEL_NODE_MIN ||
-> +               nilfs_btree_node_get_nchildren(node) <=3D 0) ? -ENOENT : =
-0;
-> +}
-> +
->  static int nilfs_btree_insert(struct nilfs_bmap *btree, __u64 key, __u64=
- ptr)
->  {
->         struct nilfs_btree_path *path;
-> @@ -2385,7 +2396,7 @@ static const struct nilfs_bmap_operations nilfs_btr=
-ee_ops =3D {
->         .bop_seek_key           =3D       nilfs_btree_seek_key,
->         .bop_last_key           =3D       nilfs_btree_last_key,
+> > +       const struct imx290_mode *modes = imx290_modes_ptr(imx290);
+> > +       unsigned int min = UINT_MAX;
+> > +       int i;
+> > +
+> > +       for (i = 0; i < imx290_modes_num(imx290); i++) {
+> > +               unsigned int tmp;
+> > +
+> > +               if (v)
+> > +                       tmp = modes[i].hmax_min - modes[i].width;
 >
-> -       .bop_check_insert       =3D       NULL,
-> +       .bop_check_insert       =3D       nilfs_btree_check_insert,
->         .bop_check_delete       =3D       nilfs_btree_check_delete,
->         .bop_gather_data        =3D       nilfs_btree_gather_data,
->  };
+> if (v)
+>    return h
+>
+> With the complete series my sensor comes up with controls defined as
+> vertical_blanking 0x009e0901 (int)    : min=280 max=261423 step=1
+> default=280 value=280
+> horizontal_blanking 0x009e0902 (int)    : min=30 max=64255 step=1
+> default=30 value=30
+>
+> Set the mode to 1080p and I get
+> vertical_blanking 0x009e0901 (int)    : min=45 max=261063 step=1
+> default=45 value=1169
+> horizontal_blanking 0x009e0902 (int)    : min=280 max=63615 step=1
+> default=280 value=280
+
+The idea here is to have VBLANK=30 available in the initial "after
+probe" state of the sensor. VBLANK=30 is a valid value for 720p mode,
+but it cannot be set after probe, because the driver (not the user)
+decided that 1080 mode is active. The idea is to relax the ranges while
+the mode is not set. Once the mode is known, the values are tightened
+to the real mode-dependent values.
+
+Kind regards
+Benjamin
+
+>   Dave
+>
+> > +               else
+> > +                       tmp = modes[i].vmax_min - modes[i].height;
+> > +
+> > +               if (tmp < min)
+> > +                       min = tmp;
+> > +       }
+> > +
+> > +       return min;
+> > +}
+> > +
+> >  static void imx290_ctrl_update(struct imx290 *imx290,
+> >                                const struct imx290_mode *mode)
+> >  {
+> >
+> > --
+> > 2.46.0
+> >
+> >
 
