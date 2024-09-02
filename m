@@ -1,53 +1,58 @@
-Return-Path: <linux-kernel+bounces-310669-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310670-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39021967FDE
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 09:01:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E926967FE2
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 09:01:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E0B6F2818CE
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 07:01:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 24A971F21E6D
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 07:01:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDF0015D5D9;
-	Mon,  2 Sep 2024 07:00:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AC0E15D5D9;
+	Mon,  2 Sep 2024 07:01:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tlmp.cc header.i=@tlmp.cc header.b="mrDi/Zgt"
+	dkim=pass (2048-bit key) header.d=tlmp.cc header.i=@tlmp.cc header.b="m7QQ4tkm"
 Received: from mail.tlmp.cc (unknown [148.135.17.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC4DD32C85
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 07:00:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC32F32C85
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 07:01:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.135.17.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725260457; cv=none; b=dap/lk1X694O+CyIBbpuHjx+420PlygTRhZP70BscnGOrK25jXTVd0Z237OoKzNREaPKwauzGNyKTo+NB3xTEW4qsbeO8Z+MVJCbFwdEaPWjxSlu+n8+EDVdA9VSFdFJJs72WPt44SmPOnJu0yYB0XFfOaIBKxhdT5DN5hlvWqo=
+	t=1725260462; cv=none; b=hDKFOKGXoUtZA32v5dpYT5A4xN2Zb6TTtpOcjoKtK+QQCmn26WNfIJPV9GJmwoabyPI8TC1XQzQ0LN1PPyHEvU4vh+/olBLXWbmegegObGrv20jBxrhYkWQvuz/pu1fexre/w3p+jWDWVTZDxKaABj8J3GsRUg/GZkmrzcdSDUM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725260457; c=relaxed/simple;
-	bh=1K/CUhSwJ6Wa3gsjl/bHFffkEaa56bHGbH3Eg/mP7wk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Q/0wPMh1tAPC+9v5UwSmsdPyWw31I3Y/odpuIN4wg5cbFq0yrOMJ4PDxZZcGlE+6m+M8d6buDRvLWSYRPhgGMHgA7JFzUzd7Kzy4j47180ob0Yn6BiO/4XjreXeVHD2/TRlwM00H1uvD6YHfFFof6Xa69DRsATeQOiv++gs8JB0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=tlmp.cc; spf=pass smtp.mailfrom=tlmp.cc; dkim=pass (2048-bit key) header.d=tlmp.cc header.i=@tlmp.cc header.b=mrDi/Zgt; arc=none smtp.client-ip=148.135.17.20
+	s=arc-20240116; t=1725260462; c=relaxed/simple;
+	bh=rtitSi5k0tRvOnm5tSLW03txJ7He0Sba/3Hmfp445gk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=UBhqqT0Z4naFuOZumEHFhcyWG7PlU79BnZrdni6Eqj5aJprPb3xQWaOehLdFUNVac/ZTzFVqtvGZ+zKkn0hMzkHYFHlpsZoZbgaB6I0NDsXrd+VOjkN+0shSJw/dXBoB/GRD5ceZ0Gj6dWW9C/+1dE+K8h0ilEMua+ZHlzLFx9E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=tlmp.cc; spf=pass smtp.mailfrom=tlmp.cc; dkim=pass (2048-bit key) header.d=tlmp.cc header.i=@tlmp.cc header.b=m7QQ4tkm; arc=none smtp.client-ip=148.135.17.20
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=tlmp.cc
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tlmp.cc
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id EF39D69838;
-	Mon,  2 Sep 2024 03:00:51 -0400 (EDT)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 4522269843;
+	Mon,  2 Sep 2024 03:00:55 -0400 (EDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tlmp.cc; s=dkim;
-	t=1725260454; h=from:subject:date:message-id:to:cc:mime-version:
-	 content-transfer-encoding; bh=16T8kYwpbBuW3+NAto6Jm8Gq1eiF2RMZkO+aeHQ7K1o=;
-	b=mrDi/ZgtzeRmQ9tVh6O5hsOYQk+gDHZY1ZKCpbhiBwGK62Li6GFA/zm3CGMt1tuccd6dpI
-	gEyEP3dTmu2HF8uLQLPoryYoSq+KPJh9OPeHxdthkWNdkQLdSB9ZhVkVrRJt89bk5JAX5r
-	4sM9OtlYBQtBX2rE1dSRnZYzx8Y4uJi/M3ZTXZndVmO9jA+ksNtB5todmUf8j57R3S3Kbh
-	FD09Is6E9tidyD2iosWeexU5FWna+DviFCNlwZPLuUdasiT8nmdKVtYkJ0ZVaUJ0x3oHd5
-	OuqYyAIj4/3kM8IpkLEu1mhs7e0MA0MbRenHPfDGDgmhGEx8/IaB79LWs2uxCQ==
+	t=1725260457; h=from:subject:date:message-id:to:cc:mime-version:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=8fgtuvRFIXezToFGm8qZZqVkmscpF7rZyoJRM+DZI0s=;
+	b=m7QQ4tkmO4/FMHc4YtQFF2v+IvtVqyyJO3x7VjvfdMoYD8nJPzOPgYNYCaelX9qCVz1Keb
+	qKPClzkXJKZSFI97qn4vLCDtysYQDjmnMd23lwVl75ymXlRpFKjQOymYIEvsfiRPKcfAt1
+	yLkKECXIhuNUC26YIJSnFZ2HTxBJ3AOZwZ3f/ZCDvwNXJIWMEAQDPwuC9uqGZwmadcL2d2
+	LX4fvySdT8QdstAqp+BYjIgM7iEQhHbZsZxVZ3CQUccFuyqR7wFEkMzvxVYbqNd8bbPFSJ
+	QIUF/dTGblz6r677DvOx7zyDlpNT8dMlca28beKsXkQ+xrToim/hQPcnh/Q3eg==
 From: Yiyang Wu <toolmanp@tlmp.cc>
 To: hsiangkao@linux.alibaba.com
 Cc: linux-erofs@lists.ozlabs.org,
 	linux-kernel@vger.kernel.org,
-	Yiyang Wu <toolmanp@tlmp.cc>
-Subject: [PATCH V2 0/2] erofs: refactor fast_symlink and read_inode
-Date: Mon,  2 Sep 2024 15:00:45 +0800
-Message-ID: <20240902070047.384952-1-toolmanp@tlmp.cc>
+	Yiyang Wu <toolmanp@tlmp.cc>,
+	Al Viro <viro@zeniv.linux.org.uk>
+Subject: [PATCH V2 1/2] erofs: use kmemdup_nul in erofs_fill_symlink
+Date: Mon,  2 Sep 2024 15:00:46 +0800
+Message-ID: <20240902070047.384952-2-toolmanp@tlmp.cc>
 X-Mailer: git-send-email 2.46.0
+In-Reply-To: <20240902070047.384952-1-toolmanp@tlmp.cc>
+References: <20240902070047.384952-1-toolmanp@tlmp.cc>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,24 +62,47 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Last-TLS-Session-Version: TLSv1.3
 
-This patchset is response to the original suggestions posted here[1].
-Since my later work is somehow related to this issue, i think it's
-better to deal with it first.
+Remove open coding in erofs_fill_symlink.
 
-Changes in V2:
-  1. Lift the erofs_fill_symlink patch to 1/2
-  2. Fix code styles problems in read_inode patch.
-  3. Fix the formatting problems caused by clang-format.
+Suggested-by: Al Viro <viro@zeniv.linux.org.uk>
+Link: https://lore.kernel.org/all/20240425222847.GN2118490@ZenIV
+Signed-off-by: Yiyang Wu <toolmanp@tlmp.cc>
+---
+ fs/erofs/inode.c | 12 +++++-------
+ 1 file changed, 5 insertions(+), 7 deletions(-)
 
-[1]: https://lore.kernel.org/all/20240425222847.GN2118490@ZenIV/
-
-Yiyang Wu (2):
-  erofs: use kmemdup_nul in erofs_fill_symlink
-  erofs: refactor read_inode calling convention
-
- fs/erofs/inode.c | 128 ++++++++++++++++++++++++-----------------------
- 1 file changed, 65 insertions(+), 63 deletions(-)
-
+diff --git a/fs/erofs/inode.c b/fs/erofs/inode.c
+index 419432be3223..d051afe39670 100644
+--- a/fs/erofs/inode.c
++++ b/fs/erofs/inode.c
+@@ -188,22 +188,20 @@ static int erofs_fill_symlink(struct inode *inode, void *kaddr,
+ 		return 0;
+ 	}
+ 
+-	lnk = kmalloc(inode->i_size + 1, GFP_KERNEL);
+-	if (!lnk)
+-		return -ENOMEM;
+-
+ 	m_pofs += vi->xattr_isize;
+ 	/* inline symlink data shouldn't cross block boundary */
+ 	if (m_pofs + inode->i_size > bsz) {
+-		kfree(lnk);
+ 		erofs_err(inode->i_sb,
+ 			  "inline data cross block boundary @ nid %llu",
+ 			  vi->nid);
+ 		DBG_BUGON(1);
+ 		return -EFSCORRUPTED;
+ 	}
+-	memcpy(lnk, kaddr + m_pofs, inode->i_size);
+-	lnk[inode->i_size] = '\0';
++
++	lnk = kmemdup_nul(kaddr + m_pofs, inode->i_size, GFP_KERNEL);
++
++	if (!lnk)
++		return -ENOMEM;
+ 
+ 	inode->i_link = lnk;
+ 	inode->i_op = &erofs_fast_symlink_iops;
 -- 
 2.46.0
 
