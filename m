@@ -1,186 +1,128 @@
-Return-Path: <linux-kernel+bounces-311452-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311453-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05EEB96897B
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 16:09:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DAD4396897F
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 16:09:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7AB871F22B06
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 14:09:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 19D421C21A00
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 14:09:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50963746E;
-	Mon,  2 Sep 2024 14:09:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FA152101A3;
+	Mon,  2 Sep 2024 14:09:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="X8U5Th4E";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Xqc0+d6q";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="X8U5Th4E";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Xqc0+d6q"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BeWWXoqg"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03C9219E992;
-	Mon,  2 Sep 2024 14:09:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B2AB183CDC;
+	Mon,  2 Sep 2024 14:09:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725286155; cv=none; b=auSHQHbW9lMeLqoI4I6gffyrAsxEh/DmdYSfFT++xKam7RpaQ3wRZxp/uCSGcXvRY8exV5S7sFQ+s7/xnfAe6Ly902cjo/uOZf/lC74SvoIUf0JPcdzTPeycvRl+z+MZn8JGmJQqoETwbR85yX2EAJNdZs+lH8J0YV7jXzOw9no=
+	t=1725286180; cv=none; b=Ls3jRxoUrvO4cYOGGjtP8cUqmCW6AhZJ8CB9egGwVNaacL+TdddA2t2bqWzveDI5NijP+bX29EqfLvxyioLVZyS02t8sZaB7Zmntuss+d7s5WccKAbhYLMGYkVk0lyW8d4dGgWMH2bHKwijMXiraTYulKnn3i9dCjreoW9rVcXg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725286155; c=relaxed/simple;
-	bh=0F/1tTzmeC08x83pDFWJWbgZAtpxfw8k/NcbcoX/BDY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QpmLUKR6Rjhxpmuu/j+EmFxthYKAsSG0rYFTfHCIMvsuL61zUpHO7yP3yJdyXLZoPlq6jQYukvRr3kGMneFGtRxbF3p/mz2GlMtqiWcHCdImtirApIdekLT0qecG3aG75sKbp5aUhs3ZKg1zQXoU9UtZLpK6nazV6Y4DI5cIZbY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=X8U5Th4E; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Xqc0+d6q; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=X8U5Th4E; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Xqc0+d6q; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 566201FBB3;
-	Mon,  2 Sep 2024 14:09:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1725286152; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6zl525NZI+rdwb8hTQ8OaF32cmelBg9hHtUjXQ5wYcc=;
-	b=X8U5Th4EjpfV1n5yl9ycU/I+YQX8PHZUAtR2FrO+0/ZiWI0NFbQOnmqfKDETIwM8c1woei
-	18h9EyHrKHzcLb4H4oCTlZmwtoIFxJcFKIjCVznfhwvcPFBt1r+bruShFDV1ipX5Oe7vEM
-	Fr0ZDvXAcKWbGF6sVGrWrdt2CwRVC9E=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1725286152;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6zl525NZI+rdwb8hTQ8OaF32cmelBg9hHtUjXQ5wYcc=;
-	b=Xqc0+d6ql8l+3mka2z8wv4PpOsNeR/LwJ3Qx9NAA0py50Wx3ITi4DG1ysbEGM2rf/P9Key
-	PLn9zhVXG89PtQBg==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=X8U5Th4E;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=Xqc0+d6q
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1725286152; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6zl525NZI+rdwb8hTQ8OaF32cmelBg9hHtUjXQ5wYcc=;
-	b=X8U5Th4EjpfV1n5yl9ycU/I+YQX8PHZUAtR2FrO+0/ZiWI0NFbQOnmqfKDETIwM8c1woei
-	18h9EyHrKHzcLb4H4oCTlZmwtoIFxJcFKIjCVznfhwvcPFBt1r+bruShFDV1ipX5Oe7vEM
-	Fr0ZDvXAcKWbGF6sVGrWrdt2CwRVC9E=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1725286152;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6zl525NZI+rdwb8hTQ8OaF32cmelBg9hHtUjXQ5wYcc=;
-	b=Xqc0+d6ql8l+3mka2z8wv4PpOsNeR/LwJ3Qx9NAA0py50Wx3ITi4DG1ysbEGM2rf/P9Key
-	PLn9zhVXG89PtQBg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 4685313AE0;
-	Mon,  2 Sep 2024 14:09:12 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id hsgxEQjH1WbDLwAAD6G6ig
-	(envelope-from <jack@suse.cz>); Mon, 02 Sep 2024 14:09:12 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id BD0A0A0965; Mon,  2 Sep 2024 16:09:11 +0200 (CEST)
-Date: Mon, 2 Sep 2024 16:09:11 +0200
-From: Jan Kara <jack@suse.cz>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Dan Williams <dan.j.williams@intel.com>,
-	Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, nvdimm@lists.linux.dev
-Subject: Re: [PATCH] dax: Remove an unused field in struct dax_operations
-Message-ID: <20240902140911.puhunqx4qg7rqy6b@quack3>
-References: <56b92b722ca0a6fd1387c871a6ec01bcb9bd525e.1725203804.git.christophe.jaillet@wanadoo.fr>
+	s=arc-20240116; t=1725286180; c=relaxed/simple;
+	bh=WzLlmfj8ZaZFS9RPHynAdrvd0IA2vC+R44QIE6StOK4=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=YIqYfojGb2SF+7l9/CaDT6tjaNAbCWW5gHrYnSuzVXJxBjrNwHcuFKnQQu3uKkB+AWPJ78bUPjk7QCDVi+L23cZ593e0LZs/4Hzr+MHbMtGi1QZlNIAJOB500n52Qb5ASpC/XBMgNWu5m5hb9JcrIpnZpF12lfJCIhYmfPWl0rE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BeWWXoqg; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725286179; x=1756822179;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=WzLlmfj8ZaZFS9RPHynAdrvd0IA2vC+R44QIE6StOK4=;
+  b=BeWWXoqgc5B7k/oi3WJF4W5jFfnWLB0NLbb5rz8aR2qgg5vFwDM/E8gF
+   QtEHyj1xTIaxB2d3a2sC1feHe/VNifZNb7OXgoExgBu3I5+TpGg7zyqjb
+   iQ9ZvqdTByAPiu9qwlUANoAYwySzH0gSbv+HfaagR1d3CxWBsnXU0S2cN
+   b8ppFJBxiaoys9pC7L58Mz2g1rMHzpMIpozeeYOYb3IMPlkIkf5dQDtMl
+   qNg+r1QQRDb2D+f2zXi9p9qVM9vfKrHEFfrEUhyIv+PXfl9hCGIAFiQbs
+   7RxS0/jGmagZ+U59tFpZasduSqIqZcYGhcjTXHKzsnnUiIpXYmChFHkm+
+   w==;
+X-CSE-ConnectionGUID: mubCWjOSSz6jfCZlKTtBjQ==
+X-CSE-MsgGUID: 4/sX7z1nT4e986uOczbWYw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11183"; a="35237841"
+X-IronPort-AV: E=Sophos;i="6.10,195,1719903600"; 
+   d="scan'208";a="35237841"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2024 07:09:38 -0700
+X-CSE-ConnectionGUID: 2DYSmZ0NSIyKmzFp4JLadw==
+X-CSE-MsgGUID: +SDs2mJ+Qz+VtAQQ31t3LQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,195,1719903600"; 
+   d="scan'208";a="64815095"
+Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.244.129])
+  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2024 07:09:32 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Mon, 2 Sep 2024 17:09:26 +0300 (EEST)
+To: Armin Wolf <W_Armin@gmx.de>
+cc: james@equiv.tech, jlee@suse.com, corentin.chary@gmail.com, luke@ljones.dev, 
+    matan@svgalib.org, coproscefalo@gmail.com, 
+    Hans de Goede <hdegoede@redhat.com>, linux@roeck-us.net, jdelvare@suse.com, 
+    "Rafael J. Wysocki" <rafael@kernel.org>, lenb@kernel.org, 
+    platform-driver-x86@vger.kernel.org, linux-hwmon@vger.kernel.org, 
+    linux-acpi@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 1/5] hwmon: (hp-wmi-sensors) Check if WMI event data
+ exists
+In-Reply-To: <20240901031055.3030-2-W_Armin@gmx.de>
+Message-ID: <c474bfef-a4d4-f1f5-463d-04ed6f69818e@linux.intel.com>
+References: <20240901031055.3030-1-W_Armin@gmx.de> <20240901031055.3030-2-W_Armin@gmx.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <56b92b722ca0a6fd1387c871a6ec01bcb9bd525e.1725203804.git.christophe.jaillet@wanadoo.fr>
-X-Rspamd-Queue-Id: 566201FBB3
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FREEMAIL_TO(0.00)[wanadoo.fr];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[wanadoo.fr];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,suse.cz:email,suse.com:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -4.01
-X-Spam-Flag: NO
+Content-Type: multipart/mixed; boundary="8323328-2029501479-1725286166=:1156"
 
-On Sun 01-09-24 17:17:09, Christophe JAILLET wrote:
-> .dax_supported() was apparently removed by commit 7b0800d00dae ("dax:
-> remove dax_capable") on 2021-11.
-> 
-> Remove the now unused function pointer from the struct dax_operations.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-Looks good. Feel free to add:
+--8323328-2029501479-1725286166=:1156
+Content-Type: text/plain; charset=ISO-8859-15
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+On Sun, 1 Sep 2024, Armin Wolf wrote:
 
-								Honza
+> The BIOS can choose to return no event data in response to a
+> WMI event, so the ACPI object passed to the WMI notify handler
+> can be NULL.
+>=20
+> Check for such a situation and ignore the event in such a case.
+>=20
+> Fixes: 23902f98f8d4 ("hwmon: add HP WMI Sensors driver")
+> Signed-off-by: Armin Wolf <W_Armin@gmx.de>
+
+Reviewed-by: Ilpo J=E4rvinen <ilpo.jarvinen@linux.intel.com>
+
+--=20
+ i.
+
 
 > ---
-> Slightly compile tested only, but "git grep dax_supported" now returns
-> nothing.
-> ---
->  include/linux/dax.h | 6 ------
->  1 file changed, 6 deletions(-)
-> 
-> diff --git a/include/linux/dax.h b/include/linux/dax.h
-> index 9d3e3327af4c..df41a0017b31 100644
-> --- a/include/linux/dax.h
-> +++ b/include/linux/dax.h
-> @@ -27,12 +27,6 @@ struct dax_operations {
->  	 */
->  	long (*direct_access)(struct dax_device *, pgoff_t, long,
->  			enum dax_access_mode, void **, pfn_t *);
-> -	/*
-> -	 * Validate whether this device is usable as an fsdax backing
-> -	 * device.
-> -	 */
-> -	bool (*dax_supported)(struct dax_device *, struct block_device *, int,
-> -			sector_t, sector_t);
->  	/* zero_page_range: required operation. Zero page range   */
->  	int (*zero_page_range)(struct dax_device *, pgoff_t, size_t);
->  	/*
-> -- 
-> 2.46.0
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+>  drivers/hwmon/hp-wmi-sensors.c | 2 ++
+>  1 file changed, 2 insertions(+)
+>=20
+> diff --git a/drivers/hwmon/hp-wmi-sensors.c b/drivers/hwmon/hp-wmi-sensor=
+s.c
+> index b5325d0e72b9..dfa1d6926dea 100644
+> --- a/drivers/hwmon/hp-wmi-sensors.c
+> +++ b/drivers/hwmon/hp-wmi-sensors.c
+> @@ -1637,6 +1637,8 @@ static void hp_wmi_notify(u32 value, void *context)
+>  =09=09goto out_unlock;
+>=20
+>  =09wobj =3D out.pointer;
+> +=09if (!wobj)
+> +=09=09goto out_unlock;
+>=20
+>  =09err =3D populate_event_from_wobj(dev, &event, wobj);
+>  =09if (err) {
+> --
+> 2.39.2
+>=20
+--8323328-2029501479-1725286166=:1156--
 
