@@ -1,134 +1,143 @@
-Return-Path: <linux-kernel+bounces-310748-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310749-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C8879680CA
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 09:38:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 198A09680CF
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 09:41:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7DD2A1C21C73
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 07:38:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 79187B21181
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 07:41:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4874178CC5;
-	Mon,  2 Sep 2024 07:38:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94B57178CCA;
+	Mon,  2 Sep 2024 07:41:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="WRRy/5Et"
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WasXQ86F"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E86F3C00
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 07:38:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8605314EC7D
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 07:40:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725262703; cv=none; b=npcllKwJRrrm7p2K38H4diU641NNOCEDlNjWZ+4VPS5SqN54ZOGYPkxcWllsajelOXIAtGAvvAnEi+ZpX1aWyQTibb/LAs3eepTkTi1CGmf42TCugHKNCbcQjktFhlOKpXT3PHoTNL148IUikk23G+Leu0rmsdPdBnb58fU7w9c=
+	t=1725262860; cv=none; b=jvHdp4BWJmXGUEnIwQm1PafkvRb02M4zOm0sCRYn47MgZWP3ydH+ZKcmB2Xi3WLYpsM32ivgc8E5y5AJV2Jpr3JWO2PHwdWufkq367RFSqrSQ5Cozzozs6Ozwlli6aGSW8hHkjmd8wUv5YTH0c96IPCGV5mlFtoB0/dQ3M0RImc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725262703; c=relaxed/simple;
-	bh=BEJNUtN7GcPC4B29NBJfhJaZCRGwXQGoQMbbCrX/D1o=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ryFB883zxY3Fdn3Z83PBLRUh8RsWIkGPNTSx4eG7hFM6maEWDJtfPznC0+Ru2lBRnsPwRp3l9w3TlyLPPB+dVZfxQCoYxsao8l47w8Cg0O6fbkzvDSTusmoQViMS2SK+AQli5MbuRbSo1hDoV8yqzS8l2EqoUpBvlWAEWd/2F4U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=WRRy/5Et; arc=none smtp.client-ip=209.85.208.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2f4f2868621so40137271fa.0
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2024 00:38:19 -0700 (PDT)
+	s=arc-20240116; t=1725262860; c=relaxed/simple;
+	bh=WgJme7hGpv0hMY6eb8C4eG1bm+pLXb4XDsw7qdVWsGs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Qk6swl+WKDW5zD+jjQ4tvcPbiDhsZjRqXse2NiYvvawfl6+QiefE9yQFn2gA09D+PFHu6Y4p/liMoi2wMQdbnNLrm6DYSnLKalD+m2jn942FvBCzAllLj9BhSermZSjUSLgUJa39hLhw5eMeo5U7sbs6sfESmqGzSMe/V72W7MU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WasXQ86F; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-2055136b612so12840715ad.0
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2024 00:40:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1725262698; x=1725867498; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BEJNUtN7GcPC4B29NBJfhJaZCRGwXQGoQMbbCrX/D1o=;
-        b=WRRy/5Et6fJUJ9WcibB5EUFNtV+02YuY+n97E4hNbEQegIxU8vwyiZAeWdUTjm03md
-         4ioW3M9feDwLJfasU3V719eiwTx8lVP6dxEXER6igl9vHWWoCHt9/CvM4vef+JGLIl7s
-         +D7nicbBvMmDYLVTvz4IlpAPIiEnXNUHwS2DmLkcF5TqZC43QErAxF/5FaeGKaMlwWv0
-         RPcQZcKdBhudrhCa2hMv9vUP+6Ee/vr1AakRtwNpBgN8GuyP+hSIlSFvBltLPs4j8nZA
-         BC7pOUXGiO0mfhRbG39Qgwk33yccsHjz3fT7ox76Dm+LMcHRKAGa0qA1LQmryP/fG2ef
-         iayw==
+        d=linaro.org; s=google; t=1725262858; x=1725867658; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=yttwNUw7d3dDFgywga8u4jHUr7TP2Q6BQGVJkPnT8/Y=;
+        b=WasXQ86FZcvvm+3Y+y3HG4gWgZ9z91MOTHNqsdXEkC5E9ecnDaqYSDWu/Tny7BdvTK
+         fLQWbHvJpmwoAIFlrM6lsTv311Z2l/21TQy6Zc5jUCffTKaJm1p8T1xG1Qot5l703f47
+         GeDgztLNa2I3UQy0jYaVdCll+6VN60JnEPvJRXiyIrj2FaHUrLAwmg/hUk666fJjl50c
+         oT9EWczUrx3Y63zVKXdSFcrHw/hzFIUTCwplas9u7VmX98VSBXtk0HNwbRzBljoOQbgv
+         WWR9iThq/w/zRHp8cbkEOpWJESp1N1mcyO5a/DFac3BxC74aEKe6unrl2mIxfVrb7F05
+         qrSg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725262698; x=1725867498;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=BEJNUtN7GcPC4B29NBJfhJaZCRGwXQGoQMbbCrX/D1o=;
-        b=ZsKseKKnG8IEGuVNcsTCbUI8ktGi6go6E/vIcL1mGNVowsuqGfoH8LqOzSu/i0CIq0
-         bLwPg6QTdqZlCkyQzKxbrqiL9NudGaLPeJFZyJJi9jMgwu/Ogi+HHJDIFBakLqKFKSGB
-         RSD1uilZCUfm26st2BoZA0+fvQPdLlF8/5iTqPma8WSr1o8ogvE/+KQa/6ZljD/L518r
-         8oBbDqEn+I90fwwlgLwM7zhWRcqNx7iRYdNgkvVGtgNlw/QN//075P3ZsHDonLYvIZ0s
-         R8H3d1Q2rC6wG92X8XV0E2ee3ff3pj4z7isnVODbja8bwOuftZY3ZxnJ8/fr18SmF+CI
-         ZlEg==
-X-Forwarded-Encrypted: i=1; AJvYcCWk0IiTG1jpXKFyqAcnMmI+xwDvm4/2wZeqJiSReLPSm1chIrODwtHfdBFoRyOeoFs6f3qMzJ7y0kna/Z8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywrmppn/sOZ1nDNy4xraj1tR4fAFbJpLIbeJZl3fMR3Fqt996++
-	BF2RHIDscCsZ3seqchKfA3jK1A0uWl/FREpCH3d/DkiF1+iILxCSAFa6mdj5tMcpeueEbef6YQe
-	RvwYZ8Rl+dfQtcX6pBsIhjkkaTU6Mt8YWyt4ung==
-X-Google-Smtp-Source: AGHT+IE8LxJ1afSAwx5C9D5PQjgzUX3XGwHYEYKFDcxs4wtkzGPBFg49KkuRHnK41bo9t+wmHpZ/kD5AUiN78RL72xA=
-X-Received: by 2002:a05:6512:e99:b0:535:3d08:5844 with SMTP id
- 2adb3069b0e04-53546afaee4mr6546170e87.6.1725262697439; Mon, 02 Sep 2024
- 00:38:17 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1725262858; x=1725867658;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=yttwNUw7d3dDFgywga8u4jHUr7TP2Q6BQGVJkPnT8/Y=;
+        b=LcRKlYnb3nfcKZB9N+eD+YFHDRErNqqmPAkKapPRrWW/UcOEVQzY28TnQEpl+yLDSu
+         jn0fYDvjCB49QIx6831W3ZvUglGMG5feqKY6PP/x8okWgEo0Vc0hRpI0Lyp2Pz9AtRg4
+         F3wwgMeOM19pqvcxl5QXjbyYnbDj/bXXeTXn5M6pvIxvf4u/ZRkXpPUVV+hRiijP+Lid
+         TQQoc5BsFIsY1VWK/LXNEc9lm++hWPnIt2dwqWiQsQ4UwondDUbeZsLOxz7UU/GxbU5H
+         cEceDQ3HzB6o8ZB0xFbkWVnOul3o6W7OoycVgKHvUdbb/0T17DkNzaOu5tDQ4qa/S3gl
+         lvqA==
+X-Forwarded-Encrypted: i=1; AJvYcCWi6DNG96E3Y2vaCBbY5faVqu0/XvXQ14pcUkcXzvlLsSKY/suaKgjNPyFNRAHeMslDaMzzmpxmzB0R/JQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwWdOt2EZosoj4CD33x3a/zrj+gTerfimueKD5ayLqPMfIqHPis
+	jB9r5hhS9fA0/0eXB+dUOZmmvBl887fnIyJ9HAFhihQWahzbQL9kM8IEUmxz9w==
+X-Google-Smtp-Source: AGHT+IEQIMeGcVOrgzVo/cb19D0ZFZOM5enF/X/Dx2AucrfaI9oErKrbz2WEP3NOKD3AcRxNn08Tcg==
+X-Received: by 2002:a17:903:2348:b0:202:3469:2c78 with SMTP id d9443c01a7336-2054660159amr69405725ad.28.1725262857758;
+        Mon, 02 Sep 2024 00:40:57 -0700 (PDT)
+Received: from thinkpad ([120.60.58.247])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-205155673a2sm61188095ad.303.2024.09.02.00.40.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 02 Sep 2024 00:40:57 -0700 (PDT)
+Date: Mon, 2 Sep 2024 13:10:51 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Siddharth Vadapalli <s-vadapalli@ti.com>
+Cc: bhelgaas@google.com, lpieralisi@kernel.org, kw@linux.com,
+	robh@kernel.org, vigneshr@ti.com, kishon@kernel.org,
+	j-keerthy@ti.com, linux-omap@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, stable@vger.kernel.org,
+	u-kumar1@ti.com, srk@ti.com
+Subject: Re: [PATCH 2/2] PCI: dra7xx: Fix error handling when IRQ request
+ fails in probe
+Message-ID: <20240902074051.h7miwo6gazhjrgri@thinkpad>
+References: <20240827122422.985547-1-s-vadapalli@ti.com>
+ <20240827122422.985547-3-s-vadapalli@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240823093323.33450-1-brgl@bgdev.pl> <20240823093323.33450-3-brgl@bgdev.pl>
- <20240827085616.v3xzrgyojxd746bv@thinkpad>
-In-Reply-To: <20240827085616.v3xzrgyojxd746bv@thinkpad>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Mon, 2 Sep 2024 09:38:06 +0200
-Message-ID: <CAMRc=MdCfrYdMUTOpFLsGSJY6wa2bzVegq8V=KAePAuFF1TR9g@mail.gmail.com>
-Subject: Re: [PATCH v3 2/2] PCI/pwrctl: put the bus rescan on a different thread
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, 
-	Krishna chaitanya chundru <quic_krichai@quicinc.com>, linux-pci@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, Konrad Dybcio <konradybcio@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240827122422.985547-3-s-vadapalli@ti.com>
 
-On Tue, Aug 27, 2024 at 10:56=E2=80=AFAM Manivannan Sadhasivam
-<manivannan.sadhasivam@linaro.org> wrote:
->
-> On Fri, Aug 23, 2024 at 11:33:23AM +0200, Bartosz Golaszewski wrote:
-> > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> >
-> > If we trigger the bus rescan from sysfs, we'll try to lock the PCI
->
-> I think the first 'we' is user and second 'we' is PCI and pwrctl drivers.=
- If so,
-> it should be spelled out to make it clear.
->
-> > rescan mutex recursively and deadlock - the platform device will be
-> > populated and probed on the same thread that handles the sysfs write.
-> >
->
-> A little bit rewording could help here:
->
-> 'When a user triggers a rescan from sysfs, sysfs code acquires the
-> pci_rescan_remove_lock during the start of the rescan. Then if a platform
-> device is created, pwrctl driver may get probed to control the power to t=
-he
-> device and it will also try to acquire the same lock to do the rescan aft=
-er
-> powering up the device. And this will cause a deadlock.'
->
-> > Add a workqueue to the pwrctl code on which we schedule the rescan for
-> > controlled PCI devices. While at it: add a new interface for
-> > initializing the pwrctl context where we'd now assign the parent device
-> > address and initialize the workqueue.
-> >
-> > Fixes: 4565d2652a37 ("PCI/pwrctl: Add PCI power control core code")
-> > Reported-by: Konrad Dybcio <konradybcio@kernel.org>
->
-> Don't we need 'Closes' link these days? I hope this is reported in ML.
->
+On Tue, Aug 27, 2024 at 05:54:22PM +0530, Siddharth Vadapalli wrote:
+> Commit d4c7d1a089d6 ("PCI: dwc: dra7xx: Push request_irq() call to the
+> bottom of probe") moved the IRQ request for "dra7xx-pcie-main" towards
+> the end of dra7xx_pcie_probe(). However, the error handling does not take
+> into account the initialization performed by either dra7xx_add_pcie_port()
+> or dra7xx_add_pcie_ep(), depending on the mode of operation. Fix the error
+> handling to address this.
+> 
+> Fixes: d4c7d1a089d6 ("PCI: dwc: dra7xx: Push request_irq() call to the bottom of probe")
+> Cc: <stable@vger.kernel.org>
+> Signed-off-by: Siddharth Vadapalli <s-vadapalli@ti.com>
 
-Nope, unfortunately on IRC. But the tag is unformally optional it seems.
+Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 
-Bart
+- Mani
 
-> > Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
->
-> With above changes,
->
-> Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> ---
+>  drivers/pci/controller/dwc/pci-dra7xx.c | 8 +++++++-
+>  1 file changed, 7 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/pci/controller/dwc/pci-dra7xx.c b/drivers/pci/controller/dwc/pci-dra7xx.c
+> index 20fb50741f3d..5c62e1a3ba52 100644
+> --- a/drivers/pci/controller/dwc/pci-dra7xx.c
+> +++ b/drivers/pci/controller/dwc/pci-dra7xx.c
+> @@ -854,11 +854,17 @@ static int dra7xx_pcie_probe(struct platform_device *pdev)
+>  					"dra7xx-pcie-main", dra7xx);
+>  	if (ret) {
+>  		dev_err(dev, "failed to request irq\n");
+> -		goto err_gpio;
+> +		goto err_deinit;
+>  	}
+>  
+>  	return 0;
+>  
+> +err_deinit:
+> +	if (dra7xx->mode == DW_PCIE_RC_TYPE)
+> +		dw_pcie_host_deinit(&dra7xx->pci->pp);
+> +	else
+> +		dw_pcie_ep_deinit(&dra7xx->pci->ep);
+> +
+>  err_gpio:
+>  err_get_sync:
+>  	pm_runtime_put(dev);
+> -- 
+> 2.40.1
+> 
+
+-- 
+மணிவண்ணன் சதாசிவம்
 
