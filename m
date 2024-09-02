@@ -1,94 +1,137 @@
-Return-Path: <linux-kernel+bounces-310861-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310854-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9177C96821F
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 10:37:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B501096820E
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 10:34:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4EE522836CC
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 08:36:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D651A1C2222F
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 08:34:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 204AF18628F;
-	Mon,  2 Sep 2024 08:36:55 +0000 (UTC)
-Received: from smtpbgeu2.qq.com (smtpbgeu2.qq.com [18.194.254.142])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A93C11865EA;
+	Mon,  2 Sep 2024 08:34:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ixXgburW"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2FA12AE99
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 08:36:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.194.254.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FBE4185B67
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 08:34:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725266214; cv=none; b=FSGsFcey8h1SVmNWrtQAXSRM9lv0qM4kpx+3U1u+DqNUP/6+Z5uLnJe9ALDhi2HT6f1nFpWtPAibKokVhnOBPgwn0E6VnbAxKoFYiITVoj8LHUy7mak88h2gGwg/jQpXxRrBFXq/3bbIO6E1oKWij1vFCChMjrhZ1NhB+RVm4Go=
+	t=1725266073; cv=none; b=R0myp+RcfSPp0+whOL80WOp44biHrDJDzsIcoesIwHaJUHfVpDZHaUonNeqap4R0fZx1y8+A7Y/kxoqWUXV6CDgoxg3uYkAQuyKSd/n+9402UXcBylxWDvC81YeVSK8oCH7TBgswVYzQSF+7HU6Np/Rpb28BTsNqDpGhbgbUWCw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725266214; c=relaxed/simple;
-	bh=SWejRdQp+kWHa8muEQd/bu49jIbL6oJzO8XqQMm46gs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=p0dWOYOHsl50Dtg4HOQXYqY29a7QiBuMvObTFWUzWHmEDGfpCqPDpBqHkb5Kr7Y58nzpuRHEkUm06sFpeNUsKk14WgXOPCoSM1S3IJkzaHGRe8ZyiM/M49if6qVDKEpjDEvpBk12Ki9F8DlgeGpN9/7yTTRP07ZXgvg8GwBdB8I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=shingroup.cn; spf=pass smtp.mailfrom=shingroup.cn; arc=none smtp.client-ip=18.194.254.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=shingroup.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shingroup.cn
-X-QQ-mid: bizesmtp87t1725266091tu2fqcr9
-X-QQ-Originating-IP: kGypH4P7jg3wvqEFFYagyp6a6SZcS9GvI3fXkANzjYY=
-Received: from HX09040029.powercore.com.cn ( [58.34.117.194])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Mon, 02 Sep 2024 16:34:43 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 11960807525001457609
-Date: Mon, 2 Sep 2024 16:34:25 +0800
-From: Luming Yu <luming.yu@shingroup.cn>
-To: Christophe Leroy <christophe.leroy@csgroup.eu>
-Cc: "shenghui.qu@shingroup.cn" <shenghui.qu@shingroup.cn>,
-	npiggin <npiggin@gmail.com>,
-	"Aneesh Kumar K.V" <aneesh.kumar@kernel.org>,
-	mpe <mpe@ellerman.id.au>, "luming.yu" <luming.yu@gmail.com>,
-	=?utf-8?B?5p2o5L2z6b6Z?= <jialong.yang@shingroup.cn>,
-	linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v1 2/2] powerpc/debug: hook to user return notifier
- infrastructure
-Message-ID: <DD7156ED36F34F8E+ZtV4kSBA-XH1f8NS@HX09040029.powercore.com.cn>
-References: <B375A36C9C4D73FF+20231218031338.2084-1-luming.yu@shingroup.cn>
- <8734vzsw0q.fsf@kernel.org>
- <8734vyn1ky.fsf@mail.lhotse>
- <2acd6623-952b-4659-bc26-c632e94560a8@csgroup.eu>
- <0638f0a2-782b-411f-9937-c62d99e9562b@csgroup.eu>
- <tencent_4F2B3C0025D5A1722470D582@qq.com>
- <bd4908d2-cea9-406b-902f-618626e74c88@csgroup.eu>
- <B6A4506E3DD1F93F+Zs7Iq_EF799NyWHK@HX09040029.powercore.com.cn>
- <3fbdc957-2db4-4148-b325-263384f9a196@csgroup.eu>
+	s=arc-20240116; t=1725266073; c=relaxed/simple;
+	bh=HUSSY6a3ZyhD/x5/cwC68u5/Zm3TMt5InaFYyBQMRz0=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=BkstW7/4tbwK8YUA7a51x9ZFXUd5BUvdxJKc2NKNgPB5DMMmXaM189Mai2ruOdGQeUYdyEGADvXtxoqSFwwQHKZd1d1YSxRJRfHnip8BqNeD23FqaE/IcPKr+w6vYcp9/zVNwJqC7pHk1STkamwUWhWSYr8Qbe04xB9EzLLWT9U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ixXgburW; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-428e0d184b4so32629075e9.2
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2024 01:34:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1725266070; x=1725870870; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+za/cAcdZ0XOTg3FDU5KvmgY/loVMFZsFxv5CioePC0=;
+        b=ixXgburWSXpB1uQ3CfuARFbrVXSWavhGkxt6kgy8XgMGUHB+ku5GKcjPz0pvuWNccQ
+         CN/yzYKuT9WnoxN5QQ4iNZR6ek8kCvIgz/DABSspUYJSjqwYvCY/AkdFDMn1yzESuMoL
+         AWt2S3X+Ij3Z99ao4pftgDmOnDu8jAD8odbKAudyJXbXXuEvjuM6UOzaifb5LtdgHbe+
+         d+3g6HcbtA714Zf1K7+SOgIQ1AlbQleHoFgk+GbSBixIMJ67GkTy8OPHJM3qQWLhAORB
+         VUyyAPyK9vXf+fQnLjlpFAdbNQ8PK4OphpY/XnVkrsaFeQyJLMTBPlnJtfWcHukkYdMk
+         q9jg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725266070; x=1725870870;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=+za/cAcdZ0XOTg3FDU5KvmgY/loVMFZsFxv5CioePC0=;
+        b=diX+AjEHfFTQiUjhj7ri6Kg8pdx0Bb/7a+NAiEd2InFtavEYnn8fVzSowewuYsU/ES
+         lxqk9oNGUj7LFhgA5ZLMbgPALpEPykoHP0+O0PHO5R9dRc6VyhNeVqxbgLHMluv8Scfw
+         sxaF8M0hFZeLUNnwBBn1THe1alQ1m87+S//2mZI0rO1LHRkwtafevTmM7xyZHd8ojPLY
+         v/zSrkhXXmjRg5ijlMjKY/Lm3ZunQa/QWzYRbhattczhWSgupLI7mfQzZMRd30YpPSaE
+         BXdirAFpUGLsHKTHZszMM2HTRZhc07IaXSf59WagwNHNQCQeHSo8yA/jV4Hnm5+wkL+H
+         7lEA==
+X-Forwarded-Encrypted: i=1; AJvYcCXPW2aJbzbUiPw8coAkUmCCc/4HrX0u5SA1QXcSN8cwfle6DmjhBH55oHSNuEFYGyhvELmG1GrEbjT4lKg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxZd2rdgXFfBnl/OCj8xBnLtKU9l3ig78qsOoS2yIHxoZ1fT5Z+
+	qfMgLIfNGhyPE5/muQ/fHs40X0sHrFeDTmopUrBu6Nbfew/EplHS+T6DqDwAAFA=
+X-Google-Smtp-Source: AGHT+IFJUVovWbnX5nY+Y2YkBfcSM9FaAqLveWckf0TJzKcGo4CXWwjHWFVMGHxm8ScNSGaXGnfepQ==
+X-Received: by 2002:a5d:50ce:0:b0:374:bde6:bff5 with SMTP id ffacd0b85a97d-374bf1c94aemr3336071f8f.46.1725266069342;
+        Mon, 02 Sep 2024 01:34:29 -0700 (PDT)
+Received: from arrakeen.starnux.net ([2a01:e0a:982:cbb0:8261:5fff:fe11:bdda])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-374bfbfc7b7sm5807456f8f.88.2024.09.02.01.34.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 02 Sep 2024 01:34:28 -0700 (PDT)
+From: Neil Armstrong <neil.armstrong@linaro.org>
+To: Kevin Hilman <khilman@baylibre.com>, 
+ Jerome Brunet <jbrunet@baylibre.com>, 
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Xianwei Zhao <xianwei.zhao@amlogic.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ kernel test robot <lkp@intel.com>
+In-Reply-To: <20240902-fix_warning-v1-1-037029c584fc@amlogic.com>
+References: <20240902-fix_warning-v1-1-037029c584fc@amlogic.com>
+Subject: Re: [PATCH] arm64: dts: amlogic: c3: fix dtbcheck warning
+Message-Id: <172526606853.2176850.7789984946561002736.b4-ty@linaro.org>
+Date: Mon, 02 Sep 2024 10:34:28 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <3fbdc957-2db4-4148-b325-263384f9a196@csgroup.eu>
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtp:shingroup.cn:qybglogicsvrgz:qybglogicsvrgz8a-1
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.1
 
-Wed, Aug 28, 2024 at 09:27:23AM +0200, Christophe Leroy wrote:
+Hi,
+
+On Mon, 02 Sep 2024 13:29:39 +0800, Xianwei Zhao wrote:
+> Fix warning when use W=1 to build dtb, as following error:
 > 
+> arch/arm64/boot/dts/amlogic/amlogic-c3.dtsi:65.7-76.4: Warning
+> (unit_address_vs_reg): /sram: node has a reg or ranges property,
+> but no unit name
 > 
-> Le 28/08/2024 à 08:50, Luming Yu a écrit :
-> > On Wed, Aug 28, 2024 at 07:46:52AM +0200, Christophe Leroy wrote:
-> > > Hi,
-> > > 
-> > > Le 28/08/2024 à 05:17, 虞陆铭 a écrit :
-> > > > Hi,
-> > > > 
-> > > > it appears the little feature might require a little bit more work to find its value of the patch.
-> > > > 
-> > > > Using the following debug module ,  some debugging shows the TIF_USER_RETURN_NOTIFY
-> > > > bit is propagated in __switch_to among tasks , but USER_RETURN_NOTIFY call back seems to
-> > > > be dropped somewhere on somone who carries the bit return to user space.
-> > > > side notes:
-> > > > there is an issue that the module symbols is not appended to /sys/kernel/debug/tracing/available_filter_functions
-this is not a problem as I just noticed that lib/Makefile carries this magic
-ccflags-remove-$(CONFIG_FUNCTION_TRACER) += $(CC_FLAGS_FTRACE)
+> arch/arm64/boot/dts/amlogic/amlogic-c3.dtsi:168.34-413.6: Warning
+> (unit_address_vs_reg): /soc/bus@fe000000/pinctrl@4000: node has a
+> unit name, but no reg or ranges property
+> 
+> [...]
+
+Thanks, Applied to https://git.kernel.org/pub/scm/linux/kernel/git/amlogic/linux.git (v6.12/arm64-dt)
+
+[1/1] arm64: dts: amlogic: c3: fix dtbcheck warning
+      https://git.kernel.org/amlogic/c/ca55a30d27cb37c07f58e5c3448f4d19edb1829c
+
+These changes has been applied on the intermediate git tree [1].
+
+The v6.12/arm64-dt branch will then be sent via a formal Pull Request to the Linux SoC maintainers
+for inclusion in their intermediate git branches in order to be sent to Linus during
+the next merge window, or sooner if it's a set of fixes.
+
+In the cases of fixes, those will be merged in the current release candidate
+kernel and as soon they appear on the Linux master branch they will be
+backported to the previous Stable and Long-Stable kernels [2].
+
+The intermediate git branches are merged daily in the linux-next tree [3],
+people are encouraged testing these pre-release kernels and report issues on the
+relevant mailing-lists.
+
+If problems are discovered on those changes, please submit a signed-off-by revert
+patch followed by a corrective changeset.
+
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/amlogic/linux.git
+[2] https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git
+[3] https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+
+-- 
+Neil
 
 
