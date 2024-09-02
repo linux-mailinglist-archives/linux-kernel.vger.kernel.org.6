@@ -1,105 +1,88 @@
-Return-Path: <linux-kernel+bounces-310832-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310834-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14AD59681CA
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 10:28:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A92E19681CE
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 10:29:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 61CE1B20BA0
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 08:28:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 533691F22A8B
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 08:29:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 763F5186607;
-	Mon,  2 Sep 2024 08:28:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mWS2HCVQ"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D0A6152E12
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 08:28:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9713A1865EE;
+	Mon,  2 Sep 2024 08:28:27 +0000 (UTC)
+Received: from cmccmta3.chinamobile.com (cmccmta6.chinamobile.com [111.22.67.139])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 383E018754E;
+	Mon,  2 Sep 2024 08:28:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.22.67.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725265696; cv=none; b=NjZJYewzmw8YD0BRSCNUGoFFXgpjkQcUKeOn8MMPx+5aGDBB1TtdoMTCX2utR35s5giYymkh62XC8CfYV6xTnzm5zutaDjZFvOa6j5SfN8JLExZU/BiWChpuKva3f7qmciLT/kxkxcBlA/c8gAzQyScxWFTu+PWSKIUPjgfvgik=
+	t=1725265707; cv=none; b=h27eANbhUkt4oBp2fRpXxJ+3jn4Rox80lCCZbU+ScbJq9wR8Zdk6xbUUTWxMY/7EtfTewdkhQ1OOxtCXhREkAJUw3se3BmDWZt0+pjqoaoBC67hfepr2vbQnwl+OTuPxMnDMVb1J+dE4OMegUww4+PqaZ1Qj6BSmb1s8vAjB/nQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725265696; c=relaxed/simple;
-	bh=DYSBPcOtKIOt23SoN4rcguGH6srPkSaQ8dPaje/1vFQ=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=rQVE2P9TYZaks564YQ3jSP25Wedlv1JS2oRJFxEnUPLmTYRrFiVHAxe6BunFAF0FMKG1skVRgiRC0dN08Z6rYpPP3vSThbVdO45akhzZ3xyScN0xRMlBAK3tRPKG/jPegQIo4YQliIOfzLxlYPXt7hVgc7P93chFQRcFBvp5AiQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mWS2HCVQ; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725265695; x=1756801695;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=DYSBPcOtKIOt23SoN4rcguGH6srPkSaQ8dPaje/1vFQ=;
-  b=mWS2HCVQ/PGpZwt4Dp+IbgVrwaV/xQXx7XQlsobHTqsc7/ACVgA9WQIg
-   +VuJvNvggFC896z54eMMzB7VbvazGSLMIiMM9seECD3d1OJnn5fu4x0Y2
-   NMSK9Z1o1qrrjZM9V2Jc6wjHFKw/Ri4wxE8u697Y8MLg4xV72MLJDhKl1
-   EFojMyKUu14JR3RX5SO4kOYLEl/WYGQwpmFV2KhvEbPepWByqvYE/kw0N
-   tzWJSpn8QhovzZ69wIzIUvwOd1G+sAxSiHMIbPEnk8I7+C787XtUtqQqx
-   vTfJlXYr8O1AS7WebZqd8GnI7dMFob89alKnen3gbTnP0zimY06XiifM1
-   Q==;
-X-CSE-ConnectionGUID: 1FHJXvMXR2Oz6qAW4Vl1qQ==
-X-CSE-MsgGUID: cPj8kIIMSYuS/ZC/gmd1/w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11182"; a="49239298"
-X-IronPort-AV: E=Sophos;i="6.10,195,1719903600"; 
-   d="scan'208";a="49239298"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2024 01:28:14 -0700
-X-CSE-ConnectionGUID: NnCR8tGQR5uk4wKIhAbeGA==
-X-CSE-MsgGUID: n5lNv2IZRpi6epXfQTS9xg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,195,1719903600"; 
-   d="scan'208";a="64168831"
-Received: from ltuz-desk.ger.corp.intel.com (HELO localhost) ([10.245.246.4])
-  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2024 01:28:10 -0700
-From: Jani Nikula <jani.nikula@linux.intel.com>
-To: Nathan Chancellor <nathan@kernel.org>, Andy Shevchenko
- <andriy.shevchenko@linux.intel.com>
-Cc: Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling
- <morbo@google.com>, Justin Stitt <justinstitt@google.com>,
- intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, Joonas Lahtinen
- <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>,
- Tvrtko Ursulin <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>,
- Daniel Vetter <daniel@ffwll.ch>
-Subject: Re: [PATCH v1 0/2] drm/i915/fence: A couple of build fixes
-In-Reply-To: <87a5gvw4y9.fsf@intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <20240829155950.1141978-1-andriy.shevchenko@linux.intel.com>
- <87cylrwahb.fsf@intel.com> <ZtCnhXwtO-gd1fMf@smile.fi.intel.com>
- <ZtC5oXSzUuuIgLiQ@smile.fi.intel.com>
- <20240829182255.GA1468662@thelio-3990X> <87a5gvw4y9.fsf@intel.com>
-Date: Mon, 02 Sep 2024 11:27:57 +0300
-Message-ID: <87frqiv4s2.fsf@intel.com>
+	s=arc-20240116; t=1725265707; c=relaxed/simple;
+	bh=Y59PE6FOhBP8a8YwZZtWys/kxKg9+7Gc0nG5ZazRhv8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=J6YMAWinCV8WXW7+7SoUMxDc5K6VhDt+HUHUWp1lmE+cC50ofujFIpLoyXBlK/X05qIx+pJDIU5f+kajXpMANxMHRGy/P/D7hjurkimm2fDcR0HqOtDOhJ75cPcNDKjm1Vg3Dktg/QfHHjTsNpLY/ai/f3bwcu0tM0MNorO6GvU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com; spf=pass smtp.mailfrom=cmss.chinamobile.com; arc=none smtp.client-ip=111.22.67.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
+	by rmmx-syy-dmz-app09-12009 (RichMail) with SMTP id 2ee966d57722b75-d7b79;
+	Mon, 02 Sep 2024 16:28:19 +0800 (CST)
+X-RM-TRANSID:2ee966d57722b75-d7b79
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from localhost.localdomain.localdomain (unknown[10.54.5.255])
+	by rmsmtp-syy-appsvr08-12008 (RichMail) with SMTP id 2ee866d577213ed-915e4;
+	Mon, 02 Sep 2024 16:28:18 +0800 (CST)
+X-RM-TRANSID:2ee866d577213ed-915e4
+From: Liu Jing <liujing@cmss.chinamobile.com>
+To: rafael@kernel.org
+Cc: viresh.kumar@linaro.org,
+	mpe@ellerman.id.au,
+	npiggin@gmail.com,
+	christophe.leroy@csgroup.eu,
+	naveen@kernel.org,
+	linux-pm@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org,
+	linux-kernel@vger.kernel.org,
+	Liu Jing <liujing@cmss.chinamobile.com>
+Subject: [PATCH] cpufreq: Fix the cacography in powernv-cpufreq.c
+Date: Mon,  2 Sep 2024 16:28:16 +0800
+Message-Id: <20240902082816.2599-1-liujing@cmss.chinamobile.com>
+X-Mailer: git-send-email 2.33.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 
-On Thu, 29 Aug 2024, Jani Nikula <jani.nikula@linux.intel.com> wrote:
-> The TL;DR is,
->
-> Reviewed-by: Jani Nikula <jani.nikula@intel.com>
->
-> on the series.
+The word 'swtich' is wrong, so fix it.
 
-Both pushed to drm-intel-next, thanks for the patches and discussion.
+Signed-off-by: Liu Jing <liujing@cmss.chinamobile.com>
+---
+ drivers/cpufreq/powernv-cpufreq.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-I amended the commit message about clang, config options and commit
-6863f5643dd7 ("kbuild: allow Clang to find unused static inline
-functions for W=1 build") while pushing.
-
-BR,
-Jani.
-
+diff --git a/drivers/cpufreq/powernv-cpufreq.c b/drivers/cpufreq/powernv-cpufreq.c
+index fddbd1ea1635..64fa92623a51 100644
+--- a/drivers/cpufreq/powernv-cpufreq.c
++++ b/drivers/cpufreq/powernv-cpufreq.c
+@@ -692,7 +692,7 @@ static void gpstate_timer_handler(struct timer_list *t)
+ 	}
+ 
+ 	/*
+-	 * If PMCR was last updated was using fast_swtich then
++	 * If PMCR was last updated was using fast_switch then
+ 	 * We may have wrong in gpstate->last_lpstate_idx
+ 	 * value. Hence, read from PMCR to get correct data.
+ 	 */
 -- 
-Jani Nikula, Intel
+2.33.0
+
+
+
 
