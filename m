@@ -1,276 +1,179 @@
-Return-Path: <linux-kernel+bounces-311167-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311151-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48C76968595
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 13:02:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E5DE96857F
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 12:58:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CADA41F22AFD
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 11:02:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F0B32881B5
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 10:58:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFCFB1DAC54;
-	Mon,  2 Sep 2024 10:57:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9763F1D3641;
+	Mon,  2 Sep 2024 10:57:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="Fl/3HtTx"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="frZjQsXH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C87C11D6DAE;
-	Mon,  2 Sep 2024 10:57:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6E521D2F4A;
+	Mon,  2 Sep 2024 10:57:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725274670; cv=none; b=XaLNMe0JSXiF9TBtjErRe0xKnpSR559r5MgLkdPG3nZRW/3c1xtiQckIcj9ZldLz4QCECYXuzp2vjt7DonHYbk2Vvi6K0OXYQ6n4wR35RnGORbaOnSi9QzV+1LrDF9MKEWsBX04YjN5zpdkgtDp952kfr4nbwc6Zm6pyg25NwlA=
+	t=1725274639; cv=none; b=PTjr3otHdZhxlI8ESOFPraAVTqxRg2C/ctIR0h4KpDsc6CHEOO9L9r//onCQV8dgOiAMXdCdLF1Vy542ptYncbCYy3/FuR8RG4B/gGlijdpz+Ugmk+zBq/JzLkgGukk+xkm1XQd9ALpK2yaaBONzyp/e/rEsWw4EHVkE7yYP+2o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725274670; c=relaxed/simple;
-	bh=5BbWc1k6oA1tQz42t0Be4gA3NCk1QECpPKKme5UwU68=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=GUpmqlMdVO67v8GW1xpSATpwiviU3Y0TSQ9Sp7WbJC64CkWc6XWrL8bA7n1MXy1BZVh47CW1UmLP88mFivuT4Dslc9YUVck2yh9OVRK+NWSbRc7Ma0fCKYoeeUnRzJ+oyAw2gjk4gVZdGIlLmmV+dqKX3UzzY0Mh397Eksn/fCM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=Fl/3HtTx; arc=none smtp.client-ip=68.232.154.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1725274668; x=1756810668;
-  h=from:date:subject:mime-version:content-transfer-encoding:
-   message-id:to:cc;
-  bh=5BbWc1k6oA1tQz42t0Be4gA3NCk1QECpPKKme5UwU68=;
-  b=Fl/3HtTxhadhjoWVdvhu3vj0ZYJBI1RNlMy5rkRE/EWVeUqsK57BXm1v
-   QUHGysbQqtXR5kFzPaRu0shURavcWKVRndnRo1Mi1mwyYjOb37W8zndv6
-   VZnq69XU7mi8IVzGSCWEIJwfndKK14BUT5N7vlWOtDSxOeZMP+1S1WM+w
-   x/c/+hTYGtxNPaaQcOu1LjqE9jknpFMpxXBnCaW5lz2MbooD8ShFbo4uz
-   2OqkAIt78dKAHbZsRsTU7gdTYFDK26uJi5GWjbpDHioJLYmNHshN09n/9
-   kHK3bansEBdi4X5jghg6osQtiBpdaMG0twstcuD/dOs1/8JU7LT9nKAeb
-   g==;
-X-CSE-ConnectionGUID: UGwwVVYkSCW8ZZOAd5HOeA==
-X-CSE-MsgGUID: IBCickTLSQiDyGRm7UbQ6w==
-X-IronPort-AV: E=Sophos;i="6.10,195,1719903600"; 
-   d="scan'208";a="31845450"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa2.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 02 Sep 2024 03:57:46 -0700
-Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Mon, 2 Sep 2024 03:57:27 -0700
-Received: from che-lt-i70843lx.microchip.com (10.10.85.11) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server id
- 15.1.2507.35 via Frontend Transport; Mon, 2 Sep 2024 03:57:16 -0700
-From: Dharma Balasubiramani <dharma.b@microchip.com>
-Date: Mon, 2 Sep 2024 16:27:09 +0530
-Subject: [PATCH v4] dt-bindings: mmc: sdhci-atmel: Convert to json schema
+	s=arc-20240116; t=1725274639; c=relaxed/simple;
+	bh=pe2+YVpcPCEGBw7dXpbzrFvyMUWq05N49C+gayZKyDk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lcTjtetuGBFV55+SMrJXuzbdUyR2GUqy5VfmOPPuf4Uzea+Q0FoHqHvoQZGYny2leT9NEWfB4fwBrGyJf2oJD0q/NrC5Amn4PADgeyX6E+x6atZ8+3TzDQ3COEkk6svHb+1LdLOdDbpMXoqr0dei1fkN8TSP+SiroOO/kZQ3/IM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=frZjQsXH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DDE23C4CEC2;
+	Mon,  2 Sep 2024 10:57:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725274638;
+	bh=pe2+YVpcPCEGBw7dXpbzrFvyMUWq05N49C+gayZKyDk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=frZjQsXHnAbljS1NUeUtoOLs3pmN28Zy3MCS+V7FV7p5qtWD2ksJZ5iL7E+UQfsC2
+	 +G51RPigBC5OEA/dZxSgwA3AirzCaxHomUswkyvOwcoRQp8w4PhxxZqntWY/RR6KZb
+	 PRV0pX7qxv9OLFH1poEflJmLfcynGAnSIYVmC78s+Q7YyD5wsMSY0jjDcyBhKp+tgg
+	 lSX/Kb9TT005DrypYF0bQRWgEbfvynixCfZrYskWfBpzRQmH2sCHor/deel0360NLw
+	 LzJBd9b/9zr7fY6+c4zOxK6OugG+i76S9w5dkVbIgl5bBjNhJMqFNGrTWseTc0Qywc
+	 uowsrnk8WOz9w==
+Date: Mon, 2 Sep 2024 11:57:14 +0100
+From: Simon Horman <horms@kernel.org>
+To: Wan Junjie <junjie.wan@inceptio.ai>
+Cc: Ioana Ciornei <ioana.ciornei@nxp.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] dpaa2-switch: fix flooding domain among multiple vlans
+Message-ID: <20240902105714.GH23170@kernel.org>
+References: <20240902015051.11159-1-junjie.wan@inceptio.ai>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240902-atmel-sdhci-v4-1-96912fab6b2d@microchip.com>
-X-B4-Tracking: v=1; b=H4sIAASa1WYC/33NTQ6CMBCG4auQrq3pD9rWlfcwLsrQ2kmEkpYQD
- eHuFrYSlt8kzzszyS6hy+RWzSS5CTPGvoz6VBEItn85im3ZRDBRMy0ZtWPn3jS3AZCCsUY0irO
- rqEkRQ3IeP1vt8Sw7YB5j+m7xia/X/c7EKaOMO+lAg9GsvncIKULA4QyxI2trEgdeFN8of9FGS
- S897Hl54GXxCoyyTCth/d//ZVl+CTttgCoBAAA=
-To: Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>, Alexandre Belloni
-	<alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	Aubin Constans <aubin.constans@microchip.com>
-CC: <linux-mmc@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	Dharma Balasubiramani <dharma.b@microchip.com>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1725274635; l=6278;
- i=dharma.b@microchip.com; s=20240209; h=from:subject:message-id;
- bh=5BbWc1k6oA1tQz42t0Be4gA3NCk1QECpPKKme5UwU68=;
- b=wRvoDXOxjyA2kABOBSV5jStVdpWIVysKjfXncXOkFQDC3cgE3O5fvNUDu0qHsspga4Izl+ORe
- o4WEHHSaGRLBoqByLqikn4sFnGceo5d3schF7vlbIp79dXjsWqSTLpV
-X-Developer-Key: i=dharma.b@microchip.com; a=ed25519;
- pk=kCq31LcpLAe9HDfIz9ZJ1U7T+osjOi7OZSbe0gqtyQ4=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240902015051.11159-1-junjie.wan@inceptio.ai>
 
-Convert sdhci-atmel documentation to yaml format. The new file will inherit
-from sdhci-common.yaml.
+On Mon, Sep 02, 2024 at 09:50:51AM +0800, Wan Junjie wrote:
+> Currently, dpaa2 switch only cares dst mac and egress interface
+> in FDB. And all ports with different vlans share the same FDB.
+> 
+> This will make things messed up when one device connected to
+> dpaa2 switch via two interfaces. Ports get two different vlans
+> assigned. These two ports will race for a same dst mac entry
+> since multiple vlans share one FDB.
+> 
+> FDB below may not show up at the same time.
+> 02:00:77:88:99:aa dev swp0 self
+> 02:00:77:88:99:aa dev swp1 self
+> But in fact, for rules on the bridge, they should be:
+> 02:00:77:88:99:aa dev swp0 vlan 10 master br0
+> 02:00:77:88:99:aa dev swp1 vlan 20 master br0
+> 
+> This patch address this by borrowing unused form ports' FDB
+> when ports join bridge. And append offload flag to hardware
+> offloaded rules so we can tell them from those on bridges.
+> 
+> Signed-off-by: Wan Junjie <junjie.wan@inceptio.ai>
 
-Note: Add microchip,sama7g5-sdhci to compatible list as we already use it
-in the DT.
+Hi Wan Junjie,
 
-Signed-off-by: Dharma Balasubiramani <dharma.b@microchip.com>
----
-This patch series converts the sdhci-atmel dt-binding to yaml format and adds
-the sama7d65,sama7g5 compatibles to the list.
----
-Changes in v4:
-- remove the "atmel,sama5d3-sdhci" and "atmel,sama5d4-sdhci" compatibles and
-  add back the "microchip,sam9x7-sdhci" compatible from old binding which was missed.
-- drop the addition of sama7d65 in binding, will be sent along with the dts patch series.
-- Add the entire description of "microchip,sdcal-inverted" from old txt binding.
-- The microchip,sam9x7-sdhci is yet to be merged in DTS
-https://lore.kernel.org/lkml/20240729070934.1991467-1-varshini.rajendran@microchip.com/
-- Link to v3: https://lore.kernel.org/r/20240830-atmel-sdhci-v3-0-7c97a0872af4@microchip.com
+Some minor feedback from my side.
 
-Changes in v3:
-- update the items in clocks instead of plain description.
-- move the items list to clock-names.
-- since baseclk is must, change maxitems to minitems: 3, and modify the
-  conditional bits accordingly.
-- Link to v2: https://lore.kernel.org/r/20240830-atmel-sdhci-v2-0-b7f58973f3fc@microchip.com
+...
 
-Changes in v2:
-- Add missing deleted file to the patch 
-"Documentation/devicetree/bindings/mmc/sdhci-atmel.txt"
-- Link to v1: https://lore.kernel.org/r/20240830-atmel-sdhci-v1-0-01e3ec8c9804@microchip.com
----
- .../bindings/mmc/atmel,sama5d2-sdhci.yaml          | 92 ++++++++++++++++++++++
- .../devicetree/bindings/mmc/sdhci-atmel.txt        | 35 --------
- 2 files changed, 92 insertions(+), 35 deletions(-)
+> diff --git a/drivers/net/ethernet/freescale/dpaa2/dpaa2-switch.c b/drivers/net/ethernet/freescale/dpaa2/dpaa2-switch.c
+> index a293b08f36d4..217c68bb0faa 100644
+> --- a/drivers/net/ethernet/freescale/dpaa2/dpaa2-switch.c
+> +++ b/drivers/net/ethernet/freescale/dpaa2/dpaa2-switch.c
+> @@ -25,8 +25,17 @@
+>  
+>  #define DEFAULT_VLAN_ID			1
+>  
+> -static u16 dpaa2_switch_port_get_fdb_id(struct ethsw_port_priv *port_priv)
+> +static u16 dpaa2_switch_port_get_fdb_id(struct ethsw_port_priv *port_priv, u16 vid)
 
-diff --git a/Documentation/devicetree/bindings/mmc/atmel,sama5d2-sdhci.yaml b/Documentation/devicetree/bindings/mmc/atmel,sama5d2-sdhci.yaml
-new file mode 100644
-index 000000000000..8c8ade88e8fe
---- /dev/null
-+++ b/Documentation/devicetree/bindings/mmc/atmel,sama5d2-sdhci.yaml
-@@ -0,0 +1,92 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/mmc/atmel,sama5d2-sdhci.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Atmel SDHCI controller
-+
-+maintainers:
-+  - Aubin Constans <aubin.constans@microchip.com>
-+  - Nicolas Ferre <nicolas.ferre@microchip.com>
-+
-+description:
-+  Bindings for the SDHCI controller found in Atmel/Microchip SoCs.
-+
-+properties:
-+  compatible:
-+    oneOf:
-+      - enum:
-+          - atmel,sama5d2-sdhci
-+          - microchip,sam9x60-sdhci
-+      - items:
-+          - enum:
-+              - microchip,sam9x7-sdhci
-+              - microchip,sama7g5-sdhci
-+          - const: microchip,sam9x60-sdhci
-+
-+  reg:
-+    maxItems: 1
-+
-+  interrupts:
-+    maxItems: 1
-+
-+  clocks:
-+    items:
-+      - description: hclock
-+      - description: multclk
-+      - description: baseclk
-+    minItems: 2
-+
-+  clock-names:
-+    items:
-+      - const: hclock
-+      - const: multclk
-+      - const: baseclk
-+    minItems: 2
-+
-+  microchip,sdcal-inverted:
-+    type: boolean
-+    description:
-+      When present, polarity on the SDCAL SoC pin is inverted. The default
-+      polarity for this signal is described in the datasheet. For instance on
-+      SAMA5D2, the pin is usually tied to the GND with a resistor and a
-+      capacitor (see "SDMMC I/O Calibration" chapter).
-+
-+required:
-+  - compatible
-+  - reg
-+  - interrupts
-+  - clocks
-+  - clock-names
-+
-+allOf:
-+  - $ref: sdhci-common.yaml#
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            enum:
-+              - atmel,sama5d2-sdhci
-+    then:
-+      properties:
-+        clocks:
-+          minItems: 3
-+        clock-names:
-+          minItems: 3
-+
-+unevaluatedProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/interrupt-controller/irq.h>
-+    #include <dt-bindings/clock/at91.h>
-+    mmc@a0000000 {
-+        compatible = "atmel,sama5d2-sdhci";
-+        reg = <0xa0000000 0x300>;
-+        interrupts = <31 IRQ_TYPE_LEVEL_HIGH 0>;
-+        clocks = <&sdmmc0_hclk>, <&sdmmc0_gclk>, <&main>;
-+        clock-names = "hclock", "multclk", "baseclk";
-+        assigned-clocks = <&sdmmc0_gclk>;
-+        assigned-clock-rates = <480000000>;
-+    };
-diff --git a/Documentation/devicetree/bindings/mmc/sdhci-atmel.txt b/Documentation/devicetree/bindings/mmc/sdhci-atmel.txt
-deleted file mode 100644
-index a9fb0a91245f..000000000000
---- a/Documentation/devicetree/bindings/mmc/sdhci-atmel.txt
-+++ /dev/null
-@@ -1,35 +0,0 @@
--* Atmel SDHCI controller
--
--This file documents the differences between the core properties in
--Documentation/devicetree/bindings/mmc/mmc.txt and the properties used by the
--sdhci-of-at91 driver.
--
--Required properties:
--- compatible:		Must be "atmel,sama5d2-sdhci" or "microchip,sam9x60-sdhci"
--			or "microchip,sam9x7-sdhci", "microchip,sam9x60-sdhci".
--- clocks:		Phandlers to the clocks.
--- clock-names:		Must be "hclock", "multclk", "baseclk" for
--			"atmel,sama5d2-sdhci".
--			Must be "hclock", "multclk" for "microchip,sam9x60-sdhci".
--			Must be "hclock", "multclk" for "microchip,sam9x7-sdhci".
--
--Optional properties:
--- assigned-clocks:	The same with "multclk".
--- assigned-clock-rates	The rate of "multclk" in order to not rely on the
--			gck configuration set by previous components.
--- microchip,sdcal-inverted: when present, polarity on the SDCAL SoC pin is
--  inverted. The default polarity for this signal is described in the datasheet.
--  For instance on SAMA5D2, the pin is usually tied to the GND with a resistor
--  and a capacitor (see "SDMMC I/O Calibration" chapter).
--
--Example:
--
--mmc0: sdio-host@a0000000 {
--	compatible = "atmel,sama5d2-sdhci";
--	reg = <0xa0000000 0x300>;
--	interrupts = <31 IRQ_TYPE_LEVEL_HIGH 0>;
--	clocks = <&sdmmc0_hclk>, <&sdmmc0_gclk>, <&main>;
--	clock-names = "hclock", "multclk", "baseclk";
--	assigned-clocks = <&sdmmc0_gclk>;
--	assigned-clock-rates = <480000000>;
--};
+This, and several other lines in this patch, could be trivially
+line wrapped in order for them to be <= 80 columns wide, as is
+still preferred in Networking code.
 
----
-base-commit: 4b7d983dd85a5cdf4938f4a0a93adedf697ac04d
-change-id: 20240830-atmel-sdhci-c9a92b710624
+This and a number of other minor problems are flagged by:
+./scripts/checkpatch.pl --strict --codespell --max-line-length=80
 
-Best regards,
+>  {
+> +	struct ethsw_core *ethsw = port_priv->ethsw_data;
+> +	int i;
+> +
+> +	if (port_priv->fdb->bridge_dev) {
+> +		for (i = 0; i < ethsw->sw_attr.max_fdbs; i++)
+> +			if (ethsw->fdbs[i].vid == vid)
+> +				return ethsw->fdbs[i].fdb_id;
+> +	}
+> +	/* Default vlan, use port's fdb id directly */
+>  	return port_priv->fdb->fdb_id;
+>  }
+>  
+
+...
+
+> @@ -191,10 +212,38 @@ static void *dpaa2_iova_to_virt(struct iommu_domain *domain,
+>  static int dpaa2_switch_add_vlan(struct ethsw_port_priv *port_priv, u16 vid)
+>  {
+>  	struct ethsw_core *ethsw = port_priv->ethsw_data;
+> +	struct net_device *netdev = port_priv->netdev;
+> +	struct dpsw_fdb_cfg fdb_cfg = {0};
+>  	struct dpsw_vlan_cfg vcfg = {0};
+> +	struct dpaa2_switch_fdb *fdb;
+> +	u16 fdb_id;
+>  	int err;
+>  
+> -	vcfg.fdb_id = dpaa2_switch_port_get_fdb_id(port_priv);
+> +	/* If ports are under a bridge, then
+> +	 * every VLAN domain should use a different fdb.
+> +	 * If ports are standalone, and
+> +	 * vid is 1 this should reuse the allocated port fdb.
+> +	 */
+> +	if (port_priv->fdb->bridge_dev) {
+> +		fdb = dpaa2_switch_fdb_get_unused(ethsw);
+> +		if (!fdb) {
+> +			/* if not available, create a new fdb */
+> +			err = dpsw_fdb_add(ethsw->mc_io, 0, ethsw->dpsw_handle,
+> +					   &fdb_id, &fdb_cfg);
+> +			if (err) {
+> +				netdev_err(netdev, "dpsw_fdb_add err %d\n", err);
+> +				return err;
+> +			}
+
+fdb is still NULL here. Based on my reading of dpaa2_switch_port_init()
+I think you need the following. Possibly also with an error check.
+
+			fdb = dpaa2_switch_fdb_get_unused(ethsw);
+
+Flagged by Smatch.
+
+> +			fdb->fdb_id = fdb_id;
+> +		}
+> +		fdb->vid = vid;
+> +		fdb->in_use = true;
+> +		fdb->bridge_dev = NULL;
+> +		vcfg.fdb_id = fdb->fdb_id;
+> +	} else {
+> +		/* Standalone, port's private fdb shared */
+> +		vcfg.fdb_id = dpaa2_switch_port_get_fdb_id(port_priv, vid);
+> +	}
+>  	err = dpsw_vlan_add(ethsw->mc_io, 0,
+>  			    ethsw->dpsw_handle, vid, &vcfg);
+>  	if (err) {
+
+...
+
 -- 
-Dharma Balasubiramani <dharma.b@microchip.com>
-
+pw-bot: cr
 
