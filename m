@@ -1,242 +1,252 @@
-Return-Path: <linux-kernel+bounces-311692-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311693-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 882A9968C46
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 18:40:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25524968C4B
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 18:41:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 41BB2283B5C
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 16:40:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A8491F2421A
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 16:41:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E09F421C190;
-	Mon,  2 Sep 2024 16:38:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68B9D1AB6EF;
+	Mon,  2 Sep 2024 16:40:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=cherry.de header.i=@cherry.de header.b="DCXg6zRw"
-Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05on2065.outbound.protection.outlook.com [40.107.21.65])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="AOvDZojF"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B4E52101B2;
-	Mon,  2 Sep 2024 16:38:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.21.65
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725295132; cv=fail; b=ouiOJqSoqIx2EUv9vgfFT7kHSw9WmbLTZW4mlmjR4dND5DVa1klXRqFXvpvD1xZvhkC+Yjf8fz1XMA7h8aiizTROvveqrH9ZoR2zKiUm6J802qvZUfI7C+XlKJbbid4v1BmEc1Ox1KtUqqEv8NyYC4fE2slSA7XRzTlcUTatSRE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725295132; c=relaxed/simple;
-	bh=S5gfqC7sX+8XZxAdQxPuq5dXYPddWbTQ4lHWPmSun3M=;
-	h=From:Date:Subject:Content-Type:Message-Id:References:In-Reply-To:
-	 To:Cc:MIME-Version; b=HWqt7H2EmjIToaEzhDcB6teSbur8Sy9CjnvVoZ+3etAxTxVJd7pRCmhn3yzFsQ+LEd/DMmLIyA+KTcWT7q9R8LZdxEbHrHqiUWBMkvwHot7xoEIuIYTIJlmKRWPeHk6Jui2EeqwKUDTyCJ+9I8L1/33gxbK/qFEhRuixkYdMNE8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cherry.de; spf=pass smtp.mailfrom=cherry.de; dkim=pass (1024-bit key) header.d=cherry.de header.i=@cherry.de header.b=DCXg6zRw; arc=fail smtp.client-ip=40.107.21.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cherry.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cherry.de
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=tnjFQiGm1C8MbpM64Jotv1EtcwV3e0gRcGKTh/e9oa4QjJs389JiFDKlhjGJJe2IGMUAbNJNtVc4HuKZkukN5XaJhonvo4PZqZABgQzyXjjwmzd++7HqeJaYhwJqFpGuh4aJwsYIjXXp46BRlx/TgLJQrzVkOMcJmxbce1T6Fv1OQnz/VIim9/qc9e6d9uxAuT5dPi/8gG8ZSFcMpyCo96Ock8zrOdUY3CiyyOtG+y2BABL6dPOtKn4+NkOTyXrBqMRILhg2MnQVcEWG4moWzZkRmt6jP6BptfonVbcpCi7zoSruzJKRAZSgGsSShGLTRPFyZl/+lATIfW1pT6KEAA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=V1fn9iDRBSjSdXhY0cbjh9VmUKMYVtZKCtUPqs0YcAM=;
- b=bERGBYcKll2oxiuVChYl5r4NVU4ZBUVHPzGGapFyaTc55DB2FURrMqFRdKMFii9KnORu3NfNCu5Vso2icBPsJqwK6nJNOoASpQLg3G6dqDL4syv9G83V2+Vdn00a83BInraWQZnJSI3NXx2qf0CTA6wBngUuxfNP4tqzjvBwssz9En2hMaz++is/WYmZgUYix9NMWtLHILS1e/zjXrQtmhi172RiOh+526xrmMrCfnbGwbUCuEqEd/PdPydpsux2PW70T0rW1NmYpmxJJMZHEpuSOD+QNFC1O0CEASFFFMkMmHJOOHUch7v8RwdcqVorP52P7S0JFBeI9d9qKzIlng==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=cherry.de; dmarc=pass action=none header.from=cherry.de;
- dkim=pass header.d=cherry.de; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cherry.de;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=V1fn9iDRBSjSdXhY0cbjh9VmUKMYVtZKCtUPqs0YcAM=;
- b=DCXg6zRwunNFlcL4zzRQ/NZp372LGbSbR6ccZMdoQandToIu8CZylbG6Q/EP4fkITIJEcMlBssrmvjAeK137WfBZMCB9uMYlcozNdfISMn9HM2ixW/PHq8y40y0LA+VHOa4hKUf7BaPvPBdfWTyoTvbSk9zHlc6rQv2sNN59CEI=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=cherry.de;
-Received: from DU0PR04MB9562.eurprd04.prod.outlook.com (2603:10a6:10:321::10)
- by DB9PR04MB9645.eurprd04.prod.outlook.com (2603:10a6:10:309::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.24; Mon, 2 Sep
- 2024 16:38:39 +0000
-Received: from DU0PR04MB9562.eurprd04.prod.outlook.com
- ([fe80::ad4d:8d53:1663:d181]) by DU0PR04MB9562.eurprd04.prod.outlook.com
- ([fe80::ad4d:8d53:1663:d181%6]) with mapi id 15.20.7918.020; Mon, 2 Sep 2024
- 16:38:39 +0000
-From: Farouk Bouabid <farouk.bouabid@cherry.de>
-Date: Mon, 02 Sep 2024 18:38:21 +0200
-Subject: [PATCH v7 8/8] arm64: dts: rockchip: add tsd,mule-i2c-mux on
- px30-ringneck
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240902-dev-mule-i2c-mux-v7-8-bf7b8f5385ed@cherry.de>
-References: <20240902-dev-mule-i2c-mux-v7-0-bf7b8f5385ed@cherry.de>
-In-Reply-To: <20240902-dev-mule-i2c-mux-v7-0-bf7b8f5385ed@cherry.de>
-To: Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Farouk Bouabid <farouk.bouabid@cherry.de>, 
- Quentin Schulz <quentin.schulz@cherry.de>, Peter Rosin <peda@axentia.se>, 
- Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>, 
- Heiko Stuebner <heiko@sntech.de>
-Cc: linux-i2c@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org
-X-Mailer: b4 0.15-dev-99b12
-X-ClientProxiedBy: VI1PR0502CA0001.eurprd05.prod.outlook.com
- (2603:10a6:803:1::14) To DU0PR04MB9562.eurprd04.prod.outlook.com
- (2603:10a6:10:321::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E80D01A2635
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 16:39:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725295201; cv=none; b=cC8O3ip4H8UPBqCiigB/X3aif6L4HVsU9N42OHC4zjE8oZVrtnxgLXkv26o2m/hgUzu8pLH3Ur72arte7gs3Ok0093WLFLsTUcnYfo1bVQDwulL1QyVSZSUCQl4tygpIX9vUWR7UT067HgYfETB5MC94+n/CvbHIIUqLvN9WK9s=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725295201; c=relaxed/simple;
+	bh=TWQWTjb2bHDNoyq7Qb4nnNTNgORAKZgIpkkOeqVlH6Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pi6vvsWmucsG8OBtlNF8FCeXidixA5WUx2OyzunTRml+8ET1aglQa3jVGEgiDJpn/wlgpwZgbE9TlX/Bmi3wgmcjqXRHXagExl/WBnvTL1P3BOkw8xGhBPL+1yydwzFB86QrTLEv7zsILCWpJA8uDNvqn+wiGT8Ixwn73/q4HZk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=AOvDZojF; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1725295198;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=sN52cpHdRrdru0pCcK4JXKDfBVCF3QpRMNtiOqVdu9M=;
+	b=AOvDZojF1lV35ty0godFZjm5Vr9I648EELf1cigniiF06tnIsOykn1FqDHCva8gx8KBt/p
+	xTkfXH6Y3DVlFema+quYwg8cRrm2QbbMh4BCeoPp7bDbAf7Af3kg87XpE5MbS5Tx36uYT/
+	bKE5cXTfgM4en+x6tf74y5ra7+mIHN4=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-136-Lt7-S0VvMqWlo4QHn9JaOw-1; Mon, 02 Sep 2024 12:39:56 -0400
+X-MC-Unique: Lt7-S0VvMqWlo4QHn9JaOw-1
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-42c7b39e953so10257885e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2024 09:39:55 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725295195; x=1725899995;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=sN52cpHdRrdru0pCcK4JXKDfBVCF3QpRMNtiOqVdu9M=;
+        b=QXnBVP5Lq1tJkEKCkOR7dF8QSPSjisHPlxh/O3M1sJNKKpsKDqMpYTa+bB8u1xE8ko
+         9Yi8cAdQ777L/YPw+2yHjmlzGaaSrr7gm/z/NT5/P3DFUIWmb+uk4HzHZxv/83G+Tg5c
+         TvCgMhhQ68JELV0Jm0mFoy74dHSG62yNh4jxa3b2MSsA5X5ODGqbxBLUNlFIQrBQHtkz
+         /1XXpTki5OPvOUKJAWhL20tlfajUI/hx5cLCbcNcDLpcNsBf2IuJj/tatv3Z88NUth17
+         0ZxJUlGvLiKBMgtpLWNHQh56mvt3IN31VHUmBazeCFGY7yEj21Yvp576C9fUMXDZEOeZ
+         +8aw==
+X-Forwarded-Encrypted: i=1; AJvYcCUq4mWPDilRp8ieChJnZEfcSh8C38ONnH+nbAwSqt+D9DDXY4GznMM4tEBvp6VzDPyt80K9COUiQEdGNd0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx3QBGEvvyiXvDWvAHhAGdDybKM/TfBZlCSLiPkp631eTDN/HP+
+	neFL7RTZKsanlL+OyWMCLqc16nWNkLfKLJjdL7GYjxEIpZvWktUekHU7brXm8PRKENGEA++xaul
+	3xN+QuRhpPlodZOzFRwxpF02bcKKzUYytmbAs1ZMLvcD3oXDzKdaiS8ENOgThgw==
+X-Received: by 2002:a05:600c:3ba3:b0:42a:a92b:8e06 with SMTP id 5b1f17b1804b1-42bb4c3e51bmr97930595e9.4.1725295194797;
+        Mon, 02 Sep 2024 09:39:54 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IG9phZGFO80qt7wZJU2JQ9lMT8p4KQA1ByjuceIs5a81ZoCFG/S1B+NhesIR8p82ymaNDcdGw==
+X-Received: by 2002:a05:600c:3ba3:b0:42a:a92b:8e06 with SMTP id 5b1f17b1804b1-42bb4c3e51bmr97930195e9.4.1725295193873;
+        Mon, 02 Sep 2024 09:39:53 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c72d:6500:849a:c1af:a5bb:ba9d? (p200300cbc72d6500849ac1afa5bbba9d.dip0.t-ipconnect.de. [2003:cb:c72d:6500:849a:c1af:a5bb:ba9d])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42ba63abea3sm180516415e9.28.2024.09.02.09.39.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 02 Sep 2024 09:39:53 -0700 (PDT)
+Message-ID: <995d18bb-16f1-4843-92bc-6c4a386a811d@redhat.com>
+Date: Mon, 2 Sep 2024 18:39:52 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DU0PR04MB9562:EE_|DB9PR04MB9645:EE_
-X-MS-Office365-Filtering-Correlation-Id: 49b24db9-8de2-4bc9-1491-08dccb6db320
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|366016|52116014|7416014|376014|38350700014|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?elFIRThHWXRCZ2lnaXl3Q3FKSGZBY2J0R01WcjhqV0pKTTBPTHZJWHFxMlRK?=
- =?utf-8?B?Vy9WTjBBZkZrdlQ4QmF1aGhQcHltVUkxcHVFQnJXSkl1YklJVlNUbExFNWFR?=
- =?utf-8?B?d2piZVFkU2tDQmdod0ltMmU1dHFtaGxOVEM0cEFKcSsvTjYrSVpVbEEzNjFO?=
- =?utf-8?B?MjcwVEpGM3BxUlQwT3I5d09XQTNjeFBvYXBvZUJaTUJhVTJKejFna0FnQWRU?=
- =?utf-8?B?a1poRkRPOVJaejR1bkEzMEltemNRNzBHczN0dTVENmxVSnVDZVR0dlEzaWRZ?=
- =?utf-8?B?L0lOUGYzYVpvbDk5dFZjVnNLS1lJeCtUQXBTczVVTHJrdDZaekovRC9TMzdw?=
- =?utf-8?B?LzBNN3YyK2pSTmgvQWozY3NMeGcxZWZWOXNsWU5YOTZMQWRpTzQ2ZjhCazND?=
- =?utf-8?B?OVR6Ti9yRlVINytzRmprcWIzcXhNdWg3VEpNTXAyY2JudGtoMURtQmNaUVdK?=
- =?utf-8?B?NjdBa1p4WHRESUx3eDVWUFlod3NRUk5sMnpTcEt6ZisyclAxWFNpNTJpbHlL?=
- =?utf-8?B?MkovNVpRVWJpVUpRUXhIWS9SdUVZY2hoV1F6MUpPZENHdVNadjIydEc5bzlO?=
- =?utf-8?B?UmkzMEF4YjM5eUk0N3ljSUE3Y3ZKc0NBcWwvMWRCaU1ZMVcrbkY1THYwWCtK?=
- =?utf-8?B?bjVBWXNiakpFdk9nemNJck5TenpTSkxtQkJkek1CQmd3UXRZV0RjbW9KMG1t?=
- =?utf-8?B?OVRsa1BEZlNMbm9MZk8wbWJvWis2a1N5dG1weE1QeWdYWmJYMWxQaXROTnRv?=
- =?utf-8?B?ZVlWNGNndGFmazk4ZEZISm0wUXBscEJxYXNqSG9abThQZkZCUkdBNWM2R0c5?=
- =?utf-8?B?elhFN25KM3lUeDF0bzhNYWIyWWdVTnpKQ1VWbEcvRHdteWluQytMTDNHTTBM?=
- =?utf-8?B?dGFqTmRuODF3U1pqZTNrT0VkMjBLaS9TK2x0UEJaUlA1aUE3dVozcm5zRzZt?=
- =?utf-8?B?RHVndGhYMDFDcjRxcEpDMm9XUkRpenFuSUdlbXdJWGxTN0lTSmsrVDd1dTNm?=
- =?utf-8?B?anNNeEVua05ORmpPbC8rYmwra3JodTlpTElHT1RlcUcxQU9RWCtES092R0Vl?=
- =?utf-8?B?S2NZMW5NM0JlUUJ3MkU1RzV1RGdkSm9IU3BYQkt0anBZeXZ2bHBYNUtISzR3?=
- =?utf-8?B?MDRYbjI4ZndpRFFsa2ZLMVdFMllLQ2F0bjcvWVBwZ1ViZUZrR3d3VjUzbzlw?=
- =?utf-8?B?bU5CMks2QjhXeUxRUmJDeENkVmhrd2VkNnJJREl1QUNMakxiTXhFdUFoQzlZ?=
- =?utf-8?B?NVovb1pyemovVlBTb0NEbXVqMzc2eElOMmI0VEhaMU1PMTcxb2tnTTlYRmJD?=
- =?utf-8?B?NTBOd01hckZtNEdvOGF0ZGdOOWVwRTUxdnZjbFdwYUJIYjVLMzJhVUZzeVRJ?=
- =?utf-8?B?Um5ORnJzYWFQYjh3YUYwWFFqams0d1h1bVN6Z3d6MHFNekl6Wm92dVYwTnE0?=
- =?utf-8?B?T2M2MlJuVk1qSm1HNkNlYU9PT2xUZ2NIeFdsTWlPV21nWk01VG91cGxIYzVl?=
- =?utf-8?B?blVzdFdqdkpYMno0ZDJXekF6UjNTYjZhTVZYMnRFejBIcnV0SGtndlJQQ3JF?=
- =?utf-8?B?NHl2bmN0bUVKR21td052YlNMRC8wNE1pSmdJMzhIaVlHdEZFdFpkYVNONGJ0?=
- =?utf-8?B?ZmNxSUNVWE1oWm52QUVleU1mZDEvM3Nxa1NheER6NEtESi9QcFNXcFVNUjk3?=
- =?utf-8?B?bFVnZFU2Z2p6b0pxZUhoVmlHZ05PMGdWbWpKc1dVazgyVUNNSGw1eFZ4cEVY?=
- =?utf-8?B?QkUxRnNpSVhqMmZ0R1llcThJVkg3TElwR2hsbllhQmJ2Rm01M3dVMXJ2YTZh?=
- =?utf-8?B?UDJuand2Rjl6Z2NpaG5BU0lPd2FjU3JxRTdvVHBXN2xPamVjOG4zOVdsOUhQ?=
- =?utf-8?B?OUM1S0g2VnZFdWN5Ync1T2xUWjJJZzEyVWFQamgrdmkvaE5CMzZWY2x4L3Bu?=
- =?utf-8?Q?t+yrHoe/Mec=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU0PR04MB9562.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(52116014)(7416014)(376014)(38350700014)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?L05jajFMSnpDZnRHbHU2YnRlWnkvT3FDTGZ3NFFQanJ6YkZPeHppdUk1Tkhz?=
- =?utf-8?B?eU81bTYycHluc3o2ZlJYQ1gwRHJqYXI0SS8yNHZuNFBqT0xGVmhyQlJJTmdD?=
- =?utf-8?B?Y1I4UHFFcGRXcFlaL0UyZVEvbVJVUU91a09ieFBGUkhhRUcwRk5wMHYzV3ov?=
- =?utf-8?B?VzgvRzROUktNWHJib0NQUElyTUpqYXZCRWlHaU9rcHR1SHY2bU1RUVN6T3Bj?=
- =?utf-8?B?bGMzVDB1UWxTeHRxbTE5aW9Pa1lkaCtoZzNya2FHZXc0RkhmNXZkNGVFcGlH?=
- =?utf-8?B?ckFWTkMybXdna0JBUXV3U1dBQjQxQzdoZEgweFNMSWdURmJTKzhHaC9uOTVP?=
- =?utf-8?B?dk1KbDBiMHN5SkszTWhiY2hWZmUyNzJUVlY0dG0venJuK2FLSllCQk5RandH?=
- =?utf-8?B?RHdFamVQSElZWEF6M0hhSjFrWlg0WkVQaTRJekhIbUU3V0JtR0M2cmllSXc5?=
- =?utf-8?B?RHQ1OUxyOG1vcFZTRHBUZUtaa01ocVFNd2hhNHg5MnZsMElFcGdMOVpkVTF3?=
- =?utf-8?B?L3l2YVhDazJJR0FHRWpOMlEyNFhnbzZEQ2F4UjFyWmtCcXptdldRM3E3Ukl4?=
- =?utf-8?B?c0YxOFp1WEdmeXkxb25UTmVNRDYyVHlsV1VXZHo0V3RXbEJWbVFZQ2ltcXpF?=
- =?utf-8?B?dDNuakRtZUdvR2Q3STNnaThaM0lYTk10NFBEbXBEWHh2UEM5Sm5UOWJFWGRL?=
- =?utf-8?B?YkJFMERlTHNlMXN3QmZhRU00UHdKaTErTzZ2VDNSZTdrNEh0SjRoVFdOTGNu?=
- =?utf-8?B?SjFPbUd5bjdmV0MybXNBOWpMcVNMVS8xVDJaQ1dRL0NScHZrR3F4MzRYa2N3?=
- =?utf-8?B?OERTZWRKdGFJdTNOaExLK29iNWhDbnQ2RHg4Y2ZnemNxMnU5bUg4dnFwOWkz?=
- =?utf-8?B?RklyUi9wTnd5QytPZ2F0UjZycGJtcHZ1ZlFtS21ZUGJvTHFCbHFpeTB5NTlX?=
- =?utf-8?B?aGhtM3ZOU0w3ZDJ2RURFckdSd1FCWDN3Nm85d2VIamw0NG55RlljUFdTNHFy?=
- =?utf-8?B?T1hiTnJQWHIwVGRRWFFmSmNYT0huRVc4eENjVVpGcEx6S1VmdXFTNzBjeVBS?=
- =?utf-8?B?bnZmVCtJMVdnZzNlbXdYaDhZY1JKbUJrRFRGM0plSnJSL0NoVnVtM0ZSN1VK?=
- =?utf-8?B?Ukt2dk54YlNwUHNIOElnSmlIOVBIMnp4TnJhSTc3a3poSHo4NGFaaEdMTHZN?=
- =?utf-8?B?Qk9GcE50THh0R3hZbnQvNGxGLzVRbEllWldYWm1YdEtaWnpVL2FUZVkzNmd3?=
- =?utf-8?B?b0hyRFpDVjBDcG81empNK3VQWlFOS1NBdXdyYlVQcTZ0OXJNM2p4LzllYWlF?=
- =?utf-8?B?bmE5d2l4b3JqbGtEUlRSRVErb1ZEU3NYZU1MR0ZleStQTlNnbEJMcU9DL0dh?=
- =?utf-8?B?TlZYSEtWU2Vvb2JleTNNckxHY3RIMEtMVFNHckpaMEhlaGlsejVPcndmbXNS?=
- =?utf-8?B?UXdDMGR1ZVdReFNOTDJQQ3UxZkZCckkrY2V4V1RZVXZ5VlhUaEJ5c2pYd2pD?=
- =?utf-8?B?NVlidmVncnZJcDVDN2VmMWJZK2VzdUU1d01yTTNwMXRCL0JYNW5td1EwUzhu?=
- =?utf-8?B?bVhEUCtCMnZiQjdmMGcvbUk2QWhQWXk1M05sY3BvbmN2KzRsOC84dTROdFgw?=
- =?utf-8?B?QTBGR1FWS29iN05Xbi82V1JlaG9kQTlvb3Fxd1JFTm5Md3oxT3BQeHBXM0Rk?=
- =?utf-8?B?NjhBbURzSU4xRU5kWlNOSDhXZkFCcjZFdnl1d2Z4Z2ZxemFreTBxdmZsTExw?=
- =?utf-8?B?V3hLbnd5MG1vblAwZmFzaFJWbDAvYWtpd2NFcjRCcUJxTDdIcDJ1V0hYNzJ2?=
- =?utf-8?B?SmJINkE4aWNvbENCekNsTkZ6cWYyNmM2WDF4S2JUbG1nNnhQdWxmVFhkbk1t?=
- =?utf-8?B?bCtobkJvcys4N05VNk5vZGxEVTVQOFhDcG81b1VyNTY3RENiSS8yOHFRbnVL?=
- =?utf-8?B?ckE0aUJBRUZubkFjVXl0RlJGNVBqK1pYdFlzKzJiNEh1eFpJQlBKdS91ZjVu?=
- =?utf-8?B?ZVRUakVUVUx4Mit4V1U4VFFqNWU2WkVEckhLVjJGSDgwQ0hoWUgwczVJMlBT?=
- =?utf-8?B?aW16bTk0ZWpIVlFTMmpTT3NWTERPR1lVdHNLWEZtTDc4V3pHb3hSTmhJblRS?=
- =?utf-8?B?N2ZuSU1nNW9kaStXSXBhRTBJU2liaFMyekR5VzlrUWNBTnNNcThTdUJZWGg4?=
- =?utf-8?B?NVE9PQ==?=
-X-OriginatorOrg: cherry.de
-X-MS-Exchange-CrossTenant-Network-Message-Id: 49b24db9-8de2-4bc9-1491-08dccb6db320
-X-MS-Exchange-CrossTenant-AuthSource: DU0PR04MB9562.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Sep 2024 16:38:39.7782
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 5e0e1b52-21b5-4e7b-83bb-514ec460677e
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: CU1m6xkVGtDKkIzxxI4RZV09TPvc4D1ru/vW8ZM3rumc64GLO/8u5OHwV4fNpw009zaro1A5yLHSivhBEdjHyafyVOpGAkiZvzu8XKR3scg=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR04MB9645
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/2] mm: make copy_to_kernel_nofault() not fault on user
+ addresses
+To: Omar Sandoval <osandov@osandov.com>
+Cc: Christophe Leroy <christophe.leroy@csgroup.eu>, linux-mm@kvack.org,
+ Andrew Morton <akpm@linux-foundation.org>, Christoph Hellwig <hch@lst.de>,
+ x86@kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, loongarch@lists.linux.dev,
+ linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
+ linuxppc-dev@lists.ozlabs.org, linux-um@lists.infradead.org,
+ kernel-team@fb.com
+References: <cover.1725223574.git.osandov@fb.com>
+ <5fa50d78-6764-4f99-87b3-7bd7edbeea5a@csgroup.eu>
+ <ZtVbrM4rQsGFJo_t@telecaster>
+ <861d448c-ce1d-4b74-87eb-9b211dfebbb1@redhat.com>
+ <ZtXZFc9kZAUMD4e0@telecaster>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <ZtXZFc9kZAUMD4e0@telecaster>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Add the tsd,mule-i2c-mux alongside with the amc6821 (tsd,mule) and isl1208
-as a default device on the mux.
+On 02.09.24 17:26, Omar Sandoval wrote:
+> On Mon, Sep 02, 2024 at 10:56:27AM +0200, David Hildenbrand wrote:
+>> On 02.09.24 08:31, Omar Sandoval wrote:
+>>> On Mon, Sep 02, 2024 at 08:19:33AM +0200, Christophe Leroy wrote:
+>>>>
+>>>>
+>>>> Le 02/09/2024 à 07:31, Omar Sandoval a écrit :
+>>>>> [Vous ne recevez pas souvent de courriers de osandov@osandov.com. Découvrez pourquoi ceci est important à https://aka.ms/LearnAboutSenderIdentification ]
+>>>>>
+>>>>> From: Omar Sandoval <osandov@fb.com>
+>>>>>
+>>>>> Hi,
+>>>>>
+>>>>> I hit a case where copy_to_kernel_nofault() will fault (lol): if the
+>>>>> destination address is in userspace and x86 Supervisor Mode Access
+>>>>> Prevention is enabled. Patch 2 has the details and the fix. Patch 1
+>>>>> renames a helper function so that its use in patch 2 makes more sense.
+>>>>> If the rename is too intrusive, I can drop it.
+>>>>
+>>>> The name of the function is "copy_to_kernel". If the destination is a user
+>>>> address, it is not a copy to kernel but a copy to user and you already have
+>>>> the function copy_to_user() for that. copy_to_user() properly handles SMAP.
+>>>
+>>> I'm not trying to copy to user. I am (well, KDB is) trying to copy to an
+>>> arbitrary address, and I want it to return an error instead of crashing
+>>> if the address is not a valid kernel address. As far as I can tell, that
+>>> is the whole point of copy_to_kernel_nofault().
+>>
+>> The thing is that you (well, KDB) triggers something that would be
+>> considered a real BUG when triggered from "ordinary" (non-debugging) code.
+> 
+> If that's the case, then it's a really weird inconsistency that it's OK
+> to call copy_from_kernel_nofault() with an invalid address but a bug to
+> call copy_to_kernel_nofault() on the same address. Again, isn't the
+> whole point of these functions to fail gracefully instead of crashing on
+> invalid addresses? (Modulo the offline and hwpoison cases you mention
+> for /proc/kcore.)
 
-Signed-off-by: Farouk Bouabid <farouk.bouabid@cherry.de>
----
+I assume the difference is mostly historically, because usually, when 
+modifying something (ftrace, live patch, kdb) you better know what you 
+want to modify actually exist and can be modified. IOW, you usually 
+read-before-weite.
 
-Notes:
-    Merge after patches 1,2,3,4
+In contrast, things like /proc/kcore, (I think) while limiting it to 
+sane addresses, might still read from areas where we remove entries from 
+the directmap (e.g., secretmem), I think.
 
- arch/arm64/boot/dts/rockchip/px30-ringneck.dtsi | 24 ++++++++++++++++++------
- 1 file changed, 18 insertions(+), 6 deletions(-)
+Like, in a compiler, modifying a variable you didn't read before is 
+rather rare as well. If you would have tried to read it, the 
+copy_from_kernel_nofault() would have failed.
 
-diff --git a/arch/arm64/boot/dts/rockchip/px30-ringneck.dtsi b/arch/arm64/boot/dts/rockchip/px30-ringneck.dtsi
-index bb1aea82e666..a683ed3e2fce 100644
---- a/arch/arm64/boot/dts/rockchip/px30-ringneck.dtsi
-+++ b/arch/arm64/boot/dts/rockchip/px30-ringneck.dtsi
-@@ -9,6 +9,7 @@
- 
- / {
- 	aliases {
-+		i2c10 = &i2c10;
- 		mmc0 = &emmc;
- 		mmc1 = &sdio;
- 		rtc0 = &rtc_twi;
-@@ -292,14 +293,25 @@ &i2c1 {
- 	clock-frequency = <400000>;
- 
- 	fan: fan@18 {
--		compatible = "ti,amc6821";
-+		compatible = "tsd,mule", "ti,amc6821";
- 		reg = <0x18>;
--		#cooling-cells = <2>;
--	};
- 
--	rtc_twi: rtc@6f {
--		compatible = "isil,isl1208";
--		reg = <0x6f>;
-+		i2c-mux {
-+			compatible = "tsd,mule-i2c-mux";
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			i2c10: i2c@0 {
-+				reg = <0x0>;
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				rtc_twi: rtc@6f {
-+					compatible = "isil,isl1208";
-+					reg = <0x6f>;
-+				};
-+			};
-+		};
- 	};
- };
- 
+I agree that the difference is weird, and likely really "nobody ran into 
+this before in sane use cases".
+
+> 
+>> But now I am confused: "if the destination address is in userspace" does not
+>> really make sense in the context of KDB, no?
+>>
+>>    [15]kdb> mm 0 1234
+>>    [   94.652476] BUG: kernel NULL pointer dereference, address:
+>> 0000000000000000
+>>
+>> Why is address 0 in "user space"? "Which" user space?
+> 
+> Sure, it's not really user space, but it's below TASK_SIZE_MAX, so
+> things like handle_page_fault() and fault_in_kernel_space() treat it as
+> if it were a user address. I could
+> s/userspace address/address that is less than TASK_SIZE_MAX or is_vsyscall_vaddr(address)/.
+
+Ah, okay, that's x86 specifics detail in 
+copy_from_kernel_nofault_allowed(), thanks.
+
+> 
+>> Isn't the problem here that KDB lets you blindly write to any non-existing
+>> memory address?
+>>
+>>
+>> Likely it should do some proper filtering like we do in fs/proc/kcore.c:
+>>
+>> Take a look at the KCORE_RAM case where we make sure the page exists, is
+>> online and may be accessed. Only then, we trigger a
+>> copy_from_kernel_nofault(). Note that the KCORE_USER is a corner case only
+>> for some special thingies on x86 (vsyscall), and can be ignored for our case
+>> here.
+> 
+> Sure, it would be better to harden KDB against all of these special
+> cases. But you can break things in all sorts of fun ways with a
+> debugger, anyways. The point of this patch is that it's nonsense that a
+> function named copy_to_kernel_nofault() does indeed fault in a trivial
+> case like address < TASK_SIZE_MAX.
+
+Yes, because the write-without-read to kernel memory "you don't know 
+even exists" is rather ... weird :)
+
+Anyhow, no strong opinion here. Patches look simple enough.
 
 -- 
-2.34.1
+Cheers,
+
+David / dhildenb
 
 
