@@ -1,105 +1,236 @@
-Return-Path: <linux-kernel+bounces-311387-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311388-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BAD0968872
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 15:07:04 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C1DE968877
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 15:07:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4042C1C22A67
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 13:07:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B6C6DB27441
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 13:07:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D169205E08;
-	Mon,  2 Sep 2024 13:06:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OzyqLZHe"
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 006CA201255;
+	Mon,  2 Sep 2024 13:07:12 +0000 (UTC)
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3E7720126E
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 13:06:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E91E746E;
+	Mon,  2 Sep 2024 13:07:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725282404; cv=none; b=Me6ML7GUre9/qU8O2PKYfqqO9NNL+dv728N/vbg954YZpeGIEb5sFiq6jlLYm0y5sjayjDFzTDLFWqcaGbAeMPxeHNTRTJD9LjoDOByE7BaCpYS5BYtiJCLQ9VlrUUnYuz4ikFnswyerKJ4S9nSYj4G+nQTni4AXf4CRctZTR/c=
+	t=1725282431; cv=none; b=b7Au9lD+KLqXB0b21FNYCt6Pppj13AdQ9DKd4S4Byp2vRNLyuDtaj4udKfMZy6Ujvn1zf1LRUnzHj/dnw5bv9xDs3gPmIda70wRIAzBMTtRGaHsUsfKPonXszDsb9dpsdJ6RjHMReCT9+k/6xr54GlejHfFGxMZE+8Za8Q4QaKI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725282404; c=relaxed/simple;
-	bh=hCao3ZwMfqBXJ90vPgMuPKTqI+Ts2iwIkv+E0luWloY=;
-	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=UCef2o5aAXx3+vtCGxo8uAaWrpraCQ0Lw3jMLXnuanediZk3eIYclVttZkvemECsvlLpJ7p4KSrnhi+VfNE6qU59sKMzi7GP00llx2D9AbnRyIz8wRpy5p7P+Ap+dkV8IymbAbsCQcOdFZUSTCy3O9N1fsdda7EYTn2N3+mZLsw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OzyqLZHe; arc=none smtp.client-ip=209.85.167.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-533463f6b16so5325617e87.1
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2024 06:06:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1725282400; x=1725887200; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=KxFGRWUoPCMnGMElyAdl1qHVvyQ1H86yoEGFpbkJKF8=;
-        b=OzyqLZHejB7rNiMGkaEAWgPNi1a1x4+ma/4n1tG8iYgm7HDoDRA/zRAANLjJHzMSjl
-         5Dxn6tHX53LvLoxwXAJyMPjxOx1NRizaG/Q8Pb39sj3SANqZH5dnb4s4h2IbQ0NqgiyF
-         Ru5Xl2MdykcPl1iGDqLQT0o8+L5wMBJgMn7VAfn1TJCTNZx0yztzsMGTYeCE6VbrxqHv
-         FTJBF5ZW1AihURIRhTvvL3Sa4rCR6LVm15YVoUlsrf2DweAIfgSSQWkYoSfX3syleiYg
-         1P53KrsP9zQqi6qGomk2+YhLEQSp8SlcOlTG97z3WE8HkBb+3CjJMeusDoQDj4hb+pD0
-         PK6Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725282400; x=1725887200;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KxFGRWUoPCMnGMElyAdl1qHVvyQ1H86yoEGFpbkJKF8=;
-        b=GW4KVuHqw2eNp9Y8SqKhKcnBriYy7uEdrPXZuBZkShzgSSdmEKQKH3hAF8N4NjZDhW
-         +mmfCLfdZA3FQieudFA+zl0WmaHP0QhzygZUKSntkLpcnJfTBWWbQ0xPYuCgqyHSXb8u
-         EqkS8+p05I3wNbzYOjn5TxVUVV4vuy9Ts5isu980mOg4G+/9LX4AcMkXplVQ8QeJDC7S
-         sXeWgjnLJkKho4TbOOVu5iOtQq2bf9FC/1RRQuP4YC5eVZIOJNCQkhb4etmdLqdUvwHD
-         Skjn/4CZp+z6atcqZEeMHVYMUApvVyTUiY7vZLUzVn8keBl4d3cgPagZOqf0Vd/vVwO+
-         aUdQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUzIldarfGsJkvdStHgZTN2z2O1C8DVhL7QYQXN7SZCtAKB94VrycNhClPEPw+z7pVsnjC9tYZkaUt+Lkc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx/zcQhTpwnPWgdA37MXRWH0ogCen47DlDpLBFD5lqaiznnUCMc
-	00WWmIISrQ7ydNf3rFzK2iMLJkFmcBsgZzIBH4SczAqwspVGmpoUAxQ4N/TrX00=
-X-Google-Smtp-Source: AGHT+IFt3dS9hGbtQ1XenR2ZRQc50prF2t+XU8esp4fl59eflznNRmkdPTVgxF5vzgMf2AOQpdNOGA==
-X-Received: by 2002:a05:6512:230c:b0:52e:fcd0:241f with SMTP id 2adb3069b0e04-53546b27fddmr7561878e87.29.1725282399574;
-        Mon, 02 Sep 2024 06:06:39 -0700 (PDT)
-Received: from [192.168.68.116] ([5.133.47.210])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a89891968desm558529266b.130.2024.09.02.06.06.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Sep 2024 06:06:39 -0700 (PDT)
-From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-To: vincent.sunplus@gmail.com, linux-kernel@vger.kernel.org, 
- Zhang Zekun <zhangzekun11@huawei.com>
-In-Reply-To: <20240902015051.85093-1-zhangzekun11@huawei.com>
-References: <20240902015051.85093-1-zhangzekun11@huawei.com>
-Subject: Re: [PATCH] nvmem: sunplus-ocotp: Use
- devm_platform_ioremap_resource_byname() helper function
-Message-Id: <172528239889.64394.14926980583304748361.b4-ty@linaro.org>
-Date: Mon, 02 Sep 2024 14:06:38 +0100
+	s=arc-20240116; t=1725282431; c=relaxed/simple;
+	bh=2i/Z9d1sSqDE7cfUxI+kQhMrLwLVAxUFIvaBcLLxE40=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qwDAP+ae6nDCuXFWQ015d/CPl3ezYT/7M60CrSgBXbX/hf4P2GnzROcnEEovhMxRST+sU11/vVKknoJWF0u7tcEoRcOnBG4spy6LFTywW9h2Bqoqp1t31YaRlGI5PN5uRkLk3Adc85dUxf+tQ2hK37mn73BUu/DmpMRgEzpGhO4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4Wy8DB1TB0z9sSN;
+	Mon,  2 Sep 2024 15:07:06 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id pEK_keS0MYWc; Mon,  2 Sep 2024 15:07:06 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4Wy8DB0STbz9sS7;
+	Mon,  2 Sep 2024 15:07:06 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id F114A8B76C;
+	Mon,  2 Sep 2024 15:07:05 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id unc9YceQJHKx; Mon,  2 Sep 2024 15:07:05 +0200 (CEST)
+Received: from [192.168.234.167] (unknown [192.168.234.167])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id F2E7F8B763;
+	Mon,  2 Sep 2024 15:07:04 +0200 (CEST)
+Message-ID: <23dcd8ab-592f-4e74-b7a7-99df3ffb9a3a@csgroup.eu>
+Date: Mon, 2 Sep 2024 15:07:04 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.12.2
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 4/5] powerpc/vdso: Wire up getrandom() vDSO
+ implementation on PPC32
+To: "Jason A. Donenfeld" <Jason@zx2c4.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+ Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
+ <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
+ Naveen N Rao <naveen@kernel.org>, Nathan Chancellor <nathan@kernel.org>,
+ Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling
+ <morbo@google.com>, Justin Stitt <justinstitt@google.com>,
+ Shuah Khan <shuah@kernel.org>, linux-kernel@vger.kernel.org,
+ linuxppc-dev@lists.ozlabs.org, linux-kselftest@vger.kernel.org,
+ llvm@lists.linux.dev, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+ linux-trace-kernel@vger.kernel.org,
+ Adhemerval Zanella <adhemerval.zanella@linaro.org>,
+ Xi Ruoyao <xry111@xry111.site>
+References: <cover.1725278148.git.christophe.leroy@csgroup.eu>
+ <ec4d2919836a9f3a7791c2540ee79067396d701b.1725278148.git.christophe.leroy@csgroup.eu>
+ <ZtWw6Wuudqj4IYWL@zx2c4.com>
+Content-Language: fr-FR
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+In-Reply-To: <ZtWw6Wuudqj4IYWL@zx2c4.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
 
-On Mon, 02 Sep 2024 09:50:51 +0800, Zhang Zekun wrote:
-> platform_get_resource_byname() and devm_ioremap_resource() can be
-> replaced by devm_platform_ioremap_resource_byname(), which can
-> simplify the code logic a bit, No functional change here.
+
+Le 02/09/2024 à 14:34, Jason A. Donenfeld a écrit :
+> On Mon, Sep 02, 2024 at 02:04:41PM +0200, Christophe Leroy wrote:
+>> This first patch adds support for PPC32. As selftests cannot easily
+>> be generated only for PPC32, and because the following patch brings
+>> support for PPC64 anyway, this patch opts out all code in
+>> __arch_chacha20_blocks_nostack() so that vdso_test_chacha will not
+>> fail to compile and will not crash on PPC64/PPC64LE, allthough the
+>> selftest itself will fail. This patch also adds a dummy
+>> __kernel_getrandom() function that returns ENOSYS on PPC64 so that
+>> vdso_test_getrandom returns KSFT_SKIP instead of KSFT_FAIL.
 > 
+> Why not just wire up the selftests in the next patch like you did for
+> v3? This seems like extra stuff for no huge reason?
+
+In v3 selftests were already wired up in v3, and there was the following 
+build failure:
+
+$ make  ARCH=powerpc CROSS_COMPILE=powerpc64le-linux-
+   CC       vdso_test_gettimeofday
+   CC       vdso_test_getcpu
+   CC       vdso_test_abi
+   CC       vdso_test_clock_getres
+   CC       vdso_test_correctness
+   CC       vdso_test_getrandom
+   CC       vdso_test_chacha
+/home/chleroy/linux-powerpc/tools/testing/selftests/../../../tools/arch/powerpc/vdso/vgetrandom-chacha.S: 
+Assembler messages:
+/home/chleroy/linux-powerpc/tools/testing/selftests/../../../tools/arch/powerpc/vdso/vgetrandom-chacha.S:84: 
+Error: `stmw' invalid when little-endian
+/home/chleroy/linux-powerpc/tools/testing/selftests/../../../tools/arch/powerpc/vdso/vgetrandom-chacha.S:198: 
+Error: `lmw' invalid when little-endian
+make: *** [../lib.mk:222: 
+/home/chleroy/linux-powerpc/tools/testing/selftests/vDSO/vdso_test_chacha] 
+Error 1
+
+So I did this change to get a clean PPC32 implementation before going 
+into PPC64. I thought it was easier to go in two steps for reviews, 
+bisectability, etc .... for just a very little extra stuff.
+
 > 
+>>   arch/powerpc/Kconfig                         |   1 +
+>>   arch/powerpc/include/asm/vdso/getrandom.h    |  54 +++++
+>>   arch/powerpc/include/asm/vdso/vsyscall.h     |   6 +
+>>   arch/powerpc/include/asm/vdso_datapage.h     |   2 +
+>>   arch/powerpc/kernel/asm-offsets.c            |   1 +
+>>   arch/powerpc/kernel/vdso/Makefile            |  13 +-
+>>   arch/powerpc/kernel/vdso/getrandom.S         |  58 ++++++
+>>   arch/powerpc/kernel/vdso/vdso32.lds.S        |   1 +
+>>   arch/powerpc/kernel/vdso/vdso64.lds.S        |   1 +
+>>   arch/powerpc/kernel/vdso/vgetrandom-chacha.S | 207 +++++++++++++++++++
+>>   arch/powerpc/kernel/vdso/vgetrandom.c        |  16 ++
+>>   tools/testing/selftests/vDSO/Makefile        |   2 +-
+>>   12 files changed, 359 insertions(+), 3 deletions(-)
+>>   create mode 100644 arch/powerpc/include/asm/vdso/getrandom.h
+>>   create mode 100644 arch/powerpc/kernel/vdso/getrandom.S
+>>   create mode 100644 arch/powerpc/kernel/vdso/vgetrandom-chacha.S
+>>   create mode 100644 arch/powerpc/kernel/vdso/vgetrandom.c
+> 
+> I think you might have forgotten to add the symlink in this commit (or
+> the next one, per my comment above, if you agree with it).
 
-Applied, thanks!
+???? That's odd. All CI tests on github went ok !!! Looks like the CI 
+tests for selftests are broken. Argh ! And of course on my computer the 
+link was there so I didn't notice.
 
-[1/1] nvmem: sunplus-ocotp: Use devm_platform_ioremap_resource_byname() helper function
-      commit: f940496293787ddfa481f2dc67fed60148212d83
+> 
+>> +/*
+>> + * Very basic 32 bits implementation of ChaCha20. Produces a given positive number
+>> + * of blocks of output with a nonce of 0, taking an input key and 8-byte
+>> + * counter. Importantly does not spill to the stack. Its arguments are:
+>> + *
+>> + *	r3: output bytes
+>> + *	r4: 32-byte key input
+>> + *	r5: 8-byte counter input/output (saved on stack)
+>> + *	r6: number of 64-byte blocks to write to output
+>> + *
+>> + *	r0: counter of blocks (initialised with r6)
+>> + *	r4: Value '4' after key has been read.
+>> + *	r5-r12: key
+>> + *	r14-r15: counter
+>> + *	r16-r31: state
+>> + */
+>> +SYM_FUNC_START(__arch_chacha20_blocks_nostack)
+>> +#ifdef __powerpc64__
+>> +	blr
+>> +#else
+>> +	stwu	r1, -96(r1)
+>> +	stw	r5, 20(r1)
+>> +	stmw	r14, 24(r1)
+>> +
+>> +	lwz	r14, 0(r5)
+>> +	lwz	r15, 4(r5)
+>> +	mr	r0, r6
+>> +	subi	r3, r3, 4
+>> +
+>> +	lwz	r5, 0(r4)
+>> +	lwz	r6, 4(r4)
+>> +	lwz	r7, 8(r4)
+>> +	lwz	r8, 12(r4)
+>> +	lwz	r9, 16(r4)
+>> +	lwz	r10, 20(r4)
+>> +	lwz	r11, 24(r4)
+>> +	lwz	r12, 28(r4)
+> 
+> If you don't want to do this, don't worry about it, but while I'm
+> commenting on things, I think it's worth noting that x86, loongarch, and
+> arm64 implementations all use the preprocessor or macros to give names
+> to these registers -- state1,2,3,...copy1,2,3 and so forth. Might be
+> worth doing the same if you think there's an easy and obvious way of
+> doing it. If not -- or if that kind of work abhors you -- don't worry
+> about it, as I'm confident enough that this code works fine. But it
+> might be "nice to have". Up to you.
 
-Best regards,
--- 
-Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+I'll have a look.
 
+> 
+>> +
+>> +	li	r4, 4
+>> +.Lblock:
+>> +	li	r31, 10
+>> +
+> 
+> Maybe a comment here, "expand 32-byte k" or similar.
+
+ok
+
+> 
+>> +	lis	r16, 0x6170
+>> +	lis	r17, 0x3320
+>> +	lis	r18, 0x7962
+>> +	lis	r19, 0x6b20
+>> +	addi	r16, r16, 0x7865
+>> +	addi	r17, r17, 0x646e
+>> +	addi	r18, r18, 0x2d32
+>> +	addi	r19, r19, 0x6574
+>> +
+>> +	mtctr	r31
+>> +
+>> +
+>> +	subic.	r0, r0, 1	/* subi. can't use r0 as source */
+> 
+> Never seen the period suffix. Just looked this up. Neat.
+
+Not sure what your comment is. Are you talking about the dot suffix 
+after subic ?
+
+That dot means I want CR register to be updated by the instruction. It 
+is equivalent to doing a comparision of the result with 0. It is used by 
+the bne (branch if not equal) a few lines later.
 
