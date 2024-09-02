@@ -1,110 +1,103 @@
-Return-Path: <linux-kernel+bounces-311331-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311332-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C03896879D
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 14:36:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A17659687A0
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 14:37:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D17D1C21CC5
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 12:36:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D23D51C21E86
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 12:37:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F0FE19C55E;
-	Mon,  2 Sep 2024 12:35:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B497619C540;
+	Mon,  2 Sep 2024 12:37:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="Hl+4GqzY"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KiR084Gq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66AB119C56D
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 12:35:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C49E19E98E;
+	Mon,  2 Sep 2024 12:37:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725280547; cv=none; b=ByI+AcL/7jsuV94BVgu8ENJuVTCLWY6FkRmTQkbYL2610aGnuWhycmq3oSq7cWCz8NhcySEMQxogMPCP6LaQznUweauLAnq8x8/pmo+rK+iUAYQYSPx2utuihWg+PMWewQvWFLc/CyNqWWlrAS5MadxjYOEgF4PtxESSzKCl7Og=
+	t=1725280642; cv=none; b=fAPk4gP8j9w4FT/cDzc11WD8wLo1EckCKIIciYO5oMFSd3aMM8Bda1oP74TbEsKWMpn7n1hECnjZNtzNADpA1+DlXW2myZXicbRFLsu5+kVWbeRF1F5L6Qh2hS1YLcWoNsSLdrQNqH6OCsU8bh4PoKwqNX/nKA87zktMwArXB8M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725280547; c=relaxed/simple;
-	bh=aOwk+CL0TJPxOVN51SIzI/t+S0Trf54uN7JkkUAIU8o=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=uenBFTDXt3LBPZXCjc7pmJAZ/dyCZeF233PyK2Fim+Iv6963iiAjKjgnldfZGmXAQ8IEotPp1hlEHf7KFabt1zdjmevatls71z2sozwwXX2ydgohjUCWDd3wV1kpqLgursYJ+7UKD85k5e5bIiL+fKBT7MxsT474uybisCzjW2I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=Hl+4GqzY; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-42c7bc97423so19047385e9.0
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2024 05:35:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1725280545; x=1725885345; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Tpnj+/HKdVwgf15IPSWq5bY+Pk4gPjusx0sjEUnHeK0=;
-        b=Hl+4GqzY5zNiDn+ZinOgd5ZtAn2L6zaeRsBm169bKrJYzLDy5Avd6Nhbmf4VHD0YGF
-         2nv2yQGCsCTNUGjZroFJOgLfVW9hx09eahGv0TCNRHMpItRvAVFw8BKfnXat5dkOBwSK
-         JXsKlge+yjxDzrn6BqKlXRnSUBUbg19GzGSUMiRH7BXQQuSnv1nP8vyURuGu4vdJkjpB
-         2VN8LdwWmjHe2OSZsxOkYWfXolGUOcbi8QOD3a6x7TTNtngNK6FOE7Z4tShfTG+J1F5O
-         vJ95ilODFKhE2Q4djCWQ8YYI3327E9rs4SFVozA7HMQB0TjUM7/dBSKiGeQfPusIFOh1
-         hpfA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725280545; x=1725885345;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Tpnj+/HKdVwgf15IPSWq5bY+Pk4gPjusx0sjEUnHeK0=;
-        b=QfV29xLxGCO895WwQuS759vGsEiASCo1qDAtPMQXOhbzAzDwBhedZ/OgQcWyI0ewTi
-         yQJl6pG2k+092qQtglaPSxbzjHtL8D7pHiVSne8N8US1+StI4z9zJw+vSwjHjpFGH2+z
-         q1tzqdsJJxQTNf+9II9CHrEwyX7hItkSjnRuD3wCYfBIgNIiUNgB6dE1OUODPe8DUann
-         mZ+FEBt2uDpYbr0aWUEj/XLFvwsG8GzMEPWoProeeCMxT3anaDNqJl4Pb9ipBeoNL5Rd
-         5r7UEcGW+bRZoZHxQTrAfG0x52Hefxlizh1aHz/qS/AZK3n+srm4iSeJGbfXKhYfbAMc
-         imcg==
-X-Forwarded-Encrypted: i=1; AJvYcCWVD1iwPUlLGfGQ818dSpneQlXn22D6pbAtIoCBPo99URXXipV81atZcVGCYHghtnzZOhVb5Y7mrsFWgms=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyCaBOA3I8aLKnkhkRmKDHUO0dI1wgg4fz3yt14bHsk/t74WsuT
-	sUNaKEI72dO2Sk5IgWA+YL9UCxsdJY3qjH8SrQEqsJ7oEySPJhMK/pzSBk7RWR4=
-X-Google-Smtp-Source: AGHT+IHwJl4i3KHkhdA+Vrs/mDuObZdEmS6zBbFWSWuaIR6VdOmEX72sy09bnz0/7BHM/1CuOEsNwA==
-X-Received: by 2002:a05:600c:4ece:b0:42a:a6aa:4118 with SMTP id 5b1f17b1804b1-42bb01c1b92mr140463635e9.18.1725280544243;
-        Mon, 02 Sep 2024 05:35:44 -0700 (PDT)
-Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:b496:9e67:73c9:9f5a])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42bb6e33e2asm136864265e9.45.2024.09.02.05.35.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Sep 2024 05:35:41 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Andy Shevchenko <andy@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: Re: [PATCH v2] gpio: pch: kerneldoc fixes for excess members
-Date: Mon,  2 Sep 2024 14:35:40 +0200
-Message-ID: <172528053865.30388.17206369071478627196.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240902121258.64094-1-krzysztof.kozlowski@linaro.org>
-References: <20240902121258.64094-1-krzysztof.kozlowski@linaro.org>
+	s=arc-20240116; t=1725280642; c=relaxed/simple;
+	bh=D8VtvsQuvIpOqRNcsehv1Db0iQ7Qrya2A4PT1Nyu1h8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=meNQnYfgZthqRsZWRudvrJFq6ILVfTlL8h9eKySHYrFQQo/xKQpeyVFLsUBTwgOb8ggU4g+zehSuxGf17STiQ6J9sUQUEqTdXb8q/liEeIq9Ps2JyCS0shj9YhZQ40o13O4GBckenYau07YpO1DV0pTJHwdbfWbfwbkjHe10Qf8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KiR084Gq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 32170C4CEC2;
+	Mon,  2 Sep 2024 12:37:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725280641;
+	bh=D8VtvsQuvIpOqRNcsehv1Db0iQ7Qrya2A4PT1Nyu1h8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=KiR084GqIYL/Bc9QK69ACAqVoLNsVyurvC0SfiwuPdvDbm85m70yINX1dvnptFjdc
+	 NyJ+84qOcyVEbSz+V+itIk0L5g41osX19zD7mioS6ooKBw8aQnftv6t7z65PIU9f/u
+	 BjWw9/cZeLqZJt2G92pZX2hdnTGeHPKK0MHK4Z/Ug6fKIL07PYeJJa6InbInJQxAg/
+	 bKWZVjuaMcSiYrcsHg3brAiwp85aN6qVSo2Fzdgij/H1FPT7DzJfOERYfW4Gf4Rqa4
+	 zRrHOWQ5AfR2ep7RiCOMa095cXTW2sLgwqy7YM9XHLe5pN/6QjTic/74Gb8Q9/e3dB
+	 zMf60wyw70GtA==
+Date: Mon, 2 Sep 2024 13:37:12 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Christophe Leroy <christophe.leroy@csgroup.eu>
+Cc: "Jason A. Donenfeld" <Jason@zx2c4.com>, linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	Adhemerval Zanella <adhemerval.zanella@linaro.org>,
+	Xi Ruoyao <xry111@xry111.site>
+Subject: Re: [PATCH] selftests: vDSO: Do not rely on $ARCH for
+ vdso_test_getrandom && vdso_test_chacha
+Message-ID: <ec7bfeb4-30aa-4874-98b7-7877a12cb98f@sirena.org.uk>
+References: <ddf594c81787dba708fc392cb03027470dee64fb.1725124064.git.christophe.leroy@csgroup.eu>
+ <ZtRqp-uZe5C07qOF@zx2c4.com>
+ <fe8ea6a6-71d7-4cfc-b20b-fa0a7f39a4be@csgroup.eu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="+hvW1VMoMitmE2LX"
+Content-Disposition: inline
+In-Reply-To: <fe8ea6a6-71d7-4cfc-b20b-fa0a7f39a4be@csgroup.eu>
+X-Cookie: You are fairminded, just and loving.
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
+--+hvW1VMoMitmE2LX
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Mon, 02 Sep 2024 14:12:58 +0200, Krzysztof Kozlowski wrote:
-> Drop kerneldoc description of 'lock' to fix W=1 warning:
-> 
->   drivers/gpio/gpio-pch.c:101: warning: Excess struct member 'lock' description in 'pch_gpio'
-> 
-> 
+On Mon, Sep 02, 2024 at 02:22:38PM +0200, Christophe Leroy wrote:
 
-Applied, thanks!
+> When vdso_test_getcpu doesn't find the vDSO entry point, it prints an error
+> text and returns KSFT_SKIP
 
-[1/1] gpio: pch: kerneldoc fixes for excess members
-      commit: e1df5d0229c37265e4a84a32e71690c5089d2f5b
+> I thought it would be more correct to have the same behaviour on
+> vdso_test_getrandom instead of trying to build it only when the underlying
+> kernel supports it.
 
-Best regards,
--- 
-Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+The problem is that the test incorporates assembler code so it simply
+won't build for architectures without explicit porting, the issue isn't
+if the target kernel supports it but rather that the test won't compile
+in the first place.
+
+--+hvW1VMoMitmE2LX
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmbVsXcACgkQJNaLcl1U
+h9D3mAf/dS+qv6Qt8ulv2/CzOosH2KqxoDIi27uUhzq4itbQbnGjNTDMo7SoHwWP
+9luA5xoKVqI1r32V7f2VUZJ1IlZdc9h77diqQdSpOxlMfDlFfECIQcWnaPB2HBSq
+WOB3RuxIY8ovwPYyBYC+QQENn3H5UKkPLaWkko912mwb3a6ZXC/afnIkFrPPw0fi
+FkRQL45KnnHsH3hVi+ur4OsiuEnU8zwadlOrQWkh77EdTCMnj4TBfqVxleRrvgn1
+kqASZgnCzoYCEwX6unHXgEqPSUHlvjwhccdwCyYKyCVsZVmyn+gc0uWv6i3BoVD9
+7YSyJmNLntPUIc+pOcJCGB2hbf6QVg==
+=CY43
+-----END PGP SIGNATURE-----
+
+--+hvW1VMoMitmE2LX--
 
