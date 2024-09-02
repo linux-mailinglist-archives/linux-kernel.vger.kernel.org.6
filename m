@@ -1,133 +1,93 @@
-Return-Path: <linux-kernel+bounces-311375-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311369-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17DB7968851
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 15:03:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EF5696883D
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 15:01:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA3462831F6
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 13:03:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 37A1E1F22C60
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 13:01:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5640120FAAB;
-	Mon,  2 Sep 2024 13:02:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X96lmF18"
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BDF0205E07;
+	Mon,  2 Sep 2024 13:01:00 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32A5C1DAC5B;
-	Mon,  2 Sep 2024 13:02:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CAD9201251
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 13:00:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725282143; cv=none; b=WU3v2u8Bm71p/LspjKZ0e8lYYvTjRQZJaJf3RYnuAZAI2jcPEp3D+0+NV1N2bXwgPdsgBFdOuCyfm+wEHJ3kvtfjuDc4GQXZYkQ9q1pTHpUz5ugjJXdWPaZX+cbHK0HglKcRUG61ZWpjQNzqAD1d+eviAvUief+xpbn7g6pOPeE=
+	t=1725282059; cv=none; b=FYzzrC6NtogOA+kQf2fHUwGyf6Fj9w+f90qDs5RqIoKnRFA1/Gez7liXQoh/bE1t08w5VFVyQ8LthgatZGwyRzHSHU/51boyoBYqUE+0Rbvj7IZYnGorq5t+dp40axlU7FsAL1Gx3WL1rMwjPrrMM083PlO+TlKN3fPQslxRqHM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725282143; c=relaxed/simple;
-	bh=iLZMvPxWL/hM07xtESp0zfM5h8Z2IElrY3m6ozv0NZ0=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=h9DuobVxXJP3cQbWzD1PjoKSHJCeQwKjPuZm5C9brDEOl2FssuZJ3NFCcxA71yFCsdmIkghOQk0BV3HrR8Zsf2mF0X/Q7jkm+dqNe5xnlz87GYSEx4Y4RwauMnz3Cfauvnw+QXU9nv3KoRnkFA6dEN5PQ0SA342xkugiUi3/YhE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=X96lmF18; arc=none smtp.client-ip=209.85.208.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5bed83488b6so4085896a12.2;
-        Mon, 02 Sep 2024 06:02:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725282140; x=1725886940; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ISPUB3+TfMJL8WlSN0HaXE5GbA9EGj6rpkzOcqEjHyg=;
-        b=X96lmF18RoD2edJLMp1mTIjExzerd7ctRTPKArkk2rFuXQAKatL/UiET2+hGo1thy8
-         gzJXtLb/Ak+DibQtBjfUH8YZM34J9yd/UjBf2ADcVkHxDRQdkzdRQPmORNpTHrsS6dS/
-         olBC9s8VLpcV12FDkwY6JKaWIPGwH8w8v7KponY0wX5phuHM6lybBiZ1Bo57PXgPBQgk
-         c0yMUo2f7ZVopcTTYyNrShxRE1m+opaqVlq9g2Occ+WoWGtTBepFJ3CS5hxAWX2z+TI6
-         kOGSRoMp0/TlkVYQWUYhHEcaIyfG79ioXcuXYVxmx3tj5I6VfZo8TnSfWmVRtoLFsUoZ
-         FadQ==
+	s=arc-20240116; t=1725282059; c=relaxed/simple;
+	bh=LSyoNsJrt4xmwJKjc+8ZA14XovgyKEHLzkEhY1X82Ck=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=p/KuACHZ6pyQJHWIdr5GrPJGH3DoERtr0Ak45g4SjqNM6MymE5h+WpuVKt5IguCVOHCudEQn1VQdiUlYIvuF+F3/1zjbuyDHITtsgqpfg+QVAo9Qv4qLAyrr0o8XrJmYKk6EhBIsR0+sT607UzSwnBS4crr7jybDv42xlf31KQ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-39d17abca55so45033485ab.1
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2024 06:00:57 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725282140; x=1725886940;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ISPUB3+TfMJL8WlSN0HaXE5GbA9EGj6rpkzOcqEjHyg=;
-        b=tjyXOSVGL0nzpECFUP09eLVOnlEUqWX7gBag/1fEtjm+oY6lbSVWI6uWYoBE8qHRYT
-         HnqWRQvSsjWoPNNFnxmVilBAdkV+VSjXsPso4ttYXYZVipaRbFM32hJV4genx58QlFhK
-         xGEpYO16/YOgcL+qSlYtQ1MGmmEAqOW4lNmhiQncuQQDkx28KiXoPol2trwMVOB0sw1d
-         JiJG8xfi8egxAvekzIbdmDF7OLeYviGU+qOYp0oiKi5Cw1Ud148/Esho22wYxx6OC6uq
-         le1cUFLrRQOniUH0NyX1lbT2yrwROtMTTgA97fezkF1nCIL1wfypHTlba824nqb7TbSZ
-         fsNA==
-X-Forwarded-Encrypted: i=1; AJvYcCUS/WNpcv8A/oifETg0+OujYnwdSNgXlRmmbQl7PF7cdOHZOAD8enyReMq4ME72KJPGh9pIWvKi7za8@vger.kernel.org, AJvYcCUmdUDFLcrv5m1GpYw4Q89txptME4x9y9YhZ14kA7dDdg3u/d8CAVr4MC8Whhh1vQp+Lgm4NblKV/Hav5wo@vger.kernel.org, AJvYcCUoaRHC6GGh7j4MH0Zv+Q8Q5Kb0NkAw/HxvGnA9EmnlpeGU6KDAxjoUnN1gB4WdViyRgg/IJP9lG8Cl@vger.kernel.org
-X-Gm-Message-State: AOJu0YxOtmRAKUE+42LciIlFdRdqohVoPaUra5iJj2+JBnNnmvgs7z6c
-	wGkejD8LSpB2zsXsZg5ZKBY3QxKiq4jdgBOruRZIPHr/x/pnWhkFPLcw8BpPbUAXQw==
-X-Google-Smtp-Source: AGHT+IHzdL6H4IGR1sZ7NvQk63I3rQxGhyF/XvlgiQIr88pIt1WNgJPfwXOHq/wo5j8XyiqNrScKgA==
-X-Received: by 2002:a17:907:d8c:b0:a86:8863:2bf0 with SMTP id a640c23a62f3a-a897fa74f73mr1138857766b.48.1725282139845;
-        Mon, 02 Sep 2024 06:02:19 -0700 (PDT)
-Received: from localhost.localdomain ([37.162.182.81])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8989196968sm554979066b.139.2024.09.02.06.02.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Sep 2024 06:02:19 -0700 (PDT)
-From: Antoni Pokusinski <apokusinski01@gmail.com>
-To: jic23@kernel.org,
-	lars@metafoo.de,
-	robh@kernel.org,
-	krzk+dt@kernel.org
-Cc: pmeerw@pmeerw.net,
-	linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Antoni Pokusinski <apokusinski01@gmail.com>
-Subject: [PATCH 2/2] dt-bindings: iio: temperature: tmp006: document interrupt
-Date: Mon,  2 Sep 2024 14:59:49 +0200
-Message-Id: <20240902125946.350635-3-apokusinski01@gmail.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240902125946.350635-1-apokusinski01@gmail.com>
-References: <20240902125946.350635-1-apokusinski01@gmail.com>
+        d=1e100.net; s=20230601; t=1725282057; x=1725886857;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=PZece7UMwHVUVaB2eGQYYRwtN9PUX+TExglevqJpqSE=;
+        b=nuLh0kuCmTUrb51w2IiLZ5+AcZab5VIdGD1wycLj3I57RriwIoYWlP2QkL7cOrR+Zd
+         RS2hdOEferu0yeNhNt2jkbvOkDIJ1fANxbBU1DntD0BZ5o6t4toInqm8EDShRWH8n04b
+         lWfgLFxc17op50qJjsA01SlpQQTJlgGIsA+lIJTpZBRSKX0TWp8Vh+FD0awriXhIYqTI
+         qiYCax1Af5vk9cGSGErVQYyuqdmjWGcafKuZDT0S5k/ASrxEr62C1512yMKeBwwFGsVF
+         XcNCdGZKwIa1yvaZ5fX2JsnDBL51rREve2wP5Pk6WBGSIkesPwovuRGq1JHOLCx9rU22
+         Oahw==
+X-Gm-Message-State: AOJu0YwLcJRTKCxgqJdMdQ4jYDCEXrAmsEJoU3KfPtGMxctnxlcMZecl
+	omSHRhxcbXoX38nRSxDFYkDpBAjcv4plpRhLyP3nZtlzmGgo2CLPJuDZmNq0cbtzx9IzaeYFZYu
+	gM4Bys8k1ie2epZTlGwrEFzT5580xCfCUE1X1ywMVTuvqi7nufHmS7Ls=
+X-Google-Smtp-Source: AGHT+IFvb5k7vpw4Ir9oc3IfxWL1D8kLNLP5TgCmcgqBBdEkLVZL/zCtw3emOjaZ9IvnsCQY1gdK99YKI9SqdK0CkY60wP90HiBb
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a92:cda8:0:b0:396:ec3b:df63 with SMTP id
+ e9e14a558f8ab-39f4107768bmr6473115ab.4.1725282056970; Mon, 02 Sep 2024
+ 06:00:56 -0700 (PDT)
+Date: Mon, 02 Sep 2024 06:00:56 -0700
+In-Reply-To: <0000000000009a502f061d1ada4d@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000024b5a90621228855@google.com>
+Subject: Re: [syzbot] possible fix (linux-ntfs3)
+From: syzbot <syzbot+9af29acd8f27fbce94bc@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Update the example with interrupt bindings and add "interrupts" property
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
-Signed-off-by: Antoni Pokusinski <apokusinski01@gmail.com>
----
- .../devicetree/bindings/iio/temperature/ti,tmp006.yaml      | 6 ++++++
- 1 file changed, 6 insertions(+)
+***
 
-diff --git a/Documentation/devicetree/bindings/iio/temperature/ti,tmp006.yaml b/Documentation/devicetree/bindings/iio/temperature/ti,tmp006.yaml
-index d43002b9bfdc..590f50ba3a31 100644
---- a/Documentation/devicetree/bindings/iio/temperature/ti,tmp006.yaml
-+++ b/Documentation/devicetree/bindings/iio/temperature/ti,tmp006.yaml
-@@ -23,6 +23,9 @@ properties:
-   vdd-supply:
-     description: provide VDD power to the sensor.
+Subject: possible fix (linux-ntfs3)
+Author: almaz.alexandrovich@paragon-software.com
+
+#syz test: https://github.com/Paragon-Software-Group/linux-ntfs3.git master
+
+diff --git a/fs/ntfs3/inode.c b/fs/ntfs3/inode.c
+index 1963a8928360..ab2abd323859 100644
+--- a/fs/ntfs3/inode.c
++++ b/fs/ntfs3/inode.c
+@@ -1679,7 +1679,10 @@ int ntfs_create_inode(struct mnt_idmap *idmap, struct inode *dir,
+ 	attr = ni_find_attr(ni, NULL, NULL, ATTR_EA, NULL, 0, NULL, NULL);
+ 	if (attr && attr->non_res) {
+ 		/* Delete ATTR_EA, if non-resident. */
+-		attr_set_size(ni, ATTR_EA, NULL, 0, NULL, 0, NULL, false, NULL);
++		struct runs_tree run;
++		run_init(&run);
++		attr_set_size(ni, ATTR_EA, NULL, 0, &run, 0, NULL, false, NULL);
++		run_close(&run);
+ 	}
  
-+  interrupts:
-+    maxItems: 1
-+
- required:
-   - compatible
-   - reg
-@@ -31,6 +34,7 @@ additionalProperties: false
- 
- examples:
-   - |
-+    #include <dt-bindings/interrupt-controller/irq.h>
-     i2c {
-         #address-cells = <1>;
-         #size-cells = <0>;
-@@ -38,5 +42,7 @@ examples:
-             compatible = "ti,tmp006";
-             reg = <0x40>;
-             vdd-supply = <&ldo4_reg>;
-+            interrupt-parent = <&gpio1>;
-+            interrupts = <4 IRQ_TYPE_EDGE_FALLING>;
-         };
-     };
--- 
-2.25.1
-
+ 	if (rp_inserted)
 
