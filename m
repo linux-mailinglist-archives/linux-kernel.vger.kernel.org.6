@@ -1,249 +1,106 @@
-Return-Path: <linux-kernel+bounces-310962-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310960-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A948968356
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 11:34:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0720896834E
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 11:33:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BEE0A1F210A5
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 09:34:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 37AC71C222FD
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 09:33:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1B321D1F6E;
-	Mon,  2 Sep 2024 09:33:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3EA21D0DF4;
+	Mon,  2 Sep 2024 09:32:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="Y1OIv6H4"
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="I7CG6e0k"
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84CA01C32FA
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 09:33:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAD2917BEB2;
+	Mon,  2 Sep 2024 09:32:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725269631; cv=none; b=IGKIQVYQSuaBs66NS4o643B5O+YgN/6gppV1PCdv7bV47xE3R2KYhR4Y3Ij3Gzvq9tR8xJ+oBeZTGB8IKz1bol1ufrKjXRx/vgaTa//UiLRIyQn05QKts2fLfS0wioHLbu7KIrKZ9UwrC0lxCwlkgAaxkBMz4SNoU/wFiuYpKLo=
+	t=1725269579; cv=none; b=ufEEQvYD5vTLgforBDkd3OZu1HfKaQ+4jXJylLNIKP0Bg4KTVSXnd25RQ6yvv5rZXjgGx2KDwd0fUnSPmxeeF6NFF1T5n2kehyJhd9M3sDlyF5px/KkKZdWZL4nUl7N4emvHNv+NdYWXLopQQJG1g3hIu2B6F2QGCEVsMxkzhHE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725269631; c=relaxed/simple;
-	bh=y+A77ehSMEo77rzqIfCQrVuaDj0WsgnwwsiyZ6QCQpA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=if5eg/R8yojmEAVkjuCBzEy1r16EeDMeUlzObCid64U02yifaAz1jHY6Y6SDEshgRsHE+LB2koycUaQ0FL60VvhestbDEUYvITaIsIOvOEf4OsJgLt2KN0nh9I7S2zR2NM8uPwZb7SmZgycndX9xUa5OoBjODWwlYsYHXGrfpuk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=Y1OIv6H4; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a86abbd68ffso651540966b.0
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2024 02:33:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1725269626; x=1725874426; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=MuJrpNL8FCioT2AsoPcDxssxH9cmo7gkd/f4U8NOJoI=;
-        b=Y1OIv6H4aP6aPjEgvJe35WnAw7YrVq5NTLI7310C1QLHLPSrK7JL5PlkyLQjVjl7cl
-         Uf92eMVQGhRuiBhRKNR4VHTQkD70wXlcWcSNaRywyc2Udywt86//LXDJNn4R9yP4O/5L
-         W+w76Iv0L3KrclgTwjklP3xG9UPfVR8PpHVxSBO4VreHBmBeySvUN4zXBkf1HxDMFa/U
-         biaMd85eeMgk5Q+Yp6BXJlFRcP9LRNJb+qYjHS3cGcOKibKXic1edJg2JTEWamJ4L2SW
-         op1WSIO8z7KdxRo4RthOTZ45WJhmBQ02KcTJ5Q7US90UY1Zs0qHuYtaxYhI3gVjY79Mm
-         ZTfw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725269626; x=1725874426;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=MuJrpNL8FCioT2AsoPcDxssxH9cmo7gkd/f4U8NOJoI=;
-        b=t8xIfCZ8JIXmUsC5V5BmRxAoYIVlse4foNyGo0B8u+tVHvc0lnS/IZL3+9IEx5z+Nj
-         K8K644aYblm8+mBAnw8zTA+suk4EoKa/7oAkHnXG5j9D7Gw7VYcyN0x64gb7bvuUyx2g
-         vS+Jikb/uaRdwT0K225WCue+bGzeD8k7YgqQBYrXVr496uJ7Jnks7JmWqeLrCLww6/Kp
-         ZQtrRYszFjFxZliJ1O4PZ21Lx/8PFxGpzSXnQiw5stKKCOeNcM76IDi46lXMxGDcjtPU
-         X3IX05dWNHaWDpb80xL5GrxLSN7CrSuJYM7kywL37ZEP/pWr6pxbuHEn6vzni1J/fhpQ
-         8qhg==
-X-Forwarded-Encrypted: i=1; AJvYcCU8TP1/9EXXyNuNFUk2l6L8LxackbU8USGo9j6ChIUlabL9hnGmn9SAKMVj9WWrDL7lIMcKoGQyM6n6sZ4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwAnGLG+oEj0cRI2QCN+z7W/yaehwAhFuYbrD8+u7FqpR3T3h1s
-	1RINYkmdLMaug2AF7gtU0JTjpo50K207TUvIl2JxO81AbDrMpTGydXTFuBge0Xc=
-X-Google-Smtp-Source: AGHT+IH8IQSF54TrqnirzVUPM3gfRxOSIM2bNewiLS95Tg3bVdPb9PXS0rBILBbHq5Vdn1sRY++FLw==
-X-Received: by 2002:a17:907:6d25:b0:a86:94cd:97f0 with SMTP id a640c23a62f3a-a89a26bfcb7mr1097377466b.19.1725269625733;
-        Mon, 02 Sep 2024 02:33:45 -0700 (PDT)
-Received: from [192.168.0.2] (host-95-233-232-76.retail.telecomitalia.it. [95.233.232.76])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a898900e73bsm532665366b.50.2024.09.02.02.33.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 02 Sep 2024 02:33:45 -0700 (PDT)
-Message-ID: <9015bc26-1a3a-49df-8728-12ceb8993035@baylibre.com>
-Date: Mon, 2 Sep 2024 11:32:37 +0200
+	s=arc-20240116; t=1725269579; c=relaxed/simple;
+	bh=QjJKqE2geFBgrfARoVt9yA1FFwK5u8v3ANqDqDMOv/A=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=UCvf0/pxGZQYYwUfRwGAEGm9gOzcn6tPG6m4SjQ8w+N2LbXaDCJ7OnUuZqf49VDGB6P/TDqKQcaYvDT/BM1IRTuu9j/xDvCqzcG6uMzGSbcf/OcdHeRQBW/zqPk1FEBr9LzW3R11D4CmsM8sfECRIyJrvbiKff9NUnRhKCzpoF4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=I7CG6e0k; arc=none smtp.client-ip=60.244.123.138
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: 527c538e690e11ef8593d301e5c8a9c0-20240902
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=i0kqKgN7CJvd0BeYNnJy0G3k1/9Gmrex+aORwHnQoQU=;
+	b=I7CG6e0ktwICWEVW+qJ8oSKi0d8Ucb46CVf87q04ItLyQHe8E/1LPha3ONypyF0otKdMRxluUdM5ouNrMPy1GlFzOfKKIJoeWfX+KoFAUuEMV3EV/o88xewld8yYfzzjpyTLaKt0I30S81saHLIWBzP1e3ILylSNeRe9cyCXyd4=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.41,REQID:7402f471-3f2b-4328-ab56-48d0036f8043,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:0
+X-CID-META: VersionHash:6dc6a47,CLOUDID:76c94fbf-d7af-4351-93aa-42531abf0c7b,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
+	RL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,
+	SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: 527c538e690e11ef8593d301e5c8a9c0-20240902
+Received: from mtkmbs14n2.mediatek.inc [(172.21.101.76)] by mailgw01.mediatek.com
+	(envelope-from <yenchia.chen@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 243078402; Mon, 02 Sep 2024 17:32:50 +0800
+Received: from mtkmbs11n2.mediatek.inc (172.21.101.187) by
+ MTKMBS14N1.mediatek.inc (172.21.101.75) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.26; Mon, 2 Sep 2024 17:32:51 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
+ mtkmbs11n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1118.26 via Frontend Transport; Mon, 2 Sep 2024 17:32:51 +0800
+From: Yenchia Chen <yenchia.chen@mediatek.com>
+To: <stable@vger.kernel.org>
+CC: Yenchia Chen <yenchia.chen@mediatek.com>, "Rafael J. Wysocki"
+	<rafael@kernel.org>, Pavel Machek <pavel@ucw.cz>, Len Brown
+	<len.brown@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
+	<angelogioacchino.delregno@collabora.com>, <linux-pm@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-mediatek@lists.infradead.org>
+Subject: [PATCH 6.6 0/1] pm, restore async device resume optimization
+Date: Mon, 2 Sep 2024 17:32:47 +0800
+Message-ID: <20240902093249.17275-1-yenchia.chen@mediatek.com>
+X-Mailer: git-send-email 2.18.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC 4/8] dt-bindings: iio: dac: add adi axi-dac bus
- property
-To: Conor Dooley <conor@kernel.org>
-Cc: Lars-Peter Clausen <lars@metafoo.de>,
- Michael Hennerich <Michael.Hennerich@analog.com>,
- =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
- Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Olivier Moysan <olivier.moysan@foss.st.com>,
- linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, dlechner@baylibre.com
-References: <20240829-wip-bl-ad3552r-axi-v0-v1-0-b6da6015327a@baylibre.com>
- <20240829-wip-bl-ad3552r-axi-v0-v1-4-b6da6015327a@baylibre.com>
- <20240829-stopwatch-morality-a933abb4d688@spud>
- <d4eddc24-9192-4a4a-ac67-4cfbd429a6a9@baylibre.com>
- <20240830-quilt-appointee-4a7947e84988@spud>
-Content-Language: en-US
-From: Angelo Dureghello <adureghello@baylibre.com>
-In-Reply-To: <20240830-quilt-appointee-4a7947e84988@spud>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-TM-AS-Product-Ver: SMEX-14.0.0.3152-9.1.1006-23728.005
+X-TM-AS-Result: No-10--0.721600-8.000000
+X-TMASE-MatchedRID: NKO9ekWIDjZNfAuy6MOHARWCVBr+Ay98UAjrAJWsTe+CsBeCv8CM/WoY
+	8jnT5UNAdvMDsdlFTfx1VOt17I0Spc3AmdtMjGJVngIgpj8eDcAZ1CdBJOsoY9mzcdRxL+xwKra
+	uXd3MZDWuikCL8VXXTHd9H3D4g3TAjOdC04VQHm0AQifLWGK23xTY0YxG1fFWyfZaWEB2dsF0BN
+	B20+SxH7f8mJY57oZddJaBDYald1lvF9+X2GEIHA==
+X-TM-AS-User-Approved-Sender: No
+X-TM-AS-User-Blocked-Sender: No
+X-TMASE-Result: 10--0.721600-8.000000
+X-TMASE-Version: SMEX-14.0.0.3152-9.1.1006-23728.005
+X-TM-SNTS-SMTP:
+	01B788881749FE3475082A6EE46C935325F93AB08D3EA507A3A6E8672CEA022C2000:8
 
-Hi Conor,
+We have met a deadlock issue on our device which use 5.15.y when resuming.
+After applying this patch which is picked from mainline, issue solved.
+Backport to 6.6.y also.
 
+Rafael J. Wysocki (1):
+  PM: sleep: Restore asynchronous device resume optimization
 
-On 30/08/24 5:33 PM, Conor Dooley wrote:
-> On Fri, Aug 30, 2024 at 10:19:49AM +0200, Angelo Dureghello wrote:
->> Hi Conor,
->>
->> On 29/08/24 5:46 PM, Conor Dooley wrote:
->>> On Thu, Aug 29, 2024 at 02:32:02PM +0200, Angelo Dureghello wrote:
->>>> From: Angelo Dureghello <adureghello@baylibre.com>
->>>>
->>>> Add bus property.
->>> RFC it may be, but you do need to explain what this bus-type actually
->>> describes for commenting on the suitability of the method to be
->>> meaningful.
->> thanks for the feedbacks,
->>
->> a "bus" is intended as a generic interface connected to the target,
->> may be used from a custom IP (fpga) to communicate with the target
->> device (by read/write(reg and value)) using a special custom interface.
->>
->> The bus could also be physically the same of some well-known existing
->> interfaces (as parallel, lvds or other uncommon interfaces), but using
->> an uncommon/custom protocol over it.
->>
->> In concrete, actually bus-type is added to the backend since the
->> ad3552r DAC chip can be connected (for maximum speed) by a 5 lanes DDR
->> parallel bus (interface that i named QSPI, but it's not exactly a QSPI
->> as a protocol), so it's a device-specific interface.
->>
->> With additions in this patchset, other frontends, of course not only
->> DACs, will be able to add specific busses and read/wrtie to the bus
->> as needed.
->>
->>>> Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
->>>> ---
->>>>    Documentation/devicetree/bindings/iio/dac/adi,axi-dac.yaml | 9 +++++++++
->>>>    1 file changed, 9 insertions(+)
->>>>
->>>> diff --git a/Documentation/devicetree/bindings/iio/dac/adi,axi-dac.yaml b/Documentation/devicetree/bindings/iio/dac/adi,axi-dac.yaml
->>>> index a55e9bfc66d7..a7ce72e1cd81 100644
->>>> --- a/Documentation/devicetree/bindings/iio/dac/adi,axi-dac.yaml
->>>> +++ b/Documentation/devicetree/bindings/iio/dac/adi,axi-dac.yaml
->>>> @@ -38,6 +38,15 @@ properties:
->>>>      clocks:
->>>>        maxItems: 1
->>> You mentioned about new compatible strings, does the one currently
->>> listed in this binding support both bus types?
-> You didn't answer this, and there's insufficient explanation of the
-> "hardware" in this RFC, but I found this which is supposedly the
-> backend:
-> https://github.com/analogdevicesinc/hdl/tree/main/library/axi_ad3552r
-> adi,axi-dac.yaml has a single compatible, and that compatible has
-> nothing to do with "axi_ad3552r" as it is "adi,axi-dac-9.1.b". I would
-> expect either justification for reuse of the compatible, or a brand new
-> compatible for this backend, even if the driver can mostly be reused.
->
-> Could you please link to whatever ADI wiki has detailed information on
-> how this stuff works so that I can look at it to better understand the
-> axes of configuration here?
+ drivers/base/power/main.c | 117 +++++++++++++++++++++-----------------
+ include/linux/pm.h        |   1 +
+ 2 files changed, 65 insertions(+), 53 deletions(-)
 
-https://analogdevicesinc.github.io/hdl/library/axi_ad3552r/index.html
-
-that has same structure and register set of the generic ADI AXI-DAC IP:
-https://wiki.analog.com/resources/fpga/docs/axi_dac_ip
-
-
->>> Making the bus type decision based on compatible only really makes sense
->>> if they're different versions of the IP, but not if they're different
->>> configuration options for a given version.
->>>
->>>> +  bus-type:
->> DAC IP on fpga actually respects same structure and register set, except
->> for a named "custom" register that may use specific bitfields depending
->> on the application of the IP.
-> To paraphrase:
-> "The register map is the same, except for the bit that is different".
-> If ADI is shipping several different configurations of this IP for
-> different DACs, I'd be expecting different compatibles for each backend
-> to be honest
-
-i am still quite new to this fpga-based implementations, at least for how
-such IPs are actually interfacing to the linux subsystem, so i may miss
-some point.
-
-About the "adi,axi-dac-9.1.b" compatible, the generic DAC IP register set
-is mostly the same structure of this ad3552r IP (links above), except for
-bitfields in the DAC_CUSTOM_CTRL register.
-
-My choice for now was to add a bus-type property.
-
-Not an HDL expert, but i think a different bus means, from an hardware 
-point of
-view, a different IP in terms of internal fpga circuitry, even if not as a
-register-set.
-
-
-> .
-> If each DAC specific backend was to have a unique compatible, would the
-> type of bus used be determinable from it? Doesn't have to work for all
-> devices from now until the heath death of the universe, but at least for
-> the devices that you're currently aware of?
->
->>> If, as you mentioned, there are multiple bus types, a non-flag property
->>> does make sense. However, I am really not keen on these "forced" numerical
->>> properties at all, I'd much rather see strings used here.
->>>> +    maxItems: 1
->>>> +    description: |
->>>> +      Configure bus type:
->>>> +        - 0: none
->>>> +        - 1: qspi
-> Also, re-reading the cover letter, it says "this platform driver uses a 4
-> lanes parallel bus, plus a clock line, similar to a qspi."
-> I don't think we should call this "qspi" if it is not actually qspi,
-> that's just confusing.
-
-Agree, name should be something different.
-
-
-> Cheers,
-> Conor.
-
-Thanks,
-regards,
-
-Angelo
-
-
->>>> +    enum: [0, 1]
->>>> +    default: 0
->>>> +
->>>>      '#io-backend-cells':
->>>>        const: 0
->>>>
->>>> -- 
->>>> 2.45.0.rc1
->>>>
->> -- 
->>   ,,,      Angelo Dureghello
->> :: :.     BayLibre -runtime team- Developer
->> :`___:
->>   `____:
->>
 -- 
-  ,,,      Angelo Dureghello
-:: :.     BayLibre -runtime team- Developer
-:`___:
-  `____:
+2.18.0
 
 
