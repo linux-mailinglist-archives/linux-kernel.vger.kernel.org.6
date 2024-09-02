@@ -1,153 +1,90 @@
-Return-Path: <linux-kernel+bounces-311394-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311396-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87D2E968890
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 15:13:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01D21968899
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 15:17:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3B7571F2383E
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 13:13:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 33F0E1C22334
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 13:17:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98079201269;
-	Mon,  2 Sep 2024 13:12:52 +0000 (UTC)
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 139F920125D;
+	Mon,  2 Sep 2024 13:17:42 +0000 (UTC)
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97CA91DAC5E;
-	Mon,  2 Sep 2024 13:12:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61D7813C9C4
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 13:17:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725282772; cv=none; b=oxSP12PHVFYTr2wI8KZnhLmulFUtkdBOfMYnGxXmu3RWvoe8+MwrAajN2rlbw7SkecqW1+GYagXwHdRw3Yy6CyDTkqB7xfnhO1415VQ2HdVIEsfpmS9/HbZ/hMNTf9VqM6KUrD3oBNfBE28r10WxooVaYryUFafUN9hWgU5y0XE=
+	t=1725283061; cv=none; b=YfATIw+tK2+7WWVqsJR+sNkMX98VztD2IgKQQEr8nPQjHclWl+D2TlsPta70crS6wUOScrc1YdtID830UJmUNZzN9RvtCrZ8aRKwDT9qMUWYYQDXe/YhPW9EJtX0oAvGcMlzWBRto6K+Y2qbNjJoJXBgZskipvv0KZGCPrc1gt8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725282772; c=relaxed/simple;
-	bh=ZBo7aRATQMh4u4PYHX2hGyvAc1Uqu4weIrPRMvH+4Uc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BrxYrnq2qZTcFgoHkNGopZLIFKK+S3IU6GIb2JEwR6puURKJ2u4hjYb6nvwkKpEA/o7ZbzCZeQkEEuEDx173Axn1/G0IeAiE04AMky0KJNao0t33GoghI6x67CitN1Y55e6VmZBrCdzYFLWJ0VAgH+AiEf761uYGq+KxGOVc2HI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4Wy8Lm6QHHz9sSN;
-	Mon,  2 Sep 2024 15:12:48 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id bOAmrEYbu_oc; Mon,  2 Sep 2024 15:12:48 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4Wy8Lm5Z1Xz9sS7;
-	Mon,  2 Sep 2024 15:12:48 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id AD68B8B76C;
-	Mon,  2 Sep 2024 15:12:48 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id bvD0TdiWVJyj; Mon,  2 Sep 2024 15:12:48 +0200 (CEST)
-Received: from [192.168.234.167] (unknown [192.168.234.167])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id B29AB8B763;
-	Mon,  2 Sep 2024 15:12:47 +0200 (CEST)
-Message-ID: <bdf1a515-b3d0-471d-89ee-989ae0d63202@csgroup.eu>
-Date: Mon, 2 Sep 2024 15:12:47 +0200
+	s=arc-20240116; t=1725283061; c=relaxed/simple;
+	bh=qZJHaGRU7fr5/0CkMOOyFtk62bXQuyuBDL9Qox2dd9I=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=FOLITQ2Po1Ik3s1L8crDMI1Y+JYb8V6ZSwukJ+38k5/T3iC6xlCf+D6FCqUR+Vp6QA9a265lqf5qWTK8YpqIh23lJ4jmHp6o+gpOkrn0WZnbbR42KUGt4qgp9RhkPG/NKSesZDWE9MIC+VvSFOUHmqlAGuR+QgXdfotKVpZvcWg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-82a1c57f4dcso522705239f.2
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2024 06:17:40 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725283059; x=1725887859;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Kv0wDtxKWFi02CvI9439oPf+UvQ0ITGAg99rJeq7kAA=;
+        b=JEO2YA1YpY8+YmoEqFhUT8Hj9ZCMd0ETpB6LI3xpnfSUuEVpBqVIMW8Dkp2qXhnlXU
+         SNBnqTmDrfxs4RCUM/6oza9r8mA/8Y7IC302H9JFTprh/AA+u47EQnIf1jDAMq/VrG4r
+         HRZfhQppXDTrv/puHiUxF2bP54kouerUR/1C+KD2l06TB3tAOSiD2FGcAE31FmJHuCzC
+         g/zbd+o9gpUKnOMkIXirm7PFPkeYCk9qCkSN7CVSjqwCsQTW9zM9H186VA1385Kl3weD
+         R+e4/DcCjLHNq5gTsu3gB44fzguf6bTbB6KWSR1QxLSpai0Q1OqAYVHE4JnwZivH5uvN
+         jzAQ==
+X-Gm-Message-State: AOJu0YyLoAa+jLyKEEa6p6xJIEiPt/7L03tGdObA8SSmarAystIr8d6T
+	b4vdwTJEC0PbbPqJw+O+sVTEfNIa+XmF/YXYgOeA5H03AGefHiczvMOKcUTeJS6zNfSn3ET0jpH
+	7PSdzj6Ri8ORL+1fKA7a8uE/F2CCGKC+0ZfYCPmxjkA7e1bikAqbvZpI=
+X-Google-Smtp-Source: AGHT+IG/vrgEctPPj5Jq5Xluh84NsJeuNLH/P2w0MDLygfY10KiqHeAR4z7EcNN5w0lqEHKeWfYq3sfcoLmsuHmxsyhcCZJtynz5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 5/5] powerpc/vdso: Wire up getrandom() vDSO
- implementation on PPC64
-To: "Jason A. Donenfeld" <Jason@zx2c4.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
- Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
- <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
- Naveen N Rao <naveen@kernel.org>, Nathan Chancellor <nathan@kernel.org>,
- Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling
- <morbo@google.com>, Justin Stitt <justinstitt@google.com>,
- Shuah Khan <shuah@kernel.org>, linux-kernel@vger.kernel.org,
- linuxppc-dev@lists.ozlabs.org, linux-kselftest@vger.kernel.org,
- llvm@lists.linux.dev, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
- linux-trace-kernel@vger.kernel.org,
- Adhemerval Zanella <adhemerval.zanella@linaro.org>,
- Xi Ruoyao <xry111@xry111.site>
-References: <cover.1725278148.git.christophe.leroy@csgroup.eu>
- <27de70dcc356e56754a03a2887a97597f5e840a4.1725278148.git.christophe.leroy@csgroup.eu>
- <ZtWyeuCfzZ66fVsg@zx2c4.com>
-Content-Language: fr-FR
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-In-Reply-To: <ZtWyeuCfzZ66fVsg@zx2c4.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6638:8721:b0:4ce:928f:adb1 with SMTP id
+ 8926c6da1cb9f-4d017d9c55cmr507433173.2.1725283059399; Mon, 02 Sep 2024
+ 06:17:39 -0700 (PDT)
+Date: Mon, 02 Sep 2024 06:17:39 -0700
+In-Reply-To: <000000000000b6f58d05e9f95a0c@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000e48a89062122c319@google.com>
+Subject: Re: [syzbot] possible fix (linux-ntfs3)
+From: syzbot <syzbot+bc7ca0ae4591cb2550f9@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
+***
 
-Le 02/09/2024 à 14:41, Jason A. Donenfeld a écrit :
-> On Mon, Sep 02, 2024 at 02:04:42PM +0200, Christophe Leroy wrote:
->>   SYM_FUNC_START(__arch_chacha20_blocks_nostack)
->>   #ifdef __powerpc64__
->> -	blr
->> +	std	r5, -216(r1)
->> +
->> +	std	r14, -144(r1)
->> +	std	r15, -136(r1)
->> +	std	r16, -128(r1)
->> +	std	r17, -120(r1)
->> +	std	r18, -112(r1)
->> +	std	r19, -104(r1)
->> +	std	r20, -96(r1)
->> +	std	r21, -88(r1)
->> +	std	r22, -80(r1)
->> +	std	r23, -72(r1)
->> +	std	r24, -64(r1)
->> +	std	r25, -56(r1)
->> +	std	r26, -48(r1)
->> +	std	r27, -40(r1)
->> +	std	r28, -32(r1)
->> +	std	r29, -24(r1)
->> +	std	r30, -16(r1)
->> +	std	r31, -8(r1)
->>   #else
->>   	stwu	r1, -96(r1)
->>   	stw	r5, 20(r1)
->> +#ifdef __BIG_ENDIAN__
->>   	stmw	r14, 24(r1)
->> +#else
->> +	stw	r14, 24(r1)
->> +	stw	r15, 28(r1)
->> +	stw	r16, 32(r1)
->> +	stw	r17, 36(r1)
->> +	stw	r18, 40(r1)
->> +	stw	r19, 44(r1)
->> +	stw	r20, 48(r1)
->> +	stw	r21, 52(r1)
->> +	stw	r22, 56(r1)
->> +	stw	r23, 60(r1)
->> +	stw	r24, 64(r1)
->> +	stw	r25, 68(r1)
->> +	stw	r26, 72(r1)
->> +	stw	r27, 76(r1)
->> +	stw	r28, 80(r1)
->> +	stw	r29, 84(r1)
->> +	stw	r30, 88(r1)
->> +	stw	r31, 92(r1)
->> +#endif
->> +#endif
-> 
-> This confuses me. Why are you adding code to the !__powerpc64__ branch
-> in this commit? (Also, why does stmw not work on LE?)
+Subject: possible fix (linux-ntfs3)
+Author: almaz.alexandrovich@paragon-software.com
 
-That's for the VDSO32 ie running 32 bits binaries on a 64 bits kernel.
+#syz test: https://github.com/Paragon-Software-Group/linux-ntfs3.git master
 
-"Programming Environments Manual for 32-Bit Implementations of the 
-PowerPC™ Architecture" say: In some implementations operating with 
-little-endian byte order, execution of an lmw or stmw instruction
-causes the system alignment error handler to be invoked
-
-And GCC doesn't like it either:
-
-tools/arch/powerpc/vdso/vgetrandom-chacha.S:84: Error: `stmw' invalid 
-when little-endian
+diff --git a/fs/ntfs3/namei.c b/fs/ntfs3/namei.c
+index fc720ad9c57a..aa7e9d70e32e 100644
+--- a/fs/ntfs3/namei.c
++++ b/fs/ntfs3/namei.c
+@@ -81,7 +81,7 @@ static struct dentry *ntfs_lookup(struct inode *dir, struct dentry *dentry,
+ 		if (err < 0)
+ 			inode = ERR_PTR(err);
+ 		else {
+-			ni_lock(ni);
++			ni_lock_dir(ni);
+ 			inode = dir_search_u(dir, uni, NULL);
+ 			ni_unlock(ni);
+ 		}
 
