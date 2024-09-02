@@ -1,139 +1,114 @@
-Return-Path: <linux-kernel+bounces-311774-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311775-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B6D5968D6B
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 20:29:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 115DC968D70
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 20:29:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C50F12838E5
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 18:29:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C3400282D25
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 18:29:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2340D19CC18;
-	Mon,  2 Sep 2024 18:29:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0C8919CC1B;
+	Mon,  2 Sep 2024 18:29:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="UY9Z1Chi"
-Received: from mail-ua1-f41.google.com (mail-ua1-f41.google.com [209.85.222.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M8jblI1S"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 689C45680
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 18:29:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 351C719CC04;
+	Mon,  2 Sep 2024 18:29:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725301742; cv=none; b=WytB74jo8gaCIMLP+OSHJKUzJGKdnVnvPwBc2M8N7zrlCDAjFh15KLwBvt0RhEzQ1ylvPcFHEGJ9c5Oa7h1yZ0VWUeIuY3p3ligg25i+U5Z1OUTA1rlT5OWdjPE0Jev8sMzMubX8TMZ+XaVWlPmQ6fGxwwlIkvYV2CaMNyAl0dg=
+	t=1725301760; cv=none; b=e7wvLljF52L8NJGDbohC+vGZuQ2WmLahNYqAP1y4pLgUaNxh5xwC5N85hToR6+CA0kDDo09moEGJFMy1GnLIPF0PW+a8sNETei0Brw8ZXI1ukGTebXMz6JN2JHWTLGev+X7cCLsRkmSCS/eF4058mefO5iRv4Ks3MRbvzH4jcDE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725301742; c=relaxed/simple;
-	bh=t0E67JOygrLpMEMGSs25nFjDBPpRV6ypA1lR9ObqNU8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FE3CPk8sWgJWgb/beVML7OJ+nzJCkb6VinXTf7ElolVnytmIJ1aM8oiTOxvshGLscxV08/1gzeFBJZmcg6gsaUynb5czvLrEs/xrcExIbnii6FTZd3XbcyoPt1o+8AJGFHUDpeIZKzPrbp80ppUVTvbluYgj4KIR3e5B9XHK3S0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=UY9Z1Chi; arc=none smtp.client-ip=209.85.222.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ua1-f41.google.com with SMTP id a1e0cc1a2514c-846c59979efso468478241.3
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2024 11:29:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1725301739; x=1725906539; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UIf5ftqS5rRzhHiAEScVat73BFgeVAnuYHMec3uMxpc=;
-        b=UY9Z1ChintIBXZvS7iiHgdT1/6nZXbyqjO9TaJVljF0kMo+pnDiPQY5CmefkoJIaOE
-         PbStIQw3m0cegOqufJPOzULEZzqlbYLnnkpDaA8ZBS7g+q3nKGo4bWXv4n5GkF5Vr6LF
-         MQS7Rs1d66z2el+GUIXw9032xRxGvzv6+NmZKi1ARIqEFhlP6fF+sKjowuqJJ4F0DDrY
-         Z8AzhIBdoMdvxInahapjX6VcQnuIgE5Lhc513CQUNMfoS4+yofQzzQv4h6PpCMZcYMnF
-         zA1fsKg8tfuLQIxnI0xkF4+0eMyA4iQ1ubqgmgGmIfEbYjRTPOssxttLz956wxXGkak+
-         zIhA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725301739; x=1725906539;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=UIf5ftqS5rRzhHiAEScVat73BFgeVAnuYHMec3uMxpc=;
-        b=uhJLwozcc/qEkZjj4wlXbZYbWkn9PWIduXxyk3f5PU8I1Kzrt/wNx5WSNiNcrCdMxR
-         MnLF2fdUQNY91sLx9ZDdHbcb6MecjPrfkUn2Hy/LnCVqxqO+AVYYl4NYJLJNy58WhX5W
-         wV3gpuIg+7wsUvurzXUt7H7pCCtOnsS+VQDVf89P2PYKlEuBjgoTerpjQYcr5xDc1+Hk
-         4/6VSb3aUx1I48XzqlbcjlX8eivFmCdOg3Ar+NwNcQZcHfuEhXLb+udCrluYCKXf4CJD
-         ILboJdOvtJUi+EIddQXkneNk9XaKKOFhD7jVuYUXGDK1LubQbTqhqQEWEne8UhU5vrya
-         bmiA==
-X-Forwarded-Encrypted: i=1; AJvYcCVCEMDbMQB0XzCe+Y48iLpJz/I/kf027eXLb/wfsxPcF8cxY0SvB4zm+DaSwRkalDP/zpYV8nU+Xh6ue2s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YymDHW3tJy6+Aa5Gu2bJUSI0fg8gcRxs5L02pxXNwjzH+i3HS++
-	NRUGwIPOWN135tcoiIwYhpzbLS29UDWVA8eqyWbuPrEzf41FeE4ta/treXGVvcUk04HkxTAtOMk
-	NqSxllbunoEfFhjza4AeCPJAx0lLaHnswQxcBuw==
-X-Google-Smtp-Source: AGHT+IFNN2YsGI4d9NkyVLuaCOIeDwnWgM8L40kWHQUqrjU70AVxBuLatdXI26wVgPjb7BnwfErs7+wo7zLY8grbChg=
-X-Received: by 2002:a05:6122:2225:b0:4fc:e5c6:be51 with SMTP id
- 71dfb90a1353d-4ffe4a5d540mr17617641e0c.3.1725301739139; Mon, 02 Sep 2024
- 11:28:59 -0700 (PDT)
+	s=arc-20240116; t=1725301760; c=relaxed/simple;
+	bh=4s8oxzcwxCWIXOWCXaa4pqsQAL0C90W5kJjfPYgPEGs=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=qP7f2GS0N5Zd+P3uw9GNOl0xcsqgTwyqz9vHmPZncEbzNaLjIJEZWFNAMySQK4V5HS4mUxnkxlFRsOD3ezDDF7H3aF8YEmUNjZtIdTrpaCONB7U5pwecnOugTzcimdM8HWdm7Wj+0FTlaA4y7nH914besmadIb1xPruqHDGSAg8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M8jblI1S; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A0406C4CEC2;
+	Mon,  2 Sep 2024 18:29:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725301759;
+	bh=4s8oxzcwxCWIXOWCXaa4pqsQAL0C90W5kJjfPYgPEGs=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=M8jblI1SNukufzShWrYMPjvLZsUcL5nSe2QhQ1v4Aof90hwjzjA3xl1+GoxP1nhqe
+	 Kkz0U3w7UZO/HRtIfohQ+dGcdEIhGZr6lw4hPDJLIVNFELnGKOAvUZY1SyVHTwjK8R
+	 pWfsObpLqwHQc1pdTzQNuRZNVtzp4C0gZTHyhsgY8iGy6hb4QPU4pjPcdWTZS0kfIb
+	 uWvHeSYUVKkR2X8LUhlN7S/p3SK1aZhhznLjBxfALnee0sUf24lOrFuaGGyXEHtXmU
+	 o/r6xUXXHJHLy9FtVLMz1JRxXe61vM6knLt8QBeSserL0AZXqj83oW5QTcV473ealw
+	 x+6d57OLzOj7g==
+Date: Mon, 2 Sep 2024 20:29:14 +0200
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Alexandra Diupina <adiupina@astralinux.ru>
+Cc: Xiaowei Song <songxiaowei@hisilicon.com>, Binghui Wang
+ <wangbinghui@hisilicon.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ Krzysztof =?UTF-8?B?V2lsY3p5xYRza2k=?= <kw@linux.com>, Rob Herring
+ <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+ linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+ lvc-project@linuxtesting.org
+Subject: Re: [PATCH v2] PCI: kirin: Fix buffer overflow
+Message-ID: <20240902202914.2d399974@foz.lan>
+In-Reply-To: <20240719122153.1987-1-adiupina@astralinux.ru>
+References: <20240712110756.3abe1806@foz.lan>
+	<20240719122153.1987-1-adiupina@astralinux.ru>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240902103638.686039-1-aardelean@baylibre.com>
- <20240902103638.686039-7-aardelean@baylibre.com> <pu536g76q5xanhwnvhpr52mttonb4gkmxfwwof4fyo4sww2g3l@6s7x3joiuzfa>
-In-Reply-To: <pu536g76q5xanhwnvhpr52mttonb4gkmxfwwof4fyo4sww2g3l@6s7x3joiuzfa>
-From: Alexandru Ardelean <aardelean@baylibre.com>
-Date: Mon, 2 Sep 2024 21:28:48 +0300
-Message-ID: <CA+GgBR_uO-qOP8mRCmWdhEFMJRz4KvVvpx2tVVsZy2iZCvPD-w@mail.gmail.com>
-Subject: Re: [PATCH v2 6/8] dt-bindings: iio: adc: document diff-channels
- corner case for some ADCs
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, jic23@kernel.org, krzk+dt@kernel.org, 
-	robh@kernel.org, lars@metafoo.de, michael.hennerich@analog.com, 
-	gstols@baylibre.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Mon, Sep 2, 2024 at 2:54=E2=80=AFPM Krzysztof Kozlowski <krzk@kernel.org=
-> wrote:
->
-> On Mon, Sep 02, 2024 at 01:36:29PM +0300, Alexandru Ardelean wrote:
-> > Some ADCs have channels with negative and positive inputs, which can be
-> > used to measure differential voltage levels. These inputs/pins are
-> > dedicated (to the given channel) and cannot be muxed as with other ADCs=
-.
-> >
-> > For those types of setups, the 'diff-channels' property can be specifie=
-d to
-> > be used with the channel number (or reg property) for both negative and
-> > positive inputs/pins.
-> >
-> > Signed-off-by: Alexandru Ardelean <aardelean@baylibre.com>
-> > ---
-> >  Documentation/devicetree/bindings/iio/adc/adc.yaml | 4 ++++
-> >  1 file changed, 4 insertions(+)
-> >
-> > diff --git a/Documentation/devicetree/bindings/iio/adc/adc.yaml b/Docum=
-entation/devicetree/bindings/iio/adc/adc.yaml
-> > index 8e7835cf36fd..9b7a8e149639 100644
-> > --- a/Documentation/devicetree/bindings/iio/adc/adc.yaml
-> > +++ b/Documentation/devicetree/bindings/iio/adc/adc.yaml
-> > @@ -37,6 +37,10 @@ properties:
-> >        to both the positive and negative inputs of a differential ADC.
-> >        The first value specifies the positive input pin, the second
-> >        specifies the negative input pin.
-> > +      There are also some ADCs, where the differential channel has ded=
-icated
-> > +      positive and negative inputs which can be used to measure differ=
-ential
-> > +      voltage levels. For those setups, this property can be configure=
-d with
-> > +      the the 'reg' property (i.e. diff-channels =3D <reg reg>).
->
-> Please run scripts/checkpatch.pl and fix reported warnings. Then please
-> run  and (probably) fix more warnings.
-> Some warnings can be ignored, especially from --strict run, but the code
-> here looks like it needs a fix. Feel free to get in touch if the warning
-> is not clear.
+Em Fri, 19 Jul 2024 15:21:53 +0300
+Alexandra Diupina <adiupina@astralinux.ru> escreveu:
 
-Right.
-Will fix.
-Seems checkpatch.pl is able to catch my stutter.
+> In kirin_pcie_parse_port() pcie->num_slots is compared to
+> pcie->gpio_id_reset size (MAX_PCI_SLOTS). Need to fix
+> condition to pcie->num_slots + 1 >= MAX_PCI_SLOTS and move
+> pcie->num_slots increment lower to avoid out-of-bounds
+> array access.
+> 
+> Found by Linux Verification Center (linuxtesting.org) with SVACE.
+> 
+> Fixes: b22dbbb24571 ("PCI: kirin: Support PERST# GPIOs for HiKey970 external PEX 8606 bridge")
+> Signed-off-by: Alexandra Diupina <adiupina@astralinux.ru>
 
->
-> Best regards,
-> Krzysztof
->
+LGTM.
+
+Reviewed-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+
+> ---
+> v2: some changes
+>  drivers/pci/controller/dwc/pcie-kirin.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/pci/controller/dwc/pcie-kirin.c b/drivers/pci/controller/dwc/pcie-kirin.c
+> index d5523f302102..deab1e653b9a 100644
+> --- a/drivers/pci/controller/dwc/pcie-kirin.c
+> +++ b/drivers/pci/controller/dwc/pcie-kirin.c
+> @@ -412,12 +412,12 @@ static int kirin_pcie_parse_port(struct kirin_pcie *pcie,
+>  			if (pcie->gpio_id_reset[i] < 0)
+>  				continue;
+>  
+> -			pcie->num_slots++;
+> -			if (pcie->num_slots > MAX_PCI_SLOTS) {
+> +			if (pcie->num_slots + 1 >= MAX_PCI_SLOTS) {
+>  				dev_err(dev, "Too many PCI slots!\n");
+>  				ret = -EINVAL;
+>  				goto put_node;
+>  			}
+> +			pcie->num_slots++;
+>  
+>  			ret = of_pci_get_devfn(child);
+>  			if (ret < 0) {
+
+
+
+Thanks,
+Mauro
 
