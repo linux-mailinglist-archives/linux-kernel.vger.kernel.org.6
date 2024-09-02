@@ -1,139 +1,107 @@
-Return-Path: <linux-kernel+bounces-311871-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311872-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16CB7968ECE
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 22:20:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA23E968ED0
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 22:21:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C966B282CC9
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 20:20:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DD7871C21F6C
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 20:21:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AD831AB6F5;
-	Mon,  2 Sep 2024 20:20:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 678271A3AAB;
+	Mon,  2 Sep 2024 20:20:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="eiNxWOC5"
-Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TcYo818K"
+Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com [209.85.128.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7E251A3AA5;
-	Mon,  2 Sep 2024 20:20:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 776181A3AA5;
+	Mon,  2 Sep 2024 20:20:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725308406; cv=none; b=fOETq4XXKVSQmY9pGBIOpUoYyP3AKxep0tD6BUBBwjm5wmYmIp8vRqMsRDTpGjSCzrIhGP1uJdsOVMnxsCHiRhOHkD1glhUOaaIzwURWP91ETEho+j7Xfl6vim3B0xo1yoGUMiT96tdx51Rsi/Ai6BGz2iBhFoirSaMYN4RTCyA=
+	t=1725308453; cv=none; b=PwgS0gy3S/vj3A1u9OlSyOvar5y7cbvbUZ+TPV/dAaM0kD25brZW/nTNFFhHWPeSy+c7MgCE+yrUDtQptqj3FjnaRhiTPGrzkfUkv/2p9y3wlD31IOUepEdh8fZplGt2CoqaBWkyYL0KzFgdAJw16K0Grj4eBqR+tii8ZIK0l04=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725308406; c=relaxed/simple;
-	bh=CpfGXUsaMycF4jl2l9nIICgEeKqNYaKOEAKloppFIw8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Cbyt4y4zgh/5dp5N2nMpqFfWfKMQvw+h9zKi5Poggce0uT7to84YvQjm2wn5Jaiol7nXj/+8qiEvaTUzjAnD43JcRYSOiaFCeeeZKWvx2sxJ2ZjrY4gu8Gr0eAJazmQCnwZpFjU/fWPFViIH4ML0z8bRgtrExGXlrkMyNTLcxBQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=eiNxWOC5; arc=none smtp.client-ip=217.70.183.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 1EF2C20004;
-	Mon,  2 Sep 2024 20:19:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1725308396;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5LLNc9i9feX+98+maMNyDk10kJ8aqshRdCfXQ8V0pLQ=;
-	b=eiNxWOC55M5AEZpFSO0e8abL2V1c2pzRlSTOUG4KQeaHLtV9KJF5Ei0vXoD9LYpnqFYL+u
-	2EXwfinJDj27LsxrLtLnU8XiBb08C/AIaRW0ZKkpa+x1w/i+NTpg7Ry/nRUuxpGAtkcqWd
-	i14o5IJ4sr/dgMdHexG0J7ZEhBibIUqmN6l5tH6SvdR15LA3HfNA8hnKjwfwHdIyPnMJRT
-	uC+KbPv9sat1yNnFgMG1SBMhuhV0TBND9jd6+NlawQlE0YmV8gpMyR/9dKIz/ypmCU8CSr
-	Y+DkoZK3DQEUDBg5+YdwAcyJsh2ATkjJVxrUJzw7JeRQYjjMJDl8ajVyr+VxYA==
-Date: Mon, 2 Sep 2024 22:19:54 +0200
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: Xianwei Zhao <xianwei.zhao@amlogic.com>
-Cc: Yiting Deng <yiting.deng@amlogic.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	linux-amlogic@lists.infradead.org, linux-rtc@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/3] rtc: support for the Amlogic on-chip RTC
-Message-ID: <2024090220195462df6c95@mail.local>
-References: <20240823-rtc-v1-0-6f70381da283@amlogic.com>
- <20240823-rtc-v1-2-6f70381da283@amlogic.com>
- <2024082609451907fd19e2@mail.local>
- <20ffd260-3c24-460f-bdbc-965573e110e3@amlogic.com>
+	s=arc-20240116; t=1725308453; c=relaxed/simple;
+	bh=DDS797LPSLXF5DUZhvSIXvhnmOVCbd+FC0JxJqgvan4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gpmxzc0U5uPRSLX+hz85I/6DGgfkHzcOAKZVHrL5IjZMe80Y0509s9g0NOULWFEyguvgmtpDIw9/a6P9acSH5/M7Tgd199mVSTkD2QCo3Tzp76p5Jeny9OxROk/UZvxTTZ9ptiRFYTpVUTHqdoRJ03Y0lDUOxEYxO5v70KZd7mw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TcYo818K; arc=none smtp.client-ip=209.85.128.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-6b6b9867faaso37889717b3.2;
+        Mon, 02 Sep 2024 13:20:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725308451; x=1725913251; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=L6ZoJimyI0+j3EAlQIah3fNwK8Zs3ud4jfbViwry4E4=;
+        b=TcYo818KR5xi4m4u+QRlq/S/ZLlbhcYfebhyLKjISv+b8fm/oFLK/EOx+6Nxdob9Bs
+         mFaZUvySowBveFX8NocqbHakHLQ8We4T5RXrNA0TBuR2IvtCMs8jX90B+UtKKKEO3/2p
+         Ficdnpvpq4wHnfWh62aAR3vZ+H1w5AqhtUzn6jSBH/ON/+iTPI4MX9QbY+7VHlTeULcM
+         pfoWg04J4wfoD1WfZQUe2VkV6YPAQ++AxP1rCLRL3u4cirR+Z2ox+1yaTwMPj/vJ2Vx2
+         UZJX2+5KSo9zD3n6L0FWOX5mX/B/apFvlD8xRZo/2v0Q9HX5n/cdOPS8GO7hD1vSAeh/
+         Zn7Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725308451; x=1725913251;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=L6ZoJimyI0+j3EAlQIah3fNwK8Zs3ud4jfbViwry4E4=;
+        b=enMvMFKfYYEIhWXcPrqiUhkN5PKO5nqCDbztMrXsAlFmPN+lQP4q4gHcvQBXasBbrm
+         MDQZnvMyBwVw/Ir1Mp/1areQLCUWgc3xWyyHiRnfuLyMqo3J2xJ5I7r6uBFMm7TdJtby
+         XA5OH5wILAalPP9ZAW+ApRyj7iDPwD6eMi7Xcfp6b/bk45ME8hGc3K02bbSSBqUml5sH
+         ODmXhe5f97axODUctt7Wx87yOwsjsQMmXqZcw+oiuk0/kQa5t3huEGQN9AbVt1nMMUch
+         chDlQiBhoF5WtREw5+Dcd4lcALaitx3dyF9Stv1g7hVZM1625mBievcJR9RPZLNpe69P
+         cVOw==
+X-Forwarded-Encrypted: i=1; AJvYcCUvd5Pjtzw25meQKQsVTUGyNeoXP2SFIYOHr88c+s/KjsQC+xL/sSndErOS+VIqTTosKROskfe39SieP/E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwxnzvamTp4XJN5afIX+GJmTgBVPhWgUczwn1qxetoftgz2qa1M
+	VBBhl7rwZaYGk0KRiFTqxeSNckce1+Ok5ZtTGlLJ7qK1DWMB8OCB1xZC/jZiWNkdrQlpYY1SVjt
+	PavQVzgkq2FUkw4QIQXSnYY6Gqcs=
+X-Google-Smtp-Source: AGHT+IGFIcrYrJVdstJYct4Tsj+HXJHCf1NPVbRfDXsdPB3uYZOllkLDC/g97W17XEYxjg4ZWz87oKS4dDT7B7VpHsc=
+X-Received: by 2002:a05:690c:6583:b0:62a:530:472f with SMTP id
+ 00721157ae682-6d40f534326mr130482947b3.32.1725308451409; Mon, 02 Sep 2024
+ 13:20:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20ffd260-3c24-460f-bdbc-965573e110e3@amlogic.com>
-X-GND-Sasl: alexandre.belloni@bootlin.com
+References: <20240902181530.6852-1-rosenp@gmail.com> <b149c9cd-a76b-4fb8-b3ff-430afa8fdd77@lunn.ch>
+In-Reply-To: <b149c9cd-a76b-4fb8-b3ff-430afa8fdd77@lunn.ch>
+From: Rosen Penev <rosenp@gmail.com>
+Date: Mon, 2 Sep 2024 13:20:40 -0700
+Message-ID: <CAKxU2N8D3JCjGkgbxwKOGyb7Nd3QDeAfEMQfCGr_EODzPrV9Jg@mail.gmail.com>
+Subject: Re: [PATCH net-next 0/6] net: ibm: emac: some cleanups and devm
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: netdev@vger.kernel.org, davem@davemloft.net, edumazet@google.com, 
+	kuba@kernel.org, pabeni@redhat.com, linux-kernel@vger.kernel.org, 
+	jacob.e.keller@intel.com, horms@kernel.org, sd@queasysnail.net, 
+	chunkeey@gmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 02/09/2024 16:14:45+0800, Xianwei Zhao wrote:
-> Hi Alexandre,
->     Thanks for your reply.
-> 
-> On 2024/8/26 17:45, Alexandre Belloni wrote:
-> > [ EXTERNAL EMAIL ]
-> > 
-> > On 23/08/2024 17:19:45+0800, Xianwei Zhao via B4 Relay wrote:
-> > > From: Yiting Deng <yiting.deng@amlogic.com>
-> > > 
-> > > Support for the on-chip RTC found in some of Amlogic's SoCs such as the
-> > > A113L2 and A113X2.
-> > > 
-> > > Signed-off-by: Yiting Deng <yiting.deng@amlogic.com>
-> > > Signed-off-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
-> > > ---
-> > >   drivers/rtc/Kconfig       |  12 +
-> > >   drivers/rtc/Makefile      |   1 +
-> > >   drivers/rtc/rtc-amlogic.c | 589 ++++++++++++++++++++++++++++++++++++++++++++++
-> > 
-> > As pointed out, this is the third amlogic driver so the name of the file
-> > must be more specific.
-> > 
-> 
-> This RTC hardware includes a timing function and an alarm function.
-> But the existing has only timing function, alarm function is using the
-> system clock to implement a virtual alarm. And the relevant register access
-> method is also different.
-> 
-> The "meson" string is meaningless, it just keeps going, and now the new
-> hardware uses the normal naming.
+On Mon, Sep 2, 2024 at 1:00=E2=80=AFPM Andrew Lunn <andrew@lunn.ch> wrote:
+>
+> On Mon, Sep 02, 2024 at 11:15:09AM -0700, Rosen Penev wrote:
+> > It's a very old driver with a lot of potential for cleaning up code to
+> > modern standards. This was a simple one dealing with mostly the probe
+> > function and adding some devm to it.
+> >
+> > All patches were tested on a Cisco Meraki MX60W. Boot and
+> > Shutdown/Reboot showed no warnings.
+>
+> This is a 12 year old PowerPC system. Cool you found one. Looks like
+> OpenWRT still supports it.
+I recently bought one in an attempt to get qca8k working on it.
+Unfortunately the bootloader disables all ports except WAN and the
+driver has a hack that disables MDIO 0-3, which qca8k seems to need. I
+tried removing it but then mdiobus_alloc fails with error code -5.
 
-The proper naming is then definitively not just amlogic, because in 5
-year, you are going to say the exact same thing about this driver
-"register access is different, this is for old SoCs, etc"
-
-amlogc-a4 would be more appropriate.
-
-> > > +             /* Enable RTC */
-> > > +             regmap_write_bits(rtc->map, RTC_CTRL, RTC_ENABLE, RTC_ENABLE);
-> > 
-> >                  This must not be done at probe time, else you loose the
-> >                  important information taht the time has never been set. Instead,
-> >                  it should only be enabled on the first .set_time invocation do
-> >                  you could now in .read_time that the time is currently invalid.
-> > 
-> There are some doubts about this place.
-> 
-> You mean that after the system is up, unless the time is set, it will fail
-> to read the time at any time, and the alarm clock will also fail.
-> In this case, the system must set a time.
-
-Exactly, reading the time must not succeed if the time is known to be
-bad.
-
-> 
-> When read time invlalid, system is will set time.
-> This part of the logic I see the kernel part has not been implemented, so
-> only the user application has been implemented. Whether this is reasonable,
-> if not set time, you will never use RTC module.
-
-This is not going to be implemented in the kernel. The kernel can't know
-what is the proper time to set unless userspace tells it.
-
--- 
-Alexandre Belloni, co-owner and COO, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+qca8k only manages to bring up port 5 (WAN).
+>
+>         Andrwq
 
