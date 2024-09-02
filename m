@@ -1,142 +1,155 @@
-Return-Path: <linux-kernel+bounces-310451-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310452-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B15B967D3E
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 03:10:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3410967D3F
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 03:12:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C18C8281D93
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 01:10:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E6D82820A5
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 01:12:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 194D0179AA;
-	Mon,  2 Sep 2024 01:10:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Cw79jg3D"
-Received: from mail-il1-f180.google.com (mail-il1-f180.google.com [209.85.166.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F19A15E8B;
+	Mon,  2 Sep 2024 01:12:12 +0000 (UTC)
+Received: from szxga07-in.huawei.com (szxga07-in.huawei.com [45.249.212.35])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 072934A0F;
-	Mon,  2 Sep 2024 01:10:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E1C21388
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 01:12:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725239424; cv=none; b=KNFO8dM1TFcFcM+JcVgFR8hcCRnE0CGC/zdtuYgGDCt2ahPkq9WFZSM+IQrqPocJffiKbqFtwDVkFdAobk6p7xIoWMeLhapBPuKHS9j56S7CUWAVAsdaSjpjf9d9Df1kmUd9D6T8xJ8DEkTfofJQZXg2tVNFvG4msqx6wClYZ6Y=
+	t=1725239531; cv=none; b=R70vTJlv2vDew1xNVVsIyRp1gKrEHr3zOOdfmO1pE3cEmmfHoj71kUymAL02JAea1vCZdJyTbGVFtKkexmbftU7oHEgIAiuhgOQsYxIxUfQ8a9jiK6FoQibegF9ItXijirHTaP5ai8VGvvKgdcK+ucarudiq/B4C+uGZz1uWGr4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725239424; c=relaxed/simple;
-	bh=E4gzV92PxZE+qFNA+RekwmEuIebSetmvmkFXMiYp3PY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ErlsuV59133d3Su9FmLT+YNQhHRQ0f7Y+vcdamzdDa+Wexd3R08uboDRioYTYQeRkrEs7e+pqjg4jp6bCwfnwqUobZk1q7BUBnXkq701ocuNd9FtTAhAfeH71OddQojihkuTdMo93DWxAOzxvjvFlhs1sMus7NlV6hQUgNiMt9Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Cw79jg3D; arc=none smtp.client-ip=209.85.166.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-il1-f180.google.com with SMTP id e9e14a558f8ab-39f539a83e0so3899245ab.2;
-        Sun, 01 Sep 2024 18:10:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725239422; x=1725844222; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=E4gzV92PxZE+qFNA+RekwmEuIebSetmvmkFXMiYp3PY=;
-        b=Cw79jg3DiUssKVxFQSzY/3SyS/2b5SSwQEhF/VMzGUjD9pqtTkvaFGWezdHhAcNXxm
-         vKuyKgtW66Xdr5/b0geYlAU5CdgvqNFz+dE5Uuc8rA98h5vCrf4dA9/R4dJ4Do4hcdGV
-         FLR+qkKITbyy9VqecasQdG5nAOUYoiHX6Bauila9QPEHYjGJhzXP08YGKwZIkxWELN8U
-         f5B70t6ABYH5Kf55vllohXcyZUF5D6/fZIq/IYq6FyPedBAOuxM0cESKbYff7dKzrdYA
-         +qxhJ1xkN4zYuusrzJ6fjE9sGqQoKprpXJBpszEEIBZywGTaW6djo7ZND6wUuwTn8G3h
-         yTQA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725239422; x=1725844222;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=E4gzV92PxZE+qFNA+RekwmEuIebSetmvmkFXMiYp3PY=;
-        b=r8lQi9Dc1Vq7HbMaHlvTfxzQznTnKRuWRkVzseA92LLlGoHwFq9BB9Qywg3JbcX9S6
-         UGBHTnNA2VNAUPfO7nauA/PYmN/feAWf2Kw/KGgwVBe8HlK7QnnF4hM3U9LWA4B7rupk
-         WHcCUPqkr1fQt5mRn+UII9JlrrYfCoJa9JVWtHnwtZBTCytHIoCFv4iCqFiQQXTOhr/E
-         qOWZCWa8s9KycFnmOQumyivPRxzXT+caA1pEnlDUjDv9wMhXjfaW+my8b6Kw1q5Zpo27
-         nnD5YHz76B3jHZpht36yhf1EzW2lF063A68xm3/HO8oXS8yMsFJTNw0oF9GbKVqgn4jH
-         rk4A==
-X-Forwarded-Encrypted: i=1; AJvYcCUYq2pry3Gbu2sGNtCy//qrXNv4AyZdNtSVjMgRlDafYwsnUwYD/qQd9M31osbik8/R4GIFltJc38Bynu8/@vger.kernel.org, AJvYcCVYVk1O8rXSUQ7Vm9OQN6qmd4S6WqyUUNJkQE/LHht1CKjt0OEQlcyeP0vkKoPjS77ae7buvyBdGec6@vger.kernel.org
-X-Gm-Message-State: AOJu0YxyXFIvdh+P3xvZ/cScoyYjFY6jVtriHEadIrw19Ev/nRplVClp
-	zzRPtJ/cU/PX4rWrq+rqExaT/gT+n34e3U4J8PJHfx9t+0pmaaZC
-X-Google-Smtp-Source: AGHT+IFyhMM0xDEm3decKqdzpa8ZS+bTABQJ0zYWbmUuOdCfCFThXfgY07/epTd0Cp/ktdQ+h6vMgg==
-X-Received: by 2002:a05:6e02:194d:b0:397:6dfc:993a with SMTP id e9e14a558f8ab-39f4e11924fmr65501285ab.21.1725239421925;
-        Sun, 01 Sep 2024 18:10:21 -0700 (PDT)
-Received: from localhost.localdomain (174-20-195-90.mpls.qwest.net. [174.20.195.90])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-39f552cd162sm9103755ab.17.2024.09.01.18.10.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 01 Sep 2024 18:10:21 -0700 (PDT)
-From: Shimrra Shai <shimrrashai@gmail.com>
-To: cristian.ciocaltea@collabora.com
-Cc: Laurent.pinchart@ideasonboard.com,
-	aarnoud@me.com,
-	airlied@gmail.com,
-	andrzej.hajda@intel.com,
-	andy.yan@rock-chips.com,
-	conor+dt@kernel.org,
-	daniel@ffwll.ch,
-	devicetree@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	heiko@sntech.de,
-	hjc@rock-chips.com,
-	jernej.skrabec@gmail.com,
-	jonas@kwiboo.se,
-	kernel@collabora.com,
-	krzk+dt@kernel.org,
-	krzk@kernel.org,
-	ldearquer@gmail.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	maarten.lankhorst@linux.intel.com,
-	markyao0591@gmail.com,
-	mripard@kernel.org,
-	neil.armstrong@linaro.org,
-	rfoss@kernel.org,
-	robh@kernel.org,
-	s.hauer@pengutronix.de,
-	tzimmermann@suse.de
-Subject: Re: Re: [PATCH v5 3/4] dt-bindings: display: rockchip: Add schema for RK3588 HDMI TX Controller
-Date: Sun,  1 Sep 2024 20:09:48 -0500
-Message-ID: <20240902010948.3654-1-shimrrashai@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <5ea24ad3-7faa-4a59-ba10-d43b32b3b40e@collabora.com>
-References: <5ea24ad3-7faa-4a59-ba10-d43b32b3b40e@collabora.com>
+	s=arc-20240116; t=1725239531; c=relaxed/simple;
+	bh=oovSLh9q96vpKtw4eca1UznpbBSR26ECWo+IY11AjCY=;
+	h=Message-ID:Date:MIME-Version:CC:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=lLPu9i23Lv1cVPhvsjc/4v4DjN7NMrz5CgyiC8jtyWJuspY0Se2mTuZkVWDq8xUTEsM7vK626dxbe54hy6CdxbIVNVB9cH8hjiRMDxMllJaVnrsFrB8AwGpoSdN1grTQckpYN++xTQ+T5m92gse92dnKva+/rgmwdnCaWEGTY2c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.17])
+	by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4WxrLk3lQkz1S9dp;
+	Mon,  2 Sep 2024 09:11:42 +0800 (CST)
+Received: from kwepemg100017.china.huawei.com (unknown [7.202.181.58])
+	by mail.maildlp.com (Postfix) with ESMTPS id 58CEA1A0188;
+	Mon,  2 Sep 2024 09:12:00 +0800 (CST)
+Received: from [10.174.178.120] (10.174.178.120) by
+ kwepemg100017.china.huawei.com (7.202.181.58) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Mon, 2 Sep 2024 09:11:59 +0800
+Message-ID: <2ee7cb17-9003-482c-9741-f1f51f61ab4b@huawei.com>
+Date: Mon, 2 Sep 2024 09:11:58 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+CC: <mawupeng1@huawei.com>, <akpm@linux-foundation.org>,
+	<mgorman@techsingularity.net>, <mhocko@suse.com>, <dmaluka@chromium.org>,
+	<liushixin2@huawei.com>, <wangkefeng.wang@huawei.com>, <linux-mm@kvack.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] mm, proc: collect percpu free pages into the free pages
+Content-Language: en-US
+To: <ying.huang@intel.com>
+References: <20240830014453.3070909-1-mawupeng1@huawei.com>
+ <87a5guh2fb.fsf@yhuang6-desk2.ccr.corp.intel.com>
+From: mawupeng <mawupeng1@huawei.com>
+In-Reply-To: <87a5guh2fb.fsf@yhuang6-desk2.ccr.corp.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
+ kwepemg100017.china.huawei.com (7.202.181.58)
 
-Cristian Ciocaltea wrote:
-> On 8/31/24 9:13 AM, Krzysztof Kozlowski wrote:
-> >
-> > Please define all clocks.
->
-> The other clocks are defined in the common binding, should we reiterate
-> them?
 
-I would suggest yes, they should be reduplicated, if only to maintain
-consistency with all the other docs. A grep through the bridge docs
-shows that there are virtually none which use a "{}" placeholder like
-this. While it seems kind of like one might worry about "don't
-repeat yourself" syndrome, keep in mind this is not code, but human-
-used documentation. Having all the information available at a glance
-would seem to be the most convenient to the end (developer) user, so
-they aren't having to toggle between two separate files. Of course
-there may be some questions regarding docs becoming out of sync, but
-*ideally* we don't want to break backward compatibility with device
-trees (esp. given how I am imagining firmware integration to work on
-these platforms, as the RK3588 is at at least low-end desktop-grade
-performance and UEFI packages have already been built for it), though
-of course that doesn't mean adding new options is off the table.
 
-(FWIW, this is what I did in my now-withdrawn-at-your-request
-re-submission; I reduplicated the bindings as it seemed that's what
-others here were pushing for and thus that felt like the quickest way
-to get this important driver approved.)
+On 2024/8/30 15:53, Huang, Ying wrote:
+> Hi, Wupeng,
+> 
+> Wupeng Ma <mawupeng1@huawei.com> writes:
+> 
+>> From: Ma Wupeng <mawupeng1@huawei.com>
+>>
+>> The introduction of Per-CPU-Pageset (PCP) per zone aims to enhance the
+>> performance of the page allocator by enabling page allocation without
+>> requiring the zone lock. This kind of memory is free memory however is
+>> not included in Memfree or MemAvailable.
+>>
+>> With the support of higt-order pcp and pcp auto-tuning, the size of the
+>> pages in this list has become a matter of concern due to the following
+>> patches:
+>>
+>>   1. Introduction of Order 1~3 and PMD level PCP in commit 44042b449872
+>>   ("mm/page_alloc: allow high-order pages to be stored on the per-cpu
+>>   lists").
+>>   2. Introduction of PCP auto-tuning in commit 90b41691b988 ("mm: add
+>>   framework for PCP high auto-tuning").
+> 
+> With PCP auto-tuning, the idle pages in PCP will be freed to buddy after
+> some time (may be as long as tens seconds in some cases).
 
-- Shimrra Shai
+Thank you for the detailed explanation regarding PCP auto-tuning. If the
+PCP pages are freed to the buddy after a certain period due to auto-tuning,
+it's possible that there is no direct association between PCP auto-tuning
+and the increase in the PCP count as indicated below, especially if no
+actual tasks have commenced after booting. The primary reason for the
+increase might be more orders and a surplus of CPUs.
+
+> 
+>> Which lead to the total amount of the pcp can not be ignored just after
+>> booting without any real tasks for as the result show below:
+>>
+>> 		   w/o patch	  with patch	      diff	diff/total
+>> MemTotal:	525424652 kB	525424652 kB	      0 kB	        0%
+>> MemFree:	517030396 kB	520134136 kB	3103740 kB	      0.6%
+>> MemAvailable:	515837152 kB	518941080 kB	3103928 kB	      0.6%
+
+We do the following experiments which make the pcp amount even bigger:
+1. alloc 8G of memory in all of the 600+ cpus
+2. kill all the above user tasks 
+3. waiting for 36h
+
+the pcp amount 6161097(24644M) which 4.6% of the total 512G memory.
+
+
+>>
+>> On a machine with 16 zones and 600+ CPUs, prior to these commits, the PCP
+>> list contained 274368 pages (1097M) immediately after booting. In the
+>> mainline, this number has increased to 3003M, marking a 173% increase.
+>>
+>> Since available memory is used by numerous services to determine memory
+>> pressure. A substantial PCP memory volume leads to an inaccurate estimation
+>> of available memory size, significantly impacting the service logic.
+>>
+>> Remove the useless CONFIG_HIGMEM in si_meminfo_node since it will always
+>> false in is_highmem_idx if config is not enabled.
+>>
+>> Signed-off-by: Ma Wupeng <mawupeng1@huawei.com>
+>> Signed-off-by: Liu Shixin <liushixin2@huawei.com>
+> 
+> This has been discussed before in the thread of the previous version,
+> better to refer to it and summarize it.
+> 
+> [1] https://lore.kernel.org/linux-mm/YwSGqtEICW5AlhWr@dhcp22.suse.cz/
+
+As Michal Hocko mentioned in previous discussion:
+ 1. If it is a real problem?
+ 2. MemAvailable is documented as available without swapping, however
+    pcp need to drain reclaim.
+
+1. Since available memory is used by numerous services to determine memory
+pressure. A substantial PCP memory volume leads to an inaccurate estimation
+of available memory size, significantly impacting the service logic.
+2. MemAvailable here do seems wired. There is no reason to drain pcp to
+drop clean page cache As Michal Hocko already pointed in this post, drain
+clean page cache is much cheaper than drain remote pcp.Any idea on this?
+
+[1] https://lore.kernel.org/linux-mm/ZWRYZmulV0B-Jv3k@tiehlicka/
+> 
+> --
+> Best Regards,
+> Huang, Ying
+> 
 
