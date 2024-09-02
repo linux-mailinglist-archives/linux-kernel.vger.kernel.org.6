@@ -1,269 +1,147 @@
-Return-Path: <linux-kernel+bounces-311573-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311574-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B653968A97
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 17:05:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6291C968A9C
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 17:05:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 617AA1C20B8D
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 15:05:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27CC2283635
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 15:05:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89F711CB528;
-	Mon,  2 Sep 2024 15:05:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC18719F105;
+	Mon,  2 Sep 2024 15:05:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MEPcA6p6"
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PR0ECwNO"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CF171CB505
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 15:05:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 289771CB538
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 15:05:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725289508; cv=none; b=ucy06Tzs1g0FkqXPrI0KLerhaGtxHbgCWzMniNzzgRHEi2rkz6GqLXUitPcjMgo/NCV6tD+A8mOE7A7wmRqtcrifTCLpKPRvoBih7IebXGSVv0xXlcnxQ6m25TGdS/mHnb5ZDQQejp+fyGlf21o80qFhOY6VBz8zFXIn+0Rznlc=
+	t=1725289527; cv=none; b=RD2wXkVzV/AeXmjP57wRXZxvmKG4UYVzmNBZtUerLiMBpizBJm39yInHwaoVRwLmw7eT7xsy/zsYoCFKbw1MDQ3JTJ3h9biUcH+PEiZ9hXngIyGvluzpej2ReBcHW6ky27uE39iZn5im00pW5HhwvN2UaaVYqL4rHgeo3OF3cv4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725289508; c=relaxed/simple;
-	bh=bxBWmP6MnS97qclAPDqieXivWvBuFw3MueE1GYdzaAA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NTF6F8AaY4GNfGEJcT0oObLgaVBuzQgYlxMjSuzr//INrx3bSCDuYC0xXYXor0j9nkmR/DZhnfCeJXz2o3AgOwL3mFGpl3Mzs4v3HcsAb/fIQ2tVGW9pwvDq461wV6R6GJYwZMZrMJydt+dU1OE106u6lFA9AcWEyGSet9T+4PA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MEPcA6p6; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-5343eeb4973so6638453e87.2
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2024 08:05:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725289505; x=1725894305; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=fWVfLyCu7TnRFXI3PcEj4EnQGK8DTBEvYZTOdp9ZUy4=;
-        b=MEPcA6p6OGBP7higgCzFUUgSBk/1UIEds+6QxbZN+xEGeofkdmlsq6CMLRRs44C6MJ
-         7FOhbE0K0w2keeh7TboqPhtdzAddT9EpAaeQ7VBoKPBhiWf1r2HX+wGYOBNIbhGrsRBu
-         lpp79xygUjfY8YechoDlBYo7S4wdYcw8LUjNlpJzxE4Z43i0mVHmlqCRg9X15Ak1xodm
-         5bdssoa565cLpsmvqSdvxTVvXdD4c57bT3use8Xthb9QGphGVjfsmvbmnaidK+Nc8KKN
-         gy8FzUzYmim57MSFGIesjJnLAalfiyE/ANUOZyfKow00EKIp7XngiZQkA+7oYtPDjZJr
-         9kPQ==
+	s=arc-20240116; t=1725289527; c=relaxed/simple;
+	bh=k0/DqNn6r0hvbqjOGsbxJs9bNKNoTLtYp0jpsW3kue0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Shir/bIlgjVWLXtDU/uAW24fbqGCQ15QEaIWI1WIOYtjz/VPdMVJfigSSh8Fydha/l8+ZwDlfq0vMsuir0O+RjBada0YktswDtHmLUrrTgWE8BKddyqJ6YGbvBeovOSMBsSBzwNAany+F9/JM2vwMMKIbtxixuT0ZfizLgC2lZw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PR0ECwNO; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1725289524;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ziH5RycTQIYEsjONg+GaJvTnZD1q/SgNIqzqcE498lo=;
+	b=PR0ECwNOpesYja2qQn+UlwfxAjGONnF+RCuLIBPWtGSrOjF0z/0CfCF3LLQIZUzIjlfAzH
+	lQCn+Zy1cp7oL0Xx/JFFMy/umbwi9C7kwk6piMww9p+g064awyNLrQYS53hLl6himwWsfB
+	WmhMh8/HUyKMmKsfDaGseht7LqWToMA=
+Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com
+ [209.85.216.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-673-5KO2tlqhOqWBfSwwxzs4rQ-1; Mon, 02 Sep 2024 11:05:23 -0400
+X-MC-Unique: 5KO2tlqhOqWBfSwwxzs4rQ-1
+Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-2d8759255d4so3322062a91.3
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2024 08:05:23 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725289505; x=1725894305;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fWVfLyCu7TnRFXI3PcEj4EnQGK8DTBEvYZTOdp9ZUy4=;
-        b=vsvf4vclLYQJznv/ErTJS1lrWuefEu7eO7uY854pLRJTZ++zl9K6/zbQLDWsD1fHce
-         moyrb4dkXVl6Zdzzy22ajs36gTn7lmGep4raKp3U93fSkmyflusFh1WCuW5HX8++BuxE
-         knhxVR7Vmvvr8VQwMCV8e5uyPs1vn2oWIMtzJQFH+3xcEQMWWb7Uvd2fbZu4qzTqYs7M
-         zj6jR4acTIbcJyTPD9VqAMihbRNiFJ5w5Rq6/gH05EpiRvyN9h8R4ZonVF2ZQg7wZWCN
-         Ghz5ZBaaNIARO25Z+D0mO4jKTksCRKu7jtuuL3kHQlxq+eJUce9+SSQh2Cc2MahxiPP6
-         Opgw==
-X-Forwarded-Encrypted: i=1; AJvYcCVE8wv9PJmEpZvDIhlcQlVQ8BLHu3V5nkK65+irOJ5GDj6Ki7sDxMPrHzHv5zLvXz6O4VtZ3Fe2uCorRZc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxlugcPIhl6ZVMm5lC3bVpshk+56zO7Izc5VmbqVmvCUpUqhRne
-	2TgL4kHHxKdkjGqnFOCY/uvqmT9PwNZq6Kz5dmwgBCszNm0vtftM
-X-Google-Smtp-Source: AGHT+IFh64dOBlZhhpfwwTsOz8hViI+snEGY73VkK6LRwd/ze4p4sV6NWAsTw+FkFxQOOKvFKQdvKA==
-X-Received: by 2002:a05:6512:68f:b0:52e:933f:f1fa with SMTP id 2adb3069b0e04-53546c03f81mr7989346e87.61.1725289504049;
-        Mon, 02 Sep 2024 08:05:04 -0700 (PDT)
-Received: from [192.168.0.20] ([148.56.230.39])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a898902292bsm566333566b.88.2024.09.02.08.05.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 02 Sep 2024 08:05:02 -0700 (PDT)
-Message-ID: <6cd86103-8ebf-469d-8e68-444fffa56c68@gmail.com>
-Date: Mon, 2 Sep 2024 17:05:00 +0200
+        d=1e100.net; s=20230601; t=1725289522; x=1725894322;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ziH5RycTQIYEsjONg+GaJvTnZD1q/SgNIqzqcE498lo=;
+        b=Q/ptrw9tp1f0iO1TgTPS4y4pfq8Yd3QBeIVDkYbhoLj504hB19H3L+vFNacbjzH48D
+         X0hzk4FdqkETyRw1rXabz74lKoR/lFBmuJniLOekTJ57xX1AqqzdAL+JVPbBMJpsw38g
+         9q1EIUv+D9KKYdhp878ELqwOTv3ef4U+d+UC/spjJd+69Ujo2kO2FbePUrk7mU7Kdinh
+         PSKJct61T2HpD2PIgCp527xkVpbkJpy08X3WVJsAEwJK6cUX1ZS1h057h7i4el2MpVrD
+         lyRfv15jAa+YlipGDgUzFvbhdUd/qQU+F/xILolzTfEyWy6ipnQfNM4FRI+IVAsui2v3
+         wxyg==
+X-Forwarded-Encrypted: i=1; AJvYcCXfdjLEppYM8+lWgnv/OivWbrNaXLV5jAyUzS0VnXUS3nD4J0bCdMxh/kyFvB2nbu8pHpB5JqOmbM8FvWw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywm3VP/8dZfVOLsy58pwa4yCGq+Symyv4s0kOKcemADFUPAsO2f
+	rv+Hi6gHWaqesb7ewgLyD4DmTpLGxY6cMSYGL5gx/MwR1hxdadwo3l4YxoJoYSuSPJN0G/q8z/N
+	sAg4+yPpOCY9bl4wzixOFT/Lxaw3yXXrsTrK2IKsCA6l8MeNGOK6m5pcA6N0amuU/lJnzfUPVoM
+	JRVU/UiWOzifCSY5aIMQoTr+Tc+GcwE9tfps6n
+X-Received: by 2002:a17:90a:8d07:b0:2d8:27c1:1d4a with SMTP id 98e67ed59e1d1-2d88d6dbadbmr8803280a91.24.1725289522154;
+        Mon, 02 Sep 2024 08:05:22 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF0yHTmMgIu13OPCtaJjdH70dJqkGRaPQI7+UUIjnFKNKjMRWxvi7+frXfjTnChdUxzt4MQr6gq2Zp/Dq3TmBk=
+X-Received: by 2002:a17:90a:8d07:b0:2d8:27c1:1d4a with SMTP id
+ 98e67ed59e1d1-2d88d6dbadbmr8803237a91.24.1725289521719; Mon, 02 Sep 2024
+ 08:05:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/1] drm/mediatek: Fix get efuse issue for MT8188 DPTX
-To: Liankun Yang <liankun.yang@mediatek.com>, chunkuang.hu@kernel.org,
- p.zabel@pengutronix.de, airlied@gmail.com, daniel@ffwll.ch,
- angelogioacchino.delregno@collabora.com, ck.hu@mediatek.com,
- shuijing.li@mediatek.com, jitao.shi@mediatek.com, mac.shen@mediatek.com
-Cc: Project_Global_Chrome_Upstream_Group@mediatek.com,
- dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <20240902133736.16461-1-liankun.yang@mediatek.com>
-Content-Language: en-US, ca-ES, es-ES
-From: Matthias Brugger <matthias.bgg@gmail.com>
-Autocrypt: addr=matthias.bgg@gmail.com; keydata=
- xsFNBFP1zgUBEAC21D6hk7//0kOmsUrE3eZ55kjc9DmFPKIz6l4NggqwQjBNRHIMh04BbCMY
- fL3eT7ZsYV5nur7zctmJ+vbszoOASXUpfq8M+S5hU2w7sBaVk5rpH9yW8CUWz2+ZpQXPJcFa
- OhLZuSKB1F5JcvLbETRjNzNU7B3TdS2+zkgQQdEyt7Ij2HXGLJ2w+yG2GuR9/iyCJRf10Okq
- gTh//XESJZ8S6KlOWbLXRE+yfkKDXQx2Jr1XuVvM3zPqH5FMg8reRVFsQ+vI0b+OlyekT/Xe
- 0Hwvqkev95GG6x7yseJwI+2ydDH6M5O7fPKFW5mzAdDE2g/K9B4e2tYK6/rA7Fq4cqiAw1+u
- EgO44+eFgv082xtBez5WNkGn18vtw0LW3ESmKh19u6kEGoi0WZwslCNaGFrS4M7OH+aOJeqK
- fx5dIv2CEbxc6xnHY7dwkcHikTA4QdbdFeUSuj4YhIZ+0QlDVtS1QEXyvZbZky7ur9rHkZvP
- ZqlUsLJ2nOqsmahMTIQ8Mgx9SLEShWqD4kOF4zNfPJsgEMB49KbS2o9jxbGB+JKupjNddfxZ
- HlH1KF8QwCMZEYaTNogrVazuEJzx6JdRpR3sFda/0x5qjTadwIW6Cl9tkqe2h391dOGX1eOA
- 1ntn9O/39KqSrWNGvm+1raHK+Ev1yPtn0Wxn+0oy1tl67TxUjQARAQABzSlNYXR0aGlhcyBC
- cnVnZ2VyIDxtYXR0aGlhcy5iZ2dAZ21haWwuY29tPsLBkgQTAQIAPAIbAwYLCQgHAwIGFQgC
- CQoLBBYCAwECHgECF4AWIQTmuZIYwPLDJRwsOhfZFAuyVhMC8QUCWt3scQIZAQAKCRDZFAuy
- VhMC8WzRD/4onkC+gCxG+dvui5SXCJ7bGLCu0xVtiGC673Kz5Aq3heITsERHBV0BqqctOEBy
- ZozQQe2Hindu9lasOmwfH8+vfTK+2teCgWesoE3g3XKbrOCB4RSrQmXGC3JYx6rcvMlLV/Ch
- YMRR3qv04BOchnjkGtvm9aZWH52/6XfChyh7XYndTe5F2bqeTjt+kF/ql+xMc4E6pniqIfkv
- c0wsH4CkBHqoZl9w5e/b9MspTqsU9NszTEOFhy7p2CYw6JEa/vmzR6YDzGs8AihieIXDOfpT
- DUr0YUlDrwDSrlm/2MjNIPTmSGHH94ScOqu/XmGW/0q1iar/Yr0leomUOeeEzCqQtunqShtE
- 4Mn2uEixFL+9jiVtMjujr6mphznwpEqObPCZ3IcWqOFEz77rSL+oqFiEA03A2WBDlMm++Sve
- 9jpkJBLosJRhAYmQ6ey6MFO6Krylw1LXcq5z1XQQavtFRgZoruHZ3XlhT5wcfLJtAqrtfCe0
- aQ0kJW+4zj9/So0uxJDAtGuOpDYnmK26dgFN0tAhVuNInEVhtErtLJHeJzFKJzNyQ4GlCaLw
- jKcwWcqDJcrx9R7LsCu4l2XpKiyxY6fO4O8DnSleVll9NPfAZFZvf8AIy3EQ8BokUsiuUYHz
- wUo6pclk55PZRaAsHDX/fNr24uC6Eh5oNQ+v4Pax/gtyyc7BTQRd1TlIARAAm78mTny44Hwd
- IYNK4ZQH6U5pxcJtU45LLBmSr4DK/7er9chpvJ5pgzCGuI25ceNTEg5FChYcgfNMKqwCAekk
- V9Iegzi6UK448W1eOp8QeQDS6sHpLSOe8np6/zvmUvhiLokk7tZBhGz+Xs5qQmJPXcag7AMi
- fuEcf88ZSpChmUB3WflJV2DpxF3sSon5Ew2i53umXLqdRIJEw1Zs2puDJaMqwP3wIyMdrfdI
- H1ZBBJDIWV/53P52mKtYQ0Khje+/AolpKl96opi6o9VLGeqkpeqrKM2cb1bjo5Zmn4lXl6Nv
- JRH/ZT68zBtOKUtwhSlOB2bE8IDonQZCOYo2w0opiAgyfpbij8uiI7siBE6bWx2fQpsmi4Jr
- ZBmhDT6n/uYleGW0DRcZmE2UjeekPWUumN13jaVZuhThV65SnhU05chZT8vU1nATAwirMVeX
- geZGLwxhscduk3nNb5VSsV95EM/KOtilrH69ZL6Xrnw88f6xaaGPdVyUigBTWc/fcWuw1+nk
- GJDNqjfSvB7ie114R08Q28aYt8LCJRXYM1WuYloTcIhRSXUohGgHmh7usl469/Ra5CFaMhT3
- yCVciuHdZh3u+x+O1sRcOhaFW3BkxKEy+ntxw8J7ZzhgFOgi2HGkOGgM9R03A6ywc0sPwbgk
- gF7HCLirshP2U/qxWy3C8DkAEQEAAcLBdgQYAQgAIBYhBOa5khjA8sMlHCw6F9kUC7JWEwLx
- BQJd1TlIAhsMAAoJENkUC7JWEwLxtdcP/jHJ9vI8adFi1HQoWUKCQbZdZ5ZJHayFKIzU9kZE
- /FHzzzMDZYFgcCTs2kmUVyGloStXpZ0WtdCMMB31jBoQe5x9LtICHEip0irNXm80WsyPCEHU
- 3wx91QkOmDJftm6T8+F3lqhlc3CwJGpoPY7AVlevzXNJfATZR0+Yh9NhON5Ww4AjsZntqQKx
- E8rrieLRd+he57ZdRKtRRNGKZOS4wetNhodjfnjhr4Z25BAssD5q+x4uaO8ofGxTjOdrSnRh
- vhzPCgmP7BKRUZA0wNvFxjboIw8rbTiOFGb1Ebrzuqrrr3WFuK4C1YAF4CyXUBL6Z1Lto//i
- 44ziQUK9diAgfE/8GhXP0JlMwRUBlXNtErJgItR/XAuFwfO6BOI43P19YwEsuyQq+rubW2Wv
- rWY2Bj2dXDAKUxS4TuLUf2v/b9Rct36ljzbNxeEWt+Yq4IOY6QHnE+w4xVAkfwjT+Vup8sCp
- +zFJv9fVUpo/bjePOL4PMP1y+PYrp4PmPmRwoklBpy1ep8m8XURv46fGUHUEIsTwPWs2Q87k
- 7vjYyrcyAOarX2X5pvMQvpAMADGf2Z3wrCsDdG25w2HztweUNd9QEprtJG8GNNzMOD4cQ82T
- a7eGvPWPeXauWJDLVR9jHtWT9Ot3BQgmApLxACvwvD1a69jaFKov28SPHxUCQ9Y1Y/Ct
-In-Reply-To: <20240902133736.16461-1-liankun.yang@mediatek.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20240827203804.4989-1-Ashish.Kalra@amd.com>
+In-Reply-To: <20240827203804.4989-1-Ashish.Kalra@amd.com>
+From: Paolo Bonzini <pbonzini@redhat.com>
+Date: Mon, 2 Sep 2024 17:05:08 +0200
+Message-ID: <CABgObfZMQ1qcQf-XLZaPGFzmbtoe3gGuMvXF-N0qo_5Z9jf+vg@mail.gmail.com>
+Subject: Re: [PATCH] x86/sev: Fix host kdump support for SNP
+To: Ashish Kalra <Ashish.Kalra@amd.com>
+Cc: seanjc@google.com, dave.hansen@linux.intel.com, tglx@linutronix.de, 
+	mingo@redhat.com, bp@alien8.de, x86@kernel.org, hpa@zytor.com, 
+	peterz@infradead.org, linux-kernel@vger.kernel.org, kvm@vger.kernel.org, 
+	thomas.lendacky@amd.com, michael.roth@amd.com, kexec@lists.infradead.org, 
+	linux-coco@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Tue, Aug 27, 2024 at 10:40=E2=80=AFPM Ashish Kalra <Ashish.Kalra@amd.com=
+> wrote:
+> +void snp_decommision_all(void)
 
+Should be spelled snp_decommission_all (with two "s").
 
-On 02/09/2024 15:36, Liankun Yang wrote:
-> Update efuse data for MT8188 displayport.
-> 
-> The DP monitor can not display when DUT connected to USB-c to DP dongle.
-> Analysis view is invalid DP efuse data.
-> 
-> Fixes: 350c3fe907fb ("drm/mediatek: dp: Add support MT8188 dp/edp function")
-> 
-> Changes in V2:
-> - Add Fixes tag.
-> - Update the commit title.
-> - Update the commit description.
-> Per suggestion from the previous thread:
-> https://patchwork.kernel.org/project/linux-mediatek/patch/
-> 20240510061716.31103-1-liankun.yang@mediatek.com/
+> +static DEFINE_SPINLOCK(snp_decommision_lock);
 
-Changelog should go after '---' below your Signed-off-by, as we don't want that 
-in the commit message later.
+Same here.
 
-Reviewed-by: Matthias Brugger <matthias.bgg@gmail.com>
+>  /*
+>   * Only MSR_TSC_AUX is switched via the user return hook.  EFER is switc=
+hed via
+>   * the VMCB, and the SYSCALL/SYSENTER MSRs are handled by VMLOAD/VMSAVE.
+> @@ -594,9 +597,97 @@ static inline void kvm_cpu_svm_disable(void)
+>
+>  static void svm_emergency_disable(void)
+>  {
+> +       static atomic_t waiting_for_cpus_synchronized;
+> +       static bool synchronize_cpus_initiated;
+> +       static bool snp_decommision_handled;
 
-> 
-> Signed-off-by: Liankun Yang <liankun.yang@mediatek.com>
-> ---
->   drivers/gpu/drm/mediatek/mtk_dp.c | 85 ++++++++++++++++++++++++++++++-
->   1 file changed, 84 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/mediatek/mtk_dp.c b/drivers/gpu/drm/mediatek/mtk_dp.c
-> index d8796a904eca..f2bee617f063 100644
-> --- a/drivers/gpu/drm/mediatek/mtk_dp.c
-> +++ b/drivers/gpu/drm/mediatek/mtk_dp.c
-> @@ -145,6 +145,89 @@ struct mtk_dp_data {
->   	u16 audio_m_div2_bit;
->   };
->   
-> +static const struct mtk_dp_efuse_fmt mt8188_dp_efuse_fmt[MTK_DP_CAL_MAX] = {
-> +	[MTK_DP_CAL_GLB_BIAS_TRIM] = {
-> +		.idx = 0,
-> +		.shift = 10,
-> +		.mask = 0x1f,
-> +		.min_val = 1,
-> +		.max_val = 0x1e,
-> +		.default_val = 0xf,
-> +	},
-> +	[MTK_DP_CAL_CLKTX_IMPSE] = {
-> +		.idx = 0,
-> +		.shift = 15,
-> +		.mask = 0xf,
-> +		.min_val = 1,
-> +		.max_val = 0xe,
-> +		.default_val = 0x8,
-> +	},
-> +	[MTK_DP_CAL_LN_TX_IMPSEL_PMOS_0] = {
-> +		.idx = 1,
-> +		.shift = 0,
-> +		.mask = 0xf,
-> +		.min_val = 1,
-> +		.max_val = 0xe,
-> +		.default_val = 0x8,
-> +	},
-> +	[MTK_DP_CAL_LN_TX_IMPSEL_PMOS_1] = {
-> +		.idx = 1,
-> +		.shift = 8,
-> +		.mask = 0xf,
-> +		.min_val = 1,
-> +		.max_val = 0xe,
-> +		.default_val = 0x8,
-> +	},
-> +	[MTK_DP_CAL_LN_TX_IMPSEL_PMOS_2] = {
-> +		.idx = 1,
-> +		.shift = 16,
-> +		.mask = 0xf,
-> +		.min_val = 1,
-> +		.max_val = 0xe,
-> +		.default_val = 0x8,
-> +	},
-> +	[MTK_DP_CAL_LN_TX_IMPSEL_PMOS_3] = {
-> +		.idx = 1,
-> +		.shift = 24,
-> +		.mask = 0xf,
-> +		.min_val = 1,
-> +		.max_val = 0xe,
-> +		.default_val = 0x8,
-> +	},
-> +	[MTK_DP_CAL_LN_TX_IMPSEL_NMOS_0] = {
-> +		.idx = 1,
-> +		.shift = 4,
-> +		.mask = 0xf,
-> +		.min_val = 1,
-> +		.max_val = 0xe,
-> +		.default_val = 0x8,
-> +	},
-> +	[MTK_DP_CAL_LN_TX_IMPSEL_NMOS_1] = {
-> +		.idx = 1,
-> +		.shift = 12,
-> +		.mask = 0xf,
-> +		.min_val = 1,
-> +		.max_val = 0xe,
-> +		.default_val = 0x8,
-> +	},
-> +	[MTK_DP_CAL_LN_TX_IMPSEL_NMOS_2] = {
-> +		.idx = 1,
-> +		.shift = 20,
-> +		.mask = 0xf,
-> +		.min_val = 1,
-> +		.max_val = 0xe,
-> +		.default_val = 0x8,
-> +	},
-> +	[MTK_DP_CAL_LN_TX_IMPSEL_NMOS_3] = {
-> +		.idx = 1,
-> +		.shift = 28,
-> +		.mask = 0xf,
-> +		.min_val = 1,
-> +		.max_val = 0xe,
-> +		.default_val = 0x8,
-> +	},
-> +};
-> +
->   static const struct mtk_dp_efuse_fmt mt8195_edp_efuse_fmt[MTK_DP_CAL_MAX] = {
->   	[MTK_DP_CAL_GLB_BIAS_TRIM] = {
->   		.idx = 3,
-> @@ -2771,7 +2854,7 @@ static SIMPLE_DEV_PM_OPS(mtk_dp_pm_ops, mtk_dp_suspend, mtk_dp_resume);
->   static const struct mtk_dp_data mt8188_dp_data = {
->   	.bridge_type = DRM_MODE_CONNECTOR_DisplayPort,
->   	.smc_cmd = MTK_DP_SIP_ATF_VIDEO_UNMUTE,
-> -	.efuse_fmt = mt8195_dp_efuse_fmt,
-> +	.efuse_fmt = mt8188_dp_efuse_fmt,
->   	.audio_supported = true,
->   	.audio_pkt_in_hblank_area = true,
->   	.audio_m_div2_bit = MT8188_AUDIO_M_CODE_MULT_DIV_SEL_DP_ENC0_P0_DIV_2,
+Same here, and below throughout the function (also SNP_DECOMMISSION).
+
+Please create a new function sev_emergency_disable(), with a stub in
+svm.h if CONFIG_KVM_AMD_
+
+> @@ -749,6 +749,7 @@ void sev_snp_init_protected_guest_state(struct kvm_vc=
+pu *vcpu);
+>  int sev_gmem_prepare(struct kvm *kvm, kvm_pfn_t pfn, gfn_t gfn, int max_=
+order);
+>  void sev_gmem_invalidate(kvm_pfn_t start, kvm_pfn_t end);
+>  int sev_private_max_mapping_level(struct kvm *kvm, kvm_pfn_t pfn);
+> +void snp_decommision_all(void);
+>  #else
+>  static inline struct page *snp_safe_alloc_page_node(int node, gfp_t gfp)
+>  {
+> @@ -779,7 +780,7 @@ static inline int sev_private_max_mapping_level(struc=
+t kvm *kvm, kvm_pfn_t pfn)
+>  {
+>         return 0;
+>  }
+> -
+> +static void snp_decommision_all(void);
+
+This should be inline (and after the change above it should be
+sev_emergency_disable(), not snp_decommission_all(), that is exported
+from sev.c).
+
+Thanks,
+
+Paolo
+
 
