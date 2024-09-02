@@ -1,185 +1,274 @@
-Return-Path: <linux-kernel+bounces-311539-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311541-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6EB5968A37
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 16:43:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37A3E968A3B
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 16:47:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 48B45B22F5F
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 14:43:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 75E28B21482
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 14:47:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 901741A264E;
-	Mon,  2 Sep 2024 14:43:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFEBC19C55D;
+	Mon,  2 Sep 2024 14:47:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IAUWYhyk"
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZwjrXm89"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34F051A2644
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 14:43:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 087C41DA5E
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 14:47:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725288229; cv=none; b=dBbUy0bMwDE84Yrd06WaHJ3Rh/NaxL9c0KTPWunxyBX2W6q+zwVVqTlRFu1Gxi1nO+gpINl5CQHgWfcJSC+LiFXHejfUcCRwNKHLod9omGW1t2RpT07q+YdAJ6i08cWLSkZeINmEZJK4wbrnvZaa2tBTHA+tIHtLwXTBjjJA4nI=
+	t=1725288440; cv=none; b=HBEcNlgu2PJ0ZEVI6cwH/I2X3AB6BM/3HXAHJlCQNb9PEwg330Q32ymtkqwT7D0muYxBOnbBy5HOJ3ltKHf4hIeoySNvfnWQTI/i4aOQ1rKCPDG4wKKznIgBiVbqiTEUZX84sSMTG2xtPs5qbjS2eP8vLCL5twjdKCyf9pZN0fA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725288229; c=relaxed/simple;
-	bh=JF4dhqTJSFmyNFgmZgqyjkKlHlOhNF1IGzCfM9eHi1Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Ej9m5i0dJfhMDgpvMdNCNEcQOxd8lGfSx8KeGivcpyNk21SPwrBakzz4mDMMihjOtiEcoIuXEnm1Nf+Xi2619n56hOPcIIOUca3/cFK0LZ0ia4py85j6snN2sbtg4yYhDF4MBmLjfN0OBe+UFIQasQ5A1YHwo9lxLR6rZ/H+JbY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IAUWYhyk; arc=none smtp.client-ip=209.85.208.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5a10835487fso5718211a12.1
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2024 07:43:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725288225; x=1725893025; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yFRFdizmhc2CJwy4/CKQA005aAYjoT9/YpO+LeBpeuY=;
-        b=IAUWYhykwTlnxOO3oRslB4tXArEJX6FAZWA0EnwUeZO8jl8OMI3U6bHvCdNJTFc9Xc
-         8WPO9HzpbrXhvpxVtIV2DRgDE+zAhT8qgLlZsUjyE9UBBNdXz43iTSQ2aDV7TPAOYlAX
-         Tvsk7JNPtaV8Z8fOIY2Y6IwbueM+T2LAP4JmqWpCgTH6A8L4NXV8oZqzQfbNAZi8Yb3A
-         /VbXOSBqqhf7lhblSQL8wsun1qcOmw6S5D5a3XDLEmCs17aNeY4zwyqGSUI5Q/yRtqhv
-         fAY69hpxg2VSFnijjEDia+kVjMhMTmeMCBVdmqw+RqDCd237zNW2ogTZXHB0PZs+8Nz6
-         huZg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725288225; x=1725893025;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=yFRFdizmhc2CJwy4/CKQA005aAYjoT9/YpO+LeBpeuY=;
-        b=Jp9KBJMkyiZ0/DrxmjBJN/TzDCjL+QfIOM5LW3iQEfB4WO/JeU3aG3MNC96D5jbL1R
-         dqezZEv1foECHWqrBrot9teSfaURL9E5zQZktKTlt5Lp23PgVMrxcKC8D7FTFGbiqaqh
-         LreKoUq/PTHQXpVjQObWxDgulb38uF/vzxru6/xqCE6BKfBRG149EtOGRmjgibisQ/QQ
-         4AIHrXnw1y30v7cafMw14ob2IR+imtYeIzYMKuiIZT+MJ7JYTJS6BqgjXZfzJn1guvwV
-         SHFvuvnVLdkHauF/5ah7WXyHtVSIX+gKlp329wm/fH+013hYxZk+e+AtISTNHDpS3x2A
-         E8OA==
-X-Forwarded-Encrypted: i=1; AJvYcCXhy/JlWCutACgSg4WkNGA7lUZqkqDCLEXmGZ9y9jPgihuVjNuXuJi/y2DGKWzVStsEkHdsD+AzES7I5+A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwjyUgSqbvNWjBeCFhM7eaQv5tnGXctOhKeAoSSiidyg/KdPpGo
-	1Dhk4CxEexnSDZWxs2ri3a/QecJYwt3W+kl4OlBT5sjxeDxp61Oi
-X-Google-Smtp-Source: AGHT+IFVrmcQ2LyLLYhiHo5LRdWuFIggl65+Wa6I1kVeqYevDcItonWteNGDfQxRBC1yUAzXhRpMfg==
-X-Received: by 2002:a17:906:f5a8:b0:a7a:9226:6511 with SMTP id a640c23a62f3a-a8a1d3268cemr29177566b.31.1725288224997;
-        Mon, 02 Sep 2024 07:43:44 -0700 (PDT)
-Received: from localhost.localdomain ([31.19.114.250])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a89891968e9sm563655266b.120.2024.09.02.07.43.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Sep 2024 07:43:44 -0700 (PDT)
-From: raoul.van.rueschen@gmail.com
-To: tjakobi@math.uni-bielefeld.de
-Cc: Rodrigo.Siqueira@amd.com,
-	Xinhui.Pan@amd.com,
-	airlied@gmail.com,
-	alexander.deucher@amd.com,
-	amd-gfx@lists.freedesktop.org,
-	christian.koenig@amd.com,
-	daniel@ffwll.ch,
-	dri-devel@lists.freedesktop.org,
-	harry.wentland@amd.com,
-	linux-kernel@vger.kernel.org,
-	mario.limonciello@amd.com,
-	sunpeng.li@amd.com,
-	raoul.van.rueschen@gmail.com
-Subject: Re: [PATCH 1/2] drm/amd/display: Avoid race between dcn10_set_drr() and dc_state_destruct()
-Date: Mon,  2 Sep 2024 16:43:36 +0200
-Message-ID: <20240902144337.18223-1-raoul.van.rueschen@gmail.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <7b9dbbbb1e6a3aa6d7a4d9367d44d18ddd947158.1725269643.git.tjakobi@math.uni-bielefeld.de>
-References: <7b9dbbbb1e6a3aa6d7a4d9367d44d18ddd947158.1725269643.git.tjakobi@math.uni-bielefeld.de>
+	s=arc-20240116; t=1725288440; c=relaxed/simple;
+	bh=X45jWrJCTaBMiYV5408CS0aYMQPVZIj6Q9txx4dbO+o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XLsLh1Ba+Ywkg/EyNSpjJ+wVNPuD1Kihn1FX3OUJfT1NydTdUVLhcSWk66SPaHC4QD/0pM8HI7eTLcOtdqQpRMpmFSqebqXJopM3x5HfNWeevzc/kf5apFVhZYj8VDc3Gn7tf+5HoSrCLodoO7wf+re1N7BPUcHSgQA0aWc1v54=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZwjrXm89; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85DBCC4CEC2;
+	Mon,  2 Sep 2024 14:47:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725288439;
+	bh=X45jWrJCTaBMiYV5408CS0aYMQPVZIj6Q9txx4dbO+o=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ZwjrXm89et9gPbeEmry7VYwgv1sa69m/R0JFIUjqkxST8BgocZYVOED9qEhmrzDd9
+	 jMOEqRiSnIJpk0RnlGTBJ6W7AGaOD+xKAGVZ3Rm6f3X/vZyOQRglwm1eqHk7mQMhtu
+	 JKLj5gRFVYKUnmKthNWL34ySPrxnXZTPjq8QQ5ng6DcarXQLdwUKqYTteUf3rWXasp
+	 976bgykl8UEn0cU6BDS8WWgqWtHtpR+s9E57DRVaBuHqbvMhLjKc15scwzFHg9J0pv
+	 e3Gl/RrmW4/mbAlUs+EpeKsHvg2A3H2LG7tY2vFCKAlOn+Lui6F1yPerYA6OBZ9vG/
+	 /aeWPuVccwT7A==
+Date: Mon, 2 Sep 2024 15:47:15 +0100
+From: Will Deacon <will@kernel.org>
+To: Robin Murphy <robin.murphy@arm.com>
+Cc: mark.rutland@arm.com, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, jialong.yang@shingroup.cn
+Subject: Re: [PATCH v3 2/3] perf: Add driver for Arm NI-700 interconnect PMU
+Message-ID: <20240902144714.GA11443@willie-the-truck>
+References: <cover.1725037424.git.robin.murphy@arm.com>
+ <275e8ef450eeaf837468ce34e2c6930d59091fbc.1725037424.git.robin.murphy@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <275e8ef450eeaf837468ce34e2c6930d59091fbc.1725037424.git.robin.murphy@arm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-> From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
->
-> dc_state_destruct() nulls the resource context of the DC state. The
-> pipe
-> context passed to dcn10_set_drr() is a member of this resource
-> context.
->
-> If dc_state_destruct() is called parallel to the IRQ processing
-> (which
-> calls dcn10_set_drr() at some point), we can end up using already
-> nulled
-> function callback fields of struct stream_resource.
->
-> The logic in dcn10_set_drr() already tries to avoid this, by checking
-> tg
-> against NULL. But if the nulling happens exactly after the NULL check
-> and
-> before the next access, then we get a race.
->
-> Avoid this by copying tg first to a local variable, and then use this
-> variable for all the operations. This should work, as long as nobody
-> frees the resource pool where the timing generators live.
->
-> Closes: https://gitlab.freedesktop.org/drm/amd/-/issues/3142
-> Fixes: 06ad7e164256 ("drm/amd/display: Destroy DC context while
-> keeping DML and DML2")
-> Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Hi Robin,
+
+On Fri, Aug 30, 2024 at 06:19:34PM +0100, Robin Murphy wrote:
+> The Arm NI-700 Network-on-Chip Interconnect has a relatively
+> straightforward design with a hierarchy of voltage, power, and clock
+> domains, where each clock domain then contains a number of interface
+> units and a PMU which can monitor events thereon. As such, it begets a
+> relatively straightforward driver to interface those PMUs with perf.
+> 
+> Even more so than with arm-cmn, users will require detailed knowledge of
+> the wider system topology in order to meaningfully analyse anything,
+> since the interconnect itself cannot know what lies beyond the boundary
+> of each inscrutably-numbered interface. Given that, for now they are
+> also expected to refer to the NI-700 documentation for the relevant
+> event IDs to provide as well. An identifier is implemented so we can
+> come back and add jevents if anyone really wants to.
+> 
+> Signed-off-by: Robin Murphy <robin.murphy@arm.com>
+> 
 > ---
->  .../amd/display/dc/hwss/dcn10/dcn10_hwseq.c   | 20 +++++++++++------
-> --
->  1 file changed, 12 insertions(+), 8 deletions(-)
->
-> diff --git a/drivers/gpu/drm/amd/display/dc/hwss/dcn10/dcn10_hwseq.c
-> b/drivers/gpu/drm/amd/display/dc/hwss/dcn10/dcn10_hwseq.c
-> index 3306684e805a..da8f2cb3c5db 100644
-> --- a/drivers/gpu/drm/amd/display/dc/hwss/dcn10/dcn10_hwseq.c
-> +++ b/drivers/gpu/drm/amd/display/dc/hwss/dcn10/dcn10_hwseq.c
-> @@ -3223,15 +3223,19 @@ void dcn10_set_drr(struct pipe_ctx
-> **pipe_ctx,
->  	 * as well.
->  	 */
->  	for (i = 0; i < num_pipes; i++) {
-> -		if ((pipe_ctx[i]->stream_res.tg != NULL) &&
-> pipe_ctx[i]->stream_res.tg->funcs) {
-> -			if (pipe_ctx[i]->stream_res.tg->funcs-
-> >set_drr)
-> -				pipe_ctx[i]->stream_res.tg->funcs-
-> >set_drr(
-> -					pipe_ctx[i]->stream_res.tg,
-> &params);
-> +		/* dc_state_destruct() might null the stream
-> resources, so fetch tg
-> +		 * here first to avoid a race condition. The
-> lifetime of the pointee
-> +		 * itself (the timing_generator object) is not a
-> problem here.
-> +		 */
-> +		struct timing_generator *tg = pipe_ctx[i]-
-> >stream_res.tg;
+> v2:
+>  - Add basic usage documentation
+>  - Use __counted_by attribute
+>  - Make group validation logic clearer (and drop PMU type check
+>    which perf_event_open() already takes care of)
+>  - Add retry limit to arm_ni_read_ccnt()
+> v3:
+>  - Update .remove to return void
+>  - Fix group leader validation and make the naming clearer
+>  - Drop NUMA_NO_NODE check for CPU online (the only way that could
+>    actually pass both other migration conditions is if the NUMA info
+>    is so messed up that it's not worth worrying about anyway)
+
+Thanks, this is looking pretty good now. I just have a few random comments
+based on another read-through of the code.
+
+> diff --git a/Documentation/admin-guide/perf/arm-ni.rst b/Documentation/admin-guide/perf/arm-ni.rst
+> new file mode 100644
+> index 000000000000..3cd7d0f75f0f
+> --- /dev/null
+> +++ b/Documentation/admin-guide/perf/arm-ni.rst
+> @@ -0,0 +1,17 @@
+> +====================================
+> +Arm Network-on Chip Interconnect PMU
+> +====================================
 > +
-> +		if ((tg != NULL) && tg->funcs) {
-> +			if (tg->funcs->set_drr)
-> +				tg->funcs->set_drr(tg, &params);
->  			if (adjust.v_total_max != 0 &&
-> adjust.v_total_min != 0)
-> -				if (pipe_ctx[i]->stream_res.tg-
-> >funcs->set_static_screen_control)
-> -					pipe_ctx[i]->stream_res.tg-
-> >funcs->set_static_screen_control(
-> -						pipe_ctx[i]-
-> >stream_res.tg,
-> -						event_triggers,
-> num_frames);
-> +				if (tg->funcs-
-> >set_static_screen_control)
-> +					tg->funcs-
-> >set_static_screen_control(
-> +						tg, event_triggers,
-> num_frames);
->  		}
->  	}
->  }
+> +NI-700 and friends implement a distinct PMU for each clock domain within the
+> +interconnect. Correspondingly, the driver exposes multiple PMU devices named
+> +arm_ni_<x>_cd_<y>, where <x> is an (abritrary) instance identifier and <y> is
 
-This fixes full system freezes when taking screenshots at low framerates with VRR enabled on an RX 7900 XTX.
+typo: abritrary
 
-Tested-by: Raoul van Rüschen <raoul.van.rueschen@gmail.com>
+> +the clock domain ID within that particular instance. If multiple NI instances
+> +exist within a system, the PMU devices can be correlated with the underlying
+> +hardware instance via sysfs parentage.
+> +
+> +Each PMU exposes base event aliases for the interface types present in its clock
+> +domain. These require qualifying with the "eventid" and "nodeid" parameters
+> +to specify the event code to count and the interface at which to count it
+> +(per the configured hardware ID as reflected in the xxNI_NODE_INFO register).
+> +The exception is the "cycles" alias for the PMU cycle counter, which is encoded
+> +with the PMU node type and needs no further qualification.
+
+[...]
+
+> +static ssize_t arm_ni_format_show(struct device *dev,
+> +				  struct device_attribute *attr, char *buf)
+> +{
+> +	struct arm_ni_format_attr *fmt = container_of(attr, typeof(*fmt), attr);
+> +	int lo = __ffs(fmt->field), hi = __fls(fmt->field);
+> +
+> +	return sysfs_emit(buf, "config:%d-%d\n", lo, hi);
+> +}
+
+Nit: if you end up adding single-bit config fields in the future, this
+will quietly do the wrong thing. Maybe safe-guard the 'lo==hi' case (even
+if you just warn once and return without doing anything).
+
+
+[...]
+
+> +static int arm_ni_init_cd(struct arm_ni *ni, struct arm_ni_node *node, u64 res_start)
+> +{
+> +	struct arm_ni_cd *cd = ni->cds + node->id;
+> +	const char *name;
+> +	int err;
+> +
+> +	cd->id = node->id;
+> +	cd->num_units = node->num_components;
+> +	cd->units = devm_kcalloc(ni->dev, cd->num_units, sizeof(*(cd->units)), GFP_KERNEL);
+> +	if (!cd->units)
+> +		return -ENOMEM;
+> +
+> +	for (int i = 0; i < cd->num_units; i++) {
+> +		u32 reg = readl_relaxed(node->base + NI_CHILD_PTR(i));
+> +		void __iomem *unit_base = ni->base + reg;
+> +		struct arm_ni_unit *unit = cd->units + i;
+> +
+> +		reg = readl_relaxed(unit_base + NI_NODE_TYPE);
+> +		unit->type = FIELD_GET(NI_NODE_TYPE_NODE_TYPE, reg);
+> +		unit->id = FIELD_GET(NI_NODE_TYPE_NODE_ID, reg);
+> +
+> +		switch (unit->type) {
+> +		case NI_PMU:
+> +			reg = readl_relaxed(unit_base + NI_PMCFGR);
+> +			if (!reg) {
+> +				dev_info(ni->dev, "No access to PMU %d\n", cd->id);
+> +				devm_kfree(ni->dev, cd->units);
+> +				return 0;
+> +			}
+> +			unit->ns = true;
+> +			cd->pmu_base = unit_base;
+> +			break;
+> +		case NI_ASNI:
+> +		case NI_AMNI:
+> +		case NI_HSNI:
+> +		case NI_HMNI:
+> +		case NI_PMNI:
+> +			unit->pmusela = unit_base + NI700_PMUSELA;
+> +			writel_relaxed(1, unit->pmusela);
+> +			if (readl_relaxed(unit->pmusela) != 1)
+> +				dev_info(ni->dev, "No access to node 0x%04x%04x\n", unit->id, unit->type);
+> +			else
+> +				unit->ns = true;
+> +			break;
+> +		default:
+> +			/*
+> +			 * e.g. FMU - thankfully bits 3:2 of FMU_ERR_FR0 are RES0 so
+> +			 * can't alias any of the leaf node types we're looking for.
+> +			 */
+> +			dev_dbg(ni->dev, "Mystery node 0x%04x%04x\n", unit->id, unit->type);
+> +			break;
+> +		}
+> +	}
+> +
+> +	res_start += cd->pmu_base - ni->base;
+> +	if (!devm_request_mem_region(ni->dev, res_start, SZ_4K, dev_name(ni->dev))) {
+> +		dev_err(ni->dev, "Failed to request PMU region 0x%llx\n", res_start);
+> +		return -EBUSY;
+> +	}
+> +
+> +	writel_relaxed(NI_PMCR_RESET_CCNT | NI_PMCR_RESET_EVCNT,
+> +		       cd->pmu_base + NI_PMCR);
+> +	writel_relaxed(U32_MAX, cd->pmu_base + NI_PMCNTENCLR);
+> +	writel_relaxed(U32_MAX, cd->pmu_base + NI_PMOVSCLR);
+> +	writel_relaxed(U32_MAX, cd->pmu_base + NI_PMINTENSET);
+> +
+> +	cd->irq = platform_get_irq(to_platform_device(ni->dev), cd->id);
+> +	if (cd->irq < 0)
+> +		return cd->irq;
+> +
+> +	err = devm_request_irq(ni->dev, cd->irq, arm_ni_handle_irq,
+> +			       IRQF_NOBALANCING | IRQF_NO_THREAD,
+> +			       dev_name(ni->dev), cd);
+> +	if (err)
+> +		return err;
+> +
+> +	cd->cpu = cpumask_local_spread(0, dev_to_node(ni->dev));
+> +	cd->pmu = (struct pmu) {
+> +		.module = THIS_MODULE,
+> +		.parent = ni->dev,
+> +		.attr_groups = arm_ni_attr_groups,
+> +		.capabilities = PERF_PMU_CAP_NO_EXCLUDE,
+> +		.task_ctx_nr = perf_invalid_context,
+> +		.pmu_enable = arm_ni_pmu_enable,
+> +		.pmu_disable = arm_ni_pmu_disable,
+> +		.event_init = arm_ni_event_init,
+> +		.add = arm_ni_event_add,
+> +		.del = arm_ni_event_del,
+> +		.start = arm_ni_event_start,
+> +		.stop = arm_ni_event_stop,
+> +		.read = arm_ni_event_read,
+> +	};
+> +
+> +	name = devm_kasprintf(ni->dev, GFP_KERNEL, "arm_ni_%d_cd_%d", ni->id, cd->id);
+> +	if (!name)
+> +		return -ENOMEM;
+> +
+> +	err = cpuhp_state_add_instance(arm_ni_hp_state, &cd->cpuhp_node);
+> +	if (err)
+> +		return err;
+
+What happens if there's a CPU hotplug operation here? Can we end up calling
+perf_pmu_migrate_context() concurrently with perf_pmu_register()?
+
+> +	return perf_pmu_register(&cd->pmu, name, -1);
+
+Clean up the cpuhp instance if this fails?
+
+> +static void arm_ni_remove(struct platform_device *pdev)
+> +{
+> +	struct arm_ni *ni = platform_get_drvdata(pdev);
+> +
+> +	for (int i = 0; i < ni->num_cds; i++) {
+> +		struct arm_ni_cd *cd = ni->cds + i;
+> +
+> +		if (!cd->pmu_base)
+> +			continue;
+> +
+> +		writel_relaxed(0, cd->pmu_base + NI_PMCR);
+> +		writel_relaxed(U32_MAX, cd->pmu_base + NI_PMINTENCLR);
+> +		perf_pmu_unregister(&cd->pmu);
+
+Similarly here, it feels like a CPU hotplug operation could cause problems
+here.
+
+> +		cpuhp_state_remove_instance_nocalls(arm_ni_hp_state, &cd->cpuhp_node);
+> +	}
+> +}
+
+Will
 
