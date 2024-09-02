@@ -1,109 +1,99 @@
-Return-Path: <linux-kernel+bounces-310486-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310487-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29964967DA4
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 03:58:44 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9FB8967DA7
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 04:00:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CE5841F2249C
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 01:58:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BF743B216C6
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 02:00:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6DBA2C182;
-	Mon,  2 Sep 2024 01:58:29 +0000 (UTC)
-Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4AC628683;
+	Mon,  2 Sep 2024 01:59:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="amcn4CEP"
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDF9022331
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 01:58:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAA68EAD0;
+	Mon,  2 Sep 2024 01:59:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725242309; cv=none; b=RdCiR7+mcUhYsTZmX7BtpoF6gnGHpU1hjUltMxIcBpSSTVKAHMhDfQ7ItTRmRL+b7FgTxLkAOf+XMFPC55OQMQxGLn/oZfn0NOsdZZMJ+3uoRh3PTLDvpNGGOowqYYZu2ru7VPVMv0G7zRGQLl3ifhHqXpT95aP6d8cuMZUvnQE=
+	t=1725242393; cv=none; b=qqrF32TZn10x5EWfitzXigKTR6wcmfDfYZEWOpbk9Z14vzwGWpJrEEQNTxwiaF9fLqBD2zQA/qL/UsRiBxjLunoa3D0H4mh6X6Q6cMLTFHow7xtOkXdTvubnjFBwvVpnK7wkt+OAq6nVd1QUgfXW0EXfdtqdwpJE45jZ8Z/W3qk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725242309; c=relaxed/simple;
-	bh=E0bTQB+xHofberqzJzN/FXrNFANvbZZQEQZiJAcykoY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=pCme7qlm0HVPHO7bk4UTBfgOZWkb0TmKCpaV7/1Gn/S36K5j8dy/On7g0Tv/pt5o9FO9hxrZxaAcCFIFJtSE4iCLH6LyUeBBHbo+G839+O3BNjiaW7P+s+xSxLe6g4xP1TMS+/EQbOkLk9VP+3aTUXNZkcxYFxmmB65wkUJ/zLs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.174])
-	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4WxsGq0ydpz69Qp;
-	Mon,  2 Sep 2024 09:53:23 +0800 (CST)
-Received: from kwepemh500013.china.huawei.com (unknown [7.202.181.146])
-	by mail.maildlp.com (Postfix) with ESMTPS id 0A2F914022D;
-	Mon,  2 Sep 2024 09:58:18 +0800 (CST)
-Received: from [10.67.109.254] (10.67.109.254) by
- kwepemh500013.china.huawei.com (7.202.181.146) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Mon, 2 Sep 2024 09:58:17 +0800
-Message-ID: <fa150839-43d3-ed28-b1ae-7eaa15a1200d@huawei.com>
-Date: Mon, 2 Sep 2024 09:58:16 +0800
+	s=arc-20240116; t=1725242393; c=relaxed/simple;
+	bh=iNy45UIF0UVsc+PI4+1bSK0M8zCdHe19XHjRvy5HNdY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=SzJvglrSAsk/+qULfrlyZ88JUcezUefin8tEIGTkBzXFMQ/Gz+otu39qw0kTYhqVg+QVw14+KYWA0Do+i+T6KCoLkiqEUHmHfudvtzxbqVWWwrd1VshD9FyY+X7eC30Z344deZnsAWMw8pnqvgmvKCGviwtKAzlFwWBJfdWoDAA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=amcn4CEP; arc=none smtp.client-ip=209.85.210.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-715abede256so2696670b3a.3;
+        Sun, 01 Sep 2024 18:59:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725242391; x=1725847191; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=iNy45UIF0UVsc+PI4+1bSK0M8zCdHe19XHjRvy5HNdY=;
+        b=amcn4CEPGWI0WmF7yNl7ECOxUnpilAuVAgTF+kz5aaDdTZY/A1Dk0Pg0bQV40hQLvZ
+         hhyGImP/h1Qcljpluuw0Kc0cRFbd8sYUtJNhm4b1wMRHxXVm6GMdnIIrBp7OpWcoaZfh
+         QLmhIroAma0YOA52R+mz63L3Et7yZ+qUX/+8kJr0IFa4J0KLINrxM/dZ7v3UBWwX1J4n
+         /gLHZ0ShemVWuxJ3itFgFJJ/EsW7DhXDGYaGjPDk3xIQzRWlZqW4ezqeau5IvHvO50sf
+         MFhweBWAlSv48+3BAFlN4mwzjVCqfMCblnazwkJ3z1XOtb+OJZV5bzNiilAi1Qoqa5Fi
+         iuzA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725242391; x=1725847191;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=iNy45UIF0UVsc+PI4+1bSK0M8zCdHe19XHjRvy5HNdY=;
+        b=BSfAKeXaGiSwscS9aKi/ADk0Y9nmoLlGY6+2XYj3rJ9BFfpOewsxgRARO/mNkIZyc+
+         FXERBRMgIzKzBYSsm3ync6xrB6/1DLx9LWhj0pfa8cLJHv0NaStEwIaxF1ixLEhgApM7
+         v3wLSkXwAvMvWbF8QDKATtVHJ5bfDNgiHT9KbzL1kn2rJ2r8BoCwwAW3gYGu1idvtttW
+         afMl2p16M9g3FWZAATWPigMZqFOA4rz1ahgY2GTHmmH3I6kj6201r44MWltY7bX6wUmD
+         1Hb933P/xeAQzegSPOyz52lcekf7O+yi5RmTVLKKUFKMINyzvn2bZZGjypU3B2f4O/3Z
+         y1kA==
+X-Forwarded-Encrypted: i=1; AJvYcCVx0+lxUxiqwwL8PdrWwbHeGDl7AKfAdrZJIVAefFTojG9re10GV3f/qtTzyEW6dij0/o7WdsxV5UW4WE4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxrjGnQspYm6WA5tOgCzEQmqKFkfBEFoEFPxZGljGk0+ymB3bpV
+	UswhiroVUDXd8nl4LHSErd1JAHResL8zTJ7nPdVZAP+z0Uo2Ttn5MBgItLaap2NeMeFQEBy86vF
+	4Pc1yuGcR9gJ0hCrbGS1u+60LvjEaAEiKcE+dyJIo
+X-Google-Smtp-Source: AGHT+IFnxlVMWgifosrO7uLXFxeOieNFWdrySlhYeKMnzoqczdbbf52CqiWyYuF5Qln8Cy8FMX68Ldls412GjKy0NPw=
+X-Received: by 2002:a05:6a21:1192:b0:1cc:d5be:4c7f with SMTP id
+ adf61e73a8af0-1ced6087ad5mr3914086637.16.1725242391023; Sun, 01 Sep 2024
+ 18:59:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.2.0
-Subject: Re: [PATCH -next] genirq/timings: Use min_t() to simplify the code
-Content-Language: en-US
-To: David Laight <David.Laight@ACULAB.COM>, "tglx@linutronix.de"
-	<tglx@linutronix.de>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-References: <20240831093654.4139823-1-ruanjinjie@huawei.com>
- <b7cc4af3df4c41b3975ac990532e4ba0@AcuMS.aculab.com>
-From: Jinjie Ruan <ruanjinjie@huawei.com>
-In-Reply-To: <b7cc4af3df4c41b3975ac990532e4ba0@AcuMS.aculab.com>
+References: <20240901091214.15199-1-gye976@gmail.com> <533802b3-3034-4b7c-b903-72608917e2f0@web.de>
+ <CAKbEznv-TmCr2FAodrM2SKK5A5pbV9p5-OvXPdmuk_4xXmh=Rw@mail.gmail.com> <7b827ee0-9116-4e8c-96e1-1fa5f7267f33@web.de>
+In-Reply-To: <7b827ee0-9116-4e8c-96e1-1fa5f7267f33@web.de>
+From: gyeyoung <gye976@gmail.com>
+Date: Mon, 2 Sep 2024 10:59:39 +0900
+Message-ID: <CAKbEznu=+Bkw4kmoo7qG9h2wM=2XV54j_SYzHMAH1uWhtUPCvg@mail.gmail.com>
+Subject: Re: iio: imu: inv_mpu6050: Remove duplicate code between labels
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: linux-iio@vger.kernel.org, Jonathan Cameron <jic23@kernel.org>, 
+	Lars-Peter Clausen <lars@metafoo.de>, LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- kwepemh500013.china.huawei.com (7.202.181.146)
+Content-Transfer-Encoding: quoted-printable
 
+On Mon, Sep 2, 2024 at 3:16=E2=80=AFAM Markus Elfring <Markus.Elfring@web.d=
+e> wrote:
+>
+> > Hello, I apologize for the insufficient explanation.
+>
+> How will the commit message be improved further?
+>
+> Regards,
+> Markus
 
+Since the code is short, I think it's fine for now. thanks.
 
-On 2024/9/2 4:53, David Laight wrote:
-> From: Jinjie Ruan
->> Sent: 31 August 2024 10:37
->>
->> The irq count can not exceed circular buffer IRQ_TIMINGS_SIZE, use
->> min_t() to simplify it.
->>
->> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
->> ---
->>  kernel/irq/timings.c | 3 +--
->>  1 file changed, 1 insertion(+), 2 deletions(-)
->>
->> diff --git a/kernel/irq/timings.c b/kernel/irq/timings.c
->> index c43e2ac2f8de..69f103b4c7a6 100644
->> --- a/kernel/irq/timings.c
->> +++ b/kernel/irq/timings.c
->> @@ -406,8 +406,7 @@ static u64 __irq_timings_next_event(struct irqt_stat *irqs, int irq, u64 now)
->>  	/*
->>  	 * 'count' will depends if the circular buffer wrapped or not
->>  	 */
->> -	count = irqs->count < IRQ_TIMINGS_SIZE ?
->> -		irqs->count : IRQ_TIMINGS_SIZE;
->> +	count = min_t(int, irqs->count, IRQ_TIMINGS_SIZE);
-> 
-> Why min_t() ?
-> 
-> 	David
-
-To align with the latter min_t() in __irq_timings_next_event().
-
-> 
->>
->>  	start = irqs->count < IRQ_TIMINGS_SIZE ?
->>  		0 : (irqs->count & IRQ_TIMINGS_MASK);
->> --
->> 2.34.1
->>
-> 
-> -
-> Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
-> Registration No: 1397386 (Wales)
-> 
+-Gyeyoung
 
