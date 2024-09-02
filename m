@@ -1,173 +1,155 @@
-Return-Path: <linux-kernel+bounces-311812-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311813-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01740968DF7
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 20:55:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CEDA9968DF9
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 20:56:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 827481F2243D
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 18:55:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8622E283B75
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 18:56:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B83619CC0F;
-	Mon,  2 Sep 2024 18:55:36 +0000 (UTC)
-Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3179D1A3A8E;
+	Mon,  2 Sep 2024 18:56:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UmgC96Zl"
+Received: from mail-qv1-f47.google.com (mail-qv1-f47.google.com [209.85.219.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 826A21A3AB4;
-	Mon,  2 Sep 2024 18:55:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27F391A3A87;
+	Mon,  2 Sep 2024 18:56:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725303335; cv=none; b=STTcsMQKKRdUPo+AaOW469v0Z2fy8GhmB5OBBhKGG+27qs/yfCbNsH3D2x3Urk2bh5QH3Aor/KI8fdevFnMQixu7yFgV2cHhh+GjU7qC0CbJmH4eZrz6I7wtuXX1ZYUj2YKIfJo/n05lwaPPG4pUo31ba0/XBcMaqUQD8Brpbtw=
+	t=1725303364; cv=none; b=rfe1Mp+hZ2BYDarFojUsgiKlVQmls2kQXWax6Dc7+NsTwPh2WL/UxH30mopjoV+7L1kOuYz6PT0qeme1+6ifc/sSI2cXF2a6swU1WnwyKc9FnOoqvomUXo+Dt7LDOBVSKshSmUZTEEOeWiRn1I5aB8gasU5m7x+LYPvfoFi/zB0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725303335; c=relaxed/simple;
-	bh=rX5XkmhXk6gC3MpVezdKzDLr3hE5LFcsGFoid73tBZY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=b0eTGCxZTKDTwiJxJUznE4ajjoSXsh26Mt3W118Y7D7lYMFwawVEHTboiaXFUzZJiy+HTt8ir7p9VrWpE6vF6Glk5wd41xsQi6qMFHTpbZoMp0MgoKgkigmTPHY9BP6enPzG1EFW8v73N2+ZBxmEJLRtMQm/xEzWAwmjv+w017M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.215.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
+	s=arc-20240116; t=1725303364; c=relaxed/simple;
+	bh=UNPXVryR5uf12tkMDZU40NWKkeV54rOPtxBSD7dOY4s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Hhq1HK6NbfpRYWJ+qYrxBx6wdg4cwgsSXZtSh/vfABOsZlUkD+WYLnk8HK9nuyNVMwtd7W9ZfvwWM3ayEqpKypF25iCQwZLvmX2NwOgGBxCOXv/Thv5AXk581sPWSeslWmu9YBFGdF2+DJ6AGfa1paVuh9pBsQbaYcCL076nLrI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UmgC96Zl; arc=none smtp.client-ip=209.85.219.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-7cd9e634ea9so2988549a12.0;
-        Mon, 02 Sep 2024 11:55:34 -0700 (PDT)
+Received: by mail-qv1-f47.google.com with SMTP id 6a1803df08f44-6c36ff6e981so2002726d6.1;
+        Mon, 02 Sep 2024 11:56:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725303362; x=1725908162; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=S34gjPpHo+sISR12rC66r0pzn+VWTYuEfCjQD/wvTbA=;
+        b=UmgC96ZlUqgy9uvB3O6LaBxUDVzE16wHLHJN5/bhaaZPLMgnmHAW7ne2D1uuHExb0J
+         bCe7Jk3bmtTZdgIAOzLy2HM5TRhirVnBDJn2GFcrCmdlay8bXdtEdmt0hPDUQKTa8kjL
+         mG6YxfjjHgBsrfjMw2xhF2jS82eaNSU4GTyaSAUK8qM+BtCS3Eg8B9ZPehbTLc3kjm6k
+         2qxdqDv/74EUTmQByaduvSWcPNhKUZj1jfJrduPZyzIsbf6qFbrdAaK5HzGL4jmaHWgK
+         y93h9OYcJVJEY0wA5byOn4lLhqxx7vH+rE3NxH+qrbclpkDyqraEB+TK5ZstSIWz9gAU
+         gqxQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725303334; x=1725908134;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=g7PspJxYIBwacJ8wrDrSYEhvwkcAvTj3wScyJGG8fyc=;
-        b=Y1cj3L4D0wXnK0HuX0NJVaG5lkX2dC5anoMK/Or3pPR/eb+Xw4oUMaiTmXj6uaish5
-         C9sga1wxo4EYuP9GiUCXWfFHCjXy2NRlp4E21yteBc9/u7eXx0fNRdUgqxua7z591dox
-         iabTxdaBkthR8fXUjT4a2GlXrbMG0CqDjBjm8GTLxsAWKiKNMB1+xjHkJs0zpHHREXri
-         b9QMpRTKolJBLlPG2JZ9DrsBlKmjINv/Oa3gYgOcoHU+26pNe1S0GSs9YEVh/K78mPSf
-         gKScgTy0qfohsjp09dH69qU11wczKjBIeOEHYDJq+qOd3t0yxD+A/v8lYCsf5G66HQlp
-         UFGg==
-X-Forwarded-Encrypted: i=1; AJvYcCUhKuL6qadXAd8dIrolYHtKpxfVltKyUZuEjRYcGczWM4yy4cnTFnsaRUdwulK1seX54mm/sRLuX/VznmA=@vger.kernel.org, AJvYcCVTvwOabsCirK4wfIqZEyk3wPrneBetkFha7w9a3xGQxeAUasoHwRDVRroxA/uYk0x1C2qMGrjcAfqZ0A==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyTetKsE1Biv/FaUO5qpJgVMqs6OgkaNnZkBV/0oKL/nf7ZWCjW
-	Z+4zaOBX2RP6e4HDry2hHyuJIGvb5glR9VlEjYmVSZmDBYb9cITofFlm5pFcNZc0Qkgmv2DcIyn
-	xN2BpHsAeudO0V3e7QXTk+/U6VnY=
-X-Google-Smtp-Source: AGHT+IGwFf9JPPBPJminq+ZPxPP9Wr8G8QB6Tp6yse9TPjIVfPg+QaOSv2/rL0Wn+EOd/1b3PwEd+c57Na5QmuIfb4k=
-X-Received: by 2002:a17:90a:12ce:b0:2d3:b643:8386 with SMTP id
- 98e67ed59e1d1-2d893284e4emr7193606a91.9.1725303333507; Mon, 02 Sep 2024
- 11:55:33 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1725303362; x=1725908162;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=S34gjPpHo+sISR12rC66r0pzn+VWTYuEfCjQD/wvTbA=;
+        b=TESKaH0wn/JsMqt1ohriqc0egS/uOz74cwaZhDMk2/biljbkMvNM04wG+fIrcfHMax
+         EsMRsJO5G3J/OwETGZHpyZtohBTvcD/gPm6nVDQYwRvRJmbmUXN8K4IgsvJ60Dl9AC6f
+         cZkHwru3NUlPsaoOqZcF+t+buGx/5oKCjaw1bQ6OFl68uSXTrLDaGz5cNpuypKxgM6tB
+         B9J9dWbirQwchcfx0b63T0nDAO+Lvcbs1iwCcPDRPB4CJGxbkXWco1Mq05GLXmLlnVQu
+         hurJEACTIvCYFC6dZhtE10nyYFoDgr8LN0h9eiT32g1UbsMGjgAZlR6kl++oGgn/7Z+9
+         WbhQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVKNKAGqtLUlF3L0VA/HfT0JM1wXR/QAIyNT4+W/eALkcDVshluAc/yYwjnq4wNxni+P/tnyREJ@vger.kernel.org, AJvYcCXVGlotLm/6lyTLNhQ5/y+wPPpRaETb2ch5jysNTGHsK32dNhZ4SmBooQyZNaF829D/7SWmhJitjyB0DAM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyF7MvUANpcASLzmlfPr0yOE8iksgxhI1rSA9cbK+uKEkCGU1aN
+	lJ3ymrwciW+xFL53E67529HAJEj0FnX+9C/5aTaRIv0RMjaB/N7u
+X-Google-Smtp-Source: AGHT+IG98TH7BmL5p/bMphtmXtDBMujvqAE6Fr2eXJAF6LF3ESgN8CwZ+j/8iV8ddnFgis3UIeY8KA==
+X-Received: by 2002:a05:6214:4347:b0:6c3:5c14:5159 with SMTP id 6a1803df08f44-6c35c145328mr88994616d6.34.1725303361931;
+        Mon, 02 Sep 2024 11:56:01 -0700 (PDT)
+Received: from [192.168.1.3] (ip68-4-215-93.oc.oc.cox.net. [68.4.215.93])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6c340bfa760sm44693186d6.24.2024.09.02.11.55.56
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 02 Sep 2024 11:56:01 -0700 (PDT)
+Message-ID: <ce0460e3-e0dc-4f15-8591-13d3b36a6d78@gmail.com>
+Date: Mon, 2 Sep 2024 11:55:55 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240902081837.6def2734@canb.auug.org.au> <ZtYHGDaoJrwLgs--@x1>
-In-Reply-To: <ZtYHGDaoJrwLgs--@x1>
-From: Namhyung Kim <namhyung@kernel.org>
-Date: Mon, 2 Sep 2024 11:55:22 -0700
-Message-ID: <CAM9d7chNFFdHODHX9sCKLoHCpuCdW5E+DOobK2-kOrz8fVLucA@mail.gmail.com>
-Subject: Re: linux-next: Fixes tag needs some work in the perf-current tree
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>, 
-	Veronika Molnarova <vmolnaro@redhat.com>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.1 00/71] 6.1.108-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+ conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
+References: <20240901160801.879647959@linuxfoundation.org>
+Content-Language: en-US
+From: Florian Fainelli <f.fainelli@gmail.com>
+Autocrypt: addr=f.fainelli@gmail.com; keydata=
+ xsDiBEjPuBIRBACW9MxSJU9fvEOCTnRNqG/13rAGsj+vJqontvoDSNxRgmafP8d3nesnqPyR
+ xGlkaOSDuu09rxuW+69Y2f1TzjFuGpBk4ysWOR85O2Nx8AJ6fYGCoeTbovrNlGT1M9obSFGQ
+ X3IzRnWoqlfudjTO5TKoqkbOgpYqIo5n1QbEjCCwCwCg3DOH/4ug2AUUlcIT9/l3pGvoRJ0E
+ AICDzi3l7pmC5IWn2n1mvP5247urtHFs/uusE827DDj3K8Upn2vYiOFMBhGsxAk6YKV6IP0d
+ ZdWX6fqkJJlu9cSDvWtO1hXeHIfQIE/xcqvlRH783KrihLcsmnBqOiS6rJDO2x1eAgC8meAX
+ SAgsrBhcgGl2Rl5gh/jkeA5ykwbxA/9u1eEuL70Qzt5APJmqVXR+kWvrqdBVPoUNy/tQ8mYc
+ nzJJ63ng3tHhnwHXZOu8hL4nqwlYHRa9eeglXYhBqja4ZvIvCEqSmEukfivk+DlIgVoOAJbh
+ qIWgvr3SIEuR6ayY3f5j0f2ejUMYlYYnKdiHXFlF9uXm1ELrb0YX4GMHz80nRmxvcmlhbiBG
+ YWluZWxsaSA8Zi5mYWluZWxsaUBnbWFpbC5jb20+wmYEExECACYCGyMGCwkIBwMCBBUCCAME
+ FgIDAQIeAQIXgAUCVF/S8QUJHlwd3wAKCRBhV5kVtWN2DvCVAJ4u4/bPF4P3jxb4qEY8I2gS
+ 6hG0gACffNWlqJ2T4wSSn+3o7CCZNd7SLSDOw00ESM+4EhAQAL/o09boR9D3Vk1Tt7+gpYr3
+ WQ6hgYVON905q2ndEoA2J0dQxJNRw3snabHDDzQBAcqOvdi7YidfBVdKi0wxHhSuRBfuOppu
+ pdXkb7zxuPQuSveCLqqZWRQ+Cc2QgF7SBqgznbe6Ngout5qXY5Dcagk9LqFNGhJQzUGHAsIs
+ hap1f0B1PoUyUNeEInV98D8Xd/edM3mhO9nRpUXRK9Bvt4iEZUXGuVtZLT52nK6Wv2EZ1TiT
+ OiqZlf1P+vxYLBx9eKmabPdm3yjalhY8yr1S1vL0gSA/C6W1o/TowdieF1rWN/MYHlkpyj9c
+ Rpc281gAO0AP3V1G00YzBEdYyi0gaJbCEQnq8Vz1vDXFxHzyhgGz7umBsVKmYwZgA8DrrB0M
+ oaP35wuGR3RJcaG30AnJpEDkBYHznI2apxdcuTPOHZyEilIRrBGzDwGtAhldzlBoBwE3Z3MY
+ 31TOpACu1ZpNOMysZ6xiE35pWkwc0KYm4hJA5GFfmWSN6DniimW3pmdDIiw4Ifcx8b3mFrRO
+ BbDIW13E51j9RjbO/nAaK9ndZ5LRO1B/8Fwat7bLzmsCiEXOJY7NNpIEpkoNoEUfCcZwmLrU
+ +eOTPzaF6drw6ayewEi5yzPg3TAT6FV3oBsNg3xlwU0gPK3v6gYPX5w9+ovPZ1/qqNfOrbsE
+ FRuiSVsZQ5s3AAMFD/9XjlnnVDh9GX/r/6hjmr4U9tEsM+VQXaVXqZuHKaSmojOLUCP/YVQo
+ 7IiYaNssCS4FCPe4yrL4FJJfJAsbeyDykMN7wAnBcOkbZ9BPJPNCbqU6dowLOiy8AuTYQ48m
+ vIyQ4Ijnb6GTrtxIUDQeOBNuQC/gyyx3nbL/lVlHbxr4tb6YkhkO6shjXhQh7nQb33FjGO4P
+ WU11Nr9i/qoV8QCo12MQEo244RRA6VMud06y/E449rWZFSTwGqb0FS0seTcYNvxt8PB2izX+
+ HZA8SL54j479ubxhfuoTu5nXdtFYFj5Lj5x34LKPx7MpgAmj0H7SDhpFWF2FzcC1bjiW9mjW
+ HaKaX23Awt97AqQZXegbfkJwX2Y53ufq8Np3e1542lh3/mpiGSilCsaTahEGrHK+lIusl6mz
+ Joil+u3k01ofvJMK0ZdzGUZ/aPMZ16LofjFA+MNxWrZFrkYmiGdv+LG45zSlZyIvzSiG2lKy
+ kuVag+IijCIom78P9jRtB1q1Q5lwZp2TLAJlz92DmFwBg1hyFzwDADjZ2nrDxKUiybXIgZp9
+ aU2d++ptEGCVJOfEW4qpWCCLPbOT7XBr+g/4H3qWbs3j/cDDq7LuVYIe+wchy/iXEJaQVeTC
+ y5arMQorqTFWlEOgRA8OP47L9knl9i4xuR0euV6DChDrguup2aJVU8JPBBgRAgAPAhsMBQJU
+ X9LxBQkeXB3fAAoJEGFXmRW1Y3YOj4UAn3nrFLPZekMeqX5aD/aq/dsbXSfyAKC45Go0YyxV
+ HGuUuzv+GKZ6nsysJw==
+In-Reply-To: <20240901160801.879647959@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Sep 2, 2024 at 11:42=E2=80=AFAM Arnaldo Carvalho de Melo
-<acme@kernel.org> wrote:
->
-> On Mon, Sep 02, 2024 at 08:18:37AM +1000, Stephen Rothwell wrote:
-> > Hi all,
-> >
-> > In commit
-> >
-> >   387ad33e5410 ("perf test pmu: Set uninitialized PMU alias to null")
-> >
-> > Fixes tag
-> >
-> >   Fixes: 3e0bf9 ("perf pmu: Restore full PMU name wildcard support")
->
-> In the perf-tools-next I have it as:
->
-> commit 37e2a19c98bf99747ca997be876dfc13f9165e0a
-> Author: Veronika Molnarova <vmolnaro@redhat.com>
-> Date:   Thu Aug 8 12:37:49 2024 +0200
->
->     perf test pmu: Set uninitialized PMU alias to null
->
->     Commit 3e0bf9fde2984469 ("perf pmu: Restore full PMU name wildcard
->     support") adds a test case "PMU cmdline match" that covers PMU name
->     wildcard support provided by function perf_pmu__match().
-> <SNIP>
->     Fixes: 3e0bf9fde2984469 ("perf pmu: Restore full PMU name wildcard su=
-pport")
->     Signed-off-by: Veronika Molnarova <vmolnaro@redhat.com>
->     Cc: James Clark <james.clark@linaro.org>
->     Cc: Michael Petlan <mpetlan@redhat.com>
->     Cc: Namhyung Kim <namhyung@kernel.org>
->     Cc: Radostin Stoyanov <rstoyano@redhat.com>
->     Link: https://lore.kernel.org/r/20240808103749.9356-1-vmolnaro@redhat=
-.com
->     Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-Ok, you only updated perf-tools-next.  I thought you did it on
-perf-tools too.  I'll update perf-tools soon.
 
->
-> As I have:
->
-> =E2=AC=A2[acme@toolbox perf-tools-next]$ git config core.abbrev
-> 16
-> =E2=AC=A2[acme@toolbox perf-tools-next]$
->
-> And scripts to make sure we get enough resolution to avoid such problems
+On 9/1/2024 9:17 AM, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.1.108 release.
+> There are 71 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Tue, 03 Sep 2024 16:07:34 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.108-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.1.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
-Sure, will do.
+On ARCH_BRCMSTB using 32-bit and 64-bit ARM kernels, build tested on 
+BMIPS_GENERIC:
 
->
-> I just checked and yeah, on perf-tools/perf-tools it is:
->
->     Fixes: 3e0bf9 ("perf pmu: Restore full PMU name wildcard support")
->     Signed-off-by: Veronika Molnarova <vmolnaro@redhat.com>
->     Cc: james.clark@arm.com
->     Cc: mpetlan@redhat.com
->     Cc: rstoyano@redhat.com
->     Link: https://lore.kernel.org/r/20240808103749.9356-1-vmolnaro@redhat=
-.com
->     Signed-off-by: Namhyung Kim <namhyung@kernel.org>
->
-> So I suggest Namhyung fixes up the Fixes tag to have a longer prefix for
-> the sha and Veronica to run:
->
-> =E2=AC=A2[acme@toolbox perf-tools]$ git config core.abbrev 16
-> =E2=AC=A2[acme@toolbox perf-tools]$ git config core.abbrev
-> 16
-> =E2=AC=A2[acme@toolbox perf-tools]$
+Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
+-- 
+Florian
 
-Yep, thanks!
-Namhyung
-
->
-> > has these problem(s):
-> >
-> >   - Target SHA1 does not exist
-> >
-> > Actually, the quoted SHA1 is too short and is ambiguous in my tree:
-> >
-> > $ git show 3e0bf9
-> > error: short object ID 3e0bf9 is ambiguous
-> > hint: The candidates are:
-> > hint:   3e0bf9fde298 commit 2024-06-26 - perf pmu: Restore full PMU nam=
-e wildcard support
-> > hint:   3e0bf93e0354 tree
-> > fatal: ambiguous argument '3e0bf9': unknown revision or path not in the=
- working tree.
-> >
-> > so you should use
-> >
-> > Fixes: 3e0bf9fde298 ("perf pmu: Restore full PMU name wildcard support"=
-)
-> >
-> > --
-> > Cheers,
-> > Stephen Rothwell
->
->
 
