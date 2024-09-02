@@ -1,170 +1,144 @@
-Return-Path: <linux-kernel+bounces-311708-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311709-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F00A968C8B
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 19:00:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A2DF968C8E
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 19:01:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DAEE9283A91
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 17:00:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 343A01C222AC
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 17:01:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30DA61A265D;
-	Mon,  2 Sep 2024 17:00:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8367B1C62A8;
+	Mon,  2 Sep 2024 17:01:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MiL1AmQY"
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="GXVQRA7u"
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC28823A0
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 17:00:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7E1F1A263D
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 17:01:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725296451; cv=none; b=f2WwaccaEg+ng7fYBe4iFw17hrTp2M4skUfaIiX0utn4rpRQ/06AigwYghbYfkiQ47NSGxQiLPEQnp52FHJZlene7gUDeiHShHEEhZXiqqk+BzzjDE3f3sfhKpDQl3m4TN9zd7YEHNXMO+R9rT27d9KphBzpW3MKXNbE4+0QftU=
+	t=1725296463; cv=none; b=OxMr07hytqMgEbsPEPUQbTWUTTuxbaGjBS+e7SkgyFrQFwVh7PdsXyLjRUKrVJl5cc+7dvOTt5H8yD9xDIOFTuazjIQ5K3sp/5FLR/tvpomHuP+McGi+moxLzCbB0n4T5T3/jOyxnPBmq2rmxLY94rP5A6rgJ+a+wFTUTsqbRto=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725296451; c=relaxed/simple;
-	bh=oSpNDNfOhmT1qqQjvl4S7vUCpctklbjt+iArQs5YIos=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fplW88qPmoORKHdKgllFqpJQMmaDjBylwow+3LBrqjj7nIYPmEAjzgALwbTW2GJnZcNOeattX1NCnHuhCPeNwaQcPC7s0PsEsJyOy9ZydsKG21TZA2QMmEzPUAHgiNpMlS376jTUp+zCz9eExsSu+H/h1oTgvnpRmGbEqG77B6M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MiL1AmQY; arc=none smtp.client-ip=209.85.208.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2f50966c478so46332841fa.1
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2024 10:00:49 -0700 (PDT)
+	s=arc-20240116; t=1725296463; c=relaxed/simple;
+	bh=t3cgJNHVbDKb1zJmQ4enB9xC15b6g33WhNUPCbbKsbk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Content-Type; b=GdhOfrKf0wjtnhJIoeitfIiX/plcvRQg3hf6KSXZ4HQzd1CBf/OisjbvX+Oo0vSdjb0ZT+JAkDrQk9uHpoX2zrnO3lMIkjdxn8sBNK4KWLUh4b9hTOsGvazVkH3ciARl4Milq8bejaaVm+T4DqCvCqO75AQxeKL/YPc7ECK22Yg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=GXVQRA7u; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a8696e9bd24so516316566b.0
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2024 10:01:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725296448; x=1725901248; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:date:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=J9+V/kbhLj5ujl3zbVoImDUD1XrjW3PQicqV6baThDk=;
-        b=MiL1AmQYEzEMA3rIGmSZtLXJ2o+dz1ch8FvNeHYngfoWxBgLMwgfSttsNQTlNrvOoy
-         1QSMHtoqzLBOAsCDl5kPfmUb2glj4hIkhhk9RbYXD9rt38d/pAnBlMkNsRNL+nPej76y
-         QaA+R+45GExjFClCQZ/bTEkSqaFcDtZgrWbz5bhmnAFTIyBwWyeY6j8HL2dAelOxh/5y
-         XktJN7nvCCgoF8qvjlky21irE88srH4NJoRmvGLg/ERDq0maY02QQUNtkucHhuun7i8U
-         YiWfydtKp9QBBLzdRlxti00ajU44TsI/EpHIGQ+kE8/MHZdkkDY4fRwOQPHw/FH3K/ba
-         XyrA==
+        d=google.com; s=20230601; t=1725296460; x=1725901260; darn=vger.kernel.org;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=t3cgJNHVbDKb1zJmQ4enB9xC15b6g33WhNUPCbbKsbk=;
+        b=GXVQRA7u0xNYKuX+EzxJBY5f3tlGiDzyTwabYKSxSlo+ReoBcBnqoB5+XW7QLLdatJ
+         R7/kbcW5xesg28PGrg1LItarq79pD+tHnfaZcHvnK/JiwsR7OMouDj04D7QrScx+85tT
+         XjSch2RhZr69S61UWVhFqi+RQIX/M1qm4oud7ahIhVn+xhi4H6gVALLSwxQ0r5rv6/1c
+         6XXxWzobnUB4hIs7G7YIRhjCMWPvdgiYRcts0MEiU13av5m8uw4kZdsQz4Rz1K0/8unr
+         6H/s2PAb4u+UR1vvOlj9FRY5sMbQdfUmI+67tbW9TxKYcel7nOnhZrSzlxm8sKUqk7nd
+         V1Ig==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725296448; x=1725901248;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:date:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=J9+V/kbhLj5ujl3zbVoImDUD1XrjW3PQicqV6baThDk=;
-        b=ZJ+eaD2jhdnDANovjiDjiIUmEnZKohfi9molRo9vHVOYrO5S+wHaxwdvx5BfbESuzJ
-         FJmS83Y2Avk6ZGmK4CdzoeVNbEUIuef/qvAlFZfKieGVzNLtMN1KU1i73yxN3nt2UqaP
-         Gc2WHs1qDsJlxtojzo3Wx7CLhVGuquUF8JsSj7LgH0FOh+vep9zuS9/nG3zvYmnxdJeQ
-         inMU65cy2P4iv9lf3/joqEeHezKtvrDdDURmrBmW4L2JdXsUHmituH0Dq1JIY3hq6AB6
-         hfczc7CubtMUK8yaJ/SvrPGVV4B5BYNBVq2R3rXwbJ+u5MRrnFM5pDXGYGHVmabAejJt
-         /xIw==
-X-Forwarded-Encrypted: i=1; AJvYcCW50do/wdTcMwxkGfAmpocqg41tpQrwyuDaMOzELV5soyJf51KSRDaJaCyYdZ6gnNtN0JILfFbE9B+/l9s=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy0R5XHalw6+48xmZ66ICKkDKkRZbVucVmsEcgDt3qO3WXxMH6I
-	bEDdcy++moj3Hc2CiUKGyrnOnuOIyEF0ZXyQsXmVs3AAcpRDFzS/
-X-Google-Smtp-Source: AGHT+IGrCsmJj7R1rux4b9vaIuGUMo9LKgogBWBVQ6KAtjZhu5ho54eoZE1kk2wngGuHCXxiW9L+og==
-X-Received: by 2002:a05:651c:1548:b0:2f3:f193:d2d0 with SMTP id 38308e7fff4ca-2f61e0a5a5cmr73946381fa.33.1725296446821;
-        Mon, 02 Sep 2024 10:00:46 -0700 (PDT)
-Received: from pc636 (host-90-233-206-146.mobileonline.telia.com. [90.233.206.146])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2f615183134sm19368931fa.122.2024.09.02.10.00.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Sep 2024 10:00:46 -0700 (PDT)
-From: Uladzislau Rezki <urezki@gmail.com>
-X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
-Date: Mon, 2 Sep 2024 19:00:44 +0200
-To: Adrian Huang <adrianhuang0701@gmail.com>
-Cc: urezki@gmail.com, ahuang12@lenovo.com, akpm@linux-foundation.org,
-	hch@infradead.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH 1/1] mm: vmalloc: Optimize vmap_lazy_nr arithmetic when
- purging each vmap_area
-Message-ID: <ZtXvPAoAo7UooJoV@pc636>
-References: <ZtDFQHGHMq6TfbKA@pc636>
- <20240902120046.26478-1-ahuang12@lenovo.com>
+        d=1e100.net; s=20230601; t=1725296460; x=1725901260;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=t3cgJNHVbDKb1zJmQ4enB9xC15b6g33WhNUPCbbKsbk=;
+        b=Laon2Ocdu3WsjH2bfeJ8FQzGw2psNHgPtpP6KNO4xzXyFcL6gsUPh2WSWWJfuYWL/R
+         xKVooGN6h8nVMBNSIlo061MUdgo85V5oZL+RBRt3cJoQj42XH3N26LzMHqTdYXSOXMzP
+         R5tHzpuNEh+Zes9XMaxgbwsJUTzmjtLhAlJ18Bg5RYa6i+kQrfjqIAytyjfFguM51sc6
+         ojEVybw2+qjCQb3B9k6uefnb30BUNd+L26C1BS0Z/rUwtVr+3LzpkRnw3hoPBAnjlhY/
+         JkBIwc1Fhe9fuOlSkZRevNIDHNiNYo93aQxM3jrmJsQ34ly0IIKYx+NMIDsi4f4t67q/
+         eK+A==
+X-Forwarded-Encrypted: i=1; AJvYcCX9NBlPpptgZY/4ZGbMUqEgBcbQseRbViRru6p42vmnOHSo2CSd4CNA+41ZS/Aa5/VK1/yQ3FLsh6nhqys=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxS4gI57xhVqh9SSO7aZEWwSNHECby2OQGBrQVa+PfupVQe7Tn7
+	h01QxuVEi9sthUVJiu9azBJEbQiFQ3K9FkrXB7rhBpte9o9yrxu8d0ywaOuKaS8D5KaX6/47pra
+	0PcNH673VtB0QKmoan9Ws378SmIQ953f98+CD
+X-Google-Smtp-Source: AGHT+IGC+++a4+oBo4uwdmAqNrgHdgz1zzNCQ/FhWxeCG8dymcSFrVa5Tb3eZwpSUCaL6bx7YiE5zol2P2J3WA+ezaA=
+X-Received: by 2002:a17:907:94cb:b0:a86:c372:14c3 with SMTP id
+ a640c23a62f3a-a897fa74468mr1186393266b.48.1725296459153; Mon, 02 Sep 2024
+ 10:00:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240902120046.26478-1-ahuang12@lenovo.com>
+References: <20240831113223.9627-1-jdamato@fastly.com> <CANn89iK+09DW95LTFwN1tA=_hV7xvA0mY4O4d-LwVbmNkO0y3w@mail.gmail.com>
+ <ZtXn9gK6Dr-JGo81@LQ3V64L9R2.station>
+In-Reply-To: <ZtXn9gK6Dr-JGo81@LQ3V64L9R2.station>
+From: Eric Dumazet <edumazet@google.com>
+Date: Mon, 2 Sep 2024 19:00:48 +0200
+Message-ID: <CANn89iLhrKyFKf9DpJSSM9CZ9sgoRo7jovg2GhjsJABoqzzVsQ@mail.gmail.com>
+Subject: Re: [PATCH net] net: napi: Make napi_defer_irqs u32
+To: Joe Damato <jdamato@fastly.com>, Eric Dumazet <edumazet@google.com>, netdev@vger.kernel.org, 
+	mkarsten@uwaterloo.ca, stable@kernel.org, Jakub Kicinski <kuba@kernel.org>, 
+	"David S. Miller" <davem@davemloft.net>, Paolo Abeni <pabeni@redhat.com>, 
+	Jonathan Corbet <corbet@lwn.net>, Breno Leitao <leitao@debian.org>, 
+	Johannes Berg <johannes.berg@intel.com>, Heiner Kallweit <hkallweit1@gmail.com>, 
+	Alexander Lobakin <aleksander.lobakin@intel.com>, 
+	"open list:DOCUMENTATION" <linux-doc@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Sep 02, 2024 at 08:00:46PM +0800, Adrian Huang wrote:
-> On Fri, Aug 30, 2024 at 3:00 AM Uladzislau Rezki <urezki@gmail.com> wrote:
-> > atomic_long_add_return() might also introduce a high contention. We can
-> > optimize by splitting into more light atomics. Can you check it on your
-> > 448-cores system?
-> 
-> Interestingly, the following result shows the latency of
-> free_vmap_area_noflush() is just 26 usecs (The worst case is 16ms-32ms).
-> 
-> /home/git-repo/bcc/tools/funclatency.py -u free_vmap_area_noflush & pid1=$! && sleep 8 && modprobe test_vmalloc nr_threads=$(nproc) run_test_mask=0x7; kill -SIGINT $pid1
-> 
->          usecs       : count     distribution
->          0 -> 1      : 18166     |                                        |
->          2 -> 3      : 41929818  |**                                      |
->          4 -> 7      : 181203439 |***********                             |
->          8 -> 15     : 464242836 |*****************************           |
->         16 -> 31     : 620077545 |****************************************|
->         32 -> 63     : 442133041 |****************************            |
->         64 -> 127    : 111432597 |*******                                 |
->        128 -> 255    : 3441649   |                                        |
->        256 -> 511    : 302655    |                                        |
->        512 -> 1023   : 738       |                                        |
->       1024 -> 2047   : 73        |                                        |
->       2048 -> 4095   : 0         |                                        |
->       4096 -> 8191   : 0         |                                        |
->       8192 -> 16383  : 0         |                                        |
->      16384 -> 32767  : 196       |                                        |
-> 
->    avg = 26 usecs, total: 49415657269 usecs, count: 1864782753
-> 
-> 
-> free_vmap_area_noflush() just executes the lock prefix one time, so the
-> wrost case might be just about a hundred clock cycles.
-> 
-> The problem of purge_vmap_node() is that some cores are busy on purging
-> each vmap_area of the *long* purge_list and executing atomic_long_sub()
-> for each vmap_area, while other cores free vmalloc allocations and execute
-> atomic_long_add_return() in free_vmap_area_noflush(). The following crash
-> log shows the 22 cores are busy on purging vmap_area structs [1]:
-> 
->   crash> bt -a | grep "purge_vmap_node+291" | wc -l
->   22
-> 
-> So, the latency of purge_vmap_node() dramatically increases becase it
-> excutes the lock prefix over 600,0000 times. The issue can be easier
-> to reproduce if more cores execute purge_vmap_node() simultaneously.
-> 
-Right. This is clear to me. Under heavy stressing in a tight loop we
-invoke atomic_long_sub() per one freed VA. Having 448-cores and one
-stress job per-cpu we end up with a high-contention spot when access
-to an atomic which requires a cache-line lock.
+On Mon, Sep 2, 2024 at 6:29=E2=80=AFPM Joe Damato <jdamato@fastly.com> wrot=
+e:
+>
+> On Mon, Sep 02, 2024 at 03:01:28PM +0200, Eric Dumazet wrote:
+> > On Sat, Aug 31, 2024 at 1:32=E2=80=AFPM Joe Damato <jdamato@fastly.com>=
+ wrote:
+> > >
+> > > In commit 6f8b12d661d0 ("net: napi: add hard irqs deferral feature")
+> > > napi_defer_irqs was added to net_device and napi_defer_irqs_count was
+> > > added to napi_struct, both as type int.
+> > >
+> > > This value never goes below zero. Change the type for both from int t=
+o
+> > > u32, and add an overflow check to sysfs to limit the value to S32_MAX=
+.
+> > >
+> > > Before this patch:
+> > >
+> > > $ sudo bash -c 'echo 2147483649 > /sys/class/net/eth4/napi_defer_hard=
+_irqs'
+> > > $ cat /sys/class/net/eth4/napi_defer_hard_irqs
+> > > -2147483647
+> > >
+> > > After this patch:
+> > >
+> > > $ sudo bash -c 'echo 2147483649 > /sys/class/net/eth4/napi_defer_hard=
+_irqs'
+> > > bash: line 0: echo: write error: Numerical result out of range
+> > >
+> > > Fixes: 6f8b12d661d0 ("net: napi: add hard irqs deferral feature")
+> > > Cc: stable@kernel.org
+> > > Cc: Eric Dumazet <edumazet@google.com>
+> > > Suggested-by: Jakub Kicinski <kuba@kernel.org>
+> > > Signed-off-by: Joe Damato <jdamato@fastly.com>
+> > > ---
+> >
+> > I do not think this deserves a change to stable trees.
+>
+> OK, I can send any other revisions to -next, instead.
+>
+> > Signed or unsigned, what is the issue ?
+> >
+> > Do you really need one extra bit ?
+>
+> I made the maximum S32_MAX because the practical limit has always
+> been S32_MAX. Any larger values overflow. Keeping it at S32_MAX does
+> not change anything about existing behavior, which was my goal.
+>
+> Would you prefer if it was U32_MAX instead?
+>
+> Or are you asking me to leave it the way it is?
 
-> 
-> 
-> Tested the following patch with the light atomics. However, nothing improved 
-> (But, the worst case is improved):
-> 
->          usecs        : count     distribution
->          0 -> 1       : 7146      |                                        |
->          2 -> 3       : 31734187  |**                                      |
->          4 -> 7       : 161408609 |***********                             |
->          8 -> 15      : 461411377 |*********************************       |
->         16 -> 31      : 557005293 |****************************************|
->         32 -> 63      : 435518485 |*******************************         |
->         64 -> 127     : 175033097 |************                            |
->        128 -> 255     : 42265379  |***                                     |
->        256 -> 511     : 399112    |                                        |
->        512 -> 1023    : 734       |                                        |
->       1024 -> 2047    : 72        |                                        |
-> 
-> avg = 32 usecs, total: 59952713176 usecs, count: 1864783491
-> 
-Thank you for checking this! So there is no difference. As for worst
-case, it might be an error of measurements. The problem is that we/you
-measure the time which includes a context switch because a context which
-triggers the free_vmap_area_noflush() function can easily be preempted.
-
---
-Uladzislau Rezki
+I think this would target net-next at most, please lets avoid hassles
+for stable teams.
 
