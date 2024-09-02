@@ -1,139 +1,165 @@
-Return-Path: <linux-kernel+bounces-310858-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310853-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4681C968214
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 10:35:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5110396820A
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 10:34:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D890AB22A53
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 08:35:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C5E36B2229D
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 08:34:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 149AD185E64;
-	Mon,  2 Sep 2024 08:35:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEC3718661D;
+	Mon,  2 Sep 2024 08:34:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="DX2Btwpt"
-Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="ufI/dgqz"
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4824154C0B
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 08:35:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86DD6183092
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 08:34:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725266139; cv=none; b=gmqYVbw/4V2AK2KMDANJIJ/Hx4efE+LbNzakWU9rW9y6x9I0OYXqIfOjmXx6mr/tQzTYKbTUFHLcu3G+Q4IAJxlbeRoU3Id4dgo50C19C6mtCS8074F2xAJoX8sviDOoD/UqqZUcUlrwUPlnOkgQfuqWflTes0kM6pRjFa4oBWg=
+	t=1725266062; cv=none; b=VUBDvhtt69gbUN/udDv11xf+1A5y/0tF9zUWIPwNXquI8ec2fWYt1rr9iq6NbivfJV1VlpPl8yG9a3/k+P/NW06/X86pE8piheu/xo/uyG9nvmLdOGPlzyX3LuqdiEC4nWUjXoERxnxO+Wf8RQfj1mrkJ7yTj7BnoASf11jHLWk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725266139; c=relaxed/simple;
-	bh=1yKUWgG168kIrumQ4E/lNDOE3dBsj4G/DSSmNyd+u94=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=M9xQactJIUVvtBMTdXBKF1rTyF2/7tim62b4hvCtix2dtzftTH/o04FpFlwBjbWw8SpgrBpAhY3Lp6GpR4EdcvA0Liql6shalvnl3j5pjXK6OuhnWdpB4mgySdR8p4XJMs/3wdeXGxEDu5Z58qAlZS+1GdQ+pE58XIAF+Ca3E8o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=DX2Btwpt; arc=none smtp.client-ip=209.85.216.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-2d8b68bddeaso834715a91.1
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2024 01:35:37 -0700 (PDT)
+	s=arc-20240116; t=1725266062; c=relaxed/simple;
+	bh=txgND3gwVKn6mjB+PMDD7QdLkXKhRLtMsD4C90K0ZC0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=K0WVwQToWNP/WqBS2qD/N5uCNKvxXFl7Vd5b9IT+DwlM6jUeKri/P6j/Dnx4LTvaDFyjE0+c8kRcQPR4EHNuf/SH1uFk/FHdxZP3tmWJ2q6BAD+KyrH/Oh9pd9ll1ZQl9fyVohyOK1chun/XwOHP5HVi/q9i2u5VAt1hic9vD5E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=ufI/dgqz; arc=none smtp.client-ip=209.85.208.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2f50f1d864fso44670811fa.1
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2024 01:34:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1725266137; x=1725870937; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Wx+Ngpcz5KS+uT4ExH5gnibO/Q2OSWyZ6WFtEESiF1s=;
-        b=DX2BtwptwtS4S4LBkTC5TJtMYYPfTtxYEzIl6ZwsNPN42edbg1+oW35RQKCxFMV1zd
-         XMToc86V+mqsYsBiCq6dAc01qN+xl13lufgCZBS+g9Wau+9Cb42CD/MMuSuvPgieTI1V
-         wuoxWYJy1SP58CHZi8WnaGxhsLahSEEXhVZ90=
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1725266059; x=1725870859; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VG1MaX9Wixqm8LX4jVIjxRtWDElDhiE8Ho1xpB08+bA=;
+        b=ufI/dgqzjBePBCsR1bnDU8O03jxZPZ3AlZ0Pz8zipgMY5lbHchbtJqeLNUMM/A6b+i
+         1BbSnwvEqnCNk4nEiQbqxoI+2l0ZmIK+q5C5kCV8XkqaIthD3iaXdniqDbchCaznUlXu
+         2XS8izELJLhjKBX2aYb3uvRmz5NwXQ810A5ZmdOhmvrKMhWofPEZRF3j6n1pP7pMHtR/
+         u/cnYRwVKQ3v/TRlQnwpI82b9xMgGjFLTZeairNND6/VUgUhj1svBI8HoA8Gfwt2xX6c
+         bOYfi4ufpvr3HO6cDNCW5t84BBlorpAjOWzfZviw3XbiUuYr6GU50WpibpDtALv+Y6yh
+         9ZNQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725266137; x=1725870937;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Wx+Ngpcz5KS+uT4ExH5gnibO/Q2OSWyZ6WFtEESiF1s=;
-        b=TkJ1pOYtlNGbnBzDoRjrfTzBhrxqUz/mLxCZRZ0cjehMP4DswMOsP9d+NKl1ft4Ydn
-         iPU8txMNayvVVDMLKSa4AOKR8K3vdvGwGEINbbzgPtnxXSHB8jpGrQXpMQheZWtW7z4E
-         a+TTGHQHDlNP0Ivh3n2vciuUgtPDh2V+YSJI0t0ePXfd8sZSAhxG63rYVsUmfa3TAKxL
-         UcmZjYh0b7qcYQ9VNqBGvkq0MO2BR7GkGoTUuzmbcvFVy6jn4Sw9kN2skx8I9/xcrGmF
-         I2R1IpcleI1/wfLFN4tmSb6y5apAhNm7mTcn0I/FH98FGjCTzPxGi8qumEpW3u/KGfT/
-         B6rQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVSAPLFLDjFW/Ekl8thNV4orxPddkl+yXJ1BChwCx0ft8pI/0nZHIbFFdmmEOtZ0I7SgmQ4JLgI+2fLcl4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzRaGhDUX7UZ0zZX4ddWIgYdQP9+wuU99m5tdVof1Fzxd0LOdAY
-	SW4+XaLnVKm4mjthW8nT/d/ItlLL7bjqfd/onbB3N7C4n7ky4H8J2ZBI9UVgaQ==
-X-Google-Smtp-Source: AGHT+IF4/GEqSbXqoxRakIqILSzbtpCjeIMTeUiOM4xZC1PMAowJYIU5DaWRW0ooWvdCC6o+o1UIWQ==
-X-Received: by 2002:a17:90a:558f:b0:2c9:81fd:4c27 with SMTP id 98e67ed59e1d1-2d88d6a0b9fmr7246707a91.14.1725266136913;
-        Mon, 02 Sep 2024 01:35:36 -0700 (PDT)
-Received: from fedora.. ([66.170.99.2])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d85b3b95e8sm8511509a91.54.2024.09.02.01.35.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Sep 2024 01:35:36 -0700 (PDT)
-From: Vamsi Krishna Brahmajosyula <vamsi-krishna.brahmajosyula@broadcom.com>
-To: stable@vger.kernel.org,
-	gregkh@linuxfoundation.org
-Cc: paulmck@kernel.org,
-	frederic@kernel.org,
-	neeraj.upadhyay@kernel.org,
-	joel@joelfernandes.org,
-	josh@joshtriplett.org,
-	boqun.feng@gmail.com,
-	urezki@gmail.com,
-	rostedt@goodmis.org,
-	mathieu.desnoyers@efficios.com,
-	jiangshanlai@gmail.com,
-	qiang.zhang1211@gmail.com,
-	rcu@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	ajay.kaher@broadcom.com,
-	alexey.makhalov@broadcom.com,
-	vasavi.sirnapalli@broadcom.com,
-	Nikita Kiryushin <kiryushin@ancud.ru>,
-	Sasha Levin <sashal@kernel.org>,
-	Vamsi Krishna Brahmajosyula <vamsi-krishna.brahmajosyula@broadcom.com>
-Subject: [PATCH v5.10-v5.15] rcu-tasks: Fix show_rcu_tasks_trace_gp_kthread buffer overflow
-Date: Mon,  2 Sep 2024 03:33:55 -0500
-Message-ID: <20240902083422.1095022-2-vamsi-krishna.brahmajosyula@broadcom.com>
-X-Mailer: git-send-email 2.45.2
+        d=1e100.net; s=20230601; t=1725266059; x=1725870859;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=VG1MaX9Wixqm8LX4jVIjxRtWDElDhiE8Ho1xpB08+bA=;
+        b=E9Dw1RJ+eaqu3YzwSsXSc/zqIJYyGiBiLJMt4Kg39h5rx0t7qN2etPiQ3S3+SKT1Ae
+         l3sgt4Vt5JkyO5fSVtR/FMj0Lz1i4cw2k/1RmL4zL9rjP0f3HKZB2gVWY3xBD7477qQO
+         qgP+9/OOA98gDg50iES1pY1be8Bu+63JBatQpy290rAdLFpdKMb+0kqzhRvT9VQFhhba
+         arAu9qnV+ZimEtosBI4fcW7fHzUUXpCuRELveYtCq4XYh6fmeIqFEfu6CrrSr472hICq
+         nd9mmaJAqRQHv6q2UT/6HnMniOoGBaZGGB6iT53ppJ/XJiXuOkdd0SxJYfkKkBdlF8Se
+         TmGQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVqWT+0S1BxjM0c9T88OwcHPV6nS1mVb45GRo9+swO2s9k0TwjAhrx9fEx9pMBYYRU4prKF6dZkzOhIOnk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzxA5zvexwvYh2F4Scl7BBVZ3w6rHVVgbvIn1riV97zLCK75hfS
+	ddZAqlcZJ4ZLKq+E5DuJ8R3Y+cwu9JrNNY9vFfvtrkRm1Lh+ek8tJI2gC4OBYYkieKwUeP/i2x+
+	YjFOtY4nLMfMPSe4WlLjY1tHIKAAbkSnomKcy1Q==
+X-Google-Smtp-Source: AGHT+IFZPkz+zpegGiynrc/uuNxJ0ov4qqo022LeyJfV540+XBhmrJitjFwxWZA+2HM3HGR7rldq/MxJvLLQLrQlwh0=
+X-Received: by 2002:a2e:e0a:0:b0:2f5:136d:89ef with SMTP id
+ 38308e7fff4ca-2f629063f04mr32120871fa.22.1725266058091; Mon, 02 Sep 2024
+ 01:34:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240814082301.8091-1-brgl@bgdev.pl> <87a5hcyite.fsf@kernel.org> <CAMRc=Mcr7E0dxG09_gYPxg57gYAS4j2+-3x9GCS3wOcM46O=NQ@mail.gmail.com>
+In-Reply-To: <CAMRc=Mcr7E0dxG09_gYPxg57gYAS4j2+-3x9GCS3wOcM46O=NQ@mail.gmail.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Mon, 2 Sep 2024 10:34:07 +0200
+Message-ID: <CAMRc=MeuB1yhENHXqLxRf8xFNm7dYvjLisa7zsd6_2ov_OPw3g@mail.gmail.com>
+Subject: Re: [PATCH net-next v2] dt-bindings: net: ath11k: document the inputs
+ of the ath11k on WCN6855
+To: Kalle Valo <kvalo@kernel.org>
+Cc: "David S . Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Jeff Johnson <jjohnson@kernel.org>, linux-wireless@vger.kernel.org, 
+	netdev@vger.kernel.org, devicetree@vger.kernel.org, 
+	ath11k@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Nikita Kiryushin <kiryushin@ancud.ru>
+On Fri, Aug 16, 2024 at 11:10=E2=80=AFAM Bartosz Golaszewski <brgl@bgdev.pl=
+> wrote:
+>
+> On Fri, Aug 16, 2024 at 10:26=E2=80=AFAM Kalle Valo <kvalo@kernel.org> wr=
+ote:
+> >
+> > Bartosz Golaszewski <brgl@bgdev.pl> writes:
+> >
+> > > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> > >
+> > > Describe the inputs from the PMU of the ath11k module on WCN6855.
+> > >
+> > > Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> > > ---
+> > > v1 -> v2:
+> > > - update the example
+> > >
+> > >  .../net/wireless/qcom,ath11k-pci.yaml         | 29 +++++++++++++++++=
+++
+> > >  1 file changed, 29 insertions(+)
+> >
+> > This goes to ath-next, not net-next.
+> >
+> > > diff --git a/Documentation/devicetree/bindings/net/wireless/qcom,ath1=
+1k-pci.yaml b/Documentation/devicetree/bindings/net/wireless/qcom,ath11k-pc=
+i.yaml
+> > > index 8675d7d0215c..a71fdf05bc1e 100644
+> > > --- a/Documentation/devicetree/bindings/net/wireless/qcom,ath11k-pci.=
+yaml
+> > > +++ b/Documentation/devicetree/bindings/net/wireless/qcom,ath11k-pci.=
+yaml
+> > > @@ -50,6 +50,9 @@ properties:
+> > >    vddrfa1p7-supply:
+> > >      description: VDD_RFA_1P7 supply regulator handle
+> > >
+> > > +  vddrfa1p8-supply:
+> > > +    description: VDD_RFA_1P8 supply regulator handle
+> > > +
+> > >    vddpcie0p9-supply:
+> > >      description: VDD_PCIE_0P9 supply regulator handle
+> > >
+> > > @@ -77,6 +80,22 @@ allOf:
+> > >          - vddrfa1p7-supply
+> > >          - vddpcie0p9-supply
+> > >          - vddpcie1p8-supply
+> > > +  - if:
+> > > +      properties:
+> > > +        compatible:
+> > > +          contains:
+> > > +            const: pci17cb,1103
+> > > +    then:
+> > > +      required:
+> > > +        - vddrfacmn-supply
+> > > +        - vddaon-supply
+> > > +        - vddwlcx-supply
+> > > +        - vddwlmx-supply
+> > > +        - vddrfa0p8-supply
+> > > +        - vddrfa1p2-supply
+> > > +        - vddrfa1p8-supply
+> > > +        - vddpcie0p9-supply
+> > > +        - vddpcie1p8-supply
+> >
+> > Like we discussed before, shouldn't these supplies be optional as not
+> > all modules need them?
+> >
+>
+> The answer is still the same: the ATH11K inside a WCN6855 does - in
+> fact - always need them. The fact that the X13s doesn't define them is
+> bad representation of HW and I'm fixing it in a subsequent DTS patch.
+>
 
-[ Upstream commit cc5645fddb0ce28492b15520306d092730dffa48 ]
+Gentle ping.
 
-There is a possibility of buffer overflow in
-show_rcu_tasks_trace_gp_kthread() if counters, passed
-to sprintf() are huge. Counter numbers, needed for this
-are unrealistically high, but buffer overflow is still
-possible.
-
-Use snprintf() with buffer size instead of sprintf().
-
-Found by Linux Verification Center (linuxtesting.org) with SVACE.
-
-Fixes: edf3775f0ad6 ("rcu-tasks: Add count for idle tasks on offline CPUs")
-Signed-off-by: Nikita Kiryushin <kiryushin@ancud.ru>
-Reviewed-by: Steven Rostedt (Google) <rostedt@goodmis.org>
-Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
-Signed-off-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
-Signed-off-by: Vamsi Krishna Brahmajosyula <vamsi-krishna.brahmajosyula@broadcom.com>
----
- kernel/rcu/tasks.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/kernel/rcu/tasks.h b/kernel/rcu/tasks.h
-index 105fdc2bb004..bede3a4f108e 100644
---- a/kernel/rcu/tasks.h
-+++ b/kernel/rcu/tasks.h
-@@ -1240,7 +1240,7 @@ static void show_rcu_tasks_trace_gp_kthread(void)
- {
- 	char buf[64];
- 
--	sprintf(buf, "N%d h:%lu/%lu/%lu", atomic_read(&trc_n_readers_need_end),
-+	snprintf(buf, sizeof(buf), "N%d h:%lu/%lu/%lu", atomic_read(&trc_n_readers_need_end),
- 		data_race(n_heavy_reader_ofl_updates),
- 		data_race(n_heavy_reader_updates),
- 		data_race(n_heavy_reader_attempts));
--- 
-2.45.2
-
+Bart
 
