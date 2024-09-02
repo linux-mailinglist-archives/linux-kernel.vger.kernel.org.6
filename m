@@ -1,296 +1,164 @@
-Return-Path: <linux-kernel+bounces-311391-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311392-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D82F968888
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 15:12:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82CF796888B
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 15:12:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8B786B2396E
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 13:12:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0EF30281D73
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 13:12:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B2A3200139;
-	Mon,  2 Sep 2024 13:11:38 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8B8820FAA9;
+	Mon,  2 Sep 2024 13:11:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="TYNrn+sO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B79C13212A
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 13:11:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C217205E29;
+	Mon,  2 Sep 2024 13:11:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725282697; cv=none; b=Arew3yvwL0JuN4mwwTIG3YqJAV7VWzdWzqt25ueykp2s2mUkEVgajhcH2Msl8DzefHMBxGZZWHaXKE1QtfHNFQSbYugAnZNtZCOBtUMRRQs1oYNncFNv1YtYede1Mr+WQCoYOzstUU7lP2K1q8V46M+HePqeVUuxl78C06TdPzE=
+	t=1725282719; cv=none; b=fLr02pTpExUa41zuGeJElvoM+AdnQbHm98Lpf9jhO1K3LPF0uVqP6jxazFgJNqUJObEuBCmC7f5W02/woOu2YiPJziYAWH/OBtKV7LGFJSlEwRJmxE8qwCkTtNbzQD+fuXSKmXK43KvYlhHnP+xGyzAfNOsX/MCoPwhXnSLGeQ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725282697; c=relaxed/simple;
-	bh=wNCiw8vcHy2HPstOIpjJ6c6HntN2pNs48vgt4jsXRiY=;
+	s=arc-20240116; t=1725282719; c=relaxed/simple;
+	bh=gx1O+C2Apjy6gFGimEEw36zJ1VKn28kDUmuUzLrIm/Q=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=o/7znsnjyfH0AgqLEKxG7N4IX7uLCONggM8U9yPs6nsJxpU0S1BnPio1kcKlvZe45uItfQjZvSf7tvUfrzf1HVupOWAEDPHIBJqwTbU/57Tug+gDeH6pti0Wwvp/otqkJH8jFB294mhf1bJelN+5mQLX5ww6yrwMMwBO+sUWHtw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <sha@pengutronix.de>)
-	id 1sl6q5-0001oO-QF; Mon, 02 Sep 2024 15:11:25 +0200
-Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <sha@pengutronix.de>)
-	id 1sl6q4-004uYQ-Ph; Mon, 02 Sep 2024 15:11:24 +0200
-Received: from sha by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <sha@pengutronix.de>)
-	id 1sl6q4-002Zvg-2B;
-	Mon, 02 Sep 2024 15:11:24 +0200
-Date: Mon, 2 Sep 2024 15:11:24 +0200
-From: Sascha Hauer <s.hauer@pengutronix.de>
-To: David Lin <yu-hao.lin@nxp.com>
-Cc: Francesco Dolcini <francesco@dolcini.it>,
-	Calvin Owens <calvin@wbinvd.org>,
-	Brian Norris <briannorris@chromium.org>,
-	Kalle Valo <kvalo@kernel.org>,
-	"linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"kernel@pengutronix.de" <kernel@pengutronix.de>
-Subject: Re: [EXT] [RFC PATCH 0/4] mwifiex: add support for iw61x
-Message-ID: <ZtW5fFocfr9_WgGD@pengutronix.de>
-References: <20240826072648.167004-1-s.hauer@pengutronix.de>
- <PA4PR04MB9638016F363BFF87D62B70D1D1922@PA4PR04MB9638.eurprd04.prod.outlook.com>
- <ZtVd3__wfm6EOOgH@pengutronix.de>
- <PA4PR04MB9638CF45263E713203A53EF7D1922@PA4PR04MB9638.eurprd04.prod.outlook.com>
- <ZtVtPJSsIr9eIFWv@pengutronix.de>
- <PA4PR04MB9638ED8FA48E352F7246127AD1922@PA4PR04MB9638.eurprd04.prod.outlook.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=TYkVigSKMZN+mT1C4moygPQ+UE7/l82dxNwAsesMDgLekwoTbzdf93uatL9xQ6qCyQqFdWtt1/PbtB6x4APCaLRPY6V7cFFOai+Eg2KyrHRbHbO03GEFh9hGF8ukFv//KrqK3aqJ5GeaMIad4igOlbNh5WcAGbw+FiBYNaiIiMY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=TYNrn+sO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 55E7EC4CEC2;
+	Mon,  2 Sep 2024 13:11:57 +0000 (UTC)
+Authentication-Results: smtp.kernel.org;
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="TYNrn+sO"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
+	t=1725282715;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ajNhpQQ8pAn81+LIVUJdAsztwcnl2COxj6CoGDej39E=;
+	b=TYNrn+sOOWcxaykfNDnNDmi61JtCkS+TrpjgHIzBfSS1sPXvkzpTmDWsJRbFaXPFpbvaqc
+	B66SCqvixYBCdPacgD5LYLdOPhGYKVdceuFllDZJn21oFQCKxzVwruRCix5YzZvYNbqz2r
+	cWLQEnWN1eAHp1vQCzK4b3oLmTGU6+E=
+Received: 
+	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 669363c7 (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
+	Mon, 2 Sep 2024 13:11:55 +0000 (UTC)
+Date: Mon, 2 Sep 2024 15:11:53 +0200
+From: "Jason A. Donenfeld" <Jason@zx2c4.com>
+To: Adhemerval Zanella Netto <adhemerval.zanella@linaro.org>
+Cc: Will Deacon <will@kernel.org>, Theodore Ts'o <tytso@mit.edu>,
+	linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-arch@vger.kernel.org,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Eric Biggers <ebiggers@kernel.org>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>, ardb@kernel.org
+Subject: Re: [PATCH v2] aarch64: vdso: Wire up getrandom() vDSO implementation
+Message-ID: <ZtW5meR5iLrkKErJ@zx2c4.com>
+References: <20240829201728.2825-1-adhemerval.zanella@linaro.org>
+ <20240830114645.GA8219@willie-the-truck>
+ <963afe11-fd48-4fe9-be70-2e202f836e34@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <PA4PR04MB9638ED8FA48E352F7246127AD1922@PA4PR04MB9638.eurprd04.prod.outlook.com>
-X-Sent-From: Pengutronix Hildesheim
-X-URL: http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: sha@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <963afe11-fd48-4fe9-be70-2e202f836e34@linaro.org>
 
-On Mon, Sep 02, 2024 at 08:00:58AM +0000, David Lin wrote:
-> > From: Sascha Hauer <s.hauer@pengutronix.de>
-> > Sent: Monday, September 2, 2024 3:46 PM
-> > To: David Lin <yu-hao.lin@nxp.com>
-> > Cc: Francesco Dolcini <francesco@dolcini.it>; Calvin Owens
-> > <calvin@wbinvd.org>; Brian Norris <briannorris@chromium.org>; Kalle Valo
-> > <kvalo@kernel.org>; linux-wireless@vger.kernel.org;
-> > linux-kernel@vger.kernel.org; kernel@pengutronix.de
-> > Subject: Re: [EXT] [RFC PATCH 0/4] mwifiex: add support for iw61x
+Hey Christophe (for header logic) & Will (for arm64 stuff),
+
+On Fri, Aug 30, 2024 at 09:28:29AM -0300, Adhemerval Zanella Netto wrote:
+> >> diff --git a/lib/vdso/getrandom.c b/lib/vdso/getrandom.c
+> >> index 938ca539aaa6..7c9711248d9b 100644
+> >> --- a/lib/vdso/getrandom.c
+> >> +++ b/lib/vdso/getrandom.c
+> >> @@ -5,6 +5,7 @@
+> >>  
+> >>  #include <linux/array_size.h>
+> >>  #include <linux/minmax.h>
+> >> +#include <linux/mm.h>
+> >>  #include <vdso/datapage.h>
+> >>  #include <vdso/getrandom.h>
+> >>  #include <vdso/unaligned.h>
 > > 
-> > Caution: This is an external email. Please take care when clicking links or
-> > opening attachments. When in doubt, report the message using the 'Report
-> > this email' button
-> > 
-> > 
-> > On Mon, Sep 02, 2024 at 06:54:07AM +0000, David Lin wrote:
-> > > > From: Sascha Hauer <s.hauer@pengutronix.de>
-> > > > Sent: Monday, September 2, 2024 2:41 PM
-> > > > To: David Lin <yu-hao.lin@nxp.com>
-> > > > Cc: Francesco Dolcini <francesco@dolcini.it>; Calvin Owens
-> > > > <calvin@wbinvd.org>; Brian Norris <briannorris@chromium.org>; Kalle
-> > > > Valo <kvalo@kernel.org>; linux-wireless@vger.kernel.org;
-> > > > linux-kernel@vger.kernel.org; kernel@pengutronix.de
-> > > > Subject: Re: [EXT] [RFC PATCH 0/4] mwifiex: add support for iw61x
-> > > >
-> > > > Caution: This is an external email. Please take care when clicking
-> > > > links or opening attachments. When in doubt, report the message
-> > > > using the 'Report this email' button
-> > > >
-> > > >
-> > > > On Mon, Sep 02, 2024 at 02:24:53AM +0000, David Lin wrote:
-> > > > > > From: Sascha Hauer <s.hauer@pengutronix.de>
-> > > > > > Sent: Monday, August 26, 2024 3:27 PM
-> > > > > > To: Francesco Dolcini <francesco@dolcini.it>
-> > > > > > Cc: Calvin Owens <calvin@wbinvd.org>; Brian Norris
-> > > > > > <briannorris@chromium.org>; Kalle Valo <kvalo@kernel.org>; David
-> > > > > > Lin <yu-hao.lin@nxp.com>; linux-wireless@vger.kernel.org;
-> > > > > > linux-kernel@vger.kernel.org; kernel@pengutronix.de; Sascha
-> > > > > > Hauer <s.hauer@pengutronix.de>
-> > > > > > Subject: [EXT] [RFC PATCH 0/4] mwifiex: add support for iw61x
-> > > > > >
-> > > > > > Caution: This is an external email. Please take care when
-> > > > > > clicking links or opening attachments. When in doubt, report the
-> > > > > > message using the 'Report this email' button
-> > > > > >
-> > > > > >
-> > > > > > This series adds support for the iw61x chips to the mwifiex driver.
-> > > > > > There are a few things to address, hence the RFC status. See the
-> > > > > > commit messages for details. The series is based on
-> > wireless-next/main.
-> > > > > >
-> > > > > > I am sending this now since people requested it here [1], but as
-> > > > > > it's out now feel free to leave your comments to the issues
-> > > > > > mentioned (or others I haven't mentioned ;)
-> > > > > >
-> > > > > > [1]
-> > > > > > https://lo/
-> > > > > >
-> > > >
-> > re.kern%2F&data=05%7C02%7Cyu-hao.lin%40nxp.com%7C6125c51da3704fe10
-> > > > a5
-> > > > > >
-> > > >
-> > a08dccb1a24ef%7C686ea1d3bc2b4c6fa92cd99c5c301635%7C0%7C0%7C6386
-> > > > 08560
-> > > > > >
-> > > >
-> > 383160951%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV
-> > > > 2luMz
-> > > > > >
-> > > >
-> > IiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C0%7C%7C%7C&sdata=jfQ6FQimPpwr
-> > > > nwUo
-> > > > > > OCEhmpSadtrb15ymGiif%2B1UCdG0%3D&reserved=0
-> > > > > >
-> > > >
-> > el.org%2Fall%2F20240809094533.1660-1-yu-hao.lin%40nxp.com%2F&data=05
-> > > > > >
-> > > >
-> > %7C02%7Cyu-hao.lin%40nxp.com%7C184ab4fed58647150f8508dcc5a0789a%7
-> > > > > >
-> > > >
-> > C686ea1d3bc2b4c6fa92cd99c5c301635%7C0%7C0%7C638602540229716119%
-> > > > > >
-> > > >
-> > 7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJB
-> > > > > >
-> > > >
-> > TiI6Ik1haWwiLCJXVCI6Mn0%3D%7C0%7C%7C%7C&sdata=cACBHxaQvcOqu6ri
-> > > > > > BoAlZDONRlGQ4j5DcglEV9T%2BpYU%3D&reserved=0
-> > > > > >
-> > > > > > Sascha
-> > > > > >
-> > > > > >
-> > > > > > Sascha Hauer (4):
-> > > > > >   wifi: mwifiex: release firmware at remove time
-> > > > > >   wifi: mwifiex: handle VDLL
-> > > > > >   wifi: mwifiex: wait longer for SDIO card status
-> > > > > >   mwifiex: add iw61x support
-> > > > > >
-> > > > > >  drivers/net/wireless/marvell/mwifiex/cmdevt.c | 86
-> > > > +++++++++++++++++++
-> > > > > >  drivers/net/wireless/marvell/mwifiex/fw.h     | 16 ++++
-> > > > > >  drivers/net/wireless/marvell/mwifiex/main.c   |  9 +-
-> > > > > >  drivers/net/wireless/marvell/mwifiex/main.h   |  4 +
-> > > > > >  drivers/net/wireless/marvell/mwifiex/sdio.c   | 81
-> > ++++++++++++++++-
-> > > > > >  drivers/net/wireless/marvell/mwifiex/sdio.h   |  3 +
-> > > > > >  .../net/wireless/marvell/mwifiex/sta_event.c  |  4
-> > > > > > +  .../net/wireless/marvell/mwifiex/uap_event.c  |  4 +
-> > > > > >  include/linux/mmc/sdio_ids.h                  |  3 +
-> > > > > >  9 files changed, 205 insertions(+), 5 deletions(-)
-> > > > > >
-> > > > > > --
-> > > > > > 2.39.2
-> > > > >
-> > > > > I think you ported VDLL related code from nxpwifi and you also
-> > > > > traced our private/downstream MXM driver.
-> > > >
-> > > > I ported it from this repository:
-> > > >
-> > > > https://eur01.safelinks.protection.outlook.com/?url=https%3A%2F%2Fgi
-> > > >
-> > thub.co%2F&data=05%7C02%7Cyu-hao.lin%40nxp.com%7C9f55bf357ece47645
-> > 0b
-> > > >
-> > 708dccb234dae%7C686ea1d3bc2b4c6fa92cd99c5c301635%7C0%7C0%7C6386
-> > 08599
-> > > >
-> > 700151625%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV
-> > 2luMz
-> > > >
-> > IiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C0%7C%7C%7C&sdata=OLf3OfFX7R%
-> > 2BT3V
-> > > > gWtcsqlls%2FI3ceY8r3bewwYy8bAes%3D&reserved=0
-> > > >
-> > m%2Fnxp-imx%2Fmwifiex-iw612.git&data=05%7C02%7Cyu-hao.lin%40nxp.co
-> > > >
-> > m%7C6125c51da3704fe10a5a08dccb1a24ef%7C686ea1d3bc2b4c6fa92cd99c5
-> > > >
-> > c301635%7C0%7C0%7C638608560383172495%7CUnknown%7CTWFpbGZsb3d
-> > > >
-> > 8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3
-> > > >
-> > D%7C0%7C%7C%7C&sdata=5TgI0r4u2I9Pi1FATJx32Ubn7ufmbYsBR1XkpQLAIyQ
-> > > > %3D&reserved=0
-> > > >
-> > > > Is that the one you are referring to as MXM driver?
-> > > >
-> > >
-> > > Yes.
-> > >
-> > > > > If this is the case, I think you should know nxpwifi already
-> > > > > cleaned up the porting VDLL code from MXM driver.
-> > > > > I check your patch quickly. You ported the new SDIO data type
-> > > > > (MWIFIEX_TYPE_VDLL) from nxpwifi, but you did not port the code to
-> > > > > support this new data type from nxpwifi. In other word, you did
-> > > > > not test your patch before submission (same as some of your patches).
-> > > >
-> > > > I did test it. It works with the iw61x as well as older chips. There
-> > > > are likely details I haven't tested, but it generally works. If
-> > > > there are details I should test additionally please let me know.
-> > > >
-> > > > >
-> > > > > Another thing is that this new SDIO data type should be handled
-> > > > > carefully with other existed SDIO data type.
-> > > > >
-> > > > > Nxpwifi only supports new SDIO mode, so the modification to
-> > > > > support NXPWIFI_TYPE_VDLL can be clean and simple. If you want to
-> > > > > port the code to Mwifiex, there is no one-to-one modification of the
-> > code.
-> > > > >
-> > > > > Another important thing is that you should consider if your
-> > > > > modifications will affect existed devices or not.
-> > > > > You need to check if you should check firmware version or chip
-> > > > > type before adding some code.
-> > > >
-> > > > The VDLL code I added for the iw61x only reacts to the
-> > > > EVENT_VDLL_IND event. So as long as a firmware doesn't send such an
-> > > > event nothing is changed with this patch, and I haven't seen an older chip
-> > sending a VDLL event.
-> > > >
-> > >
-> > > How about IW61x? As I mentioned before, if you test IW61x on DFS
-> > > channel, command timeout will happen.  Without correct VDLL porting,
-> > > you will encounter command timeout in some other test cases. But
-> > > testing on DFS channel will be easier to reproduce the issue.
-> > 
-> > The VDLL support in the downstream driver supports a case when a VDLL
-> > event comes in while a command is being sent. I catched this with this
-> > test:
-> > 
-> >         if (adapter->cmd_sent) {
-> >                 mwifiex_dbg(adapter, MSG, "%s: adapter is busy\n",
-> > __func__);
-> >                 return -EBUSY;
-> >         }
-> > 
-> > The downstream driver defers handling of the VDLL event to the main process
-> > in this case. I haven't implemented this case in my patch because I wasn't able
-> > to trigger it, but is this the case you are referring to?
-> > 
+> > Looks like this should be a separate change?
 > 
-> Not only this code segment. In fact, you did not add VDLL data patch support to sdio.c.
-> If you try to add the code and do test, you will know what is missing in your code.
+> 
+> It is required so arm64 can use  c-getrandom-y, otherwise vgetrandom.o build
+> fails:
+> 
+> CC      arch/arm64/kernel/vdso/vgetrandom.o
+> In file included from ./include/uapi/linux/mman.h:5,
+>                  from /mnt/projects/linux/linux-git/lib/vdso/getrandom.c:13,
+>                  from <command-line>:
+> ./arch/arm64/include/asm/mman.h: In function ‘arch_calc_vm_prot_bits’:
+> ./arch/arm64/include/asm/mman.h:14:13: error: implicit declaration of function ‘system_supports_bti’ [-Werror=implicit-function-declaration]
+>    14 |         if (system_supports_bti() && (prot & PROT_BTI))
+>       |             ^~~~~~~~~~~~~~~~~~~
+> ./arch/arm64/include/asm/mman.h:15:24: error: ‘VM_ARM64_BTI’ undeclared (first use in this function); did you mean ‘ARM64_BTI’?
+>    15 |                 ret |= VM_ARM64_BTI;
+>       |                        ^~~~~~~~~~~~
+>       |                        ARM64_BTI
+> ./arch/arm64/include/asm/mman.h:15:24: note: each undeclared identifier is reported only once for each function it appears in
+> ./arch/arm64/include/asm/mman.h:17:13: error: implicit declaration of function ‘system_supports_mte’ [-Werror=implicit-function-declaration]
+>    17 |         if (system_supports_mte() && (prot & PROT_MTE))
+>       |             ^~~~~~~~~~~~~~~~~~~
+> ./arch/arm64/include/asm/mman.h:18:24: error: ‘VM_MTE’ undeclared (first use in this function)
+>    18 |                 ret |= VM_MTE;
+>       |                        ^~~~~~
+> ./arch/arm64/include/asm/mman.h: In function ‘arch_calc_vm_flag_bits’:
+> ./arch/arm64/include/asm/mman.h:32:24: error: ‘VM_MTE_ALLOWED’ undeclared (first use in this function)
+>    32 |                 return VM_MTE_ALLOWED;
+>       |                        ^~~~~~~~~~~~~~
+> ./arch/arm64/include/asm/mman.h: In function ‘arch_validate_flags’:
+> ./arch/arm64/include/asm/mman.h:59:29: error: ‘VM_MTE’ undeclared (first use in this function)
+>    59 |         return !(vm_flags & VM_MTE) || (vm_flags & VM_MTE_ALLOWED);
+>       |                             ^~~~~~
+> ./arch/arm64/include/asm/mman.h:59:52: error: ‘VM_MTE_ALLOWED’ undeclared (first use in this function)
+>    59 |         return !(vm_flags & VM_MTE) || (vm_flags & VM_MTE_ALLOWED);
+>       |                                                    ^~~~~~~~~~~~~~
+> arch/arm64/kernel/vdso/vgetrandom.c: In function ‘__kernel_getrandom’:
+> arch/arm64/kernel/vdso/vgetrandom.c:18:25: error: ‘ENOSYS’ undeclared (first use in this function); did you mean ‘ENOSPC’?
+>    18 |                 return -ENOSYS;
+>       |                         ^~~~~~
+>       |                         ENOSPC
+> cc1: some warnings being treated as errors
+> 
+> I can move to a different patch, but this is really tied to this patch.
 
-Could you point me to the code you mean?
+Adhemerval kept this change in this patch for v3, which, if it's
+necessary, is fine with me. But I was looking to see if there was
+another way of doing it, because including linux/mm.h inside of vdso
+code is kind of contrary to your project with e379299fe0b3 ("random:
+vDSO: minimize and simplify header includes").
 
-Sascha
+getrandom.c includes uapi/linux/mman.h for the mmap constants. That
+seems fine; it's userspace code after all. But then uapi/linux/mman.h
+has this:
 
--- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+   #include <asm/mman.h>
+   #include <asm-generic/hugetlb_encode.h>
+   #include <linux/types.h>
+
+The asm-generic/ one resolves to uapi/asm-generic. But the asm/ one
+resolves to arch code, which is where we then get in trouble on ARM,
+where arch/arm64/include/asm/mman.h has all sorts of kernel code in it.
+
+Maybe, instead, it should resolve to arch/arm64/include/uapi/asm/mman.h,
+which is the header that userspace actually uses in normal user code?
+
+Is this a makefile problem? What's going on here? Seems like this is
+something worth sorting out. Or I can take Adhemerval's v3 as-is and
+we'll grit our teeth and work it out later, as you prefer. But I thought
+I should mention it.
+
+Thoughts?
+
+Jason
 
