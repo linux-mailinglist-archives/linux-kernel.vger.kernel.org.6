@@ -1,186 +1,222 @@
-Return-Path: <linux-kernel+bounces-311426-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311428-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F606968901
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 15:36:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 292E1968906
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 15:38:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8524AB22349
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 13:36:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8D5A9B20E32
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 13:38:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C64FF20FA8B;
-	Mon,  2 Sep 2024 13:36:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A05FA201253;
+	Mon,  2 Sep 2024 13:37:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="U8JD3QvR"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="QISSaH6f"
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AA4A20012E
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 13:36:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D56241A80
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 13:37:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725284178; cv=none; b=Jpz6je7Dvm6ocb0Pke3A1b+r698X1bs5kvJsOnJV3Ai1eRR6dvLfh53qLrPBnUl8neGXGvIH+lrs5BADvDS7xBc8iOtejURQf56KJsEtPCag00zTu7nZKGLBlwC6jSp+eXOS73rZF63Y1lLPArp1a0NUBB7EtcACCqTIrf4AZxE=
+	t=1725284278; cv=none; b=MElZdMzTVHlfBa5iuWnm+8n5xjTppadQoqwxfMfniRn8DJGuzBL0kdbJo7ysvLsXdONBHk0sHwgOZIL/ZT9UVdS1Cu+mb6dzUF6a9aNefa0DiL2frb8LJrNuB45vSanfG1bUKXvfZLvS2GGGiboXhhfl4S42TLGIuG66Ar9l7v8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725284178; c=relaxed/simple;
-	bh=E/VZ7GrHjsNixiI5+URY2Wc2RKp6Poy1SHD9++Jjmv8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PE6u+SCQQ//Mgb6fC06ADAz5JQ4T8VRg1WguHYrIm+a1tii5ozYIqjbP/UyX0cXGZ5fKjwhpN+VrpKYRNmqsLL/s0E+9tKGMu52VGJl6/X8l8/5nRmLdft6IdKY8nrpzDaTH9UGXf6rz9NT7rGVHUIBePQui003feyB47AGnmno=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch; spf=none smtp.mailfrom=ffwll.ch; dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b=U8JD3QvR; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ffwll.ch
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-42c5347b2f7so19970735e9.0
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2024 06:36:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google; t=1725284175; x=1725888975; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6v3FtktqquHZEtnfmY82ilNEJb6ksXTawePio7XooLM=;
-        b=U8JD3QvR0plnR/9zQ8J4RcZYvy9OhWenwuPO8WX/tyJoff+w971/fq45JRB3iUB1bS
-         7HplsRTnr9LZOIGI185oB3tt9O56ths50KPECvRrcO0Xm/ZSt6ypbGcmlz2AGPTsNH6y
-         LGzRz2t9me1D6vJ5ST/p+GGdV0Z8hpF++SWZA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725284175; x=1725888975;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6v3FtktqquHZEtnfmY82ilNEJb6ksXTawePio7XooLM=;
-        b=Ie/HyuxsCy7ly346NrBIoMebLP6+Is4wFF2g4VkSyHiugzf6KnLTZ1UyjsBFfsv4I+
-         qYifUK4v3GK2W8LwMJtgSeCh5jPU6crxHGDeVxZmV2rf54ec8R3H7nMSue1E0/sAEKWR
-         s6yiKjcQ9v4Ko0Sft97rPNu0NPSToCwq5sZOKnp+7tmncowSz7rjQY2IHPL/X+7kmibV
-         rePoCyfpvyAzmIjEynxe8O7w3pxpSRHONPlf6+R0/nGqETRFWnzwCUsw9cPgRrTNReVZ
-         HMKSmg+RuVwvMdJR1G4vArverYynqfhapd+6BIgc7Xino+c2M+dqomWPvDKgekfZloZ0
-         Kn+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWYHBjH6h2/ARc0tKGhG52DJmOOh4KP/pvyg4AfyT5m/y20BmijOH0/NLp4tRJrc1LCoH25cnReZSwlbSo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzysbiZnCgDGI3jzOUn9euiFSSyE408dbdO7cvaTMsMQHcPSjOm
-	3vfLEethz95pvoM7wUanpp6VXPn5sT6/rNwRnya7/ulzSggFJqXLXMDXs1b5ngU=
-X-Google-Smtp-Source: AGHT+IFmCAd/UKn+8RiDLAzhiVps6I/r8wIzIThrxAPcZIbCaz99pcPpBKWDT6e22RdxtT79ulMxyg==
-X-Received: by 2002:a05:600c:3b11:b0:429:a05:32fb with SMTP id 5b1f17b1804b1-42bb01b4428mr88808955e9.10.1725284174404;
-        Mon, 02 Sep 2024 06:36:14 -0700 (PDT)
-Received: from phenom.ffwll.local ([2a02:168:57f4:0:5485:d4b2:c087:b497])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-374c7fa443esm4065467f8f.41.2024.09.02.06.36.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Sep 2024 06:36:14 -0700 (PDT)
-Date: Mon, 2 Sep 2024 15:36:11 +0200
-From: Daniel Vetter <daniel.vetter@ffwll.ch>
-To: Jessica Zhang <quic_jesszhan@quicinc.com>
-Cc: Rob Clark <robdclark@gmail.com>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	quic_abhinavk@quicinc.com, Sean Paul <sean@poorly.run>,
-	Marijn Suijten <marijn.suijten@somainline.org>,
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>, quic_ebharadw@quicinc.com,
-	linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	Rob Clark <robdclark@chromium.org>
-Subject: Re: [PATCH 13/21] drm/msm/dpu: Require modeset if clone mode status
- changes
-Message-ID: <ZtW_S0j5AEr4g0QW@phenom.ffwll.local>
-Mail-Followup-To: Jessica Zhang <quic_jesszhan@quicinc.com>,
-	Rob Clark <robdclark@gmail.com>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	quic_abhinavk@quicinc.com, Sean Paul <sean@poorly.run>,
-	Marijn Suijten <marijn.suijten@somainline.org>,
-	David Airlie <airlied@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>, quic_ebharadw@quicinc.com,
-	linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	Rob Clark <robdclark@chromium.org>
-References: <20240829-concurrent-wb-v1-0-502b16ae2ebb@quicinc.com>
- <20240829-concurrent-wb-v1-13-502b16ae2ebb@quicinc.com>
+	s=arc-20240116; t=1725284278; c=relaxed/simple;
+	bh=s4G8+xz/zmaWDvHhyNvdWXS0q0N5AomzZuH3bsjzkb8=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=F99vtq8xKuwiLH+ykM+VMHVDfrUNsp58PLqz1jfSmwI5+cugru5TInI4jOi6ehSZb4CeePl1Q2YXjU66qrtT1D/5sU8iGFRUBkTfa9hAWNmC8/IQVOTIc4qXtbxnDWRJ236gUe1CEpiQZhVmepXbVlqZN2JhV4Mx/ZzLCNxgVZY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=QISSaH6f; arc=none smtp.client-ip=60.244.123.138
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: 894ba956693011ef8593d301e5c8a9c0-20240902
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=zP4cGg7CUphsBzvMJGs84P/fiBMkQ+3J/IWvuPTx6wA=;
+	b=QISSaH6fWkiP/CBeZjN4NGmffPGsKINRQeGOJqRvzwknAY0Jfu5OziDZhW2mmDuXgzTwlsMD6lKRN+Z5hl7eW7Rs9Y0YDvcCPhciuxqBNvEjtEu15GsfBJqLpLN8MkSEU5G9eQK93LmxBffa6+yBSsO4UTz/6jy5CV2nJQiE7n4=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.41,REQID:d32f88e5-7e48-4228-b5bc-60da9e185a2e,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:0
+X-CID-META: VersionHash:6dc6a47,CLOUDID:60392f15-737d-40b3-9394-11d4ad6e91a1,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
+	RL:1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,
+	SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0,NGT
+X-CID-BAS: 0,NGT,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULS
+X-UUID: 894ba956693011ef8593d301e5c8a9c0-20240902
+Received: from mtkmbs13n2.mediatek.inc [(172.21.101.108)] by mailgw01.mediatek.com
+	(envelope-from <liankun.yang@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 1307397206; Mon, 02 Sep 2024 21:37:45 +0800
+Received: from mtkmbs13n1.mediatek.inc (172.21.101.193) by
+ MTKMBS14N1.mediatek.inc (172.21.101.75) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.26; Mon, 2 Sep 2024 21:37:45 +0800
+Received: from mszsdhlt06.gcn.mediatek.inc (10.16.6.206) by
+ mtkmbs13n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1118.26 via Frontend Transport; Mon, 2 Sep 2024 21:37:45 +0800
+From: Liankun Yang <liankun.yang@mediatek.com>
+To: <chunkuang.hu@kernel.org>, <p.zabel@pengutronix.de>, <airlied@gmail.com>,
+	<daniel@ffwll.ch>, <matthias.bgg@gmail.com>,
+	<angelogioacchino.delregno@collabora.com>, <ck.hu@mediatek.com>,
+	<shuijing.li@mediatek.com>, <jitao.shi@mediatek.com>,
+	<mac.shen@mediatek.com>, <liankun.yang@mediatek.com>
+CC: <Project_Global_Chrome_Upstream_Group@mediatek.com>,
+	<dri-devel@lists.freedesktop.org>, <linux-mediatek@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
+Subject: [PATCH v2 1/1] drm/mediatek: Fix get efuse issue for MT8188 DPTX
+Date: Mon, 2 Sep 2024 21:36:35 +0800
+Message-ID: <20240902133736.16461-1-liankun.yang@mediatek.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240829-concurrent-wb-v1-13-502b16ae2ebb@quicinc.com>
-X-Operating-System: Linux phenom 6.9.12-amd64 
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-TM-AS-Product-Ver: SMEX-14.0.0.3152-9.1.1006-23728.005
+X-TM-AS-Result: No-10--1.188600-8.000000
+X-TMASE-MatchedRID: jW2Old1ajwAQkelDZj2VREKcYi5Qw/RVxBgaBynd2vlcKZwALwMGs039
+	pXYjpT7k6PIMT6GeywFIT4SOZxkibrGaAH5r9EhkhK8o4aoss8qeEP0DdJrullxTR00Ss4P6+Vi
+	hXqn9xLGFWYX2TPbDEoT7/Vs2JNl8WrGyEceiJjNtPeYaZY+k11o1rFkFFs1aaVRQ51WzrJqjxY
+	yRBa/qJcFwgTvxipFa9xS3mVzWUuAojN1lLei7RSBsp71x5CnUirOsjA55EK+k7LjKY7svMtkSk
+	4NoKJ09zxb/HOenQ+UczlaPt9MZttgaDNEduXtvyup6iSf7FQSWKQcroFQqehz+PhojlLUuev0Y
+	PTN868QBqq+/+aGCsUu0bcffALXE
+X-TM-AS-User-Approved-Sender: No
+X-TM-AS-User-Blocked-Sender: No
+X-TMASE-Result: 10--1.188600-8.000000
+X-TMASE-Version: SMEX-14.0.0.3152-9.1.1006-23728.005
+X-TM-SNTS-SMTP:
+	CF585BE6CBE2F48BBC827E841D267628A408271CE606D1727C63A1D75A9F8F292000:8
+X-MTK: N
 
-On Thu, Aug 29, 2024 at 01:48:34PM -0700, Jessica Zhang wrote:
-> If the clone mode enabled status is changing, a modeset needs to happen
-> so that the resources can be reassigned
-> 
-> Signed-off-by: Jessica Zhang <quic_jesszhan@quicinc.com>
-> ---
->  drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c | 6 ++++++
->  1 file changed, 6 insertions(+)
-> 
-> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
-> index 1b0cc899e8c1..99eaaca405a4 100644
-> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
-> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
-> @@ -1306,6 +1306,8 @@ static int dpu_crtc_atomic_check(struct drm_crtc *crtc,
->  	int rc = 0;
->  
->  	bool needs_dirtyfb = dpu_crtc_needs_dirtyfb(crtc_state);
-> +	bool clone_mode_requested = drm_crtc_in_clone_mode(crtc->state);
-> +	bool clone_mode_enabled = drm_crtc_in_clone_mode(crtc_state);
->  
->  	/* there might be cases where encoder needs a modeset too */
->  	drm_for_each_encoder_mask(drm_enc, crtc->dev, crtc_state->encoder_mask) {
-> @@ -1313,6 +1315,10 @@ static int dpu_crtc_atomic_check(struct drm_crtc *crtc,
->  			crtc_state->mode_changed = true;
->  	}
->  
-> +	if ((clone_mode_requested && !clone_mode_enabled) ||
-> +			(!clone_mode_requested && clone_mode_enabled))
-> +		crtc_state->mode_changed = true;
+Update efuse data for MT8188 displayport.
 
-So two things, and kinda about the overall patch series:
+The DP monitor can not display when DUT connected to USB-c to DP dongle.
+Analysis view is invalid DP efuse data.
 
-- msm is confused about crtc_state->mode_changed, e.g. it sets it if
-  crtc_state->active_changed, which is wrong. Or msm dpu code doesn't use
-  drm_atomic_crtc_needs_modeset() correctly.
+Fixes: 350c3fe907fb ("drm/mediatek: dp: Add support MT8188 dp/edp function")
 
-- changing crtc_state->mode_changed from your crtc or plane callbacks
-  means you cannot use drm_atomic_helper_check directly, but need to roll
-  your own that calls drm_atomic_helper_check_modesets again as needed.
-  See the kerneldoc comment for drm_atomic_helper_check_modesets()
+Changes in V2:
+- Add Fixes tag.
+- Update the commit title.
+- Update the commit description.
+Per suggestion from the previous thread:
+https://patchwork.kernel.org/project/linux-mediatek/patch/
+20240510061716.31103-1-liankun.yang@mediatek.com/
 
-- the same holds if you set mode_changed from your encoder or bridge
-  functions, but I think this doesn't apply here for this patch.
+Signed-off-by: Liankun Yang <liankun.yang@mediatek.com>
+---
+ drivers/gpu/drm/mediatek/mtk_dp.c | 85 ++++++++++++++++++++++++++++++-
+ 1 file changed, 84 insertions(+), 1 deletion(-)
 
-I think it'd be really good to
-
-- review existing kerneldoc and please submit patches where it's not clear
-  or detailed enough
-
-- add checks to the atomic helper code to catch this. I think the best way
-  would be to check if drm_atomic_crtc_needs_modeset() changes outside of
-  areas where the helper code allows it already (essentially connector
-  functions setting ->connectors_changed), and set a new
-  drm_atomic_state->dirty_needs_modeset. Which
-  drm_atomic_helper_check_modeset would clear, and which would result in a
-  WARN_ON in drm_atomic_check if it's not yet cleared when the driver
-  returns with success.
-
-  Otherwise there's just no way I think to make sure drivers get this
-  right.
-
-Can I please sign you up for these patches?
-
-Thanks, Sima
-
-> +
->  	if (drm_atomic_crtc_needs_modeset(crtc_state)) {
->  		rc = dpu_crtc_assign_resources(crtc, crtc_state);
->  		if (rc < 0)
-> 
-> -- 
-> 2.34.1
-> 
-
+diff --git a/drivers/gpu/drm/mediatek/mtk_dp.c b/drivers/gpu/drm/mediatek/mtk_dp.c
+index d8796a904eca..f2bee617f063 100644
+--- a/drivers/gpu/drm/mediatek/mtk_dp.c
++++ b/drivers/gpu/drm/mediatek/mtk_dp.c
+@@ -145,6 +145,89 @@ struct mtk_dp_data {
+ 	u16 audio_m_div2_bit;
+ };
+ 
++static const struct mtk_dp_efuse_fmt mt8188_dp_efuse_fmt[MTK_DP_CAL_MAX] = {
++	[MTK_DP_CAL_GLB_BIAS_TRIM] = {
++		.idx = 0,
++		.shift = 10,
++		.mask = 0x1f,
++		.min_val = 1,
++		.max_val = 0x1e,
++		.default_val = 0xf,
++	},
++	[MTK_DP_CAL_CLKTX_IMPSE] = {
++		.idx = 0,
++		.shift = 15,
++		.mask = 0xf,
++		.min_val = 1,
++		.max_val = 0xe,
++		.default_val = 0x8,
++	},
++	[MTK_DP_CAL_LN_TX_IMPSEL_PMOS_0] = {
++		.idx = 1,
++		.shift = 0,
++		.mask = 0xf,
++		.min_val = 1,
++		.max_val = 0xe,
++		.default_val = 0x8,
++	},
++	[MTK_DP_CAL_LN_TX_IMPSEL_PMOS_1] = {
++		.idx = 1,
++		.shift = 8,
++		.mask = 0xf,
++		.min_val = 1,
++		.max_val = 0xe,
++		.default_val = 0x8,
++	},
++	[MTK_DP_CAL_LN_TX_IMPSEL_PMOS_2] = {
++		.idx = 1,
++		.shift = 16,
++		.mask = 0xf,
++		.min_val = 1,
++		.max_val = 0xe,
++		.default_val = 0x8,
++	},
++	[MTK_DP_CAL_LN_TX_IMPSEL_PMOS_3] = {
++		.idx = 1,
++		.shift = 24,
++		.mask = 0xf,
++		.min_val = 1,
++		.max_val = 0xe,
++		.default_val = 0x8,
++	},
++	[MTK_DP_CAL_LN_TX_IMPSEL_NMOS_0] = {
++		.idx = 1,
++		.shift = 4,
++		.mask = 0xf,
++		.min_val = 1,
++		.max_val = 0xe,
++		.default_val = 0x8,
++	},
++	[MTK_DP_CAL_LN_TX_IMPSEL_NMOS_1] = {
++		.idx = 1,
++		.shift = 12,
++		.mask = 0xf,
++		.min_val = 1,
++		.max_val = 0xe,
++		.default_val = 0x8,
++	},
++	[MTK_DP_CAL_LN_TX_IMPSEL_NMOS_2] = {
++		.idx = 1,
++		.shift = 20,
++		.mask = 0xf,
++		.min_val = 1,
++		.max_val = 0xe,
++		.default_val = 0x8,
++	},
++	[MTK_DP_CAL_LN_TX_IMPSEL_NMOS_3] = {
++		.idx = 1,
++		.shift = 28,
++		.mask = 0xf,
++		.min_val = 1,
++		.max_val = 0xe,
++		.default_val = 0x8,
++	},
++};
++
+ static const struct mtk_dp_efuse_fmt mt8195_edp_efuse_fmt[MTK_DP_CAL_MAX] = {
+ 	[MTK_DP_CAL_GLB_BIAS_TRIM] = {
+ 		.idx = 3,
+@@ -2771,7 +2854,7 @@ static SIMPLE_DEV_PM_OPS(mtk_dp_pm_ops, mtk_dp_suspend, mtk_dp_resume);
+ static const struct mtk_dp_data mt8188_dp_data = {
+ 	.bridge_type = DRM_MODE_CONNECTOR_DisplayPort,
+ 	.smc_cmd = MTK_DP_SIP_ATF_VIDEO_UNMUTE,
+-	.efuse_fmt = mt8195_dp_efuse_fmt,
++	.efuse_fmt = mt8188_dp_efuse_fmt,
+ 	.audio_supported = true,
+ 	.audio_pkt_in_hblank_area = true,
+ 	.audio_m_div2_bit = MT8188_AUDIO_M_CODE_MULT_DIV_SEL_DP_ENC0_P0_DIV_2,
 -- 
-Simona Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+2.45.2
+
 
