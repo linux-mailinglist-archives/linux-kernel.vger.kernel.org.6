@@ -1,106 +1,102 @@
-Return-Path: <linux-kernel+bounces-311857-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311858-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BA43968EAA
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 22:05:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B2E74968EAC
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 22:05:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6EE601C22122
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 20:05:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E65B61C21D97
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 20:05:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A8541CB52A;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6194C200116;
 	Mon,  2 Sep 2024 20:05:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QPsrhTfc"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QELLTP63"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AC1C1A2656;
-	Mon,  2 Sep 2024 20:05:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB6FB1C62D2;
+	Mon,  2 Sep 2024 20:05:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725307516; cv=none; b=Xgt43cLJy2sWL0SecPwEKjXP5sMBkogkqpwdC5yE+YGxx9r99s6jZTvZ65b9ip6FUCTPXKD7hGvCzg+3hBqkF9E4R7F8nzIRec10yst9If3iJb+pZ3hArVCCiipAgRJTi5u88Us0uAg/kTx0JETTs5YvdGiCCeBrPgEBoqXkGSM=
+	t=1725307516; cv=none; b=iD4RzRfXAdPNwansGOYe9wLfk81AmEs+zvL9ADxYmYwKMEUvbWxjKcJDiF5PrYPTmBLFCtg/H3Oa3VfDMdM5gRyNYwAcBoY+8MhELaG80I89hugMWo8bzd80rosnsOiWqWykterd1oT1Pgwt6cH8NSZ3idlebK486vOF+XBFYqA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1725307516; c=relaxed/simple;
-	bh=hTs8v+dIotmZYJZL8iDde0DHOaDQoZeGsavc9Jc1hYU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=W+WIm8nlthJkQlvgTts3hFGP+0ZfrV8q8969lXGTfy/d2yvxOeA7/HgeyIQJOaXRNf9lJwF8whWZxjbmfoUpIvfeyu0T+BKKpPtyhdThESCUB+6etVg4uXbyK9VIkR9kWGxuuBDkzSVKa0OkKrqAUC2fLB7+/nYlCVUjUW8nOxg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QPsrhTfc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A7184C4CEC2;
-	Mon,  2 Sep 2024 20:05:12 +0000 (UTC)
+	bh=rlcVAYAHHXvi4YAo/PA0SyrdQOJptJuD1RuUQmeZcFI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gamnmFsBR6FNY8SjYW8c9I8UE8Tzl3EXL2PGiq7H0eZUwGtuefr68zq9fqiW4nbfaGAH3d3c5W/Ut1QzkuhQv+6Co1Ob8oizzBWz5oU1zXSrUSTWPsTrmEw6U5/5EL8gdpJTCDCe3MR2jGHdbqCL9+2peeLH84AZhZAIk1hBGDo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QELLTP63; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D70CDC4CEC6;
+	Mon,  2 Sep 2024 20:05:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725307515;
-	bh=hTs8v+dIotmZYJZL8iDde0DHOaDQoZeGsavc9Jc1hYU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=QPsrhTfc7DmbvvMNNcf/S2p88IYwck9izHx6jW5DkcF53RzIlsi8PAFGXBqXVyAlY
-	 fo+mH96KJJ4R5YrSAKTUrnmJ+N0QuRj1cORyi88VnZlSlKxyzT4WflvEdYBc3Byu0R
-	 58hJhTqPOC8sgcgZdcENiOniLjmmUgJJdPwxDVot+LaVZ/0+KNAklJuzf6CMRhuRkX
-	 EG51NGtRRzSXBsZqFWQT9YMlIVBvoZ1oVSKpHmBLw3nVIM+33b6ChZfOOixez+79bW
-	 KpoG0QHTsk769qTiuE+cS1LrGOtVMKWzc3ddziwIOGRhj214J3wau+jZo8nwsFbQjS
-	 iJ15BZ6PUMdxQ==
-Message-ID: <29c63407-d32a-4afd-ac92-498bf5855359@kernel.org>
-Date: Mon, 2 Sep 2024 22:05:10 +0200
+	s=k20201202; t=1725307516;
+	bh=rlcVAYAHHXvi4YAo/PA0SyrdQOJptJuD1RuUQmeZcFI=;
+	h=From:To:Cc:Subject:Date:From;
+	b=QELLTP63tQsZXzfkQzsDPlagiqFN/5MBFcw/t92Mqc7wodBRsaSvDdtdjNnmOSFDv
+	 JkkS1WsSCGDzbHeERs58VVMHq6Kpd8x8VdEoSibh/no+2VeryXJTky5me2042EMqIx
+	 EvOLcLlX3KTBL3rwb4c/WG2A/fDbOyFRx2GtQgNdeIgWHq6bKnQwGEUp1HfeKaX9+p
+	 D8S+XrY6Xu3dYiBC0YKGR0eiLxA/7v4b7NlItZNkgrU3mYlXaLH9j3E6MXnnahXCtf
+	 YNfq/v5HvZPGjmuzBzV6w0uymgAEy8VaSMp0OJB6zkaVbidYmTXFyFE5mmBaL8U1Ip
+	 FzBw3BMTVDXxQ==
+From: Namhyung Kim <namhyung@kernel.org>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Kan Liang <kan.liang@linux.intel.com>
+Cc: Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	linux-perf-users@vger.kernel.org,
+	Song Liu <song@kernel.org>,
+	bpf@vger.kernel.org
+Subject: [PATCHSET 0/5] perf tools: Constify BPF control data properly (v1)
+Date: Mon,  2 Sep 2024 13:05:10 -0700
+Message-ID: <20240902200515.2103769-1-namhyung@kernel.org>
+X-Mailer: git-send-email 2.46.0.469.g59c65b2a67-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] arm64: dts: qcom: x1e80100-crd: Enable external DP
- support
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Abel Vesa <abel.vesa@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Johan Hovold <johan@kernel.org>,
- Neil Armstrong <neil.armstrong@linaro.org>,
- Trilok Soni <quic_tsoni@quicinc.com>, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240902-x1e80100-crd-dts-add-external-dp-support-v1-0-899c264c0eb7@linaro.org>
- <20240902-x1e80100-crd-dts-add-external-dp-support-v1-1-899c264c0eb7@linaro.org>
- <th2x3gtx56fr7zuhhleuj77eghfe7kgbfhok7ul5egez4iq5v2@qy5wy4hxpb5s>
-Content-Language: en-US
-From: Konrad Dybcio <konradybcio@kernel.org>
-In-Reply-To: <th2x3gtx56fr7zuhhleuj77eghfe7kgbfhok7ul5egez4iq5v2@qy5wy4hxpb5s>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 2.09.2024 8:54 PM, Dmitry Baryshkov wrote:
-> On Mon, Sep 02, 2024 at 06:01:35PM GMT, Abel Vesa wrote:
->> The Qualcomm Snapdragon X Elite CRD board has 3 USB Type-C ports,
->> all of them supporting external DP altmode. Between each QMP
->> combo PHY and the corresponding Type-C port, sits one Parade PS8830
->> retimer which handles both orientation and SBU muxing. Add nodes for
->> each retimer, fix the graphs between connectors and the PHYs accordingly,
->> add the voltage regulators needed by each retimer and then enable all
->> 3 remaining DPUs.
->>
->> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
->> ---
+Hello,
 
-[...]
+I've realized that some control data (usually for filter actions)
+should be defined as 'const volatile' so that it can passed to the BPF
+core and to be optimized properly (like with dead code elimination).
 
-> 
->> @@ -1164,7 +1566,7 @@ &usb_1_ss0_dwc3_hs {
->>  };
->>  
->>  &usb_1_ss0_qmpphy_out {
->> -	remote-endpoint = <&pmic_glink_ss0_ss_in>;
->> +	remote-endpoint = <&retimer_ss0_ss_in>;
->>  };
-> 
-> orientation-switch
+Convert the existing codes with the similar patterns.
 
-https://git.kernel.org/pub/scm/linux/kernel/git/qcom/linux.git/commit/?h=for-next&id=17c5909f53e01c151c91f66949a9c4f191756bae
+Thanks,
+Namhyung
 
-> and mode-switch for the QMP PHY?
 
-Oops! Looks like adding it and fixing some bugs in the qmpphy driver makes
-usb+dp work every now and then..
+Namhyung Kim (5):
+  perf stat: Constify control data for BPF
+  perf ftrace latency: Constify control data for BPF
+  perf kwork: Constify control data for BPF
+  perf lock contention: Constify control data for BPF
+  perf record offcpu: Constify control data for BPF
 
-Konrad
+ tools/perf/util/bpf_counter_cgroup.c          |  6 +--
+ tools/perf/util/bpf_ftrace.c                  |  8 ++--
+ tools/perf/util/bpf_kwork.c                   |  9 ++--
+ tools/perf/util/bpf_kwork_top.c               |  7 +--
+ tools/perf/util/bpf_lock_contention.c         | 45 ++++++++++---------
+ tools/perf/util/bpf_off_cpu.c                 | 16 +++----
+ tools/perf/util/bpf_skel/bperf_cgroup.bpf.c   |  2 +-
+ tools/perf/util/bpf_skel/func_latency.bpf.c   |  7 +--
+ tools/perf/util/bpf_skel/kwork_top.bpf.c      |  2 +-
+ tools/perf/util/bpf_skel/kwork_trace.bpf.c    |  5 ++-
+ .../perf/util/bpf_skel/lock_contention.bpf.c  | 27 +++++------
+ tools/perf/util/bpf_skel/off_cpu.bpf.c        |  9 ++--
+ 12 files changed, 76 insertions(+), 67 deletions(-)
+
+-- 
+2.46.0.469.g59c65b2a67-goog
+
 
