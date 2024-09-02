@@ -1,74 +1,48 @@
-Return-Path: <linux-kernel+bounces-310896-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310875-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BCFF968296
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 10:58:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1236896825A
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 10:48:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A8A1281A23
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 08:58:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 427171C220FA
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 08:48:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0147F187324;
-	Mon,  2 Sep 2024 08:58:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="MDe3fjvi"
-Received: from out203-205-221-240.mail.qq.com (out203-205-221-240.mail.qq.com [203.205.221.240])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B096186E38;
+	Mon,  2 Sep 2024 08:48:19 +0000 (UTC)
+Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2235B186E57;
-	Mon,  2 Sep 2024 08:58:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.240
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A606C2AEFE;
+	Mon,  2 Sep 2024 08:48:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725267529; cv=none; b=hcTZLkGRYcmUkJbw1x6TPwL5rry+i79R4QZeCyGjEPXBAtePAiI7VSpJXUjkOn4ROQhf6BTrL4kXbRqXn+U0TkFm+4DWU3GMzr0OjrHknM4Cq9zuKu0wxop58/lBtgr+m0NTjs7Bd+ClAgMzNdf3jC/want7oAnQMcD1sDs9Hnk=
+	t=1725266899; cv=none; b=nMQvBRNcUBE0ABkWzp3/Fe9IGwxzlZZH7uac0kcA8qr0U1xyaNjQAoqTtlqI6+v4MoldJXfHrp5qmudlZqcUUvM8tuQdU4+859nuLVxMslUEc9ZCYJ3tw/qs51z3Fsmpa8r1ts+8no9ywJ/geZX4tTfXWa2WsRYCCTxq1KliAAs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725267529; c=relaxed/simple;
-	bh=gdMjarlsxkIjz3GacO7XUTqQrGRcxTtT3SPegpVNcMg=;
-	h=Message-ID:From:To:Cc:Subject:Date:MIME-Version; b=Sy7XfN8ecKj26qBXWQXhEcz5pxi2YHP4MyEmdhehBNlr6gSrCY5fYp1SViFoe5X8TzIdm0ZcltXvz/3fCysCE1oAfRtEycPClUGOwuR2N375pJxoA0g1/NLZ6s9+Qw6Ukz7neiiUyNNYxkz2LpYJMSiqVG1wLdaRNmICIwASMto=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=MDe3fjvi; arc=none smtp.client-ip=203.205.221.240
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
-	s=s201512; t=1725267218;
-	bh=xyAiDIvAC8LrbiIkOc9JTsgcYxtGvhFsoImt2CUMHWo=;
-	h=From:To:Cc:Subject:Date;
-	b=MDe3fjviYVCLiUcQ9mKVnurW6tr5JYmzhHgju/1E5GBqoc0blTHlyudPJP0pHTQqE
-	 aq+lj1YRVVGkRLNs93JTSaBx+UGXZbicWcOeTkos+bR/MT8uANbGYqd8wxqB7vxpR4
-	 d+knpO3Et4DcPFB6lHsnFMLDyau0f3zUHJXIitXQ=
-Received: from localhost.localdomain ([114.246.200.160])
-	by newxmesmtplogicsvrsza29-0.qq.com (NewEsmtp) with SMTP
-	id BD832428; Mon, 02 Sep 2024 16:47:24 +0800
-X-QQ-mid: xmsmtpt1725266844t1yiwz6e7
-Message-ID: <tencent_39FA49154F494DFE0FEC2F20A9A34AA9B308@qq.com>
-X-QQ-XMAILINFO: NhpLzBn2I3XwmRtRQDLpav3czAf1B15RF2AP0KtjFIMLaqOSxwqtGhfKMHR3QP
-	 d7XXIDUS9BpKwgKtlXOw/BrO3UZO3L7uN+fbgBeFOdk/KLeaqRrwBLxi9BCOaX8ps7A5PZYEF1iY
-	 wQ6Ocq1WWiKYVWfPEXBJI7656swXoxA07NdjpsVw1dI+gDwzpBMczQB1zFIFuSQAW5Mretg/6bUC
-	 TlbI3h0iTN7DE5IS8nQkkZXxYDt4hqieOGdorIiwRZenyGG3s7Uy6ab7KbYV6jaZVoB6zUz/PAm7
-	 /TTgTEGQh65po5WlQ5NpakCVxNljXTEQvRwvwhw4tZmNr5GLg2jnwnxOu8jKFDQVWDXulRAvUPZa
-	 KBjE6ctScF2nJyCYEm8A6L7LwP4jgsqqPx6m/hNRabGoT7FoObPdX/OdgJLkYwTkAmFsq8BUVicl
-	 ShRuNLWHazGtJaPUYNzJve1qG4VChmTEJuOQ6L45SdWA3eKEJluW8t0G7HXvULkEESYGSZ7FSPd8
-	 4lBFL2UK4x/GnfQxTSvXooHJHdhz89hbaXXzS6ESps4FjKWv2tqUqGwZhM5jT6U1STWmaqN6nFPu
-	 cTklZs679/ovcnys/rLPqWjRd9TEa2x3IIwqJWKlOIsZDudOCsUMjuLvWlaRZYOpm/vKppIgFHQP
-	 BVl0dOsWmq4al+ZVuNEGtUofRMDZZajTxhaUS6fZzZz712mYT6MmbWkwXTGqW/GZhlKncQa8bZI9
-	 RxHnoUhDWhj0Mq4TW5E4cp1YWXxsLGNMHeysv8jHjncTTK/9RUk1zhx6pVLdG26Q4zS0i7bSUErf
-	 yrIM61UP1LvvRByfWm3mk63GQ6aEvd9P3VIfOA/1vM9nhE2ENf1UnFmmRHsftG0bu8kOxaIx8Bd5
-	 hh0qxmGIBH94329tQcsK+8pjOo3fM4zrfGQHyB0ZtBK7b8hoAssG8l86eJhRZMmeZ5vIyA7m1XR5
-	 ZksvImJZWjjoQiAw0uFPxQJhBHvfzD+VfRU23ET/JBki9vcopPS29x41hkQqGRYvry6uBIjPRUzY
-	 ajxjdGTKWj0RriK6W5lpgdGSazwiG3cy+bAUuc1PnJ0zM7q2DHmDtWHAezAFHzR+v9me4AvA==
-X-QQ-XMRINFO: OWPUhxQsoeAVDbp3OJHYyFg=
-From: Jiawei Ye <jiawei.ye@foxmail.com>
-To: casey@schaufler-ca.com,
-	paul@paul-moore.com,
-	jmorris@namei.org,
-	serge@hallyn.com,
-	pawan.kumar.gupta@linux.intel.com
-Cc: linux-security-module@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] smackfs: Use rcu_assign_pointer() to ensure safe assignment in smk_set_cipso
-Date: Mon,  2 Sep 2024 08:47:26 +0000
-X-OQ-MSGID: <20240902084726.26179-1-jiawei.ye@foxmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1725266899; c=relaxed/simple;
+	bh=FkDXqQVLz2Rs3cMHHnpWWaLG0Fto8N4bhy2NWUB1Dag=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=WT4zn2JIcXf/173ulGzzjSWDgsB2hD6bnXZMSG7gfpHs7AUlwYm8CGjvVkMyAeXTXehdy7MwY2My9wENd6aPSe4dLY/Oa9aAjpY2libbRlXpGtrzX0zfL0SBvZSJdLeMhwM3X/Ft6YiC8fdxt43ZMUXovFlptGG2SmrjxEowHDs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from localhost (unknown [124.16.138.129])
+	by APP-03 (Coremail) with SMTP id rQCowAC3vn7De9Vm2TqHAA--.23060S2;
+	Mon, 02 Sep 2024 16:48:04 +0800 (CST)
+From: Chen Ni <nichen@iscas.ac.cn>
+To: deller@gmx.de,
+	dan.carpenter@linaro.org,
+	tzimmermann@suse.de,
+	javierm@redhat.com
+Cc: linux-fbdev@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	Chen Ni <nichen@iscas.ac.cn>
+Subject: [PATCH] fbdev: imsttfb: convert comma to semicolon
+Date: Mon,  2 Sep 2024 16:47:30 +0800
+Message-Id: <20240902084730.4111387-1-nichen@iscas.ac.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,42 +50,55 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:rQCowAC3vn7De9Vm2TqHAA--.23060S2
+X-Coremail-Antispam: 1UD129KBjvdXoW7Jw4UZF15Zr47GrWUJF4rGrg_yoWDZrXEyr
+	12q3yUGrZrAa1fKa4xKr13uF9Yy3Z5ZwnxXFnaqFZxAFy7ur4rAry0vr97G3yUW34UXFy5
+	Jryvqw4SyFyfujkaLaAFLSUrUUUUbb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbskFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Cr0_
+	Gr1UM28EF7xvwVC2z280aVAFwI0_Cr1j6rxdM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+	I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Gr0_Cr1lOx8S6xCaFVCjc4AY6r1j6r
+	4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwCY1x0262kKe7AKxVWU
+	tVW8ZwCY02Avz4vE14v_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr
+	1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE
+	14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7
+	IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E
+	87Iv67AKxVW8JVWxJwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73Uj
+	IFyTuYvjfUeFApDUUUU
+X-CM-SenderInfo: xqlfxv3q6l2u1dvotugofq/
 
-In the `smk_set_cipso` function, the `skp->smk_netlabel.attr.mls.cat`
-field is directly assigned to a new value without using the appropriate
-RCU pointer assignment functions. According to RCU usage rules, this is
-illegal and can lead to unpredictable behavior, including data
-inconsistencies and impossible-to-diagnose memory corruption issues.
+Replace a comma between expression statements by a semicolon.
 
-This possible bug was identified using a static analysis tool developed
-by myself, specifically designed to detect RCU-related issues.
-
-To address this, the assignment is now done using rcu_assign_pointer(),
-which ensures that the pointer assignment is done safely, with the
-necessary memory barriers and synchronization. This change prevents
-potential RCU dereference issues by ensuring that the `cat` field is
-safely updated while still adhering to RCU's requirements.
-
-Fixes: 0817534ff9ea ("smackfs: Fix use-after-free in netlbl_catmap_walk()")
-Signed-off-by: Jiawei Ye <jiawei.ye@foxmail.com>
+Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
 ---
- security/smack/smackfs.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/video/fbdev/imsttfb.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/security/smack/smackfs.c b/security/smack/smackfs.c
-index e22aad7604e8..5dd1e164f9b1 100644
---- a/security/smack/smackfs.c
-+++ b/security/smack/smackfs.c
-@@ -932,7 +932,7 @@ static ssize_t smk_set_cipso(struct file *file, const char __user *buf,
- 	}
- 	if (rc >= 0) {
- 		old_cat = skp->smk_netlabel.attr.mls.cat;
--		skp->smk_netlabel.attr.mls.cat = ncats.attr.mls.cat;
-+		rcu_assign_pointer(skp->smk_netlabel.attr.mls.cat, ncats.attr.mls.cat);
- 		skp->smk_netlabel.attr.mls.lvl = ncats.attr.mls.lvl;
- 		synchronize_rcu();
- 		netlbl_catmap_free(old_cat);
+diff --git a/drivers/video/fbdev/imsttfb.c b/drivers/video/fbdev/imsttfb.c
+index 660499260f46..dc4e659e06af 100644
+--- a/drivers/video/fbdev/imsttfb.c
++++ b/drivers/video/fbdev/imsttfb.c
+@@ -995,7 +995,7 @@ imsttfb_fillrect(struct fb_info *info, const struct fb_fillrect *rect)
+ 	bgc |= (bgc << 8);
+ 	bgc |= (bgc << 16);
+ 
+-	Bpp = info->var.bits_per_pixel >> 3,
++	Bpp = info->var.bits_per_pixel >> 3;
+ 	line_pitch = info->fix.line_length;
+ 
+ 	dy = rect->dy * line_pitch;
+@@ -1036,7 +1036,7 @@ imsttfb_copyarea(struct fb_info *info, const struct fb_copyarea *area)
+ 	__u32 Bpp, line_pitch, fb_offset_old, fb_offset_new, sp, dp_octl;
+  	__u32 cnt, bltctl, sx, sy, dx, dy, height, width;
+ 
+-	Bpp = info->var.bits_per_pixel >> 3,
++	Bpp = info->var.bits_per_pixel >> 3;
+ 
+ 	sx = area->sx * Bpp;
+ 	sy = area->sy;
 -- 
-2.34.1
+2.25.1
 
 
