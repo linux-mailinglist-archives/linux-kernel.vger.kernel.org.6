@@ -1,191 +1,183 @@
-Return-Path: <linux-kernel+bounces-310618-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310620-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 762E1967F27
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 08:09:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A6B6A967F2B
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 08:11:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 972471C21B3C
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 06:09:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C626F1C21977
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 06:11:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02340154BE4;
-	Mon,  2 Sep 2024 06:09:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA0D7154BEE;
+	Mon,  2 Sep 2024 06:11:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="GJIdhNf4";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="ol2GGfqp";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="GJIdhNf4";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="ol2GGfqp"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="sRoixvx/"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44A9876048;
-	Mon,  2 Sep 2024 06:09:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 686F11AACA
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 06:11:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725257368; cv=none; b=td09xgc99YnwM9TmF0/KWCk17c1Ds1xg3uqhv7W4wA+X+gxAhFVThD9UAC679T7TQ23Xe39y4JCF0feYQfRRF1/4MCqFL5YGhNLu+ocvpWrJBagHcpGLUCIPxh2exRMhoABbC5WfPgzPgk7TArg702eH1zxA3Ayr3+NjPcjh1MU=
+	t=1725257470; cv=none; b=Zn7+04K39JOX0Qoi8ywGGtx36CiBIVQcu1DiN4Er1KDel6EYcT8eT8ZmqrLkKmXPHKQUY7/unGlr9YOiUHSJd9aT4MzgCmEe5C7E+z+EGuj77GHO2iLlsN3BGMSOBOVnzRGk0L/7W13MIgWwsTQOWaTycTh6eWkJ7s3ZEDT3Ruc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725257368; c=relaxed/simple;
-	bh=80vzDC1M71YofRs8I41+2XUbnm/juJQahz6UdeElVhU=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=GB5FTgrpWhQE9TekagIv4os8qEJzk/hiW8rhCvRk8fruS/1L/labEpkbAgS4vWy5YjQkrQw5XvXMZvTfVibAhxErdcoEbcQUqM0tfjysujqerWTt3wv99JDXh38CalhaS2SEuhOIe6pv+uhzvaWhrvu3+klJG1gQ/XjRzyi6rKQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=GJIdhNf4; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=ol2GGfqp; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=GJIdhNf4; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=ol2GGfqp; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 6A191210FB;
-	Mon,  2 Sep 2024 06:09:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1725257364; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LJ0HGpSdKwTgjuO6ki3+u3E9/tO34Vc+A9OSsK9kFeU=;
-	b=GJIdhNf4eF8O1Nz8Ryh6nI0JssjjhMoMFYbNY7uJ74LsMl+/hdOe7YAHez64D17Ocflbsu
-	ylDvfsHkM6e6Mcgg0G6fUtVgIEc6AoIyP+3iQemS3wd1IsyG5kKlVRV8J3Qp5jWp/CzItp
-	Twle0oQFRB1Pu+gTAyuum0ibKSAJWRM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1725257364;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LJ0HGpSdKwTgjuO6ki3+u3E9/tO34Vc+A9OSsK9kFeU=;
-	b=ol2GGfqpNFZRnVn899+YElIXMK/FlNqIJeuSX9p9jbP8Iy8mR+RxnA8chG+Yw3AefzleFP
-	6H6ejrlDrJA+pEDw==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1725257364; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LJ0HGpSdKwTgjuO6ki3+u3E9/tO34Vc+A9OSsK9kFeU=;
-	b=GJIdhNf4eF8O1Nz8Ryh6nI0JssjjhMoMFYbNY7uJ74LsMl+/hdOe7YAHez64D17Ocflbsu
-	ylDvfsHkM6e6Mcgg0G6fUtVgIEc6AoIyP+3iQemS3wd1IsyG5kKlVRV8J3Qp5jWp/CzItp
-	Twle0oQFRB1Pu+gTAyuum0ibKSAJWRM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1725257364;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LJ0HGpSdKwTgjuO6ki3+u3E9/tO34Vc+A9OSsK9kFeU=;
-	b=ol2GGfqpNFZRnVn899+YElIXMK/FlNqIJeuSX9p9jbP8Iy8mR+RxnA8chG+Yw3AefzleFP
-	6H6ejrlDrJA+pEDw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 2018613AE5;
-	Mon,  2 Sep 2024 06:09:24 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id yWYpBpRW1WZgFwAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Mon, 02 Sep 2024 06:09:24 +0000
-Date: Mon, 02 Sep 2024 08:10:09 +0200
-Message-ID: <8734mik2m6.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Asahi Lina <lina@asahilina.net>
-Cc: Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	"Geoffrey D. Bennett" <g@b4.vu>,
-	Takashi Sakamoto <o-takashi@sakamocchi.jp>,
-	Mark Hills <mark@xwax.org>,
-	Arun Raghavan <arun@arunraghavan.net>,
-	Cyan Nyan <cyan.vtb@gmail.com>,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] ALSA: usb-audio: Add quirk for RME Digiface USB
-In-Reply-To: <20240902-rme-digiface-v1-1-6e88472a2744@asahilina.net>
-References: <20240902-rme-digiface-v1-0-6e88472a2744@asahilina.net>
-	<20240902-rme-digiface-v1-1-6e88472a2744@asahilina.net>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1725257470; c=relaxed/simple;
+	bh=MlYWtDA0Q5mTKyOcOuik7KuozIlUKzVC9dFl1KRxWgI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=q9rM6X5S/s+D9L831t9emQ/ee7YUfBIcx6CE/RXucf/WLBuVBwyzqMNQSj2IAwW/cQ19LlOSbJTj/O1Hz17IAP16/OSUyBqCyfRX7HKf948lKNb9B4dalyoiKO7MXOpye3JjDQQa83kvY6f4sJERIpBzUEGRlo1NFZqqiZqFPEo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=sRoixvx/; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-427fc9834deso55955e9.0
+        for <linux-kernel@vger.kernel.org>; Sun, 01 Sep 2024 23:11:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1725257467; x=1725862267; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Qt/pdhmIWCaDpBvzCVUeydNCVwTTuBE7DiHS/h0oVUg=;
+        b=sRoixvx//aiwA51fHOxNeeaXBwoSt+dWS4sgAFE2kNdbbyXEZETGpzNnGKafxonsoR
+         OKVFlGMuTUygOQ6tUU8UAvUab2unExlmlnxH4KqkpJSNEgK/Sp6cym6efYHG0IPu5Vn5
+         U2suCVg7WfbiHbFC2gfKvoo27kbP7DXwpqWQ9Gfg7aNU/DnQG/I3kzC14t6nLGI68HGa
+         O79ezCFLYv9dBbOU3yVoP69Lhp4OELba8Co9FWcwCFAfrvl1CU7/ZElca4q61q8sHcc8
+         q7sSujMsBivMz/BdGsXy9NhnmzEFt8yB9esYu2ABPXZ1gKtdFA7WrEH+pB2qqkknf5ie
+         pl6Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725257467; x=1725862267;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Qt/pdhmIWCaDpBvzCVUeydNCVwTTuBE7DiHS/h0oVUg=;
+        b=F4CyuBnUnKTmFLnYuSYlJQLBXz7TRvMyhmGsYso2tWOAddpZtzUqCO5KZ3Kn8wOnKN
+         ZAikA8fBg410n6fsnWKChFTeGWwEnD/YarsZGqD6AIWtRM3G705sWBybu/0uGWuAVIjC
+         V6PZ3qM0nVXN2fQ+xQ8fnwyTb0lyEXw8qCtRw/NQ12ALgvQQYyG54+jGGEp1dq78Tv/Y
+         cp10yqHxh90kU/+vk4A7u3q/nwqGDm8+C0zhh2eheHDUTpR3WiX9nEkN7xJjaCpW3oB/
+         PfWbW4w/6eB7r9yr6t9Fe7lPNMyiMkSXPaLvkDglWNG+08KNCY/vyCiM0Ybiz0Ka4pJ7
+         JSsg==
+X-Forwarded-Encrypted: i=1; AJvYcCX4Qs2hbUUO2bYZ0uTmdpyRpdYWMjZo64gQNZZTenGzcpWO94wsHwVou4QMkDVmBxFM3Lt6vLJavE3DSjI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyJfPY+fKb2hAB17RFIcxZox7y5Bvv34lQ8UX8QBUJy/81BZ6sU
+	j7sMS1UqvB0+K3a3Yh/+bKAPtMxIV4MWU7Qpn6DgNkmt5P7+7alA2bPBv+kutQ==
+X-Google-Smtp-Source: AGHT+IHKtVCpGX9bH5U9KFiXdwjXiY8dpd2rUZf/jifFQW9iyvTCQi9VEs44YJiTljvwor2vaDBCZQ==
+X-Received: by 2002:a05:600c:34c9:b0:42b:892a:333b with SMTP id 5b1f17b1804b1-42c2e54127emr1907065e9.2.1725257466373;
+        Sun, 01 Sep 2024 23:11:06 -0700 (PDT)
+Received: from google.com (44.232.78.34.bc.googleusercontent.com. [34.78.232.44])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-374b67ff88dsm7477026f8f.26.2024.09.01.23.11.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 01 Sep 2024 23:11:06 -0700 (PDT)
+Date: Mon, 2 Sep 2024 06:11:04 +0000
+From: Sebastian Ene <sebastianene@google.com>
+To: Marc Zyngier <maz@kernel.org>
+Cc: akpm@linux-foundation.org, alexghiti@rivosinc.com, ankita@nvidia.com,
+	ardb@kernel.org, catalin.marinas@arm.com,
+	christophe.leroy@csgroup.eu, james.morse@arm.com,
+	vdonnefort@google.com, mark.rutland@arm.com, oliver.upton@linux.dev,
+	rananta@google.com, ryan.roberts@arm.com, shahuang@redhat.com,
+	suzuki.poulose@arm.com, will@kernel.org, yuzenghui@huawei.com,
+	kvmarm@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, kernel-team@android.com
+Subject: Re: [PATCH v9 0/5] arm64: ptdump: View the second stage page-tables
+Message-ID: <ZtVW-CQ-G84lHUE5@google.com>
+References: <20240827084549.45731-1-sebastianene@google.com>
+ <864j72vzmw.wl-maz@kernel.org>
+ <8634mmvyx0.wl-maz@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Spam-Level: 
-X-Spamd-Result: default: False [-1.80 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[perex.cz,suse.com,b4.vu,sakamocchi.jp,xwax.org,arunraghavan.net,gmail.com,vger.kernel.org];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid]
-X-Spam-Score: -1.80
-X-Spam-Flag: NO
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8634mmvyx0.wl-maz@kernel.org>
 
-On Sun, 01 Sep 2024 23:31:50 +0200,
-Asahi Lina wrote:
+On Fri, Aug 30, 2024 at 04:00:11PM +0100, Marc Zyngier wrote:
+> On Fri, 30 Aug 2024 15:44:39 +0100,
+> Marc Zyngier <maz@kernel.org> wrote:
+
+Hello Marc,
+
+> > 
+> > Hi Seb,
 > 
-> From: Cyan Nyan <cyan.vtb@gmail.com>
+> [...]
 > 
-> Add trivial support for audio streaming on the RME Digiface USB. Binds
-> only to the first interface to allow userspace to directly drive the
-> complex I/O and matrix mixer controls.
+> > I've been giving this a go on my test systems with 16k pages, and it
+> > doesn't really work as advertised:
+> > 
+> > root@babette:/sys/kernel/debug/kvm# cat 2573-13/stage2_*
+> > 2
+> > ---[ Guest IPA ]---
+> > 0x0000000000000000-0x0000000008000000         128M 
+> > 0x0000000008000000-0x00000000090a0000       17024K 3
+> > 0x00000000090a0000-0x00000000090a4000          16K 3   R W X AF    
+> > 0x00000000090a4000-0x000000000a000000       15728K 3
+> > 
+> > Only 16kB mapped? This is a full Linux guest running the Debian
+> > installer, and just the kernel is about 20MB (the VM has 4GB of RAM,
+> > and is using QEMU as the VMM)
+> > 
+> > So clearly something isn't playing as expected. Also, this '128M'
+> > without a level being displayed makes me wonder. It is probably the
+> > QEMU flash, but then the rest of the addresses don't make much sense
+> > (RAM on QEMU is at 1GB, not at 128MB.
+> > 
+> > On another system with kvmtool, I get something similar:
+> > 
+> > root@duodenum:/home/maz# cat /sys/kernel/debug/kvm/*/stage2_*
+> > 2
+> > ---[ Guest IPA ]---
+> > 0x0000000000000000-0x0000000001020000       16512K 3
+> > 0x0000000001020000-0x0000000001024000          16K 3   R W X AF    
+> > 0x0000000001024000-0x0000000002000000       16240K 3
+> > 
+> > and kvmtool places the RAM at 2GB. Clearly not what we're seeing here.
+> > 
+> > Could you please verify this?
+
+Ughh, this doesn't look right. I will give it a spin with a different
+granule, thanks for bringing me to attention. I will look first at
+mm/ptdump.c if it works as intended.
+ 
+
 > 
-> Signed-off-by: Cyan Nyan <cyan.vtb@gmail.com>
-> [Lina: Added 2x/4x sample rate support & boot/format quirks]
-> Co-developed-by: Asahi Lina <lina@asahilina.net>
-> Signed-off-by: Asahi Lina <lina@asahilina.net>
-> ---
->  sound/usb/quirks-table.h | 190 ++++++++++++++++++++++++++++++++++++++++++++++-
->  sound/usb/quirks.c       |  58 +++++++++++++++
->  2 files changed, 247 insertions(+), 1 deletion(-)
+> For the record, on a 4kB host, I get much more plausible results:
 > 
-> diff --git a/sound/usb/quirks-table.h b/sound/usb/quirks-table.h
-> index 73abc38a5400..47fd18791396 100644
-> --- a/sound/usb/quirks-table.h
-> +++ b/sound/usb/quirks-table.h
-> @@ -4546,6 +4546,194 @@ YAMAHA_DEVICE(0x7010, "UB99"),
->  		}
->  	}
->  },
-> -
-> +{
-> +	/* Only claim interface 0 */
-> +	.match_flags = USB_DEVICE_ID_MATCH_VENDOR |
-> +		       USB_DEVICE_ID_MATCH_PRODUCT |
-> +		       USB_DEVICE_ID_MATCH_INT_CLASS |
-> +		       USB_DEVICE_ID_MATCH_INT_NUMBER,
-> +	.idVendor = 0x2a39,
-> +	.idProduct = 0x3f8c,
-> +	.bInterfaceClass = USB_CLASS_VENDOR_SPEC,
-> +	.bInterfaceNumber = 0,
-> +	.driver_info = (unsigned long) &(const struct snd_usb_audio_quirk) {
-> +		.ifnum = QUIRK_ANY_INTERFACE,
-> +		.type = QUIRK_COMPOSITE,
-(snip)
+> root@big-leg-emma:/home/maz# cat /sys/kernel/debug/kvm/632-12/stage2_*
+> 3
+> ---[ Guest IPA ]---
+> 0x0000000000000000-0x0000000000200000           2M 2   R     AF BLK
+> 0x0000000000200000-0x0000000040000000        1022M 2
+> 0x0000000040000000-0x0000000040200000           2M 2   R W X AF BLK
+> 0x0000000040200000-0x0000000044000000          62M 2
+> 0x0000000044000000-0x0000000044200000           2M 2   R W X AF BLK
+> 0x0000000044200000-0x0000000047600000          52M 2
+> 0x0000000047600000-0x0000000047800000           2M 2   R W   AF BLK
+> 0x0000000047800000-0x0000000047e00000           6M 2   R W X AF BLK
+> 0x0000000047e00000-0x0000000048000000           2M 2   R W   AF BLK
+> 0x0000000048000000-0x00000000b9c00000        1820M 2
+> 0x00000000b9c00000-0x00000000b9e00000           2M 2   R W X AF BLK
+> 0x00000000b9e00000-0x00000000bb800000          26M 2
+> 0x00000000bb800000-0x00000000bba00000           2M 2   R W X AF BLK
+> 0x00000000bba00000-0x00000000bbe00000           4M 2   R W   AF BLK
+> 0x00000000bbe00000-0x00000000bc200000           4M 2   R W X AF BLK
+> 0x00000000bc200000-0x00000000bc800000           6M 2   R W   AF BLK
+> 0x00000000bc800000-0x00000000be400000          28M 2
+> 0x00000000be400000-0x00000000bf800000          20M 2   R W X AF BLK
+> 0x00000000bf800000-0x00000000bfe00000           6M 2   R W   AF BLK
+> 0x00000000bfe00000-0x00000000c0000000           2M 2   R W X AF BLK
+> 
+> So 16kB is the one that needs investigating, and I strongly suspect
+> that 64kB is in the same boat...
+> 
+> Thanks,
+> 
+> 	M. (signing off for the day)
+> 
 
-Recently the quirk tables are rewritten with macros.
-See the commit d79e13f8e8abb5cd3a2a0f9fc9bc3fc750c5b06f
-    ALSA: usb-audio: Replace complex quirk lines with macros
-in for-next branch of sound.git tree.
+Thanks,
+Sebastian
 
-Could you try to apply to your new entries, too?
-
-
-thanks,
-
-Takashi
+> -- 
+> Without deviation from the norm, progress is not possible.
 
