@@ -1,121 +1,138 @@
-Return-Path: <linux-kernel+bounces-310952-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310953-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D148968333
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 11:28:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2419968337
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 11:30:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6E3901C2250A
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 09:28:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 84D4A28215D
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 09:29:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C61B1C32FB;
-	Mon,  2 Sep 2024 09:28:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC4891C3300;
+	Mon,  2 Sep 2024 09:29:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LRaOIxj1"
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ffRdUWLF"
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54B4A187355;
-	Mon,  2 Sep 2024 09:28:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B89751C2DCC
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 09:29:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725269307; cv=none; b=UXcfkAqCGFk5ZpIt8O0h+YdHNy8HHigqvGYR+piI7srNyKj4t9xsrGFBtOed57vJdPvgyCoPda6axMSRiac3PQZ/7hpMg/c7Pnv/dZF+KTH6kwMYn5EviHO99mQL9v6cFDZ7tf/vbWGChgmb8iRHN5RJNmP8veubGfNgBTqIn38=
+	t=1725269393; cv=none; b=mAJY+NQE9WzXhONJxgCZaicdwVfAiVgfPrBFTncL5pVnawDtgOLlB9/+em9kLy1kkv9niWhVRtpdWyvx7NBUq+VzZelUlDcFpEurrS/3wdJEQMgElHb9nGB84SQmrfBmTgAngN/u8G/drLxCRdhp9At4Woc0+b8O+ZL4XuHIgn8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725269307; c=relaxed/simple;
-	bh=wz0nbLzlS8nCRQNYzJhVNp33aZ9ev7UqcyhxjtZTSEs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CQSlrc5jpj7TprK0F1Nm5OuFW0tWQn4741L7hbAD8ljkKO08Bj2twfoNuchZ0eE9SFDgG8Lu61f22xiHSLTcqyx4DJPsQ9AgfFJUVm97q7fUjAnbpFZfOtYZfnYeWUq9C6pgF4i+vufvYn9IAxF0QA5558SrWP55zYQO65RLOI0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LRaOIxj1; arc=none smtp.client-ip=209.85.208.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2f3f68dd44bso41277491fa.3;
-        Mon, 02 Sep 2024 02:28:26 -0700 (PDT)
+	s=arc-20240116; t=1725269393; c=relaxed/simple;
+	bh=tkU6Up04ywW/1rRD39iCyC9XOTeC8+OqS8BWB+CpvwM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=j+lYlsERE4AH+QUxndy8YAJyM+DYMHPy95N63Vqr8r6LtubaDVmcFDPzLQ3v4D0hPDKfqj6x9CQTxyaTv3+jhqbW4y5+a6nORUvFEpQwFTBp49IV6L8YXegM6KoF5RpxQeA5xSmBAyYcAOavmWgLomUxSSUm7y29u4COf1AfNMk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ffRdUWLF; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a866cea40c4so457501766b.0
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2024 02:29:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725269304; x=1725874104; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=e2I6KRglLDhMBBHQDhZYriJGFB36l6M5um5WgZKc0bU=;
-        b=LRaOIxj1l0Z8kERniynpTQN+3Xvc4U3Q4Ur6oDPZpVL8ZCERXrxHr/iQTeY0IQN9nA
-         P8QqDOJLuDM5wVVw3CdJc+oLtZhWTFK92gBOdlmWUlTubtQbcu34RYg2v5Fx8X9uBtMf
-         VSPHAQtew24L0n0rkGshrywErxvEtJr3Kg86jbJ9AhiLX9OYEww40kcfkch2n4TrHweh
-         Zo60lqgyE6Ptte5kRtlqsURHJhA5ySUfc8JBaqtaApMMksrtM3qMncEPgNhnRjN1n5UI
-         k7EiTUJkHSfKh5BVbkUpsP7/QE9DoIK9OnI+Ocf2aJIcZjDUGXxVQ2/AF0ODQfRU9Rwz
-         J6TQ==
+        d=linaro.org; s=google; t=1725269390; x=1725874190; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=EPsLVJHNf9AL2cGNm+/rVQrKrbYuFpSLncZ9xh4T+lU=;
+        b=ffRdUWLFyDtTUx+oIUjLY1FTdmigqumHylLPPbVQlFYElBhBGBV309T/seueBpWL+w
+         Pti9hM2HwoajvklNlbdrXyKHechQqOf6JdzW1iFpWQ7NL3q0N/TaMuRw4rHGOHbFXByA
+         bRBzN41gDUzXhduVFNSkzbOp/TxievS4Mt6eI/TRXBveCSR5S8DG2nigxyMaSkiGLAeP
+         veNy2qaCcYqkPMsjhm6Ce00Bx0iUKO8XvlAfkMYvQwtpG2w6GtgvtcxklRBrZZRwl5fi
+         daq2+r1wvMEBaRpndEdssS55o9LHeyCwIAUb13s1nwEMNTVDAuh1cXR1hLvjOjV0udjM
+         oWmQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725269304; x=1725874104;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=e2I6KRglLDhMBBHQDhZYriJGFB36l6M5um5WgZKc0bU=;
-        b=SbUTNacvCJBGZawnNl0AUWVkLEGR/tC7tNK7PoSOmb9c1IRq56EtafCgoBQuCbLd89
-         NFdS9IEOwfNQE8qFXm+/OUDRCcUAGG0VQ2mDllVxDr4+xIqGhl4GGLthbZJOHVWXq/bR
-         CQpipauiuUEp++Zk8P0/5Ez/s/Hyf8xDOKkC2tiR85jeyqSKDU0IcF219pRI2DYJrjdL
-         nYczjdGu2XqsOQ2hr1eTYRsny7h20CeDepxXngE7/bzm6IxgEmQVoxPu2CX1l1d5Z0fq
-         bcXZbtuSyiM2mmxoI93qRMmyD3njswWXjBYEfPQbX3lVZckRb0d6sYOEI2jSoaDkzHUp
-         m81g==
-X-Forwarded-Encrypted: i=1; AJvYcCU5g/E8Z7fYDn4q4ghojOsJuDpgqq8cppryWVrmmOuqByDJ0L1Y8HIXBF5zJVdtW60N2CwyszYqDEnB@vger.kernel.org, AJvYcCVE+8LUd5RTBcEgF28kNUQvRLBXdXJTAm2vjV7o6s7GVslBNGmkey3WbTBHZmRFTe+Mg69vl4m4TnW3vKb4@vger.kernel.org
-X-Gm-Message-State: AOJu0YwstlOCoDnzxBE5ldE/tcNmWDeezcuP2VVT9SGVmMjVJ9Y18Ajf
-	swkEZF7BxTFglvqsv2c+h1i7EECO3d4C8X4aJMLOnm9BV0Rjj/IFeB5Vi7ipPkw2kHQfWkLuBLq
-	Vl6W+jG9pMRXRxOCsE4xA5KMx35xG/uzN
-X-Google-Smtp-Source: AGHT+IFhk4AbmFcLW3KVfd8VGDWeIlXhyDUx0aCY8LXKoX8coHpxbkyA8VYLyCZ2du/pvNixMNJ51iy5dx7ZjRZxEN0=
-X-Received: by 2002:a05:6512:3984:b0:533:efaf:ab26 with SMTP id
- 2adb3069b0e04-53546b44d77mr5542334e87.36.1725269303920; Mon, 02 Sep 2024
- 02:28:23 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1725269390; x=1725874190;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=EPsLVJHNf9AL2cGNm+/rVQrKrbYuFpSLncZ9xh4T+lU=;
+        b=G3Kr6PTLcib0/LrtrUSLLnbVKRXzS0vI6ARYyX81eHLypIeunh/7/XvWRntkTBbZA0
+         WTC5D6lys08bvDjNy0n5EVAygjxobzjeXa5hliZCDLZsVmE36PCRUACgGbRk+2y+tYn7
+         YrJMi+yFA+bEJj1VzDnBwQG5woRbqO6t0xUplpZYtFiRllJmeGu0iE73o9UpKIp4gnGI
+         oY7jMDvZYPTOxpn8q2taLwd0gehzIgwlmOgwGd1dHPCxeoBgx4Bhaofv4j87kzT+0kaZ
+         x9zH70KYzsxFauliI/b5jCGG1nWpYv5jUccV7fpOnaP5yKiSIkytAgzh8WZBk6E9hqPm
+         IOzg==
+X-Forwarded-Encrypted: i=1; AJvYcCVD1qWM27w3dMonTYlObeme0ahyTtTG0fofmZcWPBnzRY+S1YAu3dFfBQt9wrNQc7gCtzdN0PbC6Ep3Cwg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzpnGU9i+lwOw67/MDvgyYIwZMNPKMrVorWBqK998eBjMm+gKt7
+	ohFK7XRK+/0TLsnmWUbvl7LT+R8wf4BmfOI1B0jEE3+sHMyQYfY6vd4ka+AdGV0=
+X-Google-Smtp-Source: AGHT+IHyxYPGT71yvNGl55/joi025MgwKVNHS5yHfr4kLEH+kbbmq1SIbL5dyYz9GztD9lJk9RVwnw==
+X-Received: by 2002:a17:907:6d14:b0:a80:f358:5d55 with SMTP id a640c23a62f3a-a897f91fae3mr1073287766b.33.1725269389610;
+        Mon, 02 Sep 2024 02:29:49 -0700 (PDT)
+Received: from [192.168.10.46] (146725694.box.freepro.com. [130.180.211.218])
+        by smtp.googlemail.com with ESMTPSA id a640c23a62f3a-a8988feb61fsm543434766b.10.2024.09.02.02.29.48
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 02 Sep 2024 02:29:49 -0700 (PDT)
+Message-ID: <66b8c478-44c4-46b2-a029-bbf847429e2b@linaro.org>
+Date: Mon, 2 Sep 2024 11:29:48 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240902072859.583490-1-patrick.rudolph@9elements.com>
-In-Reply-To: <20240902072859.583490-1-patrick.rudolph@9elements.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Mon, 2 Sep 2024 12:27:47 +0300
-Message-ID: <CAHp75VeHc23XXjSGkmgajmbJ4ZH1OrSL0FGRQNrDfvWdW6cRQQ@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: pinctrl-cy8c95x0: Fix regcache
-To: Patrick Rudolph <patrick.rudolph@9elements.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Andy Shevchenko <andy@kernel.org>, 
-	naresh.solanki@9elements.com, broonie@kernel.org, linux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] clocksource: imx-tpm: fix return -ETIME when delta
+ exceeds INT_MAX
+To: Frank Li <Frank.Li@nxp.com>, Thomas Gleixner <tglx@linutronix.de>,
+ Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, Dong Aisheng <aisheng.dong@nxp.com>,
+ "open list:CLOCKSOURCE, CLOCKEVENT DRIVERS" <linux-kernel@vger.kernel.org>,
+ "open list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <imx@lists.linux.dev>,
+ "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
+ <linux-arm-kernel@lists.infradead.org>
+References: <20240725193355.1436005-1-Frank.Li@nxp.com>
+Content-Language: en-US
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+In-Reply-To: <20240725193355.1436005-1-Frank.Li@nxp.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Mon, Sep 2, 2024 at 10:30=E2=80=AFAM Patrick Rudolph
-<patrick.rudolph@9elements.com> wrote:
->
-> The size of the mux stride was of by one, which could result in
+On 25/07/2024 21:33, Frank Li wrote:
+> From: Jacky Bai <ping.bai@nxp.com>
+> 
+> In tpm_set_next_event(delta), return -ETIME by wrong cast to int when delta
+> is larger than INT_MAX.
+> 
+> For example:
+> 
+> tpm_set_next_event(delta = 0xffff_fffe)
+> {
+>          ...
+>          next = tpm_read_counter(); // assume next is 0x10
+>          next += delta; // next will 0xffff_fffe + 0x10 = 0x1_0000_000e
+>          now = tpm_read_counter();  // now is 0x10
+>          ...
+> 
+>          return (int)(next - now) <= 0 ? -ETIME : 0;
+>                       ^^^^^^^^^^
+>                       0x1_0000_000e - 0x10 = 0xffff_fffe, which is -2 when
+>                       cast to int. So return -ETIME.
+> }
+> 
+> To fix this, introduce a 'prev' variable and check if 'now - prev' is
+> larger than delta.
+> 
+> Cc: <stable@vger.kernel.org>
+> Fixes: 059ab7b82eec ("clocksource/drivers/imx-tpm: Add imx tpm timer support")
+> Signed-off-by: Jacky Bai <ping.bai@nxp.com>
+> Reviewed-by: Peng Fan <peng.fan@nxp.com>
+> Reviewed-by: Ye Li <ye.li@nxp.com>
+> Reviewed-by: Jason Liu <jason.hui.liu@nxp.com>
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> ---
 
-off
-
-> invalid pin configuration on the device side or invalid state
-> readings on the software side.
->
-> While on it also update the code and:
-> - Increase the mux stride size to 16
-> - Align the virtual muxed regmap range to 16
-> - Start the regmap window at the selector
-> - Mark reserved registers as not-readable
-
-Reported-by: Andy Shevchenko <andy@kernel.org>
-Reviewed-by: Andy Shevchenko <andy@kernel.org>
-
-...
-
-> -       if (reg >=3D CY8C95X0_VIRTUAL)
-> +       if (reg >=3D CY8C95X0_VIRTUAL && (reg % MUXED_STRIDE) < 12)
-
-Probably good to have 12 defined, but also a comment suffice, like:
-
-/* Only 12 registers are present per port (see Table 6 in the datasheet). *=
-/
-
->                 return true;
+Applied, thanks
 
 
---=20
-With Best Regards,
-Andy Shevchenko
+-- 
+<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
 
