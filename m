@@ -1,92 +1,162 @@
-Return-Path: <linux-kernel+bounces-311839-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311841-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86281968E6B
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 21:20:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2731F968E74
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 21:24:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E01B1F23C27
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 19:20:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4C20E1C22E72
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 19:24:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B8381A3040;
-	Mon,  2 Sep 2024 19:20:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 089361C62A5;
+	Mon,  2 Sep 2024 19:24:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="PpkFIZll"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="kYS17uwl";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Fd0XsXTD"
+Received: from fout2-smtp.messagingengine.com (fout2-smtp.messagingengine.com [103.168.172.145])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4DB11A2644;
-	Mon,  2 Sep 2024 19:20:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD20F15CD49;
+	Mon,  2 Sep 2024 19:24:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.145
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725304817; cv=none; b=PIg/VHcu38ocr9N/gQVcQcoMRlGc/+sxg7KY1DvisDrE94fBGOfFLptJXgjd+K0FukK/+PRoVRGdr0fnQQa4Hddog0eoMdwsRhgxH+GVicJbjAgw0msTCSXAhFX+iOP5rzXfOfPY9S7GNZpIPZ4c/y+grvcxAL3xUyA1Sm/lfak=
+	t=1725305052; cv=none; b=i4xaxpwPihLGIaD74nDClBYLjILop9+FyBCTxaCSb+Txn8Lo+93qOoVku6O4f8/Q0s8liWSGPhCCHraObk22kYOLo22tA4oslr2m3GP6eTS0reOq2AgCBxkCiAcAtIxREEyQTZo9AFZXIjVsRgOjEQW/mo2H7hXlqjjNKdou3UA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725304817; c=relaxed/simple;
-	bh=kGhu4h/5N9egiKuH0mqWnM76PfJfjgL/V15ntotrcAA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JAp03QAUO5QjXV4pDDe+GMbKkNHloIRi+WZOuX3O9bVjhxqKVGcnmxIg86oNasp9BG9r/SCBlaiqdlM8nlOMA5DgcBWDC+0tI1279zicHDKIImJhD9YhjZ698EkxUFoSvyaJx87hbLRrC5fdLZm8utaq8ZF4RAwFcdoWMStULkM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=PpkFIZll; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BDFA5C4CEC2;
-	Mon,  2 Sep 2024 19:20:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1725304817;
-	bh=kGhu4h/5N9egiKuH0mqWnM76PfJfjgL/V15ntotrcAA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=PpkFIZllf+QvaBHxnPNDT0BBi3vXDMI6E4lb6vr7cyCk4Czb1sjHu6Js2ctG4e/tE
-	 vS/4Mz516FRmY6HmkIpLYg3MGw7SvQ61D9Ejy90cdoGVW1p5zlzcPN2odC61MUisEz
-	 AvGragGcHt+GVgrrTZsAq3CtmegAKvOPYLHFrMXA=
-Date: Mon, 2 Sep 2024 21:20:13 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Heiner Kallweit <hkallweit1@gmail.com>
-Cc: Wolfram Sang <wsa@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
-	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 2/2] driver core: class: warn if a compatibility class is
- registered
-Message-ID: <2024090242-smother-preview-a1d2@gregkh>
-References: <4660a46b-9128-4407-8baa-f257245784a3@gmail.com>
- <7bc5fa50-59f6-4455-8f77-1c89f1e17d0b@gmail.com>
+	s=arc-20240116; t=1725305052; c=relaxed/simple;
+	bh=+6sndHk1cC890cCE8qSqOM/U5/AapJx58aGOL1j9Lzg=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=pBzdBqMqeGaYtjP+CWwrj6vFEZOeM7qkbh4hp7Ztg0MpvtWDgDLVXCedHF74RvDYS4xAFHN1yp5vKMTWv9x6WVmcA7ixTb6/YBJwZFSZrY7W52+JGiZY1tN3FQeMIpwQoHfoJ2JP7ZnrE/45lM9gxAgA2oSO58PNXi/qnauS9zA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=kYS17uwl; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Fd0XsXTD; arc=none smtp.client-ip=103.168.172.145
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-04.internal (phl-compute-04.nyi.internal [10.202.2.44])
+	by mailfout.nyi.internal (Postfix) with ESMTP id DB5BF13801F5;
+	Mon,  2 Sep 2024 15:24:08 -0400 (EDT)
+Received: from phl-imap-11 ([10.202.2.101])
+  by phl-compute-04.internal (MEProxy); Mon, 02 Sep 2024 15:24:08 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1725305048;
+	 x=1725391448; bh=FIkfggRvlXFcRPLeJORBzcKCauI6djscbZezqFrZhqU=; b=
+	kYS17uwl3bJgwT+U/IDIoJ/p/MZRGS0OsrSUWfKGwtvrVLghRNf9DjeffPbFOebN
+	6ihFg71jKmHvFlHi0Kqe+k0zzgsMy45vT+DsSAQYH7tGX1+QRnsVGDNW+1BClrun
+	PwLwfN+jiDxZkeoxWIsEjPmsQm2tDar1K2ELICv3gb4CFBXtkZK8iJdLf5kEYvHO
+	/hc3dTiL3K1ftda6NqGelD4rJGkZMeD4zzmqiG1tHJcrzSQ2nsXn6FJCJgjy9hr6
+	QOJrbW7BLB8nvXHPyiB8OgpjtUNXEc/+YODvviFAvSprDPIeLC0tPTl89jDdrLEm
+	EFhItVWE8gDqGCi0Lck52A==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1725305048; x=
+	1725391448; bh=FIkfggRvlXFcRPLeJORBzcKCauI6djscbZezqFrZhqU=; b=F
+	d0XsXTDvdhjAGxaj1FUhEBfryK7ggVPEt6xnvxgCXuzvQIqpzrT/cy0c869nRK60
+	pVYx69hAXZ/+2BF+Tf9v3ER2dwIMnyqIsH87E4kbxKs+uO0baP71agiQh06kmU6m
+	M+E8Acv9XzwNydgFSZ5aJfN3xOX0RD1o/OppDpysu1IkkPjsXBwA7pJBClTxUyZv
+	LXW2XRLg4sm6Be/sj7DoliA5KO7ZZ83+KEXKz1l35LcWIHRv4FqFNX4eWLvveen5
+	T4Q7T0UEbzonUk+yjIDsKuurRJmjmjbIbD1mD+WlGRx4tMisTb+HcFqTfp4MC2dh
+	WtWWWSQtQadEKKYK6tRNg==
+X-ME-Sender: <xms:2BDWZoVL2xtCQ3WLF5Wb6oW397_NETzYexZ0y6dURlDkqL0q1DlDnw>
+    <xme:2BDWZsnByh7ChGyPo5yOZxvD4Otc-j9KEPDiG4_nrohAqe8HqAYbFLtPsXmZTKpwV
+    PoY_X73MbwE4mJPaKs>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudehfedgudefiecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+    hnthhsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredt
+    tdenucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusg
+    druggvqeenucggtffrrghtthgvrhhnpefhtdfhvddtfeehudekteeggffghfejgeegteef
+    gffgvedugeduveelvdekhfdvieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
+    epmhgrihhlfhhrohhmpegrrhhnugesrghrnhgusgdruggvpdhnsggprhgtphhtthhopedv
+    fedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepughivghtmhgrrhdrvghgghgvmh
+    grnhhnsegrrhhmrdgtohhmpdhrtghpthhtohepmhgrrhhkrdhruhhtlhgrnhgusegrrhhm
+    rdgtohhmpdhrtghpthhtoheptgihphhhrghrsegthihphhgrrhdrtghomhdprhgtphhtth
+    hopehrohhsthgvughtsehgohhoughmihhsrdhorhhgpdhrtghpthhtohepsghsvghgrghl
+    lhesghhoohhglhgvrdgtohhmpdhrtghpthhtohepphgvthgvrhiisehinhhfrhgruggvrg
+    gurdhorhhgpdhrtghpthhtohepsghrrghunhgvrheskhgvrhhnvghlrdhorhhgpdhrtghp
+    thhtohepkhgvvghssehkvghrnhgvlhdrohhrghdprhgtphhtthhopehshhhurghhsehkvg
+    hrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:2BDWZsZwGzGYyB9WFg6EWx1zQFqXBmVWedNyJlBxDQ6Nq1PS69l2MA>
+    <xmx:2BDWZnVUbH-5zipttfFVWPM1sLhvms_RK7Zw7fRZSwoxW4eWNBhxeQ>
+    <xmx:2BDWZinYICP3lPnBKewO2apgaKvEL3s3YltmTcgPfrT5YTOAAAbIvg>
+    <xmx:2BDWZsd748uiIonRMUQ7kgFvzdf4COBSLkUKxHdnwKMJMuoueecXwQ>
+    <xmx:2BDWZkWMfZMs016-pk_blB0KV_aQo0-MIqGaOf71kxSBaIjX-mMu8R7F>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id BED9B2220083; Mon,  2 Sep 2024 15:24:07 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7bc5fa50-59f6-4455-8f77-1c89f1e17d0b@gmail.com>
+Date: Mon, 02 Sep 2024 19:23:47 +0000
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Aleksa Sarai" <cyphar@cyphar.com>
+Cc: "Ingo Molnar" <mingo@redhat.com>, "Peter Zijlstra" <peterz@infradead.org>,
+ "Juri Lelli" <juri.lelli@redhat.com>,
+ "Vincent Guittot" <vincent.guittot@linaro.org>,
+ "Dietmar Eggemann" <dietmar.eggemann@arm.com>,
+ "Steven Rostedt" <rostedt@goodmis.org>,
+ "Benjamin Segall" <bsegall@google.com>, "Mel Gorman" <mgorman@suse.de>,
+ "Valentin Schneider" <vschneid@redhat.com>,
+ "Alexander Viro" <viro@zeniv.linux.org.uk>,
+ "Christian Brauner" <brauner@kernel.org>, "Jan Kara" <jack@suse.cz>,
+ shuah <shuah@kernel.org>, "Kees Cook" <kees@kernel.org>,
+ "Florian Weimer" <fweimer@redhat.com>, "Mark Rutland" <mark.rutland@arm.com>,
+ linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, Linux-Arch <linux-arch@vger.kernel.org>,
+ linux-kselftest@vger.kernel.org, stable@vger.kernel.org
+Message-Id: <0455ebf7-3f84-44c7-84b3-9ed6e218cdc0@app.fastmail.com>
+In-Reply-To: 
+ <20240902.160305-cuddly.doc.quaint.provider-RsRaXpw78cll@cyphar.com>
+References: 
+ <20240902-extensible-structs-check_fields-v1-0-545e93ede2f2@cyphar.com>
+ <20240902-extensible-structs-check_fields-v1-3-545e93ede2f2@cyphar.com>
+ <63193b87-7057-4ad0-aef2-fdb5d15138c3@app.fastmail.com>
+ <20240902.160305-cuddly.doc.quaint.provider-RsRaXpw78cll@cyphar.com>
+Subject: Re: [PATCH RFC 3/8] openat2: explicitly return -E2BIG for (usize > PAGE_SIZE)
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-On Mon, Sep 02, 2024 at 09:02:17PM +0200, Heiner Kallweit wrote:
-> Kernel doc for this function states:
-> "Compatibility class are meant as a temporary user-space compatibility
-> workaround when converting a family of class devices to a bus devices."
-> 
-> Therefore remind any potential user of the old ABI that support for it
-> will be dropped soon.
-> 
-> Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
-> ---
->  drivers/base/class.c | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/drivers/base/class.c b/drivers/base/class.c
-> index 7b38fdf8e..f12a43736 100644
-> --- a/drivers/base/class.c
-> +++ b/drivers/base/class.c
-> @@ -556,6 +556,9 @@ struct class_compat *class_compat_register(const char *name)
->  {
->  	struct class_compat *cls;
->  
-> +	pr_warn("Compatibility class %s will go away soon, please migrate userspace tools to use bus devices\n",
-> +		name);
+On Mon, Sep 2, 2024, at 16:08, Aleksa Sarai wrote:
+>> >  	if (unlikely(usize < OPEN_HOW_SIZE_VER0))
+>> >  		return -EINVAL;
+>> > +	if (unlikely(usize > PAGE_SIZE))
+>> > +		return -E2BIG;
+>> > 
+>> 
+>> Is PAGE_SIZE significant here? If there is a need to enforce a limit,
+>> I would expect this to be the same regardless of kernel configuration,
+>> since the structure layout is also independent of the configuration.
+>
+> PAGE_SIZE is what clone3, perf_event_open, sched_setattr, bpf, etc all
+> use. The idea was that PAGE_SIZE is the absolute limit of any reasonable
+> extensible structure size because we are never going to have argument
+> structures that are larger than a page (I think this was discussed in
+> the original copy_struct_from_user() patchset thread in late 2019, but I
+> can't find the reference at the moment.)
+>
+> I simply forgot to add this when I first submitted openat2, the original
+> intention was to just match the other syscalls.
 
-That's not going to do anything except annoy users who have no control
-over this, sorry.  Please just fix up all of the kernel and then delete
-this function.
+Ok, I see. I guess it makes sense to keep this one consistent with the
+other ones, but we may want to revisit this in the future and
+come up with something that is independent of CONFIG_PAGE_SIZE.
 
-thanks,
+>> Where is the current -EFAULT for users passing more than a page?
+>> I only see it for reads beyond the VMA, but not e.g. when checking
+>> terabytes of zero pages from an anonymous mapping.
+>
+> I meant that we in practice return -EFAULT if you pass a really large
+> size (because you end up running off the end of mapped memory). There is
+> no explicit -EFAULT for large sizes, which is exactly the problem. :P
 
-greg k-h
+Got it, thanks.
+
+     Arnd
 
