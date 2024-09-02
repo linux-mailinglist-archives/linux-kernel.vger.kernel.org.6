@@ -1,181 +1,234 @@
-Return-Path: <linux-kernel+bounces-311643-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311645-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFC94968B83
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 18:03:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1754E968B86
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 18:03:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E001281CAC
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 16:03:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8ADFD1F23902
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 16:03:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DADBE1A2639;
-	Mon,  2 Sep 2024 16:03:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79D981A2639;
+	Mon,  2 Sep 2024 16:03:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="yT7+80O+"
-Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Lde62Y7U"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB4E442AB7;
-	Mon,  2 Sep 2024 16:03:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6A951A3028
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 16:03:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725292984; cv=none; b=KFm49FngRPFEsBoT2KfDxyTVno/Cf0f30Foc/MW4esPxTsc5Xf8bjdkoKnuQY28jRXGGISbYYJuMbTWDqxe0N85/iJKjISYohykcgMWXE++DRKfdK2ZAno40HMZvT9YSTQXUg+lmXVEkjoVibb7lVDEmGECXE4Tk8p9RhKyeFGA=
+	t=1725293014; cv=none; b=M49vkLnPOrg+7nZduM1QqMukoA1UPN9U4oFQmoH8iVUuzNj99MwTOPfkuJbPP/WJp/UFWwIlwUUtQ0R9d6DZChX7Wgs6/CXfbhitWBXueE128xhPYM7xbmqqvIt9nrckNdQvtc7E8yJ3W0H/7WcJrpM38tg8KS8TWWjPKGtoB5k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725292984; c=relaxed/simple;
-	bh=0JjunB37iEzXMOdt1r0c+A6zpwOdxB9KTs1TOBOETQE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=esDtetWJjufJwUCAlRVuvdtAxkajUP5+ErsjMt/7kj+Lzbas0k5QutRh0i5DdRhxndPi1uW5j3Y5eSkjOdyzkZ2eXeCu3hT7T3K332aoYBbF+ZYQpZRy56n8YxWBENApsY+aQYbrQG8PbMYl4IKdlsBY55b4v0zfcosjpqgU6D0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=yT7+80O+; arc=none smtp.client-ip=80.241.56.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyphar.com
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [10.196.197.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4WyD755BNrz9spX;
-	Mon,  2 Sep 2024 18:02:57 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
-	t=1725292977;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	s=arc-20240116; t=1725293014; c=relaxed/simple;
+	bh=QkCBGS2sXiAPn2JyccF0UCgSeMeG2oRyf6qQZDXkBPo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GlFtO/NIhLF5/tss0TUZSbMsv6frg0FthjdzQboZCNGPNI57G6NJraU3Jd8/UsEn8i79sEbiQqPtxVRvq5qtw83bNvlu14iBR+JDybxb16FBtlegc/GgfEK3VvWB2dx45z/L7MptpVUZwk00AlMIKdmN0z2+PQPLO3y5CVqs2x8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Lde62Y7U; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1725293011;
+	h=from:from:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=y/WAo2wEKoXQ1DpuWFNQF/dhkLU3MgM/L7pMsMzDa3U=;
-	b=yT7+80O+kLvfJIrums1mfAqfnvoGfVHmaHUI+A/suaeyi/wLufx8aoPjR6TGbQJMA6pIFn
-	afRiGRZ8YQUI/ph+gpDduYcnhcUVbDMYti4YUKKPU0FZUFpkZUHZFMZlNONPEsh5QojeLG
-	TkH8TKJ+jyILftA8RMkFHvCz/DMnt7WcDIZ9dQ/uNANWE0ZiWO9fq2JaxSXo+7cWHH6nMz
-	iF22V25OedR07/sWWrqyaKokkeL1FIDzPQ//+onct3j12jk/ANX5Invv8QIz6YIDMZ5Jvh
-	/rOdEQkdo2iTwwZ8fM7yBib0eEieFm3Mz5GKE9Hf0Jyg7f1autSh3UZdhXEbjg==
-Date: Tue, 3 Sep 2024 02:02:39 +1000
-From: Aleksa Sarai <cyphar@cyphar.com>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>, 
-	Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>, 
-	Benjamin Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
-	Valentin Schneider <vschneid@redhat.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, shuah <shuah@kernel.org>, 
-	Kees Cook <kees@kernel.org>, Florian Weimer <fweimer@redhat.com>, 
-	Mark Rutland <mark.rutland@arm.com>, linux-kernel@vger.kernel.org, linux-api@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, Linux-Arch <linux-arch@vger.kernel.org>, 
-	linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH RFC 1/8] uaccess: add copy_struct_to_user helper
-Message-ID: <20240902.090015-soviet.bowling.selfish.chin-kvAI3lnuyqH@cyphar.com>
-References: <20240902-extensible-structs-check_fields-v1-0-545e93ede2f2@cyphar.com>
- <20240902-extensible-structs-check_fields-v1-1-545e93ede2f2@cyphar.com>
- <319c0da6-3d9c-4b45-a14c-07c5bbc3afb7@app.fastmail.com>
+	bh=yc/XZqRZkYvpK5BS/4Oz3twFrDBzb7MYtEWJE/on1P4=;
+	b=Lde62Y7UUUDtkIMi4jqHoPNouobfPs2ojFiVagIzWx75PWXbkBh2XD4ZpneC9D68TF9D23
+	nTh/dJoyF+wsV8dtVPNRw4eLGN4T4x/k9AbBJ55KjU/dTUdeVheq3weULMeoTzinCkFkrr
+	JpmzwyicwbpSk8EwbtL6JZaYPeOEkMo=
+Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com
+ [209.85.222.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-648-pON_3NBDNRCIlA39weDfkg-1; Mon, 02 Sep 2024 12:03:28 -0400
+X-MC-Unique: pON_3NBDNRCIlA39weDfkg-1
+Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-7a96136f8c0so231378385a.0
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2024 09:03:28 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725293008; x=1725897808;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:reply-to:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=yc/XZqRZkYvpK5BS/4Oz3twFrDBzb7MYtEWJE/on1P4=;
+        b=SZGeqVGJAFPl0pzX2y/Tpq1hBLHEo424HxmgQMOmNt9/hVBr7uUdNcj1yIje5ZBgZ8
+         9konaFr+8VMqiMYG50XcCLcaWk2YPXOkJGE91tAdMud9gjn1uumRIepS2b5YZWz5X9xp
+         iDDl2G7Hmpm8o7FR2iEgAU6YI2VO2MxkZ6bpnuMP3fLhW4rOdj9cg7ZIz60zUb+4limh
+         92MMAlL7mid5Di6ODttYRafAt7x10UnwXZ+z34p8BMHIdA9X/E8H74rj++xRFEq5PnU+
+         eHS1Kb4KrlKJXIHef3FH448vC96jAFuqrP9vq0Haltd5Hd/3QDnhHkMpWyGvUgXDw0KJ
+         dBGQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWZgALIUoqOtN9be+DV4n3HmWDDxOnytvvkutdiXGsiG3CmqrkxfNqrd3IYEdk8OIN/H05p7iEppWL84vU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx1zuMeZTkmBFNyS6F1w+/vN+7588Gwm0NZ7Rc5VcXzn55ID35o
+	EB6gyViT+GypxXTL1RQgvxCL5OdJd9djeoCW5y7vd0LqppHUVb1d1XR/XhxNXY5cNMs+TPEqGdo
+	FHjP0aIcvxMtmh4lzchlpXIW3SiT5xiyDSZtmSHzaHrZ19cifgMl3LwWfRWTSIg==
+X-Received: by 2002:a05:620a:370d:b0:7a4:dfd6:5fb8 with SMTP id af79cd13be357-7a81d67f978mr1121076585a.23.1725293007898;
+        Mon, 02 Sep 2024 09:03:27 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHM3apCD4sp4+nR7bLQeDK99T/1mpDtwbgEMl+f8Ekn/hxJs+sZSvADILuK047UXSJy/fohsg==
+X-Received: by 2002:a05:620a:370d:b0:7a4:dfd6:5fb8 with SMTP id af79cd13be357-7a81d67f978mr1121072785a.23.1725293007445;
+        Mon, 02 Sep 2024 09:03:27 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:59e:9d80:527b:9dff:feef:3874? ([2a01:e0a:59e:9d80:527b:9dff:feef:3874])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a806c4cb8asm429554685a.67.2024.09.02.09.03.24
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 02 Sep 2024 09:03:26 -0700 (PDT)
+Message-ID: <60841b43-878a-4467-99a4-12b6e503063c@redhat.com>
+Date: Mon, 2 Sep 2024 18:03:23 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="ftgkfoq5ev7h23w4"
-Content-Disposition: inline
-In-Reply-To: <319c0da6-3d9c-4b45-a14c-07c5bbc3afb7@app.fastmail.com>
+User-Agent: Mozilla Thunderbird
+Reply-To: eric.auger@redhat.com
+Subject: Re: [RFC PATCH 3/5] vfio_platform: reset: Introduce new open and
+ close callbacks
+Content-Language: en-US
+To: Alex Williamson <alex.williamson@redhat.com>
+Cc: eric.auger.pro@gmail.com, treding@nvidia.com, vbhadram@nvidia.com,
+ jonathanh@nvidia.com, mperttunen@nvidia.com, linux-kernel@vger.kernel.org,
+ kvm@vger.kernel.org, clg@redhat.com, alexandre.torgue@foss.st.com,
+ joabreu@synopsys.com, msalter@redhat.com
+References: <20240829161302.607928-1-eric.auger@redhat.com>
+ <20240829161302.607928-4-eric.auger@redhat.com>
+ <20240829172140.686a7aa7.alex.williamson@redhat.com>
+From: Eric Auger <eric.auger@redhat.com>
+In-Reply-To: <20240829172140.686a7aa7.alex.williamson@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
+Hi Alex,
 
---ftgkfoq5ev7h23w4
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 8/30/24 01:21, Alex Williamson wrote:
+> On Thu, 29 Aug 2024 18:11:07 +0200
+> Eric Auger <eric.auger@redhat.com> wrote:
+>
+>> Some devices may require resources such as clocks and resets
+>> which cannot be handled in the vfio_platform agnostic code. Let's
+>> add 2 new callbacks to handle those resources. Those new callbacks
+>> are optional, as opposed to the reset callback. In case they are
+>> implemented, both need to be.
+>>
+>> They are not implemented by the existing reset modules.
+>>
+>> Signed-off-by: Eric Auger <eric.auger@redhat.com>
+>> ---
+>>  drivers/vfio/platform/vfio_platform_common.c  | 28 ++++++++++++++++++-
+>>  drivers/vfio/platform/vfio_platform_private.h |  6 ++++
+>>  2 files changed, 33 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/vfio/platform/vfio_platform_common.c b/drivers/vfio/platform/vfio_platform_common.c
+>> index 3be08e58365b..2174e402dc70 100644
+>> --- a/drivers/vfio/platform/vfio_platform_common.c
+>> +++ b/drivers/vfio/platform/vfio_platform_common.c
+>> @@ -228,6 +228,23 @@ static int vfio_platform_call_reset(struct vfio_platform_device *vdev,
+>>  	return -EINVAL;
+>>  }
+>>  
+>> +static void vfio_platform_reset_module_close(struct vfio_platform_device *vpdev)
+>> +{
+>> +	if (VFIO_PLATFORM_IS_ACPI(vpdev))
+>> +		return;
+>> +	if (vpdev->reset_ops && vpdev->reset_ops->close)
+>> +		vpdev->reset_ops->close(vpdev);
+>> +}
+>> +
+>> +static int vfio_platform_reset_module_open(struct vfio_platform_device *vpdev)
+>> +{
+>> +	if (VFIO_PLATFORM_IS_ACPI(vpdev))
+>> +		return 0;
+>> +	if (vpdev->reset_ops && vpdev->reset_ops->open)
+>> +		return vpdev->reset_ops->open(vpdev);
+>> +	return 0;
+>> +}
+> Hi Eric,
+>
+> I didn't get why these are no-op'd on an ACPI platform.  Shouldn't it
+> be up to the reset ops to decide whether to implement something based
+> on the system firmware rather than vfio-platform-common?
 
-On 2024-09-02, Arnd Bergmann <arnd@arndb.de> wrote:
-> On Mon, Sep 2, 2024, at 07:06, Aleksa Sarai wrote:
-> > This is based on copy_struct_from_user(), but there is one additional
-> > case to consider when creating a syscall that returns an
-> > extensible-struct to userspace -- how should data in the struct that
-> > cannot fit into the userspace struct be handled (ksize > usize)?
-> >
-> > There are three possibilies:
-> >
-> >  1. The interface is like sched_getattr(2), where new information will
-> >     be silently not provided to userspace. This is probably what most
-> >     interfaces will want to do, as it provides the most possible
-> >     backwards-compatibility.
-> >
-> >  2. The interface is like lsm_list_modules(2), where you want to return
-> >     an error like -EMSGSIZE if not providing information could result in
-> >     the userspace program making a serious mistake (such as one that
-> >     could lead to a security problem) or if you want to provide some
-> >     flag to userspace so they know that they are missing some
-> >     information.
->=20
-> I'm not sure if EMSGSIZE is the best choice here, my feeling is that
-> the kernel should instead try to behave the same way as an older kernel
-> that did not know about the extra fields:
+In case of ACPI boot, ie. VFIO_PLATFORM_IS_ACPI(vpdev) is set, I
+understand we don't use the vfio platform reset module but the ACPI _RST
+method. see vfio_platform_acpi_call_reset() and
+vfio_platform_acpi_has_reset() introduced by d30daa33ec1d ("vfio:
+platform: call _RST method when using ACPI"). I have never had the
+opportunity to test acpi boot reset though.
+>
+>> +
+>>  void vfio_platform_close_device(struct vfio_device *core_vdev)
+>>  {
+>>  	struct vfio_platform_device *vdev =
+>> @@ -242,6 +259,7 @@ void vfio_platform_close_device(struct vfio_device *core_vdev)
+>>  			"reset driver is required and reset call failed in release (%d) %s\n",
+>>  			ret, extra_dbg ? extra_dbg : "");
+>>  	}
+>> +	vfio_platform_reset_module_close(vdev);
+>>  	pm_runtime_put(vdev->device);
+>>  	vfio_platform_regions_cleanup(vdev);
+>>  	vfio_platform_irq_cleanup(vdev);
+>> @@ -265,7 +283,13 @@ int vfio_platform_open_device(struct vfio_device *core_vdev)
+>>  
+>>  	ret = pm_runtime_get_sync(vdev->device);
+>>  	if (ret < 0)
+>> -		goto err_rst;
+>> +		goto err_rst_open;
+>> +
+>> +	ret = vfio_platform_reset_module_open(vdev);
+>> +	if (ret) {
+>> +		dev_info(vdev->device, "reset module load failed (%d)\n", ret);
+>> +		goto err_rst_open;
+>> +	}
+>>  
+>>  	ret = vfio_platform_call_reset(vdev, &extra_dbg);
+>>  	if (ret && vdev->reset_required) {
+>> @@ -278,6 +302,8 @@ int vfio_platform_open_device(struct vfio_device *core_vdev)
+>>  	return 0;
+>>  
+>>  err_rst:
+>> +	vfio_platform_reset_module_close(vdev);
+>> +err_rst_open:
+>>  	pm_runtime_put(vdev->device);
+>>  	vfio_platform_irq_cleanup(vdev);
+>>  err_irq:
+>> diff --git a/drivers/vfio/platform/vfio_platform_private.h b/drivers/vfio/platform/vfio_platform_private.h
+>> index 90c99d2e70f4..528b01c56de6 100644
+>> --- a/drivers/vfio/platform/vfio_platform_private.h
+>> +++ b/drivers/vfio/platform/vfio_platform_private.h
+>> @@ -74,9 +74,13 @@ struct vfio_platform_device {
+>>   * struct vfio_platform_reset_ops - reset ops
+>>   *
+>>   * @reset:	reset function (required)
+>> + * @open:	Called when the first fd is opened for this device (optional)
+>> + * @close:	Called when the last fd is closed for this device (optional)
+> This doesn't note any platform firmware dependency.  We should probably
+> also note here the XOR requirement enforced below here.  Thanks,
+To me this is just used along with dt boot, hence the lack of check.
 
-I agree this API is not ideal for syscalls because it can lead to
-backward-compatibility issues, but that is how lsm_list_modules(2)
-works. I suspect most syscalls will go with designs (1) or (3).
+Thanks
 
-> - if the structure has always been longer than the provided buffer,
->   -EMSGSIZE should likely have been returned all along. If older
->   kernels just provided a short buffer, changing it now is an ABI
->   change that would only affect intentionally broken callers, and
->   I think keeping the behavior unchanged is more consistent.
->=20
-> - if an extra flag was added along with the larger buffer size,
->   the old kernel would likely have rejected the new flag with -EINVAL,
->   so I think returning the same thing for userspace built against
->   the old kernel headers is more consistent.
->=20
->=20
-> > +static __always_inline __must_check int
-> > +copy_struct_to_user(void __user *dst, size_t usize, const void *src,
-> > +		    size_t ksize, bool *ignored_trailing)
->=20
-> This feels like the kind of function that doesn't need to be inline
-> at all and could be moved to lib/usercopy.c instead. It should clearly
-> stay in the same place as copy_struct_from_user(), but we could move
-> that as well.
+Eric
+>
+> Alex
+>
+>>   */
+>>  struct vfio_platform_reset_ops {
+>>  	int (*reset)(struct vfio_platform_device *vdev);
+>> +	int (*open)(struct vfio_platform_device *vdev);
+>> +	void (*close)(struct vfio_platform_device *vdev);
+>>  };
+>>  
+>>  
+>> @@ -129,6 +133,8 @@ __vfio_platform_register_reset(&__ops ## _node)
+>>  MODULE_ALIAS("vfio-reset:" compat);				\
+>>  static int __init reset ## _module_init(void)			\
+>>  {								\
+>> +	if (!!ops.open ^ !!ops.close)				\
+>> +		return -EINVAL;					\
+>>  	vfio_platform_register_reset(compat, ops);		\
+>>  	return 0;						\
+>>  };								\
 
-IIRC Kees suggested copy_struct_from_user() be inline when I first
-included it, though I would have to dig through the old threads to find
-the reasoning. __builtin_object_size() was added some time after it was
-merged so that wasn't the original reason.
-
-> > +{
-> > +	size_t size =3D min(ksize, usize);
-> > +	size_t rest =3D max(ksize, usize) - size;
-> > +
-> > +	/* Double check if ksize is larger than a known object size. */
-> > +	if (WARN_ON_ONCE(ksize > __builtin_object_size(src, 1)))
-> > +		return -E2BIG;
->=20
-> I guess the __builtin_object_size() check is the reason for making
-> it __always_inline, but that could be done in a trivial inline
-> wrapper around the extern function.  If ksize is always expected
-> to be a constant for all callers, the check could even become a
-> compile-time check instead of a WARN_ON_ONCE() that feels wrong
-> here: if there is a code path where this can get triggered, there
-> is clearly a kernel bug, but the only way to find out is to have
-> a userspace caller that triggers the code path.
->=20
-> Again, the same code is already in copy_struct_from_user(), so
-> this is not something you are adding but rather something we
-> may want to change for both.
->=20
->       Arnd
-
---=20
-Aleksa Sarai
-Senior Software Engineer (Containers)
-SUSE Linux GmbH
-<https://www.cyphar.com/>
-
---ftgkfoq5ev7h23w4
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQS2TklVsp+j1GPyqQYol/rSt+lEbwUCZtXhnwAKCRAol/rSt+lE
-b0i1AP4n3zvF3EnvaHU3j7y6pOFoMZsPTUgIjM9al7nMqGnp9gD/YOPgm1jLZUNd
-4zg7QxzxYtCbzS8HNsO28bO+uW/C1A4=
-=93Iu
------END PGP SIGNATURE-----
-
---ftgkfoq5ev7h23w4--
 
