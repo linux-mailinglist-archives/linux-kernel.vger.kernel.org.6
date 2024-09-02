@@ -1,167 +1,110 @@
-Return-Path: <linux-kernel+bounces-311718-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311979-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6521E968CAE
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 19:06:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5EF096905F
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 01:20:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D2AE283CE2
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 17:06:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 148301C216BA
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 23:20:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CE561C62A9;
-	Mon,  2 Sep 2024 17:06:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A0771885AF;
+	Mon,  2 Sep 2024 23:20:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="yQUXHPzw"
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="D6w6EoT2"
+Received: from smtp.smtpout.orange.fr (smtp-25.smtpout.orange.fr [80.12.242.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DF8D1AB6DE
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 17:06:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E70492032A;
+	Mon,  2 Sep 2024 23:19:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725296781; cv=none; b=MDHUIIQKGPSa2J8FVq5oj4obdItKHMSvrGtGDV7CLBPuusna8VKs6GjHgDEA/w9Y+3G5mIk3/ihFHEpamayfkWT8AN/dRbU/5+0IEEbE2pLPWYFMxn2s8Jvgq7mbphevVVf1cLlHii6FNt/CuZk6OC5IDl/t2/33HEicQ5h6pSw=
+	t=1725319201; cv=none; b=hp9MP+JJAmuxihUmSadnahHIKadb3xBzPITfbQk/HwQDfAXYWKtw/Xv88Pyqe2CBryyvqLd86vT71W6JLdLgUWm7Yi6vaDtNlN8Io3fn67Kae/Nwvt0eOKCXANQgPJ2DQeP9uXNll9hGdTTAJn8YP2lH2HGHAklr6GgARrthKZQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725296781; c=relaxed/simple;
-	bh=m/Hl05dGE8DG9LV4d7LMKZdjId9IkoBTCyuBgmslKIU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EwpoR9Bgz1ctI3kY53yfKM0imWX2mdldWZPRB5POfCXTIzc6KgjEZWuNaKBsbzR4Sj4aOOLBK0vPAiNP4UtEQf2zO3pIJkxiIlcR2mITTC52MJ6ZHrluliytjIlT74PYX+J/PbLpZJyAVU5P8vlIULUz8Auw/GdzXgk4j05XGVg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=yQUXHPzw; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a8696e9bd24so516903866b.0
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2024 10:06:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fastly.com; s=google; t=1725296777; x=1725901577; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:mail-followup-to:message-id:subject:cc:to
-         :from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=7M8BT8N6vTwP+D5Hjg4AMJAeuxuEG1WY11kk9v24ceA=;
-        b=yQUXHPzwLakaHPlXkCRrO7aUae8f5P9dSXdXRoBhuFclC9S0bOMhP2XckKQIwQJY1G
-         e+FgxkoxrD7MZED9W94hzfslKWzxVOwr50I44Lev2VSVriG/ZTp1gzQjxxKx82A7bXtW
-         INwcl5qaPc4Qyq64vuqPBYVdGKiGziQd94m3Y=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725296777; x=1725901577;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:mail-followup-to:message-id:subject:cc:to
-         :from:date:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=7M8BT8N6vTwP+D5Hjg4AMJAeuxuEG1WY11kk9v24ceA=;
-        b=kuN4VXvEPDkJ+iaO3a5b6Bnn5M0oV06Dtmg1hMuxmQj7UNnxVH0n9qBeBznVyqfnp7
-         fbHs6cO/ReF1LIn7phHgOKdAgy/XSkaY17eAivSg/i3zv+B1p8a1P68mFhkAh7LmAwtm
-         vdFXL7pVKvqDMjQRNjhgLmtCJlln847GLoVgXj+cuu4ymolCpA14QMC+TH0j4wi6LimE
-         FXTWjQDc731+5+IxdeshFAhbBqcSverb6XEp78awW/IFZIs7r3bbEWbygmgXWaGFmxw2
-         w5wCgl0qiL9AFJ3G+tK6Osnt/E2SBfzsz0sSzhPMS4ecmw1SWkKjdBnhcp2W8Yft4mIf
-         kyJA==
-X-Forwarded-Encrypted: i=1; AJvYcCXQdiCqz9GpSYkPpIiohziBfjkKrm8WvT2vZ4yw01pPPCZpcI1omQbKf5Ck8cqzFQPwyDqxLWz9z46XMdo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxU86Qh5bHVWvXy1RI4fcBnwFI1SFZOGjLjdY2Qwy4EtD8sK655
-	cbE3k1rgGjDbG6AmONEBZUg9luETqf4m2/zPvD/SQxpNPd6JVTPO7csyfFA2MIY=
-X-Google-Smtp-Source: AGHT+IGWJf9Avan9MoUFQ6Ai0+z5nn+fJXzqwnGlBi2FTipYcSbwZOLN+wfh53hpdVGR9SMXe/vXdg==
-X-Received: by 2002:a17:907:60d0:b0:a86:acbe:8d61 with SMTP id a640c23a62f3a-a897fa71c13mr1003988366b.53.1725296777056;
-        Mon, 02 Sep 2024 10:06:17 -0700 (PDT)
-Received: from LQ3V64L9R2.station (net-2-42-195-208.cust.vodafonedsl.it. [2.42.195.208])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8989092143sm584447366b.96.2024.09.02.10.06.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Sep 2024 10:06:16 -0700 (PDT)
-Date: Mon, 2 Sep 2024 19:06:14 +0200
-From: Joe Damato <jdamato@fastly.com>
-To: Eric Dumazet <edumazet@google.com>
-Cc: netdev@vger.kernel.org, mkarsten@uwaterloo.ca, stable@kernel.org,
-	Jakub Kicinski <kuba@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Paolo Abeni <pabeni@redhat.com>, Jonathan Corbet <corbet@lwn.net>,
-	Breno Leitao <leitao@debian.org>,
-	Johannes Berg <johannes.berg@intel.com>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Alexander Lobakin <aleksander.lobakin@intel.com>,
-	"open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH net] net: napi: Make napi_defer_irqs u32
-Message-ID: <ZtXwhnVzR6ofBJhb@LQ3V64L9R2.station>
-Mail-Followup-To: Joe Damato <jdamato@fastly.com>,
-	Eric Dumazet <edumazet@google.com>, netdev@vger.kernel.org,
-	mkarsten@uwaterloo.ca, stable@kernel.org,
-	Jakub Kicinski <kuba@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Paolo Abeni <pabeni@redhat.com>, Jonathan Corbet <corbet@lwn.net>,
-	Breno Leitao <leitao@debian.org>,
-	Johannes Berg <johannes.berg@intel.com>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Alexander Lobakin <aleksander.lobakin@intel.com>,
-	"open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>
-References: <20240831113223.9627-1-jdamato@fastly.com>
- <CANn89iK+09DW95LTFwN1tA=_hV7xvA0mY4O4d-LwVbmNkO0y3w@mail.gmail.com>
- <ZtXn9gK6Dr-JGo81@LQ3V64L9R2.station>
- <CANn89iLhrKyFKf9DpJSSM9CZ9sgoRo7jovg2GhjsJABoqzzVsQ@mail.gmail.com>
+	s=arc-20240116; t=1725319201; c=relaxed/simple;
+	bh=YAGrIzusnyTr0rxXlKRJ2lrCnH+Sp4JMoe5jlxXvGHk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EiCFTIUomDUprvscH9lsUfqw76wEcqcaqJhin10eJDEOmpuuuXFvoG8ZlCr2xZVdZin5a9ZkTuvheNvkepOBsEodBfocxhbe20RK4kpJIKmSd8/Kr4G7Y9S3cPpBfyFXtjQuA8lcc8Ib3agbulWTDrUbYsAeA8wudrZMV52wzhk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=D6w6EoT2; arc=none smtp.client-ip=80.12.242.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from [192.168.1.37] ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id lAd3stLcybNNslAd3sOnCp; Mon, 02 Sep 2024 19:14:14 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1725297254;
+	bh=dsK29Y8mrgSSPkIHZ+2Q9mnnt52c5HZqPwvsqeoeFw4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=D6w6EoT2JPD2gA2xOUrhWPJnv4/1h2HHHrOYD0eP5I1o1kfiOZN5U/8t+jFlscxro
+	 tJkNAP2neZSPL64zcnebyKF0ha3eAJHOmX5GliFcdZP4NZnQQ4R8ELAt+hYr8RGr80
+	 AJuGd+rr/SgvPVoR89744yLAgfqUPloAm0zSEJupJRZVOMJyEFLdBV2PUIC1i6oOA0
+	 EEE43NopSS3q9AfA8tgqIUlmEZpDQeJQkVckDflx6Q3mgLrncEsGhYkXcXSf0USDkk
+	 zkpoP0iD5mMz25yGBZeg5grU1rr7bZexJ332hRkgrg2ZfKwlbsPOyMkrbJoFjijOu0
+	 piIc6snyHarEw==
+X-ME-Helo: [192.168.1.37]
+X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
+X-ME-Date: Mon, 02 Sep 2024 19:14:14 +0200
+X-ME-IP: 90.11.132.44
+Message-ID: <0729c1a1-3d3c-4734-8e1a-6fd722b73e02@wanadoo.fr>
+Date: Mon, 2 Sep 2024 19:14:12 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH][next] scsi: mpt3sas: Remove trailing space after \n
+ newline
+To: Colin Ian King <colin.i.king@gmail.com>,
+ Sathya Prakash <sathya.prakash@broadcom.com>,
+ Sreekanth Reddy <sreekanth.reddy@broadcom.com>,
+ Suganath Prabu Subramani <suganath-prabu.subramani@broadcom.com>,
+ "James E . J . Bottomley" <James.Bottomley@HansenPartnership.com>,
+ "Martin K . Petersen" <martin.petersen@oracle.com>,
+ MPT-FusionLinux.pdl@broadcom.com, linux-scsi@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240902143645.309537-1-colin.i.king@gmail.com>
+Content-Language: en-US, fr-FR
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20240902143645.309537-1-colin.i.king@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CANn89iLhrKyFKf9DpJSSM9CZ9sgoRo7jovg2GhjsJABoqzzVsQ@mail.gmail.com>
 
-On Mon, Sep 02, 2024 at 07:00:48PM +0200, Eric Dumazet wrote:
-> On Mon, Sep 2, 2024 at 6:29 PM Joe Damato <jdamato@fastly.com> wrote:
-> >
-> > On Mon, Sep 02, 2024 at 03:01:28PM +0200, Eric Dumazet wrote:
-> > > On Sat, Aug 31, 2024 at 1:32 PM Joe Damato <jdamato@fastly.com> wrote:
-> > > >
-> > > > In commit 6f8b12d661d0 ("net: napi: add hard irqs deferral feature")
-> > > > napi_defer_irqs was added to net_device and napi_defer_irqs_count was
-> > > > added to napi_struct, both as type int.
-> > > >
-> > > > This value never goes below zero. Change the type for both from int to
-> > > > u32, and add an overflow check to sysfs to limit the value to S32_MAX.
-> > > >
-> > > > Before this patch:
-> > > >
-> > > > $ sudo bash -c 'echo 2147483649 > /sys/class/net/eth4/napi_defer_hard_irqs'
-> > > > $ cat /sys/class/net/eth4/napi_defer_hard_irqs
-> > > > -2147483647
-> > > >
-> > > > After this patch:
-> > > >
-> > > > $ sudo bash -c 'echo 2147483649 > /sys/class/net/eth4/napi_defer_hard_irqs'
-> > > > bash: line 0: echo: write error: Numerical result out of range
-> > > >
-> > > > Fixes: 6f8b12d661d0 ("net: napi: add hard irqs deferral feature")
-> > > > Cc: stable@kernel.org
-> > > > Cc: Eric Dumazet <edumazet@google.com>
-> > > > Suggested-by: Jakub Kicinski <kuba@kernel.org>
-> > > > Signed-off-by: Joe Damato <jdamato@fastly.com>
-> > > > ---
-> > >
-> > > I do not think this deserves a change to stable trees.
-> >
-> > OK, I can send any other revisions to -next, instead.
-> >
-> > > Signed or unsigned, what is the issue ?
-> > >
-> > > Do you really need one extra bit ?
-> >
-> > I made the maximum S32_MAX because the practical limit has always
-> > been S32_MAX. Any larger values overflow. Keeping it at S32_MAX does
-> > not change anything about existing behavior, which was my goal.
-> >
-> > Would you prefer if it was U32_MAX instead?
-> >
-> > Or are you asking me to leave it the way it is?
+Le 02/09/2024 à 16:36, Colin Ian King a écrit :
+> There is a extraneous space after a newline in an ioc_info message.
+> Remove it.
 > 
-> I think this would target net-next at most, please lets avoid hassles
-> for stable teams.
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> ---
+>   drivers/scsi/mpt3sas/mpt3sas_base.c | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/scsi/mpt3sas/mpt3sas_base.c b/drivers/scsi/mpt3sas/mpt3sas_base.c
+> index 9a24f7776d64..ebe4cbbc16e4 100644
+> --- a/drivers/scsi/mpt3sas/mpt3sas_base.c
+> +++ b/drivers/scsi/mpt3sas/mpt3sas_base.c
+> @@ -8899,8 +8899,8 @@ _base_check_ioc_facts_changes(struct MPT3SAS_ADAPTER *ioc)
+>   		if (!device_remove_in_progress) {
+>   			ioc_info(ioc,
+>   			    "Unable to allocate the memory for "
+> -			    "device_remove_in_progress of sz: %d\n "
+> -			    , pd_handles_sz);
+> +			    "device_remove_in_progress of sz: %d\n",
 
-Sure, that's fine with me.
+Hi,
 
-I'm just not sure what you meant by your comment about the extra
-bit and what you are asking me to make the maximum limit? I have no
-preference.
+I think that the 2 parts of the string should be put on the same line.
 
-I just want to prevent overflow and then make the per-NAPI stuff
-compatible with existing sysfs code as much as possible.
+Another call just a few lines above is already written like that.
+
+CJ
+
+> +			    pd_handles_sz);
+>   			return -ENOMEM;
+>   		}
+>   		memset(device_remove_in_progress +
+
 
