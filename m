@@ -1,233 +1,88 @@
-Return-Path: <linux-kernel+bounces-311666-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311667-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6437C968BE3
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 18:17:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2D00968BE4
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 18:17:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AB38BB2107F
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 16:17:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 00AB41C22AF5
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 16:17:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F32E21C16F;
-	Mon,  2 Sep 2024 16:15:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FEC114BF86;
+	Mon,  2 Sep 2024 16:15:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X9J9lYBA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC79D21C16D;
-	Mon,  2 Sep 2024 16:15:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b="x21eeWzk"
+Received: from mail.8bytes.org (mail.8bytes.org [85.214.250.239])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1426013C9C7
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 16:15:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.250.239
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725293719; cv=none; b=iSX8gJ4ZoIzA1Od9XCSZyQMIqez4vFj4cM0ZYm+thnkCtqb5FvNZNjK78rZHirUpcoujBbI1r2GQ7yZQPcac6Z6pNvGV8Uzn1M4iQCTUX+UzSyuX7ke0cImfAIn+CbSa8PYf6sZu6meWxV1uTG7H89SuT5wcTybgEsAMt/19f1Y=
+	t=1725293736; cv=none; b=WR++gJ0Xg5ACqqwfSu5LOZr2EhPGcjYxKede8zTAyf20mufHyoTPi9gqVjqcFnA4dYA/3z+wuA49nKsth6G4PUMf31XluNo/xE7dJ3ZnYtpKDMEeiYDQYmoSlDp3HmG4ehZphkKf3nMPWwptjF9kMiOmO21/cj8AIPcJq63Wkgs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725293719; c=relaxed/simple;
-	bh=xtOdecYiKB5InvoL/YSqFAGZREGEyiVcgfttpziwedM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=HoSaIqk94GMV59VwSEGSnlu0tZNFkjx72hREJVeUw7cH3mlKcc+8GmH0jeUIIJ6282OTukElz79sRfKytz4NJqCzBxMWZJn8HQ+gHORly5wfuFStPaqujza1xHUd802xQZyIRbqtigkf5cXMhCWIQnDNbD0bEZXuoRBzow0LaOQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X9J9lYBA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9320FC4CECB;
-	Mon,  2 Sep 2024 16:15:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725293718;
-	bh=xtOdecYiKB5InvoL/YSqFAGZREGEyiVcgfttpziwedM=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=X9J9lYBA64rSQShxUiGuKSRL22BP/KcyYHeJ5LlD2d+U3JbXJX4HphKInc20le8Ct
-	 D5ZMVkcnyKVO+XiEz092j1U/7VIxyKQIduc8SwwcNJWueU3YY4lwvllhMbwd3eAKPf
-	 98Ap58Z5HS05CBvnARK1iGnssmA7ixbC/6zKKDxGt8K1rt64G5YjFegiY1zPNKxmmd
-	 81mHjaRVGHegi9VIOMXOT4VqFQ4z1BvaTpwdyxN5SUdtGlpNKR+b7563Z5tYDnaMOE
-	 l5/W8755n6N1X0sskiFjSlO9ek5mN551rKf+YHlrKRiBMTC2BbUix6PfxksYeigTDb
-	 8luG5fGEGdxHQ==
-From: Benjamin Tissoires <bentiss@kernel.org>
-Date: Tue, 03 Sep 2024 01:14:37 +0900
-Subject: [PATCH HID 7/7] selftests/hid: add test to disable hid-input
+	s=arc-20240116; t=1725293736; c=relaxed/simple;
+	bh=rhcvJ204D0k0g+Nk80ZMVOEWO2mrj+Y7PHB7oPKRJyw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hqRl0VW5MRs0hRUJyF8xRdH1CBXyWhYhs8T4mPQLadY0Y9SAmsmEJjfghEmtO2QWYXUuYAMsg2TB7GBRUZflry6K04x3oHylLEx35QEA/LIGHB/XPvx4wyNwfv1gOEnb1xcJiO3PnBiedt/oXUPvHXUa/hseq+7d6eGI9vPYWlA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=8bytes.org; spf=pass smtp.mailfrom=8bytes.org; dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b=x21eeWzk; arc=none smtp.client-ip=85.214.250.239
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=8bytes.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=8bytes.org
+Received: from 8bytes.org (pd9fe9dd8.dip0.t-ipconnect.de [217.254.157.216])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.8bytes.org (Postfix) with ESMTPSA id D57E52850CC;
+	Mon,  2 Sep 2024 18:15:27 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=8bytes.org;
+	s=default; t=1725293727;
+	bh=rhcvJ204D0k0g+Nk80ZMVOEWO2mrj+Y7PHB7oPKRJyw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=x21eeWzkK9hBgCDDbS5vBOCENUOkdrI9CTBTJBwXXfv3eZYqZyBLm53kCQnAPUfWp
+	 URXvxjcnrh0d5H2yXCQ7yOFs3ZLTtdU+LSFxtITVc5/bQVHY5iuQeCB0r6kUHv4v0g
+	 gySFeXIY5g3VHVTwXiF9LcsHqt86Qpxt1dGmU4avvKOAogFnGqGY+flK8Kco0AwfxY
+	 vqdFf4pQKPsxWcyr1xPYnWHy6B6NHUv0bq2xtuGveSRvZvQTAeykRpv3rYAFLGydLk
+	 MEzxHY0NOb0fa1IV3EqODZlsri7N/B5OCkj6iH2RSWctLUjcczRpanFgUt17jAayFj
+	 b0x3pIXj4yVYg==
+Date: Mon, 2 Sep 2024 18:15:26 +0200
+From: Joerg Roedel <joro@8bytes.org>
+To: Lu Baolu <baolu.lu@linux.intel.com>
+Cc: Will Deacon <will@kernel.org>, Tina Zhang <tina.zhang@intel.com>,
+	Sanjay K Kumar <sanjay.k.kumar@intel.com>, iommu@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 00/14] [PULL REQUEST] Intel IOMMU updates for v6.12
+Message-ID: <ZtXknq0jChzgq2iV@8bytes.org>
+References: <20240902022724.67059-1-baolu.lu@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240903-hid-bpf-hid-generic-v1-7-9511a565b2da@kernel.org>
-References: <20240903-hid-bpf-hid-generic-v1-0-9511a565b2da@kernel.org>
-In-Reply-To: <20240903-hid-bpf-hid-generic-v1-0-9511a565b2da@kernel.org>
-To: Jiri Kosina <jikos@kernel.org>, 
- Peter Hutterer <peter.hutterer@who-t.net>, Vicki Pfau <vi@endrift.com>, 
- Shuah Khan <shuah@kernel.org>, Jonathan Corbet <corbet@lwn.net>
-Cc: linux-input@vger.kernel.org, linux-kselftest@vger.kernel.org, 
- linux-kernel@vger.kernel.org, bpf@vger.kernel.org, 
- linux-doc@vger.kernel.org, Benjamin Tissoires <bentiss@kernel.org>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1725293696; l=5770;
- i=bentiss@kernel.org; s=20230215; h=from:subject:message-id;
- bh=xtOdecYiKB5InvoL/YSqFAGZREGEyiVcgfttpziwedM=;
- b=GE/tgxdBkatX9tmF7AXHOU/jlAbMce5qGP3SxP2mtW5A9+4VoYudbDiOQAuLD+ESHP/ByppSx
- eeIohiS/C/ADzvR+NR2IhXu7ICiStGPD39RAaNnmcWow5MdY5GSG6eQ
-X-Developer-Key: i=bentiss@kernel.org; a=ed25519;
- pk=7D1DyAVh6ajCkuUTudt/chMuXWIJHlv2qCsRkIizvFw=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240902022724.67059-1-baolu.lu@linux.intel.com>
 
-Add a test for the newly enabled feature to control the connect_mask
-of hid-generic.
+On Mon, Sep 02, 2024 at 10:27:10AM +0800, Lu Baolu wrote:
+> Lu Baolu (10):
+>   iommu/vt-d: Require DMA domain if hardware not support passthrough
+>   iommu/vt-d: Remove identity mappings from si_domain
+>   iommu/vt-d: Always reserve a domain ID for identity setup
+>   iommu/vt-d: Remove has_iotlb_device flag
+>   iommu/vt-d: Factor out helpers from domain_context_mapping_one()
+>   iommu/vt-d: Add support for static identity domain
+>   iommu/vt-d: Cleanup si_domain
+>   iommu/vt-d: Move PCI PASID enablement to probe path
+>   iommu/vt-d: Unconditionally flush device TLB for pasid table updates
+>   iommu/vt-d: Add qi_batch for dmar_domain
+> 
+> Sanjay K Kumar (1):
+>   iommu/vt-d: Fix potential lockup if qi_submit_sync called with 0 count
+> 
+> Tina Zhang (3):
+>   iommu/vt-d: Factor out invalidation descriptor composition
+>   iommu/vt-d: Refactor IOTLB and Dev-IOTLB flush for batching
+>   iommu/vt-d: Introduce batched cache invalidation
 
-Signed-off-by: Benjamin Tissoires <bentiss@kernel.org>
----
- tools/testing/selftests/hid/hid_bpf.c              | 60 +++++++++++++++++++++-
- tools/testing/selftests/hid/progs/hid.c            |  6 ++-
- .../testing/selftests/hid/progs/hid_bpf_helpers.h  |  2 +
- 3 files changed, 65 insertions(+), 3 deletions(-)
-
-diff --git a/tools/testing/selftests/hid/hid_bpf.c b/tools/testing/selftests/hid/hid_bpf.c
-index edc061b38528..41cacc30ef8b 100644
---- a/tools/testing/selftests/hid/hid_bpf.c
-+++ b/tools/testing/selftests/hid/hid_bpf.c
-@@ -4,6 +4,38 @@
- #include "hid_common.h"
- #include <bpf/bpf.h>
- 
-+static const __u8 mouse_rdesc[] = {
-+	0x05, 0x01,  /* .Usage Page (Generic Desktop)        0  */
-+	0x09, 0x02,  /* .Usage (Mouse)                       2  */
-+	0xa1, 0x01,  /* .Collection (Application)            4  */
-+	0x09, 0x02,  /* ..Usage (Mouse)                      6  */
-+	0xa1, 0x02,  /* ..Collection (Logical)               8  */
-+	0x09, 0x01,  /* ...Usage (Pointer)                   10 */
-+	0xa1, 0x00,  /* ...Collection (Physical)             12 */
-+	0x05, 0x09,  /* ....Usage Page (Button)              14 */
-+	0x19, 0x01,  /* ....Usage Minimum (1)                16 */
-+	0x29, 0x03,  /* ....Usage Maximum (3)                18 */
-+	0x15, 0x00,  /* ....Logical Minimum (0)              20 */
-+	0x25, 0x01,  /* ....Logical Maximum (1)              22 */
-+	0x75, 0x01,  /* ....Report Size (1)                  24 */
-+	0x95, 0x03,  /* ....Report Count (3)                 26 */
-+	0x81, 0x02,  /* ....Input (Data,Var,Abs)             28 */
-+	0x75, 0x05,  /* ....Report Size (5)                  30 */
-+	0x95, 0x01,  /* ....Report Count (1)                 32 */
-+	0x81, 0x03,  /* ....Input (Cnst,Var,Abs)             34 */
-+	0x05, 0x01,  /* ....Usage Page (Generic Desktop)     36 */
-+	0x09, 0x30,  /* ....Usage (X)                        38 */
-+	0x09, 0x31,  /* ....Usage (Y)                        40 */
-+	0x15, 0x81,  /* ....Logical Minimum (-127)           42 */
-+	0x25, 0x7f,  /* ....Logical Maximum (127)            44 */
-+	0x75, 0x08,  /* ....Report Size (8)                  46 */
-+	0x95, 0x02,  /* ....Report Count (2)                 48 */
-+	0x81, 0x06,  /* ....Input (Data,Var,Rel)             50 */
-+	0xc0,        /* ...End Collection                    52 */
-+	0xc0,        /* ..End Collection                     53 */
-+	0xc0,        /* .End Collection                      54 */
-+};
-+
- struct hid_hw_request_syscall_args {
- 	__u8 data[10];
- 	unsigned int hid;
-@@ -59,6 +91,8 @@ struct specific_device {
- 	__u16 bus;
- 	__u32 vid;
- 	__u32 pid;
-+	const __u8 *rdesc;
-+	const size_t rdesc_size;
- };
- 
- FIXTURE_SETUP(hid_bpf)
-@@ -72,11 +106,15 @@ FIXTURE_SETUP(hid_bpf)
- 		.bus = BUS_BLUETOOTH,
- 		.vid = 0x05ac,  /* USB_VENDOR_ID_APPLE */
- 		.pid = 0x022c,  /* USB_DEVICE_ID_APPLE_ALU_WIRELESS_ANSI */
-+		.rdesc = mouse_rdesc,
-+		.rdesc_size = sizeof(mouse_rdesc),
- 	}, {
- 		.test_name = "*",
- 		.bus = BUS_USB,
- 		.vid = 0x0001,
- 		.pid = 0x0a36,
-+		.rdesc = rdesc,
-+		.rdesc_size = sizeof(rdesc),
- 	}};
- 
- 	for (int i = 0; i < ARRAY_SIZE(devices); i++) {
-@@ -88,7 +126,7 @@ FIXTURE_SETUP(hid_bpf)
- 	ASSERT_OK_PTR(match);
- 
- 	err = setup_uhid(_metadata, &self->hid, match->bus, match->vid, match->pid,
--			 rdesc, sizeof(rdesc));
-+			 match->rdesc, match->rdesc_size);
- 	ASSERT_OK(err);
- }
- 
-@@ -914,6 +952,24 @@ static bool is_using_driver(struct __test_metadata *_metadata, struct uhid_devic
- 	return found;
- }
- 
-+static bool has_hid_input(struct uhid_device *hid)
-+{
-+	char input[1024];
-+	DIR *d;
-+
-+	sprintf(input, "/sys/bus/hid/devices/%04X:%04X:%04X.%04X/input",
-+		hid->bus, hid->vid, hid->pid, hid->hid_id);
-+
-+	d = opendir(input);
-+	if (d) {
-+		closedir(d);
-+
-+		return true;
-+	}
-+
-+	return false;
-+}
-+
- /*
-  * Attach hid_driver_probe to the given uhid device,
-  * check that the device is now using hid-generic.
-@@ -927,10 +983,12 @@ TEST_F(hid_bpf, test_hid_driver_probe)
- 	};
- 
- 	ASSERT_TRUE(is_using_driver(_metadata, &self->hid, "apple"));
-+	ASSERT_TRUE(has_hid_input(&self->hid)) TH_LOG("input node not found");
- 
- 	LOAD_PROGRAMS(progs);
- 
- 	ASSERT_TRUE(is_using_driver(_metadata, &self->hid, "hid-generic"));
-+	ASSERT_FALSE(has_hid_input(&self->hid)) TH_LOG("input node unexpectly found");
- }
- 
- /*
-diff --git a/tools/testing/selftests/hid/progs/hid.c b/tools/testing/selftests/hid/progs/hid.c
-index 883d09498351..c81d5eb18211 100644
---- a/tools/testing/selftests/hid/progs/hid.c
-+++ b/tools/testing/selftests/hid/progs/hid.c
-@@ -606,10 +606,12 @@ void BPF_PROG(hid_test_driver_probe, struct hid_device *hdev, struct hid_bpf_dri
- 	static const char hid_generic[] = "hid-generic";
- 
- 	bpf_printk("test_driver_probe, %s", hdrv->name);
--	if (!__builtin_memcmp(hdrv->name, hid_generic, sizeof(hid_generic)))
-+	if (!__builtin_memcmp(hdrv->name, hid_generic, sizeof(hid_generic))) {
- 		hdrv->force_driver = 1;
--	else
-+		id->driver_data &= ~HID_CONNECT_INPUT;
-+	} else {
- 		hdrv->ignore_driver = 1;
-+	}
- }
- 
- SEC("?struct_ops.s/hid_rdesc_fixup")
-diff --git a/tools/testing/selftests/hid/progs/hid_bpf_helpers.h b/tools/testing/selftests/hid/progs/hid_bpf_helpers.h
-index 6b0f870d0727..9447233d7a3d 100644
---- a/tools/testing/selftests/hid/progs/hid_bpf_helpers.h
-+++ b/tools/testing/selftests/hid/progs/hid_bpf_helpers.h
-@@ -90,6 +90,8 @@ struct hid_bpf_ops {
- #define BPF_F_BEFORE (1U << 3)
- #endif
- 
-+#define HID_CONNECT_INPUT (1U << 0)
-+
- /* following are kfuncs exported by HID for HID-BPF */
- extern __u8 *hid_bpf_get_data(struct hid_bpf_ctx *ctx,
- 			      unsigned int offset,
-
--- 
-2.46.0
-
+Applied, thanks Baolu.
 
