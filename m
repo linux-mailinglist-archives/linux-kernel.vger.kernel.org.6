@@ -1,96 +1,183 @@
-Return-Path: <linux-kernel+bounces-310802-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310803-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F64D968168
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 10:11:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6934896816A
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 10:11:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C852FB20A0B
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 08:11:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 20D7E282917
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 08:11:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F8AA183063;
-	Mon,  2 Sep 2024 08:11:18 +0000 (UTC)
-Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23012183CAA;
+	Mon,  2 Sep 2024 08:11:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="ADgtYXnH"
+Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA3EC17E017;
-	Mon,  2 Sep 2024 08:11:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E69717F4EC;
+	Mon,  2 Sep 2024 08:11:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725264677; cv=none; b=sd/ohPxoiRuLXV2rxc/48Y/7WytHJM4Br6f2AJdUf9dasoiRRcIf3olHEqRHzY539L0uZSly3oOe9SVTSIUuLHUxN64VpVYppF+h0EpvxlVFiM6pkpAZTvuyk2IxylJ4B7w6cYWySL1FvCp2aMm9sq8MbwvwQtCvxL9pR/8vp3g=
+	t=1725264697; cv=none; b=nQCw5Ls+M069+VU26wGemznOYBIM7xKhBcmEVPTaZs+Qs98xGO7qLBkZzg6k6bG6Z/KdU4Q8JQeVsZCxCGYyTulhRdEn7D4kVw4AWYYZFyn2BcwdLl4UTHKLIVk7lig5gPD6UVhYFppYucxK9JXCYXOeVLOSKZSRAw+xF7Bfv+w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725264677; c=relaxed/simple;
-	bh=9FrYoSca2jduyAoMMhNei/jVGPU3lyRMm4uluMDLqBI=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=S3CVsAFg+qIwYlU6NyMt0GCVwMvCvWJiE7zHwv230DoxLWwpKC3B5FKvohefQVFIz5fEQ1bFZBRWmqivS2o1pa77j9ekj4gDcpzTi9iyBrDYEx2kEwQDpSqNnnYsX9TGhwiTv5g0E4IZvKfoJLUzxV+38IYZLuprm+ril46itms=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from localhost (unknown [124.16.138.129])
-	by APP-03 (Coremail) with SMTP id rQCowADX944bc9Vmz0eFAA--.32908S2;
-	Mon, 02 Sep 2024 16:11:07 +0800 (CST)
-From: Chen Ni <nichen@iscas.ac.cn>
-To: wim@linux-watchdog.org,
-	linux@roeck-us.net,
-	andy.shevchenko@gmail.com
-Cc: linux-watchdog@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Chen Ni <nichen@iscas.ac.cn>
-Subject: [PATCH] watchdog: iTCO_wdt: Convert comma to semicolon
-Date: Mon,  2 Sep 2024 16:10:51 +0800
-Message-Id: <20240902081051.3824822-1-nichen@iscas.ac.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1725264697; c=relaxed/simple;
+	bh=Hy/p2S+XsCNkvbN3oj3Azd3tICZv+++Zge4afnbauz8=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MAtGQPUFpB9GopK2OBHI6OqbkU+qVq9kwCDMouxw15lAdLhFRRG50lkp+hU2endfCBxYyXNna7uWHN6u7qzFp7WxDa3igVcpXX0huyDG53Fffe/+7TNCmlcb08kub+3PWPyjXBvE9k663Q9aRxDOmk7KIEeNL8zbofXTUAiIGWk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=ADgtYXnH; arc=none smtp.client-ip=198.47.19.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4828BRJO126670;
+	Mon, 2 Sep 2024 03:11:27 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1725264687;
+	bh=sBsE1Q+E+NOzFYwa6tYGVaWt64Eys64dy0TSfuFYUVg=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=ADgtYXnHmkCvX1529Wpy4Bza8eN+PLPa+a2FJLf3RU+5YpqplzuXKr5QCOY3HriO1
+	 NoAucdtRB61GVvkv6sIrLsdLyya664vaD2WFqF9ELIqaKa5GyB2ZgzuBaZtBJkXjqB
+	 wUmQ2Q2pj57OT15VX5jVZLkkClf4g7yw59juZvug=
+Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4828BRih015122
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Mon, 2 Sep 2024 03:11:27 -0500
+Received: from DLEE105.ent.ti.com (157.170.170.35) by DLEE115.ent.ti.com
+ (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 2
+ Sep 2024 03:11:26 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE105.ent.ti.com
+ (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Mon, 2 Sep 2024 03:11:27 -0500
+Received: from localhost (uda0497581.dhcp.ti.com [10.24.68.185])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4828BQOD013182;
+	Mon, 2 Sep 2024 03:11:26 -0500
+Date: Mon, 2 Sep 2024 13:41:25 +0530
+From: Manorit Chawdhry <m-chawdhry@ti.com>
+To: "Kumar, Udit" <u-kumar1@ti.com>
+CC: Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
+        Tero
+ Kristo <kristo@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof
+ Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Neha Malcom Francis <n-francis@ti.com>,
+        Aniket Limaye <a-limaye@ti.com>, Beleswar Padhi <b-padhi@ti.com>
+Subject: Re: [PATCH v5 1/5] arm64: dts: ti: Refactor J784s4 SoC files to a
+ common file
+Message-ID: <20240902081125.luplg4esldhw6ycp@uda0497581>
+References: <20240828-b4-upstream-j742s2-v5-0-9aaa02a0faee@ti.com>
+ <20240828-b4-upstream-j742s2-v5-1-9aaa02a0faee@ti.com>
+ <c2568770-c80c-44d6-b3d5-a1a18f213d42@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:rQCowADX944bc9Vmz0eFAA--.32908S2
-X-Coremail-Antispam: 1UD129KBjvdXoW7Jw4UZF15ZF1ftF4UtryrZwb_yoWfGFXEka
-	47urs7Gr1UGF1jkF42ka4YkFWFvrZ8XF1xJFsYqrZaka9rJryUZ3yFqrykKw45Xa4UZr12
-	yFs8XryY9F17AjkaLaAFLSUrUUUUbb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbsAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Cr0_
-	Gr1UM28EF7xvwVC2z280aVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_JF0_Jw1lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lc7CjxVAaw2AFwI0_
-	JF0_Jw1lc2xSY4AK67AK6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r
-	4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF
-	67AKxVWUAVWUtwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2I
-	x0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2
-	z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnU
-	UI43ZEXa7VUjna93UUUUU==
-X-CM-SenderInfo: xqlfxv3q6l2u1dvotugofq/
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <c2568770-c80c-44d6-b3d5-a1a18f213d42@ti.com>
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-Replace a comma between expression statements by a semicolon.
+Hi Udit,
 
-Fixes: ce1b95ca23c1 ("watchdog: iTCO_wdt: Use allocated data structures")
-Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
----
- drivers/watchdog/iTCO_wdt.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+On 19:00-20240830, Kumar, Udit wrote:
+> Hi Manorit
+> 
+> Overall series looks ok but few comments below
+> 
+> On 8/28/2024 4:44 PM, Manorit Chawdhry wrote:
+> > Refactor J784s4 SoC files to a common file which uses the
+> > superset device to allow reuse in j742s2-evm which uses the subset part.
+> > 
+> > Signed-off-by: Manorit Chawdhry <m-chawdhry@ti.com>
+> > Reviewed-by: Beleswar Padhi <b-padhi@ti.com>
+> > ---
+> >   .../arm64/boot/dts/ti/k3-j784s4-j742s2-common.dtsi |  150 ++
+> >   .../boot/dts/ti/k3-j784s4-j742s2-main-common.dtsi  | 2667 ++++++++++++++++++
+> >   ...tsi => k3-j784s4-j742s2-mcu-wakeup-common.dtsi} |    2 +-
+> >   ...l.dtsi => k3-j784s4-j742s2-thermal-common.dtsi} |    0
+> >   arch/arm64/boot/dts/ti/k3-j784s4-main.dtsi         | 2847 +-------------------
+> >   arch/arm64/boot/dts/ti/k3-j784s4.dtsi              |  135 +-
+> >   6 files changed, 2914 insertions(+), 2887 deletions(-)
+> > 
+> > diff --git a/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-common.dtsi b/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-common.dtsi
+> > new file mode 100644
+> > index 000000000000..43fee57f0926
+> > --- /dev/null
+> > +++ b/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-common.dtsi
+> > @@ -0,0 +1,150 @@
+> > +// SPDX-License-Identifier: GPL-2.0-only OR MIT
+> > +/*
+> > + * Device Tree Source for J784S4 and J742S2 SoC Family
+> > + *
+> > + * TRM (j784s4) (SPRUJ43 JULY 2022): https://www.ti.com/lit/zip/spruj52
+> > + * TRM (j742s2): https://www.ti.com/lit/pdf/spruje3
+> > + *
+> > [..]		 <0x00 0x01000000 0x00 0x01000000 0x00 0x0d000000>, /* Most peripherals */
+> > +			 <0x00 0x04210000 0x00 0x04210000 0x00 0x00010000>, /* VPU0 */
+> > +			 <0x00 0x04220000 0x00 0x04220000 0x00 0x00010000>, /* VPU1 */
+> > +			 <0x00 0x0d000000 0x00 0x0d000000 0x00 0x00800000>, /* PCIe0 Core*/
+> > +			 <0x00 0x0d800000 0x00 0x0d800000 0x00 0x00800000>, /* PCIe1 Core*/
+> > +			 <0x00 0x0e000000 0x00 0x0e000000 0x00 0x00800000>, /* PCIe2 Core*/
+> > +			 <0x00 0x0e800000 0x00 0x0e800000 0x00 0x00800000>, /* PCIe3 Core*/
+> 
+> 
+> PCie2 and PCIe3 ranges are not common across these devices,
+> 
+> Do you want to move this into J784s4 specific file
+> 
+> Same comment for PCIe region DAT below
 
-diff --git a/drivers/watchdog/iTCO_wdt.c b/drivers/watchdog/iTCO_wdt.c
-index 264857d314da..35b358bcf94c 100644
---- a/drivers/watchdog/iTCO_wdt.c
-+++ b/drivers/watchdog/iTCO_wdt.c
-@@ -563,8 +563,8 @@ static int iTCO_wdt_probe(struct platform_device *pdev)
- 	}
- 
- 	ident.firmware_version = p->iTCO_version;
--	p->wddev.info = &ident,
--	p->wddev.ops = &iTCO_wdt_ops,
-+	p->wddev.info = &ident;
-+	p->wddev.ops = &iTCO_wdt_ops;
- 	p->wddev.bootstatus = 0;
- 	p->wddev.timeout = WATCHDOG_TIMEOUT;
- 	watchdog_set_nowayout(&p->wddev, nowayout);
--- 
-2.25.1
+This was already discussed in the previous revision and my stance is not
+to change it due to maintainance reasons [0].
 
+> 
+> > [..]
+> 
+> > 			 <0x42 0x00000000 0x42 0x00000000 0x01 0x00000000>, /* PCIe2 DAT1 */
+> > +			 <0x43 0x00000000 0x43 0x00000000 0x01 0x00000000>, /* PCIe3 DAT1 */
+> 
+> [..]
+> 
+> +#include "k3-j784s4-j742s2-main-common.dtsi"
+> > +#include "k3-j784s4-j742s2-mcu-wakeup-common.dtsi"
+> > diff --git a/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-main-common.dtsi b/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-main-common.dtsi
+> > [...]
+> > +
+> > +&cbass_main {
+> > +	msmc_ram: sram@70000000 {
+> > +		compatible = "mmio-sram";
+> > +		reg = <0x00 0x70000000 0x00 0x800000>;
+> 
+> Table 2-1 of J742S2 TRM says msmc RAM is 4MB and on J784S4 this is 8MB
+> 
+> Please see, if you can address that
+> 
+
+I think this was thought through before. So from my understanding, this
+memory map is just a dummy node that the bootloaders is supposed to be
+fixing up based on it's usecase [1]. Though ig it's not very intuitive
+looking at the DT, let me add a comment in the corresponding node to
+clarify this.
+
+"MSMC is configured by bootloaders and a runtime fixup is done in the DT
+for this node"
+
+Would you be okay with the following comment in the DT node for MSMC but
+keeping the following node in common file only?
+
+Regards,
+Manorit
+
+[0]: https://lore.kernel.org/linux-arm-kernel/20240827082445.bfx2r7z4iry4fdax@uda0497581/
+[1]: https://software-dl.ti.com/tisci/esd/latest/2_tisci_msgs/general/core.html?highlight=query#tisci-msg-query-msmc
+> 
+> > [...]
+> > 
 
