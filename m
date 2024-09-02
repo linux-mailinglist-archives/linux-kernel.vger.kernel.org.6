@@ -1,193 +1,118 @@
-Return-Path: <linux-kernel+bounces-310555-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310556-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6EA1967E47
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 05:47:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4792B967E4E
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 05:52:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 228C2B216D8
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 03:47:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F07811F2251D
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 03:52:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFF0D14EC42;
-	Mon,  2 Sep 2024 03:46:25 +0000 (UTC)
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFED214A611;
+	Mon,  2 Sep 2024 03:52:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RkZD6Xfq"
+Received: from mail-vk1-f177.google.com (mail-vk1-f177.google.com [209.85.221.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 709AB13AA45
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 03:46:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C48192E3EB;
+	Mon,  2 Sep 2024 03:52:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725248785; cv=none; b=TyW1TRrYLhgArxTjruUr08b+Fcbp/vYOAslmKo1VgMCXFK6ocrb+F1m1OT9nEEfGHmEeaPb6B2rD//OOirqSoyCXOJtFqXdGsKMiovVh4JSWCT4fy9fSoMtg7xFHctgQjd3y2ULVDpun7ZMfAaBFtTn0Kvh04S+X0ZoJF07ni64=
+	t=1725249165; cv=none; b=HDuOl6dPsa4gQBP1qB0b0fbjSj5s7lLDSI7d8mKS4g2J9xsx2giJGRBlvFA3T/+MUV8d9C+sLIMARrfJtXLReQQUb7Hc5wL1OSA7uKMIzU6RKTwmPQE5oHVxz604wvW5jOQOF0/97+XOICBpdEwAk4Uvf5/9X2Ms/X6SIvYZxig=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725248785; c=relaxed/simple;
-	bh=ccfd46cBpkEjSM2LjxDI9Y3nT+UHkBr7tm4He8LYYxk=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=MX06V3zLI68LOPGWnx6eDbEsuKB7bnk+bGO/gu57IGJwToaWYQ+7Yqr52EQyWwzor4bY3DnAd/SbSVbJUfwjoKOlFOtuJkaRzUqIdRCS4P+UIw+P5oPfOy1WABtHu9p7+PFhCV03o6smjo54sxpVxyPAsxZj6Yw6/RQtwqvc7Dk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-82a1c57f4a1so498578439f.3
-        for <linux-kernel@vger.kernel.org>; Sun, 01 Sep 2024 20:46:23 -0700 (PDT)
+	s=arc-20240116; t=1725249165; c=relaxed/simple;
+	bh=7T9EFXkKwg1R15vNn/8F1+fWeePN8YlaAfwn1Ma0Xgg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=D5r08wKN6W/OvFQAgCavh1OF1kgCmYGJfhIRV3A1nCmXB7qZuo1R1mXmMaZ3dSJ4RLYDO/ynC2bL4sMSDZsV+QnzWb/U71DKLEv0i0kAbmgrKcg8UdBrmX1WdhzymUSA72zsESSR4qxECYMH7GRfa6eP8OwyU/E0ah+ou0LueLs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RkZD6Xfq; arc=none smtp.client-ip=209.85.221.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f177.google.com with SMTP id 71dfb90a1353d-4fcff944d1dso1076555e0c.0;
+        Sun, 01 Sep 2024 20:52:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725249162; x=1725853962; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=G2RUnlHbNnTjl8NCMkpReeIs3Yr6dRgv9k7EM3TjbyY=;
+        b=RkZD6XfqbrjClh6CSZKP/QCBGGy7YBIKxZZ8gaEC5cJb8Wir0RBQ4JsWlNltoPJip8
+         7fc+GYS4vmfbdLwAa8z/i2wxO381jOcBM+OnFETpPOw3fiM1vBXOLtbWuAbcll26535F
+         uM6ybQZ+9qZGiBnd1gpOxE3Hwmqump7stWHSgH4Fc+Dv3TSc1Q5yVoJfiVZRrK9gnc60
+         XbJjgjQdvkbRGZu3rhJDi5JkeNRHrqUww4y+4LYSEjNR3cnp1SX3bYG2DyZNhJCAcbrr
+         hmZ92zPyGEa3rUAdwzu+QEsuTQfkiydom0jbMY5txhAh73TLekQoTF7J6T37Ac1Fsn/I
+         hUWQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725248782; x=1725853582;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=BwEEwZlFL12BxbuJwWxETv9001e1owLvuM6P6c3qF+g=;
-        b=LikZGCJr0qeSSxtvy/U8dT5Oatiy+WrH4GcuxAl49uRN8Fy2OZeYikcyVOT4Zxj43r
-         FevdHcuTdUFHs/D0O71klRK/pHc+em91ffm4UYhMPx5SMe29Tk472bYgm0GDL40ZrN2y
-         UJYRXlRzC58szO9nA2TNkMc1igsbPDCIT463wU2dsHC+EWg67Nn7QFd9d4J9v9bAeRSk
-         2eZWuDKz3p30Zjqo2Yfe5aDDF4avvkpoDuybQLs+o1DEBtfEJIXf6dkiIGJGsE7LZm7Q
-         1o7ikOhYsGFd+i5S/ARihXsaXebCqFCuzjS0VP3ziIEIsobFPY3yBtOLhcgYXN22pfgN
-         xYog==
-X-Forwarded-Encrypted: i=1; AJvYcCV9yPTn+bSiV1HhVG4mSgIyQYhfu5azxT4xkaq+WCGbeIgxAm3w4LR5fhfl7FaumyEuEMaeA4SqBw/fcJY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywo5Gqs2PP/AIAzR2T5LJ1TT6BvKU9mudCbRF1sMIm5uTPd0BO1
-	brhUGfCtmK6yX/3MvXe4n3glDXEBrZ9n9bKkuUs9YVRFj63MA3VrrcpPi7goSplkkeyMEsI0dWe
-	Qk+jYfbSwMhLiuQPCS7ku/jBHMnjEBH1gbWRDFeH9bQinz2AbUOxfiSk=
-X-Google-Smtp-Source: AGHT+IFLdLRoi5//frYibdpTuTcxxkcR9pFtIa6ASZ15A2L7b4Bo6Q4hmLk86urFgqWGjvTZO2J2lYICLgBYhqTjqdU1RLr8GLn7
+        d=1e100.net; s=20230601; t=1725249162; x=1725853962;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=G2RUnlHbNnTjl8NCMkpReeIs3Yr6dRgv9k7EM3TjbyY=;
+        b=WHI20wXLfx/J+FgIBpOXMaqHFQgj+cZ1HmKX5Bff6KIgkDrIdzAREQIFXQaZNZ7s6B
+         ZyF8T9xR0gdgAN+VQp8Z16KSIcoADtre1bfu80E3Cz/+I2+wHkRTLUYAlj8vBSfOhwBv
+         pPt6Dq4gn/hm7WiphYA9QwEtWroQmlu9X7uiRHUTHALUxrKJ9SYEPG78VC1WNFUF8H9C
+         7Ba3SNuUz6sbHApKAQqh2uVM1r9BDQKLboT1FnG8oR7h+HOI1pnvPFx9VoDg91WnWGfp
+         fCLCnsq2v3xK8x1wCTNwsGxWE8hlY8XdoWq3HCtirAMfdfuxFPuPn8ZE9PF/VIN6OZpa
+         WzDA==
+X-Forwarded-Encrypted: i=1; AJvYcCUc6CT9TyRSIc08GMJC2oYC3S+ZahOPAHsEYp2m4Voa7RSz8SSDWOSnk7uM/eIN7WTxC7OgaahZRiwBVmza@vger.kernel.org, AJvYcCUwi28ayDHA847hO4TlY8k9OFCOECiMudA2hzeVrks0BXDL71G9d4MNbss/6XqjcSJKJscgnlc09YKMsA==@vger.kernel.org, AJvYcCWq+FBHVyoP2JJasBTsWeiPETh8249ZDa9zKZOEdsRWuctEeO3Kc+FoUK+kCD8rqfyCYFkwYeabmQPWC17L@vger.kernel.org
+X-Gm-Message-State: AOJu0YyxvCDlq6LBdA3PeWgKbC7K07lxdR6BklacJRSYPPbLrXT+wgvL
+	6LZewujiFWFWIMlzVBgLWlb7y6BKVtBlwQuRvji48rDeKM8Fjkz33mOcnQD9GdJO5Z/PnHynKM0
+	dwqANwicl0FzFuOWO+Xyna2KPCriigMu1I8pDYQ==
+X-Google-Smtp-Source: AGHT+IFOFvhlA3yGgyBjxo/ShtFk6zMi99psF4OFBXtaEeqWpyEov+j30W8jdMyOX7uBms2EB08Vk2QgDmkDj87ZfX4=
+X-Received: by 2002:a05:6122:1828:b0:4ef:6865:8ffd with SMTP id
+ 71dfb90a1353d-4fff16970aemr11072932e0c.10.1725249162178; Sun, 01 Sep 2024
+ 20:52:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:4118:b0:4c0:a90d:4a7c with SMTP id
- 8926c6da1cb9f-4d017f16606mr534687173.6.1725248782661; Sun, 01 Sep 2024
- 20:46:22 -0700 (PDT)
-Date: Sun, 01 Sep 2024 20:46:22 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000d70eed06211ac86b@google.com>
-Subject: [syzbot] [rdma?] WARNING in gid_table_release_one (2)
-From: syzbot <syzbot+b8b7a6774bf40cf8296b@syzkaller.appspotmail.com>
-To: jgg@ziepe.ca, leon@kernel.org, linux-kernel@vger.kernel.org, 
-	linux-rdma@vger.kernel.org, netdev@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
+References: <CAHOo4gJxTt2HrnN8s9zM0spSV385R=ykNd8Mp_zvPS8tGP3Nfw@mail.gmail.com>
+ <nm2qm77haolpraz3ta3pxh5mv52yfbxe6qzix5j7h3jmq4zljl@4qfjzp3dfadd>
+ <CAHOo4gKhwsSpoAYDTwnvt3Wh71hTVf=3xR4rUvDEZui8N53ijg@mail.gmail.com>
+ <yqwjxc3jkcjkb65r4lfpg24fmmlelt3oisnc5eh4fex7wtkp5d@bueuka6g54k3>
+ <CAHOo4g+Q40RhdzuOOtAOPWtonCEty+4-zZSHqcgpzSCxbeVPjg@mail.gmail.com>
+ <pkbhhxz7emkubq4qvawtbjlxjgt5zejvlg4nxsfdzk7xozrfgt@7l7kobl5ejoq>
+ <CAHOo4g+BRWHuQu+ekLunyOi0m=j1w9Tsy=mHeMMut68XXU1ORg@mail.gmail.com> <rkwucrtbwkykuivros2gdq2cdwmjri2c2xuglbnpcvnkemwls6@yoe32qbeimjw>
+In-Reply-To: <rkwucrtbwkykuivros2gdq2cdwmjri2c2xuglbnpcvnkemwls6@yoe32qbeimjw>
+From: Hui Guo <guohui.study@gmail.com>
+Date: Mon, 2 Sep 2024 11:52:30 +0800
+Message-ID: <CAHOo4gLWFfjrPtuAD1i4+UUY9vDio_55NTk-bpwDmMm65+uk9Q@mail.gmail.com>
+Subject: Fwd: general protection fault in bioset_exit
+To: linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-crypto@vger.kernel.org, linux-block@vger.kernel.org, 
+	Jens Axboe <axboe@kernel.dk>
+Cc: Kent Overstreet <kent.overstreet@linux.dev>, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+Hi Kernel Maintainers,  after discussion with Kent Overstreet, we
+think this bug (general protection fault in bioset_exit) may be caused
+by crypto module.
+The bug information can be viewed in the previous reply email content,
+could you please check if the crash is caused by the crypto module or
+some other reason?
 
-syzbot found the following issue on:
-
-HEAD commit:    928f79a188aa Merge tag 'loongarch-fixes-6.11-2' of git://g..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=14089643980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=9e8c6a00ef394bcf
-dashboard link: https://syzkaller.appspot.com/bug?extid=b8b7a6774bf40cf8296b
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-userspace arch: i386
-
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-928f79a1.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/5bf719d3bbf5/vmlinux-928f79a1.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/88527595ba7c/bzImage-928f79a1.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+b8b7a6774bf40cf8296b@syzkaller.appspotmail.com
-
-infiniband syz1: ib_query_port failed (-19)
-infiniband syz1: Couldn't set up InfiniBand P_Key/GID cache
-------------[ cut here ]------------
-GID entry ref leak for dev syz1 index 0 ref=1
-WARNING: CPU: 0 PID: 19837 at drivers/infiniband/core/cache.c:806 release_gid_table drivers/infiniband/core/cache.c:806 [inline]
-WARNING: CPU: 0 PID: 19837 at drivers/infiniband/core/cache.c:806 gid_table_release_one+0x387/0x4b0 drivers/infiniband/core/cache.c:886
-Modules linked in:
-CPU: 0 UID: 0 PID: 19837 Comm: syz.1.3934 Not tainted 6.11.0-rc5-syzkaller-00079-g928f79a188aa #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-RIP: 0010:release_gid_table drivers/infiniband/core/cache.c:806 [inline]
-RIP: 0010:gid_table_release_one+0x387/0x4b0 drivers/infiniband/core/cache.c:886
-Code: 78 07 00 00 48 85 f6 74 2a 48 89 74 24 38 e8 b0 0a 76 f9 48 8b 74 24 38 44 89 f9 89 da 48 c7 c7 c0 69 51 8c e8 5a c3 38 f9 90 <0f> 0b 90 90 e9 6f fe ff ff e8 8b 0a 76 f9 49 8d bc 24 28 07 00 00
-RSP: 0018:ffffc900042b7080 EFLAGS: 00010286
-RAX: 0000000000000000 RBX: 0000000000000000 RCX: ffffc9002811e000
-RDX: 0000000000040000 RSI: ffffffff814dd406 RDI: 0000000000000001
-RBP: ffff88807ebaaf00 R08: 0000000000000001 R09: 0000000000000000
-R10: 0000000000000001 R11: 0000000000000000 R12: ffff888051860000
-R13: dffffc0000000000 R14: ffffed100fd755fb R15: 0000000000000001
-FS:  0000000000000000(0000) GS:ffff88802c000000(0063) knlGS:00000000f56c6b40
-CS:  0010 DS: 002b ES: 002b CR0: 0000000080050033
-CR2: 000000002effcff8 CR3: 0000000060c5e000 CR4: 0000000000350ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- ib_device_release+0xef/0x1e0 drivers/infiniband/core/device.c:498
- device_release+0xa1/0x240 drivers/base/core.c:2582
- kobject_cleanup lib/kobject.c:689 [inline]
- kobject_release lib/kobject.c:720 [inline]
- kref_put include/linux/kref.h:65 [inline]
- kobject_put+0x1e4/0x5a0 lib/kobject.c:737
- put_device+0x1f/0x30 drivers/base/core.c:3790
- rxe_net_add+0xe0/0x110 drivers/infiniband/sw/rxe/rxe_net.c:544
- rxe_newlink+0x70/0x190 drivers/infiniband/sw/rxe/rxe.c:197
- nldev_newlink+0x373/0x5e0 drivers/infiniband/core/nldev.c:1794
- rdma_nl_rcv_msg+0x388/0x6e0 drivers/infiniband/core/netlink.c:195
- rdma_nl_rcv_skb.constprop.0.isra.0+0x2e6/0x450 drivers/infiniband/core/netlink.c:239
- netlink_unicast_kernel net/netlink/af_netlink.c:1331 [inline]
- netlink_unicast+0x53c/0x7f0 net/netlink/af_netlink.c:1357
- netlink_sendmsg+0x8b8/0xd70 net/netlink/af_netlink.c:1901
- sock_sendmsg_nosec net/socket.c:730 [inline]
- __sock_sendmsg net/socket.c:745 [inline]
- ____sys_sendmsg+0x9b4/0xb50 net/socket.c:2597
- ___sys_sendmsg+0x135/0x1e0 net/socket.c:2651
- __sys_sendmsg+0x117/0x1f0 net/socket.c:2680
- do_syscall_32_irqs_on arch/x86/entry/common.c:165 [inline]
- __do_fast_syscall_32+0x73/0x120 arch/x86/entry/common.c:386
- do_fast_syscall_32+0x32/0x80 arch/x86/entry/common.c:411
- entry_SYSENTER_compat_after_hwframe+0x84/0x8e
-RIP: 0023:0xf7f20579
-Code: b8 01 10 06 03 74 b4 01 10 07 03 74 b0 01 10 08 03 74 d8 01 00 00 00 00 00 00 00 00 00 00 00 00 00 51 52 55 89 e5 0f 34 cd 80 <5d> 5a 59 c3 90 90 90 90 8d b4 26 00 00 00 00 8d b4 26 00 00 00 00
-RSP: 002b:00000000f56c656c EFLAGS: 00000296 ORIG_RAX: 0000000000000172
-RAX: ffffffffffffffda RBX: 0000000000000008 RCX: 00000000200003c0
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000296 R12: 0000000000000000
-R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
- </TASK>
-----------------
-Code disassembly (best guess), 2 bytes skipped:
-   0:	10 06                	adc    %al,(%rsi)
-   2:	03 74 b4 01          	add    0x1(%rsp,%rsi,4),%esi
-   6:	10 07                	adc    %al,(%rdi)
-   8:	03 74 b0 01          	add    0x1(%rax,%rsi,4),%esi
-   c:	10 08                	adc    %cl,(%rax)
-   e:	03 74 d8 01          	add    0x1(%rax,%rbx,8),%esi
-  1e:	00 51 52             	add    %dl,0x52(%rcx)
-  21:	55                   	push   %rbp
-  22:	89 e5                	mov    %esp,%ebp
-  24:	0f 34                	sysenter
-  26:	cd 80                	int    $0x80
-* 28:	5d                   	pop    %rbp <-- trapping instruction
-  29:	5a                   	pop    %rdx
-  2a:	59                   	pop    %rcx
-  2b:	c3                   	ret
-  2c:	90                   	nop
-  2d:	90                   	nop
-  2e:	90                   	nop
-  2f:	90                   	nop
-  30:	8d b4 26 00 00 00 00 	lea    0x0(%rsi,%riz,1),%esi
-  37:	8d b4 26 00 00 00 00 	lea    0x0(%rsi,%riz,1),%esi
+---------- Forwarded message ---------
+=E5=8F=91=E4=BB=B6=E4=BA=BA=EF=BC=9A Kent Overstreet <kent.overstreet@linux=
+.dev>
+Date: 2024=E5=B9=B49=E6=9C=882=E6=97=A5=E5=91=A8=E4=B8=80 11:16
+Subject: Re: general protection fault in bioset_exit
+To: Hui Guo <guohui.study@gmail.com>
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+On Mon, Sep 02, 2024 at 11:14:01AM GMT, Hui Guo wrote:
+> Thank Kent Overstreet for your quick response=EF=BC=81
+> Can I CC this email to the developers responsible for the crypto
+> module? I would like them to get involved and see if they can help
+> identify the cause of the crash.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+Go for it.
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+I'd also include the syzbot dashboard, there's a couple crypto ones
+there I haven't been able to track down (but I haven't dug that deeply
+in to them either): https://syzkaller.appspot.com/upstream/s/bcachefs
 
