@@ -1,151 +1,158 @@
-Return-Path: <linux-kernel+bounces-310567-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310564-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D114967E7A
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 06:26:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 246BD967E6A
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 06:18:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9C01F1C218CA
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 04:26:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 58737B20DAC
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 04:18:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA38E14E2FA;
-	Mon,  2 Sep 2024 04:26:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87C4B14B970;
+	Mon,  2 Sep 2024 04:18:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dDxMc7pP"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="tt0npxQd"
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81FCE7DA79;
-	Mon,  2 Sep 2024 04:26:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90F1D625
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 04:17:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725251203; cv=none; b=HPLEXMj5MExtE+5wROhK1gqxFS/bvU5DDRSG9GTcFma38nXHae1KYzsQom5Rsd7FwtYHc8tktq8xJo4f3+JWKS8DksSRhzDseMWqnySPlNGreXTDF5DvX6VtpzgRCEeRdyfVGl+WYEFLZTZ/qJu4gO0/cagaAg8INale+7o9ox0=
+	t=1725250680; cv=none; b=tLxHy/Mncj1EDTcaFabzS6e3HgwG+1UF2mtCVrnir7ZcPd/rsJmBPizW5vnfaJhh7CYebgtWIJfRsZN257U8JHetymg+KqYCU545iVRh8KhkrIyWu3LuHJkVUVSV2H7m1vkPoA7pKz/EDx0uq20dXvwlv9LMoeu4SY7YSkabDgM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725251203; c=relaxed/simple;
-	bh=S5qhRygrcfXvm7kJzwuP8Cmx/Ac9/Pt/rY0TldkIg7A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PgPSS+c/TyMqz0Oz4WeKZYty4GFl0PU5/e3wSmMhLR8yatZFnJiR5MFG57dHH/84AABPEUO89IpCjvyDrnnSSCNhxHCJK4foVBnwJmWOMNPc5eHCL8WyGLWug6V4S3L2VrbE/mmB5pbi/upQA4mxVB+YN/2bwkL5kLF4xCeidB0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dDxMc7pP; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725251201; x=1756787201;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=S5qhRygrcfXvm7kJzwuP8Cmx/Ac9/Pt/rY0TldkIg7A=;
-  b=dDxMc7pPokPtoqM0EDs2rOGefn8WSzChu1uYRuyz185oxRpSnmyzs+j8
-   KLsh240YPJAWKgiak8ZkiAW7GCjEv4GHlSA2mAPLktTt99ayQ6TVsHtin
-   vtvfpNF45mipsGlYIichfKsl15ujWy0yAOhKya1jXZekNpTBMLaQP2ByM
-   58c6aQBwODPsVQmBto4ipTSH5QkKFd/+ASw4UgI+AJEG4+GCJ2qSxufDz
-   slct6SLD/SuuKtay9BgOrDBfk1GZvqEBGcG0F0RNk9jBC+YG653XGhdMU
-   7nYI/U7SvFL87cowm1E+fKqQUdFcRCxQFAXl+qfwJHNJvAQ+mo4x/h8qN
-   w==;
-X-CSE-ConnectionGUID: xFFftpFwSViGl6+7cIMLCw==
-X-CSE-MsgGUID: CnDdGiGzRzCO07hJF54gUQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11182"; a="46327567"
-X-IronPort-AV: E=Sophos;i="6.10,195,1719903600"; 
-   d="scan'208";a="46327567"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Sep 2024 21:26:41 -0700
-X-CSE-ConnectionGUID: tlFPs6IPQlWRA66z8qXHOg==
-X-CSE-MsgGUID: E6Dh4lY7SJCe09jHoHjkuw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,195,1719903600"; 
-   d="scan'208";a="64175427"
-Received: from lkp-server01.sh.intel.com (HELO 9c6b1c7d3b50) ([10.239.97.150])
-  by fmviesa007.fm.intel.com with ESMTP; 01 Sep 2024 21:26:38 -0700
-Received: from kbuild by 9c6b1c7d3b50 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1skyeC-00057C-23;
-	Mon, 02 Sep 2024 04:26:36 +0000
-Date: Mon, 2 Sep 2024 12:26:17 +0800
-From: kernel test robot <lkp@intel.com>
-To: KobaK <kobak@nvidia.com>, Matt Ochs <mochs@nvidia.com>,
-	James Morse <james.morse@arm.com>,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev
-Subject: Re: [PATCH V2] acpi/prmt: find block with specific type
-Message-ID: <202409021235.QLbKiKxF-lkp@intel.com>
-References: <20240901162255.1302358-1-kobak@nvidia.com>
+	s=arc-20240116; t=1725250680; c=relaxed/simple;
+	bh=MO14LUIF8qfg6JN0ScS8++cgfVvw/iIUC0YhSNYWRP8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
+	 References; b=FedFUUYWdBMh2dNbwUAKEzGut211EPKC+9CHf+82jFB/uQAg25bI651iYJevtPHjkm5XuLFa6VICKwYC1i+q00aGLPxjJVaB5h0QYdSinbP2LKaIs4G3W0zNajk0L6nlfy4ib7U45Y30IdBGkefxzuGl1omjoaWLm6QlR8nOwr4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=tt0npxQd; arc=none smtp.client-ip=203.254.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas2p4.samsung.com (unknown [182.195.41.56])
+	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20240902041754epoutp04e81846f827bc094eff303c2be19aa0a3~xUlj1E3kU2013220132epoutp04D
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 04:17:54 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20240902041754epoutp04e81846f827bc094eff303c2be19aa0a3~xUlj1E3kU2013220132epoutp04D
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1725250674;
+	bh=Isa52YVDhPYr+/I4lVZk60xROWfiWI4E5z4qj93hrCU=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=tt0npxQdfiSqjS4+S3WmWLQw9kaPbiQOnLr3UUOQ0V5+OPtNC7e8fElyn54JqbuHR
+	 Bz6Be+ZQadG7J8nfLMczS6A2scgO009yRNsj9bmPG0m72CVeHzxv8L1ykhNtpGINoe
+	 gx4X9cRNvg5W/s7xM++N/7vr//JuGy1ZarqSSJ1k=
+Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
+	epcas2p2.samsung.com (KnoxPortal) with ESMTP id
+	20240902041753epcas2p2d2c82cb32ec3fc4f4bb49e93df19bd30~xUljLefW91585315853epcas2p22;
+	Mon,  2 Sep 2024 04:17:53 +0000 (GMT)
+Received: from epsmges2p3.samsung.com (unknown [182.195.36.98]) by
+	epsnrtp4.localdomain (Postfix) with ESMTP id 4WxwTX4vNNz4x9Q7; Mon,  2 Sep
+	2024 04:17:52 +0000 (GMT)
+Received: from epcas2p3.samsung.com ( [182.195.41.55]) by
+	epsmges2p3.samsung.com (Symantec Messaging Gateway) with SMTP id
+	D3.F3.10012.07C35D66; Mon,  2 Sep 2024 13:17:52 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+	epcas2p1.samsung.com (KnoxPortal) with ESMTPA id
+	20240902041752epcas2p12a06fa12d412aa6ce9a03ccb588abcf5~xUlh4nUzS2159921599epcas2p1w;
+	Mon,  2 Sep 2024 04:17:52 +0000 (GMT)
+Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
+	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20240902041752epsmtrp1c8d51b8d4f900d844185b0ab7f507e33~xUlh2pkVv3022030220epsmtrp15;
+	Mon,  2 Sep 2024 04:17:52 +0000 (GMT)
+X-AuditID: b6c32a47-ea1fa7000000271c-df-66d53c707abe
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+	epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	4A.1E.07567.07C35D66; Mon,  2 Sep 2024 13:17:52 +0900 (KST)
+Received: from rack03.dsn.sec.samsung.com (unknown [10.229.95.126]) by
+	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20240902041751epsmtip2c8e7ed1acf4c1fea5b6fed398b042cdd~xUlhoDYLT0320303203epsmtip2K;
+	Mon,  2 Sep 2024 04:17:51 +0000 (GMT)
+From: Kiwoong Kim <kwmad.kim@samsung.com>
+To: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
+	huobean@gmail.com, alim.akhtar@samsung.com, avri.altman@wdc.com,
+	bvanassche@acm.org, jejb@linux.ibm.com, martin.petersen@oracle.com,
+	beanhuo@micron.com, adrian.hunter@intel.com, h10.kim@samsung.com,
+	hy50.seo@samsung.com, sh425.lee@samsung.com, kwangwon.min@samsung.com,
+	junwoo80.lee@samsung.com, wkon.kim@samsung.com
+Cc: Kiwoong Kim <kwmad.kim@samsung.com>
+Subject: [RESEND PATCH v2 0/2] scsi: ufs: introduce a callback to override
+ OCS value
+Date: Mon,  2 Sep 2024 13:26:44 +0900
+Message-Id: <cover.1725251103.git.kwmad.kim@samsung.com>
+X-Mailer: git-send-email 2.26.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240901162255.1302358-1-kobak@nvidia.com>
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrGJsWRmVeSWpSXmKPExsWy7bCmuW6BzdU0gw9NyhYnn6xhs3gwbxub
+	xcufV9ksDj7sZLGY9uEns8Xf2xdZLeacbWCyWL34AYvFohvbmCx2/W1msth6YyeLxc0tR1ks
+	Lu+aw2bRfX0Hm8Xy4/+YLJb+e8tisfnSNxYHQY/LV7w9ds66y+6xeM9LJo8Jiw4wenxf38Hm
+	8fHpLRaPvi2rGD0+b5LzaD/QzRTAGZVtk5GamJJapJCal5yfkpmXbqvkHRzvHG9qZmCoa2hp
+	Ya6kkJeYm2qr5OIToOuWmQP0i5JCWWJOKVAoILG4WEnfzqYov7QkVSEjv7jEVim1ICWnwLxA
+	rzgxt7g0L10vL7XEytDAwMgUqDAhO+P07NcsBedZK3avP83YwLiLpYuRk0NCwETi3LfD7F2M
+	XBxCAjsYJZY9nsgC4XxilGjZ/pANwvnGKHHo7VtGmJbWpS+ZIBJ7GSXm7G2DqvrBKPGvHaSF
+	k4NNQFPi6c2pYFUiAi3MEhc2/QJLMAuoS+yacIIJxBYWCJM4MnkbWJxFQFVi7qZPYHFeAQuJ
+	d/8XsEKsk5dY1PAbKi4ocXLmExaIOfISzVtnM4MskBDYwSHRN38z1EsuEr8uf4BqFpZ4dXwL
+	O4QtJfGyvw3KLpZYu+MqE0RzA6PE6lenoRLGErOetQM9ygG0QVNi/S59EFNCQFniyC2ovXwS
+	HYf/skOEeSU62oQgGpUlfk2aDA0hSYmZN+9ADfSQ2DarEewaIYFYiXezN7JPYJSfheSbWUi+
+	mYWwdwEj8ypGsdSC4tz01GKjAmN4tCbn525iBCdoLfcdjDPeftA7xMjEwXiIUYKDWUmEd+me
+	i2lCvCmJlVWpRfnxRaU5qcWHGE2B4TuRWUo0OR+YI/JK4g1NLA1MzMwMzY1MDcyVxHnvtc5N
+	ERJITyxJzU5NLUgtgulj4uCUamBy/dyxMfioug6XxulnK7TCdatVV749E9q/5AHrtk5voVPX
+	AlxZL8lt+s6ywnvp2coTDbs3dbHW7hAX6/rZx+80W2rfm4dfzzP2Jt1Zt9WEpVFFq/S5hIJ6
+	u/lOw2SxK82alddZX8x1ZWkuKTbaqrbtdm2QnBh/q4LM7X0Ki5leG5SfWvswlM3sjVnf3GTu
+	sD2uHKKeT5frzLB9oD7j/Du1+7dOO09cMf/1g5z7kRq2+vcKEsK3tbHxnvoyZWsx51GOv+7X
+	7k9K/fCygKG6+svDycoszicMtB8aLhBbEmfasiBf+6hZgkVOW8g6MxONI5FOW75n80z84mZu
+	HNG9bJ/o2fy4xCOGT5717ujbbqzEUpyRaKjFXFScCABwgjpsWQQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrCLMWRmVeSWpSXmKPExsWy7bCSvG6BzdU0g1nTWS1OPlnDZvFg3jY2
+	i5c/r7JZHHzYyWIx7cNPZou/ty+yWsw528BksXrxAxaLRTe2MVns+tvMZLH1xk4Wi5tbjrJY
+	XN41h82i+/oONovlx/8xWSz995bFYvOlbywOgh6Xr3h77Jx1l91j8Z6XTB4TFh1g9Pi+voPN
+	4+PTWywefVtWMXp83iTn0X6gmymAM4rLJiU1J7MstUjfLoEr4/Ts1ywF51krdq8/zdjAuIul
+	i5GTQ0LARKJ16UumLkYuDiGB3YwSb073sEMkJCVO7HzOCGELS9xvOcIKYgsJfGOUWPFJG8Rm
+	E9CUeHpzKliziMAMZomGzq3MIAlmAXWJXRNOMIHYwgIhEnOfrGcDsVkEVCXmbvoEFucVsJB4
+	938BK8QCeYlFDb+h4oISJ2c+YYGYIy/RvHU28wRGvllIUrOQpBYwMq1ilEwtKM5Nz002LDDM
+	Sy3XK07MLS7NS9dLzs/dxAiOGC2NHYz35v/TO8TIxMF4iFGCg1lJhHfpnotpQrwpiZVVqUX5
+	8UWlOanFhxilOViUxHkNZ8xOERJITyxJzU5NLUgtgskycXBKNTAxhrVm3DxTcfeT2P9V+zpk
+	BaewyM/t7Ko6XZIoMzt3AWuggGffz7PqZr6MTqH+W8xZZMp26Mdrnz4b42kWOLVCUNKOr2Uy
+	9+ovX86+PhXsw3mhwMjr65qGhVoMHWzvTeS/zea6tMfOpscwZ1nYLcv2r7kWe1Ij3+/IPrbU
+	OTQ2/cbuNSEBWnXTc06tS0/60t/Ud8X0wFaXm1p5pR9mhDu9mHakWj3jl1B/b/TqrKrpe1dN
+	Nlw0Q71sgfKuL18FvrJVLttYNLX923zVadtEH34UW8iguy/5dcxt1WOO1xUcFLUnqSQyzZ7C
+	2ue5dFGK3/rQX29dZ5bd3RkgGff2aEFM0O+MMG7vXXwfHvEvMVZiKc5INNRiLipOBAAnjQu3
+	BwMAAA==
+X-CMS-MailID: 20240902041752epcas2p12a06fa12d412aa6ce9a03ccb588abcf5
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: AUTO_CONFIDENTIAL
+CMS-TYPE: 102P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20240902041752epcas2p12a06fa12d412aa6ce9a03ccb588abcf5
+References: <CGME20240902041752epcas2p12a06fa12d412aa6ce9a03ccb588abcf5@epcas2p1.samsung.com>
 
-Hi KobaK,
+I send this again adding more reviewers.
 
-kernel test robot noticed the following build warnings:
+UFSHCI defines OCS values but doesn't specify what exact
+conditions raise them. So I think it needs another callback
+to replace the original OCS value with the value that works
+the way you want.
 
-[auto build test WARNING on rafael-pm/linux-next]
-[also build test WARNING on rafael-pm/bleeding-edge linus/master v6.11-rc6 next-20240830]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+v1 -> v2: fix build error for arguments
 
-url:    https://github.com/intel-lab-lkp/linux/commits/KobaK/acpi-prmt-find-block-with-specific-type/20240902-002354
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git linux-next
-patch link:    https://lore.kernel.org/r/20240901162255.1302358-1-kobak%40nvidia.com
-patch subject: [PATCH V2] acpi/prmt: find block with specific type
-config: x86_64-kexec (https://download.01.org/0day-ci/archive/20240902/202409021235.QLbKiKxF-lkp@intel.com/config)
-compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240902/202409021235.QLbKiKxF-lkp@intel.com/reproduce)
+Kiwoong Kim (2):
+  scsi: ufs: core: introduce override_cqe_ocs
+  scsi: ufs: ufs-exynos: implement override_cqe_ocs
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202409021235.QLbKiKxF-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
->> drivers/acpi/prmt.c:88:66: warning: format specifies type 'unsigned long' but the argument has type 'u64' (aka 'unsigned long long') [-Wformat]
-      88 |         pr_warn("PRM: Failed to find a VA block for pa: %lx type %u\n", pa, type);
-         |                                                         ~~~             ^~
-         |                                                         %llx
-   include/linux/printk.h:518:37: note: expanded from macro 'pr_warn'
-     518 |         printk(KERN_WARNING pr_fmt(fmt), ##__VA_ARGS__)
-         |                                    ~~~     ^~~~~~~~~~~
-   include/linux/printk.h:465:60: note: expanded from macro 'printk'
-     465 | #define printk(fmt, ...) printk_index_wrap(_printk, fmt, ##__VA_ARGS__)
-         |                                                     ~~~    ^~~~~~~~~~~
-   include/linux/printk.h:437:19: note: expanded from macro 'printk_index_wrap'
-     437 |                 _p_func(_fmt, ##__VA_ARGS__);                           \
-         |                         ~~~~    ^~~~~~~~~~~
-   1 warning generated.
+ drivers/ufs/core/ufshcd-priv.h |  9 +++++++++
+ drivers/ufs/core/ufshcd.c      | 11 +++++++----
+ drivers/ufs/host/ufs-exynos.c  |  8 ++++++++
+ include/ufs/ufshcd.h           |  1 +
+ 4 files changed, 25 insertions(+), 4 deletions(-)
 
 
-vim +88 drivers/acpi/prmt.c
-
-    74	
-    75	static u64 efi_pa_va_lookup(u64 pa, u32 type)
-    76	{
-    77		efi_memory_desc_t *md;
-    78		u64 pa_offset = pa & ~PAGE_MASK;
-    79		u64 page = pa & PAGE_MASK;
-    80	
-    81		for_each_efi_memory_desc(md) {
-    82			if ((md->type == type) &&
-    83				(md->phys_addr < pa && pa < md->phys_addr + PAGE_SIZE * md->num_pages)) {
-    84				return pa_offset + md->virt_addr + page - md->phys_addr;
-    85			}
-    86		}
-    87	
-  > 88		pr_warn("PRM: Failed to find a VA block for pa: %lx type %u\n", pa, type);
-    89	
-    90		return 0;
-    91	}
-    92	
-
+base-commit: 3ba963597d19d88eb06b50af8e8757abbdc9035b
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.26.0
+
 
