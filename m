@@ -1,89 +1,255 @@
-Return-Path: <linux-kernel+bounces-310560-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310561-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81888967E5E
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 06:11:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 427B5967E63
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 06:12:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A3D92821A9
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 04:11:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 654E41C2191E
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 04:12:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D4DE1494B3;
-	Mon,  2 Sep 2024 04:11:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D37AD14BF89;
+	Mon,  2 Sep 2024 04:12:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Ats43WXn"
-Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ArKX447D"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A2C8A32
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 04:11:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0518320E;
+	Mon,  2 Sep 2024 04:12:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725250305; cv=none; b=sqDidCODF6+JcswhVvSEuCjNDTlf1KyAbjrRzP1vHVUsAmUdTtiBkOGDlAjIypb6FwNOp/3QtT5LFX57J/rT54Xn0OGQfi365eBRF1CbCTZJ6/sWD+QFe/nCTHaLamSmN0LX+5P7jLCYGJTURPi9YFWEPUrBaeHIoDdf4YCpCjk=
+	t=1725250365; cv=none; b=tIDtYW2jfbFoDngXija4rVufFAyN9wL2zjqB/IPM586fjxm/iFlJjm6XIwqzwRRw8OliNaMYmu5osBVOZQxeswObDgDcdvwieUjHzbRfpkg0eefKYG77RrdmA9Uy1WK1OobCPXt+g9u7i5IvP1xzyX5kF6Igqhj2g2gBjPyRnUw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725250305; c=relaxed/simple;
-	bh=ldg+LbqnHJ9gwDMdSZ9tPLEGrNZoIczhjCXH+CAGglY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=t3qGV9ynpOSmMG6XJOHc0ufrZKKNhcPizcJLHYuHLH87wbzrsBVm4WJR478ViQWymZzxQspqFyJ4u16w3Nea2JDJrSfj2f99OyPF6NErSAvg0K7Xg6v43/Jn1++y3NGu7wzp/JYmfMabXxSrxLBkbo9tSnVs5ZPZ1WeUYdf9qUo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Ats43WXn; arc=none smtp.client-ip=209.85.215.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-70b2421471aso2009349a12.0
-        for <linux-kernel@vger.kernel.org>; Sun, 01 Sep 2024 21:11:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1725250303; x=1725855103; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=ldg+LbqnHJ9gwDMdSZ9tPLEGrNZoIczhjCXH+CAGglY=;
-        b=Ats43WXnWxyY6y17ZWFQzbdNtOKKoS2EO4g0v8E6UMD6DvM+wLrVRBty+2/4X/eLu0
-         9HZrgcvywEI4IfGumSOQAQroLQYTajP4VYkPYT1dSisMokPHIBAiS04NErtBd6+CRM9M
-         Bb3o3QISiUc0FtmWGAK9Hg1bCpN3PPjQgkn7fYcj3u9cAmYim4D1gFGz9TIFTWwrCRTw
-         1iz01fqbw/GtN5xOG+dCc8VTkxPttlm+EKSX9023M15eQHLhITU4DXCY0wDsYeMThjmO
-         ycD3FklA+iZaV7CK/B4gjxNI7yu/egOJerG4cRx3jmDfFAOzQBqjxLDmRW4GP6XHEI43
-         X+kg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725250303; x=1725855103;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ldg+LbqnHJ9gwDMdSZ9tPLEGrNZoIczhjCXH+CAGglY=;
-        b=C9ZI29K2H2ff2a/JowFPgpm2zPnkWaJaaRk+xx4YZssty+EGUu594umtzfxnOHIiXX
-         w7z6f+JhzUx4BA5RPtKRFcKkHUb4Gxr96jTHUsDVU0d2Q6Dd52t4peS/yDO+PCcHqEwg
-         A7OaDAczW40I2vCvhJBgFmkomi7jCbywUOSTtaHdr1twIGrSgOUltn0O6CFPt7oCsczg
-         BHoNBz5kg2SML9MZpxpE/SBevboAnAT5N7lOOSy6GReGXxgaAtAQrzRawwHFspZhkYUp
-         vIbN+/nKG/xefkjT4W7ZKZWj7kxG/y/IS4MT1dP6sGZtignnN3ovP/vLdoslR8Bv5WKt
-         8kEQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVUZEJGjiiYfpkZgD1d5P7W+4Tmj1oYWwgW5aAWg572XXz7HEICswNxRpsFTLCKktrKZue52d4HR8WGOA4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwsKLqlydpZAnGLnY/q78fUf3omTn04fPOJxzTL+ij3NV/HhvBs
-	NPJZFw6FxK0p72N7SHxrLklcNJJrZBJlOeiiQbK3F4Bj29ZlEUf1oFBmaoWffYEt3/vbyJ+heip
-	5BU56XUznKElVdpA2E4uvgfkEoIgdGxhAoMJNQvr6wezUCLLTIb8c
-X-Google-Smtp-Source: AGHT+IErP80g0TsP9SLnDEA8znXKCZFsQKgYrAPROqAoutzo7mYcs5UeyLpD1pkgx52HWZCKAIeg/oiWCN9HxbfP5uo=
-X-Received: by 2002:a05:6a21:6b0a:b0:1c4:9ef6:499b with SMTP id
- adf61e73a8af0-1ced62a0dcbmr4201357637.29.1725250303019; Sun, 01 Sep 2024
- 21:11:43 -0700 (PDT)
+	s=arc-20240116; t=1725250365; c=relaxed/simple;
+	bh=2Yzl1TCxAvmFEWxCD0hG1tgfKeB5Qtda3UkGw1hGLdM=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Am2oFAy+EFyuxJJ4PoQ+Hd9aFm3PDMxuzBOJ2X1E9RicuN17AKJVFWd8fjqjJiWdUz36iPiBIKcVC+Z19+7YMFAVVO8eyxpmutPOMbQadWOIGkZq1qmWf82+voikU6lN0MAc3OgKxh/RiLqUwentx8uSPuUOVMsXgIzV2GF210c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ArKX447D; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F93DC4CEC2;
+	Mon,  2 Sep 2024 04:12:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725250364;
+	bh=2Yzl1TCxAvmFEWxCD0hG1tgfKeB5Qtda3UkGw1hGLdM=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=ArKX447DIZlHbpZgEW+XCefFC+aKgwQjSxdrGmu5T0lNo+fL5d0vFpaAWDsbVXWKq
+	 xnk1QR1Mu7/j8jktl94zL+lbsL2TH3FnWXbLc3n2FR++uDBZobxmLaOhqxKim1b6zM
+	 p7GfLW64xoD0YnE2plga4ZMlq0FX1EvSdbkNy2n+I2UXjVUhW22xzq08LnuiayWE5J
+	 yyF1QwW55J1ChjEXMIJM6heDyvNU6r7u+l6ke1nPxHeDRpAfV29/PHST5e6RJZtn5p
+	 cYFmvqZNxdt5iEK/CDpyCkWgXC6bewqouFZ7YCkxbhium5f9vIH54A4ybaVXaTNJYv
+	 ASd6WFKUiekrA==
+Date: Mon, 2 Sep 2024 06:12:36 +0200
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Borislav Petkov <bp@alien8.de>
+Cc: Tony Luck <tony.luck@intel.com>, Daniel Ferguson
+ <danielf@os.amperecomputing.com>, Ard Biesheuvel <ardb@kernel.org>, James
+ Morse <james.morse@arm.com>, Jonathan Cameron
+ <Jonathan.Cameron@huawei.com>, Len Brown <lenb@kernel.org>, "Rafael J.
+ Wysocki" <rafael@kernel.org>, Shiju Jose <shiju.jose@huawei.com>, Dan
+ Williams <dan.j.williams@intel.com>, Dave Jiang <dave.jiang@intel.com>, Ira
+ Weiny <ira.weiny@intel.com>, Shuai Xue <xueshuai@linux.alibaba.com>, Steven
+ Rostedt <rostedt@goodmis.org>, Tyler Baicar <tbaicar@codeaurora.org>, Will
+ Deacon <will@kernel.org>, Xie XiuQi <xiexiuqi@huawei.com>,
+ linux-acpi@vger.kernel.org, linux-edac@vger.kernel.org,
+ linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org, Shengwei Luo
+ <luoshengwei@huawei.com>, Jason Tian <jason@os.amperecomputing.com>,
+ m.chehab@huawei.com
+Subject: Re: [PATCH v2 1/5] RAS: Report all ARM processor CPER information
+ to userspace
+Message-ID: <20240902061236.7cfc97fd@foz.lan>
+In-Reply-To: <20240829143811.GDZtCH07BFEdbbv9wx@fat_crate.local>
+References: <cover.1720679234.git.mchehab+huawei@kernel.org>
+	<3853853f820a666253ca8ed6c7c724dc3d50044a.1720679234.git.mchehab+huawei@kernel.org>
+	<20240829143811.GDZtCH07BFEdbbv9wx@fat_crate.local>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240828095232.571946-1-hsiangkao@linux.alibaba.com>
-In-Reply-To: <20240828095232.571946-1-hsiangkao@linux.alibaba.com>
-From: Sandeep Dhavale <dhavale@google.com>
-Date: Sun, 1 Sep 2024 21:11:31 -0700
-Message-ID: <CAB=BE-ShG+2o88LTDi9Me47F=-qh-NptQx_H5ch+eXkT4p7B0Q@mail.gmail.com>
-Subject: Re: [PATCH] erofs: clean up erofs_register_sysfs()
-To: Gao Xiang <hsiangkao@linux.alibaba.com>
-Cc: linux-erofs@lists.ozlabs.org, LKML <linux-kernel@vger.kernel.org>, 
-	kernel-team@android.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-LGTM.
+Hi Boris,
 
-Reviewed-by: Sandeep Dhavale <dhavale@google.com>
+Em Thu, 29 Aug 2024 16:38:11 +0200
+Borislav Petkov <bp@alien8.de> escreveu:
+
+> On Thu, Jul 11, 2024 at 08:28:52AM +0200, Mauro Carvalho Chehab wrote:
+> > In addition to those data, it also exports two fields that are
+> > parsed by the GHES driver when firmware reports it, e. g.:
+> > 
+> > - error severity
+> > - cpu logical index  
+> 
+> s/cpu/CPU/g
+> 
+> check your whole set pls.
+
+Ok. Will address those at the hole series, sending you later today
+a new version. Except for those, are patches 2-5 ok?
+
+Regards,
+Mauro
+
+> > Report all of these information to userspace via trace uAPI, So that
+> > userspace can properly record the error and take decisions related
+> > to cpu core isolation according to error severity and other info.
+> > 
+> > After this patch, all the data from ARM Processor record from table  
+> 
+> Avoid having "This patch" or "This commit" in the commit message. It is
+> tautologically useless.
+> 
+> Also, do
+> 
+> $ git grep 'This patch' Documentation/process
+> 
+> for more details.
+
+Usually, I don't use "this patch". In this specific case, I wanted
+to bold the new fields that were added to the ARM trace event, making
+clear that before the changeset, none of such fields exist; they were
+added on such change. On other words, the keyword here is not patch,
+but instead "After". Maybe I can replace it with "now", e. g.:
+
+	The updated ARM trace event now contains the following fields:
+
+	======================================	=============================
+	UEFI field on table N.16		ARM Processor trace fields
+	======================================	=============================
+	Validation				handled when filling data for
+						affinity MPIDR and running
+						state.
+	ERR_INFO_NUM				pei_len
+	CONTEXT_INFO_NUM			ctx_len
+	Section Length				indirectly reported by
+						pei_len, ctx_len and oem_len
+	Error affinity level			affinity
+	MPIDR_EL1				mpidr
+	MIDR_EL1				midr
+	Running State				running_state
+	PSCI State				psci_state
+	Processor Error Information Structure	pei_err - count at pei_len
+	Processor Context			ctx_err- count at ctx_len
+	Vendor Specific Error Info		oem - count at oem_len
+	======================================	=============================
+
+
+> 
+> ...
+> 
+> > [mchehab: modified patch description, solve merge conflicts and fix coding style]
+> > Fixes: e9279e83ad1f ("trace, ras: add ARM processor error trace event")
+> > Signed-off-by: Shengwei Luo <luoshengwei@huawei.com>
+> > Signed-off-by: Jason Tian <jason@os.amperecomputing.com>
+> > Signed-off-by: Daniel Ferguson <danielf@os.amperecomputing.com>  
+> 
+> What is this SOB chain trying to tell me?
+> 
+> All those folks handled the patch?
+
+They reflect what happened with past attempts of upstreaming this
+change at the EDAC mailing list.
+
+See, originally this seems to come from Jason Tian in 2021:
+	https://lore.kernel.org/linux-edac/20210205022229.313030-1-jason@os.amperecomputing.com/
+	https://lore.kernel.org/linux-edac/20210422084944.3718-1-jason@os.amperecomputing.com/
+	https://lore.kernel.org/linux-edac/20210802135929.5283-1-shijie@os.amperecomputing.com/
+
+In 2022, it came a new version from Shengwei Luo:
+	https://lore.kernel.org/lkml/20220126030906.56765-1-lostway@zju.edu.cn/
+	https://lore.kernel.org/linux-edac/20220214030813.135766-1-lostway@zju.edu.cn/
+
+A new version from Daniel Ferguson arrived in 2023:
+	https://lore.kernel.org/linux-edac/20231214232330.306526-2-danielf@os.amperecomputing.com/
+
+Hard to reconstruct the entire history of this changeset, as there were
+several attempts to fix it, and patches got renamed on some of such
+attempts.
+
+Anyway, it sounds that the custody chan can better be written as:
+
+	Co-authored-by: Jason Tian <jason@os.amperecomputing.com>
+	Co-authored-by: Signed-off-by: Shengwei Luo <luoshengwei@huawei.com>
+	Co-authored-by: Daniel Ferguson <danielf@os.amperecomputing.com>  
+	Signed-off-by: Jason Tian <jason@os.amperecomputing.com>
+	Signed-off-by: Shengwei Luo <luoshengwei@huawei.com>
+	Signed-off-by: Daniel Ferguson <danielf@os.amperecomputing.com>  
+
+It probably makes sense to also indicate the original author of
+it by change the "From" metadata to:
+
+	From: Jason Tian <jason@os.amperecomputing.com>
+
+> 
+> > Tested-by: Shiju Jose <shiju.jose@huawei.com>
+> > Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+> > Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> > Cc: "Rafael J. Wysocki" <rafael@kernel.org>
+> > Link: https://uefi.org/specs/UEFI/2.10/Apx_N_Common_Platform_Error_Record.html#arm-processor-error-section
+> > ---
+> >  drivers/acpi/apei/ghes.c | 11 ++++-----
+> >  drivers/ras/ras.c        | 45 +++++++++++++++++++++++++++++++++++--
+> >  include/linux/ras.h      | 16 +++++++++++---
+> >  include/ras/ras_event.h  | 48 +++++++++++++++++++++++++++++++++++-----
+> >  4 files changed, 103 insertions(+), 17 deletions(-)  
+> 
+> ...
+> 
+> > -void log_arm_hw_error(struct cper_sec_proc_arm *err)
+> > +void log_arm_hw_error(struct cper_sec_proc_arm *err, const u8 sev)
+> >  {
+> > -	trace_arm_event(err);
+> > +	struct cper_arm_err_info *err_info;
+> > +	struct cper_arm_ctx_info *ctx_info;
+> > +	u8 *ven_err_data;
+> > +	u32 ctx_len = 0;
+> > +	int n, sz, cpu;
+> > +	s32 vsei_len;
+> > +	u32 pei_len;
+> > +	u8 *pei_err;
+> > +	u8 *ctx_err;
+> > +
+> > +	pei_len = sizeof(struct cper_arm_err_info) * err->err_info_num;
+> > +	pei_err = (u8 *)err + sizeof(struct cper_sec_proc_arm);
+> > +
+> > +	err_info = (struct cper_arm_err_info *)(err + 1);
+> > +	ctx_info = (struct cper_arm_ctx_info *)(err_info + err->err_info_num);
+> > +	ctx_err = (u8 *)ctx_info;
+> > +	for (n = 0; n < err->context_info_num; n++) {
+> > +		sz = sizeof(struct cper_arm_ctx_info) + ctx_info->size;
+> > +		ctx_info = (struct cper_arm_ctx_info *)((long)ctx_info + sz);
+> > +		ctx_len += sz;
+> > +	}
+> > +
+> > +	vsei_len = err->section_length - (sizeof(struct cper_sec_proc_arm) +
+> > +					  pei_len + ctx_len);
+> > +	if (vsei_len < 0) {
+> > +		pr_warn(FW_BUG
+> > +			"section length: %d\n", err->section_length);
+> > +		pr_warn(FW_BUG
+> > +			"section length is too small\n");
+> > +		pr_warn(FW_BUG
+> > +			"firmware-generated error record is incorrect\n");  
+> 
+> No need to break those lines.
+> 
+> > +		vsei_len = 0;
+> > +	}
+> > +	ven_err_data = (u8 *)ctx_info;
+> > +
+> > +	cpu = GET_LOGICAL_INDEX(err->mpidr);
+> > +	/* when return value is invalid, set cpu index to -1 */  
+> 
+> Obvious comment - no need for it.
+> 
+
+Will address at the next review.
 
 Thanks,
-Sandeep.
+Mauro
 
