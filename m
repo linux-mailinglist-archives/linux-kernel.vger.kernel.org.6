@@ -1,306 +1,187 @@
-Return-Path: <linux-kernel+bounces-311955-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311956-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BEDF968FE1
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 00:48:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 174E0969008
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 00:50:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 60D7C1C22846
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 22:48:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9CC1228374D
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 22:50:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8905E187340;
-	Mon,  2 Sep 2024 22:48:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5ED42187860;
+	Mon,  2 Sep 2024 22:50:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="d/PZwawo"
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z7MqEEuk"
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3724188593
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 22:48:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49AD5187340
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 22:50:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725317308; cv=none; b=am9vRCcAQnAjzrx8gTted8NHqgFSKhMwZVONaZVem25+RJoglBYI08OLFLarYeJi2wQhwILn0zbMTK3waCR4w8OEB52WnE8EkGNAx0S36hXKbvnlbjDOueL3aex0Qkas3pl/34c7mLakJFLKx/FzrFZc8KSk6ihH5/Xw+y5KLyk=
+	t=1725317422; cv=none; b=CCpaXB30NQy/ThVaJ3krbzO7hZoWfI1LWrh7um8hVsaPg5V+9nHE4NATbnBJoShgHBFQPesA/6tnhc+XnYT3ttzq9kNmjPKxIE4yVWJTgKnLZP9ZilDfGFxNF2FPjl0lg4Ejwb0OnJXyr0+VH4rG12tCYjso61IqMBnBscRc+Og=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725317308; c=relaxed/simple;
-	bh=LzUWQdGTlvvxerr/3ylQ+v75vLm4W6aDvWTRLNpxhCA=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Q/dkk1JG1x/3QVLoCrVvYIJ79wbSA29MD1Oq4v0fBoVaNu6X1FSCt7+CPgRDtnADcO9e5eZmyTGw7NFbBLWEgQEvqJgckIKdNlnAkMUV2jBR+5PkZGSi3GPdBBW7ugeJnZgLOioCGYhWua9nUxd8N2DwR7LIksp7rQE0xRZD5WI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=d/PZwawo; arc=none smtp.client-ip=209.85.208.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2f4f2cda058so50414861fa.1
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2024 15:48:26 -0700 (PDT)
+	s=arc-20240116; t=1725317422; c=relaxed/simple;
+	bh=gtquO6G2dDCRlMUENwyAYmUbTBkGxi0+cVSoWPhVG3M=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=aoFKRRaXvG4w5TzcSQmX2HZZ0Rt/WSb1gWvCpRq/hOVUnG5nWXLE6ZFMsPcgHh5qvvZbvrgbVtXyBkAM6wFKmsUEVbyU8IPykKx0uHpgKDLDWPto9YpAjv5MUHrrmZ9hwcDFbj/z3CimMjS6eDLf0ViGbgACueuZk7tSFyMb21M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Z7MqEEuk; arc=none smtp.client-ip=209.85.210.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-7143ae1b48fso2722487b3a.1
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2024 15:50:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1725317305; x=1725922105; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ILko9GrGSTEsXrXVZflQuhfBdNy2+GsUHO1RFuWf+V0=;
-        b=d/PZwawozXkdIZW5PhCclNpY61oTSNzHLZyfglktd8rnGUv6wXZffuMxa2mQnY//8W
-         bruw57jGkeZz27s3oyJeuyJGdsNG0Mh0PhXCggeMMctj3UCXyQBC+QkcMrHmXYb+4Xym
-         Ryp5ys9gPvvuTG3iiAy/AfiBGPBOFVD5bl1E310+MY/KDfkM2hn9DL51AO3R0Lp9t45O
-         FluUxKcJefmvfbUCzjTVuqavDIMDVdk9gv21z32Jcrr7+QdXp/sKoXXz6K8yiPwfHtgI
-         FAT2SMhj9GLyMDPlumijruf/21VXP0xzNL/8gwIe2lw2kCkBaOWudsieGjrxHAAza9Of
-         4U0Q==
+        d=gmail.com; s=20230601; t=1725317420; x=1725922220; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=0w7lkXpo1g+CHmrmflvgRnAVSJTT4Wmu8BjVnTGsv2g=;
+        b=Z7MqEEuk7Lld2zhInzqKiZZpe2aX6zgG73/Ek59PBoyid0mZ8J16RlStA1hhRnWZT6
+         S8Y8kQZYtrsaVcNDebYMhqXzXNdmoiguQPQ6WejLL+0j1cmDQkWIx1s8HCUacYPuUreB
+         F7U7bLroV5AAfZpi/LChRjOuBurppFLalPrIsPAjpjakmwQ/y/LMt4NhfSwZsd3LfpDy
+         w9r+X9JBqu7QHPf/WFY3sBdd0YGZXiZH8m6tWJS0RgyGLZwgwa0SLpBaosykNeXAe5u7
+         86jYhG07Ibz6/G/unKISO84074XSVO3HlO5AkFXITofJqUthihahwqm7y7y1eDX/2kVy
+         Mmow==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725317305; x=1725922105;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ILko9GrGSTEsXrXVZflQuhfBdNy2+GsUHO1RFuWf+V0=;
-        b=mP+5mE1Ecb8XQltAR+AX85AssptBNDpVHgp2oWVq1HSLLvTOc/PGmXKvmChDlmbu3u
-         GH0TohYl6YXcgibOXzQ05vIepsXLOoLK1ez/G4aPZSPwVncO43ffEbyngQPD9WxjjYEG
-         1XHehIDoB+SAoCTglZ+dEOkJPN2fOhiQzNlmenbbsO09G0mO5TkXWiOq8wRV5iOJhkje
-         YzPF8fefak0C5q2gMxjOlGqxuWdUwWpo44DZYZC94XQTUaEzrtbacx+p9YesVcbP4qUU
-         kX6VIVtsTlzc+7J49qQ9hIgMb9CRf2i6lh6arB+HnQqt+yESuqpTUO6cK2NSJDVCXZsl
-         PZPw==
-X-Forwarded-Encrypted: i=1; AJvYcCXc/YFnFwIrPMQKXtQi29FOtSHKhprceAf7iUzMgLZpLRoHFV6dzRn0XryjEz8fYI7FaoXxqoZl3I26O1w=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxjso9NTGmjbSCXgHJ5vDS5eZK5w0qyIUa5UsWS19pN/2wJ5UoY
-	R0DKN1XnLHBwBN0vnJVj4rrgSxZwnlaYATC4JZ/FP6wRBSbmxE3YN6o0Gy5E1QI=
-X-Google-Smtp-Source: AGHT+IFum6vAI4M7Ifv5kv5ZZ8Ww55Gm2DB955sOcPDG5+CQnwdg/OMQzsSkUUI+7Z9IA063dZuH2g==
-X-Received: by 2002:a05:6512:3088:b0:52c:dc06:d4ad with SMTP id 2adb3069b0e04-535462ee5demr3891202e87.6.1725317304291;
-        Mon, 02 Sep 2024 15:48:24 -0700 (PDT)
-Received: from uffe-tuxpro14.. (h-178-174-189-39.A498.priv.bahnhof.se. [178.174.189.39])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5354079bbf2sm1790646e87.20.2024.09.02.15.48.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Sep 2024 15:48:23 -0700 (PDT)
-From: Ulf Hansson <ulf.hansson@linaro.org>
-To: Viresh Kumar <vireshk@kernel.org>,
-	Nishanth Menon <nm@ti.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Dikshita Agarwal <quic_dikshita@quicinc.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <quic_kdybcio@quicinc.com>,
-	Nikunj Kela <nkela@quicinc.com>,
-	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Mikko Perttunen <mperttunen@nvidia.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Stephan Gerhold <stephan@gerhold.net>,
-	Ilia Lin <ilia.lin@kernel.org>,
-	Stanimir Varbanov <stanimir.k.varbanov@gmail.com>,
-	Vikash Garodia <quic_vgarodia@quicinc.com>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	linux-pm@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] OPP/pmdomain: Fix the assignment of the required-devs
-Date: Tue,  3 Sep 2024 00:48:15 +0200
-Message-Id: <20240902224815.78220-3-ulf.hansson@linaro.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240902224815.78220-1-ulf.hansson@linaro.org>
-References: <20240902224815.78220-1-ulf.hansson@linaro.org>
+        d=1e100.net; s=20230601; t=1725317420; x=1725922220;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=0w7lkXpo1g+CHmrmflvgRnAVSJTT4Wmu8BjVnTGsv2g=;
+        b=JBj3B5rql8OW5Rh4ZfIWkwAS/BBx/w7SRxgEbfPmfFi1+gp3Oy8iBGoCWYHQrc4qP9
+         ks3bdPZ84gVTPsgzUxyDU8P4Cwbv2dJlQupFHYisMxZf77woSRYiDUbQVGt6FqPWdCdQ
+         Ex3iuL2LuCprtRhIvRzLqu/1OMXgeDSywaQfUA34t6KwP5MWZwghRgJZ/+DJDn32C6zE
+         3c/ruAId1tEfN5k7gu87vsEpNll2p0A9hcCGBz3soop+XJ3pLfmLbt6a4at89ZVKgvHN
+         b4w5ARVUGcijKPci6U0CGBiEWYxibu7s2RzqOZH0hb35qGFihbIaqz4xWKD0nDduu20z
+         FpYA==
+X-Gm-Message-State: AOJu0Yw5js8QbAn+YW3oaxt/evF07xlcDkch3/T4AxEu4xxMpAsXYtYd
+	MDXwITZi483jztpnJckXxxFQWtrnbcT5GLGC8LYK3LcAxd4E2No1
+X-Google-Smtp-Source: AGHT+IGOOEgseY3taJzvPKMOGi4cJwnXK3ju8YNTsH2qFP+1eIRtKzWkc/8EV0t5wRt0gIkoTyO4Lg==
+X-Received: by 2002:a05:6a00:1a93:b0:705:b0c0:d7d7 with SMTP id d2e1a72fcca58-7173fa3dcb9mr7623930b3a.7.1725317420331;
+        Mon, 02 Sep 2024 15:50:20 -0700 (PDT)
+Received: from Barrys-MBP.hub ([2407:7000:8942:5500:c91e:9f1a:31db:cd2e])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-715e5577263sm7338284b3a.21.2024.09.02.15.50.14
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Mon, 02 Sep 2024 15:50:19 -0700 (PDT)
+From: Barry Song <21cnbao@gmail.com>
+To: akpm@linux-foundation.org,
+	linux-mm@kvack.org
+Cc: linux-kernel@vger.kernel.org,
+	Barry Song <v-songbaohua@oppo.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	=?UTF-8?q?Arve=20Hj=C3=B8nnev=C3=A5g?= <arve@android.com>,
+	Todd Kjos <tkjos@android.com>,
+	Martijn Coenen <maco@android.com>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Christian Brauner <brauner@kernel.org>,
+	Carlos Llamas <cmllamas@google.com>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Tangquan Zheng <zhengtangquan@oppo.com>
+Subject: [PATCH] binder_alloc: Move alloc_page() out of mmap_rwsem to reduce the lock duration
+Date: Tue,  3 Sep 2024 10:50:09 +1200
+Message-Id: <20240902225009.34576-1-21cnbao@gmail.com>
+X-Mailer: git-send-email 2.39.3 (Apple Git-146)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-The recent attempt to make genpd first lookup an OPP table for a device
-that has been attached to it and then let the OPP core validate whether the
-OPP table is correct, fails for some configurations.
+From: Barry Song <v-songbaohua@oppo.com>
 
-More precisely, if a device has multiple power-domains, which all has an
-OPP table associated, doesn't necessarily mean that the device's OPP table
-needs multiple phandles specified in the required-opps. Instead it's
-perfectly possible to use a single phandle in the required-opps, which is
-typically where the current code fails to assign the correct required-dev.
+The mmap_write_lock() can block all access to the VMAs, for example page
+faults. Performing memory allocation while holding this lock may trigger
+direct reclamation, leading to others being queued in the rwsem for an
+extended period.
+We've observed that the allocation can sometimes take more than 300ms,
+significantly blocking other threads. The user interface sometimes
+becomes less responsive as a result. To prevent this, let's move the
+allocation outside of the write lock.
+A potential side effect could be an extra alloc_page() for the second
+thread executing binder_install_single_page() while the first thread
+has done it earlier. However, according to Tangquan's 48-hour profiling
+using monkey, the likelihood of this occurring is minimal, with a ratio
+of only 1 in 2400. Compared to the significantly costly rwsem, this is
+negligible.
+On the other hand, holding a write lock without making any VMA
+modifications appears questionable and likely incorrect. While this
+patch focuses on reducing the lock duration, future updates may aim
+to eliminate the write lock entirely.
 
-To fix this problem, let's instead start by letting the OPP core find the
-device node for the required OPP table and then let genpd search for a
-corresponding OPP table, allowing us the find the correct required-dev to
-assign for it.
-
-Reported-by: Dikshita Agarwal <quic_dikshita@quicinc.com>
-Fixes: f0d2dcc9b087 ("OPP/pmdomain: Set the required_dev for a required OPP during genpd attach")
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: "Arve Hjønnevåg" <arve@android.com>
+Cc: Todd Kjos <tkjos@android.com>
+Cc: Martijn Coenen <maco@android.com>
+Cc: Joel Fernandes <joel@joelfernandes.org>
+Cc: Christian Brauner <brauner@kernel.org>
+Cc: Carlos Llamas <cmllamas@google.com>
+Cc: Suren Baghdasaryan <surenb@google.com>
+Tested-by: Tangquan Zheng <zhengtangquan@oppo.com>
+Signed-off-by: Barry Song <v-songbaohua@oppo.com>
 ---
- drivers/opp/core.c      | 15 +++++++-----
- drivers/pmdomain/core.c | 52 +++++++++++++++++++++++------------------
- include/linux/pm_opp.h  |  7 ++++--
- 3 files changed, 43 insertions(+), 31 deletions(-)
+ drivers/android/binder_alloc.c | 18 ++++++++++++++----
+ 1 file changed, 14 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/opp/core.c b/drivers/opp/core.c
-index 66cac7a1d9db..538612886446 100644
---- a/drivers/opp/core.c
-+++ b/drivers/opp/core.c
-@@ -2363,7 +2363,7 @@ static void _opp_put_config_regulators_helper(struct opp_table *opp_table)
- static int _opp_set_required_dev(struct opp_table *opp_table,
- 				 struct device *dev,
- 				 struct device *required_dev,
--				 struct opp_table *required_opp_table)
-+				 config_required_dev_t config_required_dev)
- {
- 	int i;
+diff --git a/drivers/android/binder_alloc.c b/drivers/android/binder_alloc.c
+index b3acbc4174fb..f20074e23a7c 100644
+--- a/drivers/android/binder_alloc.c
++++ b/drivers/android/binder_alloc.c
+@@ -227,13 +227,23 @@ static int binder_install_single_page(struct binder_alloc *alloc,
+ 	if (!mmget_not_zero(alloc->mm))
+ 		return -ESRCH;
  
-@@ -2380,6 +2380,7 @@ static int _opp_set_required_dev(struct opp_table *opp_table,
++	/*
++	 * Don't allocate page in mmap_write_lock, this can block
++	 * mmap_rwsem for a long time; Meanwhile, allocation failure
++	 * doesn't necessarily need to return -ENOMEM, if lru_page
++	 * has been installed, we can still return 0(success).
++	 */
++	page = alloc_page(GFP_KERNEL | __GFP_HIGHMEM | __GFP_ZERO);
++
+ 	/*
+ 	 * Protected with mmap_sem in write mode as multiple tasks
+ 	 * might race to install the same page.
+ 	 */
+ 	mmap_write_lock(alloc->mm);
+-	if (binder_get_installed_page(lru_page))
++	if (binder_get_installed_page(lru_page)) {
++		ret = 1;
+ 		goto out;
++	}
  
- 	for (i = 0; i < opp_table->required_opp_count; i++) {
- 		struct opp_table *table = opp_table->required_opp_tables[i];
-+		struct opp_table *required_opp_table;
- 
- 		/*
- 		 * The OPP table should be available at this point. If not, it's
-@@ -2396,7 +2397,9 @@ static int _opp_set_required_dev(struct opp_table *opp_table,
- 		 * We need to compare the nodes for the OPP tables, rather than
- 		 * the OPP tables themselves, as we may have separate instances.
- 		 */
--		if (required_opp_table->np == table->np) {
-+		required_opp_table = config_required_dev(required_dev,
-+							 table->np);
-+		if (required_opp_table) {
- 			/*
- 			 * The required_opp_tables parsing is not perfect, as
- 			 * the OPP core does the parsing solely based on the DT
-@@ -2422,8 +2425,8 @@ static int _opp_set_required_dev(struct opp_table *opp_table,
- 		}
+ 	if (!alloc->vma) {
+ 		pr_err("%d: %s failed, no vma\n", alloc->pid, __func__);
+@@ -241,7 +251,6 @@ static int binder_install_single_page(struct binder_alloc *alloc,
+ 		goto out;
  	}
  
--	dev_err(dev, "Missing OPP table, unable to set the required dev\n");
--	return -ENODEV;
-+	/* No matching OPP table found for the required_dev. */
-+	return -ERANGE;
- }
- 
- static void _opp_put_required_dev(struct opp_table *opp_table,
-@@ -2547,10 +2550,10 @@ int dev_pm_opp_set_config(struct device *dev, struct dev_pm_opp_config *config)
- 		data->flags |= OPP_CONFIG_REGULATOR;
+-	page = alloc_page(GFP_KERNEL | __GFP_HIGHMEM | __GFP_ZERO);
+ 	if (!page) {
+ 		pr_err("%d: failed to allocate page\n", alloc->pid);
+ 		ret = -ENOMEM;
+@@ -252,7 +261,6 @@ static int binder_install_single_page(struct binder_alloc *alloc,
+ 	if (ret) {
+ 		pr_err("%d: %s failed to insert page at offset %lx with %d\n",
+ 		       alloc->pid, __func__, addr - alloc->buffer, ret);
+-		__free_page(page);
+ 		ret = -ENOMEM;
+ 		goto out;
  	}
- 
--	if (config->required_dev && config->required_opp_table) {
-+	if (config->required_dev && config->config_required_dev) {
- 		ret = _opp_set_required_dev(opp_table, dev,
- 					    config->required_dev,
--					    config->required_opp_table);
-+					    config->config_required_dev);
- 		if (ret < 0)
- 			goto err;
- 
-diff --git a/drivers/pmdomain/core.c b/drivers/pmdomain/core.c
-index edef1a520110..0ff0b513b2a1 100644
---- a/drivers/pmdomain/core.c
-+++ b/drivers/pmdomain/core.c
-@@ -2874,20 +2874,21 @@ static void genpd_dev_pm_sync(struct device *dev)
- 	genpd_queue_power_off_work(pd);
+@@ -262,7 +270,9 @@ static int binder_install_single_page(struct binder_alloc *alloc,
+ out:
+ 	mmap_write_unlock(alloc->mm);
+ 	mmput_async(alloc->mm);
+-	return ret;
++	if (ret && page)
++		__free_page(page);
++	return ret < 0 ? ret : 0;
  }
  
--static struct opp_table *genpd_find_opp_table(struct generic_pm_domain *genpd,
--					      unsigned int depth)
-+static struct opp_table *_genpd_find_opp_table(struct generic_pm_domain *genpd,
-+					       struct device_node *np,
-+					       unsigned int depth)
- {
--	struct opp_table *opp_table;
-+	struct opp_table *opp_table = genpd->opp_table;
- 	struct gpd_link *link;
- 
--	if (genpd->opp_table)
--		return genpd->opp_table;
-+	if (opp_table && (dev_pm_opp_table_to_of_node(opp_table) == np))
-+		return opp_table;
- 
- 	list_for_each_entry(link, &genpd->child_links, child_node) {
- 		struct generic_pm_domain *parent = link->parent;
- 
- 		genpd_lock_nested(parent, depth + 1);
--		opp_table = genpd_find_opp_table(parent, depth + 1);
-+		opp_table = _genpd_find_opp_table(parent, np, depth + 1);
- 		genpd_unlock(parent);
- 
- 		if (opp_table)
-@@ -2897,12 +2898,27 @@ static struct opp_table *genpd_find_opp_table(struct generic_pm_domain *genpd,
- 	return NULL;
- }
- 
--static int genpd_set_required_opp_dev(struct device *dev,
--				      struct device *base_dev)
-+static struct opp_table *genpd_find_opp_table(struct device *dev,
-+					      struct device_node *np)
- {
- 	struct generic_pm_domain *genpd = dev_to_genpd(dev);
- 	struct opp_table *opp_table;
--	int ret = 0;
-+
-+	genpd_lock(genpd);
-+	opp_table = _genpd_find_opp_table(genpd, np, 0);
-+	genpd_unlock(genpd);
-+
-+	return opp_table;
-+}
-+
-+static int genpd_set_required_opp_dev(struct device *dev,
-+				      struct device *base_dev)
-+{
-+	struct dev_pm_opp_config config = {
-+		.required_dev = dev,
-+		.config_required_dev = genpd_find_opp_table,
-+	};
-+	int ret;
- 
- 	/* Limit support to non-providers for now. */
- 	if (of_property_present(base_dev->of_node, "#power-domain-cells"))
-@@ -2911,20 +2927,10 @@ static int genpd_set_required_opp_dev(struct device *dev,
- 	if (!dev_pm_opp_of_has_required_opp(base_dev))
- 		return 0;
- 
--	genpd_lock(genpd);
--	opp_table = genpd_find_opp_table(genpd, 0);
--	genpd_unlock(genpd);
--
--	if (opp_table) {
--		struct dev_pm_opp_config config = {
--			.required_dev = dev,
--			.required_opp_table = opp_table,
--		};
--
--		ret = devm_pm_opp_set_config(base_dev, &config);
--		if (ret < 0)
--			dev_err(dev, "failed to set opp config %d\n", ret);
--	}
-+	ret = devm_pm_opp_set_config(base_dev, &config);
-+	ret = ret == -ERANGE ? 0 : ret;
-+	if (ret < 0)
-+		dev_err(dev, "failed to set opp config %d\n", ret);
- 
- 	return ret;
- }
-diff --git a/include/linux/pm_opp.h b/include/linux/pm_opp.h
-index 7894e631cded..0ada4a5057c8 100644
---- a/include/linux/pm_opp.h
-+++ b/include/linux/pm_opp.h
-@@ -53,6 +53,9 @@ typedef int (*config_regulators_t)(struct device *dev,
- typedef int (*config_clks_t)(struct device *dev, struct opp_table *opp_table,
- 			struct dev_pm_opp *opp, void *data, bool scaling_down);
- 
-+typedef struct opp_table *(*config_required_dev_t)(struct device *dev,
-+			struct device_node *opp_table_np);
-+
- /**
-  * struct dev_pm_opp_config - Device OPP configuration values
-  * @clk_names: Clk names, NULL terminated array.
-@@ -63,7 +66,7 @@ typedef int (*config_clks_t)(struct device *dev, struct opp_table *opp_table,
-  * @supported_hw_count: Number of elements in the array.
-  * @regulator_names: Array of pointers to the names of the regulator, NULL terminated.
-  * @required_dev: Required OPP device.
-- * @required_opp_table: The corresponding required OPP table for @required_dev.
-+ * @config_required_dev: Custom helper to find the required OPP table for $required_dev.
-  *
-  * This structure contains platform specific OPP configurations for the device.
-  */
-@@ -77,7 +80,7 @@ struct dev_pm_opp_config {
- 	unsigned int supported_hw_count;
- 	const char * const *regulator_names;
- 	struct device *required_dev;
--	struct opp_table *required_opp_table;
-+	config_required_dev_t config_required_dev;
- };
- 
- #define OPP_LEVEL_UNSET			U32_MAX
+ static int binder_install_buffer_pages(struct binder_alloc *alloc,
 -- 
-2.34.1
+2.39.3 (Apple Git-146)
 
 
