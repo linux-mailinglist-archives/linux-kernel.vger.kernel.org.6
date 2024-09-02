@@ -1,135 +1,276 @@
-Return-Path: <linux-kernel+bounces-310496-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310497-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAAA9967DBB
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 04:17:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BE7C967DC2
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 04:20:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 27A731C219FE
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 02:17:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 55FBA1C212CD
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 02:20:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BD8028683;
-	Mon,  2 Sep 2024 02:17:33 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 047EA2C190;
+	Mon,  2 Sep 2024 02:20:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s35LAdWY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BEA7125DB
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 02:17:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 156D31F949;
+	Mon,  2 Sep 2024 02:20:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725243452; cv=none; b=YP3nUnR4AZ3IwBtoil0D5JgSuZQigDFCdy5fK6iTgwqh1w2quBh7vOprblQXt7a6/7HyjDr3Raq6JU60mZHb32ZLSWxoxRB6DvK7iHH4eeRoK/+ojXMbEMWPN50H85l0lSVTduqUPH/s+trv+6fzqI+YkvQukndr3MRLZs2bHcw=
+	t=1725243633; cv=none; b=JF3mN3R41+eiRlMKouV+4ZtJCFIGTclNDpJ3a5gGDyn2e1AR/20gYdUbUQty5bcW1pBkH1Md3ZezZPpnUsnPqejcuf7hWGV6Qe3vUj/B0QYpINc1RBijB3+UBWUXz2pjUscMA1w2XVHMl6Ovr/+HKW+4iWMIvtS9LFZQX3oyXfw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725243452; c=relaxed/simple;
-	bh=IfZPLAXAPgf8RLEd2qYXb6OFh8IbfAwj0VWWXRUCvx0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=memuQc39Jz1q4TUZvJCRS681dDU9PTaoZ3GVtB+d4ig98XrPfc63RVv6qxsAJKAasbQKYZ6e2DBVuztB4gqZ/ttj5sQw4hmuMo4ZNsE1NVdNJ/V3zSTG/JEQCIAvGIt5NGNZv9sMrwVWxdWzGNd4YDGA5KBCe0ffZ7M5cDP/Hcc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.214])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4Wxshq3nYFz20nL7;
-	Mon,  2 Sep 2024 10:12:27 +0800 (CST)
-Received: from kwepemh500013.china.huawei.com (unknown [7.202.181.146])
-	by mail.maildlp.com (Postfix) with ESMTPS id 050631A016C;
-	Mon,  2 Sep 2024 10:17:22 +0800 (CST)
-Received: from [10.67.109.254] (10.67.109.254) by
- kwepemh500013.china.huawei.com (7.202.181.146) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Mon, 2 Sep 2024 10:17:21 +0800
-Message-ID: <b493404f-9f7e-6f90-893e-84ff2bcb0170@huawei.com>
-Date: Mon, 2 Sep 2024 10:17:20 +0800
+	s=arc-20240116; t=1725243633; c=relaxed/simple;
+	bh=xRn+BfSsB6XdgAbV/5Mc0+2fUQ8JjXNosZfKtUrjQl0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jj3Kt/7RpE3gR41GpAxW4jEiMJZZ1gmrIHyz8z66NTo4hvWOQbSqxxaHtZjpvDSW6y7ehIHyzqQquFaVxhLi710QP2BK2qZTNLs3S+Xi7+2PGlab1oxePbKA5yVywkrRtP2qP2e3OyZNguY9ZvHllSKcz1KFh42Y6YFBdvP9OFo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s35LAdWY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A4BEFC4CEC9;
+	Mon,  2 Sep 2024 02:20:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725243632;
+	bh=xRn+BfSsB6XdgAbV/5Mc0+2fUQ8JjXNosZfKtUrjQl0=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=s35LAdWYT1pqV2N0XqnvWgasqtWIoxKPXfwCB3xKHS/fzJGep12N7FWkV0tWRgqFT
+	 ZgVFHIjCcv9n9ZVc7jGDo5UpxU44ESUkKmMVQlJhpGo94KXOHLLG+KgU771iEg3VSy
+	 9PYNkWYZDDec0oU9a6Wv/qba9strxbQILNnPOZqH4Exp1f/fHARIJsXrxKoEwkYJKz
+	 2cEb9T2gN5IhW+cAXx/Q+o03gIIWDZDJ3qZA9HitVNHRpacZkuw2cCqI3oDEsd5GcY
+	 6vfjVLKFwbGj4wsR1988lbjEjtkw6LbUF+NnZlU0XKKb4hYLhSeMKBh0Wp9N84Q1hl
+	 cez2KQTaf3a6A==
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5c0aa376e15so1966512a12.1;
+        Sun, 01 Sep 2024 19:20:32 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWguiyMdlul9meuLnQgic9kiG7bjvd0t2bCxUXBVj8EuIhLvPEyGm0uTshnLtj6z1LwsbI=@vger.kernel.org, AJvYcCXS7rMmCHxrKc39PfpiM1EAJJiRgV1vH1K5HcXirmzWhTTn0NUr9SBjWytAzGbcvQZI+Nno3SHZjEDk+Thz@vger.kernel.org
+X-Gm-Message-State: AOJu0YzWiYuDRlHGJO7pZrtUuowQcyyKTS+oVSXAwat2q25ibCZ2OyMM
+	biKfxrnDMg4C8Y3tZbELpofoH6TEWVc6asRFbXqEGmnaNs8YRxyDehN4e1myF4pCcBU6Rue0Cbb
+	5hxCImVkAHEyeKe72p4SiufkERUE=
+X-Google-Smtp-Source: AGHT+IHSf839mMpS/X4ZbkEOlVHqU2Pl6NsRBtWR5rY0e9LQZZXqVueSBYYCozI87+g/3MEgOFGfMn+F42QE0uNXJLk=
+X-Received: by 2002:a05:6402:354d:b0:5be:dab8:1bb3 with SMTP id
+ 4fb4d7f45d1cf-5c21ed3e9efmr10513009a12.13.1725243631227; Sun, 01 Sep 2024
+ 19:20:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.2.0
-Subject: Re: [PATCH -next] drm/imagination: Use memdup_user() helper
-Content-Language: en-US
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	<frank.binns@imgtec.com>, <matt.coster@imgtec.com>,
-	<maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
-	<tzimmermann@suse.de>, <airlied@gmail.com>, <daniel@ffwll.ch>,
-	<dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
-References: <20240831103047.99499-1-ruanjinjie@huawei.com>
- <74dfe952-2055-4152-90c6-ac9cc42fcad9@wanadoo.fr>
-From: Jinjie Ruan <ruanjinjie@huawei.com>
-In-Reply-To: <74dfe952-2055-4152-90c6-ac9cc42fcad9@wanadoo.fr>
+References: <20240730075744.1215856-1-maobibo@loongson.cn> <20240730075744.1215856-4-maobibo@loongson.cn>
+ <CAAhV-H7D80huYzF6ewZqcgx8MTzWZNFXJHOahoJ33zJYX1kyAw@mail.gmail.com> <13276416-c62b-b33d-1824-7764122ef863@loongson.cn>
+In-Reply-To: <13276416-c62b-b33d-1824-7764122ef863@loongson.cn>
+From: Huacai Chen <chenhuacai@kernel.org>
+Date: Mon, 2 Sep 2024 10:20:18 +0800
+X-Gmail-Original-Message-ID: <CAAhV-H4RhhYB0LHeOs+Cjr6LZj6np_S4-neEtYnLUU_K=upV_w@mail.gmail.com>
+Message-ID: <CAAhV-H4RhhYB0LHeOs+Cjr6LZj6np_S4-neEtYnLUU_K=upV_w@mail.gmail.com>
+Subject: Re: [PATCH v6 3/3] LoongArch: KVM: Add vm migration support for LBT registers
+To: maobibo <maobibo@loongson.cn>
+Cc: Tianrui Zhao <zhaotianrui@loongson.cn>, WANG Xuerui <kernel@xen0n.name>, kvm@vger.kernel.org, 
+	loongarch@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	Jiaxun Yang <jiaxun.yang@flygoat.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- kwepemh500013.china.huawei.com (7.202.181.146)
+Content-Transfer-Encoding: quoted-printable
 
+On Mon, Sep 2, 2024 at 9:56=E2=80=AFAM maobibo <maobibo@loongson.cn> wrote:
+>
+>
+> Hi Huacai,
+>
+> On 2024/8/31 =E4=B8=8B=E5=8D=8810:49, Huacai Chen wrote:
+> > Hi, Bibo,
+> >
+> > On Tue, Jul 30, 2024 at 3:57=E2=80=AFPM Bibo Mao <maobibo@loongson.cn> =
+wrote:
+> >>
+> >> Every vcpu has separate LBT registers. And there are four scr register=
+s,
+> >> one flags and ftop register for LBT extension. When VM migrates, VMM
+> >> needs to get LBT registers for every vcpu.
+> >>
+> >> Here macro KVM_REG_LOONGARCH_LBT is added for new vcpu lbt register ty=
+pe,
+> >> the following macro is added to get/put LBT registers.
+> >>    KVM_REG_LOONGARCH_LBT_SCR0
+> >>    KVM_REG_LOONGARCH_LBT_SCR1
+> >>    KVM_REG_LOONGARCH_LBT_SCR2
+> >>    KVM_REG_LOONGARCH_LBT_SCR3
+> >>    KVM_REG_LOONGARCH_LBT_EFLAGS
+> >>    KVM_REG_LOONGARCH_LBT_FTOP
+> >>
+> >> Signed-off-by: Bibo Mao <maobibo@loongson.cn>
+> >> ---
+> >>   arch/loongarch/include/uapi/asm/kvm.h |  9 +++++
+> >>   arch/loongarch/kvm/vcpu.c             | 56 +++++++++++++++++++++++++=
+++
+> >>   2 files changed, 65 insertions(+)
+> >>
+> >> diff --git a/arch/loongarch/include/uapi/asm/kvm.h b/arch/loongarch/in=
+clude/uapi/asm/kvm.h
+> >> index 49bafac8b22d..003fb766c93f 100644
+> >> --- a/arch/loongarch/include/uapi/asm/kvm.h
+> >> +++ b/arch/loongarch/include/uapi/asm/kvm.h
+> >> @@ -64,6 +64,7 @@ struct kvm_fpu {
+> >>   #define KVM_REG_LOONGARCH_KVM          (KVM_REG_LOONGARCH | 0x20000U=
+LL)
+> >>   #define KVM_REG_LOONGARCH_FPSIMD       (KVM_REG_LOONGARCH | 0x30000U=
+LL)
+> >>   #define KVM_REG_LOONGARCH_CPUCFG       (KVM_REG_LOONGARCH | 0x40000U=
+LL)
+> >> +#define KVM_REG_LOONGARCH_LBT          (KVM_REG_LOONGARCH | 0x50000UL=
+L)
+> >>   #define KVM_REG_LOONGARCH_MASK         (KVM_REG_LOONGARCH | 0x70000U=
+LL)
+> > I think KVM_REG_LOONGARCH_MASK should contain all above register
+> > classes, so should it be  (KVM_REG_LOONGARCH | 0x370000ULL)?
+> Sorry, maybe I miss something. What is the meaning of 0x370000ULL? How
+> does the value come from?
+It seems I misunderstood the mask, please ignore.
 
+>
+> >
+> >>   #define KVM_CSR_IDX_MASK               0x7fff
+> >>   #define KVM_CPUCFG_IDX_MASK            0x7fff
+> >> @@ -77,6 +78,14 @@ struct kvm_fpu {
+> >>   /* Debugging: Special instruction for software breakpoint */
+> >>   #define KVM_REG_LOONGARCH_DEBUG_INST   (KVM_REG_LOONGARCH_KVM | KVM_=
+REG_SIZE_U64 | 3)
+> >>
+> >> +/* LBT registers */
+> >> +#define KVM_REG_LOONGARCH_LBT_SCR0     (KVM_REG_LOONGARCH_LBT | KVM_R=
+EG_SIZE_U64 | 1)
+> >> +#define KVM_REG_LOONGARCH_LBT_SCR1     (KVM_REG_LOONGARCH_LBT | KVM_R=
+EG_SIZE_U64 | 2)
+> >> +#define KVM_REG_LOONGARCH_LBT_SCR2     (KVM_REG_LOONGARCH_LBT | KVM_R=
+EG_SIZE_U64 | 3)
+> >> +#define KVM_REG_LOONGARCH_LBT_SCR3     (KVM_REG_LOONGARCH_LBT | KVM_R=
+EG_SIZE_U64 | 4)
+> >> +#define KVM_REG_LOONGARCH_LBT_EFLAGS   (KVM_REG_LOONGARCH_LBT | KVM_R=
+EG_SIZE_U64 | 5)
+> >> +#define KVM_REG_LOONGARCH_LBT_FTOP     (KVM_REG_LOONGARCH_LBT | KVM_R=
+EG_SIZE_U64 | 6)
+> > FTOP is a 32bit register in other place of the kernel, is it correct
+> > to use U64 here?
+> It is deliberate and there is no 32bit compat requirement for kvm. ALL
+> regiester interfaces are defined as 64-bit.
+> On kernel and qemu side, ftop can be defined as 32bit still, however the
+> interface is 64-bit. So there is forced type conversion between u32 and
+> u64. There is no problem here.
+If you are sure, then no problem. But there is indeed KVM_REG_SIZE_U32
+in include/uapi/linux/kvm.h, and if we append more fields after ftop,
+define it as U64 may break memcpy().
 
-On 2024/8/31 18:48, Christophe JAILLET wrote:
-> Le 31/08/2024 à 12:30, Jinjie Ruan a écrit :
->> Switching to memdup_user(), which combines kmalloc() and
->> copy_from_user(),
->> and it can simplfy code.
->>
->> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
->> ---
->>   drivers/gpu/drm/imagination/pvr_context.c | 22 +++++++---------------
->>   1 file changed, 7 insertions(+), 15 deletions(-)
->>
->> diff --git a/drivers/gpu/drm/imagination/pvr_context.c
->> b/drivers/gpu/drm/imagination/pvr_context.c
->> index eded5e955cc0..e75fd50a4d9f 100644
->> --- a/drivers/gpu/drm/imagination/pvr_context.c
->> +++ b/drivers/gpu/drm/imagination/pvr_context.c
->> @@ -69,27 +69,19 @@ process_static_context_state(struct pvr_device
->> *pvr_dev, const struct pvr_stream
->>       void *stream;
->>       int err;
->>   -    stream = kzalloc(stream_size, GFP_KERNEL);
->> -    if (!stream)
->> -        return -ENOMEM;
->> -
->> -    if (copy_from_user(stream, u64_to_user_ptr(stream_user_ptr),
->> stream_size)) {
->> -        err = -EFAULT;
->> -        goto err_free;
->> -    }
->> +    stream = memdup_user(u64_to_user_ptr(stream_user_ptr), stream_size);
->> +    if (IS_ERR(stream))
->> +        return PTR_ERR(stream);
->>         err = pvr_stream_process(pvr_dev, cmd_defs, stream,
->> stream_size, dest);
->> -    if (err)
->> -        goto err_free;
->> +    if (err) {
->> +        kfree(stream);
->> +        return err;
->> +    }
->>         kfree(stream);
->>         return 0;
->> -
->> -err_free:
->> -    kfree(stream);
->> -
->> -    return err;
->>   }
-> 
-> It could also be:
->      err = pvr_stream_process(...);
-> 
->      kfree(stream);
-> 
->      return err;
-> 
-> as you did for drivers/gpu/drm/imagination/pvr_job.c.
+>
+> >
+> >> +
+> >>   #define LOONGARCH_REG_SHIFT            3
+> >>   #define LOONGARCH_REG_64(TYPE, REG)    (TYPE | KVM_REG_SIZE_U64 | (R=
+EG << LOONGARCH_REG_SHIFT))
+> >>   #define KVM_IOC_CSRID(REG)             LOONGARCH_REG_64(KVM_REG_LOON=
+GARCH_CSR, REG)
+> >> diff --git a/arch/loongarch/kvm/vcpu.c b/arch/loongarch/kvm/vcpu.c
+> >> index b5324885a81a..b2500d4fa729 100644
+> >> --- a/arch/loongarch/kvm/vcpu.c
+> >> +++ b/arch/loongarch/kvm/vcpu.c
+> >> @@ -597,6 +597,34 @@ static int kvm_get_one_reg(struct kvm_vcpu *vcpu,
+> >>                          break;
+> >>                  }
+> >>                  break;
+> >> +       case KVM_REG_LOONGARCH_LBT:
+> > What about adding FPU/LSX/LASX registers (if needed for migration) in
+> > kvm_{get, set}_one_reg() here?
+> If there is 512bit SIMD or other requirement, it will be added in
+> kvm_{get, set}_one_reg(). For FPU/LSX/LASX registers, there is common
+> API KVM_GET_FPU/KVM_SET_FPU here. The impmentation of QEMU only gets
+> FPU, the upper LSX/LASX is lost, we will submit a patch in qemu side,
+> the kvm kernel side is ok.
+OK, no problem.
 
-You are right! that will be more clean.
-
-> 
-> CJ
-> 
->>     static int init_render_fw_objs(struct pvr_context *ctx,
-> 
-> 
+Huacai
+>
+> /*
+>   * for KVM_GET_FPU and KVM_SET_FPU
+>   */
+> struct kvm_fpu {
+>          __u32 fcsr;
+>          __u64 fcc;    /* 8x8 */
+>          struct kvm_fpureg {
+>                  __u64 val64[4];
+>          } fpr[32];
+> };
+>
+> Regards
+> Bibo Mao
+> >
+> > Huacai
+> >
+> >> +               if (!kvm_guest_has_lbt(&vcpu->arch))
+> >> +                       return -ENXIO;
+> >> +
+> >> +               switch (reg->id) {
+> >> +               case KVM_REG_LOONGARCH_LBT_SCR0:
+> >> +                       *v =3D vcpu->arch.lbt.scr0;
+> >> +                       break;
+> >> +               case KVM_REG_LOONGARCH_LBT_SCR1:
+> >> +                       *v =3D vcpu->arch.lbt.scr1;
+> >> +                       break;
+> >> +               case KVM_REG_LOONGARCH_LBT_SCR2:
+> >> +                       *v =3D vcpu->arch.lbt.scr2;
+> >> +                       break;
+> >> +               case KVM_REG_LOONGARCH_LBT_SCR3:
+> >> +                       *v =3D vcpu->arch.lbt.scr3;
+> >> +                       break;
+> >> +               case KVM_REG_LOONGARCH_LBT_EFLAGS:
+> >> +                       *v =3D vcpu->arch.lbt.eflags;
+> >> +                       break;
+> >> +               case KVM_REG_LOONGARCH_LBT_FTOP:
+> >> +                       *v =3D vcpu->arch.fpu.ftop;
+> >> +                       break;
+> >> +               default:
+> >> +                       ret =3D -EINVAL;
+> >> +                       break;
+> >> +               }
+> >> +               break;
+> >>          default:
+> >>                  ret =3D -EINVAL;
+> >>                  break;
+> >> @@ -663,6 +691,34 @@ static int kvm_set_one_reg(struct kvm_vcpu *vcpu,
+> >>                          break;
+> >>                  }
+> >>                  break;
+> >> +       case KVM_REG_LOONGARCH_LBT:
+> >> +               if (!kvm_guest_has_lbt(&vcpu->arch))
+> >> +                       return -ENXIO;
+> >> +
+> >> +               switch (reg->id) {
+> >> +               case KVM_REG_LOONGARCH_LBT_SCR0:
+> >> +                       vcpu->arch.lbt.scr0 =3D v;
+> >> +                       break;
+> >> +               case KVM_REG_LOONGARCH_LBT_SCR1:
+> >> +                       vcpu->arch.lbt.scr1 =3D v;
+> >> +                       break;
+> >> +               case KVM_REG_LOONGARCH_LBT_SCR2:
+> >> +                       vcpu->arch.lbt.scr2 =3D v;
+> >> +                       break;
+> >> +               case KVM_REG_LOONGARCH_LBT_SCR3:
+> >> +                       vcpu->arch.lbt.scr3 =3D v;
+> >> +                       break;
+> >> +               case KVM_REG_LOONGARCH_LBT_EFLAGS:
+> >> +                       vcpu->arch.lbt.eflags =3D v;
+> >> +                       break;
+> >> +               case KVM_REG_LOONGARCH_LBT_FTOP:
+> >> +                       vcpu->arch.fpu.ftop =3D v;
+> >> +                       break;
+> >> +               default:
+> >> +                       ret =3D -EINVAL;
+> >> +                       break;
+> >> +               }
+> >> +               break;
+> >>          default:
+> >>                  ret =3D -EINVAL;
+> >>                  break;
+> >> --
+> >> 2.39.3
+> >>
+>
+>
 
