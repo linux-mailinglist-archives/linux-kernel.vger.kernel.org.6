@@ -1,133 +1,157 @@
-Return-Path: <linux-kernel+bounces-310584-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310585-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFF4B967EBE
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 07:20:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B117C967EBF
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 07:25:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ADEA728229B
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 05:20:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 073B7282220
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 05:25:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7731814F104;
-	Mon,  2 Sep 2024 05:20:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="a1PQyklq"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E57014E2E8;
+	Mon,  2 Sep 2024 05:25:24 +0000 (UTC)
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A26D3BBC1
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 05:20:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36EEF382;
+	Mon,  2 Sep 2024 05:25:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725254434; cv=none; b=eymIkL/0PMPRnjsatZSnz2iHj7CzxjvrgIypTLTOEFCHa3T85GTkwdlOGGNgCf+8lq5llt8FO7KXmAgqcT+8bueWK8cwTW3dVPl5Vg5Eb+oetCbqOqBcnYX7LU5QIMYvq+MaSPZRKcOh4+Nj/uXCnNLsoQvloqOJQWpfdBFNu6E=
+	t=1725254723; cv=none; b=Aomx3MY6J2aZdiaF1QU98HLeMJUNZ2i4UWFq1YygamoazDMfsVCim/9BqoLcxQgYNfHgMB//UIfph0BsFqdNbkvCT6gpTKzWH38BCbFxbatP35tKjYhSeeaVAVkLUD+ntI44Ry5daTxu3kzB+u0zI3D+40g+yOtHMXSSVQ7glCE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725254434; c=relaxed/simple;
-	bh=KvKf4g0Bbhp3lZCttFyNHndJpiFd0u4cw7Jr+H2fsGI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sFMoMSGvj6wYrKaoqjLGfmqLY5TDQbVLkoS5b/vVt7/xitywQ34jiq2WxrjJnjpH310iBufdeR+jNSRkGW9RaLSKvnsflTkoW6tWZ0kWRO7Ni14pH3EOXivXC//9gE4wlgmmWUK2UgQa0h/5N7n6iVf4SndCjlrcJyFQZfjo4gc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=a1PQyklq; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-2059204f448so386715ad.0
-        for <linux-kernel@vger.kernel.org>; Sun, 01 Sep 2024 22:20:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1725254432; x=1725859232; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=svCd9cCmgi2dsrZIqz9Ry+NjpaYUU7HzIWIuLx9fASw=;
-        b=a1PQyklqoevg4Z8ysVpaRSgCO3JcBBte/f1+B3LrQu4IZQZ8R7CqKscbQbSWSbKjCj
-         aReR3EoF0TCsYFKhCcFSo5NhULAfJ/A2OM221KuphmdEwYsjxvuKaLhNzWnuYOinBMlU
-         1F2tzYcMUaKU9Bl8C+UA79QasDc14ApzFgMtwhobbdlC+jvkvYsqjH+B090FG1xq0erF
-         58XS8zxnx1wuPdJIs9K+F2JsM/pJjx6niIWIWYW9Egk/VrxVcCkYamYx/KXZZ0x0b5IZ
-         dKJUguJ1dOjvh1hY546bSycLCd2gouDqePNQjZzkWgV3xdEWS7oQ5eW6yS2+lL8z37LB
-         wC9A==
+	s=arc-20240116; t=1725254723; c=relaxed/simple;
+	bh=0UEugsHaHTIIBze8ZhMsvGgEDYyHs4eEbl2x1MZTfyk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nQ8QAo1BtQ09s/buKBcjTE0yD/2U6/EBVKT7XfVxSzY10pGq/v3iDMtNd5c4V8jaDX4QACd12Of+YNJvqKIuLDX6jTZEXMqA58XMRBTn4qdtdKXHUTWtd1cOOY8LLQoXxs4WqIqQRTz0lKwhLOmDRZS46Pzz2tLzYOYATJb+Rzg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.167.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-53346132348so4738320e87.2;
+        Sun, 01 Sep 2024 22:25:21 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725254433; x=1725859233;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=svCd9cCmgi2dsrZIqz9Ry+NjpaYUU7HzIWIuLx9fASw=;
-        b=Pr0AuAiScVjPwlzJ3X7M1xq2cSHLe0CaBk2LkwFivORlUSZcOFB2fL0JmJ7Fd/k2Nl
-         LrLYsCK2UQxoEb+6JNiTS403EHJJv/n9fPlOY0OhWTvq+M4eoE2iPNr3DZw09B+2cg6y
-         x3wJHvbCDfcHO+LWQrhDSacJREIyHfy62WCTBWQABwnGTmzU2o1sRKMNEMhKbnZ+YCX9
-         i+NU05gJPBEJj/FAPlctsAm570/m7eDJ0EY02fuXNVd+yMFG0SZsdF18j44GwoFBMXaL
-         D17oZRn7Wv5ZTORJnrbtstF+FxeCf7yPtudBpVwLHwdfLtSmJZfATCYAYtyhS+nMvlCV
-         2svg==
-X-Forwarded-Encrypted: i=1; AJvYcCUFPDcwWoC0bE0natuH8CXu1hougbE6hZGmn2U1jpyIVuCH6gPSUpAJWV5myOJDEQTaN+7HIdWlBwFb8c0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw3cQ9WN+PUmeEZB1nAgXue1GDP2N9JV6yREO7sbGe88vQzh5hg
-	mnOCELmwdwnQCQD8n4xU9yDmBR2gK/+F8hfYlcX6DyjBUxx0SR+TxcWh0/BuEw==
-X-Google-Smtp-Source: AGHT+IENo82OP7KUAchOYeqsGnHpgO27EwWWGu6yGd/8R1i+gvRUCCf9ONzPCabM/KVK3PRQdMypwg==
-X-Received: by 2002:a17:902:f688:b0:1fb:4194:5b78 with SMTP id d9443c01a7336-2054477bfbamr54625635ad.47.1725254432576;
-        Sun, 01 Sep 2024 22:20:32 -0700 (PDT)
-Received: from thinkpad ([120.60.58.247])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20538525f1fsm37636485ad.65.2024.09.01.22.20.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 01 Sep 2024 22:20:31 -0700 (PDT)
-Date: Mon, 2 Sep 2024 10:50:22 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: MANISH PANDEY <quic_mapa@quicinc.com>
-Cc: "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
-	quic_nitirawa@quicinc.com, quic_bhaskarv@quicinc.com,
-	quic_narepall@quicinc.com, quic_rampraka@quicinc.com,
-	quic_cang@quicinc.com, quic_nguyenb@quicinc.com
-Subject: Re: [PATCH V2] scsi: ufs: qcom: update MODE_MAX cfg_bw value
-Message-ID: <20240902052022.ye5a5g4aaiunhnyl@thinkpad>
-References: <20240828132526.25719-1-quic_mapa@quicinc.com>
- <20240828133132.zqozjegmbnwa7byb@thinkpad>
- <f0b62279-b4b6-4cb3-a808-fcd170a384eb@quicinc.com>
+        d=1e100.net; s=20230601; t=1725254720; x=1725859520;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9g7m3dcp33M2h8ZbP0cmHo9kPQpGKFN1tV81kjzpYoc=;
+        b=EpETliXvYiLNHWE0HYq7LXJ4lI681anFy7uByM3wh5rErvO1znLwnymryecWLxreNl
+         M3qSbEam9tNAqJmMDmKHCuFyIJL/mEabdheZAR/z8QI8dAUVpUBCeeZxsMe7xYgr/dil
+         oZNOIZR+bk4kU3cZdhQtQrtAclGIk92VH1A2H0hYWzWMylYNPRGpQ1feUP0bMYYRi2Cf
+         zioEDf0JL/ho4iQQFjd+TXfA/g+EagIJRtHJpP4OxjfbuG09rtaFttxUw3T+ZAp7nKAZ
+         lH7gK075uXROJGKz1ILLQ3i8MOFgJ2CJXIJzXVnVvG0GlQ2gyQqU5ZEALMB4E8h3rgUO
+         Kqcw==
+X-Forwarded-Encrypted: i=1; AJvYcCUUUz2ZoQWdknPpTCvxRXxa28dLwktqGMreeAKPWaqUa3X3kyxbw0Dfc+1p5m8JJD3pB7qg23OcqrmqzsNJ30ENZA==@vger.kernel.org, AJvYcCX7CQZYXmiJmqDN4C4AAShGnFtJb9PJVe1rou3hidfcs5WQLd87O9IxhCF1OJ+j7j1M5W1db6OCF3ToMAE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwyvRKi+L9yNMgMrWvbyTld6SXP5vNHcoxObgAGcx7oqp6TO7ew
+	zwXfMjoIJdNrrjTAGqSWs7W/bKDQjuXCn3KQzBfK7R4UfVKOy51l
+X-Google-Smtp-Source: AGHT+IH9dxyFUwWBvQo0uLnPJLwBa/lSZK/j8rk+3pCpkjzIy7IKB8qk6Tx9FDW9f3rVtOLJUvoStA==
+X-Received: by 2002:a05:6512:128b:b0:52e:fefe:49c9 with SMTP id 2adb3069b0e04-53546b3ffb0mr5822064e87.36.1725254719804;
+        Sun, 01 Sep 2024 22:25:19 -0700 (PDT)
+Received: from ?IPV6:2a0b:e7c0:0:107::aaaa:69? ([2a0b:e7c0:0:107::aaaa:69])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8989196b89sm509012166b.114.2024.09.01.22.25.18
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 01 Sep 2024 22:25:18 -0700 (PDT)
+Message-ID: <0f841525-e02a-4e11-b5f8-1acc61979ccf@kernel.org>
+Date: Mon, 2 Sep 2024 07:25:17 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <f0b62279-b4b6-4cb3-a808-fcd170a384eb@quicinc.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH/RFT] Re: [PATCH v5 1/8] perf trace: Fix iteration of
+ syscall ids in syscalltbl->entries
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Howard Chu <howardchu95@gmail.com>,
+ Adrian Hunter <adrian.hunter@intel.com>, Ian Rogers <irogers@google.com>,
+ Jiri Olsa <jolsa@kernel.org>, Kan Liang <kan.liang@intel.com>,
+ Namhyung Kim <namhyung@kernel.org>, linux-perf-users@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Arnaldo Carvalho de Melo <acme@redhat.com>
+References: <20240705132059.853205-1-howardchu95@gmail.com>
+ <20240705132059.853205-2-howardchu95@gmail.com>
+ <6fe63fa3-6c63-4b75-ac09-884d26f6fb95@kernel.org> <ZtJWEVn8-w07Wm0q@x1>
+Content-Language: en-US
+From: Jiri Slaby <jirislaby@kernel.org>
+Autocrypt: addr=jirislaby@kernel.org; keydata=
+ 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
+In-Reply-To: <ZtJWEVn8-w07Wm0q@x1>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Aug 29, 2024 at 05:44:21PM +0530, MANISH PANDEY wrote:
+On 31. 08. 24, 1:30, Arnaldo Carvalho de Melo wrote:
+>  From 174899051e54ecdab06c07652a3d04ad000ab301 Mon Sep 17 00:00:00 2001
+> From: Arnaldo Carvalho de Melo <acme@redhat.com>
+> Date: Fri, 30 Aug 2024 19:53:47 -0300
+> Subject: [PATCH 1/1] perf tools: Build x86 32-bit syscall table from
+>   arch/x86/entry/syscalls/syscall_32.tbl
 > 
-> On 8/28/2024 7:01 PM, Manivannan Sadhasivam wrote:
-> > On Wed, Aug 28, 2024 at 06:55:26PM +0530, Manish Pandey wrote:
-> > > The cfg_bw value for max mode was incorrect for the Qualcomm SoC.
-> > 
-> > What do you mean by 'incorrect'? I extracted the value from downstream DTs. So
-> > it cannot be incorrect.
-> > 
-> > If you want to update it, please clearly provide the reason.
+> To remove one more use of the audit libs and address a problem reported
+> with a recent change where a function isn't available when using the
+> audit libs method, that should really go away, this being one step in
+> that direction.
 > 
-> Hi Mani,
+> The script used to generate the 64-bit syscall table was already
+> parametrized to generate for both 64-bit and 32-bit, so just use it and
+> wire the generated table to the syscalltbl.c routines.
 > 
-> From the snip from commit message
-> "The bandwidth values defined in ufs_qcom_bw_table struct are taken from
-> Qcom downstream vendor devicetree source and are calculated as per the
-> UFS3.1 Spec."
-> 
-> we have UFS 4.x devices, and ufs_qcom_bw_table is already updated with Gear
-> 5 support (8db8f6ce556a - "scsi: ufs: qcom: Add missing interconnect
-> bandwidth values for Gear 5"). So the max cfg_bw is not updated.
-> 
-> Also for UFS 3.x devices,
-> [MODE_HS_RB][UFS_HS_G3][UFS_LANE_2] = { 1492582,        204800 },
-> [MODE_HS_RB][UFS_HS_G4][UFS_LANE_2] = { 2915200,        409600 },
-> [MODE_MAX][0][0]                    = { 7643136,        307200 },
-> 
-> Please have a look for current max mode value(307200), it is even less than
-> UFS_HS_G4 (409600). So it should be updated.
-> 
+> Reported-by: Jiri Slaby <jirislaby@kernel.org>
+> Suggested-by: Ian Rogers <irogers@google.com>
+> Cc: Adrian Hunter <adrian.hunter@intel.com>
+> Cc: Howard Chu <howardchu95@gmail.com>
+> Cc: Jiri Olsa <jolsa@kernel.org>
+> Cc: Kan Liang <kan.liang@linux.intel.com>
+> Cc: Namhyung Kim <namhyung@kernel.org>
+> Link: https://lore.kernel.org/lkml/6fe63fa3-6c63-4b75-ac09-884d26f6fb95@kernel.org
+> Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-Okay, then you should mention that the max value is updated for UFS 4.x devices
-and mention that commit 8db8f6ce556a missed adding them. Also add the fixes tag
-for 8db8f6ce556a.
+Tested-by: Jiri Slaby <jirislaby@kernel.org>
 
-- Mani
-
+thanks,
 -- 
-மணிவண்ணன் சதாசிவம்
+js
+suse labs
+
 
