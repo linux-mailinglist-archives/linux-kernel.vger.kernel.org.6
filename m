@@ -1,187 +1,127 @@
-Return-Path: <linux-kernel+bounces-310850-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310852-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48FC1968201
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 10:33:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 40759968205
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 10:34:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C97D72809CB
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 08:33:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EB835281ECC
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 08:34:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07E411865FE;
-	Mon,  2 Sep 2024 08:33:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E14821865F2;
+	Mon,  2 Sep 2024 08:33:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Bs0s7Uij"
-Received: from mail-vs1-f53.google.com (mail-vs1-f53.google.com [209.85.217.53])
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="jYOjl+0A"
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D16E7154C0B
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 08:33:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABB6B161310
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 08:33:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725266008; cv=none; b=F4DOsSXz0vqj36g5nG2wNU0wSjYo5UlRABl8yxsWjM8gH3YxZEtiBFzsvsCpHej20EiQTj0dmL7AlFBP7cvzTYinmBKMKxlJpDt1v4iW3N9T2unINlx4rXN/FK71C+sSv8VUSbC2QgztHTtJPcq1WePGjEQ9wIep0jJ/q7PxdPY=
+	t=1725266034; cv=none; b=DW48EY+8KtcESCV4SJhrTabcrUbfzlfKMCmGZwpDZyMF0EYGL+0WnK55WdPMXPINFwiiExDAeKzzeo/v3Ch+gf7UKiK6eLq0gLYEwq5+WB8xUYGQE4v4uuhJZ7pMvcZB1ZW6DiBOG7fHqtM964W9Rv14hO/UZ3wbOfbI6AMs24E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725266008; c=relaxed/simple;
-	bh=PNR1y5jFFyZ/U+8iJvaIrnMTI8sRD1ojmA0BXADfGWk=;
+	s=arc-20240116; t=1725266034; c=relaxed/simple;
+	bh=zrv086Fdv9w35daxdi6hHW2giaN+qyNFa21Z0q4DoZ8=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bxbw/pGUwFv7kna1SdwnKzAh48JxOQi0BSKagxIQeu7wbfF8nhhAlLlDpEvoEUkEATflsHKl2/ghiZ7qnghZwNz9I8L6tlxPxEXF9sRBZfouC1wfNpEkgr4jrriyRwWMy8Ev+e2aKvRIwPo3mXm5cuj09UMFbSlUfiYb6M5Xis4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Bs0s7Uij; arc=none smtp.client-ip=209.85.217.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-vs1-f53.google.com with SMTP id ada2fe7eead31-498cffc6a9fso1516389137.1
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2024 01:33:25 -0700 (PDT)
+	 To:Cc:Content-Type; b=F41tdjB8zoxB0Dy9mk2hCZ9SoftW43VZWmaIj3pWK6MjNmak32OWy63yCboFhXkAImBe8Ho+kOI/n+ksoc78tgaJmaRCxGcNIf2gwLm9hE6UTT8QJKNYsthX25mvi17jVYp5mIyL4ubhU4MN0wrTu9HlB/0hufdmKOFkydVX7Ic=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=jYOjl+0A; arc=none smtp.client-ip=209.85.167.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-5334b0e1a8eso5182949e87.0
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2024 01:33:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1725266005; x=1725870805; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=kXkIyZQ0PjK6x8WUxNBMo+VFGKPoaaBPUMlbMlC+lj4=;
-        b=Bs0s7UijXm7LEFj8GsrFuOStOIIVTdEsAXMqF5L0aTrCdgjgIuS3UIaY6YMxi36/Iy
-         vHbl/8QJdNFfFrR752wCbXKEGER/OiYCC36ZmGedr88Dzno+nxgPRukgWCZDfZ2kDnTI
-         GjxfHf2h3bB7FNUpBlA5SbSyvN2FhZ/ANWkSNVVhfYGrow9AuLdRswLqgSrxzyFISzZt
-         zT9GyX+YfEuLcvbNgklB55W48XIgFn6gNLZ5QRkdBHzwP/3aKLfur3JBsMOXVHm8OE0d
-         UqaMUdDFLryf4QY7SG8bD3huvs89iUvWAGB+pkDx8+6eU38E5RbbRdbYyx2HI+OGsQM+
-         vCGg==
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1725266031; x=1725870831; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=goZxaS9ZQb5+JNlLUTZNbTEFCx+Y5sRzY+bt3xQbfq8=;
+        b=jYOjl+0AcPqri4YkwLEYNf6WxPMylAw/SUhWSkk6jJEiaXeBGDzs8bT3wtRAjLsGaZ
+         2DksmifeiG9dfc/fRRuMMgZ1D6u/Qsc6En2AtUw+onzkMdNGJ4I2sDNfRS5wF2xqFHW2
+         A+/84UdxjHj3DtNEcBHM84l+rp+5ZlNGt9OItWsMtzV2PtS96VRjjeOgLJVrflccPXdf
+         JbsieIwJHbZ7Oyihgk/TGrvwfgJG2DyVniqomFXrtGrk12kHtXaPG46xee9OIxCJqWe7
+         8iFv2crS5cN4P22OCftYdiTxqwKl0Df3RSJYhFj513qvQdWsNjI5Gn95JSk1NuRcgxiF
+         It8Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725266005; x=1725870805;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=kXkIyZQ0PjK6x8WUxNBMo+VFGKPoaaBPUMlbMlC+lj4=;
-        b=Ia4VNysD8VlB3wxnJ3z9CoNxfLZRXtqjATMahKebb4ErN691IH2w6pufBg1ybodMVc
-         mwqtu67SzXn/L/vSktjFRdMd1E8B4JpzbqaUxFopPM1mxLbE3Gc3iAK7cSywr2S4wfDT
-         LSpurm7rfAiIinQIuzmq0MSRxY5LssbE2OtiZ1Lkbvh7QUd1KD/Tmhbk5IMsGkXi9Gta
-         OihKqccexcqWqld3st1u0EqJ4488mJPdecSr4VXxYnn0HR7ue0Vm3kfy2a2GQHcOEWWc
-         1DEjKV8bD5HN+/ncB9CyzUZ8rn7GEQcVb6tFLxzgTYwToSCelsV+NdXWOXki2IK8MTGo
-         WZzA==
-X-Forwarded-Encrypted: i=1; AJvYcCU7BFSYRpgs3EsZZZSpinNIzNvFfEUY84EJylyM2sZnnT2s6Gxf4KtOQ1qgWt+b5zgVOFfpE6VqHJxQB7Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzE6TrxawqjxkXLdoMqbBpfh6/vPvLaEivVCeRHVesQoPXo6ax9
-	nnTgQl21mEQpwHmuVDplhkURvnPfWtwAwhd99jEB/2aq0j5neH8IdmfmJM2jMhBBDhexFZ0MoLn
-	3rGejQAI15WSIWrGCBA6c3PwdAKN23b2DtcqJryCo6BDIWbZUMeY=
-X-Google-Smtp-Source: AGHT+IFgxqoz93mmdsCr/aVqqjJRfDjqLFg0pIrx7sVX8EGEj0YgIu7R6T9ldniFExdERZD+0nImtPHiL+lQnbVegXM=
-X-Received: by 2002:a05:6102:441d:b0:48f:4bba:778c with SMTP id
- ada2fe7eead31-49a774f6011mr7832345137.8.1725266004923; Mon, 02 Sep 2024
- 01:33:24 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1725266031; x=1725870831;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=goZxaS9ZQb5+JNlLUTZNbTEFCx+Y5sRzY+bt3xQbfq8=;
+        b=k6DTcmSdL28pfDPyHIIZY+w1g6+rLdta5n1IZyBsaOCv/vuIrfirPQ4hwkQslzglrv
+         xu4KSVpxLM0XDB9NiLdCSBi8apvg2n3b5Sghe6WZdBnCmciTufqx/PmXoAr8g3E0CjN1
+         wfyBrJfpIJOCEjsmNhIcZqzlpmqwbslbsUYc0xIgMvRB0m/6HgQhklEzs6637wkvVyi/
+         +QmBjP8ZK7wWTBXAHy72SZhg6/jZmSuTpYflaFC2xN9j/3YgEOBWb4GAYtrcOldCfl8t
+         WJz1B7DzltOGFbaDqCPck+sUca+saU0kJmZmxMQm0iUQTzZk4EsntBFWjJxUNtIozPpc
+         FpoA==
+X-Forwarded-Encrypted: i=1; AJvYcCVDHtyXG94OXKS6g2a4AQ1C+ci5nhGWJKGq7LdkU9BwiMIbN6wN54eoM8dm2Yljqpoz1xapQFPlwPsxeMM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxdiHUDkV3f5wlkoJZ4MRPzvX+1nyKQtyrD68giiF9infiEC5br
+	cIEwi94uZ0XJaimEmZQ+ZALaLV2eoiLvq4vSvcXOtvOeg/NEpnzktLlhCyAGa1LifmrCnld8hvl
+	0lZp/XiKCds72K1R4ccm9Yi/VZ3pnuRFqRjIxa8K8edGZzHZj
+X-Google-Smtp-Source: AGHT+IFKRDHwzB9Quu4PF58ILc2a/dguARhk2kJwxG3I8e6vD/m0GzTIkGdk+QIAGoeC6Hg1Qc9gjF6NjrTW5KKvYuM=
+X-Received: by 2002:a05:6512:3f26:b0:52c:df3d:4e9d with SMTP id
+ 2adb3069b0e04-53546b8d6bfmr6080640e87.37.1725266030043; Mon, 02 Sep 2024
+ 01:33:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240901160814.090297276@linuxfoundation.org>
-In-Reply-To: <20240901160814.090297276@linuxfoundation.org>
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Mon, 2 Sep 2024 14:03:13 +0530
-Message-ID: <CA+G9fYuK+=YW6F+mBMeHAZoUrQQS6-AgAezRfQGEpZui4JUepg@mail.gmail.com>
-Subject: Re: [PATCH 5.10 000/151] 5.10.225-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
-	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, 
-	broonie@kernel.org
+References: <20240805-clk-new-helper-v2-0-e5fdd1e1d729@linaro.org>
+In-Reply-To: <20240805-clk-new-helper-v2-0-e5fdd1e1d729@linaro.org>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Mon, 2 Sep 2024 10:33:38 +0200
+Message-ID: <CAMRc=MdVRdy7tBcx0RiQG8uGf9gDzGTRL7XrXDtOkDxss4et4A@mail.gmail.com>
+Subject: Re: [PATCH v2 0/2] clk: implement a new managed helper and add first user
+To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Russell King <linux@armlinux.org.uk>, Marcel Holtmann <marcel@holtmann.org>, 
+	Luiz Augusto von Dentz <luiz.dentz@gmail.com>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-bluetooth@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sun, 1 Sept 2024 at 22:20, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
+On Mon, Aug 5, 2024 at 10:57=E2=80=AFAM Bartosz Golaszewski <brgl@bgdev.pl>=
+ wrote:
 >
-> This is the start of the stable review cycle for the 5.10.225 release.
-> There are 151 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+> I'm posting this as RFC to see if there's any interest. I noticed that
+> some drivers do: clk_get() -> clk_set_rate() -> clk_prepare_enable(). I
+> was wondering if it's worth factoring this out into dedicated helpers.
 >
-> Responses should be made by Tue, 03 Sep 2024 16:07:34 +0000.
-> Anything received after that time might be too late.
+> This series adds a new such helper for the "optional-enabled" use-case
+> and the first user. Let me know if this makes sense.
 >
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.10.225-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.10.y
-> and the diffstat can be found below.
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> ---
+> Changes in v2:
+> - s/EXPORT_SYMBOL/EXPORT_SYMBOL_GPL/
+> - add a stub for !COMMON_CLK
+> - Link to v1: https://lore.kernel.org/r/20240801-clk-new-helper-v1-0-81e9=
+338b7b17@linaro.org
 >
-> thanks,
+> ---
+> Bartosz Golaszewski (2):
+>       clk: provide devm_clk_get_optional_enabled_with_rate()
+>       Bluetooth: hci_qca: use devm_clk_get_optional_enabled_with_rate()
 >
-> greg k-h
+>  drivers/bluetooth/hci_qca.c | 24 ++----------------------
+>  drivers/clk/clk-devres.c    | 28 ++++++++++++++++++++++++++++
+>  include/linux/clk.h         | 33 +++++++++++++++++++++++++++++++++
+>  3 files changed, 63 insertions(+), 22 deletions(-)
+> ---
+> base-commit: d6dbc9f56c3a70e915625b6f1887882c23dc5c91
+> change-id: 20240801-clk-new-helper-7853f662cda1
+>
+> Best regards,
+> --
+> Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+>
 
-The Powerpc defconfig builds failed on Linux stable-rc due to following
-build warnings / errors with clang-18 and gcc-12.
+It's been a month. Any comments on this?
 
-This is a same problem on current stable-rc review on
-   - 5.4.283-rc1 review
-   - 5.10.225-rc1 review
-   - 5.15.166-rc1 review
-
-In the case of stable-rc linux-5.10.y
-
-Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
-
-Anders bisected this to first bad commit id as,
-  fbdev: offb: replace of_node_put with __free(device_node)
-  [ Upstream commit ce4a7ae84a58b9f33aae8d6c769b3c94f3d5ce76 ]
-
-build log:
---------
-drivers/video/fbdev/offb.c: In function 'offb_init_palette_hacks':
-drivers/video/fbdev/offb.c:357:47: error: expected '=', ',', ';',
-'asm' or '__attribute__' before '__free'
-  357 |                 struct device_node *pciparent
-__free(device_node) = of_get_parent(dp);
-      |                                               ^~~~~~
-drivers/video/fbdev/offb.c:357:47: error: implicit declaration of
-function '__free'; did you mean 'kfree'?
-[-Werror=implicit-function-declaration]
-  357 |                 struct device_node *pciparent
-__free(device_node) = of_get_parent(dp);
-      |                                               ^~~~~~
-      |                                               kfree
-drivers/video/fbdev/offb.c:357:54: error: 'device_node' undeclared
-(first use in this function)
-  357 |                 struct device_node *pciparent
-__free(device_node) = of_get_parent(dp);
-      |                                                      ^~~~~~~~~~~
-drivers/video/fbdev/offb.c:357:54: note: each undeclared identifier is
-reported only once for each function it appears in
-drivers/video/fbdev/offb.c:358:17: warning: ISO C90 forbids mixed
-declarations and code [-Wdeclaration-after-statement]
-  358 |                 const u32 *vid, *did;
-      |                 ^~~~~
-drivers/video/fbdev/offb.c:359:39: error: 'pciparent' undeclared
-(first use in this function); did you mean 'xa_parent'?
-  359 |                 vid = of_get_property(pciparent, "vendor-id", NULL);
-      |                                       ^~~~~~~~~
-      |                                       xa_parent
-cc1: some warnings being treated as errors
-
-
-Build Log links,
---------
- - https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-5.10.y/build/v5.10.224-152-gee485d4aa099/testrun/24999742/suite/build/test/gcc-12-ppc6xx_defconfig/log
-
-Build failed comparison:
- - https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-5.10.y/build/v5.10.224-152-gee485d4aa099/testrun/24999742/suite/build/test/gcc-12-ppc6xx_defconfig/history/
-
-metadata:
-----
-  git describe: v5.10.224-152-gee485d4aa099
-  git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-  git sha: ee485d4aa099209aaf39d4a5b8fe624ce3b3499d
-  kernel config:
-https://storage.tuxsuite.com/public/linaro/lkft/builds/2lTio0YVAvyu3ldUd5EvqiE4ii0/config
-  build url: https://storage.tuxsuite.com/public/linaro/lkft/builds/2lTio0YVAvyu3ldUd5EvqiE4ii0/
-  toolchain: clang-18 and gcc-12
-  config: defconfig
-  arch: powerpc
-
-Steps to reproduce:
----------
- - tuxmake --runtime podman --target-arch powerpc --toolchain gcc-12
---kconfig ppc6xx_defconfig
-
-
---
-Linaro LKFT
-https://lkft.linaro.org
+Bart
 
