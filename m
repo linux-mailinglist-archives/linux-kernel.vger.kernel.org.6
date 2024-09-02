@@ -1,165 +1,94 @@
-Return-Path: <linux-kernel+bounces-310853-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310861-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5110396820A
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 10:34:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9177C96821F
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 10:37:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C5E36B2229D
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 08:34:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4EE522836CC
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 08:36:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEC3718661D;
-	Mon,  2 Sep 2024 08:34:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="ufI/dgqz"
-Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 204AF18628F;
+	Mon,  2 Sep 2024 08:36:55 +0000 (UTC)
+Received: from smtpbgeu2.qq.com (smtpbgeu2.qq.com [18.194.254.142])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86DD6183092
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 08:34:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2FA12AE99
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 08:36:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.194.254.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725266062; cv=none; b=VUBDvhtt69gbUN/udDv11xf+1A5y/0tF9zUWIPwNXquI8ec2fWYt1rr9iq6NbivfJV1VlpPl8yG9a3/k+P/NW06/X86pE8piheu/xo/uyG9nvmLdOGPlzyX3LuqdiEC4nWUjXoERxnxO+Wf8RQfj1mrkJ7yTj7BnoASf11jHLWk=
+	t=1725266214; cv=none; b=FSGsFcey8h1SVmNWrtQAXSRM9lv0qM4kpx+3U1u+DqNUP/6+Z5uLnJe9ALDhi2HT6f1nFpWtPAibKokVhnOBPgwn0E6VnbAxKoFYiITVoj8LHUy7mak88h2gGwg/jQpXxRrBFXq/3bbIO6E1oKWij1vFCChMjrhZ1NhB+RVm4Go=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725266062; c=relaxed/simple;
-	bh=txgND3gwVKn6mjB+PMDD7QdLkXKhRLtMsD4C90K0ZC0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=K0WVwQToWNP/WqBS2qD/N5uCNKvxXFl7Vd5b9IT+DwlM6jUeKri/P6j/Dnx4LTvaDFyjE0+c8kRcQPR4EHNuf/SH1uFk/FHdxZP3tmWJ2q6BAD+KyrH/Oh9pd9ll1ZQl9fyVohyOK1chun/XwOHP5HVi/q9i2u5VAt1hic9vD5E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=ufI/dgqz; arc=none smtp.client-ip=209.85.208.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2f50f1d864fso44670811fa.1
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2024 01:34:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1725266059; x=1725870859; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VG1MaX9Wixqm8LX4jVIjxRtWDElDhiE8Ho1xpB08+bA=;
-        b=ufI/dgqzjBePBCsR1bnDU8O03jxZPZ3AlZ0Pz8zipgMY5lbHchbtJqeLNUMM/A6b+i
-         1BbSnwvEqnCNk4nEiQbqxoI+2l0ZmIK+q5C5kCV8XkqaIthD3iaXdniqDbchCaznUlXu
-         2XS8izELJLhjKBX2aYb3uvRmz5NwXQ810A5ZmdOhmvrKMhWofPEZRF3j6n1pP7pMHtR/
-         u/cnYRwVKQ3v/TRlQnwpI82b9xMgGjFLTZeairNND6/VUgUhj1svBI8HoA8Gfwt2xX6c
-         bOYfi4ufpvr3HO6cDNCW5t84BBlorpAjOWzfZviw3XbiUuYr6GU50WpibpDtALv+Y6yh
-         9ZNQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725266059; x=1725870859;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=VG1MaX9Wixqm8LX4jVIjxRtWDElDhiE8Ho1xpB08+bA=;
-        b=E9Dw1RJ+eaqu3YzwSsXSc/zqIJYyGiBiLJMt4Kg39h5rx0t7qN2etPiQ3S3+SKT1Ae
-         l3sgt4Vt5JkyO5fSVtR/FMj0Lz1i4cw2k/1RmL4zL9rjP0f3HKZB2gVWY3xBD7477qQO
-         qgP+9/OOA98gDg50iES1pY1be8Bu+63JBatQpy290rAdLFpdKMb+0kqzhRvT9VQFhhba
-         arAu9qnV+ZimEtosBI4fcW7fHzUUXpCuRELveYtCq4XYh6fmeIqFEfu6CrrSr472hICq
-         nd9mmaJAqRQHv6q2UT/6HnMniOoGBaZGGB6iT53ppJ/XJiXuOkdd0SxJYfkKkBdlF8Se
-         TmGQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVqWT+0S1BxjM0c9T88OwcHPV6nS1mVb45GRo9+swO2s9k0TwjAhrx9fEx9pMBYYRU4prKF6dZkzOhIOnk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzxA5zvexwvYh2F4Scl7BBVZ3w6rHVVgbvIn1riV97zLCK75hfS
-	ddZAqlcZJ4ZLKq+E5DuJ8R3Y+cwu9JrNNY9vFfvtrkRm1Lh+ek8tJI2gC4OBYYkieKwUeP/i2x+
-	YjFOtY4nLMfMPSe4WlLjY1tHIKAAbkSnomKcy1Q==
-X-Google-Smtp-Source: AGHT+IFZPkz+zpegGiynrc/uuNxJ0ov4qqo022LeyJfV540+XBhmrJitjFwxWZA+2HM3HGR7rldq/MxJvLLQLrQlwh0=
-X-Received: by 2002:a2e:e0a:0:b0:2f5:136d:89ef with SMTP id
- 38308e7fff4ca-2f629063f04mr32120871fa.22.1725266058091; Mon, 02 Sep 2024
- 01:34:18 -0700 (PDT)
+	s=arc-20240116; t=1725266214; c=relaxed/simple;
+	bh=SWejRdQp+kWHa8muEQd/bu49jIbL6oJzO8XqQMm46gs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=p0dWOYOHsl50Dtg4HOQXYqY29a7QiBuMvObTFWUzWHmEDGfpCqPDpBqHkb5Kr7Y58nzpuRHEkUm06sFpeNUsKk14WgXOPCoSM1S3IJkzaHGRe8ZyiM/M49if6qVDKEpjDEvpBk12Ki9F8DlgeGpN9/7yTTRP07ZXgvg8GwBdB8I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=shingroup.cn; spf=pass smtp.mailfrom=shingroup.cn; arc=none smtp.client-ip=18.194.254.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=shingroup.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shingroup.cn
+X-QQ-mid: bizesmtp87t1725266091tu2fqcr9
+X-QQ-Originating-IP: kGypH4P7jg3wvqEFFYagyp6a6SZcS9GvI3fXkANzjYY=
+Received: from HX09040029.powercore.com.cn ( [58.34.117.194])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Mon, 02 Sep 2024 16:34:43 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 11960807525001457609
+Date: Mon, 2 Sep 2024 16:34:25 +0800
+From: Luming Yu <luming.yu@shingroup.cn>
+To: Christophe Leroy <christophe.leroy@csgroup.eu>
+Cc: "shenghui.qu@shingroup.cn" <shenghui.qu@shingroup.cn>,
+	npiggin <npiggin@gmail.com>,
+	"Aneesh Kumar K.V" <aneesh.kumar@kernel.org>,
+	mpe <mpe@ellerman.id.au>, "luming.yu" <luming.yu@gmail.com>,
+	=?utf-8?B?5p2o5L2z6b6Z?= <jialong.yang@shingroup.cn>,
+	linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v1 2/2] powerpc/debug: hook to user return notifier
+ infrastructure
+Message-ID: <DD7156ED36F34F8E+ZtV4kSBA-XH1f8NS@HX09040029.powercore.com.cn>
+References: <B375A36C9C4D73FF+20231218031338.2084-1-luming.yu@shingroup.cn>
+ <8734vzsw0q.fsf@kernel.org>
+ <8734vyn1ky.fsf@mail.lhotse>
+ <2acd6623-952b-4659-bc26-c632e94560a8@csgroup.eu>
+ <0638f0a2-782b-411f-9937-c62d99e9562b@csgroup.eu>
+ <tencent_4F2B3C0025D5A1722470D582@qq.com>
+ <bd4908d2-cea9-406b-902f-618626e74c88@csgroup.eu>
+ <B6A4506E3DD1F93F+Zs7Iq_EF799NyWHK@HX09040029.powercore.com.cn>
+ <3fbdc957-2db4-4148-b325-263384f9a196@csgroup.eu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240814082301.8091-1-brgl@bgdev.pl> <87a5hcyite.fsf@kernel.org> <CAMRc=Mcr7E0dxG09_gYPxg57gYAS4j2+-3x9GCS3wOcM46O=NQ@mail.gmail.com>
-In-Reply-To: <CAMRc=Mcr7E0dxG09_gYPxg57gYAS4j2+-3x9GCS3wOcM46O=NQ@mail.gmail.com>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Mon, 2 Sep 2024 10:34:07 +0200
-Message-ID: <CAMRc=MeuB1yhENHXqLxRf8xFNm7dYvjLisa7zsd6_2ov_OPw3g@mail.gmail.com>
-Subject: Re: [PATCH net-next v2] dt-bindings: net: ath11k: document the inputs
- of the ath11k on WCN6855
-To: Kalle Valo <kvalo@kernel.org>
-Cc: "David S . Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Jeff Johnson <jjohnson@kernel.org>, linux-wireless@vger.kernel.org, 
-	netdev@vger.kernel.org, devicetree@vger.kernel.org, 
-	ath11k@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <3fbdc957-2db4-4148-b325-263384f9a196@csgroup.eu>
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtp:shingroup.cn:qybglogicsvrgz:qybglogicsvrgz8a-1
 
-On Fri, Aug 16, 2024 at 11:10=E2=80=AFAM Bartosz Golaszewski <brgl@bgdev.pl=
-> wrote:
->
-> On Fri, Aug 16, 2024 at 10:26=E2=80=AFAM Kalle Valo <kvalo@kernel.org> wr=
-ote:
-> >
-> > Bartosz Golaszewski <brgl@bgdev.pl> writes:
-> >
-> > > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> > >
-> > > Describe the inputs from the PMU of the ath11k module on WCN6855.
-> > >
-> > > Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> > > ---
-> > > v1 -> v2:
-> > > - update the example
-> > >
-> > >  .../net/wireless/qcom,ath11k-pci.yaml         | 29 +++++++++++++++++=
-++
-> > >  1 file changed, 29 insertions(+)
-> >
-> > This goes to ath-next, not net-next.
-> >
-> > > diff --git a/Documentation/devicetree/bindings/net/wireless/qcom,ath1=
-1k-pci.yaml b/Documentation/devicetree/bindings/net/wireless/qcom,ath11k-pc=
-i.yaml
-> > > index 8675d7d0215c..a71fdf05bc1e 100644
-> > > --- a/Documentation/devicetree/bindings/net/wireless/qcom,ath11k-pci.=
-yaml
-> > > +++ b/Documentation/devicetree/bindings/net/wireless/qcom,ath11k-pci.=
-yaml
-> > > @@ -50,6 +50,9 @@ properties:
-> > >    vddrfa1p7-supply:
-> > >      description: VDD_RFA_1P7 supply regulator handle
-> > >
-> > > +  vddrfa1p8-supply:
-> > > +    description: VDD_RFA_1P8 supply regulator handle
-> > > +
-> > >    vddpcie0p9-supply:
-> > >      description: VDD_PCIE_0P9 supply regulator handle
-> > >
-> > > @@ -77,6 +80,22 @@ allOf:
-> > >          - vddrfa1p7-supply
-> > >          - vddpcie0p9-supply
-> > >          - vddpcie1p8-supply
-> > > +  - if:
-> > > +      properties:
-> > > +        compatible:
-> > > +          contains:
-> > > +            const: pci17cb,1103
-> > > +    then:
-> > > +      required:
-> > > +        - vddrfacmn-supply
-> > > +        - vddaon-supply
-> > > +        - vddwlcx-supply
-> > > +        - vddwlmx-supply
-> > > +        - vddrfa0p8-supply
-> > > +        - vddrfa1p2-supply
-> > > +        - vddrfa1p8-supply
-> > > +        - vddpcie0p9-supply
-> > > +        - vddpcie1p8-supply
-> >
-> > Like we discussed before, shouldn't these supplies be optional as not
-> > all modules need them?
-> >
->
-> The answer is still the same: the ATH11K inside a WCN6855 does - in
-> fact - always need them. The fact that the X13s doesn't define them is
-> bad representation of HW and I'm fixing it in a subsequent DTS patch.
->
+Wed, Aug 28, 2024 at 09:27:23AM +0200, Christophe Leroy wrote:
+> 
+> 
+> Le 28/08/2024 à 08:50, Luming Yu a écrit :
+> > On Wed, Aug 28, 2024 at 07:46:52AM +0200, Christophe Leroy wrote:
+> > > Hi,
+> > > 
+> > > Le 28/08/2024 à 05:17, 虞陆铭 a écrit :
+> > > > Hi,
+> > > > 
+> > > > it appears the little feature might require a little bit more work to find its value of the patch.
+> > > > 
+> > > > Using the following debug module ,  some debugging shows the TIF_USER_RETURN_NOTIFY
+> > > > bit is propagated in __switch_to among tasks , but USER_RETURN_NOTIFY call back seems to
+> > > > be dropped somewhere on somone who carries the bit return to user space.
+> > > > side notes:
+> > > > there is an issue that the module symbols is not appended to /sys/kernel/debug/tracing/available_filter_functions
+this is not a problem as I just noticed that lib/Makefile carries this magic
+ccflags-remove-$(CONFIG_FUNCTION_TRACER) += $(CC_FLAGS_FTRACE)
 
-Gentle ping.
-
-Bart
 
