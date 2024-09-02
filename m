@@ -1,142 +1,83 @@
-Return-Path: <linux-kernel+bounces-311263-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311280-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC4F89686D7
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 13:57:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A18FD968717
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 14:07:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 99DF62850D0
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 11:57:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F9902866A9
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 12:07:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 671E4166F28;
-	Mon,  2 Sep 2024 11:57:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=deller@gmx.de header.b="TQ/AGNQD"
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.22])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A15D1DAC5F;
+	Mon,  2 Sep 2024 12:07:17 +0000 (UTC)
+Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4715B1D6DC9;
-	Mon,  2 Sep 2024 11:57:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A3AA185947;
+	Mon,  2 Sep 2024 12:07:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725278235; cv=none; b=qugJv0Ggs5a4yRk/BHoj1LqRJ3GztxuPAvP6qbTuEz/hjoAYRyzOv1vhNrj00zC9OAek7BDLN2DJMygjrgVpE8s33zmHjyyMorxHyHxKU0DpotMtpMozmMarO0c+aMRC0FFmpY1GPMuIxWVWyO1tVKs3IVFFOxlSft/QKofFARw=
+	t=1725278837; cv=none; b=iGcvEb/ERxKbqjVV/Iv0HVccwECZeeozRSscotXcbK3SL8qCtCta+aoJ2PFC73/4L1hL+CfiM1cA9LnSFiWnpv/9TzRDhnSXeOdHaMYsKiLpTO4bTMYT6wvmHPWMaSWLccAkrlt7LcitMtlMIAxrF8LNlisg0Qb6HDIyzCpyBCU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725278235; c=relaxed/simple;
-	bh=y7ZeFQTLn67qXoHXDSf+Lmf+s7fUhXzXd+zMQuKC9WA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rmgbj5y+fU5FGUjtmShLWF9eyiUOv1nE+zQl7fhWSBd9C0Iqb2h/D5M34iPonq2eMqfrvCevqOYW8Y2swY+Qz2FOx4+ipDsJAl4iN/CA5DgQgbmGsrS+qs5erTXPV+SMLaMmZXDpUIoVwg3XHbCLYO/ZI8EZLa3VvuroxGlCjYQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=deller@gmx.de header.b=TQ/AGNQD; arc=none smtp.client-ip=212.227.17.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1725278217; x=1725883017; i=deller@gmx.de;
-	bh=y7ZeFQTLn67qXoHXDSf+Lmf+s7fUhXzXd+zMQuKC9WA=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=TQ/AGNQDE3hKxUns/fNNiovsvujlvbY8PVoV9Qck0tBXBlEUsUYh3rgoAkLSdAL8
-	 35IAnjGHWsdj14QpyoRB6gU6l7xjicS9nB1OE1/Lh22z6opRV96fML/1Ntk773sLs
-	 2T2lY4YezOvFohMaD9SugmpfkXZEfZQe64oolgBjou1HRPSE8m9+aH9to0j1DLCHO
-	 0H054hVcG1uw/U6CpJ3lSV86bQmvVbtjIru9Vsnl3gjniXLDRxF6w//OnkJ+/ig4c
-	 qYVnV20hmZYU7LIsTQQ6mhXjqlKGbgnGSCsuV5L67GxKJ9qo47p1pSgC+DfpSdljm
-	 NU9r1ykvnxjWUxNOBQ==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [10.8.0.6] ([78.94.87.245]) by mail.gmx.net (mrgmx104
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1MK3Rm-1sVCz91IKs-00IpFG; Mon, 02
- Sep 2024 13:56:57 +0200
-Message-ID: <3c0dc4a0-4060-41ca-a989-08e227b78d37@gmx.de>
-Date: Mon, 2 Sep 2024 13:56:55 +0200
+	s=arc-20240116; t=1725278837; c=relaxed/simple;
+	bh=t2gAYCu0IFtlBxt8ILp+o87E1796+jpbU0bKhjOXHMs=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=m+UdObFQs49G/G8Bnm56uemZZM+oDwOPUWuIsp9qzrMrRwWPT8TCHou5GTlkfeJBfgaOGeXZadMrkKzrF4OI0K2vG5iQOkwJqNh0FjFq61P+dpQt3ugDJqTDIn9l4iHgSAoQzKoQL9Ibrr39qp89GSR97iEu99EO/k+7hZvGJZ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.234])
+	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4Wy6rl4qpnz1xwj4;
+	Mon,  2 Sep 2024 20:05:11 +0800 (CST)
+Received: from dggpemm500020.china.huawei.com (unknown [7.185.36.49])
+	by mail.maildlp.com (Postfix) with ESMTPS id 9449C140360;
+	Mon,  2 Sep 2024 20:07:11 +0800 (CST)
+Received: from huawei.com (10.67.174.77) by dggpemm500020.china.huawei.com
+ (7.185.36.49) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Mon, 2 Sep
+ 2024 20:07:11 +0800
+From: Liao Chen <liaochen4@huawei.com>
+To: <linux-gpio@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>
+CC: <linus.walleij@linaro.org>, <brgl@bgdev.pl>, <michal.simek@amd.com>,
+	<liaochen4@huawei.com>
+Subject: [PATCH -next] gpio: modepin: Enable module autoloading
+Date: Mon, 2 Sep 2024 11:58:48 +0000
+Message-ID: <20240902115848.904227-1-liaochen4@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] fbdev: imsttfb: convert comma to semicolon
-To: Chen Ni <nichen@iscas.ac.cn>, dan.carpenter@linaro.org,
- tzimmermann@suse.de, javierm@redhat.com
-Cc: linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org
-References: <20240902084730.4111387-1-nichen@iscas.ac.cn>
-Content-Language: en-US
-From: Helge Deller <deller@gmx.de>
-Autocrypt: addr=deller@gmx.de; keydata=
- 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
-In-Reply-To: <20240902084730.4111387-1-nichen@iscas.ac.cn>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:ACrym5K4x7MGXqqYYzGui3wWk3FjWg/2KIoCr0lfGXtvkYG/7Ge
- 8zQY3vjIq8sl+uRQbjd7KGSIUnH5m/DLSqLULjDJl5tkvzQRUYtOqR1HK2NtYQKTKV8aoFm
- cRQ5v305BjdlE59b8Wu08IOUhRcDxHwxRopDicN3hKV8GJPgxA5TbvDxA218/JHMgkIagoc
- XTrz26vsGnglkiHRGME1A==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:8e9LJZRxZPQ=;QB0/j0Y5+DCDLQAd0CxmT3IRRqJ
- 6bIkKouc7vmrywxrBjzC8+GgDGYwKRWruOZt81Kdwj766qwNBooGtI0iT6SBdudu7mMVTVnNK
- 03H7Sf4YW6lz07HpsrKkRlou0aMeyCSuxsZ/bzd/OQGocDDd/8Anu/gEvGjdJ+Ugm6zRN7GaU
- sNyuSH5J+VynpLGGi32spqria17s6+F53uR+LkTJCZk8OCWkVhGkYYpyFptc1SvCMiyflIveA
- Fhl4BqarBKKpthPbNuwEyGeJNsOvjAwtm9miMNlIBlbSDhQqNBsoBwvn2cdnTQP16UEckwWPC
- oSK9Ga2Hfhh6Lpl1RDpn4vuSi3x5z/iPQxmCVLFuWniEyHevzqAE/mt7ih5oSwArnchRrhuFX
- Dcc9HX5aSzGxdxSuIBOyjVZYvGxVGu0T0cM2sjE2SRjSgFOr+GL30xgIt2U55rHG7S1VAaAg8
- W8YazM/bGpYHbpVNOm9q8LD25WSs6sbOxXlU/MOdPE+XMofUv7Vztv7yJNNlpxOj0BOjRdC81
- 9dtsp2yAa9QYcm65YriEgAnVaC5l0SLtkz4WZwKxQbOyvR68qCPTn5OurJaSl12R7Ow/v84Qy
- LuOGbYNggl2T0gu92XFF41brXTwSyyNnuo8on7sPOROeGw9kpoAxcARtT1dD+9pp3t49mPrF1
- 4adwpnige33SbmKlmh+RiO/3Z5u7X+KGmOIIhCv16FVROGucBWg2w5sslxQJNSE1ZrkGsu/DM
- EwX6KSDe6KDNS59/L2zWC3oosfzhZJIEKioavqVaoCF26qxCX594OQxznkdmX5JCBHn6ivzaf
- JZmye5B0pDxfwRnnFPWGwcUA==
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+ dggpemm500020.china.huawei.com (7.185.36.49)
 
-On 9/2/24 10:47, Chen Ni wrote:
-> Replace a comma between expression statements by a semicolon.
->
-> Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
+Add MODULE_DEVICE_TABLE(), so modules could be properly autoloaded based
+on the alias from of_device_id table.
 
-I've applied your 3 comma-to-semicolon patches to the fbdev git tree.
+Signed-off-by: Liao Chen <liaochen4@huawei.com>
+---
+ drivers/gpio/gpio-zynqmp-modepin.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Thanks!
-Helge
+diff --git a/drivers/gpio/gpio-zynqmp-modepin.c b/drivers/gpio/gpio-zynqmp-modepin.c
+index a0d69387c153..2f3c9ebfa78d 100644
+--- a/drivers/gpio/gpio-zynqmp-modepin.c
++++ b/drivers/gpio/gpio-zynqmp-modepin.c
+@@ -146,6 +146,7 @@ static const struct of_device_id modepin_platform_id[] = {
+ 	{ .compatible = "xlnx,zynqmp-gpio-modepin", },
+ 	{ }
+ };
++MODULE_DEVICE_TABLE(of, modepin_platform_id);
+ 
+ static struct platform_driver modepin_platform_driver = {
+ 	.driver = {
+-- 
+2.34.1
+
 
