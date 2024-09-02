@@ -1,73 +1,87 @@
-Return-Path: <linux-kernel+bounces-310578-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310579-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9862E967EAA
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 07:05:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17AE2967EA9
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 07:05:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1BE401F216B1
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 05:05:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 492521C21636
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 05:05:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA33F15381A;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70957152E02;
 	Mon,  2 Sep 2024 05:05:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="GoMzQ/WL"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g+4dcZHj"
+Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 379B236D;
-	Mon,  2 Sep 2024 05:04:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7987B376E0;
+	Mon,  2 Sep 2024 05:04:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725253500; cv=none; b=Ch1hTCxOYbsKL3JKR+8JExLgsLszP7p4j5PkjZEyFwF0Kls+OPa84zYtHqDjiraF3hyTlaHIh0FGlboVaXJO8bOUOClRjmQAgrhOuhcBL/1/dkGHoBr8RM3Sfmko8it7qGZVLJ56GShRIkcsZEx2AMcmhpIxQ2Xj2849cK+sVqo=
+	t=1725253500; cv=none; b=nbNvLt8lF3FovuJjoa1IZKAXDGKWoNCpSDSrhveRWTIKDwEu/AtleM9UI5AeyErixQyflTNg1rcRzNzMerObZ6kwjqRJBA9kn5UI9kw8sq4TjlRmafpUEp+yEaKGoUxRxRWB3mfSxRTdCwQcNmOAOw9vq/9fsf5fyMEgpaTZpm0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1725253500; c=relaxed/simple;
-	bh=MVqTITvtSIgZ/UWOJ5zfAursfz09i8lWpLLFlRaWuzo=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=dE6pzUHy87HaMDyfD9qGGI5zPiJNLH2D1wmKEBzi8gxrIXQutt7RTlINKXEmixAeLfw0mij/sOwQm2vPQMCXPfuR0Hc3YxwxioDgKYFxJuN6Q5WhZV0wOTFEd/TnNxpoQtrj5k13Xl+msmjoBGnuD12V3GDH7fPmR4nHR0dorPM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=GoMzQ/WL; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 481NlGjC007652;
-	Mon, 2 Sep 2024 05:04:40 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=n/Dbx8Wm2IvxDD6/+cbjoX
-	ijw0ycUls4/9Xl54oYHUQ=; b=GoMzQ/WLfPzAVASGN1IaDMclgt7yt5F3uQfVSY
-	P+oc1zYM7nm8nNUemCMAlCOOOfa4thPW+WVx8A5+74LXOpXMFGJsawmPJulob73o
-	AX9vejXqLAxQR1W0/aThj+Kww569xVCWRrkN2py2iAfwWJxVfnibXtD/aTXqnTS3
-	3P0jBiZLlm7eINSiCNdr6/bB7Agj55Wc+B+XEVgmxWxyx/G0Htr4hY/svvCF2eIr
-	yJ91qZONV3DDj2upIzYM9JL9sOdo2D+THWLxSNFQD8WOnEpbIwfnIJIuj9AA6cZ9
-	eJ5iJWi9oExyv5fGgBnHUe8hwKH4bqWE0qPPeEDC6HQGAAhw==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41buj6ugha-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 02 Sep 2024 05:04:40 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48254dGS012151
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 2 Sep 2024 05:04:39 GMT
-Received: from hu-priyjain-hyd.qualcomm.com (10.80.80.8) by
- nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Sun, 1 Sep 2024 22:04:33 -0700
-From: Priyansh Jain <quic_priyjain@quicinc.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio
-	<konrad.dybcio@linaro.org>,
-        Rob Herring <robh@kernel.org>,
-        "Krzysztof
- Kozlowski" <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC: <quic_manafm@quicinc.com>, <quic_priyjain@quicinc.com>,
-        <kernel@quicinc.com>
-Subject: [PATCH v1] arm64: dts: qcom: Update tsens hysteresis for sa8775p SoC
-Date: Mon, 2 Sep 2024 10:34:16 +0530
-Message-ID: <20240902050416.47107-1-quic_priyjain@quicinc.com>
-X-Mailer: git-send-email 2.25.1
+	bh=KcjdDDJjrjgyP/exNug2pJgMTJLuvhmtIhMjw5Wsvvs=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=SGrV6eQqBVWsp8NAe/YhNC15qyk27wDYiTGXULqhuipr0vdW/ddNUILC37mwvrz/KAPlzx3vyXYBqXQm/+RTZBJhGDQZIaWxnKmFwQ62QWpQmtPj78ggngQ2rBtzsIIYojcn6mHGQOuA23HwmVpiSB87HYglVwRt3q1mqdpXkWQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=g+4dcZHj; arc=none smtp.client-ip=209.85.216.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-2d86f713557so1688118a91.2;
+        Sun, 01 Sep 2024 22:04:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725253499; x=1725858299; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FHGqQxx7ikWTbtglo2cLX/JP+S/8emXrRQELM8lSwgo=;
+        b=g+4dcZHji61Y3EnhaRGsh/JgllPVb/+XBS/9f4rABQpFAso6S3n9skuvyxq5hgTlB5
+         zqBMGsuGw84+Fk9/CAoBXBRyb1NmBnim1mtB2clCZRmHVj1qbqRrvZNbZf8Yx63xcjnj
+         YkKkEzSqgLAXR+771uRRWSv/K7aSCVWruUb42XUd1gcgDgzMF/Rzbv29aw9W9BsHdmjx
+         2fbGgxn4bhTDsxAhf0cBSRtByYoMM+oKvEI3jMaK0Si0MRWSAlmbuMZow5wkf4p9M40Y
+         TP8AgEaTkKNdop54Okwrm9eSY7UXPpl50emfKEboGZheaKPWBiD22sY8PcerRm7OW23h
+         6l0A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725253499; x=1725858299;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=FHGqQxx7ikWTbtglo2cLX/JP+S/8emXrRQELM8lSwgo=;
+        b=jOBqKEgW3XvNmhEHD5l3WpL9SzXaMxPOglLndbnRTWruMX36xtPkKufVjvdYak3icq
+         DI12J7B1SffTNCqz88V45nHwLIG38EFM5udJZs0vAQQGXASAX0xSJwms3IDfmuzcphKW
+         1RaKIm6oN/a06cpMsYvStRNllhJSsDs/ysNNLYthfOyEkP3/ouxQHN9yu0E+fefVzaiq
+         1vfGmN4CzKOPj9OCzJqMHBn1F9Epc91aLz12/CIlv1o/Diva8nEH2z+RF83NDLgaMjMu
+         poCA+JldYS1OqO5vFd9/Vr9N0gglDru2p7FvPLiI3sPvFLNGaB3I07ZzUblu/utG1FZw
+         LVWg==
+X-Forwarded-Encrypted: i=1; AJvYcCU/obILnzdxNnsuyRKSB1Brfhc6JqyfrQghm2ehsPOapHFLvc063n2BqO7TsFm5X5OWra9Mtnq8nLQK8kzq@vger.kernel.org, AJvYcCU2dZTAEKEzHZ2IAHrn5D1wtIMuj+ik9BZ0NOUb6ocle86mmzBJA/s2s2+Aj81E9S01rcP/q3z6p3QD@vger.kernel.org, AJvYcCVpEXkUnQYP99ZRtd11DCLxBHLASU5+aiazJs1mwsK3x1NQyd/IYRe/W3L3uuaveXTWQqIdxOgQXy9fymIK@vger.kernel.org
+X-Gm-Message-State: AOJu0YzzBDFYYcgFVbVpwIBA41nkDDILaiy7U0BwLSuHr/IwtjVARAGE
+	IEtC/FovjQ51nlsFGSvX5oa3526jwx8pNkrM/QAkZvOG09Ka73e2
+X-Google-Smtp-Source: AGHT+IGNou438MaV4PAfToK6bA1lpSXsINAc7F6lcuaibNFJ3EfVXplkuwr0P+F0J2p+FFP49SuK7g==
+X-Received: by 2002:a17:90b:8c6:b0:2cd:4100:ef17 with SMTP id 98e67ed59e1d1-2d8905ed64bmr5155151a91.31.1725253498541;
+        Sun, 01 Sep 2024 22:04:58 -0700 (PDT)
+Received: from localhost ([114.242.33.243])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d8c7f91919sm1764607a91.53.2024.09.01.22.04.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 01 Sep 2024 22:04:58 -0700 (PDT)
+From: Julian Sun <sunjunchao2870@gmail.com>
+To: syzbot+296b1c84b9cbf306e5a0@syzkaller.appspotmail.com
+Cc: brauner@kernel.org,
+	chandan.babu@oracle.com,
+	djwong@kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-xfs@vger.kernel.org,
+	sunjunchao2870@gmail.com,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [iomap?] [xfs?] WARNING in iomap_write_begin
+Date: Mon,  2 Sep 2024 13:04:55 +0800
+Message-Id: <20240902050455.474396-1-sunjunchao2870@gmail.com>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <0000000000002f63ae0620e563e2@google.com>
+References: <0000000000002f63ae0620e563e2@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,834 +89,23 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: _FVCTq5yZgKe5i7-qlpoAsi-wClPn4uc
-X-Proofpoint-GUID: _FVCTq5yZgKe5i7-qlpoAsi-wClPn4uc
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-09-01_06,2024-08-30_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 mlxscore=0
- mlxlogscore=673 impostorscore=0 suspectscore=0 clxscore=1011
- lowpriorityscore=0 phishscore=0 bulkscore=0 priorityscore=1501
- adultscore=0 malwarescore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2407110000 definitions=main-2409020040
 
-Update tsens trip hysteresis based on latest recommendation.
+Test the following patch.
 
-Signed-off-by: Priyansh Jain <quic_priyjain@quicinc.com>
----
- arch/arm64/boot/dts/qcom/sa8775p.dtsi | 200 +++++++++++++-------------
- 1 file changed, 100 insertions(+), 100 deletions(-)
+#syz test: upstream ee9a43b7cfe2
 
-diff --git a/arch/arm64/boot/dts/qcom/sa8775p.dtsi b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-index 23f1b2e5e624..e8b69efa8c78 100644
---- a/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-@@ -3523,13 +3523,13 @@ aoss-0-thermal {
- 			trips {
- 				trip-point0 {
- 					temperature = <105000>;
--					hysteresis = <5000>;
-+					hysteresis = <10000>;
- 					type = "passive";
- 				};
+diff --git a/fs/iomap/iter.c b/fs/iomap/iter.c
+index 79a0614eaab7..6e3f6109cac5 100644
+--- a/fs/iomap/iter.c
++++ b/fs/iomap/iter.c
+@@ -76,7 +76,8 @@ int iomap_iter(struct iomap_iter *iter, const struct iomap_ops *ops)
+ 	int ret;
  
- 				trip-point1 {
- 					temperature = <115000>;
--					hysteresis = <5000>;
-+					hysteresis = <10000>;
- 					type = "passive";
- 				};
- 			};
-@@ -3543,13 +3543,13 @@ cpu-0-0-0-thermal {
- 			trips {
- 				trip-point0 {
- 					temperature = <105000>;
--					hysteresis = <5000>;
-+					hysteresis = <10000>;
- 					type = "passive";
- 				};
- 
- 				trip-point1 {
- 					temperature = <115000>;
--					hysteresis = <5000>;
-+					hysteresis = <10000>;
- 					type = "passive";
- 				};
- 			};
-@@ -3563,13 +3563,13 @@ cpu-0-1-0-thermal {
- 			trips {
- 				trip-point0 {
- 					temperature = <105000>;
--					hysteresis = <5000>;
-+					hysteresis = <10000>;
- 					type = "passive";
- 				};
- 
- 				trip-point1 {
- 					temperature = <115000>;
--					hysteresis = <5000>;
-+					hysteresis = <10000>;
- 					type = "passive";
- 				};
- 			};
-@@ -3583,13 +3583,13 @@ cpu-0-2-0-thermal {
- 			trips {
- 				trip-point0 {
- 					temperature = <105000>;
--					hysteresis = <5000>;
-+					hysteresis = <10000>;
- 					type = "passive";
- 				};
- 
- 				trip-point1 {
- 					temperature = <115000>;
--					hysteresis = <5000>;
-+					hysteresis = <10000>;
- 					type = "passive";
- 				};
- 			};
-@@ -3603,13 +3603,13 @@ cpu-0-3-0-thermal {
- 			trips {
- 				trip-point0 {
- 					temperature = <105000>;
--					hysteresis = <5000>;
-+					hysteresis = <10000>;
- 					type = "passive";
- 				};
- 
- 				trip-point1 {
- 					temperature = <115000>;
--					hysteresis = <5000>;
-+					hysteresis = <10000>;
- 					type = "passive";
- 				};
- 			};
-@@ -3623,13 +3623,13 @@ gpuss-0-thermal {
- 			trips {
- 				trip-point0 {
- 					temperature = <105000>;
--					hysteresis = <5000>;
-+					hysteresis = <10000>;
- 					type = "passive";
- 				};
- 
- 				trip-point1 {
- 					temperature = <115000>;
--					hysteresis = <5000>;
-+					hysteresis = <10000>;
- 					type = "passive";
- 				};
- 			};
-@@ -3643,13 +3643,13 @@ gpuss-1-thermal {
- 			trips {
- 				trip-point0 {
- 					temperature = <105000>;
--					hysteresis = <5000>;
-+					hysteresis = <10000>;
- 					type = "passive";
- 				};
- 
- 				trip-point1 {
- 					temperature = <115000>;
--					hysteresis = <5000>;
-+					hysteresis = <10000>;
- 					type = "passive";
- 				};
- 			};
-@@ -3663,13 +3663,13 @@ gpuss-2-thermal {
- 			trips {
- 				trip-point0 {
- 					temperature = <105000>;
--					hysteresis = <5000>;
-+					hysteresis = <10000>;
- 					type = "passive";
- 				};
- 
- 				trip-point1 {
- 					temperature = <115000>;
--					hysteresis = <5000>;
-+					hysteresis = <10000>;
- 					type = "passive";
- 				};
- 			};
-@@ -3681,13 +3681,13 @@ audio-thermal {
- 			trips {
- 				trip-point0 {
- 					temperature = <105000>;
--					hysteresis = <5000>;
-+					hysteresis = <10000>;
- 					type = "passive";
- 				};
- 
- 				trip-point1 {
- 					temperature = <115000>;
--					hysteresis = <5000>;
-+					hysteresis = <10000>;
- 					type = "passive";
- 				};
- 			};
-@@ -3699,13 +3699,13 @@ camss-0-thermal {
- 			trips {
- 				trip-point0 {
- 					temperature = <105000>;
--					hysteresis = <5000>;
-+					hysteresis = <10000>;
- 					type = "passive";
- 				};
- 
- 				trip-point1 {
- 					temperature = <115000>;
--					hysteresis = <5000>;
-+					hysteresis = <10000>;
- 					type = "passive";
- 				};
- 			};
-@@ -3717,13 +3717,13 @@ pcie-0-thermal {
- 			trips {
- 				trip-point0 {
- 					temperature = <105000>;
--					hysteresis = <5000>;
-+					hysteresis = <10000>;
- 					type = "passive";
- 				};
- 
- 				trip-point1 {
- 					temperature = <115000>;
--					hysteresis = <5000>;
-+					hysteresis = <10000>;
- 					type = "passive";
- 				};
- 			};
-@@ -3735,13 +3735,13 @@ cpuss-0-0-thermal {
- 			trips {
- 				trip-point0 {
- 					temperature = <105000>;
--					hysteresis = <5000>;
-+					hysteresis = <10000>;
- 					type = "passive";
- 				};
- 
- 				trip-point1 {
- 					temperature = <115000>;
--					hysteresis = <5000>;
-+					hysteresis = <10000>;
- 					type = "passive";
- 				};
- 			};
-@@ -3753,13 +3753,13 @@ aoss-1-thermal {
- 			trips {
- 				trip-point0 {
- 					temperature = <105000>;
--					hysteresis = <5000>;
-+					hysteresis = <10000>;
- 					type = "passive";
- 				};
- 
- 				trip-point1 {
- 					temperature = <115000>;
--					hysteresis = <5000>;
-+					hysteresis = <10000>;
- 					type = "passive";
- 				};
- 			};
-@@ -3773,13 +3773,13 @@ cpu-0-0-1-thermal {
- 			trips {
- 				trip-point0 {
- 					temperature = <105000>;
--					hysteresis = <5000>;
-+					hysteresis = <10000>;
- 					type = "passive";
- 				};
- 
- 				trip-point1 {
- 					temperature = <115000>;
--					hysteresis = <5000>;
-+					hysteresis = <10000>;
- 					type = "passive";
- 				};
- 			};
-@@ -3793,13 +3793,13 @@ cpu-0-1-1-thermal {
- 			trips {
- 				trip-point0 {
- 					temperature = <105000>;
--					hysteresis = <5000>;
-+					hysteresis = <10000>;
- 					type = "passive";
- 				};
- 
- 				trip-point1 {
- 					temperature = <115000>;
--					hysteresis = <5000>;
-+					hysteresis = <10000>;
- 					type = "passive";
- 				};
- 			};
-@@ -3813,13 +3813,13 @@ cpu-0-2-1-thermal {
- 			trips {
- 				trip-point0 {
- 					temperature = <105000>;
--					hysteresis = <5000>;
-+					hysteresis = <10000>;
- 					type = "passive";
- 				};
- 
- 				trip-point1 {
- 					temperature = <115000>;
--					hysteresis = <5000>;
-+					hysteresis = <10000>;
- 					type = "passive";
- 				};
- 			};
-@@ -3833,13 +3833,13 @@ cpu-0-3-1-thermal {
- 			trips {
- 				trip-point0 {
- 					temperature = <105000>;
--					hysteresis = <5000>;
-+					hysteresis = <10000>;
- 					type = "passive";
- 				};
- 
- 				trip-point1 {
- 					temperature = <115000>;
--					hysteresis = <5000>;
-+					hysteresis = <10000>;
- 					type = "passive";
- 				};
- 			};
-@@ -3853,13 +3853,13 @@ gpuss-3-thermal {
- 			trips {
- 				trip-point0 {
- 					temperature = <105000>;
--					hysteresis = <5000>;
-+					hysteresis = <10000>;
- 					type = "passive";
- 				};
- 
- 				trip-point1 {
- 					temperature = <115000>;
--					hysteresis = <5000>;
-+					hysteresis = <10000>;
- 					type = "passive";
- 				};
- 			};
-@@ -3873,13 +3873,13 @@ gpuss-4-thermal {
- 			trips {
- 				trip-point0 {
- 					temperature = <105000>;
--					hysteresis = <5000>;
-+					hysteresis = <10000>;
- 					type = "passive";
- 				};
- 
- 				trip-point1 {
- 					temperature = <115000>;
--					hysteresis = <5000>;
-+					hysteresis = <10000>;
- 					type = "passive";
- 				};
- 			};
-@@ -3893,13 +3893,13 @@ gpuss-5-thermal {
- 			trips {
- 				trip-point0 {
- 					temperature = <105000>;
--					hysteresis = <5000>;
-+					hysteresis = <10000>;
- 					type = "passive";
- 				};
- 
- 				trip-point1 {
- 					temperature = <115000>;
--					hysteresis = <5000>;
-+					hysteresis = <10000>;
- 					type = "passive";
- 				};
- 			};
-@@ -3911,13 +3911,13 @@ video-thermal {
- 			trips {
- 				trip-point0 {
- 					temperature = <105000>;
--					hysteresis = <5000>;
-+					hysteresis = <10000>;
- 					type = "passive";
- 				};
- 
- 				trip-point1 {
- 					temperature = <115000>;
--					hysteresis = <5000>;
-+					hysteresis = <10000>;
- 					type = "passive";
- 				};
- 			};
-@@ -3929,13 +3929,13 @@ camss-1-thermal {
- 			trips {
- 				trip-point0 {
- 					temperature = <105000>;
--					hysteresis = <5000>;
-+					hysteresis = <10000>;
- 					type = "passive";
- 				};
- 
- 				trip-point1 {
- 					temperature = <115000>;
--					hysteresis = <5000>;
-+					hysteresis = <10000>;
- 					type = "passive";
- 				};
- 			};
-@@ -3947,13 +3947,13 @@ pcie-1-thermal {
- 			trips {
- 				trip-point0 {
- 					temperature = <105000>;
--					hysteresis = <5000>;
-+					hysteresis = <10000>;
- 					type = "passive";
- 				};
- 
- 				trip-point1 {
- 					temperature = <115000>;
--					hysteresis = <5000>;
-+					hysteresis = <10000>;
- 					type = "passive";
- 				};
- 			};
-@@ -3965,13 +3965,13 @@ cpuss-0-1-thermal {
- 			trips {
- 				trip-point0 {
- 					temperature = <105000>;
--					hysteresis = <5000>;
-+					hysteresis = <10000>;
- 					type = "passive";
- 				};
- 
- 				trip-point1 {
- 					temperature = <115000>;
--					hysteresis = <5000>;
-+					hysteresis = <10000>;
- 					type = "passive";
- 				};
- 			};
-@@ -3983,13 +3983,13 @@ aoss-2-thermal {
- 			trips {
- 				trip-point0 {
- 					temperature = <105000>;
--					hysteresis = <5000>;
-+					hysteresis = <10000>;
- 					type = "passive";
- 				};
- 
- 				trip-point1 {
- 					temperature = <115000>;
--					hysteresis = <5000>;
-+					hysteresis = <10000>;
- 					type = "passive";
- 				};
- 			};
-@@ -4003,13 +4003,13 @@ cpu-1-0-0-thermal {
- 			trips {
- 				trip-point0 {
- 					temperature = <105000>;
--					hysteresis = <5000>;
-+					hysteresis = <10000>;
- 					type = "passive";
- 				};
- 
- 				trip-point1 {
- 					temperature = <115000>;
--					hysteresis = <5000>;
-+					hysteresis = <10000>;
- 					type = "passive";
- 				};
- 			};
-@@ -4023,13 +4023,13 @@ cpu-1-1-0-thermal {
- 			trips {
- 				trip-point0 {
- 					temperature = <105000>;
--					hysteresis = <5000>;
-+					hysteresis = <10000>;
- 					type = "passive";
- 				};
- 
- 				trip-point1 {
- 					temperature = <115000>;
--					hysteresis = <5000>;
-+					hysteresis = <10000>;
- 					type = "passive";
- 				};
- 			};
-@@ -4043,13 +4043,13 @@ cpu-1-2-0-thermal {
- 			trips {
- 				trip-point0 {
- 					temperature = <105000>;
--					hysteresis = <5000>;
-+					hysteresis = <10000>;
- 					type = "passive";
- 				};
- 
- 				trip-point1 {
- 					temperature = <115000>;
--					hysteresis = <5000>;
-+					hysteresis = <10000>;
- 					type = "passive";
- 				};
- 			};
-@@ -4063,13 +4063,13 @@ cpu-1-3-0-thermal {
- 			trips {
- 				trip-point0 {
- 					temperature = <105000>;
--					hysteresis = <5000>;
-+					hysteresis = <10000>;
- 					type = "passive";
- 				};
- 
- 				trip-point1 {
- 					temperature = <115000>;
--					hysteresis = <5000>;
-+					hysteresis = <10000>;
- 					type = "passive";
- 				};
- 			};
-@@ -4083,13 +4083,13 @@ nsp-0-0-0-thermal {
- 			trips {
- 				trip-point0 {
- 					temperature = <105000>;
--					hysteresis = <5000>;
-+					hysteresis = <10000>;
- 					type = "passive";
- 				};
- 
- 				trip-point1 {
- 					temperature = <115000>;
--					hysteresis = <5000>;
-+					hysteresis = <10000>;
- 					type = "passive";
- 				};
- 			};
-@@ -4103,13 +4103,13 @@ nsp-0-1-0-thermal {
- 			trips {
- 				trip-point0 {
- 					temperature = <105000>;
--					hysteresis = <5000>;
-+					hysteresis = <10000>;
- 					type = "passive";
- 				};
- 
- 				trip-point1 {
- 					temperature = <115000>;
--					hysteresis = <5000>;
-+					hysteresis = <10000>;
- 					type = "passive";
- 				};
- 			};
-@@ -4123,13 +4123,13 @@ nsp-0-2-0-thermal {
- 			trips {
- 				trip-point0 {
- 					temperature = <105000>;
--					hysteresis = <5000>;
-+					hysteresis = <10000>;
- 					type = "passive";
- 				};
- 
- 				trip-point1 {
- 					temperature = <115000>;
--					hysteresis = <5000>;
-+					hysteresis = <10000>;
- 					type = "passive";
- 				};
- 			};
-@@ -4143,13 +4143,13 @@ nsp-1-0-0-thermal {
- 			trips {
- 				trip-point0 {
- 					temperature = <105000>;
--					hysteresis = <5000>;
-+					hysteresis = <10000>;
- 					type = "passive";
- 				};
- 
- 				trip-point1 {
- 					temperature = <115000>;
--					hysteresis = <5000>;
-+					hysteresis = <10000>;
- 					type = "passive";
- 				};
- 			};
-@@ -4163,13 +4163,13 @@ nsp-1-1-0-thermal {
- 			trips {
- 				trip-point0 {
- 					temperature = <105000>;
--					hysteresis = <5000>;
-+					hysteresis = <10000>;
- 					type = "passive";
- 				};
- 
- 				trip-point1 {
- 					temperature = <115000>;
--					hysteresis = <5000>;
-+					hysteresis = <10000>;
- 					type = "passive";
- 				};
- 			};
-@@ -4183,13 +4183,13 @@ nsp-1-2-0-thermal {
- 			trips {
- 				trip-point0 {
- 					temperature = <105000>;
--					hysteresis = <5000>;
-+					hysteresis = <10000>;
- 					type = "passive";
- 				};
- 
- 				trip-point1 {
- 					temperature = <115000>;
--					hysteresis = <5000>;
-+					hysteresis = <10000>;
- 					type = "passive";
- 				};
- 			};
-@@ -4201,13 +4201,13 @@ ddrss-0-thermal {
- 			trips {
- 				trip-point0 {
- 					temperature = <105000>;
--					hysteresis = <5000>;
-+					hysteresis = <10000>;
- 					type = "passive";
- 				};
- 
- 				trip-point1 {
- 					temperature = <115000>;
--					hysteresis = <5000>;
-+					hysteresis = <10000>;
- 					type = "passive";
- 				};
- 			};
-@@ -4219,13 +4219,13 @@ cpuss-1-0-thermal {
- 			trips {
- 				trip-point0 {
- 					temperature = <105000>;
--					hysteresis = <5000>;
-+					hysteresis = <10000>;
- 					type = "passive";
- 				};
- 
- 				trip-point1 {
- 					temperature = <115000>;
--					hysteresis = <5000>;
-+					hysteresis = <10000>;
- 					type = "passive";
- 				};
- 			};
-@@ -4237,13 +4237,13 @@ aoss-3-thermal {
- 			trips {
- 				trip-point0 {
- 					temperature = <105000>;
--					hysteresis = <5000>;
-+					hysteresis = <10000>;
- 					type = "passive";
- 				};
- 
- 				trip-point1 {
- 					temperature = <115000>;
--					hysteresis = <5000>;
-+					hysteresis = <10000>;
- 					type = "passive";
- 				};
- 			};
-@@ -4257,13 +4257,13 @@ cpu-1-0-1-thermal {
- 			trips {
- 				trip-point0 {
- 					temperature = <105000>;
--					hysteresis = <5000>;
-+					hysteresis = <10000>;
- 					type = "passive";
- 				};
- 
- 				trip-point1 {
- 					temperature = <115000>;
--					hysteresis = <5000>;
-+					hysteresis = <10000>;
- 					type = "passive";
- 				};
- 			};
-@@ -4277,13 +4277,13 @@ cpu-1-1-1-thermal {
- 			trips {
- 				trip-point0 {
- 					temperature = <105000>;
--					hysteresis = <5000>;
-+					hysteresis = <10000>;
- 					type = "passive";
- 				};
- 
- 				trip-point1 {
- 					temperature = <115000>;
--					hysteresis = <5000>;
-+					hysteresis = <10000>;
- 					type = "passive";
- 				};
- 			};
-@@ -4297,13 +4297,13 @@ cpu-1-2-1-thermal {
- 			trips {
- 				trip-point0 {
- 					temperature = <105000>;
--					hysteresis = <5000>;
-+					hysteresis = <10000>;
- 					type = "passive";
- 				};
- 
- 				trip-point1 {
- 					temperature = <115000>;
--					hysteresis = <5000>;
-+					hysteresis = <10000>;
- 					type = "passive";
- 				};
- 			};
-@@ -4317,13 +4317,13 @@ cpu-1-3-1-thermal {
- 			trips {
- 				trip-point0 {
- 					temperature = <105000>;
--					hysteresis = <5000>;
-+					hysteresis = <10000>;
- 					type = "passive";
- 				};
- 
- 				trip-point1 {
- 					temperature = <115000>;
--					hysteresis = <5000>;
-+					hysteresis = <10000>;
- 					type = "passive";
- 				};
- 			};
-@@ -4337,13 +4337,13 @@ nsp-0-0-1-thermal {
- 			trips {
- 				trip-point0 {
- 					temperature = <105000>;
--					hysteresis = <5000>;
-+					hysteresis = <10000>;
- 					type = "passive";
- 				};
- 
- 				trip-point1 {
- 					temperature = <115000>;
--					hysteresis = <5000>;
-+					hysteresis = <10000>;
- 					type = "passive";
- 				};
- 			};
-@@ -4357,13 +4357,13 @@ nsp-0-1-1-thermal {
- 			trips {
- 				trip-point0 {
- 					temperature = <105000>;
--					hysteresis = <5000>;
-+					hysteresis = <10000>;
- 					type = "passive";
- 				};
- 
- 				trip-point1 {
- 					temperature = <115000>;
--					hysteresis = <5000>;
-+					hysteresis = <10000>;
- 					type = "passive";
- 				};
- 			};
-@@ -4377,13 +4377,13 @@ nsp-0-2-1-thermal {
- 			trips {
- 				trip-point0 {
- 					temperature = <105000>;
--					hysteresis = <5000>;
-+					hysteresis = <10000>;
- 					type = "passive";
- 				};
- 
- 				trip-point1 {
- 					temperature = <115000>;
--					hysteresis = <5000>;
-+					hysteresis = <10000>;
- 					type = "passive";
- 				};
- 			};
-@@ -4397,13 +4397,13 @@ nsp-1-0-1-thermal {
- 			trips {
- 				trip-point0 {
- 					temperature = <105000>;
--					hysteresis = <5000>;
-+					hysteresis = <10000>;
- 					type = "passive";
- 				};
- 
- 				trip-point1 {
- 					temperature = <115000>;
--					hysteresis = <5000>;
-+					hysteresis = <10000>;
- 					type = "passive";
- 				};
- 			};
-@@ -4417,13 +4417,13 @@ nsp-1-1-1-thermal {
- 			trips {
- 				trip-point0 {
- 					temperature = <105000>;
--					hysteresis = <5000>;
-+					hysteresis = <10000>;
- 					type = "passive";
- 				};
- 
- 				trip-point1 {
- 					temperature = <115000>;
--					hysteresis = <5000>;
-+					hysteresis = <10000>;
- 					type = "passive";
- 				};
- 			};
-@@ -4437,13 +4437,13 @@ nsp-1-2-1-thermal {
- 			trips {
- 				trip-point0 {
- 					temperature = <105000>;
--					hysteresis = <5000>;
-+					hysteresis = <10000>;
- 					type = "passive";
- 				};
- 
- 				trip-point1 {
- 					temperature = <115000>;
--					hysteresis = <5000>;
-+					hysteresis = <10000>;
- 					type = "passive";
- 				};
- 			};
-@@ -4455,13 +4455,13 @@ ddrss-1-thermal {
- 			trips {
- 				trip-point0 {
- 					temperature = <105000>;
--					hysteresis = <5000>;
-+					hysteresis = <10000>;
- 					type = "passive";
- 				};
- 
- 				trip-point1 {
- 					temperature = <115000>;
--					hysteresis = <5000>;
-+					hysteresis = <10000>;
- 					type = "passive";
- 				};
- 			};
-@@ -4473,13 +4473,13 @@ cpuss-1-1-thermal {
- 			trips {
- 				trip-point0 {
- 					temperature = <105000>;
--					hysteresis = <5000>;
-+					hysteresis = <10000>;
- 					type = "passive";
- 				};
- 
- 				trip-point1 {
- 					temperature = <115000>;
--					hysteresis = <5000>;
-+					hysteresis = <10000>;
- 					type = "passive";
- 				};
- 			};
--- 
-2.25.1
-
+ 	if (iter->iomap.length && ops->iomap_end) {
+-		ret = ops->iomap_end(iter->inode, iter->pos, iomap_length(iter),
++		ret = ops->iomap_end(iter->inode, iter->pos,
++				iter->processed > 0 ? iomap_length(iter) : iter->iomap.length,
+ 				iter->processed > 0 ? iter->processed : 0,
+ 				iter->flags, &iter->iomap);
+ 		if (ret < 0 && !iter->processed)
 
