@@ -1,144 +1,116 @@
-Return-Path: <linux-kernel+bounces-311564-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311555-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF934968A7B
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 16:58:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62EA3968A66
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 16:56:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2E13D1C222BB
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 14:58:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D1161F22B60
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 14:56:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B659E1C9AD7;
-	Mon,  2 Sep 2024 14:55:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10A743DABFF;
+	Mon,  2 Sep 2024 14:55:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="cqSc7JI5"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RxQiyzB6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A0871C62CA;
-	Mon,  2 Sep 2024 14:55:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BA0221C191;
+	Mon,  2 Sep 2024 14:55:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725288935; cv=none; b=PJSYMPhZT2m1qmIZFwQvUmRsEnaIgAt3+tIp+LVbfPVuVPH5N3Xy2Jsa5QSx0fpWXEBz6KmsangjvdlpebIq2NjX9HqfyBDzuL8t5WtBvJmki0M/ij3d98Xox1bhMZWUHYX/yfflx3YtpxNnADCSE1bZtGM7uut7iOxiVMS/OYE=
+	t=1725288905; cv=none; b=Cx+07LRkycV3NcwTImlhrbC5bp094MEciUK371DFs2AD6V5wvuftZvjaGir8/6Sq+pSSB47ZvmLQ6YbF+JEXqLchAkVbtzUqjcwh9/pitBOeCNInZVg+cMJLR7reObW49+ln/9QwfHOhHdfPTPW4jov3aOboBRcmkRSmV/9UjfY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725288935; c=relaxed/simple;
-	bh=xRg5RV5ook/I7L7TEqs4RihaENNMpGqSI1p9RqlWG78=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=sAyWop3D06WeUb1iJjtBqzOEiRSC/Rj401A0yZVBz3Xw+BSQQ0/nG0SCAeXsIOW+no0mA5ETJLa6BhDljW0xdlnEuOxGx1Kxwe1+xs+eJMTLJqd/Vv/hnH30u4t9rEqxOS72YsgXDigFWjkqzWHJ/IxbWfGwgOvUFfiF0Ie5iLY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=cqSc7JI5; arc=none smtp.client-ip=68.232.154.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1725288933; x=1756824933;
-  h=from:date:subject:mime-version:content-transfer-encoding:
-   message-id:references:in-reply-to:to:cc;
-  bh=xRg5RV5ook/I7L7TEqs4RihaENNMpGqSI1p9RqlWG78=;
-  b=cqSc7JI5OL27L4zNhOPOZT/uhCnDx1GOA7+fbh+wqalxfVm8Ytdpc8Qy
-   /s9md0Z2Qc/DXPdiE3ZwUVOzChwyZ7LK51k3iWicblcbOjZox0UBGONOR
-   bRPKdulYxHB3cNzFNB6DxFi6XD3oAg5f+hmdDhC4Af//vwznmzE5KCdpH
-   nS2dgDRqIwUxWpj2EcAD3Fz3b+fzt01Ef8G8bj55IOSPeY1kfg1fKVBXf
-   ttgPVu0VnkDJG9aT5VVk+yNWC6hZJdX8dSmfUbgIRJFF+FfjCf1bympK7
-   eMpTkXI8iDQgvYEjSFwSq5lInPOabeu+637roFxkPo9ZNpfBx7dDNFDzP
-   Q==;
-X-CSE-ConnectionGUID: 6WD2x+lUSXKxeZe2mffqQA==
-X-CSE-MsgGUID: RqWNjkf+SjaOBDncqe/Qpg==
-X-IronPort-AV: E=Sophos;i="6.10,195,1719903600"; 
-   d="scan'208";a="31128333"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa4.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 02 Sep 2024 07:55:31 -0700
-Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
- chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Mon, 2 Sep 2024 07:55:08 -0700
-Received: from [10.205.21.108] (10.10.85.11) by chn-vm-ex04.mchp-main.com
- (10.10.85.152) with Microsoft SMTP Server id 15.1.2507.35 via Frontend
- Transport; Mon, 2 Sep 2024 07:55:05 -0700
-From: Daniel Machon <daniel.machon@microchip.com>
-Date: Mon, 2 Sep 2024 16:54:17 +0200
-Subject: [PATCH net-next 12/12] net: sparx5: ditch
- sparx5_fdma_rx/tx_reload() functions
+	s=arc-20240116; t=1725288905; c=relaxed/simple;
+	bh=HslvvXlV5s0iDjGnzMgwZM2g6j0w9etAdh0SWpLPhhU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZHJifx+eRvuhvFWCZjnGP8wcz5IQZ3qPyGlDJB5T29K0UUYQA1BsvuQPYfkLPddbUccP5rVmPQNEA8kPPer0wLeSwDsxjW/WyPRlsCP5e1vAfSIuqVgFfvvGdIO8MYiXNTH3kzYPL3jlImdvfk0t2vWkxYjAArGTyAfbfxBkAiM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RxQiyzB6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F1A2C4CECA;
+	Mon,  2 Sep 2024 14:55:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725288905;
+	bh=HslvvXlV5s0iDjGnzMgwZM2g6j0w9etAdh0SWpLPhhU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=RxQiyzB60epa0nonhB5X5HeA5hOQz8N8ccS8aSj3nO8Nz2Vs2rH98XQqcUwE2kLjJ
+	 wHzsROhmRZDrs55/JrwIZWmu5MUjNNZY91QW3tpzFjGSIdtTEr9BQ8v8oSfNLC4au4
+	 gucbrtIeIxedgjG7bDGAUx/RBjaX3AmhSdCvcbRjVnadtQw1N/4BtrKmpOtaB03yGb
+	 lvtim01b973kdES0fKjFeYvTVr+7LBDFJhmTysJtivcVxMHYNymsAPeT3vyFxseox2
+	 2VcydzDMTQFwdQZ8AUxzI5x3p52KsHLq7C2T6Ae8Vbvq5OjM/eDXOWTxwGcH7Zw1ld
+	 Kqu43wsmK18/w==
+Date: Mon, 2 Sep 2024 11:55:01 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Namhyung Kim <namhyung@kernel.org>,
+	"Steinar H. Gunderson" <sesse@google.com>
+Cc: linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+	irogers@google.com
+Subject: Re: [PATCH v9 3/3] perf annotate: LLVM-based disassembler
+Message-ID: <ZtXRxYE5WM1vScoT@x1>
+References: <20240719150051.520317-1-sesse@google.com>
+ <20240719150051.520317-3-sesse@google.com>
+ <ZtXRf7OjEOMwg3qg@x1>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-ID: <20240902-fdma-sparx5-v1-12-1e7d5e5a9f34@microchip.com>
-References: <20240902-fdma-sparx5-v1-0-1e7d5e5a9f34@microchip.com>
-In-Reply-To: <20240902-fdma-sparx5-v1-0-1e7d5e5a9f34@microchip.com>
-To: "David S. Miller" <davem@davemloft.net>, Eric Dumazet
-	<edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
-	<pabeni@redhat.com>, Lars Povlsen <lars.povlsen@microchip.com>, "Steen
- Hegelund" <Steen.Hegelund@microchip.com>, Horatiu Vultur
-	<horatiu.vultur@microchip.com>, <UNGLinuxDriver@microchip.com>,
-	<rdunlap@infradead.org>, <horms@kernel.org>
-CC: <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>,
-	=?utf-8?q?Jens_Emil_Schulz_=C3=98stergaard?=
-	<jensemil.schulzostergaard@microchip.com>
-X-Mailer: b4 0.14-dev
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZtXRf7OjEOMwg3qg@x1>
 
-These direction specific functions can be ditched in favor of a single
-function: sparx5_fdma_reload(), which retrieves the channel id from the
-fdma struct instead.
+Cc'ing Namhyung, see below.
 
-Signed-off-by: Daniel Machon <daniel.machon@microchip.com>
-Reviewed-by: Steen Hegelund <Steen.Hegelund@microchip.com>
-Reviewed-by: Jens Emil Schulz Østergaard <jensemil.schulzostergaard@microchip.com>
-Reviewed-by: Horatiu Vultur <horatiu.vultur@microchip.com>
----
- drivers/net/ethernet/microchip/sparx5/sparx5_fdma.c | 14 ++++----------
- 1 file changed, 4 insertions(+), 10 deletions(-)
+On Mon, Sep 02, 2024 at 11:53:55AM -0300, Arnaldo Carvalho de Melo wrote:
+> On Fri, Jul 19, 2024 at 05:00:51PM +0200, Steinar H. Gunderson wrote:
+> > Support using LLVM as a disassembler method, allowing helperless
+> > annotation in non-distro builds. (It is also much faster than
+> > using libbfd or bfd objdump on binaries with a lot of debug
+> > information.)
+> > 
+> > This is nearly identical to the output of llvm-objdump; there are
+> > some very rare whitespace differences, some minor changes to demangling
+> > (since we use perf's regular demangling and not LLVM's own) and
+> > the occasional case where llvm-objdump makes a different choice
+> > when multiple symbols share the same address. It should work across
+> > all of LLVM's supported architectures, although I've only tested 64-bit
+> > x86, and finding the right triple from perf's idea of machine
+> > architecture can sometimes be a bit tricky. Ideally, we should have
+> > some way of finding the triplet just from the file itself.
+> 
+> <SNIP>
+  
+> > @@ -1730,6 +1918,11 @@ int symbol__disassemble(struct symbol *sym, struct annotate_args *args)
+> >  		strcpy(symfs_filename, tmp);
+> >  	}
+> >  
+> > +#ifdef HAVE_LIBLLVM_SUPPORT
+> > +	err = symbol__disassemble_llvm(symfs_filename, sym, args);
+> > +	if (err == 0)
+> > +		goto out_remove_tmp;
+> > +#endif
+> >  #ifdef HAVE_LIBCAPSTONE_SUPPORT
+> >  	err = symbol__disassemble_capstone(symfs_filename, sym, args);
+> >  	if (err == 0)
+> 
+> So the above makes it unconditionally be used, and if the user installed
+> llvm-devel, that now gets checked and suggested at build time, then that
+> is an indication that it should be used, but I wonder if, for debugging
+> purposes we shouldn't have this done in some configurable way, i.e. some
+> ~/.perfconfig variable that allows us to try a specific disassembler,
+> something like:
+> 
+> 	perf annotate --disassemble=capstone
+> 
+> I can even envision having some perf test that compares the output for
+> some well known function to see if they really produce the same output
+> from different disassemblers, etc.
 
-diff --git a/drivers/net/ethernet/microchip/sparx5/sparx5_fdma.c b/drivers/net/ethernet/microchip/sparx5/sparx5_fdma.c
-index 7e1bdd0344d0..61df874b7623 100644
---- a/drivers/net/ethernet/microchip/sparx5/sparx5_fdma.c
-+++ b/drivers/net/ethernet/microchip/sparx5/sparx5_fdma.c
-@@ -133,16 +133,10 @@ static void sparx5_fdma_tx_deactivate(struct sparx5 *sparx5, struct sparx5_tx *t
- 		 sparx5, FDMA_CH_ACTIVATE);
- }
+Namhyung, do you see a problem with this?
+
+- Arnaldo
  
--static void sparx5_fdma_rx_reload(struct sparx5 *sparx5, struct sparx5_rx *rx)
-+static void sparx5_fdma_reload(struct sparx5 *sparx5, struct fdma *fdma)
- {
- 	/* Reload the RX channel */
--	spx5_wr(BIT(rx->fdma.channel_id), sparx5, FDMA_CH_RELOAD);
--}
--
--static void sparx5_fdma_tx_reload(struct sparx5 *sparx5, struct sparx5_tx *tx)
--{
--	/* Reload the TX channel */
--	spx5_wr(BIT(tx->fdma.channel_id), sparx5, FDMA_CH_RELOAD);
-+	spx5_wr(BIT(fdma->channel_id), sparx5, FDMA_CH_RELOAD);
- }
- 
- static bool sparx5_fdma_rx_get_frame(struct sparx5 *sparx5, struct sparx5_rx *rx)
-@@ -213,7 +207,7 @@ static int sparx5_fdma_napi_callback(struct napi_struct *napi, int weight)
- 			 sparx5, FDMA_INTR_DB_ENA);
- 	}
- 	if (counter)
--		sparx5_fdma_rx_reload(sparx5, rx);
-+		sparx5_fdma_reload(sparx5, fdma);
- 	return counter;
- }
- 
-@@ -246,7 +240,7 @@ int sparx5_fdma_xmit(struct sparx5 *sparx5, u32 *ifh, struct sk_buff *skb)
- 		sparx5_fdma_tx_activate(sparx5, tx);
- 		first_time = false;
- 	} else {
--		sparx5_fdma_tx_reload(sparx5, tx);
-+		sparx5_fdma_reload(sparx5, fdma);
- 	}
- 	return NETDEV_TX_OK;
- }
-
--- 
-2.34.1
-
+> I'm applying the patches, thanks!
 
