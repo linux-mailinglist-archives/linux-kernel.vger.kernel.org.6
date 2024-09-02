@@ -1,125 +1,121 @@
-Return-Path: <linux-kernel+bounces-310692-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310693-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64FEC968031
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 09:12:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0AC5968032
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 09:12:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1C71A1F233C0
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 07:12:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6A5C91F2369C
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 07:12:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2E9B18595B;
-	Mon,  2 Sep 2024 07:11:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC6D2182D2;
+	Mon,  2 Sep 2024 07:11:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kdV0graF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="E1qWPfwS"
+Received: from out30-130.freemail.mail.aliyun.com (out30-130.freemail.mail.aliyun.com [115.124.30.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 071D516C695;
-	Mon,  2 Sep 2024 07:11:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD38914BF89
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 07:11:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725261070; cv=none; b=R0QufIykNwATZsD33gwniOwz3NQmE6/lZ5tRYiZSJhKGZF6iwK27Uoo+yUHrYhqA5YnIuAVOoLPiOW/Boj6SoRd9CbFtqp87ZcfzNr0exyNon5AMcrWIW8MnLtjaSoY8B9c7TL+LWdxFRKHlVc8WXEbxm+8pQ2rsF74kQowM9QU=
+	t=1725261118; cv=none; b=D3tJAifLJyRy6/Buq+OCR58tIxiOx+h2xB7rmF01U6s88cgMhVcR8enF3w0L3gXEB6vp1cYWvg987fPDMGGJvCzCEBgLIz0DCtCdkoVI6Pcj+4OdBz1Zbpvf3AhNeZLfqe5zx9BovkWRfpHjudI5PzzLkwkFXj+y+ZVB7AvaD/M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725261070; c=relaxed/simple;
-	bh=qMkQznHAdfXGd0UEsfT+EpORLG4corUXuRreY7UWUbI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YFu9+1vOaK7Gf1zEAdErDttK6BAa87odykqGADPsTEy5dlibp6JKosnKL7oAlFs5XeZ2Ns4BDeYTGX8SLSExajBfQ40Mi2SueM6aNxpLIxmfCHPkvtLx2ZyJeJ5ax8PDz9PF3tEO28oBV7wbGJzMcwwp8GO2u+UFu3pD4x159n8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kdV0graF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CD694C4CEC2;
-	Mon,  2 Sep 2024 07:11:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725261069;
-	bh=qMkQznHAdfXGd0UEsfT+EpORLG4corUXuRreY7UWUbI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kdV0graFY5X+YvbbHv4MxHlxyUQPvejYrFL/0FWiixN1GMMxpnDO7Euz/7mByVL1L
-	 /QgW12NtzMtIxN09Hm0HoJSGwxZ50D57vMaCZIa3QtW6n47R7gR0sOCqghdbSwFFnA
-	 mF+3bpnS22386CMGzK9hpD2JKvhh4oY2QauDkab0wG5OCQALXz0cHa0kraUnlFzRln
-	 ybOPOIfVZkLxytZ/PlsiWDWFZXlGCZb3LX5Q9Ax4AVAPmizC5tqrD4/6TGgpKQwHHl
-	 416edA7HKHKFIM0Dra5/oryULlHxer1mxhWwXzCp7mACluyPB/8AM1hDSpc7lrjY7M
-	 Q7zxLwk567hXA==
-Date: Mon, 2 Sep 2024 09:11:05 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Frank Li <Frank.Li@nxp.com>
-Cc: Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Michael Walle <mwalle@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
-	"open list:MEMORY CONTROLLER DRIVERS" <linux-kernel@vger.kernel.org>, 
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, imx@lists.linux.dev
-Subject: Re: [PATCH v3 1/1] dt-bindings: memory-controllers: fsl,ifc: add
- compatible string fsl,ifc-nand
-Message-ID: <l2xjrs7txycf3uhhhyzypfzoem2fr4fsvbyg3bt4ktfpbzxz47@loiytha55oml>
-References: <20240830191144.1375849-1-Frank.Li@nxp.com>
+	s=arc-20240116; t=1725261118; c=relaxed/simple;
+	bh=hJCeeH2smdCNPIPMyw0NXWVcV8E/92r/DYvq+PmKub8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Y4UXmov/cj5g7TITgiTDp8gTEmWBN/2CghanNe5aiPZFPCW7YXUk2GEv4GR+JWNUewooUmfDrmyH5/PoerdtkRD8Xi9mKFIjhL2O/t/JyZiiBpitdGQT4XWsds6Dq2WPiEoScT7IttyXY/rofcy0KDHK4Lp7Ks5Gri9e5wVd0Ps=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=E1qWPfwS; arc=none smtp.client-ip=115.124.30.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1725261108; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=8CiRHCW9jgKllSt8b4QOJ9tEtCjDj7gOyPLUTr+89X8=;
+	b=E1qWPfwSjGiOUFOwKWFTrlM82pxxCPXN/SelSYPaU53lx4LTPfUd6ciXnud+MuXCOAmaZEcc5rVbBOrZCsVSwrQBx4Sp2AzAD6ew8u6bARKx/04bK4eSDqIsy4HL0moFqMqxcTgT9/kIACQ9GGGnmrdogAOcWGPlMdeDKwTP/FA=
+Received: from 30.244.151.91(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WE4c6OU_1725261106)
+          by smtp.aliyun-inc.com;
+          Mon, 02 Sep 2024 15:11:47 +0800
+Message-ID: <bfcd83f8-87ef-4282-b9e9-700c45fc3302@linux.alibaba.com>
+Date: Mon, 2 Sep 2024 15:11:45 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240830191144.1375849-1-Frank.Li@nxp.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V2 1/2] erofs: use kmemdup_nul in erofs_fill_symlink
+To: Yiyang Wu <toolmanp@tlmp.cc>
+Cc: linux-erofs@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+ Al Viro <viro@zeniv.linux.org.uk>
+References: <20240902070047.384952-1-toolmanp@tlmp.cc>
+ <20240902070047.384952-2-toolmanp@tlmp.cc>
+From: Gao Xiang <hsiangkao@linux.alibaba.com>
+In-Reply-To: <20240902070047.384952-2-toolmanp@tlmp.cc>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Aug 30, 2024 at 03:11:43PM -0400, Frank Li wrote:
-> ifc can connect nor, nand and fpag. Add child node "nand@" under fsl,ifc
-> and compatible string "fsl,ifc-nand" when ifc connect to nand flash.
+
+
+On 2024/9/2 15:00, Yiyang Wu via Linux-erofs wrote:
+> Remove open coding in erofs_fill_symlink.
 > 
-> Fix below warning:
-> arch/arm64/boot/dts/freescale/fsl-ls1043a-qds.dtb: /soc/memory-controller@1530000/nand@1,0:
-> 	failed to match any schema with compatible: ['fsl,ifc-nand']
-> 
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> Suggested-by: Al Viro <viro@zeniv.linux.org.uk>
+> Link: https://lore.kernel.org/all/20240425222847.GN2118490@ZenIV
+> Signed-off-by: Yiyang Wu <toolmanp@tlmp.cc>
 > ---
-> Change from v2 to v3
-> - add partition child node for nand
-> - Only partition property is used at ppc
-> Change from v1 to v2
-> - add address-cells and size-cells
-> ---
->  .../memory-controllers/fsl/fsl,ifc.yaml       | 26 +++++++++++++++++++
->  1 file changed, 26 insertions(+)
+>   fs/erofs/inode.c | 12 +++++-------
+>   1 file changed, 5 insertions(+), 7 deletions(-)
 > 
-> diff --git a/Documentation/devicetree/bindings/memory-controllers/fsl/fsl,ifc.yaml b/Documentation/devicetree/bindings/memory-controllers/fsl/fsl,ifc.yaml
-> index d1c3421bee107..5a11224da8914 100644
-> --- a/Documentation/devicetree/bindings/memory-controllers/fsl/fsl,ifc.yaml
-> +++ b/Documentation/devicetree/bindings/memory-controllers/fsl/fsl,ifc.yaml
-> @@ -58,6 +58,32 @@ properties:
->        access window as configured.
->  
->  patternProperties:
-> +  "^nand@[a-f0-9]+(,[a-f0-9]+)+$":
-> +    type: object
-> +    properties:
-> +      compatible:
-> +        const: fsl,ifc-nand
+> diff --git a/fs/erofs/inode.c b/fs/erofs/inode.c
+> index 419432be3223..d051afe39670 100644
+> --- a/fs/erofs/inode.c
+> +++ b/fs/erofs/inode.c
+> @@ -188,22 +188,20 @@ static int erofs_fill_symlink(struct inode *inode, void *kaddr,
+>   		return 0;
+>   	}
+>   
+> -	lnk = kmalloc(inode->i_size + 1, GFP_KERNEL);
+> -	if (!lnk)
+> -		return -ENOMEM;
+> -
+>   	m_pofs += vi->xattr_isize;
+>   	/* inline symlink data shouldn't cross block boundary */
+>   	if (m_pofs + inode->i_size > bsz) {
+> -		kfree(lnk);
+>   		erofs_err(inode->i_sb,
+>   			  "inline data cross block boundary @ nid %llu",
+>   			  vi->nid);
+>   		DBG_BUGON(1);
+>   		return -EFSCORRUPTED;
+>   	}
+> -	memcpy(lnk, kaddr + m_pofs, inode->i_size);
+> -	lnk[inode->i_size] = '\0';
 > +
-> +      reg:
-> +        maxItems: 1
+> +	lnk = kmemdup_nul(kaddr + m_pofs, inode->i_size, GFP_KERNEL);
 > +
-> +      "#address-cells":
-> +        const: 1
-> +
-> +      "#size-cells":
-> +        const: 1
-> +
-> +    patternProperties:
-> +      "^partition@[0-9a-f]+":
-> +        $ref: /schemas/mtd/partitions/partition.yaml#
-> +        deprecated: true
-> +
-> +    required:
-> +      - compatible
-> +      - reg
-> +
-> +    additionalProperties: false
-> +
->    "^.*@[a-f0-9]+(,[a-f0-9]+)+$":
 
-This pattern is for NAND already. I don't understand why you are
-duplicating it. If this part does not work, fix it.
+Unnecessary new line.
 
-Best regards,
-Krzysztof
+Also I wonder if it's possible to just
+	inode->i_link = kmemdup_nul(kaddr + m_pofs, inode->i_size, GFP_KERNEL);
+	if (!inode->i_link)
+		return -ENOMEM;
+
+here, and get rid of variable lnk.
+
+Otherwise it looks good to me.
+
+Thanks,
+Gao Xiang
+
+> +	if (!lnk)
+> +		return -ENOMEM;
+>   
+>   	inode->i_link = lnk;
+>   	inode->i_op = &erofs_fast_symlink_iops;
 
 
