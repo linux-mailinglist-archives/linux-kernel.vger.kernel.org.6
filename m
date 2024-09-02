@@ -1,171 +1,127 @@
-Return-Path: <linux-kernel+bounces-311478-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311479-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DF7B9689AE
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 16:17:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4C839689B4
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 16:17:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0526D2847E7
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 14:17:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A3E3028483C
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 14:17:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A60A6201253;
-	Mon,  2 Sep 2024 14:17:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="miNkKwNd"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 563672101B2;
+	Mon,  2 Sep 2024 14:17:15 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 425B519E969
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 14:17:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE7A919E97B;
+	Mon,  2 Sep 2024 14:17:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725286626; cv=none; b=oiCj/C9GM0USspDHcU4N2G0HrlZzUaMt2HcLj2RypcTBn/cgw2ztZjEhwEx8EBLbjAyZwBMY38K4YDiBFutKUH+HCJRHyzzQER1yv956OHrBmDtaOY+xohY6813WyiSi8KhNlLHcCANZ/Q5O0YUVmTfAYUkYflsZ0Is+eHlVSas=
+	t=1725286634; cv=none; b=IIalNgPC+61RNYzLCEnxqll1OodoarSGJTthWw5Vp/V6Pk8xCl6ztYjebwRZytlCuy+K+cD2MEFIYS1VXi9YKJShSvk2RjtUSQP9xGgpiCrdr4YsVakC6CC9fGwTRnNY4TSlTpcQjY1qc7xhWhlsLiHasbNleLX+tdoaraBm/JQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725286626; c=relaxed/simple;
-	bh=vh2QgxSX2L75UOqalaQcbV73L5PLbsUphxMNDQ2BtJQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YVkmg2wxXkw0qbr3lgu7FjIE1Buz8usUkV2JC9STeu5PkJgP8aq7S9u6J170PUzS/8iYC85hh9ZdBef2J5mCyJlYTmkEHSS5HRgPOJV0wLGWk44OeTHpnOpDuFDrC7x6tYMd6N+Qzwcj4smIAOGaGyAIAPOEqTR4UcSYNYsi9Mw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=miNkKwNd; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-42bb8cf8a5bso32507255e9.2
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2024 07:17:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1725286622; x=1725891422; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0nZ+9fn7BwVDUG445G81+75wyZkpZMEfiuxhieME3PM=;
-        b=miNkKwNdeWS4tpogmKrBjbky7evnbuusOAVqBFv5H0ON4npDnYvHnvTLNxlePMq+bl
-         zQ3XwfiJ4QNcoVYKR+FtuicLJM8qCRdEtViJHzTFo17JvfXQ5VcfLQnCF8yh9LVZv4xm
-         EvY7UkSTaMbTUmC2k1Ynlas9dWiYgWt0HnFuX2KfdSTvFbxJwA/X4j6Zhmr5NCQvj8zH
-         eo8AAQIFys7OF0m1rYkVBMW71E+RZqOq1ZooFgdotdjtCch4wWlmWkZreRAVYOQeViSx
-         FD206ABBeYdg7TMllW41z7ocWEIBR+CyNYJb2esN+tspWJikjNYdksJc01pEuBWZ9nzI
-         4Qyw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725286622; x=1725891422;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0nZ+9fn7BwVDUG445G81+75wyZkpZMEfiuxhieME3PM=;
-        b=vRf9fqILzWKQqGYdpwuE+pglqY5Y/KvCuq35vtY23uyxfu1LmfgDYoY8lsJ/YwyJ+2
-         ubixi6UBy8R4xNI27AM0+VbVl0tEcJFY7xSMLRmH/yQkaKwCfr1YIuytyfQ7KD7+/LLU
-         NhCERt3aEcVtdzIQmYWy82W1ahEtW+rdJTRGTQYBsgJIdDdJyiAOzBtWGjG9rxkC+Vj+
-         ogkmZqZ87gqGEkZs5UAy0VcMxIzMG7nxc7zsCpvFX38hMP4WDV6GAf8Nuw7kgNyEqpvb
-         RmEcMyTa/3c7b6wKSTRuXWiQwGx3EGYicQ7af3eFqWqwx1/adB9xVijQS01I9tz/6LLl
-         Ywnw==
-X-Forwarded-Encrypted: i=1; AJvYcCUsRRGilEXXSFtmQHU5bTuzvYN52O1cVeYUwNtGgJdHyohmQBFGIHIB9esQq/B2tul5hd6Vh0TL3fKPCc4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyU0u3rjy8fJ6JsHXyEzplCnXz+En3K9p6Loa7HdT/0C6b0UvLG
-	it5NBSA5jqHm/qM0pkVEZrbWH4iJseHbvGBp1lE7Z5SuEV8saIC+3Fh+Ems0JVT82iZYtIN5Ce0
-	5EAIsaTfcNVK1yJJoaYiWC7TEFYNdYLakxIEj
-X-Google-Smtp-Source: AGHT+IGTiHL3dLiYbM7/qkPUXctMrWRqR8rS7ipP+OnuURlbIUWlRU6s9EcTEKznODPu2Frc6lmN7cFFpOek3NTUuYc=
-X-Received: by 2002:a05:600c:46c6:b0:426:4978:65f0 with SMTP id
- 5b1f17b1804b1-42c82f56727mr29036395e9.18.1725286622239; Mon, 02 Sep 2024
- 07:17:02 -0700 (PDT)
+	s=arc-20240116; t=1725286634; c=relaxed/simple;
+	bh=DiqcYK8CgR5lVnVbP4NtFJ4uxP3RlOM1WRhaMpOIZg0=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Eht5Cw1rS6zf+vimIkqNfxerUIDpzAtfvJgsM2t+p6chihMK36RwU0q3cp3fgn1niA1wznnbKWuUgnlzYxBL1gfHdRS6AyRH76jso9lv2qBWJKPTyRc8w8WBzORWJ/E3Duai13yFWCjDhTiY4VCmaR9p98L6wHISmzTNfSvysPU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Wy9ht5zqTz6K5kP;
+	Mon,  2 Sep 2024 22:13:34 +0800 (CST)
+Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
+	by mail.maildlp.com (Postfix) with ESMTPS id 3EC29140A08;
+	Mon,  2 Sep 2024 22:17:08 +0800 (CST)
+Received: from localhost (10.203.177.66) by lhrpeml500005.china.huawei.com
+ (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Mon, 2 Sep
+ 2024 15:17:07 +0100
+Date: Mon, 2 Sep 2024 15:17:06 +0100
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: "Sperling, Tobias" <Tobias.Sperling@Softing.com>
+CC: Jonathan Cameron <jic23@kernel.org>, Conor Dooley <conor@kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-hwmon@vger.kernel.org" <linux-hwmon@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, "jdelvare@suse.com"
+	<jdelvare@suse.com>, "linux@roeck-us.net" <linux@roeck-us.net>,
+	"robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
+	<krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
+	"corbet@lwn.net" <corbet@lwn.net>, "linux-iio@vger.kernel.org"
+	<linux-iio@vger.kernel.org>
+Subject: Re: [PATCH 1/2] dt-bindings: hwmon: Introduce ADS71x8
+Message-ID: <20240902151706.0000334f@Huawei.com>
+In-Reply-To: <BE1P281MB2420D75334A568E60823BE48EF922@BE1P281MB2420.DEUP281.PROD.OUTLOOK.COM>
+References: <BE1P281MB24208CB90AF549578AA5C384EF972@BE1P281MB2420.DEUP281.PROD.OUTLOOK.COM>
+	<20240830-chaos-unrivaled-04c5c4c6add9@spud>
+	<20240831132159.2073994f@jic23-huawei>
+	<BE1P281MB2420D75334A568E60823BE48EF922@BE1P281MB2420.DEUP281.PROD.OUTLOOK.COM>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240808-alice-file-v9-0-2cb7b934e0e1@google.com> <20240902-dickdarm-zumeist-3858e57fb425@brauner>
-In-Reply-To: <20240902-dickdarm-zumeist-3858e57fb425@brauner>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Mon, 2 Sep 2024 16:16:49 +0200
-Message-ID: <CAH5fLgjho1p7EHkqpot4pXvrKLFkXLsw9MWcriNCOHXZ0NJ5bw@mail.gmail.com>
-Subject: Re: [PATCH v9 0/8] File abstractions needed by Rust Binder
-To: Christian Brauner <brauner@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
-	Peter Zijlstra <peterz@infradead.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, =?UTF-8?B?QXJ2ZSBIasO4bm5ldsOlZw==?= <arve@android.com>, 
-	Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, 
-	Joel Fernandes <joel@joelfernandes.org>, Carlos Llamas <cmllamas@google.com>, 
-	Suren Baghdasaryan <surenb@google.com>, Dan Williams <dan.j.williams@intel.com>, 
-	Matthew Wilcox <willy@infradead.org>, Thomas Gleixner <tglx@linutronix.de>, Daniel Xu <dxu@dxuuu.xyz>, 
-	Martin Rodriguez Reboredo <yakoyoku@gmail.com>, Trevor Gross <tmgross@umich.edu>, linux-kernel@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	Kees Cook <kees@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500004.china.huawei.com (7.191.163.9) To
+ lhrpeml500005.china.huawei.com (7.191.163.240)
 
-On Mon, Sep 2, 2024 at 10:02=E2=80=AFAM Christian Brauner <brauner@kernel.o=
-rg> wrote:
->
-> On Thu, Aug 08, 2024 at 04:15:43PM GMT, Alice Ryhl wrote:
-> > This patchset contains the file abstractions needed by the Rust
-> > implementation of the Binder driver.
-> >
-> > Please see the Rust Binder RFC for usage examples:
-> > https://lore.kernel.org/rust-for-linux/20231101-rust-binder-v1-0-08ba91=
-97f637@google.com/
-> >
-> > Users of "rust: types: add `NotThreadSafe`":
-> >       [PATCH 5/9] rust: file: add `FileDescriptorReservation`
-> >
-> > Users of "rust: task: add `Task::current_raw`":
-> >       [PATCH 7/9] rust: file: add `Kuid` wrapper
-> >       [PATCH 8/9] rust: file: add `DeferredFdCloser`
-> >
-> > Users of "rust: file: add Rust abstraction for `struct file`":
-> >       [PATCH RFC 02/20] rust_binder: add binderfs support to Rust binde=
-r
-> >       [PATCH RFC 03/20] rust_binder: add threading support
-> >
-> > Users of "rust: cred: add Rust abstraction for `struct cred`":
-> >       [PATCH RFC 05/20] rust_binder: add nodes and context managers
-> >       [PATCH RFC 06/20] rust_binder: add oneway transactions
-> >       [PATCH RFC 11/20] rust_binder: send nodes in transaction
-> >       [PATCH RFC 13/20] rust_binder: add BINDER_TYPE_FD support
-> >
-> > Users of "rust: security: add abstraction for secctx":
-> >       [PATCH RFC 06/20] rust_binder: add oneway transactions
-> >
-> > Users of "rust: file: add `FileDescriptorReservation`":
-> >       [PATCH RFC 13/20] rust_binder: add BINDER_TYPE_FD support
-> >       [PATCH RFC 14/20] rust_binder: add BINDER_TYPE_FDA support
-> >
-> > Users of "rust: file: add `Kuid` wrapper":
-> >       [PATCH RFC 05/20] rust_binder: add nodes and context managers
-> >       [PATCH RFC 06/20] rust_binder: add oneway transactions
-> >
-> > Users of "rust: file: add abstraction for `poll_table`":
-> >       [PATCH RFC 07/20] rust_binder: add epoll support
-> >
-> > This patchset has some uses of read_volatile in place of READ_ONCE.
-> > Please see the following rfc for context on this:
-> > https://lore.kernel.org/all/20231025195339.1431894-1-boqun.feng@gmail.c=
-om/
-> >
-> > Signed-off-by: Alice Ryhl <aliceryhl@google.com>
-> > ---
->
-> So, this won't make v6.12 anymore. There already were pretty big changes
-> around files for the coming cycle so I did not also want to throw this
-> into the mix as well. (Sorry that this had to miss it's birthday, Alice.)
+On Mon, 2 Sep 2024 13:24:59 +0000
+"Sperling, Tobias" <Tobias.Sperling@Softing.com> wrote:
 
-This has also gained a conflict with the helpers split [1] in
-rust-next, so maybe that is for the best.
+> > > > +  ti,mode:
+> > > > +    $ref: /schemas/types.yaml#/definitions/uint8
+> > > > +    description: |
+> > > > +      Operation mode
+> > > > +      Mode 0 - Manual mode. A channel is only sampled when the according  
+> > input  
+> > > > +        in the sysfs is read.
+> > > > +      Mode 1 - Auto mode. All channels are automatically sampled  
+> > sequentially.  
+> > > > +        Reading an input returns the last valid sample. In this mode further
+> > > > +        features like statistics and interrupts are available.
+> > > > +    default: 0  
+> > >
+> > > I don't think this ti,mode property is suitable for bindings. sysfs is a
+> > > linux implementation detail, when to do sampling is an implementation
+> > > detail of your driver. Bindings are only supposed to describe properties
+> > > of the hardware, not set software policy.  
+> > 
+> > Agreed. With an IIO driver this will become a switch based on what usespace
+> > interfaces are enabled.
+> > So if events are on or buffered data capture, enable automode.
+> > If just sysfs reads, then manual mode is fine.  
+> 
+> Not quite sure if I understood you correctly. With the mode I intended to give
+> control about the sampling behavior.
+> In manual mode channels are only sampled if they are accessed/read.
+> In auto mode they are sampled all the time sequentially. This also offers to use
+> some extended features, like triggering an interrupt if a measurement crosses a
+> defined limit.
+> So the mode mainly affects the hardware behavior and just offers the possibility
+> to catch that in userspace, if configured accordingly, but that's not a must-have.
+> 
+> Anyway, did I understood it correctly, that you suggest to configure the mode
+> according some symbols in the kconfig and check that with #ifdef? Do you have
+> the specific symbol names for me or a driver as example, so I can have a look?
+No, this is not a build time of firmware config question. It is a question of
+what the user is 'doing' with the device. Configure the mode according to what
+userspace has enabled.
 
-I will look into whether any other changes are needed given what is
-going in for 6.12 and send a new version. It looks like you already
-added it to an vfs.rust.file branch, and it doesn't look like anything
-in vfs.file required changes in this series.
+If it enables threshold detection, then turn on continuous mode.
+If it enables capture of data via a chardev (so fast path) then turn on continuous
+mode.  If neither of those, then run in manual mode.
 
-[1]: https://lore.kernel.org/r/20240815103016.2771842-1-nmi@metaspace.dk
+Jonathan
 
-> However, I do intend to merge a version for this for v6.13. There's some
-> wrapping of struct cred and specifically of struct secctx that I can
-> only handwave at. Ideally you get a nod from the LSM maintainers as well
-> but if that doesn't come in I don't see much point in making this sit in
-> limbo indefinitely.
+> 
+> Thanks and regards
+> Tobias
+> 
 
-Okay thanks! I can look into that.
-
-Alice
 
