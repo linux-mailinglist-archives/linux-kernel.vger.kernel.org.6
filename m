@@ -1,71 +1,49 @@
-Return-Path: <linux-kernel+bounces-310976-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310973-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C91996837D
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 11:42:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A21DD968375
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 11:40:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F039CB211D4
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 09:42:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D22541C2225F
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 09:40:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E0151D0DDE;
-	Mon,  2 Sep 2024 09:42:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D34F1D1F7D;
+	Mon,  2 Sep 2024 09:40:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=math.uni-bielefeld.de header.i=@math.uni-bielefeld.de header.b="PxhobTo3"
-Received: from smtp2.math.uni-bielefeld.de (smtp2.math.uni-bielefeld.de [129.70.45.13])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A7klkDRn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9570818661C
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 09:42:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=129.70.45.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9ACD179654;
+	Mon,  2 Sep 2024 09:40:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725270168; cv=none; b=EfoU7wae0Y8CoU/ftkJ33DcqPd0QymB26bhYg1HDlngVE8x/AShktnSjzUrnXbO6w4xC9+Pjpo3+t/0CXYb52XP9bykU+0Fk23t6S2/UoLP2Rw+SeQzkiYKKl3PaODbrzjTfKhPrZOCi6i2HvnJCQ1V6ufzxIZXYeNfcQQZW/rQ=
+	t=1725270030; cv=none; b=mfhqIMUCjtJFO/oMu98G3yhJp/7aY3hLFBz52+6OGdLF5RbgRvzKNEh286ByQhSfCWCTGv9gBLqH9k7XtqU1hf+yXWKcyfKvaUNvF/5n8xxijE+wqffGBTRR3+yZNiY6GaiGdZgrH0ELBg+5Ubr0vfHlvzmxTyGjfbPQEioNWG0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725270168; c=relaxed/simple;
-	bh=OlHUmE2mWnpkfcvXYamxHN5q0GeOY6PdRc6d9KkwM28=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=cLc/Dex3OqRKm+esZsBrPXvwPtJqy039UYwQMWn3YmkgFjVHlkwCFHGCy1O9cblLvplg3081Huhz2ghNmuLOsDT/LwibyYpvq4O/T1zZGuhu/A89Cq+1cEWDWL/2EyAg0dU3t4hxhywSvG70un/aWH4348Hu7z4JD2jv4rAfA2o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=math.uni-bielefeld.de; spf=pass smtp.mailfrom=math.uni-bielefeld.de; dkim=pass (2048-bit key) header.d=math.uni-bielefeld.de header.i=@math.uni-bielefeld.de header.b=PxhobTo3; arc=none smtp.client-ip=129.70.45.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=math.uni-bielefeld.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=math.uni-bielefeld.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=math.uni-bielefeld.de; s=default; t=1725270163;
-	bh=OlHUmE2mWnpkfcvXYamxHN5q0GeOY6PdRc6d9KkwM28=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=PxhobTo34c9OgoeDCdYgmwTNIlFUqpQKQOEl5R38TVuQv6lAQOLtWcgesSMA5mqK3
-	 /Pcll18vAVcyeKzuD2cegIT/of0J1un6UNsMsnozrwQ/XRC6PFovPmhRi44ktLpQJC
-	 0/ci/Idbi5rtewd/c3+g44D5Ee6g7Y+ahRF/+okViVJo2YrdX2DLeKcOYkWUkglAIo
-	 zTERcuBa0RgZzInmUWcj37oE7pcUQDBK3YCAYyGbDragDLGzP+CmhoqM4NafskuFR2
-	 Ax0GGBc0wjpSmsgSx5W3XOu9EAzH3BQhXeHzEwDK7/cc2owFWRCeO4xT4XFBZSO/Cw
-	 F2oTmHvU4RvzA==
-Received: from localhost (dslb-088-074-203-146.088.074.pools.vodafone-ip.de [88.74.203.146])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by smtp2.math.uni-bielefeld.de (Postfix) with ESMTPSA id 7603B2098B;
-	Mon,  2 Sep 2024 11:42:43 +0200 (CEST)
-From: tjakobi@math.uni-bielefeld.de
-To: Harry Wentland <harry.wentland@amd.com>,
-	Leo Li <sunpeng.li@amd.com>,
-	Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>,
-	Alex Deucher <alexander.deucher@amd.com>,
-	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-	"Pan, Xinhui" <Xinhui.Pan@amd.com>,
-	David Airlie <airlied@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	Mario Limonciello <mario.limonciello@amd.com>
-Cc: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>,
-	amd-gfx@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] drm/amd/display: Avoid race between dcn35_set_drr() and dc_state_destruct()
-Date: Mon,  2 Sep 2024 11:40:27 +0200
-Message-ID: <fd879fd0595e9e7e47c3442da10a5aede21bf895.1725269643.git.tjakobi@math.uni-bielefeld.de>
-X-Mailer: git-send-email 2.44.2
-In-Reply-To: <cover.1725269643.git.tjakobi@math.uni-bielefeld.de>
-References: <cover.1725269643.git.tjakobi@math.uni-bielefeld.de>
+	s=arc-20240116; t=1725270030; c=relaxed/simple;
+	bh=gdybJDrNjg5yzvAevTD3diZeh+qDZbL1UtLKO7Yp/ok=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=LJyf2WyIkz0QC3yqmJao8yCf3xMfApiA8CgViOzY02s8pOvZW0sGprvivE2hfMcBWTl/I/fcOri+4pjnXnZ91CeyaIYIBoGfHw+rq776TqGfi0Mu5GxvqGUdBZfBa2YOQeIGQDSk6l6RzzT2UMQCrnbz1miXm8itCf1ewHJ44i4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A7klkDRn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 559E8C4CEC2;
+	Mon,  2 Sep 2024 09:40:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725270029;
+	bh=gdybJDrNjg5yzvAevTD3diZeh+qDZbL1UtLKO7Yp/ok=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=A7klkDRnYRQZpvnT0otQWDNQb0w/JFGppIAH0cGaUGuAT9Y4cftqwZzH60wA/nOE6
+	 Qo4ZRlSx8ZopwHhbCtS+Mj/84+kQ+T1T57wg4xrEgTrInqs07ZoXm9dbc3+/3TwB40
+	 yDrJUZ5mxSsex5L2nnVHaruc6J6c3rFMtPnyJ9X9V8Z7rOeIvJ8VxlO+6xtspEBAp0
+	 hBhpbd8ys05hH3kqAsQEm7iNfIMYLTjTp+zHQQ6J/yoRcTMh8xZs2PzZZa0MW3PatQ
+	 BMgalm59xWIo9ZWtJ+fEKNjFDKN4LNcJFpHJVlA9xUv88YO6KX73Ig4v3zQK+sbmw6
+	 IRh9AH84LPoUg==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33F4E3822D69;
+	Mon,  2 Sep 2024 09:40:31 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -73,71 +51,47 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net] net: microchip: vcap: Fix use-after-free error in
+ kunit test
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <172527003004.3825645.3659251948161383657.git-patchwork-notify@kernel.org>
+Date: Mon, 02 Sep 2024 09:40:30 +0000
+References: <20240829-fix_use_after_free-v1-1-1507e307507f@microchip.com>
+In-Reply-To: <20240829-fix_use_after_free-v1-1-1507e307507f@microchip.com>
+To: =?utf-8?q?Jens_Emil_Schulz_=C3=98stergaard_=3Cjensemil=2Eschulzostergaard=40?=@codeaurora.org,
+	=?utf-8?q?microchip=2Ecom=3E?=@codeaurora.org
+Cc: lars.povlsen@microchip.com, Steen.Hegelund@microchip.com,
+ daniel.machon@microchip.com, UNGLinuxDriver@microchip.com,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ steen.hegelund@microchip.com, error27@gmail.com,
+ linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
 
-From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Hello:
 
-dc_state_destruct() nulls the resource context of the DC state. The pipe
-context passed to dcn35_set_drr() is a member of this resource context.
+This patch was applied to netdev/net.git (main)
+by David S. Miller <davem@davemloft.net>:
 
-If dc_state_destruct() is called parallel to the IRQ processing (which
-calls dcn35_set_drr() at some point), we can end up using already nulled
-function callback fields of struct stream_resource.
+On Thu, 29 Aug 2024 11:52:54 +0200 you wrote:
+> This is a clear use-after-free error. We remove it, and rely on checking
+> the return code of vcap_del_rule.
+> 
+> Reported-by: Dan Carpenter <error27@gmail.com>
+> Closes: https://lore.kernel.org/kernel-janitors/7bffefc6-219a-4f71-baa0-ad4526e5c198@kili.mountain/
+> Fixes: c956b9b318d9 ("net: microchip: sparx5: Adding KUNIT tests of key/action values in VCAP API")
+> Signed-off-by: Jens Emil Schulz Østergaard <jensemil.schulzostergaard@microchip.com>
+> 
+> [...]
 
-The logic in dcn35_set_drr() already tries to avoid this, by checking tg
-against NULL. But if the nulling happens exactly after the NULL check and
-before the next access, then we get a race.
+Here is the summary with links:
+  - [net] net: microchip: vcap: Fix use-after-free error in kunit test
+    https://git.kernel.org/netdev/net/c/a3c1e45156ad
 
-Avoid this by copying tg first to a local variable, and then use this
-variable for all the operations. This should work, as long as nobody
-frees the resource pool where the timing generators live.
-
-Closes: https://gitlab.freedesktop.org/drm/amd/-/issues/3142
-Fixes: 06ad7e164256 ("drm/amd/display: Destroy DC context while keeping DML and DML2")
-Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
----
- .../amd/display/dc/hwss/dcn35/dcn35_hwseq.c   | 20 +++++++++++--------
- 1 file changed, 12 insertions(+), 8 deletions(-)
-
-diff --git a/drivers/gpu/drm/amd/display/dc/hwss/dcn35/dcn35_hwseq.c b/drivers/gpu/drm/amd/display/dc/hwss/dcn35/dcn35_hwseq.c
-index dcced89c07b3..4e77728dac10 100644
---- a/drivers/gpu/drm/amd/display/dc/hwss/dcn35/dcn35_hwseq.c
-+++ b/drivers/gpu/drm/amd/display/dc/hwss/dcn35/dcn35_hwseq.c
-@@ -1370,7 +1370,13 @@ void dcn35_set_drr(struct pipe_ctx **pipe_ctx,
- 	params.vertical_total_mid_frame_num = adjust.v_total_mid_frame_num;
- 
- 	for (i = 0; i < num_pipes; i++) {
--		if ((pipe_ctx[i]->stream_res.tg != NULL) && pipe_ctx[i]->stream_res.tg->funcs) {
-+		/* dc_state_destruct() might null the stream resources, so fetch tg
-+		 * here first to avoid a race condition. The lifetime of the pointee
-+		 * itself (the timing_generator object) is not a problem here.
-+		 */
-+		struct timing_generator *tg = pipe_ctx[i]->stream_res.tg;
-+
-+		if ((tg != NULL) && tg->funcs) {
- 			struct dc_crtc_timing *timing = &pipe_ctx[i]->stream->timing;
- 			struct dc *dc = pipe_ctx[i]->stream->ctx->dc;
- 
-@@ -1383,14 +1389,12 @@ void dcn35_set_drr(struct pipe_ctx **pipe_ctx,
- 					num_frames = 2 * (frame_rate % 60);
- 				}
- 			}
--			if (pipe_ctx[i]->stream_res.tg->funcs->set_drr)
--				pipe_ctx[i]->stream_res.tg->funcs->set_drr(
--					pipe_ctx[i]->stream_res.tg, &params);
-+			if (tg->funcs->set_drr)
-+				tg->funcs->set_drr(tg, &params);
- 			if (adjust.v_total_max != 0 && adjust.v_total_min != 0)
--				if (pipe_ctx[i]->stream_res.tg->funcs->set_static_screen_control)
--					pipe_ctx[i]->stream_res.tg->funcs->set_static_screen_control(
--						pipe_ctx[i]->stream_res.tg,
--						event_triggers, num_frames);
-+				if (tg->funcs->set_static_screen_control)
-+					tg->funcs->set_static_screen_control(
-+						tg, event_triggers, num_frames);
- 		}
- 	}
- }
+You are awesome, thank you!
 -- 
-2.44.2
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
 
