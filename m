@@ -1,162 +1,121 @@
-Return-Path: <linux-kernel+bounces-311494-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311495-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8ADD69689D3
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 16:24:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C13E9689DA
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 16:25:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 154DB1F23858
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 14:24:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3F8B81C21D32
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 14:25:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7510819E981;
-	Mon,  2 Sep 2024 14:24:03 +0000 (UTC)
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7850119E97C;
+	Mon,  2 Sep 2024 14:25:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="k7lJ9Gc5"
+Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A03C013C9C4;
-	Mon,  2 Sep 2024 14:24:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F6EC200114
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 14:25:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725287043; cv=none; b=cJyB7zAq3V4CiWFdritO1aU+sfsCsXaLQjUHNqR6p2gc7rKqX3huXFFt1gfPcHoeUVfktr2EMih6+viNvMJnCIIcGmlkyGbe7SLOGJIeBOwhwCkY1jYvYVf1LfKACE6XRWRcZjkQVU+KCKO2JZIEozvtSszbCYsALEQM/kLGqwM=
+	t=1725287117; cv=none; b=TgVkNA7kS54TODxh8leqZBUpAKZqAvFQOxwaHTkJCV02u4NT4IFMf+mHrzxUQ8izL8m8ho1tCfD4mLVNeVyfvwnlz0NhOpBcUwOSJa+lqfm6HLbMe40nvaZXmQ9WgAOEG7fcjF/SgEn/6CJUsCZOvyACsyCay8xbHT+OGX7RmDQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725287043; c=relaxed/simple;
-	bh=iLrvGpSH1QX5oZJq0n8hkED4WsYiacPD/XFaibuaEpU=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=T0suhrxUkByv7fiWd7EVC8ry4XiCMKzNCIKdxGLDD0ta+l5PNrRm1StPKBGps/xDc+gBbb/k7zo4lmFo99yXREklc2+81aPfswwCPzOa3/22mtMovkjbj1XoSj1dIgAdKETlB+wgaP5i8wSwxcLZ5M4nEFwcVJDWfRHzX4SPGk8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4Wy9wv6KxMz9sSN;
-	Mon,  2 Sep 2024 16:23:59 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id kCIfLdUv6a_x; Mon,  2 Sep 2024 16:23:59 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4Wy9wv57Crz9sRy;
-	Mon,  2 Sep 2024 16:23:59 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 9EAA88B770;
-	Mon,  2 Sep 2024 16:23:59 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id 9J2Nm99gaq24; Mon,  2 Sep 2024 16:23:59 +0200 (CEST)
-Received: from [192.168.234.167] (unknown [192.168.234.167])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 41B2B8B76E;
-	Mon,  2 Sep 2024 16:23:59 +0200 (CEST)
-Message-ID: <2367d530-9a63-4acc-aa92-cc443477ca2c@csgroup.eu>
-Date: Mon, 2 Sep 2024 16:23:59 +0200
+	s=arc-20240116; t=1725287117; c=relaxed/simple;
+	bh=5+yk9MCmFeJBQ7L2gym3cTFE5OlnWTiYDPJMPD7RVnM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=m/dIMK2uKc20KZS2URlG36qnRRpRfabd0kw60TA0R+o3HAEZl93mUq0IsXybLC9H8KL8ogMUed2lOcLxuyf49uCkD/8MI37vP0VGkLrZfa8/3NdwnlBydBslXvK2BISFj3keyGIovBkXB8TjIT+UHaE+bFPZlLaDtSKFey64BoQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=k7lJ9Gc5; arc=none smtp.client-ip=209.85.208.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2f50ca18a13so51062491fa.1
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2024 07:25:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1725287113; x=1725891913; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=u3JhRT9F1Ebc+AzTXK0vkwr9Xmwvv6xTBM9lEdVHDNQ=;
+        b=k7lJ9Gc5pUQTsXPOcd4XHNCUdq62kF3a+lnq7nrj87N5tbogowb8LpMvlWql+5cCpX
+         y445OBWq+YFPxd6P2uHMgThRp96aaQ4xE4MEFmXKHLmUGc9giyjxdaUOFBIiCIsD1EDg
+         lhvQD8dt06OFI0h54View82IQ5ujAugrnvR3cL5SvST3h3jivXtQ/fodtXVqtxQlQgf/
+         8h138dE/2d9Pam5+ZT6GiO8dgiwWsz3VdoVeAAtTD30B+5an7gAyMm8IrbaX/3vy6imf
+         VSVGWQ+A5UuIKhlbV0lbWZFxP7qrl25MbCOBIRhsHCembc0vJLsPBObgokNCaPtNUZzO
+         bGjQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725287113; x=1725891913;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=u3JhRT9F1Ebc+AzTXK0vkwr9Xmwvv6xTBM9lEdVHDNQ=;
+        b=iJmkR2bxKyRUKAIvTRubHq57TncAM+Za5ItvbOENoVtHdAMMmrPe9jvSNdibIpGSfz
+         xJvqDPBzeVbZQO7MHsDuR/4dZcwXeI7P6lw7l8QjFVFMNidpkYv8KzaiZxdVvDO5FIeS
+         u50FcvBs4da0lEaPZYwIKJ+cDD3O4L9PzKCCvxVtD8aTc2kloU0W3Wff65DReVyz11OV
+         ZOf6yKwG4GcUIZOvROxznxcFyS4GLzO4N6eB4MLjgdi9gM3lLlZA4aaXggbMpHEHnGtU
+         dG5xdqiOGeorTgUehd5iKzuUXFibjkyofM+E0SwYtOP2xNo3izx+o9zQUx7g9t5eKjZO
+         7pLQ==
+X-Gm-Message-State: AOJu0Yxar8/3gUXmuwX8NR8MszIR0jrjXDVJVZ4/v7Hu7SLn4DDlqXSv
+	JMJ0M3QLBSPiW+8kbQpxmXrKk13AF/VFluAQVr3vdYjY4kayKQImDQprmg1ppK8=
+X-Google-Smtp-Source: AGHT+IH/xNFREYRFjRwWttEEMsV0R18Ua4UO7HrIhfQe96SyTxf8zLRNGyVUy2Qpv0QoEkL7KxrCLA==
+X-Received: by 2002:a05:651c:b13:b0:2f1:6cb1:44c0 with SMTP id 38308e7fff4ca-2f61038c633mr108241651fa.6.1725287113249;
+        Mon, 02 Sep 2024 07:25:13 -0700 (PDT)
+Received: from localhost.localdomain ([5.133.47.210])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c226c6a3f5sm5308881a12.2.2024.09.02.07.25.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 02 Sep 2024 07:25:12 -0700 (PDT)
+From: srinivas.kandagatla@linaro.org
+To: gregkh@linuxfoundation.org
+Cc: linux-kernel@vger.kernel.org,
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Subject: [PATCH 0/3] nvmem: fixes for 6.11
+Date: Mon,  2 Sep 2024 15:25:07 +0100
+Message-Id: <20240902142510.71096-1-srinivas.kandagatla@linaro.org>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] selftests: vDSO: Do not rely on $ARCH for
- vdso_test_getrandom && vdso_test_chacha
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-To: "Jason A. Donenfeld" <Jason@zx2c4.com>
-Cc: Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org,
- linux-kselftest@vger.kernel.org,
- Adhemerval Zanella <adhemerval.zanella@linaro.org>,
- Xi Ruoyao <xry111@xry111.site>
-References: <ddf594c81787dba708fc392cb03027470dee64fb.1725124064.git.christophe.leroy@csgroup.eu>
- <ZtRqp-uZe5C07qOF@zx2c4.com>
- <fe8ea6a6-71d7-4cfc-b20b-fa0a7f39a4be@csgroup.eu>
- <ec7bfeb4-30aa-4874-98b7-7877a12cb98f@sirena.org.uk>
- <ffc5600d-362f-4400-8f8b-a1ea77ca51bf@csgroup.eu>
- <ZtXEUZC_jRBSAG9k@zx2c4.com>
- <cae4fb76-224e-4858-a44a-1ebb71c25821@csgroup.eu>
-Content-Language: fr-FR
-In-Reply-To: <cae4fb76-224e-4858-a44a-1ebb71c25821@csgroup.eu>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+
+From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+
+Hi Greg,
+
+Here are few fixes in nvmem for 6.11, Could you queue
+these for next possible rc.
+
+fixes include
+	- fixing kernel doc about return value
+	- fix u-boot provider boundary checking
+	- fix dt-bindings for Zynq nvmem provider
+
+Thanks,
+Srini
+
+
+
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
 
+Geert Uytterhoeven (1):
+  nvmem: Fix return type of devm_nvmem_device_get() in kerneldoc
 
-Le 02/09/2024 à 16:18, Christophe Leroy a écrit :
-> 
-> 
-> Le 02/09/2024 à 15:57, Jason A. Donenfeld a écrit :
->> On Mon, Sep 02, 2024 at 03:23:47PM +0200, Christophe Leroy wrote:
->>>
->>>
->>> Le 02/09/2024 à 14:37, Mark Brown a écrit :
->>>> On Mon, Sep 02, 2024 at 02:22:38PM +0200, Christophe Leroy wrote:
->>>>
->>>>> When vdso_test_getcpu doesn't find the vDSO entry point, it prints 
->>>>> an error
->>>>> text and returns KSFT_SKIP
->>>>
->>>>> I thought it would be more correct to have the same behaviour on
->>>>> vdso_test_getrandom instead of trying to build it only when the 
->>>>> underlying
->>>>> kernel supports it.
->>>>
->>>> The problem is that the test incorporates assembler code so it simply
->>>> won't build for architectures without explicit porting, the issue isn't
->>>> if the target kernel supports it but rather that the test won't compile
->>>> in the first place.
->>>
->>> Yes indeed and that was the purpose of my patch, have a macro in
->>> vdso_config.h to tell where the assembler code is:
->>>
->>> diff --git a/tools/testing/selftests/vDSO/vdso_config.h
->>> b/tools/testing/selftests/vDSO/vdso_config.h
->>> index 740ce8c98d2e..693920471160 100644
->>> --- a/tools/testing/selftests/vDSO/vdso_config.h
->>> +++ b/tools/testing/selftests/vDSO/vdso_config.h
->>> @@ -47,6 +47,7 @@
->>>    #elif defined(__x86_64__)
->>>    #define VDSO_VERSION        0
->>>    #define VDSO_NAMES        1
->>> +#define VDSO_GETRANDOM
->>> "../../../../arch/x86/entry/vdso/vgetrandom-chacha.S"
->>>    #elif defined(__riscv__) || defined(__riscv)
->>>    #define VDSO_VERSION        5
->>>    #define VDSO_NAMES        1
->>>
->>>
->>> And then:
->>>
->>> diff --git a/tools/testing/selftests/vDSO/vdso_test_chacha-asm.S
->>> b/tools/testing/selftests/vDSO/vdso_test_chacha-asm.S
->>> new file mode 100644
->>> index 000000000000..8e704165f6f2
->>> --- /dev/null
->>> +++ b/tools/testing/selftests/vDSO/vdso_test_chacha-asm.S
->>> @@ -0,0 +1,7 @@
->>> +#include "vdso_config.h"
->>> +
->>> +#ifdef VDSO_GETRANDOM
->>> +
->>> +#include VDSO_GETRANDOM
->>> +
->>> +#endif
->>>
->>> I thought it was a lot easier to handle if through necessary #ifdefs in
->>> vdso_config.h that implementing an additional logic in Makefiles.
->>
->> Yet it still tripped up the test robot, right?
-> 
-> Yes I need to look at that.
-> 
->>
->> In general I'm not crazy about this approach.
-> 
-> I have the feeling I get things done easier with that approach. But if 
-> you feel better playing up with the makefile, I incline.
+John Thomson (1):
+  nvmem: u-boot-env: error if NVMEM device is too small
 
-Also I thing that one day or another someone will want to implement it a 
-more performant way on power10 which is one of the latest powerpc CPU, 
-something similar to arch/powerpc/crypto/chacha-p10le-8x.S
+Michal Simek (1):
+  dt-bindings: nvmem: Use soc-nvmem node name instead of nvmem
 
-When that happens, we will need a way to tell vdso_test_chacha to build 
-another vgetrandom-chacha.S and I feel that doing it in the Makefile 
-will become really tricky.
+ .../devicetree/bindings/nvmem/xlnx,zynqmp-nvmem.yaml       | 2 +-
+ drivers/nvmem/core.c                                       | 6 +++---
+ drivers/nvmem/u-boot-env.c                                 | 7 +++++++
+ 3 files changed, 11 insertions(+), 4 deletions(-)
+
+-- 
+2.25.1
+
 
