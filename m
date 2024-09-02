@@ -1,39 +1,59 @@
-Return-Path: <linux-kernel+bounces-310915-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310918-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CAD899682D0
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 11:12:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 360279682D6
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 11:13:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 87CD3283946
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 09:12:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 570881C215A8
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 09:13:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05BEA187346;
-	Mon,  2 Sep 2024 09:11:57 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BD4F186287
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 09:11:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74EE6187877;
+	Mon,  2 Sep 2024 09:12:55 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E689187547;
+	Mon,  2 Sep 2024 09:12:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725268316; cv=none; b=SQ951wiOyxfGr4dzy9Vx+23PrXe4fdd4cQZ26ON4YCfr0oct5jXY++HuvLXj9pRr0MypoJOIksPludoLF/BYvSiKr5f1NS1Au/u7Yf85dnGyXhZOV7N6Xg3r0BdrkEbgJLGsmPhxwQzzkxdcsoCSHubmDa86TGkDToZ9hXlXv2w=
+	t=1725268375; cv=none; b=Q9mB5N2wNRAT/jUlafl6MVh0y6UTIUdrfPemuZbsdvpW6LIErs2yy3JvJMxQGilQN7ncgzRdf2APDxfIUjGNW4B4H7mC/BoR38Tm+uUY1DWPfoeGmXDrX7BN3PjVAqYD1V1Lg3xncaBjDA2DXKYLIW9Fw7ZzpI4S0L3is/U5ibg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725268316; c=relaxed/simple;
-	bh=egCvhgn3q+xxLv/M3Kl3JcqczMvcXSPyQ+FFa03oVEY=;
+	s=arc-20240116; t=1725268375; c=relaxed/simple;
+	bh=zGgj5jyXVGaaxxCaLsxnwIBByIzH1s3DIKp7nMRUOMk=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=i9t82/J62b0jAWrva329DTWr53cjAs3l47pbUKbYVBD1gHOoKhwqlFxCo4CTTFo5Zp1p8PsBvauVDAZWdPT0TDH6tYCE92pfFIeiCCCnkKslFg6eEGOpT6wv/gQyQgejRQ2/smJo9DLexJCUG+nvmNQOMrGuAQPqxMmFrI8Uqu4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CF640FEC;
-	Mon,  2 Sep 2024 02:12:19 -0700 (PDT)
-Received: from [10.57.74.147] (unknown [10.57.74.147])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C9C0F3F73F;
-	Mon,  2 Sep 2024 02:11:50 -0700 (PDT)
-Message-ID: <ef5c4fb6-8355-4af4-81e9-b7cef88800d4@arm.com>
-Date: Mon, 2 Sep 2024 10:11:46 +0100
+	 In-Reply-To:Content-Type; b=CSYKmWoc+RtHVebR4no/pU3jKtURKjaFEcG9EoY6f+WAi4rc1WMlJt1qPyRcIhJFmDdn45eS0uNCVEGTTXA1FqGOCV3RFlQQ+OUeC3RcQirjW+bbRCodHz7ENDXPYjqzi23BOwaVu5k7bGlGmplr5SHS8v7dWtLnGWzl87Gqj68=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: 7ebffe58690b11efa216b1d71e6e1362-20240902
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.38,REQID:074946e5-9594-4ff7-9ef4-33885013dae6,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:0
+X-CID-META: VersionHash:82c5f88,CLOUDID:e1679a74f9659744bcce0c6f4470f2ac,BulkI
+	D:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0|-5,EDM:-3,IP:nil,UR
+	L:1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,S
+	PR:NO,DKR:0,DKP:0,BRR:0,BRE:0
+X-CID-BVR: 0,NGT
+X-CID-BAS: 0,NGT,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULS
+X-UUID: 7ebffe58690b11efa216b1d71e6e1362-20240902
+Received: from node2.com.cn [(10.44.16.197)] by mailgw.kylinos.cn
+	(envelope-from <luyun@kylinos.cn>)
+	(Generic MTA)
+	with ESMTP id 795379890; Mon, 02 Sep 2024 17:12:36 +0800
+Received: from node2.com.cn (localhost [127.0.0.1])
+	by node2.com.cn (NSMail) with SMTP id 30BD7B80758A;
+	Mon,  2 Sep 2024 17:12:36 +0800 (CST)
+X-ns-mid: postfix-66D58184-1073891000
+Received: from [10.42.20.151] (unknown [10.42.20.151])
+	by node2.com.cn (NSMail) with ESMTPA id EDFB4B80758A;
+	Mon,  2 Sep 2024 09:12:34 +0000 (UTC)
+Message-ID: <2df10720-1790-48bd-a50c-4816260543b0@kylinos.cn>
+Date: Mon, 2 Sep 2024 17:12:21 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,187 +61,168 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/2] drm/panfrost: Add SYSTEM_TIMESTAMP and
- SYSTEM_TIMESTAMP_FREQUENCY parameters
-To: Mary Guillemard <mary.guillemard@collabora.com>,
- linux-kernel@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org, kernel@collabora.com,
- Boris Brezillon <boris.brezillon@collabora.com>,
- Rob Herring <robh@kernel.org>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>
-References: <20240819080224.24914-1-mary.guillemard@collabora.com>
- <20240819080224.24914-2-mary.guillemard@collabora.com>
-From: Steven Price <steven.price@arm.com>
-Content-Language: en-GB
-In-Reply-To: <20240819080224.24914-2-mary.guillemard@collabora.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Subject: Re: CPU stuck due to the taprio hrtimer
+To: Vinicius Costa Gomes <vinicius.gomes@intel.com>, jhs@mojatatu.com,
+ xiyou.wangcong@gmail.com, jiri@resnulli.us
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240627055338.2186255-1-luyun@kylinos.cn>
+ <87sewy55gp.fsf@intel.com>
+Content-Language: en-US
+From: luyun <luyun@kylinos.cn>
+In-Reply-To: <87sewy55gp.fsf@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
 
-On 19/08/2024 09:02, Mary Guillemard wrote:
-> Expose system timestamp and frequency supported by the GPU.
-> 
-> Mali uses an external timer as GPU system time. On ARM, this is wired to
-> the generic arch timer so we wire cntfrq_el0 as device frequency.
-> 
-> This new uAPI will be used in Mesa to implement timestamp queries and
-> VK_KHR_calibrated_timestamps.
-> 
-> v2:
-> - Rewrote to use GPU timestamp register
-> - Add missing include for arch_timer_get_cntfrq
-> - Rework commit message
-> 
-> v3:
-> - Move panfrost_cycle_counter_get and panfrost_cycle_counter_put to
->   panfrost_ioctl_query_timestamp
-> - Handle possible overflow in panfrost_timestamp_read
-> 
 
-Reviewed-by: Steven Price <steven.price@arm.com>
+=E5=9C=A8 2024/6/28 07:30, Vinicius Costa Gomes =E5=86=99=E9=81=93:
+> Yun Lu <luyun@kylinos.cn> writes:
+>
+>> Hello,
+>>
+>> When I run a taprio test program on the latest kernel(v6.10-rc4), CPU =
+stuck
+>> is detected immediately, and the stack shows that CPU is stuck on tapr=
+io
+>> hrtimer.
+>>
+>> The reproducer program link:
+>> https://github.com/xyyluyun/taprio_test/blob/main/taprio_test.c
+>> gcc taprio_test.c -static -o taprio_test
+>>
+>> In this program, start the taprio hrtimer which clockid is set to REAL=
+TIME, and
+>> then adjust the system time by a significant value backwards. Thus, CP=
+U will enter
+>> an infinite loop in the__hrtimer_run_queues function, getting stuck an=
+d unable to
+>> exit or respond to any interrupts.
+>>
+>> I have tried to avoid this problem by apllying the following patch, an=
+d it does work.
+>> But I am not sure if this can be the final solution?
+>>
+>> Thanks.
+>>
+>> Signed-off-by: Yun Lu <luyun@kylinos.cn>
+>> ---
+>>   net/sched/sch_taprio.c | 24 ++++++++++++++++++++++++
+>>   1 file changed, 24 insertions(+)
+>>
+>> diff --git a/net/sched/sch_taprio.c b/net/sched/sch_taprio.c
+>> index a0d54b422186..2ff8d34bdbac 100644
+>> --- a/net/sched/sch_taprio.c
+>> +++ b/net/sched/sch_taprio.c
+>> @@ -104,6 +104,7 @@ struct taprio_sched {
+>>   	u32 max_sdu[TC_MAX_QUEUE]; /* save info from the user */
+>>   	u32 fp[TC_QOPT_MAX_QUEUE]; /* only for dump and offloading */
+>>   	u32 txtime_delay;
+>> +	ktime_t offset;
+>>   };
+>>  =20
+>>   struct __tc_taprio_qopt_offload {
+>> @@ -170,6 +171,19 @@ static ktime_t sched_base_time(const struct sched=
+_gate_list *sched)
+>>   	return ns_to_ktime(sched->base_time);
+>>   }
+>>  =20
+>> +static ktime_t taprio_get_offset(const struct taprio_sched *q)
+>> +{
+>> +	enum tk_offsets tk_offset =3D READ_ONCE(q->tk_offset);
+>> +	ktime_t time =3D ktime_get();
+>> +
+>> +	switch (tk_offset) {
+>> +	case TK_OFFS_MAX:
+>> +		return 0;
+>> +	default:
+>> +		return ktime_sub_ns(ktime_mono_to_any(time, tk_offset), time);
+>> +	}
+>> +}
+>> +
+>>   static ktime_t taprio_mono_to_any(const struct taprio_sched *q, ktim=
+e_t mono)
+>>   {
+>>   	/* This pairs with WRITE_ONCE() in taprio_parse_clockid() */
+>> @@ -918,6 +932,7 @@ static enum hrtimer_restart advance_sched(struct h=
+rtimer *timer)
+>>   	int num_tc =3D netdev_get_num_tc(dev);
+>>   	struct sched_entry *entry, *next;
+>>   	struct Qdisc *sch =3D q->root;
+>> +	ktime_t now_offset =3D taprio_get_offset(q);
+>>   	ktime_t end_time;
+>>   	int tc;
+>>  =20
+>> @@ -957,6 +972,14 @@ static enum hrtimer_restart advance_sched(struct =
+hrtimer *timer)
+>>   	end_time =3D ktime_add_ns(entry->end_time, next->interval);
+>>   	end_time =3D min_t(ktime_t, end_time, oper->cycle_end_time);
+>>  =20
+>> +	if (q->offset !=3D now_offset) {
+>> +		ktime_t diff =3D ktime_sub_ns(now_offset, q->offset);
+>> +
+>> +		end_time =3D ktime_add_ns(end_time, diff);
+>> +		oper->cycle_end_time =3D ktime_add_ns(oper->cycle_end_time, diff);
+>> +		q->offset =3D now_offset;
+>> +	}
+>> +
+> I think what we should do here is a bit different. Let me try to explai=
+n
+> what I have in mind with some context.
+>
+> A bit of context: The idea of taprio is to enforce "TSN" traffic
+> schedules, these schedules require time synchronization, for example vi=
+a
+> PTP, and in those cases, time jumps are not expected or a sign that
+> something is wrong.
+>
+> In my mind, a time jump, specially a big one, kind of invalidates the
+> schedule, as the schedule is based on an absolute time value (the
+> base_time), and when time jumps that reference in time is lost.
+>
+> BUT making the user's system unresponsive is a bug, a big one, as if
+> this happens in the real world, the user will be unable to investigate
+> what made the system have so big a time correction.
+>
+> So my idea is to warn the user that the time jumped, say that the user
+> needs to reconfigure the schedule, as it is now invalid, and disable th=
+e
+> schedule.
+>
+> Does this make sense?
+>
+> Ah, and thanks for the report.
 
-I'll push this to drm-misc-next.
+Hello Vinicius,
 
-Thanks,
+May I ask is there a fix patch for this issue?
 
-Steve
+I test it on the latest kernel version,=C2=A0 and it still seems to cause=
+ CPU=20
+stuck.
 
-> Signed-off-by: Mary Guillemard <mary.guillemard@collabora.com>
-> ---
->  drivers/gpu/drm/panfrost/panfrost_drv.c  | 37 ++++++++++++++++++++++++
->  drivers/gpu/drm/panfrost/panfrost_gpu.c  | 12 ++++++++
->  drivers/gpu/drm/panfrost/panfrost_gpu.h  |  1 +
->  drivers/gpu/drm/panfrost/panfrost_regs.h |  2 ++
->  include/uapi/drm/panfrost_drm.h          |  2 ++
->  5 files changed, 54 insertions(+)
-> 
-> diff --git a/drivers/gpu/drm/panfrost/panfrost_drv.c b/drivers/gpu/drm/panfrost/panfrost_drv.c
-> index 671eed4ad890..790c4ad31143 100644
-> --- a/drivers/gpu/drm/panfrost/panfrost_drv.c
-> +++ b/drivers/gpu/drm/panfrost/panfrost_drv.c
-> @@ -3,6 +3,10 @@
->  /* Copyright 2019 Linaro, Ltd., Rob Herring <robh@kernel.org> */
->  /* Copyright 2019 Collabora ltd. */
->  
-> +#ifdef CONFIG_ARM_ARCH_TIMER
-> +#include <asm/arch_timer.h>
-> +#endif
-> +
->  #include <linux/module.h>
->  #include <linux/of.h>
->  #include <linux/pagemap.h>
-> @@ -24,10 +28,28 @@
->  static bool unstable_ioctls;
->  module_param_unsafe(unstable_ioctls, bool, 0600);
->  
-> +static int panfrost_ioctl_query_timestamp(struct panfrost_device *pfdev,
-> +					  u64 *arg)
-> +{
-> +	int ret;
-> +
-> +	ret = pm_runtime_resume_and_get(pfdev->dev);
-> +	if (ret)
-> +		return ret;
-> +
-> +	panfrost_cycle_counter_get(pfdev);
-> +	*arg = panfrost_timestamp_read(pfdev);
-> +	panfrost_cycle_counter_put(pfdev);
-> +
-> +	pm_runtime_put(pfdev->dev);
-> +	return 0;
-> +}
-> +
->  static int panfrost_ioctl_get_param(struct drm_device *ddev, void *data, struct drm_file *file)
->  {
->  	struct drm_panfrost_get_param *param = data;
->  	struct panfrost_device *pfdev = ddev->dev_private;
-> +	int ret;
->  
->  	if (param->pad != 0)
->  		return -EINVAL;
-> @@ -69,6 +91,21 @@ static int panfrost_ioctl_get_param(struct drm_device *ddev, void *data, struct
->  		PANFROST_FEATURE_ARRAY(JS_FEATURES, js_features, 15);
->  		PANFROST_FEATURE(NR_CORE_GROUPS, nr_core_groups);
->  		PANFROST_FEATURE(THREAD_TLS_ALLOC, thread_tls_alloc);
-> +
-> +	case DRM_PANFROST_PARAM_SYSTEM_TIMESTAMP:
-> +		ret = panfrost_ioctl_query_timestamp(pfdev, &param->value);
-> +		if (ret)
-> +			return ret;
-> +		break;
-> +
-> +	case DRM_PANFROST_PARAM_SYSTEM_TIMESTAMP_FREQUENCY:
-> +#ifdef CONFIG_ARM_ARCH_TIMER
-> +		param->value = arch_timer_get_cntfrq();
-> +#else
-> +		param->value = 0;
-> +#endif
-> +		break;
-> +
->  	default:
->  		return -EINVAL;
->  	}
-> diff --git a/drivers/gpu/drm/panfrost/panfrost_gpu.c b/drivers/gpu/drm/panfrost/panfrost_gpu.c
-> index fd8e44992184..f19f918e2330 100644
-> --- a/drivers/gpu/drm/panfrost/panfrost_gpu.c
-> +++ b/drivers/gpu/drm/panfrost/panfrost_gpu.c
-> @@ -380,6 +380,18 @@ unsigned long long panfrost_cycle_counter_read(struct panfrost_device *pfdev)
->  	return ((u64)hi << 32) | lo;
->  }
->  
-> +unsigned long long panfrost_timestamp_read(struct panfrost_device *pfdev)
-> +{
-> +	u32 hi, lo;
-> +
-> +	do {
-> +		hi = gpu_read(pfdev, GPU_TIMESTAMP_HI);
-> +		lo = gpu_read(pfdev, GPU_TIMESTAMP_LO);
-> +	} while (hi != gpu_read(pfdev, GPU_TIMESTAMP_HI));
-> +
-> +	return ((u64)hi << 32) | lo;
-> +}
-> +
->  static u64 panfrost_get_core_mask(struct panfrost_device *pfdev)
->  {
->  	u64 core_mask;
-> diff --git a/drivers/gpu/drm/panfrost/panfrost_gpu.h b/drivers/gpu/drm/panfrost/panfrost_gpu.h
-> index d841b86504ea..b4fef11211d5 100644
-> --- a/drivers/gpu/drm/panfrost/panfrost_gpu.h
-> +++ b/drivers/gpu/drm/panfrost/panfrost_gpu.h
-> @@ -20,6 +20,7 @@ void panfrost_gpu_suspend_irq(struct panfrost_device *pfdev);
->  void panfrost_cycle_counter_get(struct panfrost_device *pfdev);
->  void panfrost_cycle_counter_put(struct panfrost_device *pfdev);
->  unsigned long long panfrost_cycle_counter_read(struct panfrost_device *pfdev);
-> +unsigned long long panfrost_timestamp_read(struct panfrost_device *pfdev);
->  
->  void panfrost_gpu_amlogic_quirk(struct panfrost_device *pfdev);
->  
-> diff --git a/drivers/gpu/drm/panfrost/panfrost_regs.h b/drivers/gpu/drm/panfrost/panfrost_regs.h
-> index c25743b05c55..c7bba476ab3f 100644
-> --- a/drivers/gpu/drm/panfrost/panfrost_regs.h
-> +++ b/drivers/gpu/drm/panfrost/panfrost_regs.h
-> @@ -78,6 +78,8 @@
->  
->  #define GPU_CYCLE_COUNT_LO		0x90
->  #define GPU_CYCLE_COUNT_HI		0x94
-> +#define GPU_TIMESTAMP_LO		0x98
-> +#define GPU_TIMESTAMP_HI		0x9C
->  
->  #define GPU_THREAD_MAX_THREADS		0x0A0	/* (RO) Maximum number of threads per core */
->  #define GPU_THREAD_MAX_WORKGROUP_SIZE	0x0A4	/* (RO) Maximum workgroup size */
-> diff --git a/include/uapi/drm/panfrost_drm.h b/include/uapi/drm/panfrost_drm.h
-> index 9f231d40a146..52b050e2b660 100644
-> --- a/include/uapi/drm/panfrost_drm.h
-> +++ b/include/uapi/drm/panfrost_drm.h
-> @@ -172,6 +172,8 @@ enum drm_panfrost_param {
->  	DRM_PANFROST_PARAM_NR_CORE_GROUPS,
->  	DRM_PANFROST_PARAM_THREAD_TLS_ALLOC,
->  	DRM_PANFROST_PARAM_AFBC_FEATURES,
-> +	DRM_PANFROST_PARAM_SYSTEM_TIMESTAMP,
-> +	DRM_PANFROST_PARAM_SYSTEM_TIMESTAMP_FREQUENCY,
->  };
->  
->  struct drm_panfrost_get_param {
+As you mentioned, a better way would be to warn the user that the=20
+current time has jumped and cancel the hrtimer,
 
+but I'm not sure how to warn the user, or just through printk?
+
+Thanks and best regards.
+
+
+>
+>>   	for (tc =3D 0; tc < num_tc; tc++) {
+>>   		if (next->gate_duration[tc] =3D=3D oper->cycle_time)
+>>   			next->gate_close_time[tc] =3D KTIME_MAX;
+>> @@ -1210,6 +1233,7 @@ static int taprio_get_start_time(struct Qdisc *s=
+ch,
+>>  =20
+>>   	base =3D sched_base_time(sched);
+>>   	now =3D taprio_get_time(q);
+>> +	q->offset =3D taprio_get_offset(q);
+>>  =20
+>>   	if (ktime_after(base, now)) {
+>>   		*start =3D base;
+>> --=20
+>> 2.34.1
+>>
+>
+> Cheers,
 
