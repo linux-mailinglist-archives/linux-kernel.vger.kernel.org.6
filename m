@@ -1,136 +1,131 @@
-Return-Path: <linux-kernel+bounces-310582-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310583-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68CED967EB3
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 07:14:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0316E967EB7
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 07:16:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B6010B2166D
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 05:14:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 924BF1F21F14
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 05:16:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB28D14F100;
-	Mon,  2 Sep 2024 05:13:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E88014F9E6;
+	Mon,  2 Sep 2024 05:16:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F+cRk6C+"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="D7vMA9VJ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06BF436D;
-	Mon,  2 Sep 2024 05:13:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A6EA382;
+	Mon,  2 Sep 2024 05:16:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725254036; cv=none; b=RYWn/s+43h4xiPJN+MMC2cT00Oy4hP4hYhlg0V+KnNj0K1HU4BG5GgGfbUgLROiJtN0FoVMbhITR0Vwiti5ylw7Z7RkpuEOy0ZesUYD547H1I1s6XhT0unrOYiOUJq0Gy6Y6+xf4sWAl3ni3EnpkPLwN4qI4vrsOMsMJaNw5WfI=
+	t=1725254198; cv=none; b=tQu3m2AV94XH/V1kMUGcf260A0Jg4B+TdKL7HDnM0FsxVrcPg5hP8Sxr8gy0WUOQuTBKfFX/o3JWPxP4XLIqtOZoJ73nPbxarlRthUMZTH6FTjqxErXVJgwUWHwEO4F8Wh+0+95u7Nq5MF3NAMaI+o4fs6/QMhIj9Uxzzv4QIqQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725254036; c=relaxed/simple;
-	bh=TPpkqPR8V96Q4pNrawsjjZ2uf1OIDvvR3Rbrdkwd92U=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=LvjCSq+RUS/Vrw1oueLSZ3hL7YL7njxa3YWl8kV7Zpy027N/jH4c+A591PeK4fR4uw6JJeLMy7Iqa/B8IOtTxtheMDmC4jfx+Gw6J/KBu7xChzkcuZI8Z7XR5ayYd7V+74BcszsgsN//rgo3J9IeBSijedgL6OP+8P0ALwfXWM0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F+cRk6C+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27587C4CEC2;
-	Mon,  2 Sep 2024 05:13:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725254035;
-	bh=TPpkqPR8V96Q4pNrawsjjZ2uf1OIDvvR3Rbrdkwd92U=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=F+cRk6C+jqe45JXc4w0ECr/xyLVyKeWB5ttckCESjF9gnaHUrOZIp8Cmy+ADMZKhT
-	 tvJ/Mj1jcRGsNTD2I3ilGlwKnBJxhytLCKBTOL88ChzM/p4dk4bFnL1IXmikmLOPpg
-	 IKe0ZuJqsVLJ4gssWyapKhx+alqZeAa0cJUFNn7R6ydE3J8Y8b6om477nBFwLlQFNF
-	 u7856rqq+XyEfM7IHFLpz/kGK3C49BoRt829dJs7gXtEVGT0Fr6Z2lKet8BsO/OX9g
-	 Gf8EslHcIoX9C/L3qe+ov4ALSnSN/wERdqmBqy5UEgkJugvvdXRHwRF3SmeLUr59/C
-	 Mfrf3Gj2qRKdA==
-X-Mailer: emacs 31.0.50 (via feedmail 11-beta-1 I)
-From: Aneesh Kumar K.V <aneesh.kumar@kernel.org>
-To: Steven Price <steven.price@arm.com>, kvm@vger.kernel.org,
-	kvmarm@lists.linux.dev
-Cc: Steven Price <steven.price@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>,
-	James Morse <james.morse@arm.com>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Joey Gouly <joey.gouly@arm.com>,
-	Alexandru Elisei <alexandru.elisei@arm.com>,
-	Christoffer Dall <christoffer.dall@arm.com>,
-	Fuad Tabba <tabba@google.com>, linux-coco@lists.linux.dev,
-	Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>,
-	Gavin Shan <gshan@redhat.com>,
-	Shanker Donthineni <sdonthineni@nvidia.com>,
-	Alper Gun <alpergun@google.com>
-Subject: Re: [PATCH v4 43/43] KVM: arm64: Allow activating realms
-In-Reply-To: <20240821153844.60084-44-steven.price@arm.com>
-References: <20240821153844.60084-1-steven.price@arm.com>
- <20240821153844.60084-44-steven.price@arm.com>
-Date: Mon, 02 Sep 2024 10:43:43 +0530
-Message-ID: <yq5afrqieiyg.fsf@kernel.org>
+	s=arc-20240116; t=1725254198; c=relaxed/simple;
+	bh=1xlmn1CCleSTfCBgJB3zCP9jQCY2zoK1n5+MoF/CsVU=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=GzdD+A/0dmeP1LqV4h+8ruvd6xTNpRDP+HB8V4v+zKZ43wRIdvt6YEshFbLabEksqOmRK3WPQrcXYC85fBVv6miuGOtRSa3/Ha/vDejpMee0Ta2KvT1ekVleXjcnhCHzjWFsZfFU3GvbbXwhYyDknHR+3/IBBUEMfrEvmDaZPc0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=D7vMA9VJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E0515C4CEC2;
+	Mon,  2 Sep 2024 05:16:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1725254198;
+	bh=1xlmn1CCleSTfCBgJB3zCP9jQCY2zoK1n5+MoF/CsVU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=D7vMA9VJUJwFXhuMZYsQF8m20GzI1hPhtdRH9/AJItHhYVyfbxTGYjTNs4EgrKr+z
+	 4oxLvWk1zZnbWAgN0QtpFQjhan7mhGNBNRprVxLtaoEBTVU38iT4cc3vu+TsODLC7D
+	 3HCiPp9GKDuq//9oLoJR1Wrwr7fSNpHIqtabIbh8=
+Date: Sun, 1 Sep 2024 22:16:36 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Suren Baghdasaryan <surenb@google.com>
+Cc: kent.overstreet@linux.dev, corbet@lwn.net, arnd@arndb.de,
+ mcgrof@kernel.org, rppt@kernel.org, paulmck@kernel.org, thuth@redhat.com,
+ tglx@linutronix.de, bp@alien8.de, xiongwei.song@windriver.com,
+ ardb@kernel.org, david@redhat.com, vbabka@suse.cz, mhocko@suse.com,
+ hannes@cmpxchg.org, roman.gushchin@linux.dev, dave@stgolabs.net,
+ willy@infradead.org, liam.howlett@oracle.com, pasha.tatashin@soleen.com,
+ souravpanda@google.com, keescook@chromium.org, dennis@kernel.org,
+ jhubbard@nvidia.com, yuzhao@google.com, vvvvvv@google.com,
+ rostedt@goodmis.org, iamjoonsoo.kim@lge.com, rientjes@google.com,
+ minchan@google.com, kaleshsingh@google.com, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+ linux-mm@kvack.org, linux-modules@vger.kernel.org, kernel-team@android.com
+Subject: Re: [PATCH v2 6/6] alloc_tag: config to store page allocation tag
+ refs in page flags
+Message-Id: <20240901221636.5b0af3694510482e9d9e67df@linux-foundation.org>
+In-Reply-To: <20240902044128.664075-7-surenb@google.com>
+References: <20240902044128.664075-1-surenb@google.com>
+	<20240902044128.664075-7-surenb@google.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Steven Price <steven.price@arm.com> writes:
+On Sun,  1 Sep 2024 21:41:28 -0700 Suren Baghdasaryan <surenb@google.com> wrote:
 
-> Add the ioctl to activate a realm and set the static branch to enable
-> access to the realm functionality if the RMM is detected.
+> Add CONFIG_PGALLOC_TAG_USE_PAGEFLAGS to store allocation tag
+> references directly in the page flags. This removes dependency on
+> page_ext and results in better performance for page allocations as
+> well as reduced page_ext memory overhead.
+> CONFIG_PGALLOC_TAG_REF_BITS controls the number of bits required
+> to be available in the page flags to store the references. If the
+> number of page flag bits is insufficient, the build will fail and
+> either CONFIG_PGALLOC_TAG_REF_BITS would have to be lowered or
+> CONFIG_PGALLOC_TAG_USE_PAGEFLAGS should be disabled.
+> 
+> ...
 >
-> Signed-off-by: Steven Price <steven.price@arm.com>
-> ---
->  arch/arm64/kvm/rme.c | 19 ++++++++++++++++++-
->  1 file changed, 18 insertions(+), 1 deletion(-)
->
-> diff --git a/arch/arm64/kvm/rme.c b/arch/arm64/kvm/rme.c
-> index 9f415411d3b5..1eeef9e15d1c 100644
-> --- a/arch/arm64/kvm/rme.c
-> +++ b/arch/arm64/kvm/rme.c
-> @@ -1194,6 +1194,20 @@ static int kvm_init_ipa_range_realm(struct kvm *kvm,
->  	return realm_init_ipa_state(realm, addr, end);
->  }
+> +config PGALLOC_TAG_USE_PAGEFLAGS
+> +	bool "Use pageflags to encode page allocation tag reference"
+> +	default n
+> +	depends on MEM_ALLOC_PROFILING
+> +	help
+> +	  When set, page allocation tag references are encoded inside page
+> +	  flags, otherwise they are encoded in page extensions.
+> +
+> +	  Setting this flag reduces memory and performance overhead of memory
+> +	  allocation profiling but also limits how many allocations can be
+> +	  tagged. The number of bits is set by PGALLOC_TAG_USE_PAGEFLAGS and
+> +	  they must fit in the page flags field.
+
+Again.  Please put yourself in the position of one of the all-minus-two
+people in this world who aren't kernel-memory-profiling-developers. 
+How the heck are they to decide whether or not to enable this?  OK, 59%
+of them are likely to say "yes" because reasons.  But then what?  How
+are they to determine whether it was the correct choice for them?  If
+we don't tell them, who will?
+
+>  config PGALLOC_TAG_REF_BITS
+>  	int "Number of bits for page allocation tag reference (10-64)"
+>  	range 10 64
+> -	default "64"
+> +	default "16" if PGALLOC_TAG_USE_PAGEFLAGS
+> +	default "64" if !PGALLOC_TAG_USE_PAGEFLAGS
+>  	depends on MEM_ALLOC_PROFILING
+>  	help
+>  	  Number of bits used to encode a page allocation tag reference.
+> @@ -1011,6 +1027,13 @@ config PGALLOC_TAG_REF_BITS
+>  	  Smaller number results in less memory overhead but limits the number of
+>  	  allocations which can be tagged (including allocations from modules).
 >  
-> +static int kvm_activate_realm(struct kvm *kvm)
-> +{
-> +	struct realm *realm = &kvm->arch.realm;
-> +
-> +	if (kvm_realm_state(kvm) != REALM_STATE_NEW)
-> +		return -EINVAL;
-> +
-> +	if (rmi_realm_activate(virt_to_phys(realm->rd)))
-> +		return -ENXIO;
-> +
-> +	WRITE_ONCE(realm->state, REALM_STATE_ACTIVE);
-> +	return 0;
-> +}
-> +
->  /* Protects access to rme_vmid_bitmap */
->  static DEFINE_SPINLOCK(rme_vmid_lock);
->  static unsigned long *rme_vmid_bitmap;
-> @@ -1343,6 +1357,9 @@ int kvm_realm_enable_cap(struct kvm *kvm, struct kvm_enable_cap *cap)
->  		r = kvm_populate_realm(kvm, &args);
->  		break;
->  	}
-> +	case KVM_CAP_ARM_RME_ACTIVATE_REALM:
-> +		r = kvm_activate_realm(kvm);
-> +		break;
->  	default:
->  		r = -EINVAL;
->  		break;
-> @@ -1599,5 +1616,5 @@ void kvm_init_rme(void)
->  	if (rme_vmid_init())
->  		return;
->  
-> -	/* Future patch will enable static branch kvm_rme_is_available */
-> +	static_branch_enable(&kvm_rme_is_available);
->
+> +	  If PGALLOC_TAG_USE_PAGEFLAGS is set, the number of requested bits should
+> +	  fit inside the page flags.
 
-like rsi_present, we might want to use this outside kvm, ex: for TIO.
-Can we move this outside module init so that we can have a helper
-like is_rme_supported()
+What does "should fit" mean?  "It is your responsibility to make it
+fit"?  "We think it will fit but we aren't really sure"?
 
+> +	  If PGALLOC_TAG_USE_PAGEFLAGS is not set, the number of bits used to store
+> +	  a reference is rounded up to the closest basic type. If set higher than 32,
+> +	  a direct pointer to the allocation tag is stored for performance reasons.
+> +
 
--aneesh
+We shouldn't be offering things like this to our users.  If we cannot decide, how
+can they?
 
