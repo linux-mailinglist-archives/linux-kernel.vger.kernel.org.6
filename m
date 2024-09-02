@@ -1,82 +1,86 @@
-Return-Path: <linux-kernel+bounces-311712-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311713-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13D70968CA0
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 19:03:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90DCE968CA1
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 19:03:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BE1EF1F2302B
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 17:03:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C34B61C21199
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 17:03:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E4561AB6E0;
-	Mon,  2 Sep 2024 17:02:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04EB21AB6E0;
+	Mon,  2 Sep 2024 17:03:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="heMRINIw"
-Received: from mail-io1-f48.google.com (mail-io1-f48.google.com [209.85.166.48])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HEqqbEL3"
+Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81EDF13D50A
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 17:02:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D80D313D50A
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 17:03:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725296576; cv=none; b=fm1CM2kf6EDJ+SxvEmMtbB7tS/KUrtj3jtW+dv0eRDAxPPo24oOrn9kkFZ+B1X91fals7t+jQhlCORrTkhOYcWexyt94uZNk9RjEHOYdZ6/BcCGkAxDesNfqBd/gbCSzBoX59yz4/tgbDLgwn1mZCkSDtJO7z1gmoXyyDbtCBXE=
+	t=1725296589; cv=none; b=DTWohZEgrLcu6oDU+C8zq7aFByxHj21G/LHVWBNnvWoS6ePJ7Hfkiy4mwQUOWRa/G637ivVuURJFsqDpK6RVeASmPn1JODLND5SsJLqwBuhy+THfb7JNd/siYxTOGXjeVJPJX5F5i5K/gbt+TXL9ZMv2yB1EGRsEm1+/o4i2Fpo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725296576; c=relaxed/simple;
-	bh=GItaJCFiStFIeQKRW1d8zEZ3Oh3HVvfv05HzW+SIQR4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UgDvbuEhai6MHOLCif1RG3RTttA1MmWKG2aDrehTTUFzlJp/pTPaf70owx1NzAPY7oGYoDAzMn6B4MLeT3p4GSYCmiYbiQZqopmHagktmXqHF2fPf2prK3/ytBP6/2qDNkDLFOZjYsFlKgFd4g08JKXzwkrUcnNpA+aUsBOfLsM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=heMRINIw; arc=none smtp.client-ip=209.85.166.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-io1-f48.google.com with SMTP id ca18e2360f4ac-82a205810ccso213548739f.2
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2024 10:02:55 -0700 (PDT)
+	s=arc-20240116; t=1725296589; c=relaxed/simple;
+	bh=x5wE2DDKvv6+OHQ+coR9qHrGW2vQFgeLrtlp2gRRsBI=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qQ+NyAqiykPNNufrpq0bwa+dQEFEfw1fT2AgCilvoCUMSRZ8N1Re2TNu8T7YpBq9J7LTmlo1yatyT46fdra3LpHwxEiy9qHp9ve2uCYQnCARcAw7536ocXNHIKK7BKKvNnDor8cdUEOyNyWGlusgO+g+rI9q4pmWCmXSPHjYLBY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HEqqbEL3; arc=none smtp.client-ip=209.85.208.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2f51b67e16dso50522321fa.3
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2024 10:03:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1725296575; x=1725901375; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1725296586; x=1725901386; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=CZVOdmbajPOyilhVT2ENHokoQg+1tObNsMtDHCqaHb8=;
-        b=heMRINIwubreoy4AXUhpWqYO24FjKsG9xFDyFd4twnphDjlXi6xhixbVInqnM9XhCq
-         EF0k8/L6ziFNjfEQgBVcC8ZkSu8DlKI6NjXZd8u68EMrWDcEkYO9QvqDs+jd9kkNEumG
-         BFVRSgDIC5Dcf2BzwiTeUQcMq7xbdBwYeAqaezCr5Eni1xXGqmZ/Xkpdtx6t5buZnY6S
-         uFexlMz/vw8tby5s3tnfw6RjH8nYOq1Afu/IwpE5JeVHm3oMl3mNyFAtGJkcNn5I+vhe
-         m+H1qUCt/VlRrxbX0OoQSX/lWr605U4ykei0xlWzCIwP9MxMBA2vjxkCgObk8wJlnfMn
-         t6oA==
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=+JSYR2Z+n9TGP0d666feNqOWhgoU2mK/WUfppMAONMU=;
+        b=HEqqbEL3CEmHHfSxMjnACJ8IOHNoECr2y9+LlaRUa4qO5Q6rieEpxheivdPmVLOqhU
+         oTC+HQKD2JfXGz6MAptDA56lbne0ifPSsO3EUB5E4t0bh+XUoFqfgReh7bml8OF47L0A
+         GdK/SrTKYaVSZ2qm3A/MHieyLWelInq71wuvmHdpxHQ+9kHFSEP0MvgoB6ofsvM2FgR/
+         wjnAs2zq4TVsUv9+mkqprGBy8MAjLjYvp+/p9S+ehXg4Z4IP+GgFX3RAM5lLZDOTCfUG
+         eykZ5Jyzj1BmG+fWRoxmmq5LWAFqP3iGzTNMrT61PFP459db6KxwxDZ87yBEP+qUAPca
+         /AMQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725296575; x=1725901375;
+        d=1e100.net; s=20230601; t=1725296586; x=1725901386;
         h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=CZVOdmbajPOyilhVT2ENHokoQg+1tObNsMtDHCqaHb8=;
-        b=fZnojd8Kk7mILE9wyALYs2TRXSbmr94M4BFXJJ+UCxfYyubZC645n2qwPfIT0QX9nU
-         tOc2+BIKgYk+hJ6yHGRH/iFytF42qhM/WuIYCzcQtRvtpXwwYdvf8cWhaEQZES2LP7Rz
-         8SGsXlIlqT1VCES/MW48lo7cEndJaOec6unxwlxF6E5ur+Qeu1Xf5lbOB2y5bddPPLOP
-         0BHAmX19Zqfm+YMoJ/c5yGWZtv8C+JxJGaw4Tt18qEEWC1VsFN9Fo3kEUW1tWq3Cr3vA
-         WvL/n5rvV8Y9d2zaFnGjvHpXFcMNFpkAt5OW/Y331h893owu+kq/8c1U23FrluyvaXJJ
-         20Bg==
-X-Forwarded-Encrypted: i=1; AJvYcCWlz6M0ufxDWbRJR01U+FGUIuLH9UL9PgpK2DFEaejoisY/5gx4qQy1e4Wwxe9Hq8/FkM1BbNJSDYUNeS4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxT5K4U2Dzf/AT7TxR/Rax+b4V/qvXtYTfLViEeGqm5C2ZfzTYJ
-	jiGfJNuEF0W5k2lX6tIT7EtRv53/D4HDiJHzC2IT/TghCRkO67JKy7pm2+lMAg==
-X-Google-Smtp-Source: AGHT+IEMq7TZba2SLvaof/QHOP04CrSz+gFKDPNws1yOGU0WvsF0B64Ea9P5fwxfXowGNjz7299f3g==
-X-Received: by 2002:a05:6e02:2196:b0:39e:3952:6dd4 with SMTP id e9e14a558f8ab-39f4f55eedbmr91478485ab.20.1725296574248;
-        Mon, 02 Sep 2024 10:02:54 -0700 (PDT)
-Received: from google.com ([2a00:79e0:2e28:6:485e:a0d2:7c59:d251])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4ced2dcdfbcsm2228970173.29.2024.09.02.10.02.52
+        bh=+JSYR2Z+n9TGP0d666feNqOWhgoU2mK/WUfppMAONMU=;
+        b=YiHQp6Mk54ZZzmBoK4D3z8XCmVQI4xreQie8GGRL1ftZGPHMsLPC23EKdSVzqDgTXu
+         QbnOth373iPOQtTVioUxK9ubFas0WL6JwT+RduB/8w+H/JWNmAjnaZgsDjwqEt2XbIJ7
+         nVSWvNgsq8S0hFu1OOSdqP3xCxMHrBI5Cno8nSRWzWPu7+LrvBQ65VFCQ4KoZupRCVsz
+         h+yVwrMJJEvguiIQewtgP04K7V9fCA/VKPVCswVcs464MemR+Tk6mc7LZ/14IbsgjTM8
+         NnT3uLQUj3KHzMkpkzAJx6EstXnInP4iXOPuqJrL9Rm5aXrbPFEcnjP9v/PNcFWCvb1j
+         hQPQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW1WxngrrluXM49v4xfNKGhlnKG2a1EJgX/yuoxJRA6BNOXFgH/nBmT19a6PeB9mjA70AL34e8dMqxH06s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwpUTSSwkI/zaiLabywQ9e0f9TA10L56X5yaJFm4q79HtmmabEs
+	mAZyMnbeakk1VN21bYophPe7UYpXrQUsqH4P2ituyyna67Kvt/BgLjqiVw==
+X-Google-Smtp-Source: AGHT+IGQqls70Mjc+NYF2v4214Le4kWQPZVljO8bj3AhiqIMRuDRnQGw5yrZe/8wKCBEP9JGGn1Mwg==
+X-Received: by 2002:a05:651c:b29:b0:2f4:36c:9c4b with SMTP id 38308e7fff4ca-2f6108908c6mr114282191fa.39.1725296585006;
+        Mon, 02 Sep 2024 10:03:05 -0700 (PDT)
+Received: from pc636 (host-90-233-206-146.mobileonline.telia.com. [90.233.206.146])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2f615183134sm19376071fa.122.2024.09.02.10.03.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Sep 2024 10:02:53 -0700 (PDT)
-Date: Mon, 2 Sep 2024 11:02:46 -0600
-From: Yu Zhao <yuzhao@google.com>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Muchun Song <muchun.song@linux.dev>, Zi Yan <ziy@nvidia.com>,
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH mm-unstable v2 1/3] mm/contig_alloc: support __GFP_COMP
-Message-ID: <ZtXvtnc2Cf8xWU7d@google.com>
-References: <20240814035451.773331-1-yuzhao@google.com>
- <20240814035451.773331-2-yuzhao@google.com>
- <Zsdz-NFl4oqZ37_h@google.com>
- <ZseGjKXaZIvgu9vQ@casper.infradead.org>
+        Mon, 02 Sep 2024 10:03:04 -0700 (PDT)
+From: Uladzislau Rezki <urezki@gmail.com>
+X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
+Date: Mon, 2 Sep 2024 19:03:02 +0200
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: Uladzislau Rezki <urezki@gmail.com>,
+	Adrian Huang <adrianhuang0701@gmail.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Christoph Hellwig <hch@infradead.org>, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, Adrian Huang <ahuang12@lenovo.com>
+Subject: Re: [PATCH 1/1] mm: vmalloc: Optimize vmap_lazy_nr arithmetic when
+ purging each vmap_area
+Message-ID: <ZtXvxuD-xkUkveRo@pc636>
+References: <20240829130633.2184-1-ahuang12@lenovo.com>
+ <ZtDFQHGHMq6TfbKA@pc636>
+ <ZtHyxvscMuxHQkaO@pc636>
+ <ea017b05-7a42-4d3a-a1f2-9bceb56966e3@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,55 +89,39 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZseGjKXaZIvgu9vQ@casper.infradead.org>
+In-Reply-To: <ea017b05-7a42-4d3a-a1f2-9bceb56966e3@wanadoo.fr>
 
-On Thu, Aug 22, 2024 at 07:42:20PM +0100, Matthew Wilcox wrote:
-> On Thu, Aug 22, 2024 at 11:23:04AM -0600, Yu Zhao wrote:
-> > Andrew, could you patch up the line above? This is what it's supposed
-> > to check:
-> > 
-> > diff --git a/include/linux/gfp.h b/include/linux/gfp.h
-> > index 59266df56aeb..03ba9563c6db 100644
-> > --- a/include/linux/gfp.h
-> > +++ b/include/linux/gfp.h
-> > @@ -452,7 +452,7 @@ static inline struct folio *folio_alloc_gigantic_noprof(int order, gfp_t gfp,
-> >  {
-> >  	struct page *page;
-> >  
-> > -	if (WARN_ON(!order || !(gfp | __GFP_COMP)))
-> > +	if (WARN_ON(!order || !(gfp & __GFP_COMP)))
-> >  		return NULL;
+Hello!
+
 > 
-> I don't think we should do this at all.  Just this should be enough:
+> Hi,
 > 
-> 	gfp |= __GFP_COMP;
+> unrelated to your use case, but something that coud easily save a few cycles
+> on some system, IMHO.
 > 
-> same as folio_alloc() (or now folio_alloc_noprof()).
-> Do we really caree if somebody tries to allocate a gigantic page with an
-> order of 0?
+> Maybe:
+> 
+> #if NR_CPUS > 1
+> static __read_mostly unsigned int nr_vmap_nodes = 1;
+> static __read_mostly unsigned int vmap_zone_size = 1;
+> #else
+> #define nr_vmap_nodes	1
+> #define vmap_zone_size	1
+> #endif
+> 
+> So that the compiler can do a better job because some loops can be optimized
+> away and there is no need to access some memory to get theses values.
+> 
+> Not sure if such a use case can exist or is of any interest.
+> 
+> This is valide because of [1] and the #ifdef around the num_possible_cpus()
+> declaration [2, 3].
+> 
+> 
+> Just my 2c.
+> 
+Thank you, i see your point.
 
-If this ever happens, I'd bet it's a bug.
-
-> It's weird, but would work, so I don't see the need for the
-> warning.
-
-So the warning could catch that, but if we think it's verbose, then
-please fold the following in:
-
-diff --git a/include/linux/gfp.h b/include/linux/gfp.h
-index a951de920e20..b43934d79dd9 100644
---- a/include/linux/gfp.h
-+++ b/include/linux/gfp.h
-@@ -452,10 +452,7 @@ static inline struct folio *folio_alloc_gigantic_noprof(int order, gfp_t gfp,
- {
- 	struct page *page;
- 
--	if (WARN_ON(!order || !(gfp & __GFP_COMP)))
--		return NULL;
--
--	page = alloc_contig_pages_noprof(1 << order, gfp, nid, node);
-+	page = alloc_contig_pages_noprof(1 << order, gfp | __GFP_COMP, nid, node);
- 
- 	return page ? page_folio(page) : NULL;
- }
+--
+Uladzislau Rezki
 
