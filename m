@@ -1,73 +1,100 @@
-Return-Path: <linux-kernel+bounces-311765-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311767-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 487B0968D37
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 20:17:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44E3A968D3B
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 20:18:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C2CA1C22015
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 18:17:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A18C8283219
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 18:18:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71A0B19CC3C;
-	Mon,  2 Sep 2024 18:16:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E64FE19CC1D;
+	Mon,  2 Sep 2024 18:17:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ax4/Mj41"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UG13USCb"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1C3D19CC20;
-	Mon,  2 Sep 2024 18:16:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5192A19CC0D;
+	Mon,  2 Sep 2024 18:17:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725301014; cv=none; b=DY+3lPvwd94+lVcP9WEG3mG1G//UMpopmGOcEGgEx2KMUgpqii8zkwc4bsWxEjez3Cpp1U7hcC09IExRx7abMHUGce6TCYsFqVZgyfRMmXxpaWbU6tskFHcukdmNdFQiNNrQUuzY6lMzH/FOcKxVose2pAYZ79yQXY/KVY1FeXY=
+	t=1725301062; cv=none; b=GJMRrJvm9qh6t25BdVBkeEqCmf7RxtGL874Zjyrc+Exs9e5DJGQxv5m8YzG4Zb/AAafYoGE1mTjtbydUewF6dPP0WBO4QAm0PQsIMm84G5MqtqI8yZPJN/gDCMOs0PktEuz4lU1dPqIq9PyqloiihP/ZHyDwaQ76YJKy6pC8wPo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725301014; c=relaxed/simple;
-	bh=14q4ZFgPzcArLjMgGqHApXO6D0Ht3KxRIxPkKQmf8RE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nOC2XMpA58qPPCp9TLvvqCYFMI4MUskZZfrIlNGkIr6MXM5KRCFu34CsV78Osm9hAwRpPfJe4jIEwUnOl8AL2GHazowkj44l4Uew+D34xdEq6ceCbEXsO934r3BkT4WiC1Wj/pyDTDPGz/DY4faTDE911nkrjZxxJYhEi43IqD4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ax4/Mj41; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B1A7C4CEC2;
-	Mon,  2 Sep 2024 18:16:52 +0000 (UTC)
+	s=arc-20240116; t=1725301062; c=relaxed/simple;
+	bh=AVwxwmBeePTqCN4pf5eLvtb6MHFWxYD/GH+1usLVWzI=;
+	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=OUK6OcUdSfXjgXWJkaY9hu1AJHNuZsAu1fLe6GW50aNfampOhZRJpiUdu8OWpZWZIyjzJTwDwCE2Sl4q2SEYP1ZregqVxw9kZeHSd2rKTELLq4hL1VNSCzrBE7daIZtnLEhw8L4TXNSpgZNuQsSNlMGuLxnGSBahpogbXWC8KXQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UG13USCb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27F2CC4CEC2;
+	Mon,  2 Sep 2024 18:17:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725301014;
-	bh=14q4ZFgPzcArLjMgGqHApXO6D0Ht3KxRIxPkKQmf8RE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ax4/Mj41WfpXUGoEq/BLZFxTLuUNbtwA5nWRnCWGbtBBV2G1OkUyior8efWVypSdB
-	 Z+1it4HfziJB1gAHTHZ5as8VErVRo+fK/IcdL4Gf3Xp6zAS8JyNSRlzyprL552gTjf
-	 DNW7N07SCqpvAUDevMIrgMoPOREmT8qHOlra/Bcn8GGE4+2LcNrhpiEXY0wTbicidS
-	 gs0pCRLQXg1zc3kRA2W5pvzq7KbfyQgCeKqfS2X/ASKn4Emx6hwczE94IHPdoklGoa
-	 Ebk/ViOll6NNqepqTFgmDUyaSGDTE+Icazf8JKpJnflU+AiaIqwdUgQdlGM2TqGRJi
-	 zb2rOhFQbSKRg==
-Date: Mon, 2 Sep 2024 19:16:50 +0100
-From: Simon Horman <horms@kernel.org>
-To: Yue Haibing <yuehaibing@huawei.com>
-Cc: shshaikh@marvell.com, manishc@marvell.com, GR-Linux-NIC-Dev@marvell.com,
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next] qlcnic: Remove unused declarations
-Message-ID: <20240902181650.GI23170@kernel.org>
-References: <20240902112904.556577-1-yuehaibing@huawei.com>
+	s=k20201202; t=1725301060;
+	bh=AVwxwmBeePTqCN4pf5eLvtb6MHFWxYD/GH+1usLVWzI=;
+	h=From:To:In-Reply-To:References:Subject:Date:From;
+	b=UG13USCb4WiPKsK5hKo0e2Q2F5AQXkG+BcrvDZVRaqacH6oH1JjtLDQ1JYa2ST7kr
+	 GakGESD0fSAXtZVeG0rGyJVTTXx6oW+m4YZoNwu1Jjqxinjn+eNfYIF2AAE8D5jFd6
+	 U5H5NK2JuETh87Bd+jd1BRfSQ3jt9fv69tV/Z1awr14FyNxChUBuwqnGns4eAffUHz
+	 7FOgkfHDFZWKqyclOmjM62oqKb0FupHo0KZcMw0FAaywwPG83WaHjjfvexWJN+rIRp
+	 rbIjNLRyQd/qJfGnda6PLZquA86adXgmXB6UqGp5TVoOZgTkek3YGzci0kmj2RvJZ5
+	 Pd3a0bjiB+sYw==
+From: Mark Brown <broonie@kernel.org>
+To: linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+In-Reply-To: <20240902102853.2476165-1-andriy.shevchenko@linux.intel.com>
+References: <20240902102853.2476165-1-andriy.shevchenko@linux.intel.com>
+Subject: Re: [PATCH v2 1/1] spi: ppc4xx: Revert "handle
+ irq_of_parse_and_map() errors"
+Message-Id: <172530105989.141806.10633264451123682243.b4-ty@kernel.org>
+Date: Mon, 02 Sep 2024 19:17:39 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240902112904.556577-1-yuehaibing@huawei.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-37811
 
-On Mon, Sep 02, 2024 at 07:29:04PM +0800, Yue Haibing wrote:
-> There is no caller and implementation in tree.
+On Mon, 02 Sep 2024 13:28:26 +0300, Andy Shevchenko wrote:
+> The commit had been applied twice as
+>   0f245463b01e ("spi: ppc4xx: handle irq_of_parse_and_map() errors")
+> and
+>   f1011ba20b83 ("spi: ppc4xx: handle irq_of_parse_and_map() errors")
 > 
-> Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
+> This reverts commit f1011ba20b83da3ee70dcb4a6d9d282a718916fa.
+> 
+> [...]
+
+Applied to
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
+
+Thanks!
+
+[1/1] spi: ppc4xx: Revert "handle irq_of_parse_and_map() errors"
+      commit: 7f9f8c5939b1d729470a15480a4ffb0512d39d3a
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
 
 Thanks,
+Mark
 
-I agree there is neither a caller nor implementation of these functions.
-
-Reviewed-by: Simon Horman <horms@kernel.org>
 
