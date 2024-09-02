@@ -1,118 +1,175 @@
-Return-Path: <linux-kernel+bounces-311876-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311877-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C8EC968EDA
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 22:27:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30567968EDF
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 22:28:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BCE591C2220E
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 20:27:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D96C4283E76
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 20:28:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EA5C1C62AB;
-	Mon,  2 Sep 2024 20:27:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 392A41C62C6;
+	Mon,  2 Sep 2024 20:28:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ThvOHWdN"
-Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="F3Qc+8AX"
+Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20AFF1A4E71;
-	Mon,  2 Sep 2024 20:27:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 724CB19CC04;
+	Mon,  2 Sep 2024 20:28:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725308832; cv=none; b=YS7eUk6mN0+zmy4VjJrwi9tHs08gDXV4OXmgPLcOaJfwIerKpwoagVQNjylXQ0c31TGB/P87fplag8e2TFv19M8vRAgV8EfS63bgCdTc/aOcZxmilXbhSGcxqnB8lUm9+4PPjZfoQtawWyaX40mAJuoi4zoYFyVdNK90J1lNLmk=
+	t=1725308906; cv=none; b=nuzs90xHmvx8KvrNH1g3oVpMA8QrBlMv9ArJ8OV4sVY78deThWPvReN9eED8S0MtEvOCTk8KqyXHKMYFIBueXAAtkXOf821stVuAWN5qbuopVmhDdxwAbep9wHDEsRP2KIol8LB+N5Q3qgO7q/EKPmTBxmbFLJn9M/4BBlWNUZM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725308832; c=relaxed/simple;
-	bh=sbASA7/1FBn9KOAbGmPoUmzWkGeBV9KBUp9kKbirgm0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PW7/Hje3YbYbH6UXc0OltEvzHsne5glQVlij2a5051PuVh8wl/GCzCUxntGRrz5498euD1Rc8tglcLyuNT176lMG9/sEESMWiwnu/GUntSy0P1kdH31B2pRUXJddO+zf0e0a7B/cGh7mAZ6pI5qX2cJgV/7CDwH3ldsxtd3xoNk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ThvOHWdN; arc=none smtp.client-ip=209.85.128.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-6c91f9fb0acso38886687b3.2;
-        Mon, 02 Sep 2024 13:27:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725308830; x=1725913630; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6Nhr8HkfR0QyBLpZ3kQVj2wTpnEp2kTEBagtzh8X6A8=;
-        b=ThvOHWdNv8FV9bUr/KdVF3s2m1vu+2SyQZ09cwa3J1HIeJ9y7G1aSq+16Q9Z69tQsx
-         j9AyJRLzgAGIioKpRVyZwkJ9HrQkkFixbIhK8SdQAXGcol+0ewN5/zFXpe/2s1+xflrP
-         EmrAoQbf3Wd+FjU4K+brFGg4CL+rFU9neV+0X65H8k+5t/sNLYpqLQcRAZSNDalEXq2S
-         /4e+pwTSKZ1kVBSUMLFWDgr0najTzWQoO+2Ao3NIVR1/JxgD6szqrjggrj9HIkDKzFfS
-         AqZQYXO9RnLgEo10s+vXHFweeu63hSgI6yY1ZzPPZ6Otn3sOrwJQKrxIFSxNkw5pB/+R
-         EQYg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725308830; x=1725913630;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6Nhr8HkfR0QyBLpZ3kQVj2wTpnEp2kTEBagtzh8X6A8=;
-        b=h9XxYfc94JT4sUa81etd3s1Trpjv89HR4itYMxccwOjgFw9ktEn9MiTg1NZoeoSQe+
-         Jk9aQLk4fabdG7KheUy3JZ5d/FkTqh/+3/9+IpEv8vHThudzbbMe2AQsawp90AUkNUp/
-         PYHcxGz13XNJcurdR3uqvPLbQfBgQwJT1/7R6LK8PARWAOR1ngnUxNLvKYi9AJj3WOgf
-         hQGK8Gd/9RRQXQrz2HLwZpIxddKp62doC2w5IvXWcebnZGU35/bGYElKEGHgmm9wvGtq
-         dP5OG0NRfPsO/vQFBB/l5un8WEERtolqnk9yA/PFQxJncvWC9VG3rAEqL3YIJpIcAkA/
-         5Bow==
-X-Forwarded-Encrypted: i=1; AJvYcCWou3uW62zUp/+pwwuBq2OV/sIa/Dp9XmMnWZRUITcpXlvb5sEDlLTZwQlSCk318daO8NVNkf0KXO0D+I0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxN5Bd9RwA7DzrX5UsOZhPN1V5kWbD+a4RNdpbySW79Vo2tlLgH
-	PKBKG6k3wJ43EyFNvmdIVXEaj9mW9xqWhxsXNFMlCDw6/z3MsD7IpL9KgsQ0jEym9ZahHufOqJT
-	gTgJz0Mm5izMNpaH/+L0gvaTEh8hxgHBg
-X-Google-Smtp-Source: AGHT+IEZQ5qUyfI55kLTZv3NvcIaMHGMClHmdfI4Ui3qizjSl71HuBAas8vYGUUoa9BF167ktTnf1Ay66lSb2AfnkAw=
-X-Received: by 2002:a05:690c:4488:b0:6be:92c7:a27e with SMTP id
- 00721157ae682-6d40f928720mr89282167b3.28.1725308830175; Mon, 02 Sep 2024
- 13:27:10 -0700 (PDT)
+	s=arc-20240116; t=1725308906; c=relaxed/simple;
+	bh=byvMvMs6cQe+rkDvGuGDD5gUm8DvBPi1Lovd4gjQBhY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ejNTgAgW3OAGEmLBz9E2VFn8pIydnhce2qXvC+f+bhvshnQkjb/4P+LkkYexLdASCYxs5VNPnmMuTKq+QbwhhDfkFpAEmhvFuOnYiSKaGfk4x7u0gEIRfxagAEVmWEduXKYoRqjsEcdyzMzmFwp2Jqv9yyDR5gMA7to7nZONV98=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=F3Qc+8AX; arc=none smtp.client-ip=217.70.183.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 0B9FA60002;
+	Mon,  2 Sep 2024 20:28:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1725308901;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/acNWIGC7J/l+lCj9xbwfTsap0VDe5s6cnY9+w/1Cgo=;
+	b=F3Qc+8AXy4XVfyxeE/R7AjyxDNhZStf4Ngzq3cE/0udfpTXLq5utZIhTRlno2r5HNxDqFW
+	7FYsHvNI2HirrQv1DaQjwcuBZmNSDzFcz9CxhEiebQYoCy+gfOJ1k0jarbgqFu22bbaOb6
+	tFlKj00ASPoxjX4Lc1JOzAnRHtjPVzDuHY42HxzOtCqemhBOtE7G7Y8LOm1dL2UYQyzxKP
+	0AQEna6l8JcAoX7cFb43qflsYcmmYoMZs5aTfU7KEFdxqlrNUEJ654L+/DOz7negI+iw0D
+	ctLVRyaFGnT/XT/FPCu2zeftLhyP90QGqO6j8prD0p4RtcUoLB+7bMrWA6ja5w==
+Date: Mon, 2 Sep 2024 22:28:19 +0200
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: claudiu beznea <claudiu.beznea@tuxon.dev>
+Cc: geert+renesas@glider.be, mturquette@baylibre.com, sboyd@kernel.org,
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	magnus.damm@gmail.com, p.zabel@pengutronix.de,
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-rtc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
+	kernel test robot <lkp@intel.com>
+Subject: Re: [PATCH v3 06/12] rtc: renesas-rtca3: Add driver for RTCA-3
+ available on Renesas RZ/G3S SoC
+Message-ID: <20240902202819e2bf5630@mail.local>
+References: <20240830130218.3377060-1-claudiu.beznea.uj@bp.renesas.com>
+ <20240830130218.3377060-7-claudiu.beznea.uj@bp.renesas.com>
+ <202408302225417622f1e7@mail.local>
+ <a7f0a36b-3169-45f8-9169-50bb0c6c04dd@tuxon.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240902181530.6852-1-rosenp@gmail.com> <20240902181530.6852-3-rosenp@gmail.com>
- <7812014c-a77f-441c-bcab-36846a3037cf@lunn.ch>
-In-Reply-To: <7812014c-a77f-441c-bcab-36846a3037cf@lunn.ch>
-From: Rosen Penev <rosenp@gmail.com>
-Date: Mon, 2 Sep 2024 13:26:59 -0700
-Message-ID: <CAKxU2N8TsYHvM7a_Dhu34xHbvrWev9eL8VOa1JZcu_naW3fwjg@mail.gmail.com>
-Subject: Re: [PATCH 2/6] net: ibm: emac: manage emac_irq with devm
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: netdev@vger.kernel.org, davem@davemloft.net, edumazet@google.com, 
-	kuba@kernel.org, pabeni@redhat.com, linux-kernel@vger.kernel.org, 
-	jacob.e.keller@intel.com, horms@kernel.org, sd@queasysnail.net, 
-	chunkeey@gmail.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a7f0a36b-3169-45f8-9169-50bb0c6c04dd@tuxon.dev>
+X-GND-Sasl: alexandre.belloni@bootlin.com
 
-On Mon, Sep 2, 2024 at 1:06=E2=80=AFPM Andrew Lunn <andrew@lunn.ch> wrote:
->
-> On Mon, Sep 02, 2024 at 11:15:11AM -0700, Rosen Penev wrote:
-> > It's the last to go in remove. Safe to let devm handle it.
-> >
-> > Also move request_irq to probe for clarity. It's removed in _remove not
-> > close.
-> >
-> > Use dev_err instead of printk. Handles names automatically.
-> >
-> > +     /* Setup error IRQ handler */
-> > +     err =3D devm_request_irq(&ofdev->dev, dev->emac_irq, emac_irq, 0,=
- "EMAC", dev);
-> > +     if (err) {
-> > +             dev_err(&ofdev->dev, "failed to request IRQ %d", dev->ema=
-c_irq);
-> > +             goto err_gone;
-> > +     }
->
-> Is this an internal interrupt, or a GPIO? It could be it is done in
-> open because there is a danger the GPIO controller has not probed
-> yet. So here you might get an EPROBE_DEFFER, where as the much older
-> kernel this was written for might not of done, if just gave an error
-> had gave up. So dev_err_probe() might be better.
-Good call on that. In my experience, I get these EPROBE_DEFER errors
-on OpenWrt's ath79 target (QCA MIPS) but not on PowerPC when trying to
-use GPIOs. Nevertheless it seems to be good practice to use
-dev_err_probe anyway. Will fix in v2.
->
->         Andrew
+On 02/09/2024 17:49:14+0300, claudiu beznea wrote:
+> >> +	/* Disable alarm, periodic interrupts. */
+> >> +	rtca3_alarm_irq_set_helper(priv, RTCA3_RCR1_AIE | RTCA3_RCR1_PIE, 0);
+> > 
+> > Why do you disable alarms on driver remove? I think you need to add a
+> > comment if this is because it can't system up, else this is a bad
+> > practice.
+> 
+> The RTC cannot power on the system after a power off. It can't also resume
+> it from a deep sleep state (when only the SoC area where the RTC resides
+> remains power on (there is no way to signal from RTC to the power supply
+> chain that an alarm happened)). It can only wake it up from s2idle mode
+> where all SoC components remains powered on.
+> 
+> Also, w/o this change the RTC remains blocked under the following scenarios
+> if the interrupts are not disabled in remove:
+> 
+> 1/ Configure wake alarm and unbind the RTC driver with the following commands:
+> # echo +10 > /sys/class/rtc/rtc0/wakealarm
+> # echo /sys/bus/platform/drivers/rtc-rtca3/1004ec00.rtc > unbind
+> # sleep 12
+> # echo /sys/bus/platform/drivers/rtc-rtca3/1004ec00.rtc > bind
+> 
+> When rebinding the re-configuration of the RTC device times out:
+> [  121.854190] rtc-rtca3 1004ec00.rtc: error -ETIMEDOUT: Failed to setup
+> the RTC!
+> [  121.861511] rtc-rtca3 1004ec00.rtc: probe with driver rtc-rtca3 failed
+> with error -110
+> -sh: echo: write error: Connection timed out
+> 
+> 2/ Configure wake alarm, unbind the RTC driver and switch to s2idle with
+> the following commands:
+> # echo s2idle > /sys/power/mem_sleep
+> # echo +10 > /sys/class/rtc/rtc0/wakealarm
+> # echo /sys/bus/platform/drivers/rtc-rtca/31004ec00.rtc > unbind
+> # echo mem > /sys/power/state
+> # #system is resumed by non RTC wakeup source (as the RTC alarm is not
+> working anymore in this case)
+> # echo /sys/bus/platform/drivers/rtc-rtca/1004ec00.rtc > bind
+> 
+> The system is not waked up from RTC alarm (as expected) and the rebinding
+> fails again:
+> 
+> [  172.483688] rtc-rtca3 1004ec00.rtc: error -ETIMEDOUT: Failed to setup
+> the RTC!
+> [  172.491003] rtc-rtca3 1004ec00.rtc: probe with driver rtc-rtca3 failed
+> with error -110
+> -sh: echo: write error: Connection timed out
+> 
+> 3/ configure the RTC alarm, unbind and power off (with the following commands):
+> # echo +60 > /sys/class/rtc/rtc0/wakealarm
+> # echo /sys/bus/platform/drivers/rtc-rtca/1004ec00.rtc > unbind
+> # poweroff
+> 
+> The system is not started after 60 seconds and at the next reboot the RTC
+> configuration on probe is failing the same:
+> 
+> [    0.292068] rtc-rtca3 1004ec00.rtc: error -ETIMEDOUT: Failed to setup
+> the RTC!
+> [    0.292182] rtc-rtca3 1004ec00.rtc: probe with driver rtc-rtca3 failed
+> with error -110
+> 
+> In all scenarios the RTC is recovered only if removing/re-applying the
+> power to the SoC area where it resides.
+> 
+> These tests were done with the patches in this series and then I tried it
+> with the following diff on top of the patches in this series. The results
+> were the same:
+> 
+> diff --git a/drivers/rtc/rtc-renesas-rtca3.c b/drivers/rtc/rtc-renesas-rtca3.c
+> index 822c055b6e4d..720fdac3adc6 100644
+> --- a/drivers/rtc/rtc-renesas-rtca3.c
+> +++ b/drivers/rtc/rtc-renesas-rtca3.c
+> @@ -586,7 +586,7 @@ static int rtca3_initial_setup(struct clk *clk, struct
+> rtca3_priv *priv)
+>         usleep_range(sleep_us, sleep_us + 10);
+> 
+>         /* Disable alarm and carry interrupts. */
+> -       mask = RTCA3_RCR1_AIE | RTCA3_RCR1_CIE;
+> +       mask = RTCA3_RCR1_AIE | RTCA3_RCR1_CIE | RTCA3_RCR1_PIE;
+>         ret = rtca3_alarm_irq_set_helper(priv, mask, 0);
+>         if (ret)
+>                 return ret;
+> @@ -784,7 +784,7 @@ static void rtca3_remove(struct platform_device *pdev)
+>         guard(spinlock_irqsave)(&priv->lock);
+> 
+>         /* Disable alarm, periodic interrupts. */
+> -       rtca3_alarm_irq_set_helper(priv, RTCA3_RCR1_AIE | RTCA3_RCR1_PIE, 0);
+> +       //rtca3_alarm_irq_set_helper(priv, RTCA3_RCR1_AIE | RTCA3_RCR1_PIE, 0);
+>  }
+
+Thanks for the detailed explanation. Can you add a small comment, I
+really want t avoid people cargo-culting this behavior as this has
+already been the case.
+
+
+-- 
+Alexandre Belloni, co-owner and COO, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
