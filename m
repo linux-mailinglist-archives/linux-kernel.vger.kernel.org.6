@@ -1,192 +1,269 @@
-Return-Path: <linux-kernel+bounces-311444-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311447-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9DF6968953
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 16:01:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F72496895F
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 16:04:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 78A291F225A7
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 14:01:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 58E64282746
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 14:04:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DA6F20125B;
-	Mon,  2 Sep 2024 14:01:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01A0920FAA9;
+	Mon,  2 Sep 2024 14:04:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b="BGBFqUHy"
-Received: from sender4-op-o15.zoho.com (sender4-op-o15.zoho.com [136.143.188.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="1A6JFwWc"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CB6019E98B
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 14:01:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.15
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725285678; cv=pass; b=ejuK1s+iQS1/OYsyvubMUhqiI2Us37eLg+TJKGie7eSAeL9qwumoulLVXhT18ULL1oXN8i7Hur7Db3Fe4RsDMEH+egHxg/WN+XbACZGamJ/0Cz1L7Uyb4GqkRRkHr4gZSM2+LRydDwn1CVtsSGW5szFW1xxkLY2R/b7DMbI/EFw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725285678; c=relaxed/simple;
-	bh=vK6hmmM0DBV12CTZ0WyugrY0MWv9y2pgNL/Z9ZtvMec=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Cthm76aOOOH0dMsABBTsQFADe23PfpqfkfEJZFKBVf0D5t0GOMyaC7a0zTTUvummwSXO68Cbo/tU/toYWZbl3AZkcDMLlXF5/MPfOmpyFFxOOFzsNnd1KJf2vDejaHbD5uZAsRp4/ECJnrheHAG58D0lAlvg/bDrQi0AUpWv2UQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me; spf=pass smtp.mailfrom=icenowy.me; dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b=BGBFqUHy; arc=pass smtp.client-ip=136.143.188.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icenowy.me
-Delivered-To: uwu@icenowy.me
-ARC-Seal: i=1; a=rsa-sha256; t=1725285665; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=S9flqk/B6l8l8AOmCYo1Gu2Tdqpn4QTNnkgrJOUmh84hTbdxCigzH1KNm+nl1vrpThUvNcHTSwLDv6FzrOuHOkSTKz+aIGGVZE2Qy4RnNyK8mtLcFZfg9+dkUuejjdI2bx+Svf0o2BB4U980yg8n4c0o46DA0AF6ZqGnIJf6XR8=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1725285665; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=D/7RuX7OmIGW9y/1IHddtkVDMYjXxYRmzEFQDdhUgEk=; 
-	b=MUjembpRv8nlszy3FhUQFuNiKTSI+gKalzBMCGzpLSYiMLZsfXlr4o7rSkIaMzV5xutAjHUl8xEyy493ppdRsYeWeiNz2pShUBxH3U2yfrHe0KOGbg+YwufMYRVU8kGWeN+ARx1jL1p1zmoD34NyMrv9dyGDVKpwSU3JIrJ9uis=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=icenowy.me;
-	spf=pass  smtp.mailfrom=uwu@icenowy.me;
-	dmarc=pass header.from=<uwu@icenowy.me>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1725285665;
-	s=zmail2; d=icenowy.me; i=uwu@icenowy.me;
-	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:MIME-Version:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=D/7RuX7OmIGW9y/1IHddtkVDMYjXxYRmzEFQDdhUgEk=;
-	b=BGBFqUHy4RwlL97QHFQDsiG2DjV48EuZ9IG+sJnykFzV8j5YhwLiZThgxm01oMbJ
-	YIh6/P2qlkrOg1SBA4mmimF1HFgMl0qPSki1y45rlDsYdBXllxEaFmjUVdRMIRKUSFv
-	V0dD/BLNc2CS/IHBLdO+Q+8LbXAA1tp3HRADosMw41gQYHdX0+x42kjq6ruz2HHw4fU
-	LNdtFFyjJbnh8BNth5KGrXd/RzoK3o0rUX7C+JTMbLyAWT/lk3EdUnfjuAaSou7yEzt
-	InKKhAH8Wi9xYlVXyd87iX2Fug49v7YYyZ6/Cy2YelHbk4zh2m/WX8vk9kdIPC+g1MO
-	2med/CFc3A==
-Received: by mx.zohomail.com with SMTPS id 172528566286781.8323865718055;
-	Mon, 2 Sep 2024 07:01:02 -0700 (PDT)
-From: Icenowy Zheng <uwu@icenowy.me>
-To: Matt Coster <Matt.Coster@imgtec.com>,
-	Frank Binns <frank.binns@imgtec.com>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	Icenowy Zheng <uwu@icenowy.me>
-Subject: [PATCH v2] drm/imagination: properly support stopping LAYOUT_MARS = 1 cores
-Date: Mon,  2 Sep 2024 22:00:39 +0800
-Message-ID: <20240902140039.1972899-1-uwu@icenowy.me>
-X-Mailer: git-send-email 2.46.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C38920FA9E
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 14:04:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725285875; cv=none; b=H9HlQ2L/uS5FLGxi/Po0ULcTcXx7QE19Ws3k6bZg5IdWoV+YmyCfptjKv6ryVCzewgbuLbaMhMr3tH6fQ0bbyPB99bMo5oHaJ1CD+pa71SwIC/H/Q/iVfhZcE0SFy9g5H0qEsI4GvG/XfUMna+BUZyKP54SNXP4GFcBF7YVT+nQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725285875; c=relaxed/simple;
+	bh=1Et7BQ8J8NaUaQ2JOGcVvt9EIpGRVMouUQixu30VYQ0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XYbN+lqvVAPnB1EMYitPe/jpUc0JUlaF1oGJ5UWXOfoVrWT6z4zDRJIIL6EYKNdE0fLeJBih3JW2tU7QUOTHgXJdaLab2bKrGbS282CHxYNv44Xb1ZSIH79bnZs0wgQtG1PpU/eFAN+qx+rjCac2uR6QcXKNa9ObRczZYMtwrWc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=1A6JFwWc; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-42bb4f8a4bfso23156945e9.1
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2024 07:04:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1725285871; x=1725890671; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=7li9gM9UpjOPvgZbRWBjXaN43V8CimxS98Qo2lGYvXk=;
+        b=1A6JFwWc2TKvbUAnCsmHO8hcKTV3QDVt/lcaLd1pL2lQi+X8bbi+TZPhbqIoOAYL18
+         WZmQ9wDMMsMAkjk4u5o4FMAQFxpjSgu9GYx7hEE7NugVQRksV23J5woPtBnUY/MM3L1I
+         tcMF70whY1J6HroBnDh7ZQvtQG1fwuONTKC7N+c9SFUCHXxR87ZuOqId1/FGvHH9m2wG
+         JU/ShEG/sTNXHNaKt3PsJ8ahzD3u1Ql0k1UR/sZ5gEz+nBmvYAYp7I6X2DsfGNzdolwS
+         0hf/mK5gS0mlgSjCClHqV/4OZz0mCnWsQoUclKZ0vzOWU9wZox/0l9svuX6chN8HchD3
+         2uDw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725285871; x=1725890671;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=7li9gM9UpjOPvgZbRWBjXaN43V8CimxS98Qo2lGYvXk=;
+        b=OxCsAsvxUDPRD0KWyKKxIyq+XOH7r3gf4xEpbTUUNHmcAINs6HsqRG9FXk8NF2+0W2
+         M9wsLqznvok+RxrgKtomho+Nx4cWQeZKW7g7rexv5dlhKEBZzTy3ImhaLz5x1CMD/o13
+         EICFxY1SNivDG7E9enk3rGyeHdXC8F3lZJXRQA0lIdzTYMFi8IRMOZooKoVIH/tiEVgh
+         f7H0/mFAiODQwg2PHgsdGL/aQ0lzxVMRtOoG7T8NSqhOY+Qb8C6R1DIX81mVmcKvYSUO
+         7sB5DGrprVaQvsYwitMRfhI/Rob3tU9h9vyLkeh6zR3Kcq/inUkAcpfOLZKuup/sfMKB
+         E4xg==
+X-Forwarded-Encrypted: i=1; AJvYcCU2Qg79oTiJKkMiSiAoVGOllwtB8I7C/QFG8igEH9vwDL3pC0g0CGI+uMiGU7PqEKcMF1FGDdNuj8NnqUI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyWkPfPWjvf3AxwR7BrnHjEfuO38ej2+/HcRshUp0mMGsS868GZ
+	3RI0M0h9weGa9CL2xFYO97Et2SvoSW/plcqyVUvWQaqhIQImzyU274puqgfrcuo=
+X-Google-Smtp-Source: AGHT+IG1gqkcOsn3OrMuQLzElZ3vTWLBSEKfTqyMT/bGY8xZ/ih5MSuOCVwR1ZOZGcB/6pfKzVSjRw==
+X-Received: by 2002:a05:600c:1ca8:b0:426:5b17:8458 with SMTP id 5b1f17b1804b1-42bbb693013mr69510745e9.12.1725285871041;
+        Mon, 02 Sep 2024 07:04:31 -0700 (PDT)
+Received: from [192.168.0.2] (host-95-233-232-76.retail.telecomitalia.it. [95.233.232.76])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42bb85ffbadsm132892695e9.12.2024.09.02.07.04.29
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 02 Sep 2024 07:04:30 -0700 (PDT)
+Message-ID: <0fbe1321-cc67-4ade-8cbb-cbbaa40d2ca1@baylibre.com>
+Date: Mon, 2 Sep 2024 16:03:22 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-ZohoMailClient: External
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC 2/8] iio: backend: extend features
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: Lars-Peter Clausen <lars@metafoo.de>,
+ Michael Hennerich <Michael.Hennerich@analog.com>,
+ =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, Rob Herring
+ <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Olivier Moysan <olivier.moysan@foss.st.com>, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ dlechner@baylibre.com
+References: <20240829-wip-bl-ad3552r-axi-v0-v1-0-b6da6015327a@baylibre.com>
+ <20240829-wip-bl-ad3552r-axi-v0-v1-2-b6da6015327a@baylibre.com>
+ <20240831122313.4d993260@jic23-huawei>
+Content-Language: en-US
+From: Angelo Dureghello <adureghello@baylibre.com>
+In-Reply-To: <20240831122313.4d993260@jic23-huawei>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Some new Rogue GPU cores have an extra MARS power domain, which
-controlls the power of the firmware core and allows the firmware core to
-power down most parts of the GPU.
+Hi Jonathan,
 
-Adapt to this by ignoring power domains that should be powered down by
-the fiwmare and checking MARS idle status instead.
+thanks for the feedbacks,
 
-The logic mimics RGXStop() function in the DDK kernel mode source code.
+On 31/08/24 1:23 PM, Jonathan Cameron wrote:
+> On Thu, 29 Aug 2024 14:32:00 +0200
+> Angelo Dureghello <adureghello@baylibre.com> wrote:
+>
+>> From: Angelo Dureghello <adureghello@baylibre.com>
+>>
+>> Extend backend features with new calls needed later on this
+>> patchset from axi version of ad3552r.
+>>
+>> A bus type property has been added to the devicetree to
+>> inform the backend about the type of bus (interface) in use
+>> bu the IP.
+>>
+>> The follwoing calls are added:
+>>
+>> iio_backend_ext_sync_enable
+>> 	enable synchronize channels on external trigger
+>> iio_backend_ext_sync_disable
+>> 	disable synchronize channels on external trigger
+>> iio_backend_ddr_enable
+>> 	enable ddr bus transfer
+>> iio_backend_ddr_disable
+>> 	disable ddr bus transfer
+>> iio_backend_set_bus_mode
+>> 	select the type of bus, so that specific read / write
+>> 	operations are performed accordingly
+>> iio_backend_buffer_enable
+>> 	enable buffer
+>> iio_backend_buffer_disable
+>> 	disable buffer
+>> iio_backend_data_transfer_addr
+>> 	define the target register address where the DAC sample
+>> 	will be written.
+>> iio_backend_bus_reg_read
+>> 	generic bus read, bus-type dependent
+>> iio_backend_bus_read_write
+>> 	generic bus write, bus-type dependent
+>>
+>> Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
+>> ---
+>>   drivers/iio/industrialio-backend.c | 151 +++++++++++++++++++++++++++++++++++++
+>>   include/linux/iio/backend.h        |  24 ++++++
+>>   2 files changed, 175 insertions(+)
+>>
+>> diff --git a/drivers/iio/industrialio-backend.c b/drivers/iio/industrialio-backend.c
+>> index a52a6b61c8b5..1f60c8626be7 100644
+>> --- a/drivers/iio/industrialio-backend.c
+>> +++ b/drivers/iio/industrialio-backend.c
+>> @@ -718,6 +718,157 @@ static int __devm_iio_backend_get(struct device *dev, struct iio_backend *back)
+>>   	return 0;
+>>   }
+>
+>> +
+>> +/**
+>> + * iio_backend_buffer_enable - Enable data buffering
+> Data buffering is a very vague term.  Perhaps some more detail on what
+> this means?
 
-Tested on BXE-4-32 (36.50.54.182) with firmware build 6503725 OS provided
-by Imagination Technologies.
+for this DAC IP, it is the dma buffer where i write the samples,
+for other non-dac frontends may be something different, so i kept it
+generic. Not sure what a proper name may be, maybe
 
-Signed-off-by: Icenowy Zheng <uwu@icenowy.me>
----
-Changes in v2:
-- Fixed some wrong change that moves the original logic into if(mars)
-  instead of if(!mars).
+"Enable optional data buffer" ?
 
- .../gpu/drm/imagination/pvr_fw_startstop.c    | 48 +++++++++++++------
- 1 file changed, 34 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/gpu/drm/imagination/pvr_fw_startstop.c b/drivers/gpu/drm/imagination/pvr_fw_startstop.c
-index 36cec227cfe3c..ae137e35edf3b 100644
---- a/drivers/gpu/drm/imagination/pvr_fw_startstop.c
-+++ b/drivers/gpu/drm/imagination/pvr_fw_startstop.c
-@@ -191,19 +191,27 @@ pvr_fw_stop(struct pvr_device *pvr_dev)
- 				       ~(ROGUE_CR_SIDEKICK_IDLE_GARTEN_EN |
- 					 ROGUE_CR_SIDEKICK_IDLE_SOCIF_EN |
- 					 ROGUE_CR_SIDEKICK_IDLE_HOSTIF_EN);
-+	const u32 mars_idle_mask = ROGUE_CR_MARS_IDLE_CPU_EN |
-+				   ROGUE_CR_MARS_IDLE_MH_SYSARB0_EN;
- 	bool skip_garten_idle = false;
-+	u32 mars = 0;
- 	u32 reg_value;
- 	int err;
- 
-+	PVR_FEATURE_VALUE(pvr_dev, layout_mars, &mars);
-+
- 	/*
- 	 * Wait for Sidekick/Jones to signal IDLE except for the Garten Wrapper.
- 	 * For cores with the LAYOUT_MARS feature, SIDEKICK would have been
- 	 * powered down by the FW.
- 	 */
--	err = pvr_cr_poll_reg32(pvr_dev, ROGUE_CR_SIDEKICK_IDLE, sidekick_idle_mask,
--				sidekick_idle_mask, POLL_TIMEOUT_USEC);
--	if (err)
--		return err;
-+	if (!mars) {
-+		err = pvr_cr_poll_reg32(pvr_dev, ROGUE_CR_SIDEKICK_IDLE,
-+					sidekick_idle_mask,
-+					sidekick_idle_mask, POLL_TIMEOUT_USEC);
-+		if (err)
-+			return err;
-+	}
- 
- 	/* Unset MTS DM association with threads. */
- 	pvr_cr_write32(pvr_dev, ROGUE_CR_MTS_INTCTX_THREAD0_DM_ASSOC,
-@@ -257,21 +265,27 @@ pvr_fw_stop(struct pvr_device *pvr_dev)
- 	 * For cores with the LAYOUT_MARS feature, SLC would have been powered
- 	 * down by the FW.
- 	 */
--	err = pvr_cr_poll_reg32(pvr_dev, ROGUE_CR_SLC_IDLE,
--				ROGUE_CR_SLC_IDLE_MASKFULL,
--				ROGUE_CR_SLC_IDLE_MASKFULL, POLL_TIMEOUT_USEC);
--	if (err)
--		return err;
-+	if (!mars) {
-+		err = pvr_cr_poll_reg32(pvr_dev, ROGUE_CR_SLC_IDLE,
-+					ROGUE_CR_SLC_IDLE_MASKFULL,
-+					ROGUE_CR_SLC_IDLE_MASKFULL,
-+					POLL_TIMEOUT_USEC);
-+		if (err)
-+			return err;
-+	}
- 
- 	/*
- 	 * Wait for Sidekick/Jones to signal IDLE except for the Garten Wrapper.
- 	 * For cores with the LAYOUT_MARS feature, SIDEKICK would have been powered
- 	 * down by the FW.
- 	 */
--	err = pvr_cr_poll_reg32(pvr_dev, ROGUE_CR_SIDEKICK_IDLE, sidekick_idle_mask,
--				sidekick_idle_mask, POLL_TIMEOUT_USEC);
--	if (err)
--		return err;
-+	if (!mars) {
-+		err = pvr_cr_poll_reg32(pvr_dev, ROGUE_CR_SIDEKICK_IDLE,
-+					sidekick_idle_mask,
-+					sidekick_idle_mask, POLL_TIMEOUT_USEC);
-+		if (err)
-+			return err;
-+	}
- 
- 	if (pvr_dev->fw_dev.processor_type == PVR_FW_PROCESSOR_TYPE_META) {
- 		err = pvr_meta_cr_read32(pvr_dev, META_CR_TxVECINT_BHALT, &reg_value);
-@@ -287,7 +301,13 @@ pvr_fw_stop(struct pvr_device *pvr_dev)
- 			skip_garten_idle = true;
- 	}
- 
--	if (!skip_garten_idle) {
-+	if (mars) {
-+		err = pvr_cr_poll_reg32(pvr_dev, ROGUE_CR_MARS_IDLE,
-+					mars_idle_mask, mars_idle_mask,
-+					POLL_TIMEOUT_USEC);
-+		if (err)
-+			return err;
-+	} else if (!skip_garten_idle) {
- 		err = pvr_cr_poll_reg32(pvr_dev, ROGUE_CR_SIDEKICK_IDLE,
- 					ROGUE_CR_SIDEKICK_IDLE_GARTEN_EN,
- 					ROGUE_CR_SIDEKICK_IDLE_GARTEN_EN,
+>> + * @back: Backend device
+>> + *
+>> + * RETURNS:
+>> + * 0 on success, negative error number on failure.
+>> + */
+>> +int iio_backend_buffer_enable(struct iio_backend *back)
+>> +{
+>> +	return iio_backend_op_call(back, buffer_enable);
+>> +}
+>> +EXPORT_SYMBOL_NS_GPL(iio_backend_buffer_enable, IIO_BACKEND);
+>> +
+>> +/**
+
+>> + * iio_backend_set_buffer_disable - Disable data buffering
+>> + * @back: Backend device
+>> + *
+>> + * RETURNS:
+>> + * 0 on success, negative error number on failure.
+>> + */
+>> +int iio_backend_buffer_disable(struct iio_backend *back)
+>> +{
+>> +	return iio_backend_op_call(back, buffer_disable);
+>> +}
+>> +EXPORT_SYMBOL_NS_GPL(iio_backend_buffer_disable, IIO_BACKEND);
+>> +
+>> +/**
+>> + * iio_backend_buffer_transfer_addr - Set data address.
+>> + * @back: Backend device
+>> + * @chan_address: Channel register address
+> Run scripts/kernel-doc on this and fix the errors (parameter name is
+> wrong).  W=1 builds might also point the simpler ones out.
+ack, done
+>> + *
+>> + * Some devices may need to inform the backend about an address/location
+>> + * where to read or write the data.
+> I'd drop the 'location' part unless this gets used later because you
+> are referring register address above.
+
+ack, done
+
+
+>> + *
+>> + * RETURNS:
+>> + * 0 on success, negative error number on failure.
+>> + */
+>> +int iio_backend_data_transfer_addr(struct iio_backend *back, u32 address)
+>> +{
+>> +	return iio_backend_op_call(back, data_transfer_addr, address);
+>> +}
+>> +EXPORT_SYMBOL_NS_GPL(iio_backend_data_transfer_addr, IIO_BACKEND);
+>> +
+>> +/**
+>> + * iio_backend_bus_reg_read - Read from the interface bus
+>> + * @back: Backend device
+>> + * @reg: Register valule
+>> + * @val: Pointer to register value
+>> + * @size: Size, in bytes
+>> + *
+>> + * A backend may operate on a specific interface with a related bus.
+>> + * Read from the interface bus.
+> So this is effectively routing control plane data through the offloaded
+> bus?  That sounds a lot more like a conventional bus than IIO backend.
+> Perhaps it should be presented as that with the IIO device attached
+> to that bus? I don't fully understand what is wired up here.
+>
+Mainly, an IP may include a bus as 16bit parallel, or LVDS, or similar
+to QSPI as in my case (ad3552r).
+
+In particular, the bus is physically as a QSPI bus, but the data format
+over it is a bit different.
+
+So ad3552r needs this 5 lanes bus + double data rate to reach 33MUPS.
+
+https://analogdevicesinc.github.io/hdl/library/axi_ad3552r/index.html
+
+
+>> + *
+>> + * RETURNS:
+>> + * 0 on success, negative error number on failure.
+>> + */
+>> +int iio_backend_bus_reg_read(struct iio_backend *back,
+>> +			     u32 reg, void *val, size_t size)
+>> +{
+>> +	if (!size)
+>> +		return -EINVAL;
+>> +
+>> +	return iio_backend_op_call(back, bus_reg_read, reg, val, size);
+>> +}
+>> +EXPORT_SYMBOL_NS_GPL(iio_backend_bus_reg_read, IIO_BACKEND);
+>> +
+
+Thanks a lot,
+
+regards,
+Angelo
+
+
 -- 
-2.46.0
+  ,,,      Angelo Dureghello
+:: :.     BayLibre -runtime team- Developer
+:`___:
+  `____:
 
 
