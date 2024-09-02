@@ -1,56 +1,83 @@
-Return-Path: <linux-kernel+bounces-311256-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311265-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CB479686B5
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 13:52:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1EAD99686E4
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 14:00:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8DC23B257F1
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 11:52:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D13C82857C1
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 12:00:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA1E81DAC45;
-	Mon,  2 Sep 2024 11:52:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B8D61DAC53;
+	Mon,  2 Sep 2024 12:00:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E4Etz+uz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Dbo2RSC6"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33AE51D6C73;
-	Mon,  2 Sep 2024 11:52:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 340071DAC52;
+	Mon,  2 Sep 2024 12:00:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725277924; cv=none; b=VKRpdHPlJ2hZnqxTCUPwahlxr3zW/Otxs9I0tDDfoRBSK9JuQBFoZhzmCom7KZengJzsyLSW9s/Ci6ubvuWPMXirZQ+oXYuFbueDktytP6xBP2kSj/QQ0vVks4a3fo6xmw8zE1YaUB/K+llGdj/WFZEQ2tj9EqqfZngG4qK0vSs=
+	t=1725278406; cv=none; b=V54f4K3dfq2zEuQSGHhRnHcioJUGvpkvctvYVmtjDUyJ4PQkwTGTwTWVrAMdNqzKRJER8UfpQaJKDnP8VDkBpT3ByBKVoC5CpNrbt+kXVTal9yn8/tNe0JkH4YkGm/ZLfUaUMVGI/c00BMFSLz06KPp7hhvxE37y7S08m2xEXco=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725277924; c=relaxed/simple;
-	bh=ClG945cLDYt80cvq7MHU0MZy2pQK+a2zhTll8AQVeEM=;
+	s=arc-20240116; t=1725278406; c=relaxed/simple;
+	bh=s5PNXJylVeTaejUqfvcmHm17nL+lhZdgF7rPHmXu+Dc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=L4uRq1CQ21g3oLqTRpkyjLdv+7sY3opBHpN3Ce7S1ib1L9MD4sHfqM9G6KvJR9to6kT9MzG1tJwa1IaO7OgsJezI99//N03fWAiQ88LIs1G5mgKg3elqMtbU70WM/ww983Af1qSlOzns52hWXnkl5jZWMxw3fsAb0HVfFTgSOXE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E4Etz+uz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3043BC4CEC6;
-	Mon,  2 Sep 2024 11:52:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725277923;
-	bh=ClG945cLDYt80cvq7MHU0MZy2pQK+a2zhTll8AQVeEM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=E4Etz+uzb+RpZxNmqRFMSO/q14B1JYKHuWA/gxjKaoF6m2/upq7RLVVb6/hXOA40D
-	 RJAHzEQHq+4Hlhqkjeiu0IAuTPAOvEF5ozEETq0cAPS+loH4qHuEsSI4gweYF4vXAY
-	 QCu7d2Dm6rLBWKbwJbY+sV+zWQoqMSfW1lWHjgc8bILnVKwkjhAcinKB2ZZ+ibL5jL
-	 YKzpVKUoAh3TOR9el1itnPUlQwCR7blj5ZWTuaMSUBo3WrgjNtR1yLjP/0+inkynb3
-	 qw00QG5+gbGuMKbezWj7GstYA4g3OcTNXSuzF6g3ENPQFiH77tKaFN/YVsbTGG+XLp
-	 0bGpdoCJNhVKA==
-Date: Mon, 2 Sep 2024 13:52:00 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Antoniu Miclaus <antoniu.miclaus@analog.com>
-Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Michael Hennerich <michael.hennerich@analog.com>, 
-	linux-input@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 3/3] dt-bindings: touchscreen: ad7877: add bindings
-Message-ID: <h6vvttsj3bu2rrmpzr4sazyn6lylh3yfzins2y2vk3rjkz76az@xy2yraidasu2>
-References: <20240902082707.4325-1-antoniu.miclaus@analog.com>
- <20240902082707.4325-3-antoniu.miclaus@analog.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZVXCXzc3qIQaHW6qzVJB8BtxdzKEBxurVTved5Y3pnfTLzYIaUFGYYmctf5Ph1KFkOPYkoua1hITu6G8f4v4DLYw9plJXT//4aD/ueYwtZ2FDRk2e0/tokfmleLa37G6SeUoFG0cAN5DtKuB/2pQlB2GFWWPhnGogIo+yWKQXso=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Dbo2RSC6; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725278405; x=1756814405;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=s5PNXJylVeTaejUqfvcmHm17nL+lhZdgF7rPHmXu+Dc=;
+  b=Dbo2RSC6HqXW1VTC5GtBboUx56ua8wxCoQKAHrn6cFAR+bSJTSby29iD
+   9rOEucttvBR/T6JMHP8E2n0FtZABqHmpdHc1d1MWewI/hFjEd/soquLJE
+   04RcynZUqDWZNalTa2kDpU/PZbVb/EvGxoTcQEcNXgf/sON8BC/GNux0n
+   IhzEMGvYpYckAxO73v/D+QmMcN1rztnqwZjoi+/df5TrVER3caZ9+COeD
+   DtjjONukFyw8XjLQR02R1IKjALGbcCQ3wIvTKbMK+F0v2aEKQ/dWppB+0
+   2XgK+3ehFUMIwaiuZBWU16kXeDRobW3RICRdXHcUNOVmL2yz8Zs11fWqm
+   A==;
+X-CSE-ConnectionGUID: qofDA69QQuKgVpno1tlvAg==
+X-CSE-MsgGUID: ztCEXd4ST/KEO/AkHX6dXw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11182"; a="27643885"
+X-IronPort-AV: E=Sophos;i="6.10,195,1719903600"; 
+   d="scan'208";a="27643885"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2024 04:53:42 -0700
+X-CSE-ConnectionGUID: bBchEQG1RTKmqrN4miqtxA==
+X-CSE-MsgGUID: bamhgSFwRwK8MR+qtAi4vA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,195,1719903600"; 
+   d="scan'208";a="65308475"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by orviesa008.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2024 04:53:36 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1sl5cj-00000004LfJ-1Jbb;
+	Mon, 02 Sep 2024 14:53:33 +0300
+Date: Mon, 2 Sep 2024 14:53:33 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Tali Perry <tali.perry1@gmail.com>
+Cc: Tyrone Ting <warp5tw@gmail.com>, avifishman70@gmail.com,
+	tmaimon77@gmail.com, venture@google.com, yuenn@google.com,
+	benjaminfair@google.com, andi.shyti@kernel.org, wsa@kernel.org,
+	rand.sec96@gmail.com, wsa+renesas@sang-engineering.com,
+	tali.perry@nuvoton.com, Avi.Fishman@nuvoton.com,
+	tomer.maimon@nuvoton.com, KWLIU@nuvoton.com, JJLIU0@nuvoton.com,
+	kfting@nuvoton.com, openbmc@lists.ozlabs.org,
+	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 6/7] i2c: npcm: use i2c frequency table
+Message-ID: <ZtWnPTSu1RKmIlhK@smile.fi.intel.com>
+References: <20240830034640.7049-1-kfting@nuvoton.com>
+ <20240830034640.7049-7-kfting@nuvoton.com>
+ <ZtIbM4NTbldBIDXf@smile.fi.intel.com>
+ <CAHb3i=vWNmokQYyOZJOVeaJaT6XAroct2gZiJYPVQf6rHzR5LA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,156 +86,58 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240902082707.4325-3-antoniu.miclaus@analog.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHb3i=vWNmokQYyOZJOVeaJaT6XAroct2gZiJYPVQf6rHzR5LA@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Mon, Sep 02, 2024 at 11:24:33AM +0300, Antoniu Miclaus wrote:
-> Add device tree bindings for the ad7877 driver.
+On Sun, Sep 01, 2024 at 06:53:38PM +0300, Tali Perry wrote:
+> On Fri, Aug 30, 2024 at 10:19 PM Andy Shevchenko
+> <andriy.shevchenko@linux.intel.com> wrote:
+> >
+> > On Fri, Aug 30, 2024 at 11:46:39AM +0800, Tyrone Ting wrote:
+> > > Modify i2c frequency from table parameters
+> > > for NPCM i2c modules.
+> > >
+> > > Supported frequencies are:
+> > >
+> > > 1. 100KHz
+> > > 2. 400KHz
+> > > 3. 1MHz
+> >
+> > There is no explanations "why". What's wrong with the calculations done in the
+> > current code?
+> >
+> > --
+> > With Best Regards,
+> > Andy Shevchenko
+> >
+> >
+> Hi Andy,
 > 
-> Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
-> ---
-> changes in v2:
->  - add only the used properties from touchscreen.yaml
->  - add vendor properties.
->  - update dt example.
->  .../input/touchscreen/adi,ad7877.yaml         | 110 ++++++++++++++++++
->  1 file changed, 110 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/input/touchscreen/adi,ad7877.yaml
+> The original equations were tested on a variety of chips and base clocks.
+> Since we added devices that use higher frequencies of the module we
+> saw that there is a mismatch between the equation and the actual
+> results on the bus itself, measured on scope.
+> So instead of using the equations we did an optimization per module
+> frequency, verified on a device.
+> Most of the work was focused on the rise time of the SCL and SDA,
+> which depends on external load of the bus and PU.
+> We needed to make sure that in all valid range of load the rise time
+> is compliant of the SMB spec timing requirements.
 > 
-> diff --git a/Documentation/devicetree/bindings/input/touchscreen/adi,ad7877.yaml b/Documentation/devicetree/bindings/input/touchscreen/adi,ad7877.yaml
-> new file mode 100644
-> index 000000000000..035e2d5bbcb8
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/input/touchscreen/adi,ad7877.yaml
-> @@ -0,0 +1,110 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/input/touchscreen/adi,ad7877.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Analog Devices AD7877 Touch Screen Controller
-> +
-> +maintainers:
-> +  - Antoniu Miclaus <antoniu.miclaus@analog.com>
-> +
-> +description: |
-> +  Analog Devices Touch Screen Controller
-> +  https://www.analog.com/media/en/technical-documentation/data-sheets/AD7877.pdf
-> +
-> +allOf:
-> +  - $ref: touchscreen.yaml#
-> +  - $ref: /schemas/spi/spi-peripheral-props.yaml#
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - adi,ad7877
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +
-> +  spi-max-frequency:
-> +    description: AD7877 SPI bus clock frequency.
-> +    minimum: 10000
-> +    maximum: 20000000
-> +
-> +  adi,stopacq-polarity:
-> +    description: The polarity of the signal applied to the STOPACQ pin.
-> +                 0 = active low
-> +                 1 = active high
-> +    $ref: /schemas/types.yaml#/definitions/uint8
-> +    enum: [0, 1]
+> This patch include the final values after extensive testing both at
+> Nuvoton as well as at customer sites.
 
-I think I was already commenting on this for analog... If using numbers,
-why this is reversed from standard GPIO property? Or maybe this should
-be just string.
+But:
+1) why is it better than do calculations?
+2) can it be problematic on theoretically different PCB design in the future?
 
-> +
-> +  adi,first-conv-delay:
-> +    description: Delay before the first conversion.
+P.S. If there is a good explanations to these and more, elaborate this in the
+commit message.
 
-No, use proper unit suffix.
+-- 
+With Best Regards,
+Andy Shevchenko
 
-> +                 0 = 0.5us
-> +                 1 = 128us
-> +                 2 = 1ms
-> +                 3 = 8ms
-> +    $ref: /schemas/types.yaml#/definitions/uint8
-> +    enum: [0, 1, 2, 3]
-> +
-> +  adi,pen-down-acc-interval:
-
-Use proper unit suffix.
-
-> +    description: Enable the ADC to repeatedly perform conversions.
-> +                  0 = covert once
-> +                  1 = every 0.5 ms
-> +                  2 = every 1 ms
-> +                  3 = every 8 ms
-> +    $ref: /schemas/types.yaml#/definitions/uint8
-> +    enum: [0, 1, 2, 3]
-
-How is it supposed to work? These are optional but there are no
-defaults?
-
-> +
-> +  adi,acquisition-time:
-> +    description:  Select acquisition times for the ADC.
-> +                  0 = 2us
-> +                  1 = 4us
-> +                  2 = 8us
-> +                  3 = 16us
-
-Same problem
-
-> +    $ref: /schemas/types.yaml#/definitions/uint8
-> +    enum: [0, 1, 2, 3]
-> +
-> +  adi,vref-delay-usecs:
-> +    description: Delay required for the SPI transfers depending on the VREF used.
-> +    $ref: /schemas/types.yaml#/definitions/uint16
-> +
-> +  touchscreen-average-samples:
-> +    enum: [1, 4, 8, 16]
-> +
-> +  touchscreen-x-plate-ohms: true
-> +  touchscreen-y-plate-ohms: true
-> +  touchscreen-min-x: true
-> +  touchscreen-min-y: true
-> +  touchscreen-max-x: true
-> +  touchscreen-max-y: true
-> +  touchscreen-max-pressure: true
-> +  touchscreen-min-pressure: true
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - interrupts
-> +  - touchscreen-average-samples
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/interrupt-controller/irq.h>
-> +    spi {
-> +      #address-cells = <1>;
-> +      #size-cells = <0>;
-> +
-> +      touchscreen@0 {
-> +        compatible = "adi,ad7877";
-> +        reg = <0>;
-> +        spi-max-frequency = <20000000>;
-> +        interrupts = <21 IRQ_TYPE_EDGE_FALLING>;
-> +        interrupt-parent = <&gpio>;
-> +        touchscreen-average-samples = <16>;
-
-Make the example complete.
-
-Best regards,
-Krzysztof
 
 
