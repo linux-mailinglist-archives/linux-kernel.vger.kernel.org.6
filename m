@@ -1,258 +1,170 @@
-Return-Path: <linux-kernel+bounces-311704-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311708-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AFD39968C83
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 18:57:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F00A968C8B
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 19:00:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EFB05B21D49
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 16:57:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DAEE9283A91
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 17:00:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C65E72101B3;
-	Mon,  2 Sep 2024 16:56:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30DA61A265D;
+	Mon,  2 Sep 2024 17:00:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="ZPBaJrC7"
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MiL1AmQY"
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E42E1AB6FA
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 16:56:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC28823A0
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 17:00:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725296174; cv=none; b=I/yX1ebUDtDDcuggxAlPvNhYn6qp+hfEbyI6qgllaoap5R6SfsOVf0UZ9Qnb5X4aXlFxiOcC60YDLYH+4+TPcnVajUr+FP1jfgXhn5mmWMmnrEZVe1mnZPEonOkb4nQEU+Mg9svIPAp6+NZ34JuhCilpV3Z24r+FuJZt8f9SPYQ=
+	t=1725296451; cv=none; b=f2WwaccaEg+ng7fYBe4iFw17hrTp2M4skUfaIiX0utn4rpRQ/06AigwYghbYfkiQ47NSGxQiLPEQnp52FHJZlene7gUDeiHShHEEhZXiqqk+BzzjDE3f3sfhKpDQl3m4TN9zd7YEHNXMO+R9rT27d9KphBzpW3MKXNbE4+0QftU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725296174; c=relaxed/simple;
-	bh=NlKD6Rywk2o6S7Srgzx1r8fUDtPHl6oDuqm+Szl1lHU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nHj5HEBkY6aDh45F9ZnVv7/vzgkxh+3m7FHGlUzNzRmSE8is79ivSXDvKbyy8BlLHH9l9yr7Rk3tBx02RzMF0VVaLoT1cHpb7iNGhILOPBdlhy+Kp7xn3vT0/9FYMUSVs4HkD2Tv2L7MwCiCML7KARSEBTkqq5ohITIT0ic+5mM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=ZPBaJrC7; arc=none smtp.client-ip=209.85.208.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5bef295a45bso1894275a12.0
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2024 09:56:11 -0700 (PDT)
+	s=arc-20240116; t=1725296451; c=relaxed/simple;
+	bh=oSpNDNfOhmT1qqQjvl4S7vUCpctklbjt+iArQs5YIos=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fplW88qPmoORKHdKgllFqpJQMmaDjBylwow+3LBrqjj7nIYPmEAjzgALwbTW2GJnZcNOeattX1NCnHuhCPeNwaQcPC7s0PsEsJyOy9ZydsKG21TZA2QMmEzPUAHgiNpMlS376jTUp+zCz9eExsSu+H/h1oTgvnpRmGbEqG77B6M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MiL1AmQY; arc=none smtp.client-ip=209.85.208.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2f50966c478so46332841fa.1
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2024 10:00:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fastly.com; s=google; t=1725296170; x=1725900970; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=FPZZydcS8XzcurpZ/PVZNgRNYtNKwp7mFoxRYZkP320=;
-        b=ZPBaJrC7F6iDUA2SJFcItS05EMhCK4OK/qZHcHeRBTyssWyN5/xzr8VfRw4EtBFuxi
-         p6K1zbA4H2j5NPp2GRIL2aYEFDxyFFf+vvL28t2Dik+2mN/wjCIpCimEKAm2zDMDf2YO
-         uAcXx/iiI7BUT5/EFcem+C25ai+rE1r3Iu0wE=
+        d=gmail.com; s=20230601; t=1725296448; x=1725901248; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:date:from:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=J9+V/kbhLj5ujl3zbVoImDUD1XrjW3PQicqV6baThDk=;
+        b=MiL1AmQYEzEMA3rIGmSZtLXJ2o+dz1ch8FvNeHYngfoWxBgLMwgfSttsNQTlNrvOoy
+         1QSMHtoqzLBOAsCDl5kPfmUb2glj4hIkhhk9RbYXD9rt38d/pAnBlMkNsRNL+nPej76y
+         QaA+R+45GExjFClCQZ/bTEkSqaFcDtZgrWbz5bhmnAFTIyBwWyeY6j8HL2dAelOxh/5y
+         XktJN7nvCCgoF8qvjlky21irE88srH4NJoRmvGLg/ERDq0maY02QQUNtkucHhuun7i8U
+         YiWfydtKp9QBBLzdRlxti00ajU44TsI/EpHIGQ+kE8/MHZdkkDY4fRwOQPHw/FH3K/ba
+         XyrA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725296170; x=1725900970;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date
+        d=1e100.net; s=20230601; t=1725296448; x=1725901248;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:date:from
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=FPZZydcS8XzcurpZ/PVZNgRNYtNKwp7mFoxRYZkP320=;
-        b=Ci2wv0gkcvnrOJYxlCcfKP5fuqRac/lB8aew2be9HmzhpZcUISLCja1GSVhInXq/SQ
-         Hif6kMIDyAGAzXFEGKYSNcP/ssypftTS2lUxg9i1FZKcOSUxMfTOgJ5w1uYuEjKBO7mk
-         lrq7ojGsd7W4b+hLVQZtYNTlJTgjU+7EFPgk0c8k8H+TUt+AA6eAKE+0AoVYrmfwj58P
-         /AwBVNuxRE458B19qsof2TKWFTk7pRexSkHMGvnIwW3tmwqxOmk/z/6oiUPgTAD1P2EW
-         77f20ax4ouJe4spgjeVp0Bm9pn5iVrxcFCfYyqNNuahZKIdetr+C6ZKVvaYZP5jai1Zu
-         7rGg==
-X-Forwarded-Encrypted: i=1; AJvYcCWAfJ5gb7pYki2m0PknDNtXxYFxzFb2jWryOITPM5HSWHASeUJmiaLb/U9iKCyyI9YI4wq/81DbhcJ+2Ro=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyTtA87DeRI20e3mwEv4RVi+g2D9rQEzKPoNTtcIvqqer98A4Xh
-	M6pUPHWXRE8lwJofRchLp0Mgco7eiwJDtKFmrqgfXuDVfzF4FH3beoB2E5TI0ME=
-X-Google-Smtp-Source: AGHT+IHK75a4RqYwQmJU4PYa0YsDaXS5QJG7oU28vPgrDCS0nTi/Fa82tRY6Z9AtBXhRiq29RMTkxw==
-X-Received: by 2002:a05:6402:4402:b0:5c2:43b1:fe58 with SMTP id 4fb4d7f45d1cf-5c243b1febcmr7426045a12.20.1725296169696;
-        Mon, 02 Sep 2024 09:56:09 -0700 (PDT)
-Received: from LQ3V64L9R2.station (net-2-42-195-208.cust.vodafonedsl.it. [2.42.195.208])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c250edd2e3sm2348706a12.27.2024.09.02.09.56.08
+        bh=J9+V/kbhLj5ujl3zbVoImDUD1XrjW3PQicqV6baThDk=;
+        b=ZJ+eaD2jhdnDANovjiDjiIUmEnZKohfi9molRo9vHVOYrO5S+wHaxwdvx5BfbESuzJ
+         FJmS83Y2Avk6ZGmK4CdzoeVNbEUIuef/qvAlFZfKieGVzNLtMN1KU1i73yxN3nt2UqaP
+         Gc2WHs1qDsJlxtojzo3Wx7CLhVGuquUF8JsSj7LgH0FOh+vep9zuS9/nG3zvYmnxdJeQ
+         inMU65cy2P4iv9lf3/joqEeHezKtvrDdDURmrBmW4L2JdXsUHmituH0Dq1JIY3hq6AB6
+         hfczc7CubtMUK8yaJ/SvrPGVV4B5BYNBVq2R3rXwbJ+u5MRrnFM5pDXGYGHVmabAejJt
+         /xIw==
+X-Forwarded-Encrypted: i=1; AJvYcCW50do/wdTcMwxkGfAmpocqg41tpQrwyuDaMOzELV5soyJf51KSRDaJaCyYdZ6gnNtN0JILfFbE9B+/l9s=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy0R5XHalw6+48xmZ66ICKkDKkRZbVucVmsEcgDt3qO3WXxMH6I
+	bEDdcy++moj3Hc2CiUKGyrnOnuOIyEF0ZXyQsXmVs3AAcpRDFzS/
+X-Google-Smtp-Source: AGHT+IGrCsmJj7R1rux4b9vaIuGUMo9LKgogBWBVQ6KAtjZhu5ho54eoZE1kk2wngGuHCXxiW9L+og==
+X-Received: by 2002:a05:651c:1548:b0:2f3:f193:d2d0 with SMTP id 38308e7fff4ca-2f61e0a5a5cmr73946381fa.33.1725296446821;
+        Mon, 02 Sep 2024 10:00:46 -0700 (PDT)
+Received: from pc636 (host-90-233-206-146.mobileonline.telia.com. [90.233.206.146])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2f615183134sm19368931fa.122.2024.09.02.10.00.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Sep 2024 09:56:09 -0700 (PDT)
-Date: Mon, 2 Sep 2024 18:56:07 +0200
-From: Joe Damato <jdamato@fastly.com>
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: netdev@vger.kernel.org, edumazet@google.com, amritha.nambiar@intel.com,
-	sridhar.samudrala@intel.com, sdf@fomichev.me, bjorn@rivosinc.com,
-	hch@infradead.org, willy@infradead.org,
-	willemdebruijn.kernel@gmail.com, skhawaja@google.com,
-	Martin Karsten <mkarsten@uwaterloo.ca>,
-	Donald Hunter <donald.hunter@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Jesper Dangaard Brouer <hawk@kernel.org>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	Daniel Jurgens <danielj@nvidia.com>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH net-next 5/5] netdev-genl: Support setting per-NAPI
- config values
-Message-ID: <ZtXuJ3TMp9cN5e9h@LQ3V64L9R2.station>
-Mail-Followup-To: Joe Damato <jdamato@fastly.com>,
-	Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
-	edumazet@google.com, amritha.nambiar@intel.com,
-	sridhar.samudrala@intel.com, sdf@fomichev.me, bjorn@rivosinc.com,
-	hch@infradead.org, willy@infradead.org,
-	willemdebruijn.kernel@gmail.com, skhawaja@google.com,
-	Martin Karsten <mkarsten@uwaterloo.ca>,
-	Donald Hunter <donald.hunter@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Jesper Dangaard Brouer <hawk@kernel.org>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	Daniel Jurgens <danielj@nvidia.com>,
-	open list <linux-kernel@vger.kernel.org>
-References: <20240829131214.169977-1-jdamato@fastly.com>
- <20240829131214.169977-6-jdamato@fastly.com>
- <20240829153105.6b813c98@kernel.org>
- <ZtGiNF0wsCRhTtOF@LQ3V64L9R2>
- <20240830142235.352dbad5@kernel.org>
+        Mon, 02 Sep 2024 10:00:46 -0700 (PDT)
+From: Uladzislau Rezki <urezki@gmail.com>
+X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
+Date: Mon, 2 Sep 2024 19:00:44 +0200
+To: Adrian Huang <adrianhuang0701@gmail.com>
+Cc: urezki@gmail.com, ahuang12@lenovo.com, akpm@linux-foundation.org,
+	hch@infradead.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH 1/1] mm: vmalloc: Optimize vmap_lazy_nr arithmetic when
+ purging each vmap_area
+Message-ID: <ZtXvPAoAo7UooJoV@pc636>
+References: <ZtDFQHGHMq6TfbKA@pc636>
+ <20240902120046.26478-1-ahuang12@lenovo.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240830142235.352dbad5@kernel.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240902120046.26478-1-ahuang12@lenovo.com>
 
-On Fri, Aug 30, 2024 at 02:22:35PM -0700, Jakub Kicinski wrote:
-> On Fri, 30 Aug 2024 11:43:00 +0100 Joe Damato wrote:
-> > On Thu, Aug 29, 2024 at 03:31:05PM -0700, Jakub Kicinski wrote:
-> > > On Thu, 29 Aug 2024 13:12:01 +0000 Joe Damato wrote:  
-> > > > +      doc: Set configurable NAPI instance settings.  
-> > > 
-> > > We should pause and think here how configuring NAPI params should
-> > > behave. NAPI instances are ephemeral, if you close and open the
-> > > device (or for some drivers change any BPF or ethtool setting)
-> > > the NAPIs may get wiped and recreated, discarding all configuration.
-> > > 
-> > > This is not how the sysfs API behaves, the sysfs settings on the device
-> > > survive close. It's (weirdly?) also not how queues behave, because we
-> > > have struct netdev{_rx,}_queue to store stuff persistently. Even tho
-> > > you'd think queues are as ephemeral as NAPIs if not more.
-> > > 
-> > > I guess we can either document this, and move on (which may be fine,
-> > > you have more practical experience than me). Or we can add an internal
-> > > concept of a "channel" (which perhaps maybe if you squint is what
-> > > ethtool -l calls NAPIs?) or just "napi_storage" as an array inside
-> > > net_device and store such config there. For simplicity of matching
-> > > config to NAPIs we can assume drivers add NAPI instances in order. 
-> > > If driver wants to do something more fancy we can add a variant of
-> > > netif_napi_add() which specifies the channel/storage to use.
-> > > 
-> > > Thoughts? I may be overly sensitive to the ephemeral thing, maybe
-> > > I work with unfortunate drivers...  
-> > 
-> > Thanks for pointing this out. I think this is an important case to
-> > consider. Here's how I'm thinking about it.
-> > 
-> > There are two cases:
-> > 
-> > 1) sysfs setting is used by existing/legacy apps: If the NAPIs are
-> > discarded and recreated, the code I added to netif_napi_add_weight
-> > in patch 1 and 3 should take care of that case preserving how sysfs
-> > works today, I believe. I think we are good on this case ?
+On Mon, Sep 02, 2024 at 08:00:46PM +0800, Adrian Huang wrote:
+> On Fri, Aug 30, 2024 at 3:00 AM Uladzislau Rezki <urezki@gmail.com> wrote:
+> > atomic_long_add_return() might also introduce a high contention. We can
+> > optimize by splitting into more light atomics. Can you check it on your
+> > 448-cores system?
 > 
-> Agreed.
+> Interestingly, the following result shows the latency of
+> free_vmap_area_noflush() is just 26 usecs (The worst case is 16ms-32ms).
 > 
-> > 2) apps using netlink to set various custom settings. This seems
-> > like a case where a future extension can be made to add a notifier
-> > for NAPI changes (like the netdevice notifier?).
+> /home/git-repo/bcc/tools/funclatency.py -u free_vmap_area_noflush & pid1=$! && sleep 8 && modprobe test_vmalloc nr_threads=$(nproc) run_test_mask=0x7; kill -SIGINT $pid1
 > 
-> Yes, the notifier may help, but it's a bit of a stop gap / fallback.
+>          usecs       : count     distribution
+>          0 -> 1      : 18166     |                                        |
+>          2 -> 3      : 41929818  |**                                      |
+>          4 -> 7      : 181203439 |***********                             |
+>          8 -> 15     : 464242836 |*****************************           |
+>         16 -> 31     : 620077545 |****************************************|
+>         32 -> 63     : 442133041 |****************************            |
+>         64 -> 127    : 111432597 |*******                                 |
+>        128 -> 255    : 3441649   |                                        |
+>        256 -> 511    : 302655    |                                        |
+>        512 -> 1023   : 738       |                                        |
+>       1024 -> 2047   : 73        |                                        |
+>       2048 -> 4095   : 0         |                                        |
+>       4096 -> 8191   : 0         |                                        |
+>       8192 -> 16383  : 0         |                                        |
+>      16384 -> 32767  : 196       |                                        |
 > 
-> > If you think this is a good idea, then we'd do something like:
-> >   1. Document that the NAPI settings are wiped when NAPIs are wiped
-> >   2. In the future (not part of this series) a NAPI notifier is
-> >      added
-> >   3. User apps can then listen for NAPI create/delete events
-> >      and update settings when a NAPI is created. It would be
-> >      helpful, I think, for user apps to know about NAPI
-> >      create/delete events in general because it means NAPI IDs are
-> >      changing.
-> > 
-> > One could argue:
-> > 
-> >   When wiping/recreating a NAPI for an existing HW queue, that HW
-> >   queue gets a new NAPI ID associated with it. User apps operating
-> >   at this level probably care about NAPI IDs changing (as it affects
-> >   epoll busy poll). Since the settings in this series are per-NAPI
-> >   (and not per HW queue), the argument could be that user apps need
-> >   to setup NAPIs when they are created and settings do not persist
-> >   between NAPIs with different IDs even if associated with the same
-> >   HW queue.
+>    avg = 26 usecs, total: 49415657269 usecs, count: 1864782753
 > 
-> IDK if the fact that NAPI ID gets replaced was intentional in the first
-> place. I would venture a guess that the person who added the IDs was
-> working with NICs which have stable NAPI instances once the device is
-> opened. This is, unfortunately, not universally the case.
 > 
-> I just poked at bnxt, mlx5 and fbnic and all of them reallocate NAPIs
-> on an open device. Closer we get to queue API the more dynamic the whole
-> setup will become (read: the more often reconfigurations will happen).
->
-
-[...]
-
-> > I think you have much more practical experience when it comes to
-> > dealing with drivers, so I am happy to follow your lead on this one,
-> > but assuming drivers will "do a thing" seems mildly scary to me with
-> > limited driver experience.
-> > 
-> > My two goals with this series are:
-> >   1. Make it possible to set these values per NAPI
-> >   2. Unblock the IRQ suspension series by threading the suspend
-> >      parameter through the code path carved in this series
-> > 
-> > So, I'm happy to proceed with this series as you prefer whether
-> > that's documentation or "napi_storage"; I think you are probably the
-> > best person to answer this question :)
+> free_vmap_area_noflush() just executes the lock prefix one time, so the
+> wrost case might be just about a hundred clock cycles.
 > 
-> How do you feel about making this configuration opt-in / require driver
-> changes? What I'm thinking is that having the new "netif_napi_add()"
-> variant (or perhaps extending netif_napi_set_irq()) to take an extra
-> "index" parameter would make the whole thing much simpler.
-
-What about extending netif_queue_set_napi instead? That function
-takes a napi and a queue index.
-
-Locally I kinda of hacked up something simple that:
-  - Allocates napi_storage in net_device in alloc_netdev_mqs
-  - Modifies netif_queue_set_napi to:
-     if (napi)
-       napi->storage = dev->napi_storage[queue_index];
-
-I think I'm still missing the bit about the
-max(rx_queues,tx_queues), though :(
-
-> Index would basically be an integer 0..n, where n is the number of
-> IRQs configured for the driver. The index of a NAPI instance would
-> likely match the queue ID of the queue the NAPI serves.
-
-Hmmm. I'm hesitant about the "number of IRQs" part. What if there
-are NAPIs for which no IRQ is allocated ~someday~ ?
-
-It seems like (I could totally be wrong) that netif_queue_set_napi
-can be called and work and create the association even without an
-IRQ allocated.
-
-I guess the issue is mostly the queue index question above: combined
-rx/tx vs drivers having different numbers of rx and tx queues.
-
-> We can then allocate an array of "napi_configs" in net_device -
-> like we allocate queues, the array size would be max(num_rx_queue,
-> num_tx_queues). We just need to store a couple of ints so it will
-> be tiny compared to queue structs, anyway.
+> The problem of purge_vmap_node() is that some cores are busy on purging
+> each vmap_area of the *long* purge_list and executing atomic_long_sub()
+> for each vmap_area, while other cores free vmalloc allocations and execute
+> atomic_long_add_return() in free_vmap_area_noflush(). The following crash
+> log shows the 22 cores are busy on purging vmap_area structs [1]:
 > 
-> The NAPI_SET netlink op can then work based on NAPI index rather 
-> than the ephemeral NAPI ID. It can apply the config to all live
-> NAPI instances with that index (of which there really should only 
-> be one, unless driver is mid-reconfiguration somehow but even that
-> won't cause issues, we can give multiple instances the same settings)
-> and also store the user config in the array in net_device.
+>   crash> bt -a | grep "purge_vmap_node+291" | wc -l
+>   22
 > 
-> When new NAPI instance is associate with a NAPI index it should get
-> all the config associated with that index applied.
+> So, the latency of purge_vmap_node() dramatically increases becase it
+> excutes the lock prefix over 600,0000 times. The issue can be easier
+> to reproduce if more cores execute purge_vmap_node() simultaneously.
 > 
-> Thoughts? Does that makes sense, and if so do you think it's an
-> over-complication?
+Right. This is clear to me. Under heavy stressing in a tight loop we
+invoke atomic_long_sub() per one freed VA. Having 448-cores and one
+stress job per-cpu we end up with a high-contention spot when access
+to an atomic which requires a cache-line lock.
 
-I think what you are proposing seems fine; I'm just working out the
-implementation details and making sure I understand before sending
-another revision.
+> 
+> 
+> Tested the following patch with the light atomics. However, nothing improved 
+> (But, the worst case is improved):
+> 
+>          usecs        : count     distribution
+>          0 -> 1       : 7146      |                                        |
+>          2 -> 3       : 31734187  |**                                      |
+>          4 -> 7       : 161408609 |***********                             |
+>          8 -> 15      : 461411377 |*********************************       |
+>         16 -> 31      : 557005293 |****************************************|
+>         32 -> 63      : 435518485 |*******************************         |
+>         64 -> 127     : 175033097 |************                            |
+>        128 -> 255     : 42265379  |***                                     |
+>        256 -> 511     : 399112    |                                        |
+>        512 -> 1023    : 734       |                                        |
+>       1024 -> 2047    : 72        |                                        |
+> 
+> avg = 32 usecs, total: 59952713176 usecs, count: 1864783491
+> 
+Thank you for checking this! So there is no difference. As for worst
+case, it might be an error of measurements. The problem is that we/you
+measure the time which includes a context switch because a context which
+triggers the free_vmap_area_noflush() function can easily be preempted.
+
+--
+Uladzislau Rezki
 
