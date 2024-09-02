@@ -1,131 +1,119 @@
-Return-Path: <linux-kernel+bounces-311241-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311244-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C590996867A
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 13:43:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 560E0968680
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 13:44:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0332D1C228D0
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 11:43:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 874E51C228FC
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 11:44:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEC831D6783;
-	Mon,  2 Sep 2024 11:43:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ESh/3z1K"
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4EC51D61BC;
+	Mon,  2 Sep 2024 11:44:36 +0000 (UTC)
+Received: from smtpbgjp3.qq.com (smtpbgjp3.qq.com [54.92.39.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB9831D6194
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 11:43:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D8DE1D6184;
+	Mon,  2 Sep 2024 11:44:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.92.39.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725277388; cv=none; b=XViQ56xxEHFUw4Cfz6OpBDRj6TG9EMm+f1znLKNOKHjijX95/i92ErbB4k2M5WksWN+6Veug1iDEyd+snY8hNSSA9VspR5DPTzuCwBX1/CnsBAl7CVJbVJGaXuXILnZG2yjH1ZDgrHLdFIOZp4XztY9ZPA4c7A2E3QRs2801f5U=
+	t=1725277476; cv=none; b=B1nTHhxqmwESIbXipZAxdhRaVXcDhb1sgCNR6RneEr/y3mC4PuHXahJrikZiUokd5xztg81LDoToc70nMASOKoEjK64+wp+RQ6X9EJq6jEvT6cI0xtHBdCy/ito4xTj0pVyhf/gn1xIOvuoFWsIMH9cgUEDRnuH93heeDqE6nic=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725277388; c=relaxed/simple;
-	bh=aMluMbJLhmb0IEL3J16AEDzecT8DhkBRh9kGj9W/BbQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Uo5z1iEinn2CxHyoPX2J1VVrXQ6t1Tw1a5cPMm7DrzrKCQq+glCK/vIDj9+rGNXEecph0cxWMfNyja0MWGyFPS5jgmmTAYtt9/1iV6xshU8oDADG/PaogGNODLDlYPli0e4VCV+U0htb/HmTyfwf53fON02UbJtD20vxaj8E5TA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ESh/3z1K; arc=none smtp.client-ip=209.85.221.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-374c7d14191so595027f8f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2024 04:43:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1725277385; x=1725882185; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=eJVoV8ur5E5PML26OjWYrL4zwoEkKD/ilxgSBTROy2E=;
-        b=ESh/3z1KIOEVftA18H5JcLTsOpY1u9kXHa7GlM5nUSBpXH/KVnl6Tf7Leb3GY4Vo6g
-         nuid1oxXHD8WUQFl8y33X8PrNgGYAu22LFH4Q7SQwmer4ZS2AV29cQlUnA3/QVMm5cb/
-         eXBGoCSG9892h8r/aA6tlLhU2WcfLz6vXK1DajsSwakL9n/QT5BBk34MJlZdgJLKzydy
-         qWvIog7HUKgBo2/gfhQVn2GBu+Gg8cFt7yqOQoKse5lRzMyxQ1N+/z13p2RkQ2XAEDem
-         SW6mRs9/ijcdThuPJ28EWbIH0M6iy1taaOwuIfqxcQXfO5ps7Fk+d7UzYdfKw0b7QDLd
-         1xfw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725277385; x=1725882185;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=eJVoV8ur5E5PML26OjWYrL4zwoEkKD/ilxgSBTROy2E=;
-        b=Kz9KOjxH0NYbcQvyvb/Sw2xxfq6n2c5s4viX+IRGVzwB4YaNYxNhXTHSSl2/pWa3GQ
-         yEaZ0HECJwXRb9p9+W6wNeUTsF63g3ImcJ3FGiESDnTdEBzsAhrW7JRgws343821Pt/r
-         hlWT03AS2HHRuQ0t5iPVKPxfR+SfHi+c7+WPRKxNEs1EbFQyK4EGhbAgxNGC1/302xGq
-         lwDGDQPeHenLoAEZzyB0B3hDudBhHhvEskyk7VU7pTVpXcXpA9GEAtSCUzs8wgbjnk5+
-         njmv/UzAuAh9VOF/c5vEzx2t6V36+X/0SPwx7gi0//xjWapsMiqPbEK8+5C+WvNOwmNA
-         FmKg==
-X-Forwarded-Encrypted: i=1; AJvYcCUc3ixicXaBnMk6s2dE4usy/qsFFPVIqLl+Z4L8++l21R4tL73b0wYuM6sAYL5jVPBKiHgyjUnMGbZh1qE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxvQN3yGJoimUZBEicn3RNnOEyD5XX44bMGfVUJ6MWBPq6iLzxD
-	16Fmn10Pb4mNARKqde5eE2nLrtkbb6Wb4/a6TW7TPeyXVhxAMA8Z1eQxaVlfrwcoSi7bvSiB59X
-	RlY62rfzg8vu12CUok5cFGBrOUWNebHMALw2g
-X-Google-Smtp-Source: AGHT+IGBSIuAmK8flBxMTjfhqRpEYf59h0KGrVS2RkXNR24CE2gpartKGqUw821ZfLCdJ0tVXO06AU7ju/cNywO36CI=
-X-Received: by 2002:a5d:4565:0:b0:374:c3e4:d6e3 with SMTP id
- ffacd0b85a97d-374c3e4d8a1mr2546132f8f.5.1725277384952; Mon, 02 Sep 2024
- 04:43:04 -0700 (PDT)
+	s=arc-20240116; t=1725277476; c=relaxed/simple;
+	bh=uTSWWEcMWHAb3DoesgJoSb8LvIGywPMBaKl0Srbj/XY=;
+	h=From:To:Cc:Subject:Mime-Version:Content-Type:Date:Message-ID; b=f+qFhZDgZAekiRWIZ6MzDidWT4QvPHr2FCJPMON/E9+Gd3z7eZhhZLt2mmEgMJCJg1X68AzI/WwPq65wHfPRm+rQrJnZ913pdutaYyUDSE/1u0JXTwkHHe4lL+elkqbkLxFedP0jqQDd8uv+z7XSuYHBqBZwz/EVRFj+HoJYVZ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=m.fudan.edu.cn; spf=pass smtp.mailfrom=m.fudan.edu.cn; arc=none smtp.client-ip=54.92.39.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=m.fudan.edu.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=m.fudan.edu.cn
+X-QQ-GoodBg: 2
+X-QQ-SSF: 0040000000000000
+X-QQ-XMRINFO: OD9hHCdaPRBwq3WW+NvGbIU=
+X-QQ-XMAILINFO: OSjQccS6YHkHb45SII8Ftfw23r+kCfO1I9L8eJcWUl+ckgWG6oPRWtux
+	e+7bIjnoXJ2mzekK2Al88AZlfoA/y3jIj6f1+DIn/wNJk71a5ye4d07PVLU1E+rsVZI/ecG
+	FvtIzxnKgPep4H05cwPfiHgnIj5QGHv2kcWcQprG3WTdVePrXzwpQpuNfj9Tl5LTv4VyzBd
+	tFgm+PZwCcOWiZ6O1zdpgJBixSYHOGqlBZe8DPsl06tmrqGEyjX9PeixTfYd6TghTyGD4fp
+	icXVXw3/azIrkbSQectKiSV5baOcxBekkgEEo0/hI8WiLid7R0Gd66LmJZhcZ84eaKuMRoM
+	BKI/DkdU9xue92oUV6VAtnXDEmENEnvlKY5bpDpYcbb2dh0zAnh59yMLYyn4iuRBHc55on3
+	z7CUMQcxp2CqxxalmC956MZcDBR1j5ADkbRAJqh1fDYUP0NHpgBpDupKlfIAH8kS9muQIRX
+	8rDzwtCfknshhZ1KU/wm7GmEsXeC9QgF6EWexaa1IxqUfWrJ2BFHXZKM8ENh88dEQdpsIFH
+	SlaEOOVx36PKsv8r92VThmh/bxcjhkM1mnFtsDdRGA1ES4lYpQEOmYH7+SfbxsPUO5n1ZyW
+	qy5b+T9jsjQzGKOGieZgGMUQpAuvUWKIoq/wiarN3ohw+5xQYkE+OcLw76QnrgMMxhPwQHV
+	fk1cNDevyW8l3k5Oc66Y/6XG5WJtsIEyhTquWNrd1MWqdpsqkdjX+eH8sS7YQJ23c6UMci9
+	0HPPbVfRDOKzChldWb7JclTphfHaPm0T4zquRr1RzHBvMiDKTnXqwkNFbrcA2npt4Q+Vg1O
+	3ul3Ay4+GPoW3JlYaDvOiF3Z2Wqg3oPNQfogqJGssBy/iQMY75gYOoOf3aCrgn3hrZVZ3MG
+	EvMruvbJwYqY80bpivhSJ7uJp4JygN/0tC0ECm3zyV0B0Z+y9BNUkcIjot8V9IaPyZuQclH
+	Uh4/MSLFEaweM6g==
+X-QQ-FEAT: 2Rmh/KmsIngruwTONLJY3WAWKAdbrRsw
+X-QQ-BUSINESS-ORIGIN: 2
+X-QQ-Originating-IP: dmuZ05ao3G3kluBycU5Jr9cTKcstfsVjiTFlSQbb574=
+X-QQ-STYLE: 
+X-QQ-mid: t6sz3a-0t1725277376t9055661
+From: "=?utf-8?B?V2VudGFpIERlbmc=?=" <wtdeng24@m.fudan.edu.cn>
+To: "=?utf-8?B?bGludXg=?=" <linux@armlinux.org.uk>
+Cc: "=?utf-8?B?ZGF2ZW0=?=" <davem@davemloft.net>, "=?utf-8?B?ZWR1bWF6ZXQ=?=" <edumazet@google.com>, "=?utf-8?B?a3ViYQ==?=" <kuba@kernel.org>, "=?utf-8?B?cGFiZW5p?=" <pabeni@redhat.com>, "=?utf-8?B?bGludXgtYXJtLWtlcm5lbA==?=" <linux-arm-kernel@lists.infradead.org>, "=?utf-8?B?bmV0ZGV2?=" <netdev@vger.kernel.org>, "=?utf-8?B?bGludXgta2VybmVs?=" <linux-kernel@vger.kernel.org>, "=?utf-8?B?5p2c6Zuq55uI?=" <21210240012@m.fudan.edu.cn>
+Subject: [BUG] Possible Use-After-Free Vulnerability in ether3 Driver Due to Race Condition
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20240827-static-mutex-v2-1-17fc32b20332@google.com>
- <10453342-d269-4b78-8962-821ef53d3cb5@proton.me> <CAH5fLgh-DYvXobXQVaQ9txYS4Rx8QhjyVvfTphk6vvnUOGzPnw@mail.gmail.com>
- <3b557f61-cead-4568-b2b4-4a56c4cbff52@proton.me> <CAH5fLggE-fWDuZXH_F3ixDSo7sQEFwnUV3cd+9_rpFH+XmnA2Q@mail.gmail.com>
-In-Reply-To: <CAH5fLggE-fWDuZXH_F3ixDSo7sQEFwnUV3cd+9_rpFH+XmnA2Q@mail.gmail.com>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Mon, 2 Sep 2024 13:42:53 +0200
-Message-ID: <CAH5fLgiZt3uVZiU1xXPcvYNR-Em2V3y+-C9EbsqrNvkScbiAYA@mail.gmail.com>
-Subject: Re: [PATCH v2] rust: add global lock support
-To: Benno Lossin <benno.lossin@proton.me>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Andreas Hindborg <a.hindborg@samsung.com>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+Content-Type: text/plain;
+	charset="utf-8"
+Content-Transfer-Encoding: base64
+Date: Mon, 2 Sep 2024 19:42:55 +0800
+X-Priority: 1
+Message-ID: <tencent_48E7914150CBB05A03CD68C4@qq.com>
+X-QQ-MIME: TCMime 1.0 by Tencent
+X-Mailer: QQMail 2.x
+X-QQ-Mailer: QQMail 2.x
+X-BIZMAIL-ID: 10923399988514903829
+X-QQ-SENDSIZE: 520
+Received: from qq.com (unknown [127.0.0.1])
+	by smtp.qq.com (ESMTP) with SMTP
+	id ; Mon, 02 Sep 2024 19:42:57 +0800 (CST)
+Feedback-ID: t:m.fudan.edu.cn:qybglogicsvrgz:qybglogicsvrgz7a-0
 
-On Mon, Sep 2, 2024 at 1:37=E2=80=AFPM Alice Ryhl <aliceryhl@google.com> wr=
-ote:
->
-> On Fri, Aug 30, 2024 at 3:22=E2=80=AFPM Benno Lossin <benno.lossin@proton=
-.me> wrote:
-> >
-> > On 30.08.24 07:34, Alice Ryhl wrote:
-> > > On Thu, Aug 29, 2024 at 8:17=E2=80=AFPM Benno Lossin <benno.lossin@pr=
-oton.me> wrote:
-> > >>
-> > >> On 27.08.24 10:41, Alice Ryhl wrote:
-> > >>> For architectures that don't use all-zeros for the unlocked case, w=
-e
-> > >>> will most likely have to hard-code the correct representation on th=
-e
-> > >>> Rust side.
-> > >>
-> > >> You mean in `unsafe_const_init`?
-> > >
-> > > No, I mean we would have `unsafe_const_new` directly set `state` to
-> > > the right value and let `unsafe_const_init` be a no-op.
-> >
-> > But how do you set the right value of a list_head? The value will be
-> > moved.
->
-> Right ... we probably can't get around needing a macro. Can statics
-> even reference themselves?
+T3VyIHRlYW0gcmVjZW50bHkgZGV2ZWxvcGVkIGEgdnVsbmVyYWJpbGl0eSBkZXRlY3Rpb24g
+dG9vbCwgYW5kIHdlIGhhdmUgZW1wbG95ZWQgaXQgdG8gc2NhbiB0aGUgTGludXggS2VybmVs
+ICh2ZXJzaW9uIDYuOS42KS4gQWZ0ZXIgbWFudWFsIHJldmlldywgd2UgZm91bmQgc29tZSBw
+b3RlbnRpYWxseSB2dWxuZXJhYmxlIGNvZGUgc25pcHBldHMgd2hpY2ggbWF5IGhhdmUgdXNl
+LWFmdGVyLWZyZWUgYnVncyBkdWUgdG8gcmFjZSBjb25kaXRpb25zLiBUaGVyZWZvcmUsIHdl
+IHdvdWxkIGFwcHJlY2lhdGUgeW91ciBleHBlcnQgaW5zaWdodCB0byBjb25maXJtIHdoZXRo
+ZXIgdGhlc2UgdnVsbmVyYWJpbGl0aWVzIGNvdWxkIGluZGVlZCBwb3NlIGEgcmlzayB0byB0
+aGUgc3lzdGVtLg0KDQpWdWxuZXJhYmlsaXR5IERlc2NyaXB0aW9uOg0KDQpGaWxlOiAvZHJp
+dmVycy9uZXQvZXRoZXJuZXQvc2VlcS9ldGhlcjMuYw0KDQpJbiB0aGUgZXRoZXIzX3Byb2Jl
+IGZ1bmN0aW9uLCBhIHRpbWVyIGlzIGluaXRpYWxpemVkIHdpdGggYSBjYWxsYmFjayBmdW5j
+dGlvbiBldGhlcjNfbGVkb2ZmLCBib3VuZCB0byAmcHJldihkZXYpLT50aW1lci4gT25jZSB0
+aGUgdGltZXIgaXMgc3RhcnRlZCwgdGhlcmUgaXMgYSByaXNrIG9mIGEgcmFjZSBjb25kaXRp
+b24gaWYgdGhlIG1vZHVsZSBvciBkZXZpY2UgaXMgcmVtb3ZlZCwgdHJpZ2dlcmluZyB0aGUg
+ZXRoZXIzX3JlbW92ZSBmdW5jdGlvbiB0byBwZXJmb3JtIGNsZWFudXAuIFRoZSBzZXF1ZW5j
+ZSBvZiBvcGVyYXRpb25zIHRoYXQgbWF5IGxlYWQgdG8gYSBVQUYgYnVnIGlzIGFzIGZvbGxv
+d3M6DQoNCkNQVTAgICAgICAgICAgICAgICAgICAgICAgICAgICAgQ1BVMQ0KDQogICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgfCAgIGV0aGVyM19sZWRvZmYNCmV0aGVyM19yZW1vdmUg
+ICAgICAgICAgICAgICB8DQogICAgZnJlZV9uZXRkZXYoZGV2KTsgICAgICAgfA0KICAgIHB1
+dF9kZXZpY2UgICAgICAgICAgICAgIHwNCiAgICBrZnJlZShkZXYpOyAgICAgICAgICAgICB8
+DQogICAgICAgICAgICAgICAgICAgICAgICAgICAgfCAgICAgICBldGhlcjNfb3V0dyhwcml2
+KGRldiktPnJlZ3MuY29uZmlnMiB8PSBDRkcyX0NUUkxPLCBSRUdfQ09ORklHMik7DQogICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgfCAgICAgICAvLyB1c2UgZGV2DQoNClByb3Bvc2Vk
+IEZpeDoNCg0KVGhlIGlzc3VlIGNhbiBiZSByZXNvbHZlZCBieSBlbnN1cmluZyB0aGF0IHRo
+ZSB0aW1lciBpcyBjYW5jZWxlZCBiZWZvcmUgcHJvY2VlZGluZyB3aXRoIHRoZSBjbGVhbnVw
+IGluIGV0aGVyM19yZW1vdmUgb3IgZXRoZXIzX2Nsb3NlLiBUaGlzIHdpbGwgcHJldmVudCBh
+bnkgcGVuZGluZyBvciBhY3RpdmUgdGltZXIgZnVuY3Rpb25zIGZyb20gYWNjZXNzaW5nIG1l
+bW9yeSB0aGF0IGhhcyBhbHJlYWR5IGJlZW4gZnJlZWQuDQoNClJlbGV2YW50IENWRSBhbmQg
+UmVmZXJlbmNlOg0KDQpUaGlzIGlzc3VlIGlzIHNpbWlsYXIgdG8gdGhlIHZ1bG5lcmFiaWxp
+dHkgZG9jdW1lbnRlZCBpbiBDVkUtMjAyMy0zMTQxLCBhbmQgYSByZWxhdGVkIGZpeCB3YXMg
+aW1wbGVtZW50ZWQgYXMgc2hvd24gaW4gdGhlIGZvbGxvd2luZyBjb21taXQ6DQoNCm1lbXN0
+aWNrOiByNTkyOiBGaXggVUFGIGJ1ZyBpbiByNTkyX3JlbW92ZSBkdWUgdG8gcmFjZSBjb25k
+aXRpb24gKGh0dHBzOi8vZ2l0Lmtlcm5lbC5vcmcvcHViL3NjbS9saW51eC9rZXJuZWwvZ2l0
+L3RvcnZhbGRzL2xpbnV4LmdpdC9jb21taXQvP2lkPTYzMjY0NDIyNzg1MDIxNzA0YzM5YjM4
+ZjY1YTc4YWI5ZTRhMTg2ZDcpDQoNClJlcXVlc3QgZm9yIFJldmlldzoNCg0KV2Ugd291bGQg
+YXBwcmVjaWF0ZSB5b3VyIGV4cGVydCBpbnNpZ2h0IHRvIGNvbmZpcm0gd2hldGhlciB0aGlz
+IHZ1bG5lcmFiaWxpdHkgaW5kZWVkIHBvc2VzIGEgcmlzayB0byB0aGUgc3lzdGVtIGFuZCBp
+ZiB0aGUgcHJvcG9zZWQgZml4IGlzIGFwcHJvcHJpYXRlLg0KDQpUaGFuayB5b3UgZm9yIHlv
+dXIgdGltZSBhbmQgY29uc2lkZXJhdGlvbi4NCg0KQmVzdCByZWdhcmRzLA0KV2VudGFpIERl
+bmcNCnd0ZGVuZzI0QG0uZnVkYW4uZWR1LmNu
 
-Looks like they can:
-
-use std::ptr::addr_of;
-
-struct MyStruct {
-    ptr: *const MyStruct,
-}
-
-static mut MY_STRUCT: MyStruct =3D MyStruct {
-    ptr: addr_of!(MY_STRUCT),
-};
-
-Alice
 
