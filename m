@@ -1,193 +1,339 @@
-Return-Path: <linux-kernel+bounces-310549-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310550-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB2B1967E29
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 05:32:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B435967E2D
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 05:35:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3715328172A
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 03:32:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 437FD1C21890
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 03:35:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02367137C35;
-	Mon,  2 Sep 2024 03:32:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE272137750;
+	Mon,  2 Sep 2024 03:35:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="s7tSPRzI"
-Received: from NAM04-MW2-obe.outbound.protection.outlook.com (mail-mw2nam04on2073.outbound.protection.outlook.com [40.107.101.73])
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="eo/JT4p6"
+Received: from BL2PR02CU003.outbound.protection.outlook.com (mail-eastusazolkn19010014.outbound.protection.outlook.com [52.103.11.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CC4E2C80;
-	Mon,  2 Sep 2024 03:32:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.101.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFF5042A9F;
+	Mon,  2 Sep 2024 03:35:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.11.14
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725247940; cv=fail; b=RjvE67CcyJ+4H74uxY05JQG6+wQ0DOkJbY8dqHYnQLTAkkezfwTyLhV5LpqFUL2/LDLL1HEXcdTM7Nq/V+cRQUpC8COiTBk6i/t+rKK0X2gFLjZr4o1wKVTQQ3RuM/uxgZ1pl/l6PAysatcYKGKQx8OQ4eAogFLo6Fk21YNerlo=
+	t=1725248111; cv=fail; b=had29rsZF5FvQzcnTvyvj8fqcPnVRakNYoTGtdL68/CPFwInUP0QgWj/wDJPM2ot1FAu39gKpaL821vawFf5CBfsmCcNYo/H5UMt2+cgb7cyKd9mXvNTvyc0mp1qPxOVlTrmlI7lTM5KwcUZmBnl9W06v/JireyUnvq9Vp+v8zY=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725247940; c=relaxed/simple;
-	bh=p2Q0EcvqZoEIJ67ZvblxYO5DCL+ozF472x68FlOiBJ4=;
+	s=arc-20240116; t=1725248111; c=relaxed/simple;
+	bh=H6mJwjV+bIzDth3zjam6LT/OK29heK1fiuqepNW9E1I=;
 	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=QzGQo4mtdACIf+XZc/PYmrZyjzfT38nZZ3GISc5zzqat40MKKnYVODGQJR9IGllIcRGi0NagYaD8zlo7k1yyqo+7ZNWoWvgLnw3lasbMrsM4JlAHDWkfl70xRTpb62DvR9i6E+PVn4NO6EfEijhzsaxlFmIu6px25kWgrY6d7LY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=s7tSPRzI; arc=fail smtp.client-ip=40.107.101.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+	 Content-Type:MIME-Version; b=jiyJpK4xsGFH0cIcRjAG4GXqajmNrV6ZteB/gG7AAHtYBupK1FWXarBM9YBekOMA2OAOLmh4+nvf0eXiohSoyEfpI/xsOCWYpOcGqvdQOdCbkrIoyiUPFk/cEA2bGQ1X03uekqQEK5Fn5QRI6IJOa2oaPvjd15ty7UEYs6qpVhI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=eo/JT4p6; arc=fail smtp.client-ip=52.103.11.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=KF89EHaHfotvi0Dklx9+y+6nWwdTifhw/2TRG9lfqSW0+ELLOAWX5fLMOA4FNCDzfKQ20gTj2PR76ddb1IxAkyCzR6VRZzmHm6WugpS1Z6Zu4PBIgNjYoQOZYg1PhxPwgYFvAw5QNvTe4Z3FNt7KtPTNE6wPcSKRgxf3UHfYGJ2/hFC4e+oFKQY32W5xXzR6+Fvc+8ZLZvtNd4NE3LwLhfwplYkC/04JXcLgW/QP/aw9Yg1pHlevJ4j79upQiZiYUjPYRxDxHUFrMJOuSYt3MN0LIeBRu7bXtGpIbC16/zQnCzCJFcG+OaO5vC16Qdf8bwUJ6ZeGGwbZZ+b41ZUQXg==
+ b=F9hp0ocrdNbUbjy+kbN7E0VE5oZ+6TDDisjnnQ48LGoexRNxgWACEc6MTBmxWOZaP0ZcgCY77O2jkxdntdB6i8zWqyJomga/p6j5QxqlBy328sLByzTQHqpPec/QHYEtpwzmUiGKLVkkO0/Tf7khcy1ojeonMlqQNiGmTbz3nDJrsMNQBw9GbCRwueaOuobY/fbaZHI4N2UOSQbTSXiU8Ch7ep0LLETfnKwtVWhldEkB2+ToIFDJWKjk2kJCByiZwyjFfo/gWg813J2+KO+mI3lPJSK4FcR8ErW9aR8wOl3+AP1/AAutQGYWu1/1PO9hoOF6vrk5QewFGRN0NH0o0A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=p2Q0EcvqZoEIJ67ZvblxYO5DCL+ozF472x68FlOiBJ4=;
- b=U8Cpsw4byIxWMZMj9yS6TE36RBAicC2IBehaeXBDhEHea0o/N5CyVm9iRGCvH40vMmvRJxpxBLL4mW+e3aVZ/HPNC0IsMwu62rhJ4YWeXeaO/XXkuSFVXDJO1yKUv1cR6Y7SfjQLudda2cm+axvuaQ7uZ36xEUw292EamgBBmCmNfnI4/tVH4yMRybsO/psLD3qqzmNPWBHRjyh83qhIDC/WoQGtJVYMLPq0ROT739aKPaXX5nggzlLsFfCGw2sFTY7f97scNwsWp2tb1zybJ+yH7XN/ZD95QmwMwd0+hQSS36VwO7RHPWnLfvd5rAg9Q0BF7cb4EoPQ2HiSrnd48A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=microchip.com; dmarc=pass action=none
- header.from=microchip.com; dkim=pass header.d=microchip.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microchip.com;
+ bh=t2B7UoUeW3+lTA/kjHWRVOqX9FrEcwtbWeyX2Lj0ExQ=;
+ b=cx2q239QkWx8UtEjN7vrsxRa4/w4ZoOewQBxgZ6reXY67VQQKMxAwOHP/6kfabrZZUjw2/G89eyY9o0JzfGqKKC0dAanw95SGvznaXd9JoWAMmxNTuLGAgsEnlmdNYqqR+SldinOQEGz+e2m18URLW8AMosLvaqbl+kZy/aFp+D7Ot44K2zRvYy7Qi3l5lBj/r41Lo2yb9RQDH1NOb1UGw+McAP1ZfPPxsEYcJTUhhqXTa0SBQyWn8vs/aDRkb3t90MiF0IIIqG5yazBAhrt+HDYumbg0Ujjl0sSbKXyoHqu78RcFVMNF8X+kfBdd68xhXUeJUgwTE374dDu6eLUIw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=p2Q0EcvqZoEIJ67ZvblxYO5DCL+ozF472x68FlOiBJ4=;
- b=s7tSPRzIqjuck2tkTUPGxfX7XPs+3qjsgkzN/K3FOOcaaavqTUKdp3H1QjthnlOCJMp7KWJYkeZZ+AnZ2sgLFWe+++oXI2o67qazJLrgyCq43NEHAsbE+h10s7M4pbrdDJfKeKLufZUD95K1x67MoG7tdwpKZT5Davqv0K5MiuvIv9z4UfwLZy0tI9MWNLrpWwwwPVyhOcPGlNeSwEoS4aIRXKaIgD7S3qc6kdMPDj4UhVEmsgE7zXaEQkhvwqmF40KJREQmBqp5f/Emp04ImCp3Yg7BufhQdnL+OHPX1NVQrVtnlcVXWGhyQOv+GleGP7mTxB/QqVVq9/beku1W6w==
-Received: from PH7PR11MB8033.namprd11.prod.outlook.com (2603:10b6:510:246::12)
- by BN9PR11MB5306.namprd11.prod.outlook.com (2603:10b6:408:137::14) with
+ bh=t2B7UoUeW3+lTA/kjHWRVOqX9FrEcwtbWeyX2Lj0ExQ=;
+ b=eo/JT4p6TcKHv0d98u9GFj+K/1MDp2tvizD2oqFcoJVOBnTJ0V3f2n3iM0/zTOhkmWK2IqQnLFwJdTXvg3D3UR1ap2E4MdIFSsFqYxWhuiEUGQqJhhZzoc+sf8jsHdMP8rCullJKyWERCxncEA402QzyGZ/mugAk0jdknumHlH4IlboQWGDuVdo31sE7OphdGswcesaAygrAfv003ebhpPd/35l2BWMdMJNaeDChKkBzOqQddAKqZIS48E7HLSALRaW2aAJ/tB1VEn/hHhD5ROV7MZKKksq7FI81Vm2aLHRihaQmW7sfdMnMZzD6L8moS9rmRrzTdNU4L+dbIn6+DQ==
+Received: from BN7PR02MB4148.namprd02.prod.outlook.com (2603:10b6:406:f6::17)
+ by SA1PR02MB8655.namprd02.prod.outlook.com (2603:10b6:806:1fe::6) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.24; Mon, 2 Sep
- 2024 03:32:16 +0000
-Received: from PH7PR11MB8033.namprd11.prod.outlook.com
- ([fe80::22a1:16dd:eea9:330c]) by PH7PR11MB8033.namprd11.prod.outlook.com
- ([fe80::22a1:16dd:eea9:330c%6]) with mapi id 15.20.7918.020; Mon, 2 Sep 2024
- 03:32:15 +0000
-From: <Arun.Ramadoss@microchip.com>
-To: <andrew@lunn.ch>, <olteanv@gmail.com>, <davem@davemloft.net>,
-	<linux@armlinux.org.uk>, <Woojung.Huh@microchip.com>, <f.fainelli@gmail.com>,
-	<kuba@kernel.org>, <vtpieter@gmail.com>, <UNGLinuxDriver@microchip.com>,
-	<edumazet@google.com>, <pabeni@redhat.com>
-CC: <o.rempel@pengutronix.de>, <pieter.van.trappen@cern.ch>,
-	<Tristram.Ha@microchip.com>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH net-next v2 3/3] net: dsa: microchip: replace unclear
- KSZ8830 strings
-Thread-Topic: [PATCH net-next v2 3/3] net: dsa: microchip: replace unclear
- KSZ8830 strings
-Thread-Index: AQHa+ubDwewIOEWJBUyTMdMV3/rdT7JD3EgA
-Date: Mon, 2 Sep 2024 03:32:15 +0000
-Message-ID: <efce22790603dff9cff21eaf39f74b6a4b5d4a97.camel@microchip.com>
-References: <20240830141250.30425-1-vtpieter@gmail.com>
-	 <20240830141250.30425-4-vtpieter@gmail.com>
-In-Reply-To: <20240830141250.30425-4-vtpieter@gmail.com>
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.25; Mon, 2 Sep
+ 2024 03:35:06 +0000
+Received: from BN7PR02MB4148.namprd02.prod.outlook.com
+ ([fe80::1c3a:f677:7a85:4911]) by BN7PR02MB4148.namprd02.prod.outlook.com
+ ([fe80::1c3a:f677:7a85:4911%7]) with mapi id 15.20.7875.019; Mon, 2 Sep 2024
+ 03:35:06 +0000
+From: Michael Kelley <mhklinux@outlook.com>
+To: Yunhong Jiang <yunhong.jiang@linux.intel.com>, "tglx@linutronix.de"
+	<tglx@linutronix.de>, "mingo@redhat.com" <mingo@redhat.com>, "bp@alien8.de"
+	<bp@alien8.de>, "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+	"x86@kernel.org" <x86@kernel.org>, "hpa@zytor.com" <hpa@zytor.com>,
+	"robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
+	<krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
+	"kys@microsoft.com" <kys@microsoft.com>, "haiyangz@microsoft.com"
+	<haiyangz@microsoft.com>, "wei.liu@kernel.org" <wei.liu@kernel.org>,
+	"decui@microsoft.com" <decui@microsoft.com>, "rafael@kernel.org"
+	<rafael@kernel.org>, "lenb@kernel.org" <lenb@kernel.org>,
+	"kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
+	"linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>
+Subject: RE: [PATCH v2 3/9] x86/dt: Support the ACPI multiprocessor wakeup for
+ device tree
+Thread-Topic: [PATCH v2 3/9] x86/dt: Support the ACPI multiprocessor wakeup
+ for device tree
+Thread-Index: AQHa9bOt/5S8CVj1dUyLXfYrtF3O7bJC+pkQ
+Date: Mon, 2 Sep 2024 03:35:06 +0000
+Message-ID:
+ <BN7PR02MB4148C25575F1C98531B6164CD4922@BN7PR02MB4148.namprd02.prod.outlook.com>
+References: <20240823232327.2408869-1-yunhong.jiang@linux.intel.com>
+ <20240823232327.2408869-4-yunhong.jiang@linux.intel.com>
+In-Reply-To: <20240823232327.2408869-4-yunhong.jiang@linux.intel.com>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach:
 X-MS-TNEF-Correlator:
-user-agent: Evolution 3.36.5-0ubuntu1 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=microchip.com;
+x-tmn: [KreIzO4QQLyQiI/7pEINlaASrwcR5VjI]
 x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PH7PR11MB8033:EE_|BN9PR11MB5306:EE_
-x-ms-office365-filtering-correlation-id: 71ff79cc-0573-4bc3-0db3-08dccaffd760
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR11MB8033.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014)(921020)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
+x-ms-traffictypediagnostic: BN7PR02MB4148:EE_|SA1PR02MB8655:EE_
+x-ms-office365-filtering-correlation-id: 70c752f7-e99a-40ee-1531-08dccb003ce1
 x-microsoft-antispam:
- BCL:0;ARA:13230040|366016|1800799024|7416014|376014|921020|38070700018;
+ BCL:0;ARA:14566002|15080799006|8060799006|19110799003|461199028|3412199025|440099028|102099032;
 x-microsoft-antispam-message-info:
- =?utf-8?B?bERodVpvWXl3eXY5M2duRDU3cEROOFdsNUFkenRnYkJzVFpEZnBncVJqKzBm?=
- =?utf-8?B?MlR5VlM2cHREYm81a080RlUwb1BqUlZ2ekxZZUUrUGVjMUN3M1ZyYXRQejE0?=
- =?utf-8?B?U1BBNGZTMldpdndqbDYyNjlWR2E4bi9FUzBibWZVK21NdGJKQ3JQYi9KN3Rq?=
- =?utf-8?B?UmY3K3VIQnZNQWtuR25yZkpjSFZBY29UbG1GdFFjdmZGWmpHMlRKNTFsaW96?=
- =?utf-8?B?NzVtbHhPM2JpTlZjUUZNT1RWQ3pDd3RVa2c4am9LRkFiK1BFelk4VkNxVFRJ?=
- =?utf-8?B?V0p1d2RWdDBpM1l1MXBCd3JVYnlvcnlxTWVVSi9qUE5VckZQTW1wRW4wMDdt?=
- =?utf-8?B?KytUcmlmRHVCNWdZTDVPMEFXWHVoUGF4dXFMN1ROUExFSXdXN2hKZGk0TjAz?=
- =?utf-8?B?Zi9TekYzSUU4cVNqczJnV0NmVnErWmYyZ0dGd2k5NHBmU1FsTVRLN05yR1pU?=
- =?utf-8?B?V1l4QndscWtNY3ZHN2gxOFJUK0xmT3VlVVVLZDF2WWNveW5ERmJjV292bWhV?=
- =?utf-8?B?U0xPdVlrejdGYU1LT09US2NKck1JTElINVlqZURGc1k3cGVMT053VG5zY2Va?=
- =?utf-8?B?T0YyRHBTQVlCU2k0aFRhbWZ4YldNYzF4MUx2UTRvTTZiSldVb0RVUUhEWDBB?=
- =?utf-8?B?cmNqUUFkWXozRzhpaXliTUhYTExVNzJNb2JzeGF5L1dBTWlkb3grRlpyb1I0?=
- =?utf-8?B?VXhqbGRwL0gybEtJKzlPYjU2NHB4MGp4NmhvM05UZ0g5eTdCTW5UVkV4OFJV?=
- =?utf-8?B?a0xQS3NJYm1KQllBbTdaOTdZb3JZRXp4S3dUTExGM0ViMVpwSHBFOXpWbmNQ?=
- =?utf-8?B?U0huMzNITnBESlpLb2xYbXhlYmhnU2ZYL01zVmRiaHg1SnhWUHZKK0xxY0RV?=
- =?utf-8?B?dFczNWtMZ05RTzJyL1N6YXdpU1U3S21XenBkRlI1eWhJWVlDYXlmbUdKei9X?=
- =?utf-8?B?K3o1VytCQjlxaS96cHJtSWI1d3NidEJzVmpTR2o3aUdSb3NGL25hREJvMTEz?=
- =?utf-8?B?N3RVRi9pRExtZFJNSWpWU2s4QmlaYTFnZ21BTlBzeU1abjMrSlB0OWVoQ2d4?=
- =?utf-8?B?cnhpT1Naa0xWMHVLc2tWeW4rZEw5Y253REI3ZVNyMWRUbGNmU2pXMnQyeVAx?=
- =?utf-8?B?V1ZCWXM0MjhoS1Z6L0pVekxaRmp0a3lGNUtFQTgxZzVlVjVVZGNsd0ZOaEJt?=
- =?utf-8?B?aW1qWXpRKzBsODhjRlJzWGNwcmVWa3p6TTNqS01MTEJrVkFhVTFRaTlNWVJJ?=
- =?utf-8?B?VVllVks1WnluR2l6SUs3cG4vNzRGcDBiaTd3YXFGZkQ4OVBUTDhjdmJHdW9w?=
- =?utf-8?B?bXVhdWRjWlNHYkRaVzA3VFIwa25ZTzBHamNyWG0rRlg0WXZXckkxbGo1S0pF?=
- =?utf-8?B?WmhZcDNqMlRKZzBwaE9pMjNJcTk2WFliQ1RvWm12VjE5VmVwSXRzQm84clo3?=
- =?utf-8?B?VkIwSlFnQW1ZSm1RVG9veE9tcWdzK21sNlVJbFZUeWJpTnpuRXRvdFczcmlo?=
- =?utf-8?B?bjQrM2ZZYXpnU0licmRLb0NYZ090ZE9Lay95Rmd2K1BWaDdCK2VKYjlLQ2tN?=
- =?utf-8?B?REl4U3ZaQ25ZalFkMWN0V2h4cW1uUUV1Ry9ZclhxbHI2cmtQRTZrMC8vajJj?=
- =?utf-8?B?SmlBdjlEb1cxSzE5dGFDZHhJUnVBaFlXYUUzMUphMzdKeFAwaDNoalBJTHJE?=
- =?utf-8?B?UThKV0lZRWhqaHovb1ZhSmQ4ZXpyeFIyMEhaS254TFJJcm10Z200RmZlc2hz?=
- =?utf-8?B?elA2cXV5TjVCRE5NNmF3elpid2tUeUJDYk1vVExiaEhYRkN4THFvN0VvTy92?=
- =?utf-8?B?Yk1nR1J1dHk5TFpoZzg5aFdHV0tqNGxnNEVuN1dMRkZPRloreW1XVWxFeGJ5?=
- =?utf-8?B?WVdGeSt2UVBISXllTjJlOEtBeHFqZHE4YW5TZHljUmQwQnhoNjl5TnVaYUxY?=
- =?utf-8?Q?79rtiTQnVKs=3D?=
+ mIeZyrnxXKUX1ByVGcnpMiuyuxpuFrkDLIhOtmrHLb+Td37ZcBEWMn7UCRjuwk3Mt6DmwQiFT/1wqyz8YTsaL7PV8Auwiwva9Y0Mr2A+z3awntbGbe2vYhUsha7SbfO8E22YX7a/FjB+ngSwvf/V7lO/DOmuvrX9MNTN1PhR92HHhtcqCx85r4GJCPM01mg8Vo7Dy9zjLc58ZrvCX89/75gDp0P9BofV2Ugxj/zhB7gWnVmROsSftnASOzLuKvD0DVyttaBO5c74YozWr+sMGRG8IN8NTsKMPem8M3abPDnSFQtc51Kp7S3YPn5eDqTTmyhie3LnwmbVb/FhuyvTZjHFMGW5PrKDARGIIhdBcw9u/asNygosLdryv+eAld67lomswHhr33+pDuoI5hLZB5rhAchIOcQQ6ncIXBCmUb2lbmULUQ+E82k6CvmMgjcGQEJbT/JPOEWHw36jf6Pd4ZEXND8ajzh4ypXnUR/PatDEmwS1wVjFbywHX0aIo5hpST8KfxUJtyh4qQZEJFI6I7lID3EDXteFfpUBjk1HLV1ywwBQqpZvUUkyGc3eGhNsjvojB/Q4esgJkcP+k8JrpACjzrTmJ6P3Eb0GC10DwbtfwLxf0hrNduytStOdKLM7yJsKW3gWxLoatElZDm+zNwiCcMEkT+/c4dD0A9c7eZWZSMvsqly0OIFa7AUcc+6m
 x-ms-exchange-antispam-messagedata-chunkcount: 1
 x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?dU5DSFp0VlJSRU8zd0gyajA0azJKRWhJR1FqeUFma056OFpkZXh6MFBaRUpw?=
- =?utf-8?B?WGsxUWhrV0FpdkxEL0oveW14TkgwYmJ4bkw5UUVKdlJKZ0lYRnhod2RHZzBL?=
- =?utf-8?B?UEgxN0l5cG5hMzVCWTZRQnhqcVo1cGVxeXhhKzJMTFRCclhOdTVleWxnNDBD?=
- =?utf-8?B?MzVWZ3MrSjV4VEhwb1gvdXpSMnRHam8zZzY3WFVXdHkzTy9aNkgrZ1IzL3ZT?=
- =?utf-8?B?YmY3cHQ4ZjRucFlzV3p4Q01wOUloUmh6enU5ejJOUkxTeDQyMllobWdXWVRX?=
- =?utf-8?B?OFpvbDB3c1dvY1Q2OU1wTWtlbzlnd2VDVDdONUFkVzY5bUY5eFJBS2V4dmhi?=
- =?utf-8?B?YWorVVFET1BRZ2RiSDhHVUNFODhsbVowR21jYkQ0T1dZVTNmS20xc1JKUGNa?=
- =?utf-8?B?dE1CSTZEWSs3TGNwZEU3NUVybmZOQlVsY2MwakhMYkxZaHpBVjFUUkQ1SENK?=
- =?utf-8?B?OWRyQ0NEa1pEdlBTQkswRm8rZlptU0hTVWxnZXltZTdQRFpFZlh5NFVMTWV2?=
- =?utf-8?B?WWJVNHdrTTBUWXdmd3NYdEpxb2N2MU1zRUVHelVJQklEbXFPMlFSNGs5SnNY?=
- =?utf-8?B?bm5mMEgyZEVFQ1N5VW1nalppRlkvdm84aFBQc3RoNXgwWmx0RFJ4STR6cUs5?=
- =?utf-8?B?OEswYjdTcnZiMmZOUEFNM2l1YWxaWi9YblZhRmRDMU9iZ3RidGlaM3c5a3Uw?=
- =?utf-8?B?UFhZeHJmdEdFbzNZT2s0dFk0M3k0Q3ErMWk5SWdYVjR3bGNBSFk5UmVKcHE0?=
- =?utf-8?B?ODErYVBBWE1YbDVJMnlranFEMW9BYW03Rkx1cytPTnFLMzhzOEFYUndOV1NP?=
- =?utf-8?B?SkVMZ1hmR2E3Z2YxQVJ4RHFoREFzVjI5QTMzN1E3NkR4SnNyLzdsTHY0dUg3?=
- =?utf-8?B?c0lGb2Rkb3V5a3JVS0pPdkp5ZjZheDYwbEhHY3h1VkxhMjdlWDNraitET1NJ?=
- =?utf-8?B?WDVkQVAwWkxBYm5EdDFFeGtpdUFUbDIyVWdLczVabkphN203UG9nSUIwbm41?=
- =?utf-8?B?NFRxS2hHN0xxRjBTYmlyc3ptNGZTSWJWN2MzeXdSUGMrVytGd2Y0SXB6ZnBT?=
- =?utf-8?B?WmdCS0ltQUZPOGZCT1AxR0pKQW04bFFOSFNha3Q1ZHczRHpTMWtIVE4rVDZJ?=
- =?utf-8?B?eHVFZU1qV2Q4WHNmd1RtVVJUV0Rwd0IvcG90eGZ4TFNQcytFZ1lwREVSaEYz?=
- =?utf-8?B?VXFnK1p5eW55bFZrSVZrOHN2UGl4a3dRUDRhSnBOOVRQTjNnWkR5eUUwVGdv?=
- =?utf-8?B?MkpKWUFPcWRKWFVjZ2QyM2p4Ry9hdW10TlhwMk4zdVpvdzNRWnlUL3JUZVJz?=
- =?utf-8?B?MGhMaSt0MVRxcFdjWSswT29RRlhtUENZdHlvWWg3bFlyMGFUcEV4aGhtMWVV?=
- =?utf-8?B?QzNQMDZ2aUwzNmE4b2ZjemdrWkV4aUgvc0JFUjArcnEwYmEyd2xEdmxLMFNQ?=
- =?utf-8?B?Y1NRVGNSTSszUmpDckdia0VlZjZybGVoTmRXK1I4a0kwWTdEcnozeTFqK1l2?=
- =?utf-8?B?QnNzbzkrZlVPcHJXRitUWDhGdWZib3pWTjNIS0JBVzRmbzdPVVp4VXo0SFY1?=
- =?utf-8?B?V3lTbkpoREZ4bDduYWV6T0N2UUlXZVlBZ1pWcVljOU02YmQyUWF5SWkrWmE4?=
- =?utf-8?B?RmFYSXVMQXRQNzR0M0RPZFQvejVQTk9CaVhSdnJBUGN6ZFlkTW9ua0xPREpp?=
- =?utf-8?B?ZlJqQVp4d2JZVFFzZS9QanJ4bnlDTzR0VGVnbVo1V1A2KzVOVlRuSlFIUlNm?=
- =?utf-8?B?S2tMQ1JwQlVWQVY2UXZqVFFST09GamJvb0E0eFVwVUdiVS9zazRYWXhQMWhr?=
- =?utf-8?B?WEtrbjNUejFZU200aVRaYjRUYVprcjh2eFhoNzEraHJBR3ZJazBKODI2L2Rk?=
- =?utf-8?B?NmpYYWRzSE9nM3YxNWJCZHpMY0NGN3c3U29vbmMyRFRhd2RLMkprbGVTRGtp?=
- =?utf-8?B?cWVhbUF6SkdKclJpWWhZTUdaUTV1ODNvODZieHpDNlhQckRMZU9uemp1dVpJ?=
- =?utf-8?B?WVNTWllxOWdSV2E0cmpDa3VHeHRCTS9SdzdTQVhPRWYyQkZtMWdiZXUrQTJj?=
- =?utf-8?B?NzlncWhqQlJ1bEFiL2NwamRVcS83cm5jWmZrd1kzSnFIWGhLN2dVWVZVSk5r?=
- =?utf-8?B?YlBsOEFWTlhudmc1QkppNVJuZzhhUFdrMUpEYUFHWm9HQmN0blFwa3l3MThK?=
- =?utf-8?B?Y1E9PQ==?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <43B65368ADF71448A27A818DBA68DF47@namprd11.prod.outlook.com>
-Content-Transfer-Encoding: base64
+ =?us-ascii?Q?fJ0L8IUIeKOP1E6QXROgUxqM57qWezxYbGJDAo6Wd/tOSzp30ZOs81oCqSmE?=
+ =?us-ascii?Q?CWd6zLzwtslAavtSbYN3lprcr+dv8Eh0HmQ+6jPm/V8wJ1cgxP9D6TORG4Z6?=
+ =?us-ascii?Q?WcxW6JSWkNMk/LB1zWVhrXcMWMseM6/tTa4Em6IG9KW7onmHVWv3L38Pjd3j?=
+ =?us-ascii?Q?Kb4KeFNl76d4F/syxqdT+/MtC4sAKB0EO2S9lXniorMWUCd60oUtjvkoNRn1?=
+ =?us-ascii?Q?b1N4V3wRcjKpiKLrnfB4zGnN6YEjMoP6mHvpPToVuiMK54Sfnd2huDArQ25m?=
+ =?us-ascii?Q?JEj5jdKPbX2/A8zGHnjasuLa4cK4eHsfejS5uxRLbKNyFqgleUWLaggaQDHN?=
+ =?us-ascii?Q?neJ2S08uOz6Ob5r7PMnknOifOO3uzFhWc1h+FFop4qtQMlf/NuqpI+VJfSrP?=
+ =?us-ascii?Q?hGo+711wa4tBd5xawF7KUz5jYe6eB0RrRqL0g0sqt+bPrym/Z90mVRuJGM0Y?=
+ =?us-ascii?Q?mUvS+owOsDKNKkKjlZxNdFWTd2bfs7w32qHWKVUyNqmsJGJOmnQuaRNpYBVu?=
+ =?us-ascii?Q?mOoPl5E7DFqXHXEioUps1nlRnpjnRWK8bhYceZytygphuI9yHhUYdT0/3gMa?=
+ =?us-ascii?Q?UdxWDdp9HITaUB/SPbBcIG2obRr5lMaQ6sw1NCdG9JyKr01zjHVpqra6TVa5?=
+ =?us-ascii?Q?RVvP36q0xHbery06EO28fRVDPm3m4J0+Sm4gjKNEd5IiPxB009w9q/bCY3tU?=
+ =?us-ascii?Q?YW4gc5YFiUKmW3v/l4lHavggSG5A565So9GNvOyfRM/GHDy+18sOg+sHa1lO?=
+ =?us-ascii?Q?eri8Z22T6m6izRp23MNAYhs4l7NOofUrRnNcdEtilIOFYczqg78Sg+wQaFsV?=
+ =?us-ascii?Q?gAXhoMgxKeIsT+93vzvvVQYHTJI/4kuTLPgumiYlMObleYF0VSZhO41xjCBU?=
+ =?us-ascii?Q?JJ3iEer9Kvg6FUmKPINAkFv2S/mhnJDigqqfKr9seURbZi3B/s9SWdfULFvX?=
+ =?us-ascii?Q?1QbG0rFOvJLRseBeA8HMhqiVAt2uhJ1Gm+Whxw/Z1XHX4woA/bCZxyQ4UZ9o?=
+ =?us-ascii?Q?LbPsZoNgRhBkp0tec3XnjeLxXQgE+hhcJaqxd9W0uVAtyOBnIeFdXihCC/Mx?=
+ =?us-ascii?Q?twqF4BQRZU2NC6FGpfj/TyXEd5vu3X8EqYjjnxdBGbfjCwzOWeyidtKboQPr?=
+ =?us-ascii?Q?A3GJg3IMpyXth1p984HJzuQX4GJNAhbSy1/Qs1Hqu8bx9dFjKX5RHxCQ/SiX?=
+ =?us-ascii?Q?KAjFVmx0CWTuW716OqMkhpAVy+g8K9IcjcbdazWw42wG1OdLceX107tw4MQ?=
+ =?us-ascii?Q?=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: microchip.com
+X-OriginatorOrg: outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PH7PR11MB8033.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 71ff79cc-0573-4bc3-0db3-08dccaffd760
-X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Sep 2024 03:32:15.8126
+X-MS-Exchange-CrossTenant-AuthSource: BN7PR02MB4148.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-Network-Message-Id: 70c752f7-e99a-40ee-1531-08dccb003ce1
+X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Sep 2024 03:35:06.1325
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: MvyokWIgQAdYjPJr1vFczePdSZyAPoxDli+PlGh9RKjPzWVZzZsRv9n210ahYetiy0iLxBxx16SR/ORPHgrXdzUSj/yLwCei83JCAes6dJI=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN9PR11MB5306
+X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR02MB8655
 
-SGkgUGlldGVyLCANCg0KT24gRnJpLCAyMDI0LTA4LTMwIGF0IDE2OjEyICswMjAwLCB2dHBpZXRl
-ckBnbWFpbC5jb20gd3JvdGU6DQo+IEVYVEVSTkFMIEVNQUlMOiBEbyBub3QgY2xpY2sgbGlua3Mg
-b3Igb3BlbiBhdHRhY2htZW50cyB1bmxlc3MgeW91DQo+IGtub3cgdGhlIGNvbnRlbnQgaXMgc2Fm
-ZQ0KPiANCj4gRnJvbTogUGlldGVyIFZhbiBUcmFwcGVuIDxwaWV0ZXIudmFuLnRyYXBwZW5AY2Vy
-bi5jaD4NCj4gDQo+IFJlcGxhY2UgdXBwZXJjYXNlIEtTWjg4MzAgd2l0aCBLU1o4ODYzIA0KDQpT
-aW5jZSBLU1o4ODYzLzczIHNoYXJpbmcgc2FtZSBjaGlwIGlkLCByZXBsYWNpbmcgS1NaODgzMCB3
-aXRoIEtTWjg4NjMNCmlzIHNvbWV3aGF0IGNvbmZ1c2luZy4gQ2FuIHlvdSBlbGFib3JhdGUgaGVy
-ZS4gSSBiZWxpZXZlLCBpdCBzaG91bGQNCktTWjg4WDNfQ0hJUF9JRC4gIA0KDQo=
+From: Yunhong Jiang <yunhong.jiang@linux.intel.com> Sent: Friday, August 23=
+, 2024 4:23 PM
+>=20
+> When a TDX guest boots with the device tree instead of ACPI, it can
+> reuse the ACPI multiprocessor wakeup mechanism to wake up application
+> processors(AP), without introducing a new mechanism from scrach.
+>=20
+> In the ACPI spec, two structures are defined to wake up the APs: the
+> multiprocessor wakeup structure and the multiprocessor wakeup mailbox
+> structure. The multiprocessor wakeup structure is passed to OS through a
+> Multiple APIC Description Table(MADT), one field specifying the physical
+> address of the multiprocessor wakeup mailbox structure. The OS sends
+> a message to firmware through the multiprocessor wakeup mailbox
+> structure, to bring up the APs.
+>=20
+> In device tree environment, the multiprocessor wakeup structure is not
+> used, to reduce the dependency on the generic ACPI table. The
+> information defined in this structure is defined in the properties of
+> cpus node in the device tree. The "wakeup-mailbox-addr" property
+> specifies the physical address of the multiprocessor wakeup mailbox
+> structure. The OS will follow the ACPI spec to send the message to the
+> firmware to bring up the APs.
+>=20
+> Signed-off-by: Yunhong Jiang <yunhong.jiang@linux.intel.com>
+> ---
+>  MAINTAINERS                        |  1 +
+>  arch/x86/Kconfig                   |  2 +-
+>  arch/x86/include/asm/acpi.h        |  1 -
+>  arch/x86/include/asm/madt_wakeup.h | 16 +++++++++++++
+>  arch/x86/kernel/madt_wakeup.c      | 38 ++++++++++++++++++++++++++++++
+>  5 files changed, 56 insertions(+), 2 deletions(-)
+>  create mode 100644 arch/x86/include/asm/madt_wakeup.h
+>=20
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 5555a3bbac5f..900de6501eba 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -288,6 +288,7 @@ T:	git
+> git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm
+>  F:	Documentation/ABI/testing/configfs-acpi
+>  F:	Documentation/ABI/testing/sysfs-bus-acpi
+>  F:	Documentation/firmware-guide/acpi/
+> +F:	arch/x86/include/asm/madt_wakeup.h
+>  F:	arch/x86/kernel/acpi/
+>  F:	arch/x86/kernel/madt_playdead.S
+>  F:	arch/x86/kernel/madt_wakeup.c
+> diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+> index d422247b2882..dba46dd30049 100644
+> --- a/arch/x86/Kconfig
+> +++ b/arch/x86/Kconfig
+> @@ -1123,7 +1123,7 @@ config X86_LOCAL_APIC
+>  config ACPI_MADT_WAKEUP
+>  	def_bool y
+>  	depends on X86_64
+> -	depends on ACPI
+> +	depends on ACPI || OF
+>  	depends on SMP
+>  	depends on X86_LOCAL_APIC
+>=20
+> diff --git a/arch/x86/include/asm/acpi.h b/arch/x86/include/asm/acpi.h
+> index 21bc53f5ed0c..0e082303ca26 100644
+> --- a/arch/x86/include/asm/acpi.h
+> +++ b/arch/x86/include/asm/acpi.h
+> @@ -83,7 +83,6 @@ union acpi_subtable_headers;
+>  int __init acpi_parse_mp_wake(union acpi_subtable_headers *header,
+>  			      const unsigned long end);
+>=20
+> -void asm_acpi_mp_play_dead(u64 reset_vector, u64 pgd_pa);
+>=20
+>  /*
+>   * Check if the CPU can handle C2 and deeper
+> diff --git a/arch/x86/include/asm/madt_wakeup.h
+> b/arch/x86/include/asm/madt_wakeup.h
+> new file mode 100644
+> index 000000000000..a8cd50af581a
+> --- /dev/null
+> +++ b/arch/x86/include/asm/madt_wakeup.h
+> @@ -0,0 +1,16 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +#ifndef __ASM_X86_MADT_WAKEUP_H
+> +#define __ASM_X86_MADT_WAKEUP_H
+> +
+> +void asm_acpi_mp_play_dead(u64 reset_vector, u64 pgd_pa);
+> +
+> +#if defined(CONFIG_OF) && defined(CONFIG_ACPI_MADT_WAKEUP)
+> +u64 dtb_parse_mp_wake(void);
+> +#else
+> +static inline u64 dtb_parse_mp_wake(void)
+> +{
+> +	return 0;
+> +}
+> +#endif
+> +
+> +#endif /* __ASM_X86_MADT_WAKEUP_H */
+> diff --git a/arch/x86/kernel/madt_wakeup.c b/arch/x86/kernel/madt_wakeup.=
+c
+> index d5ef6215583b..7257e7484569 100644
+> --- a/arch/x86/kernel/madt_wakeup.c
+> +++ b/arch/x86/kernel/madt_wakeup.c
+> @@ -14,6 +14,8 @@
+>  #include <asm/nmi.h>
+>  #include <asm/processor.h>
+>  #include <asm/reboot.h>
+> +#include <asm/madt_wakeup.h>
+> +#include <asm/prom.h>
+>=20
+>  /* Physical address of the Multiprocessor Wakeup Structure mailbox */
+>  static u64 acpi_mp_wake_mailbox_paddr __ro_after_init;
+> @@ -122,6 +124,7 @@ static int __init init_transition_pgtable(pgd_t *pgd)
+>  	return 0;
+>  }
+>=20
+> +#ifdef CONFIG_ACPI
+>  static int __init acpi_mp_setup_reset(u64 reset_vector)
+>  {
+>  	struct x86_mapping_info info =3D {
+> @@ -168,6 +171,7 @@ static int __init acpi_mp_setup_reset(u64 reset_vecto=
+r)
+>=20
+>  	return 0;
+>  }
+> +#endif
+
+When acpi_mp_setup_reset() is #ifdef'ed out because of CONFIG_ACPI
+not being set, doesn't this generate compile warnings about
+init_transition_pgtable(), alloc_pgt_page(), free_pgt_page(), etc. being
+unused?
+
+It appears that the only code in madt_wakeup.c that is shared between
+the ACPI and OF cases is acpi_wakeup_cpu()? Is that correct?=20
+
+>=20
+>  static int acpi_wakeup_cpu(u32 apicid, unsigned long start_ip)
+>  {
+> @@ -226,6 +230,7 @@ static int acpi_wakeup_cpu(u32 apicid, unsigned long =
+start_ip)
+>  	return 0;
+>  }
+>=20
+> +#ifdef CONFIG_ACPI
+>  static void acpi_mp_disable_offlining(struct acpi_madt_multiproc_wakeup =
+*mp_wake)
+>  {
+>  	cpu_hotplug_disable_offlining();
+> @@ -290,3 +295,36 @@ int __init acpi_parse_mp_wake(union acpi_subtable_he=
+aders *header,
+>=20
+>  	return 0;
+>  }
+> +#endif /* CONFIG_ACPI */
+> +
+> +#ifdef CONFIG_OF
+> +u64 __init dtb_parse_mp_wake(void)
+> +{
+> +	struct device_node *node;
+> +	u64 mailaddr =3D 0;
+> +
+> +	node =3D of_find_node_by_path("/cpus");
+> +	if (!node)
+> +		return 0;
+> +
+> +	if (of_property_match_string(node, "enable-method", "acpi-wakeup-mailbo=
+x") < 0) {
+> +		pr_err("No acpi wakeup mailbox enable-method\n");
+> +		goto done;
+
+Patch 4 of this series unconditionally calls dtb_parse_mp_wake(),
+so it will be called in normal VMs, as a well as SEV-SNP and TDX
+kernels built for VTL 2 (assuming CONFIG_OF is set). Normal VMs
+presumably won't be using DT and won't have the "/cpus" node,
+so this function will silently do nothing, which is fine. But do you
+expect the DT "/cpus" node to be present in an SEV-SNP VTL 2
+environment? If so, this function will either output some spurious
+error messages, or SEV-SNP will use the ACPI wakeup mailbox
+method, which is probably not what you want.
+
+Michael
+
+> +	}
+> +
+> +	if (of_property_read_u64(node, "wakeup-mailbox-addr", &mailaddr)) {
+> +		pr_err("Invalid wakeup mailbox addr\n");
+> +		goto done;
+> +	}
+> +	acpi_mp_wake_mailbox_paddr =3D mailaddr;
+> +	pr_info("dt wakeup-mailbox: addr 0x%llx\n", mailaddr);
+> +
+> +	/* No support for the MADT reset vector yet */
+> +	cpu_hotplug_disable_offlining();
+> +	apic_update_callback(wakeup_secondary_cpu_64, acpi_wakeup_cpu);
+> +
+> +done:
+> +	of_node_put(node);
+> +	return mailaddr;
+> +}
+> +#endif /* CONFIG_OF */
+> --
+> 2.25.1
+>=20
+
 
