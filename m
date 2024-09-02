@@ -1,73 +1,55 @@
-Return-Path: <linux-kernel+bounces-310889-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310891-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BAD25968287
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 10:56:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 513E296828B
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 10:57:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 61AC71F22F9C
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 08:56:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EF7C31F2329A
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 08:57:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BC02186E57;
-	Mon,  2 Sep 2024 08:56:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D778187356;
+	Mon,  2 Sep 2024 08:57:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ZbNtTXub"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Lwqhrfbt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C303C170A24;
-	Mon,  2 Sep 2024 08:56:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02F17186E29;
+	Mon,  2 Sep 2024 08:57:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725267405; cv=none; b=ls+GXNNG5uJfGL8tUd6OP8XLM/QL+NBGtXknHmDqFkegxbRMzDmLQVNmu4VHioYXcZltAfetryAyyHNQl8rGmkCbGyWSirAu+0iZdJ5eEl8B+DktZ2hoV9O0kcKuoYtaxMfkTXwVWlo+kpsuFj/6KeXrn6TGrGGO9pABYGxh4Ww=
+	t=1725267422; cv=none; b=b8PvJ79iyf/TiaE3X3QeDSyfjrUvqOUvci/78r/t7YqYG5jUhWLNGlC2H4mWwqIxjZnXzOtr/JzxgK0D7kCNEk16CAohmDxoD81KefZglwr9FgPYXriYBQ2yz5/aA0f7QCewgxYxtMV/uP/7D5wOCIkjDotI03fAe4jic5hoPFQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725267405; c=relaxed/simple;
-	bh=SQDP6013XDHbO/QnpiFMa3A2WFshi81GsTsmbu8keUU=;
+	s=arc-20240116; t=1725267422; c=relaxed/simple;
+	bh=NBrqVYyIOngsPMawBZmknoPAorbszVTUH1n0VupmjMg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gDNFhYbdGrirUxFX+YG5EgGbARieXSVu85lGXhw0rlQp0Lw36V6oaT6u71qLNCmKBrh3PyQZH7ONVh0iFYynNq9ZHBVBRej/2dGkt+FnXKBtalptHYU5dww4n2UmlhlHxoVvpK8TtSqMVVMkn5mj/upkP0d41RCd6+zfHvw66Qw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ZbNtTXub; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=9b/IjZ39V9cdoHavHl8NTPM0sJye50Q3ug0+s/XOyYc=; b=ZbNtTXubQ22MdeL3IYB2EXdHAu
-	NtNuA7KCl1znuVtizZ6mLhR27QWdigT3QV+CYqqkZyvdWzmwSEBMdr7a1cxpPr3kdfysmhYlLRxpW
-	9PJwvdKgPloyrzPeF7l8+1CYHG7pSpbcFJUskawdTAwNV1Q01NqwRAVJn9WL3Dx41W3EEgBepA4No
-	yN6J45R6uFB+Sbx9UnVC3l7P6UK6dxHMpSvxR1SllvTnkuHChy02QUAiyFtYQpByrWvyqRYonb814
-	QmPHdLZWMYc3AwfQOYaQpbqu1NA03pHfm/w43OkWeaqVG/SH9LmjVAdZ5YH6HcPQRN8Cv2okQ+1v6
-	RYCgE38Q==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sl2rN-0000000C7P7-0Euu;
-	Mon, 02 Sep 2024 08:56:29 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 4E27A300642; Mon,  2 Sep 2024 10:56:28 +0200 (CEST)
-Date: Mon, 2 Sep 2024 10:56:28 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Kan Liang <kan.liang@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-	linux-perf-users@vger.kernel.org,
-	Ravi Bangoria <ravi.bangoria@amd.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	James Clark <james.clark@arm.com>,
-	Athira Rajeev <atrajeev@linux.vnet.ibm.com>,
-	Kajol Jain <kjain@linux.ibm.com>,
-	Thomas Richter <tmricht@linux.ibm.com>,
-	Atish Patra <atishp@atishpatra.org>,
-	Palmer Dabbelt <palmer@rivosinc.com>,
-	Mingwei Zhang <mizhang@google.com>
-Subject: Re: [RFC/PATCH 0/4] perf tools: Do not set attr.exclude_guest by
- default (v1)
-Message-ID: <20240902085628.GA4723@noisy.programming.kicks-ass.net>
-References: <20240902014621.2002343-1-namhyung@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=W8lpTHqseF/e+Kx6vHq+baMyp14VQp+Uc+6PzuvWhW4OJ5V/A/bGxalaANnfE59hPR85KwTq/7x3ebqhxZ0509TZRQ9ETCY8cQOtgVgWQyFIwc/1Sd6BZQDMAjmhOCrfm3hbbiLAS9PUakMi7+2OxNhXUnkqye+6J99HL0b9T6E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Lwqhrfbt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 80FB2C4CEC8;
+	Mon,  2 Sep 2024 08:56:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725267421;
+	bh=NBrqVYyIOngsPMawBZmknoPAorbszVTUH1n0VupmjMg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=LwqhrfbtCs2cSbf6Pcp64+4zcmntyPN6qUIbfyxxTVjP/UvhJ3mnB06+X30RoLLXO
+	 sf+Ls+xnfP9iwMgqHlDjAntNdg8dBmZDI3DGQX2KopIUsPFyT4wEYot64hevIfZGvI
+	 d6AG/YnaIALJ3Gam9egnBRe1UXrHud9VodJEVjCaPLWH+8lxZiXgpN1pEHhwnjvZWM
+	 7BgM4/yBM7+UFBaEE3nAhkWbK9fO4W8e7rlYtGpI6gZfF8ZcgDQxTO79tVD1sUeOVH
+	 cTnHw1ibp9l0O+DtB4KB8H5x/c1izvK2JCz8tKlyrSURD+qRb3Vsm4NG5VBoTpde+e
+	 SVUFJUDubgmDg==
+Date: Mon, 2 Sep 2024 09:56:57 +0100
+From: Simon Horman <horms@kernel.org>
+To: Yuesong Li <liyuesong@vivo.com>
+Cc: elder@kernel.org, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, lihongbo22@huawei.com,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	opensource.kernel@vivo.com
+Subject: Re: [PATCH net-next v2] net: ipa: make use of dev_err_cast_probe()
+Message-ID: <20240902085657.GE23170@kernel.org>
+References: <20240829030739.1899011-1-liyuesong@vivo.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,23 +58,30 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240902014621.2002343-1-namhyung@kernel.org>
+In-Reply-To: <20240829030739.1899011-1-liyuesong@vivo.com>
 
-On Sun, Sep 01, 2024 at 06:46:17PM -0700, Namhyung Kim wrote:
-> Hello,
+On Thu, Aug 29, 2024 at 11:07:39AM +0800, Yuesong Li wrote:
+> Using dev_err_cast_probe() to simplify the code.
 > 
-> I found perf tools set exclude_guest bit inconsistently.  It used to
-> set the bit but now the default event for perf record doesn't.  So I'm
-> wondering why we want the bit in the first place.
-> 
-> Actually it's not good for PMUs don't support any exclusion like AMD
-> IBS because it disables new features after the exclude_guest due to
-> the missing feature detection logic.
-> 
-> AFAIK it doesn't matter for the most cases but perf kvm.  If users
-> need to set the bit, they can still use :H modifier.  Please let me
-> know if it's ok for you.
+> Signed-off-by: Yuesong Li <liyuesong@vivo.com>
+> Signed-off-by: Hongbo Li <lihongbo22@huawei.com>
+> ---
+> v2: https://lore.kernel.org/all/20240828160728.GR1368797@kernel.org/
+>   - fix patch name
+>   - drop the {} and fix the alignment
 
-IIRc the point of setting exclude_guest by default was so that default
-perf keeps working in the precense of that PMU pass through mess, no?
+Thanks for hte updates.
+
+I note that this code is in a probe function,
+so this patch is an appropriate use of dev_err_cast_probe() [1].
+
+I also see that it addresses the feedback on code style from v1.
+
+Reviewed-by: Simon Horman <horms@kernel.org>
+
+
+[1] [PATCH] net: alacritech: Partially revert "net: alacritech: Switch to use dev_err_probe()"
+    https://lore.kernel.org/netdev/20240830170014.15389-1-krzysztof.kozlowski@linaro.org/
+
+...
 
