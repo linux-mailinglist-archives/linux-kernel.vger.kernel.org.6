@@ -1,131 +1,164 @@
-Return-Path: <linux-kernel+bounces-311212-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311213-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D331E96861F
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 13:23:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FF6796862A
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 13:25:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0041F1C229DF
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 11:23:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 81AA61C22A23
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 11:25:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B13C184559;
-	Mon,  2 Sep 2024 11:23:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24CE7185939;
+	Mon,  2 Sep 2024 11:25:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Hdn7015D"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="HysFPBmK"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFFEB186E20
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 11:23:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3373E13B2A8;
+	Mon,  2 Sep 2024 11:24:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725276199; cv=none; b=nVQNJXd9mwSExZ3QNLhvxIkZrUZZ9JBWTYg80et77gqbIfzNJuW5GT2s53GkCzgVZ6hHanUGanS3bKSw7xhyhOBdzvxrmtle73URJCwfK83uDtcwBXX9FeCyEelnDKvNLRZvc+JCto83zgbJ8J8wpDmp6TpMa7Rk00ApjOrEe98=
+	t=1725276302; cv=none; b=iVc6/7nGbjI9dBDqyTneu8PCT1cH7bxaj1HlxZa+o8j3AOIrWL5sLKVm65VrR3Ek1S7arSoEaSef5jRMgHPW+mkHvEwriDx1MEC55+EMwYvs+XH9iRwRev93aMw63YPvZ1M2fliGDMA9eHNSk4XNqGQwGbjcg/98zCUAOVfc5+Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725276199; c=relaxed/simple;
-	bh=FpetsQ5I1CDSi8wtSlI1e+AMgn3cH3BIUkkDyXHtNqg=;
+	s=arc-20240116; t=1725276302; c=relaxed/simple;
+	bh=43N3eERPpZSiAWFa7ZHGO+ZY8fm7EsglftDcQeTsfzY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Nx+g5krPGjkrsjjPxpt0/MWhPHQoxVRsMGUdIO7dUCSslSPDJ8McP6hy437bs3j8K8bqQWddTHNBtchUWIZlWqZ8WWnzAllWPB4fZkxCCONt6+oXjhPIX9NtLBUxN9sZBnhGkW3ZSWf4BEOQzH+Z+TAavRVhXApo8zXX7qAMLxs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Hdn7015D; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-42bbe908380so22911655e9.2
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2024 04:23:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1725276196; x=1725880996; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=QEt0+dc1LSyQIyl13xdTGJyLQn3oDUp5kW96ysZGY3w=;
-        b=Hdn7015D56Nf+JeGukbWYVq5bUoemRNSQ5CMziew+iaNawQJ3koZw1RnfvVtzw2Lav
-         k+R4rz278AYM6tP7jMQui6ldRa6WK529CskU9tyzxbD5h5Wvfx/2wIvL/sa98LyetwOE
-         fphxUzD+1ZrZJOgvYvbY+fRShB/K9IPNfvKmpXCfge4XONHOT1ar8Zp4xTP1IO+RjB3h
-         XbcAH/9irEo46/Mz9EH69o0rtqcnmv9jyOP9VnzowLbIeqTm96L6yV7G22f28Cep7Z5t
-         UUck9bkPaNN5KTOD/AcrLgIHhU3LdJIsOCucquc0Vp08dV+ttbCL1eEuT84Y3D9nLiZe
-         T83w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725276196; x=1725880996;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QEt0+dc1LSyQIyl13xdTGJyLQn3oDUp5kW96ysZGY3w=;
-        b=MX4vzCoLqP1t9X6pHh+l9pZJ6dTRwhTNhKKMSpQaqCsXxDdAB1wHog0t862rJyEFdf
-         2V1KrlrGCIOQEKqs06He1Vc0pmH9Zm9yhFTGM5WSGhF4vt9UBPhMt29VYcTpXI4EYwMj
-         gv3axME7EtKjlrQJ5p72LL5zIAgwWW6BHj0JlPLglZ9HYe+wnQYux9qlMaJRmxUxr9yB
-         RyIG43EAMg47Rp5CtpZvVfe3dQsaQYk4SfDpIUHiFXKYDRtwUDJlhbTXyITXAG0Q9pt9
-         Q8u/lSOEG2SLnJjYhr4HwP5IO+hhS9QC0oRLEjWMyka6MzChSuX5F8e5bsO4eiXAmXqo
-         w1oA==
-X-Forwarded-Encrypted: i=1; AJvYcCU4FQsVhM/exPt89Zhe+7+gIW8RyOILB2EyRD3aNr9UP5oSy15aCdz3PVATNF89ZANv3h0ekKU+jNIas2Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwpbSajuUeAOBv0isF6QDZeNv01vrMGgMaY7BXJdlW9FJ2W6TFT
-	JkwdDzkUxRzJbYt8wi90zPPYvwnRB4HV1tt6R/WNn1Od/ZahcTrEsF/73snhS00=
-X-Google-Smtp-Source: AGHT+IFxJcCTvoMwpH+tvEwVOkWpvLSMuNdbuHPGieP5ISOoCAVIM3ROhsGt3PZ8voU2RxcgHG86EQ==
-X-Received: by 2002:a05:600c:4452:b0:428:1090:cfd4 with SMTP id 5b1f17b1804b1-42be48faa4emr44328095e9.33.1725276196265;
-        Mon, 02 Sep 2024 04:23:16 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42baf1b0c18sm151736775e9.37.2024.09.02.04.23.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Sep 2024 04:23:15 -0700 (PDT)
-Date: Mon, 2 Sep 2024 14:23:11 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: oe-kbuild@lists.linux.dev,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Hans de Goede <hdegoede@redhat.com>, linux-kernel@vger.kernel.org,
-	platform-driver-x86@vger.kernel.org, lkp@intel.com,
-	oe-kbuild-all@lists.linux.dev,
+	 Content-Type:Content-Disposition:In-Reply-To; b=pZ9/c6pIi+a8icaptMyJQebPVhceh9r7GEnc513gxQ5RGBonoTEgNDWCU0RAcoBY7Exf2RePo+IugtioRw5YwkCyNWqBLbOVGxE+qhJ9OSrwLKkvC5mqyu6dVba4kM0p4Ex6sng10Ra3JbJp5FeTC8rm3a5FaYuiYMyW3YNLZ8k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=HysFPBmK; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id A5C7E40E0191;
+	Mon,  2 Sep 2024 11:24:55 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id MoBoLPHXyDDP; Mon,  2 Sep 2024 11:24:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1725276291; bh=sZg3hbW3j7qspX2oVQJRU4r10UvGMmdPEa/Jk2S1BgU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=HysFPBmK+n8s+O2jLtwRbrVJh+wGaJCaP7cwJ7rpbErkx24ttZW81lVQWcnN/dJyx
+	 kSJwNZQ8s+p3LEwCMoa16nNmxN1vOEMj62x5I46Ro6LpRHz7h5vgYn17IJti1OmXBo
+	 mKH6K1K7qupfMd3Mxq24T8CoRDgh1e6ZwxsPWW53pvR513fwAuMTZ0N/hxowiCBgx8
+	 BPxxDN2/EnquHzmt9Jp3BE9pnqrG/BOogMrRkQpQz1+emOow3hdkV0eDKmrX/+QnXX
+	 sMdWQteJgZ/yfVeSYfLNr5E0SwdHEoy+fZkdskL0UkRdZWdbQ0wwqaApdbbVmlTSPF
+	 70l0sME0H5PtSy7VuGSzqh8eDqW3sS/LeM6KTs4BaVr8tXvJN3J2doSQwjjHQw2lZP
+	 /hLK5nZ/qRcRBuDojGABw8SGh5O8vXpY76qlB9sNtvsQdx3wEHiCa0YNm9PFlLGXBY
+	 9GoTlNZWqkaeWOc2nh1Mj1msTupcTEMhOUWcNgdMjeBCJ/7ueg2pkAAGaZ0df4xr27
+	 AIZLpr2tmXqAaqoaqKorSeD2mVVFMpwsm2kp1A93mNh4v1GQWrnfTf8N+IPlS4d8ho
+	 GyxgWfPlfOEnipZA87CxwCNWo5BqzblZrF+g72KvLYjGOiaRTcOsv5cL94Twca/S5K
+	 mo/uEQ4YGwzDzgu7NUFX0Ne0=
+Received: from zn.tnic (p5de8e8eb.dip0.t-ipconnect.de [93.232.232.235])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id B596440E0198;
+	Mon,  2 Sep 2024 11:24:35 +0000 (UTC)
+Date: Mon, 2 Sep 2024 13:24:29 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Cc: Tony Luck <tony.luck@intel.com>, Ard Biesheuvel <ardb@kernel.org>,
+	James Morse <james.morse@arm.com>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Len Brown <lenb@kernel.org>,
 	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Daniel Scally <djrscally@gmail.com>
-Subject: Re: [PATCH v2 2/4] platform/x86: int3472: Simplify dev_err_probe()
- usage
-Message-ID: <6be0acdb-6b4a-4330-929a-2e319075b3c6@stanley.mountain>
-References: <20240822130722.1261891-3-andriy.shevchenko@linux.intel.com>
- <20dd56f0-78ea-4255-86ac-32151160b83d@stanley.mountain>
- <ZtWQzwvo7f0QfeCI@smile.fi.intel.com>
+	Shiju Jose <shiju.jose@huawei.com>,
+	Alison Schofield <alison.schofield@intel.com>,
+	Dave Jiang <dave.jiang@intel.com>, Ira Weiny <ira.weiny@intel.com>,
+	linux-acpi@vger.kernel.org, linux-edac@vger.kernel.org,
+	linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 3/5] efi/cper: Add a new helper function to print
+ bitmasks
+Message-ID: <20240902112429.GEZtWgbSo0EVe0EyWE@fat_crate.local>
+References: <cover.1720679234.git.mchehab+huawei@kernel.org>
+ <5bb5f806a763b295401972fdff17bb455bee2e82.1720679234.git.mchehab+huawei@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <ZtWQzwvo7f0QfeCI@smile.fi.intel.com>
+In-Reply-To: <5bb5f806a763b295401972fdff17bb455bee2e82.1720679234.git.mchehab+huawei@kernel.org>
 
-On Mon, Sep 02, 2024 at 01:17:51PM +0300, Andy Shevchenko wrote:
-> On Sat, Aug 31, 2024 at 11:31:53AM +0300, Dan Carpenter wrote:
-> > Hi Andy,
-> > 
-> > kernel test robot noticed the following build warnings:
-> > 
-> > https://git-scm.com/docs/git-format-patch#_base_tree_information]
-> > 
-> > url:    https://github.com/intel-lab-lkp/linux/commits/Andy-Shevchenko/driver-core-Ignore-0-in-dev_err_probe/20240826-113856
-> > base:   driver-core/driver-core-testing
-> > patch link:    https://lore.kernel.org/r/20240822130722.1261891-3-andriy.shevchenko%40linux.intel.com
-> > patch subject: [PATCH v2 2/4] platform/x86: int3472: Simplify dev_err_probe() usage
-> > config: i386-randconfig-141-20240830 (https://download.01.org/0day-ci/archive/20240831/202408310807.sNPe5Mr2-lkp@intel.com/config)
-> > compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-> > 
-> > If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> > the same patch/commit), kindly add following tags
-> > | Reported-by: kernel test robot <lkp@intel.com>
-> > | Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-> > | Closes: https://lore.kernel.org/r/202408310807.sNPe5Mr2-lkp@intel.com/
-> > 
-> > smatch warnings:
-> > drivers/platform/x86/intel/int3472/discrete.c:292 skl_int3472_handle_gpio_resources() error: uninitialized symbol 'err_msg'.
-> > drivers/platform/x86/intel/int3472/discrete.c:292 skl_int3472_handle_gpio_resources() warn: passing zero to 'dev_err_probe'
+On Thu, Jul 11, 2024 at 08:28:54AM +0200, Mauro Carvalho Chehab wrote:
+> Sometimes it is desired to produce a single log line for errors.
+> Add a new helper function for such purpose.
+
+How does this have anything to do with the below function?
+
+Example?
+
+Why isn't anything in lib/bitmap-str.c not useful for this?
+
+> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+> ---
+>  drivers/firmware/efi/cper.c | 43 +++++++++++++++++++++++++++++++++++++
+>  include/linux/cper.h        |  2 ++
+>  2 files changed, 45 insertions(+)
 > 
-> Okay, I might agree on the err_msg, which is good to have to be passed anyway.
-> In such a case it might be good to have a dev_dbg() in the dev_err_probe() to
-> say that it is likely a bug in the code.
-> 
-> Would you accept that approach?
+> diff --git a/drivers/firmware/efi/cper.c b/drivers/firmware/efi/cper.c
+> index 7d2cdd9e2227..462d739e8dd1 100644
+> --- a/drivers/firmware/efi/cper.c
+> +++ b/drivers/firmware/efi/cper.c
+> @@ -106,6 +106,49 @@ void cper_print_bits(const char *pfx, unsigned int bits,
+>  		printk("%s\n", buf);
+>  }
+>  
+> +/**
+> + * cper_bits_to_str - return a string for set bits
+> + * @buf: buffer to store the output string
+> + * @buf_size: size of the output string buffer
+> + * @bits: bit mask
+> + * @strs: string array, indexed by bit position
+> + * @strs_size: size of the string array: @strs
+> + *
+> + * Add to @buf the bitmask in hexadecimal. 
 
-ret is 1.  We have to revert this patch.
+Where does it do that?
 
-regards,
-dan carpenter
+> Then, for each set bit in @bits,
+> + * add the corresponding string describing the bit in @strs to @buf.
+> + *
+> + * Return: number of bytes stored or an error code if lower than zero.
+> + */
+> +int cper_bits_to_str(char *buf, int buf_size, unsigned long bits,
+> +		     const char * const strs[], unsigned int strs_size)
+> +{
+> +	int len = buf_size;
+> +	char *str = buf;
+> +	int i, size;
+> +
+> +	*buf = '\0';
+> +
+> +	for_each_set_bit(i, &bits, strs_size) {
+> +		if (!(bits & (1U << (i))))
 
+BIT_UL()
+
+> +			continue;
+> +
+> +		if (*buf && len > 0) {
+
+Uff, this is testing the first char in buf and it gets copied in below in
+strscpy() through the str pointer.
+
+So this function converts a set of set bits to their corresponding *names*
+from strs[].
+
+This name doesn't even begin to explain what this function does - it converts
+a bitmap to the corresponding names of the bits in @strs. If anything, the
+above comment needs an example and the function needs to be named properly.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
