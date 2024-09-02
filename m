@@ -1,221 +1,110 @@
-Return-Path: <linux-kernel+bounces-311502-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311501-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E6BF9689EB
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 16:28:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDAB09689EA
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 16:28:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2DA381F24981
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 14:28:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 59764280A47
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 14:28:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32197210190;
-	Mon,  2 Sep 2024 14:28:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BBA819E984;
+	Mon,  2 Sep 2024 14:28:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="YLFIruWP"
-Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QA9vBkNd"
+Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B630319C55D
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 14:28:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66E8519E977;
+	Mon,  2 Sep 2024 14:28:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725287294; cv=none; b=gRL4zZFNJ/OTcJahobEwtYhybPSNAHujPZmi2swZ/qpYme7tdSXr/j1rRv9GvNagVFjsKElHP1WXjwujlM1uPFQHYIsq/YaQxwTio6v4aV2IbgDmTIbYXpXMuB6tjcbRH6udsBh0sFXFw8wVobJv5TOvONb4441PpwAro3CdeHM=
+	t=1725287293; cv=none; b=Fmt6EXPYg0BOd1KIrqMNjyMDFGoJczrBuCGa5SLB7HN/fRt31GtzTihoOxtUDniVp8pYjgR19U1IcBcggsXXa4+KyOnRUzBCMfKDjVSBEbhuGd9OKV5UEObzeGP2Mtt1nbt7QO/AC0vC5TkU8eHAerzSEOMS3E1ApMAGs8I+Pe8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725287294; c=relaxed/simple;
-	bh=v9jLjjvwoKPM7C9aTg0cuvm7/8/aoh5fXGwVeHKRXMY=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=hxM6YkVzkj52XD7KSm/1l80o6YNsEFXKEX7OfdASM/alKG/f/+WjolITjIs+5vuCpw7NiV2NZAGjpQ1A8LAcxB6D27GfTH04PjyKU61AI8eEiczCzU5jvyPa3xL2XNBka171D94Ilq4/TPptCSbFkJ1cTx/rGSwpO0pUlvRYUYI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=YLFIruWP; arc=none smtp.client-ip=217.70.183.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 2948360003;
-	Mon,  2 Sep 2024 14:28:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1725287290;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=WPsXU8s4xSlfCi2ei8mMQVrT3eZ7dvgcLn4ER60DDQk=;
-	b=YLFIruWPdvEyIIaxTPWbqmBqIi+ZsD11uCkcQLfBui6zK8jeFyxE0XKtBsZvbBZKJyAQGo
-	GE5QqyECOCOkzGpk5fkooLny1ftx/vrNna/6PvkBuxO2D7gByknZ9eLxrMwUCuRVHZ3m1P
-	se5KgLavzvupZPWlDgkmi+JNZ4j7TFyJO9vgNGuHEyyA7rRH867bXxAhFZqS6PSLg5Vzjz
-	75VBITWhqWe5MBLRkivTyDUE9eA11No4ZoseM53qpLmgjAwDM4B7GxuryHs2inz5VwR8qk
-	qPC02BWVidXTl8/PXVNq7sy/ZPbmHhz42pPkMo7ynD4a3Xu8tid8HvjvUpzmog==
-From: Gregory CLEMENT <gregory.clement@bootlin.com>
-To: Andrew Davis <afd@ti.com>, Andre Przywara <andre.przywara@arm.com>,
- Russell King <linux@armlinux.org.uk>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team
- <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, Andrew Lunn
- <andrew@lunn.ch>, Sebastian
- Hesselbarth <sebastian.hesselbarth@gmail.com>, Daniel Mack
- <daniel@zonque.org>, Haojian
- Zhuang <haojian.zhuang@gmail.com>, Robert Jarzmik <robert.jarzmik@free.fr>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- imx@lists.linux.dev, Andrew Davis <afd@ti.com>
-Subject: Re: [PATCH v2 3/7] ARM: orion5x: Switch to new sys-off handler API
-In-Reply-To: <20240729123538.175704-4-afd@ti.com>
-References: <20240729123538.175704-1-afd@ti.com>
- <20240729123538.175704-4-afd@ti.com>
-Date: Mon, 02 Sep 2024 16:28:08 +0200
-Message-ID: <87mskqf7uv.fsf@BLaptop.bootlin.com>
+	s=arc-20240116; t=1725287293; c=relaxed/simple;
+	bh=ZPnSWwOAvZYxsZdh1NfM/VL04M4Nevd+/cCV1R2LmeY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nrTV92rJAlHImflhGWSj6QyjBJWPp2IxXaMTR76I2yFvrdB5DmntkaDwi1BHcKJq3DjJzC61azCfAolARNwBpmeXRAYaoijDN+S8jOi7LHQh9xnxulaNTgR0qtn/oOLe+oPYjPMWv5WNlTIDu6blbSKIZ862q2yAqqUYfLxSYJ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QA9vBkNd; arc=none smtp.client-ip=209.85.215.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-7163489149eso2866493a12.1;
+        Mon, 02 Sep 2024 07:28:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725287292; x=1725892092; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:sender
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=5D9ejrd5Z/h0W9FXVKqYlPN2lrRBlYUuxMm5PZhnygE=;
+        b=QA9vBkNdEfjOnBp6XYqAznDKDH22TSYuH/2KhGe1W2k1gPx6XBQEjDJNQPGFcttKTI
+         2vzyGrsoniPxDu29LEXyy6m3UTLO037Nte+ux9QNozS/BwvzbQwD9TjHH4HME+sz4YO3
+         wEf7TJ2JBRvog51dsvMzzH153w4zIB64UmfT0G/Apnzr2MADw0qviuFUiDB7UdCaQRjc
+         PaP1LuSGGbutXoIvRBFEbUy8QfWg/OaFF2V7T/cPacMqziualK6+hPj1pulaj9i4ttnh
+         7fha/n+zsEVFv4d7xgcLxpYME/fkGABBZklaS/xeGJVDQABy5W/BhkvKHf2jEvrgRSRn
+         XqvQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725287292; x=1725892092;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:sender
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=5D9ejrd5Z/h0W9FXVKqYlPN2lrRBlYUuxMm5PZhnygE=;
+        b=fhCWnF9I89BI8/UjE9gCerh36hraDcuO0jS//aXPkIO8sg1Jr5C0cdTTZTU2sROYVO
+         BuZt8hTCA2WNVTTfdCvfladqcr+UEa/zPhqQXPap/9nbI44y667ESK+olfO3j2wN0fu6
+         Etxo67VvB/oKrkTZSkX0++g7ORCWAebSqWFprxKaIDzJ6SKFsxf75iRPvtHPGX/XbW+W
+         TFbMdzC9N37SqclrS2eoJqVBytgmZ0HaLH4AkpJQc1a6dEJGNqnba4DZpEOad0jRX4AG
+         NApbJKScWd5iNwAhuItqTqbHlFhA1v/qXBwHwveMAploK6YXwGQ3d9LN/Mz1AYvX2HyW
+         3gHw==
+X-Forwarded-Encrypted: i=1; AJvYcCUGe7pzN0vfG5K/W21o7dn5OooZSan7FOM0Q8f+597SO5zz7vh5i3MqniXk7dnslERaWzHtJLA6SXE/fy8=@vger.kernel.org, AJvYcCUNibflHzjgIOKWAIozuAG2B6a8PuhJdPMTVXhJsd1h2pJ53dJOQbG8Qdha5jyW6nxB0zhjCzNOuxZq@vger.kernel.org, AJvYcCUyygRXJYaalXHJw5isI6Twk+h7xxvmOD0RlcZaZff1hswfDiriKV+hIySd5CJlde+G2ffoMznzNGERTDxrQTy8Td3NgQ==@vger.kernel.org, AJvYcCXwyVGArbcjGuUOnZlb4geCqcAexL4zmHZNqhJ2uLFn5CLmB8mtPO9wLPG1lH/D14UPx7nlRXTphR+zmDJk@vger.kernel.org
+X-Gm-Message-State: AOJu0YwuWfbeA0sXTjJzTfiugo0cxFdFcsumG5r+RujcvX+tGcaobYTV
+	gO0iDsQhOdCrqa1VFiMNFoxj6Sxe21NuOzEgoB3OSKrOJzLFedRP
+X-Google-Smtp-Source: AGHT+IG9xuQTwx/EcX9g1ocH+WX9E/Rfq4mYvWEqfiVG5vxLUtJSxZyZk9u/rlS6Y6/hL8Ay0zaJoQ==
+X-Received: by 2002:a17:902:f60a:b0:205:76d0:563b with SMTP id d9443c01a7336-205840c8e08mr29580445ad.0.1725287291494;
+        Mon, 02 Sep 2024 07:28:11 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2056912c543sm22244905ad.247.2024.09.02.07.28.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 02 Sep 2024 07:28:10 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date: Mon, 2 Sep 2024 07:28:09 -0700
+From: Guenter Roeck <linux@roeck-us.net>
+To: Armin Wolf <W_Armin@gmx.de>
+Cc: james@equiv.tech, jlee@suse.com, corentin.chary@gmail.com,
+	luke@ljones.dev, matan@svgalib.org, coproscefalo@gmail.com,
+	hdegoede@redhat.com, ilpo.jarvinen@linux.intel.com,
+	jdelvare@suse.com, rafael@kernel.org, lenb@kernel.org,
+	platform-driver-x86@vger.kernel.org, linux-hwmon@vger.kernel.org,
+	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/5] hwmon: (hp-wmi-sensors) Check if WMI event data
+ exists
+Message-ID: <e90b40e9-b3a5-4228-8f12-b02a77b7789d@roeck-us.net>
+References: <20240901031055.3030-1-W_Armin@gmx.de>
+ <20240901031055.3030-2-W_Armin@gmx.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-GND-Sasl: gregory.clement@bootlin.com
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240901031055.3030-2-W_Armin@gmx.de>
 
-Hi Andrew,
+On Sun, Sep 01, 2024 at 05:10:51AM +0200, Armin Wolf wrote:
+> The BIOS can choose to return no event data in response to a
+> WMI event, so the ACPI object passed to the WMI notify handler
+> can be NULL.
+> 
+> Check for such a situation and ignore the event in such a case.
+> 
+> Fixes: 23902f98f8d4 ("hwmon: add HP WMI Sensors driver")
+> Signed-off-by: Armin Wolf <W_Armin@gmx.de>
+> Reviewed-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
 
-> Kernel now supports chained power-off handlers. Use
-> register_platform_power_off() that registers a platform level power-off
-> handler. Legacy pm_power_off() will be removed once all drivers and archs
-> are converted to the new sys-off API.
->
-> Signed-off-by: Andrew Davis <afd@ti.com>
-> Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-
-Applied on mvebu/arm
+Applied.
 
 Thanks,
-
-Gregory
-
-> ---
->  arch/arm/mach-orion5x/board-mss2.c             | 2 +-
->  arch/arm/mach-orion5x/dns323-setup.c           | 6 +++---
->  arch/arm/mach-orion5x/kurobox_pro-setup.c      | 2 +-
->  arch/arm/mach-orion5x/mv2120-setup.c           | 2 +-
->  arch/arm/mach-orion5x/net2big-setup.c          | 2 +-
->  arch/arm/mach-orion5x/terastation_pro2-setup.c | 2 +-
->  arch/arm/mach-orion5x/ts209-setup.c            | 2 +-
->  arch/arm/mach-orion5x/ts409-setup.c            | 2 +-
->  8 files changed, 10 insertions(+), 10 deletions(-)
->
-> diff --git a/arch/arm/mach-orion5x/board-mss2.c b/arch/arm/mach-orion5x/board-mss2.c
-> index b0f16d223adf5..9e3d69891d2f6 100644
-> --- a/arch/arm/mach-orion5x/board-mss2.c
-> +++ b/arch/arm/mach-orion5x/board-mss2.c
-> @@ -82,5 +82,5 @@ static void mss2_power_off(void)
->  void __init mss2_init(void)
->  {
->  	/* register mss2 specific power-off method */
-> -	pm_power_off = mss2_power_off;
-> +	register_platform_power_off(mss2_power_off);
->  }
-> diff --git a/arch/arm/mach-orion5x/dns323-setup.c b/arch/arm/mach-orion5x/dns323-setup.c
-> index 062109efa0ecc..fcd38ff7ca459 100644
-> --- a/arch/arm/mach-orion5x/dns323-setup.c
-> +++ b/arch/arm/mach-orion5x/dns323-setup.c
-> @@ -700,7 +700,7 @@ static void __init dns323_init(void)
->  		if (gpio_request(DNS323_GPIO_POWER_OFF, "POWEROFF") != 0 ||
->  		    gpio_direction_output(DNS323_GPIO_POWER_OFF, 0) != 0)
->  			pr_err("DNS-323: failed to setup power-off GPIO\n");
-> -		pm_power_off = dns323a_power_off;
-> +		register_platform_power_off(dns323a_power_off);
->  		break;
->  	case DNS323_REV_B1:
->  		/* 5182 built-in SATA init */
-> @@ -717,7 +717,7 @@ static void __init dns323_init(void)
->  		if (gpio_request(DNS323_GPIO_POWER_OFF, "POWEROFF") != 0 ||
->  		    gpio_direction_output(DNS323_GPIO_POWER_OFF, 0) != 0)
->  			pr_err("DNS-323: failed to setup power-off GPIO\n");
-> -		pm_power_off = dns323b_power_off;
-> +		register_platform_power_off(dns323b_power_off);
->  		break;
->  	case DNS323_REV_C1:
->  		/* 5182 built-in SATA init */
-> @@ -727,7 +727,7 @@ static void __init dns323_init(void)
->  		if (gpio_request(DNS323C_GPIO_POWER_OFF, "POWEROFF") != 0 ||
->  		    gpio_direction_output(DNS323C_GPIO_POWER_OFF, 0) != 0)
->  			pr_err("DNS-323: failed to setup power-off GPIO\n");
-> -		pm_power_off = dns323c_power_off;
-> +		register_platform_power_off(dns323c_power_off);
->  
->  		/* Now, -this- should theoretically be done by the sata_mv driver
->  		 * once I figure out what's going on there. Maybe the behaviour
-> diff --git a/arch/arm/mach-orion5x/kurobox_pro-setup.c b/arch/arm/mach-orion5x/kurobox_pro-setup.c
-> index acba066180801..339b10891808f 100644
-> --- a/arch/arm/mach-orion5x/kurobox_pro-setup.c
-> +++ b/arch/arm/mach-orion5x/kurobox_pro-setup.c
-> @@ -373,7 +373,7 @@ static void __init kurobox_pro_init(void)
->  	i2c_register_board_info(0, &kurobox_pro_i2c_rtc, 1);
->  
->  	/* register Kurobox Pro specific power-off method */
-> -	pm_power_off = kurobox_pro_power_off;
-> +	register_platform_power_off(kurobox_pro_power_off);
->  }
->  
->  #ifdef CONFIG_MACH_KUROBOX_PRO
-> diff --git a/arch/arm/mach-orion5x/mv2120-setup.c b/arch/arm/mach-orion5x/mv2120-setup.c
-> index b7327a6128353..5b0249f109cde 100644
-> --- a/arch/arm/mach-orion5x/mv2120-setup.c
-> +++ b/arch/arm/mach-orion5x/mv2120-setup.c
-> @@ -238,7 +238,7 @@ static void __init mv2120_init(void)
->  	if (gpio_request(MV2120_GPIO_POWER_OFF, "POWEROFF") != 0 ||
->  	    gpio_direction_output(MV2120_GPIO_POWER_OFF, 1) != 0)
->  		pr_err("mv2120: failed to setup power-off GPIO\n");
-> -	pm_power_off = mv2120_power_off;
-> +	register_platform_power_off(mv2120_power_off);
->  }
->  
->  /* Warning: HP uses a wrong mach-type (=526) in their bootloader */
-> diff --git a/arch/arm/mach-orion5x/net2big-setup.c b/arch/arm/mach-orion5x/net2big-setup.c
-> index 6ad9740b426b6..4afd9b4c71a94 100644
-> --- a/arch/arm/mach-orion5x/net2big-setup.c
-> +++ b/arch/arm/mach-orion5x/net2big-setup.c
-> @@ -423,7 +423,7 @@ static void __init net2big_init(void)
->  
->  	if (gpio_request(NET2BIG_GPIO_POWER_OFF, "power-off") == 0 &&
->  	    gpio_direction_output(NET2BIG_GPIO_POWER_OFF, 0) == 0)
-> -		pm_power_off = net2big_power_off;
-> +		register_platform_power_off(net2big_power_off);
->  	else
->  		pr_err("net2big: failed to configure power-off GPIO\n");
->  
-> diff --git a/arch/arm/mach-orion5x/terastation_pro2-setup.c b/arch/arm/mach-orion5x/terastation_pro2-setup.c
-> index 23a5521c68336..a9f01859d1012 100644
-> --- a/arch/arm/mach-orion5x/terastation_pro2-setup.c
-> +++ b/arch/arm/mach-orion5x/terastation_pro2-setup.c
-> @@ -349,7 +349,7 @@ static void __init tsp2_init(void)
->  	i2c_register_board_info(0, &tsp2_i2c_rtc, 1);
->  
->  	/* register Terastation Pro II specific power-off method */
-> -	pm_power_off = tsp2_power_off;
-> +	register_platform_power_off(tsp2_power_off);
->  }
->  
->  MACHINE_START(TERASTATION_PRO2, "Buffalo Terastation Pro II/Live")
-> diff --git a/arch/arm/mach-orion5x/ts209-setup.c b/arch/arm/mach-orion5x/ts209-setup.c
-> index bab8ba0e01ab9..de9092e992c56 100644
-> --- a/arch/arm/mach-orion5x/ts209-setup.c
-> +++ b/arch/arm/mach-orion5x/ts209-setup.c
-> @@ -314,7 +314,7 @@ static void __init qnap_ts209_init(void)
->  	i2c_register_board_info(0, &qnap_ts209_i2c_rtc, 1);
->  
->  	/* register tsx09 specific power-off method */
-> -	pm_power_off = qnap_tsx09_power_off;
-> +	register_platform_power_off(qnap_tsx09_power_off);
->  }
->  
->  MACHINE_START(TS209, "QNAP TS-109/TS-209")
-> diff --git a/arch/arm/mach-orion5x/ts409-setup.c b/arch/arm/mach-orion5x/ts409-setup.c
-> index 8131982c10d97..725688aa5cba7 100644
-> --- a/arch/arm/mach-orion5x/ts409-setup.c
-> +++ b/arch/arm/mach-orion5x/ts409-setup.c
-> @@ -312,7 +312,7 @@ static void __init qnap_ts409_init(void)
->  	platform_device_register(&ts409_leds);
->  
->  	/* register tsx09 specific power-off method */
-> -	pm_power_off = qnap_tsx09_power_off;
-> +	register_platform_power_off(qnap_tsx09_power_off);
->  }
->  
->  MACHINE_START(TS409, "QNAP TS-409")
-> -- 
-> 2.39.2
+Guenter
 
