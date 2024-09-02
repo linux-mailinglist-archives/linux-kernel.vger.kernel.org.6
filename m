@@ -1,70 +1,70 @@
-Return-Path: <linux-kernel+bounces-311780-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311781-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8B52968D8F
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 20:36:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8CA1968D90
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 20:36:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 274DE1C21E9F
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 18:36:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8F7A8281BCD
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 18:36:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C925A1C62D2;
-	Mon,  2 Sep 2024 18:36:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 366A91DAC47;
+	Mon,  2 Sep 2024 18:36:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nJ25Ez/o"
-Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com [209.85.219.169])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S/+Yswah"
+Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com [209.85.219.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFD381AB6F0
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 18:36:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 250741C62C6
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 18:36:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725302177; cv=none; b=GFWwwvaESeUUH2OvwzPA41jO8LYuWploJkskqStqc3qkg4QQZtlmAffsgOpurAFSNcOS3fhlbWLOQMHemYfiqya1K1Rxt5IXtySXKIhqgMcfsvHqD3XrV0rSf/rPldOrT9y5NCL5iFm0tdlOFx0CFDk9A1useLfQk+/r6LWrjRk=
+	t=1725302178; cv=none; b=IOsNFDdhrvcBfaeUYQHfHtG44j18WeaYHFXLJhU3sLN7nJXETiu3y4S9ReqxiQXqpcMamRbWJqLNgr0KiWbOLcIy7k9t3kyi0HS5jaWHStnGmywNyprQXY1KNblGsU1SvG18FwFz1Ibo/Aih+WlULIYbMo343FRkKnqiKOzYKuo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725302177; c=relaxed/simple;
-	bh=cXI0aLpbkNFzG2I2XJ4KaFkC1Vk7m5so2zzeOp2ZpTA=;
+	s=arc-20240116; t=1725302178; c=relaxed/simple;
+	bh=n4DY9fWvNNP+vPnev4QnAxb6kTHbVIPvGqngyfcYTZM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=BfP65PZm58zizq50IGL7jxDpVC3NFSo2XSsdwVqR9Rx5awBM5IzznLDMHm6JRH5ztMuwO+TBnalu5ZX9NKGa8vho5l/7ai1XYHKbnAeZ7ZpXCX9KyfYAA+NsuEMhogS/zVZBI6KEQDu07+BNnkbkoW3U5Q6mrmV8DbA1Qt2XI2c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nJ25Ez/o; arc=none smtp.client-ip=209.85.219.169
+	 MIME-Version; b=NmFq355xVJTOo9q0xiFKSBH5btUoCefqVTi1syB8SGVJgFELrhozeTB92FPLR67FwOX6EPoeZ06nyLxo21QL5MBSa0Zk7E3ucvuz7pqtlWCuc2wbc5I+wkwSAM/BeozvFpTpMDozYQudGwZhohYJVcL2R/uVEZEogI1IoGHr9sg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=S/+Yswah; arc=none smtp.client-ip=209.85.219.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f169.google.com with SMTP id 3f1490d57ef6-e04196b7603so4890468276.0
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2024 11:36:15 -0700 (PDT)
+Received: by mail-yb1-f182.google.com with SMTP id 3f1490d57ef6-e1a7d43a226so2958127276.3
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2024 11:36:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725302175; x=1725906975; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1725302176; x=1725906976; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=7LiUbyQ8pr+2ihhv3bomzpX3ODdNk5TniI0rAo29ma8=;
-        b=nJ25Ez/ofa2V9yTCNAh8Ms7Q33voyItNJLR4rskK2oAx0OECrMHCGD9zR0VTe8xcSr
-         0yHcMy5rOC731q8PhajvK3zvX9SCWoQKktLD5VkjDSfGmlirM/E4ZaQ/US1IlbadNYpY
-         iIZvQWktlaDY0D/ZCy3z0abOEdFzga5YibyZ7NPy8oejtk5Yg4TfJP2GwEnpMadgjlvK
-         rI/9m++vO5EYRNUsHIUgcOYfUQcmP36QVndTREUP15+fx/aCNUlUc9ebwIKr6FGzwuxH
-         vc1S3ZQ8/m+aOMwqEnxEybNhIan7pglUA2wAJdZf4LrGr0KK1iuUGSBu6YNgTrFgm4f5
-         k5oQ==
+        bh=81Pwg90lkrxuPa74EcD9qWBo9vF1Zvhp5af4I0TH1fk=;
+        b=S/+Yswah46fJmnK9YpIHFww3mCh8zFTXlf8Q7VXF7v+kk+rMnqoItQcjh0scSuB7Bg
+         u0LUXZSdq3ICthfl3NOSOEhF434XLH4N4td0iBL45KQ/RUWInbGg5g9xQDTHHmJkAjJ/
+         839F1lzctXNKuXVNSkX0rN4T5XAR53m26J7IA4abiKkTmr21/0I45+agBjIzabR1RZ0T
+         5TScYMNED2cm0uty5mwouiasKgNii/DMvdN2gYa+yahIBBmmqtDBHtUFzFOBc38XDOs1
+         hf/as0Re4kGq5zHpVSH80PjY2P9bKB1v+IZ7qoPJ8lwIL8oKXhzlgvYHjO07jC6//Fj7
+         axiA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725302175; x=1725906975;
+        d=1e100.net; s=20230601; t=1725302176; x=1725906976;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=7LiUbyQ8pr+2ihhv3bomzpX3ODdNk5TniI0rAo29ma8=;
-        b=Kpv9xGFnjT3ZEKzngA48zHnBgU7gB834H2VopdtHuuttX/em57QCubdg4fbG/rbnuw
-         cGIYUG6TUV8k8Lcz/L80QawL4yweCupsEg/Ewfo2OaFGk7Gev+E3NZMfaq+0CDhLZRz5
-         Nmk1STXpFiuq+G532lVj4OwNG52xN+JmJSvlhXXt1M5f79lXf+fCsWcAfMd1f4YQgLnX
-         ZBAhw9TY2t2qFqJ1Q+v1pmzolDkIM2OMnV4E4+CcV/fCc6L87PBMlGlf0zFShRsgcR4E
-         9ZYNv8RTUi9o7C3kiKF0ifQEa4vPYyRk3yFS7D9dXkASzQFSuWskFQGzYFPWpKPmjOS9
-         Ersg==
-X-Gm-Message-State: AOJu0Yw8NC1g8rd5xk2S1hUQNWEQ/yJ9oXqgV3GOMcG8crBWHo35rwhI
-	IHUrYrqT/NC5YVDZSgFSh26hsO5PWqy332Fo24v0O3qPliZ9ai8h3OQ18p+O
-X-Google-Smtp-Source: AGHT+IE4bvB21w/EI92y9RBVrxNLU4TDs0iCR7/PEs+mcyoTCEUNG5+qtuOpOZe7COXL33tqhFJTQg==
-X-Received: by 2002:a05:6902:2708:b0:e13:d8e9:4a35 with SMTP id 3f1490d57ef6-e1a7a02611emr8964922276.25.1725302174633;
-        Mon, 02 Sep 2024 11:36:14 -0700 (PDT)
+        bh=81Pwg90lkrxuPa74EcD9qWBo9vF1Zvhp5af4I0TH1fk=;
+        b=Gvxn0v/KIsIl34HYTuiFJbf+bOyN69DhuyegZ0N9qjZe79r9hnrZg6PdeqC8GnGRmE
+         SHcD28Ml3Ez6Bopk5Lcb9u6mJrb97RcoaDXk2CEV0lQGPibzcIrEkopu6pZLsARLFhIN
+         vAInN4vfo7snMakM+RfI9NKUPUSrBQ1+zfa4cAcP0276/EDX+eVpMUA7RU2ncZZp+RfI
+         jrAea7TI2ariktzbIa9hACWeKRWCmUS392ogCZ7kD+lo9L3gkgmBQEABnU86dI4Un/CF
+         8FBkXLXlxjfqGJVOiXSAt5hZUlmJifZdHAGnGqrLMNk090C3KsE9LerZEbGqmlnfcnfm
+         BOug==
+X-Gm-Message-State: AOJu0YwYFL8MScdfn9xd7PRetkR3uf/gJ5mlUmBKLxm8yQZJQA4dmbE+
+	9Fa1/RhM1qaCay+3JqN6saAofVt30AEFjETyYTqLjVHqM94Nk5Yai1pC/DjP
+X-Google-Smtp-Source: AGHT+IGo+Ur1m2xegyqr/Z8b1jMaHVXT+p5bk0e9C4xNp6mTRFu67zOVctFekJE8dEMvZb0KnHxclg==
+X-Received: by 2002:a05:690c:c89:b0:646:7b75:5c2c with SMTP id 00721157ae682-6d40f34125amr127977357b3.16.1725302175953;
+        Mon, 02 Sep 2024 11:36:15 -0700 (PDT)
 Received: from localhost (c-71-203-131-184.hsd1.fl.comcast.net. [71.203.131.184])
-        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e1a62681583sm1776143276.33.2024.09.02.11.36.14
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6d2d57de3fbsm16890097b3.78.2024.09.02.11.36.15
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Sep 2024 11:36:14 -0700 (PDT)
+        Mon, 02 Sep 2024 11:36:15 -0700 (PDT)
 From: Yury Norov <yury.norov@gmail.com>
 To: linux-kernel@vger.kernel.org,
 	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
@@ -80,9 +80,9 @@ Cc: Yury Norov <yury.norov@gmail.com>,
 	Ben Segall <bsegall@google.com>,
 	Mel Gorman <mgorman@suse.de>,
 	Valentin Schneider <vschneid@redhat.com>
-Subject: [PATCH v3 2/3] sched/topology: optimize topology_span_sane()
-Date: Mon,  2 Sep 2024 11:36:06 -0700
-Message-ID: <20240902183609.1683756-3-yury.norov@gmail.com>
+Subject: [PATCH v3 3/3] sched/topology: reorganize topology_span_sane() checking order
+Date: Mon,  2 Sep 2024 11:36:07 -0700
+Message-ID: <20240902183609.1683756-4-yury.norov@gmail.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240902183609.1683756-1-yury.norov@gmail.com>
 References: <20240902183609.1683756-1-yury.norov@gmail.com>
@@ -94,43 +94,82 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The function may call cpumask_equal with mi == mc, even though the CPUs are
-different. In such case, cpumask_equal() would always return true, and we
-can proceed to the next iteration immediately.
+The function currently makes 3 checks:
 
-This happens when topologies re-use the same mask for many CPUs.
-The detailed comment is provided by Valentin Schneider.
+1. mc == mi;
+2. cpumask_equal(mc, mi);
+3. cpumask_intersects(mc, mi).
 
-Reviewed-by: Valentin Schneider <vschneid@redhat.com>
+Historically, 2 last checks build a single condition for if() statement.
+
+Logically, #1 and #2 should be tested together, because for the topology
+sanity checking purposes, they do the same thing. In contrast, #3 tests
+for intersection, which is a different logical unit.
+
+This patch creates a helper for #1 and #2 and puts the corresponding
+comment on top of the helper; unloading the main topology_span_sane().
+
 Signed-off-by: Yury Norov <yury.norov@gmail.com>
 ---
- kernel/sched/topology.c | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+ kernel/sched/topology.c | 31 ++++++++++++++++++-------------
+ 1 file changed, 18 insertions(+), 13 deletions(-)
 
 diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
-index ffbe3a28d2d4..04a3b3d7b6f4 100644
+index 04a3b3d7b6f4..bbbe7955d37c 100644
 --- a/kernel/sched/topology.c
 +++ b/kernel/sched/topology.c
-@@ -2370,6 +2370,19 @@ static bool topology_span_sane(struct sched_domain_topology_level *tl,
+@@ -2346,6 +2346,22 @@ static struct sched_domain *build_sched_domain(struct sched_domain_topology_leve
+ 	return sd;
+ }
+ 
++/*
++ * Some topology levels (e.g. PKG in default_topology[]) have a
++ * sched_domain_mask_f implementation that reuses the same mask for
++ * several CPUs (in PKG's case, one mask * for all CPUs in the same
++ * NUMA node).
++ *
++ * For such topology levels, repeating cpumask_equal() checks is
++ * wasteful. Instead, we first check that the tl->mask(i) pointers
++ * aren't the same.
++ */
++static inline bool topology_cpumask_equal(const struct cpumask *m1,
++					  const struct cpumask *m2)
++{
++	return m1 == m2 || cpumask_equal(m1, m2);
++}
++
+ /*
+  * Ensure topology masks are sane, i.e. there are no conflicts (overlaps) for
+  * any two given CPUs at this (non-NUMA) topology level.
+@@ -2369,18 +2385,7 @@ static bool topology_span_sane(struct sched_domain_topology_level *tl,
+ 	 */
  	for_each_cpu_from(cpu, cpu_map) {
  		mi = tl->mask(cpu);
+-
+-		/*
+-		 * Some topology levels (e.g. PKG in default_topology[])
+-		 * have a sched_domain_mask_f implementation that reuses
+-		 * the same mask for several CPUs (in PKG's case, one mask
+-		 * for all CPUs in the same NUMA node).
+-		 *
+-		 * For such topology levels, repeating cpumask_equal()
+-		 * checks is wasteful. Instead, we first check that the
+-		 * tl->mask(i) pointers aren't the same.
+-		 */
+-		if (mi == mc)
++		if (topology_cpumask_equal(mc, mi))
+ 			continue;
  
-+		/*
-+		 * Some topology levels (e.g. PKG in default_topology[])
-+		 * have a sched_domain_mask_f implementation that reuses
-+		 * the same mask for several CPUs (in PKG's case, one mask
-+		 * for all CPUs in the same NUMA node).
-+		 *
-+		 * For such topology levels, repeating cpumask_equal()
-+		 * checks is wasteful. Instead, we first check that the
-+		 * tl->mask(i) pointers aren't the same.
-+		 */
-+		if (mi == mc)
-+			continue;
-+
  		/*
- 		 * We should 'and' all those masks with 'cpu_map' to exactly
- 		 * match the topology we're about to build, but that can only
+@@ -2389,7 +2394,7 @@ static bool topology_span_sane(struct sched_domain_topology_level *tl,
+ 		 * remove CPUs, which only lessens our ability to detect
+ 		 * overlaps
+ 		 */
+-		if (!cpumask_equal(mc, mi) && cpumask_intersects(mc, mi))
++		if (cpumask_intersects(mc, mi))
+ 			return false;
+ 	}
+ 
 -- 
 2.43.0
 
