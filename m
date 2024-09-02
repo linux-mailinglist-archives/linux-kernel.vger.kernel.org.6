@@ -1,212 +1,312 @@
-Return-Path: <linux-kernel+bounces-310558-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310559-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09968967E53
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 06:00:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86937967E5C
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 06:05:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B5A9728221C
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 04:00:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4972428220C
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 04:05:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADD401494B3;
-	Mon,  2 Sep 2024 04:00:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C469514B092;
+	Mon,  2 Sep 2024 04:05:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="crYDm9bH"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.5])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3DA1320E;
-	Mon,  2 Sep 2024 04:00:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.5
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ERDXbGa2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCAFA3BBD8;
+	Mon,  2 Sep 2024 04:05:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725249623; cv=none; b=WbKDzAUpxkXpDuKKVebB95JnsDmKXmzZBCPMs1Uv33z3jC3Q9mOSLeMM0071ZH0/HTGUVHNSfbeJwCmhbEqe/QxIs0nwaI6dhvU+4ZMVXSwht3qPpyyggYWykOIrm/OjRkIQ6XjjMVA+ZguHeem/YkNiQsgP1PRijUJP0cUQ/Ac=
+	t=1725249911; cv=none; b=UMxs1CECFytczCaBPqxXbTdUiLOtNzjkUJFhutBYmpMwKjpYjdBVyiV/4VHGRXO3EojpyElf2bjOFxSG7BlSFUw+lQfI6c6/Y8qEoQqehKn108CcCdWmusqGvhSfEMx7vG35JeUreuuAc6LcFRkL/mWsalQw15igeWK86xK794c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725249623; c=relaxed/simple;
-	bh=7aNQgfZV4d9W3f0c4rEivCLBiQTnZjNF3xCOdGrxwTI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID; b=dW7drSDTN3ch+wJztJdz96zBvT2PbfTxtTQEMEOSXYfZoHjxnP2tNwc/GYSR5edaPnjPu9hBkBFiQocubv+y0RGAyiyy8+p14MevM1IAkJaezUIqNMqWvOyL7GZOOqx7iyxr1scOJBN16M57wDumAs8BdFs1g9Nv8/WGG4fFr5M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=crYDm9bH reason="signature verification failed"; arc=none smtp.client-ip=220.197.31.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Date:From:Subject:Content-Type:MIME-Version:
-	Message-ID; bh=/ZhEwycb42rVyBLfwLAMLqT6RDwaJD0X7gwxpomhBU0=; b=c
-	rYDm9bHLySJNhn/zmG6VUFIsUkxXDEUBEvoTiqHZ/glbaVGqK9uNh4N6gxm7SR+f
-	hr2VY2yjM49WmWqbAMHDsRsY5y5f9JeZwU3TUMRoRTcsF54KNItDA/JYfeNsTIer
-	M9oivOzF2yjfgVPL4doOofGiytZzSPv1VNrH9JkgqY=
-Received: from slark_xiao$163.com ( [112.97.47.204] ) by
- ajax-webmail-wmsvr-40-119 (Coremail) ; Mon, 2 Sep 2024 11:59:42 +0800 (CST)
-Date: Mon, 2 Sep 2024 11:59:42 +0800 (CST)
-From: "Slark Xiao" <slark_xiao@163.com>
-To: "Greg KH" <gregkh@linuxfoundation.org>
-Cc: "Johan Hovold" <johan@kernel.org>, linux-usb@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re:Re: Re: Re: [PATCH] USB: serial: option: add support for Foxconn
- T99W651
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20240801(9da12a7b)
- Copyright (c) 2002-2024 www.mailtech.cn 163com
-In-Reply-To: <2024070538-circling-ambiguity-908f@gregkh>
-References: <20240705081709.105496-1-slark_xiao@163.com>
- <Zoe3qBwWG33AZaU9@hovoldconsulting.com>
- <5b098485.965d.190822996fc.Coremail.slark_xiao@163.com>
- <Zoe7RT7o39C7iXmA@hovoldconsulting.com>
- <43cc2529.9d61.190823e694a.Coremail.slark_xiao@163.com>
- <2024070538-circling-ambiguity-908f@gregkh>
-X-NTES-SC: AL_Qu2ZB/6ftk0j5COZYelS/TNK/IleJrzn6Kx/uvYvbMsavib8yiMPVnJlNkHU6MUU+WAnRkozir546PQO9GaP
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=GBK
+	s=arc-20240116; t=1725249911; c=relaxed/simple;
+	bh=TDmM6WNmDBtpDvKtVrOVPvLKn39Sv0jF9rd6+2w+b5o=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=M7fS25xzztBbzXtMW+RUol83DgF2wBjYhIwL7A96ADvlVyxMZZF1c24oOOVDXLaUO01j0vqRwcVaKvrz58DehJQDVDpLXAku1bJE0ri8Bjsr58yvJUEb88hnmOxWQGfY72oNcSA2+MkEa/4Z7PgHvVF0zpI674x7DzNPshE7Ma4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ERDXbGa2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5EB26C4CEC2;
+	Mon,  2 Sep 2024 04:05:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725249911;
+	bh=TDmM6WNmDBtpDvKtVrOVPvLKn39Sv0jF9rd6+2w+b5o=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=ERDXbGa2t/+hCVW1EQ3o72zi0D6UnQfJH3CH+Jl6QB7yTcVGgE0UJfv+X7WfuG9pS
+	 mxX9woC6VONMQLQdVligJ/YtbeIaFQueS6bq5r6xssTEaknfc4zczin6rEEHaGpogj
+	 FbJ9gM3Gz8+9AI9fLquLoHgi/dTXikfbm66Ofa/RQNZB5BDWdBP1eeXvNaClGgfJEV
+	 Jw/mqpXJYdSbPV7VcD0HkBeQQvs6qp0K/sKvpZXFiwED+ru+ulhsnJ2PBYEgKjbreU
+	 y3i90SqK95r5ww8TRBQm4X9RLkaAT15A1b5psssIMCWBq1Tn5rvxTehYsRvUbPBJAA
+	 8BwB8vf0AG8zg==
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a86b64ebd8aso230043766b.1;
+        Sun, 01 Sep 2024 21:05:11 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUmSVBTnGNP1z66JC30kQMtJP4uitiONZWfIqG3bTgCudlBVbpPOER6jMUEC79E/K/UkItm5GwsaffRSWF5@vger.kernel.org, AJvYcCX4iqNPdKjY4Ot1EjzmHFwpG6K2DrQMdPfAhm9qHnFdp8OCv/ENPhzyuZkd9+D1IG2K+kA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzK7kIvNQGiVIom+y9ngRopbtP4wCeh1329Ov4exxFidoTMEDvj
+	aPj+HW1YIR2b0yfAdmhKnq/jPR4QCFOlgyc7tIRPTsPp787/WU/PDkCu+GQPzMSk8v2+10BhtpM
+	8z6l36vW5WGwR9ii4xUwLjN9DuqY=
+X-Google-Smtp-Source: AGHT+IERQL7oHGyQdHW0wSVBvO8S9n8cLsjN5Ak1PIyaVrxS4RDKNqMwAABecy5IXqZdzwsx6C/94NOfAjICX8I45zg=
+X-Received: by 2002:a50:cc0b:0:b0:5c0:8eb1:2800 with SMTP id
+ 4fb4d7f45d1cf-5c21ed3f549mr10998764a12.11.1725249909929; Sun, 01 Sep 2024
+ 21:05:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <6c85e8f3.4bab.191b0e374ee.Coremail.slark_xiao@163.com>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID:_____wD3_30uONVmAZQ_AA--.27672W
-X-CM-SenderInfo: xvod2y5b0lt0i6rwjhhfrp/1tbiNQZOZGV4JeWkcwAEsX
-X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
+References: <20240730075744.1215856-1-maobibo@loongson.cn> <20240730075744.1215856-4-maobibo@loongson.cn>
+ <CAAhV-H7D80huYzF6ewZqcgx8MTzWZNFXJHOahoJ33zJYX1kyAw@mail.gmail.com>
+ <13276416-c62b-b33d-1824-7764122ef863@loongson.cn> <CAAhV-H4RhhYB0LHeOs+Cjr6LZj6np_S4-neEtYnLUU_K=upV_w@mail.gmail.com>
+ <1daacc02-2bdc-928b-6291-7604c841d219@loongson.cn>
+In-Reply-To: <1daacc02-2bdc-928b-6291-7604c841d219@loongson.cn>
+From: Huacai Chen <chenhuacai@kernel.org>
+Date: Mon, 2 Sep 2024 12:04:57 +0800
+X-Gmail-Original-Message-ID: <CAAhV-H5mwdCp9pX53Pu2GKA48+9k0HMAR0cEBB3BPTBjySPwKA@mail.gmail.com>
+Message-ID: <CAAhV-H5mwdCp9pX53Pu2GKA48+9k0HMAR0cEBB3BPTBjySPwKA@mail.gmail.com>
+Subject: Re: [PATCH v6 3/3] LoongArch: KVM: Add vm migration support for LBT registers
+To: maobibo <maobibo@loongson.cn>
+Cc: Tianrui Zhao <zhaotianrui@loongson.cn>, WANG Xuerui <kernel@xen0n.name>, kvm@vger.kernel.org, 
+	loongarch@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	Jiaxun Yang <jiaxun.yang@flygoat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-QXQgMjAyNC0wNy0wNSAxNzozOTo1NiwgIkdyZWcgS0giIDxncmVna2hAbGludXhmb3VuZGF0aW9u
-Lm9yZz4gd3JvdGU6Cj5PbiBGcmksIEp1bCAwNSwgMjAyNCBhdCAwNTozNDowNlBNICswODAwLCBT
-bGFyayBYaWFvIHdyb3RlOgo+PiAKPj4gQXQgMjAyNC0wNy0wNSAxNzoyMjoxMywgIkpvaGFuIEhv
-dm9sZCIgPGpvaGFuQGtlcm5lbC5vcmc+IHdyb3RlOgo+PiA+T24gRnJpLCBKdWwgMDUsIDIwMjQg
-YXQgMDU6MTE6MjJQTSArMDgwMCwgU2xhcmsgWGlhbyB3cm90ZToKPj4gPgo+PiA+PiBJIGhhdmUg
-YSBjb25jZXJuIGFib3V0IHRoZSB0ZXN0IHJlc3VsdCBvZiAidXNiLWRldmljZXMiIGluIFVidW50
-dQo+PiA+PiAyMi4wNC4gRG8geW91IGtub3cgd2h5IGl0IHdvdWxkbid0IHNob3cgb3VyIGRldmlj
-ZXMgYW55IG1vcmU/IAo+PiA+Cj4+ID5Obywgc29ycnksIG5vIGlkZWEuIEV2ZXJ5dGhpbmcgc2Vl
-bXMgdG8gd29yayBoZXJlIHdpdGggdGhlIGxhdGVzdAo+PiA+dXNidXRpbHMtMDE3Lgo+PiA+Cj4+
-ID5JcyBpdCBqdXN0IHlvdXIgZGV2aWNlcyB0aGF0IG5vIGxvbmdlciBzaG93IHVwIG9yIGRvZXNu
-J3QgaXQgd29yayBhdAo+PiA+YWxsPwo+PiA+Cj4+IEEgbG90IG9mIGRldmljZXMgbWlzc2VkIGlu
-IFVidW50dSAyMi4wNCwgZXNwZWNpYWxseSBmb3IgbW9kZW0gZGV2aWNlcy4KPj4gTm90aGluZyB3
-b3VsZCBiZSBwcmludGVkIGZvciBtb2RlbSBkZXZpY2VzLgo+Cj5XaGF0IHNwZWNpZmljIHZlcnNp
-b24gb2YgdXNidXRpbHMgYXJlIHlvdSB1c2luZz8KPgo+SWYgeW91IHB1bGwgZnJvbSB0aGUgZ2l0
-aHViIHJlcG8sIGNhbiB5b3UgdHJ5IHRoZSB2ZXJzaW9uIHRoZXJlPwo+Cj5BbmQgaWYgdGhhdCBo
-YXMgcHJvYmxlbXMsIGEgZGlmZiBvZiBib3RoIHdvcmtpbmcgYW5kIG5vdC13b3JraW5nIHdvdWxk
-Cj5iZSBncmVhdC4KPgo+dGhhbmtzLAo+Cj5ncmVnIGstaApIaSBHcmVnLApJIHJlcHJvZHVjZWQg
-dGhpcyBpc3N1ZSBhZ2Fpbi4gQW5kIG5vdyBJIGNoZWNrZWQgaXQgd2l0aCBkaWZmZXJlbnQgdXNi
-dXRpbHMKdmVyc2lvbiBvbmUgYnkgb25lLiAgVmVyc2lvbiAwMTQgaGFzIHRoaXMgaXNzdWUuIEJv
-dGggMDEzIGFuZCAwMTUgd29ya3Mgd2VsbC4KUGxlYXNlIHNlZSBhdHRhY2hlZCBsb2c6CgovL1Yw
-MTMKamJkQGpiZC1QcmVjaXNpb24tMzQ5MDp+L3VzYi11dGlscy91c2J1dGlscy0wMTMkIGxzdXNi
-IC1WCmxzdXNiICh1c2J1dGlscykgMDEzCmpiZEBqYmQtUHJlY2lzaW9uLTM0OTA6fi91c2ItdXRp
-bHMvdXNidXRpbHMtMDEzJCB1c2ItZGV2aWNlcyAKClQ6ICBCdXM9MDEgTGV2PTAwIFBybnQ9MDAg
-UG9ydD0wMCBDbnQ9MDAgRGV2Iz0gIDEgU3BkPTQ4MCBNeENoPSAxCkQ6ICBWZXI9IDIuMDAgQ2xz
-PTA5KGh1YiAgKSBTdWI9MDAgUHJvdD0wMSBNeFBTPTY0ICNDZmdzPSAgMQpQOiAgVmVuZG9yPTFk
-NmIgUHJvZElEPTAwMDIgUmV2PTA2LjEwClM6ICBNYW51ZmFjdHVyZXI9TGludXggNi4xMC42IHho
-Y2ktaGNkClM6ICBQcm9kdWN0PXhIQ0kgSG9zdCBDb250cm9sbGVyClM6ICBTZXJpYWxOdW1iZXI9
-MDAwMDowMDowZC4wCkM6ICAjSWZzPSAxIENmZyM9IDEgQXRyPWUwIE14UHdyPTBtQQpJOiAgSWYj
-PTB4MCBBbHQ9IDAgI0VQcz0gMSBDbHM9MDkoaHViICApIFN1Yj0wMCBQcm90PTAwIERyaXZlcj1o
-dWIKClQ6ICBCdXM9MDIgTGV2PTAwIFBybnQ9MDAgUG9ydD0wMCBDbnQ9MDAgRGV2Iz0gIDEgU3Bk
-PTIwMDAwIE14Q2g9IDQKRDogIFZlcj0gMy4xMCBDbHM9MDkoaHViICApIFN1Yj0wMCBQcm90PTAz
-IE14UFM9IDkgI0NmZ3M9ICAxClA6ICBWZW5kb3I9MWQ2YiBQcm9kSUQ9MDAwMyBSZXY9MDYuMTAK
-UzogIE1hbnVmYWN0dXJlcj1MaW51eCA2LjEwLjYgeGhjaS1oY2QKUzogIFByb2R1Y3Q9eEhDSSBI
-b3N0IENvbnRyb2xsZXIKUzogIFNlcmlhbE51bWJlcj0wMDAwOjAwOjBkLjAKQzogICNJZnM9IDEg
-Q2ZnIz0gMSBBdHI9ZTAgTXhQd3I9MG1BCkk6ICBJZiM9MHgwIEFsdD0gMCAjRVBzPSAxIENscz0w
-OShodWIgICkgU3ViPTAwIFByb3Q9MDAgRHJpdmVyPWh1YgoKVDogIEJ1cz0wMyBMZXY9MDAgUHJu
-dD0wMCBQb3J0PTAwIENudD0wMCBEZXYjPSAgMSBTcGQ9NDgwIE14Q2g9MTIKRDogIFZlcj0gMi4w
-MCBDbHM9MDkoaHViICApIFN1Yj0wMCBQcm90PTAxIE14UFM9NjQgI0NmZ3M9ICAxClA6ICBWZW5k
-b3I9MWQ2YiBQcm9kSUQ9MDAwMiBSZXY9MDYuMTAKUzogIE1hbnVmYWN0dXJlcj1MaW51eCA2LjEw
-LjYgeGhjaS1oY2QKUzogIFByb2R1Y3Q9eEhDSSBIb3N0IENvbnRyb2xsZXIKUzogIFNlcmlhbE51
-bWJlcj0wMDAwOjAwOjE0LjAKQzogICNJZnM9IDEgQ2ZnIz0gMSBBdHI9ZTAgTXhQd3I9MG1BCkk6
-ICBJZiM9MHgwIEFsdD0gMCAjRVBzPSAxIENscz0wOShodWIgICkgU3ViPTAwIFByb3Q9MDAgRHJp
-dmVyPWh1YgoKVDogIEJ1cz0wMyBMZXY9MDEgUHJudD0wMSBQb3J0PTA5IENudD0wMSBEZXYjPSAg
-NCBTcGQ9MTIgIE14Q2g9IDAKRDogIFZlcj0gMi4wMSBDbHM9ZTAod2xjb24pIFN1Yj0wMSBQcm90
-PTAxIE14UFM9NjQgI0NmZ3M9ICAxClA6ICBWZW5kb3I9ODA4NyBQcm9kSUQ9MDAzMyBSZXY9MDAu
-MDAKQzogICNJZnM9IDIgQ2ZnIz0gMSBBdHI9ZTAgTXhQd3I9MTAwbUEKSTogIElmIz0weDAgQWx0
-PSAwICNFUHM9IDMgQ2xzPWUwKHdsY29uKSBTdWI9MDEgUHJvdD0wMSBEcml2ZXI9YnR1c2IKSTog
-IElmIz0weDEgQWx0PSAwICNFUHM9IDIgQ2xzPWUwKHdsY29uKSBTdWI9MDEgUHJvdD0wMSBEcml2
-ZXI9YnR1c2IKClQ6ICBCdXM9MDMgTGV2PTAxIFBybnQ9MDEgUG9ydD0wMiBDbnQ9MDIgRGV2Iz0g
-IDggU3BkPTEyICBNeENoPSAwCkQ6ICBWZXI9IDIuMDAgQ2xzPTAwKD5pZmMgKSBTdWI9MDAgUHJv
-dD0wMCBNeFBTPSA4ICNDZmdzPSAgMQpQOiAgVmVuZG9yPTA0NmQgUHJvZElEPWM1MzQgUmV2PTUx
-LjAwClM6ICBNYW51ZmFjdHVyZXI9TG9naXRlY2gKUzogIFByb2R1Y3Q9VVNCIFJlY2VpdmVyCkM6
-ICAjSWZzPSAyIENmZyM9IDEgQXRyPWEwIE14UHdyPTk4bUEKSTogIElmIz0weDAgQWx0PSAwICNF
-UHM9IDEgQ2xzPTAzKEhJRCAgKSBTdWI9MDEgUHJvdD0wMSBEcml2ZXI9dXNiaGlkCkk6ICBJZiM9
-MHgxIEFsdD0gMCAjRVBzPSAxIENscz0wMyhISUQgICkgU3ViPTAxIFByb3Q9MDIgRHJpdmVyPXVz
-YmhpZAoKLy9Nb2RlbSBkZXZpY2UgY291bGQgYmUgZm91bmQKVDogIEJ1cz0wMyBMZXY9MDEgUHJu
-dD0wMSBQb3J0PTAzIENudD0wMyBEZXYjPSAgNSBTcGQ9NDgwIE14Q2g9IDAKRDogIFZlcj0gMi4x
-MCBDbHM9ZWYobWlzYyApIFN1Yj0wMiBQcm90PTAxIE14UFM9NjQgI0NmZ3M9ICAxClA6ICBWZW5k
-b3I9MWUyZCBQcm9kSUQ9MDBmMSBSZXY9MDUuMDQKUzogIE1hbnVmYWN0dXJlcj1DaW50ZXJpb24K
-UzogIFByb2R1Y3Q9Q2ludGVyaW9uIFBJRCAweDAwRjEgVVNCIE1vYmlsZSBCcm9hZGJhbmQKUzog
-IFNlcmlhbE51bWJlcj1lYTEwNTRlOApDOiAgI0lmcz0gNiBDZmcjPSAxIEF0cj1hMCBNeFB3cj01
-MDBtQQpJOiAgSWYjPTB4MCBBbHQ9IDAgI0VQcz0gMSBDbHM9MDIoY29tbWMpIFN1Yj0wZSBQcm90
-PTAwIERyaXZlcj1jZGNfbWJpbQpJOiAgSWYjPTB4MSBBbHQ9IDEgI0VQcz0gMiBDbHM9MGEoZGF0
-YSApIFN1Yj0wMCBQcm90PTAyIERyaXZlcj1jZGNfbWJpbQpJOiAgSWYjPTB4MiBBbHQ9IDAgI0VQ
-cz0gMyBDbHM9ZmYodmVuZC4pIFN1Yj1mZiBQcm90PTQwIERyaXZlcj1vcHRpb24KSTogIElmIz0w
-eDMgQWx0PSAwICNFUHM9IDEgQ2xzPWZmKHZlbmQuKSBTdWI9ZmYgUHJvdD1mZiBEcml2ZXI9KG5v
-bmUpCkk6ICBJZiM9MHg0IEFsdD0gMCAjRVBzPSAzIENscz1mZih2ZW5kLikgU3ViPWZmIFByb3Q9
-NDAgRHJpdmVyPW9wdGlvbgpJOiAgSWYjPTB4NSBBbHQ9IDAgI0VQcz0gMiBDbHM9ZmYodmVuZC4p
-IFN1Yj1mZiBQcm90PTMwIERyaXZlcj1vcHRpb24KClQ6ICBCdXM9MDMgTGV2PTAxIFBybnQ9MDEg
-UG9ydD0wNSBDbnQ9MDQgRGV2Iz0gIDIgU3BkPTQ4MCBNeENoPSAwCkQ6ICBWZXI9IDIuMDEgQ2xz
-PWVmKG1pc2MgKSBTdWI9MDIgUHJvdD0wMSBNeFBTPTY0ICNDZmdzPSAgMQpQOiAgVmVuZG9yPTBi
-ZGEgUHJvZElEPTU1ODcgUmV2PTM0LjMxClM6ICBNYW51ZmFjdHVyZXI9Q04wOTk3Rlk4TEcwMDNB
-SkEwQTZYMDIKUzogIFByb2R1Y3Q9SW50ZWdyYXRlZF9XZWJjYW1fRkhEClM6ICBTZXJpYWxOdW1i
-ZXI9MjAwOTAxMDEwMDAxCkM6ICAjSWZzPSAzIENmZyM9IDEgQXRyPTgwIE14UHdyPTUwMG1BCkk6
-ICBJZiM9MHgwIEFsdD0gMCAjRVBzPSAxIENscz0wZSh2aWRlbykgU3ViPTAxIFByb3Q9MDAgRHJp
-dmVyPXV2Y3ZpZGVvCkk6ICBJZiM9MHgxIEFsdD0gMCAjRVBzPSAwIENscz0wZSh2aWRlbykgU3Vi
-PTAyIFByb3Q9MDAgRHJpdmVyPXV2Y3ZpZGVvCkk6ICBJZiM9MHgyIEFsdD0gMCAjRVBzPSAwIENs
-cz1mZShhcHAuICkgU3ViPTAxIFByb3Q9MDEgRHJpdmVyPShub25lKQoKVDogIEJ1cz0wMyBMZXY9
-MDEgUHJudD0wMSBQb3J0PTA3IENudD0wNSBEZXYjPSAgMyBTcGQ9NDgwIE14Q2g9IDAKRDogIFZl
-cj0gMi4wMCBDbHM9MDAoPmlmYyApIFN1Yj0wMCBQcm90PTAwIE14UFM9NjQgI0NmZ3M9ICAxClA6
-ICBWZW5kb3I9MGE1YyBQcm9kSUQ9NTg2NSBSZXY9MDEuMDEKUzogIE1hbnVmYWN0dXJlcj1Ccm9h
-ZGNvbSBDb3JwClM6ICBQcm9kdWN0PTU4MjAwClM6ICBTZXJpYWxOdW1iZXI9MDEyMzQ1Njc4OUFC
-Q0QKQzogICNJZnM9IDIgQ2ZnIz0gMSBBdHI9ZTAgTXhQd3I9MTAwbUEKSTogIElmIz0weDAgQWx0
-PSAwICNFUHM9IDMgQ2xzPWZlKGFwcC4gKSBTdWI9MDAgUHJvdD0wMCBEcml2ZXI9KG5vbmUpCkk6
-ICBJZiM9MHgxIEFsdD0gMCAjRVBzPSAzIENscz0wYihzY2FyZCkgU3ViPTAwIFByb3Q9MDAgRHJp
-dmVyPShub25lKQoKVDogIEJ1cz0wNCBMZXY9MDAgUHJudD0wMCBQb3J0PTAwIENudD0wMCBEZXYj
-PSAgMSBTcGQ9MjAwMDAgTXhDaD0gMgpEOiAgVmVyPSAzLjEwIENscz0wOShodWIgICkgU3ViPTAw
-IFByb3Q9MDMgTXhQUz0gOSAjQ2Zncz0gIDEKUDogIFZlbmRvcj0xZDZiIFByb2RJRD0wMDAzIFJl
-dj0wNi4xMApTOiAgTWFudWZhY3R1cmVyPUxpbnV4IDYuMTAuNiB4aGNpLWhjZApTOiAgUHJvZHVj
-dD14SENJIEhvc3QgQ29udHJvbGxlcgoKLy9WMDE0CmpiZEBqYmQtUHJlY2lzaW9uLTM0OTA6fi91
-c2ItdXRpbHMvdXNidXRpbHMtMDE0JCBsc3VzYiAtVgpsc3VzYiAodXNidXRpbHMpIDAxNApqYmRA
-amJkLVByZWNpc2lvbi0zNDkwOn4vdXNiLXV0aWxzL3VzYnV0aWxzLTAxNCQgdXNiLWRldmljZXMg
-CgpUOiAgQnVzPTAxIExldj0wMCBQcm50PTAwIFBvcnQ9MDAgQ250PTAwIERldiM9ICAxIFNwZD00
-ODAgTXhDaD0gMQpEOiAgVmVyPSAyLjAwIENscz0wOShodWIgICkgU3ViPTAwIFByb3Q9MDEgTXhQ
-Uz02NCAjQ2Zncz0gIDEKUDogIFZlbmRvcj0xZDZiIFByb2RJRD0wMDAyIFJldj0wNi4xMApTOiAg
-TWFudWZhY3R1cmVyPUxpbnV4IDYuMTAuNiB4aGNpLWhjZApTOiAgUHJvZHVjdD14SENJIEhvc3Qg
-Q29udHJvbGxlcgpTOiAgU2VyaWFsTnVtYmVyPTAwMDA6MDA6MGQuMApDOiAgI0lmcz0gMSBDZmcj
-PSAxIEF0cj1lMCBNeFB3cj0wbUEKSTogIElmIz0gMCBBbHQ9IDAgI0VQcz0gMSBDbHM9MDkoaHVi
-ICApIFN1Yj0wMCBQcm90PTAwIERyaXZlcj1odWIKRTogIEFkPTgxKEkpIEF0cj0wMyhJbnQuKSBN
-eFBTPSAgIDQgSXZsPTI1Nm1zCgpUOiAgQnVzPTAyIExldj0wMCBQcm50PTAwIFBvcnQ9MDAgQ250
-PTAwIERldiM9ICAxIFNwZD0yMDAwMCBNeENoPSA0CkQ6ICBWZXI9IDMuMTAgQ2xzPTA5KGh1YiAg
-KSBTdWI9MDAgUHJvdD0wMyBNeFBTPSA5ICNDZmdzPSAgMQpQOiAgVmVuZG9yPTFkNmIgUHJvZElE
-PTAwMDMgUmV2PTA2LjEwClM6ICBNYW51ZmFjdHVyZXI9TGludXggNi4xMC42IHhoY2ktaGNkClM6
-ICBQcm9kdWN0PXhIQ0kgSG9zdCBDb250cm9sbGVyClM6ICBTZXJpYWxOdW1iZXI9MDAwMDowMDow
-ZC4wCkM6ICAjSWZzPSAxIENmZyM9IDEgQXRyPWUwIE14UHdyPTBtQQpJOiAgSWYjPSAwIEFsdD0g
-MCAjRVBzPSAxIENscz0wOShodWIgICkgU3ViPTAwIFByb3Q9MDAgRHJpdmVyPWh1YgpFOiAgQWQ9
-ODEoSSkgQXRyPTAzKEludC4pIE14UFM9ICAgNCBJdmw9MjU2bXMKClQ6ICBCdXM9MDMgTGV2PTAw
-IFBybnQ9MDAgUG9ydD0wMCBDbnQ9MDAgRGV2Iz0gIDEgU3BkPTQ4MCBNeENoPTEyCkQ6ICBWZXI9
-IDIuMDAgQ2xzPTA5KGh1YiAgKSBTdWI9MDAgUHJvdD0wMSBNeFBTPTY0ICNDZmdzPSAgMQpQOiAg
-VmVuZG9yPTFkNmIgUHJvZElEPTAwMDIgUmV2PTA2LjEwClM6ICBNYW51ZmFjdHVyZXI9TGludXgg
-Ni4xMC42IHhoY2ktaGNkClM6ICBQcm9kdWN0PXhIQ0kgSG9zdCBDb250cm9sbGVyClM6ICBTZXJp
-YWxOdW1iZXI9MDAwMDowMDoxNC4wCkM6ICAjSWZzPSAxIENmZyM9IDEgQXRyPWUwIE14UHdyPTBt
-QQpJOiAgSWYjPSAwIEFsdD0gMCAjRVBzPSAxIENscz0wOShodWIgICkgU3ViPTAwIFByb3Q9MDAg
-RHJpdmVyPWh1YgpFOiAgQWQ9ODEoSSkgQXRyPTAzKEludC4pIE14UFM9ICAgNCBJdmw9MjU2bXMK
-ClQ6ICBCdXM9MDMgTGV2PTAxIFBybnQ9MDEgUG9ydD0wOSBDbnQ9MDEgRGV2Iz0gIDQgU3BkPTEy
-ICBNeENoPSAwCkQ6ICBWZXI9IDIuMDEgQ2xzPWUwKHdsY29uKSBTdWI9MDEgUHJvdD0wMSBNeFBT
-PTY0ICNDZmdzPSAgMQpQOiAgVmVuZG9yPTgwODcgUHJvZElEPTAwMzMgUmV2PTAwLjAwCkM6ICAj
-SWZzPSAyIENmZyM9IDEgQXRyPWUwIE14UHdyPTEwMG1BCkk6ICBJZiM9IDAgQWx0PSAwICNFUHM9
-IDMgQ2xzPWUwKHdsY29uKSBTdWI9MDEgUHJvdD0wMSBEcml2ZXI9YnR1c2IKRTogIEFkPTAyKE8p
-IEF0cj0wMihCdWxrKSBNeFBTPSAgNjQgSXZsPTBtcwpFOiAgQWQ9ODEoSSkgQXRyPTAzKEludC4p
-IE14UFM9ICA2NCBJdmw9MW1zCkU6ICBBZD04MihJKSBBdHI9MDIoQnVsaykgTXhQUz0gIDY0IEl2
-bD0wbXMKSTogIElmIz0gMSBBbHQ9IDAgI0VQcz0gMiBDbHM9ZTAod2xjb24pIFN1Yj0wMSBQcm90
-PTAxIERyaXZlcj1idHVzYgpFOiAgQWQ9MDMoTykgQXRyPTAxKElzb2MpIE14UFM9ICAgMCBJdmw9
-MW1zCkU6ICBBZD04MyhJKSBBdHI9MDEoSXNvYykgTXhQUz0gICAwIEl2bD0xbXMKClQ6ICBCdXM9
-MDQgTGV2PTAwIFBybnQ9MDAgUG9ydD0wMCBDbnQ9MDAgRGV2Iz0gIDEgU3BkPTIwMDAwIE14Q2g9
-IDIKRDogIFZlcj0gMy4xMCBDbHM9MDkoaHViICApIFN1Yj0wMCBQcm90PTAzIE14UFM9IDkgI0Nm
-Z3M9ICAxClA6ICBWZW5kb3I9MWQ2YiBQcm9kSUQ9MDAwMyBSZXY9MDYuMTAKUzogIE1hbnVmYWN0
-dXJlcj1MaW51eCA2LjEwLjYgeGhjaS1oY2QKUzogIFByb2R1Y3Q9eEhDSSBIb3N0IENvbnRyb2xs
-ZXIKUzogIFNlcmlhbE51bWJlcj0wMDAwOjAwOjE0LjAKQzogICNJZnM9IDEgQ2ZnIz0gMSBBdHI9
-ZTAgTXhQd3I9MG1BCkk6ICBJZiM9IDAgQWx0PSAwICNFUHM9IDEgQ2xzPTA5KGh1YiAgKSBTdWI9
-MDAgUHJvdD0wMCBEcml2ZXI9aHViCkU6ICBBZD04MShJKSBBdHI9MDMoSW50LikgTXhQUz0gICA0
-IEl2bD0yNTZtcwoKTm90IG9ubHkgbW9kZW0gZGV2aWNlIGlzIG1pc3NpbmcsIHNvbWUgb3RoZXIg
-ZGV2aWNlIGNhbid0IGJlIGZvdW5kIGluIFYwMTQKYXMgd2VsbDoKClA6ICBWZW5kb3I9MDQ2ZCBQ
-cm9kSUQ9YzUzNCBSZXY9NTEuMDAKUzogIE1hbnVmYWN0dXJlcj1Mb2dpdGVjaCAKClA6ICBWZW5k
-b3I9MGJkYSBQcm9kSUQ9NTU4NyBSZXY9MzQuMzEKUzogIE1hbnVmYWN0dXJlcj1DTjA5OTdGWThM
-RzAwM0FKQTBBNlgwMgpTOiAgUHJvZHVjdD1JbnRlZ3JhdGVkX1dlYmNhbV9GSEQKClA6ICBWZW5k
-b3I9MGE1YyBQcm9kSUQ9NTg2NSBSZXY9MDEuMDEKUzogIE1hbnVmYWN0dXJlcj1Ccm9hZGNvbSBD
-b3JwCgpQbGVhc2UgaGVscCBjaGVjayB3aGljaCBjb21taXQgd2FzIG1lcmdlZCBmb3IgdGhpcyBp
-c3N1ZT8KT3IgdGhpcyBpc3N1ZSB3YXMgbm90IGJlIGZvdW5kICwgYnV0IGZpeGVkIGluIG90aGVy
-IGNvbW1pdHM/CklmIHlvdSBuZWVkIG1vcmUgbG9ncyBwbGVhc2UgbGV0IG1lIGtub3cuCgpUaGFu
-a3M=
+On Mon, Sep 2, 2024 at 10:45=E2=80=AFAM maobibo <maobibo@loongson.cn> wrote=
+:
+>
+>
+>
+> On 2024/9/2 =E4=B8=8A=E5=8D=8810:20, Huacai Chen wrote:
+> > On Mon, Sep 2, 2024 at 9:56=E2=80=AFAM maobibo <maobibo@loongson.cn> wr=
+ote:
+> >>
+> >>
+> >> Hi Huacai,
+> >>
+> >> On 2024/8/31 =E4=B8=8B=E5=8D=8810:49, Huacai Chen wrote:
+> >>> Hi, Bibo,
+> >>>
+> >>> On Tue, Jul 30, 2024 at 3:57=E2=80=AFPM Bibo Mao <maobibo@loongson.cn=
+> wrote:
+> >>>>
+> >>>> Every vcpu has separate LBT registers. And there are four scr regist=
+ers,
+> >>>> one flags and ftop register for LBT extension. When VM migrates, VMM
+> >>>> needs to get LBT registers for every vcpu.
+> >>>>
+> >>>> Here macro KVM_REG_LOONGARCH_LBT is added for new vcpu lbt register =
+type,
+> >>>> the following macro is added to get/put LBT registers.
+> >>>>     KVM_REG_LOONGARCH_LBT_SCR0
+> >>>>     KVM_REG_LOONGARCH_LBT_SCR1
+> >>>>     KVM_REG_LOONGARCH_LBT_SCR2
+> >>>>     KVM_REG_LOONGARCH_LBT_SCR3
+> >>>>     KVM_REG_LOONGARCH_LBT_EFLAGS
+> >>>>     KVM_REG_LOONGARCH_LBT_FTOP
+> >>>>
+> >>>> Signed-off-by: Bibo Mao <maobibo@loongson.cn>
+> >>>> ---
+> >>>>    arch/loongarch/include/uapi/asm/kvm.h |  9 +++++
+> >>>>    arch/loongarch/kvm/vcpu.c             | 56 ++++++++++++++++++++++=
++++++
+> >>>>    2 files changed, 65 insertions(+)
+> >>>>
+> >>>> diff --git a/arch/loongarch/include/uapi/asm/kvm.h b/arch/loongarch/=
+include/uapi/asm/kvm.h
+> >>>> index 49bafac8b22d..003fb766c93f 100644
+> >>>> --- a/arch/loongarch/include/uapi/asm/kvm.h
+> >>>> +++ b/arch/loongarch/include/uapi/asm/kvm.h
+> >>>> @@ -64,6 +64,7 @@ struct kvm_fpu {
+> >>>>    #define KVM_REG_LOONGARCH_KVM          (KVM_REG_LOONGARCH | 0x200=
+00ULL)
+> >>>>    #define KVM_REG_LOONGARCH_FPSIMD       (KVM_REG_LOONGARCH | 0x300=
+00ULL)
+> >>>>    #define KVM_REG_LOONGARCH_CPUCFG       (KVM_REG_LOONGARCH | 0x400=
+00ULL)
+> >>>> +#define KVM_REG_LOONGARCH_LBT          (KVM_REG_LOONGARCH | 0x50000=
+ULL)
+> >>>>    #define KVM_REG_LOONGARCH_MASK         (KVM_REG_LOONGARCH | 0x700=
+00ULL)
+> >>> I think KVM_REG_LOONGARCH_MASK should contain all above register
+> >>> classes, so should it be  (KVM_REG_LOONGARCH | 0x370000ULL)?
+> >> Sorry, maybe I miss something. What is the meaning of 0x370000ULL? How
+> >> does the value come from?
+> > It seems I misunderstood the mask, please ignore.
+> >
+> >>
+> >>>
+> >>>>    #define KVM_CSR_IDX_MASK               0x7fff
+> >>>>    #define KVM_CPUCFG_IDX_MASK            0x7fff
+> >>>> @@ -77,6 +78,14 @@ struct kvm_fpu {
+> >>>>    /* Debugging: Special instruction for software breakpoint */
+> >>>>    #define KVM_REG_LOONGARCH_DEBUG_INST   (KVM_REG_LOONGARCH_KVM | K=
+VM_REG_SIZE_U64 | 3)
+> >>>>
+> >>>> +/* LBT registers */
+> >>>> +#define KVM_REG_LOONGARCH_LBT_SCR0     (KVM_REG_LOONGARCH_LBT | KVM=
+_REG_SIZE_U64 | 1)
+> >>>> +#define KVM_REG_LOONGARCH_LBT_SCR1     (KVM_REG_LOONGARCH_LBT | KVM=
+_REG_SIZE_U64 | 2)
+> >>>> +#define KVM_REG_LOONGARCH_LBT_SCR2     (KVM_REG_LOONGARCH_LBT | KVM=
+_REG_SIZE_U64 | 3)
+> >>>> +#define KVM_REG_LOONGARCH_LBT_SCR3     (KVM_REG_LOONGARCH_LBT | KVM=
+_REG_SIZE_U64 | 4)
+> >>>> +#define KVM_REG_LOONGARCH_LBT_EFLAGS   (KVM_REG_LOONGARCH_LBT | KVM=
+_REG_SIZE_U64 | 5)
+> >>>> +#define KVM_REG_LOONGARCH_LBT_FTOP     (KVM_REG_LOONGARCH_LBT | KVM=
+_REG_SIZE_U64 | 6)
+> >>> FTOP is a 32bit register in other place of the kernel, is it correct
+> >>> to use U64 here?
+> >> It is deliberate and there is no 32bit compat requirement for kvm. ALL
+> >> regiester interfaces are defined as 64-bit.
+> >> On kernel and qemu side, ftop can be defined as 32bit still, however t=
+he
+> >> interface is 64-bit. So there is forced type conversion between u32 an=
+d
+> >> u64. There is no problem here.
+> > If you are sure, then no problem. But there is indeed KVM_REG_SIZE_U32
+> > in include/uapi/linux/kvm.h, and if we append more fields after ftop,
+> > define it as U64 may break memcpy().
+> yes, there is KVM_REG_SIZE_U32 definition, however LoongArch KVM does
+> not use it, else the safer checking is a little complicated. Now
+> parameter with KVM_REG_SIZE_U32 is simply treated as illegal.
+I think just add a "case KVM_REG_SIZE_U32" in kvm_set_reg/kvm_get_reg
+is OK, kvm_set_one_reg/kvm_get_one_reg don't need any modifications.
+No?
+
+Huacai
+>
+> And no memcpy() is used for ftop/cpucfg, there is assignment for every
+> single register like this:
+>
+> For cpucfg read/write:
+>    vcpu->arch.cpucfg[id] =3D (u32)v;
+>    *v =3D vcpu->arch.cpucfg[id];
+> For ftop read/write:
+>    vcpu->arch.fpu.ftop =3D v;
+>    *v =3D vcpu->arch.fpu.ftop;
+>
+> Regards
+> Bibo Mao
+> >
+> >>
+> >>>
+> >>>> +
+> >>>>    #define LOONGARCH_REG_SHIFT            3
+> >>>>    #define LOONGARCH_REG_64(TYPE, REG)    (TYPE | KVM_REG_SIZE_U64 |=
+ (REG << LOONGARCH_REG_SHIFT))
+> >>>>    #define KVM_IOC_CSRID(REG)             LOONGARCH_REG_64(KVM_REG_L=
+OONGARCH_CSR, REG)
+> >>>> diff --git a/arch/loongarch/kvm/vcpu.c b/arch/loongarch/kvm/vcpu.c
+> >>>> index b5324885a81a..b2500d4fa729 100644
+> >>>> --- a/arch/loongarch/kvm/vcpu.c
+> >>>> +++ b/arch/loongarch/kvm/vcpu.c
+> >>>> @@ -597,6 +597,34 @@ static int kvm_get_one_reg(struct kvm_vcpu *vcp=
+u,
+> >>>>                           break;
+> >>>>                   }
+> >>>>                   break;
+> >>>> +       case KVM_REG_LOONGARCH_LBT:
+> >>> What about adding FPU/LSX/LASX registers (if needed for migration) in
+> >>> kvm_{get, set}_one_reg() here?
+> >> If there is 512bit SIMD or other requirement, it will be added in
+> >> kvm_{get, set}_one_reg(). For FPU/LSX/LASX registers, there is common
+> >> API KVM_GET_FPU/KVM_SET_FPU here. The impmentation of QEMU only gets
+> >> FPU, the upper LSX/LASX is lost, we will submit a patch in qemu side,
+> >> the kvm kernel side is ok.
+> > OK, no problem.
+> >
+> > Huacai
+> >>
+> >> /*
+> >>    * for KVM_GET_FPU and KVM_SET_FPU
+> >>    */
+> >> struct kvm_fpu {
+> >>           __u32 fcsr;
+> >>           __u64 fcc;    /* 8x8 */
+> >>           struct kvm_fpureg {
+> >>                   __u64 val64[4];
+> >>           } fpr[32];
+> >> };
+> >>
+> >> Regards
+> >> Bibo Mao
+> >>>
+> >>> Huacai
+> >>>
+> >>>> +               if (!kvm_guest_has_lbt(&vcpu->arch))
+> >>>> +                       return -ENXIO;
+> >>>> +
+> >>>> +               switch (reg->id) {
+> >>>> +               case KVM_REG_LOONGARCH_LBT_SCR0:
+> >>>> +                       *v =3D vcpu->arch.lbt.scr0;
+> >>>> +                       break;
+> >>>> +               case KVM_REG_LOONGARCH_LBT_SCR1:
+> >>>> +                       *v =3D vcpu->arch.lbt.scr1;
+> >>>> +                       break;
+> >>>> +               case KVM_REG_LOONGARCH_LBT_SCR2:
+> >>>> +                       *v =3D vcpu->arch.lbt.scr2;
+> >>>> +                       break;
+> >>>> +               case KVM_REG_LOONGARCH_LBT_SCR3:
+> >>>> +                       *v =3D vcpu->arch.lbt.scr3;
+> >>>> +                       break;
+> >>>> +               case KVM_REG_LOONGARCH_LBT_EFLAGS:
+> >>>> +                       *v =3D vcpu->arch.lbt.eflags;
+> >>>> +                       break;
+> >>>> +               case KVM_REG_LOONGARCH_LBT_FTOP:
+> >>>> +                       *v =3D vcpu->arch.fpu.ftop;
+> >>>> +                       break;
+> >>>> +               default:
+> >>>> +                       ret =3D -EINVAL;
+> >>>> +                       break;
+> >>>> +               }
+> >>>> +               break;
+> >>>>           default:
+> >>>>                   ret =3D -EINVAL;
+> >>>>                   break;
+> >>>> @@ -663,6 +691,34 @@ static int kvm_set_one_reg(struct kvm_vcpu *vcp=
+u,
+> >>>>                           break;
+> >>>>                   }
+> >>>>                   break;
+> >>>> +       case KVM_REG_LOONGARCH_LBT:
+> >>>> +               if (!kvm_guest_has_lbt(&vcpu->arch))
+> >>>> +                       return -ENXIO;
+> >>>> +
+> >>>> +               switch (reg->id) {
+> >>>> +               case KVM_REG_LOONGARCH_LBT_SCR0:
+> >>>> +                       vcpu->arch.lbt.scr0 =3D v;
+> >>>> +                       break;
+> >>>> +               case KVM_REG_LOONGARCH_LBT_SCR1:
+> >>>> +                       vcpu->arch.lbt.scr1 =3D v;
+> >>>> +                       break;
+> >>>> +               case KVM_REG_LOONGARCH_LBT_SCR2:
+> >>>> +                       vcpu->arch.lbt.scr2 =3D v;
+> >>>> +                       break;
+> >>>> +               case KVM_REG_LOONGARCH_LBT_SCR3:
+> >>>> +                       vcpu->arch.lbt.scr3 =3D v;
+> >>>> +                       break;
+> >>>> +               case KVM_REG_LOONGARCH_LBT_EFLAGS:
+> >>>> +                       vcpu->arch.lbt.eflags =3D v;
+> >>>> +                       break;
+> >>>> +               case KVM_REG_LOONGARCH_LBT_FTOP:
+> >>>> +                       vcpu->arch.fpu.ftop =3D v;
+> >>>> +                       break;
+> >>>> +               default:
+> >>>> +                       ret =3D -EINVAL;
+> >>>> +                       break;
+> >>>> +               }
+> >>>> +               break;
+> >>>>           default:
+> >>>>                   ret =3D -EINVAL;
+> >>>>                   break;
+> >>>> --
+> >>>> 2.39.3
+> >>>>
+> >>
+> >>
+>
+>
 
