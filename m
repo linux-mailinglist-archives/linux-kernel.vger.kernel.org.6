@@ -1,137 +1,88 @@
-Return-Path: <linux-kernel+bounces-311325-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311324-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29A03968789
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 14:30:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B85E968788
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 14:30:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA5CD281772
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 12:30:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A1C83B23E8A
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 12:30:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 176F5200108;
-	Mon,  2 Sep 2024 12:29:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="kpfS69Z2"
-Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49ECD18595A;
+	Mon,  2 Sep 2024 12:29:04 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87C0819E996
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 12:29:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 801BA19E96F
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 12:29:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725280146; cv=none; b=XRcZZnEOpheY8+TnVvXsqvDJzCDzHYztjwM4nsQaUN6uEnP/pWr6pxC1eL440ElNjr9ThPBzkacd2DXpgIHhmTkyPQNrh+B8TVR78DJUr817p8VFwViwbtrf89dwXwREZ3pg2FIZnYMvO90ybYA90yz4Wcm0Irz9wgfbsmBwBL8=
+	t=1725280143; cv=none; b=bzboSrpB/83uTQhNKD9TAVT65B1f4zXB+uPj6zc/vU059qu0UPRVVYvgdqEOxT9S+d5yFti/fNHEk9drIjHG8sCw6POvV9UwyfOfw0kvE0IkU/fHWDSVw/k4X89VMQ4Y98i3g05C4ZQWqywMhahLbZWDsKeOqH8t22t846fhhQA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725280146; c=relaxed/simple;
-	bh=9q1kmcSWYGxbky2NAXn5eFd+ketKfs+U8FEZnXas1L0=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Ed3u6c5bjS+69n+gbGPIYAC6JZJYiU84kDdCpt0Enfg5lyYgYeC6+6kBZbBkPbqiV6rMI1FpAAzwKereawj+QDIR0BC++dYlKVTtJ3P7WpF0923eZdvMOi6w2FIfmTwr3y3ODuB+whh9XdUi9P/mz3T3hM669tZHp0kCQjwCShs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=kpfS69Z2; arc=none smtp.client-ip=217.70.183.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 844CD6000D;
-	Mon,  2 Sep 2024 12:28:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1725280136;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3bHLgPC9UcNLmBmxjD3JWZOBGlNzvtP7G+tkWxSr6cw=;
-	b=kpfS69Z2MKp2rNQmnV05UEwL+5em9prQmKegSFNYIkmVlEZ4QNcA2xC4oLYOiKk/aWLpmg
-	oMHf++ykE5xkdnkvRqzmfYRBCRvManeVrRqU/nRaUTR0K8F+6S3vnO7WZDcGDeEbSCJnsX
-	P71dvOWQau5e24O47/gYlvDA/eKTxjJx9+buLl5vR69HC1fIjEm78zcgs++bZddvUP1vxw
-	6Rdya358OfbwLuiUdOOXC5a2zMf8niBgmEia/5T2fTkanz6ZwGvD5tkxHZXQpQCDTxRu9C
-	PX6+etLucv8G2uhq8/VbMsmaXBCKl10/LSlJHbU2i/zyy/3lkT5egZdRbQCrEA==
-Date: Mon, 2 Sep 2024 14:28:53 +0200
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: Cheng Ming Lin <linchengming884@gmail.com>
-Cc: vigneshr@ti.com, linux-mtd@lists.infradead.org,
- linux-kernel@vger.kernel.org, richard@nod.at, alvinzhou@mxic.com.tw,
- leoyu@mxic.com.tw, Cheng Ming Lin <chengminglin@mxic.com.tw>
-Subject: Re: [PATCH v5 1/2] mtd: spinand: Add support for setting plane
- select bits
-Message-ID: <20240902142853.5fff056a@xps-13>
-In-Reply-To: <CAAyq3Sbta_p9WNOTEdCA7V=huPkeFFxUvxTqfzRJz0dsJMJBwg@mail.gmail.com>
-References: <20240830100310.1553675-1-linchengming884@gmail.com>
-	<20240830100310.1553675-2-linchengming884@gmail.com>
-	<20240830175504.746fb2ec@xps-13>
-	<CAAyq3Sbta_p9WNOTEdCA7V=huPkeFFxUvxTqfzRJz0dsJMJBwg@mail.gmail.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1725280143; c=relaxed/simple;
+	bh=Y22xo1KeI/H70tsZp9XDDN+XQNLU1iLBiTuyqWVuM+w=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=hOqBA/uGX2hNunE2saiw91NZMeDBUkAuHgxYr6uzYLiK1W+vBvzDSSHN9mEBnieBeyjL8d/4Ay2WWHXMLRHHcOH2ID/x6zPUy417ZyIWjpgwz2WS8jgFl5cWwkGa99Q4tsZ8FuDI8uyqouxzw9+kJ/7eru8WNYQHgtsdN4JxlBo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-39f53125f4eso16446985ab.2
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2024 05:29:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725280141; x=1725884941;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Dov6y4mS5VP69C2MZ48a5b3rf7Q5lLo5GyKHuKQiybw=;
+        b=X0mhaoqK1e11+8vYDL4Il9hvk07tVWuLrtsrKLGREUqn3Mq74Fmy1kySXoD1KJvKO5
+         2SchgngjU0Aki1ntDe/usb+ofSoywlX95SxDG8ukvBUo1sAim1kcKzJ0ofSBS+7P0arE
+         sZa1qIZpM0vf1BEhlFNxZBUJAbkd9Wb8XFk0IMEKg4EzZ8uqYsbbSg50fFmbBXZ1+VWT
+         Wk+Yu5d8DmhB5ZvShDp7m94UbUuykS2pnycCC4U1jS0dWA01gzbTGfMpGQPI3Yx8RL1m
+         cvK1xteW0au0tkJXwW1KF8+TAwoDXeu9IHzbIhCpZojdtxeY/3DgdM0NWmZqPsHDCO0d
+         rpYA==
+X-Forwarded-Encrypted: i=1; AJvYcCVCEgN1ePregOZ1c6yWayjxdTleuHRJ43XeKELXdQmL1xzM61Vj2EwCWKCQwMc/QQbOMGK93ZA2n4H9cRU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyeRCEV1TUjx8jh00WPmxiQ6mmfE8fzzDOtLmVhFbPvU7avkBQE
+	z4XaeTtEscwTxnSf1/X6z/7KpJH4UruT7KXN2aCnlfHOlOIxmhlsi/I1BOJz1TKXfgirOcAAirl
+	sG2wQEiAYdZVF91HxYYMQ+ZPM6bxr+60s/KG29vPKI6ZP5bLRb1gpI2U=
+X-Google-Smtp-Source: AGHT+IEGtLImGZmmKMXSL/xm4A1Gg1PCz9qOJqMGZHlVxuVgAXW95+jEhBiC1rQSfoUvzKvyx90FNx3QRullBv/ZBh6RUMogVI4V
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-Sasl: miquel.raynal@bootlin.com
+X-Received: by 2002:a05:6e02:194a:b0:397:3a28:94f1 with SMTP id
+ e9e14a558f8ab-39f41061d7cmr6403325ab.3.1725280141755; Mon, 02 Sep 2024
+ 05:29:01 -0700 (PDT)
+Date: Mon, 02 Sep 2024 05:29:01 -0700
+In-Reply-To: <41ccdc3a-7259-4fcd-88bb-07590d278d19@paragon-software.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000fcd95906212215df@google.com>
+Subject: Re: [syzbot] [ntfs3?] kernel panic: stack is corrupted in vprintk_emit
+From: syzbot <syzbot+4d2aaeff9eb5a2cfec70@syzkaller.appspotmail.com>
+To: almaz.alexandrovich@paragon-software.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Cheng,
+Hello,
 
-linchengming884@gmail.com wrote on Mon, 2 Sep 2024 16:42:55 +0800:
+syzbot tried to test the proposed patch but the build/boot failed:
 
-> Hi Miquel,
->=20
-> I accidentally sent the previous email before it was finished.
->=20
-> Miquel Raynal <miquel.raynal@bootlin.com> =E6=96=BC 2024=E5=B9=B48=E6=9C=
-=8830=E6=97=A5 =E9=80=B1=E4=BA=94 =E4=B8=8B=E5=8D=8811:55=E5=AF=AB=E9=81=93=
-=EF=BC=9A
-> >
-> > Hi ChengMing,
-> >
-> > linchengming884@gmail.com wrote on Fri, 30 Aug 2024 18:03:09 +0800:
-> > =20
-> > > From: Cheng Ming Lin <chengminglin@mxic.com.tw>
-> > >
-> > > Add two flags for inserting the Plane Select bit into the column
-> > > address during the write_to_cache and the read_from_cache operation.
-> > >
-> > > Add the SPINAND_HAS_PP_PLANE_SELECT_BIT flag for serial NAND flash =20
-> >
-> > This flag has been renamed :) =20
->=20
-> Thank you for the reminder. I will make the necessary changes.
->=20
-> > =20
-> > > that require inserting the Plane Select bit into the column address
-> > > during the write_to_cache operation.
-> > >
-> > > Add the SPINAND_HAS_READ_PLANE_SELECT_BIT flag for serial NAND flash
-> > > that require inserting the Plane Select bit into the column address
-> > > during the read_from_cache operation.
-> > >
-> > > Signed-off-by: Cheng Ming Lin <chengminglin@mxic.com.tw>
-> > > ---
-> > >  drivers/mtd/nand/spi/core.c | 6 ++++++
-> > >  include/linux/mtd/spinand.h | 2 ++
-> > >  2 files changed, 8 insertions(+)
-> > >
-> > > diff --git a/drivers/mtd/nand/spi/core.c b/drivers/mtd/nand/spi/core.c
-> > > index e0b6715e5dfe..e7b592cdbb4c 100644
-> > > --- a/drivers/mtd/nand/spi/core.c
-> > > +++ b/drivers/mtd/nand/spi/core.c
-> > > @@ -386,6 +386,9 @@ static int spinand_read_from_cache_op(struct spin=
-and_device *spinand,
-> > >       else
-> > >               rdesc =3D spinand->dirmaps[req->pos.plane].rdesc_ecc;
-> > >
-> > > +     if (spinand->flags & SPINAND_HAS_READ_PLANE_SELECT_BIT)
-> > > +             column |=3D req->pos.plane << fls(nanddev_page_size(nan=
-d)); =20
-> >
-> > Isn't there any better way to know what the bit position is? =20
->=20
-> There are two other methods to determine the bit position:
-> - column |=3D res->pos.plane << fls(nand->memorg.pagesize)
-> - column |=3D wdesc->info.offset
+failed to apply patch:
+checking file fs/ntfs3/super.c
+patch: **** unexpected end of file in patch
 
-Ok, let's keep it is as-is for now.
 
-Thanks,
-Miqu=C3=A8l
+
+Tested on:
+
+commit:         7529036a fs/ntfs3: Rename ntfs3_setattr into ntfs_seta..
+git tree:       https://github.com/Paragon-Software-Group/linux-ntfs3.git master
+kernel config:  https://syzkaller.appspot.com/x/.config?x=7229118d88b4a71b
+dashboard link: https://syzkaller.appspot.com/bug?extid=4d2aaeff9eb5a2cfec70
+compiler:       
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=15523cc7980000
+
 
