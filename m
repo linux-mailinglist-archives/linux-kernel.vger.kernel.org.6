@@ -1,257 +1,233 @@
-Return-Path: <linux-kernel+bounces-311003-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311004-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 081C69683D3
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 11:56:06 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFB209683D5
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 11:56:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8AC6D1F21C4A
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 09:56:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2D8B8B24B1B
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 09:56:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EF3C1D3198;
-	Mon,  2 Sep 2024 09:55:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4E521D279F;
+	Mon,  2 Sep 2024 09:56:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="garDceda"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WJrKfMex"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9B6E1D1F44;
-	Mon,  2 Sep 2024 09:55:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53604187335
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 09:56:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725270949; cv=none; b=XW5UBuiHs3Ncw5BPltctwL++hoLYYpZwSkAnaIeKa4ejaDzsUaznAZZX+5i9Rl1mhhf2RdP4d2kCCeiBISib27t/GteAmuAXnTlzgDAsF7HjuDsglCoxC1QyGEyUlwo7wudWgfzZW9+wXYwlWQN02JIrq2gFjkXIOZMq5AFNj0I=
+	t=1725270972; cv=none; b=nZ+OXqkfSPVO0VrzmDDvGRg8GAI7b3tTvWeZtOtCVIj0ErpNmyHkuvocV1Jd+vSHqLEBkjWAhyYgsC9/aZcJkHdG/V2SV5GpLBhqcrVZ4WSaX00sZoNZk5ezaleRgxw5cESX54bB6PEQTfVoTN6MnHkaO5GJ812VsEOInQvBEgc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725270949; c=relaxed/simple;
-	bh=oSbh502HY4Dm7eT1eVi4kY+Nmou7uF6mBzhrHjfaVG8=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=KF2ccvYtajv22GFVSGnlnTqYrV2Gfcfy7+OtpynRxq/w/A9dSbRU7af1PoRKcHDt3lr+om/BRarJtQeEsewjWt+LPsFFptVgD9mZgGPZADrcr6p0uCXLMySnh2g3zTElJfTmEUkwnee2Ju/mqJsviovrg5XnZDulFY+8P4k5/oI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=garDceda; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 481N0WlF020660;
-	Mon, 2 Sep 2024 09:55:26 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=+0UtkfU8O8EqtBRippx73Z
-	t/xKIk4RmzJwGe9dLxsLM=; b=garDcedaPCzJmrCWtbrUJT62pVwHdotzm5sJOr
-	YUIRU9u9tpiI1oCYG8ri03pTrltvlCKxAR5auj1zrohmIHTTgNGgraMDyW5YZ/X1
-	27sqpIMw0bMs8jQ5GY/69PayOf3tgmSm3oRqoTV8qJwZNYQX9MU5FFsqZogUh3WT
-	ITV3pnDlfaulo59WAC6ybFTkJf990O6vIosmzbeDvzfWfqvq5MnpC0HgM9KkkLQX
-	oriSGYRpPhFavrdibWdKoUBAiI+n9UvEanIYP0jjE9LRpZjFw/TCagcZcDo/yaO3
-	3d5kxbnWRBpTQULYFjuYJXBGnYAb8AKANKY2iVM5/xszqeXg==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41bvf8v53h-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 02 Sep 2024 09:55:07 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4829t777002818
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 2 Sep 2024 09:55:07 GMT
-Received: from hu-jsuraj-hyd.qualcomm.com (10.80.80.8) by
- nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Mon, 2 Sep 2024 02:54:57 -0700
-From: Suraj Jaiswal <quic_jsuraj@quicinc.com>
-To: <quic_jsuraj@quicinc.com>, Vinod Koul <vkoul@kernel.org>,
-        Bhupesh Sharma
-	<bhupesh.sharma@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        "David S.
- Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        "Jakub
- Kicinski" <kuba@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        "Krzysztof
- Kozlowski" <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        "Jose
- Abreu" <joabreu@synopsys.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>, <netdev@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        Prasad Sodagudi
-	<psodagud@quicinc.com>,
-        Andrew Halaney <ahalaney@redhat.com>, Rob Herring
-	<robh@kernel.org>
-CC: <kernel@quicinc.com>
-Subject: [PATCH net] net: stmmac: Stop using a single dma_map() for multiple descriptors
-Date: Mon, 2 Sep 2024 15:24:36 +0530
-Message-ID: <20240902095436.3756093-1-quic_jsuraj@quicinc.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1725270972; c=relaxed/simple;
+	bh=kV8GFG++RaaBCEP6/7hW49kSFBGCuPBSKeMG+g/2Ypc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=EFQlaQgahhJjIDD2F1u+j3HOf1S+kbAOHXePlSKcjhinS2gvQs8bLSN0wMktDrpYM1XZyGSvT9F6tLIqctpp/D3RSPQ4Ez6Zwh1QCEtc1YZnecUG+u0a8xnBlMrKwBq6leqAUgrMhNU8VQGEz2p8gQkCeNjQC7nWMGgQ3q4rRK4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=WJrKfMex; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1725270969;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1Hxuy7nxxFJKkwMiUTcDUdREPM6hh6QhSwYBkqKlx2c=;
+	b=WJrKfMexUaDj2tUCwdEzCPZazOcPxnYjrw0ASjiW7Mfq4/NGQOYg0TRSC/pEaaMt/pDK1L
+	NIluyvV7UgETOSEhWJe0t65w/50hML6KH+jBbPykY0wL3vdwaAlppx2woUDHvxE7Iz7J8Z
+	1v97gxCkZUoFokaHJxbByGQ/e2PJCWw=
+Received: from mail-lj1-f198.google.com (mail-lj1-f198.google.com
+ [209.85.208.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-421-uj6AygklOsGAy_C68yYw4g-1; Mon, 02 Sep 2024 05:56:07 -0400
+X-MC-Unique: uj6AygklOsGAy_C68yYw4g-1
+Received: by mail-lj1-f198.google.com with SMTP id 38308e7fff4ca-2f4f8aa3856so37178591fa.0
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2024 02:56:07 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725270966; x=1725875766;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=1Hxuy7nxxFJKkwMiUTcDUdREPM6hh6QhSwYBkqKlx2c=;
+        b=ThdzpKto6+gEC+4uZcSQchYGcsGFbzlOy4+jaAA8aI87LawrdCdMK3ehYEk8PtebTO
+         QG5D/BKZ7ZUgn3KZQnNfs92ysYWGGM6U5/0B9X+AR/rPcE9kko16L0DUo6JSrKNU1lU/
+         4h4WYkMgXkVh9kV4kEukif0BZMyarifbaH59UC5PpXitaMCNxmpdTkg0z86Bl196fPWk
+         IDBDJ/b6tfmzflfC5tvpaVoD64WVY3GML5KuCynXfBuHzBWZ42dI2bSQkILiStoLOQzk
+         J4aatLnnffsM+M+051KD1/dXCTxwzvEOCHeYkN75eTqS5wXXVMYXHqUzrM6rEwo49pwv
+         0IoA==
+X-Forwarded-Encrypted: i=1; AJvYcCVFZtQx/f5S/4ZQ4/J2LsxGgMumvzB+1+i0hIWXtkdta91kkkFN4IXQbpj8l6XeTCmqWTLZtG/tsDXvFxU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxSZNziI+kz6h5v0gvzf//3pzsAdrc4AMWve8JeZQ2QN/vVNSJF
+	LU/TXr8I1/qvtfSamFTjOHTLpO3qaVoPOMWPS9CszlBOPw4E4lZ1HjcAdNiR4pyF40ieqyNPKuk
+	++WXQ5oPpooNsXhOw+FVzoR7jzbAG8OsxSZZEso+MSuyi0bgf78BAwkugMhueFCJNARn9rXMEon
+	+I+uvZBudWdfTiXlERJI2NP3vl1xWZxU67zA1c
+X-Received: by 2002:a05:651c:b24:b0:2ef:2dc7:a8f6 with SMTP id 38308e7fff4ca-2f62903f97dmr50977091fa.13.1725270966067;
+        Mon, 02 Sep 2024 02:56:06 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHzeOLvsXNoMvOifaQjOvbimoOBIPmu3unrgxdch7eTc5cP16ueig+KVeJk8Reb0ILjM8ucdhhIMPOBQwXYBYQ=
+X-Received: by 2002:a05:651c:b24:b0:2ef:2dc7:a8f6 with SMTP id
+ 38308e7fff4ca-2f62903f97dmr50976771fa.13.1725270965459; Mon, 02 Sep 2024
+ 02:56:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: SowefPK2xML-I30pU6pjQmD6hjAW__dP
-X-Proofpoint-ORIG-GUID: SowefPK2xML-I30pU6pjQmD6hjAW__dP
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-09-02_02,2024-09-02_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 mlxlogscore=999
- suspectscore=0 clxscore=1015 priorityscore=1501 adultscore=0
- malwarescore=0 phishscore=0 lowpriorityscore=0 impostorscore=0 spamscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2409020081
+References: <20240827160256.2446626-2-dtatulea@nvidia.com> <CACGkMEuRvqu8W9-OqPBRhn1DG-+DO6TCzFdHqc7zB74GkNDkAQ@mail.gmail.com>
+ <CACLfguXjiyp+Ya4mUKXu6Dmb3Wx5wW0bbNGRSFWE-Z0E5gALTA@mail.gmail.com>
+ <8daf221f-8d87-4da1-944c-3bcd0edea604@nvidia.com> <CACLfguVr1bd6=bkGn6hX3W7xBr45qydaCpQ1mNpsATeWFqe2ZA@mail.gmail.com>
+ <55b7ae23-6000-4699-9bac-5e72fbdcd803@nvidia.com> <0648a9d9-a056-4cdb-bfb8-a792bce1e771@nvidia.com>
+ <CACLfguXM97JAdWcYO17+H6pu7MWLu2QqBgu_PypGxU_Ab+OUOQ@mail.gmail.com> <20240901144739-mutt-send-email-mst@kernel.org>
+In-Reply-To: <20240901144739-mutt-send-email-mst@kernel.org>
+From: Cindy Lu <lulu@redhat.com>
+Date: Mon, 2 Sep 2024 17:55:28 +0800
+Message-ID: <CACLfguWC-gGoY3JmMA-jU1W7OgkAEQ9iJ8TpZbRtE2iJ5++GxQ@mail.gmail.com>
+Subject: Re: [PATCH] vdpa/mlx5: Use random MAC address when no nic vport MAC set
+To: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: Dragos Tatulea <dtatulea@nvidia.com>, Jason Wang <jasowang@redhat.com>, 
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>, =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, 
+	si-wei.liu@oracle.com, Jiri Pirko <jiri@nvidia.com>, virtualization@lists.linux.dev, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Currently same page address is shared
-between multiple buffer addresses and causing smmu fault for other
-descriptor if address hold by one descriptor got cleaned.
-Allocate separate buffer address for each descriptor
-for TSO path so that if one descriptor cleared it should not
-clean other descriptor address.
-
-Signed-off-by: Suraj Jaiswal <quic_jsuraj@quicinc.com>
----
-
-Changes since v2:
-- Fixed function description 
-- Fixed handling of return value.
-
-
- .../net/ethernet/stmicro/stmmac/stmmac_main.c | 63 ++++++++++++-------
- 1 file changed, 42 insertions(+), 21 deletions(-)
-
-diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-index 83b654b7a9fd..5948774c403f 100644
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-@@ -4136,16 +4136,18 @@ static bool stmmac_vlan_insert(struct stmmac_priv *priv, struct sk_buff *skb,
- /**
-  *  stmmac_tso_allocator - close entry point of the driver
-  *  @priv: driver private structure
-- *  @des: buffer start address
-+ *  @addr: Contains either skb frag address or skb->data address
-  *  @total_len: total length to fill in descriptors
-  *  @last_segment: condition for the last descriptor
-  *  @queue: TX queue index
-+ * @is_skb_frag: condition to check whether skb data is part of fragment or not
-  *  Description:
-  *  This function fills descriptor and request new descriptors according to
-  *  buffer length to fill
-+ *  This function returns 0 on success else -ERRNO on fail
-  */
--static void stmmac_tso_allocator(struct stmmac_priv *priv, dma_addr_t des,
--				 int total_len, bool last_segment, u32 queue)
-+static int stmmac_tso_allocator(struct stmmac_priv *priv, void *addr,
-+				int total_len, bool last_segment, u32 queue, bool is_skb_frag)
- {
- 	struct stmmac_tx_queue *tx_q = &priv->dma_conf.tx_queue[queue];
- 	struct dma_desc *desc;
-@@ -4153,6 +4155,8 @@ static void stmmac_tso_allocator(struct stmmac_priv *priv, dma_addr_t des,
- 	int tmp_len;
- 
- 	tmp_len = total_len;
-+	unsigned int offset = 0;
-+	unsigned char *data = addr;
- 
- 	while (tmp_len > 0) {
- 		dma_addr_t curr_addr;
-@@ -4161,20 +4165,44 @@ static void stmmac_tso_allocator(struct stmmac_priv *priv, dma_addr_t des,
- 						priv->dma_conf.dma_tx_size);
- 		WARN_ON(tx_q->tx_skbuff[tx_q->cur_tx]);
- 
-+		buff_size = tmp_len >= TSO_MAX_BUFF_SIZE ? TSO_MAX_BUFF_SIZE : tmp_len;
-+
- 		if (tx_q->tbs & STMMAC_TBS_AVAIL)
- 			desc = &tx_q->dma_entx[tx_q->cur_tx].basic;
- 		else
- 			desc = &tx_q->dma_tx[tx_q->cur_tx];
- 
--		curr_addr = des + (total_len - tmp_len);
-+		offset = total_len - tmp_len;
-+		if (!is_skb_frag) {
-+			curr_addr = dma_map_single(priv->device, data + offset, buff_size,
-+						   DMA_TO_DEVICE);
-+
-+			if (dma_mapping_error(priv->device, curr_addr))
-+				return -ENOMEM;
-+
-+			tx_q->tx_skbuff_dma[tx_q->cur_tx].buf = curr_addr;
-+			tx_q->tx_skbuff_dma[tx_q->cur_tx].len = buff_size;
-+			tx_q->tx_skbuff_dma[tx_q->cur_tx].map_as_page = false;
-+			tx_q->tx_skbuff_dma[tx_q->cur_tx].buf_type = STMMAC_TXBUF_T_SKB;
-+		} else {
-+			curr_addr = skb_frag_dma_map(priv->device, addr, offset,
-+						     buff_size,
-+						     DMA_TO_DEVICE);
-+
-+			if (dma_mapping_error(priv->device, curr_addr))
-+				return -ENOMEM;
-+
-+			tx_q->tx_skbuff_dma[tx_q->cur_tx].buf = curr_addr;
-+			tx_q->tx_skbuff_dma[tx_q->cur_tx].len = buff_size;
-+			tx_q->tx_skbuff_dma[tx_q->cur_tx].map_as_page = true;
-+			tx_q->tx_skbuff_dma[tx_q->cur_tx].buf_type = STMMAC_TXBUF_T_SKB;
-+		}
-+
- 		if (priv->dma_cap.addr64 <= 32)
- 			desc->des0 = cpu_to_le32(curr_addr);
- 		else
- 			stmmac_set_desc_addr(priv, desc, curr_addr);
- 
--		buff_size = tmp_len >= TSO_MAX_BUFF_SIZE ?
--			    TSO_MAX_BUFF_SIZE : tmp_len;
--
- 		stmmac_prepare_tso_tx_desc(priv, desc, 0, buff_size,
- 				0, 1,
- 				(last_segment) && (tmp_len <= TSO_MAX_BUFF_SIZE),
-@@ -4182,6 +4210,7 @@ static void stmmac_tso_allocator(struct stmmac_priv *priv, dma_addr_t des,
- 
- 		tmp_len -= TSO_MAX_BUFF_SIZE;
- 	}
-+	return 0;
- }
- 
- static void stmmac_flush_tx_descriptors(struct stmmac_priv *priv, int queue)
-@@ -4351,25 +4380,17 @@ static netdev_tx_t stmmac_tso_xmit(struct sk_buff *skb, struct net_device *dev)
- 		pay_len = 0;
- 	}
- 
--	stmmac_tso_allocator(priv, des, tmp_pay_len, (nfrags == 0), queue);
-+	if (stmmac_tso_allocator(priv, (skb->data + proto_hdr_len),
-+				 tmp_pay_len, nfrags == 0, queue, false))
-+		goto dma_map_err;
- 
- 	/* Prepare fragments */
- 	for (i = 0; i < nfrags; i++) {
--		const skb_frag_t *frag = &skb_shinfo(skb)->frags[i];
-+		skb_frag_t *frag = &skb_shinfo(skb)->frags[i];
- 
--		des = skb_frag_dma_map(priv->device, frag, 0,
--				       skb_frag_size(frag),
--				       DMA_TO_DEVICE);
--		if (dma_mapping_error(priv->device, des))
-+		if (stmmac_tso_allocator(priv, frag, skb_frag_size(frag),
-+					 (i == nfrags - 1), queue, true))
- 			goto dma_map_err;
--
--		stmmac_tso_allocator(priv, des, skb_frag_size(frag),
--				     (i == nfrags - 1), queue);
--
--		tx_q->tx_skbuff_dma[tx_q->cur_tx].buf = des;
--		tx_q->tx_skbuff_dma[tx_q->cur_tx].len = skb_frag_size(frag);
--		tx_q->tx_skbuff_dma[tx_q->cur_tx].map_as_page = true;
--		tx_q->tx_skbuff_dma[tx_q->cur_tx].buf_type = STMMAC_TXBUF_T_SKB;
- 	}
- 
- 	tx_q->tx_skbuff_dma[tx_q->cur_tx].last_segment = true;
--- 
-2.25.1
+On Mon, 2 Sept 2024 at 02:49, Michael S. Tsirkin <mst@redhat.com> wrote:
+>
+> On Fri, Aug 30, 2024 at 05:29:14PM +0800, Cindy Lu wrote:
+> > On Fri, 30 Aug 2024 at 03:03, Dragos Tatulea <dtatulea@nvidia.com> wrot=
+e:
+> > >
+> > >
+> > >
+> > > On 29.08.24 12:00, Dragos Tatulea wrote:
+> > > >
+> > > >
+> > > > On 29.08.24 11:05, Cindy Lu wrote:
+> > > >> On Wed, 28 Aug 2024 at 17:37, Dragos Tatulea <dtatulea@nvidia.com>=
+ wrote:
+> > > >>>
+> > > >>>
+> > > >>>
+> > > >>> On 28.08.24 11:00, Cindy Lu wrote:
+> > > >>>> On Wed, 28 Aug 2024 at 09:51, Jason Wang <jasowang@redhat.com> w=
+rote:
+> > > >>>>>
+> > > >>>>> On Wed, Aug 28, 2024 at 12:03=E2=80=AFAM Dragos Tatulea <dtatul=
+ea@nvidia.com> wrote:
+> > > >>>>>>
+> > > >>>>>> When the vdpa device is configured without a specific MAC
+> > > >>>>>> address, the vport MAC address is used. However, this
+> > > >>>>>> address can be 0 which prevents the driver from properly
+> > > >>>>>> configuring the MPFS and breaks steering.
+> > > >>>>>>
+> > > >>>>>> The solution is to simply generate a random MAC address
+> > > >>>>>> when no MAC is set on the nic vport.
+> > > >>>>>>
+> > > >>>>>> Now it's possible to create a vdpa device without a
+> > > >>>>>> MAC address and run qemu with this device without needing
+> > > >>>>>> to configure an explicit MAC address.
+> > > >>>>>>
+> > > >>>>>> Signed-off-by: Dragos Tatulea <dtatulea@nvidia.com>
+> > > >>>>>> Reviewed-by: Jiri Pirko <jiri@nvidia.com>
+> > > >>>>>
+> > > >>>>> Acked-by: Jason Wang <jasowang@redhat.com>
+> > > >>>>>
+> > > >>>>> (Adding Cindy for double checking if it has any side effect on =
+Qemu side)
+> > > >>>>>
+> > > >>>>> Thanks
+> > > >>>>>
+> > > >>>> But Now there is a bug in QEMU: if the hardware MAC address does=
+ not
+> > > >>>> match the one in the QEMU command line, it will cause traffic lo=
+ss.
+> > > >>>>
+> > > >>> Why is this a new issue in qemu? qemu in it's current state won't=
+ work
+> > > >>> with a different mac address that the one that is set in HW anywa=
+y.
+> > > >>>
+> > > >> this is not a new bug. We are trying to fix it because it will cau=
+se
+> > > >> traffic lose without any warning.
+> > > >> in my fix , this setting (different mac in device and Qemu) will f=
+ail
+> > > >> to load the VM.
+> > > > Which is a good thing, right? Some feedback to the user that there =
+is
+> > > > a misconfig. I got bitten by this so many times... Thank you for ad=
+ding it.
+> > > >
+> > > >>
+> > > >>>> So, Just an FYI here: if your patch merged, it may cause traffic=
+ loss.
+> > > >>>> and now I'm working in the fix it in qemu, the link is
+> > > >>>> https://patchew.org/QEMU/20240716011349.821777-1-lulu@redhat.com=
+/
+> > > >>>> The idea of this fix is
+> > > >>>> There are will only two acceptable situations for qemu:
+> > > >>>> 1. The hardware MAC address is the same as the MAC address speci=
+fied
+> > > >>>> in the QEMU command line, and both MAC addresses are not 0.
+> > > >>>> 2. The hardware MAC address is not 0, and the MAC address in the=
+ QEMU
+> > > >>>> command line is 0. In this situation, the hardware MAC address w=
+ill
+> > > >>>> overwrite the QEMU command line address.
+> > > >>>>
+> > > >>> Why would this not work with this patch? This patch simply sets a=
+ MAC
+> > > >>> if the vport doesn't have one set. Which allows for more scenario=
+s to
+> > > >>> work.
+> > > >>>
+> > > >> I do not mean your patch will not work, I just want to make some
+> > > >> clarify here.Your patch + my fix may cause the VM to fail to load =
+in
+> > > >> some situations, and this is as expected.
+> > > >> Your patch is good to merge.
+> > > > Ack. Thank you for the clarification.
+> > > (Side note)
+> > > While looking at another issue I discovered that it's possible to
+> > > configure a random MAC on the mlx5_vdpa device at VM boot time if
+> > > device MAC configuration is implemented during during .set_config(). =
+So
+> > > I was able to boot up a VM with a random MAC address coming from qemu
+> > > and the traffic worked with this new MAC.
+> > >
+> > > So now I'm not sure if this is just by luck or if the .set_config()
+> > > op should be implemented for the MAC part in our device.
+> > >
+> > > Thanks,
+> > > Dragos
+> > >
+> > Hi Dragos=EF=BC=8C
+> > For qemu part, I think this is not set from set_config()?  it should
+> > be from the CVQ?
+>
+>
+> You are confusing two things.
+> Provisioning is not through CVQ.
+>
+Thanks, Michael. I'm sorry for the confusion. I just meant that maybe
+the MAC address is set through CVQ. I will make it clearer next time.
+Thanks
+Cindy
+>
+> > Usually, we don't recommend using the set_config() function because
+> > the configuration space should be read-only for modern devices.
+> >
+> > Now there is a bug in this part of qemu, and we plan to remove the
+> > code to set_config() in virtio_net_device_realize(), here is the patch
+> > https://lore.kernel.org/all/CACGkMEvCSKfahpBQLAMmSzdFN-QPhg5Zx+UQVrFX0H=
+sWybZZNA@mail.gmail.com/T/
+> > and this is still under review
+> >
+> > thanks
+> > cindy
+>
 
 
