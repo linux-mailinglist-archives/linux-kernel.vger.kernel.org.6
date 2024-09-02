@@ -1,148 +1,112 @@
-Return-Path: <linux-kernel+bounces-311484-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311487-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 944619689BB
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 16:18:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0CA29689BF
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 16:19:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 26F24284053
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 14:18:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2FB46B23640
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 14:19:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F5E220FA97;
-	Mon,  2 Sep 2024 14:18:35 +0000 (UTC)
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 743B219E98A;
+	Mon,  2 Sep 2024 14:18:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="kmp7tOfD"
+Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8646613C9C7;
-	Mon,  2 Sep 2024 14:18:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A182719E97C
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 14:18:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725286715; cv=none; b=p7H+EeqQX3tUjm+rZG5S7UdYyo5GR7nuUis+YMFCafTcx/4U3Cy4laLQ15xlf3h2+HaOLir+/IWBFQrY6AoFw60DAoCMPYvnIG76t1bNog7VaI57AsP4NE0wt6IFImmlRpHNjovcfl79/MOtlzpdLZrSu4t+DaE1rPqqlGrncsU=
+	t=1725286735; cv=none; b=ry2E209BN0OCIC2xpHpnOiQqGOcRc595oT5BxBuv5SHC9ljSdQGLt+tqsXMC1XG3oNK6BMv6PfLcl2ks0YxaRqefWLnS5BP3Tnex+t6e2Tpi3+0q85Okz0Hb/Isi2gPcEtls0l26pcnTHWgUWyP6eiAFFs/BJO7J06i8mud6X/s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725286715; c=relaxed/simple;
-	bh=+VuG2M1xa3MWBHUbHXGPrWXef37LtbrfQ9WXZ8TCtCw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DBTLj2iW+bTnxzQowEUXEVundrgheLVBam6FHhgKywr2uZN9yaFHFyj++RQ0SzSI0+8AjhAEfBze2J/inOWBYpxc4E5smz+pGccKNv0001HOU/fEV+6bg069MBGD5Kapuknaus7P2X5rX8MaIHEsrV8TtC0yhE3mnBKGx1eovWc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4Wy9pb6jQMz9sST;
-	Mon,  2 Sep 2024 16:18:31 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id dYB5tVBeTlu0; Mon,  2 Sep 2024 16:18:31 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4Wy9pb5jKRz9sSS;
-	Mon,  2 Sep 2024 16:18:31 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id B4D598B76C;
-	Mon,  2 Sep 2024 16:18:31 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id r6wBvH7GjfCs; Mon,  2 Sep 2024 16:18:31 +0200 (CEST)
-Received: from [192.168.234.167] (unknown [192.168.234.167])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 5B5558B763;
-	Mon,  2 Sep 2024 16:18:31 +0200 (CEST)
-Message-ID: <cae4fb76-224e-4858-a44a-1ebb71c25821@csgroup.eu>
-Date: Mon, 2 Sep 2024 16:18:31 +0200
+	s=arc-20240116; t=1725286735; c=relaxed/simple;
+	bh=MXUsWjaPweiZIZEehN6iMcKrX5UI1bittIfnLKaBrHI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=U1Am+30ffc+SymuaWMf19tZ4UO2NCtlBZDDyl5DF7/zThIBSrtcsCUgaCpVXzGXPDSZskRHE7AubHYy14+T/+WOIs8ppMM9vf/ESM4DSGsa9rf589J3v6/JKXLSsMDNUidiTfjubk3WDHg7MLaGF59f3xZ/pp+9Xwr6q7sH3Unc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=kmp7tOfD; arc=none smtp.client-ip=217.70.183.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 2F3F6FF802;
+	Mon,  2 Sep 2024 14:18:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1725286726;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JF7JwMRD9iwv16HTVdkRVbNX1b4HkqNeP3wNC+6sYi4=;
+	b=kmp7tOfDYQRIxM4dxZwo5PUGEyMKtUFGcxhq/4Scxhh5ecbzZRxRcFP66Q+agVwruXGj+x
+	Q2gIpAICGAs1nXXelxQCG147MmAhje3LnpbbzKWP8xStceAM29ZdMa5/HVJDkzLB1nRLA5
+	eNBDokn/ZBHR+eNAJxkSZoBpgivegWpFO1fds1pLxtlFipEgCqAZg34clZvC4DWAQaxbZw
+	oRZ2cu/bD4Oea5o9k6xZ16TS29MS4pypNd3uQ5bHSctUZWhZXNZmiO/mxkyJN0q0RONDVh
+	pldNef6z3hYC5zowqhrAh/Ky4W52SKIu++f9y5ZNvnXR6jpTLLa0zApqcOCHJg==
+Date: Mon, 2 Sep 2024 16:18:44 +0200
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+To: Martin Kurbanov <mmkurbanov@salutedevices.com>
+Cc: <linux-kernel@vger.kernel.org>, <linux-mtd@lists.infradead.org>,
+ <kernel@salutedevices.com>, Richard Weinberger <richard@nod.at>, "Vignesh
+ Raghavendra" <vigneshr@ti.com>, Mika Westerberg
+ <mika.westerberg@linux.intel.com>, Michael Walle <michael@walle.cc>, "Mark
+ Brown" <broonie@kernel.org>, Chia-Lin Kao <acelan.kao@canonical.com>, "Md
+ Sadre Alam" <quic_mdalam@quicinc.com>, Ezra Buehler
+ <ezra.buehler@husqvarnagroup.com>, Sridharan S N <quic_sridsn@quicinc.com>,
+ Frieder Schrempf <frieder.schrempf@kontron.de>, Alexey Romanov
+ <avromanov@salutedevices.com>
+Subject: Re: [PATCH v2 2/5] mtd: spinand: add OTP support
+Message-ID: <20240902161844.2bf982ef@xps-13>
+In-Reply-To: <bb137aef-4ca9-4825-99b7-12f7e17c9550@salutedevices.com>
+References: <20240827174920.316756-1-mmkurbanov@salutedevices.com>
+	<20240827174920.316756-3-mmkurbanov@salutedevices.com>
+	<bb137aef-4ca9-4825-99b7-12f7e17c9550@salutedevices.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] selftests: vDSO: Do not rely on $ARCH for
- vdso_test_getrandom && vdso_test_chacha
-To: "Jason A. Donenfeld" <Jason@zx2c4.com>
-Cc: Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org,
- linux-kselftest@vger.kernel.org,
- Adhemerval Zanella <adhemerval.zanella@linaro.org>,
- Xi Ruoyao <xry111@xry111.site>
-References: <ddf594c81787dba708fc392cb03027470dee64fb.1725124064.git.christophe.leroy@csgroup.eu>
- <ZtRqp-uZe5C07qOF@zx2c4.com>
- <fe8ea6a6-71d7-4cfc-b20b-fa0a7f39a4be@csgroup.eu>
- <ec7bfeb4-30aa-4874-98b7-7877a12cb98f@sirena.org.uk>
- <ffc5600d-362f-4400-8f8b-a1ea77ca51bf@csgroup.eu>
- <ZtXEUZC_jRBSAG9k@zx2c4.com>
-Content-Language: fr-FR
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-In-Reply-To: <ZtXEUZC_jRBSAG9k@zx2c4.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-GND-Sasl: miquel.raynal@bootlin.com
 
+Hi Martin,
 
+mmkurbanov@salutedevices.com wrote on Tue, 27 Aug 2024 20:57:04 +0300:
 
-Le 02/09/2024 à 15:57, Jason A. Donenfeld a écrit :
-> On Mon, Sep 02, 2024 at 03:23:47PM +0200, Christophe Leroy wrote:
->>
->>
->> Le 02/09/2024 à 14:37, Mark Brown a écrit :
->>> On Mon, Sep 02, 2024 at 02:22:38PM +0200, Christophe Leroy wrote:
->>>
->>>> When vdso_test_getcpu doesn't find the vDSO entry point, it prints an error
->>>> text and returns KSFT_SKIP
->>>
->>>> I thought it would be more correct to have the same behaviour on
->>>> vdso_test_getrandom instead of trying to build it only when the underlying
->>>> kernel supports it.
->>>
->>> The problem is that the test incorporates assembler code so it simply
->>> won't build for architectures without explicit porting, the issue isn't
->>> if the target kernel supports it but rather that the test won't compile
->>> in the first place.
->>
->> Yes indeed and that was the purpose of my patch, have a macro in
->> vdso_config.h to tell where the assembler code is:
->>
->> diff --git a/tools/testing/selftests/vDSO/vdso_config.h
->> b/tools/testing/selftests/vDSO/vdso_config.h
->> index 740ce8c98d2e..693920471160 100644
->> --- a/tools/testing/selftests/vDSO/vdso_config.h
->> +++ b/tools/testing/selftests/vDSO/vdso_config.h
->> @@ -47,6 +47,7 @@
->>    #elif defined(__x86_64__)
->>    #define VDSO_VERSION		0
->>    #define VDSO_NAMES		1
->> +#define VDSO_GETRANDOM	
->> "../../../../arch/x86/entry/vdso/vgetrandom-chacha.S"
->>    #elif defined(__riscv__) || defined(__riscv)
->>    #define VDSO_VERSION		5
->>    #define VDSO_NAMES		1
->>
->>
->> And then:
->>
->> diff --git a/tools/testing/selftests/vDSO/vdso_test_chacha-asm.S
->> b/tools/testing/selftests/vDSO/vdso_test_chacha-asm.S
->> new file mode 100644
->> index 000000000000..8e704165f6f2
->> --- /dev/null
->> +++ b/tools/testing/selftests/vDSO/vdso_test_chacha-asm.S
->> @@ -0,0 +1,7 @@
->> +#include "vdso_config.h"
->> +
->> +#ifdef VDSO_GETRANDOM
->> +
->> +#include VDSO_GETRANDOM
->> +
->> +#endif
->>
->> I thought it was a lot easier to handle if through necessary #ifdefs in
->> vdso_config.h that implementing an additional logic in Makefiles.
-> 
-> Yet it still tripped up the test robot, right?
+> Hello, Miquel. Thank you for the review.
+> Regarding your question ( https://lore.kernel.org/all/20240717103623.6d6b=
+63be@xps-13/ ):
+>=20
+> >> +int spinand_otp_read(struct spinand_device *spinand, loff_t from, siz=
+e_t len,
+> >> +		     u8 *buf, size_t *retlen);
+> >> +
+> >> +int spinand_otp_write(struct spinand_device *spinand, loff_t from, si=
+ze_t len,
+> >> +		      const u8 *buf, size_t *retlen);
+> >> + =20
+> >=20
+> > Why exposing spinand_otp_read and spinand_otp_write ? =20
+>=20
+> For the SPI-NAND chips we have (Micron, ESMT, FORESEE), the command
+> sequence for reading/writing OTP is the same. I decided to make these
+> functions global because other chips probably have similar read/write
+> OTP operations as well.
 
-Yes I need to look at that.
+Of course, I understand you might need them, but then the change does
+not belong to this patch. Actually you've done that correctly for the
+spinand_wait() helper.
 
-> 
-> In general I'm not crazy about this approach.
+You can do all the "make foo() global" operations in a single patch if
+you want.
 
-I have the feeling I get things done easier with that approach. But if 
-you feel better playing up with the makefile, I incline.
+I will soon review more in deep the content of this patchset again.
+
+Thanks,
+Miqu=C3=A8l
 
