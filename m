@@ -1,154 +1,174 @@
-Return-Path: <linux-kernel+bounces-310821-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310822-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D5259681A6
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 10:24:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 590F39681A9
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 10:24:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D77E1F22980
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 08:24:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EDF241F21376
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 08:24:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89CC3185E64;
-	Mon,  2 Sep 2024 08:24:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B63DF185B5E;
+	Mon,  2 Sep 2024 08:24:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Z0cgWMQ3"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=thorsis.com header.i=@thorsis.com header.b="bmOzbG9n"
+Received: from mail.thorsis.com (mail.thorsis.com [217.92.40.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C960185B65
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 08:24:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4FDC17C9B3;
+	Mon,  2 Sep 2024 08:24:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.92.40.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725265445; cv=none; b=bjzEOwOsVGH98gj7SKhUfJYhmf/hTlMFXWOcLVwz1vCnnDLYX+EBfFxi5yqysYuP2fGXJi+hjvlS+klicLP3bZxdpxUhAqSxlK1k2gMq/mR1INXm/EPZ4YIAHVIw2xP7bIKjn8PqH4gFrI7JpForPDAtIHP70jW6ETe9KWO6paU=
+	t=1725265475; cv=none; b=TCpxif9OdclCtOCW9aky3LU9CUKPco2TMe8GrTR3Q78ywRyi7DiH/utj8ZXZsd1C+cv/JgL5eeDCmpV/4SUesvPBiIw+EGsEGR8EoM3It0QVmSV/RCzp9no34C3Q94bR9e4WIEX2+k9X5skW5TiucHcaaM87nUa9f0ANrXAmSRI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725265445; c=relaxed/simple;
-	bh=mZRrDh8uuKRsFRJ76qarUXgzkV9FOvu93vZjcmsedWE=;
+	s=arc-20240116; t=1725265475; c=relaxed/simple;
+	bh=pslQU41FGdhkmaUkEZ9dQ5WuxgEanAdXBKZB2w5Nqto=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mDGKJZm+6bGUk8hlEXQju8nAr46luG5PFu61vaolDCpf7h9jFSzxHWQDf6Tsj4NpSumQKYpILt4jYsOMdZ15w5bPFm37GKEmJ90V6YczO70GSjqs4ArJHr8MMkol1N5AletKIeb7+N05YapxMlBIduaKlkVtYpBC/DJpUKGisqc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Z0cgWMQ3; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1725265443;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=k+0fISnzt5wuQd1CIsLkBQW6Py4x2XcKBx/mXvJpRkU=;
-	b=Z0cgWMQ37BdCnRV31RnGLxOSA6ti5k5sBmKdRzGoOr+5YZjuQ2VfeM8jXhA4n8FSDSCZJY
-	J0mZEFf0FPsCyCFChn2gREgCDtrc9I5J/qsrpJp71l7EWNrt+HdwImKemzL2TShTj+CU+F
-	90zYfXce0uUUAMX1sFXsrj1sVZYen1k=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-563-Tye3jLkHN06lTCJ1PNjL4g-1; Mon,
- 02 Sep 2024 04:24:01 -0400
-X-MC-Unique: Tye3jLkHN06lTCJ1PNjL4g-1
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id DEB5F1955D57;
-	Mon,  2 Sep 2024 08:23:59 +0000 (UTC)
-Received: from sirius.home.kraxel.org (unknown [10.39.193.45])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 194341955F1B;
-	Mon,  2 Sep 2024 08:23:59 +0000 (UTC)
-Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
-	id C61CF1800639; Mon,  2 Sep 2024 10:23:56 +0200 (CEST)
-Date: Mon, 2 Sep 2024 10:23:56 +0200
-From: Gerd Hoffmann <kraxel@redhat.com>
-To: Sean Christopherson <seanjc@google.com>
-Cc: Vitaly Kuznetsov <vkuznets@redhat.com>, 
-	Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, rcu@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Kevin Tian <kevin.tian@intel.com>, 
-	Yan Zhao <yan.y.zhao@intel.com>, Yiwei Zhang <zzyiwei@google.com>, 
-	Lai Jiangshan <jiangshanlai@gmail.com>, "Paul E. McKenney" <paulmck@kernel.org>, 
-	Josh Triplett <josh@joshtriplett.org>, Thomas Zimmermann <tzimmermann@suse.de>
-Subject: Re: [PATCH 5/5] KVM: VMX: Always honor guest PAT on CPUs that
- support self-snoop
-Message-ID: <fjlo4brtf32dciwubnrmqa3h3yzjxuv3t6sxpz4tsi6mj6xelx@bb66nmwxw3m2>
-References: <20240309010929.1403984-1-seanjc@google.com>
- <20240309010929.1403984-6-seanjc@google.com>
- <877cbyuzdn.fsf@redhat.com>
- <vuwlkftomgsnzsywjyxw6rcnycg3bve3o53svvxg3vd6xpok7o@k4ktmx5tqtmz>
- <871q26unq8.fsf@redhat.com>
- <ZtHOr-kCqvCdUc_A@google.com>
- <87seumt89u.fsf@redhat.com>
- <87plpqt6uh.fsf@redhat.com>
- <ZtHvjzBFUbG3fcMc@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=V4UkS4zFb1QGeyvoxwONeZqMY07136mnS5VTGjs+bUBr8ksYwgXjUZ8Cq4FVIfMNZ87lEYICUj+GsBC/tGD9ktQB4QqJ52wK9JBiYwL6t08P5QVC2siOvPX1yf6PZgkUWV6pSQV7xtI5ykGaR3PzJ5p+fJPzHmjkZUH8RQ2wIMU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=thorsis.com; spf=pass smtp.mailfrom=thorsis.com; dkim=pass (2048-bit key) header.d=thorsis.com header.i=@thorsis.com header.b=bmOzbG9n; arc=none smtp.client-ip=217.92.40.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=thorsis.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=thorsis.com
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id A41431482FA3;
+	Mon,  2 Sep 2024 10:24:28 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=thorsis.com; s=dkim;
+	t=1725265469; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=mI8+uZ1zQ3Whmswrx6WrAOVyRCcCM9kOZQ5ZCv9PtoM=;
+	b=bmOzbG9nfpXqW241QxHnQpysQs92hEsCBDpVAemdevUnuADsnuP8DDJ7VUr19ROHB128MF
+	g8i+m+1bBW71+0sfziI07Z/4gRkDxGvb2x7fALwVp7LwmDOBuOtp0UZX4H/+aZLnUvBOLF
+	ImwWPbKL1B/gH4cHQbBXut9l9sg/XXPIQDQ7Lgx91KOozm8vm1x/Jbp7NreTJDdzDmfily
+	5/cMO7Svv3FX3hatFKQ00JCcjH1QcsPuG2mNgbzs/p8bB+7Cp7nAuadJIukBJ5iOuBlIsu
+	xt8GL9yrZOA/AuCUZZnGJ29ATKOBsHCCJbEI7lSGUwIhkagPPs8eKQIbuzBHZw==
+Date: Mon, 2 Sep 2024 10:24:27 +0200
+From: Alexander Dahl <ada@thorsis.com>
+To: claudiu beznea <claudiu.beznea@tuxon.dev>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Nicolas Ferre <nicolas.ferre@microchip.com>
+Subject: Re: get, prepare, enable a clock not in DT?
+Message-ID: <20240902-machinist-straggler-cce44ffa4a7c@thorsis.com>
+Mail-Followup-To: claudiu beznea <claudiu.beznea@tuxon.dev>,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Nicolas Ferre <nicolas.ferre@microchip.com>
+References: <20240816-ludicrous-lagging-65e750c57ab4@thorsis.com>
+ <384919bc-7d45-445a-bc85-630c599d43ef@tuxon.dev>
+ <20240820-grandpa-down-fec4231f971c@thorsis.com>
+ <e7f69aa3-20a7-4233-96c7-0fa5fe67bbdc@tuxon.dev>
+ <20240828-gainfully-cringing-2f420d8882bd@thorsis.com>
+ <6cd18742-7ba8-4b0c-aff9-7065bccd4095@tuxon.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <ZtHvjzBFUbG3fcMc@google.com>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <6cd18742-7ba8-4b0c-aff9-7065bccd4095@tuxon.dev>
+User-Agent: Mutt/2.2.12 (2023-09-09)
+X-Last-TLS-Session-Version: TLSv1.3
 
-> > > Yes? :-) As Gerd described, video memory is "mapped into userspace so
-> > > the wayland / X11 display server can software-render into the buffer"
-> > > and it seems that wayland gets something unexpected in this memory and
-> > > crashes. 
-> > 
-> > Also, I don't know if it helps or not, but out of two hunks in
-> > 377b2f359d1f, it is the vmx_get_mt_mask() one which brings the
-> > issue. I.e. the following is enough to fix things:
-> > 
-> > diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-> > index f18c2d8c7476..733a0c45d1a6 100644
-> > --- a/arch/x86/kvm/vmx/vmx.c
-> > +++ b/arch/x86/kvm/vmx/vmx.c
-> > @@ -7659,13 +7659,11 @@ u8 vmx_get_mt_mask(struct kvm_vcpu *vcpu, gfn_t gfn, bool is_mmio)
-> >  
-> >         /*
-> >          * Force WB and ignore guest PAT if the VM does NOT have a non-coherent
-> > -        * device attached and the CPU doesn't support self-snoop.  Letting the
-> > -        * guest control memory types on Intel CPUs without self-snoop may
-> > -        * result in unexpected behavior, and so KVM's (historical) ABI is to
-> > -        * trust the guest to behave only as a last resort.
-> > +        * device attached.  Letting the guest control memory types on Intel
-> > +        * CPUs may result in unexpected behavior, and so KVM's ABI is to trust
-> > +        * the guest to behave only as a last resort.
-> >          */
-> > -       if (!static_cpu_has(X86_FEATURE_SELFSNOOP) &&
-> > -           !kvm_arch_has_noncoherent_dma(vcpu->kvm))
-> > +       if (!kvm_arch_has_noncoherent_dma(vcpu->kvm))
-> >                 return (MTRR_TYPE_WRBACK << VMX_EPT_MT_EPTE_SHIFT) | VMX_EPT_IPAT_BIT;
-> >  
-> >         return (MTRR_TYPE_WRBACK << VMX_EPT_MT_EPTE_SHIFT);
+Hello Claudiu,
+
+Am Sat, Aug 31, 2024 at 06:49:59PM +0300 schrieb claudiu beznea:
+> Hi, Alexander,
 > 
-> Hmm, that suggests the guest kernel maps the buffer as WC.  And looking at the
-> bochs driver, IIUC, the kernel mappings via ioremap() are UC-, not WC.  So it
-> could be that userspace doesn't play nice with WC, but could it also be that the
-> QEMU backend doesn't play nice with WC (on Intel)?
+> On 28.08.2024 09:55, Alexander Dahl wrote:
+> > Hello Claudiu,
+> > 
+> > Am Fri, Aug 23, 2024 at 05:29:44PM +0300 schrieb claudiu beznea:
+> >>
+> >>
+> >> On 20.08.2024 15:17, Alexander Dahl wrote:
+> >>> By chance: I don't have a sama7g5 based board at hand for testing.
+> >>> The datasheet says the same as for sam9x60.
+> >>> Does the nvmem_microchip_otpc driver actually work without timeout on
+> >>> sama7g5?
+> >>
+> >> Yes! This should be because system bus is clocked from MCK0 (as mentioned
+> >> in peripheral identifiers table) which is enabled by bootloader.
+> > 
+> > Not sure I can follow.  Citing the SAMA7G5 datasheet section 30.4
+> > (OTPC Product Dependencies):
+> > 
+> >     "The OTPC is clocked through the Power Management Controller
+> >     (PMC). The user must power on the main RC oscillator and enable
+> >     the peripheral clock of the OTPC prior to reading or writing the
+> >     OTP memory."
 > 
-> Given that this is a purely synthetic device, is there any reason to use UC or WC?
+> I don't see this in [1]. Only:
+> 
+> "The OTPC is clocked through the Power Management Controller (PMC), so the
+> programmer must first to configure the PMC."
+> 
+> From this I got that it is about the MCK0 listed in table Table 8-11.
+> Peripheral Identifiers.
+> 
+> [1]
+> https://ww1.microchip.com/downloads/aemDocuments/documents/MPU32/ProductDocuments/DataSheets/SAMA7G5-Series-Data-Sheet-DS60001765A.pdf
 
-Well, sharing code with other (real hardware) drivers is pretty much the
-only reason.  DRM has a set of helper functions to manage vram in pci
-memory bars (see drm_gem_vram_helper.c, drm_gem_ttm_helper.c).
+Well, this seems to be an older version revision A from 03/2022.
+I have DS60001765B (revision B) from 12/2023 and got this here (note
+the missing 'A' in the filename):
 
-> I.e. can the bochs driver configure its VRAM buffers to be WB?  It doesn't look
-> super easy (the DRM/TTM code has so. many. layers), but it appears doable.  Since
-> the device only exists in VMs, it's possible the bochs driver has never run on
-> Intel CPUs with WC memtype.
+https://ww1.microchip.com/downloads/aemDocuments/documents/MPU32/ProductDocuments/DataSheets/SAMA7G5-Series-Data-Sheet-DS60001765.pdf
 
-Thomas Zimmermann <tzimmermann@suse.de> (Cc'ed) has a drm patch series
-in flight which switches the bochs driver to a shadow buffer model, i.e.
-all the buffers visible to fbcon and userspace live in main memory.
-Display updates are handled via in-kernel memcpy from shadow to vram.
-The pci memory bar becomes an bochs driver implementation detail not
-visible outside the driver.  This should give the bochs driver the
-freedom to map vram with whatever attributes work best with kvm, without
-needing drm changes outside the driver.
+Linked here:
 
-Of course all this does not help much with current distro kernels broken
-by this patch ...
+https://www.microchip.com/en-us/product/sama7g54
 
-take care,
-  Gerd
+The revision history is not very specific, it only says "Updated Power
+Management".  Errata sheet has nothing interesting on that topic.
 
+We both cited what we saw in the datasheets.  Revision A has the
+section you cited, revision B has the section I cited.
+
+> > Table from section 8.5 (Peripheral Clocks …) has no check mark at "PMC
+> > clock control" but indeed lists MCK0 as main system bus clock.
+> 
+> This is what I was taking about.
+> 
+> >  If it
+> > works on SAMA7G5 without explicitly enabling main RC oscillator, then
+> > either that clock is on accidentally, or the datasheet is wrong in the
+> > OTPC section.
+> 
+> Might be.
+
+I don't have a SAMA7G5 at hand.  Someone who has could test if OTPC
+works with/without MCK0, and with/without main RC osc, all possible
+combinations would be most helpful: with none of those, with only one,
+only the other, both.
+
+Hope we get this clock stuff sorted out?!
+
+Greets
+Alex
+
+> 
+> Thank you,
+> Claudiu Beznea
+> 
+> > 
+> > Personally I find the "clocked through PMC" part in the OTPC
+> > section suspicious, because in the peripheral identifiers table OTPC
+> > has no "PMC Clock Control" mark.
+> > 
+> > Not sure what's the difference between SAM9X60 and SAMA7G5 internally,
+> > though.  From a user's POV it's possible one of them requires the
+> > main RC osc, and the other does not, but currently you can't tell from
+> > the datasheets.
+> > 
+> >> Here is a snapshot of reading the NVMEM on a SAMA7G5 with bootconfig and
+> >> thermal calibration packets:
+> >> https://www.linux4sam.org/bin/view/Linux4SAM/ThermalFaq
+> > 
+> > Greets
+> > Alex
+> > 
+> 
 
