@@ -1,122 +1,140 @@
-Return-Path: <linux-kernel+bounces-311414-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311418-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B6D29688E2
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 15:32:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B68C9688EA
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 15:33:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EBFEE286125
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 13:32:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 52FBF286831
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 13:33:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1715221018C;
-	Mon,  2 Sep 2024 13:32:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 190CF20FAB5;
+	Mon,  2 Sep 2024 13:32:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VGV0uQRe"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	dkim=pass (1024-bit key) header.d=maquefel.me header.i=@maquefel.me header.b="qHQCAU+G"
+Received: from forward500b.mail.yandex.net (forward500b.mail.yandex.net [178.154.239.144])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A6B220FAA9;
-	Mon,  2 Sep 2024 13:32:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A0242139D7;
+	Mon,  2 Sep 2024 13:32:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.144
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725283924; cv=none; b=P58Uac5ubwm+C9zVF10KwJHaNIb5XMl6CC/ZxNuUUYkVzvojDiO5/wHKNRBIVqgoOxMRIH9NGaO9gifUSQzxqiUHq5wrAMsax/lD1+tr8MHIzdT4NCZg46aCCNY/cu+X2jfO1tdMY5kStMFBGsVYIouOiyE/tJ4m9ZjCf04aWgI=
+	t=1725283934; cv=none; b=rgjM8uhk0BZje+/CoZLPJfLZdAMHxwR0ob0ujAoSEb2HjaAAeIP6dKtPDnSrCIC+tMULwEUL60Wq2dT5I1d0AllWg39GLC1H1vc2ePIECxBmvEgF/tZxvj490ZoD6BmQid/Pi7XB00PGv6/b5aiwL9VRbqSy88T0MPBS2/wXctM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725283924; c=relaxed/simple;
-	bh=BSXDsgKfV65tn6E/T8L5w0XQjbUaQBnlDePaCFf+QeQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=QgkipItYINxP3YZXZAt8lN1NOX4qugC+wN+Yan04ZGfqQjcEVZIBTm46bUTDM326hqFJN2nDbkI76nDpaOgK+M5vCaS3MGej58mqXpxZFqoTzogxKAXcY/C9xeabGfhE7yhFoNFVdHm9/tc6BiPPxEi+rfftcLrubFXO2B7G/zA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VGV0uQRe; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725283923; x=1756819923;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=BSXDsgKfV65tn6E/T8L5w0XQjbUaQBnlDePaCFf+QeQ=;
-  b=VGV0uQReLfvRflD4ZDENZNOMw2PzFKkTnu4Vnhm2mtFsiviD4cK4kYST
-   5ghDRml53jmaoIi8Ul8UCULSiuIWKhESZfz2/Qnp1FV0hAF5uhYtz6nvO
-   6zFM4KklFvUXkeXcCv3hFbvFM1p0wgvxzHKCaj6EtLihvxRgXuGS3swWG
-   uUHVpSOIE7jBqkWvOfVqV6t9WIFUs87mtKFnq23jOLt7c4FHO/UfWuOHm
-   V04xI0BrvsBsyosREbIGbIOB+pKv2MtqMuJjQtaeZcMUiMqGOWapUszuo
-   otkR/9ipk0ihE71fTN+OawY2Jhc5IE6mR7gMtPB9vddqvC+PLW/L4OUWG
-   g==;
-X-CSE-ConnectionGUID: NmBSXSTLSOuzArYaXUHrnw==
-X-CSE-MsgGUID: TZ6iuN2sRiGP/dR1mI0W2w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11183"; a="41364551"
-X-IronPort-AV: E=Sophos;i="6.10,195,1719903600"; 
-   d="scan'208";a="41364551"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2024 06:32:02 -0700
-X-CSE-ConnectionGUID: Xo8z+4PHS7eblkAJoP8AUg==
-X-CSE-MsgGUID: BkoQAzn0TTGgZ3P7+2BLEw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,195,1719903600"; 
-   d="scan'208";a="64293993"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmviesa007.fm.intel.com with ESMTP; 02 Sep 2024 06:31:59 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id 792E4AF3; Mon, 02 Sep 2024 16:31:58 +0300 (EEST)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	linux-gpio@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>
-Subject: [PATCH v1 5/5] gpio: stmpe: Sort headers
-Date: Mon,  2 Sep 2024 16:30:44 +0300
-Message-ID: <20240902133148.2569486-6-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
-In-Reply-To: <20240902133148.2569486-1-andriy.shevchenko@linux.intel.com>
-References: <20240902133148.2569486-1-andriy.shevchenko@linux.intel.com>
+	s=arc-20240116; t=1725283934; c=relaxed/simple;
+	bh=RxBAlD4Bmy7Hb1bcAu9RLBPtaYpWhDz4yd1KvfnADhY=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=N7GeS56dtasWhVyp2JTIHmv4FYHR+ZweEcL9tNOZ9dqkTn7hVPo3uFUlxhKozUKag6AhEbqaipR0qwf91sGwW5gVzP3opvOLk5ZDYGbYz0bsCm+xNFhn9qktIDZNDzwWjRIFHJtXLLUWAVltb1r0O17GZgU8uaorsmzJt0hGXXA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=maquefel.me; spf=pass smtp.mailfrom=maquefel.me; dkim=pass (1024-bit key) header.d=maquefel.me header.i=@maquefel.me header.b=qHQCAU+G; arc=none smtp.client-ip=178.154.239.144
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=maquefel.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=maquefel.me
+Received: from mail-nwsmtp-smtp-production-main-10.sas.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-10.sas.yp-c.yandex.net [IPv6:2a02:6b8:c10:2222:0:640:c513:0])
+	by forward500b.mail.yandex.net (Yandex) with ESMTPS id 801FF614BA;
+	Mon,  2 Sep 2024 16:32:00 +0300 (MSK)
+Received: by mail-nwsmtp-smtp-production-main-10.sas.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id xVaJQFSb2Sw0-lrFnftlD;
+	Mon, 02 Sep 2024 16:31:59 +0300
+X-Yandex-Fwd: 1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maquefel.me; s=mail;
+	t=1725283919; bh=RxBAlD4Bmy7Hb1bcAu9RLBPtaYpWhDz4yd1KvfnADhY=;
+	h=References:Date:In-Reply-To:Cc:To:From:Subject:Message-ID;
+	b=qHQCAU+GMDC2B5xoDTjogKJ5OtVR4HVOSqypeP5rbl65yW1S4r1y2lILiRlDuOf5X
+	 H0DQ/9a4e2USKKzRMhnVgEVnpwGERYoJHNZJrkCv/nYV7E8RyNE7YY3qKEsjoBBcnn
+	 Vpz+c7e+K24K/9AwneB37oi7AQUlCR2+REMk7N2Y=
+Authentication-Results: mail-nwsmtp-smtp-production-main-10.sas.yp-c.yandex.net; dkim=pass header.i=@maquefel.me
+Message-ID: <cf18eef44460da71db7e125d91da22f0a78c0375.camel@maquefel.me>
+Subject: Re: [PATCH v11 03/38] clk: ep93xx: add DT support for Cirrus EP93xx
+From: Nikita Shubin <nikita.shubin@maquefel.me>
+To: Stephen Boyd <sboyd@kernel.org>, Michael Turquette
+ <mturquette@baylibre.com>,  Nikita Shubin via B4 Relay
+ <devnull+nikita.shubin.maquefel.me@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Date: Mon, 02 Sep 2024 16:31:59 +0300
+In-Reply-To: <79cb209c6c5a14ae4d6a015f714c58d4.sboyd@kernel.org>
+References: <20240715-ep93xx-v11-0-4e924efda795@maquefel.me>
+	 <20240715-ep93xx-v11-3-4e924efda795@maquefel.me>
+	 <020c15c9939c1c4cfac925942a582cee.sboyd@kernel.org>
+	 <a87f99e02f3e9c40c8b9638a8a5a9c5b55aca68c.camel@maquefel.me>
+	 <79cb209c6c5a14ae4d6a015f714c58d4.sboyd@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.48.4 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-Sort the headers in alphabetic order in order to ease
-the maintenance for this part.
+On Fri, 2024-08-30 at 15:27 -0700, Stephen Boyd wrote:
+> Quoting Nikita Shubin (2024-08-30 02:23:12)
+> > Hello Stephen!
+> >=20
+> > On Wed, 2024-08-28 at 13:44 -0700, Stephen Boyd wrote:
+> > > Quoting Nikita Shubin via B4 Relay (2024-07-15 01:38:07)
+> > > > diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+> > > > index 3e9099504fad..234b0a8b7650 100644
+> > > > --- a/drivers/clk/Kconfig
+> > > > +++ b/drivers/clk/Kconfig
+> > > > @@ -218,6 +218,14 @@ config COMMON_CLK_EN7523
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 This driver =
+provides the fixed clocks and gates
+> > > > present
+> > > > on Airoha
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ARM silicon.
+> > > > =C2=A0
+> > > > +config COMMON_CLK_EP93XX
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 bool "Clock driver for Cirrus=
+ Logic ep93xx SoC"
+> > >=20
+> > > tristate?
+> > >=20
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 depends on ARCH_EP93XX || COM=
+PILE_TEST
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 select MFD_SYSCON
+> > >=20
+> > > Why is this selecting syscon?
+> > >=20
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 select REGMAP
+> > >=20
+> > > Is this needed either?
+> >=20
+> > Indeed REGMAP is selected by COMMON_CLK, MFD_SYSCON not required,
+> > but
+> > it needs AUXILIARY_BUS.
+>=20
+> I don't see REGMAP selected by COMMON_CLK. Did I miss something?
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/gpio/gpio-stmpe.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+Indeed REGMAP is selected by COMMON_CLK_MESON_REGMAP not COMMON_CLK on
+make tinyconfig + COMPILE_TEST.
 
-diff --git a/drivers/gpio/gpio-stmpe.c b/drivers/gpio/gpio-stmpe.c
-index c1fb06925e09..75a3633ceddb 100644
---- a/drivers/gpio/gpio-stmpe.c
-+++ b/drivers/gpio/gpio-stmpe.c
-@@ -5,16 +5,16 @@
-  * Author: Rabin Vincent <rabin.vincent@stericsson.com> for ST-Ericsson
-  */
- 
-+#include <linux/bitops.h>
- #include <linux/cleanup.h>
--#include <linux/init.h>
--#include <linux/platform_device.h>
--#include <linux/slab.h>
- #include <linux/gpio/driver.h>
-+#include <linux/init.h>
- #include <linux/interrupt.h>
- #include <linux/mfd/stmpe.h>
- #include <linux/property.h>
-+#include <linux/platform_device.h>
- #include <linux/seq_file.h>
--#include <linux/bitops.h>
-+#include <linux/slab.h>
- 
- /*
-  * These registers are modified under the irq bus lock and cached to avoid
--- 
-2.43.0.rc1.1336.g36b5255a03ac
+Then we require REGMAP because we are using regmap_read() in clk
+driver.
+
+>=20
+> >=20
+> > > > +#define
+> > > > devm_ep93xx_clk_hw_register_fixed_rate_parent_data(dev,
+> > > > name, parent_data, flags, fixed_rate)=C2=A0 \
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 __clk_hw_register_fixed_rate(=
+(dev), NULL, (name), NULL,
+> > > > NULL, \
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 (pare=
+nt_data), (flags),
+> > > > (fixed_rate), 0, 0, true)
+> > >=20
+> > > Is this to workaround a missing
+> > > devm_clk_hw_register_fixed_rate_parent_data() macro?
+> >=20
+> > Yes, if it's okay - i'll fire next revision, all other comments are
+> > acknowledged.
+> >=20
+>=20
+> Can you add the macro so others can use it in another patch?
+
+Sure.
 
 
