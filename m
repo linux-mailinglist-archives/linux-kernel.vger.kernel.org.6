@@ -1,64 +1,67 @@
-Return-Path: <linux-kernel+bounces-310989-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310990-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20BF29683A6
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 11:51:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72DDA9683A5
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 11:51:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6EE4EB22B92
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A382A1C221E2
 	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 09:51:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 704071D2F6B;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86A2C1D2F76;
 	Mon,  2 Sep 2024 09:51:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="KFVkMLnr"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="t4kJaVlk"
+Received: from out-177.mta1.migadu.com (out-177.mta1.migadu.com [95.215.58.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 120A815C15E;
-	Mon,  2 Sep 2024 09:51:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16890187329
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 09:51:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725270668; cv=none; b=Kyz3tXokax0QoqIG+s2a205tackxT+zqiH57x9OLgOVK95YeRN1U/ZkpJH7Mzu5lV6Dr4H7gDC2vqCAmpwr/N3R2zTjtm83HQLAiEohSDP6ZJUuuTKjqa+dR6t3suJMXeA6XR7y4dAW0ik/R7qdNZiRDFv1opml6mqPCf3bowaY=
+	t=1725270668; cv=none; b=JeB5dZb5kFyiGjo93LnXLC9fcOFrU5Y1wtz6JofZrDDDpZ2UkFD8cr8HL5tWDhL7lgdbjPrbejBWAlfPzunUj5KGvj+BjUpgk/t4NLneorhOtiGwfryggOGdvu0/56sOFBHPVFYIug876MSRq8S7w7aznL5OV5AnscrJ2VzACqQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1725270668; c=relaxed/simple;
-	bh=vK3X2eh5jgaDvYS5+wA6Y3V4gUEsx93OdhdgDcslbPA=;
+	bh=9tLygEonqQuh5/Rv5N0mZI5qLJAe4uxmz33mLjhIoFQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qbYMOueYCLujAfD22fOtOg/XmcagkfwTkNNSMdScJ2ewPgw+1p3nyqLGXpFkfOCJp1Yrj+iJHBWdpqSkAySieUJEe88VcdbiyOczzZudtQtgMLztYCzdXf0NzYb8HTpCjcKI/njQ96OE7DQ6ine2u9/7ACGe1ltyyXVCOidVQSM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=KFVkMLnr; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=h0wfIOWK5PRLKNr57WCqFk3j0F/4/yO4rPKo+XkKcec=; b=KFVkMLnrmNrPO9JKH/tbWmfHXv
-	oVcNQTZwm/BCzRqRvbs20mnJO/Y2vVH0aabd/ut5qmIC0RK+7M79tTY1TiIbt02JddtZMaC8iFR6J
-	/8zE9GiNx8vyqR8V677UZl2yESaWTD8b9P9TtUesYi3Yf/Fm1iLWnPqySSOXA7+AS76c6LlQvOwNL
-	RTcGC6X9SKi++J0KltbzVZEp1Qb+cqMsgb4ij7Jz+yFtMoSpnkYJmfnTp/towemkw9t24DVRH1Nzm
-	/ipm7ktGaGt/niNR6v8vSGJBtmgNUVv5/NlHblGnA1QoU7ec/b6d9RYC1+3vSZzgVOdx6zF8I4hBQ
-	1KeZpFZg==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sl3i2-0000000C7iW-3l0v;
-	Mon, 02 Sep 2024 09:50:55 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 583BE300642; Mon,  2 Sep 2024 11:50:54 +0200 (CEST)
-Date: Mon, 2 Sep 2024 11:50:54 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Luo Gengkun <luogengkun@huaweicloud.com>
-Cc: mingo@redhat.com, acme@kernel.org, namhyung@kernel.org,
-	mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
-	jolsa@kernel.org, irogers@google.com, adrian.hunter@intel.com,
-	kan.liang@linux.intel.com, linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH v5 2/2] perf/core: Fix incorrect time diff in tick adjust
- period
-Message-ID: <20240902095054.GD4723@noisy.programming.kicks-ass.net>
-References: <20240831074316.2106159-1-luogengkun@huaweicloud.com>
- <20240831074316.2106159-3-luogengkun@huaweicloud.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=pXv7kChQXp4tBciOE10hYjNssYJ6ifmdWG3sB8+EO17sZqcupKa3WTVRRNfr7Uxxtnpl9xQi0E1UajniRBITokhPfu+d91NFlEyq3Y+TGoMMImHus4xvLJu5NdhnZkyaenQJpKFglinsQBsZxDXSEVhlkC9IH9AoxfLqGwLlpbI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=t4kJaVlk; arc=none smtp.client-ip=95.215.58.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Mon, 2 Sep 2024 05:51:00 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1725270664;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=DvuMnP7w3vffI0/vSAapeokE9ygqz+HaF9Aaksx9bG0=;
+	b=t4kJaVlksiM0tu/pUBiVqQp9VLGLKhZPpdN7t2/SB/xvRgFXnXRsI+xDpSUxzy5vNaUjwB
+	bEtiuKt04EZCy8z1mcA0Ur4IRUnUToZF2dHRiVEaI1uOxk5vOv8bdGPkTJc5R4bzFgYA8p
+	E7OmBCq/V5DXQYOdk9eM0B/H2vlv3zo=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Michal Hocko <mhocko@suse.com>
+Cc: Dave Chinner <david@fromorbit.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Christoph Hellwig <hch@lst.de>, 
+	Yafang Shao <laoar.shao@gmail.com>, jack@suse.cz, Christian Brauner <brauner@kernel.org>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Paul Moore <paul@paul-moore.com>, 
+	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, linux-bcachefs@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2 v2] bcachefs: do not use PF_MEMALLOC_NORECLAIM
+Message-ID: <citv2v6f33hoidq75xd2spaqxf7nl5wbmmzma4wgmrwpoqidhj@k453tmq7vdrk>
+References: <20240827061543.1235703-1-mhocko@kernel.org>
+ <Zs6jFb953AR2Raec@dread.disaster.area>
+ <ylycajqc6yx633f4sh5g3mdbco7zrjdc5bg267sox2js6ok4qb@7j7zut5drbyy>
+ <ZtBzstXltxowPOhR@dread.disaster.area>
+ <myb6fw5v2l2byxn4raxlaqozwfdpezdmn3mnacry3y2qxmdxtl@bxbsf4v4qbmg>
+ <ZtUFaq3vD+zo0gfC@dread.disaster.area>
+ <nawltogcoffous3zv4kd2eerrrwhihbulz7pi2qyfjvslp6g3f@j3qkqftra2qm>
+ <ZtV6OwlFRu4ZEuSG@tiehlicka>
+ <v664cj6evwv7zu3b77gf2lx6dv5sp4qp2rm7jjysddi2wc2uzl@qvnj4kmc6xhq>
+ <ZtWH3SkiIEed4NDc@tiehlicka>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,99 +70,52 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240831074316.2106159-3-luogengkun@huaweicloud.com>
+In-Reply-To: <ZtWH3SkiIEed4NDc@tiehlicka>
+X-Migadu-Flow: FLOW_OUT
 
-On Sat, Aug 31, 2024 at 07:43:16AM +0000, Luo Gengkun wrote:
-> Perf events has the notion of sampling frequency which is implemented in
-> software by dynamically adjusting the counter period so that samples occur
-> at approximately the target frequency.  Period adjustment is done in 2
-> places:
->  - when the counter overflows (and a sample is recorded)
->  - each timer tick, when the event is active
-> The later case is slightly flawed because it assumes that the time since
-> the last timer-tick period adjustment is 1 tick, whereas the event may not
-> have been active (e.g. for a task that is sleeping).
+On Mon, Sep 02, 2024 at 11:39:41AM GMT, Michal Hocko wrote:
+> On Mon 02-09-24 04:52:49, Kent Overstreet wrote:
+> > On Mon, Sep 02, 2024 at 10:41:31AM GMT, Michal Hocko wrote:
+> > > On Sun 01-09-24 21:35:30, Kent Overstreet wrote:
+> > > [...]
+> > > > But I am saying that kmalloc(__GFP_NOFAIL) _should_ fail and return NULL
+> > > > in the case of bugs, because that's going to be an improvement w.r.t.
+> > > > system robustness, in exactly the same way we don't use BUG_ON() if it's
+> > > > something that we can't guarantee won't happen in the wild - we WARN()
+> > > > and try to handle the error as best we can.
+> > > 
+> > > We have discussed that in a different email thread. And I have to say
+> > > that I am not convinced that returning NULL makes a broken code much
+> > > better. Why? Because we can expect that broken NOFAIL users will not have a
+> > > error checking path. Even valid NOFAIL users will not have one because
+> > > they _know_ they do not have a different than retry for ever recovery
+> > > path. 
+> > 
+> > You mean where I asked you for a link to the discussion and rationale
+> > you claimed had happened? Still waiting on that
 > 
-> Fix by using jiffies to determine the elapsed time in that case.
+> I am not your assistent to be tasked and search through lore archives.
+> Find one if you need that.
 > 
-> Signed-off-by: Luo Gengkun <luogengkun@huaweicloud.com>
-> Reviewed-by: Adrian Hunter <adrian.hunter@intel.com>
-> ---
->  include/linux/perf_event.h |  1 +
->  kernel/events/core.c       | 12 +++++++++---
->  2 files changed, 10 insertions(+), 3 deletions(-)
+> Anyway, if you read the email and even tried to understand what is
+> written there rather than immediately started shouting a response then
+> you would have noticed I have put actual arguments here. You are free to
+> disagree with them and lay down your arguments. You have decided to
 > 
-> diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
-> index 1a8942277dda..d29b7cf971a1 100644
-> --- a/include/linux/perf_event.h
-> +++ b/include/linux/perf_event.h
-> @@ -265,6 +265,7 @@ struct hw_perf_event {
->  	 * State for freq target events, see __perf_event_overflow() and
->  	 * perf_adjust_freq_unthr_context().
->  	 */
-> +	u64				freq_tick_stamp;
->  	u64				freq_time_stamp;
->  	u64				freq_count_stamp;
->  #endif
-> diff --git a/kernel/events/core.c b/kernel/events/core.c
-> index a9395bbfd4aa..183291e0d070 100644
-> --- a/kernel/events/core.c
-> +++ b/kernel/events/core.c
-> @@ -55,6 +55,7 @@
->  #include <linux/pgtable.h>
->  #include <linux/buildid.h>
->  #include <linux/task_work.h>
-> +#include <linux/jiffies.h>
->  
->  #include "internal.h"
->  
-> @@ -4120,9 +4121,11 @@ static void perf_adjust_freq_unthr_events(struct list_head *event_list)
->  {
->  	struct perf_event *event;
->  	struct hw_perf_event *hwc;
-> -	u64 now, period = TICK_NSEC;
-> +	u64 now, period, tick_stamp;
->  	s64 delta;
->  
-> +	tick_stamp = jiffies64_to_nsecs(get_jiffies_64());
-> +
->  	list_for_each_entry(event, event_list, active_list) {
->  		if (event->state != PERF_EVENT_STATE_ACTIVE)
->  			continue;
-> @@ -4148,6 +4151,9 @@ static void perf_adjust_freq_unthr_events(struct list_head *event_list)
->  		 */
->  		event->pmu->stop(event, PERF_EF_UPDATE);
->  
-> +		period = tick_stamp - hwc->freq_tick_stamp;
-> +		hwc->freq_tick_stamp = tick_stamp;
-> +
->  		now = local64_read(&event->count);
->  		delta = now - hwc->freq_count_stamp;
->  		hwc->freq_count_stamp = now;
-> @@ -4157,9 +4163,9 @@ static void perf_adjust_freq_unthr_events(struct list_head *event_list)
->  		 * reload only if value has changed
->  		 * we have stopped the event so tell that
->  		 * to perf_adjust_period() to avoid stopping it
-> -		 * twice.
-> +		 * twice. And skip if it is the first tick adjust period.
->  		 */
-> -		if (delta > 0)
-> +		if (delta > 0 && likely(period != tick_stamp))
->  			perf_adjust_period(event, period, delta, false);
->  
->  		event->pmu->start(event, delta > 0 ? PERF_EF_RELOAD : 0);
+> [...]
+> 
+> > Yeah, enough of this insanity.
+> 
+> so I do not think you are able to do that. Again...
 
-This one I'm less happy with.. that condition 'period != tick_stamp'
-doesn't make sense to me. That's only false if hwc->freq_tick_stamp ==
-0, which it will only be once after event creation. Even through the
-Changelog babbles about event scheduling.
+Michal, if you think crashing processes is an acceptable alternative to
+error handling _you have no business writing kernel code_.
 
-Also, that all should then be written something like:
+You have been stridently arguing for one bad idea after another, and
+it's an insult to those of us who do give a shit about writing reliable
+software.
 
-	if (delta > 0 && ...) {
-		perf_adjust_period(...);
-		adjusted = true;
-	}
+You're arguing against basic precepts of kernel programming.
 
-	event->pmu->start(event, adjusted ? PERF_EF_RELOAD : 0);
+Get your head examined. And get the fuck out of here with this shit.
 
