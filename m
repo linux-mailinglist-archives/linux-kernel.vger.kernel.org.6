@@ -1,225 +1,174 @@
-Return-Path: <linux-kernel+bounces-310893-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310894-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0F9696828F
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 10:58:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B42CD968293
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 10:58:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 60DF51F231E3
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 08:58:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D53751C2165D
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 08:58:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8D7B1E48A;
-	Mon,  2 Sep 2024 08:57:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B5DD187329;
+	Mon,  2 Sep 2024 08:58:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NjD03GFX"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kXbchImT"
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF83D186E3B
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 08:57:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 252A6143889
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 08:58:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725267473; cv=none; b=q226g4aTOBs7LdJd1rP0Ou0fDMriUP13xd/4vum6pJIibUHWSrbtdYry4NBcfiGSg/pUmf0+7yN0EmiIWZD9yobo46LqcsJW1PG9ipKECRyhaGA/ej8/s2m3lS7gwcgAemNnDeO6IcclMrGq/sylBsQaeBdlGtVuIKhJZdswY30=
+	t=1725267489; cv=none; b=mVu9pQifb4s5olbOSkqw9Squ1mzau+FUJavKyUpM2/OZawoWfCYOl0Cup5rBZURb80aEUp8ZfWknj9sDdSCFlTt9udzPZhKjb0A/eDV29Qlitp5lPg0fkstjJgrVNhTN3N8oLW3elNVgRxyD0PnbHn50cX2JZNIowRUR6+xLbo4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725267473; c=relaxed/simple;
-	bh=XDpgVBWyZw0d/NdvIS0kSGXFJhhuzpkfj4C6EjbgI7A=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=m/HqWrtRIcpnPeXdkqN1aENvtsJhFoasn9vKZ/fSfOmMcVDCUBol/KPfQBsFeLg5CKFOVtzirjuULyUM6137kWAod9eW9NOrKEbekvSKud8541+bkNl5Zi0YOhspvKKOpeNXbZ9ZQNfwVz8HTZmC/RBn/gHTchb05xq7cyb7oMQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NjD03GFX; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725267471; x=1756803471;
-  h=date:from:to:cc:subject:message-id;
-  bh=XDpgVBWyZw0d/NdvIS0kSGXFJhhuzpkfj4C6EjbgI7A=;
-  b=NjD03GFXGq4pwv66OmyHusaa8FP9Kq/pE58me68UovKtWUn9bhWEWIHw
-   DpCbtfVXpbs80D8RMCkM/44xQfmXpXS6i0abe4nPvvg/25Bn2igblRQHj
-   D04UvT/k5tu12nwRnvy66YU3OJ/EZBOjSWmDn7Hn/j3AlFyjHWtMaJ7fd
-   UY4eQ5ZBTcBfwVISipykweCZUulOAHJP1LYruCv2HAGQ5qWTTnd5tAoCH
-   we24zzoMYN+Q9Q5ySGGfMfhleIMJfnFhWedMzQ5WZOY7ceuk2PXn73Gxe
-   zaCkazleYp2ADxmXeLZusHBvTwposwgqLNetslz1GzXt9BJTCyBiuz2LB
-   g==;
-X-CSE-ConnectionGUID: IZ6nek1EQ6WsWqhSRsPhjQ==
-X-CSE-MsgGUID: Ezwyw344SxKLVTMg16sFIQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11182"; a="23956384"
-X-IronPort-AV: E=Sophos;i="6.10,195,1719903600"; 
-   d="scan'208";a="23956384"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2024 01:57:51 -0700
-X-CSE-ConnectionGUID: NReFDx/xQSWaUMgY4NNBSA==
-X-CSE-MsgGUID: L5lK0qpcTZeU5rdyB+iUBw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,195,1719903600"; 
-   d="scan'208";a="69343581"
-Received: from lkp-server01.sh.intel.com (HELO 9c6b1c7d3b50) ([10.239.97.150])
-  by orviesa003.jf.intel.com with ESMTP; 02 Sep 2024 01:57:49 -0700
-Received: from kbuild by 9c6b1c7d3b50 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sl2sc-0005J8-3D;
-	Mon, 02 Sep 2024 08:57:47 +0000
-Date: Mon, 02 Sep 2024 16:57:06 +0800
-From: kernel test robot <lkp@intel.com>
-To: "x86-ml" <x86@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [tip:master] BUILD SUCCESS
- 5566819aeba01f87d6ae45c9cc57b573c8f80832
-Message-ID: <202409021604.FMFJGREH-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	s=arc-20240116; t=1725267489; c=relaxed/simple;
+	bh=d2AZu0FgOe8i1cQYkiWwnvAeNAInMNJYhUwoL8TEgHk=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=Hzb7KJmnAhj5vTsuyY0pi2LYXc7hu1lSIs3FQWHMZb24eNf/rDvoGweugQQH4OIMnb+aigW10hcfjb1zQhkQcP19zx43dh8CtUOIK++e+EiWY11WHMZ6vGbxaasQQCV016UXLeCzBsS97jFgBB1MaPIxDyOdtF5ppHb6w98EfWo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kXbchImT; arc=none smtp.client-ip=209.85.167.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-5343e75c642so5174720e87.2
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2024 01:58:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725267486; x=1725872286; darn=vger.kernel.org;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=d2AZu0FgOe8i1cQYkiWwnvAeNAInMNJYhUwoL8TEgHk=;
+        b=kXbchImT2ts9B84t+0j5JimkoiwN42HHZBNBbllgX4EYgiQD+iRKbnHP0bJzN3ZzTb
+         jmSPbzofuzF8igMmO4GO7eG4UGH08K5OEyoSUEqn2rj52vM4tId2qPDY7aSbH6Pl03fQ
+         mwoFvAPXT40+pswdGc7PwTePrO4q+dK9Nr6f4XEMT9ynBFr4MStA/Rf1qERxEhhbNLOV
+         RwGBbabhm0Pe0P2+10YeUKKNLtT8SBSFg89xDB8i5jm9nwWvuVpZMc7Y+wjd6wuucB9w
+         NR0Ah8QMtYvYwSz6dC0QmNwzNjI+6NnmqCVNVJGAAkbi374uLTS9SegD5Eos5T6ZL440
+         uKuQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725267486; x=1725872286;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=d2AZu0FgOe8i1cQYkiWwnvAeNAInMNJYhUwoL8TEgHk=;
+        b=wbnvASBLtBwQO0mk3tWssBAr8QIvb2+Tgw/5Qbn0rqLGEEth7EQ90cEwi+tUXcPVT6
+         WG93d/eb/TWpoUYti241y0Vmg9+Oy2Co6GcNWCcNmG5rnSg1GfgrzT+fJkNn49DBmgOX
+         448xw03bKxbnypg2AC49XEKCkEkvZ0AcF2jgwomiWc4NDl+bdOXY+/Ga+v/qOa0Ny+0V
+         9563NHsUJ76m3Vy/VTYzREH+/s1aZofDjEXzGqls2wKmNVfEEsKCoxGpPJ7wnxQgrUo2
+         k7fqJt1TgtQj8u1tkdXs0QfQc4yCWvZw+/wT0CxUqoyMS1i5YIRPKIb2Ag1s2SNmYNsS
+         knmA==
+X-Forwarded-Encrypted: i=1; AJvYcCUmhFxof+YP1reJkqAVTad/GFaD7Vm48WgynZL1hRBZ+BAAhujkgA81RWI0a34pL+jbHTGoi0XwSCym6w8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxej/Ji1+weNUAdn4UtGkTUNb8Wy77Un+dVV6ubuIJjKyuinjkJ
+	N1yUVXVGj7+w8duOR4vTfek6MRKZfgWLt52Zq02NScB4FmaMZSLX0vMU+w==
+X-Google-Smtp-Source: AGHT+IFwfYZR2luHOQ+GPhBWgJFUVzn4OSgxSLuQwNZCqivU7rhn+pZVHQZIOy9FQRYEstjwFCb45A==
+X-Received: by 2002:a05:6512:3f11:b0:533:4652:983a with SMTP id 2adb3069b0e04-53546b49f56mr7622865e87.35.1725267486026;
+        Mon, 02 Sep 2024 01:58:06 -0700 (PDT)
+Received: from smtpclient.apple (89-73-96-21.dynamic.chello.pl. [89.73.96.21])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5354084de30sm1524371e87.243.2024.09.02.01.58.05
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 02 Sep 2024 01:58:05 -0700 (PDT)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3776.700.51\))
+Subject: Re: [regression] oops on heavy compilations ("kernel BUG at
+ mm/zswap.c:1005!" and "Oops: invalid opcode: 0000")
+From: Piotr Oniszczuk <piotr.oniszczuk@gmail.com>
+In-Reply-To: <CAJD7tkaTcnuCFW+dWTzSAuLKBqkkGv9s5uByYm9DaJC=Cp-Xqg@mail.gmail.com>
+Date: Mon, 2 Sep 2024 10:57:50 +0200
+Cc: Pedro Falcato <pedro.falcato@gmail.com>,
+ Nhat Pham <nphamcs@gmail.com>,
+ Matthew Wilcox <willy@infradead.org>,
+ Linux regressions mailing list <regressions@lists.linux.dev>,
+ LKML <linux-kernel@vger.kernel.org>,
+ Johannes Weiner <hannes@cmpxchg.org>,
+ Linux-MM <linux-mm@kvack.org>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <EF0ABD3E-A239-4111-A8AB-5C442E759CF3@gmail.com>
+References: <BD22A15A-9216-4FA0-82DF-C7BBF8EE642E@gmail.com>
+ <6f65e3a6-5f1a-4fda-b406-17598f4a72d5@leemhuis.info>
+ <ZsiLElTykamcYZ6J@casper.infradead.org>
+ <02D2DA66-4A91-4033-8B98-ED25FC2E0CD6@gmail.com>
+ <CAKEwX=N-10A=C_Cp_m8yxfeTigvmZp1v7TrphcrHuRkHJ8837g@mail.gmail.com>
+ <A512FD59-63DF-48D3-BCB3-83DF8505E7E0@gmail.com>
+ <oophwj3aj2fnfi57ebzjuc536iltilmcpoucyms6nfk2alwvtr@pdj4cn4rvpdn>
+ <3D1B8F1F-2C41-4CCD-A5D7-41CF412F99DE@gmail.com>
+ <CAJD7tkbF2Cx4uRCJAN=EKDLkVC=CApiLAsYt4ZN9YcVUJZp_5g@mail.gmail.com>
+ <EE83D424-A546-410D-B5ED-6E9631746ACF@gmail.com>
+ <CAJD7tkZ01PPYMzcTyX_cwr836jGonJT=fwT3ovc4ixW44keRgg@mail.gmail.com>
+ <277CDE7C-7ED8-4840-9C30-533C9327B028@gmail.com>
+ <CAJD7tkaTcnuCFW+dWTzSAuLKBqkkGv9s5uByYm9DaJC=Cp-Xqg@mail.gmail.com>
+To: Yosry Ahmed <yosryahmed@google.com>
+X-Mailer: Apple Mail (2.3776.700.51)
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git master
-branch HEAD: 5566819aeba01f87d6ae45c9cc57b573c8f80832  Merge branch into tip/master: 'x86/timers'
 
-elapsed time: 832m
 
-configs tested: 133
-configs skipped: 3
+> Wiadomo=C5=9B=C4=87 napisana przez Yosry Ahmed <yosryahmed@google.com> =
+w dniu 31.08.2024, o godz. 19:23:
+>=20
+> On Sat, Aug 31, 2024 at 2:41=E2=80=AFAM Piotr Oniszczuk
+> <piotr.oniszczuk@gmail.com> wrote:
+>>=20
+>>=20
+>>=20
+>>> Wiadomo=C5=9B=C4=87 napisana przez Yosry Ahmed =
+<yosryahmed@google.com> w dniu 29.08.2024, o godz. 23:54:
+>>>=20
+>>> I also noticed that you are using z3fold as the zpool. Is the =
+problem
+>>> reproducible with zsmalloc? I wouldn't be surprised if there's a
+>>> z3fold bug somewhere.
+>>>=20
+>>=20
+>> Hmm - yesterday i recompiled 6.9.12 with zsmalloc and =E2=80=A6. =
+after 16h of continuous tests I can=E2=80=99t reproduce issue.
+>> With zsmalloc 6.9.12 looks to me like stable.
+>=20
+> Interesting, and a little bit what I hoped for tbh.
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+:-)
 
-tested configs:
-alpha                             allnoconfig   gcc-14.1.0
-alpha                            allyesconfig   clang-20
-alpha                               defconfig   gcc-14.1.0
-arc                              allmodconfig   clang-20
-arc                               allnoconfig   gcc-14.1.0
-arc                              allyesconfig   clang-20
-arc                          axs103_defconfig   gcc-14.1.0
-arc                                 defconfig   gcc-14.1.0
-arm                              allmodconfig   clang-20
-arm                               allnoconfig   gcc-14.1.0
-arm                              allyesconfig   clang-20
-arm                                 defconfig   gcc-14.1.0
-arm                       imx_v4_v5_defconfig   gcc-14.1.0
-arm                        neponset_defconfig   gcc-14.1.0
-arm                         vf610m4_defconfig   gcc-14.1.0
-arm64                            allmodconfig   clang-20
-arm64                             allnoconfig   gcc-14.1.0
-arm64                               defconfig   gcc-14.1.0
-csky                              allnoconfig   gcc-14.1.0
-csky                                defconfig   gcc-14.1.0
-hexagon                          allmodconfig   clang-20
-hexagon                           allnoconfig   gcc-14.1.0
-hexagon                          allyesconfig   clang-20
-hexagon                             defconfig   gcc-14.1.0
-i386                             allmodconfig   clang-18
-i386                              allnoconfig   clang-18
-i386                             allyesconfig   clang-18
-i386         buildonly-randconfig-001-20240902   clang-18
-i386         buildonly-randconfig-002-20240902   clang-18
-i386         buildonly-randconfig-003-20240902   clang-18
-i386         buildonly-randconfig-004-20240902   clang-18
-i386         buildonly-randconfig-005-20240902   clang-18
-i386         buildonly-randconfig-006-20240902   clang-18
-i386                                defconfig   clang-18
-i386                  randconfig-001-20240902   clang-18
-i386                  randconfig-002-20240902   clang-18
-i386                  randconfig-003-20240902   clang-18
-i386                  randconfig-004-20240902   clang-18
-i386                  randconfig-005-20240902   clang-18
-i386                  randconfig-006-20240902   clang-18
-i386                  randconfig-011-20240902   clang-18
-i386                  randconfig-012-20240902   clang-18
-i386                  randconfig-013-20240902   clang-18
-i386                  randconfig-014-20240902   clang-18
-i386                  randconfig-015-20240902   clang-18
-i386                  randconfig-016-20240902   clang-18
-loongarch                        allmodconfig   gcc-14.1.0
-loongarch                         allnoconfig   gcc-14.1.0
-loongarch                           defconfig   gcc-14.1.0
-m68k                             allmodconfig   gcc-14.1.0
-m68k                              allnoconfig   gcc-14.1.0
-m68k                             allyesconfig   gcc-14.1.0
-m68k                          amiga_defconfig   gcc-14.1.0
-m68k                                defconfig   gcc-14.1.0
-m68k                       m5208evb_defconfig   gcc-14.1.0
-m68k                       m5249evb_defconfig   gcc-14.1.0
-m68k                          sun3x_defconfig   gcc-14.1.0
-microblaze                       allmodconfig   gcc-14.1.0
-microblaze                        allnoconfig   gcc-14.1.0
-microblaze                       allyesconfig   gcc-14.1.0
-microblaze                          defconfig   gcc-14.1.0
-mips                              allnoconfig   gcc-14.1.0
-mips                 decstation_r4k_defconfig   gcc-14.1.0
-mips                           mtx1_defconfig   gcc-14.1.0
-mips                       rbtx49xx_defconfig   gcc-14.1.0
-nios2                             allnoconfig   gcc-14.1.0
-nios2                               defconfig   gcc-14.1.0
-openrisc                          allnoconfig   clang-20
-openrisc                         allyesconfig   gcc-14.1.0
-openrisc                            defconfig   gcc-12
-parisc                           allmodconfig   gcc-14.1.0
-parisc                            allnoconfig   clang-20
-parisc                           allyesconfig   gcc-14.1.0
-parisc                              defconfig   gcc-12
-parisc64                            defconfig   gcc-14.1.0
-powerpc                          allmodconfig   gcc-14.1.0
-powerpc                           allnoconfig   clang-20
-powerpc                          allyesconfig   gcc-14.1.0
-powerpc                        cell_defconfig   gcc-14.1.0
-powerpc                   currituck_defconfig   gcc-14.1.0
-powerpc                       ebony_defconfig   gcc-14.1.0
-powerpc                     powernv_defconfig   gcc-14.1.0
-riscv                            allmodconfig   gcc-14.1.0
-riscv                             allnoconfig   clang-20
-riscv                            allyesconfig   gcc-14.1.0
-riscv                               defconfig   gcc-12
-s390                             allmodconfig   gcc-14.1.0
-s390                              allnoconfig   clang-20
-s390                             allyesconfig   gcc-14.1.0
-s390                                defconfig   gcc-12
-sh                               allmodconfig   gcc-14.1.0
-sh                                allnoconfig   gcc-14.1.0
-sh                               allyesconfig   gcc-14.1.0
-sh                                  defconfig   gcc-12
-sh                      rts7751r2d1_defconfig   gcc-14.1.0
-sparc                            allmodconfig   gcc-14.1.0
-sparc64                             defconfig   gcc-12
-um                               allmodconfig   clang-20
-um                                allnoconfig   clang-20
-um                               allyesconfig   clang-20
-um                                  defconfig   gcc-12
-um                             i386_defconfig   gcc-12
-um                           x86_64_defconfig   gcc-12
-x86_64                            allnoconfig   clang-18
-x86_64                           allyesconfig   clang-18
-x86_64       buildonly-randconfig-001-20240902   clang-18
-x86_64       buildonly-randconfig-002-20240902   clang-18
-x86_64       buildonly-randconfig-003-20240902   clang-18
-x86_64       buildonly-randconfig-004-20240902   clang-18
-x86_64       buildonly-randconfig-005-20240902   clang-18
-x86_64       buildonly-randconfig-006-20240902   clang-18
-x86_64                              defconfig   clang-18
-x86_64                randconfig-001-20240902   clang-18
-x86_64                randconfig-002-20240902   clang-18
-x86_64                randconfig-003-20240902   clang-18
-x86_64                randconfig-004-20240902   clang-18
-x86_64                randconfig-005-20240902   clang-18
-x86_64                randconfig-006-20240902   clang-18
-x86_64                randconfig-011-20240902   clang-18
-x86_64                randconfig-012-20240902   clang-18
-x86_64                randconfig-013-20240902   clang-18
-x86_64                randconfig-014-20240902   clang-18
-x86_64                randconfig-015-20240902   clang-18
-x86_64                randconfig-016-20240902   clang-18
-x86_64                randconfig-071-20240902   clang-18
-x86_64                randconfig-072-20240902   clang-18
-x86_64                randconfig-073-20240902   clang-18
-x86_64                randconfig-074-20240902   clang-18
-x86_64                randconfig-075-20240902   clang-18
-x86_64                randconfig-076-20240902   clang-18
-x86_64                          rhel-8.3-rust   clang-18
-xtensa                            allnoconfig   gcc-14.1.0
-xtensa                  cadence_csp_defconfig   gcc-14.1.0
+I tested mainline 6.10.7 with 26h test and also it is stable with =
+zsmalloc=20
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+>=20
+>>=20
+>> With this - what will be your advice to move forward?
+>=20
+> Well, it's possible that some zswap change was not fully compatible
+> with z3fold, or surfaced a dormant bug in z3fold. Either way, my
+> recommendation is to use zsmalloc.
+> I have been trying to deprecate
+
+IMHO - isn=E2=80=99t bug in this report + difficulties to reproduce->fix =
+enough to depreciate z3fold? =20
+
+> z3fold, and honestly you are the only person I have seen use z3fold in
+> a while -- which is probably why no one else reported such a problem.
+
+Well - in fact this is ArchLinux - not me.
+I=E2=80=99m using Arch and kernel in builder machine with ArchLinux =
+config + packaging
+
+>=20
+>> Is there any possibility/way to avoid bisecting? (due limited time =
+from my side)
+>=20
+> So unless you have a reason to specifically use z3fold or avoid
+> zsmalloc, please use zsmalloc. It should be better for you anyway. I
+
+I see benefits already: on very memory demanding qtwebkit compile:
+z3fold: swap frequently gets 6..8G from 16G available
+zsmalloc: can=E2=80=99t see more than 1..2G
+ =20
+> doubt that you (or anyone) wants to spend time debugging a z3fold
+> problem :)
+
+lets depreciate it!
+
+
+
 
