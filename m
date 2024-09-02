@@ -1,108 +1,220 @@
-Return-Path: <linux-kernel+bounces-311282-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311283-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF33796871A
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 14:07:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4D8296871C
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 14:08:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A4A341F244F9
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 12:07:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E6CD21C23102
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 12:08:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7A09200118;
-	Mon,  2 Sep 2024 12:07:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RA+a4TzH"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEC3A20124E;
+	Mon,  2 Sep 2024 12:07:50 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90F71185939
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B91421DAC5F
 	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 12:07:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725278868; cv=none; b=XevLrQPouoNB3hHFbPWbxakLiVgZdtwHZSmq4rQc1cdBlxvJyZrLau2GuOmoZzBbTauAcQdNOep2hN+leohwKRoKV8J6ddiFTDscw9Gbdw00s2IVhMIord77UDESH5XYDasbcTZ6WW1LMqpZ853FJujT4jSl4kCJBAfwXNOJSb0=
+	t=1725278870; cv=none; b=d7ZdaTB5AYv0LBLXjFKwh1qBvZiLIi0Cz1WcxgwYjHssmhCI/suTccdmGZaKKkjz1tIBr1E5RuYxVJTTH85EqClB4g/rBPK5gGtxOtGRVjzr5KLa3lriwR5Li7dJKFs3/2BH+9qB40ZP5u2LhrYMSvwOWZIQVb42gjxZw/Rjyxw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725278868; c=relaxed/simple;
-	bh=cNfn8v57qzoh4X8pwiukWydCJ1lDZU4LMycDmGx9rY0=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=ceX5fYftEkAjNkRak3oduDu1laQAXW7qsVCoetnCjO0c0K/dy5f3zJm6YxbzmX1gCNVfPgXfx0aSVPCHq6AIrW3L/Q3UjcjbdJb9r1NKGIG3YTpxOqnYZC7PY0BNB/Hi141Q+032qjYbZvgiNmIieuCBilW+a120cSQoWQPHGj4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RA+a4TzH; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1725278865;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=pjOW0E49Yqw0mfiCURQMWGxKRTpi1ev/eO7YHhvgkrY=;
-	b=RA+a4TzHDooF9t2syeJfnaOAtINCfXQebUq8fbaeU+9O2ajFEGDpIBi8O/qGO7trFvJT3n
-	vxY+PQvc+14nNo2WQAoZuRmlZAD7VH9eokd0JYtoLZ1WL7WdSPGPqkub+WVeR8yGaXvqG6
-	jaa7RhMd4pEUlR8w8KmzkVDrvQLk53I=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-204-CfVNYkG0OgOLqsUrGaZQyA-1; Mon,
- 02 Sep 2024 08:07:44 -0400
-X-MC-Unique: CfVNYkG0OgOLqsUrGaZQyA-1
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 46F441956080;
-	Mon,  2 Sep 2024 12:07:42 +0000 (UTC)
-Received: from oldenburg3.str.redhat.com (unknown [10.39.194.42])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 29DF61956048;
-	Mon,  2 Sep 2024 12:07:39 +0000 (UTC)
-From: Florian Weimer <fweimer@redhat.com>
-To: Rich Felker <dalias@libc.org>
-Cc: "H.J. Lu" <hjl.tools@gmail.com>,  Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>,  linux-api@vger.kernel.org,
-  libc-alpha@sourceware.org,  musl@lists.openwall.com
-Subject: Re: [musl] AT_MINSIGSTKSZ mismatched interpretation kernel vs libc
-In-Reply-To: <20240831154101.GN32249@brightrain.aerifal.cx> (Rich Felker's
-	message of "Sat, 31 Aug 2024 11:41:02 -0400")
-References: <20240829205436.GA14562@brightrain.aerifal.cx>
-	<20240831092902.GA2724612@port70.net>
-	<20240831150241.GP10433@brightrain.aerifal.cx>
-	<CAMe9rOqSSX_YP7dq5WK7vDyrQ5RP6nUNrim-8FjJi1X_8NfAvg@mail.gmail.com>
-	<20240831154101.GN32249@brightrain.aerifal.cx>
-Date: Mon, 02 Sep 2024 14:07:36 +0200
-Message-ID: <87v7zetg1j.fsf@oldenburg3.str.redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1725278870; c=relaxed/simple;
+	bh=wvYqwiEFM9Z92hB+N+d5OO9EI8xNlZ8c3rMkz/NsGFY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=NWWWqohwXAKtdg13cPFY8P3ilbF0EquA7o4nr7Ze4+Z3xX4N1J5bgbRPGlZkcDkHLu3PT0k4r+Qgm6hdMvW7k7PyKRWN8h7vYVtb6+uASmxCFIBMLMW4Lcc6n7unP/y4XJNZ7w+L5DKIQkBqDnU9GJ6XbL/cIDuGeNdAAQSzMko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.254])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4Wy6v05YZlzyRKl;
+	Mon,  2 Sep 2024 20:07:08 +0800 (CST)
+Received: from kwepemh500013.china.huawei.com (unknown [7.202.181.146])
+	by mail.maildlp.com (Postfix) with ESMTPS id AA18B1800FE;
+	Mon,  2 Sep 2024 20:07:44 +0800 (CST)
+Received: from [10.67.109.254] (10.67.109.254) by
+ kwepemh500013.china.huawei.com (7.202.181.146) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Mon, 2 Sep 2024 20:07:44 +0800
+Message-ID: <f9e9e640-dd43-c808-7ac0-961728e205a2@huawei.com>
+Date: Mon, 2 Sep 2024 20:07:43 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.2.0
+Subject: Re: [PATCH] static_call: Fix a wild-memory-access bug in
+ static_call_del_module()
+Content-Language: en-US
+To: Christophe Leroy <christophe.leroy@csgroup.eu>, <tglx@linutronix.de>,
+	<linux-kernel@vger.kernel.org>, "Peter Zijlstra (Intel)"
+	<peterz@infradead.org>, Josh Poimboeuf <jpoimboe@kernel.org>
+References: <20230915082126.4187913-1-ruanjinjie@huawei.com>
+ <0f339f49-bb8d-e28d-c9d6-8f16bd62995d@huawei.com>
+ <d6c0cfeb-f4bd-4564-84e4-a0db71608a6b@csgroup.eu>
+From: Jinjie Ruan <ruanjinjie@huawei.com>
+In-Reply-To: <d6c0cfeb-f4bd-4564-84e4-a0db71608a6b@csgroup.eu>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ kwepemh500013.china.huawei.com (7.202.181.146)
 
-* Rich Felker:
 
-> This is ambiguously worded (does "operating system" mean kernel?) and
-> does not agree with POSIX, which defines it as:
->
->     Minimum stack size for a signal handler.
->
-> And otherwise just specifies that sigaltstack shall fail if given a
-> smaller size.
->
-> The POSIX definition is also underspecified but it's clear that it
-> should be possible to execute at least a do-nothing signal handler
-> (like one which immediately returns and whose sole purpose is to
-> induce EINTR when intalled without SA_RESTART), or even a minimal one
-> that does something like storing to a global variable, with such a
-> small stack. Allowing a size where even a do-nothing signal handler
-> results in a memory-clobbering overflow or access fault seems
-> non-conforming to me.
 
-POSIX does not specify what happens on a stack overflow (or more
-generally, if most resource limits are exceeded), so I think the
-behavior is conforming on a technicality.
+On 2024/9/2 20:06, Christophe Leroy wrote:
+> Hi,
+> 
+> Le 02/09/2024 à 14:01, Jinjie Ruan a écrit :
+>> Hi, it seems that this bug still exit.
+> 
+> Can you provide more details ?
+> 
+> In particular, what makes you think it is the exact same bug ?
 
-Thanks,
-Florian
+I apply this patch, and the problem not occurs.
 
+> 
+> Christophe
+> 
+> 
+>>
+>> On 2023/9/15 16:21, Jinjie Ruan wrote:
+>>> Inject fault while probing btrfs.ko, if the first kzalloc() fails
+>>> in __static_call_init(), key->mods will no be initialized. And then
+>>> in static_call_del_module() the site_mod->mod will cause
+>>> wild-memory-access as below:
+>>>
+>>> So assign key->mods to NULL in __static_call_init() if it fails
+>>> to fix the issue. And if kzalloc fails, it will just return in init
+>>> func, so it should break if it the key->mods is NULL in exit func.
+>>>
+>>>   general protection fault, probably for non-canonical address
+>>> 0xeb800159c89f94a0: 0000 [#1] PREEMPT SMP KASAN
+>>>   KASAN: maybe wild-memory-access in range
+>>> [0x5c002ace44fca500-0x5c002ace44fca507]
+>>>   CPU: 2 PID: 1843 Comm: modprobe Tainted: G        W        N
+>>> 6.6.0-rc1+ #60
+>>>   Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS
+>>> 1.13.0-1ubuntu1.1 04/01/2014
+>>>   RIP: 0010:static_call_del_module+0x113/0x280
+>>>   Code: 3c 20 00 0f 85 ef 00 00 00 49 8b 6e 08 48 85 ed 75 0d eb 75
+>>> 48 85 db 74 70 49 89 ef 48 89 dd 48 8d 7d 08 48 89 f8 48 c1 e8 03
+>>> <42> 80 3c 20 00 75 78 48 89 e8 4c 8b 6d 08 48 c1 e8 03 42 80 3c 20
+>>>   RSP: 0018:ffff888101d3f860 EFLAGS: 00010206
+>>>   RAX: 0b800559c89f94a0 RBX: 5c002ace44fca4f8 RCX: ffffffffa0210f00
+>>>   RDX: ffffffffa0210ed4 RSI: ffffffffa0210edc RDI: 5c002ace44fca500
+>>>   RBP: 5c002ace44fca4f8 R08: 0000000000000000 R09: ffffed10233e4eea
+>>>   R10: ffffed10233e4ee9 R11: ffff888119f2774b R12: dffffc0000000000
+>>>   R13: 80002ace3cfca4f8 R14: ffffffff85196de0 R15: ffffffff84ee9f99
+>>>   FS:  00007f4ff6faa540(0000) GS:ffff888119f00000(0000)
+>>> knlGS:0000000000000000
+>>>   CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>>>   CR2: 00007ffc3d1f19e8 CR3: 0000000109fa6001 CR4: 0000000000170ee0
+>>>   DR0: ffffffff8faefce8 DR1: ffffffff8faefce9 DR2: ffffffff8faefcea
+>>>   DR3: ffffffff8faefceb DR6: 00000000ffff0ff0 DR7: 0000000000000600
+>>>   Call Trace:
+>>>    <TASK>
+>>>    ? __die_body+0x1b/0x60
+>>>    ? die_addr+0x43/0x70
+>>>    ? exc_general_protection+0x121/0x210
+>>>    ? asm_exc_general_protection+0x22/0x30
+>>>    ? static_call_del_module+0x113/0x280
+>>>    ? __SCT__tp_func_ipi_exit+0x8/0x8
+>>>    static_call_module_notify+0x27f/0x390
+>>>    ? rcu_segcblist_inc_len+0x17/0x20
+>>>    notifier_call_chain+0xbf/0x280
+>>>    notifier_call_chain_robust+0x7f/0xe0
+>>>    ? notifier_call_chain+0x280/0x280
+>>>    ? kasan_quarantine_put+0x46/0x160
+>>>    blocking_notifier_call_chain_robust+0x5b/0x80
+>>>    load_module+0x4d1d/0x69f0
+>>>    ? module_frob_arch_sections+0x20/0x20
+>>>    ? update_cfs_group+0x10c/0x2a0
+>>>    ? __wake_up_common+0x10b/0x5d0
+>>>    ? kernel_read_file+0x3ca/0x510
+>>>    ? __x64_sys_fsconfig+0x650/0x650
+>>>    ? __schedule+0xa0b/0x2a60
+>>>    ? init_module_from_file+0xd2/0x130
+>>>    init_module_from_file+0xd2/0x130
+>>>    ? __ia32_sys_init_module+0xa0/0xa0
+>>>    ? _raw_spin_lock_irqsave+0xe0/0xe0
+>>>    ? ptrace_stop+0x487/0x790
+>>>    idempotent_init_module+0x32d/0x6a0
+>>>    ? init_module_from_file+0x130/0x130
+>>>    ? __fget_light+0x57/0x500
+>>>    __x64_sys_finit_module+0xbb/0x130
+>>>    do_syscall_64+0x35/0x80
+>>>    entry_SYSCALL_64_after_hwframe+0x46/0xb0
+>>>   RIP: 0033:0x7f4ff691b839
+>>>   Code: 00 f3 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8
+>>> 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05
+>>> <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d 1f f6 2c 00 f7 d8 64 89 01 48
+>>>   RSP: 002b:00007ffc07b09718 EFLAGS: 00000246 ORIG_RAX: 0000000000000139
+>>>   RAX: ffffffffffffffda RBX: 000055978f13e070 RCX: 00007f4ff691b839
+>>>   RDX: 0000000000000000 RSI: 000055978da1bc2e RDI: 0000000000000003
+>>>   RBP: 000055978da1bc2e R08: 0000000000000000 R09: 000055978f13ddb0
+>>>   R10: 0000000000000003 R11: 0000000000000246 R12: 0000000000000000
+>>>   R13: 000055978f13e020 R14: 0000000000040000 R15: 000055978f13ddb0
+>>>    </TASK>
+>>>   Modules linked in: tifm_core(+)
+>>>   Dumping ftrace buffer:
+>>>      (ftrace buffer empty)
+>>>   ---[ end trace 0000000000000000 ]---
+>>>   RIP: 0010:static_call_del_module+0x113/0x280
+>>>   Code: 3c 20 00 0f 85 ef 00 00 00 49 8b 6e 08 48 85 ed 75 0d eb 75
+>>> 48 85 db 74 70 49 89 ef 48 89 dd 48 8d 7d 08 48 89 f8 48 c1 e8 03
+>>> <42> 80 3c 20 00 75 78 48 89 e8 4c 8b 6d 08 48 c1 e8 03 42 80 3c 20
+>>>   RSP: 0018:ffff888101d3f860 EFLAGS: 00010206
+>>>   RAX: 0b800559c89f94a0 RBX: 5c002ace44fca4f8 RCX: ffffffffa0210f00
+>>>   RDX: ffffffffa0210ed4 RSI: ffffffffa0210edc RDI: 5c002ace44fca500
+>>>   RBP: 5c002ace44fca4f8 R08: 0000000000000000 R09: ffffed10233e4eea
+>>>   R10: ffffed10233e4ee9 R11: ffff888119f2774b R12: dffffc0000000000
+>>>   R13: 80002ace3cfca4f8 R14: ffffffff85196de0 R15: ffffffff84ee9f99
+>>>   FS:  00007f4ff6faa540(0000) GS:ffff888119f00000(0000)
+>>> knlGS:0000000000000000
+>>>   CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>>>   CR2: 00007ffc3d1f19e8 CR3: 0000000109fa6001 CR4: 0000000000170ee0
+>>>   DR0: ffffffff8faefce8 DR1: ffffffff8faefce9 DR2: ffffffff8faefcea
+>>>   DR3: ffffffff8faefceb DR6: 00000000ffff0ff0 DR7: 0000000000000600
+>>>   Kernel panic - not syncing: Fatal exception
+>>>   Dumping ftrace buffer:
+>>>      (ftrace buffer empty)
+>>>   Kernel Offset: disabled
+>>>   Rebooting in 1 seconds..
+>>>
+>>> Fixes: 8fd4ddda2f49 ("static_call: Don't make __static_call_return0
+>>> static")
+>>> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
+>>> ---
+>>>   kernel/static_call_inline.c | 6 ++++--
+>>>   1 file changed, 4 insertions(+), 2 deletions(-)
+>>>
+>>> diff --git a/kernel/static_call_inline.c b/kernel/static_call_inline.c
+>>> index 639397b5491c..e7aa70d33530 100644
+>>> --- a/kernel/static_call_inline.c
+>>> +++ b/kernel/static_call_inline.c
+>>> @@ -256,8 +256,10 @@ static int __static_call_init(struct module *mod,
+>>>               }
+>>>                 site_mod = kzalloc(sizeof(*site_mod), GFP_KERNEL);
+>>> -            if (!site_mod)
+>>> +            if (!site_mod) {
+>>> +                key->mods = NULL;
+>>>                   return -ENOMEM;
+>>> +            }
+>>>                 /*
+>>>                * When the key has a direct sites pointer, extract
+>>> @@ -422,7 +424,7 @@ static void static_call_del_module(struct module
+>>> *mod)
+>>>               ;
+>>>             if (!site_mod)
+>>> -            continue;
+>>> +            break;
+>>>             *prev = site_mod->next;
+>>>           kfree(site_mod);
+> 
 
