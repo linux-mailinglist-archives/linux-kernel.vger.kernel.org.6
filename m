@@ -1,111 +1,128 @@
-Return-Path: <linux-kernel+bounces-311535-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311537-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BB49968A2D
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 16:42:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFA6D968A31
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 16:42:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C62931F229BF
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 14:42:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 35AB6B22196
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 14:42:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 940561A264F;
-	Mon,  2 Sep 2024 14:41:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43F2119F10C;
+	Mon,  2 Sep 2024 14:42:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eN0CEyp7"
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=erbse.13@gmx.de header.b="qM14gzK1"
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E3DC1A2627;
-	Mon,  2 Sep 2024 14:41:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D62613D8AC;
+	Mon,  2 Sep 2024 14:42:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725288118; cv=none; b=mR168hCZRPA010ZlzYRDAUWF30vp2vae5h+0XR69seXJyTRxkonLQdDgk6LumTg2bDtWhuVSrQ6tQus9y+S8dHVoZ3HocvwIY8RqG4wNsmcmp8mRo7tTN5qdgmos67TzY7qH+/NOGgwuDWMJqfRuN4u5Ll2gx1c7J28mqf1d6OI=
+	t=1725288156; cv=none; b=t6lbujIqshhAIj4j16YhjM0LjaGnZYWyb1JBScBoV1rE0nrEe/sb54iXkFxIOpdm8m/nijuDphexY6y/6dLetcF7OFYdbQoTvy+aUaY9FlK9Yug9Z4F1A1ejUc9/+1PsPzkntKDaw2ZlEXnXWjcmI7qmyn/CBMDOpwkEj96ov18=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725288118; c=relaxed/simple;
-	bh=lzb1ZazmLEsALfcMax2ZZ+lPe0yXf6bsbyx2Poz/udQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=qgt/Am5wpjwpn8mc8g/bDl9dSww+ibpfF4UWhoW0yEdUD6T3l/i6RGlLBhMKjpBfGgZIR8qZNwZHNd5GduEwdzqcseNBj0bZF0Cv652Vrb1qP4nz8a0v+7wfn+F3j8lH4/kAYqImQ5Erv0crzIfmP+ChjUjaU9szDj/zqVNVfTs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eN0CEyp7; arc=none smtp.client-ip=209.85.221.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-374c0a8c7a9so1306537f8f.0;
-        Mon, 02 Sep 2024 07:41:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725288115; x=1725892915; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=WWlZagbdo5OAaezYG6br8ZTTQPvSDcg07kSABaERzT4=;
-        b=eN0CEyp7Cp4sHG3bN851WRxiSZYU/1NzmMeugc7ps3WGA49Xam53AMJwsYdtVdghXh
-         8ngCAMF6GL1irLBjyOgOlR5Bx3u8L6AQzZI0ItI3kwCRb0V3VYoZFtpr+cmu5RFQn/Jq
-         3medIrBjeoYUSCgszrgLEHbprWyC0q1IR38/OUtEkXFU136f+P+veOakMOW5aL9kWWPC
-         LnDwXv3fa8VzKBGsfl0esw0eioEFjFQzXM/fs6ntxTRPLHOuH1dVOLhCtWbc7/iPifsl
-         iOXoq5eIXGG6ccakfryzbvGdez2v09D/iD5Uvmd4fR/nUexgkU3QzG5iOxy8dQPJDyl7
-         rlew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725288115; x=1725892915;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=WWlZagbdo5OAaezYG6br8ZTTQPvSDcg07kSABaERzT4=;
-        b=nCbPxvXh/mESFRI+mgHYGAl+b/XU4To0yVUpU9tOzhTeO0oVyH1WYhErDOo+4owu7X
-         jzXNw3aLk1l1BSaT9BHWEsFPiPTJqlvrDu/hCl7dgEj9EX6HV7uDGyWNotvF8TacKRqu
-         wxhg3NMKJupCfNvFMcATGlc0JKnPWIHUOhZ5L2p1hGJLI2zF7fGoX0BU2e5xh0CMrxaZ
-         zU/MwhIe+f3lzl1KjS4jcNavH4MldkfUkP0tl5nwOMFl2fS1JIIiAgWHaoPzEwSsBY+E
-         BMsDO8/sHit5vNgTZ4JbjJyciNoDUAkdhI3BJT65/WIhWEPQwuGWsp/ynsby1/+7DCUF
-         DyRA==
-X-Forwarded-Encrypted: i=1; AJvYcCUEA0YE8GX4vDZAoEziFkaNQ0350NBtMNzrOir6qnICGFLOn8XfpCen2J2iD8uoCb/0k8fwiGm882OOfEw=@vger.kernel.org, AJvYcCWNmlSkJlqvxubmEkS/c15pZnRQAULD4rTbYVBbKogMA2gTnuUwbV6BvGxAz6gF7+0GFf9A1kQYGM7FPA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxHyu7dR7a+kGFDU9xXIAsOTh959sBUl5W3y84Iluw8C43lJHz/
-	N5MD59d2NG/RsgqHN9Mnz4ajLMa+DjfBtHvEknY6noQ9gArxbJn8m+y0UbcG
-X-Google-Smtp-Source: AGHT+IEaDbDBHJN8s4DMGUkMtDPHapHA++XA2ag5za8MkGXzzJPIbLYNDGzCw5gbPP1CanSxIWIUbg==
-X-Received: by 2002:a5d:4685:0:b0:374:c3cd:73ea with SMTP id ffacd0b85a97d-374eccc2990mr173898f8f.35.1725288114581;
-        Mon, 02 Sep 2024 07:41:54 -0700 (PDT)
-Received: from localhost (craw-09-b2-v4wan-169726-cust2117.vm24.cable.virginm.net. [92.238.24.70])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42bba7f9f3esm82775615e9.0.2024.09.02.07.41.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Sep 2024 07:41:54 -0700 (PDT)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Yihang Li <liyihang9@huawei.com>,
-	"James E . J . Bottomley" <James.Bottomley@HansenPartnership.com>,
-	"Martin K . Petersen" <martin.petersen@oracle.com>,
-	linux-scsi@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] scsi: hisi_sas: Remove trailing space after \n newline
-Date: Mon,  2 Sep 2024 15:41:53 +0100
-Message-Id: <20240902144153.309920-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1725288156; c=relaxed/simple;
+	bh=HjTrG1MqVWIqW/AoFS6UIQX73yyNUBpQuRGQTkx/pRg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=H9Inwr54OQMBKYCLKFNhMZh+hWIzRWHMqJE5Zy+7Um2xtCGdwyKBDTy1FgDAerobfN+X/7YpEyoFHNhWLyPinfIXi2xTiuHIDtFvPNeKKzy3tfX/e0DFwK4+TgLneNoD6cOyMUiTMzatp2lp0lg3lUYVbLw6L1pb5HL4kY6lmv4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=erbse.13@gmx.de header.b=qM14gzK1; arc=none smtp.client-ip=212.227.17.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1725288147; x=1725892947; i=erbse.13@gmx.de;
+	bh=JuEsxgQ+nZKinW+yzaKzsLhGNFeV1xPSyfzOhRHORPI=;
+	h=X-UI-Sender-Class:From:To:Cc:Subject:Date:Message-Id:
+	 MIME-Version:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=qM14gzK1AaVLoIbqEWksOE1mIJxlzOhiZd1kKZYJkkZqJ4x1UrQfril/dOE4SQD0
+	 SDE4yios9oUxNtDElZVHoyh5YH7jzMHQ9fyYw+0go02+YJqINIID7zUf3SrzRF17r
+	 eXtngCcJyodG4PEN00PocijX4dOoEoru6sIMard7OVhAqeWa8/ALSRT2jqkHewkUh
+	 MRD6fqbpwL/lXHGHun2QnkD/AUe0NNmUIuD+CHj+3/jpGhl3UEWTb1ML9DruwVOuN
+	 c6yuqCHchFwu+e5Clx1ibJ715LU6ZBaeo3IHByJ9f6XPpV0d+kVstQvXJcsczaMTg
+	 l7yo3TL5K5f4m6nLIQ==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from server ([109.192.237.113]) by mail.gmx.net (mrgmx104
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1N9MpY-1rxTYV1C3I-0183QL; Mon, 02
+ Sep 2024 16:42:27 +0200
+From: Tom Dohrmann <erbse.13@gmx.de>
+To: Tom Dohrmann <erbse.13@gmx.de>
+Cc: kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Sean Christopherson <seanjc@google.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Michael Roth <michael.roth@amd.com>
+Subject: [PATCH] KVM: x86: Only advertise KVM_CAP_READONLY_MEM when supported by VM
+Date: Mon,  2 Sep 2024 14:42:19 +0000
+Message-Id: <20240902144219.3716974-1-erbse.13@gmx.de>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:qF2iiGLas2rIyTHizeaxY+qsu3prP0XvEt6mGspNYNqG5wItrVs
+ YLcpVuLbyzlLGnlmL3V/WUpEPINzTRrSHntYOwwX3Rtmi1rpJNB+CsjsVkLGKGChXhJGC8Q
+ TfAwA/KU+K50da4uFkox3WqARq7PDa7DmJL6g/h3oymRz0NORuN/lWoseTplszHCjaYua48
+ JmHSq9Q8h+IW1c5SG6f8w==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:6mg2KCQxedc=;Y2cX8yOfuEaCOS6fu4VIBCKFVod
+ VMx9JnKmbdFm+AWk9LiZlYRlZ/IGqi13coWv76jIxEGq9fLxfHd1z3Mc4hW8Gtiw4fHlIW4d3
+ SrVluqdEhLR56OW+gHzPxI31+1jQVtWfkvjyF9tiqkOw2KswaaWPifCN+fE/0Qcsu1DRrVBuG
+ 85VZGfUVGvhZNSJM0DD3Fz4SssoXbqq2r5+6qdovQJKmVnEXhgZSQ1CjL2sqjy7Mi5/CFgKAp
+ wWRtlRO53MqeC/wCsXFjtl+ZOoQupsD1JA6D/zj6qeMEjnQkkwiRPzru3FFbFwGSXnLbKShOm
+ 9o8TDxPBrvJNIzcla8c0a8RitLADP4gtAVe7Dy1qDddqfXbE8f/dIqYtqwpVI7igOEMtjl3t8
+ FWiogYeNvpQQ4aZbfC/5D2iSqEN2fyrqvHhLTh1mZGlrvMaYR2ewnR7siBbE1a3YOLhLY26aR
+ VRLznQwYuegQeHuZIivNpNxc/U5lqTWQwepGi8ONcl6TEEwRZNHyvpYxsx0QZEh7WQ4ugEr4l
+ HOVX/E5a8WL9a+1qjjP27NaibX8mglO82BySxf3MK1j4pLk3TLJAWf6zY31o04wU27z19r792
+ 6OnPrE+5fld366jLSOsagqu/Oa16kvqFE1L+H/mLNI2Ix0YY/hcrCNT37lMf8hVOZWgy4ToKw
+ ViIfYNBpniPF+IaHLC2jZKLw/ArRfPuZGL2QdAzUnaVg1RLXSFlCEWHUOPx5Mv/1ehS8bmBQY
+ zX9/nK4G2OPpkTfnHN5hB+C48+vewHRfXAmQHgXjsiDLfuTlCiI3v38rh+yrJcBPevdRjW8Xk
+ P0nuQmH59sYvFWhI7BOPTpFg==
 
-There is a extraneous space after a newline in a dev_info message.
-Remove it.
+Until recently, KVM_CAP_READONLY_MEM was unconditionally supported on
+x86, but this is no longer the case for SEV-ES and SEV-SNP VMs.
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/scsi/hisi_sas/hisi_sas_v3_hw.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+When KVM_CHECK_EXTENSION is invoked on a VM, only advertise
+KVM_CAP_READONLY_MEM when it's actually supported.
 
-diff --git a/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c b/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
-index feda9b54b443..4cd3a3eab6f1 100644
---- a/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
-+++ b/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
-@@ -2421,7 +2421,7 @@ static void slot_complete_v3_hw(struct hisi_hba *hisi_hba,
- 		spin_lock_irqsave(&device->done_lock, flags);
- 		if (test_bit(SAS_HA_FROZEN, &ha->state)) {
- 			spin_unlock_irqrestore(&device->done_lock, flags);
--			dev_info(dev, "slot complete: task(%pK) ignored\n ",
-+			dev_info(dev, "slot complete: task(%pK) ignored\n",
- 				 task);
- 			return;
- 		}
--- 
-2.39.2
+Fixes: 66155de93bcf ("KVM: x86: Disallow read-only memslots for SEV-ES and=
+ SEV-SNP (and TDX)")
+Cc: Sean Christopherson <seanjc@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Michael Roth <michael.roth@amd.com>
+Signed-off-by: Tom Dohrmann <erbse.13@gmx.de>
+=2D--
+ arch/x86/kvm/x86.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+index 70219e406987..9ad7fe279e72 100644
+=2D-- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -4656,7 +4656,6 @@ int kvm_vm_ioctl_check_extension(struct kvm *kvm, lo=
+ng ext)
+ 	case KVM_CAP_ASYNC_PF_INT:
+ 	case KVM_CAP_GET_TSC_KHZ:
+ 	case KVM_CAP_KVMCLOCK_CTRL:
+-	case KVM_CAP_READONLY_MEM:
+ 	case KVM_CAP_IOAPIC_POLARITY_IGNORED:
+ 	case KVM_CAP_TSC_DEADLINE_TIMER:
+ 	case KVM_CAP_DISABLE_QUIRKS:
+@@ -4815,6 +4814,8 @@ int kvm_vm_ioctl_check_extension(struct kvm *kvm, lo=
+ng ext)
+ 	case KVM_CAP_VM_TYPES:
+ 		r =3D kvm_caps.supported_vm_types;
+ 		break;
++	case KVM_CAP_READONLY_MEM:
++		r =3D kvm ? kvm_arch_has_readonly_mem(kvm) : 1;
+ 	default:
+ 		break;
+ 	}
+=2D-
+2.34.1
 
 
