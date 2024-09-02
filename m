@@ -1,131 +1,133 @@
-Return-Path: <linux-kernel+bounces-310583-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310584-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0316E967EB7
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 07:16:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EFF4B967EBE
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 07:20:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 924BF1F21F14
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 05:16:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ADEA728229B
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 05:20:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E88014F9E6;
-	Mon,  2 Sep 2024 05:16:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7731814F104;
+	Mon,  2 Sep 2024 05:20:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="D7vMA9VJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="a1PQyklq"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A6EA382;
-	Mon,  2 Sep 2024 05:16:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A26D3BBC1
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 05:20:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725254198; cv=none; b=tQu3m2AV94XH/V1kMUGcf260A0Jg4B+TdKL7HDnM0FsxVrcPg5hP8Sxr8gy0WUOQuTBKfFX/o3JWPxP4XLIqtOZoJ73nPbxarlRthUMZTH6FTjqxErXVJgwUWHwEO4F8Wh+0+95u7Nq5MF3NAMaI+o4fs6/QMhIj9Uxzzv4QIqQ=
+	t=1725254434; cv=none; b=eymIkL/0PMPRnjsatZSnz2iHj7CzxjvrgIypTLTOEFCHa3T85GTkwdlOGGNgCf+8lq5llt8FO7KXmAgqcT+8bueWK8cwTW3dVPl5Vg5Eb+oetCbqOqBcnYX7LU5QIMYvq+MaSPZRKcOh4+Nj/uXCnNLsoQvloqOJQWpfdBFNu6E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725254198; c=relaxed/simple;
-	bh=1xlmn1CCleSTfCBgJB3zCP9jQCY2zoK1n5+MoF/CsVU=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=GzdD+A/0dmeP1LqV4h+8ruvd6xTNpRDP+HB8V4v+zKZ43wRIdvt6YEshFbLabEksqOmRK3WPQrcXYC85fBVv6miuGOtRSa3/Ha/vDejpMee0Ta2KvT1ekVleXjcnhCHzjWFsZfFU3GvbbXwhYyDknHR+3/IBBUEMfrEvmDaZPc0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=D7vMA9VJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E0515C4CEC2;
-	Mon,  2 Sep 2024 05:16:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1725254198;
-	bh=1xlmn1CCleSTfCBgJB3zCP9jQCY2zoK1n5+MoF/CsVU=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=D7vMA9VJUJwFXhuMZYsQF8m20GzI1hPhtdRH9/AJItHhYVyfbxTGYjTNs4EgrKr+z
-	 4oxLvWk1zZnbWAgN0QtpFQjhan7mhGNBNRprVxLtaoEBTVU38iT4cc3vu+TsODLC7D
-	 3HCiPp9GKDuq//9oLoJR1Wrwr7fSNpHIqtabIbh8=
-Date: Sun, 1 Sep 2024 22:16:36 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Suren Baghdasaryan <surenb@google.com>
-Cc: kent.overstreet@linux.dev, corbet@lwn.net, arnd@arndb.de,
- mcgrof@kernel.org, rppt@kernel.org, paulmck@kernel.org, thuth@redhat.com,
- tglx@linutronix.de, bp@alien8.de, xiongwei.song@windriver.com,
- ardb@kernel.org, david@redhat.com, vbabka@suse.cz, mhocko@suse.com,
- hannes@cmpxchg.org, roman.gushchin@linux.dev, dave@stgolabs.net,
- willy@infradead.org, liam.howlett@oracle.com, pasha.tatashin@soleen.com,
- souravpanda@google.com, keescook@chromium.org, dennis@kernel.org,
- jhubbard@nvidia.com, yuzhao@google.com, vvvvvv@google.com,
- rostedt@goodmis.org, iamjoonsoo.kim@lge.com, rientjes@google.com,
- minchan@google.com, kaleshsingh@google.com, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
- linux-mm@kvack.org, linux-modules@vger.kernel.org, kernel-team@android.com
-Subject: Re: [PATCH v2 6/6] alloc_tag: config to store page allocation tag
- refs in page flags
-Message-Id: <20240901221636.5b0af3694510482e9d9e67df@linux-foundation.org>
-In-Reply-To: <20240902044128.664075-7-surenb@google.com>
-References: <20240902044128.664075-1-surenb@google.com>
-	<20240902044128.664075-7-surenb@google.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1725254434; c=relaxed/simple;
+	bh=KvKf4g0Bbhp3lZCttFyNHndJpiFd0u4cw7Jr+H2fsGI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sFMoMSGvj6wYrKaoqjLGfmqLY5TDQbVLkoS5b/vVt7/xitywQ34jiq2WxrjJnjpH310iBufdeR+jNSRkGW9RaLSKvnsflTkoW6tWZ0kWRO7Ni14pH3EOXivXC//9gE4wlgmmWUK2UgQa0h/5N7n6iVf4SndCjlrcJyFQZfjo4gc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=a1PQyklq; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-2059204f448so386715ad.0
+        for <linux-kernel@vger.kernel.org>; Sun, 01 Sep 2024 22:20:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1725254432; x=1725859232; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=svCd9cCmgi2dsrZIqz9Ry+NjpaYUU7HzIWIuLx9fASw=;
+        b=a1PQyklqoevg4Z8ysVpaRSgCO3JcBBte/f1+B3LrQu4IZQZ8R7CqKscbQbSWSbKjCj
+         aReR3EoF0TCsYFKhCcFSo5NhULAfJ/A2OM221KuphmdEwYsjxvuKaLhNzWnuYOinBMlU
+         1F2tzYcMUaKU9Bl8C+UA79QasDc14ApzFgMtwhobbdlC+jvkvYsqjH+B090FG1xq0erF
+         58XS8zxnx1wuPdJIs9K+F2JsM/pJjx6niIWIWYW9Egk/VrxVcCkYamYx/KXZZ0x0b5IZ
+         dKJUguJ1dOjvh1hY546bSycLCd2gouDqePNQjZzkWgV3xdEWS7oQ5eW6yS2+lL8z37LB
+         wC9A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725254433; x=1725859233;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=svCd9cCmgi2dsrZIqz9Ry+NjpaYUU7HzIWIuLx9fASw=;
+        b=Pr0AuAiScVjPwlzJ3X7M1xq2cSHLe0CaBk2LkwFivORlUSZcOFB2fL0JmJ7Fd/k2Nl
+         LrLYsCK2UQxoEb+6JNiTS403EHJJv/n9fPlOY0OhWTvq+M4eoE2iPNr3DZw09B+2cg6y
+         x3wJHvbCDfcHO+LWQrhDSacJREIyHfy62WCTBWQABwnGTmzU2o1sRKMNEMhKbnZ+YCX9
+         i+NU05gJPBEJj/FAPlctsAm570/m7eDJ0EY02fuXNVd+yMFG0SZsdF18j44GwoFBMXaL
+         D17oZRn7Wv5ZTORJnrbtstF+FxeCf7yPtudBpVwLHwdfLtSmJZfATCYAYtyhS+nMvlCV
+         2svg==
+X-Forwarded-Encrypted: i=1; AJvYcCUFPDcwWoC0bE0natuH8CXu1hougbE6hZGmn2U1jpyIVuCH6gPSUpAJWV5myOJDEQTaN+7HIdWlBwFb8c0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw3cQ9WN+PUmeEZB1nAgXue1GDP2N9JV6yREO7sbGe88vQzh5hg
+	mnOCELmwdwnQCQD8n4xU9yDmBR2gK/+F8hfYlcX6DyjBUxx0SR+TxcWh0/BuEw==
+X-Google-Smtp-Source: AGHT+IENo82OP7KUAchOYeqsGnHpgO27EwWWGu6yGd/8R1i+gvRUCCf9ONzPCabM/KVK3PRQdMypwg==
+X-Received: by 2002:a17:902:f688:b0:1fb:4194:5b78 with SMTP id d9443c01a7336-2054477bfbamr54625635ad.47.1725254432576;
+        Sun, 01 Sep 2024 22:20:32 -0700 (PDT)
+Received: from thinkpad ([120.60.58.247])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20538525f1fsm37636485ad.65.2024.09.01.22.20.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 01 Sep 2024 22:20:31 -0700 (PDT)
+Date: Mon, 2 Sep 2024 10:50:22 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: MANISH PANDEY <quic_mapa@quicinc.com>
+Cc: "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>,
+	linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
+	quic_nitirawa@quicinc.com, quic_bhaskarv@quicinc.com,
+	quic_narepall@quicinc.com, quic_rampraka@quicinc.com,
+	quic_cang@quicinc.com, quic_nguyenb@quicinc.com
+Subject: Re: [PATCH V2] scsi: ufs: qcom: update MODE_MAX cfg_bw value
+Message-ID: <20240902052022.ye5a5g4aaiunhnyl@thinkpad>
+References: <20240828132526.25719-1-quic_mapa@quicinc.com>
+ <20240828133132.zqozjegmbnwa7byb@thinkpad>
+ <f0b62279-b4b6-4cb3-a808-fcd170a384eb@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <f0b62279-b4b6-4cb3-a808-fcd170a384eb@quicinc.com>
 
-On Sun,  1 Sep 2024 21:41:28 -0700 Suren Baghdasaryan <surenb@google.com> wrote:
-
-> Add CONFIG_PGALLOC_TAG_USE_PAGEFLAGS to store allocation tag
-> references directly in the page flags. This removes dependency on
-> page_ext and results in better performance for page allocations as
-> well as reduced page_ext memory overhead.
-> CONFIG_PGALLOC_TAG_REF_BITS controls the number of bits required
-> to be available in the page flags to store the references. If the
-> number of page flag bits is insufficient, the build will fail and
-> either CONFIG_PGALLOC_TAG_REF_BITS would have to be lowered or
-> CONFIG_PGALLOC_TAG_USE_PAGEFLAGS should be disabled.
+On Thu, Aug 29, 2024 at 05:44:21PM +0530, MANISH PANDEY wrote:
 > 
-> ...
->
-> +config PGALLOC_TAG_USE_PAGEFLAGS
-> +	bool "Use pageflags to encode page allocation tag reference"
-> +	default n
-> +	depends on MEM_ALLOC_PROFILING
-> +	help
-> +	  When set, page allocation tag references are encoded inside page
-> +	  flags, otherwise they are encoded in page extensions.
-> +
-> +	  Setting this flag reduces memory and performance overhead of memory
-> +	  allocation profiling but also limits how many allocations can be
-> +	  tagged. The number of bits is set by PGALLOC_TAG_USE_PAGEFLAGS and
-> +	  they must fit in the page flags field.
+> On 8/28/2024 7:01 PM, Manivannan Sadhasivam wrote:
+> > On Wed, Aug 28, 2024 at 06:55:26PM +0530, Manish Pandey wrote:
+> > > The cfg_bw value for max mode was incorrect for the Qualcomm SoC.
+> > 
+> > What do you mean by 'incorrect'? I extracted the value from downstream DTs. So
+> > it cannot be incorrect.
+> > 
+> > If you want to update it, please clearly provide the reason.
+> 
+> Hi Mani,
+> 
+> From the snip from commit message
+> "The bandwidth values defined in ufs_qcom_bw_table struct are taken from
+> Qcom downstream vendor devicetree source and are calculated as per the
+> UFS3.1 Spec."
+> 
+> we have UFS 4.x devices, and ufs_qcom_bw_table is already updated with Gear
+> 5 support (8db8f6ce556a - "scsi: ufs: qcom: Add missing interconnect
+> bandwidth values for Gear 5"). So the max cfg_bw is not updated.
+> 
+> Also for UFS 3.x devices,
+> [MODE_HS_RB][UFS_HS_G3][UFS_LANE_2] = { 1492582,        204800 },
+> [MODE_HS_RB][UFS_HS_G4][UFS_LANE_2] = { 2915200,        409600 },
+> [MODE_MAX][0][0]                    = { 7643136,        307200 },
+> 
+> Please have a look for current max mode value(307200), it is even less than
+> UFS_HS_G4 (409600). So it should be updated.
+> 
 
-Again.  Please put yourself in the position of one of the all-minus-two
-people in this world who aren't kernel-memory-profiling-developers. 
-How the heck are they to decide whether or not to enable this?  OK, 59%
-of them are likely to say "yes" because reasons.  But then what?  How
-are they to determine whether it was the correct choice for them?  If
-we don't tell them, who will?
+Okay, then you should mention that the max value is updated for UFS 4.x devices
+and mention that commit 8db8f6ce556a missed adding them. Also add the fixes tag
+for 8db8f6ce556a.
 
->  config PGALLOC_TAG_REF_BITS
->  	int "Number of bits for page allocation tag reference (10-64)"
->  	range 10 64
-> -	default "64"
-> +	default "16" if PGALLOC_TAG_USE_PAGEFLAGS
-> +	default "64" if !PGALLOC_TAG_USE_PAGEFLAGS
->  	depends on MEM_ALLOC_PROFILING
->  	help
->  	  Number of bits used to encode a page allocation tag reference.
-> @@ -1011,6 +1027,13 @@ config PGALLOC_TAG_REF_BITS
->  	  Smaller number results in less memory overhead but limits the number of
->  	  allocations which can be tagged (including allocations from modules).
->  
-> +	  If PGALLOC_TAG_USE_PAGEFLAGS is set, the number of requested bits should
-> +	  fit inside the page flags.
+- Mani
 
-What does "should fit" mean?  "It is your responsibility to make it
-fit"?  "We think it will fit but we aren't really sure"?
-
-> +	  If PGALLOC_TAG_USE_PAGEFLAGS is not set, the number of bits used to store
-> +	  a reference is rounded up to the closest basic type. If set higher than 32,
-> +	  a direct pointer to the allocation tag is stored for performance reasons.
-> +
-
-We shouldn't be offering things like this to our users.  If we cannot decide, how
-can they?
+-- 
+மணிவண்ணன் சதாசிவம்
 
