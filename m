@@ -1,102 +1,258 @@
-Return-Path: <linux-kernel+bounces-311707-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311704-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8311B968C89
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 18:57:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AFD39968C83
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 18:57:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 390DD1F23040
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 16:57:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EFB05B21D49
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 16:57:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55DD021C18F;
-	Mon,  2 Sep 2024 16:56:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C65E72101B3;
+	Mon,  2 Sep 2024 16:56:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DhV9QAuM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="ZPBaJrC7"
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 949051C62C2;
-	Mon,  2 Sep 2024 16:56:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E42E1AB6FA
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 16:56:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725296187; cv=none; b=m0gtRNK3r8lLwQZWxKvAi4YOY3P9tTc+EKiNmYw/OrbApifg/aU3HzdD2C+CsDWWqx8D9X00DqSNpNXDT5e5jp+ZxNtxQ3pVrGC4/P5Rxxi8yfYvfNSR4ZuBww8NDoM8pT49h0DYfbdrfnCnp1+WAp2CYYo+L1hXRfQMRNConrQ=
+	t=1725296174; cv=none; b=I/yX1ebUDtDDcuggxAlPvNhYn6qp+hfEbyI6qgllaoap5R6SfsOVf0UZ9Qnb5X4aXlFxiOcC60YDLYH+4+TPcnVajUr+FP1jfgXhn5mmWMmnrEZVe1mnZPEonOkb4nQEU+Mg9svIPAp6+NZ34JuhCilpV3Z24r+FuJZt8f9SPYQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725296187; c=relaxed/simple;
-	bh=EQDbaMna4Ean8/5H5hVqMKDCp1htA8sUKuu5IvS7JnA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=KN1fImQui454O3OkW/D8e0hRsw/woJ/MXGo9CwKVva2Pmn/f5VKxD8/IsMaMwo11Ql3kydlHY99+6efn+yuIavZc5X7l1Uqbhcat3GmCJCwYKl/W7ucrLeLtHORwsrBpZq2YA30tn8xBWP8+pTlCf4M2gaob52x8lphY0jpCBrQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DhV9QAuM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0759AC4CECB;
-	Mon,  2 Sep 2024 16:56:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725296186;
-	bh=EQDbaMna4Ean8/5H5hVqMKDCp1htA8sUKuu5IvS7JnA=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=DhV9QAuMAexluc+NmF+GNVpPnho0V4yVjEBbQP44bHXYuV8p8nfcsLPSMtJ8exhvR
-	 XJR+KbFetLZ3mDiw+jAy3amRt2hFasj/17i38HhDP1bmn2/9oqICsqEkSWSHMjl2HJ
-	 NiQ1EJUgu3O2IQrWQBJ4lBrMxYvaVzCvrBIfbjngLHWidWo4NinTl7CCJhZRB0lbYY
-	 tlg2A8PbLsdUiVutJHgDJEWiWgTF8EYUQ9gbSFhCFZzTVXe16++SRxd0v27tii/A6q
-	 LBe6n2HS0bS+9gpnt8WMh+qtk6+fbZMPa+DjDjugRCDAgRpcuZAAsbf2KtbjnZtRES
-	 znOLWbwPw88Yw==
-From: Miguel Ojeda <ojeda@kernel.org>
-To: Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Wedson Almeida Filho <wedsonaf@gmail.com>,
-	Masahiro Yamada <masahiroy@kernel.org>
-Cc: Boqun Feng <boqun.feng@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@samsung.com>,
-	Alice Ryhl <aliceryhl@google.com>,
-	rust-for-linux@vger.kernel.org,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nicolas Schier <nicolas@fjasle.eu>,
-	linux-kbuild@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	patches@lists.linux.dev
-Subject: [PATCH v2 6/6] docs: rust: include other expressions in conditional compilation section
-Date: Mon,  2 Sep 2024 18:55:33 +0200
-Message-ID: <20240902165535.1101978-7-ojeda@kernel.org>
-In-Reply-To: <20240902165535.1101978-1-ojeda@kernel.org>
-References: <20240902165535.1101978-1-ojeda@kernel.org>
+	s=arc-20240116; t=1725296174; c=relaxed/simple;
+	bh=NlKD6Rywk2o6S7Srgzx1r8fUDtPHl6oDuqm+Szl1lHU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nHj5HEBkY6aDh45F9ZnVv7/vzgkxh+3m7FHGlUzNzRmSE8is79ivSXDvKbyy8BlLHH9l9yr7Rk3tBx02RzMF0VVaLoT1cHpb7iNGhILOPBdlhy+Kp7xn3vT0/9FYMUSVs4HkD2Tv2L7MwCiCML7KARSEBTkqq5ohITIT0ic+5mM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=ZPBaJrC7; arc=none smtp.client-ip=209.85.208.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5bef295a45bso1894275a12.0
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2024 09:56:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fastly.com; s=google; t=1725296170; x=1725900970; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=FPZZydcS8XzcurpZ/PVZNgRNYtNKwp7mFoxRYZkP320=;
+        b=ZPBaJrC7F6iDUA2SJFcItS05EMhCK4OK/qZHcHeRBTyssWyN5/xzr8VfRw4EtBFuxi
+         p6K1zbA4H2j5NPp2GRIL2aYEFDxyFFf+vvL28t2Dik+2mN/wjCIpCimEKAm2zDMDf2YO
+         uAcXx/iiI7BUT5/EFcem+C25ai+rE1r3Iu0wE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725296170; x=1725900970;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=FPZZydcS8XzcurpZ/PVZNgRNYtNKwp7mFoxRYZkP320=;
+        b=Ci2wv0gkcvnrOJYxlCcfKP5fuqRac/lB8aew2be9HmzhpZcUISLCja1GSVhInXq/SQ
+         Hif6kMIDyAGAzXFEGKYSNcP/ssypftTS2lUxg9i1FZKcOSUxMfTOgJ5w1uYuEjKBO7mk
+         lrq7ojGsd7W4b+hLVQZtYNTlJTgjU+7EFPgk0c8k8H+TUt+AA6eAKE+0AoVYrmfwj58P
+         /AwBVNuxRE458B19qsof2TKWFTk7pRexSkHMGvnIwW3tmwqxOmk/z/6oiUPgTAD1P2EW
+         77f20ax4ouJe4spgjeVp0Bm9pn5iVrxcFCfYyqNNuahZKIdetr+C6ZKVvaYZP5jai1Zu
+         7rGg==
+X-Forwarded-Encrypted: i=1; AJvYcCWAfJ5gb7pYki2m0PknDNtXxYFxzFb2jWryOITPM5HSWHASeUJmiaLb/U9iKCyyI9YI4wq/81DbhcJ+2Ro=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyTtA87DeRI20e3mwEv4RVi+g2D9rQEzKPoNTtcIvqqer98A4Xh
+	M6pUPHWXRE8lwJofRchLp0Mgco7eiwJDtKFmrqgfXuDVfzF4FH3beoB2E5TI0ME=
+X-Google-Smtp-Source: AGHT+IHK75a4RqYwQmJU4PYa0YsDaXS5QJG7oU28vPgrDCS0nTi/Fa82tRY6Z9AtBXhRiq29RMTkxw==
+X-Received: by 2002:a05:6402:4402:b0:5c2:43b1:fe58 with SMTP id 4fb4d7f45d1cf-5c243b1febcmr7426045a12.20.1725296169696;
+        Mon, 02 Sep 2024 09:56:09 -0700 (PDT)
+Received: from LQ3V64L9R2.station (net-2-42-195-208.cust.vodafonedsl.it. [2.42.195.208])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c250edd2e3sm2348706a12.27.2024.09.02.09.56.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 02 Sep 2024 09:56:09 -0700 (PDT)
+Date: Mon, 2 Sep 2024 18:56:07 +0200
+From: Joe Damato <jdamato@fastly.com>
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: netdev@vger.kernel.org, edumazet@google.com, amritha.nambiar@intel.com,
+	sridhar.samudrala@intel.com, sdf@fomichev.me, bjorn@rivosinc.com,
+	hch@infradead.org, willy@infradead.org,
+	willemdebruijn.kernel@gmail.com, skhawaja@google.com,
+	Martin Karsten <mkarsten@uwaterloo.ca>,
+	Donald Hunter <donald.hunter@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Jesper Dangaard Brouer <hawk@kernel.org>,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+	Daniel Jurgens <danielj@nvidia.com>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH net-next 5/5] netdev-genl: Support setting per-NAPI
+ config values
+Message-ID: <ZtXuJ3TMp9cN5e9h@LQ3V64L9R2.station>
+Mail-Followup-To: Joe Damato <jdamato@fastly.com>,
+	Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
+	edumazet@google.com, amritha.nambiar@intel.com,
+	sridhar.samudrala@intel.com, sdf@fomichev.me, bjorn@rivosinc.com,
+	hch@infradead.org, willy@infradead.org,
+	willemdebruijn.kernel@gmail.com, skhawaja@google.com,
+	Martin Karsten <mkarsten@uwaterloo.ca>,
+	Donald Hunter <donald.hunter@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Jesper Dangaard Brouer <hawk@kernel.org>,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+	Daniel Jurgens <danielj@nvidia.com>,
+	open list <linux-kernel@vger.kernel.org>
+References: <20240829131214.169977-1-jdamato@fastly.com>
+ <20240829131214.169977-6-jdamato@fastly.com>
+ <20240829153105.6b813c98@kernel.org>
+ <ZtGiNF0wsCRhTtOF@LQ3V64L9R2>
+ <20240830142235.352dbad5@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240830142235.352dbad5@kernel.org>
 
-Expand the conditional compilation section to explain how to support
-other expressions, such as testing whether `RUSTC_VERSION` is at least
-a given version, which requires a numerical comparison that Rust's `cfg`
-predicates do not support (yet?).
+On Fri, Aug 30, 2024 at 02:22:35PM -0700, Jakub Kicinski wrote:
+> On Fri, 30 Aug 2024 11:43:00 +0100 Joe Damato wrote:
+> > On Thu, Aug 29, 2024 at 03:31:05PM -0700, Jakub Kicinski wrote:
+> > > On Thu, 29 Aug 2024 13:12:01 +0000 Joe Damato wrote:  
+> > > > +      doc: Set configurable NAPI instance settings.  
+> > > 
+> > > We should pause and think here how configuring NAPI params should
+> > > behave. NAPI instances are ephemeral, if you close and open the
+> > > device (or for some drivers change any BPF or ethtool setting)
+> > > the NAPIs may get wiped and recreated, discarding all configuration.
+> > > 
+> > > This is not how the sysfs API behaves, the sysfs settings on the device
+> > > survive close. It's (weirdly?) also not how queues behave, because we
+> > > have struct netdev{_rx,}_queue to store stuff persistently. Even tho
+> > > you'd think queues are as ephemeral as NAPIs if not more.
+> > > 
+> > > I guess we can either document this, and move on (which may be fine,
+> > > you have more practical experience than me). Or we can add an internal
+> > > concept of a "channel" (which perhaps maybe if you squint is what
+> > > ethtool -l calls NAPIs?) or just "napi_storage" as an array inside
+> > > net_device and store such config there. For simplicity of matching
+> > > config to NAPIs we can assume drivers add NAPI instances in order. 
+> > > If driver wants to do something more fancy we can add a variant of
+> > > netif_napi_add() which specifies the channel/storage to use.
+> > > 
+> > > Thoughts? I may be overly sensitive to the ephemeral thing, maybe
+> > > I work with unfortunate drivers...  
+> > 
+> > Thanks for pointing this out. I think this is an important case to
+> > consider. Here's how I'm thinking about it.
+> > 
+> > There are two cases:
+> > 
+> > 1) sysfs setting is used by existing/legacy apps: If the NAPIs are
+> > discarded and recreated, the code I added to netif_napi_add_weight
+> > in patch 1 and 3 should take care of that case preserving how sysfs
+> > works today, I believe. I think we are good on this case ?
+> 
+> Agreed.
+> 
+> > 2) apps using netlink to set various custom settings. This seems
+> > like a case where a future extension can be made to add a notifier
+> > for NAPI changes (like the netdevice notifier?).
+> 
+> Yes, the notifier may help, but it's a bit of a stop gap / fallback.
+> 
+> > If you think this is a good idea, then we'd do something like:
+> >   1. Document that the NAPI settings are wiped when NAPIs are wiped
+> >   2. In the future (not part of this series) a NAPI notifier is
+> >      added
+> >   3. User apps can then listen for NAPI create/delete events
+> >      and update settings when a NAPI is created. It would be
+> >      helpful, I think, for user apps to know about NAPI
+> >      create/delete events in general because it means NAPI IDs are
+> >      changing.
+> > 
+> > One could argue:
+> > 
+> >   When wiping/recreating a NAPI for an existing HW queue, that HW
+> >   queue gets a new NAPI ID associated with it. User apps operating
+> >   at this level probably care about NAPI IDs changing (as it affects
+> >   epoll busy poll). Since the settings in this series are per-NAPI
+> >   (and not per HW queue), the argument could be that user apps need
+> >   to setup NAPIs when they are created and settings do not persist
+> >   between NAPIs with different IDs even if associated with the same
+> >   HW queue.
+> 
+> IDK if the fact that NAPI ID gets replaced was intentional in the first
+> place. I would venture a guess that the person who added the IDs was
+> working with NICs which have stable NAPI instances once the device is
+> opened. This is, unfortunately, not universally the case.
+> 
+> I just poked at bnxt, mlx5 and fbnic and all of them reallocate NAPIs
+> on an open device. Closer we get to queue API the more dynamic the whole
+> setup will become (read: the more often reconfigurations will happen).
+>
 
-Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
----
- Documentation/rust/general-information.rst | 8 ++++++++
- 1 file changed, 8 insertions(+)
+[...]
 
-diff --git a/Documentation/rust/general-information.rst b/Documentation/rust/general-information.rst
-index 2d76e09da121..6146b49b6a98 100644
---- a/Documentation/rust/general-information.rst
-+++ b/Documentation/rust/general-information.rst
-@@ -151,3 +151,11 @@ configuration:
- 	#[cfg(CONFIG_X="y")]   // Enabled as a built-in (`y`)
- 	#[cfg(CONFIG_X="m")]   // Enabled as a module   (`m`)
- 	#[cfg(not(CONFIG_X))]  // Disabled
-+
-+For other predicates that Rust's ``cfg`` does not support, e.g. expressions with
-+numerical comparisons, one may define a new Kconfig symbol:
-+
-+.. code-block:: kconfig
-+
-+	config RUSTC_VERSION_MIN_107900
-+		def_bool y if RUSTC_VERSION >= 107900
--- 
-2.46.0
+> > I think you have much more practical experience when it comes to
+> > dealing with drivers, so I am happy to follow your lead on this one,
+> > but assuming drivers will "do a thing" seems mildly scary to me with
+> > limited driver experience.
+> > 
+> > My two goals with this series are:
+> >   1. Make it possible to set these values per NAPI
+> >   2. Unblock the IRQ suspension series by threading the suspend
+> >      parameter through the code path carved in this series
+> > 
+> > So, I'm happy to proceed with this series as you prefer whether
+> > that's documentation or "napi_storage"; I think you are probably the
+> > best person to answer this question :)
+> 
+> How do you feel about making this configuration opt-in / require driver
+> changes? What I'm thinking is that having the new "netif_napi_add()"
+> variant (or perhaps extending netif_napi_set_irq()) to take an extra
+> "index" parameter would make the whole thing much simpler.
 
+What about extending netif_queue_set_napi instead? That function
+takes a napi and a queue index.
+
+Locally I kinda of hacked up something simple that:
+  - Allocates napi_storage in net_device in alloc_netdev_mqs
+  - Modifies netif_queue_set_napi to:
+     if (napi)
+       napi->storage = dev->napi_storage[queue_index];
+
+I think I'm still missing the bit about the
+max(rx_queues,tx_queues), though :(
+
+> Index would basically be an integer 0..n, where n is the number of
+> IRQs configured for the driver. The index of a NAPI instance would
+> likely match the queue ID of the queue the NAPI serves.
+
+Hmmm. I'm hesitant about the "number of IRQs" part. What if there
+are NAPIs for which no IRQ is allocated ~someday~ ?
+
+It seems like (I could totally be wrong) that netif_queue_set_napi
+can be called and work and create the association even without an
+IRQ allocated.
+
+I guess the issue is mostly the queue index question above: combined
+rx/tx vs drivers having different numbers of rx and tx queues.
+
+> We can then allocate an array of "napi_configs" in net_device -
+> like we allocate queues, the array size would be max(num_rx_queue,
+> num_tx_queues). We just need to store a couple of ints so it will
+> be tiny compared to queue structs, anyway.
+> 
+> The NAPI_SET netlink op can then work based on NAPI index rather 
+> than the ephemeral NAPI ID. It can apply the config to all live
+> NAPI instances with that index (of which there really should only 
+> be one, unless driver is mid-reconfiguration somehow but even that
+> won't cause issues, we can give multiple instances the same settings)
+> and also store the user config in the array in net_device.
+> 
+> When new NAPI instance is associate with a NAPI index it should get
+> all the config associated with that index applied.
+> 
+> Thoughts? Does that makes sense, and if so do you think it's an
+> over-complication?
+
+I think what you are proposing seems fine; I'm just working out the
+implementation details and making sure I understand before sending
+another revision.
 
