@@ -1,154 +1,257 @@
-Return-Path: <linux-kernel+bounces-311002-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311003-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 583159683C9
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 11:55:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 081C69683D3
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 11:56:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0896B1F210F2
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 09:55:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8AC6D1F21C4A
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 09:56:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 835A776035;
-	Mon,  2 Sep 2024 09:54:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EF3C1D3198;
+	Mon,  2 Sep 2024 09:55:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BLn80fpT"
-Received: from mail-oa1-f52.google.com (mail-oa1-f52.google.com [209.85.160.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="garDceda"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43B821D31BD
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 09:54:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9B6E1D1F44;
+	Mon,  2 Sep 2024 09:55:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725270881; cv=none; b=jXU3ZA0wrFGrzRkCBrBFbMwPRQRnCU0iSMHleKuNmgofH3bTKGq5g5nkp/POq3hrdYaPKbd7vGnRa/9lnlsT5i+ZhwV9Jjwb7ZK1XMoSC0rizYGQ5FnnjEWglG+6DBiGEL5YifaSjLtXvzCL1ACl9FG3K+w4ObmkOsZpACj0RZI=
+	t=1725270949; cv=none; b=XW5UBuiHs3Ncw5BPltctwL++hoLYYpZwSkAnaIeKa4ejaDzsUaznAZZX+5i9Rl1mhhf2RdP4d2kCCeiBISib27t/GteAmuAXnTlzgDAsF7HjuDsglCoxC1QyGEyUlwo7wudWgfzZW9+wXYwlWQN02JIrq2gFjkXIOZMq5AFNj0I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725270881; c=relaxed/simple;
-	bh=lr0ZgOefoKyV/C+lLt6hv10oU2KyflB3T+80PqFO700=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fqjkXRpcQ1VqLM0ce/ZWlhnUl3U8DeAdMjVMXhPuvOUuwUlcDk/zNk8q98TTEyxz6EfPztKg1NfUwMZ1lygx0MhQwWs+sVk0SlH7s5RNjehGY7EAdI1j1G3VHAatIf71E2ntj/eNY7L3mJg0wqSCqjWrKmEFDArvqq++ZCqC4fc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=BLn80fpT; arc=none smtp.client-ip=209.85.160.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-oa1-f52.google.com with SMTP id 586e51a60fabf-27045e54272so1857925fac.0
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2024 02:54:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1725270879; x=1725875679; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=j39H0djlIGNkRvEqahAzaXDKTgYWKF7ZLeLZ5ZOqaUw=;
-        b=BLn80fpTbPZ+O4OsZqetw7rD4UBCA+dWPLJz/j2nZP7MkcGfUOQnnf5o5Ktk+a8aW+
-         q4U6UcqbltOiQzOXDEUw6KPkO35M5RHRqQT6Vvr6Ve4IBRq0XP8K6apNe5zNdgINTiYv
-         LuZWhYALeiiMu8E9r8f8K2dFd7dBnV1K7284Qin0GjPGNZ5ddRExXRgYaF4OsLUFTCvJ
-         hduDeelqWyr0EH835COqrVB99dTt+K+VKwqIp1q1xwE8ICZYjYUoVK73jeKM5nRd2J7B
-         N3IxgJJX/NcXQwM/7JAnOHny0SB49WbubaCWh2xStVchx0Bwz2n6NWPDujhoddDh+BO9
-         Bq+g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725270879; x=1725875679;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=j39H0djlIGNkRvEqahAzaXDKTgYWKF7ZLeLZ5ZOqaUw=;
-        b=MuBCdTEiTcqlhsqdFVKri8JlGlDoJh28BwkZk+LaqbPuLmznGZu9giVFYkKyteILNS
-         VxzdgTOizgby1RPbcMuL+1teA7SpxbcSDgUr30Xms3DnBtgXct9MKpRW05/Ny1BJoZcr
-         5V0bZudbJZ0DPg8dcmJB4AOITzoQ2ruJFwrYKdVFkO0ugQTL24uSby+ziUlDQHAQZD72
-         BPgR2D6ptxRXWu+/B4kCqvieV8Qcze9fzWd9grG/as9ZmkW5S/LYUt7y5bdJWMCCuD4c
-         tIlV4AoXGT9oyzgolG6wcGCExOy8SF5mTG2/GbcHjozLwLQVg/K4SqHYanDTj/Z8D8Z6
-         S+rg==
-X-Gm-Message-State: AOJu0Yw2J36bjJ4xJ5Juzl/4qvtA+cs50pdxgsr1Ghx+UGs8XaBO0RAx
-	ajCubWr/b2b9/crlrYbLRvfwMwK65kKfzhhkIC52vY9yi8oG2QeOMdV27CkOKu/Aiwhfp2iUr5v
-	1Psj43W/aA56v0NLJnPiHBQjynKbR8GYLOFrlBw==
-X-Google-Smtp-Source: AGHT+IGhAc+HyV61NOmivUagjO1+iOAamEKWiED6kc10KxPMsRcrdentwJMQWcDI20Kynm7aQSVNQ8jXBxVAvMi0P1Y=
-X-Received: by 2002:a05:6871:8d81:b0:277:fdb5:9ce5 with SMTP id
- 586e51a60fabf-277fdb5ce66mr978816fac.27.1725270879339; Mon, 02 Sep 2024
- 02:54:39 -0700 (PDT)
+	s=arc-20240116; t=1725270949; c=relaxed/simple;
+	bh=oSbh502HY4Dm7eT1eVi4kY+Nmou7uF6mBzhrHjfaVG8=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=KF2ccvYtajv22GFVSGnlnTqYrV2Gfcfy7+OtpynRxq/w/A9dSbRU7af1PoRKcHDt3lr+om/BRarJtQeEsewjWt+LPsFFptVgD9mZgGPZADrcr6p0uCXLMySnh2g3zTElJfTmEUkwnee2Ju/mqJsviovrg5XnZDulFY+8P4k5/oI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=garDceda; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 481N0WlF020660;
+	Mon, 2 Sep 2024 09:55:26 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=+0UtkfU8O8EqtBRippx73Z
+	t/xKIk4RmzJwGe9dLxsLM=; b=garDcedaPCzJmrCWtbrUJT62pVwHdotzm5sJOr
+	YUIRU9u9tpiI1oCYG8ri03pTrltvlCKxAR5auj1zrohmIHTTgNGgraMDyW5YZ/X1
+	27sqpIMw0bMs8jQ5GY/69PayOf3tgmSm3oRqoTV8qJwZNYQX9MU5FFsqZogUh3WT
+	ITV3pnDlfaulo59WAC6ybFTkJf990O6vIosmzbeDvzfWfqvq5MnpC0HgM9KkkLQX
+	oriSGYRpPhFavrdibWdKoUBAiI+n9UvEanIYP0jjE9LRpZjFw/TCagcZcDo/yaO3
+	3d5kxbnWRBpTQULYFjuYJXBGnYAb8AKANKY2iVM5/xszqeXg==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41bvf8v53h-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 02 Sep 2024 09:55:07 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4829t777002818
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 2 Sep 2024 09:55:07 GMT
+Received: from hu-jsuraj-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Mon, 2 Sep 2024 02:54:57 -0700
+From: Suraj Jaiswal <quic_jsuraj@quicinc.com>
+To: <quic_jsuraj@quicinc.com>, Vinod Koul <vkoul@kernel.org>,
+        Bhupesh Sharma
+	<bhupesh.sharma@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        "David S.
+ Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        "Jakub
+ Kicinski" <kuba@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        "Krzysztof
+ Kozlowski" <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        "Jose
+ Abreu" <joabreu@synopsys.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>, <netdev@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        Prasad Sodagudi
+	<psodagud@quicinc.com>,
+        Andrew Halaney <ahalaney@redhat.com>, Rob Herring
+	<robh@kernel.org>
+CC: <kernel@quicinc.com>
+Subject: [PATCH net] net: stmmac: Stop using a single dma_map() for multiple descriptors
+Date: Mon, 2 Sep 2024 15:24:36 +0530
+Message-ID: <20240902095436.3756093-1-quic_jsuraj@quicinc.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240902080727.2665235-1-jens.wiklander@linaro.org> <b1787919-77d3-41da-9ebb-cecc65d2d310@app.fastmail.com>
-In-Reply-To: <b1787919-77d3-41da-9ebb-cecc65d2d310@app.fastmail.com>
-From: Jens Wiklander <jens.wiklander@linaro.org>
-Date: Mon, 2 Sep 2024 11:54:28 +0200
-Message-ID: <CAHUa44GgySmc=byL9_0vUuP2BKifpMHqMgvMHJpEukgFGRvVmg@mail.gmail.com>
-Subject: Re: [PATCH] rpmb: use IS_REACHABLE instead of IS_ENABLED
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: linux-kernel@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>, 
-	Linus Walleij <linus.walleij@linaro.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	kernel test robot <lkp@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: SowefPK2xML-I30pU6pjQmD6hjAW__dP
+X-Proofpoint-ORIG-GUID: SowefPK2xML-I30pU6pjQmD6hjAW__dP
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-09-02_02,2024-09-02_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 mlxlogscore=999
+ suspectscore=0 clxscore=1015 priorityscore=1501 adultscore=0
+ malwarescore=0 phishscore=0 lowpriorityscore=0 impostorscore=0 spamscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2409020081
 
-Hi Arnd,
+Currently same page address is shared
+between multiple buffer addresses and causing smmu fault for other
+descriptor if address hold by one descriptor got cleaned.
+Allocate separate buffer address for each descriptor
+for TSO path so that if one descriptor cleared it should not
+clean other descriptor address.
 
-On Mon, Sep 2, 2024 at 10:31=E2=80=AFAM Arnd Bergmann <arnd@arndb.de> wrote=
-:
->
-> On Mon, Sep 2, 2024, at 08:07, Jens Wiklander wrote:
-> > Use the macro IS_REACHABLE instead of IS_ENABLED in <linux/rpmb.h> when
-> > deciding if prototypes or stubbed static inline functions should be
-> > provided. This fixes link errors when the calling code is builtin while
-> > the RPMB subsystem is a module.
-> >
-> > Reported-by: kernel test robot <lkp@intel.com>
-> > Closes:
-> > https://lore.kernel.org/oe-kbuild-all/202409021448.RSvcBPzt-lkp@intel.c=
-om/
-> > Fixes: 1e9046e3a154 ("rpmb: add Replay Protected Memory Block (RPMB)
-> > subsystem")
-> > Signed-off-by: Jens Wiklander <jens.wiklander@linaro.org>
->
-> Please don't work around a bug like this, fix it properly instead.
->
-> > diff --git a/include/linux/rpmb.h b/include/linux/rpmb.h
-> > index cccda73eea4d..37b5273c4027 100644
-> > --- a/include/linux/rpmb.h
-> > +++ b/include/linux/rpmb.h
-> > @@ -61,7 +61,7 @@ struct rpmb_dev {
-> >
-> >  #define to_rpmb_dev(x)               container_of((x), struct rpmb_dev=
-, dev)
-> >
-> > -#if IS_ENABLED(CONFIG_RPMB)
-> > +#if IS_REACHABLE(CONFIG_RPMB)
-> >  struct rpmb_dev *rpmb_dev_get(struct rpmb_dev *rdev);
-> >  void rpmb_dev_put(struct rpmb_dev *rdev);
->
-> This gives very unexpected runtime behavior where both RPMB and
-> its user are enabled, but it doesn't work.
->
-> I think what you want here is a dependency like
->
->       depends on RPMB || !RPMB
->
-> for every caller. This enforces at build time that the MMC core can
-> be built either when RPMB is disabled, of when it is reachable.
+Signed-off-by: Suraj Jaiswal <quic_jsuraj@quicinc.com>
+---
 
-Thanks for the suggestion.
+Changes since v2:
+- Fixed function description 
+- Fixed handling of return value.
 
-I tried adding the dependency above for MMC_BLOCK and OPTEE.
 
-Setting CONFIG_RPMB to "y" works as expected CONFIG_MMC_BLOCK and
-CONFIG_OPTEE can be configured as both "y" or "m".
+ .../net/ethernet/stmicro/stmmac/stmmac_main.c | 63 ++++++++++++-------
+ 1 file changed, 42 insertions(+), 21 deletions(-)
 
-Setting CONFIG_RPMB to "m" will make CONFIG_MMC_BLOCK and CONFIG_OPTEE
-"m" too, even if they are set as "y" in the defconfig. So the module
-status seems to spread to the options with the dependency. For
-tristate options, it guarantees that the expected features are
-available even if it changes from built-in to a loadable module.
+diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+index 83b654b7a9fd..5948774c403f 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
++++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+@@ -4136,16 +4136,18 @@ static bool stmmac_vlan_insert(struct stmmac_priv *priv, struct sk_buff *skb,
+ /**
+  *  stmmac_tso_allocator - close entry point of the driver
+  *  @priv: driver private structure
+- *  @des: buffer start address
++ *  @addr: Contains either skb frag address or skb->data address
+  *  @total_len: total length to fill in descriptors
+  *  @last_segment: condition for the last descriptor
+  *  @queue: TX queue index
++ * @is_skb_frag: condition to check whether skb data is part of fragment or not
+  *  Description:
+  *  This function fills descriptor and request new descriptors according to
+  *  buffer length to fill
++ *  This function returns 0 on success else -ERRNO on fail
+  */
+-static void stmmac_tso_allocator(struct stmmac_priv *priv, dma_addr_t des,
+-				 int total_len, bool last_segment, u32 queue)
++static int stmmac_tso_allocator(struct stmmac_priv *priv, void *addr,
++				int total_len, bool last_segment, u32 queue, bool is_skb_frag)
+ {
+ 	struct stmmac_tx_queue *tx_q = &priv->dma_conf.tx_queue[queue];
+ 	struct dma_desc *desc;
+@@ -4153,6 +4155,8 @@ static void stmmac_tso_allocator(struct stmmac_priv *priv, dma_addr_t des,
+ 	int tmp_len;
+ 
+ 	tmp_len = total_len;
++	unsigned int offset = 0;
++	unsigned char *data = addr;
+ 
+ 	while (tmp_len > 0) {
+ 		dma_addr_t curr_addr;
+@@ -4161,20 +4165,44 @@ static void stmmac_tso_allocator(struct stmmac_priv *priv, dma_addr_t des,
+ 						priv->dma_conf.dma_tx_size);
+ 		WARN_ON(tx_q->tx_skbuff[tx_q->cur_tx]);
+ 
++		buff_size = tmp_len >= TSO_MAX_BUFF_SIZE ? TSO_MAX_BUFF_SIZE : tmp_len;
++
+ 		if (tx_q->tbs & STMMAC_TBS_AVAIL)
+ 			desc = &tx_q->dma_entx[tx_q->cur_tx].basic;
+ 		else
+ 			desc = &tx_q->dma_tx[tx_q->cur_tx];
+ 
+-		curr_addr = des + (total_len - tmp_len);
++		offset = total_len - tmp_len;
++		if (!is_skb_frag) {
++			curr_addr = dma_map_single(priv->device, data + offset, buff_size,
++						   DMA_TO_DEVICE);
++
++			if (dma_mapping_error(priv->device, curr_addr))
++				return -ENOMEM;
++
++			tx_q->tx_skbuff_dma[tx_q->cur_tx].buf = curr_addr;
++			tx_q->tx_skbuff_dma[tx_q->cur_tx].len = buff_size;
++			tx_q->tx_skbuff_dma[tx_q->cur_tx].map_as_page = false;
++			tx_q->tx_skbuff_dma[tx_q->cur_tx].buf_type = STMMAC_TXBUF_T_SKB;
++		} else {
++			curr_addr = skb_frag_dma_map(priv->device, addr, offset,
++						     buff_size,
++						     DMA_TO_DEVICE);
++
++			if (dma_mapping_error(priv->device, curr_addr))
++				return -ENOMEM;
++
++			tx_q->tx_skbuff_dma[tx_q->cur_tx].buf = curr_addr;
++			tx_q->tx_skbuff_dma[tx_q->cur_tx].len = buff_size;
++			tx_q->tx_skbuff_dma[tx_q->cur_tx].map_as_page = true;
++			tx_q->tx_skbuff_dma[tx_q->cur_tx].buf_type = STMMAC_TXBUF_T_SKB;
++		}
++
+ 		if (priv->dma_cap.addr64 <= 32)
+ 			desc->des0 = cpu_to_le32(curr_addr);
+ 		else
+ 			stmmac_set_desc_addr(priv, desc, curr_addr);
+ 
+-		buff_size = tmp_len >= TSO_MAX_BUFF_SIZE ?
+-			    TSO_MAX_BUFF_SIZE : tmp_len;
+-
+ 		stmmac_prepare_tso_tx_desc(priv, desc, 0, buff_size,
+ 				0, 1,
+ 				(last_segment) && (tmp_len <= TSO_MAX_BUFF_SIZE),
+@@ -4182,6 +4210,7 @@ static void stmmac_tso_allocator(struct stmmac_priv *priv, dma_addr_t des,
+ 
+ 		tmp_len -= TSO_MAX_BUFF_SIZE;
+ 	}
++	return 0;
+ }
+ 
+ static void stmmac_flush_tx_descriptors(struct stmmac_priv *priv, int queue)
+@@ -4351,25 +4380,17 @@ static netdev_tx_t stmmac_tso_xmit(struct sk_buff *skb, struct net_device *dev)
+ 		pay_len = 0;
+ 	}
+ 
+-	stmmac_tso_allocator(priv, des, tmp_pay_len, (nfrags == 0), queue);
++	if (stmmac_tso_allocator(priv, (skb->data + proto_hdr_len),
++				 tmp_pay_len, nfrags == 0, queue, false))
++		goto dma_map_err;
+ 
+ 	/* Prepare fragments */
+ 	for (i = 0; i < nfrags; i++) {
+-		const skb_frag_t *frag = &skb_shinfo(skb)->frags[i];
++		skb_frag_t *frag = &skb_shinfo(skb)->frags[i];
+ 
+-		des = skb_frag_dma_map(priv->device, frag, 0,
+-				       skb_frag_size(frag),
+-				       DMA_TO_DEVICE);
+-		if (dma_mapping_error(priv->device, des))
++		if (stmmac_tso_allocator(priv, frag, skb_frag_size(frag),
++					 (i == nfrags - 1), queue, true))
+ 			goto dma_map_err;
+-
+-		stmmac_tso_allocator(priv, des, skb_frag_size(frag),
+-				     (i == nfrags - 1), queue);
+-
+-		tx_q->tx_skbuff_dma[tx_q->cur_tx].buf = des;
+-		tx_q->tx_skbuff_dma[tx_q->cur_tx].len = skb_frag_size(frag);
+-		tx_q->tx_skbuff_dma[tx_q->cur_tx].map_as_page = true;
+-		tx_q->tx_skbuff_dma[tx_q->cur_tx].buf_type = STMMAC_TXBUF_T_SKB;
+ 	}
+ 
+ 	tx_q->tx_skbuff_dma[tx_q->cur_tx].last_segment = true;
+-- 
+2.25.1
 
-It will do nothing for bool options, but that's a hypothetical case
-for now.  Wouldn't spreading the built-in status to CONFIG_RPMB be
-better? So CONFIG_RPMB turns into "y" if an option configured as
-built-in depends on it. I don't know how to do that though, so that
-could be saved for when it's needed.
-
-I'll send out patches for MMC_BLOCK and OPTEE options shortly if we're
-happy with the "depends on RPMB || !RPMB" approach.
-
-Cheers,
-Jens
 
