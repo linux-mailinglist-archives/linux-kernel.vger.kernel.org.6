@@ -1,174 +1,130 @@
-Return-Path: <linux-kernel+bounces-310822-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310829-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 590F39681A9
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 10:24:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12A729681C1
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 10:28:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EDF241F21376
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 08:24:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 44AC51C21FBE
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 08:28:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B63DF185B5E;
-	Mon,  2 Sep 2024 08:24:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01DCC186E27;
+	Mon,  2 Sep 2024 08:27:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=thorsis.com header.i=@thorsis.com header.b="bmOzbG9n"
-Received: from mail.thorsis.com (mail.thorsis.com [217.92.40.78])
+	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="Eg5rDLZ3"
+Received: from mx0b-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4FDC17C9B3;
-	Mon,  2 Sep 2024 08:24:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.92.40.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD778185B7D;
+	Mon,  2 Sep 2024 08:27:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725265475; cv=none; b=TCpxif9OdclCtOCW9aky3LU9CUKPco2TMe8GrTR3Q78ywRyi7DiH/utj8ZXZsd1C+cv/JgL5eeDCmpV/4SUesvPBiIw+EGsEGR8EoM3It0QVmSV/RCzp9no34C3Q94bR9e4WIEX2+k9X5skW5TiucHcaaM87nUa9f0ANrXAmSRI=
+	t=1725265663; cv=none; b=fIcldNzuWtw+njYdaz8lJlptjyAk5aXTB9f1fm78TOIS3pRhlLmETdEhmN/x0LStsPABqYsSY05GHhyCVz4AzyrlvhigLbft/gE8XHFJzwye2YYs3jxc6tp5OHO8FrvumOOzXbuQB0Pa63osULn+4fCejHOUXTNY2lhXNE4WtV0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725265475; c=relaxed/simple;
-	bh=pslQU41FGdhkmaUkEZ9dQ5WuxgEanAdXBKZB2w5Nqto=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=V4UkS4zFb1QGeyvoxwONeZqMY07136mnS5VTGjs+bUBr8ksYwgXjUZ8Cq4FVIfMNZ87lEYICUj+GsBC/tGD9ktQB4QqJ52wK9JBiYwL6t08P5QVC2siOvPX1yf6PZgkUWV6pSQV7xtI5ykGaR3PzJ5p+fJPzHmjkZUH8RQ2wIMU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=thorsis.com; spf=pass smtp.mailfrom=thorsis.com; dkim=pass (2048-bit key) header.d=thorsis.com header.i=@thorsis.com header.b=bmOzbG9n; arc=none smtp.client-ip=217.92.40.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=thorsis.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=thorsis.com
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id A41431482FA3;
-	Mon,  2 Sep 2024 10:24:28 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=thorsis.com; s=dkim;
-	t=1725265469; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=mI8+uZ1zQ3Whmswrx6WrAOVyRCcCM9kOZQ5ZCv9PtoM=;
-	b=bmOzbG9nfpXqW241QxHnQpysQs92hEsCBDpVAemdevUnuADsnuP8DDJ7VUr19ROHB128MF
-	g8i+m+1bBW71+0sfziI07Z/4gRkDxGvb2x7fALwVp7LwmDOBuOtp0UZX4H/+aZLnUvBOLF
-	ImwWPbKL1B/gH4cHQbBXut9l9sg/XXPIQDQ7Lgx91KOozm8vm1x/Jbp7NreTJDdzDmfily
-	5/cMO7Svv3FX3hatFKQ00JCcjH1QcsPuG2mNgbzs/p8bB+7Cp7nAuadJIukBJ5iOuBlIsu
-	xt8GL9yrZOA/AuCUZZnGJ29ATKOBsHCCJbEI7lSGUwIhkagPPs8eKQIbuzBHZw==
-Date: Mon, 2 Sep 2024 10:24:27 +0200
-From: Alexander Dahl <ada@thorsis.com>
-To: claudiu beznea <claudiu.beznea@tuxon.dev>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Nicolas Ferre <nicolas.ferre@microchip.com>
-Subject: Re: get, prepare, enable a clock not in DT?
-Message-ID: <20240902-machinist-straggler-cce44ffa4a7c@thorsis.com>
-Mail-Followup-To: claudiu beznea <claudiu.beznea@tuxon.dev>,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Nicolas Ferre <nicolas.ferre@microchip.com>
-References: <20240816-ludicrous-lagging-65e750c57ab4@thorsis.com>
- <384919bc-7d45-445a-bc85-630c599d43ef@tuxon.dev>
- <20240820-grandpa-down-fec4231f971c@thorsis.com>
- <e7f69aa3-20a7-4233-96c7-0fa5fe67bbdc@tuxon.dev>
- <20240828-gainfully-cringing-2f420d8882bd@thorsis.com>
- <6cd18742-7ba8-4b0c-aff9-7065bccd4095@tuxon.dev>
+	s=arc-20240116; t=1725265663; c=relaxed/simple;
+	bh=bwCr2cKS3bvq6ljjGjHqWsqogAeGXrGBsmS3vger5CM=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=oPm89UJins3XMDpW7W0hQJwxRj5qDOoqCFIZPZdySEV2hRogw4FhB6wLrZ+KOXj4mVyt52ZfXk2HUE/+pMqP30bJIHU6DBTF35/8tuQejS/ZZRKM7p/6EgEr+O/4griyKOoHgjVtiRK25Tiy/YvzfBT87FYriiNx3gR6sDIMVj4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=Eg5rDLZ3; arc=none smtp.client-ip=148.163.135.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
+Received: from pps.filterd (m0375855.ppops.net [127.0.0.1])
+	by mx0b-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4823IUPg003128;
+	Mon, 2 Sep 2024 04:27:25 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=
+	content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=DKIM; bh=niI3I7JyZS3O6tP9TPghw9Awc8v
+	0YPXV7qysyszBa1A=; b=Eg5rDLZ3eKtjPeh354ukZKPWaIE6L2tT4GgkaX0ccUD
+	sKlkyr++E+vR9Hxy402sWU8x3cyHlOKO0plFryEN+5ddCqibLLh8qgx7i+bTnof+
+	p3tiGsZ7PNZc3P61uY8jkp3v/DpRYh18ZxQaIPwF7vlyPhcxKb9xbepB6ULqqJS0
+	blvhtHUsOGl633HW28K6v5wM13BrqDcjnfy7UCWKdLG/mdPJrl4yPifd/viSGwnq
+	mfJCsfgj8qyZd/P2PTJuG4cePdsduLKZcDbgbFH6eF5weGb16Vj+p7NW8DfcGLYi
+	58Fl/dV4ZIDZ7+t1ezVkUCjRIUyz2kMo/h4rxqJFycA==
+Received: from nwd2mta3.analog.com ([137.71.173.56])
+	by mx0b-00128a01.pphosted.com (PPS) with ESMTPS id 41d5bg8vb9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 02 Sep 2024 04:27:24 -0400 (EDT)
+Received: from ASHBMBX8.ad.analog.com (ASHBMBX8.ad.analog.com [10.64.17.5])
+	by nwd2mta3.analog.com (8.14.7/8.14.7) with ESMTP id 4828RNRT022710
+	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Mon, 2 Sep 2024 04:27:23 -0400
+Received: from ASHBMBX9.ad.analog.com (10.64.17.10) by ASHBMBX8.ad.analog.com
+ (10.64.17.5) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.14; Mon, 2 Sep 2024
+ 04:27:22 -0400
+Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx9.ad.analog.com
+ (10.64.17.10) with Microsoft SMTP Server id 15.2.986.14 via Frontend
+ Transport; Mon, 2 Sep 2024 04:27:22 -0400
+Received: from amiclaus-VirtualBox.ad.analog.com (AMICLAUS-L02.ad.analog.com [10.48.65.139])
+	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 4828R9oQ014033;
+	Mon, 2 Sep 2024 04:27:12 -0400
+From: Antoniu Miclaus <antoniu.miclaus@analog.com>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Michael Hennerich <michael.hennerich@analog.com>,
+        Antoniu Miclaus <antoniu.miclaus@analog.com>,
+        <linux-input@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH v2 1/3] input: touchscreem: ad7877: add match table
+Date: Mon, 2 Sep 2024 11:24:31 +0300
+Message-ID: <20240902082707.4325-1-antoniu.miclaus@analog.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <6cd18742-7ba8-4b0c-aff9-7065bccd4095@tuxon.dev>
-User-Agent: Mutt/2.2.12 (2023-09-09)
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain
+X-ADIRuleOP-NewSCL: Rule Triggered
+X-Proofpoint-GUID: HMTvouU1rGNzCmtDj2v7hLqKUcCe7G64
+X-Proofpoint-ORIG-GUID: HMTvouU1rGNzCmtDj2v7hLqKUcCe7G64
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-09-02_01,2024-08-30_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 suspectscore=0
+ spamscore=0 phishscore=0 adultscore=0 malwarescore=0 mlxlogscore=999
+ lowpriorityscore=0 impostorscore=0 mlxscore=0 bulkscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2409020068
 
-Hello Claudiu,
+Add match table for the ad7877 driver and define the compatible string.
 
-Am Sat, Aug 31, 2024 at 06:49:59PM +0300 schrieb claudiu beznea:
-> Hi, Alexander,
-> 
-> On 28.08.2024 09:55, Alexander Dahl wrote:
-> > Hello Claudiu,
-> > 
-> > Am Fri, Aug 23, 2024 at 05:29:44PM +0300 schrieb claudiu beznea:
-> >>
-> >>
-> >> On 20.08.2024 15:17, Alexander Dahl wrote:
-> >>> By chance: I don't have a sama7g5 based board at hand for testing.
-> >>> The datasheet says the same as for sam9x60.
-> >>> Does the nvmem_microchip_otpc driver actually work without timeout on
-> >>> sama7g5?
-> >>
-> >> Yes! This should be because system bus is clocked from MCK0 (as mentioned
-> >> in peripheral identifiers table) which is enabled by bootloader.
-> > 
-> > Not sure I can follow.  Citing the SAMA7G5 datasheet section 30.4
-> > (OTPC Product Dependencies):
-> > 
-> >     "The OTPC is clocked through the Power Management Controller
-> >     (PMC). The user must power on the main RC oscillator and enable
-> >     the peripheral clock of the OTPC prior to reading or writing the
-> >     OTP memory."
-> 
-> I don't see this in [1]. Only:
-> 
-> "The OTPC is clocked through the Power Management Controller (PMC), so the
-> programmer must first to configure the PMC."
-> 
-> From this I got that it is about the MCK0 listed in table Table 8-11.
-> Peripheral Identifiers.
-> 
-> [1]
-> https://ww1.microchip.com/downloads/aemDocuments/documents/MPU32/ProductDocuments/DataSheets/SAMA7G5-Series-Data-Sheet-DS60001765A.pdf
+Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
+---
+no changes in v2.
+ drivers/input/touchscreen/ad7877.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-Well, this seems to be an older version revision A from 03/2022.
-I have DS60001765B (revision B) from 12/2023 and got this here (note
-the missing 'A' in the filename):
+diff --git a/drivers/input/touchscreen/ad7877.c b/drivers/input/touchscreen/ad7877.c
+index a0598e9c7aff..7886454a19c6 100644
+--- a/drivers/input/touchscreen/ad7877.c
++++ b/drivers/input/touchscreen/ad7877.c
+@@ -805,10 +805,17 @@ static int ad7877_resume(struct device *dev)
+ 
+ static DEFINE_SIMPLE_DEV_PM_OPS(ad7877_pm, ad7877_suspend, ad7877_resume);
+ 
++static const struct of_device_id ad7877_of_match[] = {
++	{ .compatible = "adi,ad7877", },
++	{ }
++};
++MODULE_DEVICE_TABLE(of, ad7877_of_match);
++
+ static struct spi_driver ad7877_driver = {
+ 	.driver = {
+ 		.name		= "ad7877",
+ 		.dev_groups	= ad7877_groups,
++		.of_match_table = ad7877_of_match,
+ 		.pm		= pm_sleep_ptr(&ad7877_pm),
+ 	},
+ 	.probe		= ad7877_probe,
+-- 
+2.46.0
 
-https://ww1.microchip.com/downloads/aemDocuments/documents/MPU32/ProductDocuments/DataSheets/SAMA7G5-Series-Data-Sheet-DS60001765.pdf
-
-Linked here:
-
-https://www.microchip.com/en-us/product/sama7g54
-
-The revision history is not very specific, it only says "Updated Power
-Management".  Errata sheet has nothing interesting on that topic.
-
-We both cited what we saw in the datasheets.  Revision A has the
-section you cited, revision B has the section I cited.
-
-> > Table from section 8.5 (Peripheral Clocks …) has no check mark at "PMC
-> > clock control" but indeed lists MCK0 as main system bus clock.
-> 
-> This is what I was taking about.
-> 
-> >  If it
-> > works on SAMA7G5 without explicitly enabling main RC oscillator, then
-> > either that clock is on accidentally, or the datasheet is wrong in the
-> > OTPC section.
-> 
-> Might be.
-
-I don't have a SAMA7G5 at hand.  Someone who has could test if OTPC
-works with/without MCK0, and with/without main RC osc, all possible
-combinations would be most helpful: with none of those, with only one,
-only the other, both.
-
-Hope we get this clock stuff sorted out?!
-
-Greets
-Alex
-
-> 
-> Thank you,
-> Claudiu Beznea
-> 
-> > 
-> > Personally I find the "clocked through PMC" part in the OTPC
-> > section suspicious, because in the peripheral identifiers table OTPC
-> > has no "PMC Clock Control" mark.
-> > 
-> > Not sure what's the difference between SAM9X60 and SAMA7G5 internally,
-> > though.  From a user's POV it's possible one of them requires the
-> > main RC osc, and the other does not, but currently you can't tell from
-> > the datasheets.
-> > 
-> >> Here is a snapshot of reading the NVMEM on a SAMA7G5 with bootconfig and
-> >> thermal calibration packets:
-> >> https://www.linux4sam.org/bin/view/Linux4SAM/ThermalFaq
-> > 
-> > Greets
-> > Alex
-> > 
-> 
 
