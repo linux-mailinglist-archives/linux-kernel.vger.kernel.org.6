@@ -1,39 +1,40 @@
-Return-Path: <linux-kernel+bounces-311433-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311435-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5B66968919
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 15:46:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66A7F96891C
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 15:46:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 71FF8284490
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 13:46:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8C1491C2214C
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 13:46:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3AEA20127D;
-	Mon,  2 Sep 2024 13:46:00 +0000 (UTC)
-Received: from IND01-BMX-obe.outbound.protection.outlook.com (mail-bmxind01on2106.outbound.protection.outlook.com [40.107.239.106])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22ED919E993;
+	Mon,  2 Sep 2024 13:46:06 +0000 (UTC)
+Received: from IND01-MAX-obe.outbound.protection.outlook.com (mail-maxind01on2109.outbound.protection.outlook.com [40.107.222.109])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94AF7C13B;
-	Mon,  2 Sep 2024 13:45:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.239.106
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B892210189;
+	Mon,  2 Sep 2024 13:46:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.222.109
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725284760; cv=fail; b=IHguQHcXmFJOsgSwdB2MycWfMhAKfHBev7z9YQ8BLe+96FycLvZ5Z3PfCXGE3LL29ExwcZI9lVdFQrhiRmth43BqzLtyra2i34FHUxWQ19yKqJSywHH5w20NekFtClFpvJXy3reWa4lfzVL7r7Au/Ul4RkmW+jc5gmALyY1VkxY=
+	t=1725284765; cv=fail; b=lcq+IE3NbxvcOm5BQQyriVxYB4O4lB+p+eqYSFKbGeKVPSaRL0YSpPKAjeVN+x7TktoLHGCmEsPIIxAgN4lVVgOkyrROGPT9IG8zgzEr8Iu+LzaqlVUbCjyOtCIIN08sqbnXvXC5eMCNf+MEauYgKfcgglbmwub0O+H0BY7vB40=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725284760; c=relaxed/simple;
-	bh=sIhdH3atbRgUvQb5w8fjubJPmeyd1bXNNaKK8zFXGck=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=t/NxE5tVuHY5ldGaHskv+bTw3rYyMt2XkKieVa6a2yzOCm93Alu/0NslTps9Zj6X4qCkSK8pgjaz9soqBT1ICxUOIv4DJEIBFCDCeiJgIgAfowW2GHqMTt9LSSVFr+ty/py7B4eCc5bOIcs5DvtS8Q+wXCtoqWU+3PWwpcs/4fk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=siliconsignals.io; spf=pass smtp.mailfrom=siliconsignals.io; arc=fail smtp.client-ip=40.107.239.106
+	s=arc-20240116; t=1725284765; c=relaxed/simple;
+	bh=/pXygvHWoFh8vkMyIpKc3a08c11LHIE8Qoseudy353c=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=RLKYzjLx4240UIykLqfNdFvzkHfe46vY1CZjwQJ5dVJqqVFgwkMFZKA8ot73GuzmflFPp2V5Dr7UkD2YIfiOSFH13C2Hng70qVFQaRa8MxGp4sbW10R0Fs4gTpkxABfzYdxLJTMCFwvQbuwLLqHEghXDHJa3Z6g4dYpSGmpWmyA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=siliconsignals.io; spf=pass smtp.mailfrom=siliconsignals.io; arc=fail smtp.client-ip=40.107.222.109
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=siliconsignals.io
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=siliconsignals.io
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=GsdX0Qf11k8goUHzOVLlfxB4OmA7M4VWfVZPuO33Aym8/ci1OQLWWii39vHMuIJwhyGPJkm7n1s5jTCeA5GHLFWMsObFCoFiq9glmJFMVlGV1JSeA97Awi+4+bRyxIWL0A52sgRK5cnkittZA5aI8KenKutH2JZAUT0v6MEuLazSB3wr1wwwgDadWYfhhmfVnF1t08gGoZlTq02wX8xn9To7bLTkmHQ0828TYQbwsHZYYr+++s5Zy9y7uC3JHVqB7ht8F5ljh7jB3ilS9IP1RouH304Kl7WtZJgA4wva7+u/rjvhSncR46XAINl/P3ZvqdEaLhAYPuMTGYvnldCDSQ==
+ b=O4hCaeBzHpUEAlqkTIxvynlnusWggqDxYrvKiby+Dxu0Mz/rd7Bp6P+HVIsRO3ifukjg65TwwTgwAvAKAKkPzLCCCmPBUejonS3JFgdsFo3DGn+dnJPtbQPHCNgnBV38ovJzYg+OMRVPuMvv9oYy9xT1VCgKXFPSZ9DVIitH1y+uObRvVBge0pES32FmmTo4RXC6ZvHYbgYV6l6zd3GuyEigcXkY7CXLmBZ1mpF7Ed/S2e4oxUteBfkgSeF2/xLINI5mAo0FKv/yKviHo9Wj9k5MsiOPUPaTV7HhzI+QcIF7rtf/070APPtpo94ZYzH707A+8/2V6YTCL++qJM8JEw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ct12Ddtsn/tYsTAc2epp1HSsWolUkL4NbbGrycT09cA=;
- b=a1shbqdMT0T9/GYuUwdwg07q23tFbP6Yo6UT4I4fYTnEt6ul+rw0dfvTOS0BN8dOAKpLSuGNUgx7F+vlMdyNRAborcgMI3sEMi7id8LJqhitIpyW5ulx5iyJQiTBfDp/NDhF7QeDaYcgqgOzAAISbJpmpQ5LK5VqUFMc+EeqMW1vxRhf1ZbSZtle6m3VvttilOMgHu2XaLaeft4hjE+Ndy2AgTIDIr52ODx8oGO0752ByYkpUHz/Cb75jVbeoxa0SlI8Ur4FkZXBiIOp5wzi7+spI/yWLxDF1g3vFv1n3NtIFyPTKu/LVMt7k+vdERIsYWJeGgRXBa+fpaZPQpE7Sw==
+ bh=lH1N2R3WS4RhypAQ62IQcBoe54d0Ly7aXaNzjK1DnVU=;
+ b=jh3VpDL67nWYulg0Zv62YzpWmYm7ZCP3jEqD6cszpI7diAw+Ptf1/EHaJE+77KRCrP1neqo7j0REPxy0rP6zSGmIlSJAA3KT3dRO+zFl4tfbloZ/5286WaBTV6TGWOUNqTRKC7Ee8E+fiGNCqvd16FoEOovG24VbgVjX3iQqOlm0Ss5kt6Z4R7M6eRyxWD9waJ6x0U9CvonBffftP/kQkOtuHe2BQ/eEjkP/585lYql6W4WzCxVOCX8InuQnlH56KpMVIQV/K1knIoG/8KWG+CAyVT3ar5N2kv6iXVsSoY+unK9g1K53OEL2PREbQGmGK0tg3udarxsCoNmGDQ7Hng==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=siliconsignals.io; dmarc=pass action=none
  header.from=siliconsignals.io; dkim=pass header.d=siliconsignals.io; arc=none
@@ -43,11 +44,11 @@ Received: from PN3P287MB1829.INDP287.PROD.OUTLOOK.COM (2603:1096:c01:199::7)
  by PN2P287MB0597.INDP287.PROD.OUTLOOK.COM (2603:1096:c01:15a::12) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.24; Mon, 2 Sep
- 2024 13:45:54 +0000
+ 2024 13:46:00 +0000
 Received: from PN3P287MB1829.INDP287.PROD.OUTLOOK.COM
  ([fe80::58ec:81a0:9454:689f]) by PN3P287MB1829.INDP287.PROD.OUTLOOK.COM
  ([fe80::58ec:81a0:9454:689f%5]) with mapi id 15.20.7918.024; Mon, 2 Sep 2024
- 13:45:54 +0000
+ 13:46:00 +0000
 From: Tarang Raval <tarang.raval@siliconsignals.io>
 To: shawnguo@kernel.org,
 	krzk+dt@kernel.org,
@@ -57,25 +58,26 @@ Cc: Tarang Raval <tarang.raval@siliconsignals.io>,
 	Conor Dooley <conor+dt@kernel.org>,
 	Sascha Hauer <s.hauer@pengutronix.de>,
 	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Gregor Herburger <gregor.herburger@ew.tq-group.com>,
-	Francesco Dolcini <francesco.dolcini@toradex.com>,
-	Joao Paulo Goncalves <joao.goncalves@toradex.com>,
 	Hugo Villeneuve <hvilleneuve@dimonoff.com>,
 	Hiago De Franco <hiago.franco@toradex.com>,
+	Joao Paulo Goncalves <joao.goncalves@toradex.com>,
+	Gregor Herburger <gregor.herburger@ew.tq-group.com>,
 	Mathieu Othacehe <m.othacehe@gmail.com>,
 	Alexander Stein <alexander.stein@ew.tq-group.com>,
+	Josua Mayer <josua@solid-run.com>,
 	Parthiban Nallathambi <parthiban@linumiz.com>,
 	Yannic Moog <y.moog@phytec.de>,
-	Josua Mayer <josua@solid-run.com>,
 	Li Yang <leoyang.li@nxp.com>,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	imx@lists.linux.dev,
 	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v3 0/2] Add support for Variscite Symphony board and VAR-SOM-MX8MP SoM
-Date: Mon,  2 Sep 2024 19:15:06 +0530
-Message-Id: <20240902134512.16717-1-tarang.raval@siliconsignals.io>
+Subject: [PATCH v3 1/2] arm64: dts: imx8mp-var-som-symphony: Add Variscite Symphony board and VAR-SOM-MX8MP SoM
+Date: Mon,  2 Sep 2024 19:15:07 +0530
+Message-Id: <20240902134512.16717-2-tarang.raval@siliconsignals.io>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20240902134512.16717-1-tarang.raval@siliconsignals.io>
+References: <20240902134512.16717-1-tarang.raval@siliconsignals.io>
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 X-ClientProxiedBy: PN2PR01CA0249.INDPRD01.PROD.OUTLOOK.COM
@@ -89,113 +91,491 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: PN3P287MB1829:EE_|PN2P287MB0597:EE_
-X-MS-Office365-Filtering-Correlation-Id: d4046c82-b512-4a5a-34cc-08dccb55910f
+X-MS-Office365-Filtering-Correlation-Id: 5f24d421-65b9-41ae-ad6a-08dccb559441
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
 	BCL:0;ARA:13230040|366016|1800799024|376014|7416014|52116014|38350700014;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?uqHrc3mIehv9asyoGfQm5cwTkL+tV74DvpqF7AOamnDuMBRsrCkpkGYzo/pg?=
- =?us-ascii?Q?AmeID7rwkLWdUS+3vdDxG4+fMhUVct8Ke8t7McwTjHhzXj/gLM9aDgpfNSPs?=
- =?us-ascii?Q?LaJtjw/wN28zPUgf5iPlOatkRdSvat/10ymCb+fZJbdUovZqhKn2H3vxyaZe?=
- =?us-ascii?Q?HAyiv79FaxPs8XrL/NGG00V+U6P4StWoxh8cO8B4pxS2WiVSuUzwD0NEVlxd?=
- =?us-ascii?Q?2hw8vBB0fNt8AjOAN8/qQ190AEtMzDPxKn11INkVIE3aE/1E2ZgevnldI5lm?=
- =?us-ascii?Q?X61slFSwLieB2hAUGrqPjuRMAh1J+vYakypZb7uiRKoJEl2xVxdMLuRQ+Y37?=
- =?us-ascii?Q?KYiimIQSEsm2ugi9SKmFehHhOieLYRqXxTzOdSVr21wcUIE69/hCiiNlp2H9?=
- =?us-ascii?Q?SCcy2t4mDuofn+6hsckGs006n9ke03t1BtBdHVeuwib6NZUw5G30/Dn73fuG?=
- =?us-ascii?Q?byso/NxUrmOx78qhnz/nMLW1CVDgrPIw02S6iSxLOWq0XE4USEUNclymTDEw?=
- =?us-ascii?Q?MSlAhe4Nl3qGZgA7oER1dNjcWK3Tui/2FdMaHaaC8RNvqahmMMPYx7oO+3Ig?=
- =?us-ascii?Q?g338xzWLCeVMPBUPDuKwGRDJx5uG3edk4xS2rV2ls1I5zJsrEarl86ObMJkW?=
- =?us-ascii?Q?5Q2hz+TkwRnkoZ2Xy8/EsgZfaJHVh1PQacagCLnCTSM2sU02IY+2/fVaa7w8?=
- =?us-ascii?Q?mVjr0rsy8gcqn4fo8O+90graBSsdJOGAWruZvFGCAYPjtH2bk0XwaP+UuZVb?=
- =?us-ascii?Q?IH9ciZW0yWE/umnHpPttLBVF1hOa00eMD/TPn3gcTdma7hEqZ4Vfg4d7GQOu?=
- =?us-ascii?Q?izHpeurSAV+9aW7Jvp2BdvEsUalhZHZ7dKFaQa2gurlkmrLGzuL0ELr091QP?=
- =?us-ascii?Q?LCJzJs39ERaXAGmYWovfUGd6YouU8EjLREfZHq9qBBylaXwueX4MlBnqWVCE?=
- =?us-ascii?Q?n82MvblKKciuFp+QifKJagApQC0yaLpiEEx4jv66I3rLOo+mYcN6MYA9pFT7?=
- =?us-ascii?Q?BZdZMmdnir55gfvfiq17kKo+tHhqC9vUrDa37mmpTJucxokqW8i6LN1yrzCc?=
- =?us-ascii?Q?xcz6JepfTfQRNMPo9zRv0FBJ2d3yqR4q4A/hzvj2PxEAHakv3scityuJ+pI6?=
- =?us-ascii?Q?TwzaHe9E4dz+IxOo4Yo7pXhxuC3+k82plJzPpKFmHqNskOfUwBfoN8AVz5cN?=
- =?us-ascii?Q?g99ezraAC9GQBuZo6k80SepyAeqtFEfm4D4o7cp1ZlX94TwOJ5/r/dfdLqwD?=
- =?us-ascii?Q?Ebdry9ZBilWHVfGyHHkUoPV6NiIX0D1Lyn0uksz0ei/BXK0uVPsXugPTu+uz?=
- =?us-ascii?Q?aZhKFOLcLcqQQgz1QlRKox0MuVaF3JTR797x7z5x4rN3InqJBNof3m0hidXc?=
- =?us-ascii?Q?RKSMNAgBsKtDzwJ5mFW5fBe0VUR7E1T5itRTM3kye2lDJ6ib5Q=3D=3D?=
+	=?us-ascii?Q?+CYLnECtONcdJwqKin4wLbgeBhezlkNcui20KEg+vuGT3kuAEZV+/yl36LfJ?=
+ =?us-ascii?Q?aKqlRM4OAHQUX/wsZI+NAhQsuF8yjmLmlKNgunIzCF4iNjuUF5cuu9ATDCzB?=
+ =?us-ascii?Q?CDVCeLBRqzoTLr3s2J5jg7EQa0X4m4JQPq/NoDN+qwgl9UAzT4YvT3RFaBgR?=
+ =?us-ascii?Q?eErQy/0a6xkqnCNcIc3frzriNbNTpPwcJnsdCKMFxPsGKX/VooorfXyincLv?=
+ =?us-ascii?Q?iQjxFa8M5t0ASGcY7CUxGcZxlECF7Z6hflN5Ew46+qt04/2dMU30MYolfv84?=
+ =?us-ascii?Q?SAFwIRvbmjgBBwHnf1dGGySxsvKmlL5oSUGGCI8dGSfgN1baAN10VpWZIywR?=
+ =?us-ascii?Q?F9qYuDoKNo4JtpcJRK79oYPOpm7T5cE5Jgqz4WjGh+sr3LkgnLkHTl50EviG?=
+ =?us-ascii?Q?ljFSt3uYDhLw942ZYZ5Xn+1N7LTqsNCaRBCwzuj9M08YyBsN7lLHsuUMUnJy?=
+ =?us-ascii?Q?E7XyFALC1v1mBmRM7sSMAkuKyXAGUrGh6jnRaBiD5bvPELAufTHl85K5ByC4?=
+ =?us-ascii?Q?lkIkZXi2Ou5OyrNBJCqFHdSOgH6OHYCpcTqa2MWCubRnvutvZjgbYKxkYdOA?=
+ =?us-ascii?Q?RbFovLnbwxUuCtkL/aJO8lecXZtfhY5Nv4H9t/9DBkDpQjcD2kU6GxQD7Sht?=
+ =?us-ascii?Q?kB600o5qBKZ2GYJznyAppowqRAbTeCz8mSG+2vr5HwBNT6+TXbWswVneMH4X?=
+ =?us-ascii?Q?kh77zyaHl7O9lb/D11QQxqOzla1UoWOpnM8onquW16ePPFtLw9sTdFUidisI?=
+ =?us-ascii?Q?zUmkPRu/3Ln612YqtfwgcSKOSkBYfW0iQC7OhC9lQkjDSuBMTlp4mQGN2gii?=
+ =?us-ascii?Q?sxENidSylcUc/EYKekfDDhoFPeClrCgm170TFOp8a98L4fiF8Mm5K0WGD1k0?=
+ =?us-ascii?Q?S24bwm3/ZPDI+flBdr3kPhxUTOh4Xkh9Sf3AyeFv40D0Qoc5uwtd4H5whZrQ?=
+ =?us-ascii?Q?bno/8ydTrBqHkUTFOzV214UDPedbkFjOeiyUwal2SgjyYjrMC8z4lN8JxBIn?=
+ =?us-ascii?Q?01pxRMNjlwQ+W0cVqWKxhNqcDGqlgDOTpWkDw1lc3iY2jpVZwAs3QiTqimu+?=
+ =?us-ascii?Q?/hgeR1Uc3N1Zn4L+jpyDD7QFQmgpa6Z9pv2WPOSczq3GoRgGJNYWWs/j+Zkm?=
+ =?us-ascii?Q?++wcc6IpI5NThRnRzk5R56EqssO+AkzWY/MqFz5bDAyNYRy2MM2oyqvw0kdM?=
+ =?us-ascii?Q?PoSiTzYP0m35WieFP3t9iIOhc4PZ0W1zQoM90Y53OhlJ1eaV8jO3KDN4jR2v?=
+ =?us-ascii?Q?vobhwjIdl9NVqyk5iJEfb0gluCDUk94BwN971uqvwgMC/keArXOY9ik4dLY5?=
+ =?us-ascii?Q?ermFdEDLJ4gxJDLMdY3yfUsGFni6SPovg1xYmg1J0fkgNzhvwPPrSXzErNXm?=
+ =?us-ascii?Q?hKcdZ4f5zImdO9+bVjjt5Yd1xB0ceGAZQvpHVXrkeLphxDQRlw=3D=3D?=
 X-Forefront-Antispam-Report:
 	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PN3P287MB1829.INDP287.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014)(52116014)(38350700014);DIR:OUT;SFP:1102;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?xBtR/bfvQxHSQw2Xk8AytQuEoOSfXyf4Pj5JNI1v0htg7vU8Kpo3MulJX6yp?=
- =?us-ascii?Q?13itQqj1QARieo4chxiUEoXFJaPMKcEiT7ueXe2SAbzdUnUbDcTJQHTJVV+a?=
- =?us-ascii?Q?AhGIngFHHE9JrlbeOecc+GGclsnW82tfyWC/xqgCYNwY6yNo/4N1wZbkafBq?=
- =?us-ascii?Q?Lumr6mGn4HBOflJZbCF+gaCh8fvxUNkes33/SbKi+XtsW0iYHmuR6gyhRK7e?=
- =?us-ascii?Q?rlZfBcjMNueP/12MaFWo9/OdYdYMFXPexAFXkp4g+2NDuyQYIixzS7nw+j72?=
- =?us-ascii?Q?M97C+/QP6Ra/Yi2rj0CiTHnxIFyFyDoxuuHcXC388N5+2wGKIZkEwxoH3ZNy?=
- =?us-ascii?Q?pzCgukZcxVN56vg++I68uI8LsNHLQHRg62oYjNwGx1FZXS+z+u9HPQY7FcIh?=
- =?us-ascii?Q?LRnvnPTopvId9PKDT13DhbULqLHqKGHc7L3fAyatenYVxU6bWfqEO6ta5lAT?=
- =?us-ascii?Q?6+8m7PKB+Vd1XJEqjv9hGiqV5h66T2YL1N81gcuH56bvUYyPrQGqnv3xi6DZ?=
- =?us-ascii?Q?EYZPWIekSJQBaj9vqNkVT8dQdrwiiHEN8LCX75ubnraZxs65D4rQTotdHI45?=
- =?us-ascii?Q?1G5HWJbUEzlr4jjOtfLR1puhEiGfeIqniYAtUyGZKR4aIa/J6MJ/2MEmdDd7?=
- =?us-ascii?Q?WPQ5m2MOYrWdHhleMy4owFk9AHq9OHa0z1Um080n7tfVchLYBI5PFbY6qldr?=
- =?us-ascii?Q?iRIudqTdDz3EPzD8tCxXIDUGW4bI6f+3QOF1bJQL8jlpzryeurAkDr0Q5/Z4?=
- =?us-ascii?Q?f7UJ9hPOeIshML7+8BhgqGZZ01XGQ627hBTzDvb100CF+AiiReB+ge4/ajjX?=
- =?us-ascii?Q?3i76vbs36VxKwswtWZAeeQ6UXBPtEWYyxB84y/v/Q8MdIf379imHilzxAPDg?=
- =?us-ascii?Q?e+UM1trpNdYVMlwhPU3rQVRP+1DmpOPrqNo0qBCeEaP7DVD6WB7gAoxMxFyr?=
- =?us-ascii?Q?ca4IXftyK4PCbGY9iujcm42Xv3Z4FgBgo6t23zQTIPTeqG20rvG3yu7C2Rn4?=
- =?us-ascii?Q?yK1YX4HbNFiAm/UOO3H2/TmvHjDIX2wj5v9o6B/hcfVE24t8s7roJinqumws?=
- =?us-ascii?Q?N/i9v7bMfZ2H0M8APXFNu1l2utdR1kwo1yhoablqH5V3XD9RivIix+H8HjoN?=
- =?us-ascii?Q?mBcMIspNBXN5sRokycG1EO6DjooCylMAFkox41iDxjGcOQWtJtIdqEF7FMCS?=
- =?us-ascii?Q?++H3iwFZ1rjzokRaJFprk/OYLJ/hAy9D3d4ugw6H3v2seTrZScOMt+HSINjA?=
- =?us-ascii?Q?uBdAO8XEMYo34akchNnL36qIyE98n+mvJrajVLBA8evn+hLFJlYpSd06Ibch?=
- =?us-ascii?Q?g2BpXtjXqKI5oToYWFMr++zYK0EAQFKxy79kb/eccJ8dCSXFRauzm9SIn2bL?=
- =?us-ascii?Q?MRT1tnqn57IDKZUFaAHdbbcdJfQO+08z/Mu5lLycVLiru31qR13cIFTICQfH?=
- =?us-ascii?Q?EY0A+9Xt0VnX7jq457s+CG1bZzrBvvZDhGc1jwdSEOTKWqcHSocPPu9mCTtz?=
- =?us-ascii?Q?w7ZgIyH+W9TJU5P3W6jyYg23oc1WBWXoWMOzab8F76d+A4G1qBiA0XB2l/k4?=
- =?us-ascii?Q?sXJzK83o6iIq1iC70875WkYXXXuGOm1iJLA5ck0kUxCAEawa6I69dictcTDl?=
- =?us-ascii?Q?1jn2K0elWcFY4AuatmKLbgE=3D?=
+	=?us-ascii?Q?2eP0KBU8KViCs6v3s3114M70Yh8BUhIOxnAR94ZgL1pAObyvk8O5ZHj61TQn?=
+ =?us-ascii?Q?oqXWOzpQhmKzb6TSAxIpvCB3WlcnbNROiWhvZibbIcShw4WXePGeuWMoTeVF?=
+ =?us-ascii?Q?nyK4g1+cnKW25A6w6Kz+xReXiby1md2/cgUQeDEIoATTEVPRbGeSSzEaQcGt?=
+ =?us-ascii?Q?vtAL2V6ec72C0F+xguP8Z8NCAZpTPitjcJDoNAXK5wCDLOUzciA4oCG1eBz/?=
+ =?us-ascii?Q?BG5hki1ODh5F4KekZSqKKrv+rHopt0yWugjrfBNXAIOvRfZXNskjDB9iZRLI?=
+ =?us-ascii?Q?JOj4OxUcd9G+Mni7SxxYYsEhr4Maj6gSKCEYY7eAHsq8eHHAcTBwWRSlMnb2?=
+ =?us-ascii?Q?J2/8WfNuzw4NqkNynIk+Bz88QO6zVpH45rzKBfNWg0nDR0p8vfZeaJrSEREV?=
+ =?us-ascii?Q?NSmOyK/vCAaBjEc/oCjrHxj6lo4Kot63fy5D70h3u83u5Bm7pHVVoMjNi0NJ?=
+ =?us-ascii?Q?fsBh5hHfnFOb2TpbnKbI6jTuVI8E6Pc7PcaaYRr/tKupw4ody5S2SZLIPf/5?=
+ =?us-ascii?Q?znhY+2er9/4H0uCcoDPcY3hMo+Fn92n5CKEU5ExBSr5t+Zcqz2uiHGz1dtvs?=
+ =?us-ascii?Q?3uklA6oOQu/g8qnM4qcfCRlkK0jZHwlCpKKHfsbIxXmiAanBq7JPiZ+ZjOpf?=
+ =?us-ascii?Q?JhoTIBQCvm4O9MQLkpIfBPfeiwfKVdYsdhJhpBN8zf4LhLja+LyB534D79cx?=
+ =?us-ascii?Q?rRTq9zq9bfFCqleSUs4M2+U6dh80D3pvtCPUJj1AhI1XhiQyMHxLN+SZTjQD?=
+ =?us-ascii?Q?t91Mxioft53crMSq4lR8KN9gggygHHdsVbDSCsTMgNvz9BJ6QgDaXAGs7SxI?=
+ =?us-ascii?Q?SGTDQ8K5DyaUM86PkQi076bBfhL04EPpPIXXRfmEuMZHw1UxMAziYEpkI/Hb?=
+ =?us-ascii?Q?amtOvAddRFz+YNW3Z//qRYhvvU+wegIipowQ9OW7xJyKEMLv2ChHmUJvgPjt?=
+ =?us-ascii?Q?20Fmqzpv1ogcpBTcVJgK2xLFRJymsaAj8/q4KqnqX/KKc4iUCtiE6eC7ne4b?=
+ =?us-ascii?Q?tn0RGp7ujVJGaCiAbgtERdikJRsB1nxm2/XVoHYHoCUGFgH/FeWQd5eTI1l8?=
+ =?us-ascii?Q?VGbF1NNHRJS6WUTbiR2kl+SmdxsixFnk94m/oTo+Hvo2wY0ICREDElS2/1ii?=
+ =?us-ascii?Q?iUUK3mj/EnCP6+n5AdOo0zdWO+KnRlI8K2MQvCFLoYL6zdRmVyJ5nTDV6EOl?=
+ =?us-ascii?Q?tka0GQoeDTU2KhGiwYeY/YBByONQBZkZkfDaE9DJpnVxmoCxRL7Di/wjOKL5?=
+ =?us-ascii?Q?0nw4dA7jo/NmL7SL+5yk2CYe+ayiReA8YTQiBm96bz+ChAsH3c/0f8/O/Dy5?=
+ =?us-ascii?Q?IJvNH5t5Xpjdz0r4dm6yS9sDJ19L9v4mWvpx9dbpqLeIxQGgebWZqK4LZuBp?=
+ =?us-ascii?Q?9DNLDTsCJzCUT8R8bQC42AR4t5XWtl2oe7PGWeJBFCjWTWpmE7FnfeEojSxV?=
+ =?us-ascii?Q?vQWOnK7eWxMF98Oyy9IGyZRdyBq6Lmn1cNnULkbbkw/Wxqvs6IGjOKt8GqSI?=
+ =?us-ascii?Q?RM//NTKTuzQIawPVKLgzAU0drA7sVOhkx3DIWFejxK6iKzDCLHcpaQU8tI8y?=
+ =?us-ascii?Q?Oc9exX+2L8rFl3GzziXJRvoCppr92Bq3Cpr7Fqkp/FWw2puHuwc7ueYStlEA?=
+ =?us-ascii?Q?uDcZElyOzJt8p+MUISjeSSE=3D?=
 X-OriginatorOrg: siliconsignals.io
-X-MS-Exchange-CrossTenant-Network-Message-Id: d4046c82-b512-4a5a-34cc-08dccb55910f
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5f24d421-65b9-41ae-ad6a-08dccb559441
 X-MS-Exchange-CrossTenant-AuthSource: PN3P287MB1829.INDP287.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Sep 2024 13:45:54.7221
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Sep 2024 13:46:00.0690
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 7ec5089e-a433-4bd1-a638-82ee62e21d37
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: xwr5YYWQutZ+TskgViTUWWkyYk7DlSGjjnxL8TOuZ/qksOonY5kPD7x6xU0YMWsgC7D9stq5FcRd0MvGR2+NBwqv2HjpFiIpx39hM7M8jbI=
+X-MS-Exchange-CrossTenant-UserPrincipalName: xsK8Py5cLT/tDttzsSEWoIw82Sg/z+nt6JKrVLBotZqbdxRqofPmFqRSZm2XbIApjpjPGaU2a7zYvRuFl2CT/1f71WS83XhadVjjTSWO9CM=
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: PN2P287MB0597
 
-Add initial support for Variscite Symphony evaluation kit with
-VAR-SOM-MX8MP System on Module.
+Adds the DTSI file for the Variscite VAR-SOM-MX8MP System on Module which
+is delivered with the Variscite Symphony Evaluation Kit.
 
-Change in v2:
+Initial support includes:
+- Serial console
+- eMMC
+- SD card
 
-in patch 1/2:
-        - Removed unnecessary property: "status"
-
-in patch 2/2:
-        - Appropriate board name instead of the SoM alone
-
-Change in v3:
-
-in patch 1/2:
-        - Removed top-level compatible from dtsi
-
-in patch 2/2:
-        - Drop VAR-SOM-MX8MP SoM compatible alone
-
-Tarang Raval (2):
-  arm64: dts: imx8mp-var-som-symphony: Add Variscite Symphony board and
-    VAR-SOM-MX8MP SoM
-  dt-bindings: arm: fsl: Add Variscite Symphony board and VAR-SOM-MX8MP
-    SoM
-
- .../devicetree/bindings/arm/fsl.yaml          |   6 +
+Signed-off-by: Tarang Raval <tarang.raval@siliconsignals.io>
+---
  arch/arm64/boot/dts/freescale/Makefile        |   1 +
  .../dts/freescale/imx8mp-var-som-symphony.dts |  11 +
  .../boot/dts/freescale/imx8mp-var-som.dtsi    | 359 ++++++++++++++++++
- 4 files changed, 377 insertions(+)
+ 3 files changed, 371 insertions(+)
  create mode 100644 arch/arm64/boot/dts/freescale/imx8mp-var-som-symphony.dts
  create mode 100644 arch/arm64/boot/dts/freescale/imx8mp-var-som.dtsi
 
+diff --git a/arch/arm64/boot/dts/freescale/Makefile b/arch/arm64/boot/dts/freescale/Makefile
+index bd443c2bc5a4..03db6aef757d 100644
+--- a/arch/arm64/boot/dts/freescale/Makefile
++++ b/arch/arm64/boot/dts/freescale/Makefile
+@@ -177,6 +177,7 @@ dtb-$(CONFIG_ARCH_MXC) += imx8mp-skov-revb-hdmi.dtb
+ dtb-$(CONFIG_ARCH_MXC) += imx8mp-skov-revb-lt6.dtb
+ dtb-$(CONFIG_ARCH_MXC) += imx8mp-skov-revb-mi1010ait-1cp1.dtb
+ dtb-$(CONFIG_ARCH_MXC) += imx8mp-tqma8mpql-mba8mpxl.dtb
++dtb-$(CONFIG_ARCH_MXC) += imx8mp-var-som-symphony.dtb
+ dtb-$(CONFIG_ARCH_MXC) += imx8mp-venice-gw71xx-2x.dtb
+ dtb-$(CONFIG_ARCH_MXC) += imx8mp-venice-gw72xx-2x.dtb
+ dtb-$(CONFIG_ARCH_MXC) += imx8mp-venice-gw73xx-2x.dtb
+diff --git a/arch/arm64/boot/dts/freescale/imx8mp-var-som-symphony.dts b/arch/arm64/boot/dts/freescale/imx8mp-var-som-symphony.dts
+new file mode 100644
+index 000000000000..36d3eb865202
+--- /dev/null
++++ b/arch/arm64/boot/dts/freescale/imx8mp-var-som-symphony.dts
+@@ -0,0 +1,11 @@
++// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
++/*
++ * Copyright 2024 Variscite Ltd.
++ */
++
++#include "imx8mp-var-som.dtsi"
++
++/ {
++	model = "Variscite VAR-SOM-MX8M-PLUS on Symphony-Board";
++	compatible = "variscite,var-som-mx8mp-symphony", "variscite,var-som-mx8mp", "fsl,imx8mp";
++};
+diff --git a/arch/arm64/boot/dts/freescale/imx8mp-var-som.dtsi b/arch/arm64/boot/dts/freescale/imx8mp-var-som.dtsi
+new file mode 100644
+index 000000000000..f1bd2d9d585b
+--- /dev/null
++++ b/arch/arm64/boot/dts/freescale/imx8mp-var-som.dtsi
+@@ -0,0 +1,359 @@
++// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
++/*
++ * Copyright 2024 Variscite Ltd.
++ *
++ * Author: Tarang Raval <tarang.raval@siliconsignals.io>
++ */
++
++/dts-v1/;
++
++#include <dt-bindings/phy/phy-imx8-pcie.h>
++#include <dt-bindings/leds/common.h>
++#include <dt-bindings/usb/pd.h>
++#include "imx8mp.dtsi"
++
++/ {
++	model = "Variscite VAR-SOM-MX8M Plus module";
++
++	chosen {
++		stdout-path = &uart2;
++	};
++	
++	gpio-leds {
++	        compatible = "gpio-leds";
++	
++	        led-0 {
++	                function = LED_FUNCTION_POWER;
++	                gpios = <&pca9534 0 GPIO_ACTIVE_HIGH>;
++	                linux,default-trigger = "heartbeat";
++	        };
++	};
++	
++	memory@40000000 {
++		device_type = "memory";
++		reg = <0x0 0x40000000 0 0xc0000000>,
++		      <0x1 0x00000000 0 0xc0000000>;
++	};
++
++
++	reg_usdhc2_vmmc: regulator-usdhc2-vmmc {
++	        compatible = "regulator-fixed";
++	        regulator-name = "VSD_3V3";
++	        regulator-min-microvolt = <3300000>;
++	        regulator-max-microvolt = <3300000>;
++	        gpios = <&gpio4 22 GPIO_ACTIVE_HIGH>;
++	        enable-active-high;
++	        startup-delay-us = <100>;
++	        off-on-delay-us = <12000>;
++	};
++};
++
++&A53_0 {
++	cpu-supply = <&buck2>;
++};
++
++&A53_1 {
++	cpu-supply = <&buck2>;
++};
++
++&A53_2 {
++	cpu-supply = <&buck2>;
++};
++
++&A53_3 {
++	cpu-supply = <&buck2>;
++};
++
++&i2c1 {
++	clock-frequency = <400000>;
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_i2c1>;
++	status = "okay";
++
++	pmic@25 {
++		compatible = "nxp,pca9450c";
++		reg = <0x25>;
++		pinctrl-names = "default";
++		pinctrl-0 = <&pinctrl_pmic>;
++		interrupt-parent = <&gpio5>;
++		interrupts = <4 IRQ_TYPE_LEVEL_LOW>;
++
++		regulators {
++			buck1: BUCK1 {
++				regulator-name = "BUCK1";
++				regulator-min-microvolt = <600000>;
++				regulator-max-microvolt = <2187500>;
++				regulator-boot-on;
++				regulator-always-on;
++				regulator-ramp-delay = <3125>;
++			};
++
++			buck2: BUCK2 {
++				regulator-name = "BUCK2";
++				regulator-min-microvolt = <600000>;
++				regulator-max-microvolt = <2187500>;
++				regulator-boot-on;
++				regulator-always-on;
++				regulator-ramp-delay = <3125>;
++				nxp,dvs-run-voltage = <950000>;
++				nxp,dvs-standby-voltage = <850000>;
++			};
++
++			buck4: BUCK4 {
++				regulator-name = "BUCK4";
++				regulator-min-microvolt = <600000>;
++				regulator-max-microvolt = <3400000>;
++				regulator-boot-on;
++				regulator-always-on;
++			};
++
++			buck5: BUCK5 {
++				regulator-name = "BUCK5";
++				regulator-min-microvolt = <600000>;
++				regulator-max-microvolt = <3400000>;
++				regulator-boot-on;
++				regulator-always-on;
++			};
++
++			buck6: BUCK6 {
++				regulator-name = "BUCK6";
++				regulator-min-microvolt = <600000>;
++				regulator-max-microvolt = <3400000>;
++				regulator-boot-on;
++				regulator-always-on;
++			};
++
++			ldo1: LDO1 {
++				regulator-name = "LDO1";
++				regulator-min-microvolt = <1600000>;
++				regulator-max-microvolt = <3300000>;
++				regulator-boot-on;
++				regulator-always-on;
++			};
++
++			ldo2: LDO2 {
++				regulator-name = "LDO2";
++				regulator-min-microvolt = <800000>;
++				regulator-max-microvolt = <1150000>;
++				regulator-boot-on;
++				regulator-always-on;
++			};
++
++			ldo3: LDO3 {
++				regulator-name = "LDO3";
++				regulator-min-microvolt = <800000>;
++				regulator-max-microvolt = <3300000>;
++				regulator-boot-on;
++				regulator-always-on;
++			};
++
++			ldo4: LDO4 {
++				regulator-name = "LDO4";
++				regulator-min-microvolt = <1800000>;
++				regulator-max-microvolt = <1800000>;
++				regulator-always-on;
++			};
++
++			ldo5: LDO5 {
++				regulator-name = "LDO5";
++				regulator-min-microvolt = <1800000>;
++				regulator-max-microvolt = <3300000>;
++			};
++		};
++	};
++};
++
++&i2c3 {
++        clock-frequency = <400000>;
++        pinctrl-names = "default";
++        pinctrl-0 = <&pinctrl_i2c3>;
++        status = "okay";
++
++	/* GPIO expander */
++	pca9534: gpio@20 {
++	        compatible = "nxp,pca9534";
++	        reg = <0x20>;
++	        pinctrl-names = "default";
++	        pinctrl-0 = <&pinctrl_pca9534>;
++	        gpio-controller;
++	        #gpio-cells = <2>;
++	        interrupt-parent = <&gpio1>;
++	        interrupts = <15 IRQ_TYPE_EDGE_FALLING>;
++	        wakeup-source;
++	
++	        usb3-sata-sel-hog {
++	                gpio-hog;
++	                gpios = <4 0>;
++	                output-low;
++	                line-name = "usb3_sata_sel";
++	        };
++	};
++};
++
++/* Console */
++&uart2 {
++        pinctrl-names = "default";
++        pinctrl-0 = <&pinctrl_uart2>;
++        status = "okay";
++};
++
++/* SD-card */
++&usdhc2 {
++        pinctrl-names = "default", "state_100mhz", "state_200mhz";
++        pinctrl-0 = <&pinctrl_usdhc2>, <&pinctrl_usdhc2_gpio>;
++        pinctrl-1 = <&pinctrl_usdhc2_100mhz>, <&pinctrl_usdhc2_gpio>;
++        pinctrl-2 = <&pinctrl_usdhc2_200mhz>, <&pinctrl_usdhc2_gpio>;
++        cd-gpios = <&gpio1 14 GPIO_ACTIVE_LOW>;
++        vmmc-supply = <&reg_usdhc2_vmmc>;
++        bus-width = <4>;
++        status = "okay";
++};
++
++/* eMMC */
++&usdhc3 {
++	pinctrl-names = "default", "state_100mhz", "state_200mhz";
++	pinctrl-0 = <&pinctrl_usdhc3>;
++	pinctrl-1 = <&pinctrl_usdhc3_100mhz>;
++	pinctrl-2 = <&pinctrl_usdhc3_200mhz>;
++	bus-width = <8>;
++	non-removable;
++	status = "okay";
++};
++
++&wdog1 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_wdog>;
++	fsl,ext-reset-output;
++	status = "okay";
++};
++
++&iomuxc {
++
++	pinctrl_i2c1: i2c1grp {
++		fsl,pins = <
++			MX8MP_IOMUXC_SD1_DATA4__I2C1_SCL				0x400001c2
++			MX8MP_IOMUXC_SD1_DATA5__I2C1_SDA				0x400001c2
++		>;
++	};
++
++	pinctrl_i2c3: i2c3grp {
++	        fsl,pins = <
++	                MX8MP_IOMUXC_I2C3_SCL__I2C3_SCL                                 0x400001c2
++	                MX8MP_IOMUXC_I2C3_SDA__I2C3_SDA                                 0x400001c2
++	        >;
++	};
++
++	pinctrl_pca9534: pca9534grp {
++	        fsl,pins = <
++	                MX8MP_IOMUXC_GPIO1_IO15__GPIO1_IO15                             0xc0
++	        >;
++	};
++	
++	pinctrl_pmic: pmicgrp {
++		fsl,pins = <
++			MX8MP_IOMUXC_SPDIF_RX__GPIO5_IO04				0x1c0
++		>;
++	};
++
++	pinctrl_uart2: uart2grp {
++	        fsl,pins = <
++        	        MX8MP_IOMUXC_UART2_RXD__UART2_DCE_RX                            0x40
++                	MX8MP_IOMUXC_UART2_TXD__UART2_DCE_TX                            0x40
++        	>;
++	};
++
++	pinctrl_usdhc2_gpio: usdhc2-gpiogrp {
++	        fsl,pins = <
++	                MX8MP_IOMUXC_GPIO1_IO14__GPIO1_IO14                             0x1c4
++	                MX8MP_IOMUXC_SAI2_RXC__GPIO4_IO22                               0x10
++	                MX8MP_IOMUXC_SD2_CD_B__GPIO2_IO12                               0xc0
++	        >;
++	};
++	
++	pinctrl_usdhc2: usdhc2grp {
++	        fsl,pins = <
++	                MX8MP_IOMUXC_SD2_CLK__USDHC2_CLK                                0x190
++	                MX8MP_IOMUXC_SD2_CMD__USDHC2_CMD                                0x1d0
++	                MX8MP_IOMUXC_SD2_DATA0__USDHC2_DATA0                            0x1d0
++	                MX8MP_IOMUXC_SD2_DATA1__USDHC2_DATA1                            0x1d0
++	                MX8MP_IOMUXC_SD2_DATA2__USDHC2_DATA2                            0x1d0
++	                MX8MP_IOMUXC_SD2_DATA3__USDHC2_DATA3                            0x1d0
++	        >;
++	};
++	
++	pinctrl_usdhc2_100mhz: usdhc2-100mhzgrp {
++	        fsl,pins = <
++	                MX8MP_IOMUXC_SD2_CLK__USDHC2_CLK                                0x194
++	                MX8MP_IOMUXC_SD2_CMD__USDHC2_CMD                                0x1d4
++	                MX8MP_IOMUXC_SD2_DATA0__USDHC2_DATA0                            0x1d4
++	                MX8MP_IOMUXC_SD2_DATA1__USDHC2_DATA1                            0x1d4
++	                MX8MP_IOMUXC_SD2_DATA2__USDHC2_DATA2                            0x1d4
++	                MX8MP_IOMUXC_SD2_DATA3__USDHC2_DATA3                            0x1d4
++	        >;
++	};
++	
++	pinctrl_usdhc2_200mhz: usdhc2-200mhzgrp {
++	        fsl,pins = <
++	                MX8MP_IOMUXC_SD2_CLK__USDHC2_CLK                                0x196
++	                MX8MP_IOMUXC_SD2_CMD__USDHC2_CMD                                0x1d6
++	                MX8MP_IOMUXC_SD2_DATA0__USDHC2_DATA0                            0x1d6
++	                MX8MP_IOMUXC_SD2_DATA1__USDHC2_DATA1                            0x1d6
++	                MX8MP_IOMUXC_SD2_DATA2__USDHC2_DATA2                            0x1d6
++	                MX8MP_IOMUXC_SD2_DATA3__USDHC2_DATA3                            0x1d6
++	        >;
++	};
++
++	pinctrl_usdhc3: usdhc3grp {
++		fsl,pins = <
++			MX8MP_IOMUXC_NAND_WE_B__USDHC3_CLK				0x190
++			MX8MP_IOMUXC_NAND_WP_B__USDHC3_CMD				0x1d0
++			MX8MP_IOMUXC_NAND_DATA04__USDHC3_DATA0				0x1d0
++			MX8MP_IOMUXC_NAND_DATA05__USDHC3_DATA1				0x1d0
++			MX8MP_IOMUXC_NAND_DATA06__USDHC3_DATA2				0x1d0
++			MX8MP_IOMUXC_NAND_DATA07__USDHC3_DATA3				0x1d0
++			MX8MP_IOMUXC_NAND_RE_B__USDHC3_DATA4				0x1d0
++			MX8MP_IOMUXC_NAND_CE2_B__USDHC3_DATA5				0x1d0
++			MX8MP_IOMUXC_NAND_CE3_B__USDHC3_DATA6				0x1d0
++			MX8MP_IOMUXC_NAND_CLE__USDHC3_DATA7				0x1d0
++			MX8MP_IOMUXC_NAND_CE1_B__USDHC3_STROBE				0x190
++		>;
++	};
++
++	pinctrl_usdhc3_100mhz: usdhc3-100mhzgrp {
++		fsl,pins = <
++			MX8MP_IOMUXC_NAND_WE_B__USDHC3_CLK				0x194
++			MX8MP_IOMUXC_NAND_WP_B__USDHC3_CMD				0x1d4
++			MX8MP_IOMUXC_NAND_DATA04__USDHC3_DATA0				0x1d4
++			MX8MP_IOMUXC_NAND_DATA05__USDHC3_DATA1				0x1d4
++			MX8MP_IOMUXC_NAND_DATA06__USDHC3_DATA2				0x1d4
++			MX8MP_IOMUXC_NAND_DATA07__USDHC3_DATA3				0x1d4
++			MX8MP_IOMUXC_NAND_RE_B__USDHC3_DATA4				0x1d4
++			MX8MP_IOMUXC_NAND_CE2_B__USDHC3_DATA5				0x1d4
++			MX8MP_IOMUXC_NAND_CE3_B__USDHC3_DATA6				0x1d4
++			MX8MP_IOMUXC_NAND_CLE__USDHC3_DATA7				0x1d4
++			MX8MP_IOMUXC_NAND_CE1_B__USDHC3_STROBE				0x194
++		>;
++	};
++
++	pinctrl_usdhc3_200mhz: usdhc3-200mhzgrp {
++		fsl,pins = <
++			MX8MP_IOMUXC_NAND_WE_B__USDHC3_CLK				0x196
++			MX8MP_IOMUXC_NAND_WP_B__USDHC3_CMD				0x1d6
++			MX8MP_IOMUXC_NAND_DATA04__USDHC3_DATA0				0x1d6
++			MX8MP_IOMUXC_NAND_DATA05__USDHC3_DATA1				0x1d6
++			MX8MP_IOMUXC_NAND_DATA06__USDHC3_DATA2				0x1d6
++			MX8MP_IOMUXC_NAND_DATA07__USDHC3_DATA3				0x1d6
++			MX8MP_IOMUXC_NAND_RE_B__USDHC3_DATA4				0x1d6
++			MX8MP_IOMUXC_NAND_CE2_B__USDHC3_DATA5				0x1d6
++			MX8MP_IOMUXC_NAND_CE3_B__USDHC3_DATA6				0x1d6
++			MX8MP_IOMUXC_NAND_CLE__USDHC3_DATA7				0x1d6
++			MX8MP_IOMUXC_NAND_CE1_B__USDHC3_STROBE				0x196
++		>;
++	};
++
++	pinctrl_wdog: wdoggrp {
++		fsl,pins = <
++			MX8MP_IOMUXC_GPIO1_IO02__WDOG1_WDOG_B				0xc6
++		>;
++	};
++};
 -- 
 2.34.1
 
