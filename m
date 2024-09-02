@@ -1,157 +1,101 @@
-Return-Path: <linux-kernel+bounces-310886-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310890-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 383CD96827B
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 10:55:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 123B9968289
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 10:57:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 693C61C2220C
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 08:55:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C44A12835CA
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 08:57:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EF6E186E3D;
-	Mon,  2 Sep 2024 08:55:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06E731E48A;
+	Mon,  2 Sep 2024 08:56:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NryBVvZW"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MQupa5Ho"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1227186601;
-	Mon,  2 Sep 2024 08:55:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65D4A170A24
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 08:56:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725267348; cv=none; b=uhK1snKCrRbKFvw6xSRfONCPz51w8XfoQTpxIP2seaJOHVRwJZkZVTSTaABoQFWyJyPyH+knbCGoqlAMrFIWPnBAGs0Vp7HNtmxSo7VcF5fIuh8ZkIrvKRO7WxztK3aKHqjucrLAPYAjxVSy59mTaWZkKu5MP6Xd9ZsQbsccsJw=
+	t=1725267418; cv=none; b=Dcn+xVLYjBqnW0SDTrkyhQzGplDC/OwDYGFzUQeSzFt4sDg9j33MLi1pHXGkUvaSB149GZ9Ydg7ppIxZqakWBu7SVfc2ak2qfR59KtlXBOM8mQryi6pVoH6OIw+BCcxGSAcBt9abZ7DLznZQgfd2kT1GGPQx5+MpO9FSKeJi708=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725267348; c=relaxed/simple;
-	bh=RjPpSsWM3JGhvlOM4iXwIuBLlcY7GXRTmC+3FAd7xqc=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=OjfYS44KWUlhGe8IKIKjW4tbnQ4eWFf36K+Q8ajoGtAcuyhUtn8Boc188IdWCvatFiUhpjZlcj5GU9y5+34zFlGHVrg/bNyYObhJg0cvmJNykp62qTkgCDJM+6d2xJ78A7TpxDnC3lp8PX1HLf+56v6U3+Ss5EmgzGPJE9PUIIk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NryBVvZW; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725267347; x=1756803347;
-  h=date:from:to:cc:subject:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=RjPpSsWM3JGhvlOM4iXwIuBLlcY7GXRTmC+3FAd7xqc=;
-  b=NryBVvZW1QlTPzXydD8Z9xpYskMY/Udh2QJ31MSse+jtGCKFjf/mfWDj
-   ojpulIERvU0Rg9zQsyz0WeFLcZWqQwg0ewiT/ANI1BGXDrhuX2MriiKXV
-   DgvPlBrxCVtqbwgVUE6JKU9yXxnvNOAXxfjAw8QSHzwrbhJ6wC2i38HhQ
-   PGjlINnahXEQYbF0xIDJn7oNHdRc4T7YzlgGTU2VIxDNHGc94Xb3n9OSR
-   4p3iy4uvtBBNQtGzoDT11QGakrOonfVw+wFkmOTmFUjmK2v0aDo2tO+LC
-   Hf+kZmtOszxny/P9Q1Xa4VQGKngUV1NhfB4vpdQDUDahb53B5WuBZnu8r
-   Q==;
-X-CSE-ConnectionGUID: NRChuXxRQaShu4jHi96ezw==
-X-CSE-MsgGUID: wBD1mpflTaSgd2lVOa2O+w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11182"; a="23646093"
-X-IronPort-AV: E=Sophos;i="6.10,195,1719903600"; 
-   d="scan'208";a="23646093"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2024 01:55:46 -0700
-X-CSE-ConnectionGUID: R5S1sudLTGihBBpmjgwdFQ==
-X-CSE-MsgGUID: iYXs/cqPQoe8Tt1c9wEh2w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,195,1719903600"; 
-   d="scan'208";a="65047877"
-Received: from unknown (HELO localhost) ([10.217.182.6])
-  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2024 01:55:44 -0700
-Date: Mon, 2 Sep 2024 10:55:39 +0200
-From: Mariusz Tkaczyk <mariusz.tkaczyk@linux.intel.com>
-To: Yu Kuai <yukuai1@huaweicloud.com>
-Cc: mariusz.tkaczyk@intel.com, song@kernel.org, linux-raid@vger.kernel.org,
- linux-kernel@vger.kernel.org, yi.zhang@huawei.com, yangerkun@huawei.com,
- "yukuai (C)" <yukuai3@huawei.com>
-Subject: Re: [PATCH md-6.12 3/7] md: don't record new badblocks for faulty
- rdev
-Message-ID: <20240902105539.00007655@linux.intel.com>
-In-Reply-To: <c9af88ac-111e-19a2-b135-d2a379ed23fc@huaweicloud.com>
-References: <20240830072721.2112006-1-yukuai1@huaweicloud.com>
-	<20240830072721.2112006-4-yukuai1@huaweicloud.com>
-	<20240830122831.0000127d@linux.intel.com>
-	<c9af88ac-111e-19a2-b135-d2a379ed23fc@huaweicloud.com>
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1725267418; c=relaxed/simple;
+	bh=0rpyOm0zg+8iU4qpvBMGbms7jc59/GQhpLhybk20r9k=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=dMjIRtUr+Ha5Dq9ofXAq082yrDoNeEPrFni2WYVHx77t3YKs4KNXOb1RehNxM0YL9LxjfC/SgBtLInelel6LplMEe8w4v76/+rLPiEoNypwlmIn2QWjWoHp45OR8IeDE3SruuWdW5D2H+rFlV6dw99F/bfflUFzmJgIlrXiP8BM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MQupa5Ho; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0423FC4CEC2;
+	Mon,  2 Sep 2024 08:56:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725267417;
+	bh=0rpyOm0zg+8iU4qpvBMGbms7jc59/GQhpLhybk20r9k=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=MQupa5HovbHXnntwazxbOidHpkeLdXaBM1Dv7TZsHj/4UZq03iE01c94l5TCoFe0z
+	 PPCwme7EbYBadIC1NIZ8T4PXvcP/ABtpW+z4RjCxo2YJXOOnmn1gLOcTfEavk9C204
+	 3srZh4OVHatwlVmW6iMpL0J7aQOX1aWCK2cNaE6RNM/m7e1SC8080xuty+FBkZXpWy
+	 32HjAbbPnj+/D5Usgixtvw9G2V1b3dq5cT27pSbbHJsxhksSkSLjNQEfeVNnQP+TcE
+	 5vbLQ5GI7QJ3k6jn6sM8QiBcWp8NaavgpyVFYKJWpj+lXBgSmIfPVwxKya1K+5MKgF
+	 7vtpThheo374Q==
+From: Christian Brauner <brauner@kernel.org>
+To: R Sundar <prosunofficial@gmail.com>,
+	Vlastimil Babka <vbabka@suse.cz>
+Cc: Christian Brauner <brauner@kernel.org>,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	kernel test robot <lkp@intel.com>,
+	Christoph Lameter <cl@linux.com>,
+	Pekka Enberg <penberg@kernel.org>,
+	David Rientjes <rientjes@google.com>,
+	Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Hyeonggon Yoo <42.hyeyoo@gmail.com>
+Subject: Re: [PATCH linux-next v2] mm: Removed @freeptr_offset to prevent doc warning
+Date: Mon,  2 Sep 2024 10:56:04 +0200
+Message-ID: <20240902-neumond-albern-71e76f6c9acc@brauner>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20240902020555.11506-1-prosunofficial@gmail.com>
+References: <20240902020555.11506-1-prosunofficial@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=gbk
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1075; i=brauner@kernel.org; h=from:subject:message-id; bh=0rpyOm0zg+8iU4qpvBMGbms7jc59/GQhpLhybk20r9k=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaRdrb24w5dbg3PDXU4ZibiXPq6WDNPZDwcveDVJP6unr drq/DyfjlIWBjEuBlkxRRaHdpNwueU8FZuNMjVg5rAygQxh4OIUgIms+8/IsLQ0x3dlVvfTI003 ft46LsIhnvshwprHKjkidtP6GwsvOTAyPCsxnL/7j2rI9FWrcju23Jfmc+/e/s9kl2x7KuvEe1t fMwAA
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
 
-On Sat, 31 Aug 2024 09:14:39 +0800
-Yu Kuai <yukuai1@huaweicloud.com> wrote:
-
-> Hi,
+On Mon, 02 Sep 2024 07:35:55 +0530, R Sundar wrote:
+> Removed @freeptr_offset to fix below doc warning.
+> ./mm/slab_common.c:385: warning: Excess function parameter 'freeptr_offset' description in 'kmem_cache_create_usercopy'
 > 
-> ÔÚ 2024/08/30 18:28, Mariusz Tkaczyk Ð´µÀ:
-> > On Fri, 30 Aug 2024 15:27:17 +0800
-> > Yu Kuai <yukuai1@huaweicloud.com> wrote:
-> >   
-> >> From: Yu Kuai <yukuai3@huawei.com>
-> >>
-> >> Faulty will be checked before issuing IO to the rdev, however, rdev can
-> >> be faulty at any time, hence it's possible that rdev_set_badblocks()
-> >> will be called for faulty rdev. In this case, mddev->sb_flags will be
-> >> set and some other path can be blocked by updating super block.
-> >>
-> >> Since faulty rdev will not be accesed anymore, there is no need to
-> >> record new babblocks for faulty rdev and forcing updating super block.
-> >>
-> >> Noted this is not a bugfix, just prevent updating superblock in some
-> >> corner cases, and will help to slice a bug related to external
-> >> metadata[1].
-> >>
-> >> [1]
-> >> https://lore.kernel.org/all/f34452df-810b-48b2-a9b4-7f925699a9e7@linux.intel.com/
-> >>
-> >> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
-> >> ---
-> >>   drivers/md/md.c | 4 ++++
-> >>   1 file changed, 4 insertions(+)
-> >>
-> >> diff --git a/drivers/md/md.c b/drivers/md/md.c
-> >> index 675d89597c7b..a3f7f407fe42 100644
-> >> --- a/drivers/md/md.c
-> >> +++ b/drivers/md/md.c
-> >> @@ -9757,6 +9757,10 @@ int rdev_set_badblocks(struct md_rdev *rdev,
-> >> sector_t s, int sectors, {
-> >>   	struct mddev *mddev = rdev->mddev;
-> >>   	int rv;
-> >> +
-> >> +	if (test_bit(Faulty, &rdev->flags))
-> >> +		return 1;
-> >> +  
-> > 
-> > Blame is volatile, this is why we need a comment here :)
-> > Otherwise, someone may remove that.  
-> 
-> Perhaps something like following?
-> 
-> /*
->   * record new babblocks for faulty rdev will force unnecessary
->   * super block updating.
->   */
 > 
 
-Almost, we need to refer to external context because this is important to
-mention where to expect issues:
+(I just love documentation so much that I document things twice?)
 
-/*
- * Recording new badblocks for faulty rdev will force unnecessary
- * super block updating. This is fragile for external management because
- * userspace daemon may trying to remove this device and deadlock may
- * occur. This will be probably solved in the mdadm, but it is safer to avoid
- * it.
- */
+---
 
-In my testing, I observed that it improves failing bios and device removal
-path (recording badblock is simply expensive if there are many badblocks) so
-the devices are removed faster but I don't have data here, this is what I saw.
+Applied to the vfs.file branch of the vfs/vfs.git tree.
+Patches in the vfs.file branch should appear in linux-next soon.
 
-Obviously, it is optimization.
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
-Mariusz
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
+
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.file
+
+[1/1] mm: Removed @freeptr_offset to prevent doc warning
+      https://git.kernel.org/vfs/vfs/c/6e016babce7c
 
