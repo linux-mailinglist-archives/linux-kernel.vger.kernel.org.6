@@ -1,134 +1,250 @@
-Return-Path: <linux-kernel+bounces-310482-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310483-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0983967D9B
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 03:53:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59F17967D9C
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 03:56:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E60B2825E1
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 01:53:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 715D11C21C4A
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 01:56:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68548224EF;
-	Mon,  2 Sep 2024 01:53:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mvT2hFL6"
-Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C2B6225D9
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 01:53:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 894F529CEB;
+	Mon,  2 Sep 2024 01:56:44 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B81F718641;
+	Mon,  2 Sep 2024 01:56:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725242022; cv=none; b=AFRFvInt5gu2/rh0usABXR1p6LjG9byGUEpSSko58TmYr9GdxvUuQ8sXDCkA8lD+UN6un6EIufO+Hhq/uLCccf7692A3+VzP88FeJEYwEv/7bVHyFHFvbqcFN6/fQuwwEklGPW/yobinG1zNk7KBspOvS04lBeTum5KpLpT/Gkg=
+	t=1725242204; cv=none; b=tdVwC1dU0IjxDi4pAXTc4Bt/a/iTyhz4GzTS+T1N26WW7oRPIZCsW65mglnVbaoTh/4Cu/UWFIULjb3hkF9XUncacqCwkG70XDhIPKitY7McVUAWG3ljM18tJgssmGYwqYkCPOquLsNk8QTSojY3igUTBxEKU8Qyp4xf+UJirnA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725242022; c=relaxed/simple;
-	bh=5KPqX+tLpiHuMvd0pv73RszLlE08Sy9qvpJ4tsDQnrA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QrX515qhv5+WsrsB4TSRinKrxYoxkLifjEuV57yCd/XoNvn5ri+n48WmIELTVA0/Ra3LarctcX4HYtg0VWs1JxPCyHDeOGnSGoBBgEUFvRVVX3pmNekqLkFRnDFp/s9AddTB7qbn4PlFucjZCOgmKB52Pa8Zad4B//qvuo4jqtk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mvT2hFL6; arc=none smtp.client-ip=209.85.216.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-2d8a54f1250so667701a91.0
-        for <linux-kernel@vger.kernel.org>; Sun, 01 Sep 2024 18:53:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725242021; x=1725846821; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=fyP5aDz0R/gRER/agXZOL8jT6PaxganlgaLK4Ts88cM=;
-        b=mvT2hFL66C68yUHSPRSsRYgI3vso7Wl+Jmdz33OMKP8hTWGfDaE1rK61yq2hKtl1lG
-         Y0B5mAFwVyIXVM+z8YZcjmhj/hAqupRfAXnIdOz7CVpoCd6z0Y4bNIL5O12etQ2KlC7o
-         E3NiWMOv9yOs0Oi0I8uV6Ohq5Ic64vBBVJaOrTnMsp3p+hPD7/Fl3jVQ7LyLac7HkCJV
-         ucDvMYtzIx0lQPZOUeI3YCOY6e4OXwG3oOfF2OZ5iVWJIyWRBZHnaMgaCa1gE8NPPi+J
-         FCsfmQPr8sZa3a37sf35/I1l+IyHsIRg5K0wPRClCA7lbLjHFnF+xNpkhWJz03IukpmO
-         RLIg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725242021; x=1725846821;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=fyP5aDz0R/gRER/agXZOL8jT6PaxganlgaLK4Ts88cM=;
-        b=fe3ruKAJSs+ZoIg8YLZSFtQt2/wuZIhXGxmYEouxCYmGkgQbqUxV8MvJpG2euDn7b8
-         5LRim8uCfWfciLQm2MxSbRInwuriGlYEhFK+o7j6KlF3x8DG+THVBqaKNHgbwRpZvDBi
-         fN6HWZzbIsIJJMKacgnGeKnvqiL4z5zYe1JtpD1YyUQefQQXCH6bwqCFOwp3zDhDEKLJ
-         riBvMj+WSiRaIm/8DCmS3a03YE1S72vWZn4OeCjMeFvxIK0aSWvsNvL7wYblPTWydn1m
-         GUaNPKxoO5cngy0VHK13ICKIqREMZ2xojcv7q7h/5hFdrZ0bz4kFMCnizDq0LSl2nABs
-         jOqQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVYze6Mp3MC74NTl1TbN/yf+8SshDGo4pO5CV5noFxevGrnTfizT18vP+FNp4t+8UIGTansSWzPsmDDYrY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxFZtm6K34ahMyshnKchGDJPDxCHY4xi6CCNqD6h7rbpL5NmHMY
-	KA5bmbTWPCbJT+0RqTS4u5sQFc1uHrAXKILyrf39jubTE4ajl6sN
-X-Google-Smtp-Source: AGHT+IHvBYdMun9onEhBNHM/CPJ12VzBY2PcBvi74m92DhN8bO+iMuO2AG0YvlPSW/AXSYBPdpR/Tw==
-X-Received: by 2002:a17:90a:eb88:b0:2d8:8bfd:d10b with SMTP id 98e67ed59e1d1-2d8905ecf1bmr4861340a91.26.1725242020400;
-        Sun, 01 Sep 2024 18:53:40 -0700 (PDT)
-Received: from [192.168.1.6] ([58.29.143.236])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d8aba505bfsm2695080a91.8.2024.09.01.18.53.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 01 Sep 2024 18:53:39 -0700 (PDT)
-Message-ID: <fbca5a6c-d1c2-488a-a605-7403aa7db21e@gmail.com>
-Date: Mon, 2 Sep 2024 10:53:33 +0900
+	s=arc-20240116; t=1725242204; c=relaxed/simple;
+	bh=x7T9w0Nw4AMzEYdKwTxYy2qgqPNk5PTKmKM9FqTHmqY=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=Ef35EO+lNbVSnOrCONe6motk8elJ6Bb7Ivbshqe/DhY1WTjNnwz4I56YKqgfmSSEzXm2QQJEn/9tJwiODTECugmqLtECQ+f2twLpES2GV3Mv+ib0q8Iv38xuJq4vSfYBIEGUPkzdTf0BlIO/MyevqreAzTwjnRQ7kDLjbU8zGVE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [10.20.42.62])
+	by gateway (Coremail) with SMTP id _____8AxHutVG9Vm_OUnAA--.13011S3;
+	Mon, 02 Sep 2024 09:56:37 +0800 (CST)
+Received: from [10.20.42.62] (unknown [10.20.42.62])
+	by front2 (Coremail) with SMTP id qciowMAxbeRUG9VmNJcDAA--.11130S3;
+	Mon, 02 Sep 2024 09:56:37 +0800 (CST)
+Subject: Re: [PATCH v6 3/3] LoongArch: KVM: Add vm migration support for LBT
+ registers
+To: Huacai Chen <chenhuacai@kernel.org>
+Cc: Tianrui Zhao <zhaotianrui@loongson.cn>, WANG Xuerui <kernel@xen0n.name>,
+ kvm@vger.kernel.org, loongarch@lists.linux.dev,
+ linux-kernel@vger.kernel.org, Jiaxun Yang <jiaxun.yang@flygoat.com>
+References: <20240730075744.1215856-1-maobibo@loongson.cn>
+ <20240730075744.1215856-4-maobibo@loongson.cn>
+ <CAAhV-H7D80huYzF6ewZqcgx8MTzWZNFXJHOahoJ33zJYX1kyAw@mail.gmail.com>
+From: maobibo <maobibo@loongson.cn>
+Message-ID: <13276416-c62b-b33d-1824-7764122ef863@loongson.cn>
+Date: Mon, 2 Sep 2024 09:56:06 +0800
+User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 10/11] sched_ext: Implement
- scx_bpf_dispatch[_vtime]_from_dsq()
-To: Andrea Righi <andrea.righi@linux.dev>, Tejun Heo <tj@kernel.org>
-Cc: void@manifault.com, kernel-team@meta.com, linux-kernel@vger.kernel.org,
- Daniel Hodges <hodges.daniel.scott@gmail.com>,
- Dan Schatzberg <schatzberg.dan@gmail.com>,
- "kernel-dev@igalia.com" <kernel-dev@igalia.com>
-References: <20240830110415.116090-1-tj@kernel.org>
- <20240830110415.116090-11-tj@kernel.org> <ZtMpIb38MSn5r4-U@gpd3>
- <ZtNC6l9nUEPnneag@slm.duckdns.org> <ZtOH1YlEgyP45UkU@gpd3>
-From: Changwoo Min <multics69@gmail.com>
-Content-Language: en-US, ko-KR, en-US-large, ko
-In-Reply-To: <ZtOH1YlEgyP45UkU@gpd3>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <CAAhV-H7D80huYzF6ewZqcgx8MTzWZNFXJHOahoJ33zJYX1kyAw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qciowMAxbeRUG9VmNJcDAA--.11130S3
+X-CM-SenderInfo: xpdruxter6z05rqj20fqof0/
+X-Coremail-Antispam: 1Uk129KBj93XoW3GF1kXr45GrWfZrWrKw15Awc_yoW7uF4xpF
+	1jyF4fGr18Kr1xC3yxKF1q9r17Xr4xAr4kuFyIqay8KrZ0vr95tw48trnxGFy3Ar1kurWx
+	u3Z0yw1jkF97J3gCm3ZEXasCq-sJn29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUUv0b4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r106r15M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_JFI_Gr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
+	Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12xvs2x26I8E6xACxx1l5I
+	8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AK
+	xVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7I2V7IY0VAS07AlzV
+	AYIcxG8wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E
+	14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw1lIx
+	kGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAF
+	wI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r
+	4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7IU1EksDUU
+	UUU==
 
 
+Hi Huacai,
 
-On 24. 9. 1. 06:15, Andrea Righi wrote:
-
->>>> +__bpf_kfunc bool scx_bpf_dispatch_from_dsq(struct bpf_iter_scx_dsq *it__iter,
->>>> +					   struct task_struct *p, u64 dsq_id,
->>>> +					   u64 slice, u64 enq_flags)
->>>> +{
->>>> +	return scx_dispatch_from_dsq((struct bpf_iter_scx_dsq_kern *)it__iter,
->>>> +				     p, dsq_id, slice, 0, enq_flags);
->>>> +}
->>>> +
->>>> +/**
->>>> + * scx_bpf_dispatch_vtime_from_dsq - Move a task from DSQ iteration to a PRIQ DSQ
->>>> + * @it__iter: DSQ iterator in progress
->>>> + * @p: task to transfer
->>>> + * @dsq_id: DSQ to move @p to
->>>> + * @slice: duration @p can run for in nsecs, 0 to keep the current value
->>>> + * @vtime: @p's ordering inside the vtime-sorted queue of the target DSQ
->>>> + * @enq_flags: SCX_ENQ_*
->>>
->>> Hm... can we pass 6 arguments to a kfunc? I think we're limited to 5,
->>> unless I'm missing something here.
->>
->> Hah, I actually don't know and didn't test the vtime variant. Maybe I should
->> just drop the @slice and @vtime. They can be set by the caller explicitly
->> before calling these kfuncs anyway although there are some concerns around
->> ownership (ie. the caller can't be sure that the task has already been
->> dispatched by someone else before scx_bpf_dispatch_from_dsq() commits). Or
->> maybe I should pack the optional arguments into a struct. I'll think more
->> about it.
+On 2024/8/31 下午10:49, Huacai Chen wrote:
+> Hi, Bibo,
 > 
-> IMHO we can simply drop them, introducing a separate struct makes the
-> API a bit inconsistent with scx_bpf_dispatch() (and I don't think we
-> want to change also scx_bpf_dispatch() for that).
+> On Tue, Jul 30, 2024 at 3:57 PM Bibo Mao <maobibo@loongson.cn> wrote:
+>>
+>> Every vcpu has separate LBT registers. And there are four scr registers,
+>> one flags and ftop register for LBT extension. When VM migrates, VMM
+>> needs to get LBT registers for every vcpu.
+>>
+>> Here macro KVM_REG_LOONGARCH_LBT is added for new vcpu lbt register type,
+>> the following macro is added to get/put LBT registers.
+>>    KVM_REG_LOONGARCH_LBT_SCR0
+>>    KVM_REG_LOONGARCH_LBT_SCR1
+>>    KVM_REG_LOONGARCH_LBT_SCR2
+>>    KVM_REG_LOONGARCH_LBT_SCR3
+>>    KVM_REG_LOONGARCH_LBT_EFLAGS
+>>    KVM_REG_LOONGARCH_LBT_FTOP
+>>
+>> Signed-off-by: Bibo Mao <maobibo@loongson.cn>
+>> ---
+>>   arch/loongarch/include/uapi/asm/kvm.h |  9 +++++
+>>   arch/loongarch/kvm/vcpu.c             | 56 +++++++++++++++++++++++++++
+>>   2 files changed, 65 insertions(+)
+>>
+>> diff --git a/arch/loongarch/include/uapi/asm/kvm.h b/arch/loongarch/include/uapi/asm/kvm.h
+>> index 49bafac8b22d..003fb766c93f 100644
+>> --- a/arch/loongarch/include/uapi/asm/kvm.h
+>> +++ b/arch/loongarch/include/uapi/asm/kvm.h
+>> @@ -64,6 +64,7 @@ struct kvm_fpu {
+>>   #define KVM_REG_LOONGARCH_KVM          (KVM_REG_LOONGARCH | 0x20000ULL)
+>>   #define KVM_REG_LOONGARCH_FPSIMD       (KVM_REG_LOONGARCH | 0x30000ULL)
+>>   #define KVM_REG_LOONGARCH_CPUCFG       (KVM_REG_LOONGARCH | 0x40000ULL)
+>> +#define KVM_REG_LOONGARCH_LBT          (KVM_REG_LOONGARCH | 0x50000ULL)
+>>   #define KVM_REG_LOONGARCH_MASK         (KVM_REG_LOONGARCH | 0x70000ULL)
+> I think KVM_REG_LOONGARCH_MASK should contain all above register
+> classes, so should it be  (KVM_REG_LOONGARCH | 0x370000ULL)?
+Sorry, maybe I miss something. What is the meaning of 0x370000ULL? How 
+does the value come from?
 
-Dropping @slice and @vtime would be cleaner in terms of the API
-interface. Some use cases simply move a task from one DSQ to
-another (e.g., from a shared DSQ to a per-domain DSQ).
+> 
+>>   #define KVM_CSR_IDX_MASK               0x7fff
+>>   #define KVM_CPUCFG_IDX_MASK            0x7fff
+>> @@ -77,6 +78,14 @@ struct kvm_fpu {
+>>   /* Debugging: Special instruction for software breakpoint */
+>>   #define KVM_REG_LOONGARCH_DEBUG_INST   (KVM_REG_LOONGARCH_KVM | KVM_REG_SIZE_U64 | 3)
+>>
+>> +/* LBT registers */
+>> +#define KVM_REG_LOONGARCH_LBT_SCR0     (KVM_REG_LOONGARCH_LBT | KVM_REG_SIZE_U64 | 1)
+>> +#define KVM_REG_LOONGARCH_LBT_SCR1     (KVM_REG_LOONGARCH_LBT | KVM_REG_SIZE_U64 | 2)
+>> +#define KVM_REG_LOONGARCH_LBT_SCR2     (KVM_REG_LOONGARCH_LBT | KVM_REG_SIZE_U64 | 3)
+>> +#define KVM_REG_LOONGARCH_LBT_SCR3     (KVM_REG_LOONGARCH_LBT | KVM_REG_SIZE_U64 | 4)
+>> +#define KVM_REG_LOONGARCH_LBT_EFLAGS   (KVM_REG_LOONGARCH_LBT | KVM_REG_SIZE_U64 | 5)
+>> +#define KVM_REG_LOONGARCH_LBT_FTOP     (KVM_REG_LOONGARCH_LBT | KVM_REG_SIZE_U64 | 6)
+> FTOP is a 32bit register in other place of the kernel, is it correct
+> to use U64 here?
+It is deliberate and there is no 32bit compat requirement for kvm. ALL 
+regiester interfaces are defined as 64-bit.
+On kernel and qemu side, ftop can be defined as 32bit still, however the 
+interface is 64-bit. So there is forced type conversion between u32 and 
+u64. There is no problem here.
+
+> 
+>> +
+>>   #define LOONGARCH_REG_SHIFT            3
+>>   #define LOONGARCH_REG_64(TYPE, REG)    (TYPE | KVM_REG_SIZE_U64 | (REG << LOONGARCH_REG_SHIFT))
+>>   #define KVM_IOC_CSRID(REG)             LOONGARCH_REG_64(KVM_REG_LOONGARCH_CSR, REG)
+>> diff --git a/arch/loongarch/kvm/vcpu.c b/arch/loongarch/kvm/vcpu.c
+>> index b5324885a81a..b2500d4fa729 100644
+>> --- a/arch/loongarch/kvm/vcpu.c
+>> +++ b/arch/loongarch/kvm/vcpu.c
+>> @@ -597,6 +597,34 @@ static int kvm_get_one_reg(struct kvm_vcpu *vcpu,
+>>                          break;
+>>                  }
+>>                  break;
+>> +       case KVM_REG_LOONGARCH_LBT:
+> What about adding FPU/LSX/LASX registers (if needed for migration) in
+> kvm_{get, set}_one_reg() here?
+If there is 512bit SIMD or other requirement, it will be added in 
+kvm_{get, set}_one_reg(). For FPU/LSX/LASX registers, there is common 
+API KVM_GET_FPU/KVM_SET_FPU here. The impmentation of QEMU only gets 
+FPU, the upper LSX/LASX is lost, we will submit a patch in qemu side, 
+the kvm kernel side is ok.
+
+/*
+  * for KVM_GET_FPU and KVM_SET_FPU
+  */
+struct kvm_fpu {
+         __u32 fcsr;
+         __u64 fcc;    /* 8x8 */
+         struct kvm_fpureg {
+                 __u64 val64[4];
+         } fpr[32];
+};
+
+Regards
+Bibo Mao
+> 
+> Huacai
+> 
+>> +               if (!kvm_guest_has_lbt(&vcpu->arch))
+>> +                       return -ENXIO;
+>> +
+>> +               switch (reg->id) {
+>> +               case KVM_REG_LOONGARCH_LBT_SCR0:
+>> +                       *v = vcpu->arch.lbt.scr0;
+>> +                       break;
+>> +               case KVM_REG_LOONGARCH_LBT_SCR1:
+>> +                       *v = vcpu->arch.lbt.scr1;
+>> +                       break;
+>> +               case KVM_REG_LOONGARCH_LBT_SCR2:
+>> +                       *v = vcpu->arch.lbt.scr2;
+>> +                       break;
+>> +               case KVM_REG_LOONGARCH_LBT_SCR3:
+>> +                       *v = vcpu->arch.lbt.scr3;
+>> +                       break;
+>> +               case KVM_REG_LOONGARCH_LBT_EFLAGS:
+>> +                       *v = vcpu->arch.lbt.eflags;
+>> +                       break;
+>> +               case KVM_REG_LOONGARCH_LBT_FTOP:
+>> +                       *v = vcpu->arch.fpu.ftop;
+>> +                       break;
+>> +               default:
+>> +                       ret = -EINVAL;
+>> +                       break;
+>> +               }
+>> +               break;
+>>          default:
+>>                  ret = -EINVAL;
+>>                  break;
+>> @@ -663,6 +691,34 @@ static int kvm_set_one_reg(struct kvm_vcpu *vcpu,
+>>                          break;
+>>                  }
+>>                  break;
+>> +       case KVM_REG_LOONGARCH_LBT:
+>> +               if (!kvm_guest_has_lbt(&vcpu->arch))
+>> +                       return -ENXIO;
+>> +
+>> +               switch (reg->id) {
+>> +               case KVM_REG_LOONGARCH_LBT_SCR0:
+>> +                       vcpu->arch.lbt.scr0 = v;
+>> +                       break;
+>> +               case KVM_REG_LOONGARCH_LBT_SCR1:
+>> +                       vcpu->arch.lbt.scr1 = v;
+>> +                       break;
+>> +               case KVM_REG_LOONGARCH_LBT_SCR2:
+>> +                       vcpu->arch.lbt.scr2 = v;
+>> +                       break;
+>> +               case KVM_REG_LOONGARCH_LBT_SCR3:
+>> +                       vcpu->arch.lbt.scr3 = v;
+>> +                       break;
+>> +               case KVM_REG_LOONGARCH_LBT_EFLAGS:
+>> +                       vcpu->arch.lbt.eflags = v;
+>> +                       break;
+>> +               case KVM_REG_LOONGARCH_LBT_FTOP:
+>> +                       vcpu->arch.fpu.ftop = v;
+>> +                       break;
+>> +               default:
+>> +                       ret = -EINVAL;
+>> +                       break;
+>> +               }
+>> +               break;
+>>          default:
+>>                  ret = -EINVAL;
+>>                  break;
+>> --
+>> 2.39.3
+>>
 
 
