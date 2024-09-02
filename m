@@ -1,257 +1,241 @@
-Return-Path: <linux-kernel+bounces-310948-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310949-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E43B996832B
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 11:26:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FFAF96832D
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 11:26:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 94C45280198
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 09:26:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 29AB32837BD
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 09:26:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43ECA1C32F1;
-	Mon,  2 Sep 2024 09:26:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3124187355;
+	Mon,  2 Sep 2024 09:26:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aRhyJh5U"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="hgfCjh3I"
+Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 855FC186287
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 09:26:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3189187326
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 09:26:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725269174; cv=none; b=sl3UGZvjnQkUE3uTMhvInrlbKFG18BwlFanic3xM012LZYrdak/OJQA13S5yzp+JewY2Bej7CmUWJzPkkgWZNNlTXebpqLqDDoRuLPQCEoLsP0esyYy32wAXbTNbqOwc8Wv+JCC45dEbuv934ePpBoelndoeXNzTK/Ms0xEW6fI=
+	t=1725269188; cv=none; b=WcnOkS/SP09Y2kK6yVH1/2PitQPalf3QUsCx3u+LD2I75kVR/F3jBNNcCNAAw4c7R6oaQU/68QbuvR1bu/UmyXRt4AeGeeU8twMp2AMUJFnl1cuJhS9q/MjHTG283LMR4JGt1ea4S+Oi61MAh90046zXhriS9Ni8Y3swVRWgyII=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725269174; c=relaxed/simple;
-	bh=sTMVp/PlQaTLYPI7C29zRBRlIvVnGTN2r5Vf6SvpLlQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GsgAaeNcS47GaXP0TbTI6Z1UDrmImZMJF2TsTMfk3gY1U3cHv4NBWYebJ5VfefLvv/quQgOnIXwFxoabv+E8XmVHyShTqSW9rXsS/+T+LiQ4XOv/uazPeIENDhubi81Zg/56zXDZ0uA9j1PhjZ6z3T0kbD9mrlpHAjzgOlrIwPY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aRhyJh5U; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C15E0C4CEC2;
-	Mon,  2 Sep 2024 09:26:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725269174;
-	bh=sTMVp/PlQaTLYPI7C29zRBRlIvVnGTN2r5Vf6SvpLlQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=aRhyJh5U5+0ITuy0LZyPBbTxEhnBFUdwQBxCu2N73+hAlybvhOduiC71m6QzRwA2T
-	 9a2sTDjKQ3pfkTl3ujwbqBT3OXN8RS0Vp6wGagqQvmkFTregaWmIxIzNr99LuNO5lC
-	 Fmba6HybWjIZYmy5jMBFp9I012cLJr5UaNNMpUr7St43scdMi3u9uJxULzgmeznwxM
-	 NvVyJ0ZAqVDBUh5d8UrJG6Mv8G7lNdyvVgyNyt22Dhr9dq98UuzeZK4xSg2tBKbX5+
-	 vHGxRcJ9wcwDER6bgYyqk4/NXVOXwea7AVn5tAD27ACLNTUIVtAO1G4VQ2DzThsNAx
-	 IASQXU0oO5CcA==
-Date: Mon, 2 Sep 2024 11:26:11 +0200
-From: Maxime Ripard <mripard@kernel.org>
-To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Daniel Vetter <daniel@ffwll.ch>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drm/mipi-dsi: Fix devm unregister & detach
-Message-ID: <20240902-refined-smooth-mammoth-fbee81@houat>
-References: <20240619-dsi-devres-fix-v1-1-a5c59310a52e@ideasonboard.com>
- <20240626-gabby-ladybug-of-freedom-08e6eb@houat>
- <66ab4206-d1c8-4aad-99a7-c4c316e343a9@ideasonboard.com>
- <20240626-warping-nondescript-mustang-bfce27@houat>
- <b7cf71b8-76fd-4638-a7b6-cc8dbae635bf@ideasonboard.com>
- <20240702-bold-exotic-mamba-fdbba4@houat>
- <7293448e-e8cc-4522-b39c-5ad133e5f732@ideasonboard.com>
- <20240725-natural-giga-crane-d54067@houat>
- <4ed3791f-bc5a-46f1-88e1-2441c7f9c8d4@ideasonboard.com>
+	s=arc-20240116; t=1725269188; c=relaxed/simple;
+	bh=2o0ULimK06zWkew5dzj7e6hQxDRTLukcoM9dm+eYN1g=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=RxKP+sk3Wir+QRbanpRg9E81rE+UZHok8KH7EO1zrmqtS3VjCC3ZqnX1Oyi3aqy8/ekvXRaAjg/UX8gvL0Boi19c91vgRfC9/zay/tARhxzZVCKSSwaTrCv2iwpoCm/hZfXXWJQHazeKu5PfLjyJCy/TAk+a0lPad+luOuiM1GM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=hgfCjh3I; arc=none smtp.client-ip=209.85.216.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-2da4e84c198so20445a91.0
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2024 02:26:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1725269185; x=1725873985; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=WGC2/wr/WrQEE/BTETF77jc4B4si+qDhZdrDFSYRq0o=;
+        b=hgfCjh3IW/xvxHRtERPvYnvpZNCC355Gd0zBEpcFjkYpYJixjQrALHMvrpFb1D+vNM
+         YQuewgssaNECOtf7e+NvPbi2CJBe1X9IGKjcnXXdOtu2M8lML30trHHsOzhWtXLheNnp
+         zFcnR/9aFREafCxpQ6uzcreit8e7oJGqIQPXY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725269185; x=1725873985;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=WGC2/wr/WrQEE/BTETF77jc4B4si+qDhZdrDFSYRq0o=;
+        b=c/6qeh9cGSYlHaHzTp+OBnhHexSfhvq0Y+d5FpiFAyeNSN/CjC/LMOEzIfWScYBoed
+         YUdHyvNyFefSM3Ba/ea4q+HAteKZGcax8JRusLcDYBTbkN9BnVU40p/6KKwqpJGJp+Dm
+         ngtEHjV80G8wsMR3eURcp3WvSk98AcgSyC3G6vAYv8ZJa0qnDFZSkqW7cyEE6R0gDCBu
+         PEAFeDQ4Y25yn4MKdaDM8cLFLbkbUNZbQ1fO9X3/PIMOS6Ybid8q4kzgRSs3dqPOHLNY
+         z6kgb/uxN4N3S7xuniq691TPahVE4Vg1Q6MUjMI1XV02neMF2cPu0tH8aX+7yO/x11uv
+         HvKA==
+X-Forwarded-Encrypted: i=1; AJvYcCUg7kny+vtQOj2bNq4nX1z7zSfCO2k3Qvm/saV+A+KEPkLtNkQCv6/QRaY1Wkj4QtLxLgolWssyUdiYlko=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzhsDrNKCoaA/ofgu0kvprowoyUmWPXG0CwTjMFhASkGCzORIQ8
+	nETamHaIzsb7HUiCHjhjV2cw7xw08J8Ktv2C27QF9PeFuU6bVvHdQMeMSRolCQ==
+X-Google-Smtp-Source: AGHT+IFFpNABbTR0Od9shAUxCDh79Vy9bj/kSc4NPnioHYER2337/NQN6V4/JU6s6tEeQo6iwe2zmw==
+X-Received: by 2002:a17:90a:eb08:b0:2d8:d254:6cdd with SMTP id 98e67ed59e1d1-2d8d2547050mr2801998a91.38.1725269184969;
+        Mon, 02 Sep 2024 02:26:24 -0700 (PDT)
+Received: from shivania.eng.vmware.com ([66.170.99.1])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d82a6e0700sm7904747a91.1.2024.09.02.02.26.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 02 Sep 2024 02:26:24 -0700 (PDT)
+From: Shivani Agarwal <shivani.agarwal@broadcom.com>
+To: stable@vger.kernel.org,
+	gregkh@linuxfoundation.org
+Cc: jaegeuk@kernel.org,
+	chao@kernel.org,
+	linux-f2fs-devel@lists.sourceforge.net,
+	linux-kernel@vger.kernel.org,
+	ajay.kaher@broadcom.com,
+	alexey.makhalov@broadcom.com,
+	vasavi.sirnapalli@broadcom.com,
+	chenyuwen <yuwen.chen@xjmz.com>,
+	Sasha Levin <sashal@kernel.org>,
+	Shivani Agarwal <shivani.agarwal@broadcom.com>
+Subject: [PATCH v6.1] f2fs: fix to truncate preallocated blocks in f2fs_file_open()
+Date: Mon,  2 Sep 2024 02:26:16 -0700
+Message-Id: <20240902092616.5249-1-shivani.agarwal@broadcom.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="ryjmwhav26o25m53"
-Content-Disposition: inline
-In-Reply-To: <4ed3791f-bc5a-46f1-88e1-2441c7f9c8d4@ideasonboard.com>
+Content-Transfer-Encoding: 8bit
 
+From: Chao Yu <chao@kernel.org>
 
---ryjmwhav26o25m53
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+[ Upstream commit 298b1e4182d657c3e388adcc29477904e9600ed5 ]
 
-Hi,
+chenyuwen reports a f2fs bug as below:
 
-On Wed, Aug 07, 2024 at 03:19:23PM GMT, Tomi Valkeinen wrote:
-> On 25/07/2024 14:28, Maxime Ripard wrote:
-> > On Mon, Jul 15, 2024 at 11:32:34AM GMT, Tomi Valkeinen wrote:
-> > > On 02/07/2024 14:43, Maxime Ripard wrote:
-> > > > Hi Tomi,
-> > > >=20
-> > > > On Wed, Jun 26, 2024 at 06:53:40PM GMT, Tomi Valkeinen wrote:
-> > > > > On 26/06/2024 18:07, Maxime Ripard wrote:
-> > > > > > On Wed, Jun 26, 2024 at 12:55:39PM GMT, Tomi Valkeinen wrote:
-> > > > > > > On 26/06/2024 11:49, Maxime Ripard wrote:
-> > > > > > > > Hi,
-> > > > > > > >=20
-> > > > > > > > On Wed, Jun 19, 2024 at 12:07:48PM GMT, Tomi Valkeinen wrot=
-e:
-> > > > > > > > > From: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard=
-=2Ecom>
-> > > > > > > > >=20
-> > > > > > > > > When a bridge driver uses devm_mipi_dsi_device_register_f=
-ull() or
-> > > > > > > > > devm_mipi_dsi_attach(), the resource management is moved =
-to devres,
-> > > > > > > > > which releases the resource automatically when the bridge=
- driver is
-> > > > > > > > > unbound.
-> > > > > > > > >=20
-> > > > > > > > > However, if the DSI host goes away first, the host unregi=
-stration code
-> > > > > > > > > will automatically detach and unregister any DSI peripher=
-als, without
-> > > > > > > > > notifying the devres about it. So when the bridge driver =
-later is
-> > > > > > > > > unbound, the resources are released a second time, leadin=
-g to crash.
-> > > > > > > >=20
-> > > > > > > > That's super surprising. mipi_dsi_device_unregister calls
-> > > > > > > > device_unregister, which calls device_del, which in turn ca=
-lls
-> > > > > > > > devres_release_all.
-> > > > > > >=20
-> > > > > > > Hmm, right.
-> > > > > > >=20
-> > > > > > > > If that doesn't work like that, then it's what needs to be =
-fixed, and
-> > > > > > > > not worked around in the MIPI-DSI bus.
-> > > > > > >=20
-> > > > > > > Well, something causes a crash for both the device register/u=
-nregister case
-> > > > > > > and the attach/detach case, and the call stacks and debug pri=
-nts showed a
-> > > > > > > double unregister/detach...
-> > > > > > >=20
-> > > > > > > I need to dig up the board and check again why the devres_rel=
-ease_all() in
-> > > > > > > device_del() doesn't solve this. But I can probably only get =
-back to this in
-> > > > > > > August, so it's perhaps best to ignore this patch for now.
-> > > > > > >=20
-> > > > > > > However, the attach/detach case is still valid? I see no devr=
-es calls in the
-> > > > > > > detach paths.
-> > > > > >=20
-> > > > > > I'm not sure what you mean by the attach/detach case. Do you ex=
-pect
-> > > > > > device resources allocated in attach to be freed when detach ru=
-n?
-> > > > >=20
-> > > > > Ah, never mind, the devres_release_all() would of course deal wit=
-h that too.
-> > > > >=20
-> > > > > However, I just realized/remembered why it crashes.
-> > > > >=20
-> > > > > devm_mipi_dsi_device_register_full() and devm_mipi_dsi_attach() a=
-re given a
-> > > > > device which is used for the devres. This device is probably alwa=
-ys the
-> > > > > bridge device. So when the bridge device goes away, so do those r=
-esources.
-> > > > >=20
-> > > > > The mipi_dsi_device_unregister() call deals with a DSI device, wh=
-ich was
-> > > > > created in devm_mipi_dsi_device_register_full(). Unregistering th=
-at DSI
-> > > > > device, which does happen when the DSI host is removed, does not =
-affect the
-> > > > > devres of the bridge.
-> > > > >=20
-> > > > > So, unloading the DSI host driver causes mipi_dsi_device_unregist=
-er() and
-> > > > > mipi_dsi_detach() to be called (as part of mipi_dsi_host_unregist=
-er()), and
-> > > > > unloading the bridge driver causes them to be called again via de=
-vres.
-> > > >=20
-> > > > Sorry, that's one of the things I don't quite get. Both functions a=
-re
-> > > > exclusively(?) called from I2C bridges, so the device passed there
-> > > > should be a i2c_client instance, and thus the MIPI-DSI host going a=
-way
-> > > > will not remove those i2c devices, only the MIPI-DSI ones, right?
-> > >=20
-> > > Yes.
-> > >=20
-> > > > So if we remove the host, the MIPI-DSI device will be detached and
-> > > > removed through the path you were explaing with the i2c client ling=
-ering
-> > > > around. And if we remove the I2C device, then devm will kick in and=
- will
-> > > > detach and remove the MIPI-DSI device.
-> > >=20
-> > > Right.
-> > >=20
-> > > > Or is it the other way around? That if you remove the host, the dev=
-ice
-> > > > is properly detached and removed, but there's still the devm actions
-> > > > lingering around in the i2c device with pointers to the mipi_dsi_de=
-vice
-> > > > that was first created, but since destroyed?
-> > > >=20
-> > > > And thus, if the i2c device ever goes away, we get a use-after-free?
-> > >=20
-> > > Hmm, I'm not sure I understand what you mean here... Aren't you descr=
-ibing
-> > > the same thing in both of these cases?
-> > >=20
-> > > In any case, to expand the description a bit, module unloading is qui=
-te
-> > > fragile. I do get a crash if I first unload the i2c bridge module, an=
-d only
-> > > then go and unload the other ones in the DRM pipeline. But I think mo=
-dule
-> > > unloading will very easily crash, whatever the DRM drivers being used=
- are,
-> > > so it's not related to this particular issue.
-> > >=20
-> > > In my view, the unload sequence that should be supported (for develop=
-ment
-> > > purposes, not for production) is to start the unload from the display
-> > > controller module, which tears down the DRM pipeline, and going from =
-there
-> > > towards the panels/connectors.
-> > >=20
-> > > Of course, it would be very nice if the module unloading worked perfe=
-ctly,
-> > > but afaics fixing all that's related to module unloading would be a
-> > > multi-year project... So, I just want to keep the sequence I describe=
-d above
-> > > working, which allows using modules while doing driver development.
-> >=20
-> > FTR, I'm all for supporting module unloading. The discussion above was
-> > about what is broken exactly, so we can come up with a good solution.
->=20
-> Does that mean that you're ok with the patch, or that something should be
-> improved?
+Unable to handle kernel NULL pointer dereference at virtual address 0000000000000011
+ fscrypt_set_bio_crypt_ctx+0x78/0x1e8
+ f2fs_grab_read_bio+0x78/0x208
+ f2fs_submit_page_read+0x44/0x154
+ f2fs_get_read_data_page+0x288/0x5f4
+ f2fs_get_lock_data_page+0x60/0x190
+ truncate_partial_data_page+0x108/0x4fc
+ f2fs_do_truncate_blocks+0x344/0x5f0
+ f2fs_truncate_blocks+0x6c/0x134
+ f2fs_truncate+0xd8/0x200
+ f2fs_iget+0x20c/0x5ac
+ do_garbage_collect+0x5d0/0xf6c
+ f2fs_gc+0x22c/0x6a4
+ f2fs_disable_checkpoint+0xc8/0x310
+ f2fs_fill_super+0x14bc/0x1764
+ mount_bdev+0x1b4/0x21c
+ f2fs_mount+0x20/0x30
+ legacy_get_tree+0x50/0xbc
+ vfs_get_tree+0x5c/0x1b0
+ do_new_mount+0x298/0x4cc
+ path_mount+0x33c/0x5fc
+ __arm64_sys_mount+0xcc/0x15c
+ invoke_syscall+0x60/0x150
+ el0_svc_common+0xb8/0xf8
+ do_el0_svc+0x28/0xa0
+ el0_svc+0x24/0x84
+ el0t_64_sync_handler+0x88/0xec
 
-No, I meant that at the very least the commit log needs to be updated to
-reflect what is actually going on, because at least my understanding of
-it doesn't match what actually happens.
+It is because inode.i_crypt_info is not initialized during below path:
+- mount
+ - f2fs_fill_super
+  - f2fs_disable_checkpoint
+   - f2fs_gc
+    - f2fs_iget
+     - f2fs_truncate
 
-We want a solution to the problem you're facing, but it's not clear to
-me what the problem is exactly at this point, so it's hard to review a
-solution.
+So, let's relocate truncation of preallocated blocks to f2fs_file_open(),
+after fscrypt_file_open().
 
-Maxime
+Fixes: d4dd19ec1ea0 ("f2fs: do not expose unwritten blocks to user by DIO")
+Reported-by: chenyuwen <yuwen.chen@xjmz.com>
+Closes: https://lore.kernel.org/linux-kernel/20240517085327.1188515-1-yuwen.chen@xjmz.com
+Signed-off-by: Chao Yu <chao@kernel.org>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Shivani Agarwal <shivani.agarwal@broadcom.com>
+---
+ fs/f2fs/f2fs.h  |  1 +
+ fs/f2fs/file.c  | 42 +++++++++++++++++++++++++++++++++++++++++-
+ fs/f2fs/inode.c |  8 --------
+ 3 files changed, 42 insertions(+), 9 deletions(-)
 
---ryjmwhav26o25m53
-Content-Type: application/pgp-signature; name="signature.asc"
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index a02c74875..2b540d878 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -788,6 +788,7 @@ enum {
+ 	FI_ALIGNED_WRITE,	/* enable aligned write */
+ 	FI_COW_FILE,		/* indicate COW file */
+ 	FI_ATOMIC_COMMITTED,	/* indicate atomic commit completed except disk sync */
++	FI_OPENED_FILE,         /* indicate file has been opened */
+ 	FI_MAX,			/* max flag, never be used */
+ };
+ 
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index c6fb179f9..62f2521cd 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -538,6 +538,42 @@ static int f2fs_file_mmap(struct file *file, struct vm_area_struct *vma)
+ 	return 0;
+ }
+ 
++static int finish_preallocate_blocks(struct inode *inode)
++{
++	int ret;
++
++	inode_lock(inode);
++	if (is_inode_flag_set(inode, FI_OPENED_FILE)) {
++		inode_unlock(inode);
++		return 0;
++	}
++
++	if (!file_should_truncate(inode)) {
++		set_inode_flag(inode, FI_OPENED_FILE);
++		inode_unlock(inode);
++		return 0;
++	}
++
++	f2fs_down_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
++	filemap_invalidate_lock(inode->i_mapping);
++
++	truncate_setsize(inode, i_size_read(inode));
++	ret = f2fs_truncate(inode);
++
++	filemap_invalidate_unlock(inode->i_mapping);
++	f2fs_up_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
++
++	if (!ret)
++		set_inode_flag(inode, FI_OPENED_FILE);
++
++	inode_unlock(inode);
++	if (ret)
++		return ret;
++
++	file_dont_truncate(inode);
++	return 0;
++}
++
+ static int f2fs_file_open(struct inode *inode, struct file *filp)
+ {
+ 	int err = fscrypt_file_open(inode, filp);
+@@ -554,7 +590,11 @@ static int f2fs_file_open(struct inode *inode, struct file *filp)
+ 
+ 	filp->f_mode |= FMODE_NOWAIT;
+ 
+-	return dquot_file_open(inode, filp);
++	err = dquot_file_open(inode, filp);
++	if (err)
++		return err;
++
++	return finish_preallocate_blocks(inode);
+ }
+ 
+ void f2fs_truncate_data_blocks_range(struct dnode_of_data *dn, int count)
+diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
+index ff4a4e92a..5b672df19 100644
+--- a/fs/f2fs/inode.c
++++ b/fs/f2fs/inode.c
+@@ -549,14 +549,6 @@ struct inode *f2fs_iget(struct super_block *sb, unsigned long ino)
+ 	}
+ 	f2fs_set_inode_flags(inode);
+ 
+-	if (file_should_truncate(inode) &&
+-			!is_sbi_flag_set(sbi, SBI_POR_DOING)) {
+-		ret = f2fs_truncate(inode);
+-		if (ret)
+-			goto bad_inode;
+-		file_dont_truncate(inode);
+-	}
+-
+ 	unlock_new_inode(inode);
+ 	trace_f2fs_iget(inode);
+ 	return inode;
+-- 
+2.39.4
 
------BEGIN PGP SIGNATURE-----
-
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZtWEswAKCRAnX84Zoj2+
-dqYWAYDMPWZSBEwFfMOv3MeoMjjbST7pAGaFb7GVqgJ2IsSq7NaN1ImJ2BxrXPYH
-KEliCLMBfjPrZZcjvBkpvMSANpKsOasFN6I0WP1hifYShh1mIdLw7nK0hYmbUVCt
-ql80NKzRBA==
-=db07
------END PGP SIGNATURE-----
-
---ryjmwhav26o25m53--
 
