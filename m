@@ -1,127 +1,139 @@
-Return-Path: <linux-kernel+bounces-310852-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310858-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40759968205
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 10:34:04 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4681C968214
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 10:35:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EB835281ECC
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 08:34:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D890AB22A53
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 08:35:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E14821865F2;
-	Mon,  2 Sep 2024 08:33:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 149AD185E64;
+	Mon,  2 Sep 2024 08:35:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="jYOjl+0A"
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="DX2Btwpt"
+Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABB6B161310
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 08:33:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4824154C0B
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 08:35:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725266034; cv=none; b=DW48EY+8KtcESCV4SJhrTabcrUbfzlfKMCmGZwpDZyMF0EYGL+0WnK55WdPMXPINFwiiExDAeKzzeo/v3Ch+gf7UKiK6eLq0gLYEwq5+WB8xUYGQE4v4uuhJZ7pMvcZB1ZW6DiBOG7fHqtM964W9Rv14hO/UZ3wbOfbI6AMs24E=
+	t=1725266139; cv=none; b=gmqYVbw/4V2AK2KMDANJIJ/Hx4efE+LbNzakWU9rW9y6x9I0OYXqIfOjmXx6mr/tQzTYKbTUFHLcu3G+Q4IAJxlbeRoU3Id4dgo50C19C6mtCS8074F2xAJoX8sviDOoD/UqqZUcUlrwUPlnOkgQfuqWflTes0kM6pRjFa4oBWg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725266034; c=relaxed/simple;
-	bh=zrv086Fdv9w35daxdi6hHW2giaN+qyNFa21Z0q4DoZ8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=F41tdjB8zoxB0Dy9mk2hCZ9SoftW43VZWmaIj3pWK6MjNmak32OWy63yCboFhXkAImBe8Ho+kOI/n+ksoc78tgaJmaRCxGcNIf2gwLm9hE6UTT8QJKNYsthX25mvi17jVYp5mIyL4ubhU4MN0wrTu9HlB/0hufdmKOFkydVX7Ic=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=jYOjl+0A; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-5334b0e1a8eso5182949e87.0
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2024 01:33:52 -0700 (PDT)
+	s=arc-20240116; t=1725266139; c=relaxed/simple;
+	bh=1yKUWgG168kIrumQ4E/lNDOE3dBsj4G/DSSmNyd+u94=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=M9xQactJIUVvtBMTdXBKF1rTyF2/7tim62b4hvCtix2dtzftTH/o04FpFlwBjbWw8SpgrBpAhY3Lp6GpR4EdcvA0Liql6shalvnl3j5pjXK6OuhnWdpB4mgySdR8p4XJMs/3wdeXGxEDu5Z58qAlZS+1GdQ+pE58XIAF+Ca3E8o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=DX2Btwpt; arc=none smtp.client-ip=209.85.216.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-2d8b68bddeaso834715a91.1
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2024 01:35:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1725266031; x=1725870831; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=goZxaS9ZQb5+JNlLUTZNbTEFCx+Y5sRzY+bt3xQbfq8=;
-        b=jYOjl+0AcPqri4YkwLEYNf6WxPMylAw/SUhWSkk6jJEiaXeBGDzs8bT3wtRAjLsGaZ
-         2DksmifeiG9dfc/fRRuMMgZ1D6u/Qsc6En2AtUw+onzkMdNGJ4I2sDNfRS5wF2xqFHW2
-         A+/84UdxjHj3DtNEcBHM84l+rp+5ZlNGt9OItWsMtzV2PtS96VRjjeOgLJVrflccPXdf
-         JbsieIwJHbZ7Oyihgk/TGrvwfgJG2DyVniqomFXrtGrk12kHtXaPG46xee9OIxCJqWe7
-         8iFv2crS5cN4P22OCftYdiTxqwKl0Df3RSJYhFj513qvQdWsNjI5Gn95JSk1NuRcgxiF
-         It8Q==
+        d=broadcom.com; s=google; t=1725266137; x=1725870937; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Wx+Ngpcz5KS+uT4ExH5gnibO/Q2OSWyZ6WFtEESiF1s=;
+        b=DX2BtwptwtS4S4LBkTC5TJtMYYPfTtxYEzIl6ZwsNPN42edbg1+oW35RQKCxFMV1zd
+         XMToc86V+mqsYsBiCq6dAc01qN+xl13lufgCZBS+g9Wau+9Cb42CD/MMuSuvPgieTI1V
+         wuoxWYJy1SP58CHZi8WnaGxhsLahSEEXhVZ90=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725266031; x=1725870831;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=goZxaS9ZQb5+JNlLUTZNbTEFCx+Y5sRzY+bt3xQbfq8=;
-        b=k6DTcmSdL28pfDPyHIIZY+w1g6+rLdta5n1IZyBsaOCv/vuIrfirPQ4hwkQslzglrv
-         xu4KSVpxLM0XDB9NiLdCSBi8apvg2n3b5Sghe6WZdBnCmciTufqx/PmXoAr8g3E0CjN1
-         wfyBrJfpIJOCEjsmNhIcZqzlpmqwbslbsUYc0xIgMvRB0m/6HgQhklEzs6637wkvVyi/
-         +QmBjP8ZK7wWTBXAHy72SZhg6/jZmSuTpYflaFC2xN9j/3YgEOBWb4GAYtrcOldCfl8t
-         WJz1B7DzltOGFbaDqCPck+sUca+saU0kJmZmxMQm0iUQTzZk4EsntBFWjJxUNtIozPpc
-         FpoA==
-X-Forwarded-Encrypted: i=1; AJvYcCVDHtyXG94OXKS6g2a4AQ1C+ci5nhGWJKGq7LdkU9BwiMIbN6wN54eoM8dm2Yljqpoz1xapQFPlwPsxeMM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxdiHUDkV3f5wlkoJZ4MRPzvX+1nyKQtyrD68giiF9infiEC5br
-	cIEwi94uZ0XJaimEmZQ+ZALaLV2eoiLvq4vSvcXOtvOeg/NEpnzktLlhCyAGa1LifmrCnld8hvl
-	0lZp/XiKCds72K1R4ccm9Yi/VZ3pnuRFqRjIxa8K8edGZzHZj
-X-Google-Smtp-Source: AGHT+IFKRDHwzB9Quu4PF58ILc2a/dguARhk2kJwxG3I8e6vD/m0GzTIkGdk+QIAGoeC6Hg1Qc9gjF6NjrTW5KKvYuM=
-X-Received: by 2002:a05:6512:3f26:b0:52c:df3d:4e9d with SMTP id
- 2adb3069b0e04-53546b8d6bfmr6080640e87.37.1725266030043; Mon, 02 Sep 2024
- 01:33:50 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1725266137; x=1725870937;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Wx+Ngpcz5KS+uT4ExH5gnibO/Q2OSWyZ6WFtEESiF1s=;
+        b=TkJ1pOYtlNGbnBzDoRjrfTzBhrxqUz/mLxCZRZ0cjehMP4DswMOsP9d+NKl1ft4Ydn
+         iPU8txMNayvVVDMLKSa4AOKR8K3vdvGwGEINbbzgPtnxXSHB8jpGrQXpMQheZWtW7z4E
+         a+TTGHQHDlNP0Ivh3n2vciuUgtPDh2V+YSJI0t0ePXfd8sZSAhxG63rYVsUmfa3TAKxL
+         UcmZjYh0b7qcYQ9VNqBGvkq0MO2BR7GkGoTUuzmbcvFVy6jn4Sw9kN2skx8I9/xcrGmF
+         I2R1IpcleI1/wfLFN4tmSb6y5apAhNm7mTcn0I/FH98FGjCTzPxGi8qumEpW3u/KGfT/
+         B6rQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVSAPLFLDjFW/Ekl8thNV4orxPddkl+yXJ1BChwCx0ft8pI/0nZHIbFFdmmEOtZ0I7SgmQ4JLgI+2fLcl4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzRaGhDUX7UZ0zZX4ddWIgYdQP9+wuU99m5tdVof1Fzxd0LOdAY
+	SW4+XaLnVKm4mjthW8nT/d/ItlLL7bjqfd/onbB3N7C4n7ky4H8J2ZBI9UVgaQ==
+X-Google-Smtp-Source: AGHT+IF4/GEqSbXqoxRakIqILSzbtpCjeIMTeUiOM4xZC1PMAowJYIU5DaWRW0ooWvdCC6o+o1UIWQ==
+X-Received: by 2002:a17:90a:558f:b0:2c9:81fd:4c27 with SMTP id 98e67ed59e1d1-2d88d6a0b9fmr7246707a91.14.1725266136913;
+        Mon, 02 Sep 2024 01:35:36 -0700 (PDT)
+Received: from fedora.. ([66.170.99.2])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d85b3b95e8sm8511509a91.54.2024.09.02.01.35.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 02 Sep 2024 01:35:36 -0700 (PDT)
+From: Vamsi Krishna Brahmajosyula <vamsi-krishna.brahmajosyula@broadcom.com>
+To: stable@vger.kernel.org,
+	gregkh@linuxfoundation.org
+Cc: paulmck@kernel.org,
+	frederic@kernel.org,
+	neeraj.upadhyay@kernel.org,
+	joel@joelfernandes.org,
+	josh@joshtriplett.org,
+	boqun.feng@gmail.com,
+	urezki@gmail.com,
+	rostedt@goodmis.org,
+	mathieu.desnoyers@efficios.com,
+	jiangshanlai@gmail.com,
+	qiang.zhang1211@gmail.com,
+	rcu@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	ajay.kaher@broadcom.com,
+	alexey.makhalov@broadcom.com,
+	vasavi.sirnapalli@broadcom.com,
+	Nikita Kiryushin <kiryushin@ancud.ru>,
+	Sasha Levin <sashal@kernel.org>,
+	Vamsi Krishna Brahmajosyula <vamsi-krishna.brahmajosyula@broadcom.com>
+Subject: [PATCH v5.10-v5.15] rcu-tasks: Fix show_rcu_tasks_trace_gp_kthread buffer overflow
+Date: Mon,  2 Sep 2024 03:33:55 -0500
+Message-ID: <20240902083422.1095022-2-vamsi-krishna.brahmajosyula@broadcom.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240805-clk-new-helper-v2-0-e5fdd1e1d729@linaro.org>
-In-Reply-To: <20240805-clk-new-helper-v2-0-e5fdd1e1d729@linaro.org>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Mon, 2 Sep 2024 10:33:38 +0200
-Message-ID: <CAMRc=MdVRdy7tBcx0RiQG8uGf9gDzGTRL7XrXDtOkDxss4et4A@mail.gmail.com>
-Subject: Re: [PATCH v2 0/2] clk: implement a new managed helper and add first user
-To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Russell King <linux@armlinux.org.uk>, Marcel Holtmann <marcel@holtmann.org>, 
-	Luiz Augusto von Dentz <luiz.dentz@gmail.com>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-bluetooth@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Mon, Aug 5, 2024 at 10:57=E2=80=AFAM Bartosz Golaszewski <brgl@bgdev.pl>=
- wrote:
->
-> I'm posting this as RFC to see if there's any interest. I noticed that
-> some drivers do: clk_get() -> clk_set_rate() -> clk_prepare_enable(). I
-> was wondering if it's worth factoring this out into dedicated helpers.
->
-> This series adds a new such helper for the "optional-enabled" use-case
-> and the first user. Let me know if this makes sense.
->
-> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> ---
-> Changes in v2:
-> - s/EXPORT_SYMBOL/EXPORT_SYMBOL_GPL/
-> - add a stub for !COMMON_CLK
-> - Link to v1: https://lore.kernel.org/r/20240801-clk-new-helper-v1-0-81e9=
-338b7b17@linaro.org
->
-> ---
-> Bartosz Golaszewski (2):
->       clk: provide devm_clk_get_optional_enabled_with_rate()
->       Bluetooth: hci_qca: use devm_clk_get_optional_enabled_with_rate()
->
->  drivers/bluetooth/hci_qca.c | 24 ++----------------------
->  drivers/clk/clk-devres.c    | 28 ++++++++++++++++++++++++++++
->  include/linux/clk.h         | 33 +++++++++++++++++++++++++++++++++
->  3 files changed, 63 insertions(+), 22 deletions(-)
-> ---
-> base-commit: d6dbc9f56c3a70e915625b6f1887882c23dc5c91
-> change-id: 20240801-clk-new-helper-7853f662cda1
->
-> Best regards,
-> --
-> Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
->
+From: Nikita Kiryushin <kiryushin@ancud.ru>
 
-It's been a month. Any comments on this?
+[ Upstream commit cc5645fddb0ce28492b15520306d092730dffa48 ]
 
-Bart
+There is a possibility of buffer overflow in
+show_rcu_tasks_trace_gp_kthread() if counters, passed
+to sprintf() are huge. Counter numbers, needed for this
+are unrealistically high, but buffer overflow is still
+possible.
+
+Use snprintf() with buffer size instead of sprintf().
+
+Found by Linux Verification Center (linuxtesting.org) with SVACE.
+
+Fixes: edf3775f0ad6 ("rcu-tasks: Add count for idle tasks on offline CPUs")
+Signed-off-by: Nikita Kiryushin <kiryushin@ancud.ru>
+Reviewed-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+Signed-off-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Vamsi Krishna Brahmajosyula <vamsi-krishna.brahmajosyula@broadcom.com>
+---
+ kernel/rcu/tasks.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/kernel/rcu/tasks.h b/kernel/rcu/tasks.h
+index 105fdc2bb004..bede3a4f108e 100644
+--- a/kernel/rcu/tasks.h
++++ b/kernel/rcu/tasks.h
+@@ -1240,7 +1240,7 @@ static void show_rcu_tasks_trace_gp_kthread(void)
+ {
+ 	char buf[64];
+ 
+-	sprintf(buf, "N%d h:%lu/%lu/%lu", atomic_read(&trc_n_readers_need_end),
++	snprintf(buf, sizeof(buf), "N%d h:%lu/%lu/%lu", atomic_read(&trc_n_readers_need_end),
+ 		data_race(n_heavy_reader_ofl_updates),
+ 		data_race(n_heavy_reader_updates),
+ 		data_race(n_heavy_reader_attempts));
+-- 
+2.45.2
+
 
