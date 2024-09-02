@@ -1,81 +1,74 @@
-Return-Path: <linux-kernel+bounces-311569-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311570-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 891C8968A89
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 17:00:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D7E99968A8B
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 17:02:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3C89F1F22962
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 15:00:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F2E81F22F30
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 15:02:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D49A719E960;
-	Mon,  2 Sep 2024 15:00:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BECEA1CB502;
+	Mon,  2 Sep 2024 15:01:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aX7kcn+G"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="toNQvgNX"
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B96651CB513;
-	Mon,  2 Sep 2024 15:00:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 541241CB50B
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 15:01:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725289247; cv=none; b=IqhEe5DnEXYhR+wdiklP5SixfvL2uiUjGaKzQnwoaVbz11VTRL+UkrJgFu/8KYrKmvJG1CcL8dzGqkoTDLVhWKxYMsDubyT5szcvDsXKh3OK38vx+dtMEb3QXKJX3ym5qS8aQxJj7WGrN+YlCr06eWBrKgQxG+u5CUIurfSARMo=
+	t=1725289315; cv=none; b=ZyAdmvrXu4l5qAN4RgLtcISoCW4CErgetb+pruAYaCf0fzaTsEE+Dz35yrWCrOFiARIR9CAPDjifhZ89QUIZlWFn99xqdqkn3ZFrfUI/Byi0fR3LALV69BF2FYx1ZK+gSrG0i0b0YWUwkYM/ppnjCfIqML/IQzjFk3ovK86dJiI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725289247; c=relaxed/simple;
-	bh=N4F0HYqE/JN2Frkasn/4po5xLM+VA605HwLPUuG5P3U=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=WvS9ba0PRp8/RMUd5eb4fEK4t6aonTHFStQuJKElKDD96/n4g+T4uzo1h1MH44FTZFPJ9Exv0ERZniDFGMUcGivMYRGtObWquruu53xcXbgCFK6C4LO/BIQi7qqJ+W5ZRvI1UePXqPP4tCQdsRhTTLh3Hepty8IRooN20PKp9us=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aX7kcn+G; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-42bbffe38e6so20707005e9.0;
-        Mon, 02 Sep 2024 08:00:45 -0700 (PDT)
+	s=arc-20240116; t=1725289315; c=relaxed/simple;
+	bh=a5A8lrDqI7aFR/XW1zOdLm52l4YORaA4kyHAIIBduoM=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=T80e9iSYcmtOcfZF7UCMIYWR5qVMfOxNv5IEyXAJlLJ7/JX4+UjF/NHx63AzASHheespuorbJL3V9JkB4ORl3PJDVv5HgFpQ/krizulCW4WMu5BCinjcU6BUYIiFY7QGOeWgEe028Cn8EcZVzL4TDdy5c0IffDutPwsUVjJWw3c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=toNQvgNX; arc=none smtp.client-ip=209.85.167.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-5343d2af735so4201370e87.1
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2024 08:01:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725289244; x=1725894044; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ck070XTt7LQ3loM5VyZWdtdily/aCMgDwKrMtiiMYlM=;
-        b=aX7kcn+Gmaq/TrJTvc8be2Y0IliI8/YJz7rTuGEGKOprt/fja4WzJ3RAkK1f/PdhWc
-         hT1hrecvIABrQcj+uTFE/FBMgr3onLQ/mcmwWKmead1XJGe4RuvzA/yQvSTP/RPIBkTo
-         Ahh/klcjxGFEdnOZJLVuPZAORU8EVM4GnFM2HhgAQUs8GIJxZyb8GeD/CFwWPc1MPYQN
-         JdP3q1AlKd/X9TSy16OzO4bizA/hOU520qhVAWPheEsdbXDPGI8QIrp6sC3wzJP0CPml
-         WBEOGS5ywWrcFtikCaAw5fIATUPmpMTMaR3Hp4C3TSpS3f3CW44NwVImcgQdS7eTfpD8
-         ESPA==
+        d=linaro.org; s=google; t=1725289311; x=1725894111; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=cO1TeBbYIYHALWkaQ6znvGEY3FTlPVW1y1SlK7fzBG0=;
+        b=toNQvgNX3crI7QSbypTQmCvCVDoMPIgy8TBJgqX8I+M/TtiavQvK2bvIm7dhD8tQCh
+         7PY4Jd7gccNyxbURiEvQUxK8fsmHDxrlYslfaiFq68GU+WOKXQ5l9agn1gTi1B4p+Wk/
+         3omrzmoJcpD1aJwZ422Adgav0VOH943sqOOBBhzVtXZbB6TLVQVrZS2LVLc/ST96UxeM
+         ZD/J6uZNYnFBP+rfCyPIs0enVgDNPNAEq862zPIq+VI4ET+lr6sD4JLuEuWB7B6KzzTg
+         CoeIz9v8Z0VRpDt7U0kOAW3IjFPDypm9YWqKBdda1qxt9TCfEeusfhftzu1e8Gif25SV
+         9IYw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725289244; x=1725894044;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1725289311; x=1725894111;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=ck070XTt7LQ3loM5VyZWdtdily/aCMgDwKrMtiiMYlM=;
-        b=s7kzH0K8Oh9N/8KsY2xvjZooYq0pR4Q/ztu54ioz2aEos0M3PnzHwlUZU1WcDF/rWc
-         9nEwSAlwf0p0seGnwJmDaTjMCDoS+798+jGBs0+VGU8A+sfOMpvs18lySW8TUZcNuVbz
-         Nrya79E/3xGh3rVEwgnCU82msZqWXTvHEgqFcb1CFMfHqcoZ6VeNaPqQ9BgyBkjl2QVr
-         NjFnbhCYghmHk5tzv2vnFLL4/HDvrmCz2YsB5QyIOr5A7A9gnQ9BPZk+1Gn6jNSzTKbM
-         VBgC2/ds++qSJlXbBnpWJQdP44AwagjZXrYa5AD0O17Jx6Odm/h8pSb5ezC+Vjomajl0
-         txJQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWCX/N+dnclM3+PxyUv7VE+gX8pDTHFPHgPgt13fb/2se70HwBXoQcCYWe5aEpbFOmVs51280arzQuLGQ==@vger.kernel.org, AJvYcCWfSTa5McfV9/jgSF2o3SlcoZ8vSgaSMvKAQGBwOi77u220bI9vJzgoczP+qgwrEybvD4MLjVrUoTbGVIY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzvbmLyELu/UevRL9RMG9oYZCrjspm214EZ+fMI3cQyKFTxiEK5
-	z6qD4hmA2U0C19r8wqYX9Lb5n++tkVYzn4yvvKrvaYmKdaV7Q0/S
-X-Google-Smtp-Source: AGHT+IHhvCV25tMGVpsV0Sy3/5vt7zPeVL5CewGQnDFRUNWlJ+SgrfNl95ybs2Dhp7yRgSXrYwKgNw==
-X-Received: by 2002:adf:fa87:0:b0:374:bf97:ba10 with SMTP id ffacd0b85a97d-374bf97bc82mr4491458f8f.25.1725289243723;
-        Mon, 02 Sep 2024 08:00:43 -0700 (PDT)
-Received: from localhost (craw-09-b2-v4wan-169726-cust2117.vm24.cable.virginm.net. [92.238.24.70])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-374b6a3d27fsm8626278f8f.59.2024.09.02.08.00.43
+        bh=cO1TeBbYIYHALWkaQ6znvGEY3FTlPVW1y1SlK7fzBG0=;
+        b=nAyFFewYWCyuL486A0dBS1qDSIgf7EcUavBntmZocMSPCzYWAjTtPusyGJfh0zLthO
+         jkvID+9DrwBsXcS4kek6j2qF39mOV9TuAPJqUSttFQk1qxiBnwaTRxHdGaDcuwL4HBFW
+         IXfA2gB7zgYbk6NBGxkjwygCHgN/U9uB34nCdzvFuq/XFE7v617gYYivWWGbYffDvrVc
+         U+FpYMLJz1cIgJpG37wGskGUPQ/diuoS0ku1nEIb97i+MWzxQGsjNxcdu0kZoeQx4Sus
+         Wcjtda/1+6joJjG3UuXD8g5evUiQH8IOqfV11WqaQ5hteKWVf/F4umzw3IhmB7Q+K8bK
+         aaNg==
+X-Forwarded-Encrypted: i=1; AJvYcCUFT7GHhL3dBjHCtA5dnB5MJ9h8R5QVzMYdkY3lN2oSlsu+yWSHtcqeiAJTUQCpT6GMIWZAefmIzKrQ628=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyNIuXhJRdmxf5XiX/+ru5DuIxUmuCCVaN8HJ3QhjT1kyegEg2Z
+	FXkquE1KplVZ/xr0hpyaXtzl86APpqpsmCrtPSFFc7YbSCRz+oQbLXUZAyvARKY=
+X-Google-Smtp-Source: AGHT+IH2YT7rJocKs0+uuQx+mqu6cGEnnz9isj+MTJuPQadaagNcOFaopjl/zwMkyPz6WYXDJbToMg==
+X-Received: by 2002:a05:6512:68c:b0:52c:d76f:7f61 with SMTP id 2adb3069b0e04-53546bb4d04mr5408823e87.56.1725289310903;
+        Mon, 02 Sep 2024 08:01:50 -0700 (PDT)
+Received: from [127.0.1.1] ([82.79.186.176])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42bb6deb1ebsm140726115e9.3.2024.09.02.08.01.49
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Sep 2024 08:00:43 -0700 (PDT)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: James Smart <james.smart@broadcom.com>,
-	Dick Kennedy <dick.kennedy@broadcom.com>,
-	"James E . J . Bottomley" <James.Bottomley@HansenPartnership.com>,
-	"Martin K . Petersen" <martin.petersen@oracle.com>,
-	linux-scsi@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] scsi: lpfc: Remove trailing space after \n newline
-Date: Mon,  2 Sep 2024 16:00:42 +0100
-Message-Id: <20240902150042.311157-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.39.2
+        Mon, 02 Sep 2024 08:01:50 -0700 (PDT)
+From: Abel Vesa <abel.vesa@linaro.org>
+Subject: [PATCH 0/2] arm64: dts: qcom: x1e80100: Add external DP support to
+ CRD and T14s
+Date: Mon, 02 Sep 2024 18:01:34 +0300
+Message-Id: <20240902-x1e80100-crd-dts-add-external-dp-support-v1-0-899c264c0eb7@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,39 +76,66 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAE7T1WYC/x3NwQrCMAyA4VcZORtIu02qryIeypJpQLqSdlIYe
+ 3eLx+/y/wcUMZUC9+EAk68W3VKHuwywvGN6CSp3gyc/UfA3bE4COSJcjJFrwciM0qpYih/kjGX
+ PebOKgeM6xtldgx+h57LJqu2/ejzP8wfZ7JmHegAAAA==
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: Johan Hovold <johan@kernel.org>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, 
+ Trilok Soni <quic_tsoni@quicinc.com>, linux-arm-msm@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Abel Vesa <abel.vesa@linaro.org>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1141; i=abel.vesa@linaro.org;
+ h=from:subject:message-id; bh=a5A8lrDqI7aFR/XW1zOdLm52l4YORaA4kyHAIIBduoM=;
+ b=owEBbQKS/ZANAwAKARtfRMkAlRVWAcsmYgBm1dNWNFqyXrRXAxBH/1HLx31mMJe3qk7v4lBMz
+ vO/YuiJIM6JAjMEAAEKAB0WIQRO8+4RTnqPKsqn0bgbX0TJAJUVVgUCZtXTVgAKCRAbX0TJAJUV
+ VvuVD/9BEYvrzyVbSQUpZUdk/y94RgWp7nAR6xAEoyNUR8/iXABZrEJieqRGVUC5fuUKoCNftr4
+ kZO3lOlWWHqD26C6BHCWTSHhyniHxlKqYWvRr4aA1Ke3n+d4J/SICJg5mjAYjO6Dn1NRl2ZX5Ds
+ nr3z+oSyGGarAzJa07rNnUxKlkoZUKyqpN6HoYH+dBySJ3YoxZwNSO2QZQtyLBOn6XvPTOTDH/r
+ DzhHZpz8LoQ4Eo2xkJ6TE9nGhXPPIETZzv5wRn6GRIMBuPLrjmN/uecoKRvUaKVMSmP0RLoXLyf
+ X2BnL6GVkz76Y69NUAgikn9gq/wuL/sayWc4KnJ3Cin2H3up6pd2dxsfXXLuteSlnpiE+6lAULW
+ kcuC5LbhaREcdX8PTv23Mca3kWKVYbtzXW1Jcth7BVbbEVH/RoeX/T0KSo6eT5FBQgtm0k2ebo7
+ KnBdW01Ky0k3Zrml5beMMV12GUM7ydMs6K8sHmeN9c2SSMOzMfjjHzxBqhE5Zlx7aIOtn/nCAFR
+ TU7UWdPmeRkTZsitYHQjxRAokNeebLYkIdfx8GwK2vCftU8PzFWRBl6I9SHAzVSxVt+D51HVhK0
+ JgL8IfxoATyWBsV2S9ivgNJ9krWbknbB/kF2U10ilPZxaorbCywTt7VUE/6lGmy5/eioH6iCi3k
+ w2tRiGtDKhmf5nQ==
+X-Developer-Key: i=abel.vesa@linaro.org; a=openpgp;
+ fpr=6AFF162D57F4223A8770EF5AF7BF214136F41FAE
 
-There is a extraneous space after a newline in two lpfc_printf_log
-messages. Remove the space.
+Both the CRD and T14s support altmode for external DisplayPort over the
+USB Type-C connectors. The CRD has 3 such connectors while the T14s has
+only 2.
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+Enabling DP altmode requires the support for the Parade PS8830 USB Type-C
+retimer. [1]
+
+Currently, only the DP 4lanes and USB3 modes have been successfully
+tested on both CRD and T14s. The DP 2lanes + USB3 mode seems to suggest
+that changes are further needed in the QMP PHY driver.
+
+[1]
+https://lore.kernel.org/all/20240829-x1e80100-ps8830-v1-0-bcc4790b1d45@linaro.org/
+
+Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
 ---
- drivers/scsi/lpfc/lpfc_sli.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Abel Vesa (2):
+      arm64: dts: qcom: x1e80100-crd: Enable external DP support
+      arm64: dts: qcom: x1e80100-t14s: Add external DP support
 
-diff --git a/drivers/scsi/lpfc/lpfc_sli.c b/drivers/scsi/lpfc/lpfc_sli.c
-index 332b8d2348e9..0e60eebe53b5 100644
---- a/drivers/scsi/lpfc/lpfc_sli.c
-+++ b/drivers/scsi/lpfc/lpfc_sli.c
-@@ -8818,7 +8818,7 @@ lpfc_sli4_hba_setup(struct lpfc_hba *phba)
- 	rc = lpfc_sli4_queue_setup(phba);
- 	if (unlikely(rc)) {
- 		lpfc_printf_log(phba, KERN_ERR, LOG_TRACE_EVENT,
--				"0381 Error %d during queue setup.\n ", rc);
-+				"0381 Error %d during queue setup.\n", rc);
- 		goto out_stop_timers;
- 	}
- 	/* Initialize the driver internal SLI layer lists. */
-@@ -21149,7 +21149,7 @@ lpfc_drain_txq(struct lpfc_hba *phba)
- 		if (!piocbq) {
- 			spin_unlock_irqrestore(&pring->ring_lock, iflags);
- 			lpfc_printf_log(phba, KERN_ERR, LOG_TRACE_EVENT,
--				"2823 txq empty and txq_cnt is %d\n ",
-+				"2823 txq empty and txq_cnt is %d\n",
- 				txq_cnt);
- 			break;
- 		}
+ .../dts/qcom/x1e78100-lenovo-thinkpad-t14s.dts     | 278 +++++++++++++-
+ arch/arm64/boot/dts/qcom/x1e80100-crd.dts          | 414 ++++++++++++++++++++-
+ 2 files changed, 682 insertions(+), 10 deletions(-)
+---
+base-commit: ecc768a84f0b8e631986f9ade3118fa37852fef0
+change-id: 20240829-x1e80100-crd-dts-add-external-dp-support-8daf3a516823
+
+Best regards,
 -- 
-2.39.2
+Abel Vesa <abel.vesa@linaro.org>
 
 
