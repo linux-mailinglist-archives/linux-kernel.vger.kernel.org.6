@@ -1,151 +1,124 @@
-Return-Path: <linux-kernel+bounces-311259-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311260-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F6039686CB
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 13:55:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 961E49686CF
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 13:55:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 68FC3B25A34
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 11:55:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EEBD6B230AC
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 11:55:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45B801DAC46;
-	Mon,  2 Sep 2024 11:55:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69D681D6DC3;
+	Mon,  2 Sep 2024 11:55:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="0cQML09U";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="lkIJ4uXa"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="bmjy6fVO"
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DDD41D6C73;
-	Mon,  2 Sep 2024 11:55:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8C9317F394
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 11:55:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725278105; cv=none; b=uuE8zD23fRzfOfJKR+GNhw/fWZlevUZwPby/JWgfYn+ttGOU2Ks8ohwyRhliSt20/eQl4t0L7YFpKK555BTjRYFkK5TRK5IwfzmQvwur/lRW0Kb1v2FUGvKTG0Nypi0tUeOl8k2vZILUa4hxKJkKaiMlADFTFEXxvjh2j1n4mdU=
+	t=1725278120; cv=none; b=OrbKgZm5q4gEF7tYgPBHJXXXAYdvpGqCzTWr/o2QLKo6Khpce8w25NgZCDjbf14qM8uoL0mmipNVGWDKeZvD+ZxUWxC/FUfgT3goprcLC9ulCsrLF+ZN13gFlAbmhiqK8LpUrsO3sCme2AG3xVsAH+dZxxf2gWeN6tASXMBdGqI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725278105; c=relaxed/simple;
-	bh=oBHHMeHiBha/fXabSA6UGxz6iD01FGTyzpDAgaM2OBw=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=fz6FMhSvbyhwJzAROjY1zqImIsk+mBEzDxvCZOhv7fg5TwzVLNWAOG3ZcoSpcxVYNWkochH3gzbh9aYtOd+H3UMuwZebbQlETpi+6sxgA/+9rFJyHeQpYgUnp4ySw+RrQ6tIhyi3W61VyUnbiypq+PEV9rJSK31cNORG+7in0OU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=0cQML09U; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=lkIJ4uXa; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1725278102;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=sEgsc5hfwM3ia/sAR7ebt4TKSr5Pvzs7BQG/4VSVeIk=;
-	b=0cQML09UZi5csPnYHKk9/AcDeo9RrboR8toJS2MoJJxZtJjbZQO4er92aqP37pf3tF3KYo
-	B7CsiytHbvp5JAwoUmaIFKDOljiwHBgHKsSbpSFyGL77SHKiXzKbc7rIuOBbjjJletV5b5
-	+vQAtzPInUxUb96foq9u3SAulT2wCQ3fTM4ktJcOtpBTTJY2KF69ybew7eI9dU8mPwtkjc
-	l9h4jNj+5gzVVrr8YA+VUFwl6tCDu5tSbfP71X/5oRYupvqqqBsNyp4SSjpJhTvSMDK/Ov
-	VZTUa0/3lgBgYuGrbaZ6GPNdxKy1fsCZ6lWqX8xPEan5Agc2UzhfbDcontaS9Q==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1725278102;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=sEgsc5hfwM3ia/sAR7ebt4TKSr5Pvzs7BQG/4VSVeIk=;
-	b=lkIJ4uXaxPac8zjaUxEtoY+WcZYF7rh33Smg10Am/Xgg45lhdJBXhlNLzsejtGadHI4nEz
-	TuBxXTEcTfvmpXCA==
-To: "Christoph Lameter (Ampere)" <cl@gentwo.org>
-Cc: Christoph Lameter via B4 Relay <devnull+cl.gentwo.org@kernel.org>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Waiman Long <longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>, Linus
- Torvalds <torvalds@linux-foundation.org>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-arch@vger.kernel.org
-Subject: Re: [PATCH v2] Avoid memory barrier in read_seqcount() through load
- acquire
-In-Reply-To: <b0543714-9176-f3a3-1ca9-55bbedf6a0c3@gentwo.org>
-References: <20240819-seq_optimize-v2-1-9d0da82b022f@gentwo.org>
- <87ttfbeyqt.ffs@tglx> <b0543714-9176-f3a3-1ca9-55bbedf6a0c3@gentwo.org>
-Date: Mon, 02 Sep 2024 13:55:01 +0200
-Message-ID: <871q226zje.ffs@tglx>
+	s=arc-20240116; t=1725278120; c=relaxed/simple;
+	bh=9J7GkouTbYRkiXQCeY02KWRx8IwFXPUu0A8xf8Lp4u0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JZGwf6tG38FnJmj7HuKANMzlsiYVfQRaUJPKpmOeWIPhCR5KxX7PG31NFebsVS8aodIyuR47ktj85dwzfzZaN9YgJYj1BhB640OCOVyAhf12H8k4IVTpmiWQMB50qAspvwyoWpOUvxlT3CcXLSBW17VZ9f8QWvm8yJ4nbIVuO4s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=bmjy6fVO; arc=none smtp.client-ip=209.85.167.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-533488ffaddso5184436e87.1
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2024 04:55:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1725278117; x=1725882917; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9J7GkouTbYRkiXQCeY02KWRx8IwFXPUu0A8xf8Lp4u0=;
+        b=bmjy6fVOZyJN/gaFZfcrQWacC4/u8Y3lHGu1DkSKzMKb2ZkWM7HUNETClw7vQk5yrw
+         Nfy7CdbmyxxmtonZV9SYHh54ov3ZjB/JQDiwOz5XeI9vi2yBdvloeIUTwugPcpxKi6Fw
+         VpG3AKkAoYj6ejZAh5q78hU9/4qVeOZuU4V4iDl2NnPfQRK1i2LJYM/en6K0VV96rkhh
+         86TC5cy1pFbSccpNdaasOUdBvSKT6KFDYnPBci5APZx9Trl16mNzTJouo6Pf5PqdkvMA
+         epf6hWya2Bbd8M9lWVIpEEa3Nfa1F+5FIvh6zp5KlZzxxyKYGUfUCpnLgY3m61lmsDkQ
+         xmGQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725278117; x=1725882917;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=9J7GkouTbYRkiXQCeY02KWRx8IwFXPUu0A8xf8Lp4u0=;
+        b=LCzuk2/NPWd0uGD5eAOebwbGSxAWw5jdwdMd48TxDwjl717P4zDf34JjVg9vsBBS2U
+         SF419OHd2XOIq4So+sOHYJTFOwFoiwBvgba+KRrMzh33bncCFOl1DkTBB2Os/Ffxpwey
+         mu1GkADWloOUYsWbB0YI96v9Jgp33Bh+Awqy2Sgv3f/iAi2WbTdcFjzr1rsjI1j7pZVg
+         uE8pk5VoCr87JeepyL1s4mvvb2JWCvYIGfirJyotIByXmAfWrhcspPza97LwOoKsFXXV
+         y5uldqdT0uBYRH3T0Vpkav0bQ31q8kHEysoT2N7lvaiRmodrzAvXfHmbIUeFoIkE+nuD
+         emYg==
+X-Forwarded-Encrypted: i=1; AJvYcCXE1sIpgWIhSev/3A2pR9TlbKCZKZgF1h4mBq8DrVHDmFMmvbg7ULyIe/uevLqjOVlMe65PgRWckez9cD4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzCV0YqiiqzJV/fd2Znq70ElpALtgphwnN9kXQkx39TJbGq5ly3
+	x+yX386qx2NnN6EUapO4a29kJzfYJHy9Il93+HrbSPJy2y4cT6nwhCIdw8pmo3lpvFkY7YvXCtV
+	OZPfMe+knfAUROjCtGJI/RZ/lGUTDjcwiV9d+PuC/RU1kF+6w
+X-Google-Smtp-Source: AGHT+IEGE12FfStnUdBGy/2dKVU5vyf2aKrdPnQfwMUTc+zGFDGNenYTlMLP89onXE8zV0IWCEadu5GfRUaSGbS+0XM=
+X-Received: by 2002:a05:6512:3b2b:b0:533:71f:3a53 with SMTP id
+ 2adb3069b0e04-53546b053admr8752543e87.19.1725278116390; Mon, 02 Sep 2024
+ 04:55:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20240829131051.43200-1-shenlichuan@vivo.com> <172527039219.21144.385699965145763717.b4-ty@linaro.org>
+ <ZtWWoT75zCSB4g1x@smile.fi.intel.com>
+In-Reply-To: <ZtWWoT75zCSB4g1x@smile.fi.intel.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Mon, 2 Sep 2024 13:55:05 +0200
+Message-ID: <CAMRc=McgnoZz0TuwB0nWAdiRyZ0tNkX9NUKq9THH1Hh0rPk9CA@mail.gmail.com>
+Subject: Re: [PATCH v1] gpio: stmpe: Simplify with dev_err_probe()
+To: Andy Shevchenko <andriy.shevchenko@intel.com>
+Cc: linus.walleij@linaro.org, mcoquelin.stm32@gmail.com, 
+	alexandre.torgue@foss.st.com, Shen Lichuan <shenlichuan@vivo.com>, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, linux-gpio@vger.kernel.org, 
+	linux-stm32@st-md-mailman.stormreply.com, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	opensource.kernel@vivo.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Aug 28 2024 at 10:15, Christoph Lameter wrote:
-> On Fri, 23 Aug 2024, Thomas Gleixner wrote:
+On Mon, Sep 2, 2024 at 12:42=E2=80=AFPM Andy Shevchenko
+<andriy.shevchenko@intel.com> wrote:
 >
->> This all can be done without the extra copies of the counter
->> accessors. Uncompiled patch below.
+> On Mon, Sep 02, 2024 at 11:46:34AM +0200, Bartosz Golaszewski wrote:
+> > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> > On Thu, 29 Aug 2024 21:10:51 +0800, Shen Lichuan wrote:
 >
-> Great. Thanks. Tried it too initially but could not make it work right.
+> [...]
 >
-> One thing that we also want is the use of the smp_cond_load_acquire to
-> have the cpu power down while waiting for a cacheline change.
+> > Applied, thanks!
 >
-> The code has several places where loops occur when the last bit is set in
-> the seqcount.
+> Be careful with patches from @vivo.com [1]!
 >
-> We could use smp_cond_load_acquire in load_sequence() but what do we do
-> about the loops at the higher level? Also this does not sync with the lock
-> checking logic.
 
-Come on. It's not rocket science to figure that out.
+Thanks for the heads-up!
 
-Uncompiled delta patch below.
+> This one in particular missed '\n' (and yes, I know that it's not an issu=
+e
+> for the ev_*() cases).
+>
 
-Thanks,
+b4 didn't complain so I didn't pay attention.
 
-        tglx
----
---- a/include/linux/seqlock.h
-+++ b/include/linux/seqlock.h
-@@ -23,6 +23,13 @@
- 
- #include <asm/processor.h>
- 
-+#ifdef CONFIG_ARCH_HAS_ACQUIRE_RELEASE
-+# define USE_LOAD_ACQUIRE	true
-+# define USE_COND_LOAD_ACQUIRE	!IS_ENABLED(CONFIG_PREEMPT_RT)
-+#else
-+# define USE_LOAD_ACQUIRE	false
-+# define USE_COND_LOAD_ACQUIRE	false
-+#endif
- /*
-  * The seqlock seqcount_t interface does not prescribe a precise sequence of
-  * read begin/retry/end. For readers, typically there is a call to
-@@ -134,10 +141,13 @@ static inline void seqcount_lockdep_read
- 
- static __always_inline unsigned __seqprop_load_sequence(const seqcount_t *s, bool acquire)
- {
--	if (acquire && IS_ENABLED(CONFIG_ARCH_HAS_ACQUIRE_RELEASE))
--		return smp_load_acquire(&s->sequence);
--	else
-+	if (!acquire || !USE_LOAD_ACQUIRE)
- 		return READ_ONCE(s->sequence);
-+
-+	if (USE_COND_LOAD_ACQUIRE)
-+		return smp_cond_load_acquire(&s->sequence, (s->sequence & 1) == 0);
-+
-+	return smp_load_acquire(&s->sequence);
- }
- 
- /*
-@@ -283,8 +293,12 @@ SEQCOUNT_LOCKNAME(mutex,        struct m
- ({									\
- 	unsigned __seq;							\
- 									\
--	while ((__seq = seqprop_sequence(s, acquire)) & 1)		\
--		cpu_relax();						\
-+	if (acquire && USE_COND_LOAD_ACQUIRE) {				\
-+		__seq = seqprop_sequence(s, acquire);			\
-+	} else {							\
-+		while ((__seq = seqprop_sequence(s, acquire)) & 1)	\
-+			cpu_relax();					\
-+	}								\
- 									\
- 	kcsan_atomic_next(KCSAN_SEQLOCK_REGION_MAX);			\
- 	__seq;								\
+Bart
+
+> [1]: https://lore.kernel.org/linux-spi/20240829033511.1917015-1-11162571@=
+vivo.com/
+> (read full discussion)
+>
+> --
+> With Best Regards,
+> Andy Shevchenko
+>
+>
 
