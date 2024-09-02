@@ -1,120 +1,106 @@
-Return-Path: <linux-kernel+bounces-310980-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310981-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E4A1968389
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 11:47:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7C5D96838A
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 11:47:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AD14E1F233B0
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 09:47:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1FE0AB21B93
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 09:47:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CB67187FEB;
-	Mon,  2 Sep 2024 09:47:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="sGNONg8S"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F21FC187338;
+	Mon,  2 Sep 2024 09:47:42 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 973CE44C76
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 09:47:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49A0644C76
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 09:47:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725270454; cv=none; b=LmzjbHsbCgxq91KF2flpY9O/QSBCTfW9ZldfS0cmw2amaFyjD4YirnQmhGtqwQWSlMElvwHKsPHa6TZhvNYQkoHCVYiAfFT/Sr7+SpHt0qk+EgOWYbmEgfPzj1R2hQrH3EDxG2u9tTxLoPymH/cFost/mX+HsoAn15gTKUEOhlk=
+	t=1725270462; cv=none; b=I0flM2KRu783Q9PvZOcEtuzRqUSYaLwGu5sYh52to0/BpTTOVIAPqp+A+zJ6Y3A1rsUr4b0Kd+c5GnHyvsDeBFL/AqgS/eGzKKXTGzFQnEdvvSdetz9HoO8CMrEsNi4RbBqGnKrRq5ZIBtYcbMVSO2V0z2SsZ/8ipgggg9zZffU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725270454; c=relaxed/simple;
-	bh=DuNScSLrncJcXkhhqd3wrDOHlNlSW0sDryQ2PyBZ5u4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=hNYr25GmtRDF6NwL0Blj8x5rv0yMLi7EasQ07rhP4S/j11KEuDbshZfopszJpFawWZCCU/BgDfJjXO1X/CX2dqgEapBvwYfYm4L9cyX+su9YxR+17FJEAc2D46UmULVHByrj8ihTwwYeeKQuIc8FkyqxFuBuaDFJf9CPohU38SI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=sGNONg8S; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-42bb8c6e250so30380855e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2024 02:47:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1725270451; x=1725875251; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=S3AEK0nNq+mUfvcaAEZ4EXWlK/uF5ptTVbDmVXUeQRg=;
-        b=sGNONg8Sh9iJ7Ptc2m+q7t6mcgCAUk7wEUZXeoboj4WhL26Q2AidZlD1sv7IFvwV4x
-         l9pEoK/k5YiTWvyYf+hkUBUiB1St5VZ/76+2oUcHIOXZiDnJGJ9lsmzLgQAM0t17M7xB
-         qcT2dp5k3AONFdCFJDkDI/hfuKMUIUgUcB1/RD4bN+A0mhJLiCUfm2IjtM7x/ekVT0uX
-         Amuan1q5AXVWYT/AjhlcfXP3oGl3yCWheR6yqY2CpbTD8XMTegtTIeC4l/fmEFipaTbN
-         mzYdPsqND/KHSuQ4x+UzmEUJher8Vap4TkKB4y7e/u+dZ9D0mtUzxBmdiraBngvQNfkV
-         M/Yg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725270451; x=1725875251;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=S3AEK0nNq+mUfvcaAEZ4EXWlK/uF5ptTVbDmVXUeQRg=;
-        b=vj7A/B5AY+iPIFJ/ziYaNTtHxx3Ifn8INvTY4ZPnUFfSlwvxK2o9GoyFeyOj6c5+3o
-         gRSIf8qXp4gR9veMz+aV/mizlOv58XKKkOS9tE6pZocCVopIqfQK01AOeSuTD3Gu7rdr
-         IlL3ahl5FfcwO/IL4pwPR/MptZzIvBjuRNx2GBd+uES2fem/Jo9WyXn+yiVEu8KNfkDa
-         QiXXgVcRqPqjXOVx8+uiYSlH8ByCz/b2s6SZAExswpocbirWAMozR1D45Arnuy12fFO4
-         LEFLOr1RDILuh1B1yioxvpWZ0QFrHrT7JWI9AVDlX2Qrh4D7MY663KioQNuKAyiU9q0F
-         oVxw==
-X-Forwarded-Encrypted: i=1; AJvYcCX0fVYLvacLsdXxMhY14X15bBsrlMnjpKT6l/z6d4EjEpiH3wkze9BUYIHxeJTiFCvkUVtQWLFAdkHa16Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwMtuJCKQe68W3UcBSvMYr5oLT7I2SG0ksgoD5OHb+4qOkIJfH9
-	IyxV9tqfuppZXPWhXf5wRbp9g80b/ZmoqpodQBrCLaU7Pce3zvTMi6s+vowz9DQ=
-X-Google-Smtp-Source: AGHT+IEE10T3SSREzGD+1MNWdnESsXC2FVE58tgjhk7q/xipxWIqUGIS5v57Sr/r85ctuKxUZXBzww==
-X-Received: by 2002:a05:600c:1d18:b0:426:6ee7:c05a with SMTP id 5b1f17b1804b1-42c82f5324cmr25804605e9.15.1725270450396;
-        Mon, 02 Sep 2024 02:47:30 -0700 (PDT)
-Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:b496:9e67:73c9:9f5a])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42ba63abea3sm168346355e9.28.2024.09.02.02.47.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Sep 2024 02:47:30 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Linus Walleij <linus.walleij@linaro.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-mips@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	Hartley Sweeten <hsweeten@visionengravers.com>,
-	Alexander Sverdlin <alexander.sverdlin@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: Re: [PATCH v1 0/2] gpiolib:legacy: Kill GPIOF_DIR_* and GPIOF_INIT_*
-Date: Mon,  2 Sep 2024 11:47:28 +0200
-Message-ID: <172527044560.21269.8413918138283838054.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240828142554.2424189-1-andriy.shevchenko@linux.intel.com>
-References: <20240828142554.2424189-1-andriy.shevchenko@linux.intel.com>
+	s=arc-20240116; t=1725270462; c=relaxed/simple;
+	bh=HiqNHCQK+1DowJhE+PJamRZymKe3J4WfIfsxrG0iR2g=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=KdOIfbb/9X/qhHwf0u5oAKdZxqZpF0W4q7Z7+Q+MAvwjHQM1jZ/HQbGGuV677EBefujsPWXFmNJGlzW3U1YYijdcB/QBp9gQkRWefLjNMt5NvBhCgiwuVYBM9sHdc6teac8RVXA9++pbxHbtucallGZo2Ly0nHpCeT5TMKlt1E4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1sl3eo-0000BQ-Rt; Mon, 02 Sep 2024 11:47:34 +0200
+Received: from [2a0a:edc0:0:900:1d::4e] (helo=lupine)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1sl3eo-004s4j-C0; Mon, 02 Sep 2024 11:47:34 +0200
+Received: from pza by lupine with local (Exim 4.96)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1sl3eo-000fuy-0x;
+	Mon, 02 Sep 2024 11:47:34 +0200
+Message-ID: <34bc2d1ceef7bcab3d9b78de588e996c2d2ecdd3.camel@pengutronix.de>
+Subject: Re: [PATCH v3 8/9] reset: amlogic: split the device core and
+ platform probe
+From: Philipp Zabel <p.zabel@pengutronix.de>
+To: Jerome Brunet <jbrunet@baylibre.com>, Neil Armstrong
+	 <neil.armstrong@linaro.org>
+Cc: Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org, 
+	linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org
+Date: Mon, 02 Sep 2024 11:47:34 +0200
+In-Reply-To: <1jsev0wj8y.fsf@starbuckisacylon.baylibre.com>
+References: <20240808102742.4095904-1-jbrunet@baylibre.com>
+	 <20240808102742.4095904-9-jbrunet@baylibre.com>
+	 <812c6ddc-1929-46c4-bac7-4bd0f5ccc213@linaro.org>
+	 <1jsev0wj8y.fsf@starbuckisacylon.baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+On Mo, 2024-08-19 at 18:49 +0200, Jerome Brunet wrote:
+> On Mon 19 Aug 2024 at 18:33, Neil Armstrong <neil.armstrong@linaro.org> w=
+rote:
+>=20
+> > On 08/08/2024 12:27, Jerome Brunet wrote:
+> > > To prepare the addition of the auxiliary device support, split
+> > > out the device core function from the probe of the platform device.
+> > > The device core function will be common to both the platform and
+> > > auxiliary
+> > > driver.
+> > > Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+> > > ---
+> > >   drivers/reset/amlogic/Kconfig                 |  10 +-
+> > >   drivers/reset/amlogic/Makefile                |   3 +-
+> > >   .../{reset-meson.c =3D> reset-meson-core.c}     | 101 +++----------=
+-----
+> > >   drivers/reset/amlogic/reset-meson-pltf.c      |  92 +++++++++++++++=
++
+> >=20
+> > Are we still in 1983 ?
+>=20
+> I don't quite get that remark or how it is helping the review.
+>
+> > please use reset-meson-platform and drop pltf completely
+>=20
+> You are requesting auxiliary -> aux on the patch.
+> So which one will it be ?
 
+I would prefer to drop the -pltf suffix completely and also to drop the
+"reset driver" -> "reset platform driver" documentation changes.
 
-On Wed, 28 Aug 2024 17:23:56 +0300, Andy Shevchenko wrote:
-> Shrink the legacy API and definition surface by killing the (internal)
-> definitions. This, in particular, will fix a couple of drivers that took
-> it wrong.
-> 
-> This is assumed to go via BPIOLIB tree as this is quite small series and
-> most of the changes related to it.
-> 
-> [...]
-
-Applied, thanks!
-
-[1/2] gpiolib: legacy: Kill GPIOF_INIT_* definitions
-      commit: 4b2b0a2ce8153d65d0829e45e73bf6acdc291344
-[2/2] gpiolib: legacy: Kill GPIOF_DIR_* definitions
-      commit: 8c045ca534d03bab1ce4b4de49d29a36276a1e35
-
-Best regards,
--- 
-Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+regards
+Philipp
 
