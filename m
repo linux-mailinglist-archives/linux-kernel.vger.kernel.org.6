@@ -1,181 +1,166 @@
-Return-Path: <linux-kernel+bounces-311526-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311518-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09042968A19
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 16:38:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33345968A08
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 16:35:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F4C31F21AA4
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 14:38:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6DFEF1C20C21
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 14:35:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1EAE19E97C;
-	Mon,  2 Sep 2024 14:36:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96FD21A2635;
+	Mon,  2 Sep 2024 14:35:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="fmAJfuq6"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WLvWFQ2i"
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EEEC1A264D;
-	Mon,  2 Sep 2024 14:36:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8234C1A2622;
+	Mon,  2 Sep 2024 14:35:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725287770; cv=none; b=V35t7cTwnpvS3uEVvxJjmsSKfogXglj7qriwd2dMV5FOW7bvZfLcYTN2RJzKO1yJ3jtHoIMTsiUL+RvdXaeWBP9xKDL/IzFZvNvFjO2z3fj/KH0Fl6Vjm0D0vs2zqDy3KSrSEwoKhkmUPa1vIj5IWMYZWQSCf2q27yWod/agwmw=
+	t=1725287716; cv=none; b=bvQFvz1+x4i7T2MvrdFGwcutlDkn0nw9RzEjqkRxGpDwyNz2uPJVipds01zA4ZRDa9xxF9swsuFNIyqEZtCj1bdTZuei1OYkc4hkPsn+5Ke3nJyUiNV1gKcosNyS010w4uPFyUtiqPyzIPGeBhcmCelXNm1bDUfdBPe7uOtw5S4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725287770; c=relaxed/simple;
-	bh=FU2s2IazRvyJuJ6eR3DYyCxYE4wFwIzeJ3sKgDBVtog=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=G3bzxWBWj/cEUOYNy3GSUSHkt2U/IDUhVeanaafhSqLon/VtJFc/Bsq/QQngUQ2/xjmdhze19b16OKpZRh2eydXXF4arK3LjK6q1CGmFduLYmaem27UpN2A22xkMfXbI2GH4EGvoTZLDYWPoD0/pRD97P6r4H3oiJUhKQhxSYAw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=fmAJfuq6; arc=none smtp.client-ip=68.232.154.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1725287768; x=1756823768;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=FU2s2IazRvyJuJ6eR3DYyCxYE4wFwIzeJ3sKgDBVtog=;
-  b=fmAJfuq6CGBg8PmYuQHIoO5HtMWeKqzLUTWQi2a4quYgPYkeutLW9Pfx
-   1bUFQamhTsXS8Ay929GJ+I30d0fRHXwz3Cr0TtNbraMizcgH9fP+Ocw4d
-   0QKwmJigN3ykGst8+Vhj5C2x5jhcxULk45KXISOlZ0F2k62cfPVC7KYSL
-   g9gbatFAoEi/Zs3Szkc2R5RoMajWoewyiEMuweROLzOOmELpUnvnqrJXF
-   WJ09yx38rcq9lJUDZhItWv1mGLssGKmk8mCmqmjLAqHScQZqwrcYcqhjV
-   /agQBPeClg6kCM4ZMtnunn0HhMrcMw0E/wxSDp4zlaCtTawi25vLW6gFU
-   A==;
-X-CSE-ConnectionGUID: nwmy61OOT8aTto41TmdklQ==
-X-CSE-MsgGUID: mdDKCsvUR2uVvioHd4NJdg==
-X-IronPort-AV: E=Sophos;i="6.10,195,1719903600"; 
-   d="scan'208";a="31855351"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa2.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 02 Sep 2024 07:36:06 -0700
-Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Mon, 2 Sep 2024 07:35:40 -0700
-Received: from che-ll-i17164.microchip.com (10.10.85.11) by
- chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server id
- 15.1.2507.35 via Frontend Transport; Mon, 2 Sep 2024 07:35:35 -0700
-From: Parthiban Veerasooran <Parthiban.Veerasooran@microchip.com>
-To: <andrew@lunn.ch>, <hkallweit1@gmail.com>, <linux@armlinux.org.uk>,
-	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-	<pabeni@redhat.com>, <ramon.nordin.rodriguez@ferroamp.se>
-CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<parthiban.veerasooran@microchip.com>, <UNGLinuxDriver@microchip.com>,
-	<Thorsten.Kummermehr@microchip.com>, Parthiban Veerasooran
-	<Parthiban.Veerasooran@microchip.com>
-Subject: [PATCH net-next v2 7/7] net: phy: microchip_t1s: configure collision detection based on PLCA mode
-Date: Mon, 2 Sep 2024 20:04:58 +0530
-Message-ID: <20240902143458.601578-8-Parthiban.Veerasooran@microchip.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240902143458.601578-1-Parthiban.Veerasooran@microchip.com>
-References: <20240902143458.601578-1-Parthiban.Veerasooran@microchip.com>
+	s=arc-20240116; t=1725287716; c=relaxed/simple;
+	bh=00guibkwtRNUAm7l+mrSZBpcT0SVm1AnQYBAkp2gYsM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KYTyQfvdaTHVbThPmrYdfiRrN1N5FboE5hF9MDHYO/EHDS6BBN2k6gPDISPWbRhhD+38GNUm2wrgsAA+i5lSWpbxlkBIrpw7m+s9RXI6ev2/CZUpHcENRtvKMzTHzDCO8gyzlt842bTczXgRjcQqxhA8ULv4wDeBuQQQUHAbeVg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WLvWFQ2i; arc=none smtp.client-ip=209.85.210.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-70cec4aa1e4so3075746b3a.1;
+        Mon, 02 Sep 2024 07:35:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725287714; x=1725892514; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=RvaEgsvt3EmKxcrvNBVRbDBwpGvxKdEq5Ms4mTY66+8=;
+        b=WLvWFQ2ipPTQCrdw47JdCZJzzlz1RF/O+F4k6NszjZlTSfbtOL648smVjfKB65fm/9
+         HvLHxHvr0Ey3yl1bS7pMtyKMQiTJ/HGEXXROWq3iNM05zuKtV3jlruCdlam6OSE96lAn
+         6jBNylh6ztrdCLPTq1KgC4oFxpAnt0DyZwuqRIehuJ9Fp/1vmOQcF6OqME9sAdTevhDq
+         CskaYRkBUQ4TJKSDngz1+j8cV8mMYxuPj8mEOljxA+e3fXKr+RfSQ8eYi0GVOUBUPO7g
+         DBJ8Kk/6eeA64NlIoM8z2/FrGfn40nDWeQUbj7oLoGkL7OAGIsjgm842fNTHtSd5xYRy
+         lRog==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725287714; x=1725892514;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RvaEgsvt3EmKxcrvNBVRbDBwpGvxKdEq5Ms4mTY66+8=;
+        b=Lly6a2pDESIQBV9zwEynckXd+/GdpmU0G1ThfD4rHnO/aJFZEwj7x1u4pNqLVpWq54
+         +nddit1lZJLVIlIWUeKa4KKbz5sTqRPheb6MSpIveUUcHGpC5wmuUs7v1aktIhPfSIIK
+         gdFeUgo3McA4fTsua/7nSMsFQe1Cs0ishGn5q7xSTIjgluh2LsbMNQ6tR5i30PL3BLz1
+         W7Ut+gidmxkkN6lJYIGiwffL5hxd2WfhqZia0fSWjsSCurIFkZ8KuGEa6pePanu4f4oH
+         S3D7SqbF62KqJj1Nda6Dk48XjeXU/LxNIjRk5J1RG8LRz8X+ds4bVH3qCFdL4H+gPUh3
+         rYFw==
+X-Forwarded-Encrypted: i=1; AJvYcCVlEvQIOQ6Hj2qdbyNz9tkcNQvowo2BGfeAgCrg/gvzUuVNALIhAn9C46v7Gq7SjNemhxFuMNU5aaVbfsu4@vger.kernel.org, AJvYcCWnwlhM0x8h17IOMve26TswFLq5LBbcaBOvnWO4BoqX4W33Tq7jnx1I9eaJQCqPQTLIhfHbtcznntspMg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxR2ymz31S9gy5vpV59QkurAb0YvTieWrQ5cM3rWiYebIu9wKk/
+	0TqSA20Ox74TLmZeA2fYJZTGe2KoZW64LTmBa4CwEenPUPMIBjJp
+X-Google-Smtp-Source: AGHT+IGbIql4DBM1UPL4+b6z8TFkZXNpV/rNV1zjv2OV0Q8ZhEXfZfcComyGcd9kjMlo3td56B91iw==
+X-Received: by 2002:a05:6a00:1398:b0:714:10d2:baae with SMTP id d2e1a72fcca58-715dfc039cemr17998340b3a.14.1725287713611;
+        Mon, 02 Sep 2024 07:35:13 -0700 (PDT)
+Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-715e575c3efsm6909357b3a.202.2024.09.02.07.35.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 02 Sep 2024 07:35:13 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <7ac1f26b-2a1c-433b-96bd-920d1846b04a@roeck-us.net>
+Date: Mon, 2 Sep 2024 07:35:11 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/5] hwmon: pmbus: Implement generic bus access delay
+To: Patrick Rudolph <patrick.rudolph@9elements.com>,
+ linux-kernel@vger.kernel.org
+Cc: jdelvare@suse.com, linux-hwmon@vger.kernel.org
+References: <20240902075319.585656-1-patrick.rudolph@9elements.com>
+Content-Language: en-US
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
+In-Reply-To: <20240902075319.585656-1-patrick.rudolph@9elements.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-As per LAN8650/1 Rev.B0/B1 AN1760 (Revision F (DS60001760G - June 2024))
-and LAN8670/1/2 Rev.C1/C2 AN1699 (Revision E (DS60001699F - June 2024)),
-under normal operation, the device should be operated in PLCA mode.
-Disabling collision detection is recommended to allow the device to
-operate in noisy environments or when reflections and other inherent
-transmission line distortion cause poor signal quality. Collision
-detection must be re-enabled if the device is configured to operate in
-CSMA/CD mode.
+On 9/2/24 00:53, Patrick Rudolph wrote:
+> Some drivers, like the max15301 or zl6100, are intentionally delaying
+> SMBus communications, to prevent transmission errors. As this is necessary
+> on additional PMBus compatible devices, implement a generic delay mechanism
+> in the pmbus core.
+> 
+> Introduces two delay settings in the pmbus_driver_info struct, one applies
+> to every SMBus transaction and the other is for write transaction only.
+> Once set by the driver the SMBus traffic, using the generic pmbus access
+> helpers, is automatically delayed when necessary.
+> 
+> The two settings are:
+> access_delay:
+>    - Unit in microseconds
+>    - Stores the accessed timestamp after every SMBus access
+>    - Delays when necessary before the next SMBus access
+> 
+> write_delay:
+>    - Unit in microseconds
+>    - Stores the written timestamp after a write SMBus access
+>    - Delays when necessary before the next SMBus access
+> 
+> This allows to drop the custom delay code from the drivers and easily
+> introduce this feature in additional pmbus drivers.
+> 
+> Signed-off-by: Patrick Rudolph <patrick.rudolph@9elements.com>
 
-Signed-off-by: Parthiban Veerasooran <Parthiban.Veerasooran@microchip.com>
----
- drivers/net/phy/microchip_t1s.c | 42 ++++++++++++++++++++++++++++++---
- 1 file changed, 39 insertions(+), 3 deletions(-)
+Series applied.
 
-diff --git a/drivers/net/phy/microchip_t1s.c b/drivers/net/phy/microchip_t1s.c
-index bd0c768df0af..a0565508d7d2 100644
---- a/drivers/net/phy/microchip_t1s.c
-+++ b/drivers/net/phy/microchip_t1s.c
-@@ -26,6 +26,12 @@
- #define LAN865X_REG_CFGPARAM_CTRL 0x00DA
- #define LAN865X_REG_STS2 0x0019
- 
-+/* Collision Detector Control 0 Register */
-+#define LAN86XX_REG_COL_DET_CTRL0	0x0087
-+#define COL_DET_CTRL0_ENABLE_BIT_MASK	BIT(15)
-+#define COL_DET_ENABLE			BIT(15)
-+#define COL_DET_DISABLE			0x0000
-+
- #define LAN865X_CFGPARAM_READ_ENABLE BIT(1)
- 
- /* The arrays below are pulled from the following table from AN1699
-@@ -370,6 +376,36 @@ static int lan867x_revb1_config_init(struct phy_device *phydev)
- 	return 0;
- }
- 
-+/* As per LAN8650/1 Rev.B0/B1 AN1760 (Revision F (DS60001760G - June 2024)) and
-+ * LAN8670/1/2 Rev.C1/C2 AN1699 (Revision E (DS60001699F - June 2024)), under
-+ * normal operation, the device should be operated in PLCA mode. Disabling
-+ * collision detection is recommended to allow the device to operate in noisy
-+ * environments or when reflections and other inherent transmission line
-+ * distortion cause poor signal quality. Collision detection must be re-enabled
-+ * if the device is configured to operate in CSMA/CD mode.
-+ *
-+ * AN1760: https://www.microchip.com/en-us/application-notes/an1760
-+ * AN1699: https://www.microchip.com/en-us/application-notes/an1699
-+ */
-+static int lan86xx_plca_set_cfg(struct phy_device *phydev,
-+				const struct phy_plca_cfg *plca_cfg)
-+{
-+	int ret;
-+
-+	ret = genphy_c45_plca_set_cfg(phydev, plca_cfg);
-+	if (ret)
-+		return ret;
-+
-+	if (plca_cfg->enabled)
-+		return phy_modify_mmd(phydev, MDIO_MMD_VEND2,
-+				      LAN86XX_REG_COL_DET_CTRL0,
-+				      COL_DET_CTRL0_ENABLE_BIT_MASK,
-+				      COL_DET_DISABLE);
-+
-+	return phy_modify_mmd(phydev, MDIO_MMD_VEND2, LAN86XX_REG_COL_DET_CTRL0,
-+			      COL_DET_CTRL0_ENABLE_BIT_MASK, COL_DET_ENABLE);
-+}
-+
- static int lan86xx_read_status(struct phy_device *phydev)
- {
- 	/* The phy has some limitations, namely:
-@@ -403,7 +439,7 @@ static struct phy_driver microchip_t1s_driver[] = {
- 		.config_init        = lan867x_revc_config_init,
- 		.read_status        = lan86xx_read_status,
- 		.get_plca_cfg	    = genphy_c45_plca_get_cfg,
--		.set_plca_cfg	    = genphy_c45_plca_set_cfg,
-+		.set_plca_cfg	    = lan86xx_plca_set_cfg,
- 		.get_plca_status    = genphy_c45_plca_get_status,
- 	},
- 	{
-@@ -413,7 +449,7 @@ static struct phy_driver microchip_t1s_driver[] = {
- 		.config_init        = lan867x_revc_config_init,
- 		.read_status        = lan86xx_read_status,
- 		.get_plca_cfg	    = genphy_c45_plca_get_cfg,
--		.set_plca_cfg	    = genphy_c45_plca_set_cfg,
-+		.set_plca_cfg	    = lan86xx_plca_set_cfg,
- 		.get_plca_status    = genphy_c45_plca_get_status,
- 	},
- 	{
-@@ -423,7 +459,7 @@ static struct phy_driver microchip_t1s_driver[] = {
- 		.config_init        = lan865x_revb_config_init,
- 		.read_status        = lan86xx_read_status,
- 		.get_plca_cfg	    = genphy_c45_plca_get_cfg,
--		.set_plca_cfg	    = genphy_c45_plca_set_cfg,
-+		.set_plca_cfg	    = lan86xx_plca_set_cfg,
- 		.get_plca_status    = genphy_c45_plca_get_status,
- 	},
- };
--- 
-2.34.1
+Thanks,
+Guenter
 
 
