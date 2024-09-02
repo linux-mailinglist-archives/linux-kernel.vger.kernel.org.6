@@ -1,83 +1,148 @@
-Return-Path: <linux-kernel+bounces-311466-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311467-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC74596898F
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 16:12:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11DAA968990
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 16:13:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A030283FF7
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 14:12:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC6BC1F2394D
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 14:13:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0D3219F111;
-	Mon,  2 Sep 2024 14:12:38 +0000 (UTC)
-Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 827DB19F112;
+	Mon,  2 Sep 2024 14:13:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="k2/ET4i0"
+Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 006B719F100;
-	Mon,  2 Sep 2024 14:12:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7F6A19F10A
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 14:12:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725286358; cv=none; b=MBbdC3dinSqkS9xoBY4iRTJjA0pTj8qB/f9BO4CHEVTwuFZFvMg7sXBoC557X8lQGUhuU/1NIW+9O+gIIJ7+Lm3uAdfajdHgl5D0LzSqe/HSaosjUitCgzLNgFGAA3oyD8RmTexQixC3wfCLd33eygWhSyrJAEu+ZTgC7h2bBws=
+	t=1725286381; cv=none; b=XXx6VlwuewUkh0Uywo3S9w5O3ge8r1ce8hbMvw1y85P/BHiXfTXhaSBkvUgZGjOPsNFwhHstzxJn+9BbceVXI1tREqr9nr6KFknho/LSuo887nhj+l9WYQWxo8F4sYhQ0yC1194CD3jg7V55fk8G5yZxe0m1MTVN7WhpcoQh6FQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725286358; c=relaxed/simple;
-	bh=Kk8CHL+kR6atoREqYqkSYJwr9BSSnxuF4pNB/FP5hzA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=THLZ69zNxhgrVDQ+zbjfJ7fVF1AusotxB1wvHDxNoNFRtxzBwg5PMBNtD8liz2cyMzdp3tQfQFYcucuC6owBKfDDWjj6pE2rmOoW+eYXGMLhtrlVOXfU86QdauwMhwzYZC1BYD/ugfM10GPIT10Tl87rTfy6PHI8ghyyiqXzj8A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.216.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-2d877dab61fso1694747a91.3;
-        Mon, 02 Sep 2024 07:12:36 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725286356; x=1725891156;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=F64bS6DRw3UKsmpMpP0QQPIepPXU+WPPJPaEDVUhgo8=;
-        b=OQfeC8zhJGvNsY05V5pz9b/V8D3eBcKwRtmY68Cb4ZsOEu2qpxFvEs/jBWrujcmthJ
-         QVNKNGqlEvsn31w4jfAUqY7xGPs9VhqIZ816yrfLmDDa6YCZFEras9klCxO5tkvrx4Br
-         2Pe3q+ZPYmkXraBNYLzMARrGh0gf2evXMwGbAsjJRFqNDotqUwhFUiT9gas7k02cuX/m
-         dnGsrqTSXYid2ugu/zjdOHcfEfIWZMgSNjjwB6bu0KWoWwL5cVGrz/9KmJSRR0KfMvJW
-         2/q6oqNj5ZkcDZAbOt8hKg4yPSbuylJ8t0U4joBqiSUHstlA9vVDgta5AEbMTciYOSXg
-         9smA==
-X-Forwarded-Encrypted: i=1; AJvYcCV5WI+QlPKzfc+r5dfaZS+Pfu3OD28bNYaGEfpjWbCcjWsEiD2cWvDVaMAlVvsTUUnMmAcC8BPzJnyL@vger.kernel.org, AJvYcCWMVGLVo5dh7G5s8Ml2HkVrUi5/XFlbc/HZAFmeo0D5CcilNOoeK22w0VKpi6GXI0MZF+VpCw7Asf4K/Bg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwW1mAGPIqGlNBZu169t+xK2s8XjqffxEfElxTrnpimhCW/0UGN
-	0ZE10YP00iZt9am/MGNJX7f3xzM6cBgzDJ/aWT+s04zrwHQY19hh
-X-Google-Smtp-Source: AGHT+IGsWW78e/zRV1dWhn7tH0/rGhlf3HuFQMz2+LGZYfUGsIT8PRfJ25tgS4V1WDe6lJrUL0V4hw==
-X-Received: by 2002:a17:90a:4481:b0:2d3:db91:ee82 with SMTP id 98e67ed59e1d1-2d856503a10mr11179272a91.40.1725286356015;
-        Mon, 02 Sep 2024 07:12:36 -0700 (PDT)
-Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d8b8fe1f68sm3237345a91.31.2024.09.02.07.12.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Sep 2024 07:12:35 -0700 (PDT)
-Date: Mon, 2 Sep 2024 23:12:33 +0900
-From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
-To: zhangjiao2 <zhangjiao2@cmss.chinamobile.com>
-Cc: manivannan.sadhasivam@linaro.org, kishon@kernel.org,
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] tools: pci: rm .*.cmd when make clean
-Message-ID: <20240902141233.GA261040@rocinante>
-References: <20240902041240.5475-1-zhangjiao2@cmss.chinamobile.com>
+	s=arc-20240116; t=1725286381; c=relaxed/simple;
+	bh=cpZ4PauVNGJbbui1qSdGNxfiCpqK77JPhmc8S9jtHHk=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=N3Rn8SMbXm5X8iDx5c8/E+60Ox516qV/7SwRWwkDFmWrenvhAPLtO5FppDoPjH13CC1SfR/ZkOF1t3gj/PWnJsyJIY2cT1exTbHkdNPxcot800n6F+bD7gz1DLTKlwV4lhWG1Bu8I0W84pLs76D6xghkI+FPSanV6KTVK60joLM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=k2/ET4i0; arc=none smtp.client-ip=217.70.183.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 360B81BF207;
+	Mon,  2 Sep 2024 14:12:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1725286372;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=wvLaVZYHS2Z2KXkZwLboI7ehC7Fzmd1852PHzQQaI5o=;
+	b=k2/ET4i0A3B6iDQpwx+ds6uQQh84yuzBHXQjFRDKYqOMgPeR8E+RM6xy2LUV/UxhugbY6P
+	Qah1Lk3GBQ/v5BitRFMhim/F0qcod+paiqnb7E/eIXLDeUdWaKgcC+ncD/WWnGK7Cjg49X
+	KDwO7XuAfwVjYUGjpk+5aHqOdt2LXoS+EcF5D9xjcFEFsFqppGvY0/9ncMHmG7Z1LzSpdT
+	XoUnwG5AWDEbJjkL614YuIoedZT+XoksJhrfkc/TpXbAWMYJMok0LdkbiZ1sA/YUys5wHG
+	dlMSwEvZ8rqHKLdR2c8M0/Fx//zvlswCzJgfIuiYXvdwabJ1JRW48irwkviG9Q==
+Date: Mon, 2 Sep 2024 16:12:50 +0200
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+To: Frank Li <Frank.li@nxp.com>
+Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>, Boris Brezillon
+ <boris.brezillon@collabora.com>, Parshuram Thombare <pthombar@cadence.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Boris Brezillon
+ <bbrezillon@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Conor Culhane
+ <conor.culhane@silvaco.com>, linux-i3c@lists.infradead.org,
+ linux-kernel@vger.kernel.org, imx@lists.linux.dev
+Subject: Re: [PATCH v3 03/11] i3c: master: Extend address status bit to 4
+ and add I3C_ADDR_SLOT_EXT_INIT
+Message-ID: <20240902161250.26846654@xps-13>
+In-Reply-To: <ZszPrBeoPehGsocC@lizhi-Precision-Tower-5810>
+References: <20240819-i3c_fix-v3-0-7d69f7b0a05e@nxp.com>
+	<20240819-i3c_fix-v3-3-7d69f7b0a05e@nxp.com>
+	<20240823180426.056ac093@xps-13>
+	<ZsjNA9JV0UKONV32@lizhi-Precision-Tower-5810>
+	<20240826100430.33194702@xps-13>
+	<Zsylya9TN4mVFL79@lizhi-Precision-Tower-5810>
+	<20240826184924.53b48861@xps-13>
+	<ZszPrBeoPehGsocC@lizhi-Precision-Tower-5810>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240902041240.5475-1-zhangjiao2@cmss.chinamobile.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-GND-Sasl: miquel.raynal@bootlin.com
 
-Hello,
+Hi Frank,
+ =20
+> > > switch to this address if it is free.
+> > >  *
+> > > In step 1, i3c_bus_get_free_addr() is called. To optimize for step 2b=
+, this
+> > > function should return an address that is not pre-reserved by any tar=
+get
+> > > device with an assigned address in the device tree (DT). =20
+> >
+> > This does not make sense, if you want to optimize for 2b, why not
+> > selecting the assigned-address property in the first place if it's
+> > available? =20
+>=20
+> This is my first idea. But I gived up this way.
+>=20
+> Select an assigned-address here will involve a big change in i3c framewor=
+k.
+> There are no PID information in i3c_master_get_free_addr().
+>=20
+> In DAA flow:
+> - SVC is get PID first, the get_free_addr(). This case, we can use PID to
+> get dt assigned address.(if change/add API)
+> - But HCI, it is difference, hci_cmd_v2_daa(), get_free_addr() firstly th=
+en
+> send out DAA command. So no PID information when call get_free_addr().
+>=20
+> To cover both case, return a *real* free address here is simplest solutio=
+n.
 
-> rm .*.cmd when make clean
+But this is a limitation of the HCI driver? So why not addressing this
+in the HCI driver instead? It would greatly simplify the core logic
+which becomes complex for wrong reasons.
 
-Applied to misc, thank you!
+> >  Also, I don't understand why you would care to specifically
+> > *not* return an address that might be the default one for another
+> > device in the first place. =20
+>=20
+> If devices A (want adddress 0xA), device B (want address 0xB), if both
+> device send hot join at the same time. device B's PID less than device A,
+>=20
+> Device B will be found firstly, call get_free_addr(), 0xA will be return
+> if no this patch.
+>=20
+> Device A, call try_get_freeaddr() to get 0xB.
+>=20
+> So Devcie B will be assign to 0xA, and Device A will be assign to address=
+ 0xB.
+>=20
+> After do_daa command, framework will add device B and device A into i3c b=
+us.
+>=20
+> When framework try to add device B to i3c bus, framework will try switch
+> device B's address to 0xB from 0xA, but it will be fail because 0xB alrea=
+dy
+> assigned to device A.
 
-[1/1] tools: PCI: Remove .*.cmd files with make clean
-      https://git.kernel.org/pci/pci/c/f5383c543de0
+Well, okay, but that's exactly the situation that will happen if these
+devices are not described in your DT. I guess it's expected that a
+device not described in your DT can be connected, thanks to the
+hot-join feature. In this case you cannot know what is this device
+preferred address and you might end-up in the exact same situation.
 
-	Krzysztof
+May I question the need for preferred addresses at all? Is this even
+part of the spec? What is the use-case?
+
+Thanks,
+Miqu=C3=A8l
 
