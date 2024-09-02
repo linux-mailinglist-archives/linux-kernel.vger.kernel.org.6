@@ -1,174 +1,171 @@
-Return-Path: <linux-kernel+bounces-311873-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311874-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C98A7968ED1
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 22:23:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59177968ED3
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 22:24:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E72AD1C21F60
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 20:23:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 038AA1F2123B
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 20:24:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B23091C62A6;
-	Mon,  2 Sep 2024 20:23:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 797241AB6F3;
+	Mon,  2 Sep 2024 20:24:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="zRLJWoXl";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="lIPDnzD3";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="zRLJWoXl";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="lIPDnzD3"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gMQjbA2Q"
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 118821A4E71;
-	Mon,  2 Sep 2024 20:23:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59D611A4E71;
+	Mon,  2 Sep 2024 20:24:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725308609; cv=none; b=DxH0fZ8w7dDjuem2ZMyxScF2+nWllNlQDguAnpIp9hwjy7W0myIT1Dplc1P4CBBI7NUE/L3Eta0QeyJrfdRcNVHGl2Q9Kjx6WMd4K+0nwwA9/sEqi//aoE9GYI5yC1hWe4stlWm0AIpF53KK+nfZZ9FxEn3v7vP9e9JagRMHGOc=
+	t=1725308657; cv=none; b=gKQkTMT5sCHpnijlfosWtYWWZnykT2xuGGh2FMM2jmhD4EgTW+uJEeVsOKY9D50xoyU3wbsvipRHC1vx770kQ9OYWQtfdHq4lTJCeSr9jEHgfSpU/xzeKnylWFMoxKt/wupZyhP8FjMAdwgcI0v9JUppa99mM7GMv+eyPVKExSk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725308609; c=relaxed/simple;
-	bh=++lgzoh37Vxo6Ba03kWmVHFHoQWmY0grJKo+XsWZHgY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IrH+k7dyXYiM4oB0tr3fcyRa0R+H6W45U0VwhxR0T/7l5jRUInJuB5UPoXMkfJGVsPCNczNbFtirUkrYnupyU2i3PnN1foo4SXUKLVXgqvPfnZbLTvHQQ0NBL+xfJ2lS3NJdZFFbZwL4sxl57v3KGStBBdXMBnEfY6rVdw5/Ctg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=zRLJWoXl; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=lIPDnzD3; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=zRLJWoXl; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=lIPDnzD3; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 2855F1FC81;
-	Mon,  2 Sep 2024 20:23:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1725308605;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=VSxYCS5BrLlCCdm+Sy0MfOucZsAL9LrffyT4xetn4Vg=;
-	b=zRLJWoXltvyJDh9truzgCtp2hbWdf8YE35XsdF0VbO1c52PM0FhSqX5yBJphBXAejWk5gs
-	a44NnjOLEJAa5271943fjXwBXoNp32hrlEF8XOwveWxGAavxC6I4DMZQwUZIIDE3oQMiuY
-	6t8CjAMLaUqFJivWOkjB2keHmL7S49c=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1725308605;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=VSxYCS5BrLlCCdm+Sy0MfOucZsAL9LrffyT4xetn4Vg=;
-	b=lIPDnzD3s8cKBkrqPAx+bEnkyNECXtprscoNh04iWFWE8ge3IV0k8zmk8KH3/+f0T2/LB4
-	vjlMDue6xKTZvWAw==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1725308605;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=VSxYCS5BrLlCCdm+Sy0MfOucZsAL9LrffyT4xetn4Vg=;
-	b=zRLJWoXltvyJDh9truzgCtp2hbWdf8YE35XsdF0VbO1c52PM0FhSqX5yBJphBXAejWk5gs
-	a44NnjOLEJAa5271943fjXwBXoNp32hrlEF8XOwveWxGAavxC6I4DMZQwUZIIDE3oQMiuY
-	6t8CjAMLaUqFJivWOkjB2keHmL7S49c=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1725308605;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=VSxYCS5BrLlCCdm+Sy0MfOucZsAL9LrffyT4xetn4Vg=;
-	b=lIPDnzD3s8cKBkrqPAx+bEnkyNECXtprscoNh04iWFWE8ge3IV0k8zmk8KH3/+f0T2/LB4
-	vjlMDue6xKTZvWAw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 053CF13A21;
-	Mon,  2 Sep 2024 20:23:25 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id zhPLAL0e1mbNGQAAD6G6ig
-	(envelope-from <dsterba@suse.cz>); Mon, 02 Sep 2024 20:23:25 +0000
-Date: Mon, 2 Sep 2024 22:23:23 +0200
-From: David Sterba <dsterba@suse.cz>
-To: Luca Stefani <luca.stefani.ge1@gmail.com>
-Cc: dsterba@suse.cz, Qu Wenruo <quwenruo.btrfs@gmx.com>,
-	Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
-	David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] btrfs: Split remaining space to discard in chunks
-Message-ID: <20240902202323.GC26776@twin.jikos.cz>
-Reply-To: dsterba@suse.cz
-References: <20240902114303.922472-1-luca.stefani.ge1@gmail.com>
- <20240902201150.GB26776@twin.jikos.cz>
- <4bef0c7b-df8b-41dc-9fe1-022cc4937def@gmail.com>
+	s=arc-20240116; t=1725308657; c=relaxed/simple;
+	bh=6xjFkK8uQbkRpwUViOiTPrGX2TrUAF95kC/YUuLceRU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=aBfnW7vbPeyP9p/20TqrVA+x8kAQoQy6ftF3EE5+S7Zd+UmYItvNXJh9vXlO6+l/fY2cVfy3DDptK9ePyaVmdR+OUSXXpqCzpye3GURRSAOE3VoPZZmMf/PBojhCctoo/kAaAo1+3Kxf/Q0MgMyYB13VtY9scB2iAnzzeujFgPo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gMQjbA2Q; arc=none smtp.client-ip=209.85.167.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-533488ffaf7so6218725e87.0;
+        Mon, 02 Sep 2024 13:24:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725308654; x=1725913454; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=SjYzoPE30IKiODDIsmnQBQJ3DNrH0uPLBC0b4MyV0qg=;
+        b=gMQjbA2QGdHOXId0NCHcp1P9Z5bEsCfWtqcjnZ0xXnBU16GLfoseB/vFQKtf0fdo87
+         uz8B4gkWBWRxQ5tSHKRXlRsqQq23qtnn8SpE2GiezRO2RnxC3FCK5H8maxNBUx+5czku
+         PqLNUSmog+dPxUgKwgTJwnq3Kpn8rOhaWQFbiPrpaqAUlG3JfpHhPDrcBuqqIVm4GrcJ
+         RDf1/Hg/X1A8j+8BjzqBWy/3DXjL04VtkM7o0IxXvnMU7/wn5TeC7D0c9Zh+Z7gaOrYI
+         2AyR7k/eMkGvljnlcMl1TPAPMtT3/UBPXfb8XBZadTf0Zjf+KcvmRnZpiQN2uchfI9kx
+         +sZw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725308654; x=1725913454;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=SjYzoPE30IKiODDIsmnQBQJ3DNrH0uPLBC0b4MyV0qg=;
+        b=pTxVWVO5S0+VPFAL3BSfi9UmVgOz0FuZ5kmGLe4pm/nV8Sl0BKsXCY/iN40VFgehLp
+         PgnIpfQY0RmsdXBQeUUoO5yNba6dRtvov/xE0Ni+LkLh3TTazL7Ye76AsXFqgipSmCkb
+         ScUG76LCMAZghbmkXXmRhZwcgJn8+rnhjnfjLMFw+bjICC2/5/Ya2OCkmyisWVw4PvDS
+         9kPkDOWTNncBXZa9uJd0Nn5/Rd9wrRdt45lctPx+00OYgy/69Hu3O2JTtkA2Sn/q+kiC
+         rW/if2Ays1M1vZ5NhQ6zILSxC+Mrb7J/hbLUOmQh3Bhhy9wLc7xo+dMOL0hG4K5b1ag5
+         HvYg==
+X-Forwarded-Encrypted: i=1; AJvYcCXr4cNc+f6Iu0mYkfM3utU2rJTxNRGZoLu2Jqj/kQGgYDD0rfLAnNmC9w6bP5js9uYutjrSdSE3tdN4I8o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyFVI4hvtSs/D3C769jw6YVP3F9tal7bb6zTdNWCNZQfqg2Zb8P
+	wCaCGBf1Gn4Xeivzcu5e7xDgZ6g1BdZD4dBQ7WFLohwocI6YWWGn8XJMhZS5
+X-Google-Smtp-Source: AGHT+IFvaLXhQ3odHosU+v+xvcXY7Z0ZYL1ynkaCmNKR5oz4hj/aSVSQ6wLw45eSqhtEQsVOjV0wSA==
+X-Received: by 2002:a05:6512:3ba9:b0:535:3c94:70c2 with SMTP id 2adb3069b0e04-53546b2584cmr9761488e87.19.1725308653936;
+        Mon, 02 Sep 2024 13:24:13 -0700 (PDT)
+Received: from [10.0.0.100] (host-85-29-124-88.kaisa-laajakaista.fi. [85.29.124.88])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5354079bbcbsm1747104e87.9.2024.09.02.13.24.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 02 Sep 2024 13:24:13 -0700 (PDT)
+Message-ID: <69542ad0-c62f-438a-8e3e-0c827b65f0d9@gmail.com>
+Date: Mon, 2 Sep 2024 23:24:30 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4bef0c7b-df8b-41dc-9fe1-022cc4937def@gmail.com>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
-X-Spam-Score: -2.50
-X-Spamd-Result: default: False [-2.50 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	HAS_REPLYTO(0.30)[dsterba@suse.cz];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com,gmx.com];
-	TAGGED_RCPT(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FREEMAIL_TO(0.00)[gmail.com];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[suse.cz,gmx.com,fb.com,toxicpanda.com,suse.com,vger.kernel.org];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	REPLYTO_ADDR_EQ_FROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	REPLYTO_DOM_NEQ_TO_DOM(0.00)[]
-X-Spam-Flag: NO
-X-Spam-Level: 
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] dmaengine: ti: k3-udma: Prioritize CSI RX traffic as RT
+To: Jai Luthra <j-luthra@ti.com>, Vinod Koul <vkoul@kernel.org>,
+ Vignesh Raghavendra <vigneshr@ti.com>
+Cc: dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240827-csi_rt-v1-1-f0c5b9488a1e@ti.com>
+From: =?UTF-8?Q?P=C3=A9ter_Ujfalusi?= <peter.ujfalusi@gmail.com>
+Content-Language: en-US
+In-Reply-To: <20240827-csi_rt-v1-1-f0c5b9488a1e@ti.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Mon, Sep 02, 2024 at 10:17:37PM +0200, Luca Stefani wrote:
-> > 		  sector_t nr_sects, gfp_t gfp_mask, struct bio **biop)
-> >    {
-> > 	  struct bio *bio;
-> > 
-> > 	  while ((bio = blk_alloc_discard_bio(bdev, &sector, &nr_sects,
-> > 			  gfp_mask)))
-> > 		  *biop = bio_chain_and_submit(*biop, bio);
-> > 	  return 0;
-> >    }
-> > 
-> > This is basically just a loop, chopping the input range as needed. The
-> > btrfs code does effectively the same, there's only the superblock,
-> > progress accounting and error handling done.
-> > 
-> > As the maximum size of a single discard request depends on a device we
-> > don't need to artificially limit it because this would require more IO
-> > requests and can be slower.
-> 
-> Thanks for taking a look, this change was prompted after I've been 
-> seeing issues due to the discard kthread blocking an userspace process 
-> causing device not to suspend.
-> https://lore.kernel.org/lkml/20240822164908.4957-1-luca.stefani.ge1@gmail.com/ 
-> is the proposed solution, but Qu mentioned that there is another place 
-> where it could happen that I didn't cover, and I think what I change 
-> here (unless it's the wrong place) allows me to add the similar 
-> `btrfs_trim_interrupted` checks to stop.
-> 
-> Please let me know if that makes sense to you, if that's the case I 
-> guess it would make sense to send the 2 patches together?
+Hi,
 
-Yeah for inserting the cancellation points it would make sense to do the
-chunking. I'd suggest to do the same logic like blk_alloc_discard_bio()
-and use the block device discard request limit and not a fixed constant.
+On 27/08/2024 15:43, Jai Luthra wrote:
+> From: Vignesh Raghavendra <vigneshr@ti.com>
+> 
+> Mark BCDMA CSI RX as real-time traffic using OrderID 8/15.
+> This ensures CSI traffic takes dedicated RT path towards DDR ensuring
+> proper priority when under competing system load.
+> 
+> Signed-off-by: Vignesh Raghavendra <vigneshr@ti.com>
+> Signed-off-by: Jai Luthra <j-luthra@ti.com>
+> ---
+>  drivers/dma/ti/k3-udma.c | 9 +++++++++
+>  1 file changed, 9 insertions(+)
+> 
+> diff --git a/drivers/dma/ti/k3-udma.c b/drivers/dma/ti/k3-udma.c
+> index 406ee199c2ac..74cdb9ec07c3 100644
+> --- a/drivers/dma/ti/k3-udma.c
+> +++ b/drivers/dma/ti/k3-udma.c
+> @@ -135,6 +135,7 @@ struct udma_match_data {
+>  	u32 statictr_z_mask;
+>  	u8 burst_size[3];
+>  	struct udma_soc_data *soc_data;
+> +	u8 order_id;
+
+I would add a new property to the BCDM in DT, like ti,order_id to be
+configurable by device and boards if needed.
+
+Static 8 and 15 in code is not too nice and begs for a question why 8
+here and why 15 there...
+
+Even if the 'defaults' in code are these magic ones, it is still better
+to have means to adjust it without the need to recompile the kernel.
+
+>  };
+>  
+>  struct udma_soc_data {
+> @@ -2110,6 +2111,7 @@ static int udma_tisci_rx_channel_config(struct udma_chan *uc)
+>  static int bcdma_tisci_rx_channel_config(struct udma_chan *uc)
+>  {
+>  	struct udma_dev *ud = uc->ud;
+> +	const struct udma_match_data *match_data = ud->match_data;
+>  	struct udma_tisci_rm *tisci_rm = &ud->tisci_rm;
+>  	const struct ti_sci_rm_udmap_ops *tisci_ops = tisci_rm->tisci_udmap_ops;
+>  	struct udma_rchan *rchan = uc->rchan;
+> @@ -2120,6 +2122,11 @@ static int bcdma_tisci_rx_channel_config(struct udma_chan *uc)
+>  	req_rx.nav_id = tisci_rm->tisci_dev_id;
+>  	req_rx.index = rchan->id;
+>  
+> +	if (match_data->order_id) {
+> +		req_rx.valid_params |= TI_SCI_MSG_VALUE_RM_UDMAP_CH_ORDER_ID_VALID;
+> +		req_rx.rx_orderid = match_data->order_id;
+> +	}
+> +
+>  	ret = tisci_ops->rx_ch_cfg(tisci_rm->tisci, &req_rx);
+>  	if (ret)
+>  		dev_err(ud->dev, "rchan%d cfg failed %d\n", rchan->id, ret);
+> @@ -4332,6 +4339,7 @@ static struct udma_match_data am62a_bcdma_csirx_data = {
+>  		0, /* No UH Channels */
+>  	},
+>  	.soc_data = &am62a_dmss_csi_soc_data,
+> +	.order_id = 8,
+>  };
+>  
+>  static struct udma_match_data am64_bcdma_data = {
+> @@ -4370,6 +4378,7 @@ static struct udma_match_data j721s2_bcdma_csi_data = {
+>  		0, /* No UH Channels */
+>  	},
+>  	.soc_data = &j721s2_bcdma_csi_soc_data,
+> +	.order_id = 15,
+>  };
+>  
+>  static const struct of_device_id udma_of_match[] = {
+> 
+> ---
+> base-commit: 6f923748057a4f6aa187e0d5b22990d633a48d12
+> change-id: 20240827-csi_rt-fc6bff701f81
+> 
+> Best regards,
+
+-- 
+Péter
 
