@@ -1,90 +1,89 @@
-Return-Path: <linux-kernel+bounces-310839-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310840-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A04B19681E0
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 10:30:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A31D9681E1
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 10:31:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4B2E01F22DE2
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 08:30:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C7CA01F22D2D
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 08:31:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 952A1186E4F;
-	Mon,  2 Sep 2024 08:29:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 949BE1862AE;
+	Mon,  2 Sep 2024 08:30:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lmkWohgZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=tlmp.cc header.i=@tlmp.cc header.b="olDWk6XD"
+Received: from mail.tlmp.cc (unknown [148.135.17.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDDCB187340;
-	Mon,  2 Sep 2024 08:29:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83FF4757EA
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 08:30:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.135.17.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725265760; cv=none; b=Smu+V6vY6LIE/BXLrANR5+fDBfsKVtfJsndHIPM1B5Kh7c3wbPue6I1dHxayZl+2/Xyk9MAkKDm1KBVURW0dgzvluG0wfcZW1FOFKIAb4G49C9bFgUyGvAX+5pSNknCF7S9h+SCEWbSmQIvaoI22g24o8iTTWm9kBLvW6g/1AnU=
+	t=1725265832; cv=none; b=bKDpRy3aIHO+og9TZrDjjxf/s1BYQLsW5m6qjUAMzNT5wuat14N/SQ1gPMVgkDeuChO0/uUiMnlYyK45qZJiVkvNImjHJISmJEWB6cY4oeA8UIiRXsxYMJBT4HkSmTrHOE96HSMk05+nh+GcVqaHgM69g3BFbQQaoOmprYOHHVA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725265760; c=relaxed/simple;
-	bh=idgLCuVdhmHHzXwIetQpOe0aAfVss/MkcQ74PTCPa38=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=MDbIgBThohbmthFpV2x4pAmsv/DYe+dvHYymI8/VM/PHVJpeLCskuxphyW13eoxv4kJt+rMymjVLIRNvKe88jUw5B1jJzh/sROfBN1fNMFTdgmcQASqtsQAW7Zn90JGix3OxNfyz7m9ylqqxbhi+kfxqr1g5echVNttfPLCAxbM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lmkWohgZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B0BDC4CEC6;
-	Mon,  2 Sep 2024 08:29:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725265759;
-	bh=idgLCuVdhmHHzXwIetQpOe0aAfVss/MkcQ74PTCPa38=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=lmkWohgZUOm0ITd3t65SVPnkFnbs/CImUv9SzV5KvXoJRRHSYmVksUqP+38XhSKTQ
-	 qEbBPls/pCnQdXlWtXTNwU8cEwBXHLUnU/GGRU33DU4oytzZhtT7iEWSxg7BVwblBK
-	 ky+PbK4kipMWu2yNg8e4mfYHPnQ3akD/eqljNwTD8RtRCPl4JIlswQeyma/jSk6vcH
-	 TbxAVSlVkIc5TsP9LLv7w//33vGDR/Bk4JF7z0FwaoGUTJIf6ubKWo8i3E4AQhCqdu
-	 JXWM2IAm6dsdeskC+O/IU8JLlAoc1HC/YYG5vJiBxy2iDXDxpdDagzO09qEhWHwSMm
-	 UE7oFaoRn6h4A==
-From: Vinod Koul <vkoul@kernel.org>
-To: Keguang Zhang <keguang.zhang@gmail.com>
-Cc: linux-mips@vger.kernel.org, dmaengine@vger.kernel.org, 
- linux-kernel@vger.kernel.org, kernel test robot <lkp@intel.com>
-In-Reply-To: <20240831-fix-loongson1-dma-v1-1-91376d87695c@gmail.com>
-References: <20240831-fix-loongson1-dma-v1-1-91376d87695c@gmail.com>
-Subject: Re: [PATCH] dmaengine: loongson1-apb-dma: Fix the build warning
- caused by the size of pdev_irqname
-Message-Id: <172526575764.510261.15886768991015863081.b4-ty@kernel.org>
-Date: Mon, 02 Sep 2024 13:59:17 +0530
+	s=arc-20240116; t=1725265832; c=relaxed/simple;
+	bh=AmPwK5ZGINCwCW9zw47gu4D74GSKi6tzyzwBVS11kis=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Z9SBjyf6lOkBy2GgWj7vNOSB2I7hPoHqg3onCHkOScsXWmII4DMcyqKVWJbbPqdIPW1Cidt7ZKIwy6NNs+n75350WABHDox1r5JRPLOqW1vQ1Ej+Q2fmV9rGRyrALFJhcFD1tp4ZCUDh727Q9z5WVWSPtV1jWXDmSClnPBAisAo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=tlmp.cc; spf=pass smtp.mailfrom=tlmp.cc; dkim=pass (2048-bit key) header.d=tlmp.cc header.i=@tlmp.cc header.b=olDWk6XD; arc=none smtp.client-ip=148.135.17.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=tlmp.cc
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tlmp.cc
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 8A3E269799;
+	Mon,  2 Sep 2024 04:30:26 -0400 (EDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tlmp.cc; s=dkim;
+	t=1725265829; h=from:subject:date:message-id:to:cc:mime-version:
+	 content-transfer-encoding; bh=qrCNvicodlSdNtI3m0rhOX/zs3Y0RyZj7feiE8HzeJE=;
+	b=olDWk6XDyTNXfPWufG3Oj3xdoICOCgnTNEpWGXoGNj9lvYiyMUG4Vy/w3dUrbOr0DJb626
+	dknvMR9yVlLpHk0w0lHrTySRjvjgfglsw60sA6Uko8Az2wvmKpKnOdMWGsBOqn+YpziFSX
+	vkb1Pq3SaUpasfuzmDxblGOTq9lpVute9aHjlA6TM4eO64wHt6H7oYlkVFWXfYwDrQN8Oi
+	kehSPDV+dXIKckWkQi4sMsmIx07RBlVndUP8gC+9GkZHJSP6dlTgcB23yW6M8qXrVNmIVe
+	sqqxlJ3jUgiqaOzubNJpl15CGA+GHo1thg04qeqHDp9UHgq00UjQUdw+101ZVg==
+From: Yiyang Wu <toolmanp@tlmp.cc>
+To: hsiangkao@linux.alibaba.com
+Cc: linux-erofs@lists.ozlabs.org,
+	linux-kernel@vger.kernel.org
+Subject: 
+Date: Mon,  2 Sep 2024 16:30:22 +0800
+Message-ID: <20240902083024.448367-1-toolmanp@tlmp.cc>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13.0
+Content-Transfer-Encoding: 8bit
+X-Last-TLS-Session-Version: TLSv1.3
 
+Subject: [PATCH V4 0/2] erofs: refactor fast_symlink and read_inode
 
-On Sat, 31 Aug 2024 17:41:09 +0800, Keguang Zhang wrote:
-> drivers/dma/loongson1-apb-dma.c: In function 'ls1x_dma_probe':
-> drivers/dma/loongson1-apb-dma.c:531:42: warning: '%d' directive writing between 1 and 8 bytes into a region of size 2 [-Wformat-overflow=]
->   531 |                 sprintf(pdev_irqname, "ch%d", id);
->       |                                          ^~
-> In function 'ls1x_dma_chan_probe',
->     inlined from 'ls1x_dma_probe' at drivers/dma/loongson1-apb-dma.c:605:8:
-> drivers/dma/loongson1-apb-dma.c:531:39: note: directive argument in the range [0, 19522579]
->   531 |                 sprintf(pdev_irqname, "ch%d", id);
->       |                                       ^~~~~~
-> drivers/dma/loongson1-apb-dma.c:531:17: note: 'sprintf' output between 4 and 11 bytes into a destination of size 4
->   531 |                 sprintf(pdev_irqname, "ch%d", id);
->       |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> 
-> [...]
+This patchset is response to the original suggestions posted here[1].
+Since my later work is somehow related to this issue, i think it's
+better to deal with it first.
 
-Applied, thanks!
+Changes in V2:
+  1. Lift the erofs_fill_symlink patch to 1/2
+  2. Fix code styles problems in read_inode patch.
+  3. Fix the formatting problems caused by clang-format.
 
-[1/1] dmaengine: loongson1-apb-dma: Fix the build warning caused by the size of pdev_irqname
-      commit: e0bee4bcdc3238ebcae6e5960544b9e3d0a62abf
+Changes in V3:
+  1. Remove some redundant variables and statements in both patches.
 
-Best regards,
+Changes in V4:
+  1. Remove out_unlock in erofs_fill_inode and use early returns.
+  2. Fix missing initializer for erofs_buf in erofs_read_inode.
+
+[1]: https://lore.kernel.org/all/20240425222847.GN2118490@ZenIV/
+
+Yiyang Wu (2):
+  erofs: use kmemdup_nul in erofs_fill_symlink
+  erofs: refactor read_inode calling convention
+
+ fs/erofs/inode.c | 133 ++++++++++++++++++++++-------------------------
+ 1 file changed, 61 insertions(+), 72 deletions(-)
+
 -- 
-~Vinod
-
+2.46.0
 
 
