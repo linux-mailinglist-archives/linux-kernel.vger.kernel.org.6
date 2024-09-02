@@ -1,200 +1,122 @@
-Return-Path: <linux-kernel+bounces-311397-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311398-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41A7B96889C
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 15:20:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0CEC96889D
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 15:20:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E4E21283053
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 13:20:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6B38F1F22E40
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 13:20:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 010B3205E34;
-	Mon,  2 Sep 2024 13:20:01 +0000 (UTC)
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB64A20FA9F;
+	Mon,  2 Sep 2024 13:20:03 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D70B19E965;
-	Mon,  2 Sep 2024 13:19:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2361320FA8E
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 13:20:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725283200; cv=none; b=h5BOEVis1nO3s+kw916iuQdSgA6vJcr4HgVOowLB7nMOiHVCPPZmsH1L/nU0hCV/wOD+A15lgVeD/FWR1q+K/+FB/BzJJRa4QmtBuXWc+Vdjc2wvh741LtX0fP+lY5xcWy8LYd6t/nsQsOnqHD8TeqnaQ/9QkPr8xvxoMC2zO84=
+	t=1725283203; cv=none; b=iKrVb3o5hEAZ8vfkBOQJXrW60Uvy6olhtrW2w4Hvv+Yh4RbdOu6SMsupxJKaghwrRdEHXyz/DlCOO1OG7FCahSE8NkhbJjlDPeBl8hPpdjekmAmLDZwpRxvzeICsj/sKp6cuy1t+nUatWvd7CiL7Iw09Qa1BkQ4B9x1U+D/igKc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725283200; c=relaxed/simple;
-	bh=CL9CvstHpgV7WBiph2BCuyi9urSbgPw2GmM7E52T+j0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hlSfs9sYsWDFSb8JbNSE1eSWdtMJWtRXgtjU/oo0kLJPPM2bktV3Ai4x45ybgxW3H0B5J6drBDFYZGCtCCvN8vFxaRW85C1ytACcs0KtDPPQLHYZAWZrBshb7qfu1/WzQp55IxiHI4nF/l7ZcWVcREpdz0Hb9pxOZa94vCApfME=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4Wy8W127zlz9sSN;
-	Mon,  2 Sep 2024 15:19:57 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id JhUY4Y_Xofmu; Mon,  2 Sep 2024 15:19:57 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4Wy8W11B1fz9sS7;
-	Mon,  2 Sep 2024 15:19:57 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 17C298B76C;
-	Mon,  2 Sep 2024 15:19:57 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id yFtt-LKodaxA; Mon,  2 Sep 2024 15:19:56 +0200 (CEST)
-Received: from [192.168.234.167] (unknown [192.168.234.167])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 726FD8B763;
-	Mon,  2 Sep 2024 15:19:56 +0200 (CEST)
-Message-ID: <8390ac81-7774-4e67-9739-c2b98813d6da@csgroup.eu>
-Date: Mon, 2 Sep 2024 15:19:56 +0200
+	s=arc-20240116; t=1725283203; c=relaxed/simple;
+	bh=9PyFQUaV/sWZor+6/9dpnu2FT5fKB1l2mGgMu3cwr+s=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=E/eitfsJCmDpb+1s0SHFNHnw3fKdEzjqARh+e/E2S8pkQH7THPoBTPS4jl9i0mrzCkH9Vrg4RUVmXjovJixvpcWPa2b6cZuw4Cp772ani/pM6DWQrF+6ZzhUj0pxlwXp7Vmc9Ut7pgwZwkSkVAKqdQ4VnVwfFd/I8k7oNYtbH+o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-39d2dee9722so57590925ab.0
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2024 06:20:01 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725283201; x=1725888001;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=WOubH5tw99fL7gFojN1O8E0oGj/guUZZiM/m+dPpPL8=;
+        b=XO5UEfrgAqkkIhMdGQOYiQEiXt5XyMcND5m2/b3EafbTuYJK/bhb+m5+rsA7VXBWxx
+         bBX3wkuapxIb7GhYtrdMDWDACa9NyrwFOVGYxQUVeS0OqbDHF5RxiW7ah/vMhmd378Xb
+         o5P2rc4TU22UDQwiHYlKBt8memXMlYCUAyd7tajtJtWWZ7ilzw3KIfssQD4OOMEuyK/V
+         PUwB4PR89qNj/UqwZyltZX3Qo+w0W1wNeE1N71NyuO9RLSODeaZlugKDdr9TXjfzmBR4
+         68se1VOv9aVU+D7lnT5liEHYeQHlYDiOcc6gz/W+v8dMYP8xHzIxuAGtVhZHf4SAHXoN
+         yGpQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVVjPkDctOQEDBaNTnomoYaC2mJ8jHLbFnrGsJ1qph5qwPi+MHxHYse7FqZ3HIcePZX3hkd0XNCrV3uMbs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzFW/uvacRzr085vAUl/k8ONE8/G9ZMz1L4KaBBxgHeqPTBJTdm
+	krc1+zuqsn9uY4kv6DLx/2CXVdfmzhPSGEF86knREqYh8z7uTaRfdJcjqRrQ9TRnTmKHDJRKVq6
+	X/1HpKhh22bhNC3CbtmkILgaY5d0UysxzsoxfuGTiu6O7qGZOweBUR7I=
+X-Google-Smtp-Source: AGHT+IEdE51dIAMId5oBPib81NfDK4MV/Bi4N+XnfFkv8PaOFAe5DNmAFB5/OCPdyQVMus1mzBIlw6mydc3JbeD4KmXt4UILuwjk
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] aarch64: vdso: Wire up getrandom() vDSO implementation
-To: "Jason A. Donenfeld" <Jason@zx2c4.com>,
- Adhemerval Zanella Netto <adhemerval.zanella@linaro.org>
-Cc: Will Deacon <will@kernel.org>, Theodore Ts'o <tytso@mit.edu>,
- linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-arch@vger.kernel.org,
- Catalin Marinas <catalin.marinas@arm.com>,
- Thomas Gleixner <tglx@linutronix.de>, Eric Biggers <ebiggers@kernel.org>,
- ardb@kernel.org
-References: <20240829201728.2825-1-adhemerval.zanella@linaro.org>
- <20240830114645.GA8219@willie-the-truck>
- <963afe11-fd48-4fe9-be70-2e202f836e34@linaro.org>
- <ZtW5meR5iLrkKErJ@zx2c4.com>
-Content-Language: fr-FR
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-In-Reply-To: <ZtW5meR5iLrkKErJ@zx2c4.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:b4f:b0:39a:eb81:ffa8 with SMTP id
+ e9e14a558f8ab-39f410c647bmr7298145ab.6.1725283201321; Mon, 02 Sep 2024
+ 06:20:01 -0700 (PDT)
+Date: Mon, 02 Sep 2024 06:20:01 -0700
+In-Reply-To: <20240902124544.6293-1-almaz.alexandrovich@paragon-software.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000005a1dda062122cc9c@google.com>
+Subject: Re: [syzbot] [ntfs3?] kernel panic: stack is corrupted in vprintk_emit
+From: syzbot <syzbot+4d2aaeff9eb5a2cfec70@syzkaller.appspotmail.com>
+To: almaz.alexandrovich@paragon-software.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+
+Hello,
+
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+kernel panic: stack is corrupted in vprintk_emit
+
+loop0: detected capacity change from 0 to 4096
+ntfs3: loop0: Different NTFS sector size (1024) and media sector size (512).
+ntfs3: loop0: Failed to load $UpCase (-22).
+Kernel panic - not syncing: stack-protector: Kernel stack is corrupted in: vprintk_emit+0x7bd/0x7c0
+CPU: 0 UID: 0 PID: 6111 Comm: syz.0.139 Not tainted 6.11.0-rc6-syzkaller-g67784a74e258-dirty #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:93 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:119
+ panic+0x349/0x860 kernel/panic.c:354
+ __stack_chk_fail+0x15/0x20 kernel/panic.c:827
+ vprintk_emit+0x7bd/0x7c0
+ _printk+0xd5/0x120 kernel/printk/printk.c:2373
+ ntfs_printk+0x3ad/0x420 fs/ntfs3/super.c:93
+ ntfs_fill_super+0x2eb8/0x4730
+ get_tree_bdev+0x3f7/0x570 fs/super.c:1635
+ vfs_get_tree+0x90/0x2b0 fs/super.c:1800
+ do_new_mount+0x2be/0xb40 fs/namespace.c:3472
+ do_mount fs/namespace.c:3812 [inline]
+ __do_sys_mount fs/namespace.c:4020 [inline]
+ __se_sys_mount+0x2d6/0x3c0 fs/namespace.c:3997
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f77a717b0ba
+Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 7e 1a 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f77a7f23e68 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 00007f77a7f23ef0 RCX: 00007f77a717b0ba
+RDX: 000000002001f800 RSI: 000000002001f840 RDI: 00007f77a7f23eb0
+RBP: 000000002001f800 R08: 00007f77a7f23ef0 R09: 0000000000000801
+R10: 0000000000000801 R11: 0000000000000246 R12: 000000002001f840
+R13: 00007f77a7f23eb0 R14: 000000000001f829 R15: 0000000020000000
+ </TASK>
+Kernel Offset: disabled
+Rebooting in 86400 seconds..
 
 
+Tested on:
 
-Le 02/09/2024 à 15:11, Jason A. Donenfeld a écrit :
-> Hey Christophe (for header logic) & Will (for arm64 stuff),
-> 
-> On Fri, Aug 30, 2024 at 09:28:29AM -0300, Adhemerval Zanella Netto wrote:
->>>> diff --git a/lib/vdso/getrandom.c b/lib/vdso/getrandom.c
->>>> index 938ca539aaa6..7c9711248d9b 100644
->>>> --- a/lib/vdso/getrandom.c
->>>> +++ b/lib/vdso/getrandom.c
->>>> @@ -5,6 +5,7 @@
->>>>   
->>>>   #include <linux/array_size.h>
->>>>   #include <linux/minmax.h>
->>>> +#include <linux/mm.h>
->>>>   #include <vdso/datapage.h>
->>>>   #include <vdso/getrandom.h>
->>>>   #include <vdso/unaligned.h>
->>>
->>> Looks like this should be a separate change?
->>
->>
->> It is required so arm64 can use  c-getrandom-y, otherwise vgetrandom.o build
->> fails:
->>
->> CC      arch/arm64/kernel/vdso/vgetrandom.o
->> In file included from ./include/uapi/linux/mman.h:5,
->>                   from /mnt/projects/linux/linux-git/lib/vdso/getrandom.c:13,
->>                   from <command-line>:
->> ./arch/arm64/include/asm/mman.h: In function ‘arch_calc_vm_prot_bits’:
->> ./arch/arm64/include/asm/mman.h:14:13: error: implicit declaration of function ‘system_supports_bti’ [-Werror=implicit-function-declaration]
->>     14 |         if (system_supports_bti() && (prot & PROT_BTI))
->>        |             ^~~~~~~~~~~~~~~~~~~
->> ./arch/arm64/include/asm/mman.h:15:24: error: ‘VM_ARM64_BTI’ undeclared (first use in this function); did you mean ‘ARM64_BTI’?
->>     15 |                 ret |= VM_ARM64_BTI;
->>        |                        ^~~~~~~~~~~~
->>        |                        ARM64_BTI
->> ./arch/arm64/include/asm/mman.h:15:24: note: each undeclared identifier is reported only once for each function it appears in
->> ./arch/arm64/include/asm/mman.h:17:13: error: implicit declaration of function ‘system_supports_mte’ [-Werror=implicit-function-declaration]
->>     17 |         if (system_supports_mte() && (prot & PROT_MTE))
->>        |             ^~~~~~~~~~~~~~~~~~~
->> ./arch/arm64/include/asm/mman.h:18:24: error: ‘VM_MTE’ undeclared (first use in this function)
->>     18 |                 ret |= VM_MTE;
->>        |                        ^~~~~~
->> ./arch/arm64/include/asm/mman.h: In function ‘arch_calc_vm_flag_bits’:
->> ./arch/arm64/include/asm/mman.h:32:24: error: ‘VM_MTE_ALLOWED’ undeclared (first use in this function)
->>     32 |                 return VM_MTE_ALLOWED;
->>        |                        ^~~~~~~~~~~~~~
->> ./arch/arm64/include/asm/mman.h: In function ‘arch_validate_flags’:
->> ./arch/arm64/include/asm/mman.h:59:29: error: ‘VM_MTE’ undeclared (first use in this function)
->>     59 |         return !(vm_flags & VM_MTE) || (vm_flags & VM_MTE_ALLOWED);
->>        |                             ^~~~~~
->> ./arch/arm64/include/asm/mman.h:59:52: error: ‘VM_MTE_ALLOWED’ undeclared (first use in this function)
->>     59 |         return !(vm_flags & VM_MTE) || (vm_flags & VM_MTE_ALLOWED);
->>        |                                                    ^~~~~~~~~~~~~~
->> arch/arm64/kernel/vdso/vgetrandom.c: In function ‘__kernel_getrandom’:
->> arch/arm64/kernel/vdso/vgetrandom.c:18:25: error: ‘ENOSYS’ undeclared (first use in this function); did you mean ‘ENOSPC’?
->>     18 |                 return -ENOSYS;
->>        |                         ^~~~~~
->>        |                         ENOSPC
->> cc1: some warnings being treated as errors
->>
->> I can move to a different patch, but this is really tied to this patch.
-> 
-> Adhemerval kept this change in this patch for v3, which, if it's
-> necessary, is fine with me. But I was looking to see if there was
-> another way of doing it, because including linux/mm.h inside of vdso
-> code is kind of contrary to your project with e379299fe0b3 ("random:
-> vDSO: minimize and simplify header includes").
-> 
-> getrandom.c includes uapi/linux/mman.h for the mmap constants. That
-> seems fine; it's userspace code after all. But then uapi/linux/mman.h
-> has this:
-> 
->     #include <asm/mman.h>
->     #include <asm-generic/hugetlb_encode.h>
->     #include <linux/types.h>
-> 
-> The asm-generic/ one resolves to uapi/asm-generic. But the asm/ one
-> resolves to arch code, which is where we then get in trouble on ARM,
-> where arch/arm64/include/asm/mman.h has all sorts of kernel code in it.
-> 
-> Maybe, instead, it should resolve to arch/arm64/include/uapi/asm/mman.h,
-> which is the header that userspace actually uses in normal user code?
-> 
-> Is this a makefile problem? What's going on here? Seems like this is
-> something worth sorting out. Or I can take Adhemerval's v3 as-is and
-> we'll grit our teeth and work it out later, as you prefer. But I thought
-> I should mention it.
+commit:         67784a74 Merge tag 'ata-6.11-rc7' of git://git.kernel...
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1323d0c7980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=d34743b6e48523a6
+dashboard link: https://syzkaller.appspot.com/bug?extid=4d2aaeff9eb5a2cfec70
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=125833db980000
 
-That's a tricky problem, I also have it on powerpc, see patch 5, I 
-solved it that way:
-
-In the Makefile:
--ccflags-y := -fno-common -fno-builtin
-+ccflags-y := -fno-common -fno-builtin -DBUILD_VDSO
-
-In arch/powerpc/include/asm/mman.h:
-
-diff --git a/arch/powerpc/include/asm/mman.h 
-b/arch/powerpc/include/asm/mman.h
-index 17a77d47ed6d..42a51a993d94 100644
---- a/arch/powerpc/include/asm/mman.h
-+++ b/arch/powerpc/include/asm/mman.h
-@@ -6,7 +6,7 @@
-
-  #include <uapi/asm/mman.h>
-
--#ifdef CONFIG_PPC64
-+#if defined(CONFIG_PPC64) && !defined(BUILD_VDSO)
-
-  #include <asm/cputable.h>
-  #include <linux/mm.h>
-
-So that the only thing that remains in arch/powerpc/include/asm/mman.h 
-when building a VDSO is #include <uapi/asm/mman.h>
-
-I got the idea from ARM64, they use something similar in their 
-arch/arm64/include/asm/rwonce.h
-
-Christophe
 
