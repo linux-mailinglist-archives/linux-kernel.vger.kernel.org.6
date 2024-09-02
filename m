@@ -1,104 +1,132 @@
-Return-Path: <linux-kernel+bounces-310653-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310654-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 033D0967FAA
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 08:49:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6ACFB967FB2
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 08:49:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9F0C2B2183E
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 06:49:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 274C1283739
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 06:49:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AC6C156993;
-	Mon,  2 Sep 2024 06:48:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17BA61714BF;
+	Mon,  2 Sep 2024 06:49:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="qMsesFWl"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.4])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACB3615442D;
-	Mon,  2 Sep 2024 06:48:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.4
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="IvGygeef"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88A29155398;
+	Mon,  2 Sep 2024 06:49:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725259737; cv=none; b=S78lf3GwqDLXaOeE0BUir7uHza8vUi7/a7yskYplQEHy3oUboBmYR75zWI0MMn19FZW9ISZCDKiMZK2Jkxw6baPi91SkKXY2tTrGURrh6mhMi4jVsB+5d0oPC6LmhOyQXjixt/nEJLnJizQ/rjqwoCAXN/jmHvcA4gGiujrIiOs=
+	t=1725259763; cv=none; b=JN41UTHkhVmfOGgXTWP6u+o6ziXL2UXrq3oB1zchEZEUJzfXrtXQMQA6Lz7J8y9L38gW8KNber2HXGpZIzbN+5+tD1gZ9sLsOQ+B9rH0yuP6QMmKNm5aSxhp2pX0so8L4CuAtbvpY9u+32n63WPo4h3zXkr3EWGqXiyXfVTvz/0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725259737; c=relaxed/simple;
-	bh=/ZUw6GQXPaP+AAz0tnorXY9Ln0hiw+td8+j/xEkumC0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID; b=MnIZqa18BKXu+QB86bzgzwI83lcCRzs9+Xz4W2V5C9fwVaKKnV1ukiM0wAAM9pIlBSBs+VQvWEoWQVufIIFyUIj8aGJvMJ1lhMhruMOludq+px9eEgKSLv+C7KchrwP/hisTeL/V5+njD4MeA5e3z3weER9nSJz/kvGGHafLcIE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=qMsesFWl reason="signature verification failed"; arc=none smtp.client-ip=117.135.210.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Date:From:Subject:Content-Type:MIME-Version:
-	Message-ID; bh=SrBHmav9lOoEBuzcBvuLA44eLy2zxHuF9oWNXKAWU8Q=; b=q
-	MsesFWlexH79FWsliWB49Z9hvq9DWdlEqJtqgW9zz4cn1y5/pg4WS7jHUuajaouN
-	gVocWAw8XJfyTwsB8WX3p1/GzloLcun7Umo9IVaHg9h1MXqy4f4i5NAbiXacPdzE
-	tBoQW8FYhon0UTwIW6T4AV760084OjT9MSti646rFM=
-Received: from 00107082$163.com ( [111.35.190.113] ) by
- ajax-webmail-wmsvr-40-109 (Coremail) ; Mon, 2 Sep 2024 14:47:45 +0800 (CST)
-Date: Mon, 2 Sep 2024 14:47:45 +0800 (CST)
-From: "David Wang" <00107082@163.com>
-To: "Greg KH" <gregkh@linuxfoundation.org>
-Cc: rafael@kernel.org, len.brown@intel.com, pavel@ucw.cz, 
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] PM: add: move warn message out of mutex lock.
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20240801(9da12a7b)
- Copyright (c) 2002-2024 www.mailtech.cn 163com
-In-Reply-To: <2024090212-shuffling-gimmick-a2dc@gregkh>
-References: <20240902054959.28073-1-00107082@163.com>
- <2024090212-shuffling-gimmick-a2dc@gregkh>
-X-NTES-SC: AL_Qu2ZB/6etk4t4yebZ+kXn0oTju85XMCzuv8j3YJeN500uyTu2wscUE9MMXT54u+hFQ2BgCi5TTtByN1wXLF8cYnXcdeOPfHjoBOsbKUCeaXK
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=GBK
+	s=arc-20240116; t=1725259763; c=relaxed/simple;
+	bh=074g9SFHINHEhJ6LzG84iAKdXLixPcuYx4Lukui8Wek=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=o/eZPXeksCfAY2nlKi55w16LNyMchvW3J4wzpdwKN8JMZwZG4Hd62ZV80FMSjPN9H8T2aZqBemcgJw+a9i/9kNU6fXz5OGLpvDbCIM+4EuMa5q4Jy5OWZecMpOrmXFj6N9LHIYmrW8Vd3TXCmKVVXI9Ds7tpBZBJCa8TKl8EP+c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=IvGygeef; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1725259757;
+	bh=VEq1mt+ug0iXPl+YdceBDxwKMKZeXE49Q9Oqe/eNH3w=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=IvGygeef8VPC2OH2D63puiXTbkFhCAR1NAaAy33+mB+vtcjv5SP7L+5KZK+RKXfMU
+	 87RRr7rIz/f/ozdNfrpvTkGbGrBJqLo2jh1o5VGhuSnTaNdXs3gK+iQAWGrrq8lfDF
+	 iuXn/upbyLLfwmTgnbv3hmzHekeRtZIhv0OEo1XvT1fYqB7RtzZPkXaH3A0oj++6vU
+	 NIRi6fmqlXWUSAA5NCRyJgMJJWwsJdQSLHLogOI0vHxwKdKlGz6C0mocW5yU0UGbFp
+	 s7v68iD2KGPmfYvDxztcVTWaw67/XRUWZkj7PgL4sjSf9tJwjFYouohjPT/TfDAf8m
+	 3H5QTACOzUS8g==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WxzrF3skKz4xD9;
+	Mon,  2 Sep 2024 16:49:17 +1000 (AEST)
+Date: Mon, 2 Sep 2024 16:49:16 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Takashi Iwai <tiwai@suse.de>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: build warning after merge of the sound tree
+Message-ID: <20240902164916.1cba3f03@canb.auug.org.au>
+In-Reply-To: <20240902132904.5ee173f3@canb.auug.org.au>
+References: <20240902132904.5ee173f3@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <128c29b9.67bf.191b17d5148.Coremail.00107082@163.com>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID:_____wD331+SX9VmKZdQAA--.53675W
-X-CM-SenderInfo: qqqrilqqysqiywtou0bp/1tbiMx5OqmXAnkx39gAEs7
-X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
+Content-Type: multipart/signed; boundary="Sig_/sjN5PeALw1CTF_TmCii/.Am";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-SGksIAoKVGhhbmtzIGZvciByZXZpZXdpbmd+CkF0IDIwMjQtMDktMDIgMTQ6MzE6MzUsICJHcmVn
-IEtIIiA8Z3JlZ2toQGxpbnV4Zm91bmRhdGlvbi5vcmc+IHdyb3RlOgo+T24gTW9uLCBTZXAgMDIs
-IDIwMjQgYXQgMDE6NDk6NTlQTSArMDgwMCwgRGF2aWQgV2FuZyB3cm90ZToKPj4gZHBtX2xpc3Rf
-bXR4IGRvZXMgbm90IHByb3RlY3QgYW55IGRhdGEgdXNlZCBieQo+PiBkZXZfd2FybiBmb3IgY2hl
-Y2tpbmcgcGFyZW50J3MgcG93ZXIsIG1vdmUKPj4gZGV2X3dhcm4gb3V0IG9mIG11dGV4IGxvY2sg
-YmxvY2sgbWFrZSB0aGUKPj4gbG9jayBtb3JlIGVmZmljaWVudCwgZXNwZWNpYWxseSB3aGVuIHRo
-ZSB3YXJuCj4+IGlzIHRyaWdnZXJlZC4gVGhpcyBjYW4gaGFwcGVuIG9uIHNvbWUgSFcgd2hlbgo+
-PiByZXN1bWUgZnJvbSBzdXNwZW5kIHdpdGggVVNCIGNhbWVyYSBvcGVuZWQ6Cj4KPlBsZWFzZSB3
-cmFwIGNoYW5nZWxvZyBsaW5lcyBhdCA3MiBjb2x1bW5zIGlmIHBvc3NpYmxlLgo+Cj4+ICA+dXNi
-IDMtMS4xOiByZXNldCBoaWdoLXNwZWVkIFVTQiBkZXZpY2UgbnVtYmVyIDQgdXNpbmcgeGhjaV9o
-Y2QKPj4gID4uLgo+PiAgPmVwXzgxOiBQTTogcGFyZW50IDMtMS4xOjEuMSBzaG91bGQgbm90IGJl
-IHNsZWVwaW5nCj4+IAo+PiBTaWduZWQtb2ZmLWJ5OiBEYXZpZCBXYW5nIDwwMDEwNzA4MkAxNjMu
-Y29tPgo+PiAtLS0KPj4gIGRyaXZlcnMvYmFzZS9wb3dlci9tYWluLmMgfCAyICstCj4+ICAxIGZp
-bGUgY2hhbmdlZCwgMSBpbnNlcnRpb24oKyksIDEgZGVsZXRpb24oLSkKPj4gCj4+IGRpZmYgLS1n
-aXQgYS9kcml2ZXJzL2Jhc2UvcG93ZXIvbWFpbi5jIGIvZHJpdmVycy9iYXNlL3Bvd2VyL21haW4u
-Ywo+PiBpbmRleCA0YTY3ZTgzMzAwZTEuLjkzNGU1YmI2MWYxMyAxMDA2NDQKPj4gLS0tIGEvZHJp
-dmVycy9iYXNlL3Bvd2VyL21haW4uYwo+PiArKysgYi9kcml2ZXJzL2Jhc2UvcG93ZXIvbWFpbi5j
-Cj4+IEBAIC0xMzQsMTAgKzEzNCwxMCBAQCB2b2lkIGRldmljZV9wbV9hZGQoc3RydWN0IGRldmlj
-ZSAqZGV2KQo+PiAgCXByX2RlYnVnKCJBZGRpbmcgaW5mbyBmb3IgJXM6JXNcbiIsCj4+ICAJCSBk
-ZXYtPmJ1cyA/IGRldi0+YnVzLT5uYW1lIDogIk5vIEJ1cyIsIGRldl9uYW1lKGRldikpOwo+PiAg
-CWRldmljZV9wbV9jaGVja19jYWxsYmFja3MoZGV2KTsKPj4gLQltdXRleF9sb2NrKCZkcG1fbGlz
-dF9tdHgpOwo+PiAgCWlmIChkZXYtPnBhcmVudCAmJiBkZXYtPnBhcmVudC0+cG93ZXIuaXNfcHJl
-cGFyZWQpCj4+ICAJCWRldl93YXJuKGRldiwgInBhcmVudCAlcyBzaG91bGQgbm90IGJlIHNsZWVw
-aW5nXG4iLAo+PiAgCQkJZGV2X25hbWUoZGV2LT5wYXJlbnQpKTsKPj4gKwltdXRleF9sb2NrKCZk
-cG1fbGlzdF9tdHgpOwo+Cj5JIGRvIG5vdCB1bmRlcnN0YW5kIGhvdyB0aGlzIGNoYW5nZSB3aWxs
-IHJlbW92ZSB0aGUgb2ZmZW5kaW5nIGxvZwo+bWVzc2FnZS4gIEl0IHNob3VsZCBiZSBzYWZlIHRv
-IGhvbGQgdGhlIGxvY2sgd2hpbGUgdGhlIGNoZWNrIGhhcHBlbnMgYW5kCj50aGUgbWVzc2FnZSBp
-cyBwcmludGVkIG91dCwgeW91IHNob3VsZCBub3Qgc2VlIGFueSBmdW5jdGlvbmFsIGNoYW5nZSBh
-dAo+YWxsLgo+Cj5TbyBhcmUgeW91IHN1cmUgdGhpcyBpcyBuZWVkZWQ/CgpUaGlzIHBhdGNoIGRv
-ZXMgbm90IGZpeCBhbnl0aGluZywgdGhlIHdhcm5pbmcgaXMgc3RpbGwgdGhlcmUgYW5kIGluZGVl
-ZCBubyBmdW5jdGlvbmFsIGNoYW5nZSBhdCBhbGwuCkl0IGlzIG1vcmUgb2YgYSBjb2RlIHJlZmFj
-dG9yOiB3aGVuIEkgZm9sbG93IHRoZSBrZXJuZWwgd2FybiBvbiBteSBzeXN0ZW0gYW5kIGNoZWNr
-IHRoZSBjb2RlLCBJIApmZWVsIGl0cyBiZXR0ZXIgdG8gbW92ZSBkZXZfd2FybiBvdXQgb2YgdGhl
-IGxvY2sgc2VjdGlvbiBzaW5jZSB0aGUgbG9jayBpcyBub3QgbWVhbnQgdG8gcHJvdGVjdCBpdCwg
-cmlnaHQ/CkFuZCBJIG1lbnRpb24gdGhlIHdhcm5pbmcgbWVzc2FnZSBpbiB0aGUgY29tbWl0IGxv
-ZyBiZWNhdXNlIEkgdGhpbmsgaXQgd291bGQgbWFrZSB0aGUgbG9jay1ob2xkaW5nIHVubmVjZXNz
-YXJpbHkKbG9uZ2VyIHdoZW4gdGhlIHdhcm5pbmcgZG8gaGFwcGVuLiAKCj4KPnRoYW5rcywKPgo+
-Z3JlZyBrLWgK
+--Sig_/sjN5PeALw1CTF_TmCii/.Am
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
+
+Hi all,
+
+On Mon, 2 Sep 2024 13:29:04 +1000 Stephen Rothwell <sfr@canb.auug.org.au> w=
+rote:
+>
+> After merging the sound tree, today's linux-next build (arm
+> multi_v7_defconfig) produced this warning:
+>=20
+> In file included from include/asm-generic/bug.h:22,
+>                  from arch/arm/include/asm/bug.h:60,
+>                  from include/linux/bug.h:5,
+>                  from include/linux/io.h:12,
+>                  from sound/core/pcm_memory.c:7:
+> sound/core/pcm_memory.c: In function 'snd_pcm_lib_preallocate_proc_write':
+> include/linux/kern_levels.h:5:25: warning: format '%zu' expects argument =
+of type 'size_t', but argument 7 has type 'long unsigned int' [-Wformat=3D]
+>     5 | #define KERN_SOH        "\001"          /* ASCII Start Of Header =
+*/
+>       |                         ^~~~~~
+> include/linux/printk.h:135:25: note: in definition of macro 'no_printk'
+>   135 |                 _printk(fmt, ##__VA_ARGS__);            \
+>       |                         ^~~
+> include/linux/kern_levels.h:15:25: note: in expansion of macro 'KERN_SOH'
+>    15 | #define KERN_DEBUG      KERN_SOH "7"    /* debug-level messages */
+>       |                         ^~~~~~~~
+> include/linux/printk.h:620:19: note: in expansion of macro 'KERN_DEBUG'
+>   620 |         no_printk(KERN_DEBUG pr_fmt(fmt), ##__VA_ARGS__)
+>       |                   ^~~~~~~~~~
+> sound/core/pcm_memory.c:215:33: note: in expansion of macro 'pr_debug'
+>   215 |                                 pr_debug("ALSA pcmC%dD%d%c,%d:%s:=
+ cannot preallocate for size %zu\n",
+>       |                                 ^~~~~~~~
+>=20
+> Introduced by commit
+>=20
+>   43b42ed438bf ("ALSA: pcm: Fix the previous conversion to kstrtoul()")
+
+This became a build failure in the i386 defconfig build, so I have
+reverted that commit for today.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/sjN5PeALw1CTF_TmCii/.Am
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmbVX+wACgkQAVBC80lX
+0GzuqAgAhijv7hnX3l5LkL9ylIrHHJaKf8fQ+3+C6epEm5DVVCVntlc5q1imse7c
+94WcerJFTLyTvZPFpk0ive7DOJNrTHREJJ/c9Ikpi2HwxwUopADKE+Ol8JOMSrOO
+QfG/3sHgOfNYDYLkqgDTv/OANqKwGbPB6gDCnyG24qMKiH/r4svFHBnQSBdfrPc8
+ygJIcNlNgUvFxXHH/DLnn04ERV4DGbTle/6kKZEb3B+yntXGhdZTUFNKF3N6xKdT
+x6D0FD+CyTmBgLhoMogrGhVNd2OyhkwCl02YB86ppdfER9HiOPzYt3k+5Yr1hwb2
+DvtThU8TApykVfBelDROZtii/OFK0A==
+=ZMig
+-----END PGP SIGNATURE-----
+
+--Sig_/sjN5PeALw1CTF_TmCii/.Am--
 
