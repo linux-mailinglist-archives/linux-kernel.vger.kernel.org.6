@@ -1,255 +1,311 @@
-Return-Path: <linux-kernel+bounces-311357-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311358-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 400539687FC
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 14:54:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39239968801
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 14:54:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 72F991C216DE
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 12:54:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA8E71F2308F
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 12:54:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 706C819C55D;
-	Mon,  2 Sep 2024 12:54:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E89C181B80;
+	Mon,  2 Sep 2024 12:54:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="L/J73pKE"
-Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Qf/AyJAd";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="GfRcXxsA";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="JKw9bQKD";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="vWf5xlfc"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 893B0181B80;
-	Mon,  2 Sep 2024 12:54:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8672719E99C;
+	Mon,  2 Sep 2024 12:54:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725281651; cv=none; b=tN/7Xfp7b8adgo/lVxUhSniiaISYI0PQpK3I96xXJAaF0gwBB81KPRAiskWbNpS1dkqHPZYOnjy6sR9KMLhh4bEb7DMBJK9wt6pDelTZ9K75jQ+vRL/HLVeuZJBAiVBjgVSASvYsoH1YBiZWm3rx9iTm6LksvQKo5qO2CxhpIXA=
+	t=1725281664; cv=none; b=LEugdqTWI+nuQ8M41N0ORzrrrjM0Q+WAYzPPa0P2XMRvY7ZUiIp82q1p9UKFt5lNDCSfOvqVX1mGGz1UudeJb4eASC5xPWMXx7cL6wLA8JO9UjxPmkkJEeMxMG2PYxjixWuUWWPdO5gjI9syx82o5PSNyB+2oRerW76KviJHfBE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725281651; c=relaxed/simple;
-	bh=rFQOK6VJteuZXKwiLuPjVYiP9/LxQxEj94oSEVurGjY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=g7izKGkGJH/E4krGHl/T2L8nH02bmcuvobWuAUMXACtC3dJA/AVVCEgMSUcEvUjT2ThNzRJJZzVAitPB/WUY2euYD1zGHJ2bIrVErMiC/2d1nRHQS6sji2GEZTl4/jU+4srkctAOTjzgvWAWNeYUvB7ySE+Al42LQ43tUFrtR2E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=L/J73pKE; arc=none smtp.client-ip=80.237.130.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:From:Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:
-	Content-Type:Content-Transfer-Encoding:Content-ID:Content-Description:
-	In-Reply-To:References; bh=SSKrWHfr3RQQxlj73LfGosa+rJRjxqlAnWYQ+2sQHwM=;
-	t=1725281649; x=1725713649; b=L/J73pKEMTny+tWvvZ5T4k0PwUtlJ1YkrVHMW/D1p/8H7qY
-	eatahSeZQl8GNUcNOUL4ACRtuIvqv4S8rGWYI5Jodg1yxHGOFSmYhO5+g8NJp5zz+Ts0rbDYJfZOv
-	cuEXN8TNZnbDuw/F44gH2tkn6Z06VvtnvesgM4fVqC+zLP9golVfY3L7NgbnfkKc2k6XPbQMJgtv2
-	syrsdT9rGKkWJq2QTo9snvYUqmZeNIXoNvYOHCtSy1xbQ45oYpGZoNtxEhsyzrPyZhb3l1BHWZ6Z4
-	sPYbEqsbddN3yAP/i1hDmD9u7RG7zDOgCqxPHIXm2hOSnP6s2ttXdo88PiIzKNPQ==;
-Received: from [2a02:8108:8980:2478:8cde:aa2c:f324:937e]; authenticated
-	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
-	id 1sl6ZA-0000Ot-MO; Mon, 02 Sep 2024 14:53:56 +0200
-Message-ID: <56651be8-1466-475f-b1c5-4087995cc5ae@leemhuis.info>
-Date: Mon, 2 Sep 2024 14:53:55 +0200
+	s=arc-20240116; t=1725281664; c=relaxed/simple;
+	bh=MFo2TZCod0v2sP074XXMoouw1+7yGiBABZ4axFWyjZ8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nkybua+mly0ebk77cFKTAdlUQ4r8miTyT0akkafFK5m1flm8Gz//xA+dHl9Vc4VwLC6HBmeDrGnLFvLQwrY7QilVTy5tpVcut8PHxaqDkEhbYYHbpNmAgymKgrmPVKxpZ+dESogrwxtJu/E3uxeTuV5qylaL/oDdtyFZlwQ42Kk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Qf/AyJAd; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=GfRcXxsA; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=JKw9bQKD; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=vWf5xlfc; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 7FADD1FBAD;
+	Mon,  2 Sep 2024 12:54:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1725281660; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hUfcnsaT50Spe9gr/GzOXNoVa7pI09BB72dUEUWz4JY=;
+	b=Qf/AyJAdtVYsGjqmNPTLH13N9kQhzsb0Na/nnIf3ezvrOvc+tgWPrypecqWFE7JHOAmec9
+	9TjELS6F3pSrKnaY3GUgikcAVnfwqaCzkSODmX/tZS63xgEYbol1PRbA+sboXVetzpZYQ6
+	+CuWHVUX++H4emhlRW5/TvDW+VdRtU4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1725281660;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hUfcnsaT50Spe9gr/GzOXNoVa7pI09BB72dUEUWz4JY=;
+	b=GfRcXxsAFhbQSvzru7OtVFqaFSxR71634popSkHRxhcfvTU+q3KYvuEOE/W1cLdyh7DFL+
+	hBFrCbQ2pTCLAOAA==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1725281659; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hUfcnsaT50Spe9gr/GzOXNoVa7pI09BB72dUEUWz4JY=;
+	b=JKw9bQKDVK4S4n68YsoCpSMOzA0LXafxipWeFTnSgw14//BEJGVuRQpU0ein0ryKnffs5m
+	RTmDmTbsywWR6cGFDFq7xMu1Xk5Qhu7AGpxfHdSLKpJS96QHxnEC+zSIMp80PZJMk71WQW
+	bT3yVdKEjTIbH9nY9Ra7GIgwGfiaQ0w=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1725281659;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hUfcnsaT50Spe9gr/GzOXNoVa7pI09BB72dUEUWz4JY=;
+	b=vWf5xlfcWlAu6jtVApi9P2HgMvaz8ayqe8Q/0lwgxEFcCwqCUEPoe8/nNuLcptt32GOAP7
+	nJlSThkfC/RSSYDw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 6E75013AE0;
+	Mon,  2 Sep 2024 12:54:19 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id OyD2Gnu11WbGFwAAD6G6ig
+	(envelope-from <jack@suse.cz>); Mon, 02 Sep 2024 12:54:19 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 11C31A0965; Mon,  2 Sep 2024 14:54:19 +0200 (CEST)
+Date: Mon, 2 Sep 2024 14:54:19 +0200
+From: Jan Kara <jack@suse.cz>
+To: Aleksa Sarai <cyphar@cyphar.com>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	Chuck Lever <chuck.lever@oracle.com>,
+	Jeff Layton <jlayton@kernel.org>,
+	Amir Goldstein <amir73il@gmail.com>,
+	Alexander Aring <alex.aring@gmail.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Christoph Hellwig <hch@infradead.org>,
+	Josef Bacik <josef@toxicpanda.com>, linux-fsdevel@vger.kernel.org,
+	linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-api@vger.kernel.org, linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH RESEND v3 2/2] fhandle: expose u64 mount id to
+ name_to_handle_at(2)
+Message-ID: <20240902125419.qe34oqqkizumocta@quack3>
+References: <20240828-exportfs-u64-mount-id-v3-0-10c2c4c16708@cyphar.com>
+ <20240828-exportfs-u64-mount-id-v3-2-10c2c4c16708@cyphar.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V2] mm/gup: Clear the LRU flag of a page before adding to
- LRU batch
-To: Chris Li <chrisl@kernel.org>, Kairui Song <ryncsn@gmail.com>
-Cc: Ge Yang <yangge1116@126.com>, Yu Zhao <yuzhao@google.com>,
- Andrew Morton <akpm@linux-foundation.org>, linux-mm <linux-mm@kvack.org>,
- LKML <linux-kernel@vger.kernel.org>, stable@vger.kernel.org,
- Barry Song <21cnbao@gmail.com>, David Hildenbrand <david@redhat.com>,
- baolin.wang@linux.alibaba.com, liuzixing@hygon.cn,
- Hugh Dickins <hughd@google.com>,
- Linux kernel regressions list <regressions@lists.linux.dev>
-References: <1719038884-1903-1-git-send-email-yangge1116@126.com>
- <CAF8kJuNP5iTj2p07QgHSGOJsiUfYpJ2f4R1Q5-3BN9JiD9W_KA@mail.gmail.com>
- <0f9f7a2e-23c3-43fe-b5c1-dab3a7b31c2d@126.com>
- <CACePvbXU8K4wxECroEPr5T3iAsG6cCDLa12WmrvEBMskcNmOuQ@mail.gmail.com>
- <b5f5b215-fdf2-4287-96a9-230a87662194@126.com>
- <CACePvbV4L-gRN9UKKuUnksfVJjOTq_5Sti2-e=pb_w51kucLKQ@mail.gmail.com>
- <00a27e2b-0fc2-4980-bc4e-b383f15d3ad9@126.com>
- <CAOUHufYi9h0kz5uW3LHHS3ZrVwEq-kKp8S6N-MZUmErNAXoXmw@mail.gmail.com>
- <CAMgjq7CLObfnEcPgrPSHtRw0RtTXLjiS=wjGnOT+xv1BhdCRHg@mail.gmail.com>
- <CAMgjq7DLGczt=_yWNe-CY=U8rW+RBrx+9VVi4AJU3HYr-BdLnQ@mail.gmail.com>
- <CACePvbXJKskfo-bd5jr2GfagaFDoYz__dbQTKmq2=rqOpJzqYQ@mail.gmail.com>
- <CACePvbWTALuB7-jH5ZxCDAy_Dxeh70Y4=eYE5Mixr2qW+Z9sVA@mail.gmail.com>
-From: "Linux regression tracking (Thorsten Leemhuis)"
- <regressions@leemhuis.info>
-Content-Language: en-US, de-DE
-Autocrypt: addr=linux@leemhuis.info; keydata=
- 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 n7RI
-Reply-To: Linux regressions mailing list <regressions@lists.linux.dev>
-In-Reply-To: <CACePvbWTALuB7-jH5ZxCDAy_Dxeh70Y4=eYE5Mixr2qW+Z9sVA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1725281649;ebc597c7;
-X-HE-SMSGID: 1sl6ZA-0000Ot-MO
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240828-exportfs-u64-mount-id-v3-2-10c2c4c16708@cyphar.com>
+X-Spam-Score: -2.30
+X-Spamd-Result: default: False [-2.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	TAGGED_RCPT(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[24];
+	RCVD_COUNT_THREE(0.00)[3];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[zeniv.linux.org.uk,kernel.org,suse.cz,oracle.com,gmail.com,infradead.org,redhat.com,arm.com,linux.intel.com,google.com,intel.com,toxicpanda.com,vger.kernel.org];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,cyphar.com:email,imap1.dmz-prg2.suse.org:helo,suse.com:email]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-Hi, Thorsten here, the Linux kernel's regression tracker. Top-posting
-for once, to make this easily accessible to everyone.
+On Wed 28-08-24 20:19:43, Aleksa Sarai wrote:
+> Now that we provide a unique 64-bit mount ID interface in statx(2), we
+> can now provide a race-free way for name_to_handle_at(2) to provide a
+> file handle and corresponding mount without needing to worry about
+> racing with /proc/mountinfo parsing or having to open a file just to do
+> statx(2).
+> 
+> While this is not necessary if you are using AT_EMPTY_PATH and don't
+> care about an extra statx(2) call, users that pass full paths into
+> name_to_handle_at(2) need to know which mount the file handle comes from
+> (to make sure they don't try to open_by_handle_at a file handle from a
+> different filesystem) and switching to AT_EMPTY_PATH would require
+> allocating a file for every name_to_handle_at(2) call, turning
+> 
+>   err = name_to_handle_at(-EBADF, "/foo/bar/baz", &handle, &mntid,
+>                           AT_HANDLE_MNT_ID_UNIQUE);
+> 
+> into
+> 
+>   int fd = openat(-EBADF, "/foo/bar/baz", O_PATH | O_CLOEXEC);
+>   err1 = name_to_handle_at(fd, "", &handle, &unused_mntid, AT_EMPTY_PATH);
+>   err2 = statx(fd, "", AT_EMPTY_PATH, STATX_MNT_ID_UNIQUE, &statxbuf);
+>   mntid = statxbuf.stx_mnt_id;
+>   close(fd);
+> 
+> Reviewed-by: Jeff Layton <jlayton@kernel.org>
+> Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
 
-Chris et. al., was that fix from Yu ever submitted? From here it looks
-like fixing this regression fell through the cracks; but at the same
-time I have this strange feeling that I'm missing something obvious here
-and will look stupid by writing this mail... If that's the case: sorry
-for the noise.
+Looks good to me. Feel free to add:
 
-Ciao, Thorsten (wearing his 'the Linux kernel's regression tracker' hat)
+Reviewed-by: Jan Kara <jack@suse.cz>
 
-On 04.08.24 21:11, Chris Li wrote:
-> On Sun, Aug 4, 2024 at 10:51 AM Chris Li <chrisl@kernel.org> wrote:
->> On Sun, Aug 4, 2024 at 5:22 AM Kairui Song <ryncsn@gmail.com> wrote:
->
->>>> Hi Yu, I tested your patch, on my system, the OOM still exists (96
->>>> core and 256G RAM), test memcg is limited to 512M and 32 thread ().
->>>>
->>>> And I found the OOM seems irrelevant to either your patch or Ge's
->>>> patch. (it may changed the OOM chance slight though)
->>>>
->>>> After the very quick OOM (it failed to untar the linux source code),
->>>> checking lru_gen_full:
->>>> memcg    47 /build-kernel-tmpfs
->>>>  node     0
->>>>         442       1691      29405           0
->>>>                      0          0r          0e          0p         57r
->>>>        617e          0p
->>>>                      1          0r          0e          0p          0r
->>>>          4e          0p
->>>>                      2          0r          0e          0p          0r
->>>>          0e          0p
->>>>                      3          0r          0e          0p          0r
->>>>          0e          0p
->>>>                                 0           0           0           0
->>>>          0           0
->>>>         443       1683      57748         832
->>>>                      0          0           0           0           0
->>>>          0           0
->>>>                      1          0           0           0           0
->>>>          0           0
->>>>                      2          0           0           0           0
->>>>          0           0
->>>>                      3          0           0           0           0
->>>>          0           0
->>>>                                 0           0           0           0
->>>>          0           0
->>>>         444       1670      30207         133
->>>>                      0          0           0           0           0
->>>>          0           0
->>>>                      1          0           0           0           0
->>>>          0           0
->>>>                      2          0           0           0           0
->>>>          0           0
->>>>                      3          0           0           0           0
->>>>          0           0
->>>>                                 0           0           0           0
->>>>          0           0
->>>>         445       1662          0           0
->>>>                      0          0R         34T          0          57R
->>>>        238T          0
->>>>                      1          0R          0T          0           0R
->>>>          0T          0
->>>>                      2          0R          0T          0           0R
->>>>          0T          0
->>>>                      3          0R          0T          0           0R
->>>>         81T          0
->>>>                             13807L        324O        867Y       2538N
->>>>         63F         18A
->>>>
->>>> If I repeat the test many times, it may succeed by chance, but the
->>>> untar process is very slow and generates about 7000 generations.
->>>>
->>>> But if I change the untar cmdline to:
->>>> python -c "import sys; sys.stdout.buffer.write(open('$linux_src',
->>>> mode='rb').read())" | tar zx
->>>>
->>>> Then the problem is gone, it can untar the file successfully and very fast.
->>>>
->>>> This might be a different issue reported by Chris, I'm not sure.
->>>
->>> After more testing, I think these are two problems (note I changed the
->>> memcg limit to 600m later so the compile test can run smoothly).
->>>
->>> 1. OOM during the untar progress (can be workarounded by the untar
->>> cmdline I mentioned above).
->>
->> There are two different issues here.
->> My recent test script has moved the untar phase out of memcg limit
->> (mostly I want to multithreading untar) so the bisect I did is only
->> catch the second one.
->> The untar issue might not be a regression from this patch.
->>
->>> 2. OOM during the compile progress (this should be the one Chris encountered).
->>>
->>> Both 1 and 2 only exist for MGLRU.
->>> 1 can be workarounded using the cmdline I mentioned above.
->>> 2 is caused by Ge's patch, and 1 is not.
->>>
->>> I can confirm Yu's patch fixed 2 on my system, but the 1 seems still a
->>> problem, it's not related to this patch, maybe can be discussed
->>> elsewhere.
->>
->> I will do a test run now with Yu's patch and report back.
-> 
-> Confirm Yu's patch fixes the regression for me. Now it can sustain
-> 470M pressure without causing OOM kill.
-> 
-> Yu, please submit your patch.  This regression has merged into Linus'
-> tree already.
-> 
-> Feel free to add:
-> 
-> Tested-by: Chris Li <chrisl@kernel.org>
-> 
-> Chris
-> 
+								Honza
 
---
-Everything you wanna know about Linux kernel regression tracking:
-https://linux-regtracking.leemhuis.info/about/#tldr
-If I did something stupid, please tell me, as explained on that page.
-
-#regzbot poke
+> ---
+>  fs/fhandle.c                                       | 29 ++++++++++++++++------
+>  include/linux/syscalls.h                           |  2 +-
+>  include/uapi/linux/fcntl.h                         |  1 +
+>  tools/perf/trace/beauty/include/uapi/linux/fcntl.h |  1 +
+>  4 files changed, 25 insertions(+), 8 deletions(-)
+> 
+> diff --git a/fs/fhandle.c b/fs/fhandle.c
+> index 6e8cea16790e..8cb665629f4a 100644
+> --- a/fs/fhandle.c
+> +++ b/fs/fhandle.c
+> @@ -16,7 +16,8 @@
+>  
+>  static long do_sys_name_to_handle(const struct path *path,
+>  				  struct file_handle __user *ufh,
+> -				  int __user *mnt_id, int fh_flags)
+> +				  void __user *mnt_id, bool unique_mntid,
+> +				  int fh_flags)
+>  {
+>  	long retval;
+>  	struct file_handle f_handle;
+> @@ -69,9 +70,19 @@ static long do_sys_name_to_handle(const struct path *path,
+>  	} else
+>  		retval = 0;
+>  	/* copy the mount id */
+> -	if (put_user(real_mount(path->mnt)->mnt_id, mnt_id) ||
+> -	    copy_to_user(ufh, handle,
+> -			 struct_size(handle, f_handle, handle_bytes)))
+> +	if (unique_mntid) {
+> +		if (put_user(real_mount(path->mnt)->mnt_id_unique,
+> +			     (u64 __user *) mnt_id))
+> +			retval = -EFAULT;
+> +	} else {
+> +		if (put_user(real_mount(path->mnt)->mnt_id,
+> +			     (int __user *) mnt_id))
+> +			retval = -EFAULT;
+> +	}
+> +	/* copy the handle */
+> +	if (retval != -EFAULT &&
+> +		copy_to_user(ufh, handle,
+> +			     struct_size(handle, f_handle, handle_bytes)))
+>  		retval = -EFAULT;
+>  	kfree(handle);
+>  	return retval;
+> @@ -83,6 +94,7 @@ static long do_sys_name_to_handle(const struct path *path,
+>   * @name: name that should be converted to handle.
+>   * @handle: resulting file handle
+>   * @mnt_id: mount id of the file system containing the file
+> + *          (u64 if AT_HANDLE_MNT_ID_UNIQUE, otherwise int)
+>   * @flag: flag value to indicate whether to follow symlink or not
+>   *        and whether a decodable file handle is required.
+>   *
+> @@ -92,7 +104,7 @@ static long do_sys_name_to_handle(const struct path *path,
+>   * value required.
+>   */
+>  SYSCALL_DEFINE5(name_to_handle_at, int, dfd, const char __user *, name,
+> -		struct file_handle __user *, handle, int __user *, mnt_id,
+> +		struct file_handle __user *, handle, void __user *, mnt_id,
+>  		int, flag)
+>  {
+>  	struct path path;
+> @@ -100,7 +112,8 @@ SYSCALL_DEFINE5(name_to_handle_at, int, dfd, const char __user *, name,
+>  	int fh_flags;
+>  	int err;
+>  
+> -	if (flag & ~(AT_SYMLINK_FOLLOW | AT_EMPTY_PATH | AT_HANDLE_FID))
+> +	if (flag & ~(AT_SYMLINK_FOLLOW | AT_EMPTY_PATH | AT_HANDLE_FID |
+> +		     AT_HANDLE_MNT_ID_UNIQUE))
+>  		return -EINVAL;
+>  
+>  	lookup_flags = (flag & AT_SYMLINK_FOLLOW) ? LOOKUP_FOLLOW : 0;
+> @@ -109,7 +122,9 @@ SYSCALL_DEFINE5(name_to_handle_at, int, dfd, const char __user *, name,
+>  		lookup_flags |= LOOKUP_EMPTY;
+>  	err = user_path_at(dfd, name, lookup_flags, &path);
+>  	if (!err) {
+> -		err = do_sys_name_to_handle(&path, handle, mnt_id, fh_flags);
+> +		err = do_sys_name_to_handle(&path, handle, mnt_id,
+> +					    flag & AT_HANDLE_MNT_ID_UNIQUE,
+> +					    fh_flags);
+>  		path_put(&path);
+>  	}
+>  	return err;
+> diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
+> index 4bcf6754738d..5758104921e6 100644
+> --- a/include/linux/syscalls.h
+> +++ b/include/linux/syscalls.h
+> @@ -870,7 +870,7 @@ asmlinkage long sys_fanotify_mark(int fanotify_fd, unsigned int flags,
+>  #endif
+>  asmlinkage long sys_name_to_handle_at(int dfd, const char __user *name,
+>  				      struct file_handle __user *handle,
+> -				      int __user *mnt_id, int flag);
+> +				      void __user *mnt_id, int flag);
+>  asmlinkage long sys_open_by_handle_at(int mountdirfd,
+>  				      struct file_handle __user *handle,
+>  				      int flags);
+> diff --git a/include/uapi/linux/fcntl.h b/include/uapi/linux/fcntl.h
+> index 38a6d66d9e88..87e2dec79fea 100644
+> --- a/include/uapi/linux/fcntl.h
+> +++ b/include/uapi/linux/fcntl.h
+> @@ -152,6 +152,7 @@
+>  #define AT_HANDLE_FID		0x200	/* File handle is needed to compare
+>  					   object identity and may not be
+>  					   usable with open_by_handle_at(2). */
+> +#define AT_HANDLE_MNT_ID_UNIQUE	0x001	/* Return the u64 unique mount ID. */
+>  
+>  #if defined(__KERNEL__)
+>  #define AT_GETATTR_NOSEC	0x80000000
+> diff --git a/tools/perf/trace/beauty/include/uapi/linux/fcntl.h b/tools/perf/trace/beauty/include/uapi/linux/fcntl.h
+> index 38a6d66d9e88..87e2dec79fea 100644
+> --- a/tools/perf/trace/beauty/include/uapi/linux/fcntl.h
+> +++ b/tools/perf/trace/beauty/include/uapi/linux/fcntl.h
+> @@ -152,6 +152,7 @@
+>  #define AT_HANDLE_FID		0x200	/* File handle is needed to compare
+>  					   object identity and may not be
+>  					   usable with open_by_handle_at(2). */
+> +#define AT_HANDLE_MNT_ID_UNIQUE	0x001	/* Return the u64 unique mount ID. */
+>  
+>  #if defined(__KERNEL__)
+>  #define AT_GETATTR_NOSEC	0x80000000
+> 
+> -- 
+> 2.46.0
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
