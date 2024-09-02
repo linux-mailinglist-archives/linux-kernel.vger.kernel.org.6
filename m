@@ -1,110 +1,127 @@
-Return-Path: <linux-kernel+bounces-311114-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311115-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C460A96850A
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 12:42:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93AD696850D
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 12:43:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6EC8D1F22525
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 10:42:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4FF242812F2
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 10:43:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97A231714BD;
-	Mon,  2 Sep 2024 10:42:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19B9B17E46E;
+	Mon,  2 Sep 2024 10:43:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PqYl94ee"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="hOa92Dx9"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 544EC13B2A8;
-	Mon,  2 Sep 2024 10:42:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD80913B2A8;
+	Mon,  2 Sep 2024 10:43:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725273770; cv=none; b=j7E3ZZEdLzEmaWqufsaH5sOiw2BrpQ/SDAzV0FW1wap182sgEGqDhsDHOhw09pHVL0ew11u10o9x64YMcz5ITIlLGY7eZwJT0yhQd+oPolJkzgVRD3W9u+gubYMy5fF8SeSjC0xbgNcKih8j72cUyOAB9hgbhnqBSfj6Y6mCUrg=
+	t=1725273805; cv=none; b=kYLufEtVZUeuDlGZVB++5Anz7QZhxFXqIF5nmSA7oYwAplDF98I5mhkaZFVlu7GkoXdiYy5yxy5nKLTBMU3NrDAvrA/trfpGZqGROUlRligmdGMNA1MfOQJOMmIusYzJrr2LnTT3t3wf8R1uLIqGYMe4xB/1MZC8EQjz0mGA/i4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725273770; c=relaxed/simple;
-	bh=xEEr5YhQ7ynEnYVBuIxwVvHOV4IpVINET57YBn2yaMY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aa4y/L9U2ZzoyOdsMfiqdUYJ4Q8nvJYdB3zJNfAsDTjwA/VlOmT5T+nXUg2tGw3O4XvIEV+ZzmacQB+tVriXjaSOXSH0yMs+HokihK0ck5SQ8WbyGJoVlwTk159bAmbqmsJp6QyJ8xBINbTlWxtoqKTauGNOF5DB931EgOpMZu8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PqYl94ee; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725273768; x=1756809768;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=xEEr5YhQ7ynEnYVBuIxwVvHOV4IpVINET57YBn2yaMY=;
-  b=PqYl94eerqxBAhJ89ijOIDtaCjm4IDqeiAQ+Rrz64mHBtHL9JfE/xqf3
-   h1T39Icka8Vu4BBXKqDt9Jb3Sfx3OIUZ/pU5lhAWVIptOx7OVQTitTAPM
-   8skfpYwHL0xAF1yWXj8E7L4RlGR3AezoIHoZ4G6rrPWroP4X3iXY1BZwi
-   yWf3xHPBiJ84tHtRdu1l8SJDDEg0nM51Fw4kh3P6ndhMoJxosuh+1O5Z9
-   DIAHoVk3qcaNKiEaLdBiDGItfZE4LnwdAqu5XlqSofAbFf6KZfRN5wSX4
-   VCC4m6LBChAsqrGg82/0nuJin9Ok+tjnEgTZm+doct8TsK5292G3s7pJJ
-   A==;
-X-CSE-ConnectionGUID: AueGdtWmTASxbCcmAF2cng==
-X-CSE-MsgGUID: LNxjQIXbT/2tOXdGDU2mqg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11182"; a="23802775"
-X-IronPort-AV: E=Sophos;i="6.10,195,1719903600"; 
-   d="scan'208";a="23802775"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2024 03:42:48 -0700
-X-CSE-ConnectionGUID: HFGOjsiyR12c8rQn7iGr0A==
-X-CSE-MsgGUID: o3T9W1tRRu+On6BWXH+Z/A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,195,1719903600"; 
-   d="scan'208";a="64576948"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmviesa008.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2024 03:42:45 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1sl4WA-00000004KMH-0Pzl;
-	Mon, 02 Sep 2024 13:42:42 +0300
-Date: Mon, 2 Sep 2024 13:42:41 +0300
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: linus.walleij@linaro.org, mcoquelin.stm32@gmail.com,
-	alexandre.torgue@foss.st.com, Shen Lichuan <shenlichuan@vivo.com>,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	linux-gpio@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	opensource.kernel@vivo.com
-Subject: Re: [PATCH v1] gpio: stmpe: Simplify with dev_err_probe()
-Message-ID: <ZtWWoT75zCSB4g1x@smile.fi.intel.com>
-References: <20240829131051.43200-1-shenlichuan@vivo.com>
- <172527039219.21144.385699965145763717.b4-ty@linaro.org>
+	s=arc-20240116; t=1725273805; c=relaxed/simple;
+	bh=q5lfXAaNbvzzQSeMLC+CUltjU/oMV1zUF3qQtgKTbUc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=BfsbpCSMSZKeOfjd4TSUxapB+q42MrPbqkLuR1GmUbWvgp6+BNSSKZaAKP6VisC90uG+yPdcEKRsApF1XmiIQgL2wpZiuE+7je8ZOxabL3+9tyoLsJNHViJfv6ZpJvkqmd/AdCKbYO+a1a9wNgWLS9aW92Z4jv5/XR/wt4EVR7U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=hOa92Dx9; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 481NZmdx020414;
+	Mon, 2 Sep 2024 10:43:20 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=2nxOabKfuJEVJc2f7fFTLr6hxJkwXtxN9U5
+	bfEmmFcM=; b=hOa92Dx9qIFUQyF/sYutRGxgEVsfSnm/gP5ZCd9UCbWVxGRFzax
+	1pIdSi+GPC8WYZnWrhZPTCXR7MJo2pKP45JWa7a6FxCh+I5BAi2UiTge3kBpvA+o
+	o+PhC4QPwfHy9KjHy+UMRUJx/Cbxt8JtXJdpXmejK1kMRWzf2W58VJw6eX29OIBx
+	QJpPSk+TL9Yi2INxe6cUowWosNs/SKVNFfQfZaOlk+BOj/V6Wmmj3smdI0TCvGC3
+	P9t7SfEJ+eBgZMh1EjE8oxA0dRmT9hVUb/7ywRYGXm9K3yS2j8Ecs1Fw4QFDvLfA
+	EU8J2pgIksqKT+KiN9SMkoe/bWlHEEmKykw==
+Received: from aptaippmta01.qualcomm.com (tpe-colo-wan-fw-bordernet.qualcomm.com [103.229.16.4])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41buj6va9t-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 02 Sep 2024 10:43:19 +0000 (GMT)
+Received: from pps.filterd (APTAIPPMTA01.qualcomm.com [127.0.0.1])
+	by APTAIPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 482AhGXs004926;
+	Mon, 2 Sep 2024 10:43:16 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by APTAIPPMTA01.qualcomm.com (PPS) with ESMTPS id 41bv8k9qah-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 02 Sep 2024 10:43:16 +0000
+Received: from APTAIPPMTA01.qualcomm.com (APTAIPPMTA01.qualcomm.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 482AhGeM004920;
+	Mon, 2 Sep 2024 10:43:16 GMT
+Received: from cse-cd02-lnx.ap.qualcomm.com (cse-cd02-lnx.qualcomm.com [10.64.75.246])
+	by APTAIPPMTA01.qualcomm.com (PPS) with ESMTPS id 482AhFEv004912
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 02 Sep 2024 10:43:16 +0000
+Received: by cse-cd02-lnx.ap.qualcomm.com (Postfix, from userid 2370279)
+	id 456C8BA2; Mon,  2 Sep 2024 18:43:14 +0800 (CST)
+From: Tingguo Cheng <quic_tingguoc@quicinc.com>
+To: andersson@kernel.org, konradybcio@kernel.org, robh@kernel.org,
+        krzk+dt@kernel.org, conor+dt@kernel.org
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel@quicinc.com,
+        quic_kotarake@quicinc.com, quic_kamalw@quicinc.com,
+        quic_skakitap@quicinc.com, quic_fenglinw@quicinc.com,
+        Tingguo Cheng <quic_tingguoc@quicinc.com>
+Subject: [PATCH] arm64: dts: qcom: sa8775p: pmic: enable rtc
+Date: Mon,  2 Sep 2024 18:43:02 +0800
+Message-Id: <20240902104302.3959670-1-quic_tingguoc@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <172527039219.21144.385699965145763717.b4-ty@linaro.org>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 8bit
+X-QCInternal: smtphost
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: qSgAXK4NWHFfXReHEFsax6fiX4FKEYpv
+X-Proofpoint-GUID: qSgAXK4NWHFfXReHEFsax6fiX4FKEYpv
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-09-02_02,2024-09-02_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 mlxscore=0
+ mlxlogscore=542 impostorscore=0 suspectscore=0 clxscore=1011
+ lowpriorityscore=0 phishscore=0 bulkscore=0 priorityscore=1501
+ adultscore=0 malwarescore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2407110000 definitions=main-2409020087
 
-On Mon, Sep 02, 2024 at 11:46:34AM +0200, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> On Thu, 29 Aug 2024 21:10:51 +0800, Shen Lichuan wrote:
+Add RTC node, the RTC is controlled by PMIC device via spmi bus.
 
-[...]
+Signed-off-by: Tingguo Cheng <quic_tingguoc@quicinc.com>
+---
+ arch/arm64/boot/dts/qcom/sa8775p-pmics.dtsi | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-> Applied, thanks!
-
-Be careful with patches from @vivo.com [1]!
-
-This one in particular missed '\n' (and yes, I know that it's not an issue
-for the ev_*() cases).
-
-[1]: https://lore.kernel.org/linux-spi/20240829033511.1917015-1-11162571@vivo.com/
-(read full discussion)
-
+diff --git a/arch/arm64/boot/dts/qcom/sa8775p-pmics.dtsi b/arch/arm64/boot/dts/qcom/sa8775p-pmics.dtsi
+index 1369c3d43f86..47d05b897d5a 100644
+--- a/arch/arm64/boot/dts/qcom/sa8775p-pmics.dtsi
++++ b/arch/arm64/boot/dts/qcom/sa8775p-pmics.dtsi
+@@ -132,6 +132,14 @@ pmm8654au_0_pon_resin: resin {
+ 			};
+ 		};
+ 
++		pmm8654au_0_rtc: rtc@6100 {
++			compatible = "qcom,pmk8350-rtc";
++			reg = <0x6100>, <0x6200>;
++			reg-names = "rtc", "alarm";
++			interrupts = <0x0 0x62 0x1 IRQ_TYPE_EDGE_RISING>;
++			allow-set-time;
++		};
++
+ 		pmm8654au_0_gpios: gpio@8800 {
+ 			compatible = "qcom,pmm8654au-gpio", "qcom,spmi-gpio";
+ 			reg = <0x8800>;
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.34.1
 
 
