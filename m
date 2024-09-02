@@ -1,284 +1,227 @@
-Return-Path: <linux-kernel+bounces-310995-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311107-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D16709683B6
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 11:52:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B4059684F1
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 12:39:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 953CC284D35
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 09:52:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C5041C22C3D
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 10:39:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10D431D460B;
-	Mon,  2 Sep 2024 09:52:16 +0000 (UTC)
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA1A918592A;
+	Mon,  2 Sep 2024 10:38:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=tdk.com header.i=@tdk.com header.b="ICpLD+yQ"
+Received: from mx0b-00549402.pphosted.com (mx0b-00549402.pphosted.com [205.220.178.134])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B7781D2F4B;
-	Mon,  2 Sep 2024 09:52:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725270735; cv=none; b=UJa6lnphPmXpz7QxLjB4mtar2b4F6+5YGTrSIQHWv/qDLP4q/k43g5d08jynzZeqJlCC2lxR8rf4IiETvQxBxtKQ0sHePmOwXJkGT299ax94m/6YbgHKBU45eTeZtHDdRvk2+R/Jn166gLA8sq0bRiSGiTRAOsi0tJ73ido4v7Q=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725270735; c=relaxed/simple;
-	bh=2/NlnzjJ5EKGmnvogmfthodMRwUpHOr61nKUlheBjLg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=mGnKEsQ3cOMYe20FG9j6EeUSXXf+LMwzt8k75Yy80rQp0A42olMEG8ckxo39m2i0BVfDaDDJWsJ5RcVF2aL6+1tsuPYSh9C+c81MLLEQmmuGcLwxmucfLmBc4RUcICHtiz1TItOkueUF920OQI5goujeGhAVZcOGCtxbo58j10M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a86e9db75b9so430093466b.1;
-        Mon, 02 Sep 2024 02:52:13 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725270732; x=1725875532;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Q2I4dRIkqSFBHXNH+YTrYB86Z1Ux+h2Hy12GxNG22PY=;
-        b=S74dgA2V/FfPx2X7bMf2LWH12JeKnwpsrZynZv4lIBKa+TqWoN9JOybZaf8rutz1kS
-         bpFHAxXBRz6zvyNZNzDYeSTLDiOBVHuk8KQ1dnEPKYARPDkvl+4FOCDlZ99Fk7eTIKOr
-         6rLkVe+KjhSvV+L3W2ywGAZh/H+ZridbeG4NGXDkc2YCXJqobUPQ2Zui3R9VBSY/Si60
-         u5KbmnpLC/2b1PhQeIegfVqSc4/FexLOMbZ9STyy4MJJnCXWHMwOfoTUVvxRZ3wTBPU4
-         NgEXkRpP8R4Xfm83v9OT72tAOM1cULqJ77S3ilWFtBkQCwxnN2kcOZSDNjweyZFIIK/Z
-         3ywQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU0iQAXxUtgu0iRDNZ9sqXDqdpwSmRZKf+We2zLgvr7tmTFnqpCqaa81H2OV7Ut3udGPmRtCLpYkCmDY8/GJQ==@vger.kernel.org, AJvYcCUCpBqs/zp+2RYPe5Q/9HtrDPNuI7I2dNgS766dbzVAqunqd8xPQTzlql1eWGwnjvfKpwz1kY69XzwyuPxqsA==@vger.kernel.org, AJvYcCWrFoYHHqW+nAeDsDoj86f13rPNMJnFB29v26stCUL12mTy5E9sQBEhECE8kSccUUnlhLWYXuhcrgOXxqIX@vger.kernel.org, AJvYcCWvc0rN2ZsT0CBnxkuZn8+XT4SjSqJ3xF/N51/7AGQgPi1kr8XjOVZzuBUJz9ghcVLMR0pkD4q7TPUs7iQZvZakCmxE4zwh@vger.kernel.org
-X-Gm-Message-State: AOJu0YxXSVHUfq+aYcWLPUVAFcUyv+Z3r3xS08ycO7D3nlgksspWYjsw
-	8eRiBB8UFSh8uKgSJxwRWZHXFrvWTs3ED3tAH1ZdDmqfiyQaoBsO
-X-Google-Smtp-Source: AGHT+IFO6/LBNTCXWadk75nDpQBX+A7ihOlHIj+QlY1/nOmbWN3uEm6pa/by2aQW+3QD97Ru6npvQg==
-X-Received: by 2002:a17:907:3ea6:b0:a86:78ef:d4ad with SMTP id a640c23a62f3a-a897f84d328mr1005496166b.20.1725270731011;
-        Mon, 02 Sep 2024 02:52:11 -0700 (PDT)
-Received: from localhost.localdomain (109-81-82-19.rct.o2.cz. [109.81.82.19])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a898900f079sm535327166b.66.2024.09.02.02.52.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Sep 2024 02:52:10 -0700 (PDT)
-From: Michal Hocko <mhocko@kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Christoph Hellwig <hch@lst.de>,
-	Yafang Shao <laoar.shao@gmail.com>,
-	Kent Overstreet <kent.overstreet@linux.dev>,
-	jack@suse.cz,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Dave Chinner <dchinner@redhat.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org,
-	linux-bcachefs@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Michal Hocko <mhocko@suse.com>
-Subject: [PATCH 1/2] bcachefs: do not use PF_MEMALLOC_NORECLAIM
-Date: Mon,  2 Sep 2024 11:51:49 +0200
-Message-ID: <20240902095203.1559361-2-mhocko@kernel.org>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20240902095203.1559361-1-mhocko@kernel.org>
-References: <20240902095203.1559361-1-mhocko@kernel.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DA0B18455E;
+	Mon,  2 Sep 2024 10:38:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.178.134
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725273495; cv=fail; b=U61/NQRMnqqJtPUJDlhxeewUqFYGgKN6XXKfFgdJebkDp25882snexomnSFXkoQTLfl8tDfOiqKjXMF7GIlzsBuYuIKwjwAzD8czSQ44qvZIiswuLaD3fcRyfRSJxQZcQmOfN6JviJG4J3nhY+NKjSBkclK1YqfdM2Ti/28l2kE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725273495; c=relaxed/simple;
+	bh=77/Zzau9nlN9s/EjQKL38Qsw4wT6xmViPMwliTlomJo=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=WEFlx0JC3I1YFRQTwL2q7Zf1z9RrciXlOpNbqS7pYZpMreer/+JY2mC/cKs9/Dx69jpp8Qekz4Br8kBdyI/wpImJ8B1Nzxc/1doO5+Y/YqWiQWB5fhROFi05mTAHiRwznhpHEzcl2j9V8V/29/nm54emAP7eARRt0UTEdvvpJIw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tdk.com; spf=pass smtp.mailfrom=tdk.com; dkim=pass (2048-bit key) header.d=tdk.com header.i=@tdk.com header.b=ICpLD+yQ; arc=fail smtp.client-ip=205.220.178.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tdk.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tdk.com
+Received: from pps.filterd (m0233779.ppops.net [127.0.0.1])
+	by mx0b-00549402.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 481Mjolt022496;
+	Mon, 2 Sep 2024 09:51:58 GMT
+Received: from beup281cu002.outbound.protection.outlook.com (mail-germanynorthazlp17010000.outbound.protection.outlook.com [40.93.77.0])
+	by mx0b-00549402.pphosted.com (PPS) with ESMTPS id 41bvhk14ej-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 02 Sep 2024 09:51:57 +0000 (GMT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=CY1a4eywfFUDE9o/owpWNfKaOgGIu9msZGE/dCzpezViKpstgTBflyxGVyW1Eldh74aK4hKwDQN4PkFtQBbBeyHdjnYBRQNsqBAn7NEsvB+ZkXIb/af18Iv0tWgt9+2RfA6iL42sVOp+cuYQjr5iSWlWxjAwukRw5DwAxNRNAu+jT8mwqx1datpYeVqR1rjEs00yzntoVIC1ljt+xQuzl8iq+aHOMQy7ix7YdxCchXXp8EEpvufdSmtsg0DHo7PPF5YYCuVyIhyZeR1kw3s3uiTFSvuGx1nz5/AmqELrqnmoMcNwObsx7gTdlZ6A65nmqzFnCwDjzF5HJO7ZJLE1Bg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=77/Zzau9nlN9s/EjQKL38Qsw4wT6xmViPMwliTlomJo=;
+ b=fReclcvXkk0eC0dvQ0pLFPGTaz64K2iVmVkrjeEleLvFtbjveU6Vpdu6suwRw8qCEv+2XRJXSI58q+e2qPDo2gXwnFQt9es6fx4WUPdjz2xlgy0ANRaiSiv2kX1AnPdssKT00kZ0vBC9DD5YU65OuqLFz49wZ5PMlbf/lCGpUIJljGi4fwrqJ72iIRf2PnmfgEVxoKoW4Ww1RhaXpjWyppaz/CGfNPeR6Nrjtkpitc0ZnLVIKOv3uo6Q8S2WDOQKPgt+erwUxAqCQ1ZE6pd8dcqusVrOviSHzrBPfQ5pbSdwjNEKLHfasUF3MMOU4+0U1/8elxtKaQusl3GW2hxg3g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=tdk.com; dmarc=pass action=none header.from=tdk.com; dkim=pass
+ header.d=tdk.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tdk.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=77/Zzau9nlN9s/EjQKL38Qsw4wT6xmViPMwliTlomJo=;
+ b=ICpLD+yQvAOtSrQLDyYZVxnWxI/nR0S1DqeHyDZN7Yawl2rzdEWWZro28tWwoYiEd5Ol2tgvPaH57mrWSZfbqxfnfScUxHubfMTlqCRRozu1bDL0BtSLxX4RamCuviIe21F0X46ohblYr3zwZvHxIzHPmsdWRtaOwVXeATQC+ZYaDitF9C6DPsW9WZvlF1IwTKmuG5uKp/9MZrU3exAHuIfOtSQeWu5oclNL6EzjDJkMY/QUfNFWES6Lf2QJbQ+ljHV+AJmY8bmJhexHd7mC6CI008NelFnlUIesglamCUzE/dFP6VTSqfmg0I8XnbgZdpr5DEL/bxAPNtDPyITpiA==
+Received: from FR3P281MB1757.DEUP281.PROD.OUTLOOK.COM (2603:10a6:d10:7c::11)
+ by BE1P281MB2116.DEUP281.PROD.OUTLOOK.COM (2603:10a6:b10:43::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.25; Mon, 2 Sep
+ 2024 09:51:50 +0000
+Received: from FR3P281MB1757.DEUP281.PROD.OUTLOOK.COM
+ ([fe80::53a6:70d:823f:e9ac]) by FR3P281MB1757.DEUP281.PROD.OUTLOOK.COM
+ ([fe80::53a6:70d:823f:e9ac%4]) with mapi id 15.20.7918.024; Mon, 2 Sep 2024
+ 09:51:50 +0000
+From: Jean-Baptiste Maneyrol <Jean-Baptiste.Maneyrol@tdk.com>
+To: gyeyoung <gye976@gmail.com>, Jonathan Cameron <jic23@kernel.org>
+CC: "lars@metafoo.de" <lars@metafoo.de>,
+        "linux-iio@vger.kernel.org"
+	<linux-iio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] iio: imu: inv_mpu6050: Remove duplicate code between
+ labels
+Thread-Topic: [PATCH v2] iio: imu: inv_mpu6050: Remove duplicate code between
+ labels
+Thread-Index: AQHa/Ge6DdRk9WE/nECUfjBCIJGKC7JC+PcAgADD+YCAAISoRg==
+Date: Mon, 2 Sep 2024 09:51:49 +0000
+Message-ID:
+ <FR3P281MB17577DB7CBA7F68A3DB2D4B4CE922@FR3P281MB1757.DEUP281.PROD.OUTLOOK.COM>
+References: <20240901120839.9274-1-gye976@gmail.com>
+ <20240901151150.77074133@jic23-huawei>
+ <CAKbEzntnDGXFCgpscGSg-E-1VraE9J+kTwOsCocmu9N5Agxt-Q@mail.gmail.com>
+In-Reply-To:
+ <CAKbEzntnDGXFCgpscGSg-E-1VraE9J+kTwOsCocmu9N5Agxt-Q@mail.gmail.com>
+Accept-Language: en-US, fr-FR
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+msip_labels:
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: FR3P281MB1757:EE_|BE1P281MB2116:EE_
+x-ms-office365-filtering-correlation-id: 11997a3d-14d4-49d8-e266-08dccb34dd4c
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|376014|1800799024|366016|3613699012|38070700018;
+x-microsoft-antispam-message-info:
+ =?utf-8?B?QnQwZFgwc1lWQWpteW56cWtjMkdjSjdCUS9ORytPU1Z0N0dveTY1bkVOaUhH?=
+ =?utf-8?B?bFFwd2ZicEJoRUJLcTN0OHhmS05mcjhVb0ZvcVA4bmp6YWNpcDJSdHNpbFJQ?=
+ =?utf-8?B?TFpEalQ3MFhMRTVtR2V3WHNqUmk3S0hSNitONzV6akFuc3YrL1VZdmZkVkVB?=
+ =?utf-8?B?MzhHSmNYUnl0WVh4dUpzZHhSR1V6ZzZmTDBad1NGcTRkUHBZSXNCd3p1S09T?=
+ =?utf-8?B?SlhpOS85T0RHMEI4aGpFZUNnbnpPTjIvdlAvREZFTDJHeE5OZHVaZWtYNDM3?=
+ =?utf-8?B?UjR4M0xSTkc2TGMraTNqWTFzREphUEc2bXoveStPYitLWEdUQ1pyaG1BODJE?=
+ =?utf-8?B?V21vQU9PNDZTbUdWZlNqM3BlOVhUSmVBT2I0SHlJWHpJOFNQMVZyVHFOS0dF?=
+ =?utf-8?B?cUlQc0szdTZ2UUE1Ukxna29aOG1uMGN5SWJibXV5SlMzTFczWjBBSEhsVWxu?=
+ =?utf-8?B?WUo2NU9XL1owdWRPSGZBYjR3dVQ1OExqN0F2akpLYVhrVXF3MDdhUU00WEx4?=
+ =?utf-8?B?RllJYnlZN2ZweEhZcFVYTGR6cVNYQWJSRzhwZVJ1azA5M2FiK3ZrOFdUcC9G?=
+ =?utf-8?B?MGhHTTQzYng4NU9MMHhJZlA0c2hzSk9ZT3p6L1M3SUZXSnRFYzNTSkpMOEJI?=
+ =?utf-8?B?UWlKY2ZiZnA1QnRwUitRQkNvb3V0NXY1Z3kwWHdmVk0vUUZ0aW9SczVzeDdm?=
+ =?utf-8?B?NnlYQWxRYWlhZExkQUJQL3ZQNFRhemdReXgwaUxYMnpyRU1waitiRnJTTFZx?=
+ =?utf-8?B?cXNXdi9nM2RwLzdqVWtNejBmUElSVytXZW1rRXp2RytVc1VTbFRsTW15RUp1?=
+ =?utf-8?B?bm12czRTOCtkVG1yZktvU2YwMkFKNkdzTE50VFp6MnNkUDF6QWxEbGYreCtS?=
+ =?utf-8?B?M1JIVno2QktrWCtINVRHdmM0VThoa1FDK0ZZNUdrK2EzVlJSSVFVOE1STEJw?=
+ =?utf-8?B?T0s3dmF1OUh6NVk5MUc3ejYwQ0cwbUVLeEt4YU83aEhYRjVmVC9nTk02VzFR?=
+ =?utf-8?B?bVF5UlFjS0xLdVk3aW5CaHlVRTlycHlQRVYyTklzZFQ3cnRYblZmWjlOdFd3?=
+ =?utf-8?B?N0x0VHZQWExqUGtkUjVvSldReWx6WVkvV3UvUjFwY2NkTVBKU2dQSTFBMXZE?=
+ =?utf-8?B?NzA3MHU1Q3VwRFJudWJtVnZPUUV4dU0wUVBFVkYrdUw5bUIxQnpGRE4xVlp4?=
+ =?utf-8?B?UlI1L1EvSVpuOGdzYkQvRm16clBUZjVucFUxVGNyMmR6MmxPQUJUMTRwY0hJ?=
+ =?utf-8?B?OWc5cER6TTFqUmd6OWoxVkt2aG5EdzVQRUs3VVAzbERFV0ZoOGo0bjQ4SXU1?=
+ =?utf-8?B?VXJsa2lDSmMwUFE5TUI0TjUvZ2hPeXpsUHpscGhLVHphWTVHOTRVdExYd1A4?=
+ =?utf-8?B?L0dHbXhZNERScFYzMFp5SXByUFc1T0htcHRUSHdpR09UeDQ5MlVWRkdLdmFL?=
+ =?utf-8?B?U2NoaW50V1FTaVNKblpvaEE2Mm5iS3BRZnBMczdDa291UjlkZmRHTGpSc3c4?=
+ =?utf-8?B?ZGhyUXFEM01XQjJGeGJWYm84VWNrUGdJdTRVUnpyZks4MkJEZDg2aGQ1Z0Z6?=
+ =?utf-8?B?NTVDcFVrdzc3cEs5MFd0cURibVU4RDVEc282Y0VZKzFsR28zU0FJZ3A3Z1Mr?=
+ =?utf-8?B?VHpJQTVlSXRYaXgyZEdVUTAyZkpza01JeXpPMEVCcktPM1JZeUZaM2JoaWZj?=
+ =?utf-8?B?WGxhOWx1RkY2bU5DcDgyVFgzTjZncEthQVBkeWhxdDBVdjBTYWlRam1NUUtG?=
+ =?utf-8?B?dlhrUTRSYkRId3ZKbGFad2J0K3lzZ2U2VmxYT3ZoNzBvYU9HcGJTSE9Ba2ZY?=
+ =?utf-8?B?OHlpb3BKbkRPSDN3dzJkaU9QUzROYmNvVkdNRFFvSXdrYzVGemRGOTJydDhX?=
+ =?utf-8?B?bFRrNHg0aGVtaFE1T1lNUHNVZ3E1M0lMYTR0M0t2L0tjUWpOZk14QzRRdUJZ?=
+ =?utf-8?Q?XwEAZdcQv2Y=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:FR3P281MB1757.DEUP281.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(3613699012)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?MEplOEpHRndaZGltaVdGRXdtbDJFUUZYbUlOdG5iRThneGVFYWZBUHdHR0tj?=
+ =?utf-8?B?d3B1WnIzQmdBNWRuemxuVGQ2cUtaZ1ovUkFxcE1IQXBMZHhremlVOFlVLzVs?=
+ =?utf-8?B?dVhZcG9Ga3N5eWRDdTh1a0hXNm95Nko3WlVBZEFPdkVKbjhFQjhHeTJNUUZC?=
+ =?utf-8?B?MXc3WTZXODFHV045QXRlYWp4Z2pXYXBmbHBMMWpXQjFYT0UrNE0wczNnbkRS?=
+ =?utf-8?B?NVBSTjJpTjg4dUFkZ0pnbkVpdWJkRy9VbVlBMmUzTFhtbnZaTkVNSXV6R3Fq?=
+ =?utf-8?B?SG5VNExhb21BY2V0T016a1JEckI4S0Y3MGEzbEkyVWNFdDZESVhjOStGZExU?=
+ =?utf-8?B?d2pXVWlqNGtJSEI4a2RlQ0xCWWNlN2VDU1N5S3FtWmlqNC9IQ0Q4ZVJJV2la?=
+ =?utf-8?B?VCt4a3MrVHB4VGhUZmdFdXJrS2d6dEhzaDVBcnQ1S0dnQngxcGlhSjVXSVY3?=
+ =?utf-8?B?dDlHUlZnV2hHa0NwbU5ZSW9VVlVsUExWY2pwZHB3bzlNMGlBNnVhcGpFeS9D?=
+ =?utf-8?B?K25lOERZeWpTZkZlQU1CYlNZWFVYWUIzdS8wdXFHSjczOVZqdXhoUFlIR0tx?=
+ =?utf-8?B?RkNkWFlxeTMzWXM1Y0krMDI5eEhUejExeG80WHhqZTNSNkZ4SXdkbVdSN1g4?=
+ =?utf-8?B?ajdJd1gySmp6TmJ4cHlzRitDTkpxU3lGc21adVJJeFJQNmozdWl2NXVPWWRC?=
+ =?utf-8?B?TmFWMWRGYkxDM2l2cjhUMTRWaWlqcDkxMmY5RVlNWUNsdlBnZ2hJU0YyblNS?=
+ =?utf-8?B?bDFDSXlrbStaZXdZeFZ1Z2U2dXZpNTdLZzdrWlZjUHBSVzI1bG1YT2d6dk4v?=
+ =?utf-8?B?eXdmTXdUc01wSUwzUGxCa0cxYjA0TjRod2wzbGV5dS9TNkdKbHNGN29GRmtT?=
+ =?utf-8?B?dHZGU0ZqZjYvZUZzQjU1TlZONDlUYlpYTkhDMU5MVERQL0Fsd2lyOWlDOU9U?=
+ =?utf-8?B?Tlg5bEg3ZU9qd0Rvdk0vRzVwRUtGVXJGSFVDbElsZEdBY0ZFRUtnMFU0c20y?=
+ =?utf-8?B?UFc2Z0VpSmpQVzVHRWNTT3d2TEJLeFRYMEhRb0JzZExtcG41UndZNzBEcDA3?=
+ =?utf-8?B?N0FrajZiUU5MY04xNHdnVEdEYzhRMUxLWUs2Q1Azb2VkWEJXaGdFc0k1c2FU?=
+ =?utf-8?B?RlJ0dzRPWlN4bm43bzVQdXRrRXZaMTFGcllpMDF0VStVRGxGcEtJK2g5ZWNV?=
+ =?utf-8?B?MlBad293U1UrMUcwcmtzNHhpa1FOY3p3cHNMenMreklwTEVETm5pb2V6M21M?=
+ =?utf-8?B?ZElRL0ZmdjNDd1kwd0dESVVvaGg2SkgvSHZ5aG5XUndNMjk5QXpQRmZUUVkw?=
+ =?utf-8?B?MXNMSG9aYUczbmlRTkNGK29ncjhtS2grNDhTT3JCcXJleGVwYVNQZHErbHBN?=
+ =?utf-8?B?eVBDc3YvNjJoRFlwdkpyOVczbFJOc253ckdqWUYzQXIyeXBOY1lUQVpLME1t?=
+ =?utf-8?B?OGEvRjkyeTE5cDZoY1NxbkFYYjJlSFlwVE1FcGdTdzN0MHJrUGRNeVI4aDFx?=
+ =?utf-8?B?T1RwYWNaSTNwakx2c2R5a0lwZkFuT01EdERIS3UzZlNGbGpRdVdpMkY0TWcx?=
+ =?utf-8?B?NzUveFlERWh4dEMzalpjdWEzMmpTWFJGSnR1WlpJL08rb28wL2ZSNXJHeGk4?=
+ =?utf-8?B?OVRGbFBHdnh1THJUbmNDMUdlSGs4SkN6MUowTWJyY1lIaUFMUlJSS2FnY05o?=
+ =?utf-8?B?YUVMTE5XQ3haMm5rYzR2bnFQZVBoajdmZWI5dDlIazVnTEEyWllkSTU5UXIx?=
+ =?utf-8?B?b2J3S3hQMnd0SWl4L0RzbnVrbEF3akhaTmFCaW1Ma0NubXBIV2l1cTljL3g2?=
+ =?utf-8?B?YzloUy9zUkxqTllTazZyNjZZRDhyUDNoZkkwQ2hZblpHNDRlWVJLbmMzVU9l?=
+ =?utf-8?B?WEgvRldFdkpQenF3dWtaMWJZbWxkWiswbTFMQUNuL2J6eUhhWkhkYmcxbllQ?=
+ =?utf-8?B?UGt0NG82TlZsZUhGRVh3NXQ3RS8yc2FCRmFiTS9obzRRanpZY3FkTXhtc0dH?=
+ =?utf-8?B?QnBzZTZQZWNQdTF1MVZPQVAxU1FTbzdyaDBCODFkdGVKdVRyUk8wa1lqRHNq?=
+ =?utf-8?B?SEJ0RlhuU3NUcDI2S2U5N2FkZ3lwekdabEcxUm5pOW4zcWFxdmVqa2VGVXB6?=
+ =?utf-8?B?YVRBV2lvcGlyQmZ6T04yZG0wdDUzOUFET1YxVDF3VkZXbUdqQWJwZGRVY3Ft?=
+ =?utf-8?B?NXc9PQ==?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: tdk.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: FR3P281MB1757.DEUP281.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-Network-Message-Id: 11997a3d-14d4-49d8-e266-08dccb34dd4c
+X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Sep 2024 09:51:49.0691
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 7e452255-946f-4f17-800a-a0fb6835dc6c
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 4Ujm9Qa/kk0eS+H5HTbqrXz91lRHPTmarpoovHIhGitpb+siXVKo2nUR9Ma5jcAcqB7ERVWt/ebY7x6qEhLXZBif57K7lryL9WXzfPpKT34=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BE1P281MB2116
+X-Proofpoint-GUID: QMl0AOes0VeWH8vKNt686QCMFYUy244C
+X-Proofpoint-ORIG-GUID: QMl0AOes0VeWH8vKNt686QCMFYUy244C
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-09-02_02,2024-09-02_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 impostorscore=0 mlxscore=0
+ mlxlogscore=999 malwarescore=0 phishscore=0 suspectscore=0 bulkscore=0
+ clxscore=1011 lowpriorityscore=0 spamscore=0 adultscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2409020080
 
-From: Michal Hocko <mhocko@suse.com>
-
-bch2_new_inode relies on PF_MEMALLOC_NORECLAIM to try to allocate a new
-inode to achieve GFP_NOWAIT semantic while holding locks. If this
-allocation fails it will drop locks and use GFP_NOFS allocation context.
-
-We would like to drop PF_MEMALLOC_NORECLAIM because it is really
-dangerous to use if the caller doesn't control the full call chain with
-this flag set. E.g. if any of the function down the chain needed
-GFP_NOFAIL request the PF_MEMALLOC_NORECLAIM would override this and
-cause unexpected failure.
-
-While this is not the case in this particular case using the scoped gfp
-semantic is not really needed bacause we can easily pus the allocation
-context down the chain without too much clutter.
-
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Reviewed-by: Dave Chinner <dchinner@redhat.com>
-Reviewed-by: Jan Kara <jack@suse.cz> # For vfs changes
-Signed-off-by: Michal Hocko <mhocko@suse.com>
----
- fs/bcachefs/fs.c          | 14 ++++++--------
- fs/inode.c                |  6 +++---
- include/linux/fs.h        |  7 ++++++-
- include/linux/lsm_hooks.h |  2 +-
- include/linux/security.h  |  4 ++--
- security/security.c       |  8 ++++----
- 6 files changed, 22 insertions(+), 19 deletions(-)
-
-diff --git a/fs/bcachefs/fs.c b/fs/bcachefs/fs.c
-index 15fc41e63b6c..d151a2f28d12 100644
---- a/fs/bcachefs/fs.c
-+++ b/fs/bcachefs/fs.c
-@@ -231,9 +231,9 @@ static struct inode *bch2_alloc_inode(struct super_block *sb)
- 	BUG();
- }
- 
--static struct bch_inode_info *__bch2_new_inode(struct bch_fs *c)
-+static struct bch_inode_info *__bch2_new_inode(struct bch_fs *c, gfp_t gfp)
- {
--	struct bch_inode_info *inode = kmem_cache_alloc(bch2_inode_cache, GFP_NOFS);
-+	struct bch_inode_info *inode = kmem_cache_alloc(bch2_inode_cache, gfp);
- 	if (!inode)
- 		return NULL;
- 
-@@ -245,7 +245,7 @@ static struct bch_inode_info *__bch2_new_inode(struct bch_fs *c)
- 	mutex_init(&inode->ei_quota_lock);
- 	memset(&inode->ei_devs_need_flush, 0, sizeof(inode->ei_devs_need_flush));
- 
--	if (unlikely(inode_init_always(c->vfs_sb, &inode->v))) {
-+	if (unlikely(inode_init_always_gfp(c->vfs_sb, &inode->v, gfp))) {
- 		kmem_cache_free(bch2_inode_cache, inode);
- 		return NULL;
- 	}
-@@ -258,12 +258,10 @@ static struct bch_inode_info *__bch2_new_inode(struct bch_fs *c)
-  */
- static struct bch_inode_info *bch2_new_inode(struct btree_trans *trans)
- {
--	struct bch_inode_info *inode =
--		memalloc_flags_do(PF_MEMALLOC_NORECLAIM|PF_MEMALLOC_NOWARN,
--				  __bch2_new_inode(trans->c));
-+	struct bch_inode_info *inode = __bch2_new_inode(trans->c, GFP_NOWAIT);
- 
- 	if (unlikely(!inode)) {
--		int ret = drop_locks_do(trans, (inode = __bch2_new_inode(trans->c)) ? 0 : -ENOMEM);
-+		int ret = drop_locks_do(trans, (inode = __bch2_new_inode(trans->c, GFP_NOFS)) ? 0 : -ENOMEM);
- 		if (ret && inode) {
- 			__destroy_inode(&inode->v);
- 			kmem_cache_free(bch2_inode_cache, inode);
-@@ -328,7 +326,7 @@ __bch2_create(struct mnt_idmap *idmap,
- 	if (ret)
- 		return ERR_PTR(ret);
- #endif
--	inode = __bch2_new_inode(c);
-+	inode = __bch2_new_inode(c, GFP_NOFS);
- 	if (unlikely(!inode)) {
- 		inode = ERR_PTR(-ENOMEM);
- 		goto err;
-diff --git a/fs/inode.c b/fs/inode.c
-index 86670941884b..a2aabbcffbe4 100644
---- a/fs/inode.c
-+++ b/fs/inode.c
-@@ -153,7 +153,7 @@ static int no_open(struct inode *inode, struct file *file)
-  * These are initializations that need to be done on every inode
-  * allocation as the fields are not initialised by slab allocation.
-  */
--int inode_init_always(struct super_block *sb, struct inode *inode)
-+int inode_init_always_gfp(struct super_block *sb, struct inode *inode, gfp_t gfp)
- {
- 	static const struct inode_operations empty_iops;
- 	static const struct file_operations no_open_fops = {.open = no_open};
-@@ -230,14 +230,14 @@ int inode_init_always(struct super_block *sb, struct inode *inode)
- #endif
- 	inode->i_flctx = NULL;
- 
--	if (unlikely(security_inode_alloc(inode)))
-+	if (unlikely(security_inode_alloc(inode, gfp)))
- 		return -ENOMEM;
- 
- 	this_cpu_inc(nr_inodes);
- 
- 	return 0;
- }
--EXPORT_SYMBOL(inode_init_always);
-+EXPORT_SYMBOL(inode_init_always_gfp);
- 
- void free_inode_nonrcu(struct inode *inode)
- {
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index fd34b5755c0b..d46ca71a7855 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -3027,7 +3027,12 @@ extern loff_t default_llseek(struct file *file, loff_t offset, int whence);
- 
- extern loff_t vfs_llseek(struct file *file, loff_t offset, int whence);
- 
--extern int inode_init_always(struct super_block *, struct inode *);
-+extern int inode_init_always_gfp(struct super_block *, struct inode *, gfp_t);
-+static inline int inode_init_always(struct super_block *sb, struct inode *inode)
-+{
-+	return inode_init_always_gfp(sb, inode, GFP_NOFS);
-+}
-+
- extern void inode_init_once(struct inode *);
- extern void address_space_init_once(struct address_space *mapping);
- extern struct inode * igrab(struct inode *);
-diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-index a2ade0ffe9e7..b08472d64765 100644
---- a/include/linux/lsm_hooks.h
-+++ b/include/linux/lsm_hooks.h
-@@ -150,6 +150,6 @@ extern struct lsm_info __start_early_lsm_info[], __end_early_lsm_info[];
- 		__used __section(".early_lsm_info.init")		\
- 		__aligned(sizeof(unsigned long))
- 
--extern int lsm_inode_alloc(struct inode *inode);
-+extern int lsm_inode_alloc(struct inode *inode, gfp_t gfp);
- 
- #endif /* ! __LINUX_LSM_HOOKS_H */
-diff --git a/include/linux/security.h b/include/linux/security.h
-index 1390f1efb4f0..7c6b9b038a0d 100644
---- a/include/linux/security.h
-+++ b/include/linux/security.h
-@@ -336,7 +336,7 @@ int security_dentry_create_files_as(struct dentry *dentry, int mode,
- 					struct cred *new);
- int security_path_notify(const struct path *path, u64 mask,
- 					unsigned int obj_type);
--int security_inode_alloc(struct inode *inode);
-+int security_inode_alloc(struct inode *inode, gfp_t gfp);
- void security_inode_free(struct inode *inode);
- int security_inode_init_security(struct inode *inode, struct inode *dir,
- 				 const struct qstr *qstr,
-@@ -769,7 +769,7 @@ static inline int security_path_notify(const struct path *path, u64 mask,
- 	return 0;
- }
- 
--static inline int security_inode_alloc(struct inode *inode)
-+static inline int security_inode_alloc(struct inode *inode, gfp_t gfp)
- {
- 	return 0;
- }
-diff --git a/security/security.c b/security/security.c
-index 8cee5b6c6e6d..3581262da5ee 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -660,14 +660,14 @@ static int lsm_file_alloc(struct file *file)
-  *
-  * Returns 0, or -ENOMEM if memory can't be allocated.
-  */
--int lsm_inode_alloc(struct inode *inode)
-+int lsm_inode_alloc(struct inode *inode, gfp_t gfp)
- {
- 	if (!lsm_inode_cache) {
- 		inode->i_security = NULL;
- 		return 0;
- 	}
- 
--	inode->i_security = kmem_cache_zalloc(lsm_inode_cache, GFP_NOFS);
-+	inode->i_security = kmem_cache_zalloc(lsm_inode_cache, gfp);
- 	if (inode->i_security == NULL)
- 		return -ENOMEM;
- 	return 0;
-@@ -1582,9 +1582,9 @@ int security_path_notify(const struct path *path, u64 mask,
-  *
-  * Return: Return 0 if operation was successful.
-  */
--int security_inode_alloc(struct inode *inode)
-+int security_inode_alloc(struct inode *inode, gfp_t gfp)
- {
--	int rc = lsm_inode_alloc(inode);
-+	int rc = lsm_inode_alloc(inode, gfp);
- 
- 	if (unlikely(rc))
- 		return rc;
--- 
-2.46.0
-
+SGVsbG8sCgp0aGFua3MgZm9yIHRoZSBwYXRjaCwgYnV0IGJld2FyZSB0aGF0IHRoaXMgbW9kaWZp
+Y2F0aW9uIGlzIGJyZWFraW5nIHRoZSBjb2RlIQoKWW91IGFyZSBkZWxldGluZyB0aGUgbm9ybWFs
+IGZ1bmN0aW9uIHBhdGggcmV0dXJuIElSUV9IQU5ETEVEICh3aXRob3V0IHRoZSBnb3RvIGVuZF9z
+ZXNzaW9uKS4gV2l0aCB0aGlzIHBhdGNoLCB0aGUgcmVzZXQgZmlmbyBmdW5jdGlvbiBjb2RlIGlu
+dl9yZXNldF9maWZvKCkgd2lsbCBiZSBjYWxsZWQgZXZlbiBpZiB0aGUgSVJRIGhhbmRsZXIgaXMg
+ZnVuY3Rpb25pbmcgY29ycmVjdGx5LgoKVGhpcyBpcyBhIG5vIGdvIGZvciBtZSwgSSBkb24ndCB0
+aGluayB3ZSBjYW4gZWFzaWx5IGNoYW5nZSB0aGVzZSAyIGxhYmVscyBhbnl3YXkuCgpCZXN0IHJl
+Z2FyZHMsCkpCCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCkZyb206
+wqBneWV5b3VuZyA8Z3llOTc2QGdtYWlsLmNvbT4KU2VudDrCoE1vbmRheSwgU2VwdGVtYmVyIDIs
+IDIwMjQgMDM6NTMKVG86wqBKb25hdGhhbiBDYW1lcm9uIDxqaWMyM0BrZXJuZWwub3JnPgpDYzrC
+oGxhcnNAbWV0YWZvby5kZSA8bGFyc0BtZXRhZm9vLmRlPjsgSmVhbi1CYXB0aXN0ZSBNYW5leXJv
+bCA8SmVhbi1CYXB0aXN0ZS5NYW5leXJvbEB0ZGsuY29tPjsgbGludXgtaWlvQHZnZXIua2VybmVs
+Lm9yZyA8bGludXgtaWlvQHZnZXIua2VybmVsLm9yZz47IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5l
+bC5vcmcgPGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc+ClN1YmplY3Q6wqBSZTogW1BBVENI
+IHYyXSBpaW86IGltdTogaW52X21wdTYwNTA6IFJlbW92ZSBkdXBsaWNhdGUgY29kZSBiZXR3ZWVu
+IGxhYmVscwrCoApUaGlzIE1lc3NhZ2UgSXMgRnJvbSBhbiBVbnRydXN0ZWQgU2VuZGVyCllvdSBo
+YXZlIG5vdCBwcmV2aW91c2x5IGNvcnJlc3BvbmRlZCB3aXRoIHRoaXMgc2VuZGVyLgrCoApPbiBT
+dW4sIFNlcCAxLCAyMDI0IGF0IDExOjEx4oCvUE0gSm9uYXRoYW4gQ2FtZXJvbiA8amljMjNAa2Vy
+bmVsLm9yZz4gd3JvdGU6Cj4KPiBPbiBTdW4sICAxIFNlcCAyMDI0IDIxOjA4OjM5ICswOTAwCj4g
+R3lleW91bmcgQmFlayA8Z3llOTc2QGdtYWlsLmNvbT4gd3JvdGU6Cj4KPiA+ICdmbHVzaF9maWZv
+JyBsYWJlbCBwZXJmb3JtcyBzYW1lIHRhc2sgYXMgJ2VuZHNlc3Npb24nIGxhYmVsCj4gPiBpbW1l
+ZGlhdGVseSBhZnRlciBjYWxsaW5nICdlbnZfcmVzZXRfZmlmbycgZnVuY3Rpb24uCj4gPiBTbyBp
+IHJlbW92ZSB0aGF0IGR1cGxpY2F0aW9uLgo+ID4KPiA+IFNpZ25lZC1vZmYtYnk6IEd5ZXlvdW5n
+IEJhZWsgPGd5ZTk3NkBnbWFpbC5jb20+Cj4KPiBPay4gVGhpcyBkb2Vzbid0IGdyZWF0bHkgYWZm
+ZWN0IHJlYWRhYmlsaXR5IGFuZCB0aGUgY29kZQo+IGVuZHMgdXAgYSBiaXQgc2hvcnRlci4KPgo+
+IEFwcGxpZWQKPgo+IEpvbmF0aGFuCj4KClRoYW5rIHlvdSBmb3IgYXBwcm92aW5nIGl0LgoKLUd5
+ZXlvdW5nCg==
 
