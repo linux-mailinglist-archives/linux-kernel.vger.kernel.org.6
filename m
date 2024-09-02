@@ -1,168 +1,108 @@
-Return-Path: <linux-kernel+bounces-310533-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310534-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69B6D967DFA
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 04:59:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7320B967DFC
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 05:00:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2BE802822DF
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 02:59:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2FB042823D2
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 03:00:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A9D539FD9;
-	Mon,  2 Sep 2024 02:59:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39D36374C4;
+	Mon,  2 Sep 2024 03:00:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LH5TjgHU"
-Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gWxj1ax9"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09BF82D613;
-	Mon,  2 Sep 2024 02:59:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C741D79C0
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 03:00:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725245983; cv=none; b=imrYI5jjCH9NAVv9FFv8cFBJ0VwI6GpISpZzpF+1e/faoKslY35CpQdicUkk2Ba43vxobbxjAjRzFs1CpKbVsjw/LACpGs85xYC8ILCTVCNlYTTlZR/j/egO2qt3EomJUG5u/CieDKXisvKRRueueWK2gsRfYsDbQ8gTtZSOS8w=
+	t=1725246032; cv=none; b=Nz43R8nyrDedW+4yyTykCNIXjOLBzH7b6Bq3bQiB9NZwxeV7jhbxeUNUVPcxgUZ75rjRyqPdhGNso8xH/TznyvOINyi/I5Ic+p5Wyu1tp9ixIqvY3N+Rr1mN6tBLvQ8ON4LuXxRQZQroAUMELLxI7BDTtrcoXLmjnK2hpT8TmHs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725245983; c=relaxed/simple;
-	bh=PNRrouqrCqu1hgaCt4SeHOtWJ3yZrdBwkhasCBgQ1zw=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=JN+BR3mfGwM+bYjeCMiYc2TT18MNoFl2PaCBOhwMO7Ua/3fbK5dPwQIssGzgp943FSI5RnngoJS+CNrCWiBO2+Cv+sOAas98X03IEHtw72V8pgPzp5PDYYYySfH52SVurMPhDNQq1tYcP8NUFHjLa30fwVYwEPGa8lbvQD3wU60=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LH5TjgHU; arc=none smtp.client-ip=209.85.216.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-2d889ba25f7so1241128a91.0;
-        Sun, 01 Sep 2024 19:59:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725245981; x=1725850781; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=AA0dytflfzhATYfkKstI1v6bdMzmDbQkOe16xp+1g4Q=;
-        b=LH5TjgHUVi2xu+eGg6YnMKOUYlSHxQX+9z2xlJgrF5KdIpSYNhG563AF/CpWi7F7d/
-         5hVm7AixGDpm7TZaZPs/Y5RopoAFk0EXOQz0wged4yhxxTtNL9GVJNPPIej5I+YcBTET
-         JtbvEUXpvCxFUchmmxPNLqmAJQOB58+olz3qngZd2OeOFxmVZZ8yAhD4igezBA869xhi
-         NvkY2Rfsnwu0ZIuu74KxmztdHpnTRtmrONW+WyioMdrtPYDTC3uD/z90bCqURiCDHVyd
-         WrXl2cc7nHVgmqjEWAErD6FWo6yMxWZHrpAmU0OVPyjbLih7flnwIH8YJFqKxkE2vGrf
-         vUng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725245981; x=1725850781;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=AA0dytflfzhATYfkKstI1v6bdMzmDbQkOe16xp+1g4Q=;
-        b=TtURTd8ENplWftE7CRBDR9Brroozwao67QtTbLvz+9L/rxrkdHaHjUbzUdIQHkX+nh
-         l4mE3wE8Y5DbcHDJc7YRQS9o0JjrEUA2A8dNoKsna0qqapP+lbw9wWw+KfTDpYG4/Yyg
-         lqVr3NmwSM+0zX0Zij9pxYC2fzbAxKh2lZq1cXuDSBNzGQyoiAzXUANZ8ogh3V+OZwhC
-         /in7p/x+h2eNs432EhzTQZG8MpVrZAc8+Xh6f7jOnpnFOQw6R3P5mD57PpXkpbQy4uQ8
-         IBWgJBXxkBG7uLkpRwohhd6LA3+lh7skDvv73yaPjTmSG8ViCbwiCuNIg77z+sbfJLY1
-         DJAg==
-X-Forwarded-Encrypted: i=1; AJvYcCVunPf/0uR+y85egrgvJiXs9imP0I7bDwjqYGK+0aW/HWDmSqRrIoMvsYyQNtlO0fPe0UeEseRewHg=@vger.kernel.org, AJvYcCX8ujX3u6Z4bv2Q+pRE4i5hZyimwrbjo31k/hp6B5nmUQdWv64yV4N0XmT1WpoyiZ1Zuf2VpyJk2lMnG9X5@vger.kernel.org
-X-Gm-Message-State: AOJu0YxbKfknSQlsZ3KfifbfzQb1L7r5JejwQ8K6tCQ0XgBN07Q5+lfb
-	hh5Ti6NgZlK57C+jUrWt2RSi+JMbiPYfI802SioEDmoznSp4mM9TfgbqEMjrTy6jVg==
-X-Google-Smtp-Source: AGHT+IHGLP3N8gRCR4Ey6BOuU1BW75sQo28mn2wjvx/YSZzn+fI9+F0Mu6WJ3t80kMrCUh2NR7UXjA==
-X-Received: by 2002:a17:90a:f2c2:b0:2d3:d68e:e8d8 with SMTP id 98e67ed59e1d1-2d8973c40e0mr3821797a91.40.1725245980989;
-        Sun, 01 Sep 2024 19:59:40 -0700 (PDT)
-Received: from ubuntu.localdomain ([103.155.100.1])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d8c5d48a8esm1646134a91.35.2024.09.01.19.59.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 01 Sep 2024 19:59:40 -0700 (PDT)
-From: Jason Liu <jasonliu10041728@gmail.com>
-To: jmaneyrol@invensense.com
-Cc: lars@metafoo.de,
-	linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Jason Liu <jasonliu10041728@gmail.com>
-Subject: [PATCH] iio/inv_icm42600: add inv_icm42600 id_table
-Date: Mon,  2 Sep 2024 10:58:48 +0800
-Message-Id: <20240902025848.76573-1-jasonliu10041728@gmail.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <jic23@kernel.org>
-References: <jic23@kernel.org>
+	s=arc-20240116; t=1725246032; c=relaxed/simple;
+	bh=yoDqWgMOr7pVVms5BtuNbWKIRetsSsNQlSf0TCPoEJs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=N6h+gCs9/PjtW3QE/PSogzWV9d+89OG2opX/wjNDE5Esig7soQRMpYw+kc/5irU3TvVu3QMq4iuyOURs3yf/C/nLEMXSlevJFAJg6v2pF7xSTKdGNuK2OvnUP3fk0FsF9PPoUArUgzsASlT16zujduAqMn6ApNsSUkM9IN7N9R4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gWxj1ax9; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1725246029;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=bwatozFoRFqFdpEKQTT0ARySzNx2fnhl3VyblIZ4u6A=;
+	b=gWxj1ax9dqPB1xVlnpizVEj7DU7i3op+//ViKQMD658ka14DySfAAH9UlUieERQRMdimhz
+	vqWeLsmXEF2riqUiWxb63sNYzi/BAmF35mTFbrAMFdA7uBgkRUVFM3oB/Xg4RJhl15in0s
+	w6RB6hRQFR3WqgalhIqTt0iD3p1Qq3U=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-570-dbYqf4VsP9qd9lXPJd2oaw-1; Sun,
+ 01 Sep 2024 23:00:24 -0400
+X-MC-Unique: dbYqf4VsP9qd9lXPJd2oaw-1
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 3C9B219560B7;
+	Mon,  2 Sep 2024 03:00:22 +0000 (UTC)
+Received: from [10.2.16.23] (unknown [10.2.16.23])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 6D4F919560A3;
+	Mon,  2 Sep 2024 03:00:17 +0000 (UTC)
+Message-ID: <cb3a3f3e-727a-4cbb-b4a8-f9469ed4f08d@redhat.com>
+Date: Sun, 1 Sep 2024 23:00:16 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: =?UTF-8?Q?Re=3A_=5BQuestion=5D_Include_isolated_cpu_to_ensure_that_?=
+ =?UTF-8?Q?tasks_are_not_scheduled_to_isolated_cpu=EF=BC=9F?=
+To: zhengzucheng <zhengzucheng@huawei.com>, peterz@infradead.org,
+ juri.lelli@redhat.com, vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+ rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+ vschneid@redhat.com, oleg@redhat.com,
+ Frederic Weisbecker <frederic@kernel.org>, mingo@kernel.org,
+ peterx@redhat.com, tj@kernel.org
+Cc: linux-kernel@vger.kernel.org
+References: <20240725120315.212428-1-zhengzucheng@huawei.com>
+ <3e68ccda-1606-9494-f57a-75be9668b83d@huawei.com>
+Content-Language: en-US
+From: Waiman Long <longman@redhat.com>
+In-Reply-To: <3e68ccda-1606-9494-f57a-75be9668b83d@huawei.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-Add the id_table of inv_icm42600, so the device can probe correctly.
+On 9/1/24 21:56, zhengzucheng wrote:
+> In a cpuset subsystem, cpuset.cpus contains isolated cpu and 
+> non-isolated cpu.
+> Is there any way to ensure that the task runs only on the non-isolated 
+> cpus?
+> eg：
+> isolcpus=1, cpusete.cpus=0-7. It is found that some tasks are 
+> scheduled to cpu1.
+>
+> In addition, task run on isolated cpu cann't be scheduled to other cpu 
+> in the future.
 
-Signed-off-by: Jason Liu <jasonliu10041728@gmail.com>
----
-V1->V2: fix up the formatting as requested
----
- drivers/iio/imu/inv_icm42600/inv_icm42600_i2c.c | 15 +++++++++++++++
- drivers/iio/imu/inv_icm42600/inv_icm42600_spi.c | 15 +++++++++++++++
- 2 files changed, 30 insertions(+)
+The best way is to avoid mixing isolated and scheduling CPUs in the same 
+cpuset especially if you are using cgroup v1.
 
-diff --git a/drivers/iio/imu/inv_icm42600/inv_icm42600_i2c.c b/drivers/iio/imu/inv_icm42600/inv_icm42600_i2c.c
-index ebb31b385881..4e00eb130e9f 100644
---- a/drivers/iio/imu/inv_icm42600/inv_icm42600_i2c.c
-+++ b/drivers/iio/imu/inv_icm42600/inv_icm42600_i2c.c
-@@ -71,6 +71,20 @@ static int inv_icm42600_probe(struct i2c_client *client)
- 				       inv_icm42600_i2c_bus_setup);
- }
- 
-+/*
-+ * device id table is used to identify what device can be
-+ * supported by this driver
-+ */
-+static const struct i2c_device_id inv_icm42600_id[] = {
-+	{ "icm42600", INV_CHIP_ICM42600 },
-+	{ "icm42602", INV_CHIP_ICM42602 },
-+	{ "icm42605", INV_CHIP_ICM42605 },
-+	{ "icm42622", INV_CHIP_ICM42622 },
-+	{ "icm42631", INV_CHIP_ICM42631 },
-+	{}
-+};
-+MODULE_DEVICE_TABLE(i2c, inv_icm42600_id);
-+
- static const struct of_device_id inv_icm42600_of_matches[] = {
- 	{
- 		.compatible = "invensense,icm42600",
-@@ -104,6 +118,7 @@ static struct i2c_driver inv_icm42600_driver = {
- 		.of_match_table = inv_icm42600_of_matches,
- 		.pm = pm_ptr(&inv_icm42600_pm_ops),
- 	},
-+	.id_table = inv_icm42600_id,
- 	.probe = inv_icm42600_probe,
- };
- module_i2c_driver(inv_icm42600_driver);
-diff --git a/drivers/iio/imu/inv_icm42600/inv_icm42600_spi.c b/drivers/iio/imu/inv_icm42600/inv_icm42600_spi.c
-index eae5ff7a3cc1..9efbe9b7674d 100644
---- a/drivers/iio/imu/inv_icm42600/inv_icm42600_spi.c
-+++ b/drivers/iio/imu/inv_icm42600/inv_icm42600_spi.c
-@@ -67,6 +67,20 @@ static int inv_icm42600_probe(struct spi_device *spi)
- 				       inv_icm42600_spi_bus_setup);
- }
- 
-+/*
-+ * device id table is used to identify what device can be
-+ * supported by this driver
-+ */
-+static const struct spi_device_id inv_icm42600_id[] = {
-+	{ "icm42600", INV_CHIP_ICM42600 },
-+	{ "icm42602", INV_CHIP_ICM42602 },
-+	{ "icm42605", INV_CHIP_ICM42605 },
-+	{ "icm42622", INV_CHIP_ICM42622 },
-+	{ "icm42631", INV_CHIP_ICM42631 },
-+	{}
-+};
-+MODULE_DEVICE_TABLE(spi, inv_icm42600_id);
-+
- static const struct of_device_id inv_icm42600_of_matches[] = {
- 	{
- 		.compatible = "invensense,icm42600",
-@@ -100,6 +114,7 @@ static struct spi_driver inv_icm42600_driver = {
- 		.of_match_table = inv_icm42600_of_matches,
- 		.pm = pm_ptr(&inv_icm42600_pm_ops),
- 	},
-+	.id_table = inv_icm42600_id,
- 	.probe = inv_icm42600_probe,
- };
- module_spi_driver(inv_icm42600_driver);
--- 
-2.25.1
+If you are using cgroup v2, one way to avoid the use of isolated CPUs is 
+to put all of them into an isolated partition. This will ensure that 
+those isolated CPUs won't be used even if they are put into the 
+cpuset.cpus of other cpusets accidentally
+
+Cheers,
+Longman
 
 
