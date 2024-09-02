@@ -1,135 +1,171 @@
-Return-Path: <linux-kernel+bounces-311337-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311338-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66C209687B8
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 14:41:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 342079687BD
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 14:43:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1B2191F22D4A
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 12:41:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B61111F22EED
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 12:43:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC71319C552;
-	Mon,  2 Sep 2024 12:41:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B278B19C551;
+	Mon,  2 Sep 2024 12:43:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="M4l7tvQZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wPt4PGPJ"
+Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46590DF71;
-	Mon,  2 Sep 2024 12:41:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80D28185B6B
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 12:43:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725280907; cv=none; b=nvFULX7Gt4yAjdDNGZnibkqTNFkMu9hnDJZ8xK5fkjXiX1TZVQiwQGpNmOV0S7ZgIZyjSyG/boYNihiflEKUMYFg153YV3IVJeKQKFBeYUibf96VNCnkb5Emxn1loqeSBhs28F79V3LHDqZGfrgMY76A8SqtTWJ1LoHrL54BeZQ=
+	t=1725281000; cv=none; b=YVsNzUyMULANVJYCGvuskiR3SvfTONAZ/sqF3FCvtvh/ZFUDoL+YFE/i1OV6+cEdGS/oE/1cX5gLvd6QmhKoGiWxXYfCHSL8WgdXMMHAc7PxnZYY4IthkPGNuhTNMB4B1fXZHdEYTKDtRHDbv2AGDERYcafafYkd7iR9hbOKINQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725280907; c=relaxed/simple;
-	bh=IgwKEHs7S8iTZYd/hP3CvwexKCli3HVlsnSvaqJwjn0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=L0maGkJylOxvA6FSCgvqYnpLUSjohAkI+c1I0pCoHkagcK1qbRSofgccWecIqV5xoaftfUBmFZM2kP+mblUO/+bLyVPuYY7uQ8FMM+uD8FLvyHPSXhvRSlg4/ZizY9NM36qXsCkgE9aiQz9+459RyeMgVwdIqfYx0z55u5jyO6o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=M4l7tvQZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 743FAC4CEC2;
-	Mon,  2 Sep 2024 12:41:44 +0000 (UTC)
-Authentication-Results: smtp.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="M4l7tvQZ"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
-	t=1725280902;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=SbTBvowwyqT3oktU3TVamYzwl3zcSe2e1nUrzf5xWhI=;
-	b=M4l7tvQZwQqTIhDhEWMzWRgk170y1R8WZOVuU9ydtbdFJffbSwgyBcPmyblIcx3RaFuuft
-	0P1p7MEgxZ3b5Ms3Cv7Fo3H/sfGe8NhzU87uuO6Yo/cbI9eyDQYOhSvjsK5nWiAA+exnbi
-	zSdAwQMYfNPZ9fMXx3kRAE0vEnV4nRQ=
-Received: 
-	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id db49d980 (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
-	Mon, 2 Sep 2024 12:41:42 +0000 (UTC)
-Date: Mon, 2 Sep 2024 14:41:30 +0200
-From: "Jason A. Donenfeld" <Jason@zx2c4.com>
-To: Christophe Leroy <christophe.leroy@csgroup.eu>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Naveen N Rao <naveen@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>,
-	Shuah Khan <shuah@kernel.org>, linux-kernel@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org, linux-kselftest@vger.kernel.org,
-	llvm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org, linux-trace-kernel@vger.kernel.org,
-	Adhemerval Zanella <adhemerval.zanella@linaro.org>,
-	Xi Ruoyao <xry111@xry111.site>
-Subject: Re: [PATCH v4 5/5] powerpc/vdso: Wire up getrandom() vDSO
- implementation on PPC64
-Message-ID: <ZtWyeuCfzZ66fVsg@zx2c4.com>
-References: <cover.1725278148.git.christophe.leroy@csgroup.eu>
- <27de70dcc356e56754a03a2887a97597f5e840a4.1725278148.git.christophe.leroy@csgroup.eu>
+	s=arc-20240116; t=1725281000; c=relaxed/simple;
+	bh=XmtoA1dxOzDS6roQ6BNIs04PwekYRQD9RJ6htg3/v6I=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=IbUJF9z7CcFvy4tZHjnvbBUJtYdC8/+V5SoiaYd1Hk696auKX8OmJEZbLadU3TNjAfxWC+Odjh4WxI6z9eOu+Q+MpMd/Sp1Arh5HMEHhEAPwUHZGoeEUGcdsCLydRD20ySQctnoys/BYpj7BCo3yopP48nwX57gOTNuCUOmHsSI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wPt4PGPJ; arc=none smtp.client-ip=209.85.216.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-2d8f06c2459so372315a91.0
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2024 05:43:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1725280998; x=1725885798; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=XmtoA1dxOzDS6roQ6BNIs04PwekYRQD9RJ6htg3/v6I=;
+        b=wPt4PGPJRvBxUgSLs3i8A5Tu98Y0IvbWPQHKJdTxk+RwYoxYS9kMkvROVH8C4uL2vD
+         TXABtVhxPJzdR//P6r3YJBByUliNjIHd9wtZ6P+g/zdOuu2D62laXRpxPzo/SbJlAkaw
+         CDRfEdQkiUyY0L/KAhXEI82L0pOJctErhxDNLMhkdcrAgRhO3mY4rk1vXP0Lg728akyw
+         ljKnBFN4+6YzeFKpcpViXiK1+vp395xGPw9WPmJQtII6e8dv8wd/uFqqlfVs8tbZ/XLN
+         nDKxSHqJcCYDyD69dFJDG4O5c5ugHKRls9jrWHIMYp6/wRGLkzHvrgB7aLaC8Cvd3mBZ
+         cUFQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725280998; x=1725885798;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=XmtoA1dxOzDS6roQ6BNIs04PwekYRQD9RJ6htg3/v6I=;
+        b=lbe7ncGrH2s3Eg/jdtx1bkRuuf1lqkJkPs5c9nFzzyVKVZkVG66fjvpFC3czPtuitW
+         L6cfQ+Z/H2KCVXctvcFh79Tzt/NsjQsbU9YUE3fjT/qKtZQ1JD6M07HB7s5F8D3pj7Bo
+         /mgb6yrLO6S9RJcKTbSlNCGCb0yLiaX6pi1Y1XMQZJQaaRoYcF1mPqDAslaV4lWsxFcg
+         PCD27i2Fby6AoBK/haEM5v2+zAxnMKAybAzZmkCr20aJtdPxPMXcG5q3/KKJQfSr9h1D
+         j0oUK+KyzfmwQqpvtEcZVokNYg+y2pEfC0E4vjWCA5Xs833FV9W+QXB6urgu3mu984aj
+         6kog==
+X-Forwarded-Encrypted: i=1; AJvYcCXQDKi2M/Qdv1cLeUEFaZ4xZbWzD4e76lhISKaXsp4BzDmSSGXJNr1F4UEvLpQncR9Um65jvVeuP9LWpn0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxMIJkiTLAUgXP73LwQGm0fSTPpiEyaujIHJcjI7S0obGxvIy4U
+	iYOx2/50fRQD0sXT0RSw05yIramblUdGFZNb+/AytNWRwT1jFUXAtPyIKQRHFx9zykn6PlqwBLn
+	W0wfC5L380reTjqJxFhuQwwPQ0efTJHz/8vL83g==
+X-Google-Smtp-Source: AGHT+IEtSBzuiPn8cwPFsnMtjISfPJE3LhaEPiYOtkJUA/snvFWxhOgQplzmnq8OTq6PPWXLEpJ7D5AgzgWDNRQ3Psc=
+X-Received: by 2002:a17:90a:67cc:b0:2cf:2bf6:b030 with SMTP id
+ 98e67ed59e1d1-2d8564cb306mr12854219a91.33.1725280997722; Mon, 02 Sep 2024
+ 05:43:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <27de70dcc356e56754a03a2887a97597f5e840a4.1725278148.git.christophe.leroy@csgroup.eu>
+References: <20240728184551.42133-1-qyousef@layalina.io> <ca6b1db0-37d9-462e-87e4-d3bbd5eec7a3@arm.com>
+ <CAKfTPtBWLe4hMBhJeSqvoW10dAF3Bgj+zcYGMgBfwUhkgytkEQ@mail.gmail.com>
+ <CAKfTPtAJNjUe=4eQxq0M6==6O7dtJrw6rtwE6-xaWMJdSmfKcA@mail.gmail.com>
+ <20240901175149.46yfk335niccmfq4@airbuntu> <CAKfTPtBahrD5L8CbB4BijAvnwq=yG375TWDUuEvNipyTDYGQTA@mail.gmail.com>
+ <24a4a74f-0d46-420a-894c-9aa01ea4abcc@arm.com>
+In-Reply-To: <24a4a74f-0d46-420a-894c-9aa01ea4abcc@arm.com>
+From: Vincent Guittot <vincent.guittot@linaro.org>
+Date: Mon, 2 Sep 2024 14:43:06 +0200
+Message-ID: <CAKfTPtBjJ4uN5CgBjCEPL198ME_TKgQu6bpVVU4-DKY6CNm4BQ@mail.gmail.com>
+Subject: Re: [PATCH v7] sched: Consolidate cpufreq updates
+To: Christian Loehle <christian.loehle@arm.com>
+Cc: Qais Yousef <qyousef@layalina.io>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Viresh Kumar <viresh.kumar@linaro.org>, Ingo Molnar <mingo@kernel.org>, 
+	Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>, 
+	Steven Rostedt <rostedt@goodmis.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
+	Valentin Schneider <vschneid@redhat.com>, Hongyan Xia <hongyan.xia2@arm.com>, 
+	John Stultz <jstultz@google.com>, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Sep 02, 2024 at 02:04:42PM +0200, Christophe Leroy wrote:
->  SYM_FUNC_START(__arch_chacha20_blocks_nostack)
->  #ifdef __powerpc64__
-> -	blr
-> +	std	r5, -216(r1)
-> +
-> +	std	r14, -144(r1)
-> +	std	r15, -136(r1)
-> +	std	r16, -128(r1)
-> +	std	r17, -120(r1)
-> +	std	r18, -112(r1)
-> +	std	r19, -104(r1)
-> +	std	r20, -96(r1)
-> +	std	r21, -88(r1)
-> +	std	r22, -80(r1)
-> +	std	r23, -72(r1)
-> +	std	r24, -64(r1)
-> +	std	r25, -56(r1)
-> +	std	r26, -48(r1)
-> +	std	r27, -40(r1)
-> +	std	r28, -32(r1)
-> +	std	r29, -24(r1)
-> +	std	r30, -16(r1)
-> +	std	r31, -8(r1)
->  #else
->  	stwu	r1, -96(r1)
->  	stw	r5, 20(r1)
-> +#ifdef __BIG_ENDIAN__
->  	stmw	r14, 24(r1)
-> +#else
-> +	stw	r14, 24(r1)
-> +	stw	r15, 28(r1)
-> +	stw	r16, 32(r1)
-> +	stw	r17, 36(r1)
-> +	stw	r18, 40(r1)
-> +	stw	r19, 44(r1)
-> +	stw	r20, 48(r1)
-> +	stw	r21, 52(r1)
-> +	stw	r22, 56(r1)
-> +	stw	r23, 60(r1)
-> +	stw	r24, 64(r1)
-> +	stw	r25, 68(r1)
-> +	stw	r26, 72(r1)
-> +	stw	r27, 76(r1)
-> +	stw	r28, 80(r1)
-> +	stw	r29, 84(r1)
-> +	stw	r30, 88(r1)
-> +	stw	r31, 92(r1)
-> +#endif
-> +#endif
+On Mon, 2 Sept 2024 at 14:35, Christian Loehle <christian.loehle@arm.com> wrote:
+>
+> On 9/2/24 13:30, Vincent Guittot wrote:
+> > On Sun, 1 Sept 2024 at 19:51, Qais Yousef <qyousef@layalina.io> wrote:
+> >>
+> >> On 08/13/24 10:27, Vincent Guittot wrote:
+> >>> On Tue, 13 Aug 2024 at 10:25, Vincent Guittot
+> >>> <vincent.guittot@linaro.org> wrote:
+> >>>>
+> >>>> On Mon, 5 Aug 2024 at 17:35, Christian Loehle <christian.loehle@arm.com> wrote:
+> >>>>> Hi Qais,
+> >>>>> the idea of SCHED_CPUFREQ_FORCE_UPDATE and the possiblity of spamming
+> >>>>> freq updates still bothered me so let me share my thoughts even though
+> >>>>> it might be niche enough for us not to care.
+> >>>>>
+> >>>>> 1. On fast_switch systems, assuming they are fine with handling the
+> >>>>> actual updates, we have a bit more work on each context_switch() and
+> >>>>> some synchronisation, too. That should be fine, if anything there's
+> >>>>> some performance regression in a couple of niche cases.
+> >>>>>
+> >>>>> 2. On !fast_switch systems this gets more interesting IMO. So we have
+> >>>>> a sugov DEADLINE task wakeup for every (in a freq-diff resulting)
+> >>>>> update request. This task will preempt whatever and currently will
+> >>>>> pretty much always be running on the CPU it ran last on (so first CPU
+> >>>>> of the PD).
+> >>>>
+> >>>> The !fast_switch is a bit of concern for me too but not for the same
+> >>>> reason and maybe the opposite of yours IIUC your proposal below:
+> >>>>
+> >>>> With fast_switch we have the following sequence:
+> >>>>
+> >>>> sched_switch() to task A
+> >>>> cpufreq_driver_fast_switch -> write new freq target
+> >>>> run task A
+> >>>>
+> >>>> This is pretty straight forward but we have the following sequence
+> >>>> with !fast_switch
+> >>>>
+> >>>> sched_switch() to task A
+> >>>> queue_irq_work -> raise an IPI on local CPU
+> >>>> Handle IPI -> wakeup and queue sugov dl worker on local CPU (always
+> >>>> with 1 CPU per PD)
+> >>>> sched_switch() to sugov dl task
+> >>>> __cpufreq_driver_target() which can possibly block on a lock
+> >>>> sched_switch() to task A
+> >>>> run task A
+> >>>>
+> >>>
+> >>> sent a bit too early
+> >>>
+> >>>> We can possibly have 2 context switch and one IPi for each "normal"
+> >>>> context switch which is not really optimal
+> >>>
+> >>> It would be good to find a way to skip the spurious back and forth
+> >>> between the normal task and sugov
+> >>
+> >> Hmm I think we use affinity to keep the sugov running on policy->related_cpus.
+> >> Relaxing this will make it less of a problem, but won't eliminate it.
+> >
+> > yes, but it's not a problem of relaxing affinity here
+> >
+> > The problem is that the 1st switch to task A will be preempted by
+> > sugov so the 1st switch is useless. You should call cpufreq_update
+> > before switching to A so that we skip the useless switch to task A and
+> > directly switch to sugov 1st then task A
+>
+> Not necessarily, if you relax them to all CPUs the sugov tasks for all PDs
+> can run on CPU0, no matter which CPU task A is on.
 
-This confuses me. Why are you adding code to the !__powerpc64__ branch
-in this commit? (Also, why does stmw not work on LE?)
+You can't always run sugov on other CPUs than those impacted by the freq change
+
+>
+> There is some benefit on having all sugov threads on the littles for many
+> platforms (i.e. restricting them), making a good mainline policy out of
+> it isn't quite so obvious to me.
+
+This is a particular case whereas we want this to work in all cases
+
+>
 
