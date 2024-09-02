@@ -1,254 +1,242 @@
-Return-Path: <linux-kernel+bounces-310951-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310939-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C139B968331
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 11:27:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DDD4C968315
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 11:23:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7843D283F9C
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 09:27:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 60A611F22494
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 09:23:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 893B11C32F1;
-	Mon,  2 Sep 2024 09:27:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C44DD1C3F13;
+	Mon,  2 Sep 2024 09:22:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=imgtec.com header.i=@imgtec.com header.b="L15kCLTr";
-	dkim=pass (1024-bit key) header.d=IMGTecCRM.onmicrosoft.com header.i=@IMGTecCRM.onmicrosoft.com header.b="Ru3vSFSe"
-Received: from mx08-00376f01.pphosted.com (mx08-00376f01.pphosted.com [91.207.212.86])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="YJPwqr3P"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1219E187326
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 09:27:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=91.207.212.86
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725269244; cv=fail; b=oYG2RX9TZNTIp9dx3A5j1ZNVQXlSdyKKflEuiGRW/fl9QT/Aej7hcRzuz45GZUrSUfF35MEcM4UV6HEchE8umINmhshUXn3SS1c2B//QAC/Mw88EFJ5ZvAKOZarLBMv27x6LuRDkZE7lu0/JV/FA/6OI5si7tHkzSEMn+YQOu/k=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725269244; c=relaxed/simple;
-	bh=YJKpXmmsjAJbX0cxxIaG3ED34hFuRjvbAkWd5QjRZGQ=;
-	h=From:To:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=uvmBlY5m4yq12CJ6R1eHgTK5ElG73M4+laSMRgPFQX79NBy+xqOA7wQhAuOl34N1aqw3RJTUq/3HGK8yrLQQ23Qr2RjKn1x1i7oGXEbQ73nDwcIDs1IqGul/BTSTsROiJLKPUcgirIda1xdPGPPOjSOXv4mk0m/CWcHDGda3m1E=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=imgtec.com; spf=pass smtp.mailfrom=imgtec.com; dkim=pass (2048-bit key) header.d=imgtec.com header.i=@imgtec.com header.b=L15kCLTr; dkim=pass (1024-bit key) header.d=IMGTecCRM.onmicrosoft.com header.i=@IMGTecCRM.onmicrosoft.com header.b=Ru3vSFSe; arc=fail smtp.client-ip=91.207.212.86
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=imgtec.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=imgtec.com
-Received: from pps.filterd (m0168888.ppops.net [127.0.0.1])
-	by mx08-00376f01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4826raVa005632;
-	Mon, 2 Sep 2024 10:21:59 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=imgtec.com; h=
-	content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=dk201812; bh=2ujPKSuJSAdwYW6JIfrCfcrx+
-	p9jYn4Nzh0q36LCf2g=; b=L15kCLTrITMvzAkBF6luFIRcIPLToQsfI1Arog0hH
-	VDylGhaw3n4eVoIqlcfDsQp7aTJh/6MKdQfYGG3PKGVUk+jqctAesLa+yyebtAnq
-	Fvji9fEW9lVplrYy7HtqOpdW2BhXlI0ZSu9oKZw3+mtF0zaNT58dmANq4FWoaOl9
-	qWP1yd1VmGHVQeKaBpm/Fq6Np7LXMowHhGxj6+uYYdaM5x3tXeqaqYSf7yesDk1/
-	pTJEvjhxWoztFmfLFmKjZ9ZTcDH2orMppYta1rD5ALF6Smb1gO0WLVDAXEzmYp8L
-	DzYGCz6WibhhMZKILFnRtqZrdJR8NMdVtNkgAR4nXqrTg==
-Received: from hhmail05.hh.imgtec.org ([217.156.249.195])
-	by mx08-00376f01.pphosted.com (PPS) with ESMTPS id 41bses9d0t-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-	Mon, 02 Sep 2024 10:21:58 +0100 (BST)
-Received: from HHMAIL05.hh.imgtec.org (10.100.10.120) by
- HHMAIL05.hh.imgtec.org (10.100.10.120) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.37; Mon, 2 Sep 2024 10:21:57 +0100
-Received: from LO3P265CU004.outbound.protection.outlook.com (40.93.67.4) by
- email.imgtec.com (10.100.10.121) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37 via Frontend
- Transport; Mon, 2 Sep 2024 10:21:57 +0100
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=dSqpyhzORPk6PLR+KQKvMoCZfbwDsS9NIvt2OtbvY+tc/tr8uLANseBJyw/zR7IDEG7p14mT1GdmG6wdaMTUI2wU/ShdR2D/qZIgiEKXnVRLUfk+Ft/kO4jCiWtf0fEMLRR00QKc8vne59qjg+DKWRq9wnxM+Tr0430s3vniSbhYmudl+yxpR3YhEKFTWRDr4agiNAhc6/6Z1JhHmAMis51cFM5i0fo2aJMsZk+awDMR+mFgGJfT63AG86Mlnse2D6E0tLcwT6ZdQOdoQjFtkDgqFeOiYp/AdJ5bptFS9++0KGK0E2cGyHMKiP/rE1iviKnahN5WR8t7cSJzTuMBlw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=2ujPKSuJSAdwYW6JIfrCfcrx+p9jYn4Nzh0q36LCf2g=;
- b=DD7gaGmn6uez06d6wZ0HqWW/EHDFVKkgoo0e47L/JnCzc0rvpGNXOJj2VLJu8lRjz/48wjX9FmdkiKffwpJEl6p72xJnlPjBwNTflm5y4xVD0pV/luQwC9IjZH3dpJlPcxDTfANlWxUR1/w5Kzn8AVYHFIhLjQpA2TXy+4J+VUDw71Rv4foOVvwkWht/fcQnU/FtNQSZ5wxnhMsBPYHaHFwuF7/vfHbEsdrwyYMW2dh/Pp4ZdGwRk+zzp66nLX/tb1EM+Z2zWDJTmTcU20W8IceSJble9nUUes4tXixUJcLIXx6xZzjqHFbAeobGhyNtFRC0PlzBCaPYIqqxseBXZA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=imgtec.com; dmarc=pass action=none header.from=imgtec.com;
- dkim=pass header.d=imgtec.com; arc=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 554461C32EB
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 09:22:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725268948; cv=none; b=jaiJO9yUd7CC6w3qrB7xvD4dYWR3cBuv1LjdH5Z4byj8iF4y+Msu3a1F1csFMH1TfGMToemtoph7htmmIPCLfEUX/CCVFzPWXOuRT6empjM/DVikdXoKWANfXTDlqOZLjmnucNCR6gIX3s2CP89kpWQ4Bcd1+7DO6ETXc8Ma/1o=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725268948; c=relaxed/simple;
+	bh=2o0ULimK06zWkew5dzj7e6hQxDRTLukcoM9dm+eYN1g=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Z3xslnYaGEFnIJY+pRBAsziL3JEg+y9qcgGgccF6XhtHj3084MdNhjFUtH4lJ5nz24FF5hrr8nvRDFSizDPMVhj5A30fcGzmW163/m3f2jLjQji76u4rANnitlzkXXnnT5ArdbtBshohFcvbsItY3s9tWhtoHrIkDFz5e2tcu6Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=YJPwqr3P; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-2053f6b8201so16775305ad.2
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2024 02:22:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=IMGTecCRM.onmicrosoft.com; s=selector2-IMGTecCRM-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=2ujPKSuJSAdwYW6JIfrCfcrx+p9jYn4Nzh0q36LCf2g=;
- b=Ru3vSFSeONufHWoTo04FQjLN78kXMMhjZYQ6R0kl2VmSggbtckaur3hMpiMFQqojRTkTliXi0OsP+z7+RW23LNXStaNzZB83G4B5O0JUcjR4yGF90/6UaR1Dy87EsxVx1oLbD3L/iZT+i0nNWT8EF2VBndhs8gVoKqrS18JmeCQ=
-Received: from LO2P265MB3406.GBRP265.PROD.OUTLOOK.COM (2603:10a6:600:19c::12)
- by LO3P265MB1929.GBRP265.PROD.OUTLOOK.COM (2603:10a6:600:107::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.25; Mon, 2 Sep
- 2024 09:21:55 +0000
-Received: from LO2P265MB3406.GBRP265.PROD.OUTLOOK.COM
- ([fe80::54e3:e143:a879:2417]) by LO2P265MB3406.GBRP265.PROD.OUTLOOK.COM
- ([fe80::54e3:e143:a879:2417%4]) with mapi id 15.20.7918.024; Mon, 2 Sep 2024
- 09:21:55 +0000
-From: Matt Coster <Matt.Coster@imgtec.com>
-To: Jinjie Ruan <ruanjinjie@huawei.com>, Frank Binns <Frank.Binns@imgtec.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard
-	<mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        Dave Airlie
-	<airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH -next v2] drm/imagination: Use memdup_user() helper
-Thread-Topic: [PATCH -next v2] drm/imagination: Use memdup_user() helper
-Thread-Index: AQHa/RmNz33WoTWU2ka18PjMKa+VcQ==
-Date: Mon, 2 Sep 2024 09:21:55 +0000
-Message-ID: <ea4ec650-d858-42c2-ab59-e17824069ba9@imgtec.com>
-References: <20240902023300.1214753-1-ruanjinjie@huawei.com>
-In-Reply-To: <20240902023300.1214753-1-ruanjinjie@huawei.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: yes
-X-MS-TNEF-Correlator:
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: LO2P265MB3406:EE_|LO3P265MB1929:EE_
-x-ms-office365-filtering-correlation-id: 6cccb940-40d0-40e4-faf9-08dccb30b005
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|366016|376014|38070700018;
-x-microsoft-antispam-message-info: =?utf-8?B?MWg2ZndNTEN1QnBnUHd0aUltZDA3NEZJUFZJdVF3TTdIUm01bUJkOUJUQXpL?=
- =?utf-8?B?UThUdk9uREl0OVB0MXk0VkN2VVBaVEdOK05QNHhHclBsVHVSR1hoT0l3SUpv?=
- =?utf-8?B?Y05EaHZ4cE56UFJqT2psOG44c3VXWWlnb1k2UmJVaWZWejN2NzhGMWh3a3Zz?=
- =?utf-8?B?Q3RpVWZUZDJkUUQwSFhMMGIvUUFzemtLM0QrZ2QrbDNSYXo0akZSUEtCNGtY?=
- =?utf-8?B?TldzUTlhWFVKdG1jMGNNNERYR2ZVUXVxdHYzdVlNQ0hDenlNVlc5Ky9xY3o2?=
- =?utf-8?B?ZmRPbGJXbGpURHJuaEtqNUxsbHA2N1RoaWp0RVc3L0ovZlF0VlF0QjlmZ3Z0?=
- =?utf-8?B?dC9xQi9xK2pVdEdFSi9US1g4S01NbkVEckpMV2VCcXBmeitlL0FkTDlBb1Rp?=
- =?utf-8?B?VEdJMDcyeUM1eHZQVkl0U2pyQ1VpZU84OER5Q1RJNUFveXlQWVZSYm9xQjFE?=
- =?utf-8?B?MnNrY1pROFpETkJzOTRoNkRNTjREN1RQNTl6ZmtEenh1UUtORWsva25Lanc0?=
- =?utf-8?B?c3daQ1FrSVQ3QW12OG01blVjazR1eExLTkhIcStYN2NBT0ZjUXFGQTlpWTV4?=
- =?utf-8?B?VlloVjFvOGw3bGNheXJXbnY2ZjNOakcxZ3FlYkNISCs2dW9xNTY3RnpVaWJS?=
- =?utf-8?B?azdLYU0vMktSN2ZjeEZwdmdDUjNxa01mV0FpTWp0UHVudUxaS3hhUUwvQ1hU?=
- =?utf-8?B?aFcxU29SdEEzZmw4VVljRGZtNFV0RUZka3JvN3laRzY1OW9XWE5Fdk5IWmZi?=
- =?utf-8?B?Q3RMM0NBQStqdXVMMTVPbnJjWHRINHJkTzByc3pxNnNqNXlPZTFTZUxtQmhB?=
- =?utf-8?B?eGpkYWZ4ZzhOeVZKd3NvRjlReTlqaDdmbTMwUTdUSVR1MXBHaE1VU0FoWVJL?=
- =?utf-8?B?RXg0Ym5yZGo1SGcvK2g1RmE3UUhvb2tvTmhtY1JGUnVSMDYreXI3b25xVit4?=
- =?utf-8?B?RjByN3RwaDV4ZWIxTGRwekkyNktMdzdmQ2dlU2d3SnVNYVdmcHpLL1hxUDAv?=
- =?utf-8?B?NHhiVVpaTDhHZDh1aElBR3NRdFQzc2UzL2ZaVDJPUXlUcGVJWWI4U3B5Q1Vx?=
- =?utf-8?B?NkRkeDVpclduSy9LTFprdlJ0OUJITWx6eCtpVXNwblJmNThoRWNiRDRETnJT?=
- =?utf-8?B?ZkJMblZaZGxNbTdXUDVjMW16bDBVdWFWM0xmV2sxQXBhOUdRbDFnV25zeGU1?=
- =?utf-8?B?cE02RDRwYVlmQTZUUzlpWFpCN05OU2EwY1VCZk9TYThWWFJQOUt0ZlhzcUJH?=
- =?utf-8?B?bHhFamd4a1lCWWtlRHFSdUlwWEtwYldranFNZzZFUHd2R3llY3lNZ0FyWVhY?=
- =?utf-8?B?UHNUZFI4WmdEV3I2cDJTNEVnakVCR1I3U0JFSjFkNTlFM3ZhNzJ5aElzTHEr?=
- =?utf-8?B?Y09RTElmK1o4cS9Yckt4TmNibDRkZmpDaU12NzFJcVdxY2w4RDJZWkJvQ0RK?=
- =?utf-8?B?MG96SkY4NFJ1eWxZdHhlZmpGMGhYUkRxeE5xdTZ0TndneDRRNytTR09TQ1c0?=
- =?utf-8?B?eTg3NklOV2k4L0hSTEtrd25IU0N5TUNSVHlJNFNIeENvUFVoQXc0aXJHUGRF?=
- =?utf-8?B?em9NMm9DNjBpeHZjS1gwZ2M1cUdzc2pXUitVcTZoK3Q0ZHJZZzB1YzJSS2gy?=
- =?utf-8?B?dmRvdng1T2JlcUhSbVk2djdnUzRheVNlVnNtaVFRMWVYWjE3OENuTDM0Vzg1?=
- =?utf-8?B?SWIybG9YRmN3bmo3L1NadEppOXovUzNxcjdVYjlsZ3dRRERxalN2bGVGWHhO?=
- =?utf-8?B?NmVYMS9MNHJlNUxmQW5RWG4rVFZ0VDVHUHBTNWxScnZ5Mm9HY3lhZTZlM3VH?=
- =?utf-8?B?MWZvT2JxdzdGNmt3bnFHSkRyM2pmcHNKQkNiQW5zTC9UekRpUWRTeFBndDZD?=
- =?utf-8?B?N1N6dHJpSFlNczlXVCt2bGVqQTVFQ2k3MmNjZkllb2xMSEE9PQ==?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LO2P265MB3406.GBRP265.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(38070700018);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?Y2N4bzdPZUMzeXdjYjBHT1dVQjBMdjU1Y3I4eUdNejBqYjNoQ0dqOHE0RTN6?=
- =?utf-8?B?TnE3alZTK1oxZ2Ntd2N0Y2ppbk9HU2VPd0hIT05ITUozT3ByaWhYMFg5dnFT?=
- =?utf-8?B?UTlhc1ovRHNyYU9ESEJjZDJCY3lwVTZoVFZFZ0htaWVsc21iR0NhTmMyQjMz?=
- =?utf-8?B?d2lYdDNyWE9Fai94ZjFLalJFZWdLT05ZdW1xWTdNUXcwUC9SZkVwVXFxOGtM?=
- =?utf-8?B?YVRSY1JjeisrazlvNTl5NzJnOU9kQWZxVDVqZi8xRVpKWVFkUk5ycElJbUx5?=
- =?utf-8?B?MGtOcTJuWUR0eGJxdlZsMlg4VGNqcEtNN3I5ZHZCM3ROSkhwc1V3SHdKVGtG?=
- =?utf-8?B?UXZzZmhxWWF2RDNFaWdwcUszTjRoNjFQYThiN0owblN4NHUrUjd2ZTBWZEVK?=
- =?utf-8?B?SEFwc25USnVZeWM1aVpEMkxQNGdzTUh4U3d3aW5Jem0yZmR3RHlYVmIyN3Zi?=
- =?utf-8?B?ZnVOaGVJZ3ZrV252VkE2NHdsNzFpa01RWDlOZUtJSEJ3WFZ2QjAxV2Y3UVFt?=
- =?utf-8?B?K05DMEFTcjFFSmo1Y3k0NkpuTkZscWxsUkNZcUs1cHIvT2poZVZWd1VRV0xL?=
- =?utf-8?B?R3hhdWFxcnYrMDlFbEllMjFhNFd6Z3RkdGU1M0tjcVIrNmVmTmMvN21WTERw?=
- =?utf-8?B?dDR5OEJUSFNxenlGWmtwNndndWltUU1HNWlsNzBVWVZIcGNNMVFUZDJGZ1Jh?=
- =?utf-8?B?M25wWi9MenNUMDMrcFhnUWxMMFk5aC9NdXR4OVZEY3p4S2NUL282ekFuaGxB?=
- =?utf-8?B?WmtWcTJiRVJ4RGRnd2NXV2pXV042NTdBTlJUS2Jsdmw2UFJlQ2N2M0dvVkdw?=
- =?utf-8?B?cWFiMDJucVc2Q1hrWFN6TXJ3bmtpM2lWREZpN04wbm55QTROUkkxREFpMGdR?=
- =?utf-8?B?Ymx3YlY3dFBvUzFrTTFRMEZoVWtGa2c5c3FqUjlnSnRJdnlac3l1ZmpXc3hw?=
- =?utf-8?B?VVNmMUVnTStjVnRtTEFJN1Bab0hmZThWdi9RL2NveWF4Z3FCZDZPOWhKRDZV?=
- =?utf-8?B?L1djYnpxUGUrVlV3T0luNVRpRGgvYmxZVkQ2c0tUQjQ3eVZRY3lGcWFDZUhB?=
- =?utf-8?B?R3Zubm5xaDUrLytPZDNha0V4K1RGNlVUT1FtZ2hpNlhIajJ3YmszdFJMSVRG?=
- =?utf-8?B?OTd2M1VOS1dXV3pTb0t3UmNGSW1iZmpkbU9WeHBycm5oTEZTeDVoWlN6WnI0?=
- =?utf-8?B?OEt3cHZmOC9Qc2krUXZWOUFhelFtbjZxODFJTnVVaU1EMEdTZXNFdDFibWpp?=
- =?utf-8?B?dzAydXkvOCtVaXVXZGJQZWtjZEFvL25NYzlTUW9rNnh0WFlBS0ZYdHlZWVlo?=
- =?utf-8?B?eGhuQ0RoUStVTzNOU0tmMDJBM21Jc0E5TjRBcjlHTjRGZVN3TU1tazZtNmRQ?=
- =?utf-8?B?dzEwK1JQTXljd2ozOVdYNURtNnMvZE1ybHhtVm5vdWhkZEdRbDBJQ2ZsVVpJ?=
- =?utf-8?B?c2U1cnM3M2JnZnRIa3QyV1ovUVQrN1lBUDBmUFNKZnBrSlliTWRGWnVTYk5T?=
- =?utf-8?B?bGFjMjBDUFVpNmVHTUtxbFM5Y0E5dnZzV0pOR25hS2NmVi9pQmpwa2VNVEJH?=
- =?utf-8?B?MjhwMm9nYXhyZkhLa0xoMUxZMHUvYlVkRVJmYUYvYm90YVRCVTlER21FR082?=
- =?utf-8?B?TUlSNm14a1lYWElVTTc0Y3hUWUNjN1pRWWRRUHFaU0tXc3I3ZFJiWEx1SG9M?=
- =?utf-8?B?SHFqWjBya0oyZEpxRXhEM01UTDNLUVlsUWVxRStRRW1ULzF2czVNeHBhdmg1?=
- =?utf-8?B?S21aa3A1S3V1Vkhpc3lkS1RUeHhQa3ZNNTZtSGllaWN4UmlnaVh5N09ZRXZz?=
- =?utf-8?B?WGhsbFRPTG96RFlJY1ZReHN5ZFhiYjVVLzM0UytOVTlBSHV3ZTBISG1WM25D?=
- =?utf-8?B?S0dBT0pJRjluWXJrV1NEMHJpSzNsRnpHTXYrSjkwZXpGWHYybE1VZXFjNC9q?=
- =?utf-8?B?akVSbFhUS2xFU05ZUTkvU05GdVlxamttNWttZGZkV1M1V0Q0OWgvMW9yajJW?=
- =?utf-8?B?YnkrZE1JSFh1QThxdTdIdU1EZVNrOTdsWmhBeURUMGYwRFJpWFczVlZPSGJi?=
- =?utf-8?B?eHJCT1VwRDRZZmdlNkV6UEtDOVBmOHVHZldxTHhYQWNyb3lidHM5UmdWN1Q1?=
- =?utf-8?B?NEZSMmZFRlFUMTMrTUM4Nm1ZS0FMTFp1Ylh4cVdxNjdhN3JNa205UEFLU3pT?=
- =?utf-8?B?aEE9PQ==?=
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="------------CTZFXxtZ0dm2tjc39wWR2y5j"
+        d=broadcom.com; s=google; t=1725268944; x=1725873744; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=WGC2/wr/WrQEE/BTETF77jc4B4si+qDhZdrDFSYRq0o=;
+        b=YJPwqr3PBGfJwDs3VV+XnqBHTJuSFrEarjZoA+q5ZhRNdvho9rfjXcMd2eNVVCarof
+         9lnIOad0PnV4xnrD/TXeKjtTBh0SROhe18uOfJMJRpdiJSFfz4seshCctz45rD3nCAgX
+         1pE8GMNR/bOWUYPiQafs2HktX8NoIb/gGiVpY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725268944; x=1725873744;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=WGC2/wr/WrQEE/BTETF77jc4B4si+qDhZdrDFSYRq0o=;
+        b=mceZTTo3yg5I2roaj2mswKmx/9PRlZzdbvTMk/qXsuVEIookxuq+TSv73Gv8+A8Wt9
+         dugz/Piy/sbjmM5dZeiVWD9M5ie0/RoDaR4G/2T6B0AZKS9Cb91fWIANiGCWUmLkNl0U
+         uVnxP8qPPagSw0hxQM6hH1hRGjy4dNJrEvaPgPy64oo8uGSY1Vbv3dP/dp+0kEDui8bN
+         KoQnIMA1UQHpp6KQOIoBTVRgSD2uXRh1BFpyLCvzhrPv0EHCYcmb1EIih9+QRqJqFadj
+         vi5fiVHYRZhhE+d+IPmBsS/u+7iNY4BOBkrB12rPp4nBYDvWw8qicOwKbdtDvf6z+BAU
+         o6VA==
+X-Forwarded-Encrypted: i=1; AJvYcCV2C+ZkHYrXOLUO3fkqun//0Q3mZdUD+M+mLfvRR35TuSgXLda8CjeTt+9FoCeeX1EFxqeZMSZlly4CbGE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxUpCPRmbQc7WysPE4g9tx6FnFw999zxi6OBBcHkR3RvuRqQNvo
+	Pd8O+OTxkJcKEc+DtbQevpQFbjHcJBp230rFaEfmXGBX8iTjp+Y6flDRNu9CSuxtYy5O2qLu9iC
+	nmI9B
+X-Google-Smtp-Source: AGHT+IHvDWC+orccoTAH9Nz3IAZQPy84jFzwKssu8xWtUujKJAW/7Ch2F+6bGNdqKjZicYipFJdvnQ==
+X-Received: by 2002:a17:903:22ce:b0:202:3a75:ec89 with SMTP id d9443c01a7336-205466f906dmr67691635ad.31.1725268943866;
+        Mon, 02 Sep 2024 02:22:23 -0700 (PDT)
+Received: from shivania.eng.vmware.com ([66.170.99.1])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-205152cd65esm62705985ad.77.2024.09.02.02.22.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 02 Sep 2024 02:22:23 -0700 (PDT)
+From: Shivani Agarwal <shivani.agarwal@broadcom.com>
+To: stable@vger.kernel.org,
+	gregkh@linuxfoundation.org
+Cc: jaegeuk@kernel.org,
+	chao@kernel.org,
+	linux-f2fs-devel@lists.sourceforge.net,
+	linux-kernel@vger.kernel.org,
+	ajay.kaher@broadcom.com,
+	alexey.makhalov@broadcom.com,
+	vasavi.sirnapalli@broadcom.com,
+	chenyuwen <yuwen.chen@xjmz.com>,
+	Sasha Levin <sashal@kernel.org>,
+	Shivani Agarwal <shivani.agarwal@broadcom.com>
+Subject: [PATCH v6.1] f2fs: fix to truncate preallocated blocks in f2fs_file_open()
+Date: Mon,  2 Sep 2024 02:22:13 -0700
+Message-Id: <20240902092213.4982-1-shivani.agarwal@broadcom.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: LO2P265MB3406.GBRP265.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6cccb940-40d0-40e4-faf9-08dccb30b005
-X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Sep 2024 09:21:55.1259
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 0d5fd8bb-e8c2-4e0a-8dd5-2c264f7140fe
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: VhxQT/MZMlB3Mv5+rQksK+6vMKQ8F1Z7yPUf6LtL2efT7B79hkElEUKi4FHQjVBjkLutfZF/1oxS1ND6g/O5eg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LO3P265MB1929
-X-OriginatorOrg: imgtec.com
-X-EXCLAIMER-MD-CONFIG: 15a78312-3e47-46eb-9010-2e54d84a9631
-X-Authority-Analysis: v=2.4 cv=aKOiqq9m c=1 sm=1 tr=0 ts=66d583b7 cx=c_pps a=6IdplsTJodF3+aqeaEJcqA==:117 a=6IdplsTJodF3+aqeaEJcqA==:17 a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=EaEq8P2WXUwA:10 a=WnR_qW7rlZcA:10 a=NgoYpvdbvlAA:10
- a=siwsJ6XmfWLo7r-GpXgA:9 a=QEXdDO2ut3YA:10 a=XY93YCl5WELb_fpiUGcA:9 a=FfaGCDsud1wA:10
-X-Proofpoint-GUID: cgrbiQBUc95s1pAvkhu86sIH68iHUXK8
-X-Proofpoint-ORIG-GUID: cgrbiQBUc95s1pAvkhu86sIH68iHUXK8
+Content-Transfer-Encoding: 8bit
 
---------------CTZFXxtZ0dm2tjc39wWR2y5j
-Content-Type: multipart/mixed; boundary="------------ji931XuWxXTQmQE68yVDUSu0";
- protected-headers="v1"
-From: Matt Coster <matt.coster@imgtec.com>
-To: Jinjie Ruan <ruanjinjie@huawei.com>, Frank Binns
- <frank.binns@imgtec.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- Dave Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Message-ID: <ea4ec650-d858-42c2-ab59-e17824069ba9@imgtec.com>
-Subject: Re: [PATCH -next v2] drm/imagination: Use memdup_user() helper
-References: <20240902023300.1214753-1-ruanjinjie@huawei.com>
-In-Reply-To: <20240902023300.1214753-1-ruanjinjie@huawei.com>
+From: Chao Yu <chao@kernel.org>
 
---------------ji931XuWxXTQmQE68yVDUSu0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+[ Upstream commit 298b1e4182d657c3e388adcc29477904e9600ed5 ]
 
-On 02/09/2024 03:33, Jinjie Ruan wrote:
-> Switching to memdup_user(), which combines kmalloc() and copy_from_user=
-(),
-> and it can simplfy code.
+chenyuwen reports a f2fs bug as below:
 
-Applied, thanks!
+Unable to handle kernel NULL pointer dereference at virtual address 0000000000000011
+ fscrypt_set_bio_crypt_ctx+0x78/0x1e8
+ f2fs_grab_read_bio+0x78/0x208
+ f2fs_submit_page_read+0x44/0x154
+ f2fs_get_read_data_page+0x288/0x5f4
+ f2fs_get_lock_data_page+0x60/0x190
+ truncate_partial_data_page+0x108/0x4fc
+ f2fs_do_truncate_blocks+0x344/0x5f0
+ f2fs_truncate_blocks+0x6c/0x134
+ f2fs_truncate+0xd8/0x200
+ f2fs_iget+0x20c/0x5ac
+ do_garbage_collect+0x5d0/0xf6c
+ f2fs_gc+0x22c/0x6a4
+ f2fs_disable_checkpoint+0xc8/0x310
+ f2fs_fill_super+0x14bc/0x1764
+ mount_bdev+0x1b4/0x21c
+ f2fs_mount+0x20/0x30
+ legacy_get_tree+0x50/0xbc
+ vfs_get_tree+0x5c/0x1b0
+ do_new_mount+0x298/0x4cc
+ path_mount+0x33c/0x5fc
+ __arm64_sys_mount+0xcc/0x15c
+ invoke_syscall+0x60/0x150
+ el0_svc_common+0xb8/0xf8
+ do_el0_svc+0x28/0xa0
+ el0_svc+0x24/0x84
+ el0t_64_sync_handler+0x88/0xec
 
-[1/1] drm/imagination: Use memdup_user() helper
-      commit: 2872a57c7ad427d428c6d12e95e55b32bdc8e3b8
+It is because inode.i_crypt_info is not initialized during below path:
+- mount
+ - f2fs_fill_super
+  - f2fs_disable_checkpoint
+   - f2fs_gc
+    - f2fs_iget
+     - f2fs_truncate
 
-Cheers,
-Matt
+So, let's relocate truncation of preallocated blocks to f2fs_file_open(),
+after fscrypt_file_open().
 
---------------ji931XuWxXTQmQE68yVDUSu0--
+Fixes: d4dd19ec1ea0 ("f2fs: do not expose unwritten blocks to user by DIO")
+Reported-by: chenyuwen <yuwen.chen@xjmz.com>
+Closes: https://lore.kernel.org/linux-kernel/20240517085327.1188515-1-yuwen.chen@xjmz.com
+Signed-off-by: Chao Yu <chao@kernel.org>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Shivani Agarwal <shivani.agarwal@broadcom.com>
+---
+ fs/f2fs/f2fs.h  |  1 +
+ fs/f2fs/file.c  | 42 +++++++++++++++++++++++++++++++++++++++++-
+ fs/f2fs/inode.c |  8 --------
+ 3 files changed, 42 insertions(+), 9 deletions(-)
 
---------------CTZFXxtZ0dm2tjc39wWR2y5j
-Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="OpenPGP_signature.asc"
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index a02c74875..2b540d878 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -788,6 +788,7 @@ enum {
+ 	FI_ALIGNED_WRITE,	/* enable aligned write */
+ 	FI_COW_FILE,		/* indicate COW file */
+ 	FI_ATOMIC_COMMITTED,	/* indicate atomic commit completed except disk sync */
++	FI_OPENED_FILE,         /* indicate file has been opened */
+ 	FI_MAX,			/* max flag, never be used */
+ };
+ 
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index c6fb179f9..62f2521cd 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -538,6 +538,42 @@ static int f2fs_file_mmap(struct file *file, struct vm_area_struct *vma)
+ 	return 0;
+ }
+ 
++static int finish_preallocate_blocks(struct inode *inode)
++{
++	int ret;
++
++	inode_lock(inode);
++	if (is_inode_flag_set(inode, FI_OPENED_FILE)) {
++		inode_unlock(inode);
++		return 0;
++	}
++
++	if (!file_should_truncate(inode)) {
++		set_inode_flag(inode, FI_OPENED_FILE);
++		inode_unlock(inode);
++		return 0;
++	}
++
++	f2fs_down_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
++	filemap_invalidate_lock(inode->i_mapping);
++
++	truncate_setsize(inode, i_size_read(inode));
++	ret = f2fs_truncate(inode);
++
++	filemap_invalidate_unlock(inode->i_mapping);
++	f2fs_up_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
++
++	if (!ret)
++		set_inode_flag(inode, FI_OPENED_FILE);
++
++	inode_unlock(inode);
++	if (ret)
++		return ret;
++
++	file_dont_truncate(inode);
++	return 0;
++}
++
+ static int f2fs_file_open(struct inode *inode, struct file *filp)
+ {
+ 	int err = fscrypt_file_open(inode, filp);
+@@ -554,7 +590,11 @@ static int f2fs_file_open(struct inode *inode, struct file *filp)
+ 
+ 	filp->f_mode |= FMODE_NOWAIT;
+ 
+-	return dquot_file_open(inode, filp);
++	err = dquot_file_open(inode, filp);
++	if (err)
++		return err;
++
++	return finish_preallocate_blocks(inode);
+ }
+ 
+ void f2fs_truncate_data_blocks_range(struct dnode_of_data *dn, int count)
+diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
+index ff4a4e92a..5b672df19 100644
+--- a/fs/f2fs/inode.c
++++ b/fs/f2fs/inode.c
+@@ -549,14 +549,6 @@ struct inode *f2fs_iget(struct super_block *sb, unsigned long ino)
+ 	}
+ 	f2fs_set_inode_flags(inode);
+ 
+-	if (file_should_truncate(inode) &&
+-			!is_sbi_flag_set(sbi, SBI_POR_DOING)) {
+-		ret = f2fs_truncate(inode);
+-		if (ret)
+-			goto bad_inode;
+-		file_dont_truncate(inode);
+-	}
+-
+ 	unlock_new_inode(inode);
+ 	trace_f2fs_iget(inode);
+ 	return inode;
+-- 
+2.39.4
 
------BEGIN PGP SIGNATURE-----
-
-wnsEABYIACMWIQS4qDmoJvwmKhjY+nN5vBnz2d5qsAUCZtWDsgUDAAAAAAAKCRB5vBnz2d5qsC1K
-AQCXSNScvpH9NH5vG3koAjMwf9d8TTPeu+R9T9Hy/QYI0QD+O2qsJ7N31gf3Ca2GKwRmPkfmqb0U
-E62xMCVA2ldLvAY=
-=TXa3
------END PGP SIGNATURE-----
-
---------------CTZFXxtZ0dm2tjc39wWR2y5j--
 
