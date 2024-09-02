@@ -1,188 +1,271 @@
-Return-Path: <linux-kernel+bounces-310731-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310733-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20C6E96807F
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 09:24:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02108968085
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 09:25:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C5E3C283E2A
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 07:24:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C0F41F268F8
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 07:25:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D6A31714D3;
-	Mon,  2 Sep 2024 07:23:51 +0000 (UTC)
-Received: from IND01-BMX-obe.outbound.protection.outlook.com (mail-bmxind01on2104.outbound.protection.outlook.com [40.107.239.104])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DCFC1714DD;
+	Mon,  2 Sep 2024 07:24:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="S9Q3Ipk6"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E15C14F104;
-	Mon,  2 Sep 2024 07:23:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.239.104
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725261831; cv=fail; b=I5OU3Dik633Qx0mgbFVXLS5j+HZB5fwwdVfEqCiuFnYy0At52KyAnczexb1Sw1M7dfJTZMfSpS1nnV61zBtsPYRV1W6MnfHooAL+MgnwVx6nnXT47NiP6CeqEmCQbVksSXeUqvDi2K402NyFBVb2Tz7HeZe7dkJwdfjfCjRI5ZY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725261831; c=relaxed/simple;
-	bh=glzvNZd3IQfaegdzmb8MpTERJyJLJv2Eg/Iri+sm53g=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=U8ld23/vtgMP5KOmXjU3gdP3Cyowx7pgZmDkXf5UV5nOg3butYQ9NxOtiEwTY8zXLlr6myEqudeQqNdSfO97GrsV0D0iciAbjES4MQ6CsL7BCuoocPtHyXmTp/WogeRezEvXaue0Dz9h1gTHPLYPbkqb1rDwnW9hjPJ25+xqwxE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=siliconsignals.io; spf=pass smtp.mailfrom=siliconsignals.io; arc=fail smtp.client-ip=40.107.239.104
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=siliconsignals.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=siliconsignals.io
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=vZAD7W4GHh3vFW/L4CLVuTmFu5g5uISBJHLFA1dT3oJ/66a1ISNqQKgD4X9jRocq8ouqLmKnuysDkyHbdgGL6/XmD8Zk6JonF06uOjAqTMO7rpch26/mKA8Ht8ua5i6oF52Wnv2bB3J30se8GOxrQc6QOWbeA1f/N3YxCTaXiqjti0FaTjXN3CQUo+6IFY36bnKZE6CynZnPzAnsobeWOF7dV4Xzx7/TsPXB/5IeKph/LQbBCDg8QXNO+Usrsx96kxJbighA7aJDh3YjAFKs2kLUP5xigAE1713Hk8wnKMVkQc4M7D7r6MnHHDl9KhPeNcMoIOGhmzEtSRI0VciqZw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=glzvNZd3IQfaegdzmb8MpTERJyJLJv2Eg/Iri+sm53g=;
- b=UXDmJJz0X0OO8jEauORA1sdUfMjLo5OI+T7yki8oO+OQp3uRdEjhK4dgMgeXWCXOLhBuGgvZpvbmu0jpQfYcvkJZIwNFFtkz792hlZr8D83zfJU46GhW49SnFMvw5bRaM6pzULGf6INN57BVgZdGZ49OhzlB4wdjuZt5/j+MVv9khQ97C5I0vilMswyxcrNTG5xRfTL7B0iGUnmux8tVXjtnbZT9DhZWbdeBB3Zw0Ssi1+8T7MmdfFVYZyFOn7qoDHoeZnAvz8HKkOp5Z69AxDaoz4En+LuNyobEDVDXW8yJYZRmp1/wCm/gBrdax6aIVNepDF1D/YRGZwchPDUVHw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=siliconsignals.io; dmarc=pass action=none
- header.from=siliconsignals.io; dkim=pass header.d=siliconsignals.io; arc=none
-Received: from PN3P287MB1829.INDP287.PROD.OUTLOOK.COM (2603:1096:c01:199::7)
- by MAYP287MB3867.INDP287.PROD.OUTLOOK.COM (2603:1096:a01:148::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.22; Mon, 2 Sep
- 2024 07:23:45 +0000
-Received: from PN3P287MB1829.INDP287.PROD.OUTLOOK.COM
- ([fe80::58ec:81a0:9454:689f]) by PN3P287MB1829.INDP287.PROD.OUTLOOK.COM
- ([fe80::58ec:81a0:9454:689f%5]) with mapi id 15.20.7918.024; Mon, 2 Sep 2024
- 07:23:45 +0000
-From: Tarang Raval <tarang.raval@siliconsignals.io>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-CC: Conor Dooley <conor+dt@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Hugo Villeneuve
-	<hvilleneuve@dimonoff.com>, Gregor Herburger
-	<gregor.herburger@ew.tq-group.com>, Joao Paulo Goncalves
-	<joao.goncalves@toradex.com>, Hiago De Franco <hiago.franco@toradex.com>,
-	Mathieu Othacehe <m.othacehe@gmail.com>, Alexander Stein
-	<alexander.stein@ew.tq-group.com>, Josua Mayer <josua@solid-run.com>, Yannic
- Moog <y.moog@phytec.de>, Li Yang <leoyang.li@nxp.com>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"imx@lists.linux.dev" <imx@lists.linux.dev>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v2 2/2] dt-bindings: arm: fsl: Add Variscite Symphony
- board and VAR-SOM-MX8MP SoM
-Thread-Topic: [PATCH v2 2/2] dt-bindings: arm: fsl: Add Variscite Symphony
- board and VAR-SOM-MX8MP SoM
-Thread-Index: AQHa/QVZO9DjaeeHeEm3sOrdEo17YLJEESYAgAAAm4eAAAORAIAAAMkX
-Date: Mon, 2 Sep 2024 07:23:45 +0000
-Message-ID:
- <PN3P287MB182944940AB38804B65D58888B922@PN3P287MB1829.INDP287.PROD.OUTLOOK.COM>
-References: <20240902065606.8072-1-tarang.raval@siliconsignals.io>
- <20240902065606.8072-3-tarang.raval@siliconsignals.io>
- <f3f65c33-335f-4769-958c-9b75fa7083dd@kernel.org>
- <PN3P287MB18293C640A4A027E6292758C8B922@PN3P287MB1829.INDP287.PROD.OUTLOOK.COM>
- <taacgew4rjjh6q53pog4jv2waamso7ytor5a2womrm3txowjo3@t3yimdusgc6g>
-In-Reply-To: <taacgew4rjjh6q53pog4jv2waamso7ytor5a2womrm3txowjo3@t3yimdusgc6g>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-msip_labels:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=siliconsignals.io;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PN3P287MB1829:EE_|MAYP287MB3867:EE_
-x-ms-office365-filtering-correlation-id: 50c83945-d39a-4ff2-b5f5-08dccb202e6f
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|1800799024|7416014|376014|366016|38070700018;
-x-microsoft-antispam-message-info:
- =?iso-8859-1?Q?ir/udBYsg0TDkMPGxyinSwkCUsi0Gk/UUlEJc/1DPJgZttChU5YBsb8vHG?=
- =?iso-8859-1?Q?JG6IZFaaaZb43BXHgNJpJHd4wI1vJw7cq9AF0ntO8IHsFKxDjAHYqwqi7f?=
- =?iso-8859-1?Q?OJRCfM5S7TqhPRnMNs3AQ2sVtlE4IgkeZGNNISFCt/sz05QFvHA7o82/hn?=
- =?iso-8859-1?Q?GQOPX/Sgx4qtDB54iksKzB+M/hzxwYaFeMqV6qiha1ND0COLCSViC+vjgK?=
- =?iso-8859-1?Q?x/XCva3sbsqHhjSS2KfQ4mUV1WmC4vyG5PWMZ/r+16mCmS+yMNuHsT3RHH?=
- =?iso-8859-1?Q?iYHcaHU8U9izKfs/Ny9AG6nb2cP6PnxZcXoGdThVYGN9WWQLq6HaauB5DL?=
- =?iso-8859-1?Q?HBuR1A6BnLdlL9dYSz9B8PUMbDcpKNGPTfrMgD2TdoUOnh0UKVjyU3Ja/P?=
- =?iso-8859-1?Q?bkg8HDNb6/YaUwjuDganrfW8HQJRZQQBcbT1PrJegis1jGtHjEmYe+8g3t?=
- =?iso-8859-1?Q?kxM1uwXodatDAVT52RUk7owje5+TI04+K87lX/LNwx3mt4eUtfc4w5ir0+?=
- =?iso-8859-1?Q?YflO47zSyzIYxtbuGqkQUJjzKsjuyFK5HbsJr0j2pv/kq+9XZxQBgINm9y?=
- =?iso-8859-1?Q?V0DUPhmlBbcWKGkdWVd2Ov2Wardby5v5TrZU8x7F8aJiAC9ogoc+hZTliZ?=
- =?iso-8859-1?Q?70DovSnjEAtfX94KPd32nltvgQSH51PxGfSyrCVJnJq9gHnyfWXszTKCdx?=
- =?iso-8859-1?Q?npGqwsDi1/68yqsflL6fuw/AcqoI2yvO+C00RODPKNM+VVdfuTrQ9nZsF+?=
- =?iso-8859-1?Q?8srsRRglFPGnLdk/vRPFnQWSk7kLipNkc21wLT4oBRcjL5iSTSnFB0z9OJ?=
- =?iso-8859-1?Q?ibWYqhK+SLeElPdKmTG2BPRZXS68xpvC37/JRpzeGoDGK4+0suCmJzU7D9?=
- =?iso-8859-1?Q?XZAQZzUBbTfhJQ0Jq7GvjuggMHBQfYrRPg7mzjp5ni7MLVK0TdmXJGHCC8?=
- =?iso-8859-1?Q?RvP7371v2WrCCG6XIPF8PnpHuJbnuIHry5Q3CvJYbgyYVaf+gAkrgTdpro?=
- =?iso-8859-1?Q?8WneLhyOTupW5iaYVAIqevTNeQEAU/tHH9aWqSymF/l17haSWMaQLC8adz?=
- =?iso-8859-1?Q?z0UfO16hWc1LE+TpvK1dRsqaoEuLO5BcMovz2HLnK3jm4cEcKZFknfy2L2?=
- =?iso-8859-1?Q?DITMjWEmi3WIAyyBnKw4U4D8ho1QytK9+bDTlYH89UKDwT3uhLxKJdv0Du?=
- =?iso-8859-1?Q?3knkzIYWL4dJOunBj3AEbm91oxcIJayOKIEZk3NRfmFH7KerfXd/qJxJoL?=
- =?iso-8859-1?Q?A2n3LN8v0/qtg1VlKZwSW7Ch/AbH9KOoUp9k3hRplSdTA5EiZGwZmbvvS7?=
- =?iso-8859-1?Q?nrXSczmFBo8VpWRLMi8M5UYKCS5UAVjNf6r8xq1YGsQA48YfFQ+jgNczcA?=
- =?iso-8859-1?Q?mm6zAAnNuxHaOGFjGd7A1pWhl+sxBa1LEexK4qUADVt8AASJLovqrZCM7v?=
- =?iso-8859-1?Q?V1FwY9E/BWNvlpr2lzaeOBtdyD8H5eISYiqSDA=3D=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PN3P287MB1829.INDP287.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016)(38070700018);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?iso-8859-1?Q?CcuYV5R3SaeL17xi7DJ2NhB7+a++5BVNNIF77/NU+SwIvQBUsaGaBru+TE?=
- =?iso-8859-1?Q?WR6XHYJVTZpc/nqP/qceKHPaI6A5Fg71tiz2bg/2gbFvqWIWfn72TcAZpO?=
- =?iso-8859-1?Q?Y4vXJ2eb5cZQ0sBS7j5UIrsDRBxzZYhs5HpmnMAnxpwACgIiVw6Q3jpNOA?=
- =?iso-8859-1?Q?XWd4vXsi6Og4Ss07U/h42MN6gCIaMEZuH34c1UdA+D81p2GsAgOJG/QOjX?=
- =?iso-8859-1?Q?f25yizH83tIBngxLl7zohmQrwnk+4GOzQLoZ79nflTRhr7KBvw1GWmMyUz?=
- =?iso-8859-1?Q?on8OoJrfSKKO/FEjNVfwTKN716QX47FQJW7xAM0Bv/Vkqj8ZvbF+VW33kQ?=
- =?iso-8859-1?Q?w4508/TeCsDqjiOhcMqYIQqSQYuvTLador+cCsOxBPL/qj9/hCa1QPFhW/?=
- =?iso-8859-1?Q?d/imlT4sjBSd3K+lL6mPb4bA7ZW34jnVhzaFOkVYGMY8HAwuuuvFw7FGg8?=
- =?iso-8859-1?Q?rUQCVwT81ft/sx+in7VZKFf0Z6rTMlWCWwonbPllWRtS4iFRiaUXtVhDJD?=
- =?iso-8859-1?Q?3iCPVlsYxUqoAgqFHCGkZQXGQv0iQGgIvx1NvwDNv1F+QeOVk2YKsJEAoG?=
- =?iso-8859-1?Q?5EPJqoqZn8P+SYpGZkkz2kgItfEv0GItQDUGCTDY2CDs2Ckw9w2Jh6ggza?=
- =?iso-8859-1?Q?hFhr5b33NbsynX1DFlLEKEzvaE/mLeU5Snab9ZAq9l7jrK5wLFhQVOt3VN?=
- =?iso-8859-1?Q?37Qosuv8Qkk0L2jyBHUs6jd49egBXy4/HD/dyugUIzyyuH5vwH5BbUVY4j?=
- =?iso-8859-1?Q?+pqJzGDn1truS9x2kbNJFTwIaLsbhp79o9CuNtGaWu/3bygrsB3njCH3As?=
- =?iso-8859-1?Q?LGmqt7D2HZ5fQGY/nTeZQmaEk3cb8CHBYRd+iyVycL4hQv+ZlmzGp1U6KS?=
- =?iso-8859-1?Q?mCu8qy/5+4VbrawWx48X9F3vp4bcv5rO3+M0x38ceqoWvLPNsZLIICvslH?=
- =?iso-8859-1?Q?rQHHaftsPH+JvFSyIWuEGkLkIyOdFCh7ShQvWOwMymdOpC18+OTSWzv9zH?=
- =?iso-8859-1?Q?1X5wRyt8JgLybpUIl9NbRvEgzH/4kXBmRWda0v/bzLp7u2GYvblJ2BnIXl?=
- =?iso-8859-1?Q?bdta68AYejAZGwkKd0BuY3vIeAhnYYWM6F3WzZ/4iyZ2tMKLW/WHhJk5gK?=
- =?iso-8859-1?Q?+bJHqqROZFrNZCUJDhvqdePQUUp2wBQoraumMrtS4JcvnzSANQOyZs+HbQ?=
- =?iso-8859-1?Q?X9Ov4ZOMgn2OkXilOwnPX5SIUIzxEwFy4tZ5PtwRXiCkwIsV0pF9NhSq3H?=
- =?iso-8859-1?Q?7MBTis9BmODj+iShAzbhlNHnVFMVDxszjq7TUm7Td8OsaaPM1EavFFDRtT?=
- =?iso-8859-1?Q?TP+jcW14e9px8AjhNKmKcfvgaPYaOe3mS+YBJcmqEX4J9Rom0EwIdpeSo2?=
- =?iso-8859-1?Q?EPDVM+SoyNl4c7QjXcwk7gQQKNL0bYFIg/GwH7JhRmDewNX7rok0dLNloR?=
- =?iso-8859-1?Q?RJtLcyqfmB2lnKTqVDjZdEthGdqH52D+KpnfaH7FCWNKpQTW1izTq9Nvms?=
- =?iso-8859-1?Q?PHGwtZgSsDlyeh6FIVsZc704ZiXV4CWSwJTLVyghq9owfqYjkDs2GQJhJc?=
- =?iso-8859-1?Q?KRRPnQtiwH/XkgAjYUV1F39OK8+tlNf5tBigqpH7dxfCnliW41h23zH6w5?=
- =?iso-8859-1?Q?pVlBaGkIuj4R7j4iEuIdHjXcqCf7rfYmEy8kO4TD3wlD69QKDPIV34DQ?=
- =?iso-8859-1?Q?=3D=3D?=
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53C9114E2D8;
+	Mon,  2 Sep 2024 07:24:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725261895; cv=none; b=HFc0ycM39oGQoBV0aOFZi+GC3eqTVxEeMDtW/sNGm4OEu5HLNvx+9ZbcAeKWDI+xVTa0fVtDt9wjoHgue+v7hGLCSWckFdh4Rd/eHzWBmwQPwoQzVpYaBXK0O5BIEWxxiGVnoJHC9bcsed+JpYb3uaYXjTJCQjNtkJQy7AcYrIE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725261895; c=relaxed/simple;
+	bh=3XNv8uTDcbQxkqOvVul+sTpiKtzUSWMPC2RrduGsN0Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=KmRuMK5rm0cjIOyx0ngvCO4HsQdv9PrpQ5O9Y26AtWmLLbJyPYwEuNAngxxGQh0f0weMxeBDDBp376zsFAyCAiZIWPKvO4sk+DB4Q4Ei0LebHr9u8Z5wNu5ih7xPqi5rUjU7eC784f5VoG5V/944SCL7FmumJ+pv2lekTIyGJLI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=S9Q3Ipk6; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 481Nex7R011142;
+	Mon, 2 Sep 2024 07:24:20 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	NeSqrGEdYmu408J1mtHUKuJQVjJvjcCOrgVyiCZV1KQ=; b=S9Q3Ipk6mTCg5RtC
+	x3io53WN3W8huW0QzVKOKVYROOIZCfPhRB4++pofxp32pL9su3VPX68hrneRrnlU
+	lQaHr6dVLN1KcIFaxT5VJqb1NMy9pgbwUsIqU9IgKaxHaYEyoiFkRgbzOU8lwZzE
+	6fsDaLOhWJrKzaxTYzLxQeB0+1rnyYC1CE/rPba4olNADcn3eTayqUh6QL2BpqLw
+	R7cpIzhx9bZP7MubNZZMqekAOYM00omEgNHT+kFFiztHkOqTRkEZMYmRxKgQM5R3
+	OvrX/UkxTBttlQwywswWaEtDWqbCc5B1ESg7YrQcmEUoHBg0mflPa8TePE4GcasZ
+	kvJ3AQ==
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41brhnc1f9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 02 Sep 2024 07:24:20 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4827OIIB032617
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 2 Sep 2024 07:24:18 GMT
+Received: from [10.239.133.242] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 2 Sep 2024
+ 00:24:15 -0700
+Message-ID: <aef09e24-bdd0-4638-8ddc-55c4d39e37ec@quicinc.com>
+Date: Mon, 2 Sep 2024 15:24:13 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: siliconsignals.io
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PN3P287MB1829.INDP287.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-Network-Message-Id: 50c83945-d39a-4ff2-b5f5-08dccb202e6f
-X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Sep 2024 07:23:45.7643
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 7ec5089e-a433-4bd1-a638-82ee62e21d37
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: RcLI1YtawtlsetcdkjM7aXALDYTfsoG6WZ4l5NtAqqeffCYTE+29DRk99iioh6t/HnUR2b55Ykpt+mn358NhSplafEIaZJkByRFo258WxAo=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MAYP287MB3867
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 1/7] dt-bindings: arm: Add support for Coresight TGU
+ trace
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+        Suzuki K Poulose
+	<suzuki.poulose@arm.com>,
+        Mike Leach <mike.leach@linaro.org>, James Clark
+	<james.clark@arm.com>,
+        Alexander Shishkin
+	<alexander.shishkin@linux.intel.com>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn
+ Andersson <andersson@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof
+ Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <coresight@lists.linaro.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>
+References: <20240830092311.14400-1-quic_songchai@quicinc.com>
+ <20240830092311.14400-2-quic_songchai@quicinc.com>
+ <0a79b9df-4ca4-4dc8-9930-3fa1dc7d3174@kernel.org>
+ <65732921-988f-41f7-886e-94415b07608e@quicinc.com>
+ <d4e424f0-5485-4ccc-83e1-d1eb3008af9f@kernel.org>
+Content-Language: en-US
+From: songchai <quic_songchai@quicinc.com>
+In-Reply-To: <d4e424f0-5485-4ccc-83e1-d1eb3008af9f@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: bp2m_hFYMZ2_uBvHKLGYyn5UjYqk803H
+X-Proofpoint-ORIG-GUID: bp2m_hFYMZ2_uBvHKLGYyn5UjYqk803H
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-09-01_06,2024-08-30_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 mlxlogscore=999
+ spamscore=0 impostorscore=0 lowpriorityscore=0 suspectscore=0 phishscore=0
+ adultscore=0 priorityscore=1501 clxscore=1015 mlxscore=0 malwarescore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2407110000
+ definitions=main-2409020060
 
-Hi,=0A=
-=0A=
->> as per your comment, I did update the board name to "variscite,var-som-m=
-x8mp-symphony" instead of "variscite,var-som-mx8mp."=0A=
->=0A=
->??? No, there is no difference. You did not test your patches either.=0A=
-=0A=
-I did test my patches using "dt_binding_check" and "CHECK_DTBS," and there =
-were no warnings or errors.=0A=
-=0A=
->When I wrote "This is not correct", it means you should drop it.=0A=
->Incorrect compatibles should not be added.=0A=
-=0A=
-Sure I will Drop it.=0A=
-=0A=
-Best Regars.=0A=
-Tarang=0A=
+
+On 9/2/2024 3:02 PM, Krzysztof Kozlowski wrote:
+> On 02/09/2024 05:14, songchai wrote:
+>> On 8/30/2024 6:11 PM, Krzysztof Kozlowski wrote:
+>>> On 30/08/2024 11:23, songchai wrote:
+>>>> The Trigger Generation Unit (TGU) is designed to detect patterns or
+>>>> sequences within a specific region of the System on Chip (SoC). Once
+>>>> configured and activated, it monitors sense inputs and can detect a
+>>>> pre-programmed state or sequence across clock cycles, subsequently
+>>>> producing a trigger.
+>>>>
+>>>>      TGU configuration space
+>>>>           offset table
+>>>>    x-------------------------x
+>>>>    |                         |
+>>>>    |                         |
+>>>>    |                         |                           Step configuration
+>>>>    |                         |                             space layout
+>>>>    |   coresight management  |                           x-------------x
+>>>>    |        registers        |                     |---> |             |
+>>>>    |                         |                     |     |  reserve    |
+>>>>    |                         |                     |     |             |
+>>>>    |-------------------------|                     |     |-------------|
+>>>>    |                         |                     |     | prioroty[3] |
+>>>>    |         step[7]         |<--                  |     |-------------|
+>>>>    |-------------------------|   |                 |     | prioroty[2] |
+>>>>    |                         |   |                 |     |-------------|
+>>>>    |           ...           |   |Steps region     |     | prioroty[1] |
+>>>>    |                         |   |                 |     |-------------|
+>>>>    |-------------------------|   |                 |     | prioroty[0] |
+>>>>    |                         |<--                  |     |-------------|
+>>>>    |         step[0]         |-------------------->      |             |
+>>>>    |-------------------------|                           |  condition  |
+>>>>    |                         |                           |             |
+>>>>    |     control and status  |                           x-------------x
+>>>>    |           space         |                           |             |
+>>>>    x-------------------------x                           |Timer/Counter|
+>>>>                                                          |             |
+>>>> 						       x-------------x
+>>>> TGU Configuration in Hardware
+>>>>
+>>>> The TGU provides a step region for user configuration, similar
+>>>> to a flow chart. Each step region consists of three register clusters:
+>>>>
+>>>> 1.Priority Region: Sets the required signals with priority.
+>>>> 2.Condition Region: Defines specific requirements (e.g., signal A
+>>>> reaches three times) and the subsequent action once the requirement is
+>>>> met.
+>>>> 3.Timer/Counter (Optional): Provides timing or counting functionality.
+>>>>
+>>>> Add a new coresight-tgu.yaml file to describe the bindings required to
+>>>> define the TGU in the device trees.
+>>>>
+>>>> Signed-off-by: songchai<quic_songchai@quicinc.com>
+>>> It feels like you are using login name as real name. Please investigate
+>>> this and confirm whether latin transcription/transliteration of your
+>>> name is like above.
+>> yes.. it's my login name. Will use my real name in next version.
+>>>> ---
+>>>>    .../bindings/arm/qcom,coresight-tgu.yaml      | 136 ++++++++++++++++++
+>>>>    1 file changed, 136 insertions(+)
+>>>>    create mode 100644 Documentation/devicetree/bindings/arm/qcom,coresight-tgu.yaml
+>>>>
+>>>> diff --git a/Documentation/devicetree/bindings/arm/qcom,coresight-tgu.yaml b/Documentation/devicetree/bindings/arm/qcom,coresight-tgu.yaml
+>>>> new file mode 100644
+>>>> index 000000000000..c261252e33e0
+>>>> --- /dev/null
+>>>> +++ b/Documentation/devicetree/bindings/arm/qcom,coresight-tgu.yaml
+>>>> @@ -0,0 +1,136 @@
+>>>> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+>>>> +# Copyright (c) 2023 Qualcomm Innovation Center, Inc. All rights reserved.
+>>>> +%YAML 1.2
+>>>> +---
+>>>> +$id:http://devicetree.org/schemas/arm/qcom,coresight-tgu.yaml#
+>>>> +$schema:http://devicetree.org/meta-schemas/core.yaml#
+>>>> +
+>>>> +title: Trigger Generation Unit - TGU
+>>>> +
+>>>> +description: |
+>>>> +  The Trigger Generation Unit (TGU) is a Data Engine which can be utilized
+>>>> +  to sense a plurality of signals and create a trigger into the CTI or
+>>>> +  generate interrupts to processors. The TGU is like the trigger circuit
+>>>> +  of a Logic Analyzer.The corresponding trigger logic can be realized by
+>>>> +  configuring the conditions for each step after sensing the signal.
+>>>> +  Once setup and enabled, it will observe sense inputs and based upon
+>>>> +  the activity of those inputs, even over clock cycles, may detect a
+>>>> +  preprogrammed state/sequence and then produce a trigger or interrupt.
+>>>> +
+>>>> +  The primary use case of the TGU is to detect patterns or sequences on a
+>>>> +  given set of signals within some region of the SoC.
+>>>> +
+>>>> +maintainers:
+>>>> +  - Mao Jinlong<quic_jinlmao@quicinc.com>
+>>>> +  - Sam Chai<quic_songchai@quicinc.com>
+>>>> +
+>>>> +# Need a custom select here or 'arm,primecell' will match on lots of nodes
+>>>> +select:
+>>>> +  properties:
+>>>> +    compatible:
+>>>> +      contains:
+>>>> +        enum:
+>>>> +          - qcom,coresight-tgu
+>>>> +  required:
+>>>> +    - compatible
+>>>> +
+>>>> +properties:
+>>>> +  $nodename:
+>>>> +    pattern: "^tgu(@[0-9a-f]+)$"
+>>> Drop the pattern (and anyway @ is not optional).
+>> There will be several TGUs in the SoC, and we want to use the address of
+>> each to distinguish them.
+> How is this related?
+>
+>> This is why we added the nodename pattern here.
+> How is this related?
+>
+>> Additionally, I noticed that both TPDM and CTI also use this format to
+>> define the nodename.
+>>
+>> Could you please share any concerns you have about using this pattern?
+> I don't get why you insist, but sure:
+> The name does not follow DT spec recommendation, plus child schema is
+> not really supposed to define the names.
+Thanks for you clarification, will drop in the next version.
+>
+>>>> +  compatible:
+>>>> +    items:
+>>>> +      - const: qcom,coresight-tgu
+>>>> +      - const: arm,primecell
+>>>> +
+>>>> +  reg:
+>>>> +    maxItems: 1
+>>>> +
+>>>> +  clocks:
+>>>> +    maxItems: 1
+>>>> +
+>>>> +  clock-names:
+>>>> +    items:
+>>>> +      - const: apb_pclk
+>>>> +
+>>>> +  qcom,tgu-steps:
+>>>> +    description:
+>>>> +      The trigger logic is realized by configuring each step after sensing
+>>>> +      the signal. The parameter here is used to describe the maximum of steps
+>>>> +      that could be configured in the current TGU.
+>>> Why this is board or SoC level property? All below also feel like
+>>> unnecessary stuff from downstream.
+>> There are actually four properties used to describe the number of
+>> registers with different functionality for TGUs at the SoC level.
+>>
+>> Each TGU may have a different number of registers, so we need to add
+>> these four properties to describe each TGU’s hardware design.
+> Each TGU on the same SoC?
+yes, in other words, there will be several TGUs in the SoC.
+>
+>
+>
+> Best regards,
+> Krzysztof
+>
 
