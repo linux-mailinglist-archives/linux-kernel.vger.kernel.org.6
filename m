@@ -1,108 +1,103 @@
-Return-Path: <linux-kernel+bounces-311675-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311676-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8494968BFA
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 18:22:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DE1F968BFE
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 18:23:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 545E2B21AF9
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 16:22:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B2E0EB22973
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 16:23:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DDD31AB6C2;
-	Mon,  2 Sep 2024 16:22:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAF4B1A2659;
+	Mon,  2 Sep 2024 16:23:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="cT5gbWuK";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="MVPMwzFz"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cnNZIEpA"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C12611428E8
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 16:22:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 713401428E8;
+	Mon,  2 Sep 2024 16:23:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725294154; cv=none; b=SRSmfcDNdO5v1UauFDDymIDbRwzQdAfzJxR0rkrDJjag6v+IJ3kzNMZlMP7+rtZHdhrseS0EHXj74UpWxJaOTudgH1xKBFlUXbo7z9cXcXlsB07VVqCFZRoTWuyzaHOo2Er9S2+TNHsTlNT/8b+35KH7tOCvIbxogrWXGsUsBqw=
+	t=1725294202; cv=none; b=n6NLNm4ujtIHRyyEUY0cDfcEoEcfwSyrlhRDOLl1kAmAM54q//ub5cz2z2DQ9sOb2cOdA2Nm6ZE44CCiisWlIr/kLljHzNnEqmqX4ALuThZiTFWYbkFRRK1jo2MsTaqM0x51AShfPqlSfTN1WhwwqUP/fOshInhQQSirbS/PmE0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725294154; c=relaxed/simple;
-	bh=qa0xAXqatdjEkG+wCL2tRSR7q4nNNDWI+Z7rPWFet7A=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=G+nI3eFcsCvDJnwHLCvuBkm00414LU/Jcan4i49ixovosdkLfoYdteygNJyLxFq2UlvXKuJJvha8koDIqmSF/abfrLSSW6C4X287pbrWkmPdF3d7fY9ztK7ogCaPXbfn2UWadcX1kQEu2CAUsjZCuWTe6plZQXVRjW63NoKBiLI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=cT5gbWuK; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=MVPMwzFz; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1725294150;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QjxZw2svNTqzIQXoyp3DL+pfkiBFjFHUSR15+evOj+0=;
-	b=cT5gbWuK8iBWkMlr56VH2afbFI+cLenaIR3FjGyULzYmvSk6JbWES4rJS8z6sRzyyBhW76
-	8/PWtk7ZdSuM3NnDEZE0/iV6Vc+V80vyX72hIRLQZqvFNvxTC/XGNA6FFh4CCBn+hDgtJ0
-	DMF4oBWLru5PgW0/N4v+/oWD5pu7pqo4zWMvY1pM6nFyZc4STZQxXGQ0YX8jNlvuT7c39q
-	sPRMNbdy73qvpAH6CMQtpA1RMJesEUgfMSSlHQniWNX8KcisGtZB38GPRmamy3T2c40Meh
-	wKazZfg1ALk6r3UQzn6RNi1T6PzklvXFVwhnjfhldpmWC6C+t2bMU/R0fhKmKA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1725294150;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QjxZw2svNTqzIQXoyp3DL+pfkiBFjFHUSR15+evOj+0=;
-	b=MVPMwzFzmG0ArI6AS0a2vbBThgbexXPzwwre8YwvqeYFL53YCuH+JxrF0ijCrBU6auYhP5
-	k8PE2euVjItAIBCg==
-To: Zhen Lei <thunder.leizhen@huawei.com>, Andrew Morton
- <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org
-Cc: Zhen Lei <thunder.leizhen@huawei.com>
-Subject: Re: [PATCH 1/5] debugobjects: Fix the misuse of global variables in
- fill_pool()
-In-Reply-To: <20240902140532.2028-2-thunder.leizhen@huawei.com>
-References: <20240902140532.2028-1-thunder.leizhen@huawei.com>
- <20240902140532.2028-2-thunder.leizhen@huawei.com>
-Date: Mon, 02 Sep 2024 18:22:30 +0200
-Message-ID: <87mskq58l5.ffs@tglx>
+	s=arc-20240116; t=1725294202; c=relaxed/simple;
+	bh=iWjG1cl1/NbcO6McdD+EpN05BnbeFzm1Nzq3sNve3PQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ippS+HfUch8iw6cHDUHQjimjLwjENavmeFp8DEYaAFGygrlsxCs27QYgAwm1VEoXWWPVAJq47JaBxvp42pqXJussGbGcpwyAoCbtO8Mbo15UeEdlFFtPPiDEK38hHHyoze7lY5eJwQtiMb9n82ogEO5XFRLUlX4QF09ku89DiDQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cnNZIEpA; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725294200; x=1756830200;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=iWjG1cl1/NbcO6McdD+EpN05BnbeFzm1Nzq3sNve3PQ=;
+  b=cnNZIEpAfL6zzpj6j3zVg7v+eM+ohVTwwHpceQKdd8n13tdvYoeI7Y1U
+   nZkNDwZitDiy6QisOEF1/PFabxrkev9CrDaSSH6POZBWvI9EAEMf7iXSt
+   spdLTPAm5BMlX70IIgz0c7x9wh17C3OhgjJAZWL1ejWizD8FiVniQaGMR
+   Q/c8XtnFgHSheg75GuvQMGuSwWHQ3DbNCk9j2FErtl7GO7SEqbI2UiAFH
+   MVgAULzldVuK6dOgOC64yrt/+glgxcqprjHiIgymzlM+7HfZqaoTJRCLN
+   P2+1jNNiwFzBq1VEUSDD5KC5baOXYRMsz2JPZiDYQbqGGyBn+ZEWhvJEl
+   g==;
+X-CSE-ConnectionGUID: vxWCyQt1Q+eia4Q0k/eJZA==
+X-CSE-MsgGUID: 4eM839EORnKwT0GH8NVrrA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11183"; a="23837103"
+X-IronPort-AV: E=Sophos;i="6.10,196,1719903600"; 
+   d="scan'208";a="23837103"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2024 09:23:15 -0700
+X-CSE-ConnectionGUID: zvKgTG9+RIad6YkYZwXvOg==
+X-CSE-MsgGUID: GuuWyVE6Q0K54dw94AaafQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,196,1719903600"; 
+   d="scan'208";a="69288930"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2024 09:23:14 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1sl9pf-00000004Qcq-3F0O;
+	Mon, 02 Sep 2024 19:23:11 +0300
+Date: Mon, 2 Sep 2024 19:23:11 +0300
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Martyn Welch <martyn.welch@collabora.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>, kernel@collabora.com,
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] gpio: mpc8xxx: Add wake on GPIO support
+Message-ID: <ZtXmb-z-KwCIO1R2@smile.fi.intel.com>
+References: <20240820143328.1987442-1-martyn.welch@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240820143328.1987442-1-martyn.welch@collabora.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Mon, Sep 02 2024 at 22:05, Zhen Lei wrote:
+On Tue, Aug 20, 2024 at 03:33:27PM +0100, Martyn Welch wrote:
+> The mpc8xxx GPIO can generate an interrupt on state change. This
+> interrupt can be used to wake up the device from its sleep state if
+> enabled to do so. Add required support to the driver so that the GPIO
+> can be used in this way.
+> 
+> In order for the GPIO to actually function in this way, it is necessary
+> to also set the GPIO bit in the RCPM. This can be done via the device
+> tree fsl,rcpm-wakeup property.
 
-> The global variable 'obj_pool_min_free' records the lowest historical
-> value of the number of nodes in the global list 'obj_pool', instead of
-> being used as the lowest threshold value. This may be a mistake and
+Any specific requirement(s) to:
+1) avoid new PM macros (such as pm_ptr());
+2) use quite outdated PM callbacks?
 
-Maybe? It's either a bug or not.
+-- 
+With Best Regards,
+Andy Shevchenko
 
-> should be replaced with variable 'debug_objects_pool_min_level'.
 
-And if it's a bug then it has to be replaced.
-
-This misses another minor issue:
-
-static int			obj_pool_min_free = ODEBUG_POOL_SIZE;
-
-static int  __data_racy		debug_objects_pool_min_level __read_mostly
-				= ODEBUG_POOL_MIN_LEVEL;
-
-As debug_objects_pool_min_level is the minimum level to keep around and
-obj_pool_min_free is a statistics mechanism, __data_racy is misplaced
-too. The variables should swap their position, because
-debug_objects_pool_min_level is functional, but obj_pool_min_free is
-pure stats.
-
-Also debug_objects_pool_min_level and debug_objects_pool_size should
-be __ro_after_init.
-
-> Fixes: d26bf5056fc0 ("debugobjects: Reduce number of pool_lock acquisitions in fill_pool()")
-> Fixes: 36c4ead6f6df ("debugobjects: Add global free list and the counter")
-
-Nice detective work!
-
-Thanks,
-
-        tglx
 
