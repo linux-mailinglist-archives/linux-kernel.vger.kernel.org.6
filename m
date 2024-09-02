@@ -1,604 +1,324 @@
-Return-Path: <linux-kernel+bounces-311617-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311618-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DC79968B39
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 17:44:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A35CB968B40
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 17:44:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8683D1F23506
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 15:44:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C79921C2260B
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 15:44:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFACC1A2642;
-	Mon,  2 Sep 2024 15:44:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0CB31A2644;
+	Mon,  2 Sep 2024 15:44:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Sv+1ko6y"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QZ1/lZYR"
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E9571CB51D;
-	Mon,  2 Sep 2024 15:43:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B99A13C9C7;
+	Mon,  2 Sep 2024 15:44:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725291842; cv=none; b=sr+ZrWh4QwO9yH0thd3q7LlQYjRmxC4Ur2rX4w3FZoBVB6mOlCQ/6oK9JD2/o9SeDtW0qIUK7W9Sz5AHCTvGWxyj5qMYDRoHng4iCEvzB2tB7n8b9fDC7B4qUSHs2XYip0NulZ6oIQk+EeehRAIQ1xoBpnLyXBXDzyMh9TtynbY=
+	t=1725291871; cv=none; b=GC99NDTuzs37NqTLOr9kEga6org4FZTvBmQguRFBtFYRT9GXNoBzZBDOFLCAbxjr9EA/xD2gQumqgy5QGpOb7WOusGv2g0eDeSpZrGwsd5WiriFs+T9h6RESlA+oXhaUGGHTlUYuuZUMdWSUxCNmuII5yX3ix4NEv6fcxwZOxwQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725291842; c=relaxed/simple;
-	bh=LDtStFCLzwM6884tlg6ymmjSJnWsxkpCzm5+PEoyK4g=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=KCAMv57Mmdmz6Bo/vjRoPbH5HAWNM6yMM10ZLHe1jYMx7X7K2Up1qidIu6oYg/WtKhxkMJA30E7o00JGqexFQUrxEPyd2LVhXK6uKZ+9IyKshEknNcso+tNS5TaJuMPC99qLm7aUWEcHfrbFGtK+Fo01kayMZY+KPDZUUXsGi+8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Sv+1ko6y; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725291840; x=1756827840;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=LDtStFCLzwM6884tlg6ymmjSJnWsxkpCzm5+PEoyK4g=;
-  b=Sv+1ko6yJm5idmdZoStW+4BTjx8FOxLhXh/7Ay71QgguBgTpAWum404o
-   gZGLq49XVpEMRqpToP6xGbHnhaYNfA5rN2AxKrTVV54FGbBXzTJcgSvaS
-   o0Wf2qiD6ltdAZnDu26wBkXkhWqTpVvs/G2R4phOX8e6ULlxoI6JpngdK
-   zHK0ph2HJmr0pJUaq8f+NtvTzX9KIBlVacpadkLxYCov5/eK2gZyjra6m
-   nFRWiYriMnDpnV7b3lOstA1xeHBU+zoDf8FlwVUHF6XWd6dKCJbG5denW
-   AC1GwKhoqd748vIcptHW9j0HGqbQNypq0j8TCLM7siqwAB+Na5zyHRSnX
-   g==;
-X-CSE-ConnectionGUID: En2eXUVhSoy9FcGm3z5bGA==
-X-CSE-MsgGUID: C2WS2/seRPmiMlNOBaNzpg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11183"; a="23742903"
-X-IronPort-AV: E=Sophos;i="6.10,195,1719903600"; 
-   d="scan'208";a="23742903"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2024 08:43:58 -0700
-X-CSE-ConnectionGUID: /SicOw63SoiCSyVcxtLTIg==
-X-CSE-MsgGUID: A/xfIu+ZT8CBj9JD7yOYgQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,195,1719903600"; 
-   d="scan'208";a="69279782"
-Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.244.129])
-  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2024 08:43:53 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Mon, 2 Sep 2024 18:43:47 +0300 (EEST)
-To: Jian-Hong Pan <jhp@endlessos.org>
-cc: "David E. Box" <david.e.box@linux.intel.com>, 
-    Bjorn Helgaas <helgaas@kernel.org>, Johan Hovold <johan@kernel.org>, 
-    Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>, 
-    Mika Westerberg <mika.westerberg@linux.intel.com>, 
-    Damien Le Moal <dlemoal@kernel.org>, 
-    Nirmal Patel <nirmal.patel@linux.intel.com>, 
-    Jonathan Derrick <jonathan.derrick@linux.dev>, 
-    Paul M Stillwell Jr <paul.m.stillwell.jr@intel.com>, 
-    linux-pci@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, 
-    linux@endlessos.org
-Subject: Re: [PATCH v8 4/4] PCI/ASPM: Fix L1.2 parameters when enable link
- state
-In-Reply-To: <CAPpJ_eeO9j38VGaukrw79dqQAZ7Z8+QMOvTbymyV9=fbQBqFzw@mail.gmail.com>
-Message-ID: <4295d0e8-12c7-927c-2da5-682163ec3d9c@linux.intel.com>
-References: <20240719075200.10717-2-jhp@endlessos.org> <20240719080255.10998-2-jhp@endlessos.org> <CAPpJ_edybLMtrN_gxP2h9Z-BuYH+RG-qRqMqgZM1oSVoW1sP5A@mail.gmail.com> <e37536a435630583398307682e1a9aadbabfb497.camel@linux.intel.com>
- <CAPpJ_eeATLdcnH9CWpvJM_9juV5ok+OEYysTit_HparqBpQ3CQ@mail.gmail.com> <eb900245-5e13-bc6c-994a-43f2db8322ea@linux.intel.com> <fc0e8066b06abed97d3857c5deefb03041a0fd2e.camel@linux.intel.com> <f9660f21-f2e8-c62c-5e86-ed4875f61701@linux.intel.com>
- <CAPpJ_eeO9j38VGaukrw79dqQAZ7Z8+QMOvTbymyV9=fbQBqFzw@mail.gmail.com>
+	s=arc-20240116; t=1725291871; c=relaxed/simple;
+	bh=botBJ1tiJN2v+NSYDlbgyNUsQ2trEkjHt/pGezG+2VE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kIlR+KVccpbHigHIsWnbkKGS5/9R3u0Aa0pyfRtcwshStahobMyFmJZC4R8XM/4h+FrPflsNco1HzVjst3ieK5K8vnu5mkgEZKchxDRb2zIPUPjekeIzukTbAtljm35RE6VLNnmBgan32naOw5vTk0qJKNGX8y+VYBfM7U/MG5I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QZ1/lZYR; arc=none smtp.client-ip=209.85.167.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-5334879ba28so6153382e87.3;
+        Mon, 02 Sep 2024 08:44:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725291868; x=1725896668; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=FP5u0P3Ro8DGfBZjAhSMaSTilOOjxZnvSRuA8wU6ado=;
+        b=QZ1/lZYRdyf0YmGMbm3bRPARiq9nM1QxvvpcQGbhqPYTe3lBXp1ilhG3+wIlYxk2KB
+         jsc75FQULiMV8H/YHe490egYeKK5DbwBEAquk2Pa8tOJJCW4nZMuVsvFNV/RqqbklJpI
+         gdIdzho/aEA1dyXzlML4J8mYWPz4BXzJXB3KEwaGsaTGdjgzLqYxdD//RXOKRfd2I+Om
+         Dau2ih3C8Gi7phFMb41LSTLjDDtiBQPSNwaJ9PTvK28+Zvd/8Al/26d3BsUGmxjLPx6s
+         ZYk8wYrqa/TQA4v2iB/LYBE+6EmpZpo3QlPUsLeZzRN+U8CdyJwhm1R2w57N+xM2WE/u
+         6WPQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725291868; x=1725896668;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FP5u0P3Ro8DGfBZjAhSMaSTilOOjxZnvSRuA8wU6ado=;
+        b=GAhR8/+CKKquDWjuJoMg+46TBBIoaAj7AGOUkp15WiGgsMViatFsLKgSYm3YesQmwh
+         CIWiqaYuzNVibLE30dnlY8Wa6klbgPtxq4tdqnoQjUS/qYy96QYM9fPbLjzTSQa92/bZ
+         kUKo0OWCT4W3yxr9TV7VO80KCmn+QKLaqqVKRNSVWaHrUjC3O/ZkxtpxsO864Hl4ur4V
+         +e+ehMU88yCUzWKBf2xzLuh040aCbvQW3lWaNZF+ckmOYoHqoziG20USJ4RORA63jLEl
+         u1XzUzAmJhq+P0SfXBAfeDWEFXTcAZefbfAKs9HpO0qvBxxw9DAZyKOEs0c4WQYj4YCv
+         l+fQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXLnjZ38ccvv6NYRgvg98Qyi3YDtrRk5PiUzYPfqEG0U+ME9adff26kLwKR6kBKotuCZLyXeOCCN6Ap@vger.kernel.org
+X-Gm-Message-State: AOJu0YxdoeCvyCMJihCg/jgTqrCuV5v1SaFB+BvaPHbi6Gp5WxZerAfL
+	RqCis6z41JWNnGF87AoGmGhM+xcChyx9RCB6k4w/NaMOb7bJLzVC
+X-Google-Smtp-Source: AGHT+IEgfNaR3U3/b1uiiFFzr2EHklk9wo8C+1+IZLOlEr0ViAXQdcdOmk/tJH3WaUnAg4lxM5ksZg==
+X-Received: by 2002:a05:6512:1318:b0:52c:dfa7:9f43 with SMTP id 2adb3069b0e04-53546b43623mr7531624e87.34.1725291867234;
+        Mon, 02 Sep 2024 08:44:27 -0700 (PDT)
+Received: from [192.168.0.20] ([148.56.230.39])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a898908ce6asm576985566b.92.2024.09.02.08.44.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 02 Sep 2024 08:44:26 -0700 (PDT)
+Message-ID: <434edbf2-da3f-49b2-9ee4-d12e84428d44@gmail.com>
+Date: Mon, 2 Sep 2024 17:44:24 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323328-1789131979-1725291827=:1156"
-
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
-
---8323328-1789131979-1725291827=:1156
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-
-On Mon, 12 Aug 2024, Jian-Hong Pan wrote:
-
-> Ilpo J=C3=A4rvinen <ilpo.jarvinen@linux.intel.com> =E6=96=BC 2024=E5=B9=
-=B48=E6=9C=888=E6=97=A5 =E9=80=B1=E5=9B=9B =E4=B8=8B=E5=8D=885:49=E5=AF=AB=
-=E9=81=93=EF=BC=9A
-> > On Wed, 7 Aug 2024, David E. Box wrote:
-> > > On Wed, 2024-08-07 at 14:18 +0300, Ilpo J=C3=A4rvinen wrote:
-> > > > On Wed, 7 Aug 2024, Jian-Hong Pan wrote:
-> > > >
-> > > > > David E. Box <david.e.box@linux.intel.com> =E6=96=BC 2024=E5=B9=
-=B48=E6=9C=886=E6=97=A5 =E9=80=B1=E4=BA=8C =E4=B8=8A=E5=8D=884:26=E5=AF=AB=
-=E9=81=93=EF=BC=9A
-> > > > > >
-> > > > > > Hi Jian-Hong,
-> > > > > >
-> > > > > > On Fri, 2024-08-02 at 16:24 +0800, Jian-Hong Pan wrote:
-> > > > > > > Jian-Hong Pan <jhp@endlessos.org> =E6=96=BC 2024=E5=B9=B47=E6=
-=9C=8819=E6=97=A5 =E9=80=B1=E4=BA=94 =E4=B8=8B=E5=8D=884:04=E5=AF=AB=E9=81=
-=93=EF=BC=9A
-> > > > > > > >
-> > > > > > > > Currently, when enable link's L1.2 features with
-> > > > > > > > __pci_enable_link_state(),
-> > > > > > > > it configs the link directly without ensuring related L1.2 =
-parameters,
-> > > > > > > > such
-> > > > > > > > as T_POWER_ON, Common_Mode_Restore_Time, and LTR_L1.2_THRES=
-HOLD have
-> > > > > > > > been
-> > > > > > > > programmed.
-> > > > > > > >
-> > > > > > > > This leads the link's L1.2 between PCIe Root Port and child=
- device
-> > > > > > > > gets
-> > > > > > > > wrong configs when a caller tries to enabled it.
-> > > > > > > >
-> > > > > > > > Here is a failed example on ASUS B1400CEAE with enabled VMD=
-:
-> > > > > > > >
-> > > > > > > > 10000:e0:06.0 PCI bridge: Intel Corporation 11th Gen Core P=
-rocessor
-> > > > > > > > PCIe
-> > > > > > > > Controller (rev 01) (prog-if 00 [Normal decode])
-> > > > > > > >     ...
-> > > > > > > >     Capabilities: [200 v1] L1 PM Substates
-> > > > > > > >         L1SubCap: PCI-PM_L1.2+ PCI-PM_L1.1+ ASPM_L1.2+ ASPM=
-_L1.1+
-> > > > > > > > L1_PM_Substates+
-> > > > > > > >                   PortCommonModeRestoreTime=3D45us PortTPow=
-erOnTime=3D50us
-> > > > > > > >         L1SubCtl1: PCI-PM_L1.2- PCI-PM_L1.1- ASPM_L1.2+ ASP=
-M_L1.1-
-> > > > > > > >                    T_CommonMode=3D45us LTR1.2_Threshold=3D1=
-01376ns
-> > > > > > > >         L1SubCtl2: T_PwrOn=3D50us
-> > > > > > > >
-> > > > > > > > 10000:e1:00.0 Non-Volatile memory controller: Sandisk Corp =
-WD Blue
-> > > > > > > > SN550
-> > > > > > > > NVMe SSD (rev 01) (prog-if 02 [NVM Express])
-> > > > > > > >     ...
-> > > > > > > >     Capabilities: [900 v1] L1 PM Substates
-> > > > > > > >         L1SubCap: PCI-PM_L1.2+ PCI-PM_L1.1- ASPM_L1.2+ ASPM=
-_L1.1-
-> > > > > > > > L1_PM_Substates+
-> > > > > > > >                   PortCommonModeRestoreTime=3D32us PortTPow=
-erOnTime=3D10us
-> > > > > > > >         L1SubCtl1: PCI-PM_L1.2- PCI-PM_L1.1- ASPM_L1.2+ ASP=
-M_L1.1-
-> > > > > > > >                    T_CommonMode=3D0us LTR1.2_Threshold=3D0n=
-s
-> > > > > > > >         L1SubCtl2: T_PwrOn=3D10us
-> > > > > > > >
-> > > > > > > > According to "PCIe r6.0, sec 5.5.4", before enabling ASPM L=
-1.2 on the
-> > > > > > > > PCIe
-> > > > > > > > Root Port and the child NVMe, they should be programmed wit=
-h the same
-> > > > > > > > LTR1.2_Threshold value. However, they have different values=
- in this
-> > > > > > > > case.
-> > > > > > > >
-> > > > > > > > Invoke aspm_calc_l12_info() to program the L1.2 parameters =
-properly
-> > > > > > > > before
-> > > > > > > > enable L1.2 bits of L1 PM Substates Control Register in
-> > > > > > > > __pci_enable_link_state().
-> > > > > > > >
-> > > > > > > > Link: https://bugzilla.kernel.org/show_bug.cgi?id=3D218394
-> > > > > > > > Signed-off-by: Jian-Hong Pan <jhp@endlessos.org>
-> > > > > > > > ---
-> > > > > > > > v2:
-> > > > > > > > - Prepare the PCIe LTR parameters before enable L1 Substate=
-s
-> > > > > > > >
-> > > > > > > > v3:
-> > > > > > > > - Only enable supported features for the L1 Substates part
-> > > > > > > >
-> > > > > > > > v4:
-> > > > > > > > - Focus on fixing L1.2 parameters, instead of re-initializi=
-ng whole
-> > > > > > > > L1SS
-> > > > > > > >
-> > > > > > > > v5:
-> > > > > > > > - Fix typo and commit message
-> > > > > > > > - Split introducing aspm_get_l1ss_cap() to "PCI/ASPM: Intro=
-duce
-> > > > > > > >   aspm_get_l1ss_cap()"
-> > > > > > > >
-> > > > > > > > v6:
-> > > > > > > > - Skipped
-> > > > > > > >
-> > > > > > > > v7:
-> > > > > > > > - Pick back and rebase on the new version kernel
-> > > > > > > > - Drop the link state flag check. And, always config link s=
-tate's
-> > > > > > > > timing
-> > > > > > > >   parameters
-> > > > > > > >
-> > > > > > > > v8:
-> > > > > > > > - Because pcie_aspm_get_link() might return the link as NUL=
-L, move
-> > > > > > > >   getting the link's parent and child devices after check t=
-he link is
-> > > > > > > >   not NULL. This avoids NULL memory access.
-> > > > > > > >
-> > > > > > > >  drivers/pci/pcie/aspm.c | 15 +++++++++++++++
-> > > > > > > >  1 file changed, 15 insertions(+)
-> > > > > > > >
-> > > > > > > > diff --git a/drivers/pci/pcie/aspm.c b/drivers/pci/pcie/asp=
-m.c
-> > > > > > > > index 5db1044c9895..55ff1d26fcea 100644
-> > > > > > > > --- a/drivers/pci/pcie/aspm.c
-> > > > > > > > +++ b/drivers/pci/pcie/aspm.c
-> > > > > > > > @@ -1411,9 +1411,15 @@ EXPORT_SYMBOL(pci_disable_link_state=
-);
-> > > > > > > >  static int __pci_enable_link_state(struct pci_dev *pdev, i=
-nt state,
-> > > > > > > > bool
-> > > > > > > > locked)
-> > > > > > > >  {
-> > > > > > > >         struct pcie_link_state *link =3D pcie_aspm_get_link=
-(pdev);
-> > > > > > > > +       u32 parent_l1ss_cap, child_l1ss_cap;
-> > > > > > > > +       struct pci_dev *parent, *child;
-> > > > > > > >
-> > > > > > > >         if (!link)
-> > > > > > > >                 return -EINVAL;
-> > > > > > > > +
-> > > > > > > > +       parent =3D link->pdev;
-> > > > > > > > +       child =3D link->downstream;
-> > > > > > > > +
-> > > > > > > >         /*
-> > > > > > > >          * A driver requested that ASPM be enabled on this =
-device, but
-> > > > > > > >          * if we don't have permission to manage ASPM (e.g.=
-, on ACPI
-> > > > > > > > @@ -1428,6 +1434,15 @@ static int __pci_enable_link_state(s=
-truct
-> > > > > > > > pci_dev
-> > > > > > > > *pdev, int state, bool locked)
-> > > > > > > >         if (!locked)
-> > > > > > > >                 down_read(&pci_bus_sem);
-> > > > > > > >         mutex_lock(&aspm_lock);
-> > > > > > > > +       /*
-> > > > > > > > +        * Ensure L1.2 parameters: Common_Mode_Restore_Time=
-s,
-> > > > > > > > T_POWER_ON and
-> > > > > > > > +        * LTR_L1.2_THRESHOLD are programmed properly befor=
-e enable
-> > > > > > > > bits for
-> > > > > > > > +        * L1.2, per PCIe r6.0, sec 5.5.4.
-> > > > > > > > +        */
-> > > > > > > > +       parent_l1ss_cap =3D aspm_get_l1ss_cap(parent);
-> > > > > > > > +       child_l1ss_cap =3D aspm_get_l1ss_cap(child);
-> > > > > > > > +       aspm_calc_l12_info(link, parent_l1ss_cap, child_l1s=
-s_cap);
-> > > > > >
-> > > > > > I still don't think this is the place to recalculate the L1.2 p=
-arameters
-> > > > > > especially when know the calculation was done but was cleared b=
-y
-> > > > > > pci_bus_reset(). Can't we just do a pci_save/restore_state() be=
-fore/after
-> > > > > > pci_bus_reset() in vmd.c?
-> > > > >
-> > > > > I have not thought pci_save/restore_state() around pci_bus_reset(=
-)
-> > > > > before.  It is an interesting direction.
-> > > > >
-> > > > > So, I prepare modification below for test.  Include "[PATCH v8 1/=
-4]
-> > > > > PCI: vmd: Set PCI devices to D0 before enable PCI PM's L1 substat=
-es",
-> > > > > too.  Then, both the PCIe bridge and the PCIe device have the sam=
-e
-> > > > > LTR_L1.2_THRESHOLD 101376ns as expected.
-> > > > >
-> > > > > diff --git a/drivers/pci/controller/vmd.c b/drivers/pci/controlle=
-r/vmd.c
-> > > > > index bbf4a47e7b31..6b8dd4f30127 100644
-> > > > > --- a/drivers/pci/controller/vmd.c
-> > > > > +++ b/drivers/pci/controller/vmd.c
-> > > > > @@ -727,6 +727,18 @@ static void vmd_copy_host_bridge_flags(struc=
-t
-> > > > > pci_host_bridge *root_bridge,
-> > > > >         vmd_bridge->native_dpc =3D root_bridge->native_dpc;
-> > > > >  }
-> > > > >
-> > > > > +static int vmd_pci_save_state(struct pci_dev *pdev, void *userda=
-ta)
-> > > > > +{
-> > > > > +       pci_save_state(pdev);
-> > > > > +       return 0;
-> > > > > +}
-> > > > > +
-> > > > > +static int vmd_pci_restore_state(struct pci_dev *pdev, void *use=
-rdata)
-> > > > > +{
-> > > > > +       pci_restore_state(pdev);
-> > > > > +       return 0;
-> > > > > +}
-> > > > > +
-> > > > >  /*
-> > > > >   * Enable ASPM and LTR settings on devices that aren't configure=
-d by BIOS.
-> > > > >   */
-> > > > > @@ -927,6 +939,7 @@ static int vmd_enable_domain(struct vmd_dev *=
-vmd,
-> > > > > unsigned long features)
-> > > > >         pci_scan_child_bus(vmd->bus);
-> > > > >         vmd_domain_reset(vmd);
-> > > > >
-> > > > > +       pci_walk_bus(vmd->bus, vmd_pci_save_state, NULL);
-> > > > >         /* When Intel VMD is enabled, the OS does not discover th=
-e Root
-> > > > > Ports
-> > > > >          * owned by Intel VMD within the MMCFG space. pci_reset_b=
-us()
-> > > > > applies
-> > > > >          * a reset to the parent of the PCI device supplied as ar=
-gument.
-> > > > > This
-> > > > > @@ -945,6 +958,7 @@ static int vmd_enable_domain(struct vmd_dev *=
-vmd,
-> > > > > unsigned long features)
-> > > > >                         break;
-> > > > >                 }
-> > > > >         }
-> > > > > +       pci_walk_bus(vmd->bus, vmd_pci_restore_state, NULL);
-> > > >
-> > > > Why not call pci_reset_bus() (or __pci_reset_bus()) then in
-> > > > vmd_enable_domain() which preserves state unlike pci_reset_bus()?
-> > > >
-> > > > (Don't tell me naming of these functions is a horrible mess. :-/)
-> > >
-> > > Hmm. So this *is* calling pci_reset_bus().
-> >
-> > Yeah, I managed to get confused by the names myself, I somehow
-> > ended up thinking it calls pci_bus_reset() which is not correct...
-> >
-> > > L1.2 configuration has specific
-> > > ordering requirements for changes to parent & child devices. Could be=
- why it's
-> > > not getting restored properly.
-> >
-> > Indeed, it has to be something else since the patch above doesn't even
-> > restore anything because dev->state_saved should get set to false by th=
-e
-> > first pci_restore_state() called from
-> > __pci_reset_bus() -> pci_bus_restore_locked() -> pci_dev_restore(), I
-> > think!?
->=20
-> Inspired by Ilpo's comment.  I add some debug messages based on
-> linux-next's tag 'next-20240809' to understand the code path of
-> pci_reset_bus():
->=20
-> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-> index ffaaca0978cb..3ee71374f1de 100644
-> --- a/drivers/pci/pci.c
-> +++ b/drivers/pci/pci.c
-> @@ -5133,8 +5133,10 @@ static void pci_dev_save_and_disable(struct pci_de=
-v *dev)
->          * races with ->remove() by the device lock, which must be held b=
-y
->          * the caller.
->          */
-> -       if (err_handler && err_handler->reset_prepare)
-> +       if (err_handler && err_handler->reset_prepare) {
-> +               pci_info(dev, "%s: %pF\n", __func__,
-> err_handler->reset_prepare);
->                 err_handler->reset_prepare(dev);
-> +       }
->=20
->         /*
->          * Wake-up device prior to save.  PM registers default to D0 afte=
-r
-> @@ -5144,6 +5146,7 @@ static void pci_dev_save_and_disable(struct pci_dev=
- *dev)
->         pci_set_power_state(dev, PCI_D0);
->=20
->         pci_save_state(dev);
-> +       pci_info(dev, "%s: PCI state_saved is %s\n", __func__,
-> dev->state_saved ? "true" : "false");
->         /*
->          * Disable the device by clearing the Command register, except fo=
-r
->          * INTx-disable which is set.  This not only disables MMIO and I/=
-O port
-> @@ -5655,6 +5658,10 @@ static void
-> pci_bus_save_and_disable_locked(struct pci_bus *bus)
->         struct pci_dev *dev;
->=20
->         list_for_each_entry(dev, &bus->devices, bus_list) {
-> +               pci_info(dev, "%s: PCI state_saved is %s, and %s subordin=
-ate\n",
-> +                        __func__,
-> +                        dev->state_saved ? "true" : "false",
-> +                        dev->subordinate ? "has" : "does not have");
->                 pci_dev_save_and_disable(dev);
->                 if (dev->subordinate)
->                         pci_bus_save_and_disable_locked(dev->subordinate)=
-;
-> @@ -5671,6 +5678,10 @@ static void pci_bus_restore_locked(struct pci_bus =
-*bus)
->         struct pci_dev *dev;
->=20
->         list_for_each_entry(dev, &bus->devices, bus_list) {
-> +               pci_info(dev, "%s: PCI state_saved is %s, and %s subordin=
-ate\n",
-> +                        __func__,
-> +                        dev->state_saved ? "true" : "false",
-> +                        dev->subordinate ? "has" : "does not have");
->                 pci_dev_restore(dev);
->                 if (dev->subordinate)
->                         pci_bus_restore_locked(dev->subordinate);
-> @@ -5786,8 +5797,10 @@ static int pci_bus_reset(struct pci_bus *bus, bool=
- probe)
->         if (!bus->self || !pci_bus_resettable(bus))
->                 return -ENOTTY;
->=20
-> -       if (probe)
-> +       if (probe) {
-> +               pci_info(bus->self, "%s: probe is true.  So return 0
-> directly", __func__);
->                 return 0;
-> +       }
->=20
->         pci_bus_lock(bus);
->=20
-> @@ -5858,10 +5871,12 @@ static int __pci_reset_bus(struct pci_bus *bus)
->         int rc;
->=20
->         rc =3D pci_bus_reset(bus, PCI_RESET_PROBE);
-> +       pci_info(bus->self, "%s: pci_bus_reset() returns %d\n", __func__,=
- rc);
->         if (rc)
->                 return rc;
->=20
->         if (pci_bus_trylock(bus)) {
-> +               pci_info(bus->self, "%s: pci_bus_trylock() returns
-> true\n", __func__);
->                 pci_bus_save_and_disable_locked(bus);
->                 might_sleep();
->                 rc =3D pci_bridge_secondary_bus_reset(bus->self);
-> @@ -5881,6 +5896,7 @@ static int __pci_reset_bus(struct pci_bus *bus)
->   */
->  int pci_reset_bus(struct pci_dev *pdev)
->  {
-> +       pci_info(pdev, "%s: %s", __func__,
-> !pci_probe_reset_slot(pdev->slot) ? "true" : "false");
->         return (!pci_probe_reset_slot(pdev->slot)) ?
->             __pci_reset_slot(pdev->slot) : __pci_reset_bus(pdev->bus);
->  }
->=20
-> And, have the information of VMD PCIe devices with the built kernel:
->=20
-> 10000:e0:06.0 PCI bridge [0604]: Intel Corporation 11th Gen Core
-> Processor PCIe Controller [8086:9a09] (rev 01) (prog-if 00 [Normal
-> decode])
->   ...
->   Capabilities: [200 v1] L1 PM Substates
->     L1SubCap: PCI-PM_L1.2+ PCI-PM_L1.1+ ASPM_L1.2+ ASPM_L1.1+ L1_PM_Subst=
-ates+
->       PortCommonModeRestoreTime=3D45us PortTPowerOnTime=3D50us
->     L1SubCtl1: PCI-PM_L1.2- PCI-PM_L1.1- ASPM_L1.2+ ASPM_L1.1-
->       T_CommonMode=3D0us LTR1.2_Threshold=3D0ns
->     L1SubCtl2: T_PwrOn=3D0us
->=20
-> 10000:e1:00.0 Non-Volatile memory controller [0108]: Sandisk Corp WD
-> Blue SN550 NVMe SSD [15b7:5009] (rev 01) (prog-if 02 [NVM Express])
->   ...
->   Capabilities: [900 v1] L1 PM Substates
->     L1SubCap: PCI-PM_L1.2+ PCI-PM_L1.1- ASPM_L1.2+ ASPM_L1.1- L1_PM_Subst=
-ates+
->       PortCommonModeRestoreTime=3D32us PortTPowerOnTime=3D10us
->     L1SubCtl1: PCI-PM_L1.2- PCI-PM_L1.1- ASPM_L1.2+ ASPM_L1.1-
->       T_CommonMode=3D0us LTR1.2_Threshold=3D101376ns
->     L1SubCtl2: T_PwrOn=3D50us
->=20
-> We can see the NVMe has expected LTR1.2_Threshold=3D101376ns, but the
-> PCIe bridge has LTR1.2_Threshold=3D0ns.
-
-This is now the other way around as in the original posting that had=20
-0ns for 10000:e1:00.0 ??
-
-Is this behavior even consistent or did you e.g. mess up some copy=20
-pasting somewhere?
-
-> Then, check the dmesg.  I notice the debug messages:
->=20
-> pci 10000:e0:06.0: PCI bridge to [bus e1]
-> pci 10000:e0:06.0: Primary bus is hard wired to 0
-> pci 10000:e1:00.0: pci_reset_bus: false
-> pci 10000:e0:06.0: pci_bus_reset: probe is true.  So return 0 directly
-> pci 10000:e0:06.0: __pci_reset_bus: pci_bus_reset() returns 0
-> pci 10000:e0:06.0: __pci_reset_bus: pci_bus_trylock() returns true
-> pci 10000:e1:00.0: pci_bus_save_and_disable_locked: PCI state_saved is
-> false, and does not have subordinate
-> pci 10000:e1:00.0: pci_dev_save_and_disable: PCI state_saved is true
-> Freeing initrd memory: 75236K
-> pci 10000:e1:00.0: pci_bus_restore_locked: PCI state_saved is true,
-> and does not have subordinate
->=20
-> So, the code path is:
->=20
-> vmd_enable_domain()
->   pci_reset_bus()
->     __pci_reset_bus()
->       pci_bus_reset()
->         pci_bus_save_and_disable_locked()
->           pci_dev_save_and_disable()
->         pci_bus_restore_locked()
->           pci_dev_restore()
->=20
-> And, from the debug messages, I learned only NVMe 10000:e1:00.0 does
-> pci_save/restore_state.  But, the PCIe bridge 10000:e0:06.0 does not.
-> So, PCIe bridge 10000:e0:06.0 does not restore state correctly.
-
-It should not be necessary to restore the bridge's configuration as it=20
-ought to not be changed by the SBR itself, PCIe6 spec 7.5.1.3.13:
-
-"Port configuration registers must not be changed, except as required to=20
-update Port status."
-
-While the second part wording leaves some leeway, I don't think any of=20
-these field really fall under "Port status".
-
-> Besides, it is NVMe 10000:e1:00.0's bus [e1] been reset, not the VMD's
-> bus in vmd_enable_domain().
-> * Bus "e1" has only NVMe 10000:e1:00.0
-> * VMD's bus in vmd_enable_domain() has PCIe bridge 10000:e0:06.0, NVMe
-> 10000:e1:00.0 and SATA Controller 10000:e0:17.0.
-
-=2E..But even if those registers on the PCIe bridge were changed underneath=
-=20
-against the spec, it's not clear from your debug log why pci_dev_restore()=
-=20
--> pci_restore_state() -> pci_restore_pcie_state() ->=20
-pci_restore_aspm_l1ss_state() did not restore also parent's=20
-LTR1.2_Threshold?? I think it should attempt to do that.
-
---=20
- i.
-
-> Here is the PCI tree:
->=20
-> -+-[0000:00]-+-00.0  Intel Corporation Device 9a04
->  |           +-02.0  Intel Corporation Tiger Lake-LP GT2 [UHD Graphics G4=
-]
->  |           +-04.0  Intel Corporation TigerLake-LP Dynamic Tuning
-> Processor Participant
->  |           +-06.0  Intel Corporation RST VMD Managed Controller
->  |           +-07.0-[01-2b]--
->  |           +-08.0  Intel Corporation GNA Scoring Accelerator module
->  |           +-0a.0  Intel Corporation Tigerlake Telemetry Aggregator Dri=
-ver
->  |           +-0d.0  Intel Corporation Tiger Lake-LP Thunderbolt 4 USB
-> Controller
->  |           +-0d.2  Intel Corporation Tiger Lake-LP Thunderbolt 4 NHI #0
->  |           +-0e.0  Intel Corporation Volume Management Device NVMe
-> RAID Controller
->  |           +-14.0  Intel Corporation Tiger Lake-LP USB 3.2 Gen 2x1
-> xHCI Host Controller
->  |           +-14.2  Intel Corporation Tiger Lake-LP Shared SRAM
->  |           +-14.3  Intel Corporation Wi-Fi 6 AX201
->  |           +-15.0  Intel Corporation Tiger Lake-LP Serial IO I2C Contro=
-ller #0
->  |           +-15.1  Intel Corporation Tiger Lake-LP Serial IO I2C Contro=
-ller #1
->  |           +-16.0  Intel Corporation Tiger Lake-LP Management Engine In=
-terface
->  |           +-17.0  Intel Corporation RST VMD Managed Controller
->  |           +-1f.0  Intel Corporation Tiger Lake-LP LPC Controller
->  |           +-1f.3  Intel Corporation Tiger Lake-LP Smart Sound
-> Technology Audio Controller
->  |           +-1f.4  Intel Corporation Tiger Lake-LP SMBus Controller
->  |           +-1f.5  Intel Corporation Tiger Lake-LP SPI Controller
->  |           \-1f.6  Intel Corporation Ethernet Connection (13) I219-V
->  \-[10000:e0]-+-06.0-[e1]----00.0  Sandisk Corp WD Blue SN550 NVMe SSD
->               \-17.0  Intel Corporation Tiger Lake-LP SATA Controller
->=20
-> According the findings above, to ensure the devices on the VMD bus
-> have correctly states, seems pci_save_state() all the devices before
-> pci_reset_bus(), and pci_restore_state() all the devices after
-> pci_reset_bus() is the correct answer.
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RESEND PATCH v2 2/2] arm64: dts: mediatek: mt8183-pumpkin: add
+ HDMI support
+To: Pin-yen Lin <treapking@chromium.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: "open list:ARM/Mediatek SoC support" <linux-kernel@vger.kernel.org>,
+ "moderated list:ARM/Mediatek SoC support"
+ <linux-mediatek@lists.infradead.org>,
+ "moderated list:ARM/Mediatek SoC support"
+ <linux-arm-kernel@lists.infradead.org>,
+ "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+ <devicetree@vger.kernel.org>, Fabien Parent <fparent@baylibre.com>
+References: <20240819120735.1508789-1-treapking@chromium.org>
+ <20240819120735.1508789-2-treapking@chromium.org>
+Content-Language: en-US, ca-ES, es-ES
+From: Matthias Brugger <matthias.bgg@gmail.com>
+Autocrypt: addr=matthias.bgg@gmail.com; keydata=
+ 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
+In-Reply-To: <20240819120735.1508789-2-treapking@chromium.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
 
 
---8323328-1789131979-1725291827=:1156--
+On 19/08/2024 14:05, Pin-yen Lin wrote:
+> From: Fabien Parent <fparent@baylibre.com>
+> 
+> The MT8183 Pumpkin board has a micro-HDMI connector. HDMI support is
+> provided by an IT66121 DPI <-> HDMI bridge.
+> 
+> This commit enables DPI and add the node for the IT66121 bridge.
+> 
+> Signed-off-by: Fabien Parent <fparent@baylibre.com>
+> Signed-off-by: Pin-yen Lin <treapking@chromium.org>
+> 
+
+Building DTB fais with:
+arch/arm64/boot/dts/mediatek/mt8183-pumpkin.dts:138.27-169.4: ERROR 
+(phandle_references): /soc/i2c@11005000/hdmitx@4c: Reference to non-existent 
+node or label "mt6358_vcn33_wifi_reg"
+
+Please check your code before submitting.
+
+Regards,
+Matthias
+
+> ---
+> 
+> (no changes since v1)
+> 
+>   .../boot/dts/mediatek/mt8183-pumpkin.dts      | 121 ++++++++++++++++++
+>   1 file changed, 121 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/mediatek/mt8183-pumpkin.dts b/arch/arm64/boot/dts/mediatek/mt8183-pumpkin.dts
+> index 1aa668c3ccf9..ecc237355b56 100644
+> --- a/arch/arm64/boot/dts/mediatek/mt8183-pumpkin.dts
+> +++ b/arch/arm64/boot/dts/mediatek/mt8183-pumpkin.dts
+> @@ -63,6 +63,18 @@ thermistor {
+>   		pulldown-ohm = <0>;
+>   		io-channels = <&auxadc 0>;
+>   	};
+> +
+> +	connector {
+> +		compatible = "hdmi-connector";
+> +		label = "hdmi";
+> +		type = "d";
+> +
+> +		port {
+> +			hdmi_connector_in: endpoint {
+> +				remote-endpoint = <&hdmi_connector_out>;
+> +			};
+> +		};
+> +	};
+>   };
+>   
+>   &auxadc {
+> @@ -120,6 +132,41 @@ &i2c6 {
+>   	pinctrl-0 = <&i2c6_pins>;
+>   	status = "okay";
+>   	clock-frequency = <100000>;
+> +	#address-cells = <1>;
+> +	#size-cells = <0>;
+> +
+> +	it66121hdmitx: hdmitx@4c {
+> +		compatible = "ite,it66121";
+> +		pinctrl-names = "default";
+> +		pinctrl-0 = <&ite_pins>;
+> +		vcn33-supply = <&mt6358_vcn33_wifi_reg>;
+> +		vcn18-supply = <&mt6358_vcn18_reg>;
+> +		vrf12-supply = <&mt6358_vrf12_reg>;
+> +		reset-gpios = <&pio 160 GPIO_ACTIVE_LOW>;
+> +		interrupt-parent = <&pio>;
+> +		interrupts = <4 IRQ_TYPE_LEVEL_LOW>;
+> +		reg = <0x4c>;
+> +
+> +		ports {
+> +			#address-cells = <1>;
+> +			#size-cells = <0>;
+> +
+> +			port@0 {
+> +				reg = <0>;
+> +				it66121_in: endpoint {
+> +					bus-width = <12>;
+> +					remote-endpoint = <&dpi_out>;
+> +				};
+> +			};
+> +
+> +			port@1 {
+> +				reg = <1>;
+> +				hdmi_connector_out: endpoint {
+> +					remote-endpoint = <&hdmi_connector_in>;
+> +				};
+> +			};
+> +		};
+> +	};
+>   };
+>   
+>   &keyboard {
+> @@ -362,6 +409,67 @@ pins_clk {
+>   			input-enable;
+>   		};
+>   	};
+> +
+> +	ite_pins: ite-pins {
+> +		pins-irq {
+> +			pinmux = <PINMUX_GPIO4__FUNC_GPIO4>;
+> +			input-enable;
+> +			bias-pull-up;
+> +		};
+> +
+> +		pins-rst {
+> +			pinmux = <PINMUX_GPIO160__FUNC_GPIO160>;
+> +			output-high;
+> +		};
+> +	};
+> +
+> +	dpi_func_pins: dpi-func-pins {
+> +		pins-dpi {
+> +			pinmux = <PINMUX_GPIO12__FUNC_I2S5_BCK>,
+> +				 <PINMUX_GPIO46__FUNC_I2S5_LRCK>,
+> +				 <PINMUX_GPIO47__FUNC_I2S5_DO>,
+> +				 <PINMUX_GPIO13__FUNC_DBPI_D0>,
+> +				 <PINMUX_GPIO14__FUNC_DBPI_D1>,
+> +				 <PINMUX_GPIO15__FUNC_DBPI_D2>,
+> +				 <PINMUX_GPIO16__FUNC_DBPI_D3>,
+> +				 <PINMUX_GPIO17__FUNC_DBPI_D4>,
+> +				 <PINMUX_GPIO18__FUNC_DBPI_D5>,
+> +				 <PINMUX_GPIO19__FUNC_DBPI_D6>,
+> +				 <PINMUX_GPIO20__FUNC_DBPI_D7>,
+> +				 <PINMUX_GPIO21__FUNC_DBPI_D8>,
+> +				 <PINMUX_GPIO22__FUNC_DBPI_D9>,
+> +				 <PINMUX_GPIO23__FUNC_DBPI_D10>,
+> +				 <PINMUX_GPIO24__FUNC_DBPI_D11>,
+> +				 <PINMUX_GPIO25__FUNC_DBPI_HSYNC>,
+> +				 <PINMUX_GPIO26__FUNC_DBPI_VSYNC>,
+> +				 <PINMUX_GPIO27__FUNC_DBPI_DE>,
+> +				 <PINMUX_GPIO28__FUNC_DBPI_CK>;
+> +		};
+> +	};
+> +
+> +	dpi_idle_pins: dpi-idle-pins {
+> +		pins-idle {
+> +			pinmux = <PINMUX_GPIO12__FUNC_GPIO12>,
+> +				 <PINMUX_GPIO46__FUNC_GPIO46>,
+> +				 <PINMUX_GPIO47__FUNC_GPIO47>,
+> +				 <PINMUX_GPIO13__FUNC_GPIO13>,
+> +				 <PINMUX_GPIO14__FUNC_GPIO14>,
+> +				 <PINMUX_GPIO15__FUNC_GPIO15>,
+> +				 <PINMUX_GPIO16__FUNC_GPIO16>,
+> +				 <PINMUX_GPIO17__FUNC_GPIO17>,
+> +				 <PINMUX_GPIO18__FUNC_GPIO18>,
+> +				 <PINMUX_GPIO19__FUNC_GPIO19>,
+> +				 <PINMUX_GPIO20__FUNC_GPIO20>,
+> +				 <PINMUX_GPIO21__FUNC_GPIO21>,
+> +				 <PINMUX_GPIO22__FUNC_GPIO22>,
+> +				 <PINMUX_GPIO23__FUNC_GPIO23>,
+> +				 <PINMUX_GPIO24__FUNC_GPIO24>,
+> +				 <PINMUX_GPIO25__FUNC_GPIO25>,
+> +				 <PINMUX_GPIO26__FUNC_GPIO26>,
+> +				 <PINMUX_GPIO27__FUNC_GPIO27>,
+> +				 <PINMUX_GPIO28__FUNC_GPIO28>;
+> +		};
+> +	};
+>   };
+>   
+>   &pmic {
+> @@ -415,3 +523,16 @@ &scp {
+>   &dsi0 {
+>   	status = "disabled";
+>   };
+> +
+> +&dpi0 {
+> +	pinctrl-names = "default", "sleep";
+> +	pinctrl-0 = <&dpi_func_pins>;
+> +	pinctrl-1 = <&dpi_idle_pins>;
+> +	status = "okay";
+> +
+> +	port {
+> +		dpi_out: endpoint {
+> +			remote-endpoint = <&it66121_in>;
+> +		};
+> +	};
+> +};
 
