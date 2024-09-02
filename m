@@ -1,184 +1,168 @@
-Return-Path: <linux-kernel+bounces-311599-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311601-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCB74968AF7
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 17:27:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23951968AFA
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 17:28:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 487941F22B81
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 15:27:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 486341C2203F
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 15:28:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9D7D1DAC47;
-	Mon,  2 Sep 2024 15:26:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 325991A2635;
+	Mon,  2 Sep 2024 15:26:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WQWDqHxu"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=osandov-com.20230601.gappssmtp.com header.i=@osandov-com.20230601.gappssmtp.com header.b="aLtRauBH"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 774561A2658;
-	Mon,  2 Sep 2024 15:25:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0571519F13A
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 15:26:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725290759; cv=none; b=PQnFFPz1Ojc9j2M9IaLFKNDv6dl+AHqtZ6U3ay0dArav5ns+bJLkfokdmqqCdZlbhgOq/0g4WPuihaHTLlFv2fwSMEN256G2Krm0fP+s4g8VLcoTykh37PFxLPopHk5D31V7EVIb3IEc9PDVRX2g4PJS3xLP7+/GxUEgb0gUBWM=
+	t=1725290778; cv=none; b=o1CKFndqahSwC4nZYMH0hZH3VFTo6+qFtG8RUoJCHfLjrzrJjuu0zH31vv4SMswWSeqVRS2El9/f9+CBnrGg5XJR171RtITPCtItEwEBjHIi8fYGoSNYLgsPlMoKTrIIrO7HMCx2uTYvaaaue9AC92uMDE14x28RInnq4va6U8o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725290759; c=relaxed/simple;
-	bh=V5hACLzeVR15kWP871kA/q+aCfEhF0lIeJeWRbN4eF4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=pxa5SnnA9ubWELY2LoBcLz67Z7iGrHstFIVsji9avnL0svJVLqL/1hp2pvu0R8WYAcZbQ7SeiUSVP81bQXQ1OVhsWHMSo5BL/OjEzLeoNMc3cWGzVGKPimR1oVw+A3YJI9HiY5VIMwTDN/UNlkKz8qvp6w46ZEOphN4Uz2Dz8eY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WQWDqHxu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E5B43C4AF14;
-	Mon,  2 Sep 2024 15:25:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725290759;
-	bh=V5hACLzeVR15kWP871kA/q+aCfEhF0lIeJeWRbN4eF4=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=WQWDqHxugk34rZI2XEcCsQ7W4d1dHbbiY5FbmIyyIqXI7zkNVpk37Jh3dp6MNSW44
-	 gJqNls0b/Cv8C7CUZD7uZ+tv8eUIAdBCbPICRln4T8gqJPE8eIVCUPJCaFogcC0LGg
-	 Cgk+RpbQsi1js1Ji2JKnelQzVZvuHIyzS0FXUPb1Vz9Awnzc17rtGfhePLlQqJXPOn
-	 nDYN5qlDuj1xDJkG9HZ3nFfMU5o/PpFKRuvyU4dGSUPKIhAz1XSRzgLvfMjnI57NHq
-	 JrlfjEGPrOpiu5bH7OLg0AD8c78KRKvCAIDBeHGSDSRmmvl+VGHtdz8xq6ewNCPJni
-	 ITOTwwQm+jbcw==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan+linaro@kernel.org>)
-	id 1sl8wX-000000000Fw-3rFq;
-	Mon, 02 Sep 2024 17:26:13 +0200
-From: Johan Hovold <johan+linaro@kernel.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Jiri Slaby <jirislaby@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Douglas Anderson <dianders@chromium.org>,
-	=?UTF-8?q?=27N=C3=ADcolas=20F=20=2E=20R=20=2E=20A=20=2E=20Prado=27?= <nfraprado@collabora.com>,
-	linux-arm-msm@vger.kernel.org,
-	linux-serial@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Johan Hovold <johan+linaro@kernel.org>,
-	stable@vger.kernel.org
-Subject: [PATCH 8/8] serial: qcom-geni: fix polled console corruption
-Date: Mon,  2 Sep 2024 17:24:51 +0200
-Message-ID: <20240902152451.862-9-johan+linaro@kernel.org>
-X-Mailer: git-send-email 2.44.2
-In-Reply-To: <20240902152451.862-1-johan+linaro@kernel.org>
-References: <20240902152451.862-1-johan+linaro@kernel.org>
+	s=arc-20240116; t=1725290778; c=relaxed/simple;
+	bh=mdB6GDxg3I3eGF//Wyea67XTwdwtlijxajgQ92wG6d4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lR+UCO2JP5xRPkGqXPRrniskbjMsqEFqXfsMhJ565xbvJ9MZPyoE95vDtmrY1sN9SKAY4R6/j9z+TCbTErSP8mTsqUdwRIy4nU4Cu6Sp82596RPmn4IhzAxWUBgV9K5vignwxnZhHTMRIWmQzRfl7eqQ3om+CFhPbTzAYY/VoBc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=osandov.com; spf=none smtp.mailfrom=osandov.com; dkim=pass (2048-bit key) header.d=osandov-com.20230601.gappssmtp.com header.i=@osandov-com.20230601.gappssmtp.com header.b=aLtRauBH; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=osandov.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=osandov.com
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-205557f9699so2667795ad.2
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2024 08:26:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=osandov-com.20230601.gappssmtp.com; s=20230601; t=1725290776; x=1725895576; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=mQrdUk9Qs95YbYxvkhvXPIF077+rLJVqqSG6sH4DY10=;
+        b=aLtRauBHycUX+ED4G1vz6Cnt9aJaAHcqKkdjjCT5XGqLQdqirY4WT8mdT18HwrxNk/
+         UVticMtx58yxZGA0UleFGgzvDxeOxPpr36lNEpNU8BYW0+Gkpmgm6yUkGEpoWeKijxFP
+         5B7Jkm159ryDpNt01XQZz+tSZKbsE+3/QLVlIn+5m26xUME/DgPKpWLFkdcXmfugeM90
+         Z2WPkmRGQVdlrbPjaJFIqVWOLft+ViRbAoVlx9gzILGsrf3HirDl+ZbRjpxwDUCen8SQ
+         8RS5ckdQmScHg8EFxYrbovGTnmwfJcdE/dtGXUweD+iGCW3+mZycJWYGsZSY9fDJ3EVd
+         cd4w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725290776; x=1725895576;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=mQrdUk9Qs95YbYxvkhvXPIF077+rLJVqqSG6sH4DY10=;
+        b=b/MqxdqjqpWHzagXWAAIj1e8hHMrLhVGoQpD3vy0wBNH4KjWZXnBaGl/xBhHxL70ko
+         92+owqRskX+p+P8+InekxzLE0pIkIXphQ/kvz447Yr7FEV0nW9Rp2x5nbjJx/z76Rjav
+         AZpzSKy08m2FVhugemgvzNQROnQoBfozbTzfm1v/fqRruD2xBRIKLEuEZksZrRViIdm1
+         fhHbOzNYaErDIOflRSrq9O8niUoPTjJT4Nk1IncUSfaJbITDXESIVMXFjzIFW5ZnoMRI
+         O//SoAhuKCCYgZYLyEFZYk6VuzIBIVN8yoMCSoy7FtaMeJLUo06xlROqutFBVSgRG5Xc
+         rqvQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXOEh08Mh9REUQH0WVD837xj5+kFBxOWFWAMmCpr0Gv2LGWIwqMEuTlHMf/EN5LSB8pzkmyE4SmTNMmc0o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyK6iTKTgEL9TGHN+CYEXCTyRddh74w4tTC71xzEOsX5BDVP9ZA
+	6617gn01obpUjdStSMsvEcoh4CkPjjdrNz1lIse/dPgMgb7KiS9qqF45wv/isBw=
+X-Google-Smtp-Source: AGHT+IEIj7UpxJT8a0mIACuZXNoTi9evmUotnGeb8wHYPTVQQPCrd38PWufROqKQIhaL5lvUsVlKgg==
+X-Received: by 2002:a17:902:e549:b0:205:8948:3578 with SMTP id d9443c01a7336-20589483694mr10763885ad.2.1725290776144;
+        Mon, 02 Sep 2024 08:26:16 -0700 (PDT)
+Received: from telecaster ([2601:602:8980:9170::901f])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-205152d04a3sm67470855ad.110.2024.09.02.08.26.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 02 Sep 2024 08:26:14 -0700 (PDT)
+Date: Mon, 2 Sep 2024 08:26:13 -0700
+From: Omar Sandoval <osandov@osandov.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: Christophe Leroy <christophe.leroy@csgroup.eu>, linux-mm@kvack.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Christoph Hellwig <hch@lst.de>, x86@kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	loongarch@lists.linux.dev, linux-mips@vger.kernel.org,
+	linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+	linux-um@lists.infradead.org, kernel-team@fb.com
+Subject: Re: [PATCH 0/2] mm: make copy_to_kernel_nofault() not fault on user
+ addresses
+Message-ID: <ZtXZFc9kZAUMD4e0@telecaster>
+References: <cover.1725223574.git.osandov@fb.com>
+ <5fa50d78-6764-4f99-87b3-7bd7edbeea5a@csgroup.eu>
+ <ZtVbrM4rQsGFJo_t@telecaster>
+ <861d448c-ce1d-4b74-87eb-9b211dfebbb1@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <861d448c-ce1d-4b74-87eb-9b211dfebbb1@redhat.com>
 
-The polled UART operations are used by the kernel debugger (KDB, KGDB),
-which can interrupt the kernel at any point in time. The current
-Qualcomm GENI implementation does not really work when there is on-going
-serial output as it inadvertently "hijacks" the current tx command,
-which can result in both the initial debugger output being corrupted as
-well as the corruption of any on-going serial output (up to 4k
-characters) when execution resumes:
+On Mon, Sep 02, 2024 at 10:56:27AM +0200, David Hildenbrand wrote:
+> On 02.09.24 08:31, Omar Sandoval wrote:
+> > On Mon, Sep 02, 2024 at 08:19:33AM +0200, Christophe Leroy wrote:
+> > > 
+> > > 
+> > > Le 02/09/2024 à 07:31, Omar Sandoval a écrit :
+> > > > [Vous ne recevez pas souvent de courriers de osandov@osandov.com. Découvrez pourquoi ceci est important à https://aka.ms/LearnAboutSenderIdentification ]
+> > > > 
+> > > > From: Omar Sandoval <osandov@fb.com>
+> > > > 
+> > > > Hi,
+> > > > 
+> > > > I hit a case where copy_to_kernel_nofault() will fault (lol): if the
+> > > > destination address is in userspace and x86 Supervisor Mode Access
+> > > > Prevention is enabled. Patch 2 has the details and the fix. Patch 1
+> > > > renames a helper function so that its use in patch 2 makes more sense.
+> > > > If the rename is too intrusive, I can drop it.
+> > > 
+> > > The name of the function is "copy_to_kernel". If the destination is a user
+> > > address, it is not a copy to kernel but a copy to user and you already have
+> > > the function copy_to_user() for that. copy_to_user() properly handles SMAP.
+> > 
+> > I'm not trying to copy to user. I am (well, KDB is) trying to copy to an
+> > arbitrary address, and I want it to return an error instead of crashing
+> > if the address is not a valid kernel address. As far as I can tell, that
+> > is the whole point of copy_to_kernel_nofault().
+> 
+> The thing is that you (well, KDB) triggers something that would be
+> considered a real BUG when triggered from "ordinary" (non-debugging) code.
 
-0190: abcdefghijklmnopqrstuvwxyz0123456789 0190: abcdefghijklmnopqrstuvwxyz0123456789
-0191: abcdefghijklmnop[   50.825552] sysrq: DEBUG
-qrstuvwxyz0123456789 0191: abcdefghijklmnopqrstuvwxyz0123456789
-Entering kdb (current=0xffff53510b4cd280, pid 640) on processor 2 due to Keyboard Entry
-[2]kdb> go
-omlji3h3h2g2g1f1f0e0ezdzdycycxbxbwawav :t72r2rp
-o9n976k5j5j4i4i3h3h2g2g1f1f0e0ezdzdycycxbxbwawavu:t7t8s8s8r2r2q0q0p
-o9n9n8ml6k6k5j5j4i4i3h3h2g2g1f1f0e0ezdzdycycxbxbwawav v u:u:t9t0s4s4rq0p
-o9n9n8m8m7l7l6k6k5j5j40q0p                                              p o
-o9n9n8m8m7l7l6k6k5j5j4i4i3h3h2g2g1f1f0e0ezdzdycycxbxbwawav :t8t9s4s4r4r4q0q0p
+If that's the case, then it's a really weird inconsistency that it's OK
+to call copy_from_kernel_nofault() with an invalid address but a bug to
+call copy_to_kernel_nofault() on the same address. Again, isn't the
+whole point of these functions to fail gracefully instead of crashing on
+invalid addresses? (Modulo the offline and hwpoison cases you mention
+for /proc/kcore.)
 
-Fix this by making sure that the polled output implementation waits for
-the tx fifo to drain before cancelling any on-going longer transfers. As
-the polled code cannot take any locks, leave the state variables as they
-are and instead make sure that the interrupt handler always starts a new
-tx command when there is data in the write buffer.
+> But now I am confused: "if the destination address is in userspace" does not
+> really make sense in the context of KDB, no?
+> 
+>   [15]kdb> mm 0 1234
+>   [   94.652476] BUG: kernel NULL pointer dereference, address:
+> 0000000000000000
+> 
+> Why is address 0 in "user space"? "Which" user space?
 
-Since the debugger can interrupt the interrupt handler when it is
-writing data to the tx fifo, it is currently not possible to fully
-prevent losing up to 64 bytes of tty output on resume.
+Sure, it's not really user space, but it's below TASK_SIZE_MAX, so
+things like handle_page_fault() and fault_in_kernel_space() treat it as
+if it were a user address. I could
+s/userspace address/address that is less than TASK_SIZE_MAX or is_vsyscall_vaddr(address)/.
 
-Fixes: c4f528795d1a ("tty: serial: msm_geni_serial: Add serial driver support for GENI based QUP")
-Cc: stable@vger.kernel.org      # 4.17
-Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
----
- drivers/tty/serial/qcom_geni_serial.c | 27 ++++++++++++++++++---------
- 1 file changed, 18 insertions(+), 9 deletions(-)
+> Isn't the problem here that KDB lets you blindly write to any non-existing
+> memory address?
+> 
+> 
+> Likely it should do some proper filtering like we do in fs/proc/kcore.c:
+> 
+> Take a look at the KCORE_RAM case where we make sure the page exists, is
+> online and may be accessed. Only then, we trigger a
+> copy_from_kernel_nofault(). Note that the KCORE_USER is a corner case only
+> for some special thingies on x86 (vsyscall), and can be ignored for our case
+> here.
 
-diff --git a/drivers/tty/serial/qcom_geni_serial.c b/drivers/tty/serial/qcom_geni_serial.c
-index fbed143c90a3..cf8bafd99a09 100644
---- a/drivers/tty/serial/qcom_geni_serial.c
-+++ b/drivers/tty/serial/qcom_geni_serial.c
-@@ -145,6 +145,7 @@ static const struct uart_ops qcom_geni_uart_pops;
- static struct uart_driver qcom_geni_console_driver;
- static struct uart_driver qcom_geni_uart_driver;
- 
-+static void __qcom_geni_serial_cancel_tx_cmd(struct uart_port *uport);
- static void qcom_geni_serial_cancel_tx_cmd(struct uart_port *uport);
- 
- static inline struct qcom_geni_serial_port *to_dev_port(struct uart_port *uport)
-@@ -403,13 +404,14 @@ static int qcom_geni_serial_get_char(struct uart_port *uport)
- static void qcom_geni_serial_poll_put_char(struct uart_port *uport,
- 							unsigned char c)
- {
--	writel(DEF_TX_WM, uport->membase + SE_GENI_TX_WATERMARK_REG);
-+	if (qcom_geni_serial_main_active(uport)) {
-+		qcom_geni_serial_poll_tx_done(uport);
-+		__qcom_geni_serial_cancel_tx_cmd(uport);
-+	}
-+
- 	writel(M_CMD_DONE_EN, uport->membase + SE_GENI_M_IRQ_CLEAR);
- 	qcom_geni_serial_setup_tx(uport, 1);
--	WARN_ON(!qcom_geni_serial_poll_bit(uport, SE_GENI_M_IRQ_STATUS,
--						M_TX_FIFO_WATERMARK_EN, true));
- 	writel(c, uport->membase + SE_GENI_TX_FIFOn);
--	writel(M_TX_FIFO_WATERMARK_EN, uport->membase + SE_GENI_M_IRQ_CLEAR);
- 	qcom_geni_serial_poll_tx_done(uport);
- }
- #endif
-@@ -688,13 +690,10 @@ static void qcom_geni_serial_stop_tx_fifo(struct uart_port *uport)
- 	writel(irq_en, uport->membase + SE_GENI_M_IRQ_EN);
- }
- 
--static void qcom_geni_serial_cancel_tx_cmd(struct uart_port *uport)
-+static void __qcom_geni_serial_cancel_tx_cmd(struct uart_port *uport)
- {
- 	struct qcom_geni_serial_port *port = to_dev_port(uport);
- 
--	if (!qcom_geni_serial_main_active(uport))
--		return;
--
- 	geni_se_cancel_m_cmd(&port->se);
- 	if (!qcom_geni_serial_poll_bit(uport, SE_GENI_M_IRQ_STATUS,
- 						M_CMD_CANCEL_EN, true)) {
-@@ -704,6 +703,16 @@ static void qcom_geni_serial_cancel_tx_cmd(struct uart_port *uport)
- 		writel(M_CMD_ABORT_EN, uport->membase + SE_GENI_M_IRQ_CLEAR);
- 	}
- 	writel(M_CMD_CANCEL_EN, uport->membase + SE_GENI_M_IRQ_CLEAR);
-+}
-+
-+static void qcom_geni_serial_cancel_tx_cmd(struct uart_port *uport)
-+{
-+	struct qcom_geni_serial_port *port = to_dev_port(uport);
-+
-+	if (!qcom_geni_serial_main_active(uport))
-+		return;
-+
-+	__qcom_geni_serial_cancel_tx_cmd(uport);
- 
- 	port->tx_remaining = 0;
- 	port->tx_queued = 0;
-@@ -930,7 +939,7 @@ static void qcom_geni_serial_handle_tx_fifo(struct uart_port *uport,
- 	if (!chunk)
- 		goto out_write_wakeup;
- 
--	if (!port->tx_remaining) {
-+	if (!active) {
- 		qcom_geni_serial_setup_tx(uport, pending);
- 		port->tx_remaining = pending;
- 		port->tx_queued = 0;
--- 
-2.44.2
+Sure, it would be better to harden KDB against all of these special
+cases. But you can break things in all sorts of fun ways with a
+debugger, anyways. The point of this patch is that it's nonsense that a
+function named copy_to_kernel_nofault() does indeed fault in a trivial
+case like address < TASK_SIZE_MAX.
 
+Thanks,
+Omar
 
