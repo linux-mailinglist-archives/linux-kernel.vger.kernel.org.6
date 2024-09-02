@@ -1,268 +1,133 @@
-Return-Path: <linux-kernel+bounces-310820-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310819-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDC6E9681A5
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 10:24:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 125069681A4
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 10:24:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DE01D1C21E24
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 08:24:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C349C2828A0
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 08:24:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A60C31865F2;
-	Mon,  2 Sep 2024 08:23:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0FF5186287;
+	Mon,  2 Sep 2024 08:23:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=aspeedtech.com header.i=@aspeedtech.com header.b="b/K6MgDV"
-Received: from APC01-PSA-obe.outbound.protection.outlook.com (mail-psaapc01on2116.outbound.protection.outlook.com [40.107.255.116])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d64tsKgi"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B3021581F8;
-	Mon,  2 Sep 2024 08:23:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.255.116
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725265428; cv=fail; b=tq7Ynlxl1wLCLvX6AD9sKKqSdeqGFeKft7SdUBqh0V28VmrMKnPX1OCrgZGPU/EVX4AtGaPmv/QsgJdILt79CFvYcrKxRmCBy4Nwkoye1dMuow1TXt7UcAUFIwrmPV9/Nj6ZW/4UV0KZm3VMjb74uNRhycHvWMeki6mR0Lu7g3A=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53D7C185B49;
+	Mon,  2 Sep 2024 08:23:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725265428; cv=none; b=U5jheu6g8nAFcBgm8plx7fNFZbd/EMrJ9PSxJKTPVUT1zSEJfc/U7/i84T+OSYcxjIaB5YsxxnT7UyKeudlw0RnW8ucFEzwrXrww/Sa/NfRRdg5NkUWVOYn3dxngF4cfnmxEB4l7X20AO/vpT/ZvHzarPRz6wSN9izAgjeizC1o=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1725265428; c=relaxed/simple;
-	bh=rnsuIn6HHDZfST6lPuVFytooZAByFB+HFPumssID5Fc=;
-	h=From:To:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=GERlCIs/QA1WG0Y8TPWuSBReZm7S3fiiYsW+pF5Zg2te+PpFohnTvlh7zD+EI/TvIF2zVT7IXHmhHokokE2m2XIMJqZkcvlGEbv4KiYXMaB9Urk6K27LwV3iAy0nwxpYuNhAWWByKqZjaw6roQXH+ihiRS+ICq/dHrAJs1InnPY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com; spf=pass smtp.mailfrom=aspeedtech.com; dkim=pass (2048-bit key) header.d=aspeedtech.com header.i=@aspeedtech.com header.b=b/K6MgDV; arc=fail smtp.client-ip=40.107.255.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aspeedtech.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=cMtIwiIBtOw6Jl+n7JUOD6zyJbCbaip8K3unTvOuJU6/Rx24Y9SJoPdCaSp40UTpCO7zTv8zSxEf/VQZFxNH/uFVEnJX2InwhREAZ3qs3s5cwx+aXlgbyfssGntDb1LLABcP0cEPjDGZkBG0+49v9nBb4htijKPDwRo+F8zx1rvIEKSiMg05/OaGiHVwh0nZGLgoY7SaDjoXsFIQVVj3IIN6LPttoDb8NAdrU0BNGvmRu4sS1xsfVxjdxEkKm/1ImhyWZZQ8r0QilVY2i2TsqGpHlOBifDubQUakeKlZW4PSRmuUnLS5AadqHUKJYX28u4fkh8QEaFSRxp9p5sduGQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=dU6JLzruOY5uh6CRJnaZPS3J6xtqJJksiiLHp1b9zhc=;
- b=gHA01n4wAni/F3J5g7Cmwq1Pe9WBye2kh0psVWIm0I8dzmmtn9CtpItl6jyhfE1UGY2J1yGwkCQ50FAs/TvCmaOg5raSsea2dhwVjiaF5Rro2aqDKm/g65TLK0DfNqNWdvuzmoPVQdElmDEsVSCWbOJo8DI5jPbIVtGl+odkXllo0S/kCtjStEYx8LQ97KvsEOmboHV1JJEuoQiMio0Fdh0aqvQtPT9ek80q3Vyf2SNIVIiD8Da0U6VDubfHitG5QuIuhnCu23O1O957JmRGeVw+vgtdZ/uHm+bYUvQUolXn6hnjb0i0UTNyzPhKOlTjmOnEkBmgxopVenEusukeKw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=aspeedtech.com; dmarc=pass action=none
- header.from=aspeedtech.com; dkim=pass header.d=aspeedtech.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aspeedtech.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=dU6JLzruOY5uh6CRJnaZPS3J6xtqJJksiiLHp1b9zhc=;
- b=b/K6MgDVw9VVuAC54eIj4xjp+Jy16L9nhFKLsKvKqGcBMS0j56bFXu/D/mlaT86RdN7fZokMTar0ZK73sC1Ndhf41tcwYNlaCybiAq+AiE9ZSyYF9dWZMZ4tMoizVmA+lAFjUrt3FTDIEEy5ivlMxCrEku2HfaHD+a/Ao3gMObie4aRFASSESdxuipJBvYnx13jSW1FfNqVJmMlVAem9ykSQSb90K9A3OKzx+sPXqKkYfE3Y4lM6jjQfs6ZfNU4AJHC0wV6ygXdYjduV4Uylh4CjBvuN4vr4iyo3EGklcbGwwXQuPJBX0qi+t+bAcVzN0nBTVuKsmPKShsu3+MVnvQ==
-Received: from OSQPR06MB7252.apcprd06.prod.outlook.com (2603:1096:604:29c::6)
- by SEZPR06MB6642.apcprd06.prod.outlook.com (2603:1096:101:17b::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.21; Mon, 2 Sep
- 2024 08:23:40 +0000
-Received: from OSQPR06MB7252.apcprd06.prod.outlook.com
- ([fe80::814e:819a:7d52:7448]) by OSQPR06MB7252.apcprd06.prod.outlook.com
- ([fe80::814e:819a:7d52:7448%6]) with mapi id 15.20.7918.024; Mon, 2 Sep 2024
- 08:23:39 +0000
-From: Billy Tsai <billy_tsai@aspeedtech.com>
-To: "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "brgl@bgdev.pl"
-	<brgl@bgdev.pl>, "robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
-	<krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
-	"joel@jms.id.au" <joel@jms.id.au>, "andrew@codeconstruct.com.au"
-	<andrew@codeconstruct.com.au>, "linux-gpio@vger.kernel.org"
-	<linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "linux-aspeed@lists.ozlabs.org"
-	<linux-aspeed@lists.ozlabs.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, BMC-SW <BMC-SW@aspeedtech.com>
-Subject: Re: [PATCH v1 1/2] dt-bindings: gpio: aspeed,ast2400-gpio: Support
- ast2700
-Thread-Topic: [PATCH v1 1/2] dt-bindings: gpio: aspeed,ast2400-gpio: Support
- ast2700
-Thread-Index: AQHa85jVx8y1iulrU0+Po1dhfG22krJEOU8Y
-Date: Mon, 2 Sep 2024 08:23:39 +0000
-Message-ID:
- <OSQPR06MB72523232F3596E3479D2785F8B922@OSQPR06MB7252.apcprd06.prod.outlook.com>
-References: <20240821070740.2378602-1-billy_tsai@aspeedtech.com>
- <20240821070740.2378602-2-billy_tsai@aspeedtech.com>
-In-Reply-To: <20240821070740.2378602-2-billy_tsai@aspeedtech.com>
-Accept-Language: en-US, zh-TW
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-msip_labels:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=aspeedtech.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: OSQPR06MB7252:EE_|SEZPR06MB6642:EE_
-x-ms-office365-filtering-correlation-id: 9534345b-f4ba-4c15-8c98-08dccb288c8e
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|1800799024|7416014|376014|366016|38070700018|921020;
-x-microsoft-antispam-message-info:
- =?iso-8859-1?Q?HJn7K+U5oTtrgRHkBRUfeQ4qfdn7A0fu3PCGaQqZKBVoD398WxcwW6Jprm?=
- =?iso-8859-1?Q?4tn4GhGyD/bpkgnc+NThO9KRO4v+tNbIvzqr19++4ch9ssNG82Hvly4heK?=
- =?iso-8859-1?Q?7u/4JTSoXnHGU6P1g6KHDE9xXWo/D3aqeV51GvwZ7TbqyxVhsWYTTW8xoB?=
- =?iso-8859-1?Q?B04MznwPPhThY5zH8mXir3n6W7pF6Q2G6TI2LLmS22Z9KdqjP0SNedg0iB?=
- =?iso-8859-1?Q?hxk72rE4MZwvK1PP4+3ZKbftpsij0NqVyCOhe4+pqifquZp1peY9LN2KnN?=
- =?iso-8859-1?Q?f/ylpr2KBJjqdTzktIOSP01hq3sRbG7myCxDZDjCGWus1rLZ60GFuAIvEH?=
- =?iso-8859-1?Q?Ue75QsPDVnvbCLxuDVnaOwe0nMRiLAze0vMxgqUTWq8IZMUXUycJb1BLhq?=
- =?iso-8859-1?Q?jBWcuZDgpi4i92w8WdFK87WDbocGvI9/Z5j+1sLHWe2/sZ0BvcljtcgrE6?=
- =?iso-8859-1?Q?mN5ISkJnL/CqMj2w9AU/9Ktbm8PuMoPertGbSNYWbMEulQHvIlw05JyBet?=
- =?iso-8859-1?Q?GFVkAB0ITkh3GRn0q1YIiSwWJjMH2dxYI+M8AlHJ8zUvXH76f8AkbUEECc?=
- =?iso-8859-1?Q?CS7IdNpirLfcwQ+vLByNSOZkh5TQEny0CrXbzsnMjQdzBoq/hz/WmuyFFW?=
- =?iso-8859-1?Q?cUGSkqEIlEyi+LiYKRkuxc3bTXuD90p9sgpycm7DRdiFfW+l3qM5M4cdJH?=
- =?iso-8859-1?Q?atYsgLlJ2CrbuHAykXhNoA+o6kw/jIh1Cg/rA09czjgJpZGh5dLpsUBoIo?=
- =?iso-8859-1?Q?el2q5Ir0Yz7d/ImBWcsBKlQ65RHrfXiLeRL394BBYBgI0FmPjrcXaNDc6/?=
- =?iso-8859-1?Q?B5vYQzedOy/Exvlfemw/P7DXooRm5vuEY8ti7LEpZWTyYmXZ0wvmPj5pj5?=
- =?iso-8859-1?Q?LUTULho9S4LYx7fbo8FIUtdrerDco7buMTuqPzuoKU3UJXJxl3UyfuKC4A?=
- =?iso-8859-1?Q?0kfuAVN/IBB/DueS3C74UlQuUQ6YhzUfBg+c4tkqk/o+6Q7aaLB22Jphs5?=
- =?iso-8859-1?Q?pL0Grne2HXZB8fMV3VYKxpLHtvtTe1XzSR9RNAwiA8IJKLn3+10ZzeZXyN?=
- =?iso-8859-1?Q?hsr/fb/726DpAkeLf5Ze1ugyS375RmKniTT1u3ky8cUzr9ztbtJa8Hv2eT?=
- =?iso-8859-1?Q?k8ij9kMXjN7X+MdWrB8HMT04OoVxKjkfHoPjFte2M/7LeA6vKpJxSNcV7Q?=
- =?iso-8859-1?Q?anX6azxiBNdLMY4lcPZoexOzfdpaC+PmcbbP8GzowsNr2qLfbL0qHnQJ2B?=
- =?iso-8859-1?Q?1spRsGS53jbt+D8uMGifaPlrIGTFLqiiNJvEWvcz2r4BrVqEymOLHg1mQ7?=
- =?iso-8859-1?Q?8PBaG8Y72SDmEyp8iCbA+lRbTM/f6KDYS/nh49MnS8Hpv4Qslg+buUELWE?=
- =?iso-8859-1?Q?F4lnpob0qdscTMrZHfErqFWaUtNUVG/R8ypl2hdOzEsSK9cujiUWVbk1By?=
- =?iso-8859-1?Q?/tfEz8RZyiHNpyAGUEGcyvvFI1VELnzxFii8ZccijTdyhDW+WoC/0BuEGl?=
- =?iso-8859-1?Q?0=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OSQPR06MB7252.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016)(38070700018)(921020);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?iso-8859-1?Q?8edOlyvmC1vGJT/+EoQLtA3VGGdfMOZ1wPzaPLDFO1/uwSdsK4PIcDPkow?=
- =?iso-8859-1?Q?E5y++cmBrjQktrgyO7w0qdnyTReIPIw9Pld/nhywDZPOXIJVZjwmIWRHQh?=
- =?iso-8859-1?Q?2Yj12UdJ85CNgQSc+VJhx53p9Ctcd6FJPZHApgVUKPuaAHWbcvVyjM3tno?=
- =?iso-8859-1?Q?9cqpDgGHr6INViq4re/DvUuFLpiefWgehgTF45UtttUkPeJv38UU/I5KxD?=
- =?iso-8859-1?Q?NA7X9APHXTKCV/2Y14vhjbsyweO/yr8ldj+wkoou6L72vKYlnkdGc9qpFI?=
- =?iso-8859-1?Q?tVYJpXGLxvSo/5Zr+xZ4qvD1fFGosmHSEW+bp55+EJg7vbfRKq2to11bi5?=
- =?iso-8859-1?Q?xYDf4OCCuvEqYjU8/Xm3Ey9bLtXpLmhvzkn7iMVo9Xg0CNTU9zARdgOT3F?=
- =?iso-8859-1?Q?bkLxRiQ5DujShFaYjjgCZ75i8xYO13eF8qhBibGlduy1gXOSH35wfgj9xq?=
- =?iso-8859-1?Q?MtuTEESiMJ7GyGcfxII+O6B7NpWE77HhV/Sf6imFk9r1XZ2J/JQSnXEKEp?=
- =?iso-8859-1?Q?Xf1mxFpxXsrVk5ehYP1sYuekIj2zR4vO/2VdmNYulDQVxSdE9neElWZF4s?=
- =?iso-8859-1?Q?N0g3HJKw0TU12Vzx7I3Ure9IPUb17QAEvNY9pccEOM0zxSiNEppeLE+wEH?=
- =?iso-8859-1?Q?p6Gzevh2MdODDczGgQ0Npm4aDj5yEB1SVpU9QlLeDsNLHT24uEucGVispS?=
- =?iso-8859-1?Q?MWV1Ta+2UtqK/rPxGX9po0G0Bbf+whYsqj7wMoffc6Ip/VeaDbAyqj6/6J?=
- =?iso-8859-1?Q?GSpUYNBBqfcJTaF6N3UrwnvToNStTUnIc1zk3vlVHWiN+XNQMcU9zu8nxv?=
- =?iso-8859-1?Q?2TJRfowoczVNROMyCxo3EKpZAK5JwVYm4ogxzmaXlfk7pq0fgfOe3v9ODQ?=
- =?iso-8859-1?Q?UXjN+8ISU38ss5zO0/7TvijsW/KuZsqXKYU2iKmSvPpCAzunV5/lg8QaOa?=
- =?iso-8859-1?Q?tHmuxKxq35RD0GFQ7ckf3XGUDkINWhtFe+ILe8rDuU+5s5Xs/8giRKy/Hc?=
- =?iso-8859-1?Q?2P195WuIX3e806C4gsMnOzNfGIM+RPGnEA6mVdvuQmu2ObDslk3dcQXu0Y?=
- =?iso-8859-1?Q?9CVL8TW6PjSttYO/zp0wYX3NF7H9UZwBU6t2VeRkqmyPEw/7Da2Jqq2MsQ?=
- =?iso-8859-1?Q?NQTqKc6ThmUwS2/EnLFZi2g2lo6uAPfTL93MfXMshh652b9K4hNJtIchnc?=
- =?iso-8859-1?Q?HCBG21MCUKUMxAKXMAZd+HHsH56cIg8UxvuiAt/3NPUZeqIqvzh3eDR3sM?=
- =?iso-8859-1?Q?uDsg8q0kDjd/vJ5UkTghDGC4/3DMlT3L82Hf0drIOkR/0qQWdmKQVrleRv?=
- =?iso-8859-1?Q?JyR9hsLHkpwoyk2cj3Ax5xhQH6cmFry1CQsblheImlJ6k5A2sr+/mCsdI3?=
- =?iso-8859-1?Q?mYj0a8NYABk7WrWrqIxZnBUZQ4RefeSHqqCZLQKl4/z8HLKfnVVpcTcVs0?=
- =?iso-8859-1?Q?VK+e8zj8m7g2bz91anaonZfn/rDKOR7zLXDtfHwiWmK63n5/lOXxQvFtsP?=
- =?iso-8859-1?Q?BLvzKfH6ws3973cQvM/wvBVRWXyqQR4XnRje8uMXLVAJO/N6Boi9JR0bSu?=
- =?iso-8859-1?Q?VgR7I0yEUVoRPo9GJs9WEeSpyMigYvOsTo8h6vJcBCkUIqHekoC9XTT659?=
- =?iso-8859-1?Q?JC8aUqPbt9S8zvE83i3oHjrE9OL4om9Cpz?=
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+	bh=Vw8owfhCT5NXCuUPrz+ei1KCOX779W7JZ98MuG1X2W4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=g7//hIuO8z7AgFpFkiDvGWYF0Mq7N0zeI8kbW5G+5VZr0y2inVUysLRQSOpfmq04Dvcv1OIQPe8+/9ClxvlB29c81cM/q3pMAev4qp8VoYizBxxJ7O8WYA/bQSbQlZrzQM9jSDsBJxaoYStx7x6n5p7n2nsn8kjxv7EML6XXtH8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d64tsKgi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5BBF9C4CEC2;
+	Mon,  2 Sep 2024 08:23:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725265427;
+	bh=Vw8owfhCT5NXCuUPrz+ei1KCOX779W7JZ98MuG1X2W4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=d64tsKgiZzjYTOkitlfnwrz3lEryc10shY3safBerLoybDvdJxIxZI6JfAePdfxFM
+	 JkR/vZz0oZIPbL2ebh/dHJrK6NqC3nZCk0C2JM7E4m8Q4K20d/HjomMMc7cxcnAyWm
+	 6yc/aQuDkvb/jGkwh5EcDtjAGkk6qY/XccGFxqtRTn52cDQd9bZMQLh+gdH5Z/olDa
+	 I8d6qccvCjJQd+mNJL15Oxk1jVghce2qYb9Skawlk5p022ongUnqq3bcAQJV/AueKD
+	 kfW0Lx7NvTFW3+iIIYMG3dAd64iTHRQgcEVwxHSPSqQxbS3OqqmdRS80V7vUPhwF2g
+	 VHtYP5otX4KzQ==
+Date: Mon, 2 Sep 2024 09:23:42 +0100
+From: Simon Horman <horms@kernel.org>
+To: "Guilherme G. Piccoli" <gpiccoli@igalia.com>
+Cc: kexec@lists.infradead.org, linux-doc@vger.kernel.org, bhe@redhat.com,
+	corbet@lwn.net, kernel@gpiccoli.net, linux-kernel@vger.kernel.org,
+	stephen.s.brennan@oracle.com, kernel-dev@igalia.com,
+	dyoung@redhat.com, vgoyal@redhat.com,
+	linux-debuggers@vger.kernel.org
+Subject: Re: [PATCH V2] Documentation: Improve crash_kexec_post_notifiers
+ description
+Message-ID: <20240902082342.GC23170@kernel.org>
+References: <20240830182219.485065-1-gpiccoli@igalia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: aspeedtech.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: OSQPR06MB7252.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9534345b-f4ba-4c15-8c98-08dccb288c8e
-X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Sep 2024 08:23:39.6750
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 43d4aa98-e35b-4575-8939-080e90d5a249
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: /V5wvc6o8tUL68YWty6+3gBkF+lnUGuhH6g7o1J2Hw1HDX6asCou1nkkolVyBaB/w9drc9UDKpW4UqYUYg0AHArYqA4a3MEHB07kNpBC5I4=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEZPR06MB6642
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240830182219.485065-1-gpiccoli@igalia.com>
 
-Hi Krzysztof,=0A=
-=0A=
-I'm sorry for missing your comment.=0A=
-=0A=
-I will remove the example in the next version of the patch.=0A=
-=0A=
-Thanks=0A=
-=0A=
-Best Regards,=0A=
-Billy Tsai=0A=
-=0A=
-> > The AST2700 is the 7th generation SoC from Aspeed, featuring two GPIO=
-=0A=
-> > controllers: one with 12 GPIO pins and another with 216 GPIO pins.=0A=
-> > =0A=
-> > Signed-off-by: Billy Tsai <billy_tsai@aspeedtech.com>=0A=
-> > ---=0A=
-> >  .../bindings/gpio/aspeed,ast2400-gpio.yaml    | 46 ++++++++++++++++++-=
-=0A=
-> >  1 file changed, 45 insertions(+), 1 deletion(-)=0A=
-> > =0A=
-> > diff --git a/Documentation/devicetree/bindings/gpio/aspeed,ast2400-gpio=
-.yaml b/Documentation/devicetree/bindings/gpio/> aspeed,ast2400-gpio.yaml=
-=0A=
-> > index cf11aa7ec8c7..4d439972c14b 100644=0A=
-> > --- a/Documentation/devicetree/bindings/gpio/aspeed,ast2400-gpio.yaml=
-=0A=
-> > +++ b/Documentation/devicetree/bindings/gpio/aspeed,ast2400-gpio.yaml=
-=0A=
-> > @@ -15,6 +15,7 @@ properties:=0A=
-> >        - aspeed,ast2400-gpio=0A=
-> >        - aspeed,ast2500-gpio=0A=
-> >        - aspeed,ast2600-gpio=0A=
-> > +      - aspeed,ast2700-gpio=0A=
-> >  =0A=
-> >    reg:=0A=
-> >      maxItems: 1=0A=
-> > @@ -42,7 +43,7 @@ properties:=0A=
-> >      const: 2=0A=
-> >  =0A=
-> >    ngpios:=0A=
-> > -    minimum: 36=0A=
-> > +    minimum: 12=0A=
-> >      maximum: 232=0A=
-> >  =0A=
-> >  required:=0A=
-> > @@ -93,6 +94,20 @@ allOf:=0A=
-> >            enum: [ 36, 208 ]=0A=
-> >        required:=0A=
-> >          - ngpios=0A=
-> > +  - if:=0A=
-> > +      properties:=0A=
-> > +        compatible:=0A=
-> > +          contains:=0A=
-> > +            const: aspeed,ast2700-gpio=0A=
-> > +    then:=0A=
-> > +      properties:=0A=
-> > +        gpio-line-names:=0A=
-> > +          minItems: 12=0A=
-> > +          maxItems: 216=0A=
-> > +        ngpios:=0A=
-> > +          enum: [ 12, 216 ]=0A=
-> > +      required:=0A=
-> > +        - ngpios=0A=
-> >  =0A=
-> >  additionalProperties: false=0A=
-> >  =0A=
-> > @@ -146,3 +161,32 @@ examples:=0A=
-> >          gpio-ranges =3D <&pinctrl 0 208 36>;=0A=
-> >          ngpios =3D <36>;=0A=
-> >      };=0A=
-> > +  - |=0A=
-> > +    soc {=0A=
-> > +        #address-cells =3D <2>;=0A=
-> > +        #size-cells =3D <2>;=0A=
-> > +        #include <dt-bindings/interrupt-controller/arm-gic.h>=0A=
-> > +        gpio2: gpio@14c0b000 {=0A=
-> > +            compatible =3D "aspeed,ast2700-gpio";=0A=
-=0A=
-> No need for new example, no relavant/important differences here.=0A=
-=0A=
-=0A=
-> +            reg =3D <0x0 0x14c0b000 0x0 0x1000>;=0A=
-> +            interrupts-extended =3D <&soc1_intc2 18>;=0A=
-> +            interrupt-controller;=0A=
-> +            #interrupt-cells =3D <2>;=0A=
-> +            #gpio-cells =3D <2>;=0A=
-> +            gpio-controller;=0A=
-> +            gpio-ranges =3D <&pinctrl1 0 0 216>;=0A=
-> +            ngpios =3D <216>;=0A=
-> +        };=0A=
-> +=0A=
-> +        gpio3: gpio@12c11000 {=0A=
-> +            compatible =3D "aspeed,ast2700-gpio";=0A=
-=0A=
-> Especially for two the same examples...=0A=
+On Fri, Aug 30, 2024 at 03:21:00PM -0300, Guilherme G. Piccoli wrote:
+> Be more clear about the downsides, the upsides (yes, there are some!)
+> and about code that unconditionally sets that.
+> 
+> Reviewed-by: Stephen Brennan <stephen.s.brennan@oracle.com>
+> Signed-off-by: Guilherme G. Piccoli <gpiccoli@igalia.com>
+> 
+> ---
+> 
+> V2: Some wording improvements from Stephen, thanks!
+> Also added his review tag.
+> 
+> V1 link: https://lore.kernel.org/r/20240830140401.458542-1-gpiccoli@igalia.com/
+> 
+> 
+>  Documentation/admin-guide/kernel-parameters.txt | 16 ++++++++++------
+>  1 file changed, 10 insertions(+), 6 deletions(-)
+> 
+
+Hi Guilherme,
+
+Some subjective grammar nits.
+
+> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+> index efc52ddc6864..351730108c58 100644
+> --- a/Documentation/admin-guide/kernel-parameters.txt
+> +++ b/Documentation/admin-guide/kernel-parameters.txt
+> @@ -913,12 +913,16 @@
+>  			the parameter has no effect.
+>  
+>  	crash_kexec_post_notifiers
+> -			Run kdump after running panic-notifiers and dumping
+> -			kmsg. This only for the users who doubt kdump always
+> -			succeeds in any situation.
+> -			Note that this also increases risks of kdump failure,
+> -			because some panic notifiers can make the crashed
+> -			kernel more unstable.
+> +			Only jump to kdump kernel after running the panic
+> +			notifiers and dumping kmsg. This option increases the
+> +			risks of a kdump failure, since some panic notifiers
+> +			can make the crashed kernel more unstable. In the
+
+nit: In the configurations -> In configurations
+
+> +			configurations where kdump may not be reliable,
+> +			running the panic notifiers can allow collecting more
+> +			data on dmesg, like stack traces from other CPUS or
+> +			extra data dumped by panic_print. Notice that some
+
+nit: Notice that -> Note that
+
+> +			code enables this option unconditionally, like
+
+Maybe: some code enables -> some configurations enable
+
+> +			Hyper-V, PowerPC (fadump) and AMD SEV.
+>  
+>  	crashkernel=size[KMG][@offset[KMG]]
+>  			[KNL,EARLY] Using kexec, Linux can switch to a 'crash kernel'
+> -- 
+> 2.46.0
+> 
+> 
+> _______________________________________________
+> kexec mailing list
+> kexec@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/kexec
+> 
 
