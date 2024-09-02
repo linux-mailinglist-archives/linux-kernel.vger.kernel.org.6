@@ -1,131 +1,80 @@
-Return-Path: <linux-kernel+bounces-311886-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311891-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8125968EFF
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 22:59:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A1CE968F10
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 23:03:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B6212831F8
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 20:59:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1081F1F2335B
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 21:03:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDF841C62CC;
-	Mon,  2 Sep 2024 20:59:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E4E919CC0A;
+	Mon,  2 Sep 2024 21:02:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aTSOvv0g"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="RNeVQhL6"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47A2F69959;
-	Mon,  2 Sep 2024 20:59:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB0AF1A4E6C;
+	Mon,  2 Sep 2024 21:02:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725310777; cv=none; b=s1SbLbeU2rBQoYlllj977a6uagz476pKOR8csfeoncrwv2UHFma+OU4JFg/rob9qNtlhr6NKvvjIGOfboEX0e+OvvAoyEIQO+z0iOjziwSsOgZdVRTDu7NYN+XicjeIWtvIlX5YAnEMzlc+8dOvNcfgytM4pzXgXWcUpLhxqykQ=
+	t=1725310974; cv=none; b=kTXPciy9EKbmiVDNCgflS/Ltrdbf/kx8VPpwdLTGthwpJQ41xm4/VlgboaJahIRCo/tpYfML9INb6RubsvWfdkiOspWfBrJQ6ARqfJtYvhml4vE3SLpRuNh+MMOm92BZRTQQPhuyjhHuChTPglq1mR5iAWH3zGbyuaDC43KdI8g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725310777; c=relaxed/simple;
-	bh=r9qaTh+53ujld32cT6POMGMmnH20RcpZ6t2TTllW2Hw=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=nuQ3sh5T3dQpmA64lT/FLJJYwFeeWIcMQIdi4es375S2DvkNhFc+beYwEydfPhzd7cB80kaZYB+kOhSA7M7EAL7XYiCNfR03b/Zy1XMKQMJgb2Cm4uxWSAqktbnTDLgASbf3VpXEhuGI6CQP3jH9EniahJmQdmtjZgPO+9jnBHI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aTSOvv0g; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A5D6C4CEC2;
-	Mon,  2 Sep 2024 20:59:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725310776;
-	bh=r9qaTh+53ujld32cT6POMGMmnH20RcpZ6t2TTllW2Hw=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=aTSOvv0ge41O8LerqN8uWFZtaSDOgysBtJ8534F0opdMVWDxru2yIsGdNOPi+y3WA
-	 xaQV0Y5QVUT5+1Ly2uwOzRixSARVkaY8NAN8qnMmS5w8CbAlbljTcbbmoVsa3ZIhKO
-	 yGcFLWdKFXpSKfNy0e/iRQpcckh2yu+daDnuYY8nMfbQ2WNnwTskGAc2cBIxH1OcXn
-	 Q9ULidDmdbnWSOz7O1ZSjoAc2QAlRnAT1dpbErxU9JPQ29KpkbbNw9sJ1vBcG87HVA
-	 k85R53LYg1DT2JxnXckQVeS2DKsovSZp6tbYltmvYi/1H2ZYK/bQFBEJDcj+NPCoaq
-	 IPNg4fOyUEh8w==
-Date: Mon, 2 Sep 2024 15:59:34 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Frank Li <Frank.Li@nxp.com>
-Cc: Richard Zhu <hongxing.zhu@nxp.com>,
-	Lucas Stach <l.stach@pengutronix.de>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	NXP Linux Team <linux-imx@nxp.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-pci@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH v8 01/11] PCI: imx6: Fix establish link failure in EP
- mode for iMX8MM and iMX8MP
-Message-ID: <20240902205934.GA227711@bhelgaas>
+	s=arc-20240116; t=1725310974; c=relaxed/simple;
+	bh=qmUm/SLESS3Ku1lLFFuoU2gDnj+R64XXYu5wCxKeIPg=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=d6k/hgE99fKwfDtfp+Mo5Al41CuxLRkO2m3MP55WcDkGReFHtl6izs9/2iONclvcr6BlexDjm06N9QUX/gTpqfpp5Ut6uZWwbFNAtzkemDhfXka38uUfHaKXPSEbJGe84rfCz1TdFHqtBf1/ttV7z73oazjl+u3+ZOV6sLB0rRg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=RNeVQhL6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA96EC4CEC2;
+	Mon,  2 Sep 2024 21:02:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1725310974;
+	bh=qmUm/SLESS3Ku1lLFFuoU2gDnj+R64XXYu5wCxKeIPg=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=RNeVQhL6YzIxWcUl1Bp2L9TmSjs82a75OMYYBJqeQhkpvRFiyUQhKqWl3A6xwf3qF
+	 3GDbh0dzdGsLOmnXZT9NzMTXDCOOEvV4Unk9lVra2sHKG+3W/zum/QtMbduIuMoGXm
+	 +fZoqy8lGxurMIgfSYMIDzJtxEbjO9jLP93d31Lg=
+Date: Mon, 2 Sep 2024 14:02:53 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Mike Yuan <me@yhndnzj.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ cgroups@vger.kernel.org, Nhat Pham <nphamcs@gmail.com>, Yosry Ahmed
+ <yosryahmed@google.com>, Johannes Weiner <hannes@cmpxchg.org>, Muchun Song
+ <muchun.song@linux.dev>, Shakeel Butt <shakeel.butt@linux.dev>, Roman
+ Gushchin <roman.gushchin@linux.dev>, Michal Hocko <mhocko@kernel.org>
+Subject: Re: [PATCH v3 3/3] Documentation/cgroup-v2: clarify that
+ zswap.writeback is ignored if zswap is disabled
+Message-Id: <20240902140253.13be47a393ccacff3d728e32@linux-foundation.org>
+In-Reply-To: <d305db940e461c92a618dd26224144a5105274b3.camel@yhndnzj.com>
+References: <20240823162506.12117-1-me@yhndnzj.com>
+	<20240823162506.12117-3-me@yhndnzj.com>
+	<d305db940e461c92a618dd26224144a5105274b3.camel@yhndnzj.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240729-pci2_upstream-v8-1-b68ee5ef2b4d@nxp.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jul 29, 2024 at 04:18:08PM -0400, Frank Li wrote:
-> From: Richard Zhu <hongxing.zhu@nxp.com>
-> 
-> Add IMX6_PCIE_FLAG_HAS_APP_RESET flag to IMX8MM_EP and IMX8MP_EP drvdata.
-> This flag was overlooked during code restructuring. It is crucial to
-> release the app-reset from the System Reset Controller before initiating
-> LTSSM to rectify the issue
+On Mon, 02 Sep 2024 14:13:43 +0000 Mike Yuan <me@yhndnzj.com> wrote:
 
-What exactly is the issue?  What does it look like to a user?  The
-endpoint doesn't establish a link correctly?
+> > +	This setting has no effect if zswap is disabled, and
+> > swapping
+> > +	would be allowed unless memory.swap.max is set to 0.
+> > =A0
+> > =A0=A0 memory.pressure
+> > =A0	A read-only nested-keyed file.
+>=20
+> Hmm, Andrew, it seems that the commit messages of this and the previous
+> patch are somehow reversed/mismatched? [1][2] Could you please confirm
+> and fix it?
 
-> Fixes: 0c9651c21f2a ("PCI: imx6: Simplify reset handling by using *_FLAG_HAS_*_RESET")
-> Signed-off-by: Richard Zhu <hongxing.zhu@nxp.com>
-> Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
-
-Does this need a -stable tag?
-
-0c9651c21f2a appeared in v6.9, but this could arguably be v6.11
-material if it fixes a serious issue.
-
-> ---
->  drivers/pci/controller/dwc/pci-imx6.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/pci/controller/dwc/pci-imx6.c b/drivers/pci/controller/dwc/pci-imx6.c
-> index 964d67756eb2b..42fd17fbadfa5 100644
-> --- a/drivers/pci/controller/dwc/pci-imx6.c
-> +++ b/drivers/pci/controller/dwc/pci-imx6.c
-> @@ -1562,7 +1562,8 @@ static const struct imx6_pcie_drvdata drvdata[] = {
->  	},
->  	[IMX8MM_EP] = {
->  		.variant = IMX8MM_EP,
-> -		.flags = IMX6_PCIE_FLAG_HAS_PHYDRV,
-> +		.flags = IMX6_PCIE_FLAG_HAS_APP_RESET |
-> +			 IMX6_PCIE_FLAG_HAS_PHYDRV,
->  		.mode = DW_PCIE_EP_TYPE,
->  		.gpr = "fsl,imx8mm-iomuxc-gpr",
->  		.clk_names = imx8mm_clks,
-> @@ -1573,7 +1574,8 @@ static const struct imx6_pcie_drvdata drvdata[] = {
->  	},
->  	[IMX8MP_EP] = {
->  		.variant = IMX8MP_EP,
-> -		.flags = IMX6_PCIE_FLAG_HAS_PHYDRV,
-> +		.flags = IMX6_PCIE_FLAG_HAS_APP_RESET |
-> +			 IMX6_PCIE_FLAG_HAS_PHYDRV,
->  		.mode = DW_PCIE_EP_TYPE,
->  		.gpr = "fsl,imx8mp-iomuxc-gpr",
->  		.clk_names = imx8mm_clks,
-> 
-> -- 
-> 2.34.1
-> 
+Yup thanks, a side-effect of turning a three-patch series into a
+one-patch hotfix and a two-patch series.
 
