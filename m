@@ -1,100 +1,96 @@
-Return-Path: <linux-kernel+bounces-311881-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311882-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41177968EED
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 22:45:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CE03968EEF
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 22:50:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 07BCD282C1A
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 20:45:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB7431F234CF
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 20:50:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E3EF185B70;
-	Mon,  2 Sep 2024 20:45:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D56F185B70;
+	Mon,  2 Sep 2024 20:49:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X7E6mmhv"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="gHiMeoWa"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6EF61A4E7E;
-	Mon,  2 Sep 2024 20:45:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 836701A4E7E;
+	Mon,  2 Sep 2024 20:49:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725309934; cv=none; b=gPbqdoY/nuZ+7iBGGCLeELnoHz72Xmf7qGmp52CySQEDG7yhr2PBKWuEg9Nl/ADlnWVV7hez4w2RjYBFKKPs9KhFBQ6ysYFoS+KS21pu1imOvprpZo9iEyhqUi3shHYta3adFanfT/q1O2D+1P2HRCgb+lnqaGV48v5wdTlEIwg=
+	t=1725310195; cv=none; b=IwcXf6J6bczV2ImYErcuNz5ToRlO/CkPSjZSuzE0mdKugwIDtvbC4IksM4A3o40F+ei6RxSOlfKOLnHS10aqtApWvoukyyZzucDMK7zvVTjcRqQa9IEZsPX8DgjGal/UkRYp0ADXv5sp/Ij5nU1QzmO5HhzAirHe/jXQLMXY/Xg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725309934; c=relaxed/simple;
-	bh=Ff/z3qhnWcm7zLGLAOapgZII/W5Vo0cU9a5nmORcnu4=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=YLlNy1+hiVU+jIWYA6PERzTxawLwDM2MY7H5YfNtUH4HRxL0irlrq0eylYAiSGt8A+20uHJcgq6MN8pXtcU/x9KmH0wd18XWcxk4KdTIyCH9S3QT/XZEpXLsJDlrwQlPiESuXNaZVR6C6ERagQkKmkN575l4TDmxGMPtZradAsE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X7E6mmhv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F298DC4CEC2;
-	Mon,  2 Sep 2024 20:45:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725309934;
-	bh=Ff/z3qhnWcm7zLGLAOapgZII/W5Vo0cU9a5nmORcnu4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=X7E6mmhvnLiRwEX8jOwv9uaNA7WFssCE4DwyDFFIqhRALpLTadMvXSgSxOK412WuC
-	 IQ8Mdjbfbsh4/3PamCXI5Tugrkp9HLlzt/3k1/0NENDWrmiarECR3Y0IZAMPZc/JYI
-	 y2yy0JjUGpMykY3+UBJEQGJdDl94KsWTHi8cAYlkVRWiCchcjgOKh2Y+t9A6S9n8ka
-	 B5KlsH3A2uZz3NufegrCENlEZeE3j6LgngOZmu4rbvm09/NcYjUTowRAd5krNGWZ1X
-	 KyM8Iu5aOy88ON4GhGIhMFjKp/vkM6h/LeB9JHzP98tp8hrSEdgSsHN8yLQhsTaVej
-	 5lfKgzpA7aPXg==
-Date: Mon, 2 Sep 2024 15:45:32 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Jim Quinlan <james.quinlan@broadcom.com>
-Cc: linux-pci@vger.kernel.org, Nicolas Saenz Julienne <nsaenz@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-	Cyril Brulebois <kibi@debian.org>,
-	Stanimir Varbanov <svarbanov@suse.de>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	bcm-kernel-feedback-list@broadcom.com, jim2101024@gmail.com,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Rob Herring <robh@kernel.org>,
-	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-rpi-kernel@lists.infradead.org>,
-	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v6 10/13] PCI: brcmstb: Refactor for chips with many
- regular inbound windows
-Message-ID: <20240902204532.GA227089@bhelgaas>
+	s=arc-20240116; t=1725310195; c=relaxed/simple;
+	bh=plMpypI6Wercf2AMqEeD8hJy/zS1sMK2nF2Og4ULyOw=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=ZDNZHFVSl7NOeT4kVIwB7G15gJQ1YBg41Y3ezLQIFKMWHS42Iabz4sDT0tsAOArmb4SWE9OzJEsllVZpgriQ5JEzg/aCniqeluLqmLFIlkn76bFSoggUg+gcHtbwhcMSVIlpAZOTHYOnGptZtAOZRUa+Fm3Fxm2ykohqJYnPSoo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=gHiMeoWa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 69389C4CEC2;
+	Mon,  2 Sep 2024 20:49:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1725310195;
+	bh=plMpypI6Wercf2AMqEeD8hJy/zS1sMK2nF2Og4ULyOw=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=gHiMeoWa0lzT85g1imdgbajsEHzGCaCYUlk/ONYUe6Zp7GrwM6LszSffkEbLgdXRr
+	 dHZltfJQaFh2HH5t9EAQ3UnL3Ixs52lRSxs09kbyRMkq2VD1ynpM5lHjNHH+VRSQRI
+	 VYoQuFvj+E/HihP+bWCJ+ELFTH2RSC3ESwGcFY+o=
+Date: Mon, 2 Sep 2024 13:49:53 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Sven Schnelle <svens@linux.ibm.com>
+Cc: Nathan Chancellor <nathan@kernel.org>, Michael Ellerman
+ <mpe@ellerman.id.au>, linux-mm@kvack.org, linuxppc-dev@lists.ozlabs.org,
+ torvalds@linux-foundation.org, christophe.leroy@csgroup.eu,
+ jeffxu@google.com, Liam.Howlett@oracle.com, linux-kernel@vger.kernel.org,
+ npiggin@gmail.com, oliver.sang@intel.com, pedro.falcato@gmail.com,
+ linux-um@lists.infradead.org, linux-s390@vger.kernel.org, Ravi Bangoria
+ <ravi.bangoria@linux.ibm.com>, Steven Rostedt <rostedt@goodmis.org>
+Subject: Re: [PATCH v2 1/4] mm: Add optional close() to struct
+ vm_special_mapping
+Message-Id: <20240902134953.e834bc2e57d36b1d3b1397e4@linux-foundation.org>
+In-Reply-To: <yt9dy149vprr.fsf@linux.ibm.com>
+References: <20240812082605.743814-1-mpe@ellerman.id.au>
+	<20240819185253.GA2333884@thelio-3990X>
+	<yt9dy149vprr.fsf@linux.ibm.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240815225731.40276-11-james.quinlan@broadcom.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Thu, Aug 15, 2024 at 06:57:23PM -0400, Jim Quinlan wrote:
-> Provide support for new chips with multiple inbound windows while
-> keeping the legacy support for the older chips.
+On Mon, 02 Sep 2024 21:06:48 +0200 Sven Schnelle <svens@linux.ibm.com> wrote:
+
+> So uprobe_clear_state() in the beginning free's the memory area
+> containing the vm_special_mapping data, but exit_mmap() uses this
+> address later via vma->vm_private_data (which was set in _install_special_mapping().
 > 
-> In existing chips there are three inbound windows with fixed purposes: the
-> first was for mapping SoC internal registers, the second was for memory,
-> and the third was for memory but with the endian swapped.  Typically, only
-> one window was used.
+> The following change fixes this for me, but i'm not sure about any side
+> effects:
 > 
-> Complicating the inbound window usage was the fact that the PCIe HW would
-> do a baroque internal mapping of system memory, and concatenate the regions
-> of multiple memory controllers.
-> 
-> Newer chips such as the 7712 and Cable Modem SOCs take a step forward and
-> drop the internal mapping while providing for multiple inbound windows.
-> This works in concert with the dma-ranges property, where each provided
-> range becomes an inbound window.
+> diff --git a/kernel/fork.c b/kernel/fork.c
+> index df8e4575ff01..cfcabba36c93 100644
+> --- a/kernel/fork.c
+> +++ b/kernel/fork.c
+> @@ -1340,11 +1340,11 @@ static inline void __mmput(struct mm_struct *mm)
+>  {
+>         VM_BUG_ON(atomic_read(&mm->mm_users));
+>  
+> -       uprobe_clear_state(mm);
+>         exit_aio(mm);
+>         ksm_exit(mm);
+>         khugepaged_exit(mm); /* must run before exit_mmap */
+>         exit_mmap(mm);
+> +       uprobe_clear_state(mm);
+>         mm_put_huge_zero_folio(mm);
+>         set_mm_exe_file(mm, NULL);
+>         if (!list_empty(&mm->mmlist)) {
 
-Krzysztof, can you touch this up on your branch to s/SOCs/SoCs/ to
-match other usage above, and ...
-
-> +	 * The HW registers (and PCIe) use order-1 numbering for BARs. As
-> +	 * such, we have inbound_wins[0] unused and BAR1 starts at inbound_wins[1].
-
-Rewrap this to fit in 80 columns like (most of) the rest of the file
-instead of 83?  I don't think we gain anything by being wider here.
+uprobe_clear_state() is a pretty simple low-level thing.  Side-effects
+seem unlikely?  
 
