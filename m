@@ -1,470 +1,269 @@
-Return-Path: <linux-kernel+bounces-311572-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311573-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BEAF968A92
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 17:02:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B653968A97
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 17:05:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 83BAF1F22962
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 15:02:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 617AA1C20B8D
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 15:05:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EE1E1A3029;
-	Mon,  2 Sep 2024 15:01:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89F711CB528;
+	Mon,  2 Sep 2024 15:05:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="EaZZJVJc"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MEPcA6p6"
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3D0D183CBB
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 15:01:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CF171CB505
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 15:05:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725289318; cv=none; b=kDOyslDb5VY47lm7O0Us52lSV2vqtYtuSX/Nd2lGG9f25p8T03u3Qx7MHj22ll42p3wTYzxf+Kz4xlnh7MyuUudrN9WRnXBD5uVd6x699xi6pQ+QWlYw+d3vB7miXZjIpnCy5rU4koBmgdiXHG8kIMD4npTkG4mMOZdgY+0oIsk=
+	t=1725289508; cv=none; b=ucy06Tzs1g0FkqXPrI0KLerhaGtxHbgCWzMniNzzgRHEi2rkz6GqLXUitPcjMgo/NCV6tD+A8mOE7A7wmRqtcrifTCLpKPRvoBih7IebXGSVv0xXlcnxQ6m25TGdS/mHnb5ZDQQejp+fyGlf21o80qFhOY6VBz8zFXIn+0Rznlc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725289318; c=relaxed/simple;
-	bh=h5Xq82//l1sVdEO34qNdYiFnG6IVy5Rx/913P5VPOVA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Vyil9rx8thdxZldOpuwKuKU5AsJTZX957KP6YNxRIhQQoZuNbOKaiBGOW+LDYepII/a4GcjIGAu56P7kfkk47+xPQ02Xeq7aV+ejDZ2RRwpWEtFd3PGvsDmJ94Lij7tY3+wBbrwQccaMursxXsdk4viRvbPOLQ/qUXBKFAyEdHI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=EaZZJVJc; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-42bbd16fca8so26124955e9.0
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2024 08:01:55 -0700 (PDT)
+	s=arc-20240116; t=1725289508; c=relaxed/simple;
+	bh=bxBWmP6MnS97qclAPDqieXivWvBuFw3MueE1GYdzaAA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NTF6F8AaY4GNfGEJcT0oObLgaVBuzQgYlxMjSuzr//INrx3bSCDuYC0xXYXor0j9nkmR/DZhnfCeJXz2o3AgOwL3mFGpl3Mzs4v3HcsAb/fIQ2tVGW9pwvDq461wV6R6GJYwZMZrMJydt+dU1OE106u6lFA9AcWEyGSet9T+4PA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MEPcA6p6; arc=none smtp.client-ip=209.85.167.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-5343eeb4973so6638453e87.2
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2024 08:05:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1725289314; x=1725894114; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=DxknQ0wfQYWuyr9cw/RceM9p4Pvz+sRj5P9CPIckMAM=;
-        b=EaZZJVJcDjH/LXR/J3S3FkUVWkBhLCemDIRHhXsYAEdpbtZLPwNq2K1YjQA5MIDRQB
-         LtaSCk7n1++FnA21IgjEt26IAhhllQcMdjvB5kkXAvfEWo5cnaA4/UORfMRU2peSP6Py
-         8CBKbpMkhSmKhgBPrvtiNLuCcvFXxAp3SH81qRVE6Zt37OyJa96icsNtkM3/VwVI6luh
-         i3qh7McSegN3fC3eQt+7O6/wJjiq1eopS7R7cKG0imx5sUIy2QZREECTc5mSgOWnco0t
-         3TU7EJap970OHt5OGQNAZIsd+r6z02JrohV9c5KuNv583Mmq5+b21gfOn6fMyWo3X6Yb
-         LmKw==
+        d=gmail.com; s=20230601; t=1725289505; x=1725894305; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=fWVfLyCu7TnRFXI3PcEj4EnQGK8DTBEvYZTOdp9ZUy4=;
+        b=MEPcA6p6OGBP7higgCzFUUgSBk/1UIEds+6QxbZN+xEGeofkdmlsq6CMLRRs44C6MJ
+         7FOhbE0K0w2keeh7TboqPhtdzAddT9EpAaeQ7VBoKPBhiWf1r2HX+wGYOBNIbhGrsRBu
+         lpp79xygUjfY8YechoDlBYo7S4wdYcw8LUjNlpJzxE4Z43i0mVHmlqCRg9X15Ak1xodm
+         5bdssoa565cLpsmvqSdvxTVvXdD4c57bT3use8Xthb9QGphGVjfsmvbmnaidK+Nc8KKN
+         gy8FzUzYmim57MSFGIesjJnLAalfiyE/ANUOZyfKow00EKIp7XngiZQkA+7oYtPDjZJr
+         9kPQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725289314; x=1725894114;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=DxknQ0wfQYWuyr9cw/RceM9p4Pvz+sRj5P9CPIckMAM=;
-        b=mgHKnnUC9iIMYhrasPW1CkyqbtwJ9svixTQ5R2oEX1YZdUF90P7mc8LglK0WprE78F
-         /lex2FDtWNuUfgpeqmiT26sxsmvOrxtUnV2stwLG+473i4cCNW/mC7tEvYQUzxD3LbhW
-         wX/im90pYBkMNkVUvuctyvdakchNQIz37VLsKLs1cqsNmqBV58yP38P6I9DbG2f6pIhX
-         1xaMDjp4kl0UlezIr5UuMnYrVhO6532BR3J2bMoZtSSfs/mR+g5g6DDAr6GPuFByT6s/
-         j4/k2X7/G+zagPHhZ2GFkQoF9kBUwNSdafbvi4pH54akLuEqGt4Kt9kFT65Koa/xvhFx
-         N0Tg==
-X-Forwarded-Encrypted: i=1; AJvYcCV+Os4O/N4vjDH5+NOVtjILvjqP2RNQDTBmQT681jlW6J6wOMi6FVdw30kCWWqiqRZMnI38EeZeZjUZhYU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwzZ8lNRLXZ+dH0oUdqJzcYtkw6WjZf29NM2x4ZqLZZkV6EGZ+q
-	GfxuUPp23FtV+NzQ9inVJE79JSVc60eQz3RXsT91SCFyd3uP46IGpf1Hps7Bp6Y=
-X-Google-Smtp-Source: AGHT+IHbOfN+sU8d6+iOdoFyqChJSi+NANboVEGhWfUjFGv6PJ5It/K5595QkKbX1B/2NspEgtXVyA==
-X-Received: by 2002:a05:600c:3c82:b0:42b:b016:94a3 with SMTP id 5b1f17b1804b1-42c88108590mr3601915e9.31.1725289313825;
-        Mon, 02 Sep 2024 08:01:53 -0700 (PDT)
-Received: from [127.0.1.1] ([82.79.186.176])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42bb6deb1ebsm140726115e9.3.2024.09.02.08.01.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Sep 2024 08:01:53 -0700 (PDT)
-From: Abel Vesa <abel.vesa@linaro.org>
-Date: Mon, 02 Sep 2024 18:01:36 +0300
-Subject: [PATCH 2/2] arm64: dts: qcom: x1e80100-t14s: Add external DP
- support
+        d=1e100.net; s=20230601; t=1725289505; x=1725894305;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fWVfLyCu7TnRFXI3PcEj4EnQGK8DTBEvYZTOdp9ZUy4=;
+        b=vsvf4vclLYQJznv/ErTJS1lrWuefEu7eO7uY854pLRJTZ++zl9K6/zbQLDWsD1fHce
+         moyrb4dkXVl6Zdzzy22ajs36gTn7lmGep4raKp3U93fSkmyflusFh1WCuW5HX8++BuxE
+         knhxVR7Vmvvr8VQwMCV8e5uyPs1vn2oWIMtzJQFH+3xcEQMWWb7Uvd2fbZu4qzTqYs7M
+         zj6jR4acTIbcJyTPD9VqAMihbRNiFJ5w5Rq6/gH05EpiRvyN9h8R4ZonVF2ZQg7wZWCN
+         Ghz5ZBaaNIARO25Z+D0mO4jKTksCRKu7jtuuL3kHQlxq+eJUce9+SSQh2Cc2MahxiPP6
+         Opgw==
+X-Forwarded-Encrypted: i=1; AJvYcCVE8wv9PJmEpZvDIhlcQlVQ8BLHu3V5nkK65+irOJ5GDj6Ki7sDxMPrHzHv5zLvXz6O4VtZ3Fe2uCorRZc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxlugcPIhl6ZVMm5lC3bVpshk+56zO7Izc5VmbqVmvCUpUqhRne
+	2TgL4kHHxKdkjGqnFOCY/uvqmT9PwNZq6Kz5dmwgBCszNm0vtftM
+X-Google-Smtp-Source: AGHT+IFh64dOBlZhhpfwwTsOz8hViI+snEGY73VkK6LRwd/ze4p4sV6NWAsTw+FkFxQOOKvFKQdvKA==
+X-Received: by 2002:a05:6512:68f:b0:52e:933f:f1fa with SMTP id 2adb3069b0e04-53546c03f81mr7989346e87.61.1725289504049;
+        Mon, 02 Sep 2024 08:05:04 -0700 (PDT)
+Received: from [192.168.0.20] ([148.56.230.39])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a898902292bsm566333566b.88.2024.09.02.08.05.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 02 Sep 2024 08:05:02 -0700 (PDT)
+Message-ID: <6cd86103-8ebf-469d-8e68-444fffa56c68@gmail.com>
+Date: Mon, 2 Sep 2024 17:05:00 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/1] drm/mediatek: Fix get efuse issue for MT8188 DPTX
+To: Liankun Yang <liankun.yang@mediatek.com>, chunkuang.hu@kernel.org,
+ p.zabel@pengutronix.de, airlied@gmail.com, daniel@ffwll.ch,
+ angelogioacchino.delregno@collabora.com, ck.hu@mediatek.com,
+ shuijing.li@mediatek.com, jitao.shi@mediatek.com, mac.shen@mediatek.com
+Cc: Project_Global_Chrome_Upstream_Group@mediatek.com,
+ dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <20240902133736.16461-1-liankun.yang@mediatek.com>
+Content-Language: en-US, ca-ES, es-ES
+From: Matthias Brugger <matthias.bgg@gmail.com>
+Autocrypt: addr=matthias.bgg@gmail.com; keydata=
+ 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
+In-Reply-To: <20240902133736.16461-1-liankun.yang@mediatek.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240902-x1e80100-crd-dts-add-external-dp-support-v1-2-899c264c0eb7@linaro.org>
-References: <20240902-x1e80100-crd-dts-add-external-dp-support-v1-0-899c264c0eb7@linaro.org>
-In-Reply-To: <20240902-x1e80100-crd-dts-add-external-dp-support-v1-0-899c264c0eb7@linaro.org>
-To: Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: Johan Hovold <johan@kernel.org>, 
- Neil Armstrong <neil.armstrong@linaro.org>, 
- Trilok Soni <quic_tsoni@quicinc.com>, linux-arm-msm@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Abel Vesa <abel.vesa@linaro.org>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=7841; i=abel.vesa@linaro.org;
- h=from:subject:message-id; bh=h5Xq82//l1sVdEO34qNdYiFnG6IVy5Rx/913P5VPOVA=;
- b=owEBbQKS/ZANAwAKARtfRMkAlRVWAcsmYgBm1dNcwav1nL0dHrjX2wU5BHgIBJw3vsWxnT0Q4
- oZ+raNyOCiJAjMEAAEKAB0WIQRO8+4RTnqPKsqn0bgbX0TJAJUVVgUCZtXTXAAKCRAbX0TJAJUV
- VuEQD/4hl6By0Yi5gyeWU7JhZt/0ux1Gt/n8VtwoQh6AHuEDjE5F6z22zvjYF2puf4ggH5LuajH
- r2ycRLwwMcdsvW7OqbQAIKfAVx1GSlXq9aoisw6xdsK67s9XtxIHAH5J1BrBC/LaI9RL5Dr5xfV
- /tn9JwBu4tLK8nHVFyKedsruu/UrabCyG2fumfC4WJclZwNm9lXCSpN2U2q77PDZM/c7jJeM7qY
- i9XitBb3uIeWDNN2cSRvu+gmG5U6uAZhz0RBbxTMfq9ArP7elYtGIohkvLXlyvPoc/xdXH3Tex3
- whnOlZrkixpMfhDXeXxrTs9bvpL05LwKsvRXfY0JYpSvAm+xbcUDBXKv7wFa/qtCRk0t51wygKq
- 9KIuHNwH5FUqctxattrepG1XzkajSvopo0H9p0Qf94A52qjtPoaXzmam0M0s8YAqvx3iBGOWqKu
- 4Ov50Pxish8ApCiKwOH9kelXRYooNG+HGnVCxRgaCk7eOMKPm9JuB165PyhzcC3ADyimOvVXwCE
- avgswJMsS0NY1Sr/PRWxRR9h99Pq6ut2B6bVsYnMo6V9WrMJVnrU0fqmeuVpERYjUPd0TJzgvJ5
- qZ69PHRwSpJlRv5gT+61SS+40kxz61Utg+H53TpOyDOfm/FclkTjaYrBzWevY6T/zSAb3orNHb7
- oxTKXVls804YUmw==
-X-Developer-Key: i=abel.vesa@linaro.org; a=openpgp;
- fpr=6AFF162D57F4223A8770EF5AF7BF214136F41FAE
 
-The Lenovo Thinkpad T14s has only 2 USB Type-C ports, both of them
-supporting external DP altmode. Between each QMP combo PHY and the
-corresponding Type-C port, sits one Parade PS8830 retimer which handles
-both orientation and SBU muxing. Add nodes for each retimer, fix the
-graphs between connectors and the PHYs accordingly add the voltage
-regulators needed by each retimer and then enable DP 0 and 1.
 
-Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
----
- .../dts/qcom/x1e78100-lenovo-thinkpad-t14s.dts     | 278 ++++++++++++++++++++-
- 1 file changed, 274 insertions(+), 4 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s.dts b/arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s.dts
-index 941dfddd6713..08ec2419f95f 100644
---- a/arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s.dts
-+++ b/arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s.dts
-@@ -66,7 +66,15 @@ port@1 {
- 					reg = <1>;
- 
- 					pmic_glink_ss0_ss_in: endpoint {
--						remote-endpoint = <&usb_1_ss0_qmpphy_out>;
-+						remote-endpoint = <&retimer_ss0_ss_out>;
-+					};
-+				};
-+
-+				port@2 {
-+					reg = <2>;
-+
-+					pmic_glink_ss0_con_sbu_in: endpoint {
-+						remote-endpoint = <&retimer_ss0_con_sbu_out>;
- 					};
- 				};
- 			};
-@@ -95,7 +103,15 @@ port@1 {
- 					reg = <1>;
- 
- 					pmic_glink_ss1_ss_in: endpoint {
--						remote-endpoint = <&usb_1_ss1_qmpphy_out>;
-+						remote-endpoint = <&retimer_ss1_ss_out>;
-+					};
-+				};
-+
-+				port@2 {
-+					reg = <2>;
-+
-+					pmic_glink_ss1_con_sbu_in: endpoint {
-+						remote-endpoint = <&retimer_ss1_con_sbu_out>;
- 					};
- 				};
- 			};
-@@ -127,6 +143,90 @@ vreg_edp_3p3: regulator-edp-3p3 {
- 		regulator-boot-on;
- 	};
- 
-+	vreg_rtmr0_1p15: regulator-rtmr0-1p15 {
-+		compatible = "regulator-fixed";
-+
-+		regulator-name = "VREG_RTMR0_1P15";
-+		regulator-min-microvolt = <1150000>;
-+		regulator-max-microvolt = <1150000>;
-+
-+		gpio = <&pm8550ve_8_gpios 8 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+
-+		pinctrl-0 = <&rtmr0_1p15_reg_en>;
-+		pinctrl-names = "default";
-+	};
-+
-+	vreg_rtmr0_1p8: regulator-rtmr0-1p8 {
-+		compatible = "regulator-fixed";
-+
-+		regulator-name = "VREG_RTMR0_1P8";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <1800000>;
-+
-+		gpio = <&pm8550ve_9_gpios 8 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+
-+		pinctrl-0 = <&rtmr0_1p8_reg_en>;
-+		pinctrl-names = "default";
-+	};
-+
-+	vreg_rtmr0_3p3: regulator-rtmr0-3p3 {
-+		compatible = "regulator-fixed";
-+
-+		regulator-name = "VREG_RTMR0_3P3";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+
-+		gpio = <&pm8550_gpios 11 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+
-+		pinctrl-0 = <&rtmr0_3p3_reg_en>;
-+		pinctrl-names = "default";
-+	};
-+
-+	vreg_rtmr1_1p15: regulator-rtmr1-1p15 {
-+		compatible = "regulator-fixed";
-+
-+		regulator-name = "VREG_RTMR1_1P15";
-+		regulator-min-microvolt = <1150000>;
-+		regulator-max-microvolt = <1150000>;
-+
-+		gpio = <&tlmm 188 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&rtmr1_1p15_reg_en>;
-+	};
-+
-+	vreg_rtmr1_1p8: regulator-rtmr1-1p8 {
-+		compatible = "regulator-fixed";
-+
-+		regulator-name = "VREG_RTMR1_1P8";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <1800000>;
-+
-+		gpio = <&tlmm 175 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&rtmr1_1p8_reg_en>;
-+	};
-+
-+	vreg_rtmr1_3p3: regulator-rtmr1-3p3 {
-+		compatible = "regulator-fixed";
-+
-+		regulator-name = "VREG_RTMR1_3P3";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+
-+		gpio = <&tlmm 186 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&rtmr1_3p3_reg_en>;
-+	};
-+
- 	vreg_nvme: regulator-nvme {
- 		compatible = "regulator-fixed";
- 
-@@ -484,6 +584,111 @@ keyboard@3a {
- 	};
- };
- 
-+&i2c3 {
-+	clock-frequency = <400000>;
-+
-+	status = "okay";
-+
-+	typec-mux@8 {
-+		compatible = "parade,ps8830";
-+		reg = <0x08>;
-+
-+		clocks = <&rpmhcc RPMH_RF_CLK3>;
-+		clock-names = "xo";
-+
-+		vdd15-supply = <&vreg_rtmr0_1p15>;
-+		vdd18-supply = <&vreg_rtmr0_1p8>;
-+		vdd33-supply = <&vreg_rtmr0_3p3>;
-+
-+		reset-gpios = <&pm8550_gpios 10 GPIO_ACTIVE_HIGH>;
-+
-+		retimer-switch;
-+		orientation-switch;
-+
-+		ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			port@0 {
-+				reg = <0>;
-+
-+				retimer_ss0_ss_out: endpoint {
-+					remote-endpoint = <&pmic_glink_ss0_ss_in>;
-+				};
-+			};
-+
-+			port@1 {
-+				reg = <1>;
-+
-+				retimer_ss0_ss_in: endpoint {
-+					remote-endpoint = <&usb_1_ss0_qmpphy_out>;
-+				};
-+			};
-+
-+			port@2 {
-+				reg = <2>;
-+
-+				retimer_ss0_con_sbu_out: endpoint {
-+					remote-endpoint = <&pmic_glink_ss0_con_sbu_in>;
-+				};
-+			};
-+		};
-+	};
-+};
-+
-+&i2c7 {
-+	clock-frequency = <400000>;
-+
-+	status = "okay";
-+
-+	typec-mux@8 {
-+		compatible = "parade,ps8830";
-+		reg = <0x8>;
-+
-+		clocks = <&rpmhcc RPMH_RF_CLK4>;
-+		clock-names = "xo";
-+
-+		vdd15-supply = <&vreg_rtmr1_1p15>;
-+		vdd18-supply = <&vreg_rtmr1_1p8>;
-+		vdd33-supply = <&vreg_rtmr1_3p3>;
-+
-+		reset-gpios = <&tlmm 176 GPIO_ACTIVE_HIGH>;
-+
-+		retimer-switch;
-+		orientation-switch;
-+
-+		ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			port@0 {
-+				reg = <0>;
-+
-+				retimer_ss1_ss_out: endpoint {
-+					remote-endpoint = <&pmic_glink_ss1_ss_in>;
-+				};
-+			};
-+
-+			port@1 {
-+				reg = <1>;
-+
-+				retimer_ss1_ss_in: endpoint {
-+					remote-endpoint = <&usb_1_ss1_qmpphy_out>;
-+				};
-+			};
-+
-+			port@2 {
-+				reg = <2>;
-+
-+				retimer_ss1_con_sbu_out: endpoint {
-+					remote-endpoint = <&pmic_glink_ss1_con_sbu_in>;
-+				};
-+			};
-+
-+		};
-+	};
-+};
-+
- &i2c8 {
- 	clock-frequency = <400000>;
- 
-@@ -508,6 +713,22 @@ &mdss {
- 	status = "okay";
- };
- 
-+&mdss_dp0 {
-+	status = "okay";
-+};
-+
-+&mdss_dp0_out {
-+	data-lanes = <0 1 2 3>;
-+};
-+
-+&mdss_dp1 {
-+	status = "okay";
-+};
-+
-+&mdss_dp1_out {
-+	data-lanes = <0 1 2 3>;
-+};
-+
- &mdss_dp3 {
- 	compatible = "qcom,x1e80100-dp";
- 	/delete-property/ #sound-dai-cells;
-@@ -588,6 +809,33 @@ &pcie6a_phy {
- 	status = "okay";
- };
- 
-+&pm8550_gpios {
-+	rtmr0_3p3_reg_en: rtmr0-3p3-reg-en-state {
-+		pins = "gpio11";
-+		function = "func1";
-+		input-disable;
-+		output-enable;
-+	};
-+};
-+
-+&pm8550ve_8_gpios {
-+	rtmr0_1p15_reg_en: rtmr0-1p15-reg-en-state {
-+		pins = "gpio8";
-+		function = "func1";
-+		input-disable;
-+		output-enable;
-+	};
-+};
-+
-+&pm8550ve_9_gpios {
-+	rtmr0_1p8_reg_en: rtmr0-1p8-reg-en-state {
-+		pins = "gpio8";
-+		function = "func1";
-+		input-disable;
-+		output-enable;
-+	};
-+};
-+
- &pmc8380_3_gpios {
- 	edp_bl_en: edp-bl-en-state {
- 		pins = "gpio4";
-@@ -733,6 +981,28 @@ wake-n-pins {
- 		};
- 	};
- 
-+	rtmr1_1p15_reg_en: rtmr1-1p15-reg-en-state {
-+		pins = "gpio188";
-+		function = "gpio";
-+		drive-strength = <2>;
-+		bias-disable;
-+	};
-+
-+	rtmr1_1p8_reg_en: rtmr1-1p8-reg-en-state {
-+		pins = "gpio175";
-+		function = "gpio";
-+		drive-strength = <2>;
-+		bias-disable;
-+	};
-+
-+	rtmr1_3p3_reg_en: rtmr1-3p3-reg-en-state {
-+		pins = "gpio186";
-+		function = "gpio";
-+		drive-strength = <2>;
-+		bias-disable;
-+	};
-+
-+
- 	wcd_default: wcd-reset-n-active-state {
- 		pins = "gpio191";
- 		function = "gpio";
-@@ -771,7 +1041,7 @@ &usb_1_ss0_dwc3_hs {
- };
- 
- &usb_1_ss0_qmpphy_out {
--	remote-endpoint = <&pmic_glink_ss0_ss_in>;
-+	remote-endpoint = <&retimer_ss0_ss_in>;
- };
- 
- &usb_1_ss1_hsphy {
-@@ -803,5 +1073,5 @@ &usb_1_ss1_dwc3_hs {
- };
- 
- &usb_1_ss1_qmpphy_out {
--	remote-endpoint = <&pmic_glink_ss1_ss_in>;
-+	remote-endpoint = <&retimer_ss1_ss_in>;
- };
+On 02/09/2024 15:36, Liankun Yang wrote:
+> Update efuse data for MT8188 displayport.
+> 
+> The DP monitor can not display when DUT connected to USB-c to DP dongle.
+> Analysis view is invalid DP efuse data.
+> 
+> Fixes: 350c3fe907fb ("drm/mediatek: dp: Add support MT8188 dp/edp function")
+> 
+> Changes in V2:
+> - Add Fixes tag.
+> - Update the commit title.
+> - Update the commit description.
+> Per suggestion from the previous thread:
+> https://patchwork.kernel.org/project/linux-mediatek/patch/
+> 20240510061716.31103-1-liankun.yang@mediatek.com/
 
--- 
-2.34.1
+Changelog should go after '---' below your Signed-off-by, as we don't want that 
+in the commit message later.
 
+Reviewed-by: Matthias Brugger <matthias.bgg@gmail.com>
+
+> 
+> Signed-off-by: Liankun Yang <liankun.yang@mediatek.com>
+> ---
+>   drivers/gpu/drm/mediatek/mtk_dp.c | 85 ++++++++++++++++++++++++++++++-
+>   1 file changed, 84 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpu/drm/mediatek/mtk_dp.c b/drivers/gpu/drm/mediatek/mtk_dp.c
+> index d8796a904eca..f2bee617f063 100644
+> --- a/drivers/gpu/drm/mediatek/mtk_dp.c
+> +++ b/drivers/gpu/drm/mediatek/mtk_dp.c
+> @@ -145,6 +145,89 @@ struct mtk_dp_data {
+>   	u16 audio_m_div2_bit;
+>   };
+>   
+> +static const struct mtk_dp_efuse_fmt mt8188_dp_efuse_fmt[MTK_DP_CAL_MAX] = {
+> +	[MTK_DP_CAL_GLB_BIAS_TRIM] = {
+> +		.idx = 0,
+> +		.shift = 10,
+> +		.mask = 0x1f,
+> +		.min_val = 1,
+> +		.max_val = 0x1e,
+> +		.default_val = 0xf,
+> +	},
+> +	[MTK_DP_CAL_CLKTX_IMPSE] = {
+> +		.idx = 0,
+> +		.shift = 15,
+> +		.mask = 0xf,
+> +		.min_val = 1,
+> +		.max_val = 0xe,
+> +		.default_val = 0x8,
+> +	},
+> +	[MTK_DP_CAL_LN_TX_IMPSEL_PMOS_0] = {
+> +		.idx = 1,
+> +		.shift = 0,
+> +		.mask = 0xf,
+> +		.min_val = 1,
+> +		.max_val = 0xe,
+> +		.default_val = 0x8,
+> +	},
+> +	[MTK_DP_CAL_LN_TX_IMPSEL_PMOS_1] = {
+> +		.idx = 1,
+> +		.shift = 8,
+> +		.mask = 0xf,
+> +		.min_val = 1,
+> +		.max_val = 0xe,
+> +		.default_val = 0x8,
+> +	},
+> +	[MTK_DP_CAL_LN_TX_IMPSEL_PMOS_2] = {
+> +		.idx = 1,
+> +		.shift = 16,
+> +		.mask = 0xf,
+> +		.min_val = 1,
+> +		.max_val = 0xe,
+> +		.default_val = 0x8,
+> +	},
+> +	[MTK_DP_CAL_LN_TX_IMPSEL_PMOS_3] = {
+> +		.idx = 1,
+> +		.shift = 24,
+> +		.mask = 0xf,
+> +		.min_val = 1,
+> +		.max_val = 0xe,
+> +		.default_val = 0x8,
+> +	},
+> +	[MTK_DP_CAL_LN_TX_IMPSEL_NMOS_0] = {
+> +		.idx = 1,
+> +		.shift = 4,
+> +		.mask = 0xf,
+> +		.min_val = 1,
+> +		.max_val = 0xe,
+> +		.default_val = 0x8,
+> +	},
+> +	[MTK_DP_CAL_LN_TX_IMPSEL_NMOS_1] = {
+> +		.idx = 1,
+> +		.shift = 12,
+> +		.mask = 0xf,
+> +		.min_val = 1,
+> +		.max_val = 0xe,
+> +		.default_val = 0x8,
+> +	},
+> +	[MTK_DP_CAL_LN_TX_IMPSEL_NMOS_2] = {
+> +		.idx = 1,
+> +		.shift = 20,
+> +		.mask = 0xf,
+> +		.min_val = 1,
+> +		.max_val = 0xe,
+> +		.default_val = 0x8,
+> +	},
+> +	[MTK_DP_CAL_LN_TX_IMPSEL_NMOS_3] = {
+> +		.idx = 1,
+> +		.shift = 28,
+> +		.mask = 0xf,
+> +		.min_val = 1,
+> +		.max_val = 0xe,
+> +		.default_val = 0x8,
+> +	},
+> +};
+> +
+>   static const struct mtk_dp_efuse_fmt mt8195_edp_efuse_fmt[MTK_DP_CAL_MAX] = {
+>   	[MTK_DP_CAL_GLB_BIAS_TRIM] = {
+>   		.idx = 3,
+> @@ -2771,7 +2854,7 @@ static SIMPLE_DEV_PM_OPS(mtk_dp_pm_ops, mtk_dp_suspend, mtk_dp_resume);
+>   static const struct mtk_dp_data mt8188_dp_data = {
+>   	.bridge_type = DRM_MODE_CONNECTOR_DisplayPort,
+>   	.smc_cmd = MTK_DP_SIP_ATF_VIDEO_UNMUTE,
+> -	.efuse_fmt = mt8195_dp_efuse_fmt,
+> +	.efuse_fmt = mt8188_dp_efuse_fmt,
+>   	.audio_supported = true,
+>   	.audio_pkt_in_hblank_area = true,
+>   	.audio_m_div2_bit = MT8188_AUDIO_M_CODE_MULT_DIV_SEL_DP_ENC0_P0_DIV_2,
 
