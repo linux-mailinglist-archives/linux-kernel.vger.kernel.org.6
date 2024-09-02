@@ -1,94 +1,86 @@
-Return-Path: <linux-kernel+bounces-311351-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311353-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBAD99687EE
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 14:51:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F3D39687F2
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 14:51:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 896C1282DF7
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 12:51:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 790791C21A50
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 12:51:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7804200134;
-	Mon,  2 Sep 2024 12:50:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nvGAMgLP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7ADCE19C55D;
+	Mon,  2 Sep 2024 12:51:35 +0000 (UTC)
+Received: from brightrain.aerifal.cx (brightrain.aerifal.cx [104.156.224.86])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FE6E20010C;
-	Mon,  2 Sep 2024 12:50:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA3114D9FB
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 12:51:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=104.156.224.86
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725281430; cv=none; b=gaSwyRQ3s7UA61Ub4LVR0dtDf+2syxcw0CwQyANjpRABkQENPUNMrBckjMFG0v7wqi3upzLNLE6xlEutuXNPNQcgNiUcjO/knYMkIcn4/3K6IISzwF89DyNJnOAbgxFqG+jvYWJXzop4dg+DsiCPINUFsFKUlcN8YJP9NEeOifI=
+	t=1725281495; cv=none; b=aE41SRUbjqY/9O44tPqPEKb0k9kM7C0Xm9S7Tzr1rRK+pUqkiD8M6MnOoyN4Qf5oGZuFI8CNoyjSg2G5MocX19/vYmxNMP4E/z0qVL4t4VHuHgzKKZwyY4wUc853O6A86ummrM9X5CrmhAXzo6nxoQiwStd7MW5vuRGCvz47Bpc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725281430; c=relaxed/simple;
-	bh=jUGbCvappkupnOCyTWEDiv39z61vi1zMHP+E6B0TIas=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=tVkwWARmwr4SGPa3FQjaNK7PvfQEx2MzbxAo9jYPzyJ2NlLSGIV57O5f+kKpyBHXsW+NHKehE8IoP5Zn5RiiCzGQpS5/MBoqgJWZdNklyVRoRxS/U0MQQ1DeBAu6TgNkH7tNON9xDzqAuOvCdamayQRN/PI1Euk51YDpTzWe+Eg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nvGAMgLP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CA940C4CEC7;
-	Mon,  2 Sep 2024 12:50:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725281429;
-	bh=jUGbCvappkupnOCyTWEDiv39z61vi1zMHP+E6B0TIas=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=nvGAMgLP3s8VI2YMGOKyxVIC8+pxlpcA9hoEhVhOygDvDypHdD6T365PX4HOYokqr
-	 fR249ww16kvtWdcdkRX+BxVAOg3thn01r/nfIZY9Z6/I/93WtYKSmH7FmtrN+OLYJm
-	 mobF67bxpBAPKmKA2SBzyUd0ETwR+4F/kr5H9kw9sl7obbEEZy+q6Oa5ZGjbR1pz/0
-	 avJuxrAY/34/EXtXP9vAwJ5oEDRyE4O0KaFUJqtZa32LjJLQ7GRBST79i0RbfX/kqB
-	 H1NLBTvNk/d8RwMTMMhyl84UMN7TFtljNfFQLP09rDeKkMHrlpvqzOqOwVffjKF5IC
-	 +SzLyCAQ53jrQ==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADCBE3805D82;
-	Mon,  2 Sep 2024 12:50:31 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1725281495; c=relaxed/simple;
+	bh=yYYDA6rj5JUGzuvIPMJjlce3l0+qAHTEiR0Tt7xwe/M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=X+N7TN7A8Iohso7avPZVcEMLQRwTGGOEiOni95KHqi6SU41WFODCesD/hOcQgwj+lmOOP/LeCTqGtXYK7vcUqlfEt2GDPUFtRvxKOW7ntzDXPwUVy/OqZswiAuh3VuX9aMozJ/3pVv4noHkxDe3YRDUefCDOsYCFrT5s/+Afbyk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=libc.org; spf=pass smtp.mailfrom=aerifal.cx; arc=none smtp.client-ip=104.156.224.86
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=libc.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aerifal.cx
+Date: Mon, 2 Sep 2024 08:51:26 -0400
+From: Rich Felker <dalias@libc.org>
+To: Florian Weimer <fweimer@redhat.com>
+Cc: "H.J. Lu" <hjl.tools@gmail.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	linux-api@vger.kernel.org, libc-alpha@sourceware.org,
+	musl@lists.openwall.com
+Subject: Re: [musl] AT_MINSIGSTKSZ mismatched interpretation kernel vs libc
+Message-ID: <20240902125125.GS10433@brightrain.aerifal.cx>
+References: <20240829205436.GA14562@brightrain.aerifal.cx>
+ <20240831092902.GA2724612@port70.net>
+ <20240831150241.GP10433@brightrain.aerifal.cx>
+ <CAMe9rOqSSX_YP7dq5WK7vDyrQ5RP6nUNrim-8FjJi1X_8NfAvg@mail.gmail.com>
+ <20240831154101.GN32249@brightrain.aerifal.cx>
+ <87v7zetg1j.fsf@oldenburg3.str.redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next v2] net: stmmac: drop the ethtool begin() callback
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <172528143025.3879101.12070327930578718589.git-patchwork-notify@kernel.org>
-Date: Mon, 02 Sep 2024 12:50:30 +0000
-References: <20240829-stmmac-no-ethtool-begin-v2-1-a11b497a7074@redhat.com>
-In-Reply-To: <20240829-stmmac-no-ethtool-begin-v2-1-a11b497a7074@redhat.com>
-To: Andrew Halaney <ahalaney@redhat.com>
-Cc: alexandre.torgue@foss.st.com, joabreu@synopsys.com, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- mcoquelin.stm32@gmail.com, quic_abchauha@quicinc.com,
- quic_scheluve@quicinc.com, d.dolenko@metrotek.ru, netdev@vger.kernel.org,
- linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87v7zetg1j.fsf@oldenburg3.str.redhat.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 
-Hello:
-
-This patch was applied to netdev/net-next.git (main)
-by David S. Miller <davem@davemloft.net>:
-
-On Thu, 29 Aug 2024 15:48:44 -0500 you wrote:
-> This callback doesn't seem to serve much purpose, and prevents things
-> like:
+On Mon, Sep 02, 2024 at 02:07:36PM +0200, Florian Weimer wrote:
+> * Rich Felker:
 > 
->     - systemd.link files from disabling autonegotiation
->     - carrier detection in NetworkManager
->     - any ethtool setting
+> > This is ambiguously worded (does "operating system" mean kernel?) and
+> > does not agree with POSIX, which defines it as:
+> >
+> >     Minimum stack size for a signal handler.
+> >
+> > And otherwise just specifies that sigaltstack shall fail if given a
+> > smaller size.
+> >
+> > The POSIX definition is also underspecified but it's clear that it
+> > should be possible to execute at least a do-nothing signal handler
+> > (like one which immediately returns and whose sole purpose is to
+> > induce EINTR when intalled without SA_RESTART), or even a minimal one
+> > that does something like storing to a global variable, with such a
+> > small stack. Allowing a size where even a do-nothing signal handler
+> > results in a memory-clobbering overflow or access fault seems
+> > non-conforming to me.
 > 
-> [...]
+> POSIX does not specify what happens on a stack overflow (or more
+> generally, if most resource limits are exceeded), so I think the
+> behavior is conforming on a technicality.
 
-Here is the summary with links:
-  - [net-next,v2] net: stmmac: drop the ethtool begin() callback
-    https://git.kernel.org/netdev/net-next/c/55ddb6c5a3ae
+It doesn't specify what happens on overflow. It does specify what
+happens on non-overflow: the program executes correctly. Failure to do
+that is the problem here, not failure to trap on fault.
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+Rich
 
