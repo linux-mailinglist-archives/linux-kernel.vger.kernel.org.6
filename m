@@ -1,109 +1,102 @@
-Return-Path: <linux-kernel+bounces-311468-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311469-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3CB1968992
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 16:14:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A1E7968994
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 16:14:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6633E1F236A9
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 14:14:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 406BC1F23491
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 14:14:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3CB019F10C;
-	Mon,  2 Sep 2024 14:13:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CFB319F113;
+	Mon,  2 Sep 2024 14:14:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yhndnzj.com header.i=@yhndnzj.com header.b="Pz+Rc1H6"
-Received: from mail-4022.proton.ch (mail-4022.proton.ch [185.70.40.22])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OKRCy/1g"
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5E8819F104
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 14:13:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0F4019F104
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 14:14:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725286436; cv=none; b=MJLZIyxGPq6HxjObAmUmj2CnkMMJCGPwZ+qtqIzZzZmZAD6T14GasIRe3iI+T5kalPt3e0GnonW/rfY58qRPijQjReErUbz3Q2ZV0JoGBbinswVnHmDajmMEMCID6C6C9Y5imEXv6WMczGedbYwp3sKdjDjZFGzP3ZbdGyaxuzk=
+	t=1725286457; cv=none; b=bNUODp/k36GWsXiBvdQWN3KAVwO5H6qVLexDJY4R6A0jqA0Gs8O70G7RnZnT5NB6KPk3mhRsKPRf8zfzPSs1H1/J2mkN5xJaY6KWB0VWjSA0pikwpx/bIDllxzFPrZyEsz7tjpmkFcgzolwTxKyW2xkbgOt/zBylYGtdl1ZSXs4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725286436; c=relaxed/simple;
-	bh=uGPV9tAR75BtaCLwmnuCOAw4KGDFFnJEqjWSWmwE5Gs=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=cBH4hDvHTaZwn3eAHkegzJUI5oUY74GeG1JbrG8k/cP/KW13xwKHPpgXo2IGfu4tNycGeA+amaXFhcmkiD4frcLxCFatFF9d1Ii3AFv4DhBk1oWmZNynR9T/72ZlvYQQ0XFRGEikkaLlt92MG8XUIBPRJfAZiSUJCrsPHgxUdwI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=yhndnzj.com; spf=pass smtp.mailfrom=yhndnzj.com; dkim=pass (2048-bit key) header.d=yhndnzj.com header.i=@yhndnzj.com header.b=Pz+Rc1H6; arc=none smtp.client-ip=185.70.40.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=yhndnzj.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yhndnzj.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yhndnzj.com;
-	s=protonmail2; t=1725286429; x=1725545629;
-	bh=uGPV9tAR75BtaCLwmnuCOAw4KGDFFnJEqjWSWmwE5Gs=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=Pz+Rc1H6l8xE+LNq1VflhrnR6hZy/Zy65dlMYNFu0Q8+2bXbIZ8uwxqaYPoqjRD18
-	 eHNaNmifT8ruB1nWzp4M976xXzqEIpjnI/i8sg906lFytRLJH5mLzDehjT3c5dNfeH
-	 olHtHEN6vipEHN+87gDxRj1iVr3lLiZVKbig94IjnwUcfcYczG2oPfBkF2OFiAy7pO
-	 PsHkX1Wx1+KZeSTOogz0TkTPux4oi5KkSfScEeXHulppwGMkWDrNXzeiHZNbRBsVwi
-	 SAxKg2a8G+fqZcYOA0Q4/R+0sOE95H+JTuSkM6W1mHWMUuMRxmcWsm+nhDRIkWr0Qe
-	 JWO4oYs9ILFfg==
-Date: Mon, 02 Sep 2024 14:13:43 +0000
-To: Andrew Morton <akpm@linux-foundation.org>
-From: Mike Yuan <me@yhndnzj.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, cgroups@vger.kernel.org, Nhat Pham <nphamcs@gmail.com>, Yosry Ahmed <yosryahmed@google.com>, Johannes Weiner <hannes@cmpxchg.org>, Muchun Song <muchun.song@linux.dev>, Shakeel Butt <shakeel.butt@linux.dev>, Roman Gushchin <roman.gushchin@linux.dev>, Michal Hocko <mhocko@kernel.org>
-Subject: Re: [PATCH v3 3/3] Documentation/cgroup-v2: clarify that zswap.writeback is ignored if zswap is disabled
-Message-ID: <d305db940e461c92a618dd26224144a5105274b3.camel@yhndnzj.com>
-In-Reply-To: <20240823162506.12117-3-me@yhndnzj.com>
-References: <20240823162506.12117-1-me@yhndnzj.com> <20240823162506.12117-3-me@yhndnzj.com>
-Feedback-ID: 102487535:user:proton
-X-Pm-Message-ID: 1b059982da0bd1a3cba5619155b6e8cc6ca71b5c
+	s=arc-20240116; t=1725286457; c=relaxed/simple;
+	bh=v2lefujDoVpBIuJLBEvZNiw3JPuM+sFNygRhBi5Us2c=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=HsChWaWAW5TvhpSRYzDtsB+wLscvvKIudKrzMINz5Ta1xFfFUt5z4KjSFa23iVOtyWooBUT2K0sWlxAFFVaf3fKDjKrlVK2of5snZ9pimNjY6/bfGYbpZKaEUu8ASuh6/EUsoBfYOwCkrwqH/6V+5eLYTfZzN5lq2FFzqWzbM+o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OKRCy/1g; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5c210e23651so4466113a12.3
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2024 07:14:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1725286454; x=1725891254; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=nmJcmvOj43+5+SnbSrOwyIS0n6r8YRRr9ji9wwxHcZA=;
+        b=OKRCy/1gD3+D6u9sit2+dgX3qMbQiLtGeaP55MzrDjK9etEBaDW0pAxfvPqrTx/XoO
+         TYB8GjZBchbXZu+wouhG3a9mlOFFW/EL5euzP1iXwcekPvnP7fySlTnEHkVrfwcjHk2x
+         912oG9HKaqJqDXn3MHr4nkBuBbJiOdFiAAhGIbTIuamWCwnycKNCaJ1R/bvxSWLPTBlP
+         g4Ewn5xnFicNi9zQDTX8PWrNVGaPsS0pC3FhxECYLDMSnl5O4FmojRKIO73mHt1qGR1U
+         00LGR6C/Bplan0LOmHuegBTPUcnsyLXCjZgTjPwJ4k3gTxa61xa/G3KlDHVpZYZqnfER
+         Z28Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725286454; x=1725891254;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=nmJcmvOj43+5+SnbSrOwyIS0n6r8YRRr9ji9wwxHcZA=;
+        b=VA7Zp2PDG1NGbDV2mARYH/6n8wf3ZdTnJcMmlPYHUDucfGVWKZcYCw89czRKrPzh6t
+         L89tB/dXpucJW3/OA2L8EHnw6vLrKvGgK8vq7+hPDROZsCsBqzaLxtXWsHGHrlrcMmV+
+         31pQPGIl0zJ91n3L2WCA+Nh2KOPZRplcAciMup3+Dblz+cplyOKhobbm5iAWsnW+1mEh
+         NlANNYJVOdns0PKNKNOQ7QWue6uXSb3HtqEs16U32iZuCQslDkhySv3LJRVF/pVIeEZc
+         7mRjQp6mVUhjLI0iLYGQ6KYOqXdNexSfW0PoJV1N1vpUa9kI1RA/WBw6El3I2zINP1SO
+         xdoA==
+X-Gm-Message-State: AOJu0YyVXdfdCaDMk7ipxq/cPz0TFMKKAV3yXFIr8AEbNgJp0Cf3qE9H
+	hDsrQVQfWMjSWsIlXqRH56NXtqMdUAp99V5sv/Fm+OeHlRojqpgOPgu8VAzXShI=
+X-Google-Smtp-Source: AGHT+IExT3kmeUDqu8ma8c+Y54fUSBUInItgpjo3YCn5ueT4Fd35Mu6gFlRGJkWznZ1M8eAuEWFKSQ==
+X-Received: by 2002:a05:6402:3483:b0:5c2:4404:a193 with SMTP id 4fb4d7f45d1cf-5c24404a2b2mr4676035a12.34.1725286454112;
+        Mon, 02 Sep 2024 07:14:14 -0700 (PDT)
+Received: from localhost.localdomain ([5.133.47.210])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c24ff04551sm2370824a12.35.2024.09.02.07.14.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 02 Sep 2024 07:14:13 -0700 (PDT)
+From: srinivas.kandagatla@linaro.org
+To: gregkh@linuxfoundation.org
+Cc: linux-kernel@vger.kernel.org,
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Subject: [PATCH 0/1] misc: fastrpc: fixes for 6.11
+Date: Mon,  2 Sep 2024 15:14:08 +0100
+Message-Id: <20240902141409.70371-1-srinivas.kandagatla@linaro.org>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-> As discussed in [1], zswap-related settings natually
-> lose their effect when zswap is disabled, specifically
-> zswap.writeback here. Be explicit about this behavior.
->=20
-> [1]
-> https://lore.kernel.org/linux-kernel/CAKEwX=3DMhbwhh-=3DxxCU-RjMXS_n=3DRp=
-V3Gtznb2m_3JgL+jzz++g@mail.gmail.com/
->=20
-> Cc: Nhat Pham <nphamcs@gmail.com>
-> Cc: Yosry Ahmed <yosryahmed@google.com>
->=20
-> Signed-off-by: Mike Yuan <me@yhndnzj.com>
-> ---
-> =C2=A0Documentation/admin-guide/cgroup-v2.rst | 2 ++
-> =C2=A01 file changed, 2 insertions(+)
->=20
-> diff --git a/Documentation/admin-guide/cgroup-v2.rst
-> b/Documentation/admin-guide/cgroup-v2.rst
-> index 95c18bc17083..a1723e402596 100644
-> --- a/Documentation/admin-guide/cgroup-v2.rst
-> +++ b/Documentation/admin-guide/cgroup-v2.rst
-> @@ -1731,6 +1731,8 @@ The following nested keys are defined.
-> =C2=A0
-> =C2=A0=09Note that this is subtly different from setting
-> memory.swap.max to
-> =C2=A0=090, as it still allows for pages to be written to the zswap
-> pool.
-> +=09This setting has no effect if zswap is disabled, and
-> swapping
-> +=09would be allowed unless memory.swap.max is set to 0.
-> =C2=A0
-> =C2=A0=C2=A0 memory.pressure
-> =C2=A0=09A read-only nested-keyed file.
+From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 
-Hmm, Andrew, it seems that the commit messages of this and the previous
-patch are somehow reversed/mismatched? [1][2] Could you please confirm
-and fix it?
+Hi Greg,
 
-[1]:
-https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git/commit/?h=3Dmm-=
-unstable&id=3Deef275964326760bb55803b167854981cab97e55
-[2]:
-https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git/commit/?h=3Dmm-=
-unstable&id=3D42c3628a37400c2bc4199b9f8423be701646d4e0
+Here are one fix in fastrpc for 6.11, Could you queue
+this for 6.11 if its not too late.
+
+
+Thanks,
+Srini
+
+Sukrut Bellary (1):
+  misc: fastrpc: Fix double free of 'buf' in error path
+
+ drivers/misc/fastrpc.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
+
+-- 
+2.25.1
 
 
