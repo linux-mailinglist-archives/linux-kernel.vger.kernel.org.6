@@ -1,79 +1,78 @@
-Return-Path: <linux-kernel+bounces-311506-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311507-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BDC29689F3
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 16:30:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E0DFA9689F4
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 16:30:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EE007B231AD
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 14:30:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 35A0BB22FDD
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 14:30:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA1F920FABE;
-	Mon,  2 Sep 2024 14:30:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA0C413E8A5;
+	Mon,  2 Sep 2024 14:30:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dOZN8l2K"
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wf/joCvH"
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A17D820FA9C
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 14:30:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7887C2101A6
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 14:30:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725287404; cv=none; b=A133rtKPW2fYBWldUkzvWR/QrgqFVysD4ipYb3dUwO/jRmZTpYcoVUHdh6+jd8Xo8aAtLwCP0jQWLsOG7yBSs8a4sBKeJXDJN8+iMw7WChHK4zSUPiMPWbivt3vPozwEjJdFALFPRm0jGkjTnI3/PC8uthlea6pwt4kfBqnqlTI=
+	t=1725287406; cv=none; b=Tu1r5sdF1x6vIBvhkj8zg8i/x2LxVdb2Tr/wnTIoh/pGny7bOHC+QOFJAgq/njeT1bFbOvUEsRsRbDcVN/YbFpO8//0zUn7Waxy0jQaiQwg2bZUMJGHdwLQF2pniVfbYC5hNRxa8N+2bgs0zrOvtPn/Y/QxISJrzxqDiKds3dsM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725287404; c=relaxed/simple;
-	bh=Zxcd9LkyYaOSN8fvwJ1xNiYaqqcaXioGlDiVsAE7nXg=;
+	s=arc-20240116; t=1725287406; c=relaxed/simple;
+	bh=6S/BL58l6DGslYCysih6MHL7TQa+dxFbkVKivoprPbg=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=bWaAd78RPe9n62n2BDDXI7UWuHikjgK1gqKURDzSQUeENT7dkqRExZkrpiEEI6ryet8XMdcOezBt/W/5Y8UMVd4aqvMwTlFFfxc/cxBTs8IZ++KjBvzk5PnZp6ZNXze82eczG5JItv+5YktC4jzEVTW6Ir1wASilW8yWn6AQ3zk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=dOZN8l2K; arc=none smtp.client-ip=209.85.218.46
+	 MIME-Version; b=U0mulsXR80RIgNINNW42viKlxvikDWGe97l3w0huYCrLU9z8c+1+DsEVG0chnvYlLXCLg37lJXAmNLJ7IuXBnDHmUkQcDMfyLNYTOiDN5T0X4dJgXCC/wicSaqr8Op3jejGReW1BJ0B4UgiII+ZGUAbb+hQCsaqD1WEB+zt18a8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wf/joCvH; arc=none smtp.client-ip=209.85.208.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a869f6ce2b9so468695566b.2
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2024 07:30:02 -0700 (PDT)
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2f3f163e379so69491221fa.3
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2024 07:30:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1725287401; x=1725892201; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1725287403; x=1725892203; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=f9WpMPcffP4bVIHfwlm0A0QBWfa2okRCbCAWMVHxhp8=;
-        b=dOZN8l2KCr2Y+vGtCzd3Q+SiA8sFntkZAdmxRZXTHWxXh/y6X7TiT0Hd5b5ltE3Dcv
-         6U2ICQcIgy3xIVNnStc6UIznGjGypt+mV74UALn8qpWr2GipE+iv2gqG2fLx5NfClKFK
-         uW7+Zo4f4WgeaTEQ1qd1HISQbraFMiD1OqXcnIZtV14YBvvApy7ySVEIXYNe9I7Tu7Ec
-         gv8O9DLlWtwyypsxDcDXOFd91gLiRSAm0vIqg6qlxC3HFP/cLmgPYzP0lTv+8mMspVvK
-         bd89+7vZye0mCw60j6b1GqL6ZsccHlMLoMAItoE35ELrUvcS3tO3jIL3TX242sBlkz/F
-         XUGA==
+        bh=FQxhPfaSfEzPkFbIFbbXZUYpGA0UFHQtGXmB6Sa6n/8=;
+        b=wf/joCvHBCikFDYVotv0hB3RJo1hRrBPj7Qhf3BUpS0tsYghKJkwgZt1t+HHUVLxF8
+         baIjF8Wx62QV4X3R2ux12NykffTJY09a5ht6x3U/gGTj89LDkZniU1/JtkcZyXmffm3K
+         AWU16NEcY5WV3H9amAn2WzAKpwwAiV5GFi1Mk8+Sq41utmPmhu/XRLB5FaRtOVVoeJ8H
+         uYwr056p0kHCbIPjxbxcre1JZaiHMYegfGOuy2PKMnv3tyIqNl2CUzBolM1TPlhG5gCU
+         D+W/MgurQpPmtA2ajUCU8qanzyUn9hsLOtJPfyU6yL5QWJE/bqWFlxt9BElIfvkN4Peo
+         RIDw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725287401; x=1725892201;
+        d=1e100.net; s=20230601; t=1725287403; x=1725892203;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=f9WpMPcffP4bVIHfwlm0A0QBWfa2okRCbCAWMVHxhp8=;
-        b=DK9glJhWKFX5FzaktBRn7p960pyfWfd/OJNiIrKkLMewOKKwHw+xHuhZIpu2xganep
-         cQMZZVpYLqoHK/DMTDm/Svyo52GHHTkgRggt2yWRLOJc+WkmUIKxYGo48R9aFGGfTicQ
-         7zg7xUPHE0HfgqHp46sHbt8YtMhZd6Ljk4cut3u+5AyTI/J5SxIua59azxW7O6p5kq9/
-         TRl/wRSwRNtnhvIzZK0MmUTC7O22/MNJxPb9RzazgNBJqKLUFqS8tUTturZ+F3LuJfgn
-         fn6fcvDieWRSJCRh1/EzrnhsYnni3Lir7w8IcmNGNHvhQcQI2oOhau3oRjoQR46V+xJy
-         Z9zQ==
-X-Gm-Message-State: AOJu0Yxb6obnDXKign6N9QmZzRDHf3QPnArLgyy6Z3x8IH7F/ebTWCHR
-	kwbS28YHY+v/6rLD0Sd5EiLpsuDRfRs7sIp3961c5NZAxBHjY1bZV4nsSCTS74E=
-X-Google-Smtp-Source: AGHT+IHh4os20I7TL5kdbM9kzi/iA3oh1B8pPaRa8MBFGxXYwl/jTfa24TfHXNsPjAh7hUGEhbliFw==
-X-Received: by 2002:a17:907:d8c:b0:a7a:aa35:409e with SMTP id a640c23a62f3a-a897f875407mr1216860666b.25.1725287400995;
-        Mon, 02 Sep 2024 07:30:00 -0700 (PDT)
+        bh=FQxhPfaSfEzPkFbIFbbXZUYpGA0UFHQtGXmB6Sa6n/8=;
+        b=wR+K1Oaqhcm7cGPsV62Gx9Ly/jLUQmTVMqYUVqbEIZhJRCKULHdARyVy9LIC+HVOJM
+         +gKAKe4//E5HyeQM40gXKLHNrh5FnVUzj1I3lrtFUHilhzPXk9VvTaf4assZvln/54ib
+         Fj+AOYsC9gINaXA78PrpwJCYg9GFjvAOGngLhfXuE8LqNFp0LYZGqJV10a3T3w3Zc8rs
+         nO/uGbXok7QnRlkXOlibRoYftC15huz21RghRHmlOMcjtUebnBKZnpL1koNuIJBHfZXn
+         rM82atH6/O+iwrU+WGQjkWpR/8gPhmuhMNkVB9zdVtaNmBLuQNAFfWBRJK6DfS28EyrU
+         KmxA==
+X-Gm-Message-State: AOJu0Yx30juv/jA08O8ikIpXgLzH2v8XPzOt2u+//gSystGDEIY4tqUv
+	vfWBOlSe6nwcHnXhWLY2OxiSiYmBqy/Vgh+CRlxafGNQeKscgnBB1oQ63RAI2QE=
+X-Google-Smtp-Source: AGHT+IHUBOhCeHWiu2UPzso0/FqzEudFCnhMC1OGTyF1ZmMpGjeRgQlzF4CynvEu565yi7iUuWD83Q==
+X-Received: by 2002:a05:6512:1294:b0:533:c9d:a01f with SMTP id 2adb3069b0e04-53546b1e1c2mr8611155e87.4.1725287402416;
+        Mon, 02 Sep 2024 07:30:02 -0700 (PDT)
 Received: from localhost.localdomain ([5.133.47.210])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a89891d80fcsm566011666b.181.2024.09.02.07.29.59
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a89891d80fcsm566011666b.181.2024.09.02.07.30.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Sep 2024 07:30:00 -0700 (PDT)
+        Mon, 02 Sep 2024 07:30:01 -0700 (PDT)
 From: srinivas.kandagatla@linaro.org
 To: gregkh@linuxfoundation.org
 Cc: linux-kernel@vger.kernel.org,
 	Peng Fan <peng.fan@nxp.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
 	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: [PATCH 1/9] dt-bindings: nvmem: imx-ocotp: support i.MX95
-Date: Mon,  2 Sep 2024 15:29:44 +0100
-Message-Id: <20240902142952.71639-2-srinivas.kandagatla@linaro.org>
+Subject: [PATCH 2/9] nvmem: imx-ocotp-ele: support i.MX95
+Date: Mon,  2 Sep 2024 15:29:45 +0100
+Message-Id: <20240902142952.71639-3-srinivas.kandagatla@linaro.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20240902142952.71639-1-srinivas.kandagatla@linaro.org>
 References: <20240902142952.71639-1-srinivas.kandagatla@linaro.org>
@@ -87,36 +86,74 @@ Content-Transfer-Encoding: 8bit
 
 From: Peng Fan <peng.fan@nxp.com>
 
-Add i.MX95 ocotp compatible string
+i.MX95 OCOTP has same accessing method, so add an entry for i.MX95, but
+some fuse has ECC feature, so only read out the lower 16bits for ECC fuses.
 
 Signed-off-by: Peng Fan <peng.fan@nxp.com>
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 ---
- Documentation/devicetree/bindings/nvmem/imx-ocotp.yaml | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/nvmem/imx-ocotp-ele.c | 32 +++++++++++++++++++++++++++++---
+ 1 file changed, 29 insertions(+), 3 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/nvmem/imx-ocotp.yaml b/Documentation/devicetree/bindings/nvmem/imx-ocotp.yaml
-index e21c06e9a741..b2cb76cf9053 100644
---- a/Documentation/devicetree/bindings/nvmem/imx-ocotp.yaml
-+++ b/Documentation/devicetree/bindings/nvmem/imx-ocotp.yaml
-@@ -14,7 +14,7 @@ maintainers:
- description: |
-   This binding represents the on-chip eFuse OTP controller found on
-   i.MX6Q/D, i.MX6DL/S, i.MX6SL, i.MX6SX, i.MX6UL, i.MX6ULL/ULZ, i.MX6SLL,
--  i.MX7D/S, i.MX7ULP, i.MX8MQ, i.MX8MM, i.MX8MN i.MX8MP and i.MX93 SoCs.
-+  i.MX7D/S, i.MX7ULP, i.MX8MQ, i.MX8MM, i.MX8MN i.MX8MP and i.MX93/5 SoCs.
+diff --git a/drivers/nvmem/imx-ocotp-ele.c b/drivers/nvmem/imx-ocotp-ele.c
+index cf920542f939..1ba494497698 100644
+--- a/drivers/nvmem/imx-ocotp-ele.c
++++ b/drivers/nvmem/imx-ocotp-ele.c
+@@ -14,8 +14,9 @@
+ #include <linux/slab.h>
  
- allOf:
-   - $ref: nvmem.yaml#
-@@ -36,6 +36,7 @@ properties:
-               - fsl,imx8mq-ocotp
-               - fsl,imx8mm-ocotp
-               - fsl,imx93-ocotp
-+              - fsl,imx95-ocotp
-           - const: syscon
-       - items:
-           - enum:
+ enum fuse_type {
+-	FUSE_FSB = 1,
+-	FUSE_ELE = 2,
++	FUSE_FSB = BIT(0),
++	FUSE_ELE = BIT(1),
++	FUSE_ECC = BIT(2),
+ 	FUSE_INVALID = -1
+ };
+ 
+@@ -93,7 +94,10 @@ static int imx_ocotp_reg_read(void *context, unsigned int offset, void *val, siz
+ 			continue;
+ 		}
+ 
+-		*buf++ = readl_relaxed(reg + (i << 2));
++		if (type & FUSE_ECC)
++			*buf++ = readl_relaxed(reg + (i << 2)) & GENMASK(15, 0);
++		else
++			*buf++ = readl_relaxed(reg + (i << 2));
+ 	}
+ 
+ 	memcpy(val, (u8 *)p, bytes);
+@@ -155,8 +159,30 @@ static const struct ocotp_devtype_data imx93_ocotp_data = {
+ 	},
+ };
+ 
++static const struct ocotp_devtype_data imx95_ocotp_data = {
++	.reg_off = 0x8000,
++	.reg_read = imx_ocotp_reg_read,
++	.size = 2048,
++	.num_entry = 12,
++	.entry = {
++		{ 0, 1, FUSE_FSB | FUSE_ECC },
++		{ 7, 1, FUSE_FSB | FUSE_ECC },
++		{ 9, 3, FUSE_FSB | FUSE_ECC },
++		{ 12, 24, FUSE_FSB },
++		{ 36, 2, FUSE_FSB  | FUSE_ECC },
++		{ 38, 14, FUSE_FSB },
++		{ 63, 1, FUSE_ELE },
++		{ 128, 16, FUSE_ELE },
++		{ 188, 1, FUSE_ELE },
++		{ 317, 2, FUSE_FSB | FUSE_ECC },
++		{ 320, 7, FUSE_FSB },
++		{ 328, 184, FUSE_FSB }
++	},
++};
++
+ static const struct of_device_id imx_ele_ocotp_dt_ids[] = {
+ 	{ .compatible = "fsl,imx93-ocotp", .data = &imx93_ocotp_data, },
++	{ .compatible = "fsl,imx95-ocotp", .data = &imx95_ocotp_data, },
+ 	{},
+ };
+ MODULE_DEVICE_TABLE(of, imx_ele_ocotp_dt_ids);
 -- 
 2.25.1
 
