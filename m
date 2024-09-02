@@ -1,44 +1,45 @@
-Return-Path: <linux-kernel+bounces-310700-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310701-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77E7396804A
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 09:16:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17AE996804B
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 09:16:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DBDAFB225EE
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 07:16:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 39E391C205BC
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 07:16:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7AC116BE20;
-	Mon,  2 Sep 2024 07:16:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F163177992;
+	Mon,  2 Sep 2024 07:16:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RmzGMWRd"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="agYKSAil"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 363862B9BB
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 07:16:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A293F2B9BB
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 07:16:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725261393; cv=none; b=uoq+Ge5aA//12XoixOLDHfDjl5mHbrNJplcLz/j/O9z8GYQ4Irp9YeRzXrjaszz0MZ+QyddYr4Z2Cx8/7/YuiWZ5gSQqpd1CWEIdu7ydZ/qPTv8Teq1561khv17fg3paLW8A91mDnXdkQCqH0hq82lnAs3lX7Tt19hwhCf5yJ6w=
+	t=1725261396; cv=none; b=JBwvxeYEhOcB/E1pEEyN/xyUDBFEcPqNWZxNfLsAiUVN5MKaQ0ZBLKUH3BuOX8Ixyil4hXr5nLCcKEMJ17CMZgurk7n+mTLPhEfnU8Lw1HdiCvsMchzNWQ86ol0blXoBrpvKViFALr0QOCBny9fdVf84rYqEekyX+oD0fyQJEeQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725261393; c=relaxed/simple;
-	bh=C+PQyPVCIVbmT/BZwf3yjRAH5H4AzFwbepsfC3VtwYo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=a93YY467YptqeRn307oc7S5XHcsY1JwZWzshJxI/Aygv1dO6yTdiWVJSTqo7D2Vghr8RHrlv0+GS9QZPvOtg4h5O/mSDdQ19cqvv4UQq0tPeSV3aMT6LfGsIn9QJKsAVlMPvl4DCPI+XG0tQhnRxyzsuKn+wTbyMQRdHunvYqXE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RmzGMWRd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B4FC7C4CEC2;
-	Mon,  2 Sep 2024 07:16:29 +0000 (UTC)
+	s=arc-20240116; t=1725261396; c=relaxed/simple;
+	bh=35oS5cqvsOoGfro8SlCHvjRjEwfOQy4xgC0vABlxtJk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=dujYXoB1lhG3XrTMMvZsuSxMIcT4QReqhJ4qn0z5bVHo6GAW6CisAA0OxRVppSXOJOnlG1MATpnqxjQ0pKDUJfNmuwPZEeRUg0R0W82Z9SdI1cLtQFh+DX+8LCyMJoWFOFupqt7jTjoeD8QMpyFgr5xaoF+sXaXIb747nNma0Nc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=agYKSAil; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5BAB1C4CEC2;
+	Mon,  2 Sep 2024 07:16:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725261392;
-	bh=C+PQyPVCIVbmT/BZwf3yjRAH5H4AzFwbepsfC3VtwYo=;
-	h=From:To:Cc:Subject:Date:From;
-	b=RmzGMWRdeLlM97okxY0Sw/YVpluQR5yVs86w+rYSGxhsrJ0twKF8C6XMJhCcOJrhN
-	 zeVnZMGaBxB0b+iOU9YkLfSjwrHuYFJuB7Anp8tPnaJBYLQkX6bveW+uogzC3eFbSM
-	 drf2NyTvM+LOatVbNyY4gk4VvlYICfui+UJPNUnD7pyQPkzzXsQ7dG6b3UxRXXhdMq
-	 YnnO5RpdJ2HHpz20DV51q+gnlCRr9saSCrsso2KtMLEaokS9O4+VuSysrY6hNyjmEN
-	 vx653RNcY+1986hKlndc2S1jorh1E1kyF7GspGOsYRLQKcGwKcs3FbG64vas3yd6Nn
-	 fLOvh0LxtqWfg==
+	s=k20201202; t=1725261396;
+	bh=35oS5cqvsOoGfro8SlCHvjRjEwfOQy4xgC0vABlxtJk=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=agYKSAilfuYO5J7eGOLpdxzw52rI9hxDd1DKce1cIpm9Fjt0aSVLplL3wmg3sHr/G
+	 HcnCqtqK+RRS9/TCwa5CYuM7L/NqpTsTB4pDnREzgFVbLECV8qmZhLyt0sh+yUJ0TS
+	 FRx3J5kf7s+dBjFhx4zq5oHD+lnChGZzvxxnvQkR9PX/G6oLAS0039chUbgygF+8tp
+	 8ZPsA6lo80t4DbiB6RX9oxVQLDuR6S6ekvtWBhywuT7ZpbwpxXZEVZhDdCjGsMqA2d
+	 2YOFTQU8dknUtnJQPcYzUM2Dpjx2Gq7vW03RUznWSZB8bJNXXeiZPGqYcGs17eJXul
+	 wy6Zp76/km4Ug==
 From: alexs@kernel.org
 To: Vitaly Wool <vitaly.wool@konsulko.com>,
 	Miaohe Lin <linmiaohe@huawei.com>,
@@ -53,10 +54,12 @@ To: Vitaly Wool <vitaly.wool@konsulko.com>,
 	Yosry Ahmed <yosryahmed@google.com>,
 	nphamcs@gmail.com
 Cc: Alex Shi <alexs@kernel.org>
-Subject: [PATCH v7 00/21] mm/zsmalloc: add zpdesc memory descriptor for zswap.zpool 
-Date: Mon,  2 Sep 2024 15:21:11 +0800
-Message-ID: <20240902072136.578720-1-alexs@kernel.org>
+Subject: [PATCH v7 01/21] mm/zsmalloc: add zpdesc memory descriptor for zswap.zpool
+Date: Mon,  2 Sep 2024 15:21:12 +0800
+Message-ID: <20240902072136.578720-2-alexs@kernel.org>
 X-Mailer: git-send-email 2.46.0
+In-Reply-To: <20240902072136.578720-1-alexs@kernel.org>
+References: <20240902072136.578720-1-alexs@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,95 +70,159 @@ Content-Transfer-Encoding: 8bit
 
 From: Alex Shi <alexs@kernel.org>
 
-According to Metthew's plan, the page descriptor will be replace by a 8
-bytes mem_desc on destination purpose.
-https://lore.kernel.org/lkml/YvV1KTyzZ+Jrtj9x@casper.infradead.org/
+The 1st patch introduces new memory descriptor zpdesc and rename
+zspage.first_page to zspage.first_zpdesc, no functional change.
 
-This patchset abstracts the memory descriptor used in zsmalloc by zswap/zram.
-The descriptor still overlays the struct page; nothing has changed
-in that regard. What this patchset accomplishes is the use of folios in
-to save some code size, and the introduction of a new concept, zpdesc. 
-This patchset is just an initial step; it does not bias the potential 
-changes to kmem_alloc or larger zspage modifications.
+We removed PG_owner_priv_1 since it was moved to zspage after
+commit a41ec880aa7b ("zsmalloc: move huge compressed obj from
+page to zspage").
 
-To name the struct zpdesc instead of zsdesc, since there are still 3
-zpools under zswap: zbud, z3fold, zsmalloc for now(z3fold maybe removed
-soon), and we could easyly extend it to other zswap.zpool in needs.
+And keep the memcg_data member, since as Yosry pointed out:
+"When the pages are freed, put_page() -> folio_put() -> __folio_put()
+will call mem_cgroup_uncharge(). The latter will call folio_memcg()
+(which reads folio->memcg_data) to figure out if uncharging needs to
+be done.
 
-For all zswap.zpools, they are all using single page since often used
-under memory pressure. So the conversion via folio series helper is
-better than page's for compound_head check saving.
+There are also other similar code paths that will check
+folio->memcg_data. It is currently expected to be present for all
+folios. So until we have custom code paths per-folio type for
+allocation/freeing/etc, we need to keep folio->memcg_data present and
+properly initialized."
 
-For now, all zpools are using some page struct members, like page.flags
-for PG_private/PG_locked. and list_head lru, page.mapping for page migration.
-
-This patachset does not increase the descriptor size nor introduce any
-functional changes, and could save about 122Kbytes zsmalloc.o size.
-
-Thanks a lot for comments and suggestion from Yosry, Yoo, Sergey, Willy
-and Vishal!
-
-Thanks
-Alex
+Originally-by: Hyeonggon Yoo <42.hyeyoo@gmail.com>
+Signed-off-by: Alex Shi <alexs@kernel.org>
 ---
-v6->v7:
-- rebase on akpm/mm-unstable on Aug 30
-
-v5->v6:
-- rebase on akpm/mm-unstable on Aug 4
-- recover 2 helpers and update code comments according to Vishal's
-  comments on patch 1 and 6.
-
-v4->v5:
-- rebase on akpm/mm-unstable on Aug 8 + Stephen Rothwell's build fix.
-- add a helper and update code comments according to Sergey's comments
-- fold patch 20/21, remove 3 helpers functions according to Vishal's
-  comments 
-
-v3->v4:
-- rebase on akpm/mm-unstable Jul 21
-- fixed a build warning reported by LKP
-- Add a comment update for struct page to zpdesc change
-
-v2->v3:
-- Fix LKP reported build issue
-- Update the Usage of struct zpdesc fields.
-- Rebase onto latest mm-unstable commit 2073cda629a4
-
-v1->v2: 
-- Take Yosry and Yoo's suggestion to add more members in zpdesc,
-- Rebase on latest mm-unstable commit 31334cf98dbd
-Alex Shi (10):
-  mm/zsmalloc: add zpdesc memory descriptor for zswap.zpool
-  mm/zsmalloc: use zpdesc in trylock_zspage()/lock_zspage()
-  mm/zsmalloc: convert create_page_chain() and its users to use zpdesc
-  mm/zsmalloc: rename reset_page to reset_zpdesc and use zpdesc in it
-  mm/zsmalloc: convert SetZsPageMovable and remove unused funcs
-  mm/zsmalloc: convert get/set_first_obj_offset() to take zpdesc
-  mm/zsmalloc: introduce __zpdesc_clear_movable
-  mm/zsmalloc: introduce __zpdesc_clear/set_zsmalloc()
-  mm/zsmalloc: introduce zpdesc_clear_first() helper
-  mm/zsmalloc: update comments for page->zpdesc changes
-
-Hyeonggon Yoo (11):
-  mm/zsmalloc: convert __zs_map_object/__zs_unmap_object to use zpdesc
-  mm/zsmalloc: add and use pfn/zpdesc seeking funcs
-  mm/zsmalloc: convert obj_malloc() to use zpdesc
-  mm/zsmalloc: convert obj_allocated() and related helpers to use zpdesc
-  mm/zsmalloc: convert init_zspage() to use zpdesc
-  mm/zsmalloc: convert obj_to_page() and zs_free() to use zpdesc
-  mm/zsmalloc: add zpdesc_is_isolated()/zpdesc_zone() helper for
-    zs_page_migrate()
-  mm/zsmalloc: convert __free_zspage() to use zdsesc
-  mm/zsmalloc: convert location_to_obj() to take zpdesc
-  mm/zsmalloc: convert migrate_zspage() to use zpdesc
-  mm/zsmalloc: convert get_zspage() to take zpdesc
-
- mm/zpdesc.h   | 147 +++++++++++++++
- mm/zsmalloc.c | 490 +++++++++++++++++++++++++++-----------------------
- 2 files changed, 414 insertions(+), 223 deletions(-)
+ mm/zpdesc.h   | 72 +++++++++++++++++++++++++++++++++++++++++++++++++++
+ mm/zsmalloc.c |  9 ++++---
+ 2 files changed, 77 insertions(+), 4 deletions(-)
  create mode 100644 mm/zpdesc.h
 
+diff --git a/mm/zpdesc.h b/mm/zpdesc.h
+new file mode 100644
+index 000000000000..721ef8861131
+--- /dev/null
++++ b/mm/zpdesc.h
+@@ -0,0 +1,72 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/* zpdesc.h: zswap.zpool memory descriptor
++ *
++ * Written by Alex Shi <alexs@kernel.org>
++ *	      Hyeonggon Yoo <42.hyeyoo@gmail.com>
++ */
++#ifndef __MM_ZPDESC_H__
++#define __MM_ZPDESC_H__
++
++/*
++ * struct zpdesc -	Memory descriptor for zpool memory, now is for zsmalloc
++ * @flags:		Page flags, PG_private: identifies the first component page
++ * @lru:		Indirectly used by page migration
++ * @mops:		Used by page migration
++ * @next:		Next zpdesc in a zspage in zsmalloc zpool
++ * @handle:		For huge zspage in zsmalloc zpool
++ * @zspage:		Points to the zspage this zpdesc is a part of
++ * @first_obj_offset:	First object offset in zsmalloc zpool
++ * @_refcount:		Indirectly use by page migration
++ * @memcg_data:		Memory Control Group data.
++ *
++ * This struct overlays struct page for now. Do not modify without a good
++ * understanding of the issues.
++ */
++struct zpdesc {
++	unsigned long flags;
++	struct list_head lru;
++	struct movable_operations *mops;
++	union {
++		/* Next zpdescs in a zspage in zsmalloc zpool */
++		struct zpdesc *next;
++		/* For huge zspage in zsmalloc zpool */
++		unsigned long handle;
++	};
++	struct zspage *zspage;
++	unsigned int first_obj_offset;
++	atomic_t _refcount;
++#ifdef CONFIG_MEMCG
++	unsigned long memcg_data;
++#endif
++};
++#define ZPDESC_MATCH(pg, zp) \
++	static_assert(offsetof(struct page, pg) == offsetof(struct zpdesc, zp))
++
++ZPDESC_MATCH(flags, flags);
++ZPDESC_MATCH(lru, lru);
++ZPDESC_MATCH(mapping, mops);
++ZPDESC_MATCH(index, next);
++ZPDESC_MATCH(index, handle);
++ZPDESC_MATCH(private, zspage);
++ZPDESC_MATCH(page_type, first_obj_offset);
++ZPDESC_MATCH(_refcount, _refcount);
++#ifdef CONFIG_MEMCG
++ZPDESC_MATCH(memcg_data, memcg_data);
++#endif
++#undef ZPDESC_MATCH
++static_assert(sizeof(struct zpdesc) <= sizeof(struct page));
++
++#define zpdesc_page(zp)			(_Generic((zp),			\
++	const struct zpdesc *:		(const struct page *)(zp),	\
++	struct zpdesc *:		(struct page *)(zp)))
++
++/* Using folio conversion to skip compound_head checking */
++#define zpdesc_folio(zp)		(_Generic((zp),			\
++	const struct zpdesc *:		(const struct folio *)(zp),	\
++	struct zpdesc *:		(struct folio *)(zp)))
++
++#define page_zpdesc(p)			(_Generic((p),			\
++	const struct page *:		(const struct zpdesc *)(p),	\
++	struct page *:			(struct zpdesc *)(p)))
++
++#endif
+diff --git a/mm/zsmalloc.c b/mm/zsmalloc.c
+index 73a3ec5b21ad..5d3e27083c72 100644
+--- a/mm/zsmalloc.c
++++ b/mm/zsmalloc.c
+@@ -64,6 +64,7 @@
+ #include <linux/pagemap.h>
+ #include <linux/fs.h>
+ #include <linux/local_lock.h>
++#include "zpdesc.h"
+ 
+ #define ZSPAGE_MAGIC	0x58
+ 
+@@ -251,7 +252,7 @@ struct zspage {
+ 	};
+ 	unsigned int inuse;
+ 	unsigned int freeobj;
+-	struct page *first_page;
++	struct zpdesc *first_zpdesc;
+ 	struct list_head list; /* fullness list */
+ 	struct zs_pool *pool;
+ 	rwlock_t lock;
+@@ -446,7 +447,7 @@ static inline void mod_zspage_inuse(struct zspage *zspage, int val)
+ 
+ static inline struct page *get_first_page(struct zspage *zspage)
+ {
+-	struct page *first_page = zspage->first_page;
++	struct page *first_page = zpdesc_page(zspage->first_zpdesc);
+ 
+ 	VM_BUG_ON_PAGE(!is_first_page(first_page), first_page);
+ 	return first_page;
+@@ -939,7 +940,7 @@ static void create_page_chain(struct size_class *class, struct zspage *zspage,
+ 		set_page_private(page, (unsigned long)zspage);
+ 		page->index = 0;
+ 		if (i == 0) {
+-			zspage->first_page = page;
++			zspage->first_zpdesc = page_zpdesc(page);
+ 			SetPagePrivate(page);
+ 			if (unlikely(class->objs_per_zspage == 1 &&
+ 					class->pages_per_zspage == 1))
+@@ -1315,7 +1316,7 @@ static unsigned long obj_malloc(struct zs_pool *pool,
+ 		link->handle = handle | OBJ_ALLOCATED_TAG;
+ 	else
+ 		/* record handle to page->index */
+-		zspage->first_page->index = handle | OBJ_ALLOCATED_TAG;
++		zspage->first_zpdesc->handle = handle | OBJ_ALLOCATED_TAG;
+ 
+ 	kunmap_atomic(vaddr);
+ 	mod_zspage_inuse(zspage, 1);
 -- 
 2.46.0
 
