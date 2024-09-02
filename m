@@ -1,188 +1,172 @@
-Return-Path: <linux-kernel+bounces-310761-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310763-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E820B9680EB
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 09:51:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B727C9680F3
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 09:51:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6107DB20764
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 07:51:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F02F91C21FDE
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 07:51:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C97E17C22E;
-	Mon,  2 Sep 2024 07:50:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1A78183CCD;
+	Mon,  2 Sep 2024 07:51:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Qju6jSZK"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="xn44svXP"
+Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4D7014900E
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 07:50:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CFBE17D354;
+	Mon,  2 Sep 2024 07:51:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725263451; cv=none; b=AhQ/Nh/e5UYw93O3BQUWpkuQT2j/agf4oLMVX7eTCUdWzeo5M1QtO/NLeOP6dkzI+z6HJYjM/Tlcd7wxozUK2bXMxxDqk7d/Pl0Ss341YJSD08kSAXFDUgiLPZOabAJIgk1xfmsrdL7j8a/aJ9+r0hlfhIz0rFelevXaDqFL4XM=
+	t=1725263496; cv=none; b=SWpYi0xkkVW/YjnV7w4QIOCSCTA1rlJLva2CFl3Shle4V4gT3mmbp9GsrZNk6mrYWgjhAw1Rhh5+ehIbzvUn+U+RhQ/rFQd6Jrk5/SJKrPGDGySSxgHaR+84LUyLDnDBNzaSxb3cMx716QMI6Xk4N3KL0SXRIZxbter1r+X/2O8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725263451; c=relaxed/simple;
-	bh=S5+ORhvYHAjQ3Nu+w7aF/cDQYGF92UNOnE7o8O5LjSA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qiPjY2x/mQ6BVSz/lG7/t4UnoRXHpqRJxgPJ3ehLGhoidDA6IDyb36qy1fnUHTqc0pJpI7RZdaoOU+gUQxmi/YN5BpnttyJgbEQlI1/hBjN4hSZryqk1ryLyxnX/5/4WnTdxqhMtY6zmQHwMwrKc5Wos7NBbJZeDDtgqw4npYCg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Qju6jSZK; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725263449; x=1756799449;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=S5+ORhvYHAjQ3Nu+w7aF/cDQYGF92UNOnE7o8O5LjSA=;
-  b=Qju6jSZKV5UglgqIkDBrFY3ptWDE1gC08TGCvTEptU1jCYhb8GYwR3ut
-   0YOcmDe3jJX/2L3jmfCEg+xmMny7kbbghJEWsGIwNiWFYzGRfSN9Qb0v9
-   dfQeeUkwZ15K5Ue/3nueVVYKn9Uf/0x0HhwnMtw64jgueCVjIl/MeZvzE
-   SEsA5VZ3XpHpExzLitEpLMwZ6cZyC6VunVMIMb7I3G0aYagKOz5gYzhj5
-   7OjnwMiX7UvIrxIJhakZQCPVU1Rx0Ma4uCdTI26wPDa07VUaUk7p1gdE+
-   gjpmiI0GiT1L6CMkK9m2nBgD4abc0ZrnG/bfpNzV9DFwgEXjU4ge5KFWf
-   w==;
-X-CSE-ConnectionGUID: JoE6ahTZSkKsY4qSkDY0qg==
-X-CSE-MsgGUID: 51gi9KkaReOS5PXh01qsEQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11182"; a="34443948"
-X-IronPort-AV: E=Sophos;i="6.10,195,1719903600"; 
-   d="scan'208";a="34443948"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2024 00:50:49 -0700
-X-CSE-ConnectionGUID: zC2eh/4MSBKBTW1bD81/7g==
-X-CSE-MsgGUID: DcouEchOSouNJH+PmlwD7g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,195,1719903600"; 
-   d="scan'208";a="87772741"
-Received: from lkp-server01.sh.intel.com (HELO 9c6b1c7d3b50) ([10.239.97.150])
-  by fmviesa002.fm.intel.com with ESMTP; 02 Sep 2024 00:50:47 -0700
-Received: from kbuild by 9c6b1c7d3b50 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sl1pl-0005GM-0q;
-	Mon, 02 Sep 2024 07:50:45 +0000
-Date: Mon, 2 Sep 2024 15:49:49 +0800
-From: kernel test robot <lkp@intel.com>
-To: Jens Wiklander <jens.wiklander@linaro.org>,
-	linux-kernel@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>
-Cc: oe-kbuild-all@lists.linux.dev, Linus Walleij <linus.walleij@linaro.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jens Wiklander <jens.wiklander@linaro.org>,
-	Dan Carpenter <error27@gmail.com>
-Subject: Re: [PATCH] rpmb: fix error path in rpmb_dev_register()
-Message-ID: <202409021532.QfH7shPj-lkp@intel.com>
-References: <20240830061404.2831708-1-jens.wiklander@linaro.org>
+	s=arc-20240116; t=1725263496; c=relaxed/simple;
+	bh=LGdFzXCZV9e9fm6i3YukXBcr3+13OxC9jSKEmGUaFUo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=V9y0kNKYqr58V5vvA3hzOSes45uWJm9epmdHPORG4WPgVE0dyIOCNP47zb80cby2ZTRDhaO1cJSr5OjaH/VlUZ6/DR+enC5vWZm6Nh1CBKXw5mY/OidNc7j69d9yZgHZvW3EV/GgHlUK+Iaj58nZaHNYg9RcyW81SmAtzIyvmtA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=xn44svXP; arc=none smtp.client-ip=198.47.19.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4827pERA122063;
+	Mon, 2 Sep 2024 02:51:14 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1725263474;
+	bh=89ojlR2cAueP1WxvY/oiDyv2Ng1YgXcasPazDykYRyg=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=xn44svXPWAxVynNHyUpwKxyKQ+Kxl8sYnw1ChX6H3ySG2P+CRdlHdITCrAiYz16Fq
+	 ACrybzXj+iK7WFaefmLOS/J++TvIgAEqbzA2uVIO6doOgt8yXg7MRonDcyrrqi3pyE
+	 SzTcq13ydLXQhWglx6g3N2fxK872nPwRW8v2v+U4=
+Received: from DLEE103.ent.ti.com (dlee103.ent.ti.com [157.170.170.33])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4827pEe2029413
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Mon, 2 Sep 2024 02:51:14 -0500
+Received: from DLEE108.ent.ti.com (157.170.170.38) by DLEE103.ent.ti.com
+ (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 2
+ Sep 2024 02:51:14 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE108.ent.ti.com
+ (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Mon, 2 Sep 2024 02:51:13 -0500
+Received: from [10.249.135.225] ([10.249.135.225])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4827p5PI092461;
+	Mon, 2 Sep 2024 02:51:07 -0500
+Message-ID: <9f7dfdc0-954c-4924-90c3-7742120b487c@ti.com>
+Date: Mon, 2 Sep 2024 13:21:05 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240830061404.2831708-1-jens.wiklander@linaro.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v7 2/2] net: ti: icssg-prueth: Add support for PA
+ Stats
+To: Jan Kiszka <jan.kiszka@siemens.com>, MD Danish Anwar <danishanwar@ti.com>,
+        Suman Anna <s-anna@ti.com>, Sai Krishna <saikrishnag@marvell.com>,
+        Dan
+ Carpenter <dan.carpenter@linaro.org>,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        Diogo Ivo <diogo.ivo@siemens.com>,
+        Kory Maincent <kory.maincent@bootlin.com>,
+        Andrew Lunn <andrew@lunn.ch>, Paolo Abeni <pabeni@redhat.com>,
+        Jakub Kicinski
+	<kuba@kernel.org>, Eric Dumazet <edumazet@google.com>,
+        "David S. Miller"
+	<davem@davemloft.net>,
+        Roger Quadros <rogerq@kernel.org>, Conor Dooley
+	<conor+dt@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Rob Herring
+	<robh@kernel.org>,
+        Santosh Shilimkar <ssantosh@kernel.org>, Nishanth Menon
+	<nm@ti.com>
+CC: <netdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <srk@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>
+References: <20240822122652.1071801-1-danishanwar@ti.com>
+ <20240822122652.1071801-3-danishanwar@ti.com>
+ <8cfcb7f7-1779-463a-9e77-e0e09234a35f@siemens.com>
+ <e2333f3c-7481-446a-8293-6afac14a34a0@ti.com>
+ <c7e618bd-c33e-4042-b769-392546cb9297@siemens.com>
+Content-Language: en-US
+From: "Anwar, Md Danish" <a0501179@ti.com>
+In-Reply-To: <c7e618bd-c33e-4042-b769-392546cb9297@siemens.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-Hi Jens,
-
-kernel test robot noticed the following build warnings:
-
-[auto build test WARNING on next-20240829]
-[cannot apply to v6.11-rc5 v6.11-rc4 v6.11-rc3 linus/master v6.11-rc6]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Jens-Wiklander/rpmb-fix-error-path-in-rpmb_dev_register/20240830-141540
-base:   next-20240829
-patch link:    https://lore.kernel.org/r/20240830061404.2831708-1-jens.wiklander%40linaro.org
-patch subject: [PATCH] rpmb: fix error path in rpmb_dev_register()
-config: i386-randconfig-004-20240902 (https://download.01.org/0day-ci/archive/20240902/202409021532.QfH7shPj-lkp@intel.com/config)
-compiler: gcc-11 (Debian 11.3.0-12) 11.3.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240902/202409021532.QfH7shPj-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202409021532.QfH7shPj-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
-   drivers/misc/rpmb-core.c: In function 'rpmb_dev_register':
->> drivers/misc/rpmb-core.c:199:1: warning: label 'err_id_remove' defined but not used [-Wunused-label]
-     199 | err_id_remove:
-         | ^~~~~~~~~~~~~
 
 
-vim +/err_id_remove +199 drivers/misc/rpmb-core.c
+On 9/2/2024 1:04 PM, Jan Kiszka wrote:
+> On 02.09.24 09:28, Anwar, Md Danish wrote:
+>>
+>>
+>> On 9/2/2024 12:52 PM, Jan Kiszka wrote:
+>>> On 22.08.24 14:26, MD Danish Anwar wrote:
+>>>> Add support for dumping PA stats registers via ethtool.
+>>>> Firmware maintained stats are stored at PA Stats registers.
+>>>> Also modify emac_get_strings() API to use ethtool_puts().
+>>>>
+>>>> This commit also maintains consistency between miig_stats and pa_stats by
+>>>> - renaming the array icssg_all_stats to icssg_all_miig_stats
+>>>> - renaming the structure icssg_stats to icssg_miig_stats
+>>>> - renaming ICSSG_STATS() to ICSSG_MIIG_STATS()
+>>>> - changing order of stats related data structures and arrays so that data
+>>>>   structures of a certain stats type is clubbed together.
+>>>>
+>>>> Signed-off-by: MD Danish Anwar <danishanwar@ti.com>
+>>>> ---
+>>>>  drivers/net/ethernet/ti/icssg/icssg_ethtool.c |  19 ++-
+>>>>  drivers/net/ethernet/ti/icssg/icssg_prueth.c  |   6 +
+>>>>  drivers/net/ethernet/ti/icssg/icssg_prueth.h  |   9 +-
+>>>>  drivers/net/ethernet/ti/icssg/icssg_stats.c   |  31 +++-
+>>>>  drivers/net/ethernet/ti/icssg/icssg_stats.h   | 158 +++++++++++-------
+>>>>  5 files changed, 140 insertions(+), 83 deletions(-)
+>>>>
+>>>
+>>> ...
+>>>
+>>>> diff --git a/drivers/net/ethernet/ti/icssg/icssg_prueth.c b/drivers/net/ethernet/ti/icssg/icssg_prueth.c
+>>>> index 53a3e44b99a2..f623a0f603fc 100644
+>>>> --- a/drivers/net/ethernet/ti/icssg/icssg_prueth.c
+>>>> +++ b/drivers/net/ethernet/ti/icssg/icssg_prueth.c
+>>>> @@ -1182,6 +1182,12 @@ static int prueth_probe(struct platform_device *pdev)
+>>>>  		return -ENODEV;
+>>>>  	}
+>>>>  
+>>>> +	prueth->pa_stats = syscon_regmap_lookup_by_phandle(np, "ti,pa-stats");
+>>>> +	if (IS_ERR(prueth->pa_stats)) {
+>>>> +		dev_err(dev, "couldn't get ti,pa-stats syscon regmap\n");
+>>>> +		return -ENODEV;
+>>>
+>>> I was just beaten for potentially not being backward compatible, but
+>>> this is definitely not working with existing DTs, just ran into it.
+>>>
+>>
+>> Jan, I had posted the DT patch needed for this [1]. But the DT patch
+>> goes to different tree and it was dependent on binding patch of this
+>> series. My intention was once the binding is in, I will post the DT
+>> patch in the next window. Till then ICSSG driver will break here but
+>> once DT gets merged it will be alright. If that's not the best solution,
+>> I can post DT here, but it will need to get merged via net-next.
+>>
+>> [1] https://lore.kernel.org/all/20240729113226.2905928-4-danishanwar@ti.com/
+>>
+> 
+> Why not respect in the driver that the dtbinding says this property is
+> only optional?
+> 
 
-1e9046e3a15460 Jens Wiklander 2024-08-14  146  
-1e9046e3a15460 Jens Wiklander 2024-08-14  147  /**
-1e9046e3a15460 Jens Wiklander 2024-08-14  148   * rpmb_dev_register - register RPMB partition with the RPMB subsystem
-1e9046e3a15460 Jens Wiklander 2024-08-14  149   * @dev: storage device of the rpmb device
-1e9046e3a15460 Jens Wiklander 2024-08-14  150   * @descr: RPMB device description
-1e9046e3a15460 Jens Wiklander 2024-08-14  151   *
-1e9046e3a15460 Jens Wiklander 2024-08-14  152   * While registering the RPMB partition extract needed device information
-1e9046e3a15460 Jens Wiklander 2024-08-14  153   * while needed resources are available.
-1e9046e3a15460 Jens Wiklander 2024-08-14  154   *
-1e9046e3a15460 Jens Wiklander 2024-08-14  155   * Returns: a pointer to a 'struct rpmb_dev' or an ERR_PTR on failure
-1e9046e3a15460 Jens Wiklander 2024-08-14  156   */
-1e9046e3a15460 Jens Wiklander 2024-08-14  157  struct rpmb_dev *rpmb_dev_register(struct device *dev,
-1e9046e3a15460 Jens Wiklander 2024-08-14  158  				   struct rpmb_descr *descr)
-1e9046e3a15460 Jens Wiklander 2024-08-14  159  {
-1e9046e3a15460 Jens Wiklander 2024-08-14  160  	struct rpmb_dev *rdev;
-1e9046e3a15460 Jens Wiklander 2024-08-14  161  	int ret;
-1e9046e3a15460 Jens Wiklander 2024-08-14  162  
-1e9046e3a15460 Jens Wiklander 2024-08-14  163  	if (!dev || !descr || !descr->route_frames || !descr->dev_id ||
-1e9046e3a15460 Jens Wiklander 2024-08-14  164  	    !descr->dev_id_len)
-1e9046e3a15460 Jens Wiklander 2024-08-14  165  		return ERR_PTR(-EINVAL);
-1e9046e3a15460 Jens Wiklander 2024-08-14  166  
-1e9046e3a15460 Jens Wiklander 2024-08-14  167  	rdev = kzalloc(sizeof(*rdev), GFP_KERNEL);
-1e9046e3a15460 Jens Wiklander 2024-08-14  168  	if (!rdev)
-1e9046e3a15460 Jens Wiklander 2024-08-14  169  		return ERR_PTR(-ENOMEM);
-1e9046e3a15460 Jens Wiklander 2024-08-14  170  	rdev->descr = *descr;
-1e9046e3a15460 Jens Wiklander 2024-08-14  171  	rdev->descr.dev_id = kmemdup(descr->dev_id, descr->dev_id_len,
-1e9046e3a15460 Jens Wiklander 2024-08-14  172  				     GFP_KERNEL);
-1e9046e3a15460 Jens Wiklander 2024-08-14  173  	if (!rdev->descr.dev_id) {
-1e9046e3a15460 Jens Wiklander 2024-08-14  174  		ret = -ENOMEM;
-1e9046e3a15460 Jens Wiklander 2024-08-14  175  		goto err_free_rdev;
-1e9046e3a15460 Jens Wiklander 2024-08-14  176  	}
-1e9046e3a15460 Jens Wiklander 2024-08-14  177  
-1e9046e3a15460 Jens Wiklander 2024-08-14  178  	mutex_lock(&rpmb_mutex);
-1e9046e3a15460 Jens Wiklander 2024-08-14  179  	ret = ida_simple_get(&rpmb_ida, 0, 0, GFP_KERNEL);
-1e9046e3a15460 Jens Wiklander 2024-08-14  180  	mutex_unlock(&rpmb_mutex);
-1e9046e3a15460 Jens Wiklander 2024-08-14  181  	if (ret < 0)
-1e9046e3a15460 Jens Wiklander 2024-08-14  182  		goto err_free_dev_id;
-1e9046e3a15460 Jens Wiklander 2024-08-14  183  	rdev->id = ret;
-1e9046e3a15460 Jens Wiklander 2024-08-14  184  
-1e9046e3a15460 Jens Wiklander 2024-08-14  185  	dev_set_name(&rdev->dev, "rpmb%d", rdev->id);
-1e9046e3a15460 Jens Wiklander 2024-08-14  186  	rdev->dev.class = &rpmb_class;
-1e9046e3a15460 Jens Wiklander 2024-08-14  187  	rdev->dev.parent = dev;
-1e9046e3a15460 Jens Wiklander 2024-08-14  188  
-1e9046e3a15460 Jens Wiklander 2024-08-14  189  	ret = device_register(&rdev->dev);
-d1c997b32ba265 Jens Wiklander 2024-08-30  190  	if (ret) {
-d1c997b32ba265 Jens Wiklander 2024-08-30  191  		put_device(&rdev->dev);
-d1c997b32ba265 Jens Wiklander 2024-08-30  192  		return ERR_PTR(ret);
-d1c997b32ba265 Jens Wiklander 2024-08-30  193  	}
-1e9046e3a15460 Jens Wiklander 2024-08-14  194  
-1e9046e3a15460 Jens Wiklander 2024-08-14  195  	dev_dbg(&rdev->dev, "registered device\n");
-1e9046e3a15460 Jens Wiklander 2024-08-14  196  
-1e9046e3a15460 Jens Wiklander 2024-08-14  197  	return rdev;
-1e9046e3a15460 Jens Wiklander 2024-08-14  198  
-1e9046e3a15460 Jens Wiklander 2024-08-14 @199  err_id_remove:
-1e9046e3a15460 Jens Wiklander 2024-08-14  200  	mutex_lock(&rpmb_mutex);
-1e9046e3a15460 Jens Wiklander 2024-08-14  201  	ida_simple_remove(&rpmb_ida, rdev->id);
-1e9046e3a15460 Jens Wiklander 2024-08-14  202  	mutex_unlock(&rpmb_mutex);
-1e9046e3a15460 Jens Wiklander 2024-08-14  203  err_free_dev_id:
-1e9046e3a15460 Jens Wiklander 2024-08-14  204  	kfree(rdev->descr.dev_id);
-1e9046e3a15460 Jens Wiklander 2024-08-14  205  err_free_rdev:
-1e9046e3a15460 Jens Wiklander 2024-08-14  206  	kfree(rdev);
-1e9046e3a15460 Jens Wiklander 2024-08-14  207  	return ERR_PTR(ret);
-1e9046e3a15460 Jens Wiklander 2024-08-14  208  }
-1e9046e3a15460 Jens Wiklander 2024-08-14  209  EXPORT_SYMBOL_GPL(rpmb_dev_register);
-1e9046e3a15460 Jens Wiklander 2024-08-14  210  
+
+Sure Jan, In that case, I will send out a fix making this optional in
+driver.
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Thanks and Regards,
+Md Danish Anwar
 
