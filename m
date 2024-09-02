@@ -1,153 +1,81 @@
-Return-Path: <linux-kernel+bounces-310667-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310669-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B608E967FDB
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 08:59:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39021967FDE
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 09:01:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 433B01F221D0
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 06:59:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E0B6F2818CE
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 07:01:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23FB5165F1E;
-	Mon,  2 Sep 2024 06:59:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDF0015D5D9;
+	Mon,  2 Sep 2024 07:00:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pIC0q2tW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=tlmp.cc header.i=@tlmp.cc header.b="mrDi/Zgt"
+Received: from mail.tlmp.cc (unknown [148.135.17.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 557A4156993;
-	Mon,  2 Sep 2024 06:59:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC4DD32C85
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 07:00:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.135.17.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725260351; cv=none; b=LuIr/93ExdrSSqpBdiOaZHG+YjxTarzUfnM4NwOZK7RP133Eu1JKFuaEcjetxdKDA/23+ra3Yh956lFY3rHufXcrPe3B0XVLrEzHX2Av6ZPv8W+TIKixMzUhLGwAh7KxZNwouYhx3h395m4V3xkDgWq3xYeWxRxMcyK/J0GUqXk=
+	t=1725260457; cv=none; b=dap/lk1X694O+CyIBbpuHjx+420PlygTRhZP70BscnGOrK25jXTVd0Z237OoKzNREaPKwauzGNyKTo+NB3xTEW4qsbeO8Z+MVJCbFwdEaPWjxSlu+n8+EDVdA9VSFdFJJs72WPt44SmPOnJu0yYB0XFfOaIBKxhdT5DN5hlvWqo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725260351; c=relaxed/simple;
-	bh=yPm4oH8FeOcwnlw7Y03dlBz2ZzbeQw4TfXKVJEdhfzA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GJL3Dlp9lM4bl05qYeNw41tAfseL4n7vpUUxuZHW+F3id+WRgTr6+o+4B/XNzF+O/5bw9peNrnBwd21OFQpne+Fn6YjoJwEXXyOmgl1jD/LsgfEoFJYSh3UntVN52GozK9vMo/ccG96fUamoja+ePq5i8s2VSA199QkSI3yLktc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pIC0q2tW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EAD13C4CEC2;
-	Mon,  2 Sep 2024 06:59:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725260351;
-	bh=yPm4oH8FeOcwnlw7Y03dlBz2ZzbeQw4TfXKVJEdhfzA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=pIC0q2tWttbsM3AxRXWX+M4++SjouCh7uJ7cGcU64knVq6cWPbtrfyQjrdRpeIiIe
-	 E9Oue04ssrAOtTi31VrNw4EEpg+67SDjF3TNIV2LVMjiPXjAnlUkEZtBR00fNSjV47
-	 +/q9FWdweDdhdJjNIgRGDg9dQtbXrZ4cU200A+vrS5N/DewP4yUTjCxVtJrja+mjVH
-	 zUfCkFIEicDUcefK+vuu7oE0XsffazduSev9ZuEyIRitqwMK/px+s/r9j+63tcSlRz
-	 jll3n7T2DaU/z8ACtcqnEqokfoRYPrCzITAxgzUj9UnlrySdU5HqAcNLzDPnPhuBTZ
-	 vXMgq2SnnwA2A==
-Message-ID: <f3f65c33-335f-4769-958c-9b75fa7083dd@kernel.org>
-Date: Mon, 2 Sep 2024 08:59:04 +0200
+	s=arc-20240116; t=1725260457; c=relaxed/simple;
+	bh=1K/CUhSwJ6Wa3gsjl/bHFffkEaa56bHGbH3Eg/mP7wk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Q/0wPMh1tAPC+9v5UwSmsdPyWw31I3Y/odpuIN4wg5cbFq0yrOMJ4PDxZZcGlE+6m+M8d6buDRvLWSYRPhgGMHgA7JFzUzd7Kzy4j47180ob0Yn6BiO/4XjreXeVHD2/TRlwM00H1uvD6YHfFFof6Xa69DRsATeQOiv++gs8JB0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=tlmp.cc; spf=pass smtp.mailfrom=tlmp.cc; dkim=pass (2048-bit key) header.d=tlmp.cc header.i=@tlmp.cc header.b=mrDi/Zgt; arc=none smtp.client-ip=148.135.17.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=tlmp.cc
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tlmp.cc
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id EF39D69838;
+	Mon,  2 Sep 2024 03:00:51 -0400 (EDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tlmp.cc; s=dkim;
+	t=1725260454; h=from:subject:date:message-id:to:cc:mime-version:
+	 content-transfer-encoding; bh=16T8kYwpbBuW3+NAto6Jm8Gq1eiF2RMZkO+aeHQ7K1o=;
+	b=mrDi/ZgtzeRmQ9tVh6O5hsOYQk+gDHZY1ZKCpbhiBwGK62Li6GFA/zm3CGMt1tuccd6dpI
+	gEyEP3dTmu2HF8uLQLPoryYoSq+KPJh9OPeHxdthkWNdkQLdSB9ZhVkVrRJt89bk5JAX5r
+	4sM9OtlYBQtBX2rE1dSRnZYzx8Y4uJi/M3ZTXZndVmO9jA+ksNtB5todmUf8j57R3S3Kbh
+	FD09Is6E9tidyD2iosWeexU5FWna+DviFCNlwZPLuUdasiT8nmdKVtYkJ0ZVaUJ0x3oHd5
+	OuqYyAIj4/3kM8IpkLEu1mhs7e0MA0MbRenHPfDGDgmhGEx8/IaB79LWs2uxCQ==
+From: Yiyang Wu <toolmanp@tlmp.cc>
+To: hsiangkao@linux.alibaba.com
+Cc: linux-erofs@lists.ozlabs.org,
+	linux-kernel@vger.kernel.org,
+	Yiyang Wu <toolmanp@tlmp.cc>
+Subject: [PATCH V2 0/2] erofs: refactor fast_symlink and read_inode
+Date: Mon,  2 Sep 2024 15:00:45 +0800
+Message-ID: <20240902070047.384952-1-toolmanp@tlmp.cc>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] dt-bindings: arm: fsl: Add Variscite Symphony
- board and VAR-SOM-MX8MP SoM
-To: Tarang Raval <tarang.raval@siliconsignals.io>, shawnguo@kernel.org,
- krzk+dt@kernel.org, robh@kernel.org, festevam@gmail.com
-Cc: Conor Dooley <conor+dt@kernel.org>, Sascha Hauer
- <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>,
- Hugo Villeneuve <hvilleneuve@dimonoff.com>,
- Gregor Herburger <gregor.herburger@ew.tq-group.com>,
- Joao Paulo Goncalves <joao.goncalves@toradex.com>,
- Hiago De Franco <hiago.franco@toradex.com>,
- Mathieu Othacehe <m.othacehe@gmail.com>,
- Alexander Stein <alexander.stein@ew.tq-group.com>,
- Josua Mayer <josua@solid-run.com>, Yannic Moog <y.moog@phytec.de>,
- Li Yang <leoyang.li@nxp.com>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, imx@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org
-References: <20240902065606.8072-1-tarang.raval@siliconsignals.io>
- <20240902065606.8072-3-tarang.raval@siliconsignals.io>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240902065606.8072-3-tarang.raval@siliconsignals.io>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-On 02/09/2024 08:56, Tarang Raval wrote:
-> Adds support for the Variscite VAR-SOM-MX8MP System on Module and
-> the Variscite Symphony Evaluation Kit.
-> 
-> Signed-off-by: Tarang Raval <tarang.raval@siliconsignals.io>
-> ---
->  Documentation/devicetree/bindings/arm/fsl.yaml | 7 +++++++
->  1 file changed, 7 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/arm/fsl.yaml b/Documentation/devicetree/bindings/arm/fsl.yaml
-> index 6d185d09cb6a..99555767f8d0 100644
-> --- a/Documentation/devicetree/bindings/arm/fsl.yaml
-> +++ b/Documentation/devicetree/bindings/arm/fsl.yaml
-> @@ -1071,6 +1071,7 @@ properties:
->                - toradex,verdin-imx8mp     # Verdin iMX8M Plus Modules
->                - toradex,verdin-imx8mp-nonwifi  # Verdin iMX8M Plus Modules without Wi-Fi / BT
->                - toradex,verdin-imx8mp-wifi  # Verdin iMX8M Plus Wi-Fi / BT Modules
-> +              - variscite,var-som-mx8mp-symphony # i.MX8MP Variscite VAR-SOM-MX8M-PLUS Symphony evaluation board
->            - const: fsl,imx8mp
+This patchset is response to the original suggestions posted here[1].
+Since my later work is somehow related to this issue, i think it's
+better to deal with it first.
 
-<form letter>
-This is a friendly reminder during the review process.
+Changes in V2:
+  1. Lift the erofs_fill_symlink patch to 1/2
+  2. Fix code styles problems in read_inode patch.
+  3. Fix the formatting problems caused by clang-format.
 
-It seems my or other reviewer's previous comments were not fully
-addressed. Maybe the feedback got lost between the quotes, maybe you
-just forgot to apply it. Please go back to the previous discussion and
-either implement all requested changes or keep discussing them.
+[1]: https://lore.kernel.org/all/20240425222847.GN2118490@ZenIV/
 
-Thank you.
-</form letter>
+Yiyang Wu (2):
+  erofs: use kmemdup_nul in erofs_fill_symlink
+  erofs: refactor read_inode calling convention
 
-Best regards,
-Krzysztof
+ fs/erofs/inode.c | 128 ++++++++++++++++++++++++-----------------------
+ 1 file changed, 65 insertions(+), 63 deletions(-)
+
+-- 
+2.46.0
 
 
