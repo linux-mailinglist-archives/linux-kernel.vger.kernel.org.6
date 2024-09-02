@@ -1,81 +1,80 @@
-Return-Path: <linux-kernel+bounces-310770-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310771-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7CB996810C
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 09:55:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5741596810E
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 09:55:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D9EED1C21FF2
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 07:55:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A6C33B22AEA
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 07:55:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F2E317E017;
-	Mon,  2 Sep 2024 07:55:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99FB2185952;
+	Mon,  2 Sep 2024 07:55:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=9elements.com header.i=@9elements.com header.b="KfEq8Pvu"
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	dkim=pass (2048-bit key) header.d=9elements.com header.i=@9elements.com header.b="DydYV0CZ"
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3D3F1552FC
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 07:55:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A93D17C22E
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 07:55:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725263727; cv=none; b=NSvobgvZjQ1Zz9m616trg2RDiQnV4FtYpVjz4Y3CFZGW+mtVbkhq4Hx1hwJb41sHrXqs5nbr7fTRdJRwBvU0jpg1gys47xTzjop/0vzdFYX7LPS839ph9xIeNiaCt2FCUsM+tqjCwpur0D75/KSAAUODDvBtRs6+HsONORFLJX8=
+	t=1725263729; cv=none; b=Dkc5HDvvVR9/6PmzE1MjkGshBAAlas0VdpY3NGjUX18RDvZrra4F3xVr1RKeurydhd0c5lsKnF6/lXlBEAMSMlsMYpAirjtuhAJ8rqq2ChO7z2B46IEI9GJ7IUjT/EudTvH9AHRNcTqVaGxJqNfnkAxRmHXP/EMIo9v3DR1aJOQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725263727; c=relaxed/simple;
-	bh=CHTREiAcEZMsJXs1E2EV/u8Fu6chAqB+ClVn1Vb70uQ=;
+	s=arc-20240116; t=1725263729; c=relaxed/simple;
+	bh=aWOWSzyMeRbm3ItC9i35pWQz0CkR9clxZFABoapwEmA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=EnQygi4CMaqbVEjfPARwbbigjKtTEolVkn008RaSy8A0UWGhIA2sBlkoWu4lSUrXwGwHrCXGGYXB4jPYKoTLIJ9kDhSOKIn8BwJP9KdErP064PnBEcxtEj8rQBgvpSdDL2wp2mCqtD1PWobJQFokkMa4HMn29SlOKvd4UN6yD9c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=9elements.com; spf=pass smtp.mailfrom=9elements.com; dkim=pass (2048-bit key) header.d=9elements.com header.i=@9elements.com header.b=KfEq8Pvu; arc=none smtp.client-ip=209.85.218.46
+	 MIME-Version; b=fH+BcpmvrSMHUFsVB/viGDy8WvVgm5o83hAO6wMCDKD/eBRIc6iJIrURtGWspif8I1FTempAG1sxyItm6XcdxGU9ejHiRzi5f/K0MYwr2ifsAh6XtM45cOLQ1zNPAU+7ZUN+whqUXKqmtW6YxdY6x9n0TLUDS3yablYgnJks7Mw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=9elements.com; spf=pass smtp.mailfrom=9elements.com; dkim=pass (2048-bit key) header.d=9elements.com header.i=@9elements.com header.b=DydYV0CZ; arc=none smtp.client-ip=209.85.208.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=9elements.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=9elements.com
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a86984e035aso476740466b.2
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2024 00:55:25 -0700 (PDT)
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5c210e23651so4032470a12.3
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2024 00:55:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=9elements.com; s=google; t=1725263724; x=1725868524; darn=vger.kernel.org;
+        d=9elements.com; s=google; t=1725263725; x=1725868525; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=2wJu6eSYrIH+jWqR93bP7w6T/N0xlGC/9JkjmC8TAO0=;
-        b=KfEq8PvuWfudjCQkPag4TGwYWcvDqpWqQCVULjWDsHsQ2HEoYHF+1gYal0//NdI1HM
-         Jizs+lCv7F6eX+tZF76cCVfJyUjnYph2OV+Dq6+Qd9V8G6Hm7bVWmCQg+I00+TsSo08W
-         7+lRPxE0/jfk+FvnEWg5ONUglQZW8pv9FWTYn8N2C8XsKE7b0Gj7/TvdTIWRE2b1QgZ0
-         1khzzzRGDpqtfQWsa2TDwKQqKOmL9kxy3SaQ0byn3CeKS558v7fDzk0X+6LvRdof8e0V
-         XREucuZKNqOntfgLUTCh+cN4xls7Lf6krqhw2J6X+gE/dEmHNOyIj3oC4WcSr71HXdeT
-         vZkg==
+        bh=hsVXyLDSs2fFLBUKODkBzg9eUfumfnlE3Ahu+IB1q70=;
+        b=DydYV0CZpJDFtWlk/tQhQckBANGBqtVInUku0qwk3b5mvUqajifVbFDcG0JTriIO1X
+         Pdy+bdfktZCxi7KLzgJNErbdSeVon2TSCaOcmNfMR87GBZgYOy7EJXhDJzJChdBMTHf1
+         nBRToo6slDZnrLGBaE6E3ddh0OsHb4cgQuJXmVKF7K5HfkQ3hVQuDVMlZSLRsP4iQ62j
+         q5aKeLWJKkmlW7Nx3AnueOyN3xov9dL6RsKyvxth2MRrXvgkT+rqs9p9cE0Sr2iAiEDz
+         04F9TT+6F/Kcaxdusy63ksJ/0YZqa+hHU9wh1WNMk6dwAW4hQ1qLjJ+F292CKGYYgC6S
+         ZO8w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725263724; x=1725868524;
+        d=1e100.net; s=20230601; t=1725263725; x=1725868525;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=2wJu6eSYrIH+jWqR93bP7w6T/N0xlGC/9JkjmC8TAO0=;
-        b=PSBMRn0Y8F8I3LCzkqXTqNiUoHk/Zsib9/3qF/HKBOqgD/3GXTbsfCwiM6utISuL6f
-         6QXntkksHKlQ0glrMco8ualXJ6yQpNfZk/q913OCTc0HXHZAJLtmpCg6Tw5LiCKtbDWg
-         5G7F8iZPssOUVDamD0BTIGRlMq06uQcNfNbNWzsGbE6GE/uOMSeyV9FhSwqGk47GM79R
-         2zwLX+O3A2EStTEuq4H6xd9XLVDOZJWMtrsu+els/+gziCQU+892NM4FnQ4OLfcAftPW
-         x8+v63Vhu7XLDm3Jjqe2kGQO05YG3++fs4aQ6gGIadaJATy3i1TirNSgGjhBAw3UpKrf
-         hEqA==
-X-Forwarded-Encrypted: i=1; AJvYcCUIMbUM0voRYP66OoCHWqJmK5oAaAXgvx2+uZJ93IWAZsa3EW7AVpPGWXaptjnP4SqgKlqtWb1q7lbbsqo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy8Mw3psQ9qg6z4MPURrGWI+Dwb269yc3bc4+oOiyY6fkGVIsGE
-	YIc7rqhVHLUWwGd6HzageQ+9HuoL53M9qViF/nr/sDg+fg2mwm882+AmaGfessw=
-X-Google-Smtp-Source: AGHT+IHuc6RANhB2GFUELent8s8Fr0cwtTYQacm2gMM6HYRleWFgZr0ofL5/w80YH5dqa6wZI+h+Ag==
-X-Received: by 2002:a17:907:948b:b0:a86:c252:aaa2 with SMTP id a640c23a62f3a-a89a379d069mr706616766b.51.1725263724106;
-        Mon, 02 Sep 2024 00:55:24 -0700 (PDT)
+        bh=hsVXyLDSs2fFLBUKODkBzg9eUfumfnlE3Ahu+IB1q70=;
+        b=Znx0tHYC/3UiAPdB/GRhxiv0gJecakl9UDl2WXBprp0Fm5+FOFKVkO72ZaV6vPjhD7
+         bCiPFkCm8xzweJh+24QBjYwx/MfAXQOyjql3szFij5kVwecNWLKyygqyjhRooBUai7sS
+         jS10G5PURAGrD4g+hrN7y6bIACRnkzSFBwFt6JELt/w53FH1twyxEX7DMGzHnL7oom8M
+         2A5wTBAYsn0lswhSmVzP3DTx00+axMmaq393FGDKhDRhB1SCQ1pG2DfOmvqFqPoXOw0i
+         AmvoYqM1xZt/acUCya9xq/2zqcMBpXsVT1BhZzL707J7EhXZOhdr3pJsMpw0T+4rc62i
+         m2YA==
+X-Gm-Message-State: AOJu0YzI3WM5wTYsEdJSh7JmV1PV3QzS3Z8W6Bed7s/4gYIKsk6Hu0WO
+	PcocP+I9A/SZHb+O/pu01DzBIWYLwWgJG7uf5qs7/dlRymyC9qqOA+j/1zfPzGJgVj3EWxufZdF
+	7
+X-Google-Smtp-Source: AGHT+IEBRtDc4jtuzw3Cb4zykGMMX4ofSyV73MtXmrgXfWD3fmQiUt5cg2UBsDskc07WY1CLzZzkjw==
+X-Received: by 2002:a17:907:72c7:b0:a86:a30f:4aef with SMTP id a640c23a62f3a-a89a35dee4cmr633103266b.22.1725263725486;
+        Mon, 02 Sep 2024 00:55:25 -0700 (PDT)
 Received: from fedora.sec.9e.network (ip-037-049-067-221.um09.pools.vodafone-ip.de. [37.49.67.221])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8989022481sm521076066b.86.2024.09.02.00.55.23
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8989022481sm521076066b.86.2024.09.02.00.55.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Sep 2024 00:55:23 -0700 (PDT)
+        Mon, 02 Sep 2024 00:55:25 -0700 (PDT)
 From: Patrick Rudolph <patrick.rudolph@9elements.com>
-To: Daniel Nilsson <daniel.nilsson@flex.com>
+To: linux-kernel@vger.kernel.org
 Cc: jdelvare@suse.com,
 	linux@roeck-us.net,
 	Patrick Rudolph <patrick.rudolph@9elements.com>,
-	linux-hwmon@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v3 2/5] hwmon: pmbus: max15301: Use generic code
-Date: Mon,  2 Sep 2024 09:53:13 +0200
-Message-ID: <20240902075319.585656-2-patrick.rudolph@9elements.com>
+	linux-hwmon@vger.kernel.org
+Subject: [PATCH v3 3/5] hwmon: pmbus: ucd9000: Use generic code
+Date: Mon,  2 Sep 2024 09:53:14 +0200
+Message-ID: <20240902075319.585656-3-patrick.rudolph@9elements.com>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20240902075319.585656-1-patrick.rudolph@9elements.com>
 References: <20240902075319.585656-1-patrick.rudolph@9elements.com>
@@ -87,7 +86,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Use the generic pmbus bus access delay.
+Use generic pmbus bus write access delay.
 
 Signed-off-by: Patrick Rudolph <patrick.rudolph@9elements.com>
 ---
@@ -97,126 +96,98 @@ Changelog v2:
 Changelog v3:
 - Added changelog
 
- drivers/hwmon/pmbus/max15301.c | 92 +---------------------------------
- 1 file changed, 1 insertion(+), 91 deletions(-)
+ drivers/hwmon/pmbus/ucd9000.c | 64 ++---------------------------------
+ 1 file changed, 2 insertions(+), 62 deletions(-)
 
-diff --git a/drivers/hwmon/pmbus/max15301.c b/drivers/hwmon/pmbus/max15301.c
-index 986404fe6a31..f5367a7bc0f5 100644
---- a/drivers/hwmon/pmbus/max15301.c
-+++ b/drivers/hwmon/pmbus/max15301.c
-@@ -31,8 +31,6 @@ MODULE_DEVICE_TABLE(i2c, max15301_id);
- 
- struct max15301_data {
- 	int id;
--	ktime_t access;		/* Chip access time */
--	int delay;		/* Delay between chip accesses in us */
- 	struct pmbus_driver_info info;
+diff --git a/drivers/hwmon/pmbus/ucd9000.c b/drivers/hwmon/pmbus/ucd9000.c
+index d817c719b90b..5d3d1773bf52 100644
+--- a/drivers/hwmon/pmbus/ucd9000.c
++++ b/drivers/hwmon/pmbus/ucd9000.c
+@@ -67,7 +67,6 @@ struct ucd9000_data {
+ 	struct gpio_chip gpio;
+ #endif
+ 	struct dentry *debugfs;
+-	ktime_t write_time;
  };
+ #define to_ucd9000_data(_info) container_of(_info, struct ucd9000_data, info)
  
-@@ -55,89 +53,6 @@ static struct max15301_data max15301_data = {
- 	}
- };
+@@ -86,63 +85,6 @@ struct ucd9000_debugfs_entry {
+  */
+ #define UCD90320_WAIT_DELAY_US 500
  
--/* This chip needs a delay between accesses */
--static inline void max15301_wait(const struct max15301_data *data)
+-static inline void ucd90320_wait(const struct ucd9000_data *data)
 -{
--	if (data->delay) {
--		s64 delta = ktime_us_delta(ktime_get(), data->access);
+-	s64 delta = ktime_us_delta(ktime_get(), data->write_time);
 -
--		if (delta < data->delay)
--			udelay(data->delay - delta);
--	}
+-	if (delta < UCD90320_WAIT_DELAY_US)
+-		udelay(UCD90320_WAIT_DELAY_US - delta);
 -}
 -
--static int max15301_read_word_data(struct i2c_client *client, int page,
+-static int ucd90320_read_word_data(struct i2c_client *client, int page,
 -				   int phase, int reg)
 -{
 -	const struct pmbus_driver_info *info = pmbus_get_driver_info(client);
--	struct max15301_data *data = to_max15301_data(info);
--	int ret;
--
--	if (page > 0)
--		return -ENXIO;
+-	struct ucd9000_data *data = to_ucd9000_data(info);
 -
 -	if (reg >= PMBUS_VIRT_BASE)
 -		return -ENXIO;
 -
--	max15301_wait(data);
--	ret = pmbus_read_word_data(client, page, phase, reg);
--	data->access = ktime_get();
--
--	return ret;
+-	ucd90320_wait(data);
+-	return pmbus_read_word_data(client, page, phase, reg);
 -}
 -
--static int max15301_read_byte_data(struct i2c_client *client, int page, int reg)
+-static int ucd90320_read_byte_data(struct i2c_client *client, int page, int reg)
 -{
 -	const struct pmbus_driver_info *info = pmbus_get_driver_info(client);
--	struct max15301_data *data = to_max15301_data(info);
--	int ret;
+-	struct ucd9000_data *data = to_ucd9000_data(info);
 -
--	if (page > 0)
--		return -ENXIO;
--
--	max15301_wait(data);
--	ret = pmbus_read_byte_data(client, page, reg);
--	data->access = ktime_get();
--
--	return ret;
+-	ucd90320_wait(data);
+-	return pmbus_read_byte_data(client, page, reg);
 -}
 -
--static int max15301_write_word_data(struct i2c_client *client, int page, int reg,
--				    u16 word)
+-static int ucd90320_write_word_data(struct i2c_client *client, int page,
+-				    int reg, u16 word)
 -{
 -	const struct pmbus_driver_info *info = pmbus_get_driver_info(client);
--	struct max15301_data *data = to_max15301_data(info);
+-	struct ucd9000_data *data = to_ucd9000_data(info);
 -	int ret;
 -
--	if (page > 0)
--		return -ENXIO;
--
--	if (reg >= PMBUS_VIRT_BASE)
--		return -ENXIO;
--
--	max15301_wait(data);
+-	ucd90320_wait(data);
 -	ret = pmbus_write_word_data(client, page, reg, word);
--	data->access = ktime_get();
+-	data->write_time = ktime_get();
 -
 -	return ret;
 -}
 -
--static int max15301_write_byte(struct i2c_client *client, int page, u8 value)
+-static int ucd90320_write_byte(struct i2c_client *client, int page, u8 value)
 -{
 -	const struct pmbus_driver_info *info = pmbus_get_driver_info(client);
--	struct max15301_data *data = to_max15301_data(info);
+-	struct ucd9000_data *data = to_ucd9000_data(info);
 -	int ret;
 -
--	if (page > 0)
--		return -ENXIO;
--
--	max15301_wait(data);
+-	ucd90320_wait(data);
 -	ret = pmbus_write_byte(client, page, value);
--	data->access = ktime_get();
+-	data->write_time = ktime_get();
 -
 -	return ret;
 -}
 -
- static int max15301_probe(struct i2c_client *client)
+ static int ucd9000_get_fan_config(struct i2c_client *client, int fan)
  {
- 	int status;
-@@ -164,12 +79,7 @@ static int max15301_probe(struct i2c_client *client)
- 		return -ENODEV;
+ 	int fan_config = 0;
+@@ -667,10 +609,8 @@ static int ucd9000_probe(struct i2c_client *client)
+ 		info->func[0] |= PMBUS_HAVE_FAN12 | PMBUS_HAVE_STATUS_FAN12
+ 		  | PMBUS_HAVE_FAN34 | PMBUS_HAVE_STATUS_FAN34;
+ 	} else if (mid->driver_data == ucd90320) {
+-		info->read_byte_data = ucd90320_read_byte_data;
+-		info->read_word_data = ucd90320_read_word_data;
+-		info->write_byte = ucd90320_write_byte;
+-		info->write_word_data = ucd90320_write_word_data;
++		/* Delay SMBus operations after a write */
++		info->write_delay = UCD90320_WAIT_DELAY_US;
  	}
  
--	max15301_data.delay = delay;
--
--	info->read_byte_data = max15301_read_byte_data;
--	info->read_word_data = max15301_read_word_data;
--	info->write_byte = max15301_write_byte;
--	info->write_word_data = max15301_write_word_data;
-+	info->access_delay = delay;
- 
- 	return pmbus_do_probe(client, info);
- }
+ 	ucd9000_probe_gpio(client, mid, data);
 -- 
 2.45.2
 
