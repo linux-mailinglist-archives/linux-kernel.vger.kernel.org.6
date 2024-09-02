@@ -1,66 +1,58 @@
-Return-Path: <linux-kernel+bounces-311877-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311878-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30567968EDF
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 22:28:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA23F968EE6
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 22:37:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D96C4283E76
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 20:28:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5771D1F23517
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 20:37:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 392A41C62C6;
-	Mon,  2 Sep 2024 20:28:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="F3Qc+8AX"
-Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC71B183063;
+	Mon,  2 Sep 2024 20:37:28 +0000 (UTC)
+Received: from fgw23-7.mail.saunalahti.fi (fgw23-7.mail.saunalahti.fi [62.142.5.84])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 724CB19CC04;
-	Mon,  2 Sep 2024 20:28:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E48D81428E0
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 20:37:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.142.5.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725308906; cv=none; b=nuzs90xHmvx8KvrNH1g3oVpMA8QrBlMv9ArJ8OV4sVY78deThWPvReN9eED8S0MtEvOCTk8KqyXHKMYFIBueXAAtkXOf821stVuAWN5qbuopVmhDdxwAbep9wHDEsRP2KIol8LB+N5Q3qgO7q/EKPmTBxmbFLJn9M/4BBlWNUZM=
+	t=1725309448; cv=none; b=uriEYVv2OsXCZFQl+j8JXmSbj1j97gw8veW5rOSShgTHKBlaq6jb8EjbMOPfmzI+vvmOm4DTJqqnjV84BbuShPsN5rDlLXXtAFn+IN14EikqvJi1s9B6zjLtw5preek3i8uFXJhWdjm1B8PSA01zmByvWc8H3h2rfObfCIC19U0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725308906; c=relaxed/simple;
-	bh=byvMvMs6cQe+rkDvGuGDD5gUm8DvBPi1Lovd4gjQBhY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ejNTgAgW3OAGEmLBz9E2VFn8pIydnhce2qXvC+f+bhvshnQkjb/4P+LkkYexLdASCYxs5VNPnmMuTKq+QbwhhDfkFpAEmhvFuOnYiSKaGfk4x7u0gEIRfxagAEVmWEduXKYoRqjsEcdyzMzmFwp2Jqv9yyDR5gMA7to7nZONV98=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=F3Qc+8AX; arc=none smtp.client-ip=217.70.183.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 0B9FA60002;
-	Mon,  2 Sep 2024 20:28:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1725308901;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/acNWIGC7J/l+lCj9xbwfTsap0VDe5s6cnY9+w/1Cgo=;
-	b=F3Qc+8AXy4XVfyxeE/R7AjyxDNhZStf4Ngzq3cE/0udfpTXLq5utZIhTRlno2r5HNxDqFW
-	7FYsHvNI2HirrQv1DaQjwcuBZmNSDzFcz9CxhEiebQYoCy+gfOJ1k0jarbgqFu22bbaOb6
-	tFlKj00ASPoxjX4Lc1JOzAnRHtjPVzDuHY42HxzOtCqemhBOtE7G7Y8LOm1dL2UYQyzxKP
-	0AQEna6l8JcAoX7cFb43qflsYcmmYoMZs5aTfU7KEFdxqlrNUEJ654L+/DOz7negI+iw0D
-	ctLVRyaFGnT/XT/FPCu2zeftLhyP90QGqO6j8prD0p4RtcUoLB+7bMrWA6ja5w==
-Date: Mon, 2 Sep 2024 22:28:19 +0200
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: claudiu beznea <claudiu.beznea@tuxon.dev>
-Cc: geert+renesas@glider.be, mturquette@baylibre.com, sboyd@kernel.org,
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	magnus.damm@gmail.com, p.zabel@pengutronix.de,
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-rtc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
-	kernel test robot <lkp@intel.com>
-Subject: Re: [PATCH v3 06/12] rtc: renesas-rtca3: Add driver for RTCA-3
- available on Renesas RZ/G3S SoC
-Message-ID: <20240902202819e2bf5630@mail.local>
-References: <20240830130218.3377060-1-claudiu.beznea.uj@bp.renesas.com>
- <20240830130218.3377060-7-claudiu.beznea.uj@bp.renesas.com>
- <202408302225417622f1e7@mail.local>
- <a7f0a36b-3169-45f8-9169-50bb0c6c04dd@tuxon.dev>
+	s=arc-20240116; t=1725309448; c=relaxed/simple;
+	bh=kfH2+W1R2W5ZJM+H60zVdLSui4KadwG9+9YnszFJ9F0=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JbK1uMxj4wpYB/yjIlh0zbxVh8wwmZFr7WHYTuBKxLq0G/gLTb460HbT7kh976TlzJ1z9Ax190LOGiPBJnTsXvM6KtaEPt2RUbOrZcAmvLuEpBlSBkIZmTzcTxYEQcbibX9qCucYaUTGreGf5wx+4L91w+kJoaFrjrdhMtDg3DA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=fail smtp.mailfrom=gmail.com; arc=none smtp.client-ip=62.142.5.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=gmail.com
+Received: from localhost (88-113-25-87.elisa-laajakaista.fi [88.113.25.87])
+	by fgw23.mail.saunalahti.fi (Halon) with ESMTP
+	id 1a2ba198-696b-11ef-8256-005056bdfda7;
+	Mon, 02 Sep 2024 23:37:01 +0300 (EEST)
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Mon, 2 Sep 2024 23:36:59 +0300
+To: Thomas Bonnefille <thomas.bonnefille@bootlin.com>
+Cc: Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Chen Wang <unicorn_wang@outlook.com>,
+	Inochi Amaoto <inochiama@outlook.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	=?iso-8859-1?Q?Miqu=E8l?= Raynal <miquel.raynal@bootlin.com>,
+	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
+Subject: Re: [PATCH v5 2/3] iio: adc: sophgo-saradc: Add driver for Sophgo
+ CV1800B SARADC
+Message-ID: <ZtYh6xUcP8zo3xMj@surfacebook.localdomain>
+References: <20240829-sg2002-adc-v5-0-aacb381e869b@bootlin.com>
+ <20240829-sg2002-adc-v5-2-aacb381e869b@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -69,107 +61,196 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <a7f0a36b-3169-45f8-9169-50bb0c6c04dd@tuxon.dev>
-X-GND-Sasl: alexandre.belloni@bootlin.com
+In-Reply-To: <20240829-sg2002-adc-v5-2-aacb381e869b@bootlin.com>
 
-On 02/09/2024 17:49:14+0300, claudiu beznea wrote:
-> >> +	/* Disable alarm, periodic interrupts. */
-> >> +	rtca3_alarm_irq_set_helper(priv, RTCA3_RCR1_AIE | RTCA3_RCR1_PIE, 0);
-> > 
-> > Why do you disable alarms on driver remove? I think you need to add a
-> > comment if this is because it can't system up, else this is a bad
-> > practice.
-> 
-> The RTC cannot power on the system after a power off. It can't also resume
-> it from a deep sleep state (when only the SoC area where the RTC resides
-> remains power on (there is no way to signal from RTC to the power supply
-> chain that an alarm happened)). It can only wake it up from s2idle mode
-> where all SoC components remains powered on.
-> 
-> Also, w/o this change the RTC remains blocked under the following scenarios
-> if the interrupts are not disabled in remove:
-> 
-> 1/ Configure wake alarm and unbind the RTC driver with the following commands:
-> # echo +10 > /sys/class/rtc/rtc0/wakealarm
-> # echo /sys/bus/platform/drivers/rtc-rtca3/1004ec00.rtc > unbind
-> # sleep 12
-> # echo /sys/bus/platform/drivers/rtc-rtca3/1004ec00.rtc > bind
-> 
-> When rebinding the re-configuration of the RTC device times out:
-> [  121.854190] rtc-rtca3 1004ec00.rtc: error -ETIMEDOUT: Failed to setup
-> the RTC!
-> [  121.861511] rtc-rtca3 1004ec00.rtc: probe with driver rtc-rtca3 failed
-> with error -110
-> -sh: echo: write error: Connection timed out
-> 
-> 2/ Configure wake alarm, unbind the RTC driver and switch to s2idle with
-> the following commands:
-> # echo s2idle > /sys/power/mem_sleep
-> # echo +10 > /sys/class/rtc/rtc0/wakealarm
-> # echo /sys/bus/platform/drivers/rtc-rtca/31004ec00.rtc > unbind
-> # echo mem > /sys/power/state
-> # #system is resumed by non RTC wakeup source (as the RTC alarm is not
-> working anymore in this case)
-> # echo /sys/bus/platform/drivers/rtc-rtca/1004ec00.rtc > bind
-> 
-> The system is not waked up from RTC alarm (as expected) and the rebinding
-> fails again:
-> 
-> [  172.483688] rtc-rtca3 1004ec00.rtc: error -ETIMEDOUT: Failed to setup
-> the RTC!
-> [  172.491003] rtc-rtca3 1004ec00.rtc: probe with driver rtc-rtca3 failed
-> with error -110
-> -sh: echo: write error: Connection timed out
-> 
-> 3/ configure the RTC alarm, unbind and power off (with the following commands):
-> # echo +60 > /sys/class/rtc/rtc0/wakealarm
-> # echo /sys/bus/platform/drivers/rtc-rtca/1004ec00.rtc > unbind
-> # poweroff
-> 
-> The system is not started after 60 seconds and at the next reboot the RTC
-> configuration on probe is failing the same:
-> 
-> [    0.292068] rtc-rtca3 1004ec00.rtc: error -ETIMEDOUT: Failed to setup
-> the RTC!
-> [    0.292182] rtc-rtca3 1004ec00.rtc: probe with driver rtc-rtca3 failed
-> with error -110
-> 
-> In all scenarios the RTC is recovered only if removing/re-applying the
-> power to the SoC area where it resides.
-> 
-> These tests were done with the patches in this series and then I tried it
-> with the following diff on top of the patches in this series. The results
-> were the same:
-> 
-> diff --git a/drivers/rtc/rtc-renesas-rtca3.c b/drivers/rtc/rtc-renesas-rtca3.c
-> index 822c055b6e4d..720fdac3adc6 100644
-> --- a/drivers/rtc/rtc-renesas-rtca3.c
-> +++ b/drivers/rtc/rtc-renesas-rtca3.c
-> @@ -586,7 +586,7 @@ static int rtca3_initial_setup(struct clk *clk, struct
-> rtca3_priv *priv)
->         usleep_range(sleep_us, sleep_us + 10);
-> 
->         /* Disable alarm and carry interrupts. */
-> -       mask = RTCA3_RCR1_AIE | RTCA3_RCR1_CIE;
-> +       mask = RTCA3_RCR1_AIE | RTCA3_RCR1_CIE | RTCA3_RCR1_PIE;
->         ret = rtca3_alarm_irq_set_helper(priv, mask, 0);
->         if (ret)
->                 return ret;
-> @@ -784,7 +784,7 @@ static void rtca3_remove(struct platform_device *pdev)
->         guard(spinlock_irqsave)(&priv->lock);
-> 
->         /* Disable alarm, periodic interrupts. */
-> -       rtca3_alarm_irq_set_helper(priv, RTCA3_RCR1_AIE | RTCA3_RCR1_PIE, 0);
-> +       //rtca3_alarm_irq_set_helper(priv, RTCA3_RCR1_AIE | RTCA3_RCR1_PIE, 0);
->  }
+Thu, Aug 29, 2024 at 02:31:51PM +0200, Thomas Bonnefille kirjoitti:
+> This adds a driver for the Sophgo CV1800B SARADC.
 
-Thanks for the detailed explanation. Can you add a small comment, I
-really want t avoid people cargo-culting this behavior as this has
-already been the case.
+Jonathan, please consider the below improvements to be folded in as well.
 
+...
+
++ array_size.h
+
+> +#include <linux/bitfield.h>
+
++ bits.h
++ cleanup.h
+
+> +#include <linux/clk.h>
+> +#include <linux/completion.h>
+
++ err.h
+
+> +#include <linux/interrupt.h>
+
+> +#include <linux/iio/iio.h>
+
+I would split it into a separate group already.
+
+> +#include <linux/iopoll.h>
+> +#include <linux/mod_devicetable.h>
+> +#include <linux/module.h>
+> +#include <linux/mutex.h>
+> +#include <linux/platform_device.h>
+
++ types.h
+
+...
+
+> +#define CV1800B_READ_TIMEOUT_MS				1000
+> +#define CV1800B_READ_TIMEOUT_US				(CV1800B_READ_TIMEOUT_MS * 1000)
+
+Effectively these may be written as
+
+(1 * MSEC_PER_SEC)
+(1 * USEC_PER_SEC)
+
+...
+
+> +static int cv1800b_adc_wait(struct cv1800b_adc *saradc)
+> +{
+> +	if (saradc->irq < 0) {
+> +		u32 reg;
+> +
+> +		return readl_poll_timeout(saradc->regs + CV1800B_ADC_STATUS_REG,
+> +					  reg, !(reg & CV1800B_ADC_BUSY),
+> +					  500, CV1800B_READ_TIMEOUT_US);
+> +	}
+> +
+> +	return wait_for_completion_timeout(&saradc->completion,
+> +					  msecs_to_jiffies(CV1800B_READ_TIMEOUT_MS)) > 0
+> +					  ? 0 : -ETIMEDOUT;
+
+Usually we leave "?" part on the previous line.
+
+> +}
+> +
+> +static int cv1800b_adc_read_raw(struct iio_dev *indio_dev,
+> +				struct iio_chan_spec const *chan,
+> +				int *val, int *val2, long mask)
+> +{
+> +	struct cv1800b_adc *saradc = iio_priv(indio_dev);
+> +
+> +	switch (mask) {
+> +	case IIO_CHAN_INFO_RAW:{
+
+Missing space
+
+> +		u32 sample;
+> +
+> +		scoped_guard(mutex, &saradc->lock) {
+> +			int ret;
+> +
+> +			cv1800b_adc_start_measurement(saradc, chan->scan_index);
+> +			ret = cv1800b_adc_wait(saradc);
+> +			if (ret < 0)
+> +				return ret;
+> +
+> +			sample = readl(saradc->regs + CV1800B_ADC_CH_RESULT_REG(chan->scan_index));
+> +		}
+> +		if (!(sample & CV1800B_ADC_CH_VALID))
+> +			return -ENODATA;
+> +
+> +		*val = sample & CV1800B_ADC_CH_RESULT;
+> +		return IIO_VAL_INT;
+> +		}
+
+This should be indented as 'c' in the above 'case'.
+
+> +	case IIO_CHAN_INFO_SCALE:
+> +		*val = 3300;
+> +		*val2 = 12;
+> +		return IIO_VAL_FRACTIONAL_LOG2;
+> +	case IIO_CHAN_INFO_SAMP_FREQ:
+> +		u32 status_reg = readl(saradc->regs + CV1800B_ADC_CYC_SET_REG);
+
+> +		int clk_div = (1 + FIELD_GET(CV1800B_MASK_CLKDIV, status_reg));
+> +		int freq = clk_get_rate(saradc->clk) / clk_div;
+
+Why are these signed?
+
+> +		int nb_startup_cycle = 1 + FIELD_GET(CV1800B_MASK_STARTUP_CYCLE, status_reg);
+> +		int nb_sample_cycle = 1 + FIELD_GET(CV1800B_MASK_SAMPLE_WINDOW, status_reg);
+> +		int nb_compare_cycle = 1 + FIELD_GET(CV1800B_MASK_COMPARE_CYCLE, status_reg);
+> +
+> +		*val = freq / (nb_startup_cycle + nb_sample_cycle + nb_compare_cycle);
+> +		return IIO_VAL_INT;
+> +	default:
+> +		return -EINVAL;
+> +	}
+> +}
+
+...
+
+> +static int cv1800b_adc_probe(struct platform_device *pdev)
+> +{
+
+Having
+
+	struct device *dev = &pdev->dev;
+
+here helps making below code neater.
+
+> +	struct cv1800b_adc *saradc;
+> +	struct iio_dev *indio_dev;
+> +	int ret;
+> +
+> +	indio_dev = devm_iio_device_alloc(&pdev->dev, sizeof(*saradc));
+> +	if (!indio_dev)
+> +		return -ENOMEM;
+> +
+> +	saradc = iio_priv(indio_dev);
+> +	indio_dev->name = "sophgo-cv1800b-adc";
+> +	indio_dev->modes = INDIO_DIRECT_MODE;
+> +	indio_dev->info = &cv1800b_adc_info;
+> +	indio_dev->num_channels = ARRAY_SIZE(sophgo_channels);
+> +	indio_dev->channels = sophgo_channels;
+> +
+> +	saradc->clk = devm_clk_get_enabled(&pdev->dev, NULL);
+> +	if (IS_ERR(saradc->clk))
+> +		return PTR_ERR(saradc->clk);
+> +
+> +	saradc->regs = devm_platform_ioremap_resource(pdev, 0);
+> +	if (IS_ERR(saradc->regs))
+> +		return PTR_ERR(saradc->regs);
+> +
+> +	saradc->irq = platform_get_irq_optional(pdev, 0);
+> +	if (saradc->irq >= 0) {
+
+'=' is redundant
+
+> +		init_completion(&saradc->completion);
+> +		ret = devm_request_irq(&pdev->dev, saradc->irq,
+> +				       cv1800b_adc_interrupt_handler, 0,
+> +				       dev_name(&pdev->dev), saradc);
+> +		if (ret)
+> +			return ret;
+> +
+> +		writel(1, saradc->regs + CV1800B_ADC_INTR_EN_REG);
+
+BIT(0)
+
+> +	}
+> +
+> +	ret = devm_mutex_init(&pdev->dev, &saradc->lock);
+> +	if (ret)
+> +		return ret;
+
++ blank line?
+
+> +	writel(FIELD_PREP(CV1800B_MASK_STARTUP_CYCLE, 15) |
+> +	       FIELD_PREP(CV1800B_MASK_SAMPLE_WINDOW, 15) |
+> +	       FIELD_PREP(CV1800B_MASK_CLKDIV, 1) |
+> +	       FIELD_PREP(CV1800B_MASK_COMPARE_CYCLE, 15),
+> +	       saradc->regs + CV1800B_ADC_CYC_SET_REG);
+> +
+> +	return devm_iio_device_register(&pdev->dev, indio_dev);
+> +}
 
 -- 
-Alexandre Belloni, co-owner and COO, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+With Best Regards,
+Andy Shevchenko
+
+
 
