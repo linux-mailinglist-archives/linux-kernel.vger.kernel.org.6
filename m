@@ -1,135 +1,97 @@
-Return-Path: <linux-kernel+bounces-310724-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310698-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F05596806D
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 09:22:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF92A968045
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 09:15:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2540D1C2017A
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 07:22:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2916DB22D42
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 07:15:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE4D617A93C;
-	Mon,  2 Sep 2024 07:19:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B48A91714B7;
+	Mon,  2 Sep 2024 07:15:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=aruba.it header.i=@aruba.it header.b="I5b3SIZu"
-Received: from smtpdh18-1.aruba.it (smtpdh18-1.aruba.it [62.149.155.132])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fl9bI7la"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17A76179654
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 07:18:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.149.155.132
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 145952B9BB;
+	Mon,  2 Sep 2024 07:15:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725261545; cv=none; b=XIrbDvXMLKPhhXbuFIFhLA4Yehkd/liaQOnN2/ngi8EbzaV3TL+Rlkk1Y+k55DTuzi+ltxDPoky9rshbhSufxeIJAFcftQBY5DP1898nUMMfvY/iKRtIUxrxZ5EyWb/CmAVYeft7wmC/FSwTeTG8HLV7q3pRPTDQPu+9zrO4SOE=
+	t=1725261341; cv=none; b=W3zIQfiNqTXDuVOAUJm/27nhI6lYQNqWbN57L7RC6dXloBH3N7FWy5yvHyd8xnjpNGFvDJpqY92miyF4wF1zocxPX+CgdZHeRrdheJz51z6k/VKBzl80Nso4a2Dr2cB0TkfMq6T0DAqPiQPficHj9C3J2U/q7NPFJu8gkviub+4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725261545; c=relaxed/simple;
-	bh=6Wea60hTyUPz/NIKQ39u6mLhiFIPRjr6DJ9DttEJ+lc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SXWRXyeRNjGHeM6IqAmLA+ffQigzaKCu450kF1fems44NOT7r6r+tJ9rYD62uBV/p110tAxElMIt6KStvGMZUiP0ECWZXN33/xLwK5EN2a7F4AdfbxqM33DkgmieOmXvvMnK2Oiq8rqRnw3aJjnm1YjuCYvJm17i/JIFOToNe+s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=enneenne.com; spf=pass smtp.mailfrom=enneenne.com; dkim=pass (2048-bit key) header.d=aruba.it header.i=@aruba.it header.b=I5b3SIZu; arc=none smtp.client-ip=62.149.155.132
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=enneenne.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=enneenne.com
-Received: from [192.168.1.58] ([79.0.204.227])
-	by Aruba Outgoing Smtp  with ESMTPSA
-	id l1Hxs0Ts4Y7T4l1HysUSkS; Mon, 02 Sep 2024 09:15:51 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=aruba.it; s=a1;
-	t=1725261351; bh=6Wea60hTyUPz/NIKQ39u6mLhiFIPRjr6DJ9DttEJ+lc=;
-	h=Date:MIME-Version:Subject:To:From:Content-Type;
-	b=I5b3SIZuSnvDYpTqxqaRpwKVXO2AuSOCPnsju0C4XioP+yVi4CmqGgU1aBVy76X5t
-	 mT+YZSYv4m0vVWhBes+sfncp9dyak3Q9xnsaz3a9+H4oY72acCJRzv0a1Rmjb3p71c
-	 gTLs1Lrf4rla2uibaSLhmXdzo2DdqeWScPoHEW2dX2UYwDCIdRywVXNKN6MZBZde4f
-	 LpKSDGb2kHiHGwHdptC+Th3jd65YWuVl5XnNOY/y2yuce9qHZ9FE5thZBafSssY49b
-	 bR4W/RJxwcbL6YU9fxravm/qXktnDlpN2WpVvtWm2emy/hQ83XiduWUmkqyp5aRazo
-	 mvJgARNjbnN3w==
-Message-ID: <78128328-7006-419e-9977-1487b3a2dab0@enneenne.com>
-Date: Mon, 2 Sep 2024 09:15:48 +0200
+	s=arc-20240116; t=1725261341; c=relaxed/simple;
+	bh=iuyP/VtdtkkWVHV70diXCHx9wHxziitIWnxKSuMioec=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eUFpU5eEdQv4cd45iNlUgx0iPxvSLuYM0PhX5ityO3GNx1hMnW11ueLVSzBVYrer/yqsyCedeOo8HeWiYOIDDJ/efuc5/nHjCk+KdVsV+yuukA+14lvuPV+6f8kNriCfR7RpVC9IcyO6kAhkkca1OQeOD+AC7XtkVATITqldO8g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fl9bI7la; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C370C4CEC8;
+	Mon,  2 Sep 2024 07:15:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725261340;
+	bh=iuyP/VtdtkkWVHV70diXCHx9wHxziitIWnxKSuMioec=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fl9bI7laG+huLOya0/pqIrm5r9sMlJk/wFeo99ituF7Ixtn6vktyscjPaIAdeiyKX
+	 igEbL+X5457xmhhB6Ue5Pz7I4M26uttNzUk8mHsYfDArf8OZve6N75tzLXIzi/yBk0
+	 x96nOe86Jrdt0W5qstNCs4m0fthRtM95EhAQj3GlBLA2pKXvymBknV/XvbUcQv4YZf
+	 dqzF0hfI8oHTDnAupKina/o3Vjhn3Ny78gQ37id4ceWmw3tRlt2eCs0gEJEbEQGdPS
+	 uCH6wuveYemf5Z1xPreludpo6EbPnmA5fe0C4BiiPYZ/dmgnVEGRIXY4yGnByl4ict
+	 K/feHI4uXrg6Q==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1sl1I1-000000002L4-3CSm;
+	Mon, 02 Sep 2024 09:15:53 +0200
+Date: Mon, 2 Sep 2024 09:15:53 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Stephen Boyd <swboyd@chromium.org>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, patches@lists.linux.dev,
+	linux-clk@vger.kernel.org, Amit Pundir <amit.pundir@linaro.org>,
+	Taniya Das <quic_tdas@quicinc.com>
+Subject: Re: [PATCH v3 1/2] clk: qcom: dispcc-sc7180: Only park display clks
+ at init
+Message-ID: <ZtVmKWTBtJiA53U0@hovoldconsulting.com>
+References: <20240828171722.1251587-1-swboyd@chromium.org>
+ <20240828171722.1251587-2-swboyd@chromium.org>
+ <c1e35d3d-fa00-4453-aaa3-9f23a07acb4f@linaro.org>
+ <CAE-0n51Ag1wpj0uUPVtMvgZJE2FF_FZkw+j=bRiAq3vYk=Y_Fw@mail.gmail.com>
+ <CAE-0n53rNuyXcVcqTBSgbNzuJzCBkaHE21dPNkMTrs=BCTkmPg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 RESEND] pps: add an error check in parport_attach
-To: Ma Ke <make24@iscas.ac.cn>, christophe.jaillet@wanadoo.fr,
- linux@treblig.org, akpm@linux-foundation.org, sudipm.mukherjee@gmail.com,
- gregkh@linuxfoundation.org
-Cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-References: <20240828131814.3034338-1-make24@iscas.ac.cn>
-From: Rodolfo Giometti <giometti@enneenne.com>
-Content-Language: en-US
-In-Reply-To: <20240828131814.3034338-1-make24@iscas.ac.cn>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4xfGbE3zGolREKZsj53EaLe/Y2T8zfP8kV6IpeXs74fQi/xbKvJs4OlIpnw6lJSGfYxZ39/oHHX6e7RZRW3M9Ccx+amrX3F+9PV6qMMg6i9XW+TRUQ6lHe
- 55NgwnkWf/z95fZ5Q4iHkh15p6dFl9AuWPNj9wMa0zaj4x++TIfc3GjnBlTiJxNTLvFZbCqM8vgpdal9u97WU/9gsnTeNozG7k3N2Vvvl40O6q88VGsz9Br+
- GSeDhGkGzQ4Y1RdXuCL6R4XMYnLg7DeroeC5ry7GPHWcqLOThfaE03wIQTm5yn8LPbCSSyfKqZQ7iHomW9a5vpuZyIhB2f04tFFsLoXd5YKnPT936cmsvUpu
- GWoq9j4jDtwiFgAkeWBIzKL5alJP7yqGN8P59OGUvBMzkbaeje7Ck6CSpx7CJXNVw1/tjNXxPFP2UnJ8ydqW/Jo8D/bW/ais4CbbWvMgm6uTn7toCek=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAE-0n53rNuyXcVcqTBSgbNzuJzCBkaHE21dPNkMTrs=BCTkmPg@mail.gmail.com>
 
-On 28/08/24 15:18, Ma Ke wrote:
-> In parport_attach, the return value of ida_alloc is unchecked, witch leads
-> to the use of an invalid index value.
+On Fri, Aug 30, 2024 at 03:29:22PM -0700, Stephen Boyd wrote:
+> Quoting Stephen Boyd (2024-08-29 09:34:05)
+
+> > It sounds like it's better to make the default always park at
+> > registration time and special case the one or two places where that
+> > isn't possible, i.e. USB because it has special rate requirements. So I
+> > should just go back to v1 then and pile on the QUP patches.
 > 
-> To address this issue, index should be checked. When the index value is
-> abnormal, the device should be freed.
-> 
-> Found by code review, compile tested only.
-> 
-> Cc: stable@vger.kernel.org
-> Fixes: fb56d97df70e ("pps: client: use new parport device model")
-> Signed-off-by: Ma Ke <make24@iscas.ac.cn>
+> I've done this now and I'll push out clk-fixes with the QUP patches.
 
-Acked-by: Rodolfo Giometti <giometti@enneenne.com>
+I assumed you'd fix up all the other SoCs affected by this, but I only
+saw fixes for sm8550, sm8650 and x1e80100 in your fixes branch.
 
-> ---
-> Changes in v3:
-> - modified Fixes tag as suggestions.
-> Changes in v2:
-> - removed error output as suggestions.
-> ---
->   drivers/pps/clients/pps_parport.c | 8 ++++++--
->   1 file changed, 6 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/pps/clients/pps_parport.c b/drivers/pps/clients/pps_parport.c
-> index 63d03a0df5cc..abaffb4e1c1c 100644
-> --- a/drivers/pps/clients/pps_parport.c
-> +++ b/drivers/pps/clients/pps_parport.c
-> @@ -149,6 +149,9 @@ static void parport_attach(struct parport *port)
->   	}
->   
->   	index = ida_alloc(&pps_client_index, GFP_KERNEL);
-> +	if (index < 0)
-> +		goto err_free_device;
-> +
->   	memset(&pps_client_cb, 0, sizeof(pps_client_cb));
->   	pps_client_cb.private = device;
->   	pps_client_cb.irq_func = parport_irq;
-> @@ -159,7 +162,7 @@ static void parport_attach(struct parport *port)
->   						    index);
->   	if (!device->pardev) {
->   		pr_err("couldn't register with %s\n", port->name);
-> -		goto err_free;
-> +		goto err_free_ida;
->   	}
->   
->   	if (parport_claim_or_block(device->pardev) < 0) {
-> @@ -187,8 +190,9 @@ static void parport_attach(struct parport *port)
->   	parport_release(device->pardev);
->   err_unregister_dev:
->   	parport_unregister_device(device->pardev);
-> -err_free:
-> +err_free_ida:
->   	ida_free(&pps_client_index, index);
-> +err_free_device:
->   	kfree(device);
->   }
->   
+Just sent a corresponding fix for sc8280xp, which I've confirmed also
+needs this for QUP:
 
--- 
-GNU/Linux Solutions                  e-mail: giometti@enneenne.com
-Linux Device Driver                          giometti@linux.it
-Embedded Systems                     phone:  +39 349 2432127
-UNIX programming
+	https://lore.kernel.org/lkml/20240902070830.8535-1-johan+linaro@kernel.org/
 
+But what about the sm8550 USB issue? Don't the other platforms also need
+a corresponding fix (e.g. for when booting from USB)?
+
+Johan
 
