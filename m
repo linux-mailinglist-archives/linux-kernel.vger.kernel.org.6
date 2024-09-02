@@ -1,73 +1,73 @@
-Return-Path: <linux-kernel+bounces-310921-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310923-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1008B9682E1
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 11:15:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B22EB9682E5
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 11:16:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BDFEC28394F
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 09:15:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3E2F51F222A7
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 09:16:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 371A0185B48;
-	Mon,  2 Sep 2024 09:14:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A871186E5D;
+	Mon,  2 Sep 2024 09:16:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kMp7PaLx"
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qva3GESC"
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F911187347;
-	Mon,  2 Sep 2024 09:14:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 352C279C0
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 09:16:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725268494; cv=none; b=TfgTCQWeuSmJxLoNJSy8MOIV6ihIEgIzRoEKoOvd2cDpQ6XfCEbaZyiAQT4B1+zErNgP8ZQJKwiaNbqQyYkOwrXvoBmTLVX3+qAykAMhppvRLQHomOjE0LxxFO6yV7c7K2EuWFWq53omdy1D2ji92RNXaxc9mWqbGAZQO14Iu5A=
+	t=1725268564; cv=none; b=dk7eQAHDpQVh2ohpnStCmxMkcdA4hjB0nAXzFV1fywv4vq2/xOfYEon3tXsWh6ggqi4yfNK1lkqU1Ot9P6e7oJx/qfz+TbFns+m4IBbMZqFLfNMkovh8f0gvhcEACNR4dD0L2S+sBM3iatIdrEAVKpAorSehdf0cBLO7PMLgMbk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725268494; c=relaxed/simple;
-	bh=BiOfTQ/ScWjx2UeroMLEiJGQTe7d+mkNi8Eh/fXNXLE=;
+	s=arc-20240116; t=1725268564; c=relaxed/simple;
+	bh=sU2Zeg8uSu1OdKxW66HtqBOojELTmmz59osdKKEreLU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qFtVzgcvisRzmvoAKNr1ZAPHaM+eu1ZTp5aekW/SFoLlkdm5hzodkrNoUt8CCIlSkKK/678dxAu3etaF4P/HkQA4vZ/NChtRdlqUKG23Us02HQ95dKXOSMF54Oep4g5TbkUr6L+Bu7DdQZHxGPxSWDR/wSxN/1SXNXsXh1tVfOI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kMp7PaLx; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-374c962e5adso430456f8f.1;
-        Mon, 02 Sep 2024 02:14:52 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=pk3gWGyIwT7vOrTMTzS7+PlaHayEUJLZXZWiAH8h0T71UwxrCYd+bwS9PIzDC7s5/XV7RoGfNlU3YVzyiJ3H//dNUGSbsFa737cYNy29RW5xjJxNdw025Sw8yiewmz7yI3y0VDEFW5gJ2pK0y9a9pVOqAXpvGrwB9mrVV5Pd9lY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qva3GESC; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a86b46c4831so440080766b.1
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2024 02:16:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725268491; x=1725873291; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1725268560; x=1725873360; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=Wvfx7uXnphEAcqrxryp1hC4hXuppYE7B9WLMIBchYMk=;
-        b=kMp7PaLxmtfJsu4Bfbgl8Fjj5iKz4+9NcNfz9N4X7PywNSR9Ijx3Fj24NWKpuqivx7
-         2tZ82Mu1i98luYLGi1kD++K0XZ8mDN65x6mgbOzqqmDlRU56tTHdp3qHM4ArlVCy065E
-         BnGDdbBX/uxbTnuOVznKJdV8xoZ/P00v85yyO1oKI+IwJUpkYDVUMolduGdAn/XLSIlU
-         qiXdr1PWSPbPcXA21Aqbiq1fCjey3MC0JYorbKxabH/Apjn79W53zxz0uxh1kRNZ8f1Q
-         PvKXkzToRF6RbFv798bRaTC/nICybmIQpm57gCvFyN8YHZVjU/OER7ndEyXmB7auUSZB
-         njOg==
+        bh=XqtUFpntbJ3Eo7PvN32OL3nmlhHeCsCaqdg7902Q0I0=;
+        b=qva3GESCVTjkBZK4sPR0otFKHVQtzEyR8eWNDzNE4gE6CkQNo/jnckYSpzkh+1WCio
+         3BsJn5k/GBGs2Qm2xwNenDIaPvHJAgbMtFNWrT6mycnT5uoDMdF79m/ggj91NmaHLWH5
+         fNKO8CRnDAM+aDBE6V/TFFw/Al3ozKmPYswTQUNr5TM53TYBPVs+J+4q9YP2rHow4Bdm
+         0IZTGpYeY8tXIzx08lRQvb+CTCltL9DoaEQOTEE/eYfBIv3ZtxV6IaIJ6hWGNhcP8di4
+         liacnF0Wl2EZAtXZrPulMMCEZUIuptF2++Bh9tmxrRcaReb47CMJA07gzrZypWJ9bym7
+         eEQg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725268491; x=1725873291;
+        d=1e100.net; s=20230601; t=1725268560; x=1725873360;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Wvfx7uXnphEAcqrxryp1hC4hXuppYE7B9WLMIBchYMk=;
-        b=gXh2DyZmEWVMABZiC/xGY6vDocTC1zRsWsDkmzHQjqi+H6JiU2wwCFS1JTHYFPW67Q
-         G8dp4YaI48bHwbrNZp+KD678EA0pPYsUUUv1hoaHuwcOMnCNTVFBsdYUgWUSW31FCwF3
-         Xb6gujk/GFZq2DXg2wdLS7tFmBbEm8KTUaX4LvFgttE9K8Nu48ywZDk9Xd7bqKlCbKEm
-         K/6IqQRxKOksp087zPVI0cLtyfb8mMzPvmsmM/NGWyk6ol3SH1nMnIjEBlDVm+Q+xWRk
-         Lx4ATwrApXeuxc3Tx131UWKdMvK//Apv36kvZS95KWWPtWJy/nYXeLfYrmSbmvqWwnZI
-         oAvw==
-X-Forwarded-Encrypted: i=1; AJvYcCV1NKPUPLJBfW2VeE/B8NvPmNHKA1Tyr/Ca5j3hSDpL5hVTKtW4oaQJ0HLQQ+aSz6L050EtsTJXj91tgQ==@vger.kernel.org, AJvYcCWF2Rt16TbIZnNT/9M45a9RXq0zXtCB+s5X6Q3r9a7NiDBgs2+hsZPbVwu4/rzjPtAe6Uow9rv62boQdi/D@vger.kernel.org
-X-Gm-Message-State: AOJu0YyDvyaVxuHhNIhDVS+bj/iLGZeHfNIPh4Nk2rH65eNHpf/J1akI
-	zb4XesQIa+qr9/wwzF1Xjw3PXsleID1MqaMO2uHNjikX6Qcsb0If
-X-Google-Smtp-Source: AGHT+IFYe03u+im4J+AJUgJqbaank06o4XJpkOwEeIgY9Cech6X8TxAQCPPRv8y3D1pC3N6sWNW+VA==
-X-Received: by 2002:a5d:6190:0:b0:374:c7cd:8818 with SMTP id ffacd0b85a97d-374c7cd8a12mr2011202f8f.22.1725268490298;
-        Mon, 02 Sep 2024 02:14:50 -0700 (PDT)
-Received: from [192.168.50.7] (net-109-116-17-225.cust.vodafonedsl.it. [109.116.17.225])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42bb6e33b41sm130542065e9.40.2024.09.02.02.14.49
+        bh=XqtUFpntbJ3Eo7PvN32OL3nmlhHeCsCaqdg7902Q0I0=;
+        b=VCYj4g1nzODtk/1Kkhv0Tm+g/e0Q6mQ+t6q3W7/2HxXkgRB6yUG+2NJcWkoic3JHOa
+         I4FhNcY/7lOqZ8PemOzPlPz7YdOPZKS4p6Sdin1GXa/envPQ50eTVgvkLc7j44pDhgDn
+         bmVzt4+oREDQxF415qdxrsnYIgQ1z+6CB8I5wYhVCrtX727i4yErUIzB1L4y2tqSs9mH
+         3jCnjbgtESY966CV33odocMK0Fi1PT38SYr6DkbvBqWRuldFbOU0zRFE69ia9QN/eQwZ
+         EYEJoLxaRv4mX6ELFZpGtmAHeRWzDUlB4DK9cAfJpd5dNcO9nguQLo1wVl/92+7ZJJsn
+         dFNw==
+X-Forwarded-Encrypted: i=1; AJvYcCURpNkwr1oCk0XUFsQ9S9ymbwC8GRYE4BpY4rAQE25FAi9vwxOjzGuqLj3Es2FIZqhmRlwYtFQIJhkC4AU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz6dn65lQgL8j4GwT6mfykZGe6ScNojr9nk7UO2NruCnPL3UYDS
+	NcLC8L6IydGA0pdZpPTZdISaOKFt79fXud+F0OFHmSzwBGZO3FGWwVJZqOZsHgk=
+X-Google-Smtp-Source: AGHT+IGCtlCu217igjODSADYqKW+kDzr94TvbAxrekukLF2TKFBYEGsz6MxdsPAx8xOBY7cNeheAsQ==
+X-Received: by 2002:a17:907:9342:b0:a7a:9144:e242 with SMTP id a640c23a62f3a-a89d878230fmr366912066b.27.1725268559963;
+        Mon, 02 Sep 2024 02:15:59 -0700 (PDT)
+Received: from [192.168.1.3] ([89.47.253.130])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a89892231c4sm526672666b.221.2024.09.02.02.15.58
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 02 Sep 2024 02:14:49 -0700 (PDT)
-Message-ID: <f5e30162-8642-419f-877c-c7c9ecc27051@gmail.com>
-Date: Mon, 2 Sep 2024 11:14:48 +0200
+        Mon, 02 Sep 2024 02:15:59 -0700 (PDT)
+Message-ID: <f9377001-f6d1-4e7f-a3b2-c80f5741b4a1@linaro.org>
+Date: Mon, 2 Sep 2024 10:15:57 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,236 +75,257 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] btrfs: Don't block system suspend during fstrim
-To: Qu Wenruo <quwenruo.btrfs@gmx.com>
-Cc: Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
- David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240822164908.4957-1-luca.stefani.ge1@gmail.com>
- <400d2855-59c2-47d2-9224-f76f219ae993@gmail.com>
- <745754f6-0728-4682-95a0-39807675bb18@gmx.com>
+Subject: Re: [PATCH 1/4] perf tools: Don't set attr.exclude_guest by default
+To: Namhyung Kim <namhyung@kernel.org>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>, Ian Rogers <irogers@google.com>,
+ Kan Liang <kan.liang@linux.intel.com>, Mark Rutland <mark.rutland@arm.com>
+Cc: Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
+ Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
+ LKML <linux-kernel@vger.kernel.org>, linux-perf-users@vger.kernel.org,
+ Ravi Bangoria <ravi.bangoria@amd.com>, James Clark <james.clark@arm.com>,
+ Athira Rajeev <atrajeev@linux.vnet.ibm.com>, Kajol Jain
+ <kjain@linux.ibm.com>, Thomas Richter <tmricht@linux.ibm.com>,
+ Atish Patra <atishp@atishpatra.org>, Palmer Dabbelt <palmer@rivosinc.com>,
+ Mingwei Zhang <mizhang@google.com>
+References: <20240902014621.2002343-1-namhyung@kernel.org>
+ <20240902014621.2002343-2-namhyung@kernel.org>
 Content-Language: en-US
-From: Luca Stefani <luca.stefani.ge1@gmail.com>
-In-Reply-To: <745754f6-0728-4682-95a0-39807675bb18@gmx.com>
+From: James Clark <james.clark@linaro.org>
+In-Reply-To: <20240902014621.2002343-2-namhyung@kernel.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-Re-sending, was discarded because of HTML blocks, sorry!
 
-On 02/09/24 10:49, Qu Wenruo wrote:
-> 
-> 
-> 在 2024/9/2 18:02, Luca Stefani 写道:
->> Any update on this? It's not critical but I'd like to know if it's in
->> some part proper.
->> Thanks, Luca.
-> 
-> Sorry I didn't see your patch in the list, thus sent a different fix for
-> it later:
-> 
-> https://lore.kernel.org/linux-btrfs/20240830185113.GW25962@twin.jikos.cz/T/#t
-> 
-No worries, glad it got picked up!
->>> Sometimes the system isn't able to suspend because
->>> the task responsible for trimming the device isn't
->>> able to finish in time.
->>>
->>> Since discard isn't a critical call it can be interrupted
->>> at any time, we can simply report the amount of discarded
->>> bytes in such cases and stop the trim.
->>>
->>> Closes: https://bugzilla.kernel.org/show_bug.cgi?id=219180
->>> Signed-off-by: Luca Stefani <luca.stefani.ge1@gmail.com>
->>> ---
->>> I have no idea if that's correct, just something I implemented
->>> looking at the same solution made in ext4 by 5229a658f645.
->>>
->>> The patch in itself seems to solve the issue.
->>>
->>> repro is as follows:
->>> sudo /sbin/fstrim --listed-in /etc/fstab:/proc/self/mountinfo
->>> --verbose --quiet-unsupported &
->>> sudo ./sleepgraph.py -m mem -rtcwake 5
->>>
->>> [836563.289069] PM: suspend exit
->>> [836563.909298] PM: suspend entry (s2idle)
->>> [836563.935447] Filesystems sync: 0.026 seconds
->>> [836563.951391] Freezing user space processes
->>> [836583.958957] Freezing user space processes failed after 20.007
->>> seconds (1 tasks refusing to freeze, wq_busy=0):
->>> [836583.959582] task:fstrim          state:D stack:0     pid:241865
->>> tgid:241865 ppid:241864 flags:0x00004006
->>> [836583.959592] Call Trace:
->>> [836583.959595]  <TASK>
->>> [836583.959600]  __schedule+0x400/0x1720
->>> [836583.959612]  ? mod_delayed_work_on+0xa4/0xb0
->>> [836583.959622]  ? srso_alias_return_thunk+0x5/0xfbef5
->>> [836583.959628]  ? srso_alias_return_thunk+0x5/0xfbef5
->>> [836583.959631]  ? blk_mq_flush_plug_list.part.0+0x1e3/0x610
->>> [836583.959640]  schedule+0x27/0xf0
->>> [836583.959644]  schedule_timeout+0x12f/0x160
->>> [836583.959652]  io_schedule_timeout+0x51/0x70
->>> [836583.959657]  wait_for_completion_io+0x8a/0x160
->>> [836583.959663]  submit_bio_wait+0x60/0x90
->>> [836583.959671]  blkdev_issue_discard+0x91/0x100
->>> [836583.959680]  btrfs_issue_discard+0xc4/0x140
->>> [836583.959689]  btrfs_discard_extent+0x241/0x2a0
->>> [836583.959695]  ? srso_alias_return_thunk+0x5/0xfbef5
->>> [836583.959702]  do_trimming+0xd2/0x240
->>> [836583.959712]  trim_bitmaps+0x350/0x4c0
->>> [836583.959723]  btrfs_trim_block_group+0xb8/0x110
->>> [836583.959729]  btrfs_trim_fs+0x118/0x440
->>> [836583.959734]  ? srso_alias_return_thunk+0x5/0xfbef5
->>> [836583.959738]  ? security_capable+0x41/0x70
->>> [836583.959746]  btrfs_ioctl_fitrim+0x113/0x180
->>> [836583.959752]  btrfs_ioctl+0xdaf/0x2670
->>> [836583.959759]  ? srso_alias_return_thunk+0x5/0xfbef5
->>> [836583.959763]  ? ioctl_has_perm.constprop.0.isra.0+0xd8/0x130
->>> [836583.959774]  __x64_sys_ioctl+0x94/0xd0
->>> [836583.959782]  do_syscall_64+0x82/0x160
->>> [836583.959790]  ? srso_alias_return_thunk+0x5/0xfbef5
->>> [836583.959793]  ? syscall_exit_to_user_mode+0x72/0x220
->>> [836583.959799]  ? srso_alias_return_thunk+0x5/0xfbef5
->>> [836583.959802]  ? do_syscall_64+0x8e/0x160
->>> [836583.959807]  ? srso_alias_return_thunk+0x5/0xfbef5
->>> [836583.959811]  ? do_sys_openat2+0x9c/0xe0
->>> [836583.959821]  ? srso_alias_return_thunk+0x5/0xfbef5
->>> [836583.959825]  ? syscall_exit_to_user_mode+0x72/0x220
->>> [836583.959828]  ? srso_alias_return_thunk+0x5/0xfbef5
->>> [836583.959832]  ? do_syscall_64+0x8e/0x160
->>> [836583.959835]  ? syscall_exit_to_user_mode+0x72/0x220
->>> [836583.959838]  ? srso_alias_return_thunk+0x5/0xfbef5
->>> [836583.959842]  ? do_syscall_64+0x8e/0x160
->>> [836583.959845]  ? srso_alias_return_thunk+0x5/0xfbef5
->>> [836583.959849]  ? do_syscall_64+0x8e/0x160
->>> [836583.959851]  ? srso_alias_return_thunk+0x5/0xfbef5
->>> [836583.959855]  ? do_syscall_64+0x8e/0x160
->>> [836583.959858]  ? srso_alias_return_thunk+0x5/0xfbef5
->>> [836583.959861]  ? do_syscall_64+0x8e/0x160
->>> [836583.959864]  ? srso_alias_return_thunk+0x5/0xfbef5
->>> [836583.959868]  ? srso_alias_return_thunk+0x5/0xfbef5
->>> [836583.959873]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
->>> [836583.959878] RIP: 0033:0x7f3e4261af2d
->>> [836583.959944] RSP: 002b:00007ffec002f400 EFLAGS: 00000246 ORIG_RAX:
->>> 0000000000000010
->>> [836583.959950] RAX: ffffffffffffffda RBX: 00007ffec002f570 RCX:
->>> 00007f3e4261af2d
->>> [836583.959952] RDX: 00007ffec002f470 RSI: 00000000c0185879 RDI:
->>> 0000000000000003
->>> [836583.959955] RBP: 00007ffec002f450 R08: 0000562d74da7010 R09:
->>> 00007ffec002e7f2
->>> [836583.959957] R10: 0000000000000000 R11: 0000000000000246 R12:
->>> 0000562d74daafc0
->>> [836583.959960] R13: 0000000000000003 R14: 0000562d74daa970 R15:
->>> 0000562d74daad40
->>> [836583.959967]  </TASK>
->>> ---
->>>   fs/btrfs/extent-tree.c | 20 ++++++++++++++++----
->>>   1 file changed, 16 insertions(+), 4 deletions(-)
->>>
->>> diff --git a/fs/btrfs/extent-tree.c b/fs/btrfs/extent-tree.c
->>> index feec49e6f9c8..7e4c1d4f2f7c 100644
->>> --- a/fs/btrfs/extent-tree.c
->>> +++ b/fs/btrfs/extent-tree.c
->>> @@ -16,6 +16,7 @@
->>>   #include <linux/percpu_counter.h>
->>>   #include <linux/lockdep.h>
->>>   #include <linux/crc32c.h>
->>> +#include <linux/freezer.h>
->>>   #include "ctree.h"
->>>   #include "extent-tree.h"
->>>   #include "transaction.h"
->>> @@ -6361,6 +6362,11 @@ void btrfs_error_unpin_extent_range(struct
->>> btrfs_fs_info *fs_info, u64 start, u6
->>>       unpin_extent_range(fs_info, start, end, false);
->>>   }
->>> +static bool btrfs_trim_interrupted(void)
->>> +{
->>> +    return fatal_signal_pending(current) || freezing(current);
->>> +}
->>> +
->>>   /*
->>>    * It used to be that old block groups would be left around forever.
->>>    * Iterating over them would be enough to trim unused space.  Since we
->>> @@ -6459,8 +6465,8 @@ static int btrfs_trim_free_extents(struct
->>> btrfs_device *device, u64 *trimmed)
->>>           start += len;
->>>           *trimmed += bytes;
->>> -        if (fatal_signal_pending(current)) {
->>> -            ret = -ERESTARTSYS;
->>> +        if (btrfs_trim_interrupted()) {
->>> +            ret = 0;
->>>               break;
-> 
-> Here we should still return the same error number other than 0, to let
-> the caller know the operation is interrupted, other than finished normally.
-> 
-Here I was following how ext4 did it, my explanation for that was that 
-the kernel may have still discarded some data before the thread was 
-interrupted thus it made sense to report success.
->>>           }
->>> @@ -6508,6 +6514,9 @@ int btrfs_trim_fs(struct btrfs_fs_info *fs_info,
->>> struct fstrim_range *range)
->>>       cache = btrfs_lookup_first_block_group(fs_info, range->start);
->>>       for (; cache; cache = btrfs_next_block_group(cache)) {
->>> +        if (btrfs_trim_interrupted())
->>> +            break;
->>> +
-> 
-> The same here.
-> 
-ditto
->>>           if (cache->start >= range_end) {
->>>               btrfs_put_block_group(cache);
->>>               break;
->>> @@ -6547,17 +6556,20 @@ int btrfs_trim_fs(struct btrfs_fs_info
->>> *fs_info, struct fstrim_range *range)
->>>       mutex_lock(&fs_devices->device_list_mutex);
->>>       list_for_each_entry(device, &fs_devices->devices, dev_list) {
->>> +        if (btrfs_trim_interrupted())
->>> +            break;
->>> +
-> 
-> The same here.
-> 
-> Furthermore, I think we may not need the extra checks.
-> 
-> The fstrim is based on block groups, and a block group is normally 1GiB,
-> at most 10GiB (for RAID0/5/6/10 only), thus exiting at each block group
-> boundary should be enough to meet the hibernation/suspension timeout.
-> 
-> 
-That's probably true, but 10 seconds here wasn't enough and forcing the 
-early return in the other cases was also required.
-I tried the current patch you linked earlier in my testings and that was 
-the conclusion that led to me adding more checks.
-> 
->>>           if (test_bit(BTRFS_DEV_STATE_MISSING, &device->dev_state))
->>>               continue;
->>>           ret = btrfs_trim_free_extents(device, &group_trimmed);
->>> +
->>> +        trimmed += group_trimmed;
->>>           if (ret) {
->>>               dev_failed++;
->>>               dev_ret = ret;
->>>               break;
->>>           }
->>> -
->>> -        trimmed += group_trimmed;
-> 
-> Any special reason moving the code here?
 
-Same as not returning errno before in case of interrupt.
-I checked the code paths and it's still possible to trim some data 
-(group_trimmed != 0) even in case of failure.
+On 02/09/2024 2:46 am, Namhyung Kim wrote:
+> The exclude_guest in the event attribute is to limit profiling in the
+> host environment.  But I'm not sure why we want to set it by default
+> cause we don't care about it in most cases and I feel like it just
+> makes new PMU implementation complicated.
+> 
+> Of course it's useful for perf kvm command so I added the
+> exclude_GH_default variable to preserve the old behavior for perf kvm
+> and other commands like perf record and stat won't set the exclude bit.
+> This is helpful for AMD IBS case since having exclude_guest bit will
+> clear new feature bit due to the missing feature check logic.
+
+Probably another case where again the real fix would be to add 
+/sys/bus/event_source/devices/cpu_core/caps/exclude_guest and then we're 
+able to keep the defaults.
 
 > 
-> Thanks,
-> Qu
+>    $ sysctl kernel.perf_event_paranoid
+>    kernel.perf_event_paranoid = 0
 > 
->>>       }
->>>       mutex_unlock(&fs_devices->device_list_mutex);
->>
+>    $ perf record -W -e ibs_op// -vv true 2>&1 | grep switching
+>    switching off PERF_FORMAT_LOST support
+>    switching off weight struct support
+>    switching off bpf_event
+>    switching off ksymbol
+>    switching off cloexec flag
+>    switching off mmap2
+>    switching off exclude_guest, exclude_host
+> 
+> Maybe Apple M1 users will scream but actually the default event for
+> perf record was converted to "cycles:P" which doesn't set the
+> exclude_guest bit already.  So they need to specify the necessary
+> modifier manually like "cycles:PH" and I think it's ok.
 
-Thanks, Luca.
+I'm reading this to assume that the default record command was always 
+broken then? But what about any other command, now isn't just "cycles" 
+also broken making it worse?
+
+See 25412c036:
+
+   ...
+   (c) The Apple M1/M2 PMU requires that perf_event_attr::exclude_guest
+       is set as the hardware PMU does not count while a guest is running
+       (but might be extended in future to do so).
+   ...
+
+> 
+> Intestingly, I found it sets the exclude_bit if "u" modifier is used.
+> I don't know why but it's neither intuitive nor consistent.  Let's
+> remove the bit there too.
+> 
+> Cc: Mark Rutland <mark.rutland@arm.com>
+> Cc: James Clark <james.clark@linaro.org>
+> Cc: Ravi Bangoria <ravi.bangoria@amd.com>
+> Signed-off-by: Namhyung Kim <namhyung@kernel.org>
+> ---
+>   tools/perf/builtin-kvm.c                   |  1 +
+>   tools/perf/tests/attr/test-record-dummy-C0 |  2 +-
+>   tools/perf/tests/parse-events.c            | 18 +++++++++---------
+>   tools/perf/util/parse-events.c             |  2 +-
+>   tools/perf/util/util.c                     | 10 ++++++++--
+>   tools/perf/util/util.h                     |  3 +++
+>   6 files changed, 23 insertions(+), 13 deletions(-)
+> 
+> diff --git a/tools/perf/builtin-kvm.c b/tools/perf/builtin-kvm.c
+> index 692267b1b7e8..ca94dd3de04d 100644
+> --- a/tools/perf/builtin-kvm.c
+> +++ b/tools/perf/builtin-kvm.c
+> @@ -2147,6 +2147,7 @@ int cmd_kvm(int argc, const char **argv)
+>   						"buildid-list", "stat", NULL };
+>   	const char *kvm_usage[] = { NULL, NULL };
+>   
+> +	exclude_HG_default = true;
+>   	perf_host  = 0;
+>   	perf_guest = 1;
+>   
+> diff --git a/tools/perf/tests/attr/test-record-dummy-C0 b/tools/perf/tests/attr/test-record-dummy-C0
+> index 576ec48b3aaf..8ce6f0a5df5b 100644
+> --- a/tools/perf/tests/attr/test-record-dummy-C0
+> +++ b/tools/perf/tests/attr/test-record-dummy-C0
+> @@ -37,7 +37,7 @@ precise_ip=0
+>   mmap_data=0
+>   sample_id_all=1
+>   exclude_host=0
+> -exclude_guest=1
+> +exclude_guest=0
+>   exclude_callchain_kernel=0
+>   exclude_callchain_user=0
+>   mmap2=1
+> diff --git a/tools/perf/tests/parse-events.c b/tools/perf/tests/parse-events.c
+> index edc2adcf1bae..9179bf3084c3 100644
+> --- a/tools/perf/tests/parse-events.c
+> +++ b/tools/perf/tests/parse-events.c
+> @@ -932,7 +932,7 @@ static int test__group2(struct evlist *evlist)
+>   			TEST_ASSERT_VAL("wrong exclude_user", !evsel->core.attr.exclude_user);
+>   			TEST_ASSERT_VAL("wrong exclude_kernel", !evsel->core.attr.exclude_kernel);
+>   			TEST_ASSERT_VAL("wrong exclude_hv", evsel->core.attr.exclude_hv);
+> -			TEST_ASSERT_VAL("wrong exclude guest", evsel->core.attr.exclude_guest);
+> +			TEST_ASSERT_VAL("wrong exclude guest", !evsel->core.attr.exclude_guest);
+>   			TEST_ASSERT_VAL("wrong exclude host", !evsel->core.attr.exclude_host);
+>   			TEST_ASSERT_VAL("wrong precise_ip", !evsel->core.attr.precise_ip);
+>   			TEST_ASSERT_VAL("wrong leader", evsel__is_group_leader(evsel));
+> @@ -947,7 +947,7 @@ static int test__group2(struct evlist *evlist)
+>   			TEST_ASSERT_VAL("wrong exclude_user", !evsel->core.attr.exclude_user);
+>   			TEST_ASSERT_VAL("wrong exclude_kernel", evsel->core.attr.exclude_kernel);
+>   			TEST_ASSERT_VAL("wrong exclude_hv", evsel->core.attr.exclude_hv);
+> -			TEST_ASSERT_VAL("wrong exclude guest", evsel->core.attr.exclude_guest);
+> +			TEST_ASSERT_VAL("wrong exclude guest", !evsel->core.attr.exclude_guest);
+>   			TEST_ASSERT_VAL("wrong exclude host", !evsel->core.attr.exclude_host);
+>   			TEST_ASSERT_VAL("wrong precise_ip", !evsel->core.attr.precise_ip);
+>   			if (evsel__has_leader(evsel, leader))
+> @@ -1072,7 +1072,7 @@ static int test__group3(struct evlist *evlist __maybe_unused)
+>   		TEST_ASSERT_VAL("wrong exclude_user", !evsel->core.attr.exclude_user);
+>   		TEST_ASSERT_VAL("wrong exclude_kernel", evsel->core.attr.exclude_kernel);
+>   		TEST_ASSERT_VAL("wrong exclude_hv", evsel->core.attr.exclude_hv);
+> -		TEST_ASSERT_VAL("wrong exclude guest", evsel->core.attr.exclude_guest);
+> +		TEST_ASSERT_VAL("wrong exclude guest", !evsel->core.attr.exclude_guest);
+>   		TEST_ASSERT_VAL("wrong exclude host", !evsel->core.attr.exclude_host);
+>   		TEST_ASSERT_VAL("wrong precise_ip", !evsel->core.attr.precise_ip);
+>   		TEST_ASSERT_VAL("wrong leader", evsel__is_group_leader(evsel));
+> @@ -1222,7 +1222,7 @@ static int test__group5(struct evlist *evlist __maybe_unused)
+>   		TEST_ASSERT_VAL("wrong exclude_user", !evsel->core.attr.exclude_user);
+>   		TEST_ASSERT_VAL("wrong exclude_kernel", !evsel->core.attr.exclude_kernel);
+>   		TEST_ASSERT_VAL("wrong exclude_hv", !evsel->core.attr.exclude_hv);
+> -		TEST_ASSERT_VAL("wrong exclude guest", evsel->core.attr.exclude_guest);
+> +		TEST_ASSERT_VAL("wrong exclude guest", !evsel->core.attr.exclude_guest);
+>   		TEST_ASSERT_VAL("wrong exclude host", !evsel->core.attr.exclude_host);
+>   		TEST_ASSERT_VAL("wrong precise_ip", !evsel->core.attr.precise_ip);
+>   		TEST_ASSERT_VAL("wrong leader", evsel__is_group_leader(evsel));
+> @@ -1437,7 +1437,7 @@ static int test__leader_sample1(struct evlist *evlist)
+>   		TEST_ASSERT_VAL("wrong exclude_user", !evsel->core.attr.exclude_user);
+>   		TEST_ASSERT_VAL("wrong exclude_kernel", !evsel->core.attr.exclude_kernel);
+>   		TEST_ASSERT_VAL("wrong exclude_hv", !evsel->core.attr.exclude_hv);
+> -		TEST_ASSERT_VAL("wrong exclude guest", evsel->core.attr.exclude_guest);
+> +		TEST_ASSERT_VAL("wrong exclude guest", !evsel->core.attr.exclude_guest);
+>   		TEST_ASSERT_VAL("wrong exclude host", !evsel->core.attr.exclude_host);
+>   		TEST_ASSERT_VAL("wrong precise_ip", !evsel->core.attr.precise_ip);
+>   		TEST_ASSERT_VAL("wrong group name", !evsel->group_name);
+> @@ -1453,7 +1453,7 @@ static int test__leader_sample1(struct evlist *evlist)
+>   		TEST_ASSERT_VAL("wrong exclude_user", !evsel->core.attr.exclude_user);
+>   		TEST_ASSERT_VAL("wrong exclude_kernel", !evsel->core.attr.exclude_kernel);
+>   		TEST_ASSERT_VAL("wrong exclude_hv", !evsel->core.attr.exclude_hv);
+> -		TEST_ASSERT_VAL("wrong exclude guest", evsel->core.attr.exclude_guest);
+> +		TEST_ASSERT_VAL("wrong exclude guest", !evsel->core.attr.exclude_guest);
+>   		TEST_ASSERT_VAL("wrong exclude host", !evsel->core.attr.exclude_host);
+>   		TEST_ASSERT_VAL("wrong precise_ip", !evsel->core.attr.precise_ip);
+>   		TEST_ASSERT_VAL("wrong leader", evsel__has_leader(evsel, leader));
+> @@ -1468,7 +1468,7 @@ static int test__leader_sample1(struct evlist *evlist)
+>   		TEST_ASSERT_VAL("wrong exclude_user", !evsel->core.attr.exclude_user);
+>   		TEST_ASSERT_VAL("wrong exclude_kernel", !evsel->core.attr.exclude_kernel);
+>   		TEST_ASSERT_VAL("wrong exclude_hv", !evsel->core.attr.exclude_hv);
+> -		TEST_ASSERT_VAL("wrong exclude guest", evsel->core.attr.exclude_guest);
+> +		TEST_ASSERT_VAL("wrong exclude guest", !evsel->core.attr.exclude_guest);
+>   		TEST_ASSERT_VAL("wrong exclude host", !evsel->core.attr.exclude_host);
+>   		TEST_ASSERT_VAL("wrong precise_ip", !evsel->core.attr.precise_ip);
+>   		TEST_ASSERT_VAL("wrong group name", !evsel->group_name);
+> @@ -1497,7 +1497,7 @@ static int test__leader_sample2(struct evlist *evlist __maybe_unused)
+>   		TEST_ASSERT_VAL("wrong exclude_user", !evsel->core.attr.exclude_user);
+>   		TEST_ASSERT_VAL("wrong exclude_kernel", evsel->core.attr.exclude_kernel);
+>   		TEST_ASSERT_VAL("wrong exclude_hv", evsel->core.attr.exclude_hv);
+> -		TEST_ASSERT_VAL("wrong exclude guest", evsel->core.attr.exclude_guest);
+> +		TEST_ASSERT_VAL("wrong exclude guest", !evsel->core.attr.exclude_guest);
+>   		TEST_ASSERT_VAL("wrong exclude host", !evsel->core.attr.exclude_host);
+>   		TEST_ASSERT_VAL("wrong precise_ip", !evsel->core.attr.precise_ip);
+>   		TEST_ASSERT_VAL("wrong group name", !evsel->group_name);
+> @@ -1513,7 +1513,7 @@ static int test__leader_sample2(struct evlist *evlist __maybe_unused)
+>   		TEST_ASSERT_VAL("wrong exclude_user", !evsel->core.attr.exclude_user);
+>   		TEST_ASSERT_VAL("wrong exclude_kernel", evsel->core.attr.exclude_kernel);
+>   		TEST_ASSERT_VAL("wrong exclude_hv", evsel->core.attr.exclude_hv);
+> -		TEST_ASSERT_VAL("wrong exclude guest", evsel->core.attr.exclude_guest);
+> +		TEST_ASSERT_VAL("wrong exclude guest", !evsel->core.attr.exclude_guest);
+>   		TEST_ASSERT_VAL("wrong exclude host", !evsel->core.attr.exclude_host);
+>   		TEST_ASSERT_VAL("wrong precise_ip", !evsel->core.attr.precise_ip);
+>   		TEST_ASSERT_VAL("wrong group name", !evsel->group_name);
+> diff --git a/tools/perf/util/parse-events.c b/tools/perf/util/parse-events.c
+> index fab01ba54e34..ab73b3d45f04 100644
+> --- a/tools/perf/util/parse-events.c
+> +++ b/tools/perf/util/parse-events.c
+> @@ -1739,7 +1739,7 @@ static int parse_events__modifier_list(struct parse_events_state *parse_state,
+>   		if (mod.user) {
+>   			if (!exclude)
+>   				exclude = eu = ek = eh = 1;
+> -			if (!exclude_GH && !perf_guest)
+> +			if (!exclude_GH && !perf_guest && exclude_HG_default)
+>   				eG = 1;
+>   			eu = 0;
+>   		}
+> diff --git a/tools/perf/util/util.c b/tools/perf/util/util.c
+> index 9d55a13787ce..7e3159faaa19 100644
+> --- a/tools/perf/util/util.c
+> +++ b/tools/perf/util/util.c
+> @@ -78,17 +78,23 @@ bool sysctl__nmi_watchdog_enabled(void)
+>   
+>   bool test_attr__enabled;
+>   
+> +bool exclude_HG_default;
+> +
+>   bool perf_host  = true;
+>   bool perf_guest = false;
+>   
+>   void event_attr_init(struct perf_event_attr *attr)
+>   {
+> +	/* to capture ABI version */
+> +	attr->size = sizeof(*attr);
+> +
+> +	if (!exclude_HG_default)
+> +		return;
+> +
+>   	if (!perf_host)
+>   		attr->exclude_host  = 1;
+>   	if (!perf_guest)
+>   		attr->exclude_guest = 1;
+> -	/* to capture ABI version */
+> -	attr->size = sizeof(*attr);
+>   }
+>   
+>   int mkdir_p(char *path, mode_t mode)
+> diff --git a/tools/perf/util/util.h b/tools/perf/util/util.h
+> index 9966c21aaf04..d33ae883a54f 100644
+> --- a/tools/perf/util/util.h
+> +++ b/tools/perf/util/util.h
+> @@ -21,6 +21,9 @@ extern const char perf_more_info_string[];
+>   
+>   extern const char *input_name;
+>   
+> +/* This will control if perf_{host,guest} will set attr.exclude_{host,guest}. */
+> +extern bool exclude_HG_default;
+> +
+>   extern bool perf_host;
+>   extern bool perf_guest;
+>   
 
