@@ -1,159 +1,192 @@
-Return-Path: <linux-kernel+bounces-311443-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311444-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFD7196894C
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 16:00:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9DF6968953
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 16:01:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1EFB81C219A8
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 14:00:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 78A291F225A7
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 14:01:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B54CD210183;
-	Mon,  2 Sep 2024 14:00:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DA6F20125B;
+	Mon,  2 Sep 2024 14:01:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="X99r7ucy"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b="BGBFqUHy"
+Received: from sender4-op-o15.zoho.com (sender4-op-o15.zoho.com [136.143.188.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 088C519E98B;
-	Mon,  2 Sep 2024 14:00:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725285633; cv=none; b=L0VGBsuX55KjXbBfHTT5NgXESAHzeTbrdf5LP8j1wWOv99hWbJGvutxc16s728RvidQBGTGQqbC0x2N/v2hKu0ULpV8+zGRW9fRTZYs0dklGSsljH47xQ54aUHKAD6nuq9XhBQ3EUTV9y2zqwHwlaXIBeHjOlNs0n3RrqmYHQpE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725285633; c=relaxed/simple;
-	bh=OQBMCh4vthF1sv7FzHbCcRcPNYlzj1fNfENXE1VjT1c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aXFTeW4+i8MJgN4KkgElK2D4cxUchPAVxGWFhPmanY60ihRcRuKxoxU1oOdGRkIIxf0XV5e8RhheHmSWpoeMsKi0zFohSPyOvzx8Q7jwltMfo9mr/lh5elvHrZWkSXI6mUdKaRDT9lBgwqXSSdFSK9Or5aoHYVFmlaiGDZVuoW0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=X99r7ucy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9B4E3C4CEC2;
-	Mon,  2 Sep 2024 14:00:30 +0000 (UTC)
-Authentication-Results: smtp.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="X99r7ucy"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
-	t=1725285629;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=dH1tTlDFz02LirzapNYJOjvf27rZrsn4qQhBH9PXJJI=;
-	b=X99r7ucyzGQYz7BV9t3L42iNhMq4Gphnca5YBUq9T8Om5gEZzj1YIOYWEfXnn1VQwl8yQU
-	8dh8jff+3pIFuuuweAdnIGuZm/DTbFo6qJfXoT4ZY0IHBzAX9pRhxb8I6Wcc6Mk6KtYGP0
-	9nZRx5Gug0R98ELGgORIOU8/WjjAKP0=
-Received: 
-	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 26b40413 (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
-	Mon, 2 Sep 2024 14:00:28 +0000 (UTC)
-Date: Mon, 2 Sep 2024 16:00:24 +0200
-From: "Jason A. Donenfeld" <Jason@zx2c4.com>
-To: Christophe Leroy <christophe.leroy@csgroup.eu>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Naveen N Rao <naveen@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>,
-	Shuah Khan <shuah@kernel.org>, linux-kernel@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org, linux-kselftest@vger.kernel.org,
-	llvm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org, linux-trace-kernel@vger.kernel.org,
-	Adhemerval Zanella <adhemerval.zanella@linaro.org>,
-	Xi Ruoyao <xry111@xry111.site>
-Subject: Re: [PATCH v4 5/5] powerpc/vdso: Wire up getrandom() vDSO
- implementation on PPC64
-Message-ID: <ZtXE-AISB4w9U9Yc@zx2c4.com>
-References: <cover.1725278148.git.christophe.leroy@csgroup.eu>
- <27de70dcc356e56754a03a2887a97597f5e840a4.1725278148.git.christophe.leroy@csgroup.eu>
- <ZtWyeuCfzZ66fVsg@zx2c4.com>
- <bdf1a515-b3d0-471d-89ee-989ae0d63202@csgroup.eu>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CB6019E98B
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 14:01:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.15
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725285678; cv=pass; b=ejuK1s+iQS1/OYsyvubMUhqiI2Us37eLg+TJKGie7eSAeL9qwumoulLVXhT18ULL1oXN8i7Hur7Db3Fe4RsDMEH+egHxg/WN+XbACZGamJ/0Cz1L7Uyb4GqkRRkHr4gZSM2+LRydDwn1CVtsSGW5szFW1xxkLY2R/b7DMbI/EFw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725285678; c=relaxed/simple;
+	bh=vK6hmmM0DBV12CTZ0WyugrY0MWv9y2pgNL/Z9ZtvMec=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Cthm76aOOOH0dMsABBTsQFADe23PfpqfkfEJZFKBVf0D5t0GOMyaC7a0zTTUvummwSXO68Cbo/tU/toYWZbl3AZkcDMLlXF5/MPfOmpyFFxOOFzsNnd1KJf2vDejaHbD5uZAsRp4/ECJnrheHAG58D0lAlvg/bDrQi0AUpWv2UQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me; spf=pass smtp.mailfrom=icenowy.me; dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b=BGBFqUHy; arc=pass smtp.client-ip=136.143.188.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icenowy.me
+Delivered-To: uwu@icenowy.me
+ARC-Seal: i=1; a=rsa-sha256; t=1725285665; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=S9flqk/B6l8l8AOmCYo1Gu2Tdqpn4QTNnkgrJOUmh84hTbdxCigzH1KNm+nl1vrpThUvNcHTSwLDv6FzrOuHOkSTKz+aIGGVZE2Qy4RnNyK8mtLcFZfg9+dkUuejjdI2bx+Svf0o2BB4U980yg8n4c0o46DA0AF6ZqGnIJf6XR8=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1725285665; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=D/7RuX7OmIGW9y/1IHddtkVDMYjXxYRmzEFQDdhUgEk=; 
+	b=MUjembpRv8nlszy3FhUQFuNiKTSI+gKalzBMCGzpLSYiMLZsfXlr4o7rSkIaMzV5xutAjHUl8xEyy493ppdRsYeWeiNz2pShUBxH3U2yfrHe0KOGbg+YwufMYRVU8kGWeN+ARx1jL1p1zmoD34NyMrv9dyGDVKpwSU3JIrJ9uis=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=icenowy.me;
+	spf=pass  smtp.mailfrom=uwu@icenowy.me;
+	dmarc=pass header.from=<uwu@icenowy.me>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1725285665;
+	s=zmail2; d=icenowy.me; i=uwu@icenowy.me;
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:MIME-Version:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=D/7RuX7OmIGW9y/1IHddtkVDMYjXxYRmzEFQDdhUgEk=;
+	b=BGBFqUHy4RwlL97QHFQDsiG2DjV48EuZ9IG+sJnykFzV8j5YhwLiZThgxm01oMbJ
+	YIh6/P2qlkrOg1SBA4mmimF1HFgMl0qPSki1y45rlDsYdBXllxEaFmjUVdRMIRKUSFv
+	V0dD/BLNc2CS/IHBLdO+Q+8LbXAA1tp3HRADosMw41gQYHdX0+x42kjq6ruz2HHw4fU
+	LNdtFFyjJbnh8BNth5KGrXd/RzoK3o0rUX7C+JTMbLyAWT/lk3EdUnfjuAaSou7yEzt
+	InKKhAH8Wi9xYlVXyd87iX2Fug49v7YYyZ6/Cy2YelHbk4zh2m/WX8vk9kdIPC+g1MO
+	2med/CFc3A==
+Received: by mx.zohomail.com with SMTPS id 172528566286781.8323865718055;
+	Mon, 2 Sep 2024 07:01:02 -0700 (PDT)
+From: Icenowy Zheng <uwu@icenowy.me>
+To: Matt Coster <Matt.Coster@imgtec.com>,
+	Frank Binns <frank.binns@imgtec.com>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	Icenowy Zheng <uwu@icenowy.me>
+Subject: [PATCH v2] drm/imagination: properly support stopping LAYOUT_MARS = 1 cores
+Date: Mon,  2 Sep 2024 22:00:39 +0800
+Message-ID: <20240902140039.1972899-1-uwu@icenowy.me>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <bdf1a515-b3d0-471d-89ee-989ae0d63202@csgroup.eu>
+X-ZohoMailClient: External
 
-On Mon, Sep 02, 2024 at 03:12:47PM +0200, Christophe Leroy wrote:
-> 
-> 
-> Le 02/09/2024 à 14:41, Jason A. Donenfeld a écrit :
-> > On Mon, Sep 02, 2024 at 02:04:42PM +0200, Christophe Leroy wrote:
-> >>   SYM_FUNC_START(__arch_chacha20_blocks_nostack)
-> >>   #ifdef __powerpc64__
-> >> -	blr
-> >> +	std	r5, -216(r1)
-> >> +
-> >> +	std	r14, -144(r1)
-> >> +	std	r15, -136(r1)
-> >> +	std	r16, -128(r1)
-> >> +	std	r17, -120(r1)
-> >> +	std	r18, -112(r1)
-> >> +	std	r19, -104(r1)
-> >> +	std	r20, -96(r1)
-> >> +	std	r21, -88(r1)
-> >> +	std	r22, -80(r1)
-> >> +	std	r23, -72(r1)
-> >> +	std	r24, -64(r1)
-> >> +	std	r25, -56(r1)
-> >> +	std	r26, -48(r1)
-> >> +	std	r27, -40(r1)
-> >> +	std	r28, -32(r1)
-> >> +	std	r29, -24(r1)
-> >> +	std	r30, -16(r1)
-> >> +	std	r31, -8(r1)
-> >>   #else
-> >>   	stwu	r1, -96(r1)
-> >>   	stw	r5, 20(r1)
-> >> +#ifdef __BIG_ENDIAN__
-> >>   	stmw	r14, 24(r1)
-> >> +#else
-> >> +	stw	r14, 24(r1)
-> >> +	stw	r15, 28(r1)
-> >> +	stw	r16, 32(r1)
-> >> +	stw	r17, 36(r1)
-> >> +	stw	r18, 40(r1)
-> >> +	stw	r19, 44(r1)
-> >> +	stw	r20, 48(r1)
-> >> +	stw	r21, 52(r1)
-> >> +	stw	r22, 56(r1)
-> >> +	stw	r23, 60(r1)
-> >> +	stw	r24, 64(r1)
-> >> +	stw	r25, 68(r1)
-> >> +	stw	r26, 72(r1)
-> >> +	stw	r27, 76(r1)
-> >> +	stw	r28, 80(r1)
-> >> +	stw	r29, 84(r1)
-> >> +	stw	r30, 88(r1)
-> >> +	stw	r31, 92(r1)
-> >> +#endif
-> >> +#endif
-> > 
-> > This confuses me. Why are you adding code to the !__powerpc64__ branch
-> > in this commit? (Also, why does stmw not work on LE?)
-> 
-> That's for the VDSO32 ie running 32 bits binaries on a 64 bits kernel.
-> 
-> "Programming Environments Manual for 32-Bit Implementations of the 
-> PowerPC™ Architecture" say: In some implementations operating with 
-> little-endian byte order, execution of an lmw or stmw instruction
-> causes the system alignment error handler to be invoked
-> 
-> And GCC doesn't like it either:
-> 
-> tools/arch/powerpc/vdso/vgetrandom-chacha.S:84: Error: `stmw' invalid 
-> when little-endian
+Some new Rogue GPU cores have an extra MARS power domain, which
+controlls the power of the firmware core and allows the firmware core to
+power down most parts of the GPU.
 
-Does it make sense to do all the 32-bit stuff in the PPC32 commit (and
-then you can introduce the selftests there without the error you
-mentioned), and then add the 64-bit stuff in this commit?
+Adapt to this by ignoring power domains that should be powered down by
+the fiwmare and checking MARS idle status instead.
+
+The logic mimics RGXStop() function in the DDK kernel mode source code.
+
+Tested on BXE-4-32 (36.50.54.182) with firmware build 6503725 OS provided
+by Imagination Technologies.
+
+Signed-off-by: Icenowy Zheng <uwu@icenowy.me>
+---
+Changes in v2:
+- Fixed some wrong change that moves the original logic into if(mars)
+  instead of if(!mars).
+
+ .../gpu/drm/imagination/pvr_fw_startstop.c    | 48 +++++++++++++------
+ 1 file changed, 34 insertions(+), 14 deletions(-)
+
+diff --git a/drivers/gpu/drm/imagination/pvr_fw_startstop.c b/drivers/gpu/drm/imagination/pvr_fw_startstop.c
+index 36cec227cfe3c..ae137e35edf3b 100644
+--- a/drivers/gpu/drm/imagination/pvr_fw_startstop.c
++++ b/drivers/gpu/drm/imagination/pvr_fw_startstop.c
+@@ -191,19 +191,27 @@ pvr_fw_stop(struct pvr_device *pvr_dev)
+ 				       ~(ROGUE_CR_SIDEKICK_IDLE_GARTEN_EN |
+ 					 ROGUE_CR_SIDEKICK_IDLE_SOCIF_EN |
+ 					 ROGUE_CR_SIDEKICK_IDLE_HOSTIF_EN);
++	const u32 mars_idle_mask = ROGUE_CR_MARS_IDLE_CPU_EN |
++				   ROGUE_CR_MARS_IDLE_MH_SYSARB0_EN;
+ 	bool skip_garten_idle = false;
++	u32 mars = 0;
+ 	u32 reg_value;
+ 	int err;
+ 
++	PVR_FEATURE_VALUE(pvr_dev, layout_mars, &mars);
++
+ 	/*
+ 	 * Wait for Sidekick/Jones to signal IDLE except for the Garten Wrapper.
+ 	 * For cores with the LAYOUT_MARS feature, SIDEKICK would have been
+ 	 * powered down by the FW.
+ 	 */
+-	err = pvr_cr_poll_reg32(pvr_dev, ROGUE_CR_SIDEKICK_IDLE, sidekick_idle_mask,
+-				sidekick_idle_mask, POLL_TIMEOUT_USEC);
+-	if (err)
+-		return err;
++	if (!mars) {
++		err = pvr_cr_poll_reg32(pvr_dev, ROGUE_CR_SIDEKICK_IDLE,
++					sidekick_idle_mask,
++					sidekick_idle_mask, POLL_TIMEOUT_USEC);
++		if (err)
++			return err;
++	}
+ 
+ 	/* Unset MTS DM association with threads. */
+ 	pvr_cr_write32(pvr_dev, ROGUE_CR_MTS_INTCTX_THREAD0_DM_ASSOC,
+@@ -257,21 +265,27 @@ pvr_fw_stop(struct pvr_device *pvr_dev)
+ 	 * For cores with the LAYOUT_MARS feature, SLC would have been powered
+ 	 * down by the FW.
+ 	 */
+-	err = pvr_cr_poll_reg32(pvr_dev, ROGUE_CR_SLC_IDLE,
+-				ROGUE_CR_SLC_IDLE_MASKFULL,
+-				ROGUE_CR_SLC_IDLE_MASKFULL, POLL_TIMEOUT_USEC);
+-	if (err)
+-		return err;
++	if (!mars) {
++		err = pvr_cr_poll_reg32(pvr_dev, ROGUE_CR_SLC_IDLE,
++					ROGUE_CR_SLC_IDLE_MASKFULL,
++					ROGUE_CR_SLC_IDLE_MASKFULL,
++					POLL_TIMEOUT_USEC);
++		if (err)
++			return err;
++	}
+ 
+ 	/*
+ 	 * Wait for Sidekick/Jones to signal IDLE except for the Garten Wrapper.
+ 	 * For cores with the LAYOUT_MARS feature, SIDEKICK would have been powered
+ 	 * down by the FW.
+ 	 */
+-	err = pvr_cr_poll_reg32(pvr_dev, ROGUE_CR_SIDEKICK_IDLE, sidekick_idle_mask,
+-				sidekick_idle_mask, POLL_TIMEOUT_USEC);
+-	if (err)
+-		return err;
++	if (!mars) {
++		err = pvr_cr_poll_reg32(pvr_dev, ROGUE_CR_SIDEKICK_IDLE,
++					sidekick_idle_mask,
++					sidekick_idle_mask, POLL_TIMEOUT_USEC);
++		if (err)
++			return err;
++	}
+ 
+ 	if (pvr_dev->fw_dev.processor_type == PVR_FW_PROCESSOR_TYPE_META) {
+ 		err = pvr_meta_cr_read32(pvr_dev, META_CR_TxVECINT_BHALT, &reg_value);
+@@ -287,7 +301,13 @@ pvr_fw_stop(struct pvr_device *pvr_dev)
+ 			skip_garten_idle = true;
+ 	}
+ 
+-	if (!skip_garten_idle) {
++	if (mars) {
++		err = pvr_cr_poll_reg32(pvr_dev, ROGUE_CR_MARS_IDLE,
++					mars_idle_mask, mars_idle_mask,
++					POLL_TIMEOUT_USEC);
++		if (err)
++			return err;
++	} else if (!skip_garten_idle) {
+ 		err = pvr_cr_poll_reg32(pvr_dev, ROGUE_CR_SIDEKICK_IDLE,
+ 					ROGUE_CR_SIDEKICK_IDLE_GARTEN_EN,
+ 					ROGUE_CR_SIDEKICK_IDLE_GARTEN_EN,
+-- 
+2.46.0
+
 
