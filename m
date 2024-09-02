@@ -1,163 +1,78 @@
-Return-Path: <linux-kernel+bounces-310523-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310520-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0288D967DE7
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 04:39:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33AC1967DE3
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 04:37:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2B5E31C21E6C
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 02:39:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9A278B23DE3
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 02:37:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DD562C859;
-	Mon,  2 Sep 2024 02:39:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C11F3BB21;
+	Mon,  2 Sep 2024 02:36:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Pg9pjjbm"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="APEag89X"
+Received: from out30-133.freemail.mail.aliyun.com (out30-133.freemail.mail.aliyun.com [115.124.30.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48F412772A
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 02:39:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B06DC38DE5
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 02:36:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725244791; cv=none; b=D9pACd9rEFLOEIm26oMxjSqEY2eNrehszbQi8thFzh7OtYJrwWUucDrKy/1LP0zZ88Gpn7tGwP/k5QJoLNAAM8C+HAqnQE4iG2+7JR6m4ZrFBZmbTFCZe0Wzh2Y5uJY7YFNnqcy3nQE4E+2mfxfyE/eBzoqBXfNbXt5uM+WYcak=
+	t=1725244608; cv=none; b=QQIIRiDufjywmk57x/7+7qdXsEvOcnEmd4vZzCCybgL87/MSWz8ACYDjY9S+doD5ZRMm3cnyRNwx6FxkjMMwFFESJb3+37KNXVjopODy69GEoUz/9uSZV+ATWIVCIbaTWMc5MeAFJv2ewKFRRcOmCaEA9yfKDrl7Bfb8zckvVdA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725244791; c=relaxed/simple;
-	bh=hCD0lhf9UrsR3cHabJeE+8UdsFm02SwQKqkiHbb+S2g=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=AJtbCC2d+CjzZzuYJprdraFUymTaRN/8EkYW48esjV5fcHOOP8k6IL7e6S/RaJQhBKb8t44hcnI0tUv+Y7L44vHkRWVCjJbO7hH36h/iUC1+jKrdH3P5a/cgRYvwCE68AZ2rbXkNWnOeXLwnGWrx4qTObElwy2SW7osP8zlLscc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Pg9pjjbm; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725244791; x=1756780791;
-  h=message-id:date:mime-version:cc:subject:to:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=hCD0lhf9UrsR3cHabJeE+8UdsFm02SwQKqkiHbb+S2g=;
-  b=Pg9pjjbmvDziHVEJkBWD1PM8bOvKJX6GWs+fbokZRXXEVQoVUMpi3gKt
-   Yuxm/OG+wkcA5DosF6fl14hvOOjVwMakrFB1eBtHmB7EYXpU0ODCrzFT4
-   orDbXfT7+vzFryvdoBmUCa0LQ2vIiREiVv3Vc8yXIU0OuPI4Ei82SbFYi
-   ED/TzdMbsB59WTR5YU7LdnS0CBmKQ5VYI9/DAw6CjL1mjI4V94QY9ZoZE
-   iMSGdLsi4r4Xt/oWkD59wBiw8cYzxIsmoIhgLzKwjktFsfQALEx5CWk1Y
-   HrvyOwyX9cmDZTbIEz3rLBYB1LgEGPq2b8r5PdDKPmN9vOJXs7UkRVNgZ
-   Q==;
-X-CSE-ConnectionGUID: CEbxYn+lSj6pddgm+x5FWg==
-X-CSE-MsgGUID: GWT/AdydSkaYKA2c45nDDQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11182"; a="34970977"
-X-IronPort-AV: E=Sophos;i="6.10,195,1719903600"; 
-   d="scan'208";a="34970977"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Sep 2024 19:39:50 -0700
-X-CSE-ConnectionGUID: Vvw2S6LERzmBwcXvTVFedg==
-X-CSE-MsgGUID: JrQGoICJTqqoV9nwgTGo1w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,195,1719903600"; 
-   d="scan'208";a="64505180"
-Received: from allen-box.sh.intel.com (HELO [10.239.159.127]) ([10.239.159.127])
-  by fmviesa009.fm.intel.com with ESMTP; 01 Sep 2024 19:39:48 -0700
-Message-ID: <b64d095e-a9a6-4df9-b693-9cd6018eb1a5@linux.intel.com>
-Date: Mon, 2 Sep 2024 10:35:54 +0800
+	s=arc-20240116; t=1725244608; c=relaxed/simple;
+	bh=/v5+Nj5heAtqiXqJxuumZ0IQx01iQfXW6VTPVS7QrSY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=grieyo2UVP3qcUgLuO5Gat9ZuOR0ukmGxOv0bjFw5w4BiscBsnMnIVHt1p2E0kU6Vl4bwfOQP0pWAnT82dKlcB6DX9wqFE1mGjTu+EH2ttf1gio8IWlhlS8gqFrDEOFMQs3l98YFNs+bR4AdM1kTvF9Xtr23x/NIaEl8fHfgL0I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=APEag89X; arc=none smtp.client-ip=115.124.30.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1725244597; h=From:To:Subject:Date:Message-Id:MIME-Version;
+	bh=ChehcMT61sXTyQ7rRVqr54vujGM9pbYTlJ0+I2dxfp8=;
+	b=APEag89XxBLScJ5CmSFapAh/+BZXXSnMquct4qr7J+ldP3HMTDQr9p25GbOOXTxOs+BGxmWm6pxHa6Hum1px3SuwgTiBbvCEEzsk9h5dY16Rnl11hQz/YqIGZ4BgXBUaxvSBOgbQTphJv0rJj7z+L7r495qfMxldag2XCo7jw/Y=
+Received: from localhost(mailfrom:joseph.qi@linux.alibaba.com fp:SMTPD_---0WE1gx-G_1725244596)
+          by smtp.aliyun-inc.com;
+          Mon, 02 Sep 2024 10:36:37 +0800
+From: Joseph Qi <joseph.qi@linux.alibaba.com>
+To: Andrew Morton <akpm@linux-foundation.org>,
+	Lizhi Xu <lizhi.xu@windriver.com>,
+	Heming Zhao <heming.zhao@suse.com>
+Cc: ocfs2-devel@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	jlbec@evilplan.org,
+	mark@fasheh.com,
+	syzbot+ab134185af9ef88dfed5@syzkaller.appspotmail.com,
+	syzkaller-bugs@googlegroups.com
+Subject: [PATCH v5 RESEND 0/2] Misc fixes for ocfs2_read_blocks
+Date: Mon,  2 Sep 2024 10:36:34 +0800
+Message-Id: <20240902023636.1843422-1-joseph.qi@linux.alibaba.com>
+X-Mailer: git-send-email 2.39.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: baolu.lu@linux.intel.com, Yi Liu <yi.l.liu@intel.com>,
- "Tian, Kevin" <kevin.tian@intel.com>, tina.zhang@intel.com,
- Sanjay K Kumar <sanjay.k.kumar@intel.com>
-Subject: Re: [PATCH v2] iommu/vt-d: Fix potential lockup if qi_submit_sync
- called with 0 count
-To: Jacob Pan <jacob.jun.pan@linux.intel.com>, iommu@lists.linux.dev,
- LKML <linux-kernel@vger.kernel.org>
-References: <20240728210059.1964602-1-jacob.jun.pan@linux.intel.com>
-Content-Language: en-US
-From: Baolu Lu <baolu.lu@linux.intel.com>
-In-Reply-To: <20240728210059.1964602-1-jacob.jun.pan@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 7/29/24 5:00 AM, Jacob Pan wrote:
-> From: Sanjay K Kumar<sanjay.k.kumar@intel.com>
-> 
-> If qi_submit_sync() is invoked with 0 invalidation descriptors (for
-> instance, for DMA draining purposes), we can run into a bug where a
-> submitting thread fails to detect the completion of invalidation_wait.
-> Subsequently, this led to a soft lockup. Currently, there is no impact
-> by this bug on the existing users because no callers are submitting
-> invalidations with 0 descriptors. This fix will enable future users
-> (such as DMA drain) calling qi_submit_sync() with 0 count.
-> 
-> Suppose thread T1 invokes qi_submit_sync() with non-zero descriptors, while
-> concurrently, thread T2 calls qi_submit_sync() with zero descriptors. Both
-> threads then enter a while loop, waiting for their respective descriptors
-> to complete. T1 detects its completion (i.e., T1's invalidation_wait status
-> changes to QI_DONE by HW) and proceeds to call reclaim_free_desc() to
-> reclaim all descriptors, potentially including adjacent ones of other
-> threads that are also marked as QI_DONE.
-> 
-> During this time, while T2 is waiting to acquire the qi->q_lock, the IOMMU
-> hardware may complete the invalidation for T2, setting its status to
-> QI_DONE. However, if T1's execution of reclaim_free_desc() frees T2's
-> invalidation_wait descriptor and changes its status to QI_FREE, T2 will
-> not observe the QI_DONE status for its invalidation_wait and will
-> indefinitely remain stuck.
-> 
-> This soft lockup does not occur when only non-zero descriptors are
-> submitted.In such cases, invalidation descriptors are interspersed among
-> wait descriptors with the status QI_IN_USE, acting as barriers. These
-> barriers prevent the reclaim code from mistakenly freeing descriptors
-> belonging to other submitters.
-> 
-> Considered the following example timeline:
-> 	T1			T2
-> ========================================
-> 	ID1
-> 	WD1
-> 	while(WD1!=QI_DONE)
-> 	unlock
-> 				lock
-> 	WD1=QI_DONE*		WD2
-> 				while(WD2!=QI_DONE)
-> 				unlock
-> 	lock
-> 	WD1==QI_DONE?
-> 	ID1=QI_DONE		WD2=DONE*
-> 	reclaim()
-> 	ID1=FREE
-> 	WD1=FREE
-> 	WD2=FREE
-> 	unlock
-> 				soft lockup! T2 never sees QI_DONE in WD2
-> 
-> Where:
-> ID = invalidation descriptor
-> WD = wait descriptor
-> * Written by hardware
-> 
-> The root of the problem is that the descriptor status QI_DONE flag is used
-> for two conflicting purposes:
-> 1. signal a descriptor is ready for reclaim (to be freed)
-> 2. signal by the hardware that a wait descriptor is complete
-> 
-> The solution (in this patch) is state separation by using QI_FREE flag
-> for #1.
-> 
-> Once a thread's invalidation descriptors are complete, their status would
-> be set to QI_FREE. The reclaim_free_desc() function would then only
-> free descriptors marked as QI_FREE instead of those marked as
-> QI_DONE. This change ensures that T2 (from the previous example) will
-> correctly observe the completion of its invalidation_wait (marked as
-> QI_DONE).
-> 
-> Signed-off-by: Sanjay K Kumar<sanjay.k.kumar@intel.com>
-> Signed-off-by: Jacob Pan<jacob.jun.pan@linux.intel.com>
+This series contains 2 fixes for ocfs2_read_blocks().
+The first patch fix the issue reported by syzbot, which detects bad
+unlock balance in ocfs2_read_blocks().
+The second patch fix an issue reported by Heming Zhao when reviewing
+above fix.
 
-Queued for v6.12-rc1.
+Lizhi Xu (2):
+  ocfs2: remove unreasonable unlock in ocfs2_read_blocks
+  ocfs2: Fix possible null-ptr-deref in ocfs2_set_buffer_uptodate
 
-Thanks,
-baolu
+ fs/ocfs2/buffer_head_io.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+-- 
+2.39.3
+
 
