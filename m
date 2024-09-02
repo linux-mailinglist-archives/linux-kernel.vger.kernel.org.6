@@ -1,214 +1,249 @@
-Return-Path: <linux-kernel+bounces-311768-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311769-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67BF2968D3E
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 20:19:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A215968D44
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 20:21:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 727C21C22015
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 18:19:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AE90D1C2239B
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 18:21:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C039519CC12;
-	Mon,  2 Sep 2024 18:19:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE20619CC1F;
+	Mon,  2 Sep 2024 18:21:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cu2648W/"
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="Tt9ufGKj"
+Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05on2087.outbound.protection.outlook.com [40.107.21.87])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AFF519CC03;
-	Mon,  2 Sep 2024 18:18:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725301142; cv=none; b=qQe6bdyofFF3SbGH5Am/QLly6t2a41riBKTID6mbuID689i043kA/zjWNkLPurfwpw9VW2YbOG5zbVrpk8Su+stzUFDPZlZKwqjNRlPIQ0Bp0HT9o9hX51RmWpsoLF8eEaZq0Mybt5VLSKbi17SmgOAfPMnEzzeI8dPr4QD16+8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725301142; c=relaxed/simple;
-	bh=D/geGiuZreM50wHNk3+rE6qw/c9jZHG8UlPD/TBrYrU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IZhQNrQMwt0oPxNjC2g8nwRsYQJ86p3boicqzauqmYtsdvBngjPSQDMJt+4jDMZmWNR6sG03WnW2YaRIIQl5K64lYz+lEz93S+G8ITdgy5EycBeilqvftM9GyBM0RvActRY4rMrcexo6sgp/htFTeKVuFnuoqOWal9A5kSsrggY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cu2648W/; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5c0aa376e15so2482925a12.1;
-        Mon, 02 Sep 2024 11:18:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725301138; x=1725905938; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=bT5kiWnKqIbTLuP1bx7rfiNJ+AxW9IS6n6BC+9VoOOY=;
-        b=cu2648W/SI5e6IfxyoyFjBin8nGzkt9zXlW9mcja3tgYeJhx0CVMTe5spRVRYVOG8j
-         rYz8Z4uiGFfhNeHZu7zwJuZveNah2yPSofe0aXyNxlbCj4yaJi4Hv/4Ir1n1xBFXM3tq
-         INPqBgMFcJsHIUUKydyAmrakm39DHcIO8AHfjkrogTsVEvqWJvxrWHNqksE+isq4cG2G
-         5EVB6kxJo5Sz7JTwPMJ2wHYz4stVBkKCf3Mozau+qvLj6k6kRNEIwe83F5mrYkcFsuEh
-         7f1nMBPvtsFKMJEan5I8t0L9Kk45fgjrbeOBQ6wbsCiZ41P48ktDQDRDRcl7q8O3FJjW
-         e5rA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725301138; x=1725905938;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=bT5kiWnKqIbTLuP1bx7rfiNJ+AxW9IS6n6BC+9VoOOY=;
-        b=K95Di/yqqWfGcotlerUzZOcXNYM9mYzt7mcJETzYzjBVaS+b2SVczVlzyr3O82cXC5
-         QB8Z01LMxtjea7F3GnuvEUXTkZ/65IIofmOaL0nIPD9qV8889GnZ82eALmj9q8wgrX9e
-         Ge/YWaDlPm8dXyBgFn3/MTA2/XfWQm/k4Oh39ttr8ths5njOqXHt6nmOCWFK87DnaEWg
-         GnejWR4ToZFAhL53GrHx2ztFfKZYwIYeehukVkGYOuaAGwOvgcJ9lnfVQzfpksds+hm8
-         pdis3LovUOLeKTc8ILiE89AIHstS5iud/HsxbR2LWledyN2308iXFG9dHvRnwIIOhadK
-         Ke7A==
-X-Forwarded-Encrypted: i=1; AJvYcCU4OnncZ7cikVn44Ar3GI2tVfptlC05gRPAZv51r3+nq43UJ8b3UFRFBtQUBzvXHv2s/9eMxzNtSTIDknE=@vger.kernel.org, AJvYcCW9lim2oCn0Ft3pD1LfECP3Tck5NTO1+c8WLz5EXDPvL5O7M3Do/d1d5qlHzZRwByT2DjURokIBILnfBjE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwAJEkhsYPg17J+YDqkJVGimufUyRYLJ6kBKahyitXEyBkASyfH
-	U+DB8ZfGXhhoQ4ZTM8dmhqsAi4i+4CGnvRlOPdz28pr4P3ieH0LwWONQ51kDen4xd9iKrxWAvw/
-	KWiV2wKxqoX9y2soD37KbUsMZwQM=
-X-Google-Smtp-Source: AGHT+IEGdH8Hj2wazK7AfWtMmT7ZbWzTqy7SKMVAB2/yqtWzcn0JYMegF8Y4nkv5VYbSut5v3zKKTS45cnpzPucZmOc=
-X-Received: by 2002:a05:6402:2108:b0:5be:eb4f:d4cb with SMTP id
- 4fb4d7f45d1cf-5c21ed31405mr15587124a12.5.1725301137313; Mon, 02 Sep 2024
- 11:18:57 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1EB119CC0B
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 18:21:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.21.87
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725301265; cv=fail; b=RJuigWCmeF6hQMH6jab/UqJVcAoKqD7QgYK+WPS6/3KSqKsHoEioqLDV/KUfuDxxlZsIOihpugG6bwPweY6o/AEprZckQ2BQxNm/xdKqcT7XdmsH29DIr9528H0bTBZEegx8Uz0f9/g+5lVIs+e7498K7oBqTX/ZFLRLF20J4OA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725301265; c=relaxed/simple;
+	bh=YjRMwilWfpcWAO2l3q65GlP0VdroPsmrIdb3OHBxsd4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=dXhtAhwdBYA4AtndYxBDGWlLd/RQzn1gf9WqKST9I97p1Q/YgXa7WZCZoiyJe08FnqxIuxP5dJSixm0yYYji3/acz3nbNQ/tcqriapf00XcVQmlRvHlD7HY85CdQl4FubL9yV+le1mLIS376LgCs+b7H31JaDi8oglK16ljKNgo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=fail (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=Tt9ufGKj reason="signature verification failed"; arc=fail smtp.client-ip=40.107.21.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=GjRTL+XC0LbnE1NrFsxcLGirczyMzkSgySaVqQEeFzRViQYU/ftf6JCPpgFm1vZCJLzXNp8qYNDBpSnVMKQDdDbzxyiYwsZ9TlwZRKzzYiJp73NLyUvxCTvDKqK29MJBSvqmgvCDp4jYs6c+Hh04sDQV4ox/vAWmRQjq/Z4+zZW+PjSDV+HxbEbLZnVVN8aDb+rqiR6YzG0DXo8DMnmLeA8Yws/JH5w+KFUPs2/oUv8Dp/YkCk9LhlNYyzehSc+Iy+m3UvIJ47rbcB/Ors3kXAKA18RlN8BvkPLNLuoe7hmj0zu4+uzLqKP0qNMkotujcds2T3MZA7chZ4VHH3EShg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ubve0RSP5GjdDLG7Lml9kD1ZL3N9PacIiinSuVaKaV4=;
+ b=s1AtlCW10WNJFV5+oQs1O0Xi47MGZoZUaZYeokDXWhhtrtdTsA1GbiyoXJSiON8f0tFGRYtK6zPF45HoGwCzUybt3m2tlUncYnKvneutvUWd1t4a1624AWZOxjeeqlkrMCh18lAE1HdaFOZI4wLlzxRLIR0HLaX0u6+dpgnAM75y+T0CXQuv2+Nltvh1Q/voMxLi9OGEQnJMS7PP2a8xuOmZr+6K3GwrxRlgVgHFKteWHw/M5I1/UHulgU1t66gAXi++Aqh+IL26ypok0hiephMYmL0VWRa2R9T0cJz+ph2Eo7YhoCGzztb7wdL9tJ7UQHr2jtLwNYmshnALEDhkiA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ubve0RSP5GjdDLG7Lml9kD1ZL3N9PacIiinSuVaKaV4=;
+ b=Tt9ufGKjiI6Kk3sHkFqWMmUch/8FhYk6dMKeGRItR2owkzP8Kbyoi1dT/QSXItCQTYy/6pNzkQMXatf0uRB0DS53dak/9dW8Vi4y706lN4SpTqsyccBRJOoAsrs/5uicCB/cJFh3mY7ICuMQFovPlztnAQZzaq2CcPOnfv8E+JuCyl7VNAWf/IETupLRCoA4YTBy5lYgvbJ7PHho8FINzMPDHYZ6SxBVJAXFtDkmLFC4xFrIFJc1loECIs9X+Ro65uAN43C0WIhA1ZNH25tOOlhUf13v92j6pUr28WSgzryaS9MToK6gL2hl4/BMTdLpHaWaLQR1nLK1pEzdfLXk/Q==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
+ by AS5PR04MB9731.eurprd04.prod.outlook.com (2603:10a6:20b:654::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.24; Mon, 2 Sep
+ 2024 18:21:00 +0000
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06%4]) with mapi id 15.20.7918.020; Mon, 2 Sep 2024
+ 18:20:59 +0000
+Date: Mon, 2 Sep 2024 14:20:51 -0400
+From: Frank Li <Frank.li@nxp.com>
+To: Miquel Raynal <miquel.raynal@bootlin.com>
+Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Boris Brezillon <boris.brezillon@collabora.com>,
+	Parshuram Thombare <pthombar@cadence.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Boris Brezillon <bbrezillon@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Conor Culhane <conor.culhane@silvaco.com>,
+	linux-i3c@lists.infradead.org, linux-kernel@vger.kernel.org,
+	imx@lists.linux.dev
+Subject: Re: [PATCH v3 03/11] i3c: master: Extend address status bit to 4 and
+ add I3C_ADDR_SLOT_EXT_INIT
+Message-ID: <ZtYCA9cYywmUaJSQ@lizhi-Precision-Tower-5810>
+References: <20240819-i3c_fix-v3-0-7d69f7b0a05e@nxp.com>
+ <20240819-i3c_fix-v3-3-7d69f7b0a05e@nxp.com>
+ <20240823180426.056ac093@xps-13>
+ <ZsjNA9JV0UKONV32@lizhi-Precision-Tower-5810>
+ <20240826100430.33194702@xps-13>
+ <Zsylya9TN4mVFL79@lizhi-Precision-Tower-5810>
+ <20240826184924.53b48861@xps-13>
+ <ZszPrBeoPehGsocC@lizhi-Precision-Tower-5810>
+ <20240902161250.26846654@xps-13>
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240902161250.26846654@xps-13>
+X-ClientProxiedBy: BYAPR04CA0019.namprd04.prod.outlook.com
+ (2603:10b6:a03:40::32) To PAXPR04MB9642.eurprd04.prod.outlook.com
+ (2603:10a6:102:240::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240902-imx290-avail-v3-0-b32a12799fed@skidata.com> <CAPY8ntD4tbSF41+ShJ0WdP5=N3uJi2tWDEyr-ypcKha40T+Q=Q@mail.gmail.com>
-In-Reply-To: <CAPY8ntD4tbSF41+ShJ0WdP5=N3uJi2tWDEyr-ypcKha40T+Q=Q@mail.gmail.com>
-From: Benjamin Bara <bbara93@gmail.com>
-Date: Mon, 2 Sep 2024 20:18:45 +0200
-Message-ID: <CAJpcXm6YxT69nYy+j8zkswsmaV_93S+dyXFjaJet7Jfm-cHv7A@mail.gmail.com>
-Subject: Re: [PATCH v3 0/7] media: i2c: imx290: check for availability in probe()
-To: Dave Stevenson <dave.stevenson@raspberrypi.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, 
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
-	Sakari Ailus <sakari.ailus@linux.intel.com>, Hans de Goede <hdegoede@redhat.com>, 
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
-	Alexander Stein <alexander.stein@ew.tq-group.com>, linux-media@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Benjamin Bara <benjamin.bara@skidata.com>
-Content-Type: text/plain; charset="UTF-8"
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|AS5PR04MB9731:EE_
+X-MS-Office365-Filtering-Correlation-Id: 7a38ef4f-4bfa-4fe8-6dfb-08dccb7bfed2
+X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+ BCL:0;ARA:13230040|1800799024|366016|7416014|376014|52116014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+ =?iso-8859-1?Q?gAt3FtDyLOHY/pNeSM+kTiNkhz0DbItwQLw4ZXrYibpO1bdsV2ZaUPkgr4?=
+ =?iso-8859-1?Q?VOE9g0VErWsZqiU1otPK2WYSlfQ0lQNu44frHUxqE7QMYYr7DJs3B5jPXL?=
+ =?iso-8859-1?Q?NgqrUKMnawjNDKuPR6IGjAcyLjim3O2FlCngm4sUV/iNVplHv4tadsFjg2?=
+ =?iso-8859-1?Q?+Anp2BEK4ZwdDKQwK87qDfW/SSygUo9vknvZgNNqpKwBCgb+1dFSk8i8v2?=
+ =?iso-8859-1?Q?OO8dXja6SI14JGvRZO9P5WOhC5CauSdWEXYOtWDBtpsmDWir5wYyLLcDl1?=
+ =?iso-8859-1?Q?V/+xb0QhzoGIkBOe0sTX1W7LytfuKEMveuor3j14gSSAK2kuJdgxfrKAk2?=
+ =?iso-8859-1?Q?Xxb8/AGl3NQZKHDK/FXAUaWAH+mIL2DXj/U0fbCG1kqnwyt0MXmmPWN8tH?=
+ =?iso-8859-1?Q?fRaI5cpQDv2ZF+We1JTAjGN2MUj34RFFgvnWcOTrHX6ZapB7/G5WtZgEkj?=
+ =?iso-8859-1?Q?OUsBelQP2jE1fc7zTUpn/Kl3mBM7rGjqPokoVwhnPgDqlot/S6n8MjAvWx?=
+ =?iso-8859-1?Q?OM6qK1jsxrwlHZCEwR5I9NCinaZnX53aaAjFhrCvMdUS5dvCd45wpTm+aL?=
+ =?iso-8859-1?Q?IXAluWniwiR1ldGB89U8l+o2fpG07xsF3ZrVLcUKTzgbO/vGMk0rZo7fYs?=
+ =?iso-8859-1?Q?3+M6YiZOI/hy8iKoQGEOGuwI3NIhU2AiXIekBVxEbBkF7NwT40vf87RGlV?=
+ =?iso-8859-1?Q?SwaoCqXqgWPEJ7l/0m0DKB7goinEQ6aWE+y2jYrbKINEQQWUClH0pmD14r?=
+ =?iso-8859-1?Q?7tzoFNNf/nhGuiY7WLlH++7e6/Hkfmt6Rd0UVxyv92RDyc3/1QAbH3af/g?=
+ =?iso-8859-1?Q?k6OfHP9hVldJPU3Li/1zTNzV+2+EP0zG5WzkXaXB9Hl3tuTBScTDytRxv6?=
+ =?iso-8859-1?Q?yWJECkqRp1FvJkKDE5tdTG1/P4w8rlp9d41pOpA2YYpoqF1xeYFu2pCyTo?=
+ =?iso-8859-1?Q?RvzNrgiQayWiLzZOKqE0n0oUeBcuPIWDP65cJB0iwcugLPBsNZmS/zUaBU?=
+ =?iso-8859-1?Q?8cfFMjB9EDWhhiN/g8TKGjOZhTV66Bq5dHOllNHe2J0B0HD+5/FfTjN99n?=
+ =?iso-8859-1?Q?LZDrL2Q6WBvyuNUmDtDpV3W+BtEkGN+2BlkKsJm7sGIqv3kbFDHGGKUQFw?=
+ =?iso-8859-1?Q?uhne6QlJcjiRSXvkkhvl5wKa5GY5OQ5GuS638aoL4+Hxx+jIZJy0tBkr3P?=
+ =?iso-8859-1?Q?QV7bF350ICEcWn/TMktxa2lGdRvkmiaFLU2dnnwk0r70chluLYtYK1CtQn?=
+ =?iso-8859-1?Q?eDoLXIB09+sibEMTwZ6bl/tcAyYmybWdnp2c5gXQQ27i7aGMIQSdFM5wIe?=
+ =?iso-8859-1?Q?ewa3zNml8n/gjuaP17hGdQZRDv+vNIEpxwqrCBJmmW99jGFcRvvfexsL+F?=
+ =?iso-8859-1?Q?KPQDwotG+BVQGwabj5dhXQdvg2odDMc00ISPTMaUDeLg6qCxrVcC6zzfzC?=
+ =?iso-8859-1?Q?0ActzqtjrvJvXxT7mrJnXPayb9QCRfkxSoa/qw=3D=3D?=
+X-Forefront-Antispam-Report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014)(52116014)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+ =?iso-8859-1?Q?Ewrxm3zGLJBAVpKM58frqa8VGOX+hDgcApTVu519KG1hWHhLDoNGwm0GN9?=
+ =?iso-8859-1?Q?F0vGOw04C9aPCSfo4GOp6QP7BMrpi6STwOWPjCcfRYRYUyxZD8W0GVmK8H?=
+ =?iso-8859-1?Q?Bweyalr28OOc3cGADXarhBDINSC52r8uS3mWGvo2QF66O1iYQ/XShJLdCa?=
+ =?iso-8859-1?Q?McyTkknfOfZpMFIjSwLQam8cq7j9vtfPEnE3raIFsMXt/eBBPCJUehvuRu?=
+ =?iso-8859-1?Q?lyuKP5wYlHi42J3Sy+IufdgvszgeEVcSbOSzURBdLFhuQKA2/e8Tofu8T5?=
+ =?iso-8859-1?Q?OffOe8FBCZwr5bLFaSRIo81nh9xHJoOm5tdp/nZsIFgzli4W8RuNUcQrvB?=
+ =?iso-8859-1?Q?xAx9EVutt/Vb/d3+HOiZ4/kNUBljx3EbkDrzMlXWr+1cGVdns/nlhu9IJM?=
+ =?iso-8859-1?Q?UNn3poSw9NjtpCfHl1u83RY3vBt5R5zBDxMb6EneXmBmyAwKn8M2IQ6wC/?=
+ =?iso-8859-1?Q?eTDRH+FAQaGaxAQcrXlPvjmQVnPe9nyo0PHaN2+mrNMgwq812bkhHDC5kv?=
+ =?iso-8859-1?Q?9XeWN9KG6mGu2hU911CM71wtJZvR8eW6lbSsoKv8rhpjJU8Aq5Z3OsX/FR?=
+ =?iso-8859-1?Q?PdaxlyJ5O84b0iyx20imTaVUxRc15nopiLlNASXj9eMHm1LeotYR/64yas?=
+ =?iso-8859-1?Q?fmR3Ij3ag1ZDPSnNMNwndRQI0iAcWL7GR1DovK5e03n2CusSRTF9nLygw/?=
+ =?iso-8859-1?Q?iY7Losk3EEwcte8hKjJr1gcC8+X4CuHewb77pGjfEFkiVeSdWsNVsxyNim?=
+ =?iso-8859-1?Q?TtRLUGz/Dy1hltE0ps6F4dxAoKNils+Bcok0gWMSB/ncXJWEOemoPy4iDy?=
+ =?iso-8859-1?Q?M7PaoObexqONHWuIPdzGBt2yCpiuzc0njJ2z9p+ivTXUp2gnzQtmjtqFbj?=
+ =?iso-8859-1?Q?T5jX8UHXfDZQ6l+8Sot3NHaxE0d1rws4dp53kyq+NsQblQPe4UZVs0M/bg?=
+ =?iso-8859-1?Q?lOTHHybF70cK+mtdVnhY8Ih/gd/SyGhjpFKIX23E+xO3dHqNs/ZlJV6Xif?=
+ =?iso-8859-1?Q?1kBX6u68h3mXYZNzrnKcIg1lbU4Zz0ZOtLZSrCoYzj5mqqAj7wAK2bWRnJ?=
+ =?iso-8859-1?Q?YliMoMsVuQEGBALzKEMZEN1xIfeMw/xTCxL8E/tXA7F9XyXzVA8gdfYo/2?=
+ =?iso-8859-1?Q?4iJl1Q/vGRBxjlh3c/VlmXB8ZO0kFVijUPam1KadU7FYseiwdgdMtdJToD?=
+ =?iso-8859-1?Q?Q61zLh3KgGCZ94dX0vFHX3QRTjso5zMv7RhLqbwtfPbg5EgEC270zdua5r?=
+ =?iso-8859-1?Q?rcXFkcLYDPyu+51s/gqgYykgRcd98W9azoU6hVn5YvHeJlDNxOV+G4qIsZ?=
+ =?iso-8859-1?Q?9xpZc+qL+W43149tS2IDgbr0bmyIdDXv6t73zJQRoYYuIzcsbAlTD9E98P?=
+ =?iso-8859-1?Q?VSXMEWVp9RxZl63rn/ZLijXtLEtpx1JdBHX+0TjkBrz8Ue76wkiN58NOCA?=
+ =?iso-8859-1?Q?12nNn2MVBCFc7xrCARcRT7M8mVSBC4NzlenPbul9rer/70u16aDTaF+lHr?=
+ =?iso-8859-1?Q?AKeD+DiUcRH6w4DrFDb56SiPhri4x7SojEDPFFYlSlJnoqwXaAmJRJQHNp?=
+ =?iso-8859-1?Q?KBpSD7b6x8UKshHjCpiNCOi+y/o9gQLlxLHzV7DGkSlTQcYDMKzCmJ2Mlg?=
+ =?iso-8859-1?Q?FL/kbNqg43AOsmimh2rc9GC6bGus3DIlp0?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7a38ef4f-4bfa-4fe8-6dfb-08dccb7bfed2
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Sep 2024 18:20:59.7920
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: oiPMNmwkQ31Ya0UsKdv0fqrxTx9eDa/AaMiCK+eZFiRiJXIqoyt++GVWnBRYxnM4iZpwXv1TLjGp35UbmYwoJA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS5PR04MB9731
 
-Hi Dave!
-
-Thank you for your feedback!
-
-On Mon, 2 Sept 2024 at 19:55, Dave Stevenson
-<dave.stevenson@raspberrypi.com> wrote:
-> On Mon, 2 Sept 2024 at 16:57, <bbara93@gmail.com> wrote:
-> > This series introduces i2c communication with the imx290 sensor during
-> > probe s.t. the v4l2 subdev is not initialized when the chip is not
-> > reachable.
-> >
-> > The datasheets show that INCKSEL* registers have a different default
-> > value after reset on imx290[1] and imx327[2], however I am not sure if
-> > this is a sufficient identification option - therefore I just removed
-> > the current CHIP_ID register for now.
-> >
-> > Thank you all for the feedback and the discussion, I updated the series
-> > to contain some of the ideas that came up.
-> >
-> > For now, I kept reading back the content of the STANDBY register, as
-> > suggested by Sakari and Alexander. If not wanted (as suggested by
-> > Laurent), I can re-add my "optional read" commit from the first version
-> > of this series instead.
-> >
-> > *Overview:*
-> > Patch 1/7 is a split from the old 1/2 which defines the values of the
-> > STANDBY register and uses them.
-> > Patch 2/7 is new and defines the whole supported range of the controls.
-> > Patch 3/7 is the old 2/2 to drop the CHIP_ID register.
-> > Patch 4+5/7 are new and target the avoidable communication during
-> > probe(). I decided to use a variant that also works on machines without
-> > runtime PM active, and falls back to the values of 2/7 instead.
+On Mon, Sep 02, 2024 at 04:12:50PM +0200, Miquel Raynal wrote:
+> Hi Frank,
 >
-> I was reading through patches 2, 4, 5, and 7 and really not seeing
-> what you're trying to avoid here. Adding an option to avoid powering
-> up the sensor is one thing, but we've got masses of other changes to
-> fake HBLANK, VBLANK, and LINK_FREQ values, even though we appear to
-> still have a pad format defined as 1920x1080 1x10 set on the pad. All
-> those controls are therefore declaring invalid ranges at that point.
-
-I guess I missed the pad format. My idea with 2+4 was to have "more free
-control ranges" while we don't have a mode set yet - but it is probably
-not a really good idea. Patch 5, as you said, can also be replaced with
-a bool. As Laurent brought up the point with the privacy LED, patch 7 is
-just an example how we can avoid powering the sensor up during probe
-time.
-
-> If it's solely trying to stop imx290_set_ctrl sending register writes
-> when not streaming, isn't it simpler to have a basic bool in the state
-> structure to denote whether we've passed through
- imx290_set_stream(subdev, 1)? Set it in the same place as
-> pm_runtime_resume_and_get is called as it's mimicking exactly the same
-> behaviour.
->
-> > Additionally, imx290_runtime_suspend() is using v4l_subdev, and
-> > therefore depends on the subdevice. If we move the autosuspend stuff
-> > before the subdevice creation, we basically have a race between the
-> > delay and the subdevice creation. Although it is not very close, I don't
-> > think it is a good idea to potentially autosuspend before the subdev is
-> > created.
-> > Patch 6/7 is the old 1/2.
-> > Patch 7/7 is a new PoC to decide to check the availability based on the
-> > power state of the sensor during probe().
+> > > > switch to this address if it is free.
+> > > >  *
+> > > > In step 1, i3c_bus_get_free_addr() is called. To optimize for step 2b, this
+> > > > function should return an address that is not pre-reserved by any target
+> > > > device with an assigned address in the device tree (DT).
+> > >
+> > > This does not make sense, if you want to optimize for 2b, why not
+> > > selecting the assigned-address property in the first place if it's
+> > > available?
 > >
-> > Note: dummy-regulators, which are used when no supplies are set in the
-> > DT, are always-on.
-> > Note2: The "off" mode is currently only active after probe(). If this
-> > approach is of interest, I would also ensure that it is active once
-> > streaming has stopped - need to dig deeper if it is necessary to store
-> > the "old current" before stopping, therefore only "initial" for now.
+> > This is my first idea. But I gived up this way.
+> >
+> > Select an assigned-address here will involve a big change in i3c framework.
+> > There are no PID information in i3c_master_get_free_addr().
+> >
+> > In DAA flow:
+> > - SVC is get PID first, the get_free_addr(). This case, we can use PID to
+> > get dt assigned address.(if change/add API)
+> > - But HCI, it is difference, hci_cmd_v2_daa(), get_free_addr() firstly then
+> > send out DAA command. So no PID information when call get_free_addr().
+> >
+> > To cover both case, return a *real* free address here is simplest solution.
 >
-> What extra data do you see sent after stopping? On any system with
-> runtime PM, imx290_set_ctrl will stop at the "if
-> (!pm_runtime_get_if_in_use(imx290->dev))" check.
+> But this is a limitation of the HCI driver? So why not addressing this
+> in the HCI driver instead? It would greatly simplify the core logic
+> which becomes complex for wrong reasons.
 
-This is rather related to patch 2+4. As I already expected that it has
-downsides to have an extra (invalid) "off mode", I didn't set it
-everytime streaming is stopped. I guess dropping 2+4 and replacing 5
-with a bool is probably a better idea to have this.
-
-Thanks
-Benjamin
+It is reasonable requirement to reduce stall SCL time. After get PID, SCL
+have to stall low to wait for software get dynamtic address, I3C spec allow
+relative long time for this, but still better if hardware can send out PID
+and dynamatic address together withoug stall SCL low. Pre-alloc adddress is
+good method if consider this.
 
 >
->   Dave
+> > >  Also, I don't understand why you would care to specifically
+> > > *not* return an address that might be the default one for another
+> > > device in the first place.
+> >
+> > If devices A (want adddress 0xA), device B (want address 0xB), if both
+> > device send hot join at the same time. device B's PID less than device A,
+> >
+> > Device B will be found firstly, call get_free_addr(), 0xA will be return
+> > if no this patch.
+> >
+> > Device A, call try_get_freeaddr() to get 0xB.
+> >
+> > So Devcie B will be assign to 0xA, and Device A will be assign to address 0xB.
+> >
+> > After do_daa command, framework will add device B and device A into i3c bus.
+> >
+> > When framework try to add device B to i3c bus, framework will try switch
+> > device B's address to 0xB from 0xA, but it will be fail because 0xB already
+> > assigned to device A.
 >
-> > thanks & regards
-> > Benjamin
-> >
-> > [1] https://static6.arrow.com/aropdfconversion/c0c7efde6571c768020a72f59b226308b9669e45/sony_imx290lqr-c_datasheet.pdf
-> > [2] https://e2e.ti.com/cfs-file/__key/communityserver-discussions-components-files/138/IMX327LQR_2D00_C_5F00_TechnicalDatasheet_5F00_E_5F00_Rev0.2.pdf
-> >
-> > ---
-> > Changes in v3:
-> > - probably better readable in the overview
-> > - 1/2 -> 1+6/7
-> > - 2/2 -> 3/7 (added R-b - thx for that)
-> > - others are new based on the discussions/suggestions
-> > - Link to v2: https://lore.kernel.org/r/20240828-imx290-avail-v2-0-bd320ac8e8fa@skidata.com
-> >
-> > Changes in v2:
-> > - dropped 1/2 to ignore the read value in cci_read() (old 2/2 -> new 1/2)
-> > - 1/2: read-back standby mode instead and ensure that it is really in standby
-> > - new 2/2: drop chip_id register definition which seems to be incorrect
-> > - Link to v1: https://lore.kernel.org/r/20240807-imx290-avail-v1-0-666c130c7601@skidata.com
-> >
-> > ---
-> > Benjamin Bara (7):
-> >       media: i2c: imx290: Define standby mode values
-> >       media: i2c: imx290: Define absolute control ranges
-> >       media: i2c: imx290: Remove CHIP_ID reg definition
-> >       media: i2c: imx290: Introduce initial "off" mode & link freq
-> >       media: i2c: imx290: Avoid communication during probe()
-> >       media: i2c: imx290: Check for availability in probe()
-> >       media: i2c: imx290: Implement a "privacy mode" for probe()
-> >
-> >  drivers/media/i2c/imx290.c | 153 ++++++++++++++++++++++++++++++++++++---------
-> >  1 file changed, 124 insertions(+), 29 deletions(-)
-> > ---
-> > base-commit: eec5d86d5bac6b3e972eb9c1898af3c08303c52d
-> > change-id: 20240807-imx290-avail-85795c27d988
-> >
-> > Best regards,
-> > --
-> > Benjamin Bara <benjamin.bara@skidata.com>
-> >
-> >
+> Well, okay, but that's exactly the situation that will happen if these
+> devices are not described in your DT. I guess it's expected that a
+> device not described in your DT can be connected, thanks to the
+> hot-join feature. In this case you cannot know what is this device
+> preferred address and you might end-up in the exact same situation.
+
+If not descript in DT, it means that any dynmatic address can be assigned.
+
+>
+> May I question the need for preferred addresses at all? Is this even
+> part of the spec? What is the use-case?
+
+It is implements detail. I3C spec said lower dynamtic address have high IBI
+priority. Spec just said assign lower dynamtic address if want to higher
+IBI prioerity. Using DT assign-address just is one implement method.
+
+>
+> Thanks,
+> Miquèl
 
