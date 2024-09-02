@@ -1,112 +1,214 @@
-Return-Path: <linux-kernel+bounces-311255-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311256-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A87049686AC
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 13:51:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CB479686B5
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 13:52:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 329C3B255CF
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 11:51:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8DC23B257F1
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 11:52:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3039200129;
-	Mon,  2 Sep 2024 11:50:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA1E81DAC45;
+	Mon,  2 Sep 2024 11:52:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="dSLiLwFs";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="U3FPl05l"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E4Etz+uz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91780200119;
-	Mon,  2 Sep 2024 11:50:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33AE51D6C73;
+	Mon,  2 Sep 2024 11:52:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725277842; cv=none; b=a5fAm4E/mADG6hle8/1J7Ve/ofL37XPLkRHj/0i//afE00IA4ktrHFSIV2hG29XTkcq7WXa0g3/gsf1bfe7Eh5VlamrDWLCbeFI7XGMCXPm9gwW0pp/WcJhXsKDAoAfPCA7wGj9M2xNb5gKwbNGYFdqwQlQhglESjhuaH9xoicE=
+	t=1725277924; cv=none; b=VKRpdHPlJ2hZnqxTCUPwahlxr3zW/Otxs9I0tDDfoRBSK9JuQBFoZhzmCom7KZengJzsyLSW9s/Ci6ubvuWPMXirZQ+oXYuFbueDktytP6xBP2kSj/QQ0vVks4a3fo6xmw8zE1YaUB/K+llGdj/WFZEQ2tj9EqqfZngG4qK0vSs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725277842; c=relaxed/simple;
-	bh=A0k3d7wdxFo9sEFnr7CFpHwxFKgcd4wWZnqNjNuApic=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=WT0/jfSRyqdhhABOVW3K1uu3YhXIOOPMu4UArmrvpcS9p2BsrcEqHhI7+C57OUxMY77DlUCtkgISHOShF9Dm4CntaIzmZsCdrQGFS8GukRSPbZxrIJewr57WqDuwypFSu/OXOVCNoNDIsWgfEMBJSzjDl9AsQ+ABt3oaFDOsmaw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=dSLiLwFs; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=U3FPl05l; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1725277833;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5LjZ1QNNFQlKaId5zo+XC1TiL4cbSpY/fOAJtKrxVLQ=;
-	b=dSLiLwFslla9TZ+Ot5Ux8QrD5fBmLPqaSoSZ6zy8TwqpnOqjvZoB+ofkr42iDv0HSqoGm2
-	TN14qLaheL4Dy5s7REDl7QDZFIMNMNjYIkZ4H5fmg0t8c5L2Bb7Ry+WoNsXOlONYqUYz89
-	3L7k0CC+ENTDtYxCcSNpMozw+RQuH8JGjlH9HvTngvXokZ7m/gNMHyy5kHirkZBOOM1um+
-	FeAadzLCuzqaaKsfTizIPSvoBJ2XrSKbPvAjJ7GoRX41DX42b4PhKIqvmdy9v2ffQYxclf
-	rSHO2DuDwW8mam9tbdLT20FD9vvBqvRnbaJiwSv4UQhx2cwJAvH2l6H17G9hQA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1725277833;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5LjZ1QNNFQlKaId5zo+XC1TiL4cbSpY/fOAJtKrxVLQ=;
-	b=U3FPl05lX9YZooaXQdnK5OY/2zU879ytBLMKgLHkPUMNwg3fUzyGLMAhprffoAzflQtysH
-	/Ao16Z61mCRBu3Aw==
-To: Yan Zhen <yanzhen@vivo.com>, ckeepax@opensource.cirrus.com,
- rf@opensource.cirrus.com
-Cc: linux-sound@vger.kernel.org, patches@opensource.cirrus.com,
- linux-kernel@vger.kernel.org, opensorce.kernel@vivo.com, Yan Zhen
- <yanzhen@vivo.com>
-Subject: Re: [PATCH v3] irqchip: madera: Simplify with dev_err_probe()
-In-Reply-To: <20240830084620.396417-1-yanzhen@vivo.com>
-References: <20240830084620.396417-1-yanzhen@vivo.com>
-Date: Mon, 02 Sep 2024 13:50:33 +0200
-Message-ID: <874j6y6zqu.ffs@tglx>
+	s=arc-20240116; t=1725277924; c=relaxed/simple;
+	bh=ClG945cLDYt80cvq7MHU0MZy2pQK+a2zhTll8AQVeEM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=L4uRq1CQ21g3oLqTRpkyjLdv+7sY3opBHpN3Ce7S1ib1L9MD4sHfqM9G6KvJR9to6kT9MzG1tJwa1IaO7OgsJezI99//N03fWAiQ88LIs1G5mgKg3elqMtbU70WM/ww983Af1qSlOzns52hWXnkl5jZWMxw3fsAb0HVfFTgSOXE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E4Etz+uz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3043BC4CEC6;
+	Mon,  2 Sep 2024 11:52:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725277923;
+	bh=ClG945cLDYt80cvq7MHU0MZy2pQK+a2zhTll8AQVeEM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=E4Etz+uzb+RpZxNmqRFMSO/q14B1JYKHuWA/gxjKaoF6m2/upq7RLVVb6/hXOA40D
+	 RJAHzEQHq+4Hlhqkjeiu0IAuTPAOvEF5ozEETq0cAPS+loH4qHuEsSI4gweYF4vXAY
+	 QCu7d2Dm6rLBWKbwJbY+sV+zWQoqMSfW1lWHjgc8bILnVKwkjhAcinKB2ZZ+ibL5jL
+	 YKzpVKUoAh3TOR9el1itnPUlQwCR7blj5ZWTuaMSUBo3WrgjNtR1yLjP/0+inkynb3
+	 qw00QG5+gbGuMKbezWj7GstYA4g3OcTNXSuzF6g3ENPQFiH77tKaFN/YVsbTGG+XLp
+	 0bGpdoCJNhVKA==
+Date: Mon, 2 Sep 2024 13:52:00 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Antoniu Miclaus <antoniu.miclaus@analog.com>
+Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Michael Hennerich <michael.hennerich@analog.com>, 
+	linux-input@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 3/3] dt-bindings: touchscreen: ad7877: add bindings
+Message-ID: <h6vvttsj3bu2rrmpzr4sazyn6lylh3yfzins2y2vk3rjkz76az@xy2yraidasu2>
+References: <20240902082707.4325-1-antoniu.miclaus@analog.com>
+ <20240902082707.4325-3-antoniu.miclaus@analog.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240902082707.4325-3-antoniu.miclaus@analog.com>
 
-On Fri, Aug 30 2024 at 16:46, Yan Zhen wrote:
-> Switch to use dev_err_probe() to simplify the error path and
-> unify a message template.
->
-> Using this helper is totally fine even if err is known to never
-> be -EPROBE_DEFER.
+On Mon, Sep 02, 2024 at 11:24:33AM +0300, Antoniu Miclaus wrote:
+> Add device tree bindings for the ad7877 driver.
+> 
+> Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
+> ---
+> changes in v2:
+>  - add only the used properties from touchscreen.yaml
+>  - add vendor properties.
+>  - update dt example.
+>  .../input/touchscreen/adi,ad7877.yaml         | 110 ++++++++++++++++++
+>  1 file changed, 110 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/input/touchscreen/adi,ad7877.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/input/touchscreen/adi,ad7877.yaml b/Documentation/devicetree/bindings/input/touchscreen/adi,ad7877.yaml
+> new file mode 100644
+> index 000000000000..035e2d5bbcb8
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/input/touchscreen/adi,ad7877.yaml
+> @@ -0,0 +1,110 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/input/touchscreen/adi,ad7877.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Analog Devices AD7877 Touch Screen Controller
+> +
+> +maintainers:
+> +  - Antoniu Miclaus <antoniu.miclaus@analog.com>
+> +
+> +description: |
+> +  Analog Devices Touch Screen Controller
+> +  https://www.analog.com/media/en/technical-documentation/data-sheets/AD7877.pdf
+> +
+> +allOf:
+> +  - $ref: touchscreen.yaml#
+> +  - $ref: /schemas/spi/spi-peripheral-props.yaml#
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - adi,ad7877
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +  spi-max-frequency:
+> +    description: AD7877 SPI bus clock frequency.
+> +    minimum: 10000
+> +    maximum: 20000000
+> +
+> +  adi,stopacq-polarity:
+> +    description: The polarity of the signal applied to the STOPACQ pin.
+> +                 0 = active low
+> +                 1 = active high
+> +    $ref: /schemas/types.yaml#/definitions/uint8
+> +    enum: [0, 1]
 
-Is fine? We don't care about fine. The question is whether it is correct
-or not. And if so, then there wants to be an explanation why it is correct.
+I think I was already commenting on this for analog... If using numbers,
+why this is reversed from standard GPIO property? Or maybe this should
+be just string.
 
-> Changes in v3:
-> -Rewrite the subject as 'irqchip: madera:'.
+> +
+> +  adi,first-conv-delay:
+> +    description: Delay before the first conversion.
 
-Which is still wrong. Care to read Documentation/process/ ?
+No, use proper unit suffix.
 
->  drivers/irqchip/irq-madera.c | 5 ++---
->  1 file changed, 2 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/irqchip/irq-madera.c b/drivers/irqchip/irq-madera.c
-> index acceb6e7fa95..d5ad4466a140 100644
-> --- a/drivers/irqchip/irq-madera.c
-> +++ b/drivers/irqchip/irq-madera.c
-> @@ -199,9 +199,8 @@ static int madera_irq_probe(struct platform_device *pdev)
->  		ret = regmap_update_bits(madera->regmap, MADERA_IRQ1_CTRL,
->  					 MADERA_IRQ_POL_MASK, 0);
->  		if (ret) {
-> -			dev_err(&pdev->dev,
-> -				"Failed to set IRQ polarity: %d\n", ret);
-> -			return ret;
-> +			return dev_err_probe(&pdev->dev, ret,
-> +						"Failed to set IRQ polarity");
+> +                 0 = 0.5us
+> +                 1 = 128us
+> +                 2 = 1ms
+> +                 3 = 8ms
+> +    $ref: /schemas/types.yaml#/definitions/uint8
+> +    enum: [0, 1, 2, 3]
+> +
+> +  adi,pen-down-acc-interval:
 
-https://www.kernel.org/doc/html/latest/process/maintainer-tip.html#line-breaks
+Use proper unit suffix.
 
-But that's moot as Krzysztof pointed out that this patch just picks a
-random instance of the code for no reason.
+> +    description: Enable the ADC to repeatedly perform conversions.
+> +                  0 = covert once
+> +                  1 = every 0.5 ms
+> +                  2 = every 1 ms
+> +                  3 = every 8 ms
+> +    $ref: /schemas/types.yaml#/definitions/uint8
+> +    enum: [0, 1, 2, 3]
 
-Thanks,
+How is it supposed to work? These are optional but there are no
+defaults?
 
-        tglx
+> +
+> +  adi,acquisition-time:
+> +    description:  Select acquisition times for the ADC.
+> +                  0 = 2us
+> +                  1 = 4us
+> +                  2 = 8us
+> +                  3 = 16us
+
+Same problem
+
+> +    $ref: /schemas/types.yaml#/definitions/uint8
+> +    enum: [0, 1, 2, 3]
+> +
+> +  adi,vref-delay-usecs:
+> +    description: Delay required for the SPI transfers depending on the VREF used.
+> +    $ref: /schemas/types.yaml#/definitions/uint16
+> +
+> +  touchscreen-average-samples:
+> +    enum: [1, 4, 8, 16]
+> +
+> +  touchscreen-x-plate-ohms: true
+> +  touchscreen-y-plate-ohms: true
+> +  touchscreen-min-x: true
+> +  touchscreen-min-y: true
+> +  touchscreen-max-x: true
+> +  touchscreen-max-y: true
+> +  touchscreen-max-pressure: true
+> +  touchscreen-min-pressure: true
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - interrupts
+> +  - touchscreen-average-samples
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/interrupt-controller/irq.h>
+> +    spi {
+> +      #address-cells = <1>;
+> +      #size-cells = <0>;
+> +
+> +      touchscreen@0 {
+> +        compatible = "adi,ad7877";
+> +        reg = <0>;
+> +        spi-max-frequency = <20000000>;
+> +        interrupts = <21 IRQ_TYPE_EDGE_FALLING>;
+> +        interrupt-parent = <&gpio>;
+> +        touchscreen-average-samples = <16>;
+
+Make the example complete.
+
+Best regards,
+Krzysztof
+
 
