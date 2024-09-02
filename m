@@ -1,175 +1,148 @@
-Return-Path: <linux-kernel+bounces-311220-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311221-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88F46968641
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 13:31:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C304968642
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 13:32:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E0F41C21C28
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 11:31:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A64E281550
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 11:32:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B55EE187326;
-	Mon,  2 Sep 2024 11:31:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OF89CnOZ"
-Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0177186E5B;
+	Mon,  2 Sep 2024 11:32:27 +0000 (UTC)
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4AC2195;
-	Mon,  2 Sep 2024 11:31:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8B29195
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 11:32:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725276689; cv=none; b=SAtzzxe9B/cvKPDSP08tRZWBWaOQ7qZaywLMn0+CbpXvvbvirUlWJy6g6TlM9FndBIm8+0X+hiFdEvyqCjU9cnaxmuILeMXU3MNJCebM5Ays+g7vSQUSTO2SL0ZVdIvH36Qhi/MZPJdwOXrdfvsG13L4rObFl5kHuG4ggHgIGfA=
+	t=1725276747; cv=none; b=ngm+hvP9Nb6ffVvnqY6ZZJ12FbTyZIjCEb+7WhXp6bGbvdD/Kr0oHWKt/uj/M0rJ9jXoXqjO+0TAqe2wj/FtGec7E6gcHHgjFmWAOVhcJ593KsSaqo1XG9jR7fbTyjRhm7oaX4NG+tRE8bHC99g4qDHyBXmpVnsmRFXJsC21T1g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725276689; c=relaxed/simple;
-	bh=kaLu8QdTVTSYArpuwR9YQB+rqGwassSJXc79Q4yw5Ss=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=TgjlIWMWUt9F48CnTXgd0iMyt7VaEj5h+IHMfaue82W4lCYF/ewR+aAGV5Xpy5FWArpQOAf1wSPyxZxxEitipjmsmrFAYgsOclLkrjXhK/Xxg3knySvn8Y1YDQIhr9oKP5tipZM4Pt5aXF93HmFN0SbDADkg3oKLq8GVfY/yEaA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OF89CnOZ; arc=none smtp.client-ip=209.85.215.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-7cd9e634ea9so2705875a12.0;
-        Mon, 02 Sep 2024 04:31:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725276686; x=1725881486; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kGJL/UfUCw42GI751ZmhsRYSPyBsQCICs+KScTxVAY8=;
-        b=OF89CnOZRXqoaYk5j8HN2ZNOM1q3Dc7hyVuamXBWJlp4CjcLXfx1nsQSU3GV3yYKoO
-         4VEOWlVGy3jjrp6g1OfgclqK7NIAgAR73ADcaXt1ZwEm0gndeYGq00KSwhMk9x78/e0R
-         fkTUVU5hQ5taE2+uHpNvCOSpdDmAUmeEtPJf3X3CVG8dFCcDMJpevymARpNYQqC8cAVf
-         apyvIfRJmfw628FdtML+jq/59SzWvfdsKZ8qPRnQ1cf/dzTipmrIe5L605KJI06cfh6n
-         nqj95fv2ERbjgnm/wC4qqEmITCgSSGnCp4lpy6pJZ3/IVq0tw4+PL5HPGo8s4TBwzVWi
-         fCuQ==
+	s=arc-20240116; t=1725276747; c=relaxed/simple;
+	bh=p4Bp5xa5G055V/DdEVD5CHNMNJBjIwA7IUM+aXuzAus=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=fBAOZyz6EItkAUZOkLFkpwhwTSDHF5ILAXbESp214n59ZmvozTiHq1rHvj3Bq1NKaBrNn5sEbWo1BWuHtRH8SHZIW9k3rjatNLY/Cu5lYEfBO26iWVZy1za15jZ/qf5NKjAActtzFNS4kUgWW5ANVzX0rat6cyS7JUh2MOzKRi8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-82a246af0aaso377004839f.3
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2024 04:32:25 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725276686; x=1725881486;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=kGJL/UfUCw42GI751ZmhsRYSPyBsQCICs+KScTxVAY8=;
-        b=K0gzNlhUuz1h7wfHJk69Pm8mXcJSXKWJL0wIrM9AxC/JDq3hFEk8ydpsx02OIYYwtU
-         WsMI+hFkky7+g66ep1Kn1HIusLa3mIHMXQjoKsodiHOXrmUi8IuUjkk9toSOFBfFaroG
-         BoAZg9sly0FZZsTABY8ka8bi5WmlIiiRsUPLW1zIDRRdTvj31XxIRlQ3SDJzanMkzY/w
-         W1EYMxjQBawbPzr8kAblnHLH1AOqAHxGOVZkdmWTtrmJ7qPHHwM4xrOygDLKKfyyfJV4
-         kJVW6IOTlXj+QfZfwV0rxz1LoFjkodtKqx8dn+DOdyyNcwacJ2/WSY/cfRZROK3U0Zf9
-         tjiQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWlzCI3mf9yepSYmX9hQdeW0Jc20EBh9Cf0Df2qXGg+LF5xMolEviUDXyVl3os15aHdPGSsQbymCHk29ucK@vger.kernel.org, AJvYcCXbQhm4ma49HNOTjMh13SFjmTcwJJc/GR60LMmqy00/IqPiiiwSGUlmKLaAFWsa24RK7iuA91nwLTQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxMvoNhN5spOw0s5vX5Uh9BC+LlVAKBL0Dr+8wcNIz4IfjYzXYs
-	DSVQL9EfquhBaEM3lC8x/9QBWpe0CgkzzcvcRdoa55zvtpi2BiXC
-X-Google-Smtp-Source: AGHT+IF9pcoNxeIPlMERzSZyT+1QryN2d5h6mK1yRYcNGLBbDfqQrsqiICmIQrOwyCCeKgCxamd3oQ==
-X-Received: by 2002:a17:902:e804:b0:205:3e68:7359 with SMTP id d9443c01a7336-20547c0cdccmr54910135ad.53.1725276685681;
-        Mon, 02 Sep 2024 04:31:25 -0700 (PDT)
-Received: from ubuntu.localdomain ([103.155.100.1])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-205bda42b8dsm3768605ad.137.2024.09.02.04.31.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Sep 2024 04:31:25 -0700 (PDT)
-From: Jason Liu <jasonliu10041728@gmail.com>
-To: jmaneyrol@invensense.com
-Cc: jic23@kernel.org,
-	lars@metafoo.de,
-	linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Jason Liu <jasonliu10041728@gmail.com>
-Subject: [PATCH] iio/inv_icm42600: add inv_icm42600 id_table
-Date: Mon,  2 Sep 2024 19:31:01 +0800
-Message-Id: <20240902113101.3135-1-jasonliu10041728@gmail.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <FR3P281MB175720831E0817C23AD0B1BACE922@FR3P281MB1757.DEUP281.PROD.OUTLOOK.COM>
-References: <FR3P281MB175720831E0817C23AD0B1BACE922@FR3P281MB1757.DEUP281.PROD.OUTLOOK.COM>
+        d=1e100.net; s=20230601; t=1725276745; x=1725881545;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Nfj7/unb5Y/8Jp60UCn4Zs1L6qkNzEH9kIrKvtPXpxo=;
+        b=UgLrUNpOm+FsxAVPRR/LJGkn9ppwwiZ4+WH7VaKm5aiJtEarxtpY6Zr2m/LiMBpBKL
+         D6Xkls/F+lx+3dS3uiqfMvmLF311JmiCr4oEr7Jxis2YwkJEg2Bg1D8XAhbvaLrkxv+G
+         YUaNr/GJZKDvZDT6gfhicw2z4mQa+qY2SQAdY4ZY2CHzYh19A3MOINJsaGMeawf2XkVe
+         n/3MAlxp9a9e68t2R9YK9pC3CEDeVX23EWEMzz/oppUkyA4kF2uFBnA/ltc37/bYIi/P
+         aHoLbzBd01RbLfbgshcbkDCdWDIYye0EhSDmNCVRPBF9n3tlIcoDb5gDy+RHghyWUm0E
+         jICQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWbTQvloOLsYOKterKCHlGGGYuh7jlDsv19QZJTjlgZBzeYNSISpWvyp8H7aL48BZL+QBsoEAMykyxLY7E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyfDqU6dWDtbcFKzFj6rvtjF6vGSG7oUSl+zKZNEaKpkiHx7Zj6
+	VMTat/7mRslOzPERY+4bGA55kZSLTIZb/uZc65xUQWNlSD/PduqrnoNqMJ30Vz6ZXwmVqEXTI7u
+	4YThp65YZFUHrYbzV92frni4vrvmNm/AJbIJ11C+BLcOCO689t7ELBTU=
+X-Google-Smtp-Source: AGHT+IElG8hBzyo5uPdCfIWS6oEEBGj5NX8Uk/2PB7g5lFKv2FIwWq0BJ/ToiGDaqITTK3WP5vuDgN1Jsdc5w3pU75PIUvWXxTu/
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6602:15cd:b0:82a:133e:c3d2 with SMTP id
+ ca18e2360f4ac-82a26122876mr31817739f.0.1725276744954; Mon, 02 Sep 2024
+ 04:32:24 -0700 (PDT)
+Date: Mon, 02 Sep 2024 04:32:24 -0700
+In-Reply-To: <0000000000002f64da061e021fc2@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000085c6cd0621214be6@google.com>
+Subject: Re: [syzbot] [jfs?] kernel BUG in jfs_unlink
+From: syzbot <syzbot+41b43444de86db4c5ed1@syzkaller.appspotmail.com>
+To: jfs-discussion@lists.sourceforge.net, linux-kernel@vger.kernel.org, 
+	shaggy@kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Add the id_table of inv_icm42600, so the device can probe correctly.
+syzbot has found a reproducer for the following issue on:
 
-Signed-off-by: Jason Liu <jasonliu10041728@gmail.com>
+HEAD commit:    c9f016e72b5c Merge tag 'x86-urgent-2024-09-01' of git://gi..
+git tree:       upstream
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=14d09929980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=8926d683f62db53e
+dashboard link: https://syzkaller.appspot.com/bug?extid=41b43444de86db4c5ed1
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=106934fb980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15617f2f980000
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/e47617e91522/disk-c9f016e7.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/69d8aef7dff1/vmlinux-c9f016e7.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/dd5392c61560/bzImage-c9f016e7.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/7111d4efcae8/mount_0.gz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+41b43444de86db4c5ed1@syzkaller.appspotmail.com
+
+BUG at fs/jfs/namei.c:513 assert(ip->i_nlink)
+------------[ cut here ]------------
+kernel BUG at fs/jfs/namei.c:513!
+Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN PTI
+CPU: 1 UID: 0 PID: 5224 Comm: syz-executor204 Not tainted 6.11.0-rc6-syzkaller-00017-gc9f016e72b5c #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
+RIP: 0010:jfs_unlink+0xafd/0xb30 fs/jfs/namei.c:513
+Code: e8 c8 5d 91 08 e8 83 f0 73 fe 48 c7 c7 20 9c 22 8c 48 c7 c6 e0 99 22 8c ba 01 02 00 00 48 c7 c1 60 9c 22 8c e8 64 5e 8e 08 90 <0f> 0b e8 5c f0 73 fe 48 c7 c7 20 9c 22 8c 48 c7 c6 e0 99 22 8c ba
+RSP: 0018:ffffc9000344fbe0 EFLAGS: 00010246
+RAX: 000000000000002d RBX: 0000000000000000 RCX: 44cfc770ad800100
+RDX: 0000000000000000 RSI: 0000000080000000 RDI: 0000000000000000
+RBP: ffffc9000344fd10 R08: ffffffff8174016c R09: 1ffff92000689f1c
+R10: dffffc0000000000 R11: fffff52000689f1d R12: 0000000000000000
+R13: ffffc9000344fc60 R14: 1ffff92000689f8c R15: ffff888072c33248
+FS:  0000555577bcd380(0000) GS:ffff8880b8900000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000000000045bdd0 CR3: 000000007ab8a000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ vfs_unlink+0x365/0x650 fs/namei.c:4422
+ do_unlinkat+0x4ae/0x830 fs/namei.c:4486
+ __do_sys_unlink fs/namei.c:4534 [inline]
+ __se_sys_unlink fs/namei.c:4532 [inline]
+ __x64_sys_unlink+0x47/0x50 fs/namei.c:4532
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f69ef25fad7
+Code: 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48 83 c8 ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 b8 57 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fff4544dac8 EFLAGS: 00000206 ORIG_RAX: 0000000000000057
+RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f69ef25fad7
+RDX: 00007fff4544daf0 RSI: 00007fff4544db80 RDI: 00007fff4544db80
+RBP: 00007fff4544db80 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000100 R11: 0000000000000206 R12: 00007fff4544ec70
+R13: 0000555577bd6700 R14: 0000000000000001 R15: 431bde82d7b634db
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:jfs_unlink+0xafd/0xb30 fs/jfs/namei.c:513
+Code: e8 c8 5d 91 08 e8 83 f0 73 fe 48 c7 c7 20 9c 22 8c 48 c7 c6 e0 99 22 8c ba 01 02 00 00 48 c7 c1 60 9c 22 8c e8 64 5e 8e 08 90 <0f> 0b e8 5c f0 73 fe 48 c7 c7 20 9c 22 8c 48 c7 c6 e0 99 22 8c ba
+RSP: 0018:ffffc9000344fbe0 EFLAGS: 00010246
+RAX: 000000000000002d RBX: 0000000000000000 RCX: 44cfc770ad800100
+RDX: 0000000000000000 RSI: 0000000080000000 RDI: 0000000000000000
+RBP: ffffc9000344fd10 R08: ffffffff8174016c R09: 1ffff92000689f1c
+R10: dffffc0000000000 R11: fffff52000689f1d R12: 0000000000000000
+R13: ffffc9000344fc60 R14: 1ffff92000689f8c R15: ffff888072c33248
+FS:  0000555577bcd380(0000) GS:ffff8880b8900000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000000000045bdd0 CR3: 000000007ab8a000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+
+
 ---
-V1->V2: fix up the formatting as requested
----
-V2->V3: add icm42686 (INV_ICM_42686) and icm42688 (INV_ICM_42688)
----
- drivers/iio/imu/inv_icm42600/inv_icm42600_i2c.c | 17 +++++++++++++++++
- drivers/iio/imu/inv_icm42600/inv_icm42600_spi.c | 17 +++++++++++++++++
- 2 files changed, 34 insertions(+)
-
-diff --git a/drivers/iio/imu/inv_icm42600/inv_icm42600_i2c.c b/drivers/iio/imu/inv_icm42600/inv_icm42600_i2c.c
-index ebb31b385881..9e65fef04c39 100644
---- a/drivers/iio/imu/inv_icm42600/inv_icm42600_i2c.c
-+++ b/drivers/iio/imu/inv_icm42600/inv_icm42600_i2c.c
-@@ -71,6 +71,22 @@ static int inv_icm42600_probe(struct i2c_client *client)
- 				       inv_icm42600_i2c_bus_setup);
- }
- 
-+/*
-+ * device id table is used to identify what device can be
-+ * supported by this driver
-+ */
-+static const struct i2c_device_id inv_icm42600_id[] = {
-+	{ "icm42600", INV_CHIP_ICM42600 },
-+	{ "icm42602", INV_CHIP_ICM42602 },
-+	{ "icm42605", INV_CHIP_ICM42605 },
-+	{ "icm42686", INV_CHIP_ICM42686 },
-+	{ "icm42622", INV_CHIP_ICM42622 },
-+	{ "icm42688", INV_CHIP_ICM42688 },
-+	{ "icm42631", INV_CHIP_ICM42631 },
-+	{}
-+};
-+MODULE_DEVICE_TABLE(i2c, inv_icm42600_id);
-+
- static const struct of_device_id inv_icm42600_of_matches[] = {
- 	{
- 		.compatible = "invensense,icm42600",
-@@ -104,6 +120,7 @@ static struct i2c_driver inv_icm42600_driver = {
- 		.of_match_table = inv_icm42600_of_matches,
- 		.pm = pm_ptr(&inv_icm42600_pm_ops),
- 	},
-+	.id_table = inv_icm42600_id,
- 	.probe = inv_icm42600_probe,
- };
- module_i2c_driver(inv_icm42600_driver);
-diff --git a/drivers/iio/imu/inv_icm42600/inv_icm42600_spi.c b/drivers/iio/imu/inv_icm42600/inv_icm42600_spi.c
-index eae5ff7a3cc1..75441b2be174 100644
---- a/drivers/iio/imu/inv_icm42600/inv_icm42600_spi.c
-+++ b/drivers/iio/imu/inv_icm42600/inv_icm42600_spi.c
-@@ -67,6 +67,22 @@ static int inv_icm42600_probe(struct spi_device *spi)
- 				       inv_icm42600_spi_bus_setup);
- }
- 
-+/*
-+ * device id table is used to identify what device can be
-+ * supported by this driver
-+ */
-+static const struct spi_device_id inv_icm42600_id[] = {
-+	{ "icm42600", INV_CHIP_ICM42600 },
-+	{ "icm42602", INV_CHIP_ICM42602 },
-+	{ "icm42605", INV_CHIP_ICM42605 },
-+	{ "icm42686", INV_CHIP_ICM42686 },
-+	{ "icm42622", INV_CHIP_ICM42622 },
-+	{ "icm42688", INV_CHIP_ICM42688 },
-+	{ "icm42631", INV_CHIP_ICM42631 },
-+	{}
-+};
-+MODULE_DEVICE_TABLE(spi, inv_icm42600_id);
-+
- static const struct of_device_id inv_icm42600_of_matches[] = {
- 	{
- 		.compatible = "invensense,icm42600",
-@@ -100,6 +116,7 @@ static struct spi_driver inv_icm42600_driver = {
- 		.of_match_table = inv_icm42600_of_matches,
- 		.pm = pm_ptr(&inv_icm42600_pm_ops),
- 	},
-+	.id_table = inv_icm42600_id,
- 	.probe = inv_icm42600_probe,
- };
- module_spi_driver(inv_icm42600_driver);
--- 
-2.25.1
-
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
