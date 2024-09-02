@@ -1,205 +1,205 @@
-Return-Path: <linux-kernel+bounces-310568-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310569-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C46EE967E7D
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 06:28:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2742E967E80
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 06:39:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E62AC1C218BE
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 04:28:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 85E871F21708
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 04:39:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BC3314D702;
-	Mon,  2 Sep 2024 04:28:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B80A13C80E;
+	Mon,  2 Sep 2024 04:39:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XcgqsWm6"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="Ek0aCgqn"
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2055.outbound.protection.outlook.com [40.107.237.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B9751E50B
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 04:28:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725251289; cv=none; b=COyacVHuh9MwgGDLAfX4y2H6QFoRUZ/e75yuBXgcyyw2pfM75WVMgaOszf8ffKQR7gKKrPUlJhlTiX29H7XUl5y6zXzGZ+ZZuugWWjxJ5Olv5pa7rakpNWyZ4lGNTjS5XBCCoL2wWhFwPv9dMFBOuKMGyvsrLCS9+bhyMlx0Tmg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725251289; c=relaxed/simple;
-	bh=imrdOP267f9TBBXh8m6wg6kbuBgsSfpHQtnHTBSQ4r4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hyCbDFei2EJ9TZEMkpn2e7otwC9pJNVX51nVCtCbG+sQuN8LGeL18SxoDdvp8ga4wgPxYLUHyUovurD+MMrPN6hJMXWbd2YuNyARZXi4BlaEYR5ovCnyvauNYkMJJjMycf897wu4gNwuZ8HGKGsPMJWns1bUwWqhyXjfOhED5h4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XcgqsWm6; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1725251284;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=e/Gj4eDafKoQrJYXOLZ6AuCMbE6RyJc4zifVlDVrlgU=;
-	b=XcgqsWm6qWeumgCqsUrLhkyzWE8ePGadig5sggh99aau4LmCHNE/Q4YQyR3lIrq0bhdYs3
-	8yYOrQSW+0ISLydpUYIEcy50lA7r/wVkQwLjR6zomkXSkX9yHS5MSSt0zo6UEeflpgBGvF
-	BVtFcs4MJtg+0tSa9m6Ijuj8QTwn35A=
-Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com
- [209.85.216.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-640-GWH3JfgkN9yHzFY1cdltZw-1; Mon, 02 Sep 2024 00:28:03 -0400
-X-MC-Unique: GWH3JfgkN9yHzFY1cdltZw-1
-Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-2d89dacf002so1844600a91.3
-        for <linux-kernel@vger.kernel.org>; Sun, 01 Sep 2024 21:28:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725251282; x=1725856082;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=e/Gj4eDafKoQrJYXOLZ6AuCMbE6RyJc4zifVlDVrlgU=;
-        b=UiorlX+vyTm60ydlQ/gF/ADmOLo1ZFplfht0xdTjOzQzkt/TBQbMkxowHwExzFh1nv
-         LZv22FEZI3pFlisa/DLAB0nCqT+1wHwyy31i0aCsUVyQVjLONhW15bgTpEi5WcCqZWpL
-         cEWvZU4yWrB0ytOAgUM2i2f99+SH5cIC47tC1Uzk1oIxZCCZPGJ+OygdO0yz3ZkED4m8
-         mp/80SJTEpoFWDuIJNo1f6Tlnpn2j9KBuN9E8uD+gQ1EBxUXAe4wPiCGWMAYfRd6aqyu
-         iWMtwk8PxP9s9eqxRT0ZPDblByLxpGDLhKXUKB6akVx5IwxJrqg3bbzc5Vdysj+0u2J7
-         r4eA==
-X-Forwarded-Encrypted: i=1; AJvYcCU1xvmTmzDDi+x7eCopic09Sm7CZ13elwnamTZOuwEcG9HtTLCFKbvj+al40jZeIbQy0oHd4yld56zmmMY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzkhRNVkZxyQ9F/dXya1PwhedNoozFUcWloWygvQ0t+TMfxat3I
-	VYT9YYKVFJSvnyaJjIa5Bt1LQsJsVy6v66OW5KZWdTH7p5X5uXpwL45RUg3Xb3XHDlTyT+r1yjc
-	+d9fwHD2E1IxToOydhHeTDXyhzHihzfe+AfvfrKCnPHEAuSdjyPxNIlPg5wTwrJiMV8CjiSftwl
-	BR4tJB6I7T8YwgP3cpkDhrq7zcM50R5A0uUI+A
-X-Received: by 2002:a17:90b:2bc6:b0:2d8:99c4:3cd9 with SMTP id 98e67ed59e1d1-2d899c43e12mr6950231a91.3.1725251281964;
-        Sun, 01 Sep 2024 21:28:01 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFJ70KQouOrad1n8w655Ru1U5qCbR6u/l5jxaDuXmg5lnMyHLK/m9F3iqPdkC3VCTOyETBUITjc0W1iTC600q4=
-X-Received: by 2002:a17:90b:2bc6:b0:2d8:99c4:3cd9 with SMTP id
- 98e67ed59e1d1-2d899c43e12mr6950211a91.3.1725251281369; Sun, 01 Sep 2024
- 21:28:01 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3240A3A1CD
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 04:39:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.55
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725251950; cv=fail; b=dg4KQvV1eCnctXZHp8L0nzbSXRZdsc/1dIVQluHWfCPkOI7MOlVDkCqltCw1/iP1irZL7nKgc0izX7xNus43oKTmwHW+egilFSeMTig2dItvqpGrj/ZJ4T+nyh4xbbbLMMpKq/rWerftxpuAjymnk/3mnF52gI++ENYLQtAzDj0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725251950; c=relaxed/simple;
+	bh=tT75p7tWP+WV3BgnYivl5n/8ZKQ1Jt7G+0p164Wu0Rk=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=bYOh1NJq/9fQOUWt7hXa8YzpdLzWMOexehiHnxcUZTp2kxKgeoTd5kjpy8P8wsZksf5DYVJA6ohFgUrkxrad1b5U8I+LEtQSP1rwaCkaVK6JzEFR7DGQWVBGGdImCIA4UY6tqtfnnHJhRlfWU287lf+3EnF9aacoKpeVdiDjtfg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=Ek0aCgqn; arc=fail smtp.client-ip=40.107.237.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=CrA+rI6FxSFS/wohy/4TIo69zC4MOhQ3rxNBGIshjkG2wsEUC8ktbJ3b+a5jjvUNTxpHMXGZBoinpDvtutZEGc8iH8MGuePt7cSJJIPUYbGz+31VPErBvM4LhXPyIzubepo70/Ok+V3/teFKjJduOyZAFd75wdof5072jLP366o5p87zGpDqEd9af08kbrPtJkZpmF6irXZeJzQ0YHpRsVKwSyk/206/x7otD3HpbecRl7e/jGRxekdOTcYlTLGaV3CCSn8cOhOt3dDc6dFSjsVDtRrnoM3n7zAO1WmYHmBufAOf2vCoSMYYmjAxj2uP3Sbg+TDNcSeDQQhey9LZiA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=tT75p7tWP+WV3BgnYivl5n/8ZKQ1Jt7G+0p164Wu0Rk=;
+ b=MEE3WkDKHVWK+xJZsFrzLojhYEaX84kBQL+VRasJAC5s8wX0l+QESHr9+sRwbSYiTFCJrSUxgwCAGCnk5VwGWy9BuzMwNsNwU/skglX7Uptq5mrrAcbjg8RqPj6ToEKs6WxDJfKzU8Agga2DoKF3ED3tryhkgpqhiW2wzGs2eJnFIwOsDstlNIpt1og6gjKSyWEhv8ySwGhieE5d5uhs2pWC9VL5C/JAknt+ws8XvxFFpOqTFwy35DH5SmBxGDXHFmlP5Tign4Z7Nm4nBylaUmB/5zFEXnyO7R8hhomyzGhHufq2on84NDAUh6eMyPtn2l3Bg/enff8RjSA2zfrMjw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=microchip.com; dmarc=pass action=none
+ header.from=microchip.com; dkim=pass header.d=microchip.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microchip.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=tT75p7tWP+WV3BgnYivl5n/8ZKQ1Jt7G+0p164Wu0Rk=;
+ b=Ek0aCgqn5pe6znduX4Yn0wu75OQBghY9hX0kxpaDQcmzRK1ve029CPa9MsoFGZYWIr09V8RUd57nZujhsrO6wuZitMcIL6HfaRJVjuPkJcJw1QNSgNDl1W+CZh+nPK9jbPiZ1+tfA/1mNN2lM9PZS72DPDRO9cxtnQEyKpVBhpje/fdF5rfUT6AKaGt6HVuups76fS8UiU3nliwwOdqvxMkyt1PYW3ErlD25H6kKa1JvxDDdCvcvUeutSMFFFZ819ThVKGLZmePqDWfLWkx/AU5EZllQ+6Alq+PRNYq6nNVq5evdhPi70V0NjPz3rvRkWPhdwr33S+/oUY+Xqa3YOQ==
+Received: from PH7PR11MB6451.namprd11.prod.outlook.com (2603:10b6:510:1f4::16)
+ by CY5PR11MB6437.namprd11.prod.outlook.com (2603:10b6:930:36::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.24; Mon, 2 Sep
+ 2024 04:39:05 +0000
+Received: from PH7PR11MB6451.namprd11.prod.outlook.com
+ ([fe80::80a8:f388:d92e:41f8]) by PH7PR11MB6451.namprd11.prod.outlook.com
+ ([fe80::80a8:f388:d92e:41f8%6]) with mapi id 15.20.7918.020; Mon, 2 Sep 2024
+ 04:39:04 +0000
+From: <Dharma.B@microchip.com>
+To: <claudiu.beznea@tuxon.dev>, <Manikandan.M@microchip.com>,
+	<andrzej.hajda@intel.com>, <neil.armstrong@linaro.org>, <rfoss@kernel.org>,
+	<Laurent.pinchart@ideasonboard.com>, <jonas@kwiboo.se>,
+	<jernej.skrabec@gmail.com>, <maarten.lankhorst@linux.intel.com>,
+	<mripard@kernel.org>, <tzimmermann@suse.de>, <airlied@gmail.com>,
+	<daniel@ffwll.ch>, <Hari.PrasathGE@microchip.com>
+CC: <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/3] drm/bridge: microchip-lvds: Revert
+ clk_prepare_enable() in case of failure
+Thread-Topic: [PATCH 1/3] drm/bridge: microchip-lvds: Revert
+ clk_prepare_enable() in case of failure
+Thread-Index: AQHa+Jv3E6nmCX7dPEKp0MFBmfquabJD8tqA
+Date: Mon, 2 Sep 2024 04:39:04 +0000
+Message-ID: <b9b8494e-8606-4f40-87ad-797617b72d18@microchip.com>
+References: <20240827161223.4152195-1-claudiu.beznea@tuxon.dev>
+ <20240827161223.4152195-2-claudiu.beznea@tuxon.dev>
+In-Reply-To: <20240827161223.4152195-2-claudiu.beznea@tuxon.dev>
+Accept-Language: en-GB, en-US
+Content-Language: en-GB
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=microchip.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PH7PR11MB6451:EE_|CY5PR11MB6437:EE_
+x-ms-office365-filtering-correlation-id: e849f6dd-4298-419c-1879-08dccb092cc4
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR11MB6451.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014)(38070700018)(921020);DIR:OUT;SFP:1101;
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|1800799024|366016|7416014|376014|38070700018|921020;
+x-microsoft-antispam-message-info:
+ =?utf-8?B?ZHFtSkpHb2owbnExY003QThMT0pSb2xDbE5UeGJZWjRkMTdYazdIRUVESzZ6?=
+ =?utf-8?B?U1I5Zi96M21sb2dxL2ZzdUpDWWdRU2IzMlUxVHJiT2ZQajdVWmp2ZDQ1V1gx?=
+ =?utf-8?B?Q1M3MnhhYXRNOGlqa0R6ckZ4SytpRXRMeWt1aUdPTkNUQ3Zoc25xTTV4RTdC?=
+ =?utf-8?B?cmlUcGxnd0VVQmlaQjVYNVFEbi9tdy9vV2x2QzJQcGxNNnV5ZUhmS1M5Uitn?=
+ =?utf-8?B?dFdVVjRJRUJSRitLUUJwUGpNRVc4OWc5SjRCdW9CZmtjaDMrbGh4dVl4cG5K?=
+ =?utf-8?B?cFFoYTlzamVsVnFjb3ZORkJRdmdSNjBCZDVqOWhMRDVEMFZSeHhEYjBveG9X?=
+ =?utf-8?B?SWoyL0kvanpyVlZEemxBKzVRN1RyMFhTWEZ6R25kbERYa2p4UHBIdC9YWnF6?=
+ =?utf-8?B?MlYvRkF0RklSU1gxanJlbitkbEFtaUJQV0FoWFltSlQrVFljcEFwRE1kU1dY?=
+ =?utf-8?B?cTNSZGdSNEdqM21HT1IycXkyM3d4aFJEOHpJQ2JkVjh4L3lPRjRiOHh2WTJO?=
+ =?utf-8?B?ak5SOGUzRFV1dzhYU0ZqZUs3S0dxTW1wZFFhd3Y4VmpsMjRaZ3lDNDZDQ3RU?=
+ =?utf-8?B?cFh5Z0NEQkdyK1ZCMWhZMmNzekJWdGhjdWRPdkI4UXRPWTNBVk5pcHZVU0Zr?=
+ =?utf-8?B?Z1VmUXR4UUR6MU1uSHN1cHlpR0dvRWYvYjNMditGZ3FlNGs4Nk5GdVVFZGZh?=
+ =?utf-8?B?N0tKdXozSUd6UzN3NzdWRlpndlovUTVCd2FxVVR0TERlWG1vQjA3TC8waDBo?=
+ =?utf-8?B?dlAzcklPbVVKNVRvN0dxWkM4dE81N3VUZ0dXVEJRd0N5b09aTVp3TGpmbmtn?=
+ =?utf-8?B?YTl0WkZzZTNZWWl2RGVZZVRLSnlUMytzS25tYVFPTEJucnBpY0laMyttNENT?=
+ =?utf-8?B?bC9OUGM2ZWR5R0ZWTUk1b0hhZndLRVFpTzJNYmJiVmRBeVhwUjd4ZmZIS3M1?=
+ =?utf-8?B?MElsR3VON3JNT01sTWs3WXVSOFpPY3VOc2liT1ZUVjhqRTluR0FXWW14ejhP?=
+ =?utf-8?B?SUVjQ3RFMG1RRDlmV1JBWFprTXB1R3FJUUtlYTNQNTdwWXpodGFCY05FcENJ?=
+ =?utf-8?B?UWNTakVZUngyb1N3WWM1dnhmRDZWQk5KSmhIUnZBV05IdTRDL0FnVDFuOFdN?=
+ =?utf-8?B?V3pldVZ1ZGc1UlNtQWZRZjZMbnVUcGFXYm9BSDJZV0ttMlZXdms2aFBBbEVw?=
+ =?utf-8?B?cGJEMU9YaDBnN3hDSllTTitKbllHNDRES25LT3FaeUQyeHRzQTFyU1o3TEFr?=
+ =?utf-8?B?dGVaenVKVHUyaUVUTTl0bE9VRHJPaVBrcVQ5MmNwT0xranpib0FwUkhTSWg4?=
+ =?utf-8?B?UEc2Vit0R3pVaVBxVHd4bWFvY0FZWlVFRS9iMENqSWY4WlhVbnpwNzhVV0FW?=
+ =?utf-8?B?UXpNOEdJamZqbGI2bFoxUkt4SVR2NlllcTVsRmhZZlRGenBxZGNVMFpOVkZW?=
+ =?utf-8?B?eWE4ZVJoUUtrQUVtQUpVRk9TR1VjMTBERm8yTjBkOHk1QUc3a2hnYUpUeTY4?=
+ =?utf-8?B?VkJwdlVqd2ZHeS9uUTltK3ZhYkNkaFlKR2p3VE5xb1IrOHpZUkpyejVsRlNP?=
+ =?utf-8?B?ckl2Z2JIUVJYWjNlUXEwUTlNSFJheGEzTnA1UEtCVTg0cEJWanNwNzhHenFB?=
+ =?utf-8?B?d2Y0aDdHL2I2YnhaQzF2RGpxTTdFN0RzM0tKWmtGbXlRNm9wczlBd25nOE5I?=
+ =?utf-8?B?dXNLeHppK1huSHpFL01QbVRCL3dYN3ZnZWZBTFg3ZXB6TUZjczBVRHlMK2Ra?=
+ =?utf-8?B?ellLRUVtMXpUcU5hRHh4djRnSHd4NitYeldDTk9kbzcyS21kS2o2a2R1NTdl?=
+ =?utf-8?B?N2pDczJuWmZJcjNUUFJzUkx6LzV3S3ZHS3FTK0o4M3pUbWxRZzFVVkg0a2ZJ?=
+ =?utf-8?B?VE9aeGtidkU0ZHlGR2d0ZTZEMDlHU1lXT0REK2dzYVF2YlRHTzk5RHVONVNu?=
+ =?utf-8?Q?WnRtqyJPYZ0=3D?=
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?c3hQNTlBNHVyY21XSm5YY1gzRGJOdThwa2c1UjZpdkc5Zmtyd3ZKRTlrVnJr?=
+ =?utf-8?B?TVlUd1IvSmhlalg1RVhOMy9XTEQ5d1BqRHJrZ2Nyd254TUtBR0VINk9yM3F5?=
+ =?utf-8?B?cy9xNzhWLyt6dU44Qk1aRDg1MHgya1J0QXJqc041R2lNZk1NZ3JUQlYwRmFU?=
+ =?utf-8?B?OHhuQythT0cvSG1VOFZqbi8wSDZuZiszUUVXUmlEV1FGbHdvNndYV2ZyRnVL?=
+ =?utf-8?B?cHkwWDgzc0U1MFNzRzRnem9wZU91TTFITStjRE05NVEreEpQUTY2L05tNEFi?=
+ =?utf-8?B?U3U0cXg0a3FPd2tlSTZNOENlY1psVVZ2UU5BYzJWVnI4ZnhjQ3JuVjgyU2VC?=
+ =?utf-8?B?QTNnbjNsdmZMWmJuWE5QU0ZDRGRDN3dGaDZiN2ZmVEdWYm5GK2F6aWdtOFR4?=
+ =?utf-8?B?ZkdTMHhuOHl6OGdWekxFR0lQb2NScThCc0s4OG1IQzZkREF2bmNXbWR2ZWhN?=
+ =?utf-8?B?WXFSUWp6d3hzUkd5VTIwS1M1dEEzaC9DVmxRZWVIWkQxQjNpVlJ3Kzd0WHMz?=
+ =?utf-8?B?L3N2SGE0SDNDTlF5ZnRzMy9nelVjNjVnSTdCUSt5c3Z1eWQ2OVZ0VEFaTjhR?=
+ =?utf-8?B?aUlBMHNQUG5BUVFFc1h1SUZOcGZ3aTE0ajRnazhxME9YaFY4aTRoQ3pScEFK?=
+ =?utf-8?B?QitNUjd4MXppK3RhdldPWkZTL2RxSDFYWFBxT05Va2xLbStjVVFmVG9ZT2U4?=
+ =?utf-8?B?UmhFeDV1R2JVamN0V2Q3Wk9zMk10Qzg1S0xWZ2hQSFBzU2Z0eGdKZE02M1VS?=
+ =?utf-8?B?TE8vbnVwdTFLRVpWSWcxZTYyTWg5cjhCQjhHUnk2RWdNdmFQNUx2Vitwc1Fl?=
+ =?utf-8?B?eFVUV1VOSFRRdlBjcnlxNnFrdjlkaDNiSjZGS3hXblp2NFo1WkFhY0JGWi9P?=
+ =?utf-8?B?NWkyWisvSkh6aG55WFVMTEJVcU5SUHgrT25mWTRUbzlGc0FlWmUzVkZMT3Na?=
+ =?utf-8?B?NFk1UVRpdUhOc25HOXVSK3AyOXppSHZ0ZkJnVUpSMUFRZFYrYUlha2oxS3Jx?=
+ =?utf-8?B?M0UrQlcyMU4zcGZoTW5kMXRhNVlKREVoWmRKUHRpMVI4Y1FISXQ5U2JkSWpJ?=
+ =?utf-8?B?SlcxRjUybXdVZG8vNnBPaHU5aGFJbWJJNUtDVkNmeGIraDhMUE4wR3l5ZkJ3?=
+ =?utf-8?B?bno3REVpa012Q2RIOVEyRlFHQm9KajdUdjBlUjFpdFZoZ0V6dTBYQTc5ZUlI?=
+ =?utf-8?B?VkRnMkM5VHpxWWk3VVU5Q3UrcmdLQ2F3QURRU1ZaOWt6STlxT2FUa2xiTXdC?=
+ =?utf-8?B?ZUJwRnRVaEl1VmkrQzlwdXRwTzJ2Y0dVRW9lYXQvRWNZeWVWdDdWVk5Hc2tl?=
+ =?utf-8?B?ajloOTE5TDU5VGgybGJ3dUVqQ3dIaWlmZHI0aXNndWwybGxVL2Q5eFdpSU1Z?=
+ =?utf-8?B?a1cySXJtVHU2b1dXeDdFNmExeDlnNXcvbDZIeWtBSVJWV1hyT2tKZXJHanRX?=
+ =?utf-8?B?bS9obTZJcHpkZmFlbHoyRTMrdGYwQmNEbTVOYTZHVU1jZXlFeGV2cTZsdURn?=
+ =?utf-8?B?akU5V3IxWmlSdUZsZ2JvUVk2ZXpCaFN5dGNkWHFYa2VQakNKYS96TmNPczNk?=
+ =?utf-8?B?N0xBNWgzejVzVkxneGI1d3dES1VOL1J0eG5XaXVSSFZOMGJsc0JtMVJoVVlw?=
+ =?utf-8?B?NkZuS3hhSlFqbk05SUljQnJXZTRBN1cyRnEveGpBaFd4VFNxQjQ3Z1NlQ0Fo?=
+ =?utf-8?B?RU90dGVCYnB3TWd3TEJIdHpoa3JjSkkycGFXS2dWWTR5R1hoZnVZNmRvYVBh?=
+ =?utf-8?B?WU5XcUNFdzJoeG1TaERDQkJJR0w0eEUwNUVUb1pUU3NqREhiSlJCaTYvc2ZJ?=
+ =?utf-8?B?cThuNjJCZ1UyM2ZtM2lJWnFaTEhDNnFwV2l6a05FU3Vkak9KR2hXQ3ROV3BF?=
+ =?utf-8?B?SzF1d0o4N2w3NXRwelVxSzhaeEQ3Vzdaa0tWdzNBWkhpVGxwTnJjcm9hM0du?=
+ =?utf-8?B?SjdKSDN5NmZpb1R6cG1uZjZHbjA0Q3JnYlh3MFlrN1FQOVU2M3BUbTJnMWds?=
+ =?utf-8?B?K1NOOTRkZ0NTSzllVTRweXJGVWtNTmhhQTNReDZ0K0l6SWFnaFFRaStsRy91?=
+ =?utf-8?B?VE1JbTJYM1FuM3Y0VmNLZzJyWmozZVpvekxycldUVERjamovY3dpdFZqQ20w?=
+ =?utf-8?Q?NidvwxvC6GF03eVChbvK1kLUt?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <783AB76CFF63B642808D10131EFE2DE9@namprd11.prod.outlook.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240829161620.38679-1-carlos.bilbao.osdev@gmail.com>
- <20240829161620.38679-3-carlos.bilbao.osdev@gmail.com> <c15d3682-05ee-437c-b51c-d6a824252d76@nvidia.com>
- <CACGkMEtDSDTS_SVvsf7nwMdabGCN85P-r5WpjgZdVDV5PMdc0g@mail.gmail.com> <f5e3768d-bb16-48eb-96df-ce5f9593b843@digitalocean.com>
-In-Reply-To: <f5e3768d-bb16-48eb-96df-ce5f9593b843@digitalocean.com>
-From: Jason Wang <jasowang@redhat.com>
-Date: Mon, 2 Sep 2024 12:27:50 +0800
-Message-ID: <CACGkMEtsNeL+o6Rgb=ehj8OJpfkoojasPK1ZMp4S5bMKBjwcng@mail.gmail.com>
-Subject: Re: [PATCH 2/2] vdpa: Add support to update speed/duplex in vDPA/mlx5_vnet
-To: Carlos Bilbao <cbilbao@digitalocean.com>
-Cc: Dragos Tatulea <dtatulea@nvidia.com>, Carlos Bilbao <carlos.bilbao.osdev@gmail.com>, mst@redhat.com, 
-	bilbao@vt.edu, xuanzhuo@linux.alibaba.com, eperezma@redhat.com, 
-	cratiu@nvidia.com, lingshan.zhu@intel.com, virtualization@lists.linux.dev, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-OriginatorOrg: microchip.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PH7PR11MB6451.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e849f6dd-4298-419c-1879-08dccb092cc4
+X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Sep 2024 04:39:04.5540
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: BPt+3+PW/nW7JMrnwEQu3maAYy1j8y0xRuk/2Az257xFKE1EyroNhu/KR55+PibNtMfxz/OVWWEwEBtRzop16g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR11MB6437
 
-On Fri, Aug 30, 2024 at 9:15=E2=80=AFPM Carlos Bilbao <cbilbao@digitalocean=
-.com> wrote:
->
-> Hello,
->
-> On 8/29/24 9:31 PM, Jason Wang wrote:
-> > On Fri, Aug 30, 2024 at 5:08=E2=80=AFAM Dragos Tatulea <dtatulea@nvidia=
-.com> wrote:
-> >> (resending as I accidentally replied only to Carlos)
-> >>
-> >> On 29.08.24 18:16, Carlos Bilbao wrote:
-> >>> From: Carlos Bilbao <cbilbao@digitalocean.com>
-> >>>
-> >>> Include support to update the vDPA configuration fields of speed and
-> >>> duplex (as needed by VHOST_VDPA_SET_CONFIG). This includes function
-> >>> mlx5_vdpa_set_config() as well as changes in vdpa.c to fill the initi=
-al
-> >>> values to UNKNOWN. Also add a warning message for when
-> >>> mlx5_vdpa_get_config() receives offset and length out of bounds.
-> >>>
-> >>> Signed-off-by: Carlos Bilbao <cbilbao@digitalocean.com>
-> >>> ---
-> >>>  drivers/vdpa/mlx5/net/mlx5_vnet.c | 34 +++++++++++++++++++++++++++++=
-+-
-> >>>  drivers/vdpa/vdpa.c               | 27 ++++++++++++++++++++++++
-> >>>  include/uapi/linux/vdpa.h         |  2 ++
-> >>>  3 files changed, 62 insertions(+), 1 deletion(-)
-> >>>
-> >>> diff --git a/drivers/vdpa/mlx5/net/mlx5_vnet.c b/drivers/vdpa/mlx5/ne=
-t/mlx5_vnet.c
-> >>> index c47009a8b472..a44bb2072eec 100644
-> >>> --- a/drivers/vdpa/mlx5/net/mlx5_vnet.c
-> >>> +++ b/drivers/vdpa/mlx5/net/mlx5_vnet.c
-> >>> @@ -3221,12 +3221,44 @@ static void mlx5_vdpa_get_config(struct vdpa_=
-device *vdev, unsigned int offset,
-> >>>
-> >>>       if (offset + len <=3D sizeof(struct virtio_net_config))
-> >>>               memcpy(buf, (u8 *)&ndev->config + offset, len);
-> >>> +     else
-> >>> +             mlx5_vdpa_warn(mvdev, "Offset and length out of bounds\=
-n");
-> >>>  }
-> >>>
-> >>>  static void mlx5_vdpa_set_config(struct vdpa_device *vdev, unsigned =
-int offset, const void *buf,
-> >>>                                unsigned int len)
-> >>>  {
-> >>> -     /* not supported */
-> >>> +     struct mlx5_vdpa_dev *mvdev =3D to_mvdev(vdev);
-> >>> +     struct mlx5_vdpa_net *ndev =3D to_mlx5_vdpa_ndev(mvdev);
-> >>> +
-> >>> +     if (offset + len > sizeof(struct virtio_net_config)) {
-> >>> +             mlx5_vdpa_warn(mvdev, "Offset and length out of bounds\=
-n");
-> >>> +             return;
-> >>> +     }
-> >>> +
-> >>> +     /*
-> >>> +      * Note that this will update the speed/duplex configuration fi=
-elds
-> >>> +      * but the hardware support to actually perform this change doe=
-s
-> >>> +      * not exist yet.
-> >>> +      */
-> >>> +     switch (offset) {
-> >>> +     case offsetof(struct virtio_net_config, speed):
-> >>> +             if (len =3D=3D sizeof(((struct virtio_net_config *) 0)-=
->speed))
-> >>> +                     memcpy(&ndev->config.speed, buf, len);
-> >>> +             else
-> >>> +                     mlx5_vdpa_warn(mvdev, "Invalid length for speed=
-.\n");
-> >>> +             break;
-> >>> +
-> >>> +     case offsetof(struct virtio_net_config, duplex):
-> >>> +             if (len =3D=3D sizeof(((struct virtio_net_config *)0)->=
-duplex))
-> >>> +                     memcpy(&ndev->config.duplex, buf, len);
-> >>> +             else
-> >>> +                     mlx5_vdpa_warn(mvdev, "Invalid length for duple=
-x.\n");
-> >>> +             break;
-> >>> +
-> >>> +     default:
-> >>> +             mlx5_vdpa_warn(mvdev, "Configuration field not supporte=
-d.\n");
-> >> This will trigger noise in dmesg because there is a MAC configuration =
-here.
-> >>> +     }
-> >> I would prefer that the .set_config remains a stub TBH. Setting the fi=
-elds here is
-> >> misleading: the user might deduce that the configuration worked when t=
-hey read the
-> >> values and see that they were updated.
-> > Yes, and actually, those fields are read-only according to the spec:
-> >
-> > """
-> > The network device has the following device configuration layout. All
-> > of the device configuration fields are read-only for the driver.
-> > """
-> >
-> > Thanks
->
->
-> Should I go ahead and remove the ioctl then?
-
-If you meant mlx5_vdpa_set_config, I think yes.
-
-Thanks
-
+T24gMjcvMDgvMjQgOTo0MiBwbSwgQ2xhdWRpdSBCZXpuZWEgd3JvdGU6DQo+IEVYVEVSTkFMIEVN
+QUlMOiBEbyBub3QgY2xpY2sgbGlua3Mgb3Igb3BlbiBhdHRhY2htZW50cyB1bmxlc3MgeW91IGtu
+b3cgdGhlIGNvbnRlbnQgaXMgc2FmZQ0KPiANCj4gSW4gY2FzZSBwbV9ydW50aW1lX2dldF9zeW5j
+KCkgZmFpbHMgdGhlIGNsb2NrIHJlbWFpbnMgZW5hYmxlZC4gRGlzYWJsZQ0KPiBpdCB0byBzYXZl
+IHBvd2VyIG9uIHRoaXMgZmFpbHVyZSBzY2VuYXJpby4NCj4gDQo+IEZpeGVzOiAxNzliMDc2OWZj
+NWYgKCJkcm0vYnJpZGdlOiBhZGQgbHZkcyBjb250cm9sbGVyIHN1cHBvcnQgZm9yIHNhbTl4NyIp
+DQo+IFNpZ25lZC1vZmYtYnk6IENsYXVkaXUgQmV6bmVhIDxjbGF1ZGl1LmJlem5lYUB0dXhvbi5k
+ZXY+DQpSZXZpZXdlZC1hbmQtdGVzdGVkLWJ5OiBEaGFybWEgQmFsYXN1YmlyYW1hbmkgPGRoYXJt
+YS5iQG1pY3JvY2hpcC5jb20+DQo+IC0tLQ0KPiAgIGRyaXZlcnMvZ3B1L2RybS9icmlkZ2UvbWlj
+cm9jaGlwLWx2ZHMuYyB8IDEgKw0KPiAgIDEgZmlsZSBjaGFuZ2VkLCAxIGluc2VydGlvbigrKQ0K
+PiANCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9icmlkZ2UvbWljcm9jaGlwLWx2ZHMu
+YyBiL2RyaXZlcnMvZ3B1L2RybS9icmlkZ2UvbWljcm9jaGlwLWx2ZHMuYw0KPiBpbmRleCBiODMx
+M2RhZDYwNzIuLjAyNzI5MmFiMDE5NyAxMDA2NDQNCj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2Jy
+aWRnZS9taWNyb2NoaXAtbHZkcy5jDQo+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9icmlkZ2UvbWlj
+cm9jaGlwLWx2ZHMuYw0KPiBAQCAtMTI1LDYgKzEyNSw3IEBAIHN0YXRpYyB2b2lkIG1jaHBfbHZk
+c19lbmFibGUoc3RydWN0IGRybV9icmlkZ2UgKmJyaWRnZSkNCj4gDQo+ICAgICAgICAgIHJldCA9
+IHBtX3J1bnRpbWVfZ2V0X3N5bmMobHZkcy0+ZGV2KTsNCj4gICAgICAgICAgaWYgKHJldCA8IDAp
+IHsNCj4gKyAgICAgICAgICAgICAgIGNsa19kaXNhYmxlX3VucHJlcGFyZShsdmRzLT5wY2xrKTsN
+Cj4gICAgICAgICAgICAgICAgICBkZXZfZXJyKGx2ZHMtPmRldiwgImZhaWxlZCB0byBnZXQgcG0g
+cnVudGltZTogJWRcbiIsIHJldCk7DQo+ICAgICAgICAgICAgICAgICAgcmV0dXJuOw0KPiAgICAg
+ICAgICB9DQo+IC0tDQo+IDIuMzkuMg0KPiANCg0KDQotLSANCldpdGggQmVzdCBSZWdhcmRzLA0K
+RGhhcm1hIEIuDQo=
 
