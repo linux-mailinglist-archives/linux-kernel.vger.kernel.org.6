@@ -1,215 +1,256 @@
-Return-Path: <linux-kernel+bounces-311919-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311920-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48E47968F56
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 23:56:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B41D6968F58
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 23:57:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9D786B2103C
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 21:56:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6CBDB283C34
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 21:57:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AAEF18BB9A;
-	Mon,  2 Sep 2024 21:53:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0969D18756E;
+	Mon,  2 Sep 2024 21:55:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OROlkf2L"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="EFS05vGK";
+	dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b="h44q7Bon"
+Received: from a7-42.smtp-out.eu-west-1.amazonses.com (a7-42.smtp-out.eu-west-1.amazonses.com [54.240.7.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40BBA187FF7;
-	Mon,  2 Sep 2024 21:53:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06A72187344;
+	Mon,  2 Sep 2024 21:55:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.240.7.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725314032; cv=none; b=GU8/jtz7Ohgt9PeHB5OTn0UrrnkjPoIN9tiNEuaYLLaATF9785DnXm/KN+wEKcbw07iOintEaTy7/rf/smyuC98k+11F7bQ86hsMP70u6reCv7rY2b4C4ZMDqdUJc4TFux4A5B2w7xM3tXsFOd38WReqnap4uK1YscVikLcMYlM=
+	t=1725314146; cv=none; b=dU0u2rnKKZAeQYJFowc29G/9Ge1XxH2auXdrUVrHAjQ7hrw2NtZZz1w1hCrnEkbpX+lslUzNMUSExBPnpIwgF0H79oerkOxZvfvE9wIO6OQZPzINuq3pLeN2bmbz/SMgPWVK8ivijkT+iMZ0oNRTcT3BzddWTvlaFcHU8jJYJno=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725314032; c=relaxed/simple;
-	bh=heylAxykd8X4rIhXf7HcHXhHxx01Fwwpbrn2DfxpdCY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=ewrQMFLJshhyJXXObMphWxqhYCei2w8sWfRi/t2ZrlIZi9gLnzn8nnZyqGw8XNKZvHGcGmtfs0Amb/jNYACVuSOXch+hrYvnxSEwx4k/NpcsOuFjaypu9S0w2En5ZimIiJY2h1AxLdLuqr7woVPUNfIVGTYrwWIPGL8gSUspNjM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OROlkf2L; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 1096AC4CEDE;
-	Mon,  2 Sep 2024 21:53:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725314032;
-	bh=heylAxykd8X4rIhXf7HcHXhHxx01Fwwpbrn2DfxpdCY=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=OROlkf2LFfHDJgPmtGoFN1NvSEm1YEQccQ8NEZnvlZrrrE1LWyxGqb9ATQ36Ih4eb
-	 TV8x7MLQkeVHhQ5ARiTpFUmAfR43g9NvfnNtM+p2VelCoXTyME4GUp9WVmtTScSITJ
-	 0sr0wsIruf7jo8urKB1czUCsPVcodldnUNE+mgDYcAB3al/TSXtwBpXaWDH8VJwdl2
-	 7THQ2t9LVnsaJHnAUwM9E1ZhrytxTTdMdmPuPlQeWEQEUApgj2JwFRD1OXg+Mp9uHa
-	 dqGIh8+zzC75fdTba4doJeMt4eQNGRY4tfVog/1yktQPza8KQMBBXJLzaPUXZyXFXu
-	 f9dxocaTlXhiA==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06695C54FC6;
-	Mon,  2 Sep 2024 21:53:52 +0000 (UTC)
-From: =?utf-8?q?Andr=C3=A9_Apitzsch_via_B4_Relay?= <devnull+git.apitzsch.eu@kernel.org>
-Date: Mon, 02 Sep 2024 23:54:40 +0200
-Subject: [PATCH 13/13] media: i2c: imx214: Add test pattern control
+	s=arc-20240116; t=1725314146; c=relaxed/simple;
+	bh=k7aKxeQmEkM1y7ybGawqN1iDsl7azjOv3PpczXOhmzU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FC76R1qGT6+lG5kQhspkdL3rnedehdI8rE4VN+PMN38MBSWOHVcpCOU1+T12GWxkRzXx2p9qQbBcxHVGoMvU09FBTk81DRoiDvkTtItPNrxYnrSjfvZ9pjudRcYHiy5NLbCk0p40vU09/SF5dIiI0FB6EQBga7gumBdOE3jLnEU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=amazonses.collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=EFS05vGK; dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b=h44q7Bon; arc=none smtp.client-ip=54.240.7.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazonses.collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
+	s=4232tfv5ebdrjdwkr5zzm7kytdkokgug; d=collabora.com; t=1725314142;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:Content-Type:In-Reply-To;
+	bh=k7aKxeQmEkM1y7ybGawqN1iDsl7azjOv3PpczXOhmzU=;
+	b=EFS05vGK7/OYS8ClPD5BssuHd9lEwTyOQOIjgkCQqIjw2AAJr8Im0i1vUJNRJJYy
+	wrnFu5aoUCWjhTN/+n0KLoWsENUkaLWPrsINqUGlXOLSzrknEUEHF5VMkx4e0T6PFAe
+	AMIEfmuqUidiqtYySvjN+GN2SUDXBWzsn1wOmtPSLP9B+I320jQsCE/6ASP3DBxOwka
+	KvlWJO3siZJE8Llk/7mSZVmMFXBCaWvz1KvrJA9t5L/awiigrC0uxRZzYmjLh+Y9kyK
+	D2mhuIzulZ9KPdtV4zUJkCSfTpwNJ/H0/0lLV+H/OK9kSSKPPY9J5eeog54pqOHaY7N
+	byDjJ5rcMA==
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
+	s=uku4taia5b5tsbglxyj6zym32efj7xqv; d=amazonses.com; t=1725314142;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:Content-Type:In-Reply-To:Feedback-ID;
+	bh=k7aKxeQmEkM1y7ybGawqN1iDsl7azjOv3PpczXOhmzU=;
+	b=h44q7Bon45QsvSKu3Nt2A6JQyXYs2RfgRA8WZ5yVbjfPIwXdD3cMbrfT6szOwJHU
+	dLIeAXW78B/dsL81+coA2wEZtF1WAs23jbuLPYYl2r9bKkTmv8zEhZMg01Yfllv78mt
+	5WQV5r4ihsMJxXxodd707snQF+6PNl5Y+VTsgZME=
+Date: Mon, 2 Sep 2024 21:55:42 +0000
+From: Sebastian Reichel <sebastian.reichel@collabora.com>
+To: Dimitri Fedrau <dima.fedrau@gmail.com>
+Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
+	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] power: supply: max1720x: add read support for nvmem
+Message-ID: <01020191b4bc8ff0-e7e8d909-4802-4076-9caf-cee0296fd10d-000000@eu-west-1.amazonses.com>
+References: <20240831182145.11589-1-dima.fedrau@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20240902-imx214-v1-13-c96cba989315@apitzsch.eu>
-References: <20240902-imx214-v1-0-c96cba989315@apitzsch.eu>
-In-Reply-To: <20240902-imx214-v1-0-c96cba989315@apitzsch.eu>
-To: Ricardo Ribalda <ribalda@kernel.org>, 
- Sakari Ailus <sakari.ailus@linux.intel.com>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org, 
- linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
- =?utf-8?q?Andr=C3=A9_Apitzsch?= <git@apitzsch.eu>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1725314079; l=4184;
- i=git@apitzsch.eu; s=20240325; h=from:subject:message-id;
- bh=S18zCLZxu7uVo4Qh5/WJT4wrMs1kwsCQDThfCqeUjns=;
- b=U/c1WEWfj8syWYQeIrbBlFiv5eQwLYmTf5yiaWH6BWuDlXpTe1+9nQDo7H9r0b5OV7qIlcc8k
- FB9uSncKAiIAt1POKGcqitKycWHyKX/NTeGtkp42QIfCGdpUkzB90Yy
-X-Developer-Key: i=git@apitzsch.eu; a=ed25519;
- pk=wxovcZRfvNYBMcTw4QFFtNEP4qv39gnBfnfyImXZxiU=
-X-Endpoint-Received: by B4 Relay for git@apitzsch.eu/20240325 with
- auth_id=142
-X-Original-From: =?utf-8?q?Andr=C3=A9_Apitzsch?= <git@apitzsch.eu>
-Reply-To: git@apitzsch.eu
-
-From: André Apitzsch <git@apitzsch.eu>
-
-This adds V4L2_CID_TEST_PATTERN control support.
-
-Signed-off-by: André Apitzsch <git@apitzsch.eu>
----
- drivers/media/i2c/imx214.c | 77 ++++++++++++++++++++++++++++++++++++++++++++--
- 1 file changed, 75 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/media/i2c/imx214.c b/drivers/media/i2c/imx214.c
-index 6493a9b9ea88..6d67c7b307bd 100644
---- a/drivers/media/i2c/imx214.c
-+++ b/drivers/media/i2c/imx214.c
-@@ -181,6 +181,23 @@
- 
- #define IMX214_REG_ATR_FAST_MOVE	CCI_REG8(0x9300)
- 
-+/* Test Pattern Control */
-+#define IMX214_REG_TEST_PATTERN		CCI_REG16(0x0600)
-+#define IMX214_TEST_PATTERN_DISABLE	0
-+#define IMX214_TEST_PATTERN_SOLID_COLOR	1
-+#define IMX214_TEST_PATTERN_COLOR_BARS	2
-+#define IMX214_TEST_PATTERN_GREY_COLOR	3
-+#define IMX214_TEST_PATTERN_PN9		4
-+
-+/* Test pattern colour components */
-+#define IMX214_REG_TESTP_RED		CCI_REG16(0x0602)
-+#define IMX214_REG_TESTP_GREENR		CCI_REG16(0x0604)
-+#define IMX214_REG_TESTP_BLUE		CCI_REG16(0x0606)
-+#define IMX214_REG_TESTP_GREENB		CCI_REG16(0x0608)
-+#define IMX214_TESTP_COLOUR_MIN		0
-+#define IMX214_TESTP_COLOUR_MAX		0x03ff
-+#define IMX214_TESTP_COLOUR_STEP	1
-+
- /* IMX214 native and active pixel array size */
- #define IMX214_NATIVE_WIDTH		4224U
- #define IMX214_NATIVE_HEIGHT		3136U
-@@ -213,6 +230,22 @@ static const u32 imx214_mbus_formats[] = {
- 	MEDIA_BUS_FMT_SBGGR10_1X10,
- };
- 
-+static const char * const imx214_test_pattern_menu[] = {
-+	"Disabled",
-+	"Color Bars",
-+	"Solid Color",
-+	"Grey Color Bars",
-+	"PN9"
-+};
-+
-+static const int imx214_test_pattern_val[] = {
-+	IMX214_TEST_PATTERN_DISABLE,
-+	IMX214_TEST_PATTERN_COLOR_BARS,
-+	IMX214_TEST_PATTERN_SOLID_COLOR,
-+	IMX214_TEST_PATTERN_GREY_COLOR,
-+	IMX214_TEST_PATTERN_PN9,
-+};
-+
- struct imx214 {
- 	struct device *dev;
- 	struct clk *xclk;
-@@ -819,6 +852,26 @@ static int imx214_set_ctrl(struct v4l2_ctrl *ctrl)
- 		cci_write(imx214->regmap, IMX214_REG_FRM_LENGTH_LINES,
- 			  format->height + ctrl->val, &ret);
- 		break;
-+	case V4L2_CID_TEST_PATTERN:
-+		cci_write(imx214->regmap, IMX214_REG_TEST_PATTERN,
-+			  imx214_test_pattern_val[ctrl->val], &ret);
-+		break;
-+	case V4L2_CID_TEST_PATTERN_RED:
-+		cci_write(imx214->regmap, IMX214_REG_TESTP_RED,
-+			  ctrl->val, &ret);
-+		break;
-+	case V4L2_CID_TEST_PATTERN_GREENR:
-+		cci_write(imx214->regmap, IMX214_REG_TESTP_GREENR,
-+			  ctrl->val, &ret);
-+		break;
-+	case V4L2_CID_TEST_PATTERN_BLUE:
-+		cci_write(imx214->regmap, IMX214_REG_TESTP_BLUE,
-+			  ctrl->val, &ret);
-+		break;
-+	case V4L2_CID_TEST_PATTERN_GREENB:
-+		cci_write(imx214->regmap, IMX214_REG_TESTP_GREENB,
-+			  ctrl->val, &ret);
-+		break;
- 	default:
- 		ret = -EINVAL;
- 	}
-@@ -846,14 +899,14 @@ static int imx214_ctrls_init(struct imx214 *imx214)
- 	struct v4l2_ctrl_handler *ctrl_hdlr;
- 	int exposure_max, exposure_def;
- 	int hblank;
--	int ret;
-+	int i, ret;
- 
- 	ret = v4l2_fwnode_device_parse(imx214->dev, &props);
- 	if (ret < 0)
- 		return ret;
- 
- 	ctrl_hdlr = &imx214->ctrls;
--	ret = v4l2_ctrl_handler_init(&imx214->ctrls, 12);
-+	ret = v4l2_ctrl_handler_init(&imx214->ctrls, 13);
- 	if (ret)
- 		return ret;
- 
-@@ -908,6 +961,26 @@ static int imx214_ctrls_init(struct imx214 *imx214)
- 	if (imx214->vflip)
- 		imx214->vflip->flags |= V4L2_CTRL_FLAG_MODIFY_LAYOUT;
- 
-+	v4l2_ctrl_new_std_menu_items(ctrl_hdlr, &imx214_ctrl_ops,
-+				     V4L2_CID_TEST_PATTERN,
-+				     ARRAY_SIZE(imx214_test_pattern_menu) - 1,
-+				     0, 0, imx214_test_pattern_menu);
-+	for (i = 0; i < 4; i++) {
-+		/*
-+		 * The assumption is that
-+		 * V4L2_CID_TEST_PATTERN_GREENR == V4L2_CID_TEST_PATTERN_RED + 1
-+		 * V4L2_CID_TEST_PATTERN_BLUE   == V4L2_CID_TEST_PATTERN_RED + 2
-+		 * V4L2_CID_TEST_PATTERN_GREENB == V4L2_CID_TEST_PATTERN_RED + 3
-+		 */
-+		v4l2_ctrl_new_std(ctrl_hdlr, &imx214_ctrl_ops,
-+				  V4L2_CID_TEST_PATTERN_RED + i,
-+				  IMX214_TESTP_COLOUR_MIN,
-+				  IMX214_TESTP_COLOUR_MAX,
-+				  IMX214_TESTP_COLOUR_STEP,
-+				  IMX214_TESTP_COLOUR_MAX);
-+		/* The "Solid color" pattern is white by default */
-+	}
-+
- 	imx214->unit_size = v4l2_ctrl_new_std_compound(ctrl_hdlr,
- 				NULL,
- 				V4L2_CID_UNIT_CELL_SIZE,
-
--- 
-2.46.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="ggta6jjiwxntt2pw"
+Content-Disposition: inline
+In-Reply-To: <20240831182145.11589-1-dima.fedrau@gmail.com>
+Feedback-ID: ::1.eu-west-1.YpP9ZbxnARFfy3Cb5pfsLd/pdsXBCNK0KEM7HforL4k=:AmazonSES
+X-SES-Outgoing: 2024.09.02-54.240.7.42
 
 
+--ggta6jjiwxntt2pw
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi,
+
+On Sat, Aug 31, 2024 at 08:21:45PM GMT, Dimitri Fedrau wrote:
+> ModelGauge m5 and device configuration values are stored in nonvolatile
+> memory to prevent data loss if the IC loses power. Add read support for
+> the nonvolatile memory on MAX1720X devices.
+>=20
+> Signed-off-by: Dimitri Fedrau <dima.fedrau@gmail.com>
+> ---
+>=20
+> Based on:
+> 479b6d04964b "power: supply: add support for MAX1720x standalone fuel gau=
+ge"
+> in branch for-next
+>=20
+> Changes in V2:
+>   - remove function max1720x_remove and use devm_add_action_or_reset() to
+>     unregister info->ancillary to avoid race condition during module remo=
+ve
+
+Thanks, but the transformation is quite incomplete. You probably
+should have a look what device managed resource actually means :)
+
+> ---
+>  drivers/power/supply/max1720x_battery.c | 220 ++++++++++++++++++++++--
+>  1 file changed, 205 insertions(+), 15 deletions(-)
+>=20
+> diff --git a/drivers/power/supply/max1720x_battery.c b/drivers/power/supp=
+ly/max1720x_battery.c
+> index edc262f0a62f..d27c94bdb835 100644
+> --- a/drivers/power/supply/max1720x_battery.c
+> +++ b/drivers/power/supply/max1720x_battery.c
+
+[...]
+
+> +static int max1720x_probe_nvmem(struct i2c_client *client,
+> +				struct max1720x_device_info *info)
+>  {
+>  	struct device *dev =3D &client->dev;
+> -	struct i2c_client *ancillary;
+> +	struct nvmem_config nvmem_config =3D {
+
+As noticed by the build bot: you need to add this include for the
+struct:
+
+#include <linux/nvmem-provider.h>
+
+> +		.dev =3D dev,
+> +		.name =3D "max1720x_nvmem",
+> +		.cells =3D max1720x_nvmem_cells,
+> +		.ncells =3D ARRAY_SIZE(max1720x_nvmem_cells),
+> +		.read_only =3D true,
+> +		.root_only =3D true,
+> +		.reg_read =3D max1720x_nvmem_reg_read,
+> +		.size =3D ARRAY_SIZE(max1720x_nvmem_cells) * 2,
+> +		.word_size =3D 2,
+> +		.stride =3D 2,
+> +		.priv =3D info,
+> +	};
+> +	struct nvmem_device *nvmem;
+> +	unsigned int val;
+>  	int ret;
+> =20
+> -	ancillary =3D i2c_new_ancillary_device(client, "nvmem", 0xb);
+> -	if (IS_ERR(ancillary)) {
+> +	info->ancillary =3D i2c_new_ancillary_device(client, "nvmem", 0xb);
+> +	if (IS_ERR(info->ancillary)) {
+>  		dev_err(dev, "Failed to initialize ancillary i2c device\n");
+> -		return PTR_ERR(ancillary);
+> +		return PTR_ERR(info->ancillary);
+>  	}
+> =20
+> -	ret =3D i2c_smbus_read_word_data(ancillary, MAX1720X_NRSENSE);
+> -	i2c_unregister_device(ancillary);
+> -	if (ret < 0)
+> -		return ret;
+> +	ret =3D devm_add_action_or_reset(dev, max1720x_unregister_ancillary, in=
+fo);
+> +	if (ret) {
+> +		dev_err(dev, "Failed to add unregister callback\n");
+> +		goto err;
+> +	}
+> =20
+> -	info->rsense =3D ret;
+> +	info->regmap_nv =3D devm_regmap_init_i2c(info->ancillary,
+> +					       &max1720x_nvmem_regmap_cfg);
+> +	if (IS_ERR(info->regmap_nv)) {
+> +		dev_err(dev, "regmap initialization of nvmem failed\n");
+> +		ret =3D PTR_ERR(info->regmap_nv);
+> +		goto err;
+> +	}
+> +
+> +	ret =3D regmap_read(info->regmap_nv, MAX1720X_NRSENSE, &val);
+> +	if (ret < 0) {
+> +		dev_err(dev, "Failed to read sense resistor value\n");
+> +		goto err;
+> +	}
+> +
+> +	info->rsense =3D val;
+>  	if (!info->rsense) {
+>  		dev_warn(dev, "RSense not calibrated, set 10 mOhms!\n");
+>  		info->rsense =3D 1000; /* in regs in 10^-5 */
+>  	}
+> =20
+> +	nvmem =3D devm_nvmem_register(dev, &nvmem_config);
+> +	if (IS_ERR(nvmem)) {
+> +		dev_err(dev, "Could not register nvmem!");
+> +		ret =3D PTR_ERR(nvmem);
+> +		goto err;
+> +	}
+> +
+>  	return 0;
+> +err:
+> +	i2c_unregister_device(info->ancillary);
+
+devm_add_action_or_reset() already unregisters on failure, so this
+results in a double unregister. Please also simplify 'goto err'
+with 'return ret;'.
+
+> +
+> +	return ret;
+>  }
+> =20
+>  static const struct power_supply_desc max1720x_bat_desc =3D {
+> @@ -299,20 +487,22 @@ static int max1720x_probe(struct i2c_client *client)
+> =20
+>  	psy_cfg.drv_data =3D info;
+>  	psy_cfg.fwnode =3D dev_fwnode(dev);
+> +	i2c_set_clientdata(client, info);
+>  	info->regmap =3D devm_regmap_init_i2c(client, &max1720x_regmap_cfg);
+>  	if (IS_ERR(info->regmap))
+>  		return dev_err_probe(dev, PTR_ERR(info->regmap),
+>  				     "regmap initialization failed\n");
+> =20
+> -	ret =3D max1720x_probe_sense_resistor(client, info);
+> +	ret =3D max1720x_probe_nvmem(client, info);
+>  	if (ret)
+> -		return dev_err_probe(dev, ret,
+> -				     "Failed to read sense resistor value\n");
+> +		return dev_err_probe(dev, ret, "Failed to probe nvmem\n");
+> =20
+>  	bat =3D devm_power_supply_register(dev, &max1720x_bat_desc, &psy_cfg);
+> -	if (IS_ERR(bat))
+> +	if (IS_ERR(bat)) {
+> +		i2c_unregister_device(info->ancillary);
+
+This is also already handled by devm and must be removed.
+
+>  		return dev_err_probe(dev, PTR_ERR(bat),
+>  				     "Failed to register power supply\n");
+> +	}
+> =20
+>  	return 0;
+>  }
+
+-- Sebastian
+
+--ggta6jjiwxntt2pw
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmbWNFkACgkQ2O7X88g7
++prnKw/7BvyloO8T23jJijuCuMrDU7wMGOVNh4D+Ij/WrJ6UmhOqD5KBqXt0h0Hy
+GPIHrmnDGSXwjtIc1WuulmP6Ka0ZpeMsiidNr2vihWLixEEXMw6ZtiCpFuC3X9OM
+KqBGWPHPz32HlTZu2BBPEjKRkAWdpIlXKeXHCpmEWHHrF+MnC7tkglJanSNuYmD1
+/jCvMkM8MwVpiK9wVeSvVh7klZiEcrvNVWy9qCO6U5/ZVYf/Rw9DOVko2K7Wt+Tx
+HzrkYmrGUPp379ZlP3K/j16KK9g9NpoYpfsvT5jKPZQo80KhKHOQQ02hGnnDTKxF
+gIxamttKfNudVy3IZz2AFzkS03f123H6xjCvXfkjG7EvqY9S6EkLljS6pAwNzF6/
+xrQGUsfWTIHBsXNeLpctxLZxYFtJx2HSFNt9TicsNBIYWH3Aq+hrs3T/zzdA0H7H
+Uf/ZnL1DwqUstyCW7a69u9QGaz9cJd6lBmohw6oCa1E/L+X4h8C4gG2YC0GpNL/W
+TiARhxwkKOgnCgYDJOR+G06ACtl97fTSC+6uLZP4bd9IdtSmvotYia08lsl/scLO
+BjWRpELGQV97aD011TVNzmM4Lk9ElownNMCRKqyLHCU5+q8h9MNHlZ6wUJ7hBXAk
+zq7re8TaaXfmT1/Mqr1IQmlmIdno3AeZ3p1JKfwunTEyZr1qBIk=
+=VGt2
+-----END PGP SIGNATURE-----
+
+--ggta6jjiwxntt2pw--
 
