@@ -1,100 +1,151 @@
-Return-Path: <linux-kernel+bounces-311257-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311259-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16B6A9686C5
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 13:54:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F6039686CB
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 13:55:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C95772836E7
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 11:54:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 68FC3B25A34
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 11:55:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 090941DAC46;
-	Mon,  2 Sep 2024 11:54:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45B801DAC46;
+	Mon,  2 Sep 2024 11:55:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rjZtWnsO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="0cQML09U";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="lkIJ4uXa"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6037817F394;
-	Mon,  2 Sep 2024 11:54:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DDD41D6C73;
+	Mon,  2 Sep 2024 11:55:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725278076; cv=none; b=VuzjTi2MUgAAJ/M5Dz4Ri6sKq/Y/ZJT4Rz6blYorTtTxm54NbL2je2fr2weQHZE/wxdaZ6ou8o6XJ4WVJNDbiZq1uM/RPSQK0ZZxe/SUsSxPNLdnjaOUgCoc5BnId/mRSavYfYe7h8YxOr5x98TFZZnYBAB2I4cHjk+PLVIWyhU=
+	t=1725278105; cv=none; b=uuE8zD23fRzfOfJKR+GNhw/fWZlevUZwPby/JWgfYn+ttGOU2Ks8ohwyRhliSt20/eQl4t0L7YFpKK555BTjRYFkK5TRK5IwfzmQvwur/lRW0Kb1v2FUGvKTG0Nypi0tUeOl8k2vZILUa4hxKJkKaiMlADFTFEXxvjh2j1n4mdU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725278076; c=relaxed/simple;
-	bh=Qoy6TXYrDxb7VDyVoMvrB2KIvBuOAimyxOxwy2B2xwY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qOdJGOAF2ZlotYxCSMKLaFENMt/sSOSskpqmlEOmtBXnm34IJExjER74CnUxF/1RKA8oOxf6JYKtQQbyqTRw9X0X7QjC6Q0S/usvHk4EgVUHLONPu3tfBK9hyx/p06zlaiJB/UhDYyHRN2ZYsP5WvzItIiezkGFOTYEjQzQrZpU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rjZtWnsO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB4A5C4CEC2;
-	Mon,  2 Sep 2024 11:54:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725278076;
-	bh=Qoy6TXYrDxb7VDyVoMvrB2KIvBuOAimyxOxwy2B2xwY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rjZtWnsOxeRzyuI7Z4qmPAKCdx1AvBKFI2lSofSFykDSP2ZMddVNl1yGd8dQZ/4Us
-	 fvzb+3z8YINo3shAunu7qYN8vY3e9m2TJAiW2zNYY3V3pKs+AlUxWxtBMhL+O2DYsh
-	 BpPLh+tkTCHB2Sl0UU8/ENIg6Owa3587xsqSGDSRg21Tm+A4TQVFGeX6OjB2akqJRl
-	 LyE75B6FBGBpc8H1zssczwP/eGRETY1oMkmyq/KjykAgyPcJJf4ZfzLZxjJ/Az7hG/
-	 Zcvhza5hyL7Qq7zpdy+vNYQXMijvD0Fovvva4neFklk6lMbCGngHwickdK6alRoCgt
-	 o5NBYK47YP8Dw==
-Date: Mon, 2 Sep 2024 13:54:33 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Alexandru Ardelean <aardelean@baylibre.com>
-Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, jic23@kernel.org, krzk+dt@kernel.org, robh@kernel.org, 
-	lars@metafoo.de, michael.hennerich@analog.com, gstols@baylibre.com
-Subject: Re: [PATCH v2 6/8] dt-bindings: iio: adc: document diff-channels
- corner case for some ADCs
-Message-ID: <pu536g76q5xanhwnvhpr52mttonb4gkmxfwwof4fyo4sww2g3l@6s7x3joiuzfa>
-References: <20240902103638.686039-1-aardelean@baylibre.com>
- <20240902103638.686039-7-aardelean@baylibre.com>
+	s=arc-20240116; t=1725278105; c=relaxed/simple;
+	bh=oBHHMeHiBha/fXabSA6UGxz6iD01FGTyzpDAgaM2OBw=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=fz6FMhSvbyhwJzAROjY1zqImIsk+mBEzDxvCZOhv7fg5TwzVLNWAOG3ZcoSpcxVYNWkochH3gzbh9aYtOd+H3UMuwZebbQlETpi+6sxgA/+9rFJyHeQpYgUnp4ySw+RrQ6tIhyi3W61VyUnbiypq+PEV9rJSK31cNORG+7in0OU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=0cQML09U; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=lkIJ4uXa; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1725278102;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=sEgsc5hfwM3ia/sAR7ebt4TKSr5Pvzs7BQG/4VSVeIk=;
+	b=0cQML09UZi5csPnYHKk9/AcDeo9RrboR8toJS2MoJJxZtJjbZQO4er92aqP37pf3tF3KYo
+	B7CsiytHbvp5JAwoUmaIFKDOljiwHBgHKsSbpSFyGL77SHKiXzKbc7rIuOBbjjJletV5b5
+	+vQAtzPInUxUb96foq9u3SAulT2wCQ3fTM4ktJcOtpBTTJY2KF69ybew7eI9dU8mPwtkjc
+	l9h4jNj+5gzVVrr8YA+VUFwl6tCDu5tSbfP71X/5oRYupvqqqBsNyp4SSjpJhTvSMDK/Ov
+	VZTUa0/3lgBgYuGrbaZ6GPNdxKy1fsCZ6lWqX8xPEan5Agc2UzhfbDcontaS9Q==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1725278102;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=sEgsc5hfwM3ia/sAR7ebt4TKSr5Pvzs7BQG/4VSVeIk=;
+	b=lkIJ4uXaxPac8zjaUxEtoY+WcZYF7rh33Smg10Am/Xgg45lhdJBXhlNLzsejtGadHI4nEz
+	TuBxXTEcTfvmpXCA==
+To: "Christoph Lameter (Ampere)" <cl@gentwo.org>
+Cc: Christoph Lameter via B4 Relay <devnull+cl.gentwo.org@kernel.org>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Waiman Long <longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>, Linus
+ Torvalds <torvalds@linux-foundation.org>, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-arch@vger.kernel.org
+Subject: Re: [PATCH v2] Avoid memory barrier in read_seqcount() through load
+ acquire
+In-Reply-To: <b0543714-9176-f3a3-1ca9-55bbedf6a0c3@gentwo.org>
+References: <20240819-seq_optimize-v2-1-9d0da82b022f@gentwo.org>
+ <87ttfbeyqt.ffs@tglx> <b0543714-9176-f3a3-1ca9-55bbedf6a0c3@gentwo.org>
+Date: Mon, 02 Sep 2024 13:55:01 +0200
+Message-ID: <871q226zje.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240902103638.686039-7-aardelean@baylibre.com>
+Content-Type: text/plain
 
-On Mon, Sep 02, 2024 at 01:36:29PM +0300, Alexandru Ardelean wrote:
-> Some ADCs have channels with negative and positive inputs, which can be
-> used to measure differential voltage levels. These inputs/pins are
-> dedicated (to the given channel) and cannot be muxed as with other ADCs.
-> 
-> For those types of setups, the 'diff-channels' property can be specified to
-> be used with the channel number (or reg property) for both negative and
-> positive inputs/pins.
-> 
-> Signed-off-by: Alexandru Ardelean <aardelean@baylibre.com>
-> ---
->  Documentation/devicetree/bindings/iio/adc/adc.yaml | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/iio/adc/adc.yaml b/Documentation/devicetree/bindings/iio/adc/adc.yaml
-> index 8e7835cf36fd..9b7a8e149639 100644
-> --- a/Documentation/devicetree/bindings/iio/adc/adc.yaml
-> +++ b/Documentation/devicetree/bindings/iio/adc/adc.yaml
-> @@ -37,6 +37,10 @@ properties:
->        to both the positive and negative inputs of a differential ADC.
->        The first value specifies the positive input pin, the second
->        specifies the negative input pin.
-> +      There are also some ADCs, where the differential channel has dedicated
-> +      positive and negative inputs which can be used to measure differential
-> +      voltage levels. For those setups, this property can be configured with
-> +      the the 'reg' property (i.e. diff-channels = <reg reg>).
+On Wed, Aug 28 2024 at 10:15, Christoph Lameter wrote:
+> On Fri, 23 Aug 2024, Thomas Gleixner wrote:
+>
+>> This all can be done without the extra copies of the counter
+>> accessors. Uncompiled patch below.
+>
+> Great. Thanks. Tried it too initially but could not make it work right.
+>
+> One thing that we also want is the use of the smp_cond_load_acquire to
+> have the cpu power down while waiting for a cacheline change.
+>
+> The code has several places where loops occur when the last bit is set in
+> the seqcount.
+>
+> We could use smp_cond_load_acquire in load_sequence() but what do we do
+> about the loops at the higher level? Also this does not sync with the lock
+> checking logic.
 
-Please run scripts/checkpatch.pl and fix reported warnings. Then please
-run  and (probably) fix more warnings.
-Some warnings can be ignored, especially from --strict run, but the code
-here looks like it needs a fix. Feel free to get in touch if the warning
-is not clear.
+Come on. It's not rocket science to figure that out.
 
-Best regards,
-Krzysztof
+Uncompiled delta patch below.
 
+Thanks,
+
+        tglx
+---
+--- a/include/linux/seqlock.h
++++ b/include/linux/seqlock.h
+@@ -23,6 +23,13 @@
+ 
+ #include <asm/processor.h>
+ 
++#ifdef CONFIG_ARCH_HAS_ACQUIRE_RELEASE
++# define USE_LOAD_ACQUIRE	true
++# define USE_COND_LOAD_ACQUIRE	!IS_ENABLED(CONFIG_PREEMPT_RT)
++#else
++# define USE_LOAD_ACQUIRE	false
++# define USE_COND_LOAD_ACQUIRE	false
++#endif
+ /*
+  * The seqlock seqcount_t interface does not prescribe a precise sequence of
+  * read begin/retry/end. For readers, typically there is a call to
+@@ -134,10 +141,13 @@ static inline void seqcount_lockdep_read
+ 
+ static __always_inline unsigned __seqprop_load_sequence(const seqcount_t *s, bool acquire)
+ {
+-	if (acquire && IS_ENABLED(CONFIG_ARCH_HAS_ACQUIRE_RELEASE))
+-		return smp_load_acquire(&s->sequence);
+-	else
++	if (!acquire || !USE_LOAD_ACQUIRE)
+ 		return READ_ONCE(s->sequence);
++
++	if (USE_COND_LOAD_ACQUIRE)
++		return smp_cond_load_acquire(&s->sequence, (s->sequence & 1) == 0);
++
++	return smp_load_acquire(&s->sequence);
+ }
+ 
+ /*
+@@ -283,8 +293,12 @@ SEQCOUNT_LOCKNAME(mutex,        struct m
+ ({									\
+ 	unsigned __seq;							\
+ 									\
+-	while ((__seq = seqprop_sequence(s, acquire)) & 1)		\
+-		cpu_relax();						\
++	if (acquire && USE_COND_LOAD_ACQUIRE) {				\
++		__seq = seqprop_sequence(s, acquire);			\
++	} else {							\
++		while ((__seq = seqprop_sequence(s, acquire)) & 1)	\
++			cpu_relax();					\
++	}								\
+ 									\
+ 	kcsan_atomic_next(KCSAN_SEQLOCK_REGION_MAX);			\
+ 	__seq;								\
 
