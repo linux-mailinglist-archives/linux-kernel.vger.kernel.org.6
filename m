@@ -1,154 +1,110 @@
-Return-Path: <linux-kernel+bounces-311464-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311465-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BBCE96898A
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 16:11:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2065196898C
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 16:12:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3EBF71C22B92
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 14:11:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA00A1F239B6
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 14:12:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1255719F11A;
-	Mon,  2 Sep 2024 14:10:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75D0819F112;
+	Mon,  2 Sep 2024 14:12:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="j5mzraXN"
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NoE6E7dt"
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A19CA2139D4
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 14:10:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 526CB19F103;
+	Mon,  2 Sep 2024 14:12:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725286218; cv=none; b=XbuWWkuwGjC7orhMdJpcwNDuoA8be292rvtYXUsgKAN2f2+ARxP7InHzuNIZzYkDQHqvWM7DN1lktWcF6kfpsY4R48vAgOiTESd6oSLXbtAdRMW5yzy0WhQ961Oe9DTsNBSUimOyUv8hdz3qBqwUvWtzhorCjSwT1+cs8pjd8dc=
+	t=1725286326; cv=none; b=MPBKbbXRQXJ2Hg+6D+H8UZi7zJSt72Ci51GVH4yiF+UbbV585GZtKd4ChW2lTl4OOXc4jVIW2D4mzH3IO6WFNlnur60hablz+P2ZpRKcSYxw8JsobozZ44O79M6Z9KO8DQ/NUtpS+MEzGpuZZ5ZtqP+h1mJDuVu6ZPnnOdrc37s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725286218; c=relaxed/simple;
-	bh=6YwwAfyU0B0/g/tSliwXNeMH+iCOQdzN52CjixjX9mk=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=AgpgOtWxlgwl3aB/a69TLFfJXRwKnrDLiVvsEy1xf+ZNBI+dMw7aSvKFwdGLsBQiHT4ovWu7uauU6paEZNhhYk1vMFAexRLN2CX1Gwe71TTHs5YrdgoZk7GlA0LC4iumP56ZA9UrVvBB74BtAP3KTMp3X74aQcF0AgYlnRv7ilE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=j5mzraXN; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a8695cc91c8so427727266b.3
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2024 07:10:16 -0700 (PDT)
+	s=arc-20240116; t=1725286326; c=relaxed/simple;
+	bh=Y3dT1cqEaGxeNcpHnUz7gh7yRKuWdeTj/5wcehnNv6A=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=CYn3mwPcYy17x7uozVf/5KJJTOwp8retbQk2FBXF13jtgOzXTEwldLFt8Fe8shv1Ln9ne8s/vqLTcS35jTu1P4ilzpHpPJ8UivwWcn+oF5/cm5B/zJvDXGhGTmsPHZC7ZYvQNYjYSLgp3F+MpHcbv88+WY50gv5ZRG0tWsloakU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NoE6E7dt; arc=none smtp.client-ip=209.85.208.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5c26815e174so639852a12.0;
+        Mon, 02 Sep 2024 07:12:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1725286215; x=1725891015; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NEXG8xSsxSH4oncQomb3hsfY98uEQJs5PaBlHSgTpck=;
-        b=j5mzraXNI+KEuI4thSbE56dS7L+DvBRv36scs/n104p4Yq15ojPwKnwekPOIAPj7wK
-         6uxb5KMpjyjYDJh6Uh5GCzVAZjHouARPgFAnyZuRdS7yXcYBhuF/lgrPGNYswiWRbRQk
-         +E9YK62slOfkI/rzcw5zxFUTrnY/rJ0f1gP+FfV2HlTtx8ibccXYW/J90ErcMYIYLW8V
-         hTDAYclmqXKqtNZAyBJFegA+eTdhEsaziciGZhzSIvipBReZ5/zESmHefWQiBmbuVmzq
-         CwCJKNkL8W1UJ//69w+6Ly31ZhtCWQQQJl7eyWpr8bO99QVAhSkNY+SzG1aum4req7BY
-         dUwA==
+        d=gmail.com; s=20230601; t=1725286323; x=1725891123; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=RptCdAZky21+tAU1YnkwI1FByFYF8uROiRobK4HGMq4=;
+        b=NoE6E7dtXsy56oVOfAKVjeeNYvTR8pC3oe1mRFKP/iCgfeaBcl5mXDvcflZU0WJ1+L
+         cLs5bUYaDWY1oQxE+/cD5WbLy2mCj1AVQ7OUXalKJ0BshKghrZQUJMOgBPmykYd7p3se
+         8EGaqqshME1cySaeRK7I0Xtil8XH0QS1rrN5MXtYHarVu61JCoJXTVeAYiIXBnTaRgZA
+         0+7giRS6EuDOlb02i33NKpfPo/HrbYeK6NDTnEf86w9G2or+i+5+v5kqMfuP0RdSBvI/
+         x6rSbAZvks3RhOdsYoKSbLR4p7Tr79+mz+sCyzHVg3+7cWB1a3OQO+dFl6XyqOqje5YB
+         0m+g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725286215; x=1725891015;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=NEXG8xSsxSH4oncQomb3hsfY98uEQJs5PaBlHSgTpck=;
-        b=aOYB1Hb6IQJ7zOQ0o+q983x8lNIOA7ogpNsmdNPbIRbg3+05WYeD/8AlNuAIssJ3Fs
-         i6nms78hmSuf5liScb75yowPdmVxXIyWkZJx9qTTK9UrjumeTQTeWb8TPRBUk14sdSbE
-         eoGnZBYScpqHLLOjfCp/L0q/kfhva5y0yslNCkZaxgIc9py5qAOgh4sKwmiIbdwJvyqY
-         d7Kn22A5iRszMoNbZ33boUz0FKfIGv8edo7fGfHmqf+1ImnvLLwVAxcbdUkIoxMQDL6c
-         Xvux5L7ZsDDZHWcLohYYJwRGLnP3sTciGvMwHY2Kg0vcV9jeItm9SIgrQhLTz3M9zoRI
-         abIg==
-X-Gm-Message-State: AOJu0YxyIgL4ffn87b0Am3WBwbsPRBMdL4uFWq6tq8WS9MAbDicS4wLu
-	bx11Aseg55afy3Y4sCKCtykKxPtMAKU2zaAcl8OxThtmldbU7ZoELwqZA14Q13o=
-X-Google-Smtp-Source: AGHT+IGXCNyaNZl9sPxZZZ6KU5nSZOR6dYdungazLFE2e1ReXfppeBK2JoIQOrnSSkmu1lL/r4mscg==
-X-Received: by 2002:a17:907:3f24:b0:a7a:a892:8e05 with SMTP id a640c23a62f3a-a897f92022amr947243266b.33.1725286214766;
-        Mon, 02 Sep 2024 07:10:14 -0700 (PDT)
-Received: from localhost.localdomain ([5.133.47.210])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a89891d6f16sm561716066b.150.2024.09.02.07.10.13
+        d=1e100.net; s=20230601; t=1725286323; x=1725891123;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=RptCdAZky21+tAU1YnkwI1FByFYF8uROiRobK4HGMq4=;
+        b=m0PNCzqyUFVCFFMkBJhz8LtF27QdQVn61iZR5TCX0jC//bp9S08jSSNRGhcsqN7MXv
+         TVcA7ZFELAJJv4iLWyW3VoiME8+9HZC+JYQhHxtvhMjLpYm6RNHdV1iwFe8dQKtVCzy3
+         cpOJ2GQQ504VHHZT917C5DYuAHq6Jaqgta+9iJagtsiYDEy1VERVqJZsrd8MIueNUXJD
+         p3+ZLYdgvttU6q8urjAAva0gvb8KSz04h2RVE6zvGPhmHKY9A1mqaqO0+8ndgMvmWg+V
+         0ZfU7N5qif7JHhpw1PPDopefRExLY0xKmg08jBEW3e74m5PuMum1v6o2gnVyK+XOLPjj
+         Fo+Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVUs+Kvuy4gohNPgW3UJUQ45hgGEVgc6b/8A00gXxOEOcuDjVTCGQCd5KVkKymBVQVnEgqZ1rJDSWb0PA==@vger.kernel.org, AJvYcCWlS0/svOCTsdbdvAP0Vq+51IUCRrOWkStu3mMa/bSC10QdyeNBKu3eeHouL+KO5bZJuVrKdhtGm69Xz6A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxayVQK91SL5zT/5t3NvkOu+36rw5WX7a7BL/YAMQKKQs48nTJz
+	OuWFyr4gcLte/OqdR87TXPCG6wLZ+GpgxRlME/EyGiLvQ3bWbRj9
+X-Google-Smtp-Source: AGHT+IH8+ym5kCfrw/asOTbITqJyF7SOHJahHtR/KU4AxQeW5WnCSDCJSg5AiZSfLxAdOIT83maKXQ==
+X-Received: by 2002:a17:906:da86:b0:a86:722c:1460 with SMTP id a640c23a62f3a-a89d8782136mr498124666b.18.1725286323328;
+        Mon, 02 Sep 2024 07:12:03 -0700 (PDT)
+Received: from localhost (craw-09-b2-v4wan-169726-cust2117.vm24.cable.virginm.net. [92.238.24.70])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8a1cc8a2d5sm12301266b.28.2024.09.02.07.12.02
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Sep 2024 07:10:13 -0700 (PDT)
-From: srinivas.kandagatla@linaro.org
-To: gregkh@linuxfoundation.org
-Cc: linux-kernel@vger.kernel.org,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: [PATCH 4/4] slimbus: generate MODULE_ALIAS() from MODULE_DEVICE_TABLE()
-Date: Mon,  2 Sep 2024 15:10:04 +0100
-Message-Id: <20240902141004.70048-5-srinivas.kandagatla@linaro.org>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240902141004.70048-1-srinivas.kandagatla@linaro.org>
-References: <20240902141004.70048-1-srinivas.kandagatla@linaro.org>
+        Mon, 02 Sep 2024 07:12:02 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: "James E . J . Bottomley" <James.Bottomley@HansenPartnership.com>,
+	"Martin K . Petersen" <martin.petersen@oracle.com>,
+	linux-scsi@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] scsi: zalon: Remove trailing space after \n newline
+Date: Mon,  2 Sep 2024 15:12:02 +0100
+Message-Id: <20240902141202.308632-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-From: Masahiro Yamada <masahiroy@kernel.org>
+There is a extraneous space after a newline in a dev_printk message,
+remove it. Also fix non-tabbed indentation of the statement.
 
-Commit 9e663f4811c6 ("slimbus: core: add support to uevent") added the
-MODALIAS=slim:* uevent variable, but modpost does not generate the
-corresponding MODULE_ALIAS().
-
-To support automatic module loading, slimbus drivers still need to
-manually add MODULE_ALIAS("slim:<manf_id>:<prod_code>:*"), as seen in
-sound/soc/codecs/wcd9335.c.
-
-To automate this, make modpost generate the proper MODULE_ALIAS() from
-MODULE_DEVICE_TABLE(slim, ).
-
-Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
-Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- scripts/mod/devicetable-offsets.c |  4 ++++
- scripts/mod/file2alias.c          | 11 +++++++++++
- 2 files changed, 15 insertions(+)
+ drivers/scsi/zalon.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/scripts/mod/devicetable-offsets.c b/scripts/mod/devicetable-offsets.c
-index 518200813d4e..9c7b404defbd 100644
---- a/scripts/mod/devicetable-offsets.c
-+++ b/scripts/mod/devicetable-offsets.c
-@@ -153,6 +153,10 @@ int main(void)
- 	DEVID_FIELD(i3c_device_id, part_id);
- 	DEVID_FIELD(i3c_device_id, extra_info);
+diff --git a/drivers/scsi/zalon.c b/drivers/scsi/zalon.c
+index 22d412cab91d..15602ec862e3 100644
+--- a/drivers/scsi/zalon.c
++++ b/drivers/scsi/zalon.c
+@@ -139,7 +139,7 @@ zalon_probe(struct parisc_device *dev)
+ 		return -ENODEV;
  
-+	DEVID(slim_device_id);
-+	DEVID_FIELD(slim_device_id, manf_id);
-+	DEVID_FIELD(slim_device_id, prod_code);
-+
- 	DEVID(spi_device_id);
- 	DEVID_FIELD(spi_device_id, name);
- 
-diff --git a/scripts/mod/file2alias.c b/scripts/mod/file2alias.c
-index 5d1c61fa5a55..99dce93a4188 100644
---- a/scripts/mod/file2alias.c
-+++ b/scripts/mod/file2alias.c
-@@ -960,6 +960,16 @@ static int do_i3c_entry(const char *filename, void *symval,
- 	return 1;
- }
- 
-+static int do_slim_entry(const char *filename, void *symval, char *alias)
-+{
-+	DEF_FIELD(symval, slim_device_id, manf_id);
-+	DEF_FIELD(symval, slim_device_id, prod_code);
-+
-+	sprintf(alias, "slim:%x:%x:*", manf_id, prod_code);
-+
-+	return 1;
-+}
-+
- /* Looks like: spi:S */
- static int do_spi_entry(const char *filename, void *symval,
- 			char *alias)
-@@ -1555,6 +1565,7 @@ static const struct devtable devtable[] = {
- 	{"rpmsg", SIZE_rpmsg_device_id, do_rpmsg_entry},
- 	{"i2c", SIZE_i2c_device_id, do_i2c_entry},
- 	{"i3c", SIZE_i3c_device_id, do_i3c_entry},
-+	{"slim", SIZE_slim_device_id, do_slim_entry},
- 	{"spi", SIZE_spi_device_id, do_spi_entry},
- 	{"dmi", SIZE_dmi_system_id, do_dmi_entry},
- 	{"platform", SIZE_platform_device_id, do_platform_entry},
+ 	if (request_irq(dev->irq, ncr53c8xx_intr, IRQF_SHARED, "zalon", host)) {
+-	  dev_printk(KERN_ERR, &dev->dev, "irq problem with %d, detaching\n ",
++		dev_printk(KERN_ERR, &dev->dev, "irq problem with %d, detaching\n",
+ 		     dev->irq);
+ 		goto fail;
+ 	}
 -- 
-2.25.1
+2.39.2
 
 
