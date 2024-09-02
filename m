@@ -1,209 +1,131 @@
-Return-Path: <linux-kernel+bounces-311753-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311754-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1734968D0B
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 20:00:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB1E8968D10
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 20:08:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2A80A1F22FE0
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 18:00:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7EC372826EC
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 18:08:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA7311C62AE;
-	Mon,  2 Sep 2024 18:00:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D61C1C62B5;
+	Mon,  2 Sep 2024 18:08:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b="W0E1ioUE"
-Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com [209.85.219.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="GTBDNHj7"
+Received: from smtpout.efficios.com (smtpout.efficios.com [167.114.26.122])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E87C19F12F
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 18:00:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5080514287;
+	Mon,  2 Sep 2024 18:08:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.114.26.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725300031; cv=none; b=sozADlbEX4wsmcYV91/y0R8btLl0WUdj93bC8dsdNNcgs+Tyq7ZtDHZATfOl5f7CR7mOakM66sEwPSxfC0voNS+MqG8wWhFNX6rw8o6SqzUsj9M9qAXnsjolGKjnOerw9mcM4B2f7GicBQ7/q9XZOlDCUM+DCAd7YTs+yrBKUfo=
+	t=1725300506; cv=none; b=iGalV3Dj4YfFhahYV92a8D8ZrkqUv4x1WCyBVahrJXtIGCEAUmso3GpSBNcqZzh17aecn9FXwCmeYopk1Svk6x4bdAOGSYlpqgfKD3rClJlLqLfAyLGBWYPCxFdnRY15DX6fZ+mtxPjz4Zy70Wo39Woa6+9kYSE827+MdHnhZxs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725300031; c=relaxed/simple;
-	bh=eIdZarM1ZLkVjotRPPZmnvVFmvtd6W2DF0WIqNGWdp0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Z23c3AJDR4OPNJFVKboiCRsQIm2m3ZqIbh/jw7fL2yMnXYXscn26JWU9oc/wykGBo86DchKn+Gr0XtT0JMF6QtdCJj2FnP8ElEEeNy2oIDI+WDra0QPcgwaER+NDH5TYgO1FHKVKZNMNIBTA69qVvkxBy86ANv6jIJl9OxvuVMs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com; spf=pass smtp.mailfrom=raspberrypi.com; dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b=W0E1ioUE; arc=none smtp.client-ip=209.85.219.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=raspberrypi.com
-Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-e13d5cbc067so4759739276.2
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2024 11:00:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=raspberrypi.com; s=google; t=1725300028; x=1725904828; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=TDNeSmr+pEwKiBUwbmQzYPYqs+N6cVSAJynan+v3I9Q=;
-        b=W0E1ioUEEe626nTl+afl8lO4DVm2lEoZZ6RWB2n7LmwxDYJjXMj60+ApB83mftARpu
-         v+EXTrCvmAdt8W8+5XLR3JxMwk606dKA0DlfGLy0pjjvzAIGDH1o35F6OgTgJoWLBO1J
-         qUQ9G1cwGm3O+5T/sL+698kNbq/BRSAmipYkZp8VhmEP1S4zb2LhUrmLosZYScEKshD5
-         upxs0rCAyv/K0qM4h2V6GW58iG+UDtN2ZbXJOSYGVgbH+C3EgG9qWNnfzDvClN7NQWKp
-         eEchcQTd40LTRv/Hfl+RyuhQ2U8B/dGRXxGPd2oiDvluD8K/zM6Nuw+ha+/c66qi6o+5
-         JQxA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725300028; x=1725904828;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=TDNeSmr+pEwKiBUwbmQzYPYqs+N6cVSAJynan+v3I9Q=;
-        b=qVT+qKBgzpzpa+SIEA1KJk6dOKmeyOLZWE8LFn7nTEuzUZc/yRuWuq2A3b0jbcJEUM
-         PCNpgPJNe6/6MUgwN4NAaWX/w6wYTOWM0JfYwBKl94/vQeG6Si5JEIXAPvaE0cIBDa7V
-         lNAdEmNmf2waDomC2hfcTqv5pnyRMuVsBfNRCWujM6ju9zfVqwMtySds2D190M0K3qOZ
-         8wH4MgEqkxMzcx7i1X81REWG+SuYgzRCez2DTk9V0qiveop4g9Pvq8efp/LpHmVsYopj
-         b3nhFZaaKnVQgHn8w3XqfctTxyRK9Tz3BYXZL9pwoJUMhr3PdTOdLchi5GErRwKW6CBF
-         SbNA==
-X-Forwarded-Encrypted: i=1; AJvYcCX7dZwD+TPIm7Ev7xkN5/ZBUfqHg5/0I0f5sR705b1aFi0qbNKxkXEyATb46CeLv08U3/oSf6xvL1KSvq4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyLbnOmGrgzlgA85mBdsRDWm8KonULkKRw70NByCOvYfkuKKYmp
-	+UpXr2cetkGuUGqjB2jtbaktJ4f1Upfa9lVgiXxfSNULwpp5wOxYwWBdHXxGfD04JV1Q60j7yNs
-	eWfD8986f4Fsh2IsrMHHRtr7s5YuHrt1zJ185eA==
-X-Google-Smtp-Source: AGHT+IFn4wQQczLIIxtXiQbYwUwHLtres2LmVlKhTtBWt0g9+wQzEl6+uilrT4mQe/H3yg5cNi2SGciwpTKS3FNIHAo=
-X-Received: by 2002:a25:ce50:0:b0:e1a:8026:e71b with SMTP id
- 3f1490d57ef6-e1a8026e893mr9541600276.54.1725300028277; Mon, 02 Sep 2024
- 11:00:28 -0700 (PDT)
+	s=arc-20240116; t=1725300506; c=relaxed/simple;
+	bh=0W12QeDYJ7tLn/TygJCk1LuRNBEti1l/SOkQQI1YJSM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FtWJcXUO2bW1QsJxFFNtYsYtW1jyfAXUaxv9YH3CdmwSOrHW1p+IObR4/0JOPp/J39C26g8JnyuTdY6gjHxp5QUCWyet+g6YD7f8RpFA/1w77k1LdZ4WI/ekkN8e009lwlFLxFEKOuR78am0WDeousATs4TFTuOzi4l17EwFq7I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=GTBDNHj7; arc=none smtp.client-ip=167.114.26.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
+	s=smtpout1; t=1725300501;
+	bh=0W12QeDYJ7tLn/TygJCk1LuRNBEti1l/SOkQQI1YJSM=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=GTBDNHj7ZuFQ96r3dvGy4U+GSTV7lSg3/ToCYYvxelNqBuzMCu8v+i+D4lza96DWc
+	 ikHwdpexy4525OjvIJYOR2Oo/TLPp4UwasFueDmAY7SqNRK2APHBy+d2NdLr0Kn/bD
+	 7k1BCfydKVtYX3l/95RUV58oBaOX+6LJbLwOpWaAaaREPOMUINvv2A7mhc2ICeMiWs
+	 vYkqc8V7cLWLpEMGCkZs/2nbMBCY11oMUJDT01FWPNqDQxOruCGI2n0v9jHwjNHiKH
+	 B52oi+GUy5XE1BWEtRLfzeLsiBAZSu12VNFMdycXKlrJE4P4Z6M7GN+zA8j8zyC31V
+	 TQCK6+e8WAwOA==
+Received: from [IPV6:2606:6d00:100:4000:cacb:9855:de1f:ded2] (unknown [IPv6:2606:6d00:100:4000:cacb:9855:de1f:ded2])
+	by smtpout.efficios.com (Postfix) with ESMTPSA id 4WyGvn5Jq1z1K5h;
+	Mon,  2 Sep 2024 14:08:21 -0400 (EDT)
+Message-ID: <9de6ca8f-b3f1-4ebc-a5eb-185532e164e7@efficios.com>
+Date: Mon, 2 Sep 2024 14:08:00 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240902-imx290-avail-v3-0-b32a12799fed@skidata.com> <20240902-imx290-avail-v3-2-b32a12799fed@skidata.com>
-In-Reply-To: <20240902-imx290-avail-v3-2-b32a12799fed@skidata.com>
-From: Dave Stevenson <dave.stevenson@raspberrypi.com>
-Date: Mon, 2 Sep 2024 19:00:12 +0100
-Message-ID: <CAPY8ntCj=u4ZQJwjhvZF30x08Cf0h7R5yQTim7QCKd8bi_M08w@mail.gmail.com>
-Subject: Re: [PATCH v3 2/7] media: i2c: imx290: Define absolute control ranges
-To: bbara93@gmail.com
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, 
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
-	Sakari Ailus <sakari.ailus@linux.intel.com>, Hans de Goede <hdegoede@redhat.com>, 
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
-	Alexander Stein <alexander.stein@ew.tq-group.com>, linux-media@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Benjamin Bara <benjamin.bara@skidata.com>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 2/2] cleanup.h: Introduce DEFINE_INACTIVE_GUARD and
+ activate_guard
+To: Peter Zijlstra <peterz@infradead.org>,
+ Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
+ Kees Cook <keescook@chromium.org>, Greg KH <gregkh@linuxfoundation.org>,
+ Sean Christopherson <seanjc@google.com>, Steven Rostedt
+ <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>,
+ Alexei Starovoitov <ast@kernel.org>, Yonghong Song <yhs@fb.com>,
+ "Paul E . McKenney" <paulmck@kernel.org>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Namhyung Kim <namhyung@kernel.org>, bpf@vger.kernel.org,
+ Joel Fernandes <joel@joelfernandes.org>, linux-trace-kernel@vger.kernel.org,
+ Ingo Molnar <mingo@kernel.org>
+References: <20240828143719.828968-1-mathieu.desnoyers@efficios.com>
+ <20240828143719.828968-3-mathieu.desnoyers@efficios.com>
+ <20240902154334.GH4723@noisy.programming.kicks-ass.net>
+From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Content-Language: en-US
+In-Reply-To: <20240902154334.GH4723@noisy.programming.kicks-ass.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Benjamin
+On 2024-09-02 11:43, Peter Zijlstra wrote:
+> On Wed, Aug 28, 2024 at 10:37:19AM -0400, Mathieu Desnoyers wrote:
+>> To cover scenarios where the scope of the guard differs from the scope
+>> of its activation, introduce DEFINE_INACTIVE_GUARD() and activate_guard().
+>>
+>> Here is an example use for a conditionally activated guard variable:
+>>
+>> void func(bool a)
+>> {
+>> 	DEFINE_INACTIVE_GUARD(preempt_notrace, myguard);
+>>
+>> 	[...]
+>> 	if (a) {
+>> 		might_sleep();
+>> 		activate_guard(preempt_notrace, myguard)();
+>> 	}
+>> 	[ protected code ]
+>> }
+> 
+> So... I more or less proposed this much earlier:
+> 
+>    https://lore.kernel.org/all/20230919131038.GC39346@noisy.programming.kicks-ass.net/T/#mb7b84212619ac743dfe4d2cc81decce451586b27
+> 
+> and Linus took objection to similar patterns. But perhaps my naming
+> wasn't right.
 
-On Mon, 2 Sept 2024 at 16:58, <bbara93@gmail.com> wrote:
->
-> From: Benjamin Bara <benjamin.bara@skidata.com>
->
-> For now, the driver activates the first mode (1080p) as current active
-> mode in probe(). This e.g. means that one cannot set VBLANK below 45
-> (vmax_min - height), although theoretically the minimum is 30 (720p
-> mode). Define the absolute possible/supported ranges to have them
-> available later.
+Then you suggested something like a "guard_if()":
 
-Currently the driver will set the ranges for VBLANK and HBLANK
-whenever the mode changes.
+https://lore.kernel.org/lkml/20231120221524.GD8262@noisy.programming.kicks-ass.net/
 
-How is it helpful to fake these numbers? Seeing as they aren't
-reflecting anything useful, they may as well all be 0.
+which I find really odd because it requires to evaluate the same
+condition twice within the function if it is used as guard_if
+expression and needed as expression within the rest of the function
+flow. I find the original patch with labels and gotos less ugly
+than the guard_if().
 
-> Signed-off-by: Benjamin Bara <benjamin.bara@skidata.com>
-> ---
-> Changes since v2:
-> - new
-> ---
->  drivers/media/i2c/imx290.c | 36 ++++++++++++++++++++++++++++++++----
->  1 file changed, 32 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/media/i2c/imx290.c b/drivers/media/i2c/imx290.c
-> index 1c97f9650eb4..466492bab600 100644
-> --- a/drivers/media/i2c/imx290.c
-> +++ b/drivers/media/i2c/imx290.c
-> @@ -499,6 +499,10 @@ static const struct imx290_clk_cfg imx290_720p_clock_config[] = {
->  };
->
->  /* Mode configs */
-> +#define WIDTH_720P     1280
-> +#define HEIGHT_720P    720
-> +#define MINIMUM_WIDTH  WIDTH_720P
-> +#define MINIMUM_HEIGHT HEIGHT_720P
->  static const struct imx290_mode imx290_modes_2lanes[] = {
->         {
->                 .width = 1920,
-> @@ -512,8 +516,8 @@ static const struct imx290_mode imx290_modes_2lanes[] = {
->                 .clk_cfg = imx290_1080p_clock_config,
->         },
->         {
-> -               .width = 1280,
-> -               .height = 720,
-> +               .width = WIDTH_720P,
-> +               .height = HEIGHT_720P,
->                 .hmax_min = 3300,
->                 .vmax_min = 750,
->                 .link_freq_index = FREQ_INDEX_720P,
-> @@ -537,8 +541,8 @@ static const struct imx290_mode imx290_modes_4lanes[] = {
->                 .clk_cfg = imx290_1080p_clock_config,
->         },
->         {
-> -               .width = 1280,
-> -               .height = 720,
-> +               .width = WIDTH_720P,
-> +               .height = HEIGHT_720P,
->                 .hmax_min = 3300,
->                 .vmax_min = 750,
->                 .link_freq_index = FREQ_INDEX_720P,
-> @@ -846,6 +850,30 @@ static const char * const imx290_test_pattern_menu[] = {
->         "000/555h Toggle Pattern",
->  };
->
-> +/* absolute supported control ranges */
-> +#define HBLANK_MAX     (IMX290_HMAX_MAX - MINIMUM_WIDTH)
-> +#define VBLANK_MAX     (IMX290_VMAX_MAX - MINIMUM_HEIGHT)
-> +static unsigned int imx290_get_blank_min(const struct imx290 *imx290, bool v)
-> +{
+Hence my proposal to optionally separate the definition from the activation,
+which nicely integrates with the existing code flow.
 
-This function is never used in this patch. I'm surprised the compiler
-doesn't throw an error on a static function not being used.
-You first use it in patch 4 "Introduce initial "off" mode & link freq"
+If Linus' objections were mainly about naming, perhaps what I am
+suggestion here may be more to his liking ?
 
-> +       const struct imx290_mode *modes = imx290_modes_ptr(imx290);
-> +       unsigned int min = UINT_MAX;
-> +       int i;
-> +
-> +       for (i = 0; i < imx290_modes_num(imx290); i++) {
-> +               unsigned int tmp;
-> +
-> +               if (v)
-> +                       tmp = modes[i].hmax_min - modes[i].width;
+Thanks,
 
-if (v)
-   return h
+Mathieu
 
-With the complete series my sensor comes up with controls defined as
-vertical_blanking 0x009e0901 (int)    : min=280 max=261423 step=1
-default=280 value=280
-horizontal_blanking 0x009e0902 (int)    : min=30 max=64255 step=1
-default=30 value=30
+-- 
+Mathieu Desnoyers
+EfficiOS Inc.
+https://www.efficios.com
 
-Set the mode to 1080p and I get
-vertical_blanking 0x009e0901 (int)    : min=45 max=261063 step=1
-default=45 value=1169
-horizontal_blanking 0x009e0902 (int)    : min=280 max=63615 step=1
-default=280 value=280
-
-  Dave
-
-> +               else
-> +                       tmp = modes[i].vmax_min - modes[i].height;
-> +
-> +               if (tmp < min)
-> +                       min = tmp;
-> +       }
-> +
-> +       return min;
-> +}
-> +
->  static void imx290_ctrl_update(struct imx290 *imx290,
->                                const struct imx290_mode *mode)
->  {
->
-> --
-> 2.46.0
->
->
 
