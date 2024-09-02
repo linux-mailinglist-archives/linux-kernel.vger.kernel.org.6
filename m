@@ -1,75 +1,47 @@
-Return-Path: <linux-kernel+bounces-311641-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311642-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2930B968B76
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 18:01:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F1C3968B7E
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 18:02:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 770221F21A82
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 16:01:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 17879282B33
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 16:02:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 557661A3029;
-	Mon,  2 Sep 2024 16:01:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 914501A302E;
+	Mon,  2 Sep 2024 16:02:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="e8wK5sYs"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CRAXP0Ih"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E923742AB7
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 16:01:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1D942A8D0;
+	Mon,  2 Sep 2024 16:02:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725292908; cv=none; b=b/lgwYOYM67VaaugnBRdAueA4WO4s3Qnh/9cduhwS47gfBxy77qxupJZISAx3oDMQyAQJCkATYjAN8CJHNhp07ADv4BH5ZNKVRLswie/1UggzWt1VDzUfV4Yb52X6vBDZCTQWwPIj23WvMavg09i/A18idD1CvBdGz5cBAR7aP8=
+	t=1725292952; cv=none; b=WuqvvmJCSw2CCjNS0lRgSoiKaogO7wwu/qiaHWPsAO/rpBYREc84q/N3+EwMp80o0iwvddZQTYDE+3QmKLabYosZf3+sYsfosF+QXxlcsO6yoJV8XZkaCoOsDJpaY3hzdyrqUgcoed/pvxc0ErF8ru53jun46S72LlEPbFONGmU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725292908; c=relaxed/simple;
-	bh=q1Sk8iuFNM9LQs8bptLDUAHhOMaqgVIg77iI7T6Vu8A=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=by9y1BZoJIcN6e5R4enXr6htLURUfmypVMQqfGKWEhxzdq+Hiqsceo8FqGVDroFV8rp/6285atCs9Zxodt3bW23crSwI5Op9SLtf0yg96OmPkkPOLKaDSnI+CP4cyKmZzYGWdEWBDW+ip9jO7OFJOFj0482v+racY2zQD2l3FwM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=e8wK5sYs; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-42c828c8863so11487055e9.3
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2024 09:01:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1725292905; x=1725897705; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=SF/Ff5WyVgapJBUAlK400SzZpWZqi3ZPw8P5uireNeY=;
-        b=e8wK5sYsjM0AD8LzuG7K+7Xl/+zk638xdmWTZ1BTH4jI2VoTmhmjzRW4vmu0KveuED
-         pTUiuldzjftnjn5xS/dllodJFBde9dDHHazU/T+gD8/iUn3EL/+RKDKwT+RDjN4cOuSY
-         DabfxJih/6s2w2OlarvpL0Bp7F9f3/Q/CX9zRVuVB0IIzeXXCvCe9tlUB2rDgJv0cqwm
-         Drm4JwFO2QWFJIeuGtPl42BxX+TIFt5G0S5B/WilEvfXOL5flVLn2c9ApoXeLaztFsZq
-         ESIU41qcBrDzBkCFm8LQ9rGmWptL2MneSC/7CWww1gShlvQjurc4vJKFqUsQs0dBrwEx
-         EejQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725292905; x=1725897705;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=SF/Ff5WyVgapJBUAlK400SzZpWZqi3ZPw8P5uireNeY=;
-        b=DALdoORSxBP+YmA87xZEGB94YHG8tJL/x/MnWJ/LkXNxn042ERP14s4lEez5YLqhH7
-         w4eKBnWsmcY/nR9jQG+DqSfuBaWuq5jnB+D836/w8D3V89AMOBMFsQcqnFH0Rvv5TkVk
-         Ho7XJCgoj5EEiBt2g9MkNOBgN6sFhbJV4ub27FISoVwkwBC5P6ufHgKlN+VXwPOUcI9E
-         syWmKmNsWypdnq6qsZkiT5IbGfUsqP8V895WsiTlTa9/wHAqdPzAxjpgCkdTTy5MVqEt
-         uyuoj/vuHeRrQeWxeL7pbA8e9AnybAGKb8hmhwXJPy2fp9pTPqrh4rwJuq4wbMRmE7i3
-         qg+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCV5y1B67vxDfKy+FYF4+izhZvJfL9fr2/xYtxWeqeiuV6n4M6mBha7bWax/VSbe7DLqgwr8Rc1HzYSq/4Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxA7Fs1Vwri/Bju1PKX4rVI04loPjU02f/MMKBUVObgQXkI8tGP
-	oh0UukzTOJKtI49d3dn9XqaWF2Jd4j0QyqPolXcUmhPhUMv3Gcop7nvrUq20I9E=
-X-Google-Smtp-Source: AGHT+IF1FhUQ7IvRKPdMigexj7urXN7rPlu172HF+X6OH59nohe9A0m5J5raB29jCzlTZvWnIcmgDA==
-X-Received: by 2002:a05:600c:1d27:b0:428:9ba:39f with SMTP id 5b1f17b1804b1-42bdc6333bdmr57198385e9.11.1725292904649;
-        Mon, 02 Sep 2024 09:01:44 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:982:cbb0:7dba:3cd0:a1f4:e3fa? ([2a01:e0a:982:cbb0:7dba:3cd0:a1f4:e3fa])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42ba639d512sm175180525e9.18.2024.09.02.09.01.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 02 Sep 2024 09:01:44 -0700 (PDT)
-Message-ID: <925061d3-9894-4332-8c2a-e494ad22c66b@linaro.org>
-Date: Mon, 2 Sep 2024 18:01:43 +0200
+	s=arc-20240116; t=1725292952; c=relaxed/simple;
+	bh=6LeCsdM8CqtOIi4hNTfkKo04Af3xwWWjHmr/+DqmEPo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WQIxDB2TsYclJM5taWIO0vUnSucY6VFPwbCOAg05wDlb0n7k05cr5pxl4GfDUg1wGXjmvwqNiZvfe2ljkmbNir1eASJLAAK2HT8q9QymXPvZBo6Fc/FenxDoyf9MHEwPnJblJoHYA7T+eBhDUVKAYQy94ltweHJBGj/DQe+xwnM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CRAXP0Ih; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BC3D6C4CEC2;
+	Mon,  2 Sep 2024 16:02:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725292951;
+	bh=6LeCsdM8CqtOIi4hNTfkKo04Af3xwWWjHmr/+DqmEPo=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=CRAXP0IhQSi+6W2FU8hkG1UG9b9yeW0eF3Dd1kxh2x3nqJ4T/Y/34p1IBpSVix4MD
+	 XS4/rjeoVnkI/VCPvk4xZvpqgsQDosxPhUeZaQVmRWJ81ZCgoFl8ysDcUwEWFoGwXv
+	 psbdS3MPjdcC1BffysLVBd0t+mATAN6jYzv1uqRPI9OeqMpLQ8gE5mRWMOQHE9p0nc
+	 x91ZGo+z/e1fubYOy2IhNmp1ISwnYMWuOXSZwYwA2U2W7dmFFxJIBMOaQwa3/+gOHw
+	 HdCiVD/ckhhKfCvnffXUNO1dvIzWLRAWqaKtQNRWcnPDITAcO83tpWnyqBm9XUqnXO
+	 DEoxU3PHv5eQw==
+Message-ID: <45037518-41b7-4cc1-a7f4-c4a0c9873950@kernel.org>
+Date: Mon, 2 Sep 2024 18:02:24 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,157 +49,179 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-From: neil.armstrong@linaro.org
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH 2/2] arm64: dts: qcom: x1e80100-romulus: Set up USB
- Multiport controller
-To: Konrad Dybcio <konradybcio@kernel.org>,
- Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: Marijn Suijten <marijn.suijten@somainline.org>,
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, Konrad Dybcio <quic_kdybcio@quicinc.com>,
- 20240830-nxp-ptn3222-v2-0-4c6d8535cf6c@linaro.org
-References: <20240902-topic-sl7_updates-v1-0-3ee667e6652d@quicinc.com>
- <20240902-topic-sl7_updates-v1-2-3ee667e6652d@quicinc.com>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <20240902-topic-sl7_updates-v1-2-3ee667e6652d@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Subject: Re: AW: [PATCH 1/2] dt-bindings: hwmon: Introduce ADS71x8
+To: "Sperling, Tobias" <Tobias.Sperling@Softing.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-hwmon@vger.kernel.org" <linux-hwmon@vger.kernel.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+ "jdelvare@suse.com" <jdelvare@suse.com>,
+ "linux@roeck-us.net" <linux@roeck-us.net>, "robh@kernel.org"
+ <robh@kernel.org>, "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
+ "conor+dt@kernel.org" <conor+dt@kernel.org>, "corbet@lwn.net"
+ <corbet@lwn.net>
+References: <BE1P281MB24208CB90AF549578AA5C384EF972@BE1P281MB2420.DEUP281.PROD.OUTLOOK.COM>
+ <ypez4vjmasehqflgi4ylylpicldabf2dc6wwjco34qr2zmkdvx@enejrjjyaulf>
+ <BE1P281MB24208DE67DB0B1E9A75823ECEF922@BE1P281MB2420.DEUP281.PROD.OUTLOOK.COM>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <BE1P281MB24208DE67DB0B1E9A75823ECEF922@BE1P281MB2420.DEUP281.PROD.OUTLOOK.COM>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 02/09/2024 16:50, Konrad Dybcio wrote:
-> From: Konrad Dybcio <quic_kdybcio@quicinc.com>
+On 02/09/2024 15:48, Sperling, Tobias wrote:
+>> On Fri, Aug 30, 2024 at 11:49:53AM +0000, Sperling, Tobias wrote:
+>>> >From b2e04ce5500faf274654be5284be9db4f3abefce Mon Sep 17 00:00:00
+>> 2001
+>>
+>> Some junk ^^^ above. Please investigate how you send patches.
 > 
-> The USB MP controller is wired up to the USB-A port on the left side
-> and to the Surface Connector on the right side. Configure it.
+> Yeah also saw this line, but of course tried to apply the patch again after sending it
+> as mail and that worked fine. But just checked again and seems like this line can be
+> dropped.
+> And yes, I sent the patches manually, as we likely have some restrictions for smtp,
+> but as I was able to apply them again it's fine I guess.
 > 
-> While at it, remove a stray double \n.
+>>> From: Tobias Sperling <tobias.sperling@softing.com>
+>>> Date: Fri, 23 Aug 2024 12:08:33 +0200
+>>> Subject: [PATCH 1/2] dt-bindings: hwmon: Introduce ADS71x8
+>>
+>> And all this suggests malformed patch.
 > 
-> Signed-off-by: Konrad Dybcio <quic_kdybcio@quicinc.com>
-> ---
->   .../boot/dts/qcom/x1e80100-microsoft-romulus.dtsi  | 59 +++++++++++++++++++++-
->   1 file changed, 57 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/x1e80100-microsoft-romulus.dtsi b/arch/arm64/boot/dts/qcom/x1e80100-microsoft-romulus.dtsi
-> index 5419d0b02785..ac2acf949b70 100644
-> --- a/arch/arm64/boot/dts/qcom/x1e80100-microsoft-romulus.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/x1e80100-microsoft-romulus.dtsi
-> @@ -572,7 +572,17 @@ &i2c5 {
->   
->   	status = "okay";
->   
-> -	/* Something @4f */
-> +	ptn3222: redriver@4f {
-> +		compatible = "nxp,ptn3222";
-> +		reg = <0x4f>;
-> +
-> +		reset-gpios = <&tlmm 7 GPIO_ACTIVE_LOW>;
-> +
-> +		vdd3v3-supply = <&vreg_l13b>;
-> +		vdd1v8-supply = <&vreg_l4b>;
-> +
-> +		#phy-cells = <0>;
+> Why? If I drop this I'm not able to apply the patch, so I think this should be fine.
 
-It's unrelated to mutiport USB-A, should go in a separate change,
-and also probably in a bigger change enabling usb-c features using
-the retimer.
+OK, it works with b4, but seeing duplicated subject is not expected and
+might not work with all tools.
 
-Neil
-
-> +	};
->   };
->   
->   &i2c7 {
-> @@ -583,7 +593,6 @@ &i2c7 {
->   	/* PS8830 USB retimer @8 */
->   };
->   
-> -
->   &mdss {
->   	status = "okay";
->   };
-> @@ -717,6 +726,15 @@ &smb2360_1_eusb2_repeater {
->   	vdd3-supply = <&vreg_l14b>;
->   };
->   
-> +&smb2360_2 {
-> +	status = "okay";
-> +};
-> +
-> +&smb2360_2_eusb2_repeater {
-> +	vdd18-supply = <&vreg_l3d>;
-> +	vdd3-supply = <&vreg_l8b>;
-> +};
-> +
->   &tlmm {
->   	gpio-reserved-ranges = <44 4>, /* SPI (TPM) */
->   			       <238 1>; /* UFS Reset */
-> @@ -856,3 +874,40 @@ &usb_1_ss1_dwc3_hs {
->   &usb_1_ss1_qmpphy_out {
->   	remote-endpoint = <&pmic_glink_ss1_ss_in>;
->   };
-> +
-> +/* MP0 goes to the Surface Connector, MP1 goes to the USB-A port */
-> +&usb_mp {
-> +	status = "okay";
-> +};
-> +
-> +&usb_mp_hsphy0 {
-> +	vdd-supply = <&vreg_l2e>;
-> +	vdda12-supply = <&vreg_l2j>;
-> +
-> +	phys = <&smb2360_2_eusb2_repeater>;
-> +
-> +	status = "okay";
-> +};
-> +
-> +&usb_mp_hsphy1 {
-> +	vdd-supply = <&vreg_l2e>;
-> +	vdda12-supply = <&vreg_l2j>;
-> +
-> +	phys = <&ptn3222>;
-> +
-> +	status = "okay";
-> +};
-> +
-> +&usb_mp_qmpphy0 {
-> +	vdda-phy-supply = <&vreg_l3e>;
-> +	vdda-pll-supply = <&vreg_l3c>;
-> +
-> +	status = "okay";
-> +};
-> +
-> +&usb_mp_qmpphy1 {
-> +	vdda-phy-supply = <&vreg_l3e>;
-> +	vdda-pll-supply = <&vreg_l3c>;
-> +
-> +	status = "okay";
-> +};
 > 
+>>>
+>>> Add documentation for the driver of ADS7128 and ADS7138 12-bit, 8-channel
+>>> analog-to-digital converters. These ADCs have a wide operating range and
+>>> a wide feature set. Communication is based on an I2C interface.
+>>> The driver provides the functionality of manually reading single channels
+>>> or sequentially reading all channels automatically.
+>>>
+>>> Signed-off-by: Tobias Sperling <tobias.sperling@softing.com>
+>>> ---
+>>>  .../devicetree/bindings/hwmon/ti,ads71x8.yaml |  85 +++++++++++
+>>>  Documentation/hwmon/ads71x8.rst               | 140 ++++++++++++++++++
+>>>  Documentation/hwmon/index.rst                 |   1 +
+>>
+>> Please run scripts/checkpatch.pl and fix reported warnings. Then please
+>> run  and (probably) fix more warnings.
+>> Some warnings can be ignored, especially from --strict run, but the code
+>> here looks like it needs a fix. Feel free to get in touch if the warning
+>> is not clear.
+> 
+> Had done this already before submitting the patches (at least without --strict),
+> but only reports a warning about splitting the patch (which I got wrong here)
+> and updating the maintainers.
+> I guess you were about suggesting a second script to run. Which one is that?
+
+Please split the patches.
+
+> 
+>>> +$id:
+>> https://deu01.safelinks.protection.outlook.com/?url=http%3A%2F%2Fdevicetree.
+>> org%2Fschemas%2Fhwmon%2Fti%2Cads71x8.yaml%23&data=05%7C02%7C%7C
+>> ff09fedbe2744394f78508dcc9881ee7%7Cfe3606fad3974238999768dcd7851f64
+>> %7C1%7C0%7C638606833686313557%7CUnknown%7CTWFpbGZsb3d8eyJWIjoi
+>> MC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C0%7C
+>> %7C%7C&sdata=vZaCpdaNzELpNNnd6wp5P9MNLQTnAmWXYD%2BNKQYCJ78%
+>> 3D&reserved=0
+>>> +$schema:
+>> https://deu01.safelinks.protection.outlook.com/?url=http%3A%2F%2Fdevicetree.
+>> org%2Fmeta-
+>> schemas%2Fcore.yaml%23&data=05%7C02%7C%7Cff09fedbe2744394f78508dcc
+>> 9881ee7%7Cfe3606fad3974238999768dcd7851f64%7C1%7C0%7C63860683368
+>> 6326954%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2lu
+>> MzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C0%7C%7C%7C&sdata=EJflznuTZYGR
+>> BRjULwohiHk8gPF9iRusSbmF8CKkl5Q%3D&reserved=0
+>>> +
+>>> +title: Texas Instruments ADS7128/ADS7138 Analog to Digital Converter (ADC)
+>>> +
+>>> +maintainers:
+>>> +  - None
+>>
+>> Fidn a person... otherwise why would we care?
+> 
+> I know it's not nice, but we are likely not implementing further features, but OK, will
+> add myself then.
+> 
+>>> +    default: 1
+>>> +
+>>> +  interrupts:
+>>> +    description: |
+>>> +      Only considered in mode 1!
+>>
+>> What is "considered"? Driver considers? This does not matter. Describe
+>> the hardware and if this is hardware related, you should have
+>> allOf:if:then restricting this.
+> 
+> It's possible to define a mode, either manual sampling or autosampling. In the
+> latter mode, also the hardware capabilities change, e.g. the driver is able to
+> trigger an interrupt so defining the interrupt only makes sense in that mode.
+> Will have a look to allOf:if:then then.
+> 
+>>> +            compatible = "ti,ads7138";
+>>> +            reg = <0x10>;
+>>> +            avdd-supply = <&reg_stb_3v3>;
+>>> +            ti,mode = /bits/ 8 <1>;
+>>> +            ti,interval = /bits/ 16 <1000>;
+>>> +            interrupt-parent = <&gpio2>;
+>>> +            interrupts = <12 IRQ_TYPE_LEVEL_LOW>;
+>>> +            status = "okay";
+>>
+>> Drop
+> 
+> I guess, I shall only drop the "status" not the whole section?
+
+Only status
+
+Best regards,
+Krzysztof
 
 
