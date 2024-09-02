@@ -1,74 +1,62 @@
-Return-Path: <linux-kernel+bounces-311607-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311608-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 823E9968B18
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 17:32:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F26C0968B1E
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 17:34:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A79E21C21CC5
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 15:32:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 808191F230FA
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 15:34:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBE0B1A263C;
-	Mon,  2 Sep 2024 15:32:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AD9119F13A;
+	Mon,  2 Sep 2024 15:34:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RFMDEdhk"
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Yop8Mwho"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67C9938FB0;
-	Mon,  2 Sep 2024 15:31:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02CDA1CB514;
+	Mon,  2 Sep 2024 15:34:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725291120; cv=none; b=fDFfdVr2DmSMXubO2NMVQDoEbNqGgTUtH9mbY59VfbFWkDUUGeDgP+OSTE/kC91k5CCHsmcA1K/TcvoesxrMJq3iAMThBqP4kdg923yaC2OTP7oXe4QZfy2lbKpMlzkecgw3X9EfVfI5bbv7/r8mM20mVmacNF5IhH/DhLEtFOw=
+	t=1725291261; cv=none; b=WgugJZyr6Q5xVSL5Ck+mzgE+MLrvLnPvWStdT8AEuYE+6TGgpWkZCc5TOchqWH5h3yzfF4/mwRZ6kAyDvrCpSDXGvBbpsfkfWAQ3UzlJOr2bffwu64hxhI7xhIP96/JGtsKMlIJxkquw0+h3x9yE420tXVd01fW2XFIboG9kqvU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725291120; c=relaxed/simple;
-	bh=DRcS/eDXPxHpY5M/LuFQM13QEB+saRntbeQcU1Jk7ks=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=OCXiZzFtV06eRQYFhsi4niXgqEpcGX9qIta98RUKOxIZX/GsEfkLOCkyFwB3Uo04Vu4K/qM4aUCTE0CzgSECPnylD9/QSBl+IC/cwYuRLz2bimSBrKCJKICuZTs85KvkyuhMLPLmDmvjaobkavUkhHaKZxh7DVkyJ2Rzc/G7bik=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RFMDEdhk; arc=none smtp.client-ip=209.85.167.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-52f01b8738dso3103838e87.1;
-        Mon, 02 Sep 2024 08:31:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725291115; x=1725895915; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=1lEAaITg61rMOKoeV9sGqIv6NT56UG0eY9VP45Si6Hs=;
-        b=RFMDEdhkIOQZ8uj68lLjoKioN+7zvdVdCunb99DWu54BI6klyR1e9G5Quc/bDu/d4S
-         1dExMkQhKU+Ons+ilHTROoIGUOiI0NdHDJCvsxiCtcAYFXp320MQvgXSJKkX5uG8cdNg
-         guFEp3iixGOdd/scmHLj3kI/7a1tz1Cew4eYPRwbrRa/+jG8vKiO1PVsUXNQzzsIEizu
-         eU807uR57sXHx1DpqiYwjodQf8ten9NsjQk97dbbYnuOU62XB4lYo9DfiyxKY+Xzn1ps
-         5xaH/yySkbknsBmM92we9uNioq+3gSY9x6FF/9y6JXlab08VYgN3j7Ka2BG7AHEwnsuF
-         ZJuw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725291115; x=1725895915;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=1lEAaITg61rMOKoeV9sGqIv6NT56UG0eY9VP45Si6Hs=;
-        b=J79DkCMcWasQb9R8d2MDCTavbd7zaDKIpOWsFBowa2G/WZ9aX39UR5bjLno2Ktv/tc
-         K+ytYXSvbcWpYHkcBUqV4LFUijM/2hztTaxQBoGf3d4NFiQhI2r2Vv3dbiIGKcmQleSI
-         8L6N0wZuCQX3U1L9eS5L6j7Uq5GpsgGStI7hdA0MxB/zuFzk/5oPGTsmWszgGHoAhaKF
-         5GaEF7UJg4NNosZ36mhGN5RMCbbCiBgp186BVE3EcAdmGmejDdokoJn2e5g0/39s+86n
-         drxw3fal7gSXqen12NFLpfqUgLE+fWEgLbLzIpJa5NF8/VN2lMM236sWqv5lR1WA9zbG
-         g/qA==
-X-Forwarded-Encrypted: i=1; AJvYcCXR8B64K3J9GhQzhw6Gbi6p+oyiHjyeDAkn6bqlSfuiecZ2rkCKTmq4g+nwYrgKD0ID+azSdeXxzvKb9OE=@vger.kernel.org, AJvYcCXw/y6tgYzOEDdZqeK7jcQXySHn3mnhiMRgFgMZkBaUhUZ5uOmUdEVEsoXH0FJaDXDcLNTHcUcu4kkPqf0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwF7ZyLTdefZUyKuVDYOfUFtto3zEHaFXWGSfHcD3lU13Cnk95f
-	/UxD2alPcFZEqhgW+hRN33DhOFDeJwn84BqQMwg7SY9Ua/V4zq6Z
-X-Google-Smtp-Source: AGHT+IGYGf8VX7LIcYOgdyPmt731pfn6LVYofo2CruraVVYwx7aQjpnX8k6VgUS23jgFdINd2tm2Fw==
-X-Received: by 2002:a05:6512:a92:b0:533:77d:1176 with SMTP id 2adb3069b0e04-53546af3011mr6978933e87.4.1725291114527;
-        Mon, 02 Sep 2024 08:31:54 -0700 (PDT)
-Received: from [192.168.0.20] ([148.56.230.39])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8989233403sm569728466b.212.2024.09.02.08.31.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 02 Sep 2024 08:31:53 -0700 (PDT)
-Message-ID: <f6566469-36fe-4cf8-b1c1-4a476e5c5645@gmail.com>
-Date: Mon, 2 Sep 2024 17:31:52 +0200
+	s=arc-20240116; t=1725291261; c=relaxed/simple;
+	bh=vCcQ9NB0LiNRbZ//WE2/zEZ6PWxPEAu7O9GOLgqE/2M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=GcsWzt8NMHrxObSdYgcpyoEdrJvOk+BZh7vvQGBypUdNywZkBy12yUz1CvopBoPgHeloLF5fWOkn/pQ5U7opcyVTon+CLG4B8oUgZ7NlnAxNYPVgCcb5hwpgZQqRffZ2JfxNXRyKaTtyHOul4wpJeLh6yVZqoXbmQQVo+cDnJgg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Yop8Mwho; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 482AxvoR010042;
+	Mon, 2 Sep 2024 15:34:06 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	3DLs52+iwcPCDzJQJkKgEQL73datcOJ1QKKlau+klrM=; b=Yop8MwhoXjwAYRkd
+	kAL1JRcXzLEXfYS16Xp5nymjiHtPVB8WHat+ppYhsWr3+nue1aB1zBKto3AfXrZg
+	MLO5Od0tPot0ZAS+RHBVBLKRADm49m8wf+PUZkNWetYaj6TvTTvx8WmcWz6x7kkN
+	rrnwqul7BUbX2OH2bU1BfbzSo9Wa+goB9GuYc0ns7c+gwPJr3lthsL5U3SoMqKze
+	NhPxgEsxqZrW0HBGx6ESbzx/qyslg6rRPpsJEgi8YPuFdh/qT/O0T4GXmTlMPwsp
+	pdmlNGXv7hF2yVD356V2nrRWc4v+GZdefi4P2fCMr3A9kwMot6CrNZvawk8YGTeE
+	VXBTQw==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41brhndckg-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 02 Sep 2024 15:34:06 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 482FY4MQ026945
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 2 Sep 2024 15:34:04 GMT
+Received: from [10.253.79.111] (10.80.80.8) by nalasex01c.na.qualcomm.com
+ (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 2 Sep 2024
+ 08:34:00 -0700
+Message-ID: <ecc34401-68c2-463f-b630-6a81ad95625e@quicinc.com>
+Date: Mon, 2 Sep 2024 23:33:57 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,142 +64,110 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 3/3] soc: mediatek: cmdq: Remove cmdq_pkt_finalize()
- helper function
-To: Chun-Kuang Hu <chunkuang.hu@kernel.org>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Moudy Ho
- <moudy.ho@mediatek.com>, "Jason-JH . Lin" <jason-jh.lin@mediatek.com>,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- linux-media@vger.kernel.org
-References: <20240901143259.16849-1-chunkuang.hu@kernel.org>
- <20240901143259.16849-4-chunkuang.hu@kernel.org>
-Content-Language: en-US, ca-ES, es-ES
-From: Matthias Brugger <matthias.bgg@gmail.com>
-Autocrypt: addr=matthias.bgg@gmail.com; keydata=
- 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
-In-Reply-To: <20240901143259.16849-4-chunkuang.hu@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH v3 2/4] clk: qcom: Add CMN PLL clock controller driver for
+ IPQ SoC
+To: Stephen Boyd <sboyd@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        "Krzysztof
+ Kozlowski" <krzk+dt@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh@kernel.org>, Will Deacon <will@kernel.org>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <quic_kkumarcs@quicinc.com>,
+        <quic_suruchia@quicinc.com>, <quic_pavir@quicinc.com>,
+        <quic_linchen@quicinc.com>, <quic_leiwei@quicinc.com>,
+        <bartosz.golaszewski@linaro.org>, <srinivas.kandagatla@linaro.org>
+References: <20240827-qcom_ipq_cmnpll-v3-0-8e009cece8b2@quicinc.com>
+ <20240827-qcom_ipq_cmnpll-v3-2-8e009cece8b2@quicinc.com>
+ <d7b374670eb2f6d442f351106ab1221a.sboyd@kernel.org>
+ <7f4d41a0-b1b9-4b63-8590-63f4fcf1a359@quicinc.com>
+ <7736d0d0-634d-403d-b70f-f33b7402456c@quicinc.com>
+ <04944b77ce6327ba5f4ec96348a9cda2.sboyd@kernel.org>
+Content-Language: en-US
+From: Jie Luo <quic_luoj@quicinc.com>
+In-Reply-To: <04944b77ce6327ba5f4ec96348a9cda2.sboyd@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: bOj18FDAbeH-jVO2mgGuJ2irMu9A5k__
+X-Proofpoint-ORIG-GUID: bOj18FDAbeH-jVO2mgGuJ2irMu9A5k__
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-02_04,2024-09-02_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 mlxlogscore=999
+ spamscore=0 impostorscore=0 lowpriorityscore=0 suspectscore=0 phishscore=0
+ adultscore=0 priorityscore=1501 clxscore=1015 mlxscore=0 malwarescore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2407110000
+ definitions=main-2409020123
 
 
 
-On 01/09/2024 16:32, Chun-Kuang Hu wrote:
-> In order to have fine-grained control, use cmdq_pkt_eoc() and
-> cmdq_pkt_jump_rel() to replace cmdq_pkt_finalize().
+On 8/31/2024 6:24 AM, Stephen Boyd wrote:
+> Quoting Jie Luo (2024-08-30 09:14:28)
+>> Hi Stephen,
+>> Please find below a minor update to my earlier message on clk_ops usage.
 > 
-> Signed-off-by: Chun-Kuang Hu <chunkuang.hu@kernel.org>
+> Ok. Next time you can trim the reply to save me time.
 
-Acked-by: Matthias Brugger <matthias.bgg@gmail.com>
+OK.
 
-> ---
->   drivers/soc/mediatek/mtk-cmdq-helper.c | 22 ----------------------
->   include/linux/soc/mediatek/mtk-cmdq.h  | 13 -------------
->   2 files changed, 35 deletions(-)
 > 
-> diff --git a/drivers/soc/mediatek/mtk-cmdq-helper.c b/drivers/soc/mediatek/mtk-cmdq-helper.c
-> index a8fccedba83f..2a47dda4dd4a 100644
-> --- a/drivers/soc/mediatek/mtk-cmdq-helper.c
-> +++ b/drivers/soc/mediatek/mtk-cmdq-helper.c
-> @@ -538,27 +538,5 @@ int cmdq_pkt_eoc(struct cmdq_pkt *pkt)
->   }
->   EXPORT_SYMBOL(cmdq_pkt_eoc);
->   
-> -int cmdq_pkt_finalize(struct cmdq_pkt *pkt)
-> -{
-> -	struct cmdq_instruction inst = { {0} };
-> -	int err;
-> -
-> -	/* insert EOC and generate IRQ for each command iteration */
-> -	inst.op = CMDQ_CODE_EOC;
-> -	inst.value = CMDQ_EOC_IRQ_EN;
-> -	err = cmdq_pkt_append_command(pkt, inst);
-> -	if (err < 0)
-> -		return err;
-> -
-> -	/* JUMP to end */
-> -	inst.op = CMDQ_CODE_JUMP;
-> -	inst.value = CMDQ_JUMP_PASS >>
-> -		cmdq_get_shift_pa(((struct cmdq_client *)pkt->cl)->chan);
-> -	err = cmdq_pkt_append_command(pkt, inst);
-> -
-> -	return err;
-> -}
-> -EXPORT_SYMBOL(cmdq_pkt_finalize);
-> -
->   MODULE_DESCRIPTION("MediaTek Command Queue (CMDQ) driver");
->   MODULE_LICENSE("GPL v2");
-> diff --git a/include/linux/soc/mediatek/mtk-cmdq.h b/include/linux/soc/mediatek/mtk-cmdq.h
-> index 5bee6f7fc400..0c3906e8ad19 100644
-> --- a/include/linux/soc/mediatek/mtk-cmdq.h
-> +++ b/include/linux/soc/mediatek/mtk-cmdq.h
-> @@ -391,14 +391,6 @@ int cmdq_pkt_jump_rel(struct cmdq_pkt *pkt, s32 offset, u8 shift_pa);
->    */
->   int cmdq_pkt_eoc(struct cmdq_pkt *pkt);
->   
-> -/**
-> - * cmdq_pkt_finalize() - Append EOC and jump command to pkt.
-> - * @pkt:	the CMDQ packet
-> - *
-> - * Return: 0 for success; else the error code is returned
-> - */
-> -int cmdq_pkt_finalize(struct cmdq_pkt *pkt);
-> -
->   #else /* IS_ENABLED(CONFIG_MTK_CMDQ) */
->   
->   static inline int cmdq_dev_get_client_reg(struct device *dev,
-> @@ -519,11 +511,6 @@ static inline int cmdq_pkt_eoc(struct cmdq_pkt *pkt)
->   	return -EINVAL;
->   }
->   
-> -static inline int cmdq_pkt_finalize(struct cmdq_pkt *pkt)
-> -{
-> -	return -EINVAL;
-> -}
-> -
->   #endif /* IS_ENABLED(CONFIG_MTK_CMDQ) */
->   
->   #endif	/* __MTK_CMDQ_H__ */
+>> On 8/28/2024 1:44 PM, Jie Luo wrote:
+>>> On 8/28/2024 7:50 AM, Stephen Boyd wrote:
+>>>> Quoting Luo Jie (2024-08-27 05:46:00)
+>>>>> +       case 48000000:
+>>>>> +               val |= FIELD_PREP(CMN_PLL_REFCLK_INDEX, 7);
+>>>>> +               break;
+>>>>> +       case 50000000:
+>>>>> +               val |= FIELD_PREP(CMN_PLL_REFCLK_INDEX, 8);
+>>>>> +               break;
+>>>>> +       case 96000000:
+>>>>> +               val |= FIELD_PREP(CMN_PLL_REFCLK_INDEX, 7);
+>>>>> +               val &= ~CMN_PLL_REFCLK_DIV;
+>>>>> +               val |= FIELD_PREP(CMN_PLL_REFCLK_DIV, 2);
+>>>>> +               break;
+>>>>> +       default:
+>>>>> +               return -EINVAL;
+>>>>> +       }
+>>>>
+>>>> Why isn't this done with struct clk_ops::set_rate() or clk_ops::init()?
+>>>
+>>> OK, I will move this code into the clk_ops::init().
+>>
+>> This code is expected to be executed once for initializing the CMN PLL
+>> to enable output clocks, and requires the parent clock rate to be
+>> available. However the parent clock rate is not available in the
+>> clk_ops::init(). Hence clk_ops::set_rate() seems to be the right option
+>> for this. Please let us know if this approach is fine. Thanks.
+> 
+> Sure. It actually sounds like the PLL has a mux to select different
+> reference clks. Is that right? If so, it seems like there should be
+> multiple 'clocks' for the DT property and many parents possible. If
+> that's the case then it should be possible to have something like
+> 
+> 	clocks = <0>, <&refclk>, <0>;
+> 
+> in the DT node and then have clk_set_rate() from the consumer actually
+> set the parent index in hardware. If that's all static then it can be
+> done with assigned-clock-parents or assigned-clock-rates.
+
+Thanks Stephen. The CMN PLL block always uses a single input reference
+clock pin on any given IPQ SoC, however its rate may be different on
+different IPQ SoC. For example, its rate is 48MHZ on IPQ9574 and 96MHZ
+on IPQ5018.
+
+Your second suggestion seems more apt for this device. I can define the
+DT property 'assigned-clock-parents' to configure the clock parent of
+CMN PLL. The code for reference clock selection will be added in
+clk_ops::set_parent(). Please let us know if this approach is fine.
+
+
+
 
