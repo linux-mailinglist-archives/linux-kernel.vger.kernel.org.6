@@ -1,120 +1,88 @@
-Return-Path: <linux-kernel+bounces-310458-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310457-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BAB06967D54
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 03:27:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B38D967D51
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 03:25:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 60C771C203DB
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 01:27:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB20B1C2140B
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 01:25:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D13F118641;
-	Mon,  2 Sep 2024 01:27:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8B54182C5;
+	Mon,  2 Sep 2024 01:25:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kK5RdHjQ"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="UkpW38Oj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 272EE63B9;
-	Mon,  2 Sep 2024 01:27:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28D158F6C;
+	Mon,  2 Sep 2024 01:25:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725240456; cv=none; b=c3UIs8gTILh7+8POwfpNSCfDx/YRkFp7rRo+CWIlt31/VJYvp+ATPamw2d+CzJOJzo4xmY9yKoVOjh71FkNGaum5IMHhZBZgmN2R5PiZUsqR2Tc1KXmnoi5gQhgoVTWPf9dqrfoqJS+1NILHsluK4xoAV9cSYv0YqWuJOSGSuWA=
+	t=1725240316; cv=none; b=N2jGxy/1n2wflqvnf/lThiWTZUEEcAAEUTcyKvrbILR5yZgU+QjAz6XkwzkJo49Im5ZjY1RCN6nsjVGvXoz1oaHsb5/cHOf3PeTMWIQr0ekCMJ8PjP1HrPnkSTzhkhSDgwJcJxYsd1fdnwdMWgxCBR++wI1hO/m+14+rfjiaiMs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725240456; c=relaxed/simple;
-	bh=HeTAqEed+CsvSVxJIA6VToj4x6Lfo6eyxWgPYkYVyjE=;
+	s=arc-20240116; t=1725240316; c=relaxed/simple;
+	bh=wtpNYKnZbKdLBY23YTOSswuvHz/BYSepZx1YEZntG9Y=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fI2hdwAsuc/cQm0foVe31kR6EW5Qqd9s+ux18YgqYihTZLGwuj1Wr4L2XdOhtvx/qHI6v86rfjmw/Iv4ZRh71K7NSZ2t1RqgXNBsnWgZmlvj9jkPXkJMIDAZAf9YY8+9SizsCfY/fftYcgAJD8zashO1yswkN0v9zg2Ye4hR20Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kK5RdHjQ; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725240454; x=1756776454;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=HeTAqEed+CsvSVxJIA6VToj4x6Lfo6eyxWgPYkYVyjE=;
-  b=kK5RdHjQjoeQf5T/pWHWTi08b3020X0QzZkVdCLsMwr+/jc84ImfRN5H
-   BZ17xTWJ95AKlbnzG6j6I+zJWVheC/l7pTERJQBP1FmKr8XGCaGkBBH0k
-   azMTNoZb6UPZNF2bNvwv9EXHnrUDtPVB3HpksnY8E/JZkaKjNL6ip14De
-   zoqIZBZlliXdTsOXqHDq8jacg9pQg1BmRlnd4LxjPbv6ukVk1zH6BEvBS
-   CeD2lTggiAMd0VJ9wG/wwvrDR70OiSffDh0rti7/JSC7ufr2IWvNFVyD9
-   gnsVGqBhhMrW+tsaB3P8TV0K7ymocjWty/hsJ78cWHUDhqFFnloiD6oIp
-   Q==;
-X-CSE-ConnectionGUID: ul3sXAlNTEK1KL5jQymqyw==
-X-CSE-MsgGUID: h7fRnn7vT4OT6mqSG+vYYw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11182"; a="34968091"
-X-IronPort-AV: E=Sophos;i="6.10,194,1719903600"; 
-   d="scan'208";a="34968091"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Sep 2024 18:27:34 -0700
-X-CSE-ConnectionGUID: oHft2kWySemckoaLRRBfaA==
-X-CSE-MsgGUID: /bXwErv0TwuRQZUYt4zDIw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,194,1719903600"; 
-   d="scan'208";a="87700571"
-Received: from yilunxu-optiplex-7050.sh.intel.com (HELO localhost) ([10.239.159.165])
-  by fmviesa002.fm.intel.com with ESMTP; 01 Sep 2024 18:27:31 -0700
-Date: Mon, 2 Sep 2024 09:25:00 +0800
-From: Xu Yilun <yilun.xu@linux.intel.com>
-To: Tony Lindgren <tony.lindgren@linux.intel.com>
-Cc: Rick Edgecombe <rick.p.edgecombe@intel.com>, seanjc@google.com,
-	pbonzini@redhat.com, kvm@vger.kernel.org, kai.huang@intel.com,
-	isaku.yamahata@gmail.com, xiaoyao.li@intel.com,
-	linux-kernel@vger.kernel.org,
-	Isaku Yamahata <isaku.yamahata@intel.com>,
-	Binbin Wu <binbin.wu@linux.intel.com>
-Subject: Re: [PATCH 09/25] KVM: TDX: Get system-wide info about TDX module on
- initialization
-Message-ID: <ZtUT7DzEgMeEMqqL@yilunxu-OptiPlex-7050>
-References: <20240812224820.34826-1-rick.p.edgecombe@intel.com>
- <20240812224820.34826-10-rick.p.edgecombe@intel.com>
- <Zr21XioOyi0CZ+FV@yilunxu-OptiPlex-7050>
- <ZtFy8_etJ2tkQ8pm@tlindgre-MOBL1>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Q1hLBe/Z6rVtYA+qgRV2BCQkuXFexKluMruw58bh+6qDvkNa9I/Wd2FkYFhvHsJ0d8Dc9drUpF7rbq5f5W5KQXVOCcFalWZMxsiGWokFbKFBEzZk4Yd/2E/Sl7hSpQijAvnBUJWZN2KjZYolpDxA9ic8u1u6JH7CfAEJWV9My64=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=UkpW38Oj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 078B3C4CEC3;
+	Mon,  2 Sep 2024 01:25:14 +0000 (UTC)
+Authentication-Results: smtp.kernel.org;
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="UkpW38Oj"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
+	t=1725240313;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=2K7OHgvBC0Jl0NQ7ZSPU3UBUGrLsQruG/gL/a9e9DwU=;
+	b=UkpW38OjKk2A4/02WiGW7XVS2vw3SmZK8YoiNJT+UpI11nCwPq+vprgkRlh+gYiOCqGs2k
+	XqoUdACWl3D7P+JTYUgkJEZ2agwouBTGWlz3uEF52/Oa46/xSMTMvrbxAJEUCR9rUU7dps
+	i3YuNCm+RMBRSIQ0bFx96eqpQ3D5z78=
+Received: 
+	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 9764ebd9 (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
+	Mon, 2 Sep 2024 01:25:13 +0000 (UTC)
+Date: Mon, 2 Sep 2024 03:25:10 +0200
+From: "Jason A. Donenfeld" <Jason@zx2c4.com>
+To: Christophe Leroy <christophe.leroy@csgroup.eu>
+Cc: Shuah Khan <shuah@kernel.org>, linux-kernel@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org, linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH] selftests: vDSO: Also test counter in vdso_test_chacha
+Message-ID: <ZtUT9t_wr96S2mJe@zx2c4.com>
+References: <f9f64c5ded3925ae408f01c1c61e2fdf6f645a71.1725212364.git.christophe.leroy@csgroup.eu>
+ <ZtStjU_3K9yIJsmp@zx2c4.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <ZtFy8_etJ2tkQ8pm@tlindgre-MOBL1>
+In-Reply-To: <ZtStjU_3K9yIJsmp@zx2c4.com>
 
-> > > +static int tdx_get_capabilities(struct kvm_tdx_cmd *cmd)
-> > > +{
-> > > +	const struct tdx_sysinfo_td_conf *td_conf = &tdx_sysinfo->td_conf;
-> > > +	struct kvm_tdx_capabilities __user *user_caps;
-> > > +	struct kvm_tdx_capabilities *caps = NULL;
-> > > +	int i, ret = 0;
-> > > +
-> > > +	/* flags is reserved for future use */
-> > > +	if (cmd->flags)
-> > > +		return -EINVAL;
-> > > +
-> > > +	caps = kmalloc(sizeof(*caps), GFP_KERNEL);
-> > > +	if (!caps)
-> > > +		return -ENOMEM;
-> > > +
-> > > +	user_caps = u64_to_user_ptr(cmd->data);
-> > > +	if (copy_from_user(caps, user_caps, sizeof(*caps))) {
-> > > +		ret = -EFAULT;
-> > > +		goto out;
-> > > +	}
-> > > +
-> > > +	if (caps->nr_cpuid_configs < td_conf->num_cpuid_config) {
-> > > +		ret = -E2BIG;
-> > 
-> > How about output the correct num_cpuid_config to userspace as a hint,
-> > to avoid user blindly retries.
+On Sun, Sep 01, 2024 at 08:08:13PM +0200, Jason A. Donenfeld wrote:
+> > +	reference_chacha20_blocks(output1, key, counter1, BLOCKS);
+> > +	__arch_chacha20_blocks_nostack(output2, key, counter2, BLOCKS);
+> > +	if (memcmp(output1, output2, sizeof(output1)) ||
+> > +	    memcmp(counter2, counter2, sizeof(counter1)))
+> > +		return KSFT_FAIL;
+> > +
+> > +	reference_chacha20_blocks(output1, key, counter1, BLOCKS);
+> > +	__arch_chacha20_blocks_nostack(output2, key, counter2, BLOCKS);
+> > +	if (memcmp(output1, output2, sizeof(output1)) ||
+> > +	    memcmp(counter2, counter2, sizeof(counter1)))
+> > +		return KSFT_FAIL;
+> > +
 > 
-> Hmm do we want to add also positive numbers for errors for this function?
+> Why repeat these two stanzas? 
 
-No. I think maybe update the user_caps->nr_cpuid_configs when returning
--E2BIG. Similar to KVM_GET_MSR_INDEX_LIST.
+Ah, from your commit message:
 
-Thanks,
-Yilun
+"The first test verifies that the function properly writes back the
+upper word, the second test verifies that the function properly reads
+back the upper word."
+
 
