@@ -1,267 +1,247 @@
-Return-Path: <linux-kernel+bounces-310904-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310907-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A5CF9682AB
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 11:05:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D94409682B7
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 11:09:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 029691F21C86
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 09:05:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8E45D282AF5
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 09:09:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4BFF187341;
-	Mon,  2 Sep 2024 09:05:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7E50187341;
+	Mon,  2 Sep 2024 09:09:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fwpwKArY"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=stwmm.onmicrosoft.com header.i=@stwmm.onmicrosoft.com header.b="WlqStIjE"
+Received: from mail.sensor-technik.de (mail.sensor-technik.de [80.150.181.156])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FF85154C1E
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 09:05:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725267947; cv=none; b=MxxfI1mTajjxsY1uAn1bhk0lldvFBtm1rXAtyv1qhe1mFi5+b4PIFGRInOVSPDa7lXsNvPkj55Iwtqkom0BiVWlTVTTUSo1UBTpDUnkSbxYC/mQRAowIqJSYT2O7v4IzbnZCra8qVI3S+jZanBfjDsAXMGYRKctlb3pGE9PKxj8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725267947; c=relaxed/simple;
-	bh=jLsXe+caJI4qfPC9maQ8yJiJHKBFxjWKjboGtLFZ44Y=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XAg2MPVtYWPv7kLVXloDrt5Vw5mDigh0NN9LdHRmzDe4RcQcUnY3D+01GL3q1LaHIsgGPCXzBtBy2zz826mAO9kBMaIhRG9eOfwBEWLEFaVKvGUfoQ2VgLGFLnJ5j9lE4xd1BvJ74F7aEPiwQgqFSFs5BLuxX/uKxvgyI4ZYE4k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fwpwKArY; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1725267944;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Yl/+7diA2SKHvAxd7Br7OGqXTfXuQ8DMdZAp+CxC8VE=;
-	b=fwpwKArYTSK0VG6NNSFuRTRAXbvB2SbO4G3tJwdnoRU2VfPqZp89tVUKwnSbb1B0Us/Pnu
-	K9qF/ut+sOGBI2GC2VX/AwLTTF+F845VlI3xU+uUTs6tqhKZYSmv+vTYZFChmbyLY+/Cby
-	haTpqPLzwUe+mtobk41A15pUJBmXotM=
-Received: from mail-ed1-f70.google.com (mail-ed1-f70.google.com
- [209.85.208.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-687-t0YubrDzN0iI_9Ovm8qcyg-1; Mon, 02 Sep 2024 05:05:41 -0400
-X-MC-Unique: t0YubrDzN0iI_9Ovm8qcyg-1
-Received: by mail-ed1-f70.google.com with SMTP id 4fb4d7f45d1cf-5befa588972so3060781a12.1
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2024 02:05:40 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725267940; x=1725872740;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Yl/+7diA2SKHvAxd7Br7OGqXTfXuQ8DMdZAp+CxC8VE=;
-        b=oX5x2Yhi2JtwpILeYNsIrH37kaDgNzWvWO+hfPi/Ndl6i8kobV3k9xxYS7NlwCrn2K
-         6S40hgKpqDEJLyNsUNCYn3PANHYUjnUtbGpVop16YEXBvieAgfidW5SjPWrqFS2K22tX
-         0EOt9YZA7f3onP2bz9S6JG/XCsz7m68t6bftlbTaEbBE6CaAe7vhpw4U+dZl8aqFiY6o
-         lkF72aEdVkuHialwjQUB10hXaSD9CvvrzKZHy+dqrxqCqA58e4qVeuxf9OYKLGcsgLMy
-         ukrDeHQV7peJQaXSIgyhKwmU5siG6acs/viLJyqo8bNS6q2BFkk+BYFJLfcpwO7JLBm3
-         Y8Tg==
-X-Forwarded-Encrypted: i=1; AJvYcCW1tRMe0wNFGTV0AptrEABshf6BD3rLdvJM+IWRP78ESSpncT2oe0GFTY+11KMNvvLx+b9yT1ite1fNKFc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzZBF1XH/rs1QT8wcNLCs2V/Ubeoh3gNdg3VLHnq3M5tNLANpgo
-	MHK63nFaLo/XcrJP7FrnRn971s2qsqVi2MSvesK4Fytm8/Tmr2C7y8vgg7+wAY5+HlkNgJwl+uO
-	BXaViLmhk5eCVTwY4zU/pi6/yGW+bGxzHuSbabulihWkiVM+DZcl+z5EeNADcmrUTuo62sea8w2
-	vD4TBiILpwb5SDxZq4KijlLK71wbMCUkoxmVDC
-X-Received: by 2002:a05:6402:26d2:b0:5c2:1298:35ee with SMTP id 4fb4d7f45d1cf-5c243724727mr4288529a12.2.1725267939784;
-        Mon, 02 Sep 2024 02:05:39 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGPJNx7l/OE5XOyhaGq5fVqlPbzCCg0Nm7WCBI69Iyu75oP5ZB/jcx4ZvNGdTQOPhcLxJnyLBPqTnG/xY3ey+4=
-X-Received: by 2002:a05:6402:26d2:b0:5c2:1298:35ee with SMTP id
- 4fb4d7f45d1cf-5c243724727mr4288513a12.2.1725267939247; Mon, 02 Sep 2024
- 02:05:39 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88C34187330;
+	Mon,  2 Sep 2024 09:08:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=80.150.181.156
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725268140; cv=fail; b=JACXNFfxebJQjuEANpLsqhgI28967B8Xfu1YLoUvqdiGKI8C4zH8lKoU6tXW7cRWGeI3Gl6fzZHbmiJzOgB6PsmHAAd333z5i9XVsJ3zHPgxm4OO8xbKi14bLikXetDuN2oXa9XIwivBCxGlbTx9K3gWreyToANIMjA6mfNMvaY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725268140; c=relaxed/simple;
+	bh=Emsx5fuhjCsZqL49Yv3Rd4K4gQxYYadi762mC9AZ/y0=;
+	h=From:To:CC:Subject:Date:Message-ID:Content-Type:MIME-Version; b=STvLNSxwPbn8eDuSG4HZpXQf87fSIPmPTBdl5MJvJADnISsugy7N5fSd/Tyn7WbZAKde1VcQnfp3mQsRwq/NSPIbIWDrF9Md2rwXu/TNfx8F/TkK/215Zt6nxS229Sqt93wVA1VMZf+9TJqtRs0p5txIXkn4u/DgaB4FO6z5x14=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wiedemann-group.com; spf=pass smtp.mailfrom=wiedemann-group.com; dkim=pass (1024-bit key) header.d=stwmm.onmicrosoft.com header.i=@stwmm.onmicrosoft.com header.b=WlqStIjE; arc=fail smtp.client-ip=80.150.181.156
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wiedemann-group.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wiedemann-group.com
+X-CSE-ConnectionGUID: DkXE4p7GRq6oOM6Yy2KbgQ==
+X-CSE-MsgGUID: 4Yc8WVK5R0+yftqs5tKV8w==
+Received: from stwz1.stww2k.local (HELO stwz1.wiedemann-group.com) ([172.25.209.3])
+  by mail.sensor-technik.de with ESMTP; 02 Sep 2024 11:07:40 +0200
+Received: from stwz1.stww2k.local (localhost [127.0.0.1])
+	by stwz1.wiedemann-group.com (Postfix) with ESMTP id 5ECBEB5A8A;
+	Mon,  2 Sep 2024 11:07:40 +0200 (CEST)
+Received: from mail.wiedemann-group.com (stwexm.stww2k.local [172.25.2.110])
+	by stwz1.wiedemann-group.com (Postfix) with ESMTP id 55885B5A87;
+	Mon,  2 Sep 2024 11:06:03 +0200 (CEST)
+Received: from stwexm.stww2k.local (172.25.2.110) by stwexm.stww2k.local
+ (172.25.2.110) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Mon, 2 Sep
+ 2024 11:06:03 +0200
+Received: from EUR02-AM0-obe.outbound.protection.outlook.com (104.47.11.238)
+ by stwexm.stww2k.local (172.25.2.110) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.37 via Frontend Transport; Mon, 2 Sep 2024 11:06:03 +0200
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=hbV/3ynaan+ZPljuIrnbK/EaSpTSZ3fif9oWTVZB9E0kpi4uST9q6jwFb/TiDgKj5mrN5T9LipgxiIhFqfX7M+t+lR6XbIGw+4aVUhZ9itJ2nn8o7XvqrUikjcXCl1ckK2HaXSeA0gcuta+3WLHBaBWtcDz0n1oV6u1wWLODDGHzxiRrHDCdYXXe6QhE120V1jTu8IqlW0Ybjg3AIPEvnFDrPUoydQ+AOJvb6c0n+4aXnwkLmAufH1REqAwm9Pa6mT2bRtJUFMrUZoYYir6Yi80TttyYTh++asHVmIccgh2JC8h7GEYGM4vvjEDGkTppIrWffW1/XiX5mBh0ExlERA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=A0bAWbMTsCNn80mmc1VytjP3yJc+HZLqzERTw4UxNGw=;
+ b=b8mbVctH845pUlwLzrr8ieNtq9LyJntVphtBbiLJbY0NOqWclG+JCCNzV0W9P2RbIiJpJtmTkvMsOUAaGgXfiBHhdmPwVAXvTeV0mXOG6WpemopIIGsc03xGLF96Cfw8mgdl9jk+tFRXWLXnW5EUfToJaESraDt25sBy1xIJO0D1kddsRPDwUThy6yDM2+anHDwC2zphVvNxTMUzlZM5ZTQTc/NH3IBDmOcqTMYlEHHSNv5E7sp+criyOblekMjZ+6nEWB7aG7Sz7acVIKFllGizDEJku8iAe/MVAYH1P0ZSRpZDGZ23mmNbgtpfK6y4gPtc26nkK4iPWfhMQrQ3Fg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=wiedemann-group.com; dmarc=pass action=none
+ header.from=wiedemann-group.com; dkim=pass header.d=wiedemann-group.com;
+ arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=stwmm.onmicrosoft.com;
+ s=selector1-stwmm-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=A0bAWbMTsCNn80mmc1VytjP3yJc+HZLqzERTw4UxNGw=;
+ b=WlqStIjE5H/mDHjtD4BTOL/HydOM7xyYGdVrx810b2mccrenRjNcAUFe8489B68xTcb5S7maMkzy4xRq3KaItswwHRzhjFZZrH/+uZSd5Oc0GXk/nb0YFiB5k7NHOTv8haW+ZJCSO+Ta04yQBf0VHIUgm0h3/5lmiGKjO4N/Juo=
+Received: from AS1P250MB0608.EURP250.PROD.OUTLOOK.COM (2603:10a6:20b:48d::22)
+ by PAXP250MB0424.EURP250.PROD.OUTLOOK.COM (2603:10a6:102:287::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.23; Mon, 2 Sep
+ 2024 09:05:54 +0000
+Received: from AS1P250MB0608.EURP250.PROD.OUTLOOK.COM
+ ([fe80::b4a:3a:227e:8da2]) by AS1P250MB0608.EURP250.PROD.OUTLOOK.COM
+ ([fe80::b4a:3a:227e:8da2%4]) with mapi id 15.20.7918.024; Mon, 2 Sep 2024
+ 09:05:54 +0000
+From: Michel Alex <Alex.Michel@wiedemann-group.com>
+To: "robh+dt@kernel.org" <robh+dt@kernel.org>,
+	"krzysztof.kozlowski+dt@linaro.org" <krzysztof.kozlowski+dt@linaro.org>,
+	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, "Abel
+ Vesa" <abelvesa@kernel.org>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, "richardcochran@gmail.com"
+	<richardcochran@gmail.com>
+CC: "o.rempel@pengutronix.de" <o.rempel@pengutronix.de>, "lee@kernel.org"
+	<lee@kernel.org>, "abel.vesa@linaro.org" <abel.vesa@linaro.org>, "Pengutronix
+ Kernel Team" <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>,
+	"NXP Linux Team" <linux-imx@nxp.com>, "linux@armlinux.org.uk"
+	<linux@armlinux.org.uk>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "linux-clk@vger.kernel.org"
+	<linux-clk@vger.kernel.org>, "netdev@vger.kernel.org"
+	<netdev@vger.kernel.org>, Waibel Georg <Georg.Waibel@wiedemann-group.com>,
+	Appelt Andreas <Andreas.Appelt@wiedemann-group.com>, Michel Alex
+	<Alex.Michel@wiedemann-group.com>
+Subject: [PATCH 1/1] clk: imx6ul: fix clock parent for
+ IMX6UL_CLK_ENETx_REF_SEL
+Thread-Topic: [PATCH 1/1] clk: imx6ul: fix clock parent for
+ IMX6UL_CLK_ENETx_REF_SEL
+Thread-Index: Adr9EzHKHzzDMWF3TX6ldy1WNJe8vA==
+Date: Mon, 2 Sep 2024 09:05:53 +0000
+Message-ID: <AS1P250MB0608F9CE4009DCE65C61EEDEA9922@AS1P250MB0608.EURP250.PROD.OUTLOOK.COM>
+Accept-Language: de-DE, en-US
+Content-Language: de-DE
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=wiedemann-group.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: AS1P250MB0608:EE_|PAXP250MB0424:EE_
+x-ms-office365-filtering-correlation-id: 02c195f8-a1bc-4157-5d57-08dccb2e7322
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|366016|7416014|376014|38070700018;
+x-microsoft-antispam-message-info: =?us-ascii?Q?CFDX0xXtQp9WNs2dVqBxxUPRC1XrtwKNK+9czPOEiU0duEU34CWdghH5LiQ3?=
+ =?us-ascii?Q?FKe69VmGgiY/YFRUffSJDcxX5QelCKCRiiIIEQJ0pPDnpAbmbgIf+yyhMKHW?=
+ =?us-ascii?Q?1GJO2H6aK/isnteNNqw1R3VqE++ooUoETgKSSEdtLvXFQBduTUemAO7wttwl?=
+ =?us-ascii?Q?meK323ivOMR6Xw9t7f1aPr9+4DMz+pgiUmYr4wVTyg7DVi2nNlxg8T9bi5no?=
+ =?us-ascii?Q?gegnPo4JPIfYUvBIp1JWwhlHqrbyAhhJZ+HcoxHOyOD1wBfBs6ju5A9ZdtMO?=
+ =?us-ascii?Q?SB09Gtm9N75lv/Y/cpg0mgWbEXfU4zDtiD1v5VdYfi0izBXraLPBCqj/wV0c?=
+ =?us-ascii?Q?5BoAnr3lxikjp7RYPOKolJgN7gCZcSuW7E0YPfvQu9BzoLEDMJqQjgV+cLd8?=
+ =?us-ascii?Q?qjudO6eoOKk3n/Lwy1PaeA9DtfaNrO2Yn/lBig5glDZ86EvGIiqgH5o8NP9s?=
+ =?us-ascii?Q?DfJ91V1KdDNKNAEm09h0Q18aeIR8kPaxPgZ2fYC98zJDqguxshVSvTx458q+?=
+ =?us-ascii?Q?ng2tWKQYTQKRZtK1nO5LqN8sO/WCE9wBa10Duk9QzkJ4/QpYJnHLL2DAABZM?=
+ =?us-ascii?Q?ujulDeeU2FmiLq/93bFutKwlUZ7ULoqOdAnG72mPIFm2psdrA66o2BW9pimU?=
+ =?us-ascii?Q?J3GYWkCuAzgdYhMAHZ7va5L93T0h7PZN6sxUq3Qhfg8BBP5minQaqE+ktOHm?=
+ =?us-ascii?Q?d2VpqruCg9PZO9jNLIcJfx/zM/fMCxS8X4BTgDclvb6zTPlrP7x0Z9x0FVOp?=
+ =?us-ascii?Q?+lbOMHrdH/X9ckpwIccqbWyfqK/9VhDTax73y44ZUtYLwjip6wfUXmm9EPh6?=
+ =?us-ascii?Q?qgDp1ptJyKFjVSQ0csTO2zPhlbGPprwlp9kf5KuVPqNMdKvaZvPLFBKVWXMc?=
+ =?us-ascii?Q?wy0qQo/WVyURTt3kDEaloT3QeS/tG4g5hupG6qD4vU8zX6zokWENJq6qCuk/?=
+ =?us-ascii?Q?jlWowqo7/3YGMywQDZ2CdxuLsgSpX2i0Y+teuXVmfa3ysV6F25s6ygGcjE9T?=
+ =?us-ascii?Q?NBUquoDkR0qVZy407B+ssURWJDlet+MongIksxRS8XOhD+9oETmbXb+566Wm?=
+ =?us-ascii?Q?UVbppJRQafwR1n+MfrSQYVd9KJhlKvDcB8cfWQr1+14pdseLx5gA2Y7sVsnn?=
+ =?us-ascii?Q?MoWdlkoOzx93Df3oqMe99to9vrbkpPDv/zy8yE2caGcitx0PPv6rTtby4V1Y?=
+ =?us-ascii?Q?H+NK8l2ZUTDPAZd2kMtoxe/lpjnUBM+FA9PehCUco17HsbebAowBL5NhupYZ?=
+ =?us-ascii?Q?CHAl0BVGTUUFu/CIae1MS0061zK/1YfmQf5kaGQCiVysdF+I+ctk63zLb2H9?=
+ =?us-ascii?Q?o5ZfDmQWKkWKNJWZAmu1ElMg1xXBttSffH6mTSu7d7igMaEhqXfgOtimJ70w?=
+ =?us-ascii?Q?10Rqc4271D4ysVO7QWRwDkEv7mYv4epNcCJl8QvXEJQskp8uxw=3D=3D?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS1P250MB0608.EURP250.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014)(38070700018);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?7bUTsNj1U5MjHu0AF3iu78DNK/C9mOp9X0wv6oiuJ0LIh7AJE8q/XAUdqLtD?=
+ =?us-ascii?Q?/52t4EUhvAtcgJ0+fS3VG0ZbfL2EZicFqxDphCrlDZsLMAV6BLabBzGMvob7?=
+ =?us-ascii?Q?s1Q1TRIObbjYrzg0BP8XKygRMwLNAKvTHyjG8mNJFbxFzSLw0RH0OvQUcQHE?=
+ =?us-ascii?Q?kuQZYFZtSs5O6smv3K8UsHON2NCr6EJGCMQ+RJg8R+n9UfmmoJdI4nJBeUim?=
+ =?us-ascii?Q?LXM3HziZ4rTgRLLw2APEt1xealbYMiGfWhJzR2uWwHJ1V6Kpht3t+INnWXpi?=
+ =?us-ascii?Q?EA5DfN8vp14gCyU8jmV6vCPtgWNo6j1ux5IluKLG7R/9klCsPFYbCo/hyrXq?=
+ =?us-ascii?Q?/08pbE+j+H9c7/6o3n4FGkAtTHNujHN2mISUt46jadSHillKIWfnJzhjVHjG?=
+ =?us-ascii?Q?xXpOEHMVUk0BMHsiIrmm98ElVeqsYebhBQs5ZMWGJf9yUjFYSKTtMdgGM1sG?=
+ =?us-ascii?Q?Qat22LIdkWZkb3YMKNE87Jhv9x3LYFih8OsKPAXRn+6UsHz0j9OnU3WCid+E?=
+ =?us-ascii?Q?EtBNruRfOuGlZ0tMApQKX1rTTv5CvOJf+kfRSjmc752NHRKqFkPVrj2rldfx?=
+ =?us-ascii?Q?B0mA1I1B5JqqWijLud5p9PDihpTKysBiayPyi5FRlAvMCNkjhcwHnhODjuRP?=
+ =?us-ascii?Q?MvNrT9FsoYN73V9Fbq35lxUkpaZFictlll7PFrZGaqeESHZ9P0dIthEguDEq?=
+ =?us-ascii?Q?kqoK7+FBbQEbRhmRlpbtgw9kTQl4lkV8fv2ZODpQyZ+SWuh8rKOZwUtWSMMJ?=
+ =?us-ascii?Q?kpfADgD9sV4/Pgx2Nle35HJFTB+2yjEgtX8mhPqftMSi6xzAu0n1kr7k3VMn?=
+ =?us-ascii?Q?f/9FwvtmNECBLZZX1g8OaqvQY8JD3SbQ5trQPRENngqIv99BiwSvUhoed+An?=
+ =?us-ascii?Q?l4vXIX355OauCXzNAeWPnn+7e9HJtFr7u+ZaybkR9BcGu/tu0lL4S2lblTI0?=
+ =?us-ascii?Q?HNi2LlnAKqCy2+WFNQnylgdlnltEKMawkxL6zLSw+3d1RutWQ3bXYqYSmlQM?=
+ =?us-ascii?Q?LljPhiEQTsJM0w+ohkcFuFZVyEn4yJJrp0dFtwOEoW5vH+AORuyIWAyYSHwm?=
+ =?us-ascii?Q?bBXrVmMGPBtpYeq9RV2iBI+/uq1r/zFAf+cE35+MbEzOIwMu2IKk44cpdAdq?=
+ =?us-ascii?Q?KdRB5m5Q/IrZzARmMxykKoCdZI484j3Ano6gs4cyo7hQjxmR8pgDAmxUusyo?=
+ =?us-ascii?Q?P+4ohxtTwuXilpZWejwBKz83akuFYZ1J02htZ5svYYjLr/3s9wPYVC4d0qZU?=
+ =?us-ascii?Q?KsZKALEufEX7khhPFLxPhJXmZlXornE1xXKL7B4k9L/ZLqQR2daCFeKTgWlf?=
+ =?us-ascii?Q?vBBx/vlOvNnY68Jc6FM/vEqvTB5RI544chm5E3KBXJqadgvE9g2TsOZR4VvL?=
+ =?us-ascii?Q?5uUAXU6ybRNHJz8stHfvLCrH30HhFuzcuJoDeoXDMh2XZ56UL/m7MSoGFaQH?=
+ =?us-ascii?Q?UZgBxcmSBcmzSS+GxjrhvmODm6y2ebKFsiMUxxp2ewh90AYvUgt3JcJtpH1r?=
+ =?us-ascii?Q?hrpe+IVBEen/mdKg9xD1NBa9o2Y9rjx8jTwxBgx73RM8haJMnFgOLq4D7Ddr?=
+ =?us-ascii?Q?nI+5Cu2odYoL4ylwXDEnXqtF0Dme6Be/dDDVRIxLtbqdsYOK9TdYF6Rh3DoP?=
+ =?us-ascii?Q?xg=3D=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240827160256.2446626-2-dtatulea@nvidia.com> <CACGkMEuRvqu8W9-OqPBRhn1DG-+DO6TCzFdHqc7zB74GkNDkAQ@mail.gmail.com>
- <CACLfguXjiyp+Ya4mUKXu6Dmb3Wx5wW0bbNGRSFWE-Z0E5gALTA@mail.gmail.com>
- <8daf221f-8d87-4da1-944c-3bcd0edea604@nvidia.com> <CACLfguVr1bd6=bkGn6hX3W7xBr45qydaCpQ1mNpsATeWFqe2ZA@mail.gmail.com>
- <55b7ae23-6000-4699-9bac-5e72fbdcd803@nvidia.com> <CACLfguUZVDGaY4MD+_tDqM9DQC-C6cuPfCf34X59e2RkMztEkA@mail.gmail.com>
- <cfece74e-a979-4f74-8a6a-fc8869e354f7@nvidia.com> <750da215-adea-422c-8130-7524671a8779@nvidia.com>
- <CACLfguWu=1aZ=mhtzMGXGG2s3iG-SVAFB8QkObWfg+npdV0X9g@mail.gmail.com> <4936c228-a3e6-4dc3-a8b4-0f9706e7541f@nvidia.com>
-In-Reply-To: <4936c228-a3e6-4dc3-a8b4-0f9706e7541f@nvidia.com>
-From: Cindy Lu <lulu@redhat.com>
-Date: Mon, 2 Sep 2024 17:05:01 +0800
-Message-ID: <CACLfguVibPU_WzvRKJ7oVN+SaFy1YYysPbmBWEfdYgFjYc-h0Q@mail.gmail.com>
-Subject: Re: [PATCH] vdpa/mlx5: Use random MAC address when no nic vport MAC set
-To: Dragos Tatulea <dtatulea@nvidia.com>
-Cc: Jason Wang <jasowang@redhat.com>, "Michael S. Tsirkin" <mst@redhat.com>, 
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>, =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, 
-	si-wei.liu@oracle.com, Jiri Pirko <jiri@nvidia.com>, virtualization@lists.linux.dev, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: 3bFcVrf3n/KUAcs3SIgYoVMXstueFITRmwlCWKaEct2TYv8U4uViuMPZlWhLuI5sIIotzqf4zwOWtGk+Mc0iuO+yNrKsySAkc8TUUh96tvvvuKeqLumhit6z4GiZ2+1pa9MaXT/dJ7ZU0t7HosoEz8/HeB0hfV8OujdROWfPbkTnesd/mM1wV8qgOYLpFZTU0xutcsU3W+mk1ZrmjroLBDi3kz3tOfzmJ5ZSTFxqDmytCK4oNuQsPWBj3haxuhjpfSTO7b3vN9w4Nz3wKzJaEExQizDKPqF0ulOt1PdSWZmPm28FRm3MF3uS6PfDjpassm71xRP2UHiS1gkRicBDt637G2n52dcBk8XryDP0MRECLrv2lY+eYejixlVw4wsOI5OKVZQVVus01zSk1+Kyi4qVfrAm7t5FRvAsWpRSJTuVYXla+B6IC57jOtMMCIsBGFdjj/8+NkCCNHt0HlzTcKF5nAw2M1Mwiq6rn5IrF0G32RjM580a7+lmLtjcN+VA2KF8ttpEszZHuVPOSwnOV9LilWSV7dDoNw2qd/BSgQ81wzzjHskKziSsT0d3rSNUbxx/FxYXzwuDrJlOxg1gmQ==
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: AS1P250MB0608.EURP250.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-Network-Message-Id: 02c195f8-a1bc-4157-5d57-08dccb2e7322
+X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Sep 2024 09:05:54.0039
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: f92d38a3-9c84-427f-afc3-aef091509c71
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: mN34U4XJLyEnZwvFEJSvwnWYVpZr/sReuqMZg7gUgtNE5srkAOqfB6VpIPybZF4ImxGZLpkIMSPLS7CkRPO33x1mc00xi7vhVcTnJXrUuK0=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXP250MB0424
+X-C2ProcessedOrg: 71f8fb5e-29e9-40bb-a2d4-613e155b19df
+X-TBoneOriginalFrom: Michel Alex <Alex.Michel@wiedemann-group.com>
+X-TBoneOriginalTo: "robh+dt@kernel.org" <robh+dt@kernel.org>,
+	"krzysztof.kozlowski+dt@linaro.org" <krzysztof.kozlowski+dt@linaro.org>,
+	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, "Abel
+ Vesa" <abelvesa@kernel.org>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, "richardcochran@gmail.com"
+	<richardcochran@gmail.com>
+X-TBoneOriginalCC: "o.rempel@pengutronix.de" <o.rempel@pengutronix.de>, "lee@kernel.org"
+	<lee@kernel.org>, "abel.vesa@linaro.org" <abel.vesa@linaro.org>, "Pengutronix
+ Kernel Team" <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>,
+	"NXP Linux Team" <linux-imx@nxp.com>, "linux@armlinux.org.uk"
+	<linux@armlinux.org.uk>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "linux-clk@vger.kernel.org"
+	<linux-clk@vger.kernel.org>, "netdev@vger.kernel.org"
+	<netdev@vger.kernel.org>, Waibel Georg <Georg.Waibel@wiedemann-group.com>,
+	Appelt Andreas <Andreas.Appelt@wiedemann-group.com>, Michel Alex
+	<Alex.Michel@wiedemann-group.com>
+X-TBoneDomainSigned: false
 
-On Mon, 2 Sept 2024 at 16:54, Dragos Tatulea <dtatulea@nvidia.com> wrote:
->
->
->
-> On 02.09.24 10:40, Cindy Lu wrote:
-> > On Fri, 30 Aug 2024 at 22:46, Dragos Tatulea <dtatulea@nvidia.com> wrot=
-e:
-> >>
-> >> Hi Cindy,
-> >>
-> >> On 30.08.24 15:52, Dragos Tatulea wrote:
-> >>>
-> >>>
-> >>> On 30.08.24 11:12, Cindy Lu wrote:
-> >>>> On Thu, 29 Aug 2024 at 18:00, Dragos Tatulea <dtatulea@nvidia.com> w=
-rote:
-> >>>>>
-> >>>>>
-> >>>>>
-> >>>>> On 29.08.24 11:05, Cindy Lu wrote:
-> >>>>>> On Wed, 28 Aug 2024 at 17:37, Dragos Tatulea <dtatulea@nvidia.com>=
- wrote:
-> >>>>>>>
-> >>>>>>>
-> >>>>>>>
-> >>>>>>> On 28.08.24 11:00, Cindy Lu wrote:
-> >>>>>>>> On Wed, 28 Aug 2024 at 09:51, Jason Wang <jasowang@redhat.com> w=
-rote:
-> >>>>>>>>>
-> >>>>>>>>> On Wed, Aug 28, 2024 at 12:03=E2=80=AFAM Dragos Tatulea <dtatul=
-ea@nvidia.com> wrote:
-> >>>>>>>>>>
-> >>>>>>>>>> When the vdpa device is configured without a specific MAC
-> >>>>>>>>>> address, the vport MAC address is used. However, this
-> >>>>>>>>>> address can be 0 which prevents the driver from properly
-> >>>>>>>>>> configuring the MPFS and breaks steering.
-> >>>>>>>>>>
-> >>>>>>>>>> The solution is to simply generate a random MAC address
-> >>>>>>>>>> when no MAC is set on the nic vport.
-> >>>>>>>>>>
-> >>>>>>>>>> Now it's possible to create a vdpa device without a
-> >>>>>>>>>> MAC address and run qemu with this device without needing
-> >>>>>>>>>> to configure an explicit MAC address.
-> >>>>>>>>>>
-> >>>>>>>>>> Signed-off-by: Dragos Tatulea <dtatulea@nvidia.com>
-> >>>>>>>>>> Reviewed-by: Jiri Pirko <jiri@nvidia.com>
-> >>>>>>>>>
-> >>>>>>>>> Acked-by: Jason Wang <jasowang@redhat.com>
-> >>>>>>>>>
-> >>>>>>>>> (Adding Cindy for double checking if it has any side effect on =
-Qemu side)
-> >>>>>>>>>
-> >>>>>>>>> Thanks
-> >>>>>>>>>
-> >>>>>>>> But Now there is a bug in QEMU: if the hardware MAC address does=
- not
-> >>>>>>>> match the one in the QEMU command line, it will cause traffic lo=
-ss.
-> >>>>>>>>
-> >>>>>>> Why is this a new issue in qemu? qemu in it's current state won't=
- work
-> >>>>>>> with a different mac address that the one that is set in HW anywa=
-y.
-> >>>>>>>
-> >>>>>> this is not a new bug. We are trying to fix it because it will cau=
-se
-> >>>>>> traffic lose without any warning.
-> >>>>>> in my fix , this setting (different mac in device and Qemu) will f=
-ail
-> >>>>>> to load the VM.
-> >>>>> Which is a good thing, right? Some feedback to the user that there =
-is
-> >>>>> a misconfig. I got bitten by this so many times... Thank you for ad=
-ding it.
-> >>>>>
-> >>>>>>
-> >>>>>>>> So, Just an FYI here: if your patch merged, it may cause traffic=
- loss.
-> >>>>>>>> and now I'm working in the fix it in qemu, the link is
-> >>>>>>>> https://patchew.org/QEMU/20240716011349.821777-1-lulu@redhat.com=
-/
-> >>>>>>>> The idea of this fix is
-> >>>>>>>> There are will only two acceptable situations for qemu:
-> >>>>>>>> 1. The hardware MAC address is the same as the MAC address speci=
-fied
-> >>>>>>>> in the QEMU command line, and both MAC addresses are not 0.
-> >>>>>>>> 2. The hardware MAC address is not 0, and the MAC address in the=
- QEMU
-> >>>>>>>> command line is 0. In this situation, the hardware MAC address w=
-ill
-> >>>>>>>> overwrite the QEMU command line address.
-> >>>>>>>>
-> >>>>>>> Why would this not work with this patch? This patch simply sets a=
- MAC
-> >>>>>>> if the vport doesn't have one set. Which allows for more scenario=
-s to
-> >>>>>>> work.
-> >>>>>>>
-> >>>>>> I do not mean your patch will not work, I just want to make some
-> >>>>>> clarify here.Your patch + my fix may cause the VM to fail to load =
-in
-> >>>>>> some situations, and this is as expected.
-> >>>>>> Your patch is good to merge.
-> >>>>> Ack. Thank you for the clarification.
-> >>>>>
-> >>>>> Thanks,
-> >>>>> Dragos
-> >>>>>
-> >>>> Hi Dragos=EF=BC=8C
-> >>>>  I think we need to hold this patch. Because it may not be working
-> >>>> with upstream qemu.
-> >>>>
-> >>>> MLX will create a random MAC address for your patch. Additionally, i=
-f
-> >>>> there is no specific MAC in the QEMU command line, QEMU will also
-> >>>> generate a random MAC.
-> >>>> these two MAC are not the same. and this will cause traffic loss.
-> >>> Ahaa, it turns out that qemu 8.x and 9.x have different behaviour.
-> >>>
-> >>> Initially I was testing this scenario (vdpa device created with no ma=
-c
-> >>> and no mac set in qemu cli) with qemu 8.x. There, qemu was not being
-> >>> able to set the qemu generated random mac addres because .set_config(=
-)
-> >>> is a nop in mlx5_vdpa.
-> >>>
-> >>> Then I moved to qemu 9.x and saw that this scenario was working becau=
-se
-> >>> now the CVQ was used instead to configure the mac on the device.
-> >>>
-> >>> So this patch should definitely not be applied.
-> >>>
-> >>> I was thinking if there are ways to fix this for 8.x. The only feasib=
-le
-> >>> way is to implement .set_config() in mlx5_vdpa for the mac
-> >>> configuration. But as you previousy said, this is discouraged.
-> >>>
-> >> I just tested your referenced qemu fix from patchwork and I found that
-> >> for the case when a vdpa device doesn't have a mac address (mac addres=
-s
-> >> 0 and VIRTIO_NET_F_MAC not set) qemu will return an error. So with thi=
-s
-> >> fix we'd be back to square one where the user always has to set a mac
-> >> somewhere.
-> >>
-> >> Would it be possible to take this case into consideration with your
-> >> fix?
-> >>
-> >> Thanks,
-> >> Dragos
-> >>
-> > Hi Dragos
-> >
-> > Thanks for your test and help, I think I can add a check for
-> > VIRTIO_NET_F_MAC in the qemu code. if the device's Mac is 0 and the
-> > VIRTIO_NET_F_MAC is not set. The guest VM will fail to load. I will
-> > double-check this
-> My request was to use the random MAC from qemu in this case. qemu is
-> able to configure the device via CVQ. At least this device...
->
-Ok, I got it. Sorry for my misunderstanding. I understand what you
-mean. Then the device needs to set the bit VIRTIO_NET_F_CTRL_MAC_ADDR
-to use CVQ. I will verify this and change my patch.
-Thanks
-Cindy
-> Thanks,
-> Dragos
->
+Commit 4e197ee880c24ecb63f7fe17449b3653bc64b03c ("clk: imx6ul: add
+ethernet refclock mux support") sets the internal clock as default
+ethernet clock.
+
+Since IMX6UL_CLK_ENET_REF cannot be parent for IMX6UL_CLK_ENET1_REF_SEL,
+the call to clk_set_parent() fails. IMX6UL_CLK_ENET1_REF_125M is the correc=
+t
+parent and shall be used instead.
+Same applies for IMX6UL_CLK_ENET2_REF_SEL, for which IMX6UL_CLK_ENET2_REF_1=
+25M
+is the correct parent.
+
+Cc: stable@vger.kernel.org
+Signed-off-by: Alex Michel <alex.michel@wiedemann-group.com>
+---
+ drivers/clk/imx/clk-imx6ul.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/clk/imx/clk-imx6ul.c b/drivers/clk/imx/clk-imx6ul.c
+index f9394e94f69d..05c7a82b751f 100644
+--- a/drivers/clk/imx/clk-imx6ul.c
++++ b/drivers/clk/imx/clk-imx6ul.c
+@@ -542,8 +542,8 @@ static void __init imx6ul_clocks_init(struct device_nod=
+e *ccm_node)
+=20
+ 	clk_set_parent(hws[IMX6UL_CLK_ENFC_SEL]->clk, hws[IMX6UL_CLK_PLL2_PFD2]->=
+clk);
+=20
+-	clk_set_parent(hws[IMX6UL_CLK_ENET1_REF_SEL]->clk, hws[IMX6UL_CLK_ENET_RE=
+F]->clk);
+-	clk_set_parent(hws[IMX6UL_CLK_ENET2_REF_SEL]->clk, hws[IMX6UL_CLK_ENET2_R=
+EF]->clk);
++	clk_set_parent(hws[IMX6UL_CLK_ENET1_REF_SEL]->clk, hws[IMX6UL_CLK_ENET1_R=
+EF_125M]->clk);
++	clk_set_parent(hws[IMX6UL_CLK_ENET2_REF_SEL]->clk, hws[IMX6UL_CLK_ENET2_R=
+EF_125M]->clk);
+=20
+ 	imx_register_uart_clocks();
+ }
+--=20
+2.43.0
 
 
