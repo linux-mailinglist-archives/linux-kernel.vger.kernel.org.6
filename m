@@ -1,118 +1,144 @@
-Return-Path: <linux-kernel+bounces-311498-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311499-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D050A9689DD
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 16:25:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F011D9689DF
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 16:26:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8F16D282C98
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 14:25:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AC7B1282A79
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 14:26:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CD8B2139C6;
-	Mon,  2 Sep 2024 14:25:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A55F619E985;
+	Mon,  2 Sep 2024 14:26:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FwIwJKhB"
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
+	dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b="jN+MUR21"
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5707521018F
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 14:25:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57117179AA
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 14:26:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725287121; cv=none; b=ZopLxbFOzd2uLZpchFeW+Y0/NfhMtJRof0Su9gU2KjIvtuWTWnJRkOr6+tROmxTR5ps7Fxl6l6VP3GEYcPom6hWZimipHkih0DDEMIl2iO8uvNzhZgMIOYTAblPXVpE8erVuy/CJitOhTpmQMD/ckBbrB1qvlqudF1pDHdGwBaY=
+	t=1725287192; cv=none; b=Y6YdrHJVYbB/3y3xMtni16ni7q7J0nanqpjtxc9+bpHBAWbirxvbO/OAgmWrU453OXJkMMrooZ/sTOzIH5XV2SW1gKoYOrZ6iidJxvO7esi0UMC30ndybDLPaVkFcenh1gowIAf/h4RjPvuqZEADW33CoEB8GJt2CQgMb0c/M0g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725287121; c=relaxed/simple;
-	bh=AzaAfthTj3oPuZJHTCZMkNORw1JDAjyfcLr2xsQ3dfo=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=KRtC34EvSgiiwNNhGUw+keutPzlNeoNVSi8wX0fa+cbGGuq0jzPiRBYnlELAGRCzSlARvOtWuGTEwvQcxKEZzjhv4qbix2YQ51++xVWSbUJTevbvY1WSFZeSmrVlP4vuSXPP6TkVN7IKtklI2dBWFOtkC6Ivakc1XokXUZ+zg0w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=FwIwJKhB; arc=none smtp.client-ip=209.85.208.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2f50966c478so44447011fa.1
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2024 07:25:19 -0700 (PDT)
+	s=arc-20240116; t=1725287192; c=relaxed/simple;
+	bh=H7vyAyYos1Mwcq7X2jIEKoRVgsk9WdtvDuhSksp7HbQ=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=WZmkmPQUIIEoGeVn51V9gsPjcw7nWWN7o7tEicwCU9/WwU1OgRreS7fXBNIMyXVuBnA3yk18h6b0Psrov4Uck7WTQgBNc7UqSTQA1muPzBaBBrDS8cTwUHIVdydz4sPe87hLkw+pFev7rsPdI3QPuhm54w+dGYt0pv9g1bDVlPo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com; spf=none smtp.mailfrom=toblux.com; dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b=jN+MUR21; arc=none smtp.client-ip=209.85.167.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toblux.com
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-53346424061so882208e87.2
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2024 07:26:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1725287117; x=1725891917; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=toblux-com.20230601.gappssmtp.com; s=20230601; t=1725287188; x=1725891988; darn=vger.kernel.org;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=xEqPUZhtdX5/8LGHAXcAYGkDFqga90sc5TMoJh0yC4g=;
-        b=FwIwJKhBwOBMBPaV9UReb4nAlOsbka8k1QhClqHC2P/+QgJjNjP5w+4GvTCUemJEJs
-         Gy9WCuOxxuP/44ilKlj2Wg4qLJPcT+SM3xjno9XBAPDw+AFjIX5nFdLXc2diSbiHDUgd
-         NzLfdqJUGm+d1ZoO82v8YiTrtNYzTsZd5vSJYLlcexZF5e4cdOjYIVSXiQJrQFB2FvNF
-         QCudYsSaBSELw1zXmuU1J4IK23UvJNQpedUMet+itPhm9JVDB7BM39MxCfcNOP+V9q5t
-         At6KVG7wF4R0NwM28NtHGUlUjXFU/0fz0/emKcepU7OHjQFcFd5WGlK74YEmTWV2gR3Y
-         gEIw==
+        bh=PjFOfcuO0ShvMdTp7/UhQI6FmPlsW1v0riJgONdlWOw=;
+        b=jN+MUR21WJREuexkc/0ZZQ0YWsy0RQ9T2O3AbtOxaJ2MOvEaA8nPTKgQgqlHFw+0Vl
+         ZH2Y69AltD/5SuDzBeSGBwq0o3GQ0mLw2ihkde9XfRn5hszYGJnsseiUGG3iEEQy3vkb
+         wAN1U9ZJM0DgQy6XopUhuakmF0GUvRUVXltGugvzMrjs25xMzMkYqV4ATU2Ve2229p5y
+         4zRyFai2xQZcm0ImKKnEiFwpxLOL4wWREWf5umZdeUy1wpHwjaWmdHTmu/IeqfEU/Gfd
+         ZYLIwzq0MNQTkd07p8R1dRQiOGYarKPSBUaXCqk5FvXefyD16/iXt3DUza5NfB64uIlO
+         rcSA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725287117; x=1725891917;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1725287188; x=1725891988;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=xEqPUZhtdX5/8LGHAXcAYGkDFqga90sc5TMoJh0yC4g=;
-        b=iJtjFgMuyW+V2HqzG0WMbKoZDPX8Se2BHi/Qmj1kYcdzpvhAOO16SjqbncxeYJl5ie
-         WpB+SByCkrYLJRrkyPuWrtxhVWjTvFmisJiem41FUeTqv9TyuJxGPZEJTGctYGKJkozE
-         xiA6IB4K42dGXCcqv+9BvjYDfkNQE/ykqZEG+36lmAvRfy3NFZ9j0m3dIMg5Ly+5xe3i
-         cRaBpvUtQiyzJEzheVlg0atHRiuHOFPO3SnD+RROv5sZClZYhRqp4xypwU0JE9FfLJly
-         +H6X1bGmv6XCi+Jc8phxuRBcAMfL0K/tHkUAZKtDmiuqtTCNj85trjOwK3mZjiC5z+lI
-         zuBg==
-X-Gm-Message-State: AOJu0YyR72rGWLxyZO9Qtr2gegPiR9QZgI1Wgv2ocxbBnDGClkLlX8TT
-	j+njhUBnaBB9/qU82toPxq+vZcMjKbLmcxdJcUXdE6tmT9/Ms9gYWNkVIw/JFV0=
-X-Google-Smtp-Source: AGHT+IFBGhEqhORTU317F+vkMZ0dALKzW3x2CANLv5SAF2qvMyeWJDu5gm48GADl4hd+GdGPAVTvIA==
-X-Received: by 2002:a05:651c:550:b0:2f5:11f6:1b24 with SMTP id 38308e7fff4ca-2f61e0562admr77454241fa.18.1725287117300;
-        Mon, 02 Sep 2024 07:25:17 -0700 (PDT)
-Received: from localhost.localdomain ([5.133.47.210])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c226c6a3f5sm5308881a12.2.2024.09.02.07.25.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Sep 2024 07:25:16 -0700 (PDT)
-From: srinivas.kandagatla@linaro.org
-To: gregkh@linuxfoundation.org
-Cc: linux-kernel@vger.kernel.org,
-	Michal Simek <michal.simek@amd.com>,
-	Rob Herring <robh@kernel.org>,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: [PATCH 3/3] dt-bindings: nvmem: Use soc-nvmem node name instead of nvmem
-Date: Mon,  2 Sep 2024 15:25:10 +0100
-Message-Id: <20240902142510.71096-4-srinivas.kandagatla@linaro.org>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240902142510.71096-1-srinivas.kandagatla@linaro.org>
-References: <20240902142510.71096-1-srinivas.kandagatla@linaro.org>
+        bh=PjFOfcuO0ShvMdTp7/UhQI6FmPlsW1v0riJgONdlWOw=;
+        b=AXQhqyui6wfs218UZ1BWYurkXikhojpMZvQXlGshIg7K5FUi+EYvHa5nF5FlTJCr3L
+         RR5s5t76RbgMqRRZ5lVkMGvanq8G7aovFHLK0g/xmkoPlhvG950U13UQUZgxMgrch2q5
+         ZSFRQ6Rb+OcF6c0V29IP/n9X28maEh1Z0WimvuakPiTUevd4ShudBszbRki0J7c6RI8S
+         pjlez8MpcocJSLrNWomBdpw+4n4hjGr9KOMyAiTMKUCz84shp1feSsZ6v8XxxJJE1LEI
+         tDAcvw5ROC+hjE/tCTnDqyQrETIklsHsBZKCyHPFo8KzKCIzehfkdqo8rG3TV2L889he
+         IDEQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVDq2d5nA9uL5pcCOZICIb0Q7LiwyOvCFVEkPLkEuVNdJbPYS88U+BJojXy/0At7MWZOPU3nyawOM0avGY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx/VHGjIUmjqFKz+a0RwyqxLNveBB26q+CsbfMrkPdcbvYXNqky
+	xFxrCbEdkzeEyDBHgXOM8WVeIEmmtJ0D+UF96aXYkFVRCqRErZnEEP7cJWk+cjw=
+X-Google-Smtp-Source: AGHT+IHeIw+q9i7onUbUCEx78myzhKZ0pIFDsy/43aHlqTGGuR/yF5s3RmikeRVD7XGZV/QWroy3Ng==
+X-Received: by 2002:a05:6512:b1a:b0:532:f06d:b12a with SMTP id 2adb3069b0e04-53546afcdabmr4089916e87.3.1725287188014;
+        Mon, 02 Sep 2024 07:26:28 -0700 (PDT)
+Received: from smtpclient.apple ([2001:a61:1050:bb01:34e6:8781:24eb:6a6c])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a89891d7482sm561805966b.165.2024.09.02.07.26.27
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 02 Sep 2024 07:26:27 -0700 (PDT)
+Content-Type: text/plain;
+	charset=us-ascii
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3776.700.51\))
+Subject: Re: [PATCH v2] fs/ntfs3: Use swap() to improve code
+From: Thorsten Blum <thorsten.blum@toblux.com>
+In-Reply-To: <20240826103939.63548-2-thorsten.blum@toblux.com>
+Date: Mon, 2 Sep 2024 16:26:16 +0200
+Cc: ntfs3@lists.linux.dev,
+ linux-kernel@vger.kernel.org,
+ dan.carpenter@linaro.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <041F9CBB-17E9-4D6F-B981-BC861E1048CB@toblux.com>
+References: <20240826103939.63548-2-thorsten.blum@toblux.com>
+To: almaz.alexandrovich@paragon-software.com
+X-Mailer: Apple Mail (2.3776.700.51)
 
-From: Michal Simek <michal.simek@amd.com>
+On 26. Aug 2024, at 12:39, Thorsten Blum <thorsten.blum@toblux.com> =
+wrote:
+>=20
+> Use the swap() macro to simplify the code and improve its readability.
+>=20
+> Fixes the following Coccinelle/coccicheck warning reported by
+> swap.cocci:
+>=20
+>  WARNING opportunity for swap()
+>=20
+> Compile-tested only.
+>=20
+> Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
+> ---
+> Changes in v2:
+> - Address kernel test robot feedback and assign match_offset as before
+> - Link to v1: =
+https://lore.kernel.org/linux-kernel/20240731135403.80805-2-thorsten.blum@=
+toblux.com/
+> ---
+> fs/ntfs3/lib/lzx_decompress.c | 3 +--
+> 1 file changed, 1 insertion(+), 2 deletions(-)
+>=20
+> diff --git a/fs/ntfs3/lib/lzx_decompress.c =
+b/fs/ntfs3/lib/lzx_decompress.c
+> index 6b16f07073c1..4d5701024f83 100644
+> --- a/fs/ntfs3/lib/lzx_decompress.c
+> +++ b/fs/ntfs3/lib/lzx_decompress.c
+> @@ -512,8 +512,7 @@ static int lzx_decompress_block(const struct =
+lzx_decompressor *d,
+> * the same code.  (For R0, the swap is a no-op.)
+> */
+> match_offset =3D recent_offsets[offset_slot];
+> - recent_offsets[offset_slot] =3D recent_offsets[0];
+> - recent_offsets[0] =3D match_offset;
+> + swap(recent_offsets[offset_slot], recent_offsets[0]);
+> } else {
+> /* Explicit offset  */
+>=20
+> --=20
+> 2.46.0
+>=20
 
-Based on commit d8764d347bd7 ("dt-bindings: firmware: xilinx: Describe
-soc-nvmem subnode") soc-nvmem should be used instead of simple nvmem that's
-why also update example to have it described correctly everywhere.
+Hi Konstantin,
 
-Fixes: c7f99cd8fb6b ("dt-bindings: nvmem: Convert xlnx,zynqmp-nvmem.txt to yaml")
-Signed-off-by: Michal Simek <michal.simek@amd.com>
-Acked-by: Rob Herring (Arm) <robh@kernel.org>
-Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
----
- Documentation/devicetree/bindings/nvmem/xlnx,zynqmp-nvmem.yaml | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I just noticed that v1 of this patch is already in next (commit=20
+7495ce846bbe4f38d7ea5e023e44ad864b6348ad), but v2 fixes a possible bug=20=
 
-diff --git a/Documentation/devicetree/bindings/nvmem/xlnx,zynqmp-nvmem.yaml b/Documentation/devicetree/bindings/nvmem/xlnx,zynqmp-nvmem.yaml
-index 917c40d5c382..1cbe44ab23b1 100644
---- a/Documentation/devicetree/bindings/nvmem/xlnx,zynqmp-nvmem.yaml
-+++ b/Documentation/devicetree/bindings/nvmem/xlnx,zynqmp-nvmem.yaml
-@@ -28,7 +28,7 @@ unevaluatedProperties: false
- 
- examples:
-   - |
--    nvmem {
-+    soc-nvmem {
-         compatible = "xlnx,zynqmp-nvmem-fw";
-         nvmem-layout {
-             compatible = "fixed-layout";
--- 
-2.25.1
+reported by kernel test robot (match_offset is still used later).
 
+Could you take another look at it and apply v2 if possible?
+
+Thanks,
+Thorsten=
 
