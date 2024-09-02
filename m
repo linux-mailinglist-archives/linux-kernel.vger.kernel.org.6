@@ -1,149 +1,144 @@
-Return-Path: <linux-kernel+bounces-310871-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310876-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85836968247
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 10:45:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C8E5F96825B
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 10:48:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E45E282EDA
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 08:45:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 85D61283580
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 08:48:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7293156885;
-	Mon,  2 Sep 2024 08:45:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E50AF16EB76;
+	Mon,  2 Sep 2024 08:48:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SsOTyZqy"
-Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=heusel.eu header.i=christian@heusel.eu header.b="CwoD2QiL"
+Received: from mout.kundenserver.de (mout.kundenserver.de [217.72.192.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDAAA7D401
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 08:45:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB16C1E48A;
+	Mon,  2 Sep 2024 08:48:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725266708; cv=none; b=QUeW+NkiuwiD+9DPMZ4hJIouwUAmrbNTJMJx0jyXT4flrzCY/10FzbKNS4lHsahaD06yiQlWzAT2S1tZ+w4KKDrUXvmleDRJa+Gh7qMEbxrqD3zG9oZGQyeAWYWEg7hBm9WWlY2NdZuDZ1WyshGT2Ok99JgvUcttx9z6xlcRVrs=
+	t=1725266924; cv=none; b=hGDOSw0rKWag5dWOA3tINiUsqXPRHszihti+GhY99I2P/4Mc+hhwNDPaCFhs2wmsK4o4xXY9jaY0Y83AJJTO5A0QhZQSKhcxWS3YtwroYlSY5luJbadV/j/MI0T849JLeN1FgINJa2xpCtMNaQEzsXRzVZluhb6gODwnzJ+yfiY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725266708; c=relaxed/simple;
-	bh=gb41VV9Y9wCuWlSBKmdHeI8ghtWnRNrEuF3qCJE3RaM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=aAJK2KSAIo3q78NsRUHrf4JsImlFqe2DT0525K7xnn2VvCadeBASODTmsjQCh5Szr1gHuXoaDctgDqPS5U6sPg8preEboxJgj5I1zXXgvwca5mgro+EhrKytADLBPra74e8e2aZcOGJtmJCVnWvAMocFFXYg0V6ZwZajyLAn90E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SsOTyZqy; arc=none smtp.client-ip=209.85.215.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-6bce380eb96so2119600a12.0
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2024 01:45:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725266706; x=1725871506; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OdqvCtx4hCTgy7BAxwzQbRHtzAPunqaxxME8+E7kXXY=;
-        b=SsOTyZqyH787zNcCGusTSmI7XTccfq7uuFoTpYXX+LGbv/KlgxPOsWOrRFn8KUdI/f
-         hsXkFd3fruBTXajvWZq2wgENspcdcOHAhbs7iq8Q/OovYHnwnalFVwXq4vuRM2lz1bzY
-         oyaEEJKk8FRhkxJKKsKdvw7G+MA8olShCnQG3LRyDnrYQ+zJXZ0HiCfQovbv3YqHZXyh
-         uOYFSOsx7zTrzOH4RXk2AFQO9JJhwOlCgCNiKNODWbsIyb2GicW/XAkCfiseCirCBVe1
-         CIOiSYpq/4DJWRGs2n2h9ObRR0NhUXdx/o2fJkBD+p1qNCYkoMpHSvcfPxsXwVmNQUBT
-         AvHw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725266706; x=1725871506;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=OdqvCtx4hCTgy7BAxwzQbRHtzAPunqaxxME8+E7kXXY=;
-        b=YBgIMBXXIRoGNYCg2odIoGHnTHGlL6tDj2EK/ZPHvhkkP/obMwBikydnunT5oyB2E6
-         Mn/8Kkq59FTZTRUUwqmmRd24x17O0vgWlBvNdaA51ecn9fbjKd/plG/fHblFkj3KP1ek
-         B5T3xhveuWdew8zVci02vf3B/v+QIY8aDRgBHPC+J3n6+VYKYBbF7UjNikFCiVk8SepO
-         DucYXMvRv9q7nL93Idqt21EKrLd4H9SdEP9S+keMfxPWg60mmA0L14iQcgVQbYtvNtvD
-         yVfCGQoOGhpnwOq2Ndj67X7J1Y/nt1OEKlDr/deFBgVdQkvgS0AikuAUEE1hOlNSo4Iw
-         Zs+w==
-X-Forwarded-Encrypted: i=1; AJvYcCWkpUm9Y1CGAf34rzG4nYkrMe/7W33g7R+CERgTosvANOlGl1IexWByT/TzlpSy9V7uVG3VSsSn4ZDbtcc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxm9/XJpk1YU+THNWbY85NtYeXtUWhbzNubrG7D84/UktYZDVaj
-	6JkmqAZQ43sL7k7GyPVIr3mpkHIoF907Vd3VnM377LcySKVvU4JLtuSg/Ku9PHco3vY4eqyGfb0
-	R75hi3mWTWn6lmziJJI6nM6aZyxk=
-X-Google-Smtp-Source: AGHT+IHAI7kM0DcQ1Kk+xb1ziGWteM2SawbzG1IhlHiizIJbRX7VFUfJXcHjFVQg8b+4YnDofi7gqQcXaYryXdNCJIA=
-X-Received: by 2002:a05:6a20:e687:b0:1c4:ae14:4e3d with SMTP id
- adf61e73a8af0-1cece4fcfe8mr6562127637.13.1725266705966; Mon, 02 Sep 2024
- 01:45:05 -0700 (PDT)
+	s=arc-20240116; t=1725266924; c=relaxed/simple;
+	bh=A19maF2oWPHkqTGx94yzNxGSBOwDzbA2rJL3LldZ67w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AfZaW9TfwRcnbFiQOuv8Db3nSP+RJDVBJqJyt1X2JE/fcmr0PPKtFuWunefcVibiYKmXBtsUyD4t26E2YQBs/AgzNEJ5/CS/nMzX49K39dvNtrsWDOU0BGlvkHvGQydzp2KHVn9i/EqVwnMJXHL435UG1MyhYHnY4zg19GeAcfg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=heusel.eu; spf=pass smtp.mailfrom=heusel.eu; dkim=pass (2048-bit key) header.d=heusel.eu header.i=christian@heusel.eu header.b=CwoD2QiL; arc=none smtp.client-ip=217.72.192.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=heusel.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=heusel.eu
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=heusel.eu;
+	s=s1-ionos; t=1725266919; x=1725871719; i=christian@heusel.eu;
+	bh=A19maF2oWPHkqTGx94yzNxGSBOwDzbA2rJL3LldZ67w=;
+	h=X-UI-Sender-Class:Date:From:To:Cc:Subject:Message-ID:References:
+	 MIME-Version:Content-Type:In-Reply-To:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=CwoD2QiLvuGYzsiK0MzKhhde9lSdvHZbbNNhXwnSywobRIM4qvhUzLJ0tdlWlITW
+	 rqwvmyl1PvM6IKBmrgPc78fiUeggaAVq+EM6AuobTqoaU1gnhK8EwP1PK82bOxdsP
+	 vFTtCmOw0qskXfvQGbzZhlaWRSeyDHMUl4jxuKTmSKi7ZnKw8bYky9QAftGRakKVN
+	 aLo7tWGUB6BAJItM+N70XTiwbi0a6UisKkbMOHTsmV98tnepMW3uk7N2L/jwW6mt5
+	 rw5TI2MGG/zasBdLaDY8dE2z/G1KBl/aGPZS4Bjsk0gDArb9dE0wjuDGWRABvULe/
+	 F+zEVFa5Rzam39+auA==
+X-UI-Sender-Class: 55c96926-9e95-11ee-ae09-1f7a4046a0f6
+Received: from localhost ([109.54.30.229]) by mrelayeu.kundenserver.de
+ (mreue106 [212.227.15.183]) with ESMTPSA (Nemesis) id
+ 1MScox-1se3au09gP-00ROGr; Mon, 02 Sep 2024 10:43:01 +0200
+Date: Mon, 2 Sep 2024 10:42:57 +0200
+From: Christian Heusel <christian@heusel.eu>
+To: Paul Rolland <rol@witbe.net>
+Cc: Zack Rusin <zack.rusin@broadcom.com>, 
+	Andreas Piesk <a.piesk@mailbox.org>, bcm-kernel-feedback-list@broadcom.com, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, maaz.mombasawala@broadcom.com, 
+	martin.krastev@broadcom.com, rdkehn@gmail.com, regressions@lists.linux.dev, 
+	spender@grsecurity.net
+Subject: Re: [REGRESSION][BISECTED] vmwgfx crashes with command buffer error
+ after update
+Message-ID: <948af4e4-6da4-4f49-82c8-ef061485e49f@heusel.eu>
+References: <CABQX2QM09V=+G=9T6Ax8Ad3F85hU0Cg4WqD82hTN=yhktXNDaQ@mail.gmail.com>
+ <40cf01ab-73ad-4243-b851-a02c377bdbde@mailbox.org>
+ <CABQX2QM1A9yWCuOHV6kgi3YbPvPHz-zazkOXM6Up9RWrZ-CgPQ@mail.gmail.com>
+ <20240902103436.5806f7ec@riri>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240830100310.1553675-1-linchengming884@gmail.com>
- <20240830100310.1553675-2-linchengming884@gmail.com> <20240830175504.746fb2ec@xps-13>
-In-Reply-To: <20240830175504.746fb2ec@xps-13>
-From: Cheng Ming Lin <linchengming884@gmail.com>
-Date: Mon, 2 Sep 2024 16:42:55 +0800
-Message-ID: <CAAyq3Sbta_p9WNOTEdCA7V=huPkeFFxUvxTqfzRJz0dsJMJBwg@mail.gmail.com>
-Subject: Re: [PATCH v5 1/2] mtd: spinand: Add support for setting plane select bits
-To: Miquel Raynal <miquel.raynal@bootlin.com>
-Cc: vigneshr@ti.com, linux-mtd@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, richard@nod.at, alvinzhou@mxic.com.tw, 
-	leoyu@mxic.com.tw, Cheng Ming Lin <chengminglin@mxic.com.tw>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="rupcgzgxmzcxpunk"
+Content-Disposition: inline
+In-Reply-To: <20240902103436.5806f7ec@riri>
+X-Provags-ID: V03:K1:qccHn7M7lebkNgQVrXMfeacJegLBw7eCdvFx6uS4itYQrsMRryY
+ wFNWF4NEIIrFLUTc8SPGytZtD7XIPMjGCR3A137aax3bllqdnjsJmFfX6hDe8etuhXfHM7H
+ w+zn/MwnEG4w7Nd2OjQt5l2Cm+sUNIXYLsbYqP+iARI9BmSeRidp6jO0vPD6aCi2LphNYY8
+ Ye7GHPc85cHBEMbZNbzPQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:piftTdK7JJY=;xZ04CBxhDkmKqgA3RX5KKQNaQVn
+ 7OBH2UI+WrQ9ixYWqtoSKjFmhzo/CwgMK07zYmiUnrtC/++IXvvd5XXI3/0ZG/licfym5+BqX
+ YBoB37Em2kndU2cGlkeDmhIpzFb87oCkE6NkQaJqcved4qsIKLGjerw69w9lpSqRrwmFWtCTC
+ OE0wl7xpy8qReZT9y54PLmqVGumBgfl6q/JsJ3aYHdevVKfv3nnZg20oWJT6yuwfNZvISlwwX
+ Qx69VtESbybi/SrbPEIAhlVvMfR2KU+IceaHCZD0wEFULPbFOy6JiwugOVd6QfL8tFVgZjxNP
+ nrjFUK/Bmx6uB4TigIS5a+ir9KaTzux2tkY7XYe1/PG099UIRQuJUXjVSjdxMTYxZCVf+sL7p
+ ojFx/vaLFNheG8zzJSQUOGBdOxAQFWMOLDixxerFfa3qrON1MYKUP4dsmSrSJwdqMQoFLsoUh
+ 8PDVrIm9acrhxKuXTTFBOaptQequ6E+HEAnfVD/ceUFtSs3/Ri3YvtjZiJsstHw8Y7fMMssHv
+ bylyKtRG+e0l2WnmdVNQ06IeLDFLWL3OjWn35dVRhjVjgITAbMW937XlIBHvtqDqXxkkZVNLf
+ GrlfadXB65UBrhgU1A9IBopBiMaFHmX3gTGTeo1/26+VCWmM4kxQZA5NvNgfFDcTKHR9Bt2tc
+ JMhSKjDLXwdXTcxxGqosc6e7CbeGLCtZQPUhr83vpkmpDq7povUeDzaj+FdmKWADC23oXQxhJ
+ KAZLuFX9uj/xdJY6+S+F63/TJRq9pR5+g==
+
+
+--rupcgzgxmzcxpunk
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Miquel,
+On 24/09/02 10:34AM, Paul Rolland wrote:
+> Hello,
 
-I accidentally sent the previous email before it was finished.
+Hey Paul,
 
-Miquel Raynal <miquel.raynal@bootlin.com> =E6=96=BC 2024=E5=B9=B48=E6=9C=88=
-30=E6=97=A5 =E9=80=B1=E4=BA=94 =E4=B8=8B=E5=8D=8811:55=E5=AF=AB=E9=81=93=EF=
-=BC=9A
->
-> Hi ChengMing,
->
-> linchengming884@gmail.com wrote on Fri, 30 Aug 2024 18:03:09 +0800:
->
-> > From: Cheng Ming Lin <chengminglin@mxic.com.tw>
-> >
-> > Add two flags for inserting the Plane Select bit into the column
-> > address during the write_to_cache and the read_from_cache operation.
-> >
-> > Add the SPINAND_HAS_PP_PLANE_SELECT_BIT flag for serial NAND flash
->
-> This flag has been renamed :)
+> On Fri, 16 Aug 2024 14:56:19 -0400
+> Zack Rusin <zack.rusin@broadcom.com> wrote:
+>=20
+> > Thanks! I see. I have a patch out that fixes it, but in general I
+>=20
+> Any chance to see that one pushed to stable 6.10.x kernels so that we can
+> have a working console ?
 
-Thank you for the reminder. I will make the necessary changes.
+this is on the way as the stable team has already queued the patch for
+the (to be released) 6.10.8 stable kernel:
+https://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git/tre=
+e/queue-6.10/drm-vmwgfx-disable-coherent-dumb-buffers-without-3d.patch
 
->
-> > that require inserting the Plane Select bit into the column address
-> > during the write_to_cache operation.
-> >
-> > Add the SPINAND_HAS_READ_PLANE_SELECT_BIT flag for serial NAND flash
-> > that require inserting the Plane Select bit into the column address
-> > during the read_from_cache operation.
-> >
-> > Signed-off-by: Cheng Ming Lin <chengminglin@mxic.com.tw>
-> > ---
-> >  drivers/mtd/nand/spi/core.c | 6 ++++++
-> >  include/linux/mtd/spinand.h | 2 ++
-> >  2 files changed, 8 insertions(+)
-> >
-> > diff --git a/drivers/mtd/nand/spi/core.c b/drivers/mtd/nand/spi/core.c
-> > index e0b6715e5dfe..e7b592cdbb4c 100644
-> > --- a/drivers/mtd/nand/spi/core.c
-> > +++ b/drivers/mtd/nand/spi/core.c
-> > @@ -386,6 +386,9 @@ static int spinand_read_from_cache_op(struct spinan=
-d_device *spinand,
-> >       else
-> >               rdesc =3D spinand->dirmaps[req->pos.plane].rdesc_ecc;
-> >
-> > +     if (spinand->flags & SPINAND_HAS_READ_PLANE_SELECT_BIT)
-> > +             column |=3D req->pos.plane << fls(nanddev_page_size(nand)=
-);
->
-> Isn't there any better way to know what the bit position is?
+> Regards,
+> Paul
 
-There are two other methods to determine the bit position:
-- column |=3D res->pos.plane << fls(nand->memorg.pagesize)
-- column |=3D wdesc->info.offset
+Cheers,
+Chris
 
->
-> Thanks,
-> Miqu=C3=A8l
+--rupcgzgxmzcxpunk
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Thanks,
-Cheng Ming Lin
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEb3ea3iR6a4oPcswTwEfU8yi1JYUFAmbVepEACgkQwEfU8yi1
+JYW0HRAAwlqiPgELsPtSvfPFKg3xBzpLCOrYbDIPWZDJ4lj4QlUp0Ni++wN4q0h7
+JKUZmXIuTyODIwIG+gDBZPYIVnlAPy1W7x0M8agJVu2tfdGvxPCQYAxuPTHg+h0Y
+KV+HIGgnXoll7d78vdtGGSqDWp+aKyPDPXmggLcMDGibmsj/jSV2fY5XfuSIqLOw
+DkVcC7Sd4duYORqP0fpLycJGyHyDIcwAB7Eb1UKA/njq1e1nVxQ1G1PyLvqSzvYD
+EVaDAFNbqHj1GMdRlKyWoWvgjOahwIqwLyKByxQcji9LjHwsBzJVaed+RaVDyJJp
+M139nd2fvzW99VICAYitDDnLBEa7p5KkCS94JnMEvL7GzYEdtz4eqkSTQP2UrsbM
+k7TiNf94S/kAxf66AbO0vot7v2yspRcSZZWRA7+50VDm4Z3GyexED1Pr1HHdjZCx
+Hl5LHHoGce/acRycNhZMZw4twPSww7TZb7hgQKPVCyhgAW+eCBNyLvJH5PsHLkfH
+7VhERUCTN7EOP9KpQ7xI68g9WvvOZ0lk1Ps1rIZ8ZUkPEQ34MSi7c16jteMnqUq1
+TPp1ssJRKepYV8nhv5w6x2zL9a9XJoo8dG6tuTK+rpYh7fj6HdNdn8KwuXrMjuz2
+FvSbU+fGfpnLlgQYtAKP61FHQ3f6VGC47jlmrzb1iteXWKA/P+k=
+=EDDy
+-----END PGP SIGNATURE-----
+
+--rupcgzgxmzcxpunk--
 
