@@ -1,95 +1,129 @@
-Return-Path: <linux-kernel+bounces-310931-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310932-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93AF19682FF
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 11:21:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1AE8D968300
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 11:21:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C58071C223DC
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 09:21:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4C2131C22252
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 09:21:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B20291C2DDA;
-	Mon,  2 Sep 2024 09:21:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FE8E1C2DBD;
+	Mon,  2 Sep 2024 09:21:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ieipzoJd"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="KDzoTJ3F";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="GvDkMwI6"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35E941C2DAD;
-	Mon,  2 Sep 2024 09:21:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E327187355
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 09:21:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725268868; cv=none; b=YDwIl/KNLGWVN3AFyja8q5/m+/OENJE4RA6dIygeBXqeRh18naR/jwoYm3tWU6NAzvBPj1HDsn2KafK27KsLuZDpuoWxPsQBaj5KMQau6sou8tdaEchJ+cvO6+0fjTjaYMb6v066IBIwfyQ14nyHHyNjoBkugwc3eeKDDi3E1Ik=
+	t=1725268875; cv=none; b=qmnC+awVK0a5rwNPU6yssLCMcunYA1/fHzUH5mbbZINHVcp49gQYgG1w3QKb1kuZENzax8ANo9eQAIlqPMMIrQd6Ye8wSHVA/MX9OiwFazQfS8mHYok1jIRjHkmNl2LlhnNhtRs7gn8pDY0VEYpph91M1Ls20kqCrZDA1kGdPgI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725268868; c=relaxed/simple;
-	bh=Xqc71HLB9RR0YC17nm4rIyYdKPMvk+koNamcsCl4XCU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tcaNGz6IES9LMRvRh19Kh7yYsQxolB7Tfuqwpchi/M70PdQ9G5YO43radTUV75Vs7/+/msjithRq9I32QmVmWO473zwzx+xrDeA6k7w+rRzNG6qGwTKU1/Mgo3YEyvoDnqLBOzirMrI1mbfl65QSlkBrINDdzcR3VMBM94cDbmw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ieipzoJd; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=JAulFDgx3FvNWuvmiwL6YUk4T1Qk0lgDdU6iJ9PrymU=; b=ieipzoJdht1lg4dRdhmixmOKYT
-	TI1E8SwgNJhQ/iAsP/lACajYfGU6idk4EFzXg2saJgDFwVUGnVStqhfvs7LnWFDYjXAfU7CphCk7C
-	TFJR/IS6aAY14y2ANY7hEWNZtxAxJv3uUbGv1V6nst7BXGky7h6uvkYTqosVt+zzmIhaRUuCY+r6V
-	HRCTjbYjYQ1pt7ZWvlEe1raNGTy5uJMDh4ORyhGAWUSl2+B1FguKXNbU/3PYJjiD+1qNeDmL+g/lX
-	9SXEZyVfVfJfiuo2s3hTk+EQaq/OemlDBVUBy7YgXsGRMy2Il93jB2MWNA2SvjFXH1AUv3DLtMp7J
-	lSFRbs4g==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sl3F0-0000000C7Yt-1IzZ;
-	Mon, 02 Sep 2024 09:20:54 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id D9DAD300642; Mon,  2 Sep 2024 11:20:53 +0200 (CEST)
-Date: Mon, 2 Sep 2024 11:20:53 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Luo Gengkun <luogengkun@huaweicloud.com>
-Cc: mingo@redhat.com, acme@kernel.org, namhyung@kernel.org,
-	mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
-	jolsa@kernel.org, irogers@google.com, adrian.hunter@intel.com,
-	kan.liang@linux.intel.com, linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH v5 1/2] perf/core: Fix small negative period being ignored
-Message-ID: <20240902092053.GC4723@noisy.programming.kicks-ass.net>
-References: <20240831074316.2106159-1-luogengkun@huaweicloud.com>
- <20240831074316.2106159-2-luogengkun@huaweicloud.com>
+	s=arc-20240116; t=1725268875; c=relaxed/simple;
+	bh=P3RFR3w9OGKb7/aT/u9MBYytXXSbIUzoU/rnrYfruag=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=tMwqmYRJFdMmdktI94RPOB9fPIyijR63wbm9lT/LxfH6r26ocwD6D0UaBFDP1f5vcxucgazQmEAd7MUwDgZHous7iZCY8wEcF2Tg779t7WDQsUAKfW3y6V4+u/3C5EV5JSt28wTSZQ/KKN3Ji/jnQSyRf9iwvCmwYhOx8dZNtCQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=KDzoTJ3F; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=GvDkMwI6; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1725268872;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ezJ86gMHAl9kksvHdXlVMp+lrI2MsRBPUc3qEVfL37o=;
+	b=KDzoTJ3FNcFB3d3MAotEbymvq/O70JY1KKTQv4NKvjyG9v+kxY/hyAV5UWWSaQnUs/JwiV
+	ph7HwtT/0UgfPAm5ATCFt7jV6Ouska+u1r1TrFCjBiuMxPJ1uyTVXDJ//is6tfd4TBiazz
+	yyBojNtQDiCCC9sTHvu00CQEv10CUwKLFUjdi/7FzXb6l6Te/JR7/zLL5wR/V5Q/yYCv+r
+	iWZShThdkM0AgXJ4nXqSUb09QTQuuObVAAuY3hhHXonGIU3s8Ubt9ZxLlQajNkSJoDwqIQ
+	a3n9t2JkabQm/cUhCZLbk6hIa5UoMAZcvQd8DMl5Yqj27vQXZaHc/VgbAxcfQQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1725268872;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ezJ86gMHAl9kksvHdXlVMp+lrI2MsRBPUc3qEVfL37o=;
+	b=GvDkMwI6i5ETQ35y27uKoJdpLQsmdPxSSwCiNfFTkoBp7h/iQgVd0Ayu1t6M8Xtx/cEd5s
+	hp2WFo2A6vOR48BQ==
+To: Xingyu Li <xli399@ucr.edu>, akpm@linux-foundation.org,
+ linux-kernel@vger.kernel.org
+Cc: Yu Hao <yhao016@ucr.edu>
+Subject: Re: BUG: general protection fault in __free_object
+In-Reply-To: <CALAgD-7TsMdA7rjxfpheXc=MNqikEXY9TZNxJt4z9vm6Yfs5qQ@mail.gmail.com>
+References: <CALAgD-7TsMdA7rjxfpheXc=MNqikEXY9TZNxJt4z9vm6Yfs5qQ@mail.gmail.com>
+Date: Mon, 02 Sep 2024 11:21:11 +0200
+Message-ID: <87frqi76ns.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240831074316.2106159-2-luogengkun@huaweicloud.com>
+Content-Type: text/plain
 
-On Sat, Aug 31, 2024 at 07:43:15AM +0000, Luo Gengkun wrote:
+On Wed, Aug 28 2024 at 16:27, Xingyu Li wrote:
+> We found a bug in Linux 6.10 using syzkaller. It is possibly a null
+> pointer dereference  bug.
+> The reproducer is
+> https://gist.github.com/freexxxyyy/5aefd53c6567415e9fe8c76cc2ad390c
 
->  kernel/events/core.c | 6 +++++-
->  1 file changed, 5 insertions(+), 1 deletion(-)
-> 
-> diff --git a/kernel/events/core.c b/kernel/events/core.c
-> index c973e3c11e03..a9395bbfd4aa 100644
-> --- a/kernel/events/core.c
-> +++ b/kernel/events/core.c
-> @@ -4092,7 +4092,11 @@ static void perf_adjust_period(struct perf_event *event, u64 nsec, u64 count, bo
->  	period = perf_calculate_period(event, nsec, count);
->  
->  	delta = (s64)(period - hwc->sample_period);
-> -	delta = (delta + 7) / 8; /* low pass filter */
-> +	if (delta >= 0)
-> +		delta += 7;
-> +	else
-> +		delta -= 7;
-> +	delta /= 8; /* low pass filter */
->  
->  	sample_period = hwc->sample_period + delta;
->  
+Reproducer alone is not really helpful. This needs the corresponding
+kernel config, the exact kernel version and a description of the
+reproduction environment (compiler, qemu command line ....)
 
-OK, that makes sense, Thanks!
+It does not reproduce here at all.
+
+Also if it really reproduces, then have you checked against current
+mainline as well?
+
+> RIP: 0010:hlist_add_head include/linux/list.h:1032 [inline]
+> RIP: 0010:__free_object+0x903/0xaa0 lib/debugobjects.c:396
+>  __debug_check_no_obj_freed lib/debugobjects.c:994 [inline]
+>  debug_check_no_obj_freed+0x135/0x530 lib/debugobjects.c:1019
+>  slab_free_hook mm/slub.c:2163 [inline]
+>  slab_free_freelist_hook mm/slub.c:2225 [inline]
+>  slab_free_bulk mm/slub.c:4462 [inline]
+>  kmem_cache_free_bulk+0x1bf/0x360 mm/slub.c:4676
+
+The code in question is serialized against objpool modifications with
+pool_lock. So nothing can change any of the related data.
+
+    if (obj_pool_free > debug_objects_pool_size &&
+        obj_nr_tofree < ODEBUG_FREE_WORK_MAX) {
+
+	for (i = 0; i < ODEBUG_BATCH_SIZE; i++) {
+		obj = __alloc_object(&obj_pool);
+		hlist_add_head(&obj->node, &obj_to_free); <- fail
+
+debug_objects_pool_size is initialized to:
+
+        ODEBUG_POOL_SIZE + num_possible_cpus() * ODEBUG_BATCH_SIZE;
+=
+        1024 + num_possible_cpus() * 16
+
+The minimum size is 1040, so there are at least 1040 objects in
+obj_pool. The loop allocates at max 16 objects, which means
+
+             __alloc_object(&obj_pool);
+
+is guaranteed to return an object and cannot return NULL.
+
+So the only reason why this can result in a NULL pointer dereference is
+that the obj_to_free list is corrupted. No idea how that should happen.
+
+Maybe some proper reproducer instructions shed some light to it.
+
+Thanks,
+
+        tglx
+
+
+
+
 
