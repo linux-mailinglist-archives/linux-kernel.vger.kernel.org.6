@@ -1,161 +1,93 @@
-Return-Path: <linux-kernel+bounces-311604-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311603-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74ACD968B0C
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 17:29:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D60FE968B06
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 17:29:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 33458281062
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 15:29:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 94B2E284119
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 15:29:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0A3D1A2650;
-	Mon,  2 Sep 2024 15:28:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="G5J5YmVf"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B24951AB6F4;
+	Mon,  2 Sep 2024 15:28:04 +0000 (UTC)
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD84419F135;
-	Mon,  2 Sep 2024 15:28:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9D0E39FE5
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 15:28:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725290916; cv=none; b=EvzJy8cxAUuNPUYVD6C5H2UgiFhkRnSkvqJY22O6SEsHQjT4H/9fLmZiOerO8UTd69kc08ChwQWZ9RHpTtyjsQZewS3nG9tcTsA4xc5HQ42c1NX2vkaiDkC5/Nt6G/fUeOu12A27qSup13t8Qb/+UA8+i+jpynq89XnQzXiCHKM=
+	t=1725290884; cv=none; b=bTVul8tDFnQM5K7QDX4rOyatONyVRxuhRVBlkYjSviggnQyIVybhu9+3C7J8WIfv51QLRVT+r5S1w5bc9yv+50JPLPDxr5EoKdrdgghi6jpZ+lyEUXbQmY3tXKvrYCAir803yKAl1wvT2UoCDiMvhqZgDJAzxLSd5Gtv1y/0Eek=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725290916; c=relaxed/simple;
-	bh=Do0rvgKlkHq8ASU6039rFshbKnhl+L6kgjVSUyIV/2s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qxqCI4LpJ95AhVZw7b85/RikApuWwshbjhQZwK9076mZYI3IeGOs+MhNDZtiwvPjU4mDK+gaZXs/yUmgJJ0wEFVqRSuccCfP69xxt6W+O00R0t/FjgL0WPSygUblShuAgu0vKFCKswsd/zT4ZSaiU0TqPafxyTzKYVQAtcaYAYE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=fail (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=G5J5YmVf reason="signature verification failed"; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 476F440E0284;
-	Mon,  2 Sep 2024 15:28:30 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=fail (4096-bit key)
-	reason="fail (body has been altered)" header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id mxqVLOupLElX; Mon,  2 Sep 2024 15:28:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1725290899; bh=v1rVrPx0zTAxn60ub0hHERL/EEmSzE33L7q+4cw2pqE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=G5J5YmVf3YT9NhA986KamNtE9zh3OAey7J2/sgPKpUnF6j4cMZdjDE8RDFmX/qC28
-	 Uoe3ZXyRVP7PTGHi7qYS1WGrzgOsKKeUlNZisWaM0mxoDQ5TLgfnIzXVwSxL635kLD
-	 yKgAkh70AvUx4OjB9uMlNb1EZrBIAeD50fFl+VPAg1dub+YgQPjbDcMD2/tSHKOsf9
-	 wKsZqf38OfBH0HLxkO9kWNIpI2OIit78tvvFnBcH/wnxjTi/vu73SD4yA82yY3krtq
-	 kWwKVeIpEyfSEKxb2wGeBfdbD7h91mewH0ljomOsQ4SkySmQW8npn8Nx1xiPoLaM1Z
-	 iXz6lbcrlmsdnnm5A/9YYz0FTomZF79+YQVNd/sWG8vFQIv0gn8cGAgBAFUr3oO0Y5
-	 EaDs+XScP/p7fXBO8LLbwVhKQ8Mbarl10asKZaXEnbyPFKAzDIXIt1eWN7HiMWst8t
-	 n3Nn9JinCnhfO6x7hla9BdawuBhcVmqqZFRP0mIEOPOBvpx38qt+ideRDPtNByeatt
-	 enlSgK5qZ4QVcTc+/yv7wP0XqkKwUlylrw0CpBlCKXp8q6gH7mW8xhmJbfVQizMq8D
-	 Qdn/q7HRE+5woDgpgziR/lt+7qRVivMwtr+jtLnJYgmtM3MH1MrEpzfrA/JYmfNWeb
-	 vMhIzX8tGdSaR36fKHO+RWFg=
-Received: from zn.tnic (p5de8e8eb.dip0.t-ipconnect.de [93.232.232.235])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 4D8D240E0081;
-	Mon,  2 Sep 2024 15:28:01 +0000 (UTC)
-Date: Mon, 2 Sep 2024 17:27:55 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Cc: Tony Luck <tony.luck@intel.com>, Ard Biesheuvel <ardb@kernel.org>,
-	James Morse <james.morse@arm.com>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Len Brown <lenb@kernel.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Shiju Jose <shiju.jose@huawei.com>,
-	Alison Schofield <alison.schofield@intel.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Daniel Ferguson <danielf@os.amperecomputing.com>,
-	Dave Jiang <dave.jiang@intel.com>, Ira Weiny <ira.weiny@intel.com>,
-	Shuai Xue <xueshuai@linux.alibaba.com>, linux-acpi@vger.kernel.org,
-	linux-edac@vger.kernel.org, linux-efi@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 4/5] efi/cper: align ARM CPER type with UEFI 2.9A/2.10
- specs
-Message-ID: <20240902152755.GFZtXZe5FPSfjRa9u3@fat_crate.local>
-References: <cover.1720679234.git.mchehab+huawei@kernel.org>
- <1ca1274f57fac69eda2f193de53077e8254a70fe.1720679234.git.mchehab+huawei@kernel.org>
+	s=arc-20240116; t=1725290884; c=relaxed/simple;
+	bh=fcsvwgJHszrqFYBuVGMJyWBjEoNkn9u8s/Qvo7dREkE=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=OOQxW2JB1WuGe6yJw+rYIKmGN2x2mpkaFiiY77bqSaOfKw3F+JiMv1eYTnCYMKkwDnleFwNCOmcaG2z1PizuciHtecdPy3t5MkHfEH/AscBQZF1J6Q6UvxpA/2X3myn4s2W3JlukyodQmV4/AfcLfxB8aFDF+wOiabZJphdbbaI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-82a217cec1fso466343639f.0
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2024 08:28:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725290882; x=1725895682;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=DPWC6U8f2qBdEbiB/1tHLk14BDYkG8mFDHPKIKYsGpk=;
+        b=YAKE/gD1li67GvwxR8TsUSWVPfuIzhKT2l92v/e3UnfORjyktZl8lUAPhF1Olbyeei
+         /lFJMNprplkOYtv3c8+bUpnzVcUE3TQhhJWIWZ5/G1kP2a+0LaFsWc2VIcazH8ZS/+tM
+         vHfqHeDHiGP7j6wli9VAwJfmcOngzyUsrkMzxx67AhTAyAb4elLfnLIgpJG3NhkoUsAv
+         IoOZL+nGTu3eyP9UnDdwxtgSNflfTSZDSyvbbEU0vyNKO4iDeHnTG+I/Sz+5QGSeg9Pq
+         mX23Fv61lBH9QYnhaTz3VBfEpvi7A/mbPC3YT9WdOYDuq0gjwDayDH0wXq/XzdA6kmhW
+         cAIA==
+X-Forwarded-Encrypted: i=1; AJvYcCUfP6pzUCxToaCl8zwEzBPoD/gMmJv/y/vIY3M9bm8JooWBIs2fJWbICicko4LUt8pShJV2/GRTGKiW2VM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw9vDNbxvaQVf95F/heaMwhzLOiJRkPJuUwqDqUN5B5el4sGPiY
+	cNOQYmjtBBPtETXJa8JE0iE73Zh4Q9Xb1lqLaHrAv251z9qFot4C14CLunW2iXPlfkrKtKQe+bJ
+	+pCqdhEWIYlLPgAotxc97sfEDOEnmyuzfODbQevJMPPicY/cWaqFul+I=
+X-Google-Smtp-Source: AGHT+IGYE7aRkq1QdG5CqeZumrhss9UwB66VHx1USISJdAEcgiBS8pGvcFiBithIiWwzkPxwiT2pBaJMBi9K1YaRPMlswNp5FSto
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <1ca1274f57fac69eda2f193de53077e8254a70fe.1720679234.git.mchehab+huawei@kernel.org>
-Content-Transfer-Encoding: quoted-printable
+X-Received: by 2002:a05:6638:8704:b0:4b9:e5b4:67fd with SMTP id
+ 8926c6da1cb9f-4d017d77c32mr899228173.1.1725290881918; Mon, 02 Sep 2024
+ 08:28:01 -0700 (PDT)
+Date: Mon, 02 Sep 2024 08:28:01 -0700
+In-Reply-To: <00000000000087bd88062117d676@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000026b5250621249667@google.com>
+Subject: Re: [syzbot] [fs?] [mm?] INFO: task hung in page_cache_ra_unbounded (2)
+From: syzbot <syzbot+265e1cae90f8fa08f14d@syzkaller.appspotmail.com>
+To: akpm@linux-foundation.org, davem@davemloft.net, johan.hedberg@gmail.com, 
+	kuba@kernel.org, linma@zju.edu.cn, linux-bluetooth@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, luiz.dentz@gmail.com, marcel@holtmann.org, 
+	netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com, willy@infradead.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Jul 11, 2024 at 08:28:55AM +0200, Mauro Carvalho Chehab wrote:
-> Up to UEFI spec 2.9, the type byte of CPER struct for ARM processor
-> was defined simply as:
->=20
-> Type at byte offset 4:
->=20
-> 	- Cache error
-> 	- TLB Error
-> 	- Bus Error
-> 	- Micro-architectural Error
-> 	All other values are reserved
->=20
-> Yet, there was no information about how this would be encoded.
->=20
-> Spec 2.9A errata corrected it by defining:
->=20
-> 	- Bit 1 - Cache Error
-> 	- Bit 2 - TLB Error
-> 	- Bit 3 - Bus Error
-> 	- Bit 4 - Micro-architectural Error
-> 	All other values are reserved
->=20
-> That actually aligns with the values already defined on older
-> versions at N.2.4.1. Generic Processor Error Section.
->=20
-> Spec 2.10 also preserve the same encoding as 2.9A.
->=20
-> Adjust CPER and GHES handling code for both generic and ARM
-> processors to properly handle UEFI 2.9A and 2.10 encoding.
->=20
-> Link: https://uefi.org/specs/UEFI/2.10/Apx_N_Common_Platform_Error_Reco=
-rd.html#arm-processor-error-information
-> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-> Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-> ---
->  drivers/acpi/apei/ghes.c        | 15 ++++++----
->  drivers/firmware/efi/cper-arm.c | 50 ++++++++++++++++-----------------
->  include/linux/cper.h            | 10 +++----
->  3 files changed, 38 insertions(+), 37 deletions(-)
+syzbot has bisected this issue to:
 
-How was this thing ever tested?!?!
+commit e305509e678b3a4af2b3cfd410f409f7cdaabb52
+Author: Lin Ma <linma@zju.edu.cn>
+Date:   Sun May 30 13:37:43 2021 +0000
 
-Geez.
+    Bluetooth: use correct lock to prevent UAF of hdev object
 
-drivers/acpi/apei/ghes.c: In function =E2=80=98ghes_handle_arm_hw_error=E2=
-=80=99:
-drivers/acpi/apei/ghes.c:565:34: error: implicit declaration of function =
-=E2=80=98FIELD_GET=E2=80=99 [-Werror=3Dimplicit-function-declaration]
-  565 |                                  FIELD_GET(CPER_ARM_ERR_TYPE_MASK=
-, err_info->type),
-      |                                  ^~~~~~~~~
-cc1: some warnings being treated as errors
-make[5]: *** [scripts/Makefile.build:244: drivers/acpi/apei/ghes.o] Error=
- 1
-make[4]: *** [scripts/Makefile.build:485: drivers/acpi/apei] Error 2
-make[4]: *** Waiting for unfinished jobs....
-make[3]: *** [scripts/Makefile.build:485: drivers/acpi] Error 2
-make[3]: *** Waiting for unfinished jobs....
-make[2]: *** [scripts/Makefile.build:485: drivers] Error 2
-make[1]: *** [/mnt/kernel/kernel/2nd/linux/Makefile:1925: .] Error 2
-make: *** [Makefile:224: __sub-make] Error 2
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=16a579eb980000
+start commit:   431c1646e1f8 Linux 6.11-rc6
+git tree:       upstream
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=15a579eb980000
+console output: https://syzkaller.appspot.com/x/log.txt?x=11a579eb980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=660f6eb11f9c7dc5
+dashboard link: https://syzkaller.appspot.com/bug?extid=265e1cae90f8fa08f14d
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16f8f0fb980000
 
---=20
-Regards/Gruss,
-    Boris.
+Reported-by: syzbot+265e1cae90f8fa08f14d@syzkaller.appspotmail.com
+Fixes: e305509e678b ("Bluetooth: use correct lock to prevent UAF of hdev object")
 
-https://people.kernel.org/tglx/notes-about-netiquette
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
