@@ -1,158 +1,134 @@
-Return-Path: <linux-kernel+bounces-310455-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310456-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E7D7967D47
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 03:21:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04FDC967D4B
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 03:23:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8CFBB1C21028
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 01:21:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B08E41F2191D
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 01:23:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64C99182B4;
-	Mon,  2 Sep 2024 01:21:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF536182C5;
+	Mon,  2 Sep 2024 01:23:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="pYzkwZx0"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LxSDHSyO"
+Received: from mail-oi1-f174.google.com (mail-oi1-f174.google.com [209.85.167.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C1D0179AA;
-	Mon,  2 Sep 2024 01:21:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2CCF8F6C;
+	Mon,  2 Sep 2024 01:23:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725240067; cv=none; b=gxwIvcS+s+wSoBJOzaLjbgD+1N5NXVWykg+Hwauib8eKvrLaHvXSU9uhmT6o0Uzd2kz31I5LwN8QVebzhznAqn/bDOFb38AUyqt67wAUTZXDfG30KDc3GFCS7xBzgg7gh+KLYwwalDESLvdM1VnU4jpR4OQlnQcCfmPJlMsrsJg=
+	t=1725240203; cv=none; b=LYj13obtpVytFcBSejx3kgT8BE3MaNEt2rV75sky/bYDhoG5nfHzDR+oneu8fis1aIlAQM2hxrKCQURPj+eSAkuKle6/RRPYxw0sMAlOsEDaa19Wct/3cXEsOeHNOyi3YQkgze0yUSj7nh7ffZ69K+SOM4dKoSaSSfe4Y0yt4TQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725240067; c=relaxed/simple;
-	bh=veHDEAqZ7qx4m7FUaxOpeRM4Ko7hWkG+aledPNRz+x8=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=uLjsznO5Eyhk2c8DbwhYmqOT4Dq7kC07PeJWrZ2ivJVzDHltqAx51fOwd4yTzu5vlhbBdh/t6a3brUGR5J1EFCxzMC9sw7+FJfAtWjURNf5ruV26MVh3tKSuL0+jGOBwalFMJylhsgKnSJhNdK4mfSEVTUL8S4yZKnVM98ITU/U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=pYzkwZx0; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1725240062;
-	bh=yCX3AG3F1YQmeNFRBTV/ZK2nZz1LuG4wF0BT5ltBvjw=;
-	h=Date:From:To:Cc:Subject:From;
-	b=pYzkwZx0qpu1lj3CUf0gyvRNfr3rVmsB9s0B4SbYNU8K2HF4uy9eQUwnuqH2bjlNs
-	 xUGXc1rVO8SOjcYwm/ZGCJ1dZ9AgBeV89oHvKCnvISOyA9MFBhoKNlgASsK8e65tRs
-	 KcNQqn5KEVWAt2FEldXOVR+NXpH4AiNzW9UPZbgN327EojUOn8nojAKQFFn4lClfa6
-	 PAJ4r1SwXXpuYgacFyAQtQHb8Mxf9kTWy9+o6m0YNftUxyOOHKCS54OhGHir2rIfR0
-	 3j33C/XInKR43PLWUs1TXaMyFQQlOYJCJVtp4hCl4yN5cHMnX3fOLpJrd/LxZe/RxK
-	 4B052bWnfWiYw==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WxrYT6jH4z4x87;
-	Mon,  2 Sep 2024 11:21:01 +1000 (AEST)
-Date: Mon, 2 Sep 2024 11:21:01 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Christian Brauner <brauner@kernel.org>, Andrew Morton
- <akpm@linux-foundation.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>, Luis Chamberlain
- <mcgrof@kernel.org>, Pankaj Raghav <p.raghav@samsung.com>, Usama Arif
- <usamaarif642@gmail.com>
-Subject: linux-next: manual merge of the vfs-brauner tree with the mm tree
-Message-ID: <20240902112101.2728f045@canb.auug.org.au>
+	s=arc-20240116; t=1725240203; c=relaxed/simple;
+	bh=rcY86Xh8hmdWc/GwfHJUqqLAtLfP8/R+o7Jjb71rsCI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uld3dL40a4fB/o615I7pOk7Jfp2dmgt5TE6CP5HMtVJgoeqItA/lk+wKanieFEfYuZF8YW0wY/ZLtwxph2E8ymFKOH2eWS7+A2JUR7I7moraHRJ0dzXg1VKd78q2A/ArLsz4U/sZCguLUcCJ7OUm3BanArLF7BkVVWoLdHI8C1I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LxSDHSyO; arc=none smtp.client-ip=209.85.167.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oi1-f174.google.com with SMTP id 5614622812f47-3df07fe03acso2347062b6e.3;
+        Sun, 01 Sep 2024 18:23:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725240200; x=1725845000; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=u/xe9QZ+gYCeSq3BZh2r9ujizGNk/decUAVyH1Yg/YA=;
+        b=LxSDHSyO5pc0OffgDnnK+B2TJglcpQNi/N+q09Xjctle93q4GMG/Jita6yMFoNIPMT
+         TIh688VvQZ0+PnhPbno3IubG9/RkzneU3GHgdj9arA0KZPuGADV98Q1E4H8kDKFzF/ca
+         4WB/4r/XLnjpUXRv/LOqV/L3ZIl0CidQHAd9RV3lpwrSxvWvx9hTRRoGZDDrUEnaLius
+         nJlLuI9qG/VASr7WCQ/55qWIqV4zzk/Un4KMV6O4in/7bcbSnY572SD1/+klEXC1MVc2
+         ptF9pbO9eIzRM/BNmkPygjYVAzOvtWr4EKYXK3ZisEEdFt2M9Mh2azfNOdPuAhMMMYO6
+         W6TQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725240200; x=1725845000;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=u/xe9QZ+gYCeSq3BZh2r9ujizGNk/decUAVyH1Yg/YA=;
+        b=xPqoa7Ev7mZZvVsOJxjAMRDPJIer8TVOe+h9L8bx/FA7u2S7RCUKR+JqMSmcA7VrQT
+         D9GTz/Q0J4wbhlZYnJcv6a0y/yg8Ljt5ICCjSM3zoi6DMv0SoPwr+er6ajFjsMZEBnGS
+         wjgHRNRAfnESVXoDXerAX7BFiX5bhXWs4ii3A4wEjQoVvwBxF7UH+7/s9xX9F1UyPnAL
+         OYY4BK7W+vfgG8k+5GOj54/NL+Ya9/AAdscYmLJgBcRYKR1HK9jB75yEPt8VSwLs5zvc
+         ANEZSYMcd3bGvbjjwYidgYqXAm0themEpul/3W+xdccyf7j8BgoqNAcTKR4G7KIK+7OV
+         Nz3Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUWpY8tqfjEuNKTtNx6A9P+Rdq7nwVIqSAQPWgKjxLSqV6sDaFKzh45ux0z4mMkEDn9MVODZxTUxh+Uvjmz@vger.kernel.org, AJvYcCXb4UFtxjufyt9B8suy4O8KG05IuzL9XoGayvArygHIGyFHIbuEPOGQrfjNtuTp60qce4VkAr9C47S9@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw2JH28JSKS0iMYiyBsxBctZ+Y6hSA3RxxQpDLC32RMM1OTS2pQ
+	uSv1R35vH/DB2Bwd8a6Hx3cybivwWaeAPMoB+jFXu90GhtumJ+pc
+X-Google-Smtp-Source: AGHT+IH6KvwfF320D8xw/jut+hpZ9VMsVm9fprd9ay7D3ASB+9t79VFPwlYZxN0fUjpgiNxSLJSNJg==
+X-Received: by 2002:a05:6870:9e98:b0:254:affe:5a05 with SMTP id 586e51a60fabf-277d044346cmr6761684fac.21.1725240200505;
+        Sun, 01 Sep 2024 18:23:20 -0700 (PDT)
+Received: from visitorckw-System-Product-Name ([140.113.216.168])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-715e56d9716sm6038692b3a.174.2024.09.01.18.23.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 01 Sep 2024 18:23:19 -0700 (PDT)
+Date: Mon, 2 Sep 2024 09:23:15 +0800
+From: Kuan-Wei Chiu <visitorckw@gmail.com>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Yu-Chun Lin <eleanor15x@gmail.com>
+Cc: Yu-Chun Lin <eleanor15x@gmail.com>, thierry.reding@gmail.com,
+	maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+	tzimmermann@suse.de, airlied@gmail.com, daniel@ffwll.ch,
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] docs: devicetree: Fix typo in lvds.yaml
+Message-ID: <ZtUTg0C81FwChfDh@visitorckw-System-Product-Name>
+References: <20240901133046.962263-1-eleanor15x@gmail.com>
+ <20240901151745.GB6713@pendragon.ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/TN_5+TTIdtGKY._wb.+H6NN";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240901151745.GB6713@pendragon.ideasonboard.com>
 
---Sig_/TN_5+TTIdtGKY._wb.+H6NN
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Sun, Sep 01, 2024 at 06:17:45PM +0300, Laurent Pinchart wrote:
+> Hi Yu-Chun,
+> 
+> Thank you for the patch.
+> 
+> On Sun, Sep 01, 2024 at 09:30:46PM +0800, Yu-Chun Lin wrote:
+> > Corrected the spelling in the description of LVDS Display Common
+> > Properties.
+> > 
+> > Signed-off-by: Yu-Chun Lin <eleanor15x@gmail.com>
+> 
+> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+>
+LGTM. Feel free to add:
 
-Hi all,
+Reviewed-by: Kuan-Wei Chiu <visitorckw@gmail.com>
 
-Today's linux-next merge of the fs-next tree got a conflict in:
+Regards,
+Kuan-Wei
 
-  include/linux/huge_mm.h
-
-between commit:
-
-  bc47772ebe8b ("mm: introduce a pageflag for partially mapped folios")
-
-from the mm-unstable branch of the mm tree and commit:
-
-  fd031210c9ce ("mm: split a folio in minimum folio order chunks")
-
-from the vfs-brauner tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc include/linux/huge_mm.h
-index 0b0539f4ee1a,7c50aeed0522..000000000000
---- a/include/linux/huge_mm.h
-+++ b/include/linux/huge_mm.h
-@@@ -326,14 -316,15 +328,15 @@@ unsigned long thp_get_unmapped_area_vmf
-  		unsigned long len, unsigned long pgoff, unsigned long flags,
-  		vm_flags_t vm_flags);
- =20
- -bool can_split_folio(struct folio *folio, int *pextra_pins);
- +bool can_split_folio(struct folio *folio, int caller_pins, int *pextra_pi=
-ns);
-  int split_huge_page_to_list_to_order(struct page *page, struct list_head =
-*list,
-  		unsigned int new_order);
-+ int split_folio_to_list(struct folio *folio, struct list_head *list);
-  static inline int split_huge_page(struct page *page)
-  {
-- 	return split_huge_page_to_list_to_order(page, NULL, 0);
-+ 	return split_folio(page_folio(page));
-  }
- -void deferred_split_folio(struct folio *folio);
- +void deferred_split_folio(struct folio *folio, bool partially_mapped);
- =20
-  void __split_huge_pmd(struct vm_area_struct *vma, pmd_t *pmd,
-  		unsigned long address, bool freeze, struct folio *folio);
-@@@ -502,7 -487,13 +505,13 @@@ static inline int split_huge_page(struc
-  {
-  	return 0;
-  }
-+=20
-+ static inline int split_folio_to_list(struct folio *folio, struct list_he=
-ad *list)
-+ {
-+ 	return 0;
-+ }
-+=20
- -static inline void deferred_split_folio(struct folio *folio) {}
- +static inline void deferred_split_folio(struct folio *folio, bool partial=
-ly_mapped) {}
-  #define split_huge_pmd(__vma, __pmd, __address)	\
-  	do { } while (0)
- =20
-
---Sig_/TN_5+TTIdtGKY._wb.+H6NN
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmbVEv0ACgkQAVBC80lX
-0Gw5EAf9GbI00hwZb2BMskaU6qsiXG12/m8h0QtGyRScACqtI6hdrTUwnQaL4lpx
-OZ4m+u4Mbj1chqQ6+xSHL7iQPZ9iZaxn4tsDADutljQFEY4Jx5HnPR7f8DYEkWof
-MUo9Ur8Qo/neJQueptTbEkneIPdOthUReYl/7mxoTOnzAUCht7jVMGnTTTV7stv8
-3xbPhUHDCkXkXDSsHOI2IH0goVDXnvUKp7mt7ImEJONQXHExxSmJL38m0AadFYn9
-rNJ4VfQYjUmS7vQywcT4OVVb2m5VCIRh09YSgSZFrNpH0cfHZyKsn8jWkI14Qn/e
-7f2Tdy3rWD9tOhbfMQ+dj14CPoVexQ==
-=nrbf
------END PGP SIGNATURE-----
-
---Sig_/TN_5+TTIdtGKY._wb.+H6NN--
+> > ---
+> >  Documentation/devicetree/bindings/display/lvds.yaml | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/Documentation/devicetree/bindings/display/lvds.yaml b/Documentation/devicetree/bindings/display/lvds.yaml
+> > index 224db4932011..b74efbea3be2 100644
+> > --- a/Documentation/devicetree/bindings/display/lvds.yaml
+> > +++ b/Documentation/devicetree/bindings/display/lvds.yaml
+> > @@ -16,7 +16,7 @@ maintainers:
+> >  description:
+> >    This binding extends the data mapping defined in lvds-data-mapping.yaml.
+> >    It supports reversing the bit order on the formats defined there in order
+> > -  to accomodate for even more specialized data formats, since a variety of
+> > +  to accommodate for even more specialized data formats, since a variety of
+> >    data formats and layouts is used to drive LVDS displays.
+> >  
+> >  properties:
+> 
+> -- 
+> Regards,
+> 
+> Laurent Pinchart
 
