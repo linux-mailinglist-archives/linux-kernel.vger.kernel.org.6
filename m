@@ -1,72 +1,71 @@
-Return-Path: <linux-kernel+bounces-311097-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311098-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FCE99684D3
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 12:37:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0249E9684D6
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 12:37:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 49B4728860B
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 10:37:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 831AA1F23399
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 10:37:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F92F183CD7;
-	Mon,  2 Sep 2024 10:37:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03ECB184559;
+	Mon,  2 Sep 2024 10:37:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="i4ObsPfz"
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="RXaXJMyX"
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22B8815FD13
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 10:36:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EA7D181CE1
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 10:36:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725273419; cv=none; b=l/zPWpXbrxlXM44EtdjTar0ZLZXWst122d5e9iCDqpQf7c1todFiJadCDa/+1/IhEgjjVR0lHKy8NXJv6/pIWWTiUy/dslLc/00yuqpKM8sKYjGtuhLNGRuxKQGZEtwcWmkIrb6FMo4gj/RuRFvM6WHneyvJDYUaU868L2kMpcw=
+	t=1725273421; cv=none; b=HPUg15jeu0KXlGItKRMaX+xrfmob3mrRxhDRoIiXAruDjCU2myWYcQQA+b5kN8Hu00pVIn0M38/E4A/h9uDm63Xwio7dezVLbVdoe5fCKyTC9lH3tCv6LJHOZ2kRolLnPXmmAEK50A2rBHZqg3ipnV107orZH4xgx15v68Xg8Zg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725273419; c=relaxed/simple;
-	bh=IXqmhsQDt/RO+GElC8x8ywqYUr/3SWcgPZP7XLJrRH0=;
+	s=arc-20240116; t=1725273421; c=relaxed/simple;
+	bh=9wWTe2RhHwvr6CPLWLyUmFQssffTJWZ48+UUgVNgMfA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=towT+xUDD8tK2YIw5mvKPJinNS6Se1ShJf0hUSl36RSjAd8Zozre7XISEaZpZLsd+D/kpxtjc3ZYiWx+zKTyKRsy1XbPMa8+s/ppHvCQOO77fpuFhD63BxnI8y4ytgrlK0Pdl+v5KxzGJG2BpnzAWcFdlMXwqzP4s+bePE4Btso=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=i4ObsPfz; arc=none smtp.client-ip=209.85.167.50
+	 MIME-Version:Content-Type; b=i11mxGMtaVm8lHVppIroWTA75Uo91WW2KRqtUZx+uDwufXaOuQ2SjXgAR4R27xVfqfg1GLQyOl6/GCqm/C6OxtpF7KGwKbrsCR2tYT7yJWuLvB/7AJkInAHDP3h0EA2iBSBXEm6OxLtoyrE1Qk7uIBiuDethTm/PepAXXrt1Jzw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=RXaXJMyX; arc=none smtp.client-ip=209.85.218.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-53345604960so4524606e87.3
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2024 03:36:57 -0700 (PDT)
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a7a81bd549eso337995366b.3
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2024 03:36:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1725273416; x=1725878216; darn=vger.kernel.org;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1725273418; x=1725878218; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Ui2lv4x9FTPWujQRhFdVeT4msHXJUFxc93RUhnH6Vdg=;
-        b=i4ObsPfzFfllcg68ujk90EGsLWr0W9Szor3efz7N1usMwRxWYO7/gD61qfi5ioO9Bk
-         ALarINfH5EIFYWZaHU/n7l3CbRn14Hb7YUUuuhCYUUy1XG4dVDse2PrPBcipO2FZeBmY
-         eE6i/c4Xyq2m1cU7CKYW/rRYk/vNTAa8ZR8FNHryeme0qaPLowo/DVxGhK1FWvuvB0GS
-         +NHjKOMcBPXXnbfVoGyXpVsD3tjORQO06TuOLKkrPTsIMtGUWUnjpaRnsEHQIevDppfW
-         Mp5x/dPVkClES+Oh7NHeWRoa30OiIFLHMPXEiyR7P7P87/rOupmI5fHhSaqVQeGKe/dD
-         KQ8g==
+        bh=WRucj7sLZEUBkFzhvRqpr3JKNs6+16Ez8lks/iAJ3Xo=;
+        b=RXaXJMyXe7Iw3yp8BTlLK1dooJ4J55xsYrQjwaMHWGOUPJkXx8qsFxa3WiqAyUCCad
+         KvUav1LSTP6gRMjoTvS/wRcuNgNe+YSPyamBY3+ODTfDIhIoHpeuquJOWsoQgyqAtkY6
+         66NsKEPK2638hMBwvOYvsYQwHxSq44TQ5ty7x0m2RbmUs9ujAQgGSosyVq9l81Mrb6Tu
+         h3jajWJMWx+13rCHrPUTSx1Hr+TlV2aTWv6UteAguTOL73H5bfC1joIdw77PvW9+K5vL
+         8b5tVkIQJTTlM7uLEfEqp54uj3nzDLwrstNGiHSqzxqCMfvpsN8vuRhYoVZBRaeytNlH
+         b6Aw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725273416; x=1725878216;
+        d=1e100.net; s=20230601; t=1725273418; x=1725878218;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Ui2lv4x9FTPWujQRhFdVeT4msHXJUFxc93RUhnH6Vdg=;
-        b=RJGYrCiUkkJcKvHww7r+NFAVKRXiBvY3+RFi9PQX8QBOF/gC56P46mtnMyKdz/UtWE
-         e2IJZuaxL/+T1LXXwdBsbwB7Cc6K9XI5iXcDOS5aVRQdBZubrTJngPQ8dI5ihdJKAxsV
-         qwbU5me7fFHccVk+Cd0SSjFzZ8bfJSIlBr3VE8dbOr3QDNv0Ir0hgbYvyVv9FIY5ofQS
-         J6XBJQ6iDJetxfETKu21m/bjUALS7ugcrLrmknV5HBvbivfbNFRSnLCoDH/bJ6cdTa04
-         Vh9Rs1Z00OquhPkITXq6UIdaiXpWyOrL60yaPZKPyR8UJ+uVYFDmZ1lmI68cEDGMiQWL
-         sEEw==
-X-Forwarded-Encrypted: i=1; AJvYcCX9GHqsswEp7dggh7OQgvkSGICYgAIvpz6sP6XDkwYhPuZbT1IzXZMCOaWSyKd5LRNy+lhm1QzPdJwvL80=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz85nyRp0DKuEN1Fou6cHrHAeGXI8iOGTh0U4HnGPdXHYK6DcUl
-	iUMyS+QktUevuRxU0oQnMb8noE5CCptXRKLYY9a8nWX1j8JeUUVjXxJPPBcMeykgv/9+Qf7MSFX
-	cXxM=
-X-Google-Smtp-Source: AGHT+IE7QHfP7LWY+O7Vl0+pPZHA7g1j6i36WnsPlbhD/KPhHNsYvcLbIn25Q3MFVzYi5IGmTTLisg==
-X-Received: by 2002:a05:6512:1101:b0:533:3fc8:9ac0 with SMTP id 2adb3069b0e04-53546b4248amr5551918e87.34.1725273415673;
-        Mon, 02 Sep 2024 03:36:55 -0700 (PDT)
+        bh=WRucj7sLZEUBkFzhvRqpr3JKNs6+16Ez8lks/iAJ3Xo=;
+        b=esHNPs6+xOhbqc+bAtba8w4+t5wAfHx5v9UUdxEucq3pAeDWulUppBrro8V6YN6LmX
+         OpD+zHsDxZj0V7wcTD7oQNwEFv+sE+BH7vvek+afCtnxau+EQEfayQTkKYXQnT28V8HH
+         lyq2i4Ohnsb5ng2St9AI+9g/Y7Xvg4/ncPtDhNr6mFPPErIb/TFlaxIzBhsMS7GUyFQy
+         18PvEKY+LKe8aOwcvw9c6cXpGczwC/QIDQJjnpPUPXajoA4/340NBQsdTqF+SZ3I4/c7
+         Lcu6ipdqI0s2ggpGFNgmQt4SQya58n0G8zR7YK4gQYs9f5wDVQshG8s6z78xKNBJuGHZ
+         HueA==
+X-Forwarded-Encrypted: i=1; AJvYcCWuHi3jNMTF0J8mTw9y3luOgeb8fPexcAFWgC2GYl8oyswcW9OVn8S7AL3ART3g1GmYGfIQHiaW206YH3o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwvFoy4i4UB5w7b8IlUaYh9ASUueNxgnoAueU2QE9BUPZGYfJww
+	6+TUxSOigoLxnmrVNz/7oEktHB1yixXgFZl28iA+5Hw37/0zX46VjIkKOKe3eHA=
+X-Google-Smtp-Source: AGHT+IGs3wVJTHJ7qyp2vbEm9Wg5aV71A/IVWW27uPpd7RSejJp8JXTar1dmQObOgDz9YV8h50xsmg==
+X-Received: by 2002:a17:907:3fa7:b0:a86:b00a:7a27 with SMTP id a640c23a62f3a-a897fad07f9mr1015773966b.60.1725273417491;
+        Mon, 02 Sep 2024 03:36:57 -0700 (PDT)
 Received: from neptune.local ([2a02:2f0e:3004:6100:e124:ce40:67a4:fcf0])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a89891da22bsm540876766b.182.2024.09.02.03.36.54
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a89891da22bsm540876766b.182.2024.09.02.03.36.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Sep 2024 03:36:55 -0700 (PDT)
+        Mon, 02 Sep 2024 03:36:57 -0700 (PDT)
 From: Alexandru Ardelean <aardelean@baylibre.com>
 To: linux-iio@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
@@ -78,9 +77,9 @@ Cc: jic23@kernel.org,
 	michael.hennerich@analog.com,
 	gstols@baylibre.com,
 	Alexandru Ardelean <aardelean@baylibre.com>
-Subject: [PATCH v2 2/8] iio: adc: ad7606: move 'val' pointer to ad7606_scan_direct()
-Date: Mon,  2 Sep 2024 13:36:25 +0300
-Message-ID: <20240902103638.686039-3-aardelean@baylibre.com>
+Subject: [PATCH v2 3/8] iio: adc: ad7606: split a 'ad7606_sw_mode_setup()' from probe
+Date: Mon,  2 Sep 2024 13:36:26 +0300
+Message-ID: <20240902103638.686039-4-aardelean@baylibre.com>
 X-Mailer: git-send-email 2.46.0
 In-Reply-To: <20240902103638.686039-1-aardelean@baylibre.com>
 References: <20240902103638.686039-1-aardelean@baylibre.com>
@@ -90,59 +89,82 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-The ad7606_scan_direct() function returns 'int', which is fine for 16-bit
-samples.
-But when going to 18-bit samples, these need to be implemented as 32-bit
-(or int) type.
+This change moves the logic for setting up SW mode (during probe) into it's
+own function.
 
-In that case when getting samples (which can be negative), we'd get random
-error codes.
-So, the easiest thing is to just move the 'val' pointer to
-'ad7606_scan_direct()'. This doesn't qualify as a fix, it's just a
-preparation for 18-bit ADCs (of the AD7606 family).
+With the addition of some newer parts, the SW-mode part can get a little
+more complicated.
+So it's a bit better to have a separate function for this.
 
 Signed-off-by: Alexandru Ardelean <aardelean@baylibre.com>
 ---
- drivers/iio/adc/ad7606.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/iio/adc/ad7606.c | 43 ++++++++++++++++++++++++----------------
+ 1 file changed, 26 insertions(+), 17 deletions(-)
 
 diff --git a/drivers/iio/adc/ad7606.c b/drivers/iio/adc/ad7606.c
-index dba1f28782e4..5049e37f8393 100644
+index 5049e37f8393..b400c9b2519d 100644
 --- a/drivers/iio/adc/ad7606.c
 +++ b/drivers/iio/adc/ad7606.c
-@@ -138,7 +138,8 @@ static irqreturn_t ad7606_trigger_handler(int irq, void *p)
- 	return IRQ_HANDLED;
- }
+@@ -545,6 +545,29 @@ static const struct iio_trigger_ops ad7606_trigger_ops = {
+ 	.validate_device = iio_trigger_validate_own_device,
+ };
  
--static int ad7606_scan_direct(struct iio_dev *indio_dev, unsigned int ch)
-+static int ad7606_scan_direct(struct iio_dev *indio_dev, unsigned int ch,
-+			      int *val)
- {
- 	struct ad7606_state *st = iio_priv(indio_dev);
- 	int ret;
-@@ -153,7 +154,7 @@ static int ad7606_scan_direct(struct iio_dev *indio_dev, unsigned int ch)
++static int ad7606_sw_mode_setup(struct iio_dev *indio_dev)
++{
++	struct ad7606_state *st = iio_priv(indio_dev);
++
++	if (!st->bops->sw_mode_config)
++		return 0;
++
++	st->sw_mode_en = device_property_present(st->dev, "adi,sw-mode");
++	if (!st->sw_mode_en)
++		return 0;
++
++	indio_dev->info = &ad7606_info_os_range_and_debug;
++
++	/* Scale of 0.076293 is only available in sw mode */
++	st->scale_avail = ad7616_sw_scale_avail;
++	st->num_scales = ARRAY_SIZE(ad7616_sw_scale_avail);
++
++	/* After reset, in software mode, ±10 V is set by default */
++	memset32(st->range, 2, ARRAY_SIZE(st->range));
++
++	return st->bops->sw_mode_config(indio_dev);
++}
++
+ int ad7606_probe(struct device *dev, int irq, void __iomem *base_address,
+ 		 const char *name, unsigned int id,
+ 		 const struct ad7606_bus_ops *bops)
+@@ -617,23 +640,9 @@ int ad7606_probe(struct device *dev, int irq, void __iomem *base_address,
+ 	st->write_scale = ad7606_write_scale_hw;
+ 	st->write_os = ad7606_write_os_hw;
  
- 	ret = ad7606_read_samples(st);
- 	if (ret == 0)
--		ret = st->data[ch];
-+		*val = sign_extend32(st->data[ch], 15);
+-	if (st->bops->sw_mode_config)
+-		st->sw_mode_en = device_property_present(st->dev,
+-							 "adi,sw-mode");
+-
+-	if (st->sw_mode_en) {
+-		/* Scale of 0.076293 is only available in sw mode */
+-		st->scale_avail = ad7616_sw_scale_avail;
+-		st->num_scales = ARRAY_SIZE(ad7616_sw_scale_avail);
+-
+-		/* After reset, in software mode, ±10 V is set by default */
+-		memset32(st->range, 2, ARRAY_SIZE(st->range));
+-		indio_dev->info = &ad7606_info_os_range_and_debug;
+-
+-		ret = st->bops->sw_mode_config(indio_dev);
+-		if (ret < 0)
+-			return ret;
+-	}
++	ret = ad7606_sw_mode_setup(indio_dev);
++	if (ret)
++		return ret;
  
- error_ret:
- 	gpiod_set_value(st->gpio_convst, 0);
-@@ -173,10 +174,9 @@ static int ad7606_read_raw(struct iio_dev *indio_dev,
- 	switch (m) {
- 	case IIO_CHAN_INFO_RAW:
- 		iio_device_claim_direct_scoped(return -EBUSY, indio_dev) {
--			ret = ad7606_scan_direct(indio_dev, chan->address);
-+			ret = ad7606_scan_direct(indio_dev, chan->address, val);
- 			if (ret < 0)
- 				return ret;
--			*val = (short) ret;
- 			return IIO_VAL_INT;
- 		}
- 		unreachable();
+ 	st->trig = devm_iio_trigger_alloc(dev, "%s-dev%d",
+ 					  indio_dev->name,
 -- 
 2.46.0
 
