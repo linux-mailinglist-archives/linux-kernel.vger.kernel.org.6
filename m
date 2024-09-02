@@ -1,328 +1,251 @@
-Return-Path: <linux-kernel+bounces-311327-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311328-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6069F96878E
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 14:31:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC84B968796
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 14:35:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7FC671C21B00
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 12:31:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3BC32B21EDE
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 12:35:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7784813D503;
-	Mon,  2 Sep 2024 12:31:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F362819C548;
+	Mon,  2 Sep 2024 12:35:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="WWJVZ2tK"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="GvCPvbhW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B33B19E96F
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 12:31:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D5CF1547D2;
+	Mon,  2 Sep 2024 12:34:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725280296; cv=none; b=QmX3Q4SklSMMbxxVp8Ithy/4uD8LV1KX83wIybSZ6xgUYJbNRaCmkatiSX03Fp1oJbtCt1fWlhPjWCplTm6ZTCOpretxQYrWKxJGFKOgg/L0MMYb6ChZsSBJrVv9dbBTX5F9wkWPpY2cdrtIASo0t6F3ptrENpXk4dh+/NdLcro=
+	t=1725280500; cv=none; b=Ta6Gl3bdliOeHeug/u8f9NJTkIyue1IF5zfGhtW6+8gt8MyWlDRrTCFMRC7dhR14t4ND1zwIy/kk08PbW/0SnO7e+FxpODv/aExcI7zbPXY6u+CMmvu7h0vaHfTavvcBtX+ee0+MtYSmC3YNutHjGmUF/OebGTRnDs3fGEDNzjc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725280296; c=relaxed/simple;
-	bh=igzdyWfW5jdo3OTyQsnstYJ1ADA0TjvsorCzcXGm30Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:Cc:From:
-	 In-Reply-To:Content-Type; b=JiarNfJfIy2Zq3qkgiS4wG6dVKyGFeU1Nu6PQgcxMkNUA252NWbIePX/bJqYhNL8MuYBoqJi0jA6B02LIlngq7MIG/Djdgl0YOkXQXsDq+HMlXdWyibARUOoQA1nsLujq8u7OZ5Z3EzQyPnb4q/er8VkEl0tHtSSkrN2VVv8yS0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=WWJVZ2tK; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from [192.168.88.20] (91-156-87-48.elisa-laajakaista.fi [91.156.87.48])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id CA02E4CE;
-	Mon,  2 Sep 2024 14:30:20 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1725280221;
-	bh=igzdyWfW5jdo3OTyQsnstYJ1ADA0TjvsorCzcXGm30Q=;
-	h=Date:Subject:To:References:Cc:From:In-Reply-To:From;
-	b=WWJVZ2tK6910XvS/jQS7D0eWmDI3st5dPyjifRwN6zO734go5kvGdJ+Z8ixXQKfFp
-	 Pk5dbJWNhU0EQ5eBXKJshnsKBlnL6wyPSiKU+MSl8rw+QDgrx+r7RR34U+/41vTFy0
-	 OqqiUHGGO+WczaeLmHRFg9herc4SZetT1mpyht4M=
-Message-ID: <d411e79f-a22e-48e9-b135-5d7a0afa3cf3@ideasonboard.com>
-Date: Mon, 2 Sep 2024 15:31:28 +0300
+	s=arc-20240116; t=1725280500; c=relaxed/simple;
+	bh=SpaQhol4jKQT3OZEyvYFwyTWnRWt14Va6wLPDT2DG/I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sN/YMql7PcWXlfc1YBqbvMnfS9ZxPw35UXPlxSGC4wO/Cv5E370Hep3tALtPjpVLLVvm/ocyEyBbdY+gp/xMDwT4tAASG13CvuJA9Q+/oyorN9ugqxe8tPnieX4tbcfL/MPjzraffx5J/D9+KttVryOyvvuDIzIffxUjpfggaG4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=GvCPvbhW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 839DDC4CEC2;
+	Mon,  2 Sep 2024 12:34:57 +0000 (UTC)
+Authentication-Results: smtp.kernel.org;
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="GvCPvbhW"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
+	t=1725280495;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=882s/0oxY3IaUveWmEXQ9Cl4UCSpcI/yfMpsZGvZIqQ=;
+	b=GvCPvbhW2m2jYoAxPU1wvqvYj9FboQLHWShrj+s+adjZAJT3TuHPHxTV7jxhkLBDOaMexZ
+	lgOnLbMwcrBalkcwK2Us5lCoS0HPCfmqmBrkvHWRXH4kgn5eiovHjf2iVAYU/SglD3w6gQ
+	EdxGyEKCEpN2M6xkxzv9bOZ82o4t/fw=
+Received: 
+	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 6aea6560 (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
+	Mon, 2 Sep 2024 12:34:54 +0000 (UTC)
+Date: Mon, 2 Sep 2024 14:34:49 +0200
+From: "Jason A. Donenfeld" <Jason@zx2c4.com>
+To: Christophe Leroy <christophe.leroy@csgroup.eu>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Naveen N Rao <naveen@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	Shuah Khan <shuah@kernel.org>, linux-kernel@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org, linux-kselftest@vger.kernel.org,
+	llvm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org, linux-trace-kernel@vger.kernel.org,
+	Adhemerval Zanella <adhemerval.zanella@linaro.org>,
+	Xi Ruoyao <xry111@xry111.site>
+Subject: Re: [PATCH v4 4/5] powerpc/vdso: Wire up getrandom() vDSO
+ implementation on PPC32
+Message-ID: <ZtWw6Wuudqj4IYWL@zx2c4.com>
+References: <cover.1725278148.git.christophe.leroy@csgroup.eu>
+ <ec4d2919836a9f3a7791c2540ee79067396d701b.1725278148.git.christophe.leroy@csgroup.eu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/mipi-dsi: Fix devm unregister & detach
-To: Maxime Ripard <mripard@kernel.org>, Daniel Vetter <daniel.vetter@ffwll.ch>
-References: <20240619-dsi-devres-fix-v1-1-a5c59310a52e@ideasonboard.com>
- <20240626-gabby-ladybug-of-freedom-08e6eb@houat>
- <66ab4206-d1c8-4aad-99a7-c4c316e343a9@ideasonboard.com>
- <20240626-warping-nondescript-mustang-bfce27@houat>
- <b7cf71b8-76fd-4638-a7b6-cc8dbae635bf@ideasonboard.com>
- <20240702-bold-exotic-mamba-fdbba4@houat>
- <7293448e-e8cc-4522-b39c-5ad133e5f732@ideasonboard.com>
- <20240725-natural-giga-crane-d54067@houat>
- <4ed3791f-bc5a-46f1-88e1-2441c7f9c8d4@ideasonboard.com>
- <20240902-refined-smooth-mammoth-fbee81@houat>
- <ZtWYWuqhqvdWd0Q7@phenom.ffwll.local>
-Content-Language: en-US
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Autocrypt: addr=tomi.valkeinen@ideasonboard.com; keydata=
- xsFNBE6ms0cBEACyizowecZqXfMZtnBniOieTuFdErHAUyxVgtmr0f5ZfIi9Z4l+uUN4Zdw2
- wCEZjx3o0Z34diXBaMRJ3rAk9yB90UJAnLtb8A97Oq64DskLF81GCYB2P1i0qrG7UjpASgCA
- Ru0lVvxsWyIwSfoYoLrazbT1wkWRs8YBkkXQFfL7Mn3ZMoGPcpfwYH9O7bV1NslbmyJzRCMO
- eYV258gjCcwYlrkyIratlHCek4GrwV8Z9NQcjD5iLzrONjfafrWPwj6yn2RlL0mQEwt1lOvn
- LnI7QRtB3zxA3yB+FLsT1hx0va6xCHpX3QO2gBsyHCyVafFMrg3c/7IIWkDLngJxFgz6DLiA
- G4ld1QK/jsYqfP2GIMH1mFdjY+iagG4DqOsjip479HCWAptpNxSOCL6z3qxCU8MCz8iNOtZk
- DYXQWVscM5qgYSn+fmMM2qN+eoWlnCGVURZZLDjg387S2E1jT/dNTOsM/IqQj+ZROUZuRcF7
- 0RTtuU5q1HnbRNwy+23xeoSGuwmLQ2UsUk7Q5CnrjYfiPo3wHze8avK95JBoSd+WIRmV3uoO
- rXCoYOIRlDhg9XJTrbnQ3Ot5zOa0Y9c4IpyAlut6mDtxtKXr4+8OzjSVFww7tIwadTK3wDQv
- Bus4jxHjS6dz1g2ypT65qnHen6mUUH63lhzewqO9peAHJ0SLrQARAQABzTBUb21pIFZhbGtl
- aW5lbiA8dG9taS52YWxrZWluZW5AaWRlYXNvbmJvYXJkLmNvbT7CwY4EEwEIADgWIQTEOAw+
- ll79gQef86f6PaqMvJYe9QUCX/HruAIbAwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgAAKCRD6
- PaqMvJYe9WmFD/99NGoD5lBJhlFDHMZvO+Op8vCwnIRZdTsyrtGl72rVh9xRfcSgYPZUvBuT
- VDxE53mY9HaZyu1eGMccYRBaTLJSfCXl/g317CrMNdY0k40b9YeIX10feiRYEWoDIPQ3tMmA
- 0nHDygzcnuPiPT68JYZ6tUOvAt7r6OX/litM+m2/E9mtp8xCoWOo/kYO4mOAIoMNvLB8vufi
- uBB4e/AvAjtny4ScuNV5c5q8MkfNIiOyag9QCiQ/JfoAqzXRjVb4VZG72AKaElwipiKCWEcU
- R4+Bu5Qbaxj7Cd36M/bI54OrbWWETJkVVSV1i0tghCd6HHyquTdFl7wYcz6cL1hn/6byVnD+
- sR3BLvSBHYp8WSwv0TCuf6tLiNgHAO1hWiQ1pOoXyMEsxZlgPXT+wb4dbNVunckwqFjGxRbl
- Rz7apFT/ZRwbazEzEzNyrBOfB55xdipG/2+SmFn0oMFqFOBEszXLQVslh64lI0CMJm2OYYe3
- PxHqYaztyeXsx13Bfnq9+bUynAQ4uW1P5DJ3OIRZWKmbQd/Me3Fq6TU57LsvwRgE0Le9PFQs
- dcP2071rMTpqTUteEgODJS4VDf4lXJfY91u32BJkiqM7/62Cqatcz5UWWHq5xeF03MIUTqdE
- qHWk3RJEoWHWQRzQfcx6Fn2fDAUKhAddvoopfcjAHfpAWJ+ENc7BTQROprNHARAAx0aat8GU
- hsusCLc4MIxOQwidecCTRc9Dz/7U2goUwhw2O5j9TPqLtp57VITmHILnvZf6q3QAho2QMQyE
- DDvHubrdtEoqaaSKxKkFie1uhWNNvXPhwkKLYieyL9m2JdU+b88HaDnpzdyTTR4uH7wk0bBa
- KbTSgIFDDe5lXInypewPO30TmYNkFSexnnM3n1PBCqiJXsJahE4ZQ+WnV5FbPUj8T2zXS2xk
- 0LZ0+DwKmZ0ZDovvdEWRWrz3UzJ8DLHb7blPpGhmqj3ANXQXC7mb9qJ6J/VSl61GbxIO2Dwb
- xPNkHk8fwnxlUBCOyBti/uD2uSTgKHNdabhVm2dgFNVuS1y3bBHbI/qjC3J7rWE0WiaHWEqy
- UVPk8rsph4rqITsj2RiY70vEW0SKePrChvET7D8P1UPqmveBNNtSS7In+DdZ5kUqLV7rJnM9
- /4cwy+uZUt8cuCZlcA5u8IsBCNJudxEqBG10GHg1B6h1RZIz9Q9XfiBdaqa5+CjyFs8ua01c
- 9HmyfkuhXG2OLjfQuK+Ygd56mV3lq0aFdwbaX16DG22c6flkkBSjyWXYepFtHz9KsBS0DaZb
- 4IkLmZwEXpZcIOQjQ71fqlpiXkXSIaQ6YMEs8WjBbpP81h7QxWIfWtp+VnwNGc6nq5IQDESH
- mvQcsFS7d3eGVI6eyjCFdcAO8eMAEQEAAcLBXwQYAQIACQUCTqazRwIbDAAKCRD6PaqMvJYe
- 9fA7EACS6exUedsBKmt4pT7nqXBcRsqm6YzT6DeCM8PWMTeaVGHiR4TnNFiT3otD5UpYQI7S
- suYxoTdHrrrBzdlKe5rUWpzoZkVK6p0s9OIvGzLT0lrb0HC9iNDWT3JgpYDnk4Z2mFi6tTbq
- xKMtpVFRA6FjviGDRsfkfoURZI51nf2RSAk/A8BEDDZ7lgJHskYoklSpwyrXhkp9FHGMaYII
- m9EKuUTX9JPDG2FTthCBrdsgWYPdJQvM+zscq09vFMQ9Fykbx5N8z/oFEUy3ACyPqW2oyfvU
- CH5WDpWBG0s5BALp1gBJPytIAd/pY/5ZdNoi0Cx3+Z7jaBFEyYJdWy1hGddpkgnMjyOfLI7B
- CFrdecTZbR5upjNSDvQ7RG85SnpYJTIin+SAUazAeA2nS6gTZzumgtdw8XmVXZwdBfF+ICof
- 92UkbYcYNbzWO/GHgsNT1WnM4sa9lwCSWH8Fw1o/3bX1VVPEsnESOfxkNdu+gAF5S6+I6n3a
- ueeIlwJl5CpT5l8RpoZXEOVtXYn8zzOJ7oGZYINRV9Pf8qKGLf3Dft7zKBP832I3PQjeok7F
- yjt+9S+KgSFSHP3Pa4E7lsSdWhSlHYNdG/czhoUkSCN09C0rEK93wxACx3vtxPLjXu6RptBw
- 3dRq7n+mQChEB1am0BueV1JZaBboIL0AGlSJkm23kw==
-In-Reply-To: <ZtWYWuqhqvdWd0Q7@phenom.ffwll.local>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <ec4d2919836a9f3a7791c2540ee79067396d701b.1725278148.git.christophe.leroy@csgroup.eu>
 
-Hi,
+On Mon, Sep 02, 2024 at 02:04:41PM +0200, Christophe Leroy wrote:
+> This first patch adds support for PPC32. As selftests cannot easily
+> be generated only for PPC32, and because the following patch brings
+> support for PPC64 anyway, this patch opts out all code in
+> __arch_chacha20_blocks_nostack() so that vdso_test_chacha will not
+> fail to compile and will not crash on PPC64/PPC64LE, allthough the
+> selftest itself will fail. This patch also adds a dummy
+> __kernel_getrandom() function that returns ENOSYS on PPC64 so that
+> vdso_test_getrandom returns KSFT_SKIP instead of KSFT_FAIL.
 
-On 02/09/2024 13:50, Daniel Vetter wrote:
-> On Mon, Sep 02, 2024 at 11:26:11AM +0200, Maxime Ripard wrote:
->> Hi,
->>
->> On Wed, Aug 07, 2024 at 03:19:23PM GMT, Tomi Valkeinen wrote:
->>> On 25/07/2024 14:28, Maxime Ripard wrote:
->>>> On Mon, Jul 15, 2024 at 11:32:34AM GMT, Tomi Valkeinen wrote:
->>>>> On 02/07/2024 14:43, Maxime Ripard wrote:
->>>>>> Hi Tomi,
->>>>>>
->>>>>> On Wed, Jun 26, 2024 at 06:53:40PM GMT, Tomi Valkeinen wrote:
->>>>>>> On 26/06/2024 18:07, Maxime Ripard wrote:
->>>>>>>> On Wed, Jun 26, 2024 at 12:55:39PM GMT, Tomi Valkeinen wrote:
->>>>>>>>> On 26/06/2024 11:49, Maxime Ripard wrote:
->>>>>>>>>> Hi,
->>>>>>>>>>
->>>>>>>>>> On Wed, Jun 19, 2024 at 12:07:48PM GMT, Tomi Valkeinen wrote:
->>>>>>>>>>> From: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
->>>>>>>>>>>
->>>>>>>>>>> When a bridge driver uses devm_mipi_dsi_device_register_full() or
->>>>>>>>>>> devm_mipi_dsi_attach(), the resource management is moved to devres,
->>>>>>>>>>> which releases the resource automatically when the bridge driver is
->>>>>>>>>>> unbound.
->>>>>>>>>>>
->>>>>>>>>>> However, if the DSI host goes away first, the host unregistration code
->>>>>>>>>>> will automatically detach and unregister any DSI peripherals, without
->>>>>>>>>>> notifying the devres about it. So when the bridge driver later is
->>>>>>>>>>> unbound, the resources are released a second time, leading to crash.
->>>>>>>>>>
->>>>>>>>>> That's super surprising. mipi_dsi_device_unregister calls
->>>>>>>>>> device_unregister, which calls device_del, which in turn calls
->>>>>>>>>> devres_release_all.
->>>>>>>>>
->>>>>>>>> Hmm, right.
->>>>>>>>>
->>>>>>>>>> If that doesn't work like that, then it's what needs to be fixed, and
->>>>>>>>>> not worked around in the MIPI-DSI bus.
->>>>>>>>>
->>>>>>>>> Well, something causes a crash for both the device register/unregister case
->>>>>>>>> and the attach/detach case, and the call stacks and debug prints showed a
->>>>>>>>> double unregister/detach...
->>>>>>>>>
->>>>>>>>> I need to dig up the board and check again why the devres_release_all() in
->>>>>>>>> device_del() doesn't solve this. But I can probably only get back to this in
->>>>>>>>> August, so it's perhaps best to ignore this patch for now.
->>>>>>>>>
->>>>>>>>> However, the attach/detach case is still valid? I see no devres calls in the
->>>>>>>>> detach paths.
->>>>>>>>
->>>>>>>> I'm not sure what you mean by the attach/detach case. Do you expect
->>>>>>>> device resources allocated in attach to be freed when detach run?
->>>>>>>
->>>>>>> Ah, never mind, the devres_release_all() would of course deal with that too.
->>>>>>>
->>>>>>> However, I just realized/remembered why it crashes.
->>>>>>>
->>>>>>> devm_mipi_dsi_device_register_full() and devm_mipi_dsi_attach() are given a
->>>>>>> device which is used for the devres. This device is probably always the
->>>>>>> bridge device. So when the bridge device goes away, so do those resources.
->>>>>>>
->>>>>>> The mipi_dsi_device_unregister() call deals with a DSI device, which was
->>>>>>> created in devm_mipi_dsi_device_register_full(). Unregistering that DSI
->>>>>>> device, which does happen when the DSI host is removed, does not affect the
->>>>>>> devres of the bridge.
->>>>>>>
->>>>>>> So, unloading the DSI host driver causes mipi_dsi_device_unregister() and
->>>>>>> mipi_dsi_detach() to be called (as part of mipi_dsi_host_unregister()), and
->>>>>>> unloading the bridge driver causes them to be called again via devres.
->>>>>>
->>>>>> Sorry, that's one of the things I don't quite get. Both functions are
->>>>>> exclusively(?) called from I2C bridges, so the device passed there
->>>>>> should be a i2c_client instance, and thus the MIPI-DSI host going away
->>>>>> will not remove those i2c devices, only the MIPI-DSI ones, right?
->>>>>
->>>>> Yes.
->>>>>
->>>>>> So if we remove the host, the MIPI-DSI device will be detached and
->>>>>> removed through the path you were explaing with the i2c client lingering
->>>>>> around. And if we remove the I2C device, then devm will kick in and will
->>>>>> detach and remove the MIPI-DSI device.
->>>>>
->>>>> Right.
->>>>>
->>>>>> Or is it the other way around? That if you remove the host, the device
->>>>>> is properly detached and removed, but there's still the devm actions
->>>>>> lingering around in the i2c device with pointers to the mipi_dsi_device
->>>>>> that was first created, but since destroyed?
->>>>>>
->>>>>> And thus, if the i2c device ever goes away, we get a use-after-free?
->>>>>
->>>>> Hmm, I'm not sure I understand what you mean here... Aren't you describing
->>>>> the same thing in both of these cases?
->>>>>
->>>>> In any case, to expand the description a bit, module unloading is quite
->>>>> fragile. I do get a crash if I first unload the i2c bridge module, and only
->>>>> then go and unload the other ones in the DRM pipeline. But I think module
->>>>> unloading will very easily crash, whatever the DRM drivers being used are,
->>>>> so it's not related to this particular issue.
->>>>>
->>>>> In my view, the unload sequence that should be supported (for development
->>>>> purposes, not for production) is to start the unload from the display
->>>>> controller module, which tears down the DRM pipeline, and going from there
->>>>> towards the panels/connectors.
->>>>>
->>>>> Of course, it would be very nice if the module unloading worked perfectly,
->>>>> but afaics fixing all that's related to module unloading would be a
->>>>> multi-year project... So, I just want to keep the sequence I described above
->>>>> working, which allows using modules while doing driver development.
->>>>
->>>> FTR, I'm all for supporting module unloading. The discussion above was
->>>> about what is broken exactly, so we can come up with a good solution.
->>>
->>> Does that mean that you're ok with the patch, or that something should be
->>> improved?
->>
->> No, I meant that at the very least the commit log needs to be updated to
->> reflect what is actually going on, because at least my understanding of
->> it doesn't match what actually happens.
->>
->> We want a solution to the problem you're facing, but it's not clear to
->> me what the problem is exactly at this point, so it's hard to review a
->> solution.
-> 
-> So I haven't looked at the full thing, but I think the proper fix is to
-> make both detach and unregister cope with being called multiple times. I
-> think devm_ here is a red herring, the underlying issues is that we can
-> unregister/detach from two sides:
-> 
-> - when the host dsi goes away
-> - when individual dsi devices on a given host go away
-> 
-> So there needs to be book-keeping and locking to make sure no matter which
-> order things disappear, we don't try to unregister/detach a dsi device
-> twice.
+Why not just wire up the selftests in the next patch like you did for
+v3? This seems like extra stuff for no huge reason?
 
-I think that is what my patch does (for devm_).
+>  arch/powerpc/Kconfig                         |   1 +
+>  arch/powerpc/include/asm/vdso/getrandom.h    |  54 +++++
+>  arch/powerpc/include/asm/vdso/vsyscall.h     |   6 +
+>  arch/powerpc/include/asm/vdso_datapage.h     |   2 +
+>  arch/powerpc/kernel/asm-offsets.c            |   1 +
+>  arch/powerpc/kernel/vdso/Makefile            |  13 +-
+>  arch/powerpc/kernel/vdso/getrandom.S         |  58 ++++++
+>  arch/powerpc/kernel/vdso/vdso32.lds.S        |   1 +
+>  arch/powerpc/kernel/vdso/vdso64.lds.S        |   1 +
+>  arch/powerpc/kernel/vdso/vgetrandom-chacha.S | 207 +++++++++++++++++++
+>  arch/powerpc/kernel/vdso/vgetrandom.c        |  16 ++
+>  tools/testing/selftests/vDSO/Makefile        |   2 +-
+>  12 files changed, 359 insertions(+), 3 deletions(-)
+>  create mode 100644 arch/powerpc/include/asm/vdso/getrandom.h
+>  create mode 100644 arch/powerpc/kernel/vdso/getrandom.S
+>  create mode 100644 arch/powerpc/kernel/vdso/vgetrandom-chacha.S
+>  create mode 100644 arch/powerpc/kernel/vdso/vgetrandom.c
 
-Some vocabulary first:
+I think you might have forgotten to add the symlink in this commit (or
+the next one, per my comment above, if you agree with it).
 
-dsi peripheral device - The device that represents the DSI peripheral. 
-It is a bridge or a panel, and (usually) an i2c or platform device.
+> +/*
+> + * Very basic 32 bits implementation of ChaCha20. Produces a given positive number
+> + * of blocks of output with a nonce of 0, taking an input key and 8-byte
+> + * counter. Importantly does not spill to the stack. Its arguments are:
+> + *
+> + *	r3: output bytes
+> + *	r4: 32-byte key input
+> + *	r5: 8-byte counter input/output (saved on stack)
+> + *	r6: number of 64-byte blocks to write to output
+> + *
+> + *	r0: counter of blocks (initialised with r6)
+> + *	r4: Value '4' after key has been read.
+> + *	r5-r12: key
+> + *	r14-r15: counter
+> + *	r16-r31: state
+> + */
+> +SYM_FUNC_START(__arch_chacha20_blocks_nostack)
+> +#ifdef __powerpc64__
+> +	blr
+> +#else
+> +	stwu	r1, -96(r1)
+> +	stw	r5, 20(r1)
+> +	stmw	r14, 24(r1)
+> +
+> +	lwz	r14, 0(r5)
+> +	lwz	r15, 4(r5)
+> +	mr	r0, r6
+> +	subi	r3, r3, 4
+> +
+> +	lwz	r5, 0(r4)
+> +	lwz	r6, 4(r4)
+> +	lwz	r7, 8(r4)
+> +	lwz	r8, 12(r4)
+> +	lwz	r9, 16(r4)
+> +	lwz	r10, 20(r4)
+> +	lwz	r11, 24(r4)
+> +	lwz	r12, 28(r4)
 
-dsi peripheral driver - The driver handling the dsi peripheral device.
+If you don't want to do this, don't worry about it, but while I'm
+commenting on things, I think it's worth noting that x86, loongarch, and
+arm64 implementations all use the preprocessor or macros to give names
+to these registers -- state1,2,3,...copy1,2,3 and so forth. Might be
+worth doing the same if you think there's an easy and obvious way of
+doing it. If not -- or if that kind of work abhors you -- don't worry
+about it, as I'm confident enough that this code works fine. But it
+might be "nice to have". Up to you.
 
-dsi device - Runtime created device instance that represents the DSI 
-peripheral. So in my case we have the i2c bridge device, and a dsi 
-device is created for it in the setup code.
+> +
+> +	li	r4, 4
+> +.Lblock:
+> +	li	r31, 10
+> +
 
-dsi controller device - A device that has a DSI bus (usually a platform 
-or i2c device, I would guess).
+Maybe a comment here, "expand 32-byte k" or similar.
 
-dsi controller driver - A driver for the dsi controller device. Creates 
-the dsi host.
+> +	lis	r16, 0x6170
+> +	lis	r17, 0x3320
+> +	lis	r18, 0x7962
+> +	lis	r19, 0x6b20
+> +	addi	r16, r16, 0x7865
+> +	addi	r17, r17, 0x646e
+> +	addi	r18, r18, 0x2d32
+> +	addi	r19, r19, 0x6574
+> +
+> +	mtctr	r31
+> +
+> +	mr	r20, r5
+> +	mr	r21, r6
+> +	mr	r22, r7
+> +	mr	r23, r8
+> +	mr	r24, r9
+> +	mr	r25, r10
+> +	mr	r26, r11
+> +	mr	r27, r12
+> +
+> +	mr	r28, r14
+> +	mr	r29, r15
+> +	li	r30, 0
+> +	li	r31, 0
+> +
+> +.Lpermute:
+> +	QUARTERROUND4( 0, 4, 8,12, 1, 5, 9,13, 2, 6,10,14, 3, 7,11,15)
+> +	QUARTERROUND4( 0, 5,10,15, 1, 6,11,12, 2, 7, 8,13, 3, 4, 9,14)
+> +
+> +	bdnz	.Lpermute
+> +
+> +	addis	r16, r16, 0x6170
+> +	addis	r17, r17, 0x3320
+> +	addis	r18, r18, 0x7962
+> +	addis	r19, r19, 0x6b20
+> +	addi	r16, r16, 0x7865
+> +	addi	r17, r17, 0x646e
+> +	addi	r18, r18, 0x2d32
+> +	addi	r19, r19, 0x6574
+> +
+> +	add	r20, r20, r5
+> +	add	r21, r21, r6
+> +	add	r22, r22, r7
+> +	add	r23, r23, r8
+> +	add	r24, r24, r9
+> +	add	r25, r25, r10
+> +	add	r26, r26, r11
+> +	add	r27, r27, r12
+> +
+> +	add	r28, r28, r14
+> +	add	r29, r29, r15
+> +
+> +	stwbrx	r16, r4, r3
+> +	addi	r3, r3, 8
+> +	stwbrx	r17, 0, r3
+> +	stwbrx	r18, r4, r3
+> +	addi	r3, r3, 8
+> +	stwbrx	r19, 0, r3
+> +	stwbrx	r20, r4, r3
+> +	addi	r3, r3, 8
+> +	stwbrx	r21, 0, r3
+> +	stwbrx	r22, r4, r3
+> +	addi	r3, r3, 8
+> +	stwbrx	r23, 0, r3
+> +	stwbrx	r24, r4, r3
+> +	addi	r3, r3, 8
+> +	stwbrx	r25, 0, r3
+> +	stwbrx	r26, r4, r3
+> +	addi	r3, r3, 8
+> +	stwbrx	r27, 0, r3
+> +	stwbrx	r28, r4, r3
+> +	addi	r3, r3, 8
+> +	stwbrx	r29, 0, r3
+> +	stwbrx	r30, r4, r3
+> +	addi	r3, r3, 8
+> +	stwbrx	r31, 0, r3
+> +
+> +	subic.	r0, r0, 1	/* subi. can't use r0 as source */
 
-dsi host - represents the DSI host side, owned by the dsi controller driver.
-
-When a dsi peripheral driver uses devm_mipi_dsi_device_register_full() 
-or devm_mipi_dsi_attach(), the dsi device is created and attached to the 
-dsi host. When the dsi peripheral device-driver is unbound, devres will 
-call unregister and detach are called automatically. This works fine.
-
-But when the device-driver for the dsi controller is unbound, the dsi 
-controller driver will unregister the dsi host, and the unregistration 
-will also unregister and detach the dsi device. But the devres is not 
-told about that. So when the dsi peripheral is later unbound, its devres 
-will again unregister and detach.
-
-To fix that this patch uses devm_remove_action() to remove the devres 
-action when the host side goes away first.
-
-Now, after writing the above, I realized that all this won't help with 
-the non-devm versions: the host side has unregistered and detached the 
-dsi device, but if the dsi peripheral driver calls mipi_dsi_detach() or 
-mipi_dsi_device_unregister(), it will again crash.
-
-Handling the attach/detach should be quite easy, and in fact the code 
-already handles it, but it uses WARN_ON() there so that has to go. But 
-attach/detach will crash anyway if the dsi device has already been 
-freed, which happens when the dsi controller driver calls 
-mipi_dsi_device_unregister().
-
-So... The dsi peripheral driver should keep a reference to the dsi 
-device, with get_device()? And then do a put_device() after calling 
-mipi_dsi_device_unregister()?
-
-But we don't free the dsi device, it has essentially been disabled 
-without telling the dsi peripheral driver about it, which might cause 
-problems.
-
-I don't know... This doesn't sound correct to me. Probably my patch is 
-just new wrong on top of old wrong. Or maybe I don't quite grasp how 
-this works.
-
-Oh, I now realized/remembered that we can also have "real" dsi devices, 
-when the dsi peripheral is a child of the dsi bus device, and controlled 
-via DSI commands (i.e. not via i2c or memory mapped registers). Perhaps 
-all/some of this confusion in the code comes from the use of dsi device 
-for both "real" dsi devices and as a "dsi client", created by 
-i2c/platform devices.
-
-With a "real" dsi device things work fine, as the driver only attaches 
-and detaches, and the device (un)registration is handled by the dsi host.
-
-Well, this turned out to be a bit of a rambling email... I don't have a 
-clear solution in mind.
-
-  Tomi
-
+Never seen the period suffix. Just looked this up. Neat.
 
