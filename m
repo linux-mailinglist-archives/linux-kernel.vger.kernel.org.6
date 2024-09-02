@@ -1,127 +1,87 @@
-Return-Path: <linux-kernel+bounces-311479-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-311480-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4C839689B4
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 16:17:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0EE89689B5
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 16:18:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A3E3028483C
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 14:17:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E91E284677
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 14:18:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 563672101B2;
-	Mon,  2 Sep 2024 14:17:15 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A17113E02B;
+	Mon,  2 Sep 2024 14:18:05 +0000 (UTC)
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE7A919E97B;
-	Mon,  2 Sep 2024 14:17:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 568C319F139
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2024 14:18:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725286634; cv=none; b=IIalNgPC+61RNYzLCEnxqll1OodoarSGJTthWw5Vp/V6Pk8xCl6ztYjebwRZytlCuy+K+cD2MEFIYS1VXi9YKJShSvk2RjtUSQP9xGgpiCrdr4YsVakC6CC9fGwTRnNY4TSlTpcQjY1qc7xhWhlsLiHasbNleLX+tdoaraBm/JQ=
+	t=1725286684; cv=none; b=L+xXvImwM+LmyxLUOGpPJplm/3bEX8JxbEfoajXmbKISsZl+qvzTpwwGQixuoPXFxnOaA5sGsVQ7RVxk6iaQOaUnYJ0gu921D3mKAMfTSKS5kZlD4MGQr6rB6cUl+LIMYhRJQzLaY3jOroA8JaCZ3wIxsHocfFBeBdCK1CnKWWs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725286634; c=relaxed/simple;
-	bh=DiqcYK8CgR5lVnVbP4NtFJ4uxP3RlOM1WRhaMpOIZg0=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Eht5Cw1rS6zf+vimIkqNfxerUIDpzAtfvJgsM2t+p6chihMK36RwU0q3cp3fgn1niA1wznnbKWuUgnlzYxBL1gfHdRS6AyRH76jso9lv2qBWJKPTyRc8w8WBzORWJ/E3Duai13yFWCjDhTiY4VCmaR9p98L6wHISmzTNfSvysPU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.231])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Wy9ht5zqTz6K5kP;
-	Mon,  2 Sep 2024 22:13:34 +0800 (CST)
-Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
-	by mail.maildlp.com (Postfix) with ESMTPS id 3EC29140A08;
-	Mon,  2 Sep 2024 22:17:08 +0800 (CST)
-Received: from localhost (10.203.177.66) by lhrpeml500005.china.huawei.com
- (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Mon, 2 Sep
- 2024 15:17:07 +0100
-Date: Mon, 2 Sep 2024 15:17:06 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: "Sperling, Tobias" <Tobias.Sperling@Softing.com>
-CC: Jonathan Cameron <jic23@kernel.org>, Conor Dooley <conor@kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-hwmon@vger.kernel.org" <linux-hwmon@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, "jdelvare@suse.com"
-	<jdelvare@suse.com>, "linux@roeck-us.net" <linux@roeck-us.net>,
-	"robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
-	<krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
-	"corbet@lwn.net" <corbet@lwn.net>, "linux-iio@vger.kernel.org"
-	<linux-iio@vger.kernel.org>
-Subject: Re: [PATCH 1/2] dt-bindings: hwmon: Introduce ADS71x8
-Message-ID: <20240902151706.0000334f@Huawei.com>
-In-Reply-To: <BE1P281MB2420D75334A568E60823BE48EF922@BE1P281MB2420.DEUP281.PROD.OUTLOOK.COM>
-References: <BE1P281MB24208CB90AF549578AA5C384EF972@BE1P281MB2420.DEUP281.PROD.OUTLOOK.COM>
-	<20240830-chaos-unrivaled-04c5c4c6add9@spud>
-	<20240831132159.2073994f@jic23-huawei>
-	<BE1P281MB2420D75334A568E60823BE48EF922@BE1P281MB2420.DEUP281.PROD.OUTLOOK.COM>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1725286684; c=relaxed/simple;
+	bh=YRg8NNmKJdVyya7PAJqmCYEfL4RCJXwVKTbgiaryzEg=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=IWmrgWXUjqQVfXoMu0Ml8R7fLdSvII48aPENuydUaYW1FzQ8RF32ys+VG/q0xmDdDa2Pv3Blw5GVe13FhFw2CuHF8E5eX26FCIGo2EPilRRK6jyKeGh7FrB764xLUJn3O1XoPuNKrpVJQVgM9ZykmQ7TA07/GnJ7InfYan7aQuw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-82a246b5043so422228139f.3
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2024 07:18:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725286682; x=1725891482;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=tQg3RywN/LV7REkc10nc9ziB+No7VlfGZF5p1IqB+Ao=;
+        b=t3rPlEzq1yjkO4YyKGYpXu/rx1lu28fMr+UEbVKfCoJlWhhB0NpbKIuzvFjd+2i3Fj
+         /f+2+e07Zbmz9bIiG6MUU2tPb0wdGDEzJArTG1gDLp1rk1o9wQhtiIgtoB/+uMiGwHxf
+         CREHzItQ9KHRTOyFIEMzvpWApXale19w8jG1RwcXXjqA6YNpc7d7CutJMEJ+7VLmgpfZ
+         fSylaRhF/VTB9k6p1MjNLpvaIFQDH4zCBenMXhy4MN2zQaGmz+zGFNe3vWnR2r1A9mmY
+         T3YQHc1GE4Di/ngHDZqEjE4LqnpIDxW9a2VXY5ZZ8KPFbxoZw9aYVtSrlESWpNptE39B
+         mTMg==
+X-Forwarded-Encrypted: i=1; AJvYcCWAzd8zgQNSi22DyZAUqV25sgSLevKUa9LnKSGJcDaY4bQd+wIqlDIz7XFG9ihErBilXcqYs9SJSp+YSCw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwyPDLhu8ohAu/vvuexHPVAHcj5PAuw16hCq3WMy2j4X6pfh0hC
+	ZJHd9oLhYkehW/H9dvp5R9QELpJwCrjXsL2xVhiCFqelqRPD1G0CgskyvUXEKtCL/KNpdJ0BM3x
+	cj3xb4vomSQSH0LLlRazwZUQOr+npQPtv+s4SL5ygHxt7dpTCdvNMmxc=
+X-Google-Smtp-Source: AGHT+IFs7wLBImYMHk/cGG36IM81JcNaYNKVsG95m7e3dGqVDuohZWeSL9uTWancEk5dTxtBUmGa0eEjap8Y+W0pFCJH8Elqovsk
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500004.china.huawei.com (7.191.163.9) To
- lhrpeml500005.china.huawei.com (7.191.163.240)
+X-Received: by 2002:a05:6602:6413:b0:803:85e8:c40b with SMTP id
+ ca18e2360f4ac-82a262f597dmr59911339f.3.1725286682477; Mon, 02 Sep 2024
+ 07:18:02 -0700 (PDT)
+Date: Mon, 02 Sep 2024 07:18:02 -0700
+In-Reply-To: <20240902131729.8411-1-almaz.alexandrovich@paragon-software.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000d859210621239b1c@google.com>
+Subject: Re: [syzbot] [ntfs3?] possible deadlock in mi_read
+From: syzbot <syzbot+bc7ca0ae4591cb2550f9@syzkaller.appspotmail.com>
+To: almaz.alexandrovich@paragon-software.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, 2 Sep 2024 13:24:59 +0000
-"Sperling, Tobias" <Tobias.Sperling@Softing.com> wrote:
+Hello,
 
-> > > > +  ti,mode:
-> > > > +    $ref: /schemas/types.yaml#/definitions/uint8
-> > > > +    description: |
-> > > > +      Operation mode
-> > > > +      Mode 0 - Manual mode. A channel is only sampled when the according  
-> > input  
-> > > > +        in the sysfs is read.
-> > > > +      Mode 1 - Auto mode. All channels are automatically sampled  
-> > sequentially.  
-> > > > +        Reading an input returns the last valid sample. In this mode further
-> > > > +        features like statistics and interrupts are available.
-> > > > +    default: 0  
-> > >
-> > > I don't think this ti,mode property is suitable for bindings. sysfs is a
-> > > linux implementation detail, when to do sampling is an implementation
-> > > detail of your driver. Bindings are only supposed to describe properties
-> > > of the hardware, not set software policy.  
-> > 
-> > Agreed. With an IIO driver this will become a switch based on what usespace
-> > interfaces are enabled.
-> > So if events are on or buffered data capture, enable automode.
-> > If just sysfs reads, then manual mode is fine.  
-> 
-> Not quite sure if I understood you correctly. With the mode I intended to give
-> control about the sampling behavior.
-> In manual mode channels are only sampled if they are accessed/read.
-> In auto mode they are sampled all the time sequentially. This also offers to use
-> some extended features, like triggering an interrupt if a measurement crosses a
-> defined limit.
-> So the mode mainly affects the hardware behavior and just offers the possibility
-> to catch that in userspace, if configured accordingly, but that's not a must-have.
-> 
-> Anyway, did I understood it correctly, that you suggest to configure the mode
-> according some symbols in the kconfig and check that with #ifdef? Do you have
-> the specific symbol names for me or a driver as example, so I can have a look?
-No, this is not a build time of firmware config question. It is a question of
-what the user is 'doing' with the device. Configure the mode according to what
-userspace has enabled.
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-If it enables threshold detection, then turn on continuous mode.
-If it enables capture of data via a chardev (so fast path) then turn on continuous
-mode.  If neither of those, then run in manual mode.
+Reported-by: syzbot+bc7ca0ae4591cb2550f9@syzkaller.appspotmail.com
+Tested-by: syzbot+bc7ca0ae4591cb2550f9@syzkaller.appspotmail.com
 
-Jonathan
+Tested on:
 
-> 
-> Thanks and regards
-> Tobias
-> 
+commit:         7529036a fs/ntfs3: Rename ntfs3_setattr into ntfs_seta..
+git tree:       https://github.com/Paragon-Software-Group/linux-ntfs3.git master
+console output: https://syzkaller.appspot.com/x/log.txt?x=176192fb980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=2258b49cd9b339fa
+dashboard link: https://syzkaller.appspot.com/bug?extid=bc7ca0ae4591cb2550f9
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=14586b47980000
 
+Note: testing is done by a robot and is best-effort only.
 
