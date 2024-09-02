@@ -1,399 +1,208 @@
-Return-Path: <linux-kernel+bounces-310538-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-310540-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B985967E08
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 05:01:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id ABDF8967E0C
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 05:03:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B2A0A1F2280E
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 03:01:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2D4A01F228C8
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2024 03:03:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9C5C22092;
-	Mon,  2 Sep 2024 03:00:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6F0B3BBC1;
+	Mon,  2 Sep 2024 03:03:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="jFR/gZtH"
-Received: from out30-132.freemail.mail.aliyun.com (out30-132.freemail.mail.aliyun.com [115.124.30.132])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IB1TYKzl"
+Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 869143BB50;
-	Mon,  2 Sep 2024 03:00:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.132
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72BB779C0;
+	Mon,  2 Sep 2024 03:03:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725246057; cv=none; b=c+T/XNUBSYRzEipEskj6V0tmb2prYxpUon6W+nDze4jB4GfucTi5bbiT64n/djZ3krrEZjimfnbMA+DoFQ437LC1z0bVeZM03wfi7UtrGxgIqLSnziisRrCw3EsLKXEm9OK3zk9Mt58C+niAxeqWjMh23ldGjw5jk9lpK2Cfuhc=
+	t=1725246208; cv=none; b=fcPWa1t2DMEe0+0eBpJc81cFw3yGmiP1hC6HnY2nGBGDa6cqgRdZjn9bTwlKMXXfvYTpG2bxHLjLeZWrWVLY+E4GtE3RIc1tX8qSL1rtV4Ho2DNsRiRWiWVc2keQjpmEjZwQ6+Pq9/UnH0xLo8x3hxPzPqIdURJShgSaGFrzAMg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725246057; c=relaxed/simple;
-	bh=ktABfr8KDnMVJGQEgvyo642bcCmnk8hd82zKdOnnyLg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=GG2gOHcA/BOWRbvGeWgJapZ6hXJzYtYbCYBpiTyPUc4vfTfRCq8Tfok4LO5h1w32iLjlCmYW1JF6LNOIdtlT6MdCdRWwtCa+4Hb4bsGgCB9nE8lGm2S68LuZWcR73xfj21iPd6PM52ZbnraVQj59aLuF8B54MDM9Qu8cLRO1KCw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=jFR/gZtH; arc=none smtp.client-ip=115.124.30.132
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1725246052; h=From:To:Subject:Date:Message-ID:MIME-Version;
-	bh=BifK0Clid7OESoXNef0gZrr4lzWKcwPmPBCzPd9yXiE=;
-	b=jFR/gZtHg4MVwOAd+ebQdI4Pxuebg0QaZl4hxMIl+FiLxVZlUrohJWXTJpgSjzB9rvdVGw9Nh0vH8obu59eO4NZr+jWuzXtW7wARRj3VlfHK/Awqk3wWry9T7l62anG6AkAeTwIangkufVVLhe2j+laj7qLSgoSM+PIjQWxBIdk=
-Received: from localhost.localdomain(mailfrom:xueshuai@linux.alibaba.com fp:SMTPD_---0WE1odpl_1725246049)
-          by smtp.aliyun-inc.com;
-          Mon, 02 Sep 2024 11:00:50 +0800
-From: Shuai Xue <xueshuai@linux.alibaba.com>
-To: bp@alien8.de,
-	rafael@kernel.org,
-	wangkefeng.wang@huawei.com,
-	tanxiaofei@huawei.com,
-	mawupeng1@huawei.com,
-	tony.luck@intel.com,
-	linmiaohe@huawei.com,
-	naoya.horiguchi@nec.com,
-	james.morse@arm.com,
-	tongtiangen@huawei.com,
-	gregkh@linuxfoundation.org,
-	will@kernel.org,
-	jarkko@kernel.org
-Cc: linux-acpi@vger.kernel.org,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	akpm@linux-foundation.org,
-	linux-edac@vger.kernel.org,
-	x86@kernel.org,
-	xueshuai@linux.alibaba.com,
-	justin.he@arm.com,
-	ardb@kernel.org,
-	ying.huang@intel.com,
-	ashish.kalra@amd.com,
-	baolin.wang@linux.alibaba.com,
-	tglx@linutronix.de,
-	mingo@redhat.com,
-	dave.hansen@linux.intel.com,
-	lenb@kernel.org,
-	hpa@zytor.com,
-	robert.moore@intel.com,
-	lvying6@huawei.com,
-	xiexiuqi@huawei.com,
-	zhuo.song@linux.alibaba.com
-Subject: [PATCH v12 3/3] ACPI: APEI: handle synchronous exceptions in task work
-Date: Mon,  2 Sep 2024 11:00:34 +0800
-Message-ID: <20240902030034.67152-4-xueshuai@linux.alibaba.com>
-X-Mailer: git-send-email 2.44.0
-In-Reply-To: <20221027042445.60108-1-xueshuai@linux.alibaba.com>
-References: <20221027042445.60108-1-xueshuai@linux.alibaba.com>
+	s=arc-20240116; t=1725246208; c=relaxed/simple;
+	bh=FD5QgdU1llmtdefhiBbMEIfOQBm1h7zqqXMxz0ZmR/o=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZToB/GSOwfZ28SfZ4npbTnWy8jrMMeDjixto3l1gpUFnyeGG0yZg/5aUdXaVSJD/AOSIz52PhjqoCjE+hbeG7L/b3mkgozWi+5r1TbotFXexbR7nfXTLKzCudzJaMO4pFPwOZ2MAB7BNM80xPu7Oj/0HY9rhQpU54IKpRKUEecA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IB1TYKzl; arc=none smtp.client-ip=209.85.160.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-456774a0fe7so20936731cf.0;
+        Sun, 01 Sep 2024 20:03:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725246205; x=1725851005; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LZxvKASLeQPhlUeFrFQCFSS8riyVWdaWYAqCbhxuJ7E=;
+        b=IB1TYKzlH9sImKgOSZYRddp4GTCOiaEXLoPrQ9/zwVBVJ7sE4PQY0N7Xh26qinXuC0
+         7IxH94OJh0KdRJ5HlSmp1eE8EfgVwRkPs/noZFZObdIvcBqp2cRTNUpUDJnM9NjW5Pt2
+         Y2SvcRXUJODoy1scdLYv79uQJQ+a8cDWAcf42CiaemCROqEGQczy2j/AfyEpb6fZaCg+
+         wcMRb5biDMOdG+X/GQJi0rUOcQ58WMrYshrPj/J6WPcHeinGDHUcsZgY+QEesp76Hrql
+         gQN4992Cpm/sur82ADvRGicvi7CSwv+h2oanimtO5EbqzumPjBZYggzOP1F6pT3tlfW4
+         BqiA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725246205; x=1725851005;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=LZxvKASLeQPhlUeFrFQCFSS8riyVWdaWYAqCbhxuJ7E=;
+        b=DgmTeCQeIISBFWAPBKmJHM4ptkaST8TsPRgXF0UvgFkoweYu/9LHfxkDDiJ2b52NpW
+         ZwQMj+v6BdaxLGrg3AJ8q6/YoQQnotG3I94HCtFijK92Khgw70bGuQ6mAAzZDB3E2LM/
+         D1965SaMeajsjAu/ILSMDSrHNlVbHq4nBCCfZg5D9FX2pkwNfmPHY7vUCo1/AW7DfyDF
+         +rV6QSALCnZaRuh9nN3EhEeJV911ZRS3ggzcOaSpyNolyfnWPsW7XNX1RB50QIfUKL1R
+         soHLGPGpU5mBiQ1IUiKt6mWMh2IOLg6KZZq/LGculnEv2VbvJVbNhVm55p68i6xcN2Y6
+         xXVA==
+X-Forwarded-Encrypted: i=1; AJvYcCUAmK7wP22U5+dd4DsW7pcWz9MTXuHd1yLIKzZ7wrP+fpLm4G8HcRbNpmF4Pu5oG6DeXgekddyb/Cn0ob36@vger.kernel.org, AJvYcCWxbXtO1R4qMn7b7eyFJg8xbVyEzX7jcSTfk7JdQSU3nT27SlV/p/XA0oe7avOTnhlx3cCkfHR064MP/m+t@vger.kernel.org
+X-Gm-Message-State: AOJu0YynH/+hX9Ef0SqppkC43nPBTtifo6t2f9tZUsEqHG7x3PrtCJ3/
+	I2ATnE5tOAaV396wPbrlBwp+AwZsyuN99qDGbqAucrQWfbcPdL4/54YHvEc/nyETCg86L/HwiKC
+	MDlisSwPyHJy3ovzfs8QFhUImfkc=
+X-Google-Smtp-Source: AGHT+IGQT0cG/HgGQSVHmz2EXEuhrSnKMDbqLSUVFa8dO6+VBSLmM6ZI7QgskC6mcN/cUUG56353wFfp/xkzaJSVjf4=
+X-Received: by 2002:a05:6214:468e:b0:6c3:5a86:6a2e with SMTP id
+ 6a1803df08f44-6c35a867552mr66716106d6.50.1725246205287; Sun, 01 Sep 2024
+ 20:03:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240828140638.3204253-1-kent.overstreet@linux.dev>
+ <Zs9xC3OJPbkMy25C@casper.infradead.org> <gutyvxwembnzaoo43dzvmnpnbmj6pzmypx5kcyor3oeomgzkva@6colowp7crgk>
+ <Zs959Pa5H5WeY5_i@tiehlicka> <xxs3s22qmlzby3ligct7x5a3fbzzjfdqqt7unmpih64dk3kdyx@vml4m27gpujw>
+ <ZtBWxWunhXTh0bhS@tiehlicka> <wjfubyrzk4ovtuae5uht7uhhigkrym2anmo5w5vp7xgq3zss76@s2uy3qindie4>
+ <ZtCFP5w6yv/aykui@dread.disaster.area> <CALOAHbCssCSb7zF6VoKugFjAQcMACmOTtSCzd7n8oGfXdsxNsg@mail.gmail.com>
+ <ZtPhAdqZgq6s4zmk@dread.disaster.area>
+In-Reply-To: <ZtPhAdqZgq6s4zmk@dread.disaster.area>
+From: Yafang Shao <laoar.shao@gmail.com>
+Date: Mon, 2 Sep 2024 11:02:50 +0800
+Message-ID: <CALOAHbBEF=i7e+Zet-L3vEyQRcwmOn7b6vmut0-ae8_DQipOAw@mail.gmail.com>
+Subject: Re: [PATCH] bcachefs: Switch to memalloc_flags_do() for vmalloc allocations
+To: Dave Chinner <david@fromorbit.com>
+Cc: Kent Overstreet <kent.overstreet@linux.dev>, Michal Hocko <mhocko@suse.com>, 
+	Matthew Wilcox <willy@infradead.org>, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, Dave Chinner <dchinner@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The memory uncorrected error could be signaled by asynchronous interrupt
-(specifically, SPI in arm64 platform), e.g. when an error is detected by
-a background scrubber, or signaled by synchronous exception
-(specifically, data abort excepction in arm64 platform), e.g. when a CPU
-tries to access a poisoned cache line. Currently, both synchronous and
-asynchronous error use memory_failure_queue() to schedule
-memory_failure() exectute in kworker context.
+On Sun, Sep 1, 2024 at 11:35=E2=80=AFAM Dave Chinner <david@fromorbit.com> =
+wrote:
+>
+> On Fri, Aug 30, 2024 at 05:14:28PM +0800, Yafang Shao wrote:
+> > On Thu, Aug 29, 2024 at 10:29=E2=80=AFPM Dave Chinner <david@fromorbit.=
+com> wrote:
+> > >
+> > > On Thu, Aug 29, 2024 at 07:55:08AM -0400, Kent Overstreet wrote:
+> > > > Ergo, if you're not absolutely sure that a GFP_NOFAIL use is safe
+> > > > according to call path and allocation size, you still need to be
+> > > > checking for failure - in the same way that you shouldn't be using
+> > > > BUG_ON() if you cannot prove that the condition won't occur in real=
+ wold
+> > > > usage.
+> > >
+> > > We've been using __GFP_NOFAIL semantics in XFS heavily for 30 years
+> > > now. This was the default Irix kernel allocator behaviour (it had a
+> > > forwards progress guarantee and would never fail allocation unless
+> > > told it could do so). We've been using the same "guaranteed not to
+> > > fail" semantics on Linux since the original port started 25 years
+> > > ago via open-coded loops.
+> > >
+> > > IOWs, __GFP_NOFAIL semantics have been production tested for a
+> > > couple of decades on Linux via XFS, and nobody here can argue that
+> > > XFS is unreliable or crashes in low memory scenarios. __GFP_NOFAIL
+> > > as it is used by XFS is reliable and lives up to the "will not fail"
+> > > guarantee that it is supposed to have.
+> > >
+> > > Fundamentally, __GFP_NOFAIL came about to replace the callers doing
+> > >
+> > >         do {
+> > >                 p =3D kmalloc(size);
+> > >         while (!p);
+> > >
+> > > so that they blocked until memory allocation succeeded. The call
+> > > sites do not check for failure, because -failure never occurs-.
+> > >
+> > > The MM devs want to have visibility of these allocations - they may
+> > > not like them, but having __GFP_NOFAIL means it's trivial to audit
+> > > all the allocations that use these semantics.  IOWs, __GFP_NOFAIL
+> > > was created with an explicit guarantee that it -will not fail- for
+> > > normal allocation contexts so it could replace all the open-coded
+> > > will-not-fail allocation loops..
+> > >
+> > > Given this guarantee, we recently removed these historic allocation
+> > > wrapper loops from XFS, and replaced them with __GFP_NOFAIL at the
+> > > allocation call sites. There's nearly a hundred memory allocation
+> > > locations in XFS that are tagged with __GFP_NOFAIL.
+> > >
+> > > If we're now going to have the "will not fail" guarantee taken away
+> > > from __GFP_NOFAIL, then we cannot use __GFP_NOFAIL in XFS. Nor can
+> > > it be used anywhere else that a "will not fail" guarantee it
+> > > required.
+> > >
+> > > Put simply: __GFP_NOFAIL will be rendered completely useless if it
+> > > can fail due to external scoped memory allocation contexts.  This
+> > > will force us to revert all __GFP_NOFAIL allocations back to
+> > > open-coded will-not-fail loops.
+> > >
+> > > This is not a step forwards for anyone.
+> >
+> > Hello Dave,
+> >
+> > I've noticed that XFS has increasingly replaced kmem_alloc() with
+> > __GFP_NOFAIL. For example, in kernel 4.19.y, there are 0 instances of
+> > __GFP_NOFAIL under fs/xfs, but in kernel 6.1.y, there are 41
+> > occurrences. In kmem_alloc(), there's an explicit
+> > memalloc_retry_wait() to throttle the allocator under heavy memory
+> > pressure, which aligns with your filesystem design. However, using
+> > __GFP_NOFAIL removes this throttling mechanism, potentially causing
+> > issues when the system is under heavy memory load. I'm concerned that
+> > this shift might not be a beneficial trend.
+>
+> AIUI, the memory allocation looping has back-offs already built in
+> to it when memory reserves are exhausted and/or reclaim is
+> congested.
+>
+> e.g:
+>
+> get_page_from_freelist()
+>   (zone below watermark)
+>   node_reclaim()
+>     __node_reclaim()
+>       shrink_node()
+>         reclaim_throttle()
 
-As a result, when a user-space process is accessing a poisoned data, a
-data abort is taken and the memory_failure() is executed in the kworker
-context:
+It applies to all kinds of allocations.
 
-  - will send wrong si_code by SIGBUS signal in early_kill mode, and
-  - can not kill the user-space in some cases resulting a synchronous
-    error infinite loop
+>
+> And the call to recalim_throttle() will do the equivalent of
+> memalloc_retry_wait() (a 2ms sleep).
 
-Issue 1: send wrong si_code in early_kill mode
+I'm wondering if we should take special action for __GFP_NOFAIL, as
+currently, it only results in an endless loop with no intervention.
 
-Since commit a70297d22132 ("ACPI: APEI: set memory failure flags as
-MF_ACTION_REQUIRED on synchronous events")', the flag MF_ACTION_REQUIRED
-could be used to determine whether a synchronous exception occurs on
-ARM64 platform.  When a synchronous exception is detected, the kernel is
-expected to terminate the current process which has accessed poisoned
-page. This is done by sending a SIGBUS signal with an error code
-BUS_MCEERR_AR, indicating an action-required machine check error on
-read.
+>
+> > We have been using XFS for our big data servers for years, and it has
+> > consistently performed well with older kernels like 4.19.y. However,
+> > after upgrading all our servers from 4.19.y to 6.1.y over the past two
+> > years, we have frequently encountered livelock issues caused by memory
+> > exhaustion. To mitigate this, we've had to limit the RSS of
+> > applications, which isn't an ideal solution and represents a worrying
+> > trend.
+>
+> If userspace uses all of memory all the time, then the best the
+> kernel can do is slowly limp along. Preventing userspace from
+> overcommitting memory to the point of OOM is the only way to avoid
+> these "userspace space wants more memory than the machine physically
+> has" sorts of issues. i.e. this is not a problem that the kernel
+> code can solve short of randomly killing userspace applications...
 
-However, when kill_proc() is called to terminate the processes who have
-the poisoned page mapped, it sends the incorrect SIGBUS error code
-BUS_MCEERR_AO because the context in which it operates is not the one
-where the error was triggered.
+We expect an OOM event, but it never occurs, which is a problem.
 
-To reproduce this problem:
+--
+Regards
 
-  # STEP1: enable early kill mode
-  #sysctl -w vm.memory_failure_early_kill=1
-  vm.memory_failure_early_kill = 1
-
-  # STEP2: inject an UCE error and consume it to trigger a synchronous error
-  #einj_mem_uc single
-  0: single   vaddr = 0xffffb0d75400 paddr = 4092d55b400
-  injecting ...
-  triggering ...
-  signal 7 code 5 addr 0xffffb0d75000
-  page not present
-  Test passed
-
-The si_code (code 5) from einj_mem_uc indicates that it is BUS_MCEERR_AO
-error and it is not fact.
-
-To fix it, queue memory_failure() as a task_work so that it runs in
-the context of the process that is actually consuming the poisoned data.
-
-After this patch set:
-
-  # STEP1: enable early kill mode
-  #sysctl -w vm.memory_failure_early_kill=1
-  vm.memory_failure_early_kill = 1
-
-  # STEP2: inject an UCE error and consume it to trigger a synchronous error
-  #einj_mem_uc single
-  0: single   vaddr = 0xffffb0d75400 paddr = 4092d55b400
-  injecting ...
-  triggering ...
-  signal 7 code 4 addr 0xffffb0d75000
-  page not present
-  Test passed
-
-The si_code (code 4) from einj_mem_uc indicates that it is BUS_MCEERR_AR
-error as we expected.
-
-Issue 2: a synchronous error infinite loop due to memory_failure() failed
-
-If a user-space process, e.g. devmem, a poisoned page which has been set
-HWPosion flag, kill_accessing_process() is called to send SIGBUS to the
-current processs with error info. Because the memory_failure() is
-executed in the kworker contex, it will just do nothing but return
-EFAULT. So, devmem will access the posioned page and trigger an
-excepction again, resulting in a synchronous error infinite loop. Such
-loop may cause platform firmware to exceed some threshold and reboot
-when Linux could have recovered from this error.
-
-To reproduce this problem:
-
-  # STEP 1: inject an UCE error, and kernel will set HWPosion flag for related page
-  #einj_mem_uc single
-  0: single   vaddr = 0xffffb0d75400 paddr = 4092d55b400
-  injecting ...
-  triggering ...
-  signal 7 code 4 addr 0xffffb0d75000
-  page not present
-  Test passed
-
-  # STEP 2: access the same page and it will trigger a synchronous error infinite loop
-  devmem 0x4092d55b400
-
-To fix it, if memory_failure() failed, perform a force kill to current process.
-
-Signed-off-by: Shuai Xue <xueshuai@linux.alibaba.com>
-Tested-by: Ma Wupeng <mawupeng1@huawei.com>
-Reviewed-by: Kefeng Wang <wangkefeng.wang@huawei.com>
-Reviewed-by: Xiaofei Tan <tanxiaofei@huawei.com>
-Reviewed-by: Baolin Wang <baolin.wang@linux.alibaba.com>
----
- drivers/acpi/apei/ghes.c | 78 +++++++++++++++++++++++-----------------
- include/acpi/ghes.h      |  3 --
- include/linux/mm.h       |  1 -
- mm/memory-failure.c      | 13 -------
- 4 files changed, 45 insertions(+), 50 deletions(-)
-
-diff --git a/drivers/acpi/apei/ghes.c b/drivers/acpi/apei/ghes.c
-index b0b20ee533d9..b956e9ed020f 100644
---- a/drivers/acpi/apei/ghes.c
-+++ b/drivers/acpi/apei/ghes.c
-@@ -467,28 +467,42 @@ static void ghes_clear_estatus(struct ghes *ghes,
- }
- 
- /*
-- * Called as task_work before returning to user-space.
-- * Ensure any queued work has been done before we return to the context that
-- * triggered the notification.
-+ * struct task_work - for synchronous RAS event
-+ *
-+ * @twork:                callback_head for task work
-+ * @pfn:                  page frame number of corrupted page
-+ * @flags:                work control flags
-+ *
-+ * Structure to pass task work to be handled before
-+ * returning to user-space via task_work_add().
-  */
--static void ghes_kick_task_work(struct callback_head *head)
-+struct task_work {
-+	struct callback_head twork;
-+	u64 pfn;
-+	int flags;
-+};
-+
-+static void memory_failure_cb(struct callback_head *twork)
- {
--	struct acpi_hest_generic_status *estatus;
--	struct ghes_estatus_node *estatus_node;
--	u32 node_len;
-+	struct task_work *twcb = container_of(twork, struct task_work, twork);
-+	unsigned long pfn = twcb->pfn;
-+	int ret;
- 
--	estatus_node = container_of(head, struct ghes_estatus_node, task_work);
--	if (IS_ENABLED(CONFIG_ACPI_APEI_MEMORY_FAILURE))
--		memory_failure_queue_kick(estatus_node->task_work_cpu);
-+	ret = memory_failure(twcb->pfn, twcb->flags);
-+	gen_pool_free(ghes_estatus_pool, (unsigned long)twcb, sizeof(*twcb));
- 
--	estatus = GHES_ESTATUS_FROM_NODE(estatus_node);
--	node_len = GHES_ESTATUS_NODE_LEN(cper_estatus_len(estatus));
--	gen_pool_free(ghes_estatus_pool, (unsigned long)estatus_node, node_len);
-+	if (!ret || ret == -EHWPOISON || ret == -EOPNOTSUPP)
-+		return;
-+
-+	pr_err("%#lx: Sending SIGBUS to %s:%d due to hardware memory corruption\n",
-+			pfn, current->comm, task_pid_nr(current));
-+	force_sig(SIGBUS);
- }
- 
- static bool ghes_do_memory_failure(u64 physical_addr, int flags)
- {
- 	unsigned long pfn;
-+	struct task_work *twcb;
- 
- 	if (!IS_ENABLED(CONFIG_ACPI_APEI_MEMORY_FAILURE))
- 		return false;
-@@ -501,6 +515,18 @@ static bool ghes_do_memory_failure(u64 physical_addr, int flags)
- 		return false;
- 	}
- 
-+	if (flags == MF_ACTION_REQUIRED && current->mm) {
-+		twcb = (void *)gen_pool_alloc(ghes_estatus_pool, sizeof(*twcb));
-+		if (!twcb)
-+			return false;
-+
-+		twcb->pfn = pfn;
-+		twcb->flags = flags;
-+		init_task_work(&twcb->twork, memory_failure_cb);
-+		task_work_add(current, &twcb->twork, TWA_RESUME);
-+		return true;
-+	}
-+
- 	memory_failure_queue(pfn, flags);
- 	return true;
- }
-@@ -745,7 +771,7 @@ int cxl_cper_kfifo_get(struct cxl_cper_work_data *wd)
- }
- EXPORT_SYMBOL_NS_GPL(cxl_cper_kfifo_get, CXL);
- 
--static bool ghes_do_proc(struct ghes *ghes,
-+static void ghes_do_proc(struct ghes *ghes,
- 			 const struct acpi_hest_generic_status *estatus)
- {
- 	int sev, sec_sev;
-@@ -810,8 +836,6 @@ static bool ghes_do_proc(struct ghes *ghes,
- 			current->comm, task_pid_nr(current));
- 		force_sig(SIGBUS);
- 	}
--
--	return queued;
- }
- 
- static void __ghes_print_estatus(const char *pfx,
-@@ -1113,9 +1137,7 @@ static void ghes_proc_in_irq(struct irq_work *irq_work)
- 	struct ghes_estatus_node *estatus_node;
- 	struct acpi_hest_generic *generic;
- 	struct acpi_hest_generic_status *estatus;
--	bool task_work_pending;
- 	u32 len, node_len;
--	int ret;
- 
- 	llnode = llist_del_all(&ghes_estatus_llist);
- 	/*
-@@ -1130,25 +1152,16 @@ static void ghes_proc_in_irq(struct irq_work *irq_work)
- 		estatus = GHES_ESTATUS_FROM_NODE(estatus_node);
- 		len = cper_estatus_len(estatus);
- 		node_len = GHES_ESTATUS_NODE_LEN(len);
--		task_work_pending = ghes_do_proc(estatus_node->ghes, estatus);
-+
-+		ghes_do_proc(estatus_node->ghes, estatus);
-+
- 		if (!ghes_estatus_cached(estatus)) {
- 			generic = estatus_node->generic;
- 			if (ghes_print_estatus(NULL, generic, estatus))
- 				ghes_estatus_cache_add(generic, estatus);
- 		}
--
--		if (task_work_pending && current->mm) {
--			estatus_node->task_work.func = ghes_kick_task_work;
--			estatus_node->task_work_cpu = smp_processor_id();
--			ret = task_work_add(current, &estatus_node->task_work,
--					    TWA_RESUME);
--			if (ret)
--				estatus_node->task_work.func = NULL;
--		}
--
--		if (!estatus_node->task_work.func)
--			gen_pool_free(ghes_estatus_pool,
--				      (unsigned long)estatus_node, node_len);
-+		gen_pool_free(ghes_estatus_pool, (unsigned long)estatus_node,
-+			      node_len);
- 
- 		llnode = next;
- 	}
-@@ -1209,7 +1222,6 @@ static int ghes_in_nmi_queue_one_entry(struct ghes *ghes,
- 
- 	estatus_node->ghes = ghes;
- 	estatus_node->generic = ghes->generic;
--	estatus_node->task_work.func = NULL;
- 	estatus = GHES_ESTATUS_FROM_NODE(estatus_node);
- 
- 	if (__ghes_read_estatus(estatus, buf_paddr, fixmap_idx, len)) {
-diff --git a/include/acpi/ghes.h b/include/acpi/ghes.h
-index be1dd4c1a917..ebd21b05fe6e 100644
---- a/include/acpi/ghes.h
-+++ b/include/acpi/ghes.h
-@@ -35,9 +35,6 @@ struct ghes_estatus_node {
- 	struct llist_node llnode;
- 	struct acpi_hest_generic *generic;
- 	struct ghes *ghes;
--
--	int task_work_cpu;
--	struct callback_head task_work;
- };
- 
- struct ghes_estatus_cache {
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index 6549d0979b28..f5f1d6a8a07d 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -3981,7 +3981,6 @@ enum mf_flags {
- int mf_dax_kill_procs(struct address_space *mapping, pgoff_t index,
- 		      unsigned long count, int mf_flags);
- extern int memory_failure(unsigned long pfn, int flags);
--extern void memory_failure_queue_kick(int cpu);
- extern int unpoison_memory(unsigned long pfn);
- extern atomic_long_t num_poisoned_pages __read_mostly;
- extern int soft_offline_page(unsigned long pfn, int flags);
-diff --git a/mm/memory-failure.c b/mm/memory-failure.c
-index df26e2ff5e06..e369aae2da1f 100644
---- a/mm/memory-failure.c
-+++ b/mm/memory-failure.c
-@@ -2486,19 +2486,6 @@ static void memory_failure_work_func(struct work_struct *work)
- 	}
- }
- 
--/*
-- * Process memory_failure work queued on the specified CPU.
-- * Used to avoid return-to-userspace racing with the memory_failure workqueue.
-- */
--void memory_failure_queue_kick(int cpu)
--{
--	struct memory_failure_cpu *mf_cpu;
--
--	mf_cpu = &per_cpu(memory_failure_cpu, cpu);
--	cancel_work_sync(&mf_cpu->work);
--	memory_failure_work_func(&mf_cpu->work);
--}
--
- static int __init memory_failure_init(void)
- {
- 	struct memory_failure_cpu *mf_cpu;
--- 
-2.39.3
-
+Yafang
 
