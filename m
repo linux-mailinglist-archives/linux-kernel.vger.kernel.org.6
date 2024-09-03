@@ -1,179 +1,132 @@
-Return-Path: <linux-kernel+bounces-313423-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313424-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45F2196A552
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 19:18:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65D2596A557
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 19:20:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F216B285FBD
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 17:18:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 98B7D1C24154
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 17:20:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2478F18DF92;
-	Tue,  3 Sep 2024 17:18:38 +0000 (UTC)
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9C2B18DF78;
+	Tue,  3 Sep 2024 17:19:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mJSiaHTo"
+Received: from mail-oo1-f47.google.com (mail-oo1-f47.google.com [209.85.161.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 191E51420DD;
-	Tue,  3 Sep 2024 17:18:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F341B1C14;
+	Tue,  3 Sep 2024 17:19:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725383917; cv=none; b=q85UdUcYglCvJ1EiQaBXdE4juMKTXCUABEZzVNrxs1J/sT5PsOrGLxX3GxF7LOryIvGHqzGTSosI3bax96v7zxrSzox+SoJu0mqGdHiAzPzW0fVL9LHUOUxHwd1m/evW8gxlJSXo0wddTMQ7iiTWKHwjzCtprqbkqF8CMnoIXKY=
+	t=1725383999; cv=none; b=byais/hTwqeORkShw1UQgGHr3QF51mSJHd9uPN5w9c1A1J8umTEklJH+ljQIJicbtFVtKtBBRjmSQgfKOAXCtV4MhvKEqtoFuvT1iK9oDQczaOSbHBHnu5RSQEVNaykbc0qoG7olOAogpMMh6LTuym7te3+VAl0jlWaK0jY+KMw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725383917; c=relaxed/simple;
-	bh=rAT/16lEXiR/FQGCf8mH61WrxLJvKpfnUCw3JXbOKlk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aMYZvRwPzKbHvQjy+LnWLJRw7iHRHbfsE5FzHqr9nQsWPh1U6xRR1yoeeI/3q4uyx3Hua+1CdN5JNDqVSewh5TbiqTgXWzIAC4Ke4bK9goeW2rxnvPQOqpFw50ctPwt/5ER6bui/RRLjIGlStf2NoV4yn2enL9hmm63EBN1Qn4U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4Wyslp6shpz9sSC;
-	Tue,  3 Sep 2024 19:18:30 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id hEi4N-oS1BVW; Tue,  3 Sep 2024 19:18:30 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4Wysln4fbCz9sSH;
-	Tue,  3 Sep 2024 19:18:29 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 7E91E8B779;
-	Tue,  3 Sep 2024 19:18:29 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id pxEcRzUEidZI; Tue,  3 Sep 2024 19:18:29 +0200 (CEST)
-Received: from [192.168.234.228] (unknown [192.168.234.228])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 3CEB98B774;
-	Tue,  3 Sep 2024 19:18:27 +0200 (CEST)
-Message-ID: <6b07c48d-656f-4e42-bfa7-0ecead72a7b8@csgroup.eu>
-Date: Tue, 3 Sep 2024 19:18:26 +0200
+	s=arc-20240116; t=1725383999; c=relaxed/simple;
+	bh=nRZ2V36ig2VtSBPxHVYItft25PT2WEBXHd3mI9pDF2k=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FeRN7SiHO30mCOwApwLj0C35pTUMLW8OdvnhadLe7LjamOIwg8v5ewEevJvPDDHsUeC3c3ejhbLEGgGARwgkskuT9yxIRtk0cg5yhdJjqHjp60xh6W/WKcMgwK8VQY0JTTgtuIhNbMEh9341XJHK12WYLhGpA5pon+v/v6sHrMk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mJSiaHTo; arc=none smtp.client-ip=209.85.161.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oo1-f47.google.com with SMTP id 006d021491bc7-5e172cc6d66so1221090eaf.2;
+        Tue, 03 Sep 2024 10:19:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725383997; x=1725988797; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=qtH9IPamoorP6Ga02exdlUhBBWCKetzwMLalE6WeBhU=;
+        b=mJSiaHToB8MZFOo3RhlSdwEUBDcDR6K2J2+kSXsr7tcbSCQYoRkxUjOU9bgOgTs16u
+         8CQ8LNwMuCjPx+bF6tQzNeBrauRQ1PO95S51q1gTfX+GiwRb/43qJwoRHXzFkj4UFmjX
+         Aivos+dAhL+g/zf1t6R0iGM3U7818QqFYYWCRF7F0fFoWr2eVcBN0i4eJnyvpNTzIxxf
+         oaaw7XLlnl8bHx+eH8bLE1eskBnwuTwnFeJwIIt9ckpWncrc6TXVgEx8uQcaM8KtGtN5
+         WHRQpFl5DbYy4bApJAovFGHHvFifzIvBdTSXdQU4sKwp+ZuMuNJXdfsYka0hqMyR1MyG
+         uU5g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725383997; x=1725988797;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=qtH9IPamoorP6Ga02exdlUhBBWCKetzwMLalE6WeBhU=;
+        b=L6+XMRXuYnLLp/IfEBrkpuW5gd8NpGDpK5raJ538YZ8V41O/jsDjj2lsI49o6gus1U
+         X3FefFHYiLTImrfi5MhjwaWqinFpLYSBWWReN6iLs8jOBqn2uFC/Cd1KbGJEiWlO2H+4
+         Fw7r7dnVFL4MmpR/3o9b0sIAnvnc3WqjsvNymu9M/D76LKTFs/ba/fMy7YWG1E1uIciM
+         UfsogJtFV/czmvfNH2dR6p2XVzVHLPVUnuca7jPfbHQTKghgV1uv5TdFwNhOXzYDTs/y
+         wvBUIGnwsmIiK8AjH+eSuAMVxfsEklb07wwYZo4YQsIe1oRvIE60rBaJ/BWct+ErwW+I
+         aCcQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUWVp0F0Yjuo/JUiAuh00EG+ZqFpqYyAPhAcWNjROUcYrFmlTXix2Khi8q7iyqeru/BAwBlFsOuX1tsBnc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxdY9lBZncervDuIMDUwCsYg2J0OWBR5BRszfbqC/nQIvg3Dif/
+	VQ2z/WW3D3aIN4suT6dBDTayEBxM6INIBebegeaHUVVgBa8KKgcq
+X-Google-Smtp-Source: AGHT+IHfFv81FL9CWSvPRuQ1Ag7YXMFuM3Q4pEddxacXVQIp8ZecgE/XViB7Vu+JuEFaKiPp/R58XA==
+X-Received: by 2002:a05:6358:783:b0:1b5:a34d:fea8 with SMTP id e5c5f4694b2df-1b7e35ecda7mr1904005155d.0.1725383996838;
+        Tue, 03 Sep 2024 10:19:56 -0700 (PDT)
+Received: from fedora.. ([106.219.162.224])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7d4fbd8aab2sm120044a12.20.2024.09.03.10.19.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Sep 2024 10:19:56 -0700 (PDT)
+From: Riyan Dhiman <riyandhiman14@gmail.com>
+To: aacraid@microsemi.com,
+	James.Bottomley@HansenPartnership.com,
+	martin.petersen@oracle.com
+Cc: linux-scsi@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Riyan Dhiman <riyandhiman14@gmail.com>
+Subject: [PATCH] scsi: aacraid: Prevent premature freeing and improve memory allocation checks for fsa_dev
+Date: Tue,  3 Sep 2024 22:49:11 +0530
+Message-ID: <20240903171911.9197-1-riyandhiman14@gmail.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC v2 2/4] mm: Add hint and mmap_flags to struct
- vm_unmapped_area_info
-To: Charlie Jenkins <charlie@rivosinc.com>, Arnd Bergmann <arnd@arndb.de>,
- Richard Henderson <richard.henderson@linaro.org>,
- Ivan Kokshaysky <ink@jurassic.park.msu.ru>, Matt Turner
- <mattst88@gmail.com>, Vineet Gupta <vgupta@kernel.org>,
- Russell King <linux@armlinux.org.uk>, Guo Ren <guoren@kernel.org>,
- Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>,
- Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
- "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
- Helge Deller <deller@gmx.de>, Michael Ellerman <mpe@ellerman.id.au>,
- Nicholas Piggin <npiggin@gmail.com>, Naveen N Rao <naveen@kernel.org>,
- Alexander Gordeev <agordeev@linux.ibm.com>,
- Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
- Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
- Christian Borntraeger <borntraeger@linux.ibm.com>,
- Sven Schnelle <svens@linux.ibm.com>,
- Yoshinori Sato <ysato@users.sourceforge.jp>, Rich Felker <dalias@libc.org>,
- John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
- "David S. Miller" <davem@davemloft.net>,
- Andreas Larsson <andreas@gaisler.com>, Thomas Gleixner <tglx@linutronix.de>,
- Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
- Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
- "H. Peter Anvin" <hpa@zytor.com>, Andy Lutomirski <luto@kernel.org>,
- Peter Zijlstra <peterz@infradead.org>, Muchun Song <muchun.song@linux.dev>,
- Andrew Morton <akpm@linux-foundation.org>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka
- <vbabka@suse.cz>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Shuah Khan <shuah@kernel.org>
-Cc: linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-alpha@vger.kernel.org, linux-snps-arc@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org, linux-csky@vger.kernel.org,
- loongarch@lists.linux.dev, linux-mips@vger.kernel.org,
- linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
- linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
- sparclinux@vger.kernel.org, linux-mm@kvack.org,
- linux-kselftest@vger.kernel.org
-References: <20240829-patches-below_hint_mmap-v2-0-638a28d9eae0@rivosinc.com>
- <20240829-patches-below_hint_mmap-v2-2-638a28d9eae0@rivosinc.com>
-Content-Language: fr-FR
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-In-Reply-To: <20240829-patches-below_hint_mmap-v2-2-638a28d9eae0@rivosinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Hi Charlie,
+Refactor the allocation and freeing sequence of `fsa_dev` to ensure
+that memory is not prematurely freed, which could lead to use-after-free errors
+or undefined behavior.
 
-Le 29/08/2024 à 09:15, Charlie Jenkins a écrit :
-> The hint address and mmap_flags are necessary to determine if
-> MAP_BELOW_HINT requirements are satisfied.
-> 
-> Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
-> ---
->   arch/alpha/kernel/osf_sys.c      | 2 ++
->   arch/arc/mm/mmap.c               | 3 +++
->   arch/arm/mm/mmap.c               | 7 +++++++
->   arch/csky/abiv1/mmap.c           | 3 +++
->   arch/loongarch/mm/mmap.c         | 3 +++
->   arch/mips/mm/mmap.c              | 3 +++
->   arch/parisc/kernel/sys_parisc.c  | 3 +++
->   arch/powerpc/mm/book3s64/slice.c | 7 +++++++
->   arch/s390/mm/hugetlbpage.c       | 4 ++++
->   arch/s390/mm/mmap.c              | 6 ++++++
->   arch/sh/mm/mmap.c                | 6 ++++++
->   arch/sparc/kernel/sys_sparc_32.c | 3 +++
->   arch/sparc/kernel/sys_sparc_64.c | 6 ++++++
->   arch/sparc/mm/hugetlbpage.c      | 4 ++++
->   arch/x86/kernel/sys_x86_64.c     | 6 ++++++
->   arch/x86/mm/hugetlbpage.c        | 4 ++++
->   fs/hugetlbfs/inode.c             | 4 ++++
->   include/linux/mm.h               | 2 ++
->   mm/mmap.c                        | 6 ++++++
->   19 files changed, 82 insertions(+)
-> 
+Changes:
+- Modified the order of memory operations by allocating new memory for fsa_dev
+  first and checking for success before freeing the old fsa_dev pointer.
+- Updated the error handling to ensure -ENOMEM is returned if allocation fails,
+  preserving the existing valid memory.
 
->   
-> diff --git a/arch/powerpc/mm/book3s64/slice.c b/arch/powerpc/mm/book3s64/slice.c
-> index ef3ce37f1bb3..f0e2550af6d0 100644
-> --- a/arch/powerpc/mm/book3s64/slice.c
-> +++ b/arch/powerpc/mm/book3s64/slice.c
-> @@ -286,6 +286,10 @@ static unsigned long slice_find_area_bottomup(struct mm_struct *mm,
->   		.length = len,
->   		.align_mask = PAGE_MASK & ((1ul << pshift) - 1),
->   	};
-> +
-> +	info.hint = addr;
-> +	info.mmap_flags = flags;
-> +
->   	/*
->   	 * Check till the allow max value for this mmap request
->   	 */
-> @@ -331,6 +335,9 @@ static unsigned long slice_find_area_topdown(struct mm_struct *mm,
->   	};
->   	unsigned long min_addr = max(PAGE_SIZE, mmap_min_addr);
->   
-> +	info.hint = addr;
-> +	info.mmap_flags = flags;
-> +
->   	/*
->   	 * If we are trying to allocate above DEFAULT_MAP_WINDOW
->   	 * Add the different to the mmap_base.
+Signed-off-by: Riyan Dhiman <riyandhiman14@gmail.com>
+---
+ drivers/scsi/aacraid/aachba.c | 14 +++++---------
+ 1 file changed, 5 insertions(+), 9 deletions(-)
 
-ppc64_defconfig:
+diff --git a/drivers/scsi/aacraid/aachba.c b/drivers/scsi/aacraid/aachba.c
+index b22857c6f3f4..f3fc9b622aee 100644
+--- a/drivers/scsi/aacraid/aachba.c
++++ b/drivers/scsi/aacraid/aachba.c
+@@ -490,18 +490,14 @@ int aac_get_containers(struct aac_dev *dev)
+ 	if (dev->fsa_dev == NULL ||
+ 		dev->maximum_num_containers != maximum_num_containers) {
+ 
+-		fsa_dev_ptr = dev->fsa_dev;
+-
+-		dev->fsa_dev = kcalloc(maximum_num_containers,
++		fsa_dev_ptr = kcalloc(maximum_num_containers,
+ 					sizeof(*fsa_dev_ptr), GFP_KERNEL);
+-
+-		kfree(fsa_dev_ptr);
+-		fsa_dev_ptr = NULL;
+-
+-
+-		if (!dev->fsa_dev)
++		if(!fsa_dev_ptr)
+ 			return -ENOMEM;
+ 
++		kfree(dev->fsa_dev);
++		dev->fsa_dev = fsa_dev_ptr;
++
+ 		dev->maximum_num_containers = maximum_num_containers;
+ 	}
+ 	for (index = 0; index < dev->maximum_num_containers; index++) {
+-- 
+2.46.0
 
-   CC      arch/powerpc/mm/book3s64/slice.o
-arch/powerpc/mm/book3s64/slice.c: In function 'slice_find_area_bottomup':
-arch/powerpc/mm/book3s64/slice.c:291:27: error: 'flags' undeclared 
-(first use in this function)
-   291 |         info.mmap_flags = flags;
-       |                           ^~~~~
-arch/powerpc/mm/book3s64/slice.c:291:27: note: each undeclared 
-identifier is reported only once for each function it appears in
-arch/powerpc/mm/book3s64/slice.c: In function 'slice_find_area_topdown':
-arch/powerpc/mm/book3s64/slice.c:339:27: error: 'flags' undeclared 
-(first use in this function)
-   339 |         info.mmap_flags = flags;
-       |                           ^~~~~
-make[5]: *** [scripts/Makefile.build:244: 
-arch/powerpc/mm/book3s64/slice.o] Error 1
 
