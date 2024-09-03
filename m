@@ -1,261 +1,249 @@
-Return-Path: <linux-kernel+bounces-313330-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313332-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E5E096A409
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 18:16:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2633596A40F
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 18:17:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C03DB1C210F4
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 16:16:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A6C311F27469
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 16:17:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF93418A6AC;
-	Tue,  3 Sep 2024 16:16:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 666BA18A6A7;
+	Tue,  3 Sep 2024 16:17:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="BmXmhQ+h";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="qvPaEmyD"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="vxVZ+v3T"
+Received: from mail-ot1-f45.google.com (mail-ot1-f45.google.com [209.85.210.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48D5B1DFCB;
-	Tue,  3 Sep 2024 16:16:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725380210; cv=fail; b=cUTst8pAKp6C6EpqsXsIZg2QQT+v0q1DMQDrq92UAoVfR0CG29f+tPGYUVaqVweb06ARR6fmcjwpFx49+C+hpTWUoUXybhCFj9YV5jc9Sln7jfiUeaewH0WL97NqUKWvSfHM2JwTeM3cWPKNyJCcAIMFoJX0ZKdcOPXJFDNXEtQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725380210; c=relaxed/simple;
-	bh=k6j15Y7CR6tBmV98xboe1vQidnKqu2c0KtNYM8XsOTQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=UC9InCnyDmyYrfC4GWllIRzWQ2tCHFDiXkjYaeKG0MWran7isHcsMOYHRF7QGz0i1CpbFD5aifuc4/I+8TY+dKHc+0qNBlj3qN4XwnMffRGlMAlCE+xpJZAvmeJbITGWOK500g9oQ+sDCe/42uSJPbKDNOD22MM2LpQpxXL2TMw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=BmXmhQ+h; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=qvPaEmyD; arc=fail smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 483F0Z5B009041;
-	Tue, 3 Sep 2024 16:16:38 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
-	date:from:to:cc:subject:message-id:references:content-type
-	:in-reply-to:mime-version; s=corp-2023-11-20; bh=rRkamwXoZt3APC7
-	rnGcy5tySlehZ9PXYfty9H7+iCjo=; b=BmXmhQ+hqL/CRVBmMDoSOZAh9I1CLBi
-	yDq/YtkyRwq4Jkj3qCEfVu4VMUDuhG24s1TxukiXE95hKaohjuW0kLw1qljCvytb
-	TnVSHkIHRlBVe4CtP9mU3mc2G4ntBeEUMaaTAAtFesWyP+DjgKv/X9HOee9DyhU7
-	sVuR3gkVBLWnvU0Je+T+m9sutGn47WRszlWGcvzJL1vOcPaKXQnvc5BVpyGqx+A1
-	QYWYxVDFfy/UTcTX3jc+oYX6fJG48+PWWUip9yG5/JHQnPX+R5H7xL5NutrYvL3B
-	8ehepAgcnLjQk3KsDWvf5O9hHfR8Gs6bWP6MlEvFLFkdJxdrOagNbcA==
-Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 41duw7scn9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 03 Sep 2024 16:16:37 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 483G2QuM032650;
-	Tue, 3 Sep 2024 16:16:37 GMT
-Received: from nam04-bn8-obe.outbound.protection.outlook.com (mail-bn8nam04lp2045.outbound.protection.outlook.com [104.47.74.45])
-	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 41bsm94ahc-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 03 Sep 2024 16:16:36 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=zFY2uHH6XHBLN6D9hXr++P9Sezk9h6YQXQY9GWEhIpkzJc2dCcnFdt6C0sxJrCvR5Har2YiyEJpqczNUrcdjmqazQryEd1TApYzHtqe4aZ6Si2amgryO9b+aKnqWL1+zM2OCEggOInDJRiLa40UzKMosYs9i1HNH2fKalzEgSNBICEvo580o71+XrhEdJXXx98t/effJdVjCJbyJHsaN6XsLQTYXoxlI9qKrmdIcVY8gMd+sqfQnVN2BTmoLtTgXTpwPK8/w0qNhN/84mCaW6K0A7hOnZLBOMNFKNjruCey0f0t/I7F4KKMVWqxrMjH8RRSPtlzGu38f0tHkoUc/4w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=rRkamwXoZt3APC7rnGcy5tySlehZ9PXYfty9H7+iCjo=;
- b=ng+DeR9VgOJzGNOW87+wNhOMqZvswmBbmAdbqpwj1dst2ZcWlXspsRok2Y/uBdHc2NWc2ZVQ1Sh2zAW0ohOWcquPIxurfy476lpRkTxx02n02Oa4HrhH4x9zhiX2ipgt0GCfDlK0Ba6mRvjXARaKIwNksQhLhuqLvKGnDUtksBtwHM6fiqQHjSQrMqaKr62+IUS+Uey/kWI3tfN6sWk3xAUcWRQXtTwsuS5ZwXrU13GnRgyjBpVst/RnDG8OhmVTEqOsto5BK+RHYps5DUmvBkVjzqa9On2lUf4cJ+XduHD5yvcJAsYKV9m5K1Wuhn3ToInHlfWPeuwMzLYGNmctOw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C1AF189B88
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 16:17:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.45
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725380249; cv=none; b=IEPHJN9BCnrIuNEWO2Uj/uYL4Eci/XiiJvdKBOCtrzkFoUOcnQLT1nv3/4MmYn4tXERee4VCX4mkHO3A7IHlEIrkazlR0YWE7K26NluQccTmNPbWIaoJ+yeC9ZalptB/SrE1pvig+FGv35S9Pr6cFcaY3crgc3G9qd9WB+VOt+0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725380249; c=relaxed/simple;
+	bh=QUrDmjGxDWVKFhcNoy+HxAmj0c8osU6YyWrVQMdtj1o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=acPZB1dTA6rw9jWjDl+OTQpd8Tu4g1ezc9IT4sXvBH8KwL8JuMwU5uXUqhvHpc0U4fUWcRoh35DmhyMmvIugcEhYzWhOYRaDHhHOvfP2mcYjP3LK/zc+KVILzkcKbGhiqDzvmMjb6bUGDROX/SbgH9czYWnknWAiDoDcbqlb1mM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=vxVZ+v3T; arc=none smtp.client-ip=209.85.210.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-ot1-f45.google.com with SMTP id 46e09a7af769-7093ba310b0so2320759a34.2
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 09:17:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=rRkamwXoZt3APC7rnGcy5tySlehZ9PXYfty9H7+iCjo=;
- b=qvPaEmyDtevcgQ+FGQ0Oq/rQvqrt08vbcx98FIopmGchsD9Lg8iUAqvf50uM7vCAuw7OY3fWYSs1JhfsOXkB06YTZpwjkhgzslb3+FEVI8U5jVJd4Wvn7BW9LIPhS/BLWbSYAAYKfIcMb3SpyWc0bwffJY2ZHLqpJA+UlZ7Lz8o=
-Received: from CYXPR10MB7924.namprd10.prod.outlook.com (2603:10b6:930:e6::10)
- by CH3PR10MB7677.namprd10.prod.outlook.com (2603:10b6:610:17a::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.17; Tue, 3 Sep
- 2024 16:16:32 +0000
-Received: from CYXPR10MB7924.namprd10.prod.outlook.com
- ([fe80::794d:6966:dd4a:f6e5]) by CYXPR10MB7924.namprd10.prod.outlook.com
- ([fe80::794d:6966:dd4a:f6e5%4]) with mapi id 15.20.7918.024; Tue, 3 Sep 2024
- 16:16:30 +0000
-Date: Tue, 3 Sep 2024 12:16:28 -0400
-From: "Liam R. Howlett" <Liam.Howlett@oracle.com>
-To: Nathan Chancellor <nathan@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-        kernel test robot <lkp@intel.com>, llvm@lists.linux.dev,
-        oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>
-Subject: Re: lib/maple_tree.c:330:20: error: unused function 'mte_set_full'
-Message-ID: <fxpibejx4g6tt7ow2l2qmjbd6adquukkszolqgmjvq4oo2s22e@p6wlptkl74px>
-Mail-Followup-To: "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
-	Nathan Chancellor <nathan@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
-	kernel test robot <lkp@intel.com>, llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, Linux Memory Management List <linux-mm@kvack.org>, 
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>
-References: <202408310728.S7EE59BN-lkp@intel.com>
- <20240830175015.3569d261b0d48d46eb6ec1cf@linux-foundation.org>
- <20240831012845.GA2993938@thelio-3990X>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240831012845.GA2993938@thelio-3990X>
-User-Agent: NeoMutt/20240425
-X-ClientProxiedBy: YT3PR01CA0112.CANPRD01.PROD.OUTLOOK.COM
- (2603:10b6:b01:85::30) To CYXPR10MB7924.namprd10.prod.outlook.com
- (2603:10b6:930:e6::10)
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1725380246; x=1725985046; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=53GiOZpe/Mi1YNWuIB9EhTKXzBDKqq6MqraEG6tJCLo=;
+        b=vxVZ+v3TwtDPT8w9+afpdOjiOGpM1Y1AkdGzRLtBB19QBo/1OFxKowXzOJNoUmyRxL
+         yd7RLz9I52TSVvygBytT5/tpR6TGCQTdS442PgXfbsA2PCIgzD+hi5HE8DhXI2OrwnnP
+         LuR8V7OVqGMdvBE9z+NmWasqR1uJxbgeupXNSn5vFGL4jiDIs5/kZh26BEz+EmhfELQd
+         RG7WOfsSevRw7KvJrxeeryDcglWp3NHfmnW1p55SxhFYG8oVyDB0BevwXgi4ZLumx89o
+         xrMag5qBcGNGiglA/U5xPgTK5m5q10vWCoMbUZUwQeNhyKJtU7a3e6IvPvUrWIRP/R0T
+         pPmg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725380246; x=1725985046;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=53GiOZpe/Mi1YNWuIB9EhTKXzBDKqq6MqraEG6tJCLo=;
+        b=AlgEe8Tf0520l5MTqWGiH8fR//0xibubQC+i8wiiVn3axRJz8BD/pF9AF9IKrINXZN
+         ZTX/slPHxZnaVqdMng3+0vtw5EGzQ9Y07u5bnQnabZrxx0J4zuD287BfV8e85ExeWGzN
+         ruiE13BirOOuss1RA0Y3j0Dgr2YgIJ2RRloiiGcea0hxHWfiyNwbqW1skMtBysFS+rWn
+         Bp1/GZ3M97VPhb2HDjsH+MDtUmDFCGuB/Of/v0oo5Kwts4NA298uJPqyFKln7O1KLEJ+
+         aMyB+eb4Y/w3cYk3rkSlXDrhK/3PKaEpi98am73jIU0YHRrLq0l9j6Fdq4eCuP6wA3Ba
+         aiYg==
+X-Forwarded-Encrypted: i=1; AJvYcCUXbXeWGavJ7AhtBqlUrxGbl1nGtZigJKvCzKjMh+KjqMO/FNJi+mEnVshH8VYD3AOhN8f67RUI5I1fcgc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyYNdrtt8HwY7RWixaoCZMclphNiOJsek8CNuC7KnIAANmFMdu5
+	er1YqFFhlAcxumB3Bh1WCnvh1FVTIiqrONpulOgVReZsIB3RwvI24oxJIaUtGdY=
+X-Google-Smtp-Source: AGHT+IHTlOQ2HrzrTU2Q3N454srcRMdp7zFoL+AYKDmUWAD5RYsVkxQj4bH6We19C8bVDozpvH490g==
+X-Received: by 2002:a05:6830:dc8:b0:70c:92ee:5662 with SMTP id 46e09a7af769-70f71efed69mr13403446a34.8.1725380246297;
+        Tue, 03 Sep 2024 09:17:26 -0700 (PDT)
+Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-70f671a82a0sm2413574a34.60.2024.09.03.09.17.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 03 Sep 2024 09:17:25 -0700 (PDT)
+Message-ID: <4a62ea7b-a8af-49e0-9718-30d927a69038@baylibre.com>
+Date: Tue, 3 Sep 2024 11:17:24 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CYXPR10MB7924:EE_|CH3PR10MB7677:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0783e516-32e3-4c27-b605-08dccc33c557
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?VfK6VnaXdjO0KOF0zBsRUhAmtEpXPQnYmPi/xYCq0eImhVJRIh/BZeu1Acdv?=
- =?us-ascii?Q?j5Kzw0iBWSICB/6yUo/14oUhecJ0xHi/zAzzvrhf9D5er8EJGxcPoSj2arnm?=
- =?us-ascii?Q?TpotSM6Uc4UQHr0ucuOL/qvXk9jb6clZk7EvXH9zQt+JeDi7H8sora7+6gDU?=
- =?us-ascii?Q?WehNsz9zvWtPm/ORkVotYPSkOkqr7/gyDbdw4uTarIhfyc4eT+YWj9xLBpAg?=
- =?us-ascii?Q?J0YgEJN6SY1sztIbdWkz9IvXZbMqTYjwfLaK3gmDmYOAlBlUSq/Gru45Wr6R?=
- =?us-ascii?Q?mzuJyzvLLacFsHXcby0iwjr5SxWxPaFJwrelJtAdN1hG+oMtzP74nlcyX0xe?=
- =?us-ascii?Q?l9srBgok6qlefaKxYizlVdZxcdUfHOQhIzn+Gu6KBdtBXrR8WSFvcvGh7ZQT?=
- =?us-ascii?Q?9mz6WG0A8IYCTMD1XvUeUa18t6FGLwrMyHcr9EmCDyiTbWJVJDd9JxVGgyrN?=
- =?us-ascii?Q?/9nQYhbTFhIzbW/1oIMZsRxP3hS9xo2xk7/STj5ljt96FTRa/w+e6ZV/mhJQ?=
- =?us-ascii?Q?9nf+wJIrQbXUrfUHSQ8rb3NdpjimblYsOMfeGSBgtyOa54u40UVm01lXqxwJ?=
- =?us-ascii?Q?ixxLiExwACF2rNp8IgrKUBPnFe1pyL+3KCF2nytyg0GFvzUldwqunkEA5Z3D?=
- =?us-ascii?Q?keepYFEk1pIm8guYByt1vc6/CmAW3Nam5/MhIllJwSvNrfm3I10R55InfMIH?=
- =?us-ascii?Q?m1ZCifJ1iLApgVAhVM9rM7KEAuCDiFp0akTlFj69/Q/LX8hUoTOjGF8b1Lt1?=
- =?us-ascii?Q?A5BhEGMcFnh42udiAmI090G4ZBxisRBENNU8IIjYQ6Fo0rg1CtFIfkox7YuY?=
- =?us-ascii?Q?x+G1fTQhyKuoNTB5nrV748HlsObCbbUVhJUraIzyXrInuhmNVf5Lpcz4RZMo?=
- =?us-ascii?Q?5M64UfHE0WpN2SSog7xvBKxw3XF01IzMcfl3YhckWIHpPzG0r4glTnD9svYp?=
- =?us-ascii?Q?Hz94tdSEU5n0wf8+0uCfs88wjj3B+bQCJw4KJKyduJo6nlAtJlJjFV9FZ1J0?=
- =?us-ascii?Q?FkC+rUiCqOAguy2gpywYU+k3GOZYOP+Yw4euDzb6bH+jnlM5kv/Y/QNkkq5b?=
- =?us-ascii?Q?i2GNqQSxm4AI9rtRbfaC3KZWOcXEiB8X+yRyNggad4byBIMn6LIWfMUGVJZD?=
- =?us-ascii?Q?TNIeoQd+9CZYJ1k9dE+8QE4KTmc2jFOYKpXIGaSh2iHDICym8AtG1Rss9RRh?=
- =?us-ascii?Q?dqv4MwGUbTj8ltUJOKP88J+yVXRyN+vIFmszR188t98JWWoSo5sHdiY6SHtD?=
- =?us-ascii?Q?Wom4TJATtEbWmrFq55MK87DA2qEDtIbmG73kLlWt7q90fL/sxZCUuQ4P0Aq5?=
- =?us-ascii?Q?s0Y=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CYXPR10MB7924.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?6lIed84zG0kTnVJFItWdC14JGm3J65X2iJHP1hlffva9dON6rsAUgiXBnj0/?=
- =?us-ascii?Q?aMFK+caqBUdhvB8vrUTDq85S5uY8Ef0g05uAgM7nLPHWLK02VLuFWPKB+RTI?=
- =?us-ascii?Q?p2MbzFRfGMSWYPiLh7GteDSpby0QEy2OPuCsB2mInPfmLOdUmNNOg6HPsFbV?=
- =?us-ascii?Q?cbUiorDfDBD21POt4KhxU7pvY5ely6vQyeGmAVy/w31AMcbrr1HvK0uvMSER?=
- =?us-ascii?Q?BQWY2fagq0sKdaKmGjgHef/dJV9c1s0p56xgcZGKO1q9IteZvREZQdvTCdQ+?=
- =?us-ascii?Q?hZJNwrCTIPS21T4bwvwH+0ACyX2El6s2J0LPCO/0YyyjGvnBy5upnKcfBfE1?=
- =?us-ascii?Q?NwO38sCXK/SAbHcaeQI5wjEryobZgD/ay1Jzgb0tS/Ffrpl7hz8RFNkFBLZ6?=
- =?us-ascii?Q?yAUzMc/eVBSjzBIWpPEBI1RYgtAtl5AcblxSSa0EVnIWO9DAxZLmgjSGOmPH?=
- =?us-ascii?Q?WOl960vJC/ytdeJ77lta9RnZf2OQFSL1Jq395iwZJTLM1CLWyAY7nj/U3hEM?=
- =?us-ascii?Q?147O7htw/7U7xNobuYwZ0YYYUZJEComnDLZ1s+L3vJqlzIz/w9DgUxyQvi78?=
- =?us-ascii?Q?NpsTTOPnhsDcyT2LfpeyWeldPxHPuPwLLlWcR5wX9f3VlBdv7JMdIt8zX5D+?=
- =?us-ascii?Q?oggKfDBwffk3PNhgkplebUfSgBPHI24SxD/6tqI+sO1H8yERdcouP7MBaWvm?=
- =?us-ascii?Q?ysz2+PPHVi3FFVszpN98Jy4HoYrstoqAmJOO52Cz3IKtxTcOYMtJXPpLZIzI?=
- =?us-ascii?Q?sF+PF/XytHQaqcf2Am7VcJOTIbEQEnPq/9zx+3ZZD51o16RDsEpPg7TcMjA1?=
- =?us-ascii?Q?fuzu9MKi1UsEenDVJRi6QlrFJOleuJTLq/Ld1AUSIOh0+CvaFH8fzvhJnqJx?=
- =?us-ascii?Q?vBDt+rKhaNbNOToj0oURkUyL2DiLTE/l2mYuGFy8JKprLXXetDbOIm9dPBi/?=
- =?us-ascii?Q?DrB90Awp0a+7eWiD8w/ycKpPLta0g87gEDopnMiJ7vl/42jOJrfWPq3Mumbg?=
- =?us-ascii?Q?dIJfAtRetWfU5AAet5JjXO+zYC0oqIf15hzaS3wErl5yd9DDqgmA4WdzU2Qk?=
- =?us-ascii?Q?c1zOHCbTmWiKUJ5TlyA6L+H2id7B5mGkZ4x+huV5M95I6c9aeEhx7HKhdKRP?=
- =?us-ascii?Q?//W8ik0cLYPvRX2p+plYyLVMx1ofYn2FFDIma1SQEkt4AZE1eOiee7IjyZef?=
- =?us-ascii?Q?vfMfZrtHYzYzRr4pbmQKzXOFlqip66NFk6/sdupWjZNiP4SN0Lpes0dMjyo2?=
- =?us-ascii?Q?T60bjeEatBvnQwnAEj8b4kfCHSZFO5LyMqEQ24jLH6J42JKj+xQruu4x3qC7?=
- =?us-ascii?Q?yoqUbf33OcCWxN2U4ztGNYlT2yVhhOPnb/2Xo/adZkEoIhQeApLzwONAMsJf?=
- =?us-ascii?Q?j3hEye15CXoDo4yhEXtd/MfadXXZC2p3ZrYHP8At5JROmd6HpS86FqRrO4QB?=
- =?us-ascii?Q?JapWVym9VAQvXILCX8nCyHYF1ciAjManuqC7VZCbcVGxZEbKx/u+Qzfy1DDV?=
- =?us-ascii?Q?7/ZeJvesWZNffNhTrfu1rWclaOgCoTsDsndMZpBj60yJnpsNibEO3POqLSBj?=
- =?us-ascii?Q?3Eu2sdjIr7Qz3KaFEs9gdvmhLD7cGBcsJY9XxeJA?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	uRgFwaz/T5U8WEaxWHptbClF7axUWRktalQ0Y3Ox5jS2kmx0frPzFZwPkMyFnF5LyaWBrWlbO8LZ+/qYPEuK94YWlyYSj2sQXSgZb2eacvqiw51TmE8sMzy+jKClNIH7xqzurWYVqUo56ed5Nb0rtVm2VUnaQe2SGpsvjdRw4KRA4nOWyMGhzhGna8WUUDt4EeyiEgSNYAVHARzI/Js1GSWu378eJF0maUB2bAmY6MRGsMzWhoXNQOXyHb0wkY/Pey/jEdbut+wgMWnb5mcgDEj+aFcZSY+u1iArDNqvRgZkzw3VxdnU+7ER2YRQNFZovTy3O6dslYFUj671/S5krcFniaUZSUMbgcqFaAGl44XFRc5+XkbvJU7NpExFZ85SNCL1y+r9xFtlAvr0C5G8+J2yg+NUZDBcvxGdPiwHE+9ZeTXMv/CDtq5NpqN04iDAVbGafEi+UNyY7AIP/t4wSAVCM2/v7cY0clo/EkHtoOWu3JsUw6j6xneTtENkRfqewUJ+2iLMGSgF0p4WxV2D8keaWOiLXcJ09utMxXs39JtK0SFuvd7exYbyN9z2nnsgFNzL1Sn2ziI6fb8xo9SdMCe+IzAWucecrJSwcUd6ne4=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0783e516-32e3-4c27-b605-08dccc33c557
-X-MS-Exchange-CrossTenant-AuthSource: CYXPR10MB7924.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Sep 2024 16:16:30.7401
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: mDZhrE5UXMCEWJCz9AodaXc5fdS3Rfats8+YYEclPB51yg1RH1BGd6aNp+vS8j9NqFQbXTDS0JnJ28lo5w0T5A==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR10MB7677
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-03_04,2024-09-03_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 spamscore=0 phishscore=0
- mlxscore=0 bulkscore=0 adultscore=0 malwarescore=0 mlxlogscore=861
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2407110000
- definitions=main-2409030131
-X-Proofpoint-GUID: Rp1sI3u2HRBe9-bPDAK28nM11uDSvdWR
-X-Proofpoint-ORIG-GUID: Rp1sI3u2HRBe9-bPDAK28nM11uDSvdWR
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 0/8] iio: dac: introducing ad3552r-axi
+To: Angelo Dureghello <adureghello@baylibre.com>,
+ Jonathan Cameron <jic23@kernel.org>
+Cc: Lars-Peter Clausen <lars@metafoo.de>,
+ Michael Hennerich <Michael.Hennerich@analog.com>,
+ =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, Rob Herring
+ <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Olivier Moysan <olivier.moysan@foss.st.com>, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240829-wip-bl-ad3552r-axi-v0-v1-0-b6da6015327a@baylibre.com>
+ <20240831123837.26a1070a@jic23-huawei>
+ <74e0b200-d4c0-4aa3-9ee6-f49ac3f1467d@baylibre.com>
+Content-Language: en-US
+From: David Lechner <dlechner@baylibre.com>
+In-Reply-To: <74e0b200-d4c0-4aa3-9ee6-f49ac3f1467d@baylibre.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-* Nathan Chancellor <nathan@kernel.org> [240830 21:28]:
-> On Fri, Aug 30, 2024 at 05:50:15PM -0700, Andrew Morton wrote:
-> > On Sat, 31 Aug 2024 07:42:38 +0800 kernel test robot <lkp@intel.com> wrote:
-> > 
-> > > All errors (new ones prefixed by >>):
-> > > 
-> > > >> lib/maple_tree.c:330:20: error: unused function 'mte_set_full' [-Werror,-Wunused-function]
-> > >      330 | static inline void mte_set_full(const struct maple_enode *node)
-> > >          |                    ^~~~~~~~~~~~
-> > > >> lib/maple_tree.c:335:20: error: unused function 'mte_clear_full' [-Werror,-Wunused-function]
-> > >      335 | static inline void mte_clear_full(const struct maple_enode *node)
-> > >          |                    ^~~~~~~~~~~~~~
-> > >    2 errors generated.
-> > 
-> > afaict these have never been used.  It's odd that this was just detected.
+On 9/3/24 3:34 AM, Angelo Dureghello wrote:
+> Hi Jonathan and all,
 > 
-> I don't think it has just now been detected, as these functions have
-> been flagged before:
 > 
-> https://lore.kernel.org/20240503160821.GB3960118@thelio-3990X/
+> On 31/08/24 1:38 PM, Jonathan Cameron wrote:
+>> On Thu, 29 Aug 2024 14:31:58 +0200
+>> Angelo Dureghello <adureghello@baylibre.com> wrote:
+>>
+>>> Hi, asking for comments for this patchset, that is mostly
+>>> ready, at least feature-complete and functionally tested.
+>>>
+>>> I am introducing ad3552r-axi variant, controlled from a fpga-based
+>>> AXI IP, as a platform driver, using the DAC backend. The patchset is
+>>> actually based on linux-iio, since some needed DAC backend features
+>>> was already there on that repo only, still to be merged in mainline.
+>>>
+>>> Comments i would like to ask are:
+>>>
+>>> - i added some devicetree bindings inside current ad3552r yaml,
+>>>    device is the same, so i wouldn't create a different yaml file.
+>> Agreed. If same device, it's usually better to keep it in one file.
+>>
+>>> - if it's ok adding the bus-type property in the DAC backend:
+>>>    actually, this platform driver uses a 4 lanes parallel bus, plus
+>>>    a clock line, similar to a qspi. This to read an write registers
+>>>    and as well to send samples at double data rate. Other DAC may
+>>>    need "parallel" or "lvds" in the future.
+>> If it is for register read + write as well, sounds to me like you need
+>> to treat this as a new bus type, possibly then combined with a
+>> backend, or something similar to spi offload?
+>>
+>> What bus does this currently sit on in your DT bindings?
+>> (add an example)
 > 
-> > Should we just zap them or is there some reason to retain?
 > 
-> From the above thread, Liam and Matthew seem to want to retain them.
-> Perhaps just wrapping them in '#if 0' and a comment that says these will
-> eventually see use would be a happy compromise between outright removal
-> and doing nothing about this warning?
+> &amba {
+> 
+>     ref_clk: clk@44B00000 {
+>         compatible = "adi,axi-clkgen-2.00.a";
+>         reg = <0x44B00000 0x10000>;
+>         #clock-cells = <0>;
+>         clocks = <&clkc 15>, <&clkc 15>;
+>         clock-names = "s_axi_aclk", "clkin1";
+>         clock-output-names = "ref_clk";
+>     };
+> 
+>     dac_tx_dma: dma-controller@0x44a30000 {
+>         compatible = "adi,axi-dmac-1.00.a";
+>         reg = <0x44a30000 0x10000>;
+>         #dma-cells = <1>;
+>         interrupt-parent = <&intc>;
+>         interrupts = <0 57 IRQ_TYPE_LEVEL_HIGH>;
+>         clocks = <&clkc 15>;
+> 
+>         adi,channels {
+>             #size-cells = <0>;
+>             #address-cells = <1>;
+> 
+>             dma-channel@0 {
+>                 reg = <0>;
+>                 adi,source-bus-width = <32>;
+>                 adi,source-bus-type = <0>;
+>                 adi,destination-bus-width = <32>;
+>                 adi,destination-bus-type = <1>;
+>             };
+>         };
+>     };
+> 
+>     backend: controller@44a70000 {
+>         compatible = "adi,axi-dac-9.1.b";
+>         reg = <0x44a70000 0x1000>;
+>         dmas = <&dac_tx_dma 0>;
+>         dma-names = "tx";
+>         #io-backend-cells = <0>;
+>         clocks = <&ref_clk>;
+>         bus-type = <1>;  /* IIO QSPI */
+>     };
+> 
+>     axi-ad3552r {
+>         compatible = "adi,ad3552r";
+>         reset-gpios = <&gpio0 92 GPIO_ACTIVE_LOW>;
+>         io-backends = <&backend>;
+>         #address-cells = <1>;
+>         #size-cells = <0>;
+>         channel@0 {
+>             reg = <0>;
+>             adi,output-range-microvolt = <(-10000000) (10000000)>;
+>         };
+>     };
 
-Besides these functions being static and inline (And thus compiled out),
-they are stopping people from trying to use the bit in the address -
-which we have had happen.
+Shouldn't the axi-ad3552r node be one level higher since it isn't
+a memory-mapped device, but rather an external chip?
 
-I am still working on the code to use these on my side, although I have
-been held up with other work upstream.
+But based on the other feedback we got in this series and some
+#devicetree IRC chat here is an alternate binding suggestion we
+could consider.
 
-> 
-> > --- a/lib/maple_tree.c~a
-> > +++ a/lib/maple_tree.c
-> > @@ -348,21 +348,6 @@ static inline void *mte_safe_root(const
-> >  	return (void *)((unsigned long)node & ~MAPLE_ROOT_NODE);
-> >  }
-> >  
-> > -static inline void *mte_set_full(const struct maple_enode *node)
-> > -{
-> > -	return (void *)((unsigned long)node & ~MAPLE_ENODE_NULL);
-> > -}
-> > -
-> > -static inline void *mte_clear_full(const struct maple_enode *node)
-> > -{
-> > -	return (void *)((unsigned long)node | MAPLE_ENODE_NULL);
-> > -}
-> > -
-> > -static inline bool mte_has_null(const struct maple_enode *node)
-> > -{
-> > -	return (unsigned long)node & MAPLE_ENODE_NULL;
-> > -}
-> > -
-> >  static __always_inline bool ma_is_root(struct maple_node *node)
-> >  {
-> >  	return ((unsigned long)node->parent & MA_ROOT_PARENT);
-> > _
-> > 
-> > 
-> > 
+First, even though the FPGA IP block for use with AD3225R uses
+the same register map as the AXI DAC IP block, some of the
+registers behave differently, so it makes sense to have a
+different compatible string rather than using the bus-type
+property to tell the difference between the two IP blocks.
+There are likely more differences than just the bus type.
+
+Second, technically, the AXI DAC IP block can't be used as
+a generic SPI controller, so it wouldn't make sense to put
+it in drivers/spi. But, from wiring point of view, it could
+still make sense to use SPI DT bindings since we have SPI
+wiring. At the same time, the AXI DAC IP block is also
+providing extra functionality in addition to the SPI bus
+so it makes sense to keep the io-backend bindings for those
+extra bits.
+
+    backend: spi@44a70000 {
+        compatible = "adi,axi-dac-ad3225r";
+        reg = <0x44a70000 0x1000>;
+        dmas = <&dac_tx_dma 0>;
+        dma-names = "tx";
+        #io-backend-cells = <0>;
+        clocks = <&ref_clk>;
+
+        #address-cells = <1>;
+        #size-cells = <0>;
+
+        dac@0 {
+            compatible = "adi,ad3552r";
+            reg = <0>;
+
+            /* 
+             * Not sure how right this is - attempting to say that
+             * the QSPI select pin is hardwired high, so the 4 SPI I/O
+             * pins on the DAC are always functioning as SDIO0/1/2/3
+             * as opposed to the usual 2 SDI/SDO pins and 2 unused.
+             */
+            spi-3-wire;
+            spi-tx-bus-width = <4>;
+            spi-rx-bus-width = <4>;
+
+            reset-gpios = <&gpio0 92 GPIO_ACTIVE_LOW>;
+            io-backends = <&backend>;
+
+            #address-cells = <1>;
+            #size-cells = <0>;
+
+            channel@0 {
+                reg = <0>;
+                adi,output-range-microvolt = <(-10000000) (10000000)>;
+            };
+        };
+    };
+
+
 
