@@ -1,142 +1,402 @@
-Return-Path: <linux-kernel+bounces-312778-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312789-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7182D969B1C
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 13:05:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6C79969B57
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 13:15:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 188B81F24310
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 11:05:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 165F31C22CF5
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 11:15:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6784D1A42BF;
-	Tue,  3 Sep 2024 11:05:05 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CDEA1A42A3;
+	Tue,  3 Sep 2024 11:14:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="Xz/RKmgt"
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 536031A42AA;
-	Tue,  3 Sep 2024 11:05:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 099E11A0BFE
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 11:14:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725361505; cv=none; b=MVorOex3gxA36Kul81nTG+zs+dV+AzlcO51zTopEDVLQzmtQ0l36Sar4bxxSbA0FL/sY3P3jbvOKt363l3+M4SAr5JucGxWmIdYYALberFhMwVg3O3HjG15AAdUUSEV0BdSzjEcpi43Pntc5cT8s1JdKpVtsOgvgOLTEfqO4o1o=
+	t=1725362098; cv=none; b=G+D7oivKgjq+EFe0TrdNZt70BoYPMuRXV3d8+bHXStQ1dUfAtkksS+YmF78UbiNDnxEi4Vvu+8DO+zohj22XH+/PLtCgR7gaf5zh5mPeOCCjxoEA8CFAUQIhuCs21fFzt5CWmzk4c2MITztoR2yLn5wgjwaCdDyGjSYd092RWNA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725361505; c=relaxed/simple;
-	bh=hB6fcwq6XdKfTlxxS89U8hmHpeWw82yFyWLpkJ8m8B8=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=dcDg/vkp0KkO0Wl9TcmGZPXtKm953Tj6nK8M0a6R4KUBsoBtD4T0zglTNwK2KdzwYf7elVzH74Yb+7qiNNA8NPKtgoNBf01HF6iV283X++K3LU35caQ/YgIHBqvYFNvVr5n4EfQ1S9wEsb9wHfgr5AffjLlgHYCh5/mHB3VPK0g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.44])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4WyjM72jLBz20nDG;
-	Tue,  3 Sep 2024 19:00:03 +0800 (CST)
-Received: from kwepemg500017.china.huawei.com (unknown [7.202.181.81])
-	by mail.maildlp.com (Postfix) with ESMTPS id 5ADC0140137;
-	Tue,  3 Sep 2024 19:04:59 +0800 (CST)
-Received: from huawei.com (10.175.127.227) by kwepemg500017.china.huawei.com
- (7.202.181.81) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 3 Sep
- 2024 19:04:58 +0800
-From: Li Lingfeng <lilingfeng3@huawei.com>
-To: <chuck.lever@oracle.com>, <jlayton@kernel.org>, <neilb@suse.de>,
-	<okorniev@redhat.com>, <Dai.Ngo@oracle.com>, <tom@talpey.com>
-CC: <linux-nfs@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<yukuai1@huaweicloud.com>, <houtao1@huawei.com>, <yi.zhang@huawei.com>,
-	<yangerkun@huawei.com>, <lilingfeng@huaweicloud.com>,
-	<lilingfeng3@huawei.com>
-Subject: [PATCH] nfsd: return -EINVAL when namelen is 0
-Date: Tue, 3 Sep 2024 19:14:46 +0800
-Message-ID: <20240903111446.659884-1-lilingfeng3@huawei.com>
-X-Mailer: git-send-email 2.31.1
+	s=arc-20240116; t=1725362098; c=relaxed/simple;
+	bh=jtf5UBjj58Xkn9jIIvjDdMX10N54vtz211Eu2nXY/AE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hkMjhVXYDn0OQBG6OJTpug4ffEwERI6mQsYf4Fc38MVuYz/BFG9Fl2oHeMtO7BPgIj/ABSqNEPJbW4L8G4ZRWJZKzMh+hbJeNs9WKg0ay+fywVz/srVz5yucg+dMAswRdgxpm83dRgdK2/p8PEXtPTG8DwoMDrYO6XHZwfHBOQY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch; spf=none smtp.mailfrom=ffwll.ch; dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b=Xz/RKmgt; arc=none smtp.client-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ffwll.ch
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-374bfc395a5so1640418f8f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 04:14:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google; t=1725362094; x=1725966894; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=cdCqagRRve1pn7bDH687tOJrmKhVSUgMhrDqEyO6mmM=;
+        b=Xz/RKmgtef0LQUghC94pW9w6+l+WZ9D/9ooCpmnE5GXVjxKuPIjpND88twfx3tiP9w
+         8c8VkumIeEntHfN4NM/qdN6XysAzI2JqBm/vatyc3PZsmE8dPYfUZGPM69v2kBGcV0cf
+         dHdZK33sXIs2BrSUS/owg0txai4MBvdQgSxnk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725362094; x=1725966894;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=cdCqagRRve1pn7bDH687tOJrmKhVSUgMhrDqEyO6mmM=;
+        b=UkLhE9gnTFU19fPGGxFcPqns3mbWhdrhDuT2pwPZntRFsNWqjZJtynnVk5FhVzLJc1
+         P/LJe1Qcxocie5ThDyOfqCbLC3lf+lhOFSPdu20w/LFgtoj9IJEWQ2FGiRl048VnysbJ
+         xxiUjJNyJ0sU2vazHwlsEad3bCNZhqYvoesXKk0CqycFtpdfNGPG8HAzNihj1iOoqEdM
+         wL0RkWmwKgYElBTTmKOHzwWqJQUGSrT/cWsue5XiNMWAC0xeq00BUB+DxIEaydAPd0LX
+         KamQ0kN2Xazp39TJAZ5kgRDbR09zBOba71N07feAIsBOMFFp22zcdXYE0hZtwrvzbpTk
+         oI0A==
+X-Forwarded-Encrypted: i=1; AJvYcCXslEJcJNES5gPr0/yxWa0b03mcM3QdMuVWh6MS5vyFbyisqPUKZnhbQuaf5tkDhsMxdqrT861tTBfoDH0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxVCmWf01laonqMmdPfKBYnb9Smrr4bAnargyJNL8Rjo6UfidL8
+	Cf02KZGPPgy68dUDp/dhUstStxDoPwjYH8971Q3+mqlPS1ODE9NVql7OfhtL2zo=
+X-Google-Smtp-Source: AGHT+IGXnh9eICRCDvm5xsPyEv1JHnkDfOBah/OfSMsZXxsdMT44GKcTawk+mOXQ026wjP0B4u4S6A==
+X-Received: by 2002:a05:6000:210e:b0:374:cf83:23dd with SMTP id ffacd0b85a97d-374cf83267cmr3361725f8f.2.1725362094035;
+        Tue, 03 Sep 2024 04:14:54 -0700 (PDT)
+Received: from phenom.ffwll.local ([2a02:168:57f4:0:5485:d4b2:c087:b497])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-374b67ff88dsm11019597f8f.26.2024.09.03.04.14.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Sep 2024 04:14:53 -0700 (PDT)
+Date: Tue, 3 Sep 2024 13:14:51 +0200
+From: Simona Vetter <simona.vetter@ffwll.ch>
+To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Cc: Simona Vetter <simona.vetter@ffwll.ch>,
+	Maxime Ripard <mripard@kernel.org>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drm/mipi-dsi: Fix devm unregister & detach
+Message-ID: <Ztbvq8XI9HOfRZfn@phenom.ffwll.local>
+Mail-Followup-To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+	Simona Vetter <simona.vetter@ffwll.ch>,
+	Maxime Ripard <mripard@kernel.org>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <b7cf71b8-76fd-4638-a7b6-cc8dbae635bf@ideasonboard.com>
+ <20240702-bold-exotic-mamba-fdbba4@houat>
+ <7293448e-e8cc-4522-b39c-5ad133e5f732@ideasonboard.com>
+ <20240725-natural-giga-crane-d54067@houat>
+ <4ed3791f-bc5a-46f1-88e1-2441c7f9c8d4@ideasonboard.com>
+ <20240902-refined-smooth-mammoth-fbee81@houat>
+ <ZtWYWuqhqvdWd0Q7@phenom.ffwll.local>
+ <d411e79f-a22e-48e9-b135-5d7a0afa3cf3@ideasonboard.com>
+ <Zta9h9QiL_OsV3FO@phenom.ffwll.local>
+ <d58f5dad-3f60-424f-bed4-460e2ac4b022@ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- kwepemg500017.china.huawei.com (7.202.181.81)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d58f5dad-3f60-424f-bed4-460e2ac4b022@ideasonboard.com>
+X-Operating-System: Linux phenom 6.9.12-amd64 
 
-When we have a corrupted main.sqlite in /var/lib/nfs/nfsdcld/, it may
-result in namelen being 0, which will cause memdup_user() to return
-ZERO_SIZE_PTR.
-When we access the name.data that has been assigned the value of
-ZERO_SIZE_PTR in nfs4_client_to_reclaim(), null pointer dereference is
-triggered.
+On Tue, Sep 03, 2024 at 11:27:23AM +0300, Tomi Valkeinen wrote:
+> On 03/09/2024 10:40, Simona Vetter wrote:
+> > On Mon, Sep 02, 2024 at 03:31:28PM +0300, Tomi Valkeinen wrote:
+> > > Hi,
+> > > 
+> > > On 02/09/2024 13:50, Daniel Vetter wrote:
+> > > > On Mon, Sep 02, 2024 at 11:26:11AM +0200, Maxime Ripard wrote:
+> > > > > Hi,
+> > > > > 
+> > > > > On Wed, Aug 07, 2024 at 03:19:23PM GMT, Tomi Valkeinen wrote:
+> > > > > > On 25/07/2024 14:28, Maxime Ripard wrote:
+> > > > > > > On Mon, Jul 15, 2024 at 11:32:34AM GMT, Tomi Valkeinen wrote:
+> > > > > > > > On 02/07/2024 14:43, Maxime Ripard wrote:
+> > > > > > > > > Hi Tomi,
+> > > > > > > > > 
+> > > > > > > > > On Wed, Jun 26, 2024 at 06:53:40PM GMT, Tomi Valkeinen wrote:
+> > > > > > > > > > On 26/06/2024 18:07, Maxime Ripard wrote:
+> > > > > > > > > > > On Wed, Jun 26, 2024 at 12:55:39PM GMT, Tomi Valkeinen wrote:
+> > > > > > > > > > > > On 26/06/2024 11:49, Maxime Ripard wrote:
+> > > > > > > > > > > > > Hi,
+> > > > > > > > > > > > > 
+> > > > > > > > > > > > > On Wed, Jun 19, 2024 at 12:07:48PM GMT, Tomi Valkeinen wrote:
+> > > > > > > > > > > > > > From: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+> > > > > > > > > > > > > > 
+> > > > > > > > > > > > > > When a bridge driver uses devm_mipi_dsi_device_register_full() or
+> > > > > > > > > > > > > > devm_mipi_dsi_attach(), the resource management is moved to devres,
+> > > > > > > > > > > > > > which releases the resource automatically when the bridge driver is
+> > > > > > > > > > > > > > unbound.
+> > > > > > > > > > > > > > 
+> > > > > > > > > > > > > > However, if the DSI host goes away first, the host unregistration code
+> > > > > > > > > > > > > > will automatically detach and unregister any DSI peripherals, without
+> > > > > > > > > > > > > > notifying the devres about it. So when the bridge driver later is
+> > > > > > > > > > > > > > unbound, the resources are released a second time, leading to crash.
+> > > > > > > > > > > > > 
+> > > > > > > > > > > > > That's super surprising. mipi_dsi_device_unregister calls
+> > > > > > > > > > > > > device_unregister, which calls device_del, which in turn calls
+> > > > > > > > > > > > > devres_release_all.
+> > > > > > > > > > > > 
+> > > > > > > > > > > > Hmm, right.
+> > > > > > > > > > > > 
+> > > > > > > > > > > > > If that doesn't work like that, then it's what needs to be fixed, and
+> > > > > > > > > > > > > not worked around in the MIPI-DSI bus.
+> > > > > > > > > > > > 
+> > > > > > > > > > > > Well, something causes a crash for both the device register/unregister case
+> > > > > > > > > > > > and the attach/detach case, and the call stacks and debug prints showed a
+> > > > > > > > > > > > double unregister/detach...
+> > > > > > > > > > > > 
+> > > > > > > > > > > > I need to dig up the board and check again why the devres_release_all() in
+> > > > > > > > > > > > device_del() doesn't solve this. But I can probably only get back to this in
+> > > > > > > > > > > > August, so it's perhaps best to ignore this patch for now.
+> > > > > > > > > > > > 
+> > > > > > > > > > > > However, the attach/detach case is still valid? I see no devres calls in the
+> > > > > > > > > > > > detach paths.
+> > > > > > > > > > > 
+> > > > > > > > > > > I'm not sure what you mean by the attach/detach case. Do you expect
+> > > > > > > > > > > device resources allocated in attach to be freed when detach run?
+> > > > > > > > > > 
+> > > > > > > > > > Ah, never mind, the devres_release_all() would of course deal with that too.
+> > > > > > > > > > 
+> > > > > > > > > > However, I just realized/remembered why it crashes.
+> > > > > > > > > > 
+> > > > > > > > > > devm_mipi_dsi_device_register_full() and devm_mipi_dsi_attach() are given a
+> > > > > > > > > > device which is used for the devres. This device is probably always the
+> > > > > > > > > > bridge device. So when the bridge device goes away, so do those resources.
+> > > > > > > > > > 
+> > > > > > > > > > The mipi_dsi_device_unregister() call deals with a DSI device, which was
+> > > > > > > > > > created in devm_mipi_dsi_device_register_full(). Unregistering that DSI
+> > > > > > > > > > device, which does happen when the DSI host is removed, does not affect the
+> > > > > > > > > > devres of the bridge.
+> > > > > > > > > > 
+> > > > > > > > > > So, unloading the DSI host driver causes mipi_dsi_device_unregister() and
+> > > > > > > > > > mipi_dsi_detach() to be called (as part of mipi_dsi_host_unregister()), and
+> > > > > > > > > > unloading the bridge driver causes them to be called again via devres.
+> > > > > > > > > 
+> > > > > > > > > Sorry, that's one of the things I don't quite get. Both functions are
+> > > > > > > > > exclusively(?) called from I2C bridges, so the device passed there
+> > > > > > > > > should be a i2c_client instance, and thus the MIPI-DSI host going away
+> > > > > > > > > will not remove those i2c devices, only the MIPI-DSI ones, right?
+> > > > > > > > 
+> > > > > > > > Yes.
+> > > > > > > > 
+> > > > > > > > > So if we remove the host, the MIPI-DSI device will be detached and
+> > > > > > > > > removed through the path you were explaing with the i2c client lingering
+> > > > > > > > > around. And if we remove the I2C device, then devm will kick in and will
+> > > > > > > > > detach and remove the MIPI-DSI device.
+> > > > > > > > 
+> > > > > > > > Right.
+> > > > > > > > 
+> > > > > > > > > Or is it the other way around? That if you remove the host, the device
+> > > > > > > > > is properly detached and removed, but there's still the devm actions
+> > > > > > > > > lingering around in the i2c device with pointers to the mipi_dsi_device
+> > > > > > > > > that was first created, but since destroyed?
+> > > > > > > > > 
+> > > > > > > > > And thus, if the i2c device ever goes away, we get a use-after-free?
+> > > > > > > > 
+> > > > > > > > Hmm, I'm not sure I understand what you mean here... Aren't you describing
+> > > > > > > > the same thing in both of these cases?
+> > > > > > > > 
+> > > > > > > > In any case, to expand the description a bit, module unloading is quite
+> > > > > > > > fragile. I do get a crash if I first unload the i2c bridge module, and only
+> > > > > > > > then go and unload the other ones in the DRM pipeline. But I think module
+> > > > > > > > unloading will very easily crash, whatever the DRM drivers being used are,
+> > > > > > > > so it's not related to this particular issue.
+> > > > > > > > 
+> > > > > > > > In my view, the unload sequence that should be supported (for development
+> > > > > > > > purposes, not for production) is to start the unload from the display
+> > > > > > > > controller module, which tears down the DRM pipeline, and going from there
+> > > > > > > > towards the panels/connectors.
+> > > > > > > > 
+> > > > > > > > Of course, it would be very nice if the module unloading worked perfectly,
+> > > > > > > > but afaics fixing all that's related to module unloading would be a
+> > > > > > > > multi-year project... So, I just want to keep the sequence I described above
+> > > > > > > > working, which allows using modules while doing driver development.
+> > > > > > > 
+> > > > > > > FTR, I'm all for supporting module unloading. The discussion above was
+> > > > > > > about what is broken exactly, so we can come up with a good solution.
+> > > > > > 
+> > > > > > Does that mean that you're ok with the patch, or that something should be
+> > > > > > improved?
+> > > > > 
+> > > > > No, I meant that at the very least the commit log needs to be updated to
+> > > > > reflect what is actually going on, because at least my understanding of
+> > > > > it doesn't match what actually happens.
+> > > > > 
+> > > > > We want a solution to the problem you're facing, but it's not clear to
+> > > > > me what the problem is exactly at this point, so it's hard to review a
+> > > > > solution.
+> > > > 
+> > > > So I haven't looked at the full thing, but I think the proper fix is to
+> > > > make both detach and unregister cope with being called multiple times. I
+> > > > think devm_ here is a red herring, the underlying issues is that we can
+> > > > unregister/detach from two sides:
+> > > > 
+> > > > - when the host dsi goes away
+> > > > - when individual dsi devices on a given host go away
+> > > > 
+> > > > So there needs to be book-keeping and locking to make sure no matter which
+> > > > order things disappear, we don't try to unregister/detach a dsi device
+> > > > twice.
+> > > 
+> > > I think that is what my patch does (for devm_).
+> > 
+> > Yep, except I think you should just do it for everyone, not just for the
+> > special case where one of the calls is done through devm.
+> > 
+> > > Some vocabulary first:
+> > > 
+> > > dsi peripheral device - The device that represents the DSI peripheral. It is
+> > > a bridge or a panel, and (usually) an i2c or platform device.
+> > > 
+> > > dsi peripheral driver - The driver handling the dsi peripheral device.
+> > > 
+> > > dsi device - Runtime created device instance that represents the DSI
+> > > peripheral. So in my case we have the i2c bridge device, and a dsi device is
+> > > created for it in the setup code.
+> > > 
+> > > dsi controller device - A device that has a DSI bus (usually a platform or
+> > > i2c device, I would guess).
+> > > 
+> > > dsi controller driver - A driver for the dsi controller device. Creates the
+> > > dsi host.
+> > > 
+> > > dsi host - represents the DSI host side, owned by the dsi controller driver.
+> > > 
+> > > When a dsi peripheral driver uses devm_mipi_dsi_device_register_full() or
+> > > devm_mipi_dsi_attach(), the dsi device is created and attached to the dsi
+> > > host. When the dsi peripheral device-driver is unbound, devres will call
+> > > unregister and detach are called automatically. This works fine.
+> > > 
+> > > But when the device-driver for the dsi controller is unbound, the dsi
+> > > controller driver will unregister the dsi host, and the unregistration will
+> > > also unregister and detach the dsi device. But the devres is not told about
+> > > that. So when the dsi peripheral is later unbound, its devres will again
+> > > unregister and detach.
+> > > 
+> > > To fix that this patch uses devm_remove_action() to remove the devres action
+> > > when the host side goes away first.
+> > > 
+> > > Now, after writing the above, I realized that all this won't help with the
+> > > non-devm versions: the host side has unregistered and detached the dsi
+> > > device, but if the dsi peripheral driver calls mipi_dsi_detach() or
+> > > mipi_dsi_device_unregister(), it will again crash.
+> > > 
+> > > Handling the attach/detach should be quite easy, and in fact the code
+> > > already handles it, but it uses WARN_ON() there so that has to go. But
+> > > attach/detach will crash anyway if the dsi device has already been freed,
+> > > which happens when the dsi controller driver calls
+> > > mipi_dsi_device_unregister().
+> > 
+> > Hm I thought we have a full struct device, so refcounted, and also with
+> > struct device unregister should be separate from the final kfree when the
+> > last reference drops away. Hence I thought this should just work.
+> > 
+> > We might need to grab a reference in attach/detach to sort this out?
+> 
+> I think there's a bit more to it. A non-dsi-device bridge driver would do:
+> 
+> (devm_)mipi_dsi_device_register_full()
+> ...
+> (devm_)mipi_dsi_attach()
+> 
+> The DSI host side could unregister and free the dsi_device right after the
+> call to mipi_dsi_device_register_full(), and mipi_dsi_attach() would
+> probably just crash.
+> 
+> If I understand this correctly, the main issue is that the bridge driver
+> doesn't own an exclusive reference to the dsi_device, even if it looks like
+> it does, but rather both the dsi host and the bridge driver share the same
+> reference. So, we could get an extra reference, so that each side has its
+> own.
+> 
+> But I think there's more. The bridge driver will call
+> mipi_dsi_device_unregister() (manually or via devres), and that does
+> device_unregister(). However, the dsi host will also call
+> mipi_dsi_device_unregister() when tearing down, which would result in
+> another device_unregister().
+> 
+> The above is not a problem if the bridge does away first, as then the dsi
+> bus won't contain the dsi_device anymore, and the dsi host will not
+> unregister it. But if it's the other way around, the dsi host will do
+> device_unregister, and later the bridge will do it too as it thinks it owns
+> the dsi_device.
+> 
+> I presume that can be solved by tracking whether we have unregistered the
+> dsi_device or not. However, what would happen if the bridge driver calls any
+> of the other mipi_dsi_* functions with the dsi_device that has already been
+> unregistered by the dsi host? Nothing good, probably. So all those functions
+> should start to fail graciously when the dsi_device has been unregistered.
+> Or the bridge driver should somehow get a notification about the
+> unregistration so that it knows not to call those functions.
 
-[ T1205] ==================================================================
-[ T1205] BUG: KASAN: null-ptr-deref in nfs4_client_to_reclaim+0xe9/0x260
-[ T1205] Read of size 1 at addr 0000000000000010 by task nfsdcld/1205
-[ T1205]
-[ T1205] CPU: 11 PID: 1205 Comm: nfsdcld Not tainted 5.10.0-00003-g2c1423731b8d #406
-[ T1205] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS ?-20190727_073836-buildvm-ppc64le-16.ppc.fedoraproject.org-3.fc31 04/01/2014
-[ T1205] Call Trace:
-[ T1205]  dump_stack+0x9a/0xd0
-[ T1205]  ? nfs4_client_to_reclaim+0xe9/0x260
-[ T1205]  __kasan_report.cold+0x34/0x84
-[ T1205]  ? nfs4_client_to_reclaim+0xe9/0x260
-[ T1205]  kasan_report+0x3a/0x50
-[ T1205]  nfs4_client_to_reclaim+0xe9/0x260
-[ T1205]  ? nfsd4_release_lockowner+0x410/0x410
-[ T1205]  cld_pipe_downcall+0x5ca/0x760
-[ T1205]  ? nfsd4_cld_tracking_exit+0x1d0/0x1d0
-[ T1205]  ? down_write_killable_nested+0x170/0x170
-[ T1205]  ? avc_policy_seqno+0x28/0x40
-[ T1205]  ? selinux_file_permission+0x1b4/0x1e0
-[ T1205]  rpc_pipe_write+0x84/0xb0
-[ T1205]  vfs_write+0x143/0x520
-[ T1205]  ksys_write+0xc9/0x170
-[ T1205]  ? __ia32_sys_read+0x50/0x50
-[ T1205]  ? ktime_get_coarse_real_ts64+0xfe/0x110
-[ T1205]  ? ktime_get_coarse_real_ts64+0xa2/0x110
-[ T1205]  do_syscall_64+0x33/0x40
-[ T1205]  entry_SYSCALL_64_after_hwframe+0x67/0xd1
-[ T1205] RIP: 0033:0x7fdbdb761bc7
-[ T1205] Code: 0f 00 f7 d8 64 89 02 48 c7 c0 ff ff ff ff eb b7 0f 1f 00 f3 0f 1e fa 64 8b 04 25 18 00 00 00 85 c0 75 10 b8 01 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 514
-[ T1205] RSP: 002b:00007fff8c4b7248 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
-[ T1205] RAX: ffffffffffffffda RBX: 000000000000042b RCX: 00007fdbdb761bc7
-[ T1205] RDX: 000000000000042b RSI: 00007fff8c4b75f0 RDI: 0000000000000008
-[ T1205] RBP: 00007fdbdb761bb0 R08: 0000000000000000 R09: 0000000000000001
-[ T1205] R10: 0000000000000000 R11: 0000000000000246 R12: 000000000000042b
-[ T1205] R13: 0000000000000008 R14: 00007fff8c4b75f0 R15: 0000000000000000
-[ T1205] ==================================================================
+Ah yeah I got confused, I thought attach/detach was for the dsi_device,
+not the dsi_host. But it's all ok, because mipi_dsi_driver is a full-blown
+driver, so if we unregister the device all the drivers will be unbound,
+which means they should first detach and stop using the mipi_dsi_device.
+If they continue to do that, they're busted.
 
-Fix it by checking namelen.
+Where things fall apart is for the non-dsi drivers which call
+mipi_dsi_attach directly, after having called
+mipi_dsi_device_register_full, bypassing the driver model. Those just blow
+up, and I don't think you can fix that without using the driver model
+properly.
 
-Signed-off-by: Li Lingfeng <lilingfeng3@huawei.com>
----
- fs/nfsd/nfs4recover.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+With that you should have all the pieces:
 
-diff --git a/fs/nfsd/nfs4recover.c b/fs/nfsd/nfs4recover.c
-index 67d8673a9391..69a3a84e159e 100644
---- a/fs/nfsd/nfs4recover.c
-+++ b/fs/nfsd/nfs4recover.c
-@@ -809,6 +809,10 @@ __cld_pipe_inprogress_downcall(const struct cld_msg_v2 __user *cmsg,
- 			ci = &cmsg->cm_u.cm_clntinfo;
- 			if (get_user(namelen, &ci->cc_name.cn_len))
- 				return -EFAULT;
-+			if (!namelen) {
-+				dprintk("%s: namelen should not be zero", __func__);
-+				return -EINVAL;
-+			}
- 			name.data = memdup_user(&ci->cc_name.cn_id, namelen);
- 			if (IS_ERR(name.data))
- 				return PTR_ERR(name.data);
-@@ -831,6 +835,10 @@ __cld_pipe_inprogress_downcall(const struct cld_msg_v2 __user *cmsg,
- 			cnm = &cmsg->cm_u.cm_name;
- 			if (get_user(namelen, &cnm->cn_len))
- 				return -EFAULT;
-+			if (!namelen) {
-+				dprintk("%s: namelen should not be zero", __func__);
-+				return -EINVAL;
-+			}
- 			name.data = memdup_user(&cnm->cn_id, namelen);
- 			if (IS_ERR(name.data))
- 				return PTR_ERR(name.data);
+- No matter who calls unregister, the driver gets unbound and can clean up
+  the mess. After the unregister call there should be nothing attached
+  anymore, so we can make that a WARN_ON.
+
+- mipi_dsi_device_register_full needs to be changed to not transfer the
+  reference, meaning using device_register instead of device_add. This way
+  the non-dsi drivers retain a reference of their own.
+
+- the non-dsi driver in it's non-dsi remove hook needs to call
+  mipi_dsi_unregister and then mipi_dsi_put (which is just a device_put).
+
+- we need some locking around mipi_dsi_unregister to make sure it's not
+  called twice and cannot race between a non-dsi driver and a bridge
+  driver.
+
+> I have to say I feel a bit uncertain about the whole ownership model here.
+
+Yeah I misunderstood a few things too, but I think now it's clearer for
+me. Essentially unless you have a guarantee that both the host and
+dsi-device will be removed in the same order always (by both being
+instantiated from one probe hook like with pci drivers) you have to use a
+full dsi_driver even for non-dsi cases. Otherwise you won't get the
+->remove hook and things will blow up.
+
+Also the manual call to mipi_dsi_detach in mipi_dsi_remove_device_fn is a
+bug and should be replaced by a WARN_ON(dsi->attached) after we've called
+mipi_dsi_device_unregister:
+
+- For the case of a native driver we've called that driver's ->remove hook
+  as part of unregister, which should have called mipi_dsi_detach. If it
+  didn't, it's a bug in that drivers ->remove hook
+
+  Aside: we should have a devm_mipi_dsi_attach to make this easier, which
+  also checks that you only call this on a mipi_dsi_device and nothing
+  else (because anything else is a bug).
+
+- for the case of a non-dsi driver that also registers the host (the only
+  case which does not result in lifetime bugs on removal) that non-dsi
+  driver's remove function should make sure it's nuking everything in the
+  right order. So first explicit dsi_device unregister, then explicit
+  dsi_host_unregister. Otherwise it will at least look buggy.
+
+It's a bit of work, but I think this should be solid and we should be able
+to get there in fairly small steps.
+
+Cheers, Sima
 -- 
-2.31.1
-
+Simona Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
 
