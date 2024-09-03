@@ -1,113 +1,188 @@
-Return-Path: <linux-kernel+bounces-313159-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313162-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E7BE96A11F
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 16:49:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D8D796A12E
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 16:51:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF0C328BE5A
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 14:49:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 937D81C23E81
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 14:51:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F042B158DD2;
-	Tue,  3 Sep 2024 14:48:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AFBB15AADA;
+	Tue,  3 Sep 2024 14:51:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LjeUp7VR"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=mary.guillemard@collabora.com header.b="XDwDpt5Q"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 022BE13D8BF;
-	Tue,  3 Sep 2024 14:48:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725374932; cv=none; b=gPlIizwnUhdsRoKpuJA6NsxpIdpiuiS0vsQoSebeulHnudMYCa3/FQJ/vt/X8luI+Y1LDjkBCnRZCk9n/apwtgqyBQT4kWehj778SobEKLswLwNecVvZtYC56vqerWtMidYfcqhAAjd06BqDVYkELyf1skgwFRYt2uno/srRSAY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725374932; c=relaxed/simple;
-	bh=Je2vmDY5FCSKlkQhUOJpUDBKbPavcaXLxF8qTKqwiI8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=f/FSRipmZljW+8h7L55WaJ1Ubyu+zrFdhOPMvQ670m2c9JndxA6pGuhDbu7svvLMFWAvs0lGKN4B4quCNnMKe8bzAz2ARDySrrjYOVso8sh0v0z2FPxoorutvKLv4VAtrPYb5YcxoXxBZl74fC9moPz21rQDRuSLdPM0FCYA5Aw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LjeUp7VR; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725374931; x=1756910931;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Je2vmDY5FCSKlkQhUOJpUDBKbPavcaXLxF8qTKqwiI8=;
-  b=LjeUp7VRrd86nHlE6NwyYdhqckEmHI6A+1S9K6wmCJHRDHQh5giT4OWE
-   mXXfr+90gsKiXvEg5pgMz4eUaxC6cVPpMWVRWQFLF8X7eVYpy5tII/Maz
-   tzqim/1psQ9DYAge/2sCXJOlwoJAX5e4WWxtCtESaHde3NQBaNuXQBkgZ
-   hnQh8Mssn6pRucj9pNA3ehtshnFXfW9uPj6ICtV3ThOlcynsEKrgpEdUb
-   6DqH0PwJjG1UZO4k3nm4s2xt8rgQg93V0dDyAjwBWgO6br8hg0qp6bP3O
-   awgqdT3O2gRkdAmYLyv5DBI4BHqKevcMrb/zTvOcpJj80QrlSitTFQ4JA
-   Q==;
-X-CSE-ConnectionGUID: M64T8/GYRdeYsEB9FmIIvw==
-X-CSE-MsgGUID: wZlWUrbAThW8AEo7DuWZdw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11184"; a="23844849"
-X-IronPort-AV: E=Sophos;i="6.10,199,1719903600"; 
-   d="scan'208";a="23844849"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2024 07:48:49 -0700
-X-CSE-ConnectionGUID: 50vhjylPRlSYoSZBfZ1nBQ==
-X-CSE-MsgGUID: bJ4GT7Y9Qw2+1ddljY2c4A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,199,1719903600"; 
-   d="scan'208";a="65293586"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by orviesa006.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2024 07:48:44 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1slUpj-00000004k23-3JOV;
-	Tue, 03 Sep 2024 17:48:39 +0300
-Date: Tue, 3 Sep 2024 17:48:39 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Vasileios Amoiridis <vassilisamir@gmail.com>
-Cc: linux@armlinux.org.uk, maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com,
-	daniel@ffwll.ch, linus.walleij@linaro.org, alsi@bang-olufsen.dk,
-	andrew@lunn.ch, f.fainelli@gmail.com, olteanv@gmail.com,
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, nico@fluxnic.net, arend.vanspriel@broadcom.com,
-	kvalo@kernel.org, robh@kernel.org, saravanak@google.com,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	linux-wireless@vger.kernel.org, brcm80211@lists.linux.dev,
-	brcm80211-dev-list.pdl@broadcom.com, devicetree@vger.kernel.org
-Subject: Re: [PATCH v1 7/7] of/irq: Make use of irq_get_trigger_type()
-Message-ID: <Ztchx4c2v78eGkYy@smile.fi.intel.com>
-References: <20240902225534.130383-1-vassilisamir@gmail.com>
- <20240902225534.130383-8-vassilisamir@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD469143748;
+	Tue,  3 Sep 2024 14:51:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725375081; cv=pass; b=QJ39XbYrJ17O0uOTuCOp/CZxGyURw43GRTUO+SaVQPdIfHczpsv1gSsB/bI7hwMOhkSxzZpx5KcmBidyxNDZjYSV9p1YFGxhcg1h1VRv5aAsNwSV36j3P3PtbTuzOl8xqg4e8+X3gXBa+/83OYqZC2ZlwVp2burR+rn+o1xCEy4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725375081; c=relaxed/simple;
+	bh=GURumbuGbZwNDQLNlryk1NuoiF2/LxgRiaV2AXJTKfI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qwv/GrN4KFFGn30xww6ucWzVnvb7ecT8TfgdvpaAc5IbRKOx+XEYzFO98/IY1AnkMWfRXy8eJf/UL7LH6LwI9B9KKoZ1WYFIwMta0F4ro654G6pe930Kx2agj8aWYLgp082HGcBLNJGesrvU7Ee42D/nu1uWO3JVwHQju+4E/Ws=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=mary.guillemard@collabora.com header.b=XDwDpt5Q; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+Delivered-To: kernel@collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1725375061; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=FFrPtUkgOiHxCnw5NIFs4L068NZikJBaUfWdpeXS5p7z+BA1SJXDM9QtWHcXygywdrvTY9fG0+ZNe+jf2kDUtBIIDjVkyKSwQ2s4ks66GwcZt3ya/I53cL0B7Ot77Dvj/eGDudstvZeePB7/IY3/7R6U+jJu2ADWljIZfyELEEQ=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1725375061; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=JoZyTngQaWUmJroKbr6Fpr/n3m9/mAYytfSe+YwDYgo=; 
+	b=fj6HZLJetex5KjzqzYK4p9o3lgE3f5iCQZOoOAPGkXdg3X345CHOGdX050xdRg5FR9axIZkOBP0L55rBboAe650V30odLGleMC2OcqQS9UvRS3MZZXiG8D78ST8PQOM2ivTFXe3Be7k0b/EtnS5vgwsUZ8JVtChaE23rvhx5OqA=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=mary.guillemard@collabora.com;
+	dmarc=pass header.from=<mary.guillemard@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1725375061;
+	s=zohomail; d=collabora.com; i=mary.guillemard@collabora.com;
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:MIME-Version:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=JoZyTngQaWUmJroKbr6Fpr/n3m9/mAYytfSe+YwDYgo=;
+	b=XDwDpt5Qoth2HKrs8RlmZKcgqljZh/a9XFjXM+n8rk/3jI1Atzxf0tlCVwwQovqf
+	XIQVUVYzXBxA+NalBXoIEDeLEdubbGzjATQ2Qoz+A2n/sVeaVtRxLO0AS9pgViOvvam
+	oxgAq+gyQmtvH42EgZvlfbS8INZDM+l7KChfJIoI=
+Received: by mx.zohomail.com with SMTPS id 1725375058634587.9557627661392;
+	Tue, 3 Sep 2024 07:50:58 -0700 (PDT)
+From: Mary Guillemard <mary.guillemard@collabora.com>
+To: linux-kernel@vger.kernel.org
+Cc: kernel@collabora.com,
+	Mary Guillemard <mary.guillemard@collabora.com>,
+	stable@vger.kernel.org,
+	Boris Brezillon <boris.brezillon@collabora.com>,
+	Steven Price <steven.price@arm.com>,
+	Liviu Dudau <liviu.dudau@arm.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	Heiko Stuebner <heiko@sntech.de>,
+	dri-devel@lists.freedesktop.org
+Subject: [PATCH] drm/panthor: Restrict high priorities on group_create
+Date: Tue,  3 Sep 2024 16:49:55 +0200
+Message-ID: <20240903144955.144278-2-mary.guillemard@collabora.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240902225534.130383-8-vassilisamir@gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 8bit
+X-ZohoMailClient: External
 
-On Tue, Sep 03, 2024 at 12:55:34AM +0200, Vasileios Amoiridis wrote:
-> Convert irqd_get_trigger_type(irq_get_irq_data(irq)) cases to the more
-> simple irq_get_trigger_type(irq).
+We were allowing any users to create a high priority group without any
+permission checks. As a result, this was allowing possible denial of
+service.
 
-...
+We now only allow the DRM master or users with the CAP_SYS_NICE
+capability to set higher priorities than PANTHOR_GROUP_PRIORITY_MEDIUM.
 
->  		r->start = r->end = irq;
-> -		r->flags = IORESOURCE_IRQ | irqd_get_trigger_type(irq_get_irq_data(irq));
-> +		r->flags = IORESOURCE_IRQ | irq_get_trigger_type(irq);
->  		r->name = name ? name : of_node_full_name(dev);
+As the sole user of that uAPI lives in Mesa and hardcode a value of
+MEDIUM [1], this should be safe to do.
 
-As per previous patch this can be utilised to
+Additionally, as those checks are performed at the ioctl level,
+panthor_group_create now only check for priority level validity.
 
-		*r = DEFINE_RES_IRQ_NAMED(irq, name ?: of_node_full_name(dev));
-		r->flags |= irq_get_trigger_type(irq);
+[1]https://gitlab.freedesktop.org/mesa/mesa/-/blob/f390835074bdf162a63deb0311d1a6de527f9f89/src/gallium/drivers/panfrost/pan_csf.c#L1038
 
+Signed-off-by: Mary Guillemard <mary.guillemard@collabora.com>
+Fixes: de8548813824 ("drm/panthor: Add the scheduler logical block")
+Cc: stable@vger.kernel.org
+---
+ drivers/gpu/drm/panthor/panthor_drv.c   | 23 +++++++++++++++++++++++
+ drivers/gpu/drm/panthor/panthor_sched.c |  2 +-
+ include/uapi/drm/panthor_drm.h          |  6 +++++-
+ 3 files changed, 29 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/gpu/drm/panthor/panthor_drv.c b/drivers/gpu/drm/panthor/panthor_drv.c
+index b5e7b919f241..34182f67136c 100644
+--- a/drivers/gpu/drm/panthor/panthor_drv.c
++++ b/drivers/gpu/drm/panthor/panthor_drv.c
+@@ -10,6 +10,7 @@
+ #include <linux/platform_device.h>
+ #include <linux/pm_runtime.h>
+ 
++#include <drm/drm_auth.h>
+ #include <drm/drm_debugfs.h>
+ #include <drm/drm_drv.h>
+ #include <drm/drm_exec.h>
+@@ -996,6 +997,24 @@ static int panthor_ioctl_group_destroy(struct drm_device *ddev, void *data,
+ 	return panthor_group_destroy(pfile, args->group_handle);
+ }
+ 
++static int group_priority_permit(struct drm_file *file,
++				 u8 priority)
++{
++	/* Ensure that priority is valid */
++	if (priority > PANTHOR_GROUP_PRIORITY_HIGH)
++		return -EINVAL;
++
++	/* Medium priority and below are always allowed */
++	if (priority <= PANTHOR_GROUP_PRIORITY_MEDIUM)
++		return 0;
++
++	/* Higher priorities require CAP_SYS_NICE or DRM_MASTER */
++	if (capable(CAP_SYS_NICE) || drm_is_current_master(file))
++		return 0;
++
++	return -EACCES;
++}
++
+ static int panthor_ioctl_group_create(struct drm_device *ddev, void *data,
+ 				      struct drm_file *file)
+ {
+@@ -1011,6 +1030,10 @@ static int panthor_ioctl_group_create(struct drm_device *ddev, void *data,
+ 	if (ret)
+ 		return ret;
+ 
++	ret = group_priority_permit(file, args->priority);
++	if (ret)
++		return ret;
++
+ 	ret = panthor_group_create(pfile, args, queue_args);
+ 	if (ret >= 0) {
+ 		args->group_handle = ret;
+diff --git a/drivers/gpu/drm/panthor/panthor_sched.c b/drivers/gpu/drm/panthor/panthor_sched.c
+index c426a392b081..91a31b70c037 100644
+--- a/drivers/gpu/drm/panthor/panthor_sched.c
++++ b/drivers/gpu/drm/panthor/panthor_sched.c
+@@ -3092,7 +3092,7 @@ int panthor_group_create(struct panthor_file *pfile,
+ 	if (group_args->pad)
+ 		return -EINVAL;
+ 
+-	if (group_args->priority > PANTHOR_CSG_PRIORITY_HIGH)
++	if (group_args->priority >= PANTHOR_CSG_PRIORITY_COUNT)
+ 		return -EINVAL;
+ 
+ 	if ((group_args->compute_core_mask & ~ptdev->gpu_info.shader_present) ||
+diff --git a/include/uapi/drm/panthor_drm.h b/include/uapi/drm/panthor_drm.h
+index 926b1deb1116..e23a7f9b0eac 100644
+--- a/include/uapi/drm/panthor_drm.h
++++ b/include/uapi/drm/panthor_drm.h
+@@ -692,7 +692,11 @@ enum drm_panthor_group_priority {
+ 	/** @PANTHOR_GROUP_PRIORITY_MEDIUM: Medium priority group. */
+ 	PANTHOR_GROUP_PRIORITY_MEDIUM,
+ 
+-	/** @PANTHOR_GROUP_PRIORITY_HIGH: High priority group. */
++	/**
++	 * @PANTHOR_GROUP_PRIORITY_HIGH: High priority group.
++	 *
++	 * Requires CAP_SYS_NICE or DRM_MASTER.
++	 */
+ 	PANTHOR_GROUP_PRIORITY_HIGH,
+ };
+ 
+
+base-commit: a15710027afb40c7c1e352902fa5b8c949f021de
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.46.0
 
 
