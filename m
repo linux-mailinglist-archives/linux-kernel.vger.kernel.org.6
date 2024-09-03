@@ -1,283 +1,105 @@
-Return-Path: <linux-kernel+bounces-313261-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313260-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2073B96A2A8
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 17:31:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A732596A2A7
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 17:31:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4617E1C22ED3
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 15:31:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5CEE01F29117
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 15:31:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B6C8188921;
-	Tue,  3 Sep 2024 15:27:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38F5912B94;
+	Tue,  3 Sep 2024 15:27:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bLzeDYYJ"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dw3O4diw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 069681CA6B5;
-	Tue,  3 Sep 2024 15:27:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EC102AE66;
+	Tue,  3 Sep 2024 15:27:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725377228; cv=none; b=CM23Y3vqrAJUn73uejhxhOI8ILVLIfqGPrU4Pk6qg/92jFtB4TZ8dk6v5sW/z6b9MZeYEBqw3O98seQNzF0ax6cFoVUG98QALokg2/ffCOOROivaWQA1YbJprWwaC89Jm4L6oJ1PQwC5y2w2W14hAnACOrcHNXs8V9h3fvYN86I=
+	t=1725377227; cv=none; b=VLu8FFPS6TDO0vQqdaBKMrnFVl+5jRSgv6aC4qZwlh0WxFQl78YkhV3nzrr3nvdjcXVoWeHH7Q2HpXljOFhHkSfKF16J7W7aE8Oha+d+uzLn7BzPyq4mlaTLLGJ9WaqlFvnbWPJ1pDw+cvofssIUeeZiSYpWkAoQq2GdS4zqou0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725377228; c=relaxed/simple;
-	bh=DlGOTVSV/G3oaEgB3bm66biB+sxeCZWjwowa+b8SjRw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=ZsfcofbwuXELb0EK2X6WbiIL184B6LND0ylBvr1H/ezf63bINFK29WXCdtKLetRUpVPFaZo354WzkhO31agT1O2t6haswps2+KXzA17mCs4jxSrLo/q0RZk5WK8UPZjr+5UF4ZD4SnzT5+3AflYK1BavfnonQSny1ZBB+C1/nOU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bLzeDYYJ; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725377227; x=1756913227;
-  h=message-id:date:mime-version:subject:to:references:from:
-   in-reply-to:content-transfer-encoding;
-  bh=DlGOTVSV/G3oaEgB3bm66biB+sxeCZWjwowa+b8SjRw=;
-  b=bLzeDYYJAwf0KvavWU5Jc+AunnOzf2DKGOV1+HR0BNtcQk4S6iST2L4s
-   UNzKxTFAYmI9OyvGFJQCATiJM5sKilbxuHdVOBD7CEbzVJVck+PGJplMH
-   In596GODlg9eZaTKYjXnBjfyRRdKkArvxyYR9c7aFNjVrSlKVdPYy1hA9
-   OutE8K2vYSUpVz259mI4jhAsmMBHcRk6Vq0qMjGOOIAZJho6Yvu61XSDj
-   Xm8n2XfM17vDjOSOo1QNUP4FLYtBQisGeHvN8HnXww0ykgJFrrNerBaFm
-   ZValmOonbu2kkTdomi46Dx9CTrBuYD6TRfK0XFtU3CQPF7ufBMdjgqVUa
-   A==;
-X-CSE-ConnectionGUID: haJUtbRpR868tuiDqHjVIg==
-X-CSE-MsgGUID: w3U77jqORp+akiRDp+4j1g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11184"; a="24173524"
-X-IronPort-AV: E=Sophos;i="6.10,199,1719903600"; 
-   d="scan'208";a="24173524"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2024 08:27:06 -0700
-X-CSE-ConnectionGUID: GpOdiqPQSDCV9B/UTmYJEw==
-X-CSE-MsgGUID: x88LGf/0S5KWcBCFdx1yqQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,199,1719903600"; 
-   d="scan'208";a="102361667"
-Received: from ahunter6-mobl1.ger.corp.intel.com (HELO [10.0.2.15]) ([10.246.0.178])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2024 08:27:00 -0700
-Message-ID: <3f03541e-6dab-472f-bad9-4cdc0c0dc061@intel.com>
-Date: Tue, 3 Sep 2024 18:26:54 +0300
+	s=arc-20240116; t=1725377227; c=relaxed/simple;
+	bh=xHRJBR++gk5UN984vqRoTxLZz7hyZvZb/PDsqUJ6Bmc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lcqfBZo1ORdw1lFHg+fvtKA/25pMdvh4tRwqZuf6EysHLVqvvmt8f66sAie6MEYk6GTWZhA/bD5ImJXUR8bhlwkNi0YBU7X10XXcCo4zS2XzxRf3rrV4omXI/ywWTjOolEJVuRE9S8FynCv7c5fmjacpync2NGiuCL93vpFp6ls=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dw3O4diw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC22DC4CEC4;
+	Tue,  3 Sep 2024 15:27:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725377227;
+	bh=xHRJBR++gk5UN984vqRoTxLZz7hyZvZb/PDsqUJ6Bmc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=dw3O4diwZxKNXN2Hkd7lqN1+10no/UW5InQxldhDZiKqGFwEGx6gClrhgkCVNqsnh
+	 Ni5P67OX8jhOniY3iYLqA/e8LwfTRLpHbeD2NTQY10X0LkKJM3e9YzHbBGKf95NpUt
+	 JCZ4+JxzDEFE1EYj7H2WI9zHlwE6Bqn+svMwWQ6Us4AIxigZsUpJmUEAWdgdoGsa+o
+	 rkrjngBXMMFHZR1ymDDV8ZrdGNW0H8opq696QVgjQtLI8l0tnp9OiJ2ZVSXHA9IJkP
+	 YXLpTRLi2PzJ+kCjz0rQn4tTT+5D0t/qkgk4tX95BHUDUmWLnqO89vgmnHbfCks9sx
+	 fAk8fMASknBcA==
+Date: Tue, 3 Sep 2024 10:27:05 -0500
+From: Rob Herring <robh@kernel.org>
+To: Dhruva Gole <d-gole@ti.com>
+Cc: Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Vignesh Raghavendra <vigneshr@ti.com>, linux-pm@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] dt-bindings: opp: operating-points-v2-ti-cpu:
+ Describe opp-supported-hw
+Message-ID: <20240903152705.GA1044006-robh@kernel.org>
+References: <20240903-b4-opp-dt-binding-fix-v1-0-f7e186456d9f@ti.com>
+ <20240903-b4-opp-dt-binding-fix-v1-1-f7e186456d9f@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 4/8] perf auxtrace: Introduce
- auxtrace_record__validate_events()
-To: Leo Yan <leo.yan@arm.com>, Peter Zijlstra <peterz@infradead.org>,
- Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
- "Liang, Kan" <kan.liang@linux.intel.com>,
- Suzuki K Poulose <suzuki.poulose@arm.com>, Mike Leach
- <mike.leach@linaro.org>, James Clark <james.clark@linaro.org>,
- John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>,
- Yicong Yang <yangyicong@hisilicon.com>,
- Jonathan Cameron <jonathan.cameron@huawei.com>,
- linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, coresight@lists.linaro.org
-References: <20240823113306.2310957-1-leo.yan@arm.com>
- <20240823113306.2310957-5-leo.yan@arm.com>
-Content-Language: en-US
-From: Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-In-Reply-To: <20240823113306.2310957-5-leo.yan@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240903-b4-opp-dt-binding-fix-v1-1-f7e186456d9f@ti.com>
 
-On 23/08/24 14:33, Leo Yan wrote:
-> A prerequisite for multiple AUX events is that the AUX events cannot
-> overlap CPU maps. The reason is that every CPU has only one AUX trace
-> buffer and maps it to an unique buffer index for CPU and system tracing
-> mode.
+On Tue, Sep 03, 2024 at 04:00:07PM +0530, Dhruva Gole wrote:
+> It seems like we missed migrating the complete information from the old
+> DT binding where we had described what the opp-supported-hw is supposed
+> to describe. Hence, bring back the exact description from the previous
+> binding to the current one.
 > 
-> To prevent the case of CPU maps overlapping occurring within multiple
-> AUX events, the auxtrace_record__validate_events() function is
-> introduced. It iterates through all AUX events and returns failure if
-> it detects CPU maps overlapping.
-> 
-> Signed-off-by: Leo Yan <leo.yan@arm.com>
+> Fixes: e576a9a8603f ("dt-bindings: cpufreq: Convert ti-cpufreq to json schema")
+> Signed-off-by: Dhruva Gole <d-gole@ti.com>
 > ---
->  tools/perf/builtin-record.c |  4 +++
->  tools/perf/util/auxtrace.c  | 64 +++++++++++++++++++++++++++++++++++++
->  tools/perf/util/auxtrace.h  |  7 ++++
->  3 files changed, 75 insertions(+)
+>  .../devicetree/bindings/opp/operating-points-v2-ti-cpu.yaml         | 6 +++++-
+>  1 file changed, 5 insertions(+), 1 deletion(-)
 > 
-> diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
-> index adbaf80b398c..2c618efba97d 100644
-> --- a/tools/perf/builtin-record.c
-> +++ b/tools/perf/builtin-record.c
-> @@ -862,6 +862,10 @@ static int record__auxtrace_init(struct record *rec)
+> diff --git a/Documentation/devicetree/bindings/opp/operating-points-v2-ti-cpu.yaml b/Documentation/devicetree/bindings/opp/operating-points-v2-ti-cpu.yaml
+> index 02d1d2c17129..90855009cb81 100644
+> --- a/Documentation/devicetree/bindings/opp/operating-points-v2-ti-cpu.yaml
+> +++ b/Documentation/devicetree/bindings/opp/operating-points-v2-ti-cpu.yaml
+> @@ -45,7 +45,11 @@ patternProperties:
+>        clock-latency-ns: true
+>        opp-hz: true
+>        opp-microvolt: true
+> -      opp-supported-hw: true
+> +      opp-supported-hw:
+> +        description: |
+> +          Two bitfields indicating:
+> +            1. Which revision of the SoC the OPP is supported by
+> +            2. Which eFuse bits indicate this OPP is available
+
+This does nothing to tell me how to populate the property.
+
+>        opp-suspend: true
+>        turbo-mode: true
 >  
->  	auxtrace_regroup_aux_output(rec->evlist);
->  
-> +	err = auxtrace_validate_events(rec->evlist);
-> +	if (err)
-> +		return err;
-> +
->  	return auxtrace_parse_filters(rec->evlist);
->  }
->  
-> diff --git a/tools/perf/util/auxtrace.c b/tools/perf/util/auxtrace.c
-> index ca8682966fae..87e4f21b6edf 100644
-> --- a/tools/perf/util/auxtrace.c
-> +++ b/tools/perf/util/auxtrace.c
-> @@ -2828,6 +2828,70 @@ int auxtrace_parse_filters(struct evlist *evlist)
->  	return 0;
->  }
->  
-> +int auxtrace_validate_events(struct evlist *evlist)
-
-'auxtrace_validate_aux_events' would better indicate that it is
-looking only at AUX area events.
-
-> +{
-> +	struct evsel *evsel;
-> +	struct perf_cpu_map *cpu_map = NULL;
-> +	struct perf_cpu_map *cpu_map_intersect = NULL;
-> +	struct perf_cpu_map *cpu_map_merged = NULL;
-> +	int ret = 0;
-> +
-> +	if (!evlist)
-> +		return 0;
-
-Elsewhere we assume it is not NULL, might as well here too.
-
-> +
-> +	/*
-> +	 * Currently the tool only supports multiple AUX events without
-> +	 * overlapping CPU maps and every CPU has its unique AUX buffer
-> +	 * for CPU or system mode tracing.
-> +	 *
-> +	 * Returns failure if detects CPU maps overlapping.
-> +	 */
-> +	evlist__for_each_entry(evlist, evsel) {
-> +		if (!evsel__is_aux_event(evsel))
-> +			continue;
-> +
-> +		if (perf_cpu_map__is_empty(evsel->pmu->cpus))
-> +			continue;
-
-Unless perf_cpu_map__intersect() is broken, the empty check
-should not be needed.
-
-Shouldn't we be looking at evsel->cpus ?
-
-Possibly need to consider the perf_cpu_map__has_any_cpu() case?
-e.g.
-		if (cpu_map && (perf_cpu_map__has_any_cpu(evsel->cpus) || 
-				perf_cpu_map__has_any_cpu(cpu_map)) {
-			ret = -EINVAL;
-			break;
-		}
-
-> +
-> +		cpu_map_intersect = perf_cpu_map__intersect(cpu_map, evsel->pmu->cpus);
-> +		if (cpu_map_intersect) {
-> +			perf_cpu_map__put(cpu_map_intersect);
-> +			pr_err("Doesn't support AUX events with overlapping CPU masks\n");
-> +			ret = -EINVAL;
-> +			break;
-> +		}
-> +		perf_cpu_map__put(cpu_map_intersect);
-
-Maybe add a helper:
-
-static bool perf_cpu_map__do_maps_intersect(struct perf_cpu_map *a, struct perf_cpu_map *b)
-{
-	struct perf_cpu_map *intersection = perf_cpu_map__intersect(a, b);
-	bool ret = !perf_cpu_map__is_empty(intersection);
-
-	perf_cpu_map__put(intersection);
-
-	return ret;
-}
-
-> +
-> +		cpu_map_merged = perf_cpu_map__merge(cpu_map, evsel->pmu->cpus);
-> +		if (!cpu_map_merged) {
-> +			ret = -ENOMEM;
-> +			break;
-> +		}
-> +
-> +		/* Update the CPU maps after merging */
-> +		perf_cpu_map__put(cpu_map);
-> +		cpu_map = cpu_map_merged;
-
-perf_cpu_map__merge() is a bit tricky - see its comments.  This
-should probably all just be:
-
-		cpu_map = perf_cpu_map__merge(cpu_map, evsel->pmu->cpus);
-
-
-> +	}
-> +
-> +	if (!ret)
-> +		goto out;
-
-Could we put the error path last i.e.
-
-	perf_cpu_map__put(cpu_map);
-
-	if (ret)
-		goto out_err;
-
-	return 0;
-
-out_err:
-> +
-> +	/* If fails, dump CPU maps for debugging */
-> +	evlist__for_each_entry(evlist, evsel) {
-> +		char buf[200];
-> +
-> +		if (!evsel__is_aux_event(evsel))
-> +			continue;
-> +
-> +		cpu_map__snprint(evsel->pmu->cpus, buf, sizeof(buf));
-> +		pr_debug("AUX event [%s]'s cpu map is: %s\n", evsel->pmu->name, buf);
-
-Could probably use cpu_map__fprintf(pmu->cpus, debug_file()) and
-not need buf.
-
-> +	}
-> +
-> +out:
-> +	perf_cpu_map__put(cpu_map);
-> +	return ret;
-> +}
-> +
->  int auxtrace__process_event(struct perf_session *session, union perf_event *event,
->  			    struct perf_sample *sample, const struct perf_tool *tool)
->  {
-> diff --git a/tools/perf/util/auxtrace.h b/tools/perf/util/auxtrace.h
-> index a1895a4f530b..67a74ad0c383 100644
-> --- a/tools/perf/util/auxtrace.h
-> +++ b/tools/perf/util/auxtrace.h
-> @@ -636,6 +636,7 @@ void addr_filters__exit(struct addr_filters *filts);
->  int addr_filters__parse_bare_filter(struct addr_filters *filts,
->  				    const char *filter);
->  int auxtrace_parse_filters(struct evlist *evlist);
-> +int auxtrace_validate_events(struct evlist *evlist);
->  
->  int auxtrace__process_event(struct perf_session *session, union perf_event *event,
->  			    struct perf_sample *sample, const struct perf_tool *tool);
-> @@ -875,6 +876,12 @@ int auxtrace_parse_filters(struct evlist *evlist __maybe_unused)
->  	return 0;
->  }
->  
-> +static inline
-> +int auxtrace_validate_events(struct evlist *evlist __maybe_unused)
-> +{
-> +	return 0;
-> +}
-> +
->  int auxtrace_mmap__mmap(struct auxtrace_mmap *mm,
->  			struct auxtrace_mmap_params *mp,
->  			void *userpg, int fd);
-
+> 
+> -- 
+> 2.34.1
+> 
 
