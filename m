@@ -1,115 +1,105 @@
-Return-Path: <linux-kernel+bounces-313909-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313910-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D9CA96AC37
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 00:30:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C67F96AC3E
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 00:34:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5A4F3284126
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 22:30:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9F78A1C24525
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 22:34:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D0991B982C;
-	Tue,  3 Sep 2024 22:30:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A30CB1B9825;
+	Tue,  3 Sep 2024 22:34:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GVsMSwf2"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cl1JUbCM"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81C3D1EC01F;
-	Tue,  3 Sep 2024 22:30:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EC1D186E30;
+	Tue,  3 Sep 2024 22:34:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725402636; cv=none; b=u278AIZlpLkpRzzR63cFTYk7pHkqugFi4VbSUXMC7yLrl7saFCMSTAnLKLcl9R2RaGtDo3m3aNRzePqSt3sYWb+pXqepdkYWzFD4e7GfYDrfffyst9vHW4cXjfnXYOwERC0THrD/z7vldb+yx3KN56uEqnWUD7f1K2XnK04DfVQ=
+	t=1725402841; cv=none; b=bpnzZQd1aCQts54c5gp2Y7WGjC/jZbyTMBGgCV5g3csgMS96mt3XGXoid5xKrQRYPXnZskIIeQbueRPdAk/K6gMlNMqg6I/yo3Ll/NNXDvALyU2UNLnQXWNLilqaYBqw3kjJH9ct1Df4+YsLEMB9FacyZuYDsNcixG6VP2Nps+Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725402636; c=relaxed/simple;
-	bh=0NXvwQ8nOPQQ9cWalY9pUVsAdxuWo/Cm+R8hAX7RG9g=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=S+CNlNdTB5McAkQLgWv1vhSV43Z9pENWt7SzJNPCsDBM/ffzvmm4aDQeotfNuRFiPi32ycxa/xs7OZYGFUJQ6DK4ZoI5zWnhlk5zvqCao9P2PFxdaldut+I7h1piJQgNDFqspo2dABzf2Amx6MSf4zvHcE3r+F2TLOUME7JA1PE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GVsMSwf2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F03E8C4CEC5;
-	Tue,  3 Sep 2024 22:30:34 +0000 (UTC)
+	s=arc-20240116; t=1725402841; c=relaxed/simple;
+	bh=PJuaEhOFGYtVYPKXwDpttFc+q5OxRf2zKobxdkoJmTg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=K//wJPfSpYyF+/ye7k80CBlGo2aCH2VPno69gSuYuumKkB8ERtGJZjwNvyMu/+0ALmaHEl4UBAFF5getHjCj5f3oBzfmLmkW+027dV32T3z5hihyw2QPnNnrmFFznSPDEUGN8Zj66YYbY1z+Tmc4YfMhZiJDOlS6242n7ijSk3s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cl1JUbCM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93953C4CEC4;
+	Tue,  3 Sep 2024 22:34:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725402635;
-	bh=0NXvwQ8nOPQQ9cWalY9pUVsAdxuWo/Cm+R8hAX7RG9g=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=GVsMSwf2zoKcqiwSThVdDpVadtc48cynOH8JvyCaNQ1SuCeK4XqiX3rU2I7OnFrV8
-	 UGEJGEj8VrcnXvvRCPQ/ESb90UZ1F15V1aWt7xsYf670iXXFOzDnwOMx2ia3v+PM9m
-	 U6eT+3yGMKLLyqS+DHLbe5lstjEqL1lKTKBmgSJ7UUSKDTOGztBHGdIT64H2l+wj6B
-	 PgEzKXAzJtl+qYFmj0AOAkrg2ql7+yjySSMhrNzfJR98VoeZbe9raFtUXMs5OC8PEo
-	 aRHiCI5iYFaeafPAcMcFjDCtiRrsXMRBGn9TW8pUbYB37qr/exEXes8Wm0b47Ta0mn
-	 AshKvLuYlEb/w==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EB3733806651;
-	Tue,  3 Sep 2024 22:30:36 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1725402840;
+	bh=PJuaEhOFGYtVYPKXwDpttFc+q5OxRf2zKobxdkoJmTg=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=cl1JUbCM9uq01AMIDCJyqCBNoHE8kVLu1Zlum4zDmNcdU2M0Z6EnPJa4JG9Wf+Lxg
+	 9ikXHR3b/LYZxALX/n3kJYWb7UJYyMiEn1vNR5OCoz4ZCXgdA7WsjjR/KAa4Pi2vy9
+	 9/lR7RZJ0t3ms1ZapFF6OgOvJnROLB0By59ayo2ih88WYMa7m3GTJJC01d/rn3oYQ0
+	 24PkAfQWeVHT5hlr+LZ2A/A4/cCBMd4MI4fJ26ElWmpyUx65ztX3RD57VttODew+X/
+	 4AHQ8QRRDKcdEeX934gyYgqkJhQY1wkPe5af2W/7hZ+emoTMzhPMVelMq2ZT4TGqhg
+	 trCXY1uR0rR5w==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 3796ACE1257; Tue,  3 Sep 2024 15:34:00 -0700 (PDT)
+Date: Tue, 3 Sep 2024 15:34:00 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: linux-kernel@vger.kernel.org, Linux-Arch <linux-arch@vger.kernel.org>
+Subject: Re: 16-bit store instructions &c?
+Message-ID: <0974da0a-8788-470d-bb9c-8fc90d7e6f08@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <3ca4590a-8256-42d1-89ca-f337ae6f755c@paulmck-laptop>
+ <b3512703-bab3-4999-ac20-b1b874fcfcc3@app.fastmail.com>
+ <289c7e10-06df-435b-a30d-c2a5bc4eea29@paulmck-laptop>
+ <9242c5c2-2011-45bf-8679-3f918323788e@app.fastmail.com>
+ <1bb58d8d-4a2a-4728-a8f3-9295145dbbb0@paulmck-laptop>
+ <f209bf4d-1d14-404b-8bff-8d6d2854d704@app.fastmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next 00/11] mptcp: MIB counters for MPJ TX + misc
- improvements
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <172540263576.468499.15933223216339757413.git-patchwork-notify@kernel.org>
-Date: Tue, 03 Sep 2024 22:30:35 +0000
-References: <20240902-net-next-mptcp-mib-mpjtx-misc-v1-0-d3e0f3773b90@kernel.org>
-In-Reply-To: <20240902-net-next-mptcp-mib-mpjtx-misc-v1-0-d3e0f3773b90@kernel.org>
-To: Matthieu Baerts (NGI0) <matttbe@kernel.org>
-Cc: mptcp@lists.linux.dev, martineau@kernel.org, geliang@kernel.org,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- shuah@kernel.org, netdev@vger.kernel.org, linux-kselftest@vger.kernel.org,
- linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f209bf4d-1d14-404b-8bff-8d6d2854d704@app.fastmail.com>
 
-Hello:
-
-This series was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
-
-On Mon, 02 Sep 2024 12:45:51 +0200 you wrote:
-> Recently, a few issues have been discovered around the creation of
-> additional subflows. Without these counters, it was difficult to point
-> out the reason why some subflows were not created as expected.
+On Thu, Aug 29, 2024 at 09:56:52PM +0200, Arnd Bergmann wrote:
+> On Thu, Aug 29, 2024, at 15:37, Paul E. McKenney wrote:
+> > My plan is to submit a pull request for the remaining three 8-bit
+> > cmpxchg() emulation commits into the upcoming merge window.  In the
+> > meantime, I will create similar patches for 16-bit cmpxchg() and perhaps
+> > also both 8-bit and 16-bit xchg().  I will obviously CC both you and
+> > Russell on the full set.  And if there are hardware-incompatibility
+> > complaints, we can deal with them, whether by dropping the offending
+> > pieces of my patches or by whatever other adjustments make sense.
+> >
+> > Does that seem like a reasonable approach, or is there a better way?
 > 
-> In patch 3, all error paths from __mptcp_subflow_connect() are covered,
-> except the one related to the 'fully established mode', because it can
-> only happen with the userspace PM, which will propagate the error to the
-> userspace in this case (ENOTCONN).
+> There is one thing I'd really like to see happen here, and that is
+> changing the architectures so they only define the fixed-length
+> __arch_xchg{8,16,32,64} and __arch_cmpxchg{8,16,32,64} helpers,
+> ideally as inline functions to have type checking on the pointer.
 > 
-> [...]
+> If we make the xchg()/cmpxchg() functiuons handle all sizes
+> across architectures, that just ends up cementing the type
+> agnostic macros, so I feel it would be better to have
+> fixed-size helpers as the generic API so we can phase out the
+> use of the existing macros on smaller-than-u32 arguments.
+> 
+> The macro is still needed to allow dealing with both integer
+> and pointer objects, as well as a mix of 'int' and 'long'
+> arguments on 64-bit, but for normal fixed-size objects I
+> think we can best use the same method as the current
+> xchg64()/cmpxchg64().
 
-Here is the summary with links:
-  - [net-next,01/11] mptcp: pm: rename helpers linked to 'flush'
-    https://git.kernel.org/netdev/net-next/c/7bcf4d8022f9
-  - [net-next,02/11] mptcp: pm: reduce entries iterations on connect
-    https://git.kernel.org/netdev/net-next/c/b83fbca1b4c9
-  - [net-next,03/11] mptcp: MIB counters for sent MP_JOIN
-    https://git.kernel.org/netdev/net-next/c/1bd1788b6cab
-  - [net-next,04/11] selftests: mptcp: join: reduce join_nr params
-    https://git.kernel.org/netdev/net-next/c/1b2965a8cd8d
-  - [net-next,05/11] selftests: mptcp: join: one line for join check
-    https://git.kernel.org/netdev/net-next/c/ba8a664004da
-  - [net-next,06/11] selftests: mptcp: join: validate MPJ SYN TX MIB counters
-    https://git.kernel.org/netdev/net-next/c/004125c251a6
-  - [net-next,07/11] selftests: mptcp: join: more explicit check name
-    https://git.kernel.org/netdev/net-next/c/6ed495345be8
-  - [net-next,08/11] selftests: mptcp: join: specify host being checked
-    https://git.kernel.org/netdev/net-next/c/8d328dbcf61b
-  - [net-next,09/11] selftests: mptcp: join: mute errors when ran in the background
-    https://git.kernel.org/netdev/net-next/c/08eecd7e7fe7
-  - [net-next,10/11] selftests: mptcp: join: simplify checksum_tests
-    https://git.kernel.org/netdev/net-next/c/0e2b4584d61a
-  - [net-next,11/11] selftests: mptcp: pm_nl_ctl: remove re-definition
-    https://git.kernel.org/netdev/net-next/c/38dc0708bcc8
+So the idea is to have architecture-independent xchg()/cmpxchg() that
+invoke the __arch_xchg{8,16,32,64} and __arch_cmpxchg{8,16,32,64} helpers?
+Seems plausible to me.
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+How can I best help?  My guess is that I should prototype an emulated
+xchg() function, given my limited familiarity with the architectures.
 
-
+						Thanx, Paul
 
