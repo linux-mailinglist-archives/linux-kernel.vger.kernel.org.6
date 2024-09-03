@@ -1,198 +1,74 @@
-Return-Path: <linux-kernel+bounces-313127-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313128-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC3F996A09F
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 16:30:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 276C196A0A2
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 16:30:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F20151C23D72
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 14:30:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D96B3287039
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 14:30:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AED59185925;
-	Tue,  3 Sep 2024 14:29:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8529F153BD7;
+	Tue,  3 Sep 2024 14:30:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DxN3LwBl"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d/uubxF5"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2C367E563
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 14:29:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9A371420DD;
+	Tue,  3 Sep 2024 14:30:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725373771; cv=none; b=a846lxtTuRkCFB+OMk1wicCnqsCcXX7HTGdLYHZ0X0u+Ri6BdnE+HT8ayvL3nSOhmMM/L7GDb9MReIWHJ81noMeQRgzmZXdoNEG/5vBTWDu1OmvpOhqB3wNENgzzUuwOSG6V+HI2fzOpwx43b7BX1AWWek//SDMNRAgPp5Z+puM=
+	t=1725373804; cv=none; b=h6jmhXksyJlQaB58x/DkW9E6WuM4AomM2d6orN6SPUzsVHz30XWVmLhRoD8Pq6rlS+6hhvYVFbM8jxjhrPZuJYCj9gY9dW7IKLCF9surLSlLXQ88b1zrbt2Zhv1NcSHjfxRolT04SeebWoPPZt2LWLcsJvfFBSxeZ8r4YIPcv1A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725373771; c=relaxed/simple;
-	bh=WN58fwH7EbY6PBzdDqIJkpil+L7A4/7HqEQ8ZxMEVS0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=oTEYpZsIRKv+cSAR+h7skrvP53MDBMuUnTqenCDRb9WwL37D1V1zK5F9R7HCsJfmZFfXRP5l1G8ttg4nbpB6kFhfW2pYiVhHW2cq54ZMAcxrhw5oGJII2JZsM6a8tOAg2byzsDSlfsqSNmbrqDP2tGS/zyXeStw6+Gr0JpTF9Hg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DxN3LwBl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 19C2FC4CEC4;
-	Tue,  3 Sep 2024 14:29:28 +0000 (UTC)
+	s=arc-20240116; t=1725373804; c=relaxed/simple;
+	bh=sjKoXk1z/rlVpknvexNcdZienzI2tB0ICyNAVxm1paI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SCRraGjr2YsDI6ykE8zytb47mjMYZYpnx8uX3YoyG0V0+oLjCnqtsZexr0AZlBduMI2EkxEwIb9pH33Te851Mv3MMYtuP0snpxpUOTMFYLpl1mp6MxA8pd/n7QMoGbAaingz6ehFtATVRF5NGsybleSzxOBqCrYD1VoXOkRAuyk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d/uubxF5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D10C4C4CEC7;
+	Tue,  3 Sep 2024 14:30:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725373770;
-	bh=WN58fwH7EbY6PBzdDqIJkpil+L7A4/7HqEQ8ZxMEVS0=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=DxN3LwBlXaNc4cJHAq352Q5hw2H/fuK4x9RGCZdDlqsSzN+Zu391Vkun8AwYKUa6i
-	 9VlTv/w6tZYMijcnZhM1K1vi608Nfg/vMgz1iUG4sQ9IPjLfP1Ems1sOP8AwatarKS
-	 iFRHuOMTJd96bOevl30gX/k5FItZuLZdypT5d+orCkCfduQvbwvksIs8wCf8/wzM3b
-	 HD8NpHbQYRjBnDVe7/APHKLepZheqqkwUfAucxd8sFHPEilWkdeb9E47X/Myq8BvT7
-	 W55/O8qzXXHSylKWDKb5BYcRQQPD95lEuh6fXHJh4YuHwv5oyaRX/tuM2fineN1v/F
-	 p6K/A9u6iwJcQ==
-Message-ID: <10d4a49b-c596-418e-969c-0830d678de87@kernel.org>
-Date: Tue, 3 Sep 2024 22:29:25 +0800
+	s=k20201202; t=1725373804;
+	bh=sjKoXk1z/rlVpknvexNcdZienzI2tB0ICyNAVxm1paI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=d/uubxF5/g0Nm9YFqMtmnEPNf0YHjjrq4S8pt/NCGO+z1GQqlWIZfn/bEBCM/DRFs
+	 lYKXlThzsRBcAqFFcK8pWiYwY+6ynOd94/5XfVlGyUjchm9+/4MWFRI1wxj0Rbc6gO
+	 10MHlhJPYlICf+dUmNCuDrNysHBhrZlXsvTr85jsKvmgHRinTNoHuUVsofmKEKjOwm
+	 Ovam5hlZv9bCQDkRy1D6MW8JPAgA3r6r4hE6z+s/pBMcDyF0+WkjmTK/SaTq/SaVMK
+	 lb+OdwC+QyKM0FIYlbCWpAKOmpdxlhosw+RQqnRPvlGimsrGCnGYWMsDrtym7HnPEI
+	 /MEp+97kU0XGw==
+Date: Tue, 3 Sep 2024 16:30:00 +0200
+From: Andi Shyti <andi.shyti@kernel.org>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Jarkko Nikula <jarkko.nikula@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, 
+	Jan Dabros <jsd@semihalf.com>, Narasimhan.V@amd.com, Borislav Petkov <bp@alien8.de>, 
+	Kim Phillips <kim.phillips@amd.com>
+Subject: Re: [PATCH v2 1/1] i2c: designware: Consolidate PM ops
+Message-ID: <g74jbzdorj4vdhqxaztbl6rsjrybhlhx6swybrtms6jeaufzhq@ac77f3xcip2u>
+References: <20240827150101.2171107-1-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [syzbot] [f2fs?] kernel BUG in f2fs_evict_inode (3)
-To: syzbot <syzbot+ebea2790904673d7c618@syzkaller.appspotmail.com>,
- jaegeuk@kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-References: <000000000000b0231406204772a1@google.com>
-Content-Language: en-US
-From: Chao Yu <chao@kernel.org>
-Autocrypt: addr=chao@kernel.org; keydata=
- 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
-In-Reply-To: <000000000000b0231406204772a1@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240827150101.2171107-1-andriy.shevchenko@linux.intel.com>
 
-#syz test git://git.kernel.org/pub/scm/linux/kernel/git/chao/linux.git wip
+Hi Andy,
 
-On 2024/8/22 23:38, syzbot wrote:
-> syzbot has found a reproducer for the following issue on:
-> 
-> HEAD commit:    872cf28b8df9 Merge tag 'platform-drivers-x86-v6.11-4' of g..
-> git tree:       upstream
-> console+strace: https://syzkaller.appspot.com/x/log.txt?x=13ece38d980000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=4fc2afd52fd008bb
-> dashboard link: https://syzkaller.appspot.com/bug?extid=ebea2790904673d7c618
-> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1344680b980000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1034880b980000
-> 
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/c63409516c62/disk-872cf28b.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/79b2b8c52d3a/vmlinux-872cf28b.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/27cb9df9c339/bzImage-872cf28b.xz
-> mounted in repro #1: https://storage.googleapis.com/syzbot-assets/1f04d7ef7499/mount_0.gz
-> mounted in repro #2: https://storage.googleapis.com/syzbot-assets/831601ee93df/mount_5.gz
-> 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+ebea2790904673d7c618@syzkaller.appspotmail.com
-> 
-> ------------[ cut here ]------------
-> kernel BUG at fs/f2fs/inode.c:896!
-> Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN PTI
-> CPU: 1 UID: 0 PID: 5217 Comm: syz-executor605 Not tainted 6.11.0-rc4-syzkaller-00033-g872cf28b8df9 #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
-> RIP: 0010:f2fs_evict_inode+0x1598/0x15c0 fs/f2fs/inode.c:896
-> Code: 6e 9b ab fd 31 ff 89 de e8 65 9b ab fd 40 84 ed 75 28 e8 5b 98 ab fd e9 3c ec ff ff e8 51 98 ab fd 90 0f 0b e8 49 98 ab fd 90 <0f> 0b e8 41 98 ab fd 90 0f 0b 90 e9 fc fe ff ff e8 33 98 ab fd e8
-> RSP: 0018:ffffc90003497808 EFLAGS: 00010293
-> RAX: ffffffff83e7f267 RBX: 0000000000000002 RCX: ffff88801a3e8000
-> RDX: 0000000000000000 RSI: 0000000000000002 RDI: 0000000000000000
-> RBP: 0000000000000000 R08: ffffffff83e7ec50 R09: 1ffff1100efe9611
-> R10: dffffc0000000000 R11: ffffed100efe9612 R12: ffff88807a834000
-> R13: ffff888077f4b088 R14: ffff888077f4abe8 R15: dffffc0000000000
-> FS:  000055556d6353c0(0000) GS:ffff8880b9300000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 00007f376cbf9000 CR3: 00000000786a0000 CR4: 00000000003506f0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> Call Trace:
->   <TASK>
->   evict+0x532/0x950 fs/inode.c:704
->   dispose_list fs/inode.c:747 [inline]
->   evict_inodes+0x5f9/0x690 fs/inode.c:797
->   generic_shutdown_super+0x9d/0x2d0 fs/super.c:627
->   kill_block_super+0x44/0x90 fs/super.c:1696
->   kill_f2fs_super+0x344/0x690 fs/f2fs/super.c:4898
->   deactivate_locked_super+0xc4/0x130 fs/super.c:473
->   cleanup_mnt+0x41f/0x4b0 fs/namespace.c:1373
->   task_work_run+0x24f/0x310 kernel/task_work.c:228
->   ptrace_notify+0x2d2/0x380 kernel/signal.c:2402
->   ptrace_report_syscall include/linux/ptrace.h:415 [inline]
->   ptrace_report_syscall_exit include/linux/ptrace.h:477 [inline]
->   syscall_exit_work+0xc6/0x190 kernel/entry/common.c:173
->   syscall_exit_to_user_mode_prepare kernel/entry/common.c:200 [inline]
->   __syscall_exit_to_user_mode_work kernel/entry/common.c:205 [inline]
->   syscall_exit_to_user_mode+0x279/0x370 kernel/entry/common.c:218
->   do_syscall_64+0x100/0x230 arch/x86/entry/common.c:89
->   entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> RIP: 0033:0x7f37740a00a7
-> Code: 08 00 48 83 c4 08 5b 5d c3 66 2e 0f 1f 84 00 00 00 00 00 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 b8 a6 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 01 c3 48 c7 c2 b0 ff ff ff f7 d8 64 89 02 b8
-> RSP: 002b:00007ffc120a25e8 EFLAGS: 00000206 ORIG_RAX: 00000000000000a6
-> RAX: 0000000000000000 RBX: 0000000000015fbb RCX: 00007f37740a00a7
-> RDX: 0000000000000000 RSI: 0000000000000009 RDI: 00007ffc120a26a0
-> RBP: 00007ffc120a26a0 R08: 0000000000000000 R09: 0000000000000000
-> R10: 00000000ffffffff R11: 0000000000000206 R12: 00007ffc120a3750
-> R13: 000055556d636700 R14: 431bde82d7b634db R15: 00007ffc120a36f4
->   </TASK>
-> Modules linked in:
-> ---[ end trace 0000000000000000 ]---
-> RIP: 0010:f2fs_evict_inode+0x1598/0x15c0 fs/f2fs/inode.c:896
-> Code: 6e 9b ab fd 31 ff 89 de e8 65 9b ab fd 40 84 ed 75 28 e8 5b 98 ab fd e9 3c ec ff ff e8 51 98 ab fd 90 0f 0b e8 49 98 ab fd 90 <0f> 0b e8 41 98 ab fd 90 0f 0b 90 e9 fc fe ff ff e8 33 98 ab fd e8
-> RSP: 0018:ffffc90003497808 EFLAGS: 00010293
-> RAX: ffffffff83e7f267 RBX: 0000000000000002 RCX: ffff88801a3e8000
-> RDX: 0000000000000000 RSI: 0000000000000002 RDI: 0000000000000000
-> RBP: 0000000000000000 R08: ffffffff83e7ec50 R09: 1ffff1100efe9611
-> R10: dffffc0000000000 R11: ffffed100efe9612 R12: ffff88807a834000
-> R13: ffff888077f4b088 R14: ffff888077f4abe8 R15: dffffc0000000000
-> FS:  000055556d6353c0(0000) GS:ffff8880b9300000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 00007f376bda6000 CR3: 00000000786a0000 CR4: 00000000003506f0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> 
-> 
-> ---
-> If you want syzbot to run the reproducer, reply with:
-> #syz test: git://repo/address.git branch-or-commit-hash
-> If you attach or paste a git patch, syzbot will apply it before testing.
+On Tue, Aug 27, 2024 at 06:00:37PM GMT, Andy Shevchenko wrote:
+> We have the same (*) PM ops in the PCI and plaform drivers.
 
+/plaform/platform/
+
+with this change I pushed it to i2c/i2c-host.
+
+Thanks,
+Andi
 
