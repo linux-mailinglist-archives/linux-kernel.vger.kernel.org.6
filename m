@@ -1,169 +1,111 @@
-Return-Path: <linux-kernel+bounces-312187-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312188-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FA50969337
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 07:33:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16968969338
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 07:34:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 788A7B22F60
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 05:33:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4A1941C22BD9
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 05:34:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D56F1CDA0B;
-	Tue,  3 Sep 2024 05:33:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA46D1CDFB6;
+	Tue,  3 Sep 2024 05:34:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j6DpbaId"
-Received: from mail-oi1-f180.google.com (mail-oi1-f180.google.com [209.85.167.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="b+GP7t8e"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 123ABA32;
-	Tue,  3 Sep 2024 05:33:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C194CA32;
+	Tue,  3 Sep 2024 05:34:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725341626; cv=none; b=f0o+EMaS1sgCfxMx86kk9fzvv9fskSAMX96ComOy4I8o9lFlJSZeWbjlTx/qPltKDkcIaEfxcXajIRUWyVAI0oXJFdSPwrrJzGDlkwBljgtxp6hI56fvc4Tt0KX8IPGpkfxYS4zSdleNfcijnwufpkA0Y1sqWHWWxd/vN/wyZ+8=
+	t=1725341680; cv=none; b=Y4ejy2MvtKE4RoiuuuwubJy2IyB+uahdMV7TGvU2BHYGCm5WGUWOkWHEQic3YWq/CM6VZyWDHI9jzM9a6jXQz/qGeOU0OgdUNCcdpZWMcqts8jboBlY/0ILM/9sBWWgSXrno7iwIuXWpbCBoYb2Ii5sEKlVxrWe9/IwZwoBF704=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725341626; c=relaxed/simple;
-	bh=kBCm4WbfAFJkHuZk0xLF0j1BQ3I8uN31xamppr7/mC8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OR4bbELyrOdENE8JeDlpUx07GpYFEESAOhREOcs8P1+aYXlGZ1D2IBuMQuYnClDBE/q1tAbKJfKzbrDGs2Ds879Zzj6Kfa197WjQhwxrTzLS2aovoKAb0X8AJYbDi02r3BfVPKl3+r2JVhpgqv/bG6CMH/H2ZMlFfW8YyPswir8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=j6DpbaId; arc=none smtp.client-ip=209.85.167.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oi1-f180.google.com with SMTP id 5614622812f47-3df04219e31so2649189b6e.3;
-        Mon, 02 Sep 2024 22:33:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725341624; x=1725946424; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=JakgDYfe7sytnBhz1iKXTFIBZav6FpZy9HfYCiO/lC8=;
-        b=j6DpbaIdrD0622A8Dndmw+Hfvm9/zU+vMOXYoA3PrHIWLZF+zZWy9+WZnpG6Tog3HK
-         8T/3rgRAvNt/CHZ6gE8S3Cyx9OQ0jPRiXqJO5Ge0YFtl+sUxcKufrGQqxq135ZdNruaA
-         X6MVCDMxCrqqheoZu8W1GKRD0bIDDKmjz9paceDUMAthD3Ljes9J35+/T6cFPvQ9opYN
-         0WRFv3smQiptU4qnyhDZKlvk04fRNRg8/YUAkHENbWwDR0jtctgIeVK41JldyvCE/6cn
-         XILxLT02kRR7/LPiiYHK9Cu5RBee8PpkiJFRvwob9seueHBxzkcMnJqfWqIiBlHBLsZ0
-         rE5A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725341624; x=1725946424;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JakgDYfe7sytnBhz1iKXTFIBZav6FpZy9HfYCiO/lC8=;
-        b=b+6deKhKA/rtHDZz8i3ZEHs4fQdkEvllYT1zA6boN/cgyPVb5kHZiJbbWOw0CAPFvB
-         TWFBlB567ZJYCZPdTvWuL3zw149ycAw8h0ICi5Ta1texCavjGO/5PDk5YQWR7/O0e8+z
-         hDplMeT9ixHbw69LISPueTE/Dj7oI39VBF314RNKstV4gW2tE9nPYPg2b/Yhc2/4gLcz
-         vmri2Lv10HbIz9ixVHualLCJbsZNplnVHwu5ZIVgeq2w5TmeBrx60dTGTAoOrtEE9N7J
-         MlvRnuPrglHVEqyjUiCQyUuM5YHvMQc9d15+LXZSR1JFFWXLfQMEk9AzUTqj9GOlrGO/
-         nHjw==
-X-Forwarded-Encrypted: i=1; AJvYcCX+dXBgLBp+DQJBrtUWU6qQrkOgvUUZKsvAV79CyGe9lBBx+eI1gzgYi0NzEbo1ANAyE1dEJkyreq+bVcQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxxDMs1m7Z5vy9Kj+fxLTRI0sP55kLbU1+2Bm+SwMOkZPsicoOF
-	H8iqU/MqZISuCyD+gelOi4h2H0ds4FGqyEOKMOwoxkjCH6uiwDB/Vr4u5w==
-X-Google-Smtp-Source: AGHT+IE36LpCqg+RK4x4R1SPqwbglJU0NWwJYZeHnfhrOI4YhCF9ElrJdCQ5Va/u4jckzFJuHLXT8Q==
-X-Received: by 2002:a05:6808:f03:b0:3df:2d98:b04d with SMTP id 5614622812f47-3df2d98b157mr9144178b6e.30.1725341624030;
-        Mon, 02 Sep 2024 22:33:44 -0700 (PDT)
-Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7d22e77ef32sm8426203a12.41.2024.09.02.22.33.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 02 Sep 2024 22:33:43 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <4cda9fc3-41c1-4a11-b9cc-ad5aace4a4f8@roeck-us.net>
-Date: Mon, 2 Sep 2024 22:33:41 -0700
+	s=arc-20240116; t=1725341680; c=relaxed/simple;
+	bh=c8KcBxPELnVU1lz0D5LCPWKXq/fZGhu7ld+hoWo1ZXo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Yn5S9oMyM/XIEHEPlYHb2u2uKQka2jnLyAxumBC0MHccmlsTsL/UnxwlRpTsEjhvMPELEmcMn5ZvqIj/dxb8Yvef1x82dddr0EWWmD5Xhz9DHeWhAMCA3yl3u4/Djp6tNzUcNFSKsUFhxo0sj29sC4Sa7ikVHD4oROPzEjBkLB4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=b+GP7t8e; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725341679; x=1756877679;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=c8KcBxPELnVU1lz0D5LCPWKXq/fZGhu7ld+hoWo1ZXo=;
+  b=b+GP7t8eBHUOSIXkZt3gwLTAki3zP3q2MsGw2wfBEh/64TdoODX/06FE
+   iFcbNha76+oJscqu//x1EeCrK5hn2QBnhnA6RgOg5l8ifCu0/+PcKGuz5
+   rxl1xbCrwyWVHVf0XlvmXyDPAxEXcLPVpcIeF2IPgPxL8Hz7PgGsgqj7U
+   FqEX6aqezBTMOZ25W1QW1GYxvZ5NzGlwrcP6339+S7KqPFe1H4SX8gfGo
+   oQOiYFfF2UdHK5iiJgE37yLldQeam/mrRISOjSL9bY8e54T+9oqW/oajp
+   ZWPq/R0Aqgnv7FP9FiI9kUJ0p9j7XokxQ2YmfdJZkpBKjOJHGHS7k+VzR
+   g==;
+X-CSE-ConnectionGUID: JPPahUtFSpeyK3KHr2N8zg==
+X-CSE-MsgGUID: lsfrBdK+SPqtnbFRT0EwcQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11183"; a="34487650"
+X-IronPort-AV: E=Sophos;i="6.10,197,1719903600"; 
+   d="scan'208";a="34487650"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2024 22:34:35 -0700
+X-CSE-ConnectionGUID: apwivu79Tkq5kOy45tn23w==
+X-CSE-MsgGUID: RErpYkIaTYWpzimcLkBq3A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,197,1719903600"; 
+   d="scan'208";a="69648032"
+Received: from cpetruta-mobl1.ger.corp.intel.com (HELO tlindgre-MOBL1) ([10.245.246.115])
+  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2024 22:34:31 -0700
+Date: Tue, 3 Sep 2024 08:34:24 +0300
+From: Tony Lindgren <tony.lindgren@linux.intel.com>
+To: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
+Cc: "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+	"pbonzini@redhat.com" <pbonzini@redhat.com>,
+	"seanjc@google.com" <seanjc@google.com>,
+	"Li, Xiaoyao" <xiaoyao.li@intel.com>,
+	"Yamahata, Isaku" <isaku.yamahata@intel.com>,
+	"sean.j.christopherson@intel.com" <sean.j.christopherson@intel.com>,
+	"Huang, Kai" <kai.huang@intel.com>,
+	"isaku.yamahata@gmail.com" <isaku.yamahata@gmail.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 18/25] KVM: TDX: Do TDX specific vcpu initialization
+Message-ID: <Ztaf4PbPNxeMIg7J@tlindgre-MOBL1>
+References: <20240812224820.34826-1-rick.p.edgecombe@intel.com>
+ <20240812224820.34826-19-rick.p.edgecombe@intel.com>
+ <bb67e7315b443ad2f1cf0b0687c3412b9224122b.camel@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] watchdog: iTCO_wdt: Convert comma to semicolon
-To: Chen Ni <nichen@iscas.ac.cn>, wim@linux-watchdog.org
-Cc: linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240903012620.204247-1-nichen@iscas.ac.cn>
-Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
-In-Reply-To: <20240903012620.204247-1-nichen@iscas.ac.cn>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <bb67e7315b443ad2f1cf0b0687c3412b9224122b.camel@intel.com>
 
-On 9/2/24 18:26, Chen Ni wrote:
-> Replace a comma between expression statements by a semicolon.
+On Wed, Aug 28, 2024 at 02:34:21PM +0000, Edgecombe, Rick P wrote:
+> On Mon, 2024-08-12 at 15:48 -0700, Rick Edgecombe wrote:
+> > +static inline bool is_td_vcpu_created(struct vcpu_tdx *tdx)
+> > +{
+> > +       return tdx->td_vcpu_created;
+> > +}
 > 
-> Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
-> ---
-> Changelog:
+> This and is_td_finalized() seem like unneeded helpers. The field name is clear
+> enough.
+
+I'll do a patch for this.
+
+> >  static inline bool is_td_created(struct kvm_tdx *kvm_tdx)
+> >  {
+> >         return kvm_tdx->tdr_pa;
 > 
-> v1 -> v2:
-> 
-> 1. Drop Fixes tag.
+> Not this one though, the helper makes the caller code clearer.
 
-Please don't do that. Not only was v2 unnecessary, with it you unnecessarily
-dropped not only one but _two_ Reviewed-by: tags.
+Yes this makes things more readable.
 
-Guenter
+Regards,
 
-> ---
->   drivers/watchdog/iTCO_wdt.c | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/watchdog/iTCO_wdt.c b/drivers/watchdog/iTCO_wdt.c
-> index 264857d314da..35b358bcf94c 100644
-> --- a/drivers/watchdog/iTCO_wdt.c
-> +++ b/drivers/watchdog/iTCO_wdt.c
-> @@ -563,8 +563,8 @@ static int iTCO_wdt_probe(struct platform_device *pdev)
->   	}
->   
->   	ident.firmware_version = p->iTCO_version;
-> -	p->wddev.info = &ident,
-> -	p->wddev.ops = &iTCO_wdt_ops,
-> +	p->wddev.info = &ident;
-> +	p->wddev.ops = &iTCO_wdt_ops;
->   	p->wddev.bootstatus = 0;
->   	p->wddev.timeout = WATCHDOG_TIMEOUT;
->   	watchdog_set_nowayout(&p->wddev, nowayout);
-
+Tony
 
