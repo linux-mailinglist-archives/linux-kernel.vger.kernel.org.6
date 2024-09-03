@@ -1,50 +1,80 @@
-Return-Path: <linux-kernel+bounces-312109-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312111-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4C3F969261
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 05:45:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B77DF969264
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 05:57:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 91E74284FF5
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 03:45:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 713B2283616
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 03:57:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1246433BC;
-	Tue,  3 Sep 2024 03:45:37 +0000 (UTC)
-Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 111521CDFA1;
+	Tue,  3 Sep 2024 03:57:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A92RHExL"
+Received: from mail-oi1-f179.google.com (mail-oi1-f179.google.com [209.85.167.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29FCD18EBF
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 03:45:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17998383;
+	Tue,  3 Sep 2024 03:57:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725335137; cv=none; b=iGNjlOOL2boImxnyk3eN8agvMOwQS2IL3c6kwEq7voTtUOEP3bbVXL6yiDZimKSrCkRoAH+KYoojPwHbfRPGfq+NTX50vvHXWl+pOdQrtpgJ/JYzB2XBuwgYZb89Bw1oZEKZ1hKijoS34HjlCgTQs3sxZT6wxlsJcoXTmTy/J0o=
+	t=1725335843; cv=none; b=uOsjQaGi2504ji3LOh5+96q8Hj1gikZZol7NWYY7+mChqztSn6N8E3cpPIp7Hnpny791wTyRzogIm1JCn7eC1oTTORAXZ1NknkznIOLYvTz9taJOI2ymbHxEUEt678zDzsZaYE8R2NKFg3tcezsSnQI0oQ1FC5y4kNVgxW2FrQU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725335137; c=relaxed/simple;
-	bh=DR3kwa3/bIos73yr5KF/QcBGcUaNM7F9rCDjs0fwhCM=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=BnBzE73iUh3lNCsKh1rHXUziUXoLuNBWlsykGVfYs0OAJ1M7IMajeFuz+WIJanhyPSWXucEZNwVaFJ+VjKolnVve8K/n89h0ImK94JWVFfEMkhNzctLmMZpNV5U+4dZiclGg7lo5a+MFU3u+HdOrq6oaz0+Qp5A4vwCYGyCbyes=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.254])
-	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4WyWc50Yksz69RJ;
-	Tue,  3 Sep 2024 11:40:37 +0800 (CST)
-Received: from kwepemh500013.china.huawei.com (unknown [7.202.181.146])
-	by mail.maildlp.com (Postfix) with ESMTPS id 28A9A18010B;
-	Tue,  3 Sep 2024 11:45:33 +0800 (CST)
-Received: from huawei.com (10.90.53.73) by kwepemh500013.china.huawei.com
- (7.202.181.146) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 3 Sep
- 2024 11:45:32 +0800
-From: Jinjie Ruan <ruanjinjie@huawei.com>
-To: <pmladek@suse.com>, <rostedt@goodmis.org>, <john.ogness@linutronix.de>,
-	<senozhatsky@chromium.org>, <linux-kernel@vger.kernel.org>
-CC: <ruanjinjie@huawei.com>
-Subject: [PATCH -next v2 RESEND] printk: Use the BITS_PER_LONG macro
-Date: Tue, 3 Sep 2024 11:53:58 +0800
-Message-ID: <20240903035358.308482-1-ruanjinjie@huawei.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1725335843; c=relaxed/simple;
+	bh=6om9AST2rsmZsprvhdjhpv4RG5zd0DiwHv96r3fWcmk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=omPsATl6zAXIIrXIBISReIs+82qvV0u9mcWwGIn3GQ6YROlaNiAZMWwoyPxL62T31RdBJUCZfRKWmbdSNpDfLd9Lam1PalzKdEZGLEgqWKM8paubaJofakKtvOM38OAbBQyZf1Ae4nUMMoy8ASSIetRH6U9x2u960EIkT3bHN8E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=A92RHExL; arc=none smtp.client-ip=209.85.167.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oi1-f179.google.com with SMTP id 5614622812f47-3df0a54623dso2592828b6e.0;
+        Mon, 02 Sep 2024 20:57:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725335840; x=1725940640; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZMqTxfGWsFsPuQuj6hkm4TSHO/NChkL4tIS9tJnRwLU=;
+        b=A92RHExLAq5PSg2xOl4HoEFTwW92FyfBA0+w1PLcNz0Kh5dXmyTe2DQ+D2nCMEic97
+         W7/A1Fqmc2dW+BNXwyPt2djCrRjM9JxQJMPBKoskBfsxbzCwPejju0cjQu1H7J6dG7Lp
+         DKQjdn+OrWOwST5INKfHckTnXNN9bPGdQkoswup10M74mAUSVESqWJtwcoNu8E4i/dxg
+         L/7CJnszBNhK61MORb0duza+/6s+eoRqQHwWMYP2CfdQhOIUmiY5aGBT3tIFWPusB0mD
+         Haxk+oy/AlEggZGssPIb1hEsVH5//ZbA7ozBXA85boFNdkozy1cqI3eLKMdrzdxR9FZW
+         PmNw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725335840; x=1725940640;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ZMqTxfGWsFsPuQuj6hkm4TSHO/NChkL4tIS9tJnRwLU=;
+        b=lHFeTywiNkdPtmWrJTCNEGjmUfPT8lQXvDpUY1Cl8sO4ejo/1a6CNnPi2IhJbww+Cu
+         QQBrerTUuFg0IuZOVgRyoA6NIUQsS4+ksNanFrnKU9HmEenkFFz8C2dUwrSUO2UWjZV4
+         Rq8GuvbDobn5B6kdKBwspkYiasqohHNwALdb1awijIrBSwbzTaZCtVPsFsvSPxqUR/KL
+         U/z8xu6nA6wdoxxGTa9HRSTSiUnIOSrO13stRrY6uOmbx880fv25vha+UyaXlm4+1/Ts
+         4kFIL/re2cn3LuCWKcx9e0NhRfxE08Y+ktlyeOPqTdS+LGrpyBIvgOfl91cF3B3W/4Jv
+         Qhvg==
+X-Forwarded-Encrypted: i=1; AJvYcCXIm2NRqN+YMBmcBHeCaGIK4XPnq/M/nNukEEQLzojmsqJATVTty8Nq3tsGIzTCA7GGp+jMfDdeuyzgHG0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw6oo8Gf1B+fTS/47nBgaAaDPAaBNY/N8YIwTiVvTKbn+fR/GWj
+	6t0BarnRY4rzRMNPQHbjrJS1chr2SYB6nFe7ffsjjQNUIxOS77yeqW92HYgL
+X-Google-Smtp-Source: AGHT+IGMGmkPnvzDi/RcsLIx8HxARXXibx603MI5vTz2eh49yiXYiYi/6CPj/TbDOhhnjVybQqSzBA==
+X-Received: by 2002:a05:6808:3a18:b0:3d9:27fc:158f with SMTP id 5614622812f47-3df1c9b85d7mr14239128b6e.29.1725335840140;
+        Mon, 02 Sep 2024 20:57:20 -0700 (PDT)
+Received: from abhash-IdeaPad-L340-15IRH-Gaming.. ([136.233.9.100])
+        by smtp.googlemail.com with ESMTPSA id 41be03b00d2f7-7d22e785333sm8329421a12.56.2024.09.02.20.57.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 02 Sep 2024 20:57:19 -0700 (PDT)
+From: Abhash Jha <abhashkumarjha123@gmail.com>
+To: linux-iio@vger.kernel.org
+Cc: songqiang1304521@gmail.com,
+	jic23@kernel.org,
+	lars@metafoo.de,
+	linux-kernel@vger.kernel.org,
+	Abhash Jha <abhashkumarjha123@gmail.com>
+Subject: [PATCH v3 0/2] Continuous mode support for VL53l0x
+Date: Tue,  3 Sep 2024 09:26:34 +0530
+Message-ID: <20240903035636.9559-1-abhashkumarjha123@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -52,43 +82,43 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- kwepemh500013.china.huawei.com (7.202.181.146)
 
-sizeof(unsigned long) * 8 is the number of bits in an unsigned long
-variable, replace it with BITS_PER_LONG macro to make it simpler.
+Hello,
 
-Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
----
-v2:
-- Add include.
----
- kernel/printk/printk_ringbuffer.h | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+The first patch adds support for checking the sensor ID by reading
+MODEL_IDENTIFICATION register and seeing if it returns the value 0xEE
 
-diff --git a/kernel/printk/printk_ringbuffer.h b/kernel/printk/printk_ringbuffer.h
-index bd2a892deac1..8de6c495cf2b 100644
---- a/kernel/printk/printk_ringbuffer.h
-+++ b/kernel/printk/printk_ringbuffer.h
-@@ -4,6 +4,7 @@
- #define _KERNEL_PRINTK_RINGBUFFER_H
- 
- #include <linux/atomic.h>
-+#include <linux/bits.h>
- #include <linux/dev_printk.h>
- #include <linux/stddef.h>
- #include <linux/types.h>
-@@ -122,7 +123,7 @@ enum desc_state {
- 
- #define _DATA_SIZE(sz_bits)	(1UL << (sz_bits))
- #define _DESCS_COUNT(ct_bits)	(1U << (ct_bits))
--#define DESC_SV_BITS		(sizeof(unsigned long) * 8)
-+#define DESC_SV_BITS		BITS_PER_LONG
- #define DESC_FLAGS_SHIFT	(DESC_SV_BITS - 2)
- #define DESC_FLAGS_MASK		(3UL << DESC_FLAGS_SHIFT)
- #define DESC_STATE(sv)		(3UL & (sv >> DESC_FLAGS_SHIFT))
+The second patch adds support for continuous mode in the sensor by using
+buffers. We enable the sensor's continuous mode in the buffer_postenable
+function.
+Replaced the irq handler with a threaded irq handler in order to perform
+I2C reads for the data. The continuous mode can be disabled by disabling
+the buffer.
+Added a trigger to the device for the continuous mode. Also validating that
+the device uses the internal trigger provided by us.
+
+Changes in v3:
+- Added "asm/unaligned.h" include to fix `-Wimplicit-function-declaration`.
+- The above error was pointed during testing by kernel-test-robot
+- Link to v2: https://lore.kernel.org/linux-iio/20240902122557.129013-1-abhashkumarjha123@gmail.com/T/#t
+
+Changes in v2:
+- Added a trigger for the device
+- Added a poll function for the triggered buffer setup
+- Performed the data reading and pushing to buffers in the poll function
+- Minor code refactoring
+
+- Link to v1: https://lore.kernel.org/linux-iio/20240830201627.298264-1-abhashkumarjha123@gmail.com/T/#t
+
+
+Abhash Jha (2):
+  iio: proximity: vl53l0x-i2c: Added sensor ID check
+  iio: proximity: vl53l0x-i2c: Added continuous mode support
+
+ drivers/iio/proximity/vl53l0x-i2c.c | 177 +++++++++++++++++++++++-----
+ 1 file changed, 150 insertions(+), 27 deletions(-)
+
 -- 
-2.34.1
+2.43.0
 
 
