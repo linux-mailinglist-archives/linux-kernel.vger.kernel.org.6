@@ -1,173 +1,178 @@
-Return-Path: <linux-kernel+bounces-313681-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313682-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE4BF96A897
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 22:41:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BE1596A899
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 22:41:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F4A11F21399
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 20:41:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 606F11C20A53
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 20:41:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 627AB1D58B6;
-	Tue,  3 Sep 2024 20:38:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 268381D5CCB;
+	Tue,  3 Sep 2024 20:40:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="mMoooUuF"
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="cXlMWqtN"
+Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA1741DB55E;
-	Tue,  3 Sep 2024 20:38:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D15AD1D223A
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 20:40:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725395930; cv=none; b=HALikaZJlh6GQK1a/lmbUHwReGE6CBLTpaeaKXzDEGG+M5QpjZ8Kq4YENaZKrQIlncFbOJntJaOB9yXhK8NQaCwysQ84LOZFLnS3Ow/MvJ56ROjvM4y02IKzVKr7s3yh4ApA1z3Yjdauec+P0GrZ3Mj3vvXsOHIVD+QCgBFurLc=
+	t=1725396015; cv=none; b=YiZGO1ua6cjMrt8NIqe3pnLPiwVj6RZ0U8RAR+7aLWLqYPWFmVdFH5QJOT+x5OpGgDjW9tpo4TTtmDduBWjWTdvt2f6UvdR9ZejEEo018gJu44idQkM3T8HCcbodEOzEX4TmGG6GNmWSwUsB4oREYQYUNzg3a8tLQRJ47nvKym4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725395930; c=relaxed/simple;
-	bh=VFoTsRtt68RVoeAi9VLYHfQjDg2XerBSNoRzzGDciSo=;
-	h=Date:From:To:CC:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To:References; b=Ai5DEiTsC0owbX1voIwXvZ70YMp+vmXAi2tL2aS5rW8XWE5LM/AlM1DJ+S3proryq+rNXOfdkWHWozH10BDdWo3zOM9NViyiARpfh5h4krOHpKj8SfK+nIvAqhzg/bYd/YNRpUHTllBuDY3s3RZoDBYpKXZUikCvDIVsADNxW88=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=mMoooUuF; arc=none smtp.client-ip=210.118.77.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20240903203845euoutp02183ff4c4ac8e027bf3c3115036f0ad8b~x1nPvaRt71652516525euoutp02i;
-	Tue,  3 Sep 2024 20:38:45 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20240903203845euoutp02183ff4c4ac8e027bf3c3115036f0ad8b~x1nPvaRt71652516525euoutp02i
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1725395925;
-	bh=GNR+eK42esfILSIOqFtg0aWfjz42sOarNmVsVFV8tbQ=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=mMoooUuFfjML3nBfHfvdD4YlzKAeEDyDBWppHqsKVLHh7Mqvyku7hM3JBmIXdlF0s
-	 HXBv/PQYboc5x6cN+nsU4RznuqxX3T4KnQ+M5GqILJL8t6sdvJZ9kD8VoaFrFEozSB
-	 deuA7ZWMsd/ISwD3UlTQ5x41vrDVbioEb5F1WiOw=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-	20240903203844eucas1p2401ddb0040b75475278124294f250e08~x1nOqUo5r0264902649eucas1p2C;
-	Tue,  3 Sep 2024 20:38:44 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-	eusmges3new.samsung.com (EUCPMTA) with SMTP id 45.5A.09620.4D377D66; Tue,  3
-	Sep 2024 21:38:44 +0100 (BST)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-	20240903203843eucas1p113cca3d7efa156bf50ddf1c9f555978b~x1nNTZbbE1114411144eucas1p1U;
-	Tue,  3 Sep 2024 20:38:43 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-	eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20240903203843eusmtrp28d9d32636f0230899b8eabf94334c70a~x1nNSG5l32626626266eusmtrp2o;
-	Tue,  3 Sep 2024 20:38:43 +0000 (GMT)
-X-AuditID: cbfec7f5-d31ff70000002594-6f-66d773d4a31f
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-	eusmgms1.samsung.com (EUCPMTA) with SMTP id 12.E7.14621.2D377D66; Tue,  3
-	Sep 2024 21:38:42 +0100 (BST)
-Received: from CAMSVWEXC02.scsc.local (unknown [106.1.227.72]) by
-	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20240903203842eusmtip2d7b8f85193e728a15f68f839e5e4e855~x1nM8-Kqe1124611246eusmtip2J;
-	Tue,  3 Sep 2024 20:38:42 +0000 (GMT)
-Received: from localhost (106.210.248.110) by CAMSVWEXC02.scsc.local
-	(2002:6a01:e348::6a01:e348) with Microsoft SMTP Server (TLS) id 15.0.1497.2;
-	Tue, 3 Sep 2024 21:38:42 +0100
-Date: Tue, 3 Sep 2024 22:38:37 +0200
-From: Joel Granados <j.granados@samsung.com>
-To: Kaixiong Yu <yukaixiong@huawei.com>
-CC: <akpm@linux-foundation.org>, <mcgrof@kernel.org>, <ysato@users.osdn.me>,
-	<dalias@libc.org>, <glaubitz@physik.fu-berlin.de>, <luto@kernel.org>,
-	<tglx@linutronix.de>, <bp@alien8.de>, <dave.hansen@linux.intel.com>,
-	<hpa@zytor.com>, <viro@zeniv.linux.org.uk>, <brauner@kernel.org>,
-	<jack@suse.cz>, <kees@kernel.org>, <willy@infradead.org>,
-	<Liam.Howlett@oracle.com>, <vbabka@suse.cz>, <lorenzo.stoakes@oracle.com>,
-	<trondmy@kernel.org>, <anna@kernel.org>, <chuck.lever@oracle.com>,
-	<jlayton@kernel.org>, <neilb@suse.de>, <okorniev@redhat.com>,
-	<Dai.Ngo@oracle.com>, <tom@talpey.com>, <davem@davemloft.net>,
-	<edumazet@google.com>, <kuba@kernel.org>, <pabeni@redhat.com>,
-	<paul@paul-moore.com>, <jmorris@namei.org>, <linux-sh@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-	<linux-mm@kvack.org>, <linux-nfs@vger.kernel.org>, <netdev@vger.kernel.org>,
-	<linux-security-module@vger.kernel.org>, <wangkefeng.wang@huawei.com>
-Subject: Re: [PATCH v2 -next 00/15] sysctl: move sysctls from vm_table into
- its own files
-Message-ID: <20240903203837.cbzs3ziuh6eq4kvo@joelS2.panther.com>
+	s=arc-20240116; t=1725396015; c=relaxed/simple;
+	bh=cCmLjf308k6OsUJLrInpoUdAeJs7fWLaNbFSDImA684=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=pfxuq/Tl83IofHNlgcNmCIwb/tc973F/4reHD7GR37Ewu9dkudYwNxWW+OYJ41qa/ayO/EhWMVzEns5Ey3C2oPqVcrqSflJA414qhDCbvCcOKr1dG0CT7njSEhnlpA+nArxsRJNuChl4kxehLtiJrT7VOU24SfHJYqLJ7YWp/S0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--edliaw.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=cXlMWqtN; arc=none smtp.client-ip=209.85.128.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--edliaw.bounces.google.com
+Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6b47ff8a5c4so111015497b3.2
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 13:40:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1725396013; x=1726000813; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=gr0+wD1hQSkgsAJy15LgXOqT17mmHStoYkWLI3kOh1E=;
+        b=cXlMWqtNbG9zhOlXPMihLtpr5nhe4BzDkxU9LdrLlY1lJCr5OIn0+6jSm8HZYY0422
+         Br8c7ZwVzdtkU5vc7xEMh+Uh3naN2azLlpctk0/S4hwGt4Ut65eRRds71TI5BXPDi6ea
+         3xD8Mo86RI6INjS0rO/lIO39LC3qV6iWyRMHlhzxhQ0Hz+LvpJXKMytpZEPMf3gFn+TH
+         lyhBgfRDmDieONFeHqF8G4purijtXERbF6JprBf+nfcK4KxSYUwp66JR0mPrQ1lD+b//
+         35o9b355/bl34igrZgd3sfVVgW5v5dmERdrjO2hVyj2b8O9jJQtHLMw9gJ7q1uiBkiSv
+         W55Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725396013; x=1726000813;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=gr0+wD1hQSkgsAJy15LgXOqT17mmHStoYkWLI3kOh1E=;
+        b=tm6k5/NJFW4xDsJ9LpbpHTqkpW03DmuTZq6YbT+q8EyGkkd5bmeUibgAO5ycqFvYeB
+         Vz0xW0qvcU6JpNa/EV+s0hBvPYk9F7VPO9Zw0MX84sxCNW+/m8LrA4i6NlW4ICli9FUK
+         1QR3RNtJaYAaMLOT5aIPAVm5c9aWcME7rUlfYiSTeHadi9aSoAk2Zx6NZ4tqiqcfAcwp
+         IHILJgoXjag1m+0Dn7n83lFT4lW7nySbuBURM4S0Kn2Q44yBP3+6GpxOGJjspi776cFG
+         6HksRW7sRN8c02krkrE7o0jE0LaKIpHKu6t3sqdX5MAH2tm8gPlu5LvSKABwuSOQOOx3
+         tFcA==
+X-Gm-Message-State: AOJu0YwcJjHGAiag+StHkSWzA//hxRPkCJw1o9cFh76Pa6lyl+5tWWTv
+	W1Afryi1NI5PJw/zwC6Al+m0+5MDS96BYq3iNHbzDTu6fp1RmPlS5pAZ0oFW3oY3EaOnnJTLF6J
+	s+A==
+X-Google-Smtp-Source: AGHT+IFl6cBrYkda8nNgdZrTivfv3zjTpKUU2f25L9umrr7vatGI4GPL+9fg9hOyModMI6oj7rvGWFpN3Tw=
+X-Received: from edliaw.c.googlers.com ([fda3:e722:ac3:cc00:24:72f4:c0a8:305d])
+ (user=edliaw job=sendgmr) by 2002:a05:690c:4888:b0:6ad:e9c1:fc4f with SMTP id
+ 00721157ae682-6d40f922d32mr317297b3.5.1725396012716; Tue, 03 Sep 2024
+ 13:40:12 -0700 (PDT)
+Date: Tue,  3 Sep 2024 20:39:12 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20240903033011.2870608-1-yukaixiong@huawei.com>
-X-ClientProxiedBy: CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) To
-	CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348)
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Te0xTZxjG8/WcnlNqao6VwBeBQICBsoEbLORTtglmWY7GbXjJnE4iFQ5g
-	5GZLN9ziVhQHEgSsjEtBLpMBcpXSlFWBDjDUQtZuXDKEAZNR5xzXIiI62rUczPzved/n+b3f
-	+/7x8TDhLLGNdzoxhREniuI9CT6u7l01+g9Jfot5c/weRKXNDQS6pLHiaOmWhUD/9JgBso7/
-	xUHl37cSqHL1ORc9upUBUKkxHUem3ikSlcx7oYIWZ1RSeJGDVqvrSNTUfIODmmaNXPSLOoeL
-	2mR/kKi9Q4+jwdulBJposNqMn/q5aCF7ikCl/+ZjSK+4iSPj7UYuGskzAdRRLsNRb4UTkj80
-	k+hp/wxAY/JCHLUqv8NQ3/M+DjJft3BRSVoOQMY1HRelLU0C9OKZbbpVu0KgeqsKC91Br1zK
-	wWnVzfscukIppdPvznLp1lo/Wll3maCVZjlJG0oWcHrOYCDpe0UvcLpMf5DOXomiF02jON3Y
-	8QjQXQYDoOc7h4lw5+P8d6KZ+NOfM+Kd70Xy48ZM9/HkPl7qxN0JUgaWiCzgwIPU21ButnKz
-	AJ8npGoB1GVlc9jiCYAKdSvHnhJSSwA2zHBfEuNjSxgbqgGw/EIfYAtb6IpRhrOECkD5nJNd
-	45Q3zNOVrU8iqDegceZ3zK4dKV/4cP5nwg5j1CAJJ682AbuxlfoMmh4Ur4cEVChcnpwjWL0F
-	6oun1x/AbIMq7phtfZ5Nu8AaC8/edqDehf0tGYDd1At2VXeTrD4P+1Sj66dBqmgTnCkY4bDG
-	+1Dek7UBbIWPdaoNwBVaNeUbwDUAtZYFki3qAaxOW96gQ2D60DRp3wJSYVBbfpKVm+HI7BZ2
-	z81Qri7E2LYAZn4rZEEfWD8xg+cBL8UrlyleuUzx/2UVAKsDzoxUkhDLSIISmS8CJKIEiTQx
-	NiAqKUEJbD+i36Jb/hHUPl4M6AYcHugGkId5OgoiWoZjhIJo0bkvGXHSSbE0npF0Axce7uks
-	eC3anRFSsaIU5gzDJDPily6H57BNxlGoU/bknsr/2L/NaVF3fABbKM14+sGuvzX5pyy7tZSD
-	a1uNPqRq5+GevZFDJ7qOlS2saH9ovtw+dT1zn5kQ1QWqDUNH02BgmuPZzo/ikq+ElumLzO0R
-	PmMTRcqepvSr7S5rq4dCvq4KzJv2CC42Fd/wDQrennvANdXJtJ9fGSHrfJBvmPegzrvH+iik
-	Kfs9Bo54BmjazxS8fnYw8Y5bavGzrz5Uph5xq9fXHsuculalcExKbfWP8mo8uker2uWdSaQn
-	bAopORCjqbTkCmrzHckB0l3tlyz9NfDcnxe9w08EjYbNxX8aedBNcyF4bZ/vN9lhvYf5br6d
-	uxd7Iod3fJIb/mSvJy6JE73lh4klov8AfRsoZoAEAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Se0xTdxTH/fU+emGQXMvrJ8yhhWWTQaG89qsDNAuwu4S5jT0jcayBC5hR
-	ML3tHi5T8BEGkgbwwSwVq2QMOinQMnQqOpHASme7QGC4ShEFxA1FWhzjIazQLfO/zznn+/3m
-	5ORQmOAIGUjtLlCw8gJpvpD0xM3LPfaIPu63nKjiGzFI03yORId/XMGRs2WZRH9edwC0MnyP
-	h06fNZLozPwCgSZbSgDSWA/haLz7Dh/VTIegE60BqKb6IA/N1+v4SN9cx0P6B1YC/dquItD5
-	ott8dLnDhKP+ixoS2c+tuAY/mQn0qPwOiTRLxzBkUjfiyHqxiUBDFeMAdZwuwlG31h9VTTj4
-	6C/zFEC2qmocGQ3HMdS70MtDjlPLBKopVgFkfdJDoGLnCECLf7vSV67Okej7lTZs+xZm7rAK
-	Z9oab/IYrUHJHOp6QDDGhjDGoCslGYOjis9Yah7hzEOLhc/8/M0iztSa3mbK57KYmfHfcaap
-	YxIw1ywWwExfGSDfCtgpSpAXKhXsprxCTpEozBCjaJFYgkTRsRKROOblXVuj44SRSQnZbP7u
-	T1l5ZNLHojzb+E18Ty/1ub3Lzi8CTrIMeFCQjoXDNidWBjwpAf0tgL0LNsI9eBa2zg78yz5w
-	abCMdItmABxdniXcRRuAztFpsKrC6VBY0VPLW2WSDofWqVvYKvvSL8CJ6Rtrbozu58ORSv2a
-	wYfOgOOjJ9dE3vR2+Hjk4dpOAroCQNt1b3d/PTSdHMNXGXOFai85XBrKxUHwu2Vqte1BJ0Jz
-	awlwbxoCr9V38t38FXQ+mQAVwEf9VJL6qST1/0lagOmAL6vkZLkyTizipDJOWZAryiqUGYDr
-	K9u7540XQO0fM6JOwKNAJ4AUJvT13tU6kCPwzpZ+sZeVF2bKlfks1wniXKeoxAL9sgpdb12g
-	yBTHR8WJY+MlUXGS+BhhgHdqvzVHQOdKFewnLLuHlf/n41EegUW8I750s/CsUTX14pBqW3bL
-	Jq+SpgMasyFky4U0nWAxSPaq4oexdy+1J0Nn91xsw3MbBjdTd0OPDiWPRC/ZehoWPhgkUdh0
-	uk6bkpLSHHJ//Qn7Ps80Ll2/sdRRExw6V6lN31ld8gvj2Bem23FgLKWJn370Naf+StvXEZcn
-	+7sy3ik3vlKa2VedYLz/ZrB+XdjjdZhXxevPJAtM4fsTg4KHE2b96ywwukhWMPtZaiLppwv8
-	8qVtx07VHb+dpgnAhfd83i8zf2SIpDe/Z6rfcL67fO+H+8Ov9r0hTZLH9EcuPu+vCdqqvhur
-	k6RG8BR2AUzS+nFerfjG8IMY4XHL1ChyKIU4lycVh2FyTvoPClcIMx4EAAA=
-X-CMS-MailID: 20240903203843eucas1p113cca3d7efa156bf50ddf1c9f555978b
-X-Msg-Generator: CA
-X-RootMTR: 20240903033105eucas1p2b9d0b874da268fecb49905d90340de09
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20240903033105eucas1p2b9d0b874da268fecb49905d90340de09
-References: <CGME20240903033105eucas1p2b9d0b874da268fecb49905d90340de09@eucas1p2.samsung.com>
-	<20240903033011.2870608-1-yukaixiong@huawei.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.46.0.469.g59c65b2a67-goog
+Message-ID: <20240903203915.3383774-1-edliaw@google.com>
+Subject: [PATCH RESEND] selftests/futex: Order calls in futex_requeue
+From: Edward Liaw <edliaw@google.com>
+To: linux-kselftest@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, 
+	Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Darren Hart <dvhart@infradead.org>, Davidlohr Bueso <dave@stgolabs.net>, 
+	"=?UTF-8?q?Andr=C3=A9=20Almeida?=" <andrealmeid@igalia.com>, Shuah Khan <shuah@kernel.org>, 
+	John Stultz <jstultz@google.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Anna-Maria Behnsen <anna-maria@linutronix.de>, Frederic Weisbecker <frederic@kernel.org>, 
+	Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>, 
+	Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, 
+	Oleg Nesterov <oleg@redhat.com>, Marco Elver <elver@google.com>, Dmitry Vyukov <dvyukov@google.com>
+Cc: linux-kernel@vger.kernel.org, kernel-team@android.com, 
+	Edward Liaw <edliaw@google.com>, Muhammad Usama Anjum <usama.anjum@collabora.com>, 
+	Davidlohr Bueso <dbueso@suse.de>, llvm@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Sep 03, 2024 at 11:29:56AM +0800, Kaixiong Yu wrote:
-> This patch series moves sysctls of vm_table in kernel/sysctl.c to
-> places where they actually belong, and do some related code clean-ups.
-> After this patch series, all sysctls in vm_table have been moved into its
-> own files, meanwhile, delete vm_table.
-> 
-> All the modifications of this patch series base on
-> linux-next(tags/next-20240902). To test this patch series, the code was
-> compiled with both the CONFIG_SYSCTL enabled and disabled on arm64 and
-> x86_64 architectures. After this patch series is applied, all files
-> under /proc/sys/vm can be read or written normally.
+Similar to fbf4dec70277 ("selftests/futex: Order calls to
+futex_lock_pi"), which fixed a flake in futex_lock_pi due to racing
+between the parent and child threads.
 
-This move make a lot of sense. The question with these multi-subsystem
-patchsets is how do they go into mainline. For now I have added this to
-sysctl-testing to see if it needs more work. I can push this through the
-sysctl subsystem, but you need to get reviewed-by for all of the commits
-in different subsystems. I'm also fine with this going in through some
-other subsys if anyone wants to take it?
+The same issue can occur in the futex_requeue test, because it expects
+waiterfn to make progress to futex_wait before the parent starts to
+requeue. This is mitigated by the parent sleeping for WAKE_WAIT_US, but
+it still fails occasionally. This can be reproduced by adding a sleep in
+the waiterfn before futex_wait:
 
-Best
+TAP version 13
+1..2
+not ok 1 futex_requeue simple returned: 0
+not ok 2 futex_requeue simple returned: 0
+not ok 3 futex_requeue many returned: 0
+not ok 4 futex_requeue many returned: 0
 
+Instead, replace the sleep with barriers to make the sequencing
+explicit.
+
+Fixes: 7cb5dd8e2c8c ("selftests: futex: Add futex compare requeue test")
+Reviewed-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
+Signed-off-by: Edward Liaw <edliaw@google.com>
+---
+ .../selftests/futex/functional/futex_requeue.c       | 12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
+
+diff --git a/tools/testing/selftests/futex/functional/futex_requeue.c b/tools/testing/selftests/futex/functional/futex_requeue.c
+index 51485be6eb2f..8f7d3e8bf32a 100644
+--- a/tools/testing/selftests/futex/functional/futex_requeue.c
++++ b/tools/testing/selftests/futex/functional/futex_requeue.c
+@@ -12,9 +12,9 @@
+ 
+ #define TEST_NAME "futex-requeue"
+ #define timeout_ns  30000000
+-#define WAKE_WAIT_US 10000
+ 
+ volatile futex_t *f1;
++static pthread_barrier_t barrier;
+ 
+ void usage(char *prog)
+ {
+@@ -32,6 +32,8 @@ void *waiterfn(void *arg)
+ 	to.tv_sec = 0;
+ 	to.tv_nsec = timeout_ns;
+ 
++	pthread_barrier_wait(&barrier);
++
+ 	if (futex_wait(f1, *f1, &to, 0))
+ 		printf("waiter failed errno %d\n", errno);
+ 
+@@ -70,13 +72,15 @@ int main(int argc, char *argv[])
+ 	ksft_print_msg("%s: Test futex_requeue\n",
+ 		       basename(argv[0]));
+ 
++	pthread_barrier_init(&barrier, NULL, 2);
+ 	/*
+ 	 * Requeue a waiter from f1 to f2, and wake f2.
+ 	 */
+ 	if (pthread_create(&waiter[0], NULL, waiterfn, NULL))
+ 		error("pthread_create failed\n", errno);
+ 
+-	usleep(WAKE_WAIT_US);
++	pthread_barrier_wait(&barrier);
++	pthread_barrier_destroy(&barrier);
+ 
+ 	info("Requeuing 1 futex from f1 to f2\n");
+ 	res = futex_cmp_requeue(f1, 0, &f2, 0, 1, 0);
+@@ -99,6 +103,7 @@ int main(int argc, char *argv[])
+ 		ksft_test_result_pass("futex_requeue simple succeeds\n");
+ 	}
+ 
++	pthread_barrier_init(&barrier, NULL, 11);
+ 
+ 	/*
+ 	 * Create 10 waiters at f1. At futex_requeue, wake 3 and requeue 7.
+@@ -109,7 +114,8 @@ int main(int argc, char *argv[])
+ 			error("pthread_create failed\n", errno);
+ 	}
+ 
+-	usleep(WAKE_WAIT_US);
++	pthread_barrier_wait(&barrier);
++	pthread_barrier_destroy(&barrier);
+ 
+ 	info("Waking 3 futexes at f1 and requeuing 7 futexes from f1 to f2\n");
+ 	res = futex_cmp_requeue(f1, 0, &f2, 3, 7, 0);
 -- 
+2.46.0.469.g59c65b2a67-goog
 
-Joel Granados
 
