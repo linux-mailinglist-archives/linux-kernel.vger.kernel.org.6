@@ -1,186 +1,174 @@
-Return-Path: <linux-kernel+bounces-312708-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312710-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22851969A1C
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 12:25:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2149969A25
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 12:29:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D099E2845B6
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 10:25:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E54FB1C23372
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 10:29:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 044C91B985D;
-	Tue,  3 Sep 2024 10:25:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="F0jO1JGv"
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADFC81B9831;
+	Tue,  3 Sep 2024 10:29:21 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EBD045003
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 10:25:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B642C1B9826
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 10:29:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725359134; cv=none; b=VUufUHk9JJgpf4iZsNIuN+1wvf8AQGogKfsSAaPJ9yZjeIagmUNCp57q4NGSu0NJkgBqF11k+qCA711WbkmnFVqbUo+TtjXr1EUr71sBeYwphZ1VdVDnZgD8uxdjmrc5g0cS2SO+Vd6KjufJ92upMnvy1Bd7PqBBYbd42Bw88mM=
+	t=1725359361; cv=none; b=OuxrNGTBfDqu3EbWjzkhc46cTi6HcjRjfxIu1zgseMZKcYAo94N02vKn5/ghHUKgpH4SURdiYA0wxn8+Piyebx0+rKKb2EX48m+Emgv69YZhe6x+QS8zFTYE9vCdlRVPrn2D5u+AU1Jtj5abjsJGMne68RLEI+6HayGyQy32ymo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725359134; c=relaxed/simple;
-	bh=oN5rF1Mtwe+X1+e6eXEyAVAwAsw9T08tJv9O9Z3jkmA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EcjTGfaTrCcIF+JQDDGLqMsvYTcMszF9viNn0jHik8CxMrYfP8S/M3x3XGjx1K9VQHa+5CFybL2PKwvG4uE/LtBx836I0HNXOZdUnKfuT7Ub+0Xw8Jixwn2kbtFV8pPgPa2ZqlyJ7Cd45mix66lAgX9xF/pyTW2026mfMHPkcmU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=F0jO1JGv; arc=none smtp.client-ip=209.85.218.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a7a9cf7d3f3so566017866b.1
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 03:25:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1725359130; x=1725963930; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=FhjOSSPYKdQokRD0f5VUMVTrt7/yXDhsNLWMWB2HXlc=;
-        b=F0jO1JGvoPJfFNIhll/q3SGxwZqFptaRlWqemly6wjMoCM03zNwoRLMdnpBfX2eoQe
-         zIvXpSdtKXwIUTitf+9j3CASljivJN9GU5jUDI5GrJ+pPF5U++YOzpH5Smbrk1WBRaIB
-         tB0epHVBEkG2GMWHq5qc0AhSYRkBnRC6YsClp6aSql4aO698EmyBYDy8ZvukSNJhE9+l
-         YKa8eHQnLpXlrEnmE2PE0Lf/8940U51x1hFWbIUM4S+gZ7TWZH6XnU3X5i3YIMh9g3hj
-         T7eaZEF83JFBp9uEBTMa04jJg61jLEPrrf3Xb83IstXHHXSbXhcQ8y2RsF2HTeZCmNh6
-         YkcQ==
+	s=arc-20240116; t=1725359361; c=relaxed/simple;
+	bh=gT/LQY3fBKa033x1eX0blsHMmEV5xanZCc19O2q6ctc=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=YCWo2p3ZuVtFB7ZtZFpLNCIaFQHeNgYHwQI46OryuwcaAKWUnNS34XdNxmVKoOHTKZRDhy7bRNd/uStayvdRFBFRnYULtGbvoxD7cBhS4qe6qL1cTyVaabbPgbUTEODvYZvp1ySF8F6bmg66+dCzuHiGw1l70RVwojb7/PZuZpo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-39d4ba9c42aso60366175ab.3
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 03:29:19 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725359130; x=1725963930;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FhjOSSPYKdQokRD0f5VUMVTrt7/yXDhsNLWMWB2HXlc=;
-        b=BQeQjzK8uSgNPFqPtvPOz04GB4chGor4MY04OEnbQqOndgSB9fWNxVt7fdWyvHp8si
-         vCt579sd9RnTKc0y6kbWKBKwZWnfTqMeI8oIWsEKBx4XSapGh7tx3LNGxzd4vbEywpMl
-         NrnliP3K0IMbf2G6Xr5cG6Z1PeMknVqUCmVnXOgqbhLCP3LY6yRATZBRdwL+7nwG9JTc
-         w9bOEmuwiLPCTjVgnZ8cUyHsKk2EiNd+mrfcJEskeiaLLG+AwG/qslYAUbJ+RlPDiwCs
-         YcLA2uo5+ini2fu7Fu3+DC8mHT9RdWTEzm+GOblUeP16hdVDKE692xZ26CHwgUedszDX
-         /nUg==
-X-Forwarded-Encrypted: i=1; AJvYcCU6IQNAGh66aSVQtNi3YQQ1Pkz2efu8kdI92p+rilc63GaUp/l8QstoU6cIMp/Nf4/I6SI6K2KMFRSBqGY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzgV/WVeugUowATrolZYJiIAxZknBB9mP2a/u9zbjqsgunohi2A
-	vsBwnmlyoj/zo5oeuzZr0X+wQCuytITI3tQ+nOfR357hupQmVih8i9Xo7cHbH+4=
-X-Google-Smtp-Source: AGHT+IGZbMC+8AxfRktMaXs8vwVDTnVZtWSHrNzE6z21jvPmy2E9Xiz7kgV5kmhvl7T/ABHn/N3PsQ==
-X-Received: by 2002:a17:907:3e83:b0:a86:6fb3:fda5 with SMTP id a640c23a62f3a-a89fae1b889mr519848566b.32.1725359129869;
-        Tue, 03 Sep 2024 03:25:29 -0700 (PDT)
-Received: from linaro.org ([84.232.173.69])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a89891d6fa9sm663853166b.162.2024.09.03.03.25.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Sep 2024 03:25:29 -0700 (PDT)
-Date: Tue, 3 Sep 2024 13:25:27 +0300
-From: Abel Vesa <abel.vesa@linaro.org>
-To: Rajendra Nayak <quic_rjendra@quicinc.com>
-Cc: manivannan.sadhasivam@linaro.org, bp@alien8.de, tony.luck@intel.com,
-	mchehab@kernel.org, rric@kernel.org, andersson@kernel.org,
-	konradybcio@kernel.org, quic_sibis@quicinc.com,
-	linux-arm-msm@vger.kernel.org, linux-edac@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] EDAC/qcom: Make irq configuration optional
-Message-ID: <ZtbkF4lkLqSq65Ws@linaro.org>
-References: <20240903101510.3452734-1-quic_rjendra@quicinc.com>
+        d=1e100.net; s=20230601; t=1725359359; x=1725964159;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=NRNSBzYEnJABwE8WtqjmxFldyu3O9FP/lLXmT6XD040=;
+        b=JoSr1d0imHyAfNzBRU8fkwW8euHR2q+oK5VVx86MlaGCCYBnEvb/jTZnDERBxeg9Z6
+         AoXcPtu0juzHH7Ri+YcpkGG7nufaE/JxSgyLYWld6Uqn64JRUiDio1OtCOibWVFExZci
+         NevIhF/y1bXCX0mpxueNcEhF9Z9A2uvq0HVNdAI/H+PaxQyk09WDQp1/rAbniMYv5/IT
+         B99xwtHXQT/p625giotk89cCpfF0K5/pu1vMpWEEQiJfPdnfBD7LW3NfwWBER/btFG+C
+         IeUUZ7RbTtmyH3Z65Y0trUHMscyTkw5VxS3SatIXUx5KOTfU/08n+w6ngdQtihOymCN2
+         YQ8g==
+X-Forwarded-Encrypted: i=1; AJvYcCU5h1bBNjUiQrKIGncC6/HM6xydi1c5sGV4AMzC0FKwImDZd3dRzEsStz23nupOxrMXgOTZSNOg3MCkAtk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyvmM/B+vS4mb1G/AKebra6VbURgYhzepWvXMj9HDmtU9Fb/4xy
+	QljyaDIzAfCQZIXnFeAXIkDixFKQgGBS91J3EsBzcbLMW62RBGYM+dJoLgZvXGnilHiy8N8QYJo
+	UVrQfeC7EeeAW7yCP29EsSsXcuOxgAuXKwdT4Fwer3IEykSBfhkUPm3s=
+X-Google-Smtp-Source: AGHT+IFeZfDs8CAVVuo3iOfw+zRbjQNXVj5CQ4Ca9iK16vQ+xoGOS7zZQ9MCAXOwAakDR063imPgNTb5emeSjH7+JjQ2qRjtwEvr
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240903101510.3452734-1-quic_rjendra@quicinc.com>
+X-Received: by 2002:a05:6e02:198f:b0:396:dc3a:72f2 with SMTP id
+ e9e14a558f8ab-39f410602bamr10312555ab.3.1725359358801; Tue, 03 Sep 2024
+ 03:29:18 -0700 (PDT)
+Date: Tue, 03 Sep 2024 03:29:18 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000b10c48062134870d@google.com>
+Subject: [syzbot] [ocfs2?] kernel BUG in _ocfs2_free_suballoc_bits
+From: syzbot <syzbot+2d6d9df993967dde8297@syzkaller.appspotmail.com>
+To: jlbec@evilplan.org, joseph.qi@linux.alibaba.com, 
+	linux-kernel@vger.kernel.org, mark@fasheh.com, ocfs2-devel@lists.linux.dev, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 24-09-03 15:45:10, Rajendra Nayak wrote:
-> On most modern qualcomm SoCs, the configuration necessary to enable the
-> Tag/Data RAM related irqs being propagated to the SoC irq controller is
-> already done in firmware (in DSF or 'DDR System Firmware')
-> 
-> On some like the x1e80100, these registers aren't even accesible to the
-> kernel causing a crash when edac device is probed.
-> 
-> Hence, make the irq configuration optional in the driver and mark x1e80100
-> as the SoC on which this should be avoided.
-> 
-> Fixes: af16b00578a7 ("arm64: dts: qcom: Add base X1E80100 dtsi and the QCP dts")
-> Reported-by: Bjorn Andersson <andersson@kernel.org>
-> Signed-off-by: Rajendra Nayak <quic_rjendra@quicinc.com>
-> Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Hello,
 
-Reviewed-by: Abel Vesa <abel.vesa@linaro.org>
+syzbot found the following issue on:
 
-> ---
-> v2: 
-> Minor typo fixed in changelog
-> 
->  drivers/edac/qcom_edac.c           | 8 +++++---
->  drivers/soc/qcom/llcc-qcom.c       | 3 +++
->  include/linux/soc/qcom/llcc-qcom.h | 2 ++
->  3 files changed, 10 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/edac/qcom_edac.c b/drivers/edac/qcom_edac.c
-> index d3cd4cc54ace..96611ca09ac5 100644
-> --- a/drivers/edac/qcom_edac.c
-> +++ b/drivers/edac/qcom_edac.c
-> @@ -342,9 +342,11 @@ static int qcom_llcc_edac_probe(struct platform_device *pdev)
->  	int ecc_irq;
->  	int rc;
->  
-> -	rc = qcom_llcc_core_setup(llcc_driv_data, llcc_driv_data->bcast_regmap);
-> -	if (rc)
-> -		return rc;
-> +	if (!llcc_driv_data->ecc_irq_configured) {
-> +		rc = qcom_llcc_core_setup(llcc_driv_data, llcc_driv_data->bcast_regmap);
-> +		if (rc)
-> +			return rc;
-> +	}
->  
->  	/* Allocate edac control info */
->  	edev_ctl = edac_device_alloc_ctl_info(0, "qcom-llcc", 1, "bank",
-> diff --git a/drivers/soc/qcom/llcc-qcom.c b/drivers/soc/qcom/llcc-qcom.c
-> index 8fa4ffd3a9b5..b1c0ae9991d6 100644
-> --- a/drivers/soc/qcom/llcc-qcom.c
-> +++ b/drivers/soc/qcom/llcc-qcom.c
-> @@ -139,6 +139,7 @@ struct qcom_llcc_config {
->  	int size;
->  	bool need_llcc_cfg;
->  	bool no_edac;
-> +	bool irq_configured;
->  };
->  
->  struct qcom_sct_config {
-> @@ -718,6 +719,7 @@ static const struct qcom_llcc_config x1e80100_cfg[] = {
->  		.need_llcc_cfg	= true,
->  		.reg_offset	= llcc_v2_1_reg_offset,
->  		.edac_reg_offset = &llcc_v2_1_edac_reg_offset,
-> +		.irq_configured = true,
->  	},
->  };
->  
-> @@ -1345,6 +1347,7 @@ static int qcom_llcc_probe(struct platform_device *pdev)
->  	drv_data->cfg = llcc_cfg;
->  	drv_data->cfg_size = sz;
->  	drv_data->edac_reg_offset = cfg->edac_reg_offset;
-> +	drv_data->ecc_irq_configured = cfg->irq_configured;
->  	mutex_init(&drv_data->lock);
->  	platform_set_drvdata(pdev, drv_data);
->  
-> diff --git a/include/linux/soc/qcom/llcc-qcom.h b/include/linux/soc/qcom/llcc-qcom.h
-> index 9e9f528b1370..acad1f4cf854 100644
-> --- a/include/linux/soc/qcom/llcc-qcom.h
-> +++ b/include/linux/soc/qcom/llcc-qcom.h
-> @@ -125,6 +125,7 @@ struct llcc_edac_reg_offset {
->   * @num_banks: Number of llcc banks
->   * @bitmap: Bit map to track the active slice ids
->   * @ecc_irq: interrupt for llcc cache error detection and reporting
-> + * @ecc_irq_configured: 'True' if firmware has already configured the irq propagation
->   * @version: Indicates the LLCC version
->   */
->  struct llcc_drv_data {
-> @@ -139,6 +140,7 @@ struct llcc_drv_data {
->  	u32 num_banks;
->  	unsigned long *bitmap;
->  	int ecc_irq;
-> +	bool ecc_irq_configured;
->  	u32 version;
->  };
->  
-> -- 
-> 2.34.1
-> 
+HEAD commit:    fb24560f31f9 Merge tag 'lsm-pr-20240830' of git://git.kern..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=15107925980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=996585887acdadb3
+dashboard link: https://syzkaller.appspot.com/bug?extid=2d6d9df993967dde8297
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-fb24560f.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/2d39db26a2bc/vmlinux-fb24560f.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/8910481ae16e/bzImage-fb24560f.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+2d6d9df993967dde8297@syzkaller.appspotmail.com
+
+loop0: detected capacity change from 0 to 32768
+=======================================================
+WARNING: The mand mount option has been deprecated and
+         and is ignored by this kernel. Remove the mand
+         option from the mount to silence this warning.
+=======================================================
+JBD2: Ignoring recovery information on journal
+ocfs2: Mounting device (7,0) on (node local, slot 0) with ordered data mode.
+------------[ cut here ]------------
+kernel BUG at fs/ocfs2/suballoc.c:2542!
+Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN NOPTI
+CPU: 0 UID: 0 PID: 5120 Comm: syz.0.0 Not tainted 6.11.0-rc5-syzkaller-00207-gfb24560f31f9 #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+RIP: 0010:_ocfs2_free_suballoc_bits+0x11a2/0x14a0 fs/ocfs2/suballoc.c:2542
+Code: 18 e9 8f fb ff ff 44 89 e1 80 e1 07 80 c1 03 38 c1 0f 8c 92 fb ff ff 4c 89 e7 e8 39 c7 6a fe e9 85 fb ff ff e8 7f 7b 03 fe 90 <0f> 0b e8 77 7b 03 fe 90 0f 0b f3 0f 1e fa 65 8b 1d 45 c6 73 7c bf
+RSP: 0018:ffffc90002e5f840 EFLAGS: 00010287
+RAX: ffffffff839010b1 RBX: 00000000ffffffff RCX: 0000000000040000
+RDX: ffffc9000b849000 RSI: 000000000001fa9e RDI: 000000000001fa9f
+RBP: ffffc90002e5f9e8 R08: ffffffff8390000c R09: 0000000000000001
+R10: dffffc0000000000 R11: fffffbfff2030dbe R12: ffff88804098f0e8
+R13: dffffc0000000000 R14: ffff888013113e00 R15: dffffc0000000000
+FS:  00007f44d49666c0(0000) GS:ffff88801fe00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f44d4923f98 CR3: 000000000072c000 CR4: 0000000000350ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ _ocfs2_free_clusters+0x5ff/0xad0 fs/ocfs2/suballoc.c:2646
+ ocfs2_replay_truncate_records fs/ocfs2/alloc.c:5971 [inline]
+ __ocfs2_flush_truncate_log+0x760/0x1250 fs/ocfs2/alloc.c:6054
+ ocfs2_flush_truncate_log+0x4f/0x70 fs/ocfs2/alloc.c:6076
+ ocfs2_sync_fs+0x125/0x390 fs/ocfs2/super.c:402
+ iterate_supers+0xc6/0x190 fs/super.c:934
+ ksys_sync+0xdb/0x1c0 fs/sync.c:104
+ __do_sys_sync+0xe/0x20 fs/sync.c:113
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f44d3b79eb9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f44d4966038 EFLAGS: 00000246 ORIG_RAX: 00000000000000a2
+RAX: ffffffffffffffda RBX: 00007f44d3d15f80 RCX: 00007f44d3b79eb9
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: 00007f44d3be793e R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000000 R14: 00007f44d3d15f80 R15: 00007ffee36f9688
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:_ocfs2_free_suballoc_bits+0x11a2/0x14a0 fs/ocfs2/suballoc.c:2542
+Code: 18 e9 8f fb ff ff 44 89 e1 80 e1 07 80 c1 03 38 c1 0f 8c 92 fb ff ff 4c 89 e7 e8 39 c7 6a fe e9 85 fb ff ff e8 7f 7b 03 fe 90 <0f> 0b e8 77 7b 03 fe 90 0f 0b f3 0f 1e fa 65 8b 1d 45 c6 73 7c bf
+RSP: 0018:ffffc90002e5f840 EFLAGS: 00010287
+RAX: ffffffff839010b1 RBX: 00000000ffffffff RCX: 0000000000040000
+RDX: ffffc9000b849000 RSI: 000000000001fa9e RDI: 000000000001fa9f
+RBP: ffffc90002e5f9e8 R08: ffffffff8390000c R09: 0000000000000001
+R10: dffffc0000000000 R11: fffffbfff2030dbe R12: ffff88804098f0e8
+R13: dffffc0000000000 R14: ffff888013113e00 R15: dffffc0000000000
+FS:  00007f44d49666c0(0000) GS:ffff88801fe00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f44d4923f98 CR3: 000000000072c000 CR4: 0000000000350ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
