@@ -1,164 +1,243 @@
-Return-Path: <linux-kernel+bounces-313113-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313115-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D79196A071
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 16:27:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DBB496A076
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 16:27:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E94041F2693F
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 14:27:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A11971F26DAA
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 14:27:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE1C7140E3C;
-	Tue,  3 Sep 2024 14:25:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19E641448DC;
+	Tue,  3 Sep 2024 14:26:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BM4TXl4r"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="OcecZJrw"
+Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A25DE18784F;
-	Tue,  3 Sep 2024 14:25:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 732BD6F30F
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 14:26:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725373538; cv=none; b=CrRdTpM+lg5Q+9y+9McQh4MNI9DReS+wpMgaKZFdhSGrFKYYy2LBna2gcTb0BrZ97d3Eu5TusntE54STjXdm7Ahf5FmYe25tsr9o6oGOfKIMhh6UM/Z5OD1bP+9uNa3/Kt1qvXu4Ml9fezjuHlwlZTTF4U8tYzyC4I0H1t8OJuY=
+	t=1725373602; cv=none; b=QQ1V4+Tm66rNlmjK4hxw3ffbtIKbbP5k4u13eM2Lmtd3Zg0KInP5fhvWA60BfC9+uXGJ56GfgsBOylsmIXDVlZ36wVJl1bNBK1HRAvqnOauGllQU9aOf9W5sp+0GZdeFFiHlsnXu0bfcksGgyjOLAkn8QbkbSUD0cClXJc+tJdk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725373538; c=relaxed/simple;
-	bh=vlXcYHXcM7ekhzgNyjdKdwkzgO633TVanFbWzjVtOhw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=OzSO7D5dwy/dfXjRyBEgL/UFkW7WUcLWyTR5lwiDNg9kGFal77mob80qPjz4hrViAe1H5+3bH3UETAPYTtOrs93x4XrRJnRGtX15rWgvyTxS9QJDY5MzwyT/9B8CB8d1ollxwszzxxwur8zJLZKfbGQ1zQuypMIo9x68IHYJkfE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BM4TXl4r; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725373536; x=1756909536;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=vlXcYHXcM7ekhzgNyjdKdwkzgO633TVanFbWzjVtOhw=;
-  b=BM4TXl4rdgp0wPKV6nM74yYDJbnk/IS/T6F7DIOrcOgPD3BkmCbvXJpo
-   QWmZPj8DZiL7Rh5F2LmGzQPGRKwSzBGAoW1Z5Y0FKCeT7RkLcyM581E42
-   Dy9BZeIfQDk90yd0krzB15GCX05hCCaCehC7aAMJz9/+3GMwClZ0UyYc0
-   i2UGIsxIDpQfuSAFnNW9Pgkt41fCMWeq8edt3H7jCi2Tec+5eSeIUMxVp
-   m724c+4spS29EN+gGd7BIYVGSakjQWNFNWRdqpNJNXfd2dZL3bjOC6O2+
-   uD7XqDS7pb2nXwwK1fka6QTrtnqCjxv77vHa+tTbT1Q03bXPy9YLRm+0n
-   Q==;
-X-CSE-ConnectionGUID: pdalVBetQ6uswIP022wieQ==
-X-CSE-MsgGUID: q1ouB/RqSwSM/cSIL4HBzQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11184"; a="23541400"
-X-IronPort-AV: E=Sophos;i="6.10,199,1719903600"; 
-   d="scan'208";a="23541400"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2024 07:25:36 -0700
-X-CSE-ConnectionGUID: lbTkBKsKQNiNx/BlJ1Hu6w==
-X-CSE-MsgGUID: wze16VBBSiKfr0AenaW9AA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,199,1719903600"; 
-   d="scan'208";a="65658902"
-Received: from black.fi.intel.com (HELO black.fi.intel.com.) ([10.237.72.28])
-  by orviesa008.jf.intel.com with ESMTP; 03 Sep 2024 07:25:34 -0700
-From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-To: Andi Shyti <andi.shyti@kernel.org>,
-	Jarkko Nikula <jarkko.nikula@linux.intel.com>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Mika Westerberg <mika.westerberg@linux.intel.com>,
-	Jan Dabros <jsd@semihalf.com>,
-	linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 7/7] i2c: designware: Group all DesignWare drivers under a single option
-Date: Tue,  3 Sep 2024 17:25:06 +0300
-Message-ID: <20240903142506.3444628-8-heikki.krogerus@linux.intel.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240903142506.3444628-1-heikki.krogerus@linux.intel.com>
-References: <20240903142506.3444628-1-heikki.krogerus@linux.intel.com>
+	s=arc-20240116; t=1725373602; c=relaxed/simple;
+	bh=8+eUfBEzIlg+968o8gmybxyBbuz7pfN83tXX/hvmfcA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=l76G/RyiFQf2ihxbQGDWP5bgoJbmI8E9icNuJgoeWmCggXatk892EgDWPaxK53ahWestm5EhaHkRsmbKJilekxQr3a6lAf8+2fbKQMRrmFVrAAQE/VnMM+FWnBVx1copldmGCVI/pGh8MIQKAnBywZRkO70ljY2EyO1sJarGptE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=OcecZJrw; arc=none smtp.client-ip=209.85.208.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2f3f90295a9so61796531fa.0
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 07:26:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1725373598; x=1725978398; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=gRWCN9rHhj3q9L4+Q+FFmPyBrbcPG6d/9623eTv6N8w=;
+        b=OcecZJrwHFnX5gpHq2xG1ujJud0yPfoVKKJTUsJ4dwQr6Zne6gdg0+mxn52awjEwQ8
+         nT7h48ahYjMGyj9DNB4I9XNYXPPQ4MHJQWt8LBao5al3x55Y0YMkgI0fBnLJwIsuaB9k
+         HILrAGxgGmP2LBM+5asyptQJe+G9c1rlu78Ac=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725373598; x=1725978398;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=gRWCN9rHhj3q9L4+Q+FFmPyBrbcPG6d/9623eTv6N8w=;
+        b=je3HZDIgIT21+M6hlvWcBeRDBhX2mBCyghn9VsvDrhOKIHGv94z4g4KGZs1AQlha5T
+         iyww4aefr+XKBJmR+65/oqmi487JOQT60cviZ/f81GpWeQa2C9q3++7z/dB960mDJ6g2
+         NZNmtlbKnBd5gO9uynoQwE8VYE4/TMQGa2KaeStCX0iqHpWXryMFZeJDoK5RpW9N5k+S
+         +BWToH/7oo4+B464/3ixKgM39KBofKdR5MjHhNQe+w/KfIuh0c/nwn5D1Nqb01Nrei/n
+         GIDW7Vd6MrjSd6xAPwkvS7q+0ZzrMNuTec4KAr2l+MdxSH1wFnNvXaioOH48rjDJDAsJ
+         /1jQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXdArXE2wppjUVCO/pTe/3mtXn8+DbudaoEnqZloegi6fJ+tqshj8KPj2kji+Ddop+Xf3Gg1KjPCmhlDP0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzXi9pIGGAub38JHVL0lV6z+n4+lUdwx12yhZXjf4jYak0I/iMS
+	h++0tvcGfbQU67EMjaLWwDBivGmzTud932nZ3Khor9Bw9Og5OOYL3FyB0Qr+ZPXErxj2V+He6o4
+	Y6KYoC3AzRoGItztq5k9W5eNsJlI0JMWjChWu
+X-Google-Smtp-Source: AGHT+IFWHIrQ2aIrLwGxyf+RqLMdXhsgSsJGAMAAVKOAOAj0LtTktf/D92/Wll7afKJLsYR1ftwbJuT6fgTM0BIkOm8=
+X-Received: by 2002:a2e:be09:0:b0:2f4:f255:4fc1 with SMTP id
+ 38308e7fff4ca-2f636a0c7f2mr56347951fa.11.1725373597820; Tue, 03 Sep 2024
+ 07:26:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240815225731.40276-6-james.quinlan@broadcom.com> <20240902191827.GA224376@bhelgaas>
+In-Reply-To: <20240902191827.GA224376@bhelgaas>
+From: Jim Quinlan <james.quinlan@broadcom.com>
+Date: Tue, 3 Sep 2024 10:26:24 -0400
+Message-ID: <CA+-6iNywkWq=H1WRTWaVbPwa9aBTZxyhwfsWqX5eYh22L7P1ag@mail.gmail.com>
+Subject: Re: [PATCH v6 05/13] PCI: brcmstb: Use bridge reset if available
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: linux-pci@vger.kernel.org, Nicolas Saenz Julienne <nsaenz@kernel.org>, 
+	Bjorn Helgaas <bhelgaas@google.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, 
+	Cyril Brulebois <kibi@debian.org>, Stanimir Varbanov <svarbanov@suse.de>, 
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Krzysztof Kozlowski <krzk@kernel.org>, 
+	bcm-kernel-feedback-list@broadcom.com, jim2101024@gmail.com, 
+	Florian Fainelli <florian.fainelli@broadcom.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+	=?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
+	Rob Herring <robh@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-rpi-kernel@lists.infradead.org>, 
+	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>, 
+	open list <linux-kernel@vger.kernel.org>
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
+	boundary="000000000000784a28062137d844"
 
-There are quite a few drivers and options for the DesignWare
-I2C adapter in the Kconfig. Grouping all of them under the
-I2C_DESIGNWARE_CORE. That makes the menuconfig a bit more
-easier to understand.
+--000000000000784a28062137d844
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
----
- drivers/i2c/busses/Kconfig | 29 ++++++++++++++++++-----------
- 1 file changed, 18 insertions(+), 11 deletions(-)
+On Mon, Sep 2, 2024 at 3:18=E2=80=AFPM Bjorn Helgaas <helgaas@kernel.org> w=
+rote:
+>
+> On Thu, Aug 15, 2024 at 06:57:18PM -0400, Jim Quinlan wrote:
+> > The 7712 SOC has a bridge reset which can be described in the device tr=
+ee.
+> > Use it if present.  Otherwise, continue to use the legacy method to res=
+et
+> > the bridge.
+>
+> >  static void brcm_pcie_bridge_sw_init_set_generic(struct brcm_pcie *pci=
+e, u32 val)
+> >  {
+> > -     u32 tmp, mask =3D  RGR1_SW_INIT_1_INIT_GENERIC_MASK;
+> > -     u32 shift =3D RGR1_SW_INIT_1_INIT_GENERIC_SHIFT;
+> > +     if (val)
+> > +             reset_control_assert(pcie->bridge_reset);
+> > +     else
+> > +             reset_control_deassert(pcie->bridge_reset);
+> >
+> > -     tmp =3D readl(pcie->base + PCIE_RGR1_SW_INIT_1(pcie));
+> > -     tmp =3D (tmp & ~mask) | ((val << shift) & mask);
+> > -     writel(tmp, pcie->base + PCIE_RGR1_SW_INIT_1(pcie));
+> > +     if (!pcie->bridge_reset) {
+> > +             u32 tmp, mask =3D  RGR1_SW_INIT_1_INIT_GENERIC_MASK;
+> > +             u32 shift =3D RGR1_SW_INIT_1_INIT_GENERIC_SHIFT;
+> > +
+> > +             tmp =3D readl(pcie->base + PCIE_RGR1_SW_INIT_1(pcie));
+> > +             tmp =3D (tmp & ~mask) | ((val << shift) & mask);
+> > +             writel(tmp, pcie->base + PCIE_RGR1_SW_INIT_1(pcie));
+> > +     }
+>
+> This pattern looks goofy:
+>
+>   reset_control_assert(pcie->bridge_reset);
+>   if (!pcie->bridge_reset) {
+>     ...
+>
+> If we're going to test pcie->bridge_reset at all, it should be first
+> so it's obvious what's going on and the reader doesn't have to go
+> verify that reset_control_assert() ignores and returns success for a
+> NULL pointer:
+>
+>   if (pcie->bridge_reset) {
+>     if (val)
+>       reset_control_assert(pcie->bridge_reset);
+>     else
+>       reset_control_deassert(pcie->bridge_reset);
+>
+>     return;
+>   }
+>
+>   u32 tmp, mask =3D  RGR1_SW_INIT_1_INIT_GENERIC_MASK;
+>   ...
+>
+Will do.
 
-diff --git a/drivers/i2c/busses/Kconfig b/drivers/i2c/busses/Kconfig
-index a22f9125322a..027724358d28 100644
---- a/drivers/i2c/busses/Kconfig
-+++ b/drivers/i2c/busses/Kconfig
-@@ -559,28 +559,33 @@ config I2C_DAVINCI
- 	  For details please see http://www.ti.com/davinci
- 
- config I2C_DESIGNWARE_CORE
--	tristate
-+	tristate "Synopsys DesignWare I2C adapter"
- 	select REGMAP
-+	help
-+	  This option enables support for the Synopsys DesignWare I2C adapter.
-+	  This driver includes support for the I2C host on the Synopsys
-+	  Designware I2C adapter.
-+
-+	  To compile the driver as a module, choose M here: the module will be
-+	  called i2c-designware-core.
-+
-+if I2C_DESIGNWARE_CORE
- 
- config I2C_DESIGNWARE_SLAVE
- 	bool "Synopsys DesignWare Slave"
--	depends on I2C_DESIGNWARE_CORE
- 	select I2C_SLAVE
- 	help
- 	  If you say yes to this option, support will be included for the
- 	  Synopsys DesignWare I2C slave adapter.
- 
--	  This is not a standalone module, this module compiles together with
--	  i2c-designware-core.
--
- config I2C_DESIGNWARE_PLATFORM
--	tristate "Synopsys DesignWare Platform"
-+	tristate "Synopsys DesignWare Platform driver"
- 	depends on (ACPI && COMMON_CLK) || !ACPI
--	select I2C_DESIGNWARE_CORE
- 	select MFD_SYSCON if MIPS_BAIKAL_T1
-+	default I2C_DESIGNWARE_CORE
- 	help
- 	  If you say yes to this option, support will be included for the
--	  Synopsys DesignWare I2C adapter.
-+	  Synopsys DesignWare I2C adapters on the platform bus.
- 
- 	  This driver can also be built as a module.  If so, the module
- 	  will be called i2c-designware-platform.
-@@ -613,17 +618,19 @@ config I2C_DESIGNWARE_BAYTRAIL
- 	  a BayTrail system using the AXP288.
- 
- config I2C_DESIGNWARE_PCI
--	tristate "Synopsys DesignWare PCI"
-+	tristate "Synopsys DesignWare PCI driver"
- 	depends on PCI
--	select I2C_DESIGNWARE_CORE
- 	select I2C_CCGX_UCSI
- 	help
- 	  If you say yes to this option, support will be included for the
--	  Synopsys DesignWare I2C adapter. Only master mode is supported.
-+	  Synopsys DesignWare I2C adapters on the PCI bus. Only master mode is
-+	  supported.
- 
- 	  This driver can also be built as a module.  If so, the module
- 	  will be called i2c-designware-pci.
- 
-+endif
-+
- config I2C_DIGICOLOR
- 	tristate "Conexant Digicolor I2C driver"
- 	depends on ARCH_DIGICOLOR || COMPILE_TEST
--- 
-2.45.2
+Jim Quinlan
+Broadcom STB/CM
 
+> Krzysztof, can you amend this on the branch?
+>
+> It will also make the eventual return checking and error message
+> simpler because we won't have to initialize "ret" first, and we can
+> "return 0" directly for the legacy case.
+>
+> Bjorn
+
+--000000000000784a28062137d844
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Description: S/MIME Cryptographic Signature
+
+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
+mOAplh6h3nMZUZxBguxG3g2p3iD4EgibUYneEzqOQafIQB/naf2uetKb8y9jKgWJxq2Y4y8Jqg2u
+uVIO1AyOJjWwqdgN+QhuIlat+qZd03P48Gim9ZPEMDUCAwEAAaOCAdswggHXMA4GA1UdDwEB/wQE
+AwIFoDCBowYIKwYBBQUHAQEEgZYwgZMwTgYIKwYBBQUHMAKGQmh0dHA6Ly9zZWN1cmUuZ2xvYmFs
+c2lnbi5jb20vY2FjZXJ0L2dzZ2NjcjNwZXJzb25hbHNpZ24yY2EyMDIwLmNydDBBBggrBgEFBQcw
+AYY1aHR0cDovL29jc3AuZ2xvYmFsc2lnbi5jb20vZ3NnY2NyM3BlcnNvbmFsc2lnbjJjYTIwMjAw
+TQYDVR0gBEYwRDBCBgorBgEEAaAyASgKMDQwMgYIKwYBBQUHAgEWJmh0dHBzOi8vd3d3Lmdsb2Jh
+bHNpZ24uY29tL3JlcG9zaXRvcnkvMAkGA1UdEwQCMAAwSQYDVR0fBEIwQDA+oDygOoY4aHR0cDov
+L2NybC5nbG9iYWxzaWduLmNvbS9nc2djY3IzcGVyc29uYWxzaWduMmNhMjAyMC5jcmwwJQYDVR0R
+BB4wHIEaamFtZXMucXVpbmxhbkBicm9hZGNvbS5jb20wEwYDVR0lBAwwCgYIKwYBBQUHAwQwHwYD
+VR0jBBgwFoAUljPR5lgXWzR1ioFWZNW+SN6hj88wHQYDVR0OBBYEFGx/E27aeGBP2eJktrILxlhK
+z8f6MA0GCSqGSIb3DQEBCwUAA4IBAQBdQQukiELsPfse49X4QNy/UN43dPUw0I1asiQ8wye3nAuD
+b3GFmf3SZKlgxBTdWJoaNmmUFW2H3HWOoQBnTeedLtV9M2Tb9vOKMncQD1f9hvWZR6LnZpjBIlKe
++R+v6CLF07qYmBI6olvOY/Rsv9QpW9W8qZYk+2RkWHz/fR5N5YldKlJHP0NDT4Wjc5fEzV+mZC8A
+AlT80qiuCVv+IQP08ovEVSLPhUp8i1pwsHT9atbWOfXQjbq1B/ditFIbPzwmwJPuGUc7n7vpmtxB
+75sSFMj27j4JXl5W9vORgHR2YzuPBzfzDJU1ul0DIofSWVF6E1dx4tZohRED1Yl/T/ZGMYICbTCC
+AmkCAQEwazBbMQswCQYDVQQGEwJCRTEZMBcGA1UEChMQR2xvYmFsU2lnbiBudi1zYTExMC8GA1UE
+AxMoR2xvYmFsU2lnbiBHQ0MgUjMgUGVyc29uYWxTaWduIDIgQ0EgMjAyMAIMSO43VW7D5NP1X/KD
+MA0GCWCGSAFlAwQCAQUAoIHUMC8GCSqGSIb3DQEJBDEiBCCdG0CREno6Irm7ymgcrzXeAHrsr/4F
+Bvtqd9EQ/4hP7DAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEPFw0yNDA5
+MDMxNDI2MzhaMGkGCSqGSIb3DQEJDzFcMFowCwYJYIZIAWUDBAEqMAsGCWCGSAFlAwQBFjALBglg
+hkgBZQMEAQIwCgYIKoZIhvcNAwcwCwYJKoZIhvcNAQEKMAsGCSqGSIb3DQEBBzALBglghkgBZQME
+AgEwDQYJKoZIhvcNAQEBBQAEggEAjj52JPbEsA3Q3mSY0qI5+z2Dm2ZdzhXjHASwB1tmned06UuE
+VBr8Q4lo+X0K96YLoa52S0swb3exgd3deFR0hHRD3btdhYt3CXSru9uhsWQ8BpBiPF0SI0sBGbfy
+hec7fnTamj+0qnOijLIafy0CwyGFj4JciiuT+l93MdEpPM8R6v4o2eSNPaoZaJYWQZ/QWD7SLGlf
+zK3OIAAI1C75gOuHAzUTjiaSRoq1H+dB8Wbqg/feJHx7k5JiimfQxaMxOd1wa4GbsmNiKp8uf1zI
+YvdGqXZsMVD5FNe901vk7anYI1Fnnz7X9IWJsOdxqSATR1LloeLxMLCw74AplVJoVw==
+--000000000000784a28062137d844--
 
