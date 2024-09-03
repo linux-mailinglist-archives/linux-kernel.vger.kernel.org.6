@@ -1,116 +1,208 @@
-Return-Path: <linux-kernel+bounces-313443-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313444-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D897596A57F
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 19:35:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13CF096A581
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 19:35:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 95B1D287431
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 17:35:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE137286F41
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 17:35:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3E6D18EFF0;
-	Tue,  3 Sep 2024 17:35:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 028E618FDC8;
+	Tue,  3 Sep 2024 17:35:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QchsLL4F"
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AG/jCMVN"
+Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F04818DF6F
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 17:35:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC50C18DF8B;
+	Tue,  3 Sep 2024 17:35:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725384924; cv=none; b=IvkCCEPumswijNUqmSInoW+ps/FyTZ0Fy+1y8V6H/gDGo9UTLzsgMfVpv8DfbZ2bdgh0p0erjTjSN1wy5TArSorzapRO58RFnRsEUK9vk4dEohElfw7P4p1UthtSc8EpVojf8wpMxOQYWUlzPVYVyCWue/3VL4ogDoOierxc3oU=
+	t=1725384925; cv=none; b=Jw5TH20NaWi0Lr5ww0iMe4bsXglZ4q8aqLetoOsuVPk0F8ERzvhUKb2YWS309+gvsxinI4J5aQEx9cBUdmrb9Qt/naplO62lelM3BrfA1i8yUpOsnv8BUujaG5peK/CnGRm481486i9FcJ/SLxktUCa1v7Vgox6KDtLB5NBzAdk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725384924; c=relaxed/simple;
-	bh=j0CW8rhLDFUaQ71X8gGMvzqTFZUTuOYdHKvSZuUSgKg=;
+	s=arc-20240116; t=1725384925; c=relaxed/simple;
+	bh=LQwsYC0/HXU6jv1YztlWr/faX6lsno7F23xR44vC5ss=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QhOyhP6zNvPXSAZdBiItmpNDlNAjATZmBfb5dIG4PtOS2hqKGVRo/XrSn28V1FPJwkIYZb4UbIcgIZ3uHlz2srRzpPTmDYOGgLcYbiYCCwiAiMTUO3E5Rz7S5Riwa2ypPKFy0TWNck0p/2eI5hvLOkv+wBet7setSy3inxyKAFY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QchsLL4F; arc=none smtp.client-ip=209.85.208.54
+	 To:Cc:Content-Type; b=gsXohx9HpA1xPgCTTYmGL4iTaNQ1pj8yJTMdPxh4rNL5BG7ieQUBtYd/yGeZ2AdqRfVTzkMiEOG+jZL05ZBIvAHtF1UeaCRfIdJi4WVQQ7RpvWWXqY6Mhu4TIfK3JMj0IybxpFRrUuia8HJo2qpFdnPT83+BvBEyhnOEQa8aX1k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AG/jCMVN; arc=none smtp.client-ip=209.85.216.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5becd359800so5816079a12.0
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 10:35:22 -0700 (PDT)
+Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-2da4ea59658so1163230a91.0;
+        Tue, 03 Sep 2024 10:35:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725384921; x=1725989721; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1725384923; x=1725989723; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=j0CW8rhLDFUaQ71X8gGMvzqTFZUTuOYdHKvSZuUSgKg=;
-        b=QchsLL4FDmA02tiTsPwT8k2lr61IbSTVo2bgialds/Z9VW0iUfAe8gjutOMbM0n80l
-         OUPTDf6Kx7bzMsmSk2TAYyQAEcapt96H4+wMeIU3jrD8a6U+VvnEHiWo5tFH1Mz5BBue
-         AG1wZ+1lcrPzgWtK/uHgE2+Z0LKcl5nrbdYi4Kz2RJkVlpME0/wTpyVuPQWeASFqyzgm
-         c/2OCCqpuxUXM4zYCgTla8165sTvYcxrUxA+a8QxxiIm/6Zp3zneTsHql8/pYjL7kGib
-         oxfGOSYv5Kt1Dnij76/KsLEWxBxB2tsx0iWfIH2MA+B7nvkyEosYpZa3Q0mYYE11sTFs
-         5zQw==
+        bh=l3hUXgLjalL7lAeUT4m6rvI6dnqff1plFSiWYGGCoE0=;
+        b=AG/jCMVNwCHA4Dyii8SIMZJJ8eoDatV9yd7Gu1SPdIpYWk+sFKjQ3IGxOk5+TTErBs
+         IkFItP5ar9uOrp08u2uIoeSiX88+HZwXRl/pA7rt0Vmh3+0NZp1qTJMD2rQkNDoBFO/i
+         AmIo6nYkn73QvPVO3XLtEEWXZVbwFpol3KyrcBaNwvWlFL7sx5V6yixh831eKwXqf+yI
+         K8YpBH8d2Pf6XDGqCoLQBfDOx0JDSSPXpx/l6bjeZfvPFQfycIdKDGfWto3q++5iqQGW
+         Dx3mb2v5rrapnrwlu/JYfXDM+Jksp1nQM05vUJjkytAyYcpkF6tvfvd7PGnWRG/2fkTL
+         /cKg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725384921; x=1725989721;
+        d=1e100.net; s=20230601; t=1725384923; x=1725989723;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=j0CW8rhLDFUaQ71X8gGMvzqTFZUTuOYdHKvSZuUSgKg=;
-        b=D11i3O57RK30+aHYUgMwLZIygD4HmH+QpfMyRLJfnOtJD6VZ7GiA9E2jaKlfOQCyyz
-         0x032G2K2789c2SHhZTRfiVBubOfHvaF5+dL13JhaJJ65JnNNXLpwlaK85piFUZeA+Z/
-         ziQ1lAriYBYkiBbNCs2nFGjUto/lD/YkenKTw7JboYNrwAbhYKNFpuyt+qzZXYqp8gWE
-         4UbFvr4dEaitWGWM6/wpJGOkPRHd6diWOqhOA9wTwm9bbnzgLM+qrB23+GUmf5ISuZ/1
-         yAerZUBNvuek+M78Nx0UB965IhBGC3x1g/m0WxBj8J4BDqMdTPAERc8S8oIYihZjOA8M
-         Xptg==
-X-Forwarded-Encrypted: i=1; AJvYcCUMZx3U06QhcWQsEZ1wg4/aquwk6bmrxGnm6Sim6y7+BHaPO1BMbSYUlb7BtzytpQdPtlJzfeWgWMYz9zI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyQnz+3FpJLQ2jdHTQEfJAItHJJ1ZKzGx9ShDMMW5IMU2+K0dHG
-	7TiEXUB15tw2g9S3Sg2w+/zFkXotN0yGUggw+uK+JMRlEynOiu83e+SnGQM3DDPpzyD19oWqp6z
-	xsBpqubClx2tVCkdGAo0gvyQUuLc=
-X-Google-Smtp-Source: AGHT+IGu5gblqbaozzhufThg/mHSRVx/NXnG34ZnNs6Ee6bJLangyPU8DmwziVvYVnfPWEKpUV/Il8jyWlPB3vFdtmI=
-X-Received: by 2002:a05:6402:26d2:b0:5c2:1298:35ee with SMTP id
- 4fb4d7f45d1cf-5c243724727mr7664368a12.2.1725384920570; Tue, 03 Sep 2024
- 10:35:20 -0700 (PDT)
+        bh=l3hUXgLjalL7lAeUT4m6rvI6dnqff1plFSiWYGGCoE0=;
+        b=lUaS9iNxMGAmNKJgpPgxszrwKSlcDiYfnt+Dhj5Hl4lFEYU0kHdhMKj3LN8WOwcVwm
+         56+vt3iuNcH20rGEAbff7bpsnK+renLz1ZHPBCgG8CcRtjMSjmwpac4q47o6qMQZyeDH
+         2EwKD4QAP7YGlnsKytQA0KlY6kpmFRHinxYto1/JlqUAZS8CJ2wrf/FPGFR5rSVnn3Fa
+         Q4ujBTdChAHBCb8wRUet/Ah1FH2KxG87OlViezV+r4wOzUUgSkAl8Z8t/N4o6b5PVwMU
+         hX21Oi/ZfXfsvMVqaB8p5WfBIiqn+njKAO/7cqxKfRVboJiN1EYcMAwN0PCkIbNSWxTH
+         WzTg==
+X-Forwarded-Encrypted: i=1; AJvYcCVJWbBSZrTFdTAlUmp3aFMAPZx1j9ESP0bu7aw3IDNm0THfEnIHsAydaciQ8x9by5VbnIyDXyAFycJaXh4r@vger.kernel.org, AJvYcCVpujKKvoJw88DJQx1dUkiYrWVfZRvioiQIZXYS8+jSsZr2vu9qwwhgspT9QW9ztDSOxsBMjO44J4NIfP5aDJr4GAc8@vger.kernel.org, AJvYcCW/Wv6MuKyT3J68eud93DOFp+Aq2n9wJvPXNswkl87R+S7vncdoPb/ELcE53UYSVMhu22s=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywc3hQjZA4+hEVmfxkFhXVQ5NsYSEaY1LJfY83yP35MitfgrJkn
+	tjqNm0es/s0wkhCl2MGkOzHM0Wu73MuT9WbY5ddT/k/p/xebKiwA00Wu4Q6y0SabFDzfKTJjuTt
+	l+u4UAUI0mY6obMT/TAr5jLFJ2Ik=
+X-Google-Smtp-Source: AGHT+IE2Caw/xhU7eXyirtFUOj3URIayxgMSRZGkemLmVzQAwmUHrOMrd18peOQe/Wv611jgoKooKYSc1l00fOUfgnU=
+X-Received: by 2002:a17:90a:6fa2:b0:2d3:bfc3:3ef3 with SMTP id
+ 98e67ed59e1d1-2d88d6af3dcmr11971100a91.12.1725384923145; Tue, 03 Sep 2024
+ 10:35:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240806022143.3924396-1-alexs@kernel.org> <20240806022311.3924442-1-alexs@kernel.org>
- <20240806123213.2a747a8321bdf452b3307fa9@linux-foundation.org>
- <CAJD7tkakcaLVWi0viUqaW0K81VoCuGmkCHN4KQXp5+SSJLMB9g@mail.gmail.com>
- <20240807051754.GA428000@google.com> <ZrQ9lrZKWdPR7Zfu@casper.infradead.org>
- <20240814060354.GC8686@google.com> <66ce5eed.170a0220.387c4d.276d@mx.google.com>
- <20240903032003.GB9738@google.com>
-In-Reply-To: <20240903032003.GB9738@google.com>
-From: Vishal Moola <vishal.moola@gmail.com>
-Date: Tue, 3 Sep 2024 10:35:09 -0700
-Message-ID: <CAOzc2pwzEVNDoXqXmG-Y+doBO=K9NY7=M5NGUJmohfjHcM5hyg@mail.gmail.com>
-Subject: Re: [PATCH v5 00/21] mm/zsmalloc: add zpdesc memory descriptor for zswap.zpool
-To: Sergey Senozhatsky <senozhatsky@chromium.org>
-Cc: Matthew Wilcox <willy@infradead.org>, Yosry Ahmed <yosryahmed@google.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, alexs@kernel.org, 
-	Vitaly Wool <vitaly.wool@konsulko.com>, Miaohe Lin <linmiaohe@huawei.com>, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, minchan@kernel.org, 
-	david@redhat.com, 42.hyeyoo@gmail.com, nphamcs@gmail.com
+References: <20240829183741.3331213-1-andrii@kernel.org> <20240829183741.3331213-5-andrii@kernel.org>
+ <ZtD_x9zxLjyhS37Z@krava> <CAEf4Bzb3mCWK5St51bRDnQ1b-aTj=2w6bi6MkZydW48s=R+CCA@mail.gmail.com>
+ <ZtHM_C1NmDSKL0pi@krava> <20240830143151.GC20163@redhat.com>
+ <CAEf4BzbOjB9Str9-ea6pa46sRDdHJF5mb0rj1dyJquvBT-9vnw@mail.gmail.com>
+ <20240830202050.GA7440@redhat.com> <CAEf4BzZCrchQCOPv9ToUy8coS4q6LjoLUB_c6E6cvPPquR035Q@mail.gmail.com>
+ <20240831161914.GA9683@redhat.com> <CAEf4BzYE7+YgM7HMb-JceoC33f=irjHkj=5x46WaXdCcgTk4xg@mail.gmail.com>
+In-Reply-To: <CAEf4BzYE7+YgM7HMb-JceoC33f=irjHkj=5x46WaXdCcgTk4xg@mail.gmail.com>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Tue, 3 Sep 2024 10:35:10 -0700
+Message-ID: <CAEf4Bza6SRP0ZTuOa=W8W3uM86DJKkGoTQ9itHxcdGWt1Su=-Q@mail.gmail.com>
+Subject: Re: [PATCH v4 4/8] uprobes: travers uprobe's consumer list locklessly
+ under SRCU protection
+To: Oleg Nesterov <oleg@redhat.com>
+Cc: Jiri Olsa <olsajiri@gmail.com>, Andrii Nakryiko <andrii@kernel.org>, 
+	linux-trace-kernel@vger.kernel.org, peterz@infradead.org, rostedt@goodmis.org, 
+	mhiramat@kernel.org, bpf@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	paulmck@kernel.org, willy@infradead.org, surenb@google.com, 
+	akpm@linux-foundation.org, linux-mm@kvack.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Sep 2, 2024 at 8:20=E2=80=AFPM Sergey Senozhatsky
-<senozhatsky@chromium.org> wrote:
+On Tue, Sep 3, 2024 at 10:27=E2=80=AFAM Andrii Nakryiko
+<andrii.nakryiko@gmail.com> wrote:
 >
-> On (24/08/27 16:19), Vishal Moola wrote:
+> On Sat, Aug 31, 2024 at 9:19=E2=80=AFAM Oleg Nesterov <oleg@redhat.com> w=
+rote:
 > >
-> > Or should we aim to leave zsmalloc as it is currently implemented?
+> > On 08/30, Andrii Nakryiko wrote:
+> > >
+> > > On Fri, Aug 30, 2024 at 1:21=E2=80=AFPM Oleg Nesterov <oleg@redhat.co=
+m> wrote:
+> > > >
+> > > > I'll probably write another email (too late for me today), but I ag=
+ree
+> > > > that "avoid register_rwsem in handler_chain" is obviously a good go=
+al,
+> > > > lets discuss the possible cleanups or even fixlets later, when this
+> > > > series is already applied.
+> > > >
+> > >
+> > > Sounds good. It seems like I'll need another revision due to missing
+> > > include, so if there is any reasonably straightforward clean up we
+> > > should do, I can just incorporate that into my series.
+> >
+> > I was thinking about another seq counter incremented in register(), so
+> > that handler_chain() can detect the race with uprobe_register() and ski=
+p
+> > unapply_uprobe() in this case. This is what Peter did in one of his ser=
+ies.
+> > Still changes the current behaviour, but not too much.
+>
+> We could do that, but then worst case, when we do detect registration
+> race, what do we do? We still have to do the same. So instead of
+> polluting the logic with seq counter it's best to just codify the
+> protocol and take advantage of that.
+>
+> But as you said, this all can/should be addressed as a follow up
+> discussion. You mentioned some clean ups you wanted to do, let's
+> discuss all that as part of that?
+>
+> >
+> > But see below,
+> >
+> > > I still think it's fine, tbh.
+> >
+> > and perhaps you are right,
+> >
+> > > Which uprobe user violates this contract
+> > > in the kernel?
+> >
+> > The only in-kernel user of UPROBE_HANDLER_REMOVE is perf, and it is fin=
+e.
 > >
 >
-> Is this really an option?
+> Well, BPF program can accidentally trigger this as well, but that's a
+> bug, we should fix it ASAP in the bpf tree.
+>
+>
+> > But there are out-of-tree users, say systemtap, I have no idea if this
+> > change can affect them.
+> >
+> > And in general, this change makes the API less "flexible".
+>
+> it maybe makes a weird and too-flexible case a bit more work to
+> implement. Because if consumer want to be that flexible, they can
+> still define filter that will be coordinated between filter() and
+> handler() implementation.
+>
+> >
+> > But once again, I agree that it would be better to apply your series fi=
+rst,
+> > then add the fixes in (unlikely) case it breaks something.
+>
+> Yep, agreed, thanks! Will send a new version ASAP, so we have a common
+> base to work on top of.
+>
+> >
+> > But. Since you are going to send another version, may I ask you to add =
+a
+> > note into the changelog to explain that this patch assumes (and enforce=
+s)
+> > the rule about handler/filter consistency?
+>
+> Yep, will do. I will also leave a comment next to the filter callback
+> definition in uprobe_consumer about this.
+>
 
-Yup. That would be similar to your initial suggestion: zpdescs would be a
-wrapper around struct page and we "chain zpdesc-s together to form a zspage=
-".
+Ok, I'm adding this:
 
-Although, we may as well aim for an improved implementation of zsmalloc (if=
- at
-all possible) since implementing the zpdesc wrapper requires us to modify a
-good chunk of code anyways. That way zsmalloc gets direct wins for its user=
-s
-on top of shrinking struct page as Matthew described before.
+diff --git a/include/linux/uprobes.h b/include/linux/uprobes.h
+index 29c935b0d504..33236d689d60 100644
+--- a/include/linux/uprobes.h
++++ b/include/linux/uprobes.h
+@@ -29,6 +29,14 @@ struct page;
+ #define MAX_URETPROBE_DEPTH            64
 
-I believe you would be a better judge of whether or not any improvements
-are feasible (and worth the effort).
+ struct uprobe_consumer {
++       /*
++        * handler() can return UPROBE_HANDLER_REMOVE to signal the need to
++        * unregister uprobe for current process. If UPROBE_HANDLER_REMOVE =
+is
++        * returned, filter() callback has to be implemented as well and it
++        * should return false to "confirm" the decision to uninstall uprob=
+e
++        * for the current process. If filter() is omitted or returns true,
++        * UPROBE_HANDLER_REMOVE is effectively ignored.
++        */
+        int (*handler)(struct uprobe_consumer *self, struct pt_regs *regs);
+        int (*ret_handler)(struct uprobe_consumer *self,
+                                unsigned long func,
+
+
+> >
+> > Oleg.
+> >
 
