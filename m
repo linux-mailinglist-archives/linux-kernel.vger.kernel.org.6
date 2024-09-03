@@ -1,97 +1,93 @@
-Return-Path: <linux-kernel+bounces-313786-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313787-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D23696A9BB
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 23:09:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58E8B96A9BF
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 23:09:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A1F6AB21A0D
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 21:09:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 139FD2866E8
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 21:09:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C17F41D58A7;
-	Tue,  3 Sep 2024 21:01:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1889B1D79A3;
+	Tue,  3 Sep 2024 21:01:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="qNm9g//h"
-Received: from 008.lax.mailroute.net (008.lax.mailroute.net [199.89.1.11])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="figUKZY/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 913C1126BE7;
-	Tue,  3 Sep 2024 21:01:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 639631D7987;
+	Tue,  3 Sep 2024 21:01:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725397284; cv=none; b=p4yMsjRtSeKVsY9L6xEYZ9u3HlXdimz8xrgMJBdQ4HPvJwO+zTn5H42uPEuhfr5KpQRl6CSCPVuqMCBLVpkX9kLpBFbB6W82EpYgUQMH1ORD7atb919cp2t961PtjAy3E87tsu8QoO29Q+M6kns+bc/FrqdcQe15q6TVjQOP+RA=
+	t=1725397318; cv=none; b=tVRokt6RjvcZEQ7f1XSBOT0Jq6TJ9KAc1ETnZBA7CKxMLjKnC/XFl1sikqvVeYasyNCqHRAWSwk2vkaUDgOhifR8+nZmTw5rSH1Ne8VTSBIamftTNDXHL6opfEkZ1TPc3RWXcahKR3cVRHi7ObKSUfDKK9YIJknsIRktbNtlPpI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725397284; c=relaxed/simple;
-	bh=jVhj2xMsWVduincqHIuHsp2XlN6UZ1a7zLSg46WfuWc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mfFy0x6NVNwwky5Ns+m3DYsjFdorqiQs+IYkIZYey2cq+2X8DcA574eEFqgACBkOZalY/qwk6SKhNrqdiznO4NsAYd5ppTmKdwE8FeWvMTsGiUt41rWaRK4HeW2w/Drq/41RCtYA78oS3wIjbrPaB5nK9cyFvwsJRvYJavY6Noc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=qNm9g//h; arc=none smtp.client-ip=199.89.1.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 008.lax.mailroute.net (Postfix) with ESMTP id 4Wyyhx5p7sz6ClY93;
-	Tue,  3 Sep 2024 21:01:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1725397279; x=1727989280; bh=GcSbK+dobI0o7Q22prdN5k7H
-	CGcrrI0ReHGActTH+uw=; b=qNm9g//hzQagxuHCntXtcEwgtQ8st4tyDmZXxBpt
-	V3Z9PlHP5+whFtBwci7Pee32auMSEL1Z4GgTPMmSpWpK12N9uOkrJC4VILCQ8eFr
-	coH6pjCocaqcl8QIGcqYMse5DltSYVss054/QxqGPDW2r0g5PBiDXo2WjNzLltEh
-	D78VjmVKpIFx01a3XLr3fNMkJHnVJ7RoXXv2tK/tLcQjEqfcufgROQRhEfxnX6Bz
-	dQ5eBCl8i9cKyZiduLoiwQtEb4RwJMCLp8bKspLupLhbNJaRRxBgDPKg6ElamGdu
-	SwO0PDL9p+En0D71M2LjnRsjlebhV0VCf0oCkj8eUETx3g==
-X-Virus-Scanned: by MailRoute
-Received: from 008.lax.mailroute.net ([127.0.0.1])
- by localhost (008.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id Gn4A2Pjt5VLY; Tue,  3 Sep 2024 21:01:19 +0000 (UTC)
-Received: from [100.66.154.22] (unknown [104.135.204.82])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 008.lax.mailroute.net (Postfix) with ESMTPSA id 4Wyyht6HR8z6ClY92;
-	Tue,  3 Sep 2024 21:01:18 +0000 (UTC)
-Message-ID: <bf6746d0-d8cc-412e-ac7b-6f17c3e3de9d@acm.org>
-Date: Tue, 3 Sep 2024 14:01:18 -0700
+	s=arc-20240116; t=1725397318; c=relaxed/simple;
+	bh=YlgYWrov2J1Ssj0+EKTW9v1CpfXqfqZj60bm9Xzp8gA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LfH6jNWEhNcnuYelEimPq99emCf+7zco7tYi4HdDCJgrAYArJdqrhHo537bZ8zlIT9yoaTT2ViVw5Bte8YndWNd8vs/KrQnwMqfVdiT4qszle0l7z+eQHh7flSzMrXin1Z3kL4ng70v9vn578Hmggy81i3NZlHe1wCZaAPoRAaM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=figUKZY/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CD49DC4CEC4;
+	Tue,  3 Sep 2024 21:01:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725397317;
+	bh=YlgYWrov2J1Ssj0+EKTW9v1CpfXqfqZj60bm9Xzp8gA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=figUKZY/IW8+qj7UyVP2DYHB0tHl/V0Pgl7XXGOIlJCbEkzSModtPUp0dan0N5Myq
+	 Q7rk+ptZvZZSVnYv3dSL3VCISr8aMuhGm92zZCxaA6oLTVHLOgWQWGPCWuqrB+VVUK
+	 YbjcW2ZsfYoYx9vadxljtW++8Rmn7juctFToFEUFzLwpfx8pADCMx2XMQWif7Rp10D
+	 516BJHWIOMlx/QI7FXzzITM5Hb6YmryY8/YcMj9jdcv02+EkIGTa+uiwEtOpJXdhuG
+	 sms353NOhmcFQ8tdzyfUcKzEVhO51qCmV4Zc+Ed1Nl6edZeevKQKcJn4WhY4yXh4TU
+	 fH+9xY7y2v5zA==
+Date: Tue, 3 Sep 2024 23:01:54 +0200
+From: Andi Shyti <andi.shyti@kernel.org>
+To: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Cc: Jarkko Nikula <jarkko.nikula@linux.intel.com>, 
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, 
+	Jan Dabros <jsd@semihalf.com>, linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Vineet Gupta <vgupta@kernel.org>, Russell King <linux@armlinux.org.uk>, 
+	Dinh Nguyen <dinguyen@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, 
+	Will Deacon <will@kernel.org>, Alexandre Belloni <alexandre.belloni@bootlin.com>, 
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	Jiawen Wu <jiawenwu@trustnetic.com>, Mengyuan Lou <mengyuanlou@net-swift.com>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org, 
+	linux-riscv@lists.infradead.org, UNGLinuxDriver@microchip.com, linux-mips@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-snps-arc@lists.infradead.org
+Subject: Re: [PATCH v2 0/7] i2c: designware: Group all DesignWare drivers
+ under a single option
+Message-ID: <3phynd24wmymhqugikbdwdzoa6vlzxwv5a6n6bk4446atbf7nu@c2kb766j3pcc>
+References: <20240903142506.3444628-1-heikki.krogerus@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] scsi: aacraid: Fix memory leak in open_getadapter_fib
- function
-To: Riyan Dhiman <riyandhiman14@gmail.com>, aacraid@microsemi.com,
- James.Bottomley@HansenPartnership.com, martin.petersen@oracle.com
-Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <b7f0acf4-5e7d-4491-81be-71518197c58b@acm.org>
- <20240903203121.5953-1-riyandhiman14@gmail.com>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <20240903203121.5953-1-riyandhiman14@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240903142506.3444628-1-heikki.krogerus@linux.intel.com>
 
-On 9/3/24 1:30 PM, Riyan Dhiman wrote:
->> Just above the copy_to_user() call there is the following statement:
->>
->> 	list_add_tail(&fibctx->next, &dev->fib_list);
->>
->> Does that mean that the above kfree() will cause list corruption?
-> 
-> Yes, you are correct. I overlooked that fibctx is part of a list, and freeing the
-> memory without removing the list entry would corrupt the list.
-> The list entry should be deleted before freeing the memory if copy_to_user() fails.
+Hi Jarkko, Andy,
 
-Are you sure that this is what the code should do?
+...
+
+> Heikki Krogerus (7):
+>   ARC: configs: enable I2C_DESIGNWARE_CORE with I2C_DESIGNWARE_PLATFORM
+>   ARM: configs: enable I2C_DESIGNWARE_CORE with I2C_DESIGNWARE_PLATFORM
+>   arm64: defconfig: enable I2C_DESIGNWARE_CORE with
+>     I2C_DESIGNWARE_PLATFORM
+>   mips: configs: enable I2C_DESIGNWARE_CORE with I2C_DESIGNWARE_PLATFORM
+>   RISC-V: configs: enable I2C_DESIGNWARE_CORE with
+>     I2C_DESIGNWARE_PLATFORM
+>   net: txgbe: Fix I2C Kconfig dependencies
+>   i2c: designware: Group all DesignWare drivers under a single option
+
+I believe you know this code already, do you mind giving it an
+ack?
 
 Thanks,
-
-Bart.
-
+Andi
 
