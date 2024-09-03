@@ -1,139 +1,195 @@
-Return-Path: <linux-kernel+bounces-313059-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313060-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0B4E969FAF
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 16:01:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 58DDC969FB0
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 16:01:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DA9CAB24DFD
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 14:01:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BD078B25026
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 14:01:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A72553B7AC;
-	Tue,  3 Sep 2024 14:01:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A6773FE55;
+	Tue,  3 Sep 2024 14:01:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=martyn.welch@collabora.com header.b="T8IavOfe"
-Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lsB2P9mT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69ACE364BC;
-	Tue,  3 Sep 2024 14:01:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725372084; cv=pass; b=NEiKFyPq1iEDJg7xnFJry7QmFstWZrZsvHjT+AiPC9UaGcm5D1sictIbjcNOp/f37Qyvz7s688w39hbcGv3jmG4wOYXWqwzK80AX6ZDZPna9GSM3o62tp/hazzABsZEKXhfc2pBC/mgEZzeO2z/47D8Mn3+/s2R0pUd3ju5vQGM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B2E43A267;
+	Tue,  3 Sep 2024 14:01:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725372084; cv=none; b=kKFVsUMTvz36qJV6kvvzfniiDDiBwsTRPXrvwwTvThSBl/4P5weXZcAoqQUmyiQQXci4IhLfTQyU/fFKbH8GWor5XTVurMrluNUVfnwp/yKW1joxFUTd/cyaaaKNzClEdh91wTy70BLTrJnZ3FWmissQTr/gbqaT71lVoc0PNs8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1725372084; c=relaxed/simple;
-	bh=DgKxU7ymeyfOn8smC+a1eI8FG8Ya+bjC3XbwIbFlPW8=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=heMtNGEA17mjfMXzZgkFz2HCgJbany7HnSv02fY41u6U1xOjcJaR/bKz4QHeW+m6KEIBJRHrqZVQEEGTCxnr9TQrVeSVlQHXTx8Xd0zjjbWOQPmxVuum2TZ75mlRy1Fju9uDxXYxhEAH2s7+iGGe6TqWmNHUex8O4KYCRxn9r14=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=martyn.welch@collabora.com header.b=T8IavOfe; arc=pass smtp.client-ip=136.143.188.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-Delivered-To: kernel@collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1725372052; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=jRDM+URDR9uwOmWNvoFX5gNWeDHB2mlFa8lxqT5+BqHKd5gH1/ET2RzteklqT6gUMllBtOnEKhbEXHgilyIoHCQS4o6rJtcpsAEDJ2jjzTs18whMloAbBjib3A4W+fKLOhoyQqDwCbMZuPHm31ElMQoPX9srIRJvbSnqQg3xsx8=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1725372052; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=B3X7/BScnuaQ5QIic6vas4I7lF55wl7Aex0QV6b1zjA=; 
-	b=FtWnMeyyyw1il1g48Jw+eZyB+f1o+5udDFtzZAihGuvA/wvnbgrNKLAowasYLX3P8juVlvEYPeiEBXTRt6fR/PENQi3apZ5s4PRh4sJoFOQKydTT2SpIjFmWVtFhpZi2jXrx8hbE/bL3clhV0VqagEHKwj0Qzu71X+7kXMrb8qI=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=martyn.welch@collabora.com;
-	dmarc=pass header.from=<martyn.welch@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1725372052;
-	s=zohomail; d=collabora.com; i=martyn.welch@collabora.com;
-	h=Message-ID:Subject:Subject:From:From:To:To:Cc:Cc:Date:Date:In-Reply-To:References:Content-Type:Content-Transfer-Encoding:MIME-Version:Message-Id:Reply-To;
-	bh=B3X7/BScnuaQ5QIic6vas4I7lF55wl7Aex0QV6b1zjA=;
-	b=T8IavOfespJk1awZh/FhBdD7tDA9xoyNL+wYPwGUCA5+9q17wAaoCmpZwuKEWbhg
-	1PvlP4tsy53JIKD+DvvQpIxrcobF1//jNwBd4xtncM/dmXtB/3Hb/fGWOBSlYlO7Ts9
-	jTcpxM0PNYYam5SWT7OfDiCP4faZFAXHr+u2z4aM=
-Received: by mx.zohomail.com with SMTPS id 1725372050874491.02003731810225;
-	Tue, 3 Sep 2024 07:00:50 -0700 (PDT)
-Message-ID: <c47861dae9d339b9033ed71c45160009a7464888.camel@collabora.com>
-Subject: Re: [PATCH] net: enetc: Replace ifdef with IS_ENABLED
-From: Martyn Welch <martyn.welch@collabora.com>
-To: Vadim Fedorenko <vadim.fedorenko@linux.dev>, Claudiu Manoil	
- <claudiu.manoil@nxp.com>, Vladimir Oltean <vladimir.oltean@nxp.com>, "David
- S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub
- Kicinski <kuba@kernel.org>,  Paolo Abeni <pabeni@redhat.com>
-Cc: kernel@collabora.com, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Date: Tue, 03 Sep 2024 15:00:47 +0100
-In-Reply-To: <ecd830fe-28a8-4995-b4d3-fa4e5312b305@linux.dev>
-References: <20240830175052.1463711-1-martyn.welch@collabora.com>
-	 <ecd830fe-28a8-4995-b4d3-fa4e5312b305@linux.dev>
-Organization: Collabora Ltd.
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.53.2-1 
+	bh=T3Olby2iz255iWqiyW1U6xdVFp0tBuO814LWWXqbBbk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QYakaD6RIiwHEfZmGXpxChtz+WaAsDGlAKxVuOOwcsknQfxLcGVG+c0QQD7/1Qn9ntgTa7vyqdbhuLMfcbLE90a8VxBvTi+gaZVfr0G+4tHhaHjWnyIeX3oNeHVYhofHTdDZyaFYMTU3B9NY2opwAWbzw5ti+bOvEtXcfBkVAiU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lsB2P9mT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C21FC4CEC4;
+	Tue,  3 Sep 2024 14:01:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725372084;
+	bh=T3Olby2iz255iWqiyW1U6xdVFp0tBuO814LWWXqbBbk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=lsB2P9mTNwz+liKL2BMmgqmgCsWsewFPlekUhGK1mFmGvBly0KlzEq244n3hbAw50
+	 0X6JAKTRH+mOIQpfwlK4ofp7OK+cBTgX0Y0gey7ookcMPuZdU1ThMIinOplry2PXod
+	 3GutX59NFkRJv6AY7bXqx+r+edIxex/CMlG3EA1PsRQgW53frTcTDd8TiTuzogXPDW
+	 lBXiNDqa/fVg0zTAKHT9K/yxC3c9lvzuEczeT7Bl/R6F7CvLygyFbYVLCqRfkz+JBy
+	 lKmlA/6V3+tAFkPDHkRlfZqRQ87Wk5sz3CQTr62UnENglTFG8A7EzOln5iFd7jB7aD
+	 40iyyXlq0H9kw==
+Date: Tue, 3 Sep 2024 15:01:19 +0100
+From: Lee Jones <lee@kernel.org>
+To: Dmitry Rokosov <ddrokosov@salutedevices.com>
+Cc: pavel@ucw.cz, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org,
+	kernel@salutedevices.com, rockosov@gmail.com,
+	Alexey Romanov <avromanov@salutedevices.com>
+Subject: Re: [PATCH v1] leds: introduce ordered workqueue for leds events
+ instead of system_wq
+Message-ID: <20240903140119.GW6858@google.com>
+References: <20240820155407.32729-1-ddrokosov@salutedevices.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ZohoMailClient: External
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240820155407.32729-1-ddrokosov@salutedevices.com>
 
-On Mon, 2024-09-02 at 10:21 +0100, Vadim Fedorenko wrote:
-> On 30/08/2024 18:50, Martyn Welch wrote:
-> > The enetc driver uses ifdefs when checking whether
-> > CONFIG_FSL_ENETC_PTP_CLOCK is enabled in a number of places. This
-> > works
-> > if the driver is compiled in but fails if the driver is available
-> > as a
-> > kernel module. Replace the instances of ifdef with use of the
-> > IS_ENABLED
-> > macro, that will evaluate as true when this feature is built as a
-> > kernel
-> > module.
-> >=20
-> > Signed-off-by: Martyn Welch <martyn.welch@collabora.com>
-> > ---
-> > =C2=A0 drivers/net/ethernet/freescale/enetc/enetc.c=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 8 ++++----
-> > =C2=A0 drivers/net/ethernet/freescale/enetc/enetc.h=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 4 ++--
-> > =C2=A0 drivers/net/ethernet/freescale/enetc/enetc_ethtool.c | 2 +-
-> > =C2=A0 3 files changed, 7 insertions(+), 7 deletions(-)
-> >=20
-> > diff --git a/drivers/net/ethernet/freescale/enetc/enetc.c
-> > b/drivers/net/ethernet/freescale/enetc/enetc.c
-> > index 5c45f42232d3..276bc96dd1ef 100644
-> > --- a/drivers/net/ethernet/freescale/enetc/enetc.c
-> > +++ b/drivers/net/ethernet/freescale/enetc/enetc.c
-> > @@ -977,7 +977,7 @@ static int enetc_refill_rx_ring(struct
-> > enetc_bdr *rx_ring, const int buff_cnt)
-> > =C2=A0=C2=A0	return j;
-> > =C2=A0 }
-> > =C2=A0=20
-> > -#ifdef CONFIG_FSL_ENETC_PTP_CLOCK
-> > +#if IS_ENABLED(CONFIG_FSL_ENETC_PTP_CLOCK)
-> > =C2=A0 static void enetc_get_rx_tstamp(struct net_device *ndev,
-> > =C2=A0=C2=A0				union enetc_rx_bd *rxbd,
-> > =C2=A0=C2=A0				struct sk_buff *skb)
-> > @@ -1041,7 +1041,7 @@ static void enetc_get_offloads(struct
-> > enetc_bdr *rx_ring,
-> > =C2=A0=C2=A0		__vlan_hwaccel_put_tag(skb, tpid,
-> > le16_to_cpu(rxbd->r.vlan_opt));
-> > =C2=A0=C2=A0	}
-> > =C2=A0=20
-> > -#ifdef CONFIG_FSL_ENETC_PTP_CLOCK
-> > +#if IS_ENABLED(CONFIG_FSL_ENETC_PTP_CLOCK)
-> > =C2=A0=C2=A0	if (priv->active_offloads & ENETC_F_RX_TSTAMP)
-> > =C2=A0=C2=A0		enetc_get_rx_tstamp(rx_ring->ndev, rxbd, skb);
->=20
-> I believe IS_ENABLED can go directly to if statement and there should
-> be
-> no macros dances anymore. You can change these lines into
-> 	if (IS_ENABLED(CONFIG_FSL_ENETC_PTP_CLOCK) &&
-> 	=C2=A0=C2=A0=C2=A0 priv->active_offloads & ENETC_F_RX_TSTAMP)
->=20
-> The same applies to other spots in the patch.
->=20
+On Tue, 20 Aug 2024, Dmitry Rokosov wrote:
 
-Thanks, v2 on the way....
+> This allows to setup ordered workqueue for leds events. This may be
+> useful, because default 'system_wq' does not guarantee execution order
+> of each work_struct, thus for several brightness update requests (for
+> multiple leds), real brightness switch could be in random order.
+> 
+> Yes, for sysfs-based leds we have flush_work() call inside
+> brightness_store() operation, but it's blocking call, so userspace
+> caller can be blocked at a long time, which means leds animation stream
+> can be broken.
+> 
+> Ordered workqueue has the same behaviour as system_wq + flush_work(),
+> but all scheduled works are async and userspace caller is not blocked,
+> which it better for userspace animation scheduling.
+> 
+> Signed-off-by: Alexey Romanov <avromanov@salutedevices.com>
+> Signed-off-by: Dmitry Rokosov <ddrokosov@salutedevices.com>
+> ---
+>  drivers/leds/led-class.c | 12 +++++++++++-
+>  drivers/leds/led-core.c  |  6 +++---
+>  include/linux/leds.h     |  1 +
+>  3 files changed, 15 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
+> index ba1be15cfd8e..fba12471cf1f 100644
+> --- a/drivers/leds/led-class.c
+> +++ b/drivers/leds/led-class.c
+> @@ -25,6 +25,8 @@
+>  static DEFINE_MUTEX(leds_lookup_lock);
+>  static LIST_HEAD(leds_lookup_list);
+>  
+> +static struct workqueue_struct *leds_wq;
 
-Martyn
+Does this _have_ to be global?
+
+Isn't there a suitable data structure that we can store it in?
+
+>  static ssize_t brightness_show(struct device *dev,
+>  		struct device_attribute *attr, char *buf)
+>  {
+> @@ -57,7 +59,6 @@ static ssize_t brightness_store(struct device *dev,
+>  	if (state == LED_OFF)
+>  		led_trigger_remove(led_cdev);
+>  	led_set_brightness(led_cdev, state);
+> -	flush_work(&led_cdev->set_brightness_work);
+>  
+>  	ret = size;
+>  unlock:
+> @@ -549,6 +550,8 @@ int led_classdev_register_ext(struct device *parent,
+>  
+>  	led_update_brightness(led_cdev);
+>  
+> +	led_cdev->wq = leds_wq;
+> +
+>  	led_init_core(led_cdev);
+>  
+>  #ifdef CONFIG_LEDS_TRIGGERS
+> @@ -667,12 +670,19 @@ EXPORT_SYMBOL_GPL(devm_led_classdev_unregister);
+>  
+>  static int __init leds_init(void)
+>  {
+> +	leds_wq = alloc_ordered_workqueue("leds", 0);
+> +	if (!leds_wq) {
+> +		pr_err("failed to create leds ordered workqueue\n");
+
+Nit: "LEDs"
+
+> +		return -ENOMEM;
+> +	}
+> +
+>  	return class_register(&leds_class);
+>  }
+>  
+>  static void __exit leds_exit(void)
+>  {
+>  	class_unregister(&leds_class);
+> +	destroy_workqueue(leds_wq);
+>  }
+>  
+>  subsys_initcall(leds_init);
+> diff --git a/drivers/leds/led-core.c b/drivers/leds/led-core.c
+> index 89c9806cc97f..9769ac49be20 100644
+> --- a/drivers/leds/led-core.c
+> +++ b/drivers/leds/led-core.c
+> @@ -266,7 +266,7 @@ void led_blink_set_nosleep(struct led_classdev *led_cdev, unsigned long delay_on
+>  		led_cdev->delayed_delay_on = delay_on;
+>  		led_cdev->delayed_delay_off = delay_off;
+>  		set_bit(LED_SET_BLINK, &led_cdev->work_flags);
+> -		schedule_work(&led_cdev->set_brightness_work);
+> +		queue_work(led_cdev->wq, &led_cdev->set_brightness_work);
+>  		return;
+>  	}
+>  
+> @@ -297,7 +297,7 @@ void led_set_brightness(struct led_classdev *led_cdev, unsigned int brightness)
+>  		 */
+>  		if (!brightness) {
+>  			set_bit(LED_BLINK_DISABLE, &led_cdev->work_flags);
+> -			schedule_work(&led_cdev->set_brightness_work);
+> +			queue_work(led_cdev->wq, &led_cdev->set_brightness_work);
+>  		} else {
+>  			set_bit(LED_BLINK_BRIGHTNESS_CHANGE,
+>  				&led_cdev->work_flags);
+> @@ -333,7 +333,7 @@ void led_set_brightness_nopm(struct led_classdev *led_cdev, unsigned int value)
+>  		set_bit(LED_SET_BRIGHTNESS_OFF, &led_cdev->work_flags);
+>  	}
+>  
+> -	schedule_work(&led_cdev->set_brightness_work);
+> +	queue_work(led_cdev->wq, &led_cdev->set_brightness_work);
+>  }
+>  EXPORT_SYMBOL_GPL(led_set_brightness_nopm);
+>  
+> diff --git a/include/linux/leds.h b/include/linux/leds.h
+> index 6300313c46b7..7c9f1cb12ab9 100644
+> --- a/include/linux/leds.h
+> +++ b/include/linux/leds.h
+> @@ -169,6 +169,7 @@ struct led_classdev {
+>  	int			 new_blink_brightness;
+>  	void			(*flash_resume)(struct led_classdev *led_cdev);
+>  
+> +	struct workqueue_struct *wq; /* LED workqueue */
+>  	struct work_struct	set_brightness_work;
+>  	int			delayed_set_value;
+>  	unsigned long		delayed_delay_on;
+> -- 
+> 2.43.0
+> 
+> 
+
+-- 
+Lee Jones [李琼斯]
 
