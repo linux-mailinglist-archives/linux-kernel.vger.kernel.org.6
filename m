@@ -1,117 +1,97 @@
-Return-Path: <linux-kernel+bounces-313785-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313786-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13D7A96A9B9
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 23:09:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D23696A9BB
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 23:09:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B12811F22E86
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 21:09:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A1F6AB21A0D
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 21:09:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E50A11A4F18;
-	Tue,  3 Sep 2024 21:00:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C17F41D58A7;
+	Tue,  3 Sep 2024 21:01:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AB5R4DrZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="qNm9g//h"
+Received: from 008.lax.mailroute.net (008.lax.mailroute.net [199.89.1.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47FA3B647;
-	Tue,  3 Sep 2024 21:00:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 913C1126BE7;
+	Tue,  3 Sep 2024 21:01:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725397229; cv=none; b=KCjUFggbT5oW+1BIzZdWDEI1rGHMWtvdrZm93aPIeMP0Olh0G0GHd1wM4DNh2VYvt8rc1/v3CoCFf5j1osRLBhW9Y6FB3ZlH/fp4TDA8Kh0mvXKxPvhWx5VdB9YDyu9HsYev/pSgCqp9jkOcaHwRfNCXhilQGcUR/O31CXjVywg=
+	t=1725397284; cv=none; b=p4yMsjRtSeKVsY9L6xEYZ9u3HlXdimz8xrgMJBdQ4HPvJwO+zTn5H42uPEuhfr5KpQRl6CSCPVuqMCBLVpkX9kLpBFbB6W82EpYgUQMH1ORD7atb919cp2t961PtjAy3E87tsu8QoO29Q+M6kns+bc/FrqdcQe15q6TVjQOP+RA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725397229; c=relaxed/simple;
-	bh=jv+1kf8g+dnHYkhxQbSszP1qpuXLncf8k9I1jM1n2QQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Oag73Bz2RQp626ff6xPyxrTK1KT8mGL1ZNra5S7XSP5NTlc74UlM2iSVc6f6GppIWkeBstmTmWH0/9JkytydAUoJsxo+ZuXpGWbvROTqmyAgZzVLGZq5/68dxa5eD0p8weNe289a9VyB4PDd4NgAsabRcpg/ubToehljILV+v10=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AB5R4DrZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC929C4CEC4;
-	Tue,  3 Sep 2024 21:00:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725397229;
-	bh=jv+1kf8g+dnHYkhxQbSszP1qpuXLncf8k9I1jM1n2QQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=AB5R4DrZQ/aI2cRbASR71eUQcs1cE6UTHXVX1DpFAHErRrEkoqaqjmlUllD2+Nu9w
-	 xFVKIluKEsEaXIctdA/rxApJZkG8oOIqALZBu5MuuGxQ2iIef+nK5/OfOqkT5j5y+v
-	 K7AxGx52m57lMrnULyvSZHwno66gxuWU8/gZXgw0zT7d28+Imqjmhi4Rup9e8390GD
-	 HWkx98A1SESPE1rwo8TQKE5JxBRmc9Iyx6gUelKYQo6pvhp112dv6/7Tx2F3Wn+2L/
-	 K2yuWDaHER2Ak+3JmpNTo6cRSDD80KReQrV+iRAyDHjtCmcMJMM8cJUvNLI37rlhcW
-	 V5/U9HkcntSbg==
-Date: Tue, 3 Sep 2024 23:00:25 +0200
-From: Andi Shyti <andi.shyti@kernel.org>
-To: Stefan Eichenberger <eichest@gmail.com>
-Cc: o.rempel@pengutronix.de, kernel@pengutronix.de, shawnguo@kernel.org, 
-	s.hauer@pengutronix.de, festevam@gmail.com, francesco.dolcini@toradex.com, 
-	Frank.Li@nxp.com, linux-i2c@vger.kernel.org, imx@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	Stefan Eichenberger <stefan.eichenberger@toradex.com>
-Subject: Re: [PATCH v3 4/4] i2c: imx: prevent rescheduling in non dma mode
-Message-ID: <pva2d5fc76ykjlzyxivrau4qnt6cu6qqlgmuvq3ykzlaqvsqio@xuultvre2f4d>
-References: <20240902074330.6349-1-eichest@gmail.com>
- <20240902074330.6349-5-eichest@gmail.com>
+	s=arc-20240116; t=1725397284; c=relaxed/simple;
+	bh=jVhj2xMsWVduincqHIuHsp2XlN6UZ1a7zLSg46WfuWc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mfFy0x6NVNwwky5Ns+m3DYsjFdorqiQs+IYkIZYey2cq+2X8DcA574eEFqgACBkOZalY/qwk6SKhNrqdiznO4NsAYd5ppTmKdwE8FeWvMTsGiUt41rWaRK4HeW2w/Drq/41RCtYA78oS3wIjbrPaB5nK9cyFvwsJRvYJavY6Noc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=qNm9g//h; arc=none smtp.client-ip=199.89.1.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 008.lax.mailroute.net (Postfix) with ESMTP id 4Wyyhx5p7sz6ClY93;
+	Tue,  3 Sep 2024 21:01:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1725397279; x=1727989280; bh=GcSbK+dobI0o7Q22prdN5k7H
+	CGcrrI0ReHGActTH+uw=; b=qNm9g//hzQagxuHCntXtcEwgtQ8st4tyDmZXxBpt
+	V3Z9PlHP5+whFtBwci7Pee32auMSEL1Z4GgTPMmSpWpK12N9uOkrJC4VILCQ8eFr
+	coH6pjCocaqcl8QIGcqYMse5DltSYVss054/QxqGPDW2r0g5PBiDXo2WjNzLltEh
+	D78VjmVKpIFx01a3XLr3fNMkJHnVJ7RoXXv2tK/tLcQjEqfcufgROQRhEfxnX6Bz
+	dQ5eBCl8i9cKyZiduLoiwQtEb4RwJMCLp8bKspLupLhbNJaRRxBgDPKg6ElamGdu
+	SwO0PDL9p+En0D71M2LjnRsjlebhV0VCf0oCkj8eUETx3g==
+X-Virus-Scanned: by MailRoute
+Received: from 008.lax.mailroute.net ([127.0.0.1])
+ by localhost (008.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id Gn4A2Pjt5VLY; Tue,  3 Sep 2024 21:01:19 +0000 (UTC)
+Received: from [100.66.154.22] (unknown [104.135.204.82])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 008.lax.mailroute.net (Postfix) with ESMTPSA id 4Wyyht6HR8z6ClY92;
+	Tue,  3 Sep 2024 21:01:18 +0000 (UTC)
+Message-ID: <bf6746d0-d8cc-412e-ac7b-6f17c3e3de9d@acm.org>
+Date: Tue, 3 Sep 2024 14:01:18 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240902074330.6349-5-eichest@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] scsi: aacraid: Fix memory leak in open_getadapter_fib
+ function
+To: Riyan Dhiman <riyandhiman14@gmail.com>, aacraid@microsemi.com,
+ James.Bottomley@HansenPartnership.com, martin.petersen@oracle.com
+Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <b7f0acf4-5e7d-4491-81be-71518197c58b@acm.org>
+ <20240903203121.5953-1-riyandhiman14@gmail.com>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <20240903203121.5953-1-riyandhiman14@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Stefan,
-
-One final ask...
-
-On Mon, Sep 02, 2024 at 09:42:04AM GMT, Stefan Eichenberger wrote:
-> From: Stefan Eichenberger <stefan.eichenberger@toradex.com>
+On 9/3/24 1:30 PM, Riyan Dhiman wrote:
+>> Just above the copy_to_user() call there is the following statement:
+>>
+>> 	list_add_tail(&fibctx->next, &dev->fib_list);
+>>
+>> Does that mean that the above kfree() will cause list corruption?
 > 
-> We are experiencing a problem with the i.MX I2C controller when
-> communicating with SMBus devices. We are seeing devices time-out because
-> the time between sending/receiving two bytes is too long, and the SMBus
-> device returns to the idle state. This happens because the i.MX I2C
-> controller sends and receives byte by byte. When a byte is sent or
-> received, we get an interrupt and can send or receive the next byte.
-> 
-> The current implementation sends a byte and then waits for an event
-> generated by the interrupt subroutine. After the event is received, the
-> next byte is sent and we wait again. This waiting allows the scheduler
-> to reschedule other tasks, with the disadvantage that we may not send
-> the next byte for a long time because the send task is not immediately
-> scheduled. For example, if the rescheduling takes more than 25ms, this
-> can cause SMBus devices to timeout and communication to fail.
-> 
-> This patch changes the behavior so that we do not reschedule the
-> send/receive task, but instead send or receive the next byte in the
-> interrupt subroutine. This prevents rescheduling and drastically reduces
-> the time between sending/receiving bytes. The cost in the interrupt
-> subroutine is relatively small, we check what state we are in and then
-> send/receive the next byte. Before we had to call wake_up, which is even
-> less expensive. However, we also had to do some scheduling, which
-> increased the overall cost compared to the new solution. The wake_up
-> function to wake up the send/receive task is now only called when an
-> error occurs or when the transfer is complete.
-> 
-> Signed-off-by: Stefan Eichenberger <stefan.eichenberger@toradex.com>
-> Acked-by: Oleksij Rempel <o.rempel@pengutronix.de>
+> Yes, you are correct. I overlooked that fibctx is part of a list, and freeing the
+> memory without removing the list entry would corrupt the list.
+> The list entry should be deleted before freeing the memory if copy_to_user() fails.
 
-The code is fine and looks good to me. The commit log is also
-very descriptive. However, there isn’t a single line of comment
-in the code.
-
-If someone else encounters this code without understanding your
-specific context, they might find it too complex and attempt to
-simplify it or revert to the previous implementation.
-
-Please add comments to describe the state machine you
-implemented, the reasoning behind it (as you explained in the
-commit log), and make it understandable for those who haven’t
-reviewed your patches.
+Are you sure that this is what the code should do?
 
 Thanks,
-Andi
+
+Bart.
+
 
