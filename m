@@ -1,55 +1,59 @@
-Return-Path: <linux-kernel+bounces-313893-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313894-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4550E96ABEC
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 00:15:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1672F96ABEE
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 00:15:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B24D61F24747
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 22:15:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B57001F24295
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 22:15:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 673831D58A7;
-	Tue,  3 Sep 2024 22:13:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AC931D88BA;
+	Tue,  3 Sep 2024 22:13:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pQazOKke"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Kwt+dUH7"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C10511D5897;
-	Tue,  3 Sep 2024 22:13:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70CC63A267;
+	Tue,  3 Sep 2024 22:13:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725401593; cv=none; b=NNPx4d3p62xxEhWn9LlkKXaCXJvljzQfOoVec4Diot8SquQCiNzyYgX9bY5fc7ryi5QbnsDA/eqUWPfVGgvG98Z+fpcW1XXMBRegu00JA3cZ8RuSOAc7Nk3TEHeOIwjXY4T3H24FN8HkRROz0YT/h1MRbXstwIi6QitmhcCBxJI=
+	t=1725401621; cv=none; b=JTb5cXB+l476B4YeChQQi9TZgbkx+Ok+j4s/t/YiTtwB1wz8DiHj9JN0jXJiRutVAZSa+tA5MCYeSWLgQb76edXvfnkWQeX8WNKWTYlz17SLPJjLQ10OwsSSDsbzXBhRKwyGRjRVKJ4Vi+Cvkd8smIa3APs4t3J6hRMxHxCtCqQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725401593; c=relaxed/simple;
-	bh=hnRbTCBiLUPEeMzG78scZn52td6uKH5byGGBNSgOMLM=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=nbOHIAh3fT/qMngVkdIqV+qhlJrWlJewgR6UemKRUPf03lXYK9Rcu2sS2dQuF045pY/go1BI/6AIAfv0Vf0kyQUrWlVshoRMNWEeSl1FFhd1/47KCbfBSDd2Hc1bDzSaYwo563JPoxWi4x3cGPiMipWCFThGJUvnNBaaXrtGSkg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pQazOKke; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2DEB2C4CEC5;
-	Tue,  3 Sep 2024 22:13:13 +0000 (UTC)
+	s=arc-20240116; t=1725401621; c=relaxed/simple;
+	bh=BFwV4XFqWWCv3stbm+yoKdUNt7HYzxBOKF2GDUHAz+Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Dm3CDuCiL/QPdtdyVHojwMzYDMxTdzBZmofzeyuAh+BEfHf1mgsffwRGlLgSMWYySBKwBu6kRBrq0zEgfYpq4w/2Q/vz4rY0xgGQncFh96iY1nZKBW9oNW6HXiP1i4aaTQMkiVNNa6bqJOqeZFUB7OSpEmLo/77TKOesC0xIahE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Kwt+dUH7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4A03AC4CEC5;
+	Tue,  3 Sep 2024 22:13:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725401593;
-	bh=hnRbTCBiLUPEeMzG78scZn52td6uKH5byGGBNSgOMLM=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=pQazOKkeI1qKBVVv7OCXZPFdT/ODCP+O1xNQB3JQaa3kUG9ZuCW0O+NP3UPV0HkCL
-	 41+HH1UjTac0FrD0LmIK7YSC8lRSKf+0JeJyj9i6CcmquIJu6mj6h8tibP0tl2MDIr
-	 TSJEx8zQqfY+x3heqircZfp/eoh210Mq5b3oJiHmSgz8BA2SkzKjCq86JaJbijy0bX
-	 dXREkJPgf7QM7YntYCIsN9g4Q80Jth22DmnsH+4P2pZlOE29c683+X23Aa2xa+/5um
-	 1CqdCQM8t6zdGstHaNKhqpP3CKCyKYKCnapK79/PXCz+YZxyQ3p5Llr1jTWyF8nYcN
-	 Ib1UicTn09VKw==
-Date: Tue, 3 Sep 2024 17:13:11 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Bjorn Helgaas <bhelgaas@google.com>,
-	Krishna chaitanya chundru <quic_krichai@quicinc.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: Re: [PATCH v3 0/2] PCI/pwrctl: fixes for v6.11
-Message-ID: <20240903221311.GA306706@bhelgaas>
+	s=k20201202; t=1725401621;
+	bh=BFwV4XFqWWCv3stbm+yoKdUNt7HYzxBOKF2GDUHAz+Y=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=Kwt+dUH7Z6nYBlPxIBkm0Vvf1XFwD5P0V3tSz9ut1EJukXQpHy14Hts52T5rNQh7y
+	 TUh3GV1D55sqi22iRQf3N3WGxXD9HgfnbqIObA5owK+MJfR+Yt0i0CM4YebON97PzQ
+	 U+DhWrkFHthwv/F7l0AwjvTSitEVrh7yFgWBpeSqChvs+P2PGVxrExHR5nv2ujNt3P
+	 dHrHLuezZSLoZEA50uXqto9tzvGPdndeJUfAvLVhF0CKh8erVWmWcmNhSTwx9bVVuT
+	 HL3iAj5f8KSrpJ/aqNjXOA4kJ+KftdDorimy0nJF2wBV0Ag6mOoGwvs85EUBkIo/LS
+	 QGK/q5Wq/A65A==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id D3B16CE1257; Tue,  3 Sep 2024 15:13:40 -0700 (PDT)
+Date: Tue, 3 Sep 2024 15:13:40 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: rcu@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-team@meta.com,
+	rostedt@goodmis.org, Alexei Starovoitov <ast@kernel.org>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>, bpf@vger.kernel.org
+Subject: Re: [PATCH rcu 0/11] Add light-weight readers for SRCU
+Message-ID: <0359b3a4-b6db-45d9-9957-b304b4a85865@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <26cddadd-a79b-47b1-923e-9684cd8a7ef4@paulmck-laptop>
+ <gbar5cxixgq4jtxgtzv7xjipabhqqbwdwyrtahkkws3tregdvo@edqb7ku2uhk2>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,37 +62,55 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240823093323.33450-1-brgl@bgdev.pl>
+In-Reply-To: <gbar5cxixgq4jtxgtzv7xjipabhqqbwdwyrtahkkws3tregdvo@edqb7ku2uhk2>
 
-On Fri, Aug 23, 2024 at 11:33:21AM +0200, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+On Tue, Sep 03, 2024 at 05:38:05PM -0400, Kent Overstreet wrote:
+> On Tue, Sep 03, 2024 at 09:32:51AM GMT, Paul E. McKenney wrote:
+> > Hello!
+> > 
+> > This series provides light-weight readers for SRCU.  This lightness
+> > is selected by the caller by using the new srcu_read_lock_lite() and
+> > srcu_read_unlock_lite() flavors instead of the usual srcu_read_lock() and
+> > srcu_read_unlock() flavors.  Although this passes significant rcutorture
+> > testing, this should still be considered to be experimental.
 > 
-> Bjorn,
-> 
-> Here's a respin of the PCI/pwrctl fixes that should go into v6.11. I
-> eventually found a solution that doesn't require Krishna's topology
-> change but Krishna: please make sure to update the code in
-> drivers/pci/remove.c as well when rebasing your work once this gets
-> upstream.
-> 
-> v2 -> v3:
-> - use the correct device for unregistering the platform pwrctl device in
->   patch 1/2
-> - make patch 1/2 easier to read by using device_for_each_child()
-> 
-> v1 -> v2:
-> - use the scoped variant of for_each_child_of_node() to fix a memory
->   leak in patch 1/2
-> 
-> Bartosz Golaszewski (2):
->   PCI: don't rely on of_platform_depopulate() for reused OF-nodes
->   PCI/pwrctl: put the bus rescan on a different thread
-> 
->  drivers/pci/pwrctl/core.c              | 26 +++++++++++++++++++++++---
->  drivers/pci/pwrctl/pci-pwrctl-pwrseq.c |  2 +-
->  drivers/pci/remove.c                   | 18 +++++++++++++++++-
->  include/linux/pci-pwrctl.h             |  3 +++
->  4 files changed, 44 insertions(+), 5 deletions(-)
+> This avoids memory barriers, correct?
 
-Applied to pci/for-linus for v6.11, thanks.
+Yes, there are no smp_mb() invocations in either srcu_read_lock_lite()
+or srcu_read_unlock_lite().  As usual, nothing comes for free, so the
+overhead is moved to the update side, and amplified, in the guise of
+the at least two calls to synchronize_rcu().
+
+> > There are a few restrictions:  (1) If srcu_read_lock_lite() is called
+> > on a given srcu_struct structure, then no other flavor may be used on
+> > that srcu_struct structure, before, during, or after.  (2) The _lite()
+> > readers may only be invoked from regions of code where RCU is watching
+> > (as in those regions in which rcu_is_watching() returns true).  (3)
+> > There is no auto-expediting for srcu_struct structures that have
+> > been passed to _lite() readers.  (4) SRCU grace periods for _lite()
+> > srcu_struct structures invoke synchronize_rcu() at least twice, thus
+> > having longer latencies than their non-_lite() counterparts.  (5) Even
+> > with synchronize_srcu_expedited(), the resulting SRCU grace period
+> > will invoke synchronize_rcu() at least twice, as opposed to invoking
+> > the IPI-happy synchronize_rcu_expedited() function.  (6)  Just as with
+> > srcu_read_lock() and srcu_read_unlock(), the srcu_read_lock_lite() and
+> > srcu_read_unlock_lite() functions may not (repeat, *not*) be invoked
+> > from NMI handlers (that is what the _nmisafe() interface are for).
+> > Although one could imagine readers that were both _lite() and _nmisafe(),
+> > one might also imagine that the read-modify-write atomic operations that
+> > are needed by any NMI-safe SRCU read marker would make this unhelpful
+> > from a performance perspective.
+> 
+> So if I'm following, this should work fine for bcachefs, and be a nifty
+> small perforance boost.
+
+Glad you like it!
+
+> Can I give you an account for my test cluster? If you'd like, we can
+> convert bcachefs to it and point it at your branch.
+
+Thank you, but I will pass on more accounts.  I have a fair amount of
+hardware at my disposal.  ;-)
+
+							Thanx, Paul
 
