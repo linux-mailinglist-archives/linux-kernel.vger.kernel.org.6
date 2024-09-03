@@ -1,144 +1,208 @@
-Return-Path: <linux-kernel+bounces-312214-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312215-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 573939693A4
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 08:27:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BE4F9693A7
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 08:29:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8A2FC1C20F5D
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 06:27:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC298284734
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 06:29:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 799CB1CFEA9;
-	Tue,  3 Sep 2024 06:27:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2556B1CFEAA;
+	Tue,  3 Sep 2024 06:29:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="rzESbfHi"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="oG3FmULU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AF5B1CEACD;
-	Tue,  3 Sep 2024 06:27:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66DCCA5F;
+	Tue,  3 Sep 2024 06:29:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725344872; cv=none; b=lXYewW1KJ3VLfk39uki3FQjwrUOmlqHV5smAm++3sB/wPhbsZuX07HhLWJ2HXlj+1NRYjOxtxqLdQ8jXK1z1ff0g+gid2BxCQtQ7FhuisH0U51u5uQTDFLiLGbHIP2FzfjswGSueBek11n8tnz218/1BcSt+bfFqVDfGr3M2XkM=
+	t=1725344980; cv=none; b=N0gHN+LEyD4YZ8IbY5dNsb9toleLK6j3OtIdkIfPt2TN8nbTtJjZFNNJSHOhJQDW1mb5lOA3C+Qms7kkswpNN0MXfBED5FZiabHH4uEg1eiIrnACen1g1qCmeo/o4r9z4Fm4zSD1LgMyezWQrNoEVgJzu/pybKCI+EnqJNLZodY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725344872; c=relaxed/simple;
-	bh=sMQ71KUx8Yfj/b5CyoYHGS+JpK7RHanY/ORvFOYgGSo=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=pwjc0m6blfA6rvGpJbZE968bGWEEYU/z4oaHSXy4l2LIYRmRDTwptCP4cKJIp0Ul2mj0os+p2PAVIKVGGOYXg4etwxb2MmZeiJ2kPi6hbIwz74k3s9Av3KsGPlmGsr2BSJ4/wgPsyJx1Yi99TFYlZrBiqg7+279s55QM8t8OdCU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=rzESbfHi; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 482MmnT9025891;
-	Tue, 3 Sep 2024 06:27:24 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from
-	:to:cc:subject:in-reply-to:references:date:message-id
-	:mime-version:content-type; s=pp1; bh=VgrxN144iUPf7NqeoMOyzsSN98
-	GEfqKoLsawzlynxPg=; b=rzESbfHimjo981rF1eOvgpMSjsCQ2UXY78JmMhDEPZ
-	DPh07gQoAfNtgrqCnJFv+HngQ73My+guTlInZU4UAvE+Dm9dcfsYpQEIqRqoVG6I
-	obVtiqyrCd8ZtLNynhBiS1xKvLMAi/spun5PMu9Eab4stcoNMpzU0EqMEfHF9k64
-	+Lwt5vXL3GQWmcwF7+U+6eOVKzqSx/n6WbnE3sku4HNati9Ia2vVLoEPV1PxeuvG
-	3fui9eN9a0KkNJJxBS5E1cd0jLPmZSXe5AuC2X3sdunUJeNgYrgy4e73/Bna0Inl
-	PYj52ozWBoOg+tVNxtsqs4KH9vbGLWVO9WCW8G0uWdcA==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 41brkqmhru-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 03 Sep 2024 06:27:23 +0000 (GMT)
-Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4836RNUi007387;
-	Tue, 3 Sep 2024 06:27:23 GMT
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 41brkqmhrr-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 03 Sep 2024 06:27:23 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4832HPjd012052;
-	Tue, 3 Sep 2024 06:27:22 GMT
-Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 41cegpse6m-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 03 Sep 2024 06:27:22 +0000
-Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
-	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4836RKVJ14483918
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 3 Sep 2024 06:27:20 GMT
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 1289B2004D;
-	Tue,  3 Sep 2024 06:27:20 +0000 (GMT)
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 9BD9820040;
-	Tue,  3 Sep 2024 06:27:19 +0000 (GMT)
-Received: from tuxmaker.linux.ibm.com (unknown [9.152.85.9])
-	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Tue,  3 Sep 2024 06:27:19 +0000 (GMT)
-From: Sven Schnelle <svens@linux.ibm.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-        Nathan Chancellor
- <nathan@kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>, linux-mm@kvack.org,
-        linuxppc-dev@lists.ozlabs.org, christophe.leroy@csgroup.eu,
-        jeffxu@google.com, Liam.Howlett@oracle.com,
-        linux-kernel@vger.kernel.org, npiggin@gmail.com, oliver.sang@intel.com,
-        pedro.falcato@gmail.com, linux-um@lists.infradead.org,
-        linux-s390@vger.kernel.org,
-        Ravi Bangoria
- <ravi.bangoria@linux.ibm.com>,
-        Steven Rostedt <rostedt@goodmis.org>
-Subject: Re: [PATCH v2 1/4] mm: Add optional close() to struct
- vm_special_mapping
-In-Reply-To: <CAHk-=wjD0XLhkzou89J-TK=L6B88pFoNYxN1uTWRQB3U5Czywg@mail.gmail.com>
-	(Linus Torvalds's message of "Mon, 2 Sep 2024 14:02:56 -0700")
-References: <20240812082605.743814-1-mpe@ellerman.id.au>
-	<20240819185253.GA2333884@thelio-3990X>
-	<yt9dy149vprr.fsf@linux.ibm.com>
-	<20240902134953.e834bc2e57d36b1d3b1397e4@linux-foundation.org>
-	<CAHk-=wjD0XLhkzou89J-TK=L6B88pFoNYxN1uTWRQB3U5Czywg@mail.gmail.com>
-Date: Tue, 03 Sep 2024 08:27:19 +0200
-Message-ID: <yt9dr0a1uu9k.fsf@linux.ibm.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1725344980; c=relaxed/simple;
+	bh=10+jhI/6ImbS3ZFkXBIC2SnK6R1MLziOBOnLAq6QFJs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OpIfWulgBdTjJnXxknH3RdGDuo8j4khIU8V4Ti9r7L/vuH0UfMkAxFsg+qWbgThJufSJfY92w1Lw+GcBPbNCg/cbEkl+DI1VIazdjdme2yiqA6SZZOBhLn6kg4caVFUVAc0/OaHPRWSwhaP5rzdwmTVEoBvo/cqNPT0ZXLTdBo4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=oG3FmULU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66154C4CEC5;
+	Tue,  3 Sep 2024 06:29:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1725344980;
+	bh=10+jhI/6ImbS3ZFkXBIC2SnK6R1MLziOBOnLAq6QFJs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=oG3FmULU+/8/xnITT69vNFuShKPWGm96zQV0TF/w6tzAgzzHXvDwx63HT7w8KE85t
+	 bNOAGaEjVYSwfyWZEpI7naviFAf3MZJNxzeVMPST9nd3zo3f1C066nUcxSuOGTJsh+
+	 ZTDz6sUwC02OwBk9F41JpePipOzUUnXkfUDCerTM=
+Date: Tue, 3 Sep 2024 08:29:36 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Yuesong Li <liyuesong@vivo.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Jakub Kicinski <kuba@kernel.org>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Mark Brown <broonie@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Daniel Mack <daniel@zonque.org>,
+	Haojian Zhuang <haojian.zhuang@gmail.com>,
+	Robert Jarzmik <robert.jarzmik@free.fr>,
+	linux-arm-kernel@lists.infradead.org, linux-spi@vger.kernel.org,
+	linux-kernel@vger.kernel.org, opensource.kernel@vivo.com,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Yang Ruibin <11162571@vivo.com>
+Subject: Re: [PATCH v2] drivers: spi: Insert the missing pci_dev_put()before
+ return
+Message-ID: <2024090358-settling-blimp-fb4c@gregkh>
+References: <20240829033511.1917015-1-11162571@vivo.com>
+ <CAMuHMdWNjo69_W6f+R9QJJOf8uF0htg2XazeS-yjugJv3UM+kg@mail.gmail.com>
+ <4e2ad62b-b11e-40db-9cd9-a26f7642c735@kernel.org>
+ <b397b47e-f1fa-4589-9f07-d59ce743ec89@vivo.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: 9aSqu6fFfWss73YgKp0gBlzFQVIXapXn
-X-Proofpoint-ORIG-GUID: OxhEA4e_rV3dfcm0C7DWi8uVqyGWdHzl
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-02_06,2024-09-02_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- clxscore=1011 mlxscore=0 impostorscore=0 malwarescore=0 suspectscore=0
- priorityscore=1501 adultscore=0 mlxlogscore=970 bulkscore=0 spamscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2409030046
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <b397b47e-f1fa-4589-9f07-d59ce743ec89@vivo.com>
 
-Linus Torvalds <torvalds@linux-foundation.org> writes:
+On Mon, Sep 02, 2024 at 03:15:48PM +0800, Yuesong Li wrote:
+> 
+> 
+> On 2024/8/31 1:10, Krzysztof Kozlowski wrote:
+> > On 30/08/2024 10:55, Geert Uytterhoeven wrote:
+> > > Hi Yang,
+> > > 
+> > > On Thu, Aug 29, 2024 at 5:35 AM Yang Ruibin <11162571@vivo.com> wrote:
+> > > > Increase the reference count by calling pci_get_slot(), and remember to
+> > > > decrement the reference count by calling pci_dev_put().
+> > > > 
+> > > > Signed-off-by: Yang Ruibin <11162571@vivo.com>
+> > > 
+> > > Thanks for your patch, which is now commit 8a0ec8c2d736961f ("spi:
+> > > Insert the missing pci_dev_put()before return") in spi/for-next.
+> > > 
+> > > > --- a/drivers/spi/spi-pxa2xx-pci.c
+> > > > +++ b/drivers/spi/spi-pxa2xx-pci.c
+> > > > @@ -146,8 +146,10 @@ static int lpss_spi_setup(struct pci_dev *dev, struct pxa2xx_spi_controller *c)
+> > > >          c->num_chipselect = 1;
+> > > > 
+> > > >          ret = pxa2xx_spi_pci_clk_register(dev, ssp, 50000000);
+> > > > -       if (ret)
+> > > > +       if (ret) {
+> > > > +               pci_dev_put(dma_dev);
+> > > 
+> > > dma_dev is still uninitialized at this point.
+> > > 
+> > > >                  return ret;
+> > > > +       }
+> > > > 
+> > > >          dma_dev = pci_get_slot(dev->bus, PCI_DEVFN(PCI_SLOT(dev->devfn), 0));
+> > > 
+> > > dma_dev is initialized only here...
+> > > 
+> > > >          ret = devm_add_action_or_reset(&dev->dev, lpss_dma_put_device, dma_dev);
+> > > 
+> > > ... and freed automatically by lpss_dma_put_device() in case of
+> > > any later failures since commit 609d7ffdc42199a0 ("spi: pxa2xx-pci:
+> > > Balance reference count for PCI DMA device") in v5.18.
+> > > 
+> > > > @@ -222,8 +224,10 @@ static int mrfld_spi_setup(struct pci_dev *dev, struct pxa2xx_spi_controller *c)
+> > > >          }
+> > > > 
+> > > >          ret = pxa2xx_spi_pci_clk_register(dev, ssp, 25000000);
+> > > > -       if (ret)
+> > > > +       if (ret) {
+> > > > +               pci_dev_put(dma_dev);
+> > > >                  return ret;
+> > > > +       }
+> > > > 
+> > > >          dma_dev = pci_get_slot(dev->bus, PCI_DEVFN(21, 0));
+> > > >          ret = devm_add_action_or_reset(&dev->dev, lpss_dma_put_device, dma_dev);
+> > > 
+> > > Likewise.
+> > > 
+> > > Hence this patch is not needed, and introduced two bugs.
+> > 
+> > Cc Greg, Jakub, David and Paolo,
+> > 
+> > It seems Vivo (at least two persons from vivo.com) is sending patches
+> > generated through some sort of automation without really knowing what
+> > they were doing. All of the patches look like innocent
+> > cleanups/simplifications/fixes, but they do more.
+> > 
+> > This patch here looks like introducing two bugs.
+> > 
+> > These patches:
+> > 1. https://lore.kernel.org/all/20240830033251.232992-1-yujiaoliang@vivo.com/
+> > 
+> > 2. https://lore.kernel.org/all/20240828122650.1324246-1-11162571@vivo.com/
+> > (I sent a revert for this)
+> > 
+> > 3. https://lore.kernel.org/all/20240829072016.2329466-1-11162571@vivo.com/
+> > 
+> > and probably more...
+> > 
+> > introduce dev_err_probe() outside of probe path which is not desired,
+> > because it marks a probed (working) device as deferred.
+> > 
+> > The patches look trivial and/or helpful, so people tend to accept them
+> > through default trust.
+> > 
+> > I kindly suggest reverse - do not trust them by default and instead do a
+> > thorough review before accepting any cleanup/trivial patch from @vivo.com.
+> > 
+> > Best regards,
+> > Krzysztof
+> > 
+> > 
+> 
+> Dear Geert, Krzysztof, and the Linux Kernel Community,
+> 
+> I hope this message finds you well. My name is Yuesong Li, and I am writing
+> on behalf of VIVO to sincerely apologize for the recent issues caused by the
+> patches submitted by our team members. We deeply regret the problems that
+> these submissions have introduced and the concerns they have raised within
+> the community.
+> 
+> We recognize that the patches submitted were not up to the standards
+> expected by the Linux kernel community. It is clear that our team members
+> did not fully understand the implications of their contributions, leading to
+> errors and the need for reverts. This is entirely our responsibility, and we
+> are committed to ensuring that this does not happen again.
+> 
+> To address these issues, VIVO is taking the following steps:
+> 
+> 1.Training for employees: We are implementing a comprehensive training
+> program for all employees who contribute to open source projects. This
+> training will focus on understanding the intricacies of the Linux kernel,
+> best practices for code submissions, and the importance of thorough testing
+> and review before submitting patches.
+> 
+> 2.Enhanced Internal Review Process: Moving forward, we will enforce a more
+> rigorous internal review process for all patches before they are submitted
+> to the community. This will involve senior developers with experience in the
+> open source community who will guide and review the work of less experienced
+> contributors.
+> 
+> We value the open-source community and the collaborative spirit that drives
+> it. VIVO is committed to contributing positively and responsibly moving
+> forward. We kindly ask for your forgiveness for the mistakes we've made and
+> your understanding as we take concrete steps to improve.
+> 
+> Thank you for your continued dedication to the Linux kernel, and please feel
+> free to reach out if there are any further concerns or if you have
+> suggestions on how we can better align with the community's expectations.
 
-> On Mon, 2 Sept 2024 at 13:49, Andrew Morton <akpm@linux-foundation.org> wrote:
->>
->> uprobe_clear_state() is a pretty simple low-level thing.  Side-effects
->> seem unlikely?
->
-> I think uprobe_clear_state() should be removed from fork.c entirely,
-> made 'static', and then we'd have
->
->         area->xol_mapping.close = uprobe_clear_state;
->
-> in __create_xol_area() instead (ok, the arguments change, instead of
-> looking up "mm->uprobes_state.xol_area", it would get it as the vma
-> argument)
->
-> That's how it should always have been, except we didn't have a close() function.
->
-> Hmm?
+Thanks for doing this.  I've now dropped all pending vivo patches that
+were in my review queues and will wait for this process to happen so
+that they can be resubmitted after proper review by your internal
+groups.
 
-Indeed, that's much better. I'll prepare a patch.
+good luck!
 
-Thanks!
+greg k-h
 
