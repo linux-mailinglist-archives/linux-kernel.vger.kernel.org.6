@@ -1,238 +1,173 @@
-Return-Path: <linux-kernel+bounces-313680-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313681-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E03196A892
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 22:40:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE4BF96A897
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 22:41:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 927E11F251EE
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 20:40:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F4A11F21399
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 20:41:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3EA21D5886;
-	Tue,  3 Sep 2024 20:38:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 627AB1D58B6;
+	Tue,  3 Sep 2024 20:38:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="rkkvWzhX"
-Received: from NAM04-MW2-obe.outbound.protection.outlook.com (mail-mw2nam04on2084.outbound.protection.outlook.com [40.107.101.84])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="mMoooUuF"
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FCDC1DB531;
-	Tue,  3 Sep 2024 20:38:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.101.84
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725395893; cv=fail; b=Lq13AYkKHn6ew2OEY4br+zyg//s89ly3Z+wZMW9OKpTLQVPZGTRFS5iwXsWOgD/McwsH3mG3+ALIa76n3f42WmVFNOsCG6G5ks5xBID14TK+rY5EoGmjtLxHZwuLH09spvG3vsI2C9RrqxxEdHLWCL7awkZqQ0MMKZDIY/idR2E=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725395893; c=relaxed/simple;
-	bh=Ijq3fd5L8BSvNvF5ZOrHuiEbEFIErE3jCPVO5A9bdlU=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=nz3lQGQdR4RVIyLXFiXmjsHrgkGIk+gPSg5Bu41DEOJT1Ya41oWom3PUNOr6VYam241QSxjQEB3w4g4phn7M2rjZEy2eQ67lw67X7RzF7I+pQiudhi3Oye0wPRWSxZT09jmtjkYkzhMrm4F4CgctwP4GRuKKzwtDYegWeSW9MpY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=rkkvWzhX; arc=fail smtp.client-ip=40.107.101.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=A1CPkbUIGW26RJRtyNaKxBCsyz3HiHGqybzClD3mXwVz1W3SVbisZKWe+H8+dIYTLxcwZKgExSxooTDaQJi8l84ysm99pNhVIB6TiXr+1xEmBNF73yIRqxoDO8d5JN/6M+K8C7SlclhPHE8+bHIjxn1PP2TPCCu/LzMQaNKLEHmsGStWvX0dTNp//QrN+unmA/E9z8FjDiHpYETGoQtWFbz/SWrqI5crU0QdBVjn3dQPvH7taIqc5Cs5MtrQvFrSS5n58IJ488EBQ/Sv7X74fwbvAs0fLlxOKE1iGghyy0pTN6v8LO0qit7ZVdaUbQyfe3wkfulJpGxFc1JPVTXhAw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=bTOVDlllWLDdzlMSZznT+2RIK5fFtS3990Pwlkjel6g=;
- b=Kd4QwS/IKhLWSYfEfO4f1oN+J9wakCe4Lgf8Yq2hxloDEcK0BoQxR5iGBT889ldIXic1y+fAHkxor0seHnnMCYPpN3mz6+wd5PzfMgNWuahBb1xdrHqv0sy4WnrpBLwJbEKs/RQ82AcK2sPBpcCdb0XUUceBO9g4HiL885dMI36qk11kV5lmt0yAntOU6pETo0V/1rQoskcJzehKdA+Sf+cHpQwbG358QTfyKEL+jG6JcjPCzpWfN6AixD/DsvVnMosgikc46xdQKcS6A2DHzzFox3RwF4zm/t7yB4mPjVaq1Gx+KnDYqYiUCgVWUHdWu/9iP0AaGx4jP+boIma4kQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=bTOVDlllWLDdzlMSZznT+2RIK5fFtS3990Pwlkjel6g=;
- b=rkkvWzhXdSzlcbJnMpcKmmo/mfgLTN1yFRyoj/cKVqWPUplURlE21N81L6Xk9JQvDLXfzF9V/EU1XNUSzf9pwCxZeSY2xKFpbSA3XbIm258b225fSGa9Zg4FBeELtdnWPM88XZ4ML+tR9dOrfqg3l9G08br+E6RtiRd1ZeDtC3s=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from SA0PR12MB4447.namprd12.prod.outlook.com (2603:10b6:806:9b::23)
- by MN0PR12MB6269.namprd12.prod.outlook.com (2603:10b6:208:3c3::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.27; Tue, 3 Sep
- 2024 20:38:09 +0000
-Received: from SA0PR12MB4447.namprd12.prod.outlook.com
- ([fe80::b4ba:6991:ab76:86d2]) by SA0PR12MB4447.namprd12.prod.outlook.com
- ([fe80::b4ba:6991:ab76:86d2%5]) with mapi id 15.20.7918.024; Tue, 3 Sep 2024
- 20:38:09 +0000
-Message-ID: <ab9f0c78-0e7e-95b4-5b24-5264d745e44f@amd.com>
-Date: Tue, 3 Sep 2024 15:38:06 -0500
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH v2 1/2] x86, KVM:SVM: Move sev specific parsing into
- arch/x86/virt/svm
-To: linux-kernel@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, linux-doc@vger.kernel.org,
- Borislav Petkov <bp@alien8.de>, Thomas Gleixner <tglx@linutronix.de>,
- Ingo Molnar <mingo@redhat.com>, Dave Hansen <dave.hansen@linux.intel.com>,
- Eric Van Tassell <Eric.VanTassell@amd.com>,
- Tom Lendacky <thomas.lendacky@amd.com>, Ashish Kalra <ashish.kalra@amd.com>,
- Michael Roth <michael.roth@amd.com>, "H . Peter Anvin" <hpa@zytor.com>
-References: <20240903003511.1530454-2-papaluri@amd.com>
- <202409031656.SS8NsjIN-lkp@intel.com>
-Content-Language: en-US
-From: "Paluri, PavanKumar" <papaluri@amd.com>
-In-Reply-To: <202409031656.SS8NsjIN-lkp@intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: BN0PR04CA0002.namprd04.prod.outlook.com
- (2603:10b6:408:ee::7) To SA0PR12MB4447.namprd12.prod.outlook.com
- (2603:10b6:806:9b::23)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA1741DB55E;
+	Tue,  3 Sep 2024 20:38:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725395930; cv=none; b=HALikaZJlh6GQK1a/lmbUHwReGE6CBLTpaeaKXzDEGG+M5QpjZ8Kq4YENaZKrQIlncFbOJntJaOB9yXhK8NQaCwysQ84LOZFLnS3Ow/MvJ56ROjvM4y02IKzVKr7s3yh4ApA1z3Yjdauec+P0GrZ3Mj3vvXsOHIVD+QCgBFurLc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725395930; c=relaxed/simple;
+	bh=VFoTsRtt68RVoeAi9VLYHfQjDg2XerBSNoRzzGDciSo=;
+	h=Date:From:To:CC:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To:References; b=Ai5DEiTsC0owbX1voIwXvZ70YMp+vmXAi2tL2aS5rW8XWE5LM/AlM1DJ+S3proryq+rNXOfdkWHWozH10BDdWo3zOM9NViyiARpfh5h4krOHpKj8SfK+nIvAqhzg/bYd/YNRpUHTllBuDY3s3RZoDBYpKXZUikCvDIVsADNxW88=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=mMoooUuF; arc=none smtp.client-ip=210.118.77.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20240903203845euoutp02183ff4c4ac8e027bf3c3115036f0ad8b~x1nPvaRt71652516525euoutp02i;
+	Tue,  3 Sep 2024 20:38:45 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20240903203845euoutp02183ff4c4ac8e027bf3c3115036f0ad8b~x1nPvaRt71652516525euoutp02i
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1725395925;
+	bh=GNR+eK42esfILSIOqFtg0aWfjz42sOarNmVsVFV8tbQ=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+	b=mMoooUuFfjML3nBfHfvdD4YlzKAeEDyDBWppHqsKVLHh7Mqvyku7hM3JBmIXdlF0s
+	 HXBv/PQYboc5x6cN+nsU4RznuqxX3T4KnQ+M5GqILJL8t6sdvJZ9kD8VoaFrFEozSB
+	 deuA7ZWMsd/ISwD3UlTQ5x41vrDVbioEb5F1WiOw=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+	20240903203844eucas1p2401ddb0040b75475278124294f250e08~x1nOqUo5r0264902649eucas1p2C;
+	Tue,  3 Sep 2024 20:38:44 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+	eusmges3new.samsung.com (EUCPMTA) with SMTP id 45.5A.09620.4D377D66; Tue,  3
+	Sep 2024 21:38:44 +0100 (BST)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+	20240903203843eucas1p113cca3d7efa156bf50ddf1c9f555978b~x1nNTZbbE1114411144eucas1p1U;
+	Tue,  3 Sep 2024 20:38:43 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+	eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20240903203843eusmtrp28d9d32636f0230899b8eabf94334c70a~x1nNSG5l32626626266eusmtrp2o;
+	Tue,  3 Sep 2024 20:38:43 +0000 (GMT)
+X-AuditID: cbfec7f5-d31ff70000002594-6f-66d773d4a31f
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+	eusmgms1.samsung.com (EUCPMTA) with SMTP id 12.E7.14621.2D377D66; Tue,  3
+	Sep 2024 21:38:42 +0100 (BST)
+Received: from CAMSVWEXC02.scsc.local (unknown [106.1.227.72]) by
+	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20240903203842eusmtip2d7b8f85193e728a15f68f839e5e4e855~x1nM8-Kqe1124611246eusmtip2J;
+	Tue,  3 Sep 2024 20:38:42 +0000 (GMT)
+Received: from localhost (106.210.248.110) by CAMSVWEXC02.scsc.local
+	(2002:6a01:e348::6a01:e348) with Microsoft SMTP Server (TLS) id 15.0.1497.2;
+	Tue, 3 Sep 2024 21:38:42 +0100
+Date: Tue, 3 Sep 2024 22:38:37 +0200
+From: Joel Granados <j.granados@samsung.com>
+To: Kaixiong Yu <yukaixiong@huawei.com>
+CC: <akpm@linux-foundation.org>, <mcgrof@kernel.org>, <ysato@users.osdn.me>,
+	<dalias@libc.org>, <glaubitz@physik.fu-berlin.de>, <luto@kernel.org>,
+	<tglx@linutronix.de>, <bp@alien8.de>, <dave.hansen@linux.intel.com>,
+	<hpa@zytor.com>, <viro@zeniv.linux.org.uk>, <brauner@kernel.org>,
+	<jack@suse.cz>, <kees@kernel.org>, <willy@infradead.org>,
+	<Liam.Howlett@oracle.com>, <vbabka@suse.cz>, <lorenzo.stoakes@oracle.com>,
+	<trondmy@kernel.org>, <anna@kernel.org>, <chuck.lever@oracle.com>,
+	<jlayton@kernel.org>, <neilb@suse.de>, <okorniev@redhat.com>,
+	<Dai.Ngo@oracle.com>, <tom@talpey.com>, <davem@davemloft.net>,
+	<edumazet@google.com>, <kuba@kernel.org>, <pabeni@redhat.com>,
+	<paul@paul-moore.com>, <jmorris@namei.org>, <linux-sh@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+	<linux-mm@kvack.org>, <linux-nfs@vger.kernel.org>, <netdev@vger.kernel.org>,
+	<linux-security-module@vger.kernel.org>, <wangkefeng.wang@huawei.com>
+Subject: Re: [PATCH v2 -next 00/15] sysctl: move sysctls from vm_table into
+ its own files
+Message-ID: <20240903203837.cbzs3ziuh6eq4kvo@joelS2.panther.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SA0PR12MB4447:EE_|MN0PR12MB6269:EE_
-X-MS-Office365-Filtering-Correlation-Id: 9d45bdbe-d046-4510-2f5c-08dccc585261
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?YlltVXlvNkxsZm5rT0ZaUFlDUUQ0UU93OUJkalJYVDRUN1RVTXI0R3cvc1Rq?=
- =?utf-8?B?bnhZS1BtSFVsRmZmNW9jVHVnUmFOblU1Z1hRaUFXbHdlbm9qcG82NVJDUHZO?=
- =?utf-8?B?SGJTYjFVVmlNMnFiS1hPOTVUR2pBL1grVitPTHBWY21HK2h6RzJsVngxS2ls?=
- =?utf-8?B?MENScm9oZElkaTE0UkVVOTNnd3B4MlVIWURKcjNqSDljV3hKc3BPb3daK1Na?=
- =?utf-8?B?dkgxY1pZU3hZaERQTEd3ZXduMmhBQmx2Y0ozYlcvREhGQWh2N3FlTkxiMTlB?=
- =?utf-8?B?Tm1tM0tWUVYzbFhVTkJFektEVlEzb1ZMbERYUlROSktkT2drb2MxTyt6cW1s?=
- =?utf-8?B?WE0yN3p5OXdHd2ExaFFGdHpxK3pFenFUSXRaVys0UFhnVXdSSzZjUFdSZHBs?=
- =?utf-8?B?Q1pkZDk3d0xrMEJNb21QckJKRzhRNG83VVVZTitFeGRBQmlUeTBIc2ZMOWVC?=
- =?utf-8?B?TSs1WFdKS1lLVzBndnFQaEpWZkRmY3JBWmxCYyszUGxKb3FPdHNTTnVXVmdz?=
- =?utf-8?B?UFpMdTFOMzBaeVA0YkhadGdiU0ZmVUFqQTFFWVMvL2F1WEZLbTlpUzZBSFJT?=
- =?utf-8?B?NVhOVHV1c0pCQzAxMEo4WlFFMXBTeTZNYjZpaU5iUWQxSEhRMXh0Nk1rc2pl?=
- =?utf-8?B?VU03VmtvZlNKR3d4ejl3OVJFd1lTK05BQWRaMDhkd293ZFRiK25mdUZva3Mw?=
- =?utf-8?B?ZkM0TWlaWUJKNUNLeTI3RXVCK0k0a1RPbVFqcENPb3pwSkhpM1NYRDNxOHl5?=
- =?utf-8?B?b2Q1RkppeFFRN0d0Si9kNjBhN2p3aFNMdTNXOWJzMmRjbXdsV0l6aFNHaHdT?=
- =?utf-8?B?RWZ4VFk0TFpaek5lengrRmtDbnlnaFFoNmxqQ3hkWGMwNDNrZEUzQXUxSWNE?=
- =?utf-8?B?TUpsVFNwOXg3OU1sQTd2WmF2NDVTSjZPQm1FZEFNK0FOZnFYZ2Y0N3Izdmw3?=
- =?utf-8?B?RkxxZHdkNHJkaVhjYXY2NlVIaERPM3pTVnIrVlBESjh0aXAzNENWWExNK3RF?=
- =?utf-8?B?bE1aRytMeFR6Tk4xV3JuYjRYZlRtczU0enM1bXkzSmtHVWVickw5blBjK2VM?=
- =?utf-8?B?Sno4UTYrZ2M5OVYrckg2aXhnMzlxcjFqci9SV0M5OGQzOXNmMnhpckxUYVZi?=
- =?utf-8?B?N3VpUmZMNjBweUlHeHJPb21OQkRYUHVvamQzSjNEMWRBOUJvM216UEM4ZVZP?=
- =?utf-8?B?NDBCSlNLL1NDRWd2VjBUeXJ5L0pITS9xQnhGTzBnajlGelRXWU9DVGVPeWha?=
- =?utf-8?B?ZVpXMEQweDREWUFWVGVhOHBRdjVIc016VmhkNEN6VXI3djR2RG1KTVBjSzRU?=
- =?utf-8?B?ZVZTcGI3Yzg2cW9wNlZOdlI4MzJqQzBrcWFjeUF0SE92SElnR0Z5L3RoL3Ft?=
- =?utf-8?B?cThjMmZqNE16Mm9oekJyRFk5UWo4TWdvejBTYzlYNWR6WlBNZWd0aFNLME5X?=
- =?utf-8?B?NktlT3NPV3UrdDUyUElldUp2eWFvNHM0RlF0RWpjM0YzMUFxZjZzaitwOSty?=
- =?utf-8?B?Y1BXaE43WENFT3A0bVdmc1paS2xsSW9vM1poNlZlM0h1YU9PM1BNME84Ujd6?=
- =?utf-8?B?bVUwZUhZTGRkelJIQU1RUmNJb0ZHd0g2WXZOZUFLTXhhalU4R3Z2amE1N1U5?=
- =?utf-8?B?QlY4MkUzdlZvMFF2M0d1ZVQvQWNGV2VZekJvTTVsaXNRMFhWbXlheE5idkhx?=
- =?utf-8?B?Vzl4T1FnMkllNXRicjZySCtVbExPRHVKZkRiOHEwMEhXZ014bGtCNjhwVVJZ?=
- =?utf-8?Q?oPU4hlQ+hz9gCu9sddZGrCV0eWjt3bP45vonfh6?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA0PR12MB4447.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?MENYOTBDWExwSDRHeWVOSHdZdTk0RjhnUnA1WkltREZsL3FiRjBXcUtCNERV?=
- =?utf-8?B?N1Z0VXZLOEdxTmx6RVJqaUZKWFBaZWFoSUhLemF2QlNpcFBzL2todE1QbjE0?=
- =?utf-8?B?VE93QWJNcU5OWnZDVFFWV3drdzFyNHVyMmtlQkdOL095VGY5dU5yMjJ4M3lO?=
- =?utf-8?B?cVBaSnp5ZW5oc0FIZGxnMlhDZk1CUHBjaVovTFM0TVZQbDlkaUhreUoweEJS?=
- =?utf-8?B?TCtxNElRQUVhOEVtY1pIOHp1RWVkQXJUQXNYVlc3aVhIN1lwb3J1SWRzaUxI?=
- =?utf-8?B?RUUxSVYrcUl5d0Zna1dMdUVZc3RQVnQzTDd5Zm1zMnBWWFFsZEhJV0NCajZS?=
- =?utf-8?B?Wlc5cUVyZUtKRENOK3ByYlpPdlU3Z0ZUaGltTUxuWTZya08wWEFQTXFKaTFp?=
- =?utf-8?B?TlVEd0JHaFRPVmhxelBpRS93R09DWi9OZGdCZ1ZmZ3NmUzNXQ1kyMFFYU1JT?=
- =?utf-8?B?V0I0WGhGcVZUb0c1L1g2YVg0aFZUQnJIZjJ6TWMrODZtS3p3TFFPR3NwK0tp?=
- =?utf-8?B?Snd4U09NNElneVdwQm11K3VGVzlxSE4vQkhHVGIvanVoaGxSNzJjdlE5TnVY?=
- =?utf-8?B?d1FpTnBpWXBqZFIyek9mK3IvQWxrMVN1ZWVhL1NJZS9WSHBGVmpVWWhyN1hJ?=
- =?utf-8?B?ZmlEbjQ5WUl1OHB3N1R2ZDJYb09wbk1URDBxVjhkVWNzK2ovRkpydnFaUlBy?=
- =?utf-8?B?SEpMRFlMUW1mMFFlRktKeUZ2Z2MyOWZNcmZ5RDdSTGxKK1VMRU9lTk5zODhX?=
- =?utf-8?B?OW03R3pMK1NkbkpiSEMyeUhFbXNJNGhvaTU5QnhOTDkveGdGK2lrY0ZUYUtQ?=
- =?utf-8?B?cTNJbzkxcFhkNmlxL1FrTzg2UndsNGJINUpBVkVBRjh4d05KZC9zRkpwZWkw?=
- =?utf-8?B?TG9sWGJmVk1EN2tUWm9wN05oTEp5SEVKbmMzUlpqMzVVWmppWjFnSHordHFG?=
- =?utf-8?B?azBjWWc3R3VpQncydFdKUWhrY211WlJueW83Q1VrY0s2clM3M20rODhyZHpi?=
- =?utf-8?B?bCtrM2hwQ1ZOZWt6WkhNR25OTExKQXp2OS9wT085VnM2UWg4Q1RVRmp1eERm?=
- =?utf-8?B?MURnVzJ4MHRIRUFub1B5MWh1bHFQTmdJbkpFOGhQL3BoRHpvcTNIYkpPaGRy?=
- =?utf-8?B?amRESjFMbTQ0dm0wa1VYUWVIcHZwZEhwN3N0Y2pOTTBUZXJ5RXdXdjl5UlUv?=
- =?utf-8?B?K0liaFhCQmk2RW5uZlR4T0FJUllhc0lXNjVlYWd0S0N6V0c1QUEvcm01ZVla?=
- =?utf-8?B?ZDMyMkdQUWhiUzkyN2ZjTXhMakduN3Zvekw1cGFHWit0MFViaTVxc25xU0Jo?=
- =?utf-8?B?M1pLeG1Fb0cvekhKTnpVTnljeDBNVW9wYVhlTUxCOG5mVU5teTBOL3N1QWhx?=
- =?utf-8?B?UXBXd2xubHhYQk02MWcybThEQ2xrdER2Vnp6SVA3bWRsblArOGRiaVhHWVBK?=
- =?utf-8?B?dUxrRGVaRy8zK1BzdmZmaDRoUklxbkUzQ2tDcmp5UWw4cjdJZit6M0xiNzFY?=
- =?utf-8?B?aHBta3RaMnNJUis0SWhBK0N5TXhicWtGMWdBSXlTRjd4TnQwZjBjbWMwUVRx?=
- =?utf-8?B?clNtTnZ6bDdaUDM5ZnJRUi9QUEZHUXU1S1NBbU04dGZvKzZVVTFpNWVZZmI0?=
- =?utf-8?B?VEdNYXNDeStsdU5nOEEyS0l4VnpOdmRnUEFxMC95UmJXZk9ZYTc2YnhCcDhF?=
- =?utf-8?B?RTRzRGF6NEZMRTA0aDV5VW02c1NXSGIwU1JLbXltR2hRMysyVE9relZwdWVD?=
- =?utf-8?B?am9aOHZPbkNNYjFzanBiVGtkK2ZESXRsU1ZEL0JGaUVYRFk0cmFLTHhwaU9Y?=
- =?utf-8?B?TTZuK29UUTZ5T21TZDgvU2VEMngwcnAvQTA5VGVidVhZNW82aXVXL0grNy92?=
- =?utf-8?B?RUZlcG5POHREUVRCVktHNzNLcitUSUhhQjNHVy96K29hZ1VCUThnbmtJdlZK?=
- =?utf-8?B?QWxvcWpiSWRwblFzaFViWnZ5SzhOaCtTc1Y1aUJwQXl5eFhoMGRDd0R4a3JN?=
- =?utf-8?B?UkpsZW1TQ3kzTUVqc3VuN1lxQkJQMzJvaEFVUkVEZEZKektvUGFkd3kyNEs5?=
- =?utf-8?B?dlRFZGxaVHllWG5kUkhkTDMvMWRkRW9SRm93YnRvdDZMNWhJNklWM1gzQTBl?=
- =?utf-8?Q?bVJoe4LrVk5tb0cVV/53rO6Wz?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9d45bdbe-d046-4510-2f5c-08dccc585261
-X-MS-Exchange-CrossTenant-AuthSource: SA0PR12MB4447.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Sep 2024 20:38:09.5701
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: cjKQfNgLSa75LUZURuYOTDJg3YBIqnq4xTh3Gf870UsBZtgDmpGH1r62Zbks23qdG/z9R09Tkj+gdWuaBjxwtw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR12MB6269
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20240903033011.2870608-1-yukaixiong@huawei.com>
+X-ClientProxiedBy: CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) To
+	CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348)
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Te0xTZxjG8/WcnlNqao6VwBeBQICBsoEbLORTtglmWY7GbXjJnE4iFQ5g
+	5GZLN9ziVhQHEgSsjEtBLpMBcpXSlFWBDjDUQtZuXDKEAZNR5xzXIiI62rUczPzved/n+b3f
+	+/7x8TDhLLGNdzoxhREniuI9CT6u7l01+g9Jfot5c/weRKXNDQS6pLHiaOmWhUD/9JgBso7/
+	xUHl37cSqHL1ORc9upUBUKkxHUem3ikSlcx7oYIWZ1RSeJGDVqvrSNTUfIODmmaNXPSLOoeL
+	2mR/kKi9Q4+jwdulBJposNqMn/q5aCF7ikCl/+ZjSK+4iSPj7UYuGskzAdRRLsNRb4UTkj80
+	k+hp/wxAY/JCHLUqv8NQ3/M+DjJft3BRSVoOQMY1HRelLU0C9OKZbbpVu0KgeqsKC91Br1zK
+	wWnVzfscukIppdPvznLp1lo/Wll3maCVZjlJG0oWcHrOYCDpe0UvcLpMf5DOXomiF02jON3Y
+	8QjQXQYDoOc7h4lw5+P8d6KZ+NOfM+Kd70Xy48ZM9/HkPl7qxN0JUgaWiCzgwIPU21ButnKz
+	AJ8npGoB1GVlc9jiCYAKdSvHnhJSSwA2zHBfEuNjSxgbqgGw/EIfYAtb6IpRhrOECkD5nJNd
+	45Q3zNOVrU8iqDegceZ3zK4dKV/4cP5nwg5j1CAJJ682AbuxlfoMmh4Ur4cEVChcnpwjWL0F
+	6oun1x/AbIMq7phtfZ5Nu8AaC8/edqDehf0tGYDd1At2VXeTrD4P+1Sj66dBqmgTnCkY4bDG
+	+1Dek7UBbIWPdaoNwBVaNeUbwDUAtZYFki3qAaxOW96gQ2D60DRp3wJSYVBbfpKVm+HI7BZ2
+	z81Qri7E2LYAZn4rZEEfWD8xg+cBL8UrlyleuUzx/2UVAKsDzoxUkhDLSIISmS8CJKIEiTQx
+	NiAqKUEJbD+i36Jb/hHUPl4M6AYcHugGkId5OgoiWoZjhIJo0bkvGXHSSbE0npF0Axce7uks
+	eC3anRFSsaIU5gzDJDPily6H57BNxlGoU/bknsr/2L/NaVF3fABbKM14+sGuvzX5pyy7tZSD
+	a1uNPqRq5+GevZFDJ7qOlS2saH9ovtw+dT1zn5kQ1QWqDUNH02BgmuPZzo/ikq+ElumLzO0R
+	PmMTRcqepvSr7S5rq4dCvq4KzJv2CC42Fd/wDQrennvANdXJtJ9fGSHrfJBvmPegzrvH+iik
+	Kfs9Bo54BmjazxS8fnYw8Y5bavGzrz5Uph5xq9fXHsuculalcExKbfWP8mo8uker2uWdSaQn
+	bAopORCjqbTkCmrzHckB0l3tlyz9NfDcnxe9w08EjYbNxX8aedBNcyF4bZ/vN9lhvYf5br6d
+	uxd7Iod3fJIb/mSvJy6JE73lh4klov8AfRsoZoAEAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Se0xTdxTH/fU+emGQXMvrJ8yhhWWTQaG89qsDNAuwu4S5jT0jcayBC5hR
+	ML3tHi5T8BEGkgbwwSwVq2QMOinQMnQqOpHASme7QGC4ShEFxA1FWhzjIazQLfO/zznn+/3m
+	5ORQmOAIGUjtLlCw8gJpvpD0xM3LPfaIPu63nKjiGzFI03yORId/XMGRs2WZRH9edwC0MnyP
+	h06fNZLozPwCgSZbSgDSWA/haLz7Dh/VTIegE60BqKb6IA/N1+v4SN9cx0P6B1YC/dquItD5
+	ott8dLnDhKP+ixoS2c+tuAY/mQn0qPwOiTRLxzBkUjfiyHqxiUBDFeMAdZwuwlG31h9VTTj4
+	6C/zFEC2qmocGQ3HMdS70MtDjlPLBKopVgFkfdJDoGLnCECLf7vSV67Okej7lTZs+xZm7rAK
+	Z9oab/IYrUHJHOp6QDDGhjDGoCslGYOjis9Yah7hzEOLhc/8/M0iztSa3mbK57KYmfHfcaap
+	YxIw1ywWwExfGSDfCtgpSpAXKhXsprxCTpEozBCjaJFYgkTRsRKROOblXVuj44SRSQnZbP7u
+	T1l5ZNLHojzb+E18Ty/1ub3Lzi8CTrIMeFCQjoXDNidWBjwpAf0tgL0LNsI9eBa2zg78yz5w
+	abCMdItmABxdniXcRRuAztFpsKrC6VBY0VPLW2WSDofWqVvYKvvSL8CJ6Rtrbozu58ORSv2a
+	wYfOgOOjJ9dE3vR2+Hjk4dpOAroCQNt1b3d/PTSdHMNXGXOFai85XBrKxUHwu2Vqte1BJ0Jz
+	awlwbxoCr9V38t38FXQ+mQAVwEf9VJL6qST1/0lagOmAL6vkZLkyTizipDJOWZAryiqUGYDr
+	K9u7540XQO0fM6JOwKNAJ4AUJvT13tU6kCPwzpZ+sZeVF2bKlfks1wniXKeoxAL9sgpdb12g
+	yBTHR8WJY+MlUXGS+BhhgHdqvzVHQOdKFewnLLuHlf/n41EegUW8I750s/CsUTX14pBqW3bL
+	Jq+SpgMasyFky4U0nWAxSPaq4oexdy+1J0Nn91xsw3MbBjdTd0OPDiWPRC/ZehoWPhgkUdh0
+	uk6bkpLSHHJ//Qn7Ps80Ll2/sdRRExw6V6lN31ld8gvj2Bem23FgLKWJn370Naf+StvXEZcn
+	+7sy3ik3vlKa2VedYLz/ZrB+XdjjdZhXxevPJAtM4fsTg4KHE2b96ywwukhWMPtZaiLppwv8
+	8qVtx07VHb+dpgnAhfd83i8zf2SIpDe/Z6rfcL67fO+H+8Ov9r0hTZLH9EcuPu+vCdqqvhur
+	k6RG8BR2AUzS+nFerfjG8IMY4XHL1ChyKIU4lycVh2FyTvoPClcIMx4EAAA=
+X-CMS-MailID: 20240903203843eucas1p113cca3d7efa156bf50ddf1c9f555978b
+X-Msg-Generator: CA
+X-RootMTR: 20240903033105eucas1p2b9d0b874da268fecb49905d90340de09
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20240903033105eucas1p2b9d0b874da268fecb49905d90340de09
+References: <CGME20240903033105eucas1p2b9d0b874da268fecb49905d90340de09@eucas1p2.samsung.com>
+	<20240903033011.2870608-1-yukaixiong@huawei.com>
 
+On Tue, Sep 03, 2024 at 11:29:56AM +0800, Kaixiong Yu wrote:
+> This patch series moves sysctls of vm_table in kernel/sysctl.c to
+> places where they actually belong, and do some related code clean-ups.
+> After this patch series, all sysctls in vm_table have been moved into its
+> own files, meanwhile, delete vm_table.
+> 
+> All the modifications of this patch series base on
+> linux-next(tags/next-20240902). To test this patch series, the code was
+> compiled with both the CONFIG_SYSCTL enabled and disabled on arm64 and
+> x86_64 architectures. After this patch series is applied, all files
+> under /proc/sys/vm can be read or written normally.
 
+This move make a lot of sense. The question with these multi-subsystem
+patchsets is how do they go into mainline. For now I have added this to
+sysctl-testing to see if it needs more work. I can push this through the
+sysctl subsystem, but you need to get reviewed-by for all of the commits
+in different subsystems. I'm also fine with this going in through some
+other subsys if anyone wants to take it?
 
-On 9/3/2024 3:44 AM, kernel test robot wrote:
-> Hi Pavan,
-> 
-> kernel test robot noticed the following build warnings:
-> 
-> [auto build test WARNING on a85536e1bce722cb184abbac98068217874bdd6e]
-> 
-> url:    https://github.com/intel-lab-lkp/linux/commits/Pavan-Kumar-Paluri/x86-KVM-SVM-Move-sev-specific-parsing-into-arch-x86-virt-svm/20240903-083803
-> base:   a85536e1bce722cb184abbac98068217874bdd6e
-> patch link:    https://lore.kernel.org/r/20240903003511.1530454-2-papaluri%40amd.com
-> patch subject: [PATCH v2 1/2] x86, KVM:SVM: Move sev specific parsing into arch/x86/virt/svm
-> config: i386-buildonly-randconfig-001-20240903 (https://download.01.org/0day-ci/archive/20240903/202409031656.SS8NsjIN-lkp@intel.com/config)
-> compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240903/202409031656.SS8NsjIN-lkp@intel.com/reproduce)
-> 
-> If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Closes: https://lore.kernel.org/oe-kbuild-all/202409031656.SS8NsjIN-lkp@intel.com/
-> 
-> All warnings (new ones prefixed by >>):
-> 
->    In file included from arch/x86/include/asm/sev.h:16,
->                     from arch/x86/virt/svm/cmdline.c:13:
->>> arch/x86/include/asm/coco.h:28:18: warning: 'cc_mask' defined but not used [-Wunused-const-variable=]
->       28 | static const u64 cc_mask = 0;
->          |                  ^~~~~~~
-> 
-> 
-> vim +/cc_mask +28 arch/x86/include/asm/coco.h
-> 
-> 1c811d403afd73 Ard Biesheuvel     2024-02-03  22  
-> b577f542f93cbb Kirill A. Shutemov 2022-02-22  23  u64 cc_mkenc(u64 val);
-> b577f542f93cbb Kirill A. Shutemov 2022-02-22  24  u64 cc_mkdec(u64 val);
-> 99485c4c026f02 Jason A. Donenfeld 2024-03-26  25  void cc_random_init(void);
-> b577f542f93cbb Kirill A. Shutemov 2022-02-22  26  #else
-> e4596477100706 Nathan Chancellor  2024-02-02  27  #define cc_vendor (CC_VENDOR_NONE)
-> a0a8d15a798be4 Kirill A. Shutemov 2024-04-24 @28  static const u64 cc_mask = 0;
-> e4596477100706 Nathan Chancellor  2024-02-02  29  
-> 
+Best
 
-The following diff resolves the build warning reported by kernel test robot.
+-- 
 
-diff --git a/arch/x86/virt/svm/cmdline.c b/arch/x86/virt/svm/cmdline.c
-index 43039ec67606..9b900e950b4b 100644
---- a/arch/x86/virt/svm/cmdline.c
-+++ b/arch/x86/virt/svm/cmdline.c
-@@ -11,7 +11,7 @@
- #include <linux/printk.h>
-
- #include <asm/cpufeature.h>
--#include <asm/sev.h>
-+#include <asm/sev-common.h>
-
- struct sev_config sev_cfg;
-
-I will apply this fix to the patch and send a v3.
-
-Thanks,
-Pavan
+Joel Granados
 
