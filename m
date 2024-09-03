@@ -1,131 +1,144 @@
-Return-Path: <linux-kernel+bounces-312880-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312881-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09F71969D01
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 14:08:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DCDDF969D06
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 14:10:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B44E71F25A7B
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 12:08:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1BB861C236A9
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 12:10:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBB9F1C9854;
-	Tue,  3 Sep 2024 12:08:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FBAC1B9859;
+	Tue,  3 Sep 2024 12:09:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="K32E9Fg+"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="S9fJCH2U"
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA6731C9841
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 12:08:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21D4A19F42F
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 12:09:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725365316; cv=none; b=NVxPTY6f18d4HG19KiWvqgP5fOFmEWRXbOh4kTlxjW5pAh6SdompskZFWQvAe43g5bHFQxbF/6qfIG//ApTTfiE4iEds9MLJ25n7wXv3052JbgQMTBw4sgfmE2LdYLX7itFlyb3rZ6uod0jVZWqof7eiTc2RgECc54eeBoU82HQ=
+	t=1725365396; cv=none; b=MvaumzmJLmonJQx3pyGp8FUiLht5BjvJP8nukh6i5a4LNQdmepJhbp6zeAc5Zxq0Fb3IN0AF1fU4Vms5ZcDGHQtnPB7Oqzfo0oYIGDyRj/kX8lagTGAzl30rXaDXytIpyY8wD55ilw5UE1ISErgHAbxvZAoAvpdBRwq8mV6DjCU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725365316; c=relaxed/simple;
-	bh=BsZ1n0bOcMMHp87eIkC1zg9ceFjqaILO25XZebbY6Ok=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VD1VaLCfX/S158EvBx3x/EXZgqO1AuWiCooITEdk4zOFuocUugswVWHTDQ89YbcTdrSdmFWWdCEQfm4mdopDms1QDxOuJzvxFtVX8VFym80bPHVXn8VUaN9cmWD7I4JoOiARk8bWIOgvqgD6PCuvKReKd2VKp7aPpp/0CLklWt8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=K32E9Fg+; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1725365313;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9aYRYgG0kixSIOydeenongC/DRL5RnTOeLQrTKXisEc=;
-	b=K32E9Fg+vcGTIt5kmZB2CAX0PraKQyk7DCri+mtm6FmAJagnQLjAlUp42SQ90zlGpSkPZL
-	oZrkm5Ok0DGgBv6zG96s/fey1h5I/gWNuwHwXD5naBCylMNinU/K4jqsNvD7zI5vAFZ8+e
-	wYbU+raeeg7w34jWY04ZThh9Hel+H3c=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-687-ZPCH39mrPhCIvyjpM4U2ZA-1; Tue, 03 Sep 2024 08:08:32 -0400
-X-MC-Unique: ZPCH39mrPhCIvyjpM4U2ZA-1
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-428040f49f9so48979545e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 05:08:32 -0700 (PDT)
+	s=arc-20240116; t=1725365396; c=relaxed/simple;
+	bh=N1qqn7vYKBlbeXYmAR1aaSBjOkAuuoIsPmVXjG1IKa0=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=YPNt7XOGAr4vJxTnX+cAu7MMWm+1qgKwAveEqvkyzDSe1we1SiK9JxSzpMp2joAHu+tRGxvKO5VpoCV4zTAxGQP93p6rsMaHdE+eLHPKAbu0O3r5jrIltMhMx5iuX43YLFML0RHNT1XjjVe7YmjS3HNDfombMpo4nb7L4yef37I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=S9fJCH2U; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-367990aaef3so3127361f8f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 05:09:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1725365393; x=1725970193; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=JLYlLLGKbB0TvMjhCmijODtjVYZ8RqD6X4SH5pHru3k=;
+        b=S9fJCH2UgJkF2l+UauktRfkH4nq6TM7EIxAYnstUodWneXJ/guUWV3jxiexAaIpX4P
+         cOq8nLDzfXxC24xhhrjvz8eoi7ZCHnuoeIc9i5DH2nwzRDOdkBbkMElRrv5Dx5N8rVH0
+         daBP0biULvTTipG6uBkctB9INyCkes3hes1btVssSexWAWLn9xBLIUnBQYOpgVKLNU3I
+         RmQVAeQuXl+Z1Ew8SF0UsboblwrwBQioUMVgi3C8lf1Xu3gc0XDkEQeX3+dzbKYdjQjt
+         tB2SGlEpDmfrbfc0mEyAoZ40Cj+dHGrp4/SxzdaspfziCz5RqhBjWQmsWgv+wodJCxeR
+         faOA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725365311; x=1725970111;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=9aYRYgG0kixSIOydeenongC/DRL5RnTOeLQrTKXisEc=;
-        b=qe36owQD3greb2LjZox61I5ALD7eoGlqPCyzdMqGbIGgKH3u/m2XhAQMVYRGCzduui
-         /6ry2eAnCGe0e+RAW25+Wa0xi0qYndNoPm6E/K9WSUhw8kU92Mb6ELqgXbLUDIPrZU7l
-         5NI0WE6t8qMPHgajTAy0ibfF3V6Ww9GT2MhJUqX+b2X8VSv+eMtNiSGTRpKOENzomXWV
-         LMoCwsAEqsd3ZermLje3Z31h2MiWwksGtR1FomhsHorHnGXXyBezjXEDF7IxQZQ7qgMv
-         a3gQ760KS2ERHGpVBxd9acLbfkDnkow73Y4ACGeqonP2+2Gz5tv9EW3JDtCQ+H6bf9ga
-         TxQg==
-X-Forwarded-Encrypted: i=1; AJvYcCUVo4iqPce6GUFgbkC/dRdbOmKwyzw+Kh4qz2PVLIV0bIJe/QeAndeP9gT6HC7D1T2akrKvaDStRneOucg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzPn95h5uo6eSzPcygTepd0Eed33mve4mY/IO6kgi2xZcR3B0Gx
-	J9z3v4lECcQNbY1FS3fdDEisxNfTkvqzK0s8R6Atvj5OHR3D5ZANEJbg/LT7WvPMxYGYjVeByaC
-	YUDX/t8C1fP0bQK4TrywNgRjX6loS5SuMGNpSyc+oiSRbG1P7/FjIgB6PBG7kHw==
-X-Received: by 2002:a05:600c:470f:b0:425:7bbf:fd07 with SMTP id 5b1f17b1804b1-42bb02c0727mr129293705e9.5.1725365311435;
-        Tue, 03 Sep 2024 05:08:31 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFYuACYFYmdeRau/l5pNATI4VMioGx45q1slOGtbAH3lBc6r4xbg0dCcuR4/N7ge1VOuo7FrA==
-X-Received: by 2002:a05:600c:470f:b0:425:7bbf:fd07 with SMTP id 5b1f17b1804b1-42bb02c0727mr129293435e9.5.1725365310883;
-        Tue, 03 Sep 2024 05:08:30 -0700 (PDT)
-Received: from [192.168.88.27] (146-241-5-217.dyn.eolo.it. [146.241.5.217])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42bb6deb3efsm170510925e9.6.2024.09.03.05.08.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 03 Sep 2024 05:08:30 -0700 (PDT)
-Message-ID: <0f3cf321-3c23-43df-b6eb-55dd0a1fec64@redhat.com>
-Date: Tue, 3 Sep 2024 14:08:25 +0200
+        d=1e100.net; s=20230601; t=1725365393; x=1725970193;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=JLYlLLGKbB0TvMjhCmijODtjVYZ8RqD6X4SH5pHru3k=;
+        b=v3h/x3tECWG57tzWL+sTFM5SEVpS3OeJSM9iNRLVPpGKb0mFYas02qF7d4hLNnD5pt
+         h1nRB5ivpCH91DWyvhCQImVRtki3dwoB6g27AiDjuMqtHZpkN93r5HWlahmo9+3tbcUV
+         Wlb5kcWQiw+xyyfsCWFx01MOOvNzVsZKYFPAvwUYLRCGpaFaCTuBuO03ZSZ3uUgld9Qd
+         /lwoakdIQUKh5IeG03gMjUkP18+tiCt/jf1vsc4mhx1CRLLsOMfHC3nsD/RxqcE3uazp
+         HzH5DbrMCdd/PM91lIysB2zIOi3FULB85U5oVQBOwddSCrIDLatiCdQv6J7lisOXbDKx
+         5lYw==
+X-Forwarded-Encrypted: i=1; AJvYcCUQOrDNvuL3RfMA7+iMzt/Ji317G5dTgxvk9HYxIRFe3Ae9ymOxD5B4T7qXmgzwOTCB+cwTTXX2m/mCsAo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzAdXCMcVI73m9LuEhKdKfh8smGRP63Kti2Fi88/Z7+WxR/xWws
+	+ZITjDF0/QSoCFFFB5+3k1cR+phGLjt/dBFbr6vUofgTMNZvfWZLBjJOBnMcuus=
+X-Google-Smtp-Source: AGHT+IEyoZ4C1GIHdc4etZJ5y8/7i4ZOxLROM5omYazPOI3P6CpupmD7KGheFpP2J3CHj/uHt2FC5g==
+X-Received: by 2002:a5d:440b:0:b0:374:c847:852 with SMTP id ffacd0b85a97d-376dd71aa2bmr403119f8f.29.1725365393138;
+        Tue, 03 Sep 2024 05:09:53 -0700 (PDT)
+Received: from ubuntu-vm.. (51-148-40-55.dsl.zen.co.uk. [51.148.40.55])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3749ee4a55fsm14069238f8f.10.2024.09.03.05.09.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Sep 2024 05:09:51 -0700 (PDT)
+From: Adhemerval Zanella <adhemerval.zanella@linaro.org>
+To: "Jason A . Donenfeld" <Jason@zx2c4.com>,
+	Theodore Ts'o <tytso@mit.edu>,
+	linux-kernel@vger.kernel.org,
+	linux-crypto@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-arch@vger.kernel.org,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Eric Biggers <ebiggers@kernel.org>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>
+Subject: [PATCH v5 0/2] arm64: Implement getrandom() in vDSO
+Date: Tue,  3 Sep 2024 12:09:15 +0000
+Message-ID: <20240903120948.13743-1-adhemerval.zanella@linaro.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V6 net-next 07/11] net: hibmcge: Implement rx_poll
- function to receive packets
-To: Jijie Shao <shaojijie@huawei.com>, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org
-Cc: shenjian15@huawei.com, wangpeiyang1@huawei.com, liuyonglong@huawei.com,
- chenhao418@huawei.com, sudongming1@huawei.com, xujunsheng@huawei.com,
- shiyongbang@huawei.com, libaihan@huawei.com, andrew@lunn.ch,
- jdamato@fastly.com, horms@kernel.org, jonathan.cameron@huawei.com,
- shameerali.kolothum.thodi@huawei.com, salil.mehta@huawei.com,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240830121604.2250904-1-shaojijie@huawei.com>
- <20240830121604.2250904-8-shaojijie@huawei.com>
-Content-Language: en-US
-From: Paolo Abeni <pabeni@redhat.com>
-In-Reply-To: <20240830121604.2250904-8-shaojijie@huawei.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 8/30/24 14:16, Jijie Shao wrote:
-> @@ -119,6 +122,20 @@ static void hbg_buffer_free_skb(struct hbg_buffer *buffer)
->   	buffer->skb = NULL;
->   }
->   
-> +static int hbg_buffer_alloc_skb(struct hbg_buffer *buffer)
-> +{
-> +	u32 len = hbg_spec_max_frame_len(buffer->priv, buffer->dir);
-> +	struct hbg_priv *priv = buffer->priv;
-> +
-> +	buffer->skb = netdev_alloc_skb(priv->netdev, len);
-> +	if (unlikely(!buffer->skb))
-> +		return -ENOMEM;
+Implement stack-less ChaCha20 and wire it with the generic vDSO
+getrandom code.  The first patch is Mark's fix to the alternatives
+system in the vDSO, while the the second is the actual vDSO work.
 
-It's preferable to allocate the skbuff at packet reception time, inside 
-the poll() function, just before passing the skb to the upper stack, so 
-that the header contents are fresh in the cache. Additionally that 
-increases the change for the allocator could hit its fastpath.
+Changes from v4:
+- Improve BE handling.
 
-> +
-> +	buffer->skb_len = len;
-> +	memset(buffer->skb->data, 0, HBG_PACKET_HEAD_SIZE);
+Changes from v3:
+- Use alternative_has_cap_likely instead of ALTERNATIVE.
+- Header/include and comment fixups.
 
-Out of sheer ignorace, why do you need to clear the packet data?
+Changes from v2:
+- Refactor Makefile to use same flags for vgettimeofday and
+  vgetrandom.
+- Removed rodata usage and fixed BE on vgetrandom-chacha.S.
 
-thanks,
+Changes from v1:
+- Fixed style issues and typos.
+- Added fallback for systems without NEON support.
+- Avoid use of non-volatile vector registers in neon chacha20.
+- Use c-getrandom-y for vgetrandom.c.
+- Fixed TIMENS vdso_rnd_data access.
 
-Paolo
+Adhemerval Zanella (1):
+  arm64: vdso: wire up getrandom() vDSO implementation
+
+Mark Rutland (1):
+  arm64: alternative: make alternative_has_cap_likely() VDSO compatible
+
+ arch/arm64/Kconfig                          |   1 +
+ arch/arm64/include/asm/alternative-macros.h |   4 +
+ arch/arm64/include/asm/mman.h               |   6 +-
+ arch/arm64/include/asm/vdso.h               |   6 +
+ arch/arm64/include/asm/vdso/getrandom.h     |  50 ++++++
+ arch/arm64/include/asm/vdso/vsyscall.h      |  10 ++
+ arch/arm64/kernel/vdso.c                    |   6 -
+ arch/arm64/kernel/vdso/Makefile             |  25 ++-
+ arch/arm64/kernel/vdso/vdso                 |   1 +
+ arch/arm64/kernel/vdso/vdso.lds.S           |   4 +
+ arch/arm64/kernel/vdso/vgetrandom-chacha.S  | 172 ++++++++++++++++++++
+ arch/arm64/kernel/vdso/vgetrandom.c         |  15 ++
+ tools/arch/arm64/vdso                       |   1 +
+ tools/include/linux/compiler.h              |   4 +
+ tools/testing/selftests/vDSO/Makefile       |   3 +-
+ 15 files changed, 292 insertions(+), 16 deletions(-)
+ create mode 100644 arch/arm64/include/asm/vdso/getrandom.h
+ create mode 120000 arch/arm64/kernel/vdso/vdso
+ create mode 100644 arch/arm64/kernel/vdso/vgetrandom-chacha.S
+ create mode 100644 arch/arm64/kernel/vdso/vgetrandom.c
+ create mode 120000 tools/arch/arm64/vdso
+
+-- 
+2.43.0
 
 
