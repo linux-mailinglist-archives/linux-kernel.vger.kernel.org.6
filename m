@@ -1,59 +1,69 @@
-Return-Path: <linux-kernel+bounces-313043-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313040-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00CB0969F70
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 15:54:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96275969F67
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 15:52:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 231B5B23A1E
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 13:53:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2C3BA1F24091
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 13:52:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 992E939FFE;
-	Tue,  3 Sep 2024 13:53:30 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A1381CA6AD;
+	Tue,  3 Sep 2024 13:52:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="xtyGCyxM"
+Received: from out162-62-58-211.mail.qq.com (out162-62-58-211.mail.qq.com [162.62.58.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B7202A1D3;
-	Tue,  3 Sep 2024 13:53:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F0323C38
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 13:52:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.58.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725371610; cv=none; b=Hyxt48dEqKONKJH5zaDk1466F3BuNoelK/J/rKpzqBIcMBY/is+zEW3srlqs6beYAnJFcrnoWx/CmtsLmEy/Rawc2DCV0QXzu4XG2SUW0cgCtl99mmF4Ck9QeGKm/RJJEXg5GgA09Cdq++D77i8tRgePA01cVekn9N/HlZx2WcY=
+	t=1725371570; cv=none; b=biYQc3lzxh02hMZxo6D7DN4+WgzH+D+yy8uUj+tv8lG4QA1KKFmB+yPL40QuEbc04O5oWa8H3S7tAIFcXm+kC6wpH9wvucRs7B95i0NoY5pcT8n3NBL9mxnmCAARLvYZYVcwASoWlA+EJ0uNt/Zv7KMVK398qs0iCvokD8AE0YI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725371610; c=relaxed/simple;
-	bh=mOHqSBCGfoGqsl9rxTgfLkUkSCG2LYjrcFdiWH34Pq4=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=U6yTyDuPf/Thv+/N4iJLRxNHXiiZxO8lYD6R4jcp06kTJSwz+xoGw83PXu3WLcvp5QNNaJ3PZd7Bk7Y+vLQaRuN83O55PnJd4JKgtUniwRWzmBM1pEidcMJBStOXgxsXkv6+coXdm7XiQCOzDY4qSzxTZESThu68KRx7AGtGl7Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4WynBs6Llrz4f3kq0;
-	Tue,  3 Sep 2024 21:53:09 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 2447E1A018D;
-	Tue,  3 Sep 2024 21:53:20 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP4 (Coremail) with SMTP id gCh0CgDH+sbNFNdmiUgjAQ--.58276S6;
-	Tue, 03 Sep 2024 21:53:19 +0800 (CST)
-From: Yu Kuai <yukuai1@huaweicloud.com>
-To: tj@kernel.org,
-	josef@toxicpanda.com,
-	axboe@kernel.dk
-Cc: cgroups@vger.kernel.org,
-	linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	yukuai3@huawei.com,
-	yukuai1@huaweicloud.com,
-	yi.zhang@huawei.com,
-	yangerkun@huawei.com
-Subject: [PATCH for-6.12 2/2] blk-throttle: support prioritized processing of metadata
-Date: Tue,  3 Sep 2024 21:51:49 +0800
-Message-Id: <20240903135149.271857-3-yukuai1@huaweicloud.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240903135149.271857-1-yukuai1@huaweicloud.com>
-References: <20240903135149.271857-1-yukuai1@huaweicloud.com>
+	s=arc-20240116; t=1725371570; c=relaxed/simple;
+	bh=Qchee+0RNtaaELXAIfuBAUamxVkgobY8iONuLVQco5Y=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=iwa7VN4ZCRyOT8/W8s7N0nKMCJivzMKGZY7RvBYhIoVVtbUtD1F7Om/Z6bzMLngF1Xo7iEzELcva3ZH4rou5Yi828E3napU3oSlwKONwl8GkBFrz1kNcACo7QSdcsArpWLpMaytJfz2aRAF+trtQR8M8HQgb7ZFTsVpqgYp0mHc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=xtyGCyxM; arc=none smtp.client-ip=162.62.58.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1725371557; bh=fevg39+RHWzdbFpNxIkdCNAZJyXH4MlrR18xlYxNMNc=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=xtyGCyxMOGsWiAdrKIjW3awU46U66LrUvP/sqcloOLopOXuEr9sAaWpSoPRYqRREL
+	 tavuCEnjxQAPMOFR7aN89p9ok0AsXiQH0G2T0l+1tJaygGxBHwHSSdCI55+5vmL0ab
+	 nD20sw9a9HFSDQSlRQPZZS9pQ+I2gOIe4UPB01C0=
+Received: from pek-lxu-l1.wrs.com ([111.198.224.50])
+	by newxmesmtplogicsvrsza10-0.qq.com (NewEsmtp) with SMTP
+	id D23B728B; Tue, 03 Sep 2024 21:52:35 +0800
+X-QQ-mid: xmsmtpt1725371555txjam4d4v
+Message-ID: <tencent_DF6D237A296523A8E45177687763C6C2B305@qq.com>
+X-QQ-XMAILINFO: MeezYcwNx3ZfsgzWG2Bw9SnZRZPh/OQs3h2tH6+Wpdmb4NWzOfhqq1ew94I6dm
+	 Cip4y2yW/BQvcNeoErjMDtp9sFe+dMn4r5DStc8XhciH4SqyoiWkNjC0622AaQ1byW4OjVmKbaot
+	 sVFYqX7uAhLVDvtLXThZQlYr2mlzbWZYT8tVllfspkDbNglRgFL8V2OUHVPa5hQtvPiJyax0Zsqh
+	 5KyPbL0juxfaTOHFbxGx6BHu5UDER6C1uFOH07cBDeIvKYTL17IVTBRRap/W/TkbzuRNVuH9R3KR
+	 JkHbU/2I+HZVCvl3x6gjAHIq/QV1h4zSXwCYietbdnm2QFiwC6ACWGEbhp8Qc0r3V/XFTAQWv0rL
+	 nfElCf/KoQuV9s8XDXAKOGxG8cU8+STs/USe6NUTuHiyxMH+OFP6v54ZRL7u6rP+RpW/fTRwV6OG
+	 Vwcqc3J5eyd1J5nVOQ/ayp1ZmTdchrBCTyXzJHTeh7f5eLI64EII/sNJebMD1TMPohTOhXBGHL89
+	 +H5S7owG9xQJMHlEufEZQgp3LZbwSZqhC99b4Q/fFwZFuJxdwIBQK6ni9lFg9aVzNwm0rWyjPYja
+	 DEvvyQS/vi9P86wOUqo3/W35ehKZBGWba3kprYQCvLRRrCswhRfiY025kDakly/iySMTpKuGNEU+
+	 sRWVzjnrcC/B0eSukuECBk9S1AneCMfE/gn+m/bSsmY7JtpUHMmT4OfPkGrU+1jvmBM5SH+HpLIk
+	 YWROFEZQvkzCEwG1nOkXzNBVn013V8yF59H/VCGZhjIpLOGfDo4utkLFNDnMKesGITDuYcEg57R8
+	 3AkVrlRBCWdAHwNXKt1oTXMqMI2Dc6rMtCP7WHiI+I1Ll0S+YLephXHCP+PZQzdI30UvO+rV47en
+	 f/z9OVbSm20VRyiTyVOgxqjTUA0v3WG8RfF/S1JgLbxUfxG5HFHlr9eKHGWazyWSDlpJruv9y0
+X-QQ-XMRINFO: NyFYKkN4Ny6FSmKK/uo/jdU=
+From: Edward Adam Davis <eadavis@qq.com>
+To: syzbot+f3a31fb909db9b2a5c4d@syzkaller.appspotmail.com
+Cc: linux-kernel@vger.kernel.org
+Subject: Re: [syzbot] [mptcp?] KASAN: slab-use-after-free Read in __timer_delete_sync
+Date: Tue,  3 Sep 2024 21:52:36 +0800
+X-OQ-MSGID: <20240903135235.3264061-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.46.0
+In-Reply-To: <000000000000b341bb062136d2d9@google.com>
+References: <000000000000b341bb062136d2d9@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,152 +71,44 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgDH+sbNFNdmiUgjAQ--.58276S6
-X-Coremail-Antispam: 1UD129KBjvJXoWxJF4UtryrCF1Uuw15tr47urg_yoWrXryDpr
-	WfCrW5Kws5JFsrKwsI9F1UXa4fKan7Xr98J3s3JrW3A3W7Zrn8WFn0yryFyFWrAF9rGF4a
-	9rs0qr95CF1UGrJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUQv14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_Jryl82xGYIkIc2
-	x26xkF7I0E14v26r4j6ryUM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2z4x0
-	Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j6F4UJw
-	A2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oVCq3wAS
-	0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2
-	IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0
-	Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2kIc2
-	xKxwCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCF54CYxVCY1x0262kKe7AK
-	xVWUtVW8ZwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I
-	0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAI
-	cVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcV
-	CF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIE
-	c7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUczV8UUUUU=
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-From: Yu Kuai <yukuai3@huawei.com>
+entry need to be protected by pm.lock.
 
-Currently, blk-throttle handle all IO fifo, hence if data IO is
-throttled and then meta IO is dispatched, the meta IO will have to wait
-for the data IO, causing priority inversion problems.
+#syz test
 
-This patch support to handle metadata first and then pay debt while
-throttling data.
-
-Test script: use cgroup v1 to throttle root cgroup, then create new
-dir and file while write back is throttled
-
-test() {
-  mkdir /mnt/test/xxx
-  touch /mnt/test/xxx/1
-  sync /mnt/test/xxx
-  sync /mnt/test/xxx
-}
-
-mkfs.ext4 -F /dev/nvme0n1 -E lazy_itable_init=0,lazy_journal_init=0
-mount /dev/nvme0n1 /mnt/test
-
-echo "259:0 $((1024*1024))" > /sys/fs/cgroup/blkio/blkio.throttle.write_bps_device
-dd if=/dev/zero of=/mnt/test/foo1 bs=16M count=1 conv=fdatasync status=none &
-sleep 4
-
-time test
-echo "259:0 0" > /sys/fs/cgroup/blkio/blkio.throttle.write_bps_device
-
-sleep 1
-umount /dev/nvme0n1
-
-Test result: time cost for creating new dir and file
-before this patch:  14s
-after this patch:   0.1s
-
-Signed-off-by: Yu Kuai <yukuai3@huawei.com>
----
- block/blk-throttle.c | 65 +++++++++++++++++++++++++++++---------------
- 1 file changed, 43 insertions(+), 22 deletions(-)
-
-diff --git a/block/blk-throttle.c b/block/blk-throttle.c
-index eb859c44c9f3..9c5bbd261724 100644
---- a/block/blk-throttle.c
-+++ b/block/blk-throttle.c
-@@ -1595,6 +1595,22 @@ void blk_throtl_cancel_bios(struct gendisk *disk)
- 	spin_unlock_irq(&q->queue_lock);
+diff --git a/net/mptcp/pm_netlink.c b/net/mptcp/pm_netlink.c
+index 3e4ad801786f..06a6846e316c 100644
+--- a/net/mptcp/pm_netlink.c
++++ b/net/mptcp/pm_netlink.c
+@@ -336,11 +336,12 @@ mptcp_pm_del_add_timer(struct mptcp_sock *msk,
+ 	entry = mptcp_lookup_anno_list_by_saddr(msk, addr);
+ 	if (entry && (!check_id || entry->addr.id == addr->id))
+ 		entry->retrans_times = ADD_ADDR_RETRANS_MAX;
+-	spin_unlock_bh(&msk->pm.lock);
+ 
+ 	if (entry && (!check_id || entry->addr.id == addr->id))
+ 		sk_stop_timer_sync(sk, &entry->add_timer);
+ 
++	spin_unlock_bh(&msk->pm.lock);
++
+ 	return entry;
  }
  
-+static bool tg_within_limit(struct throtl_grp *tg, struct bio *bio, bool rw)
-+{
-+	/* throtl is FIFO - if bios are already queued, should queue */
-+	if (tg->service_queue.nr_queued[rw])
-+		return false;
-+
-+	return tg_may_dispatch(tg, bio, NULL);
-+}
-+
-+static void tg_dispatch_in_debt(struct throtl_grp *tg, struct bio *bio, bool rw)
-+{
-+	if (!bio_flagged(bio, BIO_BPS_THROTTLED))
-+		tg->carryover_bytes[rw] -= throtl_bio_data_size(bio);
-+	tg->carryover_ios[rw]--;
-+}
-+
- bool __blk_throtl_bio(struct bio *bio)
- {
- 	struct request_queue *q = bdev_get_queue(bio->bi_bdev);
-@@ -1611,29 +1627,34 @@ bool __blk_throtl_bio(struct bio *bio)
- 	sq = &tg->service_queue;
+@@ -1637,6 +1638,7 @@ static void mptcp_pm_remove_addrs_and_subflows(struct mptcp_sock *msk,
+ 	struct mptcp_rm_list alist = { .nr = 0 }, slist = { .nr = 0 };
+ 	struct mptcp_pm_addr_entry *entry;
  
- 	while (true) {
--		/* throtl is FIFO - if bios are already queued, should queue */
--		if (sq->nr_queued[rw])
-+		if (tg_within_limit(tg, bio, rw)) {
-+			/* within limits, let's charge and dispatch directly */
-+			throtl_charge_bio(tg, bio);
-+
-+			/*
-+			 * We need to trim slice even when bios are not being
-+			 * queued otherwise it might happen that a bio is not
-+			 * queued for a long time and slice keeps on extending
-+			 * and trim is not called for a long time. Now if limits
-+			 * are reduced suddenly we take into account all the IO
-+			 * dispatched so far at new low rate and * newly queued
-+			 * IO gets a really long dispatch time.
-+			 *
-+			 * So keep on trimming slice even if bio is not queued.
-+			 */
-+			throtl_trim_slice(tg, rw);
-+		} else if (bio_issue_as_root_blkg(bio)) {
-+			/*
-+			 * IOs which may cause priority inversions are
-+			 * dispatched directly, even if they're over limit.
-+			 * Debts are handled by carryover_bytes/ios while
-+			 * calculating wait time.
-+			 */
-+			tg_dispatch_in_debt(tg, bio, rw);
-+		} else {
-+			/* if above limits, break to queue */
- 			break;
--
--		/* if above limits, break to queue */
--		if (!tg_may_dispatch(tg, bio, NULL))
--			break;
--
--		/* within limits, let's charge and dispatch directly */
--		throtl_charge_bio(tg, bio);
--
--		/*
--		 * We need to trim slice even when bios are not being queued
--		 * otherwise it might happen that a bio is not queued for
--		 * a long time and slice keeps on extending and trim is not
--		 * called for a long time. Now if limits are reduced suddenly
--		 * we take into account all the IO dispatched so far at new
--		 * low rate and * newly queued IO gets a really long dispatch
--		 * time.
--		 *
--		 * So keep on trimming slice even if bio is not queued.
--		 */
--		throtl_trim_slice(tg, rw);
-+		}
++	spin_lock_bh(&msk->pm.lock);
+ 	list_for_each_entry(entry, rm_list, list) {
+ 		if (slist.nr < MPTCP_RM_IDS_MAX &&
+ 		    lookup_subflow_by_saddr(&msk->conn_list, &entry->addr))
+@@ -1647,7 +1649,6 @@ static void mptcp_pm_remove_addrs_and_subflows(struct mptcp_sock *msk,
+ 			alist.ids[alist.nr++] = entry->addr.id;
+ 	}
  
- 		/*
- 		 * @bio passed through this layer without being throttled.
--- 
-2.39.2
+-	spin_lock_bh(&msk->pm.lock);
+ 	if (alist.nr) {
+ 		msk->pm.add_addr_signaled -= alist.nr;
+ 		mptcp_pm_remove_addr(msk, &alist);
 
 
