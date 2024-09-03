@@ -1,235 +1,243 @@
-Return-Path: <linux-kernel+bounces-313897-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313898-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DAE9496ABFD
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 00:18:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B515196AC02
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 00:18:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5BD031F2570B
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 22:18:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E5BB285567
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 22:18:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B80B91A4E80;
-	Tue,  3 Sep 2024 22:18:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9671D1C9DC9;
+	Tue,  3 Sep 2024 22:18:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gke3Wjn5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="U1yE1Vuq"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 157221EBFE4;
-	Tue,  3 Sep 2024 22:18:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62FB5126C16;
+	Tue,  3 Sep 2024 22:18:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725401902; cv=none; b=T+fb1Fx0mGEaAj0deCQixlfQZRGUeMGmLJidi1bbjrxAtrXK0CYK/C4f8ukCJcFsFUP88fF9V2FKeGSPLO9pOIv1oi99g5RBKs8T3Iihm6Bu+CRATCuScTPbQdySt2I3vu3Tr4oVyPvMvx3mQY3kdZkxMz5cHSrXbFHpjnp/ojs=
+	t=1725401924; cv=none; b=KI9PCIangtDlJYqP89gYBh8zhi+F2GhzKTghqaCJ3A5NUWZ/22FWRlZHaxECOpNVR4uU3k8cKLH1keBrjredjfyxKnMM94Oq0Rqn9YDKbEWlP9qbzV+PQtVazSsNKmebyRkiNFJGx3mIXYekx4y6bXjnfGeTOCAXcfDXBpDuuO0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725401902; c=relaxed/simple;
-	bh=ofGtKLeOINGZt+upXE0xfK5KYPswpVR/C0fqSZ1f660=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=f5SMD6sBdLbfBxgsh/YbaCckMUDuAkMpzykBiEaeWhg0JCt+SMRa/SEbOaiLYtpXubSyOVFiZ2mhkI8hHAWuWnBj4U+cXOZ/8Dh8zNisp6cKH6moUyMt4kBhJr72+G1nq8XK3K/wuWj/SsTjAbNaDEtO5+894yAeTBkMpix3GdI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gke3Wjn5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A706DC4CEC4;
-	Tue,  3 Sep 2024 22:18:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725401901;
-	bh=ofGtKLeOINGZt+upXE0xfK5KYPswpVR/C0fqSZ1f660=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=gke3Wjn5dqoKGbiIjlmeVKG/Uji8+RsT/iTji1DWda8O2EOneTnCfE9IYIQBE3xLL
-	 9Hq23w02oVgePst9seHWNuObDevufpAOqki9LRTc9SsIa7fLr5xfcQcaBsfKdxZ7LQ
-	 9b3Ah99gYGoaOd5srztlbqgm/o+tDoYmvGiyKrV+Pd/2/Ln8GnNHkVKEdOswfPoUFf
-	 MtjadBFzjSmGfp7fMtkg1K8GFtVkHQH2VZJQdqwsdeTeoo08EuFz0qBl7R5fng2e+q
-	 0GCeKDKBBdXZhRUJKSrnnpJ+dQtdqy+KmM9GbXqKMd283c0QSE78kIyWL/zN37r7aC
-	 0CHE2RsDryp0A==
-Date: Tue, 3 Sep 2024 17:18:20 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Tony Hutter <hutter2@llnl.gov>
-Cc: bhelgaas@google.com, minyard@acm.org, linux-pci@vger.kernel.org,
-	openipmi-developer@lists.sourceforge.net,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] PCI: Introduce Cray ClusterStor E1000 NVMe slot LED
- driver
-Message-ID: <20240903221820.GA26364@bhelgaas>
+	s=arc-20240116; t=1725401924; c=relaxed/simple;
+	bh=UHAN35FBq3KAiIrnojpTJmchmFwUeFU4wJ465i+18is=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:CC:References:
+	 In-Reply-To:Content-Type; b=LevDC8DHDO54Wqh5yOuOLfmJ0CJqCyoeD79J+eih8pmtgZMEnbIbRNVTiiNwSBSM03LZv4/Ont//17mVmGsJdO7rgr+reF6kfLPcY2n2p66u6qZ06skoWjIBhMTRLqr+C2cYEF0Gm7eW2jVnDgF2zuwnwWKdWZtHf3YDMWw0oLE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=U1yE1Vuq; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 483IgdDh009481;
+	Tue, 3 Sep 2024 22:18:27 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	qgWlqxKjeBpg4Ts6zdxWmbOOIrvHy2nnFujcHgGQovQ=; b=U1yE1VuqyY9RIxKb
+	HZIyF5kanildyiU66t2j8rFbsVKpObVZ/JsVkRhF9aCT4gTGs8idKZ11GHk+xvGX
+	IzuCeAG2IOnqc+1wy/F+8/dhiotbKDfJqlKAIPf4LAcmJr8Ov5vNd/Xxx0uMInxS
+	I8p/nTEbzJb1FT95O9oOZ/h+lR89CsH5lMGaL7kkKHaSqtyeFt45A0NYmaSNOuD6
+	QS7XdA6UOxRC4+TU1YZhnOTM5ekgC2A/aaduo62RUREvH+uDml9qUTeyUXbafNRD
+	TI43vZLncdBirHeSPPhf9/6DMJP2zVgx0GEdoc9TdNJ2DYIcDMDsMvIKuJWCSMJT
+	vr9roA==
+Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41e0bhj259-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 03 Sep 2024 22:18:27 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 483MIPOa000659
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 3 Sep 2024 22:18:25 GMT
+Received: from [10.134.70.212] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 3 Sep 2024
+ 15:18:24 -0700
+Message-ID: <9f95704d-0699-4b11-b8cb-40f1a57eeebd@quicinc.com>
+Date: Tue, 3 Sep 2024 15:18:24 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <40c7776f-b168-4cbe-a352-122e56fe7b31@llnl.gov>
+User-Agent: Mozilla Thunderbird
+From: Jessica Zhang <quic_jesszhan@quicinc.com>
+Subject: Re: [PATCH 07/21] drm/msm/dpu: Check CRTC encoders are valid clones
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: Rob Clark <robdclark@gmail.com>, <quic_abhinavk@quicinc.com>,
+        Sean Paul
+	<sean@poorly.run>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        "David
+ Airlie" <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+        "Maarten
+ Lankhorst" <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard
+	<mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>, <quic_ebharadw@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <freedreno@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+        Rob Clark <robdclark@chromium.org>
+References: <20240829-concurrent-wb-v1-0-502b16ae2ebb@quicinc.com>
+ <20240829-concurrent-wb-v1-7-502b16ae2ebb@quicinc.com>
+ <uqtlpynjdszqyyikj64uxwuqnk3lmzma7kd2vwxipnj4fg2eje@7toj5kww7vk7>
+Content-Language: en-US
+In-Reply-To: <uqtlpynjdszqyyikj64uxwuqnk3lmzma7kd2vwxipnj4fg2eje@7toj5kww7vk7>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: zlqd_Dm-1wxH-7mOEjxkMTFe4fHAHsIR
+X-Proofpoint-GUID: zlqd_Dm-1wxH-7mOEjxkMTFe4fHAHsIR
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-03_10,2024-09-03_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999
+ priorityscore=1501 suspectscore=0 adultscore=0 bulkscore=0 malwarescore=0
+ spamscore=0 lowpriorityscore=0 clxscore=1015 impostorscore=0 mlxscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2409030178
 
-On Tue, Aug 27, 2024 at 02:03:48PM -0700, Tony Hutter wrote:
-> Add driver to control the NVMe slot LEDs on the Cray ClusterStor E1000.
-> The driver provides hotplug attention status callbacks for the 24 NVMe
-> slots on the E1000.  This allows users to access the E1000's locate and
-> fault LEDs via the normal /sys/bus/pci/slots/<slot>/attention sysfs
-> entries.  This driver uses IPMI to communicate with the E1000 controller to
-> toggle the LEDs.
 
-I hope/assume the interface is the same as one of the others, i.e.,
-the existing one added for NVMe behind VMD by
-https://git.kernel.org/linus/576243b3f9ea ("PCI: pciehp: Allow
-exclusive userspace control of indicators") or the new one for NPEM
-and the _DSM at
-https://lore.kernel.org/linux-pci/20240814122900.13525-3-mariusz.tkaczyk@linux.intel.com/
 
-I suppose we intend that the ledmon utility will be able to drive
-these LEDs?  Whatever the user, we should try to minimize the number
-of different interfaces for this functionality.
+On 8/30/2024 10:00 AM, Dmitry Baryshkov wrote:
+> On Thu, Aug 29, 2024 at 01:48:28PM GMT, Jessica Zhang wrote:
+>> Check that each encoder in the CRTC state's encoder_mask is marked as a
+>> possible clone for all other encoders in the encoder_mask and that only
+>> one CRTC is in clone mode at a time
+>>
+>> Signed-off-by: Jessica Zhang <quic_jesszhan@quicinc.com>
+>> ---
+>>   drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c | 36 +++++++++++++++++++++++++++++++-
+>>   1 file changed, 35 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
+>> index 5ec1b5a38922..bebae365c036 100644
+>> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
+>> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
+>> @@ -1,6 +1,6 @@
+>>   // SPDX-License-Identifier: GPL-2.0-only
+>>   /*
+>> - * Copyright (c) 2022-2023 Qualcomm Innovation Center, Inc. All rights reserved.
+>> + * Copyright (c) 2022-2024 Qualcomm Innovation Center, Inc. All rights reserved.
+>>    * Copyright (c) 2014-2021 The Linux Foundation. All rights reserved.
+>>    * Copyright (C) 2013 Red Hat
+>>    * Author: Rob Clark <robdclark@gmail.com>
+>> @@ -1204,6 +1204,36 @@ static struct msm_display_topology dpu_crtc_get_topology(
+>>   	return topology;
+>>   }
+>>   
+>> +static bool dpu_crtc_has_valid_clones(struct drm_crtc *crtc,
+>> +		struct drm_crtc_state *crtc_state)
+>> +{
+>> +	struct drm_encoder *drm_enc;
+>> +	struct drm_crtc *temp_crtc;
+>> +	int num_cwb_sessions = 0;
+>> +
+>> +	drm_for_each_crtc(temp_crtc, crtc->dev)
+>> +		if (drm_crtc_in_clone_mode(temp_crtc->state))
+> 
+> No, get the state from drm_atomic_state. temp_crtc->state might be
+> irrelevant.
 
-A few minor random comments from a quick look below.
+Hi Dmitry,
 
-> +config HOTPLUG_PCI_PCIE_CRAY_E1000
-> +	tristate "PCIE Hotplug extensions for Cray ClusterStor E1000"
+Ack.
 
-s/PCIE/PCIe/
+> 
+>> +			num_cwb_sessions++;
+> 
+> Even simpler:
+> if (temp_crtc != crtc && drm_crtc_in_clone_mode(...))
+> 	return false;
 
-> +static ssize_t craye1k_show(struct kobject *kobj, struct kobj_attribute *kattr,
-> +			    char *buf);
-> +static ssize_t craye1k_store(struct kobject *kobj, struct kobj_attribute *kattr,
-> +			     const char *buf,
-> +			     size_t count);
-> +static void craye1k_new_smi(int iface, struct device *dev);
-> +static void craye1k_smi_gone(int iface);
-> +static void craye1k_msg_handler(struct ipmi_recv_msg *msg, void *user_msg_data);
+Ack.
 
-Is it possible to reorder the function implementations such that these
-forward declarations are not needed?  That's the typical Linux style, so
-that ordering will be more familiar to readers.
+> 
+>> +
+>> +	/*
+>> +	 * Only support a single concurrent writeback session running
+>> +	 * at a time
+> 
+> If it is not a hardware limitation, please add:
+> FIXME: support more than one session
 
-> +static atomic64_t *craye1k_lookup_stat(struct kobject *kobj, const char *name)
-> +{
-> +	struct craye1k *craye1k;
-> +	struct device *dev;
-> +	int i;
-> +
-> +	/* Lookup table for name -> atomic64_t offset */
-> +	const struct {
-> +		const char *name;
-> +		size_t offset;
-> +	} table[] = {
-> +		CRAYE1K_TABLE(check_primary),
-> +		CRAYE1K_TABLE(check_primary_failed),
-> +		CRAYE1K_TABLE(was_already_primary),
-> +		CRAYE1K_TABLE(was_not_already_primary),
-> +		CRAYE1K_TABLE(set_primary),
-> +		CRAYE1K_TABLE(set_initial_primary_failed),
-> +		CRAYE1K_TABLE(set_primary_failed),
-> +		CRAYE1K_TABLE(set_led_locate_failed),
-> +		CRAYE1K_TABLE(set_led_fault_failed),
-> +		CRAYE1K_TABLE(set_led_readback_failed),
-> +		CRAYE1K_TABLE(set_led_failed),
-> +		CRAYE1K_TABLE(get_led_failed),
-> +		CRAYE1K_TABLE(completion_timeout),
-> +		CRAYE1K_TABLE(wrong_msgid),
-> +		CRAYE1K_TABLE(request_failed)
-> +	};
+This is a hardware limitation.
 
-Looks like possibly this table could be static instead of being on the
-stack?
+> 
+>> +	 */
+>> +	if (num_cwb_sessions > 1)
+>> +		return false;
+>> +
+>> +	drm_for_each_encoder_mask(drm_enc, crtc->dev, crtc_state->encoder_mask) {
+>> +		if ((crtc_state->encoder_mask & drm_enc->possible_clones) !=
+>> +				crtc_state->encoder_mask) {
+> 
+> Align to opening bracket, please. Granted that other drivers don't
+> perform this check, is it really necessary? Doesn't
+> validate_encoder_possible_clones() ensure the same, but during the
+> encoder registration?
 
-> + * __craye1k_set_primary() - Tell the BMC we want to be the primary server
-> + *
-> + * An E1000 board has two physical servers on it.  In order to set a slot
-> + * NVMe LED, this server needs to first tell the BMC that it's the primary
-> + * server.
-> + *
-> + * Returns: 0 on success, 1 otherwise.
-> + */
-> +
+The difference here is that validate_encoder_possible_clones() is only 
+called when the drm device is initially registered.
 
-Spurious blank line.
+The check here is to make sure that the encoders userspace is proposing 
+to be cloned are actually possible clones of each other. This might not 
+be necessary for drivers where all encoders are all possible clones of 
+each other. But for MSM (and CWB), real-time display encoders can only 
+be clones of writeback (and vice versa).
 
-> +static int __craye1k_set_primary(struct craye1k *craye1k)
+> 
+>> +			DPU_ERROR("crtc%d failed valid clone check for mask 0x%x\n",
+> 
+> DPU_DEBUG, don't let users spam dmesg.
 
-> + * craye1k_is_primary() - Are we the primary server?
-> + *
-> + * Returns: 1 if we are the primary server, 0 otherwise.
-> + */
-> +static int craye1k_is_primary(struct craye1k *craye1k)
-> +{
-> +	u8 byte = 0;
-> +	int rc;
-> +
-> +	/* Response byte is 0x1 on success */
-> +	rc = craye1k_do_command(craye1k, CRAYE1K_CMD_PRIMARY, &byte, 1);
-> +	atomic64_inc(&craye1k->check_primary);
-> +	if (rc == 0x1)
-> +		return 1;   /* success */
-> +
-> +	atomic64_inc(&craye1k->check_primary_failed);
-> +	return 0;   /* We are not the primary server node */
-> +}
-> +
-> +/*
-> + * craye1k_set_primary() - Attempt to set ourselves as the primary server
-> + *
-> + * Returns: 0 on success, 1 otherwise.
+Ack.
 
-Maybe return a negative error value like -EIO for failure?  Then the
-caller can simply pass that return value up.  Same for
-__craye1k_set_primary().
+> 
+>> +				crtc->base.id, crtc_state->encoder_mask);
+>> +			return false;
+>> +		}
+>> +	}
+>> +
+>> +	return true;
+>> +}
+>> +
+>>   static int dpu_crtc_assign_resources(struct drm_crtc *crtc, struct drm_crtc_state *crtc_state)
+>>   {
+>>   	struct dpu_hw_blk *hw_ctl[MAX_CHANNELS_PER_CRTC];
+>> @@ -1287,6 +1317,10 @@ static int dpu_crtc_atomic_check(struct drm_crtc *crtc,
+>>   			return rc;
+>>   	}
+>>   
+>> +	if (drm_crtc_in_clone_mode(crtc_state) &&
+>> +			!dpu_crtc_has_valid_clones(crtc, crtc_state))
+> 
+> Align to opening bracket.
 
-> +	 * We know that our attention status callback functions have been swapped
-> +	 * into the PCI device's hotplug_slot->ops values.  We can use that
-> +	 * knowledge to lookup our craye1k.
-> +	 *
-> +	 * To do that, we use the current hotplug_slot->ops value, which is going
-> +	 * to be one of the entries in craye1k->ops[], and offset our slot number
-> +	 * to get the address of craye1k->ops[0].  We then use that with
-> +	 * container_of() to get craye1k.  Slots start at 1, so account for that.
+Ack
 
-99% of this file fits in 80 columns.  This and one or two other
-comments use 81, which seems like a random width.  Can you reflow
-these to fit in 80?
+Thanks,
 
-> +static int __craye1k_get_attention_status(struct hotplug_slot *hotplug_slot,
-> +					  u8 *status, bool set_primary)
-> +{
-> +	unsigned char slot;
-> +	int locate, fault;
-> +	int rc = 0;
-> +	struct craye1k *craye1k;
-> +
-> +	slot = PSN(to_ctrl(hotplug_slot));
-> +	if (!(slot >= 1 && slot <= 24)) {
-> +		rc = -EINVAL;
-> +		goto out;
+Jessica Zhang
 
-There's no cleanup at "out", so drop the "rc" and the label, use
-"return -EINVAL/-EIO/etc " directly here, and then "return 0" at the
-end.
-
-> +	}
-> +
-> +	craye1k = craye1k_from_hotplug_slot(hotplug_slot);
-> +
-> +	if (set_primary) {
-> +		if (craye1k_set_primary(craye1k) != 0) {
-> +			rc = -EIO;
-> +			goto out;
-> +		}
-> +	}
-> +
-> +	locate = craye1k_get_slot_led(craye1k, slot, true);
-> +	if (locate == -1) {
-> +		rc = -EINVAL;
-> +		goto out;
-> +	}
-> +
-> +	fault = craye1k_get_slot_led(craye1k, slot, false);
-> +	if (fault == -1) {
-> +		rc = -EINVAL;
-> +		goto out;
-> +	}
-> +
-> +	if (rc != 0)
-> +		atomic64_inc(&craye1k->get_led_failed);
-> +
-> +	*status = locate << 1 | fault;
-> +
-> +out:
-> +	return rc;
-> +}
+> 
+>> +		return -EINVAL;
+>> +
+>>   	if (!crtc_state->enable || !drm_atomic_crtc_effectively_active(crtc_state)) {
+>>   		DRM_DEBUG_ATOMIC("crtc%d -> enable %d, active %d, skip atomic_check\n",
+>>   				crtc->base.id, crtc_state->enable,
+>>
+>> -- 
+>> 2.34.1
+>>
+> 
+> -- 
+> With best wishes
+> Dmitry
 
