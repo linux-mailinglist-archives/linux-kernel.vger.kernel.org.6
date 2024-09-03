@@ -1,111 +1,136 @@
-Return-Path: <linux-kernel+bounces-312359-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312363-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3AE596957E
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 09:30:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A30DF969587
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 09:31:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8DD1B1F228E5
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 07:30:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4B99D1F242AC
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 07:31:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F842201273;
-	Tue,  3 Sep 2024 07:29:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A812B200101;
+	Tue,  3 Sep 2024 07:30:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="Hdr2IS2b"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TMusd5NF"
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14E76201244
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 07:29:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A43720FABB;
+	Tue,  3 Sep 2024 07:30:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725348583; cv=none; b=AMK59x3Oj/H1c+UrjZvB3UDsOuI8ULdgSSfcmkcaYFLGBjIP+nKfIi7GfRi4lWEfrG/EfSWv6eQp3q2Hnn16RMtPHjs6UQGMV9X1lk/eZATrGFx48TauItgW/NxzmOuo8qZM/Uy+rAt2pdqt/9prDY9RsS2se+T1bofQStES7s4=
+	t=1725348602; cv=none; b=fhKwEv114Pf0i4V5Ne1IjNgDHRMyudGCrRmIpN46EaHXHnph/bca7XjprdnOKyN8QmDPsnsHGRUOKQENHXMC2O/1HcdwEAW7NYVrPass/sy6/mq1mIgXVGZt34s9+xmR+7K2QVmrLTCKqHlHV7JfhtN7376pZeFKk65g8mQskDw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725348583; c=relaxed/simple;
-	bh=OjTvpAAXrGTGgptUXOR17snuqDSOhkzcn0L67rJb/BM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bjWYSEWRjJFd41APqs/MXYGHe0Q2y/xTjic7cU23Ad3fUnQDlHinYvSuhIAwUc+yuvmxLGzvIj+8HwBPPAG3+VPBM1j81A/XbSFI2VW/YaReR/1hNYQccejQK7Pw1BjM4gayaLnMUqtlLty1EHAVPsyekevZjnj4Gg2xAnOZQRM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=Hdr2IS2b; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-42bbffe38e6so25749825e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 00:29:41 -0700 (PDT)
+	s=arc-20240116; t=1725348602; c=relaxed/simple;
+	bh=KKvHqt3siS6yomCisTHDJUcUhDzuy3LBBgDMRQ4k+Rg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=nPQW9clfd6ldxqEoMFpnFZ4MV1XJCY6TGm6zUFTx7YXMuTsq2IKLCz5d9ZCFpFj1HRpQQ6FFue49hAg6GKRFh24ZPpHQ8wdxwd1/Lf8pu2+7m68LSOhAc7vUDluxbUMy8ucVGsuwDTS5r3OA5ikIrKjVTJ4NAl6WOlJ9mQYGbso=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TMusd5NF; arc=none smtp.client-ip=209.85.208.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5c255e3c327so2148910a12.1;
+        Tue, 03 Sep 2024 00:30:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1725348580; x=1725953380; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=OjTvpAAXrGTGgptUXOR17snuqDSOhkzcn0L67rJb/BM=;
-        b=Hdr2IS2b3As/nKpzPm5F3y4sTGkodVUE4Qm8RBF4TQSPS62pM6hhBcuU8OZVBL2FFL
-         WNZJSNutIoid6vhdfxG7rhQu7kO8HV/0fh14GRZJ3XVtyeYwGCPdnIPGjWuij83MVEPi
-         A/wbbHE5orRu5hJlDDLl6RzFJa7REmZ0/JTablnMSZqJQscybLJr26GetXwlPeBNRuNN
-         hDTgjsMnqykhmbGJDMM9KETTqDZRV5BWcb5/Q9FwCDF0E5bIwW5E0a1kfiWac2JD6hWV
-         Q+ol9zgY0dZhPuTPCMV+1LdK+2SXvE2iwkaimGs0pa6/p7675FNIG4SOJrlWJLloYX/7
-         5Muw==
+        d=gmail.com; s=20230601; t=1725348599; x=1725953399; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XndFyI8puSjAv9/6vHD7/Fma9yvh6kpyB+LRqezDNzk=;
+        b=TMusd5NF6rWMZXHS3Wzjeq6bJnYeRsY1aVUxC4iDsq9zJJwn0FK8xSQ9z67n5wrut0
+         xv0ZpbNI5qQc5Qa1z4w4mtf2dg+FCtp6umQaCT88a2F+nqoBC8CVvv2wclydDQKFTRz7
+         O9WnF/W6udtsk07n3i8VcDgCnlwGM/AZnrRJapzAiu1wjiMpz80cCytF+rap1BhfCydp
+         X5dzeDb457MzEQcdtp0Olso/SEkFZvkAPWHAAwz9868yeHkzsITwqf9c4igNGLeMtH0u
+         92PDgHa+E0V9yv8ex7AZlDWmMRdw0nwkoE2UTe2hhPvzRAyUcn1mt379AIQCMOrQDhfe
+         vAGA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725348580; x=1725953380;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=OjTvpAAXrGTGgptUXOR17snuqDSOhkzcn0L67rJb/BM=;
-        b=tq8cLiPhW4P6jrB9Kfm9zaAU4weWxrloB+3yJ91r5iWWoj6t2BllOd454DEKMjp50D
-         yHLCKwsGBliOkuAFiV6P5VBVBmrL8HKjibB0SzoanUrKne6+3KLDevG2Mer3hgiPNUro
-         Jz8tJE3MS7Fb67gER9ExGXj/7bw2pk2bBI5QCYuoKMIePy0vOpLl2yFUh75NRujyR0jh
-         GBMx+qhVMiSUxkiHUVp1jBsj3UDsWCwUw1pcq99v+V/U3dHSzaTOQje8hyA73s3dc42/
-         x06DDWGYGhXg2R6kAefKBWXMID3jDPfHIpKn0C1NNx533jYApZzRbOwHKNZGbkMQB8S9
-         oR2g==
-X-Forwarded-Encrypted: i=1; AJvYcCUweBhbNNnABBSFC25Bi+JguEpoosgDLkPXFIWqb2urf6CmZSc4ktsjsBdxAIuarbpuGgr8QCddnRT0bjE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxsR17CZuJS2LVF+GWRMKCUXic1A7iDkrQ+i8dP+6INQkCq9eti
-	BlEryYcDdyrLDUvolyC87Az37xH8fREpFFmOf2T359IVLbW3URFNk2FRPMQOcz4=
-X-Google-Smtp-Source: AGHT+IGhGflCAt3iq4B1lbWKcdTsZZUKYcwm75P51VoYgK+6+yVr8U4256jHMWzi1AT2+olzh4gbWg==
-X-Received: by 2002:adf:cf0f:0:b0:374:c2cb:a3c5 with SMTP id ffacd0b85a97d-374c2cba4f9mr5068543f8f.62.1725348580241;
-        Tue, 03 Sep 2024 00:29:40 -0700 (PDT)
-Received: from [192.168.50.4] ([82.78.167.144])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42bb73e20b7sm161574845e9.14.2024.09.03.00.29.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 03 Sep 2024 00:29:39 -0700 (PDT)
-Message-ID: <04b80600-1d87-43d7-913d-6940b0b53e36@tuxon.dev>
-Date: Tue, 3 Sep 2024 10:29:38 +0300
+        d=1e100.net; s=20230601; t=1725348599; x=1725953399;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=XndFyI8puSjAv9/6vHD7/Fma9yvh6kpyB+LRqezDNzk=;
+        b=YXlUy1Y+QSjxtCPA+HPuUp3GDcmlaI+hwM6Hd75yqPmtLGaqo6GEfrQNzBA9J71eTp
+         As32GkKYSPJNsQk3bnfUJNPX2OKk7g9WLGrHGGVUuEUMKA2ve6LQCfZSzT2eSUspKqxC
+         0P8ovjwXwma6nAkVVcQBGEDneWuwv0HuMQcCirx2vf8fuIpezGcTeQylUyVb+Tl6fNx9
+         qE/5EI+OpIRt3LHLC+E1WNUyeM0RHEgt61mr4RKwjGZ0M4SfCUYub3DveVZLfwayUiDs
+         UvBpvXQXd/iaLAGX6JEp9OcGWN9mIaT84hnYs/jaeRsf+Aybr8EY0c55YrxdbO0Yi76A
+         Iw4g==
+X-Forwarded-Encrypted: i=1; AJvYcCU5Hw3xULvE9qNAXnYTVv6//gATyPqDntBOpwIQb2TmG9Zf8q7q7vQ5m6dh/PkpPgYdFoKNBWwF4oEq1GQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz4TOGkYIIRux/UshvOLnRQAK3wvXF1d1h0HSkvzqJBEsrsSFEP
+	9l5GUCukQ3NK4J2+8tyRX/L4nPtzH91UOIXV8GphHwvTJD4ay/Vb
+X-Google-Smtp-Source: AGHT+IFB/oMp09sgiuT+TnuXo+ZNmtpslBujctoMWkBFwLgfqmHZzHNuEXPV06EtYHOC1hyljQaWkw==
+X-Received: by 2002:a05:6402:2552:b0:5c2:5cf4:1949 with SMTP id 4fb4d7f45d1cf-5c25cf41a83mr3111262a12.19.1725348598291;
+        Tue, 03 Sep 2024 00:29:58 -0700 (PDT)
+Received: from lapsy144.cern.ch (lapsy144.ipv6.cern.ch. [2001:1458:202:99::100:4b])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c226c6a37asm6121947a12.1.2024.09.03.00.29.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Sep 2024 00:29:57 -0700 (PDT)
+From: vtpieter@gmail.com
+To: Woojung Huh <woojung.huh@microchip.com>,
+	UNGLinuxDriver@microchip.com,
+	Andrew Lunn <andrew@lunn.ch>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Vladimir Oltean <olteanv@gmail.com>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Arun.Ramadoss@microchip.com
+Cc: netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Tristram.Ha@microchip.com,
+	o.rempel@pengutronix.de,
+	Pieter Van Trappen <pieter.van.trappen@cern.ch>,
+	Arun Ramadoss <arun.ramadoss@microchip.com>
+Subject: [PATCH net-next v3 2/3] net: dsa: microchip: clean up ksz8_reg definition macros
+Date: Tue,  3 Sep 2024 09:29:38 +0200
+Message-ID: <20240903072946.344507-3-vtpieter@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240903072946.344507-1-vtpieter@gmail.com>
+References: <20240903072946.344507-1-vtpieter@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 06/12] rtc: renesas-rtca3: Add driver for RTCA-3
- available on Renesas RZ/G3S SoC
-Content-Language: en-US
-To: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc: geert+renesas@glider.be, mturquette@baylibre.com, sboyd@kernel.org,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- magnus.damm@gmail.com, p.zabel@pengutronix.de,
- linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-rtc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
- kernel test robot <lkp@intel.com>
-References: <20240830130218.3377060-1-claudiu.beznea.uj@bp.renesas.com>
- <20240830130218.3377060-7-claudiu.beznea.uj@bp.renesas.com>
- <202408302225417622f1e7@mail.local>
- <a7f0a36b-3169-45f8-9169-50bb0c6c04dd@tuxon.dev>
- <20240902202819e2bf5630@mail.local>
-From: claudiu beznea <claudiu.beznea@tuxon.dev>
-In-Reply-To: <20240902202819e2bf5630@mail.local>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
+From: Pieter Van Trappen <pieter.van.trappen@cern.ch>
 
+Remove macros that are already defined at more appropriate places.
 
-On 02.09.2024 23:28, Alexandre Belloni wrote:
-> Thanks for the detailed explanation. Can you add a small comment, I
-> really want t avoid people cargo-culting this behavior as this has
-> already been the case.
+Signed-off-by: Pieter Van Trappen <pieter.van.trappen@cern.ch>
+Acked-by: Arun Ramadoss <arun.ramadoss@microchip.com>
+---
+ drivers/net/dsa/microchip/ksz8_reg.h | 4 ----
+ 1 file changed, 4 deletions(-)
 
-Sure, I'll update it in the next version.
+diff --git a/drivers/net/dsa/microchip/ksz8_reg.h b/drivers/net/dsa/microchip/ksz8_reg.h
+index ff264d57594f..329688603a58 100644
+--- a/drivers/net/dsa/microchip/ksz8_reg.h
++++ b/drivers/net/dsa/microchip/ksz8_reg.h
+@@ -364,8 +364,6 @@
+ #define REG_IND_DATA_1			0x77
+ #define REG_IND_DATA_0			0x78
+ 
+-#define REG_IND_DATA_PME_EEE_ACL	0xA0
+-
+ #define REG_INT_STATUS			0x7C
+ #define REG_INT_ENABLE			0x7D
+ 
+@@ -709,8 +707,6 @@
+ #define KSZ8795_ID_LO			0x1550
+ #define KSZ8863_ID_LO			0x1430
+ 
+-#define KSZ8795_SW_ID			0x8795
+-
+ #define PHY_REG_LINK_MD			0x1D
+ 
+ #define PHY_START_CABLE_DIAG		BIT(15)
+-- 
+2.43.0
 
-Thank you,
-Claudiu Beznea
 
