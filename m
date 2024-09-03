@@ -1,98 +1,99 @@
-Return-Path: <linux-kernel+bounces-312924-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312926-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54880969DC3
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 14:38:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7E9C969DCC
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 14:39:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B6301B219ED
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 12:38:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E6B8281046
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 12:39:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEEC11DA109;
-	Tue,  3 Sep 2024 12:38:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0ACF01D6DC2;
+	Tue,  3 Sep 2024 12:38:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rS52qQI3"
-Received: from mail-yb1-f170.google.com (mail-yb1-f170.google.com [209.85.219.170])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="szQ9idGl"
+Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E849A1DA0F4
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 12:38:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 626991DA115
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 12:38:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725367083; cv=none; b=T9rvgFONiVlRDNr/4LF6gSCFdYfnb7f/hxScxNdeI+//nO6Es1YVPLrt5JEmrNg840xT62O8XD9F0JweCSN5BB1SnX7gYLbOJCd/a4JdRzl1T6eh+T9mLbh5LmxlWrO2IojNeIPfSCc6EZByNw9ELz4Wno486K4yft0fsn8hQ8g=
+	t=1725367087; cv=none; b=CbdA9FPlcxKofG/yTqSU0jyubwHkAOhc1J1fHl3nZHDmmQCO04yG4wO3kbLOFW6oz4JjaLnl9DVrkxpQKbAcaKVWIZ9d7r1+u72YSo2EAHYHlYn9uV9qSYLri474Y/Sk5ihJDqlvh6UzP19sIT7PXxd7nsOdY+qd+d6X4Veepig=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725367083; c=relaxed/simple;
-	bh=so07fhMMxdSs5dvGJCXgXpjSzTunUkiCXhADIMW4sUA=;
+	s=arc-20240116; t=1725367087; c=relaxed/simple;
+	bh=FZbJd1tZJzW9XzhGrtdmKRdbrVG5J6WlHQL95vMvdbY=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=f2OWXvO8cDPR0FoNHM8XPn+lIC+FiK0jf9CZHjB75CoruLRVDzHT5Z8oNbWrEDnlDi8RxMG6QPm98WGiTRcg1f7C36Os/ZnPBUICMP7XSzL9zhScaEWrM5GSJf/SEEUWucXfIxODKPvyCcftMEIHgWcaRdlQLPgG+XYQ5SQMmsM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rS52qQI3; arc=none smtp.client-ip=209.85.219.170
+	 To:Cc:Content-Type; b=tXs8LzjjwAKVj9a7evNfNR4q22iIONTbsliJ5tXnHhiE1tdL8eqcaLZbx8XD+wjFZYh21vtIK23ey2qJxzY3udkKuNtESu9K82OIe15gWo2eRNCJh2sGnd2BDV5zqfqmFNoVqf1JKDnFY1rAnnSyhzv7xEHCSyFClyC8o+ypG48=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=szQ9idGl; arc=none smtp.client-ip=209.85.219.177
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f170.google.com with SMTP id 3f1490d57ef6-e179c28d5e8so5484885276.1
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 05:38:01 -0700 (PDT)
+Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-e1a9dc3efc1so2951503276.2
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 05:38:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1725367081; x=1725971881; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1725367084; x=1725971884; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=A/GPlpR6N9raBXPZjYRGmkOR7a/Tjc3UpicaLb0zTl8=;
-        b=rS52qQI3D1xu2JBgaSxEWPuftqx9Sc2QgWxce0CHVLpP8oPbSuHLgYfmawRtZXa5B3
-         /rbxEG5zkMNqTkIOpTywCmAAjAjc/6Yaj6uRmD5uN+04wUrcopV2to7+pIJqaL5bDp+B
-         e4+SLru1YH+fsYzRXmcHGdDTJxu4CpIJ/DCU5Sh190V2hfCEOzmI9tPNH+/FpCjoe9MP
-         wkdo7byrzmgq+48woTpK5oagDbwWHycMIQPPJWjy2DlYVUwj1vjS9YNxG5VvKy3c+wbI
-         vbxvkDHjzyzT8jlWdeRciMJgur3ZDzdMhCFKafOi/ZoFqxs4xb0MN5w5lTtSR8bIEhUC
-         zxdQ==
+        bh=GMKmnjbDpsQIapo5HuPs4+45d9/Y2i87xJa3a9ExiQU=;
+        b=szQ9idGlwxL8K1QdeBo4T62bs7WNdIRII5l2BkMvPO0FtsFMY6g1kZYe1Qku/LQyeQ
+         IV7dTYDeNn58B7WTgmWzZweluw4aQ1avEaZtLKnynEz2BzamPKh9m6XdthDjAAEc0gxe
+         8ZevTNoO8B8RIJPSBPl4y8mC313TSEb4giRScE9EzpbSCn8HyOe5Jy57a1iUQCv4eJ6Y
+         sdFXYkSPIRx9LfhVcCasc94F1YZPewB8w4kpk8EN1L2Xtj20W3OtpTFoP6Rsa1M2rnGX
+         nglIHxgHLU/6Z2EzpENJ3MpIjmgpP6TvNaGTo68EBpOFUIJ0RQpUlSrzjaHPJloRyv5y
+         9r9w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725367081; x=1725971881;
+        d=1e100.net; s=20230601; t=1725367084; x=1725971884;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=A/GPlpR6N9raBXPZjYRGmkOR7a/Tjc3UpicaLb0zTl8=;
-        b=mE0N9O2+DOZ901x3kpFyfDMc48r8i2lNgX5zC+vEPjZpbKOBpBZybBTHs8TLBkEEXN
-         HAGV5F3XxY7ROe/JEH+va4yJx2wU88PFi2k3ry0pwkCs3w50blyFEfqEprRMerbfYSks
-         2yevZFAqEgyividigBzsgXhgjkduVK1U6gHKVQtCOcAqX4O6FBm8udg+9dtSYZKBeYFG
-         6mSss/yLR8+QwE/OL5NThC+T4xsDmw2DUJQMeSrTXAyuUTlZfbQyCBpwR1BEGnI6yUCj
-         GgiU8CS9d7UwRWNMmsqG3TSBhQqkoG08WNsA+/Ecb8UymT/QZXXzN3Sdox2a624X5MAL
-         P9lw==
-X-Forwarded-Encrypted: i=1; AJvYcCUhJc1oO1THVO3FvHqsZPlpCswUVYuCkU6wVe4YgRtYQ3Vby51RRmxueqLCMZRn7H6mGxFEBpZF4+4OUaM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz6pwqqm8gO9u6oxBQn5ABm3Js4Vp206N6i8iuMhCBivJbEfDje
-	AkMWjmMBAMcPtQlHHU2cyJhtxcfaDl5nOhL2VK8fCtWCTcRaKKzI2rex+7UETvfE8iY7PM6fb43
-	fmQgEmhr7+DIxTQLvCWdacnV1ma1t1dPGqE8Q2w==
-X-Google-Smtp-Source: AGHT+IEjte3d2I7iHlCrFM55Q6V1uxJf1u47/kPDXpSXZgFMB17aGufprFsCA9FCvY15MVqgrv9KtM+/VSWPoSdQk3o=
-X-Received: by 2002:a05:6902:c06:b0:e16:19f7:9702 with SMTP id
- 3f1490d57ef6-e1a7a01cc00mr16390835276.24.1725367081048; Tue, 03 Sep 2024
- 05:38:01 -0700 (PDT)
+        bh=GMKmnjbDpsQIapo5HuPs4+45d9/Y2i87xJa3a9ExiQU=;
+        b=LvNmqaxK59KvpgKwhHVPMjrXoMUd+d2wyETu4v4zAKIx2AHxRLW1PLHaQHozJchmLW
+         DiTD1pCOiA2Y4suG/TdhWuYs610ZhgzM9BmhrxeJzb3L1eRZicv8lMdIuYHbGuEMlAMc
+         fpzP8f7eSXAMOSZzJmFVNDqdYp6OAZWwItPcaW9LyaKcDqZ++FgF3TZUQwD+7mjjlp29
+         fB6/dOTqzVjp14FEWwM2SEHdjTryxOX4Icu/rXYpzH55ClKlfBW+gkSHBFbFOZnvVrmc
+         Z5W11R25uzeB321PllePn7gsZRatW7pDewRbw7OCow0QRr/hXvy8XBboKyVbTTtklb3P
+         KCcQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX9XAujQ+uW2ukg09A0WvR9wRqRn4QCqwSwJLoEDOTVshcgmkR+ZqpBcuMzMaU8GoXX5IKK+GonCLE8WNQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzZYvQIwav2N9TzfLgflb7rhLnV0xSRs5Yy7mF2XA1wzSWu3M/q
+	jFmdixB+5GdWumnfHm9A9+7ojH/QEFzCPkuuYuwHEdteuVXqyGY+K8tsg3nTkjF9xjR809Gl2sm
+	GmC2ucgrmCV3Xy8hBDxJs6eJBNC2RVP4jrmq8fQ==
+X-Google-Smtp-Source: AGHT+IFoBiimtQty+ZFFbQefHWfDZl6LnzYy8OvfxnVeQ1irgttQ6ADNaC03ffHR60k5ULdX0MxqCJX0+8Vdu8/hM3c=
+X-Received: by 2002:a05:6902:2309:b0:e1a:b361:4d94 with SMTP id
+ 3f1490d57ef6-e1ab361540emr6397661276.24.1725367084353; Tue, 03 Sep 2024
+ 05:38:04 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240901182244.45543-1-riyandhiman14@gmail.com>
-In-Reply-To: <20240901182244.45543-1-riyandhiman14@gmail.com>
+References: <20240902-atmel-sdhci-v4-1-96912fab6b2d@microchip.com>
+In-Reply-To: <20240902-atmel-sdhci-v4-1-96912fab6b2d@microchip.com>
 From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Tue, 3 Sep 2024 14:37:25 +0200
-Message-ID: <CAPDyKFqdu07MwGyoJ8oMmpFw2u2=1zc8m6LCais8Wva58uTcug@mail.gmail.com>
-Subject: Re: [PATCH] mmc: core: convert simple_stroul to kstroul
-To: Riyan Dhiman <riyandhiman14@gmail.com>
-Cc: linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Tue, 3 Sep 2024 14:37:28 +0200
+Message-ID: <CAPDyKFroWmE+P8S5XD5b2BgnnPjNO3B1XpOHsZAGU8rUOsEarQ@mail.gmail.com>
+Subject: Re: [PATCH v4] dt-bindings: mmc: sdhci-atmel: Convert to json schema
+To: Dharma Balasubiramani <dharma.b@microchip.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Nicolas Ferre <nicolas.ferre@microchip.com>, 
+	Alexandre Belloni <alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
+	Aubin Constans <aubin.constans@microchip.com>, linux-mmc@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-On Sun, 1 Sept 2024 at 20:22, Riyan Dhiman <riyandhiman14@gmail.com> wrote:
+On Mon, 2 Sept 2024 at 12:57, Dharma Balasubiramani
+<dharma.b@microchip.com> wrote:
 >
-> simple_strtoul() is obsolete and lacks proper error handling, making it
-> unsafe for converting strings to unsigned long values. Replace it with
-> kstrtoul(), which provides robust error checking and better safety.
+> Convert sdhci-atmel documentation to yaml format. The new file will inherit
+> from sdhci-common.yaml.
 >
-> This change improves the reliability of the string-to-integer conversion
-> and aligns with current kernel coding standards. Error handling is added
-> to catch conversion failures, returning -EINVAL when input is invalid.
+> Note: Add microchip,sama7g5-sdhci to compatible list as we already use it
+> in the DT.
 >
-> Issue reported by checkpatch:
-> - WARNING: simple_strtoul is obsolete, use kstrtoul instead
->
-> Signed-off-by: Riyan Dhiman <riyandhiman14@gmail.com>
+> Signed-off-by: Dharma Balasubiramani <dharma.b@microchip.com>
 
 Applied for next, thanks!
 
@@ -101,28 +102,180 @@ Uffe
 
 
 > ---
->  drivers/mmc/core/block.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
+> This patch series converts the sdhci-atmel dt-binding to yaml format and adds
+> the sama7d65,sama7g5 compatibles to the list.
+> ---
+> Changes in v4:
+> - remove the "atmel,sama5d3-sdhci" and "atmel,sama5d4-sdhci" compatibles and
+>   add back the "microchip,sam9x7-sdhci" compatible from old binding which was missed.
+> - drop the addition of sama7d65 in binding, will be sent along with the dts patch series.
+> - Add the entire description of "microchip,sdcal-inverted" from old txt binding.
+> - The microchip,sam9x7-sdhci is yet to be merged in DTS
+> https://lore.kernel.org/lkml/20240729070934.1991467-1-varshini.rajendran@microchip.com/
+> - Link to v3: https://lore.kernel.org/r/20240830-atmel-sdhci-v3-0-7c97a0872af4@microchip.com
 >
-> diff --git a/drivers/mmc/core/block.c b/drivers/mmc/core/block.c
-> index 2c9963248fcb..140d2b3504b3 100644
-> --- a/drivers/mmc/core/block.c
-> +++ b/drivers/mmc/core/block.c
-> @@ -307,10 +307,10 @@ static ssize_t force_ro_store(struct device *dev, struct device_attribute *attr,
->                               const char *buf, size_t count)
->  {
->         int ret;
-> -       char *end;
->         struct mmc_blk_data *md = mmc_blk_get(dev_to_disk(dev));
-> -       unsigned long set = simple_strtoul(buf, &end, 0);
-> -       if (end == buf) {
-> +       unsigned long set;
+> Changes in v3:
+> - update the items in clocks instead of plain description.
+> - move the items list to clock-names.
+> - since baseclk is must, change maxitems to minitems: 3, and modify the
+>   conditional bits accordingly.
+> - Link to v2: https://lore.kernel.org/r/20240830-atmel-sdhci-v2-0-b7f58973f3fc@microchip.com
+>
+> Changes in v2:
+> - Add missing deleted file to the patch
+> "Documentation/devicetree/bindings/mmc/sdhci-atmel.txt"
+> - Link to v1: https://lore.kernel.org/r/20240830-atmel-sdhci-v1-0-01e3ec8c9804@microchip.com
+> ---
+>  .../bindings/mmc/atmel,sama5d2-sdhci.yaml          | 92 ++++++++++++++++++++++
+>  .../devicetree/bindings/mmc/sdhci-atmel.txt        | 35 --------
+>  2 files changed, 92 insertions(+), 35 deletions(-)
+>
+> diff --git a/Documentation/devicetree/bindings/mmc/atmel,sama5d2-sdhci.yaml b/Documentation/devicetree/bindings/mmc/atmel,sama5d2-sdhci.yaml
+> new file mode 100644
+> index 000000000000..8c8ade88e8fe
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/mmc/atmel,sama5d2-sdhci.yaml
+> @@ -0,0 +1,92 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/mmc/atmel,sama5d2-sdhci.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
 > +
-> +       if (kstrtoul(buf, 0, &set)) {
->                 ret = -EINVAL;
->                 goto out;
->         }
+> +title: Atmel SDHCI controller
+> +
+> +maintainers:
+> +  - Aubin Constans <aubin.constans@microchip.com>
+> +  - Nicolas Ferre <nicolas.ferre@microchip.com>
+> +
+> +description:
+> +  Bindings for the SDHCI controller found in Atmel/Microchip SoCs.
+> +
+> +properties:
+> +  compatible:
+> +    oneOf:
+> +      - enum:
+> +          - atmel,sama5d2-sdhci
+> +          - microchip,sam9x60-sdhci
+> +      - items:
+> +          - enum:
+> +              - microchip,sam9x7-sdhci
+> +              - microchip,sama7g5-sdhci
+> +          - const: microchip,sam9x60-sdhci
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    items:
+> +      - description: hclock
+> +      - description: multclk
+> +      - description: baseclk
+> +    minItems: 2
+> +
+> +  clock-names:
+> +    items:
+> +      - const: hclock
+> +      - const: multclk
+> +      - const: baseclk
+> +    minItems: 2
+> +
+> +  microchip,sdcal-inverted:
+> +    type: boolean
+> +    description:
+> +      When present, polarity on the SDCAL SoC pin is inverted. The default
+> +      polarity for this signal is described in the datasheet. For instance on
+> +      SAMA5D2, the pin is usually tied to the GND with a resistor and a
+> +      capacitor (see "SDMMC I/O Calibration" chapter).
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - interrupts
+> +  - clocks
+> +  - clock-names
+> +
+> +allOf:
+> +  - $ref: sdhci-common.yaml#
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            enum:
+> +              - atmel,sama5d2-sdhci
+> +    then:
+> +      properties:
+> +        clocks:
+> +          minItems: 3
+> +        clock-names:
+> +          minItems: 3
+> +
+> +unevaluatedProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/interrupt-controller/irq.h>
+> +    #include <dt-bindings/clock/at91.h>
+> +    mmc@a0000000 {
+> +        compatible = "atmel,sama5d2-sdhci";
+> +        reg = <0xa0000000 0x300>;
+> +        interrupts = <31 IRQ_TYPE_LEVEL_HIGH 0>;
+> +        clocks = <&sdmmc0_hclk>, <&sdmmc0_gclk>, <&main>;
+> +        clock-names = "hclock", "multclk", "baseclk";
+> +        assigned-clocks = <&sdmmc0_gclk>;
+> +        assigned-clock-rates = <480000000>;
+> +    };
+> diff --git a/Documentation/devicetree/bindings/mmc/sdhci-atmel.txt b/Documentation/devicetree/bindings/mmc/sdhci-atmel.txt
+> deleted file mode 100644
+> index a9fb0a91245f..000000000000
+> --- a/Documentation/devicetree/bindings/mmc/sdhci-atmel.txt
+> +++ /dev/null
+> @@ -1,35 +0,0 @@
+> -* Atmel SDHCI controller
+> -
+> -This file documents the differences between the core properties in
+> -Documentation/devicetree/bindings/mmc/mmc.txt and the properties used by the
+> -sdhci-of-at91 driver.
+> -
+> -Required properties:
+> -- compatible:          Must be "atmel,sama5d2-sdhci" or "microchip,sam9x60-sdhci"
+> -                       or "microchip,sam9x7-sdhci", "microchip,sam9x60-sdhci".
+> -- clocks:              Phandlers to the clocks.
+> -- clock-names:         Must be "hclock", "multclk", "baseclk" for
+> -                       "atmel,sama5d2-sdhci".
+> -                       Must be "hclock", "multclk" for "microchip,sam9x60-sdhci".
+> -                       Must be "hclock", "multclk" for "microchip,sam9x7-sdhci".
+> -
+> -Optional properties:
+> -- assigned-clocks:     The same with "multclk".
+> -- assigned-clock-rates The rate of "multclk" in order to not rely on the
+> -                       gck configuration set by previous components.
+> -- microchip,sdcal-inverted: when present, polarity on the SDCAL SoC pin is
+> -  inverted. The default polarity for this signal is described in the datasheet.
+> -  For instance on SAMA5D2, the pin is usually tied to the GND with a resistor
+> -  and a capacitor (see "SDMMC I/O Calibration" chapter).
+> -
+> -Example:
+> -
+> -mmc0: sdio-host@a0000000 {
+> -       compatible = "atmel,sama5d2-sdhci";
+> -       reg = <0xa0000000 0x300>;
+> -       interrupts = <31 IRQ_TYPE_LEVEL_HIGH 0>;
+> -       clocks = <&sdmmc0_hclk>, <&sdmmc0_gclk>, <&main>;
+> -       clock-names = "hclock", "multclk", "baseclk";
+> -       assigned-clocks = <&sdmmc0_gclk>;
+> -       assigned-clock-rates = <480000000>;
+> -};
+>
+> ---
+> base-commit: 4b7d983dd85a5cdf4938f4a0a93adedf697ac04d
+> change-id: 20240830-atmel-sdhci-c9a92b710624
+>
+> Best regards,
 > --
-> 2.46.0
+> Dharma Balasubiramani <dharma.b@microchip.com>
 >
 
