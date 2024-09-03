@@ -1,115 +1,105 @@
-Return-Path: <linux-kernel+bounces-313622-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313623-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3021696A7B7
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 21:47:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F69596A7BD
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 21:48:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D735B1F221A3
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 19:47:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C94EB1F251F0
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 19:48:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A238D1DC743;
-	Tue,  3 Sep 2024 19:47:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C3EC1DC72A;
+	Tue,  3 Sep 2024 19:48:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vHdZ9whQ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WaOiBXY/"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 023151DC720;
-	Tue,  3 Sep 2024 19:47:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC5201DC720;
+	Tue,  3 Sep 2024 19:48:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725392867; cv=none; b=B2zYb8GdbUyv8M/9RPX1cz1/n4bTBBSwG4tz18lve3Vq4960tj6PDPF5JrVq0/kq0YVx7Aaml7sXJ6txUwRB69r8LkAtD2asVWor4fhcP+D2drlVlxiBcETX0J0lbYKWmT4OOFb0bJevXmJ4tnD0paHPsMJaV65ICPGom+wSJIo=
+	t=1725392886; cv=none; b=E4sqaFolTM9pRXSDRbJbtEu+Ov+rWlIqZRREMQstgwtGGIDbr202hrM7x4We1Hs6lroKz3K6gCbbAlOIzB6LD/9ZwDZlzhf6lHcx9Eisf11Hkas0+beOFaUsu3wXFbTD387dJIXt3pJCzq6fHqPBTZ/3mToWQ7XHf0Q0Fd9K4o0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725392867; c=relaxed/simple;
-	bh=U4A3pCwQ8/EbM4aeqrIb3zzmf5B948+U++dXeaD+0fw=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=m0/qca92SaegFFCbOz5Hw2LNkqsDtClLN0ahUEusq9z1q9oYDD19At+yfXAz0k9tuVXHQ6mjB6am8dnYF0XxcnrukxQUmy/UgHrfWSxwq9te1VTyLuFuThKUV0XPl8mkNMgKAPzhAkdOHTFxFBHDD3TitiaGuvZr9B3Qngh1XNE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vHdZ9whQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A0E49C4CEC4;
-	Tue,  3 Sep 2024 19:47:41 +0000 (UTC)
+	s=arc-20240116; t=1725392886; c=relaxed/simple;
+	bh=3p0g7g5p3i50KQ2x/lFG1FmicesjihiO7bM0HYwDHBY=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=dQ+FkNlt4qppexpm0z9atIeqQBosP87a465F1ccGT/8bFVW2XjbMkFw7nQishmBWEhofgE1gwJfHk/h2RbG0Sfxfq46io5IIqFWNJeYnsb8MDzgAvwywbVpH9tDOYFVqzqel3tXyAAZMijbcpAcEhchx/1wlNC82uaxGdXbpQuE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WaOiBXY/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6D6BC4CEC4;
+	Tue,  3 Sep 2024 19:48:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725392866;
-	bh=U4A3pCwQ8/EbM4aeqrIb3zzmf5B948+U++dXeaD+0fw=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=vHdZ9whQz0I8ZtZX+b5pM9uapfWQ3scd83hcOx1cfd3dtzT88FYDiQ156i7hspdVn
-	 j7oT28rCz/kUAJGswxxcP3/Ggff6k9cksqEUxEEDprkLyrINe4rpWE1rLI+YmE2ULZ
-	 zTlnh9h67IBwtfo4wo4D+3behY4F8S8oQF4OSI1wjmCVL7wZIyf4RRJ6qqXh/6FKWn
-	 y8rLOIYk1FwvQ8aglJoHyhkHprTG7LvEocRordvMwFtKEIy5gDh+2mv1NYcW4Uvq4l
-	 GDoRiYfAzCt6UUOjlD8Ld3qgQol0uylZFlumh4CSJDl+MIw6EFzreHFRbL5/r9O+jp
-	 fi0m74R6vPLeg==
-Date: Tue, 3 Sep 2024 20:47:37 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>, David Lechner
- <dlechner@baylibre.com>, Andy Shevchenko
- <andriy.shevchenko@linux.intel.com>, Michael Hennerich
- <michael.hennerich@analog.com>, Antoniu Miclaus
- <antoniu.miclaus@analog.com>, Jinjie Ruan <ruanjinjie@huawei.com>, Lorenzo
- Bianconi <lorenzo@kernel.org>, Srinivas Pandruvada
- <srinivas.pandruvada@linux.intel.com>, Basavaraj Natikar
- <Basavaraj.Natikar@amd.com>, linux-input@vger.kernel.org,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, Jiri Kosina
- <jikos@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>
-Subject: Re: [PATCH v1 10/22] iio: dac: max517: Get platform data via
- dev_get_platdata()
-Message-ID: <20240903204737.710e49dd@jic23-huawei>
-In-Reply-To: <20240902222824.1145571-11-andy.shevchenko@gmail.com>
-References: <20240902222824.1145571-1-andy.shevchenko@gmail.com>
-	<20240902222824.1145571-11-andy.shevchenko@gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=k20201202; t=1725392885;
+	bh=3p0g7g5p3i50KQ2x/lFG1FmicesjihiO7bM0HYwDHBY=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=WaOiBXY/KVKWzml45UCJb+WWIBSw0lvuhE0Mv7k/zWUsAqIsb4Mma5kz3NxWBQ0bq
+	 Q5p2ZfbrI+3zDeagmBF4/6SsbBGUnCt9Gb07whtcTgm+Yn9V4kqIHjm2WRtzTCL3Ti
+	 etT4gj82eXuH2jyWUUA61XPuxMAYeWXuCztfUklSF0l/KuB+auXZVOC2lwBBoR2ulI
+	 5OnSKLo0z4pYiY++tp1dAgKItd46IXo+cd8RZ7GM6DotjLox9rxNPM1u2FKZ9vOsj6
+	 WrMHdMs4peE8U35yOBAcPUURlOazdQiP08efgujoHR0JylWzVrkkfqi+wYLOQtSJYs
+	 z+Y3lm9vigyDA==
+Message-ID: <83fac884d749bda0cf0b346e4e869bc8.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20240830130218.3377060-8-claudiu.beznea.uj@bp.renesas.com>
+References: <20240830130218.3377060-1-claudiu.beznea.uj@bp.renesas.com> <20240830130218.3377060-8-claudiu.beznea.uj@bp.renesas.com>
+Subject: Re: [PATCH v3 07/12] arm64: dts: renesas: r9a08g045: Add VBATTB node
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: claudiu.beznea@tuxon.dev, linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-rtc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+To: Claudiu <claudiu.beznea@tuxon.dev>, alexandre.belloni@bootlin.com, conor+dt@kernel.org, geert+renesas@glider.be, krzk+dt@kernel.org, magnus.damm@gmail.com, mturquette@baylibre.com, p.zabel@pengutronix.de, robh@kernel.org
+Date: Tue, 03 Sep 2024 12:48:03 -0700
+User-Agent: alot/0.10
 
-On Tue,  3 Sep 2024 01:16:55 +0300
-Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
+Quoting Claudiu (2024-08-30 06:02:13)
+> diff --git a/arch/arm64/boot/dts/renesas/r9a08g045.dtsi b/arch/arm64/boot=
+/dts/renesas/r9a08g045.dtsi
+> index 067a26a66c24..247fa80a4f53 100644
+> --- a/arch/arm64/boot/dts/renesas/r9a08g045.dtsi
+> +++ b/arch/arm64/boot/dts/renesas/r9a08g045.dtsi
+> @@ -160,6 +160,18 @@ i2c3: i2c@10090c00 {
+>                         status =3D "disabled";
+>                 };
+> =20
+> +               vbattb: vbattb@1005c000 {
+> +                       compatible =3D "renesas,r9a08g045-vbattb";
+> +                       reg =3D <0 0x1005c000 0 0x1000>;
+> +                       interrupts =3D <GIC_SPI 43 IRQ_TYPE_LEVEL_HIGH>;
+> +                       clocks =3D <&cpg CPG_MOD R9A08G045_VBAT_BCLK>, <&=
+vbattb_xtal>;
+> +                       clock-names =3D "bclk", "rtx";
+> +                       #clock-cells =3D <1>;
+> +                       power-domains =3D <&cpg>;
+> +                       resets =3D <&cpg R9A08G045_VBAT_BRESETN>;
+> +                       status =3D "disabled";
+> +               };
+> +
+>                 cpg: clock-controller@11010000 {
+>                         compatible =3D "renesas,r9a08g045-cpg";
+>                         reg =3D <0 0x11010000 0 0x10000>;
+> @@ -425,4 +437,11 @@ timer {
+>                 interrupt-names =3D "sec-phys", "phys", "virt", "hyp-phys=
+",
+>                                   "hyp-virt";
+>         };
+> +
+> +       vbattb_xtal: vbattb-xtal {
 
-> From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> 
-> Access to platform data via dev_get_platdata() getter to make code cleaner.
-> 
-> Signed-off-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-> ---
->  drivers/iio/dac/max517.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/iio/dac/max517.c b/drivers/iio/dac/max517.c
-> index 685980184d3c..96781ae04f9d 100644
-> --- a/drivers/iio/dac/max517.c
-> +++ b/drivers/iio/dac/max517.c
-> @@ -143,10 +143,10 @@ static const struct iio_chan_spec max517_channels[] = {
->  
->  static int max517_probe(struct i2c_client *client)
->  {
-> +	const struct max517_platform_data *platform_data = dev_get_platdata(&client->dev);
->  	const struct i2c_device_id *id = i2c_client_get_device_id(client);
->  	struct max517_data *data;
->  	struct iio_dev *indio_dev;
-> -	struct max517_platform_data *platform_data = client->dev.platform_data;
->  	int chan;
->  
->  	indio_dev = devm_iio_device_alloc(&client->dev, sizeof(*data));
-> @@ -176,7 +176,7 @@ static int max517_probe(struct i2c_client *client)
->  
->  	/*
->  	 * Reference voltage on MAX518 and default is 5V, else take vref_mv
-> -	 * from platform_data
-> +	 * from platform_data.
+The node name should be something like clock-<frequency> but if the
+frequency is different per-board then I don't know what should happen
+here. Can you leave the vbattb_xtal phandle up above and then require
+the node to be defined in the board with the proper frequency after the
+dash?
 
-I guess this is accidental?  
-
-J
-
->  	 */
->  	for (chan = 0; chan < indio_dev->num_channels; chan++) {
->  		if (id->driver_data == ID_MAX518 || !platform_data)
-
+> +               compatible =3D "fixed-clock";
+> +               #clock-cells =3D <0>;
+> +               /* This value must be overridden by the board. */
+> +               clock-frequency =3D <0>;
 
