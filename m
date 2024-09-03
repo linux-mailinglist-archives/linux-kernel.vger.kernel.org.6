@@ -1,211 +1,76 @@
-Return-Path: <linux-kernel+bounces-313916-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313915-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 221E796AC57
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 00:40:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44D0596AC55
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 00:40:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 467A51C20C62
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 22:40:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 03A262821D4
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 22:40:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 463BA1D5886;
-	Tue,  3 Sep 2024 22:40:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="vAIEV3HB"
-Received: from mx1.sberdevices.ru (mx2.sberdevices.ru [45.89.224.132])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34F801D588D;
+	Tue,  3 Sep 2024 22:39:57 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEA481A4E82;
-	Tue,  3 Sep 2024 22:39:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.89.224.132
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F799168D0
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 22:39:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725403198; cv=none; b=CkIqjCeCmhDbh5kGj1vEVdw763GjdBnaL2/ZUYNGw3DAWdoZMDpNrM0zpTPjs0ascl6+RLfO4UnvuZ/FxjvszThfZLe9t0/Enz8klCbReBB9k5Xc3iw0gOxGAlhIy+jQfUlxcVBnsv3UH8JdHS3HfJiK1yBEmSNNyntzVat7US4=
+	t=1725403196; cv=none; b=CEjNABoRfy75JqQ+pztHfKiDFCuw6M7Nr5F70eJ3cKpbRAhposTLfCDghtuB74pN3BEdmSKHCZleud3HViWaWUGZMbEgp4LSpwv3CQnaR8OXMUFNUw+Uvb7anIVUOg43pKGNRQOtqszUvDfi3wL1L3h7f6tF9zw4kM6jA3fXqls=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725403198; c=relaxed/simple;
-	bh=53mS/sX0yNaUT/8JcOrRucePW5GpyLqAUQZP/puA/WM=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=axoyJp41mwG0jVyM6BgX6R5Ut7+D2GPPWq31+Ufs01szeAVo1nLk5WuXdn5pFNpTEMVaJ+XuU8oWwlFQK6LfZrUwGsLBUALUadIGDabHYykFOQxgCFVqkd3Kgvxo4oMzL6RPYGSwxvYxaSyZXuBXronJBCehrZHWh8VOWNc53EM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=salutedevices.com; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=vAIEV3HB; arc=none smtp.client-ip=45.89.224.132
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=salutedevices.com
-Received: from p-infra-ksmg-sc-msk02.sberdevices.ru (localhost [127.0.0.1])
-	by mx1.sberdevices.ru (Postfix) with ESMTP id CC9F212000E;
-	Wed,  4 Sep 2024 01:39:46 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru CC9F212000E
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
-	s=mail; t=1725403186;
-	bh=/b8KvL37VJ7Yl3OS0J5IUxw4T/Li7iFq09Xpsl0pz9Q=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
-	b=vAIEV3HB8p49UmlAkom3hms+4jcKRN8S/p/QbDROVvhpbs0FmPTuOQcmixGnhbqeS
-	 w8MrwyTdEkuFSIR5few+fCYfJNXXKr6JV39wRaud5bxs37oWemni4tGMPMAKGMqizf
-	 7Lp44jEF89V9+POi0B3JMzrkH43bl93PcfPKISITcAFW+EzPnr6Bo4jufhHq7MdQiH
-	 XyfRTsB6WFTGo5odc8GbMqXy3sa48aCkMVDLza13K25T+1vjEUMS08o9fIFsu2iGWx
-	 Aas1/WPJ3iRNG17vGNnYRK+78GzP9PE6jdsKdKoeiUiZxyR/GMPhkKPPbs0oVvxY9j
-	 19JfrRdCXIo1Q==
-Received: from smtp.sberdevices.ru (p-i-exch-sc-m01.sberdevices.ru [172.16.192.107])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mx1.sberdevices.ru (Postfix) with ESMTPS;
-	Wed,  4 Sep 2024 01:39:43 +0300 (MSK)
-From: Dmitry Rokosov <ddrokosov@salutedevices.com>
-To: <pavel@ucw.cz>, <lee@kernel.org>
-CC: <linux-kernel@vger.kernel.org>, <linux-leds@vger.kernel.org>,
-	<kernel@salutedevices.com>, <rockosov@gmail.com>, Dmitry Rokosov
-	<ddrokosov@salutedevices.com>, Alexey Romanov <avromanov@salutedevices.com>
-Subject: [PATCH v2] leds: introduce ordered workqueue for leds events instead of system_wq
-Date: Wed, 4 Sep 2024 01:39:30 +0300
-Message-ID: <20240903223936.21292-1-ddrokosov@salutedevices.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1725403196; c=relaxed/simple;
+	bh=8W5riU8d8OR9uVuQVnKFkpWm30w5HYNWE2EiA/h48/w=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=chuplcWoRhGTOULZAvT4+JIDhd38tSiv+O6M3BcMzGV3TzJZ9ZEsFjlFldb6RjF7iaj0DVEI8GZ3omkTiWnqea9vG1AUq4Fgzq4npYNXAXnz7M0QPlcaTUHvYkwAh35nb9EUEjK74LT+V4VKsYuuFLUvb6GGXfjjipmfSTYgjPI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-39d2dee9722so1990435ab.0
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 15:39:55 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725403194; x=1726007994;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=8W5riU8d8OR9uVuQVnKFkpWm30w5HYNWE2EiA/h48/w=;
+        b=VG/NqNE7YakLDWbzDhwOm5Pcf/X1keIspnHDDINYjmk0KYtw/gp/tPXrXwN0PWulPf
+         9smFvZrHCYhz50pJFwrwV+vPcbBafoAdEa65j2q35URFO6spxGB133RqgKKGVA2TZEd+
+         CRkAChPC/ePrOG7SBABqZ+wOBvWdVqwMGnq3rcEef6+4R6+uwiXbg/Y/ROk50MrsCJdI
+         ylfwWzNtRFD4E/rz90A4+CNc0okod5QOzG4XHR3yGjbZZW86/3xNW9HbUduJ4ddRWPz3
+         FJN4Gl1wCwizohipdULbB6opf7Vc7IY+ZCD8PMwH4hQqAKfdE4BmmNnAY4J7upI4OYDq
+         bi7g==
+X-Gm-Message-State: AOJu0Yxh25utqr2tPPca9XYaffXfJqdHbwKeBkJJDawlYlLHAaQ6bMqT
+	6CR8qOkCd4QfvATei9L8GAtfsF8S8oGzKWXJvfrqV36RppopbnioNmA2MTVE+QYCdnvcwvfcY+6
+	BzF8DHsbwpFcD6/joTrEV4c/ebL8uhG5hbsMH7Lu7LUjwlGtkV7NQ2SQ=
+X-Google-Smtp-Source: AGHT+IHDkSDkTJJNtIcqy7XX6iLI8o93C0Onfct1fd6iv3ymsXGWrQZhLxB+WL++8kHMw5VgLrEnhahMNVoQuAalJCjgYHWKHUCm
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: p-i-exch-a-m1.sberdevices.ru (172.24.196.116) To
- p-i-exch-a-m2.sberdevices.ru (172.24.196.120)
-X-KSMG-Rule-ID: 10
-X-KSMG-Message-Action: clean
-X-KSMG-AntiSpam-Lua-Profiles: 187515 [Sep 03 2024]
-X-KSMG-AntiSpam-Version: 6.1.1.5
-X-KSMG-AntiSpam-Envelope-From: ddrokosov@salutedevices.com
-X-KSMG-AntiSpam-Rate: 0
-X-KSMG-AntiSpam-Status: not_detected
-X-KSMG-AntiSpam-Method: none
-X-KSMG-AntiSpam-Auth: dkim=none
-X-KSMG-AntiSpam-Info: LuaCore: 32 0.3.32 766319f57b3d5e49f2c79a76e7d7087b621090df, {Tracking_uf_ne_domains}, {Tracking_from_domain_doesnt_match_to}, salutedevices.com:7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;127.0.0.199:7.1.2;smtp.sberdevices.ru:7.1.1,5.0.1;lore.kernel.org:7.1.1, FromAlignment: s
-X-MS-Exchange-Organization-SCL: -1
-X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiPhishing: Clean, bases: 2024/09/03 21:19:00
-X-KSMG-LinksScanning: Clean, bases: 2024/09/03 20:52:00
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/09/03 20:30:00 #26515812
-X-KSMG-AntiVirus-Status: Clean, skipped
+X-Received: by 2002:a05:6e02:1b07:b0:381:c14:70cf with SMTP id
+ e9e14a558f8ab-39f73b3b487mr426205ab.1.1725403194585; Tue, 03 Sep 2024
+ 15:39:54 -0700 (PDT)
+Date: Tue, 03 Sep 2024 15:39:54 -0700
+In-Reply-To: <0000000000003d5bc30617238b6d@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000008207d606213ebcb1@google.com>
+Subject: Re: [syzbot] retest overlayfs-next
+From: syzbot <syzbot+94891a5155abdf6821b7@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-This allows to setup ordered workqueue for leds events. This may be
-useful, because default 'system_wq' does not guarantee execution order
-of each work_struct, thus for several brightness update requests (for
-multiple leds), real brightness switch could be in random order.
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org.
 
-Yes, for sysfs-based leds we have flush_work() call inside
-brightness_store() operation, but it's blocking call, so userspace
-caller can be blocked at a long time, which means leds animation stream
-can be broken.
+***
 
-Ordered workqueue has the same behaviour as system_wq + flush_work(),
-but all scheduled works are async and userspace caller is not blocked,
-which it better for userspace animation scheduling.
+Subject: retest overlayfs-next
+Author: andrew.kanner@gmail.com
 
-Signed-off-by: Alexey Romanov <avromanov@salutedevices.com>
-Signed-off-by: Dmitry Rokosov <ddrokosov@salutedevices.com>
----
-Changes v2 since v1 at [1]:
-    - replace "leds" with "LEDs" in the log message
-
-Links:
-    [1] https://lore.kernel.org/all/20240820155407.32729-1-ddrokosov@salutedevices.com/
----
- drivers/leds/led-class.c | 12 +++++++++++-
- drivers/leds/led-core.c  |  6 +++---
- include/linux/leds.h     |  1 +
- 3 files changed, 15 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
-index c66d1bead0a4..b5e28ad54f7f 100644
---- a/drivers/leds/led-class.c
-+++ b/drivers/leds/led-class.c
-@@ -25,6 +25,8 @@
- static DEFINE_MUTEX(leds_lookup_lock);
- static LIST_HEAD(leds_lookup_list);
- 
-+static struct workqueue_struct *leds_wq;
-+
- static ssize_t brightness_show(struct device *dev,
- 		struct device_attribute *attr, char *buf)
- {
-@@ -57,7 +59,6 @@ static ssize_t brightness_store(struct device *dev,
- 	if (state == LED_OFF)
- 		led_trigger_remove(led_cdev);
- 	led_set_brightness(led_cdev, state);
--	flush_work(&led_cdev->set_brightness_work);
- 
- 	ret = size;
- unlock:
-@@ -548,6 +549,8 @@ int led_classdev_register_ext(struct device *parent,
- 
- 	led_update_brightness(led_cdev);
- 
-+	led_cdev->wq = leds_wq;
-+
- 	led_init_core(led_cdev);
- 
- #ifdef CONFIG_LEDS_TRIGGERS
-@@ -666,12 +669,19 @@ EXPORT_SYMBOL_GPL(devm_led_classdev_unregister);
- 
- static int __init leds_init(void)
- {
-+	leds_wq = alloc_ordered_workqueue("leds", 0);
-+	if (!leds_wq) {
-+		pr_err("failed to create LEDs ordered workqueue\n");
-+		return -ENOMEM;
-+	}
-+
- 	return class_register(&leds_class);
- }
- 
- static void __exit leds_exit(void)
- {
- 	class_unregister(&leds_class);
-+	destroy_workqueue(leds_wq);
- }
- 
- subsys_initcall(leds_init);
-diff --git a/drivers/leds/led-core.c b/drivers/leds/led-core.c
-index 89c9806cc97f..9769ac49be20 100644
---- a/drivers/leds/led-core.c
-+++ b/drivers/leds/led-core.c
-@@ -266,7 +266,7 @@ void led_blink_set_nosleep(struct led_classdev *led_cdev, unsigned long delay_on
- 		led_cdev->delayed_delay_on = delay_on;
- 		led_cdev->delayed_delay_off = delay_off;
- 		set_bit(LED_SET_BLINK, &led_cdev->work_flags);
--		schedule_work(&led_cdev->set_brightness_work);
-+		queue_work(led_cdev->wq, &led_cdev->set_brightness_work);
- 		return;
- 	}
- 
-@@ -297,7 +297,7 @@ void led_set_brightness(struct led_classdev *led_cdev, unsigned int brightness)
- 		 */
- 		if (!brightness) {
- 			set_bit(LED_BLINK_DISABLE, &led_cdev->work_flags);
--			schedule_work(&led_cdev->set_brightness_work);
-+			queue_work(led_cdev->wq, &led_cdev->set_brightness_work);
- 		} else {
- 			set_bit(LED_BLINK_BRIGHTNESS_CHANGE,
- 				&led_cdev->work_flags);
-@@ -333,7 +333,7 @@ void led_set_brightness_nopm(struct led_classdev *led_cdev, unsigned int value)
- 		set_bit(LED_SET_BRIGHTNESS_OFF, &led_cdev->work_flags);
- 	}
- 
--	schedule_work(&led_cdev->set_brightness_work);
-+	queue_work(led_cdev->wq, &led_cdev->set_brightness_work);
- }
- EXPORT_SYMBOL_GPL(led_set_brightness_nopm);
- 
-diff --git a/include/linux/leds.h b/include/linux/leds.h
-index 6300313c46b7..7c9f1cb12ab9 100644
---- a/include/linux/leds.h
-+++ b/include/linux/leds.h
-@@ -169,6 +169,7 @@ struct led_classdev {
- 	int			 new_blink_brightness;
- 	void			(*flash_resume)(struct led_classdev *led_cdev);
- 
-+	struct workqueue_struct *wq; /* LED workqueue */
- 	struct work_struct	set_brightness_work;
- 	int			delayed_set_value;
- 	unsigned long		delayed_delay_on;
--- 
-2.43.0
-
+#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/overlayfs/vfs.git overlayfs-next
 
