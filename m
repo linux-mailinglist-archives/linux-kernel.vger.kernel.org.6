@@ -1,140 +1,97 @@
-Return-Path: <linux-kernel+bounces-312824-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312825-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5436969C13
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 13:38:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3AC3D969C16
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 13:39:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 15CAD1F2254E
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 11:38:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D15601F23CDC
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 11:39:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CDB11DA0E0;
-	Tue,  3 Sep 2024 11:37:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AF9E1B982E;
+	Tue,  3 Sep 2024 11:37:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CdHV+C/4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="j8UI95Lk"
+Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBD251B9837;
-	Tue,  3 Sep 2024 11:37:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E9781A42CF
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 11:37:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725363424; cv=none; b=FGmLyjJgX02AxeiwEGgN/KP2d344fwYVOmqD9WHqwsX9tYRrcQU9gZqqgzVzvlAewqjI+DkOEFNuymy6M6a2qaVH/hDH9kSyxbLlfB2zYZksy9SMdYLPMbpIvdc0HltBdIeAD8ivhl91oGjboA9A78EM3CYP+c88C+ftr3BnIcQ=
+	t=1725363468; cv=none; b=MG0BJZ9WOAnmYrDSu1PtrQ27BL4NtGOrhAvcLD94yd3zMvSeaEAouDobJE8FC6mzu/yRAX0ymNBxJSe6O94irGZH3y/6rx3DbtcOI5AOjogOqgECH7ubTBgGTTSHkbRrQjwoHUjSpNg3mVjwBFOFmuLaUIPAyePojZP5gt5oV6s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725363424; c=relaxed/simple;
-	bh=M8x5O5+ecPZMcpyp2d116pNR2ABANGRbj+KY1PYvgbI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nNn49w57LGKroWVI2YHLq2VM7s6hNzZHsuPDfjjsioi3w+wMITyd/WMUekEjKhJ346FlmCK8TXZ4C9Yjk9NoZFsYcaFhMhKDkKPvzWI29YoQjVNdaEdOIbtnJRSAItfuadlUw/nb78gjFMr6ea/Wvneoc37ezLa8WG5BIpqJIJ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CdHV+C/4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB98BC4CEC4;
-	Tue,  3 Sep 2024 11:36:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725363424;
-	bh=M8x5O5+ecPZMcpyp2d116pNR2ABANGRbj+KY1PYvgbI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=CdHV+C/4tVBTj2JHABm+NeqGyByIbBPlyQAyb60T9KXSBbOHl16R4pzRD36TxjZ4V
-	 uGGFuAd+RPd2YXwZoqgHWgl30+jzIfsGrtivbjq1tGjJQAC+qE/s1MtZHyhWTsfO4G
-	 Oz42QvK0S0lRMFi00eFGSvMFfNtOHgv4Jr1+bpuv1G0bd0NT/IjUuHrG7DLEQ0UCYr
-	 JR7crKwq1rTF6n5wK1t8sDlneJP83R+soFK96jZ41xWt49J9t8TPx1VroG8Hvb//7o
-	 GJYkn7pyPNMfucO3wB8xm4lb5ivQz/RonQnxTiob9tUWXhlVscwPKH+1oNSYTwBdOx
-	 zlReg3XoMJl9A==
-Message-ID: <d6674376-f404-4b65-899f-4c7cfcf9524b@kernel.org>
-Date: Tue, 3 Sep 2024 13:36:56 +0200
+	s=arc-20240116; t=1725363468; c=relaxed/simple;
+	bh=O3ZEJ22xs+dj/gilFg+LDOedyKbsX+Txrwu1SOIvA80=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qepA3EuN3Jqf+2cbuDTK6Wt8/0xxQmbk2eTOH4rwuUIEB2hBHhXscjtXGS7br/6Tzh3eoQzk7gBxJXp9+/KlRN2RbfmU9tHzJ7PN4Cg61ptUURNSVW77ZaPYI8gq0sGwRV6FW6IG5v7Oh/6f/4BLjazuH4Ef5WfQ08iVw7jpPJM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=j8UI95Lk; arc=none smtp.client-ip=18.9.28.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
+Received: from cwcc.thunk.org (pool-173-48-102-194.bstnma.fios.verizon.net [173.48.102.194])
+	(authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 483BawTE025595
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 3 Sep 2024 07:36:59 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
+	t=1725363422; bh=BfQrKnI6k0uPhdUNQxC8mkW1lleMusSB/XuTcAchULs=;
+	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
+	b=j8UI95LkRX1+X4hhOkv7zycF8TDHoc0gw8WxWZhbnaXVAUNERctBG/cjABfYjoa6Q
+	 WQXKlVX8IkHFGmlrL7/JudzJX0iBJ2e8tEsf4m+LEt9G9DhXGhj+xhra1DsjK5qL7O
+	 OHtjVjTnWI5ZLbO8smRXfy3eyon6/zEOczpMftjZ8JMPipN7qB3x1ARPNzkSsaTGCc
+	 TmduoxriNoUAs7o6JDV0Ui7PBNoq75wEv0/vvFqUT/5yD0+gySlqzfptfEq7+inaLR
+	 34BylYa/KnBNhwo7z37TPyYKmTn5u2quoEvRIgyXVIVKSHpdKbao7TSPYJZJcZl1EV
+	 er4kDOhMVGXqg==
+Received: by cwcc.thunk.org (Postfix, from userid 15806)
+	id 4FF9115C02C4; Tue, 03 Sep 2024 07:36:58 -0400 (EDT)
+Date: Tue, 3 Sep 2024 07:36:58 -0400
+From: "Theodore Ts'o" <tytso@mit.edu>
+To: =?iso-8859-1?Q?Andr=E9?= Almeida <andrealmeid@igalia.com>
+Cc: Hugh Dickins <hughd@google.com>, Andrew Morton <akpm@linux-foundation.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+        krisman@kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, kernel-dev@igalia.com,
+        Daniel Rosenberg <drosen@google.com>, smcv@collabora.com,
+        Christoph Hellwig <hch@lst.de>,
+        Gabriel Krisman Bertazi <gabriel@krisman.be>
+Subject: Re: [PATCH v2 2/8] unicode: Create utf8_check_strict_name
+Message-ID: <20240903113658.GA1002375@mit.edu>
+References: <20240902225511.757831-1-andrealmeid@igalia.com>
+ <20240902225511.757831-3-andrealmeid@igalia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] Loongarch: EDAC driver for loongson memory
- controller
-To: Zhao Qunqin <zhaoqunqin@loongson.cn>, Xi Ruoyao <xry111@xry111.site>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- chenhuacai@kernel.org, linux-edac@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, kernel@xen0n.name,
- bp@alien8.de, tony.luck@intel.com, james.morse@arm.com, mchehab@kernel.org,
- rric@kernel.org, loongarch@lists.linux.dev
-References: <20240903015354.9443-1-zhaoqunqin@loongson.cn>
- <20240903015354.9443-3-zhaoqunqin@loongson.cn>
- <jkdyayyjrzuhhfaueiessntfdof2m55xjxedkl3zp2jalf4sii@3fo65j64c6rv>
- <549969b7-26c4-a203-b5a0-2e89ab7e7d79@loongson.cn>
- <979d67cc-cbd2-408c-a8ca-a063030bcec2@kernel.org>
- <5c0003ae887f2f80f7852498e1c1a3ff2c07129e.camel@xry111.site>
- <0f9e9184-740f-4a47-b653-a4b1d1c1239a@kernel.org>
- <f534cc40-56d5-2ac8-4db6-aaaa32b07e2f@loongson.cn>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <f534cc40-56d5-2ac8-4db6-aaaa32b07e2f@loongson.cn>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240902225511.757831-3-andrealmeid@igalia.com>
 
-On 03/09/2024 13:31, Zhao Qunqin wrote:
-> 
-> 在 2024/9/3 下午7:29, Krzysztof Kozlowski 写道:
->> On 03/09/2024 10:30, Xi Ruoyao wrote:
->>> On Tue, 2024-09-03 at 09:58 +0200, Krzysztof Kozlowski wrote:
->>>>>>> +	select EDAC_SUPPORT
->>>>>> I think you got here comment before. How did you address it?
->>>>> I just randomly found a spot, and I will put it at the end(next version
->>>>> patch).
->>>> No, the comment was different. You must not select user-visible symbols.
->>> EDAC_SUPPORT isn't user-visible.  EDAC is and it has been removed.
->> Ah, ok, I missed that. Shouldn't this be separate patch with its own
->> rationale? Or before this driver there was no EDAC support for Loongson
->> at all?
-> 
-> Before this driver there was no EDAC support for Loongson
-> at all.
+I'd suggest using the one-line summary:
 
-Ack, ok.
+unicode: create the helper function utf8_check_strict_name()
 
-Best regards,
-Krzysztof
+so that it's a bit more descriptive.
 
+On Mon, Sep 02, 2024 at 07:55:04PM -0300, Andr� Almeida wrote:
+> +/**
+> + * utf8_check_strict_name - Check if a given name is suitable for a directory
+> + *
+> + * This functions checks if the proposed filename is suitable for the parent
+> + * directory. That means that only valid UTF-8 filenames will be accepted for
+> + * casefold directories from filesystems created with the strict enconding flags.
+> + * That also means that any name will be accepted for directories that doesn't
+> + * have casefold enabled, or aren't being strict with the enconding.
+
+I also suggest wrapping with a fill column of 72 characters, instead
+of 80.
+
+						- Ted
+						
 
