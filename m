@@ -1,111 +1,132 @@
-Return-Path: <linux-kernel+bounces-312887-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312888-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E899969D29
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 14:14:28 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 566D0969D2F
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 14:14:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 19BE5283DC8
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 12:14:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E6799B231A7
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 12:14:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 205511D0943;
-	Tue,  3 Sep 2024 12:14:10 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27B431C9858;
+	Tue,  3 Sep 2024 12:14:41 +0000 (UTC)
+Received: from szxga07-in.huawei.com (szxga07-in.huawei.com [45.249.212.35])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C5E71CEAC4;
-	Tue,  3 Sep 2024 12:14:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A340A1A3AA0
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 12:14:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725365649; cv=none; b=O4aqUpE+FDZLQk5m/86GBbJqe/0dOsb/CPVk/4a2i10PquAyNn9RK+RhqyQ7CeiKbAkm3lLWtjKnxbgB8p6SHA0+uXvti3uK5UPFkHvskagx7sSjeB9Trq/OxDOdAtkEVOEIsjgBlzadS4v/6CPEdA7KPsuGi3yHElDa5eCcrCM=
+	t=1725365680; cv=none; b=k7fsQx+GIdJKp7Vqd+PyrH/J98S2OFFCB/RKM8rUH6fz+Uj/wY7p8yvJnzLa0NPAc1TwO4pzYSPBM7q1cvH1Z4cFcGJ3ijJx/Ub7ixdq3gHYE76a2RGyju0w3cVrDm+ULFzNFBf5itGnKdYGep3rZ6ki6d8Hnq89Om2XsH2BiqA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725365649; c=relaxed/simple;
-	bh=uo3J5vdSL9Nj+lyqUX2ohj9VwlQQPdz8v3pBjh5S/Xc=;
-	h=Message-ID:Date:MIME-Version:CC:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=ead+PVWwuEcErfQqnk/GS6OAo3/pzJhr3zdOLJRlwE2nCkWaQsw0b/IQ4Ibh4rvNYDPFdFQdZ4xLcIXmFWCU4BmtDq/2eT4r+as6Td5EfZuVW5ikfFgNHwHQo9doX5uY0eRMoNNlppD2Soi1Dq4Qm2C7itrUdR6+Fyw0q4lpKow=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+	s=arc-20240116; t=1725365680; c=relaxed/simple;
+	bh=NCvPOnEmcLwbQQtJP53jQNqHjD1ta4EvcIi4omOUNKM=;
+	h=Subject:To:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=KqMog9zbB2Z8VPjuV0B/CmbTvE9S5Nu1eTPlCwyi+b5G4riaSweVqKLp6DwYNDWR+D/fXOZtRAyo9gzo+Mr90ZE2AGwzp51TlCUiSgiswJvgwUYuSq9lSGQY68xZxnbFe/5avF8JKswNdrOd0lqyc6Du0rzCXFK93UgTQVSiQG0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.35
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.194])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4Wyky21ZfNzgYvm;
-	Tue,  3 Sep 2024 20:11:54 +0800 (CST)
-Received: from kwepemm000007.china.huawei.com (unknown [7.193.23.189])
-	by mail.maildlp.com (Postfix) with ESMTPS id 015CF1402CC;
-	Tue,  3 Sep 2024 20:14:01 +0800 (CST)
-Received: from [10.67.120.192] (10.67.120.192) by
- kwepemm000007.china.huawei.com (7.193.23.189) with Microsoft SMTP Server
+Received: from mail.maildlp.com (unknown [172.19.163.44])
+	by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4Wyl0m2nP3z1S9mq;
+	Tue,  3 Sep 2024 20:14:16 +0800 (CST)
+Received: from dggpemf100006.china.huawei.com (unknown [7.185.36.228])
+	by mail.maildlp.com (Postfix) with ESMTPS id 1FB151400D7;
+	Tue,  3 Sep 2024 20:14:36 +0800 (CST)
+Received: from [10.174.178.55] (10.174.178.55) by
+ dggpemf100006.china.huawei.com (7.185.36.228) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Tue, 3 Sep 2024 20:13:59 +0800
-Message-ID: <0341f08c-fe8b-4f9c-961e-9b773d67d7bf@huawei.com>
-Date: Tue, 3 Sep 2024 20:13:58 +0800
+ 15.2.1544.11; Tue, 3 Sep 2024 20:14:35 +0800
+Subject: Re: [PATCH 4/5] debugobjects: Use hlist_splice_init() to reduce lock
+ conflicts
+To: Thomas Gleixner <tglx@linutronix.de>, Andrew Morton
+	<akpm@linux-foundation.org>, <linux-kernel@vger.kernel.org>
+References: <20240902140532.2028-1-thunder.leizhen@huawei.com>
+ <20240902140532.2028-5-thunder.leizhen@huawei.com> <87le0982vo.ffs@tglx>
+From: "Leizhen (ThunderTown)" <thunder.leizhen@huawei.com>
+Message-ID: <ca59d908-7779-8f84-57df-0298888a7340@huawei.com>
+Date: Tue, 3 Sep 2024 20:14:35 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-CC: <shaojijie@huawei.com>, <shenjian15@huawei.com>,
-	<wangpeiyang1@huawei.com>, <liuyonglong@huawei.com>, <chenhao418@huawei.com>,
-	<sudongming1@huawei.com>, <xujunsheng@huawei.com>, <shiyongbang@huawei.com>,
-	<libaihan@huawei.com>, <andrew@lunn.ch>, <jdamato@fastly.com>,
-	<horms@kernel.org>, <jonathan.cameron@huawei.com>,
-	<shameerali.kolothum.thodi@huawei.com>, <salil.mehta@huawei.com>,
-	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH V6 net-next 03/11] net: hibmcge: Add mdio and hardware
- configuration supported in this module
-To: Paolo Abeni <pabeni@redhat.com>, <davem@davemloft.net>,
-	<edumazet@google.com>, <kuba@kernel.org>
-References: <20240830121604.2250904-1-shaojijie@huawei.com>
- <20240830121604.2250904-4-shaojijie@huawei.com>
- <0ff20687-74de-4e63-90f4-57cf06795990@redhat.com>
-From: Jijie Shao <shaojijie@huawei.com>
-In-Reply-To: <0ff20687-74de-4e63-90f4-57cf06795990@redhat.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- kwepemm000007.china.huawei.com (7.193.23.189)
+In-Reply-To: <87le0982vo.ffs@tglx>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ dggpemf100006.china.huawei.com (7.185.36.228)
 
 
-on 2024/9/3 19:59, Paolo Abeni wrote:
-> On 8/30/24 14:15, Jijie Shao wrote:
-> [...]
->> +static int hbg_mdio_wait_ready(struct hbg_mac *mac)
->> +{
->> +#define HBG_MDIO_OP_TIMEOUT_US        (1 * 1000 * 1000)
->> +#define HBG_MDIO_OP_INTERVAL_US        (5 * 1000)
->
-> Minor nit: I find the define inside the function body less readable 
-> than placing them just before the function itself.
 
-These two macros are only used in this function.
-Is it necessary to move them to the header file?
+On 2024/9/3 18:09, Thomas Gleixner wrote:
+> On Mon, Sep 02 2024 at 22:05, Zhen Lei wrote:
+> 
+>> The sub list can be prepared in advance outside the lock, so that the
+>> operation time inside the lock can be reduced and the possibility of
+>> lock conflict can be reduced.
+>>
+>> Signed-off-by: Zhen Lei <thunder.leizhen@huawei.com>
+>> ---
+>>  lib/debugobjects.c | 18 ++++++++++--------
+>>  1 file changed, 10 insertions(+), 8 deletions(-)
+>>
+>> diff --git a/lib/debugobjects.c b/lib/debugobjects.c
+>> index fc8224f9f0eda8f..998724e9dee526b 100644
+>> --- a/lib/debugobjects.c
+>> +++ b/lib/debugobjects.c
+>> @@ -167,23 +167,25 @@ static void fill_pool(void)
+>>  		return;
+>>  
+>>  	while (READ_ONCE(obj_pool_free) < debug_objects_pool_min_level) {
+>> -		struct debug_obj *new[ODEBUG_BATCH_SIZE];
+>> +		HLIST_HEAD(batch_list);
+>> +		struct debug_obj *new, *last;
+> 
+> Variable ordering please.
 
->
->> +
->> +    struct hbg_priv *priv = HBG_MAC_GET_PRIV(mac);
->> +    u32 cmd;
->> +
->> +    return readl_poll_timeout(priv->io_base + 
->> HBG_REG_MDIO_COMMAND_ADDR, cmd,
->> +                  !FIELD_GET(HBG_REG_MDIO_COMMAND_START_B, cmd),
->> +                  HBG_MDIO_OP_INTERVAL_US,
->> +                  HBG_MDIO_OP_TIMEOUT_US);
->> +}
->
-> [...]> +static void hbg_phy_adjust_link(struct net_device *netdev)
->> +{
->> +    struct hbg_priv *priv = netdev_priv(netdev);
->> +    struct phy_device *phydev = priv->mac.phydev;
->
-> Minor nit: please respect the reverse x-mas tree order
+OK
 
-Here, I need to get the *priv first, so I'm not following the reverse x-mas tree order here.
-I respect the reverse x-mas tree order everywhere else.
+> 
+>>  		int cnt;
+>>  
+>>  		for (cnt = 0; cnt < ODEBUG_BATCH_SIZE; cnt++) {
+>> -			new[cnt] = kmem_cache_zalloc(obj_cache, gfp);
+>> -			if (!new[cnt])
+>> +			new = kmem_cache_zalloc(obj_cache, gfp);
+>> +			if (!new)
+>>  				break;
+>> +			hlist_add_head(&new->node, &batch_list);
+>> +			if (cnt == 0)
+>                         
+>                         if (!cnt)
+> 
+> but it would be more self explaining if you have:
+> 
+> 		struct debug_obj *new, *last = NULL;
+> 
+> and then
+>                 if (!last)
 
-	Thanks,
-	Jijie Shao
+OK, I will change it. I thought so, but I changed it to reduce
+the null initialization. Ha ha, wrong choice.
 
+> 
+>> +				last = new;
+>>  		}
+> 
+> Thanks,
+> 
+>         tglx
+> .
+> 
+
+-- 
+Regards,
+  Zhen Lei
 
