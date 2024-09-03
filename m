@@ -1,113 +1,141 @@
-Return-Path: <linux-kernel+bounces-313144-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313145-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 959F596A0DD
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 16:40:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DFA296A0E6
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 16:42:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4703F1F26FC0
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 14:40:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 142331F222D4
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 14:42:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 049B414036F;
-	Tue,  3 Sep 2024 14:39:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TEEf2WAy"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D5C513E3E5;
+	Tue,  3 Sep 2024 14:42:05 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CABC213D625;
-	Tue,  3 Sep 2024 14:39:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49A9D13D278;
+	Tue,  3 Sep 2024 14:42:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725374396; cv=none; b=D5tmro/oBZ5aWEnQsvs2n/SIr7fwbLFad+rcST5cl6Rg/XGv6EgwlItCawLbEyQUqLEIrgy7PMLjHST1AmZ2q4od/tQUblEPmsXo3FqZH2K8Wz0DFEdGqMGS7/M5M7DZnoCmybEjlcqGCs33gJrL4onzsr9hNkMPT+wzB8R2FHI=
+	t=1725374524; cv=none; b=lrg1rS9lizCbSXxf0rLIIkkO1a50YaEwruGl68tQhkhC65rFffHdQOtMaHfHFlEFmsJZ/ZriJUKhHvWgLrMa7S20AQj+KOCR4iupzRJ0aKVc4gt9mpYiz2WCef4WAOhFAM6PhKAFuC8RKhjnciocbucrYxvARALRglJOGagkLc4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725374396; c=relaxed/simple;
-	bh=18ErWonMY+5270jdrv3f8u/lrBXpunSgd5cvf5gJZK4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gnyfQWVqoppqTcTw4DrSb5jBRRKEKRYrsy0YJJ7/zMfh8QJi6uQSRLlL2mwvX/kzZ0xFKldMT2M8RoQs4ZRAFsAloZllaPHR2V18O21s8kXdNNGB/+h74h9qbAAPCJVJFJA6QPL6+MeWbCL6hYbPpmbeL5vG7CogyLSXbWibWyc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TEEf2WAy; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725374395; x=1756910395;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=18ErWonMY+5270jdrv3f8u/lrBXpunSgd5cvf5gJZK4=;
-  b=TEEf2WAyNHjDsX8U0lHXMa5pmJcM6jA8gOabu9GU4mzuQgyY9E+b08lT
-   VojB9MIjfT/U1E9Wm82xcMwmvEhWG7Ls6sZGJ1vre8UPX/Eo4xaryt10W
-   dn98PDfcqWlvzqy4WPN7ILo49OOZjaT4EcB9WBN5EOG1umGygLjmlNI3C
-   Nq6ZdVmBAQ/pehlT6qHKSB3AP8KJvBvdQwkIjcEebElNt55InAsyzVV77
-   7ifiBVjmqYwZE+7NUB8kGIHDEfkTTPVD+TwxhCtCNJJ1i1kgkmtNXNaN4
-   KK3Gz14IU04h6YERck94cDroD9O40S/J1IJ3FnPwFbbN8QLhH3UfJFmjJ
-   A==;
-X-CSE-ConnectionGUID: M+OueBqDQkyqIrl3Cx9SVQ==
-X-CSE-MsgGUID: YCLV4GU1QlKEWdwyUgL/jA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11184"; a="23853192"
-X-IronPort-AV: E=Sophos;i="6.10,199,1719903600"; 
-   d="scan'208";a="23853192"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2024 07:39:54 -0700
-X-CSE-ConnectionGUID: f0UEFQVdQFK+4XR9uSxwMw==
-X-CSE-MsgGUID: aCeKh2sGTJmeO1X2xjz0ng==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,199,1719903600"; 
-   d="scan'208";a="69731145"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by orviesa005.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2024 07:39:50 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1slUh9-00000004jrC-14wb;
-	Tue, 03 Sep 2024 17:39:47 +0300
-Date: Tue, 3 Sep 2024 17:39:47 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Vasileios Amoiridis <vassilisamir@gmail.com>
-Cc: jic23@kernel.org, lars@metafoo.de, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, ang.iglesiasg@gmail.com,
-	linus.walleij@linaro.org, biju.das.jz@bp.renesas.com,
-	javier.carrasco.cruz@gmail.com, semen.protsenko@linaro.org,
-	579lpy@gmail.com, ak@it-klinger.de, linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	christophe.jaillet@wanadoo.fr
-Subject: Re: [PATCH v5 7/7] iio: pressure: bmp280: Move bmp085 interrupt to
- new configuration
-Message-ID: <Ztcfs3Pvy9tzIFNm@smile.fi.intel.com>
-References: <20240902184222.24874-1-vassilisamir@gmail.com>
- <20240902184222.24874-8-vassilisamir@gmail.com>
+	s=arc-20240116; t=1725374524; c=relaxed/simple;
+	bh=HHs8jW5i+MFVV9WvFuQXQ+AAl3XL0OqfehWw3PVFi6A=;
+	h=Message-ID:Date:MIME-Version:CC:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=Ebw9KM47PTZOrWFgrck23iM0E6FBpVmeFEI87TNFsUlC/DcqRyHyYlnTXk89Z3DOTRmrUbSeNHnyYG9cwItoETJ6IaRA2wSlvJIopSKebyuuMCUcbgoT6JVM7DKQX7U9WpQ0jY/jRCzAIntyYix2vT8cQROnPDqpT/PSR1NQVA8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.254])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4WypG72V4lzyR2M;
+	Tue,  3 Sep 2024 22:41:03 +0800 (CST)
+Received: from kwepemm000007.china.huawei.com (unknown [7.193.23.189])
+	by mail.maildlp.com (Postfix) with ESMTPS id E24A518010A;
+	Tue,  3 Sep 2024 22:41:59 +0800 (CST)
+Received: from [10.67.120.192] (10.67.120.192) by
+ kwepemm000007.china.huawei.com (7.193.23.189) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Tue, 3 Sep 2024 22:41:58 +0800
+Message-ID: <55fbd21f-ac81-465f-b164-7e5b6c0ca7d9@huawei.com>
+Date: Tue, 3 Sep 2024 22:41:57 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240902184222.24874-8-vassilisamir@gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mozilla Thunderbird
+CC: <shaojijie@huawei.com>, <shenjian15@huawei.com>,
+	<wangpeiyang1@huawei.com>, <liuyonglong@huawei.com>, <chenhao418@huawei.com>,
+	<sudongming1@huawei.com>, <xujunsheng@huawei.com>, <shiyongbang@huawei.com>,
+	<libaihan@huawei.com>, <andrew@lunn.ch>, <jdamato@fastly.com>,
+	<horms@kernel.org>, <jonathan.cameron@huawei.com>,
+	<shameerali.kolothum.thodi@huawei.com>, <salil.mehta@huawei.com>,
+	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH V6 net-next 06/11] net: hibmcge: Implement .ndo_start_xmit
+ function
+To: Paolo Abeni <pabeni@redhat.com>, <davem@davemloft.net>,
+	<edumazet@google.com>, <kuba@kernel.org>
+References: <20240830121604.2250904-1-shaojijie@huawei.com>
+ <20240830121604.2250904-7-shaojijie@huawei.com>
+ <2bc090db-7bc1-4810-80c7-61218fb49acf@redhat.com>
+From: Jijie Shao <shaojijie@huawei.com>
+In-Reply-To: <2bc090db-7bc1-4810-80c7-61218fb49acf@redhat.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
+ kwepemm000007.china.huawei.com (7.193.23.189)
 
-On Mon, Sep 02, 2024 at 08:42:22PM +0200, Vasileios Amoiridis wrote:
-> This commit intends to add the old BMP085 sensor to the new IRQ interface
-> of the driver for consistence. No functional changes intended.
-> 
-> The BMP085 sensor is equivalent with the BMP180 with the only difference of
-> BMP085 having an extra interrupt pin to inform about an End of Conversion.
 
-This one also LGTM,
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+on 2024/9/3 21:31, Paolo Abeni wrote:
+> On 8/30/24 14:15, Jijie Shao wrote:
+>> +netdev_tx_t hbg_net_start_xmit(struct sk_buff *skb, struct 
+>> net_device *net_dev)
+>> +{
+>> +    struct hbg_ring *ring = netdev_get_tx_ring(net_dev);
+>> +    struct hbg_priv *priv = netdev_priv(net_dev);
+>> +    /* This smp_load_acquire() pairs with smp_store_release() in
+>> +     * hbg_tx_buffer_recycle() called in tx interrupt handle process.
+>> +     */
+>> +    u32 ntc = smp_load_acquire(&ring->ntc);
+>> +    struct hbg_buffer *buffer;
+>> +    struct hbg_tx_desc tx_desc;
+>> +    u32 ntu = ring->ntu;
+>> +
+>> +    if (unlikely(!hbg_nic_is_open(priv))) {
+>> +        dev_kfree_skb_any(skb);
+>> +        return NETDEV_TX_OK;
+>> +    }
+>> +
+>> +    if (unlikely(!skb->len ||
+>> +             skb->len > hbg_spec_max_frame_len(priv, HBG_DIR_TX))) {
+>> +        dev_kfree_skb_any(skb);
+>> +        net_dev->stats.tx_errors++;
+>> +        return NETDEV_TX_OK;
+>> +    }
+>> +
+>> +    if (unlikely(hbg_queue_is_full(ntc, ntu, ring) ||
+>> +             hbg_fifo_is_full(ring->priv, ring->dir))) {
+>> +        netif_stop_queue(net_dev);
+>> +        return NETDEV_TX_BUSY;
+>> +    }
+>> +
+>> +    buffer = &ring->queue[ntu];
+>> +    buffer->skb = skb;
+>> +    buffer->skb_len = skb->len;
+>> +    if (unlikely(hbg_dma_map(buffer))) {
+>> +        dev_kfree_skb_any(skb);
+>> +        return NETDEV_TX_OK;
+>> +    }
+>> +
+>> +    buffer->state = HBG_TX_STATE_START;
+>> +    hbg_init_tx_desc(buffer, &tx_desc);
+>> +    hbg_hw_set_tx_desc(priv, &tx_desc);
+>> +
+>> +    /* This smp_store_release() pairs with smp_load_acquire() in
+>> +     * hbg_tx_buffer_recycle() called in tx interrupt handle process.
+>> +     */
+>> +    smp_store_release(&ring->ntu, hbg_queue_next_prt(ntu, ring));
+>
+> Here you should probably check for netif_txq_maybe_stop()
+>
+>> +    net_dev->stats.tx_bytes += skb->len;
+>> +    net_dev->stats.tx_packets++;
+>
+> Try to avoid 'dev->stats' usage. Instead you could use per napi stats 
+> accounting (no contention).
 
-...
+use dev_sw_netstats_tx_add() or dev_sw_netstats_rx_add() ?
 
-> -	int ret;
-> +	int ret, irq;
+>
+> Side note: 'net_dev' is quite an unusual variable name for a network 
+> device.
 
-I'm not fan of such a churn, meaning a new variable just on the new line to
-make diff less noisy, but it's not a big deal at all.
-
--- 
-With Best Regards,
-Andy Shevchenko
-
+sure, 'dev' is ok.
+	
+	Thanks,
+	Jijie Shao
 
 
