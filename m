@@ -1,129 +1,231 @@
-Return-Path: <linux-kernel+bounces-312808-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312809-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24365969BE7
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 13:34:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DE62969BEA
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 13:34:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C2DA11F23ED2
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 11:34:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B23691C212F2
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 11:34:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0916B1A42C2;
-	Tue,  3 Sep 2024 11:34:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5013D1A42D5;
+	Tue,  3 Sep 2024 11:34:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hKorwkrY"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="H94G5Exn"
+Received: from NAM04-BN8-obe.outbound.protection.outlook.com (mail-bn8nam04on2084.outbound.protection.outlook.com [40.107.100.84])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8B35195
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 11:34:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725363262; cv=none; b=lvJ9HdyKJAgY5t4woA4UJwHggmfnZ5OK8T6JYyRJSYw6GdWrvi+0MLmb4nysxlIqvAkAPbTmUiJTE/BLlB/gKVLg0bwOr+h7Uox+ycnuN2dl0bCGlpO12jX85fzQoZSDfvyP75g8hLyy8O4rYm+ryhii/dgTfqVmbb4qYa0Svhk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725363262; c=relaxed/simple;
-	bh=46XNmUR45khZvA8eAYqDcdhPS16b5Y3YseKtzeiIWkQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=egLnh5Bb7kCOU1Dyak6PigHlNVoSHOQGOXs4oU+O/wSoEB1y42xWn2iNWohTjlzkekrKjsbxxotMuR8ifbtSNs6sandFgkFZCntPqpyJI3J66Nluve5K2wmVsSt8S8jLwlQdRWsz3xS/2hkEvCMLeNTYy6UoRsVywVwk+A58GzE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=hKorwkrY; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-42bbe908380so31621315e9.2
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 04:34:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1725363259; x=1725968059; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=46XNmUR45khZvA8eAYqDcdhPS16b5Y3YseKtzeiIWkQ=;
-        b=hKorwkrYB33irTBYcLr7LQdDbZR3NChYrs/alfmQkEToIDUspe5MO3QNc7/B027sl5
-         Wm1WtnaZC+dN1QqCFvA141ay2M/rcTaphhir4rDCDAfQR16skewqNHce+OYTA31Y533a
-         lsAIOIww9wOzJuYu0ehV636/cUTKvmaegcFfVkJfWtjO1YEv/yWZG8v53qvM62/NOIgV
-         eTUsV8mFnYdvXYeaGSiKB6skrUxSIqh+z+V9yERQwhHuJ1TO20Qv86acQxIW5w36F6+U
-         7y0hEGnDyBOkuFZIzQJsYchjvEOkl8k4EXT369x3Ia9qoes2HOdS4YnWim0RErN4Hldy
-         pFoQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725363259; x=1725968059;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=46XNmUR45khZvA8eAYqDcdhPS16b5Y3YseKtzeiIWkQ=;
-        b=Ij2acXXJ6dgJZlkkMsVdL4RgdrpCV8L4R400KQPif1L6BosV3vnhiryXuLJL2OxwJz
-         YOi+aJTpGAwQ4EsclWakhFKI51lvxife/pUXB0M0Csw8TOawMd14wujQoAcQVas6Roio
-         ixH/jRhs/QBRlC9zNN7B8IDmVG81AQKKnRVQSeG1URQDYJTa3CDflPTn7BevUW3ozRFO
-         oerCXmW8r5/sROLTPGz3sMw3HNr37J+qszrW6rwhdtXlcWRX4fn1eLFeba7tSIqMEcBA
-         CdIn3C8nBI+HP0oKJ/OTzdA9lwSlr1SfoYkDWRry60T3rcTRQRyr3+KTdc33eCccwX3K
-         E5UA==
-X-Forwarded-Encrypted: i=1; AJvYcCVYX8AJi5uDrQ52e5+B7xcyi7lJ9a/refsT7XjdG9afuVF6SfQ9fsTOpirEGGpSZFbYHinTixHCKNHXjQo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw6ZCWk/Gi6c7AbVoHiHSX8LmPCPyBqEly4a3sKEkU6mN5lGk7p
-	ne5R5ctw+5wJZQ7P9epS6CohZaif5D80Ch0tOnNZ8ab4Z0oBa9peNxHv3iuROSdv9Lr4cqZXzXY
-	WiqgEUdu0/jj5gCU9o+PFKoo/KOjrOwLgM9zQ
-X-Google-Smtp-Source: AGHT+IFuNzVuMjoZGRoZLPtdEPPXHkmFSmRBW7NyYXKHWBhqV12O7T7xt9BawC+YUzC3UzRWxXIuVp1OKWsiC9kNggs=
-X-Received: by 2002:a05:600c:34c6:b0:426:6921:e3e5 with SMTP id
- 5b1f17b1804b1-42bdc64e47fmr67490965e9.24.1725363258825; Tue, 03 Sep 2024
- 04:34:18 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE3431A42D1;
+	Tue,  3 Sep 2024 11:34:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.100.84
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725363289; cv=fail; b=ogNxr+Oori6AqXEs7rCEzquWe5HeacMAy/kMeXisa8zU1rtvAafRPufLAHF/NQG8BisnuRKn15UfNrm/z3Sk5Rxr1ZyFsU3i8Q151A9WPPPFvtBwvvrfISvK3nSaqhUroJ+uuDeWHLB19Jpy3Ho9jx/rwh1gOu5smM31Vir77UA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725363289; c=relaxed/simple;
+	bh=fqrZzJyd8MAy+NtiqjQ9CU8CvY3d+BXPJ3l2U5ZUcas=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=CfL/SO+uxA03XZyych2zmAyE+zspJhoumhOwgYXaKLttDLLpkPEpaIfuZENJH2qkQsOTNyy0NRw2Xj90HpBza7a2Lr6ArmCtteaUY9aInrejhhNfS5509NP3RHZ727Hk319P4vPB4/TATnu9lNPsWvyD6UO+RvkYiOGtHTdE4nw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=H94G5Exn; arc=fail smtp.client-ip=40.107.100.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=vZkNDjj3fBqQudlsdHmm483NV0JiWGu21VTdOEkSjHFcQs68r68A216Jx7lxwMwGqBfYH4++7oRKaB+zzKqWK5Dx0GPYWQerQgg3RfUHn3zQDf705uXWe6cUv2W0mth7A8N3iU0YxT4wDUVJxTRJnm6IOYPSJQ6bCVFMSZNL3dtpb2/hiyhCpPG+sIihrBCei4SRUlFRaYBsPArYgNFqwRiA1XpsM8DcRscIcFRxv92Ihe+grdnsR45QWL1Fxp2pyfisKMhzvkdF3sFF8UXTjlrUgXzwP9EBIPuM9wGzt2oGERDAHjJ3hii6eYBreREg5ybsjJX48OUj4CurjB/Q6g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=py8u4OX83i/3syVL8qYVVIMaXkGK1P/LrBgXyBaPsf4=;
+ b=MtMLiZzU+5Al3MNk6DilfSjeZMcmicYov1APj/Boz//bcSLXXw0nbehk1rygoixY6TLwwkme5JcsWcARjm4hQspJ7wsRX5WFGg4qc18ac9rsdJNGxKFKtgFOMgXkaGTEdmTv8ZQz6on0P4XvWvTdCm22VKO0e27U6jFwXG6y+lXoMC3N98u5BLwmAYhilqc7toBPszDikOJQsL5gGoacBhYfVY9HHiTvBoO3YWqDE8WVBRn5rZPpuQboFIlO8EGYfWCPy14Z5i2c6QiolOFG9X5ysI8t0A2pq6GFtaSX+b7/zSOHPsULbw0qeEu+nHq7IgcEhDbmK1n/QPqXSgOQPg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=py8u4OX83i/3syVL8qYVVIMaXkGK1P/LrBgXyBaPsf4=;
+ b=H94G5ExnfrSfCwwlUBvJ2kwpbvcb+SQJHjSrfFsx4euNkhLhP2YLG4gGX6ge50EjxviscTp0RE8NHHflsBhn/AQ6tM3wOPqcXE5EPS1NdGy/OpEyewu0KeZgc2ZMNHj+i8zMlw3z8xyKpYiM8+mTu0GJbKDDCHhTO+YWwUL2MaE=
+Received: from BN7PR06CA0066.namprd06.prod.outlook.com (2603:10b6:408:34::43)
+ by PH8PR12MB7278.namprd12.prod.outlook.com (2603:10b6:510:222::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.25; Tue, 3 Sep
+ 2024 11:34:42 +0000
+Received: from MN1PEPF0000ECD8.namprd02.prod.outlook.com
+ (2603:10b6:408:34:cafe::55) by BN7PR06CA0066.outlook.office365.com
+ (2603:10b6:408:34::43) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.27 via Frontend
+ Transport; Tue, 3 Sep 2024 11:34:42 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ MN1PEPF0000ECD8.mail.protection.outlook.com (10.167.242.137) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.7918.13 via Frontend Transport; Tue, 3 Sep 2024 11:34:42 +0000
+Received: from SATLEXMB04.amd.com (10.181.40.145) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 3 Sep
+ 2024 06:34:41 -0500
+Received: from prasad-r9-mach.amd.com (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
+ Transport; Tue, 3 Sep 2024 06:34:32 -0500
+From: Venkata Prasad Potturu <venkataprasad.potturu@amd.com>
+To: <broonie@kernel.org>, <alsa-devel@alsa-project.org>
+CC: <Vijendar.Mukunda@amd.com>, <Basavaraj.Hiregoudar@amd.com>,
+	<Sunil-kumar.Dommati@amd.com>, <syed.sabakareem@amd.com>, "Venkata Prasad
+ Potturu" <venkataprasad.potturu@amd.com>, Liam Girdwood
+	<lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai
+	<tiwai@suse.com>, "Syed Saba Kareem" <Syed.SabaKareem@amd.com>, Jeff Johnson
+	<quic_jjohnson@quicinc.com>, "open list:SOUND - SOC LAYER / DYNAMIC AUDIO
+ POWER MANAGEM..." <linux-sound@vger.kernel.org>, open list
+	<linux-kernel@vger.kernel.org>
+Subject: [PATCH 01/12] ASoC: amd: acp: Refactor TDM slots selction based on acp revision id
+Date: Tue, 3 Sep 2024 17:04:16 +0530
+Message-ID: <20240903113427.182997-2-venkataprasad.potturu@amd.com>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20240903113427.182997-1-venkataprasad.potturu@amd.com>
+References: <20240903113427.182997-1-venkataprasad.potturu@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240903091700.172734-1-benno.lossin@proton.me>
- <20240903091700.172734-2-benno.lossin@proton.me> <CAH5fLgjicT5O77UviXUPxc0-O7nQO4J+M3Nfo+6Mm-DVGQBhMg@mail.gmail.com>
- <ca2e865a-f0a2-488e-ab0b-53ef5c4e95b3@proton.me>
-In-Reply-To: <ca2e865a-f0a2-488e-ab0b-53ef5c4e95b3@proton.me>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Tue, 3 Sep 2024 13:34:05 +0200
-Message-ID: <CAH5fLgj+U_9_GsFk5cJw_t6UdOsZsQkBtRz5cG-iHgTuj=qY7g@mail.gmail.com>
-Subject: Re: [PATCH 2/2] rust: sync: require `Sync` for `Backend::GuardState`
-To: Benno Lossin <benno.lossin@proton.me>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Andreas Hindborg <a.hindborg@samsung.com>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+Received-SPF: None (SATLEXMB04.amd.com: venkataprasad.potturu@amd.com does not
+ designate permitted sender hosts)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MN1PEPF0000ECD8:EE_|PH8PR12MB7278:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1f79c23c-6eb9-4376-ef57-08dccc0c6716
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|82310400026|36860700013|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?mTzmuBrS4PHyEYniTUtV9wq5BjBvJ1CqVRrxj9vtM7fZuQcO8FpTAKwJHXpH?=
+ =?us-ascii?Q?MmuRHFUF+1BJbnqk4cuWdtDj/FRxJaGHi9HdpXHQfNbItqITGJWScOeMgYU1?=
+ =?us-ascii?Q?0GEFI9o7r0ksJI4YIqhPd8/efF0OQAxeBw+YOxcTkNog/5PlZIqC7Op6CT0U?=
+ =?us-ascii?Q?frP+JfdMGQtL8/DXQBFkPiHLD9+KvnvLM9j6/dDdfI/GHmfgmsy8Qt2PEciu?=
+ =?us-ascii?Q?JuBcfv24+1ME5/CpaGqWK1rxMZMiuIuVtJwESI0MWF8a+l7nDf+oAymNHSAs?=
+ =?us-ascii?Q?9gpwDhWy9I+x/nT4lknP2p5TRUNCZoo0BS5Um/VZiHCw2kpa9l//BgQBzIR+?=
+ =?us-ascii?Q?bzTN8T7HbvVBe+RIlbV4P3kHkVpkpKkeDUjNyiImGt8+7okMaYqSvUyW6FJG?=
+ =?us-ascii?Q?B8j4he8EVBz5Ad8gf86oFn24yqLUGR/wXMDWDZtLOCGW6B+LX5zqLwzokYtk?=
+ =?us-ascii?Q?MjDUR2tMC9jFvyVr+L0Z+wghBq80cUDllWPADQj/UVOVRkSQoM2e4YHy+IMQ?=
+ =?us-ascii?Q?1GxxljM0yX0s/rRBfKR2gnc//bb+A28noN8ROXVnl1ZGFpKi8k1SR+VkOZOY?=
+ =?us-ascii?Q?Mdll14OkCGMqRIUc6T1ZLsMJdoXxCgU6ShuDppoTsL1wuP39bF/6/3FUqbAE?=
+ =?us-ascii?Q?XG9nP0glFEnzwtmhVN0+QZA63taQkuQl8WQ2a2H6uVapRvpFFpXVHfxvVVGZ?=
+ =?us-ascii?Q?QN7nKKPk7b93TE415yQhquhzYP4RuERLxS8lnYXMqmW341UGz0hXGOLlJ+XQ?=
+ =?us-ascii?Q?NkA4Ltfxj/qw+tIOWuSi2KDhnccoOnS61qdy1TQAzhm7dl3k9ZG/EPFEjjgA?=
+ =?us-ascii?Q?Ks4JlzdjO6T1Xddg09q2zP0Cuk4lfCzTJP0Wusz/xRoJ25JrMZW+GrouVZ6m?=
+ =?us-ascii?Q?zWJxx74IbI1/02Zp8Dj89HielyMeJrlCs2Aui2DADwkV5B7FmFbxpnCovfXS?=
+ =?us-ascii?Q?v5vsoknLuj4kjbcYvSrDXtBsqrAGN49f2f0P99lvoHIvahSRNoGh8O/0cXYB?=
+ =?us-ascii?Q?9yBSPVhe++7/LmRbBAeZ/XlaET9VRdldISTKtQarGEKeILHNRiXtpKKrdSlB?=
+ =?us-ascii?Q?FL4jy2tBwj+g9Bp6lYNlfdFwmSEg8MqfHOJQArPZyzdL1yWAI2LTR4KrxIU1?=
+ =?us-ascii?Q?YLY8u0r6nMd/rCGFv+7Nnfgjrr5iEWbQAdiy7fC0MqCbtsZzghRa4aCy40Ik?=
+ =?us-ascii?Q?80U6rlmE4U9TQXt4vVZGNrvTPKa4DZ7ysLhK67A0bH8IC5GRIrzNdNmPSSUk?=
+ =?us-ascii?Q?eeVrp0q4sP6QPGXGB46h3iMKX5AXe9fs9BxZqCwyq0AW3Mzj6/ur1IpSp2dP?=
+ =?us-ascii?Q?Xh4UxRD3T/pHeUCVs35xBMyIYo45TW3XrfDUcpg2o6tRDN0ohs5QvX2oSKVU?=
+ =?us-ascii?Q?8Bafen8vfj5zWKIjwq2b7st5CN8EBoHLlEWmKomIG0HYYW9mNKRG0mF3h8GD?=
+ =?us-ascii?Q?UWyRG6DplXqgzk32L88H+AV8N3mP1D1v?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(82310400026)(36860700013)(376014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Sep 2024 11:34:42.0216
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1f79c23c-6eb9-4376-ef57-08dccc0c6716
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	MN1PEPF0000ECD8.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR12MB7278
 
-On Tue, Sep 3, 2024 at 12:06=E2=80=AFPM Benno Lossin <benno.lossin@proton.m=
-e> wrote:
->
-> On 03.09.24 11:32, Alice Ryhl wrote:
-> > On Tue, Sep 3, 2024 at 11:17=E2=80=AFAM Benno Lossin <benno.lossin@prot=
-on.me> wrote:
-> >>
-> >> `Guard<T, B>` implements `Sync` when `T` is `Sync`. Since this does no=
-t
-> >> depend on `B`, creating a `Guard` that is `Sync`, but with `!Sync` sta=
-te
-> >> is possible. This is a soundness issue, thus add the bounds to the
-> >> respective impls.
-> >>
-> >> Signed-off-by: Benno Lossin <benno.lossin@proton.me>
-> >
-> > Right now, a `&Guard<T, B>` has exactly the same powers as &T, as the
-> > only thing you can do on the guard with only a shared reference is
-> > deref to a &T. So the bounds are correct as they are, unless new APIs
-> > are added (which seems unlikely?).
->
-> Right, but I thought it was strange not to require that. Since that
-> would be the default behavior of the `Sync` auto-trait. And the only
-> reason why we have to implement `Sync` is because we want it to be
-> `!Send` with the `PhantomData<*mut ()>`.
->
-> All of our locks currently use `()` as the guard state, so we don't lose
-> anything.
->
-> Maybe it might make sense to instead have a marker type that is `!Send`
-> but `Sync` that can be used here instead, since then we could avoid the
-> `unsafe impl Sync`.
+Refactor TDM slots selection based on acp revision id.
 
-I think it's actually quite reasonable to `unsafe impl Sync` for lock
-guards. The lock guard in std is also rather special in regards to its
-Sync implementation, since it also has a situation where Send deals
-with special details of the guard, but Sync does not.
+Signed-off-by: Venkata Prasad Potturu <venkataprasad.potturu@amd.com>
+---
+ sound/soc/amd/acp/acp-i2s.c | 40 +++++++++++++++++++++++++++----------
+ 1 file changed, 29 insertions(+), 11 deletions(-)
 
-Alice
+diff --git a/sound/soc/amd/acp/acp-i2s.c b/sound/soc/amd/acp/acp-i2s.c
+index 97258b4cf89b..5d1d27078626 100644
+--- a/sound/soc/amd/acp/acp-i2s.c
++++ b/sound/soc/amd/acp/acp-i2s.c
+@@ -95,9 +95,11 @@ static int acp_i2s_set_tdm_slot(struct snd_soc_dai *dai, u32 tx_mask, u32 rx_mas
+ {
+ 	struct device *dev = dai->component->dev;
+ 	struct acp_dev_data *adata = snd_soc_dai_get_drvdata(dai);
++	struct acp_chip_info *chip;
+ 	struct acp_stream *stream;
+ 	int slot_len, no_of_slots;
+ 
++	chip = dev_get_platdata(dev);
+ 	switch (slot_width) {
+ 	case SLOT_WIDTH_8:
+ 		slot_len = 8;
+@@ -116,15 +118,23 @@ static int acp_i2s_set_tdm_slot(struct snd_soc_dai *dai, u32 tx_mask, u32 rx_mas
+ 		return -EINVAL;
+ 	}
+ 
+-	switch (slots) {
+-	case 1 ... 7:
+-		no_of_slots = slots;
+-		break;
+-	case 8:
+-		no_of_slots = 0;
++	switch (chip->acp_rev) {
++	case ACP3X_DEV:
++	case ACP6X_DEV:
++		switch (slots) {
++		case 1 ... 7:
++			no_of_slots = slots;
++			break;
++		case 8:
++			no_of_slots = 0;
++			break;
++		default:
++			dev_err(dev, "Unsupported slots %d\n", slots);
++			return -EINVAL;
++		}
+ 		break;
+ 	default:
+-		dev_err(dev, "Unsupported slots %d\n", slots);
++		dev_err(dev, "Unknown chip revision %d\n", chip->acp_rev);
+ 		return -EINVAL;
+ 	}
+ 
+@@ -132,12 +142,20 @@ static int acp_i2s_set_tdm_slot(struct snd_soc_dai *dai, u32 tx_mask, u32 rx_mas
+ 
+ 	spin_lock_irq(&adata->acp_lock);
+ 	list_for_each_entry(stream, &adata->stream_list, list) {
+-		if (tx_mask && stream->dir == SNDRV_PCM_STREAM_PLAYBACK)
+-			adata->tdm_tx_fmt[stream->dai_id - 1] =
++		switch (chip->acp_rev) {
++		case ACP3X_DEV:
++		case ACP6X_DEV:
++			if (tx_mask && stream->dir == SNDRV_PCM_STREAM_PLAYBACK)
++				adata->tdm_tx_fmt[stream->dai_id - 1] =
+ 					FRM_LEN | (slots << 15) | (slot_len << 18);
+-		else if (rx_mask && stream->dir == SNDRV_PCM_STREAM_CAPTURE)
+-			adata->tdm_rx_fmt[stream->dai_id - 1] =
++			else if (rx_mask && stream->dir == SNDRV_PCM_STREAM_CAPTURE)
++				adata->tdm_rx_fmt[stream->dai_id - 1] =
+ 					FRM_LEN | (slots << 15) | (slot_len << 18);
++			break;
++		default:
++			dev_err(dev, "Unknown chip revision %d\n", chip->acp_rev);
++			return -EINVAL;
++		}
+ 	}
+ 	spin_unlock_irq(&adata->acp_lock);
+ 	return 0;
+-- 
+2.39.2
+
 
