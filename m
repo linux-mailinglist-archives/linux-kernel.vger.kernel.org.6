@@ -1,198 +1,521 @@
-Return-Path: <linux-kernel+bounces-313888-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313891-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B279A96ABDD
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 00:13:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61F9096ABE8
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 00:14:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6972B285B1E
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 22:13:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9D92CB255F6
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 22:14:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB6021D54E4;
-	Tue,  3 Sep 2024 22:09:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36B431D6DDB;
+	Tue,  3 Sep 2024 22:11:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ixcf00Dk"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="Oy83z9Hs"
+Received: from DUZPR83CU001.outbound.protection.outlook.com (mail-northeuropeazolkn19013070.outbound.protection.outlook.com [52.103.32.70])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A4261DA2EE;
-	Tue,  3 Sep 2024 22:09:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D085F1D799E;
+	Tue,  3 Sep 2024 22:11:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.32.70
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725401361; cv=fail; b=CrE0siqJUwaClnBOsUTctBIj7CDinRleZbwMVnKGRE/9XjiBJ7d4hGMo3pfGrCxtHTz2mYiDcA9hfQoWejCVMAD3keYtuihuuZJt115OaOCsnUQyPZ+6upo3vLoP8/20Ce8d8mmWHiBEiCWzTB4Z/BT9wXganB50fsiK/fTO0S0=
+	t=1725401474; cv=fail; b=u8s4T//LLGnqjXEjie1njPMoZkTTrbTy+F/yon62mm12OzJ2Kc08Y8Qwrq6Ii7WuSQ89QB9UuKFHtFGW1BXigy83DUAFoNeqCsLb2q66yeXh5jMjGtUkgUgrUrZQO47dc+HZDq7oz7IHuYhotHZEJQPvP2QYa1PnCb5LdWhg1lg=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725401361; c=relaxed/simple;
-	bh=mBMh3Rgp4fx7V7biLGf+72oSM6HMTD3LqYU01szGe+8=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=phfLZlI4wW+mxEUT9L5irf2o1Z7nVNdneU58ep72vEgenaWAtqOaJM7wJk3O/WZ/ZxI3Fpg0QREYR1Xh9krK+nBIHOSkitG+e18qDEfDOfUEUoVFUv0oMC425v8zeBN6cI/xHWHhQHDiDdZ1Jo8jdvthF686SRxaNfmxQW7z9g8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ixcf00Dk; arc=fail smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725401360; x=1756937360;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=mBMh3Rgp4fx7V7biLGf+72oSM6HMTD3LqYU01szGe+8=;
-  b=ixcf00DkXBU8cDyFfKULYModxbIa+rmKX3jYAgDrmtycLTrbxsVISY5w
-   W+yQgKPh1k4rXMzl9+hxmiOdX1fcBPgarjtkyS5tuug5CAURJfzOm9fP4
-   fKKevEjMcX7j4eGNaJvPlaUH/nSRsZuAlWnTgs5dFZUK2aD2k7027Zs2f
-   2XIiGomyeIsyEcq1dpKjbavPQeg8BYse7hHIdyq0uKRKMr1CESfrChWd/
-   pyeWcyE6dp9CDyidL3k2hf5J1Jw2mHkupoIVkUm6ZoVjFzTRAIaXVzRkE
-   y17CxCGY8ynQQYiHPJkzzBcpRISHLYXXFHH9iLSZYYPUWzE/OTxjQx2am
-   g==;
-X-CSE-ConnectionGUID: ysGR9ns0SaSCsE0y2ISmCg==
-X-CSE-MsgGUID: /UJxpCSHQGeljQbSrN530w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11184"; a="35186541"
-X-IronPort-AV: E=Sophos;i="6.10,199,1719903600"; 
-   d="scan'208";a="35186541"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2024 15:09:18 -0700
-X-CSE-ConnectionGUID: NJ3KviFjR3ih/VZHbYC7ww==
-X-CSE-MsgGUID: o8q5JL1zShCS3fu6ExREBg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,199,1719903600"; 
-   d="scan'208";a="65561781"
-Received: from fmsmsx602.amr.corp.intel.com ([10.18.126.82])
-  by orviesa007.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 03 Sep 2024 15:09:18 -0700
-Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
- fmsmsx602.amr.corp.intel.com (10.18.126.82) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Tue, 3 Sep 2024 15:09:17 -0700
-Received: from FMSEDG603.ED.cps.intel.com (10.1.192.133) by
- fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Tue, 3 Sep 2024 15:09:17 -0700
-Received: from NAM02-BN1-obe.outbound.protection.outlook.com (104.47.51.46) by
- edgegateway.intel.com (192.55.55.68) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Tue, 3 Sep 2024 15:09:17 -0700
+	s=arc-20240116; t=1725401474; c=relaxed/simple;
+	bh=VRMyYiFADntRaYWKa8srLMLo4ImNH1x1utvG5R4gPlM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=l/VXWKjH32SVKy36onLNNepwDfUFV83++bYA/hX+aL/9z5Pe4WExYt63qUpTSDQ99hhCRZYsbANMEhWVKKODTbnoyPmoRwTZv0g0ARwO7cKJHd5NpDpQMTM14dKa03jV1Y9zWAfw5c8dWE0ljS3F5q8FGa2ew08Il5WHExFkzlg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=Oy83z9Hs; arc=fail smtp.client-ip=52.103.32.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=rhelXSuN16U/8gJuCBq7xtRsJFBcpY/6U4+1uwbnKB0y098tIu/hdbCh+4btSkisP9Pw0LU37mnk9ij/vf2GeA/ms8W7K8eQNlVMJq1sWZSnFHGjZhxyG+cxeeEhCcamdiUtctCZr83+Po0k87Vc6L3UysWHTkp0yLOgPAgF4buFCEK7lBQtLregNjCSwAqXPGrcjLOp2iX9mgYkuQ8tLbWULMH0fIBj8L/4tNBccXOrnzw9YI4hsPdIUR8hyxV9qd14Our84FcE7AwMxdRQcM0bONVrzISqx59xHtw6psJ3SduTcx6YI1MxxSwvlUtXEbhvZhlTlFrSu5hHm59Sqw==
+ b=rBYN9x/nR+byNJkRZKy7NekzX/HwjJ7IsJ2NjaZOqambGpTpnUrjRODDdymtKPgY2qQRzPLF9NxZi9IwCwOw6z9lZQ5tXQUqWzeAN94czY/xMIAv5JPm19x9B80TNwMJbV7dT/Fbcfr37i0ISnNUDBPxbxLU113m3w15PlUcWHQrNVAttSZoScprjkOeCbyt1kpaXk7KZgQJooGy9Ybq3EtwzVeaQ3HR+GYnGK7y9kugyVXfcjkhJG5ZIdyYUu362Cjwun5F7PrFrLd3qoMfnAmLEz1YWmFPmF3ReqEa7VjrJq+o7QRrCzgs3XDGXFAtmiEcw7cXfWlNGpfC6+Bplw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=hNdy+ynbXbsNEiyXM33h4aGPSZLCDxmHucMdlYmxqsY=;
- b=Aag22CuYYwsf41bS5Rv2zckMJpWWDLLJXAXRwfXizAteUXf2MKhQyUT3ucraS2UwF9x18/XL3eFV39u+0atMr0vXhRlpgK6pIUCokzSukQvOP9pvJtU6Vh1fkbUCPsG7ciXxvj+1wWmX5NetiRzMhgiOdvrgKtaCACO4sjpcBZY3RNW+pAJMhbV6zFdKUP1+l/Eq2DfsYwebsG+iK27OQ3j3sD0Uc2ToxJ/oTNSC5wGK0OzHg1e2hA/ezexP1Xsi7i2Zr37c7xOU3ncYuKOPOiDyF/YSbTRpXrAercpNOoo/YaJJWg0mx9NYNgC+jrOWJHGPwXQgAnTegGHtvwGPSg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from SJ1PR11MB6083.namprd11.prod.outlook.com (2603:10b6:a03:48a::9)
- by MN0PR11MB5962.namprd11.prod.outlook.com (2603:10b6:208:371::18) with
+ bh=ItkT1Oe88otzRYEIKE04ZEPRro7q4zW7CYtVfDyCBIo=;
+ b=hmtOa1+/UuvnkTMRRH2mL9/4ikAVJgN4R8HVQ56smpJcEMcmvO54PdC9teWigxb+Jy6n8EvCXDZekDdj8z9qZrmEEKKHaN0tu0VaaQvQZR2YhDaR0K8K4dxXUG5IoUeqd2hYsJ9P3AhHwZmpOptRQoMD5Smgo+ZGIbKKDl/C3dwhRBCThBlIgScW6sMyHg4jIqA4Ui4LwltwnZ6VZzvqFx+TNZeM2Ljjd+cSRFZXPpTkt7ZKYY++Jow3LhYNMhXeraDjI3Ca1B2Rbf7B2JR1SUzUy4GXo1Y7a3bcUvrflylTJpP7xax9sJ9GALsOGH22jflnqJHQRJhSfaA+bkEvog==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ItkT1Oe88otzRYEIKE04ZEPRro7q4zW7CYtVfDyCBIo=;
+ b=Oy83z9HsUyEfOCswvKwMlGseZTFXesq/oGbNEE7dl/qTJp41TEOdCxEwcDF9Prwb6/8akIBHGFUlUciAH0igasapmmGW2q8jWoOt8wqaRxBMN/38rOpZTIWkEhmR34wYREyUKykT+EyrtzKjVePlU2GxcsfGJhCvfi+2Xrjm3u2bmftMY/IbKYIs6yshqzWFGPOR4BtrGQgnixu+2wHIR+DY4Lpe9bNpIGrUmLpySfXZ21x6zk5LXSb8NbxCpya63i6/hss8+36egnfCgb6L75ES4bRYnSLOFp6lGtnDJtJJv9lbmqV/cfRN3B4YLKfFKwNYvXJmcuEmV7xstZb8LQ==
+Received: from AM6PR03MB5848.eurprd03.prod.outlook.com (2603:10a6:20b:e4::10)
+ by VI1PR03MB6335.eurprd03.prod.outlook.com (2603:10a6:800:140::14) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.25; Tue, 3 Sep
- 2024 22:09:15 +0000
-Received: from SJ1PR11MB6083.namprd11.prod.outlook.com
- ([fe80::acfd:b7e:b73b:9361]) by SJ1PR11MB6083.namprd11.prod.outlook.com
- ([fe80::acfd:b7e:b73b:9361%4]) with mapi id 15.20.7918.024; Tue, 3 Sep 2024
- 22:09:14 +0000
-From: "Luck, Tony" <tony.luck@intel.com>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Mauro Carvalho Chehab
-	<mchehab+samsung@kernel.org>, Borislav Petkov <bp@alien8.de>
-CC: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "Linux Next
- Mailing List" <linux-next@vger.kernel.org>
-Subject: RE: linux-next: Signed-off-by missing for commit in the edac tree
-Thread-Topic: linux-next: Signed-off-by missing for commit in the edac tree
-Thread-Index: AQHa/kz76YZ4Hy0EK0GXXgRXdBr65rJGnu5g
-Date: Tue, 3 Sep 2024 22:09:14 +0000
-Message-ID: <SJ1PR11MB60833DD539A2191E72F1202BFC932@SJ1PR11MB6083.namprd11.prod.outlook.com>
-References: <20240904080201.407ada9b@canb.auug.org.au>
-In-Reply-To: <20240904080201.407ada9b@canb.auug.org.au>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SJ1PR11MB6083:EE_|MN0PR11MB5962:EE_
-x-ms-office365-filtering-correlation-id: acaa8433-8c59-4d2d-2228-08dccc650c10
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|376014|1800799024|366016|38070700018;
-x-microsoft-antispam-message-info: =?us-ascii?Q?NZuvMwyo81BtbYcQ/1HPi8TbapWAb5bNuT3Igecy58lp+xu4+dlu9QC8svv0?=
- =?us-ascii?Q?VYEBzqH4Zkf3xdPCagOkRUE0v+VT/YpExiMy6jkO1LR9I/kpEZW91HEDFB2I?=
- =?us-ascii?Q?jkLmLEnwGF1GCNzVJfch2Lq6OepP8na85Mhy2LWuBUcxuYQJQD3DN8o7o2qv?=
- =?us-ascii?Q?qBst/kP/h1MwWWgmHUVDXpObrwoG8D4h812qFBzIUkcaBe5ezjcQqiYFpz7R?=
- =?us-ascii?Q?0Qn2SWmIgB+KDyI70FHwPzO/daGakOv8Php1sDXyhMOTxkVqaMBO1tOz8LvK?=
- =?us-ascii?Q?G/qfDpGX4qoP78/feaCvHmOaS6Z86gsrtldocYn1PLVb9PgSA397N73ur/sy?=
- =?us-ascii?Q?QjCBrmnUMOq1oxBDGaykuPQxipXjeBNGIFNt9vYnjEpMihA6k+C69EKa7KBU?=
- =?us-ascii?Q?3cX6sD42AJUSkD73x32hljDihPmgBRnvmoGsKNKIlXp6Fo+Gp5hq7IWm7Dha?=
- =?us-ascii?Q?P80Muqk44lkrxZ5mxp2ZBadoKw6jAQq/aoJCfjXICARXkdkU41NS3diilBvJ?=
- =?us-ascii?Q?DOXDYBlLSL4lRaJkxvLdsyMyQ8kogB2OR0H7kAJuC3v2Whkxw+u54NPUpVve?=
- =?us-ascii?Q?yaOGzy90tg1aYKZ6g1BZZ5bVkpTCpuvy7bcGKyZ1Zto8KsGSO7+r/luu9xTP?=
- =?us-ascii?Q?l9tvTC39y9QpgmSRrw/jvXylAgGVI3r1Emg4D+iIO/8PIAEqGAoVkilv7vY9?=
- =?us-ascii?Q?YsNIu4qosScNopu/0E9kL/1Z+yZRW+6R6zirkH2W7cagKYmprAK0tVeZE7hN?=
- =?us-ascii?Q?Gf6UyNTBuwDdTEz6JwBsZ6PZqloyahx6JdJq1b7oebfAQEZP2Yk/i0ICw8y6?=
- =?us-ascii?Q?QYNZI1sXP/D+jC/BOg51lQViClTAhiJDWJb7ASwYtGilg+z1DTrl4tcw49CT?=
- =?us-ascii?Q?xaUdxyEBifCH1bJUTY9a+A7Ra+gFZdfQhpuX5D/kFXxH/VJgjaCK13E+qDtF?=
- =?us-ascii?Q?W68QgsTiyzU08VboUcMo0y4vxCm8wLTpHydfcafBQi/8AtQNMEjOuorkwdZv?=
- =?us-ascii?Q?2xJjR0pQ+iYnsN0NeSqP/HjmZEBU+TK6m1Z+ft0jnGndYcr0nOKMrLz5/ff3?=
- =?us-ascii?Q?fNY7y0hsEEmDsD+L0Ynv4Buw1pQ5AymoUSmZnuyxYDJai38R83sSN3K8KoXP?=
- =?us-ascii?Q?yFE2e0g7o5WXqJg7Lhztvv6gUJrY4bQQAv3eluL1+4ibwS2PIrWfpopVQoox?=
- =?us-ascii?Q?g5VIzMQlixyjW5DzTcz0rcaxs9q/SZkrKaTXVnxjc5kNuAsvQVUAL/nIHesC?=
- =?us-ascii?Q?yvMqtZT1cZLerzOD4Y+UZUY6+aTxRfwX1TE3lBN7/DypMQTSVDeWQQBFsx1n?=
- =?us-ascii?Q?QJ9UoPxJqyg4szhgb/6upgGMzKKdD5Jk5x1zt/TV+7S3KzxfrffCMBfSABxq?=
- =?us-ascii?Q?adjuOX7urA5H6z/Lt745WCultvfgZ9zmW3/wubzBdviwx7gVxg=3D=3D?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ1PR11MB6083.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?RgOhlAObPmZpWCXfN4Y2/NkH3YxsVi3wUZyU2ABTMveHvzZ9v0VlHCq+ggRe?=
- =?us-ascii?Q?UPp7JH8wc6OXQRFdWUDchEeHICOdMZx37D9Nk2SHzt8No1gp4mX04fJ72RVP?=
- =?us-ascii?Q?I6OhFUKNSeM191Tw1VVExOCEtV7oGpGdzcBKcRVWMiDkYUsEyjSrlKphzMMN?=
- =?us-ascii?Q?YCuE15CuE2kYDZFhybLZ7mxwmWiSXheRczy9NeYr6ReT9UECyjqzB0N8kPbc?=
- =?us-ascii?Q?8G0/X3tc/o3B3aAYglWinJsmteuEBhEY6rs4IsIjouHZUorenT5JXhs1ST7+?=
- =?us-ascii?Q?NNNvmmQF2zz0RjDH0GeKMPzoztpIsdDGwLxSj5uYgENpbnDsyAOhvBKmr5oo?=
- =?us-ascii?Q?A3XPAAMkmu/tdFTxQkXqj65R2hUEdA2NtJh5TPqmdOdvLVp2DvFnPWkDqfov?=
- =?us-ascii?Q?9z4fh+gBu9sKixYmGo4nJQR7jNittr1gkcUKYkQGjfEpWdKD96Gxze+zLuh0?=
- =?us-ascii?Q?BA1ibHsXKXXdJUd+WJUapMsKm24mSbj+t7gQn0TMNvf/lvaj3Z0o+oy8wYkf?=
- =?us-ascii?Q?HI8ziZJ4VtG88f8SXm9bjYrpEls1BZqxC/HrhDCM+Zuyqbxk7tGTGbbdnjM/?=
- =?us-ascii?Q?O40r7K/55ZDsUpmAkcTjGYbrL7nV0oouyu7cf21pj+Yu2YCcOCK+NK8DOiVt?=
- =?us-ascii?Q?blAxypd4XRBRXSrM/BFOduGkxiBvxHYDd+GGtoJJemAyy6zTVzuivgSvxIEN?=
- =?us-ascii?Q?sKaIyo+vQqn3ddOZCGwy7yhmATJ4NPEQrxKQCkRT5ermRuRg/21nnNEqRP8E?=
- =?us-ascii?Q?/Loopgr1xhPyYg1RzfPb0vHntYxwQcUrMfHWwbNUVrUJ397Kqt+mqHh81yW5?=
- =?us-ascii?Q?YaamYMqiZheFlNei9tAwPlyeL1XdUrkI7ntBJOIv5yOJiEhxfESmWIZS6m5b?=
- =?us-ascii?Q?RRWfjcL7vX1uTyCh5GJDVeH271Evqr3SqrfaR8f67LGV9zYLuiJhqdHIpUqy?=
- =?us-ascii?Q?nDcrP8uX7O4zOQIJZTRr8kCFbYBRjn9mH1aVTeVTuEUeDXCPAD/Immm1TeQe?=
- =?us-ascii?Q?yZGe7HOsXtrnxCqM8YKBsnfHv7JqsP0vYjfsisgbMRfvzAgAjzH4Kj9RQnfj?=
- =?us-ascii?Q?qgzdNO5yn1EBuLZLMIu2rQND713wM6T6n+8MPwrHlvyRwskynn7r682VDahH?=
- =?us-ascii?Q?sNmhx9g2v9XTNm+M+dQxLi2ZSaExxWW0LAlsq3i9NdQY6G3OfxzCkb1GA2fz?=
- =?us-ascii?Q?WdZMp8EkLdNISS+PNUm1ztVXecaODXPK8rTdNz7dOZUnrk+k7ffll7+UqWwx?=
- =?us-ascii?Q?ggXVGjDmfEqbGvA/lH8QkD9Fwr+xjBMYrHe3xVpm3QcsLMd8vibPKG78LFDV?=
- =?us-ascii?Q?GyIhipm1o3QFkLeVExj4W+SuvDw7Yzk6pJ69p4E/lMiPgGvVjPk7ZPqasdZQ?=
- =?us-ascii?Q?4WHzC006QdJz3DzpmlVRby+Y3WJqaxv+Zsk5zdw6gOxh41YMcO7pE8AqBByp?=
- =?us-ascii?Q?RA49qmQI38IjXTb6zeVGJb+saecP7X97Xh7YEl5Kbua4cf17FPutKcpt4nx6?=
- =?us-ascii?Q?D/V/6y3Oxe4kZ2LYCf2N3oD6+/hOFmXnS5hXgVeGLZJgW4KyyTaaMfm9BNga?=
- =?us-ascii?Q?G6AW4xnotaR/L+/ANL1CLfZm2AmlAR2pT3x57SwA?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.27; Tue, 3 Sep
+ 2024 22:11:04 +0000
+Received: from AM6PR03MB5848.eurprd03.prod.outlook.com
+ ([fe80::4b97:bbdb:e0ac:6f7]) by AM6PR03MB5848.eurprd03.prod.outlook.com
+ ([fe80::4b97:bbdb:e0ac:6f7%5]) with mapi id 15.20.7918.024; Tue, 3 Sep 2024
+ 22:11:04 +0000
+From: Juntong Deng <juntong.deng@outlook.com>
+To: ast@kernel.org,
+	daniel@iogearbox.net,
+	john.fastabend@gmail.com,
+	andrii@kernel.org,
+	martin.lau@linux.dev,
+	eddyz87@gmail.com,
+	song@kernel.org,
+	yonghong.song@linux.dev,
+	kpsingh@kernel.org,
+	sdf@fomichev.me,
+	haoluo@google.com,
+	jolsa@kernel.org,
+	memxor@gmail.com,
+	snorcht@gmail.com
+Cc: bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [RFC PATCH bpf-next 2/2] selftests/bpf: Add tests for open-coded style bpf dynamic pointer iterator
+Date: Tue,  3 Sep 2024 23:09:49 +0100
+Message-ID:
+ <AM6PR03MB58485BE1C0964BFD3C3657D899932@AM6PR03MB5848.eurprd03.prod.outlook.com>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <AM6PR03MB5848C2304B17658423B4B81D99932@AM6PR03MB5848.eurprd03.prod.outlook.com>
+References: <AM6PR03MB5848C2304B17658423B4B81D99932@AM6PR03MB5848.eurprd03.prod.outlook.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-TMN: [trO/xc8yGqM2LWABVX792NIo30jo1n3y]
+X-ClientProxiedBy: LO2P265CA0498.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:13a::23) To AM6PR03MB5848.eurprd03.prod.outlook.com
+ (2603:10a6:20b:e4::10)
+X-Microsoft-Original-Message-ID:
+ <20240903220949.82946-1-juntong.deng@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AM6PR03MB5848:EE_|VI1PR03MB6335:EE_
+X-MS-Office365-Filtering-Correlation-Id: 2e7ff9e1-d6b5-4357-cfff-08dccc654d23
+X-Microsoft-Antispam:
+	BCL:0;ARA:14566002|461199028|8060799006|15080799006|5072599009|19110799003|440099028|3412199025;
+X-Microsoft-Antispam-Message-Info:
+	L9jSLmbIMOvCKFVyCrmQ8iaiTj3fulaBVSmZWx9+xVu2uKV9CY37WlQVLLhcNhVmGM15Q+KBWvLHneby2lGhyVRd7aEshheaUGmTfiiTsQ++jK4ORPoRkwwmoryE6rfUur+a3jrmALNYmxCLoIDc7tIIl+hIrTG9jq1+R5/AM6SP0KeGhwAJQ+0lvS41jOtQMQHzpXh731ZhS2fAHIuJ+5A3QV5+9wbAgnv1kN5NPW1fbLw+ssM85qGZ+ozBQQzlmB2qI01rrXrqXahXGtL5pN1oqFJ0khGBgE0rmdPISzGP/+gVcLy56F6mAxtaDdVc5Ks2T3T03wK9YScu9grsP38AnHEnZF2UBAq88IrY5xLNLt+Z4iStGcUyNpLQ4Y4lRtfdqOP+gStl+Ve00/p0KJbU5s1M3ck/IycxFIeHluwD4toOm7WbQns1SGkZWpYj32RHN0a5Zu4jPwpwTTImasSKl42Bz5+LVfVgjEMOKKHZUO1D9WH6AuK0hQXTcG5snxEavSF4ecjeSL3rghJRHOe7snGDSqAOvnqkDQGIbJwR3b8IB0PO90oC3SVFOcFd2gmc6+G2Dcb1KYw8T1EORig0IViY7re0PhkgeVl0/vACoTBa0deNDa5LvqVG2J0SCV4wb/hEJPpkbNuMuA/0QLOYuzmtu+nt5jG3XsV/Pz8LzVipae+60yw4KtatEYmQ30iDmTe8oyDPmzjY8Ie1JA==
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?j/8f3lkBz+sHtFCcE+zKabo3OwHaahx08/cekcVCAH6s2f4UAs4JsxMSwHcU?=
+ =?us-ascii?Q?MFCXnaOfOtQ9YnHUQoI+B/8cTlKdQvrITmDpfpDfrslVKs4+nTMRJOQV5dVL?=
+ =?us-ascii?Q?E3Noi8XTGouZZUy2vShT3T6UO5eNhfudrx0AtmPFIdB1Tqbxlw6S7Z+ZPXvB?=
+ =?us-ascii?Q?NnbY+huR3g9Sfj/Le0hsN2lRppqns1Ryg33nqUDEGpkBQiC3E1eZZTVkcJsn?=
+ =?us-ascii?Q?eLIif/E/v4rTblE6vcFL2zVw1SbVG4g3QFNHr5y0Noji9vTl1UDsa/D8Pki1?=
+ =?us-ascii?Q?EphIgKsPwb0CIBJzU3Puta3TTt/Qmj9H41719FX/fkHxdvKv+5np6VGYg2+i?=
+ =?us-ascii?Q?akq7lwQkc6UDVLzazrIkAjhJVwb75elRezmvQgytsi5DKQB6GW/zfr84cGhV?=
+ =?us-ascii?Q?ptqFZktQraFJtMalkP/XPZJrMHjWmoq/+71y3YdvHf6gzfecP/mgOLahHD4i?=
+ =?us-ascii?Q?vk6kt3E2zWiqx5W5jRk7VVaw0nhOgUtZGSif5W6RbbJxrPrBrzQQxk4fgkAI?=
+ =?us-ascii?Q?nk236ojmFh0rGjfbYlXwnpmegKo36p1ujBju4a1OpYJcIwhoHAXs2UJdeXfc?=
+ =?us-ascii?Q?Zgr4eCJOhzKq1t7h5PtB+kpelT7yjyhoCm9pYjkkGjFKvZlQavAtPu58dybK?=
+ =?us-ascii?Q?XBN/vLrn6zDpvhWa/VN0l2p2XLib20Gj3Z+ETjVu6bLN5kYdC8+xSXpmks45?=
+ =?us-ascii?Q?lDIlbQRnz0Z4x6bCfK7aFqBBwu32BykOV2uW1TcHGEAlt4xQwDR6JK09GBqm?=
+ =?us-ascii?Q?Lw6acR1TVl8NabSROT7mfkkCK++BN838OE/bg9asyBS8bf1aNoi1iB3uYnRp?=
+ =?us-ascii?Q?lEH5duOL5kMRex1/zhrvZqbuMzSBYHAz2mD/NsFA0A8g/8dmTUKsh45W18cM?=
+ =?us-ascii?Q?foMkxcEWRbzaTupW+AO5gdBBS8wuUGCekhr15shqf6LTLW0Gdb/0M01gMr9R?=
+ =?us-ascii?Q?NBOljvvEzPNsTr2Z5zqJa/7aFoZ02VnOG872nb+BfGDOYIDpLVQ91xIrGPpv?=
+ =?us-ascii?Q?Vhvb1hVAkkIGPdZ+/k1H3XCm+Qlgwr55DMi4J5tHTNc3mft4YayXmMrsHTTE?=
+ =?us-ascii?Q?CrQTazFCgMJmrSp4iJu0VHWaom3fp/YwIZh8ldx9GzAcVQTYjwVjpmJ3U3Xf?=
+ =?us-ascii?Q?GiIB7r27asMBRY2vtc+LFpQgj1mixhmNJtHk6cSrfqh9QoQrYAm/TFvl7QcM?=
+ =?us-ascii?Q?FTDurU74XbGErSQGRlOKvhWT8nQZqS7qhkg1oolH4zV0S+pAtafdd22KZRXd?=
+ =?us-ascii?Q?/AZVUBn8VwkEsUyB65nz?=
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2e7ff9e1-d6b5-4357-cfff-08dccc654d23
+X-MS-Exchange-CrossTenant-AuthSource: AM6PR03MB5848.eurprd03.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SJ1PR11MB6083.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: acaa8433-8c59-4d2d-2228-08dccc650c10
-X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Sep 2024 22:09:14.5625
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Sep 2024 22:11:04.0069
  (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: JyiOfekSv0Ds2wbxbePQr0IP8DC55wtROGhsqwr+v+xlHuEnjp68TY/p1OiYgOp/ZA2+8Z15VVbp8QoBPcPcSQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR11MB5962
-X-OriginatorOrg: intel.com
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
+	00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR03MB6335
 
-> Commit
->
->  b4765ca18f95 ("EDAC/sb_edac: Fix the compile warning of large frame size=
-")
->
-> is missing a Signed-off-by from its committer.
+This patch adds test cases for open-coded style bpf dynamic pointer
+iterator.
 
-Thanks. I'll fix it and push -f an update.
+bpf_iter_dynptr_buffer_fit is used to test the case where the buffer
+will be filled in every iteration.
 
--Tony
+bpf_iter_dynptr_buffer_remain is used to test the case where the buffer
+will be remaining in the last iteration.
+
+Both of the above test cases check that the offset, read data length,
+and read data content are all correct in each iteration, and that the
+iteration loop ends correctly.
+
+In addition, this patch adds test cases for failures caused by dynptr
+uninitialized, iterator uninitialized and buffer is NULL.
+
+Signed-off-by: Juntong Deng <juntong.deng@outlook.com>
+---
+ .../testing/selftests/bpf/bpf_experimental.h  |   9 ++
+ .../testing/selftests/bpf/prog_tests/iters.c  |  50 +++++++
+ .../selftests/bpf/progs/iters_dynptr.c        | 140 ++++++++++++++++++
+ .../bpf/progs/iters_dynptr_failure.c          | 108 ++++++++++++++
+ 4 files changed, 307 insertions(+)
+ create mode 100644 tools/testing/selftests/bpf/progs/iters_dynptr.c
+ create mode 100644 tools/testing/selftests/bpf/progs/iters_dynptr_failure.c
+
+diff --git a/tools/testing/selftests/bpf/bpf_experimental.h b/tools/testing/selftests/bpf/bpf_experimental.h
+index b0668f29f7b3..acbc6a1916bd 100644
+--- a/tools/testing/selftests/bpf/bpf_experimental.h
++++ b/tools/testing/selftests/bpf/bpf_experimental.h
+@@ -575,6 +575,15 @@ extern int bpf_iter_css_new(struct bpf_iter_css *it,
+ extern struct cgroup_subsys_state *bpf_iter_css_next(struct bpf_iter_css *it) __weak __ksym;
+ extern void bpf_iter_css_destroy(struct bpf_iter_css *it) __weak __ksym;
+ 
++struct bpf_iter_dynptr;
++extern int bpf_iter_dynptr_new(struct bpf_iter_dynptr *it, struct bpf_dynptr *p,
++			       u32 offset, void *buffer, u32 buffer__szk) __ksym;
++extern int *bpf_iter_dynptr_next(struct bpf_iter_dynptr *it) __ksym;
++extern int bpf_iter_dynptr_set_buffer(struct bpf_iter_dynptr *it__iter,
++				      void *buffer, u32 buffer__szk) __ksym;
++extern u32 bpf_iter_dynptr_get_last_offset(struct bpf_iter_dynptr *it__iter) __ksym;
++extern void bpf_iter_dynptr_destroy(struct bpf_iter_dynptr *it) __ksym;
++
+ extern int bpf_wq_init(struct bpf_wq *wq, void *p__map, unsigned int flags) __weak __ksym;
+ extern int bpf_wq_start(struct bpf_wq *wq, unsigned int flags) __weak __ksym;
+ extern int bpf_wq_set_callback_impl(struct bpf_wq *wq,
+diff --git a/tools/testing/selftests/bpf/prog_tests/iters.c b/tools/testing/selftests/bpf/prog_tests/iters.c
+index 89ff23c4a8bc..7c17ef8eea70 100644
+--- a/tools/testing/selftests/bpf/prog_tests/iters.c
++++ b/tools/testing/selftests/bpf/prog_tests/iters.c
+@@ -21,6 +21,8 @@
+ #include "iters_css_task.skel.h"
+ #include "iters_css.skel.h"
+ #include "iters_task_failure.skel.h"
++#include "iters_dynptr.skel.h"
++#include "iters_dynptr_failure.skel.h"
+ 
+ static void subtest_num_iters(void)
+ {
+@@ -291,6 +293,50 @@ static void subtest_css_iters(void)
+ 	iters_css__destroy(skel);
+ }
+ 
++static int subtest_dynptr_iters(struct iters_dynptr *skel, const char *prog_name)
++{
++	struct bpf_program *prog;
++	int prog_fd;
++
++	prog = bpf_object__find_program_by_name(skel->obj, prog_name);
++	if (!ASSERT_OK_PTR(prog, "bpf_object__find_program_by_name"))
++		return -1;
++
++	prog_fd = bpf_program__fd(prog);
++	if (!ASSERT_GT(prog_fd, 0, "bpf_program__fd"))
++		return -1;
++
++	if (test__start_subtest(prog_name)) {
++		bpf_prog_test_run_opts(prog_fd, NULL);
++		ASSERT_EQ(skel->bss->iter_step_match, 0, "step_match");
++		ASSERT_EQ(skel->bss->iter_content_match, 0, "content_match");
++	}
++
++	return 0;
++}
++
++const char *dynptr_iter_tests[] = {
++	"bpf_iter_dynptr_buffer_fit",
++	"bpf_iter_dynptr_buffer_remain"
++};
++
++static void test_dynptr_iters(void)
++{
++	struct iters_dynptr *skel = NULL;
++	int i;
++
++	skel = iters_dynptr__open_and_load();
++	if (!ASSERT_OK_PTR(skel, "skel_open_and_load"))
++		return;
++
++	for (i = 0; i < ARRAY_SIZE(dynptr_iter_tests); i++) {
++		if (subtest_dynptr_iters(skel, dynptr_iter_tests[i]))
++			break;
++	}
++
++	iters_dynptr__destroy(skel);
++}
++
+ void test_iters(void)
+ {
+ 	RUN_TESTS(iters_state_safety);
+@@ -315,5 +361,9 @@ void test_iters(void)
+ 		subtest_css_task_iters();
+ 	if (test__start_subtest("css"))
+ 		subtest_css_iters();
++
++	test_dynptr_iters();
++
+ 	RUN_TESTS(iters_task_failure);
++	RUN_TESTS(iters_dynptr_failure);
+ }
+diff --git a/tools/testing/selftests/bpf/progs/iters_dynptr.c b/tools/testing/selftests/bpf/progs/iters_dynptr.c
+new file mode 100644
+index 000000000000..29a44b96f5fe
+--- /dev/null
++++ b/tools/testing/selftests/bpf/progs/iters_dynptr.c
+@@ -0,0 +1,140 @@
++// SPDX-License-Identifier: GPL-2.0
++
++#include "vmlinux.h"
++#include <errno.h>
++#include <bpf/bpf_helpers.h>
++#include <bpf/bpf_tracing.h>
++#include "bpf_misc.h"
++#include "bpf_experimental.h"
++
++char _license[] SEC("license") = "GPL";
++
++struct {
++	__uint(type, BPF_MAP_TYPE_RINGBUF);
++	__uint(max_entries, 4096);
++} ringbuf SEC(".maps");
++
++int iter_content_match = 0;
++int iter_step_match = 0;
++
++SEC("syscall")
++int bpf_iter_dynptr_buffer_fit(const void *ctx)
++{
++	struct bpf_iter_dynptr dynptr_it;
++	struct bpf_dynptr ptr;
++
++	char write_data[5] = {'a', 'b', 'c', 'd', 'e'};
++	char read_data1[2], read_data2[3];
++	int *read_len, offset;
++
++	bpf_ringbuf_reserve_dynptr(&ringbuf, sizeof(write_data), 0, &ptr);
++
++	bpf_dynptr_write(&ptr, 0, write_data, sizeof(write_data), 0);
++
++	bpf_iter_dynptr_new(&dynptr_it, &ptr, 0, read_data1, sizeof(read_data1));
++
++	read_len = bpf_iter_dynptr_next(&dynptr_it);
++	offset = bpf_iter_dynptr_get_last_offset(&dynptr_it);
++
++	if (read_len == NULL) {
++		iter_step_match = -1;
++		goto out;
++	}
++
++	if (*read_len != sizeof(read_data1)) {
++		iter_step_match = -1;
++		goto out;
++	}
++
++	if (offset != 0) {
++		iter_step_match = -1;
++		goto out;
++	}
++
++	if (read_data1[0] != write_data[0] || read_data1[1] != write_data[1]) {
++		iter_content_match = -1;
++		goto out;
++	}
++
++	bpf_iter_dynptr_set_buffer(&dynptr_it, read_data2, sizeof(read_data2));
++
++	read_len = bpf_iter_dynptr_next(&dynptr_it);
++	offset = bpf_iter_dynptr_get_last_offset(&dynptr_it);
++
++	if (read_len == NULL) {
++		iter_step_match = -1;
++		goto out;
++	}
++
++	if (*read_len != sizeof(read_data2)) {
++		iter_step_match = -1;
++		goto out;
++	}
++
++	if (offset != 2) {
++		iter_step_match = -1;
++		goto out;
++	}
++
++	if (read_data2[0] != write_data[2] || read_data2[1] != write_data[3] ||
++	   read_data2[2] != write_data[4]) {
++		iter_content_match = -1;
++		goto out;
++	}
++
++	read_len = bpf_iter_dynptr_next(&dynptr_it);
++	if (read_len != NULL)
++		iter_step_match = -1;
++out:
++	bpf_iter_dynptr_destroy(&dynptr_it);
++	bpf_ringbuf_discard_dynptr(&ptr, 0);
++	return 0;
++}
++
++SEC("syscall")
++int bpf_iter_dynptr_buffer_remain(const void *ctx)
++{
++	struct bpf_iter_dynptr dynptr_it;
++	struct bpf_dynptr ptr;
++
++	char write_data[1] = {'a'};
++	char read_data[2];
++	int *read_len, offset;
++
++	bpf_ringbuf_reserve_dynptr(&ringbuf, sizeof(write_data), 0, &ptr);
++
++	bpf_dynptr_write(&ptr, 0, write_data, sizeof(write_data), 0);
++
++	bpf_iter_dynptr_new(&dynptr_it, &ptr, 0, read_data, sizeof(read_data));
++
++	read_len = bpf_iter_dynptr_next(&dynptr_it);
++	offset = bpf_iter_dynptr_get_last_offset(&dynptr_it);
++
++	if (read_len == NULL) {
++		iter_step_match = -1;
++		goto out;
++	}
++
++	if (*read_len != 1) {
++		iter_step_match = -1;
++		goto out;
++	}
++
++	if (offset != 0) {
++		iter_step_match = -1;
++		goto out;
++	}
++
++	if (read_data[0] != write_data[0]) {
++		iter_content_match = -1;
++		goto out;
++	}
++
++	read_len = bpf_iter_dynptr_next(&dynptr_it);
++	if (read_len != NULL)
++		iter_step_match = -1;
++out:
++	bpf_iter_dynptr_destroy(&dynptr_it);
++	bpf_ringbuf_discard_dynptr(&ptr, 0);
++	return 0;
++}
+diff --git a/tools/testing/selftests/bpf/progs/iters_dynptr_failure.c b/tools/testing/selftests/bpf/progs/iters_dynptr_failure.c
+new file mode 100644
+index 000000000000..97bec2f39f62
+--- /dev/null
++++ b/tools/testing/selftests/bpf/progs/iters_dynptr_failure.c
+@@ -0,0 +1,108 @@
++// SPDX-License-Identifier: GPL-2.0
++
++#include "vmlinux.h"
++#include <errno.h>
++#include <bpf/bpf_helpers.h>
++#include <bpf/bpf_tracing.h>
++#include "bpf_misc.h"
++#include "bpf_experimental.h"
++
++char _license[] SEC("license") = "GPL";
++
++struct {
++	__uint(type, BPF_MAP_TYPE_RINGBUF);
++	__uint(max_entries, 4096);
++} ringbuf SEC(".maps");
++
++SEC("raw_tp/sys_enter")
++__failure __msg("Expected an initialized dynptr as arg #2")
++int bpf_iter_dynptr_new_uninit_dynptr(void *ctx)
++{
++	struct bpf_iter_dynptr dynptr_it;
++	struct bpf_dynptr ptr;
++	char read_data[5];
++
++	bpf_iter_dynptr_new(&dynptr_it, &ptr, 0, read_data, sizeof(read_data));
++
++	return 0;
++}
++
++SEC("raw_tp/sys_enter")
++__failure __msg("arg#3 arg#4 memory, len pair leads to invalid memory access")
++int bpf_iter_dynptr_new_null_buffer(void *ctx)
++{
++	struct bpf_iter_dynptr dynptr_it;
++	struct bpf_dynptr ptr;
++	char *read_data = NULL;
++
++	bpf_ringbuf_reserve_dynptr(&ringbuf, 10, 0, &ptr);
++
++	bpf_iter_dynptr_new(&dynptr_it, &ptr, 0, read_data, 10);
++
++	bpf_ringbuf_discard_dynptr(&ptr, 0);
++	return 0;
++}
++
++SEC("raw_tp/sys_enter")
++__failure __msg("expected an initialized iter_dynptr as arg #1")
++int bpf_iter_dynptr_next_uninit_iter(void *ctx)
++{
++	struct bpf_iter_dynptr dynptr_it;
++
++	bpf_iter_dynptr_next(&dynptr_it);
++
++	return 0;
++}
++
++SEC("raw_tp/sys_enter")
++__failure __msg("expected an initialized iter_dynptr as arg #1")
++int bpf_iter_dynptr_get_last_offset_uninit_iter(void *ctx)
++{
++	struct bpf_iter_dynptr dynptr_it;
++
++	bpf_iter_dynptr_get_last_offset(&dynptr_it);
++
++	return 0;
++}
++
++SEC("raw_tp/sys_enter")
++__failure __msg("expected an initialized iter_dynptr as arg #1")
++int bpf_iter_dynptr_set_buffer_uninit_iter(void *ctx)
++{
++	struct bpf_iter_dynptr dynptr_it;
++	char read_data[5];
++
++	bpf_iter_dynptr_set_buffer(&dynptr_it, read_data, sizeof(read_data));
++
++	return 0;
++}
++
++SEC("raw_tp/sys_enter")
++__failure __msg("arg#1 arg#2 memory, len pair leads to invalid memory access")
++int bpf_iter_dynptr_set_buffer_null_buffer(void *ctx)
++{
++	struct bpf_iter_dynptr dynptr_it;
++	struct bpf_dynptr ptr;
++	char *null_data = NULL;
++	char read_data[5];
++
++	bpf_ringbuf_reserve_dynptr(&ringbuf, 10, 0, &ptr);
++
++	bpf_iter_dynptr_new(&dynptr_it, &ptr, 0, read_data, sizeof(read_data));
++
++	bpf_iter_dynptr_set_buffer(&dynptr_it, null_data, 10);
++
++	bpf_ringbuf_discard_dynptr(&ptr, 0);
++	return 0;
++}
++
++SEC("raw_tp/sys_enter")
++__failure __msg("expected an initialized iter_dynptr as arg #1")
++int bpf_iter_dynptr_destroy_uninit_iter(void *ctx)
++{
++	struct bpf_iter_dynptr dynptr_it;
++
++	bpf_iter_dynptr_destroy(&dynptr_it);
++
++	return 0;
++}
+-- 
+2.39.2
+
 
