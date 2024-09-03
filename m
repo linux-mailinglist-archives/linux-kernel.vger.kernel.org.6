@@ -1,265 +1,339 @@
-Return-Path: <linux-kernel+bounces-312276-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312278-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46D3696945B
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 08:59:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A370196946A
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 09:01:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F377F2812EF
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 06:59:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5962928350A
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 07:01:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95144201244;
-	Tue,  3 Sep 2024 06:57:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A4EA1D6C72;
+	Tue,  3 Sep 2024 06:58:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="owYXqf/w"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b="GjwwOTob"
+Received: from TY3P286CU002.outbound.protection.outlook.com (mail-japaneastazon11010025.outbound.protection.outlook.com [52.101.229.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B48EB1DAC6B;
-	Tue,  3 Sep 2024 06:57:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725346640; cv=none; b=LE3zCFjqsDLWPT8ZEkeqfmX3YDsl0emu2MzEll6ZeodxZpDtXnnfqQWrHm7VMiJo4SHaGjVz3JXbGJyEofyJ41zRAA29xzeDrxRss3lPnkRHGaBRZ56tg53ei27gnicQgvZF6hRcKRmRvjRtqSxpcM6HdAOhMGH567jWx9rD3ew=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725346640; c=relaxed/simple;
-	bh=LUjMeTfQ9bZqzLTWIcK3xiA9fpPEh7p7Ch2XD8eiTYM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=hVgWPc/v9GJllmOHTh1waCOjWjBHKSJ6rxgAmMPwqMP6+cn7V8A/xRL+gpMUvSeAas7B2p+14mIT5IM+ltQpsR3wI2ywSrwWy/cjfjp8Y/fy7tx+VxLvXPrDoq8ITdPEBIk6IDWUZNb8hm+V8T+86UUVy4CB4oAp5jLDapEwFto=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=owYXqf/w; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 2FF36C4CEDB;
-	Tue,  3 Sep 2024 06:57:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725346640;
-	bh=LUjMeTfQ9bZqzLTWIcK3xiA9fpPEh7p7Ch2XD8eiTYM=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=owYXqf/wrqF66DL4ZBxIB0TF0pvM9hhhBd9pEWAhO3IGDay50Bp40HsnhnvfSkkOQ
-	 LKp+yAks3p5MNpqeTRhxF6mGoHaEbgETB+0fZZb4E3XVmSf44DQXW9KhpLzpV/o9h6
-	 NshzakigRxGsjSjRINMW1Kw9p5KFQZHijG3xNd9BJEhF6Zndgr8DGzc4NiLS9ok7wJ
-	 4EO5ApoOnJShsdBfAi+FQGQPOpb7Aj9BNxFsUsiKEtcWP3Z6AQrQbE4j6j+IfKQ/jX
-	 e4fEETlqmDBGb5cBDaRjtJp4yeVqocrJDDjk9BU15FLcf3D5MDpE5BE95sXft5XxL9
-	 82uVMBQDgmUig==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 285DCCD342C;
-	Tue,  3 Sep 2024 06:57:18 +0000 (UTC)
-From: Keke Li via B4 Relay <devnull+keke.li.amlogic.com@kernel.org>
-Date: Tue, 03 Sep 2024 14:57:13 +0800
-Subject: [PATCH 9/9] Documentation: media: add documentation file
- c3-isp.rst
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 606851D61B8;
+	Tue,  3 Sep 2024 06:58:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.229.25
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725346707; cv=fail; b=AfarLzAXTTR3gGaf0cJBD83BXWFl4NAB7A6OPH7rjWKxzIzeWyyCW9VD/LL3md5o+RMaxGqJqGQM0j21oJdm8pFOf+TF6UryTallPe1IHeTZyOg+H8KCm298eYvItzOxh/jAnGQ85teDvwxKhCuYbY0gYy8umi5zPKY+VjNGSis=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725346707; c=relaxed/simple;
+	bh=omje5I0/uemsv/t3dPXMFX7YHF59nNHxbsXYRgO2fAc=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=M//Yv89LXJRFA0Xh/ol9e1/ZICyeqFWPk4d0blql1GlXr/TX8kbfy3ldmHoXVO3OUuCTD4Ui29ArYZmjOUwsFtjamrT3kPq12OMI8H4+OuQsg9l2B54YgWmChK6aPDdBASDzVeuw9fm2+eRqmDpIJYMThKUzEiuwqVXIMSrI01c=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b=GjwwOTob; arc=fail smtp.client-ip=52.101.229.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=CH+Kb/GmNKY6pKmGIDng9x+ySfNrWdD9t6/P165+GEQP2jhCK+hCNWTGZ4VMF1k9Eh3vrGZ+AF/hcm151mLkNU8l/ZhXQxRSsSBx7Wl3RHspc+XlAE8UMmEJCHwMDJcjo+hBjeLMFjike3W0GnyfggBnB1eS1cWapP4yu5MlBAYY6J+IvFOHjQow2mc3ltm4/kdl4JexIoT7Nmin/PV8txy23VwJgVo68xArzo4ym6x3wuxbPcjaDB3jJLI3tlHTL39nF0X08NaxIdHjFNaNnDJayybkalQYcP17RyGFciOHcZ921edtnvLhYvmzZpNTL/ocLbvVhT5Ul6daIHsPhQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=NSz+bcrPCI9ycBf1DlZlA6+9c06Lx42YY1bzF323Jxc=;
+ b=W3L7d+a+f8FkQAuGkBpPvabSyRda1AASIoozwkqGB2M8gi1ym1OG5bpP4XrM2Bhv+JA86td7gNETlcNMiGwDyfV1cCEAEwfNzf8l3i9s1qdE3ePR5C827NqMp3sX/a/6MuLcmumPjhzAbekTDzY/MKJRsxgzoA6bI30+v0SGRN84RDfGUUyGmbCusHNp7CE+lMOrlk2HJKfu7+HHZBxaKHMwiF3vQyROVmS3NBHh/9VgTaqNOD8MLOceO92qZkzDzf9FgssgQKQnBujkrZ1+hU2QIkaoXyP1xl5LdkdPDx2vnykkyoFviSte2v3KQAZ+tU8ySyH8A5KdKc8/RRfbfw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
+ header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=NSz+bcrPCI9ycBf1DlZlA6+9c06Lx42YY1bzF323Jxc=;
+ b=GjwwOTobe1zZ4GnoxsMu14csFr4LBfU7QQ0bEzKGCIG6KxYWMnwKchexndDfISlcQc0Z4mfuLR9ZxZYOATwpTZynvvU14TL4+ytFisQfs5/pdUBbV+FgYwOQHutz170Z4lavPWI9If02AtDV4/hoee4wbxv/i5cjtR4tyMl3qes=
+Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com (2603:1096:400:3d0::7)
+ by OS9PR01MB13305.jpnprd01.prod.outlook.com (2603:1096:604:30b::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.25; Tue, 3 Sep
+ 2024 06:58:15 +0000
+Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com
+ ([fe80::86ef:ca98:234d:60e1]) by TY3PR01MB11346.jpnprd01.prod.outlook.com
+ ([fe80::86ef:ca98:234d:60e1%6]) with mapi id 15.20.7918.024; Tue, 3 Sep 2024
+ 06:58:15 +0000
+From: Biju Das <biju.das.jz@bp.renesas.com>
+To: Claudiu.Beznea <claudiu.beznea@tuxon.dev>, "geert+renesas@glider.be"
+	<geert+renesas@glider.be>, "mturquette@baylibre.com"
+	<mturquette@baylibre.com>, "sboyd@kernel.org" <sboyd@kernel.org>,
+	"robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
+	<krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
+	"alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
+	"magnus.damm@gmail.com" <magnus.damm@gmail.com>, "p.zabel@pengutronix.de"
+	<p.zabel@pengutronix.de>
+CC: Claudiu.Beznea <claudiu.beznea@tuxon.dev>,
+	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, Claudiu Beznea
+	<claudiu.beznea.uj@bp.renesas.com>
+Subject: RE: [PATCH v3 01/12] dt-bindings: clock: renesas,r9a08g045-vbattb:
+ Document VBATTB
+Thread-Topic: [PATCH v3 01/12] dt-bindings: clock: renesas,r9a08g045-vbattb:
+ Document VBATTB
+Thread-Index: AQHa+tztyXN6WBwX60SzraGfzO2XvrJFpXxQ
+Date: Tue, 3 Sep 2024 06:58:15 +0000
+Message-ID:
+ <TY3PR01MB11346D59E486D88611E8F254F86932@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+References: <20240830130218.3377060-1-claudiu.beznea.uj@bp.renesas.com>
+ <20240830130218.3377060-2-claudiu.beznea.uj@bp.renesas.com>
+In-Reply-To: <20240830130218.3377060-2-claudiu.beznea.uj@bp.renesas.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=bp.renesas.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: TY3PR01MB11346:EE_|OS9PR01MB13305:EE_
+x-ms-office365-filtering-correlation-id: 72e97183-5bbd-41f5-1489-08dccbe5c87f
+x-ld-processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|1800799024|376014|7416014|366016|921020|38070700018;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?8eoQyF/px/x2qGsqCQKbDHt3bwqrEhWpmXB/eSuDC7J4600bARpLIOltx7Nh?=
+ =?us-ascii?Q?5W08VhkbdBQYG7R/JdvKZt3vdY76MYI5EceJBz62C70nJNzK1gveSz7BkqLa?=
+ =?us-ascii?Q?IoK2oRvf2aJOPqLUE2ErK0lE0l7hofgo3hMVQUabo2cyyHcZ0MSZLKOO/VqJ?=
+ =?us-ascii?Q?gySOVsJfzBll0YSPArJy4U+A7WEDD2A2rnoHNjj88VD+u1o3KFiN9bLtA482?=
+ =?us-ascii?Q?op8TmHW8gC6a9Y4HXqEpLfkYp3ZvbBxMlE/pLcEdq3r101Ni/zwwDTtThxHC?=
+ =?us-ascii?Q?aOf18VHOzbaVl5ARfC8EqUYTcji6qJSxAIGaokp2VgZh/jeHJEZbORbp+Z43?=
+ =?us-ascii?Q?dSoOA43I7aZ811uCDJUzgcNahWagUTOKeR6ga3DV6YD13IkOZehRXgGyPgoJ?=
+ =?us-ascii?Q?5/xQbYRz+LM/5FpMYg/wDbTPN1UYCq56pL8BNRCsKk1E45Aw/HQnyoQpTi8f?=
+ =?us-ascii?Q?0uikiMYNjY5hxya/0eR2cAziOltAKaHxDxZlYELagCPnREB9HrSASmIQ2vva?=
+ =?us-ascii?Q?UQirXbne6Gkk7o/xBIaJ0/CYgxxgakzMvNy85uNXPpEFvvc7UrFueaoWbjiV?=
+ =?us-ascii?Q?RoX6B75ANuZLVSl8hZMLuYVZJqwOa7PZT+NRfbMlK0wRc+j4L3GmzgYjmDpg?=
+ =?us-ascii?Q?zufIWxFrMRhRAGkDd5ZnKQ7ijEuFJc/G93+dCJcbYe5AZ6fL8W1fNpUjvGss?=
+ =?us-ascii?Q?R90iVeKGfahh7cqwJhdk8W8IWhH4FmSx9QdYdFUZhx5NrEOTUbT7u59BSm03?=
+ =?us-ascii?Q?BL3Y3hrreTyDWl2lFlpe+N/qtt+7d0v+M77/A1Q8LzPvEQQTIvTg1lraUDSv?=
+ =?us-ascii?Q?rJUSteIRQ9rdn5ejbvaSMBFRg3AMzAX1lAoIYZ2pkDK/8+SPi0gT8xR42v3P?=
+ =?us-ascii?Q?asa25pn8+UP29nQyZbyrRLhSi0R+FHzh26a+RherxnwhrOaZ5RcIoWWTUdsI?=
+ =?us-ascii?Q?HqExh965Rz4hIer+2/n9EQDcZIZbgs9E2oOrtzmoO7Ob3DRgOTDHhcwtholU?=
+ =?us-ascii?Q?7g/OI0+FRy1mPIo7vzQ6PHb9FJE/14NOPo4pbYFMxCHwKmqHbdiXbFgLnjUr?=
+ =?us-ascii?Q?6DOYYlM62fE42KHYV3hIqFhMBSZE6etl+t4unWaTPJwDXGn1Cz01fe+OHw3s?=
+ =?us-ascii?Q?EKzDP7QVeocD3N1/lW6zeBAwhPLnYDkw7Ldf9l+8i+pbngth+px07JszAe6l?=
+ =?us-ascii?Q?Fe7oDPsG+b9zzQAwffbalWtdDEtjzcHhh03VWmvTYLtGVi1YNEW3OZtd1Q0K?=
+ =?us-ascii?Q?9YHtNKnDUR6pZ5ru8p1vvlmAA6glCMeulfH/jFcglR4x7GmmlpNuwCAzTdPq?=
+ =?us-ascii?Q?6Mo/vhRAOBeNVuAzGphbSslpBY3bFFsYnwRdcSQb1CyJrVjzur4+eJebwXwC?=
+ =?us-ascii?Q?X2M3IJfB1Hpl+ei2WIDTanSkob2k?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY3PR01MB11346.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016)(921020)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?8gi6i3k0dcLwdGTUqWwlpVZ8Y9IJlLYVzvPUDLquk//g+Tgki+TahMqhhR3i?=
+ =?us-ascii?Q?mrkQzQZkjAULGV0u2C5oISOoExvlrJDw8cYujBXYJ6Z4iFJ/fGSXKMxOcZbD?=
+ =?us-ascii?Q?3tS53TQevZd6TAE0ddCu73k59/4vF4I09zj2Yl61R/qtxA0g7BgbCyxMtEuZ?=
+ =?us-ascii?Q?zbhGOF9Gd/i2Rlw4lGVFgwSf73TYhHpYbVnA+1pyk3yJmDCtq20zSGAqp4F1?=
+ =?us-ascii?Q?uJKsHQGzrThTK0W6OKhdSbb/KE6lkC2b08U1ywo9u9V7440iZwsgtE4TGwxE?=
+ =?us-ascii?Q?RC/dbEYaLzsQrHpXkVPvsNDSfPdRni1QFFjwVHjI0vR4XwCDjkfPxFbKVsN5?=
+ =?us-ascii?Q?DaLVFP3neJGXxiFWqwkZRrcbLR4ijxGd583fWfXOH8E+P38nhdjQVjDuGF0v?=
+ =?us-ascii?Q?3Vhuik/2vhan9nZwmMCe/FOQ4sd+7ZYcjGOK5LXBMEfp04+nMObw5j4N3kr8?=
+ =?us-ascii?Q?T4EJGOfcN/n4E6QFW3sET4ymUvHrLciZgJDPlJWKeNzlgVHACg+bwePR5Ub+?=
+ =?us-ascii?Q?1ZSJyakYbnhC7f5dTsWdt+Ik+rxs7ua6eMrmMCGj+sBj4KCuAljSoivoFpLQ?=
+ =?us-ascii?Q?mjCJ5cLbwJjyUfR9U4g1pODlXbIbZja3l5QtC8OuWhWGNzZ25G8cTEROHhDo?=
+ =?us-ascii?Q?VRsbq9pHNWE3Dtt2H6Lq9+YYgse4P1A73YkMXu7ZP6ZN8sifA5wLEOhGbjFE?=
+ =?us-ascii?Q?UDjeC534+q3ILx3VieC4BOPjDBjl4DbCLSOfVvjgYDSH4ERtE85Kpd9rp17K?=
+ =?us-ascii?Q?bHxnZ9s37OLWl200o4mHNwyQ7ctmYrSX5Uxlpm81TzdWKHh1Y9WwFHyjmdQg?=
+ =?us-ascii?Q?kbkfVcmu5Nb9L4Dx5Q9AWIuJ9jYuncD0NZjJNJQU3gFuLIpCdOa70QYUIupn?=
+ =?us-ascii?Q?HGbnq7PE3AMpHKjeAVDWS073kMovIZgui0E8emBfqoa1MGsyRNvVg7QRyy7F?=
+ =?us-ascii?Q?MDO1flxUqvLu9Xqojynv4fOR4OPgm+bwOiAM9kiRsvWzxCwKZmH+bfa6W38j?=
+ =?us-ascii?Q?SWuklz6U8DZJSfMw8mRl+9PbiYZWB+r6bZCip8L9ilTlg+gKKWWIq9ctcPet?=
+ =?us-ascii?Q?qqmr6YHv3+uIlHPJGFuMAsUitmS9ffLy3eaLWb9RPnPn7qCJq2eZkXB7szZa?=
+ =?us-ascii?Q?NlKFWJfSzqT9+weHDkee1KsgWpakwBx8+nZf2eIo12dUjCfMS48rePSvLsqc?=
+ =?us-ascii?Q?7dXsdqAo8ExqsbjM5U1NST6TrB/dMUTQwsIYWdXtKmBY9SHg6jg9lCo1jsrC?=
+ =?us-ascii?Q?kqlxNVW/Ez8R2c2tZnLbJDj84jDBCkf7RLOVvkGCZ/voJmZ4euqbDJ1YKylO?=
+ =?us-ascii?Q?CkqQL9XxX7GFe5fikrqSC5NyxUa7Qz8X2ZDAhoMW+SfqWDTxgjthdp4c9qP6?=
+ =?us-ascii?Q?4xTiyyrq4dyU+eagRK6tOHvjbyF9XZ/kwTXo2XLu/nRZZF18aqJrBW+H6dFW?=
+ =?us-ascii?Q?ogfLcMfiq5+4zuIjXhQKMMt9fEimQ2TnyElW1JPBHiKDkNM3DiF0lSM1prEs?=
+ =?us-ascii?Q?cYjSTuRgDCG0n+wRC8bqnt9EYPRC0d3PwBZWI3Nt5cfEk1CsoGAyHvRE6G77?=
+ =?us-ascii?Q?bmszLLrgRiVbEyfgGXvcAw7AuIo6lLW33ZGYDAuXmWiAFJFEEue+zpOSj+2k?=
+ =?us-ascii?Q?RQ=3D=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240903-c3isp-v1-9-8af0edcc13c8@amlogic.com>
-References: <20240903-c3isp-v1-0-8af0edcc13c8@amlogic.com>
-In-Reply-To: <20240903-c3isp-v1-0-8af0edcc13c8@amlogic.com>
-To: Mauro Carvalho Chehab <mchehab@kernel.org>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-media@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, kieran.bingham@ideasonboard.com, 
- laurent.pinchart@ideasonboard.com, dan.scally@ideasonboard.com, 
- Keke Li <keke.li@amlogic.com>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1725346629; l=7370;
- i=keke.li@amlogic.com; s=20240902; h=from:subject:message-id;
- bh=60NWyVRAbjYroOKP/Zc6hNew0FkkUGrTfDQP+/4qhj0=;
- b=HKiOJcszM7lX98DQBdKWyFiG97/Su0UsYlIEXf0DrXIrVmslh+/8eapaMuw/ef6dnggGgcKYB
- YiXfqo8qN/1AVubiuWID/2+Lqw5TNIGX33InAm12s4OIlAY2UHlRtnV
-X-Developer-Key: i=keke.li@amlogic.com; a=ed25519;
- pk=XxNPTsQ0YqMJLLekV456eoKV5gbSlxnViB1k1DhfRmU=
-X-Endpoint-Received: by B4 Relay for keke.li@amlogic.com/20240902 with
- auth_id=204
-X-Original-From: Keke Li <keke.li@amlogic.com>
-Reply-To: keke.li@amlogic.com
+X-OriginatorOrg: bp.renesas.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: TY3PR01MB11346.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 72e97183-5bbd-41f5-1489-08dccbe5c87f
+X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Sep 2024 06:58:15.0992
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: Tm4IjhCT3zyRDlolfLwLl9jD00AbVb8l9TlCuU7VQgYp8lsgkAfijY+FJaXOHaBAwKBuNEKEC8C6vB7g4sKiFTclTgeYAxfBogb+gntyhto=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OS9PR01MB13305
 
-From: Keke Li <keke.li@amlogic.com>
+Hi Claudiu,
 
-Add the file 'c3-isp.rst' that documents the c3-isp driver.
+> -----Original Message-----
+> From: Claudiu <claudiu.beznea@tuxon.dev>
+> Sent: Friday, August 30, 2024 2:02 PM
+> Subject: [PATCH v3 01/12] dt-bindings: clock: renesas,r9a08g045-vbattb: D=
+ocument VBATTB
+>=20
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>=20
+> The VBATTB IP of the Renesas RZ/G3S SoC controls the clock for RTC, the t=
+amper detector and a small
+> general usage memory of 128B. Add documentation for it.
+>=20
+> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> ---
+>=20
+> Changes in v3:
+> - moved the file to clock dt bindings directory as it is the
+>   only functionality supported at the moment; the other functionalities
+>   (tamper detector, SRAM) are offered though register spreaded
+>   though the address space of the VBATTB IP and not actually
+>   individual devices; the other functionalities are not
+>   planned to be supported soon and if they will be I think they
+>   fit better on auxiliary bus than MFD
+> - dropped interrupt names as requested in the review process
+> - dropped the inner node for clock controller
+> - added #clock-cells
+> - added rtx clock
+> - updated description for renesas,vbattb-load-nanofarads
+> - included dt-bindings/interrupt-controller/irq.h in examples section
+>=20
+> Changes in v2:
+> - changed file name and compatible
+> - updated title, description sections
+> - added clock controller part documentation and drop dedicated file
+>   for it included in v1
+> - used items to describe interrupts, interrupt-names, clocks, clock-names=
+,
+>   resets
+> - dropped node labels and status
+> - updated clock-names for clock controller to cope with the new
+>   logic on detecting the necessity to setup bypass
+>=20
+>  .../clock/renesas,r9a08g045-vbattb.yaml       | 81 +++++++++++++++++++
+>  1 file changed, 81 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/renesas,r9a08=
+g045-vbattb.yaml
+>=20
+> diff --git a/Documentation/devicetree/bindings/clock/renesas,r9a08g045-vb=
+attb.yaml
+> b/Documentation/devicetree/bindings/clock/renesas,r9a08g045-vbattb.yaml
+> new file mode 100644
+> index 000000000000..29df0e01fae5
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/renesas,r9a08g045-vbattb.y
+> +++ aml
+> @@ -0,0 +1,81 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) %YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/clock/renesas,r9a08g045-vbattb.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Renesas Battery Backup Function (VBATTB)
+> +
+> +description:
+> +  Renesas VBATTB is an always on powered module (backed by battery)
+> +which
+> +  controls the RTC clock (VBATTCLK), tamper detection logic and a small
+> +  general usage memory (128B).
+> +
+> +maintainers:
+> +  - Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> +
+> +properties:
+> +  compatible:
+> +    const: renesas,r9a08g045-vbattb
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  interrupts:
+> +    items:
+> +      - description: tamper detector interrupt
+> +
+> +  clocks:
+> +    items:
+> +      - description: VBATTB module clock
+> +      - description: RTC input clock (crystal oscillator or external
+> + clock device)
+> +
+> +  clock-names:
+> +    items:
+> +      - const: bclk
+> +      - const: rtx
+> +
+> +  '#clock-cells':
+> +    const: 1
+> +
+> +  power-domains:
+> +    maxItems: 1
 
-Signed-off-by: Keke Li <keke.li@amlogic.com>
----
- Documentation/admin-guide/media/c3-isp.dot      | 26 +++++++
- Documentation/admin-guide/media/c3-isp.rst      | 96 +++++++++++++++++++++++++
- Documentation/admin-guide/media/v4l-drivers.rst |  1 +
- MAINTAINERS                                     | 10 +++
- 4 files changed, 133 insertions(+)
+Not sure, you need to document "PD_VBATT" power domain=20
+as per Table 41.2, this LSI supports 3 power domains(PD_ISOVCC, PD_VCC, PD_=
+VBATT)
 
-diff --git a/Documentation/admin-guide/media/c3-isp.dot b/Documentation/admin-guide/media/c3-isp.dot
-new file mode 100644
-index 000000000000..0cc1b8b96404
---- /dev/null
-+++ b/Documentation/admin-guide/media/c3-isp.dot
-@@ -0,0 +1,26 @@
-+digraph board {
-+	rankdir=TB
-+	n00000001 [label="{{<port0> 0 | <port1> 1} | isp-core\n/dev/v4l-subdev0 | {<port2> 2 | <port3> 3}}", shape=Mrecord, style=filled, fillcolor=green]
-+	n00000001:port3 -> n00000006:port0 [style=bold]
-+	n00000001:port3 -> n00000009:port0 [style=bold]
-+	n00000001:port3 -> n0000000c:port0 [style=bold]
-+	n00000001:port2 -> n00000020 [style=bold]
-+	n00000006 [label="{{<port0> 0} | isp-resizer0\n/dev/v4l-subdev1 | {<port1> 1}}", shape=Mrecord, style=filled, fillcolor=green]
-+	n00000006:port1 -> n00000014 [style=bold]
-+	n00000009 [label="{{<port0> 0} | isp-resizer1\n/dev/v4l-subdev2 | {<port1> 1}}", shape=Mrecord, style=filled, fillcolor=green]
-+	n00000009:port1 -> n00000018 [style=bold]
-+	n0000000c [label="{{<port0> 0} | isp-resizer2\n/dev/v4l-subdev3 | {<port1> 1}}", shape=Mrecord, style=filled, fillcolor=green]
-+	n0000000c:port1 -> n0000001c [style=bold]
-+	n0000000f [label="{{<port0> 0} | mipi-adapter\n/dev/v4l-subdev4 | {<port1> 1}}", shape=Mrecord, style=filled, fillcolor=green]
-+	n0000000f:port1 -> n00000001:port0 [style=bold]
-+	n00000014 [label="isp-video0\n/dev/video0", shape=box, style=filled, fillcolor=yellow]
-+	n00000018 [label="isp-video1\n/dev/video1", shape=box, style=filled, fillcolor=yellow]
-+	n0000001c [label="isp-video2\n/dev/video2", shape=box, style=filled, fillcolor=yellow]
-+	n00000020 [label="isp-stats\n/dev/video3", shape=box, style=filled, fillcolor=yellow]
-+	n00000024 [label="isp-params\n/dev/video4", shape=box, style=filled, fillcolor=yellow]
-+	n00000024 -> n00000001:port1 [style=bold]
-+	n00000038 [label="{{<port0> 0} | mipi-csi2\n/dev/v4l-subdev5 | {<port1> 1}}", shape=Mrecord, style=filled, fillcolor=green]
-+	n00000038:port1 -> n0000000f:port0 [style=bold]
-+	n0000003d [label="{{} | imx290 2-001a\n/dev/v4l-subdev6 | {<port0> 0}}", shape=Mrecord, style=filled, fillcolor=green]
-+	n0000003d:port0 -> n00000038:port0 [style=bold]
-+}
-diff --git a/Documentation/admin-guide/media/c3-isp.rst b/Documentation/admin-guide/media/c3-isp.rst
-new file mode 100644
-index 000000000000..fab10c962465
---- /dev/null
-+++ b/Documentation/admin-guide/media/c3-isp.rst
-@@ -0,0 +1,96 @@
-+.. SPDX-License-Identifier: (GPL-2.0-only OR MIT)
-+
-+.. include:: <isonum.txt>
-+
-+=================================================
-+Amlogic C3 Image Signal Processing (C3ISP) driver
-+=================================================
-+
-+Introduction
-+============
-+
-+This file documents the Amlogic C3ISP driver located under
-+drivers/media/platform/amlogic/c3-isp.
-+
-+The current version of the driver supports the C3ISP found on
-+Amlogic C308L processor.
-+
-+The driver implements V4L2, Media controller and V4L2 subdev interfaces.
-+Camera sensor using V4L2 subdev interface in the kernel is supported.
-+
-+The driver has been tested on AW419-C308L-Socket platform.
-+
-+Anlogic Camera hardware
-+=======================
-+
-+The Camera hardware found on C308L processors and supported by
-+the driver consists of:
-+
-+- 1 MIPI-CSI2 module. It handle the Physical layer of the CSI2 receivers and
-+  receive MIPI data.
-+  A separate camera sensor can be connected to MIPI-CSi2 module.
-+- 1 MIPI-ADAPTER module. Organize MIPI data to meet ISP input requirements and
-+  send MIPI data to ISP
-+- 1 ISP (Image Signal Processing) module. Contain a pipeline of image processing
-+  hardware blocks.
-+  The ISP pipeline contains three scalers at the end.
-+  The ISP also contains the DMA interface which writes the output data to memory.
-+
-+Supported functionality
-+=======================
-+
-+The current version of the driver supports:
-+
-+- Input from camera sensor via MIPI-CSI2;
-+
-+- Pixel output interface of ISP
-+
-+  - Scaling support. Configuration of the scaler module
-+    for downscalling with ratio up to 8x.
-+
-+Driver Architecture and Design
-+==============================
-+
-+The driver implements the V4L2 subdev interface. With the goal to model the
-+hardware links between the modules and to expose a clean, logical and usable
-+interface, the driver is split into V4L2 sub-devices as follows:
-+
-+- 1 mipi-csi2 sub-device - mipi-csi2 is represented by a single sub-device.
-+- 1 mipi-adapter sub-device - mipi-adapter is represented by a single sub-devices.
-+- 1 isp-core sub-device - isp-core is represented by a single sub-devices.
-+- 3 isp-resizer sub-devices - isp-resizer is represented by a number of sub-devices
-+  equal to the number of capture device.
-+
-+isp-core sub-device is linked to 2 separate video device nodes and
-+3 isp-resizer sub-devices nodes.
-+
-+- 1 capture statistics video device node.
-+- 1 output parameters video device node.
-+- 3 isp-resizer sub-device nodes.
-+
-+isp-resizer sub-device is linked to capture video device node.
-+
-+- isp-resizer0 is linked to isp-cap0
-+- isp-resizer1 is linked to isp-cap1
-+- isp-resizer2 is linked to isp-cap2
-+
-+The media controller pipeline graph is as follows (with connected a
-+IMX290 camera sensor):
-+
-+.. _isp_topology_graph:
-+
-+.. kernel-figure:: c3-isp.dot
-+    :alt:   c3-isp.dot
-+    :align: center
-+
-+    Media pipeline topology
-+
-+Implementation
-+==============
-+
-+Runtime configuration of the hardware via 'isp-params' video device node.
-+Acquiring statistics of ISP hardware via 'isp-stats' video device node.
-+Acquiring output image of ISP hardware via 'isp-video[0, 2]' video device node.
-+
-+The output size of the scaler module in the ISP is configured with
-+the pixel format of 'isp-video[0, 2]' video device node.
-diff --git a/Documentation/admin-guide/media/v4l-drivers.rst b/Documentation/admin-guide/media/v4l-drivers.rst
-index b6af448b9fe9..be0a8a860f39 100644
---- a/Documentation/admin-guide/media/v4l-drivers.rst
-+++ b/Documentation/admin-guide/media/v4l-drivers.rst
-@@ -10,6 +10,7 @@ Video4Linux (V4L) driver-specific documentation
- 	:maxdepth: 2
- 
- 	bttv
-+	c3-isp
- 	cafe_ccic
- 	cx88
- 	fimc
-diff --git a/MAINTAINERS b/MAINTAINERS
-index f99d0ea45815..411bd4e6318b 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -4889,6 +4889,16 @@ S:	Maintained
- F:	Documentation/devicetree/bindings/net/can/st,stm32-bxcan.yaml
- F:	drivers/net/can/bxcan.c
- 
-+C3 ISP DRIVER FOR AMLOGIC
-+M:	Keke Li <keke.li@amlogic.com>
-+L:	linux-media@vger.kernel.org
-+S:	Maintained
-+F:	Documentation/admin-guide/media/c3-isp.dot
-+F:	Documentation/admin-guide/media/c3-isp.rst
-+F:	Documentation/devicetree/bindings/media/amlogic,c3-isp.yaml
-+F:	Documentation/userspace-api/media/v4l/metafmt-c3-isp.rst
-+F:	drivers/media/platform/amlogic/c3-isp/
-+
- C3 MIPI ADAPTER DRIVER FOR AMLOGIC
- M:	Keke Li <keke.li@amlogic.com>
- L:	linux-media@vger.kernel.org
+Power Mode PD_ISOVCC PD_VCC PD_VBATT
+ALL_ON      ON          ON    ON
+AWO         OFF         ON    ON
+VBATT       OFF         OFF   ON
+ALL_OFF     OFF         OFF   OFF
 
--- 
-2.45.2
+PD_VBATT domain is the area where the RTC/backup register is located, works=
+ on battery power when the power of
+PD_VCC and PD_ISOVCC domain are turned off.
 
+Cheers,
+Biju
+
+> +
+> +  resets:
+> +    items:
+> +      - description: VBATTB module reset
+> +
+> +  renesas,vbattb-load-nanofarads:
+> +    description: load capacitance of the on board crystal oscillator
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    enum: [ 4000, 7000, 9000, 12500 ]
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - interrupts
+> +  - clocks
+> +  - clock-names
+> +  - '#clock-cells'
+> +  - power-domains
+> +  - resets
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/clock/r9a08g045-cpg.h>
+> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +    #include <dt-bindings/interrupt-controller/irq.h>
+> +
+> +    vbattb@1005c000 {
+> +        compatible =3D "renesas,r9a08g045-vbattb";
+> +        reg =3D <0x1005c000 0x1000>;
+> +        interrupts =3D <GIC_SPI 43 IRQ_TYPE_LEVEL_HIGH>;
+> +        clocks =3D <&cpg CPG_MOD R9A08G045_VBAT_BCLK>, <&vbattb_xtal>;
+> +        clock-names =3D "bclk", "rtx";
+> +        #clock-cells =3D <1>;
+> +        power-domains =3D <&cpg>;
+> +        resets =3D <&cpg R9A08G045_VBAT_BRESETN>;
+> +        renesas,vbattb-load-nanofarads =3D <12500>;
+> +    };
+> --
+> 2.39.2
+>=20
 
 
