@@ -1,96 +1,104 @@
-Return-Path: <linux-kernel+bounces-312321-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312322-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A08509694F2
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 09:14:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 984F29694F6
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 09:14:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D35CA1C231E0
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 07:14:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 44C671F259D9
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 07:14:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0086D1D6C46;
-	Tue,  3 Sep 2024 07:13:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A58E1D6C71;
+	Tue,  3 Sep 2024 07:13:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gs1AGCOE"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZS4BN3u4"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A2C31D6786;
-	Tue,  3 Sep 2024 07:13:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F35B51D6786;
+	Tue,  3 Sep 2024 07:13:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725347607; cv=none; b=L+yYqmkaclZM7Kvc8cOXyaJq67VDzUyWbhnrSqot0dYDr9PnlHkOJlRozwJMaxPmweEgSO1Fp2EWDTCqWP2SYPXvqicVKCA3IE45lNjLGCPX/BDVW5ECv8tlzw8d3IAlQdDHJYFSezNx1RHHbTfEAyeUwxHIfTk2a63mcuKRdCM=
+	t=1725347633; cv=none; b=hwiiiP+XMdKXfwrVHrRkGOZx2lmDgdT1L2YmWiQ9DdBl+2y8Jqkjd2ea6nmMTbDETnmKZ1hgKAADpKsfifk9FRUxWGSXBvuIIr+RZR3aoSz1LqWgLzWyaekAjJ0QMHnPkmFdN8f8ke/yUbcbfEFzUACKBbQMNZOEbqwjq/Z4504=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725347607; c=relaxed/simple;
-	bh=gdQzZXQlNJ2WddxY58vtzSE+Tx9smuEhfiUdnMoqg7g=;
+	s=arc-20240116; t=1725347633; c=relaxed/simple;
+	bh=0Uy3vZt8qZjrD6E+O0S/4z71XOnTJ9DqHIMmIgPSwOg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SWLxgZlfmNr8O/W2e0lCuzBQJfJFd/ZIIkZ3ToK3FcCXsgsuTU5JhYXTQKQOVv+jNBEHRlgBmV7+cpbCcMmtPY64cuqgdPsjobC1FL4z/xsFLA03hBq71PIFBCBKJEKexG1k5DU5Ojdq0C5GSW1G3NakeqLk6lB5L6QjfXn0xtw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gs1AGCOE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC72BC4CEC5;
-	Tue,  3 Sep 2024 07:13:26 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=rhqFtqW2Y+IaEoBwbZ3H47B7Etvuz8hdCCSgaPwmn2ZHw1fEOp4jK4Wac71ajfTJZoO3uEDVqv2xmCbBJtFHiG2F+zUwBRvmn14WPxhmirEZBa6G6pXkyvzbbJOn/pdKKkNWOQXLUPmnjwoTUN4EqrJUvIR4GUS02xpBJNYSZDI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZS4BN3u4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A97C4C4CEC5;
+	Tue,  3 Sep 2024 07:13:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725347606;
-	bh=gdQzZXQlNJ2WddxY58vtzSE+Tx9smuEhfiUdnMoqg7g=;
+	s=k20201202; t=1725347632;
+	bh=0Uy3vZt8qZjrD6E+O0S/4z71XOnTJ9DqHIMmIgPSwOg=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gs1AGCOE0G9fqfFMaSn6iVu8Mq8LATc6F2Zfv81WpvPE9dRr3nnBEfcFkPCe+F4oi
-	 RxyaYqcDIUmPlyIbiiIAHo0f8PaJepNHUlB+EXBtkRAPZXakwUGiyutUpmAG1urLl6
-	 90esgVCbA8qZJCGUeirSeGWISfaU4n7bFJUd3LFJazKHKn01VeWFKO4+m7kwqUyHMp
-	 mCpt73XfigcFJUqP9YPo50jpw4r77A1f+Xuhoi7EfSFTmHo/ICV0paScvwr21F7sCg
-	 YZ4ioGQh0SdO4b4zMI7us8SmiY1G0zC5S0nk/n2QGjfIAYD4CI/u1zG/N/IpX24GkK
-	 fiZmzoPriFhng==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1slNjS-000000000zP-0Wm6;
-	Tue, 03 Sep 2024 09:13:42 +0200
-Date: Tue, 3 Sep 2024 09:13:42 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Abel Vesa <abel.vesa@linaro.org>
-Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Rajendra Nayak <quic_rjendra@quicinc.com>,
-	Sibi Sankar <quic_sibis@quicinc.com>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Trilok Soni <quic_tsoni@quicinc.com>, linux-kernel@vger.kernel.org,
-	linux-usb@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH RFC 1/2] dt-bindings: usb: Add Parade PS8830 Type-C
- retimer bindings
-Message-ID: <Zta3Jr7rCDzxe_mE@hovoldconsulting.com>
-References: <20240829-x1e80100-ps8830-v1-0-bcc4790b1d45@linaro.org>
- <20240829-x1e80100-ps8830-v1-1-bcc4790b1d45@linaro.org>
+	b=ZS4BN3u4K1biGvQRK+tKWHBJzpGz9UQzb2I0P++HT3bpUWtznxKIdLWww0jkKlMrg
+	 foboshX4vxa1irJ+YktZMbyLfH8IvaDHZgIKjbiKK3GzLMWWhLREv4EaV1gL1M/13J
+	 tZNagEeXCOdaLJfe28EYwODoQrWDys8IEq7Hs+f+t0l1Xd+px5t+IIgykTewPXlNWL
+	 B+K54gozhJbpfpynp8eJO+/xw66cz+lwaFw3dV9Tgal2O7NnLNwWknu07sO/8Fozsi
+	 jg7+lzVut3SgfOMDl66W9vkORgIaUac11fwEBeY+H4tJR5+ikI8i+fQ6a4UQfsVw7y
+	 Vvt2thA75RE0A==
+Date: Tue, 3 Sep 2024 09:13:48 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Jingyi Wang <quic_jingyw@quicinc.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/4] soc: qcom: llcc: add errata to get bank num
+Message-ID: <vtj5liux4hrb7je3ojnfyixor6sk2oy2p4nlvt2rgnzisjj773@ckyl7a2kpa62>
+References: <20240903-qcs8300_llcc_driver-v1-0-228659bdf067@quicinc.com>
+ <20240903-qcs8300_llcc_driver-v1-3-228659bdf067@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240829-x1e80100-ps8830-v1-1-bcc4790b1d45@linaro.org>
+In-Reply-To: <20240903-qcs8300_llcc_driver-v1-3-228659bdf067@quicinc.com>
 
-On Thu, Aug 29, 2024 at 09:44:25PM +0300, Abel Vesa wrote:
-> Document bindings for the Parade PS8830 Type-C retimer. This retimer is
-> currently found on all boards featuring Qualcomm Snapdragon X Elite SoCs
-> and it is needed to provide altmode muxing between DP and USB.
+On Tue, Sep 03, 2024 at 02:21:31PM +0800, Jingyi Wang wrote:
+> Use "num-banks" property to indicate the actual num of banks for
+> errata.
+> 
+> Signed-off-by: Jingyi Wang <quic_jingyw@quicinc.com>
+> ---
+>  drivers/soc/qcom/llcc-qcom.c | 15 ++++++++++-----
+>  1 file changed, 10 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/soc/qcom/llcc-qcom.c b/drivers/soc/qcom/llcc-qcom.c
+> index 8fa4ffd3a9b5..3fb45e625d82 100644
+> --- a/drivers/soc/qcom/llcc-qcom.c
+> +++ b/drivers/soc/qcom/llcc-qcom.c
+> @@ -1275,12 +1275,17 @@ static int qcom_llcc_probe(struct platform_device *pdev)
+>  		goto err;
+>  	cfg = &cfgs->llcc_config[cfg_index];
+>  
+> -	ret = regmap_read(regmap, cfg->reg_offset[LLCC_COMMON_STATUS0], &num_banks);
+> -	if (ret)
+> -		goto err;
+> +	if (unlikely(!of_property_read_u32(dev->of_node, "num-banks", &num_banks))) {
 
-> +  vdd15-supply:
-> +    description: power supply (1.5V)
+Drop unlikely.
 
-As Konrad already pointed out, this appears to be a 1.15 V supply, in
-which case the name and description needs an update.
+> +		/* errata: get num of llcc banks. */
 
-> +
-> +  vdd18-supply:
-> +    description: power supply (1.8V)
-> +
-> +  vdd33-supply:
-> +    description: power supply (3.3V)
+Huh? What?
 
-Johan
+> +	} else {
+> +		ret = regmap_read(regmap, cfg->reg_offset[LLCC_COMMON_STATUS0], &num_banks);
+> +		if (ret)
+> +			goto err;
+
+Sorry, but what? You can read it from hardware, but you add DT property?
+No, that's just wrong. Why commit msg explains nothing about reasons and
+problem you are solving?
+
+Best regards,
+Krzysztof
+
 
