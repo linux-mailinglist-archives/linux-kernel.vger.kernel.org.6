@@ -1,133 +1,107 @@
-Return-Path: <linux-kernel+bounces-313488-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313485-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7EEB96A606
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 19:58:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A674896A5FD
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 19:57:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EA0E81C2145A
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 17:58:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 64042281D7F
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 17:57:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D80131917E8;
-	Tue,  3 Sep 2024 17:58:18 +0000 (UTC)
-Received: from azure-sdnproxy.icoremail.net (azure-sdnproxy.icoremail.net [52.237.72.81])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1388819005F;
-	Tue,  3 Sep 2024 17:58:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.237.72.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8885818FDCD;
+	Tue,  3 Sep 2024 17:57:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JiOMveeh"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5676918E022;
+	Tue,  3 Sep 2024 17:57:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725386298; cv=none; b=i0/1hOwFJapwBLQRNSBO/N1VmOcEWsp+6ic+AG1zTTZOCmrkXdBLQ20TiM2PPi23bhIE9JS2IKzb1fk+1YOaOzqUvP8SUYrzRVJXdEW9TqmzfxRCZNxHITJ7mgr/BzOCUpODmNNlV5cnTznr0wLJmo+Gn2k7fsPIVSk1p/Qd9/E=
+	t=1725386256; cv=none; b=JYF8sZoyNGSv2LdRlub9/a+Rnvo9eN8LdQzBHqVXYdgouaYYmZ5vStsRRoHZLZdERtMOQFAPVtfpXqMV5MpmAD9RyQO2Vm8KvFRzfZIyhbCgzdGRhUuXRIYFFgwanVCgIAJqY/Q3rdB3UC1R2CdCiEZjIJFusZg6w0g7rCy3t+I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725386298; c=relaxed/simple;
-	bh=uATjZ/YF6nzeNKi1F2SZH37jXsIQydZyrH2XaUeCEdQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QILVSExEGhigbd/0LjNB1eI4er1RSz63gn22fmIYC7iq1pPZmZ+qUfY1y4juAVfygJXRdtS1dKuyj9BcBBTDMpMQ42ni2oecXQTnCo3wsErTSENC1+WCOXeBTQEfztu1vrwrNwUp2xZrTiOW9puDaYZNEncIw2gL2mFmNyE7nnk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hust.edu.cn; spf=pass smtp.mailfrom=hust.edu.cn; arc=none smtp.client-ip=52.237.72.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hust.edu.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hust.edu.cn
-Received: from hust.edu.cn (unknown [172.16.0.52])
-	by app2 (Coremail) with SMTP id HwEQrACXn7f4TddmHm+pAA--.54713S2;
-	Wed, 04 Sep 2024 01:57:12 +0800 (CST)
-Received: from [198.18.0.1] (unknown [10.12.177.116])
-	by gateway (Coremail) with SMTP id _____wB3b772Tddm33b7AA--.43248S2;
-	Wed, 04 Sep 2024 01:57:11 +0800 (CST)
-Message-ID: <bd647428-f74d-4f89-acd2-0a96c7f0478a@hust.edu.cn>
-Date: Wed, 4 Sep 2024 01:57:08 +0800
+	s=arc-20240116; t=1725386256; c=relaxed/simple;
+	bh=EXM6g49SzTFN4g5RSuFkh8aFGvkVKWw6W6cmvo7DtN8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SNDMgepgrjYmqzqpl32I6YgzhKPXWAetPALAMHiXShUVUq5EDLjDweUcnFHnSxZlVFzkElb0m8h0u44IlNItw+s48oYD8SeZF7VOiFiCnKf3cYjNKXlDBi2tUwizlgsAAFfXQswLElX5gsVSmtzBfmmrRmGfhaSFV9BH+Spn6J8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JiOMveeh; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725386254; x=1756922254;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=EXM6g49SzTFN4g5RSuFkh8aFGvkVKWw6W6cmvo7DtN8=;
+  b=JiOMveehk0YhFIVOvMnPgnr0ZNsFgHUyOcQHwOMG2ooZRwPGjKDtu2+S
+   66u+kNSxblkzAaOWOtL3LWY6hp0za2eA+nzjjv+VZvXn4JBFjERB7Hg1v
+   K9wEm62ijGODGSDOU+bm5hUvYFpS7SuQUq3EnAMP7np4bAv/4U67BDLU+
+   FGKBvKBI2gRBW8OKDN6GM8C/oWUV+R+0FvfWqJD/77k+FBnvpUKB77ic3
+   QwEjp6mVFjfCZLCdr9I6xKsZ1KRN0Y6s+pSjvhsYjc0U1CDGHWCaI6V42
+   PCofu6DImVW1m5qKVW/Q9URwNYl3M9hysqqMaHy7v3XLtYA82gDl3lSUW
+   A==;
+X-CSE-ConnectionGUID: +9FmoZ7oR06ZXbMo3Dht4g==
+X-CSE-MsgGUID: A+3zojCTTTuzeomuJpxsrg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11184"; a="46532016"
+X-IronPort-AV: E=Sophos;i="6.10,199,1719903600"; 
+   d="scan'208";a="46532016"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2024 10:57:34 -0700
+X-CSE-ConnectionGUID: ilIAXnsSSJKCUX3UsFOmrw==
+X-CSE-MsgGUID: o0kt1GO2QYW28og6PAbGLw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,199,1719903600"; 
+   d="scan'208";a="102408553"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by orviesa001.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2024 10:57:31 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1slXmR-00000004nRC-2Ik4;
+	Tue, 03 Sep 2024 20:57:27 +0300
+Date: Tue, 3 Sep 2024 20:57:27 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	David Lechner <dlechner@baylibre.com>,
+	Michael Hennerich <michael.hennerich@analog.com>,
+	Antoniu Miclaus <antoniu.miclaus@analog.com>,
+	Jinjie Ruan <ruanjinjie@huawei.com>,
+	Lorenzo Bianconi <lorenzo@kernel.org>,
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+	Basavaraj Natikar <Basavaraj.Natikar@amd.com>,
+	linux-input@vger.kernel.org, linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Jiri Kosina <jikos@kernel.org>, Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>
+Subject: Re: [PATCH v1 00/22] iio: use dev_get_platdata() to access
+ platform_data
+Message-ID: <ZtdOB3VRN0QCGWU9@smile.fi.intel.com>
+References: <20240902222824.1145571-1-andy.shevchenko@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] docs: update dev-tools/kcsan.rst url about KTSAN
-To: Marco Elver <elver@google.com>, Dongliang Mu <dzm91@hust.edu.cn>
-Cc: Dmitry Vyukov <dvyukov@google.com>, Jonathan Corbet <corbet@lwn.net>,
- hust-os-kernel-patches@googlegroups.com, kasan-dev@googlegroups.com,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240725174632.23803-1-tttturtleruss@hust.edu.cn>
- <a6285062-4e36-431e-b902-48f4bee620e0@hust.edu.cn>
- <CANpmjNOiMFUM8KxV8Gj_LTSbC_qLYSh+34Ma8gC1LFCgjtPRsA@mail.gmail.com>
-From: Haoyang Liu <tttturtleruss@hust.edu.cn>
-In-Reply-To: <CANpmjNOiMFUM8KxV8Gj_LTSbC_qLYSh+34Ma8gC1LFCgjtPRsA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:HwEQrACXn7f4TddmHm+pAA--.54713S2
-Authentication-Results: app2; spf=neutral smtp.mail=tttturtleruss@hust
-	.edu.cn;
-X-Coremail-Antispam: 1UD129KBjvJXoW7Cw1kGFWrWFWfAry3uF45Jrb_yoW8uF4kpa
-	yfuFyIkw4vqr17K3yIgw40yFW8tF93Xr1UJ3W8J3WFqrsIvFn3trW29w4Fga4UZrZ5CFW2
-	vF4j9a4Fv3WDAaUanT9S1TB71UUUUjUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUmFb7Iv0xC_Cr1lb4IE77IF4wAFc2x0x2IEx4CE42xK8VAvwI8I
-	cIk0rVWrJVCq3wA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjx
-	v20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j6F4UM28EF7xvwVC2
-	z280aVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gr1j6F4UJwAaw2AFwI
-	0_Jrv_JF1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2xF0cIa020Ex4CE44I27wAq
-	x4xG64xvF2IEw4CE5I8CrVC2j2WlYx0EF7xvrVAajcxG14v26r4UJVWxJr1lYx0E74AGY7
-	Cv6cx26r4fZr1UJr1lYx0Ec7CjxVAajcxG14v26r4UJVWxJr1lOx8S6xCaFVCjc4AY6r1j
-	6r4UM4x0Y48IcVAKI48JMxkF7I0En4kS14v26r126r1DMxAIw28IcxkI7VAKI48JMxAIw2
-	8IcVCjz48v1sIEY20_GFW3Jr1UJwCFx2IqxVCFs4IE7xkEbVWUJVW8JwCFI7km07C267AK
-	xVWUXVWUAwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67
-	AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI
-	42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMI
-	IF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUvcSsGvfC2
-	KfnxnUUI43ZEXa7IU0KNt3UUUUU==
-X-CM-SenderInfo: rxsqjiqrssiko6kx23oohg3hdfq/1tbiAQkJAmbWg7dAjQADsJ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240902222824.1145571-1-andy.shevchenko@gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
+On Tue, Sep 03, 2024 at 01:16:45AM +0300, Andy Shevchenko wrote:
+> Unify how IIO drivers access platform_data field of struct device.
+> In simple and straightforward cases constify the local variables.
+> 
+> (Not tested)
 
-在 2024/7/26 16:38, Marco Elver 写道:
-> On Fri, 26 Jul 2024 at 03:36, Dongliang Mu <dzm91@hust.edu.cn> wrote:
->>
->> On 2024/7/26 01:46, Haoyang Liu wrote:
->>> The KTSAN doc has moved to
->>> https://github.com/google/kernel-sanitizers/blob/master/KTSAN.md.
->>> Update the url in kcsan.rst accordingly.
->>>
->>> Signed-off-by: Haoyang Liu <tttturtleruss@hust.edu.cn>
->> Although the old link is still accessible, I agree to use the newer one.
->>
->> If this patch is merged, you need to change your Chinese version to
->> catch up.
->>
->> Reviewed-by: Dongliang Mu <dzm91@hust.edu.cn>
->>
->>> ---
->>>    Documentation/dev-tools/kcsan.rst | 3 ++-
->>>    1 file changed, 2 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/Documentation/dev-tools/kcsan.rst b/Documentation/dev-tools/kcsan.rst
->>> index 02143f060b22..d81c42d1063e 100644
->>> --- a/Documentation/dev-tools/kcsan.rst
->>> +++ b/Documentation/dev-tools/kcsan.rst
->>> @@ -361,7 +361,8 @@ Alternatives Considered
->>>    -----------------------
->>>
->>>    An alternative data race detection approach for the kernel can be found in the
->>> -`Kernel Thread Sanitizer (KTSAN) <https://github.com/google/ktsan/wiki>`_.
->>> +`Kernel Thread Sanitizer (KTSAN)
->>> +<https://github.com/google/kernel-sanitizers/blob/master/KTSAN.md>`_.
->>>    KTSAN is a happens-before data race detector, which explicitly establishes the
->>>    happens-before order between memory operations, which can then be used to
->>>    determine data races as defined in `Data Races`_.
-> Acked-by: Marco Elver <elver@google.com>
->
-> Do you have a tree to take your other patch ("docs/zh_CN: Add
-> dev-tools/kcsan Chinese translation") through? If so, I would suggest
-> that you ask that maintainer to take both patches, this and the
-> Chinese translation patch. (Otherwise, I will queue this patch to be
-> remembered but it'll be a while until it reaches mainline.)
+Jonathan, in case you are fine with the series, feel free to squash, e.g.,
+changes against hid-sensor drivers.
 
-Hi, Marco.
+-- 
+With Best Regards,
+Andy Shevchenko
 
-
-The patch "docs/zh_CN: Add dev-tools/kcsan Chinese translation" has been 
-applied, but they didn't take this one. How about you take it into your 
-tree?
-
-
-Thanks,
-
-Haoyang
 
 
