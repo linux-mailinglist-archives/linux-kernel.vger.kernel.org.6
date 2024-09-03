@@ -1,177 +1,167 @@
-Return-Path: <linux-kernel+bounces-312913-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312915-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5F9A969DA2
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 14:31:25 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6E4D969DA6
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 14:32:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DB7D31C22810
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 12:31:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 44F33B238B8
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 12:32:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1CEB1B12F1;
-	Tue,  3 Sep 2024 12:31:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p9Cwt331"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CF521B12F2;
-	Tue,  3 Sep 2024 12:31:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 174031D0965;
+	Tue,  3 Sep 2024 12:32:12 +0000 (UTC)
+Received: from cmccmta1.chinamobile.com (cmccmta2.chinamobile.com [111.22.67.135])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53EE41D0959;
+	Tue,  3 Sep 2024 12:32:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.22.67.135
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725366677; cv=none; b=dMzl7sQXWUxXqg00fa+89FmAYpQc7Z7/rAqTwH6ziLNqaDxNUx61b/Gjt/+k/zr0JnFyZ7na+hM2Rum5fUhM2RZE3f2UQBcPj/LZtunsZ9697OC4r4yybcQM84gQ8+MKsmSEQ3AXdEEBqRiZNnoanl4AJThf7YpJ1vVS/HSo9HM=
+	t=1725366731; cv=none; b=MlYf7g228Arn1cUvjJKVcHiKK/eqP1q4SToeqwsjkGEPUyORGVG8BuCNhI8g8cEx/UGhlRK5gmCYG0M0SMZd8CD3MrKfrYJoWwNOxFYqUe6bEDVpEa3qDGD8t9FV/6cVKZUTctyEG2EbrE2IkEr4Yl8cUfIIhtn1cTd4Q8/gnhg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725366677; c=relaxed/simple;
-	bh=qd3YxyjMYJ2bCJ1Cx0VsMYa5IKT9E+IfmiTj9DCPMgA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=G9NnwcC2AWwWqmyLF6ZDJewj8cooijITXmV9gKUxpMKul9AhMBdj+q71GisT6oVzGxIcwVZlU8Eas6ecfjtod7mK8H/CCRnwLL0yPxPdjW/+uXrAQxdcJIEwQZf2ktAWvc+PS7lpP+vWuAQgtPkqUNH2f0hkZ0EOgvRnxRVErxo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p9Cwt331; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8CE55C4CECA;
-	Tue,  3 Sep 2024 12:31:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725366676;
-	bh=qd3YxyjMYJ2bCJ1Cx0VsMYa5IKT9E+IfmiTj9DCPMgA=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=p9Cwt331oTsaBNNrEypvf8b/uEF69M+RFSUX9uXcNrYfWJwDNCbrQfL3m8DThVSAl
-	 b3xwH0H91TVS8haXoVVe47qPwvXlze90hFuZWNhzAUhrC6+SuDm6G+7yfDe7n1aC8M
-	 oQgduVcD7wHXryQNOU7oVoSyXYUFhbovZF+IniPUUB4WQufgLugkScpnFnaplx0sb7
-	 UgTP9qp8Qwwvk+SIsZ3Bg03I7YSGkdtGMBBSyIe3U67AOjz6f3LGlxbxTn4tit7wSR
-	 Sf3gTURGWu3c0QVVeXV53F1pjtzBhXHG6PlT2/bejy5vkQ9DUfzJPonN34eFkM4/jg
-	 2m+EyXqZCPTaA==
-Received: by mail-oi1-f171.google.com with SMTP id 5614622812f47-3df0dc53ec1so3040433b6e.1;
-        Tue, 03 Sep 2024 05:31:16 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUGZSerFs3xsky+yKqtsjR4hp4hWM1u+XDHtAbfa6vS0IG+LiTZGM8TnRmSLUGZh5StukJLmdD5PoI=@vger.kernel.org, AJvYcCUfKZGOg6KohIWCG/oxfoXvuep6gJIVhLn/3kqUHonGFs0FOXzSUShGEoVP0yETx6cu6T73tuheJhYWjio=@vger.kernel.org
-X-Gm-Message-State: AOJu0YweraKT1n/Hfky+yI4tseL0TpL/qZsLefAFurlaE5Eqh5ZPKTBc
-	ogC8hnrFZjvQsLKteWpdpQ6zK07l7OSRhNrTzWYhGxLwfMaOWe9C4FnTLkxQ8b9/YdDpDN4/ZWy
-	Wna5C+xJwtopqB+FgbA5w2eLjZ1U=
-X-Google-Smtp-Source: AGHT+IHvp5rsI7Bt85qzdXZ81AuCvRx2LxFL/Zu5C1K0ZMKZAS7lysa3cHAw5xVEHBIQXAYgRKzPVlbJLjZifH3WEk8=
-X-Received: by 2002:a05:6808:1892:b0:3d9:2c7b:26d4 with SMTP id
- 5614622812f47-3df1d66126dmr13542701b6e.28.1725366675807; Tue, 03 Sep 2024
- 05:31:15 -0700 (PDT)
+	s=arc-20240116; t=1725366731; c=relaxed/simple;
+	bh=wt0MsrlPeQPhAtDdj7Q1A5xQ3NmHHrGzu1igSPDkRqY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=GtZTAfxFNxiakwol+72EvrNFvUzzlOJpk6Zz7Hpk0pdvAXd2jTiiQUs9rdnqEpNr0Tiy0lKyYoKo/6ljwQI3aNxzakDA4VPADUEA92GgFxVfq4sstna4u/gfnPWd4/i/hEzG4IEP0ZFvk93BtZ9xwibfCimEi/yDYeuO+qGc7As=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com; spf=pass smtp.mailfrom=cmss.chinamobile.com; arc=none smtp.client-ip=111.22.67.135
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
+	by rmmx-syy-dmz-app03-12003 (RichMail) with SMTP id 2ee366d701c2796-abfa5;
+	Tue, 03 Sep 2024 20:32:04 +0800 (CST)
+X-RM-TRANSID:2ee366d701c2796-abfa5
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from localhost.localdomain (unknown[223.108.79.97])
+	by rmsmtp-syy-appsvr10-12010 (RichMail) with SMTP id 2eea66d701c1cbf-e51bd;
+	Tue, 03 Sep 2024 20:32:04 +0800 (CST)
+X-RM-TRANSID:2eea66d701c1cbf-e51bd
+From: tangbin <tangbin@cmss.chinamobile.com>
+To: neal_liu@aspeedtech.com,
+	gregkh@linuxfoundation.org,
+	joel@jms.id.au,
+	andrew@codeconstruct.com.au
+Cc: linux-aspeed@lists.ozlabs.org,
+	linux-usb@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	tangbin <tangbin@cmss.chinamobile.com>
+Subject: [PATCH] usb: gadget: aspeed_udc: use the defined variable to simplify code
+Date: Tue,  3 Sep 2024 20:31:52 +0800
+Message-Id: <20240903123152.6980-1-tangbin@cmss.chinamobile.com>
+X-Mailer: git-send-email 2.33.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240902125933.5742-1-00107082@163.com>
-In-Reply-To: <20240902125933.5742-1-00107082@163.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Tue, 3 Sep 2024 14:31:04 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0hMnnDjKJLMgcT_p1nnejyyAyaqaA_AF5t+_=PsSMfceQ@mail.gmail.com>
-Message-ID: <CAJZ5v0hMnnDjKJLMgcT_p1nnejyyAyaqaA_AF5t+_=PsSMfceQ@mail.gmail.com>
-Subject: Re: [PATCH] pm: sleep: do not set is_prepared when no_pm_callbacks is set
-To: David Wang <00107082@163.com>
-Cc: rafael@kernel.org, pavel@ucw.cz, gregkh@linuxfoundation.org, 
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: multipart/mixed; boundary="000000000000d1c4a80621363b96"
+Content-Transfer-Encoding: 8bit
 
---000000000000d1c4a80621363b96
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Use the defined variable 'dev' to make the code cleaner.
 
-On Mon, Sep 2, 2024 at 2:59=E2=80=AFPM David Wang <00107082@163.com> wrote:
->
-> When resume, a parent device with no pm callbacks
-> would have "is_prepared" and "direct_complete" bit
-> set, and skip the "fib" chance to unset "is_prepared"
-> in device_resume because of the direct_complete bit.
+Signed-off-by: tangbin <tangbin@cmss.chinamobile.com>
+---
+ drivers/usb/gadget/udc/aspeed_udc.c | 26 +++++++++++++-------------
+ 1 file changed, 13 insertions(+), 13 deletions(-)
 
-Sure, but is_prepared will be cleared in device_complete() AFAICS.
+diff --git a/drivers/usb/gadget/udc/aspeed_udc.c b/drivers/usb/gadget/udc/aspeed_udc.c
+index f4781e611..702d4806c 100644
+--- a/drivers/usb/gadget/udc/aspeed_udc.c
++++ b/drivers/usb/gadget/udc/aspeed_udc.c
+@@ -1479,7 +1479,7 @@ static int ast_udc_probe(struct platform_device *pdev)
+ 	struct ast_udc_dev *udc;
+ 	int rc;
+ 
+-	udc = devm_kzalloc(&pdev->dev, sizeof(struct ast_udc_dev), GFP_KERNEL);
++	udc = devm_kzalloc(dev, sizeof(struct ast_udc_dev), GFP_KERNEL);
+ 	if (!udc)
+ 		return -ENOMEM;
+ 
+@@ -1494,32 +1494,32 @@ static int ast_udc_probe(struct platform_device *pdev)
+ 
+ 	udc->reg = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(udc->reg)) {
+-		dev_err(&pdev->dev, "Failed to map resources\n");
++		dev_err(dev, "Failed to map resources\n");
+ 		return PTR_ERR(udc->reg);
+ 	}
+ 
+ 	platform_set_drvdata(pdev, udc);
+ 
+-	udc->clk = devm_clk_get(&pdev->dev, NULL);
++	udc->clk = devm_clk_get(dev, NULL);
+ 	if (IS_ERR(udc->clk)) {
+ 		rc = PTR_ERR(udc->clk);
+ 		goto err;
+ 	}
+ 	rc = clk_prepare_enable(udc->clk);
+ 	if (rc) {
+-		dev_err(&pdev->dev, "Failed to enable clock (0x%x)\n", rc);
++		dev_err(dev, "Failed to enable clock (0x%x)\n", rc);
+ 		goto err;
+ 	}
+ 
+ 	/* Check if we need to limit the HW to USB1 */
+-	max_speed = usb_get_maximum_speed(&pdev->dev);
++	max_speed = usb_get_maximum_speed(dev);
+ 	if (max_speed != USB_SPEED_UNKNOWN && max_speed < USB_SPEED_HIGH)
+ 		udc->force_usb1 = true;
+ 
+ 	/*
+ 	 * Allocate DMA buffers for all EPs in one chunk
+ 	 */
+-	udc->ep0_buf = dma_alloc_coherent(&pdev->dev,
++	udc->ep0_buf = dma_alloc_coherent(dev,
+ 					  AST_UDC_EP_DMA_SIZE *
+ 					  AST_UDC_NUM_ENDPOINTS,
+ 					  &udc->ep0_buf_dma, GFP_KERNEL);
+@@ -1534,7 +1534,7 @@ static int ast_udc_probe(struct platform_device *pdev)
+ 	 */
+ 	udc->desc_mode = AST_UDC_DESC_MODE;
+ 
+-	dev_info(&pdev->dev, "DMA %s\n", udc->desc_mode ?
++	dev_info(dev, "DMA %s\n", udc->desc_mode ?
+ 		 "descriptor mode" : "single mode");
+ 
+ 	INIT_LIST_HEAD(&udc->gadget.ep_list);
+@@ -1556,26 +1556,26 @@ static int ast_udc_probe(struct platform_device *pdev)
+ 		goto err;
+ 	}
+ 
+-	rc = devm_request_irq(&pdev->dev, udc->irq, ast_udc_isr, 0,
++	rc = devm_request_irq(dev, udc->irq, ast_udc_isr, 0,
+ 			      KBUILD_MODNAME, udc);
+ 	if (rc) {
+-		dev_err(&pdev->dev, "Failed to request interrupt\n");
++		dev_err(dev, "Failed to request interrupt\n");
+ 		goto err;
+ 	}
+ 
+-	rc = usb_add_gadget_udc(&pdev->dev, &udc->gadget);
++	rc = usb_add_gadget_udc(dev, &udc->gadget);
+ 	if (rc) {
+-		dev_err(&pdev->dev, "Failed to add gadget udc\n");
++		dev_err(dev, "Failed to add gadget udc\n");
+ 		goto err;
+ 	}
+ 
+-	dev_info(&pdev->dev, "Initialized udc in USB%s mode\n",
++	dev_info(dev, "Initialized udc in USB%s mode\n",
+ 		 udc->force_usb1 ? "1" : "2");
+ 
+ 	return 0;
+ 
+ err:
+-	dev_err(&pdev->dev, "Failed to udc probe, rc:0x%x\n", rc);
++	dev_err(dev, "Failed to udc probe, rc:0x%x\n", rc);
+ 	ast_udc_remove(pdev);
+ 
+ 	return rc;
+-- 
+2.33.0
 
-> This will trigger a kernel warning when resume its child
-> For example, when suspend system with an USB webcam
-> opened, following warning would show up during resume:
->
->  >usb 3-1.1: reset high-speed USB device number 4 using xhci_hcd
->  >..
->  >ep_81: PM: parent 3-1.1:1.1 should not be sleeping
 
-This is printed in device_pm_add(), so apparently something new has
-appeared under the parent while it's between "resume" and "prepare".
 
-The parent is actually still regarded as "suspended" because any
-resume callbacks have not been called for it, but new children can be
-added under it at this point because doing so does not break the
-dpm_list ordering and all of its ancestors have been already resumed.
-
-> The device parenting relationships are:
-> [usb 3-1.1] << [uvcvideo 3-1.1:1.1] << [ep_81].
-> When resume, since the virtual [uvcvideo 3-1.1:1.1] device
-> has no pm callbacks, it would not clear "is_prepared"
-> once set.  Then, when resume [ep_81], pm module would
-> yield a warn seeing [ep_81]'s parent [uvcvideo 3-1.1:1.1]
-> having "is_prepared".
->
-> Do not set "is_prepared" for virtual devices having
-> no pm callbacks can clear those kernel warnings.
->
-> Signed-off-by: David Wang <00107082@163.com>
-> ---
->  drivers/base/power/main.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/base/power/main.c b/drivers/base/power/main.c
-> index 934e5bb61f13..e2149ccf2c3e 100644
-> --- a/drivers/base/power/main.c
-> +++ b/drivers/base/power/main.c
-> @@ -1880,7 +1880,8 @@ int dpm_prepare(pm_message_t state)
->                 mutex_lock(&dpm_list_mtx);
->
->                 if (!error) {
-> -                       dev->power.is_prepared =3D true;
-> +                       if (!dev->power.no_pm_callbacks)
-> +                               dev->power.is_prepared =3D true;
-
-This is not the way to address the issue IMV.
-
-power.is_prepared set means that the device is in dpm_prepared_list
-and I wouldn't depart from that even for devices without PM callbacks.
-
->                         if (!list_empty(&dev->power.entry))
->                                 list_move_tail(&dev->power.entry, &dpm_pr=
-epared_list);
->                 } else if (error =3D=3D -EAGAIN) {
-> --
-
-It would be better to add a power.no_pm_callbacks check for the parent
-to device_pm_add(), but this would still suppress the warning is some
-cases in which it should be printed (for example, the new device's
-parent is a "virtual" device without PM callbacks, but its grandparent
-is a regular device that has PM callbacks and is suspended).
-
-Something like the attached patch (untested) might work, though.
-
---000000000000d1c4a80621363b96
-Content-Type: text/x-patch; charset="US-ASCII"; name="pm-sleep-pm-add.patch"
-Content-Disposition: attachment; filename="pm-sleep-pm-add.patch"
-Content-Transfer-Encoding: base64
-Content-ID: <f_m0mepvtg0>
-X-Attachment-Id: f_m0mepvtg0
-
-LS0tCiBkcml2ZXJzL2Jhc2UvcG93ZXIvbWFpbi5jIHwgICAxNiArKysrKysrKysrKysrLS0tCiAx
-IGZpbGUgY2hhbmdlZCwgMTMgaW5zZXJ0aW9ucygrKSwgMyBkZWxldGlvbnMoLSkKCkluZGV4OiBs
-aW51eC1wbS9kcml2ZXJzL2Jhc2UvcG93ZXIvbWFpbi5jCj09PT09PT09PT09PT09PT09PT09PT09
-PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT0KLS0tIGxpbnV4LXBt
-Lm9yaWcvZHJpdmVycy9iYXNlL3Bvd2VyL21haW4uYworKysgbGludXgtcG0vZHJpdmVycy9iYXNl
-L3Bvd2VyL21haW4uYwpAQCAtMTI3LDYgKzEyNyw4IEBAIHZvaWQgZGV2aWNlX3BtX3VubG9jayh2
-b2lkKQogICovCiB2b2lkIGRldmljZV9wbV9hZGQoc3RydWN0IGRldmljZSAqZGV2KQogeworCXN0
-cnVjdCBkZXZpY2UgKmFuY2VzdG9yOworCiAJLyogU2tpcCBQTSBzZXR1cC9pbml0aWFsaXphdGlv
-bi4gKi8KIAlpZiAoZGV2aWNlX3BtX25vdF9yZXF1aXJlZChkZXYpKQogCQlyZXR1cm47CkBAIC0x
-MzQsMTIgKzEzNiwyMCBAQCB2b2lkIGRldmljZV9wbV9hZGQoc3RydWN0IGRldmljZSAqZGV2KQog
-CXByX2RlYnVnKCJBZGRpbmcgaW5mbyBmb3IgJXM6JXNcbiIsCiAJCSBkZXYtPmJ1cyA/IGRldi0+
-YnVzLT5uYW1lIDogIk5vIEJ1cyIsIGRldl9uYW1lKGRldikpOwogCWRldmljZV9wbV9jaGVja19j
-YWxsYmFja3MoZGV2KTsKKwogCW11dGV4X2xvY2soJmRwbV9saXN0X210eCk7Ci0JaWYgKGRldi0+
-cGFyZW50ICYmIGRldi0+cGFyZW50LT5wb3dlci5pc19wcmVwYXJlZCkKLQkJZGV2X3dhcm4oZGV2
-LCAicGFyZW50ICVzIHNob3VsZCBub3QgYmUgc2xlZXBpbmdcbiIsCi0JCQlkZXZfbmFtZShkZXYt
-PnBhcmVudCkpOworCisJYW5jZXN0b3IgPSBkZXYtPnBhcmVudDsKKwl3aGlsZSAoYW5jZXN0b3Ig
-JiYgYW5jZXN0b3ItPnBvd2VyLm5vX3BtX2NhbGxiYWNrcykKKwkJYW5jZXN0b3IgPSBhbmNlc3Rv
-ci0+cGFyZW50OworCisJaWYgKGFuY2VzdG9yICYmIGFuY2VzdG9yLT5wb3dlci5pc19wcmVwYXJl
-ZCkKKwkJZGV2X3dhcm4oZGV2LCAiYW5jZXN0b3IgJXMgc2hvdWxkIG5vdCBiZSBzbGVlcGluZ1xu
-IiwKKwkJCSBkZXZfbmFtZShhbmNlc3RvcikpOworCiAJbGlzdF9hZGRfdGFpbCgmZGV2LT5wb3dl
-ci5lbnRyeSwgJmRwbV9saXN0KTsKIAlkZXYtPnBvd2VyLmluX2RwbV9saXN0ID0gdHJ1ZTsKKwog
-CW11dGV4X3VubG9jaygmZHBtX2xpc3RfbXR4KTsKIH0KIAo=
---000000000000d1c4a80621363b96--
 
