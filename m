@@ -1,174 +1,309 @@
-Return-Path: <linux-kernel+bounces-313348-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313349-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3C3B96A446
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 18:29:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F81196A449
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 18:29:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D27028689C
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 16:29:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C3A9A1C23F43
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 16:29:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F54B18BC00;
-	Tue,  3 Sep 2024 16:29:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BEC718BBBC;
+	Tue,  3 Sep 2024 16:29:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GPb9eX8V"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="yqbH3xh2"
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2060.outbound.protection.outlook.com [40.107.92.60])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F9BA18B499
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 16:29:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725380957; cv=none; b=T01RI2wYHy9VJyA2sgmQXuls4F539r0mf0KS/Hxm0Xr1uDHGl6kX+0UmGcEa3HmdVHUAsyWjGJcL1ck/leLWrSEPVlfYy/we0cdm9Eic5FK5YvsRUB/5U3rLLqzrutKSL4QtGzZhuD/J9eWTeXu/mR7FEoYF0jCgjhs12Z43/C8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725380957; c=relaxed/simple;
-	bh=zYtlk+5sfQncdxRHQdTsxikt0082PiHmmUZg7TTvIvg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type:Content-Disposition; b=uQeWHG0etk+RK5rlGPLy34c7BWoOj/gnZ9NovjcQZHHbjnHPpK4vb4c4FH8ZLJK94EExIFgkSYuA7IaKELxf90OCf3RzkdpImdMpjPirMjGOxbnyfselRYe0PVcLMkNotXzG8Uy2Z1mzE5T75tSZeYChpvwPERskFVzL0Rf6/2A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GPb9eX8V; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1725380954;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Zrnaqsww4jvYqG6LWOK9qSkVY3XeoG7b3xEfRlLXIuA=;
-	b=GPb9eX8V6KrTUWWkgg3GcbJuSzN+gC2Lm1KKFJ4SM1x2bRBVlkEAc4zT0wuwSQmw1aYh7o
-	Q/0mDQseefE06bLPYLZ0GZQQEqDvn2l0L2fCjZblkiAiLoWotd41duJIsipd6gozPxwtaL
-	dtzE+3j4WGoebGfuRUYy53EuZcZj2fk=
-Received: from mail-pf1-f199.google.com (mail-pf1-f199.google.com
- [209.85.210.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-681-165BlBo0OMi78FHNxV9h4g-1; Tue, 03 Sep 2024 12:29:13 -0400
-X-MC-Unique: 165BlBo0OMi78FHNxV9h4g-1
-Received: by mail-pf1-f199.google.com with SMTP id d2e1a72fcca58-7141f62ac14so5344437b3a.0
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 09:29:13 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725380952; x=1725985752;
-        h=content-transfer-encoding:content-disposition:mime-version
-         :references:in-reply-to:message-id:date:subject:cc:to:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Zrnaqsww4jvYqG6LWOK9qSkVY3XeoG7b3xEfRlLXIuA=;
-        b=AYvhRS35zpPub2GlDWXd88vkYrEzflJlhoNQaqueU3nC4M3r5I4b6P0y87njeTLrAD
-         rdHTK2BMHKHTYN+z8HSHEWR2L7YMWPFX6CjWtsZ91bn+Mx+w+rQJtbhoz1gB0fSkhlcj
-         sRBs46+vN55c0gvty93f9ayvEAwkP3z9gmv27e540TNdYNcqIN0oiFPJ1UNIGbhGcgap
-         3RfSfPyJfqWEe0U2tWpW0YmWgUPXAeADFdN6RrdTQG0FNrCzLcX4gs+aZfs4fZZGSQ0g
-         6OzOIRwNjoottmA3m1psGtc1q4i7k/Ppgyk7TODWRzEWkJCMWEfFq40kzdx31L4VK8Ey
-         btKg==
-X-Forwarded-Encrypted: i=1; AJvYcCUog0jaUcqLO5oY/ANIvDx5KgIG1+C0NwwjR9BnLaMuzhPYzizZC4oJQvevzCaGUM0z+tgyXaB6FyD2jBw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzcOdYdc4a+wLoxu3pH/ixr6cAcdBVbhh2Pm3NfWzihSkwK+pWm
-	+3/PuzEYXn7zlBcXEsyskI2bn9eSBStQO8WOz3n2GEWFSCvIOAKA0o6NFoKFNjrvMRGFO9Cx174
-	+j0yI7twaMkAX4iTNTiYx0pONYc8l18kUONTd1ksDOFC3WPAAPdhJKIDuYIXxy90aJ8G0PAUA
-X-Received: by 2002:a17:902:cecc:b0:205:7b03:ec3f with SMTP id d9443c01a7336-2057b03ee0amr99540735ad.19.1725380951883;
-        Tue, 03 Sep 2024 09:29:11 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEFB7YsrYOLHMUBhndqah1OUkE6FYlc2YhqiVhS0lNKY7Sh/DddLuJw4Mh3nlZdjBuyYPz4vg==
-X-Received: by 2002:a17:902:cecc:b0:205:7b03:ec3f with SMTP id d9443c01a7336-2057b03ee0amr99540215ad.19.1725380951200;
-        Tue, 03 Sep 2024 09:29:11 -0700 (PDT)
-Received: from localhost.localdomain ([2804:1b3:a800:179b:467b:fbc5:3354:8591])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-206ae9525d6sm550515ad.111.2024.09.03.09.29.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Sep 2024 09:29:10 -0700 (PDT)
-From: Leonardo Bras <leobras@redhat.com>
-To: Breno Leitao <leitao@debian.org>
-Cc: Leonardo Bras <leobras@redhat.com>,
-	"Michael S. Tsirkin" <mst@redhat.com>,
-	Jason Wang <jasowang@redhat.com>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	rbc@meta.com,
-	horms@kernel.org,
-	"open list:VIRTIO CORE AND NET DRIVERS" <virtualization@lists.linux.dev>,
-	"open list:NETWORKING DRIVERS" <netdev@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH net-next] virtio_net: Fix napi_skb_cache_put warning
-Date: Tue,  3 Sep 2024 13:28:50 -0300
-Message-ID: <Ztc5QllkqaKZsaoN@LeoBras>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <ZpUHEszCj16rNoGy@gmail.com>
-References: <20240712115325.54175-1-leitao@debian.org> <20240714033803-mutt-send-email-mst@kernel.org> <ZpUHEszCj16rNoGy@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5D5918B49A;
+	Tue,  3 Sep 2024 16:29:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.60
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725380971; cv=fail; b=R72Pw28NQ+E3zLDFwORZUxpnB+Sc5VUDwwLp+1LG3DybzT4JQK5gMjslILGPKUCsBdjxLa7obk3d2yBoWVedwDq6JEMx+Nl8xUuJqCsGnWGLCgkVHbHWASNdlv42GYZT6ce4J84vzAge0gtCv3BYXQbLBgi57qs0JEn0dgzLdiY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725380971; c=relaxed/simple;
+	bh=davqs1Py54b9xm8B/uUJPYZOPSzwEauofZPv6NIrbmY=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=FQURnsVfk16GTXUsBZ78jCYuU436rvKe74yz6RYKi0ZbU0xEyeVyYXI3GXGjj442B8iX2UsBqnL+AUetplhfCmRbX+rRxE2mOwQyDKOJnW5BfPnskvouYW5cLzZdaxNFapxFuIu10iB42BNY48nOsuoE5caqZzyBVBe2Ns7Y3fQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=yqbH3xh2; arc=fail smtp.client-ip=40.107.92.60
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=yP/sdIb9/d2CfpZuDw/Ch4pDhD8R++zASYD+lWagnXJjZfvvs+fke/ulB3TYwKawD1flg67V58V5/dGBframBbIxcS3stwXAnkID1DxMrUHoJ49vYlxUWmwRiHO9KcK0G4HWUD6CMfTn9x9FoD5tCfSwmrLg/JwPNw9ebCBCmztrnvZBsZDcnWtQrT1gRq5DEfJYrx1maL6xV/8lr+fgBd+6wuUw0fTc0mxZ8VPSUS1d1Kkqz3+bCOSJ+5IewdY80J1fqxrFLLWcOTCesAKJiB52MKzu9Lbq8DXZA0JSMq1V30TEWvr6oUWJtjpck5h5tvSoGcGlDf163cqFvLOlJw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=rMyapjXq0x2WsGli8rOVBjAHgyUwBrrSs2HmsghX1ng=;
+ b=wBNxXl8N+SAPWZkf/3uZTXfQ02borsP0lLwanhixELScrdFvmpfG/VLZo0Ydf5B7w3+ejG/O/mlcfnj8THl9I9U2ini3tqpnziCjHZ7nnV9mUT6Ys55n4C/ZL4TV0KLKy+N8v1qelOfzcHDaojLF4R2oga2kGOgz0Jjd69RJEe3mfyQQ83Euxq2csWwj4tJY1NJ1YdpD8qZI6sabM/9h7ytgnS8J761qEwtO6lOzXceBMsHtvmKlEPImZKaQTwug5lF0qsKIl2pjyAOkoxJctua+q0PPdBf+9mgXvKR7rwPm6Z/dFFuyWngWf9N9IO3kJq77b9Vk+LYnZQDwZLfmsQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=rMyapjXq0x2WsGli8rOVBjAHgyUwBrrSs2HmsghX1ng=;
+ b=yqbH3xh2QF6oeMBu7rFNd8l7GlUwEGUGkVnY+1H7v6ybKE1RVHHIUe9FJguJ3+yRxKufZaR0IlLO8b6rxgeImLZGXvyUraNeSuViLhb9XoO1JkEkHg+z4YJvSrW4zh978GGWQYaFjOPwbrcJ5+hgWKbKZhXTDpJ8PvQKuacsAwQ=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from MN0PR12MB6101.namprd12.prod.outlook.com (2603:10b6:208:3cb::10)
+ by PH7PR12MB5758.namprd12.prod.outlook.com (2603:10b6:510:1d1::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.25; Tue, 3 Sep
+ 2024 16:29:26 +0000
+Received: from MN0PR12MB6101.namprd12.prod.outlook.com
+ ([fe80::37ee:a763:6d04:81ca]) by MN0PR12MB6101.namprd12.prod.outlook.com
+ ([fe80::37ee:a763:6d04:81ca%7]) with mapi id 15.20.7918.024; Tue, 3 Sep 2024
+ 16:29:26 +0000
+Message-ID: <6ac2dfbf-fd9a-4223-8d9e-bb41dbf98b1a@amd.com>
+Date: Tue, 3 Sep 2024 11:29:23 -0500
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 2/5] PCI: Check PCI_PM_CTRL instead of PCI_COMMAND in
+ pci_dev_wait()
+To: Bjorn Helgaas <helgaas@kernel.org>, Mario Limonciello <superm1@kernel.org>
+Cc: Bjorn Helgaas <bhelgaas@google.com>,
+ Mathias Nyman <mathias.nyman@intel.com>,
+ Mika Westerberg <mika.westerberg@linux.intel.com>,
+ "open list : PCI SUBSYSTEM" <linux-pci@vger.kernel.org>,
+ open list <linux-kernel@vger.kernel.org>,
+ "open list : USB XHCI DRIVER" <linux-usb@vger.kernel.org>,
+ Daniel Drake <drake@endlessos.org>, Gary Li <Gary.Li@amd.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+References: <20240830000137.GA84915@bhelgaas>
+Content-Language: en-US
+From: Mario Limonciello <mario.limonciello@amd.com>
+In-Reply-To: <20240830000137.GA84915@bhelgaas>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SA1P222CA0198.NAMP222.PROD.OUTLOOK.COM
+ (2603:10b6:806:3c4::22) To MN0PR12MB6101.namprd12.prod.outlook.com
+ (2603:10b6:208:3cb::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MN0PR12MB6101:EE_|PH7PR12MB5758:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8eee4f88-080a-4ab8-6327-08dccc3593cd
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|7416014|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?aVRZWUZ3OFNMSmMxQ2c2NWNqRHQ5Smo5UVNzMWIzSER4WFJzUkhOY05uZjVl?=
+ =?utf-8?B?VzNhNXR5cGhoMVBBS3QzQTBpUjFMaEtTdXU0Wmh2TmxjSXFjblpudVY5QTJj?=
+ =?utf-8?B?dHhCYTh2YVlMWm9UTFQ3NnFicWdTQ3FCZmV0WjlSQnBDUTIxOFliSlIzdHVQ?=
+ =?utf-8?B?V1JZWlpiQWF4SFAwem82bTExekVobmtqOXZWTUFrU1FPTjJKN1ZLUTJsbzI1?=
+ =?utf-8?B?Szh1MXRqVG9XMGFxcm9GbzhzYjNZSVZ4S1M3dTRxRTFsQnVhME40YnBhaVl3?=
+ =?utf-8?B?VVdrYmhLOENhZU1pRE9rK2xnSGhmcjlIWHhVeEgreC8wRW16cHd5aGU2ZHYr?=
+ =?utf-8?B?cjlaa3l2ODFOS1NXUUJBcmZiMG5uMThHVFZrWENHRWtRbmxJa3lWUEZmSzZr?=
+ =?utf-8?B?SHhBOWpwSGFuQmZOU2NUNTZZSHJHTXlDcEhSazB3NTFPTVpiTmN0RjhZbWVO?=
+ =?utf-8?B?Uzl3QXR2WnhDQ05hdW9KSFVNaUdlbWFOdE41ZFJJdVQwalFWQ1NJdG5rZkh3?=
+ =?utf-8?B?MXBlTUVNZHdFQitEbDR6eFVIMTd6THl3WEpDOUJ6NWtzSW4yZm5zSmNSSU1j?=
+ =?utf-8?B?TUJEbUE5bDBqcjlQNFNXaWI2TFFqVkprc0VlRjBpSXdsckQ1ZUtySmFtMEV3?=
+ =?utf-8?B?dTY1dDVBeG5zZ1I1Ump0OVdEWWthcUp6WXR3dVUxd0ZRM2x0Qjlhc3VwS0tm?=
+ =?utf-8?B?cEJoOFNwZVdNL1pVT1pzeWNOc3ZZdlIxQjk5NWVqdWlzalVqYitVSTlwM0hU?=
+ =?utf-8?B?Sm5HSm90YklRWGFaVWxMUU9ULzJIZnRVeFFyL3FacmZzbXJTQmVielRrTCt4?=
+ =?utf-8?B?MUZsWHRxemxSSjJobFVEYW8vMzJHWm0wZnBVaWZjVENzOHl6a2Q0YzNXeStZ?=
+ =?utf-8?B?MTl6bklnT0hnZnZiakZsVmliTUJ6YzE5RkxaVW5zeXljVm5xbzZhZHAvcXo0?=
+ =?utf-8?B?c2wyOFNOVUdrWk4yZU5LVVk0V25xcVJPU2Q5N29Id0Z6bXdTbU1SNjYvMC9V?=
+ =?utf-8?B?VWp5SHZsU3BmUW9uNFpVOXZaYnNGMkJ5MUJESFNlRjgwL2VXcWcvVXNISTRl?=
+ =?utf-8?B?NTZPR0tjTTZqd29RSm5QU3NuOFdtUmJPNG4zOTMrRXJYRzdzYkN2Z0xtNlJJ?=
+ =?utf-8?B?WjlET1ZNa3NyOVJqdjBLUHFxazZJS2NCNnlDM3pYTW9QM1NKUWtTaVl4QkxB?=
+ =?utf-8?B?Z3FPRWRNMlY0RlVMTk92MWJPcmJkcFVsRXRnZmYvV3MvREtlSFMvQjVlVUdB?=
+ =?utf-8?B?TlcwS3NSZ2hxM3J6VytoczR0V09yOWxLR09VaWZlT01sb2RkYys0MDJHZkVI?=
+ =?utf-8?B?bGxLa1FXclMrR1R6WWFucGJHWXZ1bGoySzZ0cktyaXBIV1NrN1dDc29MWlA2?=
+ =?utf-8?B?NHlWSVlKMURxS29zdXF6ME5iNEhhVkFKb05qQlhKbHA3enZFczRrbkpRcGpU?=
+ =?utf-8?B?RFR4R0xoNTM5eS9CUVphZWR6R0lQSHNPMGNJalY0S0sxbjlGWU5kc0ZtU3dC?=
+ =?utf-8?B?U2VWcGJoVURrVGZ4a3ZIeEZ3SGRtbCtSWGRYbEVCMFdYUTZTcFFnSnYycnA1?=
+ =?utf-8?B?L01zdVVZQzQvMG8vZUF1bGVnbHo2VzdGNWkvWWx3dUJOUXYwcWlRTHRKeFpN?=
+ =?utf-8?B?NEFjbGFEbWp0WDQ2QzBjWjlEemtOeXdXWUVDY0x6ODRQWmp1Z0VNV1R3bU5o?=
+ =?utf-8?B?L1dHS21HcDJLRXpHMWt5dUpDdTJYUEdZOVBlVWxBc1RxSFQxMStVcHh0WCsy?=
+ =?utf-8?B?RHNpWDdWOUpaYnY4Vmp2ZWcvbGN6bERSYmxBRXVEWHBVbHVvdEYxQzh4WWVS?=
+ =?utf-8?Q?/MfysDKu5FGlc8HPPy8d0rH0Yl84Y3E774E+8=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR12MB6101.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?eGtaZ0ZEWXRaR2ZjVXhPZEI0V1N1L3FLUDh4N0o5QldLZG0rT0N3bGkxMzVq?=
+ =?utf-8?B?ZjFJQmZtWDliTmZVcWgzbGx1VkUzMmJXbmRrWDltMmRKUVZIdEoxdEljVkpB?=
+ =?utf-8?B?UEdwNVQwbzNocE1iZnQ1aXg3UU1uT2lhS0g2UFpWMUNiSGJRUWp4N0pyZ1Vz?=
+ =?utf-8?B?bDJHS0JvaTJQV1BReGxZaEdDWGRDTi9LTDVibnNjczVxZlU2cDlZZ2Z3Rm1v?=
+ =?utf-8?B?MGsvNnB6NUZkVkpSQ0MwcHZLakpFVkg3aHVUOHA2Q2s2c2NlQXZMRjVwMGQ4?=
+ =?utf-8?B?MS9lR3RvTnlocFp0TmU1YnlJTm82bmJxZ25aeWdlZlVjRWNybGNLN2dhVWtH?=
+ =?utf-8?B?OEJ2SVN5dFR3Mkhjck0waXd0Y1l3MGptQ0ljQVlZUlZMTUhocElSVmJGejFT?=
+ =?utf-8?B?b0JKQ25ZSDgvMWsvM01xK3liK1NmOXdtditiaUlsbTNBZ1VrTVFhNzZDMUJZ?=
+ =?utf-8?B?WEpiRDdxdlVYQ0dRUGVxeHNZdTZHcnpTWGp5M0VUWlVwTnlNV2JrQTc1LzhC?=
+ =?utf-8?B?MXBucitiLzljU1FCZVRxUk4xSE81V1JJdFpxSk9CSmsySVdBZG9pSFF5Z3Fo?=
+ =?utf-8?B?QjYvTFhWUWpSTEpHZUFnTHFiNm5ZbWRLbEg2QTEwZ1Z5YUcyQUFicHluY1Jt?=
+ =?utf-8?B?SFBjL1lHNnhKZzUzaGR0Qmp3SGpiRHE3WjBKN1V2MGh6aTVMSGlIWkpCRGZV?=
+ =?utf-8?B?WktGdVIyaEZ1blJwUE5PUk00b0U0eEt0RnR4azZMeTZKSWVIU2VjNUQvNWtQ?=
+ =?utf-8?B?clR4T082cnE0RmNmTWhDV04zTjdhVmVVeGdwdlBaVVZ0SCtuc2wxc0dzKyta?=
+ =?utf-8?B?UFJMejFwSHRDVUtxT2VQL1R1N3dsS3BBUnBaY2tGSkNFQk0rT0krSVFRdEkx?=
+ =?utf-8?B?T1g0ek1JOVcvK0RqZFpjaW5BUTIrMytqeUNPNGEyakZ6TUFlUDBkWTFpUVZE?=
+ =?utf-8?B?aXloNHFVNndLekgySDFwbjEvT3d5YmZpeXlCNllGU21oY0RNRGxhWWtrVHpP?=
+ =?utf-8?B?RG95TVhvSk40dmdGZGVYaEhzdmNKQjJHaWFReThTQU1OTUFwWXNnN2JQS2JW?=
+ =?utf-8?B?d0RtaVhYZDJyR3drcjlYSEswcEV2aFBWWmNHclhWbEUrSjdEM292dFQzaE9V?=
+ =?utf-8?B?TVlMamRreVJFZEprUTdxTWRrR1ZTdU5RRitLcDdZTDVGYXk2eHBvUG41blhm?=
+ =?utf-8?B?S1JodGJVZ3M4SzljYWNBQUJhUHFFL1JITFc3c3h1dW05dG4xbjA3V1U1K1ZH?=
+ =?utf-8?B?RCtCaEtpNHp6b0hXWnN4NjE5U3JWa0hsZnJNT3duUm0rY201UFlLSEh1dHMx?=
+ =?utf-8?B?OGtia2ZnWnhPc1JhVjg2bWwvVFJzNzNMbXFRZ3JQWVZrdHhqS29ialVZZGZU?=
+ =?utf-8?B?MjI5S28yMS9EalJqbmYvSThLN3JWTncvc1dhQTQyb1Z3Sng0NmNheHB1ankw?=
+ =?utf-8?B?TWdmSENFbFEyVnhVK3pMTHNWbWMySEpORmMrNzdkVFhmWXUxSjgwYVFnNStZ?=
+ =?utf-8?B?alVhOGg2MUFmQ0d4TlY0QjhqUjdwRDV4WEswaWJlc1ZTSjNyRCtaYlFRNHBw?=
+ =?utf-8?B?T0ZjMVVHRkgvZXE4WW1LYzNBNGdOb014Zm5PVXlHb3YxNWxxWU5JTWVuUTRi?=
+ =?utf-8?B?a3Evc1dQL0pGVTI4TmZobU1IRzNXZDdEVW8wVytYZXBLUW1hdzhWU2lsYWFx?=
+ =?utf-8?B?UkFIN3FFT1UySVRxUVF3TkZGNWxrREt0NHpnMWhvbVVQWFhjbE5IOWRiM0h0?=
+ =?utf-8?B?bHhiR2tQdEw1Q3AxZTFvQ25YbjJBSERlNWtMSnJhRFd2ZW1qNWZxVzRKTXZ2?=
+ =?utf-8?B?ZVBtUXZSZnRUbjRFWTh1QTNHQkhSb2hleEx2anE2dG1lL2hJc2grcnBDVFJV?=
+ =?utf-8?B?SjZqZDlxMXZ4TkUrMWJzbUE0OVVZZUY4UkNmOU5wWUw3ZGQzWWtBbWIyRmta?=
+ =?utf-8?B?c0VsajdpMjNFNHRVWURlakEzTXZROHBaTzN1TlpIRGFod0Yzc3dON2ovQTRl?=
+ =?utf-8?B?MEo2TUQ3aFJENEFUQ3Vqd0s0K2srVUM2bzc5aWd4L3g4dEFvZWl0UU4rR3gv?=
+ =?utf-8?B?ZXlTUS9vbmtoQlZRRG93bGEzZWpadWthaENwZ2dKVzNGK3BJVE9JTEtOUmFZ?=
+ =?utf-8?Q?oMUizXYZ7NiwFV5PffcX5Yay9?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8eee4f88-080a-4ab8-6327-08dccc3593cd
+X-MS-Exchange-CrossTenant-AuthSource: MN0PR12MB6101.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Sep 2024 16:29:26.6122
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: ltmxqZhoaPPbIcM3ltU7rfqUwb1IvXilCb1R4mF+q4VCkvkNFf4qAYo1QvoKZGmPOJZuh6CxK1alwQgOAOxaWw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB5758
 
-On Mon, Jul 15, 2024 at 04:25:06AM -0700, Breno Leitao wrote:
-> Hello Michael,
+On 8/29/2024 19:01, Bjorn Helgaas wrote:
+> On Fri, Aug 23, 2024 at 10:40:20AM -0500, Mario Limonciello wrote:
+>> From: Mario Limonciello <mario.limonciello@amd.com>
+>>
+>> If a dock is plugged in at the same time as autosuspend delay then
+>> this can cause malfunctions in the USB4 stack. This happens because
+>> the device is still in D3cold at the time that the PCI core handed
+>> control back to the USB4 stack.
+>>
+>> A device that has gone through a reset may return a value in
+>> PCI_COMMAND but that doesn't mean it's finished transitioning to D0.
+>> For devices that support power management explicitly check
+>> PCI_PM_CTRL on everything but system resume to ensure the transition
+>> happened.
 > 
-> On Sun, Jul 14, 2024 at 03:38:42AM -0400, Michael S. Tsirkin wrote:
-> > On Fri, Jul 12, 2024 at 04:53:25AM -0700, Breno Leitao wrote:
-> > > After the commit bdacf3e34945 ("net: Use nested-BH locking for
-> > > napi_alloc_cache.") was merged, the following warning began to appear:
-> > > 
-> > > 	 WARNING: CPU: 5 PID: 1 at net/core/skbuff.c:1451 napi_skb_cache_put+0x82/0x4b0
-> > > 
-> > > 	  __warn+0x12f/0x340
-> > > 	  napi_skb_cache_put+0x82/0x4b0
-> > > 	  napi_skb_cache_put+0x82/0x4b0
-> > > 	  report_bug+0x165/0x370
-> > > 	  handle_bug+0x3d/0x80
-> > > 	  exc_invalid_op+0x1a/0x50
-> > > 	  asm_exc_invalid_op+0x1a/0x20
-> > > 	  __free_old_xmit+0x1c8/0x510
-> > > 	  napi_skb_cache_put+0x82/0x4b0
-> > > 	  __free_old_xmit+0x1c8/0x510
-> > > 	  __free_old_xmit+0x1c8/0x510
-> > > 	  __pfx___free_old_xmit+0x10/0x10
-> > > 
-> > > The issue arises because virtio is assuming it's running in NAPI context
-> > > even when it's not, such as in the netpoll case.
-> > > 
-> > > To resolve this, modify virtnet_poll_tx() to only set NAPI when budget
-> > > is available. Same for virtnet_poll_cleantx(), which always assumed that
-> > > it was in a NAPI context.
-> > > 
-> > > Fixes: df133f3f9625 ("virtio_net: bulk free tx skbs")
-> > > Suggested-by: Jakub Kicinski <kuba@kernel.org>
-> > > Signed-off-by: Breno Leitao <leitao@debian.org>
-> > 
-> > Acked-by: Michael S. Tsirkin <mst@redhat.com>
-> > 
-> > though I'm not sure I understand the connection with bdacf3e34945.
+> Still trying to understand what's going on here.
 > 
-> The warning above appeared after bdacf3e34945 landed.
+> I posted a change to pci_dev_wait() to read Vendor ID, look for Config
+> RRS status, and wait for a successful completion (when RRS Software
+> Visibility is enabled) [1].
+> 
+> You tested that and found that it didn't help with *this* issue [2].
+> I assume you tested something like v6.11-rc plus the patches from [1],
+> i.e., without the PCI_PM_CTRL changes in this series.
+> 
+>    1) Initially the device is in D0
+> 
+>    2) We put it in D3cold (using some ACPI method) because the
+>    autosuspend delay expired (?)
+> 
+>    3) Plugging in the dock wakes up the device, so we power up the
+>    device (via pci_power_up(), which again uses some ACPI method), and
+>    it should transition to D0uninitialized
+> 
+>    4) The USB4 stack sees the device but thinks it's in D3cold (?)
+> 
+> If your testing only included [1], but did not include the
+> pci_power_up() change from patch 3/5 "Verify functions currently in
+> D3cold have entered D0", I don't think we would call pci_dev_wait(),
+> so I wouldn't expect [1] to make any difference.
+> 
+> If you *did* include both [1] and patch 3/5, the implication would be
+> that pci_dev_wait() successfully read the Vendor ID, meaning the
+> device is not in D3cold when pci_power_up() returns.
 
-Hi Breno,
-Thanks for fixing this!
+The testing here was from the LTS 6.6.y kernel with both [1] and patch 
+3/5 from this series.
 
-I think the confusion is around the fact that the commit on Fixes 
-(df133f3f9625) tag is different from the commit in the commit message
-(bdacf3e34945).
+I can get testing from 6.11-rc6 with a combination of patches if you 
+would like.
 
-Please help me check if the following is correct:
-###
-Any tree which includes df133f3f9625 ("virtio_net: bulk free tx skbs") 
-should also include your patch, since it fixes stuff in there.
+> 
+> Can you clarify what you see and possibly expand/correct my timeline
+> above?
 
-The fact that the warning was only made visible in 
-bdacf3e34945 ("net: Use nested-BH locking for napi_alloc_cache.")
-does not change the fact that it was already present before.
+The timeline you shared is nearly correct.  The USB4 stack *thinks* the 
+device is in D0 because of the return of pci_power_up().
 
-Also, having bdacf3e34945 is not necessary for the backport, since
-it only made the bug visible.
-###
+As by polling PCI_PM_CTRL we can see it's still in D3, so it hasn't made 
+it to D0uninitialized yet.
 
-Are above statements right?
+I guess I reading between the lines you have an assumption that you 
+can't read the vendor ID from D3; which doesn't appear to be the case 
+from our testing.
 
-It's important to make it clear since this helps the backporting process.
-
-Thanks!
-Leo
+> 
+> [1] https://lore.kernel.org/linux-pci/20240827234848.4429-1-helgaas@kernel.org/
+> [2] https://lore.kernel.org/linux-pci/30d9589a-8050-421b-a9a5-ad3422feadad@amd.com/
+> 
+>> Devices that don't support power management and system resume will
+>> continue to use PCI_COMMAND.
+>>
+>> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+>> ---
+>> v4->v5:
+>>   * Fix misleading indentation
+>>   * Amend commit message
+>> ---
+>>   drivers/pci/pci.c | 28 ++++++++++++++++++++--------
+>>   1 file changed, 20 insertions(+), 8 deletions(-)
+>>
+>> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+>> index 1e219057a5069..f032a4aaec268 100644
+>> --- a/drivers/pci/pci.c
+>> +++ b/drivers/pci/pci.c
+>> @@ -1309,21 +1309,33 @@ static int pci_dev_wait(struct pci_dev *dev, enum pci_reset_type reset_type, int
+>>   	 * the read (except when CRS SV is enabled and the read was for the
+>>   	 * Vendor ID; in that case it synthesizes 0x0001 data).
+>>   	 *
+>> -	 * Wait for the device to return a non-CRS completion.  Read the
+>> -	 * Command register instead of Vendor ID so we don't have to
+>> -	 * contend with the CRS SV value.
+>> +	 * Wait for the device to return a non-CRS completion.  On devices
+>> +	 * that support PM control and on waits that aren't part of system
+>> +	 * resume read the PM control register to ensure the device has
+>> +	 * transitioned to D0.  On devices that don't support PM control,
+>> +	 * or during system resume read the command register to instead of
+>> +	 * Vendor ID so we don't have to contend with the CRS SV value.
+>>   	 */
+>>   	for (;;) {
+>> -		u32 id;
+>> -
+>>   		if (pci_dev_is_disconnected(dev)) {
+>>   			pci_dbg(dev, "disconnected; not waiting\n");
+>>   			return -ENOTTY;
+>>   		}
+>>   
+>> -		pci_read_config_dword(dev, PCI_COMMAND, &id);
+>> -		if (!PCI_POSSIBLE_ERROR(id))
+>> -			break;
+>> +		if (dev->pm_cap && reset_type != PCI_DEV_WAIT_RESUME) {
+>> +			u16 pmcsr;
+>> +
+>> +			pci_read_config_word(dev, dev->pm_cap + PCI_PM_CTRL, &pmcsr);
+>> +			if (!PCI_POSSIBLE_ERROR(pmcsr) &&
+>> +			    (pmcsr & PCI_PM_CTRL_STATE_MASK) == PCI_D0)
+>> +				break;
+>> +		} else {
+>> +			u32 id;
+>> +
+>> +			pci_read_config_dword(dev, PCI_COMMAND, &id);
+>> +			if (!PCI_POSSIBLE_ERROR(id))
+>> +				break;
+>> +		}
+>>   
+>>   		if (delay > timeout) {
+>>   			pci_warn(dev, "not ready %dms after %s; giving up\n",
+>> -- 
+>> 2.43.0
+>>
 
 
