@@ -1,73 +1,73 @@
-Return-Path: <linux-kernel+bounces-312770-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312771-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A63D969B00
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 12:57:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8341969B05
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 12:58:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 41BF628708C
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 10:57:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3541A1F24ADC
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 10:58:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C97E21A42AB;
-	Tue,  3 Sep 2024 10:56:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C6F21B12CA;
+	Tue,  3 Sep 2024 10:58:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="My3mRlVG"
-Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="QF44Gsyk"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87D421B12CD
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 10:56:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91A291B12C0
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 10:58:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725360989; cv=none; b=Y9c6s4ycDdaL2bZsSqV29P9ZoETKE8TeOG+zxnLC2cPDKtEgyWambDDXbOXEMgTd/2lcHPOcQCOlcT8COaH72wwmwWiBAuszVPjtaHMQSWzDLrl2O1VKBKTLV6qyxrtCw8wPSfCy0igb9oJzmIlR31FRnSsHLXh9HaTjidFGZ0o=
+	t=1725361101; cv=none; b=jyCoVjVc/S7DAfIDcku5+VCuiExC+s14Ua9vAoy5oyaARbXth+AEh3gPMUVXSbMpgPPh+cLUfrhYqUp/+5ANWjpg7W3WBe9RQwP6L5tayQEUsMXap9McqxNqEWjxUt2ZhyYn3YU40USXknKlH8jB/bHO7eKi9pVP+33rbX5CHUU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725360989; c=relaxed/simple;
-	bh=3UYJC5DIR/O2NREOaIE2+PZ6+tLYVr4tfXxGSTKr3Sw=;
+	s=arc-20240116; t=1725361101; c=relaxed/simple;
+	bh=G+wfkTxv/p3JhAs8yWro+dghNLKXoq5Zfa8T3z/KDrE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hbEAgoyzk1dviryX4OKAqNdMTqUPYZ+U7xqwtH6Czo5JDYy0BY1R16DZIf/tSNlwQ+DIH7R37ZUX7C/0YxERIRmHhXzJsg0YCaA0+oMmHQeBQ+cQpxIL8pE1vcOAzqKgu5Yv9/SHe0r7Cv4O1ZKLs/COrl3vvwDMWEAjJhWY7Jw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=My3mRlVG; arc=none smtp.client-ip=209.85.208.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2f43de7ad5eso65797001fa.1
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 03:56:27 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=CWegbaa1FEb7DhI8bkSQ+oIOpqDHDDJ5LS0iRP8AoIJdZ/z7i7Z6r6YhhTmMQVypyW3gIX+kMOqnD3cp5C4Q24wIA9xkT6vH87A+6XjR2qIb2dVcFBufz12vejLfQu1GqeG9wbkgTPe0iPQ0tyQSQau1WoFBkQb7GI2yz9WaBrk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=QF44Gsyk; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4280ca0791bso44659365e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 03:58:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1725360986; x=1725965786; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=tuxon.dev; s=google; t=1725361098; x=1725965898; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=kDvb0WcuPHeizgGgsmrLYwvbAH11f64LB2c1bYIjiXk=;
-        b=My3mRlVG98chCijkIXHBoyud9kLKruOfJsLFFfHzomVCQAScPJD1Pppmlu/Bbs4A63
-         debI4mVTZf+F6xR4depKBRTLatur3j5XvRc7Cv4Z/5o8z915MQvOtpCI2/Yr84bp8jRD
-         WgCn6LCWyOw3PVWoCVVin0CvC6eTwyGm66CTaLgYf2ypewxSnWhWxZvnzd9SzBPqApRG
-         3m10O1cHRqnfKiYVvKRhBSX6iDcOTKScaQ4ttsmx+W/QvzRojxNo7ibPkNvyyNvdzB/B
-         5uldNbzil+xEDgbf1CTfqUv8eJBJ45+i/upGKmpRZ+KVOS8QTNSWpfqtLu0MbPCg+no9
-         exwQ==
+        bh=IiyTYtjACDnUS+yMHRQJxA78DUiZLSpdAQkLFojBlZU=;
+        b=QF44Gsyk1qkIlHRsOoPGAevX5PIlOx6q35ITfgDBRLOvA4s83fI5PFzij4VCz68Ilg
+         CG1UCHqeR+5rB4nQ9y4wvYAQV0ZW/B6WR6ofppY3zSglnl3gAj11N0YFtPIZzUsbVuvX
+         mJrvf8ffU+mRGxh/2Nvsu6XqnF6EKjDgSWi5oVVEbrTUrQ0krUBG9u9tQ7v+9MGqhJvG
+         ChRdSsUXf+IrFfkJFra6UbiYTiCOOdTjakK4EqjNiN475tzrkpRn8Fpo8TzXsI0UJOHP
+         om9b0AzjtoInvvFInwYqExkSB59q3Pp3FVgIsq6QJxLz2MshAaTaVftfcpdStO5jrUh+
+         TOHg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725360986; x=1725965786;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1725361098; x=1725965898;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=kDvb0WcuPHeizgGgsmrLYwvbAH11f64LB2c1bYIjiXk=;
-        b=LKJzrC3atOFAlVW7O4DTbPFyAHC1f7hwplOGY97PRLk49wg6oKRZuOjtaXEV/tZ5DR
-         7F6DRLtUybLCB62pAObJYOJchEn8ouQ9WSPgGsawhDHFbtzhOcSsXuy4HlEiqOr3Ut1Z
-         S4fVhuqQYnS5fpg0kMgPyjK2Tl5JCxY/0vWCkOi6Kl/y7ljzoRSH9lDOjQ5Sixm/tdDM
-         FP6ylII7egPmR6kdOn303LgX1jaSK3rCghmdsIiD6nGDXysgJQjRrERD2Rdy76C07ARu
-         4zAbzl6nDoI+rDflSRLr0ZHX1OYrVfDMgp03N2XNbOXbCYVP2reO27frLwUmf8+UPFJr
-         FJrw==
-X-Gm-Message-State: AOJu0YwG8pSKqw1PX+QpRNOjYEvyqkEVmcU079FBkWW2AHewV4VUVX2r
-	pAsuMlP2WAUgvGjH+jpG1fl4C7T5dbbYOUVjCADRD9ctgRYBA+HoH9whwWkWoRJbfb7SdzyXq1v
-	U
-X-Google-Smtp-Source: AGHT+IE2cI4NH67RfwNyzjVdcXzsvdId6Gg17wD6SGu8dgF2FWmIkcDLP8i7MYI4imgJhdqGeV5F5w==
-X-Received: by 2002:a2e:b887:0:b0:2f4:fc1c:e5dc with SMTP id 38308e7fff4ca-2f6265d771bmr85954851fa.33.1725360985503;
-        Tue, 03 Sep 2024 03:56:25 -0700 (PDT)
-Received: from [192.168.68.116] ([5.133.47.210])
-        by smtp.googlemail.com with ESMTPSA id 4fb4d7f45d1cf-5c245c467e7sm4040089a12.50.2024.09.03.03.56.24
+        bh=IiyTYtjACDnUS+yMHRQJxA78DUiZLSpdAQkLFojBlZU=;
+        b=bILMv1SBQbnTllEV97QYDMi+1Ram0zafh+pJ2U0jnO9Cts67oD/Pot+8siZoRiMU+1
+         OU4KI1bAKx0SMy/Jh3OLShbROEWQHTlETkP/GG7iYIV0BvHc1+szCWRfEdek0mdtZSM8
+         qGAIY8fh4QA9c5DGXeUoA9qTRtz0HylKRWH5CJCIPNvEeaEiUYPce/HzGOjzV4q9zs+C
+         DC2qLEcziQsU0OvKgm1yTS+Hze4tmGQrYBfyq7VUIOEzTSkPNQVScz7vgNVRlHZAgDeR
+         Mkr6EY4u3JO2POXkhAtVbQO2IzQBInP1ajfFci3xqlevczdP6FgY+rwvaTPg8ehZuvtd
+         cu0A==
+X-Forwarded-Encrypted: i=1; AJvYcCVA0uDBwogqrL9IzdPZ1F7BS/mOXfpm824ESWzRveZFapWyBx0styex3MV5wLmd2R7N4oeiBDrhOuiGdas=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyNMJ9jZ5UlV5IBfgKHE/Lj86xSNu9ZbDXD7kZ0fJFjFSDgH7xp
+	F4Qtt85zhG0M8OOh6jfYwnfjMDHbzXSfoxMPRDVGPZK4O52CROtl7FCZnP2s7D8=
+X-Google-Smtp-Source: AGHT+IGznagqoviE6ySUvt6lxPt835b+hPmScaIpmlICIM82eo24CPYzqVSzQJR1lwMuNCXz+hrYhg==
+X-Received: by 2002:a5d:5387:0:b0:374:c69c:2273 with SMTP id ffacd0b85a97d-376dd80faadmr265958f8f.37.1725361097737;
+        Tue, 03 Sep 2024 03:58:17 -0700 (PDT)
+Received: from [192.168.50.4] ([82.78.167.144])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42bb73e20b7sm168108285e9.14.2024.09.03.03.58.15
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 03 Sep 2024 03:56:24 -0700 (PDT)
-Message-ID: <90a7917f-7a7e-4904-8af2-c411c198cd80@linaro.org>
-Date: Tue, 3 Sep 2024 11:56:23 +0100
+        Tue, 03 Sep 2024 03:58:17 -0700 (PDT)
+Message-ID: <da4c57ff-de2b-418f-ba2c-e83c1d399b94@tuxon.dev>
+Date: Tue, 3 Sep 2024 13:58:15 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,40 +75,135 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/3] nvmem: fixes for 6.11
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: linux-kernel@vger.kernel.org
-References: <20240902142510.71096-1-srinivas.kandagatla@linaro.org>
- <2024090351-monument-hydrogen-f495@gregkh>
- <a326aa34-a683-4efd-af7a-f2f264c7fc4b@linaro.org>
- <2024090357-cardiac-foil-6476@gregkh>
+Subject: Re: [PATCH 00/16] Add initial USB support for the Renesas RZ/G3S SoC
 Content-Language: en-US
-From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-In-Reply-To: <2024090357-cardiac-foil-6476@gregkh>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: vkoul@kernel.org, kishon@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, p.zabel@pengutronix.de, geert+renesas@glider.be,
+ magnus.damm@gmail.com, gregkh@linuxfoundation.org, mturquette@baylibre.com,
+ sboyd@kernel.org, yoshihiro.shimoda.uh@renesas.com,
+ biju.das.jz@bp.renesas.com, linux-phy@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-renesas-soc@vger.kernel.org, linux-usb@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+ linux-pm@vger.kernel.org, Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+References: <20240822152801.602318-1-claudiu.beznea.uj@bp.renesas.com>
+ <CAPDyKFrS4Dhd7DZa2zz=oPro1TiTJFix0awzzzp8Qatm-8Z2Ug@mail.gmail.com>
+ <99bef301-9f6c-4797-b47e-c83e56dfbda9@tuxon.dev>
+ <CAPDyKFrVS2vpsJqTvjKCJ7ADqXc4D4k2eeCBsaK4T+=pXDnKUA@mail.gmail.com>
+ <fa9b3449-ea3e-4482-b7eb-96999445cea5@tuxon.dev>
+ <CAPDyKFrkkASq7rfRN=9sEet-p8T8t+f__PdnSNRN3bMNipnNNw@mail.gmail.com>
+ <CAPDyKFpLnREr4C=wZ7o8Lb-CZbQa4Nr2VTuYdZHZ26Rcb1Masg@mail.gmail.com>
+From: claudiu beznea <claudiu.beznea@tuxon.dev>
+In-Reply-To: <CAPDyKFpLnREr4C=wZ7o8Lb-CZbQa4Nr2VTuYdZHZ26Rcb1Masg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 
 
-On 03/09/2024 11:52, Greg KH wrote:
-> On Tue, Sep 03, 2024 at 11:45:59AM +0100, Srinivas Kandagatla wrote:
+On 03.09.2024 13:35, Ulf Hansson wrote:
+> On Sat, 31 Aug 2024 at 12:32, Ulf Hansson <ulf.hansson@linaro.org> wrote:
 >>
+>> [...]
 >>
->> On 03/09/2024 11:20, Greg KH wrote:
->>> On Mon, Sep 02, 2024 at 03:25:07PM +0100, srinivas.kandagatla@linaro.org wrote:
->>>> From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 >>>>
->>>> Hi Greg,
->>>>
->>>> Here are few fixes in nvmem for 6.11, Could you queue
->>>> these for next possible rc.
+>>>> If not, there are two other options that can be considered I think.
+>>>> *) Using the genpd on/off notifiers, to really allow the consumer
+>>>> driver of the reset-control to know when the PM domain gets turned
+>>>> on/off.
+>>>> **) Move the entire reset handling into the PM domain provider, as it
+>>>> obviously knows when the domain is getting turned on/off.
 >>>
->>> You forgot to cc: stable on all of these :(
+>>> This option is what I've explored, tested on my side.
 >>>
->> Sorry Greg, Should I resend them with CC Stable?
+>>> I explored it in 2 ways:
+>>>
+>>> 1/ SYSC modeled as an individual PM domain provider (this is more
+>>>    appropriate to how HW manual described the hardware) with this the PHY
+>>>    reset DT node would have to get 2 PM domains handlers (one for the
+>>>    current PM domain provider and the other one for SYSC):
+>>>
+>>> +               phyrst: usbphy-ctrl@11e00000 {
+>>> +                       compatible = "renesas,r9a08g045-usbphy-ctrl";
+>>> +                       reg = <0 0x11e00000 0 0x10000>;
+>>> +                       clocks = <&cpg CPG_MOD R9A08G045_USB_PCLK>;
+>>> +                       resets = <&cpg R9A08G045_USB_PRESETN>;
+>>> +                       power-domain-names = "cpg", "sysc";
+>>> +                       power-domains = <&cpg R9A08G045_PD_USB_PHY>, <&sysc
+>>> R9A08G045_SYSC_PD_USB>;
+>>> +                       #reset-cells = <1>;
+>>> +                       status = "disabled";
+>>> +
+>>> +                       usb0_vbus_otg: regulator-vbus {
+>>> +                               regulator-name = "vbus";
+>>> +                       };
+>>> +               };
+>>> +
+>>
+>> According to what you have described earlier/above, modelling the SYSC
+>> as a PM domain provider seems like a better description of the HW to
+>> me. Although, as I said earlier, if you prefer the reset approach, I
+>> would not object to that.
 > 
-> I fixed them up by hand.
-Thank you
+> Following the discussion I believe I should take this back. If I
+> understand correctly, SYSC signal seems best to be modelled as a
+> reset.
+> 
+>  Although, it looks like the USB PM domain provider should rather be
+> the consumer of that reset, instead of having the reset being consumed
+> by the consumers of the USB PM domain.
 
---srini
+The PM domain provider for USB is the provider for the rest of IPs. To work
+like this the SYSC these signals should be handled in the USB domains power
+on/off function. It's not impossible to have it implemented like this but
+it will complicate a bit the code, AFAICT. This will not describe the
+hardware, also.
+
+With the information that we had up to yesterday, the connection b/w HW
+blocks was something as follows:
+
+                 USB area
+              +--------------------------+
+      sig     | PHY -> USB controller X  |
+SYSC -------->|  ^                       |
+              |  |                       |
+              | PHY reset                |
+              +--------------------------+
+
+In this implementation the SYSC signal was connected to PHY reset block as
+it is the root of the devices used in the USB setup and no USB
+functionality can exist w/o the PHY reset being setup.
+
+There is a new information arrived just yesterday from hardware team saying
+this about SYSC signals: "When turning off USB PHY and PCIe PHY, if they
+are not controlled, PHY may break" which may means that it is just
+connected to the PHYs not to the USB area/region or PCIe area/region as
+initially expressed in HW manual.
+
+With that the HW connection b/w the USB devices and SYSC might become
+something like:
+
+                 USB area
+              +--------------------------+
+     sig   +--->PHY -> USB controller X  |
+SYSC ------+  |  ^                       |
+              |  |                       |
+              | PHY reset                |
+              +--------------------------+
+
+I haven't got the chance to test this topology, though.
+
+With this new information would you be OK to still have it as a reset
+signal and connected only to the PHY driver ?
+
+Thank you,
+Claudiu Beznea
+
+> 
+> Did that make sense?
+> 
+> [...]
+> 
+> Kind regards
+> Uffe
 
