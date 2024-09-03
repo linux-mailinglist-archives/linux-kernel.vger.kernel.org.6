@@ -1,95 +1,103 @@
-Return-Path: <linux-kernel+bounces-312986-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312987-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 137A4969EB1
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 15:08:44 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ADF86969EB6
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 15:09:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B1A341F24DFE
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 13:08:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2E6E8B234A7
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 13:09:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 018D91C242A;
-	Tue,  3 Sep 2024 13:08:12 +0000 (UTC)
-Received: from smtpbgbr1.qq.com (smtpbgbr1.qq.com [54.207.19.206])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCABD1A7263;
+	Tue,  3 Sep 2024 13:08:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="IXZPo+KT"
+Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 018241A724C;
-	Tue,  3 Sep 2024 13:08:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.207.19.206
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C89F31A0BC6;
+	Tue,  3 Sep 2024 13:08:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725368891; cv=none; b=IYFbgjfs0E/V9losBhKX6lsAqmGw3veRFA9AoeytL/8+u1Gc8E9ViWyTIuOpbjrhkF3bebiJcjaXRu1UcYjsEAKCw1UId5Hf/42daBJNVC8EUOiKe62GchYC9qdwNHPj5KJpFeEQPqTCRH6WRfd8sZMNfmm49xMtq/SZEbPw68k=
+	t=1725368922; cv=none; b=swfl+sUsjpKbtTMvdculGmkhZSd7A/U25L745+Pm3VLo+aFkmtS24S4C3rgWlRaXyR/sTSaXgpDSYu2X0tfN1x1ZSEWpUiOntlb7llPci9MLFeGPotlqXlMzzWSKGCmPwo67qo2GwXpAvRukhhvd9SiDm72scSPkkQHcIxVuw34=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725368891; c=relaxed/simple;
-	bh=KHxS+RzsYQVUstki9O9G2Fth9NOTM3+FP0WNjRpmWGw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=cGFrB5if3PLFA9Il9Y0nMqQjTYKqn4wr9d1IEvgneGCtxb6kcJ54EUUjaL8H3MjuoJEB4jMLlILkrJz7vOgjF9pVqWnLtbjdyphlgGC3hzIemYE2tVAtlGI4ixrjHxkXIrZo9d4Q7M0PcK4YBefqU1tHTbdA8aGQcWNleuERD3s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iorw.io; spf=none smtp.mailfrom=iorw.io; arc=none smtp.client-ip=54.207.19.206
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iorw.io
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=iorw.io
-X-QQ-mid: bizesmtp88t1725368797tvffge9y
-X-QQ-Originating-IP: IniwHKqgiTyeNYqQCtQD+YECBJEHxDU1F/TeNYWWD5k=
-Received: from localhost.localdomain ( [203.119.160.23])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Tue, 03 Sep 2024 21:06:31 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 14936481488341771613
-From: Zigit Zo <zig@iorw.io>
-To: ojeda@kernel.org,
-	bjorn3_gh@protonmail.com,
-	richard@nod.at,
-	anton.ivanov@cambridgegreys.com,
-	johannes@sipsolutions.net,
-	tglx@linutronix.de,
-	mingo@redhat.com,
-	nathan@kernel.org,
-	ndesaulniers@google.com,
-	gary@garyguo.net
-Cc: zig@iorw.io,
-	rust-for-linux@vger.kernel.org,
-	linux-um@lists.infradead.org,
-	llvm@lists.linux.dev,
-	x86@kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] rust: arch/um: use 'large' code model for uml
-Date: Tue,  3 Sep 2024 21:06:06 +0800
-Message-ID: <54FC087D02C52990+20240903130606.292935-3-zig@iorw.io>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20240903130606.292935-1-zig@iorw.io>
-References: <20240903130606.292935-1-zig@iorw.io>
+	s=arc-20240116; t=1725368922; c=relaxed/simple;
+	bh=clzfDAUKNaEKJTxWQo3EO3dRZsqSu3Cc9NoGkCzcJkM=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Znl5Ggk4B+sGvrOiUboCcYdznE2n//a/+sX72dYO1owiX18wvDD7gZwOSd8mYlQP0cJ16rJmd/LmA5p7qz4R/UeX0kKHWj7nzHgnGCHbECpol3B+ju145weDW/Us/WF8wI5HrOFiBk2YB37h1zb8DoHQRIgJzbEgz/RrcKQL6p4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=IXZPo+KT; arc=none smtp.client-ip=217.70.183.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id E1F111C0006;
+	Tue,  3 Sep 2024 13:08:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1725368912;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7pB2vNbOkOQHLpYZQbbZDQTzWnUnjZRAGf+Nhk5QM0w=;
+	b=IXZPo+KTvxrtzSiz3SiL1HOa5CNDzdKsNQQizKxXRTvvVJXiXtFUwnYvyg09JY3mz65lf/
+	1stZz1eLHmN0hskkocyekJfFkLdYbWHaf0FTqL7L0NCMaWc8Cc3wrELDxAbpJgmFKz9sEp
+	uM+cUAdlkG5yLsEnbr8oDEZmePRVBO3rVWOntYy/wQvHRFsW7EmZByiGHJXN5C9jX5y601
+	6/byMAzy+PbQfXBVQCCU7qbEA5KryZZfm1yiaUAQthly/FsvvhprBDl9/kDhDxAByPhHAN
+	G00VPk1wiDOdSNlis1OuAUb8J3BqwJTd5RBY1xqp4Mr6PDNzXZwcVlHiVuASbw==
+Date: Tue, 3 Sep 2024 15:08:26 +0200
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+To: Md Sadre Alam <quic_mdalam@quicinc.com>
+Cc: <broonie@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+ <conor+dt@kernel.org>, <andersson@kernel.org>, <konradybcio@kernel.org>,
+ <richard@nod.at>, <vigneshr@ti.com>, <manivannan.sadhasivam@linaro.org>,
+ <esben@geanix.com>, <linux-arm-msm@vger.kernel.org>,
+ <linux-spi@vger.kernel.org>, <devicetree@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <linux-mtd@lists.infradead.org>
+Subject: Re: [PATCH v8 0/8] Add QPIC SPI NAND driver
+Message-ID: <20240903150826.749b8560@xps-13>
+In-Reply-To: <5169761b-422d-70ab-ba53-a898cb7bfa2f@quicinc.com>
+References: <20240820104239.1774600-1-quic_mdalam@quicinc.com>
+	<5169761b-422d-70ab-ba53-a898cb7bfa2f@quicinc.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtp:iorw.io:qybglogicsvrgz:qybglogicsvrgz8a-1
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-GND-Sasl: miquel.raynal@bootlin.com
 
-The Rust modules compiled against UML should be 'large', without this
-the compiler will generate some R_X86_64_32S relocations, but UML is
-running at userspace with signed-address larger than zero, therefore
-makes '__write_relocate_add' treating the relocation as overflowed.
----
- arch/um/Makefile | 1 +
- 1 file changed, 1 insertion(+)
+Hi,
 
-diff --git a/arch/um/Makefile b/arch/um/Makefile
-index b04b1d4d6dfe..c2a9f2102ba7 100644
---- a/arch/um/Makefile
-+++ b/arch/um/Makefile
-@@ -32,6 +32,7 @@ endif
- 
- ifdef CONFIG_64BIT
- 	KBUILD_CFLAGS += -mcmodel=large
-+	KBUILD_RUSTFLAGS += -Ccode-model=large
- endif
- 
- HOST_DIR := arch/$(HEADER_ARCH)
--- 
-2.46.0
+quic_mdalam@quicinc.com wrote on Tue, 3 Sep 2024 14:45:15 +0530:
 
+> Hi Miquel,
+>=20
+> On 8/20/2024 4:12 PM, Md Sadre Alam wrote:
+> > v8:
+> >   * Fixed compilation warning reported by kernel test robot
+> >   * Added "chip" description in nandc_set_read_loc_first()
+> >   * Added "chip" description" in nandc_set_read_loc_last()
+> >   * Changed data type of read_location0, read_location1,
+> >     read_location2, read_location3, addr0, addr1, cmd, cfg0,
+> >     cfg1, ecc_bch_cfg, ecc_buf_cfg, clrflashstatus, clrreadstatus,
+> >     orig_cmd1, orig_vld to __le32 to fix compilation warning.
+> >   * Included bitfield.h header file in spi-qpic-snand.c to
+> >     fix compilation warning
+> >   * Removed unused variable "steps" variable from
+> >     qcom_spi_ecc_init_ctx_pipelined()
+> >  =20
+>      I have addressed your comments to v6 and further posted till v8.
+>      Could you please let me know if this is fine.
+>      and how to get this merged ?
+
+There are still kernel test robot reports, so this means there are
+issues in your code that I don't need to point out explicitly, but I am
+actively waiting for them to be fixed.
+
+Thanks,
+Miqu=C3=A8l
 
