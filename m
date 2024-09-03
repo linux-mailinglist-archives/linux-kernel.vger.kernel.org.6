@@ -1,104 +1,75 @@
-Return-Path: <linux-kernel+bounces-313178-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313175-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1AA5D96A17B
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 17:00:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F14A96A173
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 16:59:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 86817B2680D
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 15:00:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C33DEB26554
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 14:59:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15A101850AF;
-	Tue,  3 Sep 2024 15:00:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fKrhiWFf"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1F6016C6A7;
+	Tue,  3 Sep 2024 14:59:39 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23AAD13D245;
-	Tue,  3 Sep 2024 15:00:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6381413D531;
+	Tue,  3 Sep 2024 14:59:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725375619; cv=none; b=XcNlEdQ/exNeuA2WNxv/0dvYyCtO+KkK+LHRZhAVkNQaH3k0bQw3ghvToLE92zHF1+M/432lA+vNX7T+AKcfkIs9F6F8x6TQRpKrEjwo8sQ2uTziLy6LHl1asZQbux5QeZVJkD3GS1CCEZ0uuLQ9UDg+YpTUKvqwRrA8FtLcqFI=
+	t=1725375579; cv=none; b=Y4G3kNmipSv0rIrBLH5zMoX4hZrfPKdYadm/NDpK2txUAmBzfsOvR5O72fh6nCu/XU7i7RcdcpcRF6ooslss3pVWaNOpSLCmUMoR2H1dUtpCqyEY+PKVU6z7ETp8RwZfgN3kVKxlVd6YZM/qzfYRPmbUnVpGol5kEBNbtog+4As=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725375619; c=relaxed/simple;
-	bh=dT6FsbNahWTNg13pHyUnWbWbCQMcM2rJdjoIX0ZxlJY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fwDECDUesSovYRiO6Gnnf3nl3WO5MScVDDIBFSC3gPEb2droR0nBAtyc2BmUdqpKZ07wqCBENcsktsRq944FeBpPZ8eWw8l9BCsZ0aQs/W9tKDmiEfAe4L45qTXvcuOfDRMXKvz8ziY3EaT3c5YFXO2mXA+Li6li3GKG+WJkK2A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fKrhiWFf; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725375618; x=1756911618;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=dT6FsbNahWTNg13pHyUnWbWbCQMcM2rJdjoIX0ZxlJY=;
-  b=fKrhiWFfHhy46FZqfmGZsHX9Bj21neqCZPEn7hhSKq29DOEwZHuvJcep
-   TBJhzyMy0+I2sbw2w7TdKlh1eY/aeMkzh+GiKF2ZDbdmTI9lWKfgvBD2b
-   Kpp1KViKQT+qw1W65QLNh82ed9pzMMYfjcTdh63D/5NYEzbuO2mlw+LR2
-   0D4hTaADz4XWmRVKgJs7QxspvboLrRhkgnAdzipGfguFyGHF1G9opF5Zy
-   DsI3ovaCN6iDY0M8nfzA2SitmwxxfjCej6K0uWRmtwgbY5oUm0rqxW3NN
-   gZGi80rM/oEdk+HQevwyO6Swscjkb3dKosSFHz0pikQUVaKim2fAnlDOG
-   Q==;
-X-CSE-ConnectionGUID: nrtnBex6QKGDMdmYwwqxCQ==
-X-CSE-MsgGUID: QyPVUskCS2WayUCpk9N7bw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11184"; a="34587974"
-X-IronPort-AV: E=Sophos;i="6.10,199,1719903600"; 
-   d="scan'208";a="34587974"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2024 08:00:11 -0700
-X-CSE-ConnectionGUID: QZGN/+SaR/S8gjU/RiXZOg==
-X-CSE-MsgGUID: OsnCa0GPRnGkt4ALQIPqZA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,199,1719903600"; 
-   d="scan'208";a="65146663"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmviesa010.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2024 08:00:09 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1slV0n-00000004kE4-3a2y;
-	Tue, 03 Sep 2024 18:00:05 +0300
-Date: Tue, 3 Sep 2024 18:00:05 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Andi Shyti <andi.shyti@kernel.org>
-Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Jarkko Nikula <jarkko.nikula@linux.intel.com>,
-	Mika Westerberg <mika.westerberg@linux.intel.com>,
-	Jan Dabros <jsd@semihalf.com>, Narasimhan.V@amd.com,
-	Borislav Petkov <bp@alien8.de>, Kim Phillips <kim.phillips@amd.com>
-Subject: Re: [PATCH v2 1/1] i2c: designware: Consolidate PM ops
-Message-ID: <ZtckdcI3mSRhe2Su@smile.fi.intel.com>
-References: <20240827150101.2171107-1-andriy.shevchenko@linux.intel.com>
- <g74jbzdorj4vdhqxaztbl6rsjrybhlhx6swybrtms6jeaufzhq@ac77f3xcip2u>
+	s=arc-20240116; t=1725375579; c=relaxed/simple;
+	bh=aApIHYzdYOYkRQ8xvVR1RtlPH9XV5jWFEtmCj/Cff1M=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Cb7LpHMx61Cp5JJj16APKU4Y2w4CsgZ0r+C78X+GF0316OU6+vKJIORPVGYM/S+cU6I6tVTIRC2ak7TGVl7QlmkiIp8E+7e7VGDoFaE1BtXDYnUkytthcBng2c0xQHvTgVbOmhbl+fec8e6drPeC30QGYwJjNkX/1JjICVeKUw4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11FEDC4CEC4;
+	Tue,  3 Sep 2024 14:59:37 +0000 (UTC)
+Date: Tue, 3 Sep 2024 11:00:35 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Tomas Glozar <tglozar@redhat.com>
+Cc: linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ jkacur@redhat.com, "Luis Claudio R. Goncalves" <lgoncalv@redhat.com>
+Subject: Re: [PATCH] tracing/timerlat: Check tlat_var for NULL in
+ timerlat_fd_release
+Message-ID: <20240903110035.562fd595@gandalf.local.home>
+In-Reply-To: <CAP4=nvRfkZ2CEbFv+MFBXikZ_p2K-1uucgkdgp27JeTxe58qhw@mail.gmail.com>
+References: <20240820130001.124768-1-tglozar@redhat.com>
+	<20240823125426.404f2705@gandalf.local.home>
+	<20240823145211.34ccda61@gandalf.local.home>
+	<CAP4=nvQnW5vS5CQBZtKp-BdjYxNFbq26P36uRy3RhCenHEG_YA@mail.gmail.com>
+	<20240826132620.1618d201@gandalf.local.home>
+	<CAP4=nvTR9EuA5WhGweSaoeptEw0n0w5exr8gq6zfqGhGNt3zpg@mail.gmail.com>
+	<CAP4=nvRfkZ2CEbFv+MFBXikZ_p2K-1uucgkdgp27JeTxe58qhw@mail.gmail.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <g74jbzdorj4vdhqxaztbl6rsjrybhlhx6swybrtms6jeaufzhq@ac77f3xcip2u>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Tue, Sep 03, 2024 at 04:30:00PM +0200, Andi Shyti wrote:
-> Hi Andy,
-> 
-> On Tue, Aug 27, 2024 at 06:00:37PM GMT, Andy Shevchenko wrote:
-> > We have the same (*) PM ops in the PCI and plaform drivers.
-> 
-> /plaform/platform/
-> 
-> with this change I pushed it to i2c/i2c-host.
+On Tue, 3 Sep 2024 14:47:42 +0200
+Tomas Glozar <tglozar@redhat.com> wrote:
 
-Ah, thanks!
+> I suggest using the workaround suggested in
+> https://lore.kernel.org/linux-trace-kernel/20240823125426.404f2705@gandalf.local.home
+> for the time being. Together with the patch that adds locks around
+> stopping the threads
+> (https://patchwork.kernel.org/project/linux-trace-kernel/patch/20240823102816.5e55753b@gandalf.local.home/),
+> this should prevent the kernel panic at least until we have a solution
+> for the race itself.
 
--- 
-With Best Regards,
-Andy Shevchenko
+I'll make the first one an official patch and start running it through my
+tests. We need something soon, as this is a standing bug in the kernel
+where the fix needs to go to stable.
 
+Thanks,
 
+-- Steve
 
