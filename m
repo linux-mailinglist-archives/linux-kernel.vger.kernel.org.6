@@ -1,92 +1,100 @@
-Return-Path: <linux-kernel+bounces-313410-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313411-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4496896A51A
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 19:13:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C264E96A51D
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 19:13:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 461041C24094
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 17:13:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F295E1C23FBF
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 17:13:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED86318DF98;
-	Tue,  3 Sep 2024 17:13:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B98C418DF7E;
+	Tue,  3 Sep 2024 17:13:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K/tZpHKP"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B6AW/4mM"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C0011C14;
-	Tue,  3 Sep 2024 17:13:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C2641C14;
+	Tue,  3 Sep 2024 17:13:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725383586; cv=none; b=OrMuNDuba6cl1ZXWRwikXarf5HsXpMOlv0+imx/VyWm/d/Dfwhu6+Gtzfz+pkdGBwJCJ0loFqjpAhpUB0/CXmIe9dePg0DHU6WCgUjvueRb7j3gE+RtBDZf0HrfNEmzrnr1oZAFh72V7FiZSeUVBaegT+k1rRM+Feud+acVWIwI=
+	t=1725383625; cv=none; b=dD4x8X1dkM/Jjoxxa7HBcRGDx+jcgY+APTO+Omwo8TYGq0C9d6jG76Ycg0H66f14uAItgfAJw+nCav0UNlbW23DNXSP6J4KPrJMSAmdB2IUmWPMv8/nV2PAJUp4vNsmapmbbpQm7Z1k4qh8yPQyZrIkazOk79WbkQ9uH133ocIQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725383586; c=relaxed/simple;
-	bh=Nj3zSSXVJY7aWly8kxr2GE48AQpf8nGuG7nIWcYODkA=;
-	h=Content-Type:MIME-Version:Subject:From:In-Reply-To:References:To:
-	 Cc:Message-ID:Date; b=kr8JsBscUOcJtjQrwuNRli4zP339TvNboa5RcHgLC0in4TmRCExEKwBm4mqcyr0ztmqX/9oa9bEcOBgv9ObZSeSFc4bB723lpnJwCUzplQZNeYUK+aeDkasplhjIWbiPilJO0jQumsYbOy1D4V/JCrpMAwWzdWxX+qzEerg+PSA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K/tZpHKP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6F172C4CEC4;
-	Tue,  3 Sep 2024 17:13:00 +0000 (UTC)
+	s=arc-20240116; t=1725383625; c=relaxed/simple;
+	bh=NtlTnC0QsS/egsQ9FKZqT+K+AlktbHnzwk5mJ3lRnlY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qFLjyjLnCVqsyH3u/IdxQIgUzphK1xp8/cXyEUDAxjqLtZd6+ZwNtjODDPWXlEKhjwNLC5siY0p6Bpngi+GXQ6RvRejILd4B1QO7Es0kF88iIoVszaHIqUMn46AIFdE0QQs7g1+iL5Vw8BCe8PyE83t9MZsw+BPgRr4W8oUPq+M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B6AW/4mM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 633FCC4CEC4;
+	Tue,  3 Sep 2024 17:13:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725383586;
-	bh=Nj3zSSXVJY7aWly8kxr2GE48AQpf8nGuG7nIWcYODkA=;
-	h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
-	b=K/tZpHKPktx2CDrKKwILBE5Iz1Y8z79gvdsJWC9j309s+u/+NcGpStngyWIcEhx8b
-	 coRaxKR90TegAHXVr6mgSYoP2XIlGmrqNIHD6UGJdGrTTBqEptXRdnbJSwrNg98lnS
-	 g4HkuHG5M5aKP2Nmm9bYcRC+Sze6B6Ttv8Sch12sTtVBjioNTgnSNRq2v/jekc5aiL
-	 18v58Xu7kIhfVTao+/oWM3yWgj6flMIxKAQKRPKKZR0dK4FLA2zIaOV4D5Xd2TmM7m
-	 u/L2TuHPQYmR1+ya5K9+N5D7BkJbdYtjsWPvb7m9CYm5zDFcRw/Kf4QdAxtZxASOII
-	 4lt85LVd08KhQ==
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1725383624;
+	bh=NtlTnC0QsS/egsQ9FKZqT+K+AlktbHnzwk5mJ3lRnlY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=B6AW/4mMK5gJj/eTBROlH+M5L9Dyk9/na7fnfdJn204eMRGkzJXp16VwGauWZEqgC
+	 MB7MbJ8D0cjwiPRPomg8iOiXUVTkdCQe8UPHUMpTYCHAPi7MWVGVilSWlH9kVRu0Ke
+	 rP6C58tcOuh2IOwe7YJH4FRqiAsDEHWkJc+rTITpvRPqocIBUV3oU87azGUAN81Z1g
+	 7gfvjW9CpKj6TuO7FkrZBiK2/fXURJYm2tf/CA0gCPKWvIXATngETeCYJ6LRpLYPfr
+	 c4VBE3kf3d7sbAzf7GK+DZE1/qq5AA4d5S/PcejYRrdTK4Z1pX9aMybk2k/AlT2R6P
+	 lJriuJDGne+bA==
+Date: Tue, 3 Sep 2024 12:13:43 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Frank Li <Frank.Li@nxp.com>
+Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-kernel@vger.kernel.org,
+	Van Sebroeck <wim@iguana.be>, Conor Dooley <conor+dt@kernel.org>,
+	devicetree@vger.kernel.org,
+	Wim Van Sebroeck <wim@linux-watchdog.org>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Martyn Welch <martyn.welch@collabora.co.uk>, imx@lists.linux.dev,
+	linux-watchdog@vger.kernel.org
+Subject: Re: [PATCH v3 1/1] dt-bindings: watchdog: convert ziirave-wdt.txt to
+ yaml
+Message-ID: <172538362087.1746034.1985438397803851680.robh@kernel.org>
+References: <20240814161250.4017427-1-Frank.Li@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH v1 5/7] wifi: brcmfmac: of: Make use of
- irq_get_trigger_type()
-From: Kalle Valo <kvalo@kernel.org>
-In-Reply-To: <20240902225534.130383-6-vassilisamir@gmail.com>
-References: <20240902225534.130383-6-vassilisamir@gmail.com>
-To: Vasileios Amoiridis <vassilisamir@gmail.com>
-Cc: linux@armlinux.org.uk, maarten.lankhorst@linux.intel.com,
- mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, daniel@ffwll.ch,
- linus.walleij@linaro.org, alsi@bang-olufsen.dk, andrew@lunn.ch,
- f.fainelli@gmail.com, olteanv@gmail.com, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, nico@fluxnic.net,
- arend.vanspriel@broadcom.com, robh@kernel.org, saravanak@google.com,
- andriy.shevchenko@linux.intel.com, linux-kernel@vger.kernel.org,
- netdev@vger.kernel.org, linux-wireless@vger.kernel.org,
- brcm80211@lists.linux.dev, brcm80211-dev-list.pdl@broadcom.com,
- devicetree@vger.kernel.org, vassilisamir@gmail.com
-User-Agent: pwcli/0.1.1-git (https://github.com/kvalo/pwcli/) Python/3.11.2
-Message-ID: <172538357854.1029035.14523322695529094304.kvalo@kernel.org>
-Date: Tue,  3 Sep 2024 17:13:00 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240814161250.4017427-1-Frank.Li@nxp.com>
 
-Vasileios Amoiridis <vassilisamir@gmail.com> wrote:
 
-> Convert irqd_get_trigger_type(irq_get_irq_data(irq)) cases to the more
-> simple irq_get_trigger_type().
+On Wed, 14 Aug 2024 12:12:48 -0400, Frank Li wrote:
+> Convert ziirave-wdt.txt to yaml format.
 > 
-> Signed-off-by: Vasileios Amoiridis <vassilisamir@gmail.com>
+> Additional change:
+> - Add i2c node in example.
+> - Add ref to watchdog.yaml
+> 
+> Fix below warning:
+> arch/arm64/boot/dts/freescale/imx8mq-zii-ultra-rmb3.dtb: /soc@0/bus@30800000/i2c@30a40000/watchdog@38:
+> 	failed to match any schema with compatible: ['zii,rave-wdt']
+> 
+> Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> ---
+> Change from v2 to v3
+> - using original driver submitter and wdt maintainer as maintainter
+> - add conor dooley review tag
+> - remove value in milliseconds
+> 
+> Change from v1 to v2
+> - add ref watchdog.yaml
+> - Remove timeout-sec
+> ---
+>  .../bindings/watchdog/zii,rave-wdt.yaml       | 49 +++++++++++++++++++
+>  .../bindings/watchdog/ziirave-wdt.txt         | 19 -------
+>  2 files changed, 49 insertions(+), 19 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/watchdog/zii,rave-wdt.yaml
+>  delete mode 100644 Documentation/devicetree/bindings/watchdog/ziirave-wdt.txt
+> 
 
-wireless patches go via wireless-next, please submit patches 5-6
-separately.
-
-2 patches set to Changes Requested.
-
-13787792 [v1,5/7] wifi: brcmfmac: of: Make use of irq_get_trigger_type()
-13787793 [v1,6/7] wifi: wlcore: sdio: Make use of irq_get_trigger_type()
-
--- 
-https://patchwork.kernel.org/project/linux-wireless/patch/20240902225534.130383-6-vassilisamir@gmail.com/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
-https://docs.kernel.org/process/submitting-patches.html
+Applied, thanks!
 
 
