@@ -1,204 +1,218 @@
-Return-Path: <linux-kernel+bounces-313624-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313626-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AEA4D96A7C5
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 21:49:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0079796A7CB
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 21:50:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 043DDB214AE
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 19:49:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AAB111F253BB
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 19:50:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58EFD1DC733;
-	Tue,  3 Sep 2024 19:49:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C3B11DC733;
+	Tue,  3 Sep 2024 19:50:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=fjasle.eu header.i=@fjasle.eu header.b="eBd/C53f"
-Received: from smtp.domeneshop.no (smtp.domeneshop.no [194.63.252.55])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="droGvN5T"
+Received: from AM0PR83CU005.outbound.protection.outlook.com (mail-westeuropeazon11010047.outbound.protection.outlook.com [52.101.69.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4184E1DC720;
-	Tue,  3 Sep 2024 19:49:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.63.252.55
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725392964; cv=none; b=CHghaBCgXn4LjxtQG5PmxD/xntcOBnaEykqVfyWg5Y4aRucGdegAodxRP3dayZPYMoPGM89hs3IAJnHy0XdiN43lqmJnnw7797110j3l4fPmwxn3pTx2UgAQZt2TSiVAdJjffKryWi1zVQm/A+8/HWhjsmP3QvrsPugRe7yFiQA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725392964; c=relaxed/simple;
-	bh=ROj9kqpOSFemG0GEO1bYY09F9alqNxe4Bb0al29yNEE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=M+Td+HAijFwv4PgFNrpI28+smhaGoa20Y4OenTp7zidanCjD/l3KvB1vFCV4/xLDFiLXOfso/tG7sXnDkrCEydPFuqGcnFyB8x0x7IV+116NuKVK1eUjVlS3laZx/3OPmhgl0nvL02yeI0Pd0YQZLpIQHwYmT5huATr3nOkTy2c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fjasle.eu; spf=pass smtp.mailfrom=fjasle.eu; dkim=pass (2048-bit key) header.d=fjasle.eu header.i=@fjasle.eu header.b=eBd/C53f; arc=none smtp.client-ip=194.63.252.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fjasle.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fjasle.eu
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=fjasle.eu;
-	s=ds202307; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:Date:Message-ID:To:Cc:
-	MIME-Version:Content-Type:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=IRivim3ffLLDf7rcgH+ESDzV4H+sYZRxkj85fKwazmU=; b=eBd/C53fK7FCkwxaCWq9uJJI1q
-	HqJM8DtZmZ6JRwjLK/KUdnu/LxOInAz3o3jPrTv1YFt3rDziz27OwS4hUK7qskpTxquuAEnthUMll
-	CsBWGhaF6OUPupKLhWxqHvbg10UFA2a3XdddvXOtZUXMwg0bAOgqXDwBgeckEfQFF8mfiMgDvkhUJ
-	0sB7DOl6p53V9N2ro/wmmk9E0z86FIn7r3LkmVwuWhKYL4tGTSotFlPHQH/LFbzeW/N09gXmJC74A
-	pQGfPgPTzlPUtLnsQATbgrQXB3wrENhyBNBXpGtdz8i6ox1Vm5U8PasbCCS9NsyZE/NkLvPjxBmMm
-	/rkimeOg==;
-Received: from [2001:9e8:9e4:e501:3235:adff:fed0:37e6] (port=32920 helo=lindesnes.fjasle.eu)
-	by smtp.domeneshop.no with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <nicolas@fjasle.eu>)
-	id 1slZWS-00EkYB-St;
-	Tue, 03 Sep 2024 21:49:05 +0200
-Date: Tue, 3 Sep 2024 21:48:59 +0200
-From: Nicolas Schier <nicolas@fjasle.eu>
-To: Miguel Ojeda <ojeda@kernel.org>
-Cc: Masahiro Yamada <masahiroy@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>, linux-kbuild@vger.kernel.org,
-	linux-kernel@vger.kernel.org, patches@lists.linux.dev
-Subject: Re: [PATCH v2] kbuild: pahole-version: improve overall checking and
- error messages
-Message-ID: <20240903-super-elk-of-bliss-eaed2c@lindesnes>
-References: <20240902160828.1092891-1-ojeda@kernel.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 456221DC726;
+	Tue,  3 Sep 2024 19:50:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.69.47
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725393038; cv=fail; b=Me6YXSuADrajJ2eTSTeAnZrRdQ4iS/TOGGtsrDenj4ptKlChiDy/ChWRxgMQnyAc2kGek45rgG+gdbYhoP6Ndvk5CIMRU1x8HE7U7Z1jreISdeDpeoqS1IsAbdOUrDFzRECq990CowKmZ/NR005gDMu02W5gRM92m7sijVi/5s4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725393038; c=relaxed/simple;
+	bh=aHNqExdmCfSiSeXxsWGt0zhCXKkSNoDE46s1e3qKStM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=pxq535zTMDGnqS+yPYFhMBzMUoHrKHvNA3T0YnbaPQzhXYlMMEI3NRTnAenTSDtasY0lC/zenYSAYVvuQfg9m4o0R9Su4O8n1VHtZs/yOjd6/N0lcdEEmc/mwP5Bj5SDEAxQBqGImoN1wHH8JFuJqkDIO41p5Y+EMY3mbAFxQFM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=droGvN5T; arc=fail smtp.client-ip=52.101.69.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=FFouBFdseYuBXO+IE0R8z5XdUP/cO+k0xmh596+a9RKApSfn7+noxu3arTopVXNgjI6Sxz0m1TK+O1QcAgyRPZjNDlFDWBp9qZP28DKm0uJpRJXkYwJzdsu7NiXnCHaiAwaiFFqJGyTvX43rFkvmHGGexMbqpDKSphzD06sfVlYxEr0NecreQ5HU0FSQDNopDsOfswKbwGO/2az+74h1w2OJUKD5CgsIIXewzl2s1LRh1uae65k5KHBO3ZaP5dn7Zwqy6CIdvXAI9L/VyKJQG5VLScN2aqE6SrucUx8BcCVrjcwdfMhJYxXjFoJ0FvpUxELqU7kdE62f5KPWH9WKKg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=lGFc7mPQJsC93ZIc7FTWxYP0mlCPc4XRCh7l2eEMR9Q=;
+ b=pHejfQMueVZmpbHFS050qKT9lTAGmaj96mEEqYXeUUwKbf+j3feKxl6VDZ6GxuNU22bYx3WkJ3jF4fZLx10kR9LRoH2zeNKNqbcBc8IljhiSwLW5eULfovU6KYNl4GDrTzGT98F8PUf/hHDChZhTfGn+WzqXjAN57xkjHwbxLRQj12TptTz6MNlKoRXC/fAicXzm3b3W1BMzpFleGqXoqktetK+9R7f2xf3qilKfFes9R5rKphSktE+CFNh/TkaY710QreEvCFR+TNZ/fyMUc64g6pDdoufePSV4J3Vl+DLpNZRJ/MdXuvdklmM44TCfmZfzkKu5r/whr0I3NAsG7Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=lGFc7mPQJsC93ZIc7FTWxYP0mlCPc4XRCh7l2eEMR9Q=;
+ b=droGvN5TuWB8hJgpFpitCasqBA00XY64Y2j2T6hMS2h6lxT2f6YCY7hSI7Rk/942xaM2+1Dy+9clNglFrSj/RxTstbVWm8Etd9rQvSnKk+KnQYN582MLrAudJcyDAiMT10/K7KnxHMlzsD9QsSTMa/ZgUWwj4DInCze7hcI+cswoRNeIiVl/u5AflxlLSQ1dUMkCiFK4lv0Xh0sSxu8POuJ2sBS+hs9K5XEwtO5PXGyZb3VgUz7EDJxb+su65AtV7iQdruKZT9KsvLfFapkEglgkfvaDqw8gYz/tErS0afPQc9wyXtbjMQxAU6PymWURDqnyLE/BIPmx0QZOTQiixw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
+ by VI0PR04MB10590.eurprd04.prod.outlook.com (2603:10a6:800:264::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.25; Tue, 3 Sep
+ 2024 19:50:33 +0000
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06%4]) with mapi id 15.20.7918.020; Tue, 3 Sep 2024
+ 19:50:33 +0000
+Date: Tue, 3 Sep 2024 15:50:22 -0400
+From: Frank Li <Frank.li@nxp.com>
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Richard Zhu <hongxing.zhu@nxp.com>,
+	Lucas Stach <l.stach@pengutronix.de>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	NXP Linux Team <linux-imx@nxp.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-pci@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH v8 04/11] PCI: imx6: Rename imx6_* with imx_*
+Message-ID: <ZtdofnRRoa2WZ1Vf@lizhi-Precision-Tower-5810>
+References: <20240729-pci2_upstream-v8-4-b68ee5ef2b4d@nxp.com>
+ <20240903193739.GA230579@bhelgaas>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240903193739.GA230579@bhelgaas>
+X-ClientProxiedBy: BYAPR07CA0014.namprd07.prod.outlook.com
+ (2603:10b6:a02:bc::27) To PAXPR04MB9642.eurprd04.prod.outlook.com
+ (2603:10a6:102:240::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240902160828.1092891-1-ojeda@kernel.org>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|VI0PR04MB10590:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8b6b7b29-8aff-4707-a940-08dccc51abed
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|366016|376014|7416014|52116014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?7Yl0zhe9ocl/1JfrtenxRkLc/hqIMZpQMtkP7M/KqjYR5fWLMw6pmchthd5b?=
+ =?us-ascii?Q?9AsvXWsLKQ8m8koSnJuvpsgsxQnDkI5NwInuSBHzragk1KjqInkxhrjzp8jK?=
+ =?us-ascii?Q?oxQ3wWuBmMiD6CpOvgwYSLubguG2sVoNnb68GXfMQmA0nnA7McFRo65dkc6c?=
+ =?us-ascii?Q?2wY5taseSzVbD1ZgU9mv5kTr6NIUw+INNQU1RptE0M/P6S6ht5h0nPwW15Ux?=
+ =?us-ascii?Q?5ghz6MdxOh+T8XRrgONTGMHaqqlvf/eZSeY/4oV2XhDp4nJcCZZ5ukWnu0Yz?=
+ =?us-ascii?Q?tgiCfOVj8D5iQlKwk9GKRbRRaclEnr1MNsJqzhskWOjsdiD3ciJllThoPe/A?=
+ =?us-ascii?Q?3UqMtHBO79PiAQtXWRUixS35kk/eqZyhp7+wqs8LyB5yU70hO/DV5oPVo+nZ?=
+ =?us-ascii?Q?Nu0o/sL9QMmkUPvWRbP+xt4ARkLoiXs3Fv32q5btrwr8taVUKKSAdZ0DkhvG?=
+ =?us-ascii?Q?2GWxtO+OOWBCo3GCK8usevZFuhMMohtnif1DNfEWjE7zU9ummP3itEdL7QuM?=
+ =?us-ascii?Q?KxmWgjZqwK2d42kNMWNa0GNN4wslWgdSXA3UrK01HV8YGTIPO547y54bkrSy?=
+ =?us-ascii?Q?YC6kvXDJ3mg2uhnx89ooHi+MpAOSPIWJbMznZ1d4UdVk/k6eKV00Vrxul8V5?=
+ =?us-ascii?Q?IYK+HfcEFyuCoeubU+LphBjYNbW9gknBCMt3820XNJsMRKN1F6QYJ2BA5yXz?=
+ =?us-ascii?Q?u1jwnNdqaEkt7TLuKZFnzYHcC7QWJjgLKRT9dJxYwEhcT5Sv/jIzHsFQ8y7O?=
+ =?us-ascii?Q?fZ3cS/MAOdv4Sp3W7/ieMJDcZJudEfbNuRfoKqu9OUBTGF8bzA2PUe4ZWUZ/?=
+ =?us-ascii?Q?Ugtcw1YBQEs3FDj4amO63PPvOpKOI5TkkaA/9djwvQYmdHG6UdesdI6fnXKs?=
+ =?us-ascii?Q?0pozot1BgFJeiadiYZK048U0hwZIBbDPs2vj7Cmjc/KTrMKfGCTHbxKUenAa?=
+ =?us-ascii?Q?rs7vdiMvV6JatI57+U+BTrUgNxHXL4Zm56rN/zWcDY9tn18/7IIZOBH5rNUn?=
+ =?us-ascii?Q?Zar+EuJdL4VufaKjGKkhq3wB9S3B8xbnYus26wXFWMCsT2tSaK0AH2a9uGX/?=
+ =?us-ascii?Q?lPG3TMxIhxseL9JkuhsgrFWnxNa3yf+LHSEHiZXRk1o69sC93WXOmkwYP8Lq?=
+ =?us-ascii?Q?JXXE1EaaecFAglna6/ScfbwKaS2b+EVFLdwtkIWOEFC2JqKLeaZudl8dUyte?=
+ =?us-ascii?Q?wWreKrjQZc32JxweSH/2m64zJ5fYD3oz+FP05yNB/WQ5an5B4XSxGJYQ89vP?=
+ =?us-ascii?Q?PEkRxLH9W3w3cLO8Ab2xDe/lTzPCgipra4+8WcgvyBfmfwusnkwPHZ4d8Vd1?=
+ =?us-ascii?Q?XJYMz8JKrOC7kJtccCAjcv+UiF5FCjHdlMoXUtDe1cZhxjF2t3H4VWS/ni+w?=
+ =?us-ascii?Q?dRIHTFVFM5YjwnbSoLCm0VAuOM0BARcI/vvWGGbF4l1qaCXF0w=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014)(52116014)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?HQYXP8cRhRhdaaJCx7U0oq5/OvhSS2pn+PSHFaX3DqLIp66XIxsoVvhgozvk?=
+ =?us-ascii?Q?0lvqZsV/0HtMfjNuFVNiL83bYGEzBMUhMNYmJagmblrXguiAB9kSvBo2x8Be?=
+ =?us-ascii?Q?yNZx0Vgl/iAI6dlZzYDtoREKjK2fyj2RpEKpp1mK7N1HPceyQ8ES9dhiIArO?=
+ =?us-ascii?Q?i91H9LWzgkougHT8GmMVAr45BTu/A5ZYbrjxvwlmiX2exRlF/6MrFBLYl9fp?=
+ =?us-ascii?Q?bYgbWd0qWVmcr7/YVBZ08hGPgqecnXNjRHOILfbkB06lkNJFTeKYaUEvSYWo?=
+ =?us-ascii?Q?1Q2EqM8Wmmv+ei82L/bXolhksowiAed6FJzMzRt5+pkGusa211a87DrUZKDY?=
+ =?us-ascii?Q?0sZMdNXoQ7GCZ1lnSTOP+AKnv5ozr49CoPuZdIFJJWTbSdnjkRtsea7rMbD7?=
+ =?us-ascii?Q?w3cFH5nuYcng24ZBkltmPIHUN1DcLF4/Yj2KbNqt9TT/9jKazJwX4L2TYxn6?=
+ =?us-ascii?Q?hF58X/5tuAdF4N0AETttQuKLvE9Obne4ORPkf3hXjYB6LqtW83yI6FOG6cnw?=
+ =?us-ascii?Q?6sqm0+r22cOGS/5DCQPx8dJimCnOSoG4ipxjdamt1cbX3PFAX0AFYJMvapOB?=
+ =?us-ascii?Q?E9NRqszOQ6pfcLUM9hOZNBj8egytHJjAA9iafhUB09daoZXbcFuof34eV4ZE?=
+ =?us-ascii?Q?g2rkyVa5TQ8LAqxT63y7xVSO1q4K/s7avXA2/LWeEWrIDi3oEzv5jVdvJas6?=
+ =?us-ascii?Q?p2PPrV/qOr+VnPta+CE0oGoqEwN2FTgLfMw61w1PCX+xxxErs2NnvoSVLuyh?=
+ =?us-ascii?Q?Z2IjOAVkz7PbqxuHFXrqKQeTK2CPHJaYdYH7USnlp5+Qk7E2KUGXg3JsDUwx?=
+ =?us-ascii?Q?XqNfuB67aEOH9WL6ilkXwXQsLzJA2oilUj6QuJuAFYPRPc2VuhkpjABZQfuA?=
+ =?us-ascii?Q?g22saGz4h8mHCQjWJto1+O1SBnX0MxT36kVg7ltqY5UZAkWDiwpUYegBny3q?=
+ =?us-ascii?Q?e+z2Sxl2aBr7U8fH8iIw5GHLB/IsEVwv0c7unhlzgeRPB1YKvJdMUIhnfYIB?=
+ =?us-ascii?Q?dMoV0OkCeTBv3oU5HBxe7lL5jfdAaA53SOxC7lGCr4NpQV+kVxyX1nbi1pRx?=
+ =?us-ascii?Q?79tT4+VdVgfrZecZJp/gmZp56/BL5K8UqLaH/4A0s28eokYsxFfcbK98u1gK?=
+ =?us-ascii?Q?0XrvHxnicS7eiaROhuDSXNNyoSAP0j2n3B+15RMaWtYA7DzIooli7TvoUn1H?=
+ =?us-ascii?Q?4Fxt+kDvIpv0kn9KjK/QyacfQ+tMYWtubSInoDQYYmpInOh5is6pPkJJJoAg?=
+ =?us-ascii?Q?0WlQ3RdWewRIKU0hInYwR0xkQBuKoCvWa2UHzSBIcjVKVxd/LBEjBZmw678W?=
+ =?us-ascii?Q?M4vj5d7gtcAWPkn261XR21daaXSW6QM2km6K6WwmeU2Q0fnkLWi7PKnU1EY8?=
+ =?us-ascii?Q?ADZIWceBBnIjvBZiarsqxzDgeZHlAiZwxkJShVq/lhDpDVTwZnHP3XJ8uKvF?=
+ =?us-ascii?Q?3nHbFvcYiDe6LXiUBzfaG+RMOGaJVnYIwMIXtLgnCBzzmHPS/dJE8XQgNK58?=
+ =?us-ascii?Q?eY42JsgfbXv32BIu57hT5bR3iYRWA78pI7Hknpnpdnicj29JuK+Q/o1soUtN?=
+ =?us-ascii?Q?QicXlvfTzkS18pPLsmI=3D?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8b6b7b29-8aff-4707-a940-08dccc51abed
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Sep 2024 19:50:32.9901
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: gVBX5POs1Qfz/bIZ3XQvZ3LrknmAwS67tqrYBU5LHiAuYr8747vF3RvfbQvcrjkLq8vOSMgAPE6SGNrt2fdTRw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI0PR04MB10590
 
-On Mon, Sep 02, 2024 at 06:08:28PM +0200, Miguel Ojeda wrote:
-> Like patch "rust: suppress error messages from
-> CONFIG_{RUSTC,BINDGEN}_VERSION_TEXT" [1], do not assume the file existing
-> and being executable implies executing it will succeed.
-> 
-> Instead, bail out if executing it fails for any reason, as well as if
-> the program does not print to standard output what we are expecting from
-> `pahole --version`. The script needs to ensure that it always returns
-> an integer, since its output will go into a Kconfig `int`-type symbol.
-> 
-> In addition, check whether the program exists first, and provide
-> error messages for each error condition, similar to how it is done in
-> e.g. `scripts/rust_is_available.sh`.
-> 
-> For instance, currently `pahole` may be built for another architecture
-> or may be a program we do not expect that fails:
-> 
->     $ echo 'bad' > bad-pahole
->     $ chmod u+x bad-pahole
->     $ make PAHOLE=./bad-pahole defconfig
->     ...
->     ./bad-pahole: 1: bad: not found
->     init/Kconfig:112: syntax error
->     init/Kconfig:112: invalid statement
-> 
-> With this applied, we get instead:
-> 
->     ***
->     *** Running './bad-pahole' to check the pahole version failed with
->     *** code 127. pahole will not be used.
->     ***
->     ...
->     $ grep CONFIG_PAHOLE_VERSION .config
->     CONFIG_PAHOLE_VERSION=0
-> 
-> Similarly, `pahole` currently may be a program that returns successfully,
-> but that does not print the version that we would expect:
-> 
->     $ echo 'echo' > bad-pahole
->     $ chmod u+x bad-pahole
->     $ make PAHOLE=./bad-pahole defconfig
->     ...
->     init/Kconfig:114: syntax error
->     init/Kconfig:114: invalid statement
-> 
-> With this applied, we get instead:
-> 
->     ***
->     *** pahole './bad-pahole' returned an unexpected version output.
->     *** pahole will not be used.
->     ***
->     ...
->     $ grep CONFIG_PAHOLE_VERSION .config
->     CONFIG_PAHOLE_VERSION=0
-> 
-> Finally, with this applied, if the program does not exist, we get:
-> 
->     $ make PAHOLE=./bad-pahole defconfig
->     ...
->     ***
->     *** pahole './bad-pahole' could not be found. pahole will not be used.
->     ***
->     ...
->     $ grep CONFIG_PAHOLE_VERSION .config
->     CONFIG_PAHOLE_VERSION=0
-> 
-> Link: https://lore.kernel.org/rust-for-linux/20240727140302.1806011-1-masahiroy@kernel.org/ [1]
-> Co-developed-by: Nicolas Schier <nicolas@fjasle.eu>
-> Signed-off-by: Nicolas Schier <nicolas@fjasle.eu>
-> Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
-> ---
-> v1: https://lore.kernel.org/all/20240728125527.690726-1-ojeda@kernel.org/
-> v2:
-> 
-> Reworked to catch successful programs that may not output what we expect from
-> pahole as well as to do the checking step-by-step (for better error messages).
-> 
-> I didn't change the regular expression to reduce the changes (except adding
-> `p`) -- it can be improved separately.
-> 
-> Also, please note that I added Nicolas as co-author since he proposed part of
-> the solution, but he has not formally signed off yet.
+On Tue, Sep 03, 2024 at 02:37:39PM -0500, Bjorn Helgaas wrote:
+> On Mon, Jul 29, 2024 at 04:18:11PM -0400, Frank Li wrote:
+> > Since this driver has evolved to support other i.MX SoCs such as i.MX7/8/9,
+> > let's rename the 'imx6' prefix to 'imx' to avoid confusion. But the driver
+> > name is left unchanged to avoid breaking userspace scripts
+>
+> s/let's//
+>
+> It's not a proposal, it's what the patch *does*.
+>
+> s/But the driver name is left unchanged/Leave the driver name unchanged/
+>
+> s/scripts/scripts./ (add period)
 
-thanks, no objections.
+Good capture, sorry for this error.
 
->  scripts/pahole-version.sh | 30 +++++++++++++++++++++++++++---
->  1 file changed, 27 insertions(+), 3 deletions(-)
-> 
-> diff --git a/scripts/pahole-version.sh b/scripts/pahole-version.sh
-> index f8a32ab93ad1..cdb80a3d6e4f 100755
-> --- a/scripts/pahole-version.sh
-> +++ b/scripts/pahole-version.sh
-> @@ -5,9 +5,33 @@
->  #
->  # Prints pahole's version in a 3-digit form, such as 119 for v1.19.
-> 
-> -if [ ! -x "$(command -v "$@")" ]; then
-> -	echo 0
-> +set -e
-> +trap "echo 0; exit 1" EXIT
-> +
-> +if ! command -v "$@" >/dev/null; then
-> +	echo >&2 "***"
-> +	echo >&2 "*** pahole '$@' could not be found. pahole will not be used."
+>
+> > -#define IMX6_PCIE_FLAG_IMX6_PHY			BIT(0)
+> > -#define IMX6_PCIE_FLAG_IMX6_SPEED_CHANGE	BIT(1)
+> > -#define IMX6_PCIE_FLAG_SUPPORTS_SUSPEND		BIT(2)
+> > -#define IMX6_PCIE_FLAG_HAS_PHYDRV			BIT(3)
+> > -#define IMX6_PCIE_FLAG_HAS_APP_RESET		BIT(4)
+> > -#define IMX6_PCIE_FLAG_HAS_PHY_RESET		BIT(5)
+> > -#define IMX6_PCIE_FLAG_HAS_SERDES		BIT(6)
+> > -#define IMX6_PCIE_FLAG_SUPPORT_64BIT		BIT(7)
+> > +#define IMX_PCIE_FLAG_IMX_PHY			BIT(0)
+> > +#define IMX_PCIE_FLAG_IMX_SPEED_CHANGE	BIT(1)
+> > +#define IMX_PCIE_FLAG_SUPPORTS_SUSPEND		BIT(2)
+> > +#define IMX_PCIE_FLAG_HAS_PHYDRV			BIT(3)
+>
+> Good opportunity to fix the whitespace errors while renaming these.
+> IMX_PCIE_FLAG_IMX_SPEED_CHANGE and IMX_PCIE_FLAG_HAS_PHYDRV end up
+> with the wrong indentation.
+>
+> > -#define imx6_check_flag(pci, val)     (pci->drvdata->flags & val)
+> > +#define imx_check_flag(pci, val)     (pci->drvdata->flags & val)
+> >
+> > -#define IMX6_PCIE_MAX_CLKS       6
+> > +#define IMX_PCIE_MAX_CLKS       6
+>
+> Could also make these look nicer.
+>
+> We can touch these up, no need to repost.
 
-shellcheck likes to have '$*' instead of '$@', but I can't think of a
-set of arguments which might cause problems.
+Thanks.
 
-> +	echo >&2 "***"
-> +	exit 1
-> +fi
-> +
-> +output=$("$@" --version 2>/dev/null) || code=$?
-> +if [ -n "$code" ]; then
-> +	echo >&2 "***"
-> +	echo >&2 "*** Running '$@' to check the pahole version failed with"
-> +	echo >&2 "*** code $code. pahole will not be used."
-> +	echo >&2 "***"
-> +	exit 1
-> +fi
-> +
-> +output=$(echo "$output" | sed -nE 's/v([0-9]+)\.([0-9]+)/\1\2/p')
-
-I'd rather like to have
-
-    output=$(echo "$output" | sed -nE 's/v([0-9]+)\.([0-9][0-9])/\1\2/p')
-
-here (thus, explicitly check against a two number subversion), so that
-we can detect also versions like 1.100 or 2.1 and bail out.
-
-Kind regards,
-Nicolas
+Frank
 
