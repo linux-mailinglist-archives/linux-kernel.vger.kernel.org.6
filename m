@@ -1,74 +1,74 @@
-Return-Path: <linux-kernel+bounces-312026-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312027-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA848969101
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 03:39:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9840969100
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 03:39:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2422CB21139
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 01:38:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 752531F23B7F
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 01:39:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A12631CDA02;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC9541CCECB;
 	Tue,  3 Sep 2024 01:38:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QnyAE3Mm"
-Received: from mail-oa1-f53.google.com (mail-oa1-f53.google.com [209.85.160.53])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hou5u4yQ"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 872FC1CCEF0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE9A31CCEF5
 	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 01:38:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.53
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725327526; cv=none; b=rbo0rcB9IB5XYSPtcwTNXCOECCNIE36IG/nC5hlyXrdtCWGY6+o27K6ZO5HhpeaqMu/jZZ9PM6KUNP2fyCeBokYY6Jk774Rx1J/w0y34cQiuNf+H9doM5zoAiC/i0R62fhAt9NsJxnZhrLJxSADqud++U/nAkCPPDndzq7KabmE=
+	t=1725327526; cv=none; b=mFersDu1jRNbTr9bUC61HS1pjYh2qe1mIDMT+cLfAbF8bmbXztA3Ytf1tQa7OBn7uwkReQTyDFKgtNL0uo8JvnULZ9Jr97WNcptGuNJZ/WGdXzD3rF3o9pzQ5yjLD27ftaT2yapXQGm8qDRSOw4MSi5CN33fHmSfBmFDhVmRbdM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1725327526; c=relaxed/simple;
-	bh=3oW9a+fDXt43lNjqIB3EgW0dF5iWgx8lb4hR3cTcPFE=;
+	bh=tolGfl03yLfaWqeEhCeWkliWUwPxOzr1OwxM/FadN28=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Bwe2lXQR4q3/Ng0DME0ESv44eKUXc089c0k9seDI/USyfLbQXsah6zTZXwgoXY3y7LbSN9smPl+lR/RjP5bWpd1VWpysOAub8FXQsAOL0prRsa17I/BcBTWHoGX/tyDUDj6mjMOiNAS8g8rFTZVBOVC3y8Og0pv67XVOOBJFoA0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QnyAE3Mm; arc=none smtp.client-ip=209.85.160.53
+	 MIME-Version; b=Kqbv7u4sdRY6hbJJgRjsDGv5CUjQV8CBdlVr0Uz7hCTIbjfA2ng+K2pNFN/4eCqeFJCssZZoqe6aVW7plabiw+lsNpACkXs0hoI7NYg4U+dt5yrkcb6sIjqIanrBewRfEh19bYNrC4e4+vGngaYoELQb1aot3PEI0tO2aB+2T3Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hou5u4yQ; arc=none smtp.client-ip=209.85.214.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f53.google.com with SMTP id 586e51a60fabf-2781cb281abso67286fac.1
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-20551e2f1f8so19142945ad.2
         for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2024 18:38:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20230601; t=1725327524; x=1725932324; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=G6E7ALM61L5GXDCpe2fwl5R6dNU8EMojsouVXbwTg9g=;
-        b=QnyAE3Mm2iFZYYHaHjbfllQmXnmok12Uek0zIBq00mEDAQgIN4gBkRWnJ/9lkwQ/xU
-         2HA0bkJimLvFFkIZDelUTgk+FwZUzA+pAOK6eeRps98bFajbVwMvzpQwypoHP/6lS86Y
-         pkpzldQgukmDL/feT+1HYXkgdX1czdpqa8g02NkfhE+FElD4FVJ4IrmvWT55oY6hiCab
-         EC1dAsQW408fob6rX0AJgNsoxwjtYJ+bCECKqldLuCsU5bmIubgyJhrAmC8+ExQ0j2Ld
-         XhqujGBYJ3ez8/3Qlo3nJHSX+8URSgz96ariDrpzGCI6AZVq8Ig71rSB51ocbItVT6gs
-         FQnQ==
+        bh=ujFttD3pwqoLnOaK61kxmmuY79VSw05G+mBIn6vQcDE=;
+        b=hou5u4yQa7hlhGnebxtdVKbQffKa3WVppbfOZAugy/Vrn6wDSPYpXBhdWDcE9ttNHx
+         mIdvlxEqyflQC89EqDZaGiCR1ewol0VYHDD8M0nwuCvJrdJuI/D06Jt+h39hnnoKxqbl
+         MuGVWqt+Bo6jAMBywd+tmyH8phiY0BktB/pe1abGqNbmNj1vAsDaKqtoqNRE0nSW7qlU
+         BWS/+5WDP9jzYlf6v45tdnF/UTAuwj14BtcI86jZCpYMxH7gURqj5+DDHPhXecEx4isf
+         F5zjWb+s0iU2XCA3Spadtd+2UHcwTpLgabx1zh8IR/QGKmKCg8GP3KZbqGB/OhX3Gxu8
+         2ODQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1725327524; x=1725932324;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=G6E7ALM61L5GXDCpe2fwl5R6dNU8EMojsouVXbwTg9g=;
-        b=Wb9l2LwofuCHSgasLsEeOGKl6AoQ/ct0BCLdxqmjenSq2PNtwT472aHjwKxvl26I05
-         ybNtQ5UwmRsJNFinJ3zzsUvLcU+qXVgFeZhXbymzExFqNrLcq0ndXlGcAWq5e5pBvm/Y
-         IACzlstzMOJ91a1nHQrlF9/FEeFFArlcBIx+MC5tBBYJDPEk4wABwtx+GbdOD6wu+4aR
-         K/l4q6P5qpQdcBDCh4Ir6Hxg4FPPSn+jYX/UCQWHQpux2k8a7eVg3kwtshDtwUMvUhhL
-         kxtrfE5/VbSTMWfuEpy37vQ6YIqjEGe/uQH4hgcEBeuIJA2jNhj3QR29/q4J+8hgUZs6
-         IB5g==
-X-Forwarded-Encrypted: i=1; AJvYcCVRIMqI+td/jfNSSuRnRBu2FgxlxQP8HkzMTiSN/lcQlrqjW5lK+5aWALTpSIlzRNPGLppMK46+5kQ0jVo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxuDFGjJoMhAO0ZRgo1+x73ThtzQ4AVBCwoWY71Z4iaNXYn1192
-	Uw0CC1bS4WS7VkBh61XaElzAAf7fKd6OGIfyie2Unw0QKG/99m5G
-X-Google-Smtp-Source: AGHT+IFH7BOn7Ydiv3r3QpGrT8jgHuvBDLr4r/TxUf+m57OlNIDZlwFnzLVzLLof2Py7nhd2QdxFSg==
-X-Received: by 2002:a05:6870:a7aa:b0:277:e6fc:4a69 with SMTP id 586e51a60fabf-277e6fc4eb8mr6024916fac.2.1725327523444;
+        bh=ujFttD3pwqoLnOaK61kxmmuY79VSw05G+mBIn6vQcDE=;
+        b=J+GC8zJ8xLF8hrPTc7NEo6p5dhu5Iy/z0uDWxR0FFpFaffj0e3EOjdIQ+g2+VeLhqh
+         8iZuRyYq2tXFmaIlIwon7qV63Z45K5z43Ib3YhQSDksvOc2MRUIsQnNlxvabkRKkkypp
+         Wb8qlCxH8S2N/FchaVz+vwW7R63EFyOqnVT4iQMx/beiZkCpm2q1nU+oLP0kL5wgSwVz
+         V1TBYRBuLygqDBvliIKAEThPNVukdjt7AcYJnNwt1KEytgi2pU+ItIFVRAszkv7DoV23
+         hQ9qU3hSJjDMWSdClLYR4xofWuzc0cizXubvOnbEV49VMT9hm7XcdrHzEf8rXPyweQXR
+         NG/Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVsNBQtn2jQmAinFh1Di+RjKk1cn7kSzKb1KgapL81CWtTEbTg2//Jcq/8GCq1dPvjv7IStXAOtVYLMeQg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxyOIP4vC+4NSOzh4fL20rXSTRCM6Ylg3Q14mJEJtawcBdaBenw
+	QeukgyNb4DkTbKI2VzTksKQRXJMh1D2fDbtPJX7+t9/B36fbdztM
+X-Google-Smtp-Source: AGHT+IFtuSBup7LMg7m4f9UYikvtoExFDkt9GoIGABbjoibnui0xTXGl2XYwYOv7QjgeaRROpNVjnQ==
+X-Received: by 2002:a17:902:dacb:b0:205:5136:b2fb with SMTP id d9443c01a7336-205841a4376mr46479795ad.23.1725327523827;
         Mon, 02 Sep 2024 18:38:43 -0700 (PDT)
 Received: from twhmp6px (mxsmtp211.mxic.com.tw. [211.75.127.162])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-715e56d7804sm7405114b3a.154.2024.09.02.18.38.41
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20555dd1520sm35107915ad.230.2024.09.02.18.38.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Sep 2024 18:38:41 -0700 (PDT)
+        Mon, 02 Sep 2024 18:38:43 -0700 (PDT)
 Received: from hqs-appsw-a2o.mp600.macronix.com (linux-patcher [172.17.236.67])
-	by twhmp6px (Postfix) with ESMTPS id DE1E080526;
-	Tue,  3 Sep 2024 09:47:09 +0800 (CST)
+	by twhmp6px (Postfix) with ESMTPS id 9B1EC80484;
+	Tue,  3 Sep 2024 09:47:11 +0800 (CST)
 From: Cheng Ming Lin <linchengming884@gmail.com>
 To: miquel.raynal@bootlin.com,
 	vigneshr@ti.com,
@@ -78,9 +78,9 @@ Cc: richard@nod.at,
 	alvinzhou@mxic.com.tw,
 	leoyu@mxic.com.tw,
 	Cheng Ming Lin <chengminglin@mxic.com.tw>
-Subject: [PATCH v6 1/2] mtd: spinand: Add support for setting plane select bits
-Date: Tue,  3 Sep 2024 09:36:24 +0800
-Message-Id: <20240903013625.1658825-2-linchengming884@gmail.com>
+Subject: [PATCH v6 2/2] mtd: spinand: macronix: Flag parts needing explicit plane select
+Date: Tue,  3 Sep 2024 09:36:25 +0800
+Message-Id: <20240903013625.1658825-3-linchengming884@gmail.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20240903013625.1658825-1-linchengming884@gmail.com>
 References: <20240903013625.1658825-1-linchengming884@gmail.com>
@@ -94,60 +94,96 @@ Content-Transfer-Encoding: 8bit
 
 From: Cheng Ming Lin <chengminglin@mxic.com.tw>
 
-Add two flags for inserting the Plane Select bit into the column
-address during the write_to_cache and the read_from_cache operation.
+Macronix serial NAND flash with a two-plane structure requires
+insertion of the Plane Select bit into the column address during
+the write_to_cache operation.
 
-Add the SPINAND_HAS_PROG_PLANE_SELECT_BIT flag for serial NAND flash
-that require inserting the Plane Select bit into the column address
-during the write_to_cache operation.
-
-Add the SPINAND_HAS_READ_PLANE_SELECT_BIT flag for serial NAND flash
-that require inserting the Plane Select bit into the column address
-during the read_from_cache operation.
+Additionally, for MX35{U,F}2G14AC and MX35LF2GE4AB, insertion of
+the Plane Select bit into the column address is required during
+the read_from_cache operation.
 
 Signed-off-by: Cheng Ming Lin <chengminglin@mxic.com.tw>
 ---
- drivers/mtd/nand/spi/core.c | 6 ++++++
- include/linux/mtd/spinand.h | 2 ++
- 2 files changed, 8 insertions(+)
+ drivers/mtd/nand/spi/macronix.c | 24 +++++++++++++++++-------
+ 1 file changed, 17 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/mtd/nand/spi/core.c b/drivers/mtd/nand/spi/core.c
-index e0b6715e5dfe..e7b592cdbb4c 100644
---- a/drivers/mtd/nand/spi/core.c
-+++ b/drivers/mtd/nand/spi/core.c
-@@ -386,6 +386,9 @@ static int spinand_read_from_cache_op(struct spinand_device *spinand,
- 	else
- 		rdesc = spinand->dirmaps[req->pos.plane].rdesc_ecc;
- 
-+	if (spinand->flags & SPINAND_HAS_READ_PLANE_SELECT_BIT)
-+		column |= req->pos.plane << fls(nanddev_page_size(nand));
-+
- 	while (nbytes) {
- 		ret = spi_mem_dirmap_read(rdesc, column, nbytes, buf);
- 		if (ret < 0)
-@@ -460,6 +463,9 @@ static int spinand_write_to_cache_op(struct spinand_device *spinand,
- 	else
- 		wdesc = spinand->dirmaps[req->pos.plane].wdesc_ecc;
- 
-+	if (spinand->flags & SPINAND_HAS_PROG_PLANE_SELECT_BIT)
-+		column |= req->pos.plane << fls(nanddev_page_size(nand));
-+
- 	while (nbytes) {
- 		ret = spi_mem_dirmap_write(wdesc, column, nbytes, buf);
- 		if (ret < 0)
-diff --git a/include/linux/mtd/spinand.h b/include/linux/mtd/spinand.h
-index 5c19ead60499..0e0df620da53 100644
---- a/include/linux/mtd/spinand.h
-+++ b/include/linux/mtd/spinand.h
-@@ -312,6 +312,8 @@ struct spinand_ecc_info {
- 
- #define SPINAND_HAS_QE_BIT		BIT(0)
- #define SPINAND_HAS_CR_FEAT_BIT		BIT(1)
-+#define SPINAND_HAS_PROG_PLANE_SELECT_BIT		BIT(2)
-+#define SPINAND_HAS_READ_PLANE_SELECT_BIT		BIT(3)
- 
- /**
-  * struct spinand_ondie_ecc_conf - private SPI-NAND on-die ECC engine structure
+diff --git a/drivers/mtd/nand/spi/macronix.c b/drivers/mtd/nand/spi/macronix.c
+index 3f9e9c572854..9c93dfcb955d 100644
+--- a/drivers/mtd/nand/spi/macronix.c
++++ b/drivers/mtd/nand/spi/macronix.c
+@@ -118,7 +118,9 @@ static const struct spinand_info macronix_spinand_table[] = {
+ 		     SPINAND_INFO_OP_VARIANTS(&read_cache_variants,
+ 					      &write_cache_variants,
+ 					      &update_cache_variants),
+-		     SPINAND_HAS_QE_BIT,
++		     SPINAND_HAS_QE_BIT |
++		     SPINAND_HAS_PROG_PLANE_SELECT_BIT |
++		     SPINAND_HAS_READ_PLANE_SELECT_BIT,
+ 		     SPINAND_ECCINFO(&mx35lfxge4ab_ooblayout, NULL)),
+ 	SPINAND_INFO("MX35LF2GE4AD",
+ 		     SPINAND_ID(SPINAND_READID_METHOD_OPCODE_DUMMY, 0x26, 0x03),
+@@ -156,7 +158,8 @@ static const struct spinand_info macronix_spinand_table[] = {
+ 		     SPINAND_INFO_OP_VARIANTS(&read_cache_variants,
+ 					      &write_cache_variants,
+ 					      &update_cache_variants),
+-		     SPINAND_HAS_QE_BIT,
++		     SPINAND_HAS_QE_BIT |
++		     SPINAND_HAS_PROG_PLANE_SELECT_BIT,
+ 		     SPINAND_ECCINFO(&mx35lfxge4ab_ooblayout, NULL)),
+ 	SPINAND_INFO("MX35LF2G24AD-Z4I8",
+ 		     SPINAND_ID(SPINAND_READID_METHOD_OPCODE_DUMMY, 0x64, 0x03),
+@@ -174,7 +177,8 @@ static const struct spinand_info macronix_spinand_table[] = {
+ 		     SPINAND_INFO_OP_VARIANTS(&read_cache_variants,
+ 					      &write_cache_variants,
+ 					      &update_cache_variants),
+-		     SPINAND_HAS_QE_BIT,
++		     SPINAND_HAS_QE_BIT |
++		     SPINAND_HAS_PROG_PLANE_SELECT_BIT,
+ 		     SPINAND_ECCINFO(&mx35lfxge4ab_ooblayout, NULL)),
+ 	SPINAND_INFO("MX35LF4G24AD-Z4I8",
+ 		     SPINAND_ID(SPINAND_READID_METHOD_OPCODE_DUMMY, 0x75, 0x03),
+@@ -213,7 +217,9 @@ static const struct spinand_info macronix_spinand_table[] = {
+ 		     SPINAND_INFO_OP_VARIANTS(&read_cache_variants,
+ 					      &write_cache_variants,
+ 					      &update_cache_variants),
+-		     SPINAND_HAS_QE_BIT,
++		     SPINAND_HAS_QE_BIT |
++		     SPINAND_HAS_PROG_PLANE_SELECT_BIT |
++		     SPINAND_HAS_READ_PLANE_SELECT_BIT,
+ 		     SPINAND_ECCINFO(&mx35lfxge4ab_ooblayout,
+ 				     mx35lf1ge4ab_ecc_get_status)),
+ 	SPINAND_INFO("MX35UF4G24AD",
+@@ -223,7 +229,8 @@ static const struct spinand_info macronix_spinand_table[] = {
+ 		     SPINAND_INFO_OP_VARIANTS(&read_cache_variants,
+ 					      &write_cache_variants,
+ 					      &update_cache_variants),
+-		     SPINAND_HAS_QE_BIT,
++		     SPINAND_HAS_QE_BIT |
++		     SPINAND_HAS_PROG_PLANE_SELECT_BIT,
+ 		     SPINAND_ECCINFO(&mx35lfxge4ab_ooblayout,
+ 				     mx35lf1ge4ab_ecc_get_status)),
+ 	SPINAND_INFO("MX35UF4G24AD-Z4I8",
+@@ -253,7 +260,9 @@ static const struct spinand_info macronix_spinand_table[] = {
+ 		     SPINAND_INFO_OP_VARIANTS(&read_cache_variants,
+ 					      &write_cache_variants,
+ 					      &update_cache_variants),
+-		     SPINAND_HAS_QE_BIT,
++		     SPINAND_HAS_QE_BIT |
++		     SPINAND_HAS_PROG_PLANE_SELECT_BIT |
++		     SPINAND_HAS_READ_PLANE_SELECT_BIT,
+ 		     SPINAND_ECCINFO(&mx35lfxge4ab_ooblayout,
+ 				     mx35lf1ge4ab_ecc_get_status)),
+ 	SPINAND_INFO("MX35UF2G24AD",
+@@ -263,7 +272,8 @@ static const struct spinand_info macronix_spinand_table[] = {
+ 		     SPINAND_INFO_OP_VARIANTS(&read_cache_variants,
+ 					      &write_cache_variants,
+ 					      &update_cache_variants),
+-		     SPINAND_HAS_QE_BIT,
++		     SPINAND_HAS_QE_BIT |
++		     SPINAND_HAS_PROG_PLANE_SELECT_BIT,
+ 		     SPINAND_ECCINFO(&mx35lfxge4ab_ooblayout,
+ 				     mx35lf1ge4ab_ecc_get_status)),
+ 	SPINAND_INFO("MX35UF2G24AD-Z4I8",
 -- 
 2.25.1
 
