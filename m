@@ -1,126 +1,226 @@
-Return-Path: <linux-kernel+bounces-313266-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313267-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60EA796A2B3
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 17:32:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B78B96A2B9
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 17:32:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1829D1F294A3
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 15:32:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 40E011C23523
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 15:32:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7396918E367;
-	Tue,  3 Sep 2024 15:29:07 +0000 (UTC)
-Received: from irl.hu (irl.hu [95.85.9.111])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00B6A18A951;
+	Tue,  3 Sep 2024 15:29:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Pe8E5BrJ"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45C3D189533;
-	Tue,  3 Sep 2024 15:29:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.85.9.111
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E0EA189BB1;
+	Tue,  3 Sep 2024 15:29:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725377347; cv=none; b=dTUtNUn09Tx2pit/IuLj2dxCp68M/EM9iHSvsUj/w2MkPMVRae8tLh49Zear2LjyMU+V16NG6bG04ZeGjeWw1WnpVs6PxZg43DwAnBz17sbpf3K0m2OwfGYvqIaW3+9wZpEgal3n+y4IE4CACKamQkg/WVurPuqBg67+UE2zAEE=
+	t=1725377395; cv=none; b=B1P3xCpebHYDIj2FsAf4nWvPrTEXq5foaJH3FUt6APD8jd5+YlScuuC+MPoxmHs88FzU19iqi4LJx+nGwuRefosEoe6V9YqYA4cg6fBuGG2FHckCVfcVPddcFKQhKgLnf/Mnubt/MfAlpJ5xwyl6YQWIAoUqf+VMjqknZGQ7gUM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725377347; c=relaxed/simple;
-	bh=jkOz22QxNaB8pl8SUeaZCnrLem63e6bKQ1tsxM9C+uM=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=RJl7ugjI6uLT7oHEMP1KrGsZLKri7I4Ly8EKXrishmBK9p66e4mpGy0RbLsA6rHHg1NVnK0xQ2q+/sn3LGlbSa0s4z8NqQ2zGEYHNIWq17qzw16pTA9D8wrHhOOlQWQ3FebCVCCsTXOYtv0GmqAItOtJI+Xt8y/9IUXZRfy1ZNY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=irl.hu; spf=pass smtp.mailfrom=irl.hu; arc=none smtp.client-ip=95.85.9.111
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=irl.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=irl.hu
-Received: from fedori.lan (51b687c4.dsl.pool.telekom.hu [::ffff:81.182.135.196])
-  (AUTH: CRAM-MD5 soyer@irl.hu, )
-  by irl.hu with ESMTPSA
-  id 0000000000076045.0000000066D72B3F.001E8F8A; Tue, 03 Sep 2024 17:29:02 +0200
-Message-ID: <0e53a8b6eeb457f11a8a514b12c0598d1727b43d.camel@irl.hu>
-Subject: Re: [PATCH v1 1/1] platform/x86: ideapad-laptop: Make the
- scope_guard() clear of its scope
-From: Gergo Koteles <soyer@irl.hu>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Ilpo =?ISO-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-  Hans de Goede <hdegoede@redhat.com>,
-  platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
-  Ike Panhc <ike.pan@canonical.com>,
-  Peter Zijlstra <peterz@infradead.org>,
-  Josh Poimboeuf <jpoimboe@kernel.org>,
-  Nathan Chancellor <nathan@kernel.org>,
-  kernel test robot <lkp@intel.com>
-Date: Tue, 03 Sep 2024 17:29:02 +0200
-In-Reply-To: <Ztcn2Yu2TNSOYbhP@smile.fi.intel.com>
-References: <20240829165105.1609180-1-andriy.shevchenko@linux.intel.com>
-	 <cf8c73dd91dbbb11b562a5e0d9ac6b4035c32d28.camel@irl.hu>
-	 <Ztcn2Yu2TNSOYbhP@smile.fi.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
+	s=arc-20240116; t=1725377395; c=relaxed/simple;
+	bh=dblwvqMPF5fBICfFMv+0MNTWwSGo/n+wPvrSIkmE3TI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=tL1g9r0hhHe3y+86JwU97JSrOOMcZD8YxaZC6xqK0uY3wfKsW1vmmOtN6skolpLw7Y/jTZUE4plo/1AJmENNP9cIsfgY2wmbEtjFwyc73GN4YICtYYtbaUIL72c1SRvFTarOP7EtqZER+XALJUB+MtL7hjGh7So5pewXZxfmNtQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Pe8E5BrJ; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725377393; x=1756913393;
+  h=date:from:to:cc:subject:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=dblwvqMPF5fBICfFMv+0MNTWwSGo/n+wPvrSIkmE3TI=;
+  b=Pe8E5BrJFmTcwZxrwvsTUF+7eb2TI0rrfllemyDuFXwP2BVY1/eeiIyp
+   wnPSGDRzKO9pD9t645nvO/XT8O7rS3tmBuLH0ZrP3bqkCWwiQ8AquQSFS
+   sBPC728+DxV4DAvluTU3GJBg4sWNFe020l4RinvWHZkzbR3KVzkJq1uIC
+   r2NUBkKwHk8XbdEAKCK7q0d5dwDuIyIX6yJYhxhTm2oTGw/to4wqNbFuj
+   k/ffnmJQbrX+1XjrsRDKJq5kzM04gQaL/gl1PgW0R13PoLRddfiJ6gfb+
+   bggjJxa+UAUqGknw48syejQSSCfLC7cuTdtM3GNa3nu25NgkXBCEumP0r
+   g==;
+X-CSE-ConnectionGUID: OEJUj4pySyOYFK8BLhdkUQ==
+X-CSE-MsgGUID: QEYizpcfQ4a+oEVD82WVRw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11184"; a="23550010"
+X-IronPort-AV: E=Sophos;i="6.10,199,1719903600"; 
+   d="scan'208";a="23550010"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2024 08:29:52 -0700
+X-CSE-ConnectionGUID: vjTBr9YrSuyfBA5TEnKrLQ==
+X-CSE-MsgGUID: DlK2nhFWRO6XFYsZWDlVjA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,199,1719903600"; 
+   d="scan'208";a="64941379"
+Received: from unknown (HELO localhost) ([10.2.132.131])
+  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2024 08:29:51 -0700
+Date: Tue, 3 Sep 2024 08:29:50 -0700
+From: Nirmal Patel <nirmal.patel@linux.intel.com>
+To: Kai-Heng Feng <kai.heng.feng@canonical.com>
+Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+ jonathan.derrick@linux.dev, acelan.kao@canonical.com,
+ lpieralisi@kernel.org, kw@linux.com, robh@kernel.org, bhelgaas@google.com,
+ linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] PCI: vmd: Delay interrupt handling on MTL VMD
+ controller
+Message-ID: <20240903082950.00006d1e@linux.intel.com>
+In-Reply-To: <CAAd53p4EWEuu-V5hvOHtKZQxCJNf94+FOJT+_ryu0s2RpB1o-Q@mail.gmail.com>
+References: <20240903025544.286223-1-kai.heng.feng@canonical.com>
+	<20240903042852.v7ootuenihi5wjpn@thinkpad>
+	<CAAd53p4EWEuu-V5hvOHtKZQxCJNf94+FOJT+_ryu0s2RpB1o-Q@mail.gmail.com>
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 2024-09-03 at 18:14 +0300, Andy Shevchenko wrote:
-> On Tue, Sep 03, 2024 at 05:00:51PM +0200, Gergo Koteles wrote:
-> > On Thu, 2024-08-29 at 19:50 +0300, Andy Shevchenko wrote:
-> > > First of all, it's a bit counterintuitive to have something like
-> > >=20
-> > > 	int err;
-> > > 	...
-> > > 	scoped_guard(...)
-> > > 		err =3D foo(...);
-> > > 	if (err)
-> > > 		return err;
-> > >=20
-> > > Second, with a particular kernel configuration and compiler version i=
-n
-> > > one of such cases the objtool is not happy:
-> > >=20
-> > >   ideapad-laptop.o: warning: objtool: .text.fan_mode_show: unexpected=
- end of section
-> > >=20
-> > > I'm not an expert on all this, but the theory is that compiler and
-> > > linker in this case can't understand that 'result' variable will be
-> > > always initialized as long as no error has been returned. Assigning
-> > > 'result' to a dummy value helps with this. Note, that fixing the
-> > > scoped_guard() scope (as per above) does not make issue gone.
-> > >=20
-> > > That said, assign dummy value and make the scope_guard() clear of its=
- scope.
-> > > For the sake of consistency do it in the entire file.
-> > >=20
-> >=20
-> > Interestingly, if I open a scope manually and use the plain guard, the
-> > warning disappears.
+On Tue, 3 Sep 2024 15:07:45 +0800
+Kai-Heng Feng <kai.heng.feng@canonical.com> wrote:
+
+> On Tue, Sep 3, 2024 at 12:29=E2=80=AFPM Manivannan Sadhasivam
+> <manivannan.sadhasivam@linaro.org> wrote:
+> >
+> > On Tue, Sep 03, 2024 at 10:55:44AM +0800, Kai-Heng Feng wrote: =20
+> > > Meteor Lake VMD has a bug that the IRQ raises before the DMA
+> > > region is ready, so the requested IO is considered never
+> > > completed: [   97.343423] nvme nvme0: I/O 259 QID 2 timeout,
+> > > completion polled [   97.343446] nvme nvme0: I/O 384 QID 3
+> > > timeout, completion polled [   97.343459] nvme nvme0: I/O 320 QID
+> > > 4 timeout, completion polled [   97.343470] nvme nvme0: I/O 707
+> > > QID 5 timeout, completion polled
+> > >
+> > > The is documented as erratum MTL016 [0]. The suggested workaround
+> > > is to "The VMD MSI interrupt-handler should initially perform a
+> > > dummy register read to the MSI initiator device prior to any
+> > > writes to ensure proper PCIe ordering." which essentially is
+> > > adding a delay before the interrupt handling.
+> > > =20
+> >
+> > Why can't you add a dummy register read instead? Adding a delay for
+> > PCIe ordering is not going to work always. =20
 >=20
-> Yes, that's what I also have, but I avoid that approach because in that c=
-ase
-> the printing will be done inside the lock, widening the critical section =
-for
-> no benefits.
+> This can be done too. But it can take longer than 4us delay, so I'd
+> like to keep it a bit faster here.
+
+Since the issue is due to the bug in silicon and we have limited
+options. If community is okay to take some performance hit, then please
+add more details about the patch above VMD_FEAT_INTERRUPT_QUIRK.
+
+-nirmal
 >=20
-
-This is intended to be an inner block scope within the function, it
-does not expand the critical section.
-
-
-> > 	...
-> > 	unsigned long result;
-> > 	int err;
-> >=20
-> > 	{
-> > 		guard(mutex)(&priv->vpc_mutex);
-> > 		err =3D read_ec_data(priv->adev->handle, VPCCMD_R_FAN,
-> > &result);
-> > 		if (err)
-> > 			return err;
-> > 	}
-> > 	...
-> >=20
-> > This looks a bit strange, but is probably easier for the compiler than
-> > the for loop of scoped_guard.
-> >=20
-> > But I don't know how well this style fits into the kernel.
+> > =20
+> > > Hence add a delay before handle interrupt to workaround the
+> > > erratum.
+> > >
+> > > [0]
+> > > https://edc.intel.com/content/www/us/en/design/products/platforms/det=
+ails/meteor-lake-u-p/core-ultra-processor-specification-update/errata-detai=
+ls/#MTL016
+> > >
+> > > Link: https://bugzilla.kernel.org/show_bug.cgi?id=3D217871
+> > > Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+> > > ---
+> > >  drivers/pci/controller/vmd.c | 18 ++++++++++++++++--
+> > >  1 file changed, 16 insertions(+), 2 deletions(-)
+> > >
+> > > diff --git a/drivers/pci/controller/vmd.c
+> > > b/drivers/pci/controller/vmd.c index a726de0af011..3433b3730f9c
+> > > 100644 --- a/drivers/pci/controller/vmd.c
+> > > +++ b/drivers/pci/controller/vmd.c
+> > > @@ -16,6 +16,7 @@
+> > >  #include <linux/srcu.h>
+> > >  #include <linux/rculist.h>
+> > >  #include <linux/rcupdate.h>
+> > > +#include <linux/delay.h>
+> > >
+> > >  #include <asm/irqdomain.h>
+> > >
+> > > @@ -74,6 +75,9 @@ enum vmd_features {
+> > >        * proper power management of the SoC.
+> > >        */
+> > >       VMD_FEAT_BIOS_PM_QUIRK          =3D (1 << 5),
+> > > +
+> > > +     /* Erratum MTL016 */
+> > > +     VMD_FEAT_INTERRUPT_QUIRK        =3D (1 << 6),
+> > >  };
+> > >
+> > >  #define VMD_BIOS_PM_QUIRK_LTR        0x1003  /* 3145728 ns */
+> > > @@ -90,6 +94,8 @@ static DEFINE_IDA(vmd_instance_ida);
+> > >   */
+> > >  static DEFINE_RAW_SPINLOCK(list_lock);
+> > >
+> > > +static bool interrupt_delay;
+> > > +
+> > >  /**
+> > >   * struct vmd_irq - private data to map driver IRQ to the VMD
+> > > shared vector
+> > >   * @node:    list item for parent traversal.
+> > > @@ -105,6 +111,7 @@ struct vmd_irq {
+> > >       struct vmd_irq_list     *irq;
+> > >       bool                    enabled;
+> > >       unsigned int            virq;
+> > > +     bool                    delay_irq; =20
+> >
+> > This is unused. Perhaps you wanted to use this instead of
+> > interrupt_delay? =20
 >=20
+> This is leftover, will scratch this.
+>=20
+> Kai-Heng
+>=20
+> >
+> > - Mani
+> > =20
+> > >  };
+> > >
+> > >  /**
+> > > @@ -680,8 +687,11 @@ static irqreturn_t vmd_irq(int irq, void
+> > > *data) int idx;
+> > >
+> > >       idx =3D srcu_read_lock(&irqs->srcu);
+> > > -     list_for_each_entry_rcu(vmdirq, &irqs->irq_list, node)
+> > > +     list_for_each_entry_rcu(vmdirq, &irqs->irq_list, node) {
+> > > +             if (interrupt_delay)
+> > > +                     udelay(4);
+> > >               generic_handle_irq(vmdirq->virq);
+> > > +     }
+> > >       srcu_read_unlock(&irqs->srcu, idx);
+> > >
+> > >       return IRQ_HANDLED;
+> > > @@ -1015,6 +1025,9 @@ static int vmd_probe(struct pci_dev *dev,
+> > > const struct pci_device_id *id) if (features &
+> > > VMD_FEAT_OFFSET_FIRST_VECTOR) vmd->first_vec =3D 1;
+> > >
+> > > +     if (features & VMD_FEAT_INTERRUPT_QUIRK)
+> > > +             interrupt_delay =3D true;
+> > > +
+> > >       spin_lock_init(&vmd->cfg_lock);
+> > >       pci_set_drvdata(dev, vmd);
+> > >       err =3D vmd_enable_domain(vmd, features);
+> > > @@ -1106,7 +1119,8 @@ static const struct pci_device_id vmd_ids[]
+> > > =3D { {PCI_VDEVICE(INTEL, 0xa77f),
+> > >               .driver_data =3D VMD_FEATS_CLIENT,},
+> > >       {PCI_VDEVICE(INTEL, 0x7d0b),
+> > > -             .driver_data =3D VMD_FEATS_CLIENT,},
+> > > +             .driver_data =3D VMD_FEATS_CLIENT |
+> > > +                            VMD_FEAT_INTERRUPT_QUIRK,},
+> > >       {PCI_VDEVICE(INTEL, 0xad0b),
+> > >               .driver_data =3D VMD_FEATS_CLIENT,},
+> > >       {PCI_VDEVICE(INTEL, PCI_DEVICE_ID_INTEL_VMD_9A0B),
+> > > --
+> > > 2.43.0
+> > > =20
+> >
+> > --
+> > =E0=AE=AE=E0=AE=A3=E0=AE=BF=E0=AE=B5=E0=AE=A3=E0=AF=8D=E0=AE=A3=E0=AE=
+=A9=E0=AF=8D =E0=AE=9A=E0=AE=A4=E0=AE=BE=E0=AE=9A=E0=AE=BF=E0=AE=B5=E0=AE=
+=AE=E0=AF=8D =20
 
 
