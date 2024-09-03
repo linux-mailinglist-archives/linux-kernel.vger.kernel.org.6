@@ -1,91 +1,99 @@
-Return-Path: <linux-kernel+bounces-313639-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313640-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D533996A7FA
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 22:02:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D127E96A7FE
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 22:04:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3A923B21276
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 20:02:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1078D1C242DA
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 20:04:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB82D1922D3;
-	Tue,  3 Sep 2024 20:02:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ANJ8Zw4I"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30FAD191477;
+	Tue,  3 Sep 2024 20:04:06 +0000 (UTC)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2042A1DC746;
-	Tue,  3 Sep 2024 20:02:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CD164174C;
+	Tue,  3 Sep 2024 20:04:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725393746; cv=none; b=Gl4w/6Gn1VIoZS6j/yz7r40/AIc7Jz/2Xp7JoZyx2hGxWF2CMjeg7Wz/dERbVgfpHxNus9StKw6RmKsMoZWITZfacBq90p9J3skSJaL4jvP+KDCYjDeyL0Z56H0E776RrzX45BQrodUr5eKQFQrC2D4iO4EvfCaa8qVUqHWyEZA=
+	t=1725393845; cv=none; b=ZAkTSiFCrvIphl8+agtf/Ff+bfYfHsFulqX4xI7DPbtTIU3t11P39+bRpXA/C3V9sU0FfIVuCkFWF5CXCs8MiRrNXPjZS2TANFz2Jzvm+Fq6p5ba9tHgHWBmy2m6m/954pqPtQ1jz5aIQprjdOgZx0y2OjLJXOQjKaVAfsQOqIs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725393746; c=relaxed/simple;
-	bh=/BbWsnQvQojQuHvQGPzYTHEKobUCT3g2HuvksNY8isI=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=p8LIvSpyQ7DxKtIzjO2qQZ0MNP+j88IsHktmszxIlFfFtZFqS34fm5SkjzIlRS5p/zZBKZ67PYg4OzgIrIY7G47IvKVYM7Gz9sq2AhVC4GiW/w3ax2eD43pPV4A1ly9cQL82i/ZpQtbQRrBQG2QiPiMNsPOhycLDGYDvGONKazw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ANJ8Zw4I; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D469C4CEC4;
-	Tue,  3 Sep 2024 20:02:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725393745;
-	bh=/BbWsnQvQojQuHvQGPzYTHEKobUCT3g2HuvksNY8isI=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=ANJ8Zw4IEXajgPFCvxDtB6mwuKeSOy32UjP7xeeAOxhSeuZeniEMq4hLZJBXO52kc
-	 +KWgE4pr5DkdcNL0gBonnVnGQme6IR+1y8gH5wmGk6+U/0u7fWdRA0KwvSyN+TYyvx
-	 Q7tRWJlAXR1YUpL/QG18O3w0J71/cGYfgSBDHRvEu9zlYHJa12g2+n/5HRHyAwCnV/
-	 pDdrgeW8fsR7J2Bzuic1cEOTT8iB+RPSj3mNBbnVt1nwlzdfPbUQC30vjq4UvW70se
-	 EgMVU0naFFt+PMSqnUZMG4fPoAaoJPOzfQUPZ01YypDmos0TjAZ0c3JrYggwK2D/r/
-	 hySR3buOJqGlQ==
-Message-ID: <59429303c8158b146b24d14f4869fcd5.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1725393845; c=relaxed/simple;
+	bh=hhTUq0BJXUc/2KjuFKcG/BK7I8B7IsKcWEkw8TTiyh4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YvxpmDoHI8DVoZjMfGOSHyZcA03zqA8XiE91TkP/7a73beUg+wNW2PaIHH18Un6/63VrYYz29zgVFxiyU4JgrBDh2iWYIvuy7S03lkNrnWUg3zHiqdqzgB/fu6RE2bAR9w13Cp8nY7PuoWKP5zWu8oKSCs9rcykDD1n9/DpmQ7o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=fail smtp.mailfrom=gmail.com; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=gmail.com
+X-CSE-ConnectionGUID: +iAWB0HPRfCephGGNU06og==
+X-CSE-MsgGUID: Ram82HB+Rb6wgraZJe6PEA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11184"; a="27775698"
+X-IronPort-AV: E=Sophos;i="6.10,199,1719903600"; 
+   d="scan'208";a="27775698"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2024 13:04:03 -0700
+X-CSE-ConnectionGUID: MLYEPSgySjCZ9ixW3rekiQ==
+X-CSE-MsgGUID: NrjMsH8nSdGPv+RTUFICxg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,199,1719903600"; 
+   d="scan'208";a="65745599"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by orviesa008.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2024 13:04:01 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andy.shevchenko@gmail.com>)
+	id 1slZjs-00000004pnm-3vh0;
+	Tue, 03 Sep 2024 23:02:56 +0300
+Date: Tue, 3 Sep 2024 23:02:56 +0300
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	David Lechner <dlechner@baylibre.com>,
+	Michael Hennerich <michael.hennerich@analog.com>,
+	Antoniu Miclaus <antoniu.miclaus@analog.com>,
+	Jinjie Ruan <ruanjinjie@huawei.com>,
+	Lorenzo Bianconi <lorenzo@kernel.org>,
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+	Basavaraj Natikar <Basavaraj.Natikar@amd.com>,
+	linux-input@vger.kernel.org, linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Jiri Kosina <jikos@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>
+Subject: Re: [PATCH v1 10/22] iio: dac: max517: Get platform data via
+ dev_get_platdata()
+Message-ID: <ZtdrcHQokaHdfXp5@smile.fi.intel.com>
+References: <20240902222824.1145571-1-andy.shevchenko@gmail.com>
+ <20240902222824.1145571-11-andy.shevchenko@gmail.com>
+ <20240903204737.710e49dd@jic23-huawei>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20240902070830.8535-1-johan+linaro@kernel.org>
-References: <20240902070830.8535-1-johan+linaro@kernel.org>
-Subject: Re: [PATCH] clk: qcom: gcc-sc8280xp: don't use parking clk_ops for QUPs
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: Bjorn Andersson <andersson@kernel.org>, Michael Turquette <mturquette@baylibre.com>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, Johan Hovold <johan+linaro@kernel.org>
-To: Johan Hovold <johan+linaro@kernel.org>
-Date: Tue, 03 Sep 2024 13:02:23 -0700
-User-Agent: alot/0.10
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240903204737.710e49dd@jic23-huawei>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-Quoting Johan Hovold (2024-09-02 00:08:30)
-> A recent change started parking the RCG at an always on parent during
-> registration, something which specifically breaks handover from an early
-> serial console.
->=20
-> Quoting Stephen Boyd who fixed this issue for SM8550 [1]:
->=20
->         The QUPs aren't shared in a way that requires parking the RCG at
->         an always on parent in case some other entity turns on the clk.
->         The hardware is capable of setting a new frequency itself with
->         the DFS mode, so parking is unnecessary. Furthermore, there
->         aren't any GDSCs for these devices, so there isn't a possibility
->         of the GDSC turning on the clks for housekeeping purposes.
->=20
->         This wasn't a problem to mark these clks shared until we started
->         parking shared RCGs at clk registration time in commit
->         01a0a6cc8cfd ("clk: qcom: Park shared RCGs upon registration").
->         Parking at init is actually harmful to the UART when earlycon is
->         used. If the device is pumping out data while the frequency
->         changes you'll see garbage on the serial console until the
->         driver can probe and actually set a proper frequency.
->=20
-> Fixes: 01a0a6cc8cfd ("clk: qcom: Park shared RCGs upon registration")
-> Fixes: d65d005f9a6c ("clk: qcom: add sc8280xp GCC driver")
-> Link: https://lore.kernel.org/all/20240819233628.2074654-2-swboyd@chromiu=
-m.org/ [1]
-> Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
-> ---
+On Tue, Sep 03, 2024 at 08:47:37PM +0100, Jonathan Cameron wrote:
+> On Tue,  3 Sep 2024 01:16:55 +0300
+> Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
 
-Applied to clk-fixes
+...
+
+> >  	 * Reference voltage on MAX518 and default is 5V, else take vref_mv
+> > -	 * from platform_data
+> > +	 * from platform_data.
+> 
+> I guess this is accidental?
+
+It can be dropped.
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
