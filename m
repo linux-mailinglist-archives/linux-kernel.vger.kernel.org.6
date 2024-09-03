@@ -1,87 +1,145 @@
-Return-Path: <linux-kernel+bounces-312661-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312689-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 216A796997A
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 11:49:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CACCB9699D7
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 12:15:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9788BB21FAB
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 09:49:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 88D16283302
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 10:15:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D375519F41B;
-	Tue,  3 Sep 2024 09:49:11 +0000 (UTC)
-Received: from outboundhk.mxmail.xiaomi.com (outboundhk.mxmail.xiaomi.com [118.143.206.90])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 115BC1A0BF2
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 09:49:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=118.143.206.90
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BB2019F435;
+	Tue,  3 Sep 2024 10:15:18 +0000 (UTC)
+Received: from m-r2.th.seeweb.it (m-r2.th.seeweb.it [5.144.164.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2F2017C9B3
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 10:15:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.144.164.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725356951; cv=none; b=uoz3ZJjs3ZeMAettkYURX0+ck4lxi9Ftq/vUIZSsY6P3tE7nci5qNYgm+r9P9HMk4lNUTQ+jcMNHduCSqwlpz+2PAyBddFefaMFNknZOjm8MM0hTkaZaGUARmxIZVXCdsZYfLXI2bbEspAgm/yOtqWuZZp1oOe9y9/eNBT8a0aQ=
+	t=1725358517; cv=none; b=QK99jx7z5rVnc3FYD2AUxspqkd/uXItLiBgVBiYSjk047ahbdqzUfU/4ICP4jVD+K8CS/dXjhkSrHhyxMR2thPOmfXOHj7K1cLyvMn/sQOMqRiiq+++1DaX/b87JaNXJKjUmwuICTgB+lZFu1IJfYf7jWCEYiID8SW9uMJILAi8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725356951; c=relaxed/simple;
-	bh=YCJtvlKwGlnH0v4fIcqZym0S/odYiTTNF/thyVRPRdE=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=CdZ8jFMZpz8Dx/hdnL9DCkQcT5V3bpqDyQPt6DpvmGpEuyL7XrKjNrYTiH+BvkGbOIJ4KIduBscm2LJjO3caHbaTyOTbpjinG7eePWnNXfDRVNIbJw/RYaTVrTQCCVxjSnF0K6vgpJ+3Erdcypd1KMH+4y5QTZvRN7pGOMZXBZo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=xiaomi.com; spf=pass smtp.mailfrom=xiaomi.com; arc=none smtp.client-ip=118.143.206.90
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=xiaomi.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xiaomi.com
-X-CSE-ConnectionGUID: 6+T9Hnn8RuWjBFzMOk/HVw==
-X-CSE-MsgGUID: +E2TGmDJTgiGlym54yZ89A==
-X-IronPort-AV: E=Sophos;i="6.10,198,1719849600"; 
-   d="scan'208";a="95305435"
-From: Huang Jianan <huangjianan@xiaomi.com>
-To: Wu Bo <bo.wu@vivo.com>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-CC: Wu Bo <wubo.oduw@gmail.com>, Jaegeuk Kim <jaegeuk@kernel.org>,
-	"linux-f2fs-devel@lists.sourceforge.net"
-	<linux-f2fs-devel@lists.sourceforge.net>
-Subject: Re: [External Mail][f2fs-dev] [PATCH 05/13] f2fs: set inline tail
- flag when create inode
-Thread-Topic: [External Mail][f2fs-dev] [PATCH 05/13] f2fs: set inline tail
- flag when create inode
-Thread-Index: AQHa/d9TEJ0BFkkmf0yNrLcOSrFLD7JFSyMA
-Date: Tue, 3 Sep 2024 09:49:00 +0000
-Message-ID: <83bfb7d2-655e-4f3d-9bda-3f275637a3f0@xiaomi.com>
-References: <cover.1725334811.git.bo.wu@vivo.com>
- <d5f1a318931b213f7a27de8441ba985354eecabb.1725334811.git.bo.wu@vivo.com>
-In-Reply-To: <d5f1a318931b213f7a27de8441ba985354eecabb.1725334811.git.bo.wu@vivo.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <604B70C4BBC297469DA7016D8A220A7C@xiaomi.com>
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1725358517; c=relaxed/simple;
+	bh=pmc2fplmWiaO/xMk8E2XzhR5b3XT9lA4YRgEcHIquko=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Mj01wNoTloyMiY3+z0DkxP3a/6CHuLE8iEnLu6MyFtBPphZ7QsB4lqrmoCKW/JyR0Z8Rxx/CTMoZFObF6h9/mFgxVqd2xNfmtS+LK3gdGKJ5dArEsfBcMhbG1Ku6oUIXZwC3rx4r+GX5Ke6YHgl6kmWTdpeuOchKevsY4UcJxDA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=somainline.org; spf=pass smtp.mailfrom=somainline.org; arc=none smtp.client-ip=5.144.164.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=somainline.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=somainline.org
+Received: from SoMainline.org (94-211-6-86.cable.dynamic.v4.ziggo.nl [94.211.6.86])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by m-r2.th.seeweb.it (Postfix) with ESMTPSA id 1ECA03E996;
+	Tue,  3 Sep 2024 11:50:36 +0200 (CEST)
+Date: Tue, 3 Sep 2024 11:50:34 +0200
+From: Marijn Suijten <marijn.suijten@somainline.org>
+To: Jun Nie <jun.nie@linaro.org>
+Cc: Rob Clark <robdclark@gmail.com>, 
+	Abhinav Kumar <quic_abhinavk@quicinc.com>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
+	Sean Paul <sean@poorly.run>, David Airlie <airlied@gmail.com>, 
+	Daniel Vetter <daniel@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org, Jonathan Marek <jonathan@marek.ca>
+Subject: Re: [PATCH 02/21] drm/msm/dsi: fix DSC width for the bonded DSI case
+Message-ID: <rspuwp3zpnzwfe26hv2yezy5ad5o7wliq7ucpobyaheytvcs3j@qtshf6cewb2f>
+References: <20240829-sm8650-v6-11-hmd-pocf-mdss-quad-upstream-8-v1-0-bdb05b4b5a2e@linaro.org>
+ <20240829-sm8650-v6-11-hmd-pocf-mdss-quad-upstream-8-v1-2-bdb05b4b5a2e@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240829-sm8650-v6-11-hmd-pocf-mdss-quad-upstream-8-v1-2-bdb05b4b5a2e@linaro.org>
 
-T24gMjAyNC85LzMgMTY6NTQsIFd1IEJvIHZpYSBMaW51eC1mMmZzLWRldmVsIHdyb3RlOg0KSGkg
-Qm8sDQo+IA0KPiBTZXQgaW5saW5lIHRhaWwgZmxhZyB0byBlbmFibGUgdGhpcyBmZWF0dXJlIHdo
-ZW4gbmV3IGlub2RlIGlzIGNyZWF0ZWQuDQo+IEluaGVyaXQgdGhlIGNvbmRpdGlvbnMgZnJvbSBp
-bmxpbmUgZGF0YS4NCj4gDQo+IFNpZ25lZC1vZmYtYnk6IFd1IEJvIDxiby53dUB2aXZvLmNvbT4N
-Cj4gLS0tDQo+ICAgZnMvZjJmcy9uYW1laS5jIHwgMyArKysNCj4gICAxIGZpbGUgY2hhbmdlZCwg
-MyBpbnNlcnRpb25zKCspDQo+IA0KPiBkaWZmIC0tZ2l0IGEvZnMvZjJmcy9uYW1laS5jIGIvZnMv
-ZjJmcy9uYW1laS5jDQo+IGluZGV4IDM4YjQ3NTA0NzVkYi4uMTNjMjk1ZWExOWRlIDEwMDY0NA0K
-PiAtLS0gYS9mcy9mMmZzL25hbWVpLmMNCj4gKysrIGIvZnMvZjJmcy9uYW1laS5jDQo+IEBAIC0z
-MTUsNiArMzE1LDkgQEAgc3RhdGljIHN0cnVjdCBpbm9kZSAqZjJmc19uZXdfaW5vZGUoc3RydWN0
-IG1udF9pZG1hcCAqaWRtYXAsDQo+ICAgICAgICAgIC8qIFNob3VsZCBlbmFibGUgaW5saW5lX2Rh
-dGEgYWZ0ZXIgY29tcHJlc3Npb24gc2V0ICovDQo+ICAgICAgICAgIGlmICh0ZXN0X29wdChzYmks
-IElOTElORV9EQVRBKSAmJiBmMmZzX21heV9pbmxpbmVfZGF0YShpbm9kZSkpDQo+ICAgICAgICAg
-ICAgICAgICAgc2V0X2lub2RlX2ZsYWcoaW5vZGUsIEZJX0lOTElORV9EQVRBKTsNCj4gKyAgICAg
-ICAvKiBJbmhlcml0IHRoZSBjb25kaXRpb25zIGZyb20gaW5saW5lIGRhdGEgKi8NCj4gKyAgICAg
-ICBpZiAodGVzdF9vcHQoc2JpLCBJTkxJTkVfVEFJTCkgJiYgZjJmc19oYXNfaW5saW5lX2RhdGEo
-aW5vZGUpKQ0KPiArICAgICAgICAgICAgICAgc2V0X2lub2RlX2ZsYWcoaW5vZGUsIEZJX0lOTElO
-RV9UQUlMKTsNCg0KU2hvdWxkIGYyZnNfcG9zdF9yZWFkX3JlcXVpcmVkKCkgYmUgY2hlY2tlZCBo
-ZXJlLCBsaWtlIGlubGluZSBkYXRhPw0KDQpUaGFua3MsDQpKaWFuYW4NCg0KPiANCj4gICAgICAg
-ICAgaWYgKG5hbWUgJiYgIXRlc3Rfb3B0KHNiaSwgRElTQUJMRV9FWFRfSURFTlRJRlkpKQ0KPiAg
-ICAgICAgICAgICAgICAgIHNldF9maWxlX3RlbXBlcmF0dXJlKHNiaSwgaW5vZGUsIG5hbWUpOw0K
-PiAtLQ0KPiAyLjM1LjMNCj4gDQo+IA0KPiANCj4gX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX18NCj4gTGludXgtZjJmcy1kZXZlbCBtYWlsaW5nIGxpc3QNCj4g
-TGludXgtZjJmcy1kZXZlbEBsaXN0cy5zb3VyY2Vmb3JnZS5uZXQNCj4gaHR0cHM6Ly9saXN0cy5z
-b3VyY2Vmb3JnZS5uZXQvbGlzdHMvbGlzdGluZm8vbGludXgtZjJmcy1kZXZlbA0KDQo=
+On 2024-08-29 18:17:31, Jun Nie wrote:
+> From: Jonathan Marek <jonathan@marek.ca>
+> 
+> For the bonded DSI case, DSC pic_width and timing calculations should use
+> the width of a single panel instead of the total combined width.
+
+When this patch was originally proposed we already discussed [1] that this is
+**not** universally true.  On my hardware a single bonded panel always receives
+the full width, at least on downstream kernels, and it works [2].
+
+[1]: https://lore.kernel.org/linux-arm-msm/eanx45rnasj7lu3r2tfhtg4qkqkcidd6zctsz6ci6jlklu4fgi@3nf73w2ka4li/T/#u
+[2]: https://gitlab.freedesktop.org/drm/msm/-/issues/41
+
+Can we please figure this out before landing this patch?
+
+- Marijn
+
+> Bonded DSI can be used to drive a single panel having two input
+> channels, or to drive two panels with a input channel on every panel that
+> behave like single panel for display controller.
+> 
+> Signed-off-by: Jonathan Marek <jonathan@marek.ca>
+> Signed-off-by: Jun Nie <jun.nie@linaro.org>
+> ---
+>  drivers/gpu/drm/msm/dsi/dsi.h         | 3 ++-
+>  drivers/gpu/drm/msm/dsi/dsi_host.c    | 6 +++++-
+>  drivers/gpu/drm/msm/dsi/dsi_manager.c | 2 +-
+>  3 files changed, 8 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/msm/dsi/dsi.h b/drivers/gpu/drm/msm/dsi/dsi.h
+> index 87496db203d6c..35b90c462f637 100644
+> --- a/drivers/gpu/drm/msm/dsi/dsi.h
+> +++ b/drivers/gpu/drm/msm/dsi/dsi.h
+> @@ -79,7 +79,8 @@ int msm_dsi_host_power_off(struct mipi_dsi_host *host);
+>  int msm_dsi_host_set_display_mode(struct mipi_dsi_host *host,
+>  				  const struct drm_display_mode *mode);
+>  enum drm_mode_status msm_dsi_host_check_dsc(struct mipi_dsi_host *host,
+> -					    const struct drm_display_mode *mode);
+> +					    const struct drm_display_mode *mode,
+> +					    bool is_bonded_dsi);
+>  unsigned long msm_dsi_host_get_mode_flags(struct mipi_dsi_host *host);
+>  int msm_dsi_host_register(struct mipi_dsi_host *host);
+>  void msm_dsi_host_unregister(struct mipi_dsi_host *host);
+> diff --git a/drivers/gpu/drm/msm/dsi/dsi_host.c b/drivers/gpu/drm/msm/dsi/dsi_host.c
+> index 6388bb12696ff..7a4d9c071be5a 100644
+> --- a/drivers/gpu/drm/msm/dsi/dsi_host.c
+> +++ b/drivers/gpu/drm/msm/dsi/dsi_host.c
+> @@ -2489,7 +2489,8 @@ int msm_dsi_host_set_display_mode(struct mipi_dsi_host *host,
+>  }
+>  
+>  enum drm_mode_status msm_dsi_host_check_dsc(struct mipi_dsi_host *host,
+> -					    const struct drm_display_mode *mode)
+> +					    const struct drm_display_mode *mode,
+> +					    bool is_bonded_dsi)
+>  {
+>  	struct msm_dsi_host *msm_host = to_msm_dsi_host(host);
+>  	struct drm_dsc_config *dsc = msm_host->dsc;
+> @@ -2499,6 +2500,9 @@ enum drm_mode_status msm_dsi_host_check_dsc(struct mipi_dsi_host *host,
+>  	if (!msm_host->dsc)
+>  		return MODE_OK;
+>  
+> +	if (is_bonded_dsi)
+> +		pic_width = mode->hdisplay / 2;
+> +
+>  	if (pic_width % dsc->slice_width) {
+>  		pr_err("DSI: pic_width %d has to be multiple of slice %d\n",
+>  		       pic_width, dsc->slice_width);
+> diff --git a/drivers/gpu/drm/msm/dsi/dsi_manager.c b/drivers/gpu/drm/msm/dsi/dsi_manager.c
+> index a210b7c9e5ca2..6e915b57e14bb 100644
+> --- a/drivers/gpu/drm/msm/dsi/dsi_manager.c
+> +++ b/drivers/gpu/drm/msm/dsi/dsi_manager.c
+> @@ -420,7 +420,7 @@ static enum drm_mode_status dsi_mgr_bridge_mode_valid(struct drm_bridge *bridge,
+>  			return MODE_ERROR;
+>  	}
+>  
+> -	return msm_dsi_host_check_dsc(host, mode);
+> +	return msm_dsi_host_check_dsc(host, mode, IS_BONDED_DSI());
+>  }
+>  
+>  static int dsi_mgr_bridge_attach(struct drm_bridge *bridge,
+> 
+> -- 
+> 2.34.1
+> 
 
