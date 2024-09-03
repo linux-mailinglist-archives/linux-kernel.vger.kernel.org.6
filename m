@@ -1,117 +1,140 @@
-Return-Path: <linux-kernel+bounces-312691-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312692-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 757FD9699DB
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 12:15:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 833F89699DF
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 12:16:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2CE171F237D6
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 10:15:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F68B1F23824
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 10:16:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F2E91AD254;
-	Tue,  3 Sep 2024 10:15:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EDAD1AD254;
+	Tue,  3 Sep 2024 10:15:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="aIOs5wpK"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="jueN7WZq"
+Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A64391A0BED
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 10:15:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 351411A4E88;
+	Tue,  3 Sep 2024 10:15:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725358540; cv=none; b=TknUe/aY3RKpgAFw5o5JHutvJGZtHYhm5o4uTsDukhsZSE1uZeua1XUjnS/togNvCASNKuHQ/5F6VPzMjGVICCXraaO2dnoj/Jw3Ijmf5/q9kCAicKOcjbnNSWTeSLqF5Ip2xQDfg8NNqGtIq5h3AWrtAqDCD353E+5FtUs28jA=
+	t=1725358547; cv=none; b=H+88JKke2mo6tioV4XeLPrIBQA6Xem7EBMZoAlB0zmiMbXqLkZssv7nVJXGe0LRWyBRJuMAVng6Fnc1M86yftUTYgG6DJm3iRoT/1RGyI8sprUYN5KXz+nb8rb2FjXwoK+83nbPe6Tobald+mowjM8hYtQWlWy8J1sbZHge/wQg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725358540; c=relaxed/simple;
-	bh=3ROBpLYRQU5t6rZgCY30BR3EPdo1Yn+grvnf5y04KUk=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=A6AfXQYHZgtiZAq7qhYEbIZ2aTJna+tB9o/BW2d85RU8QLc+EvyDMcm7fzlrvsej83a7VI/b1OdlpauIJxif5Tyz7/zCfZd4u8Dq1QEsEIFj8vSc51Nz2eBK303CAW8Tm4DqpWzjvwE6TaocbOt8yYmBeBNq3MNs/q+be13oPuY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=aIOs5wpK; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1725358537;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=cmLYwYb+SWbQ2tgv0jNSGEqLxszTO3ibo+yOFRuOLE4=;
-	b=aIOs5wpK3b3myMJs8IYUKdKJDbyT0bVcf6JQGHNvEI8zDehmh4CNM38jBw/MtNYwbKfDy2
-	gAVLzSWcA5r5vgZmRCSRjufUCVJ28n07iQvohZOY/ErPAzJlCW2UwU8qLQqawUw3HW91ll
-	il/CwzaHUMl8BXR7s8kowFtkVffbyM8=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-644-NPQHD1dQOXKKCet7cnWEtw-1; Tue,
- 03 Sep 2024 06:15:34 -0400
-X-MC-Unique: NPQHD1dQOXKKCet7cnWEtw-1
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E43A11955F45;
-	Tue,  3 Sep 2024 10:15:32 +0000 (UTC)
-Received: from [10.45.224.222] (unknown [10.45.224.222])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 1A8441955F1B;
-	Tue,  3 Sep 2024 10:15:30 +0000 (UTC)
-Date: Tue, 3 Sep 2024 12:15:28 +0200 (CEST)
-From: Mikulas Patocka <mpatocka@redhat.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-cc: Mike Snitzer <snitzer@kernel.org>, dm-devel@lists.linux.dev, 
-    linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH 2/2] dm-integrity: introduce the Inline mode
-In-Reply-To: <512a07c-d41a-27c4-b1f9-8fe19352d1f@linux-m68k.org>
-Message-ID: <46e7758b-c9d1-d381-3959-16cb943e5de5@redhat.com>
-References: <c994d5e-cc3d-d7f5-ce3-fd2cf91e850@redhat.com> <512a07c-d41a-27c4-b1f9-8fe19352d1f@linux-m68k.org>
+	s=arc-20240116; t=1725358547; c=relaxed/simple;
+	bh=YnJsw34CPYXxPakcw5H5XwjWdoP51JinkgYjwgJSIqo=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
+	 In-Reply-To:Content-Type; b=TIiLqWLjoj7zyVrQ5bH0RgdchNfx31ClEetHZj5s+LH5BGoHunw9m5KKafwP7i+Yf2YeEoyVeIuzJsypK0LCT5izdoHRA9cdaZmnYmP8tPuBW/6gFlaXhzYiu6klnEuG+jaXh5E/j6mdRXgoRQJNlWpoEli/Qo/gwStE5D6vHzQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=jueN7WZq; arc=none smtp.client-ip=198.47.23.248
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 483AFYNQ128308;
+	Tue, 3 Sep 2024 05:15:34 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1725358534;
+	bh=+cOqQ68ocmQKPHgHc8JkaDbSzQUEWOAxWN6anZ9lMbQ=;
+	h=Date:Subject:From:To:CC:References:In-Reply-To;
+	b=jueN7WZqY6JvvtovIbrqXTEpxkoGnRX0zbPJXNIskTuZXbcqaSVp/rX8rMhauczFN
+	 v8E1MVkEMXe4r6lkuO9A98wBedNa9A8DWF6l8IdulVuJu/i/vIz1gpnTSYn821INhl
+	 kfvqWuBTQXpJTMdq49gwlXVTBY/FNl2sEei8m6eo=
+Received: from DLEE102.ent.ti.com (dlee102.ent.ti.com [157.170.170.32])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 483AFY0X025789
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Tue, 3 Sep 2024 05:15:34 -0500
+Received: from DLEE110.ent.ti.com (157.170.170.21) by DLEE102.ent.ti.com
+ (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 3
+ Sep 2024 05:15:34 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE110.ent.ti.com
+ (157.170.170.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Tue, 3 Sep 2024 05:15:34 -0500
+Received: from [10.249.130.61] ([10.249.130.61])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 483AFUne091499;
+	Tue, 3 Sep 2024 05:15:31 -0500
+Message-ID: <522affaa-47ad-4834-be3c-acdd04902821@ti.com>
+Date: Tue, 3 Sep 2024 15:45:29 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] remoteproc: k3-r5: Delay notification of wakeup event
+From: Beleswar Prasad Padhi <b-padhi@ti.com>
+To: <andersson@kernel.org>, <mathieu.poirier@linaro.org>, <afd@ti.com>
+CC: <hnagalla@ti.com>, <u-kumar1@ti.com>, <linux-remoteproc@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20240820105004.2788327-1-b-padhi@ti.com>
+Content-Language: en-US
+In-Reply-To: <20240820105004.2788327-1-b-padhi@ti.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+
+Hi Mathieu,
+
+On 20-08-2024 16:20, Beleswar Padhi wrote:
+> From: Udit Kumar <u-kumar1@ti.com>
+>
+> Few times, core1 was scheduled to boot first before core0, which leads
+> to error:
+>
+> 'k3_r5_rproc_start: can not start core 1 before core 0'.
+>
+> This was happening due to some scheduling between prepare and start
+> callback. The probe function waits for event, which is getting
+> triggered by prepare callback. To avoid above condition move event
+> trigger to start instead of prepare callback.
+>
+> Fixes: 61f6f68447ab ("remoteproc: k3-r5: Wait for core0 power-up before powering up core1")
 
 
+Please put this patch on hold. I have some additional changelog that 
+should go in v3.
 
-On Mon, 26 Aug 2024, Geert Uytterhoeven wrote:
+Thanks,
+Beleswar
 
-> 	Hi Mikulas,
-> 
-> On Tue, 25 Jun 2024, Mikulas Patocka wrote:
-> > This commit introduces a new 'I' mode for dm-integrity.
-> > 
-> > The 'I' mode may be selected if the underlying device has non-power-of-2
-> > sector size. In this mode, dm-integrity will store integrity data
-> > directly in device's sectors and it will not use journal.
-> > 
-> > This mode improves performance and reduces flash wear because there would
-> > be no journal writes.
-> > 
-> > Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
-> 
-> Thanks for your patch, which is now commit fb0987682c629c1d
-> ("dm-integrity: introduce the Inline mode") in v6.11-rc1.
-> 
-> > @@ -4433,9 +4737,12 @@ static int dm_integrity_ctr(struct dm_ta
-> > 		ti->error = "Block size doesn't match the information in
-> > superblock";
-> > 		goto bad;
-> > 	}
-> > -	if (!le32_to_cpu(ic->sb->journal_sections)) {
-> > +	if (!le32_to_cpu(ic->sb->journal_sections) != (ic->mode == 'I')) {
-> 
-> As reporting before in e.g. [1], this is causing build failures with
-> gcc-5 and -Werror:
-> 
->     drivers/md/dm-integrity.c:4718:52: error: logical not is only applied to
-> the left hand side of comparison [-Werror=logical-not-parentheses]
->       if (!le32_to_cpu(ic->sb->journal_sections) != (ic->mode == 'I')) {
-
-Hi
-
-I fixed it. The fix will be submitted upstream in the next merge window.
-
-Mikulas
-
+> Signed-off-by: Udit Kumar <u-kumar1@ti.com>
+> [ Applied wakeup event trigger only for Split-Mode booted rprocs ]
+> Signed-off-by: Beleswar Padhi <b-padhi@ti.com>
+> ---
+> v2: Changelog:
+> * Mathieu
+> 1) Rebased changes on top of -next-20240820 tag.
+>
+> Link to v1:
+> https://lore.kernel.org/all/20240809060132.308642-1-b-padhi@ti.com/
+>
+>   drivers/remoteproc/ti_k3_r5_remoteproc.c | 5 +++--
+>   1 file changed, 3 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/remoteproc/ti_k3_r5_remoteproc.c b/drivers/remoteproc/ti_k3_r5_remoteproc.c
+> index 8a63a9360c0f..e61e53381abc 100644
+> --- a/drivers/remoteproc/ti_k3_r5_remoteproc.c
+> +++ b/drivers/remoteproc/ti_k3_r5_remoteproc.c
+> @@ -469,8 +469,6 @@ static int k3_r5_rproc_prepare(struct rproc *rproc)
+>   			ret);
+>   		return ret;
+>   	}
+> -	core->released_from_reset = true;
+> -	wake_up_interruptible(&cluster->core_transition);
+>   
+>   	/*
+>   	 * Newer IP revisions like on J7200 SoCs support h/w auto-initialization
+> @@ -587,6 +585,9 @@ static int k3_r5_rproc_start(struct rproc *rproc)
+>   		ret = k3_r5_core_run(core);
+>   		if (ret)
+>   			return ret;
+> +
+> +		core->released_from_reset = true;
+> +		wake_up_interruptible(&cluster->core_transition);
+>   	}
+>   
+>   	return 0;
 
