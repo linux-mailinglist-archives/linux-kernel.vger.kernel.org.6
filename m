@@ -1,130 +1,100 @@
-Return-Path: <linux-kernel+bounces-312011-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312013-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A49CE9690E3
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 03:24:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46DBB9690E7
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 03:27:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6249D284021
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 01:24:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A67ADB20DE4
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 01:27:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD1451CCED4;
-	Tue,  3 Sep 2024 01:23:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C0TM0I9m"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D38C61CCECE;
+	Tue,  3 Sep 2024 01:27:35 +0000 (UTC)
+Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BD9035894
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 01:23:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A4011CC8A0;
+	Tue,  3 Sep 2024 01:27:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725326637; cv=none; b=en5yAVBj+ad37AzrAyRzHHhfwjO7j4eq8DW1OGiRVOotphXtS396lAAqIIRaUgZfg6UXpKCZGJ8zJ54o8pHq6fpso6/wpOnWJo3fj58IvXKZtZa/JIr/MSaAmJPL18523WYrIzN4bXmq6FP1Pmo8YxENvkFm1wEEd9E3WxjONfY=
+	t=1725326855; cv=none; b=uuGGZUEXRw6V/ohdMs0IoN0HPbFC2frTx6/xWNbC+pa1616QmAwEQNlfjibvLca3zseVpMXUU/RtV7rThs/01PWIyT/OgUnhRiRI3osjkn2WmJOJM6thyMNKt8WW9sgqm/HugWyvaIHOTSu87g/MTMMcnGHxWm0FOCfe7NlTNXU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725326637; c=relaxed/simple;
-	bh=5dilIVLHn/EYFipuw9tNrZVa8DIM/nWuxEYXe+uhoow=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YCIc4d2T38CtxPTZS6AoIf01h0Caj6ddxv80ZcTT0rud3NBTku4U00aoasUDFm8Oh1plOKqzNACNNcwah3cZijvapw5KWLYGlasrEu434cYVdID82O3dVMl0S7XmKEszVAET1vz03QUpOiNPwCwccb8Od7uLtI6TR2tGegE2CCc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C0TM0I9m; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 77CC3C4CEC2;
-	Tue,  3 Sep 2024 01:23:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725326636;
-	bh=5dilIVLHn/EYFipuw9tNrZVa8DIM/nWuxEYXe+uhoow=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=C0TM0I9m1LC+bwE2xxR2e0Kc0AW7r4UUQNoeqYL4M4UvAW5DYSAf1ljohxHdj/ndV
-	 nTC02EJRbtll+U0csd7V0nykek+Ho5LvMU5uIuIqbDx8uByTl/OnXKGfkqIW85ye3J
-	 /gfEG31uZrmeIdFztR/BbogU4B39sqLLofSGXRefIbhn7xevcXPzX0RjM/pJ163gxP
-	 abxHG/24tP2Soj5p7PlxQ5m5joxJiyx5KZKvoemR4ksOkp/lsU816U1Jh3wlAxBXzd
-	 IYcdAwbmfB8T0FRXBiS6cYzwxzR1nD1ceVzAF3bmetnKpdXeSKHg3dkeo+V5TldNSz
-	 Da0nx5hiq6tcQ==
-Date: Mon, 2 Sep 2024 18:23:54 -0700
-From: Nathan Chancellor <nathan@kernel.org>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: "Jason A . Donenfeld" <Jason@zx2c4.com>, linux-kernel@vger.kernel.org
-Subject: Re: odd endianness toolchains for crosstool
-Message-ID: <20240903012354.GA422360@thelio-3990X>
-References: <YmX7z+BirkA3VAfW@zx2c4.com>
- <ZtCZF_yaHnECJyZ1@zx2c4.com>
- <f7069edc-a152-425f-afb1-8df326d0131c@app.fastmail.com>
+	s=arc-20240116; t=1725326855; c=relaxed/simple;
+	bh=3yE4T0slWdfNmUM+tni8P1m0CjryFGYJPC8UzMQC9MU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=cwo4Fi81lv3cNFbwiZNuM0J6A8PfX6uH8utBk3llHEG3djR0N0lEmHUm/L3R/ZIyjkOzZX/oYEkvbdK2akYIpIGMDTP2LAWuLSWbri8Ghyot6e8Y4o4+s34UYJtlAwKgowEA6IHBuv7hLu361Fn/42m9YLSHKO8J9eBQdwIRVAM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from localhost (unknown [124.16.138.129])
+	by APP-05 (Coremail) with SMTP id zQCowAA3GuryZdZm05DOAA--.43913S2;
+	Tue, 03 Sep 2024 09:27:14 +0800 (CST)
+From: Chen Ni <nichen@iscas.ac.cn>
+To: wim@linux-watchdog.org,
+	linux@roeck-us.net
+Cc: linux-watchdog@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Chen Ni <nichen@iscas.ac.cn>
+Subject: [PATCH v2] watchdog: iTCO_wdt: Convert comma to semicolon
+Date: Tue,  3 Sep 2024 09:26:20 +0800
+Message-Id: <20240903012620.204247-1-nichen@iscas.ac.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f7069edc-a152-425f-afb1-8df326d0131c@app.fastmail.com>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:zQCowAA3GuryZdZm05DOAA--.43913S2
+X-Coremail-Antispam: 1UD129KBjvdXoW7Jw4UZF15Zr47Jw4fZw17Awb_yoW3tFgEka
+	47urs7Gr1UKF10kF17Zw1rCryFvrZ8XF1xuFnYqrZak3srJryUX3yFqryktw45X3WUZF17
+	AFs8XryYgF17CjkaLaAFLSUrUUUUbb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbsxFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_
+	Cr1l84ACjcxK6I8E87Iv67AKxVWxJVW8Jr1l84ACjcxK6I8E87Iv6xkF7I0E14v26r4UJV
+	WxJr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lc7CjxVAaw2AFwI0_
+	JF0_Jw1lc2xSY4AK67AK6w4l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr
+	1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE
+	14v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7
+	IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E
+	87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r1j6r4UYxBIdaVFxhVjvjDU0x
+	ZFpf9x0JU9L05UUUUU=
+X-CM-SenderInfo: xqlfxv3q6l2u1dvotugofq/
 
-On Thu, Aug 29, 2024 at 10:25:32PM +0200, Arnd Bergmann wrote:
-> On Thu, Aug 29, 2024, at 17:51, Jason A. Donenfeld wrote:
-> > On Mon, Apr 25, 2022 at 03:39:27AM +0200, Jason A. Donenfeld wrote:
-> >
-> >
-> > I decided to give it another look, seeing if I could replace my musl.cc
-> > compilers with your crosstool ones.
-> >
-> > The actual changes required weren't so bad:
-> >
-> >     https://git.zx2c4.com/wireguard-linux/commit/?h=update-toolchain
-> >
-> > But there's not universal success:
-> >
-> >     x86_64 - good
-> >     i386 - good
-> >     arm - good
-> >     armeb - MISSING
-> >     aarch64 - good
-> >     aarch64_be - MISSING
-> >     mips - BROKEN (doesn't like -EB)
-> >     mipsel - MISSING
-> >     mips64 - BROKEN (doesn't like -EB)
-> >     mips64el - MISSING
-> >     powerpc64 - BROKEN (wrong powerpc ABI)
-> >     powerpc64le - MISSING
-> >     powerpc - BROKEN (builds but some binaries segfault)
-> >     m68k - good
-> >     riscv64 - good
-> >     riscv32 - good
-> >     s390 - BROKEN (should be called "s390x" instead)
-> >     um - kinda broken (but not crosstool's problem)
-> >
-> > To try these, I've been running:
-> >
-> >     ARCH=aarch64 make -C tools/testing/selftests/wireguard/qemu -j$(nproc)
-> >
-> > or similar, against this tree:
-> >
-> >     $ git clone -b update-toolchain https://git.zx2c4.com/wireguard-linux/
-> >
-> > So it looks like it's not quite there, but not bad either. Just FYI in
-> > case you're interested.
-> 
-> I wonder if the ones you list as missing all work with Nathan's clang
-> builds from https://mirrors.edge.kernel.org/pub/tools/llvm/ instead.
-> 
-> As far as I can tell, the main missing bit here is libgcc, which
-> is not always built along with gcc for all possible targets.
-> The llvm replacement for libgcc is https://compiler-rt.llvm.org/,
-> and you may have to build that in addition to musl when you try it.
-> 
-> I don't know if compiler-rt also works with gcc, but if it does,
-> that should fix most of the ones that you report as failing above.
-> The only one that won't work at all is um because the x86 toolchain
-> is already unable to build a kernel for that.
+Replace a comma between expression statements by a semicolon.
 
-I doubt my toolchains would fix this issue. As far as I am aware, only
-the native compiler runtime is included, not any of the cross ones, as
-the kernel itself does not use them. However, I suspect it would not be
-too difficult to cross build compiler-rt standalone and stitch it into
-my builds separately if desired.
+Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
+---
+Changelog:
 
-FWIW, I have used your toolchains to build UML but maybe that is
-environment dependent?
+v1 -> v2:
 
-Cheers,
-Nathan
+1. Drop Fixes tag.
+---
+ drivers/watchdog/iTCO_wdt.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/watchdog/iTCO_wdt.c b/drivers/watchdog/iTCO_wdt.c
+index 264857d314da..35b358bcf94c 100644
+--- a/drivers/watchdog/iTCO_wdt.c
++++ b/drivers/watchdog/iTCO_wdt.c
+@@ -563,8 +563,8 @@ static int iTCO_wdt_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	ident.firmware_version = p->iTCO_version;
+-	p->wddev.info = &ident,
+-	p->wddev.ops = &iTCO_wdt_ops,
++	p->wddev.info = &ident;
++	p->wddev.ops = &iTCO_wdt_ops;
+ 	p->wddev.bootstatus = 0;
+ 	p->wddev.timeout = WATCHDOG_TIMEOUT;
+ 	watchdog_set_nowayout(&p->wddev, nowayout);
+-- 
+2.25.1
+
 
