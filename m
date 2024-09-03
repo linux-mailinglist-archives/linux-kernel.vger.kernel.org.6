@@ -1,103 +1,106 @@
-Return-Path: <linux-kernel+bounces-313435-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313432-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7424896A572
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 19:32:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9983A96A56B
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 19:30:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 30A392885DE
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 17:32:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 431C51F252F4
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 17:30:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7E8F18E047;
-	Tue,  3 Sep 2024 17:32:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F202B18E035;
+	Tue,  3 Sep 2024 17:30:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="cUlfnWoh"
-Received: from 008.lax.mailroute.net (008.lax.mailroute.net [199.89.1.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FgQRCcO/"
+Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D7E217BA1;
-	Tue,  3 Sep 2024 17:32:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E16B1885BC
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 17:30:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725384722; cv=none; b=KPC/FJZn8cAD8OekuHyvjx4GC3IHZaGMgmjM5ax2kiCGALPzeLKJnZrv67VjvfNmBRNGK4jYNYIbnUiB75/3Kwh2xtHUM9LulkI6t1/RUwub1mjUsfohKs0EmUNxX1cEQBfgGDjdWSmPGMlxg11oc532j7aaVt98yB7ESRTLu8w=
+	t=1725384626; cv=none; b=SUyvKT0dZhekLr/49UVTWw5VUZ+t9KZAE8gYM+L2XHM4b276RZWu+yGWVqe3V8KMIPiAugiFEQfoowiZzreZPR4LE5zrtZpvk7CZm9/hdKgK29PvH/0brB9+li9UQGjdNczHqWdMrOBIZLkYjffGgf11sfRJ9ppTNviZ8nSEGAM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725384722; c=relaxed/simple;
-	bh=YNJvZ10III8fSzlNqoOO8Yi3tp6FC0ZOEsOObcglD+8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fGW4pAXAnTfyjlrQ7Yc7RLV2rnuntobXAORCZkBu1Pu4kkNqCbbwESq1Gti3yaLOKpcaLr7QFQkId9hVEisoJy+YNLZaJdyna467V8lOBWzk3gge4hit/ojeVvoPKRDpoGQDfxGnnD4BV04Vv0zLz9C9X0WsbuL7P6l39Qj67EM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=cUlfnWoh; arc=none smtp.client-ip=199.89.1.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 008.lax.mailroute.net (Postfix) with ESMTP id 4WyszR67vtz6ClY96;
-	Tue,  3 Sep 2024 17:28:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1725384513; x=1727976514; bh=ETztvBENBFjFa2gtk14V2B70
-	sTk4L6Jv4z6bXiLJo50=; b=cUlfnWoh3aYMyiQiBxdJbLKqiePWdx2g6demDFze
-	Blp7qKf5B7orQrTQ4UIAh92PDAud9g3yJw682SxO0Gkyb0Yr1BsrCeALG25Cnvpt
-	Cm9aCvVSeCtH0xWar+tnzIGNo0stnjLpc0i16OMxa0bSVkkMw9j2LXRsm0X4uiXS
-	Vm4p2mEBxSTIG4/RR44FGO4khmTLE/4pcPRUoO1A3tVQaeOrhjWf8QRPPb9JFS+k
-	F1X1mbh+w0vmUIuCmZzpNUkQPdtUnK/Pv38eH6qJHv2cPNjAS3Q8FqZ352a73moq
-	ApKjgx8Vg/4kifdwKPjCOtXe3lX+P7qj4qySkgGn6TFQSg==
-X-Virus-Scanned: by MailRoute
-Received: from 008.lax.mailroute.net ([127.0.0.1])
- by localhost (008.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id zgjE9tvZc3mS; Tue,  3 Sep 2024 17:28:33 +0000 (UTC)
-Received: from [100.66.154.22] (unknown [104.135.204.82])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 008.lax.mailroute.net (Postfix) with ESMTPSA id 4WyszP3YDXz6ClY93;
-	Tue,  3 Sep 2024 17:28:33 +0000 (UTC)
-Message-ID: <769fb0e4-6f55-4a2d-a0f2-e8836b790617@acm.org>
-Date: Tue, 3 Sep 2024 10:28:32 -0700
+	s=arc-20240116; t=1725384626; c=relaxed/simple;
+	bh=U7OgVxi/pHtRieXBne3ptoBmNWxXdsMgD85e7uHkkwg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oG1CLnpVsB1V+E1YXBGyUTA5IsqZn7vcKkYQuaHqPwl6JpJfkZN/vaYRWrm1NYsjKyZPnr9Me5U78Jk6++jD0fcIC1uCocBW+rxgFLevo+xxaIgNT8OdKA32WouMVFoJe1NDB15Uk5ol0gcNRfhOklGJ8aDIM7jBw27yh1m6WXY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FgQRCcO/; arc=none smtp.client-ip=209.85.216.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-2d8815ef6d2so2803940a91.0
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 10:30:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725384624; x=1725989424; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=xq08cW6/BlT4ZW8Fc9W5vNoCU0ZXbSqCDwV0Nd5Dp90=;
+        b=FgQRCcO/c5xeKDB3H60hgOnnAdoOHpfWB34xmYcNqS5WHBEsMu1Lh0tf1pAtt1ghm5
+         M57n5MFbHGduUdFQnoKC1eMBuXym8+BgkdmMfHpsC63g2Y8FEaVdXWG8zKbjYFPKa7/N
+         RxXdsDnJxbQj7yyxnERfnfeUtyru8sZO+hZFV6pGa1qqw/+9jCwLAuA1/IGGlsv+UbzB
+         Id3cIBTxDn5aaY4Kea+/uPutYRvO+IZy1CozWuZCcghKny0OTQN9YGf0SUnmiaB/TJV0
+         pk6omK1AtFh+5RjV1ebFBg4IgyFOcxIOKW27sIJTd+3dEuAutQxI26kOH3UzkjhBoFqU
+         GMRg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725384624; x=1725989424;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xq08cW6/BlT4ZW8Fc9W5vNoCU0ZXbSqCDwV0Nd5Dp90=;
+        b=HV5rIrGf87bNsMbA7V4k2gaB8wyv3rzxNO+GE+uGH2mGay/tIB3hLHoKJ1sDt1cpzi
+         uXZP3CwIim6YhDzXtI81vGV3Xl/HlCBdcZdBKJgCJsVY2gQdruY+NLMHmwj00+R0o1ue
+         /xGLQt9wXH+/svXXrkaTZ9wS9wox0/+EFyHo9UcaB2+QlOX4UAO4tQav8VUevxUDdJ6P
+         AJr3s3/1CvfnUfWe6QnjXPWI9waNPelSk71Tu+9SCAwUlgumcxoMXyzkGE8cepnGsyx4
+         lP68yfxtI1P5kSoUSLx/sxY+1jymYRRrPvL8R61+KtZKYDl3kJ4EF1knDnt+Fke1GBwP
+         ds9Q==
+X-Forwarded-Encrypted: i=1; AJvYcCViBaOL1arMDV36NWs6uv98witJrhpAzEPWe4q8ZyRj1kDpJXjDoGwTUEEcCZxtQQytxLkmI/fM+CRu2cw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwzKnpUrFssaj+/yai1Py2sg1Olu3+prkMggPRV1T0dA7RTHPAc
+	6izpOr/wvEoo4GjbeLK7k7ayfuAK7HThg2qyoiNjHddJKwd4RY1GupSER/vp
+X-Google-Smtp-Source: AGHT+IFlTE1TAIGJ7jQZn6Of9aSyW8eej73q05cpzIIbOcKFy+h7nv/o1+3+2HwdBeVpwYrTBE4w3g==
+X-Received: by 2002:a17:90b:c12:b0:2d3:b49f:ace3 with SMTP id 98e67ed59e1d1-2d85638576dmr17939452a91.28.1725384624274;
+        Tue, 03 Sep 2024 10:30:24 -0700 (PDT)
+Received: from embed-PC.myguest.virtualbox.org ([106.222.229.246])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d8edadf788sm4086522a91.15.2024.09.03.10.30.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Sep 2024 10:30:23 -0700 (PDT)
+Date: Tue, 3 Sep 2024 23:00:17 +0530
+From: Abhishek Tamboli <abhishektamboli9@gmail.com>
+To: Javier Martinez Canillas <javierm@redhat.com>
+Cc: neil.armstrong@linaro.org, maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com,
+	daniel@ffwll.ch, quic_jesszhan@quicinc.com,
+	skhan@linuxfoundation.org, rbmarliere@gmail.com,
+	linux-kernel-mentees@lists.linuxfoundation.org,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drm/panel: hx83112a: Switch to wrapped mipi_dsi functions
+Message-ID: <ZtdHqXvwp/L9dZJ7@embed-PC.myguest.virtualbox.org>
+References: <20240902170153.34512-1-abhishektamboli9@gmail.com>
+ <87plplgkpa.fsf@minerva.mail-host-address-is-not-set>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] block: move non sync requests complete flow to softirq
-To: ZhangHui <zhanghui31@xiaomi.com>, axboe@kernel.dk
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240903115437.42307-1-zhanghui31@xiaomi.com>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <20240903115437.42307-1-zhanghui31@xiaomi.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87plplgkpa.fsf@minerva.mail-host-address-is-not-set>
 
-On 9/3/24 4:54 AM, ZhangHui wrote:
-> Currently, for a controller that supports multiple queues, like UFS4.0,
-> the mq_ops->complete is executed in the interrupt top-half. Therefore,
-> the file system's end io is executed during the request completion process,
-> such as f2fs_write_end_io on smartphone.
+On Tue, Sep 03, 2024 at 11:17:37AM +0200, Javier Martinez Canillas wrote:
+> Abhishek Tamboli <abhishektamboli9@gmail.com> writes:
 > 
-> However, we found that the execution time of the file system end io
-> is strongly related to the size of the bio and the processing speed
-> of the CPU. Because the file system's end io will traverse every page
-> in bio, this is a very time-consuming operation.
+Hi Javier,
 > 
-> We measured that the 80M bio write operation on the little CPU will
-> cause the execution time of the top-half to be greater than 100ms.
-> The CPU tick on a smartphone is only 4ms, which will undoubtedly affect
-> scheduling efficiency.
-> 
-> Let's fixed this issue by moved non sync request completion flow to
-> softirq, and keep the sync request completion in the top-half.
+> > Use the new mipi_dsi_*_multi wrapped function in hx83112a_on
+> > and hx83112a_disable function.
 
-An explanation is missing from the patch description why this issue
-cannot be solved by changing rq_affinity to 2.
+> IMO commit messages should explain why the change is needed and
+> not just what the patch is changing (for this one can just look
+> at the diffstat). 
+Thanks for the feedback. I'll do the changes.
 
-Thanks,
-
-Bart.
-
+Regards,
+Abhishek 
 
