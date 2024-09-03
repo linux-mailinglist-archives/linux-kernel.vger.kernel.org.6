@@ -1,202 +1,130 @@
-Return-Path: <linux-kernel+bounces-313402-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313407-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E72796A500
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 19:07:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95D5C96A50E
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 19:10:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AA6C3B255F5
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 17:07:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 51F18286C60
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 17:10:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C68D18BC3A;
-	Tue,  3 Sep 2024 17:07:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0446318CC1C;
+	Tue,  3 Sep 2024 17:10:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gWBMDbfP"
-Received: from mail-oi1-f178.google.com (mail-oi1-f178.google.com [209.85.167.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B0461E492
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 17:07:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.178
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="OSfpEssx"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.2])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 934956F315;
+	Tue,  3 Sep 2024 17:09:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725383236; cv=none; b=dmM3nfXynquB4I45XbNp1X/ezki8lgzMf8wn7J92a3abKudn/ylpGG0ubu3iiZzgGw41zL0SY14B6GjRJs3R4VrvktcrDUfpd6RCbDEj0j8mbdFzKcjagSdWWCodjvZeWaEAw/Z/uFi8MWkFDO+wmBYmbxUkwhJR5v5toODcaZQ=
+	t=1725383402; cv=none; b=d5NHA4P9xRnvS7mEPRI+ZKku2VPRBI7ERoLUtLZSUySrdSE7b2+yCxlQcBDINlOjYqzMD9mmg0dlUPjP5pTt+/NHJscKfDBsyyJohwV5lf1rSYKCGRFpG8IWVZE4A175G8iE8CN1q3lKSRWCUqbRkW9YLE3GA6zcCznavihbuqc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725383236; c=relaxed/simple;
-	bh=/At984T0ZsNtT4ZvNVPYrhUpAai8vqOKiO6SG5EWbK4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XIjO3KbURatkaR3nGrnvQsqkc5xKgLhaWlPaQasgJOw6rUdxRQbirFmENXLg0tT48K7z0coUth19nwPzNL9GkruQcVFLdFyJxzGT4ZeGF4KMGsRRIdQGhQmoyBjzYnThjQHJJfuMi3wzGP63D0mqrWK+tQpyNzOf87oCVDvmt3Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gWBMDbfP; arc=none smtp.client-ip=209.85.167.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oi1-f178.google.com with SMTP id 5614622812f47-3df0d9c0fbfso2957897b6e.2
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 10:07:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725383234; x=1725988034; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZmRrBdk0YyoahIQU+4VJgU7fDaRp5Sd7lIsYquyayUs=;
-        b=gWBMDbfPIujhJZEj+INrAxdIKcXd1ZX8ZVbS7y0Ix6lit3tdW/P8puI0lfcMEZCSu7
-         XHkWGt8IL0nLbV6ZuzAloQB2KDAiX+hSaGg/CGd49YknFaQkfOfar9+B+yk6wHIaVt3k
-         dR5sayk7YM6uMEffizu9AN5NT3PhKHydOxXdv23x9r6b3ryqLJnJkFeso+5yMcPQi1qp
-         O0o3o4UXHooiWmUeX+NvlFxdf7PC27StjZKF7bz5l0b2Ozzkx+W8mvID1LiFgWhvVYwp
-         r+fbxCfHezaTcJg709GcsxZI/PRUZVrF8e1qcvTLV8byYMURkML8xo5oeRoEcr8HMnyd
-         kX6Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725383234; x=1725988034;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ZmRrBdk0YyoahIQU+4VJgU7fDaRp5Sd7lIsYquyayUs=;
-        b=tLTfalU4oH8IT32WLFG3FdIk2WV1Hh2TWfmrf38dLi9oIM6TksbwMFgK1toigiPWmX
-         Tu2CQbGp5sqBgzguVEP5UTWPGyP1yCCfzkQVg6H9x/oebPw4b7BrEaKOGhxnejkRzZC/
-         VsO4UjABYoVcaDVcItvHLNOqXMtn2vq5VJMhH4b4RSEPrZyKj44BoJPMzCoJU/xosVD7
-         /5/d2rTE4i5hfmmvUWL6gieDHdHwJ5rIUMUaVFiBhMUtP4Fykoa7o2o3v6asz+P8/WlM
-         vlnOH370P/1h2k2cg/2ZFuQm1tUUk1RpbHzpGeiyyoJr7XFLrSWN5jR/Zdu/C8bWoWXW
-         5KQQ==
-X-Gm-Message-State: AOJu0YzYu2QEO4j6ufWT2GkQJrvsHgYdrUSbl0pSgXa67igzTXaPk8Xr
-	ThFGBykoBImwitqhq5o3PsuheJ0mHKPMKYOzWNnT1m8+ZBwJbdqh/JFfA6coUIFj0XG5OU/ZKMd
-	QxfSKc7ugIT9IaVvuso97Wu1NM8sNQg==
-X-Google-Smtp-Source: AGHT+IGtQP6rYLYrnyeSqFZBp/F2I6FKttWBIQHRzg4h2pTNZPirp68TFtEoomZJkK4/ytsYL0bsc5Q1ACp0ApSgjhA=
-X-Received: by 2002:a05:6808:190c:b0:3de:16f1:7653 with SMTP id
- 5614622812f47-3df1d643e3dmr14213686b6e.25.1725383234001; Tue, 03 Sep 2024
- 10:07:14 -0700 (PDT)
+	s=arc-20240116; t=1725383402; c=relaxed/simple;
+	bh=03XIixYXaT/4wFoC3iJ/FtR2unQwfW7uyjxow3lM7GY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID; b=D1Diy+66hf/HnkouqyDV3f3ObDFNFVZwHc+zJ7KEew1RlRPoHFDVWKNGGYKNv8toOuq9XpCmSxX0EFGa8RtAd2cI6O5hIlCrWDU9k2S9VgLpaO27y2cGZgsR3DIyLnzXIZzq5KG47/7Xz7kR9SYcqQET2+ODv31YaLh4rQmKUpg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=OSfpEssx reason="signature verification failed"; arc=none smtp.client-ip=220.197.31.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Date:From:Subject:Content-Type:MIME-Version:
+	Message-ID; bh=Dhd7TmibVshGQou9elx6m0Up6wd6tS7+YdhneHG5h84=; b=O
+	SfpEssxh0qUFQ1Pde+CiW5wHdW6rRlc3xW3EIBBxaetfcyhZCKabS/OM9Mq0UL6Y
+	CMtlhBhpoCZSUs+RXuZwkAZb/S5R+lvLC1pIATMLn7widCppX8GsVxHwDvzOcclL
+	/URjdNb0bxLZici0grt/q+oiuD17McDO8/2pfkASrw=
+Received: from 00107082$163.com ( [111.35.190.113] ) by
+ ajax-webmail-wmsvr-40-102 (Coremail) ; Wed, 4 Sep 2024 01:09:02 +0800 (CST)
+Date: Wed, 4 Sep 2024 01:09:02 +0800 (CST)
+From: "David Wang" <00107082@163.com>
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: pavel@ucw.cz, gregkh@linuxfoundation.org, linux-pm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] pm: sleep: do not set is_prepared when no_pm_callbacks
+ is set
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20240801(9da12a7b)
+ Copyright (c) 2002-2024 www.mailtech.cn 163com
+In-Reply-To: <CAJZ5v0hMnnDjKJLMgcT_p1nnejyyAyaqaA_AF5t+_=PsSMfceQ@mail.gmail.com>
+References: <20240902125933.5742-1-00107082@163.com>
+ <CAJZ5v0hMnnDjKJLMgcT_p1nnejyyAyaqaA_AF5t+_=PsSMfceQ@mail.gmail.com>
+X-NTES-SC: AL_Qu2ZB/+TvEsv5CeaZekXn0oTju85XMCzuv8j3YJeN500tCTQ+RgyZVRZGF3m+uuPGzqumzO8Xx5pzt1HQ5B8RJ6+Q5vbvqAG+77zcYFtMy2O
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=UTF-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240826202352.2150294-1-daeho43@gmail.com> <45a8a9f3-27b8-433e-a0ac-e457f4cdf1eb@kernel.org>
-In-Reply-To: <45a8a9f3-27b8-433e-a0ac-e457f4cdf1eb@kernel.org>
-From: Daeho Jeong <daeho43@gmail.com>
-Date: Tue, 3 Sep 2024 10:07:03 -0700
-Message-ID: <CACOAw_xMipooJy3GrZTc2CSpMoSs9FsErdxjqMWXVQ6iDiEZ0Q@mail.gmail.com>
-Subject: Re: [f2fs-dev] [PATCH] f2fs: prevent atomic file from being dirtied
- before commit
-To: Chao Yu <chao@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, 
-	kernel-team@android.com, Daeho Jeong <daehojeong@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Message-ID: <59eb3605.b8cd.191b8dc7a89.Coremail.00107082@163.com>
+X-Coremail-Locale: zh_CN
+X-CM-TRANSID:_____wD3X9GvQtdmKrM1AA--.12492W
+X-CM-SenderInfo: qqqrilqqysqiywtou0bp/1tbiMxVPqmXAnnH+EAADsk
+X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
 
-On Mon, Sep 2, 2024 at 3:08=E2=80=AFAM Chao Yu <chao@kernel.org> wrote:
->
-> On 2024/8/27 4:23, Daeho Jeong wrote:
-> > From: Daeho Jeong <daehojeong@google.com>
-> >
-> > Keep atomic file clean while updating and make it dirtied during commit
-> > in order to avoid unnecessary and excessive inode updates in the previo=
-us
-> > fix.
-> >
-> > Fixes: 4bf78322346f ("f2fs: mark inode dirty for FI_ATOMIC_COMMITTED fl=
-ag")
-> > Signed-off-by: Daeho Jeong <daehojeong@google.com>
-> > ---
-> >   fs/f2fs/f2fs.h    |  3 +--
-> >   fs/f2fs/inode.c   | 10 ++++++----
-> >   fs/f2fs/segment.c | 10 ++++++++--
-> >   3 files changed, 15 insertions(+), 8 deletions(-)
-> >
-> > diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> > index 465b2fd50c70..5a7f6fa8b585 100644
-> > --- a/fs/f2fs/f2fs.h
-> > +++ b/fs/f2fs/f2fs.h
-> > @@ -801,7 +801,7 @@ enum {
-> >       FI_COMPRESS_RELEASED,   /* compressed blocks were released */
-> >       FI_ALIGNED_WRITE,       /* enable aligned write */
-> >       FI_COW_FILE,            /* indicate COW file */
-> > -     FI_ATOMIC_COMMITTED,    /* indicate atomic commit completed excep=
-t disk sync */
-> > +     FI_ATOMIC_DIRTIED,      /* indicate atomic file is dirtied */
-> >       FI_ATOMIC_REPLACE,      /* indicate atomic replace */
-> >       FI_OPENED_FILE,         /* indicate file has been opened */
-> >       FI_MAX,                 /* max flag, never be used */
-> > @@ -3042,7 +3042,6 @@ static inline void __mark_inode_dirty_flag(struct=
- inode *inode,
-> >       case FI_INLINE_DOTS:
-> >       case FI_PIN_FILE:
-> >       case FI_COMPRESS_RELEASED:
-> > -     case FI_ATOMIC_COMMITTED:
-> >               f2fs_mark_inode_dirty_sync(inode, true);
-> >       }
-> >   }
-> > diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
-> > index 1eb250c6b392..5dd3e55d2be2 100644
-> > --- a/fs/f2fs/inode.c
-> > +++ b/fs/f2fs/inode.c
-> > @@ -35,6 +35,11 @@ void f2fs_mark_inode_dirty_sync(struct inode *inode,=
- bool sync)
-> >       if (f2fs_inode_dirtied(inode, sync))
->
-> It will return directly here if inode was dirtied, so it may missed to se=
-t
-> FI_ATOMIC_DIRTIED flag?
-
-Is it possible for it to be already dirty, since we already made it
-clean with f2fs_write_inode() when we started the atomic write?
-
->
-> Thanks,
->
-> >               return;
-> >
-> > +     if (f2fs_is_atomic_file(inode)) {
-> > +             set_inode_flag(inode, FI_ATOMIC_DIRTIED);
-> > +             return;
-> > +     }
-> > +
-> >       mark_inode_dirty_sync(inode);
-> >   }
-> >
-> > @@ -653,10 +658,7 @@ void f2fs_update_inode(struct inode *inode, struct=
- page *node_page)
-> >       ri->i_gid =3D cpu_to_le32(i_gid_read(inode));
-> >       ri->i_links =3D cpu_to_le32(inode->i_nlink);
-> >       ri->i_blocks =3D cpu_to_le64(SECTOR_TO_BLOCK(inode->i_blocks) + 1=
-);
-> > -
-> > -     if (!f2fs_is_atomic_file(inode) ||
-> > -                     is_inode_flag_set(inode, FI_ATOMIC_COMMITTED))
-> > -             ri->i_size =3D cpu_to_le64(i_size_read(inode));
-> > +     ri->i_size =3D cpu_to_le64(i_size_read(inode));
-> >
-> >       if (et) {
-> >               read_lock(&et->lock);
-> > diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-> > index 78c3198a6308..2b5391b229a8 100644
-> > --- a/fs/f2fs/segment.c
-> > +++ b/fs/f2fs/segment.c
-> > @@ -196,9 +196,12 @@ void f2fs_abort_atomic_write(struct inode *inode, =
-bool clean)
-> >               truncate_inode_pages_final(inode->i_mapping);
-> >
-> >       release_atomic_write_cnt(inode);
-> > -     clear_inode_flag(inode, FI_ATOMIC_COMMITTED);
-> >       clear_inode_flag(inode, FI_ATOMIC_REPLACE);
-> >       clear_inode_flag(inode, FI_ATOMIC_FILE);
-> > +     if (is_inode_flag_set(inode, FI_ATOMIC_DIRTIED)) {
-> > +             clear_inode_flag(inode, FI_ATOMIC_DIRTIED);
-> > +             f2fs_mark_inode_dirty_sync(inode, true);
-> > +     }
-> >       stat_dec_atomic_inode(inode);
-> >
-> >       F2FS_I(inode)->atomic_write_task =3D NULL;
-> > @@ -365,7 +368,10 @@ static int __f2fs_commit_atomic_write(struct inode=
- *inode)
-> >               sbi->revoked_atomic_block +=3D fi->atomic_write_cnt;
-> >       } else {
-> >               sbi->committed_atomic_block +=3D fi->atomic_write_cnt;
-> > -             set_inode_flag(inode, FI_ATOMIC_COMMITTED);
-> > +             if (is_inode_flag_set(inode, FI_ATOMIC_DIRTIED)) {
-> > +                     clear_inode_flag(inode, FI_ATOMIC_DIRTIED);
-> > +                     f2fs_mark_inode_dirty_sync(inode, true);
-> > +             }
-> >       }
-> >
-> >       __complete_revoke_list(inode, &revoke_list, ret ? true : false);
->
+CgpBdCAyMDI0LTA5LTAzIDIwOjMxOjA0LCAiUmFmYWVsIEouIFd5c29ja2kiIDxyYWZhZWxAa2Vy
+bmVsLm9yZz4gd3JvdGU6Cj5PbiBNb24sIFNlcCAyLCAyMDI0IGF0IDI6NTnigK9QTSBEYXZpZCBX
+YW5nIDwwMDEwNzA4MkAxNjMuY29tPiB3cm90ZToKPj4KPj4gV2hlbiByZXN1bWUsIGEgcGFyZW50
+IGRldmljZSB3aXRoIG5vIHBtIGNhbGxiYWNrcwo+PiB3b3VsZCBoYXZlICJpc19wcmVwYXJlZCIg
+YW5kICJkaXJlY3RfY29tcGxldGUiIGJpdAo+PiBzZXQsIGFuZCBza2lwIHRoZSAiZmliIiBjaGFu
+Y2UgdG8gdW5zZXQgImlzX3ByZXBhcmVkIgo+PiBpbiBkZXZpY2VfcmVzdW1lIGJlY2F1c2Ugb2Yg
+dGhlIGRpcmVjdF9jb21wbGV0ZSBiaXQuCj4KPlN1cmUsIGJ1dCBpc19wcmVwYXJlZCB3aWxsIGJl
+IGNsZWFyZWQgaW4gZGV2aWNlX2NvbXBsZXRlKCkgQUZBSUNTLgoKWWVzLCB5b3UncmUgcmlnaHQu
+IEkgbWFkZSBhIHdyb25nIHJlYXNvbmluZy4uLgoKPgo+PiBUaGlzIHdpbGwgdHJpZ2dlciBhIGtl
+cm5lbCB3YXJuaW5nIHdoZW4gcmVzdW1lIGl0cyBjaGlsZAo+PiBGb3IgZXhhbXBsZSwgd2hlbiBz
+dXNwZW5kIHN5c3RlbSB3aXRoIGFuIFVTQiB3ZWJjYW0KPj4gb3BlbmVkLCBmb2xsb3dpbmcgd2Fy
+bmluZyB3b3VsZCBzaG93IHVwIGR1cmluZyByZXN1bWU6Cj4+Cj4+ICA+dXNiIDMtMS4xOiByZXNl
+dCBoaWdoLXNwZWVkIFVTQiBkZXZpY2UgbnVtYmVyIDQgdXNpbmcgeGhjaV9oY2QKPj4gID4uLgo+
+PiAgPmVwXzgxOiBQTTogcGFyZW50IDMtMS4xOjEuMSBzaG91bGQgbm90IGJlIHNsZWVwaW5nCj4K
+PlRoaXMgaXMgcHJpbnRlZCBpbiBkZXZpY2VfcG1fYWRkKCksIHNvIGFwcGFyZW50bHkgc29tZXRo
+aW5nIG5ldyBoYXMKPmFwcGVhcmVkIHVuZGVyIHRoZSBwYXJlbnQgd2hpbGUgaXQncyBiZXR3ZWVu
+ICJyZXN1bWUiIGFuZCAicHJlcGFyZSIuCgpZZXMsIGFmdGVyIHNvbWUgZGVidWcsIGl0IHR1cm5z
+IG91dCAidXZjdmlkZW8gMy0xLjE6MS4xIiBjcmVhdGVkIGEgbmV3CiJlcF84MSIgd2hlbiAiZXBf
+ODEiIHJlc3VtZWQKCj4KPlRoZSBwYXJlbnQgaXMgYWN0dWFsbHkgc3RpbGwgcmVnYXJkZWQgYXMg
+InN1c3BlbmRlZCIgYmVjYXVzZSBhbnkKPnJlc3VtZSBjYWxsYmFja3MgaGF2ZSBub3QgYmVlbiBj
+YWxsZWQgZm9yIGl0LCBidXQgbmV3IGNoaWxkcmVuIGNhbiBiZQo+YWRkZWQgdW5kZXIgaXQgYXQg
+dGhpcyBwb2ludCBiZWNhdXNlIGRvaW5nIHNvIGRvZXMgbm90IGJyZWFrIHRoZQo+ZHBtX2xpc3Qg
+b3JkZXJpbmcgYW5kIGFsbCBvZiBpdHMgYW5jZXN0b3JzIGhhdmUgYmVlbiBhbHJlYWR5IHJlc3Vt
+ZWQuCj4KPj4gVGhlIGRldmljZSBwYXJlbnRpbmcgcmVsYXRpb25zaGlwcyBhcmU6Cj4+IFt1c2Ig
+My0xLjFdIDw8IFt1dmN2aWRlbyAzLTEuMToxLjFdIDw8IFtlcF84MV0uCj4+IFdoZW4gcmVzdW1l
+LCBzaW5jZSB0aGUgdmlydHVhbCBbdXZjdmlkZW8gMy0xLjE6MS4xXSBkZXZpY2UKPj4gaGFzIG5v
+IHBtIGNhbGxiYWNrcywgaXQgd291bGQgbm90IGNsZWFyICJpc19wcmVwYXJlZCIKPj4gb25jZSBz
+ZXQuICBUaGVuLCB3aGVuIHJlc3VtZSBbZXBfODFdLCBwbSBtb2R1bGUgd291bGQKPj4geWllbGQg
+YSB3YXJuIHNlZWluZyBbZXBfODFdJ3MgcGFyZW50IFt1dmN2aWRlbyAzLTEuMToxLjFdCj4+IGhh
+dmluZyAiaXNfcHJlcGFyZWQiLgo+Pgo+PiBEbyBub3Qgc2V0ICJpc19wcmVwYXJlZCIgZm9yIHZp
+cnR1YWwgZGV2aWNlcyBoYXZpbmcKPj4gbm8gcG0gY2FsbGJhY2tzIGNhbiBjbGVhciB0aG9zZSBr
+ZXJuZWwgd2FybmluZ3MuCj4+Cj4+IFNpZ25lZC1vZmYtYnk6IERhdmlkIFdhbmcgPDAwMTA3MDgy
+QDE2My5jb20+Cj4+IC0tLQo+PiAgZHJpdmVycy9iYXNlL3Bvd2VyL21haW4uYyB8IDMgKystCj4+
+ICAxIGZpbGUgY2hhbmdlZCwgMiBpbnNlcnRpb25zKCspLCAxIGRlbGV0aW9uKC0pCj4+Cj4+IGRp
+ZmYgLS1naXQgYS9kcml2ZXJzL2Jhc2UvcG93ZXIvbWFpbi5jIGIvZHJpdmVycy9iYXNlL3Bvd2Vy
+L21haW4uYwo+PiBpbmRleCA5MzRlNWJiNjFmMTMuLmUyMTQ5Y2NmMmMzZSAxMDA2NDQKPj4gLS0t
+IGEvZHJpdmVycy9iYXNlL3Bvd2VyL21haW4uYwo+PiArKysgYi9kcml2ZXJzL2Jhc2UvcG93ZXIv
+bWFpbi5jCj4+IEBAIC0xODgwLDcgKzE4ODAsOCBAQCBpbnQgZHBtX3ByZXBhcmUocG1fbWVzc2Fn
+ZV90IHN0YXRlKQo+PiAgICAgICAgICAgICAgICAgbXV0ZXhfbG9jaygmZHBtX2xpc3RfbXR4KTsK
+Pj4KPj4gICAgICAgICAgICAgICAgIGlmICghZXJyb3IpIHsKPj4gLSAgICAgICAgICAgICAgICAg
+ICAgICAgZGV2LT5wb3dlci5pc19wcmVwYXJlZCA9IHRydWU7Cj4+ICsgICAgICAgICAgICAgICAg
+ICAgICAgIGlmICghZGV2LT5wb3dlci5ub19wbV9jYWxsYmFja3MpCj4+ICsgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgZGV2LT5wb3dlci5pc19wcmVwYXJlZCA9IHRydWU7Cj4KPlRoaXMg
+aXMgbm90IHRoZSB3YXkgdG8gYWRkcmVzcyB0aGUgaXNzdWUgSU1WLgo+Cj5wb3dlci5pc19wcmVw
+YXJlZCBzZXQgbWVhbnMgdGhhdCB0aGUgZGV2aWNlIGlzIGluIGRwbV9wcmVwYXJlZF9saXN0Cj5h
+bmQgSSB3b3VsZG4ndCBkZXBhcnQgZnJvbSB0aGF0IGV2ZW4gZm9yIGRldmljZXMgd2l0aG91dCBQ
+TSBjYWxsYmFja3MuCj4KPj4gICAgICAgICAgICAgICAgICAgICAgICAgaWYgKCFsaXN0X2VtcHR5
+KCZkZXYtPnBvd2VyLmVudHJ5KSkKPj4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBs
+aXN0X21vdmVfdGFpbCgmZGV2LT5wb3dlci5lbnRyeSwgJmRwbV9wcmVwYXJlZF9saXN0KTsKPj4g
+ICAgICAgICAgICAgICAgIH0gZWxzZSBpZiAoZXJyb3IgPT0gLUVBR0FJTikgewo+PiAtLQo+Cj5J
+dCB3b3VsZCBiZSBiZXR0ZXIgdG8gYWRkIGEgcG93ZXIubm9fcG1fY2FsbGJhY2tzIGNoZWNrIGZv
+ciB0aGUgcGFyZW50Cj50byBkZXZpY2VfcG1fYWRkKCksIGJ1dCB0aGlzIHdvdWxkIHN0aWxsIHN1
+cHByZXNzIHRoZSB3YXJuaW5nIGlzIHNvbWUKPmNhc2VzIGluIHdoaWNoIGl0IHNob3VsZCBiZSBw
+cmludGVkIChmb3IgZXhhbXBsZSwgdGhlIG5ldyBkZXZpY2Uncwo+cGFyZW50IGlzIGEgInZpcnR1
+YWwiIGRldmljZSB3aXRob3V0IFBNIGNhbGxiYWNrcywgYnV0IGl0cyBncmFuZHBhcmVudAo+aXMg
+YSByZWd1bGFyIGRldmljZSB0aGF0IGhhcyBQTSBjYWxsYmFja3MgYW5kIGlzIHN1c3BlbmRlZCku
+Cj4KPlNvbWV0aGluZyBsaWtlIHRoZSBhdHRhY2hlZCBwYXRjaCAodW50ZXN0ZWQpIG1pZ2h0IHdv
+cmssIHRob3VnaC4KCkkgdHJpZWQgdGhlIHBhdGNoIG9uIDYuMTEuMC1yYzYsIHRoZSB3YXJuIGlz
+IGdvbmUgd2hlbiBJIG1hZGUgZm9sbG93aW5nIHRlc3Q6CgoxLiBvcGVuIHdlYmNhbSAodmlhIG9i
+cywgZS5nLikKMi4gc3lzdGVtY3RsIHN1c3BlbmQKMy4gcmVzdW1lIHRoZSBzeXN0ZW0sIGFuZCBj
+aGVjayBrZXJuZWwgbG9nCgooV291bGQgaXQgc2FmZSB0byB3YWxrIHRoZSBwYXJlbnQgbGluayB3
+aXRob3V0IGFueSBkZXZpY2UgbG9jaz8gYW5kIEkgc3RpbGwgc3VnZ2VzdCBtb3ZpbmcKdGhvc2Ug
+Y29kZSBvdXIgb2YgJmRwbV9saXN0X210eCBsb2NrKQoKVGhhbmtzCkRhdmlkLgo=
 
