@@ -1,259 +1,162 @@
-Return-Path: <linux-kernel+bounces-313094-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313093-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A650F96A01C
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 16:15:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9D7A96A01B
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 16:14:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 33A2A1F27D38
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 14:15:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1AAF61C245DE
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 14:14:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDA0278B4E;
-	Tue,  3 Sep 2024 14:13:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A7065028C;
+	Tue,  3 Sep 2024 14:13:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b="kkiqh3XM"
-Received: from mail-yb1-f179.google.com (mail-yb1-f179.google.com [209.85.219.179])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="APQREZe9"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CC1A5B5D6
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 14:13:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A69CA4A15;
+	Tue,  3 Sep 2024 14:13:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725372820; cv=none; b=YuAJBUqs3a3qqcehFY+XhhLjApreXDmc2GVpeWissxroqv90Htls8voCoXDLeVHOAxQ9WSD1RM4N9oBAeo6wo0JQZxWpAFyZU9cyH0C4TCuM2nTjCym2Ldu5T4K+uCGVVzJp78idtpFS2EXgF2wJm7IvkAaL2Rf/nWt1bE7USUI=
+	t=1725372805; cv=none; b=jKeIk9QyU2oyC4q3tFeViCEj/edwNC6FdYET7X1Snf6K73Uj5uSyKba1AFYGmlkWzROtgn7L+723Kuh2uBWk0iOzhVAmP6agLc4VjQ87/Ir6kiE2jhxdIHEb/d6Jzeu9lyKjeyVbhfx/BpPnAJi8DMeAEmtEd78SEelbsxACZLU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725372820; c=relaxed/simple;
-	bh=sPpHRr+MQLtm2Lboh1G6Dsx9tD1YkMHI84X65rPY/U0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OKXYb15U1LFMRr/FsfD4aZClheNvhf/nSUqZ7SUphMu/C9b3V9jN7CqTHdzl0YNUgvwa+VGbwoi1AlzoxbhBK57uJ7SPTyrGOJq55wU5IfAOLo/3GPzK0tmBmkRws4yTX+C1+YJU6DXItIwuUUN7/YhkqKePd6LBMyc+d3gik58=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com; spf=pass smtp.mailfrom=raspberrypi.com; dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b=kkiqh3XM; arc=none smtp.client-ip=209.85.219.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=raspberrypi.com
-Received: by mail-yb1-f179.google.com with SMTP id 3f1490d57ef6-e1a7f1597bbso2803367276.0
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 07:13:37 -0700 (PDT)
+	s=arc-20240116; t=1725372805; c=relaxed/simple;
+	bh=juIOwHUPRN8vW4bywZbLSPaACj8BtTxzQFAnm9FkNFM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mCOnH5+TgXuprXxQtoGjdmJZyx2icoYSmE9GrGwx2QOSBQEXa9VIiCPlIsUSqrSOJ2x9sZedNBKVgdti5sbLLvWdtIs5sBmZyqjXZqXgOEHSOW6jKAbIkkesfknpE8l+ZCAMMzTRb/S+MJzUkxu2F9p3rHDKl5SOSOzDZQRpL+8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=APQREZe9; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-2068acc8b98so11278185ad.3;
+        Tue, 03 Sep 2024 07:13:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=raspberrypi.com; s=google; t=1725372817; x=1725977617; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=PDQY8XH9MN+Nzb3qiOmjoo7+Bk7qNxUQTWX7Kdpt7tE=;
-        b=kkiqh3XMzG2D+5ForXHL07VXvBQG6ltsAVsXHa5a9blUO0HPA++rdAm5WjRrKYLKxq
-         frvSdoGAAUomRxnMOKeUnR5r/1L/E5d4AETgukp5scByr6T9daYXLaNrW2RxWOeyhbsX
-         Zcb2Zh2R3/tpdPf32TTVGZBWi8JV3Gj9AmLA37SwKdvOWBBG3T/TMH4AxrmKj5G0KzcW
-         mF0OViY9ANP7fIgA7mMYvStdkIxDXIqsHyi+Z65wavH7zGzQj/L0ucUUJUDni59VJzNV
-         ha0yrO7uQX3PeZ/7uV0RgZwXtW31/VHzs6gbuYYsk+Vb1erpzr6wcBhdsBFRX2WFbTz+
-         Hxmw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725372817; x=1725977617;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=gmail.com; s=20230601; t=1725372803; x=1725977603; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=PDQY8XH9MN+Nzb3qiOmjoo7+Bk7qNxUQTWX7Kdpt7tE=;
-        b=rxI0kayskqxf9vPOHTzfDeN4tPmd1R/5MTCi9ejNyqr4DnFsCt73QPXpwmSoefrRmb
-         n0QzXiVsjleBSESDjef2aXAuyRb/Eb4hcP83NaeT3vy7zaBYE/PM9ZpS6U+DY6RxeQVq
-         NetPlfXSm4SoWWzajcoyL5KsRefH4ybcB93EwBXeTFRPUETvIOBLgT2aHr7pqAo27m3B
-         75PNxA0l6pdbqfcfe+I7MNm/91wZIjV1ph/Ob5tcfFMbN1gFDHx+fAo9o86pX0K6wpje
-         dOoUCd+RkUP0K72hPsxgB9vOP8C9NuqBVplICO4CIOgeZhkq2axTS2uEbhxyilutFFVA
-         jv3w==
-X-Forwarded-Encrypted: i=1; AJvYcCWSiWU6M5sNoTTyIVHFCoF6LRWlEHYMDz2N+8BYOu6f02JCZ5QwVnwOpkZywTwolqyoqWsYjNw+ISGpkAI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzrQMSzIMksZLVHZNaQamb93Twfx1YhSiY3Izojtgb8kbQWlSED
-	J482U4rQZdIpetcy69X69MoA2mYKOYyehZWgw5Q+dq5DWrHTTY8z7Axa98zh21lVK47cg2Z5Jki
-	888GN3rS4P0qr6tPm3JOGI21YuHaylQ+KCwdJFOSd4d577v/p
-X-Google-Smtp-Source: AGHT+IEN4iFEJvvqM9POvKE1Xbxg1aJuDADnDtFVa3bwjgX7EjE7l2Xbum94PfzolONPJBxCrlUkgWCGX+Ire6m9SXQ=
-X-Received: by 2002:a05:6902:d47:b0:e1a:90ef:3b6d with SMTP id
- 3f1490d57ef6-e1a90ef3bf3mr7192204276.7.1725372816859; Tue, 03 Sep 2024
- 07:13:36 -0700 (PDT)
+        bh=SrPZGJn6KWoXZtLiezcU+c0qMmF52QD9yccf17rPGTI=;
+        b=APQREZe9p0IuJidCtVrurMIfxkcuelDVaFOp1tEHBCIPEsb4hKE2Qdof/zFgVd7NTM
+         Q64qhXFT9sRC2R5gEMzYI4c4Od58vvqNruqY3RkaCxhzRm28R03DTd5/JJVmlbf1MfOm
+         uSIAA+J7FAArNeX9WrRMzJ6JSZ+mRkQ+QkH7hHD4x89+OMkBQe8VdZzV6bbmDmo2xx1i
+         CAi3rr8Bf57ys9SmIyxtZw8fx+sg+qO7dnijw/0f1hYjToKJOWXMp4ABSom345SLQhfB
+         1qbD5fIyGKb4rsUslG49RECqGwbPZKsY3on/1GMsEFJBkwPoyeQLVcJkm4NkP8Y43+kJ
+         WNAA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725372803; x=1725977603;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=SrPZGJn6KWoXZtLiezcU+c0qMmF52QD9yccf17rPGTI=;
+        b=IJhUyK0g5Y2+v904ObB8SReJ8nJRnDR6kW2oEF40TvliKzJFT2jrEiJesffJrD3whc
+         Zx940EBY78lqJIu32jE62MvPqvTPcpLbbcqTWvzP9vOB1ZrNTcKlpYrXclUbelV8V0W5
+         y0WSJ/MJivC0Ica0JTG4WmUHNyKJkIJoGfnD4zhhjlA8LSHOCFLXeKELSgAmkfixGBJJ
+         kD7nksESao+wY58xQb9xwc5ZXoc031p0eTRR8TAZNF7Gg/14evKXGPzLFXZSSpFVDGSl
+         mqS9fm8rpCNmyN0AkRituIOCnVrw95iYFjpzZ3TWiOBA3m/4HvD1Z6isECIoPzUmG7ZG
+         SEpA==
+X-Forwarded-Encrypted: i=1; AJvYcCW2D7WFFzVyyAMWUOGHBXEBG7zoMrMeyHT3kE0eN92dxbycdGfuFSm0KF5nnd70NSyGA2U26fWlUKYkXGM=@vger.kernel.org, AJvYcCWYVenwaVVkOIuvkyF/VR6hT1q96sg3UU2/pWa10zl5i30qyasU4Znd1+cGiSZ6Uxll3pnE4yxPhSTPMTvy@vger.kernel.org
+X-Gm-Message-State: AOJu0YyfGHf1KePSP57aNP+Qjtk2oukKfiy5s/8Bupt2ouPBwrG8VEWT
+	C65hsKC6h9T36fZKMFIaL9Zf5h+WUC9c2yePy33xOCG4ctNqT4fa
+X-Google-Smtp-Source: AGHT+IEjRbIOY72pGCBavbHe7BJELVDZYV3WLdduDbQaH6rRYLYRoQUnq6dTD/kZle9J6gIeR3MBdg==
+X-Received: by 2002:a17:902:e74b:b0:201:f409:ce73 with SMTP id d9443c01a7336-2050c4cf204mr198209875ad.65.1725372802888;
+        Tue, 03 Sep 2024 07:13:22 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-205f6d30bb6sm20361615ad.211.2024.09.03.07.13.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Sep 2024 07:13:21 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date: Tue, 3 Sep 2024 07:13:20 -0700
+From: Guenter Roeck <linux@roeck-us.net>
+To: Helge Deller <deller@gmx.de>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+	Richard Henderson <richard.henderson@linaro.org>,
+	Vlastimil Babka <vbabka@suse.cz>, linux-kernel@vger.kernel.org,
+	Linux-MM <linux-mm@kvack.org>, linux-parisc@vger.kernel.org,
+	Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH 6.10 000/809] 6.10.3-rc3 review
+Message-ID: <0e8cf563-345d-4fd4-b0ff-d80e0c7ac29c@roeck-us.net>
+References: <90e02d99-37a2-437e-ad42-44b80c4e94f6@suse.cz>
+ <87frrh44mf.ffs@tglx>
+ <76c643ee-17d6-463b-8ee1-4e30b0133671@roeck-us.net>
+ <87plqjz6aa.ffs@tglx>
+ <CAHk-=wi_YCS9y=0VJ+Rs9dcY-hbt_qFdiV_6AJnnHN4QaXsbLg@mail.gmail.com>
+ <87a5hnyox6.ffs@tglx>
+ <CAHk-=wh4rxXPpYatnuXpu98KswLzg+u7Z9vYWJCLNHC_yXZtWw@mail.gmail.com>
+ <8734nezz0g.ffs@tglx>
+ <CAHk-=wiZUidi6Gm_6XFArT621H7vAzhDA63zn2pSGJHdnjRCMA@mail.gmail.com>
+ <250f3ae6-3a81-40c7-a747-4713e8888510@gmx.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240902-imx290-avail-v3-0-b32a12799fed@skidata.com>
- <20240902-imx290-avail-v3-4-b32a12799fed@skidata.com> <20240902195821.GQ1995@pendragon.ideasonboard.com>
- <CAJpcXm6r_LAD+NC7u5aNvkEHq3Vb3osCea8MAn8nQ45dCtoxSg@mail.gmail.com> <20240903130053.GA25878@pendragon.ideasonboard.com>
-In-Reply-To: <20240903130053.GA25878@pendragon.ideasonboard.com>
-From: Dave Stevenson <dave.stevenson@raspberrypi.com>
-Date: Tue, 3 Sep 2024 15:13:20 +0100
-Message-ID: <CAPY8ntD7M5k+v-oPOMhyJV=_OcHwVjq_32m18_MrHO4zsYQOzg@mail.gmail.com>
-Subject: Re: [PATCH v3 4/7] media: i2c: imx290: Introduce initial "off" mode &
- link freq
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Benjamin Bara <bbara93@gmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
-	Sakari Ailus <sakari.ailus@linux.intel.com>, Hans de Goede <hdegoede@redhat.com>, 
-	Alexander Stein <alexander.stein@ew.tq-group.com>, linux-media@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Benjamin Bara <benjamin.bara@skidata.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <250f3ae6-3a81-40c7-a747-4713e8888510@gmx.de>
 
-On Tue, 3 Sept 2024 at 14:01, Laurent Pinchart
-<laurent.pinchart@ideasonboard.com> wrote:
->
-> On Mon, Sep 02, 2024 at 10:55:04PM +0200, Benjamin Bara wrote:
-> > On Mon, 2 Sept 2024 at 21:58, Laurent Pinchart wrote:
-> > > On Mon, Sep 02, 2024 at 05:57:29PM +0200, bbara93@gmail.com wrote:
-> > > > From: Benjamin Bara <benjamin.bara@skidata.com>
-> > > >
-> > > > To be compliant to the V4L2 API, the driver currently "randomly" decides
-> > > > on one of the two supported modes which also implies a link frequency.
-> > > >
-> > > > Add a new mode and frequency which symbolize that the sensor is not in
-> > > > use. This can be used as a default value during probe() and enables us
-> > > > to avoid communication with the sensor.
-> > >
-> > > I really doin't like this change. I would like to instead move away from
-> > > modes and make the driver freely configurable.
-> >
-> > Which controls do you want to have freely configurable? At least on the
-> > imx290 the exposure limits depend on the blanking, and the blanking
-> > limits depend on the format. As the format is defined by the mode on
-> > imx290, I think this will be quite hard with the current controls.
->
-> I want to make the format freely configurable.
+On Tue, Sep 03, 2024 at 09:54:19AM +0200, Helge Deller wrote:
+> On 8/8/24 20:19, Linus Torvalds wrote:
+> > On Thu, 8 Aug 2024 at 10:48, Thomas Gleixner <tglx@linutronix.de> wrote:
+> > > 
+> > > Here is the disassembly from my latest crashing debug kernel which
+> > > shifts it up a couple of pages. Add 0x10 or sub 0x20 to make it work.
+> > 
+> > Looks like I was off by an instruction, it's the 28th divide-step (not
+> > 29) that does the page crosser:
+> > 
+> > >      4121dffc:   0b 21 04 41     ds r1,r25,r1
+> > >      4121e000:   0b bd 07 1d     add,c ret1,ret1,ret1
+> > 
+> > but my parisc knowledge is not good enough to even guess at what could go wrong.
+> > 
+> > And I have no actual reason to believe this has *anything* to do with
+> > an itlb miss, except for that whole "exact placement seems to matter,
+> > and it crosses a page boundary" detail.
+> 
+> Well, you were on the right track :-)
+> 
+> Guenters kernel from
+> http://server.roeck-us.net/qemu/parisc64-6.10.3/
+> boots nicely on my physical C3700 machine, but crashes with Qemu.
+> 
+> So, it's not some bug in the kernel ITLB miss handler or other
+> Linux kernel code.
+> 
+> Instead it's a Qemu bug, which gets triggered by the page
+> boundary crossing of:
+>    41218ffc:   0b 21 04 41     ds r1,r25,r1
+>    41219000:   0b bd 07 1d     add,c ret1,ret1,ret1
+> 
+> During the ITLB miss, the carry bits and the PSW-V-bit
+> (from the divide step) are saved in the IPSW register and restored
+> upon irq return.
+> 
+> During packaging the bits there is a qemu coding bug, where we missed
+> to handle the PSW-V-bit as 32-bit value even on a 64-bit CPU.
+> The (copy&pasted) patch below fixes the crash for me.
+> 
 
-Isn't this partly limited by the discussion led by Jacopo in Dublin
-back in 2022 [1]?
+Yes, that works for me as well. Thanks a lot for the fix!
 
-How do we shift from the current list of 2 modes, to a single defined
-mode that the selection API can then crop?
-Changing the list of enumerated modes is likely to break existing
-users of this driver, and AIUI it isn't currently permitted for
-selecting a new enumerated mode to update the selection rectangles.
+Guenter
 
-It also needs someone to sit down and fully digest the window cropping
-mode section of the datasheet, and hope that the sensor actually
-behaves as documented. I know I don't have the time to do that at
-present.
-
-[1] https://www.spinics.net/lists/linux-media/msg218231.html
-
-> > > Furthermore, the concept of an initial unconfigured state isn't valid
-> > > in V4L2. The driver must fully initialize the whole device state at
-> > > probe time.
-> >
-> > I understand that and it makes sense to me. But given the dependencies
-> > from above and the fact that the format is currently part of this
-> > "state", it makes the "freely configurable" intention even harder :-(
->
-> Why can't we simply initialize the controls with limits that correspond
-> to the default format ? I don't understand what issue this is trying to
-> solve.
-
-If I'm following the full discussion correctly now, it's trying to
-avoid those couple of register writes during probe due to updating
-VBLANK and HBLANK control ranges. Adding all this "dummy mode" code
-seems overkill to achieve that.
-
-I see 3 simpler approaches:
-- Move the pm_runtime calls so that the range updates are when the
-sensor is powered down. Ack on that needing very careful handling of
-what is initialised when.
-- Move the lines
-    state = v4l2_subdev_lock_and_get_active_state(&imx290->sd);
-    imx290_ctrl_update(imx290, imx290->current_mode);
-    v4l2_subdev_unlock_state(state);
-out of imx290_subdev_init to the end of imx290_probe, after the pm_runtime_put
-- Add a flag to the state (in addition to the pm_runtime handling) to
-denote that we're between stream_on and stream_off, and therefore
-imx290_set_ctrl should update registers.
-
-A quick test of the 2nd option (with patches 1, 3, and 6) appears to
-achieve that aim - I only see the one read from patch 6.
-IMHO trying to address the case where runtime PM is disabled is fairly
-redundant, but others may disagree. Option 3 would achieve that with
-minimal extra overhead though.
-
-  Dave
-
-> > > > Signed-off-by: Benjamin Bara <benjamin.bara@skidata.com>
-> > > > ---
-> > > > Changes since v2:
-> > > > - new
-> > > > ---
-> > > >  drivers/media/i2c/imx290.c | 29 +++++++++++++++++++++++------
-> > > >  1 file changed, 23 insertions(+), 6 deletions(-)
-> > > >
-> > > > diff --git a/drivers/media/i2c/imx290.c b/drivers/media/i2c/imx290.c
-> > > > index 6812e7cb9e23..ece4d66001f5 100644
-> > > > --- a/drivers/media/i2c/imx290.c
-> > > > +++ b/drivers/media/i2c/imx290.c
-> > > > @@ -425,14 +425,17 @@ static const struct imx290_csi_cfg imx290_csi_297mhz = {
-> > > >  /* supported link frequencies */
-> > > >  #define FREQ_INDEX_1080P     0
-> > > >  #define FREQ_INDEX_720P              1
-> > > > +#define FREQ_INDEX_OFF               2
-> > > >  static const s64 imx290_link_freq_2lanes[] = {
-> > > >       [FREQ_INDEX_1080P] = 445500000,
-> > > >       [FREQ_INDEX_720P] = 297000000,
-> > > > +     [FREQ_INDEX_OFF] = 0,
-> > > >  };
-> > > >
-> > > >  static const s64 imx290_link_freq_4lanes[] = {
-> > > >       [FREQ_INDEX_1080P] = 222750000,
-> > > >       [FREQ_INDEX_720P] = 148500000,
-> > > > +     [FREQ_INDEX_OFF] = 0,
-> > > >  };
-> > > >
-> > > >  /*
-> > > > @@ -552,6 +555,10 @@ static const struct imx290_mode imx290_modes_4lanes[] = {
-> > > >       },
-> > > >  };
-> > > >
-> > > > +static const struct imx290_mode imx290_mode_off = {
-> > > > +     .link_freq_index = FREQ_INDEX_OFF,
-> > > > +};
-> > > > +
-> > > >  static inline const struct imx290_mode *imx290_modes_ptr(const struct imx290 *imx290)
-> > > >  {
-> > > >       if (imx290->nlanes == 2)
-> > > > @@ -876,10 +883,19 @@ static unsigned int imx290_get_blank_min(const struct imx290 *imx290, bool v)
-> > > >  static void imx290_ctrl_update(struct imx290 *imx290,
-> > > >                              const struct imx290_mode *mode)
-> > > >  {
-> > > > -     unsigned int hblank_min = mode->hmax_min - mode->width;
-> > > > -     unsigned int hblank_max = IMX290_HMAX_MAX - mode->width;
-> > > > -     unsigned int vblank_min = mode->vmax_min - mode->height;
-> > > > -     unsigned int vblank_max = IMX290_VMAX_MAX - mode->height;
-> > > > +     unsigned int hblank_min, hblank_max, vblank_min, vblank_max;
-> > > > +
-> > > > +     if (mode == &imx290_mode_off) {
-> > > > +             hblank_min = imx290_get_blank_min(imx290, false);
-> > > > +             hblank_max = HBLANK_MAX;
-> > > > +             vblank_min = imx290_get_blank_min(imx290, true);
-> > > > +             vblank_max = VBLANK_MAX;
-> > > > +     } else {
-> > > > +             hblank_min = mode->hmax_min - mode->width;
-> > > > +             hblank_max = IMX290_HMAX_MAX - mode->width;
-> > > > +             vblank_min = mode->vmax_min - mode->height;
-> > > > +             vblank_max = IMX290_VMAX_MAX - mode->height;
-> > > > +     }
-> > > >
-> > > >       __v4l2_ctrl_s_ctrl(imx290->link_freq, mode->link_freq_index);
-> > > >
-> > > > @@ -932,7 +948,8 @@ static int imx290_ctrl_init(struct imx290 *imx290)
-> > > >       imx290->link_freq =
-> > > >               v4l2_ctrl_new_int_menu(&imx290->ctrls, &imx290_ctrl_ops,
-> > > >                                      V4L2_CID_LINK_FREQ,
-> > > > -                                    imx290_link_freqs_num(imx290) - 1, 0,
-> > > > +                                    imx290_link_freqs_num(imx290) - 1,
-> > > > +                                    FREQ_INDEX_OFF,
-> > > >                                      imx290_link_freqs_ptr(imx290));
-> > > >       if (imx290->link_freq)
-> > > >               imx290->link_freq->flags |= V4L2_CTRL_FLAG_READ_ONLY;
-> > > > @@ -1278,7 +1295,7 @@ static int imx290_subdev_init(struct imx290 *imx290)
-> > > >       struct v4l2_subdev_state *state;
-> > > >       int ret;
-> > > >
-> > > > -     imx290->current_mode = &imx290_modes_ptr(imx290)[0];
-> > > > +     imx290->current_mode = &imx290_mode_off;
-> > > >
-> > > >       v4l2_i2c_subdev_init(&imx290->sd, client, &imx290_subdev_ops);
-> > > >       imx290->sd.internal_ops = &imx290_internal_ops;
-> > > >
->
-> --
-> Regards,
->
-> Laurent Pinchart
->
+> Helge
+> 
+> diff --git a/target/hppa/helper.c b/target/hppa/helper.c
+> index b79ddd8184..d4b1a3cd5a 100644
+> --- a/target/hppa/helper.c
+> +++ b/target/hppa/helper.c
+> @@ -53,7 +53,7 @@ target_ulong cpu_hppa_get_psw(CPUHPPAState *env)
+>      }
+> 
+>      psw |= env->psw_n * PSW_N;
+> -    psw |= (env->psw_v < 0) * PSW_V;
+> +    psw |= ((env->psw_v >> 31) & 1) * PSW_V;
+>      psw |= env->psw | env->psw_xb;
+> 
+>      return psw;
+> 
 
