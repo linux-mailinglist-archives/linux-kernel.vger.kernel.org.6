@@ -1,156 +1,250 @@
-Return-Path: <linux-kernel+bounces-313575-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313576-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88FA496A72C
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 21:14:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BDF796A730
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 21:16:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 07E5A1F2514A
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 19:14:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ECCD61F24DC4
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 19:16:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50DD21D5CD0;
-	Tue,  3 Sep 2024 19:14:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D6381D5CC8;
+	Tue,  3 Sep 2024 19:16:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="btG6/m82"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cP21XLzJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12AA61D5CC3
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 19:14:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60B161D5CF8;
+	Tue,  3 Sep 2024 19:16:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725390871; cv=none; b=Ph+DFDDcDhGwxCozeB9XvUxA/vAZe6frdQwb0ChgkA7HIRmCbQtLrDPq0i78X6fqJDYzlCaLZRt6thFD7rK8Bwr2I1GivdG420EzSFeAoTxoQhQeetJo6odjrypiU2Wbez/Iz3m4C3SWtpIu+2aVO62uKqRU5/dj73pVwc4Way4=
+	t=1725390983; cv=none; b=NEkXZPcsVvaZmdlX1D+9E8KLZfOnovPaPXfVCq4j90tYRLA+/sP5Ng3u6riTFfUQgCOyEqYUhBX5wJ59tFpblMu+745F6TVF5wzGNayuTZruXJWgXg0A8BL2Rg7JIR7EbcpvwyN9HuKATEs13JtJEcxnbs1T1oDsjpFLyoJ7Y4A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725390871; c=relaxed/simple;
-	bh=or6X0wP8ozeFggLTdXEFslaB29MDKtBAB44XcYasXF8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rM0nfGV/oNZo0gWMI4X4ZJr7cHnlzuex1jjCYt1YwNw9YcZxFzMhlWAieeHQyH8r5NEkJWWtBCPUEvd5rPveQBWNZR0BtUf06nTFzng8BN7cuKnJ4nQovaAyKJBzGQuBJv7nvfjqLSsetUmGI7lRxwSqStl0UqD5pCUQdGWTREk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=btG6/m82; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725390870; x=1756926870;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=or6X0wP8ozeFggLTdXEFslaB29MDKtBAB44XcYasXF8=;
-  b=btG6/m82J/LYRmEm3LRjHp8v5QYMmO2QOCMH/5xxp2NYfkWnTm+DrUGp
-   9iDf0mqyjPnZepiqcRgu5SUyZEvD7DNK77uywTIWo9wnSry07RP7pVWeC
-   zH0eh8K3lpnGMbzAamy7F3BmR2XmWe++vGZOF7kKc2UbzJSHCCD73UkMA
-   dvkBfOeUqJd06xcVqCK1WI+whpMWklzyjWYEezWLyEcqdNme2BhtfGefA
-   VZsxqWGfuNZmt5B1BTeMOPGCXp2p4YUou5kDwNL4/8cO+hzY8p7RdIKy1
-   EXUrO/e0A+wUgYL0AVN3wIFlO8R/mHhIXqOHrgckzb3WmGOFIhwy3UcTw
-   w==;
-X-CSE-ConnectionGUID: 2my//sSzQ/mF0ad/hgIPCg==
-X-CSE-MsgGUID: 6qhxLm+sTG6o0FSXJDiPpw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11184"; a="35404408"
-X-IronPort-AV: E=Sophos;i="6.10,199,1719903600"; 
-   d="scan'208";a="35404408"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2024 12:14:29 -0700
-X-CSE-ConnectionGUID: oS05bFeQT766fMIexoXYvw==
-X-CSE-MsgGUID: tDw2CiK5TbWhr9HnYR3D5g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,199,1719903600"; 
-   d="scan'208";a="95746745"
-Received: from lkp-server01.sh.intel.com (HELO 9c6b1c7d3b50) ([10.239.97.150])
-  by orviesa002.jf.intel.com with ESMTP; 03 Sep 2024 12:14:28 -0700
-Received: from kbuild by 9c6b1c7d3b50 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1slYyu-00074L-25;
-	Tue, 03 Sep 2024 19:14:24 +0000
-Date: Wed, 4 Sep 2024 03:13:26 +0800
-From: kernel test robot <lkp@intel.com>
-To: Uros Bizjak <ubizjak@gmail.com>, loongarch@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, Uros Bizjak <ubizjak@gmail.com>,
-	Huacai Chen <chenhuacai@kernel.org>,
-	WANG Xuerui <kernel@xen0n.name>,
-	Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH] longsoon/percpu: Simplify _percpu_read() and
- _percpu_write()
-Message-ID: <202409040319.2mRdIGd2-lkp@intel.com>
-References: <20240903102342.36957-1-ubizjak@gmail.com>
+	s=arc-20240116; t=1725390983; c=relaxed/simple;
+	bh=IvxVPNWe8n3Tv9B5xV600I+GCPLmdK0PoRL9GpCKJp8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=reyvANVUvYWTLquAt8OCi19J+bbksIsRnjq9nDlAaUXOhtNE4YZjSUDzc50soUteRVLOkxlIIRecHgprWaUdsNom4MRtg+wb/RbxF29IIw0fZsl+3fleGyXzpLc6g40Ok3xk+E3+zjmq4F08ZHh27XIJNjI2dgFejaypz/iI19o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cP21XLzJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B3E9C4CEC4;
+	Tue,  3 Sep 2024 19:16:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725390982;
+	bh=IvxVPNWe8n3Tv9B5xV600I+GCPLmdK0PoRL9GpCKJp8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=cP21XLzJJcbrKoDjJ//t2xk0LLwgYSRHUIfX8N4EO/ImOIaFnr0hQMLtAkF5aEKdg
+	 OCh0S/xU6IkpSKQ/Z0VeqbkXTqPMrzgh99jQUS5MJkZbvCNkDj8iFuTh8VAl/qauMH
+	 6JDoJTROdEHbjLWvu0fE3iGywfVZ9wfOXEZTUBgwE8wUCUqtIrJhQZ4Q2TpcaBZYKj
+	 wv+5Ixtm59XNPxJ2eycbka5WeFHC37L1BWC2Tru6LUk/2VubaTOm9aJDxlqYNR+Jk1
+	 MNYaUMjmHiYgEmzoO5aYBjABkv6wACVpFGJ6F4dHLdMm8nqUnpu9mKpY2bdNiy9kgI
+	 B8pNeznSsZuXw==
+Date: Tue, 3 Sep 2024 20:16:14 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Angelo Dureghello <adureghello@baylibre.com>
+Cc: Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich
+ <Michael.Hennerich@analog.com>, Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Olivier Moysan
+ <olivier.moysan@foss.st.com>, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ dlechner@baylibre.com
+Subject: Re: [PATCH RFC 3/8] iio: backend adi-axi-dac: backend features
+Message-ID: <20240903201614.08722f59@jic23-huawei>
+In-Reply-To: <fd68cda2-f523-49fd-943b-c07dbb461799@baylibre.com>
+References: <20240829-wip-bl-ad3552r-axi-v0-v1-0-b6da6015327a@baylibre.com>
+	<20240829-wip-bl-ad3552r-axi-v0-v1-3-b6da6015327a@baylibre.com>
+	<20240831123418.6bef6039@jic23-huawei>
+	<fd68cda2-f523-49fd-943b-c07dbb461799@baylibre.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240903102342.36957-1-ubizjak@gmail.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hi Uros,
+On Mon, 2 Sep 2024 18:04:51 +0200
+Angelo Dureghello <adureghello@baylibre.com> wrote:
 
-kernel test robot noticed the following build errors:
+> On 31/08/24 1:34 PM, Jonathan Cameron wrote:
+> > On Thu, 29 Aug 2024 14:32:01 +0200
+> > Angelo Dureghello <adureghello@baylibre.com> wrote:
+> >  
+> >> From: Angelo Dureghello <adureghello@baylibre.com>
+> >>
+> >> Extend DAC backend with new features required for the AXI driver
+> >> version for the a3552r DAC.
+> >>
+> >> Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>  
+> > Hi Angelo
+> > Minor comments inline.  
+> >>   
+> >>   static int axi_dac_enable(struct iio_backend *back)
+> >> @@ -460,7 +493,13 @@ static int axi_dac_data_source_set(struct iio_backend *back, unsigned int chan,
+> >>   	case IIO_BACKEND_EXTERNAL:
+> >>   		return regmap_update_bits(st->regmap,
+> >>   					  AXI_DAC_REG_CHAN_CNTRL_7(chan),
+> >> -					  AXI_DAC_DATA_SEL, AXI_DAC_DATA_DMA);
+> >> +					  AXI_DAC_DATA_SEL,
+> >> +					  AXI_DAC_DATA_DMA);  
+> > Unrelated change.   If you want to change this, separate patch.  
+> Thanks, fixed.
+> >  
+> >> +	case IIO_BACKEND_INTERNAL_RAMP_16:
+> >> +		return regmap_update_bits(st->regmap,
+> >> +					  AXI_DAC_REG_CHAN_CNTRL_7(chan),
+> >> +					  AXI_DAC_DATA_SEL,
+> >> +					  AXI_DAC_DATA_INTERNAL_RAMP_16);
+> >>   	default:
+> >>   		return -EINVAL;
+> >>   	}
+> >> @@ -518,9 +557,204 @@ static int axi_dac_reg_access(struct iio_backend *back, unsigned int reg,
+> >>   	return regmap_write(st->regmap, reg, writeval);
+> >>   }
+> >>   
+> >> +
+> >> +static int axi_dac_bus_reg_write(struct iio_backend *back,
+> >> +				 u32 reg, void *val, size_t size)  
+> > Maybe just pass an unsigned int for val?
+> > So follow what regmap does? You will still need the size, but it
+> > will just be configuration related rather than affecting the type
+> > of val.
+> >  
+> void * was used since data size in the future may vary depending
+> on the bus physical interface.
+> 
+I doubt it will get bigger than u64.  Passing void * is always
+nasty if we can do something else and this is a register writing
+operation.  I'm yet to meet an ADC or similar with > 64 bit registers
+(or even one with 64 bit ones!)
 
-[auto build test ERROR on dennis-percpu/for-next]
-[also build test ERROR on linus/master v6.11-rc6 next-20240903]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+> Actually, a reg bus write involves several AXI regmap operations.
+> >  
+> >> +{
+> >> +	struct axi_dac_state *st = iio_backend_get_priv(back);
+> >> +
+> >> +	if (!st->bus_type)
+> >> +		return -EOPNOTSUPP;
+> >> +
+> >> +	if (st->bus_type == AXI_DAC_BUS_TYPE_QSPI) {  
+> > As below, I'd use a switch and factor out this block as a separate
+> > bus specific function.  
+> Ok, changed.
+> >  
+> >> +		int ret;
+> >> +		u32 ival;
+> >> +
+> >> +		if (size != 1 && size != 2)
+> >> +			return -EINVAL;
+> >> +
+> >> +		switch (size) {
+> >> +		case 1:
+> >> +			ival = FIELD_PREP(AXI_DAC_DATA_WR_8, *(u8 *)val);
+> >> +			break;
+> >> +		case 2:
+> >> +			ival =  FIELD_PREP(AXI_DAC_DATA_WR_16, *(u16 *)val);
+> >> +			break;
+> >> +		default:
+> >> +			return  -EINVAL;  
+> > Hopefully compiler won't need this and the above. I'd drop the size != 1..
+> > check in favour of just doing it in this switch.
+> >  
+> sure, done.
+> 
+> 
+> >> +		}
+> >> +
+> >> +		ret = regmap_write(st->regmap, AXI_DAC_CNTRL_DATA_WR, ival);
+> >> +		if (ret)
+> >> +			return ret;
+> >> +
+> >> +		/*
+> >> +		 * Both REG_CNTRL_2 and AXI_DAC_CNTRL_DATA_WR need to know
+> >> +		 * the data size. So keeping data size control here only,
+> >> +		 * since data size is mandatory for to the current transfer.
+> >> +		 * DDR state handled separately by specific backend calls,
+> >> +		 * generally all raw register writes are SDR.
+> >> +		 */
+> >> +		if (size == 1)
+> >> +			ret = regmap_set_bits(st->regmap, AXI_DAC_REG_CNTRL_2,
+> >> +					      AXI_DAC_SYMB_8B);
+> >> +		else
+> >> +			ret = regmap_clear_bits(st->regmap, AXI_DAC_REG_CNTRL_2,
+> >> +						AXI_DAC_SYMB_8B);
+> >> +		if (ret)
+> >> +			return ret;
+> >> +
+> >> +		ret = regmap_update_bits(st->regmap, AXI_DAC_REG_CUSTOM_CTRL,
+> >> +					 AXI_DAC_ADDRESS,
+> >> +					 FIELD_PREP(AXI_DAC_ADDRESS, reg));
+> >> +		if (ret)
+> >> +			return ret;
+> >> +
+> >> +		ret = regmap_update_bits(st->regmap, AXI_DAC_REG_CUSTOM_CTRL,
+> >> +					 AXI_DAC_TRANSFER_DATA,
+> >> +					 AXI_DAC_TRANSFER_DATA);
+> >> +		if (ret)
+> >> +			return ret;
+> >> +
+> >> +		ret = regmap_read_poll_timeout(st->regmap,
+> >> +					       AXI_DAC_REG_CUSTOM_CTRL, ival,
+> >> +					       ival & AXI_DAC_TRANSFER_DATA,
+> >> +					       10, 100 * KILO);
+> >> +		if (ret)
+> >> +			return ret;
+> >> +
+> >> +		return regmap_clear_bits(st->regmap, AXI_DAC_REG_CUSTOM_CTRL,
+> >> +					  AXI_DAC_TRANSFER_DATA);
+> >> +	}
+> >> +
+> >> +	return -EINVAL;
+> >> +}
+> >> +
+> >> +static int axi_dac_bus_reg_read(struct iio_backend *back,
+> >> +				u32 reg, void *val, size_t size)  
+> > As for write, I'd just use an unsigned int * for val like
+> > regmap does.  
+> 
+> Ok, so initial choice was unsigned int, further thinking of
+> possible future busses drive the choice to void *.
+> 
+> Let me know, i can switch to unsigned int in case.
+I would just go with unsigned int or at a push u64 *
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Uros-Bizjak/longsoon-percpu-Simplify-_percpu_read-and-_percpu_write/20240903-182524
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/dennis/percpu.git for-next
-patch link:    https://lore.kernel.org/r/20240903102342.36957-1-ubizjak%40gmail.com
-patch subject: [PATCH] longsoon/percpu: Simplify _percpu_read() and _percpu_write()
-config: loongarch-allmodconfig (https://download.01.org/0day-ci/archive/20240904/202409040319.2mRdIGd2-lkp@intel.com/config)
-compiler: loongarch64-linux-gcc (GCC) 14.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240904/202409040319.2mRdIGd2-lkp@intel.com/reproduce)
+> 
+> 
+> >
+> >  
+> >> +{
+> >> +	struct axi_dac_state *st = iio_backend_get_priv(back);
+> >> +
+> >> +	if (!st->bus_type)
+> >> +		return -EOPNOTSUPP;
+> >> +
+> >> +	if (st->bus_type == AXI_DAC_BUS_TYPE_QSPI) {  
+> > It got mentioned in binding review but if this isn't QSPI, even
+> > if similar don't call it that.  
+> 
+> It's a bit difficult to find a different name, physically,
+> it is a QSPI, 4 lanes + clock + cs, and datasheet is naming it Quad SPI.
+> But looking the data protocol, it's a bit different.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202409040319.2mRdIGd2-lkp@intel.com/
+is QSPI actually defined anywhere? I assumed it would be like
+SPI for which everything is so flexible you can build whatever you like.
 
-All errors (new ones prefixed by >>):
+> 
+> QSPI has instruction, address and data.
+> Here we have just ADDR and DATA.
+> 
+> What about ADI_QSPI ?
 
-   In file included from include/linux/irqflags.h:19,
-                    from include/linux/spinlock.h:59,
-                    from include/linux/sched.h:2134,
-                    from arch/loongarch/kernel/asm-offsets.c:8:
-   include/linux/sched/mm.h: In function 'set_active_memcg':
->> arch/loongarch/include/asm/percpu.h:85:33: error: initialization of 'long unsigned int' from 'struct mem_cgroup *' makes integer from pointer without a cast [-Wint-conversion]
-      85 | #define __pcpu_cast_8(val)      (val)
-         |                                 ^
-   arch/loongarch/include/asm/percpu.h:89:35: note: in expansion of macro '__pcpu_cast_8'
-      89 |         unsigned long __pcp_val = __pcpu_cast_##size(_val);             \
-         |                                   ^~~~~~~~~~~~
-   arch/loongarch/include/asm/percpu.h:171:36: note: in expansion of macro '_percpu_write'
-     171 | #define this_cpu_write_8(pcp, val) _percpu_write(8, pcp, val)
-         |                                    ^~~~~~~~~~~~~
-   include/linux/percpu-defs.h:368:25: note: in expansion of macro 'this_cpu_write_8'
-     368 |                 case 8: stem##8(variable, __VA_ARGS__);break;           \
-         |                         ^~~~
-   include/linux/percpu-defs.h:490:41: note: in expansion of macro '__pcpu_size_call'
-     490 | #define this_cpu_write(pcp, val)        __pcpu_size_call(this_cpu_write_, pcp, val)
-         |                                         ^~~~~~~~~~~~~~~~
-   include/linux/sched/mm.h:420:17: note: in expansion of macro 'this_cpu_write'
-     420 |                 this_cpu_write(int_active_memcg, memcg);
-         |                 ^~~~~~~~~~~~~~
-   make[3]: *** [scripts/Makefile.build:116: arch/loongarch/kernel/asm-offsets.s] Error 1
-   make[3]: Target 'prepare' not remade because of errors.
-   make[2]: *** [Makefile:1199: prepare0] Error 2
-   make[2]: Target 'prepare' not remade because of errors.
-   make[1]: *** [Makefile:240: __sub-make] Error 2
-   make[1]: Target 'prepare' not remade because of errors.
-   make: *** [Makefile:240: __sub-make] Error 2
-   make: Target 'prepare' not remade because of errors.
+Sure, that is fine if we worry about differences from qspi
+(which depends on there being a reference spec!)
 
+Jonathan
 
-vim +85 arch/loongarch/include/asm/percpu.h
-
-    81	
-    82	#define __pcpu_cast_1(val)	(((unsigned long) val) & 0xff)
-    83	#define __pcpu_cast_2(val)	(((unsigned long) val) & 0xffff)
-    84	#define __pcpu_cast_4(val)	(((unsigned long) val) & 0xffffffff)
-  > 85	#define __pcpu_cast_8(val)	(val)
-    86	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
