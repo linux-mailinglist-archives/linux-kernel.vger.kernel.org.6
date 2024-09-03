@@ -1,69 +1,85 @@
-Return-Path: <linux-kernel+bounces-312557-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312556-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C80BB96982A
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 11:02:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EA71969829
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 11:02:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7DA44281E20
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 09:02:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 57EC12872D4
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 09:02:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD8731A4E8C;
-	Tue,  3 Sep 2024 09:01:39 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED41C1A3050;
+	Tue,  3 Sep 2024 09:01:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MJ4nHeFU"
+Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D123519F407
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF4D919F42B
 	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 09:01:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725354099; cv=none; b=XSlO031NuF9QpTT1iWDm5DJQnPPm92maK2R/q4EukcNMpnxZLrNVMRc6er/sFYOWucl6FXdvki6uFNp1C6gJTn+O/YJoJfMdnf3ctD6Km8evRJjCNwHv3x0ERpawGkmO9Ce+9/0CBcrTiyoR3Yvm7GeA53q+yI2+ChNrOdpHjVQ=
+	t=1725354098; cv=none; b=lUFNEBA9vfuj4OOHkjjMDTq5uNsqZErrfDGqiw9h7D8+gJfHyat88ZftsFeUTmj/tL89ezbpTBbLKdao4O2U94p8oHRZuOBq3Pqr/y9/KeorgDXoiYwxw8lkshk0bPh6n060ecTsmzqz/hDxap1mD1Lg8NhgrY2f5JAtuP5WHDM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725354099; c=relaxed/simple;
-	bh=BoO78xQ/ayPNhV4nvO58szEXQHCiaY0ES7P2J0hXhzg=;
+	s=arc-20240116; t=1725354098; c=relaxed/simple;
+	bh=XXc/crLCNHxzSDDZAy6Ddze/85mA/zk8QXL4gwHqt3I=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cv7tSKkwm29nkEMwGt3/MkuBpw4CyTCBlynb9pXN9KvvDHwm4hK+teyrO4QgW5cSJIXCp/Hq9VH2RG9UU+Hr3cqV20r0Z/JIeBQIR4jl3c43PZLSBFEIa90ktbwgmkvFVMwuAgGqoiIcrudV15olXL6KZ3NWMqasEGbdxwBMG40=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <sha@pengutronix.de>)
-	id 1slPPi-0008MR-C4; Tue, 03 Sep 2024 11:01:26 +0200
-Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <sha@pengutronix.de>)
-	id 1slPPh-0058uJ-L2; Tue, 03 Sep 2024 11:01:25 +0200
-Received: from sha by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <sha@pengutronix.de>)
-	id 1slPPh-004OJX-1j;
-	Tue, 03 Sep 2024 11:01:25 +0200
-Date: Tue, 3 Sep 2024 11:01:25 +0200
-From: Sascha Hauer <s.hauer@pengutronix.de>
-To: David Lin <yu-hao.lin@nxp.com>
-Cc: Francesco Dolcini <francesco@dolcini.it>,
-	Calvin Owens <calvin@wbinvd.org>,
-	Brian Norris <briannorris@chromium.org>,
-	Kalle Valo <kvalo@kernel.org>,
-	"linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"kernel@pengutronix.de" <kernel@pengutronix.de>
-Subject: Re: [EXT] [RFC PATCH 0/4] mwifiex: add support for iw61x
-Message-ID: <ZtbQZRYyTbm6FyQ1@pengutronix.de>
-References: <ZtVtPJSsIr9eIFWv@pengutronix.de>
- <PA4PR04MB9638ED8FA48E352F7246127AD1922@PA4PR04MB9638.eurprd04.prod.outlook.com>
- <ZtW5fFocfr9_WgGD@pengutronix.de>
- <PA4PR04MB963814F85BBA6DD39F516469D1932@PA4PR04MB9638.eurprd04.prod.outlook.com>
- <ZtatnHp_7FBSSpko@pengutronix.de>
- <DU0PR04MB9636EF4BC137C95F70594E9DD1932@DU0PR04MB9636.eurprd04.prod.outlook.com>
- <Zta63ltdVl_UcX9R@pengutronix.de>
- <DU0PR04MB96367FEE321C1F269278EA4DD1932@DU0PR04MB9636.eurprd04.prod.outlook.com>
- <ZtbAKPP7tIexefd3@pengutronix.de>
- <DU0PR04MB9636603B5E83B295AD83967AD1932@DU0PR04MB9636.eurprd04.prod.outlook.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=u/wJ1yPhQR1tCG4vmmmErpxauNPuFoIIt+3h7lADvYqrPm8FfuTWn2Yzq8i+qcwyioRzccG2+5o98OzO1eoFYjf2A7kt+kaTYWmgxP/AqvJOVpXJB+IWIQ3FVcuON6gtGmU3vRf3fqO/2eoI9fg0RNYVZgV9ElWgiHTg3e2WZwI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=MJ4nHeFU; arc=none smtp.client-ip=209.85.216.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-2d8b96c18f0so1536563a91.2
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 02:01:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1725354096; x=1725958896; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=cwokYJJ36zRTwb7Es++/p8+iOX4crE17pq6UetC4fjY=;
+        b=MJ4nHeFUi0xDMiwI9XuzFqVgEPN79IcIFcczV3Enr/d4bfMPvzg2rwSmgoRRqBtCVk
+         czDGfda94LEulrdcFckapJqmwkBCVm/SHxmhy94CiugFxQbttBndP1NXTO7iMfnthdqv
+         Ef5TothsreELnYucaCnxyAo/GQe7SE3XtYdthepXzqaFRPEPhdkAKllYiPHSMUwnYYFf
+         hGlqWtikPI3XYfPQsQeMUCPtkS+MMjvwCEiiZTPgckvkXdt0Hq9IkZWynpqtMY+g/H0V
+         hPa6wFHMYimJe1iK5I1qo+U0tIDFIdUjsXS3Y5eUGSg8mMPfxR3xpqKGaC60LrknqUUF
+         1hjw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725354096; x=1725958896;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cwokYJJ36zRTwb7Es++/p8+iOX4crE17pq6UetC4fjY=;
+        b=RRJLWlHjBN8sIFgRYYgsbHNb4BqfACekq6Dk+IeIDxTyw5XR+t+ZlpXYVp/SAivTzW
+         TlyovlrDaFi8/PFv5CHp/+ZGkC4ceJS89ix3zVHhu0zoCIO8zNr5tQC0XC7SCpOTod00
+         e3+w7L0//OAXawRa6dgRFangGc/11YnqNI0NOV5CIeEVHFvlIIw5+ajaB1PFM1vfKkCL
+         4zH4Sj8Zf3eVoYilnV1nBXNhvTUVkYWKt0xIeOjY8Hk6hvdnnWweaQtQKmerogBfad6X
+         O/2XdFT0QGkwdmUARGsiqJ4ityDSWioApXLkoN9FbYCF+0v6IIFJTz1Dm+dnMhJYFrwG
+         HFBQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXZS5q24FU4Ds/FOdqpO+Wa+wnIK1MJYMLcv9GEVcFAuURWlTGbwq/UQ9ydUAdgvwrRilT2gw3KxLicSB4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YymnmyuWB67kdi6ofLN5Td2LClFnncR7CHcU5/e5CGb2GlqeE1T
+	Zs2iAPRSJQ5ystieme6CP46WG23Ximr8EWP43it0CjmSxqF3DQ9t0qn84lP4zx6GzwG8tHiuDsX
+	N
+X-Google-Smtp-Source: AGHT+IHpyFwad5VKly9RnWl8Lsn1HCK4hUN/kvD8gp4deaWLKbgiLnxTpU8gsD2DZXdwowBQlTervw==
+X-Received: by 2002:a17:90b:4b0a:b0:2d8:99c4:3cd9 with SMTP id 98e67ed59e1d1-2da7482c876mr189982a91.3.1725354096268;
+        Tue, 03 Sep 2024 02:01:36 -0700 (PDT)
+Received: from localhost ([122.172.83.237])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d85b119b3dsm10803545a91.13.2024.09.03.02.01.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Sep 2024 02:01:35 -0700 (PDT)
+Date: Tue, 3 Sep 2024 14:31:33 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Huacai Chen <chenhuacai@loongson.cn>
+Cc: "Rafael J . Wysocki" <rafael@kernel.org>,
+	Huacai Chen <chenhuacai@kernel.org>, loongarch@lists.linux.dev,
+	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Xuerui Wang <kernel@xen0n.name>,
+	Jiaxun Yang <jiaxun.yang@flygoat.com>,
+	Xi Ruoyao <xry111@xry111.site>,
+	Binbin Zhou <zhoubinbin@loongson.cn>
+Subject: Re: [PATCH] cpufreq: loongson3: Use raw_smp_processor_id() in
+ do_service_request()
+Message-ID: <20240903090133.tqmsitybuutzsup5@vireshk-i7>
+References: <20240828062459.1853837-1-chenhuacai@loongson.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -72,109 +88,25 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <DU0PR04MB9636603B5E83B295AD83967AD1932@DU0PR04MB9636.eurprd04.prod.outlook.com>
-X-Sent-From: Pengutronix Hildesheim
-X-URL: http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: sha@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+In-Reply-To: <20240828062459.1853837-1-chenhuacai@loongson.cn>
 
-On Tue, Sep 03, 2024 at 07:57:51AM +0000, David Lin wrote:
-> > From: Sascha Hauer <s.hauer@pengutronix.de>
-> > Sent: Tuesday, September 3, 2024 3:52 PM
-> > To: David Lin <yu-hao.lin@nxp.com>
-> > Cc: Francesco Dolcini <francesco@dolcini.it>; Calvin Owens
-> > <calvin@wbinvd.org>; Brian Norris <briannorris@chromium.org>; Kalle Valo
-> > <kvalo@kernel.org>; linux-wireless@vger.kernel.org;
-> > linux-kernel@vger.kernel.org; kernel@pengutronix.de
-> > Subject: Re: [EXT] [RFC PATCH 0/4] mwifiex: add support for iw61x
-> > 
-> > Caution: This is an external email. Please take care when clicking links or
-> > opening attachments. When in doubt, report the message using the 'Report
-> > this email' button
-> > 
-> > 
-> > On Tue, Sep 03, 2024 at 07:35:59AM +0000, David Lin wrote:
-> > > > From: Sascha Hauer <s.hauer@pengutronix.de>
-> > > > Sent: Tuesday, September 3, 2024 3:30 PM
-> > > > To: David Lin <yu-hao.lin@nxp.com>
-> > > > Cc: Francesco Dolcini <francesco@dolcini.it>; Calvin Owens
-> > > > <calvin@wbinvd.org>; Brian Norris <briannorris@chromium.org>; Kalle
-> > > > Valo <kvalo@kernel.org>; linux-wireless@vger.kernel.org;
-> > > > linux-kernel@vger.kernel.org; kernel@pengutronix.de
-> > > > Subject: Re: [EXT] [RFC PATCH 0/4] mwifiex: add support for iw61x
-> > > >
-> > > > Caution: This is an external email. Please take care when clicking
-> > > > links or opening attachments. When in doubt, report the message
-> > > > using the 'Report this email' button
-> > > >
-> > > >
-> > > > On Tue, Sep 03, 2024 at 06:39:15AM +0000, David Lin wrote:
-> > > > > > > > > Not only this code segment. In fact, you did not add VDLL
-> > > > > > > > > data patch support
-> > > > > > > > to sdio.c.
-> > > > > > > > > If you try to add the code and do test, you will know what
-> > > > > > > > > is missing in your
-> > > > > > > > code.
-> > > > > > > >
-> > > > > > > > Could you point me to the code you mean?
-> > > > > > > >
-> > > > > > > > Sascha
-> > > > > > > >
-> > > > > > >
-> > > > > > > I only know the porting VDLL code in nxpwifi.
-> > > > > >
-> > > > > > Yes, and I asked for a pointer to that code, some function name,
-> > > > > > or file/line or whatever, because I looked at the nxpwifi driver
-> > > > > > and don't know what you mean with "VDLL data patch support" in
-> > sdio.c.
-> > > > > >
-> > > > > > Sascha
-> > > > > >
-> > > > >
-> > > > > It is better for you to check MXM driver. It is the same as
-> > > > > Mwifiex which
-> > > > support all SDIO modes.
-> > > >
-> > > > Now I am confused. You said:
-> > > >
-> > > > > In fact, you did not add VDLL data patch support to sdio.c
-> > > >
-> > > > I was under the assumption that the nxpwifi driver that you
-> > > > specifically posted for the iw61x chipset should contain this code. Isn't that
-> > the case?
-> > > >
-> > > > BTW did you really mean "VDLL data patch" or did you mean "VDLL data
-> > > > path"?
-> > > >
-> > >
-> > > Sorry VDLL data path.
-> > > You did not add the code to support this new SDIO data type in your patch.
-> > >
-> > > Please check MXM driver which supports all SDIO modes.
-> > 
-> > But why? The nxpwifi driver is much closer to the mwifiex driver and much
-> > better readable, so I would rather pick the missing pieces from there.
-> > 
-> > Sascha
-> > 
+On 28-08-24, 14:24, Huacai Chen wrote:
+> Use raw_smp_processor_id() instead of plain smp_processor_id() in
+> do_service_request(), otherwise we may get some errors with the driver
+> enabled:
 > 
-> Nxpwifi only supports SDIO new mode. MXM and Mwifiex supports normal and new SDIO modes.
+>  BUG: using smp_processor_id() in preemptible [00000000] code: (udev-worker)/208
+>  caller is loongson3_cpufreq_probe+0x5c/0x250 [loongson3_cpufreq]
+> 
+> Reported-by: Xi Ruoyao <xry111@xry111.site>
+> Tested-by: Binbin Zhou <zhoubinbin@loongson.cn>
+> Signed-off-by: Huacai Chen <chenhuacai@loongson.cn>
+> ---
+>  drivers/cpufreq/loongson3_cpufreq.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-By SDIO new mode I assume that you mean the supports_sdio_new_mode
-variable in the mwifiex driver. This is used when a chip supports it
-The iw61x supports this new mode and the iw61x also is the only chip which
-needs the VDLL code. So would I have to add something to the "normal"
-SDIO mode?
-
-Sascha
+Applied. Thanks.
 
 -- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+viresh
 
