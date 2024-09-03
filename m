@@ -1,139 +1,166 @@
-Return-Path: <linux-kernel+bounces-313193-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313195-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 402D196A1BC
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 17:10:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C4D5696A1C4
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 17:12:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F226C2829F4
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 15:10:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A9CF2874D5
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 15:12:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD2191865E9;
-	Tue,  3 Sep 2024 15:10:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 943DE185939;
+	Tue,  3 Sep 2024 15:12:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="V+p/s+9U"
-Received: from out203-205-221-205.mail.qq.com (out203-205-221-205.mail.qq.com [203.205.221.205])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="IXOBeDS4"
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57849184554;
-	Tue,  3 Sep 2024 15:10:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.205
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A41C16F8EF
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 15:11:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725376217; cv=none; b=WeHicb8n5LtTNfVcUha8VWimwH0X5MBT+mGkVmjVZ3bRz2/6Lx7q6t6amnA02MZFCiX/BuN2VpVQ+RCBFIVgaQGBWHRXpIV90fYRUyj43e3wxL5Q2gpeR1zVnZRe2fBQ6yChwnZ6LM59EBw26TUF1WYEv3j/AeXH8r/wNUBKBwU=
+	t=1725376322; cv=none; b=JtuX6VkActFay0OjJ7HOKfznJ5eLvt1+98RMZelynYNrGE+qK2xmjZIAN1OYAEaeQN45oYjKJZdXi7hawiqB5CnhbxotUYNE3Ta4i6921Lgr65c1cHOlFgnUj9QKwBkASK29WYXgj41W8hUIvteNf1OB8cdIeOM5x/wgd8/kT90=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725376217; c=relaxed/simple;
-	bh=+z7G3IX+1bW2pDxcYm41syOZar68AflCSZdjfRRjnRQ=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=REY57xE9ugUYjAOGYjyp7LH1aTAljw6ggM6ge9gkEj1iKDtrMw+4zG9NBaF5WlAP87xZ0mMQFALv5vjzVj+Ft/05PbnjCxJ8OPrPOBCXFb/xIX/7nCdEI6RCnfKBuwBiX0JRVElSX4S8aMON+qEoutvadEabCKjfs06OwBr+BH8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=V+p/s+9U; arc=none smtp.client-ip=203.205.221.205
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1725376198; bh=MQ6bT5FJLUg3J089OEWCktQlKv2hXeklSpcdpqzongM=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=V+p/s+9UiF9EiyPS254dFEry1w+QjPWqtIPHmHdxn1BwESPIycYAns+wkpdLLteSO
-	 0Rn1isYgjympltaYdJj05HVdKT1qZxuvvEMEBO9xjCAze3jBfWCQivoVM8dvmlntfV
-	 sdyJEAlD4VmMHHzAJlxUzo8wgwKHDR0aVR0hAVnU=
-Received: from pek-lxu-l1.wrs.com ([111.198.224.50])
-	by newxmesmtplogicsvrszb9-1.qq.com (NewEsmtp) with SMTP
-	id 277260F5; Tue, 03 Sep 2024 23:09:55 +0800
-X-QQ-mid: xmsmtpt1725376195t0lnj7bhm
-Message-ID: <tencent_274B82754376EF66A23C0D37029644374609@qq.com>
-X-QQ-XMAILINFO: MW5hkHoBpWXy6B4ZPvpifI2vGuaOv61uhym1HEu23+Gf+oRWFKLypO0suJilkx
-	 t/ZoF7VrTBv7RkbI4Bj9wBpeqSgD4oTR5GpFWUGhHDIoMTZn8biK3pqSqEEV3/uJfAXqIyP+VN1K
-	 T3ja2x1IIiV9zRcdPFdNHz2UrMBQqV4Dez6IMBn1zppmHZDrNgmeI5/zBPmHkXQQ+OKYldHWhGrD
-	 ngcHL/ExTTrAAhakVtANM0gd14VJBILglCvk7IlB/+qM14m+KBTi7zIgk/NFFgfD5TCYHkiOqW1H
-	 Xi8xfYKR7Hl1NlkiVp5B1DX1L9Orf/z7Hpz22y+E1VnGYm0Pqql1m6KC1WlqK/pMd5g1JTLR3OYJ
-	 tr04yPeZzJ1oZhko1SL0YnD3hfgnRadcn6xkln5Zt/bo54q/Gezzw207o0JAqCBLwiY57Toy8smo
-	 So6/avOPuRFWJtB2BDYY6kuEryKJWxfO9K1Ysm3cuufd/rME6v6P2mtbaaRcQcYWO+zp/7ySGXYa
-	 2DqYe1vllw2zD0Yl78u0YrCiI83yi3fyW/uEdtU86cY18lk7XzliCEaBcW6pP2zkN572Q43wFgcF
-	 lGa72kegs7MN6S0blVp6M2+1xf58F/s7FYBJZTbUMPvvbt0jkhyoicMy56vg4v8C/Lz/u2VBSKbd
-	 Kkq6Ed3a/umSnysO8Y6qscpqFp183qTC6xzzzf38sPTqLVATxVBwWQQE8DjLXsqK0pYU9Ih1zcef
-	 PBcAemZx91hm7i+g6+B4kZPKX+9FtDBcrRULmzNDonmJIH2iOkilv2FCHssfpoUOrknB6eNo89gs
-	 +chiIb5VBlSJRaMP5uF37ZzPB9zj+geE3FNZ6o9ElNH3GHuoMjeGz/JNAkWYbka33HJMM9rviXu1
-	 6Fkpc3qTeZskf/GpDqheChLNvQFgDtHaXlG8pkRhgrX2N1DNGTdqwQTiCPJH0A13+e6w+GFzIWvw
-	 7fE7prS/M=
-X-QQ-XMRINFO: OD9hHCdaPRBwq3WW+NvGbIU=
-From: Edward Adam Davis <eadavis@qq.com>
-To: syzbot+f3a31fb909db9b2a5c4d@syzkaller.appspotmail.com
-Cc: davem@davemloft.net,
-	edumazet@google.com,
-	geliang@kernel.org,
-	kuba@kernel.org,
-	linux-kernel@vger.kernel.org,
-	martineau@kernel.org,
-	matttbe@kernel.org,
-	mptcp@lists.linux.dev,
-	netdev@vger.kernel.org,
-	pabeni@redhat.com,
-	syzkaller-bugs@googlegroups.com
-Subject: [PATCH] mptcp: pm: Fix uaf in __timer_delete_sync
-Date: Tue,  3 Sep 2024 23:09:55 +0800
-X-OQ-MSGID: <20240903150954.3338781-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <000000000000b341bb062136d2d9@google.com>
-References: <000000000000b341bb062136d2d9@google.com>
+	s=arc-20240116; t=1725376322; c=relaxed/simple;
+	bh=HaQoSOeNV+l72P3AJuWZoCj9lxSZl2+1ZxYqkRtwfCw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VcKiLTaDKcGbtT2G20y7PsnuIWxoAGUYBw/6RNQXMnWTVR7ydmtzB+iibBRFcsj9wQMXNEIoqN2inC5PdZIgZH7Iwk0dZHTAQgzuTV0ihrHY0qBCiqgUHk5mF5sOx8160ZrWdcngw5a0eiq+Er9KbR0zrvNJq3UHRvBE74W1Icw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=IXOBeDS4; arc=none smtp.client-ip=209.85.208.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5c26815e174so1810451a12.0
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 08:11:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1725376318; x=1725981118; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=8WDyM7wA+4uXBEwvEfZ6K89F1ujUbboR8QatKwOx+kg=;
+        b=IXOBeDS4oCGAf/Gz3mqX9hKKukL0qrRfs9tZPRq2GoV2182iaU/hC81nSQ8PtlLBmK
+         sSy+rLMTANh6Z5+T9hJBZJSbFnU6cxwbCMuMN5eYJc/0ZI4ZPhX0662K/t4cpqIna708
+         dPYLtqEvXgiAs8A8KXdS6ZVBNs4aH/Dx7Hmd+oHi29n+fFq2M2p2IrzTB0lINVY1mKKR
+         lhHyUcGNwIBk9AsNXfnLo0cJXnYpPBo74M9qxrIiOKzL92ChsWBS7whKEx4mEcmsU/mt
+         ipRkJ1oqW9XWEwyrqoUb5iKaQECVjUtvw1y522pnfHK/a5qHxCkzvQZMOVUUWLJHK5g8
+         r6Ag==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725376318; x=1725981118;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=8WDyM7wA+4uXBEwvEfZ6K89F1ujUbboR8QatKwOx+kg=;
+        b=oIDbixHokW44AxB1ztBHlXW3SGUH2KPrrCjicP42JQIlpCzxZwgNQ43p/Q/lS5Lk+b
+         mwq/tjwJ1e4uUPYduL+HOtkiqEJhSwytEDYO2X2grV92nevUnkEJiBm8tyaarw7B+G0w
+         ZaF3pf/dUhdFK1uPolgo5d2p4AJT92GwyyZOeLfwomC0VhwWc4QYan32r/pb/izY23Nk
+         QYlw90r6G23UmM0mamm+2VL+s3ddqqA1lBMzqrqn1CE8NQLZdnn07uLvlw6a8gM4jxAa
+         uqhg6JDIQoOQ6AmBtxigf/k7HzLHA0aYp8R+Ii2+noNLyZrvVVr87dL22frXI9vnTt0y
+         1DUA==
+X-Forwarded-Encrypted: i=1; AJvYcCXNG0JP4dp0VMIj6P38v5/j8g1cZFhj1gZLda3bxPePBp2z5ACVN+e4cQQji/fLyRka5Bd5j7TjqdqRln4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx56ZfQpN4//iNet9qROQTLa1a8Y9sHFYS7BpbJC5ol8nEjSbE2
+	V+MnAIOjfRPFLe27sqt9Ul7r5Kc+vBaa7ojTpsnnzj8F4SPPBysjX5l98bhQSyA=
+X-Google-Smtp-Source: AGHT+IFoUUFxcVhHxWppSsUC1TKbkdYIP8izH9TlTs0zzWQ7ixgWt0bHVTTPOJbkicRNtP6gPNtD2A==
+X-Received: by 2002:a17:906:ef0d:b0:a80:f7db:3e7 with SMTP id a640c23a62f3a-a89d87216d1mr821251966b.5.1725376318249;
+        Tue, 03 Sep 2024 08:11:58 -0700 (PDT)
+Received: from [10.100.51.161] ([193.86.92.181])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8989196500sm695054466b.138.2024.09.03.08.11.57
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 03 Sep 2024 08:11:57 -0700 (PDT)
+Message-ID: <9978884e-87c8-4c20-b9ff-b4571bce01ce@suse.com>
+Date: Tue, 3 Sep 2024 17:11:57 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 08/19] gendwarfksyms: Expand subroutine_type
+To: Sami Tolvanen <samitolvanen@google.com>
+Cc: Masahiro Yamada <masahiroy@kernel.org>,
+ Luis Chamberlain <mcgrof@kernel.org>, Miguel Ojeda <ojeda@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Matthew Maurer <mmaurer@google.com>, Alex Gaynor <alex.gaynor@gmail.com>,
+ Wedson Almeida Filho <wedsonaf@gmail.com>, Gary Guo <gary@garyguo.net>,
+ Petr Pavlu <petr.pavlu@suse.com>, Neal Gompa <neal@gompa.dev>,
+ Hector Martin <marcan@marcan.st>, Janne Grunau <j@jannau.net>,
+ Asahi Linux <asahi@lists.linux.dev>, linux-kbuild@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org,
+ rust-for-linux@vger.kernel.org
+References: <20240815173903.4172139-21-samitolvanen@google.com>
+ <20240815173903.4172139-29-samitolvanen@google.com>
+Content-Language: en-US
+From: Petr Pavlu <petr.pavlu@suse.com>
+In-Reply-To: <20240815173903.4172139-29-samitolvanen@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-There are two paths to access mptcp_pm_del_add_timer, result in a race
-condition:
+On 8/15/24 19:39, Sami Tolvanen wrote:
+> Add support for expanding DW_TAG_subroutine_type and the parameters
+> in DW_TAG_formal_parameter. Use this to also expand subprograms.
+> 
+> Example output with --debug:
+> 
+>   subprogram(
+>     formal_parameter base_type usize byte_size(8),
+>     formal_parameter base_type usize byte_size(8),
+>   )
+>   -> base_type void;
+> 
+> Signed-off-by: Sami Tolvanen <samitolvanen@google.com>
+> ---
+>  scripts/gendwarfksyms/dwarf.c         | 57 ++++++++++++++++++++++++++-
+>  scripts/gendwarfksyms/gendwarfksyms.h |  1 +
+>  2 files changed, 57 insertions(+), 1 deletion(-)
+> 
+> diff --git a/scripts/gendwarfksyms/dwarf.c b/scripts/gendwarfksyms/dwarf.c
+> index 82185737fa2a..c81652426be8 100644
+> --- a/scripts/gendwarfksyms/dwarf.c
+> +++ b/scripts/gendwarfksyms/dwarf.c
+> [...]
+>  
+> +static int __process_subroutine_type(struct state *state, struct die *cache,
+> +				     Dwarf_Die *die, const char *type)
+> +{
+> +	check(process(state, cache, type));
+> +	check(process(state, cache, "("));
+> +	check(process_linebreak(cache, 1));
+> +	/* Parameters */
+> +	check(process_die_container(state, cache, die, process_type,
+> +				    match_formal_parameter_type));
+> +	check(process_linebreak(cache, -1));
+> +	check(process(state, cache, ")"));
+> +	process_linebreak(cache, 0);
+> +	/* Return type */
+> +	check(process(state, cache, "-> "));
+> +	return check(process_type_attr(state, cache, die));
+> +}
 
-     CPU1				CPU2
-     ====                               ====
-     net_rx_action
-     napi_poll                          netlink_sendmsg
-     __napi_poll                        netlink_unicast
-     process_backlog                    netlink_unicast_kernel
-     __netif_receive_skb                genl_rcv
-     __netif_receive_skb_one_core       netlink_rcv_skb
-     NF_HOOK                            genl_rcv_msg
-     ip_local_deliver_finish            genl_family_rcv_msg
-     ip_protocol_deliver_rcu            genl_family_rcv_msg_doit
-     tcp_v4_rcv                         mptcp_pm_nl_flush_addrs_doit
-     tcp_v4_do_rcv                      mptcp_nl_remove_addrs_list
-     tcp_rcv_established                mptcp_pm_remove_addrs_and_subflows
-     tcp_data_queue                     remove_anno_list_by_saddr
-     mptcp_incoming_options             mptcp_pm_del_add_timer
-     mptcp_pm_del_add_timer             kfree(entry)
+If I understand correctly, this formatting logic also affects the
+symtypes output. Looking at its format, I would like to propose a few
+minor changes.
 
-In remove_anno_list_by_saddr(running on CPU2), after leaving the critical
-zone protected by "pm.lock", the entry will be released, which leads to the
-occurrence of uaf in the mptcp_pm_del_add_timer(running on CPU1).
+Example of the current symtypes output:
+kprobe_event_cmd_init subprogram( formal_parameter pointer_type <unnamed> { s#dynevent_cmd } byte_size(8), formal_parameter pointer_type <unnamed> { base_type char byte_size(1) encoding(8) } byte_size(8), formal_parameter base_type int byte_size(4) encoding(5),  ) -> base_type void
 
-Reported-and-tested-by: syzbot+f3a31fb909db9b2a5c4d@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=f3a31fb909db9b2a5c4d
-Signed-off-by: Edward Adam Davis <eadavis@qq.com>
----
- net/mptcp/pm_netlink.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Proposed changes:
+kprobe_event_cmd_init subprogram ( formal_parameter pointer_type <unnamed> { s#dynevent_cmd } byte_size(8) , formal_parameter pointer_type <unnamed> { base_type char byte_size(1) encoding(8) } byte_size(8) , formal_parameter base_type int byte_size(4) encoding(5) ) -> base_type void
+                                ^- (1)                                                                    ^- (2)                                                                                                                                                       ^- (3)
 
-diff --git a/net/mptcp/pm_netlink.c b/net/mptcp/pm_netlink.c
-index 3e4ad801786f..d28bf0c9ad66 100644
---- a/net/mptcp/pm_netlink.c
-+++ b/net/mptcp/pm_netlink.c
-@@ -336,11 +336,12 @@ mptcp_pm_del_add_timer(struct mptcp_sock *msk,
- 	entry = mptcp_lookup_anno_list_by_saddr(msk, addr);
- 	if (entry && (!check_id || entry->addr.id == addr->id))
- 		entry->retrans_times = ADD_ADDR_RETRANS_MAX;
--	spin_unlock_bh(&msk->pm.lock);
- 
- 	if (entry && (!check_id || entry->addr.id == addr->id))
- 		sk_stop_timer_sync(sk, &entry->add_timer);
- 
-+	spin_unlock_bh(&msk->pm.lock);
-+
- 	return entry;
- }
- 
+(1) "subprogram(" is split to "subprogram (".
+(2) A space is added prior to ",".
+(3) String ", " is removed after the last parameter.
+
+Separating each token with a whitespace matches the current genksyms
+format, makes the data trivially parsable and easy to pretty-print by
+additional tools. If some tokens are merged, as in "subprogram(", then
+such a tool needs to have extra logic to parse each word and split it
+into tokens.
+
+For attributes with one value, such as "byte_size(4)", I think the
+current format is probably ok.
+
 -- 
-2.43.0
-
+Thanks,
+Petr
 
