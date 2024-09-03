@@ -1,124 +1,89 @@
-Return-Path: <linux-kernel+bounces-313161-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313170-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8324696A12B
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 16:51:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BF9D96A15C
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 16:56:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0C462B261F8
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 14:51:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 37EB72836B4
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 14:56:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6736F15667D;
-	Tue,  3 Sep 2024 14:51:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42B661684AC;
+	Tue,  3 Sep 2024 14:56:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AKRrOoEr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="bL1Cj4OK"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C47E56F30D;
-	Tue,  3 Sep 2024 14:51:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE2E42BB09;
+	Tue,  3 Sep 2024 14:56:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725375073; cv=none; b=UHKecEn4MV7xLXQ8VdEyECH6Zm8ACjfnreJvPOixb6JY3luMwuY3lU+r/5+dNWGTWz/iPgsZDuJm0j0KxH4+xCZ1DsQFqnXOWT2D5G6xAGxLFcPqUtbjMdvTxuSqsyC0PU4rXEmvevptrmMQbDepVt5GyXy/g8xaP6IjAVTmKoo=
+	t=1725375398; cv=none; b=BBGKFkUNwA0sgADKcII8OJ8XQ2mhynEOp4UKSPgUA2gT3kLgeNJ+PQQa5SOqy3Gr7TyA5N+dZMLYuwMC2F5pLe1IpoEqUUdI7eFGWEAoz5Y/CjTFC9AooWvgY7k0MuzFxBwXDmo0HN4X5xUiL7dNOTWeEsMcux+ArQCEhIc2vcY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725375073; c=relaxed/simple;
-	bh=ypa679/SQEuDxwGocMv1PijQXWWAn25QLhcHQVjpBvg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZWWuobfcfl5YmcfFQwZBmpYjmtgu4xGrcA+Oe5VZg5IVSuGU8D40u1Ogxh8G96wDc4tvDlTh9xht9y/yJLDZgpf04g8seTL/WRPGLNafIkpK0xeS9VrCD8KFTuGf7zsAcALELZx6KPxjnDO2lgFD+uc7JSJoP9yVveHVQNvucLw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AKRrOoEr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7CB15C4CEC4;
-	Tue,  3 Sep 2024 14:51:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725375073;
-	bh=ypa679/SQEuDxwGocMv1PijQXWWAn25QLhcHQVjpBvg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=AKRrOoEr8Arhm+x7N/MQWDjafbcWFx427plpqZCa4XqNEEz40U3VnF/jyV8LBzro2
-	 rhd4fdgdmKL06YnWnvFddjc/Y43BGD4hkRGRq31uC0QrLomc+wRenY2GPO7TNCrF6u
-	 ecc7Hjf0MA5ZvwOnZlKW5gFWiP9dOA2OpkwbwxcIU6w0fmh0mtF1DQdfDSfimIOmSk
-	 K9jDMjw/e/vH6QmOqAlDDPYEeh57cs3IYYfcNQkKycOygMri4+7JgmiL2TrbCo4yJ0
-	 qkyfvehSn6RfDXf+klpP4OEwxk36nhpfDZqhQUaGNOU+bfzKGtsAmgAQqQLeWGLqQN
-	 72A9KfzPuZJzQ==
-Date: Tue, 3 Sep 2024 08:51:10 -0600
-From: Keith Busch <kbusch@kernel.org>
-To: Kai-Heng Feng <kai.heng.feng@canonical.com>
-Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	nirmal.patel@linux.intel.com, jonathan.derrick@linux.dev,
-	acelan.kao@canonical.com, lpieralisi@kernel.org, kw@linux.com,
-	robh@kernel.org, bhelgaas@google.com, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] PCI: vmd: Delay interrupt handling on MTL VMD controller
-Message-ID: <ZtciXnbQJ88hjfDk@kbusch-mbp>
-References: <20240903025544.286223-1-kai.heng.feng@canonical.com>
- <20240903042852.v7ootuenihi5wjpn@thinkpad>
- <CAAd53p4EWEuu-V5hvOHtKZQxCJNf94+FOJT+_ryu0s2RpB1o-Q@mail.gmail.com>
+	s=arc-20240116; t=1725375398; c=relaxed/simple;
+	bh=2MvB+hInrumPGngUefgZ+NofqJXY4x2Qf0kBZ97xpGA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BZF/Q7wpZH5LYtR1jO/roKuUSmAR2p8HNQlzs6JmL9Yb553VUjD2xn3Fgl3HapfqOZPykpWZtSFHdUt6H8H3fBIHX7wYwS50qf83ReoW/cyyzWSp876u9+oqfgivCV/HFzK7fZeKytaerMP2X3a1eNRS9HAa5mchyG4KvWjqTgM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=bL1Cj4OK; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1725375394;
+	bh=2MvB+hInrumPGngUefgZ+NofqJXY4x2Qf0kBZ97xpGA=;
+	h=From:To:Cc:Subject:Date:From;
+	b=bL1Cj4OKKtftt/waPU8nhypkJntsMaeloWwo2qTHeUdn8AYiCFtFIp/2H8wMWW1df
+	 OHYmyj7/fJ1S3L7DtHhnOBy0jqBxKFEmb7anI9CKu1FIV1GM08Vi0Zd5+5K1X0Kte1
+	 JbI/Q4umm1ljuU/Kmqn7m0P4pInWtohUaUCLw/EcvJNKEKXaHEBwEOkaV/foW2FDej
+	 +tZV9BMGaGkkx/fMWnAaY5xm3uAKx4aOnhN3I2FRDkJEC1UAoF/yN5vQchwbz/VViU
+	 jvdev0T4i8DCzvAWb/PdbHNEdxO+l0eGOg/f/KkWJPc+VW34imaJ0cwarTCFVjGkNz
+	 sCaMquhRuaAVA==
+Received: from bootstrap.mtl.collabora.ca (mtl.collabora.ca [66.171.169.34])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: detlev)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 9CFF817E10B5;
+	Tue,  3 Sep 2024 16:56:33 +0200 (CEST)
+From: Detlev Casanova <detlev.casanova@collabora.com>
+To: linux-kernel@vger.kernel.org
+Cc: Ulf Hansson <ulf.hansson@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Jisheng Zhang <jszhang@kernel.org>,
+	linux-mmc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	kernel@collabora.com,
+	Detlev Casanova <detlev.casanova@collabora.com>
+Subject: [PATCH 0/1] dt-bindings: mmc: Add support for rk3576 eMMC
+Date: Tue,  3 Sep 2024 10:51:35 -0400
+Message-ID: <20240903145615.9302-1-detlev.casanova@collabora.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAAd53p4EWEuu-V5hvOHtKZQxCJNf94+FOJT+_ryu0s2RpB1o-Q@mail.gmail.com>
 
-On Tue, Sep 03, 2024 at 03:07:45PM +0800, Kai-Heng Feng wrote:
-> On Tue, Sep 3, 2024 at 12:29 PM Manivannan Sadhasivam
-> <manivannan.sadhasivam@linaro.org> wrote:
-> >
-> > On Tue, Sep 03, 2024 at 10:55:44AM +0800, Kai-Heng Feng wrote:
-> > > Meteor Lake VMD has a bug that the IRQ raises before the DMA region is
-> > > ready, so the requested IO is considered never completed:
-> > > [   97.343423] nvme nvme0: I/O 259 QID 2 timeout, completion polled
-> > > [   97.343446] nvme nvme0: I/O 384 QID 3 timeout, completion polled
-> > > [   97.343459] nvme nvme0: I/O 320 QID 4 timeout, completion polled
-> > > [   97.343470] nvme nvme0: I/O 707 QID 5 timeout, completion polled
-> > >
-> > > The is documented as erratum MTL016 [0]. The suggested workaround is to
-> > > "The VMD MSI interrupt-handler should initially perform a dummy register
-> > > read to the MSI initiator device prior to any writes to ensure proper
-> > > PCIe ordering." which essentially is adding a delay before the interrupt
-> > > handling.
-> > >
-> >
-> > Why can't you add a dummy register read instead? Adding a delay for PCIe
-> > ordering is not going to work always.
-> 
-> This can be done too. But it can take longer than 4us delay, so I'd
-> like to keep it a bit faster here.
+This patch has been extracted from the [0] patch set to be rebased on
+the next branch of the mmc tree as requested in [1].
 
-An added delay is just a side effect of the read. The read flushes
-pending device-to-host writes, which is most likely what the errata
-really requires. I think Mani is right, you need to pay that register
-read penalty to truly fix this.
+[0]: https://lore.kernel.org/all/010201919989e3de-60b56341-85e0-4869-89d1-362407c4f2ec-000000@eu-west-1.amazonses.com/
+[1]: https://lore.kernel.org/all/CAPDyKFoJoqwNTKvpK93QtK1wA9vzVUTzCrP32s_HEZcrujN2Mg@mail.gmail.com/
 
-> > > +     /* Erratum MTL016 */
-> > > +     VMD_FEAT_INTERRUPT_QUIRK        = (1 << 6),
-> > >  };
-> > >
-> > >  #define VMD_BIOS_PM_QUIRK_LTR        0x1003  /* 3145728 ns */
-> > > @@ -90,6 +94,8 @@ static DEFINE_IDA(vmd_instance_ida);
-> > >   */
-> > >  static DEFINE_RAW_SPINLOCK(list_lock);
-> > >
-> > > +static bool interrupt_delay;
-> > > +
-> > >  /**
-> > >   * struct vmd_irq - private data to map driver IRQ to the VMD shared vector
-> > >   * @node:    list item for parent traversal.
-> > > @@ -105,6 +111,7 @@ struct vmd_irq {
-> > >       struct vmd_irq_list     *irq;
-> > >       bool                    enabled;
-> > >       unsigned int            virq;
-> > > +     bool                    delay_irq;
-> >
-> > This is unused. Perhaps you wanted to use this instead of interrupt_delay?
-> 
-> This is leftover, will scratch this.
+Detlev.
 
-Maybe you should actually use it instead of making a global? The quirk
-says it is device specific, so no need to punish every device if it
-doesn't need it (unlikely as it is to see such a thing).
+Detlev Casanova (1):
+  dt-bindings: mmc: Add support for rk3576 eMMC
+
+ .../bindings/mmc/snps,dwcmshc-sdhci.yaml      | 34 ++++++++++++++-----
+ 1 file changed, 26 insertions(+), 8 deletions(-)
+
+-- 
+2.46.0
+
 
