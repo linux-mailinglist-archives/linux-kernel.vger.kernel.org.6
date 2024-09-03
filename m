@@ -1,137 +1,146 @@
-Return-Path: <linux-kernel+bounces-313428-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313429-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 497CF96A562
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 19:25:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9412B96A565
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 19:27:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C270AB26E1C
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 17:25:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3CAF11F24D65
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 17:27:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C362F18DF90;
-	Tue,  3 Sep 2024 17:25:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="W0lhd9he"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F20518DF90;
+	Tue,  3 Sep 2024 17:27:06 +0000 (UTC)
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A59C18BC3A;
-	Tue,  3 Sep 2024 17:25:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 362AE18BC22;
+	Tue,  3 Sep 2024 17:27:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725384335; cv=none; b=MAK6mZpa+78Ic0NPowZKD0AD0EGmvcEolwUtV4CxV8ypyBrclJ8Yhm6OuiNPbyr9YdpTSndmCUH3uqHnqsUpXpjdvOPstp16L8ure+EhJcb4UDF8sLzWT/7ZsSMMlwJhr39Ft8QOiKomR6OBPWZyVorwfiCgxDNGShut/EORYGM=
+	t=1725384425; cv=none; b=hon5wSXhC78SY9HZhDELXjJ+bNo97qCQO2zShR1vN+ubDgURePCQFY6Md8hBp3L/vkBPRxIZdousbBIuO4XVrJ87PTB7CEHdqzrVa48bTeitb+9aRns92Q13RdMi133AZzU+zcGyujdu6qqWK1oQY8+6zEEEGLXCTFnVR6pwp2g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725384335; c=relaxed/simple;
-	bh=3MF2YxDittRbFJxu2gHEoTOrMjXoYxLQH8bfqtJ612Y=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=O93CMsu0mkg81FktpQyjgZRUZdLytjUOiVjsFXAaow9UW0krJoctCynazRgYbPkn+B5NVFncoUH26kipc+Y3Kop+kP19i7BW0eKD5adLJ2T/C+JfSpxHraJFI9LD5nnt3XSOWRKvysg3Md1TU53nC4+zrie7ufXQKWZCZUpaPqA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=W0lhd9he; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725384333; x=1756920333;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=3MF2YxDittRbFJxu2gHEoTOrMjXoYxLQH8bfqtJ612Y=;
-  b=W0lhd9hekMvooVyrirT8zcO9ltJ6PFs29gLgWSFqr03+IECuTDxnCq+k
-   do8JGMXgBF+D0I/w2Q91slHPh4V1s388KON+jxj+er+pwt/+9MeLvMxK+
-   MMMjYMorDsLIKny/Tt4Bmjuk8QpRgzQ76We6NFSEZquFNRjwwlHqOAxK7
-   9w7nmridJdOTmwrKlD0TXTQrvy+xKjnVV4RleSr+NeDdaWlp/iDwTad3e
-   fBrA/9YpL+p7IH5a+E7mAPznni4j75o7nPkRtbsQWNI7peXkmLdWEDfL2
-   C/ITfBNQJLA5TePdhbGSsReVySg2TxX/v9T9EeKIIl3urQ4HKHa+vJwy5
-   g==;
-X-CSE-ConnectionGUID: 8gBXwDGKTLW5QXLCg/nxeA==
-X-CSE-MsgGUID: c2Yrjp13TWeEfA7jkoxc7Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11184"; a="24189789"
-X-IronPort-AV: E=Sophos;i="6.10,199,1719903600"; 
-   d="scan'208";a="24189789"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2024 10:25:33 -0700
-X-CSE-ConnectionGUID: 7mSEzJnBT8eg+NVyC8SVRw==
-X-CSE-MsgGUID: fI4eDd62RQWzXg0Tobs2Vw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,199,1719903600"; 
-   d="scan'208";a="65493874"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa007.jf.intel.com with ESMTP; 03 Sep 2024 10:25:30 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id 9A15A48D; Tue, 03 Sep 2024 20:25:29 +0300 (EEST)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Len Brown <len.brown@intel.com>,
-	Pavel Machek <pavel@ucw.cz>
-Subject: [PATCH v1 1/1] Documentation: PM: Discourage use of deprecated macros
-Date: Tue,  3 Sep 2024 20:25:20 +0300
-Message-ID: <20240903172520.3568731-1-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
+	s=arc-20240116; t=1725384425; c=relaxed/simple;
+	bh=8ZdETe01MiGFSirXtXpyRZv+12EZ41iU1Xl4Uoi73HE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=vElI5HVuATVeaVy63ygHALKhNiAwGAGUCT7IsGHyJaN5TdHzM+JfTOi9tOxmL03sRhywxKyYPkYVewf6Bk+0QdifSCL0hJP/VL9IEoTvasI/o4NDjlZeEnNpPZbihCnMMiarzh7MwI4PUU7QB1gjoHXO6r/rDl383Ygc1Le4oJ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-715e64ea7d1so4805325b3a.0;
+        Tue, 03 Sep 2024 10:27:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725384423; x=1725989223;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PK9LhMqmY8b61UhUQHd15GQzEH3KrI6nivBCkPiL/iI=;
+        b=b6IZjbvCQ4L3xxRttiE3f+MZU12eG/fBhwU4yyFJdVeW7Ct7tqYLbwgRtfzqdOp0Ct
+         1P+NIBrF6dUJbKT13E8ZT+T5Vm/BhP2Z53832QEnc23o0knLasFqZpU8ahiiLib4EU5B
+         1xTgYaqViBu9dHGn0jVvzujflCNCtC6SUArYtSltdrTP/seGTxTINl3/yxqgLokTeAMj
+         FMmLUXaz/2tlUjaBnr+jcWTSar5pbzzWoiugkDmNGuRnz2eoNYkYZeMU/HbhsFxLMjqc
+         B959X+uVPZT91H/BU+6C1OGeNt4lr1i6Qmq1yhlsE3sdBVxpfjuz24+9P07n+OnNIsqv
+         0SSw==
+X-Forwarded-Encrypted: i=1; AJvYcCXF6uRhsX38ebAoUxZxVzh9b8XFMeIA9G63tHM+audn746zYG1ymbCjxR8eJ3CcU8UJcbnTLFgLaMp2@vger.kernel.org, AJvYcCXvab0rN2xIJRG3fH9743Afm3BAaukicl9VyvrOJsRuNioBbo6GHLI6S4wZ5cPvGv5V/d34bzw9nRz2kHI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw+ExrMss9+7Q5F6f7LzCpq/6Ns3SQwZzT44DrWBXqYSsnTjIsU
+	R0x21x1ML44nN9qtC7pTyNpBuV/PfyArvCkW+KRP61/K/ijIVfKX
+X-Google-Smtp-Source: AGHT+IHVsC39zTt24vONpcuA61t0th3t0mAHpOCLQNJzp3nJKOCh5DdTR0XF+xGGOUw1xxX9Q+j28Q==
+X-Received: by 2002:a05:6a00:a0d:b0:707:ffa4:de3f with SMTP id d2e1a72fcca58-7173b618a17mr15439542b3a.17.1725384423445;
+        Tue, 03 Sep 2024 10:27:03 -0700 (PDT)
+Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-717785b4db7sm114603b3a.207.2024.09.03.10.27.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Sep 2024 10:27:02 -0700 (PDT)
+Date: Wed, 4 Sep 2024 02:27:01 +0900
+From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Jim Quinlan <james.quinlan@broadcom.com>, linux-pci@vger.kernel.org,
+	Nicolas Saenz Julienne <nsaenz@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+	Cyril Brulebois <kibi@debian.org>,
+	Stanimir Varbanov <svarbanov@suse.de>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	bcm-kernel-feedback-list@broadcom.com, jim2101024@gmail.com,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-rpi-kernel@lists.infradead.org>,
+	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v6 05/13] PCI: brcmstb: Use bridge reset if available
+Message-ID: <20240903172701.GA2873479@rocinante>
+References: <20240903144613.GC1403301@rocinante>
+ <20240903171743.GA255170@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240903171743.GA255170@bhelgaas>
 
-The Documentation refers to some deprecated macros.
-Update those parts accordingly.
+Hello,
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- Documentation/power/pci.rst        | 11 +++++------
- Documentation/power/runtime_pm.rst |  4 ++--
- 2 files changed, 7 insertions(+), 8 deletions(-)
+[...]
+> > > > >  static void brcm_pcie_bridge_sw_init_set_generic(struct brcm_pcie *pcie, u32 val)
+> > > > >  {
+> > > > > -     u32 tmp, mask =  RGR1_SW_INIT_1_INIT_GENERIC_MASK;
+> > > > > -     u32 shift = RGR1_SW_INIT_1_INIT_GENERIC_SHIFT;
+> > > > > +     if (val)
+> > > > > +             reset_control_assert(pcie->bridge_reset);
+> > > > > +     else
+> > > > > +             reset_control_deassert(pcie->bridge_reset);
+> > > > >
+> > > > > -     tmp = readl(pcie->base + PCIE_RGR1_SW_INIT_1(pcie));
+> > > > > -     tmp = (tmp & ~mask) | ((val << shift) & mask);
+> > > > > -     writel(tmp, pcie->base + PCIE_RGR1_SW_INIT_1(pcie));
+> > > > > +     if (!pcie->bridge_reset) {
+> > > > > +             u32 tmp, mask =  RGR1_SW_INIT_1_INIT_GENERIC_MASK;
+> > > > > +             u32 shift = RGR1_SW_INIT_1_INIT_GENERIC_SHIFT;
+> > > > > +
+> > > > > +             tmp = readl(pcie->base + PCIE_RGR1_SW_INIT_1(pcie));
+> > > > > +             tmp = (tmp & ~mask) | ((val << shift) & mask);
+> > > > > +             writel(tmp, pcie->base + PCIE_RGR1_SW_INIT_1(pcie));
+> > > > > +     }
+> > > >
+> > > > This pattern looks goofy:
+> > > >
+> > > >   reset_control_assert(pcie->bridge_reset);
+> > > >   if (!pcie->bridge_reset) {
+> > > >     ...
+> > > >
+> > > > If we're going to test pcie->bridge_reset at all, it should be first
+> > > > so it's obvious what's going on and the reader doesn't have to go
+> > > > verify that reset_control_assert() ignores and returns success for a
+> > > > NULL pointer:
+> > > >
+> > > >   if (pcie->bridge_reset) {
+> > > >     if (val)
+> > > >       reset_control_assert(pcie->bridge_reset);
+> > > >     else
+> > > >       reset_control_deassert(pcie->bridge_reset);
+> > > >
+> > > >     return;
+> > > >   }
+> > > >
+> > > >   u32 tmp, mask =  RGR1_SW_INIT_1_INIT_GENERIC_MASK;
+> > > >   ...
+> > > >
+> > > Will do.
+> > [...]
+> > 
+> > You will do what?  If you don't mind me asking.
+> 
+> Can you just do the rework on the branch, Krzysztof?  I think that
+> will be easier/quicker than having Jim repost the entire series.
 
-diff --git a/Documentation/power/pci.rst b/Documentation/power/pci.rst
-index e2c1fb8a569a..9ebecb7b00b2 100644
---- a/Documentation/power/pci.rst
-+++ b/Documentation/power/pci.rst
-@@ -979,18 +979,17 @@ subsections can be defined as a separate function, it often is convenient to
- point two or more members of struct dev_pm_ops to the same routine.  There are
- a few convenience macros that can be used for this purpose.
- 
--The SIMPLE_DEV_PM_OPS macro declares a struct dev_pm_ops object with one
-+The DEFINE_SIMPLE_DEV_PM_OPS() declares a struct dev_pm_ops object with one
- suspend routine pointed to by the .suspend(), .freeze(), and .poweroff()
- members and one resume routine pointed to by the .resume(), .thaw(), and
- .restore() members.  The other function pointers in this struct dev_pm_ops are
- unset.
- 
--The UNIVERSAL_DEV_PM_OPS macro is similar to SIMPLE_DEV_PM_OPS, but it
--additionally sets the .runtime_resume() pointer to the same value as
--.resume() (and .thaw(), and .restore()) and the .runtime_suspend() pointer to
--the same value as .suspend() (and .freeze() and .poweroff()).
-+The DEFINE_RUNTIME_DEV_PM_OPS() is similar to DEFINE_SIMPLE_DEV_PM_OPS(), but it
-+additionally sets the .runtime_resume() pointer to pm_runtime_force_resume()
-+and the .runtime_suspend() pointer to pm_runtime_force_suspend().
- 
--The SET_SYSTEM_SLEEP_PM_OPS can be used inside of a declaration of struct
-+The SYSTEM_SLEEP_PM_OPS() can be used inside of a declaration of struct
- dev_pm_ops to indicate that one suspend routine is to be pointed to by the
- .suspend(), .freeze(), and .poweroff() members and one resume routine is to
- be pointed to by the .resume(), .thaw(), and .restore() members.
-diff --git a/Documentation/power/runtime_pm.rst b/Documentation/power/runtime_pm.rst
-index 5c4e730f38d0..53d1996460ab 100644
---- a/Documentation/power/runtime_pm.rst
-+++ b/Documentation/power/runtime_pm.rst
-@@ -811,8 +811,8 @@ subsystem-level dev_pm_ops structure.
- 
- Device drivers that wish to use the same function as a system suspend, freeze,
- poweroff and runtime suspend callback, and similarly for system resume, thaw,
--restore, and runtime resume, can achieve this with the help of the
--UNIVERSAL_DEV_PM_OPS macro defined in include/linux/pm.h (possibly setting its
-+restore, and runtime resume, can achieve similar behaviour with the help of the
-+DEFINE_RUNTIME_DEV_PM_OPS() defined in include/linux/pm_runtime.h (possibly setting its
- last argument to NULL).
- 
- 8. "No-Callback" Devices
--- 
-2.43.0.rc1.1336.g36b5255a03ac
+Will do. That was the idea, I believe.
 
+	Krzysztof
 
