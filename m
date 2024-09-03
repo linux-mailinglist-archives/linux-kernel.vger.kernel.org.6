@@ -1,244 +1,136 @@
-Return-Path: <linux-kernel+bounces-313069-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313070-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BC62969FCF
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 16:05:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3AA53969FD2
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 16:05:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4286F282612
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 14:05:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EAF15281B0A
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 14:05:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 196F9383A5;
-	Tue,  3 Sep 2024 14:05:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21A9A3BB25;
+	Tue,  3 Sep 2024 14:05:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LwlKSK5E"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AerwbmcO"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50D661CA6A1;
-	Tue,  3 Sep 2024 14:05:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FB743FE55;
+	Tue,  3 Sep 2024 14:05:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725372307; cv=none; b=MnMZT5K0VhPE6d2VoWj0S5tGe0c1Mwtm8z7yeNcssDbD/Z3urGaJPB9OPUcQiL2xd9mJNwRomsJYOGaOuQjZKkCFVx5OX75urcFBzsFbXBYzDHF/5MapPel7Aj1mvrNMZnSUiRQ9FCFLygsyUzWGLfhKlpdAWR/l7l7t+i5dETA=
+	t=1725372314; cv=none; b=kPlFdQtDCupNe5g1g8vfIS3lN8t/eYqD1ypvXopzMMU7JrMlyd8rcmb15FqYBl7pzBfQdaYh8WJc3el9XKyfIn4894FtbdPvkMLCI/3Pq2tqpRjSP+UNUgRCu7CPfivB4oSQCDStBwEU+2JkMnZldjC/7Xhxh4yekkq/sDzvBRk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725372307; c=relaxed/simple;
-	bh=BsrCTrBNZtP6Tj322oSAskAaur02xSr1bxYZEPRvQNk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SNmEnCOvmEEhwCqgQA81cUeCjIw8MZuvkXL7h7lmK26HV05Xj0zvJ8mpwRrWilN7v/jpAIsV38hLDBk73g8IDdxA+3fd5oGJsKc5dLUifQ2uTKYmQBvxQG/MpFniCX/MbOASh/ToKcER6RhyhUoSYrn4cGu2iQ/ynPklGqf1LcQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LwlKSK5E; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EACE3C4CEC7;
-	Tue,  3 Sep 2024 14:05:06 +0000 (UTC)
+	s=arc-20240116; t=1725372314; c=relaxed/simple;
+	bh=EB4Qn8QfYNvDbrC1h25pHRe0otvOHZqa46a2972CPJs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=grWVNcOtCw/BKl4fwmYE592cNYFqaQF/ntM0oYnE5iouzBZurEO3nbrUlYevAjiFX+aI9GzOfzfrOs9wUuOp5d+f2HHrCOY0IFjKIqGrUsHFWa2F2Ipo/teLeW/y3bv0H63HzuOGgWSYQg+trwGUWXBFBeVIksQ4SCAk2LX4zb0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AerwbmcO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94BFEC4CEC4;
+	Tue,  3 Sep 2024 14:05:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725372307;
-	bh=BsrCTrBNZtP6Tj322oSAskAaur02xSr1bxYZEPRvQNk=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=LwlKSK5ErajemkQ1KlZk+PEO093DEXhm55Ais/KtaVEe+G3BtR/+jE1Cts9scrxeK
-	 58t+ZzcCZ80rDznylNm/yxpgjJbMGdwnOqOEq5bHZjjZ193LEMVdYrgnbhLxX3X0k1
-	 N/+3OCJX+i07bgkTSildivRE6d1SGCCVs9s+M/RBVj4Z0L5p1rlXFt5eH5C6WPu0K5
-	 xIMbR01ytLl3MRhvrFDJLXR35AF6MxOmL5YWCpVbzR0abzQLLdxZas5vTttmurMX3L
-	 fbKQm5zpbM/4LfxuOoWjH/FzFiCxR6y+RhUEvPfCnDHSWHoq38ozWJXz/P2O0JmZYY
-	 QiBiW7HNLBnpA==
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-5344ab30508so5819597e87.0;
-        Tue, 03 Sep 2024 07:05:06 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUZLthdZ8nI2ys1VR3UuvBMHTroTXhflhE9QhKIkuM9hhkTueWdObyNjfPh0mjfx88hK4MEKL7bHscuA0M=@vger.kernel.org, AJvYcCVvZVmqaL9kyGGsp1ycx/mwoeQ0+tJX0zVP6mW0JgkYBitDnE2LpI8RqwD7/Fk/oOqszjcvsXB2eKcHosdi6Q==@vger.kernel.org, AJvYcCWtjf6RiblLw6YP1AtTgVbvWBgqsuGe+/lFs9qXdl8KCuyS8or5hf/mZkoxs/4aiGBzMgUHlXvDVYwArO2e@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz11kV7T5vEEjCqFZ27l/jI3BNsFEp6899JUXRevmuG4q2PY9SO
-	yuGDB6OSEAglTKbwtMQ30SLnzlQF1UU72J6pwTRBg/GcTBaW7hLobV5dIBfG+8GfQb1CMA0fsKw
-	7e0cMbV8EilyqjBVQ3g41mXJhphM=
-X-Google-Smtp-Source: AGHT+IEl3stPqDMrvRRj2fwAJdMbwHVOrTU6HZ6qDm17MfN0Xhh+H8Y7LfJOTTRkVc+ORgP7+gCtUgz7kFNJW8gCUaM=
-X-Received: by 2002:a05:6512:234a:b0:534:53d7:c97f with SMTP id
- 2adb3069b0e04-5353ebdb303mr5808947e87.23.1725372305167; Tue, 03 Sep 2024
- 07:05:05 -0700 (PDT)
+	s=k20201202; t=1725372314;
+	bh=EB4Qn8QfYNvDbrC1h25pHRe0otvOHZqa46a2972CPJs=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=AerwbmcOGrydYlAzihg7843x/7HSBRksRCRLEwKSv8/F/N3gtr0caALyj8o54Md5+
+	 fjsgmNfCHUVOTcnK3JnwEcOl4Pd0e+7K3dTQfW43xkVTQEWMhMkHxF0dYxTr7yyss2
+	 g5bMmqRPY1SSOSRXa8KPQ3A+kST2WYstcOTCmsRKvGIs6ilFXZlFQ3zO+IFnHhcjbW
+	 RJbC/2XGKv8ZvdWexJEnCIDBhnddPtiA+rTlU68XGUh0IB+4AG1nm+15ncqfnPmifn
+	 VMZ0kbhYmAXxodW5JuSL622RDE9P8xt6vF95aI2N2CZ9o6c96Ip+KIckeKvRj2re3D
+	 bVRKj9Zd5WW4w==
+Message-ID: <2804a57d-fb92-4317-b4c4-e1811a915265@kernel.org>
+Date: Tue, 3 Sep 2024 16:05:10 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240901-modinfo-const-v2-1-ece53ca15075@weissschuh.net>
-In-Reply-To: <20240901-modinfo-const-v2-1-ece53ca15075@weissschuh.net>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Tue, 3 Sep 2024 23:04:28 +0900
-X-Gmail-Original-Message-ID: <CAK7LNATrtMzf4UG_kKL7c0E2=q8_Yh6j61-2F-f4VH0y9+vjug@mail.gmail.com>
-Message-ID: <CAK7LNATrtMzf4UG_kKL7c0E2=q8_Yh6j61-2F-f4VH0y9+vjug@mail.gmail.com>
-Subject: Re: [PATCH v2] modpost: compile constant module information only once
-To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Cc: Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, 
-	Luis Chamberlain <mcgrof@kernel.org>, linux-kernel@vger.kernel.org, 
-	linux-kbuild@vger.kernel.org, linux-modules@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 3/3] MAINTAINERS: Add an entry for Amlogic RTC driver
+To: xianwei.zhao@amlogic.com, Yiting Deng <yiting.deng@amlogic.com>,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-amlogic@lists.infradead.org, linux-rtc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240903-rtc-v2-0-05da5755b8d9@amlogic.com>
+ <20240903-rtc-v2-3-05da5755b8d9@amlogic.com>
+Content-Language: en-US
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240903-rtc-v2-3-05da5755b8d9@amlogic.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Sep 2, 2024 at 2:56=E2=80=AFAM Thomas Wei=C3=9Fschuh <linux@weisssc=
-huh.net> wrote:
->
-> Various information about modules is compiled into the info sections.
-> For that a dedicated .mod.c file is generated by modpost for each module
-> and then linked into the module.
-> However most of the information in the .mod.c is the same for all
-> modules, internal and external.
-> Split the shared information into a dedicated source file that is
-> compiled once and then linked into all modules.
->
-> This avoids frequent rebuilds for all .mod.c files when using
-> CONFIG_LOCALVERSION_AUTO because the local version ends up in .mod.c
-> through UTS_RELEASE and VERMAGIC_STRING.
-> The modules are still relinked in this case.
->
-> The code is also easier to maintain as it's now in a proper source file
-> instead of an inline string literal.
->
-> Signed-off-by: Thomas Wei=C3=9Fschuh <linux@weissschuh.net>
-
-
-Applied to linux-kbuild. Thanks!
-
-
+On 03/09/2024 09:00, Xianwei Zhao via B4 Relay wrote:
+> From: Yiting Deng <yiting.deng@amlogic.com>
+> 
+> Add Amlogic RTC entry to MAINTAINERS to clarify the maintainers
+> 
+> Signed-off-by: Yiting Deng <yiting.deng@amlogic.com>
+> Signed-off-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
 > ---
-> Changes in v2:
-> - Remove RFC status
-> - Incorporate Masahiro's proposals
->   - Rename modinfo.o to .module-common.o
->   - Build a dedicated .module-common.o for external modules
-> - Link to v1: https://lore.kernel.org/r/20240824-modinfo-const-v1-1-485f9=
-c64b868@weissschuh.net
-> ---
-> Masahiro, feel free to add some attribution for yourself when applying.
-> The new appraoch is pleasantly simpler.
-> ---
->  scripts/Makefile.modfinal |  7 +++++--
->  scripts/mod/modpost.c     | 23 -----------------------
->  scripts/module-common.c   | 25 +++++++++++++++++++++++++
->  3 files changed, 30 insertions(+), 25 deletions(-)
->
-> diff --git a/scripts/Makefile.modfinal b/scripts/Makefile.modfinal
-> index 306a6bb86e4d..6b1b72257b29 100644
-> --- a/scripts/Makefile.modfinal
-> +++ b/scripts/Makefile.modfinal
-> @@ -30,6 +30,9 @@ quiet_cmd_cc_o_c =3D CC [M]  $@
->  %.mod.o: %.mod.c FORCE
->         $(call if_changed_dep,cc_o_c)
->
-> +$(extmod_prefix).module-common.o: $(srctree)/scripts/module-common.c FOR=
-CE
-> +       $(call if_changed_dep,cc_o_c)
-> +
->  quiet_cmd_ld_ko_o =3D LD [M]  $@
->        cmd_ld_ko_o +=3D                                                  =
- \
->         $(LD) -r $(KBUILD_LDFLAGS)                                      \
-> @@ -54,13 +57,13 @@ if_changed_except =3D $(if $(call newer_prereqs_excep=
-t,$(2))$(cmd-check),      \
->         printf '%s\n' 'savedcmd_$@ :=3D $(make-cmd)' > $(dot-target).cmd,=
- @:)
->
->  # Re-generate module BTFs if either module's .ko or vmlinux changed
-> -%.ko: %.o %.mod.o scripts/module.lds $(and $(CONFIG_DEBUG_INFO_BTF_MODUL=
-ES),$(KBUILD_BUILTIN),vmlinux) FORCE
-> +%.ko: %.o %.mod.o $(extmod_prefix).module-common.o scripts/module.lds $(=
-and $(CONFIG_DEBUG_INFO_BTF_MODULES),$(KBUILD_BUILTIN),vmlinux) FORCE
->         +$(call if_changed_except,ld_ko_o,vmlinux)
->  ifdef CONFIG_DEBUG_INFO_BTF_MODULES
->         +$(if $(newer-prereqs),$(call cmd,btf_ko))
->  endif
->
-> -targets +=3D $(modules:%.o=3D%.ko) $(modules:%.o=3D%.mod.o)
-> +targets +=3D $(modules:%.o=3D%.ko) $(modules:%.o=3D%.mod.o) $(extmod_pre=
-fix).module-common.o
->
->  # Add FORCE to the prerequisites of a target to force it to be always re=
-built.
->  # ----------------------------------------------------------------------=
------
-> diff --git a/scripts/mod/modpost.c b/scripts/mod/modpost.c
-> index c8cd5d822bb6..107393a8c48a 100644
-> --- a/scripts/mod/modpost.c
-> +++ b/scripts/mod/modpost.c
-> @@ -1755,26 +1755,9 @@ static void check_modname_len(struct module *mod)
->  static void add_header(struct buffer *b, struct module *mod)
->  {
->         buf_printf(b, "#include <linux/module.h>\n");
-> -       /*
-> -        * Include build-salt.h after module.h in order to
-> -        * inherit the definitions.
-> -        */
-> -       buf_printf(b, "#define INCLUDE_VERMAGIC\n");
-> -       buf_printf(b, "#include <linux/build-salt.h>\n");
-> -       buf_printf(b, "#include <linux/elfnote-lto.h>\n");
->         buf_printf(b, "#include <linux/export-internal.h>\n");
-> -       buf_printf(b, "#include <linux/vermagic.h>\n");
->         buf_printf(b, "#include <linux/compiler.h>\n");
->         buf_printf(b, "\n");
-> -       buf_printf(b, "#ifdef CONFIG_UNWINDER_ORC\n");
-> -       buf_printf(b, "#include <asm/orc_header.h>\n");
-> -       buf_printf(b, "ORC_HEADER;\n");
-> -       buf_printf(b, "#endif\n");
-> -       buf_printf(b, "\n");
-> -       buf_printf(b, "BUILD_SALT;\n");
-> -       buf_printf(b, "BUILD_LTO_INFO;\n");
-> -       buf_printf(b, "\n");
-> -       buf_printf(b, "MODULE_INFO(vermagic, VERMAGIC_STRING);\n");
->         buf_printf(b, "MODULE_INFO(name, KBUILD_MODNAME);\n");
->         buf_printf(b, "\n");
->         buf_printf(b, "__visible struct module __this_module\n");
-> @@ -1792,12 +1775,6 @@ static void add_header(struct buffer *b, struct mo=
-dule *mod)
->         if (!external_module)
->                 buf_printf(b, "\nMODULE_INFO(intree, \"Y\");\n");
->
-> -       buf_printf(b,
-> -                  "\n"
-> -                  "#ifdef CONFIG_MITIGATION_RETPOLINE\n"
-> -                  "MODULE_INFO(retpoline, \"Y\");\n"
-> -                  "#endif\n");
-> -
->         if (strstarts(mod->name, "drivers/staging"))
->                 buf_printf(b, "\nMODULE_INFO(staging, \"Y\");\n");
->
-> diff --git a/scripts/module-common.c b/scripts/module-common.c
-> new file mode 100644
-> index 000000000000..12fbc6d3aae8
-> --- /dev/null
-> +++ b/scripts/module-common.c
-> @@ -0,0 +1,25 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +
-> +#include <linux/module.h>
-> +/*
-> + * Include build-salt.h after module.h in order to
-> + * inherit the definitions.
-> + */
-> +#define INCLUDE_VERMAGIC
-> +#include <linux/build-salt.h>
-> +#include <linux/elfnote-lto.h>
-> +#include <linux/vermagic.h>
-> +
-> +#ifdef CONFIG_UNWINDER_ORC
-> +#include <asm/orc_header.h>
-> +ORC_HEADER;
-> +#endif
-> +
-> +BUILD_SALT;
-> +BUILD_LTO_INFO;
-> +
-> +MODULE_INFO(vermagic, VERMAGIC_STRING);
-> +
-> +#ifdef CONFIG_MITIGATION_RETPOLINE
-> +MODULE_INFO(retpoline, "Y");
-> +#endif
->
-> ---
-> base-commit: 9f18baf3dd656e7ca166038d51e0b54a892d87db
-> change-id: 20240824-modinfo-const-6f0d67e2b301
->
-> Best regards,
-> --
-> Thomas Wei=C3=9Fschuh <linux@weissschuh.net>
->
+>  MAINTAINERS | 8 ++++++++
+>  1 file changed, 8 insertions(+)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 42decde38320..cdcd23456567 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -2481,6 +2481,14 @@ F:	drivers/irqchip/irq-mvebu-*
+>  F:	drivers/pinctrl/mvebu/
+>  F:	drivers/rtc/rtc-armada38x.c
+>  
+> +AMLOGIC RTC DRIVER
 
+Nope. Read the note in the file about order.
 
---=20
-Best Regards
-Masahiro Yamada
+Best regards,
+Krzysztof
+
 
