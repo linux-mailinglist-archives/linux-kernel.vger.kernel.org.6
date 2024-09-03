@@ -1,205 +1,108 @@
-Return-Path: <linux-kernel+bounces-312829-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312830-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35E9C969C2E
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 13:40:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EE70969C31
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 13:41:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5C35B1C23509
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 11:40:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 466FF1F24BA4
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 11:41:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 811FB1B982E;
-	Tue,  3 Sep 2024 11:40:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5B2C1B9837;
+	Tue,  3 Sep 2024 11:41:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kBvTXwjN"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="noyAzaRN"
+Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3695F19F422;
-	Tue,  3 Sep 2024 11:40:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8556D1AD267
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 11:41:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725363644; cv=none; b=t8053X7s0e/FKPqJY9WW8AcKuWZSwUVJe8lmYBH6cgPiPw/LNjUup6kKBFnjbWaMqZMZyZ7f+mtoU4zyA1u+05YtUAUK+4XHU7ArEk+DTLhhFV3c95X6umMR9GAHWp2112Oc31roGXt/AKwpWtIhvFBPPIGrn9GR+WjI6KWtl64=
+	t=1725363672; cv=none; b=SlnjgfHh5zwO4sPfHqgvKYNoIb7tT2PGEF7vGFyfrTWVzhG+BjTgg7+56m2Y8O8PPI3VCOCWsMtmefvNGqEqSeW/2PQ8pG9qd7CCiApd5/fGmzYpPqZzRTJ1MkP/mwM8Wfy7QKpeaBcKvnEZafibLg8YaSFY11aNkV0fd3OkGBY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725363644; c=relaxed/simple;
-	bh=TiMloUZtEOzhiMiKfurPxe7QoHWBPp0gKnxyea5FPRA=;
+	s=arc-20240116; t=1725363672; c=relaxed/simple;
+	bh=ZHWe71gDWxdrYe7NkRPXLT2MzR6OBiqbvi4uRaZipAQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DocEikGirmRrCH7ttziOoiC33wX4N9tqyQG9j/GvxdDt2w57NnTMwF8RAgUNuyegE58uDZtnbMcnT7cg/75oFvS8Tdjfvar9V87S1KCXPzVEDU9nAwu87DgKmn52P0hLJ42xNImev4Wc2v1grNr2dGgVCBw4KdS+BQm/R2nWFRI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kBvTXwjN; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725363644; x=1756899644;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=TiMloUZtEOzhiMiKfurPxe7QoHWBPp0gKnxyea5FPRA=;
-  b=kBvTXwjNKEc8gdmeRBUUa02xzMg+MdVsc2VLL4GYVJZ393Lfagdiftnt
-   Co6ZEC9VJElga5Ogs3etZBMuxs8b/Db3ReZsvAwtGTtrIzaDpd413o6Yh
-   KxuecPH1aLLdxGBQcECOU45fZdPhb51S/kpXULNr8ZKPW+aBpm9DXNDor
-   Jo6dUnijAiv/NKODOM7W9/cNWydFo3XOhRCkGXo2HFeMlktP3GiSnmTI+
-   Jmn5d2+RN5matrVQsKfRnKJ6E1diIMbrCcPAamKlqxKC8HeqjBuwpUKLE
-   Y0BNWZdVhRAIY9z5tC/DaDCpcYtBJUFVm+I1GzmLcB6x6c5yz7LHMImKQ
-   g==;
-X-CSE-ConnectionGUID: jf2M9tg7T+SOEyt4UyMLew==
-X-CSE-MsgGUID: yiq6FPocS/KmY+E/J1ccnQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11183"; a="27711949"
-X-IronPort-AV: E=Sophos;i="6.10,198,1719903600"; 
-   d="scan'208";a="27711949"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2024 04:40:43 -0700
-X-CSE-ConnectionGUID: HQD9FPlFRrCFVhb6qQT2Lg==
-X-CSE-MsgGUID: 02SRmlM4S3SyHIy3i8zzKQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,198,1719903600"; 
-   d="scan'208";a="65389034"
-Received: from kuha.fi.intel.com ([10.237.72.185])
-  by orviesa007.jf.intel.com with SMTP; 03 Sep 2024 04:40:33 -0700
-Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Tue, 03 Sep 2024 14:40:32 +0300
-Date: Tue, 3 Sep 2024 14:40:32 +0300
-From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-To: Stephen Boyd <swboyd@chromium.org>
-Cc: chrome-platform@lists.linux.dev, linux-kernel@vger.kernel.org,
-	patches@lists.linux.dev, devicetree@vger.kernel.org,
-	Douglas Anderson <dianders@chromium.org>,
-	Pin-yen Lin <treapking@chromium.org>,
-	Andrzej Hajda <andrzej.hajda@intel.com>,
-	Benson Leung <bleung@chromium.org>,
-	Conor Dooley <conor+dt@kernel.org>, Daniel Vetter <daniel@ffwll.ch>,
-	David Airlie <airlied@gmail.com>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	dri-devel@lists.freedesktop.org,
-	Guenter Roeck <groeck@chromium.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	Lee Jones <lee@kernel.org>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Prashant Malani <pmalani@chromium.org>,
-	Robert Foss <rfoss@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Tzung-Bi Shih <tzungbi@kernel.org>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Daniel Scally <djrscally@gmail.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Ivan Orlov <ivan.orlov0322@gmail.com>, linux-acpi@vger.kernel.org,
-	linux-usb@vger.kernel.org,
-	Mika Westerberg <mika.westerberg@linux.intel.com>,
-	"Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Vinod Koul <vkoul@kernel.org>
-Subject: Re: [PATCH v4 03/18] usb: typec: Stub out typec_switch APIs when
- CONFIG_TYPEC=n
-Message-ID: <Ztb1sI2W7t5k2yT7@kuha.fi.intel.com>
-References: <20240901040658.157425-1-swboyd@chromium.org>
- <20240901040658.157425-4-swboyd@chromium.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=NDvrh+j39xSo9HKsCyGSexvwBuw2P+c+b6Jq6ohAnmQfYXTSjRxMM6jTYhkoy54m4I0K8+pd0Y/E1wJ2EsgGKIIVnB6dkkVcf/aM3eSo5Z2DFK/YeY/LRPQWGtRwV7cUlAgQ/u3WUHTdx+embxb0Jaaxt2qVwBA5aMPnOgTnF0s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=noyAzaRN; arc=none smtp.client-ip=18.9.28.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
+Received: from cwcc.thunk.org (pool-173-48-102-194.bstnma.fios.verizon.net [173.48.102.194])
+	(authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 483BeYf6027219
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 3 Sep 2024 07:40:35 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
+	t=1725363638; bh=9uDcnDmRUAt/LFQyJrObeVyUY2/vhUilyf6vG2h3AhA=;
+	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
+	b=noyAzaRNdP+rfmt/qLz8IZCdb6ZHDvAYbbnbnkyvzgUoLtYVV6jM5aSrsOnDmndVW
+	 MwRj8APicIvs1lE+vu8kCOHWXd1ivqm31ojIrgHL3XzmLZvrAK3N8ZNplHERKHcxT/
+	 LQlTJ2mgNQVw7LQaajBctkw0v+xjMiL/c7nw1GkQ3gvaI1Vu3F0vx6xz5y8OCI3u4/
+	 l1ZeaZ3fVHXmRsBUrOCyaaaNaG2K7UHZr2aZF5+/r4zES3WbbqO8EffwAz6BfG3IAk
+	 uN7LCtOVq30LhxkNREorgSJkud+DLeUkDUT79BX0X2ddZwrtLy7Mg/efxsl89WkEUl
+	 r0n8NNJgbdH3g==
+Received: by cwcc.thunk.org (Postfix, from userid 15806)
+	id B316C15C02C4; Tue, 03 Sep 2024 07:40:34 -0400 (EDT)
+Date: Tue, 3 Sep 2024 07:40:34 -0400
+From: "Theodore Ts'o" <tytso@mit.edu>
+To: =?iso-8859-1?Q?Andr=E9?= Almeida <andrealmeid@igalia.com>
+Cc: Hugh Dickins <hughd@google.com>, Andrew Morton <akpm@linux-foundation.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+        krisman@kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, kernel-dev@igalia.com,
+        Daniel Rosenberg <drosen@google.com>, smcv@collabora.com,
+        Christoph Hellwig <hch@lst.de>
+Subject: Re: [PATCH v2 1/8] unicode: Fix utf8_load() error path
+Message-ID: <20240903114034.GC1002375@mit.edu>
+References: <20240902225511.757831-1-andrealmeid@igalia.com>
+ <20240902225511.757831-2-andrealmeid@igalia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20240901040658.157425-4-swboyd@chromium.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240902225511.757831-2-andrealmeid@igalia.com>
 
-On Sat, Aug 31, 2024 at 09:06:41PM -0700, Stephen Boyd wrote:
-> Ease driver development by adding stubs for the typec_switch APIs when
-> CONFIG_TYPEC=n. Copy the same method used for the typec_mux APIs to be
-> consistent.
+On Mon, Sep 02, 2024 at 07:55:03PM -0300, André Almeida wrote:
+> utf8_load() requests the symbol "utf8_data_table" and then checks if the
+> requested UTF-8 version is supported. If it's unsupported, it tries to
+> put the data table using symbol_put(). If an unsupported version is
+> requested, symbol_put() fails like this:
 > 
-> Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Cc: <linux-usb@vger.kernel.org>
-> Cc: Pin-yen Lin <treapking@chromium.org>
-> Signed-off-by: Stephen Boyd <swboyd@chromium.org>
-
-Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-
-> ---
->  include/linux/usb/typec_mux.h | 43 +++++++++++++++++++++++++++++++----
->  1 file changed, 38 insertions(+), 5 deletions(-)
+>  kernel BUG at kernel/module/main.c:786!
+>  RIP: 0010:__symbol_put+0x93/0xb0
+>  Call Trace:
+>   <TASK>
+>   ? __die_body.cold+0x19/0x27
+>   ? die+0x2e/0x50
+>   ? do_trap+0xca/0x110
+>   ? do_error_trap+0x65/0x80
+>   ? __symbol_put+0x93/0xb0
+>   ? exc_invalid_op+0x51/0x70
+>   ? __symbol_put+0x93/0xb0
+>   ? asm_exc_invalid_op+0x1a/0x20
+>   ? __pfx_cmp_name+0x10/0x10
+>   ? __symbol_put+0x93/0xb0
+>   ? __symbol_put+0x62/0xb0
+>   utf8_load+0xf8/0x150
 > 
-> diff --git a/include/linux/usb/typec_mux.h b/include/linux/usb/typec_mux.h
-> index 2489a7857d8e..efb5ed32b813 100644
-> --- a/include/linux/usb/typec_mux.h
-> +++ b/include/linux/usb/typec_mux.h
-> @@ -3,6 +3,7 @@
->  #ifndef __USB_TYPEC_MUX
->  #define __USB_TYPEC_MUX
->  
-> +#include <linux/err.h>
->  #include <linux/property.h>
->  #include <linux/usb/typec.h>
->  
-> @@ -24,16 +25,13 @@ struct typec_switch_desc {
->  	void *drvdata;
->  };
->  
-> +#if IS_ENABLED(CONFIG_TYPEC)
-> +
->  struct typec_switch *fwnode_typec_switch_get(struct fwnode_handle *fwnode);
->  void typec_switch_put(struct typec_switch *sw);
->  int typec_switch_set(struct typec_switch *sw,
->  		     enum typec_orientation orientation);
->  
-> -static inline struct typec_switch *typec_switch_get(struct device *dev)
-> -{
-> -	return fwnode_typec_switch_get(dev_fwnode(dev));
-> -}
-> -
->  struct typec_switch_dev *
->  typec_switch_register(struct device *parent,
->  		      const struct typec_switch_desc *desc);
-> @@ -42,6 +40,41 @@ void typec_switch_unregister(struct typec_switch_dev *sw);
->  void typec_switch_set_drvdata(struct typec_switch_dev *sw, void *data);
->  void *typec_switch_get_drvdata(struct typec_switch_dev *sw);
->  
-> +#else
-> +
-> +static inline struct typec_switch *
-> +fwnode_typec_switch_get(struct fwnode_handle *fwnode)
-> +{
-> +	return NULL;
-> +}
-> +static inline void typec_switch_put(struct typec_switch *sw) {}
-> +static inline int typec_switch_set(struct typec_switch *sw,
-> +		     enum typec_orientation orientation)
-> +{
-> +	return 0;
-> +}
-> +
-> +static inline struct typec_switch_dev *
-> +typec_switch_register(struct device *parent,
-> +		      const struct typec_switch_desc *desc)
-> +{
-> +	return ERR_PTR(-EOPNOTSUPP);
-> +}
-> +static inline void typec_switch_unregister(struct typec_switch_dev *sw) {}
-> +
-> +static inline void typec_switch_set_drvdata(struct typec_switch_dev *sw, void *data) {}
-> +static inline void *typec_switch_get_drvdata(struct typec_switch_dev *sw)
-> +{
-> +	return ERR_PTR(-EOPNOTSUPP);
-> +}
-> +
-> +#endif /* CONFIG_TYPEC */
-> +
-> +static inline struct typec_switch *typec_switch_get(struct device *dev)
-> +{
-> +	return fwnode_typec_switch_get(dev_fwnode(dev));
-> +}
-> +
->  struct typec_mux_state {
->  	struct typec_altmode *alt;
->  	unsigned long mode;
+> That happens because symbol_put() expects the unique string that
+> identify the symbol, instead of a pointer to the loaded symbol. Fix that
+> by using such string.
+> 
+> Fixes: 2b3d04787012 ("unicode: Add utf8-data module")
+> Signed-off-by: André Almeida <andrealmeid@igalia.com>
 
--- 
-heikki
+Nice catch!
+
+Reviewed-by: Theodore Ts'o <tytso@mit.edu>
 
