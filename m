@@ -1,130 +1,126 @@
-Return-Path: <linux-kernel+bounces-313890-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313889-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3F9196ABE6
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 00:14:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5504996ABDF
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 00:14:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 597A0B256A2
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 22:14:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F3F891F217E3
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 22:14:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80BE81D7991;
-	Tue,  3 Sep 2024 22:10:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A22551D58BD;
+	Tue,  3 Sep 2024 22:10:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="w+y9IjSJ"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OGEBxxsx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A4A91D5CD5;
-	Tue,  3 Sep 2024 22:10:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0308E18FDBA;
+	Tue,  3 Sep 2024 22:10:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725401451; cv=none; b=bUCdhdNHHN6VvmGwG7JZYqpRuVgAtc3VvsVlRedxoCZyOcrn077RgTy10Dl+DEvj28uXsZvMsdJgIDo1n8tKqMxak/JK7F/g60n/A64bOufoF4HZlr7a4qx5Ew1NnzuxMMyAwoIkOcIk/2+hFPLTlLVIA6if5cQZZIMVmDtm7Uo=
+	t=1725401449; cv=none; b=WmaiNxjhVy4ufB+jYq6AFyDo2JTwKixYWUDSGfaWQ+lSwdQ5q7ENraVvxcFipRJWGHCcqm/Dbatwjz2UvEEgULf47A3nqQxcio32Z6Td5jojeKVcx1xQCPbKVVNP72uLuHSfuawfxoHZDLAfiRZ/gh4X5aeeQVkfg4Pvm4Ykcv0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725401451; c=relaxed/simple;
-	bh=lUVot6sx53PMH7AVdyfYZF5smN2L99/Ta+PwbWV98qU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=pE+qPrdGJ7ZhqQYOA57jJTNlCn6EKosJToxtSa7cmFmZngZzhU6fkW8gXz2X6E1LA+8AvqF+7ecGEwxaoy3w8F4ACUkjBK8+It4f6w5qa+dc0EpHRLRXGynGD5qJ3s0Xrk2l+pK7+87RYpqoiPHqnosAareYwqjJ9pfFFAgRHDI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=w+y9IjSJ; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Transfer-Encoding:Content-Type:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=PmAan6NPVAhVozSYoq921sKeDS6etdaKRx0WGKUNzPg=; b=w+y9IjSJDl3NsTLiQuOYJKEffo
-	RLLqIhTKjPF80cWIwGyfcjQX1yDaAPqgMUrXE5fzV7afKReFLBeWf7XhpEyshPQPH6XqWqbpcHLGo
-	iynY4oFTmd2qzmsovTZ1CnbYmB0GR8Y8l5QrU70dkuyhYQy2iLlKm9VIKPnXVpPmDood1YGkp8lz3
-	JZh6j0lfWw5LZhQy/8BqQLLKUNovMNsyQPzvSwVI93Kse7gj8yKeMTpAHPfmbY5KXjWGSMxqNZK0P
-	WEq2rtZTZTgydAJ2HE/vYW4BE02Ynl2aNUkopQSyYydfcfHHdvU1xF0F5UaJ4a9BNaoOsSqR0JQ2Z
-	zx+2+0dg==;
-Received: from i5e860d0f.versanet.de ([94.134.13.15] helo=phil.lan)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1slbjR-0003Ah-7l; Wed, 04 Sep 2024 00:10:37 +0200
-From: Heiko Stuebner <heiko@sntech.de>
-To: Detlev Casanova <detlev.casanova@collabora.com>,
-	linux-kernel@vger.kernel.org
-Cc: Heiko Stuebner <heiko@sntech.de>,
-	Yifeng Zhao <yifeng.zhao@rock-chips.com>,
-	Rob Herring <robh@kernel.org>,
-	linux-i2c@vger.kernel.org,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	kernel@collabora.com,
-	Jamie Iles <jamie@jamieiles.com>,
-	Chris Morgan <macromorgan@hotmail.com>,
-	Michael Riesch <michael.riesch@wolfvision.net>,
-	Finley Xiao <finley.xiao@rock-chips.com>,
-	Jagan Teki <jagan@edgeble.ai>,
-	Liang Chen <cl@rock-chips.com>,
-	linux-spi@vger.kernel.org,
-	Andy Yan <andyshrk@163.com>,
-	linux-watchdog@vger.kernel.org,
-	Wim Van Sebroeck <wim@linux-watchdog.org>,
-	devicetree@vger.kernel.org,
-	Maxime Ripard <mripard@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	linux-rockchip@lists.infradead.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Elaine Zhang <zhangqing@rock-chips.com>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Dragan Simic <dsimic@manjaro.org>,
-	David Airlie <airlied@gmail.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	linux-serial@vger.kernel.org,
-	Muhammed Efe Cetin <efectn@protonmail.com>,
-	Tim Lunn <tim@feathertop.org>,
-	Ondrej Jirman <megi@xff.cz>,
-	Jimmy Hon <honyuenkwun@gmail.com>,
-	linux-arm-kernel@lists.infradead.org,
-	dri-devel@lists.freedesktop.org,
-	Andi Shyti <andi.shyti@kernel.org>,
-	Elon Zhang <zhangzj@rock-chips.com>,
-	Alexey Charkov <alchark@gmail.com>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Mark Brown <broonie@kernel.org>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-Subject: Re: (subset) [PATCH v4 0/9] Add device tree for ArmSoM Sige 5 board
-Date: Wed,  4 Sep 2024 00:10:33 +0200
-Message-ID: <172540141128.2569462.10719274439402034002.b4-ty@sntech.de>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240903152308.13565-1-detlev.casanova@collabora.com>
-References: <20240903152308.13565-1-detlev.casanova@collabora.com>
+	s=arc-20240116; t=1725401449; c=relaxed/simple;
+	bh=YToOnPwe4/lMBc4WWQWOR4PxqLZrjW8XUk2WGpI41eE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pda8cJsRwEbzaoeB0qrD38Y7N9+vfAhq3Ue3Cf0Xu3u5COWje+ieTL9997HsoBTuYr6WbuAkqpScRXn+yF2eH2Zx1hv9QbkKKXxf9fjQnmKE3Emyh7X2KxPEFm8P8wCFu1SgCvboelKgjKDtQtzOjMBunsUhmN/hP6+NRq7qu2U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OGEBxxsx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68E05C4CEC4;
+	Tue,  3 Sep 2024 22:10:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725401448;
+	bh=YToOnPwe4/lMBc4WWQWOR4PxqLZrjW8XUk2WGpI41eE=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=OGEBxxsxxFiomc9WIP8k3FtI28wTvOWbmS16bjsqc2KKzk89r6CSpn1kNpoFsunGf
+	 Uaj3DFB5j8PDhi9VUYv4Wlpv2Gf5q1ZHZbK250WQQ9NXicwfbbmp+4oG1cd2H/9cys
+	 CKDYuO2dre3iJbAm8sIUaRMiD9ZNaQvPtsowlNv7X0kgBb3sVX5DQXtMQyo/44pIlH
+	 IoVfA3VpJuSusTl5Y6hv++u2uCd6f/+g8CkVBbbkktlR9pJQIGR0Wh9+OLOArL/t7n
+	 +Cdx7HtuL3vUNt07VE9zKIl4nClf+fdGRVnCiV/F7pTcTC+MRlom0FHgYqqdT+acKb
+	 z+JvDPlDE5NMw==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 05E4DCE1257; Tue,  3 Sep 2024 15:10:48 -0700 (PDT)
+Date: Tue, 3 Sep 2024 15:10:47 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc: rcu@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+	Kernel Team <kernel-team@meta.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Kent Overstreet <kent.overstreet@linux.dev>,
+	bpf <bpf@vger.kernel.org>
+Subject: Re: [PATCH rcu 07/11] srcu: Add srcu_read_lock_lite() and
+ srcu_read_unlock_lite()
+Message-ID: <2e8c01a3-4ad7-4c4b-a697-acebdf7db8ad@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <26cddadd-a79b-47b1-923e-9684cd8a7ef4@paulmck-laptop>
+ <20240903163318.480678-7-paulmck@kernel.org>
+ <CAADnVQJCRksMjpKzpNFNXR4ZggnuLN4yTmBbFCr5YW33bbwSwQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAADnVQJCRksMjpKzpNFNXR4ZggnuLN4yTmBbFCr5YW33bbwSwQ@mail.gmail.com>
 
-On Tue, 3 Sep 2024 11:22:30 -0400, Detlev Casanova wrote:
-> Add the rk3576-armsom-sige5 device tree as well as its rk3576.dtsi base
-> and pinctrl information in rk3576-pinctrl.dtsi.
+On Tue, Sep 03, 2024 at 12:45:23PM -0700, Alexei Starovoitov wrote:
+> On Tue, Sep 3, 2024 at 9:33 AM Paul E. McKenney <paulmck@kernel.org> wrote:
+> >
+> > diff --git a/include/linux/srcu.h b/include/linux/srcu.h
+> > index 84daaa33ea0ab..4ba96e2cfa405 100644
+> > --- a/include/linux/srcu.h
+> > +++ b/include/linux/srcu.h
+> ...
 > 
-> The other commits add DT bindings documentation for the devices that
-> already work with the current corresponding drivers.
+> > +static inline int srcu_read_lock_lite(struct srcu_struct *ssp) __acquires(ssp)
+> > +{
+> > +       int retval;
+> > +
+> > +       srcu_check_read_flavor(ssp, SRCU_READ_FLAVOR_LITE);
+> > +       retval = __srcu_read_lock_lite(ssp);
+> > +       rcu_try_lock_acquire(&ssp->dep_map);
+> > +       return retval;
+> > +}
 > 
-> Note that as is, the rockchip gpio driver needs the gpio nodes
-> to be children of the pinctrl node, even though this is deprecated.
+> ...
 > 
-> [...]
+> > diff --git a/kernel/rcu/srcutree.c b/kernel/rcu/srcutree.c
+> > index 602b4b8c4b891..bab888e86b9bb 100644
+> > --- a/kernel/rcu/srcutree.c
+> > +++ b/kernel/rcu/srcutree.c
+> > +int __srcu_read_lock_lite(struct srcu_struct *ssp)
+> > +{
+> > +       int idx;
+> > +
+> > +       RCU_LOCKDEP_WARN(!rcu_is_watching(), "RCU must be watching srcu_read_lock_lite().");
+> > +       idx = READ_ONCE(ssp->srcu_idx) & 0x1;
+> > +       this_cpu_inc(ssp->sda->srcu_lock_count[idx].counter); /* Y */
+> > +       barrier(); /* Avoid leaking the critical section. */
+> > +       return idx;
+> > +}
+> > +EXPORT_SYMBOL_GPL(__srcu_read_lock_lite);
+> 
+> The use cases where smp_mb() penalty is noticeable probably will notice
+> the cost of extra call too.
+> Can the main part be in srcu.h as well to make it truly "lite" ?
+> Otherwise we'd have to rely on compilers doing LTO which may or may not happen.
 
-Applied, thanks!
+I vaguely recall #include issues for old-times srcu_read_lock() and
+srcu_read_unlock(), but I will try it and see what happens.
 
-[5/9] dt-bindings: gpu: Add rockchip,rk3576-mali compatible
-      commit: 053d157840870fc56aad8c4d3122690a65b2d462
-      drm-misc-next
+In the meantime, if you are too curious for your own good...  ;-)
 
-Best regards,
--- 
-Heiko Stuebner <heiko@sntech.de>
+One way to check the performance is to work in the other direction.  For
+example, add ndelay(10) or similar to the current srcu_read_lock_lite()
+implementation and seeing if this is visible at the system level.
+
+							Thanx, Paul
 
