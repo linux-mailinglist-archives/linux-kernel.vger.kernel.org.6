@@ -1,136 +1,140 @@
-Return-Path: <linux-kernel+bounces-313104-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313105-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3BB396A057
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 16:25:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7ACD596A058
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 16:25:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9793A1F25863
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 14:25:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 37B3028285D
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 14:25:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FEB37581B;
-	Tue,  3 Sep 2024 14:24:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED66913D530;
+	Tue,  3 Sep 2024 14:25:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hCKo6DGB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="VzrGD4Ae";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="bMKb5UXR"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CED8538DC8;
-	Tue,  3 Sep 2024 14:24:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03B3F78C60
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 14:24:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725373498; cv=none; b=iI6QGtAfQJ/ryBz/PEqMYEtporzEV/TTRFU650nOKRq18vHgsVrn+FnujKxhBUIFILo+qIU1vVAPCaLouidTSLyr6l34iSRl3eN3vRWSjmExO69Uu2qdWbZLKdoFHRxKEBspOgqo48pjMfGgcecucXayo6o+iHF5BL+6NERgxxk=
+	t=1725373501; cv=none; b=SG/s2KWpbr4I/A88l7dXkbWLBkGD9H7nwor0NkKBnQQ40CKRvY3x4kbGaesrsEhaNahTM30plNgMou8bDG+PKPX9tOJ57QKb6xsuIOuy45nOp8xIdSaTr3McRFwrg3p64MMu8zxiiXl2wx3pch+kswVVyTFhrV0lowQdkQ+rk+A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725373498; c=relaxed/simple;
-	bh=lxtQMSDCNV97wtJ76fkig2XFoSSsFkh8jb0VAzcF+JQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=toDF3+JTLKUITftM6cARZBLYwO6OJL8YcG9P04pNgLkcuXN1vJU5Ij21HdUqbuVBYYByk9KWYA70SbUScQC1aBbFdxMy6CC0Rm41bkodxmwo/ySfr9LOE7auRpM4DZTfZINNPsv5CwofeOS+mpaqmEJyrCSzeTyqMrv54AYmdpc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hCKo6DGB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92F25C4CEC7;
-	Tue,  3 Sep 2024 14:24:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725373498;
-	bh=lxtQMSDCNV97wtJ76fkig2XFoSSsFkh8jb0VAzcF+JQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hCKo6DGBjbRIg275y5P7WN9pXlCv2hdo4L0xHv9auv7rAOMY2LqrgVxbgScv6VAL6
-	 B+bT2Uq97cGtvHMhaCm9WCO44eYIJWACxrYJk8iwqCO+rrBkAbnzyPQxsaQs4aCeSP
-	 THDbO5edcmQoqF4eAVStxPeegjWbUSb10AHUW/8G7+NeHOmEKwwhGjm4PrpKYcdsBB
-	 rrjU0+Oif/OF7eIyXIDInaQceKqQyWjI2zYeja7o4xl0nw773zfaZP2NYeDeX8NxOu
-	 Zd/2GnAV4X7hJhlIOvsDgrKZ+KBf574j/duFK2tbSuEB/oEqwti+J2PpaTA+sOAAUH
-	 WQXB4kz01mYYA==
-Date: Tue, 3 Sep 2024 11:24:54 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	Athira Rajeev <atrajeev@linux.vnet.ibm.com>,
-	Dominique Martinet <asmadeus@codewreck.org>,
-	Yang Jihong <yangjihong@bytedance.com>,
-	Colin Ian King <colin.i.king@gmail.com>,
-	Chaitanya S Prakash <chaitanyas.prakash@arm.com>,
-	"Masami Hiramatsu (Google)" <mhiramat@kernel.org>,
-	James Clark <james.clark@linaro.org>,
-	John Garry <john.g.garry@oracle.com>,
-	Junhao He <hejunhao3@huawei.com>,
-	David Ahern <dsa@cumulusnetworks.com>,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 5/6] perf parse-events: Vary default_breakpoint_len on
- i386 and arm64
-Message-ID: <ZtccNpePJAM24nA7@x1>
-References: <20240831070415.506194-1-irogers@google.com>
- <20240831070415.506194-6-irogers@google.com>
+	s=arc-20240116; t=1725373501; c=relaxed/simple;
+	bh=Ux5Du97AxSg5cCnUVFRG69fPFca+6Lsy6eT4h2FYd/A=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=ALLMzQmgSVTPws+A/QsMBLJmC4qL+ZxRspXFORBeS+4/bmjYedXCH4FuJ69Nx6gKzOK2qouk6GQxjvxeh951YH7Izso4EYPBrOv2q+gIJji4I+aZX7w/Jnl8t3qJL8GfKpOHKrZyp2/CDTijWi/wGvjjgYZ0l9Z1mISR1UkHkFI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=VzrGD4Ae; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=bMKb5UXR; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: John Ogness <john.ogness@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1725373498;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=0zL9Ag0sgGMvI3K+P301EW3cTcgRJ7pGmcu/kNGaq94=;
+	b=VzrGD4Ae8n8Q33TN45PbV6zIlg2xP4+rfXnv0F9vuH9i2P6KPv2vQaqDzkyvahJhdcfEla
+	+RUr1yfNxdA18nN7SNe0OOXPvtMcgvzQlkMwLy3URkGpQ6q3gykh5bUQWtFQ74wCHbHFhX
+	p3kkj5LEQKEkLOm7QgrSSsz+iruCId621+wJIjm1hB1bIMnmgMdkfv6lwPLRwbV2tIDmDC
+	gOuaxrez/rqx2KqtKM6Bsn0QdlCf3FPE7uFH/5GTT9AW7zxOGEUjjkmNrzZilt48PyPg2C
+	YQmZG75ZHEaiKGY7oZB2DkNC9wzenVcXXEDWMuqHVL5PGzDck0lYQnKmy0dp7A==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1725373498;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=0zL9Ag0sgGMvI3K+P301EW3cTcgRJ7pGmcu/kNGaq94=;
+	b=bMKb5UXRr58j/O5vNod21m0rlAsQd/JK+67tZUrcfWme2Y47UmvCq88gSTXwTRJ7nkOUQw
+	wQAu8k3WBwpPpYDQ==
+To: Petr Mladek <pmladek@suse.com>
+Cc: Sergey Senozhatsky <senozhatsky@chromium.org>, Steven Rostedt
+ <rostedt@goodmis.org>, Thomas Gleixner <tglx@linutronix.de>,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH printk v5 15/17] printk: Implement legacy printer
+ kthread for PREEMPT_RT
+In-Reply-To: <ZtcRZpLjCjWeC4nG@pathway.suse.cz>
+References: <20240830152916.10136-1-john.ogness@linutronix.de>
+ <20240830152916.10136-16-john.ogness@linutronix.de>
+ <ZtcRZpLjCjWeC4nG@pathway.suse.cz>
+Date: Tue, 03 Sep 2024 16:30:57 +0206
+Message-ID: <874j6wke6e.fsf@jogness.linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240831070415.506194-6-irogers@google.com>
+Content-Type: text/plain
 
-On Sat, Aug 31, 2024 at 12:04:14AM -0700, Ian Rogers wrote:
-> On arm64 the breakpoint length should be 4-bytes but 8-bytes is
-> tolerated as perf passes that as sizeof(long). Just pass the correct
-> value.
-> 
-> On i386 the sizeof(long) check in the kernel needs to match the
-> kernel's long size. Check using an environment (uname checks) whether
-> 4 or 8 bytes needs to be passed. Cache the value in a static.
+On 2024-09-03, Petr Mladek <pmladek@suse.com> wrote:
+>> +static bool legacy_kthread_should_wakeup(void)
+>> +{
+>> +	struct console_flush_type ft;
+>> +	struct console *con;
+>> +	bool ret = false;
+>> +	int cookie;
+>> +
+>> +	if (kthread_should_stop())
+>> +		return true;
+>> +
+>> +	printk_get_console_flush_type(&ft);
+>> +
+>> +	cookie = console_srcu_read_lock();
+>> +	for_each_console_srcu(con) {
+>> +		short flags = console_srcu_read_flags(con);
+>> +		u64 printk_seq;
+>> +
+>> +		/*
+>> +		 * The legacy printer thread is only for legacy consoles when
+>> +		 * the nbcon consoles have their printer threads.
+>> +		 */
+>> +		if ((flags & CON_NBCON) && ft.nbcon_offload)
+>> +			continue;
+>
+> I am still scratching my head about the fact that the legacy loop
+> probably should not handle the nbcon consoles also when
+> printk_get_console_flush_type() returns ft.nbcon_atomic().
 
-⬢[acme@toolbox perf-tools-next]$ gcc --version
-gcc (GCC) 14.2.1 20240801 (Red Hat 14.2.1-1)
-Copyright (C) 2024 Free Software Foundation, Inc.
-This is free software; see the source for copying conditions.  There is NO
-warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+The legacy loop kthread should never handle nbcon consoles unless a boot
+console is registered. So it really needs to be:
 
-⬢[acme@toolbox perf-tools-next]$ gcc --version
-gcc (GCC) 14.2.1 20240801 (Red Hat 14.2.1-1)
-Copyright (C) 2024 Free Software Foundation, Inc.
-This is free software; see the source for copying conditions.  There is NO
-warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+if ((flags & CON_NBCON) && (ft.nbcon_offload || ft.nbcon_atomic))
 
-⬢[acme@toolbox perf-tools-next]$ uname -a
-Linux toolbox 6.10.4-200.fc40.x86_64 #1 SMP PREEMPT_DYNAMIC Sun Aug 11 15:32:50 UTC 2024 x86_64 GNU/Linux
-⬢[acme@toolbox perf-tools-next]$ head /etc/os-release 
-NAME="Fedora Linux"
-VERSION="40 (Toolbx Container Image)"
-ID=fedora
-VERSION_ID=40
-VERSION_CODENAME=""
-PLATFORM_ID="platform:f40"
-PRETTY_NAME="Fedora Linux 40 (Toolbx Container Image)"
-ANSI_COLOR="0;38;2;60;110;180"
-LOGO=fedora-logo-icon
-CPE_NAME="cpe:/o:fedoraproject:fedora:40"
-⬢[acme@toolbox perf-tools-next]$
+> We probably does not have to take care of it here because this
+> code is called only when the legacy kthread is running.
+> It means that nbcon consoles should have their kthreads as well
+> when they can be handled outside the legacy loop. I mean
+> that we should never see ft.nbcon_atomic set here.
 
- CC      /tmp/build/perf-tools-next/tests/bp_signal_overflow.o
-tests/bp_signal.c: In function ‘__event’:
-tests/bp_signal.c:115:28: error: operand of ‘?:’ changes signedness from ‘int’ to ‘long unsigned int’ due to unsignedness of other operand [-Werror=sign-compare]
-  115 |         pe.bp_len = is_x ? default_breakpoint_len() : sizeof(long);
-      |                            ^~~~~~~~~~~~~~~~~~~~~~~~
-  LD      /tmp/build/perf-tools-next/pmu-events/pmu-events-in.o
-cc1: all warnings being treated as errors
-make[4]: *** [/home/acme/git/perf-tools-next/tools/build/Makefile.build:105: /tmp/build/perf-tools-next/tests/bp_signal.o] Error 1
-  CC      /tmp/build/perf-tools-next/builtin-mem.o
-make[4]: *** Waiting for unfinished jobs....
-  CC      /tmp/build/perf-tools-next/util/symbol.o
-  CC      /tmp/build/perf-tools-next/builtin-version.o
-  AR      /tmp/build/perf-tools-next/libpmu-events.a
-  CC      /tmp/build/perf-tools-next/util/metricgroup.o
-  CC      /tmp/build/perf-tools-next/builtin-c2c.o
-  CC      /tmp/build/perf-tools-next/util/header.o
-make[3]: *** [/home/acme/git/perf-tools-next/tools/build/Makefile.build:158: tests] Error 2
-make[2]: *** [Makefile.perf:777: /tmp/build/perf-tools-next/perf-test-in.o] Error 2
-make[2]: *** Waiting for unfinished jobs....
+Remember that the nbcon kthreads are stopped on shutdown/reboot. For
+those final messages, ft.nbcon_atomic=1. The legacy loop kthread should
+not handled those printings.
 
+> Sigh, the logic is so complicated.
+
+It takes some getting used to. But I feel like the responsibilities and
+transitions are clearer now than ever before.
+
+>> --- a/kernel/printk/printk_safe.c
+>> +++ b/kernel/printk/printk_safe.c
+>> @@ -44,7 +44,9 @@ bool is_printk_legacy_deferred(void)
+>>  	 * The per-CPU variable @printk_context can be read safely in any
+>>  	 * context. CPU migration is always disabled when set.
+>>  	 */
+>> -	return (this_cpu_read(printk_context) || in_nmi());
+>> +	return (force_legacy_kthread() ||
+>
+> This is not correct when used in panic(). force_legacy_kthread()
+> is not a reason for offload in that case.
+
+If force_legacy_kthread() is true, legacy printing is _ALWAYS_ offloaded
+except as a "hope and pray" last attempt via
+console_flush_on_panic(). That is a requirement of PREEMPT_RT.
+
+John
 
