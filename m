@@ -1,82 +1,94 @@
-Return-Path: <linux-kernel+bounces-313895-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313896-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF11B96ABF7
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 00:17:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4F0C96ABFB
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 00:17:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 789F51F25615
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 22:17:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F2557B232D5
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 22:17:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B3DF1D0DDC;
-	Tue,  3 Sep 2024 22:17:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 963531A0BE6;
+	Tue,  3 Sep 2024 22:17:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxtx.org header.i=@linuxtx.org header.b="Xc+MNUPx"
-Received: from mail-io1-f43.google.com (mail-io1-f43.google.com [209.85.166.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZTmY122Z"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72AA5126C16
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 22:17:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A0A31A3ABA
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 22:17:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725401844; cv=none; b=UK11XG4HXOH+J9fdRdM+aU6Lq4qZQf5YmiiPIbDTlaatP4/Fp5eM9DkDhDCQ5jd3rLl0MGKEg16rX3Rby2NLbolpnLSNu8q6bre+Jhv6VqcdNjSCAUUZe6JhhgGvsf3mH22yYI1ueFrkVftUaBYOiVXcJI6wJvZmpnlewuUxvYE=
+	t=1725401847; cv=none; b=fW9apLOjGJ6Z3qPJM6m9QsevoJa5l2SC9uDibyECp9KBK8LOUyqs3kJenlOT+OPmwdnV3KzaYEsx/njAbJqqadOOQ1j50d6+/+oi7yjn5aPuoGunEnv7AexTjnMfj9lJX9/nbEwlDMJBigWFtFq3WGBP8SKHUbvqcEqHhiW9GUU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725401844; c=relaxed/simple;
-	bh=ixiIN7Un+lKbuuqP82YDNbIrIqTLTw6W6vi/Xln3G3M=;
+	s=arc-20240116; t=1725401847; c=relaxed/simple;
+	bh=6nSKMdl8/rMSTMas7fu7iffrXDBuMrREFVYndWL2WPM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=h4NybQMZg2UlmQAvPIH3darm9fGdqSwvLfemfBv+i6gDKTZ/Umro5iG1/Pcnd+ggOij4W6Mnq+y0NyAod6yEKPO4R+vzwf3+VXRutgB1xxsiPXkUu1snmnrMwbIxe5SNJtHKAuwRsRyNOnpEuNKYVaFACJCho64qLrmfJrnpm0w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=fedoraproject.org; spf=pass smtp.mailfrom=linuxtx.org; dkim=pass (1024-bit key) header.d=linuxtx.org header.i=@linuxtx.org header.b=Xc+MNUPx; arc=none smtp.client-ip=209.85.166.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=fedoraproject.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxtx.org
-Received: by mail-io1-f43.google.com with SMTP id ca18e2360f4ac-82a1af43502so296751339f.0
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 15:17:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxtx.org; s=google; t=1725401840; x=1726006640; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=s38PvxZbBMTVGvQ0kbtSdyWDBrmSjvOO/03Z8xfaLco=;
-        b=Xc+MNUPxpf3lC2zmYHaHEjHCDZ3jhq7yZ9iFYSWPZ2Hxqifg4jVtxbaC1rGPR6P5FN
-         6ApZ9zu7JQOt8W5DtDPiFYyvvDZtrzirMRAwAXnQvsqY5mb0NPVpf2INrScDJ2S1EY8h
-         OYb3SlmTsgJu5NHcEb7sOSrLA9K+z2yNB18Ys=
+	 Content-Type:Content-Disposition:In-Reply-To; b=Zi3a6u68WD0mMs2y2xMv9KAjhmzNeCHAOYP+kqGyGpipqOLoCSshSk7kU6vWPxnMjXLNeqhx+uZ5e+5xzddjf21oLxN1nq4x57UIMXRJw9EeZNkf/WmRjrxZFPRvRB/Wkccp0CS8WRaxAjX9TeJNd6ebfwwPvVLj/u7mUCD7S8U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZTmY122Z; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1725401843;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=uX67JJ48/X+mbq8S3u6zeSeVmMvnaUsc25ToyEvfFRg=;
+	b=ZTmY122ZtzOHLAtbHw0c4M6rXfsTOP8DzJ7v9rm/k8quprz7XmzcIzbTHJQL87ja3/OBra
+	dbGPqFkMAxKOqGz0swrr8KS1ReY0OefNyDIjssArIWY+0o2+3GkuY3lUl4jrjVdLnh4Rbx
+	D9UEwOQbfadzYIRzc8pV/n5AqLdRz/Q=
+Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com
+ [209.85.160.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-478-ORRI7aRXM3CQvIcnuNL4ew-1; Tue, 03 Sep 2024 18:17:22 -0400
+X-MC-Unique: ORRI7aRXM3CQvIcnuNL4ew-1
+Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-4574542503fso46552831cf.0
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 15:17:22 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725401840; x=1726006640;
+        d=1e100.net; s=20230601; t=1725401842; x=1726006642;
         h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=s38PvxZbBMTVGvQ0kbtSdyWDBrmSjvOO/03Z8xfaLco=;
-        b=Bcq5izTOEpM4abF7ptY1uywsgGFrxwFbPC5hdd6T62shYQdzVEczBBr1K222TfxKgK
-         ri+gQKKqa9zhB0CWPrNEQg8fVGId5bEXExXT2dYueEBfnF9z7P+ES8vLkulo/CkekvM9
-         UQV/E/K+Gsq4qoLXCVpnnmJFi/QH6OkJay9fdfwDDJChEB70gJZ8HdTx2kSK0NaByw4y
-         KjUkbyU054+H9BXFwXSWyvlZfC1UZ4EtYtjog+SG8cFeRCySQb+FmzidM0lLSGsbkKTd
-         Th8gQOpo0lHGPEPVut7wTZYDBTkEAMWujIjqcBXWDjR+77rcQJE5fZ8JKL3fm+i26U6W
-         OIvw==
-X-Forwarded-Encrypted: i=1; AJvYcCWA/n3FIMS9NffBOnXB8ddXzrT/GfH4203DMfAbt2COGZ22410C+ocz6qacafOX9l9GMx2MQ1oM6KbWV7U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzhYp4Qdcn+j4N/wIp/MMl9BGhIq5s4xZYxxFKfEN7aU3ATz9Xt
-	0P3j+u0UQXI7Rk6jiYhLUBFxDbL2D0yOEcF/gIPf1gY/DO2KvEgdTNsTFMFk0Q==
-X-Google-Smtp-Source: AGHT+IHSG24Jh26pxj6oDOdaXB3yvTtI5BWzt2ZuQfpSpL2rvr53tFFIUcwfaMJpX+ZdObf03WdX1w==
-X-Received: by 2002:a05:6602:6b07:b0:82a:23b4:4c90 with SMTP id ca18e2360f4ac-82a23b44d62mr1661524439f.1.1725401840339;
-        Tue, 03 Sep 2024 15:17:20 -0700 (PDT)
-Received: from fedora64.linuxtx.org ([72.42.103.70])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4ced2de5cf8sm2805547173.37.2024.09.03.15.17.18
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=uX67JJ48/X+mbq8S3u6zeSeVmMvnaUsc25ToyEvfFRg=;
+        b=wLbkFFYpZZuPPdkWPSYDqwkZfHrWU4i2UXVrTu6zgbwPhOcFRKXVS1WaXOeHzkd/7c
+         5vF7NpvVFJwawmU0A+F9uH9FCUjuJeIwRR7Ev01YI95vZOxxzMfYtUg8pEdkU0xFKpZC
+         YDkwR4wh9ejKbOrdFycyaJv0WeOJ56Ur++LlSJkBSunooaKg5O3XLfDYbDnYfvaZSUkj
+         ZnPtQDPTXfUUU/Gv1qFgJ6e+2xlSosrzxZKyh8DaYw+s4KUpZh3baHIyhHcXoeTHIYW0
+         eWxbkw5dxgxuqyZWLfUBYT0310L5aSKVQ4Nq+Gw/9xtAInRefAA6mlFELYcLzFIhLvYC
+         dX3A==
+X-Forwarded-Encrypted: i=1; AJvYcCXWxVhxcpoqPGjAYChJ6tgflENyTprGBUNaxiGrOuylU5AMm5QHIAIvFuCxyvgLp2+p8u0EJeiVB0FSXfQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxBpC0ktd1r/0ioB3X6hjrqky7TPYR9a8bnOwcpDOyuuXVmPdA9
+	Z3+6r+kbiENvceTFZvS8vQ5mMWCXrt6MKDxu89F1PpXRckkj1PM1BIsqZhLRGOoSzbALJqf5EBc
+	ZRKJr66G8CG0hCJEcN0KiyhFzpFuZwGdv1nhok/wt4+szOwHvA8SAJLzNsLZsxQ==
+X-Received: by 2002:a05:622a:4892:b0:456:80dd:2b74 with SMTP id d75a77b69052e-456f166a883mr180080161cf.2.1725401841792;
+        Tue, 03 Sep 2024 15:17:21 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGF+ADqf+HvwhdXdoU9v++JYfldALmtFlgglwFanWYamzzbURjrFGiQObND/oVCHlOkCKZ8dQ==
+X-Received: by 2002:a05:622a:4892:b0:456:80dd:2b74 with SMTP id d75a77b69052e-456f166a883mr180079751cf.2.1725401841295;
+        Tue, 03 Sep 2024 15:17:21 -0700 (PDT)
+Received: from x1gen2nano ([2600:1700:1ff0:d0e0::40])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-45682c8788asm54097881cf.1.2024.09.03.15.17.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Sep 2024 15:17:19 -0700 (PDT)
-Sender: Justin Forbes <jmforbes@linuxtx.org>
-Date: Tue, 3 Sep 2024 16:17:17 -0600
-From: Justin Forbes <jforbes@fedoraproject.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
-	jonathanh@nvidia.com, f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
-	conor@kernel.org, allen.lkml@gmail.com
-Subject: Re: [PATCH 6.6 000/166] 6.6.8-rc1 review
-Message-ID: <ZteK7TVPmK09RSz4@fedora64.linuxtx.org>
-References: <20231218135104.927894164@linuxfoundation.org>
+        Tue, 03 Sep 2024 15:17:20 -0700 (PDT)
+Date: Tue, 3 Sep 2024 17:17:18 -0500
+From: Andrew Halaney <ahalaney@redhat.com>
+To: Suraj Jaiswal <quic_jsuraj@quicinc.com>
+Cc: Vinod Koul <vkoul@kernel.org>, 
+	Bhupesh Sharma <bhupesh.sharma@linaro.org>, Andy Gross <agross@kernel.org>, 
+	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Rob Herring <robh+dt@kernel.org>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Alexandre Torgue <alexandre.torgue@foss.st.com>, Jose Abreu <joabreu@synopsys.com>, 
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>, netdev@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-stm32@st-md-mailman.stormreply.com, Prasad Sodagudi <psodagud@quicinc.com>, 
+	Rob Herring <robh@kernel.org>, kernel@quicinc.com
+Subject: Re: [PATCH net] net: stmmac: Stop using a single dma_map() for
+ multiple descriptors
+Message-ID: <yy2prsz3tjqwjwxgsrumt3qt2d62gdvjwqsti3favtfmf7m5qs@eychxx5qz25f>
+References: <20240902095436.3756093-1-quic_jsuraj@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,29 +97,230 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20231218135104.927894164@linuxfoundation.org>
+In-Reply-To: <20240902095436.3756093-1-quic_jsuraj@quicinc.com>
 
-On Mon, Dec 18, 2023 at 02:49:26PM +0100, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.6.8 release.
-> There are 166 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Wed, 20 Dec 2023 13:50:31 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6.8-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.6.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
+On Mon, Sep 02, 2024 at 03:24:36PM GMT, Suraj Jaiswal wrote:
+> Currently same page address is shared
+> between multiple buffer addresses and causing smmu fault for other
+> descriptor if address hold by one descriptor got cleaned.
+> Allocate separate buffer address for each descriptor
+> for TSO path so that if one descriptor cleared it should not
+> clean other descriptor address.
 
-Tested rc1 against the Fedora build system (aarch64, ppc64le, s390x,
-x86_64), and boot tested x86_64. No regressions noted.
+I think maybe you mean something like:
 
-Tested-by: Justin M. Forbes <jforbes@fedoraproject.org>
+    Currently in the TSO case a page is mapped with dma_map_single(), and then
+    the resulting dma address is referenced (and offset) by multiple
+    descriptors until the whole region is programmed into the descriptors.
+
+    This makes it possible for stmmac_tx_clean() to dma_unmap() the first of the
+    already processed descriptors, while the rest are still being processed
+    by the DMA engine. This leads to an iommu fault due to the DMA engine using
+    unmapped memory as seen below:
+
+    <insert splat>
+
+    You can reproduce this easily by <reproduction steps>.
+
+    To fix this, let's map each descriptor's memory reference individually.
+    This way there's no risk of unmapping a region that's still being
+    referenced by the DMA engine in a later descriptor.
+
+That's a bit nitpicky wording wise, but your first sentence is hard
+for me to follow (buffer addresses seems to mean descriptor?). I think
+showing a splat and mentioning how to reproduce is always a bonus as
+well.
+
+> 
+> Signed-off-by: Suraj Jaiswal <quic_jsuraj@quicinc.com>
+
+Fixes: ?
+
+At a quick glance I think its f748be531d70 ("stmmac: support new GMAC4")
+
+> ---
+> 
+> Changes since v2:
+> - Fixed function description 
+> - Fixed handling of return value.
+> 
+
+This is v1 as far as netdev is concerned :)
+
+> 
+>  .../net/ethernet/stmicro/stmmac/stmmac_main.c | 63 ++++++++++++-------
+>  1 file changed, 42 insertions(+), 21 deletions(-)
+> 
+> diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+> index 83b654b7a9fd..5948774c403f 100644
+> --- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+> +++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+> @@ -4136,16 +4136,18 @@ static bool stmmac_vlan_insert(struct stmmac_priv *priv, struct sk_buff *skb,
+>  /**
+>   *  stmmac_tso_allocator - close entry point of the driver
+>   *  @priv: driver private structure
+> - *  @des: buffer start address
+> + *  @addr: Contains either skb frag address or skb->data address
+>   *  @total_len: total length to fill in descriptors
+>   *  @last_segment: condition for the last descriptor
+>   *  @queue: TX queue index
+> + * @is_skb_frag: condition to check whether skb data is part of fragment or not
+>   *  Description:
+>   *  This function fills descriptor and request new descriptors according to
+>   *  buffer length to fill
+> + *  This function returns 0 on success else -ERRNO on fail
+>   */
+> -static void stmmac_tso_allocator(struct stmmac_priv *priv, dma_addr_t des,
+> -				 int total_len, bool last_segment, u32 queue)
+> +static int stmmac_tso_allocator(struct stmmac_priv *priv, void *addr,
+> +				int total_len, bool last_segment, u32 queue, bool is_skb_frag)
+>  {
+>  	struct stmmac_tx_queue *tx_q = &priv->dma_conf.tx_queue[queue];
+>  	struct dma_desc *desc;
+> @@ -4153,6 +4155,8 @@ static void stmmac_tso_allocator(struct stmmac_priv *priv, dma_addr_t des,
+>  	int tmp_len;
+>  
+>  	tmp_len = total_len;
+> +	unsigned int offset = 0;
+> +	unsigned char *data = addr;
+
+Reverse xmas tree order, offset is always set below so you could just
+declare it, and data really doesn't seem necessary to me vs using addr
+directly.
+
+https://docs.kernel.org/process/maintainer-netdev.html#local-variable-ordering-reverse-xmas-tree-rcs
+
+>  
+>  	while (tmp_len > 0) {
+>  		dma_addr_t curr_addr;
+> @@ -4161,20 +4165,44 @@ static void stmmac_tso_allocator(struct stmmac_priv *priv, dma_addr_t des,
+>  						priv->dma_conf.dma_tx_size);
+>  		WARN_ON(tx_q->tx_skbuff[tx_q->cur_tx]);
+>  
+> +		buff_size = tmp_len >= TSO_MAX_BUFF_SIZE ? TSO_MAX_BUFF_SIZE : tmp_len;
+> +
+>  		if (tx_q->tbs & STMMAC_TBS_AVAIL)
+>  			desc = &tx_q->dma_entx[tx_q->cur_tx].basic;
+>  		else
+>  			desc = &tx_q->dma_tx[tx_q->cur_tx];
+>  
+> -		curr_addr = des + (total_len - tmp_len);
+> +		offset = total_len - tmp_len;
+> +		if (!is_skb_frag) {
+> +			curr_addr = dma_map_single(priv->device, data + offset, buff_size,
+> +						   DMA_TO_DEVICE);
+
+Instead of defining "data" above, can't you just use "addr" directly here?
+
+> +
+> +			if (dma_mapping_error(priv->device, curr_addr))
+> +				return -ENOMEM;
+> +
+> +			tx_q->tx_skbuff_dma[tx_q->cur_tx].buf = curr_addr;
+> +			tx_q->tx_skbuff_dma[tx_q->cur_tx].len = buff_size;
+> +			tx_q->tx_skbuff_dma[tx_q->cur_tx].map_as_page = false;
+> +			tx_q->tx_skbuff_dma[tx_q->cur_tx].buf_type = STMMAC_TXBUF_T_SKB;
+> +		} else {
+> +			curr_addr = skb_frag_dma_map(priv->device, addr, offset,
+> +						     buff_size,
+> +						     DMA_TO_DEVICE);
+> +
+> +			if (dma_mapping_error(priv->device, curr_addr))
+> +				return -ENOMEM;
+> +
+> +			tx_q->tx_skbuff_dma[tx_q->cur_tx].buf = curr_addr;
+> +			tx_q->tx_skbuff_dma[tx_q->cur_tx].len = buff_size;
+> +			tx_q->tx_skbuff_dma[tx_q->cur_tx].map_as_page = true;
+> +			tx_q->tx_skbuff_dma[tx_q->cur_tx].buf_type = STMMAC_TXBUF_T_SKB;
+> +		}
+> +
+>  		if (priv->dma_cap.addr64 <= 32)
+>  			desc->des0 = cpu_to_le32(curr_addr);
+>  		else
+>  			stmmac_set_desc_addr(priv, desc, curr_addr);
+>  
+> -		buff_size = tmp_len >= TSO_MAX_BUFF_SIZE ?
+> -			    TSO_MAX_BUFF_SIZE : tmp_len;
+> -
+>  		stmmac_prepare_tso_tx_desc(priv, desc, 0, buff_size,
+>  				0, 1,
+>  				(last_segment) && (tmp_len <= TSO_MAX_BUFF_SIZE),
+> @@ -4182,6 +4210,7 @@ static void stmmac_tso_allocator(struct stmmac_priv *priv, dma_addr_t des,
+>  
+>  		tmp_len -= TSO_MAX_BUFF_SIZE;
+>  	}
+> +	return 0;
+
+nit: add a newline before return 0
+
+>  }
+>  
+>  static void stmmac_flush_tx_descriptors(struct stmmac_priv *priv, int queue)
+> @@ -4351,25 +4380,17 @@ static netdev_tx_t stmmac_tso_xmit(struct sk_buff *skb, struct net_device *dev)
+>  		pay_len = 0;
+>  	}
+>  
+> -	stmmac_tso_allocator(priv, des, tmp_pay_len, (nfrags == 0), queue);
+> +	if (stmmac_tso_allocator(priv, (skb->data + proto_hdr_len),
+> +				 tmp_pay_len, nfrags == 0, queue, false))
+> +		goto dma_map_err;
+
+Changing the second argument here is subtly changing the dma_cap.addr64 <= 32
+case right before this. Is that intentional?
+
+i.e., prior, pretend des = 0 (side note but des is a very confusing
+variable name for "dma address" when there's also mentions of desc meaning
+"descriptor" in the DMA ring). In the <= 32 case, we'd call
+stmmac_tso_allocator(priv, 0) and in the else case we'd call
+stmmac_tso_allocator(priv, 0 + proto_hdr_len).
+
+With this change in both cases its called with the (not-yet-dma-mapped)
+skb->data + proto_hdr_len always (i.e. like the else case).
+
+Honestly, the <= 32 case reads weird to me without this patch. It
+seems some of the buffer is filled but des is not properly incremented?
+
+I don't know how this hardware is supposed to be programmed (no databook
+access) but that seems fishy (and like a separate bug, which would be
+nice to squash if so in its own patch). Would you be able to explain the
+logic there to me if it does make sense to you?
+
+>  
+>  	/* Prepare fragments */
+>  	for (i = 0; i < nfrags; i++) {
+> -		const skb_frag_t *frag = &skb_shinfo(skb)->frags[i];
+> +		skb_frag_t *frag = &skb_shinfo(skb)->frags[i];
+>  
+> -		des = skb_frag_dma_map(priv->device, frag, 0,
+> -				       skb_frag_size(frag),
+> -				       DMA_TO_DEVICE);
+> -		if (dma_mapping_error(priv->device, des))
+> +		if (stmmac_tso_allocator(priv, frag, skb_frag_size(frag),
+> +					 (i == nfrags - 1), queue, true))
+
+Personally I think it would be nice to change stmmac_tso_allocator() so
+you can keep the frag const above... i.e. something like
+stmmac_tso_allocator(..., void *addr, ..., const skb_frag_t *frag)
+and just check if frag is NULL to determine if you're dealing with a
+frag or not (instead of passing the boolean in to indicate that).
+
+I'm curious if someone else can think of a cleaner API than that for
+that function, even that's not super pretty...
+
+>  			goto dma_map_err;
+> -
+> -		stmmac_tso_allocator(priv, des, skb_frag_size(frag),
+> -				     (i == nfrags - 1), queue);
+> -
+> -		tx_q->tx_skbuff_dma[tx_q->cur_tx].buf = des;
+> -		tx_q->tx_skbuff_dma[tx_q->cur_tx].len = skb_frag_size(frag);
+> -		tx_q->tx_skbuff_dma[tx_q->cur_tx].map_as_page = true;
+> -		tx_q->tx_skbuff_dma[tx_q->cur_tx].buf_type = STMMAC_TXBUF_T_SKB;
+>  	}
+>  
+>  	tx_q->tx_skbuff_dma[tx_q->cur_tx].last_segment = true;
+> -- 
+> 2.25.1
+> 
+
 
