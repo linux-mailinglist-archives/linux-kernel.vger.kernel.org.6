@@ -1,152 +1,142 @@
-Return-Path: <linux-kernel+bounces-312768-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312769-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4404D969AFA
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 12:56:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4433969AFF
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 12:57:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F0AE3286EB3
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 10:56:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6860B1F24B59
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 10:57:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C18ED1D86F8;
-	Tue,  3 Sep 2024 10:53:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D9D91B12F2;
+	Tue,  3 Sep 2024 10:55:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tuFd4wzv"
-Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hBkyVXIk"
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95A901D86EE
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 10:53:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F40A51B12CD
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 10:55:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725360807; cv=none; b=RisMD47x95FL1PDD/kkgF4kXVfKI5a6EVuzDyaC/kuc0AoXk52YSI9WrHt+9ZND8f6tr27g2KsPzr+SAx3l2RskNDObb+rhHwcLM5QXLzF3X6ylUFcW1EHjHuqxEHatYA0XVOqTvK4YGJe30g7h2A+Zkq6y2dJMfdWdzbhffLY8=
+	t=1725360923; cv=none; b=SUx/u297oKOcb9nrMso9gJwQ5JUyuPJXXtBuBOJTe8Obu5ysoqS9bprPNp4HU/zas15gHK1F+8PytvSWDl2b+JFmCecwK+6aCFa34JvbzKQY44lCFnaY+5ZzGH3cztUg+bnspTXjr5Vzes2WXqAydhxo2sbYNCS4VP6LXAf4DXg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725360807; c=relaxed/simple;
-	bh=5kn8MpxGBa4vJQej9zGXkwwLvcJtv98/xUQ8glPnlG0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NzsSrvHsfZdJm8mMF4nDH06g1eFAxzNN5Aq9hw+43lXru3u7NCrdSS5EOCbQZzNagz/e73QWCg3O4Pv6xUwGuWLwiYETBbj2fjIk5NFHJfMPfeVNCzsZewYykO7f5uCJgD3sj7XZHobzXwAEzqEkLPMdbqmW3oSBpIVN/Txf3Tw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=tuFd4wzv; arc=none smtp.client-ip=209.85.215.170
+	s=arc-20240116; t=1725360923; c=relaxed/simple;
+	bh=0wNqV2ftrBb/yvgxhpVC0B/1IuajgOBIg6LCvNxgrLU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gRtQfi1Z9bmRrsTLZusR6z6JzeCgj1tFb/dT+TkM6z8yYVhUenIR3ZsGLCr3pI9RDsveHpHGmozE3c1gQctO/Cf/EuRSzyiK9yXTTf0Ha8eLo5/lCmlvzmCB5/wVI/WR9EmWzeKYuA88lznicnQDlpsoDH30dxx4WslHeMLet84=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hBkyVXIk; arc=none smtp.client-ip=209.85.208.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-7cd830e0711so3163023a12.0
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 03:53:25 -0700 (PDT)
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5c241feb80dso5626685a12.0
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 03:55:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1725360805; x=1725965605; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=aal6UqOGkqZkqna94iUuUosjVWaQsTHPERAhd37Lruw=;
-        b=tuFd4wzvECe8247zHaO7j3Dzyf9D+7bbzS8iRuW6Z5kP7nH5pJvTtNMCikB0HLUIzB
-         MzVKoolRyICJGXA8+Kmk1hsWod/z1PjmVHC1Vtq78YOBZms3FTYYpLIiZq1rcvQ3Y6GH
-         o1D/bVXSjMtzwzCuQ747gtEM8tH+ByQFDMLnfcc6blwjtbm8simKai3LTFIh2shYs0BF
-         5y9Wn51BiWKAIj4Zzwntmt8pq5OrPXXOSsbkd4CJ2zZJj+xQ0dMcqkK0viovOtX6Svci
-         Ro5IkHAUfZnuutqCoC69JQ24OxT//zv1oNoSz4EDV2PwLjujC9ompgaRpgP5XZJFx0xI
-         Ry9Q==
+        d=linaro.org; s=google; t=1725360920; x=1725965720; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=4LXTxwAYU83TR52hgXwDwk5YF00xnfdgeG8lvMn1Uc4=;
+        b=hBkyVXIkh8+1Df8lQ5TeXN/KEFUImWPcw1SsWg+pSnIEh5p3eEffMkxjd5hi21UKDD
+         SCvwGTX16HC9Ffy7PHAymRnNwi1UfepoDfVrykva3ZWCGAyPbcoqlCXoErIebpj9z8mm
+         dU/zZ364vUZjRfLJqE+Kh/lgLlKfyRqO7ow9JmHu6T6TVTvEWiFDG3PgEokDsPkNsZkU
+         Mg+KNdz6PRygj1Vrbv9aTY6FC59mkIw2xkmcIuKigUMXGwwlSixmv762qxRTZDX7ZQZJ
+         P9aD6Vk4e9u/M5X0phM/cBxuDv9WwocmcLCGg2mpCnSkbFO4n97sy14vk6FTILDlktVA
+         NTzQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725360805; x=1725965605;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=aal6UqOGkqZkqna94iUuUosjVWaQsTHPERAhd37Lruw=;
-        b=ENZ5CXShwSKmpYtyXTNxZqBlxwWaaOYBDw3cSp0dFiiTjiX1HNb7/Hk4QSRLvaPAd9
-         F1K3MOWaFHSTmUoivpRZZ+xqUX2LNCiiak4f+LSfKkG06TRKdlk4NqbfLYlMWt4ccZ7t
-         +EOuxRV38nYrzej7aOSPv4Q7obXcqLIJYVhWGEiS0tbdNTr50VohYsdp+HDanpITybIX
-         1IcRrZO9Ou6dZOOl0w8ChL4CItAo+av5EpcV51gRLaoxeT9A6HEJp4HDvLV2TxsDAlhM
-         +j9AHgQFeZZa7hGoeEAO4wXLGYEynF/8brfASMiFWGuffhHLZPunaKCgTLHYAjIS80FU
-         OZxQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXQ8NrNXI5tElt0u5jorOAUaqdutNLnBzx/lWYdZQJrzbfFafmhA5LaAq8e+193C5m3xDhy2CWfpL9qmwA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxIRT6uHduYBcsvRM7IlAmuVXnbw3mNTd8Q3JcWqnL5l+J2GILx
-	fZ5xAEYxx6Eq/LqNf9BZMQRC3JR9Wqs2V62fkKv/MfSp+reHny/Uojo77ReO2Jk=
-X-Google-Smtp-Source: AGHT+IEO949mx2BbO/B5MkzoysN8aCenWGXxXwYLPohVGFSukAW3tdUV7R828HwAqgN08bopLVe5pg==
-X-Received: by 2002:a17:902:c948:b0:205:8a8b:bd2a with SMTP id d9443c01a7336-2058a8bbdd9mr58434765ad.22.1725360804781;
-        Tue, 03 Sep 2024 03:53:24 -0700 (PDT)
-Received: from localhost ([122.172.83.237])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20515545264sm78738975ad.225.2024.09.03.03.53.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Sep 2024 03:53:24 -0700 (PDT)
-Date: Tue, 3 Sep 2024 16:23:21 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Dikshita Agarwal <quic_dikshita@quicinc.com>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <quic_kdybcio@quicinc.com>,
-	Nikunj Kela <nkela@quicinc.com>,
-	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Mikko Perttunen <mperttunen@nvidia.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Stephan Gerhold <stephan@gerhold.net>,
-	Ilia Lin <ilia.lin@kernel.org>,
-	Stanimir Varbanov <stanimir.k.varbanov@gmail.com>,
-	Vikash Garodia <quic_vgarodia@quicinc.com>,
-	linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] OPP/pmdomain: Fix the assignment of the required-devs
-Message-ID: <20240903105321.suosbhkkkylfw4bv@vireshk-i7>
-References: <20240902224815.78220-1-ulf.hansson@linaro.org>
- <20240902224815.78220-3-ulf.hansson@linaro.org>
- <20240903071638.bedt3gllqdacf43a@vireshk-i7>
- <CAPDyKFoqEAHns0nrXT6dJR3sRd5VWidK_rzXGHzJiZtk_p0cKw@mail.gmail.com>
+        d=1e100.net; s=20230601; t=1725360920; x=1725965720;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=4LXTxwAYU83TR52hgXwDwk5YF00xnfdgeG8lvMn1Uc4=;
+        b=QSkbSNIXE/1zbT4PLcyW90+ifdHq7AmUhOnKAexZQw9Ew36uOcfQoLRZYRkuCmPCNs
+         +yILjGDm8DLmgO41dQOdku8fSjq/atP8Ld6WqWieAOswpxQqZj75MKz+np+oG5QbiBeW
+         PJVuQUvb+rka7DCVuct5YgdjTviMgdB/pCkvuZjYqCw0pfp2M2CAeFlaX+3FZkPt0Vxp
+         ZAl8RkUFQpJ8M5xxfgRhd0KWx1E3Jj8kWLOH/zy9fTGxRr8pbYFjQX8pqQCWW3jPccUE
+         igfRH8BFRS50SFZh5cio9JxA6+QOP9U6eebTsTXUaSN8Z2gqSuA7G/TB9PyQlyFFfMJW
+         pyjw==
+X-Gm-Message-State: AOJu0YwsctC6eKCnevz2J7o9cGpXhRBmw2RkXoQxPQzD+fOWJjTL2yHz
+	CVsPl054A3+ZVDHDOMAz5njT6ImEEWW0ceWkNkFBbRQ8i2vdwmT4RGEt1wObTSfCDkuZVPeOpc9
+	1
+X-Google-Smtp-Source: AGHT+IFfrsOdNOvTywWpNdDWwAxzOFdZykoEm+DJ2XCn3hRcHd0PrSnEPtDL8DxfK1M1rxKcKpNCkg==
+X-Received: by 2002:a05:6402:5c8:b0:5c2:5254:cdc4 with SMTP id 4fb4d7f45d1cf-5c25254cf8dmr6542396a12.17.1725360920204;
+        Tue, 03 Sep 2024 03:55:20 -0700 (PDT)
+Received: from [192.168.68.116] ([5.133.47.210])
+        by smtp.googlemail.com with ESMTPSA id 4fb4d7f45d1cf-5c226ccfe84sm6267068a12.71.2024.09.03.03.55.18
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 03 Sep 2024 03:55:19 -0700 (PDT)
+Message-ID: <23d78063-1ad9-40c3-8e91-e9fcabc53df1@linaro.org>
+Date: Tue, 3 Sep 2024 11:55:18 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAPDyKFoqEAHns0nrXT6dJR3sRd5VWidK_rzXGHzJiZtk_p0cKw@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 4/9] nvmem: layouts: add U-Boot env layout
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: linux-kernel@vger.kernel.org, =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?=
+ <rafal@milecki.pl>, Miquel Raynal <miquel.raynal@bootlin.com>
+References: <20240902142952.71639-1-srinivas.kandagatla@linaro.org>
+ <20240902142952.71639-5-srinivas.kandagatla@linaro.org>
+ <2024090308-smasher-craftwork-0db5@gregkh>
+Content-Language: en-US
+From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+In-Reply-To: <2024090308-smasher-craftwork-0db5@gregkh>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 03-09-24, 11:54, Ulf Hansson wrote:
-> Let me try to elaborate a bit more.
-> 
-> In the current code, genpd_find_opp_table() tries to find an OPP table
-> for the genpd that the device is getting attached to. Then genpd
-> passes that OPP table via devm_pm_opp_set_config(), to let the OPP
-> core to hook up a required-dev for it. This was a naive approach, as
-> that OPP table may not be the one that actually corresponds to a
-> required-opps for the required-dev. Consider the below in DT.
-> 
->         opp_table_devA: opp-table-devA {
->                 compatible = "operating-points-v2";
-> 
->                 opp-devA-50 {
->                         opp-hz = /bits/ 64 <2500>;
->                         required-opps = <&opp_pd_50>; //corresponds to
-> pd_perf1's OPP table
->                 };
->                ....
-> 
->         devA {
->                 compatible = "foo,bar";
->                 power-domains = <&pd_perf0>, <&pd_perf1>; //both
-> pd_perf0 and pd_perf1 has OPP tables.
->                 power-domain-names = "perf0", "perf1";
->                 operating-points-v2 = <&opp_table_devA>;
->         };
 
-I think another way forward would be to send an index along with
-required-dev information (now that you do it one by one). That index
-would be the index of the genpd in the genpd-list for the device. That
-would make it work, isn't it ?
 
-I would like to avoid (another) callback from the OPP core, we already
-have few of them and I don't like them a lot. Moreover, genpd should
-be able to get the right required opp, with an index. Unless I am
-mistaken and this still doesn't solve it :)
-
-> To make sure we assign the correct required-dev for cases like the
-> above, we need to let the OPP core to iterate through the available
-> required-opps and see if some of them are corresponding to the OPP
-> table for the genpd the required-dev belongs too.
+On 03/09/2024 11:12, Greg KH wrote:
+> On Mon, Sep 02, 2024 at 03:29:47PM +0100, srinivas.kandagatla@linaro.org wrote:
+>> From: Rafał Miłecki <rafal@milecki.pl>
+>>
+>> U-Boot environment variables are stored in a specific format. Actual
+>> data can be placed in various storage sources (MTD, UBI volume, EEPROM,
+>> NVRAM, etc.).
+>>
+>> Move all generic (NVMEM device independent) code from NVMEM device
+>> driver to an NVMEM layout driver. Then add a simple NVMEM layout code on
+>> top of it.
+>>
+>> This allows using NVMEM layout for parsing U-Boot env data stored in any
+>> kind of NVMEM device.
+>>
+>> The old NVMEM glue driver stays in place for handling bindings in the
+>> MTD context. To avoid code duplication it uses exported layout parsing
+>> function. Please note that handling MTD & NVMEM layout bindings may be
+>> refactored in the future.
+>>
+>> Signed-off-by: Rafał Miłecki <rafal@milecki.pl>
+>> Reviewed-by: Miquel Raynal <miquel.raynal@bootlin.com>
+>> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+>> ---
+>>   MAINTAINERS                        |   1 +
+>>   drivers/nvmem/Kconfig              |   3 +-
+>>   drivers/nvmem/layouts/Kconfig      |  11 ++
+>>   drivers/nvmem/layouts/Makefile     |   1 +
+>>   drivers/nvmem/layouts/u-boot-env.c | 211 +++++++++++++++++++++++++++++
+>>   drivers/nvmem/layouts/u-boot-env.h |  15 ++
+>>   drivers/nvmem/u-boot-env.c         | 165 +---------------------
+>>   7 files changed, 242 insertions(+), 165 deletions(-)
+>>   create mode 100644 drivers/nvmem/layouts/u-boot-env.c
+>>   create mode 100644 drivers/nvmem/layouts/u-boot-env.h
 > 
-> To manage this in a non-genpd specific way, I added another callback
-> in struct dev_pm_opp_config. In this way, it should work for any
-> future possible required-devs types too, I think.
+> This patch doesn't apply to my tree :(
+> 
+> Also, if you generate patches with 'git format-patch -M' you can see
+> when files move easier (if that's what happened here, hard to tell..)
+> 
 
--- 
-viresh
+Let me rebase this again on top of char-misc and resend it.
+
+It might be the case that this was dependent on some of the fixes.
+
+--srini
+> thanks,
+> 
+> greg k-h
 
