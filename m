@@ -1,94 +1,108 @@
-Return-Path: <linux-kernel+bounces-313316-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313317-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A92EC96A39D
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 18:07:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D37D96A39F
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 18:07:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 601F61F2468B
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 16:07:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 48E7D1F250C3
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 16:07:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0446D189BB0;
-	Tue,  3 Sep 2024 16:07:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8ACAA18B47C;
+	Tue,  3 Sep 2024 16:07:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="Q4ecfTA2"
-Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YKJc6pBt"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C2937462;
-	Tue,  3 Sep 2024 16:07:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90DA2405C9;
+	Tue,  3 Sep 2024 16:07:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725379630; cv=none; b=GF9tPPqzoObvUaMfek/bdUDZubzJw/mUzC/ThDPtWo8OikXiVAoAMI9L1fs5tW0F8cFTWHTaUnfyEqUNFEzUHTSopPgiwBljF/xizIrqPrJ5Pefl5z2kxOBLb5NQhWCiTHXSJflWqAIom4a+DYYfWTuMMAJzQMT6zkYaVwXIZfo=
+	t=1725379632; cv=none; b=E4tZuO/E/XWib1wpCuhzVRTUx5vc3+FjuBLvXWxNOdL7/46Fy20uiAkuRxJlSbZxzL/yw7W9PFTT3nqKvGsrxh/OW5IomRDctHzfZqOoV791P3o9rpjNMBlbj+9gxxhfaQ44CVGArP0X3D0HRDy+zRDxwzw+NNpvp525JFSed7E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725379630; c=relaxed/simple;
-	bh=ZK/1w6Ap/OIkmGOTQs+JfOp4gTkKRiP9LPHx30+PPyE=;
+	s=arc-20240116; t=1725379632; c=relaxed/simple;
+	bh=jcwL3wXQmF/0n6wIcun46qKYmsnJHtE2TCTE9mp4RGU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WFE3BRmLcEq+P3hHgigEVT0W9Rr+85HXKVIsE4j8VpwPAa0BxAB1ytvCJ2uWmZZV/bBMmNYA6gObJ+EjJ556ac3YV2WH/DQFLiYj+EKV9wOK0FUgDri033Y+ol5qSF0BU6JHqmdJYE0Yz/VtP7mDJAJ5qBLGqQSGpE+7pDjdXdo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=Q4ecfTA2; arc=none smtp.client-ip=217.194.8.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
-Received: from francesco-nb (31-10-206-125.static.upc.ch [31.10.206.125])
-	by mail11.truemail.it (Postfix) with ESMTPA id 0E3BC1F92C;
-	Tue,  3 Sep 2024 18:07:03 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
-	s=default; t=1725379623;
-	bh=ZK/1w6Ap/OIkmGOTQs+JfOp4gTkKRiP9LPHx30+PPyE=; h=From:To:Subject;
-	b=Q4ecfTA2JU91IHhHBvgMxs6J0idLbj/P8pl/0ig/63RIjK4KRcOcoWCI/HQopswfh
-	 TQL8S5r5wJvo/eR4Rq7he2kHt4qmizNEhWwjF9EFD+/r8egSTfTXCRGx2g25rrJXhF
-	 zTcTexme7k5u/UyOZriYfHfg7389XliTLMONjUc5AipczA6kYqO12/s7qKvxmkrF4H
-	 NI368XqJTQ9x7zncW4JJ4p/VsYfYWk9jOlWofTMLHVdPe1dkQYGGazVjT0sv0tWD0t
-	 uAStGIMNqv02noxLa3A46gp8IlKxjlJxOL1JKWpQLZED8qdQnXjY0XXisUpeSFs/mO
-	 W/LUGOqWw23mA==
-Date: Tue, 3 Sep 2024 18:07:00 +0200
-From: Francesco Dolcini <francesco@dolcini.it>
-To: =?iso-8859-1?B?Q3Pza+Fz?= Bence <csokas.bence@prolan.hu>
-Cc: Francesco Dolcini <francesco@dolcini.it>, Wei Fang <wei.fang@nxp.com>,
-	Shenwei Wang <shenwei.wang@nxp.com>,
-	Clark Wang <xiaoning.wang@nxp.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Richard Cochran <richardcochran@gmail.com>,
-	Linux Team <linux-imx@nxp.com>,
-	Francesco Dolcini <francesco.dolcini@toradex.com>,
-	imx@lists.linux.dev, netdev@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH net-next v3 0/3] net: fec: add PPS channel configuration
-Message-ID: <20240903160700.GB20205@francesco-nb>
-References: <20240809094804.391441-1-francesco@dolcini.it>
- <311a8d91-8fa8-4f46-8950-74d5fcfa7d15@prolan.hu>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ma1cKA4vbYrPajkhtvWPxnvB353EYoBYXhggya8i4Z3KJ3voIc86Zh+sQ4nc7iiJm6BHwnF9BZxTkg9gNd64FYlxoQd2B+jjDpv9NgDYFIdGDwA0f5xOhnJVXDKPHu080i3qnQl9c4PiJywHjDRjglLHqbtujb3gsKxBs2jiRc8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YKJc6pBt; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725379631; x=1756915631;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=jcwL3wXQmF/0n6wIcun46qKYmsnJHtE2TCTE9mp4RGU=;
+  b=YKJc6pBt5EZdm4eec8A/uNOJ7QL84jY2wfWC5P4FGnyil/Pan45kqMeH
+   6ncxp9QCKp1dzE+17eHYoIMEpW580dWmLnYfrauycW56Rk/EbUBfxrGwS
+   aCDOX1dMMSn8k/uATcMgIbFptqXBDeIJbGtc39Aa0OKv/SFerg7pMdHBG
+   eGqj5L2PMiJwRE3rlkfIsrx3X0BFyLE/cI7izCKZWwfOUDkT64ivIRyLQ
+   Srv8EGKnHQ+RVOLz7fUNQWTNtd37P6drYLbaUydG4RJUftEwk+6LOpByc
+   0uo7bUXohxeMlpzd4826cyLHzzScf1/JZYXv8nLIdVpDU9JX+bnhZKJXL
+   g==;
+X-CSE-ConnectionGUID: 61weAr33SuSOOeW4eeVRnA==
+X-CSE-MsgGUID: 03ZE0m/NRcK+bMzMjDnibg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11184"; a="46516601"
+X-IronPort-AV: E=Sophos;i="6.10,199,1719903600"; 
+   d="scan'208";a="46516601"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2024 09:07:10 -0700
+X-CSE-ConnectionGUID: iEc3CUm7QImXojrv9JBSRA==
+X-CSE-MsgGUID: ydNiDzDwTJevfd7p22mbwA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,199,1719903600"; 
+   d="scan'208";a="69819978"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by orviesa004.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2024 09:07:07 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1slW3c-00000004lO5-1FEs;
+	Tue, 03 Sep 2024 19:07:04 +0300
+Date: Tue, 3 Sep 2024 19:07:04 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Ye Zhang <ye.zhang@rock-chips.com>
+Cc: linus.walleij@linaro.org, brgl@bgdev.pl, heiko@sntech.de,
+	linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+	mika.westerberg@linux.intel.com, tao.huang@rock-chips.com,
+	finley.xiao@rock-chips.com, tim.chen@rock-chips.com,
+	elaine.zhang@rock-chips.com
+Subject: Re: [PATCH v3 10/12] gpio: rockchip: support new version gpio
+Message-ID: <Ztc0KNxleCCroE2C@smile.fi.intel.com>
+References: <20240903073649.237362-1-ye.zhang@rock-chips.com>
+ <20240903073649.237362-11-ye.zhang@rock-chips.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <311a8d91-8fa8-4f46-8950-74d5fcfa7d15@prolan.hu>
+In-Reply-To: <20240903073649.237362-11-ye.zhang@rock-chips.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-Hello,
+On Tue, Sep 03, 2024 at 03:36:47PM +0800, Ye Zhang wrote:
+> The next version gpio controller on SoCs like rk3576 which support four
 
-On Tue, Sep 03, 2024 at 04:10:28PM +0200, Csókás Bence wrote:
-> What's the status of this? Also, please Cc: me in further
-> conversations/revisions as well.
+GPIO
 
-I am going to send a v4 in the next few days to address the comments
-on the dt-bindings change and apart of that I hope is good to go.
+> OS operation and four interrupts
 
-Francesco
+operations ?
 
+Also missing period at the end.
+
+...
+
+What does this all mean?
+
+-- 
+With Best Regards,
+Andy Shevchenko
 
 
 
