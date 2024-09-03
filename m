@@ -1,116 +1,133 @@
-Return-Path: <linux-kernel+bounces-313940-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313941-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D689B96AC9B
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 01:04:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DCDA96AC9D
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 01:06:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4BB85B237A0
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 23:04:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A3CB1F25105
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 23:06:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43EFC1D5CDF;
-	Tue,  3 Sep 2024 23:04:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20CEF1D58B3;
+	Tue,  3 Sep 2024 23:06:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="PqClv0kK"
-Received: from out-182.mta0.migadu.com (out-182.mta0.migadu.com [91.218.175.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="N40NeuRr"
+Received: from mail-io1-f42.google.com (mail-io1-f42.google.com [209.85.166.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB8091A0BCA
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 23:03:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B227E1B9827
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 23:06:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725404640; cv=none; b=FJKHO2WIOK6NoTQEZztD2vBcHR9iGNSEA1JjC0cP5vbPu+j9V2jI/SgW3Qx2hkFkWLMEIG6ClEHRJFvViRm5LiI22sdj+1uS35ZHJF6pCiyGwkqMo9ZO71ShaZcyQ/6OHvS/adgGxqOO2Y/kSOWiFk7rseZaVTAys/K5AvJ0LuE=
+	t=1725404768; cv=none; b=rZqjjr7rXrlUpTViDLrkZ8Xhf65jTHS1dBh9cQwjeHOLMvnDZeMwBnVNqkRzj6cnFL75oBWDOqUXKww1zh09OIsuy3gOWJuyCGWcS3etiYeIVMczj1hrjpZGEPnn9WkWDR/S358Nidv1VhLq6G5U+wvtsjTyv4FiaU7qHYYdxsc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725404640; c=relaxed/simple;
-	bh=AzWB2zWBnl2HTa7A0vuRTed9eq6EjywrkCnQ5fWo9DU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EBYiWfK2REqZE9IjwAjeG5GY2jb9d54zvAixzv9ovh7rCyiO0sc3NG8NHK/ZWZFS/BhLh0Tv5KZUMClnodgzkARoCDIXSsfMQzKKixFnIR20UKxu0kMAZLPPmuv3g64iGUwW3grjq3ohVIek8eSXXldJ+OivZHLVGPunbVZu5Qo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=PqClv0kK; arc=none smtp.client-ip=91.218.175.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Tue, 3 Sep 2024 19:03:53 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1725404636;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jAlPcUUI+rbY65LhMY3kDUW+5VZoPR0KoHWBmgbLJkU=;
-	b=PqClv0kKJ8hz993FGAZx520xvTkWfKVcJ2JpedEClD7ixZt9p76cxPN4HBY+IJTjipgJ2J
-	KbreLClGm/neFVOKXoQMaD6QnDTE87rO9sE0oOMeu5HTuSs0FVIkE9ZqArD14wEFwSej9p
-	+ZLv5D5wjVRwyYLiyth2TQw5dqDYFYE=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: "Paul E. McKenney" <paulmck@kernel.org>
-Cc: rcu@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	kernel-team@meta.com, rostedt@goodmis.org, Alexei Starovoitov <ast@kernel.org>, 
-	Andrii Nakryiko <andrii@kernel.org>, Peter Zijlstra <peterz@infradead.org>, bpf@vger.kernel.org
-Subject: Re: [PATCH rcu 0/11] Add light-weight readers for SRCU
-Message-ID: <f4nkwsbqvpaxxqph3iucohfqy5zwn7j7u5uwppp7rp4mnx2eqj@lqxwtgboskik>
-References: <26cddadd-a79b-47b1-923e-9684cd8a7ef4@paulmck-laptop>
- <gbar5cxixgq4jtxgtzv7xjipabhqqbwdwyrtahkkws3tregdvo@edqb7ku2uhk2>
- <0359b3a4-b6db-45d9-9957-b304b4a85865@paulmck-laptop>
+	s=arc-20240116; t=1725404768; c=relaxed/simple;
+	bh=4HwEMqP+AeBWEeyIseM+pjAVK0SEalDg7bAT6JCmFzQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=U+llQUxFahFD70ODTky9MWKdkAisTHFe9n1GvsucwdBhxt942CeZVHad69gxAA84QT6q8b+MaGvMreLDL60wAR8nLdtIQeQ//aAKCYV5aC3nXgdeijgPYKzQtokacNu9XGuIRSAO7qThHx50XF1QvQhm8e0TynoYvEo2LDDYQF4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=N40NeuRr; arc=none smtp.client-ip=209.85.166.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-io1-f42.google.com with SMTP id ca18e2360f4ac-82a245753bfso216795739f.3
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 16:06:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1725404766; x=1726009566; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=u3BAkkaK6DTYCZdraoRrR1AOnwQgm6BkQ3h01GvsefU=;
+        b=N40NeuRr/Gf7iUuUZbSyx/GSDw5rH6VefhQzvFnv17XEx/DirkhgcOlNsYahGt0pCE
+         QduncTx18a152BUULl7PAePtZT35V7WV8xGcWEm4LtW7FQYiN++6vCkiVZrx6gXiR3+w
+         HgASXYhzniueSiYYBvxIhrRMLVYoLXn5PL5U8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725404766; x=1726009566;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=u3BAkkaK6DTYCZdraoRrR1AOnwQgm6BkQ3h01GvsefU=;
+        b=ACbRmpmmzvigyx68ggmqQR4+ZxVtReLqQGF8TVWBSNNpdiMUPLSLAtAtHCv7tXwGUV
+         vsKfE5ANoHO8ewB0VL2C66PeeIW+XxYd/WB+Q7IxRs7YO6CRQwOWWLx/tbhflk2IwT+J
+         fN+Gne5Yex9XI49UqvwgyO6OP6Kr+5QzAWhxLYXpyMYtQtGNIWn2o78cAkuGcLs6PEYy
+         It6e+N5cJAg+dD4gC46rmT9RQptRTH6uWaQtrN4K0NAvouCTfuHulIRpL6YCoeJAhwLy
+         J6HjVzBm+d6mo5in9j1DQGKiK6RivyIBZHskpePi0lCQBsVCBdYPOiNfAHrp5C1IQTeZ
+         vDcA==
+X-Forwarded-Encrypted: i=1; AJvYcCWBHMfHG0nFeX6dghVD3f0FHJ2c36BUTuWxtaAN3kMYwJNqYyP+pmBBz4BGSGvh++rQw/cUsnPaIen9q6I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyoYVGAACIXGdNUBug7lx4vYxZGmWiU07I7fOu65nYrV3fVG8Om
+	xEFJ46lzK7uFwr1hnPH0R1VooblqUQdX5Xpa1PD8BNWsM3U38VNb3zs3iF6cmEw=
+X-Google-Smtp-Source: AGHT+IGCWHo81NXmeApVZ7FR8jCII+W7+16gCqjB+W16I3N/e6ZIt3hzaLHg8vAf/tWw3+v60iTr2A==
+X-Received: by 2002:a05:6602:15c4:b0:82a:6270:7466 with SMTP id ca18e2360f4ac-82a627075e0mr463633939f.13.1725404765663;
+        Tue, 03 Sep 2024 16:06:05 -0700 (PDT)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4ced2dcdf66sm2833926173.33.2024.09.03.16.06.04
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 03 Sep 2024 16:06:05 -0700 (PDT)
+Message-ID: <c674b0f8-fb98-4562-b636-f139a83f9b7d@linuxfoundation.org>
+Date: Tue, 3 Sep 2024 17:06:04 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0359b3a4-b6db-45d9-9957-b304b4a85865@paulmck-laptop>
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] docs: submitting-patches: Advertise b4
+To: Mark Brown <broonie@kernel.org>, Jonathan Corbet <corbet@lwn.net>
+Cc: Konstantin Ryabitsev <konstantin@linuxfoundation.org>,
+ workflows@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Shuah Khan <skhan@linuxfoundation.org>
+References: <20240903-documentation-b4-advert-v1-1-fefda9564f6e@kernel.org>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <20240903-documentation-b4-advert-v1-1-fefda9564f6e@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Sep 03, 2024 at 03:13:40PM GMT, Paul E. McKenney wrote:
-> On Tue, Sep 03, 2024 at 05:38:05PM -0400, Kent Overstreet wrote:
-> > On Tue, Sep 03, 2024 at 09:32:51AM GMT, Paul E. McKenney wrote:
-> > > Hello!
-> > > 
-> > > This series provides light-weight readers for SRCU.  This lightness
-> > > is selected by the caller by using the new srcu_read_lock_lite() and
-> > > srcu_read_unlock_lite() flavors instead of the usual srcu_read_lock() and
-> > > srcu_read_unlock() flavors.  Although this passes significant rcutorture
-> > > testing, this should still be considered to be experimental.
-> > 
-> > This avoids memory barriers, correct?
+On 9/3/24 16:36, Mark Brown wrote:
+> b4 is now widely used and is quite helpful for a lot of the things that
+> submitting-patches covers, let's advertise it to submitters to try to make
+> their lives easier and reduce the number of procedural issues maintainers
+> see.
 > 
-> Yes, there are no smp_mb() invocations in either srcu_read_lock_lite()
-> or srcu_read_unlock_lite().  As usual, nothing comes for free, so the
-> overhead is moved to the update side, and amplified, in the guise of
-> the at least two calls to synchronize_rcu().
+> Signed-off-by: Mark Brown <broonie@kernel.org>
+> ---
+>   Documentation/process/submitting-patches.rst | 10 ++++++++++
+>   1 file changed, 10 insertions(+)
 > 
-> > > There are a few restrictions:  (1) If srcu_read_lock_lite() is called
-> > > on a given srcu_struct structure, then no other flavor may be used on
-> > > that srcu_struct structure, before, during, or after.  (2) The _lite()
-> > > readers may only be invoked from regions of code where RCU is watching
-> > > (as in those regions in which rcu_is_watching() returns true).  (3)
-> > > There is no auto-expediting for srcu_struct structures that have
-> > > been passed to _lite() readers.  (4) SRCU grace periods for _lite()
-> > > srcu_struct structures invoke synchronize_rcu() at least twice, thus
-> > > having longer latencies than their non-_lite() counterparts.  (5) Even
-> > > with synchronize_srcu_expedited(), the resulting SRCU grace period
-> > > will invoke synchronize_rcu() at least twice, as opposed to invoking
-> > > the IPI-happy synchronize_rcu_expedited() function.  (6)  Just as with
-> > > srcu_read_lock() and srcu_read_unlock(), the srcu_read_lock_lite() and
-> > > srcu_read_unlock_lite() functions may not (repeat, *not*) be invoked
-> > > from NMI handlers (that is what the _nmisafe() interface are for).
-> > > Although one could imagine readers that were both _lite() and _nmisafe(),
-> > > one might also imagine that the read-modify-write atomic operations that
-> > > are needed by any NMI-safe SRCU read marker would make this unhelpful
-> > > from a performance perspective.
-> > 
-> > So if I'm following, this should work fine for bcachefs, and be a nifty
-> > small perforance boost.
+> diff --git a/Documentation/process/submitting-patches.rst b/Documentation/process/submitting-patches.rst
+> index f310f2f36666..4b6904184ad1 100644
+> --- a/Documentation/process/submitting-patches.rst
+> +++ b/Documentation/process/submitting-patches.rst
+> @@ -842,6 +842,16 @@ Make sure that base commit is in an official maintainer/mainline tree
+>   and not in some internal, accessible only to you tree - otherwise it
+>   would be worthless.
+>   
+> +
+> +Tooling
+> +-------
+> +
+> +Many of the technical aspects of this process can be automated using
+> +b4, documented at <https://b4.docs.kernel.org/en/latest/>. This can
+> +help with things like tracking dependencies, running checkpatch and
+> +with formatting and sending mails.
+> +
+> +
+>   References
+>   ----------
+>   
 > 
-> Glad you like it!
+> ---
+> base-commit: 7c626ce4bae1ac14f60076d00eafe71af30450ba
+> change-id: 20240903-documentation-b4-advert-18016e83d7d9
 > 
-> > Can I give you an account for my test cluster? If you'd like, we can
-> > convert bcachefs to it and point it at your branch.
-> 
-> Thank you, but I will pass on more accounts.  I have a fair amount of
-> hardware at my disposal.  ;-)
+> Best regards,
 
-Well - bcachefs might be a good torture test; if you patch bcachefs to
-use the new API point me at a branch and I'll point the CI at it
+Looks good to me. Thanks for the update.
+
+Reviewed-by: Shuah Khan <skhan@linuxfoundation.org>
+
+thanks,
+-- Shuah
+
 
