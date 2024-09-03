@@ -1,125 +1,353 @@
-Return-Path: <linux-kernel+bounces-313972-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313973-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8AEDD96AD0D
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 01:47:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6635996AD1A
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 01:52:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 34BEC1F22EA4
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 23:47:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B6E10B22DD0
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 23:52:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 618D11D79A2;
-	Tue,  3 Sep 2024 23:47:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC9DF1D79B8;
+	Tue,  3 Sep 2024 23:52:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SlGVn1gk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="pdBZZnyX"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F9951EBFFA;
-	Tue,  3 Sep 2024 23:47:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E8ED1EBFFA;
+	Tue,  3 Sep 2024 23:52:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725407233; cv=none; b=HVKZwr10lFcJ9S+8cBx84XVAS567S5lEgoJM8RedP4wmEvWQSLwtgx04tyxhLIcWy4VG6427jkvPr6Z1bITXasunSYAEDzuCP5QSnqiIA66uvvWQdCM+9ZrOwDsimrdOwHrJ8LZLooFCKJ7+8xaiQgtBoeMn6yqktMOutc12QH8=
+	t=1725407549; cv=none; b=n30M1jRz+XPUKwgcphFvgQctGoYyKdgnsWfQRrKbOD8DpY/e1bPAPIOxZ5VW/IrzM0oUIASEihWLTf8ARqAYhmGZzdY3XMjkSDTHanPw/1tu07ZjxHKq6ZfPjDgeYCxhf0IOIoNdb7FweAnW0y8TX8h73S0nHoPbUnkxJ7q/DXs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725407233; c=relaxed/simple;
-	bh=syaECrjJE2kWIzyuFy7TOxjEg6HYnVTBHVpPWpttYog=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=XZMfdo78Of2wLAzrs9a72/9TosrYOf1pNWdZWK4wF4E/MDFXuh1QAS38EhWRfK7IN8tGL/c3x3RK1nvAmVZctm7IZeMtRbKR9JLkZ9x4yd5iwBdmLcDseojr6aDsJFLtfNjM/lfIDDavnaccA5YFSH0km09as/afo6drds6xQsg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SlGVn1gk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 859A5C4CEC4;
-	Tue,  3 Sep 2024 23:47:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725407233;
-	bh=syaECrjJE2kWIzyuFy7TOxjEg6HYnVTBHVpPWpttYog=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=SlGVn1gk0SxFfz9vigWKHLcKXUV+23WJ7CIDd+c5uNzmpaf/aZYK6uOZS1RQPZ/tN
-	 hQAVvb7MUldFyVb+I8H/aVa0F0p/oXV57TJMzSkPiXPhNsHT0VyDv7Fq2vOzlwo8sv
-	 HgQqYW2QhnGvPTTSKpFWy0CzYUO4QYjBdp7CIlttpKI+eGcmKCH/HzGZl2JFbrvw4/
-	 z6kd40ug/0TAokbkgyjxRGpHmB8AZaQdNHCB9WRH4Pqf+dS8ltl2Nt1Bw0ASUMYh6d
-	 AczG4sJoKR9q/H1wnI3Po2kKgG9E0V/iaqkfydnJsBTHWSdVcfyvOyVeVhqXY6QOwp
-	 vK/zpfWFdlylA==
-From: Mark Brown <broonie@kernel.org>
-To: linux-kernel@vger.kernel.org, 
- Detlev Casanova <detlev.casanova@collabora.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>, 
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- Andi Shyti <andi.shyti@kernel.org>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Jiri Slaby <jirislaby@kernel.org>, 
- Wim Van Sebroeck <wim@linux-watchdog.org>, 
- Guenter Roeck <linux@roeck-us.net>, Chris Morgan <macromorgan@hotmail.com>, 
- Jonas Karlman <jonas@kwiboo.se>, Tim Lunn <tim@feathertop.org>, 
- Andy Yan <andyshrk@163.com>, Muhammed Efe Cetin <efectn@protonmail.com>, 
- Jagan Teki <jagan@edgeble.ai>, Dragan Simic <dsimic@manjaro.org>, 
- Ondrej Jirman <megi@xff.cz>, Michael Riesch <michael.riesch@wolfvision.net>, 
- Jimmy Hon <honyuenkwun@gmail.com>, Elon Zhang <zhangzj@rock-chips.com>, 
- Alexey Charkov <alchark@gmail.com>, Elaine Zhang <zhangqing@rock-chips.com>, 
- Yifeng Zhao <yifeng.zhao@rock-chips.com>, 
- Finley Xiao <finley.xiao@rock-chips.com>, Liang Chen <cl@rock-chips.com>, 
- Jamie Iles <jamie@jamieiles.com>, devicetree@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
- dri-devel@lists.freedesktop.org, linux-i2c@vger.kernel.org, 
- linux-serial@vger.kernel.org, linux-spi@vger.kernel.org, 
- linux-watchdog@vger.kernel.org, kernel@collabora.com
-In-Reply-To: <20240903152308.13565-1-detlev.casanova@collabora.com>
-References: <20240903152308.13565-1-detlev.casanova@collabora.com>
-Subject: Re: (subset) [PATCH v4 0/9] Add device tree for ArmSoM Sige 5
- board
-Message-Id: <172540722527.175332.15576202732090473513.b4-ty@kernel.org>
-Date: Wed, 04 Sep 2024 00:47:05 +0100
+	s=arc-20240116; t=1725407549; c=relaxed/simple;
+	bh=0XKmHDlWBsUkyTDYuieq/MwUxV+7GE7dgLDzIXruJtM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=kt3moxwQpndLFUkPr3jwVhUfSwDD0BnsBjDoCQPe4oX5kZELeoFlB0zWI1NcS/yOCrkyulhH040oFgZkzV8459QxOYUvnW/rat3OKipNEeQWxg0ZasF+MpDOLuirN0x93cfQYGjlcWteTmkqN/IbZslQFJNkazo14gKdkJvSiWI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=pdBZZnyX; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 483LVZEv000810;
+	Tue, 3 Sep 2024 23:52:07 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	95BPSr22aNtxxkLKJOon+5nTrYaFWvyv57TrPyiflHg=; b=pdBZZnyXcGnQglde
+	fWf/+6lf+TZ68nyFbs+mysF7ei+KL7kFUW395VCuDyNQ9aIQjVpf+rWYgeLtYUQ6
+	IOhEbSXwzAxZvQ0ka+f2vlyrvHVJ0Lo/08zPyw+Gjoq2XFzLgApKF7xy7OHGa6T9
+	pMpmb0fljYLgrq58pKqfOZekWDg5GMoxfhuBR9g5sR9jTBtq5akM0mIBtrRemCbo
+	6LrSZZFG5JbpdsJIxiMU2gtHhDSpvN7dND4Hd9ZqU5OS032AFyDqAncjrjI7muZ7
+	LYQ9cuM1TgGxyqlFsYmIoher/++bfhof3VW2EghL9oMx0Kt9qCrYnLXOat92buc3
+	kBoQrg==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41drqe39ux-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 03 Sep 2024 23:52:06 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 483Nq4Mt002628
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 3 Sep 2024 23:52:04 GMT
+Received: from [10.71.114.155] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 3 Sep 2024
+ 16:52:04 -0700
+Message-ID: <02cbf2a1-f8e6-4d5a-9d46-5c21f593bcdd@quicinc.com>
+Date: Tue, 3 Sep 2024 16:52:03 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-99b12
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v26 31/33] ALSA: usb-audio: Add USB offload route kcontrol
+To: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        <srinivas.kandagatla@linaro.org>, <mathias.nyman@intel.com>,
+        <perex@perex.cz>, <conor+dt@kernel.org>, <dmitry.torokhov@gmail.com>,
+        <corbet@lwn.net>, <broonie@kernel.org>, <lgirdwood@gmail.com>,
+        <tiwai@suse.com>, <krzk+dt@kernel.org>, <Thinh.Nguyen@synopsys.com>,
+        <bgoswami@quicinc.com>, <robh@kernel.org>,
+        <gregkh@linuxfoundation.org>
+CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-sound@vger.kernel.org>, <linux-input@vger.kernel.org>,
+        <linux-usb@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-doc@vger.kernel.org>, <alsa-devel@alsa-project.org>
+References: <20240829194105.1504814-1-quic_wcheng@quicinc.com>
+ <20240829194105.1504814-32-quic_wcheng@quicinc.com>
+ <b682bd8f-2743-42cf-b51f-1444faf4635f@linux.intel.com>
+Content-Language: en-US
+From: Wesley Cheng <quic_wcheng@quicinc.com>
+In-Reply-To: <b682bd8f-2743-42cf-b51f-1444faf4635f@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 2RrMypqgf7f696ke8lsoslZaflVIykZD
+X-Proofpoint-ORIG-GUID: 2RrMypqgf7f696ke8lsoslZaflVIykZD
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-03_11,2024-09-03_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0 mlxscore=0
+ phishscore=0 adultscore=0 suspectscore=0 priorityscore=1501 clxscore=1015
+ impostorscore=0 spamscore=0 mlxlogscore=999 bulkscore=0 malwarescore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2407110000
+ definitions=main-2409030190
 
-On Tue, 03 Sep 2024 11:22:30 -0400, Detlev Casanova wrote:
-> Add the rk3576-armsom-sige5 device tree as well as its rk3576.dtsi base
-> and pinctrl information in rk3576-pinctrl.dtsi.
-> 
-> The other commits add DT bindings documentation for the devices that
-> already work with the current corresponding drivers.
-> 
-> Note that as is, the rockchip gpio driver needs the gpio nodes
-> to be children of the pinctrl node, even though this is deprecated.
-> 
-> [...]
+Hi Pierre,
 
-Applied to
+On 8/30/2024 3:05 AM, Pierre-Louis Bossart wrote:
+>
+> On 8/29/24 21:41, Wesley Cheng wrote:
+>> In order to allow userspace/applications know about USB offloading status,
+>> expose a sound kcontrol that fetches information about which sound card
+>> and PCM index the USB device is mapped to for supporting offloading.  In
+>> the USB audio offloading framework, the ASoC BE DAI link is the entity
+>> responsible for registering to the SOC USB layer.
+>>
+>> It is expected for the USB SND offloading driver to add the kcontrol to the
+>> sound card associated with the USB audio device.  An example output would
+>> look like:
+> this is very odd, the offloading driver adds a control to another card?
+>
+> That seems like a rather important layering violation.
+>
+> I thought it was done the other way, the USB audio card created a
+> control that would point to the other card/device.
+The USB SND offloading vendor driver (qc_audio_offload), which technically co-exists with USB SND core, is the entity that will add the offload kcontrol to the USB audio device's sound card.  Initially, I had the kcontrol creation as part of the USB SND mixer, but I believe Takashi preferred if the vendor driver did it instead.
+>
+>> tinymix -D 1 get 'USB Offload Playback Route PCM#0'
+>> -1, -1 (range -1->255)
+>>
+>> This example signifies that there is no mapped ASoC path available for the
+>> USB SND device.
+> but that control would not even exist if the ASoC-based driver isn't probed.
+>
+> It's become really hard to follow, I've been on all this for 1.5hrs and
+> losing track of the design.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
+Hence why it probably is a good idea to leave it within the USB offload vendor driver.  There are checks to ensure that the ASoC based driver is probed/available before the kcontrols are created for a device.  If there are devices that were identified before the ASoC components were probed, then the snd_usb_rediscover_devices() is triggered as part of soc-usb, and that would call the connect_cb() callback to the USB SND vendor offload driver to create the kcontrol.
 
-Thanks!
+Thanks
 
-[7/9] spi: dt-bindings: Add rockchip,rk3576-spi compatible
-      commit: b0cdf9cc089525da330919d1bcd3b92655aaa621
+Wesley Cheng
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
+>> tinymix -D 1 get 'USB Offload Playback Route PCM#0'
+>> 0, 0 (range -1->255)
+>>
+>> This example signifies that the offload path is available over ASoC sound
+>> card index#0 and PCM device#0.
+>>
+>> Signed-off-by: Wesley Cheng <quic_wcheng@quicinc.com>
+>> ---
+>>  sound/usb/Kconfig                 |  10 +++
+>>  sound/usb/Makefile                |   2 +
+>>  sound/usb/mixer_usb_offload.c     | 102 ++++++++++++++++++++++++++++++
+>>  sound/usb/mixer_usb_offload.h     |  17 +++++
+>>  sound/usb/qcom/Makefile           |   2 +-
+>>  sound/usb/qcom/qc_audio_offload.c |   2 +
+>>  6 files changed, 134 insertions(+), 1 deletion(-)
+>>  create mode 100644 sound/usb/mixer_usb_offload.c
+>>  create mode 100644 sound/usb/mixer_usb_offload.h
+>>
+>> diff --git a/sound/usb/Kconfig b/sound/usb/Kconfig
+>> index 5cc3eaf53e6b..e3fbf9541d0b 100644
+>> --- a/sound/usb/Kconfig
+>> +++ b/sound/usb/Kconfig
+>> @@ -176,10 +176,20 @@ config SND_BCD2000
+>>  	  To compile this driver as a module, choose M here: the module
+>>  	  will be called snd-bcd2000.
+>>  
+>> +config SND_USB_OFFLOAD_MIXER
+>> +	tristate "USB Audio Offload mixer control"
+>> +	help
+>> +	 Say Y to enable the USB audio offloading mixer controls.  This
+>> +	 exposes an USB offload capable kcontrol to signal to applications
+>> +	 about which platform sound card can support USB audio offload.
+>> +	 The returning values specify the mapped ASoC card and PCM device
+>> +	 the USB audio device is associated to.
+>> +
+>>  config SND_USB_AUDIO_QMI
+>>  	tristate "Qualcomm Audio Offload driver"
+>>  	depends on QCOM_QMI_HELPERS && SND_USB_AUDIO && USB_XHCI_SIDEBAND && SND_SOC_USB
+>>  	select SND_PCM
+>> +	select SND_USB_OFFLOAD_MIXER
+>>  	help
+>>  	  Say Y here to enable the Qualcomm USB audio offloading feature.
+>>  
+>> diff --git a/sound/usb/Makefile b/sound/usb/Makefile
+>> index 54a06a2f73ca..2f19f854944c 100644
+>> --- a/sound/usb/Makefile
+>> +++ b/sound/usb/Makefile
+>> @@ -36,3 +36,5 @@ obj-$(CONFIG_SND_USB_US122L) += snd-usbmidi-lib.o
+>>  
+>>  obj-$(CONFIG_SND) += misc/ usx2y/ caiaq/ 6fire/ hiface/ bcd2000/ qcom/
+>>  obj-$(CONFIG_SND_USB_LINE6)	+= line6/
+>> +
+>> +obj-$(CONFIG_SND_USB_OFFLOAD_MIXER) += mixer_usb_offload.o
+>> diff --git a/sound/usb/mixer_usb_offload.c b/sound/usb/mixer_usb_offload.c
+>> new file mode 100644
+>> index 000000000000..16e2fd634684
+>> --- /dev/null
+>> +++ b/sound/usb/mixer_usb_offload.c
+>> @@ -0,0 +1,102 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +/*
+>> + * Copyright (c) 2022-2024 Qualcomm Innovation Center, Inc. All rights reserved.
+>> + */
+>> +
+>> +#include <linux/usb.h>
+>> +
+>> +#include <sound/core.h>
+>> +#include <sound/control.h>
+>> +#include <sound/soc-usb.h>
+>> +
+>> +#include "usbaudio.h"
+>> +#include "card.h"
+>> +#include "helper.h"
+>> +#include "mixer.h"
+>> +
+>> +#include "mixer_usb_offload.h"
+>> +
+>> +#define PCM_IDX(n)  ((n) & 0xffff)
+>> +#define CARD_IDX(n) ((n) >> 16)
+>> +
+>> +static int
+>> +snd_usb_offload_route_get(struct snd_kcontrol *kcontrol,
+>> +			  struct snd_ctl_elem_value *ucontrol)
+>> +{
+>> +	struct device *sysdev = snd_kcontrol_chip(kcontrol);
+>> +	int ret;
+>> +
+>> +	ret = snd_soc_usb_update_offload_route(sysdev,
+>> +					       CARD_IDX(kcontrol->private_value),
+>> +					       PCM_IDX(kcontrol->private_value),
+>> +					       SNDRV_PCM_STREAM_PLAYBACK,
+>> +					       ucontrol->value.integer.value);
+>> +	if (ret < 0) {
+>> +		ucontrol->value.integer.value[0] = -1;
+>> +		ucontrol->value.integer.value[1] = -1;
+>> +	}
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static int snd_usb_offload_route_info(struct snd_kcontrol *kcontrol,
+>> +				      struct snd_ctl_elem_info *uinfo)
+>> +{
+>> +	uinfo->type = SNDRV_CTL_ELEM_TYPE_INTEGER;
+>> +	uinfo->count = 2;
+>> +	uinfo->value.integer.min = -1;
+>> +	/* Arbitrary max value, as there is no 'limit' on number of PCM devices */
+>> +	uinfo->value.integer.max = 0xff;
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static struct snd_kcontrol_new snd_usb_offload_mapped_ctl = {
+>> +	.iface = SNDRV_CTL_ELEM_IFACE_CARD,
+>> +	.access = SNDRV_CTL_ELEM_ACCESS_READ,
+>> +	.info = snd_usb_offload_route_info,
+>> +	.get = snd_usb_offload_route_get,
+>> +};
+>> +
+>> +/**
+>> + * snd_usb_offload_create_ctl() - Add USB offload bounded mixer
+>> + * @chip - USB SND chip device
+>> + *
+>> + * Creates a sound control for a USB audio device, so that applications can
+>> + * query for if there is an available USB audio offload path, and which
+>> + * card is managing it.
+>> + */
+>> +int snd_usb_offload_create_ctl(struct snd_usb_audio *chip)
+>> +{
+>> +	struct usb_device *udev = chip->dev;
+>> +	struct snd_kcontrol_new *chip_kctl;
+>> +	struct snd_usb_substream *subs;
+>> +	struct snd_usb_stream *as;
+>> +	char ctl_name[37];
+>> +	int ret;
+>> +
+>> +	list_for_each_entry(as, &chip->pcm_list, list) {
+>> +		subs = &as->substream[SNDRV_PCM_STREAM_PLAYBACK];
+>> +		if (!subs->ep_num)
+>> +			continue;
+>> +
+>> +		chip_kctl = &snd_usb_offload_mapped_ctl;
+>> +		chip_kctl->count = 1;
+>> +		/*
+>> +		 * Store the associated USB SND card number and PCM index for
+>> +		 * the kctl.
+>> +		 */
+>> +		chip_kctl->private_value = as->pcm_index |
+>> +					  chip->card->number << 16;
+>> +		sprintf(ctl_name, "USB Offload Playback Route PCM#%d",
+>> +			as->pcm_index);
+>> +		chip_kctl->name = ctl_name;
+>> +		ret = snd_ctl_add(chip->card, snd_ctl_new1(chip_kctl,
+>> +				  udev->bus->sysdev));
+>> +		if (ret < 0)
+>> +			break;
+>> +	}
+>> +
+>> +	return ret;
+>> +}
+>> +EXPORT_SYMBOL_GPL(snd_usb_offload_create_ctl);
+>> diff --git a/sound/usb/mixer_usb_offload.h b/sound/usb/mixer_usb_offload.h
+>> new file mode 100644
+>> index 000000000000..3f6e2a8b19c8
+>> --- /dev/null
+>> +++ b/sound/usb/mixer_usb_offload.h
+>> @@ -0,0 +1,17 @@
+>> +/* SPDX-License-Identifier: GPL-2.0
+>> + *
+>> + * Copyright (c) 2022-2024 Qualcomm Innovation Center, Inc. All rights reserved.
+>> + */
+>> +
+>> +#ifndef __USB_OFFLOAD_MIXER_H
+>> +#define __USB_OFFLOAD_MIXER_H
+>> +
+>> +#if IS_ENABLED(CONFIG_SND_USB_OFFLOAD_MIXER)
+>> +int snd_usb_offload_create_ctl(struct snd_usb_audio *chip);
+>> +#else
+>> +static inline int snd_usb_offload_create_ctl(struct snd_usb_audio *chip)
+>> +{
+>> +	return 0;
+>> +}
+>> +#endif
+>> +#endif /* __USB_OFFLOAD_MIXER_H */
+>> diff --git a/sound/usb/qcom/Makefile b/sound/usb/qcom/Makefile
+>> index a81c9b28d484..4005e8391ab9 100644
+>> --- a/sound/usb/qcom/Makefile
+>> +++ b/sound/usb/qcom/Makefile
+>> @@ -1,2 +1,2 @@
+>>  snd-usb-audio-qmi-objs := usb_audio_qmi_v01.o qc_audio_offload.o
+>> -obj-$(CONFIG_SND_USB_AUDIO_QMI) += snd-usb-audio-qmi.o
+>> \ No newline at end of file
+>> +obj-$(CONFIG_SND_USB_AUDIO_QMI) += snd-usb-audio-qmi.o
+>> diff --git a/sound/usb/qcom/qc_audio_offload.c b/sound/usb/qcom/qc_audio_offload.c
+>> index a7ad15404fd1..5b9262a116be 100644
+>> --- a/sound/usb/qcom/qc_audio_offload.c
+>> +++ b/sound/usb/qcom/qc_audio_offload.c
+>> @@ -36,6 +36,7 @@
+>>  #include "../helper.h"
+>>  #include "../pcm.h"
+>>  #include "../power.h"
+>> +#include "../mixer_usb_offload.h"
+>>  
+>>  #include "usb_audio_qmi_v01.h"
+>>  
+>> @@ -1703,6 +1704,7 @@ static void qc_usb_audio_offload_probe(struct snd_usb_audio *chip)
+>>  		sdev->card_idx = chip->card->number;
+>>  		sdev->chip_idx = chip->index;
+>>  
+>> +		snd_usb_offload_create_ctl(chip);
+>>  		snd_soc_usb_connect(usb_get_usb_backend(udev), sdev);
+>>  	}
+>>  
 
