@@ -1,153 +1,121 @@
-Return-Path: <linux-kernel+bounces-313477-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313478-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5272A96A5E6
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 19:52:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0375F96A5E7
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 19:53:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F04B31F25C2F
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 17:52:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A6E681F25B7F
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 17:53:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E257A18DF92;
-	Tue,  3 Sep 2024 17:52:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD39018F2C3;
+	Tue,  3 Sep 2024 17:53:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="N08CB+jL"
-Received: from out-184.mta1.migadu.com (out-184.mta1.migadu.com [95.215.58.184])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jjPudkq8"
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0721718DF7F
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 17:52:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D3A318C90C
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 17:53:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725385926; cv=none; b=BJWzdwWP7318knIO287PRVy+1rSyMUCaI3836antLp14Wj6/OwhD3PAz6rY0+kWZ4e5uZfTbDrhAgH8z0OJO9dlk4rgDeDqv9wFJ/1Y0OnnKivy7f1VaMSAidEHWdyELUZQaVgZwKUuUR+iMzcTNEKx8vW5WGhoWpMNXSycuYNk=
+	t=1725385989; cv=none; b=ouOtlgI9IFFn+TrVhZUCVrwl9GVfsAisoKhsgn7DVLndOndTkoldLtkEmp3sliSquuZRxJAGUyvMKe7bb77LDK1NtOLhKdg/xhA4bq48bUtcvovmSrT9x1kTsxkOjuoPz1uxazZ78GKt/2+BR0BEjaBpund3mNl72BHhvG3a/Po=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725385926; c=relaxed/simple;
-	bh=UeLXJklQ8pQZXSGosRpzdX4dNQGU5PtQW80YrI2BlRU=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ONHFO+s6pfn6rCkaZ92FpIYizKIqW5uGwQ7ibRCv3FqGVV2Tfd8qJN4VYTiJEmpXfoViJYcPijL4f9KF6aD8aGmTxR+BNcbb7rdZQRAuD1gmEGQz8ZFJ3i8gVZ5GI7K9HcNIl5RnUK+i5PuihOnpsRLUH4hPc+HXC4G+FlwRsqE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=N08CB+jL; arc=none smtp.client-ip=95.215.58.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1725385920;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=arCXP/c/bQi1qoEO/wOkAyALABugDqpI7zGDaG9Y0Js=;
-	b=N08CB+jLABGe2ZJvDO9//a6PyfXSUSRsFOB1qBArK9UXncQoBCoiJNm50gkPeG5RYtUeeh
-	JMKGAzeuhUcppwpnPB6LdTdV/tf4qxow3RnYdnZLMFKH32jVEfYs2mio847enRKKVmoKSk
-	3DeCiEv0kwC8jnM++92mKyTjcJvi72Y=
-From: Sean Anderson <sean.anderson@linux.dev>
-To: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	Michal Simek <michal.simek@amd.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andy Chiu <andy.chiu@sifive.com>,
-	Ariane Keller <ariane.keller@tik.ee.ethz.ch>,
-	Sean Anderson <sean.anderson@linux.dev>
-Subject: [PATCH net] net: xilinx: axienet: Fix race in axienet_stop
-Date: Tue,  3 Sep 2024 13:51:41 -0400
-Message-Id: <20240903175141.4132898-1-sean.anderson@linux.dev>
+	s=arc-20240116; t=1725385989; c=relaxed/simple;
+	bh=qsklfgnd5UqEXIqfQQCBwtoJQ4EBSLZoYc9fW2DMEyY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MdkJtHW84+zO5iXSKYiHFeNQaysxM5r9/zjwaAmTtk1OmC1Q1RbbI1+zAE1bFvFQLEHDpGlCMAhpsYNP8N31ULr43bWQ0xPHWIpKE7Qlv0tIx11CDjXG8Vs71kNqMQ+9QEopkxBbJUQ9Lj2SUReoowtcWzU5rD0Djqicba/RH/w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=jjPudkq8; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a8695cc91c8so562888166b.3
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 10:53:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1725385986; x=1725990786; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qsklfgnd5UqEXIqfQQCBwtoJQ4EBSLZoYc9fW2DMEyY=;
+        b=jjPudkq8fThwvr/rWxL/WsMIPzu7XGkUm00x1j21noPPP6r+TUTbLCPkZoyEEW2znq
+         DJAWN5CdAp6+k+K5aXtV4nGb6A4QXKmGbvXC6ByNamjPkxGYOCo8WnkgR76cYrO6+g4m
+         o5tJbHz4p/ft0PIxmUv/p75Ph/u3OwwhAvGBm+H6oaMIlCpnMj+I+cGMaxSv22UM01mh
+         v+kiqqQWWY9R/5ZzZ30RKmFQwLoWkWl2Ay8m+kOSqbPEtpBmXZ1FGOpbqTWf7kKRK0zv
+         t6gwm2tI/vXpN5A8ouSzMsgPa7f3tSiA7nNf0F1oyTOCff6tIXSi+F6joScTJ2mPM66e
+         ZiPA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725385986; x=1725990786;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=qsklfgnd5UqEXIqfQQCBwtoJQ4EBSLZoYc9fW2DMEyY=;
+        b=jm9zolsV0BttGQ+blOgO9jhlaInBp4PzCCA/WOGxqrpchmCxtVy9kA+pKa0TEiWdMY
+         utWdgjpdl5zNhodir2lqv97sgoqswTdhCuKNY0Tnt5yOmRdvo2AVE9hhXQM3RKJmqDSp
+         sT5PZxFT3keitI5bCYLVpx7ik9v+5h0boGGBVxTrMF7NCJ8I2pqLyoHWfCskazhjlXp7
+         hZ/uyFOeFX+vEAq7VRPI/ojuIIr8qfI95GDqOvTWUraxCDcY++YeAA6e+zyGL8FrOM0B
+         wCCJiOPsMV5i4B3fhVW1nIg3Oc71vfO7qXTLuVQH4pNBV/UVPGhStt5/AFrmwyI/WtD6
+         QuTg==
+X-Forwarded-Encrypted: i=1; AJvYcCW/GgNjqGVO1qVWzqk/wPSdArQl/tOdUGkP6SUjx1+fpXwRWIuddksUgL2sRuXSTp6PjRLBKaYFzDXn1Ng=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzVkyTKRWPjBLjjxSPzU0CqQnFTMofcEiwd4fQCLe4P4LBWZNmo
+	D2/dFInF/4MWeLlxV+ZguxEEpQMa+PSRc66DFZu0t7qJ55Ciu8e2hFdS5/2YsWb8dhrKLTyP/VB
+	ty08v+PGztwwIFcL5PVThkTIeufKae/Artk4W
+X-Google-Smtp-Source: AGHT+IHvumS/WZFiMMvTc4vCSVDsRaX79qV4ow/vMV/gQtuqKssFxn5rlH+WDp6OH5yqrFkTK6AYR0DyHlPMNFDvDys=
+X-Received: by 2002:a17:907:7251:b0:a86:7c5d:1856 with SMTP id
+ a640c23a62f3a-a897fa744a8mr1602475166b.46.1725385985198; Tue, 03 Sep 2024
+ 10:53:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+References: <BD22A15A-9216-4FA0-82DF-C7BBF8EE642E@gmail.com>
+ <6f65e3a6-5f1a-4fda-b406-17598f4a72d5@leemhuis.info> <ZsiLElTykamcYZ6J@casper.infradead.org>
+ <02D2DA66-4A91-4033-8B98-ED25FC2E0CD6@gmail.com> <CAKEwX=N-10A=C_Cp_m8yxfeTigvmZp1v7TrphcrHuRkHJ8837g@mail.gmail.com>
+ <A512FD59-63DF-48D3-BCB3-83DF8505E7E0@gmail.com> <27594ee6-41dd-4951-b4cc-31577c9466db@amd.com>
+In-Reply-To: <27594ee6-41dd-4951-b4cc-31577c9466db@amd.com>
+From: Yosry Ahmed <yosryahmed@google.com>
+Date: Tue, 3 Sep 2024 10:52:29 -0700
+Message-ID: <CAJD7tkbO8J+2KfRnCPPoxmPzDHnpnbWfjHx9YJe_PtJ9S_yLPw@mail.gmail.com>
+Subject: Re: [regression] oops on heavy compilations ("kernel BUG at
+ mm/zswap.c:1005!" and "Oops: invalid opcode: 0000")
+To: "Aithal, Srikanth" <sraithal@amd.com>
+Cc: Piotr Oniszczuk <piotr.oniszczuk@gmail.com>, Nhat Pham <nphamcs@gmail.com>, 
+	Matthew Wilcox <willy@infradead.org>, 
+	Linux regressions mailing list <regressions@lists.linux.dev>, LKML <linux-kernel@vger.kernel.org>, 
+	Johannes Weiner <hannes@cmpxchg.org>, Linux-MM <linux-mm@kvack.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-axienet_dma_err_handler can race with axienet_stop in the following
-manner:
+On Tue, Sep 3, 2024 at 1:31=E2=80=AFAM Aithal, Srikanth <sraithal@amd.com> =
+wrote:
+>
+> On 8/25/2024 11:25 AM, Piotr Oniszczuk wrote:
+> >
+> >
+> >> Wiadomo=C5=9B=C4=87 napisana przez Nhat Pham <nphamcs@gmail.com> w dni=
+u 23.08.2024, o godz. 18:16:
+> >>
+> >>
+> >> Have you tried with 6.9 yet? IIRC, there are two major changes to
+> >> zswap architecture in recent versions.
+> >>
+> >> 1. In 6.9, we range-partition zswap's rbtrees to reduce lock contentio=
+n.
+> >>
+> >
+> > Ok - after 32h of continuous compilation also on 6.9.12 I got series of=
+ oops (see below).
+> >
+> I hit similar soft lockup with linuxnext-20240902 build, but I was not
+> running anything for that long. Once I hit it while kexecing on
+> linuxnext-20240902 and other time was during linuxnext-20240902 boot up.
+> I have attached the logs here, I am trying to see if I can recreate it
+> on todays linux-next build.
 
-CPU 1                       CPU 2
-======================      ==================
-axienet_stop()
-    napi_disable()
-    axienet_dma_stop()
-                            axienet_dma_err_handler()
-                                napi_disable()
-                                axienet_dma_stop()
-                                axienet_dma_start()
-                                napi_enable()
-    cancel_work_sync()
-    free_irq()
-
-Fix this by setting a flag in axienet_stop telling
-axienet_dma_err_handler not to bother doing anything. I chose not to use
-disable_work_sync to allow for easier backporting.
-
-Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
-Fixes: 8a3b7a252dca ("drivers/net/ethernet/xilinx: added Xilinx AXI Ethernet driver")
----
-
- drivers/net/ethernet/xilinx/xilinx_axienet.h      | 3 +++
- drivers/net/ethernet/xilinx/xilinx_axienet_main.c | 8 ++++++++
- 2 files changed, 11 insertions(+)
-
-diff --git a/drivers/net/ethernet/xilinx/xilinx_axienet.h b/drivers/net/ethernet/xilinx/xilinx_axienet.h
-index 09c9f9787180..1223fcc1a8da 100644
---- a/drivers/net/ethernet/xilinx/xilinx_axienet.h
-+++ b/drivers/net/ethernet/xilinx/xilinx_axienet.h
-@@ -436,6 +436,8 @@ struct skbuf_dma_descriptor {
-  * @tx_bytes:	TX byte count for statistics
-  * @tx_stat_sync: Synchronization object for TX stats
-  * @dma_err_task: Work structure to process Axi DMA errors
-+ * @stopping:   Set when @dma_err_task shouldn't do anything because we are
-+ *              about to stop the device.
-  * @tx_irq:	Axidma TX IRQ number
-  * @rx_irq:	Axidma RX IRQ number
-  * @eth_irq:	Ethernet core IRQ number
-@@ -507,6 +509,7 @@ struct axienet_local {
- 	struct u64_stats_sync tx_stat_sync;
- 
- 	struct work_struct dma_err_task;
-+	bool stopping;
- 
- 	int tx_irq;
- 	int rx_irq;
-diff --git a/drivers/net/ethernet/xilinx/xilinx_axienet_main.c b/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
-index 9aeb7b9f3ae4..9eb300fc3590 100644
---- a/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
-+++ b/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
-@@ -1460,6 +1460,7 @@ static int axienet_init_legacy_dma(struct net_device *ndev)
- 	struct axienet_local *lp = netdev_priv(ndev);
- 
- 	/* Enable worker thread for Axi DMA error handling */
-+	lp->stopping = false;
- 	INIT_WORK(&lp->dma_err_task, axienet_dma_err_handler);
- 
- 	napi_enable(&lp->napi_rx);
-@@ -1580,6 +1581,9 @@ static int axienet_stop(struct net_device *ndev)
- 	dev_dbg(&ndev->dev, "axienet_close()\n");
- 
- 	if (!lp->use_dmaengine) {
-+		WRITE_ONCE(lp->stopping, true);
-+		flush_work(&lp->dma_err_task);
-+
- 		napi_disable(&lp->napi_tx);
- 		napi_disable(&lp->napi_rx);
- 	}
-@@ -2154,6 +2158,10 @@ static void axienet_dma_err_handler(struct work_struct *work)
- 						dma_err_task);
- 	struct net_device *ndev = lp->ndev;
- 
-+	/* Don't bother if we are going to stop anyway */
-+	if (READ_ONCE(lp->stopping))
-+		return;
-+
- 	napi_disable(&lp->napi_tx);
- 	napi_disable(&lp->napi_rx);
- 
--- 
-2.35.1.1320.gc452695387.dirty
-
+This doesn't look like the same problem to me. I do not see any zswap
+functions in the backtrace, I see fuse stuff. Please send a separate
+bug report to the relevant mailing lists (probably
+linux-fsdevel@vger.kernel.org).
 
