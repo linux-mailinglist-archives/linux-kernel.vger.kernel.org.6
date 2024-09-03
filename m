@@ -1,141 +1,122 @@
-Return-Path: <linux-kernel+bounces-313323-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313325-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9251696A3C7
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 18:10:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4441896A3D0
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 18:11:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 14B96B227DE
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 16:10:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0164728294E
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 16:11:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2319718BB99;
-	Tue,  3 Sep 2024 16:09:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2451189F29;
+	Tue,  3 Sep 2024 16:11:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Wx6v5xKW"
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kJAUHpzR"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF00118BB8E
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 16:09:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C18381DFFC;
+	Tue,  3 Sep 2024 16:11:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725379787; cv=none; b=PVu6z3j54X21J63J6JfXytvK2yWtlrmN0Mr8V7MDTkZt1hFpAgYJfcO24eI/nHeWPUuVwhyNy83O9PYHAKczTaghqeqfHAmnuXa6JDmdFrYgtuVhcMPhe6xo/w56qA15WjTK9ckT7UtwOqqeKbaa0XP6X61fj1FTtOzunM/SQbI=
+	t=1725379871; cv=none; b=Jlt6EOZ548mNGpIcNJ/na0aJGGv336kj0tOkBxHDuEulHKimgXuskygB/U4hYvYfvOIq4cXA6ZP4JfikNcRmraK8PutuWTb2sUQDZ8pnnOEJ5r1mWfgZOPUhbhpB6lw/ejF9KCpmxYSgWTKkzMDC2WyFZf69n7NBaRtqDNxo/wo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725379787; c=relaxed/simple;
-	bh=jq0wppVOHMajjCB/klidz4rCB87VGjTxCJBr+khhGn8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BzEwy6TNWYJt6pdubcQZfPi/CaMwJLuntl6HfhiBLZU0pmut5gLM5QTjDfIzBb1CfAKfSbMEZDRQlCjIkFBEhI9hsFa50v7MXKjFW8NFiMiP5G2ZPz3rSW4PvAx3seu+RfLvlYUHfA3lSQO+Emr2tTRXDbdU8Uyxhg2q4OM1pZ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Wx6v5xKW; arc=none smtp.client-ip=209.85.167.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-5344ab30508so5945005e87.0
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 09:09:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1725379784; x=1725984584; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pA4+e6iz7B2aVNnWGkq9LpoEssVLpjsdYRVXZGTjr7Y=;
-        b=Wx6v5xKWyHBX2AAV3APTSCKCY8AGvPvY8jWYF5pdNREt+ewuiDrG8np24OHjAIH2mv
-         6+DVo5s+/RXMR9C3J6DT9th2hBCPNkoDdAPBQqySc0RtUlcaCC75492mtFoHoHWSnVX8
-         QxkhY1/P+ZkloqRnDqa12Ur9WVUGSUXcKpw5RQdZ+rBp8ybWtRiiXHuBaelhcmUmlFWa
-         a1p3NCHsrda98GEfpmX8POyNvFoo5K9vRzIqQ3x09LhEdbVGnL7EB9HEgoqX9HtMPw+J
-         +yN+zNPUv+2WTEEWUvA3gjOokDUfUg4Umpb8h/0NtnLkmUXQdt5PcFhJ/vqkb9WpPRPK
-         TDOA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725379784; x=1725984584;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=pA4+e6iz7B2aVNnWGkq9LpoEssVLpjsdYRVXZGTjr7Y=;
-        b=uk4ezpZhJ+p4BYDstFL9A29MyeRA9m7tUlrw9vKHzYuQRzWhR0+qPujivjeptkAMq8
-         aZNllhxFfTwockwdohzoWSZlRSvd2c/xLz18dPQFWXsAZxQfudoCkId5ryrp4VAuFMUh
-         vWQxscpC+/7JEYOpV2STWxWuW7sgO6qAjfT37XiVzP5QGto9f95Xey46uQppHrN/ffn1
-         zmcqlzc5Pji06hRnEM8DR/hUE5tMrm//MxYBMF3ZUvZzbJ5K6GsmGSYJoGHezHdRRU0j
-         vI7OtZYpytR4pYjLMWZiPbLgn2ZhCzGR6HkJMPzxSzTq0e5skdyjSlAjHUXDlPpj/xNj
-         nZ+A==
-X-Forwarded-Encrypted: i=1; AJvYcCV8eCS0N+Yp77b+OWZ/QEzXaK+ZJ01RjiKtoM2qqMYmqGcysnL49F/rqsgMw3lRB4olppXgtPWFZ24YNUc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxHSkq2hhJPvSee+vVq5Aqqx1n4SsQgWuHImexSVBsITBKKjNAh
-	33R2Z7jwpJa18gH7770Nv6rf2SD86of+MSA21vKgddLNhz2T8sU9q5QCwcJaxHJXzZx5slTCpD+
-	Ey+Ums/VuZp9gMypWhQr8yvY07IIccj2LPCXd0Q==
-X-Google-Smtp-Source: AGHT+IGRHktsRm1HDEhsFIDzbmUbTSXuUPrZPQCHgHDmunk/OKRP5dnXPD28QHNSKkwKkLB34FVrCkcx7HSZCUjaQxg=
-X-Received: by 2002:a05:6512:1045:b0:52c:dc56:ce62 with SMTP id
- 2adb3069b0e04-5353ebafcbdmr5681695e87.12.1725379783701; Tue, 03 Sep 2024
- 09:09:43 -0700 (PDT)
+	s=arc-20240116; t=1725379871; c=relaxed/simple;
+	bh=23UJof+bw4z17P2EuEFVPPtXB7zf9hg2doA/jFPekec=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MrYSD1Us8Ex44vEjlWIhwCTPxUOdLVHhCUTiYvVpHpI/SsKY9SoqwvVrp0/2BH3QRsQskRHyZ/ioQiBypBTVxldUBdwIA/ahv0OykFU15iZCS6/BZ/qNMOp6L46Xzpw1nof1JHIZzjhbzmT1ReT+I7NBb1X0FNYNVbGTAK1IE4Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kJAUHpzR; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725379870; x=1756915870;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=23UJof+bw4z17P2EuEFVPPtXB7zf9hg2doA/jFPekec=;
+  b=kJAUHpzRVWRyQRpTnMRKlK7y1728IP5prMIjHHNKHtUcohHYrdDJDedP
+   KQb0le2OxaMdTexDb0Nqv4gE/1pIoVdIXwfc2p3Uo+7Ti6nm2/jLp4c5I
+   /mwPt4pD7fqf+UlMzMwuqCRo7gP4jhERwGK3azUiY2q8WtI/sutSJwMAH
+   1+dVPQQ3vh8UoYs2J/jy+ji13T+pzT0lMvIPLUX0cCkhHtbY9ZqQQA+JY
+   MWm6xS0ukzK9Zv0tJsY8WYx17fuAoyqtYtW43K19hz/d+3/74wWyLEGxQ
+   01+2HROE5h3Kb2Yd0dZ7MYMUwzM3bgRNQ5MzyZSOjbiBzawZ0UFWDZAvZ
+   w==;
+X-CSE-ConnectionGUID: z+Mi9ddLRHm1uhoDtGjyZg==
+X-CSE-MsgGUID: kFtuT8ZOTAGAP1gFM0/MFA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11184"; a="35147602"
+X-IronPort-AV: E=Sophos;i="6.10,199,1719903600"; 
+   d="scan'208";a="35147602"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2024 09:11:09 -0700
+X-CSE-ConnectionGUID: iiiYSyOkTkSWL/6RgAW03w==
+X-CSE-MsgGUID: xmCnEEbvQOKNkRB36feE1Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,199,1719903600"; 
+   d="scan'208";a="69585899"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2024 09:11:06 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1slW6l-00000004lR0-24Yh;
+	Tue, 03 Sep 2024 19:10:19 +0300
+Date: Tue, 3 Sep 2024 19:10:05 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Ye Zhang <ye.zhang@rock-chips.com>
+Cc: linus.walleij@linaro.org, brgl@bgdev.pl, heiko@sntech.de,
+	linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+	mika.westerberg@linux.intel.com, tao.huang@rock-chips.com,
+	finley.xiao@rock-chips.com, tim.chen@rock-chips.com,
+	elaine.zhang@rock-chips.com
+Subject: Re: [PATCH v3 12/12] gpio: rockchip: replace mutex_lock() with
+ guard()
+Message-ID: <Ztc03cbpPjPZatoL@smile.fi.intel.com>
+References: <20240903073649.237362-1-ye.zhang@rock-chips.com>
+ <20240903073649.237362-13-ye.zhang@rock-chips.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240829-sm8650-v6-11-hmd-pocf-mdss-quad-upstream-8-v1-0-bdb05b4b5a2e@linaro.org>
- <20240829-sm8650-v6-11-hmd-pocf-mdss-quad-upstream-8-v1-3-bdb05b4b5a2e@linaro.org>
- <6kecwqe5npysc3rup5tkij5iepgk3pf5erattfv25caedixaml@6zev3sdwjjbu>
-In-Reply-To: <6kecwqe5npysc3rup5tkij5iepgk3pf5erattfv25caedixaml@6zev3sdwjjbu>
-From: Jun Nie <jun.nie@linaro.org>
-Date: Wed, 4 Sep 2024 00:09:29 +0800
-Message-ID: <CABymUCM8zu1TY20kuEn7Dt9uDDC0hL9YAimWsTXnxDJeJFuiog@mail.gmail.com>
-Subject: Re: [PATCH 03/21] drm/msm/dsi: pass the right width to dsc
-To: Marijn Suijten <marijn.suijten@somainline.org>
-Cc: Rob Clark <robdclark@gmail.com>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Sean Paul <sean@poorly.run>, 
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, linux-arm-msm@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240903073649.237362-13-ye.zhang@rock-chips.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-Marijn Suijten <marijn.suijten@somainline.org> =E4=BA=8E2024=E5=B9=B49=E6=
-=9C=883=E6=97=A5=E5=91=A8=E4=BA=8C 18:12=E5=86=99=E9=81=93=EF=BC=9A
->
-> On 2024-08-29 18:17:32, Jun Nie wrote:
-> > Data width for dsc engine is aligned with pipe, not with whole screen
-> > width. Because the width may be halved in DSI bonded case.
-> >
-> > The dsc width is not related to the timing with back front porch in
-> > later stage, so update dsc timing earlier.
-> >
-> > Signed-off-by: Jun Nie <jun.nie@linaro.org>
->
-> I already sent a patch for this:
-> https://lore.kernel.org/linux-arm-msm/20240417-drm-msm-initial-dualpipe-d=
-sc-fixes-v1-2-78ae3ee9a697@somainline.org/
->
-> And then came up with a better solution, outlined in:
-> https://lore.kernel.org/linux-arm-msm/7fqwkryeumkt7zxsec6va7ys22nfs3tr4rr=
-cz323extdz3f6zv@w4uu2lk4uh7v/
->
-> Would you mind dropping this patch so that I can send a better solution?
+On Tue, Sep 03, 2024 at 03:36:49PM +0800, Ye Zhang wrote:
+> Replacing mutex_lock with guard() simplifies the code and helps avoid
 
-Sure. I am happy with a better solution from you.
->
-> > ---
-> >  drivers/gpu/drm/msm/dsi/dsi_host.c | 13 ++++++-------
-> >  1 file changed, 6 insertions(+), 7 deletions(-)
-> >
-> > diff --git a/drivers/gpu/drm/msm/dsi/dsi_host.c b/drivers/gpu/drm/msm/d=
-si/dsi_host.c
-> > index 7a4d9c071be5a..5abade8f26b88 100644
-> > --- a/drivers/gpu/drm/msm/dsi/dsi_host.c
-> > +++ b/drivers/gpu/drm/msm/dsi/dsi_host.c
-> > @@ -953,7 +953,7 @@ static void dsi_timing_setup(struct msm_dsi_host *m=
-sm_host, bool is_bonded_dsi)
-> >                       return;
-> >               }
-> >
-> > -             dsc->pic_width =3D mode->hdisplay;
-> > +             dsc->pic_width =3D hdisplay;
->
-> The other part of this already happened in patch 02/21?
->
-> - Marijn
->
-Patch 02/21 is just for parameter validation, not directly related to
-this patch.
+mutex_lock()
 
--Jun
+avoiding
+
+> deadlocks.
+
+...
+
+> --- a/drivers/gpio/gpio-rockchip.c
+> +++ b/drivers/gpio/gpio-rockchip.c
+
++ cleanup.h
+
+...
+
+>  	}
+> -	mutex_lock(&bank->deferred_lock);
+> +	guard(mutex)(&bank->deferred_lock);
+
+Make it surrounded by blank lines.
+
+> +	ret = rockchip_get_bank_data(bank);
+> +	if (ret)
+> +		goto err_disabled_clk;
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
