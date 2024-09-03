@@ -1,148 +1,138 @@
-Return-Path: <linux-kernel+bounces-313387-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313388-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7EE3496A4D1
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 18:48:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4A5696A4D6
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 18:50:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 08D89B26C68
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 16:48:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 239021C23AD6
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 16:50:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8575A18CBEE;
-	Tue,  3 Sep 2024 16:48:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE32618BC2E;
+	Tue,  3 Sep 2024 16:50:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="RRadP83q"
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="icPJAgfL"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5947C17BED3
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 16:48:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3BBF18B49A
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 16:50:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725382118; cv=none; b=WKvc0/PposzsblD4yUc/dDXrpTNO02r5Yxtpj0BM6jk15kxaCzyN9p6CF5sVjwr41ceCJ9HlSMfztTJX1C34FzYOFniEoOhNaaQv+LaG0ZC6R2JgCHAwnHboVAjLn2rQehXH9aCDUXBCSlUnzZyewCumvnI/XuEks5pP8NnBrjI=
+	t=1725382209; cv=none; b=SrLb8BnOXBQPR7YZbPn6xSrm4qkGJKqIs8+v5lGd5B8HlDQhjFX6WgHRmBM6uARnqesZbVJRwS2UyxcHXY4vtHQQJC8MFpmlFAiUI4g4BvWJPP4BPqlYwPa0MeEF3mg2WXj4pxG1UGVYqaCldjQw3m0efnilXR+jbCY2zmpNbjc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725382118; c=relaxed/simple;
-	bh=JUABkBov1BTpP8X1cXy8Wu9gRM5Z5iLqdXxeMqPSSEk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cuOyBRXx+B3xYcp1eZzXasEF8+7KVyR7dL1vbUZv+uhQ0HGEdnu2IOAzXxyLhL8xZTp6+FnCn/3FHXy4cfCAOca7J14gI0Ug0CnAuOqc7IkNrhi0Ynqn/6apSq9czedASmFKxZqs7Yk6JOZN24flaNVj3YgtDce3YXHwNoeloEs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=RRadP83q; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-53349d3071eso7322785e87.2
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 09:48:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1725382114; x=1725986914; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=/N3PvcbOxJEyoCocEYxC10jX1CQUHnVIF3e6bgsLpns=;
-        b=RRadP83qchmqTrBI5ZVG95Q2hnh8TvQM14nO49o4T8Bwm2qKXjEtGfhYsPl91HSXWm
-         JsFpAF61CcykPOOReGalF2sbHCmwiXm4DmMO1Ekh/iTghQMjUs1c/Ayl0BaMfDRyqr3A
-         Bm0fainJQzpBVNHMyYr2TdRMkM2VUcJ/JyNpsf4j/QZXx/2jyO6evCPDTO56REImlGCE
-         JGwY67FXtw7PNf6mf37S/AfTPa/xV/cGAww9Shysif65M568cl+kMY6qaIsMaeWBBKIA
-         DH1P/mbz/16MbMVcNvmxnb1cdQT4A82Ha0Dladng6kTe266/50IdBNM9AgUYD0zWH3i+
-         BgkA==
+	s=arc-20240116; t=1725382209; c=relaxed/simple;
+	bh=nqmuOyJXosNjfxFp47rk8c/6P1gHeGLK+0RE43HXhZ8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=R+OUukztYX1DGf67gTwiEIFOpuEqSO35S1WTxsHKyxbCGQg6CsRaURR3niECGP06qHqh+ibH9To510Sz2RXWgIq3GeKCzHf4oldy4IRDa8wZuShCdYAR3pCu0TSgOTW52T1eKeaeD3BPt/LzL0mhyboHwZokG+ESthiY3jjXypA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=icPJAgfL; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1725382206;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vt3R45yng9MI1JlX9x1QeReU6N6vf5Xvk3elVudJjyU=;
+	b=icPJAgfLMzxapCbYLu1AtK41aYKR7kT3Nu6ql62ACzFOkZtdBWEXmfg4AkhxtaOnU/Sad2
+	hBQj4g1I/pJAUAHCU5fRQGXHYGPqR/HvFnT/NoLHH1hi0tF6obi9IyprGqMheAoX7hyg2V
+	yWNVrR9lSIm5isTFC7e1PE6LQdypibk=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-694-wfQ2-rdzN0ml5yWDjaGr_Q-1; Tue, 03 Sep 2024 12:50:05 -0400
+X-MC-Unique: wfQ2-rdzN0ml5yWDjaGr_Q-1
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-42c881282cfso12651755e9.2
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 09:50:05 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725382114; x=1725986914;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/N3PvcbOxJEyoCocEYxC10jX1CQUHnVIF3e6bgsLpns=;
-        b=lLzjKSBiSZkUMBFooiR3AI9SVJIoySnEb/fnCaj8W8epblTyXkQxHnTGCvKy6bOc8H
-         BVdFU5gGaugSkMGM9pQz3HIkH25C4M8hxOzhUxqIcnFd5a61LZNzqyxobh4k+vIoTxm8
-         3AAQ/a6HpNw96vPJ9W/dl0IcohIJyFlEnhea1R/Xt5ZOGAJn3SbjKZ6KVdrf3h/Oq32I
-         bKaagvXJVNOlU+x8MEuD89WBd6S94GMcg438r2abhURKmu9fsszXKyMpyko1jx6G3w05
-         vBJiiGQavpV/V4CJoP0tRJThF5reMTnAyMAZkGnjM4lNPKco1b/8G9CSQ/JBUxY2xo72
-         x5Ow==
-X-Forwarded-Encrypted: i=1; AJvYcCVN68tlIR6kITiTDmbSDAlig4WY1bh8PMv3MtxL66l4Lj6KiZsECDhz8xhiFIgYiJLpS3cAGFCPerK/KtY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwRKUOITIIcJfVCusnB3VaMmBFqVZM6AXaRd75OFNiq+x8k4sRK
-	t1i8WyAULI90HyyTuTHIRkdpEhH2lH10VrwEoUphYy6kBav8xm7+27LFH5OkZzL2PTiOuFN5iR9
-	L
-X-Google-Smtp-Source: AGHT+IEpu3Q/jFO70kBzSh93T6Qwv4WexikxqzsC65yGsBSq1beGHqeLzWkh9GJIUhCSyIDtKtfsQw==
-X-Received: by 2002:a05:6512:6d2:b0:52f:cffd:39f9 with SMTP id 2adb3069b0e04-53546b2c596mr10142123e87.24.1725382114159;
-        Tue, 03 Sep 2024 09:48:34 -0700 (PDT)
-Received: from localhost (p5dc68f76.dip0.t-ipconnect.de. [93.198.143.118])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a89891a3e52sm693125766b.116.2024.09.03.09.48.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Sep 2024 09:48:33 -0700 (PDT)
-Date: Tue, 3 Sep 2024 18:48:32 +0200
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Rob Herring <robh@kernel.org>, linux-pwm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, 
-	Jiapeng Chong <jiapeng.chong@linux.alibaba.com>, Trevor Gamblin <tgamblin@baylibre.com>
-Subject: Re: [PATCH] pwm: lp3943: Fix signedness bug in lp3943_pwm_parse_dt()
-Message-ID: <e42tqtowldqybyqf33xgkj5lc6u4bmmxkv7dr6mnqswicsinql@mevowrbo2umz>
-References: <5e74df19-4469-4a10-8b87-e918769a2f9f@stanley.mountain>
+        d=1e100.net; s=20230601; t=1725382204; x=1725987004;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=vt3R45yng9MI1JlX9x1QeReU6N6vf5Xvk3elVudJjyU=;
+        b=lZNpkH7C9eagO/Cb0NT7sABm/zw17mDfte+2oN5WOjpjvJsOzPLy1bTCUuRzMGGxZP
+         zztI3UJoXeNM/3J1DvR2bRcPxmBXSvVyuC4vIX/exCIvgk6trVgOl50bqkimRAbRCvpw
+         ILXQErbCZemnVva78O0aOyslOst6KxSjaePQO/f6ujxx2au1ChoXIqR7zBD49vg4pQRq
+         p0QnuahZkenfP6YpiwRKUYYuJMzpDGTtetGTYunxXc5PiCGR+wRdZ4qQPWB+ys61kYjb
+         YkOQjmM1wsTyOPPOcNnlC3yOaie8+igOj+pSmxmqIttX8ojuTBx7+hzExJvmZHzicACQ
+         +9iw==
+X-Forwarded-Encrypted: i=1; AJvYcCXjsCNmRcfrqIbo9KIyiIdIuGmI+cOm0dbGUaGnVGPSq453dYb+W6t3NvO+MkRNHqmYjoXtFepIsEB1sDc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxpwjnBKWdiNDSPAnMyG36gKXN7PrjMT5wW7nPFYPvwWGG9AnuK
+	MfTp9YIy3PznT9iN2R8mYYS6nNMaxk4P6BftoxMtemZXk2ci1sh9xV4xpDgOkEMnhtaeX+ypJ7D
+	na846PgzRPwbTJGZHCxQCMApi/ZLP0CwWKshmWFEsaPIHsk1sAKUo7dXcKue1t4QH7T4YCztl70
+	6IqrXsx3Bvc1hqsDGydMP7ZeK1lLrUP4JwcIhg
+X-Received: by 2002:a05:600c:524f:b0:426:6551:3174 with SMTP id 5b1f17b1804b1-42c8de9ddd7mr11449705e9.29.1725382204127;
+        Tue, 03 Sep 2024 09:50:04 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGxNjqhzJAIg14CVUQX1gVg2ZwKA4TIQQGzXpxWRObTbG7cqWuModpsnWjHvba+Flu3OYEU8hqc/R6SRI6NG7g=
+X-Received: by 2002:a05:600c:524f:b0:426:6551:3174 with SMTP id
+ 5b1f17b1804b1-42c8de9ddd7mr11449515e9.29.1725382203627; Tue, 03 Sep 2024
+ 09:50:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="4xrlgwefelnzgxs6"
-Content-Disposition: inline
-In-Reply-To: <5e74df19-4469-4a10-8b87-e918769a2f9f@stanley.mountain>
-
-
---4xrlgwefelnzgxs6
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20240802195120.325560-1-seanjc@google.com> <20240802195120.325560-2-seanjc@google.com>
+ <CABgObfYT_X3-Qjb_ouNAGX1OOL2ULT2aEA6SDKessSbJxGZEOQ@mail.gmail.com> <ZtcmtFlX83g7C8Vd@google.com>
+In-Reply-To: <ZtcmtFlX83g7C8Vd@google.com>
+From: Paolo Bonzini <pbonzini@redhat.com>
+Date: Tue, 3 Sep 2024 18:49:50 +0200
+Message-ID: <CABgObfbwFPDiRbmVMtQZ9HipiT=4zXRqrE1fd7d44EeHt8b7=A@mail.gmail.com>
+Subject: Re: [PATCH 1/5] KVM: x86: Re-enter guest if WRMSR(X2APIC_ICR)
+ fastpath is successful
+To: Sean Christopherson <seanjc@google.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Aug 12, 2024 at 09:43:11AM +0300, Dan Carpenter wrote:
-> The "num_outputs" variable needs to be signed for the error checking for
-> of_property_count_u32_elems() to work correctly.  If the property is not
-> present then we're supposed to continue, but in the current code we will
-> try to allocate negative bytes, which will fail and it returns -ENOMEM.
->=20
-> Fixes: d6a56f3bb650 ("pwm: lp3943: Use of_property_count_u32_elems() to g=
-et property length")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
->  drivers/pwm/pwm-lp3943.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/drivers/pwm/pwm-lp3943.c b/drivers/pwm/pwm-lp3943.c
-> index f0e94c9e5956..803ecd6435cc 100644
-> --- a/drivers/pwm/pwm-lp3943.c
-> +++ b/drivers/pwm/pwm-lp3943.c
-> @@ -219,7 +219,7 @@ static int lp3943_pwm_parse_dt(struct device *dev,
->  	struct lp3943_pwm_map *pwm_map;
->  	enum lp3943_pwm_output *output;
->  	int i, err, count =3D 0;
-> -	u32 num_outputs;
-> +	int num_outputs;
-> =20
->  	if (!node)
->  		return -EINVAL;
+On Tue, Sep 3, 2024 at 5:09=E2=80=AFPM Sean Christopherson <seanjc@google.c=
+om> wrote:
+> On Mon, Sep 02, 2024, Paolo Bonzini wrote:
+> > On Fri, Aug 2, 2024 at 9:51=E2=80=AFPM Sean Christopherson <seanjc@goog=
+le.com> wrote:
+> > > Re-enter the guest in the fastpath if WRMSR emulation for x2APIC's IC=
+R is
+> > > successful, as no additional work is needed, i.e. there is no code un=
+ique
+> > > for WRMSR exits between the fastpath and the "!=3D EXIT_FASTPATH_NONE=
+" check
+> > > in __vmx_handle_exit().
+> >
+> > What about if you send an IPI to yourself?  Doesn't that return true
+> > for kvm_vcpu_exit_request() if posted interrupts are disabled?
+>
+> Yes, but that doesn't have anything to do with WRMSR itself, as KVM needs=
+ to morph
+> EXIT_FASTPATH_EXIT_HANDLED =3D> EXIT_FASTPATH_REENTER_GUEST if there's a =
+pending
+> event that needs requires injection.
 
-This issue is fixed since next-20240812 with the similar commit
-adef9a535479 ("pwm: lp3943: Fix an incorrect type in
-lp3943_pwm_parse_dt()"). (Up to next-20240830 the commit id was
-861a4272660a, I rewrote that commit because I got the Fixes line wrong.)
+The other way round? i.e. treat EXIT_FASTPATH_REENTER_GUEST as
+EXIT_FASTPATH_EXIT_HANDLED to go through event injection.
 
-For this reason I marked this patch as "Not Applicable" in patchwork.
+> Given that kvm_x86_ops.sync_pir_to_irr is likely NULL if virtual interrup=
+t delivery
+> is enabled, the overhead of the trying to re-enter the guest it essential=
+ly a few
+> cycles, e.g. check vcpu->mode and kvm_request_pending().
 
-Best regards
-Uwe
+No, I wasn't worried about performance. Probably I misread
 
---4xrlgwefelnzgxs6
-Content-Type: application/pgp-signature; name="signature.asc"
+                if (likely(exit_fastpath !=3D EXIT_FASTPATH_REENTER_GUEST))
+                        break;
 
------BEGIN PGP SIGNATURE-----
+as something like
 
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmbXPd0ACgkQj4D7WH0S
-/k7B9QgAp0kiihdPrzH5PDixrMEQeS8JDzUGoLQxGPzbSd/on3WPnuh593JQi8Fb
-JlFjK8jldFhAOFuBoHU7eyg5MyyycNhILBHPWz1WUbYEe9mwjMyHUs6lSSFGlmpC
-A3YP+yCv1lxQ1Da7fm+xdZsRLiHFhcY9udJhA4TLh7WT2KKwl7+YKvD80nhd60x2
-BTgJgJiIDO+Gm0iHYxSuOB4ConG8ywXOTMZ9mfi0yE6OJpTiGIcx/M0NLTOm5RCF
-fiyBpnNctEHaqn1HKEnLSiZJ37F+IunkjtjYj8pKYRgLAen86jQSfJ8JKMqmfnVF
-NwG2o9aYbLJ3+sofyKQ8zHmGfiFh8g==
-=n4Cp
------END PGP SIGNATURE-----
+                if (likely(exit_fastpath =3D=3D EXIT_FASTPATH_REENTER_GUEST=
+))
+                        continue;
 
---4xrlgwefelnzgxs6--
+EXIT_FASTPATH_REENTER_GUEST is exactly what's needed here.
+
+Paolo
+
 
