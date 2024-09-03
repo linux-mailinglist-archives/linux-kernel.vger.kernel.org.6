@@ -1,103 +1,214 @@
-Return-Path: <linux-kernel+bounces-312678-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312720-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B7A89699B0
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 12:03:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2674B969A4E
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 12:37:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 488FF28750B
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 10:03:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D3FE72831DB
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 10:37:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02B7919CC25;
-	Tue,  3 Sep 2024 10:03:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 079011B9837;
+	Tue,  3 Sep 2024 10:37:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="dcFLintO"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="ew2bIW0p"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B606917C9B3
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 10:03:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 504A51A0BC7
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 10:37:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725357814; cv=none; b=ZzJtLKFlQsjtPqxFtoyoHnwQXvewnWIn4oN2I0v5ge3Zi/XH22ctZM33OipD3COBTpt8+Q1zJHZqkcwgSdgI7npr6yAywz2EIyDrSYSZJDtkYXPBfTNMY0XhdWujnTdWY+fDrUNAAXufUseYTWjHEDRVofZHMWhrogHxRKc/hd0=
+	t=1725359831; cv=none; b=cxeHvQLp4X7eUZGL1mUovwMZfi9t4S470aQ18a3zR1JzAzspMppOn5cwEJv+waCfSAoYuBueTz1PLFspO9ZK/MMrTfT272r+AtgLyxCDr1c1LoFN8gye+Ueo/fMfZhwlq6DoJPNCLiiQIjjWDr8gQNSyIGMYRpI+10nOTR3tRNo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725357814; c=relaxed/simple;
-	bh=bEjo5dr+wds5EUEW0FFUxDxhXD9qETwURck3LtJXIO8=;
+	s=arc-20240116; t=1725359831; c=relaxed/simple;
+	bh=lgFfoM9wea4mTJR7aEIx+Ij9DkleM4tc+jOoWTKZ3e0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eyBI8I0cetRRf3VMWUl4bwg99sb6jRxbLdX5y3NMnG15XV9t9VJidWc1tnBx/mw8MZ4SepQCylLpq4h7iuRXRf9o+NGRZVoptbtrpk0Va15YhmBIDyF7gPRcFyxIvArY1Sykn3lKhG0anifr6M/51MnxWspgLF49EhlUi00rgZo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=dcFLintO; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=bEjo
-	5dr+wds5EUEW0FFUxDxhXD9qETwURck3LtJXIO8=; b=dcFLintOsQ7fwzigQkR3
-	eWMN8zC5FZKJEeFFBjPStw2b35e4SRzYbNKYrrz/ZxJaMa4j51AbfgUd9Vi/lJDj
-	zoi2b9GNptmgg+Kvh+W32xaAR1/8ZUK+HDhFO4X3QDTIqDDkKI7wfR0Qh19dIUMz
-	pjt+8GDhPrkCm0lNe+XI0fEhA/F+M2dXKJAc3doXPjY3QWsQeXU0P3Nl8vGD3rlr
-	bzQrBbmcLea55jDKFoBgWOfT6SQlxGKlh/vIQLpYRKMU/C8L8pYTML+6k9dq44Nv
-	hnvFryWJCbtpIb8spTAMhYonOBPL1ukbmZBqCIgjY/0uBWCdQQqnFc0ipwIqw2gj
-	Tw==
-Received: (qmail 209907 invoked from network); 3 Sep 2024 12:03:23 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 3 Sep 2024 12:03:23 +0200
-X-UD-Smtp-Session: l3s3148p1@pi/7KjQhBo0gAwDPXwdRANgvu6DX4+2c
-Date: Tue, 3 Sep 2024 12:03:23 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] i2c: simplify with scoped for each OF child loop
-Message-ID: <Ztbe61hW2dNMujce@shikoro>
-Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240816151340.154939-1-krzysztof.kozlowski@linaro.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=tOqXW/X3j/gh4HArraVFQO9sHGpkGGLB11D4v/i/S6DDh40ts+indd8e1w9y/ukZPiVSFHryvnGvxlWf9YNaCHMQ2FgH46Phv9hW09Odd/QiRV/0K9L9fM8goNGCNic1HV+o7Q9RLL0LO/yumIM7RAd4n4xZ31pfZeb1/Gcnw4Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=ew2bIW0p; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57F97C4CEC5;
+	Tue,  3 Sep 2024 10:37:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1725359830;
+	bh=lgFfoM9wea4mTJR7aEIx+Ij9DkleM4tc+jOoWTKZ3e0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ew2bIW0pEtrD5VzvPKrMlwVAbI4f+7Oc/dfujjthQkAzX5oBReRBiS5fcEuKaQA8h
+	 OO3gvBhp3/yJ3qwoHOidZaaus87ctEDfPlrgrmm7lgaAmH/HFdcu6mQu0Om/P0KHK3
+	 nUr1q20AvI1QNiFEysbA86+pROmi9HGTItEPwnnM=
+Date: Tue, 3 Sep 2024 12:04:57 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Barry Song <21cnbao@gmail.com>
+Cc: akpm@linux-foundation.org, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, Barry Song <v-songbaohua@oppo.com>,
+	Arve =?iso-8859-1?B?SGr4bm5lduVn?= <arve@android.com>,
+	Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Christian Brauner <brauner@kernel.org>,
+	Carlos Llamas <cmllamas@google.com>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Tangquan Zheng <zhengtangquan@oppo.com>
+Subject: Re: [PATCH] binder_alloc: Move alloc_page() out of mmap_rwsem to
+ reduce the lock duration
+Message-ID: <2024090331-rewire-ransack-e73b@gregkh>
+References: <20240902225009.34576-1-21cnbao@gmail.com>
+ <2024090325-sublet-unsworn-b6a3@gregkh>
+ <CAGsJ_4ybZRudJ+p7pxgb1xH7HP0rKcWW1Dtr_kvb7EUwnqxsQQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="dAVcFfMdPf4jMhsZ"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240816151340.154939-1-krzysztof.kozlowski@linaro.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAGsJ_4ybZRudJ+p7pxgb1xH7HP0rKcWW1Dtr_kvb7EUwnqxsQQ@mail.gmail.com>
 
+On Tue, Sep 03, 2024 at 05:07:23PM +0800, Barry Song wrote:
+> On Tue, Sep 3, 2024 at 4:57 PM Greg Kroah-Hartman
+> <gregkh@linuxfoundation.org> wrote:
+> >
+> > On Tue, Sep 03, 2024 at 10:50:09AM +1200, Barry Song wrote:
+> > > From: Barry Song <v-songbaohua@oppo.com>
+> > >
+> > > The mmap_write_lock() can block all access to the VMAs, for example page
+> > > faults. Performing memory allocation while holding this lock may trigger
+> > > direct reclamation, leading to others being queued in the rwsem for an
+> > > extended period.
+> > > We've observed that the allocation can sometimes take more than 300ms,
+> > > significantly blocking other threads. The user interface sometimes
+> > > becomes less responsive as a result. To prevent this, let's move the
+> > > allocation outside of the write lock.
+> > > A potential side effect could be an extra alloc_page() for the second
+> > > thread executing binder_install_single_page() while the first thread
+> > > has done it earlier. However, according to Tangquan's 48-hour profiling
+> > > using monkey, the likelihood of this occurring is minimal, with a ratio
+> > > of only 1 in 2400. Compared to the significantly costly rwsem, this is
+> > > negligible.
+> > > On the other hand, holding a write lock without making any VMA
+> > > modifications appears questionable and likely incorrect. While this
+> > > patch focuses on reducing the lock duration, future updates may aim
+> > > to eliminate the write lock entirely.
+> > >
+> > > Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> > > Cc: "Arve Hjønnevåg" <arve@android.com>
+> > > Cc: Todd Kjos <tkjos@android.com>
+> > > Cc: Martijn Coenen <maco@android.com>
+> > > Cc: Joel Fernandes <joel@joelfernandes.org>
+> > > Cc: Christian Brauner <brauner@kernel.org>
+> > > Cc: Carlos Llamas <cmllamas@google.com>
+> > > Cc: Suren Baghdasaryan <surenb@google.com>
+> > > Tested-by: Tangquan Zheng <zhengtangquan@oppo.com>
+> > > Signed-off-by: Barry Song <v-songbaohua@oppo.com>
+> > > ---
+> > >  drivers/android/binder_alloc.c | 18 ++++++++++++++----
+> > >  1 file changed, 14 insertions(+), 4 deletions(-)
+> > >
+> > > diff --git a/drivers/android/binder_alloc.c b/drivers/android/binder_alloc.c
+> > > index b3acbc4174fb..f20074e23a7c 100644
+> > > --- a/drivers/android/binder_alloc.c
+> > > +++ b/drivers/android/binder_alloc.c
+> > > @@ -227,13 +227,23 @@ static int binder_install_single_page(struct binder_alloc *alloc,
+> > >       if (!mmget_not_zero(alloc->mm))
+> > >               return -ESRCH;
+> > >
+> > > +     /*
+> > > +      * Don't allocate page in mmap_write_lock, this can block
+> > > +      * mmap_rwsem for a long time; Meanwhile, allocation failure
+> > > +      * doesn't necessarily need to return -ENOMEM, if lru_page
+> > > +      * has been installed, we can still return 0(success).
+> > > +      */
+> > > +     page = alloc_page(GFP_KERNEL | __GFP_HIGHMEM | __GFP_ZERO);
+> >
+> > But now you are allocating new pages even if binder_get_installed_page()
+> > is an error, right?  Doesn't that slow things down?
+> 
+> very very unlikely, as the ratio is only 1/2400 while write lock 100% blocks
+> everyone.
 
---dAVcFfMdPf4jMhsZ
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Ok, but:
 
-On Fri, Aug 16, 2024 at 05:13:40PM +0200, Krzysztof Kozlowski wrote:
-> Use scoped for_each_child_of_node_scoped() when iterating over device
-> nodes to make code a bit simpler.
->=20
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> > How was this benchmarked?
+> 
+> i actually put Tangquan's profiling result:
+> "
+> However, according to Tangquan's 48-hour profiling
+>  using monkey, the likelihood of this occurring is minimal, with a ratio
+>  of only 1 in 2400. Compared to the significantly costly rwsem, this is
+>  negligible."
 
-Applied to for-next, thanks!
+That's not a benchmark, or any real numbers of how this overall saves
+any time.
 
+> > >       /*
+> > >        * Protected with mmap_sem in write mode as multiple tasks
+> > >        * might race to install the same page.
+> > >        */
+> > >       mmap_write_lock(alloc->mm);
+> > > -     if (binder_get_installed_page(lru_page))
+> > > +     if (binder_get_installed_page(lru_page)) {
+> > > +             ret = 1;
+> >
+> > That is not a valid error value :(
+> >
+> > >               goto out;
+> > > +     }
+> > >
+> > >       if (!alloc->vma) {
+> > >               pr_err("%d: %s failed, no vma\n", alloc->pid, __func__);
+> > > @@ -241,7 +251,6 @@ static int binder_install_single_page(struct binder_alloc *alloc,
+> > >               goto out;
+> > >       }
+> > >
+> > > -     page = alloc_page(GFP_KERNEL | __GFP_HIGHMEM | __GFP_ZERO);
+> > >       if (!page) {
+> > >               pr_err("%d: failed to allocate page\n", alloc->pid);
+> > >               ret = -ENOMEM;
+> > > @@ -252,7 +261,6 @@ static int binder_install_single_page(struct binder_alloc *alloc,
+> > >       if (ret) {
+> > >               pr_err("%d: %s failed to insert page at offset %lx with %d\n",
+> > >                      alloc->pid, __func__, addr - alloc->buffer, ret);
+> > > -             __free_page(page);
+> > >               ret = -ENOMEM;
+> > >               goto out;
+> > >       }
+> > > @@ -262,7 +270,9 @@ static int binder_install_single_page(struct binder_alloc *alloc,
+> > >  out:
+> > >       mmap_write_unlock(alloc->mm);
+> > >       mmput_async(alloc->mm);
+> > > -     return ret;
+> > > +     if (ret && page)
+> > > +             __free_page(page);
+> > > +     return ret < 0 ? ret : 0;
+> >
+> > Please only use ? : for when you have to, otherwise please spell it out
+> > with a normal if statement:
+> >         if (ret < 0)
+> >                 return ret;
+> >         return 0;
+> >
+> > But, this is abusing the fact that you set "ret = 1" above, which is
+> > going to trip someone up in the future as that is NOT a normal coding
+> > pattern we have in the kernel, sorry.
+> >
+> > If you insist on this change, please rework it to not have that type of
+> > "positive means one thing, 0 means another, and negative means yet
+> > something else" please.
+> 
+> I was trying to consolidate all free_page() calls into one place. Otherwise,
+> we would need multiple free_page() calls. I'm perfectly fine with having more
+> free_page() calls in both the ret = 1 and ret < 0 paths. In that case,
+> the ret = 1
+> path can be removed if you prefer.
 
---dAVcFfMdPf4jMhsZ
-Content-Type: application/pgp-signature; name="signature.asc"
+Remember, we write code for people first, and compilers second.  You
+have to maintain this code for the next 10+ years, make it _VERY_
+obvious what is happening and how it works as you will be coming back to
+it and not remembering what was made for what reason at all.
 
------BEGIN PGP SIGNATURE-----
+thanks,
 
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmbW3usACgkQFA3kzBSg
-KbZ+eA//XFM8HLyX/AfuMJEht96Vz7RgqXsrMxxIAH1ez9s8+LdsKEQOQZL1y7q9
-/JmMog+yNXWCIJOW58rclfNNK3QbnuP8lHlK+Llld5GXpIJXcnclZLtCSvheMTpJ
-rcxahx+fK+RrFthVyAA+Fe/9eQUlwaLI1QJl26AFbxEl7KalLCJjuBwX2h2OwcA9
-ppTKfAnvj/L5aziTNLhrkOKPaLzzXoPw7wamD1Dgi96DYM+wZq210Urv7Z0RRtAV
-MifUMAOrxqY8W4pjjb9oeA8PsJn2nQLlDuIaF5cE7BSCLtvsX/gXiFCTPrZgVaKK
-TMblnQws+enLRx5q6O/6lauhZI4ty2PAOZO3iO2JLj1WGwfsh2kU2pHEX+9/xjf5
-EZlpwneQ8L7J6qs96WCIN2l0eBULfp0pBO3y2sFLYETtEvU9/q3OM0hfHIW0EUZo
-CdLU32zAwaw5YNiFuoS/vSleNHkv1D+xxKZ3s8zyOL1AlbaXEpKljzfgJau/IyNv
-kVmSDMzDfOfgbX2mBLHYMtIAKCKopN+YnJEiDWpLYzsp2zlc9kBcPqhWMRoqkK83
-pLC/SPM5SAQWY3NYXQbH6Z9SaDyR6kplrzwO5BcOZjcBLK7cRa5Jpq0E3Uio0rrw
-R9ODbJZjDw4VCX4hK7wDRUWV2+d+phcYBW8Z1mKX3mO/1YXwBL4=
-=tACZ
------END PGP SIGNATURE-----
-
---dAVcFfMdPf4jMhsZ--
+greg k-h
 
