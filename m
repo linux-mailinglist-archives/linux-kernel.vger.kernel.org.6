@@ -1,137 +1,263 @@
-Return-Path: <linux-kernel+bounces-313047-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313048-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E621969F80
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 15:55:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48877969F87
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 15:56:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DFC73283D13
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 13:55:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6D1C41C23FEF
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 13:56:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1E162AE75;
-	Tue,  3 Sep 2024 13:55:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF43F2AE97;
+	Tue,  3 Sep 2024 13:55:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="HOLybAVD"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="McaI5UkH"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3626846D;
-	Tue,  3 Sep 2024 13:55:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44C692A1D6
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 13:55:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725371711; cv=none; b=DTnuU6T16U4X5jURSXxIEpjKLm5ZqDsYTGbmKZ/oA1Wj29FmvU9CP9m3EyFvm/w8cgsdVMCQhhSt+vXd//ATo/MM6EoKInPuCPbldi3ycPqhS9nMis3Ax+TqeJv9aRYUKsSh3yh8qhu5CmlaNuPR+AWdnGp3zweZP0Ko4PMoUzE=
+	t=1725371751; cv=none; b=u8hNNY6fznPvwDuA53eL9AVe6IzCFG+1hXSY0pxtOzF2Jd09b4ByF9v2lchdJ7Wp7gxaaahiUyMLuI79eWLrM/tsATS1fUMHrV3NeEDpVsLwzHCXlSxpGtRB0dGY36wGzAoGgd1ybxfsyDOZpIH6rDhH/2mD0pxBHtbKlCd1BgY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725371711; c=relaxed/simple;
-	bh=TZhs90Wfs86m8kmrWdmjdudoyockf7tSMLRE1n+PTJQ=;
+	s=arc-20240116; t=1725371751; c=relaxed/simple;
+	bh=5zIeyeM/Qmt4j7Zx6DyEsvWyE6OtRWbAlepzVfbZTEI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ScUQQJDKB/zcb7QVUtBMngCpM92Frjl0Zi8I6V6cUvM8nxg53xKeDvk8X9zQhHu/ArJAuaqCtsC+JTQ0sn68T2ZRSNllcvX1vtkSJMEslDBCu2iY1SWRnNgL8D5Lo6Uddl7BKWJN+vsqnVuqtlYv4vDXMgsPejKT9+T6KSkRmg0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=HOLybAVD; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=aTa6TKOn9FmWWfnuQkVB5h4+sP16eUgPHREPtwgIrqM=; b=HOLybAVDQjB3YOhr0jmkecXGSD
-	SSCyJItTZJf0Qt6X1/5IzPPgBH4pbFkHxn8V9SbFv6Qosaxcay5HjZYoIDvJsGh/d9NbBYX4lJggv
-	95Czo6JFRqI1T6gKGQK4D/dSp1kIBBcXjblsfmb0e15kKDsKAPyV4AR2LpCzEUYSO/xaactR275lp
-	jy6cLnCew+/AXov7lBodDUdJKXOuolFUd+JIoZo01LCkjmkqXLlKJ/vIzxj8T+6a0U5lUsboBWs/S
-	KHteLuvAzIih0EHDfaPJA+I1EmYg+DH5Mb0YgiEBGOMV7PNFRAtlsIwVo3W0Owr+f3BCobVYwW2jA
-	5VFx0r5g==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1slTzr-0000000CLEm-1waM;
-	Tue, 03 Sep 2024 13:55:03 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 8625930050D; Tue,  3 Sep 2024 15:55:02 +0200 (CEST)
-Date: Tue, 3 Sep 2024 15:55:02 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: x86 Maintainers <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-	Linux PM <linux-pm@vger.kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Ricardo Neri <ricardo.neri@intel.com>,
-	Tim Chen <tim.c.chen@intel.com>
-Subject: Re: [PATCH v3 2/2] cpufreq: intel_pstate: Set asymmetric CPU
- capacity on hybrid systems
-Message-ID: <20240903135502.GX4723@noisy.programming.kicks-ass.net>
-References: <3310447.aeNJFYEL58@rjwysocki.net>
- <1979653.PYKUYFuaPT@rjwysocki.net>
+	 Content-Type:Content-Disposition:In-Reply-To; b=o1RoA+I44hC9lHVcC/t4c+DaKGRcShwOtfuF9uVLkCaGOEs70PUVcCeDgzXqL8kXsclOv/0zKOFmZufcVqowdKnWkdpUCmaeOConhrNSMa6ZmyLVwX/BP56ItdqGzzuL2gi5MzxMxhDasz3Zv91McjLaPeI/x8ZNXxNV0/9aCIQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=McaI5UkH; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-2056aa5cefcso428395ad.0
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 06:55:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1725371749; x=1725976549; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=aFVlJE2wcPJ/73dJ2/hsvJKsdhKy12KE5SwOspRc07o=;
+        b=McaI5UkHa4DuiC7qsBPkyg86dNp2oK3+vIkPd4f9ZXyzVsRZ0TzUfiZc5WKT8iI270
+         XFhD/HtFDnz7ySdvMaO7S1Bc5tSe0JxLXgxhzqXusZDIiSlnVP1z9VzhaYsgsVYrYFMv
+         6CffEUK1aY+IsTN4IBQikTsjtSMd4rktysXN2nuLBSCXAZ3i9PTvrpaXO1QiUuABF4+r
+         TPJ7mKwvuGEf18TIFhkjItq5KeD4oO0mgbDshVSwzgt2vU/Tjbt1/nkZrmDDq4emJQFz
+         od2Lr2EK/OBozvgwaS+kohV+8ZhvYsXmWCKHXh9IhdytTXSZdOa3FtrJ35U9Xfc70FUE
+         s9Hw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725371749; x=1725976549;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=aFVlJE2wcPJ/73dJ2/hsvJKsdhKy12KE5SwOspRc07o=;
+        b=EqNAhGMcsOZVgyVixT8prND/8OlQsGkMGIlH0W/jMSnKpYEAzBFMAAFqVnkfNO3lfc
+         6euIbXCTZr8wm7GzYYRPCZl3+8pkajciuRQD6iwhPyGKsi0BGgMkBMNsKTC6DEb03cnj
+         kGVsuTrxWmrostqCtXv/AUB8jwjx0ib8lXAcArJzVCH4gFdCCq0IMlbd8U9GK9tWUoJO
+         2LoYvREqHpb1JljFuNS8kw1VHsTrXM36wTcmahvzvOYcPNMZC1Jk5vHJPK7WWZQ7wEiW
+         rbEb8lW4ickuY84XJ9stVpMef7kNuh5uYB5Ryfr+QXFqiT5Ash1uQU9+9ZUBuY9aYcwF
+         BAwg==
+X-Forwarded-Encrypted: i=1; AJvYcCXjjr/Np21EMxAQJogo8YTXSs0cUI4xEWOKVQeTZmRSuipfMQ3Xw2jh2TD+kMEIGfmkc4Kvz6qR7cs/5ro=@vger.kernel.org
+X-Gm-Message-State: AOJu0YynM3OuhA7YqL01u6+mtAydlDuzGVyXZGVK4cKuAYPYnZMm3nzW
+	KugvSu7RQ+LQiceod4gWwDRmv4qVTI9FLdKOV91JvrMP8AAoXxmU4h0UIqIr1Q==
+X-Google-Smtp-Source: AGHT+IGrElXa+ZnVJVusZLLZ3n1gY1PRDfijfMKbWF3ERqoNh+U8MNTJcATggm62KZcSLZN+diKQuQ==
+X-Received: by 2002:a17:902:da92:b0:1f9:dc74:6c2b with SMTP id d9443c01a7336-20549b8e7c6mr6672125ad.29.1725371748904;
+        Tue, 03 Sep 2024 06:55:48 -0700 (PDT)
+Received: from google.com (55.212.185.35.bc.googleusercontent.com. [35.185.212.55])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-205152cd9a3sm81638545ad.90.2024.09.03.06.55.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Sep 2024 06:55:48 -0700 (PDT)
+Date: Tue, 3 Sep 2024 13:55:44 +0000
+From: Carlos Llamas <cmllamas@google.com>
+To: Barry Song <21cnbao@gmail.com>
+Cc: Hillf Danton <hdanton@sina.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, Barry Song <v-songbaohua@oppo.com>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Michal Hocko <mhocko@suse.com>,
+	Tangquan Zheng <zhengtangquan@oppo.com>
+Subject: Re: [PATCH] binder_alloc: Move alloc_page() out of mmap_rwsem to
+ reduce the lock duration
+Message-ID: <ZtcVYBUNWGow40pX@google.com>
+References: <20240902225009.34576-1-21cnbao@gmail.com>
+ <20240903110109.1696-1-hdanton@sina.com>
+ <CAGsJ_4xr-HvqKdh=Q=sVKM+hM+VS1Cf4gqPvq9vDtnQSBO9X=A@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <1979653.PYKUYFuaPT@rjwysocki.net>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAGsJ_4xr-HvqKdh=Q=sVKM+hM+VS1Cf4gqPvq9vDtnQSBO9X=A@mail.gmail.com>
 
-On Wed, Aug 28, 2024 at 01:48:10PM +0200, Rafael J. Wysocki wrote:
-> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> 
-> Make intel_pstate use the HWP_HIGHEST_PERF values from
-> MSR_HWP_CAPABILITIES to set asymmetric CPU capacity information
-> via the previously introduced arch_set_cpu_capacity() on hybrid
-> systems without SMT.
-> 
-> Setting asymmetric CPU capacity is generally necessary to allow the
-> scheduler to compute task sizes in a consistent way across all CPUs
-> in a system where they differ by capacity.  That, in turn, should help
-> to improve scheduling decisions.  It is also necessary for the schedutil
-> cpufreq governor to operate as expected on hybrid systems where tasks
-> migrate between CPUs of different capacities.
-> 
-> The underlying observation is that intel_pstate already uses
-> MSR_HWP_CAPABILITIES to get CPU performance information which is
-> exposed by it via sysfs and CPU performance scaling is based on it.
-> Thus using this information for setting asymmetric CPU capacity is
-> consistent with what the driver has been doing already.  Moreover,
-> HWP_HIGHEST_PERF reflects the maximum capacity of a given CPU including
-> both the instructions-per-cycle (IPC) factor and the maximum turbo
-> frequency and the units in which that value is expressed are the same
-> for all CPUs in the system, so the maximum capacity ratio between two
-> CPUs can be obtained by computing the ratio of their HWP_HIGHEST_PERF
-> values.  Of course, in principle that capacity ratio need not be
-> directly applicable at lower frequencies, so using it for providing the
-> asymmetric CPU capacity information to the scheduler is a rough
-> approximation, but it is as good as it gets.  Also, measurements
-> indicate that this approximation is not too bad in practice.
-> 
-> If the given system is hybrid and non-SMT, the new code disables ITMT
-> support in the scheduler (because it may get in the way of asymmetric CPU
-> capacity code in the scheduler that automatically gets enabled by setting
-> asymmetric CPU capacity) after initializing all online CPUs and finds
-> the one with the maximum HWP_HIGHEST_PERF value.  Next, it computes the
-> capacity number for each (online) CPU by dividing the product of its
-> HWP_HIGHEST_PERF and SCHED_CAPACITY_SCALE by the maximum HWP_HIGHEST_PERF.
-> 
-> When a CPU goes offline, its capacity is reset to SCHED_CAPACITY_SCALE
-> and if it is the one with the maximum HWP_HIGHEST_PERF value, the
-> capacity numbers for all of the other online CPUs are recomputed.  This
-> also takes care of a cleanup during driver operation mode changes.
-> 
-> Analogously, when a new CPU goes online, its capacity number is updated
-> and if its HWP_HIGHEST_PERF value is greater than the current maximum
-> one, the capacity numbers for all of the other online CPUs are
-> recomputed.
-> 
-> The case when the driver is notified of a CPU capacity change, either
-> through the HWP interrupt or through an ACPI notification, is handled
-> similarly to the CPU online case above, except that if the target CPU
-> is the current highest-capacity one and its capacity is reduced, the
-> capacity numbers for all of the other online CPUs need to be recomputed
-> either.
-> 
-> If the driver's "no_trubo" sysfs attribute is updated, all of the CPU
+On Tue, Sep 03, 2024 at 07:45:12PM +0800, Barry Song wrote:
+> On Tue, Sep 3, 2024 at 7:01 PM Hillf Danton <hdanton@sina.com> wrote:
+> >
+> > On Tue, Sep 03, 2024 at 10:50:09AM +1200, Barry Song wrote:
+> > > From: Barry Song <v-songbaohua@oppo.com>
+> > >
+> > > The mmap_write_lock() can block all access to the VMAs, for example page
+> > > faults. Performing memory allocation while holding this lock may trigger
+> > > direct reclamation, leading to others being queued in the rwsem for an
+> > > extended period.
+> > > We've observed that the allocation can sometimes take more than 300ms,
+> > > significantly blocking other threads. The user interface sometimes
+> > > becomes less responsive as a result. To prevent this, let's move the
+> > > allocation outside of the write lock.
 
-Trubo :-)
+Thanks for you patch Barry. So, we are aware of this contention and I've
+been working on a fix for it. See more about this below.
 
-> capacity information is computed from scratch to reflect the new turbo
-> status.
+> >
+> > I suspect concurrent allocators make things better wrt response, cutting
+> > alloc latency down to 10ms for instance in your scenario. Feel free to
+> > show figures given Tangquan's 48-hour profiling.
+> 
+> Likely.
+> 
+> Concurrent allocators are quite common in PFs which occur
+> in the same PTE. whoever gets PTL sets PTE, others free the allocated
+> pages.
+> 
+> >
+> > > A potential side effect could be an extra alloc_page() for the second
+> > > thread executing binder_install_single_page() while the first thread
+> > > has done it earlier. However, according to Tangquan's 48-hour profiling
+> > > using monkey, the likelihood of this occurring is minimal, with a ratio
+> > > of only 1 in 2400. Compared to the significantly costly rwsem, this is
+> > > negligible.
+
+This is not negligible. In fact, it is the exact reason for the page
+allocation to be done with the mmap sem. If the first thread sleeps on
+vm_insert_page(), then binder gets into a bad state of multiple threads
+trying to reclaim pages that won't really be used. Memory pressure goes
+from bad to worst pretty quick.
+
+FWIW, I believe this was first talked about here:
+https://lore.kernel.org/all/ZWmNpxPXZSxdmDE1@google.com/
+
+
+> > > On the other hand, holding a write lock without making any VMA
+> > > modifications appears questionable and likely incorrect. While this
+> > > patch focuses on reducing the lock duration, future updates may aim
+> > > to eliminate the write lock entirely.
+> >
+> > If spin, better not before taking a look at vm_insert_page().
+> 
+> I have patch 2/3 transitioning to mmap_read_lock, and per_vma_lock is
+> currently in the
+> testing queue. At the moment, alloc->spin is in place, but I'm not
+> entirely convinced
+> it's the best replacement for the write lock. Let's wait for
+> Tangquan's test results.
+> 
+> Patch 2 is detailed below, but it has only passed the build-test phase
+> so far, so
+> its result is uncertain. I'm sharing it early in case you find it
+> interesting. And I
+> am not convinced Commit d1d8875c8c13 ("binder: fix UAF of alloc->vma in
+> race with munmap()") is a correct fix to really avoid all UAF of alloc->vma.
+> 
+> [PATCH]  binder_alloc: Don't use mmap_write_lock for installing page
+> 
+> Commit d1d8875c8c13 ("binder: fix UAF of alloc->vma in race with
+> munmap()") uses the mmap_rwsem write lock to protect against a race
+> condition with munmap, where the vma is detached by the write lock,
+> but pages are zapped by the read lock. This approach is extremely
+> expensive for the system, though perhaps less so for binder itself,
+> as the write lock can block all other operations.
+> 
+> As an alternative, we could hold only the read lock and re-check
+> that the vma hasn't been detached. To protect simultaneous page
+> installation, we could use alloc->lock instead.
+> 
+> Signed-off-by: Barry Song <v-songbaohua@oppo.com>
+> ---
+>  drivers/android/binder_alloc.c | 32 +++++++++++++++++---------------
+>  1 file changed, 17 insertions(+), 15 deletions(-)
+> 
+> diff --git a/drivers/android/binder_alloc.c b/drivers/android/binder_alloc.c
+> index f20074e23a7c..a2281dfacbbc 100644
+> --- a/drivers/android/binder_alloc.c
+> +++ b/drivers/android/binder_alloc.c
+> @@ -228,24 +228,17 @@ static int binder_install_single_page(struct
+> binder_alloc *alloc,
+>                 return -ESRCH;
+> 
+>         /*
+> -        * Don't allocate page in mmap_write_lock, this can block
+> -        * mmap_rwsem for a long time; Meanwhile, allocation failure
+> -        * doesn't necessarily need to return -ENOMEM, if lru_page
+> -        * has been installed, we can still return 0(success).
+> +        * Allocation failure doesn't necessarily need to return -ENOMEM,
+> +        * if lru_page has been installed, we can still return 0(success).
+> +        * So, defer the !page check until after binder_get_installed_page()
+> +        * is completed.
+>          */
+>         page = alloc_page(GFP_KERNEL | __GFP_HIGHMEM | __GFP_ZERO);
+> 
+> -       /*
+> -        * Protected with mmap_sem in write mode as multiple tasks
+> -        * might race to install the same page.
+> -        */
+> -       mmap_write_lock(alloc->mm);
+> -       if (binder_get_installed_page(lru_page)) {
+> -               ret = 1;
+> -               goto out;
+> -       }
+> +       mmap_read_lock(alloc->mm);
+> 
+> -       if (!alloc->vma) {
+> +       /* vma might have been dropped or deattached */
+> +       if (!alloc->vma || !find_vma(alloc->mm, addr)) {
+>                 pr_err("%d: %s failed, no vma\n", alloc->pid, __func__);
+>                 ret = -ESRCH;
+>                 goto out;
+> @@ -257,18 +250,27 @@ static int binder_install_single_page(struct
+> binder_alloc *alloc,
+>                 goto out;
+>         }
+> 
+> +       spin_lock(&alloc->lock);
+
+You can't hold a spinlock and then call vm_insert_page().
+
+> +       if (binder_get_installed_page(lru_page)) {
+> +               spin_unlock(&alloc->lock);
+> +               ret = 1;
+> +               goto out;
+> +       }
+> +
+>         ret = vm_insert_page(alloc->vma, addr, page);
+>         if (ret) {
+>                 pr_err("%d: %s failed to insert page at offset %lx with %d\n",
+>                        alloc->pid, __func__, addr - alloc->buffer, ret);
+> +               spin_unlock(&alloc->lock);
+>                 ret = -ENOMEM;
+>                 goto out;
+>         }
+> 
+>         /* Mark page installation complete and safe to use */
+>         binder_set_installed_page(lru_page, page);
+> +       spin_unlock(&alloc->lock);
+>  out:
+> -       mmap_write_unlock(alloc->mm);
+> +       mmap_read_unlock(alloc->mm);
+>         mmput_async(alloc->mm);
+>         if (ret && page)
+>                 __free_page(page);
+> --
+> 2.39.3 (Apple Git-146)
+
+
+Sorry, but as I mentioned, I've been working on fixing this contention
+by supporting concurrent "faults" in binder_install_single_page(). This
+is the appropriate fix. I should be sending a patch soon after working
+out the conflicts with the shrinker's callback.
+
+Thanks,
+--
+Carlos Llamas
 
