@@ -1,351 +1,262 @@
-Return-Path: <linux-kernel+bounces-313603-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313604-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7646A96A784
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 21:40:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CE6796A785
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 21:40:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D693286332
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 19:40:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A4561F25421
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 19:40:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 715CE1D2217;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9AA41D223C;
 	Tue,  3 Sep 2024 19:39:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="C7KK2gzP";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="WaYMdS52"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rhld5IVH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B5D418BC0F;
-	Tue,  3 Sep 2024 19:39:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725392386; cv=fail; b=FQYlb8B+NU0eUIFwc5g49BKpXVpKlUchXWuBRQ5wCRom+48uHoGLtyr9CKs8jptdpwNVPWrKcidpcJ1G7HYKe7Ux3M1C0iiT9uXy98UXxCTONzUIqzl+J0GI4Pgpy/UBn10sbuY0qquACugVs/Fj1fZX9JTZBFAK7hcgbNOktjA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725392386; c=relaxed/simple;
-	bh=iHMWrV1EVgnKiXwDqvC4GR3FW9/Zh8A5b60WRRA124k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=MojX2G+w3Jwm0AGkBR0olTuruektmAiWwZEa9va2MP3f9t0gzFGipRAuHuiHRfjeyazvXhYtJYS/thOMwtN8FAkzjAaRqP/LLwyAc2CRIwyaaqB8ocAmPUTV3vZ0RDYIFGracoCPYPyFsc0HTR9JJyBhcf8iNSVZPLd/z/SAnnI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=C7KK2gzP; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=WaYMdS52; arc=fail smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 483JXTUC004492;
-	Tue, 3 Sep 2024 19:38:32 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
-	date:from:to:cc:subject:message-id:references:content-type
-	:in-reply-to:mime-version; s=corp-2023-11-20; bh=wt9ZQCmknOoKlv4
-	iGnfqxj+/B+Mo5cwpnSezO7GQWMM=; b=C7KK2gzPIUjHNEMVOd8vU3XVwWNYZ6W
-	9v/XTDrv2m1BqhpFrvDhjjsrVYkOWSUFSWKvrBlD39u7WtNNMn1i+kEg0/9/44VY
-	pYuq/h4HJ+7F/VH28ZNHRbGc9yjKABlnFsLZKwj8Zx3Oi/cwKnuC+klDkUCPMOeb
-	T7rtBTt8RpNCE4+hhC1aMBmPDrSrX3/J+zqDKOpURIayEVhXsr0MlkVZz23QrQwf
-	xo1/5aD1FxUZ/oNTMe+BNccB3GWE6C9fBq4jhzZZ6DWOFg3QRYYUYVpgPZ37nxG6
-	JrZr538y19uMpuc9KBZ14g2Dq4WAvm7esXITfBbL4ty2ptu9T0l2uJQ==
-Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 41dwndhnye-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 03 Sep 2024 19:38:32 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 483JFrKj032655;
-	Tue, 3 Sep 2024 19:38:30 GMT
-Received: from nam02-sn1-obe.outbound.protection.outlook.com (mail-sn1nam02lp2040.outbound.protection.outlook.com [104.47.57.40])
-	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 41bsm9bu73-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 03 Sep 2024 19:38:30 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=MNBMSCPxgalaKbaCMpeX7zeeVfRyg6Se/UGFuFHp1vpkkgMAY62fW9RZqZa+lg5zUmVnhlBhHNxNpSSkCGwOMtETR1ID8gB3rQttRpXSaT42w6+h1dlzNsxlrCHX3vC0t5uelRqDOPbUvMUs15TjJ7hFAmv2e5Ilnd/TAwCL9GEXtvCszo1IZSzXX9Z5NW0Ir8qovhTyNWM4jmamPbVUjvfND/C37XHOU7bxUmB1WFzWElPqIIIBrIeFCgWKPOV2Yu7ioAJddyS/MSnzWttrKBjX3us/a1x9/XYD2jNUwSchZY0kNqi8l2mR/7eAa7CjTPfQTGABeDENUNJ92nXcow==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=wt9ZQCmknOoKlv4iGnfqxj+/B+Mo5cwpnSezO7GQWMM=;
- b=RKXRpjcA020vNd8JLcBJ+MzWqMZF81H1TNKUfEHaciwx2v5+M2irhSa3rB2lrt/jkDwOwtk34e3z2pAVPkztknzwtovKMqljIhPPSBGwxfQtDj4PX5vSF9SSP2DqXUmXnGgGLQ07YQR4RPGAEH+DUU8zp/kXRrj9ciXPSnyZScqmUJmcAhnVDNGifM+U6/05IMUmQmXtrWc0OA/s2jmE6joFjK9bWIL16F8DaSYTF+NmmG6NKN0atcFLzar0jiqNO+wnaU0EESvi3BL44sg4bu39Ks0+ZdoVQupykbpb9B62HtcSoADBcNUEaf1X5rgjc4En6VC3ZE4jp+d5UFbvcw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=wt9ZQCmknOoKlv4iGnfqxj+/B+Mo5cwpnSezO7GQWMM=;
- b=WaYMdS52D4SXmZs4/aoTTUaJObbSLALksTR2oulxZiuOopdZySA4Xhp96KOTBcaBxMPKF8xLAjB7kJ+Qfeh62MAeoF8YoBXaUI7nZi42fAjk5GYNhYktC8nik4Jv4CFuaKIXVRzB666nR8RNi3g388wLxVkalimxNtEx0rWfhB0=
-Received: from LV8PR10MB7943.namprd10.prod.outlook.com (2603:10b6:408:1f9::22)
- by IA1PR10MB7199.namprd10.prod.outlook.com (2603:10b6:208:3f9::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.23; Tue, 3 Sep
- 2024 19:37:56 +0000
-Received: from LV8PR10MB7943.namprd10.prod.outlook.com
- ([fe80::a8ec:6b6b:e1a:782d]) by LV8PR10MB7943.namprd10.prod.outlook.com
- ([fe80::a8ec:6b6b:e1a:782d%7]) with mapi id 15.20.7918.020; Tue, 3 Sep 2024
- 19:37:56 +0000
-Date: Tue, 3 Sep 2024 15:37:52 -0400
-From: "Liam R. Howlett" <Liam.Howlett@oracle.com>
-To: Mark Brown <broonie@kernel.org>
-Cc: Richard Henderson <richard.henderson@linaro.org>,
-        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
-        Matt Turner <mattst88@gmail.com>, Vineet Gupta <vgupta@kernel.org>,
-        Russell King <linux@armlinux.org.uk>, Guo Ren <guoren@kernel.org>,
-        Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>,
-        "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
-        Helge Deller <deller@gmx.de>, Michael Ellerman <mpe@ellerman.id.au>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Christophe Leroy <christophe.leroy@csgroup.eu>,
-        Naveen N Rao <naveen@kernel.org>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
-        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>,
-        John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
-        "David S. Miller" <davem@davemloft.net>,
-        Andreas Larsson <andreas@gaisler.com>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>, Chris Zankel <chris@zankel.net>,
-        Max Filippov <jcmvbkbc@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>, Deepak Gupta <debug@rivosinc.com>,
-        linux-arm-kernel@lists.infradead.org, linux-alpha@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-snps-arc@lists.infradead.org,
-        linux-csky@vger.kernel.org, loongarch@lists.linux.dev,
-        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
-        sparclinux@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH 2/3] mm: Pass vm_flags to generic_get_unmapped_area()
-Message-ID: <c72vxvgbnfnph2rtcntkckqr23yd6y4nzk6fow6x644r7noaob@43c6mbe7r4v4>
-Mail-Followup-To: "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
-	Mark Brown <broonie@kernel.org>, Richard Henderson <richard.henderson@linaro.org>, 
-	Ivan Kokshaysky <ink@jurassic.park.msu.ru>, Matt Turner <mattst88@gmail.com>, 
-	Vineet Gupta <vgupta@kernel.org>, Russell King <linux@armlinux.org.uk>, 
-	Guo Ren <guoren@kernel.org>, Huacai Chen <chenhuacai@kernel.org>, 
-	WANG Xuerui <kernel@xen0n.name>, "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, 
-	Helge Deller <deller@gmx.de>, Michael Ellerman <mpe@ellerman.id.au>, 
-	Nicholas Piggin <npiggin@gmail.com>, Christophe Leroy <christophe.leroy@csgroup.eu>, 
-	Naveen N Rao <naveen@kernel.org>, Alexander Gordeev <agordeev@linux.ibm.com>, 
-	Gerald Schaefer <gerald.schaefer@linux.ibm.com>, Heiko Carstens <hca@linux.ibm.com>, 
-	Vasily Gorbik <gor@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
-	Sven Schnelle <svens@linux.ibm.com>, Yoshinori Sato <ysato@users.sourceforge.jp>, 
-	Rich Felker <dalias@libc.org>, John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, 
-	"David S. Miller" <davem@davemloft.net>, Andreas Larsson <andreas@gaisler.com>, 
-	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, 
-	Chris Zankel <chris@zankel.net>, Max Filippov <jcmvbkbc@gmail.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Vlastimil Babka <vbabka@suse.cz>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Will Deacon <will@kernel.org>, Deepak Gupta <debug@rivosinc.com>, 
-	linux-arm-kernel@lists.infradead.org, linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-snps-arc@lists.infradead.org, linux-csky@vger.kernel.org, loongarch@lists.linux.dev, 
-	linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org, 
-	linux-sh@vger.kernel.org, sparclinux@vger.kernel.org, linux-mm@kvack.org
-References: <20240902-mm-generic-shadow-stack-guard-v1-0-9acda38b3dd3@kernel.org>
- <20240902-mm-generic-shadow-stack-guard-v1-2-9acda38b3dd3@kernel.org>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240902-mm-generic-shadow-stack-guard-v1-2-9acda38b3dd3@kernel.org>
-User-Agent: NeoMutt/20240425
-X-ClientProxiedBy: YT3PR01CA0048.CANPRD01.PROD.OUTLOOK.COM
- (2603:10b6:b01:82::32) To LV8PR10MB7943.namprd10.prod.outlook.com
- (2603:10b6:408:1f9::22)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDBE91CC142;
+	Tue,  3 Sep 2024 19:39:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725392387; cv=none; b=bA69/NoQ24t6Hzmsr9XmmtGLP3DSd1En4sww7hA2xGIILHT8xa0woM+i38WDJBGvDGqxgouD8wEl5vBTffLiVxCrW41OenP/CTQ5gdTe6gHOJx0XAdn7LPynRdNoS1VOdcAONO2cA7l2+oLEtlX7prk4cZUIslJce6SrlgVS2yU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725392387; c=relaxed/simple;
+	bh=KJfRYfq4Tc1SuvTUdvxSfMAX5buQdAh38TAPXT/vBVs=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=kCFuLi017yc1BcrNFWJtw8LaLQXj+EVwXPaEIL9ZNzTCEUswMV8dqiU69ibHSEecLI6BEwlH1HKoO4r8vK5Lb0U5oLXinWUE6TiWxPzPteJML1qq0qLvNngyI3P79c6Lz1VG02O/4vhUc9T7K9FgwuZJU0kEamDYl2KxhPH2dW8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rhld5IVH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E95E5C4CEC4;
+	Tue,  3 Sep 2024 19:39:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725392385;
+	bh=KJfRYfq4Tc1SuvTUdvxSfMAX5buQdAh38TAPXT/vBVs=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=rhld5IVHNx25ieavp3YU7t/3kGzijcsogzDqOeERd0s8TKDjb1hV1STFtjS34WPlY
+	 uIcurcL/6uE15ycCN6ukZ7W5evneBItU9iCSgUGc36CPwX0CoIz71m482yb72BZfPZ
+	 +ou8MjIwIsa/n8b+iYdv9voycYZFLD+QgZ+Zm+ME3xdhRgNdzdzsvy4X0b5XqLVShf
+	 1nFrHzpTcjNbl9v50e+IGm9QjUVhXNyve/J7tb2QvpqA6Y2s3t9uwldNKutClomOI1
+	 gfwhqO5mqbFyzBdTEL5C0Ffw9/0R1F4OKrYhCQwrkr6wIm2MTPriJ61czD77rkrffB
+	 QcCZwWXSY3z0Q==
+Date: Tue, 3 Sep 2024 20:39:35 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: David Lechner <dlechner@baylibre.com>
+Cc: Angelo Dureghello <adureghello@baylibre.com>, Lars-Peter Clausen
+ <lars@metafoo.de>, Michael Hennerich <Michael.Hennerich@analog.com>, Nuno
+ =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Olivier Moysan <olivier.moysan@foss.st.com>,
+ linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
+Subject: Re: [RFC PATCH 0/8] iio: dac: introducing ad3552r-axi
+Message-ID: <20240903203935.358a1423@jic23-huawei>
+In-Reply-To: <4a62ea7b-a8af-49e0-9718-30d927a69038@baylibre.com>
+References: <20240829-wip-bl-ad3552r-axi-v0-v1-0-b6da6015327a@baylibre.com>
+	<20240831123837.26a1070a@jic23-huawei>
+	<74e0b200-d4c0-4aa3-9ee6-f49ac3f1467d@baylibre.com>
+	<4a62ea7b-a8af-49e0-9718-30d927a69038@baylibre.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LV8PR10MB7943:EE_|IA1PR10MB7199:EE_
-X-MS-Office365-Filtering-Correlation-Id: 55408ea6-0e59-4c94-e0c0-08dccc4fe8e4
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?Ljk0gatIXDFOgCq8lj3UWubx9v+++iqHhiG9cSDnTT/KLdnxnxE9BFJUfvX4?=
- =?us-ascii?Q?1dNO7z//7rxLZOn6EpkT04dBg+thdloykPqufLBvD7YoqhuHGOGhYH+k5Fkv?=
- =?us-ascii?Q?oOUyBaBhzM6mrEyzHa9aIa5BSv/oSyu7dG7PMSPpLixeKihG1vUQc22MN1uD?=
- =?us-ascii?Q?IqBXiULr63kF10b8h7FMex7I9a7ue/d7NwZkOlgn/O1XCSyKGoXm0bvV1K/E?=
- =?us-ascii?Q?BPEz/u0DuEIJrsVer/xnxUqZTR/XB4I1gznlOoFrQVf/RP79NVNOaJxt/nku?=
- =?us-ascii?Q?5lkKlid2BvgBWauOKN2chPf197yn8SvkfBVQwZvGXVACx2ywp/yvGA3s+NRX?=
- =?us-ascii?Q?Td/zY6RxXnUXCSM1NBGGGxwFR3S3Ju6wMrckaVwq7SLxjBtILWBhqEKJQRhT?=
- =?us-ascii?Q?EvW3oS0QjpmA2q+mryl/EO0o/HH1NXt5Pl1/UZ5lNPK1JvCTkaMdsbxC2QVs?=
- =?us-ascii?Q?d7E1k/5N7ZMi7tOIBApMC0zsmCfMETHoJvamCG1bLFc9RE6FpmYoNg5OMBZo?=
- =?us-ascii?Q?K/IkQTN32Z3q4jFEGs2fQiG6GxpeBKCu5HNZv6sPht3ypQVB54TEMawoQ5bT?=
- =?us-ascii?Q?L15fKy+WZXBEsPoxnvIjVpZhMfpPj+Rm4Pu7c6x28RfdY/QWtZkPlXv8VqvL?=
- =?us-ascii?Q?ooOotTtx4zRMEEud9V7U6giQD8l7Xocyzcnamdu7hsx0sNUv3nCL2IAPFPZI?=
- =?us-ascii?Q?NgH4egoozd7bgsOofHayBxAwOVpCa+XovOu2TFcZgmrplgRX9WDGUI4Q4WL7?=
- =?us-ascii?Q?O0TNDJD/I3xHNsgoovYNU/M7uoqIYyyEyoKruJnm7/4DQLF/u5nd7Jlkj3Wu?=
- =?us-ascii?Q?iW99NKCDbfCPnVR6RtcbJcmpKeQfkI+eOPXwwa1h+1lI/Z2pR2poaBsuaiy2?=
- =?us-ascii?Q?PKIs7xuIE2vfPl+B4TRRXeUKf1Oa9gFUertXQ0IteNcu4Y/JW5Z9JDda71DE?=
- =?us-ascii?Q?v0mb34krGEg91QGsCiVpnllqaMgfXHylc6SOpLjS2yo5ukrUxLQH4ztN+Uv7?=
- =?us-ascii?Q?k34PQes0JXeYn2h4yR26u88T2dxOYRrrm76pFUxXsDAGkzC8nNzToouDTbpY?=
- =?us-ascii?Q?fNbqB6v1pAGETaAMy42NNc56iSl9zhY6JDAlxz94RrlNTppcYqtavnVGhMNA?=
- =?us-ascii?Q?SYyU1+5nFLYdAx4bge2U343CAb1xbDnUM4+Zjsoy/3P/VwTLWDPQNu3DD9d0?=
- =?us-ascii?Q?Sw9P/2PQfObPy+tztChNZreG5ORdGy01SkUQTqUMSptbDbvh+SZcLG1kSmTU?=
- =?us-ascii?Q?w1i/PIQnJaTr0p3jdkbiqAIVB0upx11USeaM2WzeyZpJNu0YwSnvll/2GZ83?=
- =?us-ascii?Q?jbSCJpmHPegsSprhl5qGdJ6JbNVKcc6fzdkIRMgcStWM5Q=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV8PR10MB7943.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?dibtE6Q6MzSoM8kVH9blZ3aSAflur0cKqGRwuBfpGX5wF5aMV0UJCMBTB1sD?=
- =?us-ascii?Q?56hUnFQ4o9kbkui3FauoDxPgjF4HR+ddMZlCn7BIis+P6M/p6USWn3oFEZyg?=
- =?us-ascii?Q?pJA9CT7ke8a5eu53wgQuHV4GPGFGsPFMudnyqPS8NLUpQJQ+wxoT/JrOSNle?=
- =?us-ascii?Q?ofxXnViHv3SwnbZ9Ukn9vjcu71kzZMPv8uIIjXwubdx9DpLUO/fQokkN0Sls?=
- =?us-ascii?Q?3tRIVoZIwYpOvhQ97IiiHeu3qDYpIIcRDF0sCZeWzgXpxyx/gBYXKoSA/MxL?=
- =?us-ascii?Q?k78aswR76I2XT5IIVMCidUDHWoOPFvnQPzVzUHoKJYm4LschD15Z0UlC9qMc?=
- =?us-ascii?Q?tdb+jVuwsYPq6Sit9se0MwBYOno4IGUfmU4FmC2TlvEWiAP2sNXHIIDf7znj?=
- =?us-ascii?Q?sOHkko8usNHFpb5tt8SFZlf3x6VJCH5phR6u3rRGucttDxarrGnFIWwGlX92?=
- =?us-ascii?Q?7vI7k9UtUjdHAN8W1mBkPJJjleTbAwgWBWEkK6YHKrioqOBkAOb/SzHQQEQ9?=
- =?us-ascii?Q?XqVB22fikijB1Z2xOhkcnzFf34fTLEKQfwLWv1ke3voU5Fx9rYgIb8nkeVps?=
- =?us-ascii?Q?x6NK1kYdPEEDILNpgl8viZtid1x5f4bLVTNHpbarsAZMNqkbIknauEEBIqkj?=
- =?us-ascii?Q?ziyoe1fRbzr631ThLBWMHU/qF2j+hlG+mXu6M2W4OPwi2/YOWFClfl0kG6V1?=
- =?us-ascii?Q?2mwEkOQP259rI9rXl1kY//y4vwmfKvLvJfjg1tH8jvsLNNzA2wbih+gWgZFZ?=
- =?us-ascii?Q?lM8cvZndRIGkGvaOvVKSOjvCbNULxhOf7q6sEOldtw+LejpnhZkUqPj7G9/R?=
- =?us-ascii?Q?ETO9aJWbIsUSVwAqzuTrO9dwVcOX32MGdc/qa+HQPaL3DlUNULttv7znDDtc?=
- =?us-ascii?Q?rPlAbRhRBz4gA2sEk9k5akFQDodHROo4SaKvwC+Ur6VvMr28OsKE3ijiFDv7?=
- =?us-ascii?Q?vWgwpWSJQ2G7c/Xna5QP8nZptrz9SRt79T+XtVPdO3e5zVI6/N6M13L4TbSv?=
- =?us-ascii?Q?uuCPpTasYzWhyiYrw+D4USlszKofp5EKbJYa58ibezQUM85q72Jwp1etC6Ej?=
- =?us-ascii?Q?ZKdSg8fgIfLka7jwz0J2rTAAW49/dztWeNJO4NTiMysCYYMAokkg//6/II+u?=
- =?us-ascii?Q?302Rk9xwh67Qzus+Zqg5fxR3D4OLspTB8mo2uHGDTEyykp1RsHP/ywEbV6VR?=
- =?us-ascii?Q?O6nM5FeZg5GVock/KC0l+OksPaEam5JHtxRXuUL4LEEj860wX2H1p6KEfRoS?=
- =?us-ascii?Q?43Gr8bBiNsmRLqpRC5+Af//3qiKP78TRecetHUPXxQGnOQaMboiI7LUy1UrC?=
- =?us-ascii?Q?YixSmovbblL7pdO+EF8s4aWxboBz9ITCkAP1+b+6zMSZgxVQ4CB+4LBl8/d7?=
- =?us-ascii?Q?Ap8hNhVqk+90b7EPYVoSwa9uzfllo58GAOakhFEopf9WKicyogxSvj3Tber2?=
- =?us-ascii?Q?+N6P8u/jVThV9I86HIQBjk9OyuUKYfEDtvNtlk/u3WqqsyS3yPN+h/QhoDQD?=
- =?us-ascii?Q?k7UOQ/lI2vC01MLocGYiuiBD6aQoL8sNUbT8x8KBYlP8Q8YjKzi8loCOdtAs?=
- =?us-ascii?Q?syj+mMkY4tb4mzyjfjUELPCGMWsC7bp0blAdNQv6?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	4oW3cMtwkzPq1ORHBX/Cd82RSPeDXQbsj2pqaSIc2GQAsTzj5okRLB/PpCfWtbNBhXH5g3/FZ1FNCoJbTBPfuBx06Yo2Cbx/auBnFmWGzkzVHCCONLFvWaA7ktf3Bwkl9IwN5mu/q/af/nOWdx9byDtZrkXhyycfwBicGLKybZJTVu9EglcWkeOncbtt/b/TfQv2/pKxREtW+LCADxDljCVIpW9zFh8op8qIwCh7fV0cy87d4nMzI9zcLhzc9UOS03VSdDoJQU8Y0cOwy+OtY9xs1UwysaHiZz2EGuftZ2ycBG3b1Atj4QFhCfT2Pq4gT6WWHM4sXIScYYt7vXU99PaZLCOBuGW6Rcw8leD77kjjgodjq+ITLTE95QzODjfLMOS9fX6A3GO7hwbH/USoTxQ6l9QV8/Ktax2PA9FIWtIoaFA+F8Nz1jIG0eFu/Uqzn7okqqyIy6XT5qRa0rOzed1UA+7fVLnF8639J9GfpLULlmkcgX3bGrrBEI408d+SYsmI6Lk098mJagZvX1ysWqzUUSvJbnNovrmZIusop7AOzQWQZ4UHfdlbunzTU+ugjZS1bdtClxoMDd7nI3D7qiVr5/YQQLdcbf/DoiaOYvc=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 55408ea6-0e59-4c94-e0c0-08dccc4fe8e4
-X-MS-Exchange-CrossTenant-AuthSource: LV8PR10MB7943.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Sep 2024 19:37:56.3086
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: HgzALcugHCDefdQxenLAzhGfK5YCBy5ObNO3RVHU18gXyz/FWyxPPg/qg/qkd5WnA0/ihG1OBlqYi9pgyy75Yw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR10MB7199
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-03_07,2024-09-03_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 spamscore=0 phishscore=0
- mlxscore=0 bulkscore=0 adultscore=0 malwarescore=0 mlxlogscore=859
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2407110000
- definitions=main-2409030158
-X-Proofpoint-GUID: ufDMhQupoIYRL5DWhIQxmsUY2JyoEryv
-X-Proofpoint-ORIG-GUID: ufDMhQupoIYRL5DWhIQxmsUY2JyoEryv
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-* Mark Brown <broonie@kernel.org> [240902 15:09]:
-> In preparation for using vm_flags to ensure guard pages for shadow stacks
-> supply them as an argument to generic_get_unmapped_area(). The only user
-> outside of the core code is the PowerPC book3s64 implementation which is
-> trivially wrapping the generic implementation in the radix_enabled() case.
-> 
-> Signed-off-by: Mark Brown <broonie@kernel.org>
+On Tue, 3 Sep 2024 11:17:24 -0500
+David Lechner <dlechner@baylibre.com> wrote:
 
+> On 9/3/24 3:34 AM, Angelo Dureghello wrote:
+> > Hi Jonathan and all,
+> >=20
+> >=20
+> > On 31/08/24 1:38 PM, Jonathan Cameron wrote: =20
+> >> On Thu, 29 Aug 2024 14:31:58 +0200
+> >> Angelo Dureghello <adureghello@baylibre.com> wrote:
+> >> =20
+> >>> Hi, asking for comments for this patchset, that is mostly
+> >>> ready, at least feature-complete and functionally tested.
+> >>>
+> >>> I am introducing ad3552r-axi variant, controlled from a fpga-based
+> >>> AXI IP, as a platform driver, using the DAC backend. The patchset is
+> >>> actually based on linux-iio, since some needed DAC backend features
+> >>> was already there on that repo only, still to be merged in mainline.
+> >>>
+> >>> Comments i would like to ask are:
+> >>>
+> >>> - i added some devicetree bindings inside current ad3552r yaml,
+> >>> =C2=A0=C2=A0 device is the same, so i wouldn't create a different yam=
+l file. =20
+> >> Agreed. If same device, it's usually better to keep it in one file.
+> >> =20
+> >>> - if it's ok adding the bus-type property in the DAC backend:
+> >>> =C2=A0=C2=A0 actually, this platform driver uses a 4 lanes parallel b=
+us, plus
+> >>> =C2=A0=C2=A0 a clock line, similar to a qspi. This to read an write r=
+egisters
+> >>> =C2=A0=C2=A0 and as well to send samples at double data rate. Other D=
+AC may
+> >>> =C2=A0=C2=A0 need "parallel" or "lvds" in the future. =20
+> >> If it is for register read + write as well, sounds to me like you need
+> >> to treat this as a new bus type, possibly then combined with a
+> >> backend, or something similar to spi offload?
+> >>
+> >> What bus does this currently sit on in your DT bindings?
+> >> (add an example) =20
+> >=20
+> >=20
+> > &amba {
+> >=20
+> > =C2=A0=C2=A0 =C2=A0ref_clk: clk@44B00000 {
+> > =C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0=C2=A0 compatible =3D "adi,axi-clkgen-2.=
+00.a";
+> > =C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0=C2=A0 reg =3D <0x44B00000 0x10000>;
+> > =C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0=C2=A0 #clock-cells =3D <0>;
+> > =C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0=C2=A0 clocks =3D <&clkc 15>, <&clkc 15>;
+> > =C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0=C2=A0 clock-names =3D "s_axi_aclk", "cl=
+kin1";
+> > =C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0=C2=A0 clock-output-names =3D "ref_clk";
+> > =C2=A0=C2=A0 =C2=A0};
+> >=20
+> > =C2=A0=C2=A0 =C2=A0dac_tx_dma: dma-controller@0x44a30000 {
+> > =C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0=C2=A0 compatible =3D "adi,axi-dmac-1.00=
+.a";
+> > =C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0=C2=A0 reg =3D <0x44a30000 0x10000>;
+> > =C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0=C2=A0 #dma-cells =3D <1>;
+> > =C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0=C2=A0 interrupt-parent =3D <&intc>;
+> > =C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0=C2=A0 interrupts =3D <0 57 IRQ_TYPE_LEV=
+EL_HIGH>;
+> > =C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0=C2=A0 clocks =3D <&clkc 15>;
+> >=20
+> > =C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0=C2=A0 adi,channels {
+> > =C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0 #size-cells =
+=3D <0>;
+> > =C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0 #address-cells=
+ =3D <1>;
+> >=20
+> > =C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0 dma-channel@0 {
+> > =C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0 =C2=A0=C2=A0=
+=C2=A0 reg =3D <0>;
+> > =C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0 =C2=A0=C2=A0=
+=C2=A0 adi,source-bus-width =3D <32>;
+> > =C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0 =C2=A0=C2=A0=
+=C2=A0 adi,source-bus-type =3D <0>;
+> > =C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0 =C2=A0=C2=A0=
+=C2=A0 adi,destination-bus-width =3D <32>;
+> > =C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0 =C2=A0=C2=A0=
+=C2=A0 adi,destination-bus-type =3D <1>;
+> > =C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0 };
+> > =C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0=C2=A0 };
+> > =C2=A0=C2=A0 =C2=A0};
+> >=20
+> > =C2=A0=C2=A0 =C2=A0backend: controller@44a70000 {
+> > =C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0=C2=A0 compatible =3D "adi,axi-dac-9.1.b=
+";
+> > =C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0=C2=A0 reg =3D <0x44a70000 0x1000>;
+> > =C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0=C2=A0 dmas =3D <&dac_tx_dma 0>;
+> > =C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0=C2=A0 dma-names =3D "tx";
+> > =C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0=C2=A0 #io-backend-cells =3D <0>;
+> > =C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0=C2=A0 clocks =3D <&ref_clk>;
+> > =C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0=C2=A0 bus-type =3D <1>;=C2=A0 /* IIO QS=
+PI */
+> > =C2=A0=C2=A0 =C2=A0};
+> >=20
+> > =C2=A0=C2=A0 =C2=A0axi-ad3552r {
+> > =C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0=C2=A0 compatible =3D "adi,ad3552r";
+> > =C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0=C2=A0 reset-gpios =3D <&gpio0 92 GPIO_A=
+CTIVE_LOW>;
+> > =C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0=C2=A0 io-backends =3D <&backend>;
+> > =C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0=C2=A0 #address-cells =3D <1>;
+> > =C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0=C2=A0 #size-cells =3D <0>;
+> > =C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0=C2=A0 channel@0 {
+> > =C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0 reg =3D <0>;
+> > =C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0 adi,output-ran=
+ge-microvolt =3D <(-10000000) (10000000)>;
+> > =C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0=C2=A0 };
+> > =C2=A0=C2=A0 =C2=A0}; =20
+>=20
+> Shouldn't the axi-ad3552r node be one level higher since it isn't
+> a memory-mapped device, but rather an external chip?
+Definitely not where it currently is..
+>=20
+> But based on the other feedback we got in this series and some
+> #devicetree IRC chat here is an alternate binding suggestion we
+> could consider.
+>=20
+> First, even though the FPGA IP block for use with AD3225R uses
+> the same register map as the AXI DAC IP block, some of the
+> registers behave differently, so it makes sense to have a
+> different compatible string rather than using the bus-type
+> property to tell the difference between the two IP blocks.
+> There are likely more differences than just the bus type.
 
-It is interesting that book3s64 ppc is special in this regard.
+I'd be amazed if they managed to keep things that similar
+given totally different buses.
 
-Reviewed-by: Liam R. Howlett <Liam.Howlett@Oracle.com>
+>=20
+> Second, technically, the AXI DAC IP block can't be used as
+> a generic SPI controller, so it wouldn't make sense to put
+> it in drivers/spi.
 
-> ---
->  arch/powerpc/mm/book3s64/slice.c |  4 ++--
->  include/linux/sched/mm.h         |  4 ++--
->  mm/mmap.c                        | 10 ++++++----
->  3 files changed, 10 insertions(+), 8 deletions(-)
-> 
-> diff --git a/arch/powerpc/mm/book3s64/slice.c b/arch/powerpc/mm/book3s64/slice.c
-> index ada6bf896ef8..87307d0fc3b8 100644
-> --- a/arch/powerpc/mm/book3s64/slice.c
-> +++ b/arch/powerpc/mm/book3s64/slice.c
-> @@ -641,7 +641,7 @@ unsigned long arch_get_unmapped_area(struct file *filp,
->  				     vm_flags_t vm_flags)
->  {
->  	if (radix_enabled())
-> -		return generic_get_unmapped_area(filp, addr, len, pgoff, flags);
-> +		return generic_get_unmapped_area(filp, addr, len, pgoff, flags, vm_flags);
->  
->  	return slice_get_unmapped_area(addr, len, flags,
->  				       mm_ctx_user_psize(&current->mm->context), 0);
-> @@ -655,7 +655,7 @@ unsigned long arch_get_unmapped_area_topdown(struct file *filp,
->  					     vm_flags_t vm_flags)
->  {
->  	if (radix_enabled())
-> -		return generic_get_unmapped_area_topdown(filp, addr0, len, pgoff, flags);
-> +		return generic_get_unmapped_area_topdown(filp, addr0, len, pgoff, flags, vm_flags);
->  
->  	return slice_get_unmapped_area(addr0, len, flags,
->  				       mm_ctx_user_psize(&current->mm->context), 1);
-> diff --git a/include/linux/sched/mm.h b/include/linux/sched/mm.h
-> index c4d34abc45d4..07bb8d4181d7 100644
-> --- a/include/linux/sched/mm.h
-> +++ b/include/linux/sched/mm.h
-> @@ -204,11 +204,11 @@ unsigned long mm_get_unmapped_area_vmflags(struct mm_struct *mm,
->  unsigned long
->  generic_get_unmapped_area(struct file *filp, unsigned long addr,
->  			  unsigned long len, unsigned long pgoff,
-> -			  unsigned long flags);
-> +			  unsigned long flags, vm_flags_t vm_flags);
->  unsigned long
->  generic_get_unmapped_area_topdown(struct file *filp, unsigned long addr,
->  				  unsigned long len, unsigned long pgoff,
-> -				  unsigned long flags);
-> +				  unsigned long flags, vm_flags_t vm_flags);
->  #else
->  static inline void arch_pick_mmap_layout(struct mm_struct *mm,
->  					 struct rlimit *rlim_stack) {}
-> diff --git a/mm/mmap.c b/mm/mmap.c
-> index 7528146f886f..b06ba847c96e 100644
-> --- a/mm/mmap.c
-> +++ b/mm/mmap.c
-> @@ -1789,7 +1789,7 @@ unsigned long vm_unmapped_area(struct vm_unmapped_area_info *info)
->  unsigned long
->  generic_get_unmapped_area(struct file *filp, unsigned long addr,
->  			  unsigned long len, unsigned long pgoff,
-> -			  unsigned long flags)
-> +			  unsigned long flags, vm_flags_t vm_flags)
->  {
->  	struct mm_struct *mm = current->mm;
->  	struct vm_area_struct *vma, *prev;
-> @@ -1823,7 +1823,8 @@ arch_get_unmapped_area(struct file *filp, unsigned long addr,
->  		       unsigned long len, unsigned long pgoff,
->  		       unsigned long flags, vm_flags_t vm_flags)
->  {
-> -	return generic_get_unmapped_area(filp, addr, len, pgoff, flags);
-> +	return generic_get_unmapped_area(filp, addr, len, pgoff, flags,
-> +					 vm_flags);
->  }
->  #endif
->  
-> @@ -1834,7 +1835,7 @@ arch_get_unmapped_area(struct file *filp, unsigned long addr,
->  unsigned long
->  generic_get_unmapped_area_topdown(struct file *filp, unsigned long addr,
->  				  unsigned long len, unsigned long pgoff,
-> -				  unsigned long flags)
-> +				  unsigned long flags, vm_flags_t vm_flags)
->  {
->  	struct vm_area_struct *vma, *prev;
->  	struct mm_struct *mm = current->mm;
-> @@ -1887,7 +1888,8 @@ arch_get_unmapped_area_topdown(struct file *filp, unsigned long addr,
->  			       unsigned long len, unsigned long pgoff,
->  			       unsigned long flags, vm_flags_t vm_flags)
->  {
-> -	return generic_get_unmapped_area_topdown(filp, addr, len, pgoff, flags);
-> +	return generic_get_unmapped_area_topdown(filp, addr, len, pgoff, flags,
-> +						 vm_flags);
->  }
->  #endif
->  
-> 
-> -- 
-> 2.39.2
-> 
+I wonder if there is any precedence of restricted controllers
+for SPI?  (For i2c we have the smbus ones as a vaguely similar
+example). +CC Mark.
+
+>  But, from wiring point of view, it could
+> still make sense to use SPI DT bindings since we have SPI
+> wiring. At the same time, the AXI DAC IP block is also
+> providing extra functionality in addition to the SPI bus
+> so it makes sense to keep the io-backend bindings for those
+> extra bits.
+>=20
+>     backend: spi@44a70000 {
+>         compatible =3D "adi,axi-dac-ad3225r";
+>         reg =3D <0x44a70000 0x1000>;
+>         dmas =3D <&dac_tx_dma 0>;
+>         dma-names =3D "tx";
+>         #io-backend-cells =3D <0>;
+>         clocks =3D <&ref_clk>;
+>=20
+>         #address-cells =3D <1>;
+>         #size-cells =3D <0>;
+>=20
+>         dac@0 {
+>             compatible =3D "adi,ad3552r";
+>             reg =3D <0>;
+>=20
+>             /*=20
+>              * Not sure how right this is - attempting to say that
+>              * the QSPI select pin is hardwired high, so the 4 SPI I/O
+>              * pins on the DAC are always functioning as SDIO0/1/2/3
+>              * as opposed to the usual 2 SDI/SDO pins and 2 unused.
+>              */
+>             spi-3-wire;
+>             spi-tx-bus-width =3D <4>;
+>             spi-rx-bus-width =3D <4>;
+>=20
+>             reset-gpios =3D <&gpio0 92 GPIO_ACTIVE_LOW>;
+>             io-backends =3D <&backend>;
+>=20
+>             #address-cells =3D <1>;
+>             #size-cells =3D <0>;
+>=20
+>             channel@0 {
+>                 reg =3D <0>;
+>                 adi,output-range-microvolt =3D <(-10000000) (10000000)>;
+>             };
+>         };
+>     };
+
+That's definitely an improvement.  It's a little strange to have
+a reference back to the parent but I'm fine with that.
+
+Jonathan
+
+>=20
+>=20
+
 
