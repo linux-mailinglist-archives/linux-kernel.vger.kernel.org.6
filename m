@@ -1,78 +1,91 @@
-Return-Path: <linux-kernel+bounces-313638-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313639-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36A2396A7F6
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 22:02:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D533996A7FA
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 22:02:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 713DE1C242D8
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 20:02:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3A923B21276
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 20:02:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB4D3191477;
-	Tue,  3 Sep 2024 20:02:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB82D1922D3;
+	Tue,  3 Sep 2024 20:02:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S4mKeISm"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ANJ8Zw4I"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 557AC1DC75D;
-	Tue,  3 Sep 2024 20:02:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2042A1DC746;
+	Tue,  3 Sep 2024 20:02:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725393720; cv=none; b=roi0vV+2+/Zck1Bd7EXiow3XFYMgP0enACna8499plHjfzYwYc35FloF7ijdJcZmJ785WmunyFrvUrF2MDpGUNeeWyDTYHXnn4DFRfeCrew8zjeOqS3e0dCnkfu01aJtMoADfy9TlvQugHNMtdaCa1TS4X2aL9+S32IKS54IPU0=
+	t=1725393746; cv=none; b=Gl4w/6Gn1VIoZS6j/yz7r40/AIc7Jz/2Xp7JoZyx2hGxWF2CMjeg7Wz/dERbVgfpHxNus9StKw6RmKsMoZWITZfacBq90p9J3skSJaL4jvP+KDCYjDeyL0Z56H0E776RrzX45BQrodUr5eKQFQrC2D4iO4EvfCaa8qVUqHWyEZA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725393720; c=relaxed/simple;
-	bh=BJ5+xHQzeNHlzZqnL/XxVnntzkbjsoxMI8UADE9W6EA=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=NzRbAMqkTk2QSgvGsw3gT+CzOP5AVuJuKTU8RREmOt8qX8TstZAJJHo1n3JkQF12r4UVR++P3XEfjisSDnkvJdeqYNs9efotuVRi/qkVQhnra5b7YNPorLYz3xoxWZzrTiK8OdBmy3YTjt7DxvjOSeOp0V48DdzHWS/xitBxIbM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S4mKeISm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DFA03C4CEC4;
-	Tue,  3 Sep 2024 20:01:59 +0000 (UTC)
+	s=arc-20240116; t=1725393746; c=relaxed/simple;
+	bh=/BbWsnQvQojQuHvQGPzYTHEKobUCT3g2HuvksNY8isI=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=p8LIvSpyQ7DxKtIzjO2qQZ0MNP+j88IsHktmszxIlFfFtZFqS34fm5SkjzIlRS5p/zZBKZ67PYg4OzgIrIY7G47IvKVYM7Gz9sq2AhVC4GiW/w3ax2eD43pPV4A1ly9cQL82i/ZpQtbQRrBQG2QiPiMNsPOhycLDGYDvGONKazw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ANJ8Zw4I; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D469C4CEC4;
+	Tue,  3 Sep 2024 20:02:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725393719;
-	bh=BJ5+xHQzeNHlzZqnL/XxVnntzkbjsoxMI8UADE9W6EA=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=S4mKeISmcHFTl2ZrizBbsuS5gfAlfp1AldclHGgYLo+CfZHTM6l3Ce1iV33W8+nTd
-	 p0yHgixZkwbDyWqq6QRPgZ0f/mm8VBi/EOasg3E/8EPkbY9XlONTlCQmI2mq+UopJ2
-	 ZTVPUZelOl4fhCk+qwh70Z+POk/vEb5d1SjbAn4o4Z7r1DTT8a4LElrxrICMjvRZGm
-	 +Fj+R1AcwUKYKS1p6Aw07yQJGcwaJW7vBfYHWRaOndDCBtP9Ho6UmNpbJVScB1DUxG
-	 VyYUybhWDoG0ifYHAyu9ZJ7ku8ImxnlpFtdQRiEBCiJWuPgc8Zv2R86O1AiY8nhSeR
-	 YQOfa2ozgtOzw==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id C978C3805D82;
-	Tue,  3 Sep 2024 20:02:01 +0000 (UTC)
-Subject: Re: [GIT PULL] fuse fixes for 6.11-rc7
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <CAJfpeguT0XBxBCzBrJqS1LLCLmEahVT3FF0NZ1nkAKMRKWpyfw@mail.gmail.com>
-References: <CAJfpeguT0XBxBCzBrJqS1LLCLmEahVT3FF0NZ1nkAKMRKWpyfw@mail.gmail.com>
-X-PR-Tracked-List-Id: <linux-fsdevel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <CAJfpeguT0XBxBCzBrJqS1LLCLmEahVT3FF0NZ1nkAKMRKWpyfw@mail.gmail.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/fuse.git tags/fuse-fixes-6.11-rc7
-X-PR-Tracked-Commit-Id: 3ab394b363c5fd14b231e335fb6746ddfb93aaaa
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 88fac17500f4ea49c7bac136cf1b27e7b9980075
-Message-Id: <172539372059.424127.17267698860441437579.pr-tracker-bot@kernel.org>
-Date: Tue, 03 Sep 2024 20:02:00 +0000
-To: Miklos Szeredi <miklos@szeredi.hu>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+	s=k20201202; t=1725393745;
+	bh=/BbWsnQvQojQuHvQGPzYTHEKobUCT3g2HuvksNY8isI=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=ANJ8Zw4IEXajgPFCvxDtB6mwuKeSOy32UjP7xeeAOxhSeuZeniEMq4hLZJBXO52kc
+	 +KWgE4pr5DkdcNL0gBonnVnGQme6IR+1y8gH5wmGk6+U/0u7fWdRA0KwvSyN+TYyvx
+	 Q7tRWJlAXR1YUpL/QG18O3w0J71/cGYfgSBDHRvEu9zlYHJa12g2+n/5HRHyAwCnV/
+	 pDdrgeW8fsR7J2Bzuic1cEOTT8iB+RPSj3mNBbnVt1nwlzdfPbUQC30vjq4UvW70se
+	 EgMVU0naFFt+PMSqnUZMG4fPoAaoJPOzfQUPZ01YypDmos0TjAZ0c3JrYggwK2D/r/
+	 hySR3buOJqGlQ==
+Message-ID: <59429303c8158b146b24d14f4869fcd5.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20240902070830.8535-1-johan+linaro@kernel.org>
+References: <20240902070830.8535-1-johan+linaro@kernel.org>
+Subject: Re: [PATCH] clk: qcom: gcc-sc8280xp: don't use parking clk_ops for QUPs
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: Bjorn Andersson <andersson@kernel.org>, Michael Turquette <mturquette@baylibre.com>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, Johan Hovold <johan+linaro@kernel.org>
+To: Johan Hovold <johan+linaro@kernel.org>
+Date: Tue, 03 Sep 2024 13:02:23 -0700
+User-Agent: alot/0.10
 
-The pull request you sent on Tue, 3 Sep 2024 12:38:12 +0200:
+Quoting Johan Hovold (2024-09-02 00:08:30)
+> A recent change started parking the RCG at an always on parent during
+> registration, something which specifically breaks handover from an early
+> serial console.
+>=20
+> Quoting Stephen Boyd who fixed this issue for SM8550 [1]:
+>=20
+>         The QUPs aren't shared in a way that requires parking the RCG at
+>         an always on parent in case some other entity turns on the clk.
+>         The hardware is capable of setting a new frequency itself with
+>         the DFS mode, so parking is unnecessary. Furthermore, there
+>         aren't any GDSCs for these devices, so there isn't a possibility
+>         of the GDSC turning on the clks for housekeeping purposes.
+>=20
+>         This wasn't a problem to mark these clks shared until we started
+>         parking shared RCGs at clk registration time in commit
+>         01a0a6cc8cfd ("clk: qcom: Park shared RCGs upon registration").
+>         Parking at init is actually harmful to the UART when earlycon is
+>         used. If the device is pumping out data while the frequency
+>         changes you'll see garbage on the serial console until the
+>         driver can probe and actually set a proper frequency.
+>=20
+> Fixes: 01a0a6cc8cfd ("clk: qcom: Park shared RCGs upon registration")
+> Fixes: d65d005f9a6c ("clk: qcom: add sc8280xp GCC driver")
+> Link: https://lore.kernel.org/all/20240819233628.2074654-2-swboyd@chromiu=
+m.org/ [1]
+> Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
+> ---
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/fuse.git tags/fuse-fixes-6.11-rc7
-
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/88fac17500f4ea49c7bac136cf1b27e7b9980075
-
-Thank you!
-
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+Applied to clk-fixes
 
