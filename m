@@ -1,368 +1,196 @@
-Return-Path: <linux-kernel+bounces-312522-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312526-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22F2B9697BA
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 10:48:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 73B2D9697C4
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 10:49:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE943287D4C
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 08:48:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D581288A7F
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 08:49:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A56733DAC0C;
-	Tue,  3 Sep 2024 08:44:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0043E19F10D;
+	Tue,  3 Sep 2024 08:45:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="ZLrbJXri"
-Received: from out30-101.freemail.mail.aliyun.com (out30-101.freemail.mail.aliyun.com [115.124.30.101])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="ZX6/xien"
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2060.outbound.protection.outlook.com [40.107.244.60])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A5081D0940;
-	Tue,  3 Sep 2024 08:44:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.101
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725353083; cv=none; b=nlGZgalS/dswhIiHCDw4xTzr40Ud3ntiXm+J6yD+NlY9CIeWCT6ORwizA6tMb8t2rOuFBdaZipKB3peoszjzBYEytTJVSfpNJ0+IGh9qnaIOSKSJsEfOyOskOz/PytWieqhFavODyBXrcLbo/93Ug5EZ+3ae1upgS5T3riLE80g=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725353083; c=relaxed/simple;
-	bh=Zj7h+Df61/pENQfgug3gu4dOhNubOSRMV4QeUjHXPoY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qMedGaaiGr9iTkRRY22hEk8P7G46eQ6NGIz3oJXeEE08zTXLEPOUM/OnTPvOVj63TsRQZ87E+EvTpEoZ567wPqcm8gx3XC+aLlBsekD4ntcyxBNb01Gb+b0sm9LFJkbJ+F/6ajRyY93Kgju/5LJNhnoNssmcEA7GCIH/f3e4wTE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=ZLrbJXri; arc=none smtp.client-ip=115.124.30.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1725353078; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=07f+ZRUYFuuGrxUxDNJ+07f6JVD8p2TyIQijT4Sm9TY=;
-	b=ZLrbJXritpISpWqQWstHcLYosB1qixcWbWJRT2Jn/74o2BZRATG07jgS6Ym54bcMB/gyUkxhZzCJihYYCIPTAcF4gDoZBYdZRseV4VAibKi3F5p4aQdziTzE5VySAHZob/XUuvry1VqxizmeumkDAmA/RWwOe7KOZv/4zOzH0PI=
-Received: from 30.221.146.33(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0WECkfE6_1725353076)
-          by smtp.aliyun-inc.com;
-          Tue, 03 Sep 2024 16:44:37 +0800
-Message-ID: <6074d653-3dd3-45a3-9241-a9e2e12252c6@linux.alibaba.com>
-Date: Tue, 3 Sep 2024 16:44:35 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FD271C62A7;
+	Tue,  3 Sep 2024 08:45:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.60
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725353112; cv=fail; b=GwIktGOcf8MDxSFpDDh0As/9adn3Hl9NTIaXxqRr7HruUDRtZo9nKfdiFsRgNlcn3SLLmv8IOJppoarPDYGfAe3hpxdAxZy77y45iOnN5SgS2GxzvvPof8RcCot/U5a1cWZW9JZAVbLQNLMmOmItAKNbEN1t5S+U0penExQIuPA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725353112; c=relaxed/simple;
+	bh=QgHSqWjtpdTPY7iCJp6IN0maAJXSyQZB33/6h8qyhXA=;
+	h=From:To:CC:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID:Date; b=f4qFbdbKt1g9llksKFrMWZe38C2mI+UI3faf5n+B2rQ2pTjp3THOqnCwv/0VxygjBwWg4OnaZLkkl2LK+0EP0zDYzdG9Juvq9rcKdcjJDdynz56BI/rgcytzdJMnHl/i5g0Wg2BVXk2nwmjdiEexaJg3nikD7ahlCvE8DBN8NGE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=ZX6/xien; arc=fail smtp.client-ip=40.107.244.60
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=OTNlg6jc4rD8cX4oZSJXQibM7mbAaA/bRqJ3Nz59n9lFZFO+wgKo2lXvmPBFOEee2aYdnCIX2cJmgk5NPhMrGvqtXvqG+WDTDtRsITryIbuP0ThD1NPOJYQeaLP3JUps6pjArrSIk4kn32azrDJlQczPDpG2OsA/tRAB8IpjwGVc5TxoVasFOH4KOUmzb2Mia5XfrvkULEX96W3Hur4Sk50RFMY/GXbD5cP7x7tNl68IurEyNG1X8ts8tP4L4s5cxtRTj5s516CqfggPzsmgK1qrob5jaF9G8N4sfyuIfkQILZPNthBNiaeZSVDXOAxkNcxQzm55qwfWvtkf48emEg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=TOA/lpsH5BebeNGcpb2VySqlMsGK/TMrXGNxjMctgQY=;
+ b=FN86rIWJ1mialD4eMsRBNOPMw3ZRq6v/2TsJW08n2YL2v2o9VUeNWMOgLe9RS1icaD1KgkeCYeeT3BaSRqPrpzXZYzW0J0xECzB8LWf+7UpQg7QlzIRfbN/kSrRm8CpXAb6uQ1fnXlYG30Fkr8Wb7VJeDs6IAgYcMIksF/yqyKH70otNnA4MbIKWYLOYjUW2GbNEDSdbMVnzC4nca0XYeMEjZlY5SaviY4n3U09DAu1IPJnRiWLckmD+oeHCJI8Pg3+NOZkZRLJcwi3r7o2p82RO/518ddaC+0RxwylqH38FMP2BLkPJh3y2gU2yTebSJA1OxV3Day/ZEZ/RSByEGA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=linuxfoundation.org
+ smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
+ header.from=nvidia.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=TOA/lpsH5BebeNGcpb2VySqlMsGK/TMrXGNxjMctgQY=;
+ b=ZX6/xien9wsdv4LQPhZN83uzY6xpI+ZC+p01sF0O/dR/FLS6Oo7susCvNMVKvHLA02674+gFbR+da2dXuI808OMiQE4b0u3kRThfNtgEUR8UY7w4fuv8Ai04MXyp2QJUsN91i4CIyMzpay89d1Or6wVlw08KOpfmCEVGuP16gTcPwnW+10wOmn0PbvelwudkbuXuRGJ3lcAn9aBeXzXqeUHWI3DqjAw/njoTyG8xU5gKge/xTFjHR0qIDCY2h2ZJew48zbWV44xS/x6pG/4aX3jnwL9iYwnUNpizXbAC2Ihcc2Re9nZc1ao2OtWL4RWXcLtg//ky5IM/JXsIOVbV7w==
+Received: from CY5PR13CA0073.namprd13.prod.outlook.com (2603:10b6:930:a::33)
+ by DS7PR12MB6336.namprd12.prod.outlook.com (2603:10b6:8:93::8) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7918.24; Tue, 3 Sep 2024 08:45:02 +0000
+Received: from CY4PEPF0000EDD5.namprd03.prod.outlook.com
+ (2603:10b6:930:a:cafe::81) by CY5PR13CA0073.outlook.office365.com
+ (2603:10b6:930:a::33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7939.12 via Frontend
+ Transport; Tue, 3 Sep 2024 08:45:02 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ CY4PEPF0000EDD5.mail.protection.outlook.com (10.167.241.201) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7918.13 via Frontend Transport; Tue, 3 Sep 2024 08:45:02 +0000
+Received: from rnnvmail202.nvidia.com (10.129.68.7) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Tue, 3 Sep 2024
+ 01:44:44 -0700
+Received: from rnnvmail204.nvidia.com (10.129.68.6) by rnnvmail202.nvidia.com
+ (10.129.68.7) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Tue, 3 Sep 2024
+ 01:44:43 -0700
+Received: from jonathanh-vm-01.nvidia.com (10.127.8.9) by mail.nvidia.com
+ (10.129.68.6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4 via Frontend
+ Transport; Tue, 3 Sep 2024 01:44:43 -0700
+From: Jon Hunter <jonathanh@nvidia.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	<patches@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
+	<torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
+	<linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
+	<lkft-triage@lists.linaro.org>, <pavel@denx.de>, <jonathanh@nvidia.com>,
+	<f.fainelli@gmail.com>, <sudipm.mukherjee@gmail.com>, <srw@sladewatkins.net>,
+	<rwarsow@gmx.de>, <conor@kernel.org>, <allen.lkml@gmail.com>,
+	<broonie@kernel.org>, <linux-tegra@vger.kernel.org>, <stable@vger.kernel.org>
+Subject: Re: [PATCH 6.1 00/71] 6.1.108-rc1 review
+In-Reply-To: <20240901160801.879647959@linuxfoundation.org>
+References: <20240901160801.879647959@linuxfoundation.org>
+X-NVConfidentiality: public
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/2] virtiofs: use pages instead of pointer for kernel
- direct IO
-To: Hou Tao <houtao@huaweicloud.com>, linux-fsdevel@vger.kernel.org
-Cc: Miklos Szeredi <miklos@szeredi.hu>, Vivek Goyal <vgoyal@redhat.com>,
- Stefan Hajnoczi <stefanha@redhat.com>,
- Bernd Schubert <bernd.schubert@fastmail.fm>,
- "Michael S . Tsirkin" <mst@redhat.com>, Matthew Wilcox
- <willy@infradead.org>, Benjamin Coddington <bcodding@redhat.com>,
- linux-kernel@vger.kernel.org, virtualization@lists.linux.dev,
- houtao1@huawei.com
-References: <20240831093750.1593871-1-houtao@huaweicloud.com>
- <20240831093750.1593871-2-houtao@huaweicloud.com>
-Content-Language: en-US
-From: Jingbo Xu <jefflexu@linux.alibaba.com>
-In-Reply-To: <20240831093750.1593871-2-houtao@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Message-ID: <59d40b19-abf1-4dc1-b8d2-3f6df0182e88@rnnvmail204.nvidia.com>
+Date: Tue, 3 Sep 2024 01:44:43 -0700
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CY4PEPF0000EDD5:EE_|DS7PR12MB6336:EE_
+X-MS-Office365-Filtering-Correlation-Id: 982ff67a-cb22-46c6-38f8-08dccbf4b37f
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|36860700013|82310400026|7416014|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?cVY5ZFRYYm03eC96dENnek94ZktIVm5XZzRIbHBVZUlQbE5mMnFaRE0wSjg2?=
+ =?utf-8?B?bVN6TTAzTFJrbHNtRElnNlFrbTI0UWpvcml2WFF1MEN3ZFFXMlhyVjJ0bEV6?=
+ =?utf-8?B?M3ZQdVg4dW13YkN0OWRNVjR1VVYyN3pzQ0dHcEQ3a3kyYzdCam9GL29reERE?=
+ =?utf-8?B?VXlnVmZmVjZrRXg4ZFk3YTF0cEdZTjBydUtpTHJVVTVlVEI0dEpKcmtwNGha?=
+ =?utf-8?B?RjdpRW9QTEtvU0VSSTU0K1I5ZFQ4dFh4Vm80Z3VPRnhrK2d1c0ZHa0czSGRG?=
+ =?utf-8?B?czZkWlk0MGdtaElVNHFvajdQRDVnNWttV2dsQnNOakcxai8zejk2WnZPNm1F?=
+ =?utf-8?B?WllIOHh6YVpsbHJtbG93S0xwaEhGZGorcVFJeGYyUzkzbklkdGxlSWpxcGJT?=
+ =?utf-8?B?Y1JId0kvVytBM0I1VllKRmJFV0ViUnI2eXpZZGx4Ty9NcHBobXJhdTlDYnk4?=
+ =?utf-8?B?cDZwUEI2b3VWMDlOc0tpd3I2K1dyVmZIcHJ2TURMR2Z5SmhOdGcwb0h1L3pu?=
+ =?utf-8?B?eVN2NDFSYktlYnJ0NkFIZ01UWm1XaXBHV0FWVDBITUdrZmdkaCtWWkg4WTJQ?=
+ =?utf-8?B?MHZQL1dxMTBYc0FwckIvUnFueUM1SnFVME5GYzBacmp6ZXZRQTRzMFE5SGhn?=
+ =?utf-8?B?MkpVMjYvSnhMYzhudEFJbzdxY0swOE56MEZkb21JZUNYMkhrWWU5U1NHTXNP?=
+ =?utf-8?B?YVYyNEdpZWpuTndaczBrZitYWEFkYStRR0xwN0M4dnFQZnpZTnlGeFpQM01T?=
+ =?utf-8?B?S0lIelFBeHBZOHpudnhadzlkZTE1cFRJVjdlK3A4OWhsV2tnaXNYN1VSY2pW?=
+ =?utf-8?B?cml5STZDMXRXV0o3Z2wvbFF5MVIzMGFNaDZ2TWRQSHF4SUdPTnYvNjNWZEVm?=
+ =?utf-8?B?MUlKZm9QY29WQUt4dmhZekI1RGJaUW1hb2d3NCt0QTdiZ2lhZk1sNFlTZm5q?=
+ =?utf-8?B?Q21VZmZiNHpjaHY1WnF2Tm1EUVdjcUY0Wk11aTlWNUp1dVJXRmdFWEgxZXNC?=
+ =?utf-8?B?Z01MeFpDSUh6UHRPSlM2ZEhTWEdOaVBCR1lrc3UvSEdiejJPWlRqK0RBSENH?=
+ =?utf-8?B?NHBWL0JpRFpmUXFvUTQwRmFZN0c4aDFkZDNjVlBROTA2S0hneXRaUkIvUUNJ?=
+ =?utf-8?B?dlMrTkhpZHp4Nk1aU3l2S1J6cmlvTkN3ZXFkSWZ2S3VOaVhOWlhwRmdycmZQ?=
+ =?utf-8?B?MmR0L2JMVEZBTXVUOXBuenBCTVZUL0t5d3U5VXFqUE1xaDIwZ2Q4YWRiT1V0?=
+ =?utf-8?B?L2hiU3lpemk3ZmR5eXBjUFM4bTE4b08yOFFIV2FtRWRBakhybUJQTXNDdzBw?=
+ =?utf-8?B?YldkMU9HWXQyVElJSGI4aHZwSks0ZDRLL0xBbXFNVS9PTFo3b2N1T21MeGRR?=
+ =?utf-8?B?QVliTVQ4dVppR2pqYitOdlFTb3d5Z1E4VE91MEpDQnlNRzM4S2VrVkZwWnp4?=
+ =?utf-8?B?NE9GSXRjYVhZWGlFNHJ5UkMxU3VXWXlEMCtWbVFQTFREWlZqc0M2cDZJcm9V?=
+ =?utf-8?B?UWVlSklEMnVwbkFoQWFidFhtQVBnZm9HSEZ5dGdpSTZWYmZrRTlwcm9ZTEdv?=
+ =?utf-8?B?Z1BpbklvWkt0L3BoQ25JRDh2TGgxMGhmTUlBK2s2Um5yM2xDQldnRFdaVGxZ?=
+ =?utf-8?B?RWdNRlE3L3ZrUitDNGlNOTFXZTNtemlNVitUbDVaSGpsbSs5VlBqU0FITjVx?=
+ =?utf-8?B?OThqSlVHUytIR2w3TVlOTXNuSGVDNVZsS3IyQTc4RVd6SUhRRFhiTFgrS2lz?=
+ =?utf-8?B?M0hraVhHQzhIbDUvb3czbHg2cVFnUTFkMTNrOWF5OWtLT0Q4V1p0NmluQ3dI?=
+ =?utf-8?B?SGx6Q21HSGJHT1F4MHZ5R1plQS8xZUduaGxjVHBaOVU0VFNpa01oeDlZbCtu?=
+ =?utf-8?B?RUZEQVRWRGtvNmZOUDJXQUZRM2NqendSZlZEamoza2JxUnFyZk5MNU15a0tF?=
+ =?utf-8?Q?NHRjEtv0AjHKpEqpZaXLZb1D8QKDVJNG?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(82310400026)(7416014)(376014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Sep 2024 08:45:02.2123
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 982ff67a-cb22-46c6-38f8-08dccbf4b37f
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CY4PEPF0000EDD5.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB6336
 
+On Sun, 01 Sep 2024 18:17:05 +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.1.108 release.
+> There are 71 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Tue, 03 Sep 2024 16:07:34 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.108-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.1.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
+All tests passing for Tegra ...
 
-On 8/31/24 5:37 PM, Hou Tao wrote:
-> From: Hou Tao <houtao1@huawei.com>
-> 
-> When trying to insert a 10MB kernel module kept in a virtio-fs with cache
-> disabled, the following warning was reported:
-> 
->   ------------[ cut here ]------------
->   WARNING: CPU: 1 PID: 404 at mm/page_alloc.c:4551 ......
->   Modules linked in:
->   CPU: 1 PID: 404 Comm: insmod Not tainted 6.9.0-rc5+ #123
->   Hardware name: QEMU Standard PC (i440FX + PIIX, 1996) ......
->   RIP: 0010:__alloc_pages+0x2bf/0x380
->   ......
->   Call Trace:
->    <TASK>
->    ? __warn+0x8e/0x150
->    ? __alloc_pages+0x2bf/0x380
->    __kmalloc_large_node+0x86/0x160
->    __kmalloc+0x33c/0x480
->    virtio_fs_enqueue_req+0x240/0x6d0
->    virtio_fs_wake_pending_and_unlock+0x7f/0x190
->    queue_request_and_unlock+0x55/0x60
->    fuse_simple_request+0x152/0x2b0
->    fuse_direct_io+0x5d2/0x8c0
->    fuse_file_read_iter+0x121/0x160
->    __kernel_read+0x151/0x2d0
->    kernel_read+0x45/0x50
->    kernel_read_file+0x1a9/0x2a0
->    init_module_from_file+0x6a/0xe0
->    idempotent_init_module+0x175/0x230
->    __x64_sys_finit_module+0x5d/0xb0
->    x64_sys_call+0x1c3/0x9e0
->    do_syscall_64+0x3d/0xc0
->    entry_SYSCALL_64_after_hwframe+0x4b/0x53
->    ......
->    </TASK>
->   ---[ end trace 0000000000000000 ]---
-> 
-> The warning is triggered as follows:
-> 
-> 1) syscall finit_module() handles the module insertion and it invokes
-> kernel_read_file() to read the content of the module first.
-> 
-> 2) kernel_read_file() allocates a 10MB buffer by using vmalloc() and
-> passes it to kernel_read(). kernel_read() constructs a kvec iter by
-> using iov_iter_kvec() and passes it to fuse_file_read_iter().
-> 
-> 3) virtio-fs disables the cache, so fuse_file_read_iter() invokes
-> fuse_direct_io(). As for now, the maximal read size for kvec iter is
-> only limited by fc->max_read. For virtio-fs, max_read is UINT_MAX, so
-> fuse_direct_io() doesn't split the 10MB buffer. It saves the address and
-> the size of the 10MB-sized buffer in out_args[0] of a fuse request and
-> passes the fuse request to virtio_fs_wake_pending_and_unlock().
-> 
-> 4) virtio_fs_wake_pending_and_unlock() uses virtio_fs_enqueue_req() to
-> queue the request. Because virtiofs need DMA-able address, so
-> virtio_fs_enqueue_req() uses kmalloc() to allocate a bounce buffer for
-> all fuse args, copies these args into the bounce buffer and passed the
-> physical address of the bounce buffer to virtiofsd. The total length of
-> these fuse args for the passed fuse request is about 10MB, so
-> copy_args_to_argbuf() invokes kmalloc() with a 10MB size parameter and
-> it triggers the warning in __alloc_pages():
-> 
-> 	if (WARN_ON_ONCE_GFP(order > MAX_PAGE_ORDER, gfp))
-> 		return NULL;
-> 
-> 5) virtio_fs_enqueue_req() will retry the memory allocation in a
-> kworker, but it won't help, because kmalloc() will always return NULL
-> due to the abnormal size and finit_module() will hang forever.
-> 
-> A feasible solution is to limit the value of max_read for virtio-fs, so
-> the length passed to kmalloc() will be limited. However it will affect
-> the maximal read size for normal read. And for virtio-fs write initiated
-> from kernel, it has the similar problem but now there is no way to limit
-> fc->max_write in kernel.
-> 
-> So instead of limiting both the values of max_read and max_write in
-> kernel, introducing use_pages_for_kvec_io in fuse_conn and setting it as
-> true in virtiofs. When use_pages_for_kvec_io is enabled, fuse will use
-> pages instead of pointer to pass the KVEC_IO data.
-> 
-> After switching to pages for KVEC_IO data, these pages will be used for
-> DMA through virtio-fs. If these pages are backed by vmalloc(),
-> {flush|invalidate}_kernel_vmap_range() are necessary to flush or
-> invalidate the cache before the DMA operation. So add two new fields in
-> fuse_args_pages to record the base address of vmalloc area and the
-> condition indicating whether invalidation is needed. Perform the flush
-> in fuse_get_user_pages() for write operations and the invalidation in
-> fuse_release_user_pages() for read operations.
-> 
-> It may seem necessary to introduce another field in fuse_conn to
-> indicate that these KVEC_IO pages are used for DMA, However, considering
-> that virtio-fs is currently the only user of use_pages_for_kvec_io, just
-> reuse use_pages_for_kvec_io to indicate that these pages will be used
-> for DMA.
-> 
-> Fixes: a62a8ef9d97d ("virtio-fs: add virtiofs filesystem")
-> Signed-off-by: Hou Tao <houtao1@huawei.com>
+Test results for stable-v6.1:
+    10 builds:	10 pass, 0 fail
+    26 boots:	26 pass, 0 fail
+    115 tests:	115 pass, 0 fail
 
-Tested-by: Jingbo Xu <jefflexu@linux.alibaba.com>
+Linux version:	6.1.108-rc1-gde2d512f4921
+Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+                tegra194-p2972-0000, tegra194-p3509-0000+p3668-0000,
+                tegra20-ventana, tegra210-p2371-2180,
+                tegra210-p3450-0000, tegra30-cardhu-a04
 
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
 
-> ---
->  fs/fuse/file.c      | 62 +++++++++++++++++++++++++++++++--------------
->  fs/fuse/fuse_i.h    |  6 +++++
->  fs/fuse/virtio_fs.c |  1 +
->  3 files changed, 50 insertions(+), 19 deletions(-)
-> 
-> diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-> index f39456c65ed7..331208d3e4d1 100644
-> --- a/fs/fuse/file.c
-> +++ b/fs/fuse/file.c
-> @@ -645,7 +645,7 @@ void fuse_read_args_fill(struct fuse_io_args *ia, struct file *file, loff_t pos,
->  	args->out_args[0].size = count;
->  }
->  
-> -static void fuse_release_user_pages(struct fuse_args_pages *ap,
-> +static void fuse_release_user_pages(struct fuse_args_pages *ap, ssize_t nres,
->  				    bool should_dirty)
->  {
->  	unsigned int i;
-> @@ -656,6 +656,9 @@ static void fuse_release_user_pages(struct fuse_args_pages *ap,
->  		if (ap->args.is_pinned)
->  			unpin_user_page(ap->pages[i]);
->  	}
-> +
-> +	if (nres > 0 && ap->args.invalidate_vmap)
-> +		invalidate_kernel_vmap_range(ap->args.vmap_base, nres);
->  }
->  
->  static void fuse_io_release(struct kref *kref)
-> @@ -754,25 +757,29 @@ static void fuse_aio_complete_req(struct fuse_mount *fm, struct fuse_args *args,
->  	struct fuse_io_args *ia = container_of(args, typeof(*ia), ap.args);
->  	struct fuse_io_priv *io = ia->io;
->  	ssize_t pos = -1;
-> -
-> -	fuse_release_user_pages(&ia->ap, io->should_dirty);
-> +	size_t nres;
->  
->  	if (err) {
->  		/* Nothing */
->  	} else if (io->write) {
->  		if (ia->write.out.size > ia->write.in.size) {
->  			err = -EIO;
-> -		} else if (ia->write.in.size != ia->write.out.size) {
-> -			pos = ia->write.in.offset - io->offset +
-> -				ia->write.out.size;
-> +		} else {
-> +			nres = ia->write.out.size;
-> +			if (ia->write.in.size != ia->write.out.size)
-> +				pos = ia->write.in.offset - io->offset +
-> +				      ia->write.out.size;
->  		}
->  	} else {
->  		u32 outsize = args->out_args[0].size;
->  
-> +		nres = outsize;
->  		if (ia->read.in.size != outsize)
->  			pos = ia->read.in.offset - io->offset + outsize;
->  	}
->  
-> +	fuse_release_user_pages(&ia->ap, err ?: nres, io->should_dirty);
-> +
->  	fuse_aio_complete(io, err, pos);
->  	fuse_io_free(ia);
->  }
-> @@ -1467,24 +1474,37 @@ static inline size_t fuse_get_frag_size(const struct iov_iter *ii,
->  
->  static int fuse_get_user_pages(struct fuse_args_pages *ap, struct iov_iter *ii,
->  			       size_t *nbytesp, int write,
-> -			       unsigned int max_pages)
-> +			       unsigned int max_pages,
-> +			       bool use_pages_for_kvec_io)
->  {
-> +	bool flush_or_invalidate = false;
->  	size_t nbytes = 0;  /* # bytes already packed in req */
->  	ssize_t ret = 0;
->  
-> -	/* Special case for kernel I/O: can copy directly into the buffer */
-> +	/* Special case for kernel I/O: can copy directly into the buffer.
-> +	 * However if the implementation of fuse_conn requires pages instead of
-> +	 * pointer (e.g., virtio-fs), use iov_iter_extract_pages() instead.
-> +	 */
->  	if (iov_iter_is_kvec(ii)) {
-> -		unsigned long user_addr = fuse_get_user_addr(ii);
-> -		size_t frag_size = fuse_get_frag_size(ii, *nbytesp);
-> +		void *user_addr = (void *)fuse_get_user_addr(ii);
->  
-> -		if (write)
-> -			ap->args.in_args[1].value = (void *) user_addr;
-> -		else
-> -			ap->args.out_args[0].value = (void *) user_addr;
-> +		if (!use_pages_for_kvec_io) {
-> +			size_t frag_size = fuse_get_frag_size(ii, *nbytesp);
->  
-> -		iov_iter_advance(ii, frag_size);
-> -		*nbytesp = frag_size;
-> -		return 0;
-> +			if (write)
-> +				ap->args.in_args[1].value = user_addr;
-> +			else
-> +				ap->args.out_args[0].value = user_addr;
-> +
-> +			iov_iter_advance(ii, frag_size);
-> +			*nbytesp = frag_size;
-> +			return 0;
-> +		}
-> +
-> +		if (is_vmalloc_addr(user_addr)) {
-> +			ap->args.vmap_base = user_addr;
-> +			flush_or_invalidate = true;
-
-Could we move flush_kernel_vmap_range() upon here, so that
-flush_or_invalidate is not needed anymore and the code looks cleaner?
-
-> +		}
->  	}
->  
->  	while (nbytes < *nbytesp && ap->num_pages < max_pages) {
-> @@ -1513,6 +1533,10 @@ static int fuse_get_user_pages(struct fuse_args_pages *ap, struct iov_iter *ii,
->  			(PAGE_SIZE - ret) & (PAGE_SIZE - 1);
->  	}
->  
-> +	if (write && flush_or_invalidate)
-> +		flush_kernel_vmap_range(ap->args.vmap_base, nbytes);
-> +
-> +	ap->args.invalidate_vmap = !write && flush_or_invalidate;
-
-How about initializing vmap_base only when the data buffer is vmalloced
-and it's a read request?  In this case invalidate_vmap is no longer needed.
-
->  	ap->args.is_pinned = iov_iter_extract_will_pin(ii);
->  	ap->args.user_pages = true;
->  	if (write)
-> @@ -1581,7 +1605,7 @@ ssize_t fuse_direct_io(struct fuse_io_priv *io, struct iov_iter *iter,
->  		size_t nbytes = min(count, nmax);
->  
->  		err = fuse_get_user_pages(&ia->ap, iter, &nbytes, write,
-> -					  max_pages);
-> +					  max_pages, fc->use_pages_for_kvec_io);
->  		if (err && !nbytes)
->  			break;
->  
-> @@ -1595,7 +1619,7 @@ ssize_t fuse_direct_io(struct fuse_io_priv *io, struct iov_iter *iter,
->  		}
->  
->  		if (!io->async || nres < 0) {
-> -			fuse_release_user_pages(&ia->ap, io->should_dirty);
-> +			fuse_release_user_pages(&ia->ap, nres, io->should_dirty);
->  			fuse_io_free(ia);
->  		}
->  		ia = NULL;
-> diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
-> index f23919610313..79add14c363f 100644
-> --- a/fs/fuse/fuse_i.h
-> +++ b/fs/fuse/fuse_i.h
-> @@ -309,9 +309,12 @@ struct fuse_args {
->  	bool may_block:1;
->  	bool is_ext:1;
->  	bool is_pinned:1;
-> +	bool invalidate_vmap:1;
->  	struct fuse_in_arg in_args[3];
->  	struct fuse_arg out_args[2];
->  	void (*end)(struct fuse_mount *fm, struct fuse_args *args, int error);
-> +	/* Used for kvec iter backed by vmalloc address */
-> +	void *vmap_base;
->  };
->  
->  struct fuse_args_pages {
-> @@ -860,6 +863,9 @@ struct fuse_conn {
->  	/** Passthrough support for read/write IO */
->  	unsigned int passthrough:1;
->  
-> +	/* Use pages instead of pointer for kernel I/O */
-> +	unsigned int use_pages_for_kvec_io:1;
-
-Maybe we need a better (actually shorter) name for this flag. kvec_pages?
-
-> +
->  	/** Maximum stack depth for passthrough backing files */
->  	int max_stack_depth;
->  
-> diff --git a/fs/fuse/virtio_fs.c b/fs/fuse/virtio_fs.c
-> index dd5260141615..43d66ab5e891 100644
-> --- a/fs/fuse/virtio_fs.c
-> +++ b/fs/fuse/virtio_fs.c
-> @@ -1568,6 +1568,7 @@ static int virtio_fs_get_tree(struct fs_context *fsc)
->  	fc->delete_stale = true;
->  	fc->auto_submounts = true;
->  	fc->sync_fs = true;
-> +	fc->use_pages_for_kvec_io = true;
->  
->  	/* Tell FUSE to split requests that exceed the virtqueue's size */
->  	fc->max_pages_limit = min_t(unsigned int, fc->max_pages_limit,
-
--- 
-Thanks,
-Jingbo
+Jon
 
