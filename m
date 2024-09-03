@@ -1,122 +1,389 @@
-Return-Path: <linux-kernel+bounces-312861-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312862-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8DFB969C8C
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 13:56:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30933969C8D
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 13:57:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 736A928588A
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 11:56:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E6A3F285879
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 11:57:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74F5B1C9853;
-	Tue,  3 Sep 2024 11:56:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A337F1C985F;
+	Tue,  3 Sep 2024 11:56:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="goFHb/NV"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nqF9COob"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2E761C62AB;
-	Tue,  3 Sep 2024 11:56:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B45101C62AB
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 11:56:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725364594; cv=none; b=ANc9RbiPgx394TnC6G6oD5Sv5yc4YWPFBy2t4YckVOa5+t9yneH8Yl855JafunjfRVfiZTEQMGLdDx7axhV6zYYqukGgRjxGYg1ediDeVtfbDe+TiDI9MH3lHv2mv++gw2f7knb5IG9RrZwXHC4oIWyOp0T74MgKcY/2Y/3gbqM=
+	t=1725364608; cv=none; b=JhUipn3JQAGQ3qRivL17f9f95PBKf9Ftx2aWrJ1u0p6ufa/K/qx6YdfvlN4ippvWN7lhp5xPj5fc2TOO9cxgBUbF5ZCNLXgGgokc2mBvewGnMNWQjNmRuEDFWI56E2enF1oJFEcW5tHm2g58Nn/KiCcvwC+Zy16En/NzIy7qExA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725364594; c=relaxed/simple;
-	bh=0zDsuJ5lW1nyARE4wtBvC9CZFQt76AfHnSgA1z+UpPo=;
+	s=arc-20240116; t=1725364608; c=relaxed/simple;
+	bh=b9Utbm9UqOtmVq9baiDIRxzUGkDXu1W11qtpgj75KQQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OuBhZQsT3NhL6wM5iMvEdsG1occaUajltAQCChzGH5gxGwUL0bZiFcSlW9fvpeXWtRs2Jvh+opLOMJYtKERVqBrI6IgEfJWIAtkirXfY2n+MExFyJ3dOwnYpvemNMjW+X3pN2QTqIeOeLXNJXgFGJo+kXKf4RVYNCIEUXJuoftM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=goFHb/NV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C280AC4CEC4;
-	Tue,  3 Sep 2024 11:56:29 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=VQC67Sw7K0uVNjZKOZAjIJB98eg8fCuIVy/PowmIHjm/0Ja0ULWOYZhADOs369ZoYElFgtZxccpaS+fDEOASGd9/pWN8paLyd3iOMsx4ZFxBXwdUYCkqEd8FwqOVc+o/bj7KD4DeZpiBnvDD6UaqPSmAK4MF/hhkTU6HpBG7K3U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nqF9COob; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF8EAC4CEC4;
+	Tue,  3 Sep 2024 11:56:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725364594;
-	bh=0zDsuJ5lW1nyARE4wtBvC9CZFQt76AfHnSgA1z+UpPo=;
+	s=k20201202; t=1725364608;
+	bh=b9Utbm9UqOtmVq9baiDIRxzUGkDXu1W11qtpgj75KQQ=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=goFHb/NVyfUwbKhLKJ2UYfleAJrAn+IdbWMH1igvXp2PF8viVN/lNuzaY2QUpiuBg
-	 FQROMe7MCudg0NxbhRfo1WQtfo5WELXFLXoEuuKL48ZKa+Z1LEcEF+P1o7UogXw1vS
-	 M4YMnaG8ZIvELBvXtVkt4WnfFJtJM38IY/b9mEucb5Mf/EJei+KdTvzZ0f2pWG7OZc
-	 Rwr2jFxq07hHVIkmsLtt0a4QPCTnUxdgMpUYUHEUdx5V7EJZJjVgiP3vyBqoP1fofd
-	 0xo1x31nEg2IJDYxy3hsJ5WDoqFGTODqz5JrG5eq54e/F2ZMVzSbvaqQIGgEgwsD6w
-	 ViDOb23ShhGlQ==
-Date: Tue, 3 Sep 2024 13:56:26 +0200
-From: Danilo Krummrich <dakr@kernel.org>
-To: Benno Lossin <benno.lossin@proton.me>
-Cc: ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com,
-	boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com,
-	a.hindborg@samsung.com, aliceryhl@google.com,
-	akpm@linux-foundation.org, daniel.almeida@collabora.com,
-	faith.ekstrand@collabora.com, boris.brezillon@collabora.com,
-	lina@asahilina.net, mcanal@igalia.com, zhiw@nvidia.com,
-	cjia@nvidia.com, jhubbard@nvidia.com, airlied@redhat.com,
-	ajanulgu@redhat.com, lyude@redhat.com, linux-kernel@vger.kernel.org,
-	rust-for-linux@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH v6 01/26] rust: alloc: add `Allocator` trait
-Message-ID: <Ztb5arBBX2LsrFKo@pollux>
-References: <20240816001216.26575-1-dakr@kernel.org>
- <20240816001216.26575-2-dakr@kernel.org>
- <60253988-37e7-4acb-b2ae-748b30a4ac21@proton.me>
- <ZtDuf0QGfhiy5X_I@pollux.localdomain>
- <44b80095-8b03-4558-967e-138ea712f780@proton.me>
+	b=nqF9COobcC1K34BZ0KijycMDUCVqXOr5ZQ4ODlT+2mH5NsMsjnz6l07H0Xhopy09O
+	 TphPDSAj0CszqUmzmae5tqa3/VRb+fBgHm4HqiWj0mwKHAI7iyiJn76xTZlABkdOOU
+	 1k59efZuuOQ2txQgT0FMbeW5v7n/8oi+MfF/5YPFXsxZ+d65GXc1EPvnvq6fMs74LM
+	 PFYSph9ETKyngm3ouPrz9IQe87OpIsMMop9baVLgo6GLO/Kh3nsICZhUp06dCcyI8f
+	 THyCAIZyzQwGkcozfogiAXh1CVn/fxYdBlMWsWPDWFQcTlask8uoHd+jsDnB7PqtkT
+	 +EgqFBDDTu9TQ==
+Date: Tue, 3 Sep 2024 13:56:45 +0200
+From: Maxime Ripard <mripard@kernel.org>
+To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Cc: Daniel Vetter <daniel.vetter@ffwll.ch>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drm/mipi-dsi: Fix devm unregister & detach
+Message-ID: <20240903-encouraging-guillemot-of-warranty-aac44c@houat>
+References: <66ab4206-d1c8-4aad-99a7-c4c316e343a9@ideasonboard.com>
+ <20240626-warping-nondescript-mustang-bfce27@houat>
+ <b7cf71b8-76fd-4638-a7b6-cc8dbae635bf@ideasonboard.com>
+ <20240702-bold-exotic-mamba-fdbba4@houat>
+ <7293448e-e8cc-4522-b39c-5ad133e5f732@ideasonboard.com>
+ <20240725-natural-giga-crane-d54067@houat>
+ <4ed3791f-bc5a-46f1-88e1-2441c7f9c8d4@ideasonboard.com>
+ <20240902-refined-smooth-mammoth-fbee81@houat>
+ <ZtWYWuqhqvdWd0Q7@phenom.ffwll.local>
+ <d411e79f-a22e-48e9-b135-5d7a0afa3cf3@ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="j2aedqlgxplamaf4"
+Content-Disposition: inline
+In-Reply-To: <d411e79f-a22e-48e9-b135-5d7a0afa3cf3@ideasonboard.com>
+
+
+--j2aedqlgxplamaf4
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <44b80095-8b03-4558-967e-138ea712f780@proton.me>
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Aug 30, 2024 at 01:06:00PM +0000, Benno Lossin wrote:
-> On 29.08.24 23:56, Danilo Krummrich wrote:
-> > On Thu, Aug 29, 2024 at 06:19:09PM +0000, Benno Lossin wrote:
-> >> On 16.08.24 02:10, Danilo Krummrich wrote:
-> >>> Add a kernel specific `Allocator` trait, that in contrast to the one in
-> >>> Rust's core library doesn't require unstable features and supports GFP
-> >>> flags.
-> >>>
-> >>> Subsequent patches add the following trait implementors: `Kmalloc`,
-> >>> `Vmalloc` and `KVmalloc`.
-> >>>
-> >>> Reviewed-by: Alice Ryhl <aliceryhl@google.com>
-> >>> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
-> >>
-> >> We discussed this in our weekly meeting (I think ~one week ago?). If you
-> >> give me a draft version of the comment that you plan to add regarding
-> >> the `old_layout` parameter, I can see if I am happy with it. If I am, I
-> >> would give you my RB.
-> > 
-> > May I propose you let me know what you would like to see covered, rather than
-> > me trying to guess it. :-)
-> 
-> I was hoping that we put that in our meeting notes, but I failed to find
-> them... I would put this in a normal comment, so it doesn't show up in the
-> documentation. Preface it like implementation decision/detail:
-> - Why do `Allocator::{realloc,free}` not have an `old_layout` parameter
->   like in the stdlib? (the reasons you had for that decision, like we
->   don't need it etc.)
+On Mon, Sep 02, 2024 at 03:31:28PM GMT, Tomi Valkeinen wrote:
+> Hi,
+>=20
+> On 02/09/2024 13:50, Daniel Vetter wrote:
+> > On Mon, Sep 02, 2024 at 11:26:11AM +0200, Maxime Ripard wrote:
+> > > Hi,
+> > >=20
+> > > On Wed, Aug 07, 2024 at 03:19:23PM GMT, Tomi Valkeinen wrote:
+> > > > On 25/07/2024 14:28, Maxime Ripard wrote:
+> > > > > On Mon, Jul 15, 2024 at 11:32:34AM GMT, Tomi Valkeinen wrote:
+> > > > > > On 02/07/2024 14:43, Maxime Ripard wrote:
+> > > > > > > Hi Tomi,
+> > > > > > >=20
+> > > > > > > On Wed, Jun 26, 2024 at 06:53:40PM GMT, Tomi Valkeinen wrote:
+> > > > > > > > On 26/06/2024 18:07, Maxime Ripard wrote:
+> > > > > > > > > On Wed, Jun 26, 2024 at 12:55:39PM GMT, Tomi Valkeinen wr=
+ote:
+> > > > > > > > > > On 26/06/2024 11:49, Maxime Ripard wrote:
+> > > > > > > > > > > Hi,
+> > > > > > > > > > >=20
+> > > > > > > > > > > On Wed, Jun 19, 2024 at 12:07:48PM GMT, Tomi Valkeine=
+n wrote:
+> > > > > > > > > > > > From: Tomi Valkeinen <tomi.valkeinen+renesas@ideaso=
+nboard.com>
+> > > > > > > > > > > >=20
+> > > > > > > > > > > > When a bridge driver uses devm_mipi_dsi_device_regi=
+ster_full() or
+> > > > > > > > > > > > devm_mipi_dsi_attach(), the resource management is =
+moved to devres,
+> > > > > > > > > > > > which releases the resource automatically when the =
+bridge driver is
+> > > > > > > > > > > > unbound.
+> > > > > > > > > > > >=20
+> > > > > > > > > > > > However, if the DSI host goes away first, the host =
+unregistration code
+> > > > > > > > > > > > will automatically detach and unregister any DSI pe=
+ripherals, without
+> > > > > > > > > > > > notifying the devres about it. So when the bridge d=
+river later is
+> > > > > > > > > > > > unbound, the resources are released a second time, =
+leading to crash.
+> > > > > > > > > > >=20
+> > > > > > > > > > > That's super surprising. mipi_dsi_device_unregister c=
+alls
+> > > > > > > > > > > device_unregister, which calls device_del, which in t=
+urn calls
+> > > > > > > > > > > devres_release_all.
+> > > > > > > > > >=20
+> > > > > > > > > > Hmm, right.
+> > > > > > > > > >=20
+> > > > > > > > > > > If that doesn't work like that, then it's what needs =
+to be fixed, and
+> > > > > > > > > > > not worked around in the MIPI-DSI bus.
+> > > > > > > > > >=20
+> > > > > > > > > > Well, something causes a crash for both the device regi=
+ster/unregister case
+> > > > > > > > > > and the attach/detach case, and the call stacks and deb=
+ug prints showed a
+> > > > > > > > > > double unregister/detach...
+> > > > > > > > > >=20
+> > > > > > > > > > I need to dig up the board and check again why the devr=
+es_release_all() in
+> > > > > > > > > > device_del() doesn't solve this. But I can probably onl=
+y get back to this in
+> > > > > > > > > > August, so it's perhaps best to ignore this patch for n=
+ow.
+> > > > > > > > > >=20
+> > > > > > > > > > However, the attach/detach case is still valid? I see n=
+o devres calls in the
+> > > > > > > > > > detach paths.
+> > > > > > > > >=20
+> > > > > > > > > I'm not sure what you mean by the attach/detach case. Do =
+you expect
+> > > > > > > > > device resources allocated in attach to be freed when det=
+ach run?
+> > > > > > > >=20
+> > > > > > > > Ah, never mind, the devres_release_all() would of course de=
+al with that too.
+> > > > > > > >=20
+> > > > > > > > However, I just realized/remembered why it crashes.
+> > > > > > > >=20
+> > > > > > > > devm_mipi_dsi_device_register_full() and devm_mipi_dsi_atta=
+ch() are given a
+> > > > > > > > device which is used for the devres. This device is probabl=
+y always the
+> > > > > > > > bridge device. So when the bridge device goes away, so do t=
+hose resources.
+> > > > > > > >=20
+> > > > > > > > The mipi_dsi_device_unregister() call deals with a DSI devi=
+ce, which was
+> > > > > > > > created in devm_mipi_dsi_device_register_full(). Unregister=
+ing that DSI
+> > > > > > > > device, which does happen when the DSI host is removed, doe=
+s not affect the
+> > > > > > > > devres of the bridge.
+> > > > > > > >=20
+> > > > > > > > So, unloading the DSI host driver causes mipi_dsi_device_un=
+register() and
+> > > > > > > > mipi_dsi_detach() to be called (as part of mipi_dsi_host_un=
+register()), and
+> > > > > > > > unloading the bridge driver causes them to be called again =
+via devres.
+> > > > > > >=20
+> > > > > > > Sorry, that's one of the things I don't quite get. Both funct=
+ions are
+> > > > > > > exclusively(?) called from I2C bridges, so the device passed =
+there
+> > > > > > > should be a i2c_client instance, and thus the MIPI-DSI host g=
+oing away
+> > > > > > > will not remove those i2c devices, only the MIPI-DSI ones, ri=
+ght?
+> > > > > >=20
+> > > > > > Yes.
+> > > > > >=20
+> > > > > > > So if we remove the host, the MIPI-DSI device will be detache=
+d and
+> > > > > > > removed through the path you were explaing with the i2c clien=
+t lingering
+> > > > > > > around. And if we remove the I2C device, then devm will kick =
+in and will
+> > > > > > > detach and remove the MIPI-DSI device.
+> > > > > >=20
+> > > > > > Right.
+> > > > > >=20
+> > > > > > > Or is it the other way around? That if you remove the host, t=
+he device
+> > > > > > > is properly detached and removed, but there's still the devm =
+actions
+> > > > > > > lingering around in the i2c device with pointers to the mipi_=
+dsi_device
+> > > > > > > that was first created, but since destroyed?
+> > > > > > >=20
+> > > > > > > And thus, if the i2c device ever goes away, we get a use-afte=
+r-free?
+> > > > > >=20
+> > > > > > Hmm, I'm not sure I understand what you mean here... Aren't you=
+ describing
+> > > > > > the same thing in both of these cases?
+> > > > > >=20
+> > > > > > In any case, to expand the description a bit, module unloading =
+is quite
+> > > > > > fragile. I do get a crash if I first unload the i2c bridge modu=
+le, and only
+> > > > > > then go and unload the other ones in the DRM pipeline. But I th=
+ink module
+> > > > > > unloading will very easily crash, whatever the DRM drivers bein=
+g used are,
+> > > > > > so it's not related to this particular issue.
+> > > > > >=20
+> > > > > > In my view, the unload sequence that should be supported (for d=
+evelopment
+> > > > > > purposes, not for production) is to start the unload from the d=
+isplay
+> > > > > > controller module, which tears down the DRM pipeline, and going=
+ from there
+> > > > > > towards the panels/connectors.
+> > > > > >=20
+> > > > > > Of course, it would be very nice if the module unloading worked=
+ perfectly,
+> > > > > > but afaics fixing all that's related to module unloading would =
+be a
+> > > > > > multi-year project... So, I just want to keep the sequence I de=
+scribed above
+> > > > > > working, which allows using modules while doing driver developm=
+ent.
+> > > > >=20
+> > > > > FTR, I'm all for supporting module unloading. The discussion abov=
+e was
+> > > > > about what is broken exactly, so we can come up with a good solut=
+ion.
+> > > >=20
+> > > > Does that mean that you're ok with the patch, or that something sho=
+uld be
+> > > > improved?
+> > >=20
+> > > No, I meant that at the very least the commit log needs to be updated=
+ to
+> > > reflect what is actually going on, because at least my understanding =
+of
+> > > it doesn't match what actually happens.
+> > >=20
+> > > We want a solution to the problem you're facing, but it's not clear to
+> > > me what the problem is exactly at this point, so it's hard to review a
+> > > solution.
+> >=20
+> > So I haven't looked at the full thing, but I think the proper fix is to
+> > make both detach and unregister cope with being called multiple times. I
+> > think devm_ here is a red herring, the underlying issues is that we can
+> > unregister/detach from two sides:
+> >=20
+> > - when the host dsi goes away
+> > - when individual dsi devices on a given host go away
+> >=20
+> > So there needs to be book-keeping and locking to make sure no matter wh=
+ich
+> > order things disappear, we don't try to unregister/detach a dsi device
+> > twice.
+>=20
+> I think that is what my patch does (for devm_).
+>=20
+> Some vocabulary first:
+>=20
+> dsi peripheral device - The device that represents the DSI peripheral. It=
+ is
+> a bridge or a panel, and (usually) an i2c or platform device.
+>=20
+> dsi peripheral driver - The driver handling the dsi peripheral device.
+>=20
+> dsi device - Runtime created device instance that represents the DSI
+> peripheral. So in my case we have the i2c bridge device, and a dsi device=
+ is
+> created for it in the setup code.
+>=20
+> dsi controller device - A device that has a DSI bus (usually a platform or
+> i2c device, I would guess).
+>=20
+> dsi controller driver - A driver for the dsi controller device. Creates t=
+he
+> dsi host.
+>=20
+> dsi host - represents the DSI host side, owned by the dsi controller driv=
+er.
+>=20
+> When a dsi peripheral driver uses devm_mipi_dsi_device_register_full() or
+> devm_mipi_dsi_attach(), the dsi device is created and attached to the dsi
+> host. When the dsi peripheral device-driver is unbound, devres will call
+> unregister and detach are called automatically. This works fine.
+>=20
+> But when the device-driver for the dsi controller is unbound, the dsi
+> controller driver will unregister the dsi host,
 
-Ok.
+I assume that you're talking about:
+https://elixir.bootlin.com/linux/v6.10.7/source/drivers/gpu/drm/drm_mipi_ds=
+i.c#L357 ?
 
-> - Then something along the lines of "Note that no technical reason is
->   listed above, so if you need/want to implement an allocator taking
->   advantage of that, you can change it"
+> and the unregistration will also unregister and detach the dsi device.
 
-I don't really want to set the conditions for this to change in the
-documentation. It really depends on whether it's actually needed or the
-advantage of having it is huge enough to leave the core kernel allocators with
-unused arguments.
+And https://elixir.bootlin.com/linux/v6.10.7/source/drivers/gpu/drm/drm_mip=
+i_dsi.c#L346 ?
 
-This can really only be properly evaluated case by case in a discussion.
+> But the devres is not told about that.
 
-> 
-> I don't think we need a lot here. Additionally it would be very useful
-> to also put this in an issue to not lose track of it.
-> 
-> ---
-> Cheers,
-> Benno
-> 
+If my assumptions are correct, device_unregister() will definitely clean
+up the devres resources on that device:
+
+https://elixir.bootlin.com/linux/v6.10.7/source/drivers/base/core.c#L3886
+
+> So when the dsi peripheral is later unbound, its devres will again
+> unregister and detach.
+
+I guess in this case, only the device resource tied to the i2c client
+device (so dsi device? in your nomenclature) will run.
+
+Or is it that:
+https://elixir.bootlin.com/linux/v6.10.7/source/drivers/gpu/drm/drm_mipi_ds=
+i.c#L250
+
+Gets tied to the i2c client device, but the host being removed has
+free'd that device already?
+
+> To fix that this patch uses devm_remove_action() to remove the devres
+> action when the host side goes away first.
+>
+> Now, after writing the above, I realized that all this won't help with the
+> non-devm versions: the host side has unregistered and detached the dsi
+> device, but if the dsi peripheral driver calls mipi_dsi_detach() or
+> mipi_dsi_device_unregister(), it will again crash.
+>=20
+> Handling the attach/detach should be quite easy, and in fact the code
+> already handles it, but it uses WARN_ON() there so that has to go. But
+> attach/detach will crash anyway if the dsi device has already been freed,
+> which happens when the dsi controller driver calls
+> mipi_dsi_device_unregister().
+>=20
+> So... The dsi peripheral driver should keep a reference to the dsi device,
+> with get_device()? And then do a put_device() after calling
+> mipi_dsi_device_unregister()?
+>=20
+> But we don't free the dsi device, it has essentially been disabled without
+> telling the dsi peripheral driver about it, which might cause problems.
+
+Yeah, and the host pointer would be lingering as well.
+
+> I don't know... This doesn't sound correct to me. Probably my patch is ju=
+st
+> new wrong on top of old wrong. Or maybe I don't quite grasp how this work=
+s.
+
+I think we can fix some of them by storing the "parent" device of
+mipi_dsi_device (ie, the i2c client device) that the devm action is
+registered against, and removing the action in
+mipi_dsi_remove_device_fn.
+
+And marking non-devm variants as deprecated in favor of the devm one.
+
+Maxime
+
+--j2aedqlgxplamaf4
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZtb5eQAKCRAnX84Zoj2+
+dtk/AX43duGHox0IptyY38pXOiDowlDUUv3Hx26/tM/uKEck3nzEJ42ggcyWbvsL
+8jSI0JMBf2HZCspCGHHozi9NV5BcDzh/3EyNFgar8pQPb+f2xWwdsNMmqLC4vNo4
+TzUIjMhsJg==
+=RRCt
+-----END PGP SIGNATURE-----
+
+--j2aedqlgxplamaf4--
 
