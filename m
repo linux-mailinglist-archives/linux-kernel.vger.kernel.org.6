@@ -1,92 +1,140 @@
-Return-Path: <linux-kernel+bounces-312047-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312049-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C2C9969147
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 04:04:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9381096914C
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 04:08:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5BC03B22631
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 02:04:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 386411F231B1
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 02:08:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 828D21CCEEF;
-	Tue,  3 Sep 2024 02:04:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFAED1CCEF6;
+	Tue,  3 Sep 2024 02:08:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Gf58l3ZB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cMM+Wt7n"
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF4D7175B1;
-	Tue,  3 Sep 2024 02:04:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D2441581E5;
+	Tue,  3 Sep 2024 02:07:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725329068; cv=none; b=ZDcDQsZ1oH1atdXJIYsuHE8tSsQjCY2PaBvyH37oQgv+7xppg7Kg6AQ5nJS4YY6UVTEHGOncZ/ETW6sY3CTa5FnuBx5XwbrhexqM5ipg5AaMPSsTGF5nJY5JR+hwDWoORIgldEKtGYXWJD7RWf3JHk7Iusx+ilX6Is8pK6j+Rgw=
+	t=1725329281; cv=none; b=Ro8qQGdmHFToRoW6YhZ9aqllEA3+AyN88+e9MxKfS8udWexm7jFoOab3yQUqQF8bAwINZXCeakfEFqmZNHwygO6HcMKwLTSvuurAelFeCZCuRVtq9D/MM3+pvXCTeaIZnzWNHBShfL+yr6G8FR1+ocvJtdCap1vntq22vfLZ1CQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725329068; c=relaxed/simple;
-	bh=f6r63VNlYByyDFTmFXU7r1//1x15PRIiieh8kXz1qd4=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=qMw/mCqkTz2WVjJHtMfW2OFzm3vFag1Qe/SYqt0Kjzldb08hNRK9VqhyXgTQv3WRwMl1hREL5zD8KgVpgP9VH3NIgVVGTYUspRnJyUmDysTTiTzD+A9kdZ+RyB03ISYURRa3cqqvOF6u+GibQq9NjlCzM4YBvdMF/UosOX5faTU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Gf58l3ZB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B5ACBC4CEC2;
-	Tue,  3 Sep 2024 02:04:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725329067;
-	bh=f6r63VNlYByyDFTmFXU7r1//1x15PRIiieh8kXz1qd4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Gf58l3ZB2ux3D/Sy3fpWZWNoHH4opkXAvKDRP738HcsFdSpCioZpRkUbBekZ7sXpI
-	 BrQKt5s7nhgasyMhGbom1JeMQLpWQsjnOG6nXNKtghQ7hUdI1PgHotN2nox3Sq3KAy
-	 nHPXDOpl6hW+bEl874KLI+KQYJVad4lI1MvWO5z5lUg2zHkdREWgB7PaH8UKPxx3lh
-	 wrLS7TmlpaRBDWS7ie5BN+KV/66yuq62ggyHt6aP8GLSgj+QRP0FimHp+HeLEuICPw
-	 ur41zFldQYkRH+yppUxMpg9DlEEaanHbMRxDmv5ZABW2UyXSm3F9d+oMmwMgbEmfpd
-	 M9IHEKfoPOqrA==
-Date: Mon, 2 Sep 2024 19:04:25 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Justin Lai <justinlai0215@realtek.com>
-Cc: <davem@davemloft.net>, <edumazet@google.com>, <pabeni@redhat.com>,
- <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>, <andrew@lunn.ch>,
- <jiri@resnulli.us>, <horms@kernel.org>, <rkannoth@marvell.com>,
- <jdamato@fastly.com>, <pkshih@realtek.com>, <larry.chiu@realtek.com>
-Subject: Re: [PATCH net-next v29 07/13] rtase: Implement a function to
- receive packets
-Message-ID: <20240902190425.6eef2ee6@kernel.org>
-In-Reply-To: <20240829034832.139345-8-justinlai0215@realtek.com>
-References: <20240829034832.139345-1-justinlai0215@realtek.com>
-	<20240829034832.139345-8-justinlai0215@realtek.com>
+	s=arc-20240116; t=1725329281; c=relaxed/simple;
+	bh=T1GuxGVThsSRhyDuyn4cmCRQjYF0xXBu34+O3FRfXrc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jPgRTiqHB8IBAcK3FbKtLxZikqnlfpk0eeXFIFKfBme32qkmHyBN7aQUng4FXpAKmdYYiASvRemppfRESSDG8lTAfRVtOOr3Hxh+9kF/X4nJmGQH0LDvv0ErpObU9nIb3/wz1QKMCZzg8mZfU0TdOoFJ1X3xuWT2HPJPSgTQGZI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cMM+Wt7n; arc=none smtp.client-ip=209.85.208.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5c218866849so4974908a12.0;
+        Mon, 02 Sep 2024 19:07:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725329278; x=1725934078; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=T1GuxGVThsSRhyDuyn4cmCRQjYF0xXBu34+O3FRfXrc=;
+        b=cMM+Wt7nOaWGnoagI23gYg4hrOmDt1bYGReoHQ2LexoHbL65kHnmcgAztQdMLwr0Is
+         uQa6S08nWGebZU8m9t8Pn2QTtbiOhoNj9xcZ2/T97oYiEJ0Na71V1Cbfd7kiAHOzlA3n
+         UzVXXaHb+ymsz4lip72iKe2YOpPil1S1aKdloZo3PYUjcwvXiRq9982mGY2wtpNmxpdV
+         b0cjcQPloD05C+gn+zani+3wufWqmiBAQPelNpwKmYrEtZplWt9l2kiXStVh/TcyJlWN
+         sbQ7Q2H2CZ9lg3RKahnA1hORT9XvRsTQ3weAG9niKbHsggle30EzzBh4VqkTzvmNk0/0
+         h7Mw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725329278; x=1725934078;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=T1GuxGVThsSRhyDuyn4cmCRQjYF0xXBu34+O3FRfXrc=;
+        b=vHekfznAeg0fuTs/pQ4U1U2yp5+DVqfnqLzlLbOXGmgcB2lH1igsUqm6AAsrqSC+Cc
+         DXg2E5JQoLS+kqUS3wnFBgzutnwjOTFUNpklCOzsP4O+aqJSZAfGr2N1vAJw3kuWOJ6r
+         tnzE6sFqAnTeZTznSPk9jjEN6/zUAQlVGlfjniEyutabn1SpSync3P53ieiw9cPFUvsI
+         PdchwZTtIypgvuORy3wIaI47YqjVLmQUh8mjTEsTmnNDqrWEiH40ca0uUPXQQ8pIgNby
+         0DzEetm0+u/2upBDFDMorXeY93H0I+tCICo2bv0pXx2JwaCHim0lxxD/OC9/7mucsiU6
+         acUw==
+X-Forwarded-Encrypted: i=1; AJvYcCX2QV9IdUvfyyFcd98TSGyX6nUbSGCEepMssL0DoX2Nx18JajlRTDEIjqZItoqtV+QGyJD2508Qqi0=@vger.kernel.org, AJvYcCX7GoHwiDZtavQpKCJYngLxE2dzib0qjmliP1Zg01T5jCcdqsmbGfbVA4swKvs9nVJqkHStkKOcWhqj7OVx@vger.kernel.org
+X-Gm-Message-State: AOJu0YxhjXmYHDff+qPW4GkuZdvTZOFjqCw2IaWs+hXRbBXi7iZSL0B4
+	w4Kno0byEJ1QEqWH5gsAzmWGUG/aIwBq+nD0AMDgK8M5WQFuSlVMykZcQltv5cOral77Ixs2lHb
+	u5sJwjYQJtWsQ08RDFtcu8X/+pA==
+X-Google-Smtp-Source: AGHT+IGrC74Ctz0HzdIiD7tPawwv+UqDvOFvoUGHiH77vBFIYeFjLsTp/nj7HnVFDEBLZ4qvEkvOCGuZe0mvz2lIzBk=
+X-Received: by 2002:a17:906:f586:b0:a86:8917:fcd6 with SMTP id
+ a640c23a62f3a-a89b9733607mr529621766b.60.1725329277088; Mon, 02 Sep 2024
+ 19:07:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20240830034640.7049-1-kfting@nuvoton.com> <20240830034640.7049-6-kfting@nuvoton.com>
+ <ZtIaofiTqyFwNXrO@smile.fi.intel.com> <CACD3sJbZ-Yy3PfPWisMSiPYCbztbi1+Q+=udMG8EjNvE+xA1mg@mail.gmail.com>
+ <ZtWnd8bmiu-M4fQg@smile.fi.intel.com>
+In-Reply-To: <ZtWnd8bmiu-M4fQg@smile.fi.intel.com>
+From: Tyrone Ting <warp5tw@gmail.com>
+Date: Tue, 3 Sep 2024 10:07:45 +0800
+Message-ID: <CACD3sJass-6gu6MQxrYwLGi6OMgWnntO+N7Ob9nV6o3siFHNVg@mail.gmail.com>
+Subject: Re: [PATCH v2 5/7] i2c: npcm: Modify the client address assignment
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, avifishman70@gmail.com, 
+	tmaimon77@gmail.com, tali.perry1@gmail.com, venture@google.com, 
+	yuenn@google.com, benjaminfair@google.com, andi.shyti@kernel.org, 
+	wsa@kernel.org, rand.sec96@gmail.com, wsa+renesas@sang-engineering.com, 
+	kwliu@nuvoton.com, jjliu0@nuvoton.com, avi.fishman@nuvoton.com, 
+	tali.perry@nuvoton.com, tomer.maimon@nuvoton.com, kfting@nuvoton.com
+Cc: openbmc@lists.ozlabs.org, linux-i2c@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 29 Aug 2024 11:48:26 +0800 Justin Lai wrote:
-> +		skb->dev = dev;
+Hi Andy:
 
-no need to assign skb->dev = dev; eth_type_trans() will do it for you
+Thank you for your feedback.
 
-> +		skb_put(skb, pkt_size);
-> +		skb_mark_for_recycle(skb);
-> +		skb->protocol = eth_type_trans(skb, dev);
-> +
-> +		if (skb->pkt_type == PACKET_MULTICAST)
-> +			tp->stats.multicast++;
-> +
-> +		rtase_rx_vlan_skb(desc, skb);
-> +		rtase_rx_skb(ring, skb);
-> +
-> +		dev_sw_netstats_rx_add(dev, pkt_size);
-> +
-> +skip_process_pkt:
-> +		workdone++;
-> +		cur_rx++;
-> +		entry = cur_rx % RTASE_NUM_DESC;
-> +		desc = ring->desc + sizeof(union rtase_rx_desc) * entry;
-> +	} while (workdone != budget);
+Andy Shevchenko <andriy.shevchenko@linux.intel.com> =E6=96=BC 2024=E5=B9=B4=
+9=E6=9C=882=E6=97=A5 =E9=80=B1=E4=B8=80 =E4=B8=8B=E5=8D=887:54=E5=AF=AB=E9=
+=81=93=EF=BC=9A
+>
+> On Mon, Sep 02, 2024 at 09:40:09AM +0800, Tyrone Ting wrote:
+> > Andy Shevchenko <andriy.shevchenko@linux.intel.com> =E6=96=BC 2024=E5=
+=B9=B48=E6=9C=8831=E6=97=A5 =E9=80=B1=E5=85=AD =E4=B8=8A=E5=8D=883:16=E5=AF=
+=AB=E9=81=93=EF=BC=9A
+> > > On Fri, Aug 30, 2024 at 11:46:38AM +0800, Tyrone Ting wrote:
+> > > > Store the client address earlier since it's used in the i2c_recover=
+_bus
+> > > > logic flow.
+> > >
+> > > Here no explanation why it's now left-shifted by one bit.
+> >
+> > The address is stored from bit 1 to bit 7 in the register for sending
+> > the i2c address later.
+>
+> Yes, but previously it was stored w/o that shift.
+>
 
-The check needs to be at the start of the function.
-NAPI can be called with budget of 0 to limit the processing 
-to just Tx cleanup. In that case no packet should be received.
+Previously, the address was stored w/o that shift and with that shift
+in the following call to npcm_i2c_master_start_xmit,
+just like what https://github.com/torvalds/linux/blob/master/drivers/i2c/bu=
+sses/i2c-npcm7xx.c#L2043
+shows.
+
+Since there are cases that the i2c_recover_bus gets called at the
+early stage of the function npcm_i2c_master_xfer,
+the address is stored with the shift and used in the i2c_recover_bus call.
+
+> > I'll write some comments about the left-shifted by one bit behavior
+> > above this modification in next patch set.
+>
+> --
+> With Best Regards,
+> Andy Shevchenko
+>
+>
+
+Thank you.
+
+Regards,
+Tyrone
 
