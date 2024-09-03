@@ -1,79 +1,47 @@
-Return-Path: <linux-kernel+bounces-313063-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313064-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3E8D969FB4
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 16:03:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AF08969FBE
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 16:03:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6DE80B24283
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 14:02:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B0A211C20A01
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 14:03:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AD0E1CA68F;
-	Tue,  3 Sep 2024 14:02:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 507E43A267;
+	Tue,  3 Sep 2024 14:03:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gKWPTccz"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CPRbATi4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F4B01CA6A1
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 14:02:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E5351CA6A1;
+	Tue,  3 Sep 2024 14:03:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725372175; cv=none; b=Hqw9iCjiaA7APjgjt35n4GMp3j+yMHpQKDO4XRouF9ZLCgPtVDEcp1cjJQsHnybQsVrK+JFA0i0f2aOh1H+cQ9aPjXONHE02USImWJblHuMMOUJXyVccU4zRCRvQYGqtg60lZRIlzWlg7Vw7ru1JhEJNGNXyCNKGRczuEtMelxk=
+	t=1725372196; cv=none; b=Ori0KTe2ejIRRNoY1mFLXR+hQuhKxYAKF/PVtyUdx58ouwSxAVOFhKh6fjCfNLcMggS1k5OFa5VDZsXJGhde8u0aP7lIlh6UtnUM44a6N5+CTmKvQUVpvLU9gmW5xnZRRfgiu1Ver5F/2NQYmx7my60iNYrVPG5pIeCQib89Yj0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725372175; c=relaxed/simple;
-	bh=KbVX5/WJLt/Z0+uhwnKhCH5C1tCBFTeakpeppFQXWBU=;
+	s=arc-20240116; t=1725372196; c=relaxed/simple;
+	bh=0BK2rThx0CgZ73U+3LQbaritjH6ctDsMBYwPZE0HBoU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=a7qYINr+sgc24A4j84rKxnK+OpRbjVBfyutY4tequzHYvj45WA4nb9JU44vD+fZzX+mqF0zcOKYZnL1lJMb6jzrpY0wKesPBOEIEjOXPhjPEpqGHGQsR8NsHGApsmhmKxWMmlUzXd4gdOtyJzoz5eGdTczzO3iMJkQeXS54mYxM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gKWPTccz; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1725372172;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1T7shADQQm1E7ZhQRMDcUIIeoOERk2k982scWhmF05E=;
-	b=gKWPTcczu2r3hjiarzVzbCGLDY1k1YwvcHi4/pLg5XfIlrBvAxEkXdiPY/6NIDOReDBLHb
-	gPiMZ0JEEgd1dY8SRiWAykM+veBH7UNj6oNW/RysB/oaf5wSO2EwJ5dsjG3N01iv6m/BKO
-	y2fOmNCLxzVw33+a9ITbqdEhiOQ6LfE=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-36-V3NVZmVpP1OsRaOqy88yPg-1; Tue, 03 Sep 2024 10:02:51 -0400
-X-MC-Unique: V3NVZmVpP1OsRaOqy88yPg-1
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-374c294d841so2466712f8f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 07:02:46 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725372166; x=1725976966;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=1T7shADQQm1E7ZhQRMDcUIIeoOERk2k982scWhmF05E=;
-        b=sWPNfEFjW9joQ6+2Grkg9ojNh5O7S9XpN9lFgc3zLsfBdRXrbKgakIVVpNikudtHXz
-         SEMbAxTxt/i7wR1zK5HlVNOuKLD4uFds1jek7N3Z318Yw3IKTe6uVfag20Cprcl0Cy0r
-         cDqa6GezPLmh99jJRN3BzU5ApzEviRak3969zMjgquCgkHeylAXZfErgC0sf5K5CajbX
-         9hJgaQnwiRJjHCUYcb1Moi5A0sO9i1YDBBSmkZyG2rYVy0vlQZun5M1wF498Zvxto+N6
-         L8D6kG9SUHU9BxfR0nUuvMC8hqJSbSIPuavF5sPz1Rx3GmYfrcnOpyifI3M09uD5a/Hv
-         gnzw==
-X-Forwarded-Encrypted: i=1; AJvYcCXYgIIhR6Clzhzwc01S/stQLQT1j1FYhkZrnUQWuhfbc7q50iLm3sfmFn+jpx7eFHwq0taXcvk1EOpBk48=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzzK64V7sBCVQT3bpMqbBgr/3q+IjG9xmDH3WyflUqAi+Slx3Ao
-	4iR1KACanEOyqEvY1APIgKlrrM44y4GqeoqtqogNwXkt3hwS41HGs59dXcrs2M0CF3F4/X1s4/6
-	isNkCtI9CY/Fjgs5VvX/KdvGb5pV9M7rbjIt/ekgQEPQawpqVsEUKuKkTtwdL/w==
-X-Received: by 2002:a5d:5c87:0:b0:374:c8eb:9b18 with SMTP id ffacd0b85a97d-374c8eb9b69mr5013552f8f.24.1725372164312;
-        Tue, 03 Sep 2024 07:02:44 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGG+gCA4emCQ8lN+v2r+4PD0Xf7gtP5260Hobybyq26ysa18Yk2eN574I3dEkpcvY9bhrHY7Q==
-X-Received: by 2002:a5d:5c87:0:b0:374:c8eb:9b18 with SMTP id ffacd0b85a97d-374c8eb9b69mr5013434f8f.24.1725372163170;
-        Tue, 03 Sep 2024 07:02:43 -0700 (PDT)
-Received: from [192.168.88.27] (146-241-55-250.dyn.eolo.it. [146.241.55.250])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3749ee9ba8esm14372770f8f.50.2024.09.03.07.02.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 03 Sep 2024 07:02:42 -0700 (PDT)
-Message-ID: <c5658b79-f0bc-4b34-b113-825f40a57677@redhat.com>
-Date: Tue, 3 Sep 2024 16:02:39 +0200
+	 In-Reply-To:Content-Type; b=I15lfqmNT0nRVcjG/dcLT0kFdOjleHrSRL7IiT181DNfxXqCJcXNs9BnWnF++LeOxvrR06NdxtdogvaljAdIgi90PoF2btKMzsrQ+Qw5jMihhQ1CX6plcwczp7aCEHEN+ZjWTZt+KRra46pzapKI3TshDI5xK7uTADAXMVg0Ljk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CPRbATi4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9221C4CEC8;
+	Tue,  3 Sep 2024 14:03:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725372196;
+	bh=0BK2rThx0CgZ73U+3LQbaritjH6ctDsMBYwPZE0HBoU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=CPRbATi4+g90ioaWeXgBbRz+FGOHqpHV6EwiK++FwTfmdTJry8KVRB5p7Nt8qYwCX
+	 0FMnmIih1m1RYOztSUphRwJfiHpgcyyoN8eYFN+9wiQKDwRs1McF4oS7JQN8Ve5Zf3
+	 HBcT9mK5tGmecxWkqjZ5OmIPkeilAllotgSI9DMGNTX09MO2oR3nzaqttvL1/FC1nj
+	 hGxNsdBlNQ1bsA2rfyDiANczkDw0HTGxqLeoR8OVNC34BhESjr9jfWejrDSccD0Fm1
+	 HZYt0/zOHGATj3SAIfvx9ihjRt7KMrwcWRMgMOAsf5hi0kfuW2EcDnyXdkoqWvsxWp
+	 NW9Fp25kuHlHQ==
+Message-ID: <2528f40c-9d4d-45b0-b02e-af88e6f02a7f@kernel.org>
+Date: Tue, 3 Sep 2024 16:03:12 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,42 +49,112 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 5/5] ethernet: cavium: Replace deprecated PCI functions
-To: Philipp Stanner <pstanner@redhat.com>, Jens Axboe <axboe@kernel.dk>,
- Wu Hao <hao.wu@intel.com>, Tom Rix <trix@redhat.com>,
- Moritz Fischer <mdf@kernel.org>, Xu Yilun <yilun.xu@intel.com>,
- Andy Shevchenko <andy@kernel.org>, Linus Walleij <linus.walleij@linaro.org>,
- Bartosz Golaszewski <brgl@bgdev.pl>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
- Richard Cochran <richardcochran@gmail.com>,
- Damien Le Moal <dlemoal@kernel.org>, Hannes Reinecke <hare@suse.de>,
- John Garry <john.g.garry@oracle.com>, Chaitanya Kulkarni <kch@nvidia.com>
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-fpga@vger.kernel.org, linux-gpio@vger.kernel.org,
- netdev@vger.kernel.org, linux-pci@vger.kernel.org
-References: <20240902062342.10446-2-pstanner@redhat.com>
- <20240902062342.10446-7-pstanner@redhat.com>
+Subject: Re: [PATCH v2 1/3] dt-bindings: rtc: Add Amlogic A4 and A5 rtc
+To: xianwei.zhao@amlogic.com, Yiting Deng <yiting.deng@amlogic.com>,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-amlogic@lists.infradead.org, linux-rtc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240903-rtc-v2-0-05da5755b8d9@amlogic.com>
+ <20240903-rtc-v2-1-05da5755b8d9@amlogic.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-From: Paolo Abeni <pabeni@redhat.com>
-In-Reply-To: <20240902062342.10446-7-pstanner@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240903-rtc-v2-1-05da5755b8d9@amlogic.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 9/2/24 08:23, Philipp Stanner wrote:
-> pcim_iomap_regions() and pcim_iomap_table() have been deprecated by
-> the PCI subsystem in commit e354bb84a4c1 ("PCI: Deprecate
-> pcim_iomap_table(), pcim_iomap_regions_request_all()").
+On 03/09/2024 09:00, Xianwei Zhao via B4 Relay wrote:
+> From: Yiting Deng <yiting.deng@amlogic.com>
 > 
-> Furthermore, the driver contains an unneeded call to
-> pcim_iounmap_regions() in its probe() function's error unwind path.
-> 
-> Replace the deprecated PCI functions with pcim_iomap_region().
-> 
-> Remove the unnecessary call to pcim_iounmap_regions().
-> 
-> Signed-off-by: Philipp Stanner <pstanner@redhat.com>
+> Add documentation describing the Amlogic A4(A113L2) and A5(A113X2)
+> rtc controller.
 
-Acked-by: Paolo Abeni <pabeni@redhat.com>
+RTC. And no "controller".
+
+> 
+> Signed-off-by: Yiting Deng <yiting.deng@amlogic.com>
+> Signed-off-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
+> ---
+>  .../bindings/rtc/amlogic,amlogic-rtc.yaml          | 66 ++++++++++++++++++++++
+>  1 file changed, 66 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/rtc/amlogic,amlogic-rtc.yaml b/Documentation/devicetree/bindings/rtc/amlogic,amlogic-rtc.yaml
+> new file mode 100644
+> index 000000000000..128c60b623e1
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/rtc/amlogic,amlogic-rtc.yaml
+
+That's odd filename. Use compatible as the filename.
+
+> @@ -0,0 +1,66 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +# Copyright (C) 2024 Amlogic, Inc. All rights reserved
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/rtc/amlogic,amlogic-rtc.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Amlogic Real Time Clock controller include a4, a5
+
+Sorry, that's unparseable. Either this is clock controller or RTC. What
+does it mean "include a4"?
+
+
+> +
+> +maintainers:
+> +  - Yiting Deng <yiting.deng@amlogic.com>
+> +  - Xianwei Zhao <xianwei.zhao@amlogic.com>
+> +
+> +description:
+> +  The Amlogic new chips used RTC module.
+
+This tells me nothing. Please say something useful or drop this.
+
+Best regards,
+Krzysztof
 
 
