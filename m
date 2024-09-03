@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-313912-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313913-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72D4896AC46
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 00:36:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDABF96AC4A
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 00:38:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AC1DEB23829
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 22:36:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2AE7C1C216A9
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 22:38:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 303011D588D;
-	Tue,  3 Sep 2024 22:36:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06DC11AD27E;
+	Tue,  3 Sep 2024 22:38:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t5R+NXJS"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Js9mVu9a"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8418C186E30;
-	Tue,  3 Sep 2024 22:36:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61677186E30;
+	Tue,  3 Sep 2024 22:38:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725402980; cv=none; b=rWIJAAQtNGGakbrFMrEaZZYkS5AAQZBZBtkk3JLWHv7Cuv1KDeGdDTQXRjF/C8yWBod6WSikD8VB0IkUlpwkHb3+j4G8Pdhi6EU1FV1ofk00aCnHWFgM61nbA6ENJf99dMtv21c8ZQ45Bx7xHASjsMVje78NMxmwCE+VCnpaCuU=
+	t=1725403092; cv=none; b=B779atL8rPDm7SvVLwklQQEfr5MeI0RYhxunYI5epMH2q30Lh0PUD2alo8CtPIwBBLDfLmNfE19pFAwV80SeF+de4Oj4eK/j/K3dqsoJlG9uL/+KC00AxwF792+y9Vwy0RVB/mqxrWaXycnXAbyCzhQOrbr+kyYxTZyoiw3hb84=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725402980; c=relaxed/simple;
+	s=arc-20240116; t=1725403092; c=relaxed/simple;
 	bh=w/F5Gln/VAy+w+5IKZ0bm6juyWi5rGx8h9yXwrhxeU8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=CFGrH3IvPadOYdGlQCvSb6AoB85PGBcv50Hkwf/XILmLUz/LMRbn5sG1+FvImHxNDxs1yVh63aubDei6/gqIaRrdQg5viBlIE03kbnL34mSJu6ZvIt/6cLUY1zkPe5iKqmlWXXESnuJ/ve5IPv6nOtKRNbELDXwohfvhruPHkYo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t5R+NXJS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C4352C4CEC8;
-	Tue,  3 Sep 2024 22:36:18 +0000 (UTC)
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=HFEugnVhqlyrs1L+OZFrhwKddlu/CsR9LoBKvvAykrpB2a1O7zSQT5PH08QO4am/iTsVP6encdW2mB8WkQc+KFt4BC0MvUGSpPMU8oJNNeykQ/mYaz0wgTN2A8EH5Tm7I/vAi1W0jDyLt8Pxdw7C1OqCCPM/2X1NbPL6ytc2d/s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Js9mVu9a; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AB091C4CEC4;
+	Tue,  3 Sep 2024 22:38:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725402980;
+	s=k20201202; t=1725403091;
 	bh=w/F5Gln/VAy+w+5IKZ0bm6juyWi5rGx8h9yXwrhxeU8=;
 	h=From:Date:Subject:To:Cc:From;
-	b=t5R+NXJS7ceShRs5loYLB1GbvWLXbsTSNwqzcUeDuydzHOh7yXDdEjWCVIk/w6I5C
-	 /gmhl6SklRud24waZ0HbxfJCHGjV88AcA9RhIEMrlA+mbbY92TdWOpwCCXS4mQWXp/
-	 e0YX2AkrQ2HMId9xKxOe1C6gxvod6kDEsfeaLBpemCwWBSrwV6XMO4Wlqs6Sml0wdi
-	 exY1zDRT0KU+Jwjqta8a8eFtmSs9Q+cn1UGua9vxKBnACT8ehM87khBi1rReo6P16U
-	 gkE8OKVzDL0o6iSNCmBZonoH3cm9PufHX7+h34nWTQd5/ZL8rAVeMRk3nydUB6shiK
-	 Dq2eXldJs9bpA==
+	b=Js9mVu9a8u/+cmujqFR7xOPBihvqEnPyK693pFRW3cU+NuDq3UxLuQaL4TYJlPl0y
+	 fNW81TQr5B7TJ20NM5annc2UVTM3z5c1GJon5kSjRPqdNTQcXM/lNCqHGQiiTWcoMp
+	 DsmjnRmk850ICIf0qRWk8kNRGApiNi73r4skBMmpZQAnlcmO69TscQs58BmYo6ytVZ
+	 WznTpRH6bDkQ7nV7XbcDoHgBNbivrRYqLr4sdFlT4kw5DvAeyNtsgJJr8wes6dpx5q
+	 dFizdK15jr6t5PAdEFAdGM+xGT4dijqyMTj0O4HtzTeVqXv+MxB2NQVqek4L36xhfO
+	 6m7Sj+6pfUduQ==
 From: Mark Brown <broonie@kernel.org>
-Date: Tue, 03 Sep 2024 23:36:02 +0100
+Date: Tue, 03 Sep 2024 23:38:06 +0100
 Subject: [PATCH] docs: submitting-patches: Advertise b4
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -50,8 +50,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240903-documentation-b4-advert-v1-1-fefda9564f6e@kernel.org>
-X-B4-Tracking: v=1; b=H4sIAFGP12YC/x2MSQqAMAwAvyI5G2ituH1FPFQTNQertFUE8e8Wj
+Message-Id: <20240903-documentation-b4-advert-v1-1-7415cdd74813@kernel.org>
+X-B4-Tracking: v=1; b=H4sIAM2P12YC/x2MSQqAMAwAvyI5G2ituH1FPFQTNQertFUE8e8Wj
  wMz80BgLxygyx7wfEmQ3SXQeQbTat3CKJQYClWUqlUGaZ/OjV20MZk4lmjpYh9RN0pX3BiqqYV
  UH55nuf9zP7zvB0Jgfv1pAAAA
 To: Jonathan Corbet <corbet@lwn.net>
@@ -61,13 +61,13 @@ Cc: Konstantin Ryabitsev <konstantin@linuxfoundation.org>,
 X-Mailer: b4 0.15-dev-37811
 X-Developer-Signature: v=1; a=openpgp-sha256; l=1308; i=broonie@kernel.org;
  h=from:subject:message-id; bh=w/F5Gln/VAy+w+5IKZ0bm6juyWi5rGx8h9yXwrhxeU8=;
- b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBm149hGmuOSz86kPMz+k+68HRFxU7pTuCXgJZNW/bF
- jfGhiMyJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZtePYQAKCRAk1otyXVSH0EJ3B/
- wLEanakrcIqqBQ+MCRwUOAboiatcaAx++AoH3bJPKIA7bBUfKIzyLWb9CCi6EdsMJahDPYfoNTLtxt
- kwQ3VUa4ujOoe+xVz9tngXnuWHABvMhaEbTjImjmYIU20rH3QhkxiVGMCQ8UiLxeEMIK4xiNqeoY0m
- aI9Ru0VBU/ZKHe8n9xo3BphKw7+WFpSIuZymfv3MEgqByK0O1KCQi0Tl/m9JziIMPrX1C/bs3VWQZi
- v8cAN+tvrfydUL83MqTn0aYwRVhlUTRHFnL2SyigvCiwSCuTFBgtvpZoNCKfkT2e8oHNz2nOW6huio
- OGY1r8QpYsc9JMaUn7wH4r/tEfbw0C
+ b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBm14/RatF8H8chJ2oOyOjfR1PuV/tTK+c79PSfzLSx
+ tA8jTeyJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZteP0QAKCRAk1otyXVSH0CiZB/
+ 9EIt50HFKQFbJFNGFAX3ENCezy0hpdKlq6eDsiMAX0HPgrgie8LNy52qPsNwQgZvEr//GXy3rD2IdZ
+ +NLFtPV7AdFBw7Tv2fZD+NYq2ErTjbNqFJFWSYVppiQZL+ghTjQetA/g6AScHuZbOEKZvCkvOkdPnE
+ BG8nzwoN0oUqRkSI3ITMmfHzKFtqa8MkzbsngQ7rD+b5vJuflcTQ97zD9Rt76k0Y5MgUDw59qm/W7V
+ yGCm3voD3djFHV9TxyZhxLwX7bjB4vJbsDyBC2edzc7EAlauxZvfxnV+WG/5htibuFtODTqwSPRyaB
+ Y1Zx/q7CnAfz16AJN/lI15SAbtPy0e
 X-Developer-Key: i=broonie@kernel.org; a=openpgp;
  fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
 
