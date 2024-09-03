@@ -1,86 +1,131 @@
-Return-Path: <linux-kernel+bounces-313342-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313343-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2591296A42D
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 18:23:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CE3D896A42F
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 18:23:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D560B283DCC
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 16:23:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8CFBE286473
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 16:23:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12E4D18BB9A;
-	Tue,  3 Sep 2024 16:23:35 +0000 (UTC)
-Received: from ganesha.gnumonks.org (ganesha.gnumonks.org [213.95.27.120])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA90718BC18;
+	Tue,  3 Sep 2024 16:23:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MPWL9DsO"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB602186E46;
-	Tue,  3 Sep 2024 16:23:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.27.120
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80E26186E46;
+	Tue,  3 Sep 2024 16:23:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725380614; cv=none; b=RT4M2EkIsfGTabExQykqRLgD8lYpynjy9yrYM9J3g6csxfmf4pTcBme8exMQaPjrznQPYR3cu+Avje+LRNhlYFgU8rswgG4+CjOg35rwZRUhPN28ylshbwfOnDfS29jcLl6ImMFwV4fcOlsVh+eIM4Yq7r/4WzUn9VUylKegkt4=
+	t=1725380618; cv=none; b=KyLPtfofCjtZf65X1T2uZSykkc/OXnvpchVKDmhtlcHoz1QmgAO4wHo8sjtXMPiwtCzPcwA1b6NHWIcOPR5YqqceDeA/7N25QNahmDh3ku/rGBovDkNxWKSfW0Rs5IRrh28JZj/o/Vq9K9ph8oSxaYQUHu3xZoHTfuhf3MlRqnw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725380614; c=relaxed/simple;
-	bh=Jj2KFdSWfJ6ancHgzp2FNPCwzSow8QxGTPkncQGn5YI=;
+	s=arc-20240116; t=1725380618; c=relaxed/simple;
+	bh=3P6P48E1Svf2IYI/T/2cf8VTgYy8IOvv3Eov6N2ovRg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=E/rWIVCVLjx+sshrxEFgdpib6FTKnu8XYNY2rKxbmEeTtsS5VoAKc2OMcJuZeX0wXN/fwI3q8o5wVJ1Uuc5yqdx4myTNbrp0AbiWOGbXyR0cIvaIYqAy9chUWGsDOYGjdhOKENwM4m04Y0dNR9CFv3G2lJ88KemPEXdUppH1yD0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=netfilter.org; spf=pass smtp.mailfrom=gnumonks.org; arc=none smtp.client-ip=213.95.27.120
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=netfilter.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gnumonks.org
-Received: from [78.30.37.63] (port=49490 helo=gnumonks.org)
-	by ganesha.gnumonks.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <pablo@gnumonks.org>)
-	id 1slWJS-00AjDi-Ea; Tue, 03 Sep 2024 18:23:28 +0200
-Date: Tue, 3 Sep 2024 18:23:25 +0200
-From: Pablo Neira Ayuso <pablo@netfilter.org>
-To: Uros Bizjak <ubizjak@gmail.com>
-Cc: netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Jozsef Kadlecsik <kadlec@netfilter.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
-Subject: Re: [PATCH v2 0/2] netfilter: nf_tables: Fix percpu address space
- issues in nf_tables_api.c
-Message-ID: <Ztc3_dZwFoR7s2c3@calendula>
-References: <20240829154739.16691-1-ubizjak@gmail.com>
- <Ztc16pw4r3Tf_U7h@calendula>
- <CAFULd4amgCH=h02SSEdxrdazq0A+5wOZgvPmRmn19eb7orSV_g@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=oHvaTlXTSJcp/Wz8UdCOxLTgQKrhXZVWqQPsPlMmyksFxvZ9CojjiHCHy56ag+Tp0bgmdnR6hWYP2OkzhPoJsQIZrc4w5V+50EKfF02jq3mtuEvNYOcpo7NKJdHV4cp8C2s0U3Bn7l+lTAlN0TwEtrlTABccqC7vfnTDkHYHs2I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MPWL9DsO; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725380617; x=1756916617;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=3P6P48E1Svf2IYI/T/2cf8VTgYy8IOvv3Eov6N2ovRg=;
+  b=MPWL9DsOI2zB0CCcbg12lK14s8cnj0OwxzH1Di80cecjIxv2aBDOZ3Nk
+   /y+oQfMsteKPIRc6q3l1A3hAAYwiniWCt+/ASA47oBigxEIkwBcMYVHal
+   Ti+7MGeHPp4IVIAM6E04ULFFdNfjs3ruumwV1KX9dIXGt17jRZQywan0b
+   0p5JXIoUM6uonW6a8YJwHMxHCNObgrF7yYAN6dGSAsY9MFdgxlU/84MyD
+   6owNQbpDEabU4DZoOsnaE9awpGR1//rDI5eW/t5Vw+O4CRSWB6uIX/+SB
+   qTPrU0LIUv3Sfqh+8ZM39Yuk6J7HKVRMrWTKTnEhLVBV/Uuw8p4IP9zNn
+   w==;
+X-CSE-ConnectionGUID: N8QOmiE/QpCqhWrnAU0UZA==
+X-CSE-MsgGUID: COfxqH21R+2mKtnczO/Hxw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11184"; a="41464334"
+X-IronPort-AV: E=Sophos;i="6.10,199,1719903600"; 
+   d="scan'208";a="41464334"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2024 09:23:36 -0700
+X-CSE-ConnectionGUID: B6ogmTgYTbyMD/vEEl1Lgw==
+X-CSE-MsgGUID: b4WFgmczSYuPdhK7kKiu3A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,199,1719903600"; 
+   d="scan'208";a="65190352"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by fmviesa010.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2024 09:23:34 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1slWJX-00000004lfX-3exp;
+	Tue, 03 Sep 2024 19:23:31 +0300
+Date: Tue, 3 Sep 2024 19:23:31 +0300
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+	Martyn Welch <martyn.welch@collabora.com>,
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: Re: [PATCH 2/2] gpio: mpc8xxx: switch to using
+ DEFINE_RUNTIME_DEV_PM_OPS()
+Message-ID: <Ztc4A0rZE3G1oHo7@smile.fi.intel.com>
+References: <20240903154533.101258-1-brgl@bgdev.pl>
+ <20240903154533.101258-2-brgl@bgdev.pl>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAFULd4amgCH=h02SSEdxrdazq0A+5wOZgvPmRmn19eb7orSV_g@mail.gmail.com>
-X-Spam-Score: -1.8 (-)
+In-Reply-To: <20240903154533.101258-2-brgl@bgdev.pl>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Tue, Sep 03, 2024 at 06:19:57PM +0200, Uros Bizjak wrote:
-> On Tue, Sep 3, 2024 at 6:14 PM Pablo Neira Ayuso <pablo@netfilter.org> wrote:
-> >
-> > Hi,
-> >
-> > On Thu, Aug 29, 2024 at 05:29:30PM +0200, Uros Bizjak wrote:
-> > > Use {ERR_PTR,IS_ERR,PTR_ERR}_PCPU() macros when crossing between generic
-> > > and percpu address spaces and add __percpu annotation to *stats pointer
-> > > to fix percpu address space issues.
-> >
-> > IIRC, you submitted patch 1/2 in this series to the mm tree.
+On Tue, Sep 03, 2024 at 05:45:33PM +0200, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 > 
-> Yes, patch 1/2 is in this series just for convenience.
+> Use the preferred API for assigning system sleep pm callbacks in drivers.
 > 
-> > Let us know if this patch gets upstreamed via MM tree (if mm
-> > maintainers are fine with it) or maybe MM maintainers prefer an
-> > alternative path for this.
-> 
-> The patch is accepted into the MM tree [1].
-> 
-> [1] https://lore.kernel.org/mm-commits/20240820052852.CB380C4AF0B@smtp.kernel.org/
+> Suggested-by: Andy Shevchenko <andriy.shevchenko@intel.com>
 
-Thanks, I will wait for it to propagate to the netdev tree.
+Hmm... Maybe I should pay more attention when answering emails.
+Please, use my @linux.intel.com address for Linux kernel contributions.
+
+...
+
+>  #include <linux/mod_devicetable.h>
+>  #include <linux/of.h>
+>  #include <linux/platform_device.h>
+> +#include <linux/pm_runtime.h>
+
+You need pm.h as macros defined there.
+
+>  #include <linux/property.h>
+>  #include <linux/slab.h>
+>  #include <linux/spinlock.h>
+
+...
+
+> +static DEFINE_RUNTIME_DEV_PM_OPS(mpc8xx_pm_ops, mpc8xxx_suspend,
+> +				 mpc8xxx_resume, NULL);
+
+I would split logically, i.e.
+
+static DEFINE_RUNTIME_DEV_PM_OPS(mpc8xx_pm_ops,
+				 mpc8xxx_suspend, mpc8xxx_resume, NULL);
+
+OR
+
+static DEFINE_RUNTIME_DEV_PM_OPS(mpc8xx_pm_ops,
+				 mpc8xxx_suspend, mpc8xxx_resume,
+				 NULL);
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
