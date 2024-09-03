@@ -1,98 +1,113 @@
-Return-Path: <linux-kernel+bounces-312061-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312060-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7965A969179
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 04:39:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AED67969176
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 04:38:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AC7531C228C3
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 02:39:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3A0211F23368
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 02:38:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B93A21CCEE8;
-	Tue,  3 Sep 2024 02:39:26 +0000 (UTC)
-Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 849DF19F100;
+	Tue,  3 Sep 2024 02:38:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gi4c1GtO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD0E52AF10;
-	Tue,  3 Sep 2024 02:39:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7A5480B
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 02:38:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725331166; cv=none; b=SQonFGGTk6VQpHj96h6bzk7w9TVdm2o7m8oiIEPY6Agt1JOmVAraCYvyhi5rEM3LQu9V4zQU/Zh7maDy5u8Q4v5UMQ2JBV23lcoDGxqihpwkYqUqslbQu9PHkxGEu1g0uJCtAcH4Ld+joHtGpeHa1IJxVSzloweWNjpPBwI8HIg=
+	t=1725331082; cv=none; b=NA9sA3q68NqBIJDUoImTxv1PxN8tviwZS7U5M/rFAKiI6d7QchyEavhPYQ+Ee/HEc0N1r22KixBa3xC8yC2IWQUuFRqfP8eb0Q8qBGGkOUNYw0uNZmSFDyPQJNWmKqia8TtJsegYs+3WISKPQ0sD9OvoWwdbZDOQxNlNJNYwVko=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725331166; c=relaxed/simple;
-	bh=9msTVneaFggEOnc0HgRFAawmBb/KlQYldhtAtEmevK0=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=cAWSU1Brr1qI2NdI2CMTsmeG6i5dnN7jOMD8ZgSSvqTMP1NkMDCFv/yPfpLeWJZjdPHvLxsMjVJpP/HXRAtABzdXEZNoMPU4oN0j/duEEoGVfNoR8lsqaqay9c2C7RtEWwQmZOR2GPIBj1Po5RpEaSGYAd5PCQ0on5z8lFvbxHQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from localhost (unknown [124.16.138.129])
-	by APP-01 (Coremail) with SMTP id qwCowABH+ajRdtZm+a60AA--.35457S2;
-	Tue, 03 Sep 2024 10:39:14 +0800 (CST)
-From: Chen Ni <nichen@iscas.ac.cn>
-To: jirislaby@kernel.org,
-	gregkh@linuxfoundation.org,
-	shawnguo@kernel.org,
-	s.hauer@pengutronix.de,
-	kernel@pengutronix.de,
-	festevam@gmail.com
-Cc: linux-kernel@vger.kernel.org,
-	linux-serial@vger.kernel.org,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	Chen Ni <nichen@iscas.ac.cn>
-Subject: [PATCH] mxser: convert comma to semicolon
-Date: Tue,  3 Sep 2024 10:37:54 +0800
-Message-Id: <20240903023754.493568-1-nichen@iscas.ac.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1725331082; c=relaxed/simple;
+	bh=s3ixy1Dk0VBO3qFac0eQGqV2MWZpl1pz4srEs/WX2P8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=necc7thdPBC+n6ewl0Gw8C6QaNCs9iHfX7CDPJOHzInUxSXuFjN2QX3yFm6HaUgr9FK1IplNBIc2zDwtPfp7pSk8GW2ts8RT7HOr6KhwVk8qdS7QW1LfrM6XL3zePDUBSa2Fvh1kteAcOY2lWsT0awHR2Vm1UhfR5emuGLr1TrQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gi4c1GtO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F38B3C4CEC2;
+	Tue,  3 Sep 2024 02:37:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725331081;
+	bh=s3ixy1Dk0VBO3qFac0eQGqV2MWZpl1pz4srEs/WX2P8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=gi4c1GtOn5/HucTPGizj/UeHFF4sYHJTsoq8PWHPFGJ+qE23qcXYa+aY2bar1EJT/
+	 2PcZNxXAvF/zjkv6bUF2tUOVZuAqMCBgC76FT+yLy6aJt2yk4ZNoUO18cwlH2zbTeS
+	 ZWZmWgcKWgigzCfk3XSC8QsTLgW4z+5PKfX8GZ9OSX9A6761P6YZzTcbqpdWwsYB+Y
+	 Mec+IAau14Q293Ssgo+V4yLpXFt4P7AYs/VWXz2sTTrMp+5fA6cxX/RO+kL9DN5oD4
+	 zArRKo/bUzWmuqA/0egxtQJqpjbIxq11LUNPTcPCWvPerfi0i5OWl++R72tG78XHxr
+	 WDyPKby28kDYw==
+Date: Tue, 3 Sep 2024 10:37:55 +0800
+From: Gao Xiang <xiang@kernel.org>
+To: Yiyang Wu <toolmanp@tlmp.cc>
+Cc: linux-erofs@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V4 2/2] erofs: refactor read_inode calling convention
+Message-ID: <ZtZ2gygmwGSAuPgS@debian>
+Mail-Followup-To: Yiyang Wu <toolmanp@tlmp.cc>,
+	linux-erofs@lists.ozlabs.org, linux-kernel@vger.kernel.org
+References: <ca8dea24-1ef2-46a8-bfca-72aeffa1f6e6@linux.alibaba.com>
+ <20240902093412.509083-1-toolmanp@tlmp.cc>
+ <94737216-af40-44b0-ab3e-e5bfdbffab5f@linux.alibaba.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qwCowABH+ajRdtZm+a60AA--.35457S2
-X-Coremail-Antispam: 1UD129KBjvdXoW7Jw4UZF15Zr47GrykKF4xtFb_yoWxuFg_C3
-	4kGws2vF10kr1v9wn8J34rurySv34ruF4kX3Wv9FZ0kay7Aws5WrWkXrsrJr98urySkF9x
-	Jr4DCryxXF47WjkaLaAFLSUrUUUUbb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbfkFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j
-	6F4UJwA2z4x0Y4vEx4A2jsIE14v26r4UJVWxJr1l84ACjcxK6I8E87Iv6xkF7I0E14v26F
-	4UJVW0owAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv
-	7VC0I7IYx2IY67AKxVWUXVWUAwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r
-	1j6r4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02
-	628vn2kIc2xKxwCY1x0262kKe7AKxVWUtVW8ZwCY02Avz4vE14v_Gr1l42xK82IYc2Ij64
-	vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8G
-	jcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2I
-	x0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK
-	8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I
-	0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfUovtCDUUUU
-X-CM-SenderInfo: xqlfxv3q6l2u1dvotugofq/
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <94737216-af40-44b0-ab3e-e5bfdbffab5f@linux.alibaba.com>
 
-Replace a comma between expression statements by a semicolon.
+On Mon, Sep 02, 2024 at 05:54:22PM +0800, Gao Xiang wrote:
+> 
+> 
+> On 2024/9/2 17:34, Yiyang Wu wrote:
+> > Refactor out the iop binding behavior out of the erofs_fill_symlink
+> > and move erofs_buf into the erofs_read_inode, so that erofs_fill_inode
+> > can only deal with inode operation bindings and can be decoupled from
+> > metabuf operations. This results in better calling conventions.
+> > 
+> > Note that after this patch, we do not need erofs_buf and ofs as
+> > parameters any more when calling erofs_read_inode as
+> > all the data operations are now included in itself.
+> > 
+> > Suggested-by: Al Viro <viro@zeniv.linux.org.uk>
+> > Link: https://lore.kernel.org/all/20240425222847.GN2118490@ZenIV/
+> > Signed-off-by: Yiyang Wu <toolmanp@tlmp.cc>
+> 
+> Reviewed-by: Gao Xiang <hsiangkao@linux.alibaba.com>
+> 
+> Thanks,
+> Gao Xiang
 
-Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
----
- drivers/tty/mxser.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Applied with the following minor cleanups:
 
-diff --git a/drivers/tty/mxser.c b/drivers/tty/mxser.c
-index 6cfef88a18e3..4d45eca4929a 100644
---- a/drivers/tty/mxser.c
-+++ b/drivers/tty/mxser.c
-@@ -983,7 +983,7 @@ static int mxser_get_serial_info(struct tty_struct *tty,
- 	ss->baud_base = MXSER_BAUD_BASE;
- 	ss->close_delay = close_delay;
- 	ss->closing_wait = closing_wait;
--	ss->custom_divisor = MXSER_CUSTOM_DIVISOR,
-+	ss->custom_divisor = MXSER_CUSTOM_DIVISOR;
- 	mutex_unlock(&port->mutex);
- 	return 0;
- }
--- 
-2.25.1
+diff --git a/fs/erofs/inode.c b/fs/erofs/inode.c
+index 726a93a0413c..31d811b50291 100644
+--- a/fs/erofs/inode.c
++++ b/fs/erofs/inode.c
+@@ -16,9 +16,8 @@ static int erofs_fill_symlink(struct inode *inode, void *kaddr,
+ 
+ 	/* if it cannot be handled with fast symlink scheme */
+ 	if (vi->datalayout != EROFS_INODE_FLAT_INLINE ||
+-	    inode->i_size >= bsz || inode->i_size < 0) {
++	    inode->i_size >= bsz || inode->i_size < 0)
+ 		return 0;
+-	}
+ 
+ 	m_pofs += vi->xattr_isize;
+ 	/* inline symlink data shouldn't cross block boundary */
+@@ -204,7 +203,7 @@ static int erofs_read_inode(struct inode *inode)
+ static int erofs_fill_inode(struct inode *inode)
+ {
+ 	struct erofs_inode *vi = EROFS_I(inode);
+-	int err = 0;
++	int err;
+ 
+ 	trace_erofs_fill_inode(inode);
+ 
 
 
