@@ -1,178 +1,242 @@
-Return-Path: <linux-kernel+bounces-313682-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313705-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BE1596A899
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 22:41:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2546396A8DA
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 22:47:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 606F11C20A53
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 20:41:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 986831F255F6
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 20:47:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 268381D5CCB;
-	Tue,  3 Sep 2024 20:40:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="cXlMWqtN"
-Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6840A1D58AB;
+	Tue,  3 Sep 2024 20:43:26 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D15AD1D223A
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 20:40:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32E231D79BE
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 20:43:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725396015; cv=none; b=YiZGO1ua6cjMrt8NIqe3pnLPiwVj6RZ0U8RAR+7aLWLqYPWFmVdFH5QJOT+x5OpGgDjW9tpo4TTtmDduBWjWTdvt2f6UvdR9ZejEEo018gJu44idQkM3T8HCcbodEOzEX4TmGG6GNmWSwUsB4oREYQYUNzg3a8tLQRJ47nvKym4=
+	t=1725396205; cv=none; b=JEC15YHbkx2dxGk9UhGa6Y+Dzw7cPi8bNE6k3Opzx/fD40/+x7vL1ZER9qBGRnC45ooc9jr8clSKyBgH8s5f3i86YuSmb8vRmk8sN5ke2S+hWZWpALrT5P/v8Yguw+ZNIVVYOdR6kgfgaGmaCdHlG2R4Lzv7GeCQudF/raprRsw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725396015; c=relaxed/simple;
-	bh=cCmLjf308k6OsUJLrInpoUdAeJs7fWLaNbFSDImA684=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=pfxuq/Tl83IofHNlgcNmCIwb/tc973F/4reHD7GR37Ewu9dkudYwNxWW+OYJ41qa/ayO/EhWMVzEns5Ey3C2oPqVcrqSflJA414qhDCbvCcOKr1dG0CT7njSEhnlpA+nArxsRJNuChl4kxehLtiJrT7VOU24SfHJYqLJ7YWp/S0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--edliaw.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=cXlMWqtN; arc=none smtp.client-ip=209.85.128.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--edliaw.bounces.google.com
-Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6b47ff8a5c4so111015497b3.2
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 13:40:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1725396013; x=1726000813; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=gr0+wD1hQSkgsAJy15LgXOqT17mmHStoYkWLI3kOh1E=;
-        b=cXlMWqtNbG9zhOlXPMihLtpr5nhe4BzDkxU9LdrLlY1lJCr5OIn0+6jSm8HZYY0422
-         Br8c7ZwVzdtkU5vc7xEMh+Uh3naN2azLlpctk0/S4hwGt4Ut65eRRds71TI5BXPDi6ea
-         3xD8Mo86RI6INjS0rO/lIO39LC3qV6iWyRMHlhzxhQ0Hz+LvpJXKMytpZEPMf3gFn+TH
-         lyhBgfRDmDieONFeHqF8G4purijtXERbF6JprBf+nfcK4KxSYUwp66JR0mPrQ1lD+b//
-         35o9b355/bl34igrZgd3sfVVgW5v5dmERdrjO2hVyj2b8O9jJQtHLMw9gJ7q1uiBkiSv
-         W55Q==
+	s=arc-20240116; t=1725396205; c=relaxed/simple;
+	bh=ICPaKamSOmGmVVhHJ6kgld+RE3iX/zQONspYntYjdLo=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=WuVAsGBnpx8Gp74EDwx5t8g3QoypBNLpdC2r//BaGXYG1ZIHcH6JUV2PmQkmlyBzaX7TEUlnEifQOPyNdyZwsbPkLZe76Cm/Ew9WMWT0ER84Ta5omGCCk592TW8lj0PnQSNHiQZHrSpE2YfjHDxQc5UYD05xlGbMOI+ip8vXqMI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-39f5605c674so39979225ab.3
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 13:43:23 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725396013; x=1726000813;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+        d=1e100.net; s=20230601; t=1725396203; x=1726001003;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=gr0+wD1hQSkgsAJy15LgXOqT17mmHStoYkWLI3kOh1E=;
-        b=tm6k5/NJFW4xDsJ9LpbpHTqkpW03DmuTZq6YbT+q8EyGkkd5bmeUibgAO5ycqFvYeB
-         Vz0xW0qvcU6JpNa/EV+s0hBvPYk9F7VPO9Zw0MX84sxCNW+/m8LrA4i6NlW4ICli9FUK
-         1QR3RNtJaYAaMLOT5aIPAVm5c9aWcME7rUlfYiSTeHadi9aSoAk2Zx6NZ4tqiqcfAcwp
-         IHILJgoXjag1m+0Dn7n83lFT4lW7nySbuBURM4S0Kn2Q44yBP3+6GpxOGJjspi776cFG
-         6HksRW7sRN8c02krkrE7o0jE0LaKIpHKu6t3sqdX5MAH2tm8gPlu5LvSKABwuSOQOOx3
-         tFcA==
-X-Gm-Message-State: AOJu0YwcJjHGAiag+StHkSWzA//hxRPkCJw1o9cFh76Pa6lyl+5tWWTv
-	W1Afryi1NI5PJw/zwC6Al+m0+5MDS96BYq3iNHbzDTu6fp1RmPlS5pAZ0oFW3oY3EaOnnJTLF6J
-	s+A==
-X-Google-Smtp-Source: AGHT+IFl6cBrYkda8nNgdZrTivfv3zjTpKUU2f25L9umrr7vatGI4GPL+9fg9hOyModMI6oj7rvGWFpN3Tw=
-X-Received: from edliaw.c.googlers.com ([fda3:e722:ac3:cc00:24:72f4:c0a8:305d])
- (user=edliaw job=sendgmr) by 2002:a05:690c:4888:b0:6ad:e9c1:fc4f with SMTP id
- 00721157ae682-6d40f922d32mr317297b3.5.1725396012716; Tue, 03 Sep 2024
- 13:40:12 -0700 (PDT)
-Date: Tue,  3 Sep 2024 20:39:12 +0000
+        bh=HHhZGzUkVK4JwTPspm9AtDp6CUzqqv0WJp3dEPChI1k=;
+        b=o7EEJn8CesdzefYaMsn+y2FpHy04AQr5dWN/5RKEctdoA9P/5VdxW1mlC4J1wFVR6v
+         xn1tBVmgSk4k+HOpKx3egEGY39o+VkY/EO82A03FZh4eklq2J57eGbRt/kBqL6vBo7ax
+         iKWHVFIRvf5h6xUw/TkfwKLHoV4Eif9YqRunT4L5enEpWRMlkyRAAYVHG6MmVHpu+UCH
+         qhpgt1zR5eAirGeYbkNEPAk1yA7YOOPsiKUD5/yDJLz1/0LAHbCyCffG5ADSGbwCSU/u
+         qipYMhmqcqY23nKh7vNiFv8MLHe+njN87tFCp+du9K+m3eH9cb3MgQezRGq3GbUGgqTC
+         EHRg==
+X-Forwarded-Encrypted: i=1; AJvYcCXg8MsEofRZwmEnty9Awp95OjV3Tstn09mRl5hdv51aj3D55Pu+ZPvl2Xby+zPFaIwfHbnahF8m5ZWqO98=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxAQnP9Q3B1ueB9LyzK7lB22CDkpMVSgRat9x6ORgbGg+1yqFoP
+	tL12uKiKhdMaYOAL5W3Jm2NE+444vMvzy9oUNkm63FRr3iUZ7wcwEdKvRjBs7rH6NTaPFuQgpVI
+	yDA49bFzoNo0OnnIDVyFbgGE12jiPWr28H6p4Nq9N2nFfDpSQt8MrcjE=
+X-Google-Smtp-Source: AGHT+IE0zB3OncRdcb9/kKUQp8pRN4II6ciEuvM1S5T1Xt5+wwtB1f7i3h36hW3pfhV+TGlyqjwA1HRb+obEZXA5P+fx0vqKjuSV
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.46.0.469.g59c65b2a67-goog
-Message-ID: <20240903203915.3383774-1-edliaw@google.com>
-Subject: [PATCH RESEND] selftests/futex: Order calls in futex_requeue
-From: Edward Liaw <edliaw@google.com>
-To: linux-kselftest@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, 
-	Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Darren Hart <dvhart@infradead.org>, Davidlohr Bueso <dave@stgolabs.net>, 
-	"=?UTF-8?q?Andr=C3=A9=20Almeida?=" <andrealmeid@igalia.com>, Shuah Khan <shuah@kernel.org>, 
-	John Stultz <jstultz@google.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Anna-Maria Behnsen <anna-maria@linutronix.de>, Frederic Weisbecker <frederic@kernel.org>, 
-	Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>, 
-	Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, 
-	Oleg Nesterov <oleg@redhat.com>, Marco Elver <elver@google.com>, Dmitry Vyukov <dvyukov@google.com>
-Cc: linux-kernel@vger.kernel.org, kernel-team@android.com, 
-	Edward Liaw <edliaw@google.com>, Muhammad Usama Anjum <usama.anjum@collabora.com>, 
-	Davidlohr Bueso <dbueso@suse.de>, llvm@lists.linux.dev
+MIME-Version: 1.0
+X-Received: by 2002:a05:6638:8611:b0:4bd:4861:d7f8 with SMTP id
+ 8926c6da1cb9f-4d017e91f4bmr810462173.4.1725396203294; Tue, 03 Sep 2024
+ 13:43:23 -0700 (PDT)
+Date: Tue, 03 Sep 2024 13:43:23 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000cb688206213d1bda@google.com>
+Subject: [syzbot] [ocfs2?] possible deadlock in ocfs2_fiemap
+From: syzbot <syzbot+ca440b457d21568f8021@syzkaller.appspotmail.com>
+To: jlbec@evilplan.org, joseph.qi@linux.alibaba.com, 
+	linux-kernel@vger.kernel.org, mark@fasheh.com, ocfs2-devel@lists.linux.dev, 
+	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 
-Similar to fbf4dec70277 ("selftests/futex: Order calls to
-futex_lock_pi"), which fixed a flake in futex_lock_pi due to racing
-between the parent and child threads.
+Hello,
 
-The same issue can occur in the futex_requeue test, because it expects
-waiterfn to make progress to futex_wait before the parent starts to
-requeue. This is mitigated by the parent sleeping for WAKE_WAIT_US, but
-it still fails occasionally. This can be reproduced by adding a sleep in
-the waiterfn before futex_wait:
+syzbot found the following issue on:
 
-TAP version 13
-1..2
-not ok 1 futex_requeue simple returned: 0
-not ok 2 futex_requeue simple returned: 0
-not ok 3 futex_requeue many returned: 0
-not ok 4 futex_requeue many returned: 0
+HEAD commit:    6cd90e5ea72f Merge branch 'fixes' of git://git.kernel.org/..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=12c6b543980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=714e8373ca1f0bb3
+dashboard link: https://syzkaller.appspot.com/bug?extid=ca440b457d21568f8021
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
 
-Instead, replace the sleep with barriers to make the sequencing
-explicit.
+Unfortunately, I don't have any reproducer for this issue yet.
 
-Fixes: 7cb5dd8e2c8c ("selftests: futex: Add futex compare requeue test")
-Reviewed-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
-Signed-off-by: Edward Liaw <edliaw@google.com>
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-6cd90e5e.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/5118b413b1ad/vmlinux-6cd90e5e.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/6a2ee4a9243a/bzImage-6cd90e5e.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+ca440b457d21568f8021@syzkaller.appspotmail.com
+
+loop0: detected capacity change from 0 to 32768
+=======================================================
+WARNING: The mand mount option has been deprecated and
+         and is ignored by this kernel. Remove the mand
+         option from the mount to silence this warning.
+=======================================================
+JBD2: Ignoring recovery information on journal
+ocfs2: Mounting device (7,0) on (node local, slot 0) with ordered data mode.
+======================================================
+WARNING: possible circular locking dependency detected
+6.11.0-rc5-syzkaller-00316-g6cd90e5ea72f #0 Not tainted
+------------------------------------------------------
+syz.0.0/5152 is trying to acquire lock:
+ffff888035ca6a18 (&mm->mmap_lock){++++}-{3:3}, at: __might_fault+0xaa/0x120 mm/memory.c:6387
+
+but task is already holding lock:
+ffff888012decda0 (&oi->ip_alloc_sem){++++}-{3:3}, at: ocfs2_fiemap+0x377/0xf80 fs/ocfs2/extent_map.c:755
+
+which lock already depends on the new lock.
+
+
+the existing dependency chain (in reverse order) is:
+
+-> #2 (&oi->ip_alloc_sem){++++}-{3:3}:
+       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5759
+       down_write+0x99/0x220 kernel/locking/rwsem.c:1579
+       ocfs2_page_mkwrite+0x347/0xed0 fs/ocfs2/mmap.c:142
+       do_page_mkwrite+0x19b/0x480 mm/memory.c:3142
+       do_shared_fault mm/memory.c:5133 [inline]
+       do_fault mm/memory.c:5195 [inline]
+       do_pte_missing mm/memory.c:3947 [inline]
+       handle_pte_fault+0x126b/0x6fc0 mm/memory.c:5521
+       __handle_mm_fault mm/memory.c:5664 [inline]
+       handle_mm_fault+0x1109/0x1bc0 mm/memory.c:5832
+       do_user_addr_fault arch/x86/mm/fault.c:1389 [inline]
+       handle_page_fault arch/x86/mm/fault.c:1481 [inline]
+       exc_page_fault+0x2b9/0x8c0 arch/x86/mm/fault.c:1539
+       asm_exc_page_fault+0x26/0x30 arch/x86/include/asm/idtentry.h:623
+
+-> #1 (sb_pagefaults){.+.+}-{0:0}:
+       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5759
+       percpu_down_read include/linux/percpu-rwsem.h:51 [inline]
+       __sb_start_write include/linux/fs.h:1676 [inline]
+       sb_start_pagefault include/linux/fs.h:1841 [inline]
+       ocfs2_page_mkwrite+0x223/0xed0 fs/ocfs2/mmap.c:122
+       do_page_mkwrite+0x19b/0x480 mm/memory.c:3142
+       do_shared_fault mm/memory.c:5133 [inline]
+       do_fault mm/memory.c:5195 [inline]
+       do_pte_missing mm/memory.c:3947 [inline]
+       handle_pte_fault+0x126b/0x6fc0 mm/memory.c:5521
+       __handle_mm_fault mm/memory.c:5664 [inline]
+       handle_mm_fault+0x1109/0x1bc0 mm/memory.c:5832
+       do_user_addr_fault arch/x86/mm/fault.c:1389 [inline]
+       handle_page_fault arch/x86/mm/fault.c:1481 [inline]
+       exc_page_fault+0x2b9/0x8c0 arch/x86/mm/fault.c:1539
+       asm_exc_page_fault+0x26/0x30 arch/x86/include/asm/idtentry.h:623
+
+-> #0 (&mm->mmap_lock){++++}-{3:3}:
+       check_prev_add kernel/locking/lockdep.c:3133 [inline]
+       check_prevs_add kernel/locking/lockdep.c:3252 [inline]
+       validate_chain+0x18e0/0x5900 kernel/locking/lockdep.c:3868
+       __lock_acquire+0x137a/0x2040 kernel/locking/lockdep.c:5142
+       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5759
+       __might_fault+0xc6/0x120 mm/memory.c:6387
+       _inline_copy_to_user include/linux/uaccess.h:176 [inline]
+       _copy_to_user+0x2a/0xb0 lib/usercopy.c:26
+       copy_to_user include/linux/uaccess.h:209 [inline]
+       fiemap_fill_next_extent+0x235/0x410 fs/ioctl.c:145
+       ocfs2_fiemap+0x9f1/0xf80 fs/ocfs2/extent_map.c:796
+       ioctl_fiemap fs/ioctl.c:220 [inline]
+       do_vfs_ioctl+0x1c07/0x2e50 fs/ioctl.c:841
+       __do_sys_ioctl fs/ioctl.c:905 [inline]
+       __se_sys_ioctl+0x81/0x170 fs/ioctl.c:893
+       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+other info that might help us debug this:
+
+Chain exists of:
+  &mm->mmap_lock --> sb_pagefaults --> &oi->ip_alloc_sem
+
+ Possible unsafe locking scenario:
+
+       CPU0                    CPU1
+       ----                    ----
+  rlock(&oi->ip_alloc_sem);
+                               lock(sb_pagefaults);
+                               lock(&oi->ip_alloc_sem);
+  rlock(&mm->mmap_lock);
+
+ *** DEADLOCK ***
+
+1 lock held by syz.0.0/5152:
+ #0: ffff888012decda0 (&oi->ip_alloc_sem){++++}-{3:3}, at: ocfs2_fiemap+0x377/0xf80 fs/ocfs2/extent_map.c:755
+
+stack backtrace:
+CPU: 0 UID: 0 PID: 5152 Comm: syz.0.0 Not tainted 6.11.0-rc5-syzkaller-00316-g6cd90e5ea72f #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:93 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:119
+ check_noncircular+0x36a/0x4a0 kernel/locking/lockdep.c:2186
+ check_prev_add kernel/locking/lockdep.c:3133 [inline]
+ check_prevs_add kernel/locking/lockdep.c:3252 [inline]
+ validate_chain+0x18e0/0x5900 kernel/locking/lockdep.c:3868
+ __lock_acquire+0x137a/0x2040 kernel/locking/lockdep.c:5142
+ lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5759
+ __might_fault+0xc6/0x120 mm/memory.c:6387
+ _inline_copy_to_user include/linux/uaccess.h:176 [inline]
+ _copy_to_user+0x2a/0xb0 lib/usercopy.c:26
+ copy_to_user include/linux/uaccess.h:209 [inline]
+ fiemap_fill_next_extent+0x235/0x410 fs/ioctl.c:145
+ ocfs2_fiemap+0x9f1/0xf80 fs/ocfs2/extent_map.c:796
+ ioctl_fiemap fs/ioctl.c:220 [inline]
+ do_vfs_ioctl+0x1c07/0x2e50 fs/ioctl.c:841
+ __do_sys_ioctl fs/ioctl.c:905 [inline]
+ __se_sys_ioctl+0x81/0x170 fs/ioctl.c:893
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fa8b7f79eb9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fa8b8cc7038 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 00007fa8b8115f80 RCX: 00007fa8b7f79eb9
+RDX: 00000000200001c0 RSI: 00000000c020660b RDI: 0000000000000005
+RBP: 00007fa8b7fe793e R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000000 R14: 00007fa8b8115f80 R15: 00007ffc6d1b5088
+ </TASK>
+
+
 ---
- .../selftests/futex/functional/futex_requeue.c       | 12 +++++++++---
- 1 file changed, 9 insertions(+), 3 deletions(-)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/tools/testing/selftests/futex/functional/futex_requeue.c b/tools/testing/selftests/futex/functional/futex_requeue.c
-index 51485be6eb2f..8f7d3e8bf32a 100644
---- a/tools/testing/selftests/futex/functional/futex_requeue.c
-+++ b/tools/testing/selftests/futex/functional/futex_requeue.c
-@@ -12,9 +12,9 @@
- 
- #define TEST_NAME "futex-requeue"
- #define timeout_ns  30000000
--#define WAKE_WAIT_US 10000
- 
- volatile futex_t *f1;
-+static pthread_barrier_t barrier;
- 
- void usage(char *prog)
- {
-@@ -32,6 +32,8 @@ void *waiterfn(void *arg)
- 	to.tv_sec = 0;
- 	to.tv_nsec = timeout_ns;
- 
-+	pthread_barrier_wait(&barrier);
-+
- 	if (futex_wait(f1, *f1, &to, 0))
- 		printf("waiter failed errno %d\n", errno);
- 
-@@ -70,13 +72,15 @@ int main(int argc, char *argv[])
- 	ksft_print_msg("%s: Test futex_requeue\n",
- 		       basename(argv[0]));
- 
-+	pthread_barrier_init(&barrier, NULL, 2);
- 	/*
- 	 * Requeue a waiter from f1 to f2, and wake f2.
- 	 */
- 	if (pthread_create(&waiter[0], NULL, waiterfn, NULL))
- 		error("pthread_create failed\n", errno);
- 
--	usleep(WAKE_WAIT_US);
-+	pthread_barrier_wait(&barrier);
-+	pthread_barrier_destroy(&barrier);
- 
- 	info("Requeuing 1 futex from f1 to f2\n");
- 	res = futex_cmp_requeue(f1, 0, &f2, 0, 1, 0);
-@@ -99,6 +103,7 @@ int main(int argc, char *argv[])
- 		ksft_test_result_pass("futex_requeue simple succeeds\n");
- 	}
- 
-+	pthread_barrier_init(&barrier, NULL, 11);
- 
- 	/*
- 	 * Create 10 waiters at f1. At futex_requeue, wake 3 and requeue 7.
-@@ -109,7 +114,8 @@ int main(int argc, char *argv[])
- 			error("pthread_create failed\n", errno);
- 	}
- 
--	usleep(WAKE_WAIT_US);
-+	pthread_barrier_wait(&barrier);
-+	pthread_barrier_destroy(&barrier);
- 
- 	info("Waking 3 futexes at f1 and requeuing 7 futexes from f1 to f2\n");
- 	res = futex_cmp_requeue(f1, 0, &f2, 3, 7, 0);
--- 
-2.46.0.469.g59c65b2a67-goog
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
