@@ -1,143 +1,94 @@
-Return-Path: <linux-kernel+bounces-312877-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312878-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA2C3969CE9
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 14:06:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 996B5969CF9
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 14:07:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A778D28221C
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 12:06:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CB41B1C22DDB
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 12:07:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFBA91C768F;
-	Tue,  3 Sep 2024 12:06:39 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 798E71C9858;
+	Tue,  3 Sep 2024 12:07:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="DRZSxZ0s"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07D781A42D6
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 12:06:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5E8D1A42A4;
+	Tue,  3 Sep 2024 12:07:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725365199; cv=none; b=egSsZfea0B4uC6XGMhh85erpA+xnnQQqh5hnEEvDoz9bqjwv83+Z4q+Iqf8cVaCAxbgVNA6il9GtSLv+0YlGRKZBofivoI2G+PCWiPaJKCDKoL3/d2tqQhp5WwpvfeVr1JrUv8UhYMIz0SQXdNcOEUx5lazBuRtzHJ5RFiZe/Jo=
+	t=1725365266; cv=none; b=P2Upq/vdL0qwUZcA5lMbWDmEwjwzvWyA8RsGKhyAgx2zO/Qxf/Td3W5rAWNJ7VbP2lwnONj031RR27Whl0XpDJMm51Q7XKtGv/FQSD3SjoMXCw049XCCVgkHCR5/DuEcBgLT4q5JQMEr9zmQ4kZxb9XnsUVzjeMT3OSQXTJU5us=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725365199; c=relaxed/simple;
-	bh=sy03hUcUxnqokfHSvhnNTsDNiFZY74akAeG+3ml92e8=;
-	h=Subject:To:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=YoY5eSCyxQ1lXrOx3nfXFiXyOpJwvYJEzUpKnpBjTsAV38kU+PWXSMvM+t7w4mShxg+ex12bQp9vnVb0wAgSAdqR0mnAyvn0a05bNqsHyVMhRB8KS6KwG2Y/WMBuxlqD903grtKBhpFQ2Rh+tzM9AqisClmFw/u2Wdqxce7gVDI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.254])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4Wykpp1xdqzyR6K;
-	Tue,  3 Sep 2024 20:05:38 +0800 (CST)
-Received: from dggpemf100006.china.huawei.com (unknown [7.185.36.228])
-	by mail.maildlp.com (Postfix) with ESMTPS id B1D7918010A;
-	Tue,  3 Sep 2024 20:06:34 +0800 (CST)
-Received: from [10.174.178.55] (10.174.178.55) by
- dggpemf100006.china.huawei.com (7.185.36.228) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 3 Sep 2024 20:06:34 +0800
-Subject: Re: [PATCH 3/5] debugobjects: Don't start fill if there are remaining
- nodes locally
-To: Thomas Gleixner <tglx@linutronix.de>, Andrew Morton
-	<akpm@linux-foundation.org>, <linux-kernel@vger.kernel.org>
-References: <87o75583nv.ffs@tglx>
-From: "Leizhen (ThunderTown)" <thunder.leizhen@huawei.com>
-Message-ID: <b3e5d119-8a29-3345-8074-ad1b47ca9cce@huawei.com>
-Date: Tue, 3 Sep 2024 20:06:33 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+	s=arc-20240116; t=1725365266; c=relaxed/simple;
+	bh=bT6Zkb9fI31xbhUkgfAbk6IOgwqzzoqCMqunQIcGlkQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pFxsWlnQLawk84WYvxEMeFoRcvHm7JIulNKR+lp4/evp5PvcvQ1ChQ10IXIdV6UMX0HLQ+wmxdcV8j1zHZbWoqwo+lKSMZnonxc+WFTFfqhWrkMvKBKeMe1ITG2NbHBzil6pVYk3ug5Pm5kiD60bkMvVtz8c7bAXplwqc7huxNM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=DRZSxZ0s; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23318C4CEC4;
+	Tue,  3 Sep 2024 12:07:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1725365266;
+	bh=bT6Zkb9fI31xbhUkgfAbk6IOgwqzzoqCMqunQIcGlkQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=DRZSxZ0sfS1qfQb/YjCljtYvRyEM8SXriRAUJLt6bq8WWmniS3yZFc6P1O5A5DQ1s
+	 74lfYEjtImipFDjUgmJJU0ojJ3JSN8a5+jL1oUEmX0bJmxWdYZLjmAsQE2iGOii8a2
+	 C5gAJKZLIwTA4kbS4+0xl0xQBvXc6LKg12+mtec8=
+Date: Tue, 3 Sep 2024 14:07:43 +0200
+From: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
+To: Siddh Raman Pant <siddh.raman.pant@oracle.com>
+Cc: "stable@vger.kernel.org" <stable@vger.kernel.org>,
+	"edumazet@google.com" <edumazet@google.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>
+Subject: Re: CVE-2024-41041: udp: Set SOCK_RCU_FREE earlier in
+ udp_lib_get_port().
+Message-ID: <2024090305-starfish-hardship-dadc@gregkh>
+References: <2024072924-CVE-2024-41041-ae0c@gregkh>
+ <0ab22253fec2b0e65a95a22ceff799f39a2eaa0a.camel@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <87o75583nv.ffs@tglx>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- dggpemf100006.china.huawei.com (7.185.36.228)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0ab22253fec2b0e65a95a22ceff799f39a2eaa0a.camel@oracle.com>
 
+On Tue, Sep 03, 2024 at 11:56:17AM +0000, Siddh Raman Pant wrote:
+> On Mon, 29 Jul 2024 16:32:36 +0200, Greg Kroah-Hartman wrote:
+> > In the Linux kernel, the following vulnerability has been resolved:
+> > 
+> > udp: Set SOCK_RCU_FREE earlier in udp_lib_get_port().
+> > 
+> > [...]
+> > 
+> > We had the same bug in TCP and fixed it in commit 871019b22d1b ("net:
+> > set SOCK_RCU_FREE before inserting socket into hashtable").
+> > 
+> > Let's apply the same fix for UDP.
+> > 
+> > [...]
+> > 
+> > The Linux kernel CVE team has assigned CVE-2024-41041 to this issue.
+> > 
+> > 
+> > Affected and fixed versions
+> > ===========================
+> > 
+> > 	Issue introduced in 4.20 with commit 6acc9b432e67 and fixed in 5.4.280 with commit 7a67c4e47626
+> > 	Issue introduced in 4.20 with commit 6acc9b432e67 and fixed in 5.10.222 with commit 9f965684c57c
+> 
+> These versions don't have the TCP fix backported. Please do so.
 
+What fix backported exactly to where?  Please be more specific.  Better
+yet, please provide working, and tested, backports.
 
-On 2024/9/3 17:52, Thomas Gleixner wrote:
-> On Mon, Sep 02 2024 at 22:05, Zhen Lei wrote:
-> 
->> If the conditions for starting fill are met, it means that all cores that
->> call fill() later are blocked until the first core completes the fill
->> operation. But obviously, for a core that has free nodes locally, it does
->> not need to be blocked. This is good in stress situations.
-> 
-> Sure it's good, but is it correct? You need to explain why this can't> cause a pool depletion. The pool is filled opportunistically.
-In the case of no nesting, a core uses only one node at a time.
-Even if nesting occurs and there is only one local node,
-256 / (16 + 1) = 15, the current parameter definition tolerates
-15 cores, which should be sufficient. In fact, many cores may
-see just >= 256 at the same time without filling. Therefore,
-to eliminate the probability problem completely, an additional
-mechanism is needed.
+confused,
 
-#define ODEBUG_POOL_MIN_LEVEL	256
-#define ODEBUG_BATCH_SIZE	16
-
-> 
-> Aside of that the lock contention in fill_pool() is minimal. The heavy
-> lifting is the allocation of objects.
-
-I'm optimizing this, too. However, a new hlist helper function need to
-be added. Now that you've mentioned it, I'll send it in V2 too!
-
-> 
->> diff --git a/lib/debugobjects.c b/lib/debugobjects.c
->> index aba3e62a4315f51..fc8224f9f0eda8f 100644
->> --- a/lib/debugobjects.c
->> +++ b/lib/debugobjects.c
->> @@ -130,10 +130,15 @@ static void fill_pool(void)
->>  	gfp_t gfp = __GFP_HIGH | __GFP_NOWARN;
->>  	struct debug_obj *obj;
->>  	unsigned long flags;
->> +	struct debug_percpu_free *percpu_pool;
-> 
-> Please keep variables in reverse fir tree order.
-> 
-> https://www.kernel.org/doc/html/latest/process/maintainer-tip.html#variable-declarations
-
-OK, I will correct it.
-
->   
->>  	if (likely(READ_ONCE(obj_pool_free) >= debug_objects_pool_min_level))
->>  		return;
->>  
->> +	percpu_pool = this_cpu_ptr(&percpu_obj_pool);
-> 
-> You don't need the pointer
-> 
->> +	if (likely(obj_cache) && percpu_pool->obj_free > 0)
-> 
-> 	if (likely(obj_cache) && this_cpu_read(percpu_pool.obj_free) > 0)
-
-Nice, thanks
-
-> 
-> This lacks a comment explaining the rationale of this check.
-
-OK, I'll add.
-
-> 
-> Thanks,
-> 
->         tglx
-> 
-> 
-> 
-> 
-> .
-> 
-
--- 
-Regards,
-  Zhen Lei
+greg k-h
 
