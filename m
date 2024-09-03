@@ -1,164 +1,153 @@
-Return-Path: <linux-kernel+bounces-313016-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313020-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C988E969F10
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 15:31:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63DEE969F22
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 15:37:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 56A7B1F250E2
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 13:31:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 96E7A1C23BD1
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 13:37:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 425C453AC;
-	Tue,  3 Sep 2024 13:31:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4C4F7462;
+	Tue,  3 Sep 2024 13:37:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="V2GVUHuC"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="YEy6xRW3"
+Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C5B2817
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 13:31:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D135B63CB
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 13:37:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725370300; cv=none; b=EA2bYpQfgmencx4y2ml6SCa4VLmw+nLe8MNjxxWCcSoSaqmPw1uo1JrzHqjEKhPQR+d7r09U3GpUgqCX6NfmE1V7h36NI6tGMsIifVBOe4TYypQX04LdKrqoEAY0XO+N7Ri1z6ALinvpeQq9ATKxl7voFZtGLsCdHy/1h9VYHMk=
+	t=1725370639; cv=none; b=GsIlcKTdVUmOvtUf3co8x3uHEsXZYc2WG0piTGiqeqIl7ExSj6uncj5AYVw8X7SLBGTcxR7YBktvtFLsy6E9lOc+ypiC7r/6y38Nt3Y0iszPDMkFdmPlQS4E0mZyegKF5rHGa9khxgHo+4c83laIhtzKvzwZG3Rl+uA+peVjJLM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725370300; c=relaxed/simple;
-	bh=T4fDoJoecViVmQNPo2yZrHSz6QgMk+lBYHN95sXQCDI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=svCiQHmPNBLTjlwyrxS/2zTTCGCsJOUhvI+zvqctIRD1St40yu/vUFMzgnO9NO4wTjkNYDvpzrxHEaOAYg5mdvtphE9ZRuR1pSN8jgtVqVYVuWrhicpw8jSJNjFmGUZLOnxbjS7XNcMf4pCbHYgfVA/sCCq7x15baoV7kZ8ziB8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=V2GVUHuC; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1725370298;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=TT0mRqhaXKCd2CqytOnVTAv17c3Kp2T7BKqKGi1Nz7Q=;
-	b=V2GVUHuCWv+ptEVuB8HsKgnVnowIwE0F7sVrfuiPfWymKaVfKqtpQhztvBGIgP833cZ9xK
-	agFlT8biZzMJQvtx160t8J3ZnHindVcefK9Cw5eZsU9Aa062Qt+Uo9GTtWGHFmDINHTIjZ
-	pd5tAEmOZDm3Pfuy1NyIIvR4kj/T9qw=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-556-94iz-17oPgC7mW3iFpfPQQ-1; Tue, 03 Sep 2024 09:31:37 -0400
-X-MC-Unique: 94iz-17oPgC7mW3iFpfPQQ-1
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-374c90d24e3so2029267f8f.0
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 06:31:36 -0700 (PDT)
+	s=arc-20240116; t=1725370639; c=relaxed/simple;
+	bh=zK4sxTzKS9zno4bDB1GFZG25ka8k5P4lmUmsy43LBUk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LP73zwMAuyKMDgHSGmvxTqzIW0CwbMJkmB4U88GPqL2EVUK9RjJqiKiObUVKwat8Y31+4G/89CDMICuLxBUUTwLGF7KdyzW0suL84ZPTC2/JbKaSHgTowEeKExUsDWeRSeDpGTgJruziqFcWFqy6FNZNtILRahpb3B0dK4/XpkY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=YEy6xRW3; arc=none smtp.client-ip=209.85.160.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
+Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-4568571de47so25738841cf.3
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 06:37:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gourry.net; s=google; t=1725370636; x=1725975436; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=3JF7HWNoOErj8MlWsrCPxI4aMhOK2ReOgZKcSkTwbsQ=;
+        b=YEy6xRW3g+izcuYNL78lgXbqlHub+rLTh7/QGM5GwsKj9eCcnw8d3pn1B7vRMMKgY4
+         +zB6w5TIiHFvq3x8h+9fOLlnqaI+xoXRgufDzki4XmvgtSNW2HPGmdiU9enM2+h4vj2R
+         3c+ZpfuBKjIUux2ULCRFfLiFM/txTdOBteiPWhnAR86CJRo/bPML7p5wZ/PS14jC0fxo
+         udqMoZVEG6eOMuy5I/ZiZXZh328RH8IxAoNZQY0v8elak97rzabMEU3S9f/RqlbELnyv
+         LDkpLW2ZgMgi1D/vpMGh+pcV7+4p3DKORJXqb5yaKUDleK/Cx/VAgk0J48dxOiiK7XDn
+         kzaA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725370296; x=1725975096;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=TT0mRqhaXKCd2CqytOnVTAv17c3Kp2T7BKqKGi1Nz7Q=;
-        b=sFXa0AaJjZ7ueAJPiZFsm8dmIJ2nfYhyRxv+zoyMUeRmqa/YntwtXM5PvffmxeJdLk
-         dCJhcrQCMJ0Ve+NAS4XbhNSEw1GFRjWnSp13pyRNfs6uTQMucQSgPWqII0zoOwsr9z1T
-         swK40FD9w24FtfUzSCME/rIpqFOXJ9RLRfQrV1DTBFDVJP/b9UKBNUFNZ89puUQLwG1X
-         D3osoy7bzwl0L6ID83NHbu5Kxl105zXIJOEm7tLZsHsvWECN+KyasRcm74Ea2LJX/QWp
-         OAXWxRhbp9hBzNA+LXDv2w4jIaeqad658UBbFRqDqlNgCB535bt8mouwopphCEpERC2q
-         9KZw==
-X-Forwarded-Encrypted: i=1; AJvYcCUnDcpfX8G8Bw5BTL581dQ8plfUc0fENphhPkmI8O8WRosLLVmYGXinKwApz2xtz5CckUAylzvuwhfifwY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzQa9295o+AAM3N0dYpVcbekujkoBWpt6boyurzE2or+tPuJAO5
-	n3aFeAC7rznU8bIr4U8jhTStCKGgMDntmNvrSr0/JRvVHiOiisqnu9rVBIECpNXfH9nHpU/XddC
-	JFRVbpYbRYIqp8xXAEbAEGEXCqadHr3tWKCwHkwj/FZo7mLhLkcROx+MsLYICsw==
-X-Received: by 2002:a05:6000:1543:b0:374:d29e:6db8 with SMTP id ffacd0b85a97d-374d29e6e46mr3758620f8f.16.1725370295661;
-        Tue, 03 Sep 2024 06:31:35 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEqsEsAzk28PCAKiuT1J68bc+3njl09O+FreZRAVr0nLTh3+4A6lAl/kcqqbuaWg6B53QFsug==
-X-Received: by 2002:a05:6000:1543:b0:374:d29e:6db8 with SMTP id ffacd0b85a97d-374d29e6e46mr3758540f8f.16.1725370294504;
-        Tue, 03 Sep 2024 06:31:34 -0700 (PDT)
-Received: from [192.168.88.27] (146-241-55-250.dyn.eolo.it. [146.241.55.250])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42bb6e33b41sm171403835e9.40.2024.09.03.06.31.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 03 Sep 2024 06:31:34 -0700 (PDT)
-Message-ID: <2bc090db-7bc1-4810-80c7-61218fb49acf@redhat.com>
-Date: Tue, 3 Sep 2024 15:31:32 +0200
+        d=1e100.net; s=20230601; t=1725370636; x=1725975436;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3JF7HWNoOErj8MlWsrCPxI4aMhOK2ReOgZKcSkTwbsQ=;
+        b=FMRw0pUeffqOrgjxo0m1M7M/cLgQOnmkdzPvqabV1tsYIV0RyvKpnMD9ksoGHrsQLS
+         Ofek279Z9iGFXx/+98WHxBaS3h6Xiqe9pIgWp9koen3530nf3JzMjTFdr4uqd9Qs9NG2
+         b3emkfdXR6oDp1e9XL2uut3OV8AQ1MxxXd7q7iWQFCecB+cVut5XoJCeizhY7GYJDqpa
+         kWU9TxJXjnjJa1gDuMltJ8rQXpVu2oLos3yjZ9V0XAq1bc9/wHcHMG06FHpso2bkRSb6
+         8RMacclbwJB8hF36ZbZvYnDQD5VECUFZa0uLHJMZn5q5pSyD+2dGKUlQjTbbMlhBOWsK
+         YqnQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV7DSw56ocpEZB1oPG5fVIBsemOIuQFSK/B3n2DvLoKGabpkT5py2Pr32+938UxvG/W2XSgRZvXRDkmov0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxI/OQlZLzyeP8UC6O9LPt/G94nYtGyMqQknRGe/8TMkA8dS/re
+	TvfQxGV6EID0dJ1I2qhWkjmea9t+mHSKsWyPbE3D5DcM2V9egpnjhAr9qFg4QqY=
+X-Google-Smtp-Source: AGHT+IFbHa7o20qp9c+PMcvFFBJrJFRlDIPpShG96ziR0pYYFpBTDIwKUMfBGqIoY0lzHhFD85PCPQ==
+X-Received: by 2002:a05:622a:580d:b0:447:f922:64fd with SMTP id d75a77b69052e-456fd7e531fmr123363691cf.35.1725370636441;
+        Tue, 03 Sep 2024 06:37:16 -0700 (PDT)
+Received: from PC2K9PVX.TheFacebook.com (pool-173-79-56-208.washdc.fios.verizon.net. [173.79.56.208])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-457ca0d55f2sm28229081cf.66.2024.09.03.06.37.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Sep 2024 06:37:16 -0700 (PDT)
+Date: Tue, 3 Sep 2024 09:36:50 -0400
+From: Gregory Price <gourry@gourry.net>
+To: "Huang, Ying" <ying.huang@intel.com>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+	akpm@linux-foundation.org, david@redhat.com, nphamcs@gmail.com,
+	nehagholkar@meta.com, abhishekd@meta.com,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Feng Tang <feng.tang@intel.com>
+Subject: Re: [PATCH 0/3] mm,TPP: Enable promotion of unmapped pagecache
+Message-ID: <ZtcQ8sgr_Wgu3pB0@PC2K9PVX.TheFacebook.com>
+References: <20240803094715.23900-1-gourry@gourry.net>
+ <875xrxhs5j.fsf@yhuang6-desk2.ccr.corp.intel.com>
+ <ZsNhgU-TiTz2WKg5@PC2K9PVX.TheFacebook.com>
+ <87ikvefswp.fsf@yhuang6-desk2.ccr.corp.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V6 net-next 06/11] net: hibmcge: Implement .ndo_start_xmit
- function
-To: Jijie Shao <shaojijie@huawei.com>, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org
-Cc: shenjian15@huawei.com, wangpeiyang1@huawei.com, liuyonglong@huawei.com,
- chenhao418@huawei.com, sudongming1@huawei.com, xujunsheng@huawei.com,
- shiyongbang@huawei.com, libaihan@huawei.com, andrew@lunn.ch,
- jdamato@fastly.com, horms@kernel.org, jonathan.cameron@huawei.com,
- shameerali.kolothum.thodi@huawei.com, salil.mehta@huawei.com,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240830121604.2250904-1-shaojijie@huawei.com>
- <20240830121604.2250904-7-shaojijie@huawei.com>
-Content-Language: en-US
-From: Paolo Abeni <pabeni@redhat.com>
-In-Reply-To: <20240830121604.2250904-7-shaojijie@huawei.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87ikvefswp.fsf@yhuang6-desk2.ccr.corp.intel.com>
 
-On 8/30/24 14:15, Jijie Shao wrote:
-> +netdev_tx_t hbg_net_start_xmit(struct sk_buff *skb, struct net_device *net_dev)
-> +{
-> +	struct hbg_ring *ring = netdev_get_tx_ring(net_dev);
-> +	struct hbg_priv *priv = netdev_priv(net_dev);
-> +	/* This smp_load_acquire() pairs with smp_store_release() in
-> +	 * hbg_tx_buffer_recycle() called in tx interrupt handle process.
-> +	 */
-> +	u32 ntc = smp_load_acquire(&ring->ntc);
-> +	struct hbg_buffer *buffer;
-> +	struct hbg_tx_desc tx_desc;
-> +	u32 ntu = ring->ntu;
-> +
-> +	if (unlikely(!hbg_nic_is_open(priv))) {
-> +		dev_kfree_skb_any(skb);
-> +		return NETDEV_TX_OK;
-> +	}
-> +
-> +	if (unlikely(!skb->len ||
-> +		     skb->len > hbg_spec_max_frame_len(priv, HBG_DIR_TX))) {
-> +		dev_kfree_skb_any(skb);
-> +		net_dev->stats.tx_errors++;
-> +		return NETDEV_TX_OK;
-> +	}
-> +
-> +	if (unlikely(hbg_queue_is_full(ntc, ntu, ring) ||
-> +		     hbg_fifo_is_full(ring->priv, ring->dir))) {
-> +		netif_stop_queue(net_dev);
-> +		return NETDEV_TX_BUSY;
-> +	}
-> +
-> +	buffer = &ring->queue[ntu];
-> +	buffer->skb = skb;
-> +	buffer->skb_len = skb->len;
-> +	if (unlikely(hbg_dma_map(buffer))) {
-> +		dev_kfree_skb_any(skb);
-> +		return NETDEV_TX_OK;
-> +	}
-> +
-> +	buffer->state = HBG_TX_STATE_START;
-> +	hbg_init_tx_desc(buffer, &tx_desc);
-> +	hbg_hw_set_tx_desc(priv, &tx_desc);
-> +
-> +	/* This smp_store_release() pairs with smp_load_acquire() in
-> +	 * hbg_tx_buffer_recycle() called in tx interrupt handle process.
-> +	 */
-> +	smp_store_release(&ring->ntu, hbg_queue_next_prt(ntu, ring));
+On Mon, Sep 02, 2024 at 02:53:26PM +0800, Huang, Ying wrote:
+> Gregory Price <gourry@gourry.net> writes:
+> 
+> > On Mon, Aug 19, 2024 at 03:46:00PM +0800, Huang, Ying wrote:
+> >> Gregory Price <gourry@gourry.net> writes:
+> >> 
+> >> > Unmapped pagecache pages can be demoted to low-tier memory, but 
+> >> > they can only be promoted if a process maps the pages into the
+> >> > memory space (so that NUMA hint faults can be caught).  This can
+> >> > cause significant performance degradation as the pagecache ages
+> >> > and unmapped, cached files are accessed.
+> >> >
+> >> > This patch series enables the pagecache to request a promotion of
+> >> > a folio when it is accessed via the pagecache.
+> >> >
+> >> > We add a new `numa_hint_page_cache` counter in vmstat to capture
+> >> > information on when these migrations occur.
+> >> 
+> >> It appears that you will promote page cache page on the second access.
+> >> Do you have some better way to identify hot pages from the not-so-hot
+> >> pages?  How to balance between unmapped and mapped pages?  We have hot
+> >> page selection for hot pages.
+> >> 
+> >> [snip]
+> >> 
+> >
+> > I've since explored moving this down under a (referenced && active) check.
+> >
+> > This would be more like promotion on third access within an LRU shrink
+> > round (the LRU should, in theory, hack off the active bits on some decent
+> > time interval when the system is pressured).
+> >
+> > Barring adding new counters to folios to track hits, I don't see a clear
+> > and obvious way way to track hotness.  The primary observation here is 
+> > that pagecache is un-mapped, and so cannot use numa-fault hints.
+> >
+> > This is more complicated with MGLRU, but I'm saving that for after I
+> > figure out the plan for plain old LRU.
+> 
+> Several years ago, we have tried to use the access time tracking
+> mechanism of NUMA balancing to track the access time latency of unmapped
+> file cache folios.  The original implementation is as follows,
+> 
+> https://git.kernel.org/pub/scm/linux/kernel/git/vishal/tiering.git/commit/?h=tiering-0.8&id=5f2e64ce75c0322602c2ec8c70b64bb69b1f1329
+> 
+> What do you think about this?
+>
 
-Here you should probably check for netif_txq_maybe_stop()
+Also seems like an interesting option. I've been looking at another old
+proposal to simply add a new LRU that was implemented by kbusch a few
+years back.
 
-> +	net_dev->stats.tx_bytes += skb->len;
-> +	net_dev->stats.tx_packets++;
+https://git.kernel.org/pub/scm/linux/kernel/git/kbusch/linux.git/commit/?h=lru-promote&id=6616afe9a722f6ebedbb27ade3848cf07b9a3af7
 
-Try to avoid 'dev->stats' usage. Instead you could use per napi stats 
-accounting (no contention).
-
-Side note: 'net_dev' is quite an unusual variable name for a network device.
-
-Cheers,
-
-Paolo
-
+I may spend a little time to add a few different methods in with a switch
+I can flip to test them side by side / with each other and see what results
+we can get.
+ 
+> --
+> Best Regards,
+> Huang, Ying
 
