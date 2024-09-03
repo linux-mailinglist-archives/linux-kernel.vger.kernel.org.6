@@ -1,142 +1,103 @@
-Return-Path: <linux-kernel+bounces-312865-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312872-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B7C7969C96
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 13:58:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9467969CC5
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 14:03:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B9BA11F26391
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 11:58:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7624D286170
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 12:03:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FEB01C9853;
-	Tue,  3 Sep 2024 11:57:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MK25J7t4"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9A221C984C;
+	Tue,  3 Sep 2024 12:02:56 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F7CC1A42A5;
-	Tue,  3 Sep 2024 11:57:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73CF81A42D6;
+	Tue,  3 Sep 2024 12:02:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725364676; cv=none; b=D8+OMDeqvxO5bDM+AtJyJTyr2/bJg5nEN26RVyjcct2ex0mQvIJ1DIzUOpEfW1ePFXDw+QGs+6TW7D97eFqjJFnVDU3OHbCHSfW9ftEeALuqnHP5swBRq6sR5cIKvsZZvTHGMDJLNWbfJkHLF9O3kaKPszfiM8vJI4g/H1Cy/Y0=
+	t=1725364976; cv=none; b=pLMdLTh0cWIShK2r2cXbKCi1l41jIjC5gMyJ7yvfqNKQBbt1OnyohfhP6+OYZryijhcM6zQ5E8PyFm642g5BVSiN6j4TEqSIZSYm/stWRyBQygZfK0lAEvZeWZ1LXDzCTeus+8zSwIkz0XDyp0W6f9UbSvMnn0wzRNivNW9LklY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725364676; c=relaxed/simple;
-	bh=pYR/4xqMSDopVbTkWH4Grl03ykIHCeaM7sZywKn0npc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cU68NWEaAbT3v6APYZT4wlGmFCDzg5+5kyy5n+bO3QpjoSRcsJMCTjm3zZYm0MgvOv9vlV0dyUgH3DnceNL4uJHOkEj7nFZPqtPwzGSfwI9GqsYa2zTyu6GmXGUbljpp9mKY7farX1Qkp3ET8pmRTra2Bj1Bo3L+QqAgAgu015w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MK25J7t4; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725364675; x=1756900675;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=pYR/4xqMSDopVbTkWH4Grl03ykIHCeaM7sZywKn0npc=;
-  b=MK25J7t4kEQLracRb6W7wKAiKemOdjY9WD6AblWwFSnkhRHWqigjUs1+
-   LaevWap/X9oJUQyeCgWYOdghlUu8svC0Q6UjQ3Yc8PTBzWI1GYQklbQne
-   3g45ikVZjbwkTT6c+jcN061hN9Dr7aPhhCQsGPMU4l+9b7RvcmjE/fAas
-   jqILyAcx7oQhbIU6juaD9URjK9W33PJdWExJVnCQCbRgB03TnTu5sV1jU
-   PB5Of9V5ipyMYanpq7QPX24quRNaDCVGh9cOVbdL960JDuptSDHV2fO6b
-   N0JBQK7+8Ik/q9e1MeqBfYO93Oi/kHG+1OXKKh9WKAzZ05pm5rGRs7+Tg
-   Q==;
-X-CSE-ConnectionGUID: xeHHMBeUR9KZvgqulvkRIA==
-X-CSE-MsgGUID: dW+5Ici5RlGr6DYEQInSsw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11183"; a="24074702"
-X-IronPort-AV: E=Sophos;i="6.10,198,1719903600"; 
-   d="scan'208";a="24074702"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2024 04:57:55 -0700
-X-CSE-ConnectionGUID: AN3CRyX3TEyjq+2mjWOAVg==
-X-CSE-MsgGUID: tescbFueRZCiRT1Yv66pUQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,198,1719903600"; 
-   d="scan'208";a="65249228"
-Received: from kuha.fi.intel.com ([10.237.72.185])
-  by orviesa006.jf.intel.com with SMTP; 03 Sep 2024 04:57:44 -0700
-Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Tue, 03 Sep 2024 14:57:43 +0300
-Date: Tue, 3 Sep 2024 14:57:43 +0300
-From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-To: Stephen Boyd <swboyd@chromium.org>
-Cc: chrome-platform@lists.linux.dev, linux-kernel@vger.kernel.org,
-	patches@lists.linux.dev, devicetree@vger.kernel.org,
-	Douglas Anderson <dianders@chromium.org>,
-	Pin-yen Lin <treapking@chromium.org>,
-	Andrzej Hajda <andrzej.hajda@intel.com>,
-	Benson Leung <bleung@chromium.org>,
-	Conor Dooley <conor+dt@kernel.org>, Daniel Vetter <daniel@ffwll.ch>,
-	David Airlie <airlied@gmail.com>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	dri-devel@lists.freedesktop.org,
-	Guenter Roeck <groeck@chromium.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	Lee Jones <lee@kernel.org>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Prashant Malani <pmalani@chromium.org>,
-	Robert Foss <rfoss@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Tzung-Bi Shih <tzungbi@kernel.org>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Daniel Scally <djrscally@gmail.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Ivan Orlov <ivan.orlov0322@gmail.com>, linux-acpi@vger.kernel.org,
-	linux-usb@vger.kernel.org,
-	Mika Westerberg <mika.westerberg@linux.intel.com>,
-	"Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Vinod Koul <vkoul@kernel.org>
-Subject: Re: [PATCH v4 04/18] usb: typec: Add device managed
- typec_mux_register()
-Message-ID: <Ztb5twUp15phr1H5@kuha.fi.intel.com>
-References: <20240901040658.157425-1-swboyd@chromium.org>
- <20240901040658.157425-5-swboyd@chromium.org>
+	s=arc-20240116; t=1725364976; c=relaxed/simple;
+	bh=CdkPZCW7AZCqwheqnCFrVjTPRPnUge6Ii1ZRfWJZeX0=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=gmeOgpOgA+zOC9UVa2rPJFjwPzEsP411IocHnbjoqvthxuJMjwRcrGgCrDxG5R8eWP9xjXxG5yZ5wKsz9Z+2FupvtJRtNsCdurT9WBkPbqyUwhh206Hrx47O/Giz5o+ACfGY98TaPAbHLLwZDAODKm9aO1tfeNdPAJCjElmzI8k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.252])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4WykkV2vGQzyR09;
+	Tue,  3 Sep 2024 20:01:54 +0800 (CST)
+Received: from dggpemf500002.china.huawei.com (unknown [7.185.36.57])
+	by mail.maildlp.com (Postfix) with ESMTPS id D06C01800A7;
+	Tue,  3 Sep 2024 20:02:50 +0800 (CST)
+Received: from huawei.com (10.175.101.6) by dggpemf500002.china.huawei.com
+ (7.185.36.57) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 3 Sep
+ 2024 20:02:50 +0800
+From: Yue Haibing <yuehaibing@huawei.com>
+To: <kvalo@kernel.org>, <yuehaibing@huawei.com>
+CC: <libertas-dev@lists.infradead.org>, <linux-wireless@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: [PATCH] wifi: libertas: Cleanup unused declarations
+Date: Tue, 3 Sep 2024 19:58:11 +0800
+Message-ID: <20240903115811.958692-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240901040658.157425-5-swboyd@chromium.org>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ dggpemf500002.china.huawei.com (7.185.36.57)
 
-> diff --git a/include/linux/usb/typec_mux.h b/include/linux/usb/typec_mux.h
-> index efb5ed32b813..08431f0896d5 100644
-> --- a/include/linux/usb/typec_mux.h
-> +++ b/include/linux/usb/typec_mux.h
-> @@ -99,6 +99,8 @@ int typec_mux_set(struct typec_mux *mux, struct typec_mux_state *state);
->  
->  struct typec_mux_dev *
->  typec_mux_register(struct device *parent, const struct typec_mux_desc *desc);
-> +struct typec_mux_dev *
-> +devm_typec_mux_register(struct device *parent, const struct typec_mux_desc *desc);
->  void typec_mux_unregister(struct typec_mux_dev *mux);
->  
->  void typec_mux_set_drvdata(struct typec_mux_dev *mux, void *data);
-> @@ -123,6 +125,11 @@ typec_mux_register(struct device *parent, const struct typec_mux_desc *desc)
->  {
->  	return ERR_PTR(-EOPNOTSUPP);
->  }
-> +static inline struct typec_mux_dev *
-> +devm_typec_mux_register(struct device *parent, const struct typec_mux_desc *desc)
-> +{
-> +	return typec_mux_register(parent, desc);
+There is no caller and implementation in tree.
 
-Please just return the error directly here.
+Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
+---
+ drivers/net/wireless/marvell/libertas/cmd.h            | 5 -----
+ drivers/net/wireless/marvell/libertas_tf/libertas_tf.h | 3 ---
+ 2 files changed, 8 deletions(-)
 
-> +}
-
-thanks,
-
+diff --git a/drivers/net/wireless/marvell/libertas/cmd.h b/drivers/net/wireless/marvell/libertas/cmd.h
+index 3c193074662b..d7be232f5739 100644
+--- a/drivers/net/wireless/marvell/libertas/cmd.h
++++ b/drivers/net/wireless/marvell/libertas/cmd.h
+@@ -116,11 +116,6 @@ int lbs_set_power_adapt_cfg(struct lbs_private *priv, int enable, int8_t p0,
+ int lbs_set_tpc_cfg(struct lbs_private *priv, int enable, int8_t p0, int8_t p1,
+ 		int8_t p2, int usesnr);
+ 
+-int lbs_set_data_rate(struct lbs_private *priv, u8 rate);
+-
+-int lbs_cmd_802_11_rate_adapt_rateset(struct lbs_private *priv,
+-				      uint16_t cmd_action);
+-
+ int lbs_set_tx_power(struct lbs_private *priv, s16 dbm);
+ 
+ int lbs_set_deep_sleep(struct lbs_private *priv, int deep_sleep);
+diff --git a/drivers/net/wireless/marvell/libertas_tf/libertas_tf.h b/drivers/net/wireless/marvell/libertas_tf/libertas_tf.h
+index 631b5da09f86..a5d4c09fb918 100644
+--- a/drivers/net/wireless/marvell/libertas_tf/libertas_tf.h
++++ b/drivers/net/wireless/marvell/libertas_tf/libertas_tf.h
+@@ -484,12 +484,9 @@ void lbtf_complete_command(struct lbtf_private *priv, struct cmd_ctrl_node *cmd,
+ void lbtf_cmd_response_rx(struct lbtf_private *priv);
+ 
+ /* main.c */
+-struct chan_freq_power *lbtf_get_region_cfp_table(u8 region,
+-	int *cfp_no);
+ struct lbtf_private *lbtf_add_card(void *card, struct device *dmdev,
+ 				   const struct lbtf_ops *ops);
+ int lbtf_remove_card(struct lbtf_private *priv);
+-int lbtf_start_card(struct lbtf_private *priv);
+ int lbtf_rx(struct lbtf_private *priv, struct sk_buff *skb);
+ void lbtf_send_tx_feedback(struct lbtf_private *priv, u8 retrycnt, u8 fail);
+ void lbtf_bcn_sent(struct lbtf_private *priv);
 -- 
-heikki
+2.34.1
+
 
