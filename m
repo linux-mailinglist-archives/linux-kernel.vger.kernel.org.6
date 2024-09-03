@@ -1,73 +1,62 @@
-Return-Path: <linux-kernel+bounces-312354-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312355-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D50D9969561
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 09:28:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61192969568
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 09:29:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 05D231C231B9
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 07:28:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 85C1E1C231DE
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 07:29:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42FB11D6DB6;
-	Tue,  3 Sep 2024 07:28:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDA3D1D6C77;
+	Tue,  3 Sep 2024 07:29:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="TggNyvfa"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ibtFUNFZ"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D5511D6C61
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 07:28:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD1071D6C61;
+	Tue,  3 Sep 2024 07:29:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725348515; cv=none; b=YChy39Bctg9UrtAD78Y/FN0vp59COOTLC3rYSYvnoh7reoP5vt5EEoCetO8JhDUTZUEFYq7XM/S4mAUQ80J14SRUuRqlrVJQlwdP2DOwGxThK2klxMLGnU3hpsu89FkHUX7ZpqLQQCLvW5BlG67e7aT65GV1rdiDh6VgKVgBrQc=
+	t=1725348543; cv=none; b=YrbRSR6N+n91kfW/dj/LUCn5qN1DT45t6YEDG7wkDh9J3X1akKLMRB5/axIPwWbOaVOGRGFxv3FyiRpdjge22iGCCJ+WcZ8E1gcK6ui4DFGOgnkJJN4LnmUdX/sPZELb6VbM5s/ZMLSprzg3nvzbtHNcBo85nzMTbuLJd5RKmU0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725348515; c=relaxed/simple;
-	bh=fhs9ljhTluEeCofi3Q/UFBFLbvVKPa3FiMv+z4xC+jA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ATZi2RyAfia6Vv56CYw4VtkKiK8dpa9hwxPd5NmjO+JkWk3ijzPmBwrHm/OwXYnm5cieBmkQ7RkST3Su1WCZaOTfKauAg9kT/c2uw4Jzqjlg+vJvnxf5oONRV++llc2e3ND2Q+zME/zf0R05DvVvBhRVoIMd49e1/wMsf5wgagI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=TggNyvfa; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-428e0d184b4so41276695e9.2
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 00:28:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1725348511; x=1725953311; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=6/99gE9FKzn1v1GzAjvpqA+MvSmAnqV4n4m1JlDYUvw=;
-        b=TggNyvfaLlHsi5RAI8osyuwBc7sXZK2paLsu3vdmzE5Zct3XDJ6CBstN0zO95GQAnw
-         ymfXEp8F/1V6EkUUkFHDrYGPYDovJmdSNcWvB4KeTHD3/lxV1j5t+7+VqB0FOFuSWupH
-         8URARN40CRWXnlZhwkJ94qYv+C/3G2I8Wh+Xh3wld7lACEMauivuru93dYsr2JTew/+v
-         dJaf3XK68xvD37Hj7rok2CwMEIgMf7wz9FvxZEhWoLyyGF+Rnqe9sAonmyLz21Pizj2R
-         /RJTim1LPhN44z4kfeDIBiKUAtYS228UiH3te9kksK6yp1pPMMlU0u58pkpgjysziR6o
-         fbWg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725348511; x=1725953311;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6/99gE9FKzn1v1GzAjvpqA+MvSmAnqV4n4m1JlDYUvw=;
-        b=Z9P0h6QXvrbrhp7qdKcZ01Z6+nqlf1xrFUiu4NdJtbMPyoTxsvIxv/ZfX3QWQsDC0s
-         QWklxX5X0QqXUk9z8KxEof5KdOUQgzXywxVHaxF4NJGvDtLfQXQO+W03wmV41YH59GsW
-         0Wo4VW8ONBk8KXKDorRAsX+es2MYYmzFdeq+0o5dPnpxckcGwyga2KXqVoz6MXZe3z8G
-         CCI/5ik0SCtSK9wfRQUq3acHX6cdc4OZbOmEM7eIBEnyjVc45Lnph5zlU1mqTzhKUzBS
-         jEfpehZ3lGlKp3Anb1ZBkchJdNN6FeBKj4v94XSL1z8b1R2v4HNufSijTUVNwgEp0PeR
-         El0w==
-X-Forwarded-Encrypted: i=1; AJvYcCV33wUD5nfOalttMtSYXqbZgGL4dkAZOVOj2octK8SMpGwZqNUliMq8EypC6vjPY/ah9qo6r4dINxAUczE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyrTTr3vCFlFd1IYK/N2hyqJu04KGjxDJlXZ4TCgYWu5F356nca
-	8W5eLZ3OhRwqHQ5e0umhAJ+BnYu0TbhDyu1jNbpVpv6asHu/Iu0u3M7n12FE4JU=
-X-Google-Smtp-Source: AGHT+IFPdKSDwq2svM7AfN9p8jSbfkjJposupx9wGXez9ihUncQIuTAN9qQadaTGHwSVurVmNM9Yow==
-X-Received: by 2002:a05:600c:1ca1:b0:426:5cdf:2674 with SMTP id 5b1f17b1804b1-42c7b59e433mr70256085e9.4.1725348511256;
-        Tue, 03 Sep 2024 00:28:31 -0700 (PDT)
-Received: from [192.168.50.4] ([82.78.167.144])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42bb73e20b7sm161574845e9.14.2024.09.03.00.28.29
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 03 Sep 2024 00:28:30 -0700 (PDT)
-Message-ID: <54d60105-ee5b-48da-92f4-2bcb3dff5c92@tuxon.dev>
-Date: Tue, 3 Sep 2024 10:28:28 +0300
+	s=arc-20240116; t=1725348543; c=relaxed/simple;
+	bh=yTo/8EwDOr8YArIADqD64idxFMEmF+kyRoYrx3NxGCw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Lv8EyPPnBmVcVUm8gIFrzlNZxh919BEOBJbxmtI9opHzvHeHK6pZuROFMeTXjtjrW6hWHD3pT0WgPMQx2fVm9HH15duYOB7gGYk1qjB+lwpzsHfAFKyO+0mFWdgOTpIkue9SoKS7RTE9HCryM4+0J4vPG0bal4TXUI6+gLXq5+k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ibtFUNFZ; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 482NamoZ030904;
+	Tue, 3 Sep 2024 07:28:59 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	IkpCs1nUIGRyUlej5KjWF1AyqtoB7I0xwDRlFtYL48g=; b=ibtFUNFZsxFFUGNb
+	y9ZqldmYP8en+hf2Qf5jLWHjWUZ9yD41LPXl/2GxiDELngvPxZoE8uowOq3cKV1k
+	ssVXdwvVbUF5zoQ+N1272/AF53vQWuhjmpSyjHzbFyw2hJwo2O8LJ/LQ7XebKMeo
+	z4zbVRRAcWXxFdEaxw7gPK51huzVqKHY05qNjDiEqxQNUXUF0pqDKTZ+OuDYo/lX
+	aHPyqsoNIft1hHjNFXEBbYspnmXjVSjrmvMRYgiUeXIQ9lYimnoYTDAZts8JYwyj
+	yrryvIIS1MDyfPCbGcrObsY6dfcE7fjiJcb5rrf26RYs+yNAOOb0kxSiGcX8xz8w
+	eC8cAg==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41bvf8xewb-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 03 Sep 2024 07:28:58 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4837SwxC014185
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 3 Sep 2024 07:28:58 GMT
+Received: from [10.233.21.53] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 3 Sep 2024
+ 00:28:55 -0700
+Message-ID: <cb68781f-7127-47fb-88b2-a99766e16cd6@quicinc.com>
+Date: Tue, 3 Sep 2024 15:28:53 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,219 +64,98 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 01/12] dt-bindings: clock: renesas,r9a08g045-vbattb:
- Document VBATTB
+Subject: Re: [PATCH 3/4] soc: qcom: llcc: add errata to get bank num
+To: Krzysztof Kozlowski <krzk@kernel.org>
+CC: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio
+	<konradybcio@kernel.org>,
+        Conor Dooley <conor@kernel.org>, Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20240903-qcs8300_llcc_driver-v1-0-228659bdf067@quicinc.com>
+ <20240903-qcs8300_llcc_driver-v1-3-228659bdf067@quicinc.com>
+ <vtj5liux4hrb7je3ojnfyixor6sk2oy2p4nlvt2rgnzisjj773@ckyl7a2kpa62>
+ <407fc8ff-8058-4ab4-a822-7a5e47e5b301@quicinc.com>
+ <6c846a47-8192-4c6c-927b-8969485d49aa@kernel.org>
 Content-Language: en-US
-To: Biju Das <biju.das.jz@bp.renesas.com>,
- "geert+renesas@glider.be" <geert+renesas@glider.be>,
- "mturquette@baylibre.com" <mturquette@baylibre.com>,
- "sboyd@kernel.org" <sboyd@kernel.org>, "robh@kernel.org" <robh@kernel.org>,
- "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
- "conor+dt@kernel.org" <conor+dt@kernel.org>,
- "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
- "magnus.damm@gmail.com" <magnus.damm@gmail.com>,
- "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>
-Cc: "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
- "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-References: <20240830130218.3377060-1-claudiu.beznea.uj@bp.renesas.com>
- <20240830130218.3377060-2-claudiu.beznea.uj@bp.renesas.com>
- <TY3PR01MB11346D59E486D88611E8F254F86932@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-From: claudiu beznea <claudiu.beznea@tuxon.dev>
-In-Reply-To: <TY3PR01MB11346D59E486D88611E8F254F86932@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8
+From: Jingyi Wang <quic_jingyw@quicinc.com>
+In-Reply-To: <6c846a47-8192-4c6c-927b-8969485d49aa@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 1jTJ_xkiypB2vVyN2mBBO5ZsaUX4eEbO
+X-Proofpoint-ORIG-GUID: 1jTJ_xkiypB2vVyN2mBBO5ZsaUX4eEbO
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-02_06,2024-09-02_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 mlxlogscore=999
+ suspectscore=0 clxscore=1015 priorityscore=1501 adultscore=0
+ malwarescore=0 phishscore=0 lowpriorityscore=0 impostorscore=0 spamscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2409030058
 
 
 
-On 03.09.2024 09:58, Biju Das wrote:
-> Hi Claudiu,
+On 9/3/2024 3:19 PM, Krzysztof Kozlowski wrote:
+> On 03/09/2024 09:17, Jingyi Wang wrote:
+>>
+>>
+>> On 9/3/2024 3:13 PM, Krzysztof Kozlowski wrote:
+>>> On Tue, Sep 03, 2024 at 02:21:31PM +0800, Jingyi Wang wrote:
+>>>> Use "num-banks" property to indicate the actual num of banks for
+>>>> errata.
+>>>>
+>>>> Signed-off-by: Jingyi Wang <quic_jingyw@quicinc.com>
+>>>> ---
+>>>>  drivers/soc/qcom/llcc-qcom.c | 15 ++++++++++-----
+>>>>  1 file changed, 10 insertions(+), 5 deletions(-)
+>>>>
+>>>> diff --git a/drivers/soc/qcom/llcc-qcom.c b/drivers/soc/qcom/llcc-qcom.c
+>>>> index 8fa4ffd3a9b5..3fb45e625d82 100644
+>>>> --- a/drivers/soc/qcom/llcc-qcom.c
+>>>> +++ b/drivers/soc/qcom/llcc-qcom.c
+>>>> @@ -1275,12 +1275,17 @@ static int qcom_llcc_probe(struct platform_device *pdev)
+>>>>  		goto err;
+>>>>  	cfg = &cfgs->llcc_config[cfg_index];
+>>>>  
+>>>> -	ret = regmap_read(regmap, cfg->reg_offset[LLCC_COMMON_STATUS0], &num_banks);
+>>>> -	if (ret)
+>>>> -		goto err;
+>>>> +	if (unlikely(!of_property_read_u32(dev->of_node, "num-banks", &num_banks))) {
+>>>
+>>> Drop unlikely.
+>>>
+>>>> +		/* errata: get num of llcc banks. */
+>>>
+>>> Huh? What?
+>>>
+>>>> +	} else {
+>>>> +		ret = regmap_read(regmap, cfg->reg_offset[LLCC_COMMON_STATUS0], &num_banks);
+>>>> +		if (ret)
+>>>> +			goto err;
+>>>
+>>> Sorry, but what? You can read it from hardware, but you add DT property?
+>>> No, that's just wrong. Why commit msg explains nothing about reasons and
+>>> problem you are solving?
+>>>
+>> we need the property because there is hardware errata on this SoC, regmap_read get wrong num.
 > 
->> -----Original Message-----
->> From: Claudiu <claudiu.beznea@tuxon.dev>
->> Sent: Friday, August 30, 2024 2:02 PM
->> Subject: [PATCH v3 01/12] dt-bindings: clock: renesas,r9a08g045-vbattb: Document VBATTB
->>
->> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->>
->> The VBATTB IP of the Renesas RZ/G3S SoC controls the clock for RTC, the tamper detector and a small
->> general usage memory of 128B. Add documentation for it.
->>
->> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->> ---
->>
->> Changes in v3:
->> - moved the file to clock dt bindings directory as it is the
->>   only functionality supported at the moment; the other functionalities
->>   (tamper detector, SRAM) are offered though register spreaded
->>   though the address space of the VBATTB IP and not actually
->>   individual devices; the other functionalities are not
->>   planned to be supported soon and if they will be I think they
->>   fit better on auxiliary bus than MFD
->> - dropped interrupt names as requested in the review process
->> - dropped the inner node for clock controller
->> - added #clock-cells
->> - added rtx clock
->> - updated description for renesas,vbattb-load-nanofarads
->> - included dt-bindings/interrupt-controller/irq.h in examples section
->>
->> Changes in v2:
->> - changed file name and compatible
->> - updated title, description sections
->> - added clock controller part documentation and drop dedicated file
->>   for it included in v1
->> - used items to describe interrupts, interrupt-names, clocks, clock-names,
->>   resets
->> - dropped node labels and status
->> - updated clock-names for clock controller to cope with the new
->>   logic on detecting the necessity to setup bypass
->>
->>  .../clock/renesas,r9a08g045-vbattb.yaml       | 81 +++++++++++++++++++
->>  1 file changed, 81 insertions(+)
->>  create mode 100644 Documentation/devicetree/bindings/clock/renesas,r9a08g045-vbattb.yaml
->>
->> diff --git a/Documentation/devicetree/bindings/clock/renesas,r9a08g045-vbattb.yaml
->> b/Documentation/devicetree/bindings/clock/renesas,r9a08g045-vbattb.yaml
->> new file mode 100644
->> index 000000000000..29df0e01fae5
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/clock/renesas,r9a08g045-vbattb.y
->> +++ aml
->> @@ -0,0 +1,81 @@
->> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) %YAML 1.2
->> +---
->> +$id: http://devicetree.org/schemas/clock/renesas,r9a08g045-vbattb.yaml#
->> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->> +
->> +title: Renesas Battery Backup Function (VBATTB)
->> +
->> +description:
->> +  Renesas VBATTB is an always on powered module (backed by battery)
->> +which
->> +  controls the RTC clock (VBATTCLK), tamper detection logic and a small
->> +  general usage memory (128B).
->> +
->> +maintainers:
->> +  - Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->> +
->> +properties:
->> +  compatible:
->> +    const: renesas,r9a08g045-vbattb
->> +
->> +  reg:
->> +    maxItems: 1
->> +
->> +  interrupts:
->> +    items:
->> +      - description: tamper detector interrupt
->> +
->> +  clocks:
->> +    items:
->> +      - description: VBATTB module clock
->> +      - description: RTC input clock (crystal oscillator or external
->> + clock device)
->> +
->> +  clock-names:
->> +    items:
->> +      - const: bclk
->> +      - const: rtx
->> +
->> +  '#clock-cells':
->> +    const: 1
->> +
->> +  power-domains:
->> +    maxItems: 1
+> That's what compatible is for.
 > 
-> Not sure, you need to document "PD_VBATT" power domain 
-> as per Table 41.2, this LSI supports 3 power domains(PD_ISOVCC, PD_VCC, PD_VBATT)
+> Anyway, you did not explain the problem but just send some code. All
+> your patches in this and all future submissions must explain why you are
+> doing this. What you are fixing, why you are introducing something.
 > 
-> Power Mode PD_ISOVCC PD_VCC PD_VBATT
-> ALL_ON      ON          ON    ON
-> AWO         OFF         ON    ON
-> VBATT       OFF         OFF   ON
-> ALL_OFF     OFF         OFF   OFF
+Sure, thanks for remind.
+> Best regards,
+> Krzysztof
 > 
-> PD_VBATT domain is the area where the RTC/backup register is located, works on battery power when the power of
-> PD_VCC and PD_ISOVCC domain are turned off.
+Thanks,
+Jingyi
 
-In Linux, the CPG is the power domain provider for all the IPs in RZ/G3S
-SoC (modeled though MSTOP CPG support). This is how it is currently
-implemented.
-
-Then groups of IPs are part of power domains PD_ISOVCC, PD_VCC, PD_VBATT.
-These power domains are i2c controlled with the help of firmware (at least
-at the moment).
-
-From HW manual:
-- PD_VCC domain always powered on area.
-
-- PD_ISOVCC domain is the area where the power can be turned off.
-
-- PD_VBATT domain is the area where the RTC/backup register is located,
-  works on battery power when the power of
-.
-
-The power to these domains are controlled with the help of firmware. Linux
-cannot do control itself as the CPU is in the PD_ISOVCC. If you look at
-picture 41.3 Power mode transition [1] it is mentioned the relation b/w
-these power domains (controlled by PMIC though firmware) and the supported
-power saving modes: ALL_ON, AWO, VBATT.
-
-Thank you,
-Claudiu Beznea
-
-[1] https://pasteboard.co/4ureEUnyCfV8.png
-
-> 
-> Cheers,
-> Biju
-> 
->> +
->> +  resets:
->> +    items:
->> +      - description: VBATTB module reset
->> +
->> +  renesas,vbattb-load-nanofarads:
->> +    description: load capacitance of the on board crystal oscillator
->> +    $ref: /schemas/types.yaml#/definitions/uint32
->> +    enum: [ 4000, 7000, 9000, 12500 ]
->> +
->> +required:
->> +  - compatible
->> +  - reg
->> +  - interrupts
->> +  - clocks
->> +  - clock-names
->> +  - '#clock-cells'
->> +  - power-domains
->> +  - resets
->> +
->> +additionalProperties: false
->> +
->> +examples:
->> +  - |
->> +    #include <dt-bindings/clock/r9a08g045-cpg.h>
->> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
->> +    #include <dt-bindings/interrupt-controller/irq.h>
->> +
->> +    vbattb@1005c000 {
->> +        compatible = "renesas,r9a08g045-vbattb";
->> +        reg = <0x1005c000 0x1000>;
->> +        interrupts = <GIC_SPI 43 IRQ_TYPE_LEVEL_HIGH>;
->> +        clocks = <&cpg CPG_MOD R9A08G045_VBAT_BCLK>, <&vbattb_xtal>;
->> +        clock-names = "bclk", "rtx";
->> +        #clock-cells = <1>;
->> +        power-domains = <&cpg>;
->> +        resets = <&cpg R9A08G045_VBAT_BRESETN>;
->> +        renesas,vbattb-load-nanofarads = <12500>;
->> +    };
->> --
->> 2.39.2
->>
-> 
 
