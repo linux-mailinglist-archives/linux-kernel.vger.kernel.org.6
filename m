@@ -1,113 +1,139 @@
-Return-Path: <linux-kernel+bounces-312666-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312667-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF0D096998A
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 11:52:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1CAD96998F
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 11:55:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1D8D91C232F4
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 09:52:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6988E1F23A97
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 09:55:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B40341A3036;
-	Tue,  3 Sep 2024 09:52:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 068E51A4E73;
+	Tue,  3 Sep 2024 09:55:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ZwfzR2SJ";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="9vagBQZ4"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FWQLHUpO"
+Received: from mail-yb1-f176.google.com (mail-yb1-f176.google.com [209.85.219.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B720F1A0BF9
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 09:52:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3985419F42D
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 09:55:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725357176; cv=none; b=Txk14ChrSXAnhro18yjYAJ683pHHYOAWknUBAGQ4Mg54Bq/F94Qj+rdrXZx6QNxYFfrx9I5tkwOWAPU5eKRQtu+gMo9kdGLUCuqs3jUy74ieq234Ohx6zpJ73Cc9km7P8IDlqCEr+hAqHXnoUV84+6GY7T6bVGBmkfVHkomcGbQ=
+	t=1725357310; cv=none; b=S+5aEzKs8NyJ2+YHfntarvSGtd9gt1vkwQ8f+9rpvGX78VXW2f9ZsqT6RHJm2cuBC68k0KDpDjJUARJBrg7a7gUaoRnsmgFZeOKGFln5B9ayz/wJ9OJcko38JOmxdI/UALibeUnguXTfEaluEEFhc1HTNb6II+ECE1As9E7gvo8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725357176; c=relaxed/simple;
-	bh=gtayTF3sA8wEN49SEHOYJZvrQsGyFRuWxNuVYbjx7CI=;
-	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:MIME-Version:
-	 Content-Type; b=JGPXvGmz/Iikw7rAwB/7qUBE7+MY/c1xxc0v5M7dSX6Vtx3vQMv+MaMfwbszzwdt5cKGX5IvXi3/lbNymT5ngCRmsL9r1Wfy7QiNPkSvX5yKS0g4Q3Pwm+wg2zmYVUWQyaFvkHYQ7RhnsfDy6xuPt9VkgrUBOyy+cseuXSj4DW4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ZwfzR2SJ; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=9vagBQZ4; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1725357173;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to; bh=Kk1WtdfF/T6Yblr31h6m+g/ge61PN6u9qopwOXRrloo=;
-	b=ZwfzR2SJV/v5pRy5VOnBEh/5TRcTBmKrlBRTVRLeuxBLHAyhwwhswlJaX4iNMNh2kNl31e
-	J7j4uuQKrLT7yIrwQ7SAVToJDxBdaQcy+BtvuI80j/wMd38V9SvZcWPIs73J3o6oDE1S8K
-	+XOOm/gm8kHzDj1miFcLMkAy8soJU5I3UwUr/6N78axu2YXXmYq+WM9q4ohOX9DzrRIoCu
-	DflSLeNmCNmAGRXTYdmdBr7dF7ZC8n+17Xybe2f6htJsGtJvkZHxMLi1MXjhjqhighXJ+S
-	RekTo+LQGTxfm/c3d5rMXxgDbHeu75YLVIe9deQgISLjMyvyeh7thasXo26ocQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1725357173;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to; bh=Kk1WtdfF/T6Yblr31h6m+g/ge61PN6u9qopwOXRrloo=;
-	b=9vagBQZ4gEVvFfk4ddSqjl7pBq/NL8+0mlMZYRy8PytOU21dOWWwkZnrgOqzk/ECQW5F/2
-	LamD+MtAJwRoA2CQ==
-To: Zhen Lei <thunder.leizhen@huawei.com>, Andrew Morton
- <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org
-Cc: Zhen Lei <thunder.leizhen@huawei.com>
-Subject: Re: [PATCH 3/5] debugobjects: Don't start fill if there are
- remaining nodes locally
-In-Reply-To: <20240902140532.2028-4-thunder.leizhen@huawei.com>
-Date: Tue, 03 Sep 2024 11:52:52 +0200
-Message-ID: <87o75583nv.ffs@tglx>
+	s=arc-20240116; t=1725357310; c=relaxed/simple;
+	bh=r/D2XT9csu2hRnKwa7lr4pddgJFqYkNRTZD+HvrK5yY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MhtJxHTsREa1fS+x9wde46V4/g9oW27YRFWNm68+FifWuiGJKVxIfU9GvBHFAXuHgNwdKrEkzFWkYx5dFhXsQdEKfzrbR7a+9gm48EKsiiMoMVxjIOzRoPH6d4CsGhNIoTk+b8lUTuJXJNmCndrVETDcnPCpMITFD2l1Ooi/8VI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=FWQLHUpO; arc=none smtp.client-ip=209.85.219.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f176.google.com with SMTP id 3f1490d57ef6-dff1ccdc17bso5164716276.0
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 02:55:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1725357307; x=1725962107; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=cFqqyo1243gLC8lCdcnS069gRZejGhzhqXUGlqO3d/I=;
+        b=FWQLHUpO39uToecSQdsk7vlCb0xkyRpSb0COBxCyy3BGLftVXO3K9624zyCqWHgWlM
+         6myKdEgRNH2O0OynsP+4dulNFeMGe9eHK+hxY6tbFIL82/xglOq0kSR8LOI4kqpxjCpP
+         meB11FoRFTIoVOYaud/TCllqed/bsC6yCt7oXc0i3fQQes2mHR1B0k//3Ootyowo0bSx
+         l8Fcgf00K6dxfHj2N5LrqhnSTYRXKkmbyTvjjeyzo76RUfrxHYfzvi7t+kQUwJIqRYOj
+         GY21wwWqNn4x3fSTvxDUXT1ZIigZulPolYVT47equ7HCQiJpA0WqhESQAHDHMAVy1ZbY
+         u+Cw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725357307; x=1725962107;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=cFqqyo1243gLC8lCdcnS069gRZejGhzhqXUGlqO3d/I=;
+        b=R+1o1peH4TJncEh+qDuqZo6dD88X8cUbl6XfFso8ybsEy0N/mDQlrLAOleW6YvA18q
+         wbPKshqEZvg5sc9H/stI/xS/MqV7VPafXfdrNGjqIjz0z+dAN7El6YSF5Q8ESGtYm1h4
+         mm5EaEKS75zpUCS5F+vpXi+B3oiDwtQO5Y9T6g9vDR/JJYeEfNAk6Jd0OVEjsWkiVlWn
+         PdXApf1id6S9/prv29+Oh2LYjWQg/ro3EicVNxxPQxBJPBvrvTRksiZhBBQi3bmQIU3u
+         I9FKnzW3iiWad1G5ORec7uBEkOJ7ZcV/QLTdqv4FC5stViCIpxd04RUsFvF3u/F32+Za
+         JGKA==
+X-Forwarded-Encrypted: i=1; AJvYcCV2lMSOQ78gpjLJ6qS4AXeIkz4Mi6KYnwcO11GAxKG9Qm6IBGTjYsNdYsWZI1MeyKizUQYL5jVX7D1OV/8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxlMoXZDzMA0YqXDWB+pLvf+yHe1NHmHWzlFidwq5O53DL9eBq1
+	aoCqiH8vhiBriHcRU/wBw4WW5VzKiu16iikbRgl8GeIf8KLwI3F1Y4BgFRNlDWPpXPc8TnKaWYX
+	yTtfUZ8qpMgWMBwP6iDZuPZdhmvCUKxnBpjitAQ==
+X-Google-Smtp-Source: AGHT+IH+1PDql0ueQ/ES8PwB2F7M/INUIUGvNZZEUFj51QsjECCxPIJAbbiizLcpEvWmhRUegd7BueLrC0lx7UTd+48=
+X-Received: by 2002:a05:6902:723:b0:e13:cb77:5fda with SMTP id
+ 3f1490d57ef6-e1a79ff67d7mr15832832276.12.1725357307286; Tue, 03 Sep 2024
+ 02:55:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20240902224815.78220-1-ulf.hansson@linaro.org>
+ <20240902224815.78220-3-ulf.hansson@linaro.org> <20240903071638.bedt3gllqdacf43a@vireshk-i7>
+In-Reply-To: <20240903071638.bedt3gllqdacf43a@vireshk-i7>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Tue, 3 Sep 2024 11:54:30 +0200
+Message-ID: <CAPDyKFoqEAHns0nrXT6dJR3sRd5VWidK_rzXGHzJiZtk_p0cKw@mail.gmail.com>
+Subject: Re: [PATCH 2/2] OPP/pmdomain: Fix the assignment of the required-devs
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Dikshita Agarwal <quic_dikshita@quicinc.com>, Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <quic_kdybcio@quicinc.com>, Nikunj Kela <nkela@quicinc.com>, 
+	"Bryan O'Donoghue" <bryan.odonoghue@linaro.org>, Thierry Reding <thierry.reding@gmail.com>, 
+	Mikko Perttunen <mperttunen@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	Stephan Gerhold <stephan@gerhold.net>, Ilia Lin <ilia.lin@kernel.org>, 
+	Stanimir Varbanov <stanimir.k.varbanov@gmail.com>, Vikash Garodia <quic_vgarodia@quicinc.com>, 
+	linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Sep 02 2024 at 22:05, Zhen Lei wrote:
+On Tue, 3 Sept 2024 at 09:16, Viresh Kumar <viresh.kumar@linaro.org> wrote:
+>
+> On 03-09-24, 00:48, Ulf Hansson wrote:
+> > To fix this problem, let's instead start by letting the OPP core find the
+> > device node for the required OPP table and then let genpd search for a
+> > corresponding OPP table, allowing us the find the correct required-dev to
+> > assign for it.
+>
+> Why was doing this necessary ?
 
-> If the conditions for starting fill are met, it means that all cores that
-> call fill() later are blocked until the first core completes the fill
-> operation. But obviously, for a core that has free nodes locally, it does
-> not need to be blocked. This is good in stress situations.
+Let me try to elaborate a bit more.
 
-Sure it's good, but is it correct? You need to explain why this can't
-cause a pool depletion. The pool is filled opportunistically.
+In the current code, genpd_find_opp_table() tries to find an OPP table
+for the genpd that the device is getting attached to. Then genpd
+passes that OPP table via devm_pm_opp_set_config(), to let the OPP
+core to hook up a required-dev for it. This was a naive approach, as
+that OPP table may not be the one that actually corresponds to a
+required-opps for the required-dev. Consider the below in DT.
 
-Aside of that the lock contention in fill_pool() is minimal. The heavy
-lifting is the allocation of objects.
+        opp_table_devA: opp-table-devA {
+                compatible = "operating-points-v2";
 
-> diff --git a/lib/debugobjects.c b/lib/debugobjects.c
-> index aba3e62a4315f51..fc8224f9f0eda8f 100644
-> --- a/lib/debugobjects.c
-> +++ b/lib/debugobjects.c
-> @@ -130,10 +130,15 @@ static void fill_pool(void)
->  	gfp_t gfp = __GFP_HIGH | __GFP_NOWARN;
->  	struct debug_obj *obj;
->  	unsigned long flags;
-> +	struct debug_percpu_free *percpu_pool;
+                opp-devA-50 {
+                        opp-hz = /bits/ 64 <2500>;
+                        required-opps = <&opp_pd_50>; //corresponds to
+pd_perf1's OPP table
+                };
+               ....
 
-Please keep variables in reverse fir tree order.
+        devA {
+                compatible = "foo,bar";
+                power-domains = <&pd_perf0>, <&pd_perf1>; //both
+pd_perf0 and pd_perf1 has OPP tables.
+                power-domain-names = "perf0", "perf1";
+                operating-points-v2 = <&opp_table_devA>;
+        };
 
-https://www.kernel.org/doc/html/latest/process/maintainer-tip.html#variable-declarations
-  
->  	if (likely(READ_ONCE(obj_pool_free) >= debug_objects_pool_min_level))
->  		return;
->  
-> +	percpu_pool = this_cpu_ptr(&percpu_obj_pool);
+To make sure we assign the correct required-dev for cases like the
+above, we need to let the OPP core to iterate through the available
+required-opps and see if some of them are corresponding to the OPP
+table for the genpd the required-dev belongs too.
 
-You don't need the pointer
+To manage this in a non-genpd specific way, I added another callback
+in struct dev_pm_opp_config. In this way, it should work for any
+future possible required-devs types too, I think.
 
-> +	if (likely(obj_cache) && percpu_pool->obj_free > 0)
-
-	if (likely(obj_cache) && this_cpu_read(percpu_pool.obj_free) > 0)
-
-This lacks a comment explaining the rationale of this check.
-
-Thanks,
-
-        tglx
-
-
+Kind regards
+Uffe
 
