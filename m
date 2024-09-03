@@ -1,93 +1,105 @@
-Return-Path: <linux-kernel+bounces-313787-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313788-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58E8B96A9BF
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 23:09:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9C0A96A9C1
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 23:10:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 139FD2866E8
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 21:09:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2E0FCB209EC
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 21:10:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1889B1D79A3;
-	Tue,  3 Sep 2024 21:01:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B1051D58BA;
+	Tue,  3 Sep 2024 21:05:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="figUKZY/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lNiVWeCP"
+Received: from mail-oa1-f41.google.com (mail-oa1-f41.google.com [209.85.160.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 639631D7987;
-	Tue,  3 Sep 2024 21:01:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E9A7126C1D
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 21:05:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725397318; cv=none; b=tVRokt6RjvcZEQ7f1XSBOT0Jq6TJ9KAc1ETnZBA7CKxMLjKnC/XFl1sikqvVeYasyNCqHRAWSwk2vkaUDgOhifR8+nZmTw5rSH1Ne8VTSBIamftTNDXHL6opfEkZ1TPc3RWXcahKR3cVRHi7ObKSUfDKK9YIJknsIRktbNtlPpI=
+	t=1725397520; cv=none; b=ZSFlg4tb3ql/UO4nHsOJoyzL+BH/eIqx1ulA6J6sL1B8iqUD/RcZ/YAGmOqPvskWKH81ZxJso0tVVac/zn+T/jPJsxXpKDf6S6gJGrzdElx87nUjtFc81EgyOYkDDZHS8IZp+Kl3MI4dqZIuX9jKNmZdtWFjq8XflK+nPSaAz34=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725397318; c=relaxed/simple;
-	bh=YlgYWrov2J1Ssj0+EKTW9v1CpfXqfqZj60bm9Xzp8gA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LfH6jNWEhNcnuYelEimPq99emCf+7zco7tYi4HdDCJgrAYArJdqrhHo537bZ8zlIT9yoaTT2ViVw5Bte8YndWNd8vs/KrQnwMqfVdiT4qszle0l7z+eQHh7flSzMrXin1Z3kL4ng70v9vn578Hmggy81i3NZlHe1wCZaAPoRAaM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=figUKZY/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CD49DC4CEC4;
-	Tue,  3 Sep 2024 21:01:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725397317;
-	bh=YlgYWrov2J1Ssj0+EKTW9v1CpfXqfqZj60bm9Xzp8gA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=figUKZY/IW8+qj7UyVP2DYHB0tHl/V0Pgl7XXGOIlJCbEkzSModtPUp0dan0N5Myq
-	 Q7rk+ptZvZZSVnYv3dSL3VCISr8aMuhGm92zZCxaA6oLTVHLOgWQWGPCWuqrB+VVUK
-	 YbjcW2ZsfYoYx9vadxljtW++8Rmn7juctFToFEUFzLwpfx8pADCMx2XMQWif7Rp10D
-	 516BJHWIOMlx/QI7FXzzITM5Hb6YmryY8/YcMj9jdcv02+EkIGTa+uiwEtOpJXdhuG
-	 sms353NOhmcFQ8tdzyfUcKzEVhO51qCmV4Zc+Ed1Nl6edZeevKQKcJn4WhY4yXh4TU
-	 fH+9xY7y2v5zA==
-Date: Tue, 3 Sep 2024 23:01:54 +0200
-From: Andi Shyti <andi.shyti@kernel.org>
-To: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Cc: Jarkko Nikula <jarkko.nikula@linux.intel.com>, 
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, 
-	Jan Dabros <jsd@semihalf.com>, linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Vineet Gupta <vgupta@kernel.org>, Russell King <linux@armlinux.org.uk>, 
-	Dinh Nguyen <dinguyen@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Will Deacon <will@kernel.org>, Alexandre Belloni <alexandre.belloni@bootlin.com>, 
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Jiawen Wu <jiawenwu@trustnetic.com>, Mengyuan Lou <mengyuanlou@net-swift.com>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org, 
-	linux-riscv@lists.infradead.org, UNGLinuxDriver@microchip.com, linux-mips@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-snps-arc@lists.infradead.org
-Subject: Re: [PATCH v2 0/7] i2c: designware: Group all DesignWare drivers
- under a single option
-Message-ID: <3phynd24wmymhqugikbdwdzoa6vlzxwv5a6n6bk4446atbf7nu@c2kb766j3pcc>
-References: <20240903142506.3444628-1-heikki.krogerus@linux.intel.com>
+	s=arc-20240116; t=1725397520; c=relaxed/simple;
+	bh=NYMA1oq9BxFGRApD/T7k9bHoKBvP4yeD+4KNXBx5HME=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gqnUa7O1Q7sOPyMqqYLmPskzLUQPAM5jbqkAFLR9O53TrwAzt7EQvR0BZVeVx5eM7LBjKTCsVM7Q+NdzNO/q8W0GYP2X6dlwU3dm0vFsWo0xqksFsB6rWTZktE5M47DpmETlhImDZ/nDAi4dpqOYb91lYaDe+P/i1DA4Fx85h4w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lNiVWeCP; arc=none smtp.client-ip=209.85.160.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oa1-f41.google.com with SMTP id 586e51a60fabf-2705dd4ba64so2809585fac.3
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 14:05:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725397518; x=1726002318; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7/8Mzl5CUtHsRnmmpHB7NbNUNZa2IsBOf+f+oZc0/E4=;
+        b=lNiVWeCPhCI9HN+dscGkN7MtDb9htQafDUsxGyfRyHsKzOeCW+/EZ4dCXtl2CmkFZn
+         uU2qHhAdJOEOfNgugyU6zKAJejCo2vh0jOWxNvIVWz3upMN+fP0yTNVupl0KwbQVFrz5
+         VaeDHUTo2RsH2M/lC2WFMjoFVlHrzvvWKKtTXiZSZgOW6ckQi5ksDqiWjVh5S52T60Vm
+         WPLOF3DT17dkEeYC8Xwvn0I+bLsHfI5+i5sb4DezoMZnjkC66WY+lr2gwKOkmalFzMcO
+         ssnaIrRmzoj66OOCUHIIvQ4WqaUQnoGVd71ESx5YOxOYKGtLCGfA69sVeTgaK792ooek
+         B0CQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725397518; x=1726002318;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7/8Mzl5CUtHsRnmmpHB7NbNUNZa2IsBOf+f+oZc0/E4=;
+        b=oLM1ji0C7ga8BiOK//9LAD+8K/eBki9Hmq0ZLymJW58TimdRsz5JklSY9lz98i+lZb
+         Qz+emwaSPbBZNp29gFw0mfjU8NzCHsBYPtkDRWGU5YdqeLsRQx1V7FsT942wrXiKwh9j
+         tO1oPpzi/4Lo5HKbV2inUpE/h6+FSiWaYHhKVT/Z+k7acqd+2nqenPznslmrskaBJG1Z
+         9QNrbVW9M6r3mpAr1cxGXjN2+zuJWg447c6FR+VdWYJz0cRQo1OeMKt53gg7vrro5+RN
+         5zSF103uuXPbzTlfwQTyd2DksqEAPhKAwCpdl6rbaNchyk5EIGKjVL9X4NJoot5F0tas
+         J9Yg==
+X-Gm-Message-State: AOJu0YxjBtcCXb8cHbKhcETjmObLPFc9xF6/7zKYUDfhzdr0Pqb+6ssM
+	pGG5BtWcDqTkfTA68JkNWszDK85xtHX0Hs7YjpQnrjz2PYIRByryw2zMyMICAJV6U7XXqPzx3eL
+	/76G0o7CKlTU860hHUPaXJElyfes=
+X-Google-Smtp-Source: AGHT+IHOfbrrLsfQ0WJ9O+pB66W4fj99OHCdWaY145KTCgZVpmaqeDZZriGqHKC5T5lJEs85lu9/p3ib8FKyy95nvus=
+X-Received: by 2002:a05:6870:b009:b0:270:5320:2d6d with SMTP id
+ 586e51a60fabf-277c825d723mr8683853fac.47.1725397518053; Tue, 03 Sep 2024
+ 14:05:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240903142506.3444628-1-heikki.krogerus@linux.intel.com>
+References: <20240731201608.1840977-1-robh@kernel.org> <CAL_JsqLzpDC42G35TDjgQpDCJhmy6_oQxG97uut9VKdYCHi_NQ@mail.gmail.com>
+In-Reply-To: <CAL_JsqLzpDC42G35TDjgQpDCJhmy6_oQxG97uut9VKdYCHi_NQ@mail.gmail.com>
+From: Jassi Brar <jassisinghbrar@gmail.com>
+Date: Tue, 3 Sep 2024 16:05:06 -0500
+Message-ID: <CABb+yY1W53SJ1r1yspQpaBjMH+JPC89yBM7G9+WoewSJgjD+Mw@mail.gmail.com>
+Subject: Re: [PATCH] mailbox: Use of_property_match_string() instead of open-coding
+To: Rob Herring <robh@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Jarkko, Andy,
-
-...
-
-> Heikki Krogerus (7):
->   ARC: configs: enable I2C_DESIGNWARE_CORE with I2C_DESIGNWARE_PLATFORM
->   ARM: configs: enable I2C_DESIGNWARE_CORE with I2C_DESIGNWARE_PLATFORM
->   arm64: defconfig: enable I2C_DESIGNWARE_CORE with
->     I2C_DESIGNWARE_PLATFORM
->   mips: configs: enable I2C_DESIGNWARE_CORE with I2C_DESIGNWARE_PLATFORM
->   RISC-V: configs: enable I2C_DESIGNWARE_CORE with
->     I2C_DESIGNWARE_PLATFORM
->   net: txgbe: Fix I2C Kconfig dependencies
->   i2c: designware: Group all DesignWare drivers under a single option
-
-I believe you know this code already, do you mind giving it an
-ack?
-
-Thanks,
-Andi
+On Tue, Sep 3, 2024 at 2:18=E2=80=AFPM Rob Herring <robh@kernel.org> wrote:
+>
+> On Wed, Jul 31, 2024 at 3:16=E2=80=AFPM Rob Herring (Arm) <robh@kernel.or=
+g> wrote:
+> >
+> > Use of_property_match_string() instead of open-coding the search. With
+> > this, of_get_property() can be removed as there is no need to check for
+> > "mbox-names" presence first.
+> >
+> > This is part of a larger effort to remove callers of of_get_property()
+> > and similar functions. of_get_property() leaks the DT property data
+> > pointer which is a problem for dynamically allocated nodes which may
+> > be freed.
+> >
+> > Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+> > ---
+> >  drivers/mailbox/mailbox.c | 22 ++++++----------------
+> >  1 file changed, 6 insertions(+), 16 deletions(-)
+>
+> Ping!
+>
+Acked-by: Jassi Brar <jassisinghbrar@gmail.com>
 
