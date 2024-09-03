@@ -1,154 +1,150 @@
-Return-Path: <linux-kernel+bounces-312937-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312938-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6AB47969DF9
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 14:43:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8810C969DFB
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 14:43:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E3811C22F4C
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 12:43:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3BC611F2299A
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 12:43:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7026C1D0970;
-	Tue,  3 Sep 2024 12:43:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 387BC1D094E;
+	Tue,  3 Sep 2024 12:43:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DZ6JnnC5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="FRBkIOhD"
+Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1D1F1B12C4;
-	Tue,  3 Sep 2024 12:42:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A459E1C986E;
+	Tue,  3 Sep 2024 12:43:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725367379; cv=none; b=alSlLloFrelxFlYzjeeucyn6o+sGCtWSNnFleLNbZy1Q2+P4NQ4ynALgqIW7W0B61blJlDQvCEc94zFaBOAmPGtyz2WDB2jgFQfiCczjZZYzdLN/677hMrayHbeQq17tTlWSsjeuDi7ujylTU+WPds5LxYsINNVUf46MgRFWV1E=
+	t=1725367400; cv=none; b=t8LTq1+QBrL+ExafD5UVzPvY9maQ28PqA50+mX27vjZ97EXcV38tLdjPNAvEidnoGv1fDz4Ry0oAjI4lwfoZWTufG+9c/wb98M6yTcxqS2rmJKelQ5EjsamQzuaoYXZnb8694A8GGw3XmapWjrONaZPCi8tIfnxG4KjdSOO91yE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725367379; c=relaxed/simple;
-	bh=Sj6LW76y8E1QHpBBI4Cym7jDGJkhSCV8zLONWuArfYA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fJfofRwlRYPAxs549Nwpas0ulYsdLhyLeI0d10GosS/ebQkoyOpUIsvB2biSICHm9F9VCaQqMvbevv3KAKvVp3c9HxeezHLYiKYlJJ4j3vA9G/8Qj0FTKiT8Wyw3G3hCPlSp97p7ov++09IBmCtwMztyx7ZFXlc7nGz5zblUqAg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DZ6JnnC5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE014C4CEC4;
-	Tue,  3 Sep 2024 12:42:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725367379;
-	bh=Sj6LW76y8E1QHpBBI4Cym7jDGJkhSCV8zLONWuArfYA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=DZ6JnnC5wmT76ahDwQkgSTzJT724+pe/rk+clLNPt6Km3yq9bpPMwfNX+abmzX856
-	 w9kttZO+hIuGzHKh2NwuxBfyO8HItFPDkix5g194k8QKf0MKGEXT5Bm0E/icKn1jKP
-	 R8SKap2QZaXiba3kLcXjHvDfYQxi+jHZ7sUkgERCbIRfdsJHQ2ee0CPpUR4RyX1RqO
-	 tt5nHmKzI1ltGTki/2Ux+2kVKBwE3hU9sTfEles1h7YAlIJKtEfH9xZs1l5iCireTX
-	 Df2e27SaIy2QudDQI5aPbiDhIctuQtfxPkwUfxujg+8nXhRY7agk3YoasJg8M8MUh9
-	 +d2dh9P0T/pGA==
-Message-ID: <8d203417-e3da-4969-87ea-f77cdb720756@kernel.org>
-Date: Tue, 3 Sep 2024 14:42:51 +0200
+	s=arc-20240116; t=1725367400; c=relaxed/simple;
+	bh=yTF/fGN4RR3VpT0hzYIJTXgEPXt7knOdnRhpip1sUmA=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=m06jGsVTWgICirBGurEIkGCtt6zozzgd5j1Dpy7esaYMbqy1ghJ8Fwz2xyGZmMQ2HG2hPFda0VI5/NYaLd0ZMvUSZ266iGodj01N5OEjc0OPnqVCZFofCnoIxW1/50GBCRuR1ngxVhc1a+X5vTu3SqN0YAGaTB+bKntomjjOL/8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=FRBkIOhD; arc=none smtp.client-ip=198.47.23.249
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 483Cgufj049953;
+	Tue, 3 Sep 2024 07:42:56 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1725367376;
+	bh=kxd09p87eyIpKEs742hX/lKSrt7kw7ToaYqhb3glXVw=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=FRBkIOhD6e2QzcAQrI9xnzPedjQmZgKaBx+Y+YYCvvTPeOlENOiFOiYkMEPSLQR25
+	 c386Kvvd1dzT059YU0ZBI4OHZ1dqqwfd6SL+KHaGom6tLT9p24rymuukkHbiq53S4V
+	 7WMQ+3/V55UqyvD9cCgWayVexND8omaAcS7D9Rhw=
+Received: from DFLE112.ent.ti.com (dfle112.ent.ti.com [10.64.6.33])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 483CguFU084459
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Tue, 3 Sep 2024 07:42:56 -0500
+Received: from DFLE113.ent.ti.com (10.64.6.34) by DFLE112.ent.ti.com
+ (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 3
+ Sep 2024 07:42:56 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE113.ent.ti.com
+ (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Tue, 3 Sep 2024 07:42:56 -0500
+Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 483Cgu0k010869;
+	Tue, 3 Sep 2024 07:42:56 -0500
+Date: Tue, 3 Sep 2024 07:42:56 -0500
+From: Nishanth Menon <nm@ti.com>
+To: Josua Mayer <josua@solid-run.com>
+CC: Vignesh Raghavendra <vigneshr@ti.com>, Tero Kristo <kristo@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] arm64: dts: ti: k3-am642-sr-som: mux ethernet phy
+ reset signals input
+Message-ID: <20240903124256.kmlkjcihl6zyzgiu@commuting>
+References: <20240903-am64-phy-lockup-v2-1-8cf6bd138ebd@solid-run.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/2] dt-bindings: arm: Add Qualcomm extended CTI
-To: Mao Jinlong <quic_jinlmao@quicinc.com>,
- Suzuki K Poulose <suzuki.poulose@arm.com>, Mike Leach
- <mike.leach@linaro.org>, James Clark <james.clark@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Andy Gross <agross@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
- Rob Herring <robh+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-kernel@vger.kernel.org, coresight@lists.linaro.org,
- linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org
-References: <20240903121847.6964-1-quic_jinlmao@quicinc.com>
- <20240903121847.6964-2-quic_jinlmao@quicinc.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240903121847.6964-2-quic_jinlmao@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20240903-am64-phy-lockup-v2-1-8cf6bd138ebd@solid-run.com>
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-On 03/09/2024 14:18, Mao Jinlong wrote:
-> Add Qualcomm extended CTI support in CTI binding file. Qualcomm
-> extended CTI supports up to 128 triggers.
+On 11:52-20240903, Josua Mayer wrote:
+> Specifically on AM64 SoM design, the DP83869 phys have a chance to lock
+> up if reset gpio changes state. Update the pinmux to input-only,
+> strongly enforcing that these signals are left floating at all times.
 > 
-> Signed-off-by: Mao Jinlong <quic_jinlmao@quicinc.com>
+> This avoids sporadic phy initialisation errors mostly encountered during
+> power-on and reset. In this state the phys respond to all mdio messages
+> with a constant response, recovering only after power-cycle.
+> 
+> Signed-off-by: Josua Mayer <josua@solid-run.com>
 > ---
->  .../devicetree/bindings/arm/arm,coresight-cti.yaml | 14 ++++++++++++++
->  1 file changed, 14 insertions(+)
+> Changes in v2:
+> - update commit message with additional details
+> - rebased on v6.11-rc1
+> - Link to v1: https://lore.kernel.org/r/20240704-am64-phy-lockup-v1-1-4a38ded44f9d@solid-run.com
+> ---
+>  arch/arm64/boot/dts/ti/k3-am642-sr-som.dtsi | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
 > 
-> diff --git a/Documentation/devicetree/bindings/arm/arm,coresight-cti.yaml b/Documentation/devicetree/bindings/arm/arm,coresight-cti.yaml
-> index 6a73eaa66a42..141efba7c697 100644
-> --- a/Documentation/devicetree/bindings/arm/arm,coresight-cti.yaml
-> +++ b/Documentation/devicetree/bindings/arm/arm,coresight-cti.yaml
-> @@ -87,6 +87,10 @@ properties:
->            - const: arm,coresight-cti-v8-arch
->            - const: arm,coresight-cti
->            - const: arm,primecell
-> +      - items:
-> +          - const: qcom,coresight-cti-extended
+> diff --git a/arch/arm64/boot/dts/ti/k3-am642-sr-som.dtsi b/arch/arm64/boot/dts/ti/k3-am642-sr-som.dtsi
+> index c19d0b8bbf0f..b1f06071df4c 100644
+> --- a/arch/arm64/boot/dts/ti/k3-am642-sr-som.dtsi
+> +++ b/arch/arm64/boot/dts/ti/k3-am642-sr-som.dtsi
+> @@ -320,7 +320,7 @@ AM64X_IOPAD(0x0278, PIN_INPUT, 7) /* EXTINTn.GPIO1_70 */
+>  	ethernet_phy0_default_pins: ethernet-phy0-default-pins {
+>  		pinctrl-single,pins = <
+>  			/* reset */
+> -			AM64X_IOPAD(0x0154, PIN_OUTPUT, 7) /* PRG1_PRU1_GPO19.GPIO0_84 */
+> +			AM64X_IOPAD(0x0154, PIN_INPUT, 7) /* PRG1_PRU1_GPO19.GPIO0_84 */
+>  			/* reference clock */
+>  			AM64X_IOPAD(0x0274, PIN_OUTPUT, 5) /* EXT_REFCLK1.CLKOUT0 */
+>  		>;
+> @@ -329,7 +329,7 @@ AM64X_IOPAD(0x0274, PIN_OUTPUT, 5) /* EXT_REFCLK1.CLKOUT0 */
+>  	ethernet_phy1_default_pins: ethernet-phy1-default-pins {
+>  		pinctrl-single,pins = <
+>  			/* reset */
+> -			AM64X_IOPAD(0x0150, PIN_OUTPUT, 7) /* PRG1_PRU1_GPO18.GPIO0_20 */
+> +			AM64X_IOPAD(0x0150, PIN_INPUT, 7) /* PRG1_PRU1_GPO18.GPIO0_20 */
+>  			/* led0, external pull-down on SoM */
+>  			AM64X_IOPAD(0x0128, PIN_INPUT, 7) /* PRG1_PRU1_GPO8.GPIO0_73 */
+>  			/* led1/rxer */
+> @@ -340,7 +340,7 @@ AM64X_IOPAD(0x011c, PIN_INPUT, 7) /* PRG1_PRU1_GPO5.GPIO0_70 */
+>  	ethernet_phy2_default_pins: ethernet-phy2-default-pins {
+>  		pinctrl-single,pins = <
+>  			/* reset */
+> -			AM64X_IOPAD(0x00d4, PIN_OUTPUT, 7) /* PRG1_PRU0_GPO7.GPIO0_52 */
+> +			AM64X_IOPAD(0x00d4, PIN_INPUT, 7) /* PRG1_PRU0_GPO7.GPIO0_52 */
 
-That's just enum in previous entry/list.
+PIN_INPUT is bi-directional despite what the name states. Either way, it
+is a bit late for me to pick things up.
 
-> +          - const: arm,coresight-cti
-> +          - const: arm,primecell
->  
->    reg:
->      maxItems: 1
-> @@ -254,6 +258,16 @@ examples:
->        clocks = <&soc_smc50mhz>;
->        clock-names = "apb_pclk";
->      };
-> +  # minimum extended CTI definition.
-> +  - |
+>  			/* led0, external pull-down on SoM */
+>  			AM64X_IOPAD(0x00d8, PIN_INPUT, 7) /* PRG1_PRU0_GPO8.GPIO0_53 */
+>  			/* led1/rxer */
+> 
+> ---
+> base-commit: 8400291e289ee6b2bf9779ff1c83a291501f017b
+> change-id: 20240704-am64-phy-lockup-107ea5ffa228
+> 
+> Best regards,
+> -- 
+> Josua Mayer <josua@solid-run.com>
+> 
 
-No need for new example. No differences here.
-
-
-Best regards,
-Krzysztof
-
+-- 
+Regards,
+Nishanth Menon
+Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
 
