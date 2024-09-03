@@ -1,130 +1,129 @@
-Return-Path: <linux-kernel+bounces-312368-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312369-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0C37969597
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 09:33:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69BB3969598
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 09:33:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5CEEB1F249BD
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 07:33:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 230F1284FFF
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 07:33:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07272205E08;
-	Tue,  3 Sep 2024 07:31:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE0661D54F2;
+	Tue,  3 Sep 2024 07:32:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b="PbKTKQVW"
-Received: from omta036.useast.a.cloudfilter.net (omta036.useast.a.cloudfilter.net [44.202.169.35])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Vs+13x3W"
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E379201270
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 07:31:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.202.169.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 531AC1D61B1
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 07:32:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725348713; cv=none; b=JhTlDgCl2WBYW76/Rz7zq7a7TUEUrMDo+hAsnxVlFCqewOX1i+oxCbAnW27inn5Ux9j95c4x4FDtQA4Lz6uMzw1QoVk8K346E1HChQdQMAibipYKd1JtPGtqkKRpgyItMW0oDHbZ2liX5LHwAnhHBo/Om+bd5nsstlHKdpJIa7M=
+	t=1725348774; cv=none; b=dujnnxpFCg3E1X7B2NZC07P1CdNJcadiIMOV6SEvzPs+5qjxEQFg6jp4mavZMO/Czk50XsxedKnMJmmQIF0VB+gBFEcV3AWEr9y/Q6OHTcymGQuDLZn6/EVgfSkBlMzVZYcDoKy247TILfQeOoV2qY963A7C1dlVCSFklsVrqX0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725348713; c=relaxed/simple;
-	bh=oaOtF3mnOGhPPknWuchy+VG4R9Md2oOdD/wELS/3P+0=;
-	h=Subject:To:Cc:References:In-Reply-To:From:Message-ID:Date:
-	 MIME-Version:Content-Type; b=PEGwko5ummLRZ01BrOvw3AxdAPGyK7qLE//8fpi2jEHPUcZAu68ffAP0Sp8XfNZGyMBpWJnnzhBckWKV+Z7FJVpWUX40JC0SgNmTJZ3Gxu5wpu2VO8AqGpyt8SxgCSgbKVwd8DGEEgk/LqZ1P2S+Io3lTaCWR4gA9a44RYqRhGk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net; spf=pass smtp.mailfrom=w6rz.net; dkim=pass (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b=PbKTKQVW; arc=none smtp.client-ip=44.202.169.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=w6rz.net
-Received: from eig-obgw-5008a.ext.cloudfilter.net ([10.0.29.246])
-	by cmsmtp with ESMTPS
-	id lDLtsHt0viA19lO10sGj8g; Tue, 03 Sep 2024 07:31:50 +0000
-Received: from box5620.bluehost.com ([162.241.219.59])
-	by cmsmtp with ESMTPS
-	id lO0zs49N7lBoelO10savHK; Tue, 03 Sep 2024 07:31:50 +0000
-X-Authority-Analysis: v=2.4 cv=Lc066Cfi c=1 sm=1 tr=0 ts=66d6bb66
- a=30941lsx5skRcbJ0JMGu9A==:117 a=30941lsx5skRcbJ0JMGu9A==:17
- a=IkcTkHD0fZMA:10 a=EaEq8P2WXUwA:10 a=7vwVE5O1G3EA:10 a=VwQbUJbxAAAA:8
- a=HaFmDPmJAAAA:8 a=49j0FZ7RFL9ueZfULrUA:9 a=QEXdDO2ut3YA:10
- a=nmWuMzfKamIsx3l42hEX:22 a=hTR6fmoedSdf3N0JiVF8:22
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=w6rz.net;
-	s=default; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Date:
-	Message-ID:From:In-Reply-To:References:Cc:To:Subject:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=/JdGR1ElBqWoLMmUPKNOcI9zGa/tpf3safM59qtOubc=; b=PbKTKQVWWrpyNlg6JS12ZJwKHc
-	bZ7Ts9OADmy3Z/xGnnnRsYDdEYhm2ttsflpkGgs4DySgvOFE7H7zLJ6lpGLETl5yW4yiprZAf9w7E
-	g0O4ymuIBptQBScNGlCYtKjclHDZhpE7XT3v7Yctgc28q12s7JQSga5kiqh9kaggzOrzXsHY325OJ
-	cdV3gE3W+ZFWIYaDRz8rcOjLVOcy63KszVjA2gQcyE0G7X2mLgHW7Snw2PfcpnBHTLB5ivSAUnoMf
-	lqvqY0zVvzDRQHQT+jkstvYrKkAJ2hgccjiB7LsMNEYkqgbthwtzZZwQgu9n5YmSdENhjARrsFHs0
-	vDKsJKCQ==;
-Received: from c-73-223-253-157.hsd1.ca.comcast.net ([73.223.253.157]:38110 helo=[10.0.1.47])
-	by box5620.bluehost.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.96.2)
-	(envelope-from <re@w6rz.net>)
-	id 1slO0x-003tmn-1Z;
-	Tue, 03 Sep 2024 01:31:47 -0600
-Subject: Re: [PATCH 5.15 000/215] 5.15.166-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
- rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
-References: <20240901160823.230213148@linuxfoundation.org>
-In-Reply-To: <20240901160823.230213148@linuxfoundation.org>
-From: Ron Economos <re@w6rz.net>
-Message-ID: <4fbb6c1d-bb54-778f-810d-8c6816ee01d7@w6rz.net>
-Date: Tue, 3 Sep 2024 00:31:45 -0700
-User-Agent: Mozilla/5.0 (X11; Linux armv7l; rv:78.0) Gecko/20100101
- Thunderbird/78.14.0
+	s=arc-20240116; t=1725348774; c=relaxed/simple;
+	bh=U7FqpAKPzV4buH+ZI1vofCGLlOfNoJm00tc4Xp0bqlQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ELQqnZyo05tbCaQv+V29o5A11a9P20sxXfn/jL0Ttdv1RNABbA4U0wl3V9ZpNWRqDEqScTy8CPHWDmAAovsjWIFiBWEhB3KGNqR7uRhwohzMJww5cp78eOjz2BO5vZko2VG4U4mOi6Ie9CoVrW3zncb9d9RbJXsK6qm/9fR3YSM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Vs+13x3W; arc=none smtp.client-ip=209.85.167.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-5334b0e1a8eso6503509e87.0
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 00:32:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1725348770; x=1725953570; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=U7FqpAKPzV4buH+ZI1vofCGLlOfNoJm00tc4Xp0bqlQ=;
+        b=Vs+13x3WKrzOvshslTGxrV2rs3mzB14w8WyXspdGmAJ0FPqDDtMXD1FIxD4DOuvK33
+         qWKA6xAa3Al0oJrO9pVkt32AMSgbusv89lhdyNYjuFolfkSy8872pv5dntM5We6GgPyg
+         YCXVx42dnaEZLGqsrrMwLvUyrmdA0lPVvLgfTej5CbeaqZa7nNNErQdSQ+d9DH/9qma3
+         1dAtAomK8rp/LDKAs/yh95mF0rnCC7bS55CysBoqRzXKpa5ymw3WBFJJ4gTN+GUPOoKR
+         0Lj0NtM89RABWVIbT914UdgpRgLD7o+Q7Q5Z8DSbouxKalILdHFcEkYO2SsQV1NvspYA
+         +foA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725348770; x=1725953570;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=U7FqpAKPzV4buH+ZI1vofCGLlOfNoJm00tc4Xp0bqlQ=;
+        b=KzMwHKD4usnWGoi2kL/+Mf2cLYLXjwikEl6vPrSRR0ushGoDGHIp24CZTdCWqTQmUU
+         rUh7jcajPGHd3YKQd5eOcDubbGrU/Hhhr1pzBiLgJAqkYlUWmdFWKqcDT/CUP/Dn29vk
+         QYOtYLp5yF43b4k4ZfErgu3uQj1xO4ClUGONE85zBCJUmBGwZyDBEunMPXFaDTPNctSD
+         b4DQPFTOJN+QrWcvEL9hY59yO1dMk29dPo9N2oUYdBf0Znr3o8xfviNgEPmzzQGUVhEe
+         FSqrOCczh1jF0NvIaHnBtmlvI0tm8EL3tBgKC8w6r2Xt79EMn66j3cwbpbUC4rdQ/AYc
+         QioQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX/7JlY+vuGTNVVsVl8OAREh00Wzhld2A14Q1PLRD01Da0kgfZOteT93dt9FwxdvZRSOoLAEBnc6v1d7PY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxRuj+sn0NQC4lxlBTvaTkusoDOr/3fl92qpU6l+FKSrWnmoD6+
+	FvznLQgtok3vBqd+Ar5tUr/wLj4PmbApFrSjJQnzQjRQQq8rDiKL0zNPIphchH8lrpcQVHNVFH2
+	G9eSzAykRy7iXJSI5MyZmTKXLoEycC5Ej7okG5A==
+X-Google-Smtp-Source: AGHT+IHrFPfCS/BVC8UCkjCGmyI7i7/wfoGrPytiT60dSKpQkQEML/b4+Lrc3MCNMZfPCyT+5uqmLNbJH1mOjM56rKk=
+X-Received: by 2002:a05:6512:3b11:b0:52c:e054:4149 with SMTP id
+ 2adb3069b0e04-53546b052fdmr9233089e87.15.1725348770143; Tue, 03 Sep 2024
+ 00:32:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - box5620.bluehost.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - w6rz.net
-X-BWhitelist: no
-X-Source-IP: 73.223.253.157
-X-Source-L: No
-X-Exim-ID: 1slO0x-003tmn-1Z
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: c-73-223-253-157.hsd1.ca.comcast.net ([10.0.1.47]) [73.223.253.157]:38110
-X-Source-Auth: re@w6rz.net
-X-Email-Count: 61
-X-Org: HG=bhshared;ORG=bluehost;
-X-Source-Cap: d3NpeHJ6bmU7d3NpeHJ6bmU7Ym94NTYyMC5ibHVlaG9zdC5jb20=
-X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfOeOZcmRy50J22hZSJY+HktfpbaVRJ6b21U9SCdRliceox409ZJ+HKYQBnyxhy9qcpmPI6gcavFaV9zME8mBVtCt+vZiqPD/NVfeheBJ11DJYb7IrqPK
- Ba4kNEOxPmc/PzbOQaylols689Vnq9m3b34sYoQ0JT3oABDR8eHkaCSxYz4VY3ETdvGgRzk4PXzl6H6aozF73gDsrJMplOYk0gw=
+References: <20240829-sm8650-v6-11-hmd-pocf-mdss-quad-upstream-8-v1-0-bdb05b4b5a2e@linaro.org>
+ <20240829-sm8650-v6-11-hmd-pocf-mdss-quad-upstream-8-v1-2-bdb05b4b5a2e@linaro.org>
+ <CAA8EJpp_LWmuN8CFuQEAME-O44_wJXUKsR1QwahuigzSss5Rqw@mail.gmail.com>
+In-Reply-To: <CAA8EJpp_LWmuN8CFuQEAME-O44_wJXUKsR1QwahuigzSss5Rqw@mail.gmail.com>
+From: Jun Nie <jun.nie@linaro.org>
+Date: Tue, 3 Sep 2024 15:32:38 +0800
+Message-ID: <CABymUCPXDTCVeeC0s+1UyuqYF0XNW55qtOBV9--BOoSjAzVjkg@mail.gmail.com>
+Subject: Re: [PATCH 02/21] drm/msm/dsi: fix DSC width for the bonded DSI case
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Rob Clark <robdclark@gmail.com>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
+	Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>, 
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, linux-arm-msm@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org, Jonathan Marek <jonathan@marek.ca>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 9/1/24 9:15 AM, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.15.166 release.
-> There are 215 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+Dmitry Baryshkov <dmitry.baryshkov@linaro.org> =E4=BA=8E2024=E5=B9=B48=E6=
+=9C=8829=E6=97=A5=E5=91=A8=E5=9B=9B 18:54=E5=86=99=E9=81=93=EF=BC=9A
 >
-> Responses should be made by Tue, 03 Sep 2024 16:07:34 +0000.
-> Anything received after that time might be too late.
+> On Thu, 29 Aug 2024 at 13:19, Jun Nie <jun.nie@linaro.org> wrote:
+> >
+> > From: Jonathan Marek <jonathan@marek.ca>
+> >
+> > For the bonded DSI case, DSC pic_width and timing calculations should u=
+se
+> > the width of a single panel instead of the total combined width.
 >
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.15.166-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.15.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+> What is a "single panel"? Please rephrase the commit message so that
+> it reads logically.
 
-Built and booted successfully on RISC-V RV64 (HiFive Unmatched).
+Yeah, it is a bit confusing without the usage case explanation. "single DSI
+interface" shall be much better here. Because bonded-DSI can work with
+a single panel with 2 DSI, or with 2 panels with one DSI on each panel.
+>
+> >
+> > Bonded DSI can be used to drive a single panel having two input
+> > channels, or to drive two panels with a input channel on every panel th=
+at
+> > behave like single panel for display controller.
+>
+> Missing actual action. See Documentation/process/submitting-patches.rst
+>
+> >
+> > Signed-off-by: Jonathan Marek <jonathan@marek.ca>
+>
+> As pointed out during internal review, missing Fixes tag. Any reason
+> for ignoring it?
 
-Tested-by: Ron Economos <re@w6rz.net>
-
+Sorry, it is missed by mistaken. I am just more familiar with
+"Signed-off-by" than
+"Fixes:" tag, so not sensitive to Fixed tag and miss it when you
+mention it. Will
+add it.
 
