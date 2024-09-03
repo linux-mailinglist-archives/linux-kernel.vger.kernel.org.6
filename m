@@ -1,196 +1,270 @@
-Return-Path: <linux-kernel+bounces-312858-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312860-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0A73969C84
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 13:55:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21504969C89
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 13:56:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D7C55B236DF
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 11:55:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 45E5D1C23454
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 11:56:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9CE21B985D;
-	Tue,  3 Sep 2024 11:54:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16CCC1A42BB;
+	Tue,  3 Sep 2024 11:56:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="opVlBOCX"
-Received: from out30-111.freemail.mail.aliyun.com (out30-111.freemail.mail.aliyun.com [115.124.30.111])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="U0cASj1p";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="nfp9eSvg"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F6941A42C2
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 11:54:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.111
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725364497; cv=none; b=DL55ITgkY9M3wsAwnpEhtl4gt2KjVSH/4RBE4y/6C2FiuIoioeRzH8S1m7DJSjMjiNocrBIA1cxBCak/2mYW5MruX27sWo0U8zoEJ1xDbOs9DzRRsfQ172pC16C+fnzvlZ1r2M2JcCd7Um2vaNtelna8YD/Z/mxq5gM119QqcpU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725364497; c=relaxed/simple;
-	bh=+mPmNewDlZ8Ihi496kUYO8SXRxUeuQVCA1BZMp+uGtM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=jSAgaejs3WyOyRGbbWa1HzSmCFUn9RsLfTsUjapVqHp7VflDGfVyOYvTf1/FVYGG5o+bl7ipb+trS5TDr1f0Hm/2+lS0UwsCGIVvyHL5eTmu/QAmYhmUIr2FZF9zYriJSmBJbNjR+NPlf2Sx83pgrbK1io5OohU39620ylN8DgE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=opVlBOCX; arc=none smtp.client-ip=115.124.30.111
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1725364485; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=i06l3kzqnVLxhoBfc5PeACxcFuKsRV3tYKhJtecTSU0=;
-	b=opVlBOCXf22/Eq79yMbL4osBu5W4o5PqIqulewPgcfX8b8XliwnXPUkvxbz5BWvL5ZpZWjlxvAfiNH8XVs65kn+5pwDMWcGSQgiKnYMfD5HzFtw/VcGzlwQHD/PYTgyDtS5ErSi+4kg8ZNUhT9PMiRw+V4gkQXHMqSL8Hcf5vo0=
-Received: from 30.221.129.151(mailfrom:joseph.qi@linux.alibaba.com fp:SMTPD_---0WEDCBFt_1725364484)
-          by smtp.aliyun-inc.com;
-          Tue, 03 Sep 2024 19:54:45 +0800
-Message-ID: <b9efefaf-76ea-4ffb-8601-ad83b593ef7a@linux.alibaba.com>
-Date: Tue, 3 Sep 2024 19:54:44 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A22D1C9853;
+	Tue,  3 Sep 2024 11:56:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725364586; cv=fail; b=FvZXuVJqXShTfjqc+huxcFQoIlNdsp2nQNhrmOnokTd1sNPEWwgD/Dr1fzIO9K5rGHwcDynp/z7LaYY4RpNZDed0NNeMuJAwqx/ifVpJHEaIIn6p5gTlELXqsSHfsX2O2B0HAFK2giLWJHJo51H5pRu8XvtqJpa/fivdAN/Qe10=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725364586; c=relaxed/simple;
+	bh=QC4SMjIrSPNFQ2dIS/amM3qeOx/niBGqiEVxF8DF9wQ=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:Content-Type:
+	 MIME-Version; b=Fi6NKj1AobwySVci5IL/eoacvYeyUmOgjDC6B+DblO6qYIR7LdGGHVy3a2HxVvg/M/1pe7VaScnVH4VWisxQSgnHxm6TIZN6DxSZGVQdyT6tk0fmllkHifNwknmZu9rt9H2uodsOtd9bQGPJbz6pLKE7Sa3dP8I2IosQ+OvwkPU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=U0cASj1p; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=nfp9eSvg; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4837fh2U009164;
+	Tue, 3 Sep 2024 11:56:21 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
+	from:to:cc:subject:date:message-id:in-reply-to:content-type
+	:mime-version; s=corp-2023-11-20; bh=RtPmHdRYmvjNkooWIxgCF5gk39o
+	9hZBWkAdxdU8CF4o=; b=U0cASj1p1oQ8fvrNaYng2duRJpG+vVProyjHHeJWjt1
+	R/NYIuzzwkivrzreuLKcI/zFlXgV9Ve9EeAlMW0vdBAZOYzHjeaK7N8/OwCnf0wo
+	y1npSU3DQ3i2b0cNRCQyvRIuITH5n3IRjyfXPDkAUmPKfLjNQ2siDK+ZaA+Gi5WM
+	edxik8LTtKVF2aLYwHm8dOxD6vD3Ai1PUYlP4yQ5c4gLfG1PGgTrX0+Bub6aULg+
+	H1qhH6Hx5uXSFmQkNr3Wvi72uf0jwt+1GwuTC9Z3bfBTslnon3MLZQxt8f4G1CA7
+	iF1T7dA5jwK1vIB8GXqyoPd9AM2q1j+r/Wj/VfMLvLA==
+Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 41duw7rq1p-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 03 Sep 2024 11:56:20 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 483BNB0E032650;
+	Tue, 3 Sep 2024 11:56:20 GMT
+Received: from nam11-co1-obe.outbound.protection.outlook.com (mail-co1nam11lp2169.outbound.protection.outlook.com [104.47.56.169])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 41bsm8rw6u-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 03 Sep 2024 11:56:20 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=W5ZY8VwBeY5dqxzqEx14XMZXb0b/E+5ZpsVuU0apcfNjh+r6vdrF1oaDQ1VVuj44tXqUWosuhe46qTELH17HL+UEXVuKILJBcNiwkCjHM2NrqGBSDBwEc3WkdoGw1An1PE9SZOTsHOLpkFtWZE61u7n71FYxX4m/xDZBWYKHNSxe2Ww4paN2WaRbD2Vv6HWd1rpxFfTCbD7idoI1ZKtbkKMJNiToq1pWy5AuuncMY9riZu0qNb/ZAImjzQ9wH1ntMBDRenmSERCdSTC8cmbupY9aWby+uHJ7XhfvTK25s6aFWCmVIPRFtCfUsY811fYLTcWLUCrLbG9JOGYFMB8QCw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=RtPmHdRYmvjNkooWIxgCF5gk39o9hZBWkAdxdU8CF4o=;
+ b=Zckh1qf7Aiuk0LT4/N/bWE/uykO3BjxMbfvxNyunslJ6Sca9/fU/AwIvg/LYzZJKNr3trWyNtfZNunG2JPhqAFkNDi9byL8ZhNxjpJP194KXlj1UPcNhFK5+Qng7wz/TW20ZRmqxSctro892iGzcVj9TiNh6rSe5Nfz8Y1MMvv/kTGiG0feivjvA2ZthD8tzGuNNcQ7D9IQBvQ5g4yYmeBlL59q54RHnLo2fa6cuvi4oinFleLyMntMpnC1NTi16XYMbUftKPCr8xV9bOHsIPo19lYDsLOQPfFAVtVIfn2M5Ja3IZ5P20O9npw+3Imcij6Lf02deBJjmfb4XNj2E4g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=RtPmHdRYmvjNkooWIxgCF5gk39o9hZBWkAdxdU8CF4o=;
+ b=nfp9eSvgT+6tFyhnatOKnvIq2gBxKd1XbwN5mXt0onLRExqKbqq4gtWd8C0wxg1WftWQuSGmSE3rIlrOdsUJQvilrWsMqAQrv+kSbZzUZFB2Hf53ByxViVulv4lfwLA7SkqXfu/YaaIIwww+G0roVuODfsBmNQYdglG/4jDrUFk=
+Received: from PH0PR10MB5563.namprd10.prod.outlook.com (2603:10b6:510:f2::13)
+ by BN0PR10MB4855.namprd10.prod.outlook.com (2603:10b6:408:122::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7939.10; Tue, 3 Sep
+ 2024 11:56:17 +0000
+Received: from PH0PR10MB5563.namprd10.prod.outlook.com
+ ([fe80::1917:9c45:4a41:240]) by PH0PR10MB5563.namprd10.prod.outlook.com
+ ([fe80::1917:9c45:4a41:240%5]) with mapi id 15.20.7939.010; Tue, 3 Sep 2024
+ 11:56:17 +0000
+From: Siddh Raman Pant <siddh.raman.pant@oracle.com>
+To: "stable@vger.kernel.org" <stable@vger.kernel.org>
+CC: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "edumazet@google.com" <edumazet@google.com>,
+        "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>,
+        "netdev@vger.kernel.org"
+	<netdev@vger.kernel.org>
+Subject: Re: CVE-2024-41041: udp: Set SOCK_RCU_FREE earlier in
+ udp_lib_get_port().
+Thread-Topic: CVE-2024-41041: udp: Set SOCK_RCU_FREE earlier in
+ udp_lib_get_port().
+Thread-Index: AQHa/fhI0gbVTRlQ3kG6Pkm54NsdRw==
+Date: Tue, 3 Sep 2024 11:56:17 +0000
+Message-ID: <0ab22253fec2b0e65a95a22ceff799f39a2eaa0a.camel@oracle.com>
+In-Reply-To: <2024072924-CVE-2024-41041-ae0c@gregkh>
+Accept-Language: en-US, en-IN
+Content-Language: en-US
+X-MS-Has-Attach: yes
+X-MS-TNEF-Correlator:
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PH0PR10MB5563:EE_|BN0PR10MB4855:EE_
+x-ms-office365-filtering-correlation-id: 4418da39-f517-426d-8272-08dccc0f6b67
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|376014|1800799024|366016|38070700018;
+x-microsoft-antispam-message-info:
+ =?utf-8?B?WjdaVURZL0NSNWhkYm5Gc3dMQWZVNGVZY3E0bmYvNU8vQWNlUjJKYVIrdHlD?=
+ =?utf-8?B?Z1BRZ3J2ei9jRnNpNGdkdDQ0bTY0MG1RZUVMdmxoRGwxcjVJYkQ2WEJSOVBj?=
+ =?utf-8?B?VXE4ZnVCZzZPWkFVT0NGU2hIN0FGQ0hPYWNOZ2RTYzUwTkJwS1R3ZnhiN1JS?=
+ =?utf-8?B?VDhZclQ2TTk0a3pFR3c3anhKdGhQVmEzMU12VFdWTGViMnJsZ0NVNlZhcWNv?=
+ =?utf-8?B?YVVqZkgrVWxJeWRtZXZmTkxneWdzSUd3OUo2Um4ycUNrVXFWQlVSeGZrRGRl?=
+ =?utf-8?B?YXFPVDQ1YVgwck0xeUxOUzRpb1JVZE1BR1l4ZzFzRmZWWUt0a0c2NFRjM3Ba?=
+ =?utf-8?B?VEZGeXRRZ1FRWHc2S3lKd3ZweE1OTU9GVVdhYW1RQXVTUHZzRlh6RHo5SW1S?=
+ =?utf-8?B?YmRadWtJb3g3MkZDUEFuSFIyNlNUOHAxQ1ZFV0pHai9COTVvMDE1S2U2alFL?=
+ =?utf-8?B?bHlCVi9UY09OaUlQWHU2TW1MZjZCaWJRL1BsQ0c0K3R4NWNvUXRZRGRKYVVJ?=
+ =?utf-8?B?a0VsL1F4UU9zYi9QYjQ5MytsSGRhVjV0RjVzYWtWTGpEaVRQa1ZHUHROekVS?=
+ =?utf-8?B?V3FTbjFnZXIyQkE3NHVERGdneDU0bzA2d2hFSzBRVUg5UHJsTlhtVEF6MDRE?=
+ =?utf-8?B?WFBOOUVWU24yODU5bUtzdnFNQSs0OUZia3Z2SXh3TnducXg1MDJ2Z05uUUtI?=
+ =?utf-8?B?TmV6VXBzbW1ZNVh2aFcyMXVLajBCdEIwNzFLU21mcHB2WmhDS2xlcDJORFdJ?=
+ =?utf-8?B?ZkthNlowRllWUk1OVVcvRmwvWHJJU2ZETUZlZEVEQ0xuUWN4WWVTYUlTeXZ6?=
+ =?utf-8?B?QmE0WHVEc3VGMXhxOFoxZ0Z0TXF0NXRZY25jKzkrdHI2YVB2V1ZMcnZRejRn?=
+ =?utf-8?B?bzVDb1hkVE45SjNCK1pGMVJkdWlZb2tFanBJQUZURFhkL1ZTUDAyNjZjUWIv?=
+ =?utf-8?B?bGg3T29GVFhzcUZLVXNCbzNESkt0ZVF6VnlGTmdDVHNIbnkzV1JXTHhQQXpI?=
+ =?utf-8?B?MkdyVExzdmhYQmdRWTZETWNjWlZrUjU2NmgxWGZ3aVlYZ3ZybnJVR0ZUM3N1?=
+ =?utf-8?B?S1lTaTllSEhFd0RyME5KSVovUVdCdWRobDBwamhHSmExZTRJMWFVSVVHc2Jq?=
+ =?utf-8?B?RVhiZk51MmJHU1cvRlpOcmZDSjdoRTdmeDRrNHJMRndxbDdXL0JlRHNVbzBn?=
+ =?utf-8?B?ZDFzelM5WjhEME40b0NHZ0tzcU4wRVZIa3RPcHZjaUJPazUvelBxTmdxcndp?=
+ =?utf-8?B?Y1htdmNid1RBQnlHTFBHMERkSG96d0tOK1NRbEFscmRiR29PbUNCUi9ONW5h?=
+ =?utf-8?B?M3R6SEQyVDZnUWNuRll1SmY2VVFNRzMzS1hvQVRvR3o3TDB3eFFvMXZxdEdH?=
+ =?utf-8?B?U3pPWHJXb0ZDQ3RqdTljQ1JhbTNKb1h0NnovVUlxNDA5VlBJNFhNS1NySDFF?=
+ =?utf-8?B?cjlnT3JUbnNnRGlQSVN5bTdDKzZ1dGtJem1QMlFWMWxNcEcrMXV0SHpWdHQv?=
+ =?utf-8?B?VTZITFJ2dFRVTkdKTVlUREQvMTZCVWduMW9xTDFmZTlXcXRMSFVsdmU0eEFL?=
+ =?utf-8?B?cWdMYkwrZmlJSldGZHZUdVplRnR1N1dFRThBS1hIM2lDbStHeGtFU09qcGtW?=
+ =?utf-8?B?VnNId2N6Ky9HakNkclNLK21QMWxOZHl2R0FFdk41ajg1ZVJBdWNHaUFzVVor?=
+ =?utf-8?B?NElFYkdJdkRqSDBrWTRSL3c3dU10OEpYcFNiRGJDTWdYMmNsQ0VIRElFS3dl?=
+ =?utf-8?B?N1E5L09acFNLK1lnc2NYWUgwTUF4R0JWTjhqRHJYeXhUZUhXTTlBbkNGZm5Y?=
+ =?utf-8?B?NXlacG9hWWpnQ0VYOHpOdE5ST1VLbzJuU1VjVVdjSGhUVHlwNVNFeUs5TjJ1?=
+ =?utf-8?B?ckh0ejg5WUxPUDVEU09kbDNUblFZMkdnVm5mZkgzTzE0d0E9PQ==?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR10MB5563.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?NUVOUGNUcGpHLzVkemdkRDE5YTlkL25RdDl4VmFnQW5XNGRCR1NlakxlQjE5?=
+ =?utf-8?B?ZVJOQ2FsVkJpUUtvMUNLSEVlMkFDN0pSMjUwYm5RS2VMU1htaFU2blkyemJR?=
+ =?utf-8?B?M1RnZy9pamFQY3JkbXZxUlIxd2RBY3dyRWlIODFqNEhVeGltbjF1eW5yMDdr?=
+ =?utf-8?B?Sm9qSWpuR0Q0ZnhPSVFmb2Rzc1g0TUkyWnVWWWFNTUUrK0QzU1ZjbkhmaW9K?=
+ =?utf-8?B?V1lSUXl4ZlZTK2JJR0RLYWVZbW1NS1U5ZGVLMTE4TFdSTnB4WEJKTERYZ2wy?=
+ =?utf-8?B?REoza3RlOHV2aXBTbk5CenB5c1RETjFVVVlyK3NjeC9USDZsalcxK3BVWlMx?=
+ =?utf-8?B?dWxUcmtLUmg2bGlXa3hFZXFpYy9PdnAwTkE2d2h2cXVNMitOZTMrWnZwME9U?=
+ =?utf-8?B?UnE4RkdnLzRzRElwV3poejlsaXZldGtoWXFtdTJQQW5NMFpaYVY4NVRrU2po?=
+ =?utf-8?B?bFpxSm5GeGRmazhVZGNGaUJKcjlhVEwzRXU2a3FKbjRzWTRWeHlkTzBZTmtv?=
+ =?utf-8?B?VGNHSDJETXlsdVM5UU5SNVB6Qlh3REhDL2VuYkhjOVJxY05qdDl3cThobnJ2?=
+ =?utf-8?B?NVpPSGJoWDdjYVRCRGRMM296aVdCZUdhUG81aURCbVB2M1NTM2Nrb2N2SWYz?=
+ =?utf-8?B?YnVwdUNudTlnRU51clZIZm5rY3ppWXFVZERxZWNmTjNlalFDeUhHbXVuZnVw?=
+ =?utf-8?B?N0FmK2VJaG1HcmZVVlNSUVYrSWdocVJ2eXh1TEk0dVlFWm80OFRzUUFaeGg2?=
+ =?utf-8?B?eGQrMzNnK2swQXhMS1dqNzgrYUpUTTMwUXpSMlhZWEZWYVRXSTZHdU1rajVz?=
+ =?utf-8?B?Sms5S29zNkh1SS9ud0dlS3RmRVNBbVVMYllXQTZCMXNnTFJOMkN3MkxHVkVJ?=
+ =?utf-8?B?UVYva1JlcTV6Q2QxWXFpRUVta0RHS09UQ3dWdFRyV01CWkNxT09Tcm5ybThy?=
+ =?utf-8?B?dEpzVHVFdXhvOUNObmtFTmErdDJHUFQ4QTZub3I2M3M2TzRxSDR1cHk0OFFC?=
+ =?utf-8?B?eWR5WFBOOFJlUTJRMzE0MnhhL1UxQ2djWmZPeElxVzMweHRtdXZYT1Fwa3RH?=
+ =?utf-8?B?NXBUOTViWDNTT0lqYWJXQ0ZTeC84MUY5ZmJsRVpXSzJtL2t6SXBpVFg0SGQw?=
+ =?utf-8?B?RlJld2l6NzdTbmdhNXlBSzN3RHdoL21wQVNmNCtLczB6WXdtdG0wZzJJSFVy?=
+ =?utf-8?B?T3pZVnA1MjhhME5LUm5oWXplYmNxemg1bmRUVHIrZVFpNGUxZWl2b0tFSkxG?=
+ =?utf-8?B?bkdZMUhHaWpYWjJ3MXp4UGdJRElmSXVMOWNoYjFuY0dRT1VsV0Y5RDZlQmhk?=
+ =?utf-8?B?NnV2RExHRDM4bGV4dVBuRDNxditZaVVlUG4vTnEwUkcyL0FvbzNqb2VnSWVi?=
+ =?utf-8?B?RWx6clB1QW5MRjIwalZlcEZBTEpJK3ltWWZHcyt0QlQ2emJud0d4YVMwc0Ix?=
+ =?utf-8?B?ME1iWWRnOVNQU1hmbmtiWUxzbGE3NHovZTlYc29vN3JpTFFxZXJhRVlnMVR0?=
+ =?utf-8?B?aWZCR0hwd0xsVlVyb2JXa3R1czlvZHJIYm8wZUREbXRNZUtieDdzUllGSUph?=
+ =?utf-8?B?aHR2VmhkK1g2ampzTUZvcTRzSStHQzZSNzRMZTlEZEdodWVqUVo5TlZQdVhG?=
+ =?utf-8?B?L09FYVJxZVNJYUV0THJ5TEx4K3RrNWpIUGtVUk1uOEcyREhJMlR4SnBDQmFM?=
+ =?utf-8?B?UURyUzZnTFBOM3g1SmRQMTRNMkg4b3cyUW1HVmN0OFRqaUd6ZWxwL2tIWERk?=
+ =?utf-8?B?M3ZRWTl0cVBBRjdSRGpEMlZJNVUzeHorN3pRdi9EakVoVzMvVHI1czU5eWEy?=
+ =?utf-8?B?eFo2K2VYRDRvQ0grbHZWampQK1NNRnp0WjA3NzVYSUZ4TnFvenQxL1JTV2ds?=
+ =?utf-8?B?clFDK3lPRVhlN2FDeS91Z2hUZXN2czZxMTZpYktZUUN1SElLRW9GOUh1bnc5?=
+ =?utf-8?B?dGRSQ2I2TkNvYld4RW5nL2M1OWJjME9CRmVGS3dkcUQ1ZERMcEJHcGtUbk5j?=
+ =?utf-8?B?UmdsUElIZEExcGZoTERYa0dvVUE1MGVNb215L3hiZUdvZ0lkYnhmNmF6V3Bx?=
+ =?utf-8?B?ZklwSklkSHNFcjJCTHdPd1daYXJXY0hadXNob3lQaUFDV3l6K0hYeEl2Ti8v?=
+ =?utf-8?B?a1VoOFN5RWZZN0dpdFZCUlhDQmE1RUJaSFpUWlJMVjFsMXJHUGluWkxxSHBB?=
+ =?utf-8?Q?9W18mHjCj5sz796+NTajJPOIMhA8E0J744LLYhhcHAXh?=
+Content-Type: multipart/signed; micalg="pgp-sha512";
+	protocol="application/pgp-signature"; boundary="=-Hr2YRQ6916y2vnbjmYPE"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [syzbot] [ocfs2?] WARNING: ODEBUG bug in ocfs2_local_read_info
-To: syzbot <syzbot+f7af59df5d6b25f0febd@syzkaller.appspotmail.com>,
- jlbec@evilplan.org, linux-kernel@vger.kernel.org, mark@fasheh.com,
- ocfs2-devel@lists.linux.dev, syzkaller-bugs@googlegroups.com
-References: <000000000000a1395d062124e614@google.com>
-Content-Language: en-US
-From: Joseph Qi <joseph.qi@linux.alibaba.com>
-In-Reply-To: <000000000000a1395d062124e614@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	8+t7MlBwiII6pWEZ8hIAvY175/YbBIq3ojqH3Oj46uQ53oUK1az3WYvdBdAxqrqeuWSqkzGjvFBfZvRLlPEgdG3dTZ9dWkNexRHgWb+s/G9wxzhjVnCgpOC8E3CpQagYYyEnVU2OjdLWy1OiyRPHRO2Hu3ZvIyxGRv3P7D+NQO4wT+xbJoWhz00kePFIkwvw6zFx6U2VufopzErvpTamUcHO235VPnVHkfZwdF2WGm9M2VUgvLsHu9AAMQU6aB+57tiAQcqx4sPaN3IGJ3rc6W19gshQqbsbIfh0iEaZvHBoKga+YIfYjoq0DVrlfelRMpbZdxwrcB2u5JO1bFJrhI/7SJIpjMAS1vuapfPW7catbJ6tCWvv+wcjn5owAs+QB6jCylNy4JYf1/HaVtowlL68q59PluRmg+npGE6/b9YDxQe8JmdVse6OxBMgQZRDx1LGtPvdcxfTH7jfiFGWdGTAQN16uTGuY8wteYTazWMJI1dnrju0kf1HEDopU8gBi4gl1/V9PfOl3N5c42R5sLvXEOkNf50UayI/cdTDW2H8Gkz1xKo+D8hTvfp2voYF5l9qd4W2CBIPa5AkB9GXJUk1gqfoE7MIFPtfrCsOKHI=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PH0PR10MB5563.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4418da39-f517-426d-8272-08dccc0f6b67
+X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Sep 2024 11:56:17.7800
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: CTFjY2toqsJY6o58aE5nuvLnrDU7IFmkl1rCGIJT3u8uHVSm/I+bIBObLEm7BkLvRXQeUjWwPIY9N/z/48C+ZrNZMMz5GCavn1K17qtCiiQ=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN0PR10MB4855
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-02_06,2024-09-03_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 spamscore=0 phishscore=0
+ mlxscore=0 bulkscore=0 adultscore=0 malwarescore=0 mlxlogscore=999
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2407110000
+ definitions=main-2409030096
+X-Proofpoint-GUID: PBcsrd1bvctLQarplsfaV0zWI6xOXgfG
+X-Proofpoint-ORIG-GUID: PBcsrd1bvctLQarplsfaV0zWI6xOXgfG
 
-When ocfs2_load_local_quota_bitmaps() fails, it will free oinfo with
-active dqi_sync_work.
+--=-Hr2YRQ6916y2vnbjmYPE
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
+On Mon, 29 Jul 2024 16:32:36 +0200, Greg Kroah-Hartman wrote:
+> In the Linux kernel, the following vulnerability has been resolved:
+>=20
+> udp: Set SOCK_RCU_FREE earlier in udp_lib_get_port().
+>=20
+> [...]
+>=20
+> We had the same bug in TCP and fixed it in commit 871019b22d1b ("net:
+> set SOCK_RCU_FREE before inserting socket into hashtable").
+>=20
+> Let's apply the same fix for UDP.
+>=20
+> [...]
+>=20
+> The Linux kernel CVE team has assigned CVE-2024-41041 to this issue.
+>=20
+>=20
+> Affected and fixed versions
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D
+>=20
+> 	Issue introduced in 4.20 with commit 6acc9b432e67 and fixed in 5.4.280 w=
+ith commit 7a67c4e47626
+> 	Issue introduced in 4.20 with commit 6acc9b432e67 and fixed in 5.10.222 =
+with commit 9f965684c57c
 
-diff --git a/fs/ocfs2/quota_local.c b/fs/ocfs2/quota_local.c
-index 8ce462c64c51..ebe0dbc8db4a 100644
---- a/fs/ocfs2/quota_local.c
-+++ b/fs/ocfs2/quota_local.c
-@@ -782,6 +782,7 @@ static int ocfs2_local_read_info(struct super_block *sb, int type)
- 		if (locked)
- 			ocfs2_inode_unlock(lqinode, 1);
- 		ocfs2_release_local_quota_bitmaps(&oinfo->dqi_chunk);
-+		cancel_delayed_work_sync(&oinfo->dqi_sync_work);
- 		kfree(oinfo);
- 	}
- 	brelse(bh);
+These versions don't have the TCP fix backported. Please do so.
 
-On 9/2/24 11:50 PM, syzbot wrote:
-> Hello,
-> 
-> syzbot found the following issue on:
-> 
-> HEAD commit:    df54f4a16f82 Merge branch 'for-next/core' into for-kernelci
-> git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
-> console output: https://syzkaller.appspot.com/x/log.txt?x=15c4a31f980000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=dde5a5ba8d41ee9e
-> dashboard link: https://syzkaller.appspot.com/bug?extid=f7af59df5d6b25f0febd
-> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-> userspace arch: arm64
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17b4f0fb980000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11974d43980000
-> 
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/aa2eb06e0aea/disk-df54f4a1.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/14728733d385/vmlinux-df54f4a1.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/99816271407d/Image-df54f4a1.gz.xz
-> mounted in repro: https://storage.googleapis.com/syzbot-assets/0c40477ea929/mount_0.gz
-> 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+f7af59df5d6b25f0febd@syzkaller.appspotmail.com
-> 
-> (syz-executor200,6389,1):ocfs2_local_read_info:763 ERROR: status = -5
-> ------------[ cut here ]------------
-> ODEBUG: free active (active state 0) object: 00000000d8b0ce28 object type: timer_list hint: qsync_work_fn+0x0/0x16c
-> WARNING: CPU: 1 PID: 6389 at lib/debugobjects.c:518 debug_print_object lib/debugobjects.c:515 [inline]
-> WARNING: CPU: 1 PID: 6389 at lib/debugobjects.c:518 __debug_check_no_obj_freed lib/debugobjects.c:990 [inline]
-> WARNING: CPU: 1 PID: 6389 at lib/debugobjects.c:518 debug_check_no_obj_freed+0x398/0x47c lib/debugobjects.c:1020
-> Modules linked in:
-> CPU: 1 UID: 0 PID: 6389 Comm: syz-executor200 Not tainted 6.11.0-rc5-syzkaller-gdf54f4a16f82 #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/27/2024
-> pstate: 60400005 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-> pc : debug_print_object lib/debugobjects.c:515 [inline]
-> pc : __debug_check_no_obj_freed lib/debugobjects.c:990 [inline]
-> pc : debug_check_no_obj_freed+0x398/0x47c lib/debugobjects.c:1020
-> lr : debug_print_object lib/debugobjects.c:515 [inline]
-> lr : __debug_check_no_obj_freed lib/debugobjects.c:990 [inline]
-> lr : debug_check_no_obj_freed+0x398/0x47c lib/debugobjects.c:1020
-> sp : ffff800099586af0
-> x29: ffff800099586b30 x28: 0000000000000000 x27: ffff80008b4827c0
-> x26: ffff0000d78c6ac8 x25: dfff800000000000 x24: 0000000000000000
-> x23: ffff80009410aee8 x22: ffff0000d78c6000 x21: 0000000000000000
-> x20: ffff8000820f29cc x19: ffff0000d78c6800 x18: 0000000000000008
-> x17: 626f203832656330 x16: ffff800080345a84 x15: 0000000000000001
-> x14: 1fffe000367a12c8 x13: 0000000000000000 x12: 0000000000000003
-> x11: 0000000000000001 x10: 0000000000000003 x9 : 7913726110ee6700
-> x8 : 7913726110ee6700 x7 : ffff80008b3cfc98 x6 : 0000000000000000
-> x5 : 0000000000000001 x4 : 0000000000000001 x3 : 0000000000000000
-> x2 : 0000000000000006 x1 : ffff80008b462a00 x0 : ffff80012489c000
-> Call trace:
->  debug_print_object lib/debugobjects.c:515 [inline]
->  __debug_check_no_obj_freed lib/debugobjects.c:990 [inline]
->  debug_check_no_obj_freed+0x398/0x47c lib/debugobjects.c:1020
->  slab_free_hook mm/slub.c:2219 [inline]
->  slab_free mm/slub.c:4473 [inline]
->  kfree+0x124/0x3e0 mm/slub.c:4594
->  ocfs2_local_read_info+0x1338/0x1550 fs/ocfs2/quota_local.c:785
->  dquot_load_quota_sb+0x700/0xb48 fs/quota/dquot.c:2460
->  dquot_load_quota_inode+0x280/0x4f4 fs/quota/dquot.c:2497
->  ocfs2_enable_quotas+0x1d4/0x3cc fs/ocfs2/super.c:926
->  ocfs2_fill_super+0x3c80/0x4740 fs/ocfs2/super.c:1141
->  mount_bdev+0x1d4/0x2a0 fs/super.c:1679
->  ocfs2_mount+0x44/0x58 fs/ocfs2/super.c:1188
->  legacy_get_tree+0xd4/0x16c fs/fs_context.c:662
->  vfs_get_tree+0x90/0x28c fs/super.c:1800
->  do_new_mount+0x278/0x900 fs/namespace.c:3472
->  path_mount+0x590/0xe04 fs/namespace.c:3799
->  do_mount fs/namespace.c:3812 [inline]
->  __do_sys_mount fs/namespace.c:4020 [inline]
->  __se_sys_mount fs/namespace.c:3997 [inline]
->  __arm64_sys_mount+0x45c/0x5a8 fs/namespace.c:3997
->  __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
->  invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
->  el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
->  do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
->  el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:712
->  el0t_64_sync_handler+0x84/0xfc arch/arm64/kernel/entry-common.c:730
->  el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:598
-> irq event stamp: 66264
-> hardirqs last  enabled at (66263): [<ffff8000802b6870>] raw_spin_rq_unlock_irq+0x14/0x24 kernel/sched/sched.h:1427
-> hardirqs last disabled at (66264): [<ffff80008b2ee35c>] el1_dbg+0x24/0x80 arch/arm64/kernel/entry-common.c:470
-> softirqs last  enabled at (66246): [<ffff8000801f77b8>] softirq_handle_end kernel/softirq.c:400 [inline]
-> softirqs last  enabled at (66246): [<ffff8000801f77b8>] handle_softirqs+0xa3c/0xbfc kernel/softirq.c:582
-> softirqs last disabled at (66225): [<ffff800080020de8>] __do_softirq+0x14/0x20 kernel/softirq.c:588
-> ---[ end trace 0000000000000000 ]---
-> (syz-executor200,6389,1):ocfs2_enable_quotas:939 ERROR: status = -1
-> (syz-executor200,6389,1):ocfs2_fill_super:1145 ERROR: status = -1
-> ocfs2: Unmounting device (7,0) on (node local)
-> 
-> 
-> ---
-> This report is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
-> 
-> syzbot will keep track of this issue. See:
-> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-> 
-> If the report is already addressed, let syzbot know by replying with:
-> #syz fix: exact-commit-title
-> 
-> If you want syzbot to run the reproducer, reply with:
-> #syz test: git://repo/address.git branch-or-commit-hash
-> If you attach or paste a git patch, syzbot will apply it before testing.
-> 
-> If you want to overwrite report's subsystems, reply with:
-> #syz set subsystems: new-subsystem
-> (See the list of subsystem names on the web dashboard)
-> 
-> If the report is a duplicate of another one, reply with:
-> #syz dup: exact-subject-of-another-report
-> 
-> If you want to undo deduplication, reply with:
-> #syz undup
+Thanks,
+Siddh
 
+--=-Hr2YRQ6916y2vnbjmYPE
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEQ4+7hHLv3y1dvdaRBwq/MEwk8ioFAmbW+VcACgkQBwq/MEwk
+8ip4Vw//VrCgo+xWejnzBuBhAT+na6JLyy+MklZVa7oxCT/902M7e570SRDhq94k
+nkQ0njAq+Pobe9FDNlHRBiygmLY3YObnnjDDDFZD4RNBtbfqPbGjnWn+6CyuXTAX
+YyywsTb0bDU9Y3ZTd9VPEGmO2D9GGM72SGn+vXnrHw3+CoR3Rfn79HAh2pX+QAZE
+kKwthCCp+RIZ3yj3Nie2kNswTVpu4P7vYlAgdwLQnK5NIg677mjLtMIO940w7wWy
+ULixUP01xxSANEe9oLRNyjeX8KuBfSSqxbfcRn9HkMNFWH+insGK5Wso/C5BfoS2
+cor2BCbNlCBF+fpi2OveOCoFaVHeyTys8sNGL/iYjUkr0YBsh+0UhOiLX9QRIG8p
+96sCFYzqPTdnWyM4RhbrZ4dNDi4c0f+EbTynHBV/B0PAr4bEl+qZvof6C4rh3twI
+ZC2Nfkr9ykLFEPJxSSpEiIiuATP7Pg195T3txB0N0KHyEw3qI3mzsSWX8fE+pxwq
+Yi9Lj0I5WDg5Ibii/73eWOC5oYOBGfA41e2ZC2ixUNAboHMnDF789jEI3AvJ9K55
+pM3fjAGglHWh54EDf0fw11mm/PRzS9h2YMv9RTHJj/OaNSwMfBXkjrI2pZeL0C0+
+DSK3qbTraA9/1etv1i5oPfYc5vLI+V5TcESLPLjwMfrCpBywAXk=
+=qsRd
+-----END PGP SIGNATURE-----
+
+--=-Hr2YRQ6916y2vnbjmYPE--
 
