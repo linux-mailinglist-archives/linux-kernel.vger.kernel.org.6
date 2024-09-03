@@ -1,106 +1,129 @@
-Return-Path: <linux-kernel+bounces-313392-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313393-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 620AE96A4E7
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 18:56:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FC1296A4EA
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 18:57:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2044A288A94
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 16:56:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 64BBE1C23BDF
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 16:57:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7049E18BC3A;
-	Tue,  3 Sep 2024 16:56:46 +0000 (UTC)
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 982DE18BC39;
+	Tue,  3 Sep 2024 16:57:53 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CD4E17A90F;
-	Tue,  3 Sep 2024 16:56:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 978D9189BBF
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 16:57:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725382606; cv=none; b=CH16yAGkRewze/Ws2dnnKnbkOJq8kYyLi5OmJA/dYVzzwZhRxaDRp/ovGmncF6CPyW3Db80pTN6+2DHfcyUViZGRGiky7TY/0Xp/vaYK5X3YFLg3W758XDzfAhOi/xSKr5bwWKsTFpuFjqxFYzSS8gM8v355gQhr1dK7DQwBKdo=
+	t=1725382673; cv=none; b=rExfTqDLi7ylSbMii5/5rJjpA79FyzNzFpiDYdJginEwtE6MI5Oz3iB0umuCPyUcIpGbuN5XL1Mj869jqB1dmWKsUeN9XxBawaviKEvD3v4e9wy1phkkJhutjPE9+pWrnuK3hZ/LVjO4h51whResMj/zO5Jzwza4T3ZgYkgpE3o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725382606; c=relaxed/simple;
-	bh=rKkYRwFcgoQMTnREOmP35/mtE44/WeGdXpoaxJyIHhg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YDGc+I/AY41w3Rjg98hzmL4snUXSJOmgrY0lIvxj2IPU/FrEwuueaGjKyWcd1XcpM1UmCyv/dDzeaXrm4lnOi/fci3Z+hfUJXGl7lO0UR3dy/f9vXssSa8g0KSEnQ4a9v7MV0cIsRq3zwRN+8EsTnN52hxEop0PZYAzyZYosCFY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4WysGf22nGz9sSH;
-	Tue,  3 Sep 2024 18:56:42 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id JzJmN4SzLcUB; Tue,  3 Sep 2024 18:56:42 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4WysGf1FZ7z9sSC;
-	Tue,  3 Sep 2024 18:56:42 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 1A00F8B778;
-	Tue,  3 Sep 2024 18:56:42 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id 1Eunu3JRLihx; Tue,  3 Sep 2024 18:56:42 +0200 (CEST)
-Received: from [192.168.234.228] (unknown [192.168.234.228])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 9C6338B774;
-	Tue,  3 Sep 2024 18:56:41 +0200 (CEST)
-Message-ID: <90924209-888d-4ff3-8f60-f82a073bcf1c@csgroup.eu>
-Date: Tue, 3 Sep 2024 18:56:41 +0200
+	s=arc-20240116; t=1725382673; c=relaxed/simple;
+	bh=Kp4Ltf2L/vJqCknBSuRSkxLSWkJH/qnHIhhNntGIG68=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TfmVDCFuYuF0LgZjkLLXCtFELyAjkLK/jufRArcbmUUDlQDeC0j3L7y9GE9Kv+rs7u5grwNkCRYKh7WhEllXo2n/ZOyMEQGawvOggOaYf65mtzxzKuJLJbVaPWmXAQpR//uC0AsVrDgAYv9PjcCKVpP1h7vs9cACc1GfPlANzBA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1slWqG-0002YO-GD; Tue, 03 Sep 2024 18:57:20 +0200
+Received: from [2a0a:edc0:0:b01:1d::7b] (helo=bjornoya.blackshift.org)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1slWqE-005F6V-CF; Tue, 03 Sep 2024 18:57:18 +0200
+Received: from pengutronix.de (pd9e5994e.dip0.t-ipconnect.de [217.229.153.78])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	(Authenticated sender: mkl-all@blackshift.org)
+	by smtp.blackshift.org (Postfix) with ESMTPSA id EA7E03317CB;
+	Tue, 03 Sep 2024 16:57:17 +0000 (UTC)
+Date: Tue, 3 Sep 2024 18:57:17 +0200
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: Francesco Dolcini <francesco@dolcini.it>
+Cc: =?utf-8?B?Q3PDs2vDoXM=?= Bence <csokas.bence@prolan.hu>, 
+	imx@lists.linux.dev, Eric Dumazet <edumazet@google.com>, 
+	Fabio Estevam <festevam@gmail.com>, Rob Herring <robh@kernel.org>, 
+	Shenwei Wang <shenwei.wang@nxp.com>, Clark Wang <xiaoning.wang@nxp.com>, 
+	Linux Team <linux-imx@nxp.com>, Jakub Kicinski <kuba@kernel.org>, 
+	Paolo Abeni <pabeni@redhat.com>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	devicetree@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>, 
+	Richard Cochran <richardcochran@gmail.com>, Wei Fang <wei.fang@nxp.com>, 
+	Francesco Dolcini <francesco.dolcini@toradex.com>, linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Pengutronix Kernel Team <kernel@pengutronix.de>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
+	"David S. Miller" <davem@davemloft.net>
+Subject: Re: [PATCH net-next v3 0/3] net: fec: add PPS channel configuration
+Message-ID: <20240903-keen-feathered-nyala-1f91cd-mkl@pengutronix.de>
+References: <20240809094804.391441-1-francesco@dolcini.it>
+ <311a8d91-8fa8-4f46-8950-74d5fcfa7d15@prolan.hu>
+ <20240903160700.GB20205@francesco-nb>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] of/irq: handle irq_of_parse_and_map() errors
-To: Ma Ke <make24@iscas.ac.cn>, jochen@scram.de, andi.shyti@kernel.org,
- grant.likely@linaro.org, thierry.reding@gmail.com, rob.herring@calxeda.com
-Cc: linuxppc-dev@lists.ozlabs.org, linux-i2c@vger.kernel.org,
- linux-kernel@vger.kernel.org, stable@vger.kernel.org
-References: <20240830142127.3446406-1-make24@iscas.ac.cn>
-Content-Language: fr-FR
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-In-Reply-To: <20240830142127.3446406-1-make24@iscas.ac.cn>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="d3n7e7dyaggm5ums"
+Content-Disposition: inline
+In-Reply-To: <20240903160700.GB20205@francesco-nb>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
 
+--d3n7e7dyaggm5ums
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Le 30/08/2024 à 16:21, Ma Ke a écrit :
-> Zero and negative number is not a valid IRQ for in-kernel code and the
-> irq_of_parse_and_map() function returns zero on error.  So this check for
-> valid IRQs should only accept values > 0.
+On 03.09.2024 18:07:00, Francesco Dolcini wrote:
+> On Tue, Sep 03, 2024 at 04:10:28PM +0200, Cs=C3=B3k=C3=A1s Bence wrote:
+> > What's the status of this? Also, please Cc: me in further
+> > conversations/revisions as well.
+>=20
+> I am going to send a v4 in the next few days to address the comments
+> on the dt-bindings change and apart of that I hope is good to go.
 
-unsigned int irq_of_parse_and_map(struct device_node *node, int index);
+Have you read Richard's feedback on this?
 
-I can't see how an 'unsigned int' can be negative.
+| https://lore.kernel.org/all/YvLJJkV2GRJWl7tA@hoboy.vegasvil.org
 
-Christophe
+There seems to be a standard interface for what you're trying to do,
+right?
 
-> 
-> Cc: stable@vger.kernel.org
-> Fixes: f7578496a671 ("of/irq: Use irq_of_parse_and_map()")
-> Signed-off-by: Ma Ke <make24@iscas.ac.cn>
-> ---
->   drivers/i2c/busses/i2c-cpm.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/i2c/busses/i2c-cpm.c b/drivers/i2c/busses/i2c-cpm.c
-> index 4794ec066eb0..41e3c95c0ef7 100644
-> --- a/drivers/i2c/busses/i2c-cpm.c
-> +++ b/drivers/i2c/busses/i2c-cpm.c
-> @@ -435,7 +435,7 @@ static int cpm_i2c_setup(struct cpm_i2c *cpm)
->   	init_waitqueue_head(&cpm->i2c_wait);
->   
->   	cpm->irq = irq_of_parse_and_map(ofdev->dev.of_node, 0);
-> -	if (!cpm->irq)
-> +	if (cpm->irq <= 0)
->   		return -EINVAL;
->   
->   	/* Install interrupt handler. */
+regards,
+Marc
+
+--=20
+Pengutronix e.K.                 | Marc Kleine-Budde          |
+Embedded Linux                   | https://www.pengutronix.de |
+Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
+Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
+
+--d3n7e7dyaggm5ums
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEUEC6huC2BN0pvD5fKDiiPnotvG8FAmbXP+oACgkQKDiiPnot
+vG/vKQf/a72N78iIWxzkOUlx3s8T+bzkiDPclPHM1guLq8EsSRbMyCMujcaqdMxL
+hGNyiqnyNI5zFNhK7lVWJ+tShy/cLQgdCkAaEBIhBmQIT7M2N9zfG/4rHX8vX4MF
+D3XZSZzQC+pHiZgnUbm5SESmjz5GmumZUmBDJkVfaqjLMROR2HiAQy5f/bbE5OLp
+kU5cBBXQnhJf8+lWMEWikAhjfyt1p6Cgb7ZFsK41rGrjK+/cble0O1q7gBKsEicT
+eR5HabwoUHnKWJ7z9EB0YoLVEq/yBN+56uPZFYPxr5k+0pfX0jopOMkPlNjdlN7g
+KlNrBoCEeQ+CI35ecgDOQK9aqgK/Hg==
+=3c+f
+-----END PGP SIGNATURE-----
+
+--d3n7e7dyaggm5ums--
 
