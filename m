@@ -1,219 +1,117 @@
-Return-Path: <linux-kernel+bounces-312312-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312314-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29BEB9694D6
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 09:11:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C75C39694DD
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 09:12:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AC46DB23A4E
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 07:11:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 84865284D67
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 07:12:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 075822139C1;
-	Tue,  3 Sep 2024 07:09:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFCF221C179;
+	Tue,  3 Sep 2024 07:09:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HixSsc/5"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="STnHriJm"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 541271D6DA9;
-	Tue,  3 Sep 2024 07:09:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 136CD1D6194;
+	Tue,  3 Sep 2024 07:09:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725347378; cv=none; b=mGfncUzuwDUm0kY/tDEVKdk7fxYqU1ZSDIy7/TPzInIcByobRq2mmmiV1AGnjJUkjqa/2o273e3NFaq6y3pQOfz5OdS1bSSfye2iF0FI19GCCDUclsOYK5jW+ZddZBEuvwT8nSI9cvn1Md9UvYq7yZ6FvtaeKG9/jFdqEx6aUI0=
+	t=1725347397; cv=none; b=dONOaUd+/kte/Hk2v9pO/yTEKJ7+7dln7hy5Td7wGnaZetTHkdIMJCpTXOkE88dHJu5I7fV3vrz4z0gpK883yChu8/CpnUP34hdweVdX5NfJvaPCdwM3/YNQLwsuM4MZR+2ByzYuS602BOWWRtgRa6fYcPv3Ub22YhBvI2HJ4es=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725347378; c=relaxed/simple;
-	bh=CCHkRuR4zttYm/e6dnZVqhZ28DY1hQ+/eBD7H++fyLo=;
+	s=arc-20240116; t=1725347397; c=relaxed/simple;
+	bh=YEgWiHXBuskcPndGXIwLrLW9HeAxJb4B1CgKB0BFHno=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FStQH6DSFsMF39LPtAADtFRUjHIhtokKkdHABFrIzcTGq09o/Hac6XBQhM5+78xXTE+WDRV2igQ/En1B401aVv0G+bxQmlhanmrXP4VCV/jD031ReinF4L66hlf6lQB4T02jlyKS/YWYKEcr30/xImGjgFsvLwe3ZGQ6iRarDj0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HixSsc/5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C34A2C4CEC5;
-	Tue,  3 Sep 2024 07:09:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725347377;
-	bh=CCHkRuR4zttYm/e6dnZVqhZ28DY1hQ+/eBD7H++fyLo=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=M4WIYJIJPWXP0r115jiQ8C43c+FEtaomJdPIGb1APuJDjA11oLw+upqaWN/JAxdIG8cd0xplGFsS+RBb8dC5Nkq0VHnVdlqoTwAvjgYq8La3rSXbuceCn/4j5/L0LHJusTI4xzXyYBbs+5ZwyfqOaQeGGYnr5EWD2VbTJ9kD2oI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=STnHriJm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0A8DC4CEC6;
+	Tue,  3 Sep 2024 07:09:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1725347396;
+	bh=YEgWiHXBuskcPndGXIwLrLW9HeAxJb4B1CgKB0BFHno=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HixSsc/5RszCmF59GVgXkdhV75LwmOcBgaqwAu2T3hPwuUuNtcOWfL1tt4xgYYvKN
-	 LwAUyb/U2pG3pQna/r4cdzGT8RfVSiDezqUPND4uo8Ac1L3adyOrRhWzJrgIqauyKX
-	 A6kY8gsX0AYN3WEEUfxxPkymnNrz3NkswqY7gQfLU9J9NTGs4xCBzRFCCd8H4Ttfeu
-	 7nP6sVdxFV+uI4G+fwRnOGgaO43mbIJC5OvN2ViEw/0LXHl9U/c+4pzwV01b/T4mRi
-	 WAkSL05IAvCK7GHuv85u8UO/bJZeXWR55CohX/pdW0Bk/aT8aBVw3IeMSQV9syjTv+
-	 MNh9CfBuesdbg==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1slNfk-000000000wU-3gP9;
-	Tue, 03 Sep 2024 09:09:52 +0200
-Date: Tue, 3 Sep 2024 09:09:52 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Abel Vesa <abel.vesa@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Trilok Soni <quic_tsoni@quicinc.com>, linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] arm64: dts: qcom: x1e80100-crd: Enable external DP
- support
-Message-ID: <Zta2QJr6jIJcNdUg@hovoldconsulting.com>
-References: <20240902-x1e80100-crd-dts-add-external-dp-support-v1-0-899c264c0eb7@linaro.org>
- <20240902-x1e80100-crd-dts-add-external-dp-support-v1-1-899c264c0eb7@linaro.org>
+	b=STnHriJmfSwk3zd7FKQ9ObfXGV0wHnu1Gp9iLdbedkLQ5S8WiZ4sS1Y4nvq7uIZn4
+	 2zf+kekIOdX8CdCQBcB/NO0NudqAqV428ExhJH16hX6+3uYSe9logxDogC9l2kwMtO
+	 EufZDOag7qHsBS9ih9W17bidAngDY9oRbWashrD4=
+Date: Tue, 3 Sep 2024 09:09:53 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Andrey Konovalov <andreyknvl@gmail.com>
+Cc: Alan Stern <stern@rowland.harvard.edu>,
+	Marcello Sylvester Bauer <sylv@sylv.io>,
+	Dmitry Vyukov <dvyukov@google.com>,
+	Aleksandr Nogikh <nogikh@google.com>,
+	Marco Elver <elver@google.com>,
+	Alexander Potapenko <glider@google.com>, kasan-dev@googlegroups.com,
+	Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+	syzbot+2388cdaeb6b10f0c13ac@syzkaller.appspotmail.com,
+	syzbot+17ca2339e34a1d863aad@syzkaller.appspotmail.com,
+	stable@vger.kernel.org, andrey.konovalov@linux.dev
+Subject: Re: [PATCH] usb: gadget: dummy_hcd: execute hrtimer callback in
+ softirq context
+Message-ID: <2024090332-whomever-careless-5b7d@gregkh>
+References: <20240729022316.92219-1-andrey.konovalov@linux.dev>
+ <CA+fCnZc7qVTmH2neiCn3T44+C-CCyxfCKNc0FP3F9Cu0oKtBRQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240902-x1e80100-crd-dts-add-external-dp-support-v1-1-899c264c0eb7@linaro.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CA+fCnZc7qVTmH2neiCn3T44+C-CCyxfCKNc0FP3F9Cu0oKtBRQ@mail.gmail.com>
 
-On Mon, Sep 02, 2024 at 06:01:35PM +0300, Abel Vesa wrote:
-> The Qualcomm Snapdragon X Elite CRD board has 3 USB Type-C ports,
-> all of them supporting external DP altmode. Between each QMP
-> combo PHY and the corresponding Type-C port, sits one Parade PS8830
-> retimer which handles both orientation and SBU muxing. Add nodes for
-> each retimer, fix the graphs between connectors and the PHYs accordingly,
-> add the voltage regulators needed by each retimer and then enable all
-> 3 remaining DPUs.
+On Tue, Aug 27, 2024 at 02:02:00AM +0200, Andrey Konovalov wrote:
+> On Mon, Jul 29, 2024 at 4:23 AM <andrey.konovalov@linux.dev> wrote:
+> >
+> > From: Andrey Konovalov <andreyknvl@gmail.com>
+> >
+> > Commit a7f3813e589f ("usb: gadget: dummy_hcd: Switch to hrtimer transfer
+> > scheduler") switched dummy_hcd to use hrtimer and made the timer's
+> > callback be executed in the hardirq context.
+> >
+> > With that change, __usb_hcd_giveback_urb now gets executed in the hardirq
+> > context, which causes problems for KCOV and KMSAN.
+> >
+> > One problem is that KCOV now is unable to collect coverage from
+> > the USB code that gets executed from the dummy_hcd's timer callback,
+> > as KCOV cannot collect coverage in the hardirq context.
+> >
+> > Another problem is that the dummy_hcd hrtimer might get triggered in the
+> > middle of a softirq with KCOV remote coverage collection enabled, and that
+> > causes a WARNING in KCOV, as reported by syzbot. (I sent a separate patch
+> > to shut down this WARNING, but that doesn't fix the other two issues.)
+> >
+> > Finally, KMSAN appears to ignore tracking memory copying operations
+> > that happen in the hardirq context, which causes false positive
+> > kernel-infoleaks, as reported by syzbot.
+> >
+> > Change the hrtimer in dummy_hcd to execute the callback in the softirq
+> > context.
+> >
+> > Reported-by: syzbot+2388cdaeb6b10f0c13ac@syzkaller.appspotmail.com
+> > Closes: https://syzkaller.appspot.com/bug?extid=2388cdaeb6b10f0c13ac
+> > Reported-by: syzbot+17ca2339e34a1d863aad@syzkaller.appspotmail.com
+> > Closes: https://syzkaller.appspot.com/bug?extid=17ca2339e34a1d863aad
+> > Fixes: a7f3813e589f ("usb: gadget: dummy_hcd: Switch to hrtimer transfer scheduler")
+> > Cc: stable@vger.kernel.org
+> > Signed-off-by: Andrey Konovalov <andreyknvl@gmail.com>
 > 
-> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
-> ---
->  arch/arm64/boot/dts/qcom/x1e80100-crd.dts | 414 +++++++++++++++++++++++++++++-
->  1 file changed, 408 insertions(+), 6 deletions(-)
+> Hi Greg,
+> 
+> Could you pick up either this or Marcello's patch
+> (https://lkml.org/lkml/2024/6/26/969)? In case they got lost.
 
-> @@ -288,6 +312,134 @@ vreg_edp_3p3: regulator-edp-3p3 {
->  		regulator-boot-on;
->  	};
->  
-> +	vreg_rtmr0_1p15: regulator-rtmr0-1p15 {
-> +		compatible = "regulator-fixed";
-> +
-> +		regulator-name = "VREG_RTMR0_1P15";
-> +		regulator-min-microvolt = <1150000>;
-> +		regulator-max-microvolt = <1150000>;
-> +
-> +		gpio = <&pm8550ve_8_gpios 8 GPIO_ACTIVE_HIGH>;
-> +		enable-active-high;
-> +
-> +		pinctrl-0 = <&rtmr0_1p15_reg_en>;
-> +		pinctrl-names = "default";
-> +	};
+Both are lost now, (and please use lore.kernel.org, not lkml.org), can
+you resend the one that you wish to see accepted?
 
-> +	vreg_rtmr2_3p3: regulator-rtmr2-3p3 {
-> +		compatible = "regulator-fixed";
-> +
-> +		regulator-name = "VREG_RTMR2_3P3";
-> +		regulator-min-microvolt = <3300000>;
-> +		regulator-max-microvolt = <3300000>;
-> +
-> +		gpio = <&tlmm 187 GPIO_ACTIVE_HIGH>;
-> +		enable-active-high;
-> +
-> +		pinctrl-names = "default";
-> +		pinctrl-0 = <&rtmr2_3p3_reg_en>;
-> +	};
-> +
-> +
-> +
+thanks,
 
-Double stray newline.
-
-Also move these nodes below the nvme one to maintain sort order.
-
->  	vreg_nvme: regulator-nvme {
->  		compatible = "regulator-fixed";
->  
-> @@ -709,6 +861,163 @@ keyboard@3a {
->  	};
->  };
-
-> +&i2c7 {
-> +	clock-frequency = <400000>;
-> +
-> +	status = "okay";
-> +
-> +	typec-mux@8 {
-> +		compatible = "parade,ps8830";
-> +		reg = <0x8>;
-> +
-> +		clocks = <&rpmhcc RPMH_RF_CLK4>;
-> +		clock-names = "xo";
-> +
-> +		vdd15-supply = <&vreg_rtmr1_1p15>;
-> +		vdd18-supply = <&vreg_rtmr1_1p8>;
-> +		vdd33-supply = <&vreg_rtmr1_3p3>;
-> +
-> +		reset-gpios = <&tlmm 176 GPIO_ACTIVE_HIGH>;
-> +
-> +		retimer-switch;
-> +		orientation-switch;
-> +
-> +		ports {
-> +			#address-cells = <1>;
-> +			#size-cells = <0>;
-> +
-> +			port@0 {
-> +				reg = <0>;
-> +
-> +				retimer_ss1_ss_out: endpoint {
-> +					remote-endpoint = <&pmic_glink_ss1_ss_in>;
-> +				};
-> +			};
-> +
-> +			port@1 {
-> +				reg = <1>;
-> +
-> +				retimer_ss1_ss_in: endpoint {
-> +					remote-endpoint = <&usb_1_ss1_qmpphy_out>;
-> +				};
-> +			};
-> +
-> +			port@2 {
-> +				reg = <2>;
-> +
-> +				retimer_ss1_con_sbu_out: endpoint {
-> +					remote-endpoint = <&pmic_glink_ss1_con_sbu_in>;
-> +				};
-> +			};
-> +
-
-Stray newline.
-
-> +		};
-> +	};
-> +};
- 
-> +&pm8550_gpios {
-> +	rtmr0_3p3_reg_en: rtmr0-3p3-reg-en-state {
-> +		pins = "gpio11";
-> +		function = "func1";
-> +		input-disable;
-> +		output-enable;
-> +	};
-> +};
-> +
-> +&pm8550ve_8_gpios {
-> +	rtmr0_1p15_reg_en: rtmr0-1p15-reg-en-state {
-> +		pins = "gpio8";
-> +		function = "func1";
-> +		input-disable;
-> +		output-enable;
-> +	};
-> +};
-> +
-> +&pm8550ve_9_gpios {
-> +	rtmr0_1p8_reg_en: rtmr0-1p8-reg-en-state {
-> +		pins = "gpio8";
-> +		function = "func1";
-> +		input-disable;
-> +		output-enable;
-> +	};
-> +};
-
-Shouldn't you specify the drive strength here as well? (Same on T14s).
-
-Johan
+greg k-h
 
