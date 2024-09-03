@@ -1,112 +1,82 @@
-Return-Path: <linux-kernel+bounces-312980-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312981-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74E8A969E91
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 15:02:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 80C2E969E94
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 15:02:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 31996286969
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 13:02:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3DCB1286CD4
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 13:02:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDF701A0BF1;
-	Tue,  3 Sep 2024 13:02:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 514A01A726C;
+	Tue,  3 Sep 2024 13:02:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jABeNKYv"
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gJ6b8fln"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B61721CA687;
-	Tue,  3 Sep 2024 13:01:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFD6D1CA687;
+	Tue,  3 Sep 2024 13:02:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725368521; cv=none; b=YFoEU2DhH2rZ/nL/3U9pBT5ZhLWJHkt7NkqS2lAIBcMFTXycrfes+RVW3lq00kivvMebsX6wGghrI/5WtUX1GoldEC3kfldKa8ZZMDiknW+YBjbI6QfcU5Vn/2OdsHeG5qEGaBT5CO54zUFLVPVB6Q0Gs4P5tiLUjxfQSVHDBKM=
+	t=1725368524; cv=none; b=q7Z+Hz03XTOvl7NmTPYCp0jSpwPwcAsmmSmobdhW+PL++yhLrod8jE0tJXdrRQTTxyN0nEdXp/dT8zwaYBixLnbyM1Si2VGnFwMlp0olr1eBUI6tZhdBcZltzfbD5mL7qb/AOaDaNqVUjHVXZTH8yH8urvVhNaiK6+6Xrxly5V8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725368521; c=relaxed/simple;
-	bh=51XZL1zpa9+ZugG0MuTKWPjrQIyg9Ca1YCU0ZCUyuio=;
+	s=arc-20240116; t=1725368524; c=relaxed/simple;
+	bh=8OIOegP9FBkYI+B3igpq06xfWraWjeDI2QpZnHymEJo=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qfJ0/gnVFR/LIDquQTqAmww3GLzzD8O3W72IA7c8PTwqUGzcQbSR67ijHMBlLMus9lLUDWcgILsc/atL1y5+RjKSpFGmdM8RSN3tG6D+3Fyyq3NHyhHdqWsfAuYE04BGWuBz+Js9BTZdM0r9+iEmYuAEdVOMfCDU8jw9yElhCp4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jABeNKYv; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-53351642021so5736897e87.3;
-        Tue, 03 Sep 2024 06:01:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725368518; x=1725973318; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VNCoDBWiaDkhcsMePwXkrH4rh6xCaLi3QD6d60u1M0k=;
-        b=jABeNKYvaj74uVZuY+nSaryNdbwJWJ72xUFBi9QDe8zEvzNtD5MDOz1hHqgNuz8S1a
-         NaBBqko1PltVOTEUwNJvi6BpqP4JsVpMigHm8Ph2VIpTx3zVVeRMYQV5M4WoqUzSQl/V
-         yds0WBEGZ4PQU+5zCZLQSqYXmASP5Dmpw2MFIQXH3l+q4T8vY2naWmtpKqh9BTvmPBLt
-         BQdfbC6/CyemW0uFwYVk9YLZhN5GTXb/NcHw4bKzs/gybKBOFZe8EHGkCPVt7ELyHWDW
-         3+GYNnTpYHkqCCC17WDpoKth0+bbNuvSu9onaRqZWVyvgS7GbROgW1SBB2vKYq1xCUgU
-         cp7w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725368518; x=1725973318;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=VNCoDBWiaDkhcsMePwXkrH4rh6xCaLi3QD6d60u1M0k=;
-        b=n0oHckhsmbSYEM5RZu4xvxaYaRpyvojesh4BRcNgR5yZVMmabd8ThXSPGMgkH7Gt8v
-         ycTBN2ie7ZFC5qufcU3Kxup9611AMQwmvp08e5fxXp0iHY5UUD2u/hEVtJlWJi67yzXg
-         o3ogDfPUfbiUQZz25T7kuDkHIxMh696AXlUMkwGFMusehWHy2RSkw3rllOvb6H4Iwgj9
-         vx2tw36m9KFy2CBkahzgcywoJ17Z3c39eQo04Y36P8cBdSwL+5jg6AAKf9THTUEEor6Y
-         yVcgrUNP32jFUdR1UQfUM4QbMbqQ8U5m0nUmW3M20rOh/Qe/nGXG2fsmuZkAMbOrSXL6
-         VLmw==
-X-Forwarded-Encrypted: i=1; AJvYcCUx4m777DYi0T/pXKWFq8Ly8n2IVeksWFwfKgTb45mq8309iCuewiZL/svX5z8HPitucdmIhmkTOKZJYDKw@vger.kernel.org, AJvYcCX8s0Tp6XUpryGqfLJICbbUP68XcG2vobRZlOkf6wEOwYP11BcjTPh/cEjRBS5OhL5c0T7LK1ooXVE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxbNiCRZL0F1R8Z34r4YT8SENfsyDdGOWFtOJvPYbjvgYQW9/h9
-	+2MqFgxpKR/FFmqjV5GPcvmBJl8NsmB4BM04kyxgbPdXmqLjMQfWYyU28S3f+nVqxvYQe+4/oy1
-	vaDE6vw2FT9Sfa6gBA53vC9b1zqo=
-X-Google-Smtp-Source: AGHT+IH46cK4NeXPdEqmfU2Trxz2EWki+TuWP1ltUeNhM80T1XWTNZT5fdoKzGW1CXcqoGBpxBr6zBmSxc/j10SM9BU=
-X-Received: by 2002:a05:6512:1047:b0:52c:c5c4:43d2 with SMTP id
- 2adb3069b0e04-53546b910a0mr9807468e87.47.1725368517402; Tue, 03 Sep 2024
- 06:01:57 -0700 (PDT)
+	 To:Cc:Content-Type; b=QU/25h5AqtQE29y/ev/KvNyQ5tZ/oDoXE5OO2IiptFwTNcCYvNODXRDyd7ORpkDRlHVRJdg957yzopkRJjE1xgyJKn6ia3NzqaU9db624PYKZZT5aagqD1t8gBp04tEeMPivi4Ayxsh7EGTpCJV3eT2GJWRXbc+0kdBt+spMju4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gJ6b8fln; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5BD50C4CECA;
+	Tue,  3 Sep 2024 13:02:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725368524;
+	bh=8OIOegP9FBkYI+B3igpq06xfWraWjeDI2QpZnHymEJo=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=gJ6b8flnAVrDiI6h/tZo+isUs0NPNaxrFdGp7UyXy8q5lZVJ7WS9qKHxGBPnnOyu2
+	 rgZUs7/qEsnNdsxyi/c74XspJa8ZDfhPUIvxb9pmQcOeNODVDKwAcIizo2lJyOquPg
+	 h5p5nsZLQAr0Sc7w6BkZHjeolaY0C5UzRD6QNayWb0x8c/2JjwR7JV20Io2MpTJ8sl
+	 ujqVVis5val6WrN50kjNsdSJ2FMlAwIxZOAhWKX0pBLDsGHMUcEwnrbO0KLtIrcdmm
+	 qyn+0EcyPXcIkkgqhvwGFC8AgoTcL2oN5dYOUjPkNSaN9/G9LVo8tW8RsAib2uuv9H
+	 h8wh3aTtg9Xgw==
+Received: by mail-oo1-f54.google.com with SMTP id 006d021491bc7-5dcd8403656so3769549eaf.1;
+        Tue, 03 Sep 2024 06:02:04 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWSyqDsEqm2BXJoLRCo5hI9CyODWWxiY1G+EiuREfsceuTH2s3PKKjzzbMSLtMGpbeqsURYCk6I2pA=@vger.kernel.org, AJvYcCXEW1qUIOeUOnpmSGx5Un1tJ2lv5hg0wVGYSTU6BXLaa+reEU7bY0eKzXmTbRnvB60Jw88wYVhXO0w95v0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzsSRuxvuqlHMGzFnaxf+K7TInex0/BJYZZYzJRhUeEaNmUdCkf
+	isHvAdBWv2wcNjLuvWxb58sUBZOCWVx/52bYaIC9/7y1hRu1Uxo3ndjGWipKQ549zGcnfp5oJye
+	uyEbMAv09gIZh2Fwxh5Sw37zDisU=
+X-Google-Smtp-Source: AGHT+IFlEFGjfbhedCE8N2PESVnWtNm2uKq021SxQrP1WNu+kvQuO1CAd0ljWfW2wAuJbG517JZfpPDsT8tWk+OLZb0=
+X-Received: by 2002:a05:6870:b411:b0:260:3bdb:93a8 with SMTP id
+ 586e51a60fabf-27790319b9emr16950187fac.41.1725368523669; Tue, 03 Sep 2024
+ 06:02:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <1725350397-19527-1-git-send-email-hongxing.zhu@nxp.com> <1725350397-19527-2-git-send-email-hongxing.zhu@nxp.com>
-In-Reply-To: <1725350397-19527-2-git-send-email-hongxing.zhu@nxp.com>
-From: Fabio Estevam <festevam@gmail.com>
-Date: Tue, 3 Sep 2024 10:01:46 -0300
-Message-ID: <CAOMZO5DsUdus8b6F+vz_g7+tZum9e5WPmFCg8zts7qDU6DToTQ@mail.gmail.com>
-Subject: Re: [PATCH v1 1/2] dt-bindings: clock: nxp,imx95-blk-ctl: Add
- compatible string for i.MX95 HSIO BLK CTRL
-To: Richard Zhu <hongxing.zhu@nxp.com>
-Cc: abelvesa@kernel.org, peng.fan@nxp.com, mturquette@baylibre.com, 
-	sboyd@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-clk@vger.kernel.org, imx@lists.linux.dev, kernel@pengutronix.de
+References: <20240902054959.28073-1-00107082@163.com>
+In-Reply-To: <20240902054959.28073-1-00107082@163.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Tue, 3 Sep 2024 15:01:52 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0gZ9oAByawssaARFN1_crTuMZ-CnU5Fy9D1sWv+Moo-sg@mail.gmail.com>
+Message-ID: <CAJZ5v0gZ9oAByawssaARFN1_crTuMZ-CnU5Fy9D1sWv+Moo-sg@mail.gmail.com>
+Subject: Re: [PATCH] PM: add: move warn message out of mutex lock.
+To: David Wang <00107082@163.com>
+Cc: rafael@kernel.org, len.brown@intel.com, pavel@ucw.cz, 
+	gregkh@linuxfoundation.org, linux-pm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi Richard,
+On Mon, Sep 2, 2024 at 7:50=E2=80=AFAM David Wang <00107082@163.com> wrote:
+>
+> dpm_list_mtx does not protect any data used by
+> dev_warn for checking parent's power, move
+> dev_warn out of mutex lock block make the
+> lock more efficient, especially when the warn
+> is triggered.
 
-On Tue, Sep 3, 2024 at 5:21=E2=80=AFAM Richard Zhu <hongxing.zhu@nxp.com> w=
-rote:
->
-> Add compatible string "nxp,imx95-hsio-blk-ctl" for iMX95.
->
-> Signed-off-by: Richard Zhu <hongxing.zhu@nxp.com>
-> ---
->  Documentation/devicetree/bindings/clock/nxp,imx95-blk-ctl.yaml | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/Documentation/devicetree/bindings/clock/nxp,imx95-blk-ctl.ya=
-ml b/Documentation/devicetree/bindings/clock/nxp,imx95-blk-ctl.yaml
-> index 2dffc02dcd8b..638241f6749f 100644
-> --- a/Documentation/devicetree/bindings/clock/nxp,imx95-blk-ctl.yaml
-> +++ b/Documentation/devicetree/bindings/clock/nxp,imx95-blk-ctl.yaml
-> @@ -17,6 +17,7 @@ properties:
->            - nxp,imx95-display-csr
->            - nxp,imx95-camera-csr
->            - nxp,imx95-vpu-csr
-> +          - nxp,imx95-hsio-blk-ctl
-
-Please keep the entries in alphabetical order.
+It does protect the power.is_prepared flag of the parent.
 
