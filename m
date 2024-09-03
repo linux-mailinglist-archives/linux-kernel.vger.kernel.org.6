@@ -1,105 +1,249 @@
-Return-Path: <linux-kernel+bounces-312634-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312635-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B911996991C
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 11:34:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0773B969924
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 11:35:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6A6521F2483B
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 09:34:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7ACEF1F241C4
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 09:35:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 931F71A0BEC;
-	Tue,  3 Sep 2024 09:33:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F30F1D095E;
+	Tue,  3 Sep 2024 09:33:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="XKL6B4eH"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="ID+2qPcP"
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5125A1A0BCB
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 09:33:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3249B1CE6F5
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 09:33:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725355984; cv=none; b=FvQlPNVDdeGBEIUtCPzGMz+XbNkVUeBdg6ArobKhfMhqQktLQi+vO02E1FgQKF0FzHPOnZNi5mCsYFPoVgx3xyTHVvPJQVSbLfCwuUmamFzbnOKhNVbqhIn2RR61hLW8WmP4yQqxbDvbKxHMa7LdlBKaMg2rufr4QW/brQqJyps=
+	t=1725355989; cv=none; b=G4KpBeczMQMbPIiwA3M5yzliQGBDWq0At0oXnc1/d/FFS2wwxnEoxojwAVR5jKBfhW/uADjxcwwcyie3qvIkKg8+DSyRjkeneu5zLnGuAB+SsXJCF2//AZQDLTRZ04a0BzdfTtflI583mlTM7DsQdyz+rTTOqGMFntN4knFJPpU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725355984; c=relaxed/simple;
-	bh=c0vpnkUFsXef0W5Py4ezUBWDFZhRIoqpCv7NYgYYQwk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KA1xcNZ0u73fkY+cmdYIP83n0oZg5VGOAnDX+Q3XnaVWtW4KS7IEUBWayVP+TS3yWo1TYqWFI4pinD9DPHe02qf7Ja2M4uKqGaIMENwhEvUGANOHK3OaNuwDoF7fJlC9l+CjKosBy+AEn4aKQRr9z3ACXMT7xgpA+BMtE4E3FX8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=XKL6B4eH; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-427fc97a88cso42107105e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 02:33:02 -0700 (PDT)
+	s=arc-20240116; t=1725355989; c=relaxed/simple;
+	bh=9bwQymfzf4ndqd3FHXuhSQAaB8hV+38lgAKZNuAsONE=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nB+5bGF4uMg5U2ichV4YjCcEz9n6efzNtDkBP+83RrnoqFZLHgdnQY+z/BTc4pAWSp4OGKgNL01eTYHqyB1nh+sZ7Ql49hXswg47eUFBIS+qCSjUrfZOO66Fmg/IDr++NZW7JlwDaioRLLnX7LfZQ23auj5Z1k4RDPkSRse+aC0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=ID+2qPcP; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a80eab3945eso460515466b.1
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 02:33:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1725355981; x=1725960781; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=c0vpnkUFsXef0W5Py4ezUBWDFZhRIoqpCv7NYgYYQwk=;
-        b=XKL6B4eHIeffVTWkuAyMfZXP5GDZds1nyv+PdLojqYSO4xi1/THPFdVcTvfqHPqrlY
-         HjwN/cZ9THbAh0B5SvAykNEoogzm6/KETPMkh3vZgOewrFaCWfCR20v9m3JpjyEViWDj
-         wO0syYhjiRu6w/Gd15ijewV9oTTpvX+7Go2BdOzaOafwe+nwCZE7bGpViQBrV39x8b+R
-         0oqLqvwpKVrDJa/kgFJImNrDTidZvfc2CAcQa34XinF5h7AMLvHB63MRh7zaTYRm5DwV
-         R6lij9D8ARXbnU4VlV3JLEA5Y0bmVl4h56UI5WTNHVl4osIfgMooRvqg1Qbp5s7yHTlf
-         gaug==
+        d=suse.com; s=google; t=1725355985; x=1725960785; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:date:from:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=wTnKFrfUmE/uIkrL7Z9DoBSa27AtxRfrH2Z2SWNCR6U=;
+        b=ID+2qPcPviliUAh87/JIQZz+GwIz0+ikXhuwcYGZa9KU6XMlIU8hFqVZRSbEdsPIqr
+         MZ78jllU9dwC2lQ7yQsdVW9FRGjchQFvttzbA8u9FExn48Ek0g8SwUcTUp6kABIsboFJ
+         p4N4aWiEW0akaDfCUe+a/XbTz0mC65VUvR6UxL93A7ImF5ivD7UTiuPVUm1cGNzWM514
+         xPQfTF0sp6IBRDO/nNmPZd3k8qjC1RGxuwvbITv5tPpgzgva7ucgxfmgn98mN7dhFPnC
+         AOkbFRyJv6vQJSMupMAO1d7rVN2dxZAPCccFCd6xrJi3fMINK4Xy6po0g50gS0w3rNZT
+         0yig==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725355981; x=1725960781;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=c0vpnkUFsXef0W5Py4ezUBWDFZhRIoqpCv7NYgYYQwk=;
-        b=F/ym9cKytgaqYjZ7z7ZYPgL7qrRGLqLbZd2h8mVy3IfYhPKXqfyBzSlOBWCeGAuWiw
-         464sF6dsVQYtIvk87yqM0ENUKPWB1EHDwkIfNKAaOxvL9rV7lzcx/9OYL93FdUJKjfq3
-         +5svHBey0ooVyJPSls5FcpydaLDum5NSX/rHyovYexpX83khASBzNJ4+TxO2Ve6fPBf9
-         7av0a0mLVsvzkP4yPntI7SX4WgcYJfgnTN86TPzow9NZnE3yi5AYgJQ/k7ESbYJexP9v
-         7sIsGNPMq4u1e9oX3rCNmwiXjsxVMpOEfwj0PggfD6/kzurkIo+i0C5A4TXNcBLeZSsM
-         /zMg==
-X-Forwarded-Encrypted: i=1; AJvYcCXd9Sn4qPZZtwVPhSiIBv6KlS3bPURM2vIGgoAmxIIDApa44sXJya7PfrAUbb4P211/gX8ji+KcHeO7Q5w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxUzK9JY+sjneNewyyshZC2/DIdcwqq+YFl5x5p/7isBDdFcw+U
-	C1OGFY0XiXfz58kd3GidPzBajS+LjZ7f7L/ojZN8sIBmtk0K+ADhgaUJ3I14ThfrOYqPU08c1b9
-	LX9rDre+As5nsHnWrC/2NX4jASKJ6rNgJgomw
-X-Google-Smtp-Source: AGHT+IFQ0z3kIL0B8GtLMicNXuU28GUFcpTGLSuRcXdc7yD7zpkP/Wid9apTohJEbl7Gvgav4b700RAJ9aY8EZQNvYQ=
-X-Received: by 2002:a05:6000:d8b:b0:374:c3a3:1f4f with SMTP id
- ffacd0b85a97d-374c945c72bmr3961888f8f.24.1725355980208; Tue, 03 Sep 2024
- 02:33:00 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1725355985; x=1725960785;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:date:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=wTnKFrfUmE/uIkrL7Z9DoBSa27AtxRfrH2Z2SWNCR6U=;
+        b=RdRGw3BPHOLrOSGH6OP9unBCUOm2eZD+zJvSbz4AcjXdu7STLxDMP2g81a2bgdwrO/
+         VdtWwsMpxegtTGESw8Bf7XaZ44CFhJCQ0jdTGcJShQGZeuWYeJ2f2h2eQCviyTBkQpgy
+         3Vv2tHy/VJT0/8suPeqydDUivUkYrix/zLLAxn4kCkRoNu6qKjgU57L0G9F6w/dCY9fz
+         LZScScZRKZrYK0ilW4mDK0+K+VvMsFkfZJAgfx1D+/ZkYa53hU20FW3//fRggGSkYQMP
+         v03TqDUYFfYnaQRxMg1UQCmxMjJ2D+l21a5fV3YKhyeYkcj1ue19be3kRLG8bel7SVV/
+         3kew==
+X-Forwarded-Encrypted: i=1; AJvYcCVYNk0Zsw0wjcKgJgZzv/FqyJESoCXJLRgbErKpE6wkbiFzK5C6IEAH3gs2CgF1dEN58SIm3Ei0FmP9Yoc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxi6I/ikBV5mIGSCHHroHXiApmh8/Sl0eDa58gaWooKFGAeBsP3
+	NW7TwKXef5LpuzZqIknGRstE/Yx2JKgUgZRZDEO9Nx6uPxX+0Iicy9H1/jl+suY=
+X-Google-Smtp-Source: AGHT+IF1reVINALdSgJc0RMsY6rt9TxEJ4rR+Xojf3y9r57wj6wnX0V9PBsi2NJ940berEZ0OfsA7Q==
+X-Received: by 2002:a17:907:72c7:b0:a86:a30f:4aef with SMTP id a640c23a62f3a-a89a35dee4cmr901597466b.22.1725355985011;
+        Tue, 03 Sep 2024 02:33:05 -0700 (PDT)
+Received: from localhost (host-80-182-198-72.retail.telecomitalia.it. [80.182.198.72])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8988bdcf57sm659603066b.0.2024.09.03.02.33.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Sep 2024 02:33:04 -0700 (PDT)
+From: Andrea della Porta <andrea.porta@suse.com>
+X-Google-Original-From: Andrea della Porta <aporta@suse.de>
+Date: Tue, 3 Sep 2024 11:33:12 +0200
+To: Herve Codina <herve.codina@bootlin.com>
+Cc: Rob Herring <robh@kernel.org>,
+	Andrea della Porta <andrea.porta@suse.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Derek Kiernan <derek.kiernan@amd.com>,
+	Dragan Cvetic <dragan.cvetic@amd.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Saravana Kannan <saravanak@google.com>,
+	Bjorn Helgaas <bhelgaas@google.com>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org, netdev@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-arch@vger.kernel.org,
+	Lee Jones <lee@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
+	Stefan Wahren <wahrenst@gmx.net>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH 04/11] of: address: Preserve the flags portion on 1:1
+ dma-ranges mapping
+Message-ID: <ZtbX2NZ6A6ATqQLh@apocalypse>
+References: <cover.1724159867.git.andrea.porta@suse.com>
+ <5ca13a5b01c6c737f07416be53eb05b32811da21.1724159867.git.andrea.porta@suse.com>
+ <20240821001618.GA2309328-robh@kernel.org>
+ <ZsWi86I1KG91fteb@apocalypse>
+ <CAL_JsqKN0ZNMtq+_dhurwLR+FL2MBOmWujp7uy+5HzXxUb_qDQ@mail.gmail.com>
+ <ZtBJ0jIq-QrTVs1m@apocalypse>
+ <CAL_Jsq+_-m3cjTRsFZ0RwVpot3Pdcr1GWt-qiiFC8kQvsmV7VQ@mail.gmail.com>
+ <ZtChPt4cD8PzfEkF@apocalypse>
+ <CAL_JsqJNcZx-HH-TJhsNai2fqwPJ+dtcWTdPagRjgqM31wsJkA@mail.gmail.com>
+ <20240903110953.2b1f55b6@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240903091700.172734-1-benno.lossin@proton.me> <20240903091700.172734-2-benno.lossin@proton.me>
-In-Reply-To: <20240903091700.172734-2-benno.lossin@proton.me>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Tue, 3 Sep 2024 11:32:48 +0200
-Message-ID: <CAH5fLgjicT5O77UviXUPxc0-O7nQO4J+M3Nfo+6Mm-DVGQBhMg@mail.gmail.com>
-Subject: Re: [PATCH 2/2] rust: sync: require `Sync` for `Backend::GuardState`
-To: Benno Lossin <benno.lossin@proton.me>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Andreas Hindborg <a.hindborg@samsung.com>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240903110953.2b1f55b6@bootlin.com>
 
-On Tue, Sep 3, 2024 at 11:17=E2=80=AFAM Benno Lossin <benno.lossin@proton.m=
-e> wrote:
+Hi Herve,
+
+On 11:09 Tue 03 Sep     , Herve Codina wrote:
+> Hi,
+> 
+> On Fri, 30 Aug 2024 14:37:54 -0500
+> Rob Herring <robh@kernel.org> wrote:
+> 
+> ...
+> 
+> > > this view is much like Bootlin's approach, also my pci-ep-bus node now would look
+> > > like this:
+> > >  ...
+> > >  pci-ep-bus@0 {
+> > >         ranges = <0xc0 0x40000000
+> > >                   0x01 0x00 0x00000000
+> > >                   0x00 0x00400000>;
+> > >         ...
+> > >  };
+> > >
+> > > and also the correct unit address here is 0 again, since the parent address in
+> > > ranges is 0x01 0x00 0x00000000 (0x01 is the flags and in this case represent
+> > > BAR1, I assume that for the unit address I should use only the address part that
+> > > is 0, right?).  
+> > 
+> > No, it should be 1 for BAR1. It's 1 node per BAR.
+> 
+> It should be 1 node per BAR but in some cases it is not.
+> 
+> Indeed, in the LAN966x case, the pci-ep-bus need to have access to several
+> BARs and we have:
+
+I second this, on RP1 there are multiple BARs too, but for this minimal
+implementation we need only one. Splitting them in one bus per BAR or
+merging them with multiple ranges entries depend on whether the peripherals
+can access different BARs simultaneously. Besides this contraint, I would
+say both approach are viable.
+
+> 	...
+> 	pci-ep-bus@0 {
+> 		compatible = "simple-bus";
+> 		#address-cells = <1>;
+> 		#size-cells = <1>;
+> 
+> 		/*
+> 		 * map @0xe2000000 (32MB) to BAR0 (CPU)
+> 		 * map @0xe0000000 (16MB) to BAR1 (AMBA)
+> 		 */
+> 		ranges = <0xe2000000 0x00 0x00 0x00 0x2000000
+> 		          0xe0000000 0x01 0x00 0x00 0x1000000>;
+> 	...
+> 
+> Some devices under this bus need to use both BARs and use two regs values
+> in their reg properties to access BAR0 and BAR1.
+> 
+> 
+> > > > > > The assumption so far with all of this is that you have some specific
+> > > > > > PCI device (and therefore a driver). The simple-buses under it are
+> > > > > > defined per BAR. Not really certain if that makes sense in all cases,
+> > > > > > but since the address assignment is dynamic, it may have to. I'm also
+> > > > > > not completely convinced we should reuse 'simple-bus' here or define
+> > > > > > something specific like 'pci-bar-bus' or something.  
+> > > > >
+> > > > > Good point. Labeling a new bus for this kind of 'appliance' could be
+> > > > > beneficial to unify the dt overlay approach, and I guess it could be
+> > > > > adopted by the aforementioned Bootlin's Microchip patchset too.
+> > > > > However, since the difference with simple-bus would be basically non
+> > > > > existent, I believe that this could be done in a future patch due to
+> > > > > the fact that the dtbo is contained into the driver itself, so we do
+> > > > > not suffer from the proliferation that happens when dtb are managed
+> > > > > outside.  
+> > > >
+> > > > It's an ABI, so we really need to decide first.  
+> > >
+> > > Okay. How should we proceed?  
+> > 
+> > I think simple-bus where you have it is fine. It is really 1 level up
+> > that needs to be specified. Basically something that's referenced from
+> > the specific PCI device's schema (e.g. the RP1 schema (which you are
+> > missing)).
+> > 
+> > That schema needs to roughly look like this:
+> > 
+> > properties:
+> >   "#address-cells":
+> >     const: 3
+> >   "#size-cells":
+> >     const: 2
+> >   ranges:
+> >     minItems: 1
+> >     maxItems: 6
+> >     items:
+> >       additionalItems: true
+> >       items:
+> >         - maximum: 5  # The BAR number
+> >         - const: 0
+> >         - const: 0
+> >         - # TODO: valid PCI memory flags
+> > 
+> > patternProperties:
+> >   "^bar-bus@[0-5]$":
+> >     type: object
+> >     additionalProperties: true
+> >     properties:
+> >       compatible:
+> >         const: simple-bus
+> >       ranges: true
+> > 
+> 
+> IMHO, the node should not have 'bar' in the name.
+> In the LAN966x PCI use case, multiple BARs have to be accessed by devices
+> under this simple-bus. That's why I choose pci-ep-bus for this node name.
 >
-> `Guard<T, B>` implements `Sync` when `T` is `Sync`. Since this does not
-> depend on `B`, creating a `Guard` that is `Sync`, but with `!Sync` state
-> is possible. This is a soundness issue, thus add the bounds to the
-> respective impls.
->
-> Signed-off-by: Benno Lossin <benno.lossin@proton.me>
 
-Right now, a `&Guard<T, B>` has exactly the same powers as &T, as the
-only thing you can do on the guard with only a shared reference is
-deref to a &T. So the bounds are correct as they are, unless new APIs
-are added (which seems unlikely?). But the safety comment could
-certainly be improved.
+Agreed for your scenario. Anyway, since the dtbo and driver are shipped together,
+we are free to change the name anytime without impacting anything.
 
-Alice
+Many thanks,
+Andrea
+ 
+> Best regards,
+> Hervé
 
