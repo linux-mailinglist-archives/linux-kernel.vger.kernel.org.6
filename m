@@ -1,158 +1,133 @@
-Return-Path: <linux-kernel+bounces-313147-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313148-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 960BE96A0F2
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 16:44:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C68B396A0F6
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 16:45:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E6A3E284550
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 14:44:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 84C4028925E
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 14:45:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2241143725;
-	Tue,  3 Sep 2024 14:44:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A5A01422A2;
+	Tue,  3 Sep 2024 14:45:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sbCirwCm"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fNKw7RLt"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24C2B1F937;
-	Tue,  3 Sep 2024 14:44:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C547C143748;
+	Tue,  3 Sep 2024 14:45:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725374641; cv=none; b=K2Fc4XXJ/1HqyxgL1pV7v3uUN6+TMeaCbRShPSI/mrSYD0lwDXO0gq80ypmyvxAiywO3TpPn6R/Z71zLlZDR2hDs/vcTCN1HHOFGUtthDPSTin8PqjSYF2FKe5fgZ5P3VuuQvDqv2KXjsCh0zQXDmyLQUc0jbk0eor190YmaRfo=
+	t=1725374705; cv=none; b=RKPga6KtGKthQBilukkq69cAFi4eUPAAy42WFTlinBHDdS+NRDOV1zfVezCUx/cKS5YvUaEVjy36ixUo53UnaqIfkxNacni22lBQUZKXmY4gKj9RcHosjpVn3Wh2cJDJekmFD6Wm+iLrUgZraWMOi6Y11UfVCrSqwJOU+JOjWik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725374641; c=relaxed/simple;
-	bh=bhsfC7schH8RjjHul+VtOnj/fBjxgGuPNJejcIgfj6s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sw7XkXlFYWlWoLda5SRBSzaicyj8iXa4yOmWMzDzC1gRaIhxL3196uka25RmtVGBiE7fKYTa9Tzq6jg0dvp3OZTfpvvaHS4nwfEU0Opol3hPsfQTm0mMP674kHMJvi9IAvKa9WzCd6H7JyrrDg0nsTZd04krUCu08ksB1bRxiiM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sbCirwCm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70BDEC4CEC4;
-	Tue,  3 Sep 2024 14:44:00 +0000 (UTC)
+	s=arc-20240116; t=1725374705; c=relaxed/simple;
+	bh=kjwW4yZWDbOS3yre+iyQ+sO3btkOk+be3br7emWnx/s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dIiPNE7dMqCqInvL6pdN0IASmqV/rTbvp318jsUz9pwS0Fi3bVqdVk9MCoeYeCu67sGqrUXIwIr5RkOV+tydNEh/G7MNbQxJy5/YLZgehQ1yXyPmB0QkcHrZkkcHVsbmnGSR4P37H0QahkiGjFguhnxSCxG6GfGXeZOJwrRf+dc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fNKw7RLt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C3FFC4CEC4;
+	Tue,  3 Sep 2024 14:45:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725374640;
-	bh=bhsfC7schH8RjjHul+VtOnj/fBjxgGuPNJejcIgfj6s=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=sbCirwCmULlJUOhjUc9zCVGyJug9BPM4mAdtEiqxIOtAzsMM0pyzIo0nU8/0oZq7U
-	 XaT4S5oLB4Q5mi3UI8xatueGCnzkPuu7EmUn2olbCI1MTTAZ2VoSHTlyF7B/KIKrih
-	 wPk6Bu3exp92W6hjDiLPQG9ZRIiW5KFY9ooNLeYdsgVyMkW69foXqw77/HHzMD3Jlv
-	 KCY8hxMU5WQzVJpLIeZa1nBGvxw7mBERhnHncCJSH5+wT2EjyXqESUh/dtsayUCuqU
-	 4zOCOkZriT6qS048tCZqn3z72S64hxnIWkV5+lal6jUHabWOYvmf5WLlVFwAiXmle4
-	 Alrk1iPmHl6Rw==
-Date: Tue, 3 Sep 2024 09:43:59 -0500
-From: Rob Herring <robh@kernel.org>
-To: Parthiban Veerasooran <Parthiban.Veerasooran@microchip.com>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, horms@kernel.org, saeedm@nvidia.com,
-	anthony.l.nguyen@intel.com, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, andrew@lunn.ch, corbet@lwn.net,
-	linux-doc@vger.kernel.org, krzysztof.kozlowski+dt@linaro.org,
-	conor+dt@kernel.org, devicetree@vger.kernel.org,
-	horatiu.vultur@microchip.com, ruanjinjie@huawei.com,
-	steen.hegelund@microchip.com, vladimir.oltean@nxp.com,
-	masahiroy@kernel.org, alexanderduyck@fb.com, krzk+dt@kernel.org,
-	rdunlap@infradead.org, hkallweit1@gmail.com, linux@armlinux.org.uk,
-	UNGLinuxDriver@microchip.com, Thorsten.Kummermehr@microchip.com,
-	Pier.Beruto@onsemi.com, Selvamani.Rajagopal@onsemi.com,
-	Nicolas.Ferre@microchip.com, benjamin.bigler@bernformulastudent.ch,
-	linux@bigler.io, markku.vorne@kempower.com,
-	Conor Dooley <conor.dooley@microchip.com>
-Subject: Re: [PATCH net-next v7 14/14] dt-bindings: net: add Microchip's
- LAN865X 10BASE-T1S MACPHY
-Message-ID: <20240903144359.GA981887-robh@kernel.org>
-References: <20240903104705.378684-1-Parthiban.Veerasooran@microchip.com>
- <20240903104705.378684-15-Parthiban.Veerasooran@microchip.com>
+	s=k20201202; t=1725374705;
+	bh=kjwW4yZWDbOS3yre+iyQ+sO3btkOk+be3br7emWnx/s=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=fNKw7RLtWD+h+MVwSWb/heFmaDKUYskWslKnV2N4m/iIlCf4H7bLTJ+kaDdBI401P
+	 NPXeN9Pc9xnw7ODvmFgzKYA1LEz+/quhBboE5/UKUEeoerqReoH50aswqQhshgRcL9
+	 j5RcFhpMDmTHfK+tZrmKBtcjZgJ0HzIxqEsfEv94YYMvuH6z26JuUNaXOHLWE6Ggv6
+	 1W6S+4Pd1HS3xqyhH8KbJyptIbRM3lgQv1wvMOR79jEaFyTOIZbmKgten3tlVPwYhd
+	 LemBoGugplfgYGw+KV0F6F33m2wTYkqDQ6ofDGKS2MRzHEYbCQa6v8cGwE89qwN99u
+	 pb0Suyy9KekMw==
+Message-ID: <03e65361-790b-441e-b8e2-b8db4ffc6603@kernel.org>
+Date: Tue, 3 Sep 2024 16:45:00 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240903104705.378684-15-Parthiban.Veerasooran@microchip.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 00/10] Add minimal Exynos8895 SoC and SM-G950F support
+To: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240903124429.107076-1-ivo.ivanov.ivanov1@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240903124429.107076-1-ivo.ivanov.ivanov1@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Sep 03, 2024 at 04:17:05PM +0530, Parthiban Veerasooran wrote:
-> The LAN8650/1 combines a Media Access Controller (MAC) and an Ethernet
-> PHY to enable 10BASE-T1S networks. The Ethernet Media Access Controller
-> (MAC) module implements a 10 Mbps half duplex Ethernet MAC, compatible
-> with the IEEE 802.3 standard and a 10BASE-T1S physical layer transceiver
-> integrated into the LAN8650/1. The communication between the Host and the
-> MAC-PHY is specified in the OPEN Alliance 10BASE-T1x MACPHY Serial
-> Interface (TC6).
+On 03/09/2024 14:44, Ivaylo Ivanov wrote:
+> Hi folks,
 > 
-> Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
-> Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-> Signed-off-by: Parthiban Veerasooran <Parthiban.Veerasooran@microchip.com>
-> ---
->  .../bindings/net/microchip,lan8650.yaml       | 80 +++++++++++++++++++
->  MAINTAINERS                                   |  1 +
->  2 files changed, 81 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/net/microchip,lan8650.yaml
+> This series adds initial SoC support for the Exynos 8895 SoC and also
+> initial board support for Samsung Galaxy S8 phone (SM-G950F), codenamed
+> dreamlte.
 > 
-> diff --git a/Documentation/devicetree/bindings/net/microchip,lan8650.yaml b/Documentation/devicetree/bindings/net/microchip,lan8650.yaml
-> new file mode 100644
-> index 000000000000..b7b755b27b78
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/net/microchip,lan8650.yaml
-> @@ -0,0 +1,80 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/net/microchip,lan8650.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Microchip LAN8650/1 10BASE-T1S MACPHY Ethernet Controllers
-> +
-> +maintainers:
-> +  - Parthiban Veerasooran <parthiban.veerasooran@microchip.com>
-> +
-> +description:
-> +  The LAN8650/1 combines a Media Access Controller (MAC) and an Ethernet
-> +  PHY to enable 10BASE‑T1S networks. The Ethernet Media Access Controller
-> +  (MAC) module implements a 10 Mbps half duplex Ethernet MAC, compatible
-> +  with the IEEE 802.3 standard and a 10BASE-T1S physical layer transceiver
-> +  integrated into the LAN8650/1. The communication between the Host and
-> +  the MAC-PHY is specified in the OPEN Alliance 10BASE-T1x MACPHY Serial
-> +  Interface (TC6).
-> +
-> +allOf:
-> +  - $ref: /schemas/net/ethernet-controller.yaml#
-> +  - $ref: /schemas/spi/spi-peripheral-props.yaml#
-> +
-> +properties:
-> +  compatible:
-> +    oneOf:
-> +      - const: microchip,lan8650
-> +      - items:
-> +          - const: microchip,lan8651
-> +          - const: microchip,lan8650
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  interrupts:
-> +    description:
-> +      Interrupt from MAC-PHY asserted in the event of Receive Chunks
-> +      Available, Transmit Chunk Credits Available and Extended Status
-> +      Event.
-> +    maxItems: 1
-> +
-> +  spi-max-frequency:
-> +    minimum: 15000000
-> +    maximum: 25000000
-> +
+> The Exynos 8895 SoC is also used in S8 Plus (dream2lte), Note 8 (greatlte)
+> and Meizu 15 Plus (m1891). Currently DT is added for the Exynos 8895 SoC
+> and dreamlte, but it should be really easy to adapt for the other devices
+> with the same SoC.
 
-> +  "#address-cells":
-> +    const: 1
-> +
-> +  "#size-cells":
-> +    const: 0
+How did you resolve this comment:
 
-What are these for? They apply to child nodes, yet you have no child 
-nodes defined.
+"I do not believe this was tested. See maintainer SoC profile for
+Samsung Exynos."
 
-Rob
+?
+
+Best regards,
+Krzysztof
+
 
