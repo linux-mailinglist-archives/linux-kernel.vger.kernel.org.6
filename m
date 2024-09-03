@@ -1,229 +1,122 @@
-Return-Path: <linux-kernel+bounces-313448-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313450-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77CA896A58B
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 19:37:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FF4396A593
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 19:43:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 30062286E23
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 17:37:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DCB86286556
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 17:43:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 798BF18F2C4;
-	Tue,  3 Sep 2024 17:37:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F77F18F2CB;
+	Tue,  3 Sep 2024 17:43:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="lVuxvnVr"
-Received: from NAM04-DM6-obe.outbound.protection.outlook.com (mail-dm6nam04on2078.outbound.protection.outlook.com [40.107.102.78])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EUZMtyXH"
+Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AEFB18BC00
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 17:37:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.102.78
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725385053; cv=fail; b=MaRkfE/7vUEKa1uZc5rZxd6JBfnMMZFbwoVKOLUiYHQgqQdNygXiRYsjW/QSGWsXrJSDW6OwBhJmlSL095zzUcosLqlG1wA+y7oeS40436oXpU/Ika9Utff8EMqFoSVoIYzgsm/FPqIkmqueYJXtvuKNBU7YsAlosUD72gEAhh8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725385053; c=relaxed/simple;
-	bh=HRUCH6frL6uBu4qr7HFTQBdc5Fj5al1dB8/rD24Qe2Q=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=rA35BruZ9L8crozamNeIZGMlo7CXFTyx6kNlxXOCEAf+gmVuL13hXWRwE0qqk5zK/8jk5+iTT7wFYFVFl3HlNfO7Qvv9N+duv+OUnLCjxsu+XAw+l67c/9atTYDcSvWqfbs9k15+sAbMwVRtpAyTCIjtoqSMo3fjA1IxqduuDTM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=lVuxvnVr; arc=fail smtp.client-ip=40.107.102.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ejtz0BRSL5K7e2JQ7mPTd6tm5dvXVP8SOJvRJ7VQFA5O8qP6oEsgHhweVmFSUdo+g3PUtTuVKUjKYqzw42Hi7NUzMyNxvaPFICtnB1fRc6vTD1itV+xXaEpAiGAW2Vt5HhXv1U8cVCo0PBDxx3bz8ZFcMoxbQ1BJRdmVDi+cV7fKFVUmALFwVv1oUL89Rj6qrygdCp3mLktZdVSLKbIbmRnFcaysm/4I62app5UOPAzmLITrFcL984oGZ4QFFKq/qEicGQA0AtHP+fJmGrKXAwMYHR7GbX5eklHfb8eShi0mbT6C2CekmAg4YA2FRF5LePLL9vxpmLUEia06SvXDPQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=wfI6QjYL7dOLa4RhFtlAWiMZXKiw2QYbQYVMa/5OIuE=;
- b=VMbvdC0S5w1x4pa1kHLbgIr//5IDaEbLWlsyOkpQjhS1zYAjNPUjkaOL8bp/Ol9Zi6SFxrdA7q5fFcTZymvI0fmuzAKIkK2MjB3Ot5+Fj9G9ldHy/08krl/9q6R3SWJ3/zVMF3aVe2/igJNdpszucYjHM0d+VBV7PMjvmWabRLb4TPV1DCZXFOB4XOrtqNBt827gpSKny8qSuB6KxwdDBCgKLBwednNVxStlEp2Vm5AKOijGTlzEpwuJpzuK/2hjRTq3KZaBsqEUnd6Z1DpU9RcncCF0rWtE4S71RDPYGxOrnoOmJtEhPm9+2l6tJWdpL1qKHywtgpO3Ms5P1xr+4w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=wfI6QjYL7dOLa4RhFtlAWiMZXKiw2QYbQYVMa/5OIuE=;
- b=lVuxvnVrZsCp/UriR1wdmkPdA9jfLhDE/7ibrdaDJD6v6nHlrAgahznT1VNkHuduEg3zwIp/1JGw+OA9tq38t6eeA/yMqxIX7gQ+91j03xWn1NsORu/exrn/kMlsgWZZTUcqYFDCMv3cdvKr3OX082LqiYHCHQhztxcD0d4ou8c=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DS0PR12MB6583.namprd12.prod.outlook.com (2603:10b6:8:d1::12) by
- PH7PR12MB5829.namprd12.prod.outlook.com (2603:10b6:510:1d4::6) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7918.25; Tue, 3 Sep 2024 17:37:28 +0000
-Received: from DS0PR12MB6583.namprd12.prod.outlook.com
- ([fe80::c8a9:4b0d:e1c7:aecb]) by DS0PR12MB6583.namprd12.prod.outlook.com
- ([fe80::c8a9:4b0d:e1c7:aecb%6]) with mapi id 15.20.7918.024; Tue, 3 Sep 2024
- 17:37:28 +0000
-Message-ID: <3e9a6d05-a76c-4bbf-9f4e-2e126259b70e@amd.com>
-Date: Tue, 3 Sep 2024 10:37:25 -0700
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] vdpa/mlx5: Set speed and duplex of vDPA devices to
- UNKNOWN
-To: Carlos Bilbao <carlos.bilbao.osdev@gmail.com>, dtatulea@nvidia.com,
- mst@redhat.com, jasowang@redhat.com, sashal@kernel.org,
- alvaro.karsz@solid-run.com, christophe.jaillet@wanadoo.fr,
- steven.sistare@oracle.com
-Cc: bilbao@vt.edu, xuanzhuo@linux.alibaba.com, johnah.palmer@oracle.com,
- eperezma@redhat.com, cratiu@nvidia.com, virtualization@lists.linux.dev,
- linux-kernel@vger.kernel.org, Carlos Bilbao <cbilbao@digitalocean.com>
-References: <20240903171514.201569-1-carlos.bilbao.osdev@gmail.com>
- <20240903171514.201569-2-carlos.bilbao.osdev@gmail.com>
-Content-Language: en-US
-From: "Nelson, Shannon" <shannon.nelson@amd.com>
-In-Reply-To: <20240903171514.201569-2-carlos.bilbao.osdev@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SJ0PR03CA0362.namprd03.prod.outlook.com
- (2603:10b6:a03:3a1::7) To DS0PR12MB6583.namprd12.prod.outlook.com
- (2603:10b6:8:d1::12)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B0A418BC3A;
+	Tue,  3 Sep 2024 17:43:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725385414; cv=none; b=dl3oFkLheX6d8ty6LQvvbJ5QrO/m+CzUVifQXQq0IE8swU8PnwOGo5wuLcbuK2miSM3J34uvdNdOGiIP3RBpp5hnf+geSzcmzvLOzy05wpIlnme+ORBFIr/xUlY6AAxud07dn6LrkfvCCoUNm/czb1fmO+Xt3x9+w+uIp1v3m+s=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725385414; c=relaxed/simple;
+	bh=W2NvEDiPMdCRkIQi/U2zn9qbgZ8I+Gm2PHbpakhn09U=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kKXtO+qA+hG3e0rLHZFwk6XtjB025IEbEmd7uzvVN6geYMAx6M9HH0S4iArUTWAJUOTUlxadvwwbeNQ/AC8x5O6+i3BDjBKPDKpJiaCCgvzZE5ac8ubr1ODM4+qMlF6Or6Z3dWYx+vaBEUoKkMGEkI1KX+Slg59tRFwdLOKR/0w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EUZMtyXH; arc=none smtp.client-ip=209.85.216.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-2d88a8c66b7so136645a91.1;
+        Tue, 03 Sep 2024 10:43:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725385412; x=1725990212; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fy49/AVvXvkuJP3eSVDqTTRc5F7gppOTJPxMN+eltxo=;
+        b=EUZMtyXHxLNyclRiA3d6JyyAUj3NQkKYFDZTdFrHjPPrLVAYYdSHOFc1CDnp1b3VIA
+         rHkXxyPOcQisqmV7wVpluHjOV31BCOLnlsdT30pv1+tSeowdChXTz74NG4gOWDAa/4kE
+         XHRocy+Y9UvfaDVUEBi9WHzoqx/FuYLHn4bGE03GykvpzVR/ehzXjFf6Sf5PuJali+HZ
+         UYTAK/ZFwY5ZgZAsZuxkRzXq+U41EjFcvomq8Sl0P2yKqsI2VAtdINN+kXxd7QI9QUCF
+         U0lOIpK+caMWRY+2BzMotyqikquTuQEnY56xswE81EydxikwxXFLtQ2iyDkQGzfZDi6r
+         gEzA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725385412; x=1725990212;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=fy49/AVvXvkuJP3eSVDqTTRc5F7gppOTJPxMN+eltxo=;
+        b=dM0XGOWR0vfKp1IVjuvlRBmzECzhLBTWPFkyWwVjRBjpXJLdc8RR81gkIh+gQX9Swa
+         Tf/7nfUgGIzl0ueVGSGgBNGKEcM+rRuef8m2kEZLRulOEnuRk7j5f7M6/atLji6iVVqB
+         rMdVj79o3lWli6nzu2oIkpj75tSw9ylRjtWb/Z4CEnXMa/yZPfhU9WmlfGPYzdkJ2yMg
+         zmDPuzl50eooGdPid20fPm+8VpV8TtZ+nlQ+ZycIge9uIEI7DhjEXxaHKEj9U2Mvxegv
+         loYniRnGFz441uKdFWEw86JXr7NVIFEWMXj7Vf/gcFsgQeFiOp03YHJXz1IvKRd5w5C1
+         AXsQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUZ1Xhj3dVsvR0IeGikxwYwlUpVhUWTeceO2MaGrNw3NbQeLDAC0o24/HcUMcry9i/L2RMLroD0jDNmrvZYvXpES8eT@vger.kernel.org, AJvYcCV8QwmfEcaf9iCBTY6Afas8l+5g/cgY84RAtsJXDH2Ewt1vnOPz6NCUCMuRYr9pFYDXpriPGN9miUvJQJtd@vger.kernel.org, AJvYcCV8bxrt58GhQCQcepo0fzSDR1LXNyNMQSIEOLtNBRQkcvbxa3DM/Piq8O6d/HwTSRSSS0EB9bJ7k93yh23qpgQ=@vger.kernel.org, AJvYcCVO8j6ZSxlXgeIFm5IllkCizCaYwGt7YsEr5ld/+fFcTjatzF+4uEQgNJCr0IaFomo4FvVHHGiR+47W9OWV@vger.kernel.org, AJvYcCW2ZfUcDKeBfHL9fgWiONaoVypcVkdnAaVIJej4N+INOrE/mAsHzESsAyYlbx3LAzvdxA0oKEYGrtA=@vger.kernel.org, AJvYcCXi6Ef8pGtilB6RD0pQktgvKpDbJOR/YMcS+lXHr4uSvxEbhY2hoKPq6266WUD7Omn9VUgoC2KatMQdmg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwZYIaerTbdX0xT6qW8mLQBTd1DBTIQK/iW1MN9st6icBhvndxF
+	EBvQclrmJHWx8Qc1YprP+dn9I7M8Jcj2o/CpgqOLNvhX+8C82vT8I7zErgP1lmYL34Kfuwo6fMP
+	WJRcaNjCltzmap2wQjJVqfolv9/c=
+X-Google-Smtp-Source: AGHT+IEqKH0OWriiC8wInpcf2ZECoytsMPUwBDofLFkYfPN9ogN181tpD7iUm1gfTEwa1l2o3VI73EHRfYV1D0wWJPU=
+X-Received: by 2002:a17:90a:ba93:b0:2d8:ca39:5972 with SMTP id
+ 98e67ed59e1d1-2d8ca3991a8mr4648735a91.1.1725385412437; Tue, 03 Sep 2024
+ 10:43:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR12MB6583:EE_|PH7PR12MB5829:EE_
-X-MS-Office365-Filtering-Correlation-Id: 23542ca6-a011-49b1-6441-08dccc3f1487
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?bjVFUC9lRmRCN081Qk1pU3R5SnVwQkZVWDY3Ui9iUzJnSU9pazFhRWZJV2pq?=
- =?utf-8?B?RFVGQnBHZWZnNHJheXFoWlUzODNuZU5GYmJ5ZVZpOUJrWWtVRUNtK05MZWJx?=
- =?utf-8?B?UFhGeEsybEFVb0ExNElXREgxaEkzQkwrOHd1c0t5eXFIazBvUkYvL3N4VmxK?=
- =?utf-8?B?Z3d6SW5lM1c3cmRqZDFnM0pRMzdENGRrajB2aUxNSHlWdmxDdFpRWXAxRHA3?=
- =?utf-8?B?OG1NbWFSdXNjRUN3aVh1Mm1lMXlHcnJod1hHeENpTS94NElSVlA0Ylp2czhY?=
- =?utf-8?B?UTE3NFUzSE5LU0JYK3ZYNTJBRWlDVURpUVdyQ3kzMlRFUUo3S2J4STZSRWZy?=
- =?utf-8?B?eGNXZU9ObDU3M1RpNW9ibVFmdlRYZ0pweWVtQkpkZ0VVamdYTmgxSlZpc1o0?=
- =?utf-8?B?Yk1JeGpOMU5uNVdJTlROajhTS1A0TmlsVW5xUGY2S3d1cE1pU1JvVmp0NlFy?=
- =?utf-8?B?QUNZblpyUnNBcmQwcndDV0RYT0ZtN0F0bUREbTRKVHVucTRlK2o3R3l4eFph?=
- =?utf-8?B?MGNkZzVxdWFqSU1KTlNrRWpNZWJJV2Y0OVFUMTR1NFNoTTA5eGRWUDBMcUhX?=
- =?utf-8?B?ZG5RRHNhNldPdTB5Nk1xS2JjdS9kd1E1a3pkaWpqODBlUzJyK3J5SWNKVFEv?=
- =?utf-8?B?clhURmdWL0xobGNvZ1I0VlpTWElXanhRZkJ1a2xuVEROZnRCSHFLSmZBN1lF?=
- =?utf-8?B?T08vbHR4OEtwTGJuQW5IbVBYYUQxWlBBU2k3MVdadHZzbkZydmRacGJQaSto?=
- =?utf-8?B?ZHBaNXZGekNvYkxBMmFLNXJVaS82K2FUekIvcEFBRGMzQ3drcCtVb1NGenNG?=
- =?utf-8?B?Zk1WNTZTN2hKTTlXQXBzM0Q5SWgxZVhRTTFIWTdoVTQyU2R5STZvR2M4M3RT?=
- =?utf-8?B?QmNkaWRrT0JVUy9pT1JoUVdzOXpMQ2dXbkN0Qk1JMS82T3M2VmVzek1zSHpQ?=
- =?utf-8?B?WVdpRTkyclNZVFU2MUt0RnByVlRoa0d3RG8vS08yNkdRUVhnbW9yUzdTK0tH?=
- =?utf-8?B?alZQa2RzQVUxWGI2Mkc5bkQ0TnE5OWtvclpyR2s3c3JXbE54K00rdUZGZGU2?=
- =?utf-8?B?a085RHhvOGhBQTczNGhYSUZOd2thb3d3VlhzN2VzejJlQ09QNGlrYmRoZEc5?=
- =?utf-8?B?akV3R3FWa0k2eTY3S0FpSW1SM2dVZ3dTYVZmZkprZnBvZlVvanlIUHRPOUN2?=
- =?utf-8?B?dnczV3JrRFBGRjdjMnd2VGRJczRiZVVFRDA0dWM3M1BZTXVmQjhhMjVOeHFV?=
- =?utf-8?B?U2JCejJxQnNjWklONkcySjlJcHdaVS80WTg4bmREMTVyb1lBTkdaUWExZk0z?=
- =?utf-8?B?UkNCbVg1ZUt6OC9icFRURlRLdWhkQVlCOXEvRTg5VERPY3RIa3hicVRHTWpw?=
- =?utf-8?B?V2l2SjBocWpxMVBXSEVLTkJlVGw2Y3VOa3h3QVhCYk4rUmU0b2tFUGJXUVFY?=
- =?utf-8?B?WlFraVBpSWZXL29aQU5XZ3E3RVlSYlJoTHFtQmF1UFlRblVCeDV1MC9BaFhG?=
- =?utf-8?B?MFU5VmpIL3lRNTFYMWZJT3E1WXVCczdoS0l0SE9PMnBKenp0dEpHbmtZRDBD?=
- =?utf-8?B?RUVYSzBxd2k0S1lVQTI2Wk1lOU5QRVRPNzBDMUQyWnNUekdQbVRNVHFRSWwx?=
- =?utf-8?B?KzdWVS90ZzdiYXo5cmJ1cG13YXhxQ0NSa0VmY1BLait2U1dkTkkzdW5mUWRF?=
- =?utf-8?B?bnAvTDZVM1ZGVTBtMG8rZFIyMjB4NkpOclBFZnp6czFiVTVrbkhURldCbVpk?=
- =?utf-8?B?YVErSnZUaGZIV2JxSEJUZVVCOFVWU3pKd2RBUjd2YWNtcnNMUnIvRlFhM0Ir?=
- =?utf-8?B?TXFkdjlVdFZsamUrS2VPUT09?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR12MB6583.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?V3luTUdiU3FwRDVhSlZMNGowUnNldFVVaTBIQktiQlk3WVhJK1VLQmh1amJr?=
- =?utf-8?B?V0xad3NhblhscG5qNXJ4eUJaWThMNnNKUDk0NUU3ZWlTRjJ4U28vNXZabXBK?=
- =?utf-8?B?RFREK1BYZ2RQZ3RCOHYwRFlNbkQ1S1lER20yL28zK1l3WGtUNWtrZFpvKy9w?=
- =?utf-8?B?emxvMnQ5VWI4aSsrbDI5V1JpdDFIWURsS2lsaXlXOWo0czVxV2MrdTNCZzR5?=
- =?utf-8?B?aXZDREdnV2pNZzZ0VWNkeTYydFp2Rkc4dzZNem14RFN2YjBwVjNhOXppbVdE?=
- =?utf-8?B?VG9CNlZHNi84NU96aHVaMnBOL1NMZ3IwTndaRHZFY1BzdjEycEpRenEvb2sw?=
- =?utf-8?B?cmQ0Z05nUEpmcXY0VEdKRlV2L2JaTjRkTHc5UW03WlNqaW1XM3N3ZEdiUk00?=
- =?utf-8?B?eDdNakN6N0FhTTk4b3pVeDFWbExNVjhSQS9UelRXd09WMnh3TjRQaVM0U2pL?=
- =?utf-8?B?ZmVtN3l1TmFFdUlTWU1EQVZWZm9iWUZZeGZ4MnVnMFU3QUNJdWl0RHdGSWRo?=
- =?utf-8?B?QmhlaXFmQURGU1A3SW5TY3BETllpbUVkMnhtNStkVFBjVU9xU25rMmlxb2xn?=
- =?utf-8?B?b1VEdVhmNWFHUmNIbTZXbVRCekd1Z1BXZWhnU0NxcFczb29ROEVGRGtmYWlq?=
- =?utf-8?B?d29mVDl4SHJ3ZHpHaW15cmpwSUMxRFpmalRwWGFmTi80TjJIQ05zdzlnU0Rn?=
- =?utf-8?B?TVdJeTNNMVcydVRqSjB2MzgyMlpYVW5yTkJERWxUcThZMDZZNnJhVmFwRWZz?=
- =?utf-8?B?d0lLKzZJNXA3cStVOUh1N1VWd21HWTk1czFBNDlneTE4L3VPL1d6RDFKMHJY?=
- =?utf-8?B?eG01OUd5aVAvbXJOMVY3WFBWdjVJOWlLSUZZNERnV3NpTDRMYmhmRU0vRXZr?=
- =?utf-8?B?SjlHdE1laTNXdURINUw4VERWNXNJUGpnVTMwWmdxSjJtQjlnS1pyNlhjdUhT?=
- =?utf-8?B?RzlUUWU3OUhLclhVQXlKSU5nWjJ2MUlXOStBVFJFS1RuZnNXRVliL1hndUJn?=
- =?utf-8?B?VTcybWVIcnAzVVNPcmpaNUJSZHhnQWQvQlZFbzF5L1BweXlwdkhsaVVWSXd4?=
- =?utf-8?B?MTcvZm9Jdzl1UE1xMkppdW9oMFlmUllBWHl0ZUxpaGpqMmc3bWswY2w4K3lR?=
- =?utf-8?B?Z0c4dW1VcEtQSk9oWldaM2hZVllTbldQQmhVUDdRVmVTN25WRWxRdGJlNm1G?=
- =?utf-8?B?RDl2QmFZc3JRWDhaWjllcXRFOHFyaVozTzBQU3h6ODNUdEFrd0pMdTI5RHpt?=
- =?utf-8?B?YUxNc0tFQXVVMVJPL2Q3QmdsSUY2T2lVSXJCM3NHWExPU2ZRQzlaSGUxN2d5?=
- =?utf-8?B?UUl2ODUrLzAwQUdHeDl2ZUZVZmZNRDEwazMyaEZ5czdMYkkxTi9QNDFuYitv?=
- =?utf-8?B?R1U3T29WQnk2L1FZSi85NWVKcU85ZDlURXkvcHI2QU1lTitSa1gzSThhOEtM?=
- =?utf-8?B?MG1PY0haRGIzMEZlNFM5WVRWY2FGVlVUQVI1WWI1UU1KZTBIdzVla3dWL0d5?=
- =?utf-8?B?clJELzhPa0l3dVNJZjltWmNuMjVrb3lHWnR5LzloT1o3bHkzeUU5alhrRXA1?=
- =?utf-8?B?NkFTZk9kUlA0S05IOGJud0VOandjRWd5bEV5RlFBOXZnaVhCY2JSRld1WjEx?=
- =?utf-8?B?V21Kd0IvbFR3SzdrbkV4Mlp3UlN1Yi9iUzNkYkszZmN1QlBTMlJUeDJFNjB6?=
- =?utf-8?B?dHpxYzBSMXRodjFHMjZ6clJETW1Xdm81bVNTWnJCTUgxVXZ2TEs4SnlWTE1w?=
- =?utf-8?B?Q25jZ0I5WTMzSTlEMTI3ZVlxR0ZkSHVDRWJ6Rnk0MHcyN0t1TE01bWNaNnNo?=
- =?utf-8?B?OVh1YjZMSEp6MjNnOUw2RkZyb1hWdU9jWUYzQmppZ2tkY0h1R3ptMDY1R3JY?=
- =?utf-8?B?eGR0Ykw0SjJTY0FGU1N4NGcrV1Fjd20vSGpGRk9YSkVFdWdWRlhZUWx1Uk1Y?=
- =?utf-8?B?NWhpd1JZLytGVUFBTzFLRXNRSmJSSWg3SXdQaWpabHlOQlFhZmFxN2JCRU1G?=
- =?utf-8?B?K1BPd1NiQkFSQ1AwcnFHOWZPaHppUmd6MVQvY2x5ZVAvRVNFUEdYWHFYM0Qz?=
- =?utf-8?B?MzBFQkpETWl0WHNQNGdlTWptaVZtN2pkaE9iT0tXSjF5T3NqUWpWOGJrdyt0?=
- =?utf-8?Q?egcNBQ1rC7kIUUjC5OS/8vqW2?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 23542ca6-a011-49b1-6441-08dccc3f1487
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR12MB6583.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Sep 2024 17:37:28.0646
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: EBgWe8sDtrYpJbHGvsVA72uDZj33/GbyNc/kRNw68pduIRSWaIdasIfkQ/rudWyVm5HQ50lt9ZRZP5MjwX3xjQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB5829
+References: <20240903-mips-rust-v1-0-0fdf0b2fd58f@flygoat.com> <20240903-mips-rust-v1-1-0fdf0b2fd58f@flygoat.com>
+In-Reply-To: <20240903-mips-rust-v1-1-0fdf0b2fd58f@flygoat.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Tue, 3 Sep 2024 19:43:19 +0200
+Message-ID: <CANiq72kx+aJXJCGPv6PazCQ7BnSDN56WyVFj=6e0FNRYqunSfw@mail.gmail.com>
+Subject: Re: [PATCH 1/3] rust: Introduce HAVE_GENERATE_RUST_TARGET config option
+To: Jiaxun Yang <jiaxun.yang@flygoat.com>
+Cc: Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
+	Nicolas Schier <nicolas@fjasle.eu>, Richard Weinberger <richard@nod.at>, 
+	Anton Ivanov <anton.ivanov@cambridgegreys.com>, Johannes Berg <johannes@sipsolutions.net>, 
+	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+	"H. Peter Anvin" <hpa@zytor.com>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
+	Alice Ryhl <aliceryhl@google.com>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
+	Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, Jonathan Corbet <corbet@lwn.net>, Alex Shi <alexs@kernel.org>, 
+	Yanteng Si <siyanteng@loongson.cn>, Nick Desaulniers <ndesaulniers@google.com>, 
+	Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, linux-kbuild@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-um@lists.infradead.org, 
+	rust-for-linux@vger.kernel.org, linux-mips@vger.kernel.org, 
+	linux-trace-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
+	llvm@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 9/3/2024 10:15 AM, Carlos Bilbao wrote:
-> From: Carlos Bilbao <cbilbao@digitalocean.com>
-> 
-> Initialize the speed and duplex fields in virtio_net_config to UNKNOWN.
-> This is needed because mlx5_vdpa vDPA devicess currently do not support the
-> VIRTIO_NET_F_SPEED_DUPLEX feature which reports speed and duplex. Add
-> needed helper cpu_to_mlx5vdpa32() to convert endianness of speed.
-> 
-> Signed-off-by: Carlos Bilbao <cbilbao@digitalocean.com>
-> Reviewed-by: Dragos Tatulea <dtatulea@nvidia.com>
-> ---
->   drivers/vdpa/mlx5/net/mlx5_vnet.c | 12 ++++++++++++
->   1 file changed, 12 insertions(+)
-> 
-> diff --git a/drivers/vdpa/mlx5/net/mlx5_vnet.c b/drivers/vdpa/mlx5/net/mlx5_vnet.c
-> index b56aae3f7be3..5fce6d62af4f 100644
-> --- a/drivers/vdpa/mlx5/net/mlx5_vnet.c
-> +++ b/drivers/vdpa/mlx5/net/mlx5_vnet.c
-> @@ -173,6 +173,11 @@ static __virtio16 cpu_to_mlx5vdpa16(struct mlx5_vdpa_dev *mvdev, u16 val)
->          return __cpu_to_virtio16(mlx5_vdpa_is_little_endian(mvdev), val);
->   }
-> 
-> +static __virtio32 cpu_to_mlx5vdpa32(struct mlx5_vdpa_dev *mvdev, u32 val)
-> +{
-> +    return __cpu_to_virtio32(mlx5_vdpa_is_little_endian(mvdev), val);
-
-I hate picking at little things like this, but this should be a tab 
-rather than 4 spaces.
-
-sln
-
-
-> +}
+On Tue, Sep 3, 2024 at 7:15=E2=80=AFPM Jiaxun Yang <jiaxun.yang@flygoat.com=
+> wrote:
+>
 > +
->   static u16 ctrl_vq_idx(struct mlx5_vdpa_dev *mvdev)
->   {
->          if (!(mvdev->actual_features & BIT_ULL(VIRTIO_NET_F_MQ)))
-> @@ -3433,6 +3438,13 @@ static int mlx5_vdpa_dev_add(struct vdpa_mgmt_dev *v_mdev, const char *name,
->          init_rwsem(&ndev->reslock);
->          config = &ndev->config;
-> 
-> +       /*
-> +        * mlx5_vdpa vDPA devices currently don't support reporting or
-> +        * setting the speed or duplex.
-> +        */
-> +       config->speed  = cpu_to_mlx5vdpa32(mvdev, SPEED_UNKNOWN);
-> +       config->duplex = DUPLEX_UNKNOWN;
-> +
->          if (add_config->mask & BIT_ULL(VDPA_ATTR_DEV_NET_CFG_MTU)) {
->                  err = config_func_mtu(mdev, add_config->net.mtu);
->                  if (err)
-> --
-> 2.34.1
-> 
+
+Spurious line?
+
+> +config HAVE_GENERATE_RUST_TARGET
+> +       bool
+> +       depends on HAVE_RUST
+> +       help
+> +         This symbol should be selected by an architecture if it
+> +         supports generating Rust target files with
+> +         scripts/generate_rust_target.rs.
+
+It should be more like "if it needs" rather than "if it supports",
+i.e. the `target.json` is something that should be avoided if
+possible, since the goal is to avoid depending on it in the future.
+
+Cheers,
+Miguel
 
