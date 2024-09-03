@@ -1,193 +1,125 @@
-Return-Path: <linux-kernel+bounces-313602-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313605-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2933B96A77D
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 21:39:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05F4C96A787
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 21:40:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4C55F1C2367B
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 19:39:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 38D691C2354A
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 19:40:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53FB7191477;
-	Tue,  3 Sep 2024 19:39:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99330194A4B;
+	Tue,  3 Sep 2024 19:40:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="tC957Bon";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="QZbOff63";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="tC957Bon";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="QZbOff63"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YTiFQ/vS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A20071D7E2B;
-	Tue,  3 Sep 2024 19:39:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F38F918E379;
+	Tue,  3 Sep 2024 19:40:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725392385; cv=none; b=fQUUCFIyEBj/w0xzN9msGMQ8l+JSMl2Pn3LPA0oa8m/rTf8m0dBPA3VyfActgcUsJQhpWv1JOvTBfGHaVbk+385QlItkR+Q+dgkwfGLuC1l+cXpxmLoFv0QqYlsMCSyukjyqkVG3HadHDO7MMaCeQBz2tJekvHxlktufF+NAxvM=
+	t=1725392411; cv=none; b=fext9XqVSgeNBl0linB+gzimWgawOP/WzkXO3LPAST3WMw5mLswU8gr1rNpmwM1mMTTd0jfMU7JgK/K5auEQKoJBucuCTXQudC104MJ3HXT6dx21RZuwhfAZfFEWzsbxushoiLpEElz9YEmNmSF/kTh1XBid68eEj5Dx0e7IE3o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725392385; c=relaxed/simple;
-	bh=obfq3yLxDKCxkgzB/Y8toXSMufaoxwUHO2+IKWwhV1k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IsctcoqWVxbGZKIgVjkp2lrAahU9PNM3XE9qTp0M3EpTfxByQCZAvGh3SVFDqv0L9i1QmCTbJwz4yGN7C5jSBMOksdPKHA20uUuOxRxvHmDsmDHWkbBYKaeZx5GdmPJUmQRI0o33+uwh/leKHLYOtcVT/XdbL6SC+/okUwHgKGU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=tC957Bon; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=QZbOff63; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=tC957Bon; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=QZbOff63; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id E171A21BA3;
-	Tue,  3 Sep 2024 19:39:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1725392381;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LRhwxJzf71SgcP8EDvxZLLW7ErFwCjxTnZAyAVKtBb0=;
-	b=tC957Bon8LNd5YZ5enUgtWxHiWV7Kt7+rtmSiIYIhEYgCm6piWIJMGFEcBLPWw6gonPplO
-	IPQ0d5RhmGadKdAJGkX2CGvRi1LJJt2PY/L/8SHn+SJMWjY6OX76/Nx7wxQTc0is1qC2Ym
-	H841GMkPH8yHonDwGPPMF+6bHRSnXt0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1725392381;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LRhwxJzf71SgcP8EDvxZLLW7ErFwCjxTnZAyAVKtBb0=;
-	b=QZbOff63xZpedK8k0mXhIDLG9ENFbJq6FSR9wKu0YcGlb0Zim8ulk3e5UBYWGsCUdmqcJP
-	I6zg/79kE96AZaAA==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1725392381;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LRhwxJzf71SgcP8EDvxZLLW7ErFwCjxTnZAyAVKtBb0=;
-	b=tC957Bon8LNd5YZ5enUgtWxHiWV7Kt7+rtmSiIYIhEYgCm6piWIJMGFEcBLPWw6gonPplO
-	IPQ0d5RhmGadKdAJGkX2CGvRi1LJJt2PY/L/8SHn+SJMWjY6OX76/Nx7wxQTc0is1qC2Ym
-	H841GMkPH8yHonDwGPPMF+6bHRSnXt0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1725392381;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LRhwxJzf71SgcP8EDvxZLLW7ErFwCjxTnZAyAVKtBb0=;
-	b=QZbOff63xZpedK8k0mXhIDLG9ENFbJq6FSR9wKu0YcGlb0Zim8ulk3e5UBYWGsCUdmqcJP
-	I6zg/79kE96AZaAA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id C17AA139D5;
-	Tue,  3 Sep 2024 19:39:41 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id q8W1Lv1l12bvNQAAD6G6ig
-	(envelope-from <dsterba@suse.cz>); Tue, 03 Sep 2024 19:39:41 +0000
-Date: Tue, 3 Sep 2024 21:39:36 +0200
-From: David Sterba <dsterba@suse.cz>
-To: Luca Stefani <luca.stefani.ge1@gmail.com>
-Cc: Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
-	David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 2/3] btrfs: Split remaining space to discard in chunks
-Message-ID: <20240903193936.GK26776@twin.jikos.cz>
-Reply-To: dsterba@suse.cz
-References: <20240903071625.957275-1-luca.stefani.ge1@gmail.com>
- <20240903071625.957275-3-luca.stefani.ge1@gmail.com>
+	s=arc-20240116; t=1725392411; c=relaxed/simple;
+	bh=XC9fpM68GCykaJ0+llPct0MH1DbK7uxfWC50qejoiWM=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=SbClggBygeJ7Fukg+15h0SrQJhxF6NgbRLoxpizkNF4mpislm4XwKet3AsXw/mrWbtfLhqmyEmAYfm7R6i1DaU4XKKdnKANeF4QnAeunkiFmPx8/UmAWUvLUtC7kqhLu2xQbdR4AvT6kQXEgWsXAKzB2cDjieZK0KjgwNfzLEIs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YTiFQ/vS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99307C4CEC4;
+	Tue,  3 Sep 2024 19:40:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725392410;
+	bh=XC9fpM68GCykaJ0+llPct0MH1DbK7uxfWC50qejoiWM=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=YTiFQ/vSeJiEZhoFjPH0CtCM7fNBeEOmIL/WiDgnDa9dSCXvL082SjqmYnFJi3n9i
+	 4VJmtrHgRYDw4rx9bgw2PPGO6juFFSAd8L3qaLkz6Cmvpsp7xPMAo+e7Fn2nh9hLt/
+	 KHrKTQrxH9e02hfJtlq9JyrgL9amv1KjzGbrRdLo3AyCUXnPxQFS3b0gd+WrZUCojP
+	 cULac79qH1Wo/HdS4/4GI1Fv54v5lRh9zbx8DsSzSZd2hROp5HJ+08uGdXSnHMmqcb
+	 vV1yw7ACLEOKtZkqZbKo0AtdJU4EC+8LfpXQSB/0HY0vpJgIydZeHWYJUZPP6IpJL2
+	 03FxoOeuTnGXg==
+Date: Tue, 3 Sep 2024 12:40:08 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Samiullah Khawaja <skhawaja@google.com>
+Cc: Joe Damato <jdamato@fastly.com>, netdev@vger.kernel.org,
+ edumazet@google.com, amritha.nambiar@intel.com,
+ sridhar.samudrala@intel.com, sdf@fomichev.me, bjorn@rivosinc.com,
+ hch@infradead.org, willy@infradead.org, willemdebruijn.kernel@gmail.com,
+ Martin Karsten <mkarsten@uwaterloo.ca>, Donald Hunter
+ <donald.hunter@gmail.com>, "David S. Miller" <davem@davemloft.net>, Paolo
+ Abeni <pabeni@redhat.com>, Jesper Dangaard Brouer <hawk@kernel.org>, Xuan
+ Zhuo <xuanzhuo@linux.alibaba.com>, Daniel Jurgens <danielj@nvidia.com>,
+ open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH net-next 5/5] netdev-genl: Support setting per-NAPI
+ config values
+Message-ID: <20240903124008.4793c087@kernel.org>
+In-Reply-To: <CAAywjhTG+2BmoN76kaEmWC=J0BBvnCc7fUhAwjbSX5xzSvtGXw@mail.gmail.com>
+References: <20240829131214.169977-1-jdamato@fastly.com>
+	<20240829131214.169977-6-jdamato@fastly.com>
+	<20240829153105.6b813c98@kernel.org>
+	<ZtGiNF0wsCRhTtOF@LQ3V64L9R2>
+	<20240830142235.352dbad5@kernel.org>
+	<ZtXuJ3TMp9cN5e9h@LQ3V64L9R2.station>
+	<20240902180220.312518bc@kernel.org>
+	<CAAywjhTG+2BmoN76kaEmWC=J0BBvnCc7fUhAwjbSX5xzSvtGXw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240903071625.957275-3-luca.stefani.ge1@gmail.com>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
-X-Spam-Score: -2.50
-X-Spamd-Result: default: False [-2.50 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	HAS_REPLYTO(0.30)[dsterba@suse.cz];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MIME_TRACE(0.00)[0:+];
-	TO_DN_SOME(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FREEMAIL_TO(0.00)[gmail.com];
-	RCVD_TLS_ALL(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	ARC_NA(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	REPLYTO_ADDR_EQ_FROM(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:url];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[6];
-	REPLYTO_DOM_NEQ_TO_DOM(0.00)[]
-X-Spam-Flag: NO
-X-Spam-Level: 
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Tue, Sep 03, 2024 at 09:16:11AM +0200, Luca Stefani wrote:
-> Per Qu Wenruo in case we have a very large disk, e.g. 8TiB device,
-> mostly empty although we will do the split according to our super block
-> locations, the last super block ends at 256G, we can submit a huge
-> discard for the range [256G, 8T), causing a super large delay.
-> 
-> We now split the space left to discard based the block discard limit
-> in preparation of introduction of cancellation signals handling.
-> 
-> Link: https://bugzilla.kernel.org/show_bug.cgi?id=219180
-> Link: https://bugzilla.suse.com/show_bug.cgi?id=1229737
-> Signed-off-by: Luca Stefani <luca.stefani.ge1@gmail.com>
-> ---
->  fs/btrfs/extent-tree.c | 24 +++++++++++++++++++-----
->  1 file changed, 19 insertions(+), 5 deletions(-)
-> 
-> diff --git a/fs/btrfs/extent-tree.c b/fs/btrfs/extent-tree.c
-> index a5966324607d..9c1ddf13659e 100644
-> --- a/fs/btrfs/extent-tree.c
-> +++ b/fs/btrfs/extent-tree.c
-> @@ -1301,12 +1301,26 @@ static int btrfs_issue_discard(struct block_device *bdev, u64 start, u64 len,
->  	}
->  
->  	if (bytes_left) {
-> -		ret = blkdev_issue_discard(bdev, start >> SECTOR_SHIFT,
-> -					   bytes_left >> SECTOR_SHIFT,
-> -					   GFP_NOFS);
-> -		if (!ret)
-> -			*discarded_bytes += bytes_left;
-> +		u64 bytes_to_discard;
-> +		struct bio *bio = NULL;
-> +		sector_t sector = start >> SECTOR_SHIFT;
-> +		sector_t nr_sects = bytes_left >> SECTOR_SHIFT;
-> +
-> +		while ((bio = blk_alloc_discard_bio(bdev, &sector, &nr_sects,
-> +				GFP_NOFS))) {
-> +			ret = submit_bio_wait(bio);
-> +			bio_put(bio);
-> +
-> +			if (!ret)
-> +				bytes_to_discard = bio->bi_iter.bi_size;
-> +			else if (ret != -EOPNOTSUPP)
-> +				return ret;
-> +
-> +			start += bytes_to_discard;
-> +			bytes_left -= bytes_to_discard;
-> +		}
+On Tue, 3 Sep 2024 12:04:52 -0700 Samiullah Khawaja wrote:
+> Do we need a queue to napi association to set/persist napi
+> configurations? 
 
-This is not what I anticipated, we only wanted to know the optimal
-request size but now it's reimplementing the bio submission and compared
-to blkdev_issue_discard() it lacks blk_start_plug/blk_finish_plug.
+I'm afraid zero-copy schemes will make multiple queues per NAPI more
+and more common, so pretending the NAPI params (related to polling)
+are pre queue will soon become highly problematic.
 
-As we won't get the bio_discard_limit() export for some reason I suggest
-to go back to setting the maximum chunk limit in our code and set it to
-something like 8G.
+> Can a new index param be added to the netif_napi_add
+> and persist the configurations in napi_storage.
+
+That'd be my (weak) preference.
+
+> I guess the problem would be the size of napi_storage.
+
+I don't think so, we're talking about 16B per NAPI, 
+struct netdev_queue is 320B, struct netdev_rx_queue is 192B. 
+NAPI storage is rounding error next to those :S
+
+> Also wondering if for some use case persistence would be problematic
+> when the napis are recreated, since the new napi instances might not
+> represent the same context? For example If I resize the dev from 16
+> rx/tx to 8 rx/tx queues and the napi index that was used by TX queue,
+> now polls RX queue.
+
+We can clear the config when NAPI is activated (ethtool -L /
+set-channels). That seems like a good idea.
+
+The distinction between Rx and Tx NAPIs is a bit more tricky, tho.
+When^w If we can dynamically create Rx queues one day, a NAPI may 
+start out as a Tx NAPI and become a combined one when Rx queue is 
+added to it.
+
+Maybe it's enough to document how rings are distributed to NAPIs?
+
+First set of NAPIs should get allocated to the combined channels,
+then for remaining rx- and tx-only NAPIs they should be interleaved
+starting with rx?
+
+Example, asymmetric config: combined + some extra tx:
+
+    combined        tx
+ [0..#combined-1] [#combined..#combined+#tx-1]
+
+Split rx / tx - interleave:
+
+ [0 rx0] [1 tx0] [2 rx1] [3 tx1] [4 rx2] [5 tx2] ...
+
+This would limit the churn when changing channel counts.
 
