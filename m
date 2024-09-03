@@ -1,100 +1,132 @@
-Return-Path: <linux-kernel+bounces-312679-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312680-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A952B9699B5
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 12:06:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FC309699B7
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 12:07:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E5DE21C21E76
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 10:06:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E02561F21C50
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 10:07:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C04E1A4E88;
-	Tue,  3 Sep 2024 10:06:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE7DD1AD24C;
+	Tue,  3 Sep 2024 10:07:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="gpQg/DYF"
-Received: from mail-4316.protonmail.ch (mail-4316.protonmail.ch [185.70.43.16])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SPQzhnot"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0884C1A0BF7;
-	Tue,  3 Sep 2024 10:06:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1D5F17C9B3;
+	Tue,  3 Sep 2024 10:07:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725357987; cv=none; b=q1FEs9pFGK4km9OA7kB3Gw2ifKjGm4nKcAKSiYVhg2g2IAty/WydiLDLLH9CCiQdWYIls4UOS3J/kJg/n1CxoXSvmi2iPv0fLdmphJ+zzjkndg8/ZfD2IHHDVaQvwklyVlSz3SsD0stAXi7j/FuoO/gR8jNu08U5pDCyeTHoLZY=
+	t=1725358029; cv=none; b=slT7Mnjfsfcq+waa8xzSekhjIRJ2s1Fk6UWX2dbsNwd7DcAyb40Hdckz1dhhRCZ9jAUZ9mTau9Dwri6RHcYdSBAnCvf2nAhE8e8iUsVmdunO8j6bGtwXaxM4X9I/3gMAb0OBCwqFFzXSYd/czb8fqsWN26EsvXbJWNRbkklnGzU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725357987; c=relaxed/simple;
-	bh=KV21/ik3Jm18GV7wwEWiBlSC71Oxh9A34Pib2Xed/GM=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=dmZ0t3ukAvjhPCz70pkhiSsSLaDpk+6vktRP1RIgud6GsKE5ygOxHtIzjYBmpG33ERD3NHttC19xnYWLyQVXMLEiHf2mHdPE2PaqsCd1yO7gGTTLQq+SueJENINytjJ4FxmAR9tqyqM+0YolklQxKfZMjTWsDBSx6aApT2cqKHY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=gpQg/DYF; arc=none smtp.client-ip=185.70.43.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1725357982; x=1725617182;
-	bh=KV21/ik3Jm18GV7wwEWiBlSC71Oxh9A34Pib2Xed/GM=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=gpQg/DYFnoTcnW9v0uhP3YReAVtz9hwYtm1vJPVFHABwVy0DUQcUZf6tDhrbr7dlf
-	 U5mIdKbo9SlcB+FA5q6rfs0germUGiCZVoqhuxHOVHaB5Bqxwi/wfsAF9qnzEzo4Iz
-	 G8GuWo7cmFbPeLjRWVLXBgl+Ty7ElaLPumnh64SxxXYUelBbO5V14KeoCzmhwxNMdp
-	 6YFH53n9JhvpaFzvISBEjcasj/BGE7GIItPAib9PWyTsEO0tMvImuGslOg60O4RJwh
-	 4EWT9ue7qZypE7bYc6VoMbZj/uO4suB/MnKena///MVfqqPQKuixtjnQJnP1bBQXXt
-	 4Q8VmCZbNmVQg==
-Date: Tue, 03 Sep 2024 10:06:18 +0000
-To: Alice Ryhl <aliceryhl@google.com>
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@samsung.com>, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] rust: sync: require `Sync` for `Backend::GuardState`
-Message-ID: <ca2e865a-f0a2-488e-ab0b-53ef5c4e95b3@proton.me>
-In-Reply-To: <CAH5fLgjicT5O77UviXUPxc0-O7nQO4J+M3Nfo+6Mm-DVGQBhMg@mail.gmail.com>
-References: <20240903091700.172734-1-benno.lossin@proton.me> <20240903091700.172734-2-benno.lossin@proton.me> <CAH5fLgjicT5O77UviXUPxc0-O7nQO4J+M3Nfo+6Mm-DVGQBhMg@mail.gmail.com>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: d64e1e0d3e51bf0c9eb219a1e35f34a8f230e242
+	s=arc-20240116; t=1725358029; c=relaxed/simple;
+	bh=8KOhIo4507EuwcvtkBjOPT1UdLYvJ4MkGgnucRoMW7c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=RUO/zj/bDUVy9Uz3dmCPK/YxWZZjFmN3d4npNYCBOBnPL6Wo4zl/z8cQazS2USt6G4eKw0s9+ffrI9Ojaly8qbY+5JsvDZu4Ss+LbLtv2KLGbLjubBxEeS4H3tFAeQqxqWleiI2FJ18LT2xZrS9BunfPTe0L18mgeHk9IDF3ZbU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SPQzhnot; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725358028; x=1756894028;
+  h=message-id:date:mime-version:subject:to:references:from:
+   in-reply-to:content-transfer-encoding;
+  bh=8KOhIo4507EuwcvtkBjOPT1UdLYvJ4MkGgnucRoMW7c=;
+  b=SPQzhnotv02GRNUUuJCTUHpXGQb5dhP6Hs/ydui4G3riw9a9qtuJkjCQ
+   2JhtQTUfbOZGDLdbXX+17mrSiOjOku6vof2mOxjBjjeEwKx3e+q999rIh
+   HmXvZ2n3yoDZKP2ifnQSdfo2yqd2LE2RjHgqJF12mQpIyIjHiH4+0VVNN
+   b9NpsUsNPYF1I7xiXKDNZis/Ok2BJFT3AK2fprKC3UKw1Z6ka0OKThk3I
+   ywRvPmBnktiwzEneN1UyXPu1Jj9lIo2i6m5RYB03NJGw0JiSY4tEfiXIh
+   0ndb1PGa/34SuttiPaS617CnKXQQ0U6Xk5fHy8/7ZP1kn8h06Ey20a1rX
+   Q==;
+X-CSE-ConnectionGUID: 5Pjj7k/nTH+F9t+AR7wdgA==
+X-CSE-MsgGUID: VB96WCz5Q3+8A4Ji6jivRg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11183"; a="23754184"
+X-IronPort-AV: E=Sophos;i="6.10,198,1719903600"; 
+   d="scan'208";a="23754184"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2024 03:07:07 -0700
+X-CSE-ConnectionGUID: qNRwZHUqSNugyq2z4HfgpQ==
+X-CSE-MsgGUID: MqkRV2ThTZucNuoB0EAmWw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,198,1719903600"; 
+   d="scan'208";a="64494453"
+Received: from ahunter6-mobl1.ger.corp.intel.com (HELO [10.0.2.15]) ([10.246.0.178])
+  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2024 03:07:02 -0700
+Message-ID: <70a58dca-01dc-408b-a2f7-a854718a405b@intel.com>
+Date: Tue, 3 Sep 2024 13:06:55 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 1/8] perf/core: Allow multiple AUX PMU events with the
+ same module
+To: Leo Yan <leo.yan@arm.com>, Peter Zijlstra <peterz@infradead.org>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+ "Liang, Kan" <kan.liang@linux.intel.com>,
+ Suzuki K Poulose <suzuki.poulose@arm.com>, Mike Leach
+ <mike.leach@linaro.org>, James Clark <james.clark@linaro.org>,
+ John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>,
+ Yicong Yang <yangyicong@hisilicon.com>,
+ Jonathan Cameron <jonathan.cameron@huawei.com>,
+ linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, coresight@lists.linaro.org
+References: <20240823113306.2310957-1-leo.yan@arm.com>
+ <20240823113306.2310957-2-leo.yan@arm.com>
+Content-Language: en-US
+From: Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+In-Reply-To: <20240823113306.2310957-2-leo.yan@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 03.09.24 11:32, Alice Ryhl wrote:
-> On Tue, Sep 3, 2024 at 11:17=E2=80=AFAM Benno Lossin <benno.lossin@proton=
-.me> wrote:
->>
->> `Guard<T, B>` implements `Sync` when `T` is `Sync`. Since this does not
->> depend on `B`, creating a `Guard` that is `Sync`, but with `!Sync` state
->> is possible. This is a soundness issue, thus add the bounds to the
->> respective impls.
->>
->> Signed-off-by: Benno Lossin <benno.lossin@proton.me>
->=20
-> Right now, a `&Guard<T, B>` has exactly the same powers as &T, as the
-> only thing you can do on the guard with only a shared reference is
-> deref to a &T. So the bounds are correct as they are, unless new APIs
-> are added (which seems unlikely?).=20
+On 23/08/24 14:32, Leo Yan wrote:
+> This commit changes the condition from checking the same PMU instance to
+> checking the same .setup_aux() callback pointer. If PMU events have the
+> same callback pointer, it means they share the same PMU driver module.
+> This allows support for multiple PMU events with the same driver module.
+> 
+> As a result, more than one AUX event (e.g. arm_spe_0 and arm_spe_1)
+> can record trace into the AUX ring buffer.
+> 
+> Signed-off-by: Leo Yan <leo.yan@arm.com>
+> ---
+>  kernel/events/core.c | 9 ++++++++-
+>  1 file changed, 8 insertions(+), 1 deletion(-)
+> 
+> diff --git a/kernel/events/core.c b/kernel/events/core.c
+> index c973e3c11e03..883c457911a3 100644
+> --- a/kernel/events/core.c
+> +++ b/kernel/events/core.c
+> @@ -12345,9 +12345,16 @@ perf_event_set_output(struct perf_event *event, struct perf_event *output_event)
+>  
+>  	/*
+>  	 * If both events generate aux data, they must be on the same PMU
+> +	 * module but can be with different PMU instances.
+> +	 *
+> +	 * For a built-in PMU module, the 'pmu->module' pointer is NULL,
+> +	 * thus it is not feasible to compare the module pointers when
+> +	 * AUX PMU drivers are built into the kernel image. Instead,
+> +	 * comparing the .setup_aux() callback pointer can determine if
+> +	 * the two PMU events come from the same PMU driver.
+>  	 */
+>  	if (has_aux(event) && has_aux(output_event) &&
+> -	    event->pmu != output_event->pmu)
+> +	    event->pmu->setup_aux != output_event->pmu->setup_aux)
 
-Right, but I thought it was strange not to require that. Since that
-would be the default behavior of the `Sync` auto-trait. And the only
-reason why we have to implement `Sync` is because we want it to be
-`!Send` with the `PhantomData<*mut ()>`.
-
-All of our locks currently use `()` as the guard state, so we don't lose
-anything.
-
-Maybe it might make sense to instead have a marker type that is `!Send`
-but `Sync` that can be used here instead, since then we could avoid the
-`unsafe impl Sync`.
-
-> But the safety comment could certainly be improved.
-
-That's why I stumbled on this :)
-
----
-Cheers,
-Benno
+It is not very flexible and risks someone adding aux PMUs that
+do not want that rule but accidentally support it.  Another
+option is to add a PMU callback, but really you need to Peter's
+feedback.
 
 
