@@ -1,137 +1,93 @@
-Return-Path: <linux-kernel+bounces-312211-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312212-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BFAF96939D
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 08:25:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15D199693A0
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 08:26:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6142D1C22D23
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 06:25:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C8804281368
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 06:26:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 672E21CFEA0;
-	Tue,  3 Sep 2024 06:25:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03FAF1CFEBD;
+	Tue,  3 Sep 2024 06:26:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="DUKQxRok"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="SHqzcIrW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 809351CCEF5;
-	Tue,  3 Sep 2024 06:25:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DAE91CF2B6;
+	Tue,  3 Sep 2024 06:26:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725344735; cv=none; b=u0enkgg6N5xiDuXh2uwuRW9dUQogBwM6FTHzJv0KfVpQCTH6sWRVYaEKP6OlwYK7KGlH3cAdI65phPC+QTnyf56RuyzgC9xhJhLsDDikhnSAva99V8mnV/uU6ptwDueyXwT1jFjC/H/0l0E9FZE/fIFcQ7WAZW2XQEYoyCKxlxA=
+	t=1725344779; cv=none; b=DkX6k/GafhrPfJof9hWbpYVAYJXSgv+0z6Q68v+xbUTpSUwBckp/RyIxCmMgSHbtS+bhkW0l5lxHyKR1to0cJBm3oKwPnpKrHZVQy+cGXutCEvot+aSi6uzsnLQy59zmjNFKwi+YnqeiCG//AWMVfTQziZJ4kuUFPKitRNuY7eE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725344735; c=relaxed/simple;
-	bh=L0BzdpBTag84LeEkQ/b0SYi8kwEwBszZzTIL8k4dgjs=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ma5SmWvDhhkimVgNtbC+wfBTP2roLkUEK4LhmVu3VDvLWBjjshCredv7aknxQbm+duIBPUaorg6/edfDD1WIVDwtlumEf/4OB1QDP0lfm5Zogv50XRyAA/E/fKOHbd82nkn4XixCETECbhekFcqCqJ/zcdF3Ht+ZG8KN97Ipldk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=DUKQxRok; arc=none smtp.client-ip=68.232.153.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1725344734; x=1756880734;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=L0BzdpBTag84LeEkQ/b0SYi8kwEwBszZzTIL8k4dgjs=;
-  b=DUKQxRokhL/xVESdGkv3WNHkOqBsn1tXlMa3moUHBnZKu2sAo4uOapdg
-   ATbX2Pf38OrHeWwti+m1iGorfgt/rGhW6DCUA9cuolacU/A4jpHa/sT0m
-   7M3XicAn9BoJgVLSyyjW2ZmKKrqXaO3495teoQjJtoKMUorKHOSHnsLKj
-   B59SM5shwb4znqk/eUx4zFcQE71S68f/EHI8Gd33B/UwZJbHWzOP/MLEV
-   torBDInBKNTAUNxB/z0p8MbrLkxYYZRNTI57gXl2XfEoEgLbvDbVYkC6+
-   /7IgydUdLnuM6d+tfTBMlYupI9+lc3tk7J8Lm/Rg79g772TjzX4D2+qDj
-   Q==;
-X-CSE-ConnectionGUID: 8oTXQlsbTn2KC0ti4Inaeg==
-X-CSE-MsgGUID: LbwKEOMAQXeOVxAiwi1iog==
-X-IronPort-AV: E=Sophos;i="6.10,197,1719903600"; 
-   d="scan'208";a="31215250"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa3.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 02 Sep 2024 23:25:33 -0700
-Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Mon, 2 Sep 2024 23:25:01 -0700
-Received: from localhost (10.10.85.11) by chn-vm-ex02.mchp-main.com
- (10.10.85.144) with Microsoft SMTP Server id 15.1.2507.35 via Frontend
- Transport; Mon, 2 Sep 2024 23:25:01 -0700
-Date: Tue, 3 Sep 2024 08:24:41 +0200
-From: Horatiu Vultur <horatiu.vultur@microchip.com>
-To: Parthiban Veerasooran <Parthiban.Veerasooran@microchip.com>
-CC: <andrew@lunn.ch>, <hkallweit1@gmail.com>, <linux@armlinux.org.uk>,
-	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-	<pabeni@redhat.com>, <ramon.nordin.rodriguez@ferroamp.se>,
-	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<UNGLinuxDriver@microchip.com>, <Thorsten.Kummermehr@microchip.com>
-Subject: Re: [PATCH net-next v2 0/7] microchip_t1s: Update on Microchip
- 10BASE-T1S PHY driver
-Message-ID: <20240903062441.otbn6qcrhjisovhy@DEN-DL-M31836.microchip.com>
-References: <20240902143458.601578-1-Parthiban.Veerasooran@microchip.com>
+	s=arc-20240116; t=1725344779; c=relaxed/simple;
+	bh=OYU3Vv6X2dt4TiWTT+E0OJJb2KwBvcbab8wH1wtnTCU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ttc6fx4Dcg+2yHlfaXTJO+XaUVFNQFYqDdADAWXwxPPKI+meF6ej0Gv5ZxQejXN8yiR8qy13mzDhtF7BSGhml5tIgb1QjawL+SCF1RiQytI1hWVP7t46yDXwTOk7z6vKIPBIqOMkIMpNF/KCbKIk8RJ/kA9ZgC8NE08pTgsNzNY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=SHqzcIrW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 47743C4CEC5;
+	Tue,  3 Sep 2024 06:26:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1725344778;
+	bh=OYU3Vv6X2dt4TiWTT+E0OJJb2KwBvcbab8wH1wtnTCU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=SHqzcIrW5mVA7UsW1aaBMG87uqeuRXYiezlyvOYE2XSRq9atXsjGG9HRiO2m+iYPJ
+	 aJ3UIkbHrSl6b/FYdG1FQgQIozFV1095NcqlH9N78pcgAMVu9Gpj+cue9YG161ME2W
+	 S6g9i/h3L2sluvXS1CKr2Gizc+AyNCW/TSbHhkTw=
+Date: Tue, 3 Sep 2024 08:26:15 +0200
+From: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
+To: =?utf-8?B?6IOh6L+e5Yuk?= <hulianqin@vivo.com>
+Cc: Michael Nazzareno Trimarchi <michael@amarulasolutions.com>,
+	Prashanth K <quic_prashk@quicinc.com>,
+	"quic_jjohnson@quicinc.com" <quic_jjohnson@quicinc.com>,
+	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"opensource.kernel" <opensource.kernel@vivo.com>,
+	"akpm@linux-foundation.org" <akpm@linux-foundation.org>
+Subject: Re: [PATCH v9] usb: gadget: u_serial: Add null pointer check in
+ gs_read_complete & gs_write_complete
+Message-ID: <2024090338-nutlike-oxymoron-90f0@gregkh>
+References: <TYUPR06MB6217DE28012FFEC5E808DD64D2962@TYUPR06MB6217.apcprd06.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240902143458.601578-1-Parthiban.Veerasooran@microchip.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <TYUPR06MB6217DE28012FFEC5E808DD64D2962@TYUPR06MB6217.apcprd06.prod.outlook.com>
 
-The 09/02/2024 20:04, Parthiban Veerasooran wrote:
+On Thu, Aug 29, 2024 at 11:54:39AM +0000, 胡连勤 wrote:
+> From: Lianqin Hu <hulianqin@vivo.com>
+> 
+> Considering that in some extreme cases, when the unbind operation
+> is being executed, gserial_disconnect has already cleared gser->ioport,
+> triggering a gadget reconfiguration at this time and gs_read_complete
+> gets called afterwards, which results in accessing null pointer,
+> add a null pointer check to prevent this situation.
+> 
+> Added a static spinlock to prevent gser->ioport from becoming
+> null after the newly added check.
 
-Hi Parthiban,
+In looking at this further, shouldn't we just be moving around where we
+call usb_ep_disable() in gserial_disconnect()?
 
-> This patch series contain the below updates,
-> 
-> v1:
+Can't we shut down the endpoints _BEFORE_ we set the port structures to
+NULL?  After the endpoints are stopped, then we know that there is no
+outstanding i/o possible and then we can clean up properly?
 
-You usually use v1, v2, v3 to say what is the difference between series.
-But in your case you already had v1 already in first patch series which
-it is strange to be used. I think you wanted to just describe the
-features of this patch series.
-So, my suggestion is to drop v1 because those are the features not
-changes between version, and put ':' instead of ',' after updates.
+Not to say that your change doesn't fix the race condition here, but
+cleaning up things in the proper order might be the better way as then
+there can not be any race conditions at all?
 
-Also almost all your patches in this series start with 'This patch',
-please change this to imperative mode:
-https://www.kernel.org/doc/html/v4.10/process/submitting-patches.html
+Have you tried that?
 
-> - Restructured lan865x_write_cfg_params() and lan865x_read_cfg_params()
->   functions arguments to more generic.
-> - Updated new/improved initial settings of LAN865X Rev.B0 from latest
->   AN1760.
-> - Added support for LAN865X Rev.B1 from latest AN1760.
-> - Moved LAN867X reset handling to a new function for flexibility.
-> - Added support for LAN867X Rev.C1/C2 from latest AN1699.
-> - Disabled/enabled collision detection based on PLCA setting.
-> 
-> v2:
-> - Fixed indexing issue in the configuration parameter setup.
-> 
-> Parthiban Veerasooran (7):
->   net: phy: microchip_t1s: restructure cfg read/write functions
->     arguments
->   net: phy: microchip_t1s: update new initial settings for LAN865X
->     Rev.B0
->   net: phy: microchip_t1s: add support for Microchip's LAN865X Rev.B1
->   net: phy: microchip_t1s: move LAN867X reset handling to a new function
->   net: phy: microchip_t1s: add support for Microchip's LAN867X Rev.C1
->   net: phy: microchip_t1s: add support for Microchip's LAN867X Rev.C2
->   net: phy: microchip_t1s: configure collision detection based on PLCA
->     mode
-> 
->  drivers/net/phy/Kconfig         |   4 +-
->  drivers/net/phy/microchip_t1s.c | 299 +++++++++++++++++++++++++-------
->  2 files changed, 239 insertions(+), 64 deletions(-)
-> 
-> 
-> base-commit: 221f9cce949ac8042f65b71ed1fde13b99073256
-> -- 
-> 2.34.1
-> 
+thanks,
 
--- 
-/Horatiu
+greg k-h
 
