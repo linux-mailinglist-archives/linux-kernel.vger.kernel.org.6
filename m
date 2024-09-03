@@ -1,132 +1,170 @@
-Return-Path: <linux-kernel+bounces-313102-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313103-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B18BD96A051
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 16:23:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8A8696A054
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 16:24:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E32328257B
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 14:23:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1925D1C21A49
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 14:24:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7E2714F9D6;
-	Tue,  3 Sep 2024 14:22:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="gPkkoc7b"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67CD56F30F;
+	Tue,  3 Sep 2024 14:24:06 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D93B813F43B;
-	Tue,  3 Sep 2024 14:22:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7664951C3E
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 14:24:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725373378; cv=none; b=HZVdl6Ys0KurK8Vp5k2OeM4g6I44FvwmdOwK7jBB7KXWiUN9pKdjuVmEb/Cfh05xzQ28JDXFZAoU5ciYqAPj+/ZFS6AJI5zLrpWIwzRvk7l4Tnsm07FxvJL+7K4reGPRRLV+/TINEB+/hOEVu9eZ3NCtO0b8Hgsktvik6X+LVMM=
+	t=1725373446; cv=none; b=ExH/ZEMGr8T7rVaGRib6QqIo2MNtYbq2vy99Wf1Ua+LOQFUHceaRF18r4i24yKVP1MWWWmYP/6I5zvnATnfnu87xn+9+q2WX/VC6eKQije1pPP3gxzOktvJnYj0k1kAztPjkSE/Xg+D/vkWFWO9Q8ItfZdUq6Q1fBVfnHoH/aZI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725373378; c=relaxed/simple;
-	bh=2G38JyYAiYuwQ/PJ/PSFTe3pd18vrq+YXe8lpCcykEU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=qaSyOhI2zF0C00NP3FBO7X4B2WtIMc55dqEnkuU/1UD462IaUeuhlGdXEJlfe1hS/vo+37a8ZXTP467CRUuAJDalnEvGnJIFBjhHD8SWY0rCmxLzI5yg4wLZNqcDecIFM4d1wwbgsVWzuwfVTbd1JYwQwPQRbdEtiANnxKJOXrg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=gPkkoc7b; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 483BJZQO018884;
-	Tue, 3 Sep 2024 14:22:35 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	5X5QFp29hmQ7by+9qCpUoFC+TAzM7t4IqLCLAuIpOTE=; b=gPkkoc7bp40UJapE
-	X7PfAT3pqWVLbGb4bc5RujGXS38oqPup31do8NZhBRKgJaZrF7wtDgwOn0cKtw4/
-	LOpxMnAXbrtTQpnjaQGn3cE2BwkDD2T5icoOuVZ7b8hCFaJSQNsC5eyrmtcKHDZU
-	zNeJgMUY+hVcYaqYZLoAlzCb5IPlACFatRyB6nHTmA/SrM37pXDfeT2O4jNUzvZm
-	VascZVMDjj0x52vFsR5GoIZuGxz9hOwr8OaXSppbbuTaGdETjcqqHCxSzA4qD23T
-	W3E01byOSK9p/FZDZqrdBpwJ1z7nRo/1c/29VN8BDjKSTECdBijq3BtRaKBWXkhx
-	blbwLQ==
-Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41bt4rfnra-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 03 Sep 2024 14:22:35 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 483EMYMt025782
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 3 Sep 2024 14:22:34 GMT
-Received: from [10.216.9.110] (10.80.80.8) by nasanex01a.na.qualcomm.com
- (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 3 Sep 2024
- 07:22:29 -0700
-Message-ID: <57a810e0-c072-7792-1f5f-3ddbeb0c97a3@quicinc.com>
-Date: Tue, 3 Sep 2024 19:52:25 +0530
+	s=arc-20240116; t=1725373446; c=relaxed/simple;
+	bh=rbE7f7lEhO/NIIxMm2SBz6OukT6kPRN9hZFooAgDE80=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=gBNru7It093B3vEUXu99W7DzVP25nxyxdO3MA1q+wwDwnMz4er1NKYHnM77jGqC4Fxla/QN0AaUlZjC/j3cjQ7f9ucXaYI37ncfPkLj4qDVZJL47A2y6Y2I2kDLFW+Mz4Zf0PO8nZMJeGH/78w4IrXY55PyFOyVdxccUb/vKgTs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-39d2dbd9bebso63938215ab.0
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 07:24:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725373444; x=1725978244;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=W2lJnvUj05dxrqOXSFeo9b5D1JGrL0BBUBLl8WTh16M=;
+        b=ldpL+UJd6m2A6tDi8H8JIhBIpC34sdaUa0BCsNPTMJ4o4NQZ5ac2mdAGo/PaJOjAxk
+         q3asx4ZhUBvyjhFbTejtM38NFXaTAv0eTfWZrzDQoXCw3tiEn6WavSLNkvi1hG/Xmwx7
+         wMlKoZ1AQ2p3ZoaKe6KsRXShoPkP8322EaohqrwVdOIZ3AcSwKMhdTvXeccwBf1JlvNZ
+         sip8HaHIbsPA5Y6+hM4NcC/mMALL5JQjn3n8glxZkK6+6wqhnm5rIeZfSIRxKUwQeTLh
+         M55BeBH0VnR0tL3MZnb/OAQGEl0sq7MveCiDI5CG1T4dh7iWVohW4I0Mu1jDQY3mfdr7
+         QDVQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVBXHhVi/mtU9kKU0hbjrqtWGOW/hO9p3p/gttpSryWvKR19go5c68nvT6Ih0ojFbioKosN9tvqC6ge37A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzoTXywuS/tl5etHxkHPjjACt7c35qJVVk42SRO6MPpb557OZcd
+	rGV1IBVFKTehAC5eV0pq128ofFESJgy9pG/rZOCWe7eg8eVmJ5nUPQB0G4Eb2yCiSYlvpp6ljrm
+	n/uwRIAcm4fZXtyHqYekRFQQR8V3P+CVcemvyxCIMO2YgaCXE01balng=
+X-Google-Smtp-Source: AGHT+IEJrGX/Mlc6RCZwuWX0ygqYkHm7y6YPRYxZeQKQciGNHzz6lKSkLegrJJfsNsJV20f4ZRr+0oQnV56KwHMeT0Ck7FMyY/sz
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.9.1
-Subject: Re: [PATCH v8 0/8] Add QPIC SPI NAND driver
-Content-Language: en-US
-To: Krzysztof Kozlowski <krzk@kernel.org>, <broonie@kernel.org>,
-        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <andersson@kernel.org>, <konradybcio@kernel.org>,
-        <miquel.raynal@bootlin.com>, <richard@nod.at>, <vigneshr@ti.com>,
-        <manivannan.sadhasivam@linaro.org>, <esben@geanix.com>,
-        <linux-arm-msm@vger.kernel.org>, <linux-spi@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-mtd@lists.infradead.org>
-References: <20240820104239.1774600-1-quic_mdalam@quicinc.com>
- <5169761b-422d-70ab-ba53-a898cb7bfa2f@quicinc.com>
- <fed18a8f-446f-4d61-a9ce-4c5e09bf0aaa@kernel.org>
-From: Md Sadre Alam <quic_mdalam@quicinc.com>
-In-Reply-To: <fed18a8f-446f-4d61-a9ce-4c5e09bf0aaa@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: rttAid4ooQgcOR3iwRLcnkjL--9ZVPR3
-X-Proofpoint-ORIG-GUID: rttAid4ooQgcOR3iwRLcnkjL--9ZVPR3
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-03_02,2024-09-03_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 phishscore=0
- bulkscore=0 malwarescore=0 impostorscore=0 mlxlogscore=999
- priorityscore=1501 spamscore=0 mlxscore=0 clxscore=1015 adultscore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2409030117
+X-Received: by 2002:a05:6e02:219b:b0:376:417e:c2ab with SMTP id
+ e9e14a558f8ab-39f410beff2mr5409975ab.5.1725373443715; Tue, 03 Sep 2024
+ 07:24:03 -0700 (PDT)
+Date: Tue, 03 Sep 2024 07:24:03 -0700
+In-Reply-To: <tencent_DF6D237A296523A8E45177687763C6C2B305@qq.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000037c3da062137cf02@google.com>
+Subject: Re: [syzbot] [mptcp?] KASAN: slab-use-after-free Read in __timer_delete_sync
+From: syzbot <syzbot+f3a31fb909db9b2a5c4d@syzkaller.appspotmail.com>
+To: eadavis@qq.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+
+Hello,
+
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+possible deadlock in remove_anno_list_by_saddr
+
+============================================
+WARNING: possible recursive locking detected
+6.11.0-rc6-syzkaller-00019-g67784a74e258-dirty #0 Not tainted
+--------------------------------------------
+syz.1.16/6115 is trying to acquire lock:
+ffff888028c116a0 (&msk->pm.lock){+.-.}-{2:2}, at: spin_lock_bh include/linux/spinlock.h:356 [inline]
+ffff888028c116a0 (&msk->pm.lock){+.-.}-{2:2}, at: mptcp_pm_del_add_timer net/mptcp/pm_netlink.c:338 [inline]
+ffff888028c116a0 (&msk->pm.lock){+.-.}-{2:2}, at: remove_anno_list_by_saddr+0x24/0x190 net/mptcp/pm_netlink.c:1464
+
+but task is already holding lock:
+ffff888028c116a0 (&msk->pm.lock){+.-.}-{2:2}, at: spin_lock_bh include/linux/spinlock.h:356 [inline]
+ffff888028c116a0 (&msk->pm.lock){+.-.}-{2:2}, at: mptcp_pm_remove_addrs_and_subflows net/mptcp/pm_netlink.c:1682 [inline]
+ffff888028c116a0 (&msk->pm.lock){+.-.}-{2:2}, at: mptcp_nl_remove_addrs_list net/mptcp/pm_netlink.c:1719 [inline]
+ffff888028c116a0 (&msk->pm.lock){+.-.}-{2:2}, at: mptcp_pm_nl_flush_addrs_doit+0x509/0xd80 net/mptcp/pm_netlink.c:1760
+
+other info that might help us debug this:
+ Possible unsafe locking scenario:
+
+       CPU0
+       ----
+  lock(&msk->pm.lock);
+  lock(&msk->pm.lock);
+
+ *** DEADLOCK ***
+
+ May be due to missing lock nesting notation
+
+4 locks held by syz.1.16/6115:
+ #0: ffffffff8fcf14b0 (cb_lock){++++}-{3:3}, at: genl_rcv+0x19/0x40 net/netlink/genetlink.c:1218
+ #1: ffffffff8fcf1368 (genl_mutex){+.+.}-{3:3}, at: genl_lock net/netlink/genetlink.c:35 [inline]
+ #1: ffffffff8fcf1368 (genl_mutex){+.+.}-{3:3}, at: genl_op_lock net/netlink/genetlink.c:60 [inline]
+ #1: ffffffff8fcf1368 (genl_mutex){+.+.}-{3:3}, at: genl_rcv_msg+0x121/0xec0 net/netlink/genetlink.c:1209
+ #2: ffff888028c10e98 (sk_lock-AF_INET6){+.+.}-{0:0}, at: lock_sock include/net/sock.h:1607 [inline]
+ #2: ffff888028c10e98 (sk_lock-AF_INET6){+.+.}-{0:0}, at: mptcp_nl_remove_addrs_list net/mptcp/pm_netlink.c:1718 [inline]
+ #2: ffff888028c10e98 (sk_lock-AF_INET6){+.+.}-{0:0}, at: mptcp_pm_nl_flush_addrs_doit+0x4d0/0xd80 net/mptcp/pm_netlink.c:1760
+ #3: ffff888028c116a0 (&msk->pm.lock){+.-.}-{2:2}, at: spin_lock_bh include/linux/spinlock.h:356 [inline]
+ #3: ffff888028c116a0 (&msk->pm.lock){+.-.}-{2:2}, at: mptcp_pm_remove_addrs_and_subflows net/mptcp/pm_netlink.c:1682 [inline]
+ #3: ffff888028c116a0 (&msk->pm.lock){+.-.}-{2:2}, at: mptcp_nl_remove_addrs_list net/mptcp/pm_netlink.c:1719 [inline]
+ #3: ffff888028c116a0 (&msk->pm.lock){+.-.}-{2:2}, at: mptcp_pm_nl_flush_addrs_doit+0x509/0xd80 net/mptcp/pm_netlink.c:1760
+
+stack backtrace:
+CPU: 0 UID: 0 PID: 6115 Comm: syz.1.16 Not tainted 6.11.0-rc6-syzkaller-00019-g67784a74e258-dirty #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:93 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:119
+ check_deadlock kernel/locking/lockdep.c:3061 [inline]
+ validate_chain+0x15d3/0x5900 kernel/locking/lockdep.c:3855
+ __lock_acquire+0x137a/0x2040 kernel/locking/lockdep.c:5142
+ lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5759
+ __raw_spin_lock_bh include/linux/spinlock_api_smp.h:126 [inline]
+ _raw_spin_lock_bh+0x35/0x50 kernel/locking/spinlock.c:178
+ spin_lock_bh include/linux/spinlock.h:356 [inline]
+ mptcp_pm_del_add_timer net/mptcp/pm_netlink.c:338 [inline]
+ remove_anno_list_by_saddr+0x24/0x190 net/mptcp/pm_netlink.c:1464
+ mptcp_pm_remove_addrs_and_subflows net/mptcp/pm_netlink.c:1689 [inline]
+ mptcp_nl_remove_addrs_list net/mptcp/pm_netlink.c:1719 [inline]
+ mptcp_pm_nl_flush_addrs_doit+0x689/0xd80 net/mptcp/pm_netlink.c:1760
+ genl_family_rcv_msg_doit net/netlink/genetlink.c:1115 [inline]
+ genl_family_rcv_msg net/netlink/genetlink.c:1195 [inline]
+ genl_rcv_msg+0xb14/0xec0 net/netlink/genetlink.c:1210
+ netlink_rcv_skb+0x1e3/0x430 net/netlink/af_netlink.c:2550
+ genl_rcv+0x28/0x40 net/netlink/genetlink.c:1219
+ netlink_unicast_kernel net/netlink/af_netlink.c:1331 [inline]
+ netlink_unicast+0x7f6/0x990 net/netlink/af_netlink.c:1357
+ netlink_sendmsg+0x8e4/0xcb0 net/netlink/af_netlink.c:1901
+ sock_sendmsg_nosec net/socket.c:730 [inline]
+ __sock_sendmsg+0x221/0x270 net/socket.c:745
+ ____sys_sendmsg+0x525/0x7d0 net/socket.c:2597
+ ___sys_sendmsg net/socket.c:2651 [inline]
+ __sys_sendmsg+0x2b0/0x3a0 net/socket.c:2680
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fb336579eb9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fb3372d5038 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
+RAX: ffffffffffffffda RBX: 00007fb336715f80 RCX: 00007fb336579eb9
+RDX: 0000000001000000 RSI: 0000000020000300 RDI: 0000000000000003
+RBP: 00007fb3365e793e R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000000 R14: 00007fb336715f80 R15: 00007fb33683fa28
+ </TASK>
 
 
+Tested on:
 
-On 9/3/2024 7:14 PM, Krzysztof Kozlowski wrote:
-> On 03/09/2024 11:15, Md Sadre Alam wrote:
->> Hi Miquel,
->>
->> On 8/20/2024 4:12 PM, Md Sadre Alam wrote:
->>> v8:
->>>    * Fixed compilation warning reported by kernel test robot
->>>    * Added "chip" description in nandc_set_read_loc_first()
->>>    * Added "chip" description" in nandc_set_read_loc_last()
->>>    * Changed data type of read_location0, read_location1,
->>>      read_location2, read_location3, addr0, addr1, cmd, cfg0,
->>>      cfg1, ecc_bch_cfg, ecc_buf_cfg, clrflashstatus, clrreadstatus,
->>>      orig_cmd1, orig_vld to __le32 to fix compilation warning.
->>>    * Included bitfield.h header file in spi-qpic-snand.c to
->>>      fix compilation warning
->>>    * Removed unused variable "steps" variable from
->>>      qcom_spi_ecc_init_ctx_pipelined()
->>>
->>       I have addressed your comments to v6 and further posted till v8.
->>       Could you please let me know if this is fine.
->>       and how to get this merged ?
-> 
-> Two weeks ago you received reports that your code does not build
-> properly. So no, it is not fine. Please respond to the reports and/or
-> send corrected code.
-   Sorry I missed it, will fix and post next revision.
-> 
-> Best regards,
-> Krzysztof
-> 
+commit:         67784a74 Merge tag 'ata-6.11-rc7' of git://git.kernel...
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=13ab2a8f980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=660f6eb11f9c7dc5
+dashboard link: https://syzkaller.appspot.com/bug?extid=f3a31fb909db9b2a5c4d
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=1377f28f980000
+
 
