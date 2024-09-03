@@ -1,174 +1,100 @@
-Return-Path: <linux-kernel+bounces-312790-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312791-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5EFA6969B5A
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 13:15:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A06D5969B5C
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 13:15:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 925F31C22B5C
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 11:15:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D3F1C1C237F3
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 11:15:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 353DD1A3A9F;
-	Tue,  3 Sep 2024 11:15:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F7FB1885B5;
+	Tue,  3 Sep 2024 11:15:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Hb/iH0j4"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OpdMmhym"
+Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51A9C1B12C2;
-	Tue,  3 Sep 2024 11:15:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FA5A17DFF5;
+	Tue,  3 Sep 2024 11:15:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725362125; cv=none; b=W/4GP6pu/NVwAKwrUbhwpxn0lYsegitrBK6Jg3/kYPl5MHfLdyHhpvyD2hKqyE9v+49MPn3hvCWU76oIH+ezpDOKxdRvygoocHdUTsMWj3C5FFr1aLSd/WVU4SVQgSJjCozcpOuUK7UeSNTbvwh7LHRStJMgb0u6sATKm6UZd4w=
+	t=1725362138; cv=none; b=SD8EzJiiuzoGnOv3OYDVwMgh8MqG0l0vITVzbRbiW536J7fL6bvyVebsDjPuwe27Kqxjg+89IuZSSyyeFzoPzGOVi/9I7G+Xpz1nkWBUstvBv54HzPeqa90GJkqDXEndoh/WsoIZFJvfDogjZLrSl2G/xscbSGWdHlOdAs2oOuE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725362125; c=relaxed/simple;
-	bh=KfGX1dn8HNVuzrnALRJ6/KgJTduArsS/FUwz9Q12b3I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Vvn25NjOWsN4xkjcgkmXQ50uqB7ODBK4Z3hBJQQJrqD7M04d7+1VKtlh0aFCYnFuTbXOcd8Fv13DqzwGsrjc2CPk/8Ipa7N0Q+WsmISBJcMyBAbvjMvo6eTN1W+igsuNL/hJL535mlc5wI6yzv+x16odjeBzpNfsVR/PPDFjVDc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Hb/iH0j4; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725362123; x=1756898123;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=KfGX1dn8HNVuzrnALRJ6/KgJTduArsS/FUwz9Q12b3I=;
-  b=Hb/iH0j4a3Oau5osSCaRz6UaTpzryyMvxryLtHE8HHETN9SJkFQykZl+
-   ptvtIh86RKW2qQdGQ69iJoTTizwLiF4lFH5lGluAA7rXsIw5mxfvQUEZM
-   gvP8h5v4MkSVKGM1hFwaY0WSEUxvclIAeDq6oi2xRsn+/r9ZlMoc1TGmM
-   H6/gQOfSCImxWPWHiqkp9b08WSoXjfQ7hVM87FJ3zMhnBWKYhjWVTf8fg
-   p7ryTV53PY7h//ImoZCxhSQdieaHIoiELUPmwYi0eDTqwno2jLNgbGXXS
-   5OOATdaGBKpvpL1M1XcJDGH1/IqqeKqmCUoL3G6q3lHuNVUab2F/jLsMz
-   g==;
-X-CSE-ConnectionGUID: /x4qRc6zQSa3AWu4pSheKQ==
-X-CSE-MsgGUID: AghVxcb0T1yK7NWVZbq4cg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11183"; a="35322514"
-X-IronPort-AV: E=Sophos;i="6.10,198,1719903600"; 
-   d="scan'208";a="35322514"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2024 04:15:22 -0700
-X-CSE-ConnectionGUID: JIDeYybnQVSbI/6PSXDR1w==
-X-CSE-MsgGUID: gA1+HILmTOK07TZHYfFVnQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,198,1719903600"; 
-   d="scan'208";a="69013942"
-Received: from kuha.fi.intel.com ([10.237.72.185])
-  by fmviesa003.fm.intel.com with SMTP; 03 Sep 2024 04:15:19 -0700
-Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Tue, 03 Sep 2024 14:15:15 +0300
-Date: Tue, 3 Sep 2024 14:15:15 +0300
-From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-To: "Christian A. Ehrhardt" <lk@c--e.de>
-Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Anurag Bijea <icaliberdev@gmail.com>,
-	Christian Heusel <christian@heusel.eu>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Jameson Thies <jthies@google.com>,
-	Abhishek Pandit-Subedi <abhishekpandit@chromium.org>
-Subject: Re: [PATCH v2 1/2] usb: typec: ucsi: Enable ASUS zenbook quirk for
- VivoBooks
-Message-ID: <Ztbvw5seWqRA5/8L@kuha.fi.intel.com>
-References: <20240829100109.562429-1-lk@c--e.de>
- <ZtF/BJMls7kuD2dt@kuha.fi.intel.com>
- <ZtI8N5/SCt+dI/6z@cae.in-ulm.de>
+	s=arc-20240116; t=1725362138; c=relaxed/simple;
+	bh=BqJPlt44MeNTjunDONHtThoDBK8zbPy2hRTgHU608OI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ooci2dV7SIPk2q8XAEoiPiwCKO9hxwNIPlGOn/V2WhhuBU7Di23oxtYNZQKtTnH4oeXRnCtyKNmAw4V4cGe275YgmyiYkn7XDcaab6JL6BKya591S4FLScFBn8Cqxi2KaK70VsWlzJX8arOGD9TiGScJgQHADldJELTFZzvWvzs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OpdMmhym; arc=none smtp.client-ip=209.85.208.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2f401b2347dso45632261fa.1;
+        Tue, 03 Sep 2024 04:15:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725362135; x=1725966935; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BqJPlt44MeNTjunDONHtThoDBK8zbPy2hRTgHU608OI=;
+        b=OpdMmhymucEbWBtoidDmKeyVWYSwaefczkvpshg1kIc/qz3iCve1ODkXRp2+fZx0zZ
+         r62fe/ujGWTrHx6qXfSPPtnrLKcGTUOP5sHkT4WK1x/yGyIwrhuq0X5KUKJcTyV43c9A
+         PTHsdUdf9GsGp8lfioNgudiJRl2SgBtzFzDjADJGYOAJFoVU/NxKgF205xnWfCTBRkr9
+         xVGIoD8D85OfPSUHkA+C4BvPT34kV9V0LISp60gxWxO2VgzFF3VhV5b+D7EKOTJIxTHn
+         r0byaG1vfVA4ppMC+WvPzFLSXReFNdErovIi/dRC7chZs3pisHcCxA3gRB1hL9Aw/PYv
+         P0cQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725362135; x=1725966935;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=BqJPlt44MeNTjunDONHtThoDBK8zbPy2hRTgHU608OI=;
+        b=emccr+g2V8KUQ+cZsNWlbEPYqOx0IZA3ipPqtcwTWCkiaUtPSAgycL9FO7xNmEW31m
+         FM1Z3MWbG+4c0nR6/3QRlTBRDPNXW+i/UOnqJCge5l59k+gL/pZiS2FkTTKoacBAeqcb
+         /dhazmuMOVwW6D9uN8X000qHItF/JUURbCvh8rTBzROR1HJrLD+R4ug0jaPMEs2SHxjs
+         f7FKU0kxE9nXfTLpVPxKU9z3ofKElV+sZgbsIoMqZCddFIgi2D+mlJ7BW9kbCcHQ17Rg
+         20aDl35dwGWfm5ABA+lZfq0mQPTHxZCDhLJ/ZXXXrVXmovYQjZ2Q8djCiooyd/vgGKSi
+         DbEQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUsAV85MZNuiox9rsicw8Fc//DTAEZSfN2xszzsQ3kRTrtMGZ4gIHeX8TBK+c7QYieopklx6JbbCMK1ITke@vger.kernel.org, AJvYcCVZEWiNw+N3OkuIBSdZQL97SRd6v+8IUgu4wHSEpMW1TvWKLcaZTuksakxXs+zu0K0m/AKygmDTEAj6@vger.kernel.org
+X-Gm-Message-State: AOJu0YyhdHMLZ4LAcA9otB0YapANlLTCF660YSpBefbHQkZ4kkBqvzDh
+	+z12NcVBU4rIEi50bQvrLAc7zCNdPIou6m49+F2TfgwipsWhRQvVAkVnHEiYZFDXA/CbIw8SLxv
+	06NGwruB5WiL7Gh0fnpK110O1wBs=
+X-Google-Smtp-Source: AGHT+IE8SjM0Ms3di5cXWgcpB7iUkzE4YJxI+Ckuk4QQ044JC4VZuODzzCPoUd7IBUnkokoQYv1d6k7FzBjdigKSPYc=
+X-Received: by 2002:a05:651c:19a2:b0:2ef:2e5d:3710 with SMTP id
+ 38308e7fff4ca-2f61299bd88mr59721361fa.3.1725362134721; Tue, 03 Sep 2024
+ 04:15:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZtI8N5/SCt+dI/6z@cae.in-ulm.de>
+References: <20240903093911.3235306-1-carlos.song@nxp.com>
+In-Reply-To: <20240903093911.3235306-1-carlos.song@nxp.com>
+From: Fabio Estevam <festevam@gmail.com>
+Date: Tue, 3 Sep 2024 08:15:23 -0300
+Message-ID: <CAOMZO5C_dpYGYvc=KE7ackdJH2RfhrHP6_Z=cxM=9X+hX5W8Jg@mail.gmail.com>
+Subject: Re: [PATCH] arm64: dts: imx93-11x11-evk: remove redundant "sleep"
+ pinctrl in lpi2c2 node
+To: Carlos Song <carlos.song@nxp.com>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de, 
+	devicetree@vger.kernel.org, imx@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	frank.li@nxp.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Aug 30, 2024 at 11:40:07PM +0200, Christian A. Ehrhardt wrote:
-> 
-> Hi Heikki,
-> 
-> On Fri, Aug 30, 2024 at 11:12:52AM +0300, Heikki Krogerus wrote:
-> > Hi, Christian,
-> > 
-> > Sorry, I did not look at this properly in v1.
-> > 
-> > On Thu, Aug 29, 2024 at 12:01:08PM +0200, Christian A. Ehrhardt wrote:
-> > > The quirk for some ASUS zenbook models is required for
-> > > ASUS VivoBooks. Apply the quirk to these as well.
-> > > 
-> > > This is part of the fix for the builtin keyboard on ASUS
-> > > VivoBooks.
-> > 
-> > I think that explanation goes to patch 2/2 and vise versa.
-> 
-> Obviously! Sorry about that.
-> 
-> > 
-> > > Reported-by: Anurag Bijea <icaliberdev@gmail.com>
-> > > Closes: https://bugzilla.kernel.org/show_bug.cgi?id=219108
-> > > Bisected-by: Christian Heusel <christian@heusel.eu>
-> > > Fixes: de52aca4d9d5 ("usb: typec: ucsi: Never send a lone connector change ack")
-> > > Cc: stable@vger.kernel.org
-> > > Signed-off-by: Christian A. Ehrhardt <lk@c--e.de>
-> > > ---
-> > >  drivers/usb/typec/ucsi/ucsi.c | 8 ++++++++
-> > >  1 file changed, 8 insertions(+)
-> > > 
-> > > diff --git a/drivers/usb/typec/ucsi/ucsi.c b/drivers/usb/typec/ucsi/ucsi.c
-> > > index 4039851551c1..540cb1d2822c 100644
-> > > --- a/drivers/usb/typec/ucsi/ucsi.c
-> > > +++ b/drivers/usb/typec/ucsi/ucsi.c
-> > > @@ -38,6 +38,10 @@
-> > >  
-> > >  void ucsi_notify_common(struct ucsi *ucsi, u32 cci)
-> > >  {
-> > > +	/* Ignore bogus data in CCI if busy indicator is set. */
-> > > +	if (cci & UCSI_CCI_BUSY)
-> > > +		return;
-> > 
-> > This does not look correct. Doesn't this mean you'll timeout always if
-> > BUSY is set?
-> 
-> This is only in the notify function that would do the wakeup on
-> command completion. The very point of this change is that we do no
-> wakeup if UCSI_CCI_BUSY is set along with other bogus bits.
-> 
-> The UCSI controller is supposed to send another notification without
-> the busy bit set once the command completes.
-> 
-> Note that the ASUS laptop actually sends notifications with the BUSY
-> bit set while processing a command. This is presumably to let us know
-> that the command is being processed but that it takes longer.
-> 
-> For example this is a possible sequence:
-> ucsi_sync_control_common: cmd=20012	# GET_CONNECT_STATUS
-> ucsi_notify_common: cci=0x10000002	# BUSY notification
-> ucsi_notify_common: cci=0x80000904	# Command completion
-> 
-> > Couldn't you just check the BUSY as the first action, and then clear
-> > the other bits in CCI if it is set, if that is the problem?
-> 
-> That would not make any difference. The value is only used in this function
-> for a few other checks that look at fields that are supposed to be zero.
-> Thus zeroing these fields would have the same effect.
-> 
-> I think you had the actual error handling in mind that happens _after_
-> the timeout hits. CCI is read again there and if it still reports BUSY
-> the command is canceled.
-> 
-> > Btw. Does 4f322657ade1 ("usb: typec: ucsi: Call CANCEL from single
-> > location") affect the situation in any way?
-> 
-> I would have to check with the reporter of the bug but I don't think
-> it makes a difference because this is the error recovery code that
-> runs after the timeout. I only touched the notification code that would
-> do the wakeup.
+Hi Carlos,
 
-Okay. Can you resend this with the correct commit message.
+On Tue, Sep 3, 2024 at 6:30=E2=80=AFAM Carlos Song <carlos.song@nxp.com> wr=
+ote:
+>
+> In lpi2c2 node, default pinctrl and sleep pinctrl have the same value.
+> So "sleep" pinctrl is redundant and remove it.
+>
+> Signed-off-by: Carlos Song <carlos.song@nxp.com>
 
-thanks,
-
--- 
-heikki
+Reviewed-by: Fabio Estevam <festevam@gmail.com>
 
