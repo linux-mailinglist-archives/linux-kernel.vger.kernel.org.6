@@ -1,170 +1,245 @@
-Return-Path: <linux-kernel+bounces-313806-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313807-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8807196AA0F
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 23:27:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BD5396AA13
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 23:27:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 145091F239C1
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 21:27:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 771D51F21E69
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 21:27:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FC6F126BE8;
-	Tue,  3 Sep 2024 21:27:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 898B07DA62;
+	Tue,  3 Sep 2024 21:27:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="cR9wtbzA"
-Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="S3zuzI6/"
+Received: from NAM02-SN1-obe.outbound.protection.outlook.com (mail-sn1nam02on2081.outbound.protection.outlook.com [40.107.96.81])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96C2D1EC002
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 21:27:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725398843; cv=none; b=XKctXvcTIaoAU5/ZM+oosfpMHorCPWXTTf6dlx/SOq9XEcRWoHLZ1KOdgHw/4GwC63PoA6/gBRLu8AFt3hj3QHA13y3ip8LQsbNiNtNGz0xI8TpBYxqniPHuwALpZE64PZHVmoebvNOx37ZcO3lLN4f6Vzdx7y1AtN+pS4qNUNQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725398843; c=relaxed/simple;
-	bh=qrEVV+atCP7YQHWLRovEDChqJnEVAxmFlKh54HDJg74=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=JTD6/NiK3l5l5rN+3uIRsdyS9b4WMRb0uvyufOkkzz8FkbmCM9Wxc7i8k/aK+q8OqslTk597zmuDf811LKfQyBrZlAAwTSDdgNJDiFreDbgyDwPbgBdHVum9+fya+0njOpe6m89AuGwG4ejcD6Wiu8cDufQySsehvHgkhFigGUk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=cR9wtbzA; arc=none smtp.client-ip=209.85.215.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-6818fa37eecso5876726a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 14:27:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1725398841; x=1726003641; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=IR07rgwQIaWEPj4YMn8O/ZcaLcUIXupvfxHt9XUMIM0=;
-        b=cR9wtbzAkfq0KN+2a8SIFguzGIGC7yRb19+edEMmhwjyYdDr5X603HJSDgHddjL149
-         qIENrZdbTfIE+yV8o79DXwjzTRsOItZP4sixQTW8FDnZyysJIj+rROyEQkHRw5Jg6Cbv
-         iwzx2MEVUvMpogmrXQ0Wf71GOgRPQcg2ljMljVlnd8NXvE4VK5CY1YkJ4zJJ0tj2BmNG
-         BTgO+RbS2276S7RLr78h/+4yCbtjPKYJMjWIxpz3jK8iPyvG7m7EEyWCjFJFyW8HDsV9
-         Gcw0So9jXvwDx+IBqHzath3SBqoais1JV4Lt0qfuBNLfhBZ7ZSNsLoxK9OrySQqz/VMl
-         8mgA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725398841; x=1726003641;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=IR07rgwQIaWEPj4YMn8O/ZcaLcUIXupvfxHt9XUMIM0=;
-        b=dRmDWhO+NbbK/DIshdxWSiiW9drrat/aehCJURl1Ud7j0q6VcjUKUsYrgRoFU2NaI/
-         QocmeqyC4OQ6MobLyo/lFkpCpxGP2E9YLBqbz9WrgPgiiQeIwhsBUwzL27hIklWlptM5
-         LGKM9/sqibzCWnO0eIhnDATuUuhk3J15RCpPuCruf8XgnqA6dEcHTD6GxovGH5TSOmY9
-         Js2ydEx+7W/GwwGxPVMKy/gkfsAUJiIe0vihBsugG0ezhwE2XAXEp2g/rGvh+NACX7Uz
-         0F8ELy8AWG5+GFfLWHJ7zZwx3pxOIhAroRAQxkP/QyGBAJeTVBrELnxD8snau4FFkP5/
-         WuDQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXzl+KIXaoa+waJTX5CGAojQQ0ajM15YrserDp1wP+ZhRrtBzF24NM3NGHenLNm+3A8o4Urzsu+St9z4o8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyJD5Nb9PNMIfkgEdjeXzb4CVStrdLjlmgO9M7wUq4B4QgDXvdq
-	mf8T6Pd8JDi/8QLagGWgn4txV66VLN7UaC04X58OjlcPZPJ3wRkvxW7cwp+9587p5AUuUVEY2SW
-	+0g==
-X-Google-Smtp-Source: AGHT+IHGGObdt+nrbGLN/+Yh5AuDmiJz4qFZ0q/RoulTdosTQa20/tiyRdaw1DNIz9LuC/N23WQmeX8QqMA=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a05:6a02:595:b0:6e4:9469:9e3c with SMTP id
- 41be03b00d2f7-7d4aa728a2emr31302a12.0.1725398840594; Tue, 03 Sep 2024
- 14:27:20 -0700 (PDT)
-Date: Tue, 3 Sep 2024 14:27:19 -0700
-In-Reply-To: <CADrL8HUvmbtmfcLzqLOVhj-v7=0oEA+0DPrGnngtWoA50=eDPg@mail.gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE1541EC013
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 21:27:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.96.81
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725398861; cv=fail; b=e5GoIXbnVFPxkzrwgvU/v717X/8IMpOKp3mSgLy40iuZtYPqMMOEFYChkPnOOSlTheQ9g7jkho0VMRNyCKYSWfP58Vq1siaHuES06hp84aVUe18fE+bHsa+OEPfeauipjq/bwZIYx8FoxQnjv5booZmlQ6/m7tHSDdBolzo2KP8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725398861; c=relaxed/simple;
+	bh=MhFd7ddtPtPFwreqMkceJ/hhZkY5E9lKl4VRepcfjO0=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=Wuux23rOuJa0Ol2upcyTXheb0lwTE5m5qdRrsi9uiUngKLjTIQwJmznCMe9Ac31kDmlpvp7HmiFxtTgX5arquh8D5UNP23kGdxk6LBsBXeTD46PXK6SqgmkYK+bG+4dn5OTFnMWbu6WEEqkXSD4sVhg1ig06ClGxr03vi2eL3j0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=S3zuzI6/; arc=fail smtp.client-ip=40.107.96.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=eyNm2Smcp5N4L1YyyDArQTxIdoQ9VF6slqBfNCHSRZoDoa9Xus6W9pddP0zc5KTELbWaUyK3N/Xg3h870fYDYX9oYvaBmG+9ExE4YXzK3V9DRCqRCy3+2EtgfylLbXWZ/U4LFbhW6j5t4ZACxYpZOezB1M5C8iHy47I4AOHuohEAWKYf8gCGutqgyEMYUuRr+3ySfGpDbxcGcEsCtTRgHIFcuZCF4VYOqXALhQ2pDDrc9IlqU+Nb9WsGdWGmORmwwHx62/M0D57mHBfY9IqlyNURlsUqCI+XGYuB3cNbZgeImn5quMGiaiEdTh4Y1tzPfFLrOVclpaIx7ZuIcGyttw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=HQvkoYiQd+xrJcwbc7qtZOMgG7mG38jJKlrEcjTLHQw=;
+ b=J3NXLqsrGgdypHYd0156IDWItUbZeBoptpIpF7HdKo6JYhRsIdLtDZ6dwgvB8EhYTXJtsr4GNHD0KqB+bzJD+iLBge5SyaADx/S5u9CGK89a3PiFU3LJNMZMCkVT3Wt3yk7eeRylTdJcD9IBR+Jv3qkBFTF7lRmQl9s1PrOw9YIuFXV2PGxrsQU8+zEGfbsWNAQUX7vOcmpZAspVPqnQ0c9o6xdjob+Yt1f/xlFSgzeXZk9N2QpuSbT/1X8Xo2WvvuFSM5c5Wf7YdpGEC+olvXO1OSFSGqQU5+XIdnU2L/vyuzoOgG0QzkrdN1w7B4oFq93xXxWJCIz4sDlr3dkm/A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=HQvkoYiQd+xrJcwbc7qtZOMgG7mG38jJKlrEcjTLHQw=;
+ b=S3zuzI6/R04Wsdn37F800ygsa8Zm/gtBeuB2CRS69hD/OoB3ZllS1oElK8/JZkHp/1+g7IqjSHDmbJIooVT2fRVLi/yirD/PGAPmpNR7e1go5rSlmgIslwpE4jdJmkf8yaNq04pbzKRMcAnr4OhfA9jNZzpsIa/kBXk6NDVP7VU=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from SJ0PR12MB5438.namprd12.prod.outlook.com (2603:10b6:a03:3ba::23)
+ by SN7PR12MB8169.namprd12.prod.outlook.com (2603:10b6:806:32f::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.25; Tue, 3 Sep
+ 2024 21:27:37 +0000
+Received: from SJ0PR12MB5438.namprd12.prod.outlook.com
+ ([fe80::65b2:12d5:96ba:dd44]) by SJ0PR12MB5438.namprd12.prod.outlook.com
+ ([fe80::65b2:12d5:96ba:dd44%7]) with mapi id 15.20.7918.024; Tue, 3 Sep 2024
+ 21:27:36 +0000
+Message-ID: <3525aa03-4c5c-4d40-ad95-0bb1243d40f1@amd.com>
+Date: Tue, 3 Sep 2024 17:27:32 -0400
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] drm/amd/display: Avoid race between dcn10_set_drr()
+ and dc_state_destruct()
+To: tjakobi@math.uni-bielefeld.de, Leo Li <sunpeng.li@amd.com>,
+ Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>,
+ Alex Deucher <alexander.deucher@amd.com>,
+ =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+ "Pan, Xinhui" <Xinhui.Pan@amd.com>, David Airlie <airlied@gmail.com>,
+ Daniel Vetter <daniel@ffwll.ch>,
+ Mario Limonciello <mario.limonciello@amd.com>
+Cc: amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org
+References: <cover.1725269643.git.tjakobi@math.uni-bielefeld.de>
+ <7b9dbbbb1e6a3aa6d7a4d9367d44d18ddd947158.1725269643.git.tjakobi@math.uni-bielefeld.de>
+Content-Language: en-US
+From: Harry Wentland <harry.wentland@amd.com>
+In-Reply-To: <7b9dbbbb1e6a3aa6d7a4d9367d44d18ddd947158.1725269643.git.tjakobi@math.uni-bielefeld.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: YT4PR01CA0261.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:b01:10f::12) To SJ0PR12MB5438.namprd12.prod.outlook.com
+ (2603:10b6:a03:3ba::23)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240809194335.1726916-1-seanjc@google.com> <20240809194335.1726916-20-seanjc@google.com>
- <CADrL8HUvmbtmfcLzqLOVhj-v7=0oEA+0DPrGnngtWoA50=eDPg@mail.gmail.com>
-Message-ID: <Ztd_N7KfcRBs94YM@google.com>
-Subject: Re: [PATCH 19/22] KVM: x86/mmu: Add infrastructure to allow walking
- rmaps outside of mmu_lock
-From: Sean Christopherson <seanjc@google.com>
-To: James Houghton <jthoughton@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Oliver Upton <oliver.upton@linux.dev>, Marc Zyngier <maz@kernel.org>, Peter Xu <peterx@redhat.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ0PR12MB5438:EE_|SN7PR12MB8169:EE_
+X-MS-Office365-Filtering-Correlation-Id: bb3a745a-8569-4076-38f9-08dccc5f3b09
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?L3RTb2hLUDJqQ0FXMWRraGhVNWp6T2VET0xvUjFSZGxOWEFDdFVsazMrT2pE?=
+ =?utf-8?B?SnIxdEJRdndYWVdNejQ2a0o0RzVHOEYxcEF1am5XN0xMVHRBMzlyck80SVZT?=
+ =?utf-8?B?aGkxcU1zdDkzdVQ2cVV0ZWlQaVZrNURqUEdTbVhsSmtaV1ZmZG9OVUxBSFBv?=
+ =?utf-8?B?b05ZL1ZwZ2NXWjVwMTI5SnY3WGdkQjRYeEx3a2dhVWNsVFdXbTVHZjR3NzVv?=
+ =?utf-8?B?K2pYbnk2N0xRS1gybS9sV1NBdUt0My9MQlFVTlRLdjloRTZ2ZXJPb3IreXg4?=
+ =?utf-8?B?WVZJdUY5NGZ4Vy9SQ2tiSEZJclFXdFdVUitMTEsxMC9kWDNxUUt5dUoxNHV6?=
+ =?utf-8?B?K3gvblRxMmgrV3RQd0NKZU55MWRvRnVrVEprRUJQNFRhL3ZJR21BM25ySHBD?=
+ =?utf-8?B?ek5ZSmJ6eU96NnZDcG84Z042OHpzbk05eW1KRFNvOC9hRHFrRzR4cjZzSEVK?=
+ =?utf-8?B?cDF1RTIxYkJWZVVjSHNLVVdzbWJ0ZmxsRjd0d1NtMDFYaXgyWFB1cVhZZjRn?=
+ =?utf-8?B?cU9BTkVkbHQ3V1dVWStyOUIrM0svZiszdE8wc2EwR0tHWjZxTGVlRnh5RWtF?=
+ =?utf-8?B?OGZTVFVpS2tmZFAzTFhxTGl1RDN4NkZ5MXFqekFDUld5K3NUNzJtTmltWER1?=
+ =?utf-8?B?L2ZvUHRpRjY1TTRGeEU4QTlRS0swdTVkd3UrbzY1cDRPNHFNTGFYRjF3Qmxo?=
+ =?utf-8?B?dVh3TFNYZFYyckZjK1IybitUTVRCTGFQeEIzWTZ0dEEvVXpra3BQcmNud3di?=
+ =?utf-8?B?K2xrTkZ6YlJtREY0bUpKLzBEMFdNckxIYWVUZS9Fb0c3dGNXUVFyT1JzL1o1?=
+ =?utf-8?B?NkhXVlNJOXNkREhmamsyVEdEd0ZLQjdxV1FGY0F2b3J3VElSTFFpNERvdlFN?=
+ =?utf-8?B?clpvOU5tQ2dIcFdwY0RvWlBZOW9pRjJLQUExME9QRzRpMG8vbVkwZE1pbFht?=
+ =?utf-8?B?MXltZ1g5WUlVNGJ5M3dUZmdQblFJZElkMVN2TEFDOFc4VS83VVlZK3R3UkZq?=
+ =?utf-8?B?VW9VTVQ5b3c0R3AxVmpXdVB2d0VNMFJrUXpXUXp1Wm9PU2MyL2pHaE9ZS3hU?=
+ =?utf-8?B?cFRBU3BBcDc4L0FjcnNEenFnQWNlT2dicWF1cTNGMkdSUzUrSEVwZWlEdUN0?=
+ =?utf-8?B?V1dzb0h2SG56R1lOT1R3WFpSSVllekJvRldxSlBMQmdqRlJzaXg5aGlvMzdo?=
+ =?utf-8?B?WFJaeGN6ZGxqVDdqZGM5ZGtkRUw1Uy9JenZUMXoyRnlEbFhjc28zY2Y3QVFZ?=
+ =?utf-8?B?ZGRpY1R5MnRqZnAwakJLR0JXYnpDQldNN0pjRlVSWE1MUWdmb2NzT3ZVYzFv?=
+ =?utf-8?B?WUJEMzE5bEpmekxQQzRpMHRQNDFKV2ZXajk0Rk00RG9SaDJ0cHJXNXZJSVhJ?=
+ =?utf-8?B?RnNNRndTNkZYekYwYUg3ZjJzbWlUYU1SaHQzTUswTm9HWHVhRVZaeFlRUkVL?=
+ =?utf-8?B?UGljMm4wdHViVVozNnVSNXVsQjl4L09adlBSa2VxZWY0QzRpNTJaSHZQYlNR?=
+ =?utf-8?B?aEt0MFVJRkpYZkZSZHM0VUsrY1hwYW8zNndLN1RTTEp1d0hBV2NnSG04QXlE?=
+ =?utf-8?B?ZWUwOHZWUzBEMVlmSG1qdFVWa0RuUDhVU05Ja2dCdHFlZjlqcDE5V3R4U3lD?=
+ =?utf-8?B?L3BLeHR0RE9jRFpTcWNrbVNoNWo1Z1RsSzZla1RLUHdCTXN2UTZZZWtkRFVT?=
+ =?utf-8?B?d0pVdWNmVHo1ZFg1ZkFNZlUwSHZscUN4cWZRTXRZUStNSWo3R3gwZlp0dE92?=
+ =?utf-8?B?eGd2QkRyR1FNckpwZTQ3OUNnY0IrR21pWWdYUzhXeXBLOU9UajBsdUVSZXVY?=
+ =?utf-8?B?OGk5dTV3OE1SeFhCQWRwdz09?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ0PR12MB5438.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?STlVd205K1NmMTZNV1l1VkR0bmdoRzFVay85bGozYWJmV1duMmtqekF2ZUJo?=
+ =?utf-8?B?cGJ5SUk2M1BpR3hIZTFOc2V1SkhoVWVhRHdQSWJZU25NbVZYWWVibFVoMkhS?=
+ =?utf-8?B?RWJwVm8xcXowcXV0SE9kT09CWnQxOGtxOGtvc0JtNHRnQzFieHFobm53ck1S?=
+ =?utf-8?B?VWtZZHNmQ0JuNlVnakNybHBndmxUQTh3WmdPV01RQlNXbDVNWnM4dUNobUEx?=
+ =?utf-8?B?bkIveC8vcDFLQU80b3l6SlBQU2RtSzJ5UDNOZ3dPdWVPTDJ0djQyaWxMcUVO?=
+ =?utf-8?B?NnNWekM1eC8waHFGOUU3a0Qxek1RM1pGczdveTVYRWtQZHF3T21KWDkrOFpF?=
+ =?utf-8?B?MmJRN2J4STFQTmdqK1k3MlpIdlZYREJEY1V1QXpiV2hvQ0lWOUVwaDI4d3M0?=
+ =?utf-8?B?VHJjSFg1VElNVWtxSWpFNFBKWFpCTFFKRHUxOW1Vei80NzI0RDA3NWNzSDN6?=
+ =?utf-8?B?Q1QvV2lOaks4aEhJeGF3bmZYWUdEWGVDeG9jTk5tWkVmeEczV0lCQVYrVUxy?=
+ =?utf-8?B?TVBaemJ6OG5mS0gwK0ZUY0c0cFlLb09VU25iaVFaZ21JRjZtdXBNTmhGMVAr?=
+ =?utf-8?B?Z1RxTTAydlg1YzF3bCthc0FKcGREdytZNVB0K0w3OFlKbk82UlF3bjM0M2dm?=
+ =?utf-8?B?blVVSjh1K3BHLzFSR2wrTEFzTmNZTU1lTmVTK0tNOXRraWJ4b2RyQ1Bvc0FD?=
+ =?utf-8?B?SHU3NXQ5QlhEcDMwejN0eDlEUms0M3luRUlQRUcyaklyNXExWllORHk4MUh1?=
+ =?utf-8?B?dDNtdzFwUEJFNVhPSkN0cnFpSFhLY0lINXV3OWw3enBEM1d4bHBMV1lRV2Ir?=
+ =?utf-8?B?UnhQMUVMWFpvTGlyTnQxSTR3R2xVTVpYS2hvL1JhYStyN29BelBpYjZXYW9a?=
+ =?utf-8?B?Q2xMMzRUQjhvRFFGM0hUUzNrdXhCS01IUkhKZWU2dzIxZEFPTENQbnVKL3Z5?=
+ =?utf-8?B?ZGJUN1hEWjV2cXMwLzZaZldudTA4RlgzY0UzQVRUbjNOQkQ3Q2cxcS9DNFNi?=
+ =?utf-8?B?TUhPTk5pcUR0ZmQ4MHB4UWlxbzlDUXR2T2FpRGo0QTVJWkl1THlGTnZVdnhw?=
+ =?utf-8?B?a0k2TzlZWTRFaHQxSmd2aFI0OUNvejRLZFAwRzg5TDI5bjZIUllvMkhIZndR?=
+ =?utf-8?B?U3VONGlnS3RzRnVxblJXd2w4dDRnd3NITlZCa3ZtV2xpZ3M2bXhIczdqQytQ?=
+ =?utf-8?B?eHZZYXhBbjFjUERvNkJ6bDR3cTZibUE4Wnh2OXkvZGJXR1AwTHh5cURTTC9J?=
+ =?utf-8?B?MURSNVFZamhVNlliMUhmcGtFeVJoQzk1SUNRaWU2VmR6VWpmUnAyNmloQ1Vl?=
+ =?utf-8?B?SC9sRE9nVHFmREIyZWRnRmR4ajV1NHRhYVEyMFh5eVhBWGNaZ21sSzMwY0JX?=
+ =?utf-8?B?ZDJOV1Z6U2tqbDl6RlhRdER1NU5YSmNjUnpBaGpWdzdCbkNDSllLbFlid1BB?=
+ =?utf-8?B?a3VkU0p1MnVWMHRlWjQ0N0FFcmJUL0JxY201MFlTZWFCbzRLMWt6NnB0ME9w?=
+ =?utf-8?B?Q0lXenZtY1JXL2ZScU9VaVhoWTBNbzNKUVl3TkJYZXNqTjJXZ2ZicUVhMDc0?=
+ =?utf-8?B?Ym5hbmkwTzZwU0R0UHhJZXpBc002Wm54SVlrT3crMkRhV3NpaWY4QlZ3RXJZ?=
+ =?utf-8?B?ZTMyMWRPVlh3QjlmMmJ3L0RLL2JXOVNMU0o2ZDJDSFVsM09vQVFXNkZtU3Nm?=
+ =?utf-8?B?UWZraGJMalU3Q0tTbGtGamppSjVCeWR4K3pmQ0RuNjNNSlR4UE4vekZaVmZm?=
+ =?utf-8?B?elFzU0dyMEVzNkdrbk53SEtWbXhCeUlFSGZjOHpzcXJnQ05OY0ZvblA0MFg5?=
+ =?utf-8?B?VzJJekt1S0h5NUhJYUlNUTZqYm9Mem5ZY25xdE0rV0FhM2NSeTlGenNXS1Ra?=
+ =?utf-8?B?ZUd6UTFiM3NqSkFyNXdIazBBTTBVY1RkTWt3Q2hQQTRoUTNOVUxza2Z1Yldo?=
+ =?utf-8?B?L0tzZDduYzRvZkNROG0rVmxObnZJMllMVXV6RDVqQkdiNTJTR05PQzh0N2U5?=
+ =?utf-8?B?L25ycmZ6NFNGeEQ0WDh0SkdWdHpYK2ZtZStqa3JQWjdaeGg3a0xETjhqOVVN?=
+ =?utf-8?B?OGlMUEV1SitBOVNLZ0l6QUVTTVI0cUpNZVM4dUVqQlVlQ1dMNzJwOXpsS09N?=
+ =?utf-8?Q?XRzn61QaxQJok4vmr6NLPRW9M?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: bb3a745a-8569-4076-38f9-08dccc5f3b09
+X-MS-Exchange-CrossTenant-AuthSource: SJ0PR12MB5438.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Sep 2024 21:27:36.8850
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 6UaGTR7VpkaRcIyJyboidHoSttSKCRwYmhwbfB8UAn2cwLlk7q9cnnGQYN/uYkGZThcDs6O007uQMmoIaMtJuw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB8169
 
-On Tue, Sep 03, 2024, James Houghton wrote:
-> On Fri, Aug 9, 2024 at 12:44=E2=80=AFPM Sean Christopherson <seanjc@googl=
-e.com> wrote:
-> > +/*
-> > + * rmaps and PTE lists are mostly protected by mmu_lock (the shadow MM=
-U always
-> > + * operates with mmu_lock held for write), but rmaps can be walked wit=
-hout
-> > + * holding mmu_lock so long as the caller can tolerate SPTEs in the rm=
-ap chain
-> > + * being zapped/dropped _while the rmap is locked_.
-> > + *
-> > + * Other than the KVM_RMAP_LOCKED flag, modifications to rmap entries =
-must be
-> > + * done while holding mmu_lock for write.  This allows a task walking =
-rmaps
-> > + * without holding mmu_lock to concurrently walk the same entries as a=
- task
-> > + * that is holding mmu_lock but _not_ the rmap lock.  Neither task wil=
-l modify
-> > + * the rmaps, thus the walks are stable.
-> > + *
-> > + * As alluded to above, SPTEs in rmaps are _not_ protected by KVM_RMAP=
-_LOCKED,
-> > + * only the rmap chains themselves are protected.  E.g. holding an rma=
-p's lock
-> > + * ensures all "struct pte_list_desc" fields are stable.
-> > + */
-> > +#define KVM_RMAP_LOCKED        BIT(1)
-> > +
-> > +static unsigned long kvm_rmap_lock(struct kvm_rmap_head *rmap_head)
-> > +{
-> > +       unsigned long old_val, new_val;
-> > +
-> > +       old_val =3D READ_ONCE(rmap_head->val);
-> > +       if (!old_val)
-> > +               return 0;
->=20
-> I'm having trouble understanding how this bit works. What exactly is
-> stopping the rmap from being populated while we have it "locked"?
 
-Nothing prevents the 0=3D>1 transition, but that's a-ok because walking rma=
-ps for
-aging only cares about existing mappings.  The key to correctness is that t=
-his
-helper returns '0' when there are no rmaps, i.e. the caller is guaranteed t=
-o do
-nothing and thus will never see any rmaps that come along in the future.
 
-> aren't holding the MMU lock at all in the lockless case, and given
-> this bit, it is impossible (I think?) for the MMU-write-lock-holding,
-> rmap-modifying side to tell that this rmap is locked.
->=20
-> Concretely, my immediate concern is that we will still unconditionally
-> write 0 back at unlock time even if the value has changed.
+On 2024-09-02 05:40, tjakobi@math.uni-bielefeld.de wrote:
+> From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+> 
+> dc_state_destruct() nulls the resource context of the DC state. The pipe
+> context passed to dcn10_set_drr() is a member of this resource context.
+> 
+> If dc_state_destruct() is called parallel to the IRQ processing (which
+> calls dcn10_set_drr() at some point), we can end up using already nulled
+> function callback fields of struct stream_resource.
+> 
+> The logic in dcn10_set_drr() already tries to avoid this, by checking tg
+> against NULL. But if the nulling happens exactly after the NULL check and
+> before the next access, then we get a race.
+> 
+> Avoid this by copying tg first to a local variable, and then use this
+> variable for all the operations. This should work, as long as nobody
+> frees the resource pool where the timing generators live.
+> 
+> Closes: https://gitlab.freedesktop.org/drm/amd/-/issues/3142
+> Fixes: 06ad7e164256 ("drm/amd/display: Destroy DC context while keeping DML and DML2")
+> Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
 
-The "readonly" unlocker (not added in this patch) is a nop if the rmap was =
-empty,
-i.e. wasn't actually locked.
+Thanks for this fix. It also makes the code more readable.
 
-+static void kvm_rmap_unlock_readonly(struct kvm_rmap_head *rmap_head,
-+				     unsigned long old_val)
-+{
-+	if (!old_val)
-+		return;
-+
-+	KVM_MMU_WARN_ON(old_val !=3D (rmap_head->val & ~KVM_RMAP_LOCKED));
-+	WRITE_ONCE(rmap_head->val, old_val);
-+}
+Reviewed-by: Harry Wentland <harry.wentland@amd.com>
 
-The TODO in kvm_rmap_lock() pretty much sums things up: it's safe to call t=
-he
-"normal", non-readonly versions if and only if mmu_lock is held for write.
+Harry
 
-+static unsigned long kvm_rmap_lock(struct kvm_rmap_head *rmap_head)
-+{
-+	/*
-+	 * TODO: Plumb in @kvm and add a lockdep assertion that mmu_lock is
-+	 *       held for write.
-+	 */
-+	return __kvm_rmap_lock(rmap_head);
-+}
+> ---
+>  .../amd/display/dc/hwss/dcn10/dcn10_hwseq.c   | 20 +++++++++++--------
+>  1 file changed, 12 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/amd/display/dc/hwss/dcn10/dcn10_hwseq.c b/drivers/gpu/drm/amd/display/dc/hwss/dcn10/dcn10_hwseq.c
+> index 3306684e805a..da8f2cb3c5db 100644
+> --- a/drivers/gpu/drm/amd/display/dc/hwss/dcn10/dcn10_hwseq.c
+> +++ b/drivers/gpu/drm/amd/display/dc/hwss/dcn10/dcn10_hwseq.c
+> @@ -3223,15 +3223,19 @@ void dcn10_set_drr(struct pipe_ctx **pipe_ctx,
+>  	 * as well.
+>  	 */
+>  	for (i = 0; i < num_pipes; i++) {
+> -		if ((pipe_ctx[i]->stream_res.tg != NULL) && pipe_ctx[i]->stream_res.tg->funcs) {
+> -			if (pipe_ctx[i]->stream_res.tg->funcs->set_drr)
+> -				pipe_ctx[i]->stream_res.tg->funcs->set_drr(
+> -					pipe_ctx[i]->stream_res.tg, &params);
+> +		/* dc_state_destruct() might null the stream resources, so fetch tg
+> +		 * here first to avoid a race condition. The lifetime of the pointee
+> +		 * itself (the timing_generator object) is not a problem here.
+> +		 */
+> +		struct timing_generator *tg = pipe_ctx[i]->stream_res.tg;
+> +
+> +		if ((tg != NULL) && tg->funcs) {
+> +			if (tg->funcs->set_drr)
+> +				tg->funcs->set_drr(tg, &params);
+>  			if (adjust.v_total_max != 0 && adjust.v_total_min != 0)
+> -				if (pipe_ctx[i]->stream_res.tg->funcs->set_static_screen_control)
+> -					pipe_ctx[i]->stream_res.tg->funcs->set_static_screen_control(
+> -						pipe_ctx[i]->stream_res.tg,
+> -						event_triggers, num_frames);
+> +				if (tg->funcs->set_static_screen_control)
+> +					tg->funcs->set_static_screen_control(
+> +						tg, event_triggers, num_frames);
+>  		}
+>  	}
+>  }
+
 
