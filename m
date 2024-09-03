@@ -1,70 +1,62 @@
-Return-Path: <linux-kernel+bounces-313256-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313268-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5026496A27E
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 17:29:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4211C96A2CD
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 17:33:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E8A261F28594
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 15:29:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6365EB2A559
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 15:33:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A38D0188592;
-	Tue,  3 Sep 2024 15:24:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 815AE18BBA5;
+	Tue,  3 Sep 2024 15:30:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BO8aIvT1"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="B8uH/Hu5"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80668199FC2;
-	Tue,  3 Sep 2024 15:23:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E94726AEC;
+	Tue,  3 Sep 2024 15:30:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725377040; cv=none; b=sFWdeI8u1NXaxd1THPTpc1LmdKcq1RCipx4HI7/N/FiNwoI764UgvSgkg/spaRs1a+6BjndPAlESBd6m1KBY6QiYEeXb/fiESytmyl7T20nxeuYoYjxehV0nQmxgdLD5GDbIqvg/ggljlRETbsMvmq1utSCH0r8C4EfrO1o+Dc4=
+	t=1725377424; cv=none; b=eTwGUZp8qOlDHRM3ZBjzZF8dXe0F5lipT/65uepxe4ragjVC8qwTYq6soL1Z7+gO/jqjXxg3walvD98EagpUhT8CpoYfAJsw+n/bYP0aMR+jeGWqwmK9QhTqaxYa520V2cQnA9rgMd4efp7kfYo+Iup6wGDICWni1YqbFNAeq60=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725377040; c=relaxed/simple;
-	bh=rwT7nh24GG6CU6+ZSsx1Ol8xnZyh47g1g/jeJizY3e8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=I+akJndIJ6upiRUJgWU9McM2ZvbSZgWOt3BJaVkxo7AwOZdzZt2vwGMxrysTBz5wjMZ+Hy+WyJJnKOYpodIhB+fhLBiuK9ieA8aH7BWZKzGe902k8IHqf+6zilQj4WebkfaHX9zGBMOPaUJ7bBTYsaoDuugOPIFB+7lNPvCcLss=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BO8aIvT1; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725377039; x=1756913039;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=rwT7nh24GG6CU6+ZSsx1Ol8xnZyh47g1g/jeJizY3e8=;
-  b=BO8aIvT1MgxZ6U23Kj4X/kdkbCYEbt/CrPI2AzxgFh25mwBOy9qE8lr0
-   /kgQkHeGGrxXGbwqQlt9ZZtAhBC7ZsHqkBAudh1JCJrVabZRvwPhAMbHx
-   +UY8jsK2Jqbwd73UoBz5jypai6cgWxzEbkv7sZqp847EzJ6Pwka+dVbsV
-   2soU//pBs9qcdTnrX76kNQc2Y+0T0K+zVpR1u+DK7YNs0Msj0qdZeYwZc
-   43qiiCJV9kcnw43xnnp/8yJb9A7yGxRkWcOCbht2Mv/dwLsxxjQxwagQt
-   gRl+S3YMZ/yLcaHL/xo0zFr2zm3Z1/i3kPgrvH2ozPbd3Odvxk3M+hiqU
-   g==;
-X-CSE-ConnectionGUID: Px+DbyNMRY++b4UCwB4ksA==
-X-CSE-MsgGUID: YkC+CrZQSu+5gu1cizF64g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11184"; a="34593247"
-X-IronPort-AV: E=Sophos;i="6.10,199,1719903600"; 
-   d="scan'208";a="34593247"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2024 08:23:58 -0700
-X-CSE-ConnectionGUID: rdrWDKdYSjGMsv2T6ZNbbQ==
-X-CSE-MsgGUID: Dp2lNgzIRvu+JZ5K3WgdoQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,199,1719903600"; 
-   d="scan'208";a="64619276"
-Received: from linux.intel.com ([10.54.29.200])
-  by fmviesa007.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2024 08:23:57 -0700
-Received: from [10.212.53.225] (kliang2-mobl1.ccr.corp.intel.com [10.212.53.225])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by linux.intel.com (Postfix) with ESMTPS id 4E55520CFEE3;
-	Tue,  3 Sep 2024 08:23:55 -0700 (PDT)
-Message-ID: <902656fb-1ff2-4501-9252-7920691cc552@linux.intel.com>
-Date: Tue, 3 Sep 2024 11:23:53 -0400
+	s=arc-20240116; t=1725377424; c=relaxed/simple;
+	bh=6piqvsdwZK7m2rQI2xaAzlLX4itMjm+cIfYUK76i/9c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=TcWJVXoxeOjjqpTVESg1BRyom5rbUVkLgy9M6iNyT9bOSxqcZUqFFNuWEazihkt70MTf+OYb0rC8FGFEBB8yWIR/D5TZvpMItlO8Y4aVrTPsTGDE9l7MzRoK+KPYWhOCw+V9H/mcz1x5pvgB4zdqkyZl+DIiemXjE3myIwL1FZk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=B8uH/Hu5; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 483C6D5a009100;
+	Tue, 3 Sep 2024 15:24:35 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	6piqvsdwZK7m2rQI2xaAzlLX4itMjm+cIfYUK76i/9c=; b=B8uH/Hu5GO1wPnC+
+	V7P+1suidAjBz8algBBAEisJFWoejjT+7IiHvbN989/gYH6/qFw0rveL7SE5ZLZx
+	0IEQkeyq/8J3O2O6670dOXhxPPWRy3Ikvswir+YwzzYKWHxkKiexh8NZDaTYPUw4
+	VX+/duYB69K9KB6BApD64+Vtl0+m/xA5OkGzRJZvJbLpAYPusr1hq0LK4wvgCFQr
+	GNH9+/upDX42qqTPWBcKRcKwtxTpmmp04D19xSewG8ve1oTVl28ZMFOhizAI/e+S
+	c46/mv5mhsEUJ1NGAi7RHvauXR6a7SZaXAIFcNCCn7k3FKY+h4MmtxZUrltx4ymk
+	D8a3Dw==
+Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41btrxqt7a-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 03 Sep 2024 15:24:35 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 483FOXh5020808
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 3 Sep 2024 15:24:33 GMT
+Received: from [10.110.120.207] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 3 Sep 2024
+ 08:24:29 -0700
+Message-ID: <b855f1a9-35c2-4c53-9485-0989b3eb5a6b@quicinc.com>
+Date: Tue, 3 Sep 2024 08:24:29 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -72,92 +64,90 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH] perf: New start period for the freq mode
-To: Peter Zijlstra <peterz@infradead.org>, Namhyung Kim <namhyung@kernel.org>
-Cc: mingo@redhat.com, tglx@linutronix.de, acme@kernel.org,
- mark.rutland@arm.com, alexander.shishkin@linux.intel.com, jolsa@kernel.org,
- irogers@google.com, adrian.hunter@intel.com,
- linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
- ravi.bangoria@amd.com, sandipan.das@amd.com, atrajeev@linux.vnet.ibm.com,
- luogengkun@huaweicloud.com, ak@linux.intel.com
-References: <20240829152036.3923842-1-kan.liang@linux.intel.com>
- <ZtFjFpg0MCcLbgnq@google.com>
- <20240902103838.GF4723@noisy.programming.kicks-ass.net>
+Subject: Re: [PATCH 11/22] pinctrl: qcom: sa8775p: Add support for SA8255p SoC
+To: Krzysztof Kozlowski <krzk@kernel.org>
+CC: <andersson@kernel.org>, <konradybcio@kernel.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <rafael@kernel.org>,
+        <viresh.kumar@linaro.org>, <herbert@gondor.apana.org.au>,
+        <davem@davemloft.net>, <sudeep.holla@arm.com>, <andi.shyti@kernel.org>,
+        <tglx@linutronix.de>, <will@kernel.org>, <joro@8bytes.org>,
+        <jassisinghbrar@gmail.com>, <lee@kernel.org>,
+        <linus.walleij@linaro.org>, <amitk@kernel.org>,
+        <thara.gopinath@gmail.com>, <broonie@kernel.org>,
+        <wim@linux-watchdog.org>, <linux@roeck-us.net>, <robin.murphy@arm.com>,
+        <cristian.marussi@arm.com>, <rui.zhang@intel.com>,
+        <lukasz.luba@arm.com>, <vkoul@kernel.org>, <quic_gurus@quicinc.com>,
+        <agross@kernel.org>, <bartosz.golaszewski@linaro.org>,
+        <quic_rjendra@quicinc.com>, <robimarko@gmail.com>,
+        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-pm@vger.kernel.org>,
+        <linux-crypto@vger.kernel.org>, <arm-scmi@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-i2c@vger.kernel.org>,
+        <iommu@lists.linux.dev>, <linux-gpio@vger.kernel.org>,
+        <linux-serial@vger.kernel.org>, <linux-spi@vger.kernel.org>,
+        <linux-watchdog@vger.kernel.org>, <kernel@quicinc.com>,
+        <quic_psodagud@quicinc.com>, <quic_tsoni@quicinc.com>,
+        <quic_shazhuss@quicinc.com>
+References: <20240828203721.2751904-1-quic_nkela@quicinc.com>
+ <20240828203721.2751904-12-quic_nkela@quicinc.com>
+ <erlzqkxrogk24ugfahfsxrramay6tfhljnxrcfcuhe24pla7k3@lytnz3kmszyj>
+ <d15927f9-bd00-4e32-9c25-535c69fe56f6@quicinc.com>
+ <f227c799-cf9a-481a-b359-21828d6e8bca@kernel.org>
 Content-Language: en-US
-From: "Liang, Kan" <kan.liang@linux.intel.com>
-In-Reply-To: <20240902103838.GF4723@noisy.programming.kicks-ass.net>
-Content-Type: text/plain; charset=UTF-8
+From: Nikunj Kela <quic_nkela@quicinc.com>
+In-Reply-To: <f227c799-cf9a-481a-b359-21828d6e8bca@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: bWyf1ZPtHhHPINAXIshQXWfk8GFZ_w_W
+X-Proofpoint-ORIG-GUID: bWyf1ZPtHhHPINAXIshQXWfk8GFZ_w_W
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-03_03,2024-09-03_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 bulkscore=0
+ clxscore=1015 suspectscore=0 phishscore=0 impostorscore=0
+ priorityscore=1501 mlxscore=0 mlxlogscore=999 spamscore=0
+ lowpriorityscore=0 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2407110000 definitions=main-2409030125
 
 
-
-On 2024-09-02 6:38 a.m., Peter Zijlstra wrote:
-> On Thu, Aug 29, 2024 at 11:13:42PM -0700, Namhyung Kim wrote:
->> Hi Kan,
+On 8/30/2024 2:52 AM, Krzysztof Kozlowski wrote:
+> On 29/08/2024 16:17, Nikunj Kela wrote:
+>> On 8/29/2024 12:29 AM, Krzysztof Kozlowski wrote:
+>>> On Wed, Aug 28, 2024 at 01:37:10PM -0700, Nikunj Kela wrote:
+>>>> SA8255p platform uses the same TLMM block as used in SA8775p,
+>>>> though the pins are split between Firmware VM and Linux VM.
+>>>> let's add SA8255p specific compatible.
+>>> The change suggests devices are fully compatible, but above description
+>>> does not.
+>>>
+>>> This looks conflicting.
+>>>
+>>> Best regards,
+>>> Krzysztof
+>> Hi Krzysztof,
 >>
->> On Thu, Aug 29, 2024 at 08:20:36AM -0700, kan.liang@linux.intel.com wrote:
->>> From: Kan Liang <kan.liang@linux.intel.com>
->>>
->>> The freq mode is the current default mode of Linux perf. 1 period is
->>> used as a start period. The period is auto-adjusted in each tick or an
->>> overflow to meet the frequency target.
->>>
->>> The start period 1 is too low and may trigger some issues.
->>> - Many HWs do not support period 1 well.
->>>   https://lore.kernel.org/lkml/875xs2oh69.ffs@tglx/
-> 
-> So we already have x86_pmu::limit_period and pmu::check_period to deal
-> with this. Don't they already capture the 1 and increase it where
-> appropriate?
-
-The limit_period only checks the minimum acceptable value for HW. If the
-value is lower than that, I think HW errors may be triggered. It's a
-mandatory request.
-
-However, it doesn't make it a perfect start value, which perf uses in
-the default freq mode.
-As you can see in Thomas's experiment, it doesn't trigger HW issue to
-set the start period to 1. But the message "perf: interrupt took too
-long (2503 > 2500), lowering ..." is printed. That should be a false
-alarm. To avoid it, 32 is finally used for the limit_period.
-https://lore.kernel.org/lkml/87plq9l5d2.ffs@tglx/
-
-We cannot always use this way to address the above issue.
-- It's impossible to test all the platforms to find a perfect "32" for
-each platform.
-- Some events may need a very low period. We cannot set the limit_period
-too high.
-
-Furthermore, a low start period for the frequently occurring event
-challenges both HW and virtualization, which has a longer path to handle
-a PMI.
-
-I think we need a better start period for the default freq mode.
-
-Yes, there is already a pmu::check_period which is period related. I
-will check if it can be modified to feedback a start value somehow.
-
-
-> 
->>> - For an event that occurs frequently, period 1 is too far away from the
->>>   real period. Lots of the samples are generated at the beginning.
->>>   The distribution of samples may not be even.
-> 
-> Which is why samples include a WEIGHT option IIRC.
+>> Thanks for reviewing patches. TLMM HW block is exactly same as used in
+>> SA8775p however ownership of pins can be split between firmware VM and
+>> Linux VM. It is upto devices to decide what pins they want to use in
+>> what VM. I will extend the subject with same description as used in DT
+>> binding.
+> So there is no difference? Then devices should be made compatible with
+> fallback.
 >
+> Best regards,
+> Krzysztof
 
-The WEIGHT gives all kinds of latency to understand it. But it doesn't
-help changing the distribution.
-
-
->> Sounds like a per-pmu callback is fine.  PMUs don't have the callback
->> (including SW) can use 1 same as of now.
-> 
-> This, but also, be very careful to not over-estimate, because ramping up
-> is fast, but having to adjust down can take a while.
-
-Sure.
+Yes, I get your point now. I will discuss internally. I am leaning
+towards using sa8775p-tlmm compatible in SA8255p TLMM node so there is
+no need for adding new compatible. Will drop the two pincontrol related
+patches from the series in next version if agreed internally.
 
 Thanks,
-Kan
+
+-Nikunj
+
 
