@@ -1,317 +1,347 @@
-Return-Path: <linux-kernel+bounces-312994-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312995-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5051E969ECC
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 15:14:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B27C0969ECE
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 15:14:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 725231C237A9
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 13:14:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B4EB28458B
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 13:14:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA7E01A726A;
-	Tue,  3 Sep 2024 13:14:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF3D81A7263;
+	Tue,  3 Sep 2024 13:14:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ekAI3M5Q"
-Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="RZfYj+df"
+Received: from NAM02-DM3-obe.outbound.protection.outlook.com (mail-dm3nam02on2077.outbound.protection.outlook.com [40.107.95.77])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F3271A7255
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 13:14:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.170
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725369244; cv=none; b=UWkjCQSXd8fnKCqsGx2hDc1XsROBXGdTsPXFStjWPkfF1KPGSsuIlRehMhrDzFfhwor2Kpf1sScnQtaxEyTb727CXGwu/isZ9jWpXwvylg3tLNbb6HTZbhHPCdQQ25buKwmzw5cYjp6cdkOxX7iZgziAq6eIoHjZvtM+un96hp0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725369244; c=relaxed/simple;
-	bh=osk6WofS+aFUFMMllGU0mNRzQNPp1Qatzi2MSDn6RaE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rLJPF2TyReb5r/Z2mKqum56g7xxCA4nr+pbns33QDpZuE3Wbb3Dg/byDePKR7cvhlLS3HMnXBg3BCMdgwMIt5qt1DqKDRHERz/RDwPXhTrxHlKQdlZ8Y37eW2xFmBm+P96vgTWi1u9PYexZGMBcimUokEiob2ywLtJBGqWZtDjY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ekAI3M5Q; arc=none smtp.client-ip=209.85.128.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-6b747f2e2b7so46859577b3.3
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 06:14:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1725369241; x=1725974041; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=aieioXdBWwbtfxf4c7Swz7Bu9HwgmhP2hJRdgaMP0AQ=;
-        b=ekAI3M5QC2+Sg5I5nIiva8jHEzQkI0OFihjBYZ96Nl6f3DkQv7x5Bew6nFCVoN4IEZ
-         mAn6Ol6gUWKsQUd9HeRkOrN6z+lZ9FL6lrOFii/gnx1SD254Gh50mUF9esYobq67moMY
-         5xY08PCxyqApL7Tfi9UoV7ry+UnoRK5uanc6ky1B7dyH5jBS66p+se6gFBYXVnGE8XoK
-         JLWsGsv9slhFjzhDtYFyEAkbXCV71EZbklsTlNf+tMDV3dOY0lRT7nGbg4HQlgxBo9L3
-         l8zIm9zeNRVJ9OPLf4grjkvU/Ll5/ZXMFyE3UoelF1xdjOYmiCyO8/XY8me/XDP5Jbkv
-         8xlg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725369241; x=1725974041;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=aieioXdBWwbtfxf4c7Swz7Bu9HwgmhP2hJRdgaMP0AQ=;
-        b=VcQukiEFmdpubiiFT+qsfEShjxExNC33agMlYsSxpFOVlch/kWED7MtrlUmvKpBdQW
-         YB8fbr9yAwxpOI78/QqrhHeCpA+2w6o/05L/v3yawGYJ5Lo4mZpWOrQLqtW8uAEOX9Tv
-         toRSIIM/mPjvyRYRwXw6mSvtcFycUOzKp37uxEetZrJP39YmGjPsKW+PM4+AA5YAFyUf
-         gz4aVkDnT1K0vPEgQM31hGONAiJdGoJmTKImnnE1uzcMKjGB5982sq4ZxKkceZeZDGFS
-         L8dMHggqVBesOafuxsRaFpmsEqXgRWRLQ9HYwEaBFgreDn4+lcW89AZTl3m46m894p3M
-         zWqA==
-X-Forwarded-Encrypted: i=1; AJvYcCW/ZLDTO2gGFpZDouKPtoisw3ZLmJjT0wKTdqKmSwr4NluRq74XinFdZ3PsriO1Px209IZBLIndFFXujVo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxSNoUTY3jTD5rEPXFo3VHURhKcZaFylnS9gj4KTqEXl3XoS+Eo
-	zsUphnr4e76ivJ/o/8TKT/XiiL//heiAXqIoe+ZoNfTvoxHPLXKykfCJhlfR+cj8m7+YOlvU5Qx
-	v+B8UUKy5F3tGd7KtqmXFunAnNmIhNuJV0meYDA==
-X-Google-Smtp-Source: AGHT+IHWGp0sSdmRKGXXhqLX/pfDauo1J5cCvK8HcPkWNkLSzA7X4J59dVMwMvto/PiVODxpuK+dgugIvQlS/8Q/gVw=
-X-Received: by 2002:a05:690c:f0e:b0:6be:54e1:f1f3 with SMTP id
- 00721157ae682-6d40b0f8dacmr158100417b3.0.1725369240962; Tue, 03 Sep 2024
- 06:14:00 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FC551CA689;
+	Tue,  3 Sep 2024 13:14:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.95.77
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725369272; cv=fail; b=LOK1HmHJ15sDxZFrYcMTlCBCKQQhsv1qP8dqJXm4YD1yG8zc0VPVopQrDfBRFba0vJ6FqJTqRUev8w5Z8LR1Xysj7f1mYW+Vss6dlsl6a6s9j2Spkek31NuAkggPnDF363ZXjQKtaWnG2N6w/zypX8bs2vQQgi3eFIliEihOJFk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725369272; c=relaxed/simple;
+	bh=gervbDFeGsopKPvNf2Zm7tsa0oIT4HWnPhIf7YC93RU=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=tgl2gvgscOPNjDei5rMzvLMdvzdqkFAcR9LyEe5PfyhfqNA3e0KMdSYww1KmHCoi8cTEFnEWRYs57aksP6DWf3zKYy+7ILntpTS1iG/7LNbWTGIpzW2RwkNiwD53UQ/MkSLXOr6/dCrazktxFwXJEdAhfb2h9Tf1KK/lvMAY8nI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=RZfYj+df; arc=fail smtp.client-ip=40.107.95.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=jYuWdemjxC5HYmG+iOzHaPoXRphG38FTsqAqnEtix1jm2VyQMQXTxSDaKVeV/0n4iJbSTB7H11+XwV0Ukq+37rubBjSjpU+Z8aUmmVPHCG3xurEexXhs0blLr7ac3Hs7wp4DZFKPDQyyt/2OFuzXSc7hUOOxBrX8BjMDuB764/C4J4I6So2mW5k4di/e9JPbMEqd2gHe+JPuPofoitmy5RkS0yiG5WM8l2eEAvCCyBT9HGeIBbTaCq895aEUlmUIQzbt8KDWuxeW9Gc9Nzm6jmHvhEo207NAwGPiilE0iT3SMWxDjB7h/qG3orpdM6/jDZZp0SXtCj1wV6k1A+tQWQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=s0tH1ddazRXSI7B1mloGEfJSCtaLVakufr7aIw0myA8=;
+ b=PLFtJVZYkzXNUqiCIoP49C5UuxPzZ+II0NO5wIYULCe+zlYtfblAoYdBpjrbiea1cf2GTfUHda90ioofatzjMUcTP9LExLNhshGSCInrBrMnXgN0C65GBAs8M7S5FHGXbtMWyma9Abyx+EXxb8hu19smIQBb4azw1O2D1iGdzpfR4plNFCMZi1nCPZpOfa5rDwootpGiksPGVD1jJ0VsKUyk7JRxzhf//7scshi7XFxgR9leUJyh5A326s4WjRt/yJ24YVPSL+eH9X2+Uaxe+YR3ISaojAoJLeasHujHLpfeB76hh+cTFTknRAn+6rrPnbC+PhZlSWqWzbboY+FjjA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=s0tH1ddazRXSI7B1mloGEfJSCtaLVakufr7aIw0myA8=;
+ b=RZfYj+df2rSvkYrmZkYd30tkBEOJuA07H8tOlivivBJazcNA9o5DbQPkvJ9a3cmkr2/G4ssKZy2y7WFfNoeHw8yfXbO9TXvq9rk0Taakumyy14x9wnOlK5SelXMPzxluBPN2F3EBz+1M4UQOW5uJMtsamXzlNcS+5WTOsmaIYzM=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from MN0PR12MB6101.namprd12.prod.outlook.com (2603:10b6:208:3cb::10)
+ by SN7PR12MB6863.namprd12.prod.outlook.com (2603:10b6:806:264::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.25; Tue, 3 Sep
+ 2024 13:14:26 +0000
+Received: from MN0PR12MB6101.namprd12.prod.outlook.com
+ ([fe80::37ee:a763:6d04:81ca]) by MN0PR12MB6101.namprd12.prod.outlook.com
+ ([fe80::37ee:a763:6d04:81ca%7]) with mapi id 15.20.7918.024; Tue, 3 Sep 2024
+ 13:14:25 +0000
+Message-ID: <bfb134a3-521b-49d7-99da-483a627e2feb@amd.com>
+Date: Tue, 3 Sep 2024 08:14:26 -0500
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] cpufreq/amd-pstate: Add an early param to disable MSR
+ mode
+To: Mario Limonciello <superm1@kernel.org>,
+ "Gautham R . Shenoy" <gautham.shenoy@amd.com>,
+ Perry Yuan <perry.yuan@amd.com>
+Cc: "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)"
+ <linux-kernel@vger.kernel.org>,
+ "open list:CPU FREQUENCY SCALING FRAMEWORK" <linux-pm@vger.kernel.org>
+References: <20240901050035.1739935-1-superm1@kernel.org>
+ <20240901050035.1739935-2-superm1@kernel.org>
+Content-Language: en-US
+From: Mario Limonciello <mario.limonciello@amd.com>
+In-Reply-To: <20240901050035.1739935-2-superm1@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SA9PR13CA0016.namprd13.prod.outlook.com
+ (2603:10b6:806:21::21) To MN0PR12MB6101.namprd12.prod.outlook.com
+ (2603:10b6:208:3cb::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240816174259.2056829-1-quic_bibekkum@quicinc.com>
- <20240816174259.2056829-6-quic_bibekkum@quicinc.com> <20240823155918.GD525@willie-the-truck>
- <3ae75a75-1717-40b6-9149-bc3673d520d6@quicinc.com> <20240827124714.GB4772@willie-the-truck>
- <b335452a-977e-41cc-9424-a2244fbe20de@quicinc.com> <35849d74-1197-446b-9a4c-1b8aabb38427@arm.com>
- <a882d634-85b3-4c5b-8309-348b4b3d9f0a@quicinc.com>
-In-Reply-To: <a882d634-85b3-4c5b-8309-348b4b3d9f0a@quicinc.com>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Tue, 3 Sep 2024 16:13:50 +0300
-Message-ID: <CAA8EJpo4rX=FwAwoocbys4-sv9gzPz6wwgFVyW1x4J7TU_JTgg@mail.gmail.com>
-Subject: Re: [PATCH v14 5/6] iommu/arm-smmu: add ACTLR data and support for SC7280
-To: Bibek Kumar Patro <quic_bibekkum@quicinc.com>
-Cc: Robin Murphy <robin.murphy@arm.com>, Will Deacon <will@kernel.org>, robdclark@gmail.com, 
-	joro@8bytes.org, jgg@ziepe.ca, jsnitsel@redhat.com, robh@kernel.org, 
-	krzysztof.kozlowski@linaro.org, quic_c_gdjako@quicinc.com, 
-	konrad.dybcio@linaro.org, iommu@lists.linux.dev, 
-	linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MN0PR12MB6101:EE_|SN7PR12MB6863:EE_
+X-MS-Office365-Filtering-Correlation-Id: c2c079a7-52a7-4455-7acd-08dccc1a556d
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?L05nV2xsenlKdTdmRnBJWHdhUWZaQkdhcm1UTXBWZENDclVoc2haY2VDVmUz?=
+ =?utf-8?B?WFJBdEFyaWZVLzNQUXB3L3dRcldSSlJOVGZoRWQ5MVM3ckppaGRHTjhuVTEy?=
+ =?utf-8?B?M0h3N2JZZEYvVkNEVmdtYUZjbGkybmpNc00zdTFOczhDdnJEN1Q3dlRiMUpl?=
+ =?utf-8?B?dDVHZnlXVHJaZjF2TnRTRXU5UHBMQ3RUaXIzdXpJdEVHWEx4T2VyZ2IyN0RP?=
+ =?utf-8?B?SllRS1VEWVRQNWwyVEZUZHlyU2U5bVRQZEdHRUJ6WWMyNXZWNWsyL2VXMTV1?=
+ =?utf-8?B?aEhJajc1NzJuNGpLZE9MMGhmVlJFRjJkbk0yeHV2UmVsSGxyS0ZlaU8zTVZB?=
+ =?utf-8?B?MklhZmk0ZC9ydkk3ZHBSS29zdUNlR3ZrTDhsSTJvbnkzdCt1NTBLYk10SE83?=
+ =?utf-8?B?ZFkzNjdQMnd2QUhxYXNsZ1J6RzllRmJFaFZHektnRTlFWjNSNjBWazRkMkYy?=
+ =?utf-8?B?aDcxeU96NWhUSGNFcjFUa2tCRlRvYisxODlyU0VFRjN6S0huTW5pdTFxYzNK?=
+ =?utf-8?B?NW5hSlY4SDZuUjluUEU3NGxKT0FFYWJVUHFwZmJGa245d2hDVVNnZ1pkZDlo?=
+ =?utf-8?B?ZWx6cDg4ZGdyVVBhUTJuelpqeXpFN1lQV2cxZXU2bTNWbE1SandSQ2xmTGhp?=
+ =?utf-8?B?RFFpNCt5bm9ON3ZhMDVUZnNoTldnb3FDTWt1bGtIS1ArNmZwVEk4dXlrWUg2?=
+ =?utf-8?B?SStodFFwTXpuS1p0VEtPWWtBV05TckN0czFVdzBGeHZUbUwxeXNWditjMjZ6?=
+ =?utf-8?B?cHJEaGRkeU9ldWIrN3ZHNmloU2s4MXFNQXcvbjVhVnN5dFpiY01PYzZyaXV2?=
+ =?utf-8?B?blJzZ0xxTkZZTEIwQlBmcng1TGNBd0RrMm0wQ2w3VzJjNEptQ044T0hxMzAx?=
+ =?utf-8?B?TFRZMlFLdmVhQ2RBYmY5VmJqQ1VPK1dCcDdJclpXZ0FwbFR3a2NrMC8rQ1Np?=
+ =?utf-8?B?cUdJY2xXMGVMT1RQbktnL1lhYjNKcVVZeW10UW5NM3ppa3dqc1gvMlhIMkxX?=
+ =?utf-8?B?T0J1bjVBNUNzalpudjZkMkRrd1k1bUR6dFh0RFlOTTdCYm5sMTZmOXlLV3Nn?=
+ =?utf-8?B?N3BKQzQvSHRJQ1dmYVkreHBGdi94SWlzQUVaRmxRMVJoSjFaMkczMmRtSDVv?=
+ =?utf-8?B?bmZYZW5MSkhwYnptWHJpbmpVUW1KZXZKTXhOY0NkbXZGcGt2UTkvNlpMZ1M0?=
+ =?utf-8?B?MC9wQkcvcFIxZXNLeDlYa0dXTHJWVXhnSzF2b2VTSk5GVktXSkgvSWc3RENv?=
+ =?utf-8?B?WE1HVjFXTUpOZjNFV2hWVEd3K2JldzA2UWpDUjNURkVaQjlkRis5cEdFS1lt?=
+ =?utf-8?B?RTIzQWRLN3UxUCsxUnc2ajJCOTE4Tnp2cU5TNkVSbXRYMjladDJXSTBYT2lp?=
+ =?utf-8?B?bXBKaUFBckhKbzZEZjhkWjdlZ2FaVUlHbW5idU9VRXBXU3hMWlN1NmV5eENp?=
+ =?utf-8?B?Sjk5d1NqVWhjTExHdUR1V3VTcHdHa24xZ0FEbC9iZUdPcE1sRExaWXBQNWZw?=
+ =?utf-8?B?OVI5MUlHbU9DK0pqTFBpYmhmNitQUUxGS0d2VXpDd2QyWnFtYzh0WmZ0TTVP?=
+ =?utf-8?B?WVE2R0dNam1rTlNRMjZXNnVlNmZEOE9tUms2TU1zTldWUFl6SlNYNGM0dnJ1?=
+ =?utf-8?B?ZjFvaVZMQ0QxbHhiUzAxUnNDSkxYRkkyMGg2MHZqeDgyQnNUTkRza0ZiOXpR?=
+ =?utf-8?B?QU1CWUQ0VW9pQzZrZ1V4eEFlNk9VSkpTMmFsWGV3RzJFdHBoVE5XRkZORGZN?=
+ =?utf-8?B?TDRFVUhEK0dIUlNHR3pISG9PZE9jcXJhSWNEZmJNeUJDOEo0ckcvRU1CWUly?=
+ =?utf-8?B?M2J4UnhKNjhCbG95bHAvZz09?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR12MB6101.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?bzVsU0dydU9pb2lNcWlMdGlBQWowTXErR1pNR1ZsUForalpMK0JBVWw3YWtW?=
+ =?utf-8?B?VVJvN0RUUWV5aFVGMXp2Y1VjWGEySlhpWStWem1sbStyVkx0dmJGY1ZQRnlG?=
+ =?utf-8?B?N2pxOERJMUpuYWl5YW02SEhJV0JNS2Y5aXlpdTllR3F0bjM4cGxSV3JPazgy?=
+ =?utf-8?B?UVZ6ZFVpaWs4bHR6VTI3Yml6SWJRRHFrR0hUM0pjVHdJVit0cUtORXgwWmhS?=
+ =?utf-8?B?aW9jR0JUVnNSRTVDVEptR3VyQjk4NkJaLzZ6RkxpangyTjlDQXF3TVpGTUk2?=
+ =?utf-8?B?ZENFYU82WlA1YUxxWGlnWWt0WVVwT0pyaWhSWEg2dExFcXpzeTBneStkT3oy?=
+ =?utf-8?B?Nm1yY1B2MitqZlVOOUcwcUVtazROcklOZ09SaVZDUXVaeEtJTFNKZ2ZiWWZm?=
+ =?utf-8?B?bk1GOXNpZDJZQ21zK1RWeDBnUmNod3lObmxTckQ1cFM3Zzl6TWFXMXVsZlNZ?=
+ =?utf-8?B?VlNGUEZlK2FmdUJ2UlFMMUxwdlV2dzhXVHY0RHltWFlsYzVkU0ZWb2VGWHBw?=
+ =?utf-8?B?enIvQUNBWXRZWmFHNndSSFpKMGJaRStKbEdvdWtDbzcyTXdodkZHd1dLV0po?=
+ =?utf-8?B?dWpIM0l2MjVtVnNodXpjd3NDWnpHSnlHL1dxNXpwSlUzZTErS2JlM0Z5d0Ru?=
+ =?utf-8?B?UzQwbEszRXJ0cjJPTC95T21MUHhuYnVtd0ZGbmUxbElHU0J0dDJnbWNXeDEr?=
+ =?utf-8?B?UTgvTnJHUVFSVFRKQmcyUkRjT3ZlemxqQ1JtNm9kUGZsUTVXMU1XT2hFYjA5?=
+ =?utf-8?B?MjRwY21yamNyR2JYUUZHbXZuWU1MODJPcGF0K05wYUlJQkhxUWdiRlFEdno4?=
+ =?utf-8?B?V3VVV245Y2QybnpOa3kzeEJUblVzdDJ5TkdQcGdLc3A0MmhTRjBIMG5FYU1l?=
+ =?utf-8?B?TDN2My9VVG1oWWdZalFEL200N2ZXTzMrQmpuOUN2Q1h6aEdYZm92V3N5MWo3?=
+ =?utf-8?B?UTBPSGZ1UU0ycDRldHNvZVBZRVhUY3o5bXMvYXE3V2dsUXNGR3FBMjhTblRw?=
+ =?utf-8?B?T3Nkd2RUUy9obmtabnhQNUV4WWs1UVZoVlZ6WXZjWFV3YXRraDYvME9md2xB?=
+ =?utf-8?B?Y0g1TU55bGJqS2xQOVRrTERpbXArWjc4OWNkdWxyUi9Qbk4zS1RaT0tIckpE?=
+ =?utf-8?B?dWpqeFdNbmdXa012Z29wbXdNQmVLZVpIVnV0UjZnc24reFdwdVlOeFJ3SGZ0?=
+ =?utf-8?B?MFJVYU0rV1ByV2VlTnNhNWdZMWtpczU1ZE9lYVd0b1VGWHhTc1NEQytxM1U1?=
+ =?utf-8?B?YU5mZnBmMDdkMWROUDFqb0xCZmIya2dPZk52Qm9MR3kvQUs4RmQzUWRyR3FR?=
+ =?utf-8?B?MDVrZjNoeXRKOHRESFFxSzRoOEc4MGFnLzBxME12eFlBSFU0b1Zuc0czTUFY?=
+ =?utf-8?B?d1orQWpicVVaNFJSQXNXK3hlM0Z2dlNRajZKQXZPK3lHaGppdnYzVXdQN0h6?=
+ =?utf-8?B?YllLdUxCK3RBZEIvZ3djNjhkdlVLMXZpbytjckIrRCtEWVhWRWZTa2FnQkpj?=
+ =?utf-8?B?Si9Iakw5YXNXaE5BOUlNNE9QamdkYnRjVWFYSWQ0bFgyaHRMUjExVVJvdCtq?=
+ =?utf-8?B?eTNwWmhCZFpPZENCOTE4ZS9XV3Q5VjhCbXBLV3puaTJXSEhqdWhveEVpa0dq?=
+ =?utf-8?B?QjVGVk1aSkhoQVRKS05wSGdWeTZzSTJWUmo0a1k4NFUzR2pHNzdxZVZ2WEtG?=
+ =?utf-8?B?R29tdWViRFByczVDUndNcWZ3aDg1bkRPd0xyQkNGemhQcFMrMjFqVG5BMlZv?=
+ =?utf-8?B?eURPZXJ6KytueDk1SFRmSEROTGM2Y2RNZHRydWJnM2lKYU4vUFhVYnJWUEFz?=
+ =?utf-8?B?TXhpdFNHb29QUE4wVVBoQUhqMFc0OGRWaXRwNzN3K1N3Y0dCOUNjWTRBYmQz?=
+ =?utf-8?B?NlpMblFET0Q1RS8zcjZHenNTb3E1TmJuWERzQ1JZUGR2LzgwSVErYW1HWnZD?=
+ =?utf-8?B?Tmt0T09nOEJzdFVTUFZtOTVFOXRSKzZJaGwzMXd1VlJHcytVc2F0N2xIYUpP?=
+ =?utf-8?B?b2JrNkVWTWlCSFBsV3BiRUx1SHZlWTRtOUFXbElVdWV2OCtYdy84VVZYazZK?=
+ =?utf-8?B?U08zcm1acjBCYVdkVnpZVXJLVUZzck1XUmptanJhSDBacFRpUE9qTEpHU3Az?=
+ =?utf-8?Q?D5Nx/k1AwtSmXFYk2crNDOUB2?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c2c079a7-52a7-4455-7acd-08dccc1a556d
+X-MS-Exchange-CrossTenant-AuthSource: MN0PR12MB6101.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Sep 2024 13:14:25.5875
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: f0jQIwyVjSQGkGJKMPMxAMf9P2wOAiOBQssj+pe6aq0Dybh7KDhOZoPfVVRcBiUH/gVDFpBjazY0/Ytj15Sz6g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB6863
 
-On Tue, 3 Sept 2024 at 15:59, Bibek Kumar Patro
-<quic_bibekkum@quicinc.com> wrote:
->
->
->
-> On 8/30/2024 6:01 PM, Robin Murphy wrote:
-> > On 30/08/2024 11:00 am, Bibek Kumar Patro wrote:
-> >>
-> >>
-> >> On 8/27/2024 6:17 PM, Will Deacon wrote:
-> >>> On Mon, Aug 26, 2024 at 04:33:24PM +0530, Bibek Kumar Patro wrote:
-> >>>>
-> >>>>
-> >>>> On 8/23/2024 9:29 PM, Will Deacon wrote:
-> >>>>> On Fri, Aug 16, 2024 at 11:12:58PM +0530, Bibek Kumar Patro wrote:
-> >>>>>> Add ACTLR data table for SC7280 along with support for
-> >>>>>> same including SC7280 specific implementation operations.
-> >>>>>>
-> >>>>>> Signed-off-by: Bibek Kumar Patro <quic_bibekkum@quicinc.com>
-> >>>>>> ---
-> >>>>>>    drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c | 58
-> >>>>>> +++++++++++++++++++++-
-> >>>>>>    1 file changed, 57 insertions(+), 1 deletion(-)
-> >>>>>>
-> >>>>>> diff --git a/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
-> >>>>>> b/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
-> >>>>>> index dc143b250704..a776c7906c76 100644
-> >>>>>> --- a/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
-> >>>>>> +++ b/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
-> >>>>>> @@ -31,6 +31,55 @@
-> >>>>>>    #define PREFETCH_MODERATE    (2 << PREFETCH_SHIFT)
-> >>>>>>    #define PREFETCH_DEEP        (3 << PREFETCH_SHIFT)
-> >>>>>>
-> >>>>>> +static const struct actlr_config sc7280_apps_actlr_cfg[] =3D {
-> >>>>>> +    { 0x0800, 0x04e0, PREFETCH_DEFAULT | CMTLB },
-> >>>>>> +    { 0x0900, 0x0402, PREFETCH_SHALLOW | CPRE | CMTLB },
-> >>>>>> +    { 0x0901, 0x0000, PREFETCH_SHALLOW | CPRE | CMTLB },
-> >>>>>> +    { 0x0d01, 0x0000, PREFETCH_SHALLOW | CPRE | CMTLB },
-> >>>>>> +    { 0x1181, 0x0420, PREFETCH_DEEP | CPRE | CMTLB },
-> >>>>>> +    { 0x1182, 0x0420, PREFETCH_DEEP | CPRE | CMTLB },
-> >>>>>> +    { 0x1183, 0x0420, PREFETCH_DEEP | CPRE | CMTLB },
-> >>>>>> +    { 0x1184, 0x0420, PREFETCH_DEEP | CPRE | CMTLB },
-> >>>>>> +    { 0x1185, 0x0420, PREFETCH_DEEP | CPRE | CMTLB },
-> >>>>>> +    { 0x1186, 0x0420, PREFETCH_DEEP | CPRE | CMTLB },
-> >>>>>> +    { 0x1187, 0x0420, PREFETCH_DEEP | CPRE | CMTLB },
-> >>>>>> +    { 0x1188, 0x0420, PREFETCH_DEEP | CPRE | CMTLB },
-> >>>>>> +    { 0x1189, 0x0420, PREFETCH_DEEP | CPRE | CMTLB },
-> >>>>>> +    { 0x118b, 0x0420, PREFETCH_DEEP | CPRE | CMTLB },
-> >>>>>> +    { 0x118c, 0x0420, PREFETCH_DEEP | CPRE | CMTLB },
-> >>>>>> +    { 0x118d, 0x0420, PREFETCH_DEEP | CPRE | CMTLB },
-> >>>>>> +    { 0x118e, 0x0420, PREFETCH_DEEP | CPRE | CMTLB },
-> >>>>>> +    { 0x118f, 0x0420, PREFETCH_DEEP | CPRE | CMTLB },
-> >>>>>> +    { 0x2000, 0x0020, PREFETCH_DEFAULT | CMTLB },
-> >>>>>> +    { 0x2040, 0x0000, PREFETCH_DEFAULT | CMTLB },
-> >>>>>> +    { 0x2062, 0x0000, PREFETCH_DEFAULT | CMTLB },
-> >>>>>> +    { 0x2080, 0x0020, PREFETCH_DEFAULT | CMTLB },
-> >>>>>> +    { 0x20c0, 0x0020, PREFETCH_DEFAULT | CMTLB },
-> >>>>>> +    { 0x2100, 0x0020, PREFETCH_DEFAULT | CMTLB },
-> >>>>>> +    { 0x2140, 0x0000, PREFETCH_DEFAULT | CMTLB },
-> >>>>>> +    { 0x2180, 0x0020, PREFETCH_SHALLOW | CPRE | CMTLB },
-> >>>>>> +    { 0x2181, 0x0004, PREFETCH_SHALLOW | CPRE | CMTLB },
-> >>>>>> +    { 0x2183, 0x0000, PREFETCH_SHALLOW | CPRE | CMTLB },
-> >>>>>> +    { 0x2184, 0x0020, PREFETCH_SHALLOW | CPRE | CMTLB },
-> >>>>>> +    { 0x2187, 0x0000, PREFETCH_SHALLOW | CPRE | CMTLB },
-> >>>>>> +};
-> >>>>>> +
-> >>>>>> +static const struct actlr_config sc7280_gfx_actlr_cfg[] =3D {
-> >>>>>> +    { 0x0000, 0x07ff, PREFETCH_DEEP | CPRE | CMTLB },
-> >>>>>> +};
-> >>>>>
-> >>>>> It's Will "stuck record" Deacon here again to say that I don't thin=
-k
-> >>>>> this data belongs in the driver.
-> >>>>>
-> >>>>
-> >>>> Hi Will,
-> >>>>
-> >>>> It will be difficult to reach a consensus here, with Robin and the
-> >>>> DT folks
-> >>>> okay to keep it in the driver, while you believe it doesn't belong
-> >>>> there.
-> >>>>
-> >>>> Robin, Rob, could you please share your thoughts on concluding the
-> >>>> placement
-> >>>> of this prefetch data?
-> >>>>
-> >>>> As discussed earlier [1], the prefetch value for each client doesn=
-=E2=80=99t
-> >>>> define
-> >>>> the hardware topology and is implementation-defined register writes
-> >>>> used by
-> >>>> the software driver.
-> >>>
-> >>> It does reflect the hardware topology though, doesn't it? Those magic
-> >>> hex
-> >>> masks above refer to stream ids, so the table is hard-coding the
-> >>> prefetch
-> >>> values for particular matches.
-> >>
-> >> That is correct in the sense that stream id is mapped to context bank
-> >> where these configurations are applied.
-> >> However the other part of it is implementation-defined register/values
-> >> for which community opinion was register/value kind of data, should no=
-t
-> >> belong to device tree and are not generally approved of.
-> >>
-> >> Would also like to point out that the prefetch values are recommended
-> >> settings and doesn=E2=80=99t mean these are the only configuration whi=
-ch would
-> >> work for the soc.
-> >> So the SID-to-prefetch isn't strictly SoC defined but is a software
-> >> configuration, IMO.
-> >
-> > What's particularly confusing is that most of the IDs encoded here don'=
-t
-> > actually seem to line up with what's in the respective SoC DTSIs...
-> >
-> > However by this point I'm wary of whether we've lost sight of *why*
-> > we're doing this, and that we're deep into begging the question of
-> > whether identifying devices by StreamID is the right thing to do in the
-> > first place. For example, as best I can tell from a quick skim, we have
-> > over 2 dozen lines of data here which all serve the exact same purpose
-> > of applying PREFETCH_DEEP | CPRE | CMTLB to instances of
-> > "qcom,fastrpc-compute-cb". In general it seems unlikely that the same
-> > device would want wildly different prefetch settings across different
-> > SoCs, or even between different instances in the same SoC, so I'm reall=
-y
-> > coming round to the conclusion that this data would probably be best
-> > handled as an extension of the existing qcom_smmu_client_of_match
-> > mechanism.
-> >
->
-> As per your design idea,do you mean to use qcom_smmu_client_of_match to
-> identify the device using compatible string and apply the device
-> specific settings for all the SoCs (instead of StreamID based device
-> identification) ?
->
-> something like this rough snippet(?):
->
-> qcom_smmu_find_actlr_client(struct device *dev)
-> {
->
->         if (of_match_device(qcom_smmu_client_of_match, dev) =3D=3D
-> qcom,fastrpc-compute-cb )
->                 qcom_smmu_set_actlr_value(dev, (PREFETCH_DEEP | CPRE | CM=
-TLB));
-> /*where (PREFETCH_DEEP | CPRE | CMTLB) is used for compute-cb client.*/
->
->         else if (of_match_device(qcom_smmu_client_of_match, dev) =3D=3D q=
-com,adreno )
->                 qcom_smmu_set_actlr_value(dev, (PREFETCH_SHALLOW | CPRE |=
- CMTLB));
-> /*Where (PREFETCH_SHALLOW | CPRE | CMTLB) is for adreno client. */
+On 9/1/2024 00:00, Mario Limonciello wrote:
+> From: Mario Limonciello <mario.limonciello@amd.com>
+> 
+> This lets a system that supports the MSR run in shared memory mode
+> instead to help replicate and debug issues.
+> 
+> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
 
-I like this idea, especially once it gets converted into a per-SoC
-table of compatibles.
+After some offline discussion, will drop this patch.  Second patch will 
+remain and I will queue it up for -next.
 
->
-> }
->
-> Let me know if my understanding is incorrect.
-> Then in this case if different SoC would have a different settings for
-> same device, then everytime a new compatible would be necessary for same
-> device on different SoC?
->
-> On similar lines there is another TBU based approach which I can think
-> of. Identify the TBU -> Identify clients from TopoID derived from SID
-> range specified in qcom,stream-id-range -> Apply the client
-> specific settings ?
->
-> Both approaches would be driver-based, as they are now.
->
-> Also I'd like to point out that in the current design, since we fixed
-> the smr_is_subset arguments to make the stream IDs a subset of entries
-> in the actlr_cfg table, we can reduce the number of entries in the
-> table. This way, fewer SID-mask pairs can accommodate several stream IDs.
->
-> Thanks & regards,
-> Bibek
->
-> > Thanks,
-> > Robin.
-> >
-> >>
-> >>> If I run on a different SoC configuration > with the same table, then
-> >>> the prefetch settings will be applied to the
-> >>> wrong devices. How is that not hardware topology?
-> >>>
-> >>
-> >> The configuration table is tied to SoC compatible string however as I
-> >> mentioned above, its basically a s/w recommended setting.
-> >> (using prefetch settings other than the recommended values e.g
-> >> PREFECH_DEFAULT instead of PREFETCH_DEEP would not render the device
-> >> unusable unlike changing stream-ids which can make it unusable).
-> >>
-> >> Since it is implementation specific we cannot have a generic DT bindin=
-g,
-> >> tying stream ids to these recommended settings.
-> >> Even with qcom specific binding due to dependency on implementation, n=
-ot
-> >> sure if we would be able to maintain consistency.
-> >>
-> >> So from maintenance perspective carrying these in driver appear to be
-> >> simpler/flexible. And if it doesn=E2=80=99t violate existing precedenc=
-e, we
-> >> would prefer to carry it that way.
-> >>
-> >> This parallels how _"QoS settings"_ are handled within the driver
-> >> (similar to this example [1]).
-> >>
-> >> [1].
-> >> https://lore.kernel.org/linux-arm-msm/20231030-sc8280xp-dpu-safe-lut-v=
-1-1-6d485d7b428f@quicinc.com/#t
-> >>
-> >> Thanks & regards,
-> >> Bibek
-> >>
-> >>> WIll
+> ---
+>   .../admin-guide/kernel-parameters.txt         |  5 +++
+>   Documentation/admin-guide/pm/amd-pstate.rst   |  5 +++
+>   drivers/cpufreq/amd-pstate.c                  | 32 +++++++++++++------
+>   3 files changed, 32 insertions(+), 10 deletions(-)
+> 
+> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+> index 09126bb8cc9ff..041c609ed50ea 100644
+> --- a/Documentation/admin-guide/kernel-parameters.txt
+> +++ b/Documentation/admin-guide/kernel-parameters.txt
+> @@ -383,6 +383,11 @@
+>   			disable
+>   			  Disable amd-pstate preferred core.
+>   
+> +	amd_pstate_msr=
+> +			[X86]
+> +			disable
+> +			  Disable amd-pstate CPPC MSR (force shared memory).
+> +
+>   	amijoy.map=	[HW,JOY] Amiga joystick support
+>   			Map of devices attached to JOY0DAT and JOY1DAT
+>   			Format: <a>,<b>
+> diff --git a/Documentation/admin-guide/pm/amd-pstate.rst b/Documentation/admin-guide/pm/amd-pstate.rst
+> index d0324d44f5482..b06632556102e 100644
+> --- a/Documentation/admin-guide/pm/amd-pstate.rst
+> +++ b/Documentation/admin-guide/pm/amd-pstate.rst
+> @@ -411,6 +411,11 @@ For systems that support ``amd-pstate`` preferred core, the core rankings will
+>   always be advertised by the platform. But OS can choose to ignore that via the
+>   kernel parameter ``amd_prefcore=disable``.
+>   
+> +``amd_pstate_msr=disable``
+> +
+> +For systems that support a dedicated CPPC MSR, ignore it's use and run
+> +with shared memory instead.
+> +
+>   User Space Interface in ``sysfs`` - General
+>   ===========================================
+>   
+> diff --git a/drivers/cpufreq/amd-pstate.c b/drivers/cpufreq/amd-pstate.c
+> index 93adde45bebce..89438a3654002 100644
+> --- a/drivers/cpufreq/amd-pstate.c
+> +++ b/drivers/cpufreq/amd-pstate.c
+> @@ -88,6 +88,7 @@ static struct cpufreq_driver amd_pstate_epp_driver;
+>   static int cppc_state = AMD_PSTATE_UNDEFINED;
+>   static bool cppc_enabled;
+>   static bool amd_pstate_prefcore = true;
+> +static bool amd_pstate_msr = true;
+>   static struct quirk_entry *quirks;
+>   
+>   /*
+> @@ -187,7 +188,7 @@ static s16 amd_pstate_get_epp(struct amd_cpudata *cpudata, u64 cppc_req_cached)
+>   	u64 epp;
+>   	int ret;
+>   
+> -	if (cpu_feature_enabled(X86_FEATURE_CPPC)) {
+> +	if (amd_pstate_msr) {
+>   		if (!cppc_req_cached) {
+>   			epp = rdmsrl_on_cpu(cpudata->cpu, MSR_AMD_CPPC_REQ,
+>   					&cppc_req_cached);
+> @@ -260,7 +261,7 @@ static int amd_pstate_set_epp(struct amd_cpudata *cpudata, u32 epp)
+>   	int ret;
+>   	struct cppc_perf_ctrls perf_ctrls;
+>   
+> -	if (cpu_feature_enabled(X86_FEATURE_CPPC)) {
+> +	if (amd_pstate_msr) {
+>   		u64 value = READ_ONCE(cpudata->cppc_req_cached);
+>   
+>   		value &= ~GENMASK_ULL(31, 24);
+> @@ -813,7 +814,7 @@ static int amd_pstate_get_highest_perf(int cpu, u32 *highest_perf)
+>   {
+>   	int ret;
+>   
+> -	if (cpu_feature_enabled(X86_FEATURE_CPPC)) {
+> +	if (amd_pstate_msr) {
+>   		u64 cap1;
+>   
+>   		ret = rdmsrl_safe_on_cpu(cpu, MSR_AMD_CPPC_CAP1, &cap1);
+> @@ -1058,7 +1059,7 @@ static int amd_pstate_cpu_init(struct cpufreq_policy *policy)
+>   	/* It will be updated by governor */
+>   	policy->cur = policy->cpuinfo.min_freq;
+>   
+> -	if (cpu_feature_enabled(X86_FEATURE_CPPC))
+> +	if (amd_pstate_msr)
+>   		policy->fast_switch_possible = true;
+>   
+>   	ret = freq_qos_add_request(&policy->constraints, &cpudata->req[0],
+> @@ -1288,7 +1289,7 @@ static int amd_pstate_change_mode_without_dvr_change(int mode)
+>   
+>   	cppc_state = mode;
+>   
+> -	if (cpu_feature_enabled(X86_FEATURE_CPPC) || cppc_state == AMD_PSTATE_ACTIVE)
+> +	if (amd_pstate_msr || cppc_state == AMD_PSTATE_ACTIVE)
+>   		return 0;
+>   
+>   	for_each_present_cpu(cpu) {
+> @@ -1524,7 +1525,7 @@ static int amd_pstate_epp_cpu_init(struct cpufreq_policy *policy)
+>   	else
+>   		policy->policy = CPUFREQ_POLICY_POWERSAVE;
+>   
+> -	if (cpu_feature_enabled(X86_FEATURE_CPPC)) {
+> +	if (amd_pstate_msr) {
+>   		ret = rdmsrl_on_cpu(cpudata->cpu, MSR_AMD_CPPC_REQ, &value);
+>   		if (ret)
+>   			return ret;
+> @@ -1612,7 +1613,7 @@ static void amd_pstate_epp_update_limit(struct cpufreq_policy *policy)
+>   		epp = 0;
+>   
+>   	/* Set initial EPP value */
+> -	if (cpu_feature_enabled(X86_FEATURE_CPPC)) {
+> +	if (amd_pstate_msr) {
+>   		value &= ~GENMASK_ULL(31, 24);
+>   		value |= (u64)epp << 24;
+>   	}
+> @@ -1657,7 +1658,7 @@ static void amd_pstate_epp_reenable(struct amd_cpudata *cpudata)
+>   	value = READ_ONCE(cpudata->cppc_req_cached);
+>   	max_perf = READ_ONCE(cpudata->highest_perf);
+>   
+> -	if (cpu_feature_enabled(X86_FEATURE_CPPC)) {
+> +	if (amd_pstate_msr) {
+>   		wrmsrl_on_cpu(cpudata->cpu, MSR_AMD_CPPC_REQ, value);
+>   	} else {
+>   		perf_ctrls.max_perf = max_perf;
+> @@ -1691,7 +1692,7 @@ static void amd_pstate_epp_offline(struct cpufreq_policy *policy)
+>   	value = READ_ONCE(cpudata->cppc_req_cached);
+>   
+>   	mutex_lock(&amd_pstate_limits_lock);
+> -	if (cpu_feature_enabled(X86_FEATURE_CPPC)) {
+> +	if (amd_pstate_msr) {
+>   		cpudata->epp_policy = CPUFREQ_POLICY_UNKNOWN;
+>   
+>   		/* Set max perf same as min perf */
+> @@ -1936,7 +1937,9 @@ static int __init amd_pstate_init(void)
+>   	}
+>   
+>   	/* capability check */
+> -	if (cpu_feature_enabled(X86_FEATURE_CPPC)) {
+> +	if (amd_pstate_msr)
+> +		amd_pstate_msr = cpu_feature_enabled(X86_FEATURE_CPPC);
+> +	if (amd_pstate_msr) {
+>   		pr_debug("AMD CPPC MSR based functionality is supported\n");
+>   		if (cppc_state != AMD_PSTATE_ACTIVE)
+>   			current_pstate_driver->adjust_perf = amd_pstate_adjust_perf;
+> @@ -2002,8 +2005,17 @@ static int __init amd_prefcore_param(char *str)
+>   	return 0;
+>   }
+>   
+> +static int __init amd_msr_param(char *str)
+> +{
+> +	if (!strcmp(str, "disable"))
+> +		amd_pstate_msr = false;
+> +
+> +	return 0;
+> +}
+> +
+>   early_param("amd_pstate", amd_pstate_param);
+>   early_param("amd_prefcore", amd_prefcore_param);
+> +early_param("amd_pstate_msr", amd_msr_param);
+>   
+>   MODULE_AUTHOR("Huang Rui <ray.huang@amd.com>");
+>   MODULE_DESCRIPTION("AMD Processor P-state Frequency Driver");
 
-
-
---=20
-With best wishes
-Dmitry
 
