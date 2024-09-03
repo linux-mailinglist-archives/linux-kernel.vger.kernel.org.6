@@ -1,215 +1,180 @@
-Return-Path: <linux-kernel+bounces-312695-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312696-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7C0E9699FA
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 12:20:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76CAD969A02
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 12:20:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1825D1C231C3
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 10:20:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9B5911C230FA
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 10:20:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 186221B9821;
-	Tue,  3 Sep 2024 10:19:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 898561AD260;
+	Tue,  3 Sep 2024 10:20:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="OFxJCAnc"
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hnxnQcQx"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0E9019F435
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 10:19:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7261B19F435
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 10:20:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725358790; cv=none; b=ExPLTTC36NNHZ665aD5loPXN/atCZfBr8kV1nkhTn9YewNqB1kOG7Lqmj4mqAPi9+cvvORf2hdXvDcWkjeInDfslax0aEq4dv14EhUKKSqp8UOok5Ae8MDfAQ1diYf4r8hRFxq5OUn8jr69Wmr70vInH9c9D57HJl2hlEOkW/XE=
+	t=1725358828; cv=none; b=VF2eSaHcl9EvQifL9+gPt1pcN9oRvQd20BSSafdQawujjOg9htN+GISLUd1a7fEAadgrAyji47D43ln+YcEf3QQX9mnYCnuMIYDSwKh6n9gq/4gnROQ5BY73vvujHJH3o7TE5/IOPoISxUO9ciNGXsfE94iBtt/re9V19U+YTow=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725358790; c=relaxed/simple;
-	bh=C8KF0NATt/6MEKo6hjD8oYxBGb+BnkEDDEBROE2tMCg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hkCQGToe5YYtDgnibE3R5l6jj/QsGtWoNmQzbXQzLk2m9oWXRVcaOxaSQLHP6TrSPz0i1W6OHhTTFkg0CfGGKi+G3xG9qA92VEAwVzQdO6OWu8OwGR3pVJfu1kChdUIO36jXVhnB0/DnMtNpEmewKz37WntSDPiK9kdlKXY2ZvA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=OFxJCAnc; arc=none smtp.client-ip=209.85.167.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-53345dcd377so7108446e87.2
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 03:19:48 -0700 (PDT)
+	s=arc-20240116; t=1725358828; c=relaxed/simple;
+	bh=BPeL2yxwaX+v/9HQukw21j++tqBN5rJHE71dumN/Dc8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=syH4DRymnpWMpgBTsLg6yQeMJO/rXs3EB4LKBJTrSChiMmvRmnUbOuD6ltItBlBc376zqmgBFr/HhvPMdFfa3p34XeHzi4115Qo/ZW0hPGFSPbQblH5Vaoa2JXm+mOQrsJFShA11TKj/3Glb6XJjTHnGUf0P7wRh51vDUSM7zBM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hnxnQcQx; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-42bb885f97eso25292075e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 03:20:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1725358787; x=1725963587; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=iJS4mKwDt71f+czvCGcc6KmwF1qHOE0EcsdjnmVJivo=;
-        b=OFxJCAncAWZH82ldEgVo3pSwlwXgGZ6kPzJIcnSj0b2oRNk4qg46x0VhvupnrCk97w
-         LmIOT0HFm4ZDSTe7IIKcY5rlfUfgTjggUqQLU1IObU8a3uZSgnTOTZwAra0kwd17wyqx
-         Hnb4PDBG3NWND+zyFG/j0eaUHKmabelAToIS1nT57HQga7sPC/jSccWAG5gAkT5XjFz7
-         m1dQl6Oef4O+40Tqu+mjNXTqOhZcQHvcGJtxy4mTadb6kMsxxGdf5YHWrmANnhmNUDyF
-         eGFXbgaywzYAvuEr3bwjQ1jWejN6QWR6BzlaWBRFGG80dRYbQeKEYTNqhStI/mLzTwJd
-         uJhA==
+        d=linaro.org; s=google; t=1725358825; x=1725963625; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=O7MCvZ5Fhe/+eOHMrrRYarXfsg8B1NR75imdENvlnHc=;
+        b=hnxnQcQxTsromoIW3Zt2fzalFtaiGBkQ4zfPnqvlWSv/6TLL8ocmrzWDoR3Gldz8IZ
+         mjycAOxPeL5vN6HppL8a/pY7p1EOtdoCn0cxuzoR5G+tFt4N74oTIPG51f7GZE8Ok7BL
+         94gLFyuog058znDvrMTnRO3SSiVpQgxKPqefWrefaseOu4XkROm9uX3vhQvh6U+ZLqjw
+         dj7n21Icn4j1s6wlOZxDyeI/iF5BQeeJNg6Fvb7PJI7xrqmEsg2KyHbJKewV72HaIs6Y
+         VHVxGCb6OYf87RS4NXVSRiRDwNurtKrg8o9dr69lDfIDhCARuu+xDKFVxiIy//vFXEM6
+         hnHQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725358787; x=1725963587;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=iJS4mKwDt71f+czvCGcc6KmwF1qHOE0EcsdjnmVJivo=;
-        b=iNia5vW5JPWeg+pyikA5Md5XA5J+KfSuf0oVPcgLNe8YSSpI6TmMtEFbRqVZYI2iMq
-         yEv1MTnJaq4M/ekYnTBWpCUgoZhbAlgtvWqPhNOeUmwQ7WvCdF84pEEBp3B8lu94tOsZ
-         EcQs7K4j7SaOTVHxMrebQUBSxmx0sl/vvvlPac3qdtHcfyT0ntZSd6LuTwN1C3znW3Yn
-         EgDwfjZUGrv4FZFWFp8mZXt/CnyHUxzmjYnX97+AGXWGcxYKAwg2Zd9XbMt3GMhWN/k4
-         qN2BK3hOMdydXkN6zYf3T4wFqA8MxtFnbV3PMIsNy49ffgPVdrSj+r1TLmAFFL1yTCn5
-         B+ZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV8fHI40xuKpZlKDJUAG6UFy1DVaKJ6CCKTiFUIiqL7lNaAeorNredQY/kApvTVpkyiL1e5pNlr2VFnYGY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyKuGGguuvzlbzPB8FmIj6C4vEb0X0hzz7+lAHlngStYGreYPCy
-	VXN3KmR/yqW8Q5N8NSe2yZC4ibOJ5QFHvSFy4Zsw5CSDCTjLuZQ+SCI8UJotarA=
-X-Google-Smtp-Source: AGHT+IEls7cIQ+6hQSbZxyc8bV5YfWpE5Og0ZDGcEK0Z3VxswtkW6lt0WU0csWHFdZCyWxXy9FAPkw==
-X-Received: by 2002:a05:6512:108c:b0:52e:7125:c70a with SMTP id 2adb3069b0e04-53546b93fd9mr8417306e87.47.1725358786595;
-        Tue, 03 Sep 2024 03:19:46 -0700 (PDT)
-Received: from [192.168.50.4] ([82.78.167.144])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8988feb0e5sm675067666b.12.2024.09.03.03.19.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 03 Sep 2024 03:19:46 -0700 (PDT)
-Message-ID: <4cb2f788-1ba6-40f6-a48d-1fd2e5293aa8@tuxon.dev>
-Date: Tue, 3 Sep 2024 13:19:44 +0300
+        d=1e100.net; s=20230601; t=1725358825; x=1725963625;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=O7MCvZ5Fhe/+eOHMrrRYarXfsg8B1NR75imdENvlnHc=;
+        b=sGp2pKS45dStJ0iesh0eJV6e+ZVxdLJt0zCITuH4WOAuu3ET/mHpab2hVZiIOxAXtL
+         AZdRaZcAmXvQeLQeRsqDEkDJP0W3bdNPYCFRpH20pCAHipgQmWMGhSlBoxomP+eLv6ua
+         lkpkGkOQ6t1VceFfxnl7aImRMlsXHg7FZOwYyiHFvEg4DUye2aRMMEuBtl5v1x4DBl34
+         PYLsMJo7kuYv4jfR158eniTJSBdQNnpIAozB4mJak4L2NPZXNNzagPFb1KzjwwnJ6GZc
+         3e6TwaGKQ5FSpfx5fA4/ylC9GdjBbt5+Uc7a1A7Jt7mceP/yxLYFXkSjEY8A4RABwjqF
+         YNIg==
+X-Forwarded-Encrypted: i=1; AJvYcCVvM+1g1BAzVEHccirjuAqzSVOfeQ81ESh5oXHkmMIZqPO5Kq3Xs0juscAxQl9K7EUvMk4N+z8i0CZrgWA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyQl/XVd8Y5XHURP0+/nQtWyLw0eBNJmy7qYxZWjAO2AcGLo7zC
+	lpyl/T7a1K0w6+PCzMo9Qrh2WLpyqZ3R0a5l+p5L9ZVQfRpnICu+HAHnRvhhJa0=
+X-Google-Smtp-Source: AGHT+IGIRhFxfgT+AnDIMCr5Idq+CDt+OTG+ytIxS7mv+w/WEHRzrznSX+8/1l2ZXSAi8FDJzWB3iQ==
+X-Received: by 2002:a05:600c:1914:b0:424:8743:86b4 with SMTP id 5b1f17b1804b1-42bb4c4cbefmr100018935e9.6.1725358824235;
+        Tue, 03 Sep 2024 03:20:24 -0700 (PDT)
+Received: from localhost.localdomain ([89.47.253.130])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42bb6e274ccsm168739995e9.37.2024.09.03.03.20.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Sep 2024 03:20:23 -0700 (PDT)
+From: James Clark <james.clark@linaro.org>
+To: irogers@google.com,
+	linux-perf-users@vger.kernel.org,
+	kan.liang@linux.intel.com,
+	ak@linux.intel.com,
+	namhyung@kernel.org
+Cc: James Clark <james.clark@linaro.org>,
+	John Garry <john.g.garry@oracle.com>,
+	Will Deacon <will@kernel.org>,
+	Mike Leach <mike.leach@linaro.org>,
+	Leo Yan <leo.yan@linux.dev>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Weilin Wang <weilin.wang@intel.com>,
+	Athira Rajeev <atrajeev@linux.vnet.ibm.com>,
+	Dominique Martinet <asmadeus@codewreck.org>,
+	Yang Jihong <yangjihong@bytedance.com>,
+	Colin Ian King <colin.i.king@gmail.com>,
+	Howard Chu <howardchu95@gmail.com>,
+	Ze Gao <zegao2021@gmail.com>,
+	Jing Zhang <renyu.zj@linux.alibaba.com>,
+	Sun Haiyong <sunhaiyong@loongson.cn>,
+	Yicong Yang <yangyicong@hisilicon.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v6 0/7] Event parsing fixes
+Date: Tue,  3 Sep 2024 11:19:44 +0100
+Message-Id: <20240903102005.78049-1-james.clark@linaro.org>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 00/16] Add initial USB support for the Renesas RZ/G3S SoC
-Content-Language: en-US
-To: Biju Das <biju.das.jz@bp.renesas.com>,
- Ulf Hansson <ulf.hansson@linaro.org>
-Cc: "vkoul@kernel.org" <vkoul@kernel.org>,
- "kishon@kernel.org" <kishon@kernel.org>, "robh@kernel.org"
- <robh@kernel.org>, "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
- "conor+dt@kernel.org" <conor+dt@kernel.org>,
- "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
- "geert+renesas@glider.be" <geert+renesas@glider.be>,
- "magnus.damm@gmail.com" <magnus.damm@gmail.com>,
- "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
- "mturquette@baylibre.com" <mturquette@baylibre.com>,
- "sboyd@kernel.org" <sboyd@kernel.org>,
- Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
- "linux-phy@lists.infradead.org" <linux-phy@lists.infradead.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
- "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
- "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
- Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-References: <20240822152801.602318-1-claudiu.beznea.uj@bp.renesas.com>
- <CAPDyKFrS4Dhd7DZa2zz=oPro1TiTJFix0awzzzp8Qatm-8Z2Ug@mail.gmail.com>
- <99bef301-9f6c-4797-b47e-c83e56dfbda9@tuxon.dev>
- <TY3PR01MB1134652F9587CFA0ADE851CA486902@TY3PR01MB11346.jpnprd01.prod.outlook.com>
- <TY3PR01MB113467275C519B729FCAB1ACB86922@TY3PR01MB11346.jpnprd01.prod.outlook.com>
- <5556d176-cca7-492c-ba21-48256d5d6338@tuxon.dev>
- <TY3PR01MB113464D53083F4C8A5DBBA36586922@TY3PR01MB11346.jpnprd01.prod.outlook.com>
- <590a4fb2-24b2-432b-92db-534c5a52ed0b@tuxon.dev>
- <TY3PR01MB11346505565B81AD2894E035586922@TY3PR01MB11346.jpnprd01.prod.outlook.com>
- <35dc7414-f5bd-4ed4-bfa1-f723f4f0078c@tuxon.dev>
- <TY3PR01MB11346A4814F83FE296A1DED8886922@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-From: claudiu beznea <claudiu.beznea@tuxon.dev>
-In-Reply-To: <TY3PR01MB11346A4814F83FE296A1DED8886922@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
+I rebased this one and made some other fixes so that I could test it,
+so I thought I'd repost it here in case it's helpful. I also added a
+new test.
 
+But for the testing it all looks ok.
 
-On 02.09.2024 13:47, Biju Das wrote:
-> Hi Claudiu,
-> 
->> -----Original Message-----
->> From: claudiu beznea <claudiu.beznea@tuxon.dev>
->> Sent: Monday, September 2, 2024 11:41 AM
->> Subject: Re: [PATCH 00/16] Add initial USB support for the Renesas RZ/G3S SoC
->>
->>
->>
->> On 02.09.2024 12:18, Biju Das wrote:
->>>>>>> Do you have any plan to control this power transitions(ALL_ON to AWO and vice versa) in linux?
->>>>>> As you know, the RZ/G3S USB PM code is already prepared. This is
->>>>>> also configuring these signals when going to suspend/exiting from resume.
->>>>>> W/o configuring properly these signals the USB is not working after a suspend/resume cycle.
->>>>> One option is to handle SYSC USB PWRRDY signal in TF-A, if you plan
->>>>> to handle system transitions
->>>> there??
->>>>
->>>> As I mentioned, the settings in these registers may be changed by intermediary booting
->> applications.
->>>> Depending on that, Linux need to control it also on probe for USB to
->>>> work (it should be the same with PCIe, these signals seems similar from HW manual description).
->>> You mean system transition settings will be override by U-boot, so Linux needs to restore it back??
->>
->> It was talking about booting...
-> 
-> I am also referring to boot. Boot starts with TF-A and it has a system state.
-> 
->>
->> You proposed to handle SYSC signals from TF-A in a discussion about system power transitions:
->>
->> "One option is to handle SYSC USB PWRRDY signal in TF-A,  if you plan to handle system transitions"
->>
->> (I was guessing the "system transition" statement there refers to power states transitions, ALL_ON <->
->> AWO/VBAT)
-> 
-> That is correct.
-> 
->>
->> and I gave the booting process as a counter example: if we handle it in TF-A it may not be enough as
->> these signals might be changed by intermediary booting applications (e.g., U-Boot).
-> 
-> Why should U-boot override, system state signals such as USB PWRREADY? Can you please give an example.
+There is one small difference where it now hides _all_ default
+<not supported> events, when previously it would only hide some
+selected subset of events like "stalled-cycles-frontend". I think
+this is now more consistent across platforms because, for example,
+Apple M only has cycles and instructions, and the rest of the
+default events would always show as <not supported> there.
 
-I didn't say *should* but *might* and I was referring to a hypothetical
-situation where any used application (bootloader) might trigger this signal
-for whatever reason. My point was to let Linux to handle all the settings
-that it can do for a particular functionality. The resisters in SYSC
-address space controlling these signals are accessible to normal world
-compared to others in the SYSC address spaces.
+Tested on Raptor Lake, Kaby Lake, Juno, N1, Ampere (with the DSU
+cycles PMU) and I also faked an Apple M on Juno. 
 
-> 
->>
->> To conclude, there are 3 scenarios I see where these signals need to be
->> handled:
->> 1/ booting 
->> 2/ suspend to RAM
->> 3/ driver unbind/bind
-> 
-> --> It should be OK as linux is not handling USB PWRREADY signal.
-> 
->>
->> In case of booting: if we have TF-A to set signals there might be intermediary booting applications
->> (e.g. U-Boot) that set these signals also. If it leaves it in improper state and Linux wants to use
->> USB then the USB will not work (if Linux doesn't handle it).
-> 
-> That is the problem of U-boot. U-boot should not override system state signals such as USB PWRREADY.
+Changes since v5:
+  * Test on x86 non hybrid
+  * Assume 1 PMU in the test when no PMUs expose /cpus file
 
-U-Boot can also use USB as well.
+Changes since v4:
 
-> 
->>
->> In case of suspend to RAM: as TF-A is the only application in the suspend to RAM chain, it should work
->> handling it in TF-A.
-> 
-> That is correct, TF-A should handle based on system state.
-> 
->>
->> In case of unbind/bind: currently we don't know if these signals introduces any kind of power saving
->> so asserting/de-asserting them in Linux may be useful from this perspective, if any.
-> 
-> These are system signals, according to me should not be used in unbind/bind.
+  * Hide all <not supported> default events when not verbose
+  * Remove previous note about <not supported> behavior from the cover
+    letter and replace it with a new note about the new behavior
+ 
+Changes since v3:
 
-It can be done whatever way. I would just prefer to work for all scenarios.
+  * Rebase onto perf-tools-next 6236ebe07
+  * Fix Intel TPEBS counting mode test
+  * Fix arm-spe build
+  * Add support for DT devices in stat test
+  * Add a new test for hybrid perf stat default arguments
 
-Thank you,
-Claudiu Beznea
+Ian Rogers (5):
+  perf evsel: Add alternate_hw_config and use in evsel__match
+  perf stat: Uniquify event name improvements
+  perf stat: Remove evlist__add_default_attrs use strings
+  perf evsel x86: Make evsel__has_perf_metrics work for legacy events
+  perf evsel: Remove pmu_name
 
-> 
-> I may be wrong.
-> 
-> Cheers,
-> Biju
+James Clark (2):
+  perf test: Make stat test work on DT devices
+  perf test: Add a test for default perf stat command
+
+ tools/perf/arch/arm64/util/arm-spe.c          |   4 +-
+ tools/perf/arch/x86/util/evlist.c             |  74 +----
+ tools/perf/arch/x86/util/evsel.c              |  35 ++-
+ tools/perf/builtin-diff.c                     |   6 +-
+ tools/perf/builtin-stat.c                     | 291 +++++++-----------
+ tools/perf/tests/parse-events.c               |   2 +-
+ tools/perf/tests/shell/stat.sh                |  37 ++-
+ .../perf/tests/shell/test_stat_intel_tpebs.sh |  11 +-
+ tools/perf/util/evlist.c                      |  46 +--
+ tools/perf/util/evlist.h                      |  12 -
+ tools/perf/util/evsel.c                       |  28 +-
+ tools/perf/util/evsel.h                       |  22 +-
+ tools/perf/util/metricgroup.c                 |   4 +-
+ tools/perf/util/parse-events.c                |  58 ++--
+ tools/perf/util/parse-events.h                |   8 +-
+ tools/perf/util/parse-events.y                |   2 +-
+ tools/perf/util/pmu.c                         |   6 +-
+ tools/perf/util/pmu.h                         |   2 +-
+ tools/perf/util/stat-display.c                | 109 +++++--
+ tools/perf/util/stat-shadow.c                 |  14 +-
+ tools/perf/util/stat.c                        |   2 +-
+ 21 files changed, 360 insertions(+), 413 deletions(-)
+
+-- 
+2.34.1
+
 
