@@ -1,139 +1,376 @@
-Return-Path: <linux-kernel+bounces-312667-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312668-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1CAD96998F
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 11:55:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7857C969991
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 11:55:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6988E1F23A97
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 09:55:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9DD7F1C22F61
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 09:55:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 068E51A4E73;
-	Tue,  3 Sep 2024 09:55:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FD1E1AD262;
+	Tue,  3 Sep 2024 09:55:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FWQLHUpO"
-Received: from mail-yb1-f176.google.com (mail-yb1-f176.google.com [209.85.219.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WXm80vSC"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3985419F42D
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 09:55:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDDD41AD244
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 09:55:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725357310; cv=none; b=S+5aEzKs8NyJ2+YHfntarvSGtd9gt1vkwQ8f+9rpvGX78VXW2f9ZsqT6RHJm2cuBC68k0KDpDjJUARJBrg7a7gUaoRnsmgFZeOKGFln5B9ayz/wJ9OJcko38JOmxdI/UALibeUnguXTfEaluEEFhc1HTNb6II+ECE1As9E7gvo8=
+	t=1725357314; cv=none; b=e4pbGt9d27qPhGzG7CCdFDODxUAN7g8Hdat5SSaIvoi1bzoO0HpkmtuENuKIgASdP+7HhxjK9J/2eFcPU+7H4uTcABB55k4bOoo8Qa725c5ZAeyg4PcQcY/bTBERT+C6KuAgxb1RHIrIRFn2aQm2NoP6lpiMQmJGCaYgrWObXA4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725357310; c=relaxed/simple;
-	bh=r/D2XT9csu2hRnKwa7lr4pddgJFqYkNRTZD+HvrK5yY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MhtJxHTsREa1fS+x9wde46V4/g9oW27YRFWNm68+FifWuiGJKVxIfU9GvBHFAXuHgNwdKrEkzFWkYx5dFhXsQdEKfzrbR7a+9gm48EKsiiMoMVxjIOzRoPH6d4CsGhNIoTk+b8lUTuJXJNmCndrVETDcnPCpMITFD2l1Ooi/8VI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=FWQLHUpO; arc=none smtp.client-ip=209.85.219.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f176.google.com with SMTP id 3f1490d57ef6-dff1ccdc17bso5164716276.0
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 02:55:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1725357307; x=1725962107; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=cFqqyo1243gLC8lCdcnS069gRZejGhzhqXUGlqO3d/I=;
-        b=FWQLHUpO39uToecSQdsk7vlCb0xkyRpSb0COBxCyy3BGLftVXO3K9624zyCqWHgWlM
-         6myKdEgRNH2O0OynsP+4dulNFeMGe9eHK+hxY6tbFIL82/xglOq0kSR8LOI4kqpxjCpP
-         meB11FoRFTIoVOYaud/TCllqed/bsC6yCt7oXc0i3fQQes2mHR1B0k//3Ootyowo0bSx
-         l8Fcgf00K6dxfHj2N5LrqhnSTYRXKkmbyTvjjeyzo76RUfrxHYfzvi7t+kQUwJIqRYOj
-         GY21wwWqNn4x3fSTvxDUXT1ZIigZulPolYVT47equ7HCQiJpA0WqhESQAHDHMAVy1ZbY
-         u+Cw==
+	s=arc-20240116; t=1725357314; c=relaxed/simple;
+	bh=gumwLmVzBA7FE9rL78o6pS12HC0gVXuixmNYcaiUjMI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fu0hgdvdkMN6E9DfOGb/tt9M37fl7palHdrQTb+vvHtDUEgtAVOCqnyT7WFG0o6JCvyr5IcDYYd8MxKK3+wFqFn+NuDkCj40VOTxAgyJ4cdnpzgkEtjKJrfMccKAp/GQ0wVrNzg0pPvzTccL1iFMMXhNCHcY2IkGkmnBPj4+5m4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=WXm80vSC; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1725357311;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=H6cl3luTpkd8vDz6hnLpwHsFnsILNWhe0I9DX7IcglA=;
+	b=WXm80vSC6YfOdf8TAHulukCb1di5OXyXgxI81raZBV7+t+d2rkwBfUZ//Ngjx+tfPAIYgl
+	0fqrI+ljtqlZxb6riUE7E/hPD8ZbN4YesrlbXdAWQtcPNMgTz/NY7y3rch8XfN3U1BVanp
+	5bYFlxAuBQX9UIOX6cfUyunNtDNXouY=
+Received: from mail-lf1-f69.google.com (mail-lf1-f69.google.com
+ [209.85.167.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-665-4mhQWCIHNzaHYZplgY5tjA-1; Tue, 03 Sep 2024 05:55:10 -0400
+X-MC-Unique: 4mhQWCIHNzaHYZplgY5tjA-1
+Received: by mail-lf1-f69.google.com with SMTP id 2adb3069b0e04-53436749138so5569899e87.2
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 02:55:10 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725357307; x=1725962107;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=cFqqyo1243gLC8lCdcnS069gRZejGhzhqXUGlqO3d/I=;
-        b=R+1o1peH4TJncEh+qDuqZo6dD88X8cUbl6XfFso8ybsEy0N/mDQlrLAOleW6YvA18q
-         wbPKshqEZvg5sc9H/stI/xS/MqV7VPafXfdrNGjqIjz0z+dAN7El6YSF5Q8ESGtYm1h4
-         mm5EaEKS75zpUCS5F+vpXi+B3oiDwtQO5Y9T6g9vDR/JJYeEfNAk6Jd0OVEjsWkiVlWn
-         PdXApf1id6S9/prv29+Oh2LYjWQg/ro3EicVNxxPQxBJPBvrvTRksiZhBBQi3bmQIU3u
-         I9FKnzW3iiWad1G5ORec7uBEkOJ7ZcV/QLTdqv4FC5stViCIpxd04RUsFvF3u/F32+Za
-         JGKA==
-X-Forwarded-Encrypted: i=1; AJvYcCV2lMSOQ78gpjLJ6qS4AXeIkz4Mi6KYnwcO11GAxKG9Qm6IBGTjYsNdYsWZI1MeyKizUQYL5jVX7D1OV/8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxlMoXZDzMA0YqXDWB+pLvf+yHe1NHmHWzlFidwq5O53DL9eBq1
-	aoCqiH8vhiBriHcRU/wBw4WW5VzKiu16iikbRgl8GeIf8KLwI3F1Y4BgFRNlDWPpXPc8TnKaWYX
-	yTtfUZ8qpMgWMBwP6iDZuPZdhmvCUKxnBpjitAQ==
-X-Google-Smtp-Source: AGHT+IH+1PDql0ueQ/ES8PwB2F7M/INUIUGvNZZEUFj51QsjECCxPIJAbbiizLcpEvWmhRUegd7BueLrC0lx7UTd+48=
-X-Received: by 2002:a05:6902:723:b0:e13:cb77:5fda with SMTP id
- 3f1490d57ef6-e1a79ff67d7mr15832832276.12.1725357307286; Tue, 03 Sep 2024
- 02:55:07 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1725357309; x=1725962109;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=H6cl3luTpkd8vDz6hnLpwHsFnsILNWhe0I9DX7IcglA=;
+        b=kx01D/QbeD1R/K5lacvpIbNVaeLSreg4LwdJ3FAg/k0l5/OYo4t/GrGhKVSzfJEYjW
+         wQKrtC5VyXzpAgmYC7xo/s+hlfF0zrAvpH3DZ/RQ1qSfLqPJp9jUbCpSSwXXOj+kXJWJ
+         EBkk738fJDo6UqfsaUlrbV8ivLaDTcqofPwFEEmHGOrl9XRSCZw9TDy68JIH3yC7mz7+
+         3qCKdG3nAxcBVqGGboQ6JDf7fuxYfWM+tpCwn74suPpa77BqdIT+v+/CMxYpo2mw8ZC2
+         NjYI+B7i7fgl46Tkj1koHpTKtOq2uohyH84UEVZUc1JOS9ORDZyvm6gXSyfLxuuE7zMB
+         /Z3g==
+X-Forwarded-Encrypted: i=1; AJvYcCVeHbM30v53JU///+YxZUPmcXaotVyTAWmUympQe2PgxvOTpvqqjjxGis2xzTiyWFV17LVytqkP2xfyCgs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzLgwseikDRPJNzz3VEwIaLgAqW7VqlHRlnz5ITqEdREA8PCPIq
+	Iv6meXjs3Y2s6xZ30OmJDvyT/AuPrd0K7KIlAMnICkqeXLQ8gK2KnewGEBe0K6iESkHXrTV4Qxp
+	pr6xo6mH9le4j3sd7/fRJew6ihA5GqZw0myU5+1gFzblvVL5oY7e5ArzIQYuNug==
+X-Received: by 2002:a05:6512:3d0c:b0:52c:dc57:868b with SMTP id 2adb3069b0e04-53546b05c10mr9366563e87.13.1725357308998;
+        Tue, 03 Sep 2024 02:55:08 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE+vEqACSPoPr/P7kUg6deSgPYKTUjYfbBUFIriRYgqxBdn/NgftHOt/9f+ooB0keSZ0MtqIA==
+X-Received: by 2002:a05:6512:3d0c:b0:52c:dc57:868b with SMTP id 2adb3069b0e04-53546b05c10mr9366525e87.13.1725357308316;
+        Tue, 03 Sep 2024 02:55:08 -0700 (PDT)
+Received: from [192.168.88.27] (146-241-5-217.dyn.eolo.it. [146.241.5.217])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42ba639687csm197786695e9.8.2024.09.03.02.55.07
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 03 Sep 2024 02:55:07 -0700 (PDT)
+Message-ID: <c193cbf3-58e5-41bd-855d-07a9c08e283d@redhat.com>
+Date: Tue, 3 Sep 2024 11:55:06 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240902224815.78220-1-ulf.hansson@linaro.org>
- <20240902224815.78220-3-ulf.hansson@linaro.org> <20240903071638.bedt3gllqdacf43a@vireshk-i7>
-In-Reply-To: <20240903071638.bedt3gllqdacf43a@vireshk-i7>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Tue, 3 Sep 2024 11:54:30 +0200
-Message-ID: <CAPDyKFoqEAHns0nrXT6dJR3sRd5VWidK_rzXGHzJiZtk_p0cKw@mail.gmail.com>
-Subject: Re: [PATCH 2/2] OPP/pmdomain: Fix the assignment of the required-devs
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Dikshita Agarwal <quic_dikshita@quicinc.com>, Bjorn Andersson <andersson@kernel.org>, 
-	Konrad Dybcio <quic_kdybcio@quicinc.com>, Nikunj Kela <nkela@quicinc.com>, 
-	"Bryan O'Donoghue" <bryan.odonoghue@linaro.org>, Thierry Reding <thierry.reding@gmail.com>, 
-	Mikko Perttunen <mperttunen@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	Stephan Gerhold <stephan@gerhold.net>, Ilia Lin <ilia.lin@kernel.org>, 
-	Stanimir Varbanov <stanimir.k.varbanov@gmail.com>, Vikash Garodia <quic_vgarodia@quicinc.com>, 
-	linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v5 4/5] netdev_features: convert NETIF_F_FCOE_MTU
+ to dev->fcoe_mtu
+To: Alexander Lobakin <aleksander.lobakin@intel.com>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>
+Cc: David Ahern <dsahern@kernel.org>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+ Andrew Lunn <andrew@lunn.ch>,
+ Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
+ nex.sw.ncis.osdt.itp.upstreaming@intel.com, netdev@vger.kernel.org,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "Martin K. Petersen" <martin.petersen@oracle.com>,
+ Hannes Reinecke <hare@suse.de>
+References: <20240829123340.789395-1-aleksander.lobakin@intel.com>
+ <20240829123340.789395-5-aleksander.lobakin@intel.com>
+Content-Language: en-US
+From: Paolo Abeni <pabeni@redhat.com>
+In-Reply-To: <20240829123340.789395-5-aleksander.lobakin@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, 3 Sept 2024 at 09:16, Viresh Kumar <viresh.kumar@linaro.org> wrote:
->
-> On 03-09-24, 00:48, Ulf Hansson wrote:
-> > To fix this problem, let's instead start by letting the OPP core find the
-> > device node for the required OPP table and then let genpd search for a
-> > corresponding OPP table, allowing us the find the correct required-dev to
-> > assign for it.
->
-> Why was doing this necessary ?
+CC: Martin and Hannes, to raise awareness that the core networking 
+changes in here will introduce a small delta in the scsi subsystem, too.
 
-Let me try to elaborate a bit more.
+On 8/29/24 14:33, Alexander Lobakin wrote:
+> Ability to handle maximum FCoE frames of 2158 bytes can never be changed
+> and thus more of an attribute, not a toggleable feature.
+> Move it from netdev_features_t to "cold" priv flags (bitfield bool) and
+> free yet another feature bit.
+> 
+> Signed-off-by: Alexander Lobakin <aleksander.lobakin@intel.com>
+> ---
+>   .../networking/net_cachelines/net_device.rst          |  1 +
+>   include/linux/netdev_features.h                       |  6 ++----
+>   include/linux/netdevice.h                             |  2 ++
+>   drivers/net/ethernet/chelsio/cxgb4/cxgb4_fcoe.c       |  6 ++----
+>   drivers/net/ethernet/intel/ixgbe/ixgbe_dcb_nl.c       |  2 +-
+>   drivers/net/ethernet/intel/ixgbe/ixgbe_fcoe.c         |  4 ++--
+>   drivers/net/ethernet/intel/ixgbe/ixgbe_lib.c          |  2 +-
+>   drivers/net/ethernet/intel/ixgbe/ixgbe_main.c         | 11 ++++-------
+>   drivers/net/ethernet/intel/ixgbe/ixgbe_sriov.c        |  4 ++--
+>   drivers/scsi/fcoe/fcoe.c                              |  4 ++--
+>   net/8021q/vlan_dev.c                                  |  1 +
+>   net/ethtool/common.c                                  |  1 -
+>   12 files changed, 20 insertions(+), 24 deletions(-)
+> 
+> diff --git a/Documentation/networking/net_cachelines/net_device.rst b/Documentation/networking/net_cachelines/net_device.rst
+> index e65ffdfc9e0a..c3bbf101a887 100644
+> --- a/Documentation/networking/net_cachelines/net_device.rst
+> +++ b/Documentation/networking/net_cachelines/net_device.rst
+> @@ -167,6 +167,7 @@ unsigned:1                          threaded                -
+>   unsigned_long:1                     see_all_hwtstamp_requests
+>   unsigned_long:1                     change_proto_down
+>   unsigned_long:1                     netns_local
+> +unsigned_long:1                     fcoe_mtu
+>   struct_list_head                    net_notifier_list
+>   struct_macsec_ops*                  macsec_ops
+>   struct_udp_tunnel_nic_info*         udp_tunnel_nic_info
+> diff --git a/include/linux/netdev_features.h b/include/linux/netdev_features.h
+> index d5a3836f4793..37af2c6e7caf 100644
+> --- a/include/linux/netdev_features.h
+> +++ b/include/linux/netdev_features.h
+> @@ -58,7 +58,7 @@ enum {
+>   
+>   	NETIF_F_FCOE_CRC_BIT,		/* FCoE CRC32 */
+>   	NETIF_F_SCTP_CRC_BIT,		/* SCTP checksum offload */
+> -	NETIF_F_FCOE_MTU_BIT,		/* Supports max FCoE MTU, 2158 bytes*/
+> +	__UNUSED_NETIF_F_37,
+>   	NETIF_F_NTUPLE_BIT,		/* N-tuple filters supported */
+>   	NETIF_F_RXHASH_BIT,		/* Receive hashing offload */
+>   	NETIF_F_RXCSUM_BIT,		/* Receive checksumming offload */
+> @@ -105,7 +105,6 @@ enum {
+>   #define __NETIF_F(name)		__NETIF_F_BIT(NETIF_F_##name##_BIT)
+>   
+>   #define NETIF_F_FCOE_CRC	__NETIF_F(FCOE_CRC)
+> -#define NETIF_F_FCOE_MTU	__NETIF_F(FCOE_MTU)
+>   #define NETIF_F_FRAGLIST	__NETIF_F(FRAGLIST)
+>   #define NETIF_F_FSO		__NETIF_F(FSO)
+>   #define NETIF_F_GRO		__NETIF_F(GRO)
+> @@ -210,8 +209,7 @@ static inline int find_next_netdev_feature(u64 feature, unsigned long start)
+>   #define NETIF_F_ALL_TSO 	(NETIF_F_TSO | NETIF_F_TSO6 | \
+>   				 NETIF_F_TSO_ECN | NETIF_F_TSO_MANGLEID)
+>   
+> -#define NETIF_F_ALL_FCOE	(NETIF_F_FCOE_CRC | NETIF_F_FCOE_MTU | \
+> -				 NETIF_F_FSO)
+> +#define NETIF_F_ALL_FCOE	(NETIF_F_FCOE_CRC | NETIF_F_FSO)
+>   
+>   /* List of features with software fallbacks. */
+>   #define NETIF_F_GSO_SOFTWARE	(NETIF_F_ALL_TSO | NETIF_F_GSO_SCTP |	     \
+> diff --git a/include/linux/netdevice.h b/include/linux/netdevice.h
+> index a698e2402420..ca5f0dda733b 100644
+> --- a/include/linux/netdevice.h
+> +++ b/include/linux/netdevice.h
+> @@ -1969,6 +1969,7 @@ enum netdev_reg_state {
+>    *			HWTSTAMP_SOURCE_NETDEV
+>    *	@change_proto_down: device supports setting carrier via IFLA_PROTO_DOWN
+>    *	@netns_local: interface can't change network namespaces
+> + *	@fcoe_mtu:	device supports maximum FCoE MTU, 2158 bytes
+>    *
+>    *	@net_notifier_list:	List of per-net netdev notifier block
+>    *				that follow this device when it is moved
+> @@ -2363,6 +2364,7 @@ struct net_device {
+>   	unsigned long		see_all_hwtstamp_requests:1;
+>   	unsigned long		change_proto_down:1;
+>   	unsigned long		netns_local:1;
+> +	unsigned long		fcoe_mtu:1;
+>   
+>   	struct list_head	net_notifier_list;
+>   
+> diff --git a/drivers/net/ethernet/chelsio/cxgb4/cxgb4_fcoe.c b/drivers/net/ethernet/chelsio/cxgb4/cxgb4_fcoe.c
+> index 33b2c0c45509..f6f745f5c022 100644
+> --- a/drivers/net/ethernet/chelsio/cxgb4/cxgb4_fcoe.c
+> +++ b/drivers/net/ethernet/chelsio/cxgb4/cxgb4_fcoe.c
+> @@ -81,8 +81,7 @@ int cxgb_fcoe_enable(struct net_device *netdev)
+>   
+>   	netdev->features |= NETIF_F_FCOE_CRC;
+>   	netdev->vlan_features |= NETIF_F_FCOE_CRC;
+> -	netdev->features |= NETIF_F_FCOE_MTU;
+> -	netdev->vlan_features |= NETIF_F_FCOE_MTU;
+> +	netdev->fcoe_mtu = true;
+>   
+>   	netdev_features_change(netdev);
+>   
+> @@ -112,8 +111,7 @@ int cxgb_fcoe_disable(struct net_device *netdev)
+>   
+>   	netdev->features &= ~NETIF_F_FCOE_CRC;
+>   	netdev->vlan_features &= ~NETIF_F_FCOE_CRC;
+> -	netdev->features &= ~NETIF_F_FCOE_MTU;
+> -	netdev->vlan_features &= ~NETIF_F_FCOE_MTU;
+> +	netdev->fcoe_mtu = false;
+>   
+>   	netdev_features_change(netdev);
+>   
+> diff --git a/drivers/net/ethernet/intel/ixgbe/ixgbe_dcb_nl.c b/drivers/net/ethernet/intel/ixgbe/ixgbe_dcb_nl.c
+> index e85f7d2e8810..f2709b10c2e5 100644
+> --- a/drivers/net/ethernet/intel/ixgbe/ixgbe_dcb_nl.c
+> +++ b/drivers/net/ethernet/intel/ixgbe/ixgbe_dcb_nl.c
+> @@ -317,7 +317,7 @@ static u8 ixgbe_dcbnl_set_all(struct net_device *netdev)
+>   		int max_frame = adapter->netdev->mtu + ETH_HLEN + ETH_FCS_LEN;
+>   
+>   #ifdef IXGBE_FCOE
+> -		if (adapter->netdev->features & NETIF_F_FCOE_MTU)
+> +		if (adapter->netdev->fcoe_mtu)
+>   			max_frame = max(max_frame, IXGBE_FCOE_JUMBO_FRAME_SIZE);
+>   #endif
+>   
+> diff --git a/drivers/net/ethernet/intel/ixgbe/ixgbe_fcoe.c b/drivers/net/ethernet/intel/ixgbe/ixgbe_fcoe.c
+> index 18d63c8c2ff4..955dced844a9 100644
+> --- a/drivers/net/ethernet/intel/ixgbe/ixgbe_fcoe.c
+> +++ b/drivers/net/ethernet/intel/ixgbe/ixgbe_fcoe.c
+> @@ -858,7 +858,7 @@ int ixgbe_fcoe_enable(struct net_device *netdev)
+>   
+>   	/* enable FCoE and notify stack */
+>   	adapter->flags |= IXGBE_FLAG_FCOE_ENABLED;
+> -	netdev->features |= NETIF_F_FCOE_MTU;
+> +	netdev->fcoe_mtu = true;
+>   	netdev_features_change(netdev);
+>   
+>   	/* release existing queues and reallocate them */
+> @@ -898,7 +898,7 @@ int ixgbe_fcoe_disable(struct net_device *netdev)
+>   
+>   	/* disable FCoE and notify stack */
+>   	adapter->flags &= ~IXGBE_FLAG_FCOE_ENABLED;
+> -	netdev->features &= ~NETIF_F_FCOE_MTU;
+> +	netdev->fcoe_mtu = false;
+>   
+>   	netdev_features_change(netdev);
+>   
+> diff --git a/drivers/net/ethernet/intel/ixgbe/ixgbe_lib.c b/drivers/net/ethernet/intel/ixgbe/ixgbe_lib.c
+> index 0ee943db3dc9..16fa621ce0ff 100644
+> --- a/drivers/net/ethernet/intel/ixgbe/ixgbe_lib.c
+> +++ b/drivers/net/ethernet/intel/ixgbe/ixgbe_lib.c
+> @@ -981,7 +981,7 @@ static int ixgbe_alloc_q_vector(struct ixgbe_adapter *adapter,
+>   			set_bit(__IXGBE_RX_CSUM_UDP_ZERO_ERR, &ring->state);
+>   
+>   #ifdef IXGBE_FCOE
+> -		if (adapter->netdev->features & NETIF_F_FCOE_MTU) {
+> +		if (adapter->netdev->fcoe_mtu) {
+>   			struct ixgbe_ring_feature *f;
+>   			f = &adapter->ring_feature[RING_F_FCOE];
+>   			if ((rxr_idx >= f->offset) &&
+> diff --git a/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c b/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c
+> index 8057cef61f39..8b8404d8c946 100644
+> --- a/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c
+> +++ b/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c
+> @@ -5079,7 +5079,7 @@ static void ixgbe_configure_dcb(struct ixgbe_adapter *adapter)
+>   		netif_set_tso_max_size(adapter->netdev, 32768);
+>   
+>   #ifdef IXGBE_FCOE
+> -	if (adapter->netdev->features & NETIF_F_FCOE_MTU)
+> +	if (adapter->netdev->fcoe_mtu)
+>   		max_frame = max(max_frame, IXGBE_FCOE_JUMBO_FRAME_SIZE);
+>   #endif
+>   
+> @@ -5136,8 +5136,7 @@ static int ixgbe_hpbthresh(struct ixgbe_adapter *adapter, int pb)
+>   
+>   #ifdef IXGBE_FCOE
+>   	/* FCoE traffic class uses FCOE jumbo frames */
+> -	if ((dev->features & NETIF_F_FCOE_MTU) &&
+> -	    (tc < IXGBE_FCOE_JUMBO_FRAME_SIZE) &&
+> +	if (dev->fcoe_mtu && tc < IXGBE_FCOE_JUMBO_FRAME_SIZE &&
+>   	    (pb == ixgbe_fcoe_get_tc(adapter)))
+>   		tc = IXGBE_FCOE_JUMBO_FRAME_SIZE;
+>   #endif
+> @@ -5197,8 +5196,7 @@ static int ixgbe_lpbthresh(struct ixgbe_adapter *adapter, int pb)
+>   
+>   #ifdef IXGBE_FCOE
+>   	/* FCoE traffic class uses FCOE jumbo frames */
+> -	if ((dev->features & NETIF_F_FCOE_MTU) &&
+> -	    (tc < IXGBE_FCOE_JUMBO_FRAME_SIZE) &&
+> +	if (dev->fcoe_mtu && tc < IXGBE_FCOE_JUMBO_FRAME_SIZE &&
+>   	    (pb == netdev_get_prio_tc_map(dev, adapter->fcoe.up)))
+>   		tc = IXGBE_FCOE_JUMBO_FRAME_SIZE;
+>   #endif
+> @@ -11096,8 +11094,7 @@ static int ixgbe_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
+>   				    NETIF_F_FCOE_CRC;
+>   
+>   		netdev->vlan_features |= NETIF_F_FSO |
+> -					 NETIF_F_FCOE_CRC |
+> -					 NETIF_F_FCOE_MTU;
+> +					 NETIF_F_FCOE_CRC;
+>   	}
+>   #endif /* IXGBE_FCOE */
+>   	if (adapter->flags2 & IXGBE_FLAG2_RSC_CAPABLE)
+> diff --git a/drivers/net/ethernet/intel/ixgbe/ixgbe_sriov.c b/drivers/net/ethernet/intel/ixgbe/ixgbe_sriov.c
+> index fcfd0a075eee..e71715f5da22 100644
+> --- a/drivers/net/ethernet/intel/ixgbe/ixgbe_sriov.c
+> +++ b/drivers/net/ethernet/intel/ixgbe/ixgbe_sriov.c
+> @@ -495,7 +495,7 @@ static int ixgbe_set_vf_lpe(struct ixgbe_adapter *adapter, u32 max_frame, u32 vf
+>   		int err = 0;
+>   
+>   #ifdef CONFIG_FCOE
+> -		if (dev->features & NETIF_F_FCOE_MTU)
+> +		if (dev->fcoe_mtu)
+>   			pf_max_frame = max_t(int, pf_max_frame,
+>   					     IXGBE_FCOE_JUMBO_FRAME_SIZE);
+>   
+> @@ -857,7 +857,7 @@ static void ixgbe_set_vf_rx_tx(struct ixgbe_adapter *adapter, int vf)
+>   		int pf_max_frame = dev->mtu + ETH_HLEN;
+>   
+>   #if IS_ENABLED(CONFIG_FCOE)
+> -		if (dev->features & NETIF_F_FCOE_MTU)
+> +		if (dev->fcoe_mtu)
+>   			pf_max_frame = max_t(int, pf_max_frame,
+>   					     IXGBE_FCOE_JUMBO_FRAME_SIZE);
+>   #endif /* CONFIG_FCOE */
+> diff --git a/drivers/scsi/fcoe/fcoe.c b/drivers/scsi/fcoe/fcoe.c
+> index f1429f270170..39aec710660c 100644
+> --- a/drivers/scsi/fcoe/fcoe.c
+> +++ b/drivers/scsi/fcoe/fcoe.c
+> @@ -722,7 +722,7 @@ static int fcoe_netdev_config(struct fc_lport *lport, struct net_device *netdev)
+>   	 * will return 0, so do this first.
+>   	 */
+>   	mfs = netdev->mtu;
+> -	if (netdev->features & NETIF_F_FCOE_MTU) {
+> +	if (netdev->fcoe_mtu) {
+>   		mfs = FCOE_MTU;
+>   		FCOE_NETDEV_DBG(netdev, "Supports FCOE_MTU of %d bytes\n", mfs);
+>   	}
+> @@ -1863,7 +1863,7 @@ static int fcoe_device_notification(struct notifier_block *notifier,
+>   	case NETDEV_CHANGE:
+>   		break;
+>   	case NETDEV_CHANGEMTU:
+> -		if (netdev->features & NETIF_F_FCOE_MTU)
+> +		if (netdev->fcoe_mtu)
+>   			break;
+>   		mfs = netdev->mtu - (sizeof(struct fcoe_hdr) +
+>   				     sizeof(struct fcoe_crc_eof));
+> diff --git a/net/8021q/vlan_dev.c b/net/8021q/vlan_dev.c
+> index 3ca485537d77..09b46b057ab2 100644
+> --- a/net/8021q/vlan_dev.c
+> +++ b/net/8021q/vlan_dev.c
+> @@ -571,6 +571,7 @@ static int vlan_dev_init(struct net_device *dev)
+>   
+>   	dev->features |= dev->hw_features;
+>   	dev->lltx = true;
+> +	dev->fcoe_mtu = true;
+>   	netif_inherit_tso_max(dev, real_dev);
+>   	if (dev->features & NETIF_F_VLAN_FEATURES)
+>   		netdev_warn(real_dev, "VLAN features are set incorrectly.  Q-in-Q configurations may not work correctly.\n");
+> diff --git a/net/ethtool/common.c b/net/ethtool/common.c
+> index ca8e64162104..00f93c58b319 100644
+> --- a/net/ethtool/common.c
+> +++ b/net/ethtool/common.c
+> @@ -50,7 +50,6 @@ const char netdev_features_strings[NETDEV_FEATURE_COUNT][ETH_GSTRING_LEN] = {
+>   
+>   	[NETIF_F_FCOE_CRC_BIT] =         "tx-checksum-fcoe-crc",
+>   	[NETIF_F_SCTP_CRC_BIT] =        "tx-checksum-sctp",
+> -	[NETIF_F_FCOE_MTU_BIT] =         "fcoe-mtu",
+>   	[NETIF_F_NTUPLE_BIT] =           "rx-ntuple-filter",
+>   	[NETIF_F_RXHASH_BIT] =           "rx-hashing",
+>   	[NETIF_F_RXCSUM_BIT] =           "rx-checksum",
 
-In the current code, genpd_find_opp_table() tries to find an OPP table
-for the genpd that the device is getting attached to. Then genpd
-passes that OPP table via devm_pm_opp_set_config(), to let the OPP
-core to hook up a required-dev for it. This was a naive approach, as
-that OPP table may not be the one that actually corresponds to a
-required-opps for the required-dev. Consider the below in DT.
-
-        opp_table_devA: opp-table-devA {
-                compatible = "operating-points-v2";
-
-                opp-devA-50 {
-                        opp-hz = /bits/ 64 <2500>;
-                        required-opps = <&opp_pd_50>; //corresponds to
-pd_perf1's OPP table
-                };
-               ....
-
-        devA {
-                compatible = "foo,bar";
-                power-domains = <&pd_perf0>, <&pd_perf1>; //both
-pd_perf0 and pd_perf1 has OPP tables.
-                power-domain-names = "perf0", "perf1";
-                operating-points-v2 = <&opp_table_devA>;
-        };
-
-To make sure we assign the correct required-dev for cases like the
-above, we need to let the OPP core to iterate through the available
-required-opps and see if some of them are corresponding to the OPP
-table for the genpd the required-dev belongs too.
-
-To manage this in a non-genpd specific way, I added another callback
-in struct dev_pm_opp_config. In this way, it should work for any
-future possible required-devs types too, I think.
-
-Kind regards
-Uffe
 
