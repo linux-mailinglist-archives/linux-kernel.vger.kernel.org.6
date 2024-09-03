@@ -1,268 +1,159 @@
-Return-Path: <linux-kernel+bounces-313955-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313950-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34D7696ACD2
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 01:24:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 842FB96ACC6
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2024 01:23:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA04C1F25858
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 23:24:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AE5451C23245
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 23:23:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 632841D7E33;
-	Tue,  3 Sep 2024 23:24:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAF011D5CEB;
+	Tue,  3 Sep 2024 23:23:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Gyq+srtC"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="Tzbl6dTT"
+Received: from smtpout.efficios.com (smtpout.efficios.com [167.114.26.122])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F23461D5CEC;
-	Tue,  3 Sep 2024 23:23:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.177.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FB1A126C13
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 23:22:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.114.26.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725405839; cv=none; b=CVwoBOnyOqBYn4nqonXmVNvXRkFMj3xyGkySp5oLMuZxQOH4bAptaoQOgrmqZet4s1elVGuYQglsthjN2dCY6b/EL5uLtEt+h/6OjFV/7J1OW+HpujR9qrvc2y3simg2zXAHnuAl+oebz3Hi7Z593tZO6+M4DgUOsJ7zzju5clQ=
+	t=1725405782; cv=none; b=e/NfkRRcFZbJ/oxqF+6gRuUnpRuAVmqd3OBg4PTqiP/M4mPWkT7SnhM7ley6Ygmde26BNzd94lcvV+EtgoEb+XPQrsn9sG93J5xhiQxoTbAPat+BxVSYTELkPHW8zjhy8gnBLewFw+kCekUkB8nhYSXEG2SSTZlj6p6DN0qDv+w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725405839; c=relaxed/simple;
-	bh=MnKbj6sSS3HCJqNa+kkOnsAeT3g9xf0IOvxLxlKUb28=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Hf1giXc2PBJMjJz+BJNX1YSlidGkRw/RZ6Znw+37MaF0YeC9BVGAjQvkYRohGVEV8gTZROrOej2HUYJ2YSSxw9OkpgJK8D8m0FKX7dz81N0pB4MTIXlGsPidEKNKJTceCtvLhQIw0lJ9dd6eREQLAbnvJFbnifaBkf6+hOVkMPo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=Gyq+srtC; arc=none smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 483LBUmx028866;
-	Tue, 3 Sep 2024 23:23:32 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
-	from:to:cc:subject:date:message-id:in-reply-to:references
-	:mime-version:content-transfer-encoding; s=corp-2023-11-20; bh=q
-	EfvffDSVfz+Cs+eDRWcr3G6GuHXhaLNpWU2hJkHeiQ=; b=Gyq+srtC+arStnlah
-	Us7IAI2/G+LfgIpGjAK8YYVBmyqXbNrPdVSsYfi6KxSst/w//YW85yCDlvqKbgGk
-	a6XQFyfiHiUNspyERhIq2oXw4HCL3XZHfk4aOIufJCxJGWByFbOk3X6X1SFy532i
-	Zb7jAjs8YD0gSHcgJW4ZM0Ik85p1/fEBy/Fvs3oDrkTDIeKROz3Jl3UD1cr3h+Eb
-	fStki0YNMIkS6Io0UYpRQpWQJ+EGHP1BXHscMnPRUmdAMFd08E18023W1JMJALfG
-	1wo93GM8jya6z7nlhHpLcq5Bki7UAK/mLwf0PVFSNpkYCduT7PR9p86CvMO4LDxl
-	GuGkQ==
-Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 41dwndj1ax-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 03 Sep 2024 23:23:32 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 483L2mjO001723;
-	Tue, 3 Sep 2024 23:23:31 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 41bsmfmndr-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 03 Sep 2024 23:23:31 +0000
-Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 483NMkfG040456;
-	Tue, 3 Sep 2024 23:23:30 GMT
-Received: from localhost.us.oracle.com (dhcp-10-159-133-114.vpn.oracle.com [10.159.133.114])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 41bsmfmmwr-6;
-	Tue, 03 Sep 2024 23:23:30 +0000
-From: Anthony Yznaga <anthony.yznaga@oracle.com>
-To: akpm@linux-foundation.org, willy@infradead.org, markhemm@googlemail.com,
-        viro@zeniv.linux.org.uk, david@redhat.com, khalid@kernel.org
-Cc: anthony.yznaga@oracle.com, andreyknvl@gmail.com, dave.hansen@intel.com,
-        luto@kernel.org, brauner@kernel.org, arnd@arndb.de,
-        ebiederm@xmission.com, catalin.marinas@arm.com,
-        linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, mhiramat@kernel.org, rostedt@goodmis.org,
-        vasily.averin@linux.dev, xhao@linux.alibaba.com, pcc@google.com,
-        neilb@suse.de, maz@kernel.org
-Subject: [RFC PATCH v3 05/10] mm/mshare: Add ioctl support
-Date: Tue,  3 Sep 2024 16:22:36 -0700
-Message-ID: <20240903232241.43995-6-anthony.yznaga@oracle.com>
-X-Mailer: git-send-email 2.43.5
-In-Reply-To: <20240903232241.43995-1-anthony.yznaga@oracle.com>
-References: <20240903232241.43995-1-anthony.yznaga@oracle.com>
+	s=arc-20240116; t=1725405782; c=relaxed/simple;
+	bh=gIcUC1BSwLdR6iM2GsWO6B24F4CIc2hhblObzlEIGtk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ChVTdOkioh526CadAQwk5op9osUsSbtX2nrRstOZ/zOBReHgOIAQUUAZ7RkOuk9CU5M+7M9LPLAZN6/xDOLHBaKX/Ed7hAgF4PvNGhD2Ua7F+yDy7GDIQinMlvI+j8T/mU0/8jazAIwCjGM9pezaJgcTAmNa5tJYKYF2MOpf8kY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=Tzbl6dTT; arc=none smtp.client-ip=167.114.26.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
+	s=smtpout1; t=1725405777;
+	bh=gIcUC1BSwLdR6iM2GsWO6B24F4CIc2hhblObzlEIGtk=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Tzbl6dTTo8G+AtA3+oq0/Im+s4/QVTeZlm+ZpV9fkKdJGUUdr3C/XNdgtHKBUqaOp
+	 om1Dsa/rB3Sd2yQqK8E+5cJyzCqrYUTgl3bVpNETRCTqyQl7lX9yyneJZJ324qPfaT
+	 Xe6xp2OnRmt1ZQ25L5bgf1NgJSi5+QS1bdEhyuklbKEgtGiDXBgE7k1bFftTz4zufg
+	 mOFRNrz8456afjAN1/8l1TtsJPiPLPx/rTySq6q6OmuUg7SON5IYMQfkGv2gEOf0Zb
+	 cCqY9mtXrAOi1lpFn6ERdU5fdIOA2ICbnLW8KwATYtKqVhBlguNqq/WiSRZu/4QrjP
+	 S42kmCpXrrybQ==
+Received: from [IPV6:2606:6d00:100:4000:cacb:9855:de1f:ded2] (unknown [IPv6:2606:6d00:100:4000:cacb:9855:de1f:ded2])
+	by smtpout.efficios.com (Postfix) with ESMTPSA id 4Wz1rK60fKz1JsR;
+	Tue,  3 Sep 2024 19:22:57 -0400 (EDT)
+Message-ID: <615f169b-3b24-4661-8a2c-185c6d80f7a4@efficios.com>
+Date: Tue, 3 Sep 2024 19:22:37 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-03_11,2024-09-03_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 mlxscore=0
- mlxlogscore=999 suspectscore=0 phishscore=0 bulkscore=0 adultscore=0
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2407110000 definitions=main-2409030187
-X-Proofpoint-GUID: F6ATNHHZ8mdBkmlzSGVUWfQGjEu59pOv
-X-Proofpoint-ORIG-GUID: F6ATNHHZ8mdBkmlzSGVUWfQGjEu59pOv
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 2/2] sched: Improve cache locality of RSEQ concurrency
+ IDs for intermittent workloads
+To: Yury Norov <yury.norov@gmail.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ linux-kernel@vger.kernel.org, Valentin Schneider <vschneid@redhat.com>,
+ Mel Gorman <mgorman@suse.de>, Steven Rostedt <rostedt@goodmis.org>,
+ Vincent Guittot <vincent.guittot@linaro.org>,
+ Dietmar Eggemann <dietmar.eggemann@arm.com>, Ben Segall
+ <bsegall@google.com>, Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+ Dmitry Vyukov <dvyukov@google.com>, Marco Elver <elver@google.com>
+References: <20240903190650.53644-1-mathieu.desnoyers@efficios.com>
+ <20240903190650.53644-3-mathieu.desnoyers@efficios.com>
+ <ZtdqhmKmbVsCSAkJ@yury-ThinkPad>
+From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Content-Language: en-US
+In-Reply-To: <ZtdqhmKmbVsCSAkJ@yury-ThinkPad>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-From: Khalid Aziz <khalid@kernel.org>
+On 2024-09-03 15:59, Yury Norov wrote:
+> On Tue, Sep 03, 2024 at 03:06:50PM -0400, Mathieu Desnoyers wrote:
+[...]
+>> +
+>> +static inline void mm_set_cpus_allowed(struct mm_struct *mm, const struct cpumask *cpumask)
+>> +{
+>> +	struct cpumask *mm_allowed = mm_cpus_allowed(mm);
+>> +	int cpu, nr_set = 0;
+>> +
+>> +	if (!mm)
+>> +		return;
+>> +	/* The mm_cpus_allowed is the union of each thread allowed CPUs masks. */
+>> +	for (cpu = 0; cpu < nr_cpu_ids; cpu = cpumask_next_andnot(cpu, cpumask, mm_allowed)) {
+>> +		if (!cpumask_test_and_set_cpu(cpu, mm_allowed))
+>> +			nr_set++;
+>> +	}
+> 
+> You can do the same nicer:
+> 
+>    for_each_cpu(cpu, cpumask)
+>    	nr_set += !cpumask_test_and_set_cpu(cpu, mm_allowed);
+> 
+> This should be faster and a bit simpler, to me.
 
-Reserve a range of ioctls for msharefs and add the first two ioctls
-to get and set the start address and size of an mshare region.
+In this scenario, I expect the following per-thread cpumask properties 
+for a given process (typically): those will be typically the same bits
+set repeated over all threads belonging to a process. There are of
+course scenarios where specific threads will override the mask, but
+I don't expect this to be the most frequent case.
 
-Signed-off-by: Khalid Aziz <khalid@kernel.org>
-Signed-off-by: Anthony Yznaga <anthony.yznaga@oracle.com>
----
- .../userspace-api/ioctl/ioctl-number.rst      |  1 +
- include/uapi/linux/msharefs.h                 | 29 ++++++++
- mm/mshare.c                                   | 72 +++++++++++++++++++
- 3 files changed, 102 insertions(+)
- create mode 100644 include/uapi/linux/msharefs.h
+So we typically have an operation which initially copies the initial
+thread's allowed cpus mask to the mm allowed cpus mask, and then when
+additional affinity changes are done, we want to augment the mm allowed
+cpus masks with any additional cpu that may show up. But again, I expect
+the initial thread to typically have the complete mask and other
+operations won't typically change the mm allowed cpumask bits.
 
-diff --git a/Documentation/userspace-api/ioctl/ioctl-number.rst b/Documentation/userspace-api/ioctl/ioctl-number.rst
-index e91c0376ee59..d2fa6b117f66 100644
---- a/Documentation/userspace-api/ioctl/ioctl-number.rst
-+++ b/Documentation/userspace-api/ioctl/ioctl-number.rst
-@@ -301,6 +301,7 @@ Code  Seq#    Include File                                           Comments
- 'v'   20-27  arch/powerpc/include/uapi/asm/vas-api.h		     VAS API
- 'v'   C0-FF  linux/meye.h                                            conflict!
- 'w'   all                                                            CERN SCI driver
-+'x'   00-1F  linux/msharefs.h                                        msharefs filesystem
- 'y'   00-1F                                                          packet based user level communications
-                                                                      <mailto:zapman@interlan.net>
- 'z'   00-3F                                                          CAN bus card conflict!
-diff --git a/include/uapi/linux/msharefs.h b/include/uapi/linux/msharefs.h
-new file mode 100644
-index 000000000000..c7b509c7e093
---- /dev/null
-+++ b/include/uapi/linux/msharefs.h
-@@ -0,0 +1,29 @@
-+/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
-+/*
-+ * msharefs defines a memory region that is shared across processes.
-+ * ioctl is used on files created under msharefs to set various
-+ * attributes on these shared memory regions
-+ *
-+ *
-+ * Copyright (C) 2024 Oracle Corp. All rights reserved.
-+ * Author:	Khalid Aziz <khalid@kernel.org>
-+ */
-+
-+#ifndef _UAPI_LINUX_MSHAREFS_H
-+#define _UAPI_LINUX_MSHAREFS_H
-+
-+#include <linux/ioctl.h>
-+#include <linux/types.h>
-+
-+/*
-+ * msharefs specific ioctl commands
-+ */
-+#define MSHAREFS_GET_SIZE	_IOR('x', 0,  struct mshare_info)
-+#define MSHAREFS_SET_SIZE	_IOW('x', 1,  struct mshare_info)
-+
-+struct mshare_info {
-+	__u64 start;
-+	__u64 size;
-+};
-+
-+#endif
-diff --git a/mm/mshare.c b/mm/mshare.c
-index a37849e724e1..af46eb76d2bc 100644
---- a/mm/mshare.c
-+++ b/mm/mshare.c
-@@ -10,15 +10,20 @@
-  *
-  * Copyright (C) 2024 Oracle Corp. All rights reserved.
-  * Author:	Khalid Aziz <khalid@kernel.org>
-+ * Author:	Matthew Wilcox <willy@infradead.org>
-  *
-  */
- 
- #include <linux/fs.h>
- #include <linux/fs_context.h>
-+#include <linux/spinlock_types.h>
- #include <uapi/linux/magic.h>
-+#include <uapi/linux/msharefs.h>
- 
- struct mshare_data {
- 	struct mm_struct *mm;
-+	spinlock_t m_lock;
-+	struct mshare_info minfo;
- };
- 
- struct msharefs_info {
-@@ -28,8 +33,74 @@ struct msharefs_info {
- static const struct inode_operations msharefs_dir_inode_ops;
- static const struct inode_operations msharefs_file_inode_ops;
- 
-+static long
-+msharefs_set_size(struct mm_struct *mm, struct mshare_data *m_data,
-+			struct mshare_info *minfo)
-+{
-+	unsigned long end = minfo->start + minfo->size;
-+
-+	/*
-+	 * Validate alignment for start address, and size
-+	 */
-+	if ((minfo->start | end) & (PGDIR_SIZE - 1)) {
-+		spin_unlock(&m_data->m_lock);
-+		return -EINVAL;
-+	}
-+
-+	mm->mmap_base = minfo->start;
-+	mm->task_size = minfo->size;
-+	if (!mm->task_size)
-+		mm->task_size--;
-+
-+	m_data->minfo.start = mm->mmap_base;
-+	m_data->minfo.size = mm->task_size;
-+	spin_unlock(&m_data->m_lock);
-+
-+	return 0;
-+}
-+
-+static long
-+msharefs_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
-+{
-+	struct mshare_data *m_data = filp->private_data;
-+	struct mm_struct *mm = m_data->mm;
-+	struct mshare_info minfo;
-+
-+	switch (cmd) {
-+	case MSHAREFS_GET_SIZE:
-+		spin_lock(&m_data->m_lock);
-+		minfo = m_data->minfo;
-+		spin_unlock(&m_data->m_lock);
-+
-+		if (copy_to_user((void __user *)arg, &minfo, sizeof(minfo)))
-+			return -EFAULT;
-+
-+		return 0;
-+
-+	case MSHAREFS_SET_SIZE:
-+		if (copy_from_user(&minfo, (struct mshare_info __user *)arg,
-+			sizeof(minfo)))
-+			return -EFAULT;
-+
-+		/*
-+		 * If this mshare region has been set up once already, bail out
-+		 */
-+		spin_lock(&m_data->m_lock);
-+		if (m_data->minfo.start != 0) {
-+			spin_unlock(&m_data->m_lock);
-+			return -EINVAL;
-+		}
-+
-+		return msharefs_set_size(mm, m_data, &minfo);
-+
-+	default:
-+		return -ENOTTY;
-+	}
-+}
-+
- static const struct file_operations msharefs_file_operations = {
- 	.open		= simple_open,
-+	.unlocked_ioctl	= msharefs_ioctl,
- 	.llseek		= no_llseek,
- };
- 
-@@ -54,6 +125,7 @@ msharefs_fill_mm(struct inode *inode)
- 		goto err_free;
- 	}
- 	m_data->mm = mm;
-+	spin_lock_init(&m_data->m_lock);
- 	inode->i_private = m_data;
- 
- 	return 0;
+I also expect the cpumask to be often quite dense (often all bits
+are set).
+
+Now if we look at the operations for your proposal here:
+
+- for_each_cpu loads cpumask word-by-word and for each set bit, it
+   issues cpumask_test_and_set_cpu on mm_allowed, which is really a
+   test_and_set_bit, a fully ordered atomic operation, on each _bit_
+   set. That's O(nr_cpus) fully ordered atomic operations, and thus
+   expensive exclusive cache line accesses.
+
+My approach does:
+
+- The equivalent of a for_each_cpu_andnot (actually I should use
+   exactly that! I just noticed it exists in the API.), which loads
+   both thread and mm CPUs allowed masks in parallel, word-by-word,
+   and only issues a cpumask_test_and_set_cpu for CPUs which are set
+   in the per-thread mask, but not in the mm mask. In the typical cases
+   discussed above, we pretty much never need to issue the atomic
+   test-and-set. So all we need to do for the common case is to read
+   both cpu masks in parallel, no stores/atomic ops needed.
+
+> What concerns me is that you call atomic function in a loop, which makes
+> the whole procedure non-atomic. If it's OK, can you put a comment why a
+> series of atomic ops is OK here? If not - I believe external locking
+> would be needed.
+
+Good point, so the whole mm CPUs allowed masks tracks the allowed set,
+and based on the result of the test_and_set it accumulates the number of
+bits set and atomically add the total to nr_allowed_cpus. The mm_cid
+algorithms only care about mm nr_allowed_cpus, so those don't even need
+to look at the mm CPUs allowed mask, therefore there is no need to
+provide any ordering guarantees across the two data structures.
+
+If we'd have a cpumask_test_and_set_cpu_relaxed() it would be sufficient
+here.
+
+As you say, I should explain this in a comment.
+
+Thanks,
+
+Mathieu
+
 -- 
-2.43.5
+Mathieu Desnoyers
+EfficiOS Inc.
+https://www.efficios.com
 
 
