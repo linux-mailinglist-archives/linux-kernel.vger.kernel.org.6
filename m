@@ -1,93 +1,76 @@
-Return-Path: <linux-kernel+bounces-312753-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312755-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D269A969ACF
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 12:53:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98371969AD2
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 12:53:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 10CC81C239AD
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 10:53:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 54A50285B52
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 10:53:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09F891C768A;
-	Tue,  3 Sep 2024 10:50:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 546B41C62D6;
+	Tue,  3 Sep 2024 10:52:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o5KjDK1W"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="dGYO5om4"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 660BE1A0BFD;
-	Tue,  3 Sep 2024 10:50:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B68B91B9851
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 10:52:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725360629; cv=none; b=Oqt+dLGkEKes3zwV44+b2z4KQ5AiEnXTKkx5WLPfxix5lCIQHWe5YPkEcwNG0o+bvnIvC+z4Y8am0ALw6feODFtSbfdqnbax+AJ1eb/ay2pd4BELw1kmfxXkZmc2mOIRA27FmYmzscu0BAOYldbKjCF/NrxmlVRyhkFeKEysKsQ=
+	t=1725360727; cv=none; b=Ea+N7ceXaHy51V5pIPKUgQSrtyJadvf112yu7zEs61hBr43hpvOiwsNPPdNTGLLwKd2IHdeo+DSD5d5pcgVgcoDmys+JikDiknJXwMZRLDB0WcyW7KlkgyNKfjGWdV1SvCAxRWZWICYMtwCyXOpOjqz2HFnqjf233rvDXQGnAS0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725360629; c=relaxed/simple;
-	bh=QjRKkTcjVYnnxJPoVNjGx6/Ls3fonC7hPfc/7SboZ5w=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=pQIuUjy6KeBvKMME2gmFjLMQI+4qUKX7gE+2hhhmCh5RrF0MNwYD0ay8qodA3+dT1YwlCiquqeiUei71nJSAnt8uo/9XDwIvHJ0qkNAZutWvFoM6Xd0LINNPn5wYZdqoKTJaqBIOX+oG/e1FC5d8unHRFDN/mTtta+jPoZXgBJQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o5KjDK1W; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B495C4CEC4;
-	Tue,  3 Sep 2024 10:50:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725360629;
-	bh=QjRKkTcjVYnnxJPoVNjGx6/Ls3fonC7hPfc/7SboZ5w=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=o5KjDK1W2HOZHZq1zXQV6aG8wIYaKwE61YXaUgkjjiD165b6NkB/piiSwMSx9qw9N
-	 2a7ZAJ8+p9Lx9HJ3CljbO0lqEpHlT9WsN35cqtjvDrh3Kmyoj36kfESLSaZmgly83r
-	 G9hRX5HYL7rKISD/Akyb+HEWRjbQypJ43bweFhsWzpdwi/uZQ9pnjaO2cA4FKiZpMp
-	 NTlqFBGN1EDcUG+m/Z5+YGBDUesFZ2iMUsriVEuEAfPFUG7QpexDtdFQha5aeQVs/b
-	 SQvRurBLL7qlNW3JtLSxhlFuvDAmtmVfeTn3YpeZrfULcfLrv7XKhUKkGOYe4YbM2w
-	 IHAS0LIb1Jzgg==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EAEC63805D82;
-	Tue,  3 Sep 2024 10:50:30 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1725360727; c=relaxed/simple;
+	bh=JRP4K78B43knTz3tmcyCU7/JqkLEGmeMHfo3yYp2mlc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AJf1ejAbLN/1pWTahCLdydiwtmM4BOP76+c4YzgvsK3z2Lc/Huvf+L3ogG9SlMloAQhiP3G6/nC5s6vSPHEPiU0TdlXT2kXoGAm3MPDQ6MH18q9clq6coBtRYtqMJ+bDItsEpFT1haqy6V24FD0IDanBK2aUhOiiCaywhr1tgYQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=dGYO5om4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A8B0EC4CEC4;
+	Tue,  3 Sep 2024 10:52:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1725360727;
+	bh=JRP4K78B43knTz3tmcyCU7/JqkLEGmeMHfo3yYp2mlc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=dGYO5om40kfUrousS9gvLea/U2q1fJ9uOiaByZIHwPsa9yLopoA1d1Iv7lMvEmfCL
+	 TL45mnqptzLxdctT9ybfTDqbA6MgfRDZU9Cm8/1A4Z/qNef24Oe71kVe2zvXmHU4zS
+	 3fKG58NR84BJh/dcLQzZq2II0eB9I6FjRSRf26r4=
+Date: Tue, 3 Sep 2024 12:52:04 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/3] nvmem: fixes for 6.11
+Message-ID: <2024090357-cardiac-foil-6476@gregkh>
+References: <20240902142510.71096-1-srinivas.kandagatla@linaro.org>
+ <2024090351-monument-hydrogen-f495@gregkh>
+ <a326aa34-a683-4efd-af7a-f2f264c7fc4b@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net v4] net: phy: Fix missing of_node_put() for leds
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <172536062976.252561.14904161463456653895.git-patchwork-notify@kernel.org>
-Date: Tue, 03 Sep 2024 10:50:29 +0000
-References: <20240830022025.610844-1-ruanjinjie@huawei.com>
-In-Reply-To: <20240830022025.610844-1-ruanjinjie@huawei.com>
-To: Jinjie Ruan <ruanjinjie@huawei.com>
-Cc: andrew@lunn.ch, hkallweit1@gmail.com, linux@armlinux.org.uk,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- f.fainelli@gmail.com, ansuelsmth@gmail.com, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a326aa34-a683-4efd-af7a-f2f264c7fc4b@linaro.org>
 
-Hello:
-
-This patch was applied to netdev/net.git (main)
-by Paolo Abeni <pabeni@redhat.com>:
-
-On Fri, 30 Aug 2024 10:20:25 +0800 you wrote:
-> The call of of_get_child_by_name() will cause refcount incremented
-> for leds, if it succeeds, it should call of_node_put() to decrease
-> it, fix it.
+On Tue, Sep 03, 2024 at 11:45:59AM +0100, Srinivas Kandagatla wrote:
 > 
-> Fixes: 01e5b728e9e4 ("net: phy: Add a binding for PHY LEDs")
-> Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
 > 
-> [...]
+> On 03/09/2024 11:20, Greg KH wrote:
+> > On Mon, Sep 02, 2024 at 03:25:07PM +0100, srinivas.kandagatla@linaro.org wrote:
+> > > From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> > > 
+> > > Hi Greg,
+> > > 
+> > > Here are few fixes in nvmem for 6.11, Could you queue
+> > > these for next possible rc.
+> > 
+> > You forgot to cc: stable on all of these :(
+> > 
+> Sorry Greg, Should I resend them with CC Stable?
 
-Here is the summary with links:
-  - [net,v4] net: phy: Fix missing of_node_put() for leds
-    https://git.kernel.org/netdev/net/c/2560db6ede1a
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+I fixed them up by hand.
 
