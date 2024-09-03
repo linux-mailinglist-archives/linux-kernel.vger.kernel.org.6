@@ -1,196 +1,368 @@
-Return-Path: <linux-kernel+bounces-312519-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312522-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1FF09697B1
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 10:48:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22F2B9697BA
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 10:48:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 323D7B26F5A
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 08:48:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE943287D4C
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 08:48:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E65231C9866;
-	Tue,  3 Sep 2024 08:44:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A56733DAC0C;
+	Tue,  3 Sep 2024 08:44:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="eBaPbLcZ"
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="ZLrbJXri"
+Received: from out30-101.freemail.mail.aliyun.com (out30-101.freemail.mail.aliyun.com [115.124.30.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DFDF1C9867
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 08:44:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A5081D0940;
+	Tue,  3 Sep 2024 08:44:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725353078; cv=none; b=qel50Ioy3clcZUM8LzYH1559EXyTqlU93h+fXmNh60SWWbhLogs5as8kqtcA8FjimuUCk3cLhJlBmBm798Mf9WwYvSuruoQK3l8vs31fu4uACSEE6VJo9OO6dmN5MMs8ocJmIi3W5EBpLl1cnCzRXuqbeUPbPmRPxNzxeEnc5bA=
+	t=1725353083; cv=none; b=nlGZgalS/dswhIiHCDw4xTzr40Ud3ntiXm+J6yD+NlY9CIeWCT6ORwizA6tMb8t2rOuFBdaZipKB3peoszjzBYEytTJVSfpNJ0+IGh9qnaIOSKSJsEfOyOskOz/PytWieqhFavODyBXrcLbo/93Ug5EZ+3ae1upgS5T3riLE80g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725353078; c=relaxed/simple;
-	bh=FylgyOwq14Qsy2hkaZjp9Qg7WlZxSe0pWmI+6hs5XKY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=moiEkmC4dXVpULgOa7LMKEmTv/WMyOPdqzLXIZKdVMxhPFn9EQblpx7lsrgEIE+fkrI/ToNs53Br0i/O8Q6xdI9rbVD+ZHlkwe5KoqsIto8pfgD66oR9YiHoEYPgPKa2gas07JjMnXlF/JmnHph/zdzIfdWSAVK6xZdBvHh08Jg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=eBaPbLcZ; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a86c476f679so582679266b.1
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 01:44:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1725353074; x=1725957874; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=DZlZAQzsLSUE2kbM2Ozq+ZCTE7DVngzemuZ7Ob/TXXo=;
-        b=eBaPbLcZj1QpjtCTxIlveYA9NjAMBat3LfV2VMZqRQEkxDggQlVltFrgdhlwojjtCz
-         LOdrUlbhopWw9KppBfUB8i0pdAZChfI9QG/Ct/MJ+hWhNkwWbSEZ0O4nwHVVTKVR6+Xk
-         dQqleV4X75UIT0UjMQQEh8WbLV/APCh8TZcpLo2ap+Z1tSKBOadFaZCXw0rS0tk0yOFx
-         aQmLFVcm2Zj8RkLZONc4LQVZk8fRnwBTXnYpWYKftfVcv/E9rGNlAn5gILtH1eTnH278
-         dAt3oPlozi/junFhSnm2zigmTiE9luwZBDjykGjFkWSTIdv7w8Mfx3JnEH9s34x3MChx
-         0PWA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725353074; x=1725957874;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DZlZAQzsLSUE2kbM2Ozq+ZCTE7DVngzemuZ7Ob/TXXo=;
-        b=E3pJtdXAyKLx8vS2tal525hhnhjDmpKzhU4DBXm6u+eXVonv159jgTx+gX0ptIzrr+
-         GWeFfJwRL3vBhNED4iCu4tHluNKYB/7w/LlIpNf0nHxpHiGlVOCiual5XNfFvH+PgxVG
-         RYU6EwFspzi522YYDZNT+NiW3W0b+/69l5ievlvyXlSWU+P8iNhips8mQaiOE5wetTqY
-         feBZ5JTGUfpo2ezpaXe4bPz3P03uGYL+8c7w/b/XjYMIl4KdEJWV4+fZz1jPmvwt+LAg
-         pbCHJ3HOnyI/l1W+B3keVN2GUmigjP3Z0tqjxvRztBHupFmewJ6/QlWPw1uRf6aE0ogs
-         n7+w==
-X-Forwarded-Encrypted: i=1; AJvYcCWQn1ef/gljvWoFsjR5fkoz9X+8kayIJfuwZwtAMl7epW5HzNZi7VqfbAonicPoS6ahOt9A0O0S3ot66HI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzxvRLzNzg7r/k2f/77rharZ5PuQbvAQmGHGkE5MdqWflVurYB3
-	QSB/vwK5B+YWBXrl+9iU2vNVNY4Gf9oqxNbqDdgtWL5PTTa4Y+tHqfINqENHhRg=
-X-Google-Smtp-Source: AGHT+IHxwo9IPQ3UzoYFwfDhkPsGqhCSjCzcHlJOoBuRWzF1gLxd2R9P128YTojI0aYfG8i4cNsStA==
-X-Received: by 2002:a17:907:2cc3:b0:a86:9058:c01b with SMTP id a640c23a62f3a-a89b9729542mr798530966b.65.1725353073684;
-        Tue, 03 Sep 2024 01:44:33 -0700 (PDT)
-Received: from localhost ([193.86.92.181])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8989221e15sm653868266b.193.2024.09.03.01.44.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Sep 2024 01:44:33 -0700 (PDT)
-Date: Tue, 3 Sep 2024 10:44:32 +0200
-From: Michal Hocko <mhocko@suse.com>
-To: Charlie Jenkins <charlie@rivosinc.com>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-	Richard Henderson <richard.henderson@linaro.org>,
-	Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
-	Matt Turner <mattst88@gmail.com>, Vineet Gupta <vgupta@kernel.org>,
-	Russell King <linux@armlinux.org.uk>, Guo Ren <guoren@kernel.org>,
-	Huacai Chen <chenhuacai@kernel.org>,
-	WANG Xuerui <kernel@xen0n.name>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
-	Helge Deller <deller@gmx.de>, Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Naveen N Rao <naveen@kernel.org>,
-	Alexander Gordeev <agordeev@linux.ibm.com>,
-	Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
-	Heiko Carstens <hca@linux.ibm.com>,
-	Vasily Gorbik <gor@linux.ibm.com>,
-	Christian Borntraeger <borntraeger@linux.ibm.com>,
-	Sven Schnelle <svens@linux.ibm.com>,
-	Yoshinori Sato <ysato@users.sourceforge.jp>,
-	Rich Felker <dalias@libc.org>,
-	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
-	"David S. Miller" <davem@davemloft.net>,
-	Andreas Larsson <andreas@gaisler.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>, Andy Lutomirski <luto@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Muchun Song <muchun.song@linux.dev>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Shuah Khan <shuah@kernel.org>, linux-arch@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-alpha@vger.kernel.org,
-	linux-snps-arc@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-csky@vger.kernel.org,
-	loongarch@lists.linux.dev, linux-mips@vger.kernel.org,
-	linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-	linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
-	sparclinux@vger.kernel.org, linux-mm@kvack.org,
-	linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH RFC v2 0/4] mm: Introduce MAP_BELOW_HINT
-Message-ID: <ZtbMcN3vK-Ih1gpN@tiehlicka>
-References: <20240829-patches-below_hint_mmap-v2-0-638a28d9eae0@rivosinc.com>
- <ZtAxwJFH_hAh1BPG@tiehlicka>
- <ZtCw4vgonbJzV1xs@ghost>
+	s=arc-20240116; t=1725353083; c=relaxed/simple;
+	bh=Zj7h+Df61/pENQfgug3gu4dOhNubOSRMV4QeUjHXPoY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qMedGaaiGr9iTkRRY22hEk8P7G46eQ6NGIz3oJXeEE08zTXLEPOUM/OnTPvOVj63TsRQZ87E+EvTpEoZ567wPqcm8gx3XC+aLlBsekD4ntcyxBNb01Gb+b0sm9LFJkbJ+F/6ajRyY93Kgju/5LJNhnoNssmcEA7GCIH/f3e4wTE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=ZLrbJXri; arc=none smtp.client-ip=115.124.30.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1725353078; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=07f+ZRUYFuuGrxUxDNJ+07f6JVD8p2TyIQijT4Sm9TY=;
+	b=ZLrbJXritpISpWqQWstHcLYosB1qixcWbWJRT2Jn/74o2BZRATG07jgS6Ym54bcMB/gyUkxhZzCJihYYCIPTAcF4gDoZBYdZRseV4VAibKi3F5p4aQdziTzE5VySAHZob/XUuvry1VqxizmeumkDAmA/RWwOe7KOZv/4zOzH0PI=
+Received: from 30.221.146.33(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0WECkfE6_1725353076)
+          by smtp.aliyun-inc.com;
+          Tue, 03 Sep 2024 16:44:37 +0800
+Message-ID: <6074d653-3dd3-45a3-9241-a9e2e12252c6@linux.alibaba.com>
+Date: Tue, 3 Sep 2024 16:44:35 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZtCw4vgonbJzV1xs@ghost>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 1/2] virtiofs: use pages instead of pointer for kernel
+ direct IO
+To: Hou Tao <houtao@huaweicloud.com>, linux-fsdevel@vger.kernel.org
+Cc: Miklos Szeredi <miklos@szeredi.hu>, Vivek Goyal <vgoyal@redhat.com>,
+ Stefan Hajnoczi <stefanha@redhat.com>,
+ Bernd Schubert <bernd.schubert@fastmail.fm>,
+ "Michael S . Tsirkin" <mst@redhat.com>, Matthew Wilcox
+ <willy@infradead.org>, Benjamin Coddington <bcodding@redhat.com>,
+ linux-kernel@vger.kernel.org, virtualization@lists.linux.dev,
+ houtao1@huawei.com
+References: <20240831093750.1593871-1-houtao@huaweicloud.com>
+ <20240831093750.1593871-2-houtao@huaweicloud.com>
+Content-Language: en-US
+From: Jingbo Xu <jefflexu@linux.alibaba.com>
+In-Reply-To: <20240831093750.1593871-2-houtao@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu 29-08-24 10:33:22, Charlie Jenkins wrote:
-> On Thu, Aug 29, 2024 at 10:30:56AM +0200, Michal Hocko wrote:
-> > On Thu 29-08-24 00:15:57, Charlie Jenkins wrote:
-> > > Some applications rely on placing data in free bits addresses allocated
-> > > by mmap. Various architectures (eg. x86, arm64, powerpc) restrict the
-> > > address returned by mmap to be less than the 48-bit address space,
-> > > unless the hint address uses more than 47 bits (the 48th bit is reserved
-> > > for the kernel address space).
-> > > 
-> > > The riscv architecture needs a way to similarly restrict the virtual
-> > > address space. On the riscv port of OpenJDK an error is thrown if
-> > > attempted to run on the 57-bit address space, called sv57 [1].  golang
-> > > has a comment that sv57 support is not complete, but there are some
-> > > workarounds to get it to mostly work [2].
-> > > 
-> > > These applications work on x86 because x86 does an implicit 47-bit
-> > > restriction of mmap() address that contain a hint address that is less
-> > > than 48 bits.
-> > > 
-> > > Instead of implicitly restricting the address space on riscv (or any
-> > > current/future architecture), a flag would allow users to opt-in to this
-> > > behavior rather than opt-out as is done on other architectures. This is
-> > > desirable because it is a small class of applications that do pointer
-> > > masking.
-> > 
-> > IIRC this has been discussed at length when 5-level page tables support
-> > has been proposed for x86. Sorry I do not have a link handy but lore
-> > should help you. Linus was not really convinced and in the end vetoed it
-> > and prefer that those few applications that benefit from greater address
-> > space would do that explicitly than other way around.
+
+
+On 8/31/24 5:37 PM, Hou Tao wrote:
+> From: Hou Tao <houtao1@huawei.com>
 > 
-> I believe I found the conversation you were referring to. Ingo Molnar
-> recommended a flag similar to what I have proposed [1]. Catalin
-> recommended to make 52-bit opt-in on arm64 [2]. Dave Hansen brought up
-> MPX [3].
+> When trying to insert a 10MB kernel module kept in a virtio-fs with cache
+> disabled, the following warning was reported:
 > 
-> However these conversations are tangential to what I am proposing. arm64
-> and x86 decided to have the default address space be 48 bits. However
-> this was done on a per-architecture basis with no way for applications
-> to have guarantees between architectures. Even this behavior to restrict
-> to 48 bits does not even appear in the man pages, so would require
-> reading the kernel source code to understand that this feature is
-> available. Then to opt-in to larger address spaces, applications have to
-> know to provide a hint address that is greater than 47 bits, mmap() will
-> then return an address that contains up to 56 bits on x86 and 52 bits on
-> arm64. This difference of 4 bits causes inconsistency and is part of the
-> problem I am trying to solve with this flag.
+>   ------------[ cut here ]------------
+>   WARNING: CPU: 1 PID: 404 at mm/page_alloc.c:4551 ......
+>   Modules linked in:
+>   CPU: 1 PID: 404 Comm: insmod Not tainted 6.9.0-rc5+ #123
+>   Hardware name: QEMU Standard PC (i440FX + PIIX, 1996) ......
+>   RIP: 0010:__alloc_pages+0x2bf/0x380
+>   ......
+>   Call Trace:
+>    <TASK>
+>    ? __warn+0x8e/0x150
+>    ? __alloc_pages+0x2bf/0x380
+>    __kmalloc_large_node+0x86/0x160
+>    __kmalloc+0x33c/0x480
+>    virtio_fs_enqueue_req+0x240/0x6d0
+>    virtio_fs_wake_pending_and_unlock+0x7f/0x190
+>    queue_request_and_unlock+0x55/0x60
+>    fuse_simple_request+0x152/0x2b0
+>    fuse_direct_io+0x5d2/0x8c0
+>    fuse_file_read_iter+0x121/0x160
+>    __kernel_read+0x151/0x2d0
+>    kernel_read+0x45/0x50
+>    kernel_read_file+0x1a9/0x2a0
+>    init_module_from_file+0x6a/0xe0
+>    idempotent_init_module+0x175/0x230
+>    __x64_sys_finit_module+0x5d/0xb0
+>    x64_sys_call+0x1c3/0x9e0
+>    do_syscall_64+0x3d/0xc0
+>    entry_SYSCALL_64_after_hwframe+0x4b/0x53
+>    ......
+>    </TASK>
+>   ---[ end trace 0000000000000000 ]---
+> 
+> The warning is triggered as follows:
+> 
+> 1) syscall finit_module() handles the module insertion and it invokes
+> kernel_read_file() to read the content of the module first.
+> 
+> 2) kernel_read_file() allocates a 10MB buffer by using vmalloc() and
+> passes it to kernel_read(). kernel_read() constructs a kvec iter by
+> using iov_iter_kvec() and passes it to fuse_file_read_iter().
+> 
+> 3) virtio-fs disables the cache, so fuse_file_read_iter() invokes
+> fuse_direct_io(). As for now, the maximal read size for kvec iter is
+> only limited by fc->max_read. For virtio-fs, max_read is UINT_MAX, so
+> fuse_direct_io() doesn't split the 10MB buffer. It saves the address and
+> the size of the 10MB-sized buffer in out_args[0] of a fuse request and
+> passes the fuse request to virtio_fs_wake_pending_and_unlock().
+> 
+> 4) virtio_fs_wake_pending_and_unlock() uses virtio_fs_enqueue_req() to
+> queue the request. Because virtiofs need DMA-able address, so
+> virtio_fs_enqueue_req() uses kmalloc() to allocate a bounce buffer for
+> all fuse args, copies these args into the bounce buffer and passed the
+> physical address of the bounce buffer to virtiofsd. The total length of
+> these fuse args for the passed fuse request is about 10MB, so
+> copy_args_to_argbuf() invokes kmalloc() with a 10MB size parameter and
+> it triggers the warning in __alloc_pages():
+> 
+> 	if (WARN_ON_ONCE_GFP(order > MAX_PAGE_ORDER, gfp))
+> 		return NULL;
+> 
+> 5) virtio_fs_enqueue_req() will retry the memory allocation in a
+> kworker, but it won't help, because kmalloc() will always return NULL
+> due to the abnormal size and finit_module() will hang forever.
+> 
+> A feasible solution is to limit the value of max_read for virtio-fs, so
+> the length passed to kmalloc() will be limited. However it will affect
+> the maximal read size for normal read. And for virtio-fs write initiated
+> from kernel, it has the similar problem but now there is no way to limit
+> fc->max_write in kernel.
+> 
+> So instead of limiting both the values of max_read and max_write in
+> kernel, introducing use_pages_for_kvec_io in fuse_conn and setting it as
+> true in virtiofs. When use_pages_for_kvec_io is enabled, fuse will use
+> pages instead of pointer to pass the KVEC_IO data.
+> 
+> After switching to pages for KVEC_IO data, these pages will be used for
+> DMA through virtio-fs. If these pages are backed by vmalloc(),
+> {flush|invalidate}_kernel_vmap_range() are necessary to flush or
+> invalidate the cache before the DMA operation. So add two new fields in
+> fuse_args_pages to record the base address of vmalloc area and the
+> condition indicating whether invalidation is needed. Perform the flush
+> in fuse_get_user_pages() for write operations and the invalidation in
+> fuse_release_user_pages() for read operations.
+> 
+> It may seem necessary to introduce another field in fuse_conn to
+> indicate that these KVEC_IO pages are used for DMA, However, considering
+> that virtio-fs is currently the only user of use_pages_for_kvec_io, just
+> reuse use_pages_for_kvec_io to indicate that these pages will be used
+> for DMA.
+> 
+> Fixes: a62a8ef9d97d ("virtio-fs: add virtiofs filesystem")
+> Signed-off-by: Hou Tao <houtao1@huawei.com>
 
-Yes, I guess I do understand where you are heading. Our existing model
-assumes that anybody requiring more address space know what they are
-doing and deal with the reality. This is the way Linus has pushed this
-and I am not really convinced it is the right way TBH. On the other hand
-it is true that this allows a safe(r) transition to larger address
-spaces.
+Tested-by: Jingbo Xu <jefflexu@linux.alibaba.com>
 
-> I am not proposing to change x86 and arm64 away from using their opt-out
-> feature, I am instead proposing a standard ABI for applications that
-> need some guarantees of the bits used in pointers.
 
-Right, but this is not really different from earlier attempts to achieve
-this IIRC. Extentind mmap for that purpose seems quite tricky as already
-pointed out in other sub-threads. Quite honestly I am not really sure
-what is the right and backwards compatible way. I just wanted to make
-you aware this has been discussed at lenght in the past.
+> ---
+>  fs/fuse/file.c      | 62 +++++++++++++++++++++++++++++++--------------
+>  fs/fuse/fuse_i.h    |  6 +++++
+>  fs/fuse/virtio_fs.c |  1 +
+>  3 files changed, 50 insertions(+), 19 deletions(-)
+> 
+> diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+> index f39456c65ed7..331208d3e4d1 100644
+> --- a/fs/fuse/file.c
+> +++ b/fs/fuse/file.c
+> @@ -645,7 +645,7 @@ void fuse_read_args_fill(struct fuse_io_args *ia, struct file *file, loff_t pos,
+>  	args->out_args[0].size = count;
+>  }
+>  
+> -static void fuse_release_user_pages(struct fuse_args_pages *ap,
+> +static void fuse_release_user_pages(struct fuse_args_pages *ap, ssize_t nres,
+>  				    bool should_dirty)
+>  {
+>  	unsigned int i;
+> @@ -656,6 +656,9 @@ static void fuse_release_user_pages(struct fuse_args_pages *ap,
+>  		if (ap->args.is_pinned)
+>  			unpin_user_page(ap->pages[i]);
+>  	}
+> +
+> +	if (nres > 0 && ap->args.invalidate_vmap)
+> +		invalidate_kernel_vmap_range(ap->args.vmap_base, nres);
+>  }
+>  
+>  static void fuse_io_release(struct kref *kref)
+> @@ -754,25 +757,29 @@ static void fuse_aio_complete_req(struct fuse_mount *fm, struct fuse_args *args,
+>  	struct fuse_io_args *ia = container_of(args, typeof(*ia), ap.args);
+>  	struct fuse_io_priv *io = ia->io;
+>  	ssize_t pos = -1;
+> -
+> -	fuse_release_user_pages(&ia->ap, io->should_dirty);
+> +	size_t nres;
+>  
+>  	if (err) {
+>  		/* Nothing */
+>  	} else if (io->write) {
+>  		if (ia->write.out.size > ia->write.in.size) {
+>  			err = -EIO;
+> -		} else if (ia->write.in.size != ia->write.out.size) {
+> -			pos = ia->write.in.offset - io->offset +
+> -				ia->write.out.size;
+> +		} else {
+> +			nres = ia->write.out.size;
+> +			if (ia->write.in.size != ia->write.out.size)
+> +				pos = ia->write.in.offset - io->offset +
+> +				      ia->write.out.size;
+>  		}
+>  	} else {
+>  		u32 outsize = args->out_args[0].size;
+>  
+> +		nres = outsize;
+>  		if (ia->read.in.size != outsize)
+>  			pos = ia->read.in.offset - io->offset + outsize;
+>  	}
+>  
+> +	fuse_release_user_pages(&ia->ap, err ?: nres, io->should_dirty);
+> +
+>  	fuse_aio_complete(io, err, pos);
+>  	fuse_io_free(ia);
+>  }
+> @@ -1467,24 +1474,37 @@ static inline size_t fuse_get_frag_size(const struct iov_iter *ii,
+>  
+>  static int fuse_get_user_pages(struct fuse_args_pages *ap, struct iov_iter *ii,
+>  			       size_t *nbytesp, int write,
+> -			       unsigned int max_pages)
+> +			       unsigned int max_pages,
+> +			       bool use_pages_for_kvec_io)
+>  {
+> +	bool flush_or_invalidate = false;
+>  	size_t nbytes = 0;  /* # bytes already packed in req */
+>  	ssize_t ret = 0;
+>  
+> -	/* Special case for kernel I/O: can copy directly into the buffer */
+> +	/* Special case for kernel I/O: can copy directly into the buffer.
+> +	 * However if the implementation of fuse_conn requires pages instead of
+> +	 * pointer (e.g., virtio-fs), use iov_iter_extract_pages() instead.
+> +	 */
+>  	if (iov_iter_is_kvec(ii)) {
+> -		unsigned long user_addr = fuse_get_user_addr(ii);
+> -		size_t frag_size = fuse_get_frag_size(ii, *nbytesp);
+> +		void *user_addr = (void *)fuse_get_user_addr(ii);
+>  
+> -		if (write)
+> -			ap->args.in_args[1].value = (void *) user_addr;
+> -		else
+> -			ap->args.out_args[0].value = (void *) user_addr;
+> +		if (!use_pages_for_kvec_io) {
+> +			size_t frag_size = fuse_get_frag_size(ii, *nbytesp);
+>  
+> -		iov_iter_advance(ii, frag_size);
+> -		*nbytesp = frag_size;
+> -		return 0;
+> +			if (write)
+> +				ap->args.in_args[1].value = user_addr;
+> +			else
+> +				ap->args.out_args[0].value = user_addr;
+> +
+> +			iov_iter_advance(ii, frag_size);
+> +			*nbytesp = frag_size;
+> +			return 0;
+> +		}
+> +
+> +		if (is_vmalloc_addr(user_addr)) {
+> +			ap->args.vmap_base = user_addr;
+> +			flush_or_invalidate = true;
+
+Could we move flush_kernel_vmap_range() upon here, so that
+flush_or_invalidate is not needed anymore and the code looks cleaner?
+
+> +		}
+>  	}
+>  
+>  	while (nbytes < *nbytesp && ap->num_pages < max_pages) {
+> @@ -1513,6 +1533,10 @@ static int fuse_get_user_pages(struct fuse_args_pages *ap, struct iov_iter *ii,
+>  			(PAGE_SIZE - ret) & (PAGE_SIZE - 1);
+>  	}
+>  
+> +	if (write && flush_or_invalidate)
+> +		flush_kernel_vmap_range(ap->args.vmap_base, nbytes);
+> +
+> +	ap->args.invalidate_vmap = !write && flush_or_invalidate;
+
+How about initializing vmap_base only when the data buffer is vmalloced
+and it's a read request?  In this case invalidate_vmap is no longer needed.
+
+>  	ap->args.is_pinned = iov_iter_extract_will_pin(ii);
+>  	ap->args.user_pages = true;
+>  	if (write)
+> @@ -1581,7 +1605,7 @@ ssize_t fuse_direct_io(struct fuse_io_priv *io, struct iov_iter *iter,
+>  		size_t nbytes = min(count, nmax);
+>  
+>  		err = fuse_get_user_pages(&ia->ap, iter, &nbytes, write,
+> -					  max_pages);
+> +					  max_pages, fc->use_pages_for_kvec_io);
+>  		if (err && !nbytes)
+>  			break;
+>  
+> @@ -1595,7 +1619,7 @@ ssize_t fuse_direct_io(struct fuse_io_priv *io, struct iov_iter *iter,
+>  		}
+>  
+>  		if (!io->async || nres < 0) {
+> -			fuse_release_user_pages(&ia->ap, io->should_dirty);
+> +			fuse_release_user_pages(&ia->ap, nres, io->should_dirty);
+>  			fuse_io_free(ia);
+>  		}
+>  		ia = NULL;
+> diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
+> index f23919610313..79add14c363f 100644
+> --- a/fs/fuse/fuse_i.h
+> +++ b/fs/fuse/fuse_i.h
+> @@ -309,9 +309,12 @@ struct fuse_args {
+>  	bool may_block:1;
+>  	bool is_ext:1;
+>  	bool is_pinned:1;
+> +	bool invalidate_vmap:1;
+>  	struct fuse_in_arg in_args[3];
+>  	struct fuse_arg out_args[2];
+>  	void (*end)(struct fuse_mount *fm, struct fuse_args *args, int error);
+> +	/* Used for kvec iter backed by vmalloc address */
+> +	void *vmap_base;
+>  };
+>  
+>  struct fuse_args_pages {
+> @@ -860,6 +863,9 @@ struct fuse_conn {
+>  	/** Passthrough support for read/write IO */
+>  	unsigned int passthrough:1;
+>  
+> +	/* Use pages instead of pointer for kernel I/O */
+> +	unsigned int use_pages_for_kvec_io:1;
+
+Maybe we need a better (actually shorter) name for this flag. kvec_pages?
+
+> +
+>  	/** Maximum stack depth for passthrough backing files */
+>  	int max_stack_depth;
+>  
+> diff --git a/fs/fuse/virtio_fs.c b/fs/fuse/virtio_fs.c
+> index dd5260141615..43d66ab5e891 100644
+> --- a/fs/fuse/virtio_fs.c
+> +++ b/fs/fuse/virtio_fs.c
+> @@ -1568,6 +1568,7 @@ static int virtio_fs_get_tree(struct fs_context *fsc)
+>  	fc->delete_stale = true;
+>  	fc->auto_submounts = true;
+>  	fc->sync_fs = true;
+> +	fc->use_pages_for_kvec_io = true;
+>  
+>  	/* Tell FUSE to split requests that exceed the virtqueue's size */
+>  	fc->max_pages_limit = min_t(unsigned int, fc->max_pages_limit,
+
 -- 
-Michal Hocko
-SUSE Labs
+Thanks,
+Jingbo
 
