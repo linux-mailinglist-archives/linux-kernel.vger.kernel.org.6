@@ -1,238 +1,183 @@
-Return-Path: <linux-kernel+bounces-313372-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313375-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3709296A4A2
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 18:38:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47AAF96A4AF
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 18:42:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5B77B1C2112F
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 16:38:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F3715284DD7
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 16:42:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5886118D64F;
-	Tue,  3 Sep 2024 16:38:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="pakxOuLz";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="rXlJJayy";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="BYl+Yy8D";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="LUXPaLBD"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 993D018BC39;
+	Tue,  3 Sep 2024 16:42:29 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6E8618BBBD;
-	Tue,  3 Sep 2024 16:38:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD3E518BC12
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2024 16:42:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725381513; cv=none; b=brb6M27m6dcBzpae2AVDNSfR1NNAmltYv7HQTfKq+myhtuKh5dsmn28XSYJn5bV4HS2i++EYahYMaIzull0umwkCNCMFHqh6EIX1WUnLGGEhWz8pZHfXBSM8Inu993GfB3VwON70SCkcAponQadrILfkhOLRV4DG+iSDqT8TE1I=
+	t=1725381749; cv=none; b=IK+cy8NBXdjMfx5wD7RxK+ExfJecXBRt9y1jg5ajie3+ReUuQaO3JDXlaRnF0MQFn7WG2qsDZv8MoE7a8NGoYu4mFoEEnamBUkruMt54WtjyBuNpqyMposlG8pmEpqjlLMOQxfU0ZNFg6mnhFD4+oP5stHs9Wle9jntUNjzweyI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725381513; c=relaxed/simple;
-	bh=LpQvR2HvzyH/c8qnap9HnqIK8r52wctDLvUarPcSTBs=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=I3IdK8TMnxjZCrpUZlcTqj3UjXIPHw2/661vBNbWviP46srg3ytYZd9Cqhrj8r1RNKxxqj1OcnSwNwwmbj2Y98HusnKfbDMek2k0Mfh9tLDShRjTL7dc3kWS4GtVOPzZmnm0QZmR1RMsDtazZzUaVBPC12DKNBqLsZExtOnIrpU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=pakxOuLz; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=rXlJJayy; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=BYl+Yy8D; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=LUXPaLBD; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id D752E1FD3E;
-	Tue,  3 Sep 2024 16:38:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1725381510; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XGsMAuFIuxIETZfL4882Kac2whnAuVvMgj76Uh+vSoY=;
-	b=pakxOuLz2+853Wa/eXZ8plzfMIMkTkjneCWiOX41D9kPmDqrU6XYw42d0SFykuBYO3PzWc
-	Gg2XB1XQ4SjqsmOf+WHGOYjcc/Mjwhp+7+RybDOEzjgQ6k8MTcmED4lnYaSnW1IBJ79LEo
-	lwAu5OtN4MxNX6INKjGtnq9Gsjy5VwE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1725381510;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XGsMAuFIuxIETZfL4882Kac2whnAuVvMgj76Uh+vSoY=;
-	b=rXlJJayyP8/kQfEJe6eIh0wbsKyNkC1xbrSiRDSFtkKydcPB8XU7Ra6zbJetpB9uDHNFeg
-	dTlGCTiMApNDzwAg==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1725381509; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XGsMAuFIuxIETZfL4882Kac2whnAuVvMgj76Uh+vSoY=;
-	b=BYl+Yy8DYcJ/YiW4bj+ZDjZmEtzAIippKdUENMrK6umgTq+LvthGIjlxO1mwICvBoVfyhn
-	WdPQDhOzIhcZKj2cY6NKgY5m6LTVL2SqMhCMsg/he3bmh37faLI1njQrUnyooCncJIDDiu
-	wbvitIAFJZ+8vPNl4/aA2nGQcIDmJSI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1725381509;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XGsMAuFIuxIETZfL4882Kac2whnAuVvMgj76Uh+vSoY=;
-	b=LUXPaLBDGLufIkPjEjxtR81T3k6XN0UPmICd982JppiShwng6AvGGyan/wYa9bJt5P80ES
-	jT7wZ4yuZ+LDxzBw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 7C20413A80;
-	Tue,  3 Sep 2024 16:38:29 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id CQFlGIU712aABQAAD6G6ig
-	(envelope-from <krisman@suse.de>); Tue, 03 Sep 2024 16:38:29 +0000
-From: Gabriel Krisman Bertazi <krisman@suse.de>
-To: =?utf-8?Q?Andr=C3=A9?= Almeida <andrealmeid@igalia.com>
-Cc: Hugh Dickins <hughd@google.com>,  Andrew Morton
- <akpm@linux-foundation.org>,  Alexander Viro <viro@zeniv.linux.org.uk>,
-  Christian Brauner <brauner@kernel.org>,  Jan Kara <jack@suse.cz>,
-  krisman@kernel.org,  linux-mm@kvack.org,  linux-kernel@vger.kernel.org,
-  linux-fsdevel@vger.kernel.org,  kernel-dev@igalia.com,  Daniel Rosenberg
- <drosen@google.com>,  smcv@collabora.com,  Christoph Hellwig <hch@lst.de>
-Subject: Re: [PATCH v2 8/8] docs: tmpfs: Add casefold options
-In-Reply-To: <20240902225511.757831-9-andrealmeid@igalia.com>
- (=?utf-8?Q?=22Andr=C3=A9?=
-	Almeida"'s message of "Mon, 2 Sep 2024 19:55:10 -0300")
-References: <20240902225511.757831-1-andrealmeid@igalia.com>
-	<20240902225511.757831-9-andrealmeid@igalia.com>
-Date: Tue, 03 Sep 2024 12:38:24 -0400
-Message-ID: <871q20hev3.fsf@mailhost.krisman.be>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1725381749; c=relaxed/simple;
+	bh=succtZnmFgEiG27MfMyppGZ0dUL7MSPBoc6Jz59uogU=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=pdH7ZmWMgTqDUxIZ3CoOeoYrk8C7/SlUN8dH+PwpTYeFHdxAlPOQDV+U6g0RCFzoRCQR7/vEWnDqdgKbeO/Pdvjv0Ecz57E0VezRFQWCL7CX09tCQStQRO0a4vf2z1OgMuVWDEAaKz1Z4zgM2vbdKXe6HHw8TZK4wQrMzx/plx0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-39d4cef7aa7so55968675ab.0
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2024 09:42:27 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725381747; x=1725986547;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=d+b/Aq/Hn2smUxUjq9y3DTYsF2A0ukafPUUwQ55d1uk=;
+        b=LdqAdrfTG79YSlWvUbFn1uznC7pOKjAFR1b2cwTsX28A7S7i2dOB8bLeuDoWWyYPEb
+         FDdJcOm21wN+86pgtuk981KxVB2IAnXMe3+UVXGQ1fP0io63VU7GjISVTdB5PydAHQ1B
+         W55gZEfmHXX1KOW+VBSUFuo27fhb4KBUcrhn4YiudJCvX0SfjZDWXgfmPsITM5e0ZthF
+         ay0B16l0zqlNaq9wae1K0twMDFeKc+3LqSg/dOQ8/eb6KvRpF2YCMlpRSFP+B4V82MT/
+         TZCAqHFr/fW7W3MorWKAFE97VHGBmULsxDNLNyOpfmzTfZ65TXs4UdVEv6j4rqSbUvoJ
+         72EQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW2cBo1YTZWpuDriHmFfOxZ/2gXyf0SDOf2USQpaRVQcc/2DbGRwLuGBzth3ulFX97f/5Clil5ZVlDdUnI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxF2KKcWXPVDvrlwDxzbPh+JvtQLBOg7i4WYmcZxYNm/M8E/9NS
+	3Jptbc7kWA+WGzWW/83vsBxp8I/xeDZWyItGhvPjTmjuUtsaTr+eTA43J6Tb0qdBLW5zC6lzE7L
+	48BBsBhk0f5VCifK885m628HXVHiXLBiK7Lasoh3gqRVuVRsgCKIEl58=
+X-Google-Smtp-Source: AGHT+IGk7hopY3usx07mrJ95n3oFmoEkwAzp8ur2+76gqxWJOTvyEziZWEkBK7PiInl7zHZjwPQyrcxr+7PFYO2YCOcwK6i3HEm4
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-0.993];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[14];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[igalia.com:email,mailhost.krisman.be:mid]
-X-Spam-Score: -4.30
-X-Spam-Flag: NO
+X-Received: by 2002:a05:6638:8904:b0:4c2:7179:ce03 with SMTP id
+ 8926c6da1cb9f-4d017dc2862mr600899173.2.1725381746866; Tue, 03 Sep 2024
+ 09:42:26 -0700 (PDT)
+Date: Tue, 03 Sep 2024 09:42:26 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000001fcd17062139be6d@google.com>
+Subject: [syzbot] [kernel?] upstream-arm64 test error: kernel panic: VFS:
+ Unable to mount root fs on unknown-block(NUM,NUM)
+From: syzbot <syzbot+3d91bb43ea9bd71b490e@syzkaller.appspotmail.com>
+To: catalin.marinas@arm.com, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
+	will@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Andr=C3=A9 Almeida <andrealmeid@igalia.com> writes:
+Hello,
 
-> Document mounting options for casefold support in tmpfs.
->
-> Signed-off-by: Andr=C3=A9 Almeida <andrealmeid@igalia.com>
-> ---
->  Documentation/filesystems/tmpfs.rst | 37 +++++++++++++++++++++++++++++
->  1 file changed, 37 insertions(+)
->
-> diff --git a/Documentation/filesystems/tmpfs.rst b/Documentation/filesyst=
-ems/tmpfs.rst
-> index 56a26c843dbe..ce24fb16979a 100644
-> --- a/Documentation/filesystems/tmpfs.rst
-> +++ b/Documentation/filesystems/tmpfs.rst
-> @@ -241,6 +241,41 @@ So 'mount -t tmpfs -o size=3D10G,nr_inodes=3D10k,mod=
-e=3D700 tmpfs /mytmpfs'
->  will give you tmpfs instance on /mytmpfs which can allocate 10GB
->  RAM/SWAP in 10240 inodes and it is only accessible by root.
->=20=20
-> +tmpfs has the following mounting options for case-insesitive lookups sup=
-port:
+syzbot found the following issue on:
 
-insensitive
+HEAD commit:    8efd4bbd16de Merge branch 'for-next/core' into for-kernelci
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
+console output: https://syzkaller.appspot.com/x/log.txt?x=17016cfb980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=e8ce0989a72ac4ae
+dashboard link: https://syzkaller.appspot.com/bug?extid=3d91bb43ea9bd71b490e
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+userspace arch: arm64
 
-> +
-> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D =3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D
-> +casefold          Enable casefold support at this mount point using the =
-given
-> +                  argument as the encoding standard. Currently only utf8
-> +                  encodings are supported.
-> +strict_encoding   Enable strict encoding at this mount point (disabled by
-> +                  default). This means that invalid sequences will be re=
-jected
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/915e34fff8d7/disk-8efd4bbd.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/630f1f097016/vmlinux-8efd4bbd.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/1f1385be55d6/Image-8efd4bbd.gz.xz
 
-Invalid sequences is not clear. Perhaps:
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+3d91bb43ea9bd71b490e@syzkaller.appspotmail.com
 
-In this mode, the filesystem refuses to create file and directory with
-names containing invalid UTF-8 characters.
+ (driver?)
+  103:00001     262144 nvme0n1p1 fb1dbdda-6850-4ddd-ad86-b1774de646a7
+
+  103:00002    1048576 nvme0n1p2 d730f21b-d9a9-4cec-9f43-3402be542af1
+
+1f00             128 mtdblock0 
+ (driver?)
+List of all bdev filesystems:
+ reiserfs
+ ext3
+ ext2
+ ext4
+ cramfs
+ squashfs
+ minix
+ vfat
+ msdos
+ exfat
+ bfs
+ iso9660
+ hfsplus
+ hfs
+ vxfs
+ sysv
+ v7
+ hpfs
+ ntfs3
+ ufs
+ efs
+ affs
+ romfs
+ qnx4
+ qnx6
+ adfs
+ fuseblk
+ udf
+ omfs
+ jfs
+ xfs
+ nilfs2
+ befs
+ ocfs2
+ gfs2
+ gfs2meta
+ f2fs
+ bcachefs
+ erofs
+ zonefs
+ btrfs
+
+Kernel panic - not syncing: VFS: Unable to mount root fs on unknown-block(0,0)
+CPU: 0 UID: 0 PID: 1 Comm: swapper/0 Not tainted 6.11.0-rc5-syzkaller-g8efd4bbd16de #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/27/2024
+Call trace:
+ dump_backtrace+0x1b8/0x1e4 arch/arm64/kernel/stacktrace.c:317
+ show_stack+0x2c/0x3c arch/arm64/kernel/stacktrace.c:324
+ __dump_stack lib/dump_stack.c:93 [inline]
+ dump_stack_lvl+0xe4/0x150 lib/dump_stack.c:119
+ dump_stack+0x1c/0x28 lib/dump_stack.c:128
+ panic+0x300/0x884 kernel/panic.c:354
+ mount_root_generic+0x4c4/0x5b8 init/do_mounts.c:236
+ mount_block_root+0x6c/0x7c init/do_mounts.c:380
+ mount_root+0xb4/0xe4 init/do_mounts.c:407
+ prepare_namespace+0xdc/0x11c init/do_mounts.c:491
+ kernel_init_freeable+0x360/0x478 init/main.c:1591
+ kernel_init+0x24/0x2a0 init/main.c:1467
+ ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:860
+SMP: stopping secondary CPUs
+Kernel Offset: disabled
+CPU features: 0x08,00000103,80100128,42017203
+Memory Limit: none
+Rebooting in 86400 seconds..
 
 
-> +                  by the file system.
-> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D =3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D
-> +
-> +Note that this option doesn't enable casefold by default; one needs to s=
-et
-> +casefold flag per directory, setting the +F attribute in an empty direct=
-ory. New
-> +directories within a casefolded one will inherit the flag.
-> +
-> +Example::
-> +
-> +    $ mount -t tmpfs -o casefold=3Dutf8-12.1.0,cf_strict fs_name /mytmpfs
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-cf_strict should be strict_encoding.
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-I keep wondering if we should accept 'casefold' without any argument to
-just mean the latest encoding version available.  Sure, that is a
-problem for filesystems that can be moved between systems, but for tmpfs
-that is not a problem.  It is cumbersome to specify the version and most
-will just want the latest.
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
-> +    $ cd /mytmpfs # case-sensitive by default
-> +    $ touch a; touch A
-> +    $ ls
-> +    A  a
-> +    $ mkdir B
-> +    $ cd b
-> +    cd: The directory 'b' does not exist
-> +    $ mkdir casefold_dir
-> +    $ chattr +F casefold_dir/ # marking it as case-insensitive
-> +    $ cd
-> +    $ touch dir/a; touch dir/A
-> +    $ ls dir
-> +    a
-> +    $ mkdir B
-> +    $ cd b
-> +    $ pwd
-> +    /home/user/mytmpfs/casefold_dir/B
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
 
-I don't think we need this example,  since it is just generic
-how case-insensitiveness work.
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
 
->=20=20
->  :Author:
->     Christoph Rohland <cr@sap.com>, 1.12.01
-> @@ -250,3 +285,5 @@ RAM/SWAP in 10240 inodes and it is only accessible by=
- root.
->     KOSAKI Motohiro, 16 Mar 2010
->  :Updated:
->     Chris Down, 13 July 2020
-> +:Updated:
-> +   Andr=C3=A9 Almeida, 23 Aug 2024
-
---=20
-Gabriel Krisman Bertazi
+If you want to undo deduplication, reply with:
+#syz undup
 
