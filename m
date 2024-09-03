@@ -1,55 +1,60 @@
-Return-Path: <linux-kernel+bounces-312291-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312290-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 707CD969492
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 09:04:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C763696948F
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 09:04:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2C3A02836D3
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 07:04:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C1ED283574
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 07:04:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 920041D6196;
-	Tue,  3 Sep 2024 07:04:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C9D01D61A6;
+	Tue,  3 Sep 2024 07:04:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="ZEfVjjOR"
-Received: from mail-m16.yeah.net (mail-m16.yeah.net [1.95.21.16])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EA7D1CE6EA;
-	Tue,  3 Sep 2024 07:04:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=1.95.21.16
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="CB6s09fH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 838921CCEEC;
+	Tue,  3 Sep 2024 07:04:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725347081; cv=none; b=flR1W9wZsq7BguxDvg28AGaTuJItGgHyR6hkFAufDgWiECbNgA43pmB3GzUUXi9BBrdR4fDkj4Xq7F1UhMzm2m7IzDjzzxx1DNgzAjRqSDfZkselZIEaxxc0CwtlyAItqzlS2FAMm4UtDh+A3ZybEmw7PArTwHxVT8I7NS2qjMk=
+	t=1725347045; cv=none; b=JbCZ4oR1pJFnu2WHLDzWcaZaM6zY6CarLLsYy1dzGT6cn3BHPLxU/yin1ED8xEeM0NlFPmFoc8Af//fbcaUR/VH9XJibQBUJiTkqCCq4e1C7xy7/JHSFTAsgH0igNNJnKdkmH0QsD7OHfgacmJsJuXooMXva8mJ9XGVO3SrPFFk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725347081; c=relaxed/simple;
-	bh=54woJQz+5ijdRGgHZexgNM1OLDQAS3przto38Kwiygw=;
+	s=arc-20240116; t=1725347045; c=relaxed/simple;
+	bh=Slca8lD1DlvSk2D0BUDJG9aG9GeCUTaKROfks2UHNiA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uer4W5s7GO3VAnQ4pd18TbTnlK7Q/rdH6oPzwmnjAIb9l8AUPjxYovU+0a5EBK50yuKDZr0YaMb0JJ9fuqQWAvcGawE13uO1XKn1aEZwXwm8YzNeKRUlCAwkhPQe+SRQ88EbA2Qc7ep/aR04CA1PTlXM5JR4UtEqBKgVu7SFwEw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=ZEfVjjOR; arc=none smtp.client-ip=1.95.21.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
-	s=s110527; h=Date:From:Subject:Message-ID:MIME-Version:
-	Content-Type; bh=760U01fPK5vwIsNnOzgMhiCsuAQbyv3hm5HmSlaeDdQ=;
-	b=ZEfVjjORGGSryolJTU8/5ucSfYQys3mY88ATn9qGC9JLAD4/eBP97zphSlF9qU
-	1I4qmktm7I1S+6R9k6dwrl6qImGQHJvPpSJl7qXZANHDZjfhLLcP7Dsbkv2o4Xf8
-	B4zr5CtNfwRBvk+LClFprRNhRzWxxCyolxAwtt/YAT89M=
-Received: from dragon (unknown [114.216.210.89])
-	by gzsmtp2 (Coremail) with SMTP id Ms8vCgD3v0nbtNZmi3ZcAA--.51275S3;
-	Tue, 03 Sep 2024 15:03:57 +0800 (CST)
-Date: Tue, 3 Sep 2024 15:03:55 +0800
-From: Shawn Guo <shawnguo2@yeah.net>
-To: Lukasz Majewski <lukma@denx.de>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, devicetree@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] ARM: dts: imx28-lwe: Fix partitions definitions
-Message-ID: <Zta029K48fGUwV4g@dragon>
-References: <20240902114652.893272-1-lukma@denx.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=H5O2BxRWzonx+tkU3t6fFAi8RhXRew27Blbs1sXB4E+/4Hc1xW01AF3LiySCEaJRAIO02eBEu+67qeVCzBEF/Y8UJ63ydNhglbUaKtBeQCo78LuhBELg+/aJcDgC1wPJsDnUMh+ivX0YpXpo54qsCJadaq48UQ4XAjTsAPe4s14=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=CB6s09fH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86AFBC4CEC6;
+	Tue,  3 Sep 2024 07:04:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1725347045;
+	bh=Slca8lD1DlvSk2D0BUDJG9aG9GeCUTaKROfks2UHNiA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=CB6s09fHVKI8KSqLISVCSqr00f49L2O+jAJfDiv/EQPHQH5xaxdvEayXMJ0BtN0xY
+	 ACdON3+y+2K70BLZR8oung6+fO1hdye1bUsulUTXLF7x4HtALOZlims/IfFC5kWv2h
+	 37YdzRLufUNX7PLRJBJdjk3jwseKo8V8GLy0Ez3o=
+Date: Tue, 3 Sep 2024 09:04:02 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Hans de Goede <hdegoede@redhat.com>
+Cc: Sebastian Reichel <sre@kernel.org>,
+	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>,
+	MyungJoo Ham <myungjoo.ham@samsung.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Enric Balletbo Serra <enric.balletbo@collabora.com>,
+	Andrey Smirnov <andrew.smirnov@gmail.com>, linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+	linux-phy@lists.infradead.org
+Subject: Re: [PATCH 1/6] power: supply: "usb_type" property may be written to
+Message-ID: <2024090342-succulent-unkempt-666c@gregkh>
+References: <20240831142039.28830-1-hdegoede@redhat.com>
+ <20240831142039.28830-2-hdegoede@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,19 +63,38 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240902114652.893272-1-lukma@denx.de>
-X-CM-TRANSID:Ms8vCgD3v0nbtNZmi3ZcAA--.51275S3
-X-Coremail-Antispam: 1Uf129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
-	VFW2AGmfu7bjvjm3AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxUIWE_DUUUU
-X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiEQNPZWbWfDOzYwAAsX
+In-Reply-To: <20240831142039.28830-2-hdegoede@redhat.com>
 
-On Mon, Sep 02, 2024 at 01:46:50PM +0200, Lukasz Majewski wrote:
-> The SPI-NOR memory layout has evolved during time lifetime of the
-> device - for example special partitions to keep track of booted devices
-> for A/B booting scheme were added.
+On Sat, Aug 31, 2024 at 04:20:34PM +0200, Hans de Goede wrote:
+> According to Documentation/ABI/testing/sysfs-class-power the "usb_type"
+> property is Read-Only.
 > 
-> Signed-off-by: Lukasz Majewski <lukma@denx.de>
+> For power-supplies which consume USB power such as battery charger chips,
+> this is correct.
+> 
+> But the UCS1002 USB Port Power Controller driver which is a driver
+> for a chip which is a power-source for USB-A charging ports "usb_type"
+> is actually writable to configure the type of USB charger emulated
+> by the USB-A port.
 
-Applied all, thanks!
+Ick, crazy hardware :(
 
+> 
+> Adjust the docs and the power_supply_sysfs.c code to adjust for this
+> new writeable use of "usb_type":
+> 
+> 1. Update Documentation/ABI/testing/sysfs-class-power to document that
+> "usb_type" may be writable
+> 
+> 2. Change the power_supply_attr type in power_supply_sysfs.c from
+> POWER_SUPPLY_ATTR() into POWER_SUPPLY_ENUM_ATTR() so that the various
+> usb_type string values from POWER_SUPPLY_TYPE_TEXT[] such as e.g.
+> "SDP" and "USB_PD" can be written to the "usb_type" attribute instead
+> of only accepting integer values.
+> 
+> Cc: Enric Balletbo Serra <enric.balletbo@collabora.com>
+> Cc: Andrey Smirnov <andrew.smirnov@gmail.com>
+> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+
+Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
