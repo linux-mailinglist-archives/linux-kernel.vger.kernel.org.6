@@ -1,130 +1,116 @@
-Return-Path: <linux-kernel+bounces-312224-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312223-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A71F89693C6
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 08:35:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DFF1B9693C4
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 08:35:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C90161C22E62
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 06:35:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1F2B21C22D0E
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 06:35:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C1EC1D54D7;
-	Tue,  3 Sep 2024 06:34:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 734BF1D6194;
+	Tue,  3 Sep 2024 06:34:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FGnz37Ym"
-Received: from mail-qv1-f46.google.com (mail-qv1-f46.google.com [209.85.219.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U20Mecf9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 491A01CEAD4;
-	Tue,  3 Sep 2024 06:34:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C72424315D;
+	Tue,  3 Sep 2024 06:34:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725345284; cv=none; b=XSKxI0mQGVChBtiI5K+0VCtl+7bn5+9KaTnt41iYFiqNDL70pSnRd3Q7qLlidqgbd0tw2Wf5X+3iqKxr/CGehmFDY7AM0uoZpjOHscfCRjEeMpDIJMS8CufNXYjLp2VQhayxsiNl6QWj3YzKwME36dMQnMVq5scmeKiVGHSo0vg=
+	t=1725345266; cv=none; b=PfO8fO5PEx6CRQN9f6DI4/GSwi0gP9r94CAGDhwuVBizny035gyJB8VtusZUTnwTydy5oJlGMtw6JkTdn8GLGHS8XZFthqFjoFJzO8MVN9fm2lhoBhx63W24ADj7+FZSuMMrCHsHnI8lG9h6eFFRlV0KWmrfZiQhJ420EvFC5zw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725345284; c=relaxed/simple;
-	bh=Wv8Ur0Meq6UKefyBdzxbNxw7WEZwm6adxFTh2bzlHe4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Aoa1h9Jo/KHeyy/uGJO/CBegYm+c4cXN1lSwgKWRWmWitedI5srd/UH/qIxQkjooZYMzkZ2SIHAP8eXgDllNdvlvB+aemiVp2VPtxgyWUAfTqpZjwwj7rK4ees7aMEB5JjQ8fAJ222L8C5H0GRdRp+2f2aOE6B2tF0NsGezfu5I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FGnz37Ym; arc=none smtp.client-ip=209.85.219.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f46.google.com with SMTP id 6a1803df08f44-6c3551ce5c9so23375876d6.0;
-        Mon, 02 Sep 2024 23:34:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725345282; x=1725950082; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Wv8Ur0Meq6UKefyBdzxbNxw7WEZwm6adxFTh2bzlHe4=;
-        b=FGnz37Ym83SSh+xXFSWYgmezi8MN1ws2SQiCgIcUjmodCwbdnu5bCMRk3lkN1M+SjP
-         HDV7i1dDiPQiHNBsfMO32ylnu2KmqKrAFqFsosTZ97EFaxmr0x4RvU8/eJhpi0TheT81
-         soqpC37Z05p01H2GGFwkThgC+62xCzPMwbdMN9Hn0blScyhMnvlxDNlcw1cQqSjLUos9
-         +6ICSjsMxzvwUuU2b+T3etdrbW+PQH0RXttU7i2R/IDLgK5uN91y3gpNlwK/sAd+X8MN
-         IemUXc+4t3LWvlJdPUy3zhcFla23o0T0SZK9VA5eM7M1ffFjfNgIIk86iZQ+sKNbXNSY
-         t4Xw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725345282; x=1725950082;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Wv8Ur0Meq6UKefyBdzxbNxw7WEZwm6adxFTh2bzlHe4=;
-        b=leUjCHareQfXKdOqpUGkdwZE6zo5FWMiaHW42jPs+A4AHTo2nVSNFhjsWpqzNDZ5Hc
-         OoOSKZASF9SnrulqgM6zlbsmk4PToKGrMxCpQ15vCU8ff0h8BH3vfm2b6KTvtQMMYQM0
-         lwSjy6qOkRIjbbM7HOWPp0VmfAMvAyVGY4l24g1iNXf+nZC0IUFksACZOdAM6wiuKr9y
-         kA+7zcTPoRG+ZCc0P8rgun1SlaoAvuClL5maxR+qAfxREjOHIkS6z2yYfYUODuVBkQxF
-         DGdGuq58cO6jZ8yvSW5IqpWKRiw3dbB7PP86FVOGmAT29Y3hF7LED90H6nkn5RhuWiAq
-         hctA==
-X-Forwarded-Encrypted: i=1; AJvYcCULqNf0xpXBedJTEvEWFQXzk1tBkoZ7ANwcxzUSXncSr4JqnvS0VdnotStYQK2sijX8FVydPPjYG8pytmYQ@vger.kernel.org, AJvYcCVBOtBmzCG/kzi8HHdbA83Twv2P+29BX/sNf+wDbvDiO2fNmQius7rUixBak7ijtj8zSrRorWk/ykpO8rkd@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw8W6P1MgMFHxnI64WZgAz08e+d3bfG5EnANuQo+czAYwMb4vT1
-	AXl3r0B7Kc2WpMXfZOVVU1TzMZ6S2si0MMooMMhT2+iI496s98LkGBCC9vROWNLNR29hORumgL/
-	6To8MezpTg7SjzsGF/kga2jjpN3c=
-X-Google-Smtp-Source: AGHT+IHv9LNrpQ60gaO44a46ARNnM3HvLJvdxYBhL9WZNaj42n0QReJ1qZyueALt1fVevYfJBw8qoHdjPn97268yrQg=
-X-Received: by 2002:a05:6214:19e1:b0:6c3:69f9:fb49 with SMTP id
- 6a1803df08f44-6c369fa03d8mr67547076d6.16.1725345282103; Mon, 02 Sep 2024
- 23:34:42 -0700 (PDT)
+	s=arc-20240116; t=1725345266; c=relaxed/simple;
+	bh=ykvQKbVww2Pw3qyF6VdYZp/tM+a7MHm/vrFWiPtbsLk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=g1umUX5gLGTwhvTIrwms/LmTD935D+2mk5sbRJxTlErmXD0HM6K+Oc7qk9360ROO944Ti8Aq/gbyN5RAiFapsmbIF5Qby5IrejKV91nVP91Dp7goCXuMdDZZkUF2F/GWAu6oKgq/ncG+4OvFeCnb0dckdXe5FRHjpdgP6Xi9oqY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U20Mecf9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 464FCC4CEC5;
+	Tue,  3 Sep 2024 06:34:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725345266;
+	bh=ykvQKbVww2Pw3qyF6VdYZp/tM+a7MHm/vrFWiPtbsLk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=U20Mecf9A0iMms5Km6GEmVgPwsX2TZKhNHZbTUlG9hoPKowpZ9q/pGcWPOqd1vuYC
+	 D/KaHdf+OJVpgDqm8YgzYBSt6STVPLhPgie+3H0JtLeiVIdDWanEgrAQuvXp9ICZvA
+	 2kxF56/fd+95qwf9FaPHuiaN3vD45H2w1ngMKzgxSIQYU6HqlGBfIMOpR5JmiUN2nt
+	 9StK46jDWEDBvgOw8xej3/rqp3dqLLuLclZnzlwrR/QfuKC1lE+9rFcyGxk2NldIcs
+	 Gxwtf8ghu3QN9RG5IsED2ei3Ags2V1/y3WVhx5HruP7gP/py+cePehAE3+VzreiEbX
+	 k0ObWsWP976Zg==
+Date: Tue, 3 Sep 2024 08:34:22 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Vasileios Amoiridis <vassilisamir@gmail.com>
+Cc: jic23@kernel.org, lars@metafoo.de, robh@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, andriy.shevchenko@linux.intel.com, ang.iglesiasg@gmail.com, 
+	linus.walleij@linaro.org, biju.das.jz@bp.renesas.com, javier.carrasco.cruz@gmail.com, 
+	semen.protsenko@linaro.org, 579lpy@gmail.com, ak@it-klinger.de, linux-iio@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, christophe.jaillet@wanadoo.fr
+Subject: Re: [PATCH v5 5/7] dt-bindings: iio: pressure: bmp085: Add
+ interrupts for BMP3xx and BMP5xx devices
+Message-ID: <mdxfwawym2tn3afsbq4jmygfkdokpleb7p2deomraqwjc6k5qu@laj4j3fw7k2x>
+References: <20240902184222.24874-1-vassilisamir@gmail.com>
+ <20240902184222.24874-6-vassilisamir@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <Zs959Pa5H5WeY5_i@tiehlicka> <xxs3s22qmlzby3ligct7x5a3fbzzjfdqqt7unmpih64dk3kdyx@vml4m27gpujw>
- <ZtBWxWunhXTh0bhS@tiehlicka> <wjfubyrzk4ovtuae5uht7uhhigkrym2anmo5w5vp7xgq3zss76@s2uy3qindie4>
- <ZtCFP5w6yv/aykui@dread.disaster.area> <CALOAHbCssCSb7zF6VoKugFjAQcMACmOTtSCzd7n8oGfXdsxNsg@mail.gmail.com>
- <ZtPhAdqZgq6s4zmk@dread.disaster.area> <CALOAHbBEF=i7e+Zet-L3vEyQRcwmOn7b6vmut0-ae8_DQipOAw@mail.gmail.com>
- <ZtVzP2wfQoJrBXjF@tiehlicka> <CALOAHbAbzJL31jeGfXnbXmbXMpPv-Ak3o3t0tusjs-N-NHisiQ@mail.gmail.com>
- <ZtWArlHgX8JnZjFm@tiehlicka>
-In-Reply-To: <ZtWArlHgX8JnZjFm@tiehlicka>
-From: Yafang Shao <laoar.shao@gmail.com>
-Date: Tue, 3 Sep 2024 14:34:05 +0800
-Message-ID: <CALOAHbD=mzSBoNqCVf5TTOge4oTZq7Foxdv4H2U1zfBwjNoVKA@mail.gmail.com>
-Subject: Re: [PATCH] bcachefs: Switch to memalloc_flags_do() for vmalloc allocations
-To: Michal Hocko <mhocko@suse.com>
-Cc: Dave Chinner <david@fromorbit.com>, Kent Overstreet <kent.overstreet@linux.dev>, 
-	Matthew Wilcox <willy@infradead.org>, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, Dave Chinner <dchinner@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240902184222.24874-6-vassilisamir@gmail.com>
 
-On Mon, Sep 2, 2024 at 5:09=E2=80=AFPM Michal Hocko <mhocko@suse.com> wrote=
-:
->
-> On Mon 02-09-24 17:01:12, Yafang Shao wrote:
-> > > I really do not see why GFP_NOFAIL should be any special in this
-> > > specific case.
-> >
-> > I believe there's no way to stop it from looping, even if you
-> > implement a sophisticated user space OOM killer. ;)
->
-> User space OOM killer should be helping to replenish a free memory and
-> we have some heuristics to help NOFAIL users out with some portion of
-> memory reserves already IIRC. So we do already give them some special
-> treatment in the page allocator path. Not so much in the reclaim path.
+On Mon, Sep 02, 2024 at 08:42:20PM +0200, Vasileios Amoiridis wrote:
+> Add interrupt options for BMP3xx and BMP5xx devices as well.
+> 
+> Signed-off-by: Vasileios Amoiridis <vassilisamir@gmail.com>
+> ---
+>  .../bindings/iio/pressure/bmp085.yaml         | 22 ++++++++++++++++++-
+>  1 file changed, 21 insertions(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/iio/pressure/bmp085.yaml b/Documentation/devicetree/bindings/iio/pressure/bmp085.yaml
+> index 6fda887ee9d4..20b75865e02f 100644
+> --- a/Documentation/devicetree/bindings/iio/pressure/bmp085.yaml
+> +++ b/Documentation/devicetree/bindings/iio/pressure/bmp085.yaml
+> @@ -48,14 +48,34 @@ properties:
+>  
+>    interrupts:
+>      description:
+> -      interrupt mapping for IRQ (BMP085 only)
+> +      interrupt mapping for IRQ. Supported in BMP085, BMP3xx, BMP5xx
+>      maxItems: 1
+>  
+> +  drive-open-drain:
+> +    description:
+> +      set if the interrupt pin should be configured as open drain.
+> +      If not set, defaults to push-pull configuration.
+> +    type: boolean
+> +
+> +
 
-When setting GFP_NOFAIL, it's important to not only enable direct
-reclaim but also the OOM killer. In scenarios where swap is off and
-there is minimal page cache, setting GFP_NOFAIL without __GFP_FS can
-result in an infinite loop. In other words, GFP_NOFAIL should not be
-used with GFP_NOFS. Unfortunately, many call sites do combine them.
-For example:
+Just one blank liine.
 
-XFS:
+>  required:
+>    - compatible
+>    - vddd-supply
+>    - vdda-supply
+>  
+> +allOf:
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          not:
+> +            enum:
+> +              - bosch,bmp085
+> +              - bosch,bmp380
+> +              - bosch,bmp580
 
-fs/xfs/libxfs/xfs_exchmaps.c: GFP_NOFS | __GFP_NOFAIL
-fs/xfs/xfs_attr_item.c: GFP_NOFS | __GFP_NOFAIL
+Are you sure you tested this patch?
 
-EXT4:
+Best regards,
+Krzysztof
 
-fs/ext4/mballoc.c: GFP_NOFS | __GFP_NOFAIL
-fs/ext4/extents.c: GFP_NOFS | __GFP_NOFAIL
-
-This seems problematic, but I'm not an FS expert. Perhaps Dave or Ted
-could provide further insight.
-
---
-Regards
-
-Yafang
 
