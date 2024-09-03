@@ -1,41 +1,41 @@
-Return-Path: <linux-kernel+bounces-312985-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-312986-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7359969EB0
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 15:08:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 137A4969EB1
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 15:08:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8CAF01F24E16
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 13:08:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B1A341F24DFE
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 13:08:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A31711A7274;
-	Tue,  3 Sep 2024 13:08:09 +0000 (UTC)
-Received: from smtpbgeu2.qq.com (smtpbgeu2.qq.com [18.194.254.142])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 018D91C242A;
+	Tue,  3 Sep 2024 13:08:12 +0000 (UTC)
+Received: from smtpbgbr1.qq.com (smtpbgbr1.qq.com [54.207.19.206])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C57831A726B;
-	Tue,  3 Sep 2024 13:08:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.194.254.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 018241A724C;
+	Tue,  3 Sep 2024 13:08:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.207.19.206
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725368889; cv=none; b=oWKG3xgK+DqMbaSb8AV1SPGKpZpTVcHZ3/8Hf7gYRlzuLNvF2DBtDZh8cE5vLV9FGEfOLL0d5BJvrYbBwCZ0CNmwgomD/L2FCDNTC56J4tRjIkVE7CHKbXRT0RPJp/qHEHg7OKJCKcSNERSeWvzkZl8Hdbwg14LYKMQnDwW/0mk=
+	t=1725368891; cv=none; b=IYFbgjfs0E/V9losBhKX6lsAqmGw3veRFA9AoeytL/8+u1Gc8E9ViWyTIuOpbjrhkF3bebiJcjaXRu1UcYjsEAKCw1UId5Hf/42daBJNVC8EUOiKe62GchYC9qdwNHPj5KJpFeEQPqTCRH6WRfd8sZMNfmm49xMtq/SZEbPw68k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725368889; c=relaxed/simple;
-	bh=u9CwxNkvI3ZJBQnFwfURgj9YQRiyEmNKrwNWOOWYoJ8=;
+	s=arc-20240116; t=1725368891; c=relaxed/simple;
+	bh=KHxS+RzsYQVUstki9O9G2Fth9NOTM3+FP0WNjRpmWGw=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=XQBKu4WpbUf7M1WXz8q4GYt+oFzx8/fT1JbL7BrOOdoWYhtxT9xxahm3Zc7jgo89iU+DJTYPciHE37QYFPInC4YtY+ADpmt2pjh7sIL79i3IlbzK9/JQwcS5CinBQ9moF4Qmuzi2pN+QhLK0jlKRm1k8CwVdu452pscnUjDsX+4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iorw.io; spf=none smtp.mailfrom=iorw.io; arc=none smtp.client-ip=18.194.254.142
+	 MIME-Version; b=cGFrB5if3PLFA9Il9Y0nMqQjTYKqn4wr9d1IEvgneGCtxb6kcJ54EUUjaL8H3MjuoJEB4jMLlILkrJz7vOgjF9pVqWnLtbjdyphlgGC3hzIemYE2tVAtlGI4ixrjHxkXIrZo9d4Q7M0PcK4YBefqU1tHTbdA8aGQcWNleuERD3s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iorw.io; spf=none smtp.mailfrom=iorw.io; arc=none smtp.client-ip=54.207.19.206
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iorw.io
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=iorw.io
-X-QQ-mid: bizesmtp88t1725368790tz166xl2
-X-QQ-Originating-IP: 5Ox9MZOpB4HGff4JCHX+EhqYhjuTtoZvUONrgWtGZ5o=
+X-QQ-mid: bizesmtp88t1725368797tvffge9y
+X-QQ-Originating-IP: IniwHKqgiTyeNYqQCtQD+YECBJEHxDU1F/TeNYWWD5k=
 Received: from localhost.localdomain ( [203.119.160.23])
 	by bizesmtp.qq.com (ESMTP) with 
-	id ; Tue, 03 Sep 2024 21:06:25 +0800 (CST)
+	id ; Tue, 03 Sep 2024 21:06:31 +0800 (CST)
 X-QQ-SSF: 0000000000000000000000000000000
 X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 5789562387442949554
+X-BIZMAIL-ID: 14936481488341771613
 From: Zigit Zo <zig@iorw.io>
 To: ojeda@kernel.org,
 	bjorn3_gh@protonmail.com,
@@ -53,9 +53,9 @@ Cc: zig@iorw.io,
 	llvm@lists.linux.dev,
 	x86@kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 1/2] rust: arch/um: use 'static' relocation model for uml modules
-Date: Tue,  3 Sep 2024 21:06:05 +0800
-Message-ID: <FD7D773099A0C7EC+20240903130606.292935-2-zig@iorw.io>
+Subject: [PATCH 2/2] rust: arch/um: use 'large' code model for uml
+Date: Tue,  3 Sep 2024 21:06:06 +0800
+Message-ID: <54FC087D02C52990+20240903130606.292935-3-zig@iorw.io>
 X-Mailer: git-send-email 2.46.0
 In-Reply-To: <20240903130606.292935-1-zig@iorw.io>
 References: <20240903130606.292935-1-zig@iorw.io>
@@ -69,29 +69,26 @@ Content-Transfer-Encoding: 8bit
 X-QQ-SENDSIZE: 520
 Feedback-ID: bizesmtp:iorw.io:qybglogicsvrgz:qybglogicsvrgz8a-1
 
-In the x86_64 UML, kernel modules compiled with Rust will currently
-generate some R_X86_64_GOTPCREL relocations, which will then be rejected
-by the kernel.
-
-And because of the kernel modules of UML are only got handled by the UML
-itself, relocation model 'static' can work as expected other than 'pie'.
+The Rust modules compiled against UML should be 'large', without this
+the compiler will generate some R_X86_64_32S relocations, but UML is
+running at userspace with signed-address larger than zero, therefore
+makes '__write_relocate_add' treating the relocation as overflowed.
 ---
- arch/um/Makefile | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/um/Makefile | 1 +
+ 1 file changed, 1 insertion(+)
 
 diff --git a/arch/um/Makefile b/arch/um/Makefile
-index 00b63bac5eff..b04b1d4d6dfe 100644
+index b04b1d4d6dfe..c2a9f2102ba7 100644
 --- a/arch/um/Makefile
 +++ b/arch/um/Makefile
-@@ -63,7 +63,7 @@ KBUILD_CFLAGS += $(CFLAGS) $(CFLAGS-y) -D__arch_um__ \
- 	-Din6addr_loopback=kernel_in6addr_loopback \
- 	-Din6addr_any=kernel_in6addr_any -Dstrrchr=kernel_strrchr
+@@ -32,6 +32,7 @@ endif
  
--KBUILD_RUSTFLAGS += -Crelocation-model=pie
-+KBUILD_RUSTFLAGS_KERNEL += -Crelocation-model=pie
+ ifdef CONFIG_64BIT
+ 	KBUILD_CFLAGS += -mcmodel=large
++	KBUILD_RUSTFLAGS += -Ccode-model=large
+ endif
  
- KBUILD_AFLAGS += $(ARCH_INCLUDE)
- 
+ HOST_DIR := arch/$(HEADER_ARCH)
 -- 
 2.46.0
 
