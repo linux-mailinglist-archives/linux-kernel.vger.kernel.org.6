@@ -1,139 +1,131 @@
-Return-Path: <linux-kernel+bounces-313529-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-313530-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B65A696A6B4
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 20:40:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B924E96A6B7
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 20:41:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 675821F24AED
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 18:40:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 76DEC285EE4
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2024 18:41:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4260C191F85;
-	Tue,  3 Sep 2024 18:40:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 404CD191F87;
+	Tue,  3 Sep 2024 18:41:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kCVAeqyQ"
-Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MfTw2diR"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49FAE15574F;
-	Tue,  3 Sep 2024 18:40:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BBCA15574F;
+	Tue,  3 Sep 2024 18:41:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725388843; cv=none; b=vBCZ6b0w9JGs09tPFawfxJBfE9TcNlYt8jeeEo/SeJxq2iJZqj81fcI2CV+iZaOaHTdNq76rX1sjiGFMaXX+rSPydF5F72pYgZCfodiZCmR1ws2jFWq3vkhVL7Kk8Kqe0cNyE3wqHBt/NIBnCcjgDRWBPciaRyKndeobLa3phBI=
+	t=1725388907; cv=none; b=pOyZbCZ+/o/Omk0pLSdnummriJj5/oN6IX1aXXM2WpChUcY2lk8GQruH8n/P0phUr2usysJzuNdyIOvL1+AOgyeFyhsTMPDfBJV0knvA/wZHq8vZq1njTxnHEyT9Q7yz0DuA0rlbKaRUhPe0VGIfu4RZhvBPwOQS9Q9i9Mhkits=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725388843; c=relaxed/simple;
-	bh=O0ueIPA3TfCbFwkD/G6Tfz3Wi9LnRBhHUqC09xoX6ak=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KZCfW1EvRYIpmIoGZNjlk258w3uj/2W4C7oMR5hD/Ku/wjXli4N1VwOY5vFer8FQmNRtaBSZkLxRjBO71ZgghfUxauGpQo+99L+KbFaRxIvnFRbOHailmjUkKp7yoZoE/KBhxQrsT4EWEA2bJLFBhrV4dX3aY9T8BAv47q19Xpc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kCVAeqyQ; arc=none smtp.client-ip=209.85.216.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-2d8881850d9so2807283a91.3;
-        Tue, 03 Sep 2024 11:40:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725388841; x=1725993641; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=6wjgG2ajpqw1hRzc/uMgFC+dB34lcDpuPyL3goEF6q0=;
-        b=kCVAeqyQTR3ah+zBa+skMQwu8L3nx5MQcuxw5RoXjrXkIRkBllRCvKOXOLw4TcJGGA
-         KXdETwPMlbVVncHfdXRtssqQDlEDdVj4qvlRkuGTCC1Sh+Jzbs2HbhC8HTAGvtzp1Orm
-         W/hri/ws84FOoi4iYG6Q8OOiCoI4wnkV1UWHGVWOMZhrpjXJ3LTgkQyDu8U9K8HHk+hA
-         /n1KHP+TtkzvbqU150tBOzNet1lIpwCMPq/3fM+qRcNG1VueQjFA60jdVvneJqfxP4qf
-         WkB9+4e44/vU60Mo1gsG+720n0X5gw1AlywnwHuADL3Oc3DTP4cFK6gAFVIW+e+HgkkA
-         VALw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725388841; x=1725993641;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6wjgG2ajpqw1hRzc/uMgFC+dB34lcDpuPyL3goEF6q0=;
-        b=cS4lGc17EOT0WUGCjB1HbsPBakS1leEQAU7E1luCq5pdRo/g7Vyvkb0JvnFQuUmbX/
-         JLOhI8AHwL91/k0XhIfyELPNOOIT7SLAQKvDzo8dHWsZDMfFYzD+ohiniZIOV12HZKfm
-         +INbV11l9XRFb/vGvshv2b43HMULQv+ncygkN+2dyLodUXjdUvoww6ty3WYwrrcLHSS7
-         8H6S+f9qJPeHT9/uzjU2X2mDyTwGd4JWkugKafIfR03EeN/eNFNCDUyUAVd0K5WsjL5y
-         4A/jZkLeyk6lBYX8e8iZpbnMjRJj99pMXgp7msrSlwHVw746AJpa7ZEqzjEyjpSs9XpF
-         Yp2A==
-X-Forwarded-Encrypted: i=1; AJvYcCWuc5vweyEtkJqoCjmRaecrghPvF2Ne/C1UpL4dEqmZlGnle0WhVQ65i21x/mUFd1cZTtHcNWkMFyH3DQ==@vger.kernel.org, AJvYcCX9+jA12acMvAzAxcvhFpNQ9p9irP7CERBTl+cMTXaFbae8a5IZRT/qit9RksfWXIY+sufcAxno1FQLxHs0@vger.kernel.org
-X-Gm-Message-State: AOJu0YxVijht9rZRuBNQS1SGZ/u02hGncT2sdr81xzAKO9cSiikg7/VM
-	KDeD0WFQn/U1YCIuXqSDuFLhW6x+yHMm1dZq1DPH7L2m04J3NSR9
-X-Google-Smtp-Source: AGHT+IHgSutBHeWXw3YJPZ+Yxrdbk7ePwFYldx07gliZ3r1PpfRrHRWr4ftgUOJEMVjexUm+jTrU9A==
-X-Received: by 2002:a17:90b:3b8f:b0:2d3:d95a:36dd with SMTP id 98e67ed59e1d1-2da62ccd76bmr3038201a91.8.1725388841154;
-        Tue, 03 Sep 2024 11:40:41 -0700 (PDT)
-Received: from google.com ([2620:15c:9d:2:e682:e3dc:908:eef0])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d8b966948asm5775776a91.17.2024.09.03.11.40.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Sep 2024 11:40:40 -0700 (PDT)
-Date: Tue, 3 Sep 2024 11:40:38 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Richard Acayan <mailingradian@gmail.com>
-Cc: Marge Yang <marge.yang@tw.synaptics.com>, linux-input@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Vincent Huang <Vincent.Huang@tw.synaptics.com>,
-	david.chiu@tw.synaptics.com, derek.cheng@tw.synaptics.com,
-	sam.tsai@synaptics.com
-Subject: Re: [PATCH V2] Input: synaptics-rmi4 - Supports to query DPM value.
-Message-ID: <ZtdYJkU17y1iNsLG@google.com>
-References: <20240805083636.1381205-1-marge.yang@tw.synaptics.com>
- <ZtdQW7nqAOEJDNBN@radian>
+	s=arc-20240116; t=1725388907; c=relaxed/simple;
+	bh=ovQBxupDZwgGU+HNXgPAi4OEVfyc757WP6fI8XGi3wo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=Q1THdVFxfR4yJpoOA2BUU4vmHcRngnJZYqosLmP3LenQhwn0vM7avIylx0GlaDMaMjb8ShpQcAd72Ypcyx+PNE+RJDGNrTPez8cKHsPyndHBN4FXa1BSvX0OXX3gIY8wErDyyzkWj0DVLweaDdoXFpbo3Kpq+8R75QwDgsueNBQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MfTw2diR; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725388906; x=1756924906;
+  h=message-id:date:mime-version:subject:to:references:from:
+   in-reply-to:content-transfer-encoding;
+  bh=ovQBxupDZwgGU+HNXgPAi4OEVfyc757WP6fI8XGi3wo=;
+  b=MfTw2diR+i9wklEBnapxd5E6GIA9he+fFFmVse/8ZXC5u8SJA4H8NkK6
+   1A0eizy4udFC+3nmmUeLBv46Ail2CePXZozf077+t5gP/vW09ik9y/YMX
+   Z3INUPbPbSq8O/kMDv00uAPnoJwQ2hgFm4Iv7X6GP5NCF8iDOsEhz0Z8I
+   z1MBiPtbu5MHx+TSfBJpVnN7uAuKwO4RP3AGF3HnscjaI1FdiPDFk0JWV
+   5UEIpleWzZer9qmSTFmcqSkIc+b4qgJj1hrD7P4S5s8nE9r378LpYd5zy
+   2UlOoZp/lPv6ZG7T3C1ECKp12wEOiAL1xJt/MCl+m3Djvh41i0RO/5Mc7
+   A==;
+X-CSE-ConnectionGUID: rWkA3jZ5RZeb7otOoF6Jrw==
+X-CSE-MsgGUID: 1Ica2SVwSwio4QwN0Zwbsg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11184"; a="23525895"
+X-IronPort-AV: E=Sophos;i="6.10,199,1719903600"; 
+   d="scan'208";a="23525895"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2024 11:41:45 -0700
+X-CSE-ConnectionGUID: rc3FvuviSdmHsLbn5HSqTA==
+X-CSE-MsgGUID: 70Hue1dMQT6yAPFty6naLw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,199,1719903600"; 
+   d="scan'208";a="102419517"
+Received: from ahunter6-mobl1.ger.corp.intel.com (HELO [10.0.2.15]) ([10.246.0.178])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2024 11:41:39 -0700
+Message-ID: <32ad6b65-c7fc-426c-84a6-203ccd964444@intel.com>
+Date: Tue, 3 Sep 2024 21:41:33 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZtdQW7nqAOEJDNBN@radian>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 6/8] perf auxtrace: Bails out after finding the event
+ for the map index
+To: Leo Yan <leo.yan@arm.com>, Peter Zijlstra <peterz@infradead.org>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+ "Liang, Kan" <kan.liang@linux.intel.com>,
+ Suzuki K Poulose <suzuki.poulose@arm.com>, Mike Leach
+ <mike.leach@linaro.org>, James Clark <james.clark@linaro.org>,
+ John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>,
+ Yicong Yang <yangyicong@hisilicon.com>,
+ Jonathan Cameron <jonathan.cameron@huawei.com>,
+ linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, coresight@lists.linaro.org
+References: <20240823113306.2310957-1-leo.yan@arm.com>
+ <20240823113306.2310957-7-leo.yan@arm.com>
+Content-Language: en-US
+From: Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+In-Reply-To: <20240823113306.2310957-7-leo.yan@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Sep 03, 2024 at 02:07:23PM -0400, Richard Acayan wrote:
-> > +	/* Use the Query DPM feature when the query register exists for resolution. */
-> > +	item = rmi_get_register_desc_item(&f12->query_reg_desc, RMI_F12_QUERY_RESOLUTION);
-> > +	if (item) {
-> > +		offset = rmi_register_desc_calc_reg_offset(&f12->query_reg_desc,
-> > +			RMI_F12_QUERY_RESOLUTION);
-> > +		query_dpm_addr = fn->fd.query_base_addr	+ offset;
-> > +		ret = rmi_read(fn->rmi_dev, query_dpm_addr, buf);
-> > +		if (ret < 0) {
-> > +			dev_err(&fn->dev, "Failed to read DPM value: %d\n", ret);
-> > +			return -ENODEV;
-> > +		}
-> > +		dpm_resolution = buf[0];
-> > +
-> > +		sensor->x_mm = sensor->max_x / dpm_resolution;
-> > +		sensor->y_mm = sensor->max_y / dpm_resolution;
-> > +	} else {
-> > +		if (rmi_register_desc_has_subpacket(item, 3)) {
+On 23/08/24 14:33, Leo Yan wrote:
+> After finding the corresponding event for the passed buffer index, it is
+> safe to say the found event has been used. Then, the tool can check the
+> event status and bails out if it has been disabled.
+
+I don't really understand why this is a separate patch.  Maybe it
+should be merged with the next one?
+
 > 
-> The item variable is NULL in this branch, as it was overwritten just
-> before the if statement.
+> Signed-off-by: Leo Yan <leo.yan@arm.com>
+> ---
+>  tools/perf/util/auxtrace.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
 > 
-> This patch causes a NULL pointer dereference:
+> diff --git a/tools/perf/util/auxtrace.c b/tools/perf/util/auxtrace.c
+> index e7b582d92811..2acf63efab1d 100644
+> --- a/tools/perf/util/auxtrace.c
+> +++ b/tools/perf/util/auxtrace.c
+> @@ -688,15 +688,15 @@ int auxtrace_record__read_finish(struct auxtrace_record *itr, int idx)
+>  		if (evsel__is_aux_event(evsel)) {
+>  			int cpu_map_idx;
+>  
+> -			if (evsel->disabled)
+> -				return 0;
+> -
+>  			cpu_map_idx = evlist__find_cpu_map_idx(itr->evlist,
+>  							       evsel, idx);
+>  			/* No map is found in per CPU mmap */
+>  			if (cpu_map_idx == -ENOENT)
+>  				return cpu_map_idx;
+>  
+> +			if (evsel->disabled)
+> +				return 0;
+> +
+>  			if (cpu_map_idx >= 0)
+>  				return evlist__enable_event_idx(evsel, 1, cpu_map_idx);
+>  			else
 
-Ugh, indeed. I guess the simplest way of fixing this would be:
-
-diff --git a/drivers/input/rmi4/rmi_f12.c b/drivers/input/rmi4/rmi_f12.c
-index fc2cc8e2b0ba..8246fe77114b 100644
---- a/drivers/input/rmi4/rmi_f12.c
-+++ b/drivers/input/rmi4/rmi_f12.c
-@@ -129,9 +129,8 @@ static int rmi_f12_read_sensor_tuning(struct f12_data *f12)
- 	 * Use the Query DPM feature when the resolution query register
- 	 * exists.
- 	 */
--	item = rmi_get_register_desc_item(&f12->query_reg_desc,
--					  RMI_F12_QUERY_RESOLUTION);
--	if (item) {
-+	if (rmi_get_register_desc_item(&f12->query_reg_desc,
-+				       RMI_F12_QUERY_RESOLUTION)) {
- 		offset = rmi_register_desc_calc_reg_offset(&f12->query_reg_desc,
- 						RMI_F12_QUERY_RESOLUTION);
- 		query_dpm_addr = fn->fd.query_base_addr	+ offset;
-
-Could you please tell me if this works for you?
-
-Thanks.
-
--- 
-Dmitry
 
